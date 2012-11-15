@@ -2973,16 +2973,17 @@ void RenderLayer::paintLayerContents(GraphicsContext* context, const LayerPainti
     bool shouldPaintOutline = isSelfPaintingLayer && !isPaintingOverlayScrollbars;
     bool shouldPaintContent = m_hasVisibleContent && isSelfPaintingLayer && !isPaintingOverlayScrollbars;
 
-    // Calculate the clip rects we should use only when we need them.
-    LayoutRect layerBounds;
-    ClipRect damageRect, clipRectToApply, outlineRect;
-    LayoutPoint paintOffset;
-    
     bool useClipRect = true;
     GraphicsContext* transparencyLayerContext = context;
     
     // Ensure our lists are up-to-date.
     updateLayerListsIfNeeded();
+
+    LayoutPoint offsetFromRoot;
+    convertToLayerCoords(paintingInfo.rootLayer, offsetFromRoot);
+
+    IntRect rootRelativeBounds;
+    bool rootRelativeBoundsComputed = false;
 
     bool didQuantizeFonts = true;
     bool scrollingOnMainThread = true;
@@ -3008,13 +3009,17 @@ void RenderLayer::paintLayerContents(GraphicsContext* context, const LayerPainti
 #if ENABLE(CSS_FILTERS)
     FilterEffectRendererHelper filterPainter(filterRenderer() && paintsWithFilters());
     if (filterPainter.haveFilterEffect() && !context->paintingDisabled()) {
-        LayoutPoint rootLayerOffset;
-        convertToLayerCoords(paintingInfo.rootLayer, rootLayerOffset);
         RenderLayerFilterInfo* filterInfo = this->filterInfo();
         ASSERT(filterInfo);
         LayoutRect filterRepaintRect = filterInfo->dirtySourceRect();
-        filterRepaintRect.move(rootLayerOffset.x(), rootLayerOffset.y());
-        if (filterPainter.prepareFilterEffect(this, calculateLayerBounds(paintingInfo.rootLayer, 0), paintingInfo.paintDirtyRect, filterRepaintRect)) {
+        filterRepaintRect.move(offsetFromRoot.x(), offsetFromRoot.y());
+
+        if (!rootRelativeBoundsComputed) {
+            rootRelativeBounds = calculateLayerBounds(paintingInfo.rootLayer, &offsetFromRoot, 0);
+            rootRelativeBoundsComputed = true;
+        }
+
+        if (filterPainter.prepareFilterEffect(this, rootRelativeBounds, paintingInfo.paintDirtyRect, filterRepaintRect)) {
             // Now we know for sure, that the source image will be updated, so we can revert our tracking repaint rect back to zero.
             filterInfo->resetDirtySourceRect();
 
@@ -3035,9 +3040,14 @@ void RenderLayer::paintLayerContents(GraphicsContext* context, const LayerPainti
         }
     }
 #endif
-    
+
+    // Calculate the clip rects we should use only when we need them.
+    LayoutRect layerBounds;
+    ClipRect damageRect, clipRectToApply, outlineRect;
+    LayoutPoint paintOffset;
+
     if (shouldPaintContent || shouldPaintOutline || isPaintingOverlayScrollbars) {
-        calculateRects(localPaintingInfo.rootLayer, localPaintingInfo.region, (localPaintFlags & PaintLayerTemporaryClipRects) ? TemporaryClipRects : PaintingClipRects, localPaintingInfo.paintDirtyRect, layerBounds, damageRect, clipRectToApply, outlineRect);
+        calculateRects(localPaintingInfo.rootLayer, localPaintingInfo.region, (localPaintFlags & PaintLayerTemporaryClipRects) ? TemporaryClipRects : PaintingClipRects, localPaintingInfo.paintDirtyRect, layerBounds, damageRect, clipRectToApply, outlineRect, &offsetFromRoot);
         paintOffset = toPoint(layerBounds.location() - renderBoxLocation());
     }
 
@@ -3056,7 +3066,7 @@ void RenderLayer::paintLayerContents(GraphicsContext* context, const LayerPainti
         performOverlapTests(*localPaintingInfo.overlapTestRequests, localPaintingInfo.rootLayer, this);
 
     // We want to paint our layer, but only if we intersect the damage rect.
-    shouldPaintContent &= intersectsDamageRect(layerBounds, damageRect.rect(), localPaintingInfo.rootLayer);
+    shouldPaintContent &= intersectsDamageRect(layerBounds, damageRect.rect(), localPaintingInfo.rootLayer, &offsetFromRoot);
     
     if (localPaintFlags & PaintLayerPaintingCompositingBackgroundPhase) {
         if (shouldPaintContent && !selectionOnly) {
@@ -3515,7 +3525,7 @@ RenderLayer* RenderLayer::hitTestLayer(RenderLayer* rootLayer, RenderLayer* cont
     ClipRect bgRect;
     ClipRect fgRect;
     ClipRect outlineRect;
-    calculateRects(rootLayer, result.region(), useTemporaryClipRects ? TemporaryClipRects : RootRelativeClipRects, hitTestRect, layerBounds, bgRect, fgRect, outlineRect, IncludeOverlayScrollbarSize);
+    calculateRects(rootLayer, result.region(), useTemporaryClipRects ? TemporaryClipRects : RootRelativeClipRects, hitTestRect, layerBounds, bgRect, fgRect, outlineRect, 0, IncludeOverlayScrollbarSize);
     
     // The following are used for keeping track of the z-depth of the hit point of 3d-transformed
     // descendants.
@@ -3923,7 +3933,7 @@ ClipRect RenderLayer::backgroundClipRect(const RenderLayer* rootLayer, RenderReg
 }
 
 void RenderLayer::calculateRects(const RenderLayer* rootLayer, RenderRegion* region, ClipRectsType clipRectsType, const LayoutRect& paintDirtyRect, LayoutRect& layerBounds,
-                                 ClipRect& backgroundRect, ClipRect& foregroundRect, ClipRect& outlineRect, OverlayScrollbarSizeRelevancy relevancy) const
+                                 ClipRect& backgroundRect, ClipRect& foregroundRect, ClipRect& outlineRect, const LayoutPoint* offsetFromRoot, OverlayScrollbarSizeRelevancy relevancy) const
 {
     if (rootLayer != this && parent()) {
         backgroundRect = backgroundClipRect(rootLayer, region, clipRectsType, relevancy);
@@ -3935,7 +3945,10 @@ void RenderLayer::calculateRects(const RenderLayer* rootLayer, RenderRegion* reg
     outlineRect = backgroundRect;
     
     LayoutPoint offset;
-    convertToLayerCoords(rootLayer, offset);
+    if (offsetFromRoot)
+        offset = *offsetFromRoot;
+    else
+        convertToLayerCoords(rootLayer, offset);
     layerBounds = LayoutRect(offset, size());
 
     // Update the clip rects that will be passed to child layers.
@@ -4048,7 +4061,7 @@ void RenderLayer::repaintBlockSelectionGaps()
         renderer()->repaintRectangle(rect);
 }
 
-bool RenderLayer::intersectsDamageRect(const LayoutRect& layerBounds, const LayoutRect& damageRect, const RenderLayer* rootLayer) const
+bool RenderLayer::intersectsDamageRect(const LayoutRect& layerBounds, const LayoutRect& damageRect, const RenderLayer* rootLayer, const LayoutPoint* offsetFromRoot) const
 {
     // Always examine the canvas and the root.
     // FIXME: Could eliminate the isRoot() check if we fix background painting so that the RenderView
@@ -4069,7 +4082,7 @@ bool RenderLayer::intersectsDamageRect(const LayoutRect& layerBounds, const Layo
         
     // Otherwise we need to compute the bounding box of this single layer and see if it intersects
     // the damage rect.
-    return boundingBox(rootLayer).intersects(damageRect);
+    return boundingBox(rootLayer, offsetFromRoot).intersects(damageRect);
 }
 
 LayoutRect RenderLayer::localBoundingBox() const
@@ -4120,15 +4133,20 @@ LayoutRect RenderLayer::localBoundingBox() const
     return result;
 }
 
-LayoutRect RenderLayer::boundingBox(const RenderLayer* ancestorLayer) const
+LayoutRect RenderLayer::boundingBox(const RenderLayer* ancestorLayer, const LayoutPoint* offsetFromRoot) const
 {    
     LayoutRect result = localBoundingBox();
     if (renderer()->isBox())
         renderBox()->flipForWritingMode(result);
     else
         renderer()->containingBlock()->flipForWritingMode(result);
+
     LayoutPoint delta;
-    convertToLayerCoords(ancestorLayer, delta);
+    if (offsetFromRoot)
+        delta = *offsetFromRoot;
+    else
+        convertToLayerCoords(ancestorLayer, delta);
+    
     result.moveBy(delta);
     return result;
 }
@@ -4138,7 +4156,7 @@ IntRect RenderLayer::absoluteBoundingBox() const
     return pixelSnappedIntRect(boundingBox(root()));
 }
 
-IntRect RenderLayer::calculateLayerBounds(const RenderLayer* ancestorLayer, CalculateLayerBoundsFlags flags) const
+IntRect RenderLayer::calculateLayerBounds(const RenderLayer* ancestorLayer, const LayoutPoint* offsetFromRoot, CalculateLayerBoundsFlags flags) const
 {
     if (!isSelfPaintingLayer())
         return IntRect();
@@ -4248,7 +4266,10 @@ IntRect RenderLayer::calculateLayerBounds(const RenderLayer* ancestorLayer, Calc
     }
 
     LayoutPoint ancestorRelOffset;
-    convertToLayerCoords(ancestorLayer, ancestorRelOffset);
+    if (offsetFromRoot)
+        ancestorRelOffset = *offsetFromRoot;
+    else
+        convertToLayerCoords(ancestorLayer, ancestorRelOffset);
     unionBounds.moveBy(ancestorRelOffset);
     
     return pixelSnappedIntRect(unionBounds);
