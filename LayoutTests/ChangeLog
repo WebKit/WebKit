@@ -1,3 +1,11 @@
+2012-11-15  Kristóf Kosztyó  <kkristof@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardening. Rebaseline after r134649.
+
+        * platform/qt/http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-expected.txt:
+        * platform/qt/http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-in-body-expected.txt:
+        * platform/qt/http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-parent-same-origin-deny-expected.txt:
+
 2012-11-15  Kent Tamura  <tkent@chromium.org>
 
         Support stand-alone month names in calendar picker
