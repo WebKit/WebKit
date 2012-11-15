@@ -4690,4 +4690,3 @@
 
         This patch creates the WTF directory, which begins the process of
         moving WTF out of JavaScriptCore.
-.

@@ -19516,4 +19516,3 @@
         (WebKit::NetscapePluginInstanceProxy::loadRequest): Added an assertion.
 
 == Rolled over to ChangeLog-2010-01-29 ==
-.
