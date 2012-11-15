@@ -60,6 +60,8 @@ public:
     bool isFunction() const;
     bool hasNoValue() const { return !m_value; }
 
+    void clear() { m_value.clear(); }
+
     bool operator==(const ScriptValue& other) const { return m_value == other.m_value; }
 
     PassRefPtr<SerializedScriptValue> serialize(ScriptState*, SerializationErrorMode = Throwing);
