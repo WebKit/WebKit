@@ -1,3 +1,19 @@
+2012-11-15  Roger Fong  <roger_fong@apple.com>
+
+        Make old-run-webkit-tests handle setting the results directory properly.
+        https://bugs.webkit.org/show_bug.cgi?id=102273
+        <rdar://problem/11571607>
+
+        Reviewed by Timothy Horton.
+
+        A call to chdirWebkit in old-run-webkit-tests set the current working directory to the OpenSource folder.
+        Thus setting --results-directory to OpenSource/layout-test-results would create OpenSource/layout-test-results inside the main OpenSource folder.
+        This caused many other problems including failure to upload test results and failed future test runs.
+        The solution is to save the current working directory before calling chdirWebKit and then reconstructing the full path to the results directory 
+        using the saved directory when setting $testResultsDirectory.
+
+        * Scripts/old-run-webkit-tests:
+
 2012-11-15  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r134800 and r134805.

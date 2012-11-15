@@ -423,6 +423,8 @@ my $productDir = productDir();
 $productDir .= "/bin" if isQt();
 $productDir .= "/Programs" if isGtk();
 
+# Save the current directory before chaging it via chdirWebKit
+my $currentDir = cwd();
 chdirWebKit();
 
 if (!defined($root) && !$noBuildDumpTool) {
@@ -467,7 +469,7 @@ my @platformTestHierarchy = buildPlatformTestHierarchy(@platformResultHierarchy)
 
 $expectedDirectory = $ENV{"WebKitExpectedTestResultsDirectory"} if $ENV{"WebKitExpectedTestResultsDirectory"};
 
-$testResultsDirectory = File::Spec->rel2abs($testResultsDirectory);
+$testResultsDirectory = File::Spec->catfile($currentDir, $testResultsDirectory);
 # $testResultsDirectory must be empty before testing.
 rmtree $testResultsDirectory;
 my $testResults = File::Spec->catfile($testResultsDirectory, "results.html");
