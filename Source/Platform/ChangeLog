@@ -1,5 +1,23 @@
 2012-11-14  Dana Jansens  <danakj@chromium.org>
 
+        [chromium] Clamp negative sizes to zero when converting to gfx:: types
+        https://bugs.webkit.org/show_bug.cgi?id=102159
+
+        Reviewed by James Robinson.
+
+        Here we clamp Rect, RectF and Size types to not have negative widths or
+        heights. WebSizes that you want to keep their negative values, because
+        they are vectors, should be converted to Vector2d instead.
+
+        * chromium/public/WebFloatRect.h:
+        (WebKit::WebFloatRect::operator gfx::RectF):
+        * chromium/public/WebRect.h:
+        (WebKit::WebRect::operator gfx::Rect):
+        * chromium/public/WebSize.h:
+        (WebKit::WebSize::operator gfx::Size):
+
+2012-11-14  Dana Jansens  <danakj@chromium.org>
+
         [chromium] Match the LayerTreeSetting default for acceleratedAnimationEnabled in the WebLayerTreeSetting
         https://bugs.webkit.org/show_bug.cgi?id=102285
 

@@ -36,6 +36,7 @@
 #if WEBKIT_IMPLEMENTATION
 #include "FloatRect.h"
 #else
+#include <cmath>
 #include <ui/gfx/rect_f.h>
 #endif
 
@@ -107,7 +108,7 @@ struct WebFloatRect {
 
     operator gfx::RectF() const
     {
-        return gfx::RectF(x, y, width, height);
+        return gfx::RectF(x, y, std::max(0.0f, width), std::max(0.0f, height));
     }
 #endif
 };

@@ -36,6 +36,7 @@
 #if WEBKIT_IMPLEMENTATION
 #include "IntSize.h"
 #else
+#include <cmath>
 #include <ui/gfx/size.h>
 #include <ui/gfx/vector2d.h>
 #endif
@@ -107,7 +108,7 @@ struct WebSize {
 
     operator gfx::Size() const
     {
-        return gfx::Size(width, height);
+        return gfx::Size(std::max(0, width), std::max(0, height));
     }
 
     operator gfx::Vector2d() const

@@ -36,6 +36,7 @@
 #if WEBKIT_IMPLEMENTATION
 #include "IntRect.h"
 #else
+#include <cmath>
 #include <ui/gfx/rect.h>
 #endif
 
@@ -107,7 +108,7 @@ struct WebRect {
 
     operator gfx::Rect() const
     {
-        return gfx::Rect(x, y, width, height);
+        return gfx::Rect(x, y, std::max(0, width), std::max(0, height));
     }
 #endif
 };
