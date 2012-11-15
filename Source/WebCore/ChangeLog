@@ -1,3 +1,31 @@
+2012-11-14  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        Refactor ViewportArguments to only use CSS units
+        https://bugs.webkit.org/show_bug.cgi?id=102287
+
+        Reviewed by Noam Rosenthal.
+
+        Refactor the ViewportArgument code to use a member method for
+        resolving the viewport. This new method only uses arguments in
+        CSS units.
+
+        This is preparation for adding the CSS Device Adaptation support.
+
+        Tested by existing tests fast/viewport.
+
+        * dom/ViewportArguments.cpp:
+        (WebCore::clampLengthValue):
+        (WebCore::clampScaleValue): New utility functions.
+        (WebCore::ViewportArguments::resolve):
+        (WebCore::convertToUserSpace): Added until everyone provides arguments
+        only in CSS units and not device ones.
+        (WebCore::computeViewportAttributes):
+        (WebCore::computeMinimumScaleFactorForContentContained):
+        (WebCore):
+        (WebCore::restrictMinimumScaleFactorToViewportSize):
+        * dom/ViewportArguments.h:
+        (ViewportArguments):
+
 2012-11-14  Shinya Kawanaka  <shinyak@chromium.org> 
 
         Changing pseudoClass (:disabled) should cause distribution.

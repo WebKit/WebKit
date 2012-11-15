@@ -43,78 +43,89 @@ namespace WebCore {
 
 const float ViewportArguments::deprecatedTargetDPI = 160;
 
-ViewportAttributes computeViewportAttributes(ViewportArguments args, int desktopWidth, int deviceWidth, int deviceHeight, float devicePixelRatio, IntSize visibleViewport)
+static inline float clampLengthValue(float value)
 {
+    ASSERT(value != ViewportArguments::ValueDeviceWidth);
+    ASSERT(value != ViewportArguments::ValueDeviceHeight);
+
+    // Limits as defined in the css-device-adapt spec.
+    if (value != ViewportArguments::ValueAuto)
+        return min(float(10000), max(value, float(1)));
+    return value;
+}
+
+static inline float clampScaleValue(float value)
+{
+    ASSERT(value != ViewportArguments::ValueDeviceWidth);
+    ASSERT(value != ViewportArguments::ValueDeviceHeight);
+
+    // Limits as defined in the css-device-adapt spec.
+    if (value != ViewportArguments::ValueAuto)
+        return min(float(10), max(value, float(0.1)));
+    return value;
+}
+
+ViewportAttributes ViewportArguments::resolve(const FloatSize& initialViewportSize, const FloatSize& deviceSize, int defaultWidth) const
+{
+    float resultWidth = width;
+    float resultHeight = height;
+    float resultZoom = initialScale;
+    float resultMinZoom = minimumScale;
+    float resultMaxZoom = maximumScale;
+    float resultUserZoom = userScalable;
+
+    bool resultAutoFit = resultZoom == ViewportArguments::ValueAuto;
+
+    switch (int(resultWidth)) {
+    case ViewportArguments::ValueDeviceWidth:
+        resultWidth = deviceSize.width();
+        break;
+    case ViewportArguments::ValueDeviceHeight:
+        resultWidth = deviceSize.height();
+        break;
+    }
+
+    switch (int(resultHeight)) {
+    case ViewportArguments::ValueDeviceWidth:
+        resultHeight = deviceSize.width();
+        break;
+    case ViewportArguments::ValueDeviceHeight:
+        resultHeight = deviceSize.height();
+        break;
+    }
+
+    // Clamp values to valid range.
+    resultWidth = clampLengthValue(resultWidth);
+    resultHeight = clampLengthValue(resultHeight);
+    resultZoom = clampScaleValue(resultZoom);
+    resultMinZoom = clampScaleValue(resultMinZoom);
+    resultMaxZoom = clampScaleValue(resultMaxZoom);
+
     ViewportAttributes result;
-
-    float availableWidth = visibleViewport.width();
-    float availableHeight = visibleViewport.height();
-
-    ASSERT(availableWidth > 0 && availableHeight > 0);
-
-    // Resolve non-'auto' width and height to pixel values.
-    if (devicePixelRatio != 1.0) {
-        availableWidth /= devicePixelRatio;
-        availableHeight /= devicePixelRatio;
-        deviceWidth /= devicePixelRatio;
-        deviceHeight /= devicePixelRatio;
-    }
-
-    switch (int(args.width)) {
-    case ViewportArguments::ValueDeviceWidth:
-        args.width = deviceWidth;
-        break;
-    case ViewportArguments::ValueDeviceHeight:
-        args.width = deviceHeight;
-        break;
-    }
-
-    switch (int(args.height)) {
-    case ViewportArguments::ValueDeviceWidth:
-        args.height = deviceWidth;
-        break;
-    case ViewportArguments::ValueDeviceHeight:
-        args.height = deviceHeight;
-        break;
-    }
-
-    // Clamp values to range defined by spec and resolve minimum-scale and maximum-scale values
-    if (args.width != ViewportArguments::ValueAuto)
-        args.width = min(float(10000), max(args.width, float(1)));
-    if (args.height != ViewportArguments::ValueAuto)
-        args.height = min(float(10000), max(args.height, float(1)));
-
-    result.initiallyFitToViewport = args.initialScale == ViewportArguments::ValueAuto;
-
-    if (args.initialScale != ViewportArguments::ValueAuto)
-        args.initialScale = min(float(10), max(args.initialScale, float(0.1)));
-    if (args.minimumScale != ViewportArguments::ValueAuto)
-        args.minimumScale = min(float(10), max(args.minimumScale, float(0.1)));
-    if (args.maximumScale != ViewportArguments::ValueAuto)
-        args.maximumScale = min(float(10), max(args.maximumScale, float(0.1)));
+    result.initiallyFitToViewport = resultAutoFit;
 
     // Resolve minimum-scale and maximum-scale values according to spec.
-    if (args.minimumScale == ViewportArguments::ValueAuto)
+    if (resultMinZoom == ViewportArguments::ValueAuto)
         result.minimumScale = float(0.25);
     else
-        result.minimumScale = args.minimumScale;
+        result.minimumScale = resultMinZoom;
 
-    if (args.maximumScale == ViewportArguments::ValueAuto) {
+    if (resultMaxZoom == ViewportArguments::ValueAuto) {
         result.maximumScale = float(5.0);
         result.minimumScale = min(float(5.0), result.minimumScale);
     } else
-        result.maximumScale = args.maximumScale;
+        result.maximumScale = resultMaxZoom;
     result.maximumScale = max(result.minimumScale, result.maximumScale);
 
     // Resolve initial-scale value.
-    result.initialScale = args.initialScale;
-    if (result.initialScale == ViewportArguments::ValueAuto) {
-        result.initialScale = availableWidth / desktopWidth;
-        if (args.width != ViewportArguments::ValueAuto)
-            result.initialScale = availableWidth / args.width;
-        if (args.height != ViewportArguments::ValueAuto) {
+    result.initialScale = resultZoom;
+    if (resultZoom == ViewportArguments::ValueAuto) {
+        result.initialScale = initialViewportSize.width() / defaultWidth;
+        if (resultWidth != ViewportArguments::ValueAuto)
+            result.initialScale = initialViewportSize.width() / resultWidth;
+        if (resultHeight != ViewportArguments::ValueAuto) {
             // if 'auto', the initial-scale will be negative here and thus ignored.
-            result.initialScale = max<float>(result.initialScale, availableHeight / args.height);
+            result.initialScale = max<float>(result.initialScale, initialViewportSize.height() / resultHeight);
         }
     }
 
@@ -122,60 +133,63 @@ ViewportAttributes computeViewportAttributes(ViewportArguments args, int desktop
     result.initialScale = min(result.maximumScale, max(result.minimumScale, result.initialScale));
 
     // Resolve width value.
-    float width;
-    if (args.width != ViewportArguments::ValueAuto)
-        width = args.width;
-    else {
-        if (args.initialScale == ViewportArguments::ValueAuto)
-            width = desktopWidth;
-        else if (args.height != ViewportArguments::ValueAuto)
-            width = args.height * (availableWidth / availableHeight);
+    if (resultWidth == ViewportArguments::ValueAuto) {
+        if (resultZoom == ViewportArguments::ValueAuto)
+            resultWidth = defaultWidth;
+        else if (resultHeight != ViewportArguments::ValueAuto)
+            resultWidth = resultHeight * (initialViewportSize.width() / initialViewportSize.height());
         else
-            width = availableWidth / result.initialScale;
+            resultWidth = initialViewportSize.width() / result.initialScale;
     }
 
     // Resolve height value.
-    float height;
-    if (args.height != ViewportArguments::ValueAuto)
-        height = args.height;
-    else
-        height = width * availableHeight / availableWidth;
+    if (resultHeight == ViewportArguments::ValueAuto)
+        resultHeight = resultWidth * (initialViewportSize.height() / initialViewportSize.width());
 
     // Extend width and height to fill the visual viewport for the resolved initial-scale.
-    width = max<float>(width, availableWidth / result.initialScale);
-    height = max<float>(height, availableHeight / result.initialScale);
-    result.layoutSize.setWidth(width);
-    result.layoutSize.setHeight(height);
+    resultWidth = max<float>(resultWidth, initialViewportSize.width() / result.initialScale);
+    resultHeight = max<float>(resultHeight, initialViewportSize.height() / result.initialScale);
+    result.layoutSize.setWidth(resultWidth);
+    result.layoutSize.setHeight(resultHeight);
 
-    result.userScalable = args.userScalable;
+    // FIXME: Remove initiallyFitToViewport and use the below.
+    // Only set initialScale to a value if it was explicitly set.
+    // if (resultZoom == ViewportArguments::ValueAuto)
+    //    result.initialScale = ViewportArguments::ValueAuto;
+
+    result.userScalable = resultUserZoom;
 
     return result;
 }
 
-float computeMinimumScaleFactorForContentContained(const ViewportAttributes& result, const IntSize& viewportSize, const IntSize& contentsSize, float devicePixelRatio)
+FloatSize convertToUserSpace(const FloatSize& deviceSize, float devicePixelRatio)
 {
-    float availableWidth = viewportSize.width();
-    float availableHeight = viewportSize.height();
+    FloatSize result = deviceSize;
+    if (devicePixelRatio != 1)
+        result.scale(1 / devicePixelRatio);
+    return result;
+}
 
-    if (devicePixelRatio != 1.0) {
-        availableWidth /= devicePixelRatio;
-        availableHeight /= devicePixelRatio;
-    }
+ViewportAttributes computeViewportAttributes(ViewportArguments args, int desktopWidth, int deviceWidth, int deviceHeight, float devicePixelRatio, IntSize visibleViewport)
+{
+    FloatSize initialViewportSize = convertToUserSpace(visibleViewport, devicePixelRatio);
+    FloatSize deviceSize = convertToUserSpace(FloatSize(deviceWidth, deviceHeight), devicePixelRatio);
 
-    return max<float>(result.minimumScale, max(availableWidth / contentsSize.width(), availableHeight / contentsSize.height()));
+    return args.resolve(initialViewportSize, deviceSize, desktopWidth);
+}
+
+float computeMinimumScaleFactorForContentContained(const ViewportAttributes& result, const IntSize& visibleViewport, const IntSize& contentsSize, float devicePixelRatio)
+{
+    FloatSize viewportSize = convertToUserSpace(visibleViewport, devicePixelRatio);
+
+    return max<float>(result.minimumScale, max(viewportSize.width() / contentsSize.width(), viewportSize.height() / contentsSize.height()));
 }
 
 void restrictMinimumScaleFactorToViewportSize(ViewportAttributes& result, IntSize visibleViewport, float devicePixelRatio)
 {
-    float availableWidth = visibleViewport.width();
-    float availableHeight = visibleViewport.height();
+    FloatSize viewportSize = convertToUserSpace(visibleViewport, devicePixelRatio);
 
-    if (devicePixelRatio != 1.0) {
-        availableWidth /= devicePixelRatio;
-        availableHeight /= devicePixelRatio;
-    }
-
-    result.minimumScale = max<float>(result.minimumScale, max(availableWidth / result.layoutSize.width(), availableHeight / result.layoutSize.height()));
+    result.minimumScale = max<float>(result.minimumScale, max(viewportSize.width() / result.layoutSize.width(), viewportSize.height() / result.layoutSize.height()));
 }
 
 void restrictScaleFactorToInitialScaleIfNotUserScalable(ViewportAttributes& result)

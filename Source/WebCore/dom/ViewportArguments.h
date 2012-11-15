@@ -83,6 +83,9 @@ struct ViewportArguments {
     {
     }
 
+    // All arguments are in CSS units.
+    ViewportAttributes resolve(const FloatSize& initialViewportSize, const FloatSize& deviceSize, int defaultWidth) const;
+
     float initialScale;
     float minimumScale;
     float maximumScale;
