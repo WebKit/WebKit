@@ -1890,7 +1890,7 @@
             'accessibility/chromium/AXObjectCacheChromium.cpp',
             'accessibility/chromium/AccessibilityObjectChromium.cpp',
             'accessibility/efl/AccessibilityObjectEfl.cpp',
-            'accessibility/gtk/AXObjectCacheAtk.cpp',
+            'accessibility/atk/AXObjectCacheAtk.cpp',
             'accessibility/atk/AccessibilityObjectAtk.cpp',
             'accessibility/atk/WebKitAccessibleHyperlink.cpp',
             'accessibility/atk/WebKitAccessibleHyperlink.h',

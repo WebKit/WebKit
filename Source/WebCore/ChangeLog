@@ -1,3 +1,9 @@
+2012-11-16  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        [Chromium] One last tweak to WebCore.gypi to make Win build not sad.
+
+        * WebCore.gypi: Removed one last mention of accessibility/gtk file.
+
 2012-11-16  Robert Flack  <flackr@chromium.org>
 
         Handle gesture events on scrollbars.
