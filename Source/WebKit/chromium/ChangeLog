@@ -1,3 +1,21 @@
+2012-11-16  Mark Pilgrim  <pilgrim@chromium.org>
+
+        [Chromium] Remove cookie-related functions from PlatformSupport
+        https://bugs.webkit.org/show_bug.cgi?id=99340
+
+        Reviewed by Adam Barth.
+
+        Move cookie-related functions out of PlatformSupport and implement
+        new PlatformCookieJar interface via NetworkContext.
+
+        * WebKit.gyp:
+        * src/FrameNetworkingContextImpl.cpp: Added.
+        (WebKit):
+        (WebKit::FrameNetworkingContextImpl::cookieJar):
+        * src/FrameNetworkingContextImpl.h:
+        (FrameNetworkingContextImpl):
+        * src/PlatformSupport.cpp:
+
 2012-11-16  Tien-Ren Chen  <trchen@chromium.org>
 
         Rename applyDefaultDeviceScaleFactorInCompositor to setApplyDeviceScaleFactorInCompositor

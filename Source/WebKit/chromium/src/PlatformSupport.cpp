@@ -84,8 +84,6 @@
 #include "NativeImageSkia.h"
 
 #include "BitmapImage.h"
-#include "Cookie.h"
-#include "Document.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
 #include "IDBFactoryBackendProxy.h"
@@ -97,8 +95,6 @@
 
 #include "Worker.h"
 #include "WorkerContextProxy.h"
-#include <public/WebCookie.h>
-#include <public/WebCookieJar.h>
 #include <public/WebMimeRegistry.h>
 #include <public/WebVector.h>
 #include <wtf/Assertions.h>
@@ -107,86 +103,6 @@
 using namespace WebKit;
 
 namespace WebCore {
-
-static WebCookieJar* getCookieJar(const Document* document)
-{
-    WebFrameImpl* frameImpl = WebFrameImpl::fromFrame(document->frame());
-    if (!frameImpl || !frameImpl->client())
-        return 0;
-    WebCookieJar* cookieJar = frameImpl->client()->cookieJar(frameImpl);
-    if (!cookieJar)
-        cookieJar = WebKit::Platform::current()->cookieJar();
-    return cookieJar;
-}
-
-// Cookies --------------------------------------------------------------------
-
-void PlatformSupport::setCookies(const Document* document, const KURL& url,
-                                const String& value)
-{
-    WebCookieJar* cookieJar = getCookieJar(document);
-    if (cookieJar)
-        cookieJar->setCookie(url, document->firstPartyForCookies(), value);
-}
-
-String PlatformSupport::cookies(const Document* document, const KURL& url)
-{
-    String result;
-    WebCookieJar* cookieJar = getCookieJar(document);
-    if (cookieJar)
-        result = cookieJar->cookies(url, document->firstPartyForCookies());
-    return result;
-}
-
-String PlatformSupport::cookieRequestHeaderFieldValue(const Document* document,
-                                                     const KURL& url)
-{
-    String result;
-    WebCookieJar* cookieJar = getCookieJar(document);
-    if (cookieJar)
-        result = cookieJar->cookieRequestHeaderFieldValue(url, document->firstPartyForCookies());
-    return result;
-}
-
-bool PlatformSupport::rawCookies(const Document* document, const KURL& url, Vector<Cookie>& rawCookies)
-{
-    rawCookies.clear();
-    WebVector<WebCookie> webCookies;
-
-    WebCookieJar* cookieJar = getCookieJar(document);
-    if (cookieJar)
-        cookieJar->rawCookies(url, document->firstPartyForCookies(), webCookies);
-
-    for (unsigned i = 0; i < webCookies.size(); ++i) {
-        const WebCookie& webCookie = webCookies[i];
-        Cookie cookie(webCookie.name,
-                      webCookie.value,
-                      webCookie.domain,
-                      webCookie.path,
-                      webCookie.expires,
-                      webCookie.httpOnly,
-                      webCookie.secure,
-                      webCookie.session);
-        rawCookies.append(cookie);
-    }
-    return true;
-}
-
-void PlatformSupport::deleteCookie(const Document* document, const KURL& url, const String& cookieName)
-{
-    WebCookieJar* cookieJar = getCookieJar(document);
-    if (cookieJar)
-        cookieJar->deleteCookie(url, cookieName);
-}
-
-bool PlatformSupport::cookiesEnabled(const Document* document)
-{
-    bool result = false;
-    WebCookieJar* cookieJar = getCookieJar(document);
-    if (cookieJar)
-        result = cookieJar->cookiesEnabled(document->cookieURL(), document->firstPartyForCookies());
-    return result;
-}
 
 // Font -----------------------------------------------------------------------
 

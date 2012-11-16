@@ -21,11 +21,14 @@
 #define FrameNetworkingContextImpl_h
 
 #include "FrameNetworkingContext.h"
+#include <public/WebCookieJar.h>
 
 namespace WebKit {
 
 class FrameNetworkingContextImpl : public WebCore::FrameNetworkingContext {
 public:
+    virtual WebCookieJar* cookieJar() const OVERRIDE;
+
     static PassRefPtr<FrameNetworkingContextImpl> create(WebCore::Frame* frame)
     {
         return adoptRef(new FrameNetworkingContextImpl(frame));

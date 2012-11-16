@@ -26,6 +26,12 @@
 #include "SchedulePair.h"
 #endif
 
+#if PLATFORM(CHROMIUM)
+namespace WebKit {
+class WebCookieJar;
+}
+#endif
+
 #if PLATFORM(QT)
 #include <qglobal.h>
 #endif
@@ -60,6 +66,10 @@ public:
     virtual ~NetworkingContext() { }
 
     virtual bool isValid() const { return true; }
+
+#if PLATFORM(CHROMIUM)
+    virtual WebKit::WebCookieJar* cookieJar() const = 0;
+#endif
 
 #if PLATFORM(MAC)
     virtual bool needsSiteSpecificQuirks() const = 0;
