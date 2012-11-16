@@ -1694,3 +1694,5 @@ webkit.org/b/102190 compositing/overflow/updating-scrolling-content.html [ Failu
 webkit.org/b/102190 fast/events/overflow-scroll-fake-mouse-move.html [ Failure ]
 
 webkit.org/b/102364 compositing/overflow/scrolling-without-painting.html [ Failure ]
+
+webkit.org/b/102367 fast/forms/zoomed-controls.html [ ImageOnlyFailure Missing ]

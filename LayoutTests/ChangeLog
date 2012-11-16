@@ -1,3 +1,14 @@
+2012-11-15  KwangYong Choi  <ky0.choi@samsung.com>
+
+        [EFL] Update TestExpectations for fast/forms/zoomed-controls.html
+        https://bugs.webkit.org/show_bug.cgi?id=102369
+
+        Unreviewed. Pixel test of fast/forms/zoomed-controls.html is failing
+        introduced by r134698. Mark this test Missing and remove wrong expectation.
+
+        * platform/efl/TestExpectations:
+        * platform/efl/fast/forms/zoomed-controls-expected.png: Removed.
+
 2012-11-15  Shinya Kawanaka  <shinyak@chromium.org>
 
         Chaging pseudoClass (:enabled) should cause distribution
