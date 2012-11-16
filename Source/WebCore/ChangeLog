@@ -1,3 +1,21 @@
+2012-11-15  Stephen Chenney  <schenney@chromium.org>
+
+        mpath elements do not clear resource lists before destruction
+        https://bugs.webkit.org/show_bug.cgi?id=101505
+
+        Reviewed by Abhishek Arya.
+
+        The destructor for SVGMPathElement should clear its resources before
+        deletion, so as not to leave hanging pointers in resource lists.
+
+        Test: svg/animations/mpath-remove-from-dependents-on-delete-crash.html
+
+        * svg/SVGMPathElement.cpp:
+        (WebCore::SVGMPathElement::~SVGMPathElement): Add destructor that calls clearResourceReferences.
+        (WebCore):
+        * svg/SVGMPathElement.h:
+        (SVGMPathElement): Add destructor.
+
 2012-11-15  Kentaro Hara  <haraken@chromium.org>
 
         Remove CodeGenerator::StripModule

@@ -1,5 +1,18 @@
 2012-11-15  Stephen Chenney  <schenney@chromium.org>
 
+        mpath elements do not clear resource lists before destruction
+        https://bugs.webkit.org/show_bug.cgi?id=101505
+
+        Reviewed by Abhishek Arya.
+
+        Test that causes a mpath element to be deleted before the path that it
+        references.
+
+        * svg/animations/mpath-remove-from-dependents-on-delete-crash-expected.html: Added.
+        * svg/animations/mpath-remove-from-dependents-on-delete-crash.html: Added.
+
+2012-11-15  Stephen Chenney  <schenney@chromium.org>
+
         [Chromium] Test expectations - we're passing!
 
         Unreviewed expectations for canvas-shadow.html

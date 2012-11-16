@@ -37,6 +37,8 @@ class SVGMPathElement : public SVGElement,
 public:
     static PassRefPtr<SVGMPathElement> create(const QualifiedName&, Document*);
 
+    virtual ~SVGMPathElement();
+
     SVGPathElement* pathElement();
 
     void targetPathChanged();

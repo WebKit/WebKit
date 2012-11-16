@@ -50,6 +50,11 @@ PassRefPtr<SVGMPathElement> SVGMPathElement::create(const QualifiedName& tagName
     return adoptRef(new SVGMPathElement(tagName, document));
 }
 
+SVGMPathElement::~SVGMPathElement()
+{
+    clearResourceReferences();
+}
+
 void SVGMPathElement::buildPendingResource()
 {
     clearResourceReferences();
