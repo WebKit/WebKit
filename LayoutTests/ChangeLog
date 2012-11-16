@@ -1,3 +1,9 @@
+2012-11-16  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        [Chromium] Removed incorrect baseline.
+
+        * platform/chromium-mac/canvas/philip/tests/2d.shadow.enable.blur-expected.txt: Removed.
+
 2012-11-16  Erik Arvidsson  <arv@chromium.org>
 
         Update DOMException name: TypeMismatchError
