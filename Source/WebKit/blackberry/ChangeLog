@@ -1,3 +1,16 @@
+2012-11-16  Rob Buis  <rbuis@rim.com>
+
+        [BlackBerry] FCC doesn't work in textarea
+        https://bugs.webkit.org/show_bug.cgi?id=102088
+
+        Reviewed by Antonio Gomes.
+
+        Remove the cancel button specializations, it was needed at some point but hitting it
+        works just as well without it. This unbreaks FCC in textarea's.
+
+        * WebKitSupport/FatFingers.cpp:
+        (BlackBerry::WebKit::FatFingers::isElementClickable):
+
 2012-11-16  Adam Treat  <atreat@rim.com>
 
         [BlackBerry] Fix regression causing checkerboard flicker after app wake-up
