@@ -175,23 +175,47 @@ void RenderGrid::layoutGridItems()
         setLogicalHeight(logicalHeight() + rowTracks[i].m_usedBreadth);
 }
 
+size_t RenderGrid::resolveGridPosition(const Length& position) const
+{
+    // FIXME: Handle other values for grid-{row,column} like ranges or line names.
+    switch (position.type()) {
+    case Fixed:
+        // FIXME: What does a non-positive integer mean for a column/row?
+        if (!position.isPositive())
+            return 0;
+
+        return position.intValue() - 1;
+    case Auto:
+        // FIXME: We should follow 'grid-auto-flow' for resolution.
+        // Until then, we use the 'grid-auto-flow: none' behavior (which is the default)
+        // and resolve 'auto' as the first row / column.
+        return 0;
+    case Relative:
+    case Percent:
+    case Intrinsic:
+    case MinIntrinsic:
+    case MinContent:
+    case MaxContent:
+    case FillAvailable:
+    case FitContent:
+    case Calculated:
+    case ViewportPercentageWidth:
+    case ViewportPercentageHeight:
+    case ViewportPercentageMin:
+    case Undefined:
+        break;
+    }
+    ASSERT_NOT_REACHED();
+    return 0;
+}
+
 LayoutPoint RenderGrid::findChildLogicalPosition(RenderBox* child, const Vector<GridTrack>& columnTracks, const Vector<GridTrack>& rowTracks)
 {
-    Length column = child->style()->gridItemColumn();
-    Length row = child->style()->gridItemRow();
-
-    // FIXME: What does a non-positive integer mean for a column/row?
-    if (!column.isPositive() || !row.isPositive())
-        return LayoutPoint();
-
-    // FIXME: Handle other values for grid-{row,column} like ranges or line names.
-    if (!column.isFixed() || !row.isFixed())
-        return LayoutPoint();
-
-    size_t columnTrack = static_cast<size_t>(column.intValue()) - 1;
-    size_t rowTrack = static_cast<size_t>(row.intValue()) - 1;
+    size_t columnTrack = resolveGridPosition(child->style()->gridItemColumn());
+    size_t rowTrack = resolveGridPosition(child->style()->gridItemRow());
 
     LayoutPoint offset;
+    // FIXME: |columnTrack| and |rowTrack| should be smaller than our column / row count.
     for (size_t i = 0; i < columnTrack && i < columnTracks.size(); ++i)
         offset.setX(offset.x() + columnTracks[i].m_usedBreadth);
     for (size_t i = 0; i < rowTrack && i < rowTracks.size(); ++i)

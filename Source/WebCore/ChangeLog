@@ -1,3 +1,26 @@
+2012-11-16  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        RenderGrid should have a function to resolve grid position
+        https://bugs.webkit.org/show_bug.cgi?id=102441
+
+        Reviewed by Ojan Vafai.
+
+        The code was doing this conversion implicitly inside RenderGrid::findChildLogicalPosition.
+        Also note that we also provided a fallback by returning LayoutPoint() (ie the (0, 0) position
+        on the grid) if we couldn't handle the value. The explicit conversion is needed in order to
+        support render areas and add a proper grid model to RenderGrid.
+
+        No expected change in behavior.
+
+        * rendering/RenderGrid.h:
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::resolveGridPosition):
+        Added this new function to handle the conversion. We re-use Length but should never see
+        a lot of the <length> values so I added some ASSERTs to enforce and catch that.
+
+        (WebCore::RenderGrid::findChildLogicalPosition):
+        Simplified the function now that it just use resolveGridPosition.
+
 2012-11-16  Ulan Degenbaev  <ulan@chromium.org>
 
         [V8] Increment the amount of externally allocated memory for the receiving V8 isolate when transferring ArrayBuffer
