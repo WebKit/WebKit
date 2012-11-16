@@ -72,7 +72,7 @@ public:
     static bool dispatchEvent(Node*, PassRefPtr<EventDispatchMediator>);
     static void dispatchScopedEvent(Node*, PassRefPtr<EventDispatchMediator>);
 
-    static void dispatchSimulatedClick(Node*, PassRefPtr<Event> underlyingEvent, bool sendMouseEvents, bool showPressedLook);
+    static void dispatchSimulatedClick(Node*, Event* underlyingEvent, bool sendMouseEvents, bool showPressedLook);
 
     bool dispatchEvent(PassRefPtr<Event>);
     void adjustRelatedTarget(Event*, PassRefPtr<EventTarget> prpRelatedTarget);

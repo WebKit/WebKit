@@ -640,7 +640,7 @@ public:
 #if ENABLE(GESTURE_EVENTS)
     bool dispatchGestureEvent(const PlatformGestureEvent&);
 #endif
-    void dispatchSimulatedClick(PassRefPtr<Event> underlyingEvent, bool sendMouseEvents = false, bool showPressedLook = true);
+    void dispatchSimulatedClick(Event* underlyingEvent, bool sendMouseEvents = false, bool showPressedLook = true);
     bool dispatchBeforeLoadEvent(const String& sourceURL);
 
     virtual void dispatchFocusEvent(PassRefPtr<Node> oldFocusedNode);

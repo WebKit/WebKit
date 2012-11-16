@@ -1,3 +1,29 @@
+2012-11-16  Jon Lee  <jonlee@apple.com>
+
+        Simulated events instances do not all have the same underlying event
+        https://bugs.webkit.org/show_bug.cgi?id=102468
+        <rdar://problem/12716331>
+
+        Reviewed by Alexey Proskuryakov.
+
+        The PassRefPtr with the underlying event is included as an argument for the mouse
+        down, up, and click events. But the PassRefPtr loses its underlying pointer after
+        the first simulated mouse down event because it gets assigned to that event's
+        private m_underlyingEvent variable. We therefore send NULL to the other events.
+
+        The fix is for this and related functions to pass the raw pointer.
+
+        A layout test is not possible to put together because the call sites that use simulated
+        events with an underlying event do not send mouse events, and those that send mouse
+        events have a NULL underlying event.
+
+        * dom/EventDispatcher.cpp:
+        (WebCore::EventDispatcher::dispatchSimulatedClick): Require passing in the raw pointer.
+        * dom/EventDispatcher.h:
+        * dom/Node.cpp:
+        (WebCore::Node::dispatchSimulatedClick): Ditto.
+        * dom/Node.h:
+
 2012-11-16  Patrick Gansterer  <paroga@webkit.org>
 
         Build fix for WinCE after r134936.

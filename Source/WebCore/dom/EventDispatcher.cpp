@@ -208,7 +208,7 @@ void EventDispatcher::dispatchScopedEvent(Node* node, PassRefPtr<EventDispatchMe
     ScopedEventQueue::instance()->enqueueEventDispatchMediator(mediator);
 }
 
-void EventDispatcher::dispatchSimulatedClick(Node* node, PassRefPtr<Event> underlyingEvent, bool sendMouseEvents, bool showPressedLook)
+void EventDispatcher::dispatchSimulatedClick(Node* node, Event* underlyingEvent, bool sendMouseEvents, bool showPressedLook)
 {
     if (node->disabled())
         return;

@@ -2614,9 +2614,9 @@ bool Node::dispatchGestureEvent(const PlatformGestureEvent& event)
 }
 #endif
 
-void Node::dispatchSimulatedClick(PassRefPtr<Event> event, bool sendMouseEvents, bool showPressedLook)
+void Node::dispatchSimulatedClick(Event* underlyingEvent, bool sendMouseEvents, bool showPressedLook)
 {
-    EventDispatcher::dispatchSimulatedClick(this, event, sendMouseEvents, showPressedLook);
+    EventDispatcher::dispatchSimulatedClick(this, underlyingEvent, sendMouseEvents, showPressedLook);
 }
 
 bool Node::dispatchBeforeLoadEvent(const String& sourceURL)
