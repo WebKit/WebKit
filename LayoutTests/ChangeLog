@@ -1,3 +1,35 @@
+2012-11-16  Erik Arvidsson  <arv@chromium.org>
+
+        Update DOMException name: InvalidAccessError
+        https://bugs.webkit.org/show_bug.cgi?id=102400
+
+        Reviewed by Kentaro Hara.
+
+        Updated tests and expectations.
+
+        * editing/undomanager/undomanager-reenter-expected.txt:
+        * editing/undomanager/undomanager-reenter.html:
+        * editing/undomanager/undoscopehost-use-after-free-expected.txt:
+        * editing/undomanager/undoscopehost-use-after-free.html:
+        * fast/css/CSSPrimitiveValue-exceptions-expected.txt:
+        * fast/css/getFloatValueForUnit-expected.txt:
+        * fast/css/getFloatValueForUnit.html:
+        * fast/css/resources/CSSPrimitiveValue-exceptions.js:
+        * fast/dom/XMLSerializer-doctype2-expected.txt:
+        * fast/dom/XMLSerializer-doctype2.html:
+        * fast/dom/setPrimitiveValue-exceptions-expected.txt:
+        * fast/xmlhttprequest/xmlhttprequest-responsetype-before-open-sync-request-expected.txt:
+        * fast/xmlhttprequest/xmlhttprequest-responsetype-sync-request-expected.txt:
+        * fast/xmlhttprequest/xmlhttprequest-sync-disabled-expected.txt:
+        * http/tests/media/media-source/video-media-source-add-and-remove-buffers-expected.txt:
+        * http/tests/media/media-source/video-media-source-duration-changed-expected.txt:
+        * http/tests/websocket/tests/hybi/close-expected.txt:
+        * http/tests/websocket/tests/hybi/close.html:
+        * platform/chromium-mac/fast/dom/setPrimitiveValue-exceptions-expected.txt:
+        * platform/chromium-win/fast/dom/setPrimitiveValue-exceptions-expected.txt:
+        * webintents/web-intents-api-expected.txt:
+        * webintents/web-intents-api.html:
+
 2012-11-16  Sudarsana Nagineni  <sudarsana.nagineni@intel.com>
 
         [EFL] Gardening failure cases on EFL build bots

@@ -6,11 +6,11 @@ Test getting the duration when closed.
 
 running testExpectExceptionOnNegativeDuration
 EVENT(webkitsourceopen)
-Got expected exception Error: INVALID_ACCESS_ERR: DOM Exception 15
+Got expected exception Error: InvalidAccessError: DOM Exception 15
 
 running testExpectExceptionOnNaNDuration
 EVENT(webkitsourceopen)
-Got expected exception Error: INVALID_ACCESS_ERR: DOM Exception 15
+Got expected exception Error: InvalidAccessError: DOM Exception 15
 
 running testDurationChange
 EVENT(webkitsourceopen)

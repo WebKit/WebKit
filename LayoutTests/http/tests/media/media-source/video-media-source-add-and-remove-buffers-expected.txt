@@ -6,7 +6,7 @@ Got expected exception Error: InvalidStateError: DOM Exception 11
 running testAddBufferFailureCases
 EVENT(webkitsourceopen)
 Test empty type.
-Got expected exception Error: INVALID_ACCESS_ERR: DOM Exception 15
+Got expected exception Error: InvalidAccessError: DOM Exception 15
 Test an unsupported type.
 Got expected exception Error: NotSupportedError: DOM Exception 9
 Test a supported type with an unsupported codec.
@@ -18,7 +18,7 @@ Got expected exception Error: InvalidStateError: DOM Exception 11
 running testRemoveNullBuffer
 EVENT(webkitsourceopen)
 Test null buffer case
-Got expected exception Error: INVALID_ACCESS_ERR: DOM Exception 15
+Got expected exception Error: InvalidAccessError: DOM Exception 15
 
 running testRemoveAgain
 EVENT(webkitsourceopen)
@@ -37,7 +37,7 @@ running testAppendFailureCases
 EVENT(webkitsourceopen)
 Test a successful append.
 Test append with a null buffer.
-Got expected exception Error: INVALID_ACCESS_ERR: DOM Exception 15
+Got expected exception Error: InvalidAccessError: DOM Exception 15
 Test append after ended.
 Got expected exception Error: InvalidStateError: DOM Exception 11
 Test append after buffer has been removed.

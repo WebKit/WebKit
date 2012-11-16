@@ -50,7 +50,7 @@
       var intent9 = new WebKitIntent('a', 'b', {});
       shouldEvaluateTo('intent9.data', {});
 
-      shouldThrow('navigator.webkitStartActivity(intent1)', "'Error: INVALID_ACCESS_ERR: DOM Exception 15'");
+      shouldThrow('navigator.webkitStartActivity(intent1)', "'Error: InvalidAccessError: DOM Exception 15'");
 </script>
 <script src="../fast/js/resources/js-test-post.js"></script>
 </body>

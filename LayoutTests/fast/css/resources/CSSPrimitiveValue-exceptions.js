@@ -7,7 +7,7 @@ div.style.content = "counter(dummy, square)";
 div.style.clip = "rect(0, 0, 1, 1)";
 div.style.color = "rgb(0, 0, 0)";
 
-var invalidAccessError = "Error: INVALID_ACCESS_ERR: DOM Exception 15";
+var invalidAccessError = "Error: InvalidAccessError: DOM Exception 15";
 
 // Test passing invalid unit to getFloatValue
 shouldThrow("div.style.getPropertyCSSValue('width').getFloatValue(CSSPrimitiveValue.CSS_UNKNOWN)", "invalidAccessError");

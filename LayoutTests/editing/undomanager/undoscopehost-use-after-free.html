@@ -23,7 +23,7 @@ var transaction = {
 };
 
 debug("call transact() after the undoScopeHost has been reclaimed.");
-shouldThrow("undoManager.transact(transaction)", "'Error: INVALID_ACCESS_ERR: DOM Exception 15'");
+shouldThrow("undoManager.transact(transaction)", "'Error: InvalidAccessError: DOM Exception 15'");
 
 var successfullyParsed = true;
 </script>
