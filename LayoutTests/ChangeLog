@@ -1,3 +1,10 @@
+2012-11-15  Kenichi Ishibashi  <bashi@chromium.org>
+
+        Unreviewed test update.
+
+        * fast/text/international/combining-marks-position.html:
+        Ignore a slight diff of widths between the reference and target.
+
 2012-11-15  Kentaro Hara  <haraken@chromium.org>
 
         Unreviewed. Rebaselined pixel results.

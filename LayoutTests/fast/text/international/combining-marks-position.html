@@ -35,7 +35,10 @@ var reference2 = document.getElementById('reference2');
 var target2 = document.getElementById('target2');
 var result = document.getElementById('result');
 
-if (reference1.offsetWidth == target1.offsetWidth && reference2.offsetWidth == target2.offsetWidth)
+// Ignore a slight diff of the width between target and reference.
+var diff1 = Math.abs(reference1.offsetWidth - target1.offsetWidth);
+var diff2 = Math.abs(reference2.offsetWidth - target2.offsetWidth);
+if (diff1 < 2 && diff2 < 2)
     result.innerHTML = 'PASS. The length of targets and references are the same.<br />'
 else
     result.innerHTML = 'FAIL<br />' +
