@@ -1,3 +1,42 @@
+2012-11-16  Dan Carney  <dcarney@google.com>
+
+        add 7 bit strings capabilities to the v8 binding layer
+        https://bugs.webkit.org/show_bug.cgi?id=91850
+
+        Reviewed by Adam Barth.
+
+        This change enables the v8 binding layer to make use of webkit's
+        8 bit string capabilities. Using 8 bit strings leads to certain
+        benchmark performance improvemnts as can be seen in
+        https://bug-91850-attachments.webkit.org/attachment.cgi?id=163334.
+
+        No new tests.  Test coverage already extensive.
+
+        * bindings/v8/V8PerIsolateData.cpp:
+        (WebCore::V8PerIsolateData::visitExternalStrings):
+        * bindings/v8/V8StringResource.cpp:
+        (StringTraits):
+        (WebCore::false):
+        (WebCore):
+        (WebCore::true):
+        (WebCore::v8StringToWebCoreString):
+        * bindings/v8/V8ValueCache.cpp:
+        (WebCore::makeExternalString):
+        (WebCore::WebCoreStringResourceBase::toWebCoreStringResourceBase):
+        (WebCore):
+        (WebCore::WebCoreStringResourceBase::visitStrings):
+        * bindings/v8/V8ValueCache.h:
+        (WebCoreStringResourceBase):
+        (WebCore::WebCoreStringResourceBase::WebCoreStringResourceBase):
+        (WebCore::WebCoreStringResourceBase::~WebCoreStringResourceBase):
+        (WebCore::WebCoreStringResourceBase::atomicString):
+        (WebCore::WebCoreStringResourceBase::memoryConsumption):
+        (WebCoreStringResource16):
+        (WebCore::WebCoreStringResource16::WebCoreStringResource16):
+        (WebCore):
+        (WebCoreStringResource8):
+        (WebCore::WebCoreStringResource8::WebCoreStringResource8):
+
 2012-11-16  Erik Arvidsson  <arv@chromium.org>
 
         Update DOMException name: InvalidAccessError
