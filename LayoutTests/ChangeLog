@@ -1,3 +1,9 @@
+2012-11-16  Kentaro Hara  <haraken@chromium.org>
+
+        Unreviewed. Rebaselined pixel results.
+
+        * platform/chromium-mac/fast/text/international/combining-marks-position-expected.txt: Removed.
+
 2012-11-16  János Badics  <jbadics@inf.u-szeged.hu>
 
         [Qt][WK1] Gardening after r134816. Skipped a newly added failing test.
