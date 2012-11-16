@@ -1,3 +1,13 @@
+2012-11-16  Antti Koivisto  <antti@apple.com>
+
+        REGRESSION(r129644): User StyleSheet not applying
+        https://bugs.webkit.org/show_bug.cgi?id=102110
+
+        Reviewed by Andreas Kling.
+
+        * userscripts/user-stylesheet-invalidate-expected.txt: Added.
+        * userscripts/user-stylesheet-invalidate.html: Added.
+
 2012-11-15  Brent Fulgham  <bfulgham@webkit.org>
 
         [WinCairo] Sync with Windows test expectations.
