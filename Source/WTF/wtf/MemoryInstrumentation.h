@@ -35,6 +35,13 @@
 #include <wtf/PassOwnPtr.h>
 #include <wtf/RefPtr.h>
 
+#define DEBUG_POINTER_INSTRUMENTATION 0
+
+#if DEBUG_POINTER_INSTRUMENTATION
+#include <wtf/Assertions.h>
+#include <stdio.h>
+#endif
+
 namespace WTF {
 
 class MemoryClassInfo;
@@ -92,7 +99,7 @@ public:
     virtual ~MemoryInstrumentationClient() { }
     virtual void countObjectSize(const void*, MemoryObjectType, size_t) = 0;
     virtual bool visited(const void*) = 0;
-    virtual void checkCountedObject(const void*) = 0;
+    virtual bool checkCountedObject(const void*) = 0;
 };
 
 class MemoryInstrumentation {
@@ -116,7 +123,7 @@ protected:
 private:
     void countObjectSize(const void* object, MemoryObjectType objectType, size_t size) { m_client->countObjectSize(object, objectType, size); }
     bool visited(const void* pointer) { return m_client->visited(pointer); }
-    void checkCountedObject(const void* pointer) { return m_client->checkCountedObject(pointer); }
+    bool checkCountedObject(const void* pointer) { return m_client->checkCountedObject(pointer); }
 
     virtual void deferInstrumentedPointer(PassOwnPtr<InstrumentedPointerBase>) = 0;
     virtual void processDeferredInstrumentedPointers() = 0;
@@ -149,12 +156,18 @@ private:
 
     template<typename T> class InstrumentedPointer : public InstrumentedPointerBase {
     public:
-        explicit InstrumentedPointer(const T* pointer, MemoryObjectType ownerObjectType) : m_pointer(pointer), m_ownerObjectType(ownerObjectType) { }
+        InstrumentedPointer(const T* pointer, MemoryObjectType ownerObjectType);
         virtual void process(MemoryInstrumentation*) OVERRIDE;
 
     private:
         const T* m_pointer;
         const MemoryObjectType m_ownerObjectType;
+
+#if DEBUG_POINTER_INSTRUMENTATION
+        static const int s_maxCallStackSize = 32;
+        void* m_callStack[s_maxCallStackSize];
+        int m_callStackSize;
+#endif
     };
 
     template<typename T> void addObject(const T& t, MemoryObjectType ownerObjectType) { OwningTraits<T>::addObject(this, t, ownerObjectType); }
@@ -251,6 +264,17 @@ void MemoryInstrumentation::addObjectImpl(const RefPtr<T>* const& object, Memory
 }
 
 template<typename T>
+MemoryInstrumentation::InstrumentedPointer<T>::InstrumentedPointer(const T* pointer, MemoryObjectType ownerObjectType)
+    : m_pointer(pointer)
+    , m_ownerObjectType(ownerObjectType)
+{
+#if DEBUG_POINTER_INSTRUMENTATION
+    m_callStackSize = s_maxCallStackSize;
+    WTFGetBacktrace(m_callStack, &m_callStackSize);
+#endif
+}
+
+template<typename T>
 void MemoryInstrumentation::InstrumentedPointer<T>::process(MemoryInstrumentation* memoryInstrumentation)
 {
     MemoryObjectInfo memoryObjectInfo(memoryInstrumentation, m_ownerObjectType);
@@ -261,7 +285,12 @@ void MemoryInstrumentation::InstrumentedPointer<T>::process(MemoryInstrumentatio
     if (pointer != m_pointer && memoryInstrumentation->visited(pointer))
         return;
     memoryInstrumentation->countObjectSize(pointer, memoryObjectInfo.objectType(), memoryObjectInfo.objectSize());
-    memoryInstrumentation->checkCountedObject(pointer);
+    if (!memoryInstrumentation->checkCountedObject(pointer)) {
+#if DEBUG_POINTER_INSTRUMENTATION
+        fputs("Unknown object counted:\n", stderr);
+        WTFPrintBacktrace(m_callStack, m_callStackSize);
+#endif
+    }
 }
 
 // Link time guard for classes with external memory instrumentation.
@@ -299,5 +328,7 @@ class URLString;
 void reportMemoryUsage(const URLString* const&, MemoryObjectInfo*);
 
 } // namespace WTF
+
+#undef DEBUG_POINTER_INSTRUMENTATION
 
 #endif // !defined(MemoryInstrumentation_h)

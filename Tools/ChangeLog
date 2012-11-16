@@ -1,3 +1,14 @@
+2012-11-15  Yury Semikhatsky  <yurys@chromium.org>
+
+        Memory instrumentation: add code for reporting stack traces of unknown instrumented objects
+        https://bugs.webkit.org/show_bug.cgi?id=102384
+
+        Reviewed by Pavel Feldman.
+
+        Updated return type in accord with the changes in MemoryInstrumentationClient.
+
+        * TestWebKitAPI/Tests/WTF/MemoryInstrumentationTest.cpp:
+
 2012-11-15  Gustavo Noronha Silva  <gns@gnome.org>
 
         [GTK] Split WebCore/platform into a separate library

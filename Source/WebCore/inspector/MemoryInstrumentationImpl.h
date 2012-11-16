@@ -80,7 +80,7 @@ public:
 
     virtual void countObjectSize(const void*, MemoryObjectType, size_t) OVERRIDE;
     virtual bool visited(const void*) OVERRIDE;
-    virtual void checkCountedObject(const void*) OVERRIDE;
+    virtual bool checkCountedObject(const void*) OVERRIDE;
 
     void reportMemoryUsage(MemoryObjectInfo*) const;
 
