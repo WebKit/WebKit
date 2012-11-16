@@ -114,7 +114,7 @@ struct ViewportArguments {
     static const float deprecatedTargetDPI;
 };
 
-ViewportAttributes computeViewportAttributes(ViewportArguments args, int desktopWidth, int deviceWidth, int deviceHeight, float devicePixelRatio, IntSize visibleViewport);
+ViewportAttributes computeViewportAttributes(const ViewportArguments& args, int desktopWidth, int deviceWidth, int deviceHeight, float devicePixelRatio, IntSize visibleViewport);
 
 void restrictMinimumScaleFactorToViewportSize(ViewportAttributes& result, IntSize visibleViewport, float devicePixelRatio);
 void restrictScaleFactorToInitialScaleIfNotUserScalable(ViewportAttributes& result);

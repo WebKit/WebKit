@@ -1,3 +1,14 @@
+2012-11-16  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        Avoid copying of ViewportArguments in computeViewportAttributes function
+        https://bugs.webkit.org/show_bug.cgi?id=102354
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Updated exported symbols for GTK.
+
+        * Source/autotools/symbols.filter:
+
 2012-11-15  Gustavo Noronha Silva  <gns@gnome.org>
 
         [GTK] Split WebCore/platform into a separate library

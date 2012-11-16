@@ -1,3 +1,15 @@
+2012-11-16  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        Avoid copying of ViewportArguments in computeViewportAttributes function
+        https://bugs.webkit.org/show_bug.cgi?id=102354
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Update exported symbols.
+
+        * win/WebKit2.def:
+        * win/WebKit2CFLite.def:
+
 2012-11-15  Huang Dongsung  <luxtella@company100.net>
 
         Coordinated Graphics: Refactor code related to directly composited images.
