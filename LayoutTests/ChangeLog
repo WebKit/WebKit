@@ -1,3 +1,15 @@
+2012-11-16  Elliott Sprehn  <esprehn@chromium.org>
+
+        REGRESSION (r134774-r134779): fast/frames/detached-shadow-frame.html failing on Apple Win 7 Release (Tests)
+        https://bugs.webkit.org/show_bug.cgi?id=102433
+
+        Reviewed by Dimitri Glazkov.
+
+        Need to include the Shadow DOM polyfill.js since not all ports
+        web expose the WebkitShadowRoot constructor.
+
+        * fast/frames/detached-shadow-frame.html:
+
 2012-11-16  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed gardening.
