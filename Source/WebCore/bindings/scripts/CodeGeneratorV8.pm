@@ -137,7 +137,7 @@ sub AddToImplIncludes
 
 sub AddIncludesForType
 {
-    my $type = $codeGenerator->StripModule(shift);
+    my $type = shift;
 
     # When we're finished with the one-file-per-class
     # reorganization, we won't need these special cases.
@@ -301,7 +301,7 @@ sub GenerateHeader
          || GetGenerateIsReachable($dataNode) || $className =~ /SVG/;
     if (!$hasDependentLifetime) {
         foreach (@{$dataNode->parents}) {
-            my $parent = $codeGenerator->StripModule($_);
+            my $parent = $_;
             $headerIncludes{"V8${parent}.h"} = 1;
         }
     }
@@ -366,7 +366,7 @@ END
         # Let the compiler statically determine this for us.
         my $separator = "";
         foreach (@{$dataNode->parents}) {
-            my $parent = $codeGenerator->StripModule($_);
+            my $parent = $_;
             $headerIncludes{"V8${parent}.h"} = 1;
             push(@headerContent, "${separator}V8${parent}::hasDependentLifetime");
             $separator = " || ";
@@ -778,7 +778,7 @@ sub IsSubType
     my $parentType = shift;
     return 1 if ($dataNode->name eq $parentType);
     foreach (@allParents) {
-        my $parent = $codeGenerator->StripModule($_);
+        my $parent = $_;
         return 1 if $parent eq $parentType;
     }
     return 0;
@@ -2333,7 +2333,7 @@ sub GenerateSingleBatchedAttribute
 
     # Constructor
     if ($attribute->signature->type =~ /Constructor$/) {
-        my $constructorType = $codeGenerator->StripModule($attribute->signature->type);
+        my $constructorType = $attribute->signature->type;
         $constructorType =~ s/Constructor$//;
         # $constructorType ~= /Constructor$/ indicates that it is NamedConstructor.
         # We do not generate the header file for NamedConstructor of class XXXX,
@@ -2689,7 +2689,7 @@ sub GenerateImplementation
     my $parentClass = "";
     my $parentClassTemplate = "";
     foreach (@{$dataNode->parents}) {
-        my $parent = $codeGenerator->StripModule($_);
+        my $parent = $_;
         AddToImplIncludes("V8${parent}.h");
         $parentClass = "V8" . $parent;
         $parentClassTemplate = $parentClass . "::GetTemplate()";
@@ -3478,10 +3478,10 @@ sub BaseInterfaceName
     my $dataNode = shift;
 
     while (@{$dataNode->parents}) {
-        $dataNode = $codeGenerator->ParseInterface($codeGenerator->StripModule(@{$dataNode->parents}[0]), 1);
+        $dataNode = $codeGenerator->ParseInterface(@{$dataNode->parents}[0], 1);
     }
 
-    return $codeGenerator->StripModule($dataNode->name);
+    return $dataNode->name;
 }
 
 sub GenerateToV8Converters
@@ -3675,7 +3675,7 @@ sub GetTypeFromSignature
 {
     my $signature = shift;
 
-    return $codeGenerator->StripModule($signature->type);
+    return $signature->type;
 }
 
 
@@ -4029,7 +4029,7 @@ my %non_wrapper_types = (
 
 sub IsWrapperType
 {
-    my $type = $codeGenerator->StripModule(shift);
+    my $type = shift;
     return !($non_wrapper_types{$type});
 }
 

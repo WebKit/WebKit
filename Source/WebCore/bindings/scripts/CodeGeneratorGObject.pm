@@ -80,7 +80,7 @@ sub GetParentClassName {
     my $dataNode = shift;
 
     return "WebKitDOMObject" if @{$dataNode->parents} eq 0;
-    return "WebKitDOM" . $codeGenerator->StripModule($dataNode->parents(0));
+    return "WebKitDOM" . $dataNode->parents(0);
 }
 
 # From String::CamelCase 0.01
@@ -150,11 +150,11 @@ sub GetParentGObjType {
     my $dataNode = shift;
 
     return "WEBKIT_TYPE_DOM_OBJECT" if @{$dataNode->parents} eq 0;
-    return "WEBKIT_TYPE_DOM_" . ClassNameToGObjectType($codeGenerator->StripModule($dataNode->parents(0)));
+    return "WEBKIT_TYPE_DOM_" . ClassNameToGObjectType($dataNode->parents(0));
 }
 
 sub GetClassName {
-    my $name = $codeGenerator->StripModule(shift);
+    my $name = shift;
 
     return "WebKitDOM$name";
 }

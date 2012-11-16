@@ -312,7 +312,7 @@ sub GenerateModule
 
 sub GetClassName
 {
-    my $name = $codeGenerator->StripModule(shift);
+    my $name = shift;
 
     # special cases
     return "NSString" if $codeGenerator->IsStringType($name) or $name eq "SerializedScriptValue";
@@ -339,7 +339,7 @@ sub GetClassHeaderName
 
 sub GetImplClassName
 {
-    my $name = $codeGenerator->StripModule(shift);
+    my $name = shift;
 
     return "DOMImplementationFront" if $name eq "DOMImplementation";
     return "DOMWindow" if $name eq "AbstractView";
@@ -352,7 +352,7 @@ sub GetParentImplClassName
 
     return "Object" if @{$dataNode->parents} eq 0;
 
-    my $parent = $codeGenerator->StripModule($dataNode->parents(0));
+    my $parent = $dataNode->parents(0);
 
     # special cases
     return "Object" if $parent eq "HTMLCollection";
@@ -375,7 +375,7 @@ sub GetParentAndProtocols
             $parent = "DOMObject";
         }
     } elsif ($numParents eq 1) {
-        my $parentName = $codeGenerator->StripModule($dataNode->parents(0));
+        my $parentName = $dataNode->parents(0);
         if ($isProtocol) {
             die "Parents of protocols must also be protocols." unless IsProtocolType($parentName);
             push(@protocols, "DOM" . $parentName);
@@ -390,7 +390,7 @@ sub GetParentAndProtocols
         }
     } else {
         my @parents = @{$dataNode->parents};
-        my $firstParent = $codeGenerator->StripModule(shift(@parents));
+        my $firstParent = shift(@parents);
         if (IsProtocolType($firstParent)) {
             push(@protocols, "DOM" . $firstParent);
             if (!$isProtocol) {
@@ -401,7 +401,6 @@ sub GetParentAndProtocols
         }
 
         foreach my $parentName (@parents) {
-            $parentName = $codeGenerator->StripModule($parentName);
             die "Everything past the first class should be a protocol!" unless IsProtocolType($parentName);
 
             push(@protocols, "DOM" . $parentName);
@@ -491,7 +490,7 @@ sub GetObjCType
 
 sub GetPropertyAttributes
 {
-    my $type = $codeGenerator->StripModule(shift);
+    my $type = shift;
     my $readOnly = shift;
 
     my @attributes = ();
@@ -513,7 +512,7 @@ sub GetPropertyAttributes
 
 sub ConversionNeeded
 {
-    my $type = $codeGenerator->StripModule(shift);
+    my $type = shift;
 
     return !$codeGenerator->IsNonPointerType($type) && !$codeGenerator->IsStringType($type) && !IsNativeObjCType($type);
 }
@@ -521,7 +520,7 @@ sub ConversionNeeded
 sub GetObjCTypeGetter
 {
     my $argName = shift;
-    my $type = $codeGenerator->StripModule(shift);
+    my $type = shift;
 
     return $argName if $codeGenerator->IsPrimitiveType($type) or $codeGenerator->IsStringType($type) or IsNativeObjCType($type);
     return $argName . "Node" if $type eq "EventTarget";
@@ -539,7 +538,7 @@ sub GetObjCTypeGetter
 
 sub AddForwardDeclarationsForType
 {
-    my $type = $codeGenerator->StripModule(shift);
+    my $type = shift;
     my $public = shift;
 
     return if $codeGenerator->IsNonPointerType($type);
@@ -563,7 +562,7 @@ sub AddForwardDeclarationsForType
 
 sub AddIncludesForType
 {
-    my $type = $codeGenerator->StripModule(shift);
+    my $type = shift;
 
     return if $codeGenerator->IsNonPointerType($type);
     return if $codeGenerator->GetSequenceType($type);
@@ -1175,7 +1174,7 @@ sub GenerateImplementation
             next if SkipAttribute($attribute);
             AddIncludesForType($attribute->signature->type);
 
-            my $idlType = $codeGenerator->StripModule($attribute->signature->type);
+            my $idlType = $attribute->signature->type;
 
             my $attributeName = $attribute->signature->name;
             my $attributeType = GetObjCType($attribute->signature->type);
@@ -1493,7 +1492,7 @@ sub GenerateImplementation
 
                 AddIncludesForType($param->type);
 
-                my $idlType = $codeGenerator->StripModule($param->type);
+                my $idlType = $param->type;
                 my $implGetter = GetObjCTypeGetter($paramName, $idlType);
 
                 push(@parameterNames, $implGetter);
@@ -1582,7 +1581,7 @@ sub GenerateImplementation
                 # make a new parameter name if the original conflicts with a property name
                 $paramName = "in" . ucfirst($paramName) if $attributeNames{$paramName};
 
-                my $idlType = $codeGenerator->StripModule($param->type);
+                my $idlType = $param->type;
                 next if not $codeGenerator->IsSVGTypeNeedingTearOff($idlType) or $implClassName =~ /List$/;
 
                 my $implGetter = GetObjCTypeGetter($paramName, $idlType);

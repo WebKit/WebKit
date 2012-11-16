@@ -137,7 +137,7 @@ sub GenerateModule
 
 sub GetClassName
 {
-    my $name = $codeGenerator->StripModule(shift);
+    my $name = shift;
 
     # special cases
     return "WebDOMString" if $codeGenerator->IsStringType($name) or $name eq "SerializedScriptValue";
@@ -150,7 +150,7 @@ sub GetClassName
 
 sub GetImplClassName
 {
-    return $codeGenerator->StripModule(shift);
+    return shift;
 }
 
 sub GetParentImplClassName
@@ -162,7 +162,7 @@ sub GetParentImplClassName
         return "Object";
     }
 
-    return $codeGenerator->StripModule($dataNode->parents(0));
+    return $dataNode->parents(0);
 }
 
 sub GetParent
@@ -175,11 +175,11 @@ sub GetParent
         $parent = "WebDOMObject";
         $parent = "WebDOMEventTarget" if $dataNode->extendedAttributes->{"EventTarget"};
     } elsif ($numParents eq 1) {
-        my $parentName = $codeGenerator->StripModule($dataNode->parents(0));
+        my $parentName = $dataNode->parents(0);
         $parent = "WebDOM" . $parentName;
     } else {
         my @parents = @{$dataNode->parents};
-        my $firstParent = $codeGenerator->StripModule(shift(@parents));
+        my $firstParent = shift(@parents);
         $parent = "WebDOM" . $firstParent;
     }
 
@@ -269,14 +269,14 @@ sub GetCPPType
 
 sub ConversionNeeded
 {
-    my $type = $codeGenerator->StripModule(shift);
+    my $type = shift;
     return !$codeGenerator->IsNonPointerType($type) && !$codeGenerator->IsStringType($type);
 }
 
 sub GetCPPTypeGetter
 {
     my $argName = shift;
-    my $type = $codeGenerator->StripModule(shift);
+    my $type = shift;
 
     return $argName if $codeGenerator->IsPrimitiveType($type) or $codeGenerator->IsStringType($type);
     return "static_cast<WebCore::Range::CompareHow>($argName)" if $type eq "CompareHow";
@@ -286,7 +286,7 @@ sub GetCPPTypeGetter
 
 sub AddForwardDeclarationsForType
 {
-    my $type = $codeGenerator->StripModule(shift);
+    my $type = shift;
     my $public = shift;
 
     return if $codeGenerator->IsNonPointerType($type) or $codeGenerator->IsStringType($type);
@@ -297,7 +297,7 @@ sub AddForwardDeclarationsForType
 
 sub AddIncludesForType
 {
-    my $type = $codeGenerator->StripModule(shift);
+    my $type = shift;
 
     return if $codeGenerator->GetSequenceType($type);
     return if $codeGenerator->GetArrayType($type);
@@ -705,7 +705,7 @@ sub GenerateImplementation
             next if SkipAttribute($attribute);
             AddIncludesForType($attribute->signature->type);
 
-            my $idlType = $codeGenerator->StripModule($attribute->signature->type);
+            my $idlType = $attribute->signature->type;
 
             my $attributeName = $attribute->signature->name;
             my $attributeType = GetCPPType($attribute->signature->type, 0);
@@ -833,7 +833,7 @@ sub GenerateImplementation
 
                 AddIncludesForType($param->type);
 
-                my $idlType = $codeGenerator->StripModule($param->type);
+                my $idlType = $param->type;
                 my $implGetter = GetCPPTypeGetter($paramName, $idlType);
 
                 push(@parameterNames, $implGetter);

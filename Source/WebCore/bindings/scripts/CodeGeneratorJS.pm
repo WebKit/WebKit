@@ -186,7 +186,7 @@ sub GetParentClassName
 
     return $dataNode->extendedAttributes->{"JSLegacyParent"} if $dataNode->extendedAttributes->{"JSLegacyParent"};
     return "JSDOMWrapper" if (@{$dataNode->parents} eq 0);
-    return "JS" . $codeGenerator->StripModule($dataNode->parents(0));
+    return "JS" . $dataNode->parents(0);
 }
 
 sub GetCallbackClassName
@@ -206,7 +206,7 @@ sub IndexGetterReturnsStrings
 
 sub AddIncludesForTypeInImpl
 {
-    my $type = $codeGenerator->StripModule(shift);
+    my $type = shift;
     my $isCallback = @_ ? shift : 0;
     
     AddIncludesForType($type, $isCallback, \%implIncludes);
@@ -233,7 +233,7 @@ sub AddIncludesForTypeInImpl
 
 sub AddIncludesForTypeInHeader
 {
-    my $type = $codeGenerator->StripModule(shift);
+    my $type = shift;
     my $isCallback = @_ ? shift : 0;
     
     AddIncludesForType($type, $isCallback, \%headerIncludes);
@@ -1288,7 +1288,7 @@ sub GenerateParametersCheckExpression
     foreach my $parameter (@{$function->parameters}) {
         last if $parameterIndex >= $numParameters;
         my $value = "arg$parameterIndex";
-        my $type = $codeGenerator->StripModule($parameter->type);
+        my $type = $parameter->type;
 
         # Only DOMString or wrapper types are checked.
         # For DOMString with StrictTypeChecking only Null, Undefined and Object
@@ -1833,7 +1833,7 @@ sub GenerateImplementation
         if ($numAttributes > 0) {
             foreach my $attribute (@{$dataNode->attributes}) {
                 my $name = $attribute->signature->name;
-                my $type = $codeGenerator->StripModule($attribute->signature->type);                
+                my $type = $attribute->signature->type;
                 $codeGenerator->AssertNotSequenceType($type);
                 my $getFunctionName = GetAttributeGetterName($interfaceName, $className, $attribute);
                 my $implGetterFunctionName = $codeGenerator->WK_lcfirst($name);
@@ -1884,7 +1884,7 @@ sub GenerateImplementation
                     push(@implContent, "    }\n");
                     push(@implContent, "    return jsNull();\n");
                 } elsif ($attribute->signature->type =~ /Constructor$/) {
-                    my $constructorType = $codeGenerator->StripModule($attribute->signature->type);
+                    my $constructorType = $attribute->signature->type;
                     $constructorType =~ s/Constructor$//;
                     # When Constructor attribute is used by DOMWindow.idl, it's correct to pass castedThis as the global object
                     # When JSDOMWrappers have a back-pointer to the globalObject we can pass castedThis->globalObject()
@@ -2052,7 +2052,7 @@ sub GenerateImplementation
                 foreach my $attribute (@{$dataNode->attributes}) {
                     if (!IsReadonly($attribute)) {
                         my $name = $attribute->signature->name;
-                        my $type = $codeGenerator->StripModule($attribute->signature->type);
+                        my $type = $attribute->signature->type;
                         my $putFunctionName = GetAttributeSetterName($interfaceName, $className, $attribute);
                         my $implSetterFunctionName = $codeGenerator->WK_ucfirst($name);
 
@@ -2663,7 +2663,7 @@ sub GenerateParametersCheck
     $implIncludes{"JSDOMBinding.h"} = 1;
 
     foreach my $parameter (@{$function->parameters}) {
-        my $argType = $codeGenerator->StripModule($parameter->type);
+        my $argType = $parameter->type;
 
         # Optional arguments with [Optional] should generate an early call with fewer arguments.
         # Optional arguments with [Optional=...] should not generate the early call.
@@ -3032,7 +3032,7 @@ sub GenerateImplementationFunctionCall()
 sub GetNativeTypeFromSignature
 {
     my $signature = shift;
-    my $type = $codeGenerator->StripModule($signature->type);
+    my $type = $signature->type;
 
     if ($type eq "unsigned long" and $signature->extendedAttributes->{"IsIndex"}) {
         # Special-case index arguments because we need to check that they aren't < 0.
@@ -3143,7 +3143,7 @@ sub JSValueToNative
     my $value = shift;
 
     my $conditional = $signature->extendedAttributes->{"Conditional"};
-    my $type = $codeGenerator->StripModule($signature->type);
+    my $type = $signature->type;
 
     return "$value.toBoolean(exec)" if $type eq "boolean";
     return "$value.toNumber(exec)" if $type eq "double";
@@ -3230,7 +3230,7 @@ sub NativeToJSValue
     my $thisValue = shift;
 
     my $conditional = $signature->extendedAttributes->{"Conditional"};
-    my $type = $codeGenerator->StripModule($signature->type);
+    my $type = $signature->type;
 
     return "jsBoolean($value)" if $type eq "boolean";
 

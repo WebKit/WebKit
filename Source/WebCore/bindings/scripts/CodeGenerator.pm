@@ -114,14 +114,6 @@ sub new
     return $reference;
 }
 
-sub StripModule($)
-{
-    my $object = shift;
-    my $name = shift;
-    $name =~ s/[a-zA-Z0-9]*:://;
-    return $name;
-}
-
 sub ProcessDocument
 {
     my $object = shift;
@@ -187,7 +179,7 @@ sub ForAllParents
         my $interface = shift;
 
         for (@{$interface->parents}) {
-            my $interfaceName = $object->StripModule($_);
+            my $interfaceName = $_;
             my $parentInterface = $object->ParseInterface($interfaceName, $parentsOnly);
 
             if ($beforeRecursion) {
@@ -533,7 +525,7 @@ sub AttributeNameForGetterAndSetter
     if ($attribute->signature->extendedAttributes->{"ImplementedAs"}) {
         $attributeName = $attribute->signature->extendedAttributes->{"ImplementedAs"};
     }
-    my $attributeType = $generator->StripModule($attribute->signature->type);
+    my $attributeType = $attribute->signature->type;
 
     # Avoid clash with C++ keyword.
     $attributeName = "_operator" if $attributeName eq "operator";
@@ -707,7 +699,7 @@ sub IsStrictSubtype
 
     $object->ForAllParents($dataNode, sub {
         my $interface = shift;
-        if ($object->StripModule($interface->name) eq $interfaceName) {
+        if ($interface->name eq $interfaceName) {
             $found = 1;
         }
         return "prune" if $found;
