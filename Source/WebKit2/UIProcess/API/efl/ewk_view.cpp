@@ -921,3 +921,10 @@ Eina_Bool ewk_view_fullscreen_exit(Evas_Object* ewkView)
     return false;
 #endif
 }
+
+void ewk_view_draws_page_background_set(Evas_Object *ewkView, Eina_Bool enabled)
+{
+    EWK_VIEW_IMPL_GET_OR_RETURN(ewkView, impl);
+
+    impl->setDrawsBackground(enabled);
+}

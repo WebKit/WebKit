@@ -85,6 +85,7 @@ public:
     void requestAnimationFrame();
     void animationFrameReady();
 #endif
+    void setBackgroundColor(const WebCore::Color&);
 
 protected:
     void dispatchUpdate(const Function<void()>&);

@@ -111,6 +111,7 @@ public:
 #if ENABLE(REQUEST_ANIMATION_FRAME)
     virtual void scheduleAnimation() OVERRIDE;
 #endif
+    virtual void setBackgroundColor(const WebCore::Color&) OVERRIDE;
 
 protected:
     explicit LayerTreeCoordinator(WebPage*);

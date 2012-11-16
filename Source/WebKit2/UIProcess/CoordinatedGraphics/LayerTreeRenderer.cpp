@@ -93,6 +93,8 @@ LayerTreeRenderer::LayerTreeRenderer(LayerTreeCoordinatorProxy* layerTreeCoordin
     , m_animationFrameRequested(false)
 #endif
     , m_accelerationMode(TextureMapper::OpenGLMode)
+    , m_backgroundColor(Color::white)
+    , m_setDrawsBackground(false)
 {
 }
 
@@ -129,6 +131,13 @@ void LayerTreeRenderer::paintToCurrentGLContext(const TransformationMatrix& matr
         layer->applyAnimationsRecursively();
     m_textureMapper->beginPainting(PaintFlags);
     m_textureMapper->beginClip(TransformationMatrix(), clipRect);
+
+    if (m_setDrawsBackground) {
+        RGBA32 rgba = makeRGBA32FromFloats(m_backgroundColor.red(),
+            m_backgroundColor.green(), m_backgroundColor.blue(),
+            m_backgroundColor.alpha() * opacity);
+        m_textureMapper->drawSolidColor(clipRect, TransformationMatrix(), Color(rgba));
+    }
 
     if (currentRootLayer->opacity() != opacity || currentRootLayer->transform() != matrix) {
         currentRootLayer->setOpacity(opacity);
@@ -178,6 +187,10 @@ void LayerTreeRenderer::paintToGraphicsContext(BackingStore::PlatformGraphicsCon
     GraphicsContext graphicsContext(painter);
     m_textureMapper->setGraphicsContext(&graphicsContext);
     m_textureMapper->beginPainting();
+
+    if (m_setDrawsBackground)
+        m_textureMapper->drawSolidColor(graphicsContext.clipBounds(), TransformationMatrix(), m_backgroundColor);
+
     layer->paint();
     m_textureMapper->endPainting();
     m_textureMapper->setGraphicsContext(0);
@@ -605,6 +618,11 @@ void LayerTreeRenderer::setActive(bool active)
     m_isActive = active;
     if (m_isActive)
         renderNextFrame();
+}
+
+void LayerTreeRenderer::setBackgroundColor(const WebCore::Color& color)
+{
+    m_backgroundColor = color;
 }
 
 } // namespace WebKit

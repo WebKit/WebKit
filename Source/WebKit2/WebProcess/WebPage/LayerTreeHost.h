@@ -27,6 +27,7 @@
 #define LayerTreeHost_h
 
 #include "LayerTreeContext.h"
+#include <WebCore/Color.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 
@@ -88,6 +89,7 @@ public:
     virtual void resumeRendering() { }
 
     virtual WebCore::GraphicsLayerFactory* graphicsLayerFactory() { return 0; }
+    virtual void setBackgroundColor(const WebCore::Color&) { }
 
 #if USE(COORDINATED_GRAPHICS)
     virtual void setVisibleContentsRect(const WebCore::IntRect&, float /* scale */, const WebCore::FloatPoint&) { }

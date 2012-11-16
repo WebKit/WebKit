@@ -94,6 +94,8 @@ public:
     void removeImageBacking(CoordinatedImageBackingID);
     void setLayerAnimations(WebLayerID, const WebCore::GraphicsLayerAnimations&);
     void setAnimationsLocked(bool);
+    void setBackgroundColor(const WebCore::Color&);
+    void setDrawsBackground(bool enable) { m_setDrawsBackground = enable; }
 
 #if ENABLE(REQUEST_ANIMATION_FRAME)
     void requestAnimationFrame();
@@ -167,6 +169,8 @@ private:
     bool m_animationFrameRequested;
 #endif
     WebCore::TextureMapper::AccelerationMode m_accelerationMode;
+    WebCore::Color m_backgroundColor;
+    bool m_setDrawsBackground;
 };
 
 };

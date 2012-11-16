@@ -814,6 +814,22 @@ EAPI Ewk_Pagination_Mode ewk_view_pagination_mode_get(const Evas_Object *o);
  */
 EAPI Eina_Bool ewk_view_fullscreen_exit(Evas_Object *o);
 
+/**
+ * Sets whether the ewk_view background matches page background color.
+ *
+ * If enabled sets view background color close to page color on page load.
+ * This helps to reduce flicker on page scrolling and repainting in places
+ * where page content is not ready for painting.
+ * View background color can interfere with semi-transparent pages and is
+ * disabled by default.
+ *
+ * @param o view object to enable/disable background matching
+ * @param enabled a state to set
+ *
+ * @return @c EINA_TRUE on success or @c EINA_FALSE on failure
+ */
+EAPI void ewk_view_draws_page_background_set(Evas_Object *o, Eina_Bool enabled);
+
 #ifdef __cplusplus
 }
 #endif

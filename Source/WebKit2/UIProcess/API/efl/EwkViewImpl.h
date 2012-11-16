@@ -200,6 +200,7 @@ public:
     void informURLChange();
 
     bool isHardwareAccelerated() const { return m_isHardwareAccelerated; }
+    void setDrawsBackground(bool enable) { m_setDrawsBackground = enable; }
 
 private:
     inline Ewk_View_Smart_Data* smartData() const;
@@ -258,6 +259,7 @@ private:
     OwnPtr<WebKit::InputMethodContextEfl> m_inputMethodContext;
     OwnPtr<Ewk_Color_Picker> m_colorPicker;
     bool m_isHardwareAccelerated;
+    bool m_setDrawsBackground;
 };
 
 #endif // EwkViewImpl_h

@@ -132,6 +132,7 @@ EwkViewImpl::EwkViewImpl(Evas_Object* view, PassRefPtr<EwkContext> context, Pass
     , m_displayTimer(this, &EwkViewImpl::displayTimerFired)
     , m_inputMethodContext(InputMethodContextEfl::create(this, smartData()->base.evas))
     , m_isHardwareAccelerated(true)
+    , m_setDrawsBackground(false)
 {
     ASSERT(m_view);
     ASSERT(m_context);
@@ -338,6 +339,7 @@ void EwkViewImpl::displayTimerFired(Timer<EwkViewImpl>*)
 
     LayerTreeRenderer* renderer = page()->drawingArea()->layerTreeCoordinatorProxy()->layerTreeRenderer();
     renderer->setActive(true);
+    renderer->setDrawsBackground(m_setDrawsBackground);
     renderer->syncRemoteContent();
     if (m_isHardwareAccelerated) {
         renderer->paintToCurrentGLContext(transformToScene().toTransformationMatrix(), /* opacity */ 1, viewport);

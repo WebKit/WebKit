@@ -276,6 +276,7 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     , m_visibilityState(WebCore::PageVisibilityStateVisible)
 #endif
     , m_inspectorClient(0)
+    , m_backgroundColor(Color::white)
 {
     ASSERT(m_pageID);
     // FIXME: This is a non-ideal location for this Setting and
@@ -2764,6 +2765,18 @@ void WebPage::mainFrameDidLayout()
         send(Messages::WebPageProxy::DidChangePageCount(pageCount));
         m_cachedPageCount = pageCount;
     }
+
+#if USE(TILED_BACKING_STORE) && USE(ACCELERATED_COMPOSITING)
+    if (m_drawingArea && m_drawingArea->layerTreeHost()) {
+        double red, green, blue, alpha;
+        m_mainFrame->getDocumentBackgroundColor(&red, &green, &blue, &alpha);
+        RGBA32 rgba = makeRGBA32FromFloats(red, green, blue, alpha);
+        if (m_backgroundColor.rgb() != rgba) {
+            m_backgroundColor.setRGB(rgba);
+            m_drawingArea->layerTreeHost()->setBackgroundColor(m_backgroundColor);
+        }
+    }
+#endif
 }
 
 void WebPage::addPluginView(PluginView* pluginView)

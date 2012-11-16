@@ -1,3 +1,55 @@
+2012-11-16  Viatcheslav Ostapenko  <v.ostapenko@samsung.com>
+
+        [EFL][WK2] White flicker when scrolling big pages with dark background on slower hardware.
+        https://bugs.webkit.org/show_bug.cgi?id=102000
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add matching of view background color to the page background. This helps to reduce 
+        visibility of flicker during scrolling/scaling/repainting where page tiles are not
+        ready. View background color matching is disabled by default and can be enabled 
+        with new API function ewk_view_draws_page_background_set .
+        View background color can interfere with semi-transparent pages and should be
+        disabled by default.
+        Upstreaming changes by Youngtaeck Song(youngtaeck.song@samsung.com).
+
+        * UIProcess/API/efl/EwkViewImpl.cpp:
+        (EwkViewImpl::EwkViewImpl):
+        (EwkViewImpl::displayTimerFired):
+        * UIProcess/API/efl/EwkViewImpl.h:
+        (EwkViewImpl::setDrawsBackground):
+        (EwkViewImpl):
+        * UIProcess/API/efl/ewk_view.cpp:
+        (ewk_view_draws_page_background_set):
+        * UIProcess/API/efl/ewk_view.h:
+        * UIProcess/CoordinatedGraphics/LayerTreeCoordinatorProxy.cpp:
+        (WebKit::LayerTreeCoordinatorProxy::setBackgroundColor):
+        (WebKit):
+        * UIProcess/CoordinatedGraphics/LayerTreeCoordinatorProxy.h:
+        (LayerTreeCoordinatorProxy):
+        * UIProcess/CoordinatedGraphics/LayerTreeCoordinatorProxy.messages.in:
+        * UIProcess/CoordinatedGraphics/LayerTreeRenderer.cpp:
+        (WebKit::LayerTreeRenderer::LayerTreeRenderer):
+        (WebKit::LayerTreeRenderer::paintToCurrentGLContext):
+        (WebKit::LayerTreeRenderer::paintToGraphicsContext):
+        (WebKit::LayerTreeRenderer::setBackgroundColor):
+        (WebKit):
+        * UIProcess/CoordinatedGraphics/LayerTreeRenderer.h:
+        (LayerTreeRenderer):
+        (WebKit::LayerTreeRenderer::setDrawsBackground):
+        * WebProcess/WebPage/CoordinatedGraphics/LayerTreeCoordinator.cpp:
+        (WebKit::LayerTreeCoordinator::setBackgroundColor):
+        (WebKit):
+        * WebProcess/WebPage/CoordinatedGraphics/LayerTreeCoordinator.h:
+        (LayerTreeCoordinator):
+        * WebProcess/WebPage/LayerTreeHost.h:
+        (WebKit::LayerTreeHost::setBackgroundColor):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+        (WebKit::WebPage::mainFrameDidLayout):
+        * WebProcess/WebPage/WebPage.h:
+        (WebPage):
+
 2012-11-16  Krzysztof Czech  <k.czech@samsung.com>
 
         [WK2][GTK][EFL] Share WebKit2-GTK's WebProcess Accessibility implementation with other WebKit ports.

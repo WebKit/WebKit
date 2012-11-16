@@ -46,5 +46,7 @@ messages -> LayerTreeCoordinatorProxy {
 #if USE(GRAPHICS_SURFACE)
     SyncCanvas(uint32_t id, WebCore::IntSize canvasSize, WebCore::GraphicsSurfaceToken token, uint32_t frontBuffer)
 #endif
+
+    SetBackgroundColor(WebCore::Color color)
 }
 #endif

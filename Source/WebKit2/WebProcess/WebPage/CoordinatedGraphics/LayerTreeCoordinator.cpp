@@ -775,5 +775,10 @@ void LayerTreeCoordinator::releaseInactiveAtlasesTimerFired(Timer<LayerTreeCoord
         m_releaseInactiveAtlasesTimer.stop();
 }
 
+void LayerTreeCoordinator::setBackgroundColor(const WebCore::Color& color)
+{
+    m_webPage->send(Messages::LayerTreeCoordinatorProxy::SetBackgroundColor(color));
+}
+
 } // namespace WebKit
 #endif // USE(COORDINATED_GRAPHICS)

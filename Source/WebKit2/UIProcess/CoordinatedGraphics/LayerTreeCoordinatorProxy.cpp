@@ -209,5 +209,10 @@ void LayerTreeCoordinatorProxy::purgeBackingStores()
     m_drawingAreaProxy->page()->process()->send(Messages::LayerTreeCoordinator::PurgeBackingStores(), m_drawingAreaProxy->page()->pageID());
 }
 
+void LayerTreeCoordinatorProxy::setBackgroundColor(const WebCore::Color& color)
+{
+    dispatchUpdate(bind(&LayerTreeRenderer::setBackgroundColor, m_renderer.get(), color));
+}
+
 }
 #endif // USE(COORDINATED_GRAPHICS)

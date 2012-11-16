@@ -945,6 +945,7 @@ private:
     WebInspectorClient* m_inspectorClient;
 
     HashSet<String, CaseFoldingHash> m_mimeTypesWithCustomRepresentations;
+    WebCore::Color m_backgroundColor;
 };
 
 } // namespace WebKit
