@@ -1,5 +1,11 @@
 2012-11-15  Kentaro Hara  <haraken@chromium.org>
 
+        Unreviewed. Marked fast/forms/validation-message-appearance.html as flaky.
+
+        * platform/chromium/TestExpectations:
+
+2012-11-15  Kentaro Hara  <haraken@chromium.org>
+
         Unreviewed. Rebaselined images.
 
         * fast/media/mq-js-media-except-02-expected.txt: Renamed from LayoutTests/platform/efl/fast/media/mq-js-media-except-02-expected.txt.
