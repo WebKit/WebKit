@@ -61,7 +61,7 @@
                     if (e.code == 12)
                         log("PASS: Exception raised successfully. Type: " + e);
                     else
-                        log("FAIL: wrong exception type thrown. " + e + " was thrown, should of been Error: SYNTAX_ERR: DOM Exception 12!");
+                        log("FAIL: wrong exception type thrown. " + e + " was thrown, should of been Error: SyntaxError: DOM Exception 12!");
                 }
 
                 // Test that insertRule raises an exception for illegally placed rules.
@@ -84,7 +84,7 @@
                     if (e.code == 12)
                         log("PASS: Exception raised successfully. Type: " + e);
                     else
-                        log("FAIL: wrong exception type thrown. " + e + " was thrown, should of been Error: SYNTAX_ERR: DOM Exception 12!");
+                        log("FAIL: wrong exception type thrown. " + e + " was thrown, should of been Error: SyntaxError: DOM Exception 12!");
                 }
                 try {
                     // Nested MediaRule illegal inside a MediaRule.
@@ -95,7 +95,7 @@
                     if (e.code == 12)
                         log("PASS: Exception raised successfully. Type: " + e);
                     else
-                        log("FAIL: wrong exception type thrown. " + e + " was thrown, should of been Error: SYNTAX_ERR: DOM Exception 12!");
+                        log("FAIL: wrong exception type thrown. " + e + " was thrown, should of been Error: SyntaxError: DOM Exception 12!");
                 }
 
 

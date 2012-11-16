@@ -1,3 +1,95 @@
+2012-11-15  Erik Arvidsson  <arv@chromium.org>
+
+        Update DOMException name: SyntaxError
+        https://bugs.webkit.org/show_bug.cgi?id=102279
+
+        Reviewed by Kentaro Hara.
+
+        Updated tests and expectations.
+
+        * fast/canvas/canvas-gradient-addStop-error-expected.txt:
+        * fast/canvas/canvas-pattern-behaviour-expected.txt:
+        * fast/canvas/gradient-addColorStop-with-invalid-color-expected.txt:
+        * fast/canvas/script-tests/gradient-addColorStop-with-invalid-color.js:
+        * fast/css/css3-nth-tokens-script-expected.txt:
+        * fast/css/css3-nth-tokens-script.html:
+        * fast/dom/HTMLElement/insertAdjacentHTML-errors-expected.txt:
+        * fast/dom/HTMLElement/script-tests/insertAdjacentHTML-errors.js:
+        * fast/dom/HTMLElement/set-invalid-value-expected.txt:
+        * fast/dom/HTMLElement/set-invalid-value.html:
+        * fast/dom/SelectorAPI/dumpNodeList-almost-strict-expected.txt:
+        * fast/dom/SelectorAPI/dumpNodeList-expected.txt:
+        * fast/dom/Window/custom-constructors-expected.txt:
+        * fast/dom/Window/invalid-protocol-expected.txt:
+        * fast/dom/css-mediarule-functions-expected.txt:
+        * fast/dom/css-mediarule-functions.html:
+        * fast/dom/dataset-expected.txt:
+        * fast/dom/dataset-xhtml-expected.txt:
+        * fast/dom/element-attribute-js-null-expected.txt:
+        * fast/dom/register-protocol-handler.html:
+        * fast/dom/script-tests/dataset-xhtml.js:
+        * fast/dom/script-tests/dataset.js:
+        * fast/dom/xhtml-fragment-parsing-exceptions-expected.txt:
+        * fast/dynamic/insertAdjacentHTML-expected.txt:
+        * fast/eventsource/eventsource-constructor-expected.txt:
+        * fast/innerHTML/innerHTML-changing-document-properties-expected.txt:
+        * fast/mutation/observe-exceptions-expected.txt:
+        * fast/workers/worker-constructor-expected.txt:
+        * http/tests/security/postMessage/invalid-origin-throws-exception-expected.txt:
+        * http/tests/security/postMessage/target-origin-expected.txt:
+        * http/tests/websocket/tests/hybi/bad-sub-protocol-empty-expected.txt:
+        * http/tests/websocket/tests/hybi/bad-sub-protocol-non-ascii-expected.txt:
+        * http/tests/websocket/tests/hybi/close-expected.txt:
+        * http/tests/websocket/tests/hybi/close-reason-too-long-expected.txt:
+        * http/tests/websocket/tests/hybi/close-reason-too-long.html:
+        * http/tests/websocket/tests/hybi/close.html:
+        * http/tests/websocket/tests/hybi/invalid-subprotocol-characters-expected.txt:
+        * http/tests/websocket/tests/hybi/invalid-subprotocol-characters.html:
+        * http/tests/websocket/tests/hybi/invalid-subprotocols-expected.txt:
+        * http/tests/websocket/tests/hybi/invalid-subprotocols.html:
+        * http/tests/websocket/tests/hybi/url-parsing-expected.txt:
+        * http/tests/xmlhttprequest/inject-header-expected.txt:
+        * http/tests/xmlhttprequest/xmlhttprequest-open-empty-method-expected.txt:
+        * http/tests/xmlhttprequest/xmlhttprequest-setrequestheader-no-name-expected.txt:
+        * platform/chromium-linux/fast/media/mq-js-media-except-02-expected.png:
+        * platform/chromium-linux/fast/media/mq-js-media-except-03-expected.png:
+        * platform/chromium-mac/fast/dom/SelectorAPI/dumpNodeList-almost-strict-expected.txt:
+        * platform/chromium-mac/fast/dom/SelectorAPI/dumpNodeList-expected.txt:
+        * platform/chromium-win/fast/dom/SelectorAPI/dumpNodeList-almost-strict-expected.txt:
+        * platform/chromium-win/fast/dom/SelectorAPI/dumpNodeList-expected.txt:
+        * platform/chromium-win/fast/media/mq-js-media-except-02-expected.txt:
+        * platform/chromium-win/fast/media/mq-js-media-except-03-expected.txt:
+        * platform/chromium-win/fast/workers/worker-constructor-expected.txt:
+        * platform/chromium-win/websocket/tests/bad-sub-protocol-non-ascii-expected.txt:
+        * platform/chromium-win/websocket/tests/url-parsing-expected.txt:
+        * platform/chromium/canvas/philip/tests/2d.missingargs-expected.txt:
+        * platform/chromium/fast/dom/register-protocol-handler-expected.txt:
+        * platform/chromium/fast/media/mq-js-media-except-02-expected.txt:
+        * platform/chromium/fast/media/mq-js-media-except-03-expected.txt:
+        * platform/chromium/fast/workers/worker-constructor-expected.txt:
+        * platform/chromium/http/tests/websocket/tests/hixie76/url-parsing-expected.txt:
+        * platform/chromium/http/tests/websocket/tests/hybi/bad-sub-protocol-control-chars-expected.txt:
+        * platform/chromium/http/tests/websocket/tests/hybi/url-parsing-expected.txt:
+        * platform/efl/fast/media/mq-js-media-except-02-expected.txt:
+        * platform/efl/fast/media/mq-js-media-except-03-expected.txt:
+        * platform/gtk/fast/media/mq-js-media-except-02-expected.txt:
+        * platform/gtk/fast/media/mq-js-media-except-03-expected.txt:
+        * platform/mac/canvas/philip/tests/2d.missingargs-expected.txt:
+        * platform/mac/fast/media/mq-js-media-except-02-expected.txt:
+        * platform/mac/fast/media/mq-js-media-except-03-expected.txt:
+        * platform/qt-5.0-wk2/http/tests/websocket/tests/hybi/bad-sub-protocol-non-ascii-expected.txt:
+        * platform/qt/fast/media/mq-js-media-except-02-expected.txt:
+        * platform/qt/fast/media/mq-js-media-except-03-expected.txt:
+        * platform/qt/http/tests/websocket/tests/hixie76/bad-sub-protocol-non-ascii-expected.txt:
+        * platform/qt/http/tests/websocket/tests/hybi/bad-sub-protocol-non-ascii-expected.txt:
+        * svg/dom/SVGAngle-expected.txt:
+        * transforms/cssmatrix-2d-interface-expected.txt:
+        * transforms/cssmatrix-3d-interface-expected.txt:
+        * webintents/web-intents-api-expected.txt:
+        * webintents/web-intents-api.html:
+        * webintents/web-intents-obj-constructor-expected.txt:
+        * webintents/web-intents-obj-constructor.html:
+
 2012-11-15  James Robinson  <jamesr@chromium.org>
 
         Clean up some TestExpectations for tests that pass now.

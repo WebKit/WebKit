@@ -7,7 +7,7 @@
 <div id="description"></div>
 <div id="console"></div>
 <script type="text/javascript">
-description("Checks whether SYNTAX_ERR is thrown when attempting to send too long reason.");
+description("Checks whether SyntaxError is thrown when attempting to send too long reason.");
 
 window.jsTestIsAsync = true;
 
@@ -22,10 +22,10 @@ ws.onopen = function()
     debug("Connected.");
     try {
         ws.close(1000, longReason);
-        testFailed('SYNTAX_ERR should be thrown.');
+        testFailed('SyntaxError should be thrown.');
     } catch (e) {
-        if (e.name == 'SYNTAX_ERR')
-            testPassed('SYNTAX_ERR was thrown.');
+        if (e.name == 'SyntaxError')
+            testPassed('SyntaxError was thrown.');
         else
             testFailed('Unexpected exception: ' + e);
     }

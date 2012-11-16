@@ -22,7 +22,7 @@ PASS testSet('-Foo', 'data---foo') is true
 PASS testSet('', 'data-') is true
 PASS testSet('à', 'data-à') is true
 
-PASS testSet('-foo', 'dummy') threw exception Error: SYNTAX_ERR: DOM Exception 12.
+PASS testSet('-foo', 'dummy') threw exception Error: SyntaxError: DOM Exception 12.
 PASS testSet('foo ', 'dummy') threw exception Error: InvalidCharacterError: DOM Exception 5.
 PASS testSet('foo豈', 'dummy') threw exception Error: InvalidCharacterError: DOM Exception 5.
 

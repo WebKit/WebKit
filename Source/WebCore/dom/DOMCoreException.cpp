@@ -46,7 +46,7 @@ static struct CoreException {
     { "NotSupportedError", "The implementation did not support the requested type of object or operation." },
     { "InUseAttributeError", "An attempt was made to add an attribute that is already in use elsewhere." },
     { "InvalidStateError", "An attempt was made to use an object that is not, or is no longer, usable." },
-    { "SYNTAX_ERR", "An invalid or illegal string was specified." },
+    { "SyntaxError", "An invalid or illegal string was specified." },
     { "InvalidModificationError", "An attempt was made to modify the type of the underlying object." },
     { "NAMESPACE_ERR", "An attempt was made to create or change an object in a way which is incorrect with regard to namespaces." },
     { "INVALID_ACCESS_ERR", "A parameter or an operation was not supported by the underlying object." },

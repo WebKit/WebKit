@@ -73,4 +73,4 @@ Failed assertion: expected exception of type TypeError, got: Error: NotSupported
 Failed assertion: expected exception of type TypeError, got: Error: NotSupportedError: DOM Exception 9
 Failed assertion: expected exception of type TypeError, got: Error: NotSupportedError: DOM Exception 9
 Failed assertion: expected exception of type TypeError, got: Error: IndexSizeError: DOM Exception 1
-Failed assertion: expected exception of type TypeError, got: Error: SYNTAX_ERR: DOM Exception 12
+Failed assertion: expected exception of type TypeError, got: Error: SyntaxError: DOM Exception 12

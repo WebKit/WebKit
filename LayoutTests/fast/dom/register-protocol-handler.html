@@ -54,11 +54,11 @@ invalid_urls.forEach(function (url) {
    try {
         window.navigator.registerProtocolHandler('web+myprotocol', url, 'title');
     } catch (e) {
-        succeeded = 'SYNTAX_ERR' == e.name;
+        succeeded = 'SyntaxError' == e.name;
     }
 
     if (succeeded)
-        debug('Pass: Invalid url "' + url + '" threw SYNTAX_ERR exception.');
+        debug('Pass: Invalid url "' + url + '" threw SyntaxError exception.');
     else
         debug('Fail: Invalid url "' + url + '" allowed.');
 });

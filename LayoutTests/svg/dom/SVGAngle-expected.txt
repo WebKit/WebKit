@@ -91,27 +91,27 @@ PASS angle.newValueSpecifiedUnits(SVGAngle.SVG_ANGLETYPE_UNSPECIFIED, 0) is unde
 PASS angle.unitType is SVGAngle.SVG_ANGLETYPE_UNSPECIFIED
 
 Check setting invalid 'valueAsString' arguments
-PASS angle.valueAsString = '10px' threw exception Error: SYNTAX_ERR: DOM Exception 12.
+PASS angle.valueAsString = '10px' threw exception Error: SyntaxError: DOM Exception 12.
 PASS angle.valueAsString is "0"
 PASS angle.value is 0
 PASS angle.valueInSpecifiedUnits is 0
 PASS angle.unitType is SVGAngle.SVG_ANGLETYPE_UNSPECIFIED
-PASS angle.valueAsString = '10x' threw exception Error: SYNTAX_ERR: DOM Exception 12.
+PASS angle.valueAsString = '10x' threw exception Error: SyntaxError: DOM Exception 12.
 PASS angle.valueAsString is "0"
 PASS angle.value is 0
 PASS angle.valueInSpecifiedUnits is 0
 PASS angle.unitType is SVGAngle.SVG_ANGLETYPE_UNSPECIFIED
-PASS angle.valueAsString = '5graD' threw exception Error: SYNTAX_ERR: DOM Exception 12.
+PASS angle.valueAsString = '5graD' threw exception Error: SyntaxError: DOM Exception 12.
 PASS angle.valueAsString is "0"
 PASS angle.value is 0
 PASS angle.valueInSpecifiedUnits is 0
 PASS angle.unitType is SVGAngle.SVG_ANGLETYPE_UNSPECIFIED
-PASS angle.valueAsString = '5Rad' threw exception Error: SYNTAX_ERR: DOM Exception 12.
+PASS angle.valueAsString = '5Rad' threw exception Error: SyntaxError: DOM Exception 12.
 PASS angle.valueAsString is "0"
 PASS angle.value is 0
 PASS angle.valueInSpecifiedUnits is 0
 PASS angle.unitType is SVGAngle.SVG_ANGLETYPE_UNSPECIFIED
-PASS angle.valueAsString = ',5 rad' threw exception Error: SYNTAX_ERR: DOM Exception 12.
+PASS angle.valueAsString = ',5 rad' threw exception Error: SyntaxError: DOM Exception 12.
 PASS angle.valueAsString is "0"
 PASS angle.value is 0
 PASS angle.valueInSpecifiedUnits is 0

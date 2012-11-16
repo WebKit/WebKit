@@ -1,3 +1,16 @@
+2012-11-15  Erik Arvidsson  <arv@chromium.org>
+
+        Update DOMException name: SyntaxError
+        https://bugs.webkit.org/show_bug.cgi?id=102279
+
+        Reviewed by Kentaro Hara.
+
+        Patch 12 of 25 to update DOMException name to match the spec and Firefox.
+
+        Updated existing tests.
+
+        * dom/DOMCoreException.cpp:
+
 2012-11-15  Takashi Sakamoto  <tasak@google.com>
 
         [Win] key event's location does not work on Windows platform.

@@ -42,7 +42,7 @@ function runTest(codePoint)
             setTimeout("runTest(" + (codePoint + 1) + ")", 0);
         };
     } else {
-        shouldThrow("new WebSocket(url, \"" + escapeUnicodeCharacter(codePoint) + "\")", "'Error: SYNTAX_ERR: DOM Exception 12'");
+        shouldThrow("new WebSocket(url, \"" + escapeUnicodeCharacter(codePoint) + "\")", "'Error: SyntaxError: DOM Exception 12'");
         setTimeout("runTest(" + (codePoint + 1) + ")", 0);
     }
 }

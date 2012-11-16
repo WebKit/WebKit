@@ -14,7 +14,7 @@ Pass: Valid protocol "smsto" allowed.
 Pass: Valid protocol "tel" allowed.
 Pass: Valid protocol "urn" allowed.
 Pass: Valid protocol "webcal" allowed.
-Pass: Invalid url "" threw SYNTAX_ERR exception.
-Pass: Invalid url "%S" threw SYNTAX_ERR exception.
+Pass: Invalid url "" threw SyntaxError exception.
+Pass: Invalid url "%S" threw SyntaxError exception.
 Pass: Valid call succeeded.
 

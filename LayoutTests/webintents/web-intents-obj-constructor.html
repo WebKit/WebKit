@@ -17,18 +17,18 @@
 
     function buttonClicked() {
         // |action| and |type| are required to be present and non-empty.
-        shouldThrow("new WebKitIntent({})", "'Error: SYNTAX_ERR: DOM Exception 12'");
-        shouldThrow("new WebKitIntent(dummy)", "'Error: SYNTAX_ERR: DOM Exception 12'");
-        shouldThrow("new WebKitIntent(null)", "'Error: SYNTAX_ERR: DOM Exception 12'");
-        shouldThrow("new WebKitIntent(undefined)", "'Error: SYNTAX_ERR: DOM Exception 12'");
-        shouldThrow("new WebKitIntent(5)", "'Error: SYNTAX_ERR: DOM Exception 12'");
-        shouldThrow("new WebKitIntent('six')", "'Error: SYNTAX_ERR: DOM Exception 12'");
-        shouldThrow("new WebKitIntent(['six'])", "'Error: SYNTAX_ERR: DOM Exception 12'");
-        shouldThrow("new WebKitIntent({'a':'b'})", "'Error: SYNTAX_ERR: DOM Exception 12'");
-        shouldThrow("new WebKitIntent({'action':'b'})", "'Error: SYNTAX_ERR: DOM Exception 12'");
-        shouldThrow("new WebKitIntent({'type':'b'})", "'Error: SYNTAX_ERR: DOM Exception 12'");
-        shouldThrow("new WebKitIntent({'action':'', 'type':'b'})", "'Error: SYNTAX_ERR: DOM Exception 12'");
-        shouldThrow("new WebKitIntent({'action':'a', 'type':''})", "'Error: SYNTAX_ERR: DOM Exception 12'");
+        shouldThrow("new WebKitIntent({})", "'Error: SyntaxError: DOM Exception 12'");
+        shouldThrow("new WebKitIntent(dummy)", "'Error: SyntaxError: DOM Exception 12'");
+        shouldThrow("new WebKitIntent(null)", "'Error: SyntaxError: DOM Exception 12'");
+        shouldThrow("new WebKitIntent(undefined)", "'Error: SyntaxError: DOM Exception 12'");
+        shouldThrow("new WebKitIntent(5)", "'Error: SyntaxError: DOM Exception 12'");
+        shouldThrow("new WebKitIntent('six')", "'Error: SyntaxError: DOM Exception 12'");
+        shouldThrow("new WebKitIntent(['six'])", "'Error: SyntaxError: DOM Exception 12'");
+        shouldThrow("new WebKitIntent({'a':'b'})", "'Error: SyntaxError: DOM Exception 12'");
+        shouldThrow("new WebKitIntent({'action':'b'})", "'Error: SyntaxError: DOM Exception 12'");
+        shouldThrow("new WebKitIntent({'type':'b'})", "'Error: SyntaxError: DOM Exception 12'");
+        shouldThrow("new WebKitIntent({'action':'', 'type':'b'})", "'Error: SyntaxError: DOM Exception 12'");
+        shouldThrow("new WebKitIntent({'action':'a', 'type':''})", "'Error: SyntaxError: DOM Exception 12'");
         shouldBeEqualToString("(new WebKitIntent({'action':'a','type':'b'})).action", "a");
         shouldBeEqualToString("(new WebKitIntent({'action':'a','type':'b'})).type", "b");
 
@@ -41,9 +41,9 @@
 
         // |service|, if present, must be a valid url.
         shouldNotThrow("new WebKitIntent({'action':'a','type':'b','service':''})");
-        shouldThrow("new WebKitIntent({'action':'a','type':'b','service':null})", "'Error: SYNTAX_ERR: DOM Exception 12'");
-        shouldThrow("new WebKitIntent({'action':'a','type':'b','service':undefined})", "'Error: SYNTAX_ERR: DOM Exception 12'");
-        shouldThrow("new WebKitIntent({'action':'a','type':'b','service':'not a url'})", "'Error: SYNTAX_ERR: DOM Exception 12'");
+        shouldThrow("new WebKitIntent({'action':'a','type':'b','service':null})", "'Error: SyntaxError: DOM Exception 12'");
+        shouldThrow("new WebKitIntent({'action':'a','type':'b','service':undefined})", "'Error: SyntaxError: DOM Exception 12'");
+        shouldThrow("new WebKitIntent({'action':'a','type':'b','service':'not a url'})", "'Error: SyntaxError: DOM Exception 12'");
 
         // |data| must be cloneable.
         shouldThrow("new WebKitIntent({'action':'a','type':'b','data':window})", "'Error: DATA_CLONE_ERR: DOM Exception 25'");
@@ -107,10 +107,10 @@
              "type":"text/plain+suggestions",
              "data":"message",
              "suggestions":["www.example.com/", "http://ww2.example.com"]};
-        shouldThrow("new WebKitIntent(suggestionsIntent)", "'Error: SYNTAX_ERR: DOM Exception 12'");
+        shouldThrow("new WebKitIntent(suggestionsIntent)", "'Error: SyntaxError: DOM Exception 12'");
 
         suggestionsIntent.suggestions = [15];
-        shouldThrow("new WebKitIntent(suggestionsIntent)", "'Error: SYNTAX_ERR: DOM Exception 12'");
+        shouldThrow("new WebKitIntent(suggestionsIntent)", "'Error: SyntaxError: DOM Exception 12'");
 
         suggestionsIntent.suggestions = ["http://www.example.com/"];
         navigator.webkitStartActivity(new WebKitIntent(suggestionsIntent));

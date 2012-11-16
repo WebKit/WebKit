@@ -8,4 +8,4 @@ layer at (0,0) size 800x600
           text run at (0,0) width 154: "This text should be green."
       RenderBlock {P} at (0,35) size 784x19
         RenderText {#text} at (0,0) size 379x19
-          text run at (0,0) width 379: "Caught exception: Error: SYNTAX_ERR: DOM Exception 12"
+          text run at (0,0) width 379: "Caught exception: Error: SyntaxError: DOM Exception 12"
