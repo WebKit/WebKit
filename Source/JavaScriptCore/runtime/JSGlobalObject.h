@@ -100,7 +100,6 @@ namespace JSC {
         Register m_globalCallFrame[JSStack::CallFrameHeaderSize];
 
         WriteBarrier<JSObject> m_globalThis;
-        WriteBarrier<JSObject> m_methodCallDummy;
 
         WriteBarrier<RegExpConstructor> m_regExpConstructor;
         WriteBarrier<ErrorConstructor> m_errorConstructor;
@@ -271,8 +270,6 @@ namespace JSC {
         DatePrototype* datePrototype() const { return m_datePrototype.get(); }
         RegExpPrototype* regExpPrototype() const { return m_regExpPrototype.get(); }
         ErrorPrototype* errorPrototype() const { return m_errorPrototype.get(); }
-
-        JSObject* methodCallDummy() const { return m_methodCallDummy.get(); }
 
         Structure* withScopeStructure() const { return m_withScopeStructure.get(); }
         Structure* strictEvalActivationStructure() const { return m_strictEvalActivationStructure.get(); }

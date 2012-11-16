@@ -1,3 +1,16 @@
+2012-11-15  Filip Pizlo  <fpizlo@apple.com>
+
+        Remove methodCallDummy since it is not used anymore.
+
+        Rubber stamped by Mark Hahnenberg.
+
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::reset):
+        (JSC):
+        (JSC::JSGlobalObject::visitChildren):
+        * runtime/JSGlobalObject.h:
+        (JSGlobalObject):
+
 2012-11-14  Filip Pizlo  <fpizlo@apple.com>
 
         Structure should be able to easily tell if the prototype chain might intercept a store
