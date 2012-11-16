@@ -1,3 +1,23 @@
+2012-11-16  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Unreviewed, rolling out r134973.
+        http://trac.webkit.org/changeset/134973
+        https://bugs.webkit.org/show_bug.cgi?id=99340
+
+        Broke compile on at least Mac and Linux.
+
+        * WebKit.gyp:
+        * src/FrameNetworkingContextImpl.h:
+        * src/PlatformSupport.cpp:
+        (WebCore::getCookieJar):
+        (WebCore):
+        (WebCore::PlatformSupport::setCookies):
+        (WebCore::PlatformSupport::cookies):
+        (WebCore::PlatformSupport::cookieRequestHeaderFieldValue):
+        (WebCore::PlatformSupport::rawCookies):
+        (WebCore::PlatformSupport::deleteCookie):
+        (WebCore::PlatformSupport::cookiesEnabled):
+
 2012-11-16  Mark Pilgrim  <pilgrim@chromium.org>
 
         [Chromium] Remove cookie-related functions from PlatformSupport

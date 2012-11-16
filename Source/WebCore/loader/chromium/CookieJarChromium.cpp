@@ -1,10 +1,10 @@
 /*
- * Copyright (C) 2012 Google Inc. All rights reserved.
- *
+ * Copyright (c) 2010, Google Inc. All rights reserved.
+ * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
  * met:
- *
+ * 
  *     * Redistributions of source code must retain the above copyright
  * notice, this list of conditions and the following disclaimer.
  *     * Redistributions in binary form must reproduce the above
@@ -14,7 +14,7 @@
  *     * Neither the name of Google Inc. nor the names of its
  * contributors may be used to endorse or promote products derived from
  * this software without specific prior written permission.
- *
+ * 
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -29,23 +29,59 @@
  */
 
 #include "config.h"
-#include "FrameNetworkingContextImpl.h"
+#include "CookieJar.h"
 
-#include "WebFrameImpl.h"
-#include "public/WebFrameClient.h"
-#include <public/Platform.h>
+#include "Cookie.h"
+#include "Document.h"
+#include "PlatformSupport.h"
 
-namespace WebKit {
+namespace WebCore {
 
-WebCookieJar* FrameNetworkingContextImpl::cookieJar() const
+// FIXME: Unfork. This file is forked because all other platforms use NetworkingContext to access cookie jar, not Document or Frame.
+
+void setCookies(Document* document, const KURL& url, const String& value)
 {
-    WebFrameImpl* frameImpl = WebFrameImpl::fromFrame(frame());
-    if (!frameImpl || !frameImpl->client())
-        return 0;
-    WebCookieJar* cookieJar = frameImpl->client()->cookieJar(frameImpl);
-    if (!cookieJar)
-        cookieJar = WebKit::Platform::current()->cookieJar();
-    return cookieJar;
+    PlatformSupport::setCookies(document, url, value);
 }
 
+String cookies(const Document* document, const KURL& url)
+{
+    return PlatformSupport::cookies(document, url);
 }
+
+String cookieRequestHeaderFieldValue(const Document* document, const KURL& url)
+{
+    return PlatformSupport::cookieRequestHeaderFieldValue(document, url);
+}
+
+bool cookiesEnabled(const Document* document)
+{
+    return PlatformSupport::cookiesEnabled(document);
+}
+
+bool getRawCookies(const Document* document, const KURL& url, Vector<Cookie>& rawCookies)
+{
+    return PlatformSupport::rawCookies(document, url, rawCookies);
+}
+
+void deleteCookie(const Document* document, const KURL& url, const String& cookieName)
+{
+    return PlatformSupport::deleteCookie(document, url, cookieName);
+}
+
+void getHostnamesWithCookies(HashSet<String>& hostnames)
+{
+    // FIXME: Not yet implemented
+}
+
+void deleteCookiesForHostname(const String& hostname)
+{
+    // FIXME: Not yet implemented
+}
+
+void deleteAllCookies()
+{
+    // FIXME: Not yet implemented
+}
+
+} // namespace WebCore
