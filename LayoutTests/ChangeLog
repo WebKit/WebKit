@@ -1,3 +1,9 @@
+2012-11-15  James Robinson  <jamesr@chromium.org>
+
+        Clean up some TestExpectations for tests that pass now.
+
+        * platform/chromium/TestExpectations:
+
 2012-11-15  David Grogan  <dgrogan@chromium.org>
 
         IndexedDB setVersion-removal batch 7
