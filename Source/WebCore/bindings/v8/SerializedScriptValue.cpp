@@ -41,6 +41,7 @@
 #include "MessagePort.h"
 #include "SharedBuffer.h"
 #include "V8ArrayBuffer.h"
+#include "V8ArrayBufferCustom.h"
 #include "V8ArrayBufferView.h"
 #include "V8Binding.h"
 #include "V8Blob.h"
@@ -1647,6 +1648,8 @@ private:
             return 0;
         const void* bufferStart = m_buffer + m_position;
         RefPtr<ArrayBuffer> arrayBuffer = ArrayBuffer::create(bufferStart, byteLength);
+        arrayBuffer->setDeallocationObserver(V8ArrayBufferDeallocationObserver::instance());
+        v8::V8::AdjustAmountOfExternalAllocatedMemory(arrayBuffer->byteLength());
         m_position += byteLength;
         return arrayBuffer.release();
     }
@@ -2034,7 +2037,10 @@ public:
             return false;
         v8::Handle<v8::Object> result = m_arrayBuffers.at(index);
         if (result.IsEmpty()) {
-            result = toV8Object(ArrayBuffer::create(m_arrayBufferContents->at(index)).get(), v8::Handle<v8::Object>(), m_reader.getIsolate());
+            RefPtr<ArrayBuffer> buffer = ArrayBuffer::create(m_arrayBufferContents->at(index));
+            buffer->setDeallocationObserver(V8ArrayBufferDeallocationObserver::instance());
+            v8::V8::AdjustAmountOfExternalAllocatedMemory(buffer->byteLength());
+            result = toV8Object(buffer.get(), v8::Handle<v8::Object>(), m_reader.getIsolate());
             m_arrayBuffers[index] = result;
         }
         *object = result;
