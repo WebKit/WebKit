@@ -153,6 +153,8 @@ public:
 #endif
 
 private:
+    void updateContentsNoSwizzle(const void*, const IntRect& target, const IntPoint& sourceOffset, int bytesPerLine, unsigned bytesPerPixel = 4, Platform3DObject glFormat = GraphicsContext3D::RGBA);
+
     Platform3DObject m_id;
     IntSize m_textureSize;
     IntRect m_dirtyRect;
