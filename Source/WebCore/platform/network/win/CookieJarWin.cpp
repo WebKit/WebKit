@@ -64,10 +64,10 @@ String cookiesForDOM(NetworkingContext*, const KURL&, const KURL& url)
     return String::adopt(buffer);
 }
 
-String cookieRequestHeaderFieldValue(NetworkingContext* context, const KURL& /*firstParty*/, const KURL& url)
+String cookieRequestHeaderFieldValue(NetworkingContext* context, const KURL& firstParty, const KURL& url)
 {
     // FIXME: include HttpOnly cookie
-    return cookiesForDOM(context, url);
+    return cookiesForDOM(context, firstParty, url);
 }
 
 bool cookiesEnabled(NetworkingContext* context, const KURL& /*firstParty*/, const KURL& /*url*/)

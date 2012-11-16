@@ -1,3 +1,10 @@
+2012-11-16  Patrick Gansterer  <paroga@webkit.org>
+
+        Build fix for WinCE after r134936.
+
+        * platform/network/win/CookieJarWin.cpp:
+        (WebCore::cookieRequestHeaderFieldValue):
+
 2012-11-16  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Unreviewed, rolling out r134986.
