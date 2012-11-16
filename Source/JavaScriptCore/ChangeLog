@@ -1,5 +1,36 @@
 2012-11-15  Filip Pizlo  <fpizlo@apple.com>
 
+        DFG should copy propagate trivially no-op ConvertThis
+        https://bugs.webkit.org/show_bug.cgi?id=102445
+
+        Reviewed by Oliver Hunt.
+
+        Copy propagation is always a good thing, since it reveals must-alias relationships
+        to the CFA and CSE. This accomplishes copy propagation for ConvertThis by first
+        converting it to an Identity node (which is done by the constant folder since it
+        has access to CFA results) and then performing substitution of references to
+        Identity with references to Identity's chuld in the CSE.
+        
+        I'm not aiming for a big speed-up here; I just think that this will be useful for
+        the work on https://bugs.webkit.org/show_bug.cgi?id=102327.
+
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::execute):
+        * dfg/DFGCSEPhase.cpp:
+        (JSC::DFG::CSEPhase::performNodeCSE):
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+        * dfg/DFGNodeType.h:
+        (DFG):
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+
+2012-11-15  Filip Pizlo  <fpizlo@apple.com>
+
         CallData.h should have correct indentation.
 
         Rubber stamped by Mark Hahneberg.

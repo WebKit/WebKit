@@ -132,6 +132,13 @@ private:
                 break;
             }
                 
+            case ConvertThis: {
+                if (!isObjectSpeculation(m_state.forNode(node.child1()).m_type))
+                    break;
+                node.setOpAndDefaultFlags(Identity);
+                break;
+            }
+                
             default:
                 break;
             }

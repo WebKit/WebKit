@@ -1043,6 +1043,10 @@ private:
         
         switch (node.op()) {
         
+        case Identity:
+            setReplacement(node.child1().index());
+            break;
+            
         // Handle the pure nodes. These nodes never have any side-effects.
         case BitAnd:
         case BitOr:

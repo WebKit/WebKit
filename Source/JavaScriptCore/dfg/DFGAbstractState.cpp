@@ -257,6 +257,12 @@ bool AbstractState::execute(unsigned indexInBlock)
         node.setCanExit(false);
         break;
     }
+        
+    case Identity: {
+        forNode(nodeIndex) = forNode(node.child1());
+        node.setCanExit(false);
+        break;
+    }
             
     case GetLocal: {
         VariableAccessData* variableAccessData = node.variableAccessData();
@@ -1246,6 +1252,7 @@ bool AbstractState::execute(unsigned indexInBlock)
             // be hit, but then again, you never know.
             destination = source;
             node.setCanExit(false);
+            m_foundConstants = true; // Tell the constant folder to turn this into Identity.
             break;
         }
         

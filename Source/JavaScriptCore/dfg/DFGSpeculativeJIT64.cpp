@@ -2130,6 +2130,16 @@ void SpeculativeJIT::compile(Node& node)
         m_jit.addWeakReference(node.weakConstant());
         initConstantInfo(m_compileIndex);
         break;
+        
+    case Identity: {
+        // This could be done a lot better. We take the cheap way out because Identity
+        // is only going to stick around after CSE if we had prediction weirdness.
+        JSValueOperand operand(this, node.child1());
+        GPRTemporary result(this, operand);
+        m_jit.move(operand.gpr(), result.gpr());
+        jsValueResult(result.gpr(), m_compileIndex);
+        break;
+    }
 
     case GetLocal: {
         SpeculatedType prediction = node.variableAccessData()->prediction();

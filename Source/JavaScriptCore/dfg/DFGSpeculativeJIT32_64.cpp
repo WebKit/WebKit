@@ -2129,6 +2129,18 @@ void SpeculativeJIT::compile(Node& node)
         initConstantInfo(m_compileIndex);
         break;
 
+    case Identity: {
+        // This could be done a lot better. We take the cheap way out because Identity
+        // is only going to stick around after CSE if we had prediction weirdness.
+        JSValueOperand operand(this, node.child1());
+        GPRTemporary resultTag(this);
+        GPRTemporary resultPayload(this);
+        m_jit.move(operand.tagGPR(), resultTag.gpr());
+        m_jit.move(operand.payloadGPR(), resultPayload.gpr());
+        jsValueResult(resultTag.gpr(), resultPayload.gpr(), m_compileIndex);
+        break;
+    }
+
     case GetLocal: {
         SpeculatedType prediction = node.variableAccessData()->prediction();
         AbstractValue& value = block()->valuesAtHead.operand(node.local());
