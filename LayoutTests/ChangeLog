@@ -1,3 +1,9 @@
+2012-11-15  Brent Fulgham  <bfulgham@webkit.org>
+
+        [WinCairo] Sync with Windows test expectations.
+
+        * platform/wincairo/TestExpectations: Update to match Windows.
+
 2012-11-16  Dimitri Glazkov  <dglazkov@chromium.org>
 
         [Chromium] adjusting expectations for checkerboard.html

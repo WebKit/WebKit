@@ -577,6 +577,10 @@ css3/filters/effect-sepia-hw.html
 # Custom filters not yet supported on Windows
 css3/filters/custom
 
+# Needs rebaseline after bug 97217 is fixed
+# https://bugs.webkit.org/show_bug.cgi?id=97325
+css3/masking/clip-path-circle-relative-overflow.html
+
 # CSS image-set support not yet enabled (needs ENABLE_CSS_IMAGE_SET).
 fast/css/image-set-parsing.html
 fast/css/image-set-parsing-invalid.html
@@ -671,6 +675,8 @@ fast/text/atsui-pointtooffset-calls-cg.html
 fast/text/cg-vs-atsui.html
 fast/text/atsui-spacing-features.html
 
+webkit.org/b/98718 svg/animations/animate-css-xml-attributeType.html [ Failure Pass ]
+
 # <rdar://problem/5718773> Support a minimum antialiased font size
 svg/hixie/text/003.html
 svg/hixie/text/003a.xml
@@ -693,6 +699,7 @@ fast/events/drag-in-frames.html
 fast/events/drag-to-navigate.html
 fast/events/drop-with-file-paths.html
 fast/events/dropzone-004.html
+fast/events/only-valid-drop-targets-receive-file-drop.html
 fast/events/standalone-image-drag-to-editable.html
 http/tests/security/clipboard/clipboard-file-access.html
 http/tests/security/drag-drop-same-unique-origin.html
@@ -715,6 +722,9 @@ fast/events/keydown-numpad-keys.html
 
 # No button tracked
 fast/events/mouseover-button.html
+
+# New test added for https://bugs.webkit.org/show_bug.cgi?id=98452 needs platform specific results
+fast/text/vertical-rl-rtl-linebreak.html [ Failure ]
 
 # The eqqivalent of option-tab doesn not exist in Boomer <rdar://problem/5137230>
 fast/events/frame-tab-focus.html
@@ -795,6 +805,8 @@ fast/dom/DOMURL/check-instanceof-domurl-functions.html
 fast/forms/file/input-file-entries.html
 fast/forms/file/recover-file-input-in-unposted-form.html
 http/tests/security/contentSecurityPolicy/blob-urls-match-self.html
+fast/workers/worker-domurl.html
+media/video-src-blob.html
 
 # Need to add functionality to DumpRenderTree to test IDN <rdar://problem/5301954>
 fast/encoding/idn-security.html
@@ -1117,12 +1129,12 @@ accessibility/aria-label.html
 accessibility/aria-labelledby-overrides-label.html
 accessibility/aria-labelledby-on-input.html
 accessibility/aria-labelledby-stay-within.html
-accessibility/aria-link-supports-press.html
 accessibility/aria-list-and-listitem.html
 accessibility/aria-menubar-menuitems.html
 accessibility/aria-presentational-role.html
 accessibility/aria-readonly.html
 accessibility/aria-roles.html
+accessibility/aria-slider-value.html
 accessibility/aria-scrollbar-role.html
 accessibility/aria-tables.html
 accessibility/aria-tab-roles.html
@@ -1131,6 +1143,7 @@ accessibility/aria-used-on-image-maps.html
 accessibility/button-press-action.html
 accessibility/document-attributes.html
 accessibility/editable-webarea-context-menu-point.html
+accessibility/hidden-legend.html
 accessibility/ignore-spacer-elements.html
 accessibility/image-link.html
 accessibility/image-map1.html
@@ -1156,6 +1169,7 @@ accessibility/radio-button-group-members.html
 accessibility/radio-button-title-label.html
 accessibility/secure-textfield-title-ui.html
 accessibility/spinbutton-value.html
+accessibility/svg-remote-element.html
 accessibility/table-attributes.html
 accessibility/table-cell-spans.html
 accessibility/table-cells.html
@@ -1170,6 +1184,7 @@ accessibility/table-with-rules.html
 accessibility/textarea-insertion-point-line-number.html
 accessibility/textarea-line-for-index.html
 accessibility/textarea-selected-text-range.html
+accessibility/title-ui-element-correctness.html
 accessibility/th-as-title-ui.html
 accessibility/transformed-element.html
 accessibility/visible-elements.html
@@ -1401,6 +1416,9 @@ http/tests/local/blob/send-sliced-data-blob.html
 # BlodBuilder is not enabled
 http/tests/local/blob/send-data-blob.html
 
+# CSS Device Adaptation is not enabled.
+webkit.org/b/95959 css3/device-adapt [ Skip ]
+
 # <https://bugs.webkit.org/show_bug.cgi?id=29289>
 plugins/destroy-during-npp-new.html
 
@@ -1518,7 +1536,6 @@ fast/forms/multiple-form-submission-protection-mouse.html
 fast/events/remove-child-onscroll.html
 fast/events/platform-wheelevent-in-scrolling-div.html
 fast/events/continuous-platform-wheelevent-in-scrolling-div.html
-fast/events/scroll-in-scaled-page-with-overflow-hidden.html
 fast/events/wheelevent-direction-inverted-from-device.html
 fast/events/wheelevent-in-horizontal-scrollbar-in-rtl.html
 fast/events/wheelevent-in-vertical-scrollbar-in-rtl.html
@@ -1553,6 +1570,8 @@ fast/media/media-query-list-04.html
 fast/media/media-query-list-05.html
 fast/media/media-query-list-06.html
 fast/media/media-query-list-07.html
+fast/media/mq-resolution.html
+fast/media/mq-resolution-dpi-dpcm-warning.html
 
 # Need expectations. See https://bugs.webkit.org/show_bug.cgi?id=36461
 fast/repaint/overflow-scroll-body-appear.html
@@ -1679,9 +1698,11 @@ fast/forms/number/number-spinbutton-change-and-input-events.html
 fast/forms/number/number-large-padding.html
 fast/forms/number/number-size.html
 fast/forms/number/number-spinbutton-capturing.html
+fast/forms/number/number-spinbutton-click-in-iframe.html
 fast/forms/number/number-spinbutton-gets-disabled-or-readonly.html
 fast/forms/number/number-spinbutton-state.html
 fast/forms/number/number-spinbutton-in-multi-column.html
+
 
 # Datalist is not yet enabled.
 fast/forms/datalist
@@ -1794,6 +1815,9 @@ inspector/profiler/heap-snapshot-summary-retainers.html
 inspector/profiler/heap-snapshot-summary-sorting-fields.html
 inspector/profiler/heap-snapshot-summary-sorting.html
 inspector/profiler/heap-snapshot-summary-sorting-instances.html
+
+# New inspector/profiler/memory-instrumentation-canvas.html fails on JSC platforms
+webkit.org/b/99001 inspector/profiler/memory-instrumentation-canvas.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=40300
 inspector/debugger/live-edit.html
@@ -1989,6 +2013,7 @@ http/tests/navigation/response204.html
 fast/events/page-visibility-iframe-delete-test.html
 fast/events/page-visibility-iframe-move-test.html
 fast/events/page-visibility-iframe-propagation-test.html
+fast/events/page-visibility-null-view.html
 fast/events/page-visibility-transition-test.html
 
 # Unskip after implementing LayoutTestController::setDefersLoading and ::goBack.
@@ -1996,6 +2021,9 @@ loader/navigation-while-deferring-loads.html
 
 # JSC does not support setIsolatedWorldSecurityOrigin (http://webkit.org/b/61540)
 http/tests/security/isolatedWorld/cross-origin-xhr.html
+
+# JSC also doesn't support setIsolatedWorldContentSecurityPolicy (webkit.org/b/100815)
+http/tests/security/isolatedWorld/bypass-main-world-csp.html
 
 # ENABLE(WEBGL) is disabled
 compositing/backface-visibility/backface-visibility-webgl.html
@@ -2007,6 +2035,7 @@ http/tests/security/webgl-remote-read-remote-image-allowed.html
 http/tests/security/webgl-remote-read-remote-image-allowed-with-credentials.html
 http/tests/security/webgl-remote-read-remote-image-blocked-no-crossorigin.html
 inspector/profiler/webgl
+fast/images/webgl-teximage2d.html
 
 # Tests that require ENABLE(DOWNLOAD_ATTRIBUTE).
 fast/dom/HTMLAnchorElement/anchor-nodownload.html
@@ -2218,7 +2247,6 @@ fast/repaint/table-section-repaint.html
 fast/encoding/utf-16-big-endian.html
 fast/encoding/utf-16-little-endian.html
 fast/inline/continuation-outlines-with-layers-2.html
-fast/inline/continuation-outlines-with-layers.html
 fast/repaint/transform-absolute-in-positioned-container.html
 
 #Vibration API is not implemented.
@@ -2379,6 +2407,9 @@ compositing/rtl/rtl-fixed-overflow-scrolled.html
 compositing/rtl/rtl-fixed-overflow.html
 compositing/rtl/rtl-fixed.html
 
+# LAYER_TREE_INCLUDES_VISIBLE_RECTS option to layerTreeAsText is only applicable to Mac.
+compositing/visible-rect [ Skip ]
+
 # Asserts in RenderLayerBacking::paintIntoLayer
 # https://bugs.webkit.org/show_bug.cgi?id=88149
 compositing/backing/no-backing-foreground-layer.html
@@ -2386,9 +2417,6 @@ compositing/backing/no-backing-foreground-layer.html
 # Asserts in GraphicsContext::platformContext
 # https://bugs.webkit.org/show_bug.cgi?id=88150
 compositing/geometry/clipping-foreground.html
-
-# LAYER_TREE_INCLUDES_VISIBLE_RECTS option to layerTreeAsText is only applicable to Mac.
-compositing/visible-rect [ Skip ]
 
 # Require rebaseline after bug 88171
 # https://bugs.webkit.org/show_bug.cgi?id=88171
@@ -2501,6 +2529,8 @@ plugins/nested-plugin-objects.html
 fast/css/word-space-extra.html
 
 # ENABLE(INPUT_MULTIPLE_FIELDS_UI) is disabled
+fast/forms/date-multiple-fields
+fast/forms/month-multiple-fields
 fast/forms/time-multiple-fields
 
 # Require rebaseline after https://bugs.webkit.org/show_bug.cgi?id=84286
@@ -2595,7 +2625,6 @@ ietestcenter/css3/bordersbackgrounds/border-top-left-radius-values-001.htm
 tables/mozilla/core/table_rules.html
 tables/mozilla/marvin/x_table_rules_groups.xml
 tables/mozilla_expected_failures/collapsing_borders/bug41262-1.html
-tables/mozilla_expected_failures/other/test4.html
 transforms/2d/transform-borderbox.html
 transforms/2d/transform-origin-borderbox.html
 transitions/cross-fade-border-image.html
@@ -2720,6 +2749,16 @@ http/tests/security/location-prototype.html
 http/tests/security/script-crossorigin-loads-correctly.html
 http/tests/security/video-poster-cross-origin-crash.html
 http/tests/security/xss-eval.html
+http/tests/security/cookies/xmlhttprequest.html
+http/tests/security/canvas-cors-with-two-hosts.html
+http/tests/security/cross-frame-access-frameelement.html
+http/tests/security/document-all.html
+http/tests/security/window-named-proto.html
+http/tests/security/window-named-valueOf.html
+http/tests/security/xss-DENIED-synchronous-frame-load-in-javascript-url.html
+http/tests/security/xss-DENIED-window-open-javascript-url-with-spaces.html
+http/tests/security/xss-DENIED-window-open-parent.html
+http/tests/security/xss-DENIED-xsl-document-securityOrigin.xml
 
 # Flaky http/tests/cookie tests
 # https://bugs.webkit.org/show_bug.cgi?id=95805
@@ -2806,11 +2845,116 @@ http/tests/security/xssAuditor/xss-filter-bypass-long-string.html
 http/tests/xmlhttprequest/access-control-allow-lists-starting-with-comma.html
 http/tests/xmlhttprequest/range-test.html
 
-# CSS Device Adaptation is not enabled.
-webkit.org/b/95959 css3/device-adapt [ Skip ]
+#https://bugs.webkit.org/show_bug.cgi?id=97271
+http/tests/security/sandboxed-iframe-origin-add.html
+http/tests/security/sandboxed-iframe-origin-remove.html
 
-# css3-conditionals support is not yet enabled.
-webkit.org/b/86146 css3/supports.html
+#https://bugs.webkit.org/show_bug.cgi?id=96942
+http/tests/inspector/network/network-xhr-replay.html
+
+#AX role needs to be updated on Windows, many test cases involve AX role crash or fail
+accessibility/svg-bounds.html
+
+#https://bugs.webkit.org/show_bug.cgi?id=97485
+http/tests/security/sandboxed-iframe-form-top.html
+
+#https://bugs.webkit.org/show_bug.cgi?id=95530
+http/tests/security/inactive-document-with-empty-security-origin.html
+
+webkit.org/b/98666 fast/dom/HTMLInputElement/input-slider-update.html [ Failure ]
+webkit.org/b/98666 fast/dom/HTMLInputElement/input-slider-update-styled.html [ Failure ]
+webkit.org/b/98666 fast/forms/input-appearance-height.html [ Failure ]
+webkit.org/b/98666 fast/forms/range/input-appearance-range.html [ Failure ]
+webkit.org/b/98666 fast/forms/range/range-thumb-height-percentage.html [ Failure ]
+webkit.org/b/98666 fast/forms/range/slider-padding.html [ Failure ]
+webkit.org/b/98666 fast/forms/range/slider-thumb-shared-style.html [ Failure ]
+webkit.org/b/98666 fast/forms/range/slider-thumb-stylability.html [ Failure ]
+webkit.org/b/98666 fast/multicol/client-rects.html [ Failure ]
+webkit.org/b/98666 fast/repaint/slider-thumb-drag-release.html [ Failure ]
+webkit.org/b/98666 fast/repaint/slider-thumb-float.html [ Failure ]
+webkit.org/b/98666 media/track/track-cue-rendering-vertical.html [ Failure ]
+webkit.org/b/98666 media/track/track-cue-rendering-horizontal.html [ Failure ]
+
+#https://bugs.webkit.org/show_bug.cgi?id=98079
+http/tests/security/cross-origin-local-storage-wk1.html
+
+#Skipped on other platforms here: http://trac.webkit.org/changeset/129897
+svg/custom/clip-mask-negative-scale.svg
+
+#https://bugs.webkit.org/show_bug.cgi?id=98095
+inspector/debugger/dynamic-script-tag.html
+
+#https://bugs.webkit.org/show_bug.cgi?id=98306
+css3/flexbox/flexbox-baseline.html
+#https://bugs.webkit.org/show_bug.cgi?id=99878
+css3/flexbox/flexbox-baseline-margins.html
+
+# css3-conditionals support is not yet enabled. http://webkit.org/b/86146
+css3/supports.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=98169
+http/tests/inspector/stacktraces
+
+# Requires rebaselining after https://bugs.webkit.org/show_bug.cgi?id=11645
+webkit.org/b/11645 fast/table/025.html [ Failure ]
+
+# HIDDEN_PAGE_DOM_TIMER_THROTTLING is disabled
+fast/dom/timer-throttling-hidden-page.html
+
+# CSS_COMPOSITING is disabled (CIFilters don't work on Windows)
+css3/compositing/
+transitions/blendmode-transitions.html
+
+# User Timing is not enabled
+webkit.org/b/84893 http/tests/w3c/webperf/submission/Intel/user-timing
+
+# Resource Timing is not enable yet, skip it.
+webkit.org/b/61138 http/tests/w3c/webperf/submission/Intel/resource-timing
+
+webkit.org/b/100424 editing/selection/user-select-all-selection.html [ Failure ]
+
+# https://bugs.webkit.org/show_bug.cgi?id=99567
+# Not supported on Mac or Windows ports
+inspector/elements/update-shadowdom.html
+
+# Not supported in CFNetwork yet. https://bugs.webkit.org/show_bug.cgi?id=100349
+http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-aborted.html
+http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-overridesexpires.html
+http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-simple.html
+http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-synconmain.html
+http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-twice.html
+http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-worker-aborted.html
+http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-worker-overridesexpires.html
+http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-worker-simple.html
+http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-worker-synconworker.html
+http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-worker-twice.html
+
+# Feature introduced in r132708 is chromium only
+animations/3d/change-transform-in-end-event.html 
+transitions/move-after-transition.html 
+compositing/text-on-large-layer.html 
+compositing/iframes/fixed-position-iframe.html 
+compositing/tiling/backface-preserve-3d-tiled.html 
+compositing/tiling/constrained-layer-size.html 
+compositing/tiling/crash-huge-layer.html 
+compositing/tiling/crash-reparent-tiled-layer.html 
+compositing/tiling/huge-layer-add-remove-child.html 
+compositing/tiling/huge-layer-img.html 
+compositing/tiling/huge-layer-with-layer-children-resize.html 
+compositing/tiling/huge-layer-with-layer-children.html 
+compositing/tiling/preserve3d-tiled.html 
+compositing/tiling/tile-cache-zoomed.html
+
+# Test added in r132901 is for chromium only
+fast/images/exif-orientation-image-document.html
 
 webkit.org/b/100846 inspector-protocol/debugger-pause-dedicated-worker.html [ Skip ]
 webkit.org/b/100846 inspector-protocol/debugger-terminate-dedicated-worker-while-paused.html [ Skip ]
+
+# https://bugs.webkit.org/show_bug.cgi?id=100117
+fast/xmlhttprequest/xmlhttprequest-recursive-sync-event.html
+
+# CSS3_TEXT is disabled on Windows
+fast/css3-text/css3-text-align-last/getComputedStyle/getComputedStyle-text-align-last-inherited.html
+fast/css3-text/css3-text-align-last/getComputedStyle/getComputedStyle-text-align-last.html
+fast/css3-text/css3-text-decoration/getComputedStyle/getComputedStyle-text-decoration-line.html
