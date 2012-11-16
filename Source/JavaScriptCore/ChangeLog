@@ -34,7 +34,7 @@
         to the CFA and CSE. This accomplishes copy propagation for ConvertThis by first
         converting it to an Identity node (which is done by the constant folder since it
         has access to CFA results) and then performing substitution of references to
-        Identity with references to Identity's chuld in the CSE.
+        Identity with references to Identity's child in the CSE.
         
         I'm not aiming for a big speed-up here; I just think that this will be useful for
         the work on https://bugs.webkit.org/show_bug.cgi?id=102327.
