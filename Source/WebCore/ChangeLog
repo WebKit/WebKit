@@ -1,3 +1,12 @@
+2012-11-15  Kenichi Ishibashi  <bashi@chromium.org>
+
+        [Chromium] Unreviewed build fix attempt on win
+
+        Include OpenTypeVerticalData.h
+
+        * platform/graphics/chromium/FontPlatformDataChromiumWin.h:
+        (WebCore):
+
 2012-11-15  Kentaro Hara  <haraken@chromium.org>
 
         Unreviewed, rolling out r134881.

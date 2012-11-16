@@ -35,6 +35,7 @@
 #include "config.h"
 
 #include "FontOrientation.h"
+#include "OpenTypeVerticalData.h"
 #include "SharedBuffer.h"
 #include "SkTypeface.h"
 #include <wtf/Forward.h>
@@ -54,9 +55,6 @@ namespace WebCore {
 SkTypeface* CreateTypefaceFromHFont(HFONT, int* size, int* lfQuality);
 
 class FontDescription;
-#if ENABLE(OPENTYPE_VERTICAL)
-class OpenTypeVerticalData;
-#endif
 
 class FontPlatformData {
 public:
