@@ -1,5 +1,26 @@
 2012-11-16  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r131280
+
+    2012-10-14  Jon Lee  <jonlee@apple.com>
+
+            Allow notification origin permission request when no js callback is provided
+            https://bugs.webkit.org/show_bug.cgi?id=63615
+            <rdar://problem/11059590>
+
+            Reviewed by Sam Weinig.
+
+            Introduce a boolean to determine whether the request was using the legacy or standard API. This way,
+            we do not fall through to calling the standard API's callback if the legacy API's callback is null.
+
+            * WebCoreSupport/WebNotificationClient.mm:
+            (WebCore):
+            (-[WebNotificationPolicyListener initWithVoidCallback:]):
+            (-[WebNotificationPolicyListener allow]):
+            (-[WebNotificationPolicyListener deny]):
+
+2012-11-16  Lucas Forschler  <lforschler@apple.com>
+
         Merge r130565
 
     2012-10-05  Tim Horton  <timothy_horton@apple.com>

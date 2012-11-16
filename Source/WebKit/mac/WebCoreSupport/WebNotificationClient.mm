@@ -54,6 +54,7 @@ using namespace WebCore;
 #endif
 #if ENABLE(LEGACY_NOTIFICATIONS)
     RefPtr<VoidCallback> _voidCallback;
+    bool _isLegacyRequest;
 #endif
 }
 #if ENABLE(NOTIFICATIONS)
@@ -250,7 +251,7 @@ NotificationClient::Permission WebNotificationClient::checkPermission(ScriptExec
     if (!(self = [super init]))
         return nil;
 
-    ASSERT(callback);
+    _isLegacyRequest = true;
     _voidCallback = callback;
     return self;
 }
@@ -259,8 +260,9 @@ NotificationClient::Permission WebNotificationClient::checkPermission(ScriptExec
 - (void)allow
 {
 #if ENABLE(LEGACY_NOTIFICATIONS)
-    if (_voidCallback) {
-        _voidCallback->handleEvent();
+    if (_isLegacyRequest) {
+        if (_voidCallback)
+            _voidCallback->handleEvent();
         return;
     }
 #endif
@@ -272,8 +274,9 @@ NotificationClient::Permission WebNotificationClient::checkPermission(ScriptExec
 - (void)deny
 {
 #if ENABLE(LEGACY_NOTIFICATIONS)
-    if (_voidCallback) {
-        _voidCallback->handleEvent();
+    if (_isLegacyRequest) {
+        if (_voidCallback)
+            _voidCallback->handleEvent();
         return;
     }
 #endif

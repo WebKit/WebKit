@@ -1,5 +1,27 @@
 2012-11-16  Lucas Forschler  <lforschler@apple.com>
 
+    Merge r131280
+
+    2012-10-14  Jon Lee  <jonlee@apple.com>
+
+            Allow notification origin permission request when no js callback is provided
+            https://bugs.webkit.org/show_bug.cgi?id=63615
+            <rdar://problem/11059590>
+
+            Reviewed by Sam Weinig.
+
+            Teach DRT to look at the existing entries in the permission hash map when permission is requested.
+
+            * DumpRenderTree/mac/MockWebNotificationProvider.h: Expose policyForOrigin.
+            * DumpRenderTree/mac/MockWebNotificationProvider.mm:
+            (-[MockWebNotificationProvider setWebNotificationOrigin:permission:]):
+            * DumpRenderTree/mac/UIDelegate.mm:
+            (-[UIDelegate webView:decidePolicyForNotificationRequestFromOrigin:listener:]): Look at whether a
+            policy for the origin already exists. If so, accept or deny the request as appropriate. Otherwise,
+            accept by default.
+
+2012-11-16  Lucas Forschler  <lforschler@apple.com>
+
         Merge r128088
 
     2012-09-10  Brady Eidson  <beidson@apple.com>
