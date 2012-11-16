@@ -64,7 +64,7 @@ SimpleFontData::SimpleFontData(const FontPlatformData& platformData, bool isCust
 #if ENABLE(OPENTYPE_VERTICAL)
     if (platformData.orientation() == Vertical && !isTextOrientationFallback) {
         m_verticalData = platformData.verticalData();
-        m_hasVerticalGlyphs = m_verticalData && m_verticalData->hasVerticalMetrics();
+        m_hasVerticalGlyphs = m_verticalData.get() && m_verticalData->hasVerticalMetrics();
     }
 #endif
 }

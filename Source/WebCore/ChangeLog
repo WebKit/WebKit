@@ -1,3 +1,42 @@
+2012-11-15  Kenichi Ishibashi  <bashi@chromium.org>
+
+        Make OpenTypeVerticalData be ref-counted
+        https://bugs.webkit.org/show_bug.cgi?id=101971
+
+        Reviewed by Tony Chang.
+
+        FontCache::purgeInactiveFontData() uses mark & sweep algorithm to remove unused
+        OpenTypeVerticalData objects. It marks only OpenTypeVerticalData which can be reached
+        via SimpleFontData in gFontDataCache. However, OpenTypeVerticalData can be referred by
+        SimpleFontData which resides in CSSFontFaceSource::m_fontDataTable so the algorithm can
+        delete active OpenTypeVerticalData. To avoid deleting active OpenTypeVerticalData, make
+        it be ref-counted.
+
+        No new tests. No changes in behavior. Checked manually that the use-after-free was fixed.
+
+        * platform/graphics/FontCache.cpp:
+        (WebCore): Use RefPtr instead of OwnPtr for FontVerticalDataCache.
+        (WebCore::FontCache::getVerticalData): Return PassRefPtr<OpenTypeVerticalData>.
+        (WebCore::FontCache::purgeInactiveFontData): Follow the change of OwnPtr -> RefPtr.
+        * platform/graphics/FontCache.h:
+        * platform/graphics/SimpleFontData.cpp:
+        (WebCore::SimpleFontData::SimpleFontData):
+        * platform/graphics/SimpleFontData.h:
+        Use RefPtr instead of raw const pointer for OpenTypeVerticalData.
+        (WebCore::SimpleFontData::verticalData):
+        * platform/graphics/chromium/FontPlatformDataChromiumWin.cpp:
+        (WebCore::FontPlatformData::verticalData): Return PassRefPtr<OpenTypeVerticalData>.
+        * platform/graphics/chromium/FontPlatformDataChromiumWin.h:
+        (FontPlatformData):
+        * platform/graphics/harfbuzz/FontPlatformDataHarfBuzz.cpp:
+        (WebCore::FontPlatformData::verticalData): Ditto.
+        * platform/graphics/harfbuzz/FontPlatformDataHarfBuzz.h:
+        (WebCore):
+        (FontPlatformData):
+        * platform/graphics/opentype/OpenTypeVerticalData.h:
+        (WebCore::OpenTypeVerticalData::create): Added.
+        (OpenTypeVerticalData):
+
 2012-11-15  Xingnan Wang  <xingnan.wang@intel.com>
 
         Optimize the multiply-add in Biquad.cpp::process

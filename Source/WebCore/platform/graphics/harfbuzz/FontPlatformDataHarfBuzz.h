@@ -33,6 +33,7 @@
 
 #include "FontOrientation.h"
 #include "FontRenderStyle.h"
+#include "OpenTypeVerticalData.h"
 #include "SharedBuffer.h"
 #include "SkPaint.h"
 #include "TextOrientation.h"
@@ -47,7 +48,6 @@ typedef uint32_t SkFontID;
 namespace WebCore {
 
 class FontDescription;
-class OpenTypeVerticalData;
 
 #if USE(HARFBUZZ_NG)
 class HarfBuzzNGFace;
@@ -105,7 +105,7 @@ public:
     bool isHashTableDeletedValue() const { return m_typeface == hashTableDeletedFontValue(); }
 
 #if ENABLE(OPENTYPE_VERTICAL)
-    const OpenTypeVerticalData* verticalData() const;
+    PassRefPtr<OpenTypeVerticalData> verticalData() const;
     PassRefPtr<SharedBuffer> openTypeTable(uint32_t table) const;
 #endif
 

@@ -228,7 +228,7 @@ FontPlatformData* FontCache::getCachedFontPlatformData(const FontDescription& fo
 }
 
 #if ENABLE(OPENTYPE_VERTICAL)
-typedef HashMap<FontCache::FontFileKey, OwnPtr<OpenTypeVerticalData>, WTF::IntHash<FontCache::FontFileKey>, WTF::UnsignedWithZeroKeyHashTraits<FontCache::FontFileKey> > FontVerticalDataCache;
+typedef HashMap<FontCache::FontFileKey, RefPtr<OpenTypeVerticalData>, WTF::IntHash<FontCache::FontFileKey>, WTF::UnsignedWithZeroKeyHashTraits<FontCache::FontFileKey> > FontVerticalDataCache;
 
 FontVerticalDataCache& fontVerticalDataCacheInstance()
 {
@@ -236,19 +236,17 @@ FontVerticalDataCache& fontVerticalDataCacheInstance()
     return fontVerticalDataCache;
 }
 
-OpenTypeVerticalData* FontCache::getVerticalData(const FontFileKey& key, const FontPlatformData& platformData)
+PassRefPtr<OpenTypeVerticalData> FontCache::getVerticalData(const FontFileKey& key, const FontPlatformData& platformData)
 {
     FontVerticalDataCache& fontVerticalDataCache = fontVerticalDataCacheInstance();
     FontVerticalDataCache::iterator result = fontVerticalDataCache.find(key);
     if (result != fontVerticalDataCache.end())
-        return result.get()->value.get();
+        return result.get()->value;
 
-    OpenTypeVerticalData* verticalData = new OpenTypeVerticalData(platformData);
-    if (!verticalData->isOpenType()) {
-        delete verticalData;
-        verticalData = 0; // Put 0 in cache to mark that this isn't an OpenType font.
-    }
-    fontVerticalDataCache.set(key, adoptPtr(verticalData));
+    RefPtr<OpenTypeVerticalData> verticalData = OpenTypeVerticalData::create(platformData);
+    if (!verticalData->isOpenType())
+        verticalData.clear();
+    fontVerticalDataCache.set(key, verticalData);
     return verticalData;
 }
 #endif

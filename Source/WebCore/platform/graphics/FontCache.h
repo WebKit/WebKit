@@ -113,7 +113,7 @@ public:
 #else
     typedef AtomicString FontFileKey;
 #endif
-    OpenTypeVerticalData* getVerticalData(const FontFileKey&, const FontPlatformData&);
+    PassRefPtr<OpenTypeVerticalData> getVerticalData(const FontFileKey&, const FontPlatformData&);
 #endif
 
     struct SimpleFontFamily {

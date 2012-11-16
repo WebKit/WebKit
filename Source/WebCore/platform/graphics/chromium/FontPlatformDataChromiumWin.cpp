@@ -192,7 +192,7 @@ SCRIPT_FONTPROPERTIES* FontPlatformData::scriptFontProperties() const
 }
 
 #if ENABLE(OPENTYPE_VERTICAL)
-const OpenTypeVerticalData* FontPlatformData::verticalData() const
+PassRefPtr<OpenTypeVerticalData> FontPlatformData::verticalData() const
 {
     SkFontID id = typeface()->uniqueID();
     return fontCache()->getVerticalData(id, *this);

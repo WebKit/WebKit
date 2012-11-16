@@ -97,7 +97,7 @@ public:
     }
 
 #if ENABLE(OPENTYPE_VERTICAL)
-    const OpenTypeVerticalData* verticalData() const;
+    PassRefPtr<OpenTypeVerticalData> verticalData() const;
     PassRefPtr<SharedBuffer> openTypeTable(uint32_t table) const;
 #endif
 

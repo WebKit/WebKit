@@ -348,7 +348,7 @@ static SkFontTableTag reverseByteOrder(uint32_t tableTag)
     return (tableTag >> 24) | ((tableTag >> 8) & 0xff00) | ((tableTag & 0xff00) << 8) | ((tableTag & 0xff) << 24);
 }
 
-const OpenTypeVerticalData* FontPlatformData::verticalData() const
+PassRefPtr<OpenTypeVerticalData> FontPlatformData::verticalData() const
 {
     return fontCache()->getVerticalData(uniqueID(), *this);
 }

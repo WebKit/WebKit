@@ -29,6 +29,8 @@
 
 #include "Glyph.h"
 #include <wtf/HashMap.h>
+#include <wtf/PassRefPtr.h>
+#include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -37,9 +39,12 @@ class FontPlatformData;
 class GlyphPage;
 class SimpleFontData;
 
-class OpenTypeVerticalData {
+class OpenTypeVerticalData : public RefCounted<OpenTypeVerticalData> {
 public:
-    OpenTypeVerticalData(const FontPlatformData&);
+    static PassRefPtr<OpenTypeVerticalData> create(const FontPlatformData& platformData)
+    {
+        return adoptRef(new OpenTypeVerticalData(platformData));
+    }
 
     bool isOpenType() const { return !m_advanceWidths.isEmpty(); }
     bool hasVerticalMetrics() const { return !m_advanceHeights.isEmpty(); }
@@ -48,6 +53,8 @@ public:
     void substituteWithVerticalGlyphs(const SimpleFontData*, GlyphPage*, unsigned offset, unsigned length) const;
 
 private:
+    explicit OpenTypeVerticalData(const FontPlatformData&);
+
     void loadMetrics(const FontPlatformData&);
     void loadVerticalGlyphSubstitutions(const FontPlatformData&);
     bool hasVORG() const { return !m_vertOriginY.isEmpty(); }
