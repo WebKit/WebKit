@@ -219,4 +219,9 @@ SkBitmap DeferredImageDecoder::createLazyDecodingBitmap()
     return bitmap;
 }
 
+bool DeferredImageDecoder::hotSpot(IntPoint& hotSpot) const
+{
+    return m_actualDecoder ? m_actualDecoder->hotSpot(hotSpot) : false;
+}
+
 } // namespace WebCore

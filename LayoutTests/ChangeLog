@@ -1,3 +1,21 @@
+2012-11-15  Rick Byers  <rbyers@chromium.org>
+
+        custom CSS cursors ignore hotspot values embedded in CUR files
+        https://bugs.webkit.org/show_bug.cgi?id=100059
+
+        Reviewed by Kenneth Russell.
+
+        Add mouse cursor test cases that use CUR files that have embedded hotspot values.
+
+        * fast/events/mouse-cursor-expected.txt:
+        * fast/events/mouse-cursor-multiframecur-expected.txt: Added.
+        * fast/events/mouse-cursor-multiframecur.html: Copied from LayoutTests/fast/events/mouse-cursor.html.
+        * fast/events/mouse-cursor.html:
+        * fast/events/resources/greenbox-3frames.cur: Added.
+        * fast/events/resources/greenbox-hotspot35-4.cur: Added.
+        * fast/events/resources/greenbox-hotspot5-4.cur: Added.
+        * platform/mac/TestExpectations: Skip the multi-frame case on mac because it causes a hang
+
 2012-11-15  Kenichi Ishibashi  <bashi@chromium.org>
 
         Use complex path for the reference text in fast/text/international/combining-marks-position.html

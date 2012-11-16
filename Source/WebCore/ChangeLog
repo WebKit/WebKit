@@ -1,3 +1,36 @@
+2012-11-15  Rick Byers  <rbyers@chromium.org>
+
+        custom CSS cursors ignore hotspot values embedded in CUR files
+        https://bugs.webkit.org/show_bug.cgi?id=100059
+
+        Reviewed by Kenneth Russell.
+
+        Add reading the hotspot values to the ICOImageDecoder (for CUR files only),
+        and plumb it through so that the existing calls to ImageSource::getHotSpot
+        actually return the hot spot value when there is one.
+
+        Tests: fast/events/mouse-cursor.html, fast/events/mouse-cursor-multiframecur.html
+
+        * platform/graphics/ImageSource.cpp:
+        (WebCore::ImageSource::getHotSpot):
+        * platform/graphics/chromium/DeferredImageDecoder.cpp:
+        (WebCore::DeferredImageDecoder::hotSpot):
+        (WebCore::DeferredImageDecoder::hotSpotAtIndex):
+        * platform/graphics/chromium/DeferredImageDecoder.h:
+        (DeferredImageDecoder):
+        * platform/image-decoders/ImageDecoder.h:
+        (WebCore::ImageDecoder::hotSpot):
+        (WebCore::ImageDecoder::hotSpotAtIndex):
+        (ImageDecoder):
+        * platform/image-decoders/ico/ICOImageDecoder.cpp:
+        (WebCore::ICOImageDecoder::hotSpot):
+        (WebCore::ICOImageDecoder::hotSpotAtIndex):
+        (WebCore::ICOImageDecoder::processDirectory):
+        (WebCore::ICOImageDecoder::readDirectoryEntry):
+        * platform/image-decoders/ico/ICOImageDecoder.h:
+        (ICOImageDecoder):
+        (IconDirectoryEntry):
+
 2012-11-15  Kenichi Ishibashi  <bashi@chromium.org>
 
         Make OpenTypeVerticalData be ref-counted

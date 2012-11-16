@@ -7,37 +7,10 @@
 </head>
 <body>
 <p id="description"></p>
-<p><a href=https://bugs.webkit.org/show_bug.cgi?id=100550>Bug 100550</a></p>
-<svg xmlns="http://www.w3.org/2000/svg" 
-     xmlns:xlink="http://www.w3.org/1999/xlink" width="0" height="0">
-  <defs>
-    <cursor id="greenbox" xlink:href="resources/greenbox.png" x="0" y="0"/>
-  </defs>
-</svg>
+<p><a href=https://bugs.webkit.org/show_bug.cgi?id=100550>Bug 100059</a></p>
 <div id="test-container">
   <div>Implicit default cursor</div>
-  <div style='cursor: default'>Explicit default</div>
-  <div style='cursor: auto'>Explicit auto</div>
-  <div style='cursor: none'>No cursor</div>
-  <div style='cursor: pointer'>Pointer</div>
-  <div style='cursor: -webkit-grabbing'>-webkit-grabbing</div>
-  <div style='cursor: url(resources/greenbox.png), hand'>Existing 25x25 image</div>
-  <div style='cursor: url(doesntexist.png), pointer'>Invalid URL with fallback to pointer</div>
-  <div style='cursor: url(doesntexist.png), url(resources/greenbox.png), pointer'>Invalid with fallback to 25x25 image</div>
-  <div style='cursor: url(resources/greenbox.png) 0 0, pointer'>Image with explicit hot spot at (0,0)</div>
-  <div style='cursor: url(resources/greenbox.png) 20 10, pointer'>Image with explicit hot spot at (20,10)</div>
-  <div style='cursor: url(resources/greenbox.png) -1 -1, pointer'>Image with explicit hot spot at (-1,-1)</div>
-  <div style='cursor: url(resources/greenbox.png) 30 30, pointer'>Image with explicit hot spot outside image at (30,30)</div>
-  <div style='cursor: url(resources/greenbox-hotspot5-4.cur), pointer'>Image with implicit hot spot at (5,4)</div>
-  <div style='cursor: url(resources/greenbox-hotspot5-4.cur) 20 10, pointer'>Image with explicit hot spot at (20,10) overriding implicit hot spot</div>
-  <div style='cursor: url(resources/greenbox-hotspot35-4.cur), pointer'>Image with implicit hot spot outside image at (35,4)</div>
-  <div style='cursor: url(resources/onload-image.png), pointer'>Over large image with fallback to pointer</div>
-  <div style='cursor: url(#greenbox), pointer'>SVG cursor</div>
-  <div style='cursor: url(mouse-cursor.html), url(unknown-scheme:cursor.png), pointer'>Multiple invalid cursors with fallback to pointer</div>
-  <div style='cursor: url(#nonexistent), pointer'>Nonexistent SVG cursor with fallback to pointer</div>
-  <div><a href='#'>A link with default cursor</a></div>
-  <div style='cursor: wait'><a href='#'>Link with default cursor overriding wait</a></div>
-  <div style='cursor: wait'><div style='cursor: doesntexist'>Wait cursor which should not be affected by unknown cursor rule</div></div>
+  <div style='cursor: url(resources/greenbox-3frames.cur), pointer'>CUR file with 3 frames, largest of which (2nd frame) is 20x12 with hotspot at (18,11).</div>
 </div>
 <br/>
 <div id="console"></div>
@@ -104,15 +77,7 @@ if (window.testRunner) {
 // Now wait for each image to load or fail to load before starting tests.
 // Without this we can get null images in the cursors - eg. no known size.
 var imagesToLoad = [
-    { url: 'resources/greenbox.png' },
-    { url: 'resources/onload-image.png' },
-    { url: 'resources/greenbox-hotspot5-4.cur' },
-    { url: 'resources/greenbox-hotspot35-4.cur' },
-    { url: 'doesntexist.png', error: true },
-    { url: 'unknown-scheme:cursor.png', error: true },
-    { url: 'mouse-cursor.html', error: true },
-    { url: '#greenbox', error: true },
-    { url: '#nonexistent', error: true } ];
+    { url: 'resources/greenbox-3frames.cur' } ];
 imagesLeftToLoad = imagesToLoad.length;
 for (var i = 0; i < imagesToLoad.length; i++) {
     var img = new Image();

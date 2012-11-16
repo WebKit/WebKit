@@ -45,6 +45,15 @@ Cursor Info: type=Custom hotSpot=0,0 image=25x25
 TEST CASE: Image with explicit hot spot outside image at (30,30)
 Cursor Info: type=Custom hotSpot=0,0 image=25x25
 
+TEST CASE: Image with implicit hot spot at (5,4)
+Cursor Info: type=Custom hotSpot=5,4 image=25x25
+
+TEST CASE: Image with explicit hot spot at (20,10) overriding implicit hot spot
+Cursor Info: type=Custom hotSpot=20,10 image=25x25
+
+TEST CASE: Image with implicit hot spot outside image at (35,4)
+Cursor Info: type=Custom hotSpot=0,0 image=25x25
+
 TEST CASE: Over large image with fallback to pointer
 Cursor Info: type=Hand hotSpot=0,0
 

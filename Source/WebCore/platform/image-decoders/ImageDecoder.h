@@ -376,6 +376,10 @@ namespace WebCore {
         void setMaxNumPixels(int m) { m_maxNumPixels = m; }
 #endif
 
+        // If the image has a cursor hot-spot, stores it in the argument
+        // and returns true. Otherwise returns false.
+        virtual bool hotSpot(IntPoint&) const { return false; }
+
         virtual void reportMemoryUsage(MemoryObjectInfo*) const;
 
     protected:

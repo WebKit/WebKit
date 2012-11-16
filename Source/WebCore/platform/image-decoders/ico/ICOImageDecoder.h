@@ -56,6 +56,7 @@ namespace WebCore {
         // avoid accessing deleted memory, especially when calling this from
         // inside BMPImageReader!
         virtual bool setFailed();
+        virtual bool hotSpot(IntPoint&) const;
 
     private:
         enum ImageType {
@@ -64,9 +65,15 @@ namespace WebCore {
             PNG,
         };
 
+        enum FileType {
+            ICON = 1,
+            CURSOR = 2,
+        };
+
         struct IconDirectoryEntry {
             IntSize m_size;
             uint16_t m_bitCount;
+            IntPoint m_hotSpot;
             uint32_t m_imageOffset;
         };
 
@@ -109,6 +116,10 @@ namespace WebCore {
         // could be decoded.
         bool processDirectoryEntries();
 
+        // Stores the hot-spot for |index| in |hotSpot| and returns true,
+        // or returns false if there is none.
+        bool hotSpotAtIndex(size_t index, IntPoint& hotSpot) const;
+
         // Reads and returns a directory entry from the current offset into
         // |data|.
         IconDirectoryEntry readDirectoryEntry();
@@ -121,6 +132,9 @@ namespace WebCore {
         // Note that this only tracks data _this_ class decodes; once the
         // BMPImageReader takes over this will not be updated further.
         size_t m_decodedOffset;
+
+        // Which type of file (ICO/CUR) this is.
+        FileType m_fileType;
 
         // The headers for the ICO.
         typedef Vector<IconDirectoryEntry> IconDirectoryEntries;

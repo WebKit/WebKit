@@ -1185,3 +1185,6 @@ webkit.org/b/100142 css3/filters/effect-reference.html [ Fail ]
 
 # Mountain Lion and prior do not support custom media data loading
 Bug(jernoble) [ MountainLion Lion SnowLeopard ] media/video-src-blob.html
+
+# Hangs safari apparently due to an issue with weird multi-frame CUR image files
+webkit.org/b/101811 fast/events/mouse-cursor-multiframecur.html [ Skip ]

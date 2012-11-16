@@ -62,6 +62,7 @@ public:
     bool frameHasAlphaAtIndex(size_t index) const;
     unsigned frameBytesAtIndex(size_t index) const;
     ImageOrientation orientation() const;
+    bool hotSpot(IntPoint&) const;
 
 private:
     explicit DeferredImageDecoder(ImageDecoder* actualDecoder);
