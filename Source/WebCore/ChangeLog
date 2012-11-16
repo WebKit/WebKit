@@ -1,3 +1,45 @@
+2012-11-16  Jon Lee  <jonlee@apple.com>
+
+        Change visual look of placeholder
+        https://bugs.webkit.org/show_bug.cgi?id=102149
+        <rdar://problem/12695566>
+
+        Reviewed by Darin Adler.
+
+        Move the button to the lower-right corner. Move the theming into
+        RenderSnapshottedPlugin for now. Eventually we will want to migrate to using the
+        shadow DOM instead, and the metrics of the button are needed for click passthrough.
+
+        * Resources/startButton.png: Added.
+        * Resources/startButton@2x.png: Added.
+        * Resources/startButtonPressed.png: Added.
+        * Resources/startButtonPressed@2x.png: Added.
+        * WebCore.xcodeproj/project.pbxproj: Add button images.
+
+        Maintain variables to track whether the mouse is over the button, and the rect
+        for the button. If the user clicks in the rect, we render a pressed button.
+        * rendering/RenderSnapshottedPlugIn.cpp:
+        (WebCore): Add named constant for bottom and right padding of the button.
+        (WebCore::RenderSnapshottedPlugIn::RenderSnapshottedPlugIn):
+        (WebCore::RenderSnapshottedPlugIn::paintReplaced):
+        (WebCore::startButtonImage): Returns button image.
+        (WebCore::startButtonPressedImage): Returns pressed button image.
+        (WebCore::RenderSnapshottedPlugIn::paintButton): Draw the button image in the
+        lower right hand corner, but only if we are active or hovered.
+        (WebCore::RenderSnapshottedPlugIn::repaintButton): Stubbed to call repaint().
+        (WebCore::RenderSnapshottedPlugIn::handleEvent): Repaint the button if we are
+        hovering over the plugin rect. With a mouse down event, calculate whether the
+        mouse position is within the button rect.
+        (WebCore::RenderSnapshottedPlugIn::layout): Cache the rect representing the button
+        contents.
+        * rendering/RenderSnapshottedPlugIn.h:
+
+        Remove theming function for now.
+        * rendering/RenderTheme.h:
+        (RenderTheme):
+        * rendering/RenderThemeMacShared.h:
+        * rendering/RenderThemeMacShared.mm:
+
 2012-11-16  Eric Seidel  <eric@webkit.org>
 
         Deploy ScriptWrappable to more always-wrapped objects

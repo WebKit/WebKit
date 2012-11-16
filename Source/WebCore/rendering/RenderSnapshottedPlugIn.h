@@ -52,11 +52,16 @@ private:
     virtual bool isSnapshottedPlugIn() const OVERRIDE { return true; }
     virtual void paint(PaintInfo&, const LayoutPoint&) OVERRIDE;
     virtual void paintReplaced(PaintInfo&, const LayoutPoint&) OVERRIDE;
+
     void paintReplacedSnapshot(PaintInfo&, const LayoutPoint&);
+    void paintButton(PaintInfo&, const LayoutPoint&);
+    void repaintButton();
 
     virtual void layout() OVERRIDE;
 
     OwnPtr<RenderImageResource> m_snapshotResource;
+    LayoutRect m_buttonRect;
+    bool m_isMouseInButtonRect;
 };
 
 inline RenderSnapshottedPlugIn* toRenderSnapshottedPlugIn(RenderObject* object)

@@ -98,8 +98,6 @@ public:
     // A view associated to the contained document. Subclasses may not have such a view and return a fake.
     virtual NSView* documentViewFor(RenderObject*) const = 0;
 
-    virtual void paintPlugInSnapshotOverlay(RenderSnapshottedPlugIn*, const PaintInfo&, const LayoutPoint&) const OVERRIDE;
-
 protected:
     RenderThemeMacShared();
     virtual ~RenderThemeMacShared();

@@ -243,8 +243,6 @@ public:
     virtual String fileListDefaultLabel(bool multipleFilesAllowed) const;
     virtual String fileListNameForWidth(const FileList*, const Font&, int width, bool multipleFilesAllowed) const;
 
-    virtual void paintPlugInSnapshotOverlay(RenderSnapshottedPlugIn*, const PaintInfo&, const LayoutPoint&) const { }
-
     virtual bool shouldOpenPickerWithF4Key() const;
 
 protected:

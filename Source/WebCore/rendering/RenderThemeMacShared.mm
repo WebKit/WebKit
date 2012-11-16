@@ -1832,43 +1832,4 @@ String RenderThemeMacShared::fileListNameForWidth(const FileList* fileList, cons
     return StringTruncator::centerTruncate(strToTruncate, width, font, StringTruncator::EnableRoundingHacks);
 }
 
-void RenderThemeMacShared::paintPlugInSnapshotOverlay(RenderSnapshottedPlugIn* renderer, const PaintInfo& paintInfo, const LayoutPoint& paintOffset) const
-{
-    LayoutUnit cWidth = renderer->contentWidth();
-    LayoutUnit cHeight = renderer->contentHeight();
-    if (!cWidth || !cHeight)
-        return;
-
-    GraphicsContext* context = paintInfo.context;
-    GraphicsContextStateSaver saver(*context);
-
-    LayoutSize borderAndPadding(renderer->borderLeft() + renderer->paddingLeft(), renderer->borderTop() + renderer->paddingTop());
-
-    LayoutSize contentSize(cWidth, cHeight);
-    LayoutPoint contentLocation = paintOffset;
-    contentLocation.move(borderAndPadding);
-
-    RefPtr<Gradient> g = Gradient::create(contentLocation, FloatPoint(contentLocation.x(), contentLocation.y() + cHeight));
-    g->addColorStop(0,  Color(.5f, .5, .5, .7));
-    g->addColorStop(.2, Color(.54f, .54, .54, .3));
-    g->addColorStop(.6, Color(.62f, .62, .62, .3));
-    g->addColorStop(1,  Color(.7f, .7, .7, .95));
-    context->setFillGradient(g.release());
-    context->fillRect(pixelSnappedIntRect(LayoutRect(contentLocation, contentSize)));
-
-    static const float diameter = 50, triangleRadius = 12;
-    LayoutPoint center = contentLocation;
-    center.move(cWidth / 2, cHeight / 2);
-    context->setFillColor(Color(.4f, .4, .4, .7), ColorSpaceSRGB);
-    context->fillEllipse(FloatRect(center.x() - diameter / 2, center.y() - diameter / 2, diameter, diameter));
-
-    Path p;
-    p.moveTo(FloatPoint(center.x() - triangleRadius * 3 / 4, center.y() - triangleRadius));
-    p.addLineTo(FloatPoint(center.x() + triangleRadius * 5 / 4, center.y()));
-    p.addLineTo(FloatPoint(center.x() - triangleRadius * 3 / 4, center.y() + triangleRadius));
-    p.closeSubpath();
-    context->setFillColor(Color(1.f, 1.f, 1.f, .9f), ColorSpaceSRGB);
-    context->fillPath(p);
-}
-
 } // namespace WebCore
