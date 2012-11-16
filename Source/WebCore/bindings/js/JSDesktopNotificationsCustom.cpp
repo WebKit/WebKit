@@ -59,9 +59,9 @@ JSValue JSNotificationCenter::requestPermission(ExecState* exec)
         return throwSyntaxError(exec);
 
     // If a callback function is provided as first argument, convert to a VoidCallback.
-    RefPtr<JSVoidCallback> callback;
+    RefPtr<JSCustomVoidCallback> callback;
     if (exec->argument(0).isObject()) {
-        callback = JSVoidCallback::create(exec->argument(0).getObject(), toJSDOMGlobalObject(static_cast<Document*>(context), exec));
+        callback = JSCustomVoidCallback::create(exec->argument(0).getObject(), toJSDOMGlobalObject(static_cast<Document*>(context), exec));
         if (exec->hadException())
             return jsUndefined();
     }
