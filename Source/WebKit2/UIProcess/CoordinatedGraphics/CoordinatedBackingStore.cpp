@@ -49,7 +49,7 @@ void CoordinatedBackingStoreTile::swapBuffers(WebCore::TextureMapper* textureMap
         shouldReset = true;
     }
 
-    ASSERT(textureMapper->maxTextureSize() >= std::max(m_tileRect.size().width(), m_tileRect.size().height()));
+    ASSERT(textureMapper->maxTextureSize().width() >= m_tileRect.size().width() && textureMapper->maxTextureSize().height() >= m_tileRect.size().height());
     if (shouldReset)
         texture->reset(m_tileRect.size(), m_surface->flags() & ShareableBitmap::SupportsAlpha ? BitmapTexture::SupportsAlpha : 0);
 
