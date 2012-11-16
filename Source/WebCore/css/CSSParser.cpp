@@ -186,7 +186,12 @@ static bool hasPrefix(const char* string, unsigned length, const char* prefix)
     }
     return false;
 }
-    
+
+static PassRefPtr<CSSPrimitiveValue> createPrimitiveValuePair(PassRefPtr<CSSPrimitiveValue> first, PassRefPtr<CSSPrimitiveValue> second)
+{
+    return cssValuePool().createValue(Pair::create(first, second));
+}
+
 const CSSParserContext& strictCSSParserContext()
 {
     DEFINE_STATIC_LOCAL(CSSParserContext, strictContext, (CSSStrictMode));
@@ -2227,9 +2232,7 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
         } else
             parsedValue2 = parsedValue1;
 
-        RefPtr<Pair> pair = Pair::create(parsedValue1.release(), parsedValue2.release());
-        RefPtr<CSSPrimitiveValue> val = cssValuePool().createValue(pair.release());
-        addProperty(propId, val.release(), important);
+        addProperty(propId, createPrimitiveValuePair(parsedValue1.release(), parsedValue2.release()), important);
         return true;
     }
     case CSSPropertyTabSize:
@@ -3784,7 +3787,7 @@ PassRefPtr<CSSValue> CSSParser::parseFillSize(CSSPropertyID propId, bool& allowC
 
     if (!parsedValue2)
         return parsedValue1;
-    return cssValuePool().createValue(Pair::create(parsedValue1.release(), parsedValue2.release()));
+    return createPrimitiveValuePair(parsedValue1.release(), parsedValue2.release());
 }
 
 bool CSSParser::parseFillProperty(CSSPropertyID propId, CSSPropertyID& propId1, CSSPropertyID& propId2,
@@ -6181,7 +6184,7 @@ bool CSSParser::parseBorderImageRepeat(RefPtr<CSSValue>& result)
     } else
         secondValue = firstValue;
 
-    result = cssValuePool().createValue(Pair::create(firstValue, secondValue));
+    result = createPrimitiveValuePair(firstValue, secondValue);
     return true;
 }
 
@@ -6476,10 +6479,10 @@ bool CSSParser::parseBorderRadius(CSSPropertyID propId, bool important)
         completeBorderRadii(radii[1]);
 
     ImplicitScope implicitScope(this, PropertyImplicit);
-    addProperty(CSSPropertyBorderTopLeftRadius, cssValuePool().createValue(Pair::create(radii[0][0].release(), radii[1][0].release())), important);
-    addProperty(CSSPropertyBorderTopRightRadius, cssValuePool().createValue(Pair::create(radii[0][1].release(), radii[1][1].release())), important);
-    addProperty(CSSPropertyBorderBottomRightRadius, cssValuePool().createValue(Pair::create(radii[0][2].release(), radii[1][2].release())), important);
-    addProperty(CSSPropertyBorderBottomLeftRadius, cssValuePool().createValue(Pair::create(radii[0][3].release(), radii[1][3].release())), important);
+    addProperty(CSSPropertyBorderTopLeftRadius, createPrimitiveValuePair(radii[0][0].release(), radii[1][0].release()), important);
+    addProperty(CSSPropertyBorderTopRightRadius, createPrimitiveValuePair(radii[0][1].release(), radii[1][1].release()), important);
+    addProperty(CSSPropertyBorderBottomRightRadius, createPrimitiveValuePair(radii[0][2].release(), radii[1][2].release()), important);
+    addProperty(CSSPropertyBorderBottomLeftRadius, createPrimitiveValuePair(radii[0][3].release(), radii[1][3].release()), important);
     return true;
 }
 
@@ -6537,8 +6540,8 @@ bool CSSParser::parseCounter(CSSPropertyID propId, int defaultValue, bool import
                     m_valueList->next();
                 }
 
-                list->append(cssValuePool().createValue(Pair::create(counterName.release(),
-                    cssValuePool().createValue(i, CSSPrimitiveValue::CSS_NUMBER))));
+                list->append(createPrimitiveValuePair(counterName.release(),
+                    cssValuePool().createValue(i, CSSPrimitiveValue::CSS_NUMBER)));
                 state = ID;
                 continue;
             }

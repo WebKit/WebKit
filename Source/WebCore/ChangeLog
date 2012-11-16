@@ -1,3 +1,24 @@
+2012-11-16  Alexis Menard  <alexis@webkit.org>
+
+        Factorize the creation of primitive values with a pair into a function.
+        https://bugs.webkit.org/show_bug.cgi?id=102485
+
+        Reviewed by Antti Koivisto.
+
+        The pattern is already existing in various call sites inside CSSParser
+        and more will be added in the future (see bug 102104).
+
+        No new tests : It's a refactoring only, the tests should cover it.
+
+        * css/CSSParser.cpp:
+        (WebCore):
+        (WebCore::createPrimitiveValuePair):
+        (WebCore::CSSParser::parseValue):
+        (WebCore::CSSParser::parseFillSize):
+        (WebCore::CSSParser::parseBorderImageRepeat):
+        (WebCore::CSSParser::parseBorderRadius):
+        (WebCore::CSSParser::parseCounter):
+
 2012-11-16  Mark Pilgrim  <pilgrim@chromium.org>
 
         Expand PlatformCookieJar interface to allow for other ports
