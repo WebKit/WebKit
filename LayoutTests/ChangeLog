@@ -1,3 +1,13 @@
+2012-11-16  Mike West  <mkwst@chromium.org>
+
+        [chromium] Unreviewed gardening.
+
+        http/tests/security/sandboxed-iframe-form-top.html is leaking state into
+        the next test, and should have been skipped for Chromium as well as mac
+        in r134789. This patch remedies that oversight.
+
+        * platform/chromium/TestExpectations:
+
 2012-11-16  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: don't show an Error when evaluating a watch expression results in an exception
