@@ -34,7 +34,19 @@ use lib $FindBin::Bin;
 use webkitdirs;
 use VCSUtils;
 
-push(@ARGV, "--chromium");
 setConfiguration();
+
+# Defer to Android's test runners for running webkit_unit_tests on a device.
+if (checkForArgumentAndRemoveFromARGV('--platform=chromium-android')) {
+    my @runTestCommand = ('build/android/run_tests.py', '--verbose', '--webkit', '--out-directory', sourceDir() . '/out', '-s', 'webkit_unit_tests');
+    if (configuration() eq "Release") {
+        push @runTestCommand, '--release';
+    }
+
+    chdir(sourceDir() . '/Source/WebKit/chromium') or die $!;
+    exit exitStatus(system(@runTestCommand));
+}
+
+push(@ARGV, "--chromium");
 my $pathToBinary = productDir() . "/webkit_unit_tests";
 exit exitStatus(system ($pathToBinary, @ARGV));
