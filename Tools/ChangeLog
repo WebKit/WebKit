@@ -1,3 +1,29 @@
+2012-11-16  Jochen Eisinger  <jochen@chromium.org>
+
+        [chromium] delete unused testRunner methods
+        https://bugs.webkit.org/show_bug.cgi?id=102479
+
+        Reviewed by Adam Barth.
+
+        These methods aren't used by any layout test. Remove them to avoid bit rot
+
+        * DumpRenderTree/chromium/DRTTestRunner.cpp:
+        (DRTTestRunner::DRTTestRunner):
+        (DRTTestRunner::reset):
+        * DumpRenderTree/chromium/DRTTestRunner.h:
+        (DRTTestRunner):
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::shouldBeginEditing):
+        (WebViewHost::shouldEndEditing):
+        (WebViewHost::shouldInsertNode):
+        (WebViewHost::shouldInsertText):
+        (WebViewHost::shouldChangeSelectedRange):
+        (WebViewHost::shouldDeleteRange):
+        (WebViewHost::shouldApplyStyle):
+        (WebViewHost::startDragging):
+        (WebViewHost::enterFullScreenNow):
+        (WebViewHost::exitFullScreenNow):
+
 2012-11-15  Alexey Proskuryakov  <ap@apple.com>
 
         Private Browsing is a per-page setting that sets a global value

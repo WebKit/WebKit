@@ -139,11 +139,6 @@ public:
     // It takes no arguments, and ignores any that may be present.
     void dumpCreateView(const CppArgumentList&, CppVariant*);
 
-    // When called with a boolean argument, this sets a flag that controls
-    // whether content-editable elements accept editing focus when an editing
-    // attempt is made. It ignores any additional arguments.
-    void setAcceptsEditing(const CppArgumentList&, CppVariant*);
-
     // Functions for dealing with windows. By default we block all new windows.
     void windowCount(const CppArgumentList&, CppVariant*);
     void setCanOpenWindows(const CppArgumentList&, CppVariant*);
@@ -163,10 +158,6 @@ public:
     void queueNonLoadingScript(const CppArgumentList&, CppVariant*);
     void queueLoad(const CppArgumentList&, CppVariant*);
     void queueLoadHTMLString(const CppArgumentList&, CppVariant*);
-
-    // Although this is named "objC" to match the Mac version, it actually tests
-    // the identity of its two arguments in C++.
-    void objCIdentityIsEqual(const CppArgumentList&, CppVariant*);
 
     // Changes the cookie policy from the default to allow all cookies.
     void setAlwaysAcceptCookies(const CppArgumentList&, CppVariant*);
@@ -220,10 +211,6 @@ public:
     // Converts a URL starting with file:///tmp/ to the local mapping.
     void pathToLocalResource(const CppArgumentList&, CppVariant*);
 
-    // Sets a bool such that when a drag is started, we fill the drag clipboard
-    // with a fake file object.
-    void addFileToPasteboardOnDrag(const CppArgumentList&, CppVariant*);
-
     // Executes an internal command (superset of document.execCommand() commands).
     void execCommand(const CppArgumentList&, CppVariant*);
 
@@ -249,7 +236,6 @@ public:
     void enableAutoResizeMode(const CppArgumentList&, CppVariant*);
     void disableAutoResizeMode(const CppArgumentList&, CppVariant*);
     void numberOfActiveAnimations(const CppArgumentList&, CppVariant*);
-    void disableImageLoading(const CppArgumentList&, CppVariant*);
     void setIconDatabaseEnabled(const CppArgumentList&, CppVariant*);
     void dumpSelectionRect(const CppArgumentList&, CppVariant*);
 
@@ -272,7 +258,6 @@ public:
 
     // The following are only stubs.
     // FIXME: Implement any of these that are needed to pass the layout tests.
-    void dumpAsWebArchive(const CppArgumentList&, CppVariant*);
     void dumpTitleChanges(const CppArgumentList&, CppVariant*);
     void setMainFrameIsFirstResponder(const CppArgumentList&, CppVariant*);
     void display(const CppArgumentList&, CppVariant*);
@@ -281,9 +266,6 @@ public:
     void repaintSweepHorizontally(const CppArgumentList&, CppVariant*);
     void clearBackForwardList(const CppArgumentList&, CppVariant*);
     void keepWebHistory(const CppArgumentList&, CppVariant*);
-    void storeWebScriptObject(const CppArgumentList&, CppVariant*);
-    void accessStoredWebScriptObject(const CppArgumentList&, CppVariant*);
-    void objCClassNameOf(const CppArgumentList&, CppVariant*);
     void addDisallowedURL(const CppArgumentList&, CppVariant*);
     void callShouldCloseOnWebView(const CppArgumentList&, CppVariant*);
     void setCallCloseOnWebViews(const CppArgumentList&, CppVariant*);
@@ -487,9 +469,7 @@ public:
     bool shouldGeneratePixelResults() { return m_generatePixelResults; }
     void setShouldGeneratePixelResults(bool value) { m_generatePixelResults = value; }
     bool shouldDumpCreateView() { return m_dumpCreateView; }
-    bool acceptsEditing() { return m_acceptsEditing; }
     bool canOpenWindows() { return m_canOpenWindows; }
-    bool shouldAddFileToPasteboard() { return m_shouldAddFileToPasteboard; }
     bool stopProvisionalFrameLoads() { return m_stopProvisionalFrameLoads; }
     bool deferMainResourceDataLoad() { return m_deferMainResourceDataLoad; }
     void setShowDebugLayerTree(bool value) { m_showDebugLayerTree = value; }
@@ -508,9 +488,6 @@ public:
 
     bool testRepaint() const { return m_testRepaint; }
     bool sweepHorizontally() const { return m_sweepHorizontally; }
-
-    void setHasCustomFullScreenBehavior(const CppArgumentList&, CppVariant*);
-    bool hasCustomFullScreenBehavior() const { return m_hasCustomFullScreenBehavior; }
 
     // Called by the webview delegate when the toplevel frame load is done.
     void locationChangeDone();
@@ -661,11 +638,6 @@ private:
     // is invoked.
     bool m_dumpCreateView;
 
-    // If true, the element will be treated as editable. This value is returned
-    // from various editing callbacks that are called just before edit operations
-    // are allowed.
-    bool m_acceptsEditing;
-
     // If true, new windows can be opened via javascript or by plugins. By
     // default, set to false and can be toggled to true using
     // setCanOpenWindows().
@@ -682,9 +654,6 @@ private:
     // If true and test_repaint_ is true as well, pixel dump will be produced as
     // a series of 1px-wide, view-tall paints across the width of the view.
     bool m_sweepHorizontally;
-
-    // If true and a drag starts, adds a file to the drag&drop clipboard.
-    bool m_shouldAddFileToPasteboard;
 
     // If true, stops provisional frame loads during the
     // DidStartProvisionalLoadForFrame callback.
@@ -727,10 +696,6 @@ private:
     OwnPtr<WebKit::WebDeliveredIntentClient> m_intentClient;
 
     bool m_shouldStayOnPageAfterHandlingBeforeUnload;
-
-    // If true, calls to WebViewHost::enter/exitFullScreenNow will not result in 
-    // calls to Document::will/did/Enter/ExitFullScreen.
-    bool m_hasCustomFullScreenBehavior;
 };
 
 #endif // DRTTestRunner_h
