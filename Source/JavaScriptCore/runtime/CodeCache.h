@@ -56,7 +56,7 @@ template <typename KeyType, typename EntryType, int CacheSize> class CacheMap {
     typedef typename HashMap<KeyType, unsigned>::iterator iterator;
 public:
     CacheMap()
-        : m_randomGenerator((static_cast<uint32_t>(randomNumber() * UINT32_MAX)))
+        : m_randomGenerator((static_cast<uint32_t>(randomNumber() * std::numeric_limits<uint32_t>::max())))
     {
     }
     const EntryType* find(const KeyType& key)

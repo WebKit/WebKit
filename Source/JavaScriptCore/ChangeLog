@@ -1,3 +1,12 @@
+2012-11-16  Patrick Gansterer  <paroga@webkit.org>
+
+        Build fix for WinCE after r133688.
+
+        Use numeric_limits<uint32_t>::max() instead of UINT32_MAX.
+
+        * runtime/CodeCache.h:
+        (JSC::CacheMap::CacheMap):
+
 2012-11-15  Filip Pizlo  <fpizlo@apple.com>
 
         ClassInfo.h should have correct indentation.
