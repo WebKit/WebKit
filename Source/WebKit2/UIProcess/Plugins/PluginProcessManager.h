@@ -56,8 +56,6 @@ public:
     void getSitesWithData(const PluginModuleInfo&, WebPluginSiteDataManager*, uint64_t callbackID);
     void clearSiteData(const PluginModuleInfo&, WebPluginSiteDataManager*, const Vector<String>& sites, uint64_t flags, uint64_t maxAgeInSeconds, uint64_t callbackID);
 
-    void pluginSyncMessageSendTimedOut(const String& pluginPath);
-
 private:
     PluginProcessManager();
 

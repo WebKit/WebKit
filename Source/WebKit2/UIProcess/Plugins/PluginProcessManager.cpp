@@ -74,15 +74,6 @@ void PluginProcessManager::clearSiteData(const PluginModuleInfo& plugin, WebPlug
     pluginProcess->clearSiteData(webPluginSiteDataManager, sites, flags, maxAgeInSeconds, callbackID);
 }
 
-void PluginProcessManager::pluginSyncMessageSendTimedOut(const String& pluginPath)
-{
-    PluginProcessProxy* pluginProcess = pluginProcessWithPath(pluginPath);
-    if (!pluginProcess)
-        return;
-
-    pluginProcess->terminate();
-}
-
 PluginProcessProxy* PluginProcessManager::pluginProcessWithPath(const String& pluginPath)
 {
     for (size_t i = 0; i < m_pluginProcesses.size(); ++i) {

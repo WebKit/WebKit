@@ -237,10 +237,6 @@ void WebProcessConnection::didReceiveInvalidMessage(CoreIPC::Connection*, CoreIP
     // FIXME: Implement.
 }
 
-void WebProcessConnection::syncMessageSendTimedOut(CoreIPC::Connection*)
-{
-}
-
 void WebProcessConnection::createPluginInternal(const PluginCreationParameters& creationParameters, bool& result, bool& wantsWheelEvents, uint32_t& remoteLayerClientID)
 {
     OwnPtr<PluginControllerProxy> pluginControllerProxy = PluginControllerProxy::create(this, creationParameters);

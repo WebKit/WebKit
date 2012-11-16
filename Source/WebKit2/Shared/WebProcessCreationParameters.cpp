@@ -63,9 +63,6 @@ void WebProcessCreationParameters::encode(CoreIPC::ArgumentEncoder* encoder) con
     encoder->encode(shouldAlwaysUseComplexTextCodePath);
     encoder->encode(shouldUseFontSmoothing);
     encoder->encode(iconDatabaseEnabled);
-#if ENABLE(PLUGIN_PROCESS)
-    encoder->encode(disablePluginProcessMessageTimeout);
-#endif
     encoder->encode(languages);
     encoder->encode(textCheckerState);
     encoder->encode(fullKeyboardAccessEnabled);
@@ -134,10 +131,6 @@ bool WebProcessCreationParameters::decode(CoreIPC::ArgumentDecoder* decoder, Web
         return false;
     if (!decoder->decode(parameters.iconDatabaseEnabled))
         return false;
-#if ENABLE(PLUGIN_PROCESS)
-    if (!decoder->decode(parameters.disablePluginProcessMessageTimeout))
-        return false;
-#endif
 
     if (!decoder->decode(parameters.languages))
         return false;

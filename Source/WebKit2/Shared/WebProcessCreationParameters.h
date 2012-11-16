@@ -73,10 +73,6 @@ struct WebProcessCreationParameters {
 
     bool iconDatabaseEnabled;
 
-#if ENABLE(PLUGIN_PROCESS)
-    bool disablePluginProcessMessageTimeout;
-#endif
-
     Vector<String> languages;
 
     TextCheckerState textCheckerState;
