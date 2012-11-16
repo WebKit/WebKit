@@ -1,5 +1,13 @@
 2012-11-15  Kentaro Hara  <haraken@chromium.org>
 
+        Unreviewed. Rebaselined images.
+
+        * platform/chromium-linux/compositing/checkerboard-expected.png:
+        * platform/chromium-mac-lion/compositing/checkerboard-expected.png: Added.
+        * platform/chromium-win/compositing/checkerboard-expected.png:
+
+2012-11-15  Kentaro Hara  <haraken@chromium.org>
+
         Unreviewed. Marked fast/forms/validation-message-appearance.html as flaky.
 
         * platform/chromium/TestExpectations:
