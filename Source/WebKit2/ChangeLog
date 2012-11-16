@@ -1,3 +1,13 @@
+2012-11-16  Daniel Bates  <dbates@webkit.org>
+
+        Attempt to fix the Apple Windows Debug build after http://trac.webkit.org/changeset/134908
+        (https://bugs.webkit.org/show_bug.cgi?id=102354).
+
+        Add symbol.
+
+        * win/WebKit2.def:
+        * win/WebKit2CFLite.def:
+
 2012-11-16  KyungTae Kim  <ktf.kim@samsung.com>
 
         [WK2] Bug on ASSERT code in CoordinatedBackingStore.cpp
