@@ -2819,12 +2819,6 @@ webkit.org/b/96720 fast/forms/time-multiple-fields/time-multiple-fields-preserve
 webkit.org/b/96720 fast/forms/date-multiple-fields/date-multiple-fields-preserve-value-after-history-back.html [ Pass Timeout ]
 webkit.org/b/98906 platform/chromium/fast/forms/suggestion-picker/date-suggestion-picker-mouse-operations.html [ Pass Failure ]
 
-# Need rebaseline
-webkit.org/b/102181 platform/chromium/fast/forms/calendar-picker/calendar-picker-appearance-ru.html [ Pass ImageOnlyFailure Missing ]
-webkit.org/b/102181 platform/chromium/fast/forms/suggestion-picker/month-suggestion-picker-appearance.html [ Pass ImageOnlyFailure Missing ]
-webkit.org/b/102181 platform/chromium/fast/forms/suggestion-picker/month-suggestion-picker-appearance-rtl.html [ Pass ImageOnlyFailure Missing ]
-webkit.org/b/102181 platform/chromium/fast/forms/suggestion-picker/month-suggestion-picker-appearance-with-scroll-bar.html [ Pass ImageOnlyFailure Missing ]
-
 # New test added in r87324
 crbug.com/83994 [ Win ] platform/win/plugins/call-javascript-that-destroys-plugin.html [ Failure ]
 
@@ -3643,11 +3637,6 @@ webkit.org/b/93624 [ Win Release ] inspector/console/console-format-collections.
 # Started failing around r122770
 webkit.org/b/91445 [ Linux ] plugins/embed-attributes-style.html [ ImageOnlyFailure Pass ]
 
-webkit.org/b/101561 [ Win Linux ] platform/chromium/fast/forms/calendar-picker/month-picker-appearance.html [ Missing ]
-webkit.org/b/101561 [ Win Linux ] platform/chromium/fast/forms/calendar-picker/month-picker-appearance-step.html [ Missing ]
-webkit.org/b/101561 [ Mac ] platform/chromium/fast/forms/calendar-picker/month-picker-appearance.html [ Image ]
-webkit.org/b/101561 [ Mac ] platform/chromium/fast/forms/calendar-picker/month-picker-appearance-step.html [ Image ]
-
 # Needs rebaseline after bug 97217 is fixed
 webkit.org/b/97325 css3/masking/clip-path-circle-relative-overflow.html [ ImageOnlyFailure Pass ]
 
@@ -4160,9 +4149,6 @@ webkit.org/b/100955 http/tests/security/contentSecurityPolicy/object-src-none-bl
 webkit.org/b/101377 [ Linux Debug ] platform/chromium-linux/fast/text/international/complex-joining-using-gpos.html [ Failure ImageOnlyFailure Pass ]
 
 webkit.org/b/101408 platform/chromium/fast/forms/calendar-picker/calendar-picker-key-operations.html [ Failure Pass ]
-
-webkit.org/b/101561 platform/chromium/fast/forms/calendar-picker/week-picker-appearance.html [ ImageOnlyFailure Pass ]
-webkit.org/b/101561 platform/chromium/fast/forms/calendar-picker/week-picker-appearance-step.html [ ImageOnlyFailure Pass ]
 
 webkit.org/b/101539 [ Linux Win ] editing/execCommand/switch-list-type-with-orphaned-li.html [ Failure ]
 
