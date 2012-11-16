@@ -37,6 +37,16 @@
 
 2012-11-15  Roger Fong  <roger_fong@apple.com>
 
+        Unreviewed. CSS3_TEXT is not enabled on Windows. 
+        Skipping tests:
+        fast/css3-text/css3-text-align-last/getComputedStyle/getComputedStyle-text-align-last-inherited.html
+        fast/css3-text/css3-text-align-last/getComputedStyle/getComputedStyle-text-align-last.html
+        fast/css3-text/css3-text-decoration/getComputedStyle/getComputedStyle-text-decoration-line.html
+
+        * platform/win/TestExpectations:
+
+2012-11-15  Roger Fong  <roger_fong@apple.com>
+
         Unreviewed. More subpixel layout test rebaselines for Windows.
 
         * platform/win/fast/multicol/vertical-rl/float-multicol-expected.txt: Added.
