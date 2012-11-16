@@ -1,3 +1,20 @@
+2012-11-16  Eugene Klyuchnikov  <eustas.bug@gmail.com>
+
+        Web Inspector: Workaround to show shortcuts for panels that hasn't been loaded.
+        https://bugs.webkit.org/show_bug.cgi?id=102488
+
+        Reviewed by Vsevolod Vlasov.
+
+        Panels are lazily loaded / instantiated.
+        Panel constructors register keyboard shortcuts.
+
+        When user open shortcuts screen all panel should be loaded.
+        Otherwise some shortcuts will be missing.
+
+        * inspector/front-end/ShortcutsScreen.js: Added callback invokation.
+        * inspector/front-end/inspector.js:
+        Provided callback that loads all panels.
+
 2012-11-16  Kentaro Hara  <haraken@chromium.org>
 
         [V8] Remove IsSubType() from CodeGeneratorV8.pm

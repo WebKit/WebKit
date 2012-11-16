@@ -379,10 +379,11 @@ WebInspector.doLoadedDone = function()
 
 WebInspector._doLoadedDoneWithCapabilities = function()
 {
-    WebInspector.shortcutsScreen = new WebInspector.ShortcutsScreen();
-    this._registerShortcuts();
+    var panelDescriptors = this._panelDescriptors();
+    WebInspector.shortcutsScreen = new WebInspector.ShortcutsScreen(this._registerShortcuts.bind(this, panelDescriptors));
 
     // set order of some sections explicitly
+    WebInspector.shortcutsScreen.section(WebInspector.UIString("All Panels"));
     WebInspector.shortcutsScreen.section(WebInspector.UIString("Console"));
     WebInspector.shortcutsScreen.section(WebInspector.UIString("Elements Panel"));
 
@@ -447,7 +448,6 @@ WebInspector._doLoadedDoneWithCapabilities = function()
 
     this.toolbar = new WebInspector.Toolbar();
     WebInspector.startBatchUpdate();
-    var panelDescriptors = this._panelDescriptors();
     for (var i = 0; i < panelDescriptors.length; ++i)
         WebInspector.inspectorView.addPanel(panelDescriptors[i]);
     WebInspector.endBatchUpdate();
@@ -613,7 +613,7 @@ WebInspector.openResource = function(resourceURL, inResourcesPanel)
         InspectorFrontendHost.openInNewTab(resourceURL);
 }
 
-WebInspector._registerShortcuts = function()
+WebInspector._registerShortcuts = function(panelDescriptors)
 {
     var shortcut = WebInspector.KeyboardShortcut;
     var section = WebInspector.shortcutsScreen.section(WebInspector.UIString("All Panels"));
@@ -648,6 +648,9 @@ WebInspector._registerShortcuts = function()
 
     var goToShortcut = WebInspector.GoToLineDialog.createShortcut();
     section.addKey(goToShortcut.name, WebInspector.UIString("Go to line"));
+
+    for (var i = 0; i < panelDescriptors.length; ++i)
+        panelDescriptors[i].panel();
 }
 
 WebInspector.documentKeyDown = function(event)

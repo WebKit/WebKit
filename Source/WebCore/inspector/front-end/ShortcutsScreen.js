@@ -31,9 +31,10 @@
 /**
  * @constructor
  */
-WebInspector.ShortcutsScreen = function()
+WebInspector.ShortcutsScreen = function(finishShortcutsRegistrationCallback)
 {
     this._sections = {};
+    this._finishShortcutsRegistrationCallback = finishShortcutsRegistrationCallback;
 }
 
 WebInspector.ShortcutsScreen.prototype = {
@@ -47,6 +48,10 @@ WebInspector.ShortcutsScreen.prototype = {
 
     createShortcutsTabView: function()
     {
+        if (this._finishShortcutsRegistrationCallback)
+            this._finishShortcutsRegistrationCallback();
+        delete this._finishShortcutsRegistrationCallback;
+
         var orderedSections = [];
         for (var section in this._sections)
             orderedSections.push(this._sections[section]);
