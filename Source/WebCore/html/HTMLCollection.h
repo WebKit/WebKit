@@ -25,6 +25,7 @@
 
 #include "CollectionType.h"
 #include "DynamicNodeList.h"
+#include "ScriptWrappable.h"
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/PassOwnPtr.h>
@@ -64,7 +65,7 @@ private:
     friend class DynamicNodeListCacheBase;
 };
 
-class HTMLCollection : public RefCounted<HTMLCollection>, public HTMLCollectionCacheBase {
+class HTMLCollection : public ScriptWrappable, public RefCounted<HTMLCollection>, public HTMLCollectionCacheBase {
 public:
     static PassRefPtr<HTMLCollection> create(Node* base, CollectionType);
     virtual ~HTMLCollection();

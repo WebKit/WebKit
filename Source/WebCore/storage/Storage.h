@@ -27,6 +27,7 @@
 #define Storage_h
 
 #include "DOMWindowProperty.h"
+#include "ScriptWrappable.h"
 #include "StorageArea.h"
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
@@ -37,7 +38,7 @@ namespace WebCore {
     class Frame;
     typedef int ExceptionCode;
 
-    class Storage : public RefCounted<Storage>, public DOMWindowProperty {
+    class Storage : public ScriptWrappable, public RefCounted<Storage>, public DOMWindowProperty {
     public:
         static PassRefPtr<Storage> create(Frame*, PassRefPtr<StorageArea>);
         ~Storage();

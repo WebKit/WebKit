@@ -23,6 +23,7 @@
 
 #include "CSSPropertyNames.h"
 #include "CSSRule.h"
+#include "ScriptWrappable.h"
 #include "StylePropertySet.h"
 #include <wtf/Forward.h>
 
@@ -35,7 +36,7 @@ class StyledElement;
 
 typedef int ExceptionCode;
 
-class CSSStyleDeclaration {
+class CSSStyleDeclaration : public ScriptWrappable {
     WTF_MAKE_NONCOPYABLE(CSSStyleDeclaration); WTF_MAKE_FAST_ALLOCATED;
 public:
     virtual ~CSSStyleDeclaration() { }

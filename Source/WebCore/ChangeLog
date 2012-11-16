@@ -1,3 +1,39 @@
+2012-11-16  Eric Seidel  <eric@webkit.org>
+
+        Deploy ScriptWrappable to more always-wrapped objects
+        https://bugs.webkit.org/show_bug.cgi?id=102539
+
+        Reviewed by Adam Barth.
+
+        Add the ScriptWrappable baseclass to:
+        CSSStyleDeclaration (anttik tells me these should only be used from JS, even though some old Editing code used to use them)
+        ClientRect (element.getBoundingClientRects)
+        Event (Not all events end up wrapped, but any which live past dispatch do)
+        NodeList (this covers Static and Dynamic node list types, like document.all)
+        HTMLCollection (separate from NodeList, for things like table.rows)
+        Storage (for window.storage, always wrapped)
+        XMLHttpRequest (always wrapped, created from JS)
+
+        This should be a small memory savings as the inline pointer is only 4-8 bytes
+        instead of the hashmap entry which would be 8-16.  This may also show up
+        on benchmarks which repeatedly access these objects (like window.storage).
+
+        These were found by adding a couple lines of logging-code to
+        WebCore::createWrapper when we were in the main world, but took the
+        HashMap (instead of inline) storage path. I used sort and uniq -c
+        to find the most-frequently wrapped objects (while surfing
+        a few common sites) and came up with this list.  There are still a few
+        more complicated objects (like CSSStyleDeclaration) which may benifit
+        from inline-wrapper-access and will be covered in a later patch.
+
+        * css/CSSStyleDeclaration.h:
+        * dom/ClientRect.h:
+        * dom/Event.h:
+        * dom/NodeList.h:
+        * html/HTMLCollection.h:
+        * storage/Storage.h:
+        * xml/XMLHttpRequest.h:
+
 2012-11-16  Jon Lee  <jonlee@apple.com>
 
         Simulated events instances do not all have the same underlying event

@@ -24,6 +24,7 @@
 #ifndef NodeList_h
 #define NodeList_h
 
+#include "ScriptWrappable.h"
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
 
@@ -31,7 +32,7 @@ namespace WebCore {
 
     class Node;
 
-    class NodeList : public RefCounted<NodeList> {
+    class NodeList : public ScriptWrappable, public RefCounted<NodeList> {
     public:
         virtual ~NodeList() { }
 
