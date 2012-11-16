@@ -1172,6 +1172,26 @@ void Page::resetSeenPlugins()
     m_seenPlugins.clear();
 }
 
+bool Page::hasSeenAnyMediaEngine() const
+{
+    return !m_seenMediaEngines.isEmpty();
+}
+
+bool Page::hasSeenMediaEngine(const String& engineDescription) const
+{
+    return m_seenMediaEngines.contains(engineDescription);
+}
+
+void Page::sawMediaEngine(const String& engineDescription)
+{
+    m_seenMediaEngines.add(engineDescription);
+}
+
+void Page::resetSeenMediaEngines()
+{
+    m_seenMediaEngines.clear();
+}
+
 Page::PageClients::PageClients()
     : alternativeTextClient(0)
     , chromeClient(0)

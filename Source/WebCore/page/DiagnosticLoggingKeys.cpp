@@ -64,6 +64,18 @@ const String& DiagnosticLoggingKeys::pageContainsAtLeastOnePluginKey()
     return key;
 }
 
+const String& DiagnosticLoggingKeys::pageContainsMediaEngineKey()
+{
+    DEFINE_STATIC_LOCAL(const String, key, (String("pageContainsMediaEngine")));
+    return key;
+}
+
+const String& DiagnosticLoggingKeys::pageContainsAtLeastOneMediaEngineKey()
+{
+    DEFINE_STATIC_LOCAL(const String, key, (String("pageContainsAtLeastOneMediaEngine")));
+    return key;
+}
+
 const String& DiagnosticLoggingKeys::passKey()
 {
     DEFINE_STATIC_LOCAL(const String, key, ("pass"));
