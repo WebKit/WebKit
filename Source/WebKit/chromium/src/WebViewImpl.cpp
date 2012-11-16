@@ -2934,7 +2934,7 @@ void WebViewImpl::setDeviceScaleFactor(float scaleFactor)
 
     page()->setDeviceScaleFactor(scaleFactor);
 
-    if (m_layerTreeView && m_webSettings->applyDefaultDeviceScaleFactorInCompositor()) {
+    if (m_layerTreeView && m_webSettings->applyDeviceScaleFactorInCompositor()) {
         m_deviceScaleInCompositor = page()->deviceScaleFactor();
         m_layerTreeView->setDeviceScaleFactor(m_deviceScaleInCompositor);
     }
@@ -4012,7 +4012,7 @@ void WebViewImpl::setIsAcceleratedCompositingActive(bool active)
 
         m_layerTreeView = adoptPtr(Platform::current()->compositorSupport()->createLayerTreeView(this, *m_rootLayer, layerTreeViewSettings));
         if (m_layerTreeView) {
-            if (m_webSettings->applyDefaultDeviceScaleFactorInCompositor() && page()->deviceScaleFactor() != 1) {
+            if (m_webSettings->applyDeviceScaleFactorInCompositor() && page()->deviceScaleFactor() != 1) {
                 ASSERT(page()->deviceScaleFactor());
 
                 m_deviceScaleInCompositor = page()->deviceScaleFactor();

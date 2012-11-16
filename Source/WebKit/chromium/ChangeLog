@@ -1,3 +1,24 @@
+2012-11-16  Tien-Ren Chen  <trchen@chromium.org>
+
+        Rename applyDefaultDeviceScaleFactorInCompositor to setApplyDeviceScaleFactorInCompositor
+        https://bugs.webkit.org/show_bug.cgi?id=102462
+
+        Reviewed by James Robinson.
+
+        As we no longer have this "default" device scale factor.
+
+        * public/WebSettings.h:
+        (WebKit::WebSettings::setApplyDefaultDeviceScaleFactorInCompositor):
+        * src/WebSettingsImpl.cpp:
+        (WebKit::WebSettingsImpl::WebSettingsImpl):
+        (WebKit::WebSettingsImpl::setApplyDeviceScaleFactorInCompositor):
+        * src/WebSettingsImpl.h:
+        (WebSettingsImpl):
+        (WebKit::WebSettingsImpl::applyDeviceScaleFactorInCompositor):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::setDeviceScaleFactor):
+        (WebKit::WebViewImpl::setIsAcceleratedCompositingActive):
+
 2012-11-16  Jon Lee  <jonlee@apple.com>
 
         Fix build error on Chromium due to r134995.

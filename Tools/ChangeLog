@@ -1,3 +1,15 @@
+2012-11-16  Tien-Ren Chen  <trchen@chromium.org>
+
+        Rename applyDefaultDeviceScaleFactorInCompositor to setApplyDeviceScaleFactorInCompositor
+        https://bugs.webkit.org/show_bug.cgi?id=102462
+
+        Reviewed by James Robinson.
+
+        As we no longer have this "default" device scale factor.
+
+        * DumpRenderTree/chromium/WebPreferences.cpp:
+        (WebPreferences::applyTo):
+
 2012-11-15  Takashi Sakamoto  <tasak@google.com>
 
         [Win] key event's location does not work on Windows platform.

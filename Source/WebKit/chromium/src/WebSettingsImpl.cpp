@@ -53,7 +53,7 @@ WebSettingsImpl::WebSettingsImpl(Settings* settings)
     , m_showPaintRects(false)
     , m_renderVSyncEnabled(true)
     , m_viewportEnabled(false)
-    , m_applyDefaultDeviceScaleFactorInCompositor(false)
+    , m_applyDeviceScaleFactorInCompositor(false)
     , m_gestureTapHighlightEnabled(true)
     , m_autoZoomFocusedNodeToLegibleScale(false)
     , m_deferredImageDecodingEnabled(false)
@@ -139,9 +139,9 @@ bool WebSettingsImpl::deviceSupportsTouch()
     return m_settings->deviceSupportsTouch();
 }
 
-void WebSettingsImpl::setApplyDefaultDeviceScaleFactorInCompositor(bool applyDefaultDeviceScaleFactorInCompositor)
+void WebSettingsImpl::setApplyDeviceScaleFactorInCompositor(bool applyDeviceScaleFactorInCompositor)
 {
-    m_applyDefaultDeviceScaleFactorInCompositor = applyDefaultDeviceScaleFactorInCompositor;
+    m_applyDeviceScaleFactorInCompositor = applyDeviceScaleFactorInCompositor;
 }
 
 void WebSettingsImpl::setApplyPageScaleFactorInCompositor(bool applyPageScaleFactorInCompositor)

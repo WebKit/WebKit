@@ -73,7 +73,7 @@ public:
     virtual void setAllowRunningOfInsecureContent(bool) = 0;
     virtual void setAllowScriptsToCloseWindows(bool) = 0;
     virtual void setAllowUniversalAccessFromFileURLs(bool) = 0;
-    virtual void setApplyDefaultDeviceScaleFactorInCompositor(bool) = 0;
+    virtual void setApplyDeviceScaleFactorInCompositor(bool) = 0;
     virtual void setApplyPageScaleFactorInCompositor(bool) = 0;
     virtual void setAsynchronousSpellCheckingEnabled(bool) = 0;
     virtual void setAutoZoomFocusedNodeToLegibleScale(bool) = 0;
@@ -169,8 +169,8 @@ public:
     virtual void setWebSecurityEnabled(bool) = 0;
     virtual void setXSSAuditorEnabled(bool) = 0;
 
-    // DEPRECATED
-    virtual void setDefaultDeviceScaleFactor(int) { }
+    // DEPRECATED (renamed. remove this after all call sites changed to the new name)
+    void setApplyDefaultDeviceScaleFactorInCompositor(bool enabled) { setApplyDeviceScaleFactorInCompositor(enabled); }
 
 protected:
     ~WebSettings() { }

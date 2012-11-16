@@ -238,7 +238,7 @@ void WebPreferences::applyTo(WebView* webView)
     settings->setDeferredImageDecodingEnabled(deferredImageDecodingEnabled);
     settings->setMediaPlaybackRequiresUserGesture(mediaPlaybackRequiresUserGesture);
     settings->setMockScrollbarsEnabled(mockScrollbarsEnabled);
-    settings->setApplyDefaultDeviceScaleFactorInCompositor(forceCompositingMode);
+    settings->setApplyDeviceScaleFactorInCompositor(forceCompositingMode);
     settings->setShouldRespectImageOrientation(shouldRespectImageOrientation);
 
     // Fixed values.
