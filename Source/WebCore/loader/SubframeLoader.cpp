@@ -198,7 +198,8 @@ static void logPluginRequest(Page* page, const String& mimeType, const String& u
             return;
     }
 
-    String pluginFile = page->pluginData()->pluginFileForMimeType(newMIMEType);
+    PluginData* pluginData = page->pluginData();
+    String pluginFile = pluginData ? pluginData->pluginFileForMimeType(newMIMEType) : String();
     String description = !pluginFile ? newMIMEType : pluginFile;
 
     ChromeClient* client = page->chrome()->client();
