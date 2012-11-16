@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="resources/polyfill.js"></script>
+</head>
+
+<body>
+
+<p>When an anchor tag catch 'href' attribute or release 'href' attribute, distribution should happen.</p>
+
+<div id="host1">
+    <a id="anchor1" href="http://www.example.com/">Anchor 1</a>
+    <a id="anchor2" href="http://www.example.com/">Anchor 2</a>
+</div>
+
+<div id="host2">
+    <a id="anchor3">Anchor 3</a>
+    <a id="anchor4">Anchor 4</a>
+</div>
+
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+new WebKitShadowRoot(host1).innerHTML = '<content select=":enabled"></content>';
+new WebKitShadowRoot(host2).innerHTML = '<content select=":enabled"></content>';
+
+setTimeout(function() {
+    anchor2.removeAttribute('href');
+    anchor4.setAttribute('href', 'http://www.example.com/');
+    testRunner.notifyDone();
+}, 0);
+
+</script>
+</body>
+</html>
+

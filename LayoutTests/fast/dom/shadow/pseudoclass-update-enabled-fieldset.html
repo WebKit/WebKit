@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="resources/polyfill.js"></script>
+</head>
+
+<body>
+
+<p>When the 'enabled' state of a fieldset tag is changed, we have to invalidate distribution.</p>
+
+<div id="host1">
+    <fieldset id="fieldset1">Fieldset 1</fieldset>
+    <fieldset id="fieldset2">Fieldset 2</fieldset>
+</div>
+
+<div id="host2">
+    <fieldset id="fieldset3" disabled>Fieldset 3</fieldset>
+    <fieldset id="fieldset4" disabled>Fieldset 4</fieldset>
+</div>
+
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+new WebKitShadowRoot(host1).innerHTML = '<content select=":enabled"></content>';
+new WebKitShadowRoot(host2).innerHTML = '<content select=":enabled"></content>';
+
+setTimeout(function() {
+    fieldset2.setAttribute('disabled', true);
+    fieldset4.removeAttribute('disabled');
+    testRunner.notifyDone();
+}, 0);
+
+</script>
+</body>
+</html>
+

@@ -221,7 +221,7 @@ void HTMLAnchorElement::parseAttribute(const Attribute& attribute)
         setIsLink(!attribute.isNull());
         if (wasLink != isLink()) {
             setNeedsStyleRecalc();
-            invalidateParentDistributionIfNecessary(this, SelectRuleFeatureSet::RuleFeatureLink | SelectRuleFeatureSet::RuleFeatureVisited);
+            invalidateParentDistributionIfNecessary(this, SelectRuleFeatureSet::RuleFeatureLink | SelectRuleFeatureSet::RuleFeatureVisited | SelectRuleFeatureSet::RuleFeatureEnabled);
         }
         if (isLink()) {
             String parsedURL = stripLeadingAndTrailingHTMLSpaces(attribute.value());

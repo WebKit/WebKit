@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="resources/polyfill.js"></script>
+</head>
+
+<body>
+
+<p>When the 'enabled' state of a select tag is changed, we have to invalidate distribution.</p>
+
+<div id="host1">
+    <select id="select1"><option>Select 1</option></select>
+    <select id="select2"><option>Select 2</option></select>
+</div>
+
+<div id="host2">
+    <select id="select3" disabled><option>Select 3</option></select>
+    <select id="select4" disabled><option>Select 4</option></select>
+</div>
+
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+new WebKitShadowRoot(host1).innerHTML = '<content select=":enabled"></content>';
+new WebKitShadowRoot(host2).innerHTML = '<content select=":enabled"></content>';
+
+setTimeout(function() {
+    select2.setAttribute('disabled', true);
+    select4.removeAttribute('disabled');
+    testRunner.notifyDone();
+}, 0);
+
+</script>
+</body>
+</html>
+

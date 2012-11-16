@@ -1,3 +1,35 @@
+2012-11-15  Shinya Kawanaka  <shinyak@chromium.org>
+
+        Chaging pseudoClass (:enabled) should cause distribution
+        https://bugs.webkit.org/show_bug.cgi?id=101900
+
+        Reviewed by Dimitri Glazkov.
+
+        When element's 'enabled' state is changed, we have to invalidate distribution.
+
+        According to the spec, :enabled matches anchor/area/link element having href attribute,
+        and several form control elements which is not disabled. However, currently :enalbed does not match
+        anchor/area/link yet. See https://bugs.webkit.org/show_bug.cgi?id=102349
+
+        Tests: fast/dom/shadow/pseudoclass-update-enabled-anchor.html
+               fast/dom/shadow/pseudoclass-update-enabled-area.html
+               fast/dom/shadow/pseudoclass-update-enabled-button.html
+               fast/dom/shadow/pseudoclass-update-enabled-fieldset.html
+               fast/dom/shadow/pseudoclass-update-enabled-input.html
+               fast/dom/shadow/pseudoclass-update-enabled-optgroup.html
+               fast/dom/shadow/pseudoclass-update-enabled-option.html
+               fast/dom/shadow/pseudoclass-update-enabled-select.html
+               fast/dom/shadow/pseudoclass-update-enabled-textarea.html
+
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::parseAttribute):
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::disabledAttributeChanged):
+        * html/HTMLOptGroupElement.cpp:
+        (WebCore::HTMLOptGroupElement::parseAttribute):
+        * html/HTMLOptionElement.cpp:
+        (WebCore::HTMLOptionElement::parseAttribute):
+
 2012-11-15  Erik Arvidsson  <arv@chromium.org>
 
         Update DOMException name: ValidationError

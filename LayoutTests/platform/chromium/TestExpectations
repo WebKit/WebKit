@@ -3514,6 +3514,10 @@ webkit.org/b/91488 fast/dom/shadow/shadowdom-for-output-only-shadow.html [ Image
 webkit.org/b/91489 fast/dom/shadow/shadowdom-for-fieldset-complex-shadow.html [ ImageOnlyFailure ]
 webkit.org/b/91489 fast/dom/shadow/shadowdom-for-fieldset-only-shadow.html [ ImageOnlyFailure ]
 
+# a:enabled and area:enabled are not correctly implemented yet.
+webkit.org/b/102349 fast/dom/shadow/pseudoclass-update-enabled-anchor.html [ ImageOnlyFailure ]
+webkit.org/b/102349 fast/dom/shadow/pseudoclass-update-enabled-area.html [ ImageOnlyFailure ]
+
 # Requires setUseDeferredFrameLoading() API from LayoutTestController.
 webkit.org/b/87652 http/tests/appcache/load-from-appcache-defer-resume-crash.html
 

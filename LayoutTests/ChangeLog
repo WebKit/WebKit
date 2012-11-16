@@ -1,3 +1,33 @@
+2012-11-15  Shinya Kawanaka  <shinyak@chromium.org>
+
+        Chaging pseudoClass (:enabled) should cause distribution
+        https://bugs.webkit.org/show_bug.cgi?id=101900
+
+        Reviewed by Dimitri Glazkov.
+
+        Currently :enabled matches an anchor/area/link element yet. I marked these tests as Failure.
+
+        * fast/dom/shadow/pseudoclass-update-enabled-anchor-expected.html: Added.
+        * fast/dom/shadow/pseudoclass-update-enabled-anchor.html: Added.
+        * fast/dom/shadow/pseudoclass-update-enabled-area-expected.html: Added.
+        * fast/dom/shadow/pseudoclass-update-enabled-area.html: Added.
+        * fast/dom/shadow/pseudoclass-update-enabled-button-expected.html: Added.
+        * fast/dom/shadow/pseudoclass-update-enabled-button.html: Added.
+        * fast/dom/shadow/pseudoclass-update-enabled-fieldset-expected.html: Added.
+        * fast/dom/shadow/pseudoclass-update-enabled-fieldset.html: Added.
+        * fast/dom/shadow/pseudoclass-update-enabled-input-expected.html: Added.
+        * fast/dom/shadow/pseudoclass-update-enabled-input.html: Added.
+        * fast/dom/shadow/pseudoclass-update-enabled-optgroup-expected.txt: Added.
+        * fast/dom/shadow/pseudoclass-update-enabled-optgroup.html: Added.
+        * fast/dom/shadow/pseudoclass-update-enabled-option-expected.txt: Added.
+        * fast/dom/shadow/pseudoclass-update-enabled-option.html: Added.
+        * fast/dom/shadow/pseudoclass-update-enabled-select-expected.html: Added.
+        * fast/dom/shadow/pseudoclass-update-enabled-select.html: Added.
+        * fast/dom/shadow/pseudoclass-update-enabled-textarea-expected.html: Added.
+        * fast/dom/shadow/pseudoclass-update-enabled-textarea.html: Added.
+        * platform/chromium/TestExpectations:
+        * platform/efl/TestExpectations:
+
 2012-11-15  Erik Arvidsson  <arv@chromium.org>
 
         Update DOMException name: NamespaceError

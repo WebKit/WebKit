@@ -1287,6 +1287,10 @@ webkit.org/b/91489 fast/dom/shadow/shadowdom-for-fieldset-only-shadow.html [ Ima
 webkit.org/b/95439 fast/dom/shadow/shadowdom-for-textarea-complex-shadow.html [ ImageOnlyFailure ]
 webkit.org/b/95439 fast/dom/shadow/shadowdom-for-textarea-with-placeholder.html [ ImageOnlyFailure ]
 
+# a:enabled and area:enabled are not correctly implemented yet.
+webkit.org/b/102349 fast/dom/shadow/pseudoclass-update-enabled-anchor.html [ ImageOnlyFailure ]
+webkit.org/b/102349 fast/dom/shadow/pseudoclass-update-enabled-area.html [ ImageOnlyFailure ]
+
 # This test is specific to QuickTime media engine.
 Bug(EFL) media/video-does-not-loop.html
 
