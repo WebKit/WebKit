@@ -1,3 +1,12 @@
+2012-11-15  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. Add missing text test expectations for Mac and Windows ports.
+
+        * platform/mac/css3/filters/effect-reference-ordering-hw-expected.txt: Added.
+        * platform/mac/fast/css/text-overflow-input-expected.txt: Added.
+        * platform/mac/fast/forms/input-readonly-dimmed-expected.txt: Added.
+        * platform/mac/fast/forms/input-text-scroll-left-on-blur-expected.txt: Added.
+
 2012-11-15  Jian Li  <jianli@chromium.org>
 
         Unreviewed. Updated chromium test expectations to clean up some passed
