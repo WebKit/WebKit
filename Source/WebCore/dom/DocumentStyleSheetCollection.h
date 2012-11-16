@@ -55,17 +55,16 @@ public:
     const Vector<RefPtr<CSSStyleSheet> >& activeAuthorStyleSheets() const { return m_activeAuthorStyleSheets; }
 
     CSSStyleSheet* pageUserSheet();
-    const Vector<RefPtr<CSSStyleSheet> >& documentUserStyleSheets() const { return m_userStyleSheets; }
-    const Vector<RefPtr<CSSStyleSheet> >& injectedUserStyleSheets() const;
-    const Vector<RefPtr<CSSStyleSheet> >& injectedAuthorStyleSheets() const;
+    const Vector<RefPtr<CSSStyleSheet> >* pageGroupUserSheets() const;
+    const Vector<RefPtr<CSSStyleSheet> >* documentUserSheets() const { return m_userSheets.get(); }
 
     void addStyleSheetCandidateNode(Node*, bool createdByParser);
     void removeStyleSheetCandidateNode(Node*);
 
     void clearPageUserSheet();
     void updatePageUserSheet();
-    void invalidateInjectedStyleSheetCache();
-    void updateInjectedStyleSheetCache() const;
+    void clearPageGroupUserSheets();
+    void updatePageGroupUserSheets();
 
     void addUserSheet(PassRefPtr<StyleSheetContents> userSheet);
 
@@ -126,12 +125,9 @@ private:
     int m_pendingStylesheets;
 
     RefPtr<CSSStyleSheet> m_pageUserSheet;
-
-    mutable Vector<RefPtr<CSSStyleSheet> > m_injectedUserStyleSheets;
-    mutable Vector<RefPtr<CSSStyleSheet> > m_injectedAuthorStyleSheets;
-    mutable bool m_injectedStyleSheetCacheValid;
-
-    Vector<RefPtr<CSSStyleSheet> > m_userStyleSheets;
+    mutable OwnPtr<Vector<RefPtr<CSSStyleSheet> > > m_pageGroupUserSheets;
+    OwnPtr<Vector<RefPtr<CSSStyleSheet> > > m_userSheets;
+    mutable bool m_pageGroupUserSheetCacheValid;
 
     bool m_hadActiveLoadingStylesheet;
     bool m_needsUpdateActiveStylesheetsOnStyleRecalc;

@@ -119,7 +119,7 @@ namespace WebCore {
         PageGroup(Page*);
 
         void addVisitedLink(LinkHash stringHash);
-        void invalidatedInjectedStyleSheetCacheInAllFrames();
+        void resetUserStyleCacheInAllFrames();
   
 #if ENABLE(VIDEO_TRACK)
         CaptionUserPreferences* captionPreferences();

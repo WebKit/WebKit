@@ -1,3 +1,42 @@
+2012-11-16  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Unreviewed, rolling out r134986.
+        http://trac.webkit.org/changeset/134986
+        https://bugs.webkit.org/show_bug.cgi?id=102110
+
+        Triggered ASSERT in fast/frames/seamless/seamless-inherited-
+        origin.html.
+
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::StyleResolver):
+        (WebCore::StyleResolver::addAuthorRulesAndCollectUserRulesFromSheets):
+        (WebCore::collectCSSOMWrappers):
+        * css/StyleResolver.h:
+        (StyleResolver):
+        * dom/Document.cpp:
+        (WebCore::Document::setCompatibilityMode):
+        * dom/DocumentStyleSheetCollection.cpp:
+        (WebCore::DocumentStyleSheetCollection::DocumentStyleSheetCollection):
+        (WebCore::DocumentStyleSheetCollection::~DocumentStyleSheetCollection):
+        (WebCore::DocumentStyleSheetCollection::pageGroupUserSheets):
+        (WebCore):
+        (WebCore::DocumentStyleSheetCollection::clearPageGroupUserSheets):
+        (WebCore::DocumentStyleSheetCollection::updatePageGroupUserSheets):
+        (WebCore::DocumentStyleSheetCollection::addUserSheet):
+        (WebCore::DocumentStyleSheetCollection::updateActiveStyleSheets):
+        (WebCore::DocumentStyleSheetCollection::reportMemoryUsage):
+        * dom/DocumentStyleSheetCollection.h:
+        (DocumentStyleSheetCollection):
+        (WebCore::DocumentStyleSheetCollection::documentUserSheets):
+        * page/PageGroup.cpp:
+        (WebCore::PageGroup::addUserStyleSheetToWorld):
+        (WebCore::PageGroup::removeUserStyleSheetFromWorld):
+        (WebCore::PageGroup::removeUserStyleSheetsFromWorld):
+        (WebCore::PageGroup::removeAllUserContent):
+        (WebCore::PageGroup::resetUserStyleCacheInAllFrames):
+        * page/PageGroup.h:
+        (PageGroup):
+
 2012-11-16  Michael Pruett  <michael@68k.org>
 
         IndexedDB: Propagate DOMRequestState to IndexedDB binding utility functions

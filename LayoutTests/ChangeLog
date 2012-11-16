@@ -1,3 +1,15 @@
+2012-11-16  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Unreviewed, rolling out r134986.
+        http://trac.webkit.org/changeset/134986
+        https://bugs.webkit.org/show_bug.cgi?id=102110
+
+        Triggered ASSERT in fast/frames/seamless/seamless-inherited-
+        origin.html.
+
+        * userscripts/user-stylesheet-invalidate-expected.txt: Removed.
+        * userscripts/user-stylesheet-invalidate.html: Removed.
+
 2012-11-16  Antti Koivisto  <antti@apple.com>
 
         REGRESSION(r129644): User StyleSheet not applying
