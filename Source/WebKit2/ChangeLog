@@ -1,3 +1,15 @@
+2012-11-16  Peter Gal  <galpeter@inf.u-szeged.hu>
+
+        [Qt][Mac] Fix the build after r124873
+        https://bugs.webkit.org/show_bug.cgi?id=102475
+
+        Reviewed by Noam Rosenthal.
+
+        Change the CoordinatedImageBackingID typedef from uintptr_t to uint64_t.
+
+        * Shared/WebLayerTreeInfo.h:
+        * UIProcess/CoordinatedGraphics/LayerTreeCoordinatorProxy.messages.in:
+
 2012-11-16  Sudarsana Nagineni  <sudarsana.nagineni@intel.com>
 
         [EFL][WK2] Unset the tooltip when the web process has crashed

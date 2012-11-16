@@ -33,7 +33,7 @@ namespace WebKit {
 typedef uint32_t WebLayerID;
 enum { InvalidWebLayerID = 0 };
 
-typedef uintptr_t CoordinatedImageBackingID;
+typedef uint64_t CoordinatedImageBackingID;
 enum { InvalidCoordinatedImageBackingID = 0 };
 
 // NOTE: WebLayerInfo should only use POD types, as to make serialization faster.
