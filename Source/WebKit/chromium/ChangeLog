@@ -1,3 +1,10 @@
+2012-11-16  Jon Lee  <jonlee@apple.com>
+
+        Fix build error on Chromium due to r134995.
+
+        * src/WebNode.cpp:
+        (WebKit::WebNode::simulateClick): Pass in NULL pointer instead.
+
 2012-11-16  Michael Pruett  <michael@68k.org>
 
         IndexedDB: Propagate DOMRequestState to IndexedDB binding utility functions

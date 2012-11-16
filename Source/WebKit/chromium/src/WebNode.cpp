@@ -204,8 +204,7 @@ bool WebNode::dispatchEvent(const WebDOMEvent& event)
 
 void WebNode::simulateClick()
 {
-    RefPtr<Event> noEvent;
-    m_private->dispatchSimulatedClick(noEvent);
+    m_private->dispatchSimulatedClick(0);
 }
 
 WebNodeList WebNode::getElementsByTagName(const WebString& tag) const
