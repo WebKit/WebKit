@@ -126,8 +126,11 @@ WebInspector.ScriptsPanel = function(workspaceForTest)
     this._debugSidebarContentsElement.id = "scripts-debug-sidebar-contents";
     this.sidebarElement.appendChild(this._debugSidebarContentsElement);
 
-    for (var pane in this.sidebarPanes)
+    for (var pane in this.sidebarPanes) {
+        if (this.sidebarPanes[pane] === this.sidebarPanes.domBreakpoints)
+            continue;
         this._debugSidebarContentsElement.appendChild(this.sidebarPanes[pane].element);
+    }
 
     this.sidebarPanes.callstack.expanded = true;
 

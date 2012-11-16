@@ -6424,6 +6424,7 @@
             'inspector/front-end/Object.js',
             'inspector/front-end/ObjectPopoverHelper.js',
             'inspector/front-end/ObjectPropertiesSection.js',
+            'inspector/front-end/OverridesView.js',
             'inspector/front-end/Panel.js',
             'inspector/front-end/PanelEnablerView.js',
             'inspector/front-end/ParsedURL.js',

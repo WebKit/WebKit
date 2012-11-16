@@ -43,13 +43,17 @@ WebInspector.SettingsScreen = function(onHide)
 
     this._tabbedPane = new WebInspector.TabbedPane();
     this._tabbedPane.element.addStyleClass("help-window-main");
+    var settingsLabelElement = document.createElement("div");
+    settingsLabelElement.className = "help-window-label";
+    settingsLabelElement.createTextChild(WebInspector.UIString("Settings"));
+    this._tabbedPane.element.insertBefore(settingsLabelElement, this._tabbedPane.element.firstChild);
     this._tabbedPane.element.appendChild(this._createCloseButton());
     this._tabbedPane.appendTab(WebInspector.SettingsScreen.Tabs.General, WebInspector.UIString("General"), new WebInspector.GenericSettingsTab());
-    this._tabbedPane.appendTab(WebInspector.SettingsScreen.Tabs.UserAgent, WebInspector.UIString("Overrides"), new WebInspector.UserAgentSettingsTab());
     if (WebInspector.experimentsSettings.experimentsEnabled)
         this._tabbedPane.appendTab(WebInspector.SettingsScreen.Tabs.Experiments, WebInspector.UIString("Experiments"), new WebInspector.ExperimentsSettingsTab());
     this._tabbedPane.appendTab(WebInspector.SettingsScreen.Tabs.Shortcuts, WebInspector.UIString("Shortcuts"), WebInspector.shortcutsScreen.createShortcutsTabView());
-    this._tabbedPane.shrinkableTabs = true;
+    this._tabbedPane.shrinkableTabs = false;
+    this._tabbedPane.verticalTabLayout = true;
 
     this._lastSelectedTabSetting = WebInspector.settings.createSetting("lastSelectedSettingsTab", WebInspector.SettingsScreen.Tabs.General);
     this.selectTab(this._lastSelectedTabSetting.get());
@@ -57,10 +61,9 @@ WebInspector.SettingsScreen = function(onHide)
 }
 
 WebInspector.SettingsScreen.Tabs = {
-    General: "General",
-    UserAgent: "UserAgent",
-    Experiments: "Experiments",
-    Shortcuts: "Shortcuts"
+    General: "general",
+    Experiments: "experiments",
+    Shortcuts: "shortcuts"
 }
 
 WebInspector.SettingsScreen.prototype = {
@@ -115,11 +118,18 @@ WebInspector.SettingsScreen.prototype = {
 /**
  * @constructor
  * @extends {WebInspector.View}
+ * @param {string} name
+ * @param {string=} id
  */
-WebInspector.SettingsTab = function()
+WebInspector.SettingsTab = function(name, id)
 {
     WebInspector.View.call(this);
-    this.element.className = "settings-tab help-content help-container";
+    this.element.className = "settings-tab-container";
+    if (id)
+        this.element.id = id;
+    var header = this.element.createChild("header");
+    header.createChild("h3").appendChild(document.createTextNode(name));
+    this.containerElement = this.element.createChild("div", "help-container-wrapper").createChild("div", "settings-tab help-content help-container");
 }
 
 WebInspector.SettingsTab.prototype = {
@@ -129,7 +139,7 @@ WebInspector.SettingsTab.prototype = {
      */
     _appendSection: function(name)
     {
-        var block = this.element.createChild("div", "help-block");
+        var block = this.containerElement.createChild("div", "help-block");
         if (name)
             block.createChild("div", "help-section-title").textContent = name;
         return block;
@@ -247,7 +257,7 @@ WebInspector.SettingsTab.prototype = {
  */
 WebInspector.GenericSettingsTab = function()
 {
-    WebInspector.SettingsTab.call(this);
+    WebInspector.SettingsTab.call(this, WebInspector.UIString("General"));
 
     var p = this._appendSection();
     if (Preferences.exposeDisableCache)
@@ -284,12 +294,14 @@ WebInspector.GenericSettingsTab = function()
     p.appendChild(this._createCheckboxSetting(WebInspector.UIString("Enable source maps"), WebInspector.settings.sourceMapsEnabled));
     if (WebInspector.experimentsSettings.isEnabled("sass"))
         p.appendChild(this._createCSSAutoReloadControls());
-    p.appendChild(this._createSelectSetting(WebInspector.UIString("Indentation"), [
+    var indentationElement = this._createSelectSetting(WebInspector.UIString("Indentation"), [
             [ WebInspector.UIString("2 spaces"), WebInspector.TextEditorModel.Indent.TwoSpaces ],
             [ WebInspector.UIString("4 spaces"), WebInspector.TextEditorModel.Indent.FourSpaces ],
             [ WebInspector.UIString("8 spaces"), WebInspector.TextEditorModel.Indent.EightSpaces ],
             [ WebInspector.UIString("Tab character"), WebInspector.TextEditorModel.Indent.TabCharacter ]
-        ], WebInspector.settings.textEditorIndent));
+        ], WebInspector.settings.textEditorIndent);
+    indentationElement.firstChild.className = "toplevel";
+    p.appendChild(indentationElement);
 
     p = this._appendSection(WebInspector.UIString("Profiler"));
     p.appendChild(this._createCheckboxSetting(WebInspector.UIString("Show objects' hidden properties"), WebInspector.settings.showHeapSnapshotObjectsHiddenProperties));
@@ -368,6 +380,7 @@ WebInspector.GenericSettingsTab.prototype = {
         p.appendChild(document.createTextNode(" "));
         var timeoutInput = p.createChild("input");
         timeoutInput.value = WebInspector.settings.cssReloadTimeout.get();
+        timeoutInput.className = "numeric";
         timeoutInput.style.width = "60px";
         timeoutInput.maxLength = 8;
         timeoutInput.addEventListener("blur", blurListener, false);
@@ -398,547 +411,9 @@ WebInspector.GenericSettingsTab.prototype = {
  * @constructor
  * @extends {WebInspector.SettingsTab}
  */
-WebInspector.UserAgentSettingsTab = function()
-{
-    WebInspector.SettingsTab.call(this);
-
-    var p = this._appendSection();
-    p.appendChild(this._createUserAgentControl());
-    if (Capabilities.canOverrideDeviceMetrics)
-        p.appendChild(this._createDeviceMetricsControl());
-    if (Capabilities.canOverrideGeolocation)
-        p.appendChild(this._createGeolocationOverrideControl());
-    if (Capabilities.canOverrideDeviceOrientation)
-        p.appendChild(this._createDeviceOrientationOverrideControl());
-    p.appendChild(this._createCheckboxSetting(WebInspector.UIString("Emulate touch events"), WebInspector.settings.emulateTouchEvents));
-}
-
-WebInspector.UserAgentSettingsTab.prototype = {
-    _createUserAgentControl: function()
-    {
-        var userAgent = WebInspector.settings.userAgent.get();
-
-        var p = document.createElement("p");
-        var labelElement = p.createChild("label");
-        var checkboxElement = labelElement.createChild("input");
-        checkboxElement.type = "checkbox";
-        checkboxElement.checked = false;
-        labelElement.appendChild(document.createTextNode(WebInspector.UIString("User Agent")));
-        p.appendChild(this._createUserAgentSelectRowElement(checkboxElement));
-        return p;
-    },
-
-    _createUserAgentSelectRowElement: function(checkboxElement)
-    {
-        var userAgent = WebInspector.settings.userAgent.get();
-
-        // When present, the third element lists device metrics separated by 'x':
-        // - screen width,
-        // - screen height,
-        // - font scale factor.
-        const userAgents = [
-            ["Internet Explorer 9", "Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; Trident/5.0)"],
-            ["Internet Explorer 8", "Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.0; Trident/4.0)"],
-            ["Internet Explorer 7", "Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.0)"],
-
-            ["Firefox 7 \u2014 Windows", "Mozilla/5.0 (Windows NT 6.1; Intel Mac OS X 10.6; rv:7.0.1) Gecko/20100101 Firefox/7.0.1"],
-            ["Firefox 7 \u2014 Mac", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.6; rv:7.0.1) Gecko/20100101 Firefox/7.0.1"],
-            ["Firefox 4 \u2014 Windows", "Mozilla/5.0 (Windows NT 6.1; rv:2.0.1) Gecko/20100101 Firefox/4.0.1"],
-            ["Firefox 4 \u2014 Mac", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.6; rv:2.0.1) Gecko/20100101 Firefox/4.0.1"],
-            ["Firefox 14 \u2014 Android Mobile", "Mozilla/5.0 (Android; Mobile; rv:14.0) Gecko/14.0 Firefox/14.0"],
-            ["Firefox 14 \u2014 Android Tablet", "Mozilla/5.0 (Android; Tablet; rv:14.0) Gecko/14.0 Firefox/14.0"],
-
-            ["Chrome \u2014 Android Mobile", "Mozilla/5.0 (Linux; Android 4.0.4; Galaxy Nexus Build/IMM76B) AppleWebKit/535.19 (KHTML, like Gecko) Chrome/18.0.1025.133 Mobile Safari/535.19"],
-            ["Chrome \u2014 Android Tablet", "Mozilla/5.0 (Linux; Android 4.1.2; Nexus 7 Build/JZ054K) AppleWebKit/535.19 (KHTML, like Gecko) Chrome/18.0.1025.166 Safari/535.19"],
-
-            ["iPhone \u2014 iOS 5", "Mozilla/5.0 (iPhone; CPU iPhone OS 5_0 like Mac OS X) AppleWebKit/534.46 (KHTML, like Gecko) Version/5.1 Mobile/9A334 Safari/7534.48.3", "640x960x1"],
-            ["iPhone \u2014 iOS 4", "Mozilla/5.0 (iPhone; U; CPU iPhone OS 4_3_2 like Mac OS X; en-us) AppleWebKit/533.17.9 (KHTML, like Gecko) Version/5.0.2 Mobile/8H7 Safari/6533.18.5", "640x960x1"],
-            ["iPad \u2014 iOS 5", "Mozilla/5.0 (iPad; CPU OS 5_0 like Mac OS X) AppleWebKit/534.46 (KHTML, like Gecko) Version/5.1 Mobile/9A334 Safari/7534.48.3", "1024x768x1"],
-            ["iPad \u2014 iOS 4", "Mozilla/5.0 (iPad; CPU OS 4_3_2 like Mac OS X; en-us) AppleWebKit/533.17.9 (KHTML, like Gecko) Version/5.0.2 Mobile/8H7 Safari/6533.18.5", "1024x768x1"],
-
-            ["Android 2.3 \u2014 Nexus S", "Mozilla/5.0 (Linux; U; Android 2.3.6; en-us; Nexus S Build/GRK39F) AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533.1", "480x800x1.1"],
-            ["Android 4.0.2 \u2014 Galaxy Nexus", "Mozilla/5.0 (Linux; U; Android 4.0.2; en-us; Galaxy Nexus Build/ICL53F) AppleWebKit/534.30 (KHTML, like Gecko) Version/4.0 Mobile Safari/534.30", "720x1280x1.1"],
-
-            ["BlackBerry \u2014 PlayBook 2.1", "Mozilla/5.0 (PlayBook; U; RIM Tablet OS 2.1.0; en-US) AppleWebKit/536.2+ (KHTML, like Gecko) Version/7.2.1.0 Safari/536.2+", "1024x600x1"],
-            ["BlackBerry \u2014 9900", "Mozilla/5.0 (BlackBerry; U; BlackBerry 9900; en-US) AppleWebKit/534.11+ (KHTML, like Gecko) Version/7.0.0.187 Mobile Safari/534.11+", "640x480x1"],
-            ["BlackBerry \u2014 BB10", "Mozilla/5.0 (BB10; Touch) AppleWebKit/537.1+ (KHTML, like Gecko) Version/10.0.0.1337 Mobile Safari/537.1+", "768x1280x1"],
-
-            ["MeeGo \u2014 Nokia N9", "Mozilla/5.0 (MeeGo; NokiaN9) AppleWebKit/534.13 (KHTML, like Gecko) NokiaBrowser/8.5.0 Mobile Safari/534.13", "480x854x1"],
-
-            [WebInspector.UIString("Other..."), "Other"]
-        ];
-
-        var fieldsetElement = document.createElement("fieldset");
-        this._selectElement = fieldsetElement.createChild("select");
-        this._otherUserAgentElement = fieldsetElement.createChild("input");
-        this._otherUserAgentElement.value = userAgent;
-        this._otherUserAgentElement.title = userAgent;
-
-        var selectionRestored = false;
-        for (var i = 0; i < userAgents.length; ++i) {
-            var agent = userAgents[i];
-            var option = new Option(agent[0], agent[1]);
-            option._metrics = agent[2] ? agent[2] : "";
-            this._selectElement.add(option);
-            if (userAgent === agent[1]) {
-                this._selectElement.selectedIndex = i;
-                selectionRestored = true;
-            }
-        }
-
-        if (!selectionRestored) {
-            if (!userAgent)
-                this._selectElement.selectedIndex = 0;
-            else
-              this._selectElement.selectedIndex = userAgents.length - 1;
-        }
-
-        this._selectElement.addEventListener("change", this._selectionChanged.bind(this, true), false);
-
-        fieldsetElement.addEventListener("dblclick", textDoubleClicked.bind(this), false);
-        this._otherUserAgentElement.addEventListener("blur", textChanged.bind(this), false);
-
-        function textDoubleClicked()
-        {
-            this._selectElement.selectedIndex = userAgents.length - 1;
-            this._selectionChanged();
-        }
-
-        function textChanged()
-        {
-            WebInspector.settings.userAgent.set(this._otherUserAgentElement.value);
-        }
-
-        function checkboxClicked()
-        {
-            if (checkboxElement.checked) {
-                this._selectElement.disabled = false;
-                this._selectionChanged();
-            } else {
-                this._selectElement.disabled = true;
-                this._otherUserAgentElement.disabled = true;
-            }
-            WebInspector.userAgentSupport.toggleUserAgentOverride(checkboxElement.checked);
-        }
-        checkboxElement.addEventListener("click", checkboxClicked.bind(this), false);
-
-        checkboxClicked.call(this);
-        return fieldsetElement;
-    },
-
-    /**
-     * @param {boolean=} isUserGesture
-     */
-    _selectionChanged: function(isUserGesture)
-    {
-        var value = this._selectElement.options[this._selectElement.selectedIndex].value;
-        if (value !== "Other") {
-            WebInspector.settings.userAgent.set(value);
-            this._otherUserAgentElement.value = value;
-            this._otherUserAgentElement.title = value;
-            this._otherUserAgentElement.disabled = true;
-        } else {
-            this._otherUserAgentElement.disabled = false;
-            this._otherUserAgentElement.focus();
-        }
-
-        if (isUserGesture && Capabilities.canOverrideDeviceMetrics) {
-            var metrics = this._selectElement.options[this._selectElement.selectedIndex]._metrics;
-            this._setDeviceMetricsOverride(WebInspector.UserAgentSupport.DeviceMetrics.parseSetting(metrics), false, true);
-        }
-    },
-
-    _updateScriptDisabledCheckbox: function()
-    {
-        function executionStatusCallback(error, status)
-        {
-            if (error || !status)
-                return;
-
-            switch (status) {
-            case "forbidden":
-                this._disableJSCheckbox.checked = true;
-                this._disableJSCheckbox.disabled = true;
-                break;
-            case "disabled":
-                this._disableJSCheckbox.checked = true;
-                break;
-            default:
-                this._disableJSCheckbox.checked = false;
-                break;
-            }
-        }
-
-        PageAgent.getScriptExecutionStatus(executionStatusCallback.bind(this));
-    },
-
-    /**
-     * Creates an input element under the parentElement with the given id and defaultText.
-     * It also sets an onblur event listener.
-     * @param {Element} parentElement
-     * @param {string} id
-     * @param {string} defaultText
-     * @param {function(*)} eventListener
-     * @return {Element} element
-     */
-    _createInput: function(parentElement, id, defaultText, eventListener)
-    {
-        var element = parentElement.createChild("input");
-        element.id = id;
-        element.maxLength = 12;
-        element.style.width = "80px";
-        element.value = defaultText;
-        element.align = "right";
-        element.addEventListener("blur", eventListener, false);
-        return element;
-    },
-
-    _createDeviceMetricsControl: function()
-    {
-        const metricsSetting = WebInspector.settings.deviceMetrics.get();
-        var metrics = WebInspector.UserAgentSupport.DeviceMetrics.parseSetting(metricsSetting);
-
-        const p = document.createElement("p");
-        const labelElement = p.createChild("label");
-        const checkboxElement = labelElement.createChild("input");
-        checkboxElement.id = "metrics-override-checkbox";
-        checkboxElement.type = "checkbox";
-        checkboxElement.checked = false;
-        checkboxElement.addEventListener("click", this._onMetricsCheckboxClicked.bind(this), false);
-        this._metricsCheckboxElement = checkboxElement;
-        labelElement.appendChild(document.createTextNode(WebInspector.UIString("Device metrics")));
-
-        const metricsSectionElement = this._createDeviceMetricsElement(metrics);
-        p.appendChild(metricsSectionElement);
-        this._metricsSectionElement = metricsSectionElement;
-        this._onMetricsCheckboxClicked();
-
-        return p;
-    },
-
-    _onMetricsCheckboxClicked: function()
-    {
-        var controlsDisabled = !this._metricsCheckboxElement.checked;
-        this._widthOverrideElement.disabled = controlsDisabled;
-        this._heightOverrideElement.disabled = controlsDisabled;
-        this._fontScaleFactorOverrideElement.disabled = controlsDisabled;
-        this._swapDimensionsElement.disabled = controlsDisabled;
-        this._fitWindowCheckboxElement.disabled = controlsDisabled;
-
-        if (controlsDisabled) {
-            WebInspector.userAgentSupport.toggleDeviceMetricsOverride(false);
-            return;
-        }
-
-        var metrics = WebInspector.UserAgentSupport.DeviceMetrics.parseUserInput(this._widthOverrideElement.value, this._heightOverrideElement.value, this._fontScaleFactorOverrideElement.value);
-        if (metrics && metrics.isValid() && metrics.width && metrics.height) {
-            this._setDeviceMetricsOverride(metrics, false, false);
-            WebInspector.userAgentSupport.toggleDeviceMetricsOverride(true);
-        }
-        if (!this._widthOverrideElement.value)
-            this._widthOverrideElement.focus();
-    },
-
-    _applyDeviceMetricsUserInput: function()
-    {
-        this._setDeviceMetricsOverride(WebInspector.UserAgentSupport.DeviceMetrics.parseUserInput(this._widthOverrideElement.value.trim(), this._heightOverrideElement.value.trim(), this._fontScaleFactorOverrideElement.value.trim()), true, false);
-    },
-
-    /**
-     * @param {?WebInspector.UserAgentSupport.DeviceMetrics} metrics
-     * @param {boolean} userInputModified
-     */
-    _setDeviceMetricsOverride: function(metrics, userInputModified, updateCheckbox)
-    {
-        function setValid(condition, element)
-        {
-            if (condition)
-                element.removeStyleClass("error-input");
-            else
-                element.addStyleClass("error-input");
-        }
-
-        setValid(metrics && metrics.isWidthValid(), this._widthOverrideElement);
-        setValid(metrics && metrics.isHeightValid(), this._heightOverrideElement);
-        setValid(metrics && metrics.isFontScaleFactorValid(), this._fontScaleFactorOverrideElement);
-
-        if (!metrics)
-            return;
-
-        if (!userInputModified) {
-            this._widthOverrideElement.value = metrics.widthToInput();
-            this._heightOverrideElement.value = metrics.heightToInput();
-            this._fontScaleFactorOverrideElement.value = metrics.fontScaleFactorToInput();
-        }
-
-        if (metrics.isValid()) {
-            var value = metrics.toSetting();
-            if (value !== WebInspector.settings.deviceMetrics.get())
-                WebInspector.settings.deviceMetrics.set(value);
-        }
-
-        if (this._metricsCheckboxElement && updateCheckbox) {
-            this._metricsCheckboxElement.checked = !!metrics.toSetting();
-            this._onMetricsCheckboxClicked();
-        }
-    },
-
-    /**
-     * @param {WebInspector.UserAgentSupport.DeviceMetrics} metrics
-     */
-    _createDeviceMetricsElement: function(metrics)
-    {
-        var fieldsetElement = document.createElement("fieldset");
-        fieldsetElement.id = "metrics-override-section";
-
-        function swapDimensionsClicked(event)
-        {
-            var widthValue = this._widthOverrideElement.value;
-            this._widthOverrideElement.value = this._heightOverrideElement.value;
-            this._heightOverrideElement.value = widthValue;
-            this._applyDeviceMetricsUserInput();
-        }
-
-        var tableElement = fieldsetElement.createChild("table", "nowrap");
-
-        var rowElement = tableElement.createChild("tr");
-        var cellElement = rowElement.createChild("td");
-        cellElement.appendChild(document.createTextNode(WebInspector.UIString("Screen resolution:")));
-        cellElement = rowElement.createChild("td");
-        this._widthOverrideElement = this._createInput(cellElement, "metrics-override-width", String(metrics.width || screen.width), this._applyDeviceMetricsUserInput.bind(this));
-        cellElement.appendChild(document.createTextNode(" \u00D7 ")); // MULTIPLICATION SIGN.
-        this._heightOverrideElement = this._createInput(cellElement, "metrics-override-height", String(metrics.height || screen.height), this._applyDeviceMetricsUserInput.bind(this));
-        cellElement.appendChild(document.createTextNode(" \u2014 ")); // EM DASH.
-        this._swapDimensionsElement = cellElement.createChild("button");
-        this._swapDimensionsElement.appendChild(document.createTextNode(" \u21C4 ")); // RIGHTWARDS ARROW OVER LEFTWARDS ARROW.
-        this._swapDimensionsElement.title = WebInspector.UIString("Swap dimensions");
-        this._swapDimensionsElement.addEventListener("click", swapDimensionsClicked.bind(this), false);
-
-        rowElement = tableElement.createChild("tr");
-        cellElement = rowElement.createChild("td");
-        cellElement.appendChild(document.createTextNode(WebInspector.UIString("Font scale factor:")));
-        cellElement = rowElement.createChild("td");
-        this._fontScaleFactorOverrideElement = this._createInput(cellElement, "metrics-override-font-scale", String(metrics.fontScaleFactor || 1), this._applyDeviceMetricsUserInput.bind(this));
-
-        rowElement = tableElement.createChild("tr");
-        cellElement = rowElement.createChild("td");
-        cellElement.colspan = 2;
-        this._fitWindowCheckboxElement = document.createElement("input");
-        cellElement.appendChild(this._createCheckboxSetting(WebInspector.UIString("Fit in window"), WebInspector.settings.deviceFitWindow, true, this._fitWindowCheckboxElement));
-
-        return fieldsetElement;
-    },
-
-    _createGeolocationOverrideControl: function()
-    {
-        const geolocationSetting = WebInspector.settings.geolocationOverride.get();
-        var geolocation = WebInspector.UserAgentSupport.GeolocationPosition.parseSetting(geolocationSetting);
-        var p = document.createElement("p");
-        var labelElement = p.createChild("label");
-        var checkboxElement = labelElement.createChild("input");
-        checkboxElement.id = "geolocation-override-checkbox";
-        checkboxElement.type = "checkbox";
-        checkboxElement.checked = false;
-        checkboxElement.addEventListener("click", this._onGeolocationOverrideCheckboxClicked.bind(this), false);
-        this._geolocationOverrideCheckboxElement = checkboxElement;
-        labelElement.appendChild(document.createTextNode(WebInspector.UIString("Override Geolocation")));
-
-        var geolocationSectionElement = this._createGeolocationOverrideElement(geolocation);
-        p.appendChild(geolocationSectionElement);
-        this._geolocationSectionElement = geolocationSectionElement;
-        this._onGeolocationOverrideCheckboxClicked();
-        return p;
-    },
-
-    _onGeolocationOverrideCheckboxClicked: function()
-    {
-        var controlsDisabled = !this._geolocationOverrideCheckboxElement.checked;
-        this._latitudeElement.disabled = controlsDisabled;
-        this._longitudeElement.disabled = controlsDisabled;
-        this._geolocationErrorElement.disabled = controlsDisabled;
-
-        if (controlsDisabled) {
-            WebInspector.userAgentSupport.toggleGeolocationPositionOverride(false);
-            return;
-        }
-
-        var geolocation = WebInspector.UserAgentSupport.GeolocationPosition.parseUserInput(this._latitudeElement.value, this._longitudeElement.value, this._geolocationErrorElement.checked);
-        if (geolocation) {
-            this._setGeolocationPosition(geolocation, false, false);
-            WebInspector.userAgentSupport.toggleGeolocationPositionOverride(true);
-        }
-        if (!this._latitudeElement.value)
-            this._latitudeElement.focus();
-    },
-
-    _applyGeolocationUserInput: function()
-    {
-        this._setGeolocationPosition(WebInspector.UserAgentSupport.GeolocationPosition.parseUserInput(this._latitudeElement.value.trim(), this._longitudeElement.value.trim(), this._geolocationErrorElement.checked), true, false);
-    },
-
-    /**
-     * @param {?WebInspector.UserAgentSupport.GeolocationPosition} geolocation
-     * @param {boolean} userInputModified
-     * @param {boolean} updateCheckbox
-     */
-    _setGeolocationPosition: function(geolocation, userInputModified, updateCheckbox)
-    {
-        if (!geolocation)
-            return;
-
-        if (!userInputModified) {
-            this._latitudeElement.value = geolocation.latitude;
-            this._longitudeElement.value = geolocation.longitude;
-        }
-
-        var value = geolocation.toSetting();
-        WebInspector.settings.geolocationOverride.set(value);
-
-        if (this._geolocationOverrideCheckboxElement && updateCheckbox) {
-            this._geolocationOverrideCheckboxElement.checked = !!geolocation.toSetting();
-            this._onGeolocationOverrideCheckboxClicked();
-        }
-    },
-
-    /**
-     * @param {WebInspector.UserAgentSupport.GeolocationPosition} geolocation
-     */
-    _createGeolocationOverrideElement: function(geolocation)
-    {
-        var fieldsetElement = document.createElement("fieldset");
-        fieldsetElement.id = "geolocation-override-section";
-
-        var tableElement = fieldsetElement.createChild("table");
-        var rowElement = tableElement.createChild("tr");
-        var cellElement = rowElement.createChild("td");
-        cellElement.appendChild(document.createTextNode(WebInspector.UIString("Geolocation Position") + ":"));
-        cellElement = rowElement.createChild("td");
-        cellElement.appendChild(document.createTextNode(WebInspector.UIString("Lat = ")));
-        this._latitudeElement = this._createInput(cellElement, "geolocation-override-latitude", String(geolocation.latitude), this._applyGeolocationUserInput.bind(this));
-        cellElement.appendChild(document.createTextNode(" , "));
-        cellElement.appendChild(document.createTextNode(WebInspector.UIString("Lon = ")));
-        this._longitudeElement = this._createInput(cellElement, "geolocation-override-longitude", String(geolocation.longitude), this._applyGeolocationUserInput.bind(this));
-        rowElement = tableElement.createChild("tr");
-        cellElement = rowElement.createChild("td");
-        cellElement.colSpan = 2;
-        var geolocationErrorLabelElement = document.createElement("label");
-        var geolocationErrorCheckboxElement = geolocationErrorLabelElement.createChild("input");
-        geolocationErrorCheckboxElement.id = "geolocation-error";
-        geolocationErrorCheckboxElement.type = "checkbox";
-        geolocationErrorCheckboxElement.checked = !geolocation || geolocation.error;
-        geolocationErrorCheckboxElement.addEventListener("click", this._applyGeolocationUserInput.bind(this), false);
-        geolocationErrorLabelElement.appendChild(document.createTextNode(WebInspector.UIString("Emulate position unavailable")));
-        this._geolocationErrorElement = geolocationErrorCheckboxElement;
-        cellElement.appendChild(geolocationErrorLabelElement);
-
-        return fieldsetElement;
-    },
-
-    _createDeviceOrientationOverrideControl: function()
-    {
-        const deviceOrientationSetting = WebInspector.settings.deviceOrientationOverride.get();
-        var deviceOrientation = WebInspector.UserAgentSupport.DeviceOrientation.parseSetting(deviceOrientationSetting);
-
-        var p = document.createElement("p");
-        var labelElement = p.createChild("label");
-        var checkboxElement = labelElement.createChild("input");
-        checkboxElement.id = "device-orientation-override-checkbox";
-        checkboxElement.type = "checkbox";
-        checkboxElement.checked = false;
-        checkboxElement.addEventListener("click", this._onDeviceOrientationOverrideCheckboxClicked.bind(this), false);
-        this._deviceOrientationOverrideCheckboxElement = checkboxElement;
-        labelElement.appendChild(document.createTextNode(WebInspector.UIString("Override Device Orientation")));
-
-        var deviceOrientationSectionElement = this._createDeviceOrientationOverrideElement(deviceOrientation);
-        p.appendChild(deviceOrientationSectionElement);
-        this._deviceOrientationSectionElement = deviceOrientationSectionElement;
-        this._onDeviceOrientationOverrideCheckboxClicked();
-        return p;
-    },
-
-    _onDeviceOrientationOverrideCheckboxClicked: function()
-    {
-        var controlsDisabled = !this._deviceOrientationOverrideCheckboxElement.checked;
-        this._alphaElement.disabled = controlsDisabled;
-        this._betaElement.disabled = controlsDisabled;
-        this._gammaElement.disabled = controlsDisabled;
-
-        if (controlsDisabled) {
-            WebInspector.userAgentSupport.toggleDeviceOrientationOverride(false);
-            return;
-        }
-
-        var deviceOrientation = WebInspector.UserAgentSupport.DeviceOrientation.parseUserInput(this._alphaElement.value, this._betaElement.value, this._gammaElement.value);
-        if (deviceOrientation) {
-            this._setDeviceOrientation(deviceOrientation, false, false);
-            WebInspector.userAgentSupport.toggleDeviceOrientationOverride(true);
-        }
-        if (!this._alphaElement.value)
-            this._alphaElement.focus();
-    },
-
-    _applyDeviceOrientationUserInput: function()
-    {
-        this._setDeviceOrientation(WebInspector.UserAgentSupport.DeviceOrientation.parseUserInput(this._alphaElement.value.trim(), this._betaElement.value.trim(), this._gammaElement.value.trim()), true, false);
-    },
-
-    /**
-     * @param {?WebInspector.UserAgentSupport.DeviceOrientation} deviceOrientation
-     * @param {boolean} userInputModified
-     * @param {boolean} updateCheckbox
-     */
-    _setDeviceOrientation: function(deviceOrientation, userInputModified, updateCheckbox)
-    {
-        if (!deviceOrientation)
-            return;
-
-        if (!userInputModified) {
-            this._alphaElement.value = deviceOrientation.alpha;
-            this._betaElement.value = deviceOrientation.beta;
-            this._gammaElement.value = deviceOrientation.gamma;
-        }
-
-        var value = deviceOrientation.toSetting();
-        WebInspector.settings.deviceOrientationOverride.set(value);
-
-        if (this._deviceOrientationOverrideCheckboxElement && updateCheckbox) {
-            this._deviceOrientationOverrideCheckboxElement.checked = !!deviceOrientation.toSetting();
-            this._onDeviceOrientationOverrideCheckboxClicked();
-        }
-    },
-
-    /**
-     * @param {WebInspector.UserAgentSupport.DeviceOrientation} deviceOrientation
-     */
-    _createDeviceOrientationOverrideElement: function(deviceOrientation)
-    {
-        var fieldsetElement = document.createElement("fieldset");
-        fieldsetElement.id = "device-orientation-override-section";
-
-        var tableElement = fieldsetElement.createChild("table");
-
-        var rowElement = tableElement.createChild("tr");
-        var cellElement = rowElement.createChild("td");
-        cellElement.appendChild(document.createTextNode("\u03B1: "));
-        this._alphaElement = this._createInput(cellElement, "device-orientation-override-alpha", String(deviceOrientation.alpha), this._applyDeviceOrientationUserInput.bind(this));
-        cellElement.appendChild(document.createTextNode(" \u03B2: "));
-        this._betaElement = this._createInput(cellElement, "device-orientation-override-beta", String(deviceOrientation.beta), this._applyDeviceOrientationUserInput.bind(this));
-        cellElement.appendChild(document.createTextNode(" \u03B3: "));
-        this._gammaElement = this._createInput(cellElement, "device-orientation-override-gamma", String(deviceOrientation.gamma), this._applyDeviceOrientationUserInput.bind(this));
-
-        return fieldsetElement;
-    },
-
-    __proto__: WebInspector.SettingsTab.prototype
-}
-
-/**
- * @constructor
- * @extends {WebInspector.SettingsTab}
- */
 WebInspector.ExperimentsSettingsTab = function()
 {
-    WebInspector.SettingsTab.call(this);
+    WebInspector.SettingsTab.call(this, WebInspector.UIString("Experiments"), "experiments-tab-content");
 
     var experiments = WebInspector.experimentsSettings.experiments;
     if (experiments.length) {
@@ -989,34 +464,64 @@ WebInspector.ExperimentsSettingsTab.prototype = {
 
 /**
  * @constructor
+ * @implements {WebInspector.ContextMenu.Provider}
  */
 WebInspector.SettingsController = function()
 {
-    this._statusBarButton = new WebInspector.StatusBarButton(WebInspector.UIString("Settings"), "settings-status-bar-item");;
-    this._statusBarButton.addEventListener("click", this._buttonClicked, this);
+    this._statusBarButton = new WebInspector.StatusBarButton(WebInspector.UIString("Settings"), "settings-status-bar-item");
+    this._statusBarButton.element.addEventListener("mousedown", this._buttonPressed.bind(this), false);
 
     /** @type {?WebInspector.SettingsScreen} */
     this._settingsScreen;
+
+    WebInspector.ContextMenu.registerProvider(this);
 }
 
 WebInspector.SettingsController.prototype =
 {
+    /**
+     * @override
+     */
+    appendApplicableItems: function(event, contextMenu, target)
+    {
+        if (target !== this._statusBarButton.element)
+            return;
+
+        contextMenu.appendItem(WebInspector.UIString("Overrides"), showOverrides.bind(this));
+        contextMenu.appendItem(WebInspector.UIString("Settings"), showSettings.bind(this));
+
+        function showOverrides()
+        {
+            if (this._settingsScreenVisible)
+                this._hideSettingsScreen();
+            WebInspector.OverridesView.showInDrawer();
+        }
+
+        function showSettings()
+        {
+            if (!this._settingsScreenVisible)
+                this.showSettingsScreen();
+        }
+    },
+
     get statusBarItem()
     {
         return this._statusBarButton.element;
     },
 
-    _buttonClicked: function()
+    /**
+     * @param {Event} event
+     */
+    _buttonPressed: function(event)
     {
-        if (this._statusBarButton.toggled)
-            this._hideSettingsScreen();
-        else
-            this.showSettingsScreen();
+        var menu = new WebInspector.ContextMenu(event);
+        menu.appendApplicableItems(event.currentTarget);
+        menu.showSoftMenu();
     },
 
     _onHideSettingsScreen: function()
     {
-        this._statusBarButton.toggled = false;
+        delete this._settingsScreenVisible;
     },
 
     /**
@@ -1031,7 +536,7 @@ WebInspector.SettingsController.prototype =
             this._settingsScreen.selectTab(tabId);
 
         this._settingsScreen.showModal();
-        this._statusBarButton.toggled = true;
+        this._settingsScreenVisible = true;
     },
 
     _hideSettingsScreen: function()

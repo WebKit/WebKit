@@ -176,6 +176,18 @@ WebInspector.ContextMenu.prototype = {
         this._event.consume();
     },
 
+    showSoftMenu: function()
+    {
+        var menuObject = this._buildDescriptor();
+
+        if (menuObject.length) {
+            WebInspector._contextMenu = this;
+            var softMenu = new WebInspector.SoftContextMenu(menuObject);
+            softMenu.show(this._event, true);
+        }
+        this._event.consume();
+    },
+
     _setHandler: function(id, handler)
     {
         if (handler)

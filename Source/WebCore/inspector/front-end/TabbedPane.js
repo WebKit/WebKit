@@ -81,6 +81,14 @@ WebInspector.TabbedPane.prototype = {
     },
 
     /**
+     * @type {boolean} verticalTabLayout
+     */
+    set verticalTabLayout(verticalTabLayout)
+    {
+        this._verticalTabLayout = verticalTabLayout;
+    },
+
+    /**
      * @type {boolean} shrinkableTabs
      */
     set closeableTabs(closeableTabs)
@@ -394,7 +402,7 @@ WebInspector.TabbedPane.prototype = {
         var i = 0;
         for (var tabId in this._tabs) {
             var tab = this._tabs[tabId];
-            tab.setWidth(Math.min(maxWidth, measuredWidths[i++]));
+            tab.setWidth(this._verticalTabLayout ? -1 : Math.min(maxWidth, measuredWidths[i++]));
         }
     },
 
@@ -475,7 +483,7 @@ WebInspector.TabbedPane.prototype = {
             var minimalRequiredWidth = totalTabsWidth;
             if (i !== tabsHistory.length - 1)
                 minimalRequiredWidth += measuredDropDownButtonWidth;
-            if (minimalRequiredWidth > totalWidth)
+            if (!this._verticalTabLayout && minimalRequiredWidth > totalWidth)
                 break;
             tabsToShowIndexes.push(tabsOrdered.indexOf(tabsHistory[i]));
         }
@@ -649,7 +657,7 @@ WebInspector.TabbedPaneTab.prototype = {
      */
     setWidth: function(width)
     {
-        this.tabElement.style.width = width + "px";
+        this.tabElement.style.width = width === -1 ? "" : (width + "px");
         this._width = width;
     },
 
@@ -660,6 +668,7 @@ WebInspector.TabbedPaneTab.prototype = {
     {
         var tabElement = document.createElement("div");
         tabElement.addStyleClass("tabbed-pane-header-tab");
+        tabElement.id = "tab-" + this._id;
         tabElement.tabIndex = -1;
 
         var titleElement = tabElement.createChild("span", "tabbed-pane-header-tab-title");

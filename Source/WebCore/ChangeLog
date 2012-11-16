@@ -1,3 +1,74 @@
+2012-11-06  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: metrics, geolocation, orientation overrides do not belong to the settings panel
+        https://bugs.webkit.org/show_bug.cgi?id=93691
+
+        Reviewed by Vsevolod Vlasov.
+
+        - The Overrides tab contents have been moved from the Settings dialog into a brand new Overrides drawer view,
+        both receiving a new, more light-weight design.
+        - The Cog button now brings up a popup menu with the "Overrides" and "Settings" items.
+
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * inspector/compile-front-end.py:
+        * inspector/front-end/ContextMenu.js:
+        (WebInspector.ContextMenu.prototype.showSoftMenu): Display the ContextMenu as a soft menu.
+        * inspector/front-end/OverridesView.js: Copied from Source/WebCore/inspector/front-end/SettingsScreen.js.
+        (WebInspector.OverridesView.appendBlockTo):
+        (WebInspector.OverridesView):
+        (WebInspector.OverridesView.showInDrawer):
+        (WebInspector.OverridesView.prototype.get listener):
+        (WebInspector.OverridesView.prototype._createUserAgentSelectRowElement.get const):
+        (WebInspector.OverridesView.prototype._createUserAgentSelectRowElement.textDoubleClicked):
+        (WebInspector.OverridesView.prototype._createUserAgentSelectRowElement.textChanged):
+        (WebInspector.OverridesView.prototype._createUserAgentSelectRowElement.set checkboxClicked):
+        (WebInspector.OverridesView.prototype._createUserAgentSelectRowElement):
+        (WebInspector.OverridesView.prototype._createInput):
+        (WebInspector.OverridesView.prototype._onMetricsCheckboxClicked):
+        (WebInspector.OverridesView.prototype._applyDeviceMetricsUserInput):
+        (WebInspector.OverridesView.prototype.):
+        (WebInspector.OverridesView.prototype.set if):
+        (WebInspector.OverridesView.prototype._createDeviceMetricsElement.swapDimensionsClicked):
+        (WebInspector.OverridesView.prototype._createDeviceMetricsElement):
+        (WebInspector.OverridesView.prototype._onGeolocationOverrideCheckboxClicked):
+        (WebInspector.OverridesView.prototype._applyGeolocationUserInput):
+        (WebInspector.OverridesView.prototype._setGeolocationPosition):
+        (WebInspector.OverridesView.prototype._createGeolocationOverrideElement):
+        (WebInspector.OverridesView.prototype._onDeviceOrientationOverrideCheckboxClicked):
+        (WebInspector.OverridesView.prototype._applyDeviceOrientationUserInput):
+        (WebInspector.OverridesView.prototype._setDeviceOrientation):
+        (WebInspector.OverridesView.prototype._createDeviceOrientationOverrideElement):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel): Fix the "DOM Breakpoints" pane move upon the panel creation.
+        * inspector/front-end/SettingsScreen.js:
+        (WebInspector.SettingsTab):
+        (WebInspector.SettingsTab.prototype._appendSection):
+        (WebInspector.GenericSettingsTab):
+        (WebInspector.ExperimentsSettingsTab):
+        (WebInspector.SettingsController): Implement the popup menu upon the button click.
+        (WebInspector.SettingsController.prototype.showOverrides):
+        (WebInspector.SettingsController.prototype.showSettings):
+        (WebInspector.SettingsController.prototype.appendApplicableItems):
+        (WebInspector.SettingsController.prototype._buttonPressed):
+        (WebInspector.SettingsController.prototype._onHideSettingsScreen):
+        (WebInspector.SettingsController.prototype.showSettingsScreen):
+        * inspector/front-end/ShortcutsScreen.js: Add "Shortcuts" header.
+        (WebInspector.ShortcutsScreen.prototype.createShortcutsTabView):
+        * inspector/front-end/SoftContextMenu.js: Enable in all cases, implement the alignToCurrentTarget mode in show().
+        (WebInspector.SoftContextMenu.prototype.show):
+        * inspector/front-end/TabbedPane.js: Implement vertical tab layout (skipping the tab width computations).
+        (WebInspector.TabbedPane.prototype.set verticalTabLayout):
+        (WebInspector.TabbedPane.prototype._updateWidths):
+        (WebInspector.TabbedPaneTab.prototype.setWidth):
+        (WebInspector.TabbedPaneTab.prototype._createTabElement):
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/helpScreen.css: Update styles for the new Settings and Overrides look-and-feel.
+        * inspector/front-end/inspector.css: Drive-by fix small artifacts in the soft menu and drawer view statusbar item label.
+        (.soft-context-menu-item):
+        (.drawer-header):
+        * inspector/front-end/inspector.html:
+
 2012-11-16  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r134865.

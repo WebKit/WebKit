@@ -65,7 +65,9 @@ WebInspector.ShortcutsScreen.prototype = {
 
         var view = new WebInspector.View();
 
-        var container = view.element;
+        view.element.className = "settings-tab-container";
+        view.element.createChild("header").createChild("h3").appendChild(document.createTextNode(WebInspector.UIString("Shortcuts")));
+        var container = view.element.createChild("div", "help-container-wrapper").createChild("div");
         container.className = "help-content help-container";
         for (var i = 0; i < orderedSections.length; ++i)
             orderedSections[i].renderSection(container);
