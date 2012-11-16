@@ -206,7 +206,7 @@ static void setAtkRelationSetFromCoreObject(AccessibilityObject* coreObject, Atk
     }
 }
 
-static gpointer webkit_accessible_parent_class = 0;
+static gpointer webkitAccessibleParentClass = 0;
 
 static bool isRootObject(AccessibilityObject* coreObject)
 {
@@ -257,7 +257,7 @@ static AtkObject* atkParentOfRootObject(AtkObject* object)
 static AtkObject* webkitAccessibleGetParent(AtkObject* object)
 {
     // Check first if the parent has been already set.
-    AtkObject* accessibleParent = ATK_OBJECT_CLASS(webkit_accessible_parent_class)->get_parent(object);
+    AtkObject* accessibleParent = ATK_OBJECT_CLASS(webkitAccessibleParentClass)->get_parent(object);
     if (accessibleParent)
         return accessibleParent;
 
@@ -628,7 +628,7 @@ static void setAtkStateSetFromCoreObject(AccessibilityObject* coreObject, AtkSta
     // isReadOnly is false for listBoxOptions, we need to add one
     // more check so that we do not present them as being "editable".
     if ((!coreObject->isReadOnly()
-         || (coreObject->isControl() && coreObject->canSetValueAttribute()))
+        || (coreObject->isControl() && coreObject->canSetValueAttribute()))
         && !isListBoxOption)
         atk_state_set_add_state(stateSet, ATK_STATE_EDITABLE);
 
@@ -708,7 +708,7 @@ static void setAtkStateSetFromCoreObject(AccessibilityObject* coreObject, AtkSta
 
 static AtkStateSet* webkitAccessibleRefStateSet(AtkObject* object)
 {
-    AtkStateSet* stateSet = ATK_OBJECT_CLASS(webkit_accessible_parent_class)->ref_state_set(object);
+    AtkStateSet* stateSet = ATK_OBJECT_CLASS(webkitAccessibleParentClass)->ref_state_set(object);
     AccessibilityObject* coreObject = core(object);
 
     if (coreObject == fallbackObject()) {
@@ -727,7 +727,7 @@ static AtkStateSet* webkitAccessibleRefStateSet(AtkObject* object)
 
 static AtkRelationSet* webkitAccessibleRefRelationSet(AtkObject* object)
 {
-    AtkRelationSet* relationSet = ATK_OBJECT_CLASS(webkit_accessible_parent_class)->ref_relation_set(object);
+    AtkRelationSet* relationSet = ATK_OBJECT_CLASS(webkitAccessibleParentClass)->ref_relation_set(object);
     AccessibilityObject* coreObject = core(object);
 
     setAtkRelationSetFromCoreObject(coreObject, relationSet);
@@ -737,8 +737,8 @@ static AtkRelationSet* webkitAccessibleRefRelationSet(AtkObject* object)
 
 static void webkitAccessibleInit(AtkObject* object, gpointer data)
 {
-    if (ATK_OBJECT_CLASS(webkit_accessible_parent_class)->initialize)
-        ATK_OBJECT_CLASS(webkit_accessible_parent_class)->initialize(object, data);
+    if (ATK_OBJECT_CLASS(webkitAccessibleParentClass)->initialize)
+        ATK_OBJECT_CLASS(webkitAccessibleParentClass)->initialize(object, data);
 
     WEBKIT_ACCESSIBLE(object)->m_object = reinterpret_cast<AccessibilityObject*>(data);
 }
@@ -748,14 +748,14 @@ static void webkitAccessibleFinalize(GObject* object)
     // This is a good time to clear the return buffer.
     returnString(String());
 
-    G_OBJECT_CLASS(webkit_accessible_parent_class)->finalize(object);
+    G_OBJECT_CLASS(webkitAccessibleParentClass)->finalize(object);
 }
 
-static void webkit_accessible_class_init(AtkObjectClass* klass)
+static void webkitAccessibleClassInit(AtkObjectClass* klass)
 {
     GObjectClass* gobjectClass = G_OBJECT_CLASS(klass);
 
-    webkit_accessible_parent_class = g_type_class_peek_parent(klass);
+    webkitAccessibleParentClass = g_type_class_peek_parent(klass);
 
     gobjectClass->finalize = webkitAccessibleFinalize;
 
@@ -773,16 +773,16 @@ static void webkit_accessible_class_init(AtkObjectClass* klass)
 }
 
 GType
-webkit_accessible_get_type(void)
+webkitAccessibleGetType(void)
 {
-    static volatile gsize type_volatile = 0;
+    static volatile gsize typeVolatile = 0;
 
-    if (g_once_init_enter(&type_volatile)) {
+    if (g_once_init_enter(&typeVolatile)) {
         static const GTypeInfo tinfo = {
             sizeof(WebKitAccessibleClass),
             (GBaseInitFunc) 0,
             (GBaseFinalizeFunc) 0,
-            (GClassInitFunc) webkit_accessible_class_init,
+            (GClassInitFunc) webkitAccessibleClassInit,
             (GClassFinalizeFunc) 0,
             0, /* class data */
             sizeof(WebKitAccessible), /* instance size */
@@ -791,12 +791,11 @@ webkit_accessible_get_type(void)
             0 /* value table */
         };
 
-        GType type = g_type_register_static(ATK_TYPE_OBJECT,
-                                            "WebKitAccessible", &tinfo, GTypeFlags(0));
-        g_once_init_leave(&type_volatile, type);
+        GType type = g_type_register_static(ATK_TYPE_OBJECT, "WebKitAccessible", &tinfo, GTypeFlags(0));
+        g_once_init_leave(&typeVolatile, type);
     }
 
-    return type_volatile;
+    return typeVolatile;
 }
 
 static const GInterfaceInfo AtkInterfacesInitFunctions[] = {
@@ -970,14 +969,12 @@ static GType getAccessibilityTypeFromObject(AccessibilityObject* coreObject)
     if (type)
         return type;
 
-    type = g_type_register_static(WEBKIT_TYPE_ACCESSIBLE,
-                                  atkTypeName,
-                                  &typeInfo, GTypeFlags(0));
+    type = g_type_register_static(WEBKIT_TYPE_ACCESSIBLE, atkTypeName, &typeInfo, GTypeFlags(0));
     for (guint i = 0; i < G_N_ELEMENTS(AtkInterfacesInitFunctions); i++) {
         if (interfaceMask & (1 << i))
             g_type_add_interface_static(type,
-                                        GetAtkInterfaceTypeFromWAIType(static_cast<WAIType>(i)),
-                                        &AtkInterfacesInitFunctions[i]);
+                GetAtkInterfaceTypeFromWAIType(static_cast<WAIType>(i)),
+                &AtkInterfacesInitFunctions[i]);
     }
 
     return type;

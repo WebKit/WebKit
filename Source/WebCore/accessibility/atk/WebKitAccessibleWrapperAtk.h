@@ -30,7 +30,7 @@ class AccessibilityObject;
 
 G_BEGIN_DECLS
 
-#define WEBKIT_TYPE_ACCESSIBLE                  (webkit_accessible_get_type ())
+#define WEBKIT_TYPE_ACCESSIBLE                  (webkitAccessibleGetType ())
 #define WEBKIT_ACCESSIBLE(obj)                  (G_TYPE_CHECK_INSTANCE_CAST ((obj), WEBKIT_TYPE_ACCESSIBLE, WebKitAccessible))
 #define WEBKIT_ACCESSIBLE_CLASS(klass)          (G_TYPE_CHECK_CLASS_CAST ((klass), WEBKIT_TYPE_ACCESSIBLE, WebKitAccessibleClass))
 #define WEBKIT_IS_ACCESSIBLE(obj)               (G_TYPE_CHECK_INSTANCE_TYPE ((obj), WEBKIT_TYPE_ACCESSIBLE))
@@ -46,10 +46,10 @@ struct _WebKitAccessible {
 };
 
 struct _WebKitAccessibleClass {
-    AtkObjectClass parent_class;
+    AtkObjectClass parentClass;
 };
 
-GType webkit_accessible_get_type(void) G_GNUC_CONST;
+GType webkitAccessibleGetType(void) G_GNUC_CONST;
 
 WebKitAccessible* webkitAccessibleNew(WebCore::AccessibilityObject*);
 

@@ -164,6 +164,6 @@ bool selectionBelongsToObject(AccessibilityObject* coreObject, VisibleSelection&
     Node* lastDescendant = node->lastDescendant();
     ExceptionCode ec = 0;
     return (range->intersectsNode(node, ec)
-            && (range->endContainer() != node || range->endOffset())
-            && (range->startContainer() != lastDescendant || range->startOffset() != lastOffsetInNode(lastDescendant)));
+        && (range->endContainer() != node || range->endOffset())
+        && (range->startContainer() != lastDescendant || range->startOffset() != lastOffsetInNode(lastDescendant)));
 }

@@ -24,11 +24,11 @@
 #include "AccessibilityRenderObject.h"
 #include "Document.h"
 #include "Element.h"
-#include <wtf/gobject/GOwnPtr.h>
 #include "HTMLSelectElement.h"
 #include "Range.h"
 #include "TextIterator.h"
 #include "WebKitAccessibleWrapperAtk.h"
+#include <wtf/gobject/GOwnPtr.h>
 
 namespace WebCore {
 

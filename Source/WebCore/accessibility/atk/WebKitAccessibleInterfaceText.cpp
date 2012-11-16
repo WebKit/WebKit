@@ -35,7 +35,6 @@
 #include "Document.h"
 #include "Font.h"
 #include "FrameView.h"
-#include <wtf/gobject/GOwnPtr.h>
 #include "HostWindow.h"
 #include "InlineTextBox.h"
 #include "NotImplemented.h"
@@ -47,6 +46,7 @@
 #include "WebKitAccessibleUtil.h"
 #include "WebKitAccessibleWrapperAtk.h"
 #include "htmlediting.h"
+#include <wtf/gobject/GOwnPtr.h>
 
 #if PLATFORM(GTK)
 #include <libgail-util/gail-util.h>
@@ -211,15 +211,13 @@ static AtkAttributeSet* getAttributeSetForAccessibilityObject(const Accessibilit
 
     Color bgColor = style->visitedDependentColor(CSSPropertyBackgroundColor);
     if (bgColor.isValid()) {
-        buffer.set(g_strdup_printf("%i,%i,%i",
-                                   bgColor.red(), bgColor.green(), bgColor.blue()));
+        buffer.set(g_strdup_printf("%i,%i,%i", bgColor.red(), bgColor.green(), bgColor.blue()));
         result = addToAtkAttributeSet(result, atk_text_attribute_get_name(ATK_TEXT_ATTR_BG_COLOR), buffer.get());
     }
 
     Color fgColor = style->visitedDependentColor(CSSPropertyColor);
     if (fgColor.isValid()) {
-        buffer.set(g_strdup_printf("%i,%i,%i",
-                                   fgColor.red(), fgColor.green(), fgColor.blue()));
+        buffer.set(g_strdup_printf("%i,%i,%i", fgColor.red(), fgColor.green(), fgColor.blue()));
         result = addToAtkAttributeSet(result, atk_text_attribute_get_name(ATK_TEXT_ATTR_FG_COLOR), buffer.get());
     }
 

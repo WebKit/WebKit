@@ -106,7 +106,7 @@ webcore_cppflags += \
 webcoregtk_cppflags += \
 	-DWEBKITGTK_API_VERSION_STRING=\"@WEBKITGTK_API_VERSION@\" \
 	-DWTF_USE_SOUP=1 \
-	-I$(srcdir)/Source/WebCore/accessibility/gtk \
+	-I$(srcdir)/Source/WebCore/accessibility/atk \
 	-I$(srcdir)/Source/WebCore/loader/gtk \
 	-I$(srcdir)/Source/WebCore/page/gtk \
 	-I$(srcdir)/Source/WebCore/platform/cairo \

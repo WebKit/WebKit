@@ -5891,36 +5891,36 @@ webcore_platform_sources += \
 
 # WebCore files that use GTK/GDK or any other dependency that requires GTK+.
 webcoregtk_sources += \
-	Source/WebCore/accessibility/gtk/AccessibilityObjectAtk.cpp \
-	Source/WebCore/accessibility/gtk/AXObjectCacheAtk.cpp \
-	Source/WebCore/accessibility/gtk/WebKitAccessibleHyperlink.h \
-	Source/WebCore/accessibility/gtk/WebKitAccessibleHyperlink.cpp \
-	Source/WebCore/accessibility/gtk/WebKitAccessibleInterfaceAction.cpp \
-	Source/WebCore/accessibility/gtk/WebKitAccessibleInterfaceAction.h \
-	Source/WebCore/accessibility/gtk/WebKitAccessibleInterfaceComponent.cpp \
-	Source/WebCore/accessibility/gtk/WebKitAccessibleInterfaceComponent.h \
-	Source/WebCore/accessibility/gtk/WebKitAccessibleInterfaceDocument.cpp \
-	Source/WebCore/accessibility/gtk/WebKitAccessibleInterfaceDocument.h \
-	Source/WebCore/accessibility/gtk/WebKitAccessibleInterfaceEditableText.cpp \
-	Source/WebCore/accessibility/gtk/WebKitAccessibleInterfaceEditableText.h \
-	Source/WebCore/accessibility/gtk/WebKitAccessibleInterfaceHyperlinkImpl.cpp \
-	Source/WebCore/accessibility/gtk/WebKitAccessibleInterfaceHyperlinkImpl.h \
-	Source/WebCore/accessibility/gtk/WebKitAccessibleInterfaceHypertext.cpp \
-	Source/WebCore/accessibility/gtk/WebKitAccessibleInterfaceHypertext.h \
-	Source/WebCore/accessibility/gtk/WebKitAccessibleInterfaceImage.cpp \
-	Source/WebCore/accessibility/gtk/WebKitAccessibleInterfaceImage.h \
-	Source/WebCore/accessibility/gtk/WebKitAccessibleInterfaceSelection.cpp \
-	Source/WebCore/accessibility/gtk/WebKitAccessibleInterfaceSelection.h \
-	Source/WebCore/accessibility/gtk/WebKitAccessibleInterfaceTable.cpp \
-	Source/WebCore/accessibility/gtk/WebKitAccessibleInterfaceTable.h \
-	Source/WebCore/accessibility/gtk/WebKitAccessibleInterfaceText.cpp \
-	Source/WebCore/accessibility/gtk/WebKitAccessibleInterfaceText.h \
-	Source/WebCore/accessibility/gtk/WebKitAccessibleInterfaceValue.cpp \
-	Source/WebCore/accessibility/gtk/WebKitAccessibleInterfaceValue.h \
-	Source/WebCore/accessibility/gtk/WebKitAccessibleUtil.cpp \
-	Source/WebCore/accessibility/gtk/WebKitAccessibleUtil.h \
-	Source/WebCore/accessibility/gtk/WebKitAccessibleWrapperAtk.cpp \
-	Source/WebCore/accessibility/gtk/WebKitAccessibleWrapperAtk.h \
+	Source/WebCore/accessibility/atk/AccessibilityObjectAtk.cpp \
+	Source/WebCore/accessibility/atk/AXObjectCacheAtk.cpp \
+	Source/WebCore/accessibility/atk/WebKitAccessibleHyperlink.h \
+	Source/WebCore/accessibility/atk/WebKitAccessibleHyperlink.cpp \
+	Source/WebCore/accessibility/atk/WebKitAccessibleInterfaceAction.cpp \
+	Source/WebCore/accessibility/atk/WebKitAccessibleInterfaceAction.h \
+	Source/WebCore/accessibility/atk/WebKitAccessibleInterfaceComponent.cpp \
+	Source/WebCore/accessibility/atk/WebKitAccessibleInterfaceComponent.h \
+	Source/WebCore/accessibility/atk/WebKitAccessibleInterfaceDocument.cpp \
+	Source/WebCore/accessibility/atk/WebKitAccessibleInterfaceDocument.h \
+	Source/WebCore/accessibility/atk/WebKitAccessibleInterfaceEditableText.cpp \
+	Source/WebCore/accessibility/atk/WebKitAccessibleInterfaceEditableText.h \
+	Source/WebCore/accessibility/atk/WebKitAccessibleInterfaceHyperlinkImpl.cpp \
+	Source/WebCore/accessibility/atk/WebKitAccessibleInterfaceHyperlinkImpl.h \
+	Source/WebCore/accessibility/atk/WebKitAccessibleInterfaceHypertext.cpp \
+	Source/WebCore/accessibility/atk/WebKitAccessibleInterfaceHypertext.h \
+	Source/WebCore/accessibility/atk/WebKitAccessibleInterfaceImage.cpp \
+	Source/WebCore/accessibility/atk/WebKitAccessibleInterfaceImage.h \
+	Source/WebCore/accessibility/atk/WebKitAccessibleInterfaceSelection.cpp \
+	Source/WebCore/accessibility/atk/WebKitAccessibleInterfaceSelection.h \
+	Source/WebCore/accessibility/atk/WebKitAccessibleInterfaceTable.cpp \
+	Source/WebCore/accessibility/atk/WebKitAccessibleInterfaceTable.h \
+	Source/WebCore/accessibility/atk/WebKitAccessibleInterfaceText.cpp \
+	Source/WebCore/accessibility/atk/WebKitAccessibleInterfaceText.h \
+	Source/WebCore/accessibility/atk/WebKitAccessibleInterfaceValue.cpp \
+	Source/WebCore/accessibility/atk/WebKitAccessibleInterfaceValue.h \
+	Source/WebCore/accessibility/atk/WebKitAccessibleUtil.cpp \
+	Source/WebCore/accessibility/atk/WebKitAccessibleUtil.h \
+	Source/WebCore/accessibility/atk/WebKitAccessibleWrapperAtk.cpp \
+	Source/WebCore/accessibility/atk/WebKitAccessibleWrapperAtk.h \
 	Source/WebCore/editing/gtk/FrameSelectionGtk.cpp \
 	Source/WebCore/page/gtk/DragControllerGtk.cpp \
 	Source/WebCore/page/gtk/EventHandlerGtk.cpp \

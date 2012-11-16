@@ -1,3 +1,75 @@
+2012-11-16  Mario Sanchez Prada  <mario@webkit.org>
+
+        [EFL] Share WebKit-Gtk's Accessibility implementation with others WebKit ports.
+        https://bugs.webkit.org/show_bug.cgi?id=99578
+
+        Reviewed by Martin Robinson.
+
+        Renamed WebCore/accessibility/gtk to WebCore/accessibility/atk.
+
+        * GNUmakefile.am:
+        * GNUmakefile.list.am:
+        * accessibility/atk/AXObjectCacheAtk.cpp: Renamed from
+        Source/WebCore/accessibility/gtk/AXObjectCacheAtk.cpp.
+        * accessibility/atk/AccessibilityObjectAtk.cpp: Renamed from
+        Source/WebCore/accessibility/gtk/AccessibilityObjectAtk.cpp.
+        * accessibility/atk/WebKitAccessibleHyperlink.cpp: Renamed from
+        Source/WebCore/accessibility/gtk/WebKitAccessibleHyperlink.cpp.
+        * accessibility/atk/WebKitAccessibleHyperlink.h: Renamed from
+        Source/WebCore/accessibility/gtk/WebKitAccessibleHyperlink.h.
+        * accessibility/atk/WebKitAccessibleInterfaceAction.cpp: Renamed
+        from Source/WebCore/accessibility/gtk/WebKitAccessibleInterfaceAction.cpp.
+        * accessibility/atk/WebKitAccessibleInterfaceAction.h: Renamed
+        from Source/WebCore/accessibility/gtk/WebKitAccessibleInterfaceAction.h.
+        * accessibility/atk/WebKitAccessibleInterfaceComponent.cpp:
+        Renamed from Source/WebCore/accessibility/gtk/WebKitAccessibleInterfaceComponent.cpp.
+        * accessibility/atk/WebKitAccessibleInterfaceComponent.h: Renamed
+        from Source/WebCore/accessibility/gtk/WebKitAccessibleInterfaceComponent.h.
+        * accessibility/atk/WebKitAccessibleInterfaceDocument.cpp: Renamed
+        from Source/WebCore/accessibility/gtk/WebKitAccessibleInterfaceDocument.cpp.
+        * accessibility/atk/WebKitAccessibleInterfaceDocument.h: Renamed
+        from Source/WebCore/accessibility/gtk/WebKitAccessibleInterfaceDocument.h.
+        * accessibility/atk/WebKitAccessibleInterfaceEditableText.cpp:
+        Renamed from Source/WebCore/accessibility/gtk/WebKitAccessibleInterfaceEditableText.cpp.
+        * accessibility/atk/WebKitAccessibleInterfaceEditableText.h:
+        Renamed from Source/WebCore/accessibility/gtk/WebKitAccessibleInterfaceEditableText.h.
+        * accessibility/atk/WebKitAccessibleInterfaceHyperlinkImpl.cpp:
+        Renamed from Source/WebCore/accessibility/gtk/WebKitAccessibleInterfaceHyperlinkImpl.cpp.
+        * accessibility/atk/WebKitAccessibleInterfaceHyperlinkImpl.h:
+        Renamed from Source/WebCore/accessibility/gtk/WebKitAccessibleInterfaceHyperlinkImpl.h.
+        * accessibility/atk/WebKitAccessibleInterfaceHypertext.cpp:
+        Renamed from Source/WebCore/accessibility/gtk/WebKitAccessibleInterfaceHypertext.cpp.
+        * accessibility/atk/WebKitAccessibleInterfaceHypertext.h: Renamed
+        from Source/WebCore/accessibility/gtk/WebKitAccessibleInterfaceHypertext.h.
+        * accessibility/atk/WebKitAccessibleInterfaceImage.cpp: Renamed
+        from Source/WebCore/accessibility/gtk/WebKitAccessibleInterfaceImage.cpp.
+        * accessibility/atk/WebKitAccessibleInterfaceImage.h: Renamed from
+        Source/WebCore/accessibility/gtk/WebKitAccessibleInterfaceImage.h.
+        * accessibility/atk/WebKitAccessibleInterfaceSelection.cpp:
+        Renamed from Source/WebCore/accessibility/gtk/WebKitAccessibleInterfaceSelection.cpp.
+        * accessibility/atk/WebKitAccessibleInterfaceSelection.h: Renamed
+        from Source/WebCore/accessibility/gtk/WebKitAccessibleInterfaceSelection.h.
+        * accessibility/atk/WebKitAccessibleInterfaceTable.cpp: Renamed
+        from Source/WebCore/accessibility/gtk/WebKitAccessibleInterfaceTable.cpp.
+        * accessibility/atk/WebKitAccessibleInterfaceTable.h: Renamed from
+        Source/WebCore/accessibility/gtk/WebKitAccessibleInterfaceTable.h.
+        * accessibility/atk/WebKitAccessibleInterfaceText.cpp: Renamed
+        from Source/WebCore/accessibility/gtk/WebKitAccessibleInterfaceText.cpp.
+        * accessibility/atk/WebKitAccessibleInterfaceText.h: Renamed from
+        Source/WebCore/accessibility/gtk/WebKitAccessibleInterfaceText.h.
+        * accessibility/atk/WebKitAccessibleInterfaceValue.cpp: Renamed
+        from Source/WebCore/accessibility/gtk/WebKitAccessibleInterfaceValue.cpp.
+        * accessibility/atk/WebKitAccessibleInterfaceValue.h: Renamed from
+        Source/WebCore/accessibility/gtk/WebKitAccessibleInterfaceValue.h.
+        * accessibility/atk/WebKitAccessibleUtil.cpp: Renamed from
+        Source/WebCore/accessibility/gtk/WebKitAccessibleUtil.cpp.
+        * accessibility/atk/WebKitAccessibleUtil.h: Renamed from
+        Source/WebCore/accessibility/gtk/WebKitAccessibleUtil.h.
+        * accessibility/atk/WebKitAccessibleWrapperAtk.cpp: Renamed from
+        Source/WebCore/accessibility/gtk/WebKitAccessibleWrapperAtk.cpp.
+        * accessibility/atk/WebKitAccessibleWrapperAtk.h: Renamed from
+        Source/WebCore/accessibility/gtk/WebKitAccessibleWrapperAtk.h.
+
 2012-11-16  Shinya Kawanaka  <shinyak@chromium.org>
 
         Changing pseudoClass (:indeterminate) should cause distribution

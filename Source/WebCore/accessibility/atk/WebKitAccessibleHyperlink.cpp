@@ -339,11 +339,11 @@ static void webkitAccessibleHyperlinkClassInit(AtkHyperlinkClass* klass)
     klass->is_selected_link = webkitAccessibleHyperlinkIsSelectedLink;
 
     g_object_class_install_property(gobjectClass, PROP_HYPERLINK_IMPL,
-                                    g_param_spec_object("hyperlink-impl",
-                                                        "Hyperlink implementation",
-                                                        "The associated WebKitAccessible instance.",
-                                                        WEBKIT_TYPE_ACCESSIBLE,
-                                                        (GParamFlags)(G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY | G_PARAM_STATIC_STRINGS)));
+        g_param_spec_object("hyperlink-impl",
+            "Hyperlink implementation",
+            "The associated WebKitAccessible instance.",
+            WEBKIT_TYPE_ACCESSIBLE,
+            (GParamFlags)(G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY | G_PARAM_STATIC_STRINGS)));
 
     g_type_class_add_private(gobjectClass, sizeof(WebKitAccessibleHyperlinkPrivate));
 }
