@@ -88,6 +88,7 @@ libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_CPP
 	-I$(srcdir)/Source/WebKit2/WebProcess/WebCoreSupport/gtk \
 	-I$(srcdir)/Source/WebKit2/WebProcess/WebCoreSupport/soup \
 	-I$(srcdir)/Source/WebKit2/WebProcess/WebPage \
+    -I$(srcdir)/Source/WebKit2/WebProcess/WebPage/atk \
 	-I$(srcdir)/Source/WebKit2/WebProcess/WebPage/gtk \
 	-I$(top_builddir)/DerivedSources/WebKit2 \
 	-I$(top_builddir)/DerivedSources/WebKit2/include \

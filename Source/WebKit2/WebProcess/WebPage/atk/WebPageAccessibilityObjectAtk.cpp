@@ -45,23 +45,23 @@ static AtkObject* accessibilityRootObjectWrapper(AtkObject* atkObject)
     if (!accessible->m_page)
         return 0;
 
-    Page* page = accessible->m_page->corePage();
-    if (!page)
+    Page* corePage = accessible->m_page->corePage();
+    if (!corePage)
         return 0;
 
-    Frame* core = page->mainFrame();
-    if (!core || !core->document())
+    Frame* coreFrame = corePage->mainFrame();
+    if (!coreFrame || !coreFrame->document())
         return 0;
 
-    AccessibilityObject* root = core->document()->axObjectCache()->rootObject();
-    if (!root)
+    AccessibilityObject* coreRootObject = coreFrame->document()->axObjectCache()->rootObject();
+    if (!coreRootObject)
         return 0;
 
-    AtkObject* axRoot = root->wrapper();
-    if (!axRoot || !ATK_IS_OBJECT(axRoot))
+    AtkObject* rootObject = coreRootObject->wrapper();
+    if (!rootObject || !ATK_IS_OBJECT(rootObject))
         return 0;
 
-    return axRoot;
+    return rootObject;
 }
 
 static void webPageAccessibilityObjectInitialize(AtkObject* atkObject, gpointer data)

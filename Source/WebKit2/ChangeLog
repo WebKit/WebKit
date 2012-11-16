@@ -1,3 +1,29 @@
+2012-11-16  Krzysztof Czech  <k.czech@samsung.com>
+
+        [WK2][GTK][EFL] Share WebKit2-GTK's WebProcess Accessibility implementation with other WebKit ports.
+        https://bugs.webkit.org/show_bug.cgi?id=101748
+
+        Reviewed by Martin Robinson.
+
+        Remove and rename files related to Accessibility from WebPage/gtk to WebPage/atk.
+
+        * GNUmakefile.am:
+        * GNUmakefile.list.am:
+        * WebProcess/WebPage/atk/WebPageAccessibilityObject.h: Renamed from Source/WebKit2/WebProcess/WebPage/gtk/WebPageAccessibilityObject.h.
+        (WebKit):
+        (_WebPageAccessibilityObject):
+        (_WebPageAccessibilityObjectClass):
+        * WebProcess/WebPage/atk/WebPageAccessibilityObjectAtk.cpp: Renamed from Source/WebKit2/WebProcess/WebPage/gtk/WebPageAccessibilityObject.cpp.
+        (accessibilityRootObjectWrapper):
+        (webPageAccessibilityObjectInitialize):
+        (webPageAccessibilityObjectGetIndexInParent):
+        (webPageAccessibilityObjectGetNChildren):
+        (webPageAccessibilityObjectRefChild):
+        (web_page_accessibility_object_init):
+        (web_page_accessibility_object_class_init):
+        (webPageAccessibilityObjectNew):
+        (webPageAccessibilityObjectRefresh):
+
 2012-11-16  Alexandru Chiculita  <achicu@adobe.com>
 
         [Texmap][CSS Shaders] Make the CustomFilterValidatedProgram maintain the platform compiled program
