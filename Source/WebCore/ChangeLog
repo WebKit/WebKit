@@ -1,3 +1,24 @@
+2012-11-15  Joe Mason  <jmason@rim.com>
+
+        [BlackBerry] Don't assert when notifyAuthReceived is called with a different auth type
+        https://bugs.webkit.org/show_bug.cgi?id=102436
+
+        Reviewed by Rob Buis.
+
+        The server type could change if we contact a site taking HTTP auth, through an HTTP proxy
+        taking auth of its own. First we get a 407 from the proxy, and then when get past the
+        proxy, we get a 401 from the end site - so notifyAuthReceived gets called again with auth
+        type Proxy instead of HTTP.
+
+        The correct thing to do when that happens is skip the "update the auth type in the
+        credentials" step, since these are actually new credentials and not just credentials being
+        reused for a different auth type on the same server.
+
+        PR 241637
+
+        * platform/network/blackberry/NetworkJob.cpp:
+        (WebCore::NetworkJob::notifyAuthReceived):
+
 2012-11-15  Stephen Chenney  <schenney@chromium.org>
 
         mpath elements do not clear resource lists before destruction

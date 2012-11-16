@@ -295,9 +295,7 @@ void NetworkJob::notifyAuthReceived(BlackBerry::Platform::NetworkRequest::AuthTy
         AuthenticationChallenge& challenge = m_handle->getInternal()->m_currentWebChallenge;
         if (!challenge.isNull()) {
             const ProtectionSpace& oldSpace = challenge.protectionSpace();
-            if (oldSpace.authenticationScheme() != scheme) {
-                // The scheme might have changed, but the server type shouldn't have!
-                BLACKBERRY_ASSERT(serverType == oldSpace.serverType());
+            if (oldSpace.authenticationScheme() != scheme && oldSpace.serverType() == serverType) {
                 ProtectionSpace newSpace(oldSpace.host(), oldSpace.port(), oldSpace.serverType(), oldSpace.realm(), scheme);
                 m_handle->getInternal()->m_currentWebChallenge = AuthenticationChallenge(newSpace,
                                                                                          challenge.proposedCredential(),
