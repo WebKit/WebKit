@@ -1,5 +1,4 @@
-CONSOLE MESSAGE: The setVersion() method is non-standard and will be removed. Use the "upgradeneeded" event instead.
-Test that a database is recreated correctly when an open-with-version call is queued behind both a deleteDatabase and setVersion call
+Test that a database is recreated correctly when an open-with-version call is queued behind both a deleteDatabase and an open-with-version call
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
@@ -8,72 +7,78 @@ indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.
 
 dbname = "intversion-long-queue.html"
 indexedDB.deleteDatabase(dbname)
+indexedDB.open(dbname)
 
-deleteSuccess():
-request = indexedDB.open(dbname)
-request.onsuccess = firstSuccessCallback
+prepareDatabase():
+db = event.target.result
 
-firstSuccessCallback():
+connection1Success():
 connection1 = event.target.result
+PASS db is connection1
 connection1.onversionchange = connection1VersionChangeCallback
-request = indexedDB.open(dbname)
-request.onsuccess = secondSuccessCallback
-
-secondSuccessCallback():
-connection2 = event.target.result
-connection2.onversionchange = connection2VersionChangeCallback
-request = connection2.setVersion('version 2')
-request.onblocked = setVersionBlockedCallback
-request.onsuccess = setVersionSuccessCallback
+request = indexedDB.open(dbname, 2)
+request.onsuccess = connection2Success
+request.onupgradeneeded = connection2UpgradeNeeded
+request.onblocked = connection2Blocked
 
 connection1VersionChangeCallback():
 PASS event.type is "versionchange"
-PASS event.version is "version 2"
+PASS event.oldVersion is 1
+PASS event.newVersion is 2
+PASS event.version is undefined.
 
-setVersionBlockedCallback():
+connection2Blocked():
 request = indexedDB.deleteDatabase(dbname)
 request.onblocked = deleteDatabaseBlockedCallback
 request.onsuccess = deleteDatabaseSuccessCallback
-request = indexedDB.open(dbname, 1)
-request.onupgradeneeded = upgradeNeededCallback
-request.onsuccess = openWithVersionSuccessCallback
+request = indexedDB.open(dbname, 3)
+request.onupgradeneeded = connection3UpgradeNeeded
+request.onsuccess = connection3Success
 connection1.close()
 
-setVersionSuccessCallback():
-transaction = event.target.result
-db = transaction.db
-db.createObjectStore('some object store')
-transaction.oncomplete = setVersionTransactionCompleteCallback
-
-setVersionTransactionCompleteCallback():
-PASS event.target.db.version is "version 2"
-
-connection2VersionChangeCallback():
-PASS event.type is "versionchange"
-FIXME: Fire a versionchange event that has oldVersion and newVersion
-FAIL event.oldVersion should be version 2 (of type string). Was undefined (of type undefined).
-FAIL event.newVersion should be null (of type object). Was undefined (of type undefined).
-FAIL event.version should be undefined. Was 
-
 deleteDatabaseBlockedCallback():
-connection2.close()
-FAIL event.oldVersion should be version 2 (of type string). Was undefined (of type undefined).
+FIXME: http://crbug.com/153122
+FAIL event.oldVersion should be 1 (of type number). Was undefined (of type undefined).
 FAIL event.newVersion should be null (of type object). Was undefined (of type undefined).
 FAIL event.version should be undefined. Was 
 
 deleteDatabaseSuccessCallback():
-FAIL event.oldVersion should be non-null. Was undefined
-FAIL event.newVersion should be null (of type object). Was undefined (of type undefined).
 PASS event.target.result is undefined.
+FIXME: http://crbug.com/153122
+FAIL event.oldVersion should be 1 (of type number). Was undefined (of type undefined).
+FAIL event.newVersion should be null (of type object). Was undefined (of type undefined).
 
-upgradeNeededCallback():
-gotUpgradeNeededEvent = true
-PASS event.newVersion is 1
+connection2UpgradeNeeded():
 PASS event.oldVersion is 0
+PASS event.newVersion is 2
+db = event.target.result
+PASS db.objectStoreNames.length is 0
+db.createObjectStore('some object store')
+transaction = event.target.transaction
+transaction.oncomplete = connection2TransactionComplete
 
-openWithVersionSuccessCallback():
+connection2TransactionComplete():
+PASS db.version is 2
+
+connection2Success():
+connection2 = event.target.result
+connection2.onversionchange = connection2VersionChangeEvent
+
+connection2VersionChangeEvent():
+PASS event.type is "versionchange"
+PASS event.oldVersion is 2
+PASS event.newVersion is 3
+PASS event.version is undefined.
+connection2.close()
+
+connection3UpgradeNeeded():
+gotUpgradeNeededEvent = true
+PASS event.newVersion is 3
+PASS event.oldVersion is 2
+
+connection3Success():
 PASS gotUpgradeNeededEvent is true
-PASS event.target.result.objectStoreNames.length is 0
+PASS event.target.result.objectStoreNames.length is 1
 PASS successfullyParsed is true
 
 TEST COMPLETE
