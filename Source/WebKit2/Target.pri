@@ -503,6 +503,7 @@ SOURCES += \
     Shared/WebURLResponse.cpp \
     Shared/WebWheelEvent.cpp \
     Shared/CoordinatedGraphics/CoordinatedGraphicsArgumentCoders.cpp \
+    Shared/CoordinatedGraphics/WebCustomFilterProgramProxy.cpp \
     Shared/qt/ArgumentCodersQt.cpp \
     Shared/qt/LayerTreeContextQt.cpp \
     Shared/qt/ShareableBitmapQt.cpp \

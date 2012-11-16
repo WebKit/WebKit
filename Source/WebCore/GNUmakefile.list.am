@@ -6339,6 +6339,8 @@ endif  # END USE_CLUTTER
 
 if USE_TEXTURE_MAPPER_CAIRO
 webcore_sources += \
+	Source/WebCore//platform/graphics/filters/texmap/CustomFilterValidatedProgramTextureMapper.cpp \
+	Source/WebCore//platform/graphics/filters/texmap/TextureMapperPlatformCompiledProgram.h \
 	Source/WebCore/platform/graphics/texmap/TextureMapperShaderManager.cpp \
 	Source/WebCore/platform/graphics/texmap/TextureMapperShaderManager.h \
 	Source/WebCore/platform/graphics/texmap/GraphicsLayerTextureMapper.cpp \
@@ -6360,6 +6362,8 @@ endif  # END USE_TEXTURE_MAPPER_CAIRO
 
 if USE_TEXTURE_MAPPER_GL
 webcore_sources += \
+	Source/WebCore//platform/graphics/filters/texmap/CustomFilterValidatedProgramTextureMapper.cpp \
+	Source/WebCore//platform/graphics/filters/texmap/TextureMapperPlatformCompiledProgram.h \
 	Source/WebCore/platform/graphics/texmap/TextureMapperGL.cpp \
 	Source/WebCore/platform/graphics/texmap/TextureMapperGL.h \
 	Source/WebCore/platform/graphics/texmap/TextureMapperShaderManager.cpp \

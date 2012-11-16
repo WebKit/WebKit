@@ -512,7 +512,7 @@ CustomFilterValidatedProgram::~CustomFilterValidatedProgram()
         m_globalContext->removeValidatedProgram(this);
 }
 
-#if !PLATFORM(BLACKBERRY)
+#if !PLATFORM(BLACKBERRY) && !USE(TEXTURE_MAPPER)
 void CustomFilterValidatedProgram::platformInit()
 {
 }

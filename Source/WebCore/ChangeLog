@@ -1,3 +1,49 @@
+2012-11-16  Alexandru Chiculita  <achicu@adobe.com>
+
+        [Texmap][CSS Shaders] Make the CustomFilterValidatedProgram maintain the platform compiled program
+        https://bugs.webkit.org/show_bug.cgi?id=102414
+
+        Reviewed by Noam Rosenthal.
+
+        Added WebCore classes needed for the WebKit2 implementation of Texture Mapper to keep a reference to the 
+        platform compiled custom filter. It is just used to maintain the life-time of the objects. WebKit2 injects a
+        client in TextureMapperPlatformCompiledProgram and receives a callback when the custom filter program is not
+        used to render any layer on the page. 
+
+        Note that CustomFilterValidatedProgram are reused across multiple elements of the same page. Also, the instances
+        are reused across frames, so animations should reuse the same pre-validated program. In this case, the mechanism is
+        extended and reused in the platform compositor.
+        
+        No new tests, existing tests for CSS Custom Filters already cover this path.
+
+        * CMakeLists.txt:
+        * GNUmakefile.am:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.pri:
+        * platform/graphics/filters/CustomFilterValidatedProgram.cpp:
+        (WebCore):
+        * platform/graphics/filters/CustomFilterValidatedProgram.h:
+        (WebCore):
+        (CustomFilterValidatedProgram):
+        * platform/graphics/filters/texmap/CustomFilterValidatedProgramTextureMapper.cpp: Added.
+        (WebCore):
+        (WebCore::CustomFilterValidatedProgram::platformCompiledProgram): Platform implementation for creating and deleting the reference.
+        (WebCore::CustomFilterValidatedProgram::platformInit):
+        (WebCore::CustomFilterValidatedProgram::platformDestroy):
+        * platform/graphics/filters/texmap/TextureMapperPlatformCompiledProgram.h: Added.
+        (WebCore):
+        (TextureMapperPlatformCompiledProgramClient):
+        (WebCore::TextureMapperPlatformCompiledProgramClient::ref):
+        (WebCore::TextureMapperPlatformCompiledProgramClient::deref):
+        (TextureMapperPlatformCompiledProgram):
+        Stores a link to a TextureMapperPlatformCompiledProgramClient. It's main purpose is to call unref on the client when
+        the shader is not needed anymore. WebKit2 can use that to delete the corresponding shader from the compositor side.
+        (WebCore::TextureMapperPlatformCompiledProgram::create):
+        (WebCore::TextureMapperPlatformCompiledProgram::setClient): Used by WebKit2 to inject the platform client.
+        (WebCore::TextureMapperPlatformCompiledProgram::client):
+        (WebCore::TextureMapperPlatformCompiledProgram::TextureMapperPlatformCompiledProgram):
+
 2012-11-16  Andreas Kling  <akling@apple.com>
 
         Short-circuit Element::hasEquivalentAttributes() if elements share attribute data.

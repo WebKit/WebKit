@@ -51,6 +51,7 @@ SET(WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/platform/graphics/cpu/arm"
     "${WEBCORE_DIR}/platform/graphics/cpu/arm/filters"
     "${WEBCORE_DIR}/platform/graphics/filters"
+    "${WEBCORE_DIR}/platform/graphics/filters/texmap"
     "${WEBCORE_DIR}/platform/graphics/harfbuzz"
     "${WEBCORE_DIR}/platform/graphics/harfbuzz/ng"
     "${WEBCORE_DIR}/platform/graphics/opentype"
@@ -1908,6 +1909,7 @@ SET(WebCore_SOURCES
 
     platform/graphics/cpu/arm/filters/FELightingNEON.cpp
 
+    platform/graphics/filters/texmap/CustomFilterValidatedProgramTextureMapper.cpp
     platform/graphics/filters/CustomFilterCompiledProgram.cpp
     platform/graphics/filters/CustomFilterGlobalContext.cpp
     platform/graphics/filters/CustomFilterMesh.cpp

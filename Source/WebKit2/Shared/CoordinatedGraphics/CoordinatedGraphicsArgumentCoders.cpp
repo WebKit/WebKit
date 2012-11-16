@@ -146,6 +146,10 @@ void ArgumentCoder<WebCore::FilterOperations>::encode(ArgumentEncoder& encoder, 
             ASSERT(customOperation->validatedProgram());
             RefPtr<CustomFilterValidatedProgram> program = customOperation->validatedProgram();
             ASSERT(program->isInitialized());
+            ASSERT(program->platformCompiledProgram());
+            // FIXME: We should only serialize the object if it was not serialized before,
+            // otherwise only the ID of the program should be written to the stream.
+            // https://bugs.webkit.org/show_bug.cgi?id=101801
             encoder << program->validatedVertexShader();
             encoder << program->validatedFragmentShader();
             const CustomFilterProgramInfo& programInfo = program->programInfo();

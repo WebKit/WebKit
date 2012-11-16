@@ -57,6 +57,7 @@ webcore_cppflags += \
 	-I$(srcdir)/Source/WebCore/platform/graphics/cpu/arm \
 	-I$(srcdir)/Source/WebCore/platform/graphics/cpu/arm/filters/ \
 	-I$(srcdir)/Source/WebCore/platform/graphics/filters \
+	-I$(srcdir)/Source/WebCore/platform/graphics/filters/texmap \
 	-I$(srcdir)/Source/WebCore/platform/graphics/gpu \
 	-I$(srcdir)/Source/WebCore/platform/graphics/opengl \
 	-I$(srcdir)/Source/WebCore/platform/graphics/opentype \

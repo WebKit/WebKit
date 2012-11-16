@@ -1,3 +1,46 @@
+2012-11-16  Alexandru Chiculita  <achicu@adobe.com>
+
+        [Texmap][CSS Shaders] Make the CustomFilterValidatedProgram maintain the platform compiled program
+        https://bugs.webkit.org/show_bug.cgi?id=102414
+
+        Reviewed by Noam Rosenthal.
+
+        This is the first part of shader caching implementation for the Custom Filters in WK2 LayerTreeCoordinator.
+        In this patch it will just make the LayerTreeCoordinator knowledgeable about the life-time
+        of the custom filter programs. It can allocate IDs for the filters and it also gets a callback when the
+        filters are not needed anymore.
+
+        The UI process is still recreating the shader every time, but https://bugs.webkit.org/show_bug.cgi?id=101801
+        will fix that and try to reuse existing custom filters.
+
+        * CMakeLists.txt:
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsArgumentCoders.cpp:
+        (CoreIPC::::encode):
+        * Shared/CoordinatedGraphics/WebCustomFilterProgramProxy.cpp: Added.
+        (WebKit):
+        (WebKit::WebCustomFilterProgramProxy::~WebCustomFilterProgramProxy):
+        * Shared/CoordinatedGraphics/WebCustomFilterProgramProxy.h: Added.
+        (WebKit):
+        (WebCustomFilterProgramProxyClient):
+        (WebCustomFilterProgramProxy):
+        (WebKit::WebCustomFilterProgramProxy::create):
+        (WebKit::WebCustomFilterProgramProxy::id):
+        (WebKit::WebCustomFilterProgramProxy::refFromValidatedProgram):
+        (WebKit::WebCustomFilterProgramProxy::derefFromValidatedProgram):
+        (WebKit::WebCustomFilterProgramProxy::setClient):
+        (WebKit::WebCustomFilterProgramProxy::client):
+        (WebKit::WebCustomFilterProgramProxy::WebCustomFilterProgramProxy):
+        * Target.pri:
+        * WebProcess/WebPage/CoordinatedGraphics/LayerTreeCoordinator.cpp:
+        (WebKit::LayerTreeCoordinator::~LayerTreeCoordinator):
+        (WebKit::LayerTreeCoordinator::syncLayerFilters):
+        (WebKit):
+        (WebKit::LayerTreeCoordinator::checkCustomFilterProgramProxies):
+        (WebKit::LayerTreeCoordinator::removeCustomFilterProgramProxy):
+        (WebKit::LayerTreeCoordinator::disconnectCustomFilterPrograms):
+        * WebProcess/WebPage/CoordinatedGraphics/LayerTreeCoordinator.h:
+        (LayerTreeCoordinator):
+
 2012-11-16  Peter Gal  <galpeter@inf.u-szeged.hu>
 
         [Qt][Mac] Fix the build after r124873

@@ -218,6 +218,7 @@ SET(WebKit2_SOURCES
     Shared/API/c/WKUserContentURLPattern.cpp
 
     Shared/CoordinatedGraphics/CoordinatedGraphicsArgumentCoders.cpp
+    Shared/CoordinatedGraphics/WebCustomFilterProgramProxy.cpp
 
     Shared/Plugins/NPIdentifierData.cpp
     Shared/Plugins/NPObjectMessageReceiver.cpp

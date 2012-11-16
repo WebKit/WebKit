@@ -49,6 +49,11 @@
 #include <WebCore/Settings.h>
 #include <wtf/TemporaryChange.h>
 
+#if ENABLE(CSS_SHADERS)
+#include "CustomFilterValidatedProgram.h"
+#include "ValidatedCustomFilterOperation.h"
+#endif
+
 using namespace WebCore;
 
 namespace WebKit {
@@ -60,6 +65,10 @@ PassRefPtr<LayerTreeCoordinator> LayerTreeCoordinator::create(WebPage* webPage)
 
 LayerTreeCoordinator::~LayerTreeCoordinator()
 {
+#if ENABLE(CSS_SHADERS)
+    disconnectCustomFilterPrograms();
+#endif
+
     // Prevent setCoordinatedGraphicsLayerClient(0) -> detachLayer() from modifying the set while we iterate it.
     HashSet<WebCore::CoordinatedGraphicsLayer*> registeredLayers;
     registeredLayers.swap(m_registeredLayers);
@@ -323,7 +332,59 @@ void LayerTreeCoordinator::syncCanvas(WebLayerID id, const IntSize& canvasSize, 
 void LayerTreeCoordinator::syncLayerFilters(WebLayerID id, const FilterOperations& filters)
 {
     m_shouldSyncFrame = true;
+#if ENABLE(CSS_SHADERS)
+    checkCustomFilterProgramProxies(filters);
+#endif
     m_webPage->send(Messages::LayerTreeCoordinatorProxy::SetCompositingLayerFilters(id, filters));
+}
+#endif
+
+#if ENABLE(CSS_SHADERS)
+void LayerTreeCoordinator::checkCustomFilterProgramProxies(const FilterOperations& filters)
+{
+    // We need to create the WebCustomFilterProgramProxy objects before we get to serialize the
+    // custom filters to the other process. That's because WebCustomFilterProgramProxy needs
+    // to link back to the coordinator, so that we can send a message to the UI process when 
+    // the program is not needed anymore.
+    // Note that the serialization will only happen at a later time in ArgumentCoder<WebCore::FilterOperations>::encode.
+    // At that point the program will only be serialized once. All the other times it will only use the ID of the program.
+    for (size_t i = 0; i < filters.size(); ++i) {
+        const FilterOperation* operation = filters.at(i);
+        if (operation->getOperationType() != FilterOperation::VALIDATED_CUSTOM)
+            continue;
+        const ValidatedCustomFilterOperation* customOperation = static_cast<const ValidatedCustomFilterOperation*>(operation);
+        ASSERT(customOperation->validatedProgram()->isInitialized());
+        TextureMapperPlatformCompiledProgram* program = customOperation->validatedProgram()->platformCompiledProgram();
+        if (!program->client())
+            program->setClient(WebCustomFilterProgramProxy::create(this));
+        else {
+            WebCustomFilterProgramProxy* customFilterProgramProxy = static_cast<WebCustomFilterProgramProxy*>(program->client());
+            if (!customFilterProgramProxy->client()) {
+                // Just in case the LayerTreeCoordinator was destroyed and recreated.
+                customFilterProgramProxy->setClient(this);
+            } else {
+                // If the client was not disconnected then this coordinator must be the client for it.
+                ASSERT(customFilterProgramProxy->client() == this);
+            }
+        }
+    }
+}
+
+void LayerTreeCoordinator::removeCustomFilterProgramProxy(WebCustomFilterProgramProxy* customFilterProgramProxy)
+{
+    // At this time the shader is not needed anymore, so we remove it from our set and 
+    // send a message to the other process to delete it.
+    m_customFilterPrograms.remove(customFilterProgramProxy);
+    // FIXME: Send a message to delete the object on the UI process.
+    // https://bugs.webkit.org/show_bug.cgi?id=101801
+}
+
+void LayerTreeCoordinator::disconnectCustomFilterPrograms()
+{
+    // Make sure that WebCore will not call into this coordinator anymore.
+    HashSet<WebCustomFilterProgramProxy*>::iterator iter = m_customFilterPrograms.begin();
+    for (; iter != m_customFilterPrograms.end(); ++iter)
+        (*iter)->setClient(0);
 }
 #endif
 

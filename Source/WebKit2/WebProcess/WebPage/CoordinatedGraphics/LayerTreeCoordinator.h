@@ -33,6 +33,10 @@
 #include <WebCore/GraphicsSurface.h>
 #include <wtf/OwnPtr.h>
 
+#if ENABLE(CSS_SHADERS)
+#include "WebCustomFilterProgramProxy.h"
+#endif
+
 namespace WebKit {
 
 class UpdateInfo;
@@ -42,7 +46,11 @@ class LayerTreeCoordinator : public LayerTreeHost, WebCore::GraphicsLayerClient
     , public CoordinatedGraphicsLayerClient
     , public CoordinatedImageBacking::Coordinator
     , public UpdateAtlasClient
-    , public WebCore::GraphicsLayerFactory {
+    , public WebCore::GraphicsLayerFactory
+#if ENABLE(CSS_SHADERS)
+    , WebCustomFilterProgramProxyClient
+#endif
+{
 public:
     static PassRefPtr<LayerTreeCoordinator> create(WebPage*);
     virtual ~LayerTreeCoordinator();
@@ -143,6 +151,14 @@ private:
 
     void releaseInactiveAtlasesTimerFired(WebCore::Timer<LayerTreeCoordinator>*);
 
+#if ENABLE(CSS_SHADERS)
+    // WebCustomFilterProgramProxyClient
+    void removeCustomFilterProgramProxy(WebCustomFilterProgramProxy*);
+
+    void checkCustomFilterProgramProxies(const WebCore::FilterOperations&);
+    void disconnectCustomFilterPrograms();
+#endif
+
     OwnPtr<WebCore::GraphicsLayer> m_rootLayer;
 
     // The layer which contains all non-composited content.
@@ -156,6 +172,10 @@ private:
     typedef HashMap<CoordinatedImageBackingID, RefPtr<CoordinatedImageBacking> > ImageBackingMap;
     ImageBackingMap m_imageBackings;
     Vector<OwnPtr<UpdateAtlas> > m_updateAtlases;
+
+#if ENABLE(CSS_SHADERS)
+    HashSet<WebCustomFilterProgramProxy*> m_customFilterPrograms;
+#endif
 
     bool m_notifyAfterScheduledLayerFlush;
     bool m_isValid;

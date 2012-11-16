@@ -2087,6 +2087,7 @@ HEADERS += \
     platform/graphics/cpu/arm/filters/FEGaussianBlurNEON.h \
     platform/graphics/cpu/arm/filters/FELightingNEON.h \
     platform/graphics/CrossfadeGeneratedImage.h \
+    platform/graphics/filters/texmap/TextureMapperPlatformCompiledProgram.h \
     platform/graphics/filters/CustomFilterArrayParameter.h \
     platform/graphics/filters/CustomFilterConstants.h \
     platform/graphics/filters/CustomFilterGlobalContext.h \
@@ -3509,6 +3510,7 @@ enable?(XSLT) {
 enable?(FILTERS) {
     SOURCES += \
         platform/graphics/cpu/arm/filters/FELightingNEON.cpp \
+        platform/graphics/filters/texmap/CustomFilterValidatedProgramTextureMapper.cpp \
         platform/graphics/filters/CustomFilterGlobalContext.cpp \
         platform/graphics/filters/CustomFilterOperation.cpp \
         platform/graphics/filters/CustomFilterParameterList.cpp \
