@@ -97,12 +97,20 @@ struct WebPasswordFormData {
     // When parsing an HTML form, this is typically empty.
     WebString passwordValue;
 
+    // Value of shouldAutocomplete for the password element.
+    bool passwordShouldAutocomplete;
+
     // If the form was a change password form, the name of the
     // 'old password' input element. Optional.
     WebString oldPasswordElement;
 
     // The old password. Optional.
     WebString oldPasswordValue;
+
+    WebPasswordFormData()
+        : passwordShouldAutocomplete(false)
+    {
+    }
 };
 
 } // namespace WebKit

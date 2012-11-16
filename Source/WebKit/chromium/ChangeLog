@@ -1,3 +1,25 @@
+2012-11-15  Yue Zhang  <zysxqn@google.com>
+
+        Ignore autocomplete=off for chrome generated passwords.
+        https://bugs.webkit.org/show_bug.cgi?id=102426
+
+        Reviewed by Adam Barth.
+
+        Record the autocomplete attribute in the web password form data,
+        so that we can handle autocomplete in chromium code. The
+        motivation/background is: we should ignore autocomplete=off field
+        for password forms with chrome generated passwords (has passed
+        security review). By handling autocomplete in chromium code we can
+        distinguish password forms with chrome generated passwords and
+        those normal password forms. Note that we haven't turned off
+        checking autocomplete=off in the Webkit code for now so there is
+        no behavior change after this CL, and we will turn off after we
+        make the chromium side change to be safe.
+
+        * public/WebPasswordFormData.h:
+        (WebPasswordFormData):
+        * src/WebPasswordFormData.cpp:
+
 2012-11-15  Scott Violet  <sky@chromium.org>
 
         [chromium] Create default directory so that cq can apply patch

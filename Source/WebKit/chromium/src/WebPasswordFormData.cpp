@@ -138,6 +138,7 @@ void assemblePasswordFormResult(const KURL& fullOrigin,
     if (password) {
         result->passwordElement = password->name();
         result->passwordValue = password->value();
+        result->passwordShouldAutocomplete = password->shouldAutocomplete();
     }
     if (oldPassword) {
         result->oldPasswordElement = oldPassword->name();
