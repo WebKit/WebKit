@@ -1,3 +1,38 @@
+2012-11-15  David Grogan  <dgrogan@chromium.org>
+
+        IndexedDB setVersion-removal batch 7
+        https://bugs.webkit.org/show_bug.cgi?id=102415
+
+        Reviewed by Tony Chang.
+
+        * storage/indexeddb/mozilla/object-store-remove-values-expected.txt:
+        * storage/indexeddb/mozilla/readyState-expected.txt:
+        * storage/indexeddb/mozilla/resources/object-store-remove-values.js:
+        * storage/indexeddb/mozilla/resources/readyState.js:
+          Moved one check into shared.js, a few others around, and the check
+          for setVersion's request.readyState==pending is deleted.
+
+        * storage/indexeddb/mozilla/resources/versionchange-abort.js:
+          First test I've converted that makes the initial open fail, but
+          request.onsuccess is unhooked to not cause the whole test to fail.
+
+        (prepareDatabase):
+        (postAbort):
+        * storage/indexeddb/mozilla/versionchange-abort-expected.txt:
+        * storage/indexeddb/objectstore-basics-expected.txt:
+        * storage/indexeddb/objectstore-basics-workers-expected.txt:
+        * storage/indexeddb/odd-strings-expected.txt:
+        * storage/indexeddb/readonly-expected.txt:
+        * storage/indexeddb/resources/objectstore-basics.js:
+        * storage/indexeddb/resources/odd-strings.js:
+        * storage/indexeddb/resources/readonly.js:
+          Moved the checks at the beginning to the end of the test, but
+          everything was preserved.
+
+        * storage/indexeddb/resources/shared.js:
+          Moved a check from readyState to here as the readyState layout test
+          doesn't have access to the open request before any events are fired.
+
 2012-11-15  Stephen Chenney  <schenney@chromium.org>
 
         mpath elements do not clear resource lists before destruction

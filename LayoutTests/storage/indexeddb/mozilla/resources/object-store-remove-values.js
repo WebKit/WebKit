@@ -11,21 +11,7 @@ if (this.importScripts) {
 
 description("Test IndexedDB: adds, gets, deletes, and re-gets a record in a variety of different object store configurations");
 
-function test()
-{
-    removeVendorPrefixes();
-
-    name = self.location.pathname;
-    request = evalAndLog("indexedDB.open(name)");
-    request.onsuccess = openSuccess;
-    request.onerror = unexpectedErrorCallback;
-}
-
-function openSuccess()
-{
-    db = evalAndLog("db = event.target.result");
-
-    data = evalAndLog("data = [\n" +
+data = evalAndLog("data = [\n" +
 "        { name: 'inline key; key generator',\n" +
 "          autoIncrement: true,\n" +
 "          storedObject: {name: 'Lincoln'},\n" +
@@ -52,17 +38,19 @@ function openSuccess()
 "        }\n" +
 "    ];");
 
-    i = evalAndLog("i = 0;");
-    setVersion();
-}
+i = evalAndLog("i = 0;");
+var db = null;
+debug("");
 
-function setVersion()
+runATest();
+
+function runATest()
 {
+    if (db)
+        db.close();
     if (i < data.length) {
         test = data[i];
-        request = evalAndLog("request = db.setVersion('1')");
-        request.onsuccess = createObjectStore;
-        request.onerror = unexpectedErrorCallback;
+        indexedDBTest(createObjectStore, runATest);
     } else {
         finishJSTest();
     }
@@ -70,9 +58,7 @@ function setVersion()
 
 function createObjectStore()
 {
-    transaction = event.target.result;
-    deleteAllObjectStores(db);
-
+    db = event.target.result;
     if (test.keyName) {
         objectStore = evalAndLog("objectStore = db.createObjectStore(test.name, { keyPath: test.keyName, autoIncrement: test.autoIncrement });");
     } else {
@@ -115,7 +101,4 @@ function finalCheck()
 {
     shouldBeTrue("event.target.result === undefined");
     i++;
-    transaction.oncomplete = setVersion;
 }
-
-test();

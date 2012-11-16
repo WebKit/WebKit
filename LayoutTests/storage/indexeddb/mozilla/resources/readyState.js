@@ -11,33 +11,12 @@ if (this.importScripts) {
 
 description("Test IndexedDB readyState property during different operations");
 
-function test()
+indexedDBTest(prepareDatabase, checkReadyStateInOpen);
+function prepareDatabase()
 {
-    removeVendorPrefixes();
-
-    name = self.location.pathname;
-    request = evalAndLog("indexedDB.open(name)");
-    shouldBe("request.readyState", "'pending'");
-    request.onsuccess = openSuccess;
-    request.onerror = unexpectedErrorCallback;
-}
-
-function openSuccess()
-{
-    debug("openSuccess():");
-    shouldBe("request.readyState", "'done'");
-    db = evalAndLog("db = event.target.result");
-    request = evalAndLog("request = db.setVersion('1')");
-    shouldBe("request.readyState", "'pending'");
-    request.onsuccess = setupObjectStore;
-    request.onerror = unexpectedErrorCallback;
-}
-
-function setupObjectStore()
-{
-    debug("setupObjectStore():");
-    shouldBe("request.readyState", "'done'");
-    deleteAllObjectStores(db);
+    db = event.target.result;
+    openRequest = event.target;
+    shouldBe("openRequest.readyState", "'done'");
 
     objectStore = evalAndLog("objectStore = db.createObjectStore('foo');");
     key = evalAndLog("key = 10;");
@@ -63,7 +42,12 @@ function finalCheck()
     debug("finalCheck():");
     shouldBe("request.readyState", "'done'");
     shouldBeFalse("event.target.result == null");
-    finishJSTest();
 }
 
-test();
+function checkReadyStateInOpen()
+{
+    debug("checkReadyStateInOpen():");
+    shouldBe("event.target", "openRequest");
+    shouldBeEqualToString("openRequest.readyState", "done");
+    finishJSTest();
+}

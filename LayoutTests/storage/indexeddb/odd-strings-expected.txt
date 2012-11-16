@@ -1,15 +1,3 @@
-CONSOLE MESSAGE: The setVersion() method is non-standard and will be removed. Use the "upgradeneeded" event instead.
-CONSOLE MESSAGE: The setVersion() method is non-standard and will be removed. Use the "upgradeneeded" event instead.
-CONSOLE MESSAGE: The setVersion() method is non-standard and will be removed. Use the "upgradeneeded" event instead.
-CONSOLE MESSAGE: The setVersion() method is non-standard and will be removed. Use the "upgradeneeded" event instead.
-CONSOLE MESSAGE: The setVersion() method is non-standard and will be removed. Use the "upgradeneeded" event instead.
-CONSOLE MESSAGE: The setVersion() method is non-standard and will be removed. Use the "upgradeneeded" event instead.
-CONSOLE MESSAGE: The setVersion() method is non-standard and will be removed. Use the "upgradeneeded" event instead.
-CONSOLE MESSAGE: The setVersion() method is non-standard and will be removed. Use the "upgradeneeded" event instead.
-CONSOLE MESSAGE: The setVersion() method is non-standard and will be removed. Use the "upgradeneeded" event instead.
-CONSOLE MESSAGE: The setVersion() method is non-standard and will be removed. Use the "upgradeneeded" event instead.
-CONSOLE MESSAGE: The setVersion() method is non-standard and will be removed. Use the "upgradeneeded" event instead.
-CONSOLE MESSAGE: The setVersion() method is non-standard and will be removed. Use the "upgradeneeded" event instead.
 Test IndexedDB odd value datatypes
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
@@ -17,71 +5,52 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
 
+Deleting all the databases...
 opening a database named null
-indexedDB.open(testData[nextToOpen].name)
-db = event.target.result
-request = db.setVersion('1')
-Deleted all object stores.
+indexedDB.open(testData[nextToOpen].name, 1)
 objectStore = db.createObjectStore(testData[nextToOpen].name);
 key = testData[nextToOpen].name
 request = objectStore.add(key, key);
 db.close()
 
 opening a database named faihu
-indexedDB.open(testData[nextToOpen].name)
-db = event.target.result
-request = db.setVersion('1')
-Deleted all object stores.
+indexedDB.open(testData[nextToOpen].name, 1)
 objectStore = db.createObjectStore(testData[nextToOpen].name);
 key = testData[nextToOpen].name
 request = objectStore.add(key, key);
 db.close()
 
 opening a database named unpaired surrogate
-indexedDB.open(testData[nextToOpen].name)
-db = event.target.result
-request = db.setVersion('1')
-Deleted all object stores.
+indexedDB.open(testData[nextToOpen].name, 1)
 objectStore = db.createObjectStore(testData[nextToOpen].name);
 key = testData[nextToOpen].name
 request = objectStore.add(key, key);
 db.close()
 
 opening a database named fffe
-indexedDB.open(testData[nextToOpen].name)
-db = event.target.result
-request = db.setVersion('1')
-Deleted all object stores.
+indexedDB.open(testData[nextToOpen].name, 1)
 objectStore = db.createObjectStore(testData[nextToOpen].name);
 key = testData[nextToOpen].name
 request = objectStore.add(key, key);
 db.close()
 
 opening a database named ffff
-indexedDB.open(testData[nextToOpen].name)
-db = event.target.result
-request = db.setVersion('1')
-Deleted all object stores.
+indexedDB.open(testData[nextToOpen].name, 1)
 objectStore = db.createObjectStore(testData[nextToOpen].name);
 key = testData[nextToOpen].name
 request = objectStore.add(key, key);
 db.close()
 
 opening a database named line separator
-indexedDB.open(testData[nextToOpen].name)
-db = event.target.result
-request = db.setVersion('1')
-Deleted all object stores.
+indexedDB.open(testData[nextToOpen].name, 1)
 objectStore = db.createObjectStore(testData[nextToOpen].name);
 key = testData[nextToOpen].name
 request = objectStore.add(key, key);
 db.close()
 
 reopening a database named null
-indexedDB.open(testData[nextToOpen].name)
-db = event.target.result
-request = db.setVersion('1')
-trans = event.target.result
+indexedDB.open(testData[nextToOpen].name, 2)
+trans = event.target.transaction
 objectStore = trans.objectStore(testData[nextToOpen].name);
 key = testData[nextToOpen].name
 request = objectStore.openCursor();
@@ -90,10 +59,8 @@ PASS cursor.key is testData[nextToOpen].name
 PASS cursor.value is testData[nextToOpen].name
 
 reopening a database named faihu
-indexedDB.open(testData[nextToOpen].name)
-db = event.target.result
-request = db.setVersion('1')
-trans = event.target.result
+indexedDB.open(testData[nextToOpen].name, 2)
+trans = event.target.transaction
 objectStore = trans.objectStore(testData[nextToOpen].name);
 key = testData[nextToOpen].name
 request = objectStore.openCursor();
@@ -102,10 +69,8 @@ PASS cursor.key is testData[nextToOpen].name
 PASS cursor.value is testData[nextToOpen].name
 
 reopening a database named unpaired surrogate
-indexedDB.open(testData[nextToOpen].name)
-db = event.target.result
-request = db.setVersion('1')
-trans = event.target.result
+indexedDB.open(testData[nextToOpen].name, 2)
+trans = event.target.transaction
 objectStore = trans.objectStore(testData[nextToOpen].name);
 key = testData[nextToOpen].name
 request = objectStore.openCursor();
@@ -114,10 +79,8 @@ PASS cursor.key is testData[nextToOpen].name
 PASS cursor.value is testData[nextToOpen].name
 
 reopening a database named fffe
-indexedDB.open(testData[nextToOpen].name)
-db = event.target.result
-request = db.setVersion('1')
-trans = event.target.result
+indexedDB.open(testData[nextToOpen].name, 2)
+trans = event.target.transaction
 objectStore = trans.objectStore(testData[nextToOpen].name);
 key = testData[nextToOpen].name
 request = objectStore.openCursor();
@@ -126,10 +89,8 @@ PASS cursor.key is testData[nextToOpen].name
 PASS cursor.value is testData[nextToOpen].name
 
 reopening a database named ffff
-indexedDB.open(testData[nextToOpen].name)
-db = event.target.result
-request = db.setVersion('1')
-trans = event.target.result
+indexedDB.open(testData[nextToOpen].name, 2)
+trans = event.target.transaction
 objectStore = trans.objectStore(testData[nextToOpen].name);
 key = testData[nextToOpen].name
 request = objectStore.openCursor();
@@ -138,10 +99,8 @@ PASS cursor.key is testData[nextToOpen].name
 PASS cursor.value is testData[nextToOpen].name
 
 reopening a database named line separator
-indexedDB.open(testData[nextToOpen].name)
-db = event.target.result
-request = db.setVersion('1')
-trans = event.target.result
+indexedDB.open(testData[nextToOpen].name, 2)
+trans = event.target.transaction
 objectStore = trans.objectStore(testData[nextToOpen].name);
 key = testData[nextToOpen].name
 request = objectStore.openCursor();

@@ -5,36 +5,12 @@ if (this.importScripts) {
 
 description("Test the basics of IndexedDB's IDBObjectStore.");
 
-function test()
+indexedDBTest(prepareDatabase, testSetVersionAbort);
+function prepareDatabase(evt)
 {
-    removeVendorPrefixes();
-    request = evalAndLog("indexedDB.open('objectstore-basics')");
-    request.onsuccess = openSuccess;
-    request.onerror = unexpectedErrorCallback;
-}
+    preamble(evt);
+    db = event.target.result;
 
-function openSuccess(evt)
-{
-    event = evt;
-    debug("openSuccess():");
-    self.db = evalAndLog("db = event.target.result");
-
-    request = evalAndLog("db.setVersion('new version')");
-    request.onsuccess = setVersionSuccess;
-    request.onerror = unexpectedErrorCallback;
-}
-
-function setVersionSuccess(evt)
-{
-    event = evt;
-    debug("setVersionSuccess():");
-    self.trans = evalAndLog("trans = event.target.result");
-    shouldBeNonNull("trans");
-    trans.onabort = unexpectedAbortCallback;
-
-    deleteAllObjectStores(db);
-
-    debug("createObjectStore():");
     self.store = evalAndLog("store = db.createObjectStore('storeName', null)");
     var storeNames = evalAndLog("storeNames = db.objectStoreNames");
 
@@ -91,22 +67,31 @@ function createIndex()
 
     debug("Ask for an index that doesn't exist:");
     evalAndExpectException("store.index('asdf')", "DOMException.NOT_FOUND_ERR", "'NotFoundError'");
-    trans.oncomplete = testSetVersionAbort;
 }
 
 function testSetVersionAbort()
 {
-    request = evalAndLog('db.setVersion("version fail")');
-    request.onsuccess = createAnotherIndex;
-    request.onerror = unexpectedErrorCallback;
+    request = evalAndLog('indexedDB.open(dbname, 2)');
+    request.onblocked = connection2Blocked;
+    request.onsuccess = unexpectedSuccessCallback;
+    request.onupgradeneeded = createAnotherIndex;
+    // FIXME: addData is only able to continue with the test because of
+    // http://wkb.ug/102298.
+    request.onerror = addData;
+}
+
+function connection2Blocked()
+{
+    evalAndLog("db.close()");
 }
 
 function createAnotherIndex(evt)
 {
     event = evt;
-    shouldBeEqualToString("db.version", "version fail");
+    db = event.target.result;
+    shouldBe("db.version", "2");
 
-    var setVersionTrans = evalAndLog("setVersionTrans = event.target.result");
+    var setVersionTrans = evalAndLog("setVersionTrans = event.target.transaction");
     shouldBeNonNull("setVersionTrans");
     setVersionTrans.oncomplete = unexpectedCompleteCallback;
     setVersionTrans.onabort = checkMetadata;
@@ -118,7 +103,7 @@ function createAnotherIndex(evt)
 
 function checkMetadata()
 {
-    shouldBeEqualToString("db.version", "new version");
+    shouldBe("db.version", "1");
     shouldBe("store.transaction", "setVersionTrans");
     shouldBe("store.indexNames", "['indexName']");
     shouldBe("store.indexNames.length", "1");
@@ -130,7 +115,6 @@ function checkMetadata()
     shouldBeUndefined("store.indexNames[100]");
     shouldBeNull("store.indexNames.item(1)");
     shouldBeNull("store.indexNames.item(100)");
-    addData();
 }
 
 var testDate = new Date("August 25, 1991 20:57:08");
@@ -263,9 +247,12 @@ function testPreConditions()
 {
     debug("");
     debug("testPreConditions():");
-    request = evalAndLog("db.setVersion('precondition version')");
+    db.close();
+    request = evalAndLog("indexedDB.open(dbname, 3)");
     request.onerror = unexpectedErrorCallback;
-    request.onsuccess = function() {
+    request.onupgradeneeded = function upgradeNeeded(evt) {
+        preamble(evt);
+        db = event.target.result;
         storeWithInLineKeys = evalAndLog("storeWithInLineKeys = db.createObjectStore('storeWithInLineKeys', {keyPath: 'key'})");
         storeWithOutOfLineKeys = evalAndLog("storeWithOutOfLineKeys = db.createObjectStore('storeWithOutIOfLineKeys')");
         storeWithIndex = evalAndLog("storeWithIndex = db.createObjectStore('storeWithIndex')");
@@ -308,7 +295,3 @@ function testPreConditions()
         finishJSTest();
     };
 }
-
-var jsTestIsAsync = true;
-
-test();

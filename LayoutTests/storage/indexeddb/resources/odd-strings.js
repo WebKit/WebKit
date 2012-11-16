@@ -17,29 +17,32 @@ function test()
                 { description: 'line separator',     name: '\u2028' }
     ];
     nextToOpen = 0;
-    openNextDatabase();
+    var numDeleted = 0;
+    debug("Deleting all the databases...");
+    for (var i = 0; i < testData.length; i++)
+    {
+        request = indexedDB.deleteDatabase(testData[i].name);
+        request.onblocked = unexpectedBlockedCallback;
+        request.onerror = unexpectedErrorCallback;
+        request.onsuccess = function() {
+            if (++numDeleted == testData.length)
+                openNextDatabase();
+        };
+    }
 }
 
 function openNextDatabase()
 {
     debug("opening a database named " + testData[nextToOpen].description);
-    request = evalAndLog("indexedDB.open(testData[nextToOpen].name)");
-    request.onerror = unexpectedErrorCallback;
-    request.onsuccess = openSuccess;
-}
-
-function openSuccess()
-{
-    db = evalAndLog("db = event.target.result");
-    request = evalAndLog("request = db.setVersion('1')");
-    request.onsuccess = addAKey;
-    request.onerror = unexpectedErrorCallback;
+    request = evalAndLog("indexedDB.open(testData[nextToOpen].name, 1)");
+    request.onsuccess = unexpectedSuccessCallback;
+    request.onblocked = unexpectedBlockedCallback;
+    request.onupgradeneeded = addAKey;
 }
 
 function addAKey()
 {
-    deleteAllObjectStores(db);
-
+    db = event.target.result;
     objectStore = evalAndLog("objectStore = db.createObjectStore(testData[nextToOpen].name);");
     key = evalAndLog("key = testData[nextToOpen].name");
     request = evalAndLog("request = objectStore.add(key, key);");
@@ -62,22 +65,15 @@ function closeDatabase()
 function verifyNextDatabase()
 {
     debug("reopening a database named " + testData[nextToOpen].description);
-    request = evalAndLog("indexedDB.open(testData[nextToOpen].name)");
+    request = evalAndLog("indexedDB.open(testData[nextToOpen].name, 2)");
+    request.onblocked = unexpectedBlockedCallback;
     request.onerror = unexpectedErrorCallback;
-    request.onsuccess = openSuccess2;
-}
-
-function openSuccess2()
-{
-    db = evalAndLog("db = event.target.result");
-    request = evalAndLog("request = db.setVersion('1')");
-    request.onerror = unexpectedErrorCallback;
-    request.onsuccess = getAKey;
+    request.onupgradeneeded = getAKey;
 }
 
 function getAKey()
 {
-    trans = evalAndLog("trans = event.target.result");
+    trans = evalAndLog("trans = event.target.transaction");
     objectStore = evalAndLog("objectStore = trans.objectStore(testData[nextToOpen].name);");
     key = evalAndLog("key = testData[nextToOpen].name");
     request = evalAndLog("request = objectStore.openCursor();");

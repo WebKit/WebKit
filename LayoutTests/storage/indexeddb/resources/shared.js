@@ -189,15 +189,17 @@ function indexedDBTest(upgradeCallback, optionalOpenCallback, optionalParameters
     deleteRequest.onerror = unexpectedErrorCallback;
     deleteRequest.onblocked = unexpectedBlockedCallback;
     deleteRequest.onsuccess = function() {
-        var openRequest;
+        self.openRequest = null;
         if (optionalParameters && 'version' in optionalParameters)
             openRequest = evalAndLog("indexedDB.open(dbname, " + optionalParameters['version'] + ")");
         else
             openRequest = evalAndLog("indexedDB.open(dbname)");
+        shouldBe("openRequest.readyState", "'pending'", true/*quiet*/);
         openRequest.onerror = unexpectedErrorCallback;
         openRequest.onupgradeneeded = upgradeCallback;
         openRequest.onblocked = unexpectedBlockedCallback;
         if (optionalOpenCallback)
             openRequest.onsuccess = optionalOpenCallback;
+        delete self.openRequest;
     };
 }

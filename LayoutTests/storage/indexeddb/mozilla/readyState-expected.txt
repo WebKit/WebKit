@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: The setVersion() method is non-standard and will be removed. Use the "upgradeneeded" event instead.
 Test IndexedDB readyState property during different operations
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
@@ -6,16 +5,10 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
 
-indexedDB.open(name)
-PASS request.readyState is 'pending'
-openSuccess():
-PASS request.readyState is 'done'
-db = event.target.result
-request = db.setVersion('1')
-PASS request.readyState is 'pending'
-setupObjectStore():
-PASS request.readyState is 'done'
-Deleted all object stores.
+dbname = "readyState.html"
+indexedDB.deleteDatabase(dbname)
+indexedDB.open(dbname)
+PASS openRequest.readyState is 'done'
 objectStore = db.createObjectStore('foo');
 key = 10;
 request = objectStore.add({}, key);
@@ -28,6 +21,9 @@ PASS request.readyState is 'pending'
 finalCheck():
 PASS request.readyState is 'done'
 PASS event.target.result == null is false
+checkReadyStateInOpen():
+PASS event.target is openRequest
+PASS openRequest.readyState is "done"
 PASS successfullyParsed is true
 
 TEST COMPLETE

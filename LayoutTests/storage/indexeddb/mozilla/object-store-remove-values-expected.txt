@@ -1,13 +1,8 @@
-CONSOLE MESSAGE: The setVersion() method is non-standard and will be removed. Use the "upgradeneeded" event instead.
 Test IndexedDB: adds, gets, deletes, and re-gets a record in a variety of different object store configurations
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
-
-indexedDB.open(name)
-db = event.target.result
 data = [
         { name: 'inline key; key generator',
           autoIncrement: true,
@@ -35,8 +30,12 @@ data = [
         }
     ];
 i = 0;
-request = db.setVersion('1')
-Deleted all object stores.
+
+indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+
+dbname = "object-store-remove-values.html"
+indexedDB.deleteDatabase(dbname)
+indexedDB.open(dbname)
 objectStore = db.createObjectStore(test.name, { keyPath: test.keyName, autoIncrement: test.autoIncrement });
 request = objectStore.add(test.storedObject);
 id = event.target.result;
@@ -45,8 +44,11 @@ PASS test.storedObject.name is event.target.result.name
 request = objectStore.delete(id);
 request = objectStore.get(id);
 PASS event.target.result === undefined is true
-request = db.setVersion('1')
-Deleted all object stores.
+indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+
+dbname = "object-store-remove-values.html"
+indexedDB.deleteDatabase(dbname)
+indexedDB.open(dbname)
 objectStore = db.createObjectStore(test.name, { keyPath: test.keyName, autoIncrement: test.autoIncrement });
 request = objectStore.add(test.storedObject);
 id = event.target.result;
@@ -55,8 +57,11 @@ PASS test.storedObject.name is event.target.result.name
 request = objectStore.delete(id);
 request = objectStore.get(id);
 PASS event.target.result === undefined is true
-request = db.setVersion('1')
-Deleted all object stores.
+indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+
+dbname = "object-store-remove-values.html"
+indexedDB.deleteDatabase(dbname)
+indexedDB.open(dbname)
 objectStore = db.createObjectStore(test.name, { autoIncrement: test.autoIncrement });
 request = objectStore.add(test.storedObject);
 id = event.target.result;
@@ -65,8 +70,11 @@ PASS test.storedObject.name is event.target.result.name
 request = objectStore.delete(id);
 request = objectStore.get(id);
 PASS event.target.result === undefined is true
-request = db.setVersion('1')
-Deleted all object stores.
+indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+
+dbname = "object-store-remove-values.html"
+indexedDB.deleteDatabase(dbname)
+indexedDB.open(dbname)
 objectStore = db.createObjectStore(test.name, { autoIncrement: test.autoIncrement });
 request = objectStore.add(test.storedObject, test.keyValue);
 id = event.target.result;

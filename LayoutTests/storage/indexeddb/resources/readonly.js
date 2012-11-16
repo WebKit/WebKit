@@ -18,36 +18,11 @@ function setReadonlyProperty(property, value)
     }
 }
 
-function test()
+indexedDBTest(prepareDatabase, openSuccess);
+function prepareDatabase()
 {
-    removeVendorPrefixes();
-
-    name = "foo";
-    request = evalAndLog("indexedDB.open(name)");
-    request.onsuccess = openSuccess;
-    request.onerror = unexpectedErrorCallback;
-}
-
-function openSuccess()
-{
-    setReadonlyProperty("request.result", "Infinity");
-    setReadonlyProperty("request.errorCode", "666");
-    setReadonlyProperty("request.error", "{}");
-    setReadonlyProperty("request.source", "this");
-    setReadonlyProperty("request.transaction", "this");
-    setReadonlyProperty("request.readyState", "666");
-
-    db = evalAndLog("db = event.target.result");
-    setReadonlyProperty("db.name", "'bar'");
-
-    request = evalAndLog("request = db.setVersion('1')");
-    request.onsuccess = createAndPopulateObjectStore;
-    request.onerror = unexpectedErrorCallback;
-}
-
-function createAndPopulateObjectStore()
-{
-    transaction = evalAndLog("transaction = event.target.result;");
+    db = event.target.result;
+    transaction = evalAndLog("transaction = event.target.transaction;");
     setReadonlyProperty("transaction.mode", "666");
     setReadonlyProperty("transaction.db", "this");
 
@@ -99,8 +74,20 @@ function checkCursor()
     setReadonlyProperty("keyRange.upper", "Infinity");
     setReadonlyProperty("keyRange.lowerOpen", "true");
     setReadonlyProperty("keyRange.upperOpen", "true");
+}
+
+function openSuccess()
+{
+    request = event.target;
+    setReadonlyProperty("request.result", "Infinity");
+    setReadonlyProperty("request.errorCode", "666");
+    setReadonlyProperty("request.error", "{}");
+    setReadonlyProperty("request.source", "this");
+    setReadonlyProperty("request.transaction", "this");
+    setReadonlyProperty("request.readyState", "666");
+
+    db = evalAndLog("db = event.target.result");
+    setReadonlyProperty("db.name", "'bar'");
 
     finishJSTest();
 }
-
-test();

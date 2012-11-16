@@ -9,30 +9,14 @@ if (this.importScripts) {
     importScripts('../../resources/shared.js');
 }
 
-description("Test IndexedDB's aborting setVersion");
+description("When a versionchange transaction is aborted, the version and newly created object stores should be reset");
 
-function test()
+indexedDBTest(prepareDatabase);
+function prepareDatabase()
 {
-    removeVendorPrefixes();
-
-    name = self.location.pathname;
-    request = evalAndLog("indexedDB.open(name)");
-    request.onsuccess = openSuccess;
-    request.onerror = unexpectedErrorCallback;
-}
-
-function openSuccess()
-{
-    db = evalAndLog("db = event.target.result");
-    initialVersion = evalAndLog("initialVersion = db.version;");
-    request = evalAndLog("request = db.setVersion('2')");
-    request.onsuccess = cleanDatabase;
-    request.onerror = unexpectedErrorCallback;
-}
-
-function cleanDatabase()
-{
-    deleteAllObjectStores(db);
+    db = event.target.result;
+    request = event.target;
+    request.onerror = null;
 
     objectStore = evalAndLog("objectStore = db.createObjectStore('foo');");
     shouldBe("db.objectStoreNames.length", "1");
@@ -40,17 +24,17 @@ function cleanDatabase()
     index = evalAndLog("index = objectStore.createIndex('bar', 'baz');");
     shouldBe("objectStore.indexNames.length", "1");
 
-    event.target.transaction.oncomplete = unexpectedSuccessCallback;
-    event.target.transaction.onabort = postAbort;
+    trans = request.transaction;
+    trans.oncomplete = unexpectedCompleteCallback;
+    trans.onabort = postAbort;
     evalAndLog("event.target.transaction.abort();");
 }
 
 function postAbort()
 {
-    shouldBe("db.version", "initialVersion");
+    debug("FIXME: Fails because of http://wkb.ug/102412");
+    shouldBe("db.version", "0");
     shouldBe("db.objectStoreNames.length", "0");
 
     finishJSTest();
 }
-
-test();

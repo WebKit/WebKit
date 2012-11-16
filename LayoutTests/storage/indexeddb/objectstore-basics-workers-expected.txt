@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: The setVersion() method is non-standard and will be removed. Use the "upgradeneeded" event instead.
 [Worker] Test the basics of IndexedDB's IDBObjectStore.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
@@ -7,15 +6,11 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 Starting worker: resources/objectstore-basics.js
 [Worker] indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
 [Worker] 
-[Worker] indexedDB.open('objectstore-basics')
-[Worker] openSuccess():
-[Worker] db = event.target.result
-[Worker] db.setVersion('new version')
-[Worker] setVersionSuccess():
-[Worker] trans = event.target.result
-PASS [Worker] trans is non-null.
-[Worker] Deleted all object stores.
-[Worker] createObjectStore():
+[Worker] dbname = "objectstore-basics.js"
+[Worker] indexedDB.deleteDatabase(dbname)
+[Worker] indexedDB.open(dbname)
+[Worker] 
+[Worker] prepareDatabase():
 [Worker] store = db.createObjectStore('storeName', null)
 [Worker] storeNames = db.objectStoreNames
 PASS [Worker] 'name' in store is true
@@ -66,13 +61,14 @@ PASS [Worker] index is non-null.
 PASS [Worker] Exception was thrown.
 PASS [Worker] code is DOMException.NOT_FOUND_ERR
 PASS [Worker] ename is 'NotFoundError'
-[Worker] db.setVersion("version fail")
-PASS [Worker] db.version is "version fail"
-[Worker] setVersionTrans = event.target.result
+[Worker] indexedDB.open(dbname, 2)
+[Worker] db.close()
+PASS [Worker] db.version is 2
+[Worker] setVersionTrans = event.target.transaction
 PASS [Worker] setVersionTrans is non-null.
 [Worker] store = setVersionTrans.objectStore('storeName')
 [Worker] index = store.createIndex('indexFail', 'x')
-PASS [Worker] db.version is "new version"
+PASS [Worker] db.version is 1
 PASS [Worker] store.transaction is setVersionTrans
 PASS [Worker] store.indexNames is ['indexName']
 PASS [Worker] store.indexNames.length is 1
@@ -150,7 +146,9 @@ PASS [Worker] code is IDBDatabaseException.DATA_ERR
 PASS [Worker] ename is 'DataError'
 [Worker] 
 [Worker] testPreConditions():
-[Worker] db.setVersion('precondition version')
+[Worker] indexedDB.open(dbname, 3)
+[Worker] 
+[Worker] upgradeNeeded():
 [Worker] storeWithInLineKeys = db.createObjectStore('storeWithInLineKeys', {keyPath: 'key'})
 [Worker] storeWithOutOfLineKeys = db.createObjectStore('storeWithOutIOfLineKeys')
 [Worker] storeWithIndex = db.createObjectStore('storeWithIndex')
