@@ -188,6 +188,7 @@ compositing/visible-rect [ Skip ]
 # ENABLE(SHADOW_DOM) is disabled.
 editing/shadow
 fast/dom/shadow
+fast/frames/detached-shadow-frame.html
 inspector/elements/update-shadowdom.html
 
 # Fail until SUBPIXEL_LAYOUT is enabled

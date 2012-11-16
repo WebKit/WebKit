@@ -1,3 +1,15 @@
+2012-11-16  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed gardening.
+
+        * http/tests/websocket/tests/hybi/bad-sub-protocol-control-chars-expected.txt: Updated after r134859.
+        * platform/qt/TestExpectations: Skip fast/frames/detached-shadow-frame.html, because ENABLE(SHADOW_DOM) is disabled.
+        * platform/qt/fast/media/mq-js-media-except-02-expected.txt: Updated after r134859.
+        * platform/qt/fast/media/mq-js-media-except-03-expected.txt: Updated after r134859.
+        * platform/qt/http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-expected.txt: Revert r134754, because r134649 was reverted.
+        * platform/qt/http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-in-body-expected.txt: Revert r134754, because r134649 was reverted.
+        * platform/qt/http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-parent-same-origin-deny-expected.txt: Revert r134754, because r134649 was reverted.
+
 2012-11-16  Kentaro Hara  <haraken@chromium.org>
 
         Unreviewed. Rebaselined pixel results.
