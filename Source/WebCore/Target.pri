@@ -875,6 +875,7 @@ SOURCES += \
     page/ContentSecurityPolicy.cpp \
     page/ContextMenuController.cpp \
     page/Crypto.cpp \
+    page/DeviceController.cpp \
     page/DiagnosticLoggingKeys.cpp \
     page/DOMSelection.cpp \
     page/DOMTimer.cpp \
@@ -2003,6 +2004,8 @@ HEADERS += \
     page/ContextMenuController.h \
     page/ContextMenuProvider.h \
     page/Coordinates.h \
+    page/DeviceClient.h \
+    page/DeviceController.h \
     page/DiagnosticLoggingKeys.h \
     page/DOMSelection.h \
     page/DOMTimer.h \

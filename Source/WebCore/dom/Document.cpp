@@ -2176,9 +2176,6 @@ void Document::suspendActiveDOMObjects(ActiveDOMObject::ReasonForSuspension why)
 
     if (DeviceMotionController* controller = DeviceMotionController::from(page()))
         controller->suspendEventsForAllListeners(domWindow());
-    if (DeviceOrientationController* controller = DeviceOrientationController::from(page()))
-        controller->suspendEventsForAllListeners(domWindow());
-
 #endif
 }
 
@@ -2191,8 +2188,6 @@ void Document::resumeActiveDOMObjects()
         return;
 
     if (DeviceMotionController* controller = DeviceMotionController::from(page()))
-        controller->resumeEventsForAllListeners(domWindow());
-    if (DeviceOrientationController* controller = DeviceOrientationController::from(page()))
         controller->resumeEventsForAllListeners(domWindow());
 #endif
 }
