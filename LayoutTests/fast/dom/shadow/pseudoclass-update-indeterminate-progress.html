@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="resources/polyfill.js"></script>
+<style>
+progress {
+    -webkit-appearance: none;
+}
+</style>
+</head>
+
+<body>
+
+<p>When progress became 'indeterminate' or not-'indeterminate', distribution should happen.</p>
+
+<div id="host">
+    <progress id="progress1"></progress>
+    <span>separator</span>
+    <progress id="progress2"></progress>
+</div>
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+var shadowRoot = new WebKitShadowRoot(host);
+shadowRoot.innerHTML = '<content select="span,progress:indeterminate"></content>';
+progress1.value = '30';
+
+setTimeout(function() {
+    progress1.removeAttribute('value');
+    progress2.value = '70';
+    testRunner.notifyDone();
+}, 0);
+
+</script>
+</body>
+</html>
+

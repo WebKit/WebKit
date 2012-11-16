@@ -51,6 +51,7 @@
 #include "HTMLParserIdioms.h"
 #include "IdTargetObserver.h"
 #include "InputType.h"
+#include "InsertionPoint.h"
 #include "KeyboardEvent.h"
 #include "Language.h"
 #include "LocalizedStrings.h"
@@ -531,6 +532,9 @@ void HTMLInputElement::updateType()
             updateFocusAppearance(true);
     }
 
+    if (ElementShadow* elementShadow = shadowOfParentForDistribution(this))
+        elementShadow->invalidateDistribution();
+
     setChangedSinceLastFormControlChangeEvent(false);
 
     addToRadioButtonGroup();
@@ -916,6 +920,7 @@ void HTMLInputElement::setIndeterminate(bool newValue)
     m_isIndeterminate = newValue;
 
     setNeedsStyleRecalc();
+    invalidateParentDistributionIfNecessary(this, SelectRuleFeatureSet::RuleFeatureIndeterminate);
 
     if (renderer() && renderer()->style()->hasAppearance())
         renderer()->theme()->stateChanged(renderer(), CheckedState);

@@ -1,3 +1,25 @@
+2012-11-16  Shinya Kawanaka  <shinyak@chromium.org>
+
+        Changing pseudoClass (:indeterminate) should cause distribution
+        https://bugs.webkit.org/show_bug.cgi?id=101903
+
+        Reviewed by Dimitri Glazkov.
+
+        <progress> and <input type="checkbox"> have 'indeterminate' state. When their state is changed, we have to
+        invalidate distribution if necessary. To check it, we collect a feature that :invalidate is used in select attributes.
+
+        For <input>, we also have to see 'type' is changed. According to the spec, :indeterminate should match only
+        progress element or <input type="checkbox">. So changing 'type' might also change :indeterminate state.
+
+        Tests: fast/dom/shadow/pseudoclass-update-indeterminate-input.html
+               fast/dom/shadow/pseudoclass-update-indeterminate-progress.html
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::updateType):
+        (WebCore::HTMLInputElement::setIndeterminate):
+        * html/HTMLProgressElement.cpp:
+        (WebCore::HTMLProgressElement::didElementStateChange):
+
 2012-11-16  Alexis Menard  <alexis@webkit.org>
 
         Factorize the creation of primitive values with a pair into a function.

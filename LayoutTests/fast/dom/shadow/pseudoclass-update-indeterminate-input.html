@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="resources/polyfill.js"></script>
+</head>
+
+<body>
+
+<p>When input became 'indeterminate' state or not-'indeterminate' state, distribution should happen.</p>
+
+<div id="host">
+    <input id="input1" type="checkbox">
+    <span>separator 1</span>
+    <input id="input2" type="checkbox">
+    <span>separator 2</span>
+    <input id="input3" type="checkbox">
+    <span>separator 3</span>
+    <input id="input4" type="text">
+    <span>separator 4</span>
+    <input id="input5" type="text">
+    <span>separator 5</span>
+    <input id="input6" type="text">
+</div>
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+input1.indeterminate = true;
+input2.indeterminate = true;
+input4.indeterminate = true;
+input5.indeterminate = true;
+
+var shadowRoot = new WebKitShadowRoot(host);
+shadowRoot.innerHTML = '<content select="span, input:indeterminate"></content>';
+
+setTimeout(function() {
+    input1.indeterminate = false;
+    input3.indeterminate = true;
+    input4.indeterminate = false;
+    input6.indeterminate = true;
+    
+    input2.type = 'text';
+    input5.type = 'checkbox';
+    testRunner.notifyDone();
+}, 0);
+
+</script>
+</body>
+</html>
+

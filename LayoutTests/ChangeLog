@@ -1,3 +1,18 @@
+2012-11-16  Shinya Kawanaka  <shinyak@chromium.org>
+
+        Changing pseudoClass (:indeterminate) should cause distribution
+        https://bugs.webkit.org/show_bug.cgi?id=101903
+
+        Reviewed by Dimitri Glazkov.
+
+        I've used "-webkit-appearance: none" for progress element because of Bug 102459.
+        It prevents from testing progress element on Windows.
+
+        * fast/dom/shadow/pseudoclass-update-indeterminate-input-expected.html: Added.
+        * fast/dom/shadow/pseudoclass-update-indeterminate-input.html: Added.
+        * fast/dom/shadow/pseudoclass-update-indeterminate-progress-expected.html: Added.
+        * fast/dom/shadow/pseudoclass-update-indeterminate-progress.html: Added.
+
 2012-11-16  Mike West  <mkwst@chromium.org>
 
         [chromium] Unreviewed gardening.
