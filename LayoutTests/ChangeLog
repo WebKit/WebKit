@@ -1,3 +1,16 @@
+2012-11-15  Kenichi Ishibashi  <bashi@chromium.org>
+
+        Use complex path for the reference text in fast/text/international/combining-marks-position.html
+        https://bugs.webkit.org/show_bug.cgi?id=101009
+
+        Reviewed by Kent Tamura.
+
+        Arial has a kerning pair for U+043A U+0430 so the width of the text can be
+        different between simple path and complex path. Use text-rendering: optimizeLegibility
+        to force using complex text for reference text.
+
+        * fast/text/international/combining-marks-position.html:
+
 2012-11-15  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed. Skipped media/video-src-blob.html on Windows.
