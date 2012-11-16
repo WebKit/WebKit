@@ -39,11 +39,19 @@
 
 namespace WebCore {
 
-inline void InspectorInstrumentation::addMessageToConsole(Page* page, MessageSource source, MessageType type, MessageLevel level, const String& message, PassRefPtr<ScriptArguments> arguments, PassRefPtr<ScriptCallStack> callStack, unsigned long requestIdentifier)
+inline void InspectorInstrumentation::addMessageToConsole(Page* page, MessageSource source, MessageType type, MessageLevel level, const String& message, PassRefPtr<ScriptCallStack> callStack, unsigned long requestIdentifier)
 {
 #if ENABLE(INSPECTOR)
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForPage(page))
-        addMessageToConsoleImpl(instrumentingAgents, source, type, level, message, arguments, callStack, requestIdentifier);
+        addMessageToConsoleImpl(instrumentingAgents, source, type, level, message, callStack, requestIdentifier);
+#endif
+}
+
+inline void InspectorInstrumentation::addMessageToConsole(Page* page, MessageSource source, MessageType type, MessageLevel level, const String& message, ScriptState* state, PassRefPtr<ScriptArguments> arguments, unsigned long requestIdentifier)
+{
+#if ENABLE(INSPECTOR)
+    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForPage(page))
+        addMessageToConsoleImpl(instrumentingAgents, source, type, level, message, state, arguments, requestIdentifier);
 #endif
 }
 
@@ -56,11 +64,11 @@ inline void InspectorInstrumentation::addMessageToConsole(Page* page, MessageSou
 }
 
 #if ENABLE(WORKERS)
-inline void InspectorInstrumentation::addMessageToConsole(WorkerContext* workerContext, MessageSource source, MessageType type, MessageLevel level, const String& message, PassRefPtr<ScriptArguments> arguments, PassRefPtr<ScriptCallStack> callStack, unsigned long requestIdentifier)
+inline void InspectorInstrumentation::addMessageToConsole(WorkerContext* workerContext, MessageSource source, MessageType type, MessageLevel level, const String& message, PassRefPtr<ScriptCallStack> callStack, unsigned long requestIdentifier)
 {
 #if ENABLE(INSPECTOR)
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForWorkerContext(workerContext))
-        addMessageToConsoleImpl(instrumentingAgents, source, type, level, message, arguments, callStack, requestIdentifier);
+        addMessageToConsoleImpl(instrumentingAgents, source, type, level, message, callStack, requestIdentifier);
 #endif
 }
 
@@ -73,11 +81,11 @@ inline void InspectorInstrumentation::addMessageToConsole(WorkerContext* workerC
 }
 #endif
 
-inline void InspectorInstrumentation::consoleCount(Page* page, PassRefPtr<ScriptArguments> arguments, PassRefPtr<ScriptCallStack> stack)
+inline void InspectorInstrumentation::consoleCount(Page* page, ScriptState* state, PassRefPtr<ScriptArguments> arguments)
 {
 #if ENABLE(INSPECTOR)
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForPage(page))
-        consoleCountImpl(instrumentingAgents, arguments, stack);
+        consoleCountImpl(instrumentingAgents, state, arguments);
 #endif
 }
 

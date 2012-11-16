@@ -293,7 +293,7 @@ void WorkerContext::addMessageToWorkerConsole(MessageSource source, MessageType 
 {
     ASSERT(isContextThread());
     if (callStack)
-        InspectorInstrumentation::addMessageToConsole(this, source, type, level, message, 0, callStack, requestIdentifier);
+        InspectorInstrumentation::addMessageToConsole(this, source, type, level, message, callStack, requestIdentifier);
     else
         InspectorInstrumentation::addMessageToConsole(this, source, type, level, message, sourceURL, lineNumber, requestIdentifier);
 }

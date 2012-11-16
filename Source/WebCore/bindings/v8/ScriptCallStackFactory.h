@@ -31,6 +31,7 @@
 #ifndef ScriptCallStackFactory_h
 #define ScriptCallStackFactory_h
 
+#include "ScriptCallStack.h"
 #include <v8.h>
 #include <wtf/Forward.h>
 
@@ -48,11 +49,12 @@ const v8::StackTrace::StackTraceOptions stackTraceOptions = static_cast<v8::Stac
 
 PassRefPtr<ScriptCallStack> createScriptCallStack(v8::Handle<v8::StackTrace>, size_t maxStackSize);
 PassRefPtr<ScriptCallStack> createScriptCallStack(size_t maxStackSize, bool emptyStackIsAllowed = false);
-PassRefPtr<ScriptCallStack> createScriptCallStackForConsole();
+PassRefPtr<ScriptCallStack> createScriptCallStackForConsole(size_t maxStackSize = ScriptCallStack::maxCallStackSizeToCapture);
 PassRefPtr<ScriptArguments> createScriptArguments(const v8::Arguments& v8arguments, unsigned skipArgumentCount);
 
 // This is just an alias to 'createScriptCallStackForConsole();' for compat with JSC.
 PassRefPtr<ScriptCallStack> createScriptCallStackForConsole(ScriptState*);
+PassRefPtr<ScriptCallStack> createScriptCallStack(ScriptState*, size_t maxStackSize = ScriptCallStack::maxCallStackSizeToCapture);
 
 } // namespace WebCore
 

@@ -1692,15 +1692,8 @@ sub GenerateCallWith
     }
     if ($function and $codeGenerator->ExtendedAttributeContains($callWith, "ScriptArguments")) {
         push(@$outputArray, $indent . "RefPtr<ScriptArguments> scriptArguments(createScriptArguments(args, " . @{$function->parameters} . "));\n");
-        push(@callWithArgs, "scriptArguments");
+        push(@callWithArgs, "scriptArguments.release()");
         AddToImplIncludes("ScriptArguments.h");
-    }
-    if ($codeGenerator->ExtendedAttributeContains($callWith, "CallStack")) {
-        push(@$outputArray, $indent . "RefPtr<ScriptCallStack> callStack(createScriptCallStackForConsole());\n");
-        push(@$outputArray, $indent . "if (!callStack)\n");
-        push(@$outputArray, $indent . "    return v8Undefined();\n");
-        push(@callWithArgs, "callStack");
-        AddToImplIncludes("ScriptCallStack.h");
         AddToImplIncludes("ScriptCallStackFactory.h");
     }
     return @callWithArgs;

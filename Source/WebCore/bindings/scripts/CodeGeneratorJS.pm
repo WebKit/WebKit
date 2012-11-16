@@ -2593,13 +2593,8 @@ sub GenerateCallWith
     if ($function and $codeGenerator->ExtendedAttributeContains($callWith, "ScriptArguments")) {
         push(@$outputArray, "    RefPtr<ScriptArguments> scriptArguments(createScriptArguments(exec, " . @{$function->parameters} . "));\n");
         $implIncludes{"ScriptArguments.h"} = 1;
-        push(@callWithArgs, "scriptArguments");
-    }
-    if ($codeGenerator->ExtendedAttributeContains($callWith, "CallStack")) {
-        push(@$outputArray, "    RefPtr<ScriptCallStack> callStack(createScriptCallStackForConsole(exec));\n");
-        $implIncludes{"ScriptCallStack.h"} = 1;
         $implIncludes{"ScriptCallStackFactory.h"} = 1;
-        push(@callWithArgs, "callStack");
+        push(@callWithArgs, "scriptArguments.release()");
     }
     return @callWithArgs;
 }

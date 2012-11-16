@@ -41,6 +41,7 @@
 #include "ScriptArguments.h"
 #include "ScriptCallFrame.h"
 #include "ScriptCallStack.h"
+#include "ScriptCallStackFactory.h"
 #include "ScriptController.h"
 #include "ScriptObject.h"
 #include "ScriptProfiler.h"
@@ -151,7 +152,7 @@ void InspectorConsoleAgent::clearFrontend()
     disable(&errorString);
 }
 
-void InspectorConsoleAgent::addMessageToConsole(MessageSource source, MessageType type, MessageLevel level, const String& message, PassRefPtr<ScriptArguments> arguments, PassRefPtr<ScriptCallStack> callStack, unsigned long requestIdentifier)
+void InspectorConsoleAgent::addMessageToConsole(MessageSource source, MessageType type, MessageLevel level, const String& message, PassRefPtr<ScriptCallStack> callStack, unsigned long requestIdentifier)
 {
     if (!developerExtrasEnabled())
         return;
@@ -161,13 +162,33 @@ void InspectorConsoleAgent::addMessageToConsole(MessageSource source, MessageTyp
         clearMessages(&error);
     }
 
-    addConsoleMessage(adoptPtr(new ConsoleMessage(source, type, level, message, arguments, callStack, requestIdentifier)));
+    addConsoleMessage(adoptPtr(new ConsoleMessage(source, type, level, message, 0, callStack, requestIdentifier)));
+}
+
+void InspectorConsoleAgent::addMessageToConsole(MessageSource source, MessageType type, MessageLevel level, const String& message, ScriptState* state, PassRefPtr<ScriptArguments> arguments, unsigned long requestIdentifier)
+{
+    if (!developerExtrasEnabled())
+        return;
+
+    if (type == ClearMessageType) {
+        ErrorString error;
+        clearMessages(&error);
+    }
+
+    RefPtr<ScriptCallStack> callStack(createScriptCallStackForConsole(state));
+    addConsoleMessage(adoptPtr(new ConsoleMessage(source, type, level, message, arguments, callStack.release(), requestIdentifier)));
 }
 
 void InspectorConsoleAgent::addMessageToConsole(MessageSource source, MessageType type, MessageLevel level, const String& message, const String& scriptId, unsigned lineNumber, unsigned long requestIdentifier)
 {
     if (!developerExtrasEnabled())
         return;
+
+    if (type == ClearMessageType) {
+        ErrorString error;
+        clearMessages(&error);
+    }
+
     addConsoleMessage(adoptPtr(new ConsoleMessage(source, type, level, message, scriptId, lineNumber, requestIdentifier)));
 }
 
@@ -209,8 +230,9 @@ void InspectorConsoleAgent::stopTiming(const String& title, PassRefPtr<ScriptCal
     addMessageToConsole(JSMessageSource, LogMessageType, LogMessageLevel, message, lastCaller.sourceURL(), lastCaller.lineNumber());
 }
 
-void InspectorConsoleAgent::count(PassRefPtr<ScriptArguments> arguments, PassRefPtr<ScriptCallStack> callStack)
+void InspectorConsoleAgent::count(ScriptState* state, PassRefPtr<ScriptArguments> arguments)
 {
+    RefPtr<ScriptCallStack> callStack(createScriptCallStackForConsole(state));
     const ScriptCallFrame& lastCaller = callStack->at(0);
     // Follow Firebug's behavior of counting with null and undefined title in
     // the same bucket as no argument

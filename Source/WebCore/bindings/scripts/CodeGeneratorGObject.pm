@@ -243,6 +243,10 @@ sub SkipFunction {
         return 1;
     }
 
+    if ($function->signature->name eq "timeEnd") {
+        return 1;
+    }
+
     if ($codeGenerator->GetSequenceType($functionReturnType)) {
         return 1;
     }

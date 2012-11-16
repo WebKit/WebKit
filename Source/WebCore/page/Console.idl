@@ -31,17 +31,17 @@
     OmitConstructor
 ] interface Console {
 
-    [CallWith=ScriptArguments|CallStack] void debug();
-    [CallWith=ScriptArguments|CallStack] void error();
-    [CallWith=ScriptArguments|CallStack] void info();
-    [CallWith=ScriptArguments|CallStack] void log();
-    [CallWith=ScriptArguments|CallStack] void warn();
-    [CallWith=ScriptArguments|CallStack] void dir();
-    [CallWith=ScriptArguments|CallStack] void dirxml();
-    [V8Custom, CallWith=ScriptArguments|CallStack] void trace();
-    [V8Custom, CallWith=ScriptArguments|CallStack, ImplementedAs=assertCondition] void assert(in boolean condition);
-    [CallWith=ScriptArguments|CallStack] void count();
-    [CallWith=ScriptArguments|CallStack] void markTimeline();
+    [CallWith=ScriptArguments|ScriptState] void debug();
+    [CallWith=ScriptArguments|ScriptState] void error();
+    [CallWith=ScriptArguments|ScriptState] void info();
+    [CallWith=ScriptArguments|ScriptState] void log();
+    [CallWith=ScriptArguments|ScriptState] void warn();
+    [CallWith=ScriptArguments|ScriptState] void dir();
+    [CallWith=ScriptArguments|ScriptState] void dirxml();
+    [V8Custom, CallWith=ScriptArguments|ScriptState] void trace();
+    [V8Custom, CallWith=ScriptArguments|ScriptState, ImplementedAs=assertCondition] void assert(in boolean condition);
+    [CallWith=ScriptArguments|ScriptState] void count();
+    [CallWith=ScriptArguments] void markTimeline();
 
 #if defined(ENABLE_JAVASCRIPT_DEBUGGER) && ENABLE_JAVASCRIPT_DEBUGGER
     // As per spec: http://www.w3.org/TR/WebIDL/#idl-sequence
@@ -53,12 +53,12 @@
 #endif
 
     void time(in [TreatNullAs=NullString, TreatUndefinedAs=NullString] DOMString title);
-    [CallWith=ScriptArguments|CallStack] void timeEnd(in [TreatNullAs=NullString, TreatUndefinedAs=NullString] DOMString title);
-    [CallWith=ScriptArguments|CallStack] void timeStamp();
-    [CallWith=ScriptArguments|CallStack] void group();
-    [CallWith=ScriptArguments|CallStack] void groupCollapsed();
+    [CallWith=ScriptState] void timeEnd(in [TreatNullAs=NullString, TreatUndefinedAs=NullString] DOMString title);
+    [CallWith=ScriptArguments] void timeStamp();
+    [CallWith=ScriptArguments|ScriptState] void group();
+    [CallWith=ScriptArguments|ScriptState] void groupCollapsed();
     void groupEnd();
-    [CallWith=ScriptArguments|CallStack] void clear();
+    [CallWith=ScriptArguments|ScriptState] void clear();
 
     readonly attribute MemoryInfo memory;
 };
