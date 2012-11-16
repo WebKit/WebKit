@@ -1,5 +1,14 @@
 2012-11-15  Filip Pizlo  <fpizlo@apple.com>
 
+        CallData.h should have correct indentation.
+
+        Rubber stamped by Mark Hahneberg.
+
+        * runtime/CallData.h:
+        (JSC):
+
+2012-11-15  Filip Pizlo  <fpizlo@apple.com>
+
         Remove methodCallDummy since it is not used anymore.
 
         Rubber stamped by Mark Hahnenberg.
