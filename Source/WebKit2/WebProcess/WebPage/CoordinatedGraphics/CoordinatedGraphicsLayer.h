@@ -198,6 +198,7 @@ private:
     WebKit::WebLayerInfo m_layerInfo;
     GraphicsLayer* m_maskTarget;
     GraphicsLayerTransform m_layerTransform;
+    TransformationMatrix m_cachedInverseTransform;
     bool m_inUpdateMode : 1;
     bool m_shouldUpdateVisibleRect: 1;
     bool m_shouldSyncLayerState: 1;

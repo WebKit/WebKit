@@ -656,7 +656,8 @@ IntRect CoordinatedGraphicsLayer::tiledBackingStoreVisibleRect()
     // Return a projection of the visible rect (surface coordinates) onto the layer's plane (layer coordinates).
     // The resulting quad might be squewed and the visible rect is the bounding box of this quad,
     // so it might spread further than the real visible area (and then even more amplified by the cover rect multiplier).
-    return enclosingIntRect(m_layerTransform.combined().inverse().clampedBoundsOfProjectedQuad(FloatQuad(FloatRect(m_coordinator->visibleContentsRect()))));
+    ASSERT(m_cachedInverseTransform == m_layerTransform.combined().inverse());
+    return enclosingIntRect(m_cachedInverseTransform.clampedBoundsOfProjectedQuad(FloatQuad(FloatRect(m_coordinator->visibleContentsRect()))));
 }
 
 Color CoordinatedGraphicsLayer::tiledBackingStoreBackgroundColor() const
@@ -765,6 +766,7 @@ void CoordinatedGraphicsLayer::computeTransformedVisibleRect()
     m_layerTransform.setFlattening(!preserves3D());
     m_layerTransform.setChildrenTransform(childrenTransform());
     m_layerTransform.combineTransforms(parent() ? toCoordinatedGraphicsLayer(parent())->m_layerTransform.combinedForChildren() : TransformationMatrix());
+    m_cachedInverseTransform = m_layerTransform.combined().inverse();
 
     // The combined transform will be used in tiledBackingStoreVisibleRect.
     adjustVisibleRect();
