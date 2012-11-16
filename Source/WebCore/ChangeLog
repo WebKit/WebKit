@@ -1,3 +1,24 @@
+2012-11-16  Scott Violet  <sky@chromium.org>
+
+        [chromium] Copy linux theme related files to default
+        https://bugs.webkit.org/show_bug.cgi?id=102403
+
+        Reviewed by Tony Chang
+
+        Transitional patch that copies linux WebThemeEngine to default directory.
+
+        No new tests, refactoring only.
+
+        * WebCore.gyp/WebCore.gyp: Update compile rules when use_default_render_theme is set.
+        * WebCore.gypi: Adds new files.
+        * platform/chromium/PlatformSupport.h:
+        * platform/chromium/PlatformThemeChromiumDefault.cpp: Copied from Source/WebCore/platform/chromium/PlatformThemeChromiumLinux.cpp.
+        * platform/chromium/PlatformThemeChromiumDefault.h: Copied from Source/WebCore/platform/chromium/PlatformThemeChromiumLinux.h.
+        * platform/chromium/ScrollbarThemeChromiumDefault.cpp: Copied from Source/WebCore/platform/chromium/ScrollbarThemeChromiumLinux.cpp.
+        * platform/chromium/ScrollbarThemeChromiumDefault.h: Copied from Source/WebCore/platform/chromium/ScrollbarThemeChromiumLinux.h.
+        * rendering/RenderThemeChromiumDefault.cpp: Copied from Source/WebCore/rendering/RenderThemeChromiumLinux.cpp.
+        * rendering/RenderThemeChromiumDefault.h: Copied from Source/WebCore/rendering/RenderThemeChromiumLinux.h.
+
 2012-11-16  Alec Flett  <alecflett@chromium.org>
 
         IndexedDB: add missing 'explicit' and fix backing store release

@@ -145,11 +145,13 @@
       'enable_touch_events%': 1,
       'enable_touch_icon_loading%' : 0,
       'enable_mutation_observers%': 1,
+      'use_default_render_theme%': 0,
     },
     'use_accelerated_compositing%': '<(use_accelerated_compositing)',
     'enable_skia_text%': '<(enable_skia_text)',
     'enable_svg%': '<(enable_svg)',
     'enable_touch_events%': '<(enable_touch_events)',
+    'use_default_render_theme%': '<(use_default_render_theme)',
     'conditions': [
       ['OS=="android"', {
         'feature_defines': [
@@ -237,6 +239,11 @@
       ['chromeos==1', {
         'feature_defines': [
           'SK_SUPPORT_HINTING_SCALE_FACTOR',
+        ],
+      }],
+      ['use_default_render_theme==1', {
+        'feature_defines': [
+          'ENABLE_DEFAULT_RENDER_THEME=1',
         ],
       }],
     ],

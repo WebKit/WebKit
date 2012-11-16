@@ -1,3 +1,23 @@
+2012-11-16  Scott Violet  <sky@chromium.org>
+
+        [chromium] Copy linux theme related files to default
+        https://bugs.webkit.org/show_bug.cgi?id=102403
+
+        Reviewed by Tony Chang
+
+        Transitional patch that copies linux WebThemeEngine to default directory.
+
+        No new tests, refactoring only.
+
+        * features.gypi:
+        * public/platform/default: Added.
+        * public/platform/default/WebThemeEngine.h: Copied from Source/WebKit/chromium/public/platform/linux/WebThemeEngine.h.
+        * src/PlatformSupport.cpp: Includes correct theme files when DEFAULT_RENDER_THEME is set.
+        (WebCore):
+        * src/WebViewImpl.cpp: Includes correct theme files when DEFAULT_RENDER_THEME is set.
+        (WebKit::WebViewImpl::setScrollbarColors): Calls to default theme as necessary.
+        (WebKit::WebViewImpl::setSelectionColors): Calls to default theme as necessary.
+
 2012-11-16  Robert Flack  <flackr@chromium.org>
 
         Handle gesture events on scrollbars.

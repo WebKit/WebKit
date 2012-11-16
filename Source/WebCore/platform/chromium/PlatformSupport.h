@@ -99,7 +99,7 @@ public:
     static NPObject* pluginScriptableObject(Widget*);
 
     // Theming ------------------------------------------------------------
-#if OS(WINDOWS)
+#if OS(WINDOWS) && !ENABLE(DEFAULT_RENDER_THEME)
     static void paintButton(
         GraphicsContext*, int part, int state, int classicState, const IntRect&);
     static void paintMenuList(

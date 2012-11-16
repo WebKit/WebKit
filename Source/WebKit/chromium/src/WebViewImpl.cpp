@@ -95,7 +95,6 @@
 #include "PlatformContextSkia.h"
 #include "PlatformKeyboardEvent.h"
 #include "PlatformMouseEvent.h"
-#include "PlatformThemeChromiumLinux.h"
 #include "PlatformWheelEvent.h"
 #include "PointerLockController.h"
 #include "PopupContainer.h"
@@ -165,6 +164,11 @@
 #include <wtf/TemporaryChange.h>
 #include <wtf/Uint8ClampedArray.h>
 
+#if ENABLE(DEFAULT_RENDER_THEME)
+#include "PlatformThemeChromiumDefault.h"
+#include "RenderThemeChromiumDefault.h"
+#endif
+
 #if ENABLE(GESTURE_EVENTS)
 #include "PlatformGestureCurveFactory.h"
 #include "PlatformGestureEvent.h"
@@ -172,9 +176,12 @@
 #endif
 
 #if OS(WINDOWS)
+#if !ENABLE(DEFAULT_RENDER_THEME)
 #include "RenderThemeChromiumWin.h"
+#endif
 #else
-#if OS(UNIX) && !OS(DARWIN)
+#if OS(UNIX) && !OS(DARWIN) && !ENABLE(DEFAULT_RENDER_THEME)
+#include "PlatformThemeChromiumLinux.h"
 #include "RenderThemeChromiumLinux.h"
 #endif
 #include "RenderTheme.h"
@@ -3554,7 +3561,9 @@ void WebViewImpl::setDomainRelaxationForbidden(bool forbidden, const WebString& 
 void WebViewImpl::setScrollbarColors(unsigned inactiveColor,
                                      unsigned activeColor,
                                      unsigned trackColor) {
-#if OS(UNIX) && !OS(DARWIN) && !OS(ANDROID)
+#if ENABLE(DEFAULT_RENDER_THEME)
+    PlatformThemeChromiumDefault::setScrollbarColors(inactiveColor, activeColor, trackColor);
+#elif OS(UNIX) && !OS(DARWIN) && !OS(ANDROID)
     PlatformThemeChromiumLinux::setScrollbarColors(inactiveColor, activeColor, trackColor);
 #endif
 }
@@ -3563,11 +3572,11 @@ void WebViewImpl::setSelectionColors(unsigned activeBackgroundColor,
                                      unsigned activeForegroundColor,
                                      unsigned inactiveBackgroundColor,
                                      unsigned inactiveForegroundColor) {
-#if OS(UNIX) && !OS(DARWIN) && !OS(ANDROID)
-    RenderThemeChromiumLinux::setSelectionColors(activeBackgroundColor,
-                                                 activeForegroundColor,
-                                                 inactiveBackgroundColor,
-                                                 inactiveForegroundColor);
+#if ENABLE(DEFAULT_RENDER_THEME)
+    RenderThemeChromiumDefault::setSelectionColors(activeBackgroundColor, activeForegroundColor, inactiveBackgroundColor, inactiveForegroundColor);
+    theme()->platformColorsDidChange();
+#elif OS(UNIX) && !OS(DARWIN) && !OS(ANDROID)
+    RenderThemeChromiumLinux::setSelectionColors(activeBackgroundColor, activeForegroundColor, inactiveBackgroundColor, inactiveForegroundColor);
     theme()->platformColorsDidChange();
 #endif
 }

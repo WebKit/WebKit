@@ -58,7 +58,13 @@
 
 #if OS(WINDOWS)
 #include "platform/WebRect.h"
+#if !ENABLE(DEFAULT_RENDER_THEME)
 #include <public/win/WebThemeEngine.h>
+#endif // !ENABLE(DEFAULT_RENDER_THEME)
+#endif
+
+#if ENABLE(DEFAULT_RENDER_THEME)
+#include <public/default/WebThemeEngine.h>
 #endif
 
 #if OS(DARWIN)
@@ -69,7 +75,9 @@
 #include <public/android/WebThemeEngine.h>
 #else
 #include "WebFontInfo.h"
+#if !ENABLE(DEFAULT_RENDER_THEME)
 #include <public/linux/WebThemeEngine.h>
+#endif // !ENABLE(DEFAULT_RENDER_THEME)
 #endif // OS(ANDROID)
 #endif // elif OS(UNIX)
 
@@ -221,7 +229,7 @@ NPObject* PlatformSupport::pluginScriptableObject(Widget* widget)
 
 // Theming --------------------------------------------------------------------
 
-#if OS(WINDOWS)
+#if OS(WINDOWS) && !ENABLE(DEFAULT_RENDER_THEME)
 
 void PlatformSupport::paintButton(
     GraphicsContext* gc, int part, int state, int classicState,

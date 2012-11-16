@@ -1699,6 +1699,26 @@
                 }],
             ],
         }],
+        ['use_default_render_theme==1', {
+          'sources/': [
+            ['exclude', 'platform/chromium/PlatformThemeChromiumLinux.h'],
+            ['exclude', 'platform/chromium/PlatformThemeChromiumLinux.cpp'],
+            ['exclude', 'platform/chromium/PlatformThemeChromiumWin.h'],
+            ['exclude', 'platform/chromium/PlatformThemeChromiumWin.cpp'],
+            ['exclude', 'platform/chromium/ScrollbarThemeChromiumLinux.cpp'],
+            ['exclude', 'platform/chromium/ScrollbarThemeChromiumLinux.h'],
+            ['exclude', 'platform/chromium/ScrollbarThemeChromiumWin.cpp'],
+            ['exclude', 'platform/chromium/ScrollbarThemeChromiumWin.h'],
+          ],
+        }],
+        ['use_default_render_theme==0', {
+          'sources/': [
+            ['exclude', 'platform/chromium/PlatformThemeChromiumDefault.cpp'],
+            ['exclude', 'platform/chromium/PlatformThemeChromiumDefault.h'],
+            ['exclude', 'platform/chromium/ScrollbarThemeChromiumDefault.cpp'],
+            ['exclude', 'platform/chromium/ScrollbarThemeChromiumDefault.h'],
+          ],
+        }],
         ['use_x11 == 1', {
           'sources/': [
             # Cherry-pick files excluded by the broader regular expressions above.
@@ -1987,6 +2007,17 @@
         ['exclude', 'AllInOne\\.cpp$'],
       ],
       'conditions': [
+        ['use_default_render_theme==0', {
+          'sources/': [
+            ['exclude', 'rendering/RenderThemeChromiumDefault.*'],
+          ],
+        }],
+        ['use_default_render_theme==1', {
+          'sources/': [
+            ['exclude', 'RenderThemeChromiumLinux.*'],
+            ['exclude', 'RenderThemeChromiumWin.*'],
+          ],
+        }],
         ['OS=="win"', {
           'sources/': [
             ['exclude', 'Posix\\.cpp$'],

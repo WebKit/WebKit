@@ -1,3 +1,18 @@
+2012-11-16  Scott Violet  <sky@chromium.org>
+
+        [chromium] Copy linux theme related files to default
+        https://bugs.webkit.org/show_bug.cgi?id=102403
+
+        Reviewed by Tony Chang
+
+        Transitional patch that copies linux WebThemeEngine to default directory.
+
+        No new tests, refactoring only.
+
+        * Platform.gypi:
+        * chromium/public/default: Added.
+        * chromium/public/default/WebThemeEngine.h: Copied from Source/Platform/chromium/public/linux/WebThemeEngine.h.
+
 2012-11-15  Scott Violet  <sky@chromium.org>
 
         [chromium] Create default directory so that cq can apply patch
