@@ -1,3 +1,15 @@
+2012-11-16  Takashi Sakamoto  <tasak@google.com>
+
+        ASSERT_NOT_REACHED() when building a CSSOM wrapper for StyleRuleHost
+        https://bugs.webkit.org/show_bug.cgi?id=102116
+
+        Reviewed by Alexander Pavlov.
+
+        * fast/css/at-host-cssom-crash-expected.txt: Added.
+        * fast/css/at-host-cssom-crash.html: Added.
+        * inspector/styles/styles-include-host-rules-crash-expected.txt: Added.
+        * inspector/styles/styles-include-host-rules-crash.html: Added.
+
 2012-11-15  Kenichi Ishibashi  <bashi@chromium.org>
 
         Unreviewed test update.

@@ -28,6 +28,7 @@
 #include "CSSMediaRule.h"
 #include "CSSPageRule.h"
 #include "CSSStyleRule.h"
+#include "CSSUnknownRule.h"
 #include "StyleRuleImport.h"
 #include "WebCoreMemoryInstrumentation.h"
 #include "WebKitCSSKeyframeRule.h"
@@ -220,6 +221,9 @@ PassRefPtr<CSSRule> StyleRuleBase::createCSSOMWrapper(CSSStyleSheet* parentSheet
         break;
 #endif
     case Host:
+        // FIXME: The current CSSOM editor's draft (http://dev.w3.org/csswg/cssom/) does not handle @host rules (see bug 102344).
+        rule = adoptRef(new CSSUnknownRule());
+        break;
     case Unknown:
     case Charset:
     case Keyframe:

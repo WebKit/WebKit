@@ -1,0 +1,29 @@
+<!doctype html>
+<head>
+<style>
+@host {
+    div {
+      padding: 2px;
+    }
+}
+
+div {
+  padding: 2px;
+}
+</style>
+</head>
+<body>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+var styleSheets = document.styleSheets;
+for (var i = 0; i < styleSheets.length; ++i)
+    for (var j = 0; j < styleSheets[i].cssRules.length; ++j)
+        styleSheets[i].cssRules.item(j);
+</script>
+Test for <a href="https://bugs.webkit.org/show_bug.cgi?id=102116">102116</a>: ASSERT_NOT_REACHED() when building a CSSOM wrapper for StyleRuleHost<br>
+This test has PASSED (no crash).
+</body>
+</html>
+

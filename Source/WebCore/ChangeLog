@@ -1,3 +1,23 @@
+2012-11-16  Takashi Sakamoto  <tasak@google.com>
+
+        ASSERT_NOT_REACHED() when building a CSSOM wrapper for StyleRuleHost
+        https://bugs.webkit.org/show_bug.cgi?id=102116
+
+        Reviewed by Alexander Pavlov.
+
+        Provide a CSSUnknownRule instance as a CSSOM wrapper for StyleRuleHost
+        rules. Since there is no CSSOM wrapper for @host @-rules and
+        ASSERT_NOT_REACHED is used when a CSSOM wrapper is requested,
+        this crash occurs.
+
+        Tests: fast/css/at-host-cssom-crash.html
+               inspector/styles/styles-include-host-rules-crash.html
+
+        * css/StyleRule.cpp:
+        (WebCore::StyleRuleBase::createCSSOMWrapper):
+        Return a CSSUnknownRule instance for StyleRuleHost rules instead of
+        calling ASSERT_NOT_REACHED().
+
 2012-11-16  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         Avoid copying of ViewportArguments in computeViewportAttributes function
