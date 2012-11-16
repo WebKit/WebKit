@@ -1,3 +1,15 @@
+2012-11-16  Byungwoo Lee  <bw80.lee@samsung.com>
+
+        [EFL][GTK] Build fix after r134955
+        https://bugs.webkit.org/show_bug.cgi?id=102527
+
+        Reviewed by Martin Robinson.
+
+        Fix the EFL,GTK debug bulid fails after r134955.
+
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::ResourceHandle::continueDidReceiveAuthenticationChallenge):
+
 2012-11-15  Alexey Proskuryakov  <ap@apple.com>
 
         Private Browsing is a per-page setting that sets a global value
