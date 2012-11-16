@@ -118,7 +118,7 @@ public:
             , m_cursorOptions(cursorOptions)
         {
         }
-        Cursor(const IDBBackingStore::Cursor* other);
+        explicit Cursor(const IDBBackingStore::Cursor* other);
 
         PassRefPtr<IDBKey> key() const { return m_currentKey; }
         bool continueFunction(const IDBKey* = 0, IteratorState = Seek);
@@ -149,10 +149,11 @@ public:
 
     class Transaction {
     public:
-        Transaction(IDBBackingStore*);
+        explicit Transaction(IDBBackingStore*);
         void begin();
         bool commit();
         void rollback();
+        void reset() { m_backingStore = 0; m_transaction = 0; }
 
         static LevelDBTransaction* levelDBTransactionFrom(Transaction* transaction)
         {

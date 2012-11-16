@@ -1,3 +1,27 @@
+2012-11-16  Alec Flett  <alecflett@chromium.org>
+
+        IndexedDB: add missing 'explicit' and fix backing store release
+        https://bugs.webkit.org/show_bug.cgi?id=102450
+
+        Reviewed by Tony Chang.
+
+        A inconsequential regression was introduced in http://trac.webkit.org/changeset/134129
+        which resulted in objects sticking around a bit longer than
+        expected. This makes sure the LevelDBTransaction is released
+        at the moment of commit/rollback rather than when IDBTransactionBackendImpl
+        is destroyed.
+
+        No new tests, this is just internal state that will affect
+        some future refactoring.
+
+        * Modules/indexeddb/IDBBackingStore.h:
+        (Cursor):
+        (Transaction):
+        (WebCore::IDBBackingStore::Transaction::reset):
+        * Modules/indexeddb/IDBTransactionBackendImpl.cpp:
+        (WebCore::IDBTransactionBackendImpl::abort):
+        (WebCore::IDBTransactionBackendImpl::commit):
+
 2012-11-16  Dimitri Glazkov  <dglazkov@chromium.org>
 
         [Chromium] One last tweak to WebCore.gypi to make Win build not sad.

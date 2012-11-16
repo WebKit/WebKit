@@ -130,7 +130,7 @@ void IDBTransactionBackendImpl::abort(PassRefPtr<IDBDatabaseError> error)
     // are fired, as the script callbacks may release references and allow the backing store
     // itself to be released, and order is critical.
     closeOpenCursors();
-    m_transaction = 0;
+    m_transaction.reset();
 
     // Transactions must also be marked as completed before the front-end is notified, as
     // the transaction completion unblocks operations like closing connections.
@@ -216,7 +216,7 @@ void IDBTransactionBackendImpl::commit()
     // are fired, as the script callbacks may release references and allow the backing store
     // itself to be released, and order is critical.
     closeOpenCursors();
-    m_transaction = 0;
+    m_transaction.reset();
 
     // Transactions must also be marked as completed before the front-end is notified, as
     // the transaction completion unblocks operations like closing connections.
