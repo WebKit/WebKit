@@ -1,3 +1,31 @@
+2012-11-16  Martin Robinson  <mrobinson@igalia.com>
+
+        Move authentication dialog to the UIProcess
+
+        [GTK] [WebKit2] Move GtkAuthenticationDialog to the UIProcess
+        https://bugs.webkit.org/show_bug.cgi?id=101843
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Move the use of GtkAuthenticationDialog to the UIProcess along with the rest of
+        the GTK+ widgets. This will allow us to to embed the dialog into the WebView
+        in the future and to test authentication with the WebKit2 C API.
+
+        * GNUmakefile.list.am: Add the new class to the source list and remove the
+        GTK+-only WebFrameLoader implementation file.
+        * UIProcess/API/gtk/WebKit2GtkAuthenticationDialog.cpp: Added. A subclass of GtkAuthenticationDialog
+        which uses the WebKit2 classes to do the UIProcess-side authentication.
+        * UIProcess/API/gtk/WebKit2GtkAuthenticationDialog.h: Added.
+        * UIProcess/API/gtk/WebKitLoaderClient.cpp: Add a callback for didReceiveAuthenticationChallengeInFrame.
+        (didReceiveAuthenticationChallengeInFrame): Added.
+        (attachLoaderClientToView): Use the new callback.
+        * UIProcess/Authentication/AuthenticationChallengeProxy.h:
+        (WebKit::AuthenticationChallengeProxy::core): Add this getter for the WebCore class.
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDidReceiveAuthenticationChallenge): Share the implementation
+        again.
+        * WebProcess/WebCoreSupport/gtk/WebFrameLoaderClientGtk.cpp: Removed.
+
 2012-11-15  Alexey Proskuryakov  <ap@apple.com>
 
         Private Browsing is a per-page setting that sets a global value

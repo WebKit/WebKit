@@ -1,3 +1,25 @@
+2012-11-16  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] [WebKit2] Move GtkAuthenticationDialog to the UIProcess
+        https://bugs.webkit.org/show_bug.cgi?id=101843
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Make GtkAuthenticationDialog more general, so that it can be subclassed in 
+        WebKit2. We cannot use the WebCore authentication-related classes directly there.
+
+        No new tests. This patch does not change behavior.
+
+        * platform/gtk/GtkAuthenticationDialog.cpp:
+        (WebCore::GtkAuthenticationDialog::GtkAuthenticationDialog): Remove an unused include and reorder
+        some field initializers.
+        (WebCore::GtkAuthenticationDialog::authenticate): Now handle both the okay and cancel case here. This
+        makes it simpler to subclass.
+        (WebCore::GtkAuthenticationDialog::authenticationDialogResponseCallback): Handle fetching the username
+        and password here, so that it can be shared with subclasses.
+        * platform/gtk/GtkAuthenticationDialog.h: Make some methods virtual and protected so they can be
+        subclasses.
+
 2012-11-16  Mark Pilgrim  <pilgrim@chromium.org>
 
         [Chromium] Remove cookie-related functions from PlatformSupport

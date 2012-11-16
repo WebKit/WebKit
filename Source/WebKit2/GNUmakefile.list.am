@@ -630,6 +630,8 @@ webkit2_sources += \
 	Source/WebKit2/UIProcess/API/cpp/WKRetainPtr.h \
 	Source/WebKit2/UIProcess/API/gtk/PageClientImpl.h \
 	Source/WebKit2/UIProcess/API/gtk/PageClientImpl.cpp \
+	Source/WebKit2/UIProcess/API/gtk/WebKit2GtkAuthenticationDialog.cpp \
+	Source/WebKit2/UIProcess/API/gtk/WebKit2GtkAuthenticationDialog.h \
 	Source/WebKit2/UIProcess/API/gtk/WebKitBackForwardList.h \
 	Source/WebKit2/UIProcess/API/gtk/WebKitBackForwardList.cpp \
 	Source/WebKit2/UIProcess/API/gtk/WebKitBackForwardListItem.h \
@@ -1113,7 +1115,6 @@ webkit2_sources += \
 	Source/WebKit2/WebProcess/WebCoreSupport/gtk/WebDragClientGtk.cpp \
 	Source/WebKit2/WebProcess/WebCoreSupport/gtk/WebEditorClientGtk.cpp \
 	Source/WebKit2/WebProcess/WebCoreSupport/gtk/WebErrorsGtk.cpp \
-	Source/WebKit2/WebProcess/WebCoreSupport/gtk/WebFrameLoaderClientGtk.cpp \
 	Source/WebKit2/WebProcess/WebCoreSupport/gtk/WebPopupMenuGtk.cpp \
 	Source/WebKit2/WebProcess/WebCoreSupport/soup/WebFrameNetworkingContext.cpp \
 	Source/WebKit2/WebProcess/WebCoreSupport/soup/WebFrameNetworkingContext.h \

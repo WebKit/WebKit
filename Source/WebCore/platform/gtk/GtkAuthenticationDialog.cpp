@@ -24,7 +24,6 @@
 #include "GtkVersioning.h"
 #include <glib/gi18n-lib.h>
 #include <gtk/gtk.h>
-#include <libsoup/soup.h>
 #include <wtf/gobject/GOwnPtr.h>
 
 namespace WebCore {
@@ -61,11 +60,11 @@ GtkAuthenticationDialog::~GtkAuthenticationDialog()
 }
 
 GtkAuthenticationDialog::GtkAuthenticationDialog(GtkWindow* parentWindow, const AuthenticationChallenge& challenge)
-    : m_challenge(challenge)
-    , m_dialog(gtk_dialog_new())
+    : m_dialog(gtk_dialog_new())
     , m_loginEntry(0)
     , m_passwordEntry(0)
     , m_rememberCheckButton(0)
+    , m_challenge(challenge)
 {
     GtkDialog* dialog = GTK_DIALOG(m_dialog);
     gtk_dialog_add_buttons(dialog, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OK, GTK_RESPONSE_OK, NULL);
@@ -205,22 +204,26 @@ void GtkAuthenticationDialog::destroy()
     delete this;
 }
 
-void GtkAuthenticationDialog::authenticate()
+void GtkAuthenticationDialog::authenticate(const Credential& credential)
 {
-    const char *username = gtk_entry_get_text(GTK_ENTRY(m_loginEntry));
-    const char *password = gtk_entry_get_text(GTK_ENTRY(m_passwordEntry));
-    CredentialPersistence persistence = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(m_rememberCheckButton)) ?
-        CredentialPersistencePermanent : CredentialPersistenceForSession;
-    m_challenge.authenticationClient()->receivedCredential(m_challenge,
-        Credential(String::fromUTF8(username), String::fromUTF8(password), persistence));
+    if (credential.isEmpty())
+        m_challenge.authenticationClient()->receivedRequestToContinueWithoutCredential(m_challenge);
+    else
+        m_challenge.authenticationClient()->receivedCredential(m_challenge, credential);
 }
 
 void GtkAuthenticationDialog::authenticationDialogResponseCallback(GtkWidget*, gint responseID, GtkAuthenticationDialog* dialog)
 {
-    if (responseID == GTK_RESPONSE_OK)
-        dialog->authenticate();
+    Credential credential;
+    if (responseID == GTK_RESPONSE_OK) {
+        const char *username = gtk_entry_get_text(GTK_ENTRY(dialog->m_loginEntry));
+        const char *password = gtk_entry_get_text(GTK_ENTRY(dialog->m_passwordEntry));
+        CredentialPersistence persistence = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(dialog->m_rememberCheckButton)) ?
+            CredentialPersistencePermanent : CredentialPersistenceForSession;
+        credential = Credential(String::fromUTF8(username), String::fromUTF8(password), persistence);
+    }
 
-    dialog->m_challenge.authenticationClient()->receivedRequestToContinueWithoutCredential(dialog->m_challenge);
+    dialog->authenticate(credential);
     dialog->destroy();
 }
 

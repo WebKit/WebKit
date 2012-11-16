@@ -61,6 +61,7 @@ public:
     WebCredential* proposedCredential() const;
     WebProtectionSpace* protectionSpace() const;
     int previousFailureCount() const { return m_coreAuthenticationChallenge.previousFailureCount(); }
+    const WebCore::AuthenticationChallenge& core() { return m_coreAuthenticationChallenge; }
 
 private:
     AuthenticationChallengeProxy(const WebCore::AuthenticationChallenge&, uint64_t challengeID, WebProcessProxy*);
