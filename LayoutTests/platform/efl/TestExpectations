@@ -797,6 +797,7 @@ webkit.org/b/84333 http/tests/local/fileapi/send-dragged-file.html [ Failure ]
 webkit.org/b/84333 http/tests/local/fileapi/send-sliced-dragged-file.html [ Failure ]
 webkit.org/b/84333 http/tests/local/formdata [ Failure ]
 webkit.org/b/84333 http/tests/security/clipboard/clipboard-file-access.html [ Failure ]
+webkit.org/b/84333 media/video-src-blob.html [ Failure ]
 
 # EFL port needs Pasteboard implementation.
 webkit.org/b/84338 editing/deleting/paste-with-transparent-background-color.html [ Failure ]
@@ -1100,6 +1101,7 @@ webkit.org/b/77219 compositing/webgl/webgl-reflection.html [ Skip ]
 webkit.org/b/77219 fast/canvas/webgl [ Skip ]
 webkit.org/b/77219 fast/dom/constructed-objects-prototypes.html [ Failure ]
 webkit.org/b/77219 fast/events/constructors/webgl-context-event-constructor.html [ Skip ]
+webkit.org/b/77219 fast/images/webgl-teximage2d.html [ Skip ]
 webkit.org/b/77219 http/tests/canvas/webgl/origin-clean-conformance.html [ Skip ]
 webkit.org/b/77219 http/tests/security/webgl-remote-read-remote-image-allowed-with-credentials.html [ Skip ]
 webkit.org/b/77219 http/tests/security/webgl-remote-read-remote-image-allowed.html [ Skip ]
@@ -1696,3 +1698,5 @@ webkit.org/b/102190 fast/events/overflow-scroll-fake-mouse-move.html [ Failure ]
 webkit.org/b/102364 compositing/overflow/scrolling-without-painting.html [ Failure ]
 
 webkit.org/b/102367 fast/forms/zoomed-controls.html [ ImageOnlyFailure Missing ]
+
+webkit.org/b/102493 fast/events/mouse-cursor.html [ Failure ]
