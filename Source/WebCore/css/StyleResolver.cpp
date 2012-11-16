@@ -202,13 +202,6 @@ if (isInitial) { \
     return; \
 }
 
-#define HANDLE_INHERIT_AND_INITIAL_WITH_VALUE(prop, Prop, Value) \
-HANDLE_INHERIT(prop, Prop) \
-if (isInitial) { \
-    m_style->set##Prop(RenderStyle::initial##Value());\
-    return;\
-}
-
 static RuleSet* defaultStyle;
 static RuleSet* defaultQuirksStyle;
 static RuleSet* defaultPrintStyle;

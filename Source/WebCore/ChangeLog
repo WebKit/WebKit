@@ -1,3 +1,16 @@
+2012-11-15  Luke Macpherson   <macpherson@chromium.org>
+
+        Remove unused macro HANDLE_INHERIT_AND_INITIAL_WITH_VALUE in StyleResolver.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=102036
+
+        Reviewed by Darin Adler.
+
+        Remove HANDLE_INHERIT_AND_INITIAL_WITH_VALUE macro, as it is not used anywhere.
+
+        No tests added because code is unused, and compile is enough to verify that conculsively.
+
+        * css/StyleResolver.cpp:
+
 2012-11-15  Erik Arvidsson  <arv@chromium.org>
 
         Update DOMException name: SyntaxError
