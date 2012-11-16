@@ -200,6 +200,7 @@ BackingStorePrivate::BackingStorePrivate()
     , m_resumeOperation(BackingStore::None)
     , m_suspendRenderJobs(false)
     , m_suspendRegularRenderJobs(false)
+    , m_tileMatrixNeedsUpdate(false)
     , m_isScrollingOrZooming(false)
     , m_webPage(0)
     , m_client(0)
@@ -306,17 +307,22 @@ void BackingStorePrivate::suspendScreenUpdates()
 
 void BackingStorePrivate::resumeBackingStoreUpdates()
 {
-    bool isSuspended = atomic_add_value(&m_suspendBackingStoreUpdates, 0) >= 1;
-    ASSERT(isSuspended);
-    if (!isSuspended) {
+    unsigned currentValue = atomic_add_value(&m_suspendBackingStoreUpdates, 0);
+    ASSERT(currentValue >= 1);
+    if (currentValue < 1) {
         BlackBerry::Platform::logAlways(BlackBerry::Platform::LogLevelCritical,
             "Call mismatch: Backingstore hasn't been suspended, therefore won't resume!");
         return;
     }
 
+    // Set a flag indicating that we're about to resume backingstore updates and
+    // the tile matrix should be updated as a consequence by the first render
+    // job that happens after this resumption of backingstore updates.
+    if (currentValue == 1)
+        setTileMatrixNeedsUpdate();
+
     atomic_sub(&m_suspendBackingStoreUpdates, 1);
 }
-
 
 void BackingStorePrivate::resumeScreenUpdates(BackingStore::ResumeUpdateOperation op)
 {
@@ -717,6 +723,9 @@ void BackingStorePrivate::setBackingStoreRect(const Platform::IntRect& backingSt
         return;
     }
 
+    if (m_suspendBackingStoreUpdates)
+        return;
+
     Platform::IntRect currentBackingStoreRect = frontState()->backingStoreRect();
     double currentScale = frontState()->scale();
 
@@ -1055,6 +1064,11 @@ bool BackingStorePrivate::render(const Platform::IntRect& rect)
     if (!isActive())
         return false;
 
+    // This is the first render job that has been performed since resumption of
+    // backingstore updates and the tile matrix needs updating since we suspend
+    // tile matrix updating with backingstore updates
+    updateTileMatrixIfNeeded();
+
     TileRectList tileRectList = mapFromTransformedContentsToTiles(rect);
     if (tileRectList.isEmpty())
         return false;
@@ -1160,6 +1174,7 @@ void BackingStorePrivate::requestLayoutIfNeeded() const
 
 bool BackingStorePrivate::renderVisibleContents()
 {
+    updateTileMatrixIfNeeded();
     Platform::IntRect renderRect = shouldDirectRenderingToWindow() ? visibleContentsRect() : visibleTilesRect();
     if (render(renderRect)) {
         m_renderQueue->clear(renderRect, true /*clearRegularRenderJobs*/);
@@ -1170,6 +1185,7 @@ bool BackingStorePrivate::renderVisibleContents()
 
 bool BackingStorePrivate::renderBackingStore()
 {
+    updateTileMatrixIfNeeded();
     return render(frontState()->backingStoreRect());
 }
 
@@ -1965,12 +1981,18 @@ void BackingStorePrivate::updateTileMatrixIfNeeded()
 {
     ASSERT(BlackBerry::Platform::webKitThreadMessageClient()->isCurrentThread());
 
+    if (!m_tileMatrixNeedsUpdate)
+        return;
+
+    m_tileMatrixNeedsUpdate = false;
+
     // This will update the tile matrix.
     scrollBackingStore(0, 0);
 }
 
 void BackingStorePrivate::contentsSizeChanged(const Platform::IntSize&)
 {
+    setTileMatrixNeedsUpdate();
     updateTileMatrixIfNeeded();
 }
 
@@ -2039,6 +2061,7 @@ void BackingStorePrivate::transformChanged()
 void BackingStorePrivate::orientationChanged()
 {
     ASSERT(BlackBerry::Platform::webKitThreadMessageClient()->isCurrentThread());
+    setTileMatrixNeedsUpdate();
     updateTileMatrixIfNeeded();
     createVisibleTileBuffer();
 }

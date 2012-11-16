@@ -1,3 +1,29 @@
+2012-11-16  Adam Treat  <atreat@rim.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=102540
+        [BlackBerry] Checkerboard flicker when pinch zooming out on google.com/nwshp
+
+        Reviewed by George Staikos.
+        PR 245827
+
+        Disable updates to the backingstore tile matrix when backingstore updates
+        are disabled.  This prevents changes to the tile matrix when we are in the
+        middle of a pinch zoom which can cause checkebroard flickering.
+
+        * Api/BackingStore.cpp:
+        (BlackBerry::WebKit::BackingStorePrivate::BackingStorePrivate):
+        (BlackBerry::WebKit::BackingStorePrivate::resumeBackingStoreUpdates):
+        (BlackBerry::WebKit::BackingStorePrivate::setBackingStoreRect):
+        (BlackBerry::WebKit::BackingStorePrivate::render):
+        (BlackBerry::WebKit::BackingStorePrivate::renderVisibleContents):
+        (BlackBerry::WebKit::BackingStorePrivate::renderBackingStore):
+        (BlackBerry::WebKit::BackingStorePrivate::updateTileMatrixIfNeeded):
+        (BlackBerry::WebKit::BackingStorePrivate::contentsSizeChanged):
+        (BlackBerry::WebKit::BackingStorePrivate::orientationChanged):
+        * Api/BackingStore_p.h:
+        (BlackBerry::WebKit::BackingStorePrivate::setTileMatrixNeedsUpdate):
+        (BackingStorePrivate):
+
 2012-11-16  Rob Buis  <rbuis@rim.com>
 
         [BlackBerry] FCC doesn't work in textarea

@@ -282,6 +282,7 @@ public:
     TileRectList mapFromTransformedContentsToTiles(const Platform::IntRect&) const;
     TileRectList mapFromTransformedContentsToTiles(const Platform::IntRect&, BackingStoreGeometry*) const;
 
+    void setTileMatrixNeedsUpdate() { m_tileMatrixNeedsUpdate = true; }
     void updateTileMatrixIfNeeded();
 
     // Called by WebPagePrivate::notifyTransformedContentsSizeChanged.
@@ -364,6 +365,7 @@ public:
 
     bool m_suspendRenderJobs;
     bool m_suspendRegularRenderJobs;
+    bool m_tileMatrixNeedsUpdate;
     bool m_isScrollingOrZooming;
     WebPage* m_webPage;
     BackingStoreClient* m_client;
