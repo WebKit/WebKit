@@ -1,3 +1,17 @@
+2012-11-16  Mike Fenton  <mifenton@rim.com>
+
+        [BlackBerry] Use proper keycode value for space instead of hardcoded value.
+        https://bugs.webkit.org/show_bug.cgi?id=102518
+
+        Reviewed by Rob Buis.
+
+        Remove hard coded value for space.
+
+        Reviewed Internally by Gen Mak.
+
+        * WebKitSupport/InputHandler.cpp:
+        (BlackBerry::WebKit::InputHandler::setText):
+
 2012-11-15  Andrew Lo  <anlo@rim.com>
 
         [BlackBerry] Animate changes to viewport due to input focus changes.

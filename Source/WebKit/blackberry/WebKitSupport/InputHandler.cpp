@@ -2205,7 +2205,7 @@ bool InputHandler::setText(spannable_string_t* spannableString)
     // Remove it and apply it as a keypress later.
     // Upstream Webkit bug created https://bugs.webkit.org/show_bug.cgi?id=70823
     bool requiresSpaceKeyPress = false;
-    if (textLength > 0 && textToInsert[textLength - 1] == 32 /* space */) {
+    if (textLength > 0 && textToInsert[textLength - 1] == KEYCODE_SPACE) {
         requiresSpaceKeyPress = true;
         textLength--;
         textToInsert.remove(textLength, 1);
@@ -2227,7 +2227,7 @@ bool InputHandler::setText(spannable_string_t* spannableString)
     }
 
     if (requiresSpaceKeyPress)
-        handleKeyboardInput(Platform::KeyboardEvent(32 /* space */, Platform::KeyboardEvent::KeyDown, 0), true /* changeIsPartOfComposition */);
+        handleKeyboardInput(Platform::KeyboardEvent(KEYCODE_SPACE, Platform::KeyboardEvent::KeyDown, 0), true /* changeIsPartOfComposition */);
 
     InputLog(LogLevelInfo, "InputHandler::setText Request being processed. Text after processing '%s'", elementText().latin1().data());
 
