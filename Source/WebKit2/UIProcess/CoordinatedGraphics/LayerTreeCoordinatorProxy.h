@@ -67,8 +67,9 @@ public:
     void removeTileForLayer(int layerID, int tileID);
     void createUpdateAtlas(int atlasID, const ShareableSurface::Handle&);
     void removeUpdateAtlas(int atlasID);
-    void createDirectlyCompositedImage(int64_t, const WebKit::ShareableBitmap::Handle&);
-    void destroyDirectlyCompositedImage(int64_t);
+    void createImageBacking(CoordinatedImageBackingID);
+    void updateImageBacking(CoordinatedImageBackingID, const ShareableSurface::Handle&);
+    void removeImageBacking(CoordinatedImageBackingID);
     void didReceiveLayerTreeCoordinatorProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);
     void updateViewport();
     void renderNextFrame();

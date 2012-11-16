@@ -369,6 +369,7 @@ HEADERS += \
     WebProcess/WebPage/EventDispatcher.h \
     WebProcess/WebPage/FindController.h \
     WebProcess/WebPage/CoordinatedGraphics/CoordinatedGraphicsLayer.h \
+    WebProcess/WebPage/CoordinatedGraphics/CoordinatedImageBacking.h \
     WebProcess/WebPage/CoordinatedGraphics/CoordinatedTile.h \
     WebProcess/WebPage/CoordinatedGraphics/LayerTreeCoordinator.h \
     WebProcess/WebPage/TapHighlightController.h \
@@ -750,6 +751,7 @@ SOURCES += \
     WebProcess/WebPage/EventDispatcher.cpp \
     WebProcess/WebPage/FindController.cpp \
     WebProcess/WebPage/CoordinatedGraphics/CoordinatedGraphicsLayer.cpp \
+    WebProcess/WebPage/CoordinatedGraphics/CoordinatedImageBacking.cpp \
     WebProcess/WebPage/CoordinatedGraphics/CoordinatedTile.cpp \
     WebProcess/WebPage/CoordinatedGraphics/LayerTreeCoordinator.cpp \
     WebProcess/WebPage/TapHighlightController.cpp \

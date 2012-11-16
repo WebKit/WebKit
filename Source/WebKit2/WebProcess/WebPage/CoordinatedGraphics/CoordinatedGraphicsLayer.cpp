@@ -1,5 +1,6 @@
 /*
  Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
+ Copyright (C) 2012 Company 100, Inc.
 
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Library General Public
@@ -351,8 +352,7 @@ void CoordinatedGraphicsLayer::setContentsToImage(Image* image)
         // This code makes the assumption that pointer equality on a NativeImagePtr is a valid way to tell if the image is changed.
         // This assumption is true in Qt, GTK and EFL.
         NativeImagePtr newNativeImagePtr = image->nativeImageForCurrentFrame();
-        if (!newNativeImagePtr)
-            return;
+        ASSERT(newNativeImagePtr);
 
         if (newNativeImagePtr == m_compositedNativeImagePtr)
             return;
@@ -473,16 +473,25 @@ void CoordinatedGraphicsLayer::syncImageBacking()
         return;
     m_shouldSyncImageBacking = false;
 
-    releaseImageBackingIfNeeded();
-
     if (m_compositedNativeImagePtr) {
         ASSERT(!m_mainBackingStore);
         ASSERT(m_compositedImage);
 
-        m_layerInfo.imageBackingStoreID = m_coordinator->adoptImageBackingStore(m_compositedImage.get());
-    }
+        bool imageInstanceReplaced = m_coordinatedImageBacking && (m_coordinatedImageBacking->id() != CoordinatedImageBacking::getCoordinatedImageBackingID(m_compositedImage.get()));
+        if (imageInstanceReplaced)
+            releaseImageBackingIfNeeded();
 
-    // This method changes m_layerInfo.imageBackingStoreID.
+        if (!m_coordinatedImageBacking) {
+            m_coordinatedImageBacking = m_coordinator->createImageBackingIfNeeded(m_compositedImage.get());
+            m_coordinatedImageBacking->addLayerClient(this);
+            m_layerInfo.imageID = m_coordinatedImageBacking->id();
+        }
+
+        m_coordinatedImageBacking->markDirty();
+    } else
+        releaseImageBackingIfNeeded();
+
+    // syncImageBacking() changed m_layerInfo.imageID.
     didChangeLayerState();
 }
 
@@ -554,12 +563,13 @@ void CoordinatedGraphicsLayer::flushCompositingStateForThisLayerOnly()
 
 void CoordinatedGraphicsLayer::releaseImageBackingIfNeeded()
 {
-    if (!m_layerInfo.imageBackingStoreID)
+    if (!m_coordinatedImageBacking)
         return;
 
     ASSERT(m_coordinator);
-    m_coordinator->releaseImageBackingStore(m_layerInfo.imageBackingStoreID);
-    m_layerInfo.imageBackingStoreID = 0;
+    m_coordinatedImageBacking->removeLayerClient(this);
+    m_coordinatedImageBacking.clear();
+    m_layerInfo.imageID = InvalidCoordinatedImageBackingID;
 }
 
 void CoordinatedGraphicsLayer::tiledBackingStorePaintBegin()
@@ -665,7 +675,7 @@ Color CoordinatedGraphicsLayer::tiledBackingStoreBackgroundColor() const
     return contentsOpaque() ? Color::white : Color::transparent;
 }
 
-PassOwnPtr<WebCore::GraphicsContext> CoordinatedGraphicsLayer::beginContentUpdate(const WebCore::IntSize& size, int& atlas, WebCore::IntPoint& offset)
+PassOwnPtr<GraphicsContext> CoordinatedGraphicsLayer::beginContentUpdate(const IntSize& size, int& atlas, IntPoint& offset)
 {
     if (!m_coordinator)
         return PassOwnPtr<WebCore::GraphicsContext>();

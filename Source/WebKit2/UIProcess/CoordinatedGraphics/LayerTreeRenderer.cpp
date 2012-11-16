@@ -1,5 +1,6 @@
 /*
     Copyright (C) 2012 Nokia Corporation and/or its subsidiary(-ies)
+    Copyright (C) 2012 Company 100, Inc.
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -27,7 +28,6 @@
 #include "GraphicsLayerTextureMapper.h"
 #include "LayerTreeCoordinatorProxy.h"
 #include "MessageID.h"
-#include "ShareableBitmap.h"
 #include "TextureMapper.h"
 #include "TextureMapperBackingStore.h"
 #include "TextureMapperGL.h"
@@ -302,7 +302,7 @@ void LayerTreeRenderer::setLayerState(WebLayerID id, const WebLayerInfo& layerIn
     else
         m_fixedLayers.remove(id);
 
-    assignImageToLayer(layer, layerInfo.imageBackingStoreID);
+    assignImageBackingToLayer(layer, layerInfo.imageID);
 
     // Never make the root layer clip.
     layer->setMasksToBounds(layerInfo.isRootLayer ? false : layerInfo.masksToBounds);
@@ -416,29 +416,54 @@ void LayerTreeRenderer::updateTile(WebLayerID layerID, int tileID, const TileUpd
     m_backingStoresWithPendingBuffers.add(backingStore);
 }
 
-void LayerTreeRenderer::createImage(int64_t imageID, PassRefPtr<ShareableBitmap> weakBitmap)
+void LayerTreeRenderer::createImageBacking(CoordinatedImageBackingID imageID)
 {
-    RefPtr<ShareableBitmap> bitmap = weakBitmap;
-    RefPtr<TextureMapperTiledBackingStore> backingStore = TextureMapperTiledBackingStore::create();
-    m_directlyCompositedImages.set(imageID, backingStore);
-    backingStore->updateContents(m_textureMapper.get(), bitmap->createImage().get(), BitmapTexture::UpdateCannotModifyOriginalImageData);
+    ASSERT(!m_imageBackings.contains(imageID));
+    RefPtr<CoordinatedBackingStore> backingStore(CoordinatedBackingStore::create());
+    m_imageBackings.add(imageID, backingStore.release());
 }
 
-void LayerTreeRenderer::destroyImage(int64_t imageID)
+void LayerTreeRenderer::updateImageBacking(CoordinatedImageBackingID imageID, PassRefPtr<ShareableSurface> surface)
 {
-    m_directlyCompositedImages.remove(imageID);
+    ASSERT(m_imageBackings.contains(imageID));
+    ImageBackingMap::iterator it = m_imageBackings.find(imageID);
+    RefPtr<CoordinatedBackingStore> backingStore = it->value;
+
+    // CoordinatedImageBacking is realized to CoordinatedBackingStore with only one tile in UI Process.
+    backingStore->createTile(1 /* id */, 1 /* scale */);
+    IntRect rect(IntPoint::zero(), surface->size());
+    // See CoordinatedGraphicsLayer::shouldDirectlyCompositeImage()
+    ASSERT(2000 >= std::max(rect.width(), rect.height()));
+    backingStore->setSize(rect.size());
+    backingStore->updateTile(1 /* id */, rect, rect, surface, rect.location());
+
+    m_backingStoresWithPendingBuffers.add(backingStore);
 }
 
-void LayerTreeRenderer::assignImageToLayer(GraphicsLayer* layer, int64_t imageID)
+void LayerTreeRenderer::removeImageBacking(CoordinatedImageBackingID imageID)
 {
-    if (!imageID) {
+    ASSERT(m_imageBackings.contains(imageID));
+
+    // We don't want TextureMapperLayer refers a dangling pointer.
+    ImageBackingMap::iterator it = m_imageBackings.find(imageID);
+    m_releasedImageBackings.append(it->value);
+    m_imageBackings.remove(imageID);
+}
+
+void LayerTreeRenderer::assignImageBackingToLayer(GraphicsLayer* layer, CoordinatedImageBackingID imageID)
+{
+    if (imageID == InvalidCoordinatedImageBackingID) {
         layer->setContentsToMedia(0);
         return;
     }
-
-    HashMap<int64_t, RefPtr<TextureMapperBackingStore> >::iterator it = m_directlyCompositedImages.find(imageID);
-    ASSERT(it != m_directlyCompositedImages.end());
+    ImageBackingMap::iterator it = m_imageBackings.find(imageID);
+    ASSERT(it != m_imageBackings.end());
     layer->setContentsToMedia(it->value.get());
+}
+
+void LayerTreeRenderer::removeReleasedImageBackingsIfNeeded()
+{
+    m_releasedImageBackings.clear();
 }
 
 void LayerTreeRenderer::commitTileOperations()
@@ -459,6 +484,7 @@ void LayerTreeRenderer::flushLayerChanges()
 
     m_rootLayer->flushCompositingState(FloatRect());
     commitTileOperations();
+    removeReleasedImageBackingsIfNeeded();
 
     // The pending tiles state is on its way for the screen, tell the web process to render the next one.
     dispatchOnMainThread(bind(&LayerTreeRenderer::renderNextFrame, this));
@@ -515,7 +541,7 @@ void LayerTreeRenderer::purgeGLResources()
     if (layer)
         layer->clearBackingStoresRecursive();
 
-    m_directlyCompositedImages.clear();
+    m_imageBackings.clear();
 #if USE(GRAPHICS_SURFACE)
     m_surfaceBackingStores.clear();
 #endif

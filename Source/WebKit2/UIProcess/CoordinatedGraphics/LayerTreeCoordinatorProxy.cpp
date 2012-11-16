@@ -127,15 +127,19 @@ void LayerTreeCoordinatorProxy::didRenderFrame(const WebCore::IntSize& contentsS
 #endif
 }
 
-void LayerTreeCoordinatorProxy::createDirectlyCompositedImage(int64_t key, const WebKit::ShareableBitmap::Handle& handle)
+void LayerTreeCoordinatorProxy::createImageBacking(CoordinatedImageBackingID imageID)
 {
-    RefPtr<ShareableBitmap> bitmap = ShareableBitmap::create(handle);
-    dispatchUpdate(bind(&LayerTreeRenderer::createImage, m_renderer.get(), key, bitmap));
+    dispatchUpdate(bind(&LayerTreeRenderer::createImageBacking, m_renderer.get(), imageID));
 }
 
-void LayerTreeCoordinatorProxy::destroyDirectlyCompositedImage(int64_t key)
+void LayerTreeCoordinatorProxy::updateImageBacking(CoordinatedImageBackingID imageID, const ShareableSurface::Handle& handle)
 {
-    dispatchUpdate(bind(&LayerTreeRenderer::destroyImage, m_renderer.get(), key));
+    dispatchUpdate(bind(&LayerTreeRenderer::updateImageBacking, m_renderer.get(), imageID, ShareableSurface::create(handle)));
+}
+
+void LayerTreeCoordinatorProxy::removeImageBacking(CoordinatedImageBackingID imageID)
+{
+    dispatchUpdate(bind(&LayerTreeRenderer::removeImageBacking, m_renderer.get(), imageID));
 }
 
 void LayerTreeCoordinatorProxy::setContentsSize(const FloatSize& contentsSize)

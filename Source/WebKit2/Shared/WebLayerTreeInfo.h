@@ -27,25 +27,27 @@
 #include "FloatRect.h"
 #include "FloatSize.h"
 #include "GraphicsLayer.h"
-#include "ShareableBitmap.h"
 
 namespace WebKit {
 
 typedef uint32_t WebLayerID;
 enum { InvalidWebLayerID = 0 };
 
+typedef uintptr_t CoordinatedImageBackingID;
+enum { InvalidCoordinatedImageBackingID = 0 };
+
 // NOTE: WebLayerInfo should only use POD types, as to make serialization faster.
 struct WebLayerInfo {
     WebLayerInfo()
         : replica(InvalidWebLayerID)
         , mask(InvalidWebLayerID)
-        , imageBackingStoreID(0)
+        , imageID(InvalidCoordinatedImageBackingID)
         , opacity(0)
         , flags(0) { }
 
     WebLayerID replica;
     WebLayerID mask;
-    int64_t imageBackingStoreID;
+    CoordinatedImageBackingID imageID;
 
     WebCore::FloatPoint pos;
     WebCore::FloatPoint3D anchorPoint;

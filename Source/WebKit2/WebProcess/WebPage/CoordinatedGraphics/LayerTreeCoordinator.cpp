@@ -268,7 +268,7 @@ bool LayerTreeCoordinator::flushPendingLayerChanges()
 
     m_rootLayer->flushCompositingStateForThisLayerOnly();
 
-    purgeReleasedImages();
+    flushPendingImageBackingChanges();
 
     if (m_shouldSyncRootLayer) {
         m_webPage->send(Messages::LayerTreeCoordinatorProxy::SetRootCompositingLayer(toCoordinatedGraphicsLayer(m_rootLayer.get())->id()));
@@ -439,15 +439,6 @@ void LayerTreeCoordinator::didPerformScheduledLayerFlush()
     }
 }
 
-void LayerTreeCoordinator::purgeReleasedImages()
-{
-    if (!m_isPurging) {
-        for (size_t i = 0; i < m_releasedDirectlyCompositedImages.size(); ++i)
-            m_webPage->send(Messages::LayerTreeCoordinatorProxy::DestroyDirectlyCompositedImage(m_releasedDirectlyCompositedImages[i]));
-    }
-    m_releasedDirectlyCompositedImages.clear();
-}
-
 void LayerTreeCoordinator::layerFlushTimerFired(Timer<LayerTreeCoordinator>*)
 {
     performScheduledLayerFlush();
@@ -475,79 +466,49 @@ void LayerTreeCoordinator::destroyPageOverlayLayer()
     m_pageOverlayLayer = nullptr;
 }
 
-int64_t LayerTreeCoordinator::adoptImageBackingStore(Image* image)
+PassRefPtr<CoordinatedImageBacking> LayerTreeCoordinator::createImageBackingIfNeeded(Image* image)
 {
-    if (!image)
-        return InvalidWebLayerID;
-
-    int64_t key = 0;
-
-#if PLATFORM(QT)
-    QPixmap* nativeImage = image->nativeImageForCurrentFrame();
-
-    if (!nativeImage)
-        return InvalidWebLayerID;
-
-    key = nativeImage->cacheKey();
-#elif USE(CAIRO)
-    NativeImageCairo* nativeImage = image->nativeImageForCurrentFrame();
-    if (!nativeImage)
-        return InvalidWebLayerID;
-    // This can be safely done since we own the reference.
-    // A corresponding cairo_surface_destroy() is ensured in releaseImageBackingStore().
-    cairo_surface_t* cairoSurface = cairo_surface_reference(nativeImage->surface());
-    key = reinterpret_cast<int64_t>(cairoSurface);
-#endif
-
-    HashMap<int64_t, int>::iterator it = m_directlyCompositedImageRefCounts.find(key);
-
-    if (it != m_directlyCompositedImageRefCounts.end()) {
-        ++(it->value);
-        return key;
-    }
-
-    // Check if we were going to release this image during the next flush.
-    size_t releasedIndex = m_releasedDirectlyCompositedImages.find(key);
-    if (releasedIndex == notFound) {
-        RefPtr<ShareableBitmap> bitmap = ShareableBitmap::createShareable(image->size(), (image->currentFrameHasAlpha() ? ShareableBitmap::SupportsAlpha : 0));
-        {
-            OwnPtr<WebCore::GraphicsContext> graphicsContext = bitmap->createGraphicsContext();
-            graphicsContext->drawImage(image, ColorSpaceDeviceRGB, IntPoint::zero());
-        }
-        ShareableBitmap::Handle handle;
-        bitmap->createHandle(handle);
-        m_webPage->send(Messages::LayerTreeCoordinatorProxy::CreateDirectlyCompositedImage(key, handle));
+    CoordinatedImageBackingID imageID = CoordinatedImageBacking::getCoordinatedImageBackingID(image);
+    ImageBackingMap::iterator it = m_imageBackings.find(imageID);
+    RefPtr<CoordinatedImageBacking> imageBacking;
+    if (it == m_imageBackings.end()) {
+        imageBacking = CoordinatedImageBacking::create(this, image);
+        m_imageBackings.add(imageID, imageBacking);
     } else
-        m_releasedDirectlyCompositedImages.remove(releasedIndex);
+        imageBacking = it->value;
 
-    m_directlyCompositedImageRefCounts.add(key, 1);
-    return key;
+    return imageBacking;
 }
 
-void LayerTreeCoordinator::releaseImageBackingStore(int64_t key)
+void LayerTreeCoordinator::createImageBacking(CoordinatedImageBackingID imageID)
 {
-    if (!key)
-        return;
-    HashMap<int64_t, int>::iterator it = m_directlyCompositedImageRefCounts.find(key);
-    if (it == m_directlyCompositedImageRefCounts.end())
-        return;
-
-    it->value--;
-
-    if (it->value)
-        return;
-
-#if USE(CAIRO)
-    // Complement the referencing in adoptImageBackingStore().
-    cairo_surface_t* cairoSurface = reinterpret_cast<cairo_surface_t*>(key);
-    cairo_surface_destroy(cairoSurface);
-#endif
-
-    m_directlyCompositedImageRefCounts.remove(it);
-    m_releasedDirectlyCompositedImages.append(key);
-    scheduleLayerFlush();
+    m_shouldSyncFrame = true;
+    m_webPage->send(Messages::LayerTreeCoordinatorProxy::CreateImageBacking(imageID));
 }
 
+void LayerTreeCoordinator::updateImageBacking(CoordinatedImageBackingID imageID, const ShareableSurface::Handle& handle)
+{
+    m_shouldSyncFrame = true;
+    m_webPage->send(Messages::LayerTreeCoordinatorProxy::UpdateImageBacking(imageID, handle));
+}
+
+void LayerTreeCoordinator::removeImageBacking(CoordinatedImageBackingID imageID)
+{
+    if (m_isPurging)
+        return;
+
+    ASSERT(m_imageBackings.contains(imageID));
+    m_shouldSyncFrame = true;
+    m_imageBackings.remove(imageID);
+    m_webPage->send(Messages::LayerTreeCoordinatorProxy::RemoveImageBacking(imageID));
+}
+
+void LayerTreeCoordinator::flushPendingImageBackingChanges()
+{
+    ImageBackingMap::iterator end = m_imageBackings.end();
+    for (ImageBackingMap::iterator iter = m_imageBackings.begin(); iter != end; ++iter)
+        iter->value->update();
+}
 
 void LayerTreeCoordinator::notifyAnimationStarted(const WebCore::GraphicsLayer*, double /* time */)
 {
@@ -697,10 +658,7 @@ void LayerTreeCoordinator::purgeBackingStores()
     for (HashSet<WebCore::CoordinatedGraphicsLayer*>::iterator it = m_registeredLayers.begin(); it != end; ++it)
         (*it)->purgeBackingStores();
 
-    purgeReleasedImages();
-
-    ASSERT(!m_directlyCompositedImageRefCounts.size());
-    ASSERT(!m_releasedDirectlyCompositedImages.size());
+    m_imageBackings.clear();
     m_updateAtlases.clear();
 }
 

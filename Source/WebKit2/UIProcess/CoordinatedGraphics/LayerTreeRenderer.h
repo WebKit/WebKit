@@ -89,8 +89,9 @@ public:
     void removeTile(WebLayerID, int);
     void updateTile(WebLayerID, int, const TileUpdate&);
     void flushLayerChanges();
-    void createImage(int64_t, PassRefPtr<ShareableBitmap>);
-    void destroyImage(int64_t);
+    void createImageBacking(CoordinatedImageBackingID);
+    void updateImageBacking(CoordinatedImageBackingID, PassRefPtr<ShareableSurface>);
+    void removeImageBacking(CoordinatedImageBackingID);
     void setLayerAnimations(WebLayerID, const WebCore::GraphicsLayerAnimations&);
     void setAnimationsLocked(bool);
 
@@ -119,7 +120,8 @@ private:
     void dispatchOnMainThread(const Function<void()>&);
     void adjustPositionForFixedLayers();
 
-    void assignImageToLayer(WebCore::GraphicsLayer*, int64_t imageID);
+    void assignImageBackingToLayer(WebCore::GraphicsLayer*, CoordinatedImageBackingID);
+    void removeReleasedImageBackingsIfNeeded();
     void ensureRootLayer();
     void ensureLayer(WebLayerID);
     void commitTileOperations();
@@ -139,7 +141,11 @@ private:
     Mutex m_renderQueueMutex;
 
     OwnPtr<WebCore::TextureMapper> m_textureMapper;
-    HashMap<int64_t, RefPtr<WebCore::TextureMapperBackingStore> > m_directlyCompositedImages;
+
+    typedef HashMap<CoordinatedImageBackingID, RefPtr<CoordinatedBackingStore> > ImageBackingMap;
+    ImageBackingMap m_imageBackings;
+    Vector<RefPtr<CoordinatedBackingStore> > m_releasedImageBackings;
+
     HashSet<RefPtr<CoordinatedBackingStore> > m_backingStoresWithPendingBuffers;
 
 #if USE(GRAPHICS_SURFACE)

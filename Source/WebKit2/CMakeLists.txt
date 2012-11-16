@@ -494,6 +494,7 @@ SET(WebKit2_SOURCES
     WebProcess/WebPage/WebPageGroupProxy.cpp
     WebProcess/WebPage/WebUndoStep.cpp
 
+    WebProcess/WebPage/CoordinatedGraphics/CoordinatedImageBacking.cpp
     WebProcess/WebPage/CoordinatedGraphics/CoordinatedGraphicsLayer.cpp
     WebProcess/WebPage/CoordinatedGraphics/CoordinatedTile.cpp
     WebProcess/WebPage/CoordinatedGraphics/LayerTreeCoordinator.cpp

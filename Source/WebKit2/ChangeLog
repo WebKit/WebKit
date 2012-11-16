@@ -1,5 +1,85 @@
 2012-11-15  Huang Dongsung  <luxtella@company100.net>
 
+        Coordinated Graphics: Refactor code related to directly composited images.
+        https://bugs.webkit.org/show_bug.cgi?id=101023
+
+        Reviewed by Noam Rosenthal.
+
+        Internal Review by Gwang Yoon Hwang and Jae Hyun Park.
+
+        Currently, LayerTreeCoordinator manages composited images using
+        ShareableBitmap. This patch introduces CoordinatedImageBacking which
+        plays a role in managing composited images. CoordinatedImageBacking makes us
+        gather code related to a directly composited image into a single class.
+
+        We create only one CoordinatedImageBacking per image. For example, in the leaves
+        demo, we create only 3 textures of leaves.
+
+        * CMakeLists.txt:
+        * Shared/WebLayerTreeInfo.h:
+        (WebKit::WebLayerInfo::WebLayerInfo):
+        (WebLayerInfo):
+        * Target.pri:
+        * UIProcess/CoordinatedGraphics/CoordinatedBackingStore.cpp:
+        (WebKit::CoordinatedBackingStoreTile::swapBuffers):
+        * UIProcess/CoordinatedGraphics/LayerTreeCoordinatorProxy.cpp:
+        (WebKit::LayerTreeCoordinatorProxy::createImageBacking):
+        (WebKit::LayerTreeCoordinatorProxy::updateImageBacking):
+        (WebKit):
+        (WebKit::LayerTreeCoordinatorProxy::removeImageBacking):
+        * UIProcess/CoordinatedGraphics/LayerTreeCoordinatorProxy.h:
+        (LayerTreeCoordinatorProxy):
+        * UIProcess/CoordinatedGraphics/LayerTreeCoordinatorProxy.messages.in:
+        * UIProcess/CoordinatedGraphics/LayerTreeRenderer.cpp:
+        (WebKit::LayerTreeRenderer::setLayerState):
+        (WebKit::LayerTreeRenderer::createImageBacking):
+        (WebKit::LayerTreeRenderer::updateImageBacking):
+        (WebKit::LayerTreeRenderer::removeImageBacking):
+        (WebKit):
+        (WebKit::LayerTreeRenderer::assignImageBackingToLayer):
+        (WebKit::LayerTreeRenderer::removeReleasedImageBackingsIfNeeded):
+        (WebKit::LayerTreeRenderer::flushLayerChanges):
+        (WebKit::LayerTreeRenderer::purgeGLResources):
+        * UIProcess/CoordinatedGraphics/LayerTreeRenderer.h:
+        (LayerTreeRenderer):
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedGraphicsLayer.cpp:
+        (WebCore::CoordinatedGraphicsLayer::setContentsToImage):
+        (WebCore::CoordinatedGraphicsLayer::syncImageBacking):
+        (WebCore::CoordinatedGraphicsLayer::releaseImageBackingIfNeeded):
+        (WebCore::CoordinatedGraphicsLayer::beginContentUpdate):
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedGraphicsLayer.h:
+        (CoordinatedGraphicsLayerClient):
+        (CoordinatedGraphicsLayer):
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedImageBacking.cpp: Added.
+        (WebKit):
+        (WebKit::CoordinatedImageBacking::getCoordinatedImageBackingID):
+        (WebKit::CoordinatedImageBacking::create):
+        (WebKit::CoordinatedImageBacking::CoordinatedImageBacking):
+        (WebKit::CoordinatedImageBacking::~CoordinatedImageBacking):
+        (WebKit::CoordinatedImageBacking::addLayerClient):
+        (WebKit::CoordinatedImageBacking::removeLayerClient):
+        (WebKit::CoordinatedImageBacking::markDirty):
+        (WebKit::CoordinatedImageBacking::update):
+        (WebKit::CoordinatedImageBacking::releaseSurfaceIfNeeded):
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedImageBacking.h: Added.
+        (WebCore):
+        (WebKit):
+        (CoordinatedImageBacking):
+        (Coordinator):
+        (WebKit::CoordinatedImageBacking::id):
+        * WebProcess/WebPage/CoordinatedGraphics/LayerTreeCoordinator.cpp:
+        (WebKit::LayerTreeCoordinator::flushPendingLayerChanges):
+        (WebKit::LayerTreeCoordinator::createImageBackingIfNeeded):
+        (WebKit::LayerTreeCoordinator::createImageBacking):
+        (WebKit::LayerTreeCoordinator::updateImageBacking):
+        (WebKit::LayerTreeCoordinator::removeImageBacking):
+        (WebKit::LayerTreeCoordinator::flushPendingImageBackingChanges):
+        (WebKit::LayerTreeCoordinator::purgeBackingStores):
+        * WebProcess/WebPage/CoordinatedGraphics/LayerTreeCoordinator.h:
+        (LayerTreeCoordinator):
+
+2012-11-15  Huang Dongsung  <luxtella@company100.net>
+
         Coordinated Graphics: A Minor optimization of calculating transforms in CoordinagedGraphicsLayer.
         https://bugs.webkit.org/show_bug.cgi?id=102309
 

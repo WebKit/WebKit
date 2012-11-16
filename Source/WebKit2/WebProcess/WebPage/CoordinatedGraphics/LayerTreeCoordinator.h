@@ -23,6 +23,7 @@
 #if USE(COORDINATED_GRAPHICS)
 
 #include "CoordinatedGraphicsLayer.h"
+#include "CoordinatedImageBacking.h"
 #include "LayerTreeContext.h"
 #include "LayerTreeHost.h"
 #include "Timer.h"
@@ -39,6 +40,7 @@ class WebPage;
 
 class LayerTreeCoordinator : public LayerTreeHost, WebCore::GraphicsLayerClient
     , public CoordinatedGraphicsLayerClient
+    , public CoordinatedImageBacking::Coordinator
     , public UpdateAtlasClient
     , public WebCore::GraphicsLayerFactory {
 public:
@@ -67,8 +69,7 @@ public:
     virtual void pauseRendering() { m_isSuspended = true; }
     virtual void resumeRendering() { m_isSuspended = false; scheduleLayerFlush(); }
     virtual void deviceScaleFactorDidChange() { }
-    virtual int64_t adoptImageBackingStore(WebCore::Image*);
-    virtual void releaseImageBackingStore(int64_t);
+    virtual PassRefPtr<CoordinatedImageBacking> createImageBackingIfNeeded(WebCore::Image*) OVERRIDE;
 
     virtual void createTile(WebLayerID, int tileID, const SurfaceUpdateInfo&, const WebCore::IntRect&);
     virtual void updateTile(WebLayerID, int tileID, const SurfaceUpdateInfo&, const WebCore::IntRect&);
@@ -112,6 +113,13 @@ private:
     virtual void notifyFlushRequired(const WebCore::GraphicsLayer*);
     virtual void paintContents(const WebCore::GraphicsLayer*, WebCore::GraphicsContext&, WebCore::GraphicsLayerPaintingPhase, const WebCore::IntRect& clipRect);
 
+    // CoordinatedImageBacking::Coordinator
+    virtual void createImageBacking(CoordinatedImageBackingID) OVERRIDE;
+    virtual void updateImageBacking(CoordinatedImageBackingID, const ShareableSurface::Handle&) OVERRIDE;
+    virtual void removeImageBacking(CoordinatedImageBackingID) OVERRIDE;
+
+    void flushPendingImageBackingChanges();
+
     // GraphicsLayerFactory
     virtual PassOwnPtr<WebCore::GraphicsLayer> createGraphicsLayer(WebCore::GraphicsLayerClient*) OVERRIDE;
 
@@ -125,7 +133,6 @@ private:
     void syncDisplayState();
     void lockAnimations();
     void unlockAnimations();
-    void purgeReleasedImages();
 
     void layerFlushTimerFired(WebCore::Timer<LayerTreeCoordinator>*);
 
@@ -146,8 +153,8 @@ private:
 
     HashSet<WebCore::CoordinatedGraphicsLayer*> m_registeredLayers;
     Vector<WebLayerID> m_detachedLayers;
-    HashMap<int64_t, int> m_directlyCompositedImageRefCounts;
-    Vector<int64_t> m_releasedDirectlyCompositedImages;
+    typedef HashMap<CoordinatedImageBackingID, RefPtr<CoordinatedImageBacking> > ImageBackingMap;
+    ImageBackingMap m_imageBackings;
     Vector<OwnPtr<UpdateAtlas> > m_updateAtlases;
 
     bool m_notifyAfterScheduledLayerFlush;
