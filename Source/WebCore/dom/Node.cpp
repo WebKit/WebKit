@@ -412,7 +412,7 @@ Node::~Node()
         detach();
 
     Document* doc = m_document;
-    if (AXObjectCache::accessibilityEnabled() && doc && doc->axObjectCacheExists())
+    if (AXObjectCache::accessibilityEnabled() && doc && doc->axObjectCacheExists() && !isContainerNode())
         doc->axObjectCache()->removeNodeForUse(this);
     
     if (m_previous)

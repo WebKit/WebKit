@@ -408,8 +408,8 @@ public:
         ASSERT(this);
         // FIXME: below ASSERT is useful, but prevents the use of document() in the constructor or destructor
         // due to the virtual function call to nodeType().
-        ASSERT(m_document || (nodeType() == DOCUMENT_TYPE_NODE && !inDocument()));
-        return m_document;
+        ASSERT(documentInternal() || (nodeType() == DOCUMENT_TYPE_NODE && !inDocument()));
+        return documentInternal();
     }
 
     TreeScope* treeScope() const;
@@ -736,6 +736,8 @@ protected:
     bool hasCustomStyleForRenderer() const { return getFlag(HasCustomStyleForRendererFlag); }
     void setHasCustomStyleForRenderer() { setFlag(true, HasCustomStyleForRendererFlag); }
     void clearHasCustomStyleForRenderer() { clearFlag(HasCustomStyleForRendererFlag); }
+
+    Document* documentInternal() const { return m_document; }
 
 private:
     // These API should be only used for a tree scope migration.
