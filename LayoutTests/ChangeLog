@@ -1,3 +1,15 @@
+2012-11-15  Alec Flett  <alecflett@chromium.org>
+
+        Add tests for explicit serialization values
+        https://bugs.webkit.org/show_bug.cgi?id=96818
+
+        Reviewed by Adam Barth.
+
+        Make sure SerializedScriptValues are backward compatible with future changes.
+
+        * platform/chromium/fast/storage/serialized-script-value.html: Added.
+        * platform/chromium/fast/storage/serialized-script-value.txt: Added.
+
 2012-11-15  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed. Add missing text test expectations for Mac and Windows ports.

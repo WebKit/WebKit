@@ -217,4 +217,7 @@
 
     // Returns a string with information about the mouse cursor used at the specified client location.
     DOMString getCurrentCursorInfo(in Document document) raises (DOMException);
+
+    SerializedScriptValue deserializeBuffer(in ArrayBuffer buffer);
+    ArrayBuffer serializeObject(in SerializedScriptValue obj);
 };
