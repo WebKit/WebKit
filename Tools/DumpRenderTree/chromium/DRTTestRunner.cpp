@@ -137,7 +137,6 @@ DRTTestRunner::DRTTestRunner(TestShell* shell)
     bindMethod("dumpBackForwardList", &DRTTestRunner::dumpBackForwardList);
     bindMethod("dumpChildFramesAsText", &DRTTestRunner::dumpChildFramesAsText);
     bindMethod("dumpChildFrameScrollPositions", &DRTTestRunner::dumpChildFrameScrollPositions);
-    bindMethod("dumpDatabaseCallbacks", &DRTTestRunner::dumpDatabaseCallbacks);
     bindMethod("dumpEditingCallbacks", &DRTTestRunner::dumpEditingCallbacks);
     bindMethod("dumpFrameLoadCallbacks", &DRTTestRunner::dumpFrameLoadCallbacks);
     bindMethod("dumpProgressFinishedCallback", &DRTTestRunner::dumpProgressFinishedCallback);
@@ -160,9 +159,6 @@ DRTTestRunner::DRTTestRunner(TestShell* shell)
     bindMethod("forceRedSelectionColors", &DRTTestRunner::forceRedSelectionColors);
 #if ENABLE(NOTIFICATIONS)
     bindMethod("grantWebNotificationPermission", &DRTTestRunner::grantWebNotificationPermission);
-    bindMethod("denyWebNotificationPermission", &DRTTestRunner::denyWebNotificationPermission);
-    bindMethod("removeAllWebNotificationPermissions", &DRTTestRunner::removeAllWebNotificationPermissions);
-    bindMethod("simulateWebNotificationClick", &DRTTestRunner::simulateWebNotificationClick);
 #endif
     bindMethod("findString", &DRTTestRunner::findString);
     bindMethod("isCommandEnabled", &DRTTestRunner::isCommandEnabled);
@@ -201,7 +197,6 @@ DRTTestRunner::DRTTestRunner(TestShell* shell)
     bindMethod("setDomainRelaxationForbiddenForURLScheme", &DRTTestRunner::setDomainRelaxationForbiddenForURLScheme);
     bindMethod("setAudioData", &DRTTestRunner::setAudioData);
     bindMethod("setGeolocationPermission", &DRTTestRunner::setGeolocationPermission);
-    bindMethod("setIconDatabaseEnabled", &DRTTestRunner::setIconDatabaseEnabled);
     bindMethod("setJavaScriptCanAccessClipboard", &DRTTestRunner::setJavaScriptCanAccessClipboard);
     bindMethod("setMinimumTimerInterval", &DRTTestRunner::setMinimumTimerInterval);
     bindMethod("setMockDeviceOrientation", &DRTTestRunner::setMockDeviceOrientation);
@@ -216,7 +211,6 @@ DRTTestRunner::DRTTestRunner(TestShell* shell)
     bindMethod("setPopupBlockingEnabled", &DRTTestRunner::setPopupBlockingEnabled);
     bindMethod("setPOSIXLocale", &DRTTestRunner::setPOSIXLocale);
     bindMethod("setPrinting", &DRTTestRunner::setPrinting);
-    bindMethod("setScrollbarPolicy", &DRTTestRunner::setScrollbarPolicy);
     bindMethod("setSelectTrailingWhitespaceEnabled", &DRTTestRunner::setSelectTrailingWhitespaceEnabled);
     bindMethod("setTextSubpixelPositioning", &DRTTestRunner::setTextSubpixelPositioning);
     bindMethod("setBackingScaleFactor", &DRTTestRunner::setBackingScaleFactor);
@@ -247,34 +241,13 @@ DRTTestRunner::DRTTestRunner(TestShell* shell)
     bindMethod("setStorageAllowed", &DRTTestRunner::setStorageAllowed);
     bindMethod("setPluginsAllowed", &DRTTestRunner::setPluginsAllowed);
 
-    // The following are stubs.
     bindMethod("abortModal", &DRTTestRunner::abortModal);
-    bindMethod("addDisallowedURL", &DRTTestRunner::addDisallowedURL);
-    bindMethod("applicationCacheDiskUsageForOrigin", &DRTTestRunner::applicationCacheDiskUsageForOrigin);
     bindMethod("callShouldCloseOnWebView", &DRTTestRunner::callShouldCloseOnWebView);
-    bindMethod("clearAllApplicationCaches", &DRTTestRunner::clearAllApplicationCaches);
-    bindMethod("clearApplicationCacheForOrigin", &DRTTestRunner::clearApplicationCacheForOrigin);
-    bindMethod("clearBackForwardList", &DRTTestRunner::clearBackForwardList);
-    bindMethod("keepWebHistory", &DRTTestRunner::keepWebHistory);
-    bindMethod("setApplicationCacheOriginQuota", &DRTTestRunner::setApplicationCacheOriginQuota);
-    bindMethod("setCallCloseOnWebViews", &DRTTestRunner::setCallCloseOnWebViews);
-    bindMethod("setMainFrameIsFirstResponder", &DRTTestRunner::setMainFrameIsFirstResponder);
-    bindMethod("setPrivateBrowsingEnabled", &DRTTestRunner::setPrivateBrowsingEnabled);
-    bindMethod("setUseDashboardCompatibilityMode", &DRTTestRunner::setUseDashboardCompatibilityMode);
-    bindMethod("deleteAllLocalStorage", &DRTTestRunner::deleteAllLocalStorage);
-    bindMethod("localStorageDiskUsageForOrigin", &DRTTestRunner::localStorageDiskUsageForOrigin);
-    bindMethod("originsWithLocalStorage", &DRTTestRunner::originsWithLocalStorage);
-    bindMethod("deleteLocalStorageForOrigin", &DRTTestRunner::deleteLocalStorageForOrigin);
-    bindMethod("observeStorageTrackerNotifications", &DRTTestRunner::observeStorageTrackerNotifications);
-    bindMethod("syncLocalStorage", &DRTTestRunner::syncLocalStorage);
     bindMethod("setShouldStayOnPageAfterHandlingBeforeUnload", &DRTTestRunner::setShouldStayOnPageAfterHandlingBeforeUnload);
     bindMethod("enableFixedLayoutMode", &DRTTestRunner::enableFixedLayoutMode);
     bindMethod("setFixedLayoutSize", &DRTTestRunner::setFixedLayoutSize);
     bindMethod("selectionAsMarkup", &DRTTestRunner::selectionAsMarkup);
     bindMethod("textSurroundingNode", &DRTTestRunner::textSurroundingNode);
-
-    // The fallback method is called when an unknown method is invoked.
-    bindFallbackMethod(&DRTTestRunner::fallbackMethod);
 
     // Shared properties.
     // globalFlag is used by a number of layout tests in
@@ -351,12 +324,6 @@ void DRTTestRunner::dumpAsText(const CppArgumentList& arguments, CppVariant* res
     if (arguments.size() > 0 && arguments[0].isBool())
         m_generatePixelResults = arguments[0].value.boolValue;
 
-    result->setNull();
-}
-
-void DRTTestRunner::dumpDatabaseCallbacks(const CppArgumentList&, CppVariant* result)
-{
-    // Do nothing; we don't use this flag anywhere for now
     result->setNull();
 }
 
@@ -855,49 +822,6 @@ void DRTTestRunner::setPluginsAllowed(const CppArgumentList& arguments, CppVaria
     result->setNull();
 }
 
-void DRTTestRunner::setUseDashboardCompatibilityMode(const CppArgumentList&, CppVariant* result)
-{
-    // We have no need to support Dashboard Compatibility Mode (mac-only)
-    result->setNull();
-}
-
-void DRTTestRunner::clearAllApplicationCaches(const CppArgumentList&, CppVariant* result)
-{
-    // FIXME: Implement to support application cache quotas.
-    result->setNull();
-}
-
-void DRTTestRunner::clearApplicationCacheForOrigin(const CppArgumentList&, CppVariant* result)
-{
-    // FIXME: Implement to support deleting all application cache for an origin.
-    result->setNull();
-}
-
-void DRTTestRunner::setApplicationCacheOriginQuota(const CppArgumentList&, CppVariant* result)
-{
-    // FIXME: Implement to support application cache quotas.
-    result->setNull();
-}
-
-void DRTTestRunner::originsWithApplicationCache(const CppArgumentList&, CppVariant* result)
-{
-    // FIXME: Implement to support getting origins that have application caches.
-    result->setNull();
-}
-
-void DRTTestRunner::applicationCacheDiskUsageForOrigin(const CppArgumentList&, CppVariant* result)
-{
-    // FIXME: Implement to support getting disk usage by all application cache for an origin.
-    result->setNull();
-}
-
-void DRTTestRunner::setScrollbarPolicy(const CppArgumentList&, CppVariant* result)
-{
-    // FIXME: implement.
-    // Currently only has a non-null implementation on QT.
-    result->setNull();
-}
-
 void DRTTestRunner::setCustomPolicyDelegate(const CppArgumentList& arguments, CppVariant* result)
 {
     if (arguments.size() > 0 && arguments[0].isBool()) {
@@ -1129,12 +1053,6 @@ void DRTTestRunner::numberOfActiveAnimations(const CppArgumentList&, CppVariant*
     result->set(numberOfActiveAnimations());
 }
 
-void DRTTestRunner::setIconDatabaseEnabled(const CppArgumentList&, CppVariant* result)
-{
-    // We don't use the WebKit icon database.
-    result->setNull();
-}
-
 void DRTTestRunner::callShouldCloseOnWebView(const CppArgumentList&, CppVariant* result)
 {
     result->set(m_shell->webView()->dispatchBeforeUnloadEvent());
@@ -1151,24 +1069,6 @@ void DRTTestRunner::grantWebNotificationPermission(const CppArgumentList& argume
     m_shell->notificationPresenter()->grantPermission(cppVariantToWebString(arguments[0]));
 #endif
     result->set(true);
-}
-
-void DRTTestRunner::denyWebNotificationPermission(const CppArgumentList& arguments, CppVariant* result)
-{
-    // FIXME: Implement.
-    result->setNull();
-}
-
-void DRTTestRunner::removeAllWebNotificationPermissions(const CppArgumentList& arguments, CppVariant* result)
-{
-    // FIXME: Implement.
-    result->setNull();
-}
-
-void DRTTestRunner::simulateWebNotificationClick(const CppArgumentList& arguments, CppVariant* result)
-{
-    // FIXME: Implement.
-    result->setNull();
 }
 
 void DRTTestRunner::simulateLegacyWebNotificationClick(const CppArgumentList& arguments, CppVariant* result)
@@ -1197,15 +1097,6 @@ void DRTTestRunner::setDeferMainResourceDataLoad(const CppArgumentList& argument
 {
     if (arguments.size() == 1)
         m_deferMainResourceDataLoad = cppVariantToBool(arguments[0]);
-}
-
-//
-// Unimplemented stubs
-//
-
-void DRTTestRunner::setMainFrameIsFirstResponder(const CppArgumentList& arguments, CppVariant* result)
-{
-    result->setNull();
 }
 
 void DRTTestRunner::dumpSelectionRect(const CppArgumentList& arguments, CppVariant* result)
@@ -1242,31 +1133,6 @@ void DRTTestRunner::testRepaint(const CppArgumentList&, CppVariant* result)
 void DRTTestRunner::repaintSweepHorizontally(const CppArgumentList&, CppVariant* result)
 {
     m_sweepHorizontally = true;
-    result->setNull();
-}
-
-void DRTTestRunner::clearBackForwardList(const CppArgumentList& arguments, CppVariant* result)
-{
-    result->setNull();
-}
-
-void DRTTestRunner::keepWebHistory(const CppArgumentList& arguments,  CppVariant* result)
-{
-    result->setNull();
-}
-
-void DRTTestRunner::addDisallowedURL(const CppArgumentList& arguments, CppVariant* result)
-{
-    result->setNull();
-}
-
-void DRTTestRunner::setCallCloseOnWebViews(const CppArgumentList& arguments, CppVariant* result)
-{
-    result->setNull();
-}
-
-void DRTTestRunner::setPrivateBrowsingEnabled(const CppArgumentList& arguments, CppVariant* result)
-{
     result->setNull();
 }
 
@@ -1565,12 +1431,6 @@ void DRTTestRunner::overridePreference(const CppArgumentList& arguments, CppVari
         logErrorToConsole(message);
     }
     m_shell->applyPreferences();
-}
-
-void DRTTestRunner::fallbackMethod(const CppArgumentList&, CppVariant* result)
-{
-    printf("CONSOLE MESSAGE: JavaScript ERROR: unknown method called on DRTTestRunner\n");
-    result->setNull();
 }
 
 void DRTTestRunner::addOriginAccessWhitelistEntry(const CppArgumentList& arguments, CppVariant* result)
@@ -1946,36 +1806,6 @@ void DRTTestRunner::setValueForUser(const CppArgumentList& arguments, CppVariant
         return;
 
     input->setValue(cppVariantToWebString(arguments[1]), true);
-}
-
-void DRTTestRunner::deleteAllLocalStorage(const CppArgumentList& arguments, CppVariant*)
-{
-    // Not Implemented
-}
-
-void DRTTestRunner::localStorageDiskUsageForOrigin(const CppArgumentList& arguments, CppVariant*)
-{
-    // Not Implemented
-}
-
-void DRTTestRunner::originsWithLocalStorage(const CppArgumentList& arguments, CppVariant*)
-{
-    // Not Implemented
-}
-
-void DRTTestRunner::deleteLocalStorageForOrigin(const CppArgumentList& arguments, CppVariant*)
-{
-    // Not Implemented
-}
-
-void DRTTestRunner::observeStorageTrackerNotifications(const CppArgumentList&, CppVariant*)
-{
-    // Not Implemented
-}
-
-void DRTTestRunner::syncLocalStorage(const CppArgumentList&, CppVariant*)
-{
-    // Not Implemented
 }
 
 void DRTTestRunner::setShouldStayOnPageAfterHandlingBeforeUnload(const CppArgumentList& arguments, CppVariant* result)

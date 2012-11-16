@@ -36,9 +36,28 @@
 
 namespace WebTestRunner {
 
+class WebTestDelegate;
+
 class TestRunner : public CppBoundClass {
 public:
     TestRunner();
+
+    // FIXME: once DRTTestRunner is moved entirely to this class, change this
+    // method to take a TestDelegate* instead.
+    void setDelegate(WebTestDelegate* delegate) { m_delegate = delegate; }
+
+private:
+    // The fallback method is called when a nonexistent method is called on
+    // the layout test controller object.
+    // It is usefull to catch typos in the JavaScript code (a few layout tests
+    // do have typos in them) and it allows the script to continue running in
+    // that case (as the Mac does).
+    void fallbackMethod(const CppArgumentList&, CppVariant*);
+
+    // Stub for not implemented methods.
+    void notImplemented(const CppArgumentList&, CppVariant*);
+
+    WebTestDelegate* m_delegate;
 };
 
 }

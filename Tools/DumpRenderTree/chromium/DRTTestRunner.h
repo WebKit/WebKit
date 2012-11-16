@@ -79,13 +79,6 @@ public:
     // It takes an optional argument, whether to dump pixels results or not.
     void dumpAsText(const CppArgumentList&, CppVariant*);
 
-    // This function should set a flag that tells the test_shell to print a line
-    // of descriptive text for each database command. It should take no
-    // arguments, and ignore any that may be present. However, at the moment, we
-    // don't have any DB function that prints messages, so for now this function
-    // doesn't do anything.
-    void dumpDatabaseCallbacks(const CppArgumentList&, CppVariant*);
-
     // This function sets a flag that tells the test_shell to print a line of
     // descriptive text for each editing command. It takes no arguments, and
     // ignores any that may be present.
@@ -184,13 +177,6 @@ public:
     // Passes this preference through to WebSettings.
     void setAuthorAndUserStylesEnabled(const CppArgumentList&, CppVariant*);
 
-    // Puts Webkit in "dashboard compatibility mode", which is used in obscure
-    // Mac-only circumstances. It's not really necessary, and will most likely
-    // never be used by Chrome, but some layout tests depend on its presence.
-    void setUseDashboardCompatibilityMode(const CppArgumentList&, CppVariant*);
-
-    void setScrollbarPolicy(const CppArgumentList&, CppVariant*);
-
     // Causes navigation actions just printout the intended navigation instead
     // of taking you to the page. This is used for cases like mailto, where you
     // don't actually want to open the mail program.
@@ -236,15 +222,11 @@ public:
     void enableAutoResizeMode(const CppArgumentList&, CppVariant*);
     void disableAutoResizeMode(const CppArgumentList&, CppVariant*);
     void numberOfActiveAnimations(const CppArgumentList&, CppVariant*);
-    void setIconDatabaseEnabled(const CppArgumentList&, CppVariant*);
     void dumpSelectionRect(const CppArgumentList&, CppVariant*);
 
 #if ENABLE(NOTIFICATIONS)
     // Grants permission for desktop notifications to an origin
     void grantWebNotificationPermission(const CppArgumentList&, CppVariant*);
-    void denyWebNotificationPermission(const CppArgumentList&, CppVariant*);
-    void removeAllWebNotificationPermissions(const CppArgumentList&, CppVariant*);
-    void simulateWebNotificationClick(const CppArgumentList&, CppVariant*);
     // Simulates a click on a desktop notification.
     void simulateLegacyWebNotificationClick(const CppArgumentList&, CppVariant*);
 #endif
@@ -256,20 +238,12 @@ public:
     void setAudioData(const CppArgumentList&, CppVariant*);
     const WebKit::WebArrayBufferView& audioData() const { return m_audioData; } 
 
-    // The following are only stubs.
-    // FIXME: Implement any of these that are needed to pass the layout tests.
     void dumpTitleChanges(const CppArgumentList&, CppVariant*);
-    void setMainFrameIsFirstResponder(const CppArgumentList&, CppVariant*);
     void display(const CppArgumentList&, CppVariant*);
     void displayInvalidatedRegion(const CppArgumentList&, CppVariant*);
     void testRepaint(const CppArgumentList&, CppVariant*);
     void repaintSweepHorizontally(const CppArgumentList&, CppVariant*);
-    void clearBackForwardList(const CppArgumentList&, CppVariant*);
-    void keepWebHistory(const CppArgumentList&, CppVariant*);
-    void addDisallowedURL(const CppArgumentList&, CppVariant*);
     void callShouldCloseOnWebView(const CppArgumentList&, CppVariant*);
-    void setCallCloseOnWebViews(const CppArgumentList&, CppVariant*);
-    void setPrivateBrowsingEnabled(const CppArgumentList&, CppVariant*);
 
     void setJavaScriptCanAccessClipboard(const CppArgumentList&, CppVariant*);
     void setXSSAuditorEnabled(const CppArgumentList&, CppVariant*);
@@ -284,27 +258,9 @@ public:
     void setIsolatedWorldSecurityOrigin(const CppArgumentList&, CppVariant*);
     void setIsolatedWorldContentSecurityPolicy(const CppArgumentList&, CppVariant*);
 
-    // The fallback method is called when a nonexistent method is called on
-    // the layout test controller object.
-    // It is usefull to catch typos in the JavaScript code (a few layout tests
-    // do have typos in them) and it allows the script to continue running in
-    // that case (as the Mac does).
-    void fallbackMethod(const CppArgumentList&, CppVariant*);
-
     // Allows layout tests to manage origins' whitelisting.
     void addOriginAccessWhitelistEntry(const CppArgumentList&, CppVariant*);
     void removeOriginAccessWhitelistEntry(const CppArgumentList&, CppVariant*);
-
-    // Clears all application caches.
-    void clearAllApplicationCaches(const CppArgumentList&, CppVariant*);
-    // Clears an application cache for an origin.
-    void clearApplicationCacheForOrigin(const CppArgumentList&, CppVariant*);
-    // Returns origins that have application caches.
-    void originsWithApplicationCache(const CppArgumentList&, CppVariant*);
-    // Sets the application cache quota for the localhost origin.
-    void setApplicationCacheOriginQuota(const CppArgumentList&, CppVariant*);
-    // Returns disk usage by all application caches for an origin.
-    void applicationCacheDiskUsageForOrigin(const CppArgumentList&, CppVariant*);
 
     // Clears all databases.
     void clearAllDatabases(const CppArgumentList&, CppVariant*);
@@ -372,14 +328,6 @@ public:
     // Expects the first argument to be an input element and the second argument to be a string value.
     // Forwards the setValueForUser() call to the element.
     void setValueForUser(const CppArgumentList&, CppVariant*);
-
-    // LocalStorage origin-related
-    void deleteAllLocalStorage(const CppArgumentList&, CppVariant*);
-    void originsWithLocalStorage(const CppArgumentList&, CppVariant*);
-    void deleteLocalStorageForOrigin(const CppArgumentList&, CppVariant*);
-    void localStorageDiskUsageForOrigin(const CppArgumentList&, CppVariant*);
-    void observeStorageTrackerNotifications(const CppArgumentList&, CppVariant*);
-    void syncLocalStorage(const CppArgumentList&, CppVariant*);
 
     // WebPermissionClient related.
     void setImagesAllowed(const CppArgumentList&, CppVariant*);

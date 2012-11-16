@@ -32,10 +32,53 @@
 #include "config.h"
 #include "TestRunner.h"
 
+#include "WebTestDelegate.h"
+
 namespace WebTestRunner {
 
 TestRunner::TestRunner()
+    : m_delegate(0)
 {
+    // The following are stubs.
+    bindMethod("dumpDatabaseCallbacks", &TestRunner::notImplemented);
+#if ENABLE(NOTIFICATIONS)
+    bindMethod("denyWebNotificationPermission", &TestRunner::notImplemented);
+    bindMethod("removeAllWebNotificationPermissions", &TestRunner::notImplemented);
+    bindMethod("simulateWebNotificationClick", &TestRunner::notImplemented);
+#endif
+    bindMethod("setIconDatabaseEnabled", &TestRunner::notImplemented);
+    bindMethod("setScrollbarPolicy", &TestRunner::notImplemented);
+    bindMethod("clearAllApplicationCaches", &TestRunner::notImplemented);
+    bindMethod("clearApplicationCacheForOrigin", &TestRunner::notImplemented);
+    bindMethod("clearBackForwardList", &TestRunner::notImplemented);
+    bindMethod("keepWebHistory", &TestRunner::notImplemented);
+    bindMethod("setApplicationCacheOriginQuota", &TestRunner::notImplemented);
+    bindMethod("setCallCloseOnWebViews", &TestRunner::notImplemented);
+    bindMethod("setMainFrameIsFirstResponder", &TestRunner::notImplemented);
+    bindMethod("setPrivateBrowsingEnabled", &TestRunner::notImplemented);
+    bindMethod("setUseDashboardCompatibilityMode", &TestRunner::notImplemented);
+    bindMethod("deleteAllLocalStorage", &TestRunner::notImplemented);
+    bindMethod("localStorageDiskUsageForOrigin", &TestRunner::notImplemented);
+    bindMethod("originsWithLocalStorage", &TestRunner::notImplemented);
+    bindMethod("deleteLocalStorageForOrigin", &TestRunner::notImplemented);
+    bindMethod("observeStorageTrackerNotifications", &TestRunner::notImplemented);
+    bindMethod("syncLocalStorage", &TestRunner::notImplemented);
+    bindMethod("addDisallowedURL", &TestRunner::notImplemented);
+    bindMethod("applicationCacheDiskUsageForOrigin", &TestRunner::notImplemented);
+
+    // The fallback method is called when an unknown method is invoked.
+    bindFallbackMethod(&TestRunner::fallbackMethod);
+}
+
+void TestRunner::fallbackMethod(const CppArgumentList&, CppVariant* result)
+{
+    m_delegate->printMessage("CONSOLE MESSAGE: JavaScript ERROR: unknown method called on TestRunner\n");
+    result->setNull();
+}
+
+void TestRunner::notImplemented(const CppArgumentList&, CppVariant* result)
+{
+    result->setNull();
 }
 
 }

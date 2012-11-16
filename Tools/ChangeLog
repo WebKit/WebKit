@@ -1,5 +1,33 @@
 2012-11-16  Jochen Eisinger  <jochen@chromium.org>
 
+        [chromium] move stubs from DRTTestRunner to TestRunner
+        https://bugs.webkit.org/show_bug.cgi?id=102489
+
+        Reviewed by Adam Barth.
+
+        This is part of moving all methods from DRTTestRunner to TestRunner.
+        Instead of keeping one stub per method, I'm using a shared stub to
+        clean up the code.
+
+        * DumpRenderTree/chromium/DRTTestRunner.cpp:
+        (DRTTestRunner::DRTTestRunner):
+        * DumpRenderTree/chromium/DRTTestRunner.h:
+        (DRTTestRunner):
+        * DumpRenderTree/chromium/TestRunner/src/TestRunner.cpp:
+        (WebTestRunner::TestRunner::TestRunner):
+        (WebTestRunner):
+        (WebTestRunner::TestRunner::fallbackMethod):
+        (WebTestRunner::TestRunner::notImplemented):
+        * DumpRenderTree/chromium/TestRunner/src/TestRunner.h:
+        (WebTestRunner):
+        (TestRunner):
+        (WebTestRunner::TestRunner::setDelegate):
+        * DumpRenderTree/chromium/TestShell.cpp:
+        (TestShell::createMainWindow):
+        (TestShell::~TestShell):
+
+2012-11-16  Jochen Eisinger  <jochen@chromium.org>
+
         [chromium] fake drag drop operations in the WebTestProxyBase instead of the WebViewHost
         https://bugs.webkit.org/show_bug.cgi?id=102495
 
