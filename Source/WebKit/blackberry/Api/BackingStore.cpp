@@ -2699,11 +2699,13 @@ void BackingStore::createBackingStoreMemory()
     if (BackingStorePrivate::s_currentBackingStoreOwner == d->m_webPage)
         SurfacePool::globalSurfacePool()->createBuffers();
     resumeBackingStoreUpdates();
+    resumeScreenUpdates(BackingStore::RenderAndBlit);
 }
 
 void BackingStore::releaseBackingStoreMemory()
 {
     suspendBackingStoreUpdates();
+    suspendScreenUpdates();
     if (BackingStorePrivate::s_currentBackingStoreOwner == d->m_webPage)
         SurfacePool::globalSurfacePool()->releaseBuffers();
 }

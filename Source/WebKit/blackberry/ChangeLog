@@ -1,3 +1,20 @@
+2012-11-16  Adam Treat  <atreat@rim.com>
+
+        [BlackBerry] Fix regression causing checkerboard flicker after app wake-up
+        https://bugs.webkit.org/show_bug.cgi?id=102526
+
+        Reviewed by George Staikos.
+        PR 245027
+
+        The webkit patch for 219976 introduced an undesirable behavior change
+        resulting in a regression where there was checkerboard flickering on
+        resuming from an inactive application state.  This patch restores the
+        previous behavior and fixes the regression.
+
+        * Api/BackingStore.cpp:
+        (BlackBerry::WebKit::BackingStore::createBackingStoreMemory):
+        (BlackBerry::WebKit::BackingStore::releaseBackingStoreMemory):
+
 2012-11-16  Mike Fenton  <mifenton@rim.com>
 
         [BlackBerry] Use proper keycode value for space instead of hardcoded value.
