@@ -123,14 +123,6 @@ bool PluginProxy::canInitializeAsynchronously() const
     return controller()->asynchronousPluginInitializationEnabled() && (m_connection->supportsAsynchronousPluginInitialization() || controller()->asynchronousPluginInitializationEnabledForAllPlugins());
 }
 
-void PluginProxy::waitForAsynchronousInitialization()
-{
-    ASSERT(!m_isStarted);
-    ASSERT(m_waitingOnAsynchronousInitialization);
-
-    initializeSynchronously();
-}
-
 bool PluginProxy::initializeSynchronously()
 {
     ASSERT(m_pendingPluginCreationParameters);

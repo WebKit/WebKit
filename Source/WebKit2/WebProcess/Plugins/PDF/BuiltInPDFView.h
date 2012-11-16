@@ -51,7 +51,6 @@ public:
     static WebCore::PluginInfo pluginInfo();
 
     // In-process PDFViews don't support asynchronous initialization.
-    virtual void waitForAsynchronousInitialization() { }
     virtual bool isBeingAsynchronouslyInitialized() const { return false; }
 
 private:

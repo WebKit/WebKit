@@ -37,7 +37,46 @@ public:
     }
     
 private:
+    class PluginObject : public Object<PluginObject> {
+    public:
+        PluginObject()
+        {
+        }
+
+        ~PluginObject()
+        {
+        }
+
+        bool hasProperty(NPIdentifier propertyName)
+        {
+            return true;
+        }
+
+        bool getProperty(NPIdentifier propertyName, NPVariant* result)
+        {
+            static const char* message = "My name is ";
+            char* propertyString = pluginTest()->NPN_UTF8FromIdentifier(propertyName);
+            
+            int bufferLength = strlen(propertyString) + strlen(message) + 1;
+            char* resultBuffer = static_cast<char*>(pluginTest()->NPN_MemAlloc(bufferLength));
+            snprintf(resultBuffer, bufferLength, "%s%s", message, propertyString);
+            
+            STRINGZ_TO_NPVARIANT(resultBuffer, *result);
+
+            return true;
+        }
+    };
     
+    virtual NPError NPP_GetValue(NPPVariable variable, void *value)
+    {
+        if (variable != NPPVpluginScriptableNPObject)
+            return NPERR_GENERIC_ERROR;
+        
+        *(NPObject**)value = PluginObject::create(this);
+        
+        return NPERR_NO_ERROR;
+    }
+
     virtual NPError NPP_New(NPMIMEType pluginType, uint16_t mode, int16_t argc, char* argn[], char* argv[], NPSavedData *saved)
     {
         usleep(550000);
