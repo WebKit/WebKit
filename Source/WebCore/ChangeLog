@@ -1,3 +1,9 @@
+2012-11-16  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        [Chromium] Updated WebCore.gypi after r134939.
+
+        * WebCore.gypi: Renamed acessibility/gtk to accessibility/atk.
+
 2012-11-16  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Move CredentialBackingStore usage from GtkAuthenticationDialog to ResourceHandleSoup
