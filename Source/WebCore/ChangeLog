@@ -1,3 +1,51 @@
+2012-11-16  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Rollout 134404 134548 134552 Temporarily rolling out to ease merging.
+        https://bugs.webkit.org/show_bug.cgi?id=102476
+
+        Unreviewed rolling out.
+
+        * English.lproj/localizedStrings.js:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * inspector/compile-front-end.py:
+        * inspector/front-end/AdvancedSearchController.js:
+        * inspector/front-end/CallStackSidebarPane.js:
+        (WebInspector.CallStackSidebarPane.prototype.registerShortcuts):
+        * inspector/front-end/ConsoleView.js:
+        (WebInspector.ConsoleView.prototype._registerShortcuts):
+        * inspector/front-end/ElementsPanel.js:
+        (WebInspector.ElementsPanel):
+        (WebInspector.ElementsPanel.prototype._registerShortcuts):
+        * inspector/front-end/ElementsPanelDescriptor.js:
+        * inspector/front-end/GoToLineDialog.js:
+        (WebInspector.GoToLineDialog.install):
+        * inspector/front-end/KeyboardShortcut.js:
+        (WebInspector.KeyboardShortcut._keyName):
+        * inspector/front-end/Panel.js:
+        (WebInspector.Panel.prototype.registerShortcut):
+        (WebInspector.Panel.prototype.unregisterShortcut):
+        (WebInspector.PanelDescriptor.prototype.panel):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel):
+        (WebInspector.ScriptsPanel.prototype._createDebugToolbar):
+        (WebInspector.ScriptsPanel.prototype._createButtonAndRegisterShortcuts):
+        * inspector/front-end/ScriptsPanelDescriptor.js:
+        * inspector/front-end/ShortcutsScreen.js:
+        (WebInspector.ShortcutsScreen):
+        (WebInspector.ShortcutsSection):
+        (WebInspector.ShortcutsSection.prototype._renderKey):
+        * inspector/front-end/StylesSidebarPane.js:
+        (WebInspector.StylesSidebarPane.prototype.registerShortcuts):
+        * inspector/front-end/TimelinePanel.js:
+        (WebInspector.TimelinePanel.prototype._registerShortcuts):
+        * inspector/front-end/TimelinePanelDescriptor.js: Removed.
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/inspector.html:
+        * inspector/front-end/inspector.js:
+        (WebInspector._panelDescriptors):
+        (WebInspector._registerShortcuts):
+
 2012-11-16  Eugene Klyuchnikov  <eustas.bug@gmail.com>
 
         Web Inspector: Memory Timeline Crash

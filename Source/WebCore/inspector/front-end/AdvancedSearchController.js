@@ -39,9 +39,6 @@ WebInspector.AdvancedSearchController = function()
     WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.FrameNavigated, this._frameNavigated, this);
 }
 
-/**
- * @return {!WebInspector.KeyboardShortcut.Descriptor}
- */
 WebInspector.AdvancedSearchController.createShortcut = function()
 {
     if (WebInspector.isMac())
@@ -52,7 +49,7 @@ WebInspector.AdvancedSearchController.createShortcut = function()
 
 WebInspector.AdvancedSearchController.prototype = {
     /**
-     * @param {KeyboardEvent} event
+     * @param {Event} event
      * @return {boolean}
      */
     handleShortcut: function(event)

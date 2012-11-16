@@ -229,9 +229,6 @@ WebInspector.Panel.prototype = {
         return [];
     },
 
-    /**
-     * @param {KeyboardEvent} event
-     */
     handleShortcut: function(event)
     {
         var shortcutKey = WebInspector.KeyboardShortcut.makeKeyFromEvent(event);
@@ -242,14 +239,14 @@ WebInspector.Panel.prototype = {
         }
     },
 
-    /**
-     * @param {!Array.<!WebInspector.KeyboardShortcut.Descriptor>} keys
-     * @param {function(KeyboardEvent)} handler
-     */
-    registerShortcuts: function(keys, handler)
+    registerShortcut: function(key, handler)
     {
-        for (var i = 0; i < keys.length; ++i)
-            this._shortcuts[keys[i].key] = handler;
+        this._shortcuts[key] = handler;
+    },
+
+    unregisterShortcut: function(key)
+    {
+        delete this._shortcuts[key];
     },
 
     __proto__: WebInspector.View.prototype
@@ -316,7 +313,5 @@ WebInspector.PanelDescriptor.prototype = {
             importScript(this._scriptName);
         this._panel = new WebInspector[this._className];
         return this._panel;
-    },
-
-    registerShortcuts: function() {}
+    }
 }

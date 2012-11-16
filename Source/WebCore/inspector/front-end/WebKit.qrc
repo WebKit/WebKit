@@ -203,7 +203,6 @@
     <file>TimelineGrid.js</file>
     <file>TimelineOverviewPane.js</file>
     <file>TimelinePanel.js</file>
-    <file>TimelinePanelDescriptor.js</file>
     <file>Toolbar.js</file>
     <file>TopDownProfileDataGridTree.js</file>
     <file>treeoutline.js</file>

@@ -98,6 +98,8 @@ WebInspector.ElementsPanel = function()
             this.sidebarPanes[pane].onattach();
     }
 
+    this._registerShortcuts();
+
     this._popoverHelper = new WebInspector.PopoverHelper(this.element, this._getPopoverAnchor.bind(this), this._showPopover.bind(this));
     this._popoverHelper.setTimeout(0);
 
@@ -1001,6 +1003,27 @@ WebInspector.ElementsPanel.prototype = {
 
         eventListenersSidebarPane.update(this.selectedDOMNode());
         eventListenersSidebarPane.needsUpdate = false;
+    },
+
+    _registerShortcuts: function()
+    {
+        var shortcut = WebInspector.KeyboardShortcut;
+        var section = WebInspector.shortcutsScreen.section(WebInspector.UIString("Elements Panel"));
+        var keys = [
+            shortcut.shortcutToString(shortcut.Keys.Up),
+            shortcut.shortcutToString(shortcut.Keys.Down)
+        ];
+        section.addRelatedKeys(keys, WebInspector.UIString("Navigate elements"));
+
+        keys = [
+            shortcut.shortcutToString(shortcut.Keys.Right),
+            shortcut.shortcutToString(shortcut.Keys.Left)
+        ];
+        section.addRelatedKeys(keys, WebInspector.UIString("Expand/collapse"));
+        section.addKey(shortcut.shortcutToString(shortcut.Keys.Enter), WebInspector.UIString("Edit attribute"));
+        section.addKey(shortcut.shortcutToString(shortcut.Keys.F2), WebInspector.UIString("Toggle edit as HTML"));
+
+        this.sidebarPanes.styles.registerShortcuts();
     },
 
     handleShortcut: function(event)

@@ -65,7 +65,7 @@ WebInspector.GoToLineDialog.install = function(panel, viewGetter)
     }
 
     var goToLineShortcut = WebInspector.GoToLineDialog.createShortcut();
-    panel.registerShortcuts([goToLineShortcut], showGoToLineDialog);
+    panel.registerShortcut(goToLineShortcut.key, showGoToLineDialog);
 }
 
 WebInspector.GoToLineDialog._show = function(sourceView)
@@ -75,9 +75,6 @@ WebInspector.GoToLineDialog._show = function(sourceView)
     WebInspector.Dialog.show(sourceView.element, new WebInspector.GoToLineDialog(sourceView));
 }
 
-/**
- * @return {!WebInspector.KeyboardShortcut.Descriptor}
- */
 WebInspector.GoToLineDialog.createShortcut = function()
 {
     var isMac = WebInspector.isMac();
