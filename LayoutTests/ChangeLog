@@ -1,3 +1,52 @@
+2012-11-15  David Grogan  <dgrogan@chromium.org>
+
+        IndexedDB: setVersion batch 8
+        https://bugs.webkit.org/show_bug.cgi?id=102434
+
+        Reviewed by Tony Chang.
+
+        2 lines were added to intversion-bad-parameters to capture the tests
+        that were in the now-deleted setVersion-{null,undefined}.
+
+        * storage/indexeddb/intversion-bad-parameters-expected.txt:
+        * storage/indexeddb/key-generator-expected.txt:
+        * storage/indexeddb/open-during-transaction-expected.txt:
+        * storage/indexeddb/readonly-properties-expected.txt:
+        * storage/indexeddb/resources/intversion-bad-parameters.js:
+        (deleteSuccess):
+        * storage/indexeddb/resources/key-generator.js:
+          Again awkward to call indexedDBTest all over the place. The prefix
+          line's gotta go, and we could also pull a resetDatabase method out of
+          indexedDBTest that would just do a delete and open.
+
+        (runTests.nextTest.prepareDatabase):
+        (runTests.nextTest.onSuccess.finishTest):
+        (runTests.nextTest.onSuccess):
+        (runTests.nextTest):
+        (testAcrossConnections.prepareDatabase):
+        * storage/indexeddb/resources/open-during-transaction.js:
+        (prepareDatabase.event.target.transaction.oncomplete):
+        (prepareDatabase):
+        (tryOpens):
+        * storage/indexeddb/resources/readonly-properties.js:
+        (prepareDatabase):
+        * storage/indexeddb/resources/setVersion-null.js: Removed.
+        * storage/indexeddb/resources/setVersion-undefined.js: Removed.
+        * storage/indexeddb/resources/transaction-after-close.js:
+        (prepareDatabase):
+        (firstTransactionComplete):
+        (onFinalPutSuccess):
+        * storage/indexeddb/resources/versionchangerequest-activedomobject.js:
+        (testSetVersion):
+        (upgradeNeededCallback):
+        (successCallback):
+        * storage/indexeddb/setVersion-null-expected.txt: Removed.
+        * storage/indexeddb/setVersion-null.html: Removed.
+        * storage/indexeddb/setVersion-undefined-expected.txt: Removed.
+        * storage/indexeddb/setVersion-undefined.html: Removed.
+        * storage/indexeddb/transaction-after-close-expected.txt:
+        * storage/indexeddb/versionchangerequest-activedomobject-expected.txt:
+
 2012-11-15  Alec Flett  <alecflett@chromium.org>
 
         Add tests for explicit serialization values

@@ -40,27 +40,27 @@ function testSetVersion()
     debug("");
     debug("testSetVersion():");
 
-    // NOTE: This is just an IDBRequest, it can be global.
-    evalAndLog("openRequest = indexedDB.open(self.dbname)");
+    // NOTE: openRequest is local variable so it is not captured in global
+    // scope.
+    var openRequest = evalAndLog("indexedDB.open(self.dbname)");
     openRequest.onerror = unexpectedErrorCallback;
-    openRequest.onsuccess = function () {
-        evalAndLog("db = openRequest.result");
-
-        // NOTE: versionRequest is local variable so it is not captured in global scope.
-        var versionRequest = evalAndLog("db.setVersion('1')");
-        versionRequest.onerror = unexpectedErrorCallback;
-        versionRequest.onblocked = unexpectedBlockedCallback;
-        versionRequest.onsuccess = function() { versionSuccess(); };
-        versionRequest = null;
-        if (self.gc) {
-            evalAndLog("self.gc()");
-        }
-    };
+    openRequest.onblocked = unexpectedBlockedCallback;
+    openRequest.onupgradeneeded = upgradeNeededCallback;
+    openRequest.onsuccess = successCallback;
+    openRequest = null;
+    if (self.gc) {
+        evalAndLog("self.gc()");
+    }
 }
 
-function versionSuccess()
+function upgradeNeededCallback()
 {
-    testPassed("setVersion's IDBVersionChangeRequest.onsuccess event fired");
+    testPassed("IDBOpenDBRequest received upgradeneeded event");
+}
+
+function successCallback()
+{
+    testPassed("IDBOpenDBRequest received success event");
     finishJSTest();
 }
 

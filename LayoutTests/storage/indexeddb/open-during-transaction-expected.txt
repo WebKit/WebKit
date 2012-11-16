@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: The setVersion() method is non-standard and will be removed. Use the "upgradeneeded" event instead.
 Test IndexedDB opening database connections during transactions
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
@@ -6,11 +5,9 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
 
-prepare database
-indexedDB.deleteDatabase('open-during-transaction1')
-openreq1 = indexedDB.open('open-during-transaction1')
-dbc1 = openreq1.result
-setverreq = dbc1.setVersion('1.0')
+dbname = "open-during-transaction.html"
+indexedDB.deleteDatabase(dbname)
+indexedDB.open(dbname)
 dbc1.createObjectStore('storeName')
 database preparation complete
 
@@ -20,10 +17,10 @@ trans = dbc1.transaction('storeName', 'readwrite')
 trans.objectStore('storeName').put('value', 'key')
 
 trying to open the same database
-openreq2 = indexedDB.open('open-during-transaction1')
+openreq2 = indexedDB.open(dbname)
 
 trying to open a different database
-openreq3 = indexedDB.open('open-during-transaction2')
+openreq3 = indexedDB.open(dbname + '2')
 
 openreq2.onsuccess
 PASS state is "starting"

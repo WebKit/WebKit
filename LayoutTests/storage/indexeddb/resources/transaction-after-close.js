@@ -5,30 +5,10 @@ if (this.importScripts) {
 
 description("Test closing a database connection in IndexedDB.");
 
-function test()
+indexedDBTest(prepareDatabase, runFirstRegularTransaction);
+function prepareDatabase()
 {
-    removeVendorPrefixes();
-
-    request = evalAndLog("indexedDB.open('transaction-after-close')");
-    request.onsuccess = openSuccess;
-    request.onerror = unexpectedErrorCallback;
-}
-
-function openSuccess()
-{
-    debug("openSuccess():");
-    self.db = evalAndLog("db = event.target.result");
-    request = evalAndLog("request = db.setVersion('version 1')");
-    request.onsuccess = inSetVersion;
-    request.onerror = unexpectedErrorCallback;
-}
-
-function inSetVersion()
-{
-    deleteAllObjectStores(db);
-
-    event.target.result.oncomplete = runFirstRegularTransaction;
-    event.target.result.onabort = unexpectedAbortCallback;
+    db = event.target.result;
     store = evalAndLog("store = db.createObjectStore('store')");
     request = evalAndLog("request = store.put('x', 'y')");
     request.onsuccess = onPutSuccess;
@@ -58,7 +38,7 @@ function firstTransactionComplete()
 
     debug("")
     debug("verify that we can reopen the db after calling close")
-    request = evalAndLog("indexedDB.open('transaction-after-close')");
+    request = evalAndLog("indexedDB.open(dbname)");
     request.onsuccess = onSecondOpen
     request.onerror = unexpectedErrorCallback;
 }
@@ -77,5 +57,3 @@ function onSecondOpen() {
 function onFinalPutSuccess() {
     testPassed("final put success");
 }
-
-test();

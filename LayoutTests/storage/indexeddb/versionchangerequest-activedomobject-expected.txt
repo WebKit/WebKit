@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: The setVersion() method is non-standard and will be removed. Use the "upgradeneeded" event instead.
 Ensure that IDBVersionChangeRequest objects are not GC'd if they have pending events
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
@@ -15,11 +14,10 @@ self.gc()
 PASS deleteDatabase's IDBVersionChangeRequest.onsuccess event fired
 
 testSetVersion():
-openRequest = indexedDB.open(self.dbname)
-db = openRequest.result
-db.setVersion('1')
+indexedDB.open(self.dbname)
 self.gc()
-PASS setVersion's IDBVersionChangeRequest.onsuccess event fired
+PASS IDBOpenDBRequest received upgradeneeded event
+PASS IDBOpenDBRequest received success event
 PASS successfullyParsed is true
 
 TEST COMPLETE

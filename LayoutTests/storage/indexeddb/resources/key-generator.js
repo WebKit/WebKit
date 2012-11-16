@@ -35,34 +35,27 @@ function runTests() {
         debug("");
         debug(test.description);
 
-        evalAndLog("request = indexedDB.deleteDatabase('key-generator')");
-        request.onerror = unexpectedErrorCallback;
-        request.onsuccess = function () {
-            evalAndLog("request = indexedDB.open('key-generator')");
-            request.onerror = unexpectedErrorCallback;
-            request.onsuccess = function () {
-                evalAndLog("db = request.result");
-                evalAndLog("request = db.setVersion('1')");
-                request.onerror = unexpectedErrorCallback;
-                request.onsuccess = function () {
-                    evalAndLog("trans = request.result");
-                    trans.onabort = unexpectedAbortCallback;
-                    test.verchange(db, trans);
-                    trans.oncomplete = function () {
+        indexedDBTest(prepareDatabase, onSuccess);
+        function prepareDatabase()
+        {
+            db = event.target.result;
+            trans = event.target.transaction;
+            trans.onabort = unexpectedAbortCallback;
+            test.verchange(db, trans);
+        }
+        function onSuccess() {
+            db = event.target.result;
 
-                        function finishTest() {
-                            evalAndLog("db.close()");
-                            nextTest();
-                        }
+            function finishTest() {
+                evalAndLog("db.close()");
+                nextTest();
+            }
 
-                        if (test.optional) {
-                            test.optional(db, finishTest);
-                        } else {
-                            finishTest();
-                        }
-                    };
-                };
-            };
+            if (test.optional) {
+                test.optional(db, finishTest);
+            } else {
+                finishTest();
+            }
         };
     }
 
@@ -233,22 +226,11 @@ function testAcrossConnections()
 {
     debug("");
     debug("Ensure key generator state is maintained across connections:");
-    request = evalAndLog("indexedDB.deleteDatabase('key-generator')");
-    request.onerror = unexpectedErrorCallback;
-    request.onsuccess = function () {
-        evalAndLog("request = indexedDB.open('key-generator')");
-        request.onerror = unexpectedErrorCallback;
-        request.onsuccess = function () {
-            evalAndLog("db = request.result");
-            request = evalAndLog("db.setVersion('1')");
-            request.onerror = unexpectedErrorCallback;
-            request.onsuccess = function () {
-                trans = request.result;
-                trans.onabort = unexpectedAbortCallback;
-                evalAndLog("db.createObjectStore('store', {autoIncrement: true})");
-                trans.oncomplete = doFirstWrite;
-            };
-        };
+    indexedDBTest(prepareDatabase, doFirstWrite);
+    function prepareDatabase()
+    {
+        db = event.target.result;
+        evalAndLog("db.createObjectStore('store', {autoIncrement: true})");
     };
 
     function doFirstWrite() {
@@ -267,7 +249,7 @@ function testAcrossConnections()
     function closeAndReopen() {
         evalAndLog("db.close()");
         debug("");
-        evalAndLog("request = indexedDB.open('key-generator')");
+        evalAndLog("request = indexedDB.open(dbname)");
         request.onsuccess = function () {
             evalAndLog("db = request.result");
             doSecondWrite();
