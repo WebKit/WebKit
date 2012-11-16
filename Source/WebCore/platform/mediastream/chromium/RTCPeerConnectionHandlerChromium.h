@@ -79,6 +79,7 @@ public:
     virtual void negotiationNeeded() OVERRIDE;
     virtual void didGenerateICECandidate(const WebKit::WebRTCICECandidate&) OVERRIDE;
     virtual void didChangeReadyState(WebKit::WebRTCPeerConnectionHandlerClient::ReadyState) OVERRIDE;
+    virtual void didChangeICEGatheringState(WebKit::WebRTCPeerConnectionHandlerClient::ICEGatheringState) OVERRIDE;
     virtual void didChangeICEState(WebKit::WebRTCPeerConnectionHandlerClient::ICEState) OVERRIDE;
     virtual void didAddRemoteStream(const WebKit::WebMediaStreamDescriptor&) OVERRIDE;
     virtual void didRemoveRemoteStream(const WebKit::WebMediaStreamDescriptor&) OVERRIDE;

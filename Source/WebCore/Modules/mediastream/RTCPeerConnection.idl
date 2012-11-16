@@ -60,6 +60,7 @@
     void addIceCandidate(in RTCIceCandidate candidate)
         raises(DOMException);
 
+    readonly attribute DOMString iceGatheringState;
     readonly attribute DOMString iceState;
 
     readonly attribute MediaStreamList localStreams;
@@ -84,6 +85,7 @@
     attribute EventListener onstatechange;
     attribute EventListener onaddstream;
     attribute EventListener onremovestream;
+    attribute EventListener ongatheringchange;
     attribute EventListener onicechange;
     attribute EventListener ondatachannel;
 

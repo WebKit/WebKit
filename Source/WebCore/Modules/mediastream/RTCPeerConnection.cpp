@@ -131,10 +131,12 @@ PassRefPtr<RTCPeerConnection> RTCPeerConnection::create(ScriptExecutionContext* 
 RTCPeerConnection::RTCPeerConnection(ScriptExecutionContext* context, PassRefPtr<RTCConfiguration> configuration, PassRefPtr<MediaConstraints> constraints, ExceptionCode& ec)
     : ActiveDOMObject(context, this)
     , m_readyState(ReadyStateNew)
-    , m_iceState(IceStateClosed)
+    , m_iceGatheringState(IceGatheringStateNew)
+    , m_iceState(IceStateStarting)
     , m_localStreams(MediaStreamList::create())
     , m_remoteStreams(MediaStreamList::create())
     , m_scheduledEventTimer(this, &RTCPeerConnection::scheduledEventTimerFired)
+    , m_stopped(false)
 {
     ASSERT(m_scriptExecutionContext->isDocument());
     Document* document = static_cast<Document*>(m_scriptExecutionContext);
@@ -164,7 +166,7 @@ RTCPeerConnection::~RTCPeerConnection()
 
 void RTCPeerConnection::createOffer(PassRefPtr<RTCSessionDescriptionCallback> successCallback, PassRefPtr<RTCErrorCallback> errorCallback, const Dictionary& mediaConstraints, ExceptionCode& ec)
 {
-    if (m_readyState == ReadyStateClosing || m_readyState == ReadyStateClosed) {
+    if (m_readyState == ReadyStateClosed) {
         ec = INVALID_STATE_ERR;
         return;
     }
@@ -184,7 +186,7 @@ void RTCPeerConnection::createOffer(PassRefPtr<RTCSessionDescriptionCallback> su
 
 void RTCPeerConnection::createAnswer(PassRefPtr<RTCSessionDescriptionCallback> successCallback, PassRefPtr<RTCErrorCallback> errorCallback, const Dictionary& mediaConstraints, ExceptionCode& ec)
 {
-    if (m_readyState == ReadyStateClosing || m_readyState == ReadyStateClosed) {
+    if (m_readyState == ReadyStateClosed) {
         ec = INVALID_STATE_ERR;
         return;
     }
@@ -204,7 +206,7 @@ void RTCPeerConnection::createAnswer(PassRefPtr<RTCSessionDescriptionCallback> s
 
 void RTCPeerConnection::setLocalDescription(PassRefPtr<RTCSessionDescription> prpSessionDescription, PassRefPtr<VoidCallback> successCallback, PassRefPtr<RTCErrorCallback> errorCallback, ExceptionCode& ec)
 {
-    if (m_readyState == ReadyStateClosing || m_readyState == ReadyStateClosed) {
+    if (m_readyState == ReadyStateClosed) {
         ec = INVALID_STATE_ERR;
         return;
     }
@@ -221,7 +223,7 @@ void RTCPeerConnection::setLocalDescription(PassRefPtr<RTCSessionDescription> pr
 
 PassRefPtr<RTCSessionDescription> RTCPeerConnection::localDescription(ExceptionCode& ec)
 {
-    if (m_readyState == ReadyStateClosing || m_readyState == ReadyStateClosed) {
+    if (m_readyState == ReadyStateClosed) {
         ec = INVALID_STATE_ERR;
         return 0;
     }
@@ -236,7 +238,7 @@ PassRefPtr<RTCSessionDescription> RTCPeerConnection::localDescription(ExceptionC
 
 void RTCPeerConnection::setRemoteDescription(PassRefPtr<RTCSessionDescription> prpSessionDescription, PassRefPtr<VoidCallback> successCallback, PassRefPtr<RTCErrorCallback> errorCallback, ExceptionCode& ec)
 {
-    if (m_readyState == ReadyStateClosing || m_readyState == ReadyStateClosed) {
+    if (m_readyState == ReadyStateClosed) {
         ec = INVALID_STATE_ERR;
         return;
     }
@@ -253,7 +255,7 @@ void RTCPeerConnection::setRemoteDescription(PassRefPtr<RTCSessionDescription> p
 
 PassRefPtr<RTCSessionDescription> RTCPeerConnection::remoteDescription(ExceptionCode& ec)
 {
-    if (m_readyState == ReadyStateClosing || m_readyState == ReadyStateClosed) {
+    if (m_readyState == ReadyStateClosed) {
         ec = INVALID_STATE_ERR;
         return 0;
     }
@@ -268,7 +270,7 @@ PassRefPtr<RTCSessionDescription> RTCPeerConnection::remoteDescription(Exception
 
 void RTCPeerConnection::updateIce(const Dictionary& rtcConfiguration, const Dictionary& mediaConstraints, ExceptionCode& ec)
 {
-    if (m_readyState == ReadyStateClosing || m_readyState == ReadyStateClosed) {
+    if (m_readyState == ReadyStateClosed) {
         ec = INVALID_STATE_ERR;
         return;
     }
@@ -288,7 +290,7 @@ void RTCPeerConnection::updateIce(const Dictionary& rtcConfiguration, const Dict
 
 void RTCPeerConnection::addIceCandidate(RTCIceCandidate* iceCandidate, ExceptionCode& ec)
 {
-    if (m_readyState == ReadyStateClosing || m_readyState == ReadyStateClosed) {
+    if (m_readyState == ReadyStateClosed) {
         ec = INVALID_STATE_ERR;
         return;
     }
@@ -308,29 +310,48 @@ String RTCPeerConnection::readyState() const
     switch (m_readyState) {
     case ReadyStateNew:
         return ASCIILiteral("new");
-    case ReadyStateOpening:
-        return ASCIILiteral("opening");
+    case ReadyStateHaveLocalOffer:
+        return ASCIILiteral("have-local-offer");
+    case ReadyStateHaveLocalPrAnswer:
+        return ASCIILiteral("have-local-pranswer");
+    case ReadyStateHaveRemotePrAnswer:
+        return ASCIILiteral("have-remote-pranswer");
     case ReadyStateActive:
         return ASCIILiteral("active");
-    case ReadyStateClosing:
-        return ASCIILiteral("closing");
     case ReadyStateClosed:
         return ASCIILiteral("closed");
+
+    // DEPRECATED
+    case ReadyStateOpening:
+        return ASCIILiteral("opening");
+    case ReadyStateClosing:
+        return ASCIILiteral("closing");
     }
 
     ASSERT_NOT_REACHED();
-    return ASCIILiteral("");
+    return String();
+}
+
+String RTCPeerConnection::iceGatheringState() const
+{
+    switch (m_iceGatheringState) {
+    case IceGatheringStateNew:
+        return ASCIILiteral("new");
+    case IceGatheringStateGathering:
+        return ASCIILiteral("gathering");
+    case IceGatheringStateComplete:
+        return ASCIILiteral("complete");
+    }
+
+    ASSERT_NOT_REACHED();
+    return String();
 }
 
 String RTCPeerConnection::iceState() const
 {
     switch (m_iceState) {
-    case IceStateNew:
-        return ASCIILiteral("new");
-    case IceStateGathering:
-        return ASCIILiteral("gathering");
-    case IceStateWaiting:
-        return ASCIILiteral("waiting");
+    case IceStateStarting:
+        return ASCIILiteral("starting");
     case IceStateChecking:
         return ASCIILiteral("checking");
     case IceStateConnected:
@@ -339,8 +360,18 @@ String RTCPeerConnection::iceState() const
         return ASCIILiteral("completed");
     case IceStateFailed:
         return ASCIILiteral("failed");
+    case IceStateDisconnected:
+        return ASCIILiteral("disconnected");
     case IceStateClosed:
         return ASCIILiteral("closed");
+
+    // DEPRECATED
+    case IceStateNew:
+        return ASCIILiteral("new");
+    case IceStateGathering:
+        return ASCIILiteral("gathering");
+    case IceStateWaiting:
+        return ASCIILiteral("waiting");
     }
 
     ASSERT_NOT_REACHED();
@@ -349,7 +380,7 @@ String RTCPeerConnection::iceState() const
 
 void RTCPeerConnection::addStream(PassRefPtr<MediaStream> prpStream, const Dictionary& mediaConstraints, ExceptionCode& ec)
 {
-    if (m_readyState == ReadyStateClosing || m_readyState == ReadyStateClosed) {
+    if (m_readyState == ReadyStateClosed) {
         ec = INVALID_STATE_ERR;
         return;
     }
@@ -429,7 +460,7 @@ PassRefPtr<RTCDataChannel> RTCPeerConnection::createDataChannel(String label, co
 
 void RTCPeerConnection::close(ExceptionCode& ec)
 {
-    if (m_readyState == ReadyStateClosing || m_readyState == ReadyStateClosed) {
+    if (m_readyState == ReadyStateClosed) {
         ec = INVALID_STATE_ERR;
         return;
     }
@@ -460,6 +491,16 @@ void RTCPeerConnection::didChangeReadyState(ReadyState newState)
 {
     ASSERT(scriptExecutionContext()->isContextThread());
     changeReadyState(newState);
+}
+
+void RTCPeerConnection::didChangeIceGatheringState(IceGatheringState newState)
+{
+    ASSERT(scriptExecutionContext()->isContextThread());
+    if (newState == m_iceGatheringState || m_readyState == ReadyStateClosed)
+        return;
+
+    m_iceGatheringState = newState;
+    scheduleDispatchEvent(Event::create(eventNames().gatheringchangeEvent, false, false));
 }
 
 void RTCPeerConnection::didChangeIceState(IceState newState)
@@ -523,6 +564,7 @@ ScriptExecutionContext* RTCPeerConnection::scriptExecutionContext() const
 
 void RTCPeerConnection::stop()
 {
+    m_stopped = true;
     m_iceState = IceStateClosed;
     m_readyState = ReadyStateClosed;
 
@@ -543,24 +585,18 @@ EventTargetData* RTCPeerConnection::ensureEventTargetData()
 
 void RTCPeerConnection::changeReadyState(ReadyState readyState)
 {
+    if (readyState == ReadyStateNew) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
     if (readyState == m_readyState || m_readyState == ReadyStateClosed)
         return;
 
     m_readyState = readyState;
 
-    switch (m_readyState) {
-    case ReadyStateOpening:
-        break;
-    case ReadyStateActive:
+    if (m_readyState == ReadyStateActive)
         scheduleDispatchEvent(Event::create(eventNames().openEvent, false, false));
-        break;
-    case ReadyStateClosing:
-    case ReadyStateClosed:
-        break;
-    case ReadyStateNew:
-        ASSERT_NOT_REACHED();
-        break;
-    }
 
     scheduleDispatchEvent(Event::create(eventNames().statechangeEvent, false, false));
 }
@@ -584,6 +620,9 @@ void RTCPeerConnection::scheduleDispatchEvent(PassRefPtr<Event> event)
 
 void RTCPeerConnection::scheduledEventTimerFired(Timer<RTCPeerConnection>*)
 {
+    if (m_stopped)
+        return;
+
     Vector<RefPtr<Event> > events;
     events.swap(m_scheduledEvents);
 

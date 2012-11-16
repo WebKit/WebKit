@@ -188,6 +188,11 @@ void RTCPeerConnectionHandlerChromium::didChangeReadyState(WebKit::WebRTCPeerCon
     m_client->didChangeReadyState(static_cast<RTCPeerConnectionHandlerClient::ReadyState>(state));
 }
 
+void RTCPeerConnectionHandlerChromium::didChangeICEGatheringState(WebKit::WebRTCPeerConnectionHandlerClient::ICEGatheringState state)
+{
+    m_client->didChangeIceGatheringState(static_cast<RTCPeerConnectionHandlerClient::IceGatheringState>(state));
+}
+
 void RTCPeerConnectionHandlerChromium::didChangeICEState(WebKit::WebRTCPeerConnectionHandlerClient::ICEState state)
 {
     m_client->didChangeIceState(static_cast<RTCPeerConnectionHandlerClient::IceState>(state));

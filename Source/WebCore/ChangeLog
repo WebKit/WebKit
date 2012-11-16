@@ -1,3 +1,48 @@
+2012-11-16  Tommy Widenflycht  <tommyw@google.com>
+
+        MediaStream API: Update RTCPeerConnection states to match the latest editors draft
+        https://bugs.webkit.org/show_bug.cgi?id=102382
+
+        Reviewed by Adam Barth.
+
+        Updating readyState & iceState, and adding iceGatheringState.
+        Also safeguarding the event timer callback.
+
+        Patch covered by existing tests.
+
+        * Modules/mediastream/RTCPeerConnection.cpp:
+        (WebCore::RTCPeerConnection::RTCPeerConnection):
+        (WebCore::RTCPeerConnection::createOffer):
+        (WebCore::RTCPeerConnection::createAnswer):
+        (WebCore::RTCPeerConnection::setLocalDescription):
+        (WebCore::RTCPeerConnection::localDescription):
+        (WebCore::RTCPeerConnection::setRemoteDescription):
+        (WebCore::RTCPeerConnection::remoteDescription):
+        (WebCore::RTCPeerConnection::updateIce):
+        (WebCore::RTCPeerConnection::addIceCandidate):
+        (WebCore::RTCPeerConnection::readyState):
+        (WebCore::RTCPeerConnection::iceGatheringState):
+        (WebCore):
+        (WebCore::RTCPeerConnection::iceState):
+        (WebCore::RTCPeerConnection::addStream):
+        (WebCore::RTCPeerConnection::close):
+        (WebCore::RTCPeerConnection::didChangeIceGatheringState):
+        (WebCore::RTCPeerConnection::stop):
+        (WebCore::RTCPeerConnection::changeReadyState):
+        (WebCore::RTCPeerConnection::scheduledEventTimerFired):
+        * Modules/mediastream/RTCPeerConnection.h:
+        (RTCPeerConnection):
+        * Modules/mediastream/RTCPeerConnection.idl:
+        * dom/EventNames.h:
+        (WebCore):
+        * platform/mediastream/RTCPeerConnectionHandlerClient.h:
+        (RTCPeerConnectionHandlerClient):
+        * platform/mediastream/chromium/RTCPeerConnectionHandlerChromium.cpp:
+        (WebCore::RTCPeerConnectionHandlerChromium::didChangeICEGatheringState):
+        (WebCore):
+        * platform/mediastream/chromium/RTCPeerConnectionHandlerChromium.h:
+        (RTCPeerConnectionHandlerChromium):
+
 2012-11-16  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Unreviewed, rolling out r134973.

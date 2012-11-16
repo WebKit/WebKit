@@ -45,21 +45,36 @@ class RTCPeerConnectionHandlerClient {
 public:
     enum ReadyState {
         ReadyStateNew = 1,
-        ReadyStateOpening = 2,
-        ReadyStateActive = 3,
-        ReadyStateClosing = 4,
-        ReadyStateClosed = 5
+        ReadyStateHaveLocalOffer = 2,
+        ReadyStateHaveLocalPrAnswer = 3,
+        ReadyStateHaveRemotePrAnswer = 4,
+        ReadyStateActive = 5,
+        ReadyStateClosed = 6,
+
+        // DEPRECATED
+        ReadyStateClosing = 7,
+        ReadyStateOpening = 8
     };
 
     enum IceState {
-        IceStateNew = 1,
-        IceStateGathering = 2,
-        IceStateWaiting = 3,
-        IceStateChecking = 4,
-        IceStateConnected = 5,
-        IceStateCompleted = 6,
-        IceStateFailed = 7,
-        IceStateClosed = 8
+        IceStateStarting = 1,
+        IceStateChecking = 2,
+        IceStateConnected = 3,
+        IceStateCompleted = 4,
+        IceStateFailed = 5,
+        IceStateDisconnected = 6,
+        IceStateClosed = 7,
+
+        // DEPRECATED
+        IceStateNew = 8,
+        IceStateGathering = 9,
+        IceStateWaiting = 10
+    };
+
+    enum IceGatheringState {
+        IceGatheringStateNew = 1,
+        IceGatheringStateGathering = 2,
+        IceGatheringStateComplete = 3
     };
 
     virtual ~RTCPeerConnectionHandlerClient() { }
@@ -67,6 +82,7 @@ public:
     virtual void negotiationNeeded() = 0;
     virtual void didGenerateIceCandidate(PassRefPtr<RTCIceCandidateDescriptor>) = 0;
     virtual void didChangeReadyState(ReadyState) = 0;
+    virtual void didChangeIceGatheringState(IceGatheringState) = 0;
     virtual void didChangeIceState(IceState) = 0;
     virtual void didAddRemoteStream(PassRefPtr<MediaStreamDescriptor>) = 0;
     virtual void didRemoveRemoteStream(MediaStreamDescriptor*) = 0;
