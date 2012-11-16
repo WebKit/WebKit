@@ -278,6 +278,96 @@ inline void ChildNodeRemovalNotifier::notify(Node* node)
         notifyNodeRemovedFromTree(toContainerNode(node));
 }
 
+class ChildFrameDisconnector {
+public:
+    enum ShouldIncludeRoot {
+        DoNotIncludeRoot,
+        IncludeRoot
+    };
+
+    explicit ChildFrameDisconnector(Node* root, ShouldIncludeRoot shouldIncludeRoot = IncludeRoot)
+        : m_root(root)
+    {
+        collectDescendant(m_root, shouldIncludeRoot);
+        rootNodes().add(m_root);
+    }
+
+    ~ChildFrameDisconnector()
+    {
+        rootNodes().remove(m_root);
+    }
+
+    void disconnect();
+
+    static bool nodeHasDisconnector(Node*);
+
+private:
+    void collectDescendant(Node* root, ShouldIncludeRoot);
+    void collectDescendant(ShadowTree*);
+
+    static HashSet<Node*>& rootNodes()
+    {
+        DEFINE_STATIC_LOCAL(HashSet<Node*>, nodes, ());
+        return nodes;
+    }
+
+    class Target {
+    public:
+        Target(Node* element)
+            : m_owner(element)
+            , m_ownerParent(element->parentNode())
+        { }
+
+        bool isValid() const { return m_owner->parentNode() == m_ownerParent; }
+        void disconnect();
+
+    private:
+        RefPtr<Node> m_owner;
+        Node* m_ownerParent;
+    };
+
+    Vector<Target, 10> m_list;
+    Node* m_root;
+};
+
+inline void ChildFrameDisconnector::collectDescendant(Node* root, ShouldIncludeRoot shouldIncludeRoot)
+{
+    for (Node* node = shouldIncludeRoot == IncludeRoot ? root : root->firstChild(); node;
+            node = node->traverseNextNode(root)) {
+        if (!node->isElementNode())
+            continue;
+        Element* element = toElement(node);
+        if (element->isFrameOwnerElement())
+            m_list.append(node);
+        if (element->hasShadowRoot())
+            collectDescendant(element->shadowTree());
+    }
+}
+
+inline void ChildFrameDisconnector::disconnect()
+{
+    unsigned size = m_list.size();
+    for (unsigned i = 0; i < size; ++i) {
+        Target& target = m_list[i];
+        if (target.isValid())
+            target.disconnect();
+    };
+}
+
+inline bool ChildFrameDisconnector::nodeHasDisconnector(Node* node)
+{
+    HashSet<Node*>& nodes = rootNodes();
+
+    if (nodes.isEmpty())
+        return false;
+
+    for (; node; node = node->parentNode())
+        if (nodes.contains(node))
+            return true;
+
+    return false;
+}
+
 } // namespace WebCore
 
 #endif // ContainerNodeAlgorithms_h

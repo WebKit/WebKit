@@ -63,14 +63,16 @@ Node::InsertionNotificationRequest HTMLSourceElement::insertedInto(Node* inserti
     return InsertionDone;
 }
 
-void HTMLSourceElement::willRemove()
+void HTMLSourceElement::removedFrom(Node* removalRoot)
 {
     Element* parent = parentElement();
+    if (!parent && removalRoot->isElementNode())
+        parent = toElement(removalRoot);
     if (parent && parent->isMediaElement())
-        static_cast<HTMLMediaElement*>(parentNode())->sourceWillBeRemoved(this);
-    HTMLElement::willRemove();
+        toMediaElement(parent)->sourceWasRemoved(this);
+    HTMLElement::removedFrom(removalRoot);
 }
-    
+
 void HTMLSourceElement::setSrc(const String& url)
 {
     setAttribute(srcAttr, url);

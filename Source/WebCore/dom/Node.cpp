@@ -40,6 +40,7 @@
 #include "CSSStyleSheet.h"
 #include "ChildNodeList.h"
 #include "ClassNodeList.h"
+#include "ContainerNodeAlgorithms.h"
 #include "ContextMenuController.h"
 #include "DOMImplementation.h"
 #include "DOMSettableTokenList.h"
@@ -1252,6 +1253,11 @@ static void checkAcceptChild(Node* newParent, Node* newChild, ExceptionCode& ec)
         ec = HIERARCHY_REQUEST_ERR;
         return;
     }
+
+    if (newParent->inDocument() && ChildFrameDisconnector::nodeHasDisconnector(newParent)) {
+        ec = NO_MODIFICATION_ALLOWED_ERR;
+        return;
+    }
 }
 
 void Node::checkReplaceChild(Node* newChild, Node* oldChild, ExceptionCode& ec)
@@ -1336,10 +1342,6 @@ void Node::attach()
 
     setAttached();
     clearNeedsStyleRecalc();
-}
-
-void Node::willRemove()
-{
 }
 
 void Node::detach()

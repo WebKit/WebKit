@@ -161,9 +161,10 @@ Node::InsertionNotificationRequest HTMLFrameElementBase::insertedInto(Node* inse
     return InsertionDone;
 }
 
-void HTMLFrameElementBase::didNotifySubtreeInsertions(Node* insertionPoint)
+void HTMLFrameElementBase::didNotifySubtreeInsertions(Node*)
 {
-    ASSERT_UNUSED(insertionPoint, insertionPoint->inDocument());
+    if (!inDocument())
+        return;
 
     // DocumentFragments don't kick of any loads.
     if (!document()->frame())

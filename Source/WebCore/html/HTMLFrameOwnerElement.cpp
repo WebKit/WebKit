@@ -34,7 +34,7 @@
 namespace WebCore {
 
 HTMLFrameOwnerElement::HTMLFrameOwnerElement(const QualifiedName& tagName, Document* document)
-    : HTMLElement(tagName, document)
+    : HTMLElement(tagName, document, CreateFrameOwnerElement)
     , m_contentFrame(0)
     , m_sandboxFlags(SandboxNone)
 {
@@ -49,17 +49,14 @@ RenderPart* HTMLFrameOwnerElement::renderPart() const
     return toRenderPart(renderer());
 }
 
-void HTMLFrameOwnerElement::willRemove()
+void HTMLFrameOwnerElement::disconnectContentFrame()
 {
-    // FIXME: It is unclear why this can't be moved to removedFromDocument()
-    // this is the only implementation of willRemove in WebCore!
+    // This causes an unload event thus cannot be a part of removedFrom().
     if (Frame* frame = contentFrame()) {
         RefPtr<Frame> protect(frame);
         frame->loader()->frameDetached();
         frame->disconnectOwnerElement();
     }
-
-    HTMLElement::willRemove();
 }
 
 HTMLFrameOwnerElement::~HTMLFrameOwnerElement()

@@ -287,7 +287,7 @@ public:
 
     MediaControls* mediaControls();
 
-    void sourceWillBeRemoved(HTMLSourceElement*);
+    void sourceWasRemoved(HTMLSourceElement*);
     void sourceWasAdded(HTMLSourceElement*);
 
     void privateBrowsingStateDidChange();
@@ -685,6 +685,17 @@ struct ValueToString<TextTrackCue*> {
 };
 #endif
 #endif
+
+inline bool isMediaElement(Node* node)
+{
+    return node && node->isElementNode() && toElement(node)->isMediaElement();
+}
+
+inline HTMLMediaElement* toMediaElement(Node* node)
+{
+    ASSERT(!node || isMediaElement(node));
+    return static_cast<HTMLMediaElement*>(node);
+}
 
 } //namespace
 

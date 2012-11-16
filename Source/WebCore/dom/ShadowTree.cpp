@@ -115,13 +115,6 @@ void ShadowTree::removeAllShadowRoots()
         shadowHost->attachChildrenLazily();
 }
 
-void ShadowTree::willRemove()
-{
-    ShadowRootVector roots(this);
-    for (size_t i = 0; i < roots.size(); ++i)
-        roots[i]->willRemove();
-}
-
 void ShadowTree::setParentTreeScope(TreeScope* scope)
 {
     for (ShadowRoot* root = youngestShadowRoot(); root; root = root->olderShadowRoot())

@@ -317,21 +317,6 @@ bool ContainerNode::replaceChild(PassRefPtr<Node> newChild, Node* oldChild, Exce
     return true;
 }
 
-void ContainerNode::willRemove()
-{
-    RefPtr<Node> protect(this);
-
-    NodeVector children;
-    getChildNodes(this, children);
-    for (size_t i = 0; i < children.size(); ++i) {
-        if (children[i]->parentNode() != this) // Check for child being removed from subtree while removing.
-            continue;
-        children[i]->willRemove();
-    }
-
-    Node::willRemove();
-}
-
 static void willRemoveChild(Node* child)
 {
 #if ENABLE(MUTATION_OBSERVERS)
@@ -342,7 +327,7 @@ static void willRemoveChild(Node* child)
 
     dispatchChildRemovalEvents(child);
     child->document()->nodeWillBeRemoved(child); // e.g. mutation event listener can create a new range.
-    child->willRemove();
+    ChildFrameDisconnector(child).disconnect();
 }
 
 static void willRemoveChildren(ContainerNode* container)
@@ -366,8 +351,14 @@ static void willRemoveChildren(ContainerNode* container)
 
         // fire removed from document mutation events.
         dispatchChildRemovalEvents(child);
-        child->willRemove();
     }
+
+    ChildFrameDisconnector(container, ChildFrameDisconnector::DoNotIncludeRoot).disconnect();
+}
+
+void ContainerNode::disconnectDescendantFrames()
+{
+    ChildFrameDisconnector(this).disconnect();
 }
 
 bool ContainerNode::removeChild(Node* oldChild, ExceptionCode& ec)
@@ -393,13 +384,6 @@ bool ContainerNode::removeChild(Node* oldChild, ExceptionCode& ec)
     }
 
     RefPtr<Node> child = oldChild;
-    willRemoveChild(child.get());
-
-    // Mutation events might have moved this child into a different parent.
-    if (child->parentNode() != this) {
-        ec = NOT_FOUND_ERR;
-        return false;
-    }
 
     document()->removeFocusedNodeOfSubtree(child.get());
 
@@ -409,6 +393,14 @@ bool ContainerNode::removeChild(Node* oldChild, ExceptionCode& ec)
 
     // Events fired when blurring currently focused node might have moved this
     // child into a different parent.
+    if (child->parentNode() != this) {
+        ec = NOT_FOUND_ERR;
+        return false;
+    }
+
+    willRemoveChild(child.get());
+
+    // Mutation events might have moved this child into a different parent.
     if (child->parentNode() != this) {
         ec = NOT_FOUND_ERR;
         return false;
@@ -479,16 +471,16 @@ void ContainerNode::removeChildren()
     // The container node can be removed from event handlers.
     RefPtr<ContainerNode> protect(this);
 
-    // Do any prep work needed before actually starting to detach
-    // and remove... e.g. stop loading frames, fire unload events.
-    willRemoveChildren(protect.get());
-
     // exclude this node when looking for removed focusedNode since only children will be removed
     document()->removeFocusedNodeOfSubtree(this, true);
 
 #if ENABLE(FULLSCREEN_API)
     document()->removeFullScreenElementOfSubtree(this, true);
 #endif
+
+    // Do any prep work needed before actually starting to detach
+    // and remove... e.g. stop loading frames, fire unload events.
+    willRemoveChildren(protect.get());
 
     forbidEventDispatch();
     Vector<RefPtr<Node>, 10> removedChildren;

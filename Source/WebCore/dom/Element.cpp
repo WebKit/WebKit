@@ -902,17 +902,6 @@ void Element::setChangedSinceLastFormControlChangeEvent(bool)
 {
 }
 
-void Element::willRemove()
-{
-#if ENABLE(FULLSCREEN_API)
-    if (containsFullScreenElement())
-        setContainsFullScreenElementOnAncestorsCrossingFrameBoundaries(false);
-#endif
-    if (ShadowTree* tree = shadowTree())
-        tree->willRemove();
-    ContainerNode::willRemove();
-}
-
 Node::InsertionNotificationRequest Element::insertedInto(Node* insertionPoint)
 {
     // need to do superclass processing first so inDocument() is true
@@ -945,6 +934,11 @@ Node::InsertionNotificationRequest Element::insertedInto(Node* insertionPoint)
 
 void Element::removedFrom(Node* insertionPoint)
 {
+#if ENABLE(FULLSCREEN_API)
+    if (containsFullScreenElement())
+        setContainsFullScreenElementOnAncestorsCrossingFrameBoundaries(false);
+#endif
+
     setSavedLayerScrollOffset(IntSize());
 
     if (insertionPoint->inDocument()) {
