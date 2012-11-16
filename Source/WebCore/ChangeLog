@@ -1,3 +1,30 @@
+2012-11-15  Takashi Sakamoto  <tasak@google.com>
+
+        [Win] key event's location does not work on Windows platform.
+        https://bugs.webkit.org/show_bug.cgi?id=89742
+
+        Reviewed by Brent Fulgham.
+
+        As WM_KEYDOWN, WM_KEYUP, WM_SYSKEYDOWN, and WM_SYSKEYUP doesn't
+        directly provide a virtual keycode which distinguish between left-hand
+        and right-hand keys. To obtain a virtual keycode, we have to look at
+        lparam, i.e. scancode and extended key bit. So if the given virtual
+        keycode is control, shift, or menu, use MapVirtualKey with scancode and
+        extended key bit and recreate a virtual keycode which distinguishes
+        between left-hand and right-hand.
+
+        No new tests, because left-hand keys, right-hand keys layout tests
+        have been already added.
+
+        * platform/win/KeyEventWin.cpp:
+        (WebCore::windowsKeycodeWithLocation):
+        Use wparam and lparam to recreate a virtual keycode which distinguishes
+        between left-hand and right-hand if the given wparam (=virtual keycode)
+        is control, shift, or menu.
+        (WebCore):
+        (WebCore::PlatformKeyboardEvent::PlatformKeyboardEvent):
+        Use the newly added function to obtain windows virtual keycode.
+
 2012-11-15  Joe Mason  <jmason@rim.com>
 
         [BlackBerry] Don't assert when notifyAuthReceived is called with a different auth type

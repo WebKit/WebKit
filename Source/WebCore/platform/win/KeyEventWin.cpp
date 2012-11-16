@@ -29,6 +29,10 @@
 #include <windows.h>
 #include <wtf/ASCIICType.h>
 
+#ifndef MAPVK_VSC_TO_VK_EX
+#define MAPVK_VSC_TO_VK_EX 3
+#endif
+
 using namespace WTF;
 
 namespace WebCore {
@@ -184,6 +188,32 @@ static bool isKeypadEvent(WPARAM code, LPARAM keyData, PlatformEvent::Type type)
     }
 }
 
+static int windowsKeycodeWithLocation(WPARAM keycode, LPARAM keyData)
+{
+    if (keycode != VK_CONTROL && keycode != VK_MENU && keycode != VK_SHIFT)
+        return keycode;
+
+    // If we don't need to support Windows XP or older Windows,
+    // it might be better to use MapVirtualKeyEx with scancode and
+    // extended keycode (i.e. 0xe0 or 0xe1).
+    if ((keyData >> 16) & KF_EXTENDED) {
+        switch (keycode) {
+        case VK_CONTROL:
+            return VK_RCONTROL;
+        case VK_SHIFT:
+            return VK_RSHIFT;
+        case VK_MENU:
+            return VK_RMENU;
+        default:
+            break;
+        }
+    }
+
+    int scancode = (keyData >> 16) & 0xFF;
+    int regeneratedVirtualKeyCode = ::MapVirtualKey(scancode, MAPVK_VSC_TO_VK_EX);
+    return regeneratedVirtualKeyCode ? regeneratedVirtualKeyCode : keycode;
+}
+
 static inline String singleCharacterString(UChar c)
 {
     return String(&c, 1);
@@ -194,7 +224,7 @@ PlatformKeyboardEvent::PlatformKeyboardEvent(HWND, WPARAM code, LPARAM keyData, 
     , m_text((type == PlatformEvent::Char) ? singleCharacterString(code) : String())
     , m_unmodifiedText((type == PlatformEvent::Char) ? singleCharacterString(code) : String())
     , m_keyIdentifier((type == PlatformEvent::Char) ? String() : keyIdentifierForWindowsKeyCode(code))
-    , m_windowsVirtualKeyCode((type == RawKeyDown || type == KeyUp) ? code : 0)
+    , m_windowsVirtualKeyCode((type == RawKeyDown || type == KeyUp) ? windowsKeycodeWithLocation(code, keyData) : 0)
     , m_nativeVirtualKeyCode(m_windowsVirtualKeyCode)
     , m_macCharCode(0)
     , m_autoRepeat(HIWORD(keyData) & KF_REPEAT)
