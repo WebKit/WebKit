@@ -1,3 +1,16 @@
+2012-11-16  Sudarsana Nagineni  <sudarsana.nagineni@intel.com>
+
+        [EFL][WK2] Unset the tooltip when the web process has crashed
+        https://bugs.webkit.org/show_bug.cgi?id=102232
+
+        Reviewed by Gyuyoung Kim.
+
+        Emit 'tooltip,text,unset' signal to unset the tooltip
+        when the web process has crashed.
+
+        * UIProcess/efl/PageClientBase.cpp:
+        (WebKit::PageClientBase::processDidCrash):
+
 2012-11-16  Helder Correia  <helder.correia@nokia.com>
 
         [CoordGfx] Follow coding style on explicit constructors

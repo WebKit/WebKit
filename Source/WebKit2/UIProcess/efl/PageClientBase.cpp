@@ -128,6 +128,8 @@ void PageClientBase::processDidCrash()
         m_viewImpl->smartCallback<LoadProgress>().call(&loadProgress);
     }
 
+    m_viewImpl->smartCallback<TooltipTextUnset>().call();
+
     bool handled = false;
     m_viewImpl->smartCallback<WebProcessCrashed>().call(&handled);
 
