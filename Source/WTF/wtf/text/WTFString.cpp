@@ -877,16 +877,23 @@ String String::fromUTF8(const LChar* stringStart, size_t length)
     if (!stringStart)
         return String();
 
+    if (!length)
+        return emptyString();
+
     // We'll use a StringImpl as a buffer; if the source string only contains ascii this should be
     // the right length, if there are any multi-byte sequences this buffer will be too large.
     UChar* buffer;
     String stringBuffer(StringImpl::createUninitialized(length, buffer));
     UChar* bufferEnd = buffer + length;
-
+ 
     // Try converting into the buffer.
     const char* stringCurrent = reinterpret_cast<const char*>(stringStart);
-    if (convertUTF8ToUTF16(&stringCurrent, reinterpret_cast<const char *>(stringStart + length), &buffer, bufferEnd) != conversionOK)
+    bool isAllASCII;
+    if (convertUTF8ToUTF16(&stringCurrent, reinterpret_cast<const char *>(stringStart + length), &buffer, bufferEnd, &isAllASCII) != conversionOK)
         return String();
+
+    if (isAllASCII)
+        return String(stringStart, length);
 
     // stringBuffer is full (the input must have been all ascii) so just return it!
     if (buffer == bufferEnd)
