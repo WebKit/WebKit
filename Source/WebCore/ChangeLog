@@ -1,3 +1,16 @@
+2012-11-16  Andreas Kling  <akling@apple.com>
+
+        Short-circuit Element::hasEquivalentAttributes() if elements share attribute data.
+        <http://webkit.org/b/102498>
+
+        Reviewed by Antti Koivisto.
+
+        Add a fast path to hasEquivalentAttributes() that checks if both elements are using
+        the same ElementAttributeData.
+
+        * dom/Element.cpp:
+        (WebCore::Element::hasEquivalentAttributes):
+
 2012-11-16  Zeno Albisser  <zeno@webkit.org>
 
         [Qt] Adding a null pointer check for currentContext to GraphicsContext3DQt.
