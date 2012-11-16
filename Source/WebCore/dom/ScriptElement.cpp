@@ -266,6 +266,7 @@ bool ScriptElement::requestScript(const String& sourceUrl)
             updateRequestForAccessControl(request.mutableResourceRequest(), m_element->document()->securityOrigin(), allowCredentials);
         }
         request.setCharset(scriptCharset());
+        request.setInitiator(element());
 
         m_cachedScript = m_element->document()->cachedResourceLoader()->requestScript(request);
         m_isExternalScript = true;

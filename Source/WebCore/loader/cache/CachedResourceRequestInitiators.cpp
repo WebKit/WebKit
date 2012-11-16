@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All Rights Reserved.
- * Copyright (C) 2010 Google Inc. All Rights Reserved.
+ * Copyright (C) 2012 Google, Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -11,62 +10,28 @@
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
  *
- * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * THIS SOFTWARE IS PROVIDED BY GOOGLE INC. ``AS IS'' AND ANY
  * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE COMPUTER, INC. OR
  * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
  * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
  * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CSSPreloadScanner_h
-#define CSSPreloadScanner_h
-
-#include <wtf/text/StringBuilder.h>
+#include "config.h"
+#include "CachedResourceRequestInitiators.h"
 
 namespace WebCore {
 
-class Document;
-class HTMLToken;
-
-class CSSPreloadScanner {
-    WTF_MAKE_NONCOPYABLE(CSSPreloadScanner);
-public:
-    explicit CSSPreloadScanner(Document*);
-
-    void reset();
-    void scan(const HTMLToken&, bool scanningBody);
-
-private:
-    enum State {
-        Initial,
-        MaybeComment,
-        Comment,
-        MaybeCommentEnd,
-        RuleStart,
-        Rule,
-        AfterRule,
-        RuleValue,
-        AfterRuleValue,
-        DoneParsingImportRules,
-    };
-
-    inline void tokenize(UChar c);
-    void emitRule();
-
-    State m_state;
-    StringBuilder m_rule;
-    StringBuilder m_ruleValue;
-
-    bool m_scanningBody;
-    Document* m_document;
-};
-
+CachedResourceRequestInitiators::CachedResourceRequestInitiators()
+    : css("css", AtomicString::ConstructFromLiteral)
+    , icon("icon", AtomicString::ConstructFromLiteral)
+{
 }
 
-#endif
+} // namespace WebCore

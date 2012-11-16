@@ -26,6 +26,10 @@
 #include "config.h"
 #include "CachedResourceRequest.h"
 
+#include "CachedResourceLoader.h"
+#include "Document.h"
+#include "Element.h"
+
 namespace WebCore {
 
 CachedResourceRequest::CachedResourceRequest(const ResourceRequest& resourceRequest, const String& charset, ResourceLoadPriority priority)
@@ -34,7 +38,7 @@ CachedResourceRequest::CachedResourceRequest(const ResourceRequest& resourceRequ
     , m_options(CachedResourceLoader::defaultCachedResourceOptions())
     , m_priority(priority)
     , m_forPreload(false)
-    , m_defer(CachedResourceLoader::NoDefer)
+    , m_defer(NoDefer)
 {
 }
 
@@ -43,7 +47,7 @@ CachedResourceRequest::CachedResourceRequest(const ResourceRequest& resourceRequ
     , m_options(options)
     , m_priority(ResourceLoadPriorityUnresolved)
     , m_forPreload(false)
-    , m_defer(CachedResourceLoader::NoDefer)
+    , m_defer(NoDefer)
 {
 }
 
@@ -52,8 +56,48 @@ CachedResourceRequest::CachedResourceRequest(const ResourceRequest& resourceRequ
     , m_options(CachedResourceLoader::defaultCachedResourceOptions())
     , m_priority(priority)
     , m_forPreload(false)
-    , m_defer(CachedResourceLoader::NoDefer)
+    , m_defer(NoDefer)
 {
 }
 
+CachedResourceRequest::~CachedResourceRequest()
+{
 }
+
+void CachedResourceRequest::setInitiator(PassRefPtr<Element> element)
+{
+    ASSERT(!m_initiatorElement && !m_initiatorDocument);
+    m_initiatorElement = element;
+}
+
+void CachedResourceRequest::setInitiator(const AtomicString& name, PassRefPtr<Document> document)
+{
+    ASSERT(!m_initiatorElement && !m_initiatorDocument);
+    m_initiatorName = name;
+    m_initiatorDocument = document;
+}
+
+const AtomicString& CachedResourceRequest::initiatorName() const
+{
+    if (m_initiatorElement)
+        return m_initiatorElement->localName();
+    if (!m_initiatorName.isEmpty())
+        return m_initiatorName;
+
+    DEFINE_STATIC_LOCAL(AtomicString, defaultName, ("resource", AtomicString::ConstructFromLiteral));
+    return defaultName;
+}
+
+PassRefPtr<Document> CachedResourceRequest::initiatorDocument()
+{
+    if (m_initiatorElement)
+        return m_initiatorElement->document();
+    return m_initiatorDocument;
+}
+
+PassRefPtr<Element> CachedResourceRequest::initiatorElement()
+{
+    return m_initiatorElement;
+}
+
+} // namespace WebCore

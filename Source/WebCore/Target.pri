@@ -822,6 +822,7 @@ SOURCES += \
     loader/CrossOriginPreflightResultCache.cpp \
     loader/cache/CachedResourceLoader.cpp \
     loader/cache/CachedResourceRequest.cpp \
+    loader/cache/CachedResourceRequestInitiators.cpp \
     loader/DocumentLoadTiming.cpp \
     loader/DocumentLoader.cpp \
     loader/DocumentThreadableLoader.cpp \
@@ -1955,6 +1956,8 @@ HEADERS += \
     loader/CrossOriginAccessControl.h \
     loader/CrossOriginPreflightResultCache.h \
     loader/cache/CachedResourceLoader.h \
+    loader/cache/CachedResourceRequest.h \
+    loader/cache/CachedResourceRequestInitiators.h \
     loader/DocumentLoader.h \
     loader/DocumentThreadableLoader.h \
     loader/FormState.h \

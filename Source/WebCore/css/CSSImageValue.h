@@ -27,6 +27,7 @@
 namespace WebCore {
 
 class CachedResourceLoader;
+class Element;
 class StyleCachedImage;
 class StyleImage;
 
@@ -36,7 +37,7 @@ public:
     static PassRefPtr<CSSImageValue> create(const String& url, StyleImage* image) { return adoptRef(new CSSImageValue(url, image)); }
     ~CSSImageValue();
 
-    StyleCachedImage* cachedImage(CachedResourceLoader*);
+    StyleCachedImage* cachedImage(CachedResourceLoader*, Element* initiatorElement = 0);
     // Returns a StyleCachedImage if the image is cached already, otherwise a StylePendingImage.
     StyleImage* cachedOrPendingImage();
 
@@ -53,7 +54,7 @@ public:
 protected:
     CSSImageValue(ClassType, const String& url);
 
-    StyleCachedImage* cachedImage(CachedResourceLoader*, const String& url);
+    StyleCachedImage* cachedImage(CachedResourceLoader*, const String& url, Element* initiatorElement = 0);
     String cachedImageURL();
     void clearCachedImage();
 

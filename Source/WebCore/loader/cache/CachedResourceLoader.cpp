@@ -164,7 +164,7 @@ CachedResourceHandle<CachedImage> CachedResourceLoader::requestImage(CachedResou
             return 0;
         }
     }
-    request.setDefer(clientDefersImage(request.resourceRequest().url()) ? DeferredByClient : NoDefer);
+    request.setDefer(clientDefersImage(request.resourceRequest().url()) ? CachedResourceRequest::DeferredByClient : CachedResourceRequest::NoDefer);
     return static_cast<CachedImage*>(requestResource(CachedResource::ImageResource, request).get());
 }
 
@@ -458,7 +458,7 @@ CachedResourceHandle<CachedResource> CachedResourceLoader::requestResource(Cache
         return 0;
 
     resource->setLoadPriority(request.priority());
-    if ((policy != Use || resource->stillNeedsLoad()) && NoDefer == request.defer()) {
+    if ((policy != Use || resource->stillNeedsLoad()) && CachedResourceRequest::NoDefer == request.defer()) {
         resource->load(this, request.options());
 
         // We don't support immediate loads, but we do support immediate failure.
@@ -510,7 +510,7 @@ CachedResourceHandle<CachedResource> CachedResourceLoader::loadResource(CachedRe
     return resource;
 }
 
-CachedResourceLoader::RevalidationPolicy CachedResourceLoader::determineRevalidationPolicy(CachedResource::Type type, ResourceRequest& request, bool forPreload, CachedResource* existingResource, DeferOption defer) const
+CachedResourceLoader::RevalidationPolicy CachedResourceLoader::determineRevalidationPolicy(CachedResource::Type type, ResourceRequest& request, bool forPreload, CachedResource* existingResource, CachedResourceRequest::DeferOption defer) const
 {
     if (!existingResource)
         return Load;
@@ -539,7 +539,7 @@ CachedResourceLoader::RevalidationPolicy CachedResourceLoader::determineRevalida
 
     // Do not load from cache if images are not enabled. The load for this image will be blocked
     // in CachedImage::load.
-    if (DeferredByClient == defer)
+    if (CachedResourceRequest::DeferredByClient == defer)
         return Reload;
     
     // Don't reload resources while pasting.
@@ -764,8 +764,8 @@ void CachedResourceLoader::decrementRequestCount(const CachedResource* res)
     --m_requestCount;
     ASSERT(m_requestCount > -1);
 }
-    
-void CachedResourceLoader::preload(CachedResource::Type type, ResourceRequest& request, const String& charset, bool referencedFromBody)
+
+void CachedResourceLoader::preload(CachedResource::Type type, CachedResourceRequest& request, const String& charset, bool referencedFromBody)
 {
     // FIXME: Rip this out when we are sure it is no longer necessary (even for mobile).
     UNUSED_PARAM(referencedFromBody);
@@ -780,12 +780,12 @@ void CachedResourceLoader::preload(CachedResource::Type type, ResourceRequest& r
         if (!hasRendering && !canBlockParser) {
             // Don't preload subresources that can't block the parser before we have something to draw.
             // This helps prevent preloads from delaying first display when bandwidth is limited.
-            PendingPreload pendingPreload = { type, request, charset };
+            PendingPreload pendingPreload = { type, request.resourceRequest(), charset };
             m_pendingPreloads.append(pendingPreload);
             return;
         }
     }
-    requestPreload(type, request, charset);
+    requestPreload(type, request.mutableResourceRequest(), charset);
 }
 
 void CachedResourceLoader::checkForPendingPreloads() 

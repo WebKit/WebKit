@@ -46,6 +46,7 @@ namespace WebCore {
     class ThreadTimers;
     class XMLMIMETypeRegExp;
 
+    struct CachedResourceRequestInitiators;
     struct ICUConverterWrapper;
     struct TECConverterWrapper;
 
@@ -56,6 +57,7 @@ namespace WebCore {
         ~ThreadGlobalData();
         void destroy(); // called on workers to clean up the ThreadGlobalData before the thread exits.
 
+        const CachedResourceRequestInitiators& cachedResourceRequestInitiators() { return *m_cachedResourceRequestInitiators; }
         EventNames& eventNames() { return *m_eventNames; }
         ThreadTimers& threadTimers() { return *m_threadTimers; }
         XMLMIMETypeRegExp& xmlTypeRegExp() { return *m_xmlTypeRegExp; }
@@ -73,6 +75,7 @@ namespace WebCore {
 #endif
 
     private:
+        OwnPtr<CachedResourceRequestInitiators> m_cachedResourceRequestInitiators;
         OwnPtr<EventNames> m_eventNames;
         OwnPtr<ThreadTimers> m_threadTimers;
         OwnPtr<XMLMIMETypeRegExp> m_xmlTypeRegExp;
