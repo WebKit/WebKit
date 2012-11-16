@@ -42,7 +42,7 @@ public:
     virtual bool paint(ScrollbarThemeClient*, GraphicsContext*, const IntRect& dirtyRect);
     virtual void paintScrollCorner(ScrollView*, GraphicsContext*, const IntRect& cornerRect);
 
-    virtual ScrollbarPart hitTest(ScrollbarThemeClient*, const PlatformMouseEvent&);
+    virtual ScrollbarPart hitTest(ScrollbarThemeClient*, const IntPoint&);
 
     virtual bool shouldCenterOnThumb(ScrollbarThemeClient*, const PlatformMouseEvent&);
 

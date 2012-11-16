@@ -33,6 +33,10 @@
 #include "ScrollbarTheme.h"
 #include <algorithm>
 
+#if ENABLE(GESTURE_EVENTS)
+#include "PlatformGestureEvent.h"
+#endif
+
 // FIXME: The following #includes are a layering violation and should be removed.
 #include "AXObjectCache.h"
 #include "AccessibilityScrollbar.h"
@@ -80,6 +84,7 @@ Scrollbar::Scrollbar(ScrollableArea* scrollableArea, ScrollbarOrientation orient
     , m_hoveredPart(NoPart)
     , m_pressedPart(NoPart)
     , m_pressedPos(0)
+    , m_scrollPos(0)
     , m_draggingDocument(false)
     , m_documentDragPos(0)
     , m_enabled(true)
@@ -351,6 +356,45 @@ void Scrollbar::setPressedPart(ScrollbarPart part)
         theme()->invalidatePart(this, m_hoveredPart);
 }
 
+#if ENABLE(GESTURE_EVENTS)
+bool Scrollbar::gestureEvent(const PlatformGestureEvent& evt)
+{
+    bool handled = false;
+    switch (evt.type()) {
+    case PlatformEvent::GestureTapDown:
+        setPressedPart(theme()->hitTest(this, evt.position()));
+        m_pressedPos = (orientation() == HorizontalScrollbar ? convertFromContainingWindow(evt.position()).x() : convertFromContainingWindow(evt.position()).y());
+        return true;
+    case PlatformEvent::GestureTapDownCancel:
+    case PlatformEvent::GestureScrollBegin:
+        if (m_pressedPart == ThumbPart) {
+            m_scrollPos = m_pressedPos;
+            return true;
+        }
+        break;
+    case PlatformEvent::GestureScrollUpdate:
+        if (m_pressedPart == ThumbPart) {
+            m_scrollPos += HorizontalScrollbar ? evt.deltaX() : evt.deltaY();
+            moveThumb(m_scrollPos, false);
+            return true;
+        }
+        break;
+    case PlatformEvent::GestureScrollEnd:
+        m_scrollPos = 0;
+        break;
+    case PlatformEvent::GestureTap:
+        if (m_pressedPart != ThumbPart && m_pressedPart != NoPart)
+            handled = m_scrollableArea && m_scrollableArea->scroll(pressedPartScrollDirection(), pressedPartScrollGranularity());
+        break;
+    default:
+        break;
+    }
+    setPressedPart(NoPart);
+    m_pressedPos = 0;
+    return handled;
+}
+#endif
+
 bool Scrollbar::mouseMoved(const PlatformMouseEvent& evt)
 {
     if (m_pressedPart == ThumbPart) {
@@ -368,7 +412,7 @@ bool Scrollbar::mouseMoved(const PlatformMouseEvent& evt)
     if (m_pressedPart != NoPart)
         m_pressedPos = (orientation() == HorizontalScrollbar ? convertFromContainingWindow(evt.position()).x() : convertFromContainingWindow(evt.position()).y());
 
-    ScrollbarPart part = theme()->hitTest(this, evt);
+    ScrollbarPart part = theme()->hitTest(this, evt.position());
     if (part != m_hoveredPart) {
         if (m_pressedPart != NoPart) {
             if (part == m_pressedPart) {
@@ -414,7 +458,7 @@ bool Scrollbar::mouseUp(const PlatformMouseEvent& mouseEvent)
     if (m_scrollableArea) {
         // m_hoveredPart won't be updated until the next mouseMoved or mouseDown, so we have to hit test
         // to really know if the mouse has exited the scrollbar on a mouseUp.
-        ScrollbarPart part = theme()->hitTest(this, mouseEvent);
+        ScrollbarPart part = theme()->hitTest(this, mouseEvent.position());
         if (part == NoPart)
             m_scrollableArea->mouseExitedScrollbar(this);
     }
@@ -431,7 +475,7 @@ bool Scrollbar::mouseDown(const PlatformMouseEvent& evt)
     if (evt.button() == RightButton)
         return true; // FIXME: Handled as context menu by Qt right now.  Should just avoid even calling this method on a right click though.
 
-    setPressedPart(theme()->hitTest(this, evt));
+    setPressedPart(theme()->hitTest(this, evt.position()));
     int pressedPos = (orientation() == HorizontalScrollbar ? convertFromContainingWindow(evt.position()).x() : convertFromContainingWindow(evt.position()).y());
     
     if ((m_pressedPart == BackTrackPart || m_pressedPart == ForwardTrackPart) && theme()->shouldCenterOnThumb(this, evt)) {

@@ -1,3 +1,43 @@
+2012-11-16  Robert Flack  <flackr@chromium.org>
+
+        Handle gesture events on scrollbars.
+        https://bugs.webkit.org/show_bug.cgi?id=101516
+
+        Reviewed by Antonio Gomes.
+
+        Adds a gesture event handler to scrollbars and sends gestures beginning
+        over a scrollbar to this handler to allow touch scrolling scrollbars.
+
+        Test: fast/events/touch/gesture/gesture-scrollbar.html
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::clear):
+        (WebCore::EventHandler::handleGestureEvent):
+        (WebCore::EventHandler::isScrollbarHandlingGestures):
+        (WebCore):
+        * page/EventHandler.h:
+        (EventHandler):
+        * platform/Scrollbar.cpp:
+        (WebCore::Scrollbar::Scrollbar):
+        (WebCore):
+        (WebCore::Scrollbar::gestureEvent):
+        (WebCore::Scrollbar::mouseMoved):
+        (WebCore::Scrollbar::mouseUp):
+        (WebCore::Scrollbar::mouseDown):
+        * platform/Scrollbar.h:
+        (WebCore):
+        (Scrollbar):
+        * platform/ScrollbarTheme.h:
+        (WebCore::ScrollbarTheme::hitTest):
+        * platform/ScrollbarThemeComposite.cpp:
+        (WebCore::ScrollbarThemeComposite::hitTest):
+        * platform/ScrollbarThemeComposite.h:
+        (ScrollbarThemeComposite):
+        * platform/qt/ScrollbarThemeQStyle.cpp:
+        (WebCore::ScrollbarThemeQStyle::hitTest):
+        * platform/qt/ScrollbarThemeQStyle.h:
+        (ScrollbarThemeQStyle):
+
 2012-11-16  Xianzhu Wang  <wangxianzhu@chromium.org>
 
         [Chromium-Android] Stack overflow in MediaControlsChromiumAndroid.cpp

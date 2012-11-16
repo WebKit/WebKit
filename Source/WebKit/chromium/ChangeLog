@@ -1,3 +1,16 @@
+2012-11-16  Robert Flack  <flackr@chromium.org>
+
+        Handle gesture events on scrollbars.
+        https://bugs.webkit.org/show_bug.cgi?id=101516
+
+        Reviewed by Antonio Gomes.
+
+        Adds a gesture event handler to scrollbars and sends gestures beginning
+        over a scrollbar to this handler to allow touch scrolling scrollbars.
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::handleGestureEvent):
+
 2012-11-16  Peter Beverloo  <peter@chromium.org>
 
         Unreviewed.  Rolled DEPS.

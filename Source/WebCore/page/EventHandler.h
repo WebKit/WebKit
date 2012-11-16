@@ -172,6 +172,7 @@ public:
     bool handleGestureLongPress(const PlatformGestureEvent&);
     bool handleGestureTwoFingerTap(const PlatformGestureEvent&);
     bool handleGestureScrollUpdate(const PlatformGestureEvent&);
+    bool isScrollbarHandlingGestures() const;
 #endif
 
 #if ENABLE(TOUCH_ADJUSTMENT)
@@ -460,6 +461,7 @@ private:
 
 #if ENABLE(GESTURE_EVENTS)
     RefPtr<Node> m_scrollGestureHandlingNode;
+    RefPtr<Scrollbar> m_scrollbarHandlingScrollGesture;
 #endif
 
     double m_mouseMovedDurationRunningAverage;

@@ -49,7 +49,7 @@ public:
     virtual void updateEnabledState(ScrollbarThemeClient*) { };
 
     virtual bool paint(ScrollbarThemeClient*, GraphicsContext*, const IntRect& /*damageRect*/) { return false; }
-    virtual ScrollbarPart hitTest(ScrollbarThemeClient*, const PlatformMouseEvent&) { return NoPart; }
+    virtual ScrollbarPart hitTest(ScrollbarThemeClient*, const IntPoint&) { return NoPart; }
     
     virtual int scrollbarThickness(ScrollbarControlSize = RegularScrollbar) { return 0; }
 

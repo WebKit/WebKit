@@ -692,6 +692,8 @@ bool WebViewImpl::handleGestureEvent(const WebGestureEvent& event)
 
     switch (event.type) {
     case WebInputEvent::GestureFlingStart: {
+        if (mainFrameImpl()->frame()->eventHandler()->isScrollbarHandlingGestures())
+            break;
         m_client->cancelScheduledContentIntents();
         m_lastWheelPosition = WebPoint(event.x, event.y);
         m_lastWheelGlobalPosition = WebPoint(event.globalX, event.globalY);

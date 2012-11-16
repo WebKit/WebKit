@@ -34,7 +34,7 @@ class ScrollbarThemeComposite : public ScrollbarTheme {
 public:
     // Implement ScrollbarTheme interface
     virtual bool paint(ScrollbarThemeClient*, GraphicsContext*, const IntRect& damageRect);
-    virtual ScrollbarPart hitTest(ScrollbarThemeClient*, const PlatformMouseEvent&);
+    virtual ScrollbarPart hitTest(ScrollbarThemeClient*, const IntPoint&);
     virtual void invalidatePart(ScrollbarThemeClient*, ScrollbarPart);
     virtual int thumbPosition(ScrollbarThemeClient*);
     virtual int thumbLength(ScrollbarThemeClient*);

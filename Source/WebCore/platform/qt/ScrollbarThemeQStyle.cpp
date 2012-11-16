@@ -151,10 +151,10 @@ bool ScrollbarThemeQStyle::paint(ScrollbarThemeClient* scrollbar, GraphicsContex
     return true;
 }
 
-ScrollbarPart ScrollbarThemeQStyle::hitTest(ScrollbarThemeClient* scrollbar, const PlatformMouseEvent& evt)
+ScrollbarPart ScrollbarThemeQStyle::hitTest(ScrollbarThemeClient* scrollbar, const IntPoint& position)
 {
     QStyleFacadeOption opt = initSliderStyleOption(scrollbar);
-    const QPoint pos = scrollbar->convertFromContainingWindow(evt.position());
+    const QPoint pos = scrollbar->convertFromContainingWindow(position);
     opt.rect.moveTo(QPoint(0, 0));
     QStyleFacade::SubControl sc = m_qStyle->hitTestScrollBar(opt, pos);
     return scrollbarPart(sc);
