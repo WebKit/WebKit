@@ -19,7 +19,7 @@ var test = function()
 
     function step1()
     {
-        InspectorTest.addResult(watchExpressionsSection.element.innerHTML.indexOf("watch-expressions-error-level") !== -1 ? "SUCCESS" : "FAILED");
+        InspectorTest.addResult(watchExpressionsSection.element.textContent.indexOf("<not available>") !== -1 ? "SUCCESS" : "FAILED");
 
         // Clear watch expressions after execution.
         watchExpressionsSection.watchExpressions = [];

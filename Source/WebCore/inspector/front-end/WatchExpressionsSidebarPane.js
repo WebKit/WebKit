@@ -388,8 +388,11 @@ WebInspector.WatchExpressionTreeElement.prototype = {
     {
         WebInspector.ObjectPropertyTreeElement.prototype.update.call(this);
 
-        if (this.property.wasThrown)
-            this.valueElement.addStyleClass("watch-expressions-error-level");
+        if (this.property.wasThrown) {
+            this.valueElement.textContent = WebInspector.UIString("<not available>");
+            this.listItemElement.addStyleClass("dimmed");
+        } else
+            this.listItemElement.removeStyleClass("dimmed");
 
         var deleteButton = document.createElement("input");
         deleteButton.type = "button";

@@ -472,6 +472,7 @@ localizedStrings["Node removal"] = "Node removal";
 localizedStrings["Subtree Modifications"] = "Subtree Modifications";
 localizedStrings["Subtree modifications"] = "Subtree modifications";
 localizedStrings["<node>"] = "<node>";
+localizedStrings["<not available>"] = "<not available>";
 localizedStrings["Paused on a \"%s\" breakpoint set on %s, because a new child was added to its descendant %s."] = "Paused on a \"%s\" breakpoint set on %s, because a new child was added to its descendant %s.";
 localizedStrings["Paused on a \"%s\" breakpoint set on %s, because a new child was added to that node."] = "Paused on a \"%s\" breakpoint set on %s, because a new child was added to that node.";
 localizedStrings["Paused on a \"%s\" breakpoint set on %s, because its descendant %s was removed."] = "Paused on a \"%s\" breakpoint set on %s, because its descendant %s was removed.";
