@@ -99,7 +99,7 @@ WebInspector.RemoteObject.resolveNode = function(node, objectGroup, callback)
 }
 
 /**
- * @param {RuntimeAgent.RemoteObject} payload
+ * @param {RuntimeAgent.RemoteObject=} payload
  * @return {WebInspector.RemoteObject}
  */
 WebInspector.RemoteObject.fromPayload = function(payload)
@@ -163,7 +163,7 @@ WebInspector.RemoteObject.prototype = {
     },
 
     /**
-     * @param {function(Array.<WebInspector.RemoteObjectProperty>)} callback
+     * @param {function(Array.<WebInspector.RemoteObjectProperty>, Array.<WebInspector.RemoteObjectProperty>=)} callback
      */
     getOwnProperties: function(callback)
     {
@@ -171,7 +171,7 @@ WebInspector.RemoteObject.prototype = {
     },
 
     /**
-     * @param {function(Array.<WebInspector.RemoteObjectProperty>)} callback
+     * @param {function(Array.<WebInspector.RemoteObjectProperty>, Array.<WebInspector.RemoteObjectProperty>=)} callback
      */
     getAllProperties: function(callback)
     {
@@ -180,7 +180,7 @@ WebInspector.RemoteObject.prototype = {
 
     /**
      * @param {boolean} ownProperties
-     * @param {function(Array.<RuntimeAgent.RemoteObject>)} callback
+     * @param {function(Array.<WebInspector.RemoteObjectProperty>, Array.<WebInspector.RemoteObjectProperty>=)} callback
      */
     _getProperties: function(ownProperties, callback)
     {
@@ -191,9 +191,10 @@ WebInspector.RemoteObject.prototype = {
 
         /**
          * @param {?Protocol.Error} error
-         * @param {Array.<WebInspector.RemoteObjectProperty>} properties
+         * @param {Array.<RuntimeAgent.PropertyDescriptor>} properties
+         * @param {Array.<RuntimeAgent.InternalPropertyDescriptor>=} internalProperties
          */
-        function remoteObjectBinder(error, properties)
+        function remoteObjectBinder(error, properties, internalProperties)
         {
             if (error) {
                 callback(null);
@@ -210,7 +211,15 @@ WebInspector.RemoteObject.prototype = {
                 } else
                     result.push(new WebInspector.RemoteObjectProperty(property.name, WebInspector.RemoteObject.fromPayload(property.value), property));
             }
-            callback(result);
+            var internalPropertiesResult;
+            if (internalProperties) {
+                internalPropertiesResult = [];
+                for (var i = 0; i < internalProperties.length; i++) {
+                    var property = internalProperties[i];
+                    internalPropertiesResult.push(new WebInspector.RemoteObjectProperty(property.name, WebInspector.RemoteObject.fromPayload(property.value)));
+                }
+            }
+            callback(result, internalPropertiesResult);
         }
         RuntimeAgent.getProperties(this._objectId, ownProperties, remoteObjectBinder);
     },

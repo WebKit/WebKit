@@ -1,0 +1,31 @@
+Tests how debugger presents special properties of closures, bound functions and object wrappers.
+
+Debugger was enabled.
+Script source was shown.
+Set timer for test function.
+Watch expressions updated.
+Nodes are expanded.
+'Object(true)' => 'Boolean'
+    '__proto__' => 'Boolean'
+    '[[PrimitiveValue]]' => 'true'
+'(function(a,b) { return a + b; })' => 'function (a,b) { return a + b; }'
+    'arguments' => 'null'
+    'caller' => 'null'
+    'length' => '2'
+    'name' => '""'
+    'prototype' => 'Object'
+    '__proto__' => 'function Empty() {}'
+    <function scope>
+'(function(a,b) { return a + b; }).bind({}, 2)' => 'function () { [native code] }'
+    'get arguments' => 'function ThrowTypeError() { [native code] }'
+    'get caller' => 'function ThrowTypeError() { [native code] }'
+    'length' => '1'
+    'name' => '""'
+    'set arguments' => 'function ThrowTypeError() { [native code] }'
+    'set caller' => 'function ThrowTypeError() { [native code] }'
+    '__proto__' => 'function Empty() {}'
+    '[[TargetFunction]]' => 'function (a,b) { return a + b; }'
+    '[[BoundThis]]' => 'Object'
+    '[[BoundArgs]]' => 'Array[1]'
+Debugger was disabled.
+

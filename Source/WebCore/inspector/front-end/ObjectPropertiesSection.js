@@ -76,7 +76,7 @@ WebInspector.ObjectPropertiesSection.prototype = {
             return;
         }
 
-        function callback(properties)
+        function callback(properties, internalProperties)
         {
             if (!properties)
                 return;
@@ -428,7 +428,11 @@ WebInspector.ObjectPropertyTreeElement.populate = function(treeElement, value) {
         return;
     }
 
-    function callback(properties)
+    /**
+     * @param {Array.<WebInspector.RemoteObjectProperty>} properties
+     * @param {Array.<WebInspector.RemoteObjectProperty>=} internalProperties
+     */
+    function callback(properties, internalProperties)
     {
         treeElement.removeChildren();
         if (!properties)
@@ -441,8 +445,29 @@ WebInspector.ObjectPropertyTreeElement.populate = function(treeElement, value) {
             properties[i].parentObject = value;
             treeElement.appendChild(new treeElement.treeOutline.section.treeElementConstructor(properties[i]));
         }
-        if (value.type === "function")
-            treeElement.appendChild(new WebInspector.FunctionScopeMainTreeElement(value));
+        if (value.type === "function") {
+            // Whether function has TargetFunction internal property.
+            // This is a simple way to tell that the function is actually a bound function (we are not told).
+            // Bound function never has inner scope and doesn't need corresponding UI node.   
+            var hasTargetFunction = false;
+
+            if (internalProperties) {
+                for (var i = 0; i < internalProperties.length; i++) {
+                    if (internalProperties[i].name == "[[TargetFunction]]") {
+                        hasTargetFunction = true;
+                        break;
+                    }
+                }
+            }
+            if (!hasTargetFunction)
+                treeElement.appendChild(new WebInspector.FunctionScopeMainTreeElement(value));
+        }
+        if (internalProperties) {
+            for (var i = 0; i < internalProperties.length; i++) {
+                internalProperties[i].parentObject = value;
+                treeElement.appendChild(new treeElement.treeOutline.section.treeElementConstructor(internalProperties[i]));
+            } 
+        }
     }
 
     value.getOwnProperties(callback);
@@ -688,7 +713,7 @@ WebInspector.ArrayGroupingTreeElement._populateAsFragment = function(treeElement
     }
 
     /** @this {WebInspector.ArrayGroupingTreeElement} */
-    function processProperties(properties)
+    function processProperties(properties, internalProperties)
     {
         if (!properties)
             return;
@@ -733,7 +758,7 @@ WebInspector.ArrayGroupingTreeElement._populateNonIndexProperties = function(tre
     }
 
     /** @this {WebInspector.ArrayGroupingTreeElement} */
-    function processProperties(properties)
+    function processProperties(properties, internalProperties)
     {
         if (!properties)
             return;

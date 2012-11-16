@@ -261,6 +261,29 @@ InspectorTest.dumpObjectPropertySection = function(section, formatters)
     }
 }
 
+InspectorTest.dumpObjectPropertySectionDeep = function(section)
+{
+    function domNodeToString(node) {
+        if (node)
+            return "'" + node.textContent + "'";
+        else
+            return "null";
+    }
+    function dumpTreeElementRecursively(treeElement, prefix) {
+        if ("nameElement" in treeElement)
+            InspectorTest.addResult(prefix + domNodeToString(treeElement.nameElement) + " => " + domNodeToString(treeElement.valueElement));
+        else
+            InspectorTest.addResult(prefix + treeElement.title);
+        for (var i = 0; i < treeElement.children.length; i++)
+            dumpTreeElementRecursively(treeElement.children[i], prefix + "    ");
+    }
+
+    var childNodes = section.propertiesTreeOutline.children;
+    for (var i = 0; i < childNodes.length; i++) {
+        dumpTreeElementRecursively(childNodes[i], "");
+    }
+}
+
 // FIXME: this returns the first tree item found (may fail for same-named properties in a style).
 InspectorTest.getElementStylePropertyTreeItem = function(propertyName)
 {

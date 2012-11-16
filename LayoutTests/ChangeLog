@@ -1,3 +1,19 @@
+2012-11-16  Peter Rybin  <prybin@chromium.org>
+
+        Web Inspector: show internal properties in inspector frontend
+        https://bugs.webkit.org/show_bug.cgi?id=100021
+
+        Reviewed by Yury Semikhatsky.
+
+        A new test is added. InspectorTest.dumpObjectPropertySectionDeep function is added.
+
+        * http/tests/inspector/elements-test.js:
+        (initialize_ElementTest.InspectorTest.dumpObjectPropertySectionDeep):
+        (initialize_ElementTest.InspectorTest.dumpObjectPropertySectionDeep.dumpTreeElement):
+        * inspector/debugger/properties-special-expected.txt: Added.
+        * inspector/debugger/properties-special.html: Added.
+        * platform/chromium/inspector/debugger/properties-special-expected.txt: Added.
+
 2012-11-16  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r134865.

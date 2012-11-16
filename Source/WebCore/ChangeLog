@@ -1,3 +1,25 @@
+2012-11-16  Peter Rybin  <prybin@chromium.org>
+
+        Web Inspector: show internal properties in inspector frontend
+        https://bugs.webkit.org/show_bug.cgi?id=100021
+
+        Reviewed by Yury Semikhatsky.
+
+        New field 'internalProperties' is parsed and passed via all callbacks to Object Properties section.
+
+        Test: inspector/debugger/properties-special.html
+
+        * inspector/front-end/ObjectPropertiesSection.js:
+        (WebInspector.ObjectPropertiesSection.prototype.update.callback):
+        (WebInspector.ObjectPropertiesSection.prototype.update):
+        (.callback):
+        (WebInspector.ObjectPropertyTreeElement.populate):
+        (.processProperties):
+        (WebInspector.ArrayGroupingTreeElement._populateAsFragment):
+        (WebInspector.ArrayGroupingTreeElement._populateNonIndexProperties):
+        * inspector/front-end/RemoteObject.js:
+        (WebInspector.RemoteObject.prototype.set else):
+
 2012-11-06  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: metrics, geolocation, orientation overrides do not belong to the settings panel
