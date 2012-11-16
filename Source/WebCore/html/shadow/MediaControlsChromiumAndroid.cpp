@@ -55,7 +55,7 @@ MediaControlsChromiumAndroid::MediaControlsChromiumAndroid(Document* document)
 
 PassRefPtr<MediaControls> MediaControls::create(Document* document)
 {
-    return MediaControlsChromiumAndroid::create(document);
+    return MediaControlsChromiumAndroid::createControls(document);
 }
 
 PassRefPtr<MediaControlsChromiumAndroid> MediaControlsChromiumAndroid::createControls(Document* document)

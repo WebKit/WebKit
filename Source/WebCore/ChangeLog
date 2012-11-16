@@ -1,3 +1,15 @@
+2012-11-16  Xianzhu Wang  <wangxianzhu@chromium.org>
+
+        [Chromium-Android] Stack overflow in MediaControlsChromiumAndroid.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=102444
+
+        Reviewed by Adam Barth.
+
+        No new tests. Have been covered by many existing layout tests.
+
+        * html/shadow/MediaControlsChromiumAndroid.cpp:
+        (WebCore::MediaControls::create): Calls createControls instead of itself.
+
 2012-11-16  Andreas Kling  <akling@apple.com>
 
         StyleResolver: Optimize sharing candidate evaluation for elements with shared attribute data.
