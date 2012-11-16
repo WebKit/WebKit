@@ -1,5 +1,17 @@
 2012-11-15  Kent Tamura  <tkent@chromium.org>
 
+        fast/forms/select/select-state-restore.html is flaky.
+        https://bugs.webkit.org/show_bug.cgi?id=90207
+
+        Reviewed by Hajime Morita.
+
+        * fast/forms/select/select-state-restore.html:
+        It was possible that we started the test before loading
+        js-test-post.js. It means we might miss calling waitUntilDone.
+        * platform/chromium/TestExpectations:
+
+2012-11-15  Kent Tamura  <tkent@chromium.org>
+
         [Chromium] Rebaseline for recent calendar picker and suggestion picker changes
 
         * platform/chromium-linux-x86/platform/chromium/fast/forms/suggestion-picker/month-suggestion-picker-appearance-rtl-expected.png: Added.
