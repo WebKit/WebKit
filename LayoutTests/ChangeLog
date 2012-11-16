@@ -1,3 +1,10 @@
+2012-11-15  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. Skipped media/video-src-blob.html on Windows.
+        Blob not enabled on Windows.
+
+        * platform/win/TestExpectations:
+
 2012-11-15  David Grogan  <dgrogan@chromium.org>
 
         IndexedDB: setVersion batch 8
