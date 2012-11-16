@@ -4078,6 +4078,7 @@ webcore_sources += \
 	Source/WebCore/page/PerformanceUserTiming.h \
 	Source/WebCore/page/PointerLockController.cpp \
 	Source/WebCore/page/PointerLockController.h \
+	Source/WebCore/page/PopupOpeningObserver.h \
 	Source/WebCore/page/PrintContext.cpp \
 	Source/WebCore/page/PrintContext.h \
 	Source/WebCore/page/Screen.cpp \

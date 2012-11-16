@@ -28,7 +28,6 @@
 #include "BaseChooserOnlyDateAndTimeInputType.h"
 
 #include "Chrome.h"
-#include "ChromeClient.h"
 #include "HTMLDivElement.h"
 #include "HTMLInputElement.h"
 #include "Page.h"
@@ -57,7 +56,7 @@ void BaseChooserOnlyDateAndTimeInputType::handleDOMActivateEvent(Event*)
     DateTimeChooserParameters parameters;
     if (!element()->setupDateTimeChooserParameters(parameters))
         return;
-    m_dateTimeChooser = chrome->client()->openDateTimeChooser(this, parameters);
+    m_dateTimeChooser = chrome->openDateTimeChooser(this, parameters);
 }
 
 RenderObject* BaseChooserOnlyDateAndTimeInputType::createRenderer(RenderArena* arena, RenderStyle* style) const

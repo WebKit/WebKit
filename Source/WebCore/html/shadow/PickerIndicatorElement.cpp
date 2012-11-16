@@ -33,7 +33,6 @@
 #include "PickerIndicatorElement.h"
 
 #include "Chrome.h"
-#include "ChromeClient.h"
 #include "Event.h"
 #include "Page.h"
 #include "RenderDetailsMarker.h"
@@ -117,7 +116,7 @@ void PickerIndicatorElement::openPopup()
     DateTimeChooserParameters parameters;
     if (!m_pickerIndicatorOwner->setupDateTimeChooserParameters(parameters))
         return;
-    m_chooser = chrome->client()->openDateTimeChooser(this, parameters);
+    m_chooser = chrome->openDateTimeChooser(this, parameters);
 }
 
 void PickerIndicatorElement::closePopup()

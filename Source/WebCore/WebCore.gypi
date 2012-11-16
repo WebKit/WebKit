@@ -3153,6 +3153,7 @@
             'page/PerformanceUserTiming.h',
             'page/PointerLockController.cpp',
             'page/PointerLockController.h',
+            'page/PopupOpeningObserver.h',
             'page/PrintContext.cpp',
             'page/Screen.cpp',
             'page/Screen.h',

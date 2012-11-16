@@ -41,6 +41,8 @@ namespace WebCore {
     class ColorChooser;
     class ColorChooserClient;
 #endif
+    class DateTimeChooser;
+    class DateTimeChooserClient;
     class FileChooser;
     class FileIconLoader;
     class FloatRect;
@@ -53,8 +55,10 @@ namespace WebCore {
     class Page;
     class PopupMenu;
     class PopupMenuClient;
+    class PopupOpeningObserver;
     class SearchPopupMenu;
 
+    struct DateTimeChooserParameters;
     struct FrameLoadRequest;
     struct ViewportArguments;
     struct WindowFeatures;
@@ -149,6 +153,9 @@ namespace WebCore {
 #if ENABLE(INPUT_TYPE_COLOR)
         PassOwnPtr<ColorChooser> createColorChooser(ColorChooserClient*, const Color& initialColor);
 #endif
+#if ENABLE(DATE_AND_TIME_INPUT_TYPES)
+        PassRefPtr<DateTimeChooser> openDateTimeChooser(DateTimeChooserClient*, const DateTimeChooserParameters&);
+#endif
 
         void runOpenPanel(Frame*, PassRefPtr<FileChooser>);
         void loadIconForFiles(const Vector<String>&, FileIconLoader*);
@@ -170,11 +177,16 @@ namespace WebCore {
         PassRefPtr<PopupMenu> createPopupMenu(PopupMenuClient*) const;
         PassRefPtr<SearchPopupMenu> createSearchPopupMenu(PopupMenuClient*) const;
 
+        void registerPopupOpeningObserver(PopupOpeningObserver*);
+        void unregisterPopupOpeningObserver(PopupOpeningObserver*);
+
     private:
         Chrome(Page*, ChromeClient*);
+        void notifyPopupOpeningObservers() const;
 
         Page* m_page;
         ChromeClient* m_client;
+        Vector<PopupOpeningObserver*> m_popupOpeningObservers;
     };
 }
 

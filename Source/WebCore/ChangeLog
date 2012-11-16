@@ -1,3 +1,72 @@
+2012-11-15  Kent Tamura  <tkent@chromium.org>
+
+        A Spin button should release mouse event capturing when a modal dialog opens
+        https://bugs.webkit.org/show_bug.cgi?id=98007
+
+        Reviewed by Hajime Morita.
+
+        Description of bug:
+        If the mouse left button is pressed on a spin button in
+        input[type=number] and a 'change' event handler opens a modal dialog
+        such as alert(), a repeating timer doesn't stop and mouse event
+        capturing isn't released even though the mouse pointer isn't on the spin
+        button.
+        A user will see repeating alert dialogs for a document like <input
+        type=number value=1 onchange="if (this.value==1) {alert(...);
+        this.value=1;}"> by clicking the up button.
+
+        How to solve:
+        We should notify modal dialog or popup open to a spin button.
+        This patch introduce PopupOpeningObserver. Chrome notifies it when
+        any dialogs / popups is opening. SpinButtonElement implements
+        PopupOpeningObserver and registers/unregisters itself to/from
+        Chrome.
+
+        No new tests. This is a behavior change, but it's very hard to make an
+        automated test for timer-related behavior.
+
+        * page/PopupOpeningObserver.h: Added.
+        * GNUmakefile.list.am: Add PopupOpeningObserver.h
+        * Target.pri: Ditto.
+        * WebCore.gypi: Ditto.
+        * WebCore.vcproj/WebCore.vcproj: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+
+        * page/Chrome.cpp:
+        (WebCore::Chrome::runJavaScriptAlert): Calls notifyPopupOpeningObservers.
+        (WebCore::Chrome::runJavaScriptConfirm): Ditto.
+        (WebCore::Chrome::runJavaScriptPrompt): Ditto.
+        (WebCore::Chrome::createColorChooser): Ditto.
+        (WebCore::Chrome::openDateTimeChooser):
+        Added. Calls notifyPopupOpeningObservers before calling
+        ChromeClient::openDateTimeChooser.
+        (WebCore::Chrome::runOpenPanel): Calls notifyPopupOpeningObservers.
+        (WebCore::Chrome::createPopupMenu): Ditto.
+        (WebCore::Chrome::createSearchPopupMenu): Ditto.
+        (WebCore::Chrome::registerPopupOpeningObserver): Added.
+        (WebCore::Chrome::unregisterPopupOpeningObserver): Added.
+        (WebCore::Chrome::notifyPopupOpeningObservers): Added.
+        * page/Chrome.h: Added new members and required class/struct declarations.
+
+        * html/BaseChooserOnlyDateAndTimeInputType.cpp:
+        (WebCore::BaseChooserOnlyDateAndTimeInputType::handleDOMActivateEvent):
+        Use Chrome::openDateTimeChooser instead of ChromeClient::openDateTimeChooser.
+        * html/shadow/PickerIndicatorElement.cpp:
+        (WebCore::PickerIndicatorElement::openPopup): Ditto.
+
+        * html/shadow/SpinButtonElement.h:
+        (SpinButtonElement): Declare willOpenPopup.
+        * html/shadow/SpinButtonElement.cpp:
+        (WebCore::SpinButtonElement::defaultEventHandler):
+        Change the order of timer start and changing the value so that we
+        can cancel the timer correctly.
+        Calls Chrome::registerPopupOpeningObserver on starting mouse capturing.
+        (WebCore::SpinButtonElement::willOpenPopup):
+        Release mouse event capturing before opening a modal dialog.
+        (WebCore::SpinButtonElement::releaseCapture):
+        Calls Chrome::unregisterPopupOpeningObserver.
+
+
 2012-11-15  Shinya Kawanaka  <shinyak@chromium.org>
 
         Chaging pseudoClass (:enabled) should cause distribution

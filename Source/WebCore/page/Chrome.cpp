@@ -24,6 +24,7 @@
 
 #include "ChromeClient.h"
 #include "DNS.h"
+#include "DateTimeChooser.h"
 #include "Document.h"
 #include "FileIconLoader.h"
 #include "FileChooser.h"
@@ -40,6 +41,7 @@
 #include "InspectorInstrumentation.h"
 #include "Page.h"
 #include "PageGroupLoadDeferrer.h"
+#include "PopupOpeningObserver.h"
 #include "RenderObject.h"
 #include "ResourceHandle.h"
 #include "SecurityOrigin.h"
@@ -309,6 +311,7 @@ void Chrome::runJavaScriptAlert(Frame* frame, const String& message)
     PageGroupLoadDeferrer deferrer(m_page, true);
 
     ASSERT(frame);
+    notifyPopupOpeningObservers();
     m_client->runJavaScriptAlert(frame, frame->displayStringModifiedByEncoding(message));
 }
 
@@ -322,6 +325,7 @@ bool Chrome::runJavaScriptConfirm(Frame* frame, const String& message)
     PageGroupLoadDeferrer deferrer(m_page, true);
 
     ASSERT(frame);
+    notifyPopupOpeningObservers();
     return m_client->runJavaScriptConfirm(frame, frame->displayStringModifiedByEncoding(message));
 }
 
@@ -335,6 +339,7 @@ bool Chrome::runJavaScriptPrompt(Frame* frame, const String& prompt, const Strin
     PageGroupLoadDeferrer deferrer(m_page, true);
 
     ASSERT(frame);
+    notifyPopupOpeningObservers();
     bool ok = m_client->runJavaScriptPrompt(frame, frame->displayStringModifiedByEncoding(prompt), frame->displayStringModifiedByEncoding(defaultValue), result);
 
     if (ok)
@@ -450,12 +455,22 @@ void Chrome::enumerateChosenDirectory(FileChooser* fileChooser)
 #if ENABLE(INPUT_TYPE_COLOR)
 PassOwnPtr<ColorChooser> Chrome::createColorChooser(ColorChooserClient* client, const Color& initialColor)
 {
+    notifyPopupOpeningObservers();
     return m_client->createColorChooser(client, initialColor);
+}
+#endif
+
+#if ENABLE(DATE_AND_TIME_INPUT_TYPES)
+PassRefPtr<DateTimeChooser> Chrome::openDateTimeChooser(DateTimeChooserClient* client, const DateTimeChooserParameters& parameters)
+{
+    notifyPopupOpeningObservers();
+    return m_client->openDateTimeChooser(client, parameters);
 }
 #endif
 
 void Chrome::runOpenPanel(Frame* frame, PassRefPtr<FileChooser> fileChooser)
 {
+    notifyPopupOpeningObservers();
     m_client->runOpenPanel(frame, fileChooser);
 }
 
@@ -542,17 +557,39 @@ bool Chrome::hasOpenedPopup() const
 
 PassRefPtr<PopupMenu> Chrome::createPopupMenu(PopupMenuClient* client) const
 {
+    notifyPopupOpeningObservers();
     return m_client->createPopupMenu(client);
 }
 
 PassRefPtr<SearchPopupMenu> Chrome::createSearchPopupMenu(PopupMenuClient* client) const
 {
+    notifyPopupOpeningObservers();
     return m_client->createSearchPopupMenu(client);
 }
 
 bool Chrome::requiresFullscreenForVideoPlayback()
 {
     return m_client->requiresFullscreenForVideoPlayback();
+}
+
+void Chrome::registerPopupOpeningObserver(PopupOpeningObserver* observer)
+{
+    ASSERT(observer);
+    m_popupOpeningObservers.append(observer);
+}
+
+void Chrome::unregisterPopupOpeningObserver(PopupOpeningObserver* observer)
+{
+    size_t index = m_popupOpeningObservers.find(observer);
+    ASSERT(index != notFound);
+    m_popupOpeningObservers.remove(index);
+}
+
+void Chrome::notifyPopupOpeningObservers() const
+{
+    const Vector<PopupOpeningObserver*> observers(m_popupOpeningObservers);
+    for (size_t i = 0; i < observers.size(); ++i)
+        observers[i]->willOpenPopup();
 }
 
 } // namespace WebCore

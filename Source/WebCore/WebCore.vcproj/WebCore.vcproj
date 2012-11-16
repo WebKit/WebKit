@@ -27170,6 +27170,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\page\PoppupOpeningObserver.h"
+				>
+			</File>
+			<File
 				RelativePath="..\page\PrintContext.cpp"
 				>
 			</File>

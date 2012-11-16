@@ -27,11 +27,13 @@
 #include "config.h"
 #include "SpinButtonElement.h"
 
+#include "Chrome.h"
 #include "EventHandler.h"
 #include "EventNames.h"
 #include "Frame.h"
 #include "HTMLNames.h"
 #include "MouseEvent.h"
+#include "Page.h"
 #include "RenderBox.h"
 #include "ScrollbarTheme.h"
 #include "WheelEvent.h"
@@ -100,9 +102,13 @@ void SpinButtonElement::defaultEventHandler(Event* event)
                 m_spinButtonOwner->focusAndSelectSpinButtonOwner();
             if (renderer()) {
                 if (m_upDownState != Indeterminate) {
+                    // A JavaScript event handler called in doStepAction() below
+                    // might change the element state and we might need to
+                    // cancel the repeating timer by the state change. If we
+                    // started the timer after doStepAction(), we would have no
+                    // chance to cancel the timer.
+                    startRepeatingTimer();
                     doStepAction(m_upDownState == Up ? 1 : -1);
-                    if (renderer())
-                        startRepeatingTimer();
                 }
             }
             event->setDefaultHandled();
@@ -115,6 +121,10 @@ void SpinButtonElement::defaultEventHandler(Event* event)
                 if (Frame* frame = document()->frame()) {
                     frame->eventHandler()->setCapturingMouseEventsNode(this);
                     m_capturing = true;
+                    if (Page* page = document()->page()) {
+                        if (page->chrome())
+                            page->chrome()->registerPopupOpeningObserver(this);
+                    }
                 }
             }
             UpDownState oldUpDownState = m_upDownState;
@@ -129,6 +139,12 @@ void SpinButtonElement::defaultEventHandler(Event* event)
 
     if (!event->defaultHandled())
         HTMLDivElement::defaultEventHandler(event);
+}
+
+void SpinButtonElement::willOpenPopup()
+{
+    releaseCapture();
+    m_upDownState = Indeterminate;
 }
 
 void SpinButtonElement::forwardEvent(Event* event)
@@ -183,6 +199,10 @@ void SpinButtonElement::releaseCapture()
         if (Frame* frame = document()->frame()) {
             frame->eventHandler()->setCapturingMouseEventsNode(0);
             m_capturing = false;
+            if (Page* page = document()->page()) {
+                if (page->chrome())
+                    page->chrome()->unregisterPopupOpeningObserver(this);
+            }
         }
     }
 }
