@@ -48,7 +48,7 @@ static struct CoreException {
     { "InvalidStateError", "An attempt was made to use an object that is not, or is no longer, usable." },
     { "SyntaxError", "An invalid or illegal string was specified." },
     { "InvalidModificationError", "An attempt was made to modify the type of the underlying object." },
-    { "NAMESPACE_ERR", "An attempt was made to create or change an object in a way which is incorrect with regard to namespaces." },
+    { "NamespaceError", "An attempt was made to create or change an object in a way which is incorrect with regard to namespaces." },
     { "INVALID_ACCESS_ERR", "A parameter or an operation was not supported by the underlying object." },
     { "VALIDATION_ERR", "A call to a method such as insertBefore or removeChild would make the Node invalid with respect to \"partial validity\", this exception would be raised and the operation would not be done." },
     { "TYPE_MISMATCH_ERR", "The type of an object was incompatible with the expected type of the parameter associated to the object." },

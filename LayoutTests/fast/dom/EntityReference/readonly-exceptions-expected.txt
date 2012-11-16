@@ -7,7 +7,7 @@ PASS xmlDoc2.adoptNode(entityReference) threw exception Error: NoModificationAll
 PASS entityReference.ownerDocument is xmlDoc
 PASS entityReference.nodeValue = 'foo' threw exception Error: NoModificationAllowedError: DOM Exception 7.
 PASS entityReference.nodeValue is null
-PASS entityReference.prefix = 'foo' threw exception Error: NAMESPACE_ERR: DOM Exception 14.
+PASS entityReference.prefix = 'foo' threw exception Error: NamespaceError: DOM Exception 14.
 PASS entityReference.prefix is null
 PASS entityReference.textContent = 'foo' threw exception Error: NoModificationAllowedError: DOM Exception 7.
 FAIL entityReference.textContent should be >. Was .

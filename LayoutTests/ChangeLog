@@ -1,3 +1,20 @@
+2012-11-15  Erik Arvidsson  <arv@chromium.org>
+
+        Update DOMException name: NamespaceError
+        https://bugs.webkit.org/show_bug.cgi?id=102395
+
+        Reviewed by Kentaro Hara.
+
+        Updated tests and expectations.
+
+        * fast/dom/EntityReference/readonly-exceptions-expected.txt:
+        * fast/dom/SelectorAPI/not-supported-namespace-in-selector-expected.txt:
+        * fast/dom/node-prefix-setter-namespace-exception-expected.txt:
+        * fast/dom/script-tests/setAttributeNS-prefix-and-null-namespace.js:
+        * fast/dom/setAttributeNS-prefix-and-null-namespace-expected.txt:
+        * fast/xpath/attr-namespace-expected.txt:
+        * fast/xpath/py-dom-xpath/nodetests-expected.txt:
+
 2012-11-15  Rick Byers  <rbyers@chromium.org>
 
         custom CSS cursors ignore hotspot values embedded in CUR files

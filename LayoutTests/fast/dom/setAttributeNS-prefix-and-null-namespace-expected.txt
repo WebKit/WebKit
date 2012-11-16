@@ -3,7 +3,7 @@ Test that calling setAttributeNS() with a prefixed qualifiedName and null NS thr
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS document.createElement('test').setAttributeNS(null, 'foo:bar', 'baz') threw exception Error: NAMESPACE_ERR: DOM Exception 14.
+PASS document.createElement('test').setAttributeNS(null, 'foo:bar', 'baz') threw exception Error: NamespaceError: DOM Exception 14.
 PASS successfullyParsed is true
 
 TEST COMPLETE
