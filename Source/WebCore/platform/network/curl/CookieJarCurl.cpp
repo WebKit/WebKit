@@ -37,18 +37,18 @@ String cookiesForDOM(NetworkingContext*, const KURL&, const KURL& url)
     return cookieJar.get(url.string());
 }
 
-String cookieRequestHeaderFieldValue(NetworkingContext*, const KURL& url)
+String cookieRequestHeaderFieldValue(NetworkingContext* context, const KURL& /*firstParty*/, const KURL& url)
 {
     // FIXME: include HttpOnly cookie.
     return cookieJar.get(url.string());
 }
 
-bool cookiesEnabled(NetworkingContext*)
+bool cookiesEnabled(NetworkingContext* context, const KURL& /*firstParty*/, const KURL& /*url*/)
 {
     return true;
 }
 
-bool getRawCookies(NetworkingContext*, const KURL&, Vector<Cookie>& rawCookies)
+bool getRawCookies(NetworkingContext* context, const KURL& /*firstParty*/, const KURL& /*url*/, Vector<Cookie>& rawCookies)
 {
     // FIXME: Not yet implemented
     rawCookies.clear();

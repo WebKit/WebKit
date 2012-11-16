@@ -64,18 +64,18 @@ String cookiesForDOM(NetworkingContext*, const KURL&, const KURL& url)
     return String::adopt(buffer);
 }
 
-String cookieRequestHeaderFieldValue(NetworkingContext*, const KURL& url)
+String cookieRequestHeaderFieldValue(NetworkingContext* context, const KURL& /*firstParty*/, const KURL& url)
 {
     // FIXME: include HttpOnly cookie
     return cookiesForDOM(context, url);
 }
 
-bool cookiesEnabled(NetworkingContext*)
+bool cookiesEnabled(NetworkingContext* context, const KURL& /*firstParty*/, const KURL& /*url*/)
 {
     return true;
 }
 
-bool getRawCookies(NetworkingContext*, const KURL&, Vector<Cookie>& rawCookies)
+bool getRawCookies(NetworkingContext* context, const KURL& /*firstParty*/, const KURL& /*url*/, Vector<Cookie>& rawCookies)
 {
     // FIXME: Not yet implemented
     rawCookies.clear();

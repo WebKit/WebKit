@@ -40,9 +40,9 @@ struct Cookie;
 // If networking context is null, default cookie storage is used.
 String cookiesForDOM(NetworkingContext*, const KURL& firstParty, const KURL&);
 void setCookiesFromDOM(NetworkingContext*, const KURL& firstParty, const KURL&, const String&);
-bool cookiesEnabled(NetworkingContext*);
-String cookieRequestHeaderFieldValue(NetworkingContext*, const KURL&);
-bool getRawCookies(NetworkingContext*, const KURL&, Vector<Cookie>&);
+bool cookiesEnabled(NetworkingContext*, const KURL& firstParty, const KURL&);
+String cookieRequestHeaderFieldValue(NetworkingContext*, const KURL& firstParty, const KURL&);
+bool getRawCookies(NetworkingContext*, const KURL& firstParty, const KURL&, Vector<Cookie>&);
 void deleteCookie(NetworkingContext*, const KURL&, const String&);
 void getHostnamesWithCookies(NetworkingContext*, HashSet<String>& hostnames);
 void deleteCookiesForHostname(NetworkingContext*, const String& hostname);

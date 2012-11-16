@@ -123,17 +123,17 @@ String cookiesForDOM(NetworkingContext* context, const KURL&, const KURL& url)
     return cookiesForContext(context, url, false);
 }
 
-String cookieRequestHeaderFieldValue(NetworkingContext* context, const KURL& url)
+String cookieRequestHeaderFieldValue(NetworkingContext* context, const KURL& /*firstParty*/, const KURL& url)
 {
     return cookiesForContext(context, url, true);
 }
 
-bool cookiesEnabled(NetworkingContext* context)
+bool cookiesEnabled(NetworkingContext* context, const KURL& /*firstParty*/, const KURL& /*url*/)
 {
     return !!cookieJarForContext(context);
 }
 
-bool getRawCookies(NetworkingContext* context, const KURL& url, Vector<Cookie>& rawCookies)
+bool getRawCookies(NetworkingContext* context, const KURL& /*firstParty*/, const KURL& url, Vector<Cookie>& rawCookies)
 {
     rawCookies.clear();
     SoupCookieJar* jar = context ? cookieJarForContext(context) : soupCookieJar();

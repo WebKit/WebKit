@@ -94,7 +94,7 @@ String cookiesForDOM(NetworkingContext* context, const KURL& firstParty, const K
     return resultCookies.join(QLatin1String("; "));
 }
 
-String cookieRequestHeaderFieldValue(NetworkingContext* context, const KURL &url)
+String cookieRequestHeaderFieldValue(NetworkingContext* context, const KURL& /*firstParty*/, const KURL& url)
 {
     QNetworkCookieJar* jar = context ? context->networkAccessManager()->cookieJar() : SharedCookieJarQt::shared();
     if (!jar)
@@ -111,13 +111,13 @@ String cookieRequestHeaderFieldValue(NetworkingContext* context, const KURL &url
     return resultCookies.join(QLatin1String("; "));
 }
 
-bool cookiesEnabled(NetworkingContext* context)
+bool cookiesEnabled(NetworkingContext* context, const KURL& /*firstParty*/, const KURL& /*url*/)
 {
     QNetworkCookieJar* jar = context ? context->networkAccessManager()->cookieJar() : SharedCookieJarQt::shared();
     return !!jar;
 }
 
-bool getRawCookies(NetworkingContext*, const KURL&, Vector<Cookie>& rawCookies)
+bool getRawCookies(NetworkingContext* context, const KURL& /*firstParty*/, const KURL& /*url*/, Vector<Cookie>& rawCookies)
 {
     // FIXME: Not yet implemented
     rawCookies.clear();

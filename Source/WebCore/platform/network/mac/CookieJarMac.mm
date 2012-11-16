@@ -73,7 +73,7 @@ String cookiesForDOM(NetworkingContext* context, const KURL&, const KURL& url)
     return String();
 }
 
-String cookieRequestHeaderFieldValue(NetworkingContext* context, const KURL& url)
+String cookieRequestHeaderFieldValue(NetworkingContext* context, const KURL& /*firstParty*/, const KURL& url)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
@@ -108,7 +108,7 @@ void setCookiesFromDOM(NetworkingContext* context, const KURL& firstParty, const
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
-bool cookiesEnabled(NetworkingContext* context)
+bool cookiesEnabled(NetworkingContext* context, const KURL& /*firstParty*/, const KURL& /*url*/)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
@@ -120,7 +120,7 @@ bool cookiesEnabled(NetworkingContext* context)
     return false;
 }
 
-bool getRawCookies(NetworkingContext* context, const KURL& url, Vector<Cookie>& rawCookies)
+bool getRawCookies(NetworkingContext* context, const KURL& /*firstParty*/, const KURL& url, Vector<Cookie>& rawCookies)
 {
     rawCookies.clear();
     BEGIN_BLOCK_OBJC_EXCEPTIONS;

@@ -136,7 +136,7 @@ String cookiesForDOM(NetworkingContext* context, const KURL&, const KURL& url)
     return (CFStringRef)CFDictionaryGetValue(headerCF.get(), s_cookieCF);
 }
 
-String cookieRequestHeaderFieldValue(NetworkingContext* context, const KURL& url)
+String cookieRequestHeaderFieldValue(NetworkingContext* context, const KURL& /*firstParty*/, const KURL& url)
 {
     RetainPtr<CFHTTPCookieStorageRef> cookieStorage = context ? currentCFHTTPCookieStorage() : defaultCFHTTPCookieStorage();
     if (!cookieStorage)
@@ -150,7 +150,7 @@ String cookieRequestHeaderFieldValue(NetworkingContext* context, const KURL& url
     return (CFStringRef)CFDictionaryGetValue(headerCF.get(), s_cookieCF);
 }
 
-bool cookiesEnabled(NetworkingContext* context)
+bool cookiesEnabled(NetworkingContext* context, const KURL& /*firstParty*/, const KURL& /*url*/)
 {
     CFHTTPCookieStorageAcceptPolicy policy = CFHTTPCookieStorageAcceptPolicyOnlyFromMainDocumentDomain;
     RetainPtr<CFHTTPCookieStorageRef> cookieStorage = context ? currentCFHTTPCookieStorage() : defaultCFHTTPCookieStorage();
@@ -159,7 +159,7 @@ bool cookiesEnabled(NetworkingContext* context)
     return policy == CFHTTPCookieStorageAcceptPolicyOnlyFromMainDocumentDomain || policy == CFHTTPCookieStorageAcceptPolicyAlways;
 }
 
-bool getRawCookies(NetworkingContext* context, const KURL& url, Vector<Cookie>& rawCookies)
+bool getRawCookies(NetworkingContext* context, const KURL& /*firstParty*/, const KURL& url, Vector<Cookie>& rawCookies)
 {
     rawCookies.clear();
     RetainPtr<CFHTTPCookieStorageRef> cookieStorage = context ? currentCFHTTPCookieStorage() : defaultCFHTTPCookieStorage();

@@ -1,3 +1,45 @@
+2012-11-16  Mark Pilgrim  <pilgrim@chromium.org>
+
+        Expand PlatformCookieJar interface to allow for other ports
+        https://bugs.webkit.org/show_bug.cgi?id=102456
+
+        Reviewed by Adam Barth.
+
+        Add firstParty and cookieURL arguments to several functions to
+        prepare for integrating Chromium port into new PlatformCookieJar
+        interface.
+
+        * loader/CookieJar.cpp:
+        (WebCore::cookiesEnabled):
+        (WebCore::cookieRequestHeaderFieldValue):
+        (WebCore::getRawCookies):
+        * platform/network/PlatformCookieJar.h:
+        (WebCore):
+        * platform/network/cf/CookieJarCFNet.cpp:
+        (WebCore::cookieRequestHeaderFieldValue):
+        (WebCore::cookiesEnabled):
+        (WebCore::getRawCookies):
+        * platform/network/curl/CookieJarCurl.cpp:
+        (WebCore::cookieRequestHeaderFieldValue):
+        (WebCore::cookiesEnabled):
+        (WebCore::getRawCookies):
+        * platform/network/mac/CookieJarMac.mm:
+        (WebCore::cookieRequestHeaderFieldValue):
+        (WebCore::cookiesEnabled):
+        (WebCore::getRawCookies):
+        * platform/network/qt/CookieJarQt.cpp:
+        (WebCore::cookieRequestHeaderFieldValue):
+        (WebCore::cookiesEnabled):
+        (WebCore::getRawCookies):
+        * platform/network/soup/CookieJarSoup.cpp:
+        (WebCore::cookieRequestHeaderFieldValue):
+        (WebCore::cookiesEnabled):
+        (WebCore::getRawCookies):
+        * platform/network/win/CookieJarWin.cpp:
+        (WebCore::cookieRequestHeaderFieldValue):
+        (WebCore::cookiesEnabled):
+        (WebCore::getRawCookies):
+
 2012-11-16  Julien Chaffraix  <jchaffraix@webkit.org>
 
         RenderGrid should have a function to resolve grid position
