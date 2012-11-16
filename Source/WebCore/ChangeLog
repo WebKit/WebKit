@@ -1,3 +1,19 @@
+2012-11-16  Andreas Kling  <akling@apple.com>
+
+        StyleResolver: Only input elements need equal "readonly" attribute for style sharing.
+        <http://webkit.org/b/102536>
+
+        Reviewed by Antti Koivisto.
+
+        Move the comparison of the "readonly" attribute into canShareStyleWithControl() since it's only
+        relevant for sharing style between <input> elements.
+
+        Also skip attribute comparisons for form control elements that share the same ElementAttributeData.
+
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::canShareStyleWithControl):
+        (WebCore::haveIdenticalStyleAffectingAttributes):
+
 2012-11-16  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r134867.

@@ -1083,8 +1083,12 @@ bool StyleResolver::canShareStyleWithControl(StyledElement* element) const
     if (!thisInputElement || !otherInputElement)
         return false;
 
-    if (thisInputElement->fastGetAttribute(typeAttr) != otherInputElement->fastGetAttribute(typeAttr))
-        return false;
+    if (thisInputElement->attributeData() != otherInputElement->attributeData()) {
+        if (thisInputElement->fastGetAttribute(typeAttr) != otherInputElement->fastGetAttribute(typeAttr))
+            return false;
+        if (thisInputElement->fastGetAttribute(readonlyAttr) != otherInputElement->fastGetAttribute(readonlyAttr))
+            return false;
+    }
 
     if (thisInputElement->isAutofilled() != otherInputElement->isAutofilled())
         return false;
@@ -1159,8 +1163,6 @@ static inline bool haveIdenticalStyleAffectingAttributes(StyledElement* a, Style
     if (a->fastGetAttribute(XMLNames::langAttr) != b->fastGetAttribute(XMLNames::langAttr))
         return false;
     if (a->fastGetAttribute(langAttr) != b->fastGetAttribute(langAttr))
-        return false;
-    if (a->fastGetAttribute(readonlyAttr) != b->fastGetAttribute(readonlyAttr))
         return false;
     // FIXME: This is probably not necessary.
     if (a->fastGetAttribute(cellpaddingAttr) != b->fastGetAttribute(cellpaddingAttr))
