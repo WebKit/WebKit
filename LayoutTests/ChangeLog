@@ -1,3 +1,10 @@
+2012-11-16  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening, rebaselining after r134859.
+
+        * platform/gtk/fast/media/mq-js-media-except-02-expected.txt: Added.
+        * platform/gtk/fast/media/mq-js-media-except-03-expected.txt: Added.
+
 2012-11-16  Shinya Kawanaka  <shinyak@chromium.org>
 
         Changing pseudoClass (:indeterminate) should cause distribution
