@@ -38,17 +38,12 @@
 #include "Node.h"
 #include "NodeList.h"
 #include "EventListenerWrapper.h"
-#include "RenderObject.h"
-#include "RenderWidget.h"
 #include "WebDOMEvent.h"
 #include "WebDOMEventListener.h"
 #include "WebDocument.h"
 #include "WebElement.h"
 #include "WebFrameImpl.h"
 #include "WebNodeList.h"
-#include "WebPluginContainer.h"
-#include "WebPluginContainerImpl.h"
-#include "Widget.h"
 #include "markup.h"
 #include <public/WebString.h>
 #include <public/WebVector.h>
@@ -239,22 +234,6 @@ bool WebNode::hasNonEmptyBoundingBox() const
 {
     m_private->document()->updateLayoutIgnorePendingStylesheets();
     return m_private->hasNonEmptyBoundingBox();
-}
-
-WebPluginContainer* WebNode::pluginContainer() const
-{
-    if (isNull())
-        return 0;
-    const Node* coreNode = constUnwrap<Node>();
-    if (coreNode->hasTagName(HTMLNames::objectTag) || coreNode->hasTagName(HTMLNames::embedTag)) {
-        RenderObject* object = coreNode->renderer();
-        if (object && object->isWidget()) {
-            Widget* widget = WebCore::toRenderWidget(object)->widget();
-            if (widget && widget->isPluginContainer())
-                return static_cast<WebPluginContainerImpl*>(widget);
-        }
-    }
-    return 0;
 }
 
 WebNode::WebNode(const PassRefPtr<Node>& node)
