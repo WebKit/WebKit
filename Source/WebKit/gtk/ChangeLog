@@ -1,3 +1,17 @@
+2012-11-16  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Move CredentialBackingStore usage from GtkAuthenticationDialog to ResourceHandleSoup
+        https://bugs.webkit.org/show_bug.cgi?id=101840
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Enable the CredentialStore by default for the WebKit1 GTK+ port. Before this value
+        didn't have an bearing on whether or not the persistent credential storage was used.
+        Now is does.
+
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        (WebKit::FrameLoaderClient::shouldUseCredentialStorage): Enable credential storage by default.
+
 2012-11-15  Gustavo Noronha Silva  <gns@gnome.org>
 
         [GTK] Split WebCore/platform into a separate library

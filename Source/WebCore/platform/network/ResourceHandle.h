@@ -166,6 +166,7 @@ public:
 #endif
 
 #if USE(SOUP)
+    void continueDidReceiveAuthenticationChallenge(const Credential& credentialFromPersistentStorage);
     void sendPendingRequest();
     static SoupSession* defaultSession();
     static uint64_t getSoupRequestInitiaingPageID(SoupRequest*);

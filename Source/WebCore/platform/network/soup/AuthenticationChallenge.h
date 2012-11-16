@@ -49,6 +49,7 @@ public:
     SoupSession* soupSession() const { return m_soupSession.get(); }
     SoupMessage* soupMessage() const { return m_soupMessage.get(); }
     SoupAuth* soupAuth() const { return m_soupAuth.get(); }
+    void setProposedCredential(const Credential& credential) { m_proposedCredential = credential; }
 
 private:
     friend class AuthenticationChallengeBase;

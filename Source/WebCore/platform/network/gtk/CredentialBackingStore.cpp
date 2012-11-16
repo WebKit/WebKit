@@ -62,30 +62,56 @@ static GRefPtr<GHashTable> createAttributeHashTableFromChallenge(const Authentic
     return attributes;
 }
 
-Credential CredentialBackingStore::credentialForChallenge(const AuthenticationChallenge& challenge)
+struct CredentialForChallengeAsyncReadyCallbackData {
+    CredentialBackingStore::CredentialForChallengeCallback callback;
+    void* data;
+};
+
+static void credentialForChallengeAsyncReadyCallback(SecretService* service, GAsyncResult* asyncResult, CredentialForChallengeAsyncReadyCallbackData* callbackData)
 {
-    GOwnPtr<GList> elements(secret_service_search_sync(
-        0, // The default SecretService.
-        SECRET_SCHEMA_COMPAT_NETWORK,
-        createAttributeHashTableFromChallenge(challenge).get(),
-        static_cast<SecretSearchFlags>(SECRET_SEARCH_UNLOCK | SECRET_SEARCH_LOAD_SECRETS), // The default behavior is to only return the most recent item.
-        0, // cancellable
-        0)); // error
-    if (!elements || !elements->data)
-        return Credential();
+    CredentialBackingStore::CredentialForChallengeCallback callback = callbackData->callback;
+    void* data = callbackData->data;
+    delete callbackData;
+
+    GOwnPtr<GError> error;
+    GOwnPtr<GList> elements(secret_service_search_finish(service, asyncResult, &error.outPtr()));
+    if (error || !elements || !elements->data) {
+        callback(Credential(), data);
+        return;
+    }
 
     GRefPtr<SecretItem> secretItem = adoptGRef(static_cast<SecretItem*>(elements->data));
     GRefPtr<GHashTable> attributes = adoptGRef(secret_item_get_attributes(secretItem.get()));
     String user = String::fromUTF8(static_cast<const char*>(g_hash_table_lookup(attributes.get(), "user")));
-    if (user.isEmpty())
-        return Credential();
+    if (user.isEmpty()) {
+        callback(Credential(), data);
+        return;
+    }
 
     size_t length;
     GRefPtr<SecretValue> secretValue = adoptGRef(secret_item_get_secret(secretItem.get()));
     const char* passwordData = secret_value_get(secretValue.get(), &length);
     String password = String::fromUTF8(passwordData, length);
 
-    return Credential(user, password, CredentialPersistencePermanent);
+    callback(Credential(user, password, CredentialPersistencePermanent), data);
+}
+
+void CredentialBackingStore::credentialForChallenge(const AuthenticationChallenge& challenge, CredentialForChallengeCallback callback, void* data)
+{
+    // The default flag only returns the most recent item, not all of them.
+    SecretSearchFlags searchFlags = static_cast<SecretSearchFlags>(SECRET_SEARCH_UNLOCK | SECRET_SEARCH_LOAD_SECRETS);
+    CredentialForChallengeAsyncReadyCallbackData* callbackData = new CredentialForChallengeAsyncReadyCallbackData;
+    callbackData->callback = callback;
+    callbackData->data = data;
+
+    secret_service_search(
+        0, // The default SecretService.
+        SECRET_SCHEMA_COMPAT_NETWORK,
+        createAttributeHashTableFromChallenge(challenge).get(),
+        searchFlags,
+        0, // cancellable
+        reinterpret_cast<GAsyncReadyCallback>(credentialForChallengeAsyncReadyCallback),
+        callbackData);
 }
 
 void CredentialBackingStore::storeCredentialsForChallenge(const AuthenticationChallenge& challenge, const Credential& credential)

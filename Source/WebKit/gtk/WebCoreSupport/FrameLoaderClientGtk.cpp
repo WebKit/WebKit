@@ -192,11 +192,9 @@ void FrameLoaderClient::committedLoad(WebCore::DocumentLoader* loader, const cha
     }
 }
 
-bool
-FrameLoaderClient::shouldUseCredentialStorage(WebCore::DocumentLoader*, unsigned long  identifier)
+bool FrameLoaderClient::shouldUseCredentialStorage(WebCore::DocumentLoader*, unsigned long  identifier)
 {
-    notImplemented();
-    return false;
+    return true;
 }
 
 void FrameLoaderClient::dispatchDidReceiveAuthenticationChallenge(WebCore::DocumentLoader*, unsigned long  identifier, const AuthenticationChallenge& challenge)

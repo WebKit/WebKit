@@ -1,11 +1,12 @@
 /*
+ * Copyright (C) 2004, 2005, 2006, 2007, 2009, 2010, 2011 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Alp Toker <alp@atoker.com>
  * Copyright (C) 2008 Xan Lopez <xan@gnome.org>
  * Copyright (C) 2008, 2010 Collabora Ltd.
  * Copyright (C) 2009 Holger Hans Peter Freyther
  * Copyright (C) 2009 Gustavo Noronha Silva <gns@gnome.org>
  * Copyright (C) 2009 Christian Dywan <christian@imendio.com>
- * Copyright (C) 2009, 2010, 2011 Igalia S.L.
+ * Copyright (C) 2009, 2010, 2011, 2012 Igalia S.L.
  * Copyright (C) 2009 John Kjellberg <john.kjellberg@power.alstom.com>
  * Copyright (C) 2012 Intel Corporation
  *
@@ -31,6 +32,7 @@
 #include "CachedResourceLoader.h"
 #include "ChromeClient.h"
 #include "CookieJarSoup.h"
+#include "CredentialStorage.h"
 #include "FileSystem.h"
 #include "Frame.h"
 #include "GOwnPtrSoup.h"
@@ -66,6 +68,10 @@
 #include "BlobData.h"
 #include "BlobRegistryImpl.h"
 #include "BlobStorageData.h"
+#endif
+
+#if PLATFORM(GTK)
+#include "CredentialBackingStore.h"
 #endif
 
 namespace WebCore {
@@ -279,7 +285,7 @@ SoupSession* ResourceHandleInternal::soupSession()
     return session;
 }
 
-static void gotHeadersCallback(SoupMessage* msg, gpointer data)
+static void gotHeadersCallback(SoupMessage* message, gpointer data)
 {
     ResourceHandle* handle = static_cast<ResourceHandle*>(data);
     if (!handle)
@@ -293,18 +299,65 @@ static void gotHeadersCallback(SoupMessage* msg, gpointer data)
         d->m_response.resourceLoadTiming()->receiveHeadersEnd = milisecondsSinceRequest(d->m_response.resourceLoadTiming()->requestTime);
 #endif
 
+#if PLATFORM(GTK)
+    // We are a bit more conservative with the persistent credential storage than the session store,
+    // since we are waiting until we know that this authentication succeeded before actually storing.
+    // This is because we want to avoid hitting the disk twice (once to add and once to remove) for
+    // incorrect credentials or polluting the keychain with invalid credentials.
+    if (message->status_code != 401 && message->status_code < 500 && !d->m_credentialDataToSaveInPersistentStore.credential.isEmpty()) {
+        credentialBackingStore().storeCredentialsForChallenge(
+            d->m_credentialDataToSaveInPersistentStore.challenge,
+            d->m_credentialDataToSaveInPersistentStore.credential);
+    }
+#endif
+
     // The original response will be needed later to feed to willSendRequest in
     // restartedCallback() in case we are redirected. For this reason, so we store it
     // here.
     ResourceResponse response;
-    response.updateFromSoupMessage(msg);
-
+    response.updateFromSoupMessage(message);
     d->m_response = response;
+}
+
+static void applyAuthenticationToRequest(ResourceHandle* handle, bool redirect)
+{
+    // m_user/m_pass are credentials given manually, for instance, by the arguments passed to XMLHttpRequest.open().
+    ResourceHandleInternal* d = handle->getInternal();
+    String user = d->m_user;
+    String password = d->m_pass;
+
+    ResourceRequest& request = d->m_firstRequest;
+    if (!handle->client() || handle->client()->shouldUseCredentialStorage(handle)) {
+        if (d->m_user.isEmpty() && d->m_pass.isEmpty())
+            d->m_initialCredential = CredentialStorage::get(request.url());
+        else if (!redirect) {
+            // If there is already a protection space known for the URL, update stored credentials
+            // before sending a request. This makes it possible to implement logout by sending an
+            // XMLHttpRequest with known incorrect credentials, and aborting it immediately (so that
+            // an authentication dialog doesn't pop up).
+            CredentialStorage::set(Credential(d->m_user, d->m_pass, CredentialPersistenceNone), request.url());
+        }
+    }
+
+    if (!d->m_initialCredential.isEmpty()) {
+        user = d->m_initialCredential.user();
+        password = d->m_initialCredential.password();
+    }
+
+    // We always put the credentials into the URL. In the CFNetwork-port HTTP family credentials are applied in
+    // the didReceiveAuthenticationChallenge callback, but libsoup requires us to use this method to override
+    // any previously remembered credentials. It has its own per-session credential storage.
+    if (!user.isEmpty() || !password.isEmpty()) {
+        KURL urlWithCredentials(request.url());
+        urlWithCredentials.setUser(d->m_user);
+        urlWithCredentials.setPass(d->m_pass);
+        request.setURL(urlWithCredentials);
+    }
 }
 
 // Called each time the message is going to be sent again except the first time.
 // It's used mostly to let webkit know about redirects.
-static void restartedCallback(SoupMessage* msg, gpointer data)
+static void restartedCallback(SoupMessage* message, gpointer data)
 {
     ResourceHandle* handle = static_cast<ResourceHandle*>(data);
     if (!handle)
@@ -313,29 +366,50 @@ static void restartedCallback(SoupMessage* msg, gpointer data)
     if (d->m_cancelled)
         return;
 
-    GOwnPtr<char> uri(soup_uri_to_string(soup_message_get_uri(msg), false));
+    GOwnPtr<char> uri(soup_uri_to_string(soup_message_get_uri(message), false));
     String location = String::fromUTF8(uri.get());
     KURL newURL = KURL(handle->firstRequest().url(), location);
 
     ResourceRequest request = handle->firstRequest();
     request.setURL(newURL);
-    request.setHTTPMethod(msg->method);
+    request.setHTTPMethod(message->method);
 
     // Should not set Referer after a redirect from a secure resource to non-secure one.
     if (!request.url().protocolIs("https") && protocolIs(request.httpReferrer(), "https")) {
         request.clearHTTPReferrer();
-        soup_message_headers_remove(msg->request_headers, "Referer");
+        soup_message_headers_remove(message->request_headers, "Referer");
     }
 
+    const KURL& url = request.url();
+    d->m_user = url.user();
+    d->m_pass = url.pass();
+    request.removeCredentials();
+
+    ResourceResponse& redirectResponse = d->m_response;
+    if (!protocolHostAndPortAreEqual(request.url(), redirectResponse.url())) {
+        // If the network layer carries over authentication headers from the original request
+        // in a cross-origin redirect, we want to clear those headers here. 
+        request.clearHTTPAuthorization();
+        soup_message_headers_remove(message->request_headers, "Authorization");
+
+        // TODO: We are losing any username and password specified in the redirect URL, as this is the 
+        // same behavior as the CFNet port. We should investigate if this is really what we want.
+    } else
+        applyAuthenticationToRequest(handle, true);
+
+    // Per-request authentication is handled via the URI-embedded username/password.
+    GOwnPtr<SoupURI> newSoupURI(soup_uri_new(request.urlStringForSoup().utf8().data()));
+    soup_message_set_uri(message, newSoupURI.get());
+
     if (d->client())
-        d->client()->willSendRequest(handle, request, d->m_response);
+        d->client()->willSendRequest(handle, request, redirectResponse);
 
     if (d->m_cancelled)
         return;
 
 #if ENABLE(WEB_TIMING)
-    d->m_response.setResourceLoadTiming(ResourceLoadTiming::create());
-    d->m_response.resourceLoadTiming()->requestTime = monotonicallyIncreasingTime();
+    redirectResponse.setResourceLoadTiming(ResourceLoadTiming::create());
+    redirectResponse.resourceLoadTiming()->requestTime = monotonicallyIncreasingTime();
 #endif
 
     // Update the first party in case the base URL changed with the redirect
@@ -749,14 +823,15 @@ static bool createSoupRequestAndMessageForHandle(ResourceHandle* handle, bool is
     SoupRequester* requester = SOUP_REQUESTER(soup_session_get_feature(d->soupSession(), SOUP_TYPE_REQUESTER));
 
     GOwnPtr<GError> error;
-    const ResourceRequest& request = handle->firstRequest();
+    ResourceRequest& request = handle->firstRequest();
+
     d->m_soupRequest = adoptGRef(soup_requester_request(requester, request.urlStringForSoup().utf8().data(), &error.outPtr()));
     if (error) {
         d->m_soupRequest.clear();
         return false;
     }
 
-    // Non-HTTP family requests do not need a soupMessage, as it's callbacks really only apply to HTTP.
+    // SoupMessages are only applicable to HTTP-family requests.
     if (isHTTPFamilyRequest && !createSoupMessageForHandleAndRequest(handle, request)) {
         d->m_soupRequest.clear();
         return false;
@@ -780,15 +855,6 @@ bool ResourceHandle::start(NetworkingContext* context)
     // Used to set the keep track of custom SoupSessions for ports that support it (EFL).
     d->m_context = context;
 
-    if (!(d->m_user.isEmpty() || d->m_pass.isEmpty())) {
-        // If credentials were specified for this request, add them to the url,
-        // so that they will be passed to NetworkRequest.
-        KURL urlWithCredentials(firstRequest().url());
-        urlWithCredentials.setUser(d->m_user);
-        urlWithCredentials.setPass(d->m_pass);
-        d->m_firstRequest.setURL(urlWithCredentials);
-    }
-
     // Only allow the POST and GET methods for non-HTTP requests.
     const ResourceRequest& request = firstRequest();
     bool isHTTPFamilyRequest = request.url().protocolIsInHTTPFamily();
@@ -796,6 +862,11 @@ bool ResourceHandle::start(NetworkingContext* context)
         this->scheduleFailure(InvalidURLFailure); // Error must not be reported immediately
         return true;
     }
+
+    applyAuthenticationToRequest(this, false);
+    // The CFNet backend clears these, so we do as well.
+    d->m_user = String();
+    d->m_pass = String();
 
     if (!createSoupRequestAndMessageForHandle(this, isHTTPFamilyRequest)) {
         this->scheduleFailure(InvalidURLFailure); // Error must not be reported immediately
@@ -856,17 +927,87 @@ void ResourceHandle::setIgnoreSSLErrors(bool ignoreSSLErrors)
     gIgnoreSSLErrors = ignoreSSLErrors;
 }
 
+#if PLATFORM(GTK)
+void getCredentialFromPersistentStoreCallback(const Credential& credential, void* data)
+{
+    static_cast<ResourceHandle*>(data)->continueDidReceiveAuthenticationChallenge(credential);
+}
+#endif
+
+void ResourceHandle::continueDidReceiveAuthenticationChallenge(const Credential& credentialFromPersistentStorage)
+{
+    ASSERT(d->m_currentWebChallenge);
+    AuthenticationChallenge& challenge = d->m_currentWebChallenge;
+
+    ASSERT(challenge.soupSession());
+    ASSERT(challenge.soupMessage());
+    if (!credentialFromPersistentStorage.isEmpty())
+        challenge.setProposedCredential(credentialFromPersistentStorage);
+
+    if (!client()) {
+        soup_session_unpause_message(challenge.soupSession(), challenge.soupMessage());
+        clearAuthentication();
+        return;
+    }
+
+    ASSERT(challenge.soupSession());
+    ASSERT(challenge.soupMessage());
+    client()->didReceiveAuthenticationChallenge(this, challenge);
+}
+
 void ResourceHandle::didReceiveAuthenticationChallenge(const AuthenticationChallenge& challenge)
 {
     ASSERT(d->m_currentWebChallenge.isNull());
-    d->m_currentWebChallenge = challenge;
 
-    if (client()) {
-        ASSERT(challenge.soupSession());
-        ASSERT(challenge.soupMessage());
-        soup_session_pause_message(challenge.soupSession(), challenge.soupMessage());
-        client()->didReceiveAuthenticationChallenge(this, challenge);
+    bool shouldUseCredentialStorage = !client() || client()->shouldUseCredentialStorage(this);
+    if (!d->m_user.isNull() && !d->m_pass.isNull()) {
+        Credential credential = Credential(d->m_user, d->m_pass, CredentialPersistenceForSession);
+        if (shouldUseCredentialStorage)
+            CredentialStorage::set(credential, challenge.protectionSpace(), challenge.failureResponse().url());
+        soup_auth_authenticate(challenge.soupAuth(), credential.user().utf8().data(), credential.password().utf8().data());
+
+        return;
     }
+
+    // FIXME: Per the specification, the user shouldn't be asked for credentials if there were incorrect ones provided explicitly.
+    if (shouldUseCredentialStorage) {
+        if (!d->m_initialCredential.isEmpty() || challenge.previousFailureCount()) {
+            // The stored credential wasn't accepted, stop using it. There is a race condition
+            // here, since a different credential might have already been stored by another
+            // ResourceHandle, but the observable effect should be very minor, if any.
+            CredentialStorage::remove(challenge.protectionSpace());
+        }
+
+        if (!challenge.previousFailureCount()) {
+            Credential credential = CredentialStorage::get(challenge.protectionSpace());
+            if (!credential.isEmpty() && credential != d->m_initialCredential) {
+                ASSERT(credential.persistence() == CredentialPersistenceNone);
+
+                // Store the credential back, possibly adding it as a default for this directory.
+                if (challenge.failureResponse().httpStatusCode() == 401)
+                    CredentialStorage::set(credential, challenge.protectionSpace(), challenge.failureResponse().url());
+
+                soup_auth_authenticate(challenge.soupAuth(), credential.user().utf8().data(), credential.password().utf8().data());
+                return;
+            }
+        }
+    }
+
+    d->m_currentWebChallenge = challenge;
+    soup_session_pause_message(challenge.soupSession(), challenge.soupMessage());
+
+#if PLATFORM(GTK)
+    // We could also do this before we even start the request, but that would be at the expense
+    // of all request latency, versus a one-time latency for the small subset of requests that
+    // use HTTP authentication. In the end, this doesn't matter much, because persistent credentials
+    // will become session credentials after the first use.
+    if (shouldUseCredentialStorage) {
+        credentialBackingStore().credentialForChallenge(challenge, getCredentialFromPersistentStoreCallback, this);
+        return;
+    }
+#endif
+
+    continueDidReceiveAuthenticationChallenge(Credential());
 }
 
 void ResourceHandle::receivedRequestToContinueWithoutCredential(const AuthenticationChallenge& challenge)
@@ -884,6 +1025,26 @@ void ResourceHandle::receivedCredential(const AuthenticationChallenge& challenge
     ASSERT(!challenge.isNull());
     if (challenge != d->m_currentWebChallenge)
         return;
+
+    // FIXME: Support empty credentials. Currently, an empty credential cannot be stored in WebCore credential storage, as that's empty value for its map.
+    if (credential.isEmpty()) {
+        receivedRequestToContinueWithoutCredential(challenge);
+        return;
+    }
+
+    // Eventually we will manage per-session credentials only internally or use some newly-exposed API from libsoup,
+    // because once we authenticate via libsoup, there is no way to ignore it for a particular request. Right now,
+    // we place the credentials in the store even though libsoup will never fire the authenticate signal again for
+    // this protection space.
+    if (credential.persistence() == CredentialPersistenceForSession || credential.persistence() == CredentialPersistencePermanent)
+        CredentialStorage::set(credential, challenge.protectionSpace(), challenge.failureResponse().url());
+
+#if PLATFORM(GTK)
+    if (credential.persistence() == CredentialPersistencePermanent) {
+        d->m_credentialDataToSaveInPersistentStore.credential = credential;
+        d->m_credentialDataToSaveInPersistentStore.challenge = challenge;
+    }
+#endif
 
     ASSERT(challenge.soupSession());
     ASSERT(challenge.soupMessage());

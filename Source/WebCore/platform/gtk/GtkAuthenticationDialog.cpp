@@ -66,8 +66,6 @@ GtkAuthenticationDialog::GtkAuthenticationDialog(GtkWindow* parentWindow, const 
     , m_loginEntry(0)
     , m_passwordEntry(0)
     , m_rememberCheckButton(0)
-    , m_isSavingPassword(false)
-    , m_savePasswordHandler(0)
 {
     GtkDialog* dialog = GTK_DIALOG(m_dialog);
     gtk_dialog_add_buttons(dialog, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OK, GTK_RESPONSE_OK, NULL);
@@ -190,10 +188,10 @@ GtkAuthenticationDialog::GtkAuthenticationDialog(GtkWindow* parentWindow, const 
 
 void GtkAuthenticationDialog::show()
 {
-    Credential savedCredential = credentialBackingStore().credentialForChallenge(m_challenge);
-    if (!savedCredential.isEmpty()) {
-        gtk_entry_set_text(GTK_ENTRY(m_loginEntry), savedCredential.user().utf8().data());
-        gtk_entry_set_text(GTK_ENTRY(m_passwordEntry), savedCredential.password().utf8().data());
+    const Credential& credentialFromPersistentStorage = m_challenge.proposedCredential();
+    if (!credentialFromPersistentStorage.isEmpty()) {
+        gtk_entry_set_text(GTK_ENTRY(m_loginEntry), credentialFromPersistentStorage.user().utf8().data());
+        gtk_entry_set_text(GTK_ENTRY(m_passwordEntry), credentialFromPersistentStorage.password().utf8().data());
         gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(m_rememberCheckButton), TRUE);
     }
 
@@ -204,39 +202,6 @@ void GtkAuthenticationDialog::show()
 void GtkAuthenticationDialog::destroy()
 {
     gtk_widget_destroy(m_dialog);
-
-    // Do not delete the object if it's still saving the password,
-    // the save password callback will delete it.
-    if (!m_isSavingPassword)
-        delete this;
-}
-
-void GtkAuthenticationDialog::savePasswordCallback(SoupMessage*, GtkAuthenticationDialog* dialog)
-{
-    dialog->savePassword();
-}
-
-void GtkAuthenticationDialog::savePassword()
-{
-    ASSERT(!m_username.isNull());
-    ASSERT(!m_password.isNull());
-
-    // Anything but 401 and 5xx means the password was accepted.
-    SoupMessage* message = m_challenge.soupMessage();
-    if (message->status_code != 401 && message->status_code < 500) {
-        Credential credentialToSave = Credential(
-            String::fromUTF8(m_username.data()),
-            String::fromUTF8(m_password.data()),
-            CredentialPersistencePermanent);
-        credentialBackingStore().storeCredentialsForChallenge(m_challenge, credentialToSave);
-    }
-
-    // Disconnect the callback. If the authentication succeeded we are done,
-    // and if it failed we'll create a new GtkAuthenticationDialog and we'll
-    // connect to 'got-headers' again in GtkAuthenticationDialog::authenticate()
-    g_signal_handler_disconnect(message, m_savePasswordHandler);
-
-    // Dialog has been already destroyed, after saving the password it should be deleted.
     delete this;
 }
 
@@ -244,16 +209,8 @@ void GtkAuthenticationDialog::authenticate()
 {
     const char *username = gtk_entry_get_text(GTK_ENTRY(m_loginEntry));
     const char *password = gtk_entry_get_text(GTK_ENTRY(m_passwordEntry));
-
-    bool rememberCredentials = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(m_rememberCheckButton));
-    if (m_rememberCheckButton && gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(m_rememberCheckButton))) {
-        m_username = username;
-        m_password = password;
-        m_isSavingPassword = true;
-        m_savePasswordHandler = g_signal_connect(m_challenge.soupMessage(), "got-headers", G_CALLBACK(savePasswordCallback), this);
-    }
-
-    CredentialPersistence persistence = rememberCredentials ? CredentialPersistencePermanent : CredentialPersistenceForSession;
+    CredentialPersistence persistence = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(m_rememberCheckButton)) ?
+        CredentialPersistencePermanent : CredentialPersistenceForSession;
     m_challenge.authenticationClient()->receivedCredential(m_challenge,
         Credential(String::fromUTF8(username), String::fromUTF8(password), persistence));
 }

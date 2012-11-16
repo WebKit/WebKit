@@ -38,9 +38,10 @@ public:
     friend CredentialBackingStore& credentialBackingStore();
     virtual ~CredentialBackingStore() { }
 
-    Credential credentialForChallenge(const AuthenticationChallenge&);
-    void storeCredentialsForChallenge(const AuthenticationChallenge&, const Credential&);
+    typedef void (*CredentialForChallengeCallback)(const Credential&, void* data);
 
+    void credentialForChallenge(const AuthenticationChallenge&, CredentialForChallengeCallback, void* data);
+    void storeCredentialsForChallenge(const AuthenticationChallenge&, const Credential&);
 private:
     CredentialBackingStore() { }
 };

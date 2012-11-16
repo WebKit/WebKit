@@ -194,6 +194,12 @@ namespace WebCore {
         RefPtr<NetworkingContext> m_context;
         SoupSession* soupSession();
 #endif
+#if PLATFORM(GTK)
+        struct {
+            Credential credential;
+            AuthenticationChallenge challenge;
+        } m_credentialDataToSaveInPersistentStore;
+#endif
 #if PLATFORM(QT)
         QNetworkReplyHandler* m_job;
         RefPtr<NetworkingContext> m_context;

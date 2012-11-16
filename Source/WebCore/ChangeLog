@@ -1,3 +1,57 @@
+2012-11-16  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Move CredentialBackingStore usage from GtkAuthenticationDialog to ResourceHandleSoup
+        https://bugs.webkit.org/show_bug.cgi?id=101840
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Make ResourceHandleSoup aware of per-session CredentialStorage and persistent CredentialStorage.
+        Persistent credential storage interaction is moved from GtkAuthenticationDialog, so that it can
+        be used whether or not GtkAuthenticationDialog is used or not. We try to properly handle redirects
+        in the manner that the CFNet backend does.
+
+        No new tests. There are tests for this behavior, but they cannot be activated until we finish
+        plumbing this through to the API layer. Once that patch lands, the tests will be turned on.
+
+        * platform/gtk/GtkAuthenticationDialog.cpp: No longer store credentials into the persistent
+        storage manually, instead rely on ResourceHandleSoup. Also, we no longer get proposed credentials
+        from the persistent storage here as well. They are pre-loaded by the ResourceHanndle.
+        * platform/gtk/GtkAuthenticationDialog.h: Remove callbacks and members associated with saving
+        credentials to the persistent credential store.
+        * platform/network/ResourceHandle.h:
+        (ResourceHandle): Add a method which is used to continue asynchronously after looking for
+        proposed credentials in the persistent credential store.
+        * platform/network/ResourceHandleInternal.h: Add a member which tracks persistent credentials to be added once we know
+        an authentication succeeded.
+        * platform/network/gtk/CredentialBackingStore.cpp:
+        (CredentialForChallengeAsyncReadyCallbackData): Added this data structure used for asynchronous access
+        of stored credentials.
+        (WebCore::credentialForChallengeAsyncReadyCallback): Ditto for this callback.
+        (WebCore::CredentialBackingStore::credentialForChallenge): Make this method asynchronous.
+        * platform/network/gtk/CredentialBackingStore.h:
+        (CredentialBackingStore): Update method signatures for for making credentialForChallenge asynchronous.
+        * platform/network/soup/AuthenticationChallenge.h:
+        (WebCore::AuthenticationChallenge::setProposedCredential): Added a setter so that ResourceHandleSoup
+        can set proposed credentials from the persistent credential store.
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::gotHeadersCallback): For GTK+ save any pending credential in the persistent credential storage
+        if the authentication succeeded.
+        (WebCore::applyAuthenticationToRequest): Added this method which generically embeds stored credentials
+        in the request URI. This is the method that Soup uses to override any soup-stored session credential.
+        (WebCore::restartedCallback): Strip credentials for requests that span a security origin. Handle
+        authenticating requests from the session store.
+        (WebCore::createSoupRequestAndMessageForHandle): Make the local request reference mutable.
+        (WebCore::ResourceHandle::start): Remove some code which is now part of applyAuthenticationToRequest.
+        Call applyAuthenticationToRequest and clear the user and password members like the CFNet backend does.
+        (WebCore::getCredentialFromPersistentStoreCallback): Added this callback for getting persistently stored credentials.
+        (WebCore::ResourceHandle::continueDidReceiveAuthenticationChallenge): Split out didReceiveAuthenticationChallenge
+        into this asynchronous bit.
+        (WebCore::ResourceHandle::didReceiveAuthenticationChallenge): For GTK+ continue handling this situation after
+        first looking in the persistent credential store.
+        (WebCore::ResourceHandle::receivedCredential): Store session credentials in the session storage, which is
+        at the moment a redundant version of the Soup session storage and also prepare any persistent credentials
+        for storage later (see gotHeadersCallback).
+
 2012-11-16  Erik Arvidsson  <arv@chromium.org>
 
         Update DOMException name: TypeMismatchError
