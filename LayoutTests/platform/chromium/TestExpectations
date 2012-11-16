@@ -4181,14 +4181,3 @@ webkit.org/b/102277 fast/events/overflow-scroll-fake-mouse-move.html [ Pass Text
 webkit.org/b/102294 platform/chromium/virtual/deferred/fast/images/exif-orientation.html [ ImageOnlyFailure ]
 webkit.org/b/102294 platform/chromium/virtual/deferred/fast/images/exif-orientation-css.html [ ImageOnlyFailure ]
 webkit.org/b/102294 platform/chromium/virtual/deferred/fast/images/gray-scale-jpeg-with-color-profile.html [ ImageOnlyFailure ]
-
-webkit.org/b/102423 [ Debug ] accessibility/content-changed-notification-causes-crash.html [ Crash ]
-webkit.org/b/102423 [ Debug ] editing/pasteboard/paste-sanitize-crash-1.html [ Crash ]
-webkit.org/b/102423 [ Debug ] editing/pasteboard/paste-sanitize-crash-2.html [ Crash ]
-webkit.org/b/102423 [ Debug ] fast/block/line-layout/double-line-break-obj-removal-crash.html [ Crash ]
-webkit.org/b/102423 [ Debug ] fast/css/counters/counter-traverse-object-crash.html [ Crash ]
-webkit.org/b/102423 [ Debug ] fast/images/link-body-content-imageDimensionChanged-crash.html [ Crash ]
-webkit.org/b/102423 [ Debug ] platform/chromium/virtual/deferred/fast/images/link-body-content-imageDimensionChanged-crash.html [ Crash ]
-
-webkit.org/b/102427 [ XP Mac ] svg/custom/baseval-animval-equality.svg [ Failure ]
-webkit.org/b/102427 [ XP Mac ] svg/dom/SVGLengthList-basics.xhtml [ Failure ]
