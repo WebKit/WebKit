@@ -1,3 +1,12 @@
+2012-11-16  János Badics  <jbadics@inf.u-szeged.hu>
+
+        [Qt][WK1] Gardening after r134816. Skipped a newly added failing test.
+        https://bugs.webkit.org/show_bug.cgi?id=102471
+
+        Reviewed by Csaba Osztrogonác.
+
+        * platform/qt-5.0-wk1/TestExpectations:
+
 2012-11-16  Peter Rybin  <prybin@chromium.org>
 
         Web Inspector: show internal properties in inspector frontend

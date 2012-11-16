@@ -87,3 +87,6 @@ webkit.org/b/99306 transitions/suspend-transform-transition.html [ ImageOnlyFail
 fast/dom/HTMLAnchorElement/anchor-no-multiple-windows.html
 fast/dom/Window/window-open-no-multiple-windows.html
 fast/forms/post-popup-no-multiple-windows.html
+
+# [Qt][WK1] new fast/images/webgl-teximage2d.html introduced in r134816 fails
+webkit.org/b/102471 fast/images/webgl-teximage2d.html
