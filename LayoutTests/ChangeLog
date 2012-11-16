@@ -1,3 +1,7 @@
+2012-11-16  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        [Chromium] adjusting expectations for checkerboard.html
+
 2012-11-16  Li Yin  <li.yin@intel.com>
 
         audiopannernode-basic.html should cover default value of attribute.
