@@ -42,7 +42,7 @@
 #include <WebCore/PlatformPasteboard.h>
 #include <wtf/Atomics.h>
 
-#if PLATFORM(WIN)
+#if PLATFORM(WIN) && USE(CFNETWORK)
 #include "WebFrameNetworkingContext.h"
 #include <WebKitSystemInterface/WebKitSystemInterface.h>
 #endif
@@ -106,7 +106,7 @@ void WebPlatformStrategies::notifyCookiesChanged()
     WebCookieManager::shared().dispatchCookiesDidChange();
 }
 
-#if PLATFORM(WIN)
+#if PLATFORM(WIN) && USE(CFNETWORK)
 RetainPtr<CFHTTPCookieStorageRef> WebPlatformStrategies::defaultCookieStorage()
 {
     if (CFURLStorageSessionRef session = WebFrameNetworkingContext::defaultStorageSession())

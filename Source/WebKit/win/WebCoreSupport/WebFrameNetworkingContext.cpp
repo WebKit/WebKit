@@ -21,15 +21,21 @@
 #include "WebFrameNetworkingContext.h"
 
 #include "FrameLoaderClient.h"
+#if USE(CFNETWORK)
 #include <CFNetwork/CFHTTPCookiesPriv.h>
 #include <WebCore/CookieStorageCFNet.h>
+#endif
 #include <WebCore/Settings.h>
+#if USE(CFNETWORK)
 #include <WebKitSystemInterface/WebKitSystemInterface.h>
+#endif
 
 using namespace WebCore;
 
+#if USE(CFNETWORK)
 static CFURLStorageSessionRef defaultCFStorageSession;
 static CFURLStorageSessionRef privateBrowsingStorageSession;
+#endif
 
 PassRefPtr<WebFrameNetworkingContext> WebFrameNetworkingContext::create(Frame* frame, const String& userAgent)
 {
@@ -65,13 +71,16 @@ void WebFrameNetworkingContext::setPrivateBrowsingStorageSessionIdentifierBase(c
 
 void WebFrameNetworkingContext::switchToNewTestingSession()
 {
+#if USE(CFNETWORK)
     // Set a private session for testing to avoid interfering with global cookies. This should be different from private browsing session.
     defaultCFStorageSession = wkCreatePrivateStorageSession(CFSTR("Private WebKit Session"), defaultCFStorageSession);
+#endif
 }
 
 void WebFrameNetworkingContext::ensurePrivateBrowsingSession()
 {
     ASSERT(isMainThread());
+#if USE(CFNETWORK)
     if (privateBrowsingStorageSession)
         return;
 
@@ -79,17 +88,21 @@ void WebFrameNetworkingContext::ensurePrivateBrowsingSession()
     RetainPtr<CFStringRef> cfIdentifier = String(base + ".PrivateBrowsing").createCFString();
 
     privateBrowsingStorageSession = wkCreatePrivateStorageSession(cfIdentifier.get(), defaultCFStorageSession);
+#endif
 }
 
 void WebFrameNetworkingContext::destroyPrivateBrowsingSession()
 {
+#if USE(CFNETWORK)
     if (!privateBrowsingStorageSession)
         return;
 
     CFRelease(privateBrowsingStorageSession);
     privateBrowsingStorageSession = 0;
+#endif
 }
 
+#if USE(CFNETWORK)
 CFURLStorageSessionRef WebFrameNetworkingContext::defaultStorageSession()
 {
     return defaultCFStorageSession;
@@ -122,3 +135,4 @@ void WebFrameNetworkingContext::setCookieAcceptPolicyForAllContexts(CFHTTPCookie
         CFHTTPCookieStorageSetCookieAcceptPolicy(privateBrowsingCookieStorage.get(), policy);
     }
 }
+#endif

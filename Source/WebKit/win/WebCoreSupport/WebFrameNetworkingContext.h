@@ -32,10 +32,13 @@ public:
     static void switchToNewTestingSession();
     static void ensurePrivateBrowsingSession();
     static void destroyPrivateBrowsingSession();
+
+#if USE(CFNETWORK)
     static CFURLStorageSessionRef defaultStorageSession();
 
     static void setCookieAcceptPolicyForTestingContext(CFHTTPCookieStorageAcceptPolicy);
     static void setCookieAcceptPolicyForAllContexts(CFHTTPCookieStorageAcceptPolicy);
+#endif
 
 private:
     WebFrameNetworkingContext(WebCore::Frame* frame, const WTF::String& userAgent)
@@ -46,7 +49,9 @@ private:
 
     virtual WTF::String userAgent() const;
     virtual WTF::String referrer() const;
+#if USE(CFNETWORK)
     virtual CFURLStorageSessionRef storageSession() const;
+#endif
     virtual WebCore::ResourceError blockedError(const WebCore::ResourceRequest&) const;
 
     WTF::String m_userAgent;

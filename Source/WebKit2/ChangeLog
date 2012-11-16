@@ -1,3 +1,10 @@
+2012-11-16  Brent Fulgham  <bfulgham@webkit.org>
+
+        [WinCairo] Build correction after r134960.
+
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:  Stub out
+        calls to CFNetwork-based implementation.
+
 2012-11-16  Martin Robinson  <mrobinson@igalia.com>
 
         Move authentication dialog to the UIProcess

@@ -30,7 +30,9 @@
 #include <WebCore/Page.h>
 #include <WebCore/PageGroup.h>
 #include <WebCore/PluginDatabase.h>
+#if USE(CFNETWORK)
 #include <WebKitSystemInterface/WebKitSystemInterface.h>
+#endif
 
 using namespace WebCore;
 
@@ -78,6 +80,7 @@ void WebPlatformStrategies::notifyCookiesChanged()
 {
 }
 
+#if USE(CFNETWORK)
 RetainPtr<CFHTTPCookieStorageRef> WebPlatformStrategies::defaultCookieStorage()
 {
     if (CFURLStorageSessionRef session = WebFrameNetworkingContext::defaultStorageSession())
@@ -85,6 +88,7 @@ RetainPtr<CFHTTPCookieStorageRef> WebPlatformStrategies::defaultCookieStorage()
 
     return wkGetDefaultHTTPCookieStorage();
 }
+#endif
 
 void WebPlatformStrategies::refreshPlugins()
 {
