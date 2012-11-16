@@ -1,3 +1,23 @@
+2012-11-15  Takashi Sakamoto  <tasak@google.com>
+
+        [Win] key event's location does not work on Windows platform.
+        https://bugs.webkit.org/show_bug.cgi?id=89742
+
+        Reviewed by Brent Fulgham.
+
+        Modified keyDownCallback to use lparam to specify left-hand keys or
+        right-hand keys.
+
+        * DumpRenderTree/win/EventSender.cpp:
+        (makeKeyDataForScanCode):
+        Given a virtual keycode, generate scancode and extended key bit of
+        lparam.
+        (keyDownCallback):
+        Use lparam for left-hand and right-hand keys, because Windows doesn't
+        directly provide a virtual keycode which distinguishes between
+        left-hand and right-hand. For example, when control key is pressed,
+        wparam has VK_CONTROL, neither VK_RCONTROL nor VK_LCONTROL.
+
 2012-11-16  Tommy Widenflycht  <tommyw@google.com>
 
         [chromium] MediaStream API: Add missing WebRTCPeerConnectionHandlerClient::didAddRemoteDataChannel

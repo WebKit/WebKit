@@ -45,6 +45,9 @@
 #include <wtf/text/WTFString.h>
 
 #define WM_DRT_SEND_QUEUED_EVENT (WM_APP+1)
+#ifndef MAPVK_VK_TO_VSC
+#define MAPVK_VK_TO_VSC 0
+#endif
 
 static bool down;
 static bool dragMode = true;
@@ -434,6 +437,16 @@ void replaySavedEvents(HRESULT* oleDragAndDropReturnValue)
     replayingSavedEvents = false;
 }
 
+static int makeKeyDataForScanCode(int virtualKeyCode)
+{
+    unsigned scancode = MapVirtualKey(virtualKeyCode, MAPVK_VK_TO_VSC);
+    int keyData = scancode & 0xFF;
+    scancode = scancode >> 8;
+    if (scancode == 0xe0 || scancode == 0xe1)
+        keyData += KF_EXTENDED;
+    return keyData << 16;
+}
+
 static JSValueRef keyDownCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     if (argumentCount < 1)
@@ -479,19 +492,25 @@ static JSValueRef keyDownCallback(JSContextRef context, JSObjectRef function, JS
         virtualKeyCode = VK_SNAPSHOT;
     else if (JSStringIsEqualToUTF8CString(character, "menu"))
         virtualKeyCode = VK_APPS;
-    else if (JSStringIsEqualToUTF8CString(character, "leftControl"))
-        virtualKeyCode = VK_LCONTROL;
-    else if (JSStringIsEqualToUTF8CString(character, "leftShift"))
-        virtualKeyCode = VK_LSHIFT;
-    else if (JSStringIsEqualToUTF8CString(character, "leftAlt"))
-        virtualKeyCode = VK_LMENU;
-    else if (JSStringIsEqualToUTF8CString(character, "rightControl"))
-        virtualKeyCode = VK_RCONTROL;
-    else if (JSStringIsEqualToUTF8CString(character, "rightShift"))
-        virtualKeyCode = VK_RSHIFT;
-    else if (JSStringIsEqualToUTF8CString(character, "rightAlt"))
-        virtualKeyCode = VK_RMENU;
-    else {
+    else if (JSStringIsEqualToUTF8CString(character, "leftControl")) {
+        virtualKeyCode = VK_CONTROL;
+        keyData += makeKeyDataForScanCode(VK_LCONTROL);
+    } else if (JSStringIsEqualToUTF8CString(character, "leftShift")) {
+        virtualKeyCode = VK_SHIFT;
+        keyData += makeKeyDataForScanCode(VK_LSHIFT);
+    } else if (JSStringIsEqualToUTF8CString(character, "leftAlt")) {
+        virtualKeyCode = VK_MENU;
+        keyData += makeKeyDataForScanCode(VK_LMENU);
+    } else if (JSStringIsEqualToUTF8CString(character, "rightControl")) {
+        virtualKeyCode = VK_CONTROL;
+        keyData += makeKeyDataForScanCode(VK_RCONTROL);
+    } else if (JSStringIsEqualToUTF8CString(character, "rightShift")) {
+        virtualKeyCode = VK_SHIFT;
+        keyData += makeKeyDataForScanCode(VK_RSHIFT);
+    } else if (JSStringIsEqualToUTF8CString(character, "rightAlt")) {
+        virtualKeyCode = VK_MENU;
+        keyData += makeKeyDataForScanCode(VK_RMENU);
+    } else {
         charCode = JSStringGetCharactersPtr(character)[0];
         virtualKeyCode = LOBYTE(VkKeyScan(charCode));
         if (WTF::isASCIIUpper(charCode))
