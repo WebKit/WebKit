@@ -1,3 +1,13 @@
+2012-11-15  Stephen Chenney  <schenney@chromium.org>
+
+        [Chromium] Test expectations - we're passing!
+
+        Unreviewed expectations for canvas-shadow.html
+
+        * platform/chromium-linux-x86/platform/chromium/virtual/gpu/fast/canvas/canvas-shadow-expected.txt: Added.
+        * platform/chromium-linux/platform/chromium/virtual/gpu/fast/canvas/canvas-shadow-expected.txt: Added.
+        * platform/chromium-win-xp/platform/chromium/virtual/gpu/fast/canvas/canvas-shadow-expected.txt: Added.
+
 2012-11-15  David Grogan  <dgrogan@chromium.org>
 
         IndexedDB: remove setVersion from intversion-long-queue
