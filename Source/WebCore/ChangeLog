@@ -1,5 +1,12 @@
 2012-11-16  Dimitri Glazkov  <dglazkov@chromium.org>
 
+        [Chromium] Land a proper fix for r134939.
+
+        * WebCore.gyp/WebCore.gyp: Added exclusion for "atk".
+        * WebCore.gypi: Put the accessibility/atk directory back into WebCore.gypi.
+
+2012-11-16  Dimitri Glazkov  <dglazkov@chromium.org>
+
         [Chromium] Just yank the whole accessibility/atk dir out of WebCore.gypi.
 
 2012-11-16  Dimitri Glazkov  <dglazkov@chromium.org>

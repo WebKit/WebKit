@@ -2070,7 +2070,7 @@
         ['exclude', 'bridge/jni/jsc/'],
 
         # FIXME: Figure out how to store these patterns in a variable.
-        ['exclude', '(cairo|ca|cf|cg|curl|efl|freetype|gstreamer|gtk|linux|mac|opengl|openvg|opentype|pango|posix|qt|soup|svg|symbian|texmap|iphone|win|wince|wx)/'],
+        ['exclude', '(atk|cairo|ca|cf|cg|curl|efl|freetype|gstreamer|gtk|linux|mac|opengl|openvg|opentype|pango|posix|qt|soup|svg|symbian|texmap|iphone|win|wince|wx)/'],
         ['exclude', '(?<!Chromium)(Cairo|CF|CG|Curl|Gtk|JSC|Linux|Mac|OpenType|POSIX|Posix|Qt|Safari|Soup|Symbian|Win|WinCE|Wx)\\.(cpp|mm?)$'],
 
         ['exclude', 'AllInOne\\.cpp$'],
