@@ -74,6 +74,7 @@ javascriptcore_built_nosources :=
 llint_nosources :=
 offlineasm_nosources :=
 webcore_cppflags :=
+webcore_platform_sources :=
 webcore_modules_sources :=
 webcore_sources :=
 webcore_libadd :=
