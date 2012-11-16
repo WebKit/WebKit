@@ -49,6 +49,9 @@ void InitWebCoreSystemInterface(void)
     INIT(CGContextGetShouldSmoothFonts);
     INIT(CGPatternCreateWithImageAndTransform);
     INIT(CGContextResetClip);
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
+    INIT(CGContextDrawsWithCorrectShadowOffsets);
+#endif
     INIT(CopyCFLocalizationPreferredName);
     INIT(CopyCONNECTProxyResponse);
     INIT(CopyNSURLResponseStatusLine);

@@ -1,3 +1,20 @@
+2012-11-16  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r130565
+
+    2012-10-05  Tim Horton  <timothy_horton@apple.com>
+
+            [cg] GraphicsContextCG should ask CG whether the shadow offset workaround is required
+            https://bugs.webkit.org/show_bug.cgi?id=98565
+            <rdar://problem/12436468>
+
+            Reviewed by Simon Fraser.
+
+            Add wkCGContextDrawsWithCorrectShadowOffsets.
+
+            * WebCoreSupport/WebSystemInterface.mm:
+            (InitWebCoreSystemInterface):
+
 2012-11-15  Lucas Forschler  <lforschler@apple.com>
 
         Merge r133977
