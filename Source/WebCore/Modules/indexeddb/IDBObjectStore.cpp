@@ -101,12 +101,10 @@ PassRefPtr<IDBRequest> IDBObjectStore::get(ScriptExecutionContext* context, Pass
     return get(context, keyRange.release(), ec);
 }
 
-static void generateIndexKeysForValue(const IDBIndexMetadata& indexMetadata,
-                                      const ScriptValue& objectValue,
-                                      IDBObjectStore::IndexKeys* indexKeys)
+static void generateIndexKeysForValue(DOMRequestState* requestState, const IDBIndexMetadata& indexMetadata, const ScriptValue& objectValue, IDBObjectStore::IndexKeys* indexKeys)
 {
     ASSERT(indexKeys);
-    RefPtr<IDBKey> indexKey = createIDBKeyFromScriptValueAndKeyPath(objectValue, indexMetadata.keyPath);
+    RefPtr<IDBKey> indexKey = createIDBKeyFromScriptValueAndKeyPath(requestState, objectValue, indexMetadata.keyPath);
 
     if (!indexKey)
         return;
@@ -171,6 +169,7 @@ PassRefPtr<IDBRequest> IDBObjectStore::put(IDBObjectStoreBackendInterface::PutMo
     const IDBKeyPath& keyPath = m_metadata.keyPath;
     const bool usesInLineKeys = !keyPath.isNull();
     const bool hasKeyGenerator = autoIncrement();
+    DOMRequestState requestState(context);
 
     if (putMode != IDBObjectStoreBackendInterface::CursorUpdate && usesInLineKeys && key) {
         ec = IDBDatabaseException::DATA_ERR;
@@ -181,7 +180,7 @@ PassRefPtr<IDBRequest> IDBObjectStore::put(IDBObjectStoreBackendInterface::PutMo
         return 0;
     }
     if (usesInLineKeys) {
-        RefPtr<IDBKey> keyPathKey = createIDBKeyFromScriptValueAndKeyPath(value, keyPath);
+        RefPtr<IDBKey> keyPathKey = createIDBKeyFromScriptValueAndKeyPath(&requestState, value, keyPath);
         if (keyPathKey && !keyPathKey->isValid()) {
             ec = IDBDatabaseException::DATA_ERR;
             return 0;
@@ -191,7 +190,7 @@ PassRefPtr<IDBRequest> IDBObjectStore::put(IDBObjectStoreBackendInterface::PutMo
             return 0;
         }
         if (hasKeyGenerator && !keyPathKey) {
-            if (!canInjectIDBKeyIntoScriptValue(value, keyPath)) {
+            if (!canInjectIDBKeyIntoScriptValue(&requestState, value, keyPath)) {
                 ec = IDBDatabaseException::DATA_ERR;
                 return 0;
             }
@@ -208,7 +207,7 @@ PassRefPtr<IDBRequest> IDBObjectStore::put(IDBObjectStoreBackendInterface::PutMo
     Vector<IndexKeys> indexKeys;
     for (IDBObjectStoreMetadata::IndexMap::const_iterator it = m_metadata.indexes.begin(); it != m_metadata.indexes.end(); ++it) {
         IndexKeys keys;
-        generateIndexKeysForValue(it->value, value, &keys);
+        generateIndexKeysForValue(&requestState, it->value, value, &keys);
         indexIds.append(it->key);
         indexKeys.append(keys);
     }
@@ -328,7 +327,7 @@ private:
             ScriptValue value = cursor->value();
 
             IDBObjectStore::IndexKeys indexKeys;
-            generateIndexKeysForValue(m_indexMetadata, value, &indexKeys);
+            generateIndexKeysForValue(request->requestState(), m_indexMetadata, value, &indexKeys);
 
             Vector<IDBObjectStore::IndexKeys, 1> indexKeysList;
             indexKeysList.append(indexKeys);

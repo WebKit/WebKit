@@ -117,6 +117,8 @@ public:
 
     IDBTransactionBackendInterface::TaskType taskType() { return m_taskType; }
 
+    DOMRequestState* requestState() { return &m_requestState; }
+
 protected:
     IDBRequest(ScriptExecutionContext*, PassRefPtr<IDBAny> source, IDBTransactionBackendInterface::TaskType, IDBTransaction*);
     void enqueueEvent(PassRefPtr<Event>);

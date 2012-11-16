@@ -1,3 +1,37 @@
+2012-11-16  Michael Pruett  <michael@68k.org>
+
+        IndexedDB: Propagate DOMRequestState to IndexedDB binding utility functions
+        https://bugs.webkit.org/show_bug.cgi?id=102430
+
+        Reviewed by Adam Barth.
+
+        DOMRequestState is currently propagated to some but not all of
+        the IndexedDB binding utility functions. In order to implement
+        these functions for JSC, this state must be propagated to all
+        of the utility functions.
+
+        Tests: storage/indexeddb/*
+
+        * Modules/indexeddb/IDBCursor.cpp:
+        (WebCore::IDBCursor::update):
+        (WebCore::IDBCursor::setValueReady):
+        * Modules/indexeddb/IDBObjectStore.cpp:
+        (WebCore::generateIndexKeysForValue):
+        (WebCore::IDBObjectStore::put):
+        (WebCore):
+        * Modules/indexeddb/IDBRequest.cpp:
+        (WebCore::IDBRequest::onSuccess):
+        (WebCore::IDBRequest::dispatchEvent):
+        * Modules/indexeddb/IDBRequest.h:
+        (WebCore::IDBRequest::requestState):
+        (IDBRequest):
+        * bindings/v8/IDBBindingUtilities.cpp:
+        (WebCore::createIDBKeyFromScriptValueAndKeyPath):
+        (WebCore::serializeIDBValue):
+        (WebCore::injectIDBKeyIntoScriptValue):
+        * bindings/v8/IDBBindingUtilities.h:
+        (WebCore):
+
 2012-11-16  Byungwoo Lee  <bw80.lee@samsung.com>
 
         Rebaselined run-bindings-tests.

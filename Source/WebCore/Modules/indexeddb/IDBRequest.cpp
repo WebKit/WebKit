@@ -286,7 +286,7 @@ void IDBRequest::onSuccess(PassRefPtr<IDBCursorBackendInterface> backend, PassRe
         return;
 
     DOMRequestState::Scope scope(m_requestState);
-    ScriptValue value = deserializeIDBValue(&m_requestState, serializedValue);
+    ScriptValue value = deserializeIDBValue(requestState(), serializedValue);
     ASSERT(m_cursorType != IDBCursorBackendInterface::InvalidCursorType);
     RefPtr<IDBCursor> cursor;
     if (m_cursorType == IDBCursorBackendInterface::IndexKeyCursor)
@@ -343,7 +343,7 @@ void IDBRequest::onSuccess(PassRefPtr<SerializedScriptValue> serializedScriptVal
         return;
 
     DOMRequestState::Scope scope(m_requestState);
-    ScriptValue value = deserializeIDBValue(&m_requestState, serializedScriptValue);
+    ScriptValue value = deserializeIDBValue(requestState(), serializedScriptValue);
     onSuccessInternal(value);
 }
 
@@ -370,14 +370,14 @@ void IDBRequest::onSuccess(PassRefPtr<SerializedScriptValue> prpSerializedScript
     ASSERT(keyPath == effectiveObjectStore(m_source)->keyPath());
 #endif
     DOMRequestState::Scope scope(m_requestState);
-    ScriptValue value = deserializeIDBValue(&m_requestState, prpSerializedScriptValue);
+    ScriptValue value = deserializeIDBValue(requestState(), prpSerializedScriptValue);
 
     RefPtr<IDBKey> primaryKey = prpPrimaryKey;
 #ifndef NDEBUG
-    RefPtr<IDBKey> expectedKey = createIDBKeyFromScriptValueAndKeyPath(value, keyPath);
+    RefPtr<IDBKey> expectedKey = createIDBKeyFromScriptValueAndKeyPath(requestState(), value, keyPath);
     ASSERT(!expectedKey || expectedKey->isEqual(primaryKey.get()));
 #endif
-    bool injected = injectIDBKeyIntoScriptValue(primaryKey, value, keyPath);
+    bool injected = injectIDBKeyIntoScriptValue(requestState(), primaryKey, value, keyPath);
     ASSERT_UNUSED(injected, injected);
     onSuccessInternal(value);
 }
@@ -409,7 +409,7 @@ void IDBRequest::onSuccess(PassRefPtr<IDBKey> key, PassRefPtr<IDBKey> primaryKey
         return;
 
     DOMRequestState::Scope scope(m_requestState);
-    ScriptValue value = deserializeIDBValue(&m_requestState, serializedValue);
+    ScriptValue value = deserializeIDBValue(requestState(), serializedValue);
     ASSERT(m_pendingCursor);
     setResultCursor(m_pendingCursor.release(), key, primaryKey, value);
     enqueueEvent(createSuccessEvent());
@@ -482,7 +482,7 @@ bool IDBRequest::dispatchEvent(PassRefPtr<Event> event)
     if (event->type() == eventNames().successEvent) {
         cursorToNotify = getResultCursor();
         if (cursorToNotify) {
-            cursorToNotify->setValueReady(&m_requestState, m_cursorKey.release(), m_cursorPrimaryKey.release(), m_cursorValue);
+            cursorToNotify->setValueReady(requestState(), m_cursorKey.release(), m_cursorPrimaryKey.release(), m_cursorValue);
             m_cursorValue.clear();
         }
     }
