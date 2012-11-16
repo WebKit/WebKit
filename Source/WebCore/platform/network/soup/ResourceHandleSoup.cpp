@@ -936,7 +936,7 @@ void getCredentialFromPersistentStoreCallback(const Credential& credential, void
 
 void ResourceHandle::continueDidReceiveAuthenticationChallenge(const Credential& credentialFromPersistentStorage)
 {
-    ASSERT(d->m_currentWebChallenge.isNull());
+    ASSERT(!d->m_currentWebChallenge.isNull());
     AuthenticationChallenge& challenge = d->m_currentWebChallenge;
 
     ASSERT(challenge.soupSession());
