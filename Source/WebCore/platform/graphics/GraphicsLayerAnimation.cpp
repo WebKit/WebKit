@@ -221,6 +221,8 @@ GraphicsLayerAnimation::GraphicsLayerAnimation(const String& name, const Keyfram
     , m_listsMatch(listsMatch)
     , m_startTime(startTime)
     , m_pauseTime(0)
+    , m_totalRunningTime(0)
+    , m_lastRefreshedTime(m_startTime)
     , m_state(PlayingState)
 {
 }

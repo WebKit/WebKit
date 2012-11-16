@@ -1,3 +1,18 @@
+2012-11-16  Balazs Kelemen  <kbalazs@webkit.org>
+
+        Coordinated Graphics: support the "freeze animations" API
+        https://bugs.webkit.org/show_bug.cgi?id=100703
+
+        Reviewed by Noam Rosenthal.
+
+        Typo fix after previous patch.
+
+        No new tests, it's just a typo that only takes effect in the browser.
+
+        * platform/graphics/GraphicsLayerAnimation.cpp:
+        (WebCore::GraphicsLayerAnimation::GraphicsLayerAnimation):
+        Initialize members.
+
 2012-11-16  Dan Carney  <dcarney@google.com>
 
         add 7 bit strings capabilities to the v8 binding layer
