@@ -1152,6 +1152,44 @@ static inline bool elementHasDirectionAuto(Element* element)
     return element->isHTMLElement() && toHTMLElement(element)->hasDirectionAuto();
 }
 
+static inline bool haveIdenticalStyleAffectingAttributes(StyledElement* a, StyledElement* b)
+{
+    if (a->attributeData() == b->attributeData())
+        return true;
+    if (a->fastGetAttribute(XMLNames::langAttr) != b->fastGetAttribute(XMLNames::langAttr))
+        return false;
+    if (a->fastGetAttribute(langAttr) != b->fastGetAttribute(langAttr))
+        return false;
+    if (a->fastGetAttribute(readonlyAttr) != b->fastGetAttribute(readonlyAttr))
+        return false;
+    // FIXME: This is probably not necessary.
+    if (a->fastGetAttribute(cellpaddingAttr) != b->fastGetAttribute(cellpaddingAttr))
+        return false;
+    if (a->hasClass()) {
+#if ENABLE(SVG)
+        // SVG elements require a (slow!) getAttribute comparision because "class" is an animatable attribute for SVG.
+        if (a->isSVGElement()) {
+            if (a->getAttribute(classAttr) != b->getAttribute(classAttr))
+                return false;
+        } else
+#endif
+        if (a->fastGetAttribute(classAttr) != b->fastGetAttribute(classAttr))
+            return false;
+    }
+
+    if (a->presentationAttributeStyle() && !attributeStylesEqual(a->presentationAttributeStyle(), b->presentationAttributeStyle()))
+        return false;
+
+#if ENABLE(PROGRESS_ELEMENT)
+    if (a->hasTagName(progressTag)) {
+        if (static_cast<HTMLProgressElement*>(a)->isDeterminate() != static_cast<HTMLProgressElement*>(b)->isDeterminate())
+            return false;
+    }
+#endif
+
+    return true;
+}
+
 bool StyleResolver::canShareStyleWithElement(StyledElement* element) const
 {
     RenderStyle* style = element->renderStyle();
@@ -1192,28 +1230,14 @@ bool StyleResolver::canShareStyleWithElement(StyledElement* element) const
         return false;
     if (element == element->document()->cssTarget())
         return false;
-    if (element->fastGetAttribute(XMLNames::langAttr) != m_element->fastGetAttribute(XMLNames::langAttr))
+
+    if (!haveIdenticalStyleAffectingAttributes(element, m_styledElement))
         return false;
-    if (element->fastGetAttribute(langAttr) != m_element->fastGetAttribute(langAttr))
-        return false;
-    if (element->fastGetAttribute(readonlyAttr) != m_element->fastGetAttribute(readonlyAttr))
-        return false;
-    if (element->fastGetAttribute(cellpaddingAttr) != m_element->fastGetAttribute(cellpaddingAttr))
-        return false;
+
     if (element->hasID() && m_features.idsInRules.contains(element->idForStyleResolution().impl()))
         return false;
     if (element->hasScopedHTMLStyleChild())
         return false;
-
-#if ENABLE(PROGRESS_ELEMENT)
-    if (element->hasTagName(progressTag)) {
-        ASSERT(m_element->hasTagName(progressTag));
-        HTMLProgressElement* thisProgressElement = static_cast<HTMLProgressElement*>(element);
-        HTMLProgressElement* otherProgressElement = static_cast<HTMLProgressElement*>(m_element);
-        if (thisProgressElement->isDeterminate() != otherProgressElement->isDeterminate())
-            return false;
-    }
-#endif
 
     // FIXME: We should share style for option and optgroup whenever possible.
     // Before doing so, we need to resolve issues in HTMLSelectElement::recalcListItems
@@ -1245,21 +1269,6 @@ bool StyleResolver::canShareStyleWithElement(StyledElement* element) const
 #endif
 
     if (elementHasDirectionAuto(element))
-        return false;
-
-    if (element->hasClass()) {
-#if ENABLE(SVG)
-        // SVG elements require a (slow!) getAttribute comparision because "class" is an animatable attribute for SVG.
-        if (element->isSVGElement()) {
-            if (element->getAttribute(classAttr) != m_element->getAttribute(classAttr))
-                return false;
-        } else
-#endif
-        if (element->fastGetAttribute(classAttr) != m_element->fastGetAttribute(classAttr))
-            return false;
-    }
-
-    if (element->presentationAttributeStyle() && !attributeStylesEqual(element->presentationAttributeStyle(), m_styledElement->presentationAttributeStyle()))
         return false;
 
     if (additionalPresentationAttributeStyleA && !attributeStylesEqual(additionalPresentationAttributeStyleA, additionalPresentationAttributeStyleB))

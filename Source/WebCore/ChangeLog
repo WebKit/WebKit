@@ -1,3 +1,22 @@
+2012-11-16  Andreas Kling  <akling@apple.com>
+
+        StyleResolver: Optimize sharing candidate evaluation for elements with shared attribute data.
+        <http://webkit.org/b/102507>
+
+        Reviewed by Antti Koivisto.
+
+        When evaluating two elements as potential style sharing candidate, we have a whole bunch of code
+        comparing the various attributes that would prevent sharing.
+
+        If the two elements both share the same ElementAttributeData, we can skip all those checks
+        since they are guaranteed to have equal attributes.
+
+        Cuts the time spent in canShareStyleWithElement() by 25% on the HTML5 spec at <http://whatwg.org/c>.
+
+        * css/StyleResolver.cpp:
+        (WebCore::haveIdenticalStyleAffectingAttributes):
+        (WebCore::StyleResolver::canShareStyleWithElement):
+
 2012-11-16  Byungwoo Lee  <bw80.lee@samsung.com>
 
         [EFL][GTK] Build fix after r134955
