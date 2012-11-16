@@ -1,3 +1,29 @@
+2012-11-16  Eugene Klyuchnikov  <eustas.bug@gmail.com>
+
+        Web Inspector: Memory Timeline Crash
+        https://bugs.webkit.org/show_bug.cgi?id=102390
+
+        Reviewed by Vsevolod Vlasov.
+
+        Crash seems to be caused by IPC overflow.
+        Messages "ParsedScriptSource" are routed to
+        ResourceScriptMapping.prototype.addScript that process them in time
+        linear to number of already registered non-anonymous non-inline scripts.
+
+        Fixed this with replacing repreated filtering with "on-line" bucketing.
+
+        * inspector/front-end/ResourceScriptMapping.js:
+        (WebInspector.ResourceScriptMapping):
+        Removed duplicating initialization code.
+        (WebInspector.ResourceScriptMapping.prototype.addScript):
+        Added script bucketing by sourceURL/isInline parameters.
+        (WebInspector.ResourceScriptMapping.prototype._scriptsForSourceURL):
+        Avoid filterfig.
+        (WebInspector.ResourceScriptMapping.prototype._createUISourceCode):
+        Added outgoing muatable array safeguard.
+        (WebInspector.ResourceScriptMapping.prototype._reset):
+        Added type information and added two new maps.
+
 2012-11-16  Helder Correia  <helder.correia@nokia.com>
 
         [CoordGfx] Follow coding style on explicit constructors

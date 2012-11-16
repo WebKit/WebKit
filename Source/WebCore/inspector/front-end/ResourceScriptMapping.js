@@ -39,14 +39,7 @@ WebInspector.ResourceScriptMapping = function(workspace)
     this._workspace.addEventListener(WebInspector.Workspace.Events.ProjectWillReset, this._reset, this);
     this._workspace.addEventListener(WebInspector.UISourceCodeProvider.Events.UISourceCodeAdded, this._uiSourceCodeAddedToWorkspace, this);
 
-    /** @type {Object.<string, WebInspector.UISourceCode>} */
-    this._temporaryUISourceCodeForScriptId = {};
-    this._scriptIdsForTemporaryUISourceCode = new Map();
-    /** @type {Object.<string, WebInspector.UISourceCode>} */
-    this._originalUISourceCodeForScriptId = {};
-    this._scriptIdsForOriginalUISourceCode = new Map();
-
-    this._scripts = [];
+    this._reset();
 }
 
 WebInspector.ResourceScriptMapping.prototype = {
@@ -119,8 +112,14 @@ WebInspector.ResourceScriptMapping.prototype = {
      */
     addScript: function(script)
     {
-        if (!script.isAnonymousScript())
+        if (!script.isAnonymousScript()) {
             this._scripts.push(script);
+            var scriptsForSourceURL = script.isInlineScript() ? this._inlineScriptsForSourceURL : this._nonInlineScriptsForSourceURL;
+            var bucket = scriptsForSourceURL[script.sourceURL] || [];
+            scriptsForSourceURL[script.sourceURL] = bucket;
+            bucket.push(script);
+        }
+
         script.setSourceMapping(this);
         var uiSourceCode = this._workspaceUISourceCodeForScript(script);
         if (uiSourceCode) {
@@ -132,7 +131,7 @@ WebInspector.ResourceScriptMapping.prototype = {
 
         if (this._deleteTemporaryUISourceCodeForScripts(scripts)) {
             this._deleteOriginalUISourceCodeForScripts(scripts);
-            uiSourceCode = this._getOrCreateTemporaryUISourceCode(script);
+            this._getOrCreateTemporaryUISourceCode(script);
         }
     },
 
@@ -201,16 +200,12 @@ WebInspector.ResourceScriptMapping.prototype = {
     /**
      * @param {string} sourceURL
      * @param {boolean} isInlineScript
-     * @return {Array.<WebInspector.Script>}
+     * @return {!Array.<!WebInspector.Script>}
      */
     _scriptsForSourceURL: function(sourceURL, isInlineScript)
     {
-        function filter(script)
-        {
-            return script.sourceURL === sourceURL && script.isInlineScript() === isInlineScript;
-        }
-
-        return this._scripts.filter(filter.bind(this));
+        var scriptsForSourceURL = isInlineScript ? this._inlineScriptsForSourceURL : this._nonInlineScriptsForSourceURL;
+        return scriptsForSourceURL[sourceURL] || [];
     },
 
     /**
@@ -221,7 +216,7 @@ WebInspector.ResourceScriptMapping.prototype = {
     _createUISourceCode: function(scripts, divergedVersion)
     {
         var script = scripts[0];
-        var contentProvider = script.isInlineScript() ? new WebInspector.ConcatenatedScriptsContentProvider(scripts) : script;
+        var contentProvider = script.isInlineScript() ? new WebInspector.ConcatenatedScriptsContentProvider(scripts.slice()) : script;
         var isDynamicScript = this._isDynamicScript(script);
         var url = isDynamicScript ? "" : script.sourceURL;
         var temporaryUISourceCode = this._workspace.addTemporaryUISourceCode(url, contentProvider, !script.isInlineScript() && !divergedVersion, script.isContentScript);
@@ -314,10 +309,16 @@ WebInspector.ResourceScriptMapping.prototype = {
 
     _reset: function()
     {
+        /** @type {Object.<string, WebInspector.UISourceCode>} */
         this._temporaryUISourceCodeForScriptId = {};
         this._scriptIdsForTemporaryUISourceCode = new Map();
+        /** @type {Object.<string, WebInspector.UISourceCode>} */
         this._originalUISourceCodeForScriptId = {};
         this._scriptIdsForOriginalUISourceCode = new Map();
+        /** @type {!Object.<string, !Array.<!WebInspector.UISourceCode>>} */
+        this._inlineScriptsForSourceURL = {};
+        /** @type {!Object.<string, !Array.<!WebInspector.UISourceCode>>} */
+        this._nonInlineScriptsForSourceURL = {};
         this._scripts = [];
     },
 }
