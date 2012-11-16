@@ -2,6 +2,29 @@
 
         Unreviewed. Rebaselined images.
 
+        * fast/media/mq-js-media-except-02-expected.txt: Renamed from LayoutTests/platform/efl/fast/media/mq-js-media-except-02-expected.txt.
+        * fast/media/mq-js-media-except-03-expected.txt: Renamed from LayoutTests/platform/efl/fast/media/mq-js-media-except-03-expected.txt.
+        * platform/chromium-mac-lion/fast/media/mq-js-media-except-02-expected.png:
+        * platform/chromium-mac-lion/fast/media/mq-js-media-except-03-expected.png:
+        * platform/chromium-mac-snowleopard/fast/media/mq-js-media-except-02-expected.png:
+        * platform/chromium-mac-snowleopard/fast/media/mq-js-media-except-03-expected.png:
+        * platform/chromium-mac/fast/media/mq-js-media-except-02-expected.png:
+        * platform/chromium-mac/fast/media/mq-js-media-except-02-expected.txt: Renamed from LayoutTests/platform/chromium/fast/media/mq-js-media-except-02-expected.txt.
+        * platform/chromium-mac/fast/media/mq-js-media-except-03-expected.png:
+        * platform/chromium-mac/fast/media/mq-js-media-except-03-expected.txt: Renamed from LayoutTests/platform/chromium/fast/media/mq-js-media-except-03-expected.txt.
+        * platform/chromium-mac/svg/custom/baseval-animval-equality-expected.png:
+        * platform/chromium-mac/svg/custom/baseval-animval-equality-expected.txt: Added.
+        * platform/chromium-win-xp/fast/media/mq-js-media-except-02-expected.png: Added.
+        * platform/chromium-win-xp/fast/media/mq-js-media-except-03-expected.png: Added.
+        * platform/efl-wk1/fast/media/mq-js-media-except-02-expected.png: Renamed from LayoutTests/platform/efl/fast/media/mq-js-media-except-02-expected.png.
+        * platform/efl-wk1/fast/media/mq-js-media-except-03-expected.png: Renamed from LayoutTests/platform/efl/fast/media/mq-js-media-except-03-expected.png.
+        * platform/gtk/fast/media/mq-js-media-except-02-expected.txt: Removed.
+        * platform/gtk/fast/media/mq-js-media-except-03-expected.txt: Removed.
+
+2012-11-15  Kentaro Hara  <haraken@chromium.org>
+
+        Unreviewed. Rebaselined images.
+
         * platform/chromium-win-xp/platform/chromium/fast/forms/calendar-picker/calendar-picker-appearance-expected.png: Added.
         * platform/chromium-win-xp/platform/chromium/fast/forms/calendar-picker/calendar-picker-appearance-step-expected.png: Added.
 
