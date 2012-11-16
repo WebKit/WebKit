@@ -88,6 +88,7 @@ webkit.org/b/100272 [ Debug ] fast/media/w3c/test_media_queries.html [ Pass Slow
 webkit.org/b/70878 [ Linux Debug ] http/tests/xmlhttprequest/xmlhttprequest-test-send-flag.html [ Pass Slow ]
 webkit.org/b/102179 [ Win Debug ] platform/chromium/virtual/gpu/fast/hidpi/image-set-without-specified-width.html [ Pass Slow ]
 webkit.org/b/102463 [ Win Debug ] fast/forms/validation-message-appearance.html [ Pass ImageOnlyFailure ]
+webkit.org/b/102464 [ Debug ] fast/images/webgl-teximage2d.html [ Pass Slow ]
 
 # These tests started being slow when we switched to DRT.
 webkit.org/b/90488 [ Linux Win Debug ] inspector [ Pass Slow ]
