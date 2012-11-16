@@ -1,3 +1,35 @@
+2012-11-15  Kentaro Hara  <haraken@chromium.org>
+
+        [V8] Remove redundant $interfaceName from function parameters
+        https://bugs.webkit.org/show_bug.cgi?id=102334
+
+        Reviewed by Adam Barth.
+
+        'sub func { my $dataNode = shift; my $interfaceName = shift; }'
+        is redundant. We can get $interfaceName by $dataNode->name.
+
+        No tests. No change in behavior.
+
+        * bindings/scripts/CodeGeneratorV8.pm:
+        (GenerateOpaqueRootForGC):
+        (GenerateHeader):
+        (GenerateConstructorGetter):
+        (GenerateNormalAttrGetter):
+        (GenerateReplaceableAttrSetter):
+        (GenerateNormalAttrSetter):
+        (GenerateOverloadedFunctionCallback):
+        (GenerateFunctionCallback):
+        (GenerateOverloadedConstructorCallback):
+        (GenerateSingleConstructorCallback):
+        (GenerateConstructorCallback):
+        (GenerateEventConstructorCallback):
+        (GenerateTypedArrayConstructorCallback):
+        (GenerateNamedConstructorCallback):
+        (GenerateBatchedAttributeData):
+        (GenerateImplementation):
+        (GenerateToV8Converters):
+        (GetNativeTypeForConversions):
+
 2012-11-15  Simon Fraser  <simon.fraser@apple.com>
 
         Ensure that scrollbar layers show debug borders
