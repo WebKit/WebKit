@@ -1,3 +1,21 @@
+2012-11-16  Byungwoo Lee  <bw80.lee@samsung.com>
+
+        Rebaselined run-bindings-tests.
+        https://bugs.webkit.org/show_bug.cgi?id=102523
+
+        Reviewed by Dimitri Glazkov.
+
+        Expected results need to be updated after r134931
+
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::jsTestObjWithScriptArgumentsAndCallStackAttribute):
+        (WebCore::setJSTestObjWithScriptArgumentsAndCallStackAttribute):
+        (WebCore::jsTestObjPrototypeFunctionWithScriptArgumentsAndCallStack):
+        * bindings/scripts/test/V8/V8TestObj.cpp:
+        (WebCore::TestObjV8Internal::withScriptArgumentsAndCallStackAttributeAttrGetter):
+        (WebCore::TestObjV8Internal::withScriptArgumentsAndCallStackAttributeAttrSetter):
+        (WebCore::TestObjV8Internal::withScriptArgumentsAndCallStackCallback):
+
 2012-11-16  Pratik Solanki  <psolanki@apple.com>
 
         For single element arrays use the pointer into the CFDataRef instead of copying data
