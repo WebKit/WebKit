@@ -154,3 +154,5 @@ diagnosticLoggingEnabled initial=false
 applyPageScaleFactorInCompositor initial=false
 plugInSnapshottingEnabled initial=false
 frameFlatteningEnabled initial=false
+
+allowCustomScrollbarInMainFrame initial=true

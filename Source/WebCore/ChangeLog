@@ -1,3 +1,19 @@
+2012-11-15  Tien-Ren Chen  <trchen@chromium.org>
+
+        Add Settings to disable custom scrollbars on main frame
+        https://bugs.webkit.org/show_bug.cgi?id=102323
+
+        Reviewed by Adam Barth.
+
+        Custom scrollbars on main frame don't really work well on touch devices.
+        Add a setting to inhibit their creation.
+
+        No new tests. No change in default layout behavior.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::createScrollbar):
+        * page/Settings.in:
+
 2012-11-15  Rick Byers  <rbyers@chromium.org>
 
         custom CSS cursors ignore hotspot values embedded in CUR files

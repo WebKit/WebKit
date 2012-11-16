@@ -512,6 +512,11 @@ void FrameView::updateCanHaveScrollbars()
 
 PassRefPtr<Scrollbar> FrameView::createScrollbar(ScrollbarOrientation orientation)
 {
+    if (Settings* settings = m_frame->settings()) {
+        if (!settings->allowCustomScrollbarInMainFrame() && m_frame->page() && m_frame->page()->mainFrame() == m_frame)
+            return ScrollView::createScrollbar(orientation);
+    }
+
     // FIXME: We need to update the scrollbar dynamically as documents change (or as doc elements and bodies get discovered that have custom styles).
     Document* doc = m_frame->document();
 

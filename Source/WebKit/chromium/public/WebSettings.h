@@ -69,6 +69,7 @@ public:
     virtual void setAcceleratedPaintingEnabled(bool) = 0;
     virtual void setAllowDisplayOfInsecureContent(bool) = 0;
     virtual void setAllowFileAccessFromFileURLs(bool) = 0;
+    virtual void setAllowCustomScrollbarInMainFrame(bool) = 0;
     virtual void setAllowRunningOfInsecureContent(bool) = 0;
     virtual void setAllowScriptsToCloseWindows(bool) = 0;
     virtual void setAllowUniversalAccessFromFileURLs(bool) = 0;

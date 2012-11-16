@@ -706,4 +706,9 @@ bool WebSettingsImpl::applyPageScaleFactorInCompositor() const
     return m_settings->applyPageScaleFactorInCompositor();
 }
 
+void WebSettingsImpl::setAllowCustomScrollbarInMainFrame(bool enabled)
+{
+    m_settings->setAllowCustomScrollbarInMainFrame(enabled);
+}
+
 } // namespace WebKit
