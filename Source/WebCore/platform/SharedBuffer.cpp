@@ -124,10 +124,32 @@ unsigned SharedBuffer::size() const
     return m_size;
 }
 
+void SharedBuffer::createPurgeableBuffer() const
+{
+    if (m_purgeableBuffer)
+        return;
+
+    if (hasPlatformData())
+        return;
+
+#if USE(NETWORK_CFDATA_ARRAY_CALLBACK)
+    if (singleDataArrayBuffer())
+        return;
+#endif
+
+    m_purgeableBuffer = PurgeableBuffer::create(buffer().data(), m_size);
+}
+
 const char* SharedBuffer::data() const
 {
     if (hasPlatformData())
         return platformData();
+
+#if USE(NETWORK_CFDATA_ARRAY_CALLBACK)
+    const char* directBuffer = singleDataArrayBuffer();
+    if (directBuffer)
+        return directBuffer;
+#endif
     
     if (m_purgeableBuffer)
         return m_purgeableBuffer->data();

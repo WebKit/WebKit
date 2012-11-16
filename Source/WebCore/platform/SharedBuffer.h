@@ -116,6 +116,8 @@ public:
 
     void reportMemoryUsage(MemoryObjectInfo*) const;
 
+    void createPurgeableBuffer() const;
+
 private:
     SharedBuffer();
     explicit SharedBuffer(size_t);
@@ -136,11 +138,12 @@ private:
     unsigned m_size;
     mutable Vector<char> m_buffer;
     mutable Vector<char*> m_segments;
-    OwnPtr<PurgeableBuffer> m_purgeableBuffer;
+    mutable OwnPtr<PurgeableBuffer> m_purgeableBuffer;
 #if USE(NETWORK_CFDATA_ARRAY_CALLBACK)
     mutable Vector<RetainPtr<CFDataRef> > m_dataArray;
     void copyDataArrayAndClear(char *destination, unsigned bytesToCopy) const;
     unsigned copySomeDataFromDataArray(const char*& someData, unsigned position) const;
+    const char *singleDataArrayBuffer() const;
 #endif
 #if USE(CF)
     explicit SharedBuffer(CFDataRef);

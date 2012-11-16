@@ -66,7 +66,7 @@ bool SharedBuffer::hasPlatformData() const
 
 const char* SharedBuffer::platformData() const
 {
-    return (const char*)CFDataGetBytePtr(m_cfData.get());
+    return reinterpret_cast<const char*>(CFDataGetBytePtr(m_cfData.get()));
 }
 
 unsigned SharedBuffer::platformDataSize() const
@@ -81,7 +81,7 @@ void SharedBuffer::maybeTransferPlatformData()
     
     ASSERT(!m_size);
         
-    append((const char*)CFDataGetBytePtr(m_cfData.get()), CFDataGetLength(m_cfData.get()));
+    append(reinterpret_cast<const char*>(CFDataGetBytePtr(m_cfData.get())), CFDataGetLength(m_cfData.get()));
         
     m_cfData = 0;
 }
@@ -130,6 +130,19 @@ unsigned SharedBuffer::copySomeDataFromDataArray(const char*& someData, unsigned
         }
         totalOffset += dataLen;
     }
+    return 0;
+}
+
+const char *SharedBuffer::singleDataArrayBuffer() const
+{
+    // If we had previously copied data into m_buffer in copyDataArrayAndClear() or some other
+    // function, then we can't return a pointer to the CFDataRef buffer.
+    if (m_buffer.size())
+        return 0;
+
+    if (m_dataArray.size() == 1)
+        return reinterpret_cast<const char*>(CFDataGetBytePtr(m_dataArray.at(0).get()));
+
     return 0;
 }
 #endif

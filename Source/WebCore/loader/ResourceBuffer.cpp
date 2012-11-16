@@ -100,6 +100,12 @@ bool ResourceBuffer::hasPurgeableBuffer() const
     return m_sharedBuffer->hasPurgeableBuffer();
 }
 
+void ResourceBuffer::createPurgeableBuffer() const
+{
+    ASSERT(m_sharedBuffer);
+    sharedBuffer()->createPurgeableBuffer();
+}
+
 PassOwnPtr<PurgeableBuffer> ResourceBuffer::releasePurgeableBuffer()
 {
     return m_sharedBuffer->releasePurgeableBuffer();

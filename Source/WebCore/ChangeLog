@@ -1,3 +1,36 @@
+2012-11-16  Pratik Solanki  <psolanki@apple.com>
+
+        For single element arrays use the pointer into the CFDataRef instead of copying data
+        https://bugs.webkit.org/show_bug.cgi?id=102306
+        <rdar://problem/12267471>
+
+        Reviewed by Alexey Proskuryakov.
+
+        We generally copy the data received from CFNetwork into our own buffers. But if the
+        CFArrayRef has exactly one CFDataRef inside it, then we can just hold on to the CFDataRef
+        and access its memory directly and avoid making a copy.
+
+        This also moves the creation of PurgeableBuffer from CachedResource to SharedBuffer.
+        SharedBuffer::createPurgeableBuffer() will avoid creating PurgeableBuffer when the
+        SharedBuffer is backed by a NSData/CFDataRef and when we want to optimize and directly use
+        the memory in the data array.
+
+        No new tests because no change in functionality.
+
+        * loader/ResourceBuffer.cpp:
+        (WebCore::ResourceBuffer::createPurgeableBuffer): Added.
+        * loader/ResourceBuffer.h:
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::makePurgeable):
+        * platform/SharedBuffer.cpp:
+        (WebCore::SharedBuffer::createPurgeableBuffer): Added.
+        (WebCore::SharedBuffer::data):
+        * platform/SharedBuffer.h:
+        * platform/cf/SharedBufferCF.cpp:
+        (WebCore::SharedBuffer::platformData): Use reinterpret_cast instead of C-style cast.
+        (WebCore::SharedBuffer::maybeTransferPlatformData): Use reinterpret_cast instead of C-style cast.
+        (WebCore::SharedBuffer::singleDataArrayBuffer): Added.
+
 2012-11-16  Antti Koivisto  <antti@apple.com>
 
         REGRESSION(r129644): User StyleSheet not applying
