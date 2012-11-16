@@ -3,12 +3,14 @@ Tests RTCDataChannel.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS pc_onopen was called
-PASS dc.readyState is 'connecting'
 PASS dc.reliable is true
 PASS dc.reliable is true
 PASS dc.reliable is true
 PASS dc.reliable is false
+PASS pc_onopen was called
+PASS dc.readyState is 'connecting'
+PASS pc_ondatachannel was called
+PASS event.channel.readyState is 'open'
 PASS dc_onopen was called
 PASS dc.readyState is 'open'
 PASS dc.label is 'label'

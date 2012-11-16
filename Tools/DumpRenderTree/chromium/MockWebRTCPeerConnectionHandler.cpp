@@ -337,6 +337,11 @@ bool MockWebRTCPeerConnectionHandler::openDataChannel(const WebRTCDataChannel& d
     if (m_stopped)
         return false;
 
+    WebRTCDataChannel remoteDataChannel;
+    remoteDataChannel.initialize("MockRemoteDataChannel", dataChannel.reliable());
+    remoteDataChannel.readyStateChanged(WebRTCDataChannel::ReadyStateOpen);
+    m_client->didAddRemoteDataChannel(remoteDataChannel);
+
     postTask(new DataChannelReadyStateTask(this, dataChannel, WebRTCDataChannel::ReadyStateOpen));
     return true;
 }

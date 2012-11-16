@@ -1,3 +1,15 @@
+2012-11-16  Tommy Widenflycht  <tommyw@google.com>
+
+        [chromium] MediaStream API: Add missing WebRTCPeerConnectionHandlerClient::didAddRemoteDataChannel
+        https://bugs.webkit.org/show_bug.cgi?id=102386
+
+        Reviewed by Adam Barth.
+
+        Adding mock data channel functionality.
+
+        * DumpRenderTree/chromium/MockWebRTCPeerConnectionHandler.cpp:
+        (MockWebRTCPeerConnectionHandler::openDataChannel):
+
 2012-11-16  Jochen Eisinger  <jochen@chromium.org>
 
         [chromium] delete unused testRunner methods

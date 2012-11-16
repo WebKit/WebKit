@@ -33,6 +33,7 @@
 
 namespace WebKit {
 class WebMediaStreamDescriptor;
+class WebRTCDataChannel;
 class WebRTCICECandidate;
 
 class WebRTCPeerConnectionHandlerClient {
@@ -64,6 +65,7 @@ public:
     virtual void didChangeICEState(ICEState) = 0;
     virtual void didAddRemoteStream(const WebMediaStreamDescriptor&) = 0;
     virtual void didRemoveRemoteStream(const WebMediaStreamDescriptor&) = 0;
+    virtual void didAddRemoteDataChannel(const WebRTCDataChannel&) { }
 };
 
 } // namespace WebKit

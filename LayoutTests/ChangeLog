@@ -1,3 +1,13 @@
+2012-11-16  Tommy Widenflycht  <tommyw@google.com>
+
+        [chromium] MediaStream API: Add missing WebRTCPeerConnectionHandlerClient::didAddRemoteDataChannel
+        https://bugs.webkit.org/show_bug.cgi?id=102386
+
+        Reviewed by Adam Barth.
+
+        * fast/mediastream/RTCPeerConnection-datachannel.html:
+        * fast/mediastream/RTCPeerConnection-datachannel-expected.txt:
+
 2012-11-16  Robert Flack  <flackr@chromium.org>
 
         Handle gesture events on scrollbars.

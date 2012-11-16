@@ -1,3 +1,13 @@
+2012-11-16  Tommy Widenflycht  <tommyw@google.com>
+
+        [chromium] MediaStream API: Add missing WebRTCPeerConnectionHandlerClient::didAddRemoteDataChannel
+        https://bugs.webkit.org/show_bug.cgi?id=102386
+
+        Reviewed by Adam Barth.
+
+        * chromium/public/WebRTCPeerConnectionHandlerClient.h:
+        (WebRTCPeerConnectionHandlerClient):
+
 2012-11-16  Scott Violet  <sky@chromium.org>
 
         [chromium] Copy linux theme related files to default
