@@ -392,18 +392,6 @@ void TestShell::testTimedOut()
     testFinished();
 }
 
-void TestShell::setPerTilePaintingEnabled(bool enabled)
-{
-    m_perTilePaintingEnabled = enabled;
-    Platform::current()->compositorSupport()->setPerTilePaintingEnabled(enabled);
-}
-
-void TestShell::setAcceleratedAnimationEnabled(bool enabled)
-{
-    m_acceleratedAnimationEnabled = enabled;
-    Platform::current()->compositorSupport()->setAcceleratedAnimationEnabled(enabled);
-}
-
 static string dumpDocumentText(WebFrame* frame)
 {
     // We use the document element's text instead of the body text here because
