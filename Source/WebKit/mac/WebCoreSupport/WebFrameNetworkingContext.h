@@ -1,5 +1,6 @@
 /*
     Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
+    Copyright (C) 2012 Apple Inc. All rights reserved.
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -26,6 +27,14 @@ public:
         return adoptRef(new WebFrameNetworkingContext(frame));
     }
 
+    static void setPrivateBrowsingStorageSessionIdentifierBase(const String&);
+    static void switchToNewTestingSession();
+    static void ensurePrivateBrowsingSession();
+    static void destroyPrivateBrowsingSession();
+    static CFURLStorageSessionRef defaultStorageSession();
+
+    static void setCookieAcceptPolicyForTestingContext(NSHTTPCookieAcceptPolicy);
+
 private:
     WebFrameNetworkingContext(WebCore::Frame* frame)
         : WebCore::FrameNetworkingContext(frame)
@@ -34,6 +43,7 @@ private:
 
     virtual bool needsSiteSpecificQuirks() const OVERRIDE;
     virtual bool localFileContentSniffingEnabled() const OVERRIDE;
+    virtual CFURLStorageSessionRef storageSession() const OVERRIDE;
     virtual WebCore::SchedulePairHashSet* scheduledRunLoopPairs() const OVERRIDE;
     virtual WebCore::ResourceError blockedError(const WebCore::ResourceRequest&) const OVERRIDE;
 };

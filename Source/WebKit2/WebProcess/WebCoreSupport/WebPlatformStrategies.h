@@ -55,6 +55,9 @@ private:
 
     // WebCore::CookiesStrategy
     virtual void notifyCookiesChanged() OVERRIDE;
+#if PLATFORM(MAC) || USE(CFNETWORK)
+    virtual RetainPtr<CFHTTPCookieStorageRef> defaultCookieStorage() OVERRIDE;
+#endif
 
     // WebCore::LoaderStrategy
 #if ENABLE(NETWORK_PROCESS)

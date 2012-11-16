@@ -246,6 +246,8 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification;
 + (CFStringEncoding)_systemCFStringEncoding;
 + (void)_setInitialDefaultTextEncodingToSystemEncoding;
 + (void)_setIBCreatorID:(NSString *)string;
+
+// For DumpRenderTree use only.
 + (void)_switchNetworkLoaderToNewTestingSession;
 + (void)_setCurrentNetworkLoaderSessionCookieAcceptPolicy:(NSHTTPCookieAcceptPolicy)cookieAcceptPolicy;
 

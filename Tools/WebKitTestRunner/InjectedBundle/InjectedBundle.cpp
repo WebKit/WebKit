@@ -103,6 +103,9 @@ void InjectedBundle::initialize(WKBundleRef bundle, WKTypeRef initializationUser
 
     activateFonts();
     WKBundleActivateMacFontAscentHack(m_bundle);
+
+    // FIXME: We'd like to start with a clean state for every test, but this function can't be used more than once yet.
+    WKBundleSwitchNetworkLoaderToNewTestingSession(m_bundle);
 }
 
 void InjectedBundle::didCreatePage(WKBundlePageRef page)
@@ -242,7 +245,6 @@ void InjectedBundle::beginTesting(WKDictionaryRef settings)
     WKBundleSetAllowUniversalAccessFromFileURLs(m_bundle, m_pageGroup, true);
     WKBundleSetJavaScriptCanAccessClipboard(m_bundle, m_pageGroup, true);
     WKBundleSetPrivateBrowsingEnabled(m_bundle, m_pageGroup, false);
-    WKBundleSwitchNetworkLoaderToNewTestingSession(m_bundle);
     WKBundleSetAuthorAndUserStylesEnabled(m_bundle, m_pageGroup, true);
     WKBundleSetFrameFlatteningEnabled(m_bundle, m_pageGroup, false);
     WKBundleSetMinimumLogicalFontSize(m_bundle, m_pageGroup, 9);

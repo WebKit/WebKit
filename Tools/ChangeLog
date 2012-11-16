@@ -1,3 +1,21 @@
+2012-11-15  Alexey Proskuryakov  <ap@apple.com>
+
+        Private Browsing is a per-page setting that sets a global value
+        https://bugs.webkit.org/show_bug.cgi?id=67870
+
+        Reviewed by Sam Weinig.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm: (setDefaultsToConsistentValuesForTesting):
+        Call _switchNetworkLoaderToNewTestingSession before making other settings, so that
+        they would actually apply to the testing session.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::initialize):
+        (WTR::InjectedBundle::beginTesting):
+        Only call WKBundleSwitchNetworkLoaderToNewTestingSession once per process, matching
+        WebKit1. I'm not fully sure what is going wrong, but apparently creating mutiple
+        sessions with the same identifier doesn't quite work.
+
 2012-11-16  Yael Aharon  <yael.aharon@intel.com>
 
         Unreviewed. Help bugzilla find me.

@@ -33,6 +33,7 @@
 #import "CookieStorage.h"
 #import "CookieStorageCFNet.h"
 #import "KURL.h"
+#import "NetworkingContext.h"
 #import "WebCoreSystemInterface.h"
 
 namespace WebCore {
@@ -65,7 +66,7 @@ String cookiesForDOM(NetworkingContext* context, const KURL&, const KURL& url)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
-    RetainPtr<CFHTTPCookieStorageRef> cookieStorage = context ? currentCFHTTPCookieStorage() : defaultCFHTTPCookieStorage();
+    RetainPtr<CFHTTPCookieStorageRef> cookieStorage = context ? currentCFHTTPCookieStorage(context) : defaultCFHTTPCookieStorage();
     NSArray *cookies = wkHTTPCookiesForURL(cookieStorage.get(), url);
     return [[NSHTTPCookie requestHeaderFieldsWithCookies:filterCookies(cookies).get()] objectForKey:@"Cookie"];
 
@@ -77,7 +78,7 @@ String cookieRequestHeaderFieldValue(NetworkingContext* context, const KURL& /*f
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
-    RetainPtr<CFHTTPCookieStorageRef> cookieStorage = context ? currentCFHTTPCookieStorage() : defaultCFHTTPCookieStorage();
+    RetainPtr<CFHTTPCookieStorageRef> cookieStorage = context ? currentCFHTTPCookieStorage(context) : defaultCFHTTPCookieStorage();
     NSArray *cookies = wkHTTPCookiesForURL(cookieStorage.get(), url);
     return [[NSHTTPCookie requestHeaderFieldsWithCookies:cookies] objectForKey:@"Cookie"];
 
@@ -102,7 +103,7 @@ void setCookiesFromDOM(NetworkingContext* context, const KURL& firstParty, const
     RetainPtr<NSArray> filteredCookies = filterCookies([NSHTTPCookie cookiesWithResponseHeaderFields:[NSDictionary dictionaryWithObject:cookieString forKey:@"Set-Cookie"] forURL:cookieURL]);
     ASSERT([filteredCookies.get() count] <= 1);
 
-    RetainPtr<CFHTTPCookieStorageRef> cookieStorage = context ? currentCFHTTPCookieStorage() : defaultCFHTTPCookieStorage();
+    RetainPtr<CFHTTPCookieStorageRef> cookieStorage = context ? currentCFHTTPCookieStorage(context) : defaultCFHTTPCookieStorage();
     wkSetHTTPCookiesForURL(cookieStorage.get(), filteredCookies.get(), cookieURL, firstParty);
 
     END_BLOCK_OBJC_EXCEPTIONS;
@@ -112,7 +113,7 @@ bool cookiesEnabled(NetworkingContext* context, const KURL& /*firstParty*/, cons
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
-    RetainPtr<CFHTTPCookieStorageRef> cookieStorage = context ? currentCFHTTPCookieStorage() : defaultCFHTTPCookieStorage();
+    RetainPtr<CFHTTPCookieStorageRef> cookieStorage = context ? currentCFHTTPCookieStorage(context) : defaultCFHTTPCookieStorage();
     NSHTTPCookieAcceptPolicy cookieAcceptPolicy = static_cast<NSHTTPCookieAcceptPolicy>(wkGetHTTPCookieAcceptPolicy(cookieStorage.get()));
     return cookieAcceptPolicy == NSHTTPCookieAcceptPolicyAlways || cookieAcceptPolicy == NSHTTPCookieAcceptPolicyOnlyFromMainDocumentDomain;
 
@@ -125,7 +126,7 @@ bool getRawCookies(NetworkingContext* context, const KURL& /*firstParty*/, const
     rawCookies.clear();
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
-    RetainPtr<CFHTTPCookieStorageRef> cookieStorage = context ? currentCFHTTPCookieStorage() : defaultCFHTTPCookieStorage();
+    RetainPtr<CFHTTPCookieStorageRef> cookieStorage = context ? currentCFHTTPCookieStorage(context) : defaultCFHTTPCookieStorage();
     NSArray *cookies = wkHTTPCookiesForURL(cookieStorage.get(), url);
     NSUInteger count = [cookies count];
     rawCookies.reserveCapacity(count);
@@ -145,7 +146,7 @@ void deleteCookie(NetworkingContext* context, const KURL& url, const String& coo
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
     NSURL *cookieURL = url;
-    RetainPtr<CFHTTPCookieStorageRef> cookieStorage = context ? currentCFHTTPCookieStorage() : defaultCFHTTPCookieStorage();
+    RetainPtr<CFHTTPCookieStorageRef> cookieStorage = context ? currentCFHTTPCookieStorage(context) : defaultCFHTTPCookieStorage();
     NSArray *cookies = wkHTTPCookiesForURL(cookieStorage.get(), cookieURL);
 
     NSString *cookieNameString = cookieName;
@@ -164,7 +165,7 @@ void getHostnamesWithCookies(NetworkingContext* context, HashSet<String>& hostna
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
-    RetainPtr<CFHTTPCookieStorageRef> cookieStorage = context ? currentCFHTTPCookieStorage() : defaultCFHTTPCookieStorage();
+    RetainPtr<CFHTTPCookieStorageRef> cookieStorage = context ? currentCFHTTPCookieStorage(context) : defaultCFHTTPCookieStorage();
     NSArray *cookies = wkHTTPCookies(cookieStorage.get());
     
     for (NSHTTPCookie* cookie in cookies)
@@ -177,7 +178,7 @@ void deleteCookiesForHostname(NetworkingContext* context, const String& hostname
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
-    RetainPtr<CFHTTPCookieStorageRef> cookieStorage = context ? currentCFHTTPCookieStorage() : defaultCFHTTPCookieStorage();
+    RetainPtr<CFHTTPCookieStorageRef> cookieStorage = context ? currentCFHTTPCookieStorage(context) : defaultCFHTTPCookieStorage();
     NSArray *cookies = wkHTTPCookies(cookieStorage.get());
     if (!cookies)
         return;
@@ -192,7 +193,7 @@ void deleteCookiesForHostname(NetworkingContext* context, const String& hostname
 
 void deleteAllCookies(NetworkingContext* context)
 {
-    RetainPtr<CFHTTPCookieStorageRef> cookieStorage = context ? currentCFHTTPCookieStorage() : defaultCFHTTPCookieStorage();
+    RetainPtr<CFHTTPCookieStorageRef> cookieStorage = context ? currentCFHTTPCookieStorage(context) : defaultCFHTTPCookieStorage();
     wkDeleteAllHTTPCookies(cookieStorage.get());
 }
 

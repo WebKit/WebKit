@@ -31,6 +31,7 @@
 #import "WebPreferenceKeysPrivate.h"
 
 #import "WebApplicationCache.h"
+#import "WebFrameNetworkingContext.h"
 #import "WebKitLogging.h"
 #import "WebKitNSStringExtras.h"
 #import "WebKitSystemBits.h"
@@ -1285,17 +1286,12 @@ static NSString *classIBCreatorID = nil;
 
 + (void)_switchNetworkLoaderToNewTestingSession
 {
-    // Set a private session for testing to avoid interfering with global cookies. This should be different from private browsing session.
-    RetainPtr<CFURLStorageSessionRef> session = ResourceHandle::createPrivateBrowsingStorageSession(CFSTR("WebKit Testing Session"));
-    ResourceHandle::setDefaultStorageSession(session.get());
+    WebFrameNetworkingContext::switchToNewTestingSession();
 }
 
 + (void)_setCurrentNetworkLoaderSessionCookieAcceptPolicy:(NSHTTPCookieAcceptPolicy)policy
 {
-    [[NSHTTPCookieStorage sharedHTTPCookieStorage] setCookieAcceptPolicy:policy];
-
-    if (RetainPtr<CFHTTPCookieStorageRef> cookieStorage = currentCFHTTPCookieStorage())
-        WKSetHTTPCookieAcceptPolicy(cookieStorage.get(), policy);
+    WebFrameNetworkingContext::setCookieAcceptPolicyForTestingContext(policy);
 }
 
 - (BOOL)isDOMPasteAllowed

@@ -60,6 +60,7 @@
 #include "WebEvent.h"
 #include "WebEventConversion.h"
 #include "WebFrame.h"
+#include "WebFrameNetworkingContext.h"
 #include "WebFullScreenManager.h"
 #include "WebFullScreenManagerMessages.h"
 #include "WebGeolocationClient.h"
@@ -2176,7 +2177,16 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
     settings->setLocalStorageEnabled(store.getBoolValueForKey(WebPreferencesKey::localStorageEnabledKey()));
     settings->setXSSAuditorEnabled(store.getBoolValueForKey(WebPreferencesKey::xssAuditorEnabledKey()));
     settings->setFrameFlatteningEnabled(store.getBoolValueForKey(WebPreferencesKey::frameFlatteningEnabledKey()));
-    settings->setPrivateBrowsingEnabled(store.getBoolValueForKey(WebPreferencesKey::privateBrowsingEnabledKey()));
+
+    bool privateBrowsingEnabled = store.getBoolValueForKey(WebPreferencesKey::privateBrowsingEnabledKey());
+#if PLATFORM(MAC) || USE(CFNETWORK)
+    if (privateBrowsingEnabled)
+        WebFrameNetworkingContext::ensurePrivateBrowsingSession();
+    else
+        WebFrameNetworkingContext::destroyPrivateBrowsingSession();
+#endif
+    settings->setPrivateBrowsingEnabled(privateBrowsingEnabled);
+
     settings->setDeveloperExtrasEnabled(store.getBoolValueForKey(WebPreferencesKey::developerExtrasEnabledKey()));
     settings->setJavaScriptExperimentsEnabled(store.getBoolValueForKey(WebPreferencesKey::javaScriptExperimentsEnabledKey()));
     settings->setTextAreasAreResizable(store.getBoolValueForKey(WebPreferencesKey::textAreasAreResizableKey()));

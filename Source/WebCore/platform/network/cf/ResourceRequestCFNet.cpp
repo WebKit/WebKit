@@ -136,7 +136,6 @@ void ResourceRequest::doUpdatePlatformRequest()
         CFURLRequestSetTimeoutInterval(cfRequest, timeoutInterval());
     } else
         cfRequest = CFURLRequestCreateMutable(0, url.get(), (CFURLRequestCachePolicy)cachePolicy(), timeoutInterval(), firstPartyForCookies.get());
-    wkSetRequestStorageSession(ResourceHandle::currentStorageSession(), cfRequest);
 
     CFURLRequestSetHTTPRequestMethod(cfRequest, httpMethod().createCFString().get());
 

@@ -21,8 +21,15 @@
 #include "WebFrameNetworkingContext.h"
 
 #include "FrameLoaderClient.h"
+#include <CFNetwork/CFHTTPCookiesPriv.h>
+#include <WebCore/CookieStorageCFNet.h>
+#include <WebCore/Settings.h>
+#include <WebKitSystemInterface/WebKitSystemInterface.h>
 
 using namespace WebCore;
+
+static CFURLStorageSessionRef defaultCFStorageSession;
+static CFURLStorageSessionRef privateBrowsingStorageSession;
 
 PassRefPtr<WebFrameNetworkingContext> WebFrameNetworkingContext::create(Frame* frame, const String& userAgent)
 {
@@ -42,4 +49,76 @@ String WebFrameNetworkingContext::referrer() const
 WebCore::ResourceError WebFrameNetworkingContext::blockedError(const WebCore::ResourceRequest& request) const
 {
     return frame()->loader()->client()->blockedError(request);
+}
+
+static String& privateBrowsingStorageSessionIdentifierBase()
+{
+    ASSERT(isMainThread());
+    DEFINE_STATIC_LOCAL(String, base, ());
+    return base;
+}
+
+void WebFrameNetworkingContext::setPrivateBrowsingStorageSessionIdentifierBase(const String& identifier)
+{
+    privateBrowsingStorageSessionIdentifierBase() = identifier;
+}
+
+void WebFrameNetworkingContext::switchToNewTestingSession()
+{
+    // Set a private session for testing to avoid interfering with global cookies. This should be different from private browsing session.
+    defaultCFStorageSession = wkCreatePrivateStorageSession(CFSTR("Private WebKit Session"), defaultCFStorageSession);
+}
+
+void WebFrameNetworkingContext::ensurePrivateBrowsingSession()
+{
+    ASSERT(isMainThread());
+    if (privateBrowsingStorageSession)
+        return;
+
+    String base = privateBrowsingStorageSessionIdentifierBase().isNull() ? String(reinterpret_cast<CFStringRef>(CFBundleGetValueForInfoDictionaryKey(CFBundleGetMainBundle(), kCFBundleIdentifierKey))) : privateBrowsingStorageSessionIdentifierBase();
+    RetainPtr<CFStringRef> cfIdentifier = String(base + ".PrivateBrowsing").createCFString();
+
+    privateBrowsingStorageSession = wkCreatePrivateStorageSession(cfIdentifier.get(), defaultCFStorageSession);
+}
+
+void WebFrameNetworkingContext::destroyPrivateBrowsingSession()
+{
+    if (!privateBrowsingStorageSession)
+        return;
+
+    CFRelease(privateBrowsingStorageSession);
+    privateBrowsingStorageSession = 0;
+}
+
+CFURLStorageSessionRef WebFrameNetworkingContext::defaultStorageSession()
+{
+    return defaultCFStorageSession;
+}
+
+CFURLStorageSessionRef WebFrameNetworkingContext::storageSession() const
+{
+    bool privateBrowsingEnabled = frame() && frame()->settings() && frame()->settings()->privateBrowsingEnabled();
+    if (privateBrowsingEnabled) {
+        ASSERT(privateBrowsingStorageSession);
+        return privateBrowsingStorageSession;
+    }
+    return defaultCFStorageSession;
+}
+
+void WebFrameNetworkingContext::setCookieAcceptPolicyForTestingContext(CFHTTPCookieStorageAcceptPolicy policy)
+{
+    ASSERT(defaultCFStorageSession);
+    RetainPtr<CFHTTPCookieStorageRef> defaultCookieStorage = adoptCF(wkCopyHTTPCookieStorage(defaultCFStorageSession));
+    CFHTTPCookieStorageSetCookieAcceptPolicy(defaultCookieStorage.get(), policy);
+}
+
+void WebFrameNetworkingContext::setCookieAcceptPolicyForAllContexts(CFHTTPCookieStorageAcceptPolicy policy)
+{
+    if (RetainPtr<CFHTTPCookieStorageRef> cookieStorage = defaultCFHTTPCookieStorage())
+        CFHTTPCookieStorageSetCookieAcceptPolicy(cookieStorage.get(), policy);
+
+    if (privateBrowsingStorageSession) {
+        RetainPtr<CFHTTPCookieStorageRef> privateBrowsingCookieStorage = adoptCF(wkCopyHTTPCookieStorage(privateBrowsingStorageSession));
+        CFHTTPCookieStorageSetCookieAcceptPolicy(privateBrowsingCookieStorage.get(), policy);
+    }
 }

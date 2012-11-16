@@ -45,6 +45,7 @@
 #include "WebEditorClient.h"
 #include "WebElementPropertyBag.h"
 #include "WebFrame.h"
+#include "WebFrameNetworkingContext.h"
 #include "WebGeolocationClient.h"
 #include "WebGeolocationPosition.h"
 #include "WebIconDatabase.h"
@@ -4960,9 +4961,7 @@ HRESULT updateSharedSettingsFromPreferencesIfNeeded(IWebPreferences* preferences
         return hr;
 
 #if USE(CFNETWORK)
-    // Set cookie storage accept policy
-    if (RetainPtr<CFHTTPCookieStorageRef> cookieStorage = currentCFHTTPCookieStorage())
-        CFHTTPCookieStorageSetCookieAcceptPolicy(cookieStorage.get(), acceptPolicy);
+    WebFrameNetworkingContext::setCookieAcceptPolicyForAllContexts(acceptPolicy);
 #endif
 
     return S_OK;

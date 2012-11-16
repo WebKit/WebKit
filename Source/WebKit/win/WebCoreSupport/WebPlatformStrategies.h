@@ -50,6 +50,7 @@ private:
 
     // WebCore::CookiesStrategy
     virtual void notifyCookiesChanged();
+    virtual RetainPtr<CFHTTPCookieStorageRef> defaultCookieStorage();
 
     // WebCore::PluginStrategy
     virtual void refreshPlugins();

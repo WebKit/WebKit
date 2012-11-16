@@ -25,6 +25,7 @@
 
 #import "WebPlatformStrategies.h"
 
+#import "WebFrameNetworkingContext.h"
 #import "WebPluginDatabase.h"
 #import "WebPluginPackage.h"
 #import <WebCore/BlockExceptions.h>
@@ -32,6 +33,7 @@
 #import <WebCore/Page.h>
 #import <WebCore/PageGroup.h>
 #import <WebCore/PlatformPasteboard.h>
+#import <WebKitSystemInterface.h>
 
 using namespace WebCore;
 
@@ -77,6 +79,19 @@ VisitedLinkStrategy* WebPlatformStrategies::createVisitedLinkStrategy()
 
 void WebPlatformStrategies::notifyCookiesChanged()
 {
+}
+
+RetainPtr<CFHTTPCookieStorageRef> WebPlatformStrategies::defaultCookieStorage()
+{
+    if (CFURLStorageSessionRef session = WebFrameNetworkingContext::defaultStorageSession())
+        return adoptCF(WKCopyHTTPCookieStorage(session));
+
+#if USE(CFNETWORK)
+    return WKGetDefaultHTTPCookieStorage();
+#else
+    // When using NSURLConnection, we also use its shared cookie storage.
+    return 0;
+#endif
 }
 
 void WebPlatformStrategies::refreshPlugins()

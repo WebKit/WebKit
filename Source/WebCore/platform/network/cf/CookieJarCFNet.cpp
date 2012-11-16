@@ -31,6 +31,7 @@
 #include "Cookie.h"
 #include "CookieStorageCFNet.h"
 #include "KURL.h"
+#include "NetworkingContext.h"
 #include "ResourceHandle.h"
 #include "SoftLinking.h"
 #include <CFNetwork/CFHTTPCookiesPriv.h>
@@ -100,9 +101,8 @@ void setCookiesFromDOM(NetworkingContext* context, const KURL& firstParty, const
     if (value.isEmpty())
         return;
 
-    RetainPtr<CFHTTPCookieStorageRef> cookieStorage = context ? currentCFHTTPCookieStorage() : defaultCFHTTPCookieStorage();
-    if (!cookieStorage)
-        return;
+    RetainPtr<CFHTTPCookieStorageRef> cookieStorage = context ? currentCFHTTPCookieStorage(context) : defaultCFHTTPCookieStorage();
+    ASSERT(cookieStorage);
 
     RetainPtr<CFURLRef> urlCF(AdoptCF, url.createCFURL());
     RetainPtr<CFURLRef> firstPartyForCookiesCF(AdoptCF, firstParty.createCFURL());
@@ -124,9 +124,8 @@ void setCookiesFromDOM(NetworkingContext* context, const KURL& firstParty, const
 
 String cookiesForDOM(NetworkingContext* context, const KURL&, const KURL& url)
 {
-    RetainPtr<CFHTTPCookieStorageRef> cookieStorage = context ? currentCFHTTPCookieStorage() : defaultCFHTTPCookieStorage();
-    if (!cookieStorage)
-        return String();
+    RetainPtr<CFHTTPCookieStorageRef> cookieStorage = context ? currentCFHTTPCookieStorage(context) : defaultCFHTTPCookieStorage();
+    ASSERT(cookieStorage);
 
     RetainPtr<CFURLRef> urlCF(AdoptCF, url.createCFURL());
 
@@ -138,9 +137,8 @@ String cookiesForDOM(NetworkingContext* context, const KURL&, const KURL& url)
 
 String cookieRequestHeaderFieldValue(NetworkingContext* context, const KURL& /*firstParty*/, const KURL& url)
 {
-    RetainPtr<CFHTTPCookieStorageRef> cookieStorage = context ? currentCFHTTPCookieStorage() : defaultCFHTTPCookieStorage();
-    if (!cookieStorage)
-        return String();
+    RetainPtr<CFHTTPCookieStorageRef> cookieStorage = context ? currentCFHTTPCookieStorage(context) : defaultCFHTTPCookieStorage();
+    ASSERT(cookieStorage);
 
     RetainPtr<CFURLRef> urlCF(AdoptCF, url.createCFURL());
 
@@ -152,19 +150,18 @@ String cookieRequestHeaderFieldValue(NetworkingContext* context, const KURL& /*f
 
 bool cookiesEnabled(NetworkingContext* context, const KURL& /*firstParty*/, const KURL& /*url*/)
 {
-    CFHTTPCookieStorageAcceptPolicy policy = CFHTTPCookieStorageAcceptPolicyOnlyFromMainDocumentDomain;
-    RetainPtr<CFHTTPCookieStorageRef> cookieStorage = context ? currentCFHTTPCookieStorage() : defaultCFHTTPCookieStorage();
-    if (cookieStorage)
-        policy = CFHTTPCookieStorageGetCookieAcceptPolicy(cookieStorage.get());
+    RetainPtr<CFHTTPCookieStorageRef> cookieStorage = context ? currentCFHTTPCookieStorage(context) : defaultCFHTTPCookieStorage();
+    ASSERT(cookieStorage);
+
+    CFHTTPCookieStorageAcceptPolicy policy = CFHTTPCookieStorageGetCookieAcceptPolicy(cookieStorage.get());
     return policy == CFHTTPCookieStorageAcceptPolicyOnlyFromMainDocumentDomain || policy == CFHTTPCookieStorageAcceptPolicyAlways;
 }
 
 bool getRawCookies(NetworkingContext* context, const KURL& /*firstParty*/, const KURL& url, Vector<Cookie>& rawCookies)
 {
     rawCookies.clear();
-    RetainPtr<CFHTTPCookieStorageRef> cookieStorage = context ? currentCFHTTPCookieStorage() : defaultCFHTTPCookieStorage();
-    if (!cookieStorage)
-        return false;
+    RetainPtr<CFHTTPCookieStorageRef> cookieStorage = context ? currentCFHTTPCookieStorage(context) : defaultCFHTTPCookieStorage();
+    ASSERT(cookieStorage);
 
     RetainPtr<CFURLRef> urlCF(AdoptCF, url.createCFURL());
 
@@ -195,9 +192,8 @@ bool getRawCookies(NetworkingContext* context, const KURL& /*firstParty*/, const
 
 void deleteCookie(NetworkingContext* context, const KURL& url, const String& name)
 {
-    RetainPtr<CFHTTPCookieStorageRef> cookieStorage = context ? currentCFHTTPCookieStorage() : defaultCFHTTPCookieStorage();
-    if (!cookieStorage)
-        return;
+    RetainPtr<CFHTTPCookieStorageRef> cookieStorage = context ? currentCFHTTPCookieStorage(context) : defaultCFHTTPCookieStorage();
+    ASSERT(cookieStorage);
 
     RetainPtr<CFURLRef> urlCF(AdoptCF, url.createCFURL());
 
@@ -216,9 +212,8 @@ void deleteCookie(NetworkingContext* context, const KURL& url, const String& nam
 
 void getHostnamesWithCookies(NetworkingContext* context, HashSet<String>& hostnames)
 {
-    RetainPtr<CFHTTPCookieStorageRef> cookieStorage = context ? currentCFHTTPCookieStorage() : defaultCFHTTPCookieStorage();
-    if (!cookieStorage)
-        return;
+    RetainPtr<CFHTTPCookieStorageRef> cookieStorage = context ? currentCFHTTPCookieStorage(context) : defaultCFHTTPCookieStorage();
+    ASSERT(cookieStorage);
 
     RetainPtr<CFArrayRef> cookiesCF(AdoptCF, CFHTTPCookieStorageCopyCookies(cookieStorage.get()));
     if (!cookiesCF)
@@ -234,9 +229,8 @@ void getHostnamesWithCookies(NetworkingContext* context, HashSet<String>& hostna
 
 void deleteCookiesForHostname(NetworkingContext* context, const String& hostname)
 {
-    RetainPtr<CFHTTPCookieStorageRef> cookieStorage = context ? currentCFHTTPCookieStorage() : defaultCFHTTPCookieStorage();
-    if (!cookieStorage)
-        return;
+    RetainPtr<CFHTTPCookieStorageRef> cookieStorage = context ? currentCFHTTPCookieStorage(context) : defaultCFHTTPCookieStorage();
+    ASSERT(cookieStorage);
 
     RetainPtr<CFArrayRef> cookiesCF(AdoptCF, CFHTTPCookieStorageCopyCookies(cookieStorage.get()));
     if (!cookiesCF)
@@ -253,9 +247,8 @@ void deleteCookiesForHostname(NetworkingContext* context, const String& hostname
 
 void deleteAllCookies(NetworkingContext* context)
 {
-    RetainPtr<CFHTTPCookieStorageRef> cookieStorage = context ? currentCFHTTPCookieStorage() : defaultCFHTTPCookieStorage();
-    if (!cookieStorage)
-        return;
+    RetainPtr<CFHTTPCookieStorageRef> cookieStorage = context ? currentCFHTTPCookieStorage(context) : defaultCFHTTPCookieStorage();
+    ASSERT(cookieStorage);
 
     CFHTTPCookieStorageDeleteAllCookies(cookieStorage.get());
 }

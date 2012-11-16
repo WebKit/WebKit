@@ -23,61 +23,27 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "RemoteNetworkingContext.h"
+#include "config.h"
+#include "WebPlatformStrategies.h"
 
-#import "WebCore/ResourceError.h"
-#import "WebErrors.h"
+#include "WebFrameNetworkingContext.h"
+#include <WebKitSystemInterface.h>
 
 using namespace WebCore;
 
 namespace WebKit {
 
-RemoteNetworkingContext::RemoteNetworkingContext(bool needsSiteSpecificQuirks, bool localFileContentSniffingEnabled)
-    : m_needsSiteSpecificQuirks(needsSiteSpecificQuirks)
-    , m_localFileContentSniffingEnabled(localFileContentSniffingEnabled)
+RetainPtr<CFHTTPCookieStorageRef> WebPlatformStrategies::defaultCookieStorage()
 {
-}
+    if (CFURLStorageSessionRef session = WebFrameNetworkingContext::defaultStorageSession())
+        return adoptCF(WKCopyHTTPCookieStorage(session));
 
-RemoteNetworkingContext::~RemoteNetworkingContext()
-{
-}
-
-bool RemoteNetworkingContext::isValid() const
-{
-    return true;
-}
-
-bool RemoteNetworkingContext::needsSiteSpecificQuirks() const
-{
-    return m_needsSiteSpecificQuirks;
-}
-
-bool RemoteNetworkingContext::localFileContentSniffingEnabled() const
-{
-    return m_localFileContentSniffingEnabled;
-}
-
-CFURLStorageSessionRef RemoteNetworkingContext::storageSession() const
-{
-    // FIXME (NetworkProcess): Implement.
+#if USE(CFNETWORK)
+    return WKGetDefaultHTTPCookieStorage();
+#else
+    // When using NSURLConnection, we also use its shared cookie storage.
     return 0;
+#endif
 }
 
-NSOperationQueue *RemoteNetworkingContext::scheduledOperationQueue() const
-{
-    static NSOperationQueue *queue;
-    if (!queue) {
-        queue = [[NSOperationQueue alloc] init];
-        // Default concurrent operation count depends on current system workload, but delegate methods are mostly idling in IPC, so we can run as many as needed.
-        [queue setMaxConcurrentOperationCount:NSIntegerMax];
-    }
-    return queue;
-}
-
-ResourceError RemoteNetworkingContext::blockedError(const ResourceRequest& request) const
-{
-    return WebKit::blockedError(request);
-}
-
-}
+} // namespace WebKit

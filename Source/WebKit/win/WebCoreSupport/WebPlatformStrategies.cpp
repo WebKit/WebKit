@@ -26,9 +26,11 @@
 #include "config.h"
 #include "WebPlatformStrategies.h"
 
+#include "WebFrameNetworkingContext.h"
 #include <WebCore/Page.h>
 #include <WebCore/PageGroup.h>
 #include <WebCore/PluginDatabase.h>
+#include <WebKitSystemInterface/WebKitSystemInterface.h>
 
 using namespace WebCore;
 
@@ -74,6 +76,14 @@ VisitedLinkStrategy* WebPlatformStrategies::createVisitedLinkStrategy()
 
 void WebPlatformStrategies::notifyCookiesChanged()
 {
+}
+
+RetainPtr<CFHTTPCookieStorageRef> WebPlatformStrategies::defaultCookieStorage()
+{
+    if (CFURLStorageSessionRef session = WebFrameNetworkingContext::defaultStorageSession())
+        return adoptCF(wkCopyHTTPCookieStorage(session));
+
+    return wkGetDefaultHTTPCookieStorage();
 }
 
 void WebPlatformStrategies::refreshPlugins()

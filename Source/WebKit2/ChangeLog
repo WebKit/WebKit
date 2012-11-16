@@ -1,3 +1,52 @@
+2012-11-15  Alexey Proskuryakov  <ap@apple.com>
+
+        Private Browsing is a per-page setting that sets a global value
+        https://bugs.webkit.org/show_bug.cgi?id=67870
+
+        Reviewed by Sam Weinig.
+
+        * NetworkProcess/mac/RemoteNetworkingContext.h: Added storageSession().
+
+        * NetworkProcess/mac/RemoteNetworkingContext.mm:
+        (WebKit::RemoteNetworkingContext::storageSession): Just always fall back to default
+        so far.
+
+        * WebKit2.xcodeproj/project.pbxproj: Added WebPlatformStrategiesMac.mm for strategy
+        code that uses Objective C.
+
+        * WebProcess/Cookies/mac/WebCookieManagerMac.mm:
+        (WebKit::WebCookieManager::platformSetHTTPCookieAcceptPolicy): Use WebFrameNetworkingContext
+        instead of hardcoding access to sessiosn here.
+
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::setPrivateBrowsingEnabled): Create and destroy private
+        browsing session as appropriate.
+        (WebKit::InjectedBundle::switchNetworkLoaderToNewTestingSession): Use WebFrameNetworkingContext
+        instead of hardcoding access to sessiosn here.
+
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.h:
+        * WebProcess/WebCoreSupport/mac/WebPlatformStrategiesMac.mm: Added.
+        (WebKit::WebPlatformStrategies::defaultCookieStorage):
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+        (WebKit::WebPlatformStrategies::defaultCookieStorage):
+        Implemented defaultCookieStorage() through WebFrameNetworkingContext.
+
+        * WebProcess/WebCoreSupport/mac/WebFrameNetworkingContext.h:
+        * WebProcess/WebCoreSupport/mac/WebFrameNetworkingContext.mm:
+        Moved code for dealing with global contexts here from WebCore.
+
+        * WebProcess/WebPage/WebPage.cpp: (WebKit::WebPage::updatePreferences):
+        Create a global private session when any page enters private browsing, and
+        delete it when any page exits private browsing. This is handling a preference
+        change, so all pages get it once.
+
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::platformHasLocalDataForURL): Use main frame's context.
+        (WebKit::cachedResponseForURL): Ditto.
+
+        * WebProcess/WebProcess.cpp: (WebKit::WebProcess::initializeWebProcess): Updated
+        to talk to WebFrameNetworkingContext instead of ResourceHandle for global session.
+
 2012-11-16  Viatcheslav Ostapenko  <v.ostapenko@samsung.com>
 
         [EFL][WK2] White flicker when scrolling big pages with dark background on slower hardware.

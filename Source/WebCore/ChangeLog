@@ -1,3 +1,95 @@
+2012-11-15  Alexey Proskuryakov  <ap@apple.com>
+
+        Private Browsing is a per-page setting that sets a global value
+        https://bugs.webkit.org/show_bug.cgi?id=67870
+
+        Reviewed by Sam Weinig.
+
+        Make ResourceHandle{Mac,CFNet} use context to access storage session.
+
+        * WebCore.exp.in: We track less session state in WebCore now, so we need fewer
+        exports.
+
+        * loader/FrameNetworkingContext.h: Added an OVERRIDE.
+
+        * page/Settings.cpp: (WebCore::Settings::setPrivateBrowsingEnabled): WebCore
+        no longer keeps track of a globally enabled private CFNetwork storage session.
+
+        * platform/CookiesStrategy.h: Added defaultCookieStorage(). Some cookie jar methods
+        don't have a NetworkingContext pointer, and have to use whatever a client expects
+        them to do. Perhaps we should move those methods away from WebCore eventually.
+
+        * platform/network/NetworkingContext.h: Added storageSession().
+
+        * platform/network/ResourceHandle.h: Removed sttaic methods for dealing with global
+        sessions.
+
+        * platform/network/ResourceHandleInternal.h: Added m_storageSession. We need to
+        remember it post-creation to do things in willSendRequest. Alternatively, we could
+        keep a reference to NetworkingContext itself.
+
+        * platform/network/cf/CookieJarCFNet.cpp:
+        (WebCore::setCookiesFromDOM): currentCFHTTPCookieStorage now needs a context,
+        there is no globally current one any more. Also, we don't really expect cookie
+        stirage to be 0 when not using NSURLConnection.
+        (WebCore::cookiesForDOM): Ditto.
+        (WebCore::cookieRequestHeaderFieldValue): Ditto.
+        (WebCore::cookiesEnabled): Ditto.
+        (WebCore::getRawCookies): Ditto.
+        (WebCore::deleteCookie): Ditto.
+        (WebCore::getHostnamesWithCookies): Ditto.
+        (WebCore::deleteCookiesForHostname): Ditto.
+        (WebCore::deleteAllCookies): Ditto.
+        * platform/network/cf/CookieStorageCFNet.cpp:
+        (WebCore::currentCFHTTPCookieStorage): Use a context.
+        (WebCore::defaultCFHTTPCookieStorage): Except for Windows-only override session,
+        this is implemented in a strategy.
+        (WebCore::overridenCookieStorage): Exposed the override for WebKit use on Windows.
+
+        * platform/network/cf/CookieStorageCFNet.h: Ditto.
+
+        * platform/network/cf/ResourceHandleCFNet.cpp:
+        (WebCore::willSendRequest): Use storage session from the context, not global one.
+        (WebCore::makeFinalRequest): Merged this into the only remaining caller. This
+        function didn't really make any sense on its own.
+        (WebCore::shouldRelaxThirdPartyCookiePolicy): Factored out of createCFURLConnection
+        to match Mac.
+        (WebCore::ResourceHandle::createCFURLConnection): While merging makeFinalRequest()
+        in, removed some seemingly nonsensical code that was getting and immediately re-applying
+        cookie storage accept policy.
+        (WebCore::ResourceHandle::start): Store context->storageSession() for use in willSendRequest.
+        (WebCore::ResourceHandle::willSendRequest): Apply the stored session, not global one.
+        (WebCore::ResourceHandle::storageSession): An accessor for static methods that cannot
+        access "d".
+        (WebCore::ResourceHandle::loadResourceSynchronously): Store context->storageSession() for use in willSendRequest.
+        (WebCore::ResourceHandle::willLoadFromCache): Don't call makeFinalRequest here.
+        It didn't match Mac, and nothing in makeFinalRequest should have affected the result.
+
+        * platform/network/cf/ResourceRequestCFNet.cpp: (WebCore::ResourceRequest::doUpdatePlatformRequest):
+        This function used to apply current storage session to every request for no apparent
+        reason.
+
+        * platform/network/mac/CookieJarMac.mm:
+        (WebCore::cookiesForDOM): Changed to pass context to currentCFHTTPCookieStorage.
+        (WebCore::cookieRequestHeaderFieldValue): Ditto.
+        (WebCore::setCookiesFromDOM): Ditto.
+        (WebCore::cookiesEnabled): Ditto.
+        (WebCore::getRawCookies): Ditto.
+        (WebCore::deleteCookie): Ditto.
+        (WebCore::getHostnamesWithCookies): Ditto.
+        (WebCore::deleteCookiesForHostname): Ditto.
+        (WebCore::deleteAllCookies): Ditto.
+        * platform/network/mac/ResourceHandleMac.mm:
+        (WebCore::shouldRelaxThirdPartyCookiePolicy): There was no need to special case
+        null currentCFHTTPCookieStorage, WKSI handles that internally. Added a context
+        argument, so that the function can access current session.
+        (WebCore::ResourceHandle::createNSURLConnection): Updated for other code changes.
+        (WebCore::ResourceHandle::start): Store context->storageSession() for use in willSendRequest.
+        (WebCore::ResourceHandle::willLoadFromCache): Style fix.
+        (WebCore::ResourceHandle::loadResourceSynchronously): Store context->storageSession()
+        for use in willSendRequest. 
+        (WebCore::ResourceHandle::willSendRequest): Use stored session, not global one.
+
 2012-11-16  Dimitri Glazkov  <dglazkov@chromium.org>
 
         [Chromium] Land a proper fix for r134939.

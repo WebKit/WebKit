@@ -67,6 +67,10 @@ OBJC_CLASS NSURLAuthenticationChallenge;
 OBJC_CLASS NSURLConnection;
 #endif
 
+#if PLATFORM(MAC) || USE(CFNETWORK)
+typedef const struct __CFURLStorageSession* CFURLStorageSessionRef;
+#endif
+
 // The allocations and releases in ResourceHandleInternal are
 // Cocoa-exception-free (either simple Foundation classes or
 // WebCoreResourceLoaderImp which avoids doing work in dealloc).
@@ -156,6 +160,9 @@ namespace WebCore {
 #if PLATFORM(MAC)
         bool m_startWhenScheduled;
         bool m_needsSiteSpecificQuirks;
+#endif
+#if PLATFORM(MAC) || USE(CFNETWORK)
+        RetainPtr<CFURLStorageSessionRef> m_storageSession;
 #endif
 #if USE(WININET)
         Timer<ResourceHandle> m_fileLoadTimer;

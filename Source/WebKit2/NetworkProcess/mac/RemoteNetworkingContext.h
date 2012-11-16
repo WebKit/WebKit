@@ -45,6 +45,7 @@ private:
 
     virtual bool needsSiteSpecificQuirks() const OVERRIDE;
     virtual bool localFileContentSniffingEnabled() const OVERRIDE;
+    virtual CFURLStorageSessionRef storageSession() const OVERRIDE;
     virtual NSOperationQueue *scheduledOperationQueue() const OVERRIDE;
     virtual WebCore::ResourceError blockedError(const WebCore::ResourceRequest&) const OVERRIDE;
 

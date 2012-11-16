@@ -25,8 +25,8 @@
 
 #import "config.h"
 #import "WebCookieManager.h"
-#import <WebCore/CookieStorageCFNet.h>
-#import <WebKitSystemInterface.h>
+
+#import "WebFrameNetworkingContext.h"
 
 using namespace WebCore;
 
@@ -34,10 +34,7 @@ namespace WebKit {
 
 void WebCookieManager::platformSetHTTPCookieAcceptPolicy(HTTPCookieAcceptPolicy policy)
 {
-    [[NSHTTPCookieStorage sharedHTTPCookieStorage] setCookieAcceptPolicy:static_cast<NSHTTPCookieAcceptPolicy>(policy)];
-
-    if (RetainPtr<CFHTTPCookieStorageRef> cookieStorage = currentCFHTTPCookieStorage())
-        WKSetHTTPCookieAcceptPolicy(cookieStorage.get(), policy);
+    WebFrameNetworkingContext::setCookieAcceptPolicyForAllContexts(policy);
 }
 
 HTTPCookieAcceptPolicy WebCookieManager::platformGetHTTPCookieAcceptPolicy()

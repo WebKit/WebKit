@@ -1,3 +1,35 @@
+2012-11-15  Alexey Proskuryakov  <ap@apple.com>
+
+        Private Browsing is a per-page setting that sets a global value
+        https://bugs.webkit.org/show_bug.cgi?id=67870
+
+        Reviewed by Sam Weinig.
+
+        * WebCoreSupport/WebFrameNetworkingContext.h:
+        * WebCoreSupport/WebFrameNetworkingContext.mm:
+        Moved functions for managing global sessions from WebCore.
+
+        * WebCoreSupport/WebPlatformStrategies.h:
+        * WebCoreSupport/WebPlatformStrategies.mm:
+        (WebPlatformStrategies::defaultCookieStorage): Added. Uses WebFrameNetworkingContext
+        to reach the storage.
+
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences _switchNetworkLoaderToNewTestingSession]): Ditto.
+        (+[WebPreferences _setCurrentNetworkLoaderSessionCookieAcceptPolicy:]): Ditto.
+
+        * WebView/WebPreferencesPrivate.h: Added a comment explaining that two functions
+        are not generic enough for use outside DRT (one of them had "testing" in name,
+        but another did not).
+
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChanged:]): Create a global private browsing session when
+        the first view with private browsing is created, delete it when any window with
+        it disabled is created (since this comes from preferences, it applies to all
+        views equally, even though we are dealing with a single one here).
+        (-[WebView _cachedResponseForURL:]): Use main frame's networking context instead of
+        a global one.
+
 2012-11-13  Timothy Hatcher  <timothy@apple.com>
 
         Adjust the Web Inspector window title frame if needed to prevent it from intersecting the dock button.

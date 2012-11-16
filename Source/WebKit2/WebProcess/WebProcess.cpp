@@ -37,6 +37,7 @@
 #include "WebCoreArgumentCoders.h"
 #include "WebDatabaseManager.h"
 #include "WebFrame.h"
+#include "WebFrameNetworkingContext.h"
 #include "WebGeolocationManagerMessages.h"
 #include "WebKeyValueStorageManager.h"
 #include "WebMediaCacheManager.h"
@@ -280,7 +281,7 @@ void WebProcess::initializeWebProcess(const WebProcessCreationParameters& parame
 
 #if PLATFORM(MAC) || USE(CFNETWORK)
     // FIXME (NetworkProcess): Send this identifier to network process.
-    WebCore::ResourceHandle::setPrivateBrowsingStorageSessionIdentifierBase(parameters.uiProcessBundleIdentifier);
+    WebFrameNetworkingContext::setPrivateBrowsingStorageSessionIdentifierBase(parameters.uiProcessBundleIdentifier);
 #endif
 
 #if ENABLE(NETWORK_PROCESS)

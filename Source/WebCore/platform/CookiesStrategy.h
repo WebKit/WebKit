@@ -28,11 +28,21 @@
 
 #if USE(PLATFORM_STRATEGIES)
 
+#include <wtf/RetainPtr.h>
+
+#if PLATFORM(MAC) || USE(CFNETWORK)
+typedef struct OpaqueCFHTTPCookieStorage*  CFHTTPCookieStorageRef;
+#endif
+
 namespace WebCore {
 
 class CookiesStrategy {
 public:
     virtual void notifyCookiesChanged() = 0;
+
+#if PLATFORM(MAC) || USE(CFNETWORK)
+    virtual RetainPtr<CFHTTPCookieStorageRef> defaultCookieStorage() = 0;
+#endif
 
 protected:
     virtual ~CookiesStrategy() { }

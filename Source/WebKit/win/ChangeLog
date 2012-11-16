@@ -1,3 +1,29 @@
+2012-11-15  Alexey Proskuryakov  <ap@apple.com>
+
+        Private Browsing is a per-page setting that sets a global value
+        https://bugs.webkit.org/show_bug.cgi?id=67870
+
+        Reviewed by Sam Weinig.
+
+        * WebCookieManagerCFNet.cpp: (WebCookieManager::cookieStorage): We can't get
+        current session without any context, but the code was not correct anyway, the client
+        is clearly interested in a getter to match override setter.
+
+        * WebCoreSupport/WebFrameNetworkingContext.cpp: Moved code for tracking global
+        sessions from WebCore to WebKit. The behavior is unchanged, but lower levels are
+        now cleaner.
+
+        * WebCoreSupport/WebFrameNetworkingContext.h: Ditto.
+
+        * WebCoreSupport/WebPlatformStrategies.h:
+        * WebCoreSupport/WebPlatformStrategies.cpp:
+        (WebPlatformStrategies::defaultCookieStorage): Added. Use WebFrameNetworkingContext
+        for tracking the default session.
+
+        * WebView.cpp: (updateSharedSettingsFromPreferencesIfNeeded):
+        Use WebFrameNetworkingContext::setCookieAcceptPolicyForAllContexts. Updating only
+        the current session is not sufficient, and did not match Mac.
+
 2012-11-14  George Tsoumalis  <tsumalis96@gmail.com>
 
         Implementation for mehods in WebMutableURLRequest.cpp

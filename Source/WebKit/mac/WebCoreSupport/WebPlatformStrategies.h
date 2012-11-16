@@ -51,6 +51,7 @@ private:
 
     // WebCore::CookiesStrategy
     virtual void notifyCookiesChanged() OVERRIDE;
+    virtual RetainPtr<CFHTTPCookieStorageRef> defaultCookieStorage() OVERRIDE;
 
     // WebCore::PluginStrategy
     virtual void refreshPlugins() OVERRIDE;

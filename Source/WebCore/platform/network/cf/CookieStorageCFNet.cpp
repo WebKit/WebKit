@@ -56,14 +56,14 @@ static RetainPtr<CFHTTPCookieStorageRef>& cookieStorageOverride()
 
 #endif
 
-RetainPtr<CFHTTPCookieStorageRef> currentCFHTTPCookieStorage()
+RetainPtr<CFHTTPCookieStorageRef> currentCFHTTPCookieStorage(NetworkingContext* context)
 {
 #if PLATFORM(WIN)
     if (RetainPtr<CFHTTPCookieStorageRef>& override = cookieStorageOverride())
         return override;
 #endif
 
-    if (CFURLStorageSessionRef session = ResourceHandle::currentStorageSession())
+    if (CFURLStorageSessionRef session = context->storageSession())
         return RetainPtr<CFHTTPCookieStorageRef>(AdoptCF, wkCopyHTTPCookieStorage(session));
 
 #if USE(CFNETWORK)
@@ -81,15 +81,7 @@ RetainPtr<CFHTTPCookieStorageRef> defaultCFHTTPCookieStorage()
         return override;
 #endif
 
-    if (CFURLStorageSessionRef session = ResourceHandle::defaultStorageSession())
-        return RetainPtr<CFHTTPCookieStorageRef>(AdoptCF, wkCopyHTTPCookieStorage(session));
-
-#if USE(CFNETWORK)
-    return wkGetDefaultHTTPCookieStorage();
-#else
-    // When using NSURLConnection, we also use its shared cookie storage.
-    return 0;
-#endif
+    return platformStrategies()->cookiesStrategy()->defaultCookieStorage();
 }
 
 #if PLATFORM(WIN)
@@ -99,6 +91,11 @@ void overrideCookieStorage(CFHTTPCookieStorageRef cookieStorage)
     ASSERT(isMainThread());
     // FIXME: Why don't we retain it? The only caller is an API method that takes cookie storage as a raw argument.
     cookieStorageOverride().adoptCF(cookieStorage);
+}
+
+CFHTTPCookieStorageRef overridenCookieStorage()
+{
+    return cookieStorageOverride().get();
 }
 
 static void notifyCookiesChangedOnMainThread(void*)
