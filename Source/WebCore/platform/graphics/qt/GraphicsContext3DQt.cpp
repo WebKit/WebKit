@@ -319,12 +319,12 @@ void GraphicsContext3DPrivate::blitMultisampleFramebufferAndRestoreContext() con
 
     const QOpenGLContext* currentContext = QOpenGLContext::currentContext();
     QSurface* currentSurface = 0;
-    if (currentContext != m_platformContext) {
+    if (currentContext && currentContext != m_platformContext) {
         currentSurface = currentContext->surface();
         m_platformContext->makeCurrent(m_surface);
     }
     blitMultisampleFramebuffer();
-    if (currentSurface)
+    if (currentContext)
         const_cast<QOpenGLContext*>(currentContext)->makeCurrent(currentSurface);
 }
 
