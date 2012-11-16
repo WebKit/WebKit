@@ -1,3 +1,28 @@
+2012-11-16  Helder Correia  <helder.correia@nokia.com>
+
+        [CoordGfx] Follow coding style on explicit constructors
+        https://bugs.webkit.org/show_bug.cgi?id=102451
+
+        Reviewed by Noam Rosenthal.
+
+        Use the explicit keyword on single argument constructors.
+
+        No new tests needed.
+
+        * platform/graphics/texmap/GraphicsLayerTextureMapper.h:
+        (GraphicsLayerTextureMapper):
+        * platform/graphics/texmap/TextureMapper.h:
+        (TextureMapper):
+        * platform/graphics/texmap/TextureMapperBackingStore.h:
+        (WebCore::TextureMapperTile::TextureMapperTile):
+        * platform/graphics/texmap/TextureMapperGL.cpp:
+        (WebCore::TextureMapperGLData::SharedGLData::SharedGLData):
+        (WebCore::TextureMapperGLData::TextureMapperGLData):
+        * platform/graphics/texmap/TextureMapperGL.h:
+        (BitmapTextureGL):
+        * platform/graphics/texmap/TextureMapperShaderManager.h:
+        (TextureMapperShaderManager):
+
 2012-11-16  Kihong Kwon  <kihong.kwon@samsung.com>
 
         Add DeviceController base-class to remove duplication of DeviceXXXControler

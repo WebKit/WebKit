@@ -81,7 +81,7 @@ public:
     virtual void paint(TextureMapper*, const TransformationMatrix&, float, BitmapTexture*, const unsigned exposedEdges);
     virtual ~TextureMapperTile() { }
 
-    TextureMapperTile(const FloatRect& rect)
+    explicit TextureMapperTile(const FloatRect& rect)
         : m_rect(rect)
     {
     }

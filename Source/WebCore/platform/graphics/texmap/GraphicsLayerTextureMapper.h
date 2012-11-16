@@ -36,7 +36,7 @@ class GraphicsLayerTextureMapper : public GraphicsLayer {
     friend class TextureMapperLayer;
 
 public:
-    GraphicsLayerTextureMapper(GraphicsLayerClient*);
+    explicit GraphicsLayerTextureMapper(GraphicsLayerClient*);
     virtual ~GraphicsLayerTextureMapper();
 
     // reimps from GraphicsLayer.h

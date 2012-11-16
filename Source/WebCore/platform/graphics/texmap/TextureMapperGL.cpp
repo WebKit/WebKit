@@ -89,7 +89,7 @@ public:
 
         TextureMapperShaderManager textureMapperShaderManager;
 
-        SharedGLData(GraphicsContext3D* context)
+        explicit SharedGLData(GraphicsContext3D* context)
             : textureMapperShaderManager(context)
         {
             glContextDataMap().add(context->platformGraphicsContext3D(), this);
@@ -116,7 +116,7 @@ public:
 
     void initializeStencil();
 
-    TextureMapperGLData(GraphicsContext3D* context)
+    explicit TextureMapperGLData(GraphicsContext3D* context)
         : context(context)
         , PaintFlags(0)
         , previousProgram(0)

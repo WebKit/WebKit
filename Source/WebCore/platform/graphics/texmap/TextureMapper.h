@@ -155,7 +155,7 @@ public:
     virtual PassRefPtr<BitmapTexture> acquireTextureFromPool(const IntSize&);
 
 protected:
-    TextureMapper(AccelerationMode);
+    explicit TextureMapper(AccelerationMode);
 
 private:
 #if USE(TEXTURE_MAPPER_GL)

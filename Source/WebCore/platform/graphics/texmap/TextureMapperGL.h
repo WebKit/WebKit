@@ -165,7 +165,7 @@ private:
     TextureMapperGL::ClipStack m_clipStack;
     RefPtr<GraphicsContext3D> m_context3D;
 
-    BitmapTextureGL(TextureMapperGL*);
+    explicit BitmapTextureGL(TextureMapperGL*);
     BitmapTextureGL();
 
     void clearIfNeeded();

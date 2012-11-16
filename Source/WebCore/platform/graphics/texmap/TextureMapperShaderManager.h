@@ -105,7 +105,7 @@ public:
     };
 
     TextureMapperShaderManager() { }
-    TextureMapperShaderManager(GraphicsContext3D*);
+    explicit TextureMapperShaderManager(GraphicsContext3D*);
     virtual ~TextureMapperShaderManager();
 
     PassRefPtr<TextureMapperShaderProgram> getShaderProgram(ShaderKey);

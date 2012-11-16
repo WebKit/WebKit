@@ -33,7 +33,7 @@ class ShareableSurface;
 
 class CoordinatedBackingStoreTile : public WebCore::TextureMapperTile {
 public:
-    CoordinatedBackingStoreTile(float scale = 1)
+    explicit CoordinatedBackingStoreTile(float scale = 1)
         : TextureMapperTile(WebCore::FloatRect())
         , m_scale(scale)
         , m_repaintCount(0)

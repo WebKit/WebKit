@@ -88,7 +88,7 @@ public:
     void paintCheckerPattern(WebCore::GraphicsContext*, const WebCore::FloatRect&);
 
 private:
-    CoordinatedTileBackend(CoordinatedTileClient*);
+    explicit CoordinatedTileBackend(CoordinatedTileClient*);
     CoordinatedTileClient* m_client;
 };
 
