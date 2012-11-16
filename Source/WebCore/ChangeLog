@@ -1,3 +1,15 @@
+2012-11-16  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r134867.
+        http://trac.webkit.org/changeset/134867
+        https://bugs.webkit.org/show_bug.cgi?id=102544
+
+        Broke security fuzzier test (heap-buffer-overflow) (Requested
+        by bfulgham on #webkit).
+
+        * platform/audio/Biquad.cpp:
+        (WebCore::Biquad::process):
+
 2012-11-16  Tommy Widenflycht  <tommyw@google.com>
 
         MediaStream API: Update RTCPeerConnection states to match the latest editors draft

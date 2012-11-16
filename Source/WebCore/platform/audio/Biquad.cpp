@@ -41,10 +41,6 @@
 #include <Accelerate/Accelerate.h>
 #endif
 
-#ifdef __SSE2__
-#include <emmintrin.h>
-#endif
-
 namespace WebCore {
 
 const int kBufferSize = 1024;
@@ -100,45 +96,8 @@ void Biquad::process(const float* sourceP, float* destP, size_t framesToProcess)
     double a1 = m_a1;
     double a2 = m_a2;
 
-    // Optimize the hot multiply-add by pipelining with SSE2 intrinsics.
-#ifdef __SSE2__
-    __m128d mm0 = _mm_set_pd(x1, x2); // mm0 = (x1, x2)
-    __m128d mm1 = _mm_set_pd(y2, static_cast<double>(*sourceP)); // mm1 = (y2, x)
-    __m128d mm2 = _mm_set_pd(b1, b2); // mm2 = (b1, b2)
-    __m128d mm3 = _mm_set_pd(-a2, b0); // mm3 = (-a2, b0)
-    __m128d mm4 = _mm_set_sd(y1); // mm4 = y1, only use low part of mm4.
-    __m128d mm5;
-    __m128d mm6;
-    __m128 mm7; // Only use low part of mm7.
-    __m128d mma1 = _mm_set_sd(-a1); // mma1 = -a1, only use low part of mma1.
-
-    while (n) {
-        sourceP++;
-        mm6 = mm1; // mm6 = (y2, x)
-        mm1 = _mm_shuffle_pd(mm1, mm4, 0); // mm1 = (y1, x)
-        mm5 = _mm_mul_pd(mm2, mm0); // mm5 = (x1 * b1, x2 * b2)
-        mm6 = _mm_mul_pd(mm3, mm6); // mm6 = (-y2 * a2, x * b0)
-        mm0 = _mm_shuffle_pd(mm0, mm1, 1); // mm0 = (x, x1)
-        mm4 = _mm_mul_sd(mm4, mma1); // mm4 = -y1 * a1
-        mm5 = _mm_add_pd(mm5, mm6); // mm5 = (x1 * b1 - y2 * a2, x2 * b2 + x * b0)
-        n--;
-        mm6 = mm5; // mm6 = (x1 * b1 - y2 * a2, x2 * b2 + x * b0)
-        mm7 = _mm_load_ss(sourceP); // mm7 = *sourceP, load next x value.
-        mm1 = _mm_cvtss_sd(mm1, mm7); // mm1 = (y1, x)
-        mm5 = _mm_add_sd(mm4, mm5); // mm5 = x2 * b2 + x * b0 - y1 * a1, only care low part of mm5 here.
-        mm6 = _mm_shuffle_pd(mm6, mm6, 1); // mm6 = (x2 * b2 + x * b0, x1 * b1 - y2 * a2)
-        mm5 = _mm_add_sd(mm5, mm6); // mm5 = x * b0 + x1 * b1 + x2 * b2 - y1 * a1 - y2 * a2 = y, only care low part of mm5.
-        mm7 = _mm_cvtsd_ss(mm7, mm5); // mm7 = static_cast<float>(y)
-        _mm_store_ss(destP, mm7); // Store y to destP
-        mm4 = mm5; // mm4 = y
-        destP++;
-    }
-    _mm_storeh_pd(&x1, mm0);
-    _mm_storel_pd(&x2, mm0);
-    _mm_storel_pd(&y1, mm4);
-    _mm_storeh_pd(&y2, mm1);
-#else
     while (n--) {
+        // FIXME: this can be optimized by pipelining the multiply adds...
         float x = *sourceP++;
         float y = b0*x + b1*x1 + b2*x2 - a1*y1 - a2*y2;
 
@@ -150,7 +109,6 @@ void Biquad::process(const float* sourceP, float* destP, size_t framesToProcess)
         y2 = y1;
         y1 = y;
     }
-#endif // __SSE2__
 
     // Local variables back to member. Flush denormals here so we
     // don't slow down the inner loop above.
