@@ -150,7 +150,7 @@ void WorkerScriptController::evaluate(const ScriptSourceCode& sourceCode, Script
         String errorMessage;
         int lineNumber = 0;
         String sourceURL = sourceCode.url().string();
-        if (m_workerContext->sanitizeScriptError(errorMessage, lineNumber, sourceURL))
+        if (m_workerContext->sanitizeScriptError(errorMessage, lineNumber, sourceURL, sourceCode.cachedScript()))
             *exception = ScriptValue(*m_globalData, throwError(exec, createError(exec, errorMessage.impl())));
         else
             *exception = ScriptValue(*m_globalData, evaluationException);

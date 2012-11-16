@@ -31,6 +31,8 @@
 #ifndef ScriptSourceCode_h
 #define ScriptSourceCode_h
 
+#include "CachedResourceHandle.h"
+#include "CachedScript.h"
 #include "CachedScriptSourceProvider.h"
 #include "KURL.h"
 #include <parser/SourceProvider.h>
@@ -48,9 +50,10 @@ public:
     {
     }
 
-    ScriptSourceCode(CachedScript* cs)
-        : m_provider(CachedScriptSourceProvider::create(cs))
+    explicit ScriptSourceCode(CachedScript* cachedScript)
+        : m_provider(CachedScriptSourceProvider::create(cachedScript))
         , m_code(m_provider)
+        , m_cachedScript(cachedScript)
     {
     }
 
@@ -62,13 +65,17 @@ public:
 
     int startLine() const { return m_code.firstLine(); }
 
+    CachedScript* cachedScript() const { return m_cachedScript.get(); }
+
     const KURL& url() const { return m_url; }
     
 private:
     RefPtr<JSC::SourceProvider> m_provider;
     
     JSC::SourceCode m_code;
-    
+
+    CachedResourceHandle<CachedScript> m_cachedScript;
+
     KURL m_url;
 
 };

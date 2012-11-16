@@ -1,3 +1,19 @@
+2012-11-16  Pablo Flouret  <pablof@motorola.com>
+
+        [JSC] Don't sanitize window.onerror information on crossorigin-enabled scripts
+        https://bugs.webkit.org/show_bug.cgi?id=70574
+
+        Reviewed by Geoffrey Garen.
+
+        * http/tests/security/resources/cors-script.php:
+        * http/tests/security/script-crossorigin-onerror-information-expected.txt: Added.
+        * http/tests/security/script-crossorigin-onerror-information.html: Added.
+        * http/tests/security/script-no-crossorigin-onerror-should-be-sanitized-expected.txt: Added.
+        * http/tests/security/script-no-crossorigin-onerror-should-be-sanitized.html: Added.
+
+        * platform/chromium/TestExpectations:
+            This patch only deals with JSC right now, skip the new tests.
+
 2012-11-16  Dimitri Glazkov  <dglazkov@chromium.org>
 
         [Chromium] Remaining bits of Win7 rebaselines.

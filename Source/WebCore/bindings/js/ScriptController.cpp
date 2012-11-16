@@ -144,7 +144,7 @@ ScriptValue ScriptController::evaluateInWorld(const ScriptSourceCode& sourceCode
     InspectorInstrumentation::didEvaluateScript(cookie);
 
     if (evaluationException) {
-        reportException(exec, evaluationException);
+        reportException(exec, evaluationException, sourceCode.cachedScript());
         m_sourceURL = savedSourceURL;
         return ScriptValue();
     }

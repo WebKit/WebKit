@@ -1,3 +1,56 @@
+2012-11-16  Pablo Flouret  <pablof@motorola.com>
+
+        [JSC] Don't sanitize window.onerror information on crossorigin-enabled scripts
+        https://bugs.webkit.org/show_bug.cgi?id=70574
+
+        Reviewed by Geoffrey Garen.
+
+        For scripts that use CORS (via the crossorigin attribute in this case),
+        don't sanitize the information passed to the window's onerror handler (i.e.
+        message, url, and line number). Useful for scripts hosted on CDNs.
+
+        Tests: http/tests/security/script-crossorigin-onerror-information.html
+               http/tests/security/script-no-crossorigin-onerror-should-be-sanitized.html
+
+        * WebCore.exp.in:
+        * WebCore.order:
+
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::reportException):
+        * bindings/js/JSDOMBinding.h:
+        (WebCore):
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::evaluateInWorld):
+        * bindings/js/ScriptSourceCode.h:
+        (WebCore::ScriptSourceCode::ScriptSourceCode):
+        (WebCore::ScriptSourceCode::cachedScript):
+        (ScriptSourceCode):
+        * bindings/js/WorkerScriptController.cpp:
+        (WebCore::WorkerScriptController::evaluate):
+            Keep a reference to the cached script in the ScriptSourceCode, so
+            that it can be passed around and be available when reporting the
+            exception.
+
+        * dom/ScriptExecutionContext.cpp:
+        (WebCore::ScriptExecutionContext::sanitizeScriptError):
+        (WebCore::ScriptExecutionContext::reportException):
+        (WebCore::ScriptExecutionContext::dispatchErrorEvent):
+        * dom/ScriptExecutionContext.h:
+        (WebCore):
+        (ScriptExecutionContext):
+            Check if the script passes the access control checks, and if so,
+            don't sanitize the error information.
+
+        * html/parser/HTMLPreloadScanner.cpp:
+        (WebCore::PreloadTask::processAttributes):
+        (WebCore::PreloadTask::preload):
+        (PreloadTask):
+        (WebCore::PreloadTask::crossOriginModeAllowsCookies):
+            When preloading script elements, check for the crossorigin attribute
+            and adjust the request's allowCookies value accordingly. Otherwise
+            when the script is loaded from the cache later on, the cross origin mode
+            (anonymous/use-credentials) will be effectively ignored.
+
 2012-11-16  Jon Lee  <jonlee@apple.com>
 
         Change visual look of placeholder
