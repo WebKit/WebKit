@@ -1,3 +1,17 @@
+2012-11-15  Erik Arvidsson  <arv@chromium.org>
+
+        Update DOMException name: ValidationError
+        https://bugs.webkit.org/show_bug.cgi?id=102416
+
+        Reviewed by Kentaro Hara.
+
+        Patch 16 of 25 to update DOMException name to match the spec and Firefox.
+
+        VALIDATION_ERR is historical and not used in any spec or our code.
+
+        * dom/DOMCoreException.cpp:
+        * dom/ExceptionCode.h:
+
 2012-11-15  Kentaro Hara  <haraken@chromium.org>
 
         [V8] Remove IsSubType() from CodeGeneratorV8.pm
