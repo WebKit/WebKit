@@ -1,3 +1,26 @@
+2012-11-15  Kentaro Hara  <haraken@chromium.org>
+
+        Unreviewed, rolling out r134881.
+        http://trac.webkit.org/changeset/134881
+        https://bugs.webkit.org/show_bug.cgi?id=102348
+
+        http/tests/appcache tests on JSC platforms are broken
+
+        * bindings/scripts/CodeGenerator.pm:
+        (IsStrictSubtype):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateImplementation):
+        * bindings/scripts/CodeGeneratorV8.pm:
+        (GenerateHeader):
+        (GetInternalFields):
+        (IsSubType):
+        (IsNodeSubType):
+        (GenerateNormalAttrGetter):
+        (GenerateNormalAttrSetter):
+        (GenerateFunctionCallback):
+        (GenerateImplementationIndexer):
+        (GenerateToV8Converters):
+
 2012-11-15  Viatcheslav Ostapenko  <v.ostapenko@samsung.com>
 
         [TexMap][Cairo][Qt] Refactor BitmapTextureGL::updateContents().

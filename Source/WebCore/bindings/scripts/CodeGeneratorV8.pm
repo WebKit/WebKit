@@ -46,6 +46,8 @@ my @implContentDecls = ();
 my %implIncludes = ();
 my %headerIncludes = ();
 
+my @allParents = ();
+
 # Default .h template
 my $headerTemplate = << "EOF";
 /*
@@ -289,12 +291,11 @@ sub GenerateHeader
     my $className = "V8$interfaceName";
 
     # Copy contents of parent classes except the first parent.
-    my @parents;
-    $codeGenerator->AddMethodsConstantsAndAttributesFromParentClasses($dataNode, \@parents, 1);
+    $codeGenerator->AddMethodsConstantsAndAttributesFromParentClasses($dataNode, \@allParents, 1);
     $codeGenerator->LinkOverloadedFunctions($dataNode);
 
     # Ensure the IsDOMNodeType function is in sync.
-    die("IsDOMNodeType is out of date with respect to $interfaceName") if IsDOMNodeType($interfaceName) != $codeGenerator->IsSubType($dataNode, "Node");
+    die("IsDOMNodeType is out of date with respect to $interfaceName") if IsDOMNodeType($interfaceName) != IsNodeSubType($dataNode);
 
     my $hasDependentLifetime = $dataNode->extendedAttributes->{"V8DependentLifetime"} || $dataNode->extendedAttributes->{"ActiveDOMObject"}
          || GetGenerateIsReachable($dataNode) || $className =~ /SVG/;
@@ -536,7 +537,7 @@ END
 
     my $customWrap = !!($dataNode->extendedAttributes->{"CustomToJSObject"} or $dataNode->extendedAttributes->{"V8CustomToJSObject"});
     if ($noToV8) {
-        die "Can't suppress toV8 for subclass\n" if @parents;
+        die "Can't suppress toV8 for subclass\n" if @allParents;
     } elsif ($noWrap) {
         die "Must have custom toV8\n" if !$customWrap;
         push(@headerContent, <<END);
@@ -550,7 +551,7 @@ inline v8::Handle<v8::Value> toV8Fast(${nativeType}* impl, const v8::AccessorInf
 END
     } else {
 
-        my $getCachedWrapper = $codeGenerator->IsSubType($dataNode, "Node") ? "V8DOMWrapper::getCachedWrapper(impl)" : "DOMDataStore::current(isolate)->get(impl)";
+        my $getCachedWrapper = IsNodeSubType($dataNode) ? "V8DOMWrapper::getCachedWrapper(impl)" : "DOMDataStore::current(isolate)->get(impl)";
         my $createWrapperCall = $customWrap ? "${className}::wrap" : "${className}::createWrapper";
 
         if ($customWrap) {
@@ -592,7 +593,7 @@ inline v8::Handle<v8::Value> toV8(${nativeType}* impl, v8::Handle<v8::Object> cr
     return wrap(impl, creationContext, isolate);
 }
 END
-        if ($codeGenerator->IsSubType($dataNode, "Node")) {
+        if (IsNodeSubType($dataNode)) {
             push(@headerContent, <<END);
 
 inline v8::Handle<v8::Value> toV8Fast(${nativeType}* impl, const v8::AccessorInfo& info, Node* holder)
@@ -641,11 +642,11 @@ sub GetInternalFields
     # so special-case AbstractWorker and WorkerContext to include all sub-types.
     # Event listeners on DOM nodes are explicitly supported in the GC controller.
     # FIXME: Simplify this when all EventTargets are subtypes of EventTarget.
-    if (!$codeGenerator->IsSubType($dataNode, "Node")
+    if (!IsNodeSubType($dataNode)
         && ($dataNode->extendedAttributes->{"EventTarget"}
             || $dataNode->extendedAttributes->{"IsWorkerContext"}
-            || $codeGenerator->IsSubType($dataNode, "AbstractWorker")
-            || $codeGenerator->IsSubType($dataNode, "EventTarget"))) {
+            || IsSubType($dataNode, "AbstractWorker")
+            || IsSubType($dataNode, "EventTarget"))) {
         push(@customInternalFields, "eventListenerCacheIndex");
     }
 
@@ -769,6 +770,24 @@ sub GenerateHeaderCustomCall
         push(@headerContent, "    static v8::Handle<v8::Value> reloadAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo&);\n");
         push(@headerContent, "    static v8::Handle<v8::Value> replaceAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo&);\n");
     }
+}
+
+sub IsSubType
+{
+    my $dataNode = shift;
+    my $parentType = shift;
+    return 1 if ($dataNode->name eq $parentType);
+    foreach (@allParents) {
+        my $parent = $_;
+        return 1 if $parent eq $parentType;
+    }
+    return 0;
+}
+
+sub IsNodeSubType
+{
+    my $dataNode = shift;
+    return IsSubType($dataNode, "Node");
 }
 
 sub IsVisibleAcrossOrigins
@@ -949,7 +968,7 @@ END
     } else {
         my $reflect = $attribute->signature->extendedAttributes->{"Reflect"};
         my $url = $attribute->signature->extendedAttributes->{"URL"};
-        if ($getterStringUsesImp && $reflect && !$url && $codeGenerator->IsSubType($dataNode, "Node") && $codeGenerator->IsStringType($attrType)) {
+        if ($getterStringUsesImp && $reflect && !$url && IsNodeSubType($dataNode) && $codeGenerator->IsStringType($attrType)) {
             # Generate super-compact call for regular attribute getter:
             my $contentAttributeName = $reflect eq "VALUE_IS_MISSING" ? lc $attrName : $reflect;
             my $namespace = $codeGenerator->NamespaceForAttributeName($interfaceName, $contentAttributeName);
@@ -1043,7 +1062,7 @@ END
     # Special case for readonly or Replaceable attributes (with a few exceptions). This attempts to ensure that JS wrappers don't get
     # garbage-collected prematurely when their lifetime is strongly tied to their owner. We accomplish this by inserting a reference to
     # the newly created wrapper into an internal field of the holder object.
-    if (!$codeGenerator->IsSubType($dataNode, "Node") && $attrName ne "self" && IsWrapperType($returnType) && (IsReadonly($attribute) || $attribute->signature->extendedAttributes->{"Replaceable"} || $attrName eq "location")
+    if (!IsNodeSubType($dataNode) && $attrName ne "self" && IsWrapperType($returnType) && (IsReadonly($attribute) || $attribute->signature->extendedAttributes->{"Replaceable"} || $attrName eq "location")
         && $returnType ne "EventTarget" && $returnType ne "SerializedScriptValue" && $returnType ne "DOMWindow" 
         && $returnType ne "MessagePortArray"
         && $returnType !~ /SVG/ && $returnType !~ /HTML/ && !IsDOMNodeType($returnType)) {
@@ -1232,7 +1251,7 @@ END
     } else {
         my $attrType = GetTypeFromSignature($attribute->signature);
         my $reflect = $attribute->signature->extendedAttributes->{"Reflect"};
-        if ($reflect && $codeGenerator->IsSubType($dataNode, "Node") && $codeGenerator->IsStringType($attrType)) {
+        if ($reflect && IsNodeSubType($dataNode) && $codeGenerator->IsStringType($attrType)) {
             # Generate super-compact call for regular attribute setter:
             my $contentAttributeName = $reflect eq "VALUE_IS_MISSING" ? lc $attrName : $reflect;
             my $namespace = $codeGenerator->NamespaceForAttributeName($interfaceName, $contentAttributeName);
@@ -1291,7 +1310,7 @@ END
         if ($attribute->signature->type eq "EventListener") {
             my $implSetterFunctionName = $codeGenerator->WK_ucfirst($attrName);
             AddToImplIncludes("V8AbstractEventListener.h");
-            if (!$codeGenerator->IsSubType($dataNode, "Node")) {
+            if (!IsNodeSubType($dataNode)) {
                 push(@implContentDecls, "    transferHiddenDependency(info.Holder(), imp->$attrName(), value, V8${interfaceName}::eventListenerCacheIndex);\n");
             }
             if ($interfaceName eq "WorkerContext" and $attribute->signature->name eq "onerror") {
@@ -1544,10 +1563,10 @@ sub GenerateFunctionCallback
     # but they are extremely consistent across the various classes that take event listeners,
     # so we can generate them as a "special case".
     if ($name eq "addEventListener") {
-        GenerateEventListenerCallback($interfaceName, !$codeGenerator->IsSubType($dataNode, "Node"), "add");
+        GenerateEventListenerCallback($interfaceName, !IsNodeSubType($dataNode), "add");
         return;
     } elsif ($name eq "removeEventListener") {
-        GenerateEventListenerCallback($interfaceName, !$codeGenerator->IsSubType($dataNode, "Node"), "remove");
+        GenerateEventListenerCallback($interfaceName, !IsNodeSubType($dataNode), "remove");
         return;
     }
 
@@ -2491,7 +2510,7 @@ sub GenerateImplementationIndexer
         }
     }
 
-    my $hasEnumerator = !$isSpecialCase && $codeGenerator->IsSubType($dataNode, "Node");
+    my $hasEnumerator = !$isSpecialCase && IsNodeSubType($dataNode);
 
     # FIXME: Find a way to not have to special-case HTMLOptionsCollection.
     if ($interfaceName eq "HTMLOptionsCollection") {
@@ -3478,7 +3497,7 @@ sub GenerateToV8Converters
 
     my $createWrapperArgumentType = GetPassRefPtrType($nativeType);
     my $baseType = BaseInterfaceName($dataNode);
-    my $getCachedWrapper = $codeGenerator->IsSubType($dataNode, "Node") ? "V8DOMWrapper::getCachedWrapper(impl.get())" : "DOMDataStore::current(isolate)->get(impl.get())";
+    my $getCachedWrapper = IsNodeSubType($dataNode) ? "V8DOMWrapper::getCachedWrapper(impl.get())" : "DOMDataStore::current(isolate)->get(impl.get())";
 
     push(@implContent, <<END);
 
@@ -3495,7 +3514,7 @@ END
 
     AddToImplIncludes("Frame.h");
 
-    if ($codeGenerator->IsSubType($dataNode, "Document")) {
+    if (IsSubType($dataNode, "Document")) {
         push(@implContent, <<END);
     if (Frame* frame = impl->frame()) {
         if (frame->script()->initializeMainWorld()) {

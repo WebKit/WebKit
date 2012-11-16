@@ -1419,7 +1419,7 @@ sub GenerateImplementation
     my $hasParent = $hasLegacyParent || $hasRealParent;
     my $parentClassName = GetParentClassName($dataNode);
     my $visibleInterfaceName = $codeGenerator->GetVisibleInterfaceName($dataNode);
-    my $eventTarget = $codeGenerator->IsSubType($dataNode, "EventTarget");
+    my $eventTarget = $dataNode->extendedAttributes->{"EventTarget"} || $codeGenerator->IsStrictSubtype($dataNode, "EventTarget");
     my $needsMarkChildren = $dataNode->extendedAttributes->{"JSCustomMarkFunction"} || $dataNode->extendedAttributes->{"EventTarget"} || $dataNode->name eq "EventTarget";
 
     # - Add default header template

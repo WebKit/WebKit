@@ -690,14 +690,13 @@ sub GetVisibleInterfaceName
     return $interfaceName ? $interfaceName : $dataNode->name;
 }
 
-sub IsSubType
+sub IsStrictSubtype
 {
     my $object = shift;
     my $dataNode = shift;
     my $interfaceName = shift;
     my $found = 0;
 
-    return 1 if $interfaceName eq $dataNode->name;
     $object->ForAllParents($dataNode, sub {
         my $interface = shift;
         if ($interface->name eq $interfaceName) {
