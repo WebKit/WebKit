@@ -45,6 +45,7 @@ class WebDocument;
 class WebElement;
 class WebFrame;
 class WebNodeList;
+class WebPluginContainer;
 
 // Provides access to some properties of a DOM node.
 class WebNode {
@@ -119,6 +120,7 @@ public:
     // This does not 100% guarantee the user can see it, but is pretty close.
     // Note: This method only works properly after layout has occurred.
     WEBKIT_EXPORT bool hasNonEmptyBoundingBox() const;
+    WEBKIT_EXPORT WebPluginContainer* pluginContainer() const;
 
     template<typename T> T to()
     {

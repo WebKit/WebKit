@@ -714,6 +714,7 @@
                                 # functions defined only in !WEBKIT_IMPLEMENTATION.
                                 'tests/AssociatedURLLoaderTest.cpp',
                                 'tests/EventListenerTest.cpp',
+                                'tests/FakeWebPlugin.cpp',
                                 'tests/FrameTestHelpers.cpp',
                                 'tests/IDBBindingUtilitiesTest.cpp',
                                 'tests/LevelDBTest.cpp',
@@ -728,6 +729,7 @@
                                 'tests/WebImageTest.cpp',
                                 'tests/WebPageNewSerializerTest.cpp',
                                 'tests/WebPageSerializerTest.cpp',
+                                'tests/WebPluginContainerTest.cpp'
                                 'tests/WebViewTest.cpp',
                             ],
                             'conditions': [
