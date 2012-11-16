@@ -1,3 +1,10 @@
+2012-11-15  Kentaro Hara  <haraken@chromium.org>
+
+        Unreviewed. Rebaselined images.
+
+        * platform/chromium-win-xp/platform/chromium/fast/forms/calendar-picker/calendar-picker-appearance-expected.png: Added.
+        * platform/chromium-win-xp/platform/chromium/fast/forms/calendar-picker/calendar-picker-appearance-step-expected.png: Added.
+
 2012-11-15  Kent Tamura  <tkent@chromium.org>
 
         fast/forms/select/select-state-restore.html is flaky.
