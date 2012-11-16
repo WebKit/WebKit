@@ -1,5 +1,30 @@
 2012-11-15  Filip Pizlo  <fpizlo@apple.com>
 
+        ClassInfo.h should have correct indentation.
+
+        Rubber stamped by Mark Hahnenberg.
+
+        ClassInfo.h had some true creativity in its use of whitespace. Some things within
+        the namespace were indented four spaces and others where not. One #define had its
+        contents indented four spaces, while another didn't. I applied the following rule:
+        
+        - Non-macro things in the namespace should not be indented (that's our current
+          accepted practice).
+        
+        - Macros should never be indented but if they are multi-line then their subsequent
+          bodies should be indented four spaces. I believe that is consistent with what we
+          do elsewhere.
+
+        * runtime/ClassInfo.h:
+        (JSC):
+        (MethodTable):
+        (ClassInfo):
+        (JSC::ClassInfo::propHashTable):
+        (JSC::ClassInfo::isSubClassOf):
+        (JSC::ClassInfo::hasStaticProperties):
+
+2012-11-15  Filip Pizlo  <fpizlo@apple.com>
+
         DFG should copy propagate trivially no-op ConvertThis
         https://bugs.webkit.org/show_bug.cgi?id=102445
 

@@ -29,90 +29,90 @@
 
 namespace JSC {
 
-    class HashEntry;
-    struct HashTable;
+class HashEntry;
+struct HashTable;
 
-    struct MethodTable {
-        typedef void (*DestroyFunctionPtr)(JSCell*);
-        DestroyFunctionPtr destroy;
+struct MethodTable {
+    typedef void (*DestroyFunctionPtr)(JSCell*);
+    DestroyFunctionPtr destroy;
 
-        typedef void (*VisitChildrenFunctionPtr)(JSCell*, SlotVisitor&);
-        VisitChildrenFunctionPtr visitChildren;
+    typedef void (*VisitChildrenFunctionPtr)(JSCell*, SlotVisitor&);
+    VisitChildrenFunctionPtr visitChildren;
 
-        typedef void (*CopyBackingStoreFunctionPtr)(JSCell*, CopyVisitor&);
-        CopyBackingStoreFunctionPtr copyBackingStore;
+    typedef void (*CopyBackingStoreFunctionPtr)(JSCell*, CopyVisitor&);
+    CopyBackingStoreFunctionPtr copyBackingStore;
 
-        typedef CallType (*GetCallDataFunctionPtr)(JSCell*, CallData&);
-        GetCallDataFunctionPtr getCallData;
+    typedef CallType (*GetCallDataFunctionPtr)(JSCell*, CallData&);
+    GetCallDataFunctionPtr getCallData;
 
-        typedef ConstructType (*GetConstructDataFunctionPtr)(JSCell*, ConstructData&);
-        GetConstructDataFunctionPtr getConstructData;
+    typedef ConstructType (*GetConstructDataFunctionPtr)(JSCell*, ConstructData&);
+    GetConstructDataFunctionPtr getConstructData;
 
-        typedef void (*PutFunctionPtr)(JSCell*, ExecState*, PropertyName propertyName, JSValue, PutPropertySlot&);
-        PutFunctionPtr put;
+    typedef void (*PutFunctionPtr)(JSCell*, ExecState*, PropertyName propertyName, JSValue, PutPropertySlot&);
+    PutFunctionPtr put;
 
-        typedef void (*PutByIndexFunctionPtr)(JSCell*, ExecState*, unsigned propertyName, JSValue, bool shouldThrow);
-        PutByIndexFunctionPtr putByIndex;
+    typedef void (*PutByIndexFunctionPtr)(JSCell*, ExecState*, unsigned propertyName, JSValue, bool shouldThrow);
+    PutByIndexFunctionPtr putByIndex;
 
-        typedef bool (*DeletePropertyFunctionPtr)(JSCell*, ExecState*, PropertyName);
-        DeletePropertyFunctionPtr deleteProperty;
+    typedef bool (*DeletePropertyFunctionPtr)(JSCell*, ExecState*, PropertyName);
+    DeletePropertyFunctionPtr deleteProperty;
 
-        typedef bool (*DeletePropertyByIndexFunctionPtr)(JSCell*, ExecState*, unsigned);
-        DeletePropertyByIndexFunctionPtr deletePropertyByIndex;
+    typedef bool (*DeletePropertyByIndexFunctionPtr)(JSCell*, ExecState*, unsigned);
+    DeletePropertyByIndexFunctionPtr deletePropertyByIndex;
 
-        typedef bool (*GetOwnPropertySlotFunctionPtr)(JSCell*, ExecState*, PropertyName, PropertySlot&);
-        GetOwnPropertySlotFunctionPtr getOwnPropertySlot;
+    typedef bool (*GetOwnPropertySlotFunctionPtr)(JSCell*, ExecState*, PropertyName, PropertySlot&);
+    GetOwnPropertySlotFunctionPtr getOwnPropertySlot;
 
-        typedef bool (*GetOwnPropertySlotByIndexFunctionPtr)(JSCell*, ExecState*, unsigned, PropertySlot&);
-        GetOwnPropertySlotByIndexFunctionPtr getOwnPropertySlotByIndex;
+    typedef bool (*GetOwnPropertySlotByIndexFunctionPtr)(JSCell*, ExecState*, unsigned, PropertySlot&);
+    GetOwnPropertySlotByIndexFunctionPtr getOwnPropertySlotByIndex;
 
-        typedef JSObject* (*ToThisObjectFunctionPtr)(JSCell*, ExecState*);
-        ToThisObjectFunctionPtr toThisObject;
+    typedef JSObject* (*ToThisObjectFunctionPtr)(JSCell*, ExecState*);
+    ToThisObjectFunctionPtr toThisObject;
 
-        typedef JSValue (*DefaultValueFunctionPtr)(const JSObject*, ExecState*, PreferredPrimitiveType);
-        DefaultValueFunctionPtr defaultValue;
+    typedef JSValue (*DefaultValueFunctionPtr)(const JSObject*, ExecState*, PreferredPrimitiveType);
+    DefaultValueFunctionPtr defaultValue;
 
-        typedef void (*GetOwnPropertyNamesFunctionPtr)(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
-        GetOwnPropertyNamesFunctionPtr getOwnPropertyNames;
+    typedef void (*GetOwnPropertyNamesFunctionPtr)(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
+    GetOwnPropertyNamesFunctionPtr getOwnPropertyNames;
 
-        typedef void (*GetOwnNonIndexPropertyNamesFunctionPtr)(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
-        GetOwnNonIndexPropertyNamesFunctionPtr getOwnNonIndexPropertyNames;
+    typedef void (*GetOwnNonIndexPropertyNamesFunctionPtr)(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
+    GetOwnNonIndexPropertyNamesFunctionPtr getOwnNonIndexPropertyNames;
 
-        typedef void (*GetPropertyNamesFunctionPtr)(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
-        GetPropertyNamesFunctionPtr getPropertyNames;
+    typedef void (*GetPropertyNamesFunctionPtr)(JSObject*, ExecState*, PropertyNameArray&, EnumerationMode);
+    GetPropertyNamesFunctionPtr getPropertyNames;
 
-        typedef String (*ClassNameFunctionPtr)(const JSObject*);
-        ClassNameFunctionPtr className;
+    typedef String (*ClassNameFunctionPtr)(const JSObject*);
+    ClassNameFunctionPtr className;
 
-        typedef bool (*CustomHasInstanceFunctionPtr)(JSObject*, ExecState*, JSValue);
-        CustomHasInstanceFunctionPtr customHasInstance;
+    typedef bool (*CustomHasInstanceFunctionPtr)(JSObject*, ExecState*, JSValue);
+    CustomHasInstanceFunctionPtr customHasInstance;
 
-        typedef void (*PutWithAttributesFunctionPtr)(JSObject*, ExecState*, PropertyName propertyName, JSValue, unsigned attributes);
-        PutWithAttributesFunctionPtr putDirectVirtual;
+    typedef void (*PutWithAttributesFunctionPtr)(JSObject*, ExecState*, PropertyName propertyName, JSValue, unsigned attributes);
+    PutWithAttributesFunctionPtr putDirectVirtual;
 
-        typedef bool (*DefineOwnPropertyFunctionPtr)(JSObject*, ExecState*, PropertyName, PropertyDescriptor&, bool);
-        DefineOwnPropertyFunctionPtr defineOwnProperty;
+    typedef bool (*DefineOwnPropertyFunctionPtr)(JSObject*, ExecState*, PropertyName, PropertyDescriptor&, bool);
+    DefineOwnPropertyFunctionPtr defineOwnProperty;
 
-        typedef bool (*GetOwnPropertyDescriptorFunctionPtr)(JSObject*, ExecState*, PropertyName, PropertyDescriptor&);
-        GetOwnPropertyDescriptorFunctionPtr getOwnPropertyDescriptor;
-    };
+    typedef bool (*GetOwnPropertyDescriptorFunctionPtr)(JSObject*, ExecState*, PropertyName, PropertyDescriptor&);
+    GetOwnPropertyDescriptorFunctionPtr getOwnPropertyDescriptor;
+};
 
 #define CREATE_MEMBER_CHECKER(member) \
-template <typename T> \
-struct MemberCheck##member { \
-    struct Fallback { \
-        void member(...); \
-    }; \
-    struct Derived : T, Fallback { }; \
-    template <typename U, U> struct Check; \
-    typedef char Yes[2]; \
-    typedef char No[1]; \
-    template <typename U> \
-    static No &func(Check<void (Fallback::*)(...), &U::member>*); \
-    template <typename U> \
-    static Yes &func(...); \
-    enum { has = sizeof(func<Derived>(0)) == sizeof(Yes) }; \
-}
+    template <typename T> \
+    struct MemberCheck##member { \
+        struct Fallback { \
+            void member(...); \
+        }; \
+        struct Derived : T, Fallback { }; \
+        template <typename U, U> struct Check; \
+        typedef char Yes[2]; \
+        typedef char No[1]; \
+        template <typename U> \
+        static No &func(Check<void (Fallback::*)(...), &U::member>*); \
+        template <typename U> \
+        static Yes &func(...); \
+        enum { has = sizeof(func<Derived>(0)) == sizeof(Yes) }; \
+    }
 
 #define HAS_MEMBER_NAMED(klass, name) (MemberCheck##name<klass>::has)
 
@@ -141,54 +141,54 @@ struct MemberCheck##member { \
     }, \
     ClassName::TypedArrayStorageType
 
-    struct ClassInfo {
-        /**
-         * A string denoting the class name. Example: "Window".
-         */
-        const char* className;
+struct ClassInfo {
+    /**
+     * A string denoting the class name. Example: "Window".
+     */
+    const char* className;
 
-        /**
-         * Pointer to the class information of the base class.
-         * 0L if there is none.
-         */
-        const ClassInfo* parentClass;
-        /**
-         * Static hash-table of properties.
-         * For classes that can be used from multiple threads, it is accessed via a getter function that would typically return a pointer to thread-specific value.
-         */
-        const HashTable* propHashTable(ExecState* exec) const
-        {
-            if (classPropHashTableGetterFunction)
-                return classPropHashTableGetterFunction(exec);
-            return staticPropHashTable;
-        }
+    /**
+     * Pointer to the class information of the base class.
+     * 0L if there is none.
+     */
+    const ClassInfo* parentClass;
+    /**
+     * Static hash-table of properties.
+     * For classes that can be used from multiple threads, it is accessed via a getter function that would typically return a pointer to thread-specific value.
+     */
+    const HashTable* propHashTable(ExecState* exec) const
+    {
+        if (classPropHashTableGetterFunction)
+            return classPropHashTableGetterFunction(exec);
+        return staticPropHashTable;
+    }
         
-        bool isSubClassOf(const ClassInfo* other) const
-        {
-            for (const ClassInfo* ci = this; ci; ci = ci->parentClass) {
-                if (ci == other)
-                    return true;
-            }
-            return false;
+    bool isSubClassOf(const ClassInfo* other) const
+    {
+        for (const ClassInfo* ci = this; ci; ci = ci->parentClass) {
+            if (ci == other)
+                return true;
         }
+        return false;
+    }
 
-        bool hasStaticProperties() const
-        {
-            for (const ClassInfo* ci = this; ci; ci = ci->parentClass) {
-                if (ci->staticPropHashTable || ci->classPropHashTableGetterFunction)
-                    return true;
-            }
-            return false;
+    bool hasStaticProperties() const
+    {
+        for (const ClassInfo* ci = this; ci; ci = ci->parentClass) {
+            if (ci->staticPropHashTable || ci->classPropHashTableGetterFunction)
+                return true;
         }
+        return false;
+    }
 
-        const HashTable* staticPropHashTable;
-        typedef const HashTable* (*ClassPropHashTableGetterFunction)(ExecState*);
-        const ClassPropHashTableGetterFunction classPropHashTableGetterFunction;
+    const HashTable* staticPropHashTable;
+    typedef const HashTable* (*ClassPropHashTableGetterFunction)(ExecState*);
+    const ClassPropHashTableGetterFunction classPropHashTableGetterFunction;
 
-        MethodTable methodTable;
+    MethodTable methodTable;
 
-        TypedArrayType typedArrayStorageType;
-    };
+    TypedArrayType typedArrayStorageType;
+};
 
 } // namespace JSC
 
