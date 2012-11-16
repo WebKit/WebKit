@@ -394,6 +394,7 @@
                 'src/FindInPageCoordinates.h',
                 'src/FrameLoaderClientImpl.cpp',
                 'src/FrameLoaderClientImpl.h',
+                'src/FrameNetworkingContextImpl.cpp',
                 'src/FrameNetworkingContextImpl.h',
                 'src/GeolocationClientProxy.cpp',
                 'src/GeolocationClientProxy.h',
