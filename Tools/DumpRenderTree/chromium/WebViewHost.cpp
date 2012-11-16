@@ -577,13 +577,6 @@ void WebViewHost::setStatusText(const WebString& text)
     printf("UI DELEGATE STATUS CALLBACK: setStatusText:%s\n", text.utf8().data());
 }
 
-void WebViewHost::startDragging(WebFrame*, const WebDragData& data, WebDragOperationsMask mask, const WebImage&, const WebPoint&)
-{
-    // When running a test, we need to fake a drag drop operation otherwise
-    // Windows waits for real mouse events to know when the drag is over.
-    m_shell->eventSender()->doDragDrop(data, mask);
-}
-
 void WebViewHost::didUpdateLayout()
 {
 #if OS(MAC_OS_X)

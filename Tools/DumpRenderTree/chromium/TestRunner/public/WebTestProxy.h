@@ -33,10 +33,15 @@
 
 #include "Platform/chromium/public/WebRect.h"
 #include "WebKit/chromium/public/WebAccessibilityNotification.h"
+#include "WebKit/chromium/public/WebDragOperation.h"
 #include "WebKit/chromium/public/WebNavigationPolicy.h"
 
 namespace WebKit {
 class WebAccessibilityObject;
+class WebDragData;
+class WebFrame;
+class WebImage;
+struct WebPoint;
 struct WebSize;
 }
 
@@ -65,6 +70,7 @@ protected:
     void show(WebKit::WebNavigationPolicy);
     void didAutoResize(const WebKit::WebSize&);
     void postAccessibilityNotification(const WebKit::WebAccessibilityObject&, WebKit::WebAccessibilityNotification);
+    void startDragging(WebKit::WebFrame*, const WebKit::WebDragData&, WebKit::WebDragOperationsMask, const WebKit::WebImage&, const WebKit::WebPoint&);
 
 private:
     WebTestInterfaces* m_testInterfaces;
@@ -124,6 +130,11 @@ public:
     {
         WebTestProxyBase::postAccessibilityNotification(object, notification);
         WebViewClientImpl::postAccessibilityNotification(object, notification);
+    }
+    virtual void startDragging(WebKit::WebFrame* frame, const WebKit::WebDragData& data, WebKit::WebDragOperationsMask mask, const WebKit::WebImage& image, const WebKit::WebPoint& point)
+    {
+        WebTestProxyBase::startDragging(frame, data, mask, image, point);
+        WebViewClientImpl::startDragging(frame, data, mask, image, point);
     }
 };
 

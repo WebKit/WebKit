@@ -1,3 +1,26 @@
+2012-11-16  Jochen Eisinger  <jochen@chromium.org>
+
+        [chromium] fake drag drop operations in the WebTestProxyBase instead of the WebViewHost
+        https://bugs.webkit.org/show_bug.cgi?id=102495
+
+        Reviewed by Adam Barth.
+
+        When a drag operation is initiated in a layout test, we need to
+        simulate a corresponding drop event, otherwise the WebViewImpl will sit
+        there waiting for it. Instead of having the embedder taking care of
+        this, move this into the TestRunner library.
+
+        * DumpRenderTree/chromium/TestRunner/public/WebTestProxy.h:
+        (WebKit):
+        (WebTestProxyBase):
+        (WebTestRunner::WebTestProxy::startDragging):
+        * DumpRenderTree/chromium/TestRunner/src/WebTestProxy.cpp:
+        (WebTestRunner::WebTestProxyBase::startDragging):
+        (WebTestRunner):
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        * DumpRenderTree/chromium/WebViewHost.h:
+        (WebViewHost):
+
 2012-11-16  Tien-Ren Chen  <trchen@chromium.org>
 
         Rename applyDefaultDeviceScaleFactorInCompositor to setApplyDeviceScaleFactorInCompositor

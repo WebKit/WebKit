@@ -35,6 +35,7 @@
 #include "WebAccessibilityNotification.h"
 #include "WebAccessibilityObject.h"
 #include "WebElement.h"
+#include "WebEventSender.h"
 #include "WebNode.h"
 #include "WebTestDelegate.h"
 #include "WebTestInterfaces.h"
@@ -210,6 +211,13 @@ void WebTestProxyBase::postAccessibilityNotification(const WebKit::WebAccessibil
 
         m_delegate->printMessage(message + "\n");
     }
+}
+
+void WebTestProxyBase::startDragging(WebFrame*, const WebDragData& data, WebDragOperationsMask mask, const WebImage&, const WebPoint&)
+{
+    // When running a test, we need to fake a drag drop operation otherwise
+    // Windows waits for real mouse events to know when the drag is over.
+    m_testInterfaces->eventSender()->doDragDrop(data, mask);
 }
 
 }
