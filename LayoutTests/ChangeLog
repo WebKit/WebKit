@@ -1,5 +1,34 @@
 2012-11-16  Erik Arvidsson  <arv@chromium.org>
 
+        Update DOMException name: TypeMismatchError
+        https://bugs.webkit.org/show_bug.cgi?id=102418
+
+        Reviewed by Kentaro Hara.
+
+        Updated tests and expectations.
+
+        * editing/selection/extend-expected.txt:
+        * fast/dom/Element/attr-param-typechecking-expected.txt:
+        * fast/dom/Geolocation/argument-types-expected.txt:
+        * fast/dom/Geolocation/not-enough-arguments-expected.txt:
+        * fast/dom/Geolocation/script-tests/argument-types.js:
+        (test):
+        * fast/dom/HTMLSelectElement/select-selectedIndex-expected.txt:
+        * fast/dom/HTMLSelectElement/select-selectedIndex-multiple-expected.txt:
+        * fast/js/select-options-add-expected.txt:
+        * fast/mediastream/RTCIceCandidate-expected.txt:
+        * fast/mediastream/RTCPeerConnection-expected.txt:
+        * fast/mediastream/RTCSessionDescription-expected.txt:
+        * platform/chromium/fast/dynamic/insertAdjacentElement-expected.txt:
+        * platform/efl/fast/dynamic/insertAdjacentElement-expected.txt:
+        * platform/gtk/fast/dynamic/insertAdjacentElement-expected.txt:
+        * platform/mac/fast/dynamic/insertAdjacentElement-expected.txt:
+        * platform/qt/fast/dynamic/insertAdjacentElement-expected.txt:
+        * security/crypto-random-values-types-expected.txt:
+        * svg/dom/SVGTransformList-expected.txt:
+
+2012-11-16  Erik Arvidsson  <arv@chromium.org>
+
         Update DOMException name: InvalidAccessError
         https://bugs.webkit.org/show_bug.cgi?id=102400
 

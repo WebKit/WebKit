@@ -10,11 +10,11 @@ PASS initializer = JSON.parse(JSON.stringify(sessionDescription)); did not throw
 PASS sessionDescription = new RTCSessionDescription(initializer); did not throw exception.
 PASS sessionDescription.type is "offer"
 PASS sessionDescription.sdp is "foobar"
-PASS new RTCSessionDescription({}); threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
+PASS new RTCSessionDescription({}); threw exception Error: TypeMismatchError: DOM Exception 17.
 PASS new RTCSessionDescription(5); threw exception TypeError: Not an object..
 PASS new RTCSessionDescription('foobar'); threw exception TypeError: Not an object..
-PASS new RTCSessionDescription({type:'foobar', sdp:'x'}); threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
-PASS new RTCSessionDescription({type:'offer', sdp:''}); threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
+PASS new RTCSessionDescription({type:'foobar', sdp:'x'}); threw exception Error: TypeMismatchError: DOM Exception 17.
+PASS new RTCSessionDescription({type:'offer', sdp:''}); threw exception Error: TypeMismatchError: DOM Exception 17.
 PASS new RTCSessionDescription({type:'offer', sdp:'x'}); did not throw exception.
 PASS new RTCSessionDescription({type:'answer', sdp:'x'}); did not throw exception.
 PASS new RTCSessionDescription({type:'pranswer', sdp:'x'}); did not throw exception.

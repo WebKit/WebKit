@@ -54,7 +54,7 @@ namespace WebCore {
 
         // Introduced in DOM Level 3:
         VALIDATION_ERR = 16, // Historical
-        TYPE_MISMATCH_ERR = 17,
+        TYPE_MISMATCH_ERR = 17, // Historical; use TypeError instead
 
         // XMLHttpRequest extension:
         SECURITY_ERR = 18,

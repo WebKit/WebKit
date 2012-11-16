@@ -57,7 +57,7 @@ PASS mySelect.selectedIndex is -1
 PASS mySelect.options.length is 10
 PASS mySelect.selectedIndex is -1
 19) trying to set an element that's not an option: select element
-PASS mySelect.options[10] = mySelect; threw exception Error: TYPE_MISMATCH_ERR: DOM Exception 17.
+PASS mySelect.options[10] = mySelect; threw exception Error: TypeMismatchError: DOM Exception 17.
 PASS mySelect.options.length is 10
 PASS mySelect.selectedIndex is -1
 20) trying to set a option element using an invalid index: negative infinity
