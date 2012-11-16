@@ -357,6 +357,16 @@ void InspectorPageAgent::restore()
     if (m_state->getBoolean(PageAgentState::pageAgentEnabled)) {
         ErrorString error;
         enable(&error);
+        bool scriptExecutionDisabled = m_state->getBoolean(PageAgentState::pageAgentScriptExecutionDisabled);
+        setScriptExecutionDisabled(0, scriptExecutionDisabled);
+        bool showFPSCounter = m_state->getBoolean(PageAgentState::pageAgentShowFPSCounter);
+        setShowFPSCounter(0, showFPSCounter);
+
+        int currentWidth = static_cast<int>(m_state->getLong(PageAgentState::pageAgentScreenWidthOverride));
+        int currentHeight = static_cast<int>(m_state->getLong(PageAgentState::pageAgentScreenHeightOverride));
+        double currentFontScaleFactor = m_state->getDouble(PageAgentState::pageAgentFontScaleFactorOverride);
+        bool currentFitWindow = m_state->getBoolean(PageAgentState::pageAgentFitWindow);
+        updateViewMetrics(currentWidth, currentHeight, currentFontScaleFactor, currentFitWindow);
 #if ENABLE(TOUCH_EVENTS)
         updateTouchEventEmulationInPage(m_state->getBoolean(PageAgentState::touchEventEmulationEnabled));
 #endif
@@ -367,10 +377,6 @@ void InspectorPageAgent::enable(ErrorString*)
 {
     m_enabled = true;
     m_state->setBoolean(PageAgentState::pageAgentEnabled, true);
-    bool scriptExecutionDisabled = m_state->getBoolean(PageAgentState::pageAgentScriptExecutionDisabled);
-    setScriptExecutionDisabled(0, scriptExecutionDisabled);
-    bool showFPSCounter = m_state->getBoolean(PageAgentState::pageAgentShowFPSCounter);
-    setShowFPSCounter(0, showFPSCounter);
     m_instrumentingAgents->setInspectorPageAgent(this);
 }
 
