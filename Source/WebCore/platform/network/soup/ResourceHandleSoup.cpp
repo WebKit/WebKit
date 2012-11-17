@@ -327,7 +327,7 @@ static void applyAuthenticationToRequest(ResourceHandle* handle, bool redirect)
     String password = d->m_pass;
 
     ResourceRequest& request = d->m_firstRequest;
-    if (!handle->client() || handle->client()->shouldUseCredentialStorage(handle)) {
+    if (handle->shouldUseCredentialStorage()) {
         if (d->m_user.isEmpty() && d->m_pass.isEmpty())
             d->m_initialCredential = CredentialStorage::get(request.url());
         else if (!redirect) {
@@ -912,6 +912,11 @@ void ResourceHandle::cancel()
         g_cancellable_cancel(d->m_cancellable.get());
 }
 
+bool ResourceHandle::shouldUseCredentialStorage()
+{
+    return (!client() || client()->shouldUseCredentialStorage(this)) && firstRequest().url().protocolIsInHTTPFamily();
+}
+
 void ResourceHandle::setHostAllowsAnyHTTPSCertificate(const String& host)
 {
     allowsAnyHTTPSCertificateHosts().add(host.lower());
@@ -959,10 +964,10 @@ void ResourceHandle::didReceiveAuthenticationChallenge(const AuthenticationChall
 {
     ASSERT(d->m_currentWebChallenge.isNull());
 
-    bool shouldUseCredentialStorage = !client() || client()->shouldUseCredentialStorage(this);
+    bool useCredentialStorage = shouldUseCredentialStorage();
     if (!d->m_user.isNull() && !d->m_pass.isNull()) {
         Credential credential = Credential(d->m_user, d->m_pass, CredentialPersistenceForSession);
-        if (shouldUseCredentialStorage)
+        if (useCredentialStorage)
             CredentialStorage::set(credential, challenge.protectionSpace(), challenge.failureResponse().url());
         soup_auth_authenticate(challenge.soupAuth(), credential.user().utf8().data(), credential.password().utf8().data());
 
@@ -970,7 +975,7 @@ void ResourceHandle::didReceiveAuthenticationChallenge(const AuthenticationChall
     }
 
     // FIXME: Per the specification, the user shouldn't be asked for credentials if there were incorrect ones provided explicitly.
-    if (shouldUseCredentialStorage) {
+    if (useCredentialStorage) {
         if (!d->m_initialCredential.isEmpty() || challenge.previousFailureCount()) {
             // The stored credential wasn't accepted, stop using it. There is a race condition
             // here, since a different credential might have already been stored by another
@@ -1001,7 +1006,7 @@ void ResourceHandle::didReceiveAuthenticationChallenge(const AuthenticationChall
     // of all request latency, versus a one-time latency for the small subset of requests that
     // use HTTP authentication. In the end, this doesn't matter much, because persistent credentials
     // will become session credentials after the first use.
-    if (shouldUseCredentialStorage) {
+    if (useCredentialStorage) {
         credentialBackingStore().credentialForChallenge(challenge, getCredentialFromPersistentStoreCallback, this);
         return;
     }
@@ -1032,19 +1037,21 @@ void ResourceHandle::receivedCredential(const AuthenticationChallenge& challenge
         return;
     }
 
-    // Eventually we will manage per-session credentials only internally or use some newly-exposed API from libsoup,
-    // because once we authenticate via libsoup, there is no way to ignore it for a particular request. Right now,
-    // we place the credentials in the store even though libsoup will never fire the authenticate signal again for
-    // this protection space.
-    if (credential.persistence() == CredentialPersistenceForSession || credential.persistence() == CredentialPersistencePermanent)
-        CredentialStorage::set(credential, challenge.protectionSpace(), challenge.failureResponse().url());
+    if (shouldUseCredentialStorage()) {
+        // Eventually we will manage per-session credentials only internally or use some newly-exposed API from libsoup,
+        // because once we authenticate via libsoup, there is no way to ignore it for a particular request. Right now,
+        // we place the credentials in the store even though libsoup will never fire the authenticate signal again for
+        // this protection space.
+        if (credential.persistence() == CredentialPersistenceForSession || credential.persistence() == CredentialPersistencePermanent)
+            CredentialStorage::set(credential, challenge.protectionSpace(), challenge.failureResponse().url());
 
 #if PLATFORM(GTK)
-    if (credential.persistence() == CredentialPersistencePermanent) {
-        d->m_credentialDataToSaveInPersistentStore.credential = credential;
-        d->m_credentialDataToSaveInPersistentStore.challenge = challenge;
-    }
+        if (credential.persistence() == CredentialPersistencePermanent) {
+            d->m_credentialDataToSaveInPersistentStore.credential = credential;
+            d->m_credentialDataToSaveInPersistentStore.challenge = challenge;
+        }
 #endif
+    }
 
     ASSERT(challenge.soupSession());
     ASSERT(challenge.soupMessage());

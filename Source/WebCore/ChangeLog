@@ -1,3 +1,26 @@
+2012-11-17  Martin Robinson  <mrobinson@igalia.com>
+
+        [Soup] CredentialStorage should only be used for HTTP-family requests
+        https://bugs.webkit.org/show_bug.cgi?id=102582
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Do not use CredentialStorage when handling non-HTTP family requests. CredentialStorage
+        only expects to handle requests in the HTTP family.
+
+        No new tests. This is covered by existing tests.
+
+        * platform/network/ResourceHandle.h:
+        (ResourceHandle): Add a shouldUseCredentialStorage helper to ResourceHandle. This
+        helper returns false when firstRequest() is a non-HTTP family request.
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::applyAuthenticationToRequest): Use the new helper.
+        (WebCore::createSoupRequestAndMessageForHandle): Ditto.
+        (WebCore::ResourceHandle::start): Ditto.
+        (WebCore::ResourceHandle::shouldUseCredentialStorage): Ditto.
+        (WebCore::ResourceHandle::didReceiveAuthenticationChallenge): Ditto.
+        (WebCore::ResourceHandle::receivedCredential): Ditto.
+
 2012-11-16  Patrick Gansterer  <paroga@webkit.org>
 
         Build fix for !USE(ACCELERATED_COMPOSITING) after r135029.
