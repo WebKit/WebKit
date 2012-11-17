@@ -1,3 +1,20 @@
+2012-11-16  Jaehun Lim  <ljaehun.lim@samsung.com>
+
+        [EFL][WK2] Remove unnecessary #include statemtns
+        https://bugs.webkit.org/show_bug.cgi?id=102577
+
+        Reviewed by Anders Carlsson.
+
+        ewk_*_private.h doesn't need to include RefCounted.h after Ewk_Object refactoring.
+
+        * UIProcess/API/efl/ewk_auth_request_private.h:
+        * UIProcess/API/efl/ewk_database_manager.cpp:
+        * UIProcess/API/efl/ewk_file_chooser_request_private.h:
+        * UIProcess/API/efl/ewk_form_submission_request_private.h:
+        * UIProcess/API/efl/ewk_navigation_data_private.h:
+        * UIProcess/API/efl/ewk_resource_private.h:
+        * UIProcess/API/efl/ewk_storage_manager.cpp:
+
 2012-11-16  Sam Weinig  <weinig@apple.com>
 
         Fix the windows build.

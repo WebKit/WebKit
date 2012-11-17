@@ -29,7 +29,6 @@
 #include "APIObject.h"
 #include "ewk_object_private.h"
 #include <wtf/PassRefPtr.h>
-#include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 

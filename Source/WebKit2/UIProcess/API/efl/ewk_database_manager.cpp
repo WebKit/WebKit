@@ -34,7 +34,6 @@
 #include "ewk_error_private.h"
 #include "ewk_security_origin.h"
 #include "ewk_security_origin_private.h"
-#include <wtf/RefCounted.h>
 
 using namespace WebKit;
 

@@ -33,7 +33,6 @@
 #include "ewk_security_origin.h"
 #include "ewk_security_origin_private.h"
 #include "ewk_storage_manager_private.h"
-#include <wtf/RefCounted.h>
 
 using namespace WebKit;
 

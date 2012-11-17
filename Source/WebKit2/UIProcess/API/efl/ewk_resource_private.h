@@ -30,7 +30,6 @@
 #include "WKURL.h"
 #include "ewk_object_private.h"
 #include <wtf/PassRefPtr.h>
-#include <wtf/RefCounted.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
