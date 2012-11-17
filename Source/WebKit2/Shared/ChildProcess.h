@@ -87,6 +87,8 @@ private:
     static NSString * const processSuppressionVisibleApplicationReason;
 #endif
 
+    void platformInitialize();
+
     // The timeout, in seconds, before this process will be terminated if termination
     // has been enabled. If the timeout is 0 seconds, the process will be terminated immediately.
     double m_terminationTimeout;

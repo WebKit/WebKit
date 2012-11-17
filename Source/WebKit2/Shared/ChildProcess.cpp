@@ -66,9 +66,8 @@ ChildProcess::ChildProcess()
 {
     // FIXME: The termination timer should not be scheduled on the main run loop.
     // It won't work with the threaded mode, but it's not really useful anyway as is.
-#if PLATFORM(MAC)
-    disableProcessSuppression(processSuppressionVisibleApplicationReason);
-#endif
+    
+    platformInitialize();
 }
 
 ChildProcess::~ChildProcess()
@@ -104,5 +103,11 @@ void ChildProcess::didCloseOnConnectionWorkQueue(WorkQueue& workQueue, CoreIPC::
 
     workQueue.dispatchAfterDelay(bind(static_cast<void(*)()>(watchdogCallback)), watchdogDelay);
 }
-    
+
+#if !PLATFORM(MAC)
+void ChildProcess::platformInitialize()
+{
+}
+#endif
+
 } // namespace WebKit

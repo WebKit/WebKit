@@ -1,3 +1,21 @@
+2012-11-16  Kiran Muppala  <cmuppala@apple.com>
+
+        Set task priority of WebKit2 processes to zero on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=102567
+
+        Reviewed by Mark Rowe.
+
+        Explicitly set task priority of WebKit2 processes to zero, to
+        override automatic priority determination by the system.
+
+        * Shared/ChildProcess.cpp:
+        (WebKit::ChildProcess::ChildProcess): Add call to platformInitialize() and
+        move MAC specific call to disableProcessSuppression to platformInitialize.
+        (WebKit::ChildProcess::platformInitialize): Dummy for non MAC platforms.
+        * Shared/ChildProcess.h:
+        * Shared/mac/ChildProcessMac.mm:
+        (WebKit::ChildProcess::platformInitialize): Add call to setpriority().
+
 2012-11-16  Brady Eidson  <beidson@apple.com>
 
         Move resource loader messaging from NetworkConnectionToWebProcess directly to NetworkResourceLoader

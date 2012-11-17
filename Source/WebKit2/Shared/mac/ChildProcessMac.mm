@@ -62,4 +62,12 @@ void ChildProcess::enableProcessSuppression(NSString *reason)
 #endif
 }
 
+void ChildProcess::platformInitialize()
+{
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+    setpriority(PRIO_DARWIN_PROCESS, 0, 0);
+#endif
+    disableProcessSuppression(processSuppressionVisibleApplicationReason);
+}
+
 }
