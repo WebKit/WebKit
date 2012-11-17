@@ -83,6 +83,7 @@ class RenderLayerCompositor::OverlapMap {
     WTF_MAKE_NONCOPYABLE(OverlapMap);
 public:
     OverlapMap()
+        : m_geometryMap(UseTransforms)
     {
         // Begin assuming the root layer will be composited so that there is
         // something on the stack. The root layer should also never get an

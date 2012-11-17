@@ -1,3 +1,14 @@
+2012-11-16  Simon Fraser  <simon.fraser@apple.com>
+
+        Eliminate ancestor tree walk computing outlineBoundsForRepaint() when updating layer positions
+        https://bugs.webkit.org/show_bug.cgi?id=101874
+
+        Reviewed by Dave Hyatt.
+
+        In debug, skip tests that assert because of LayoutUnit truncation.
+
+        * platform/mac/TestExpectations:
+
 2012-11-16  Alec Flett  <alecflett@chromium.org>
 
         Add tests for explicit serialization values

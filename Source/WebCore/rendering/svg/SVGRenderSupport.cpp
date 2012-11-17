@@ -111,10 +111,12 @@ const RenderObject* SVGRenderSupport::pushMappingToContainer(const RenderObject*
     // At the SVG/HTML boundary (aka RenderSVGRoot), we apply the localToBorderBoxTransform 
     // to map an element from SVG viewport coordinates to CSS box coordinates.
     // RenderSVGRoot's mapLocalToContainer method expects CSS box coordinates.
-    if (parent->isSVGRoot())
-        geometryMap.push(object, TransformationMatrix(toRenderSVGRoot(parent)->localToBorderBoxTransform()));
-    else
-        geometryMap.push(object, LayoutSize());
+    if (parent->isSVGRoot()) {
+        TransformationMatrix matrix(object->localToParentTransform());
+        matrix.multiply(toRenderSVGRoot(parent)->localToBorderBoxTransform());
+        geometryMap.push(object, matrix);
+    } else
+        geometryMap.push(object, object->localToParentTransform());
 
     return parent;
 }

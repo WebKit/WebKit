@@ -1,3 +1,85 @@
+2012-11-12  Simon Fraser  <simon.fraser@apple.com>
+
+        Eliminate ancestor tree walk computing outlineBoundsForRepaint() when updating layer positions
+        https://bugs.webkit.org/show_bug.cgi?id=101874
+
+        Reviewed by Dave Hyatt.
+
+        RenderLayer::updateLayerPositions() and updateLayerPositionsAfterScroll() spend a
+        lot of time in computeRepaintRects(), which does two ancestor tree walks, once
+        for clippedOverflowRectForRepaint(), and one for outlineBoundsForRepaint().
+
+        Eliminate the ancestor tree walk in outlineBoundsForRepaint() by maintaining
+        a RenderGeometryMap as we traverse the layer tree, and then using it to map
+        the outline bounds to the repaint container. Replace the hokey cached offsetFromRoot
+        now that the RenderGeometryMap can do a better job.
+        
+        The clipped overflow rect cannot be mapped simply, so cannot yet make use of
+        the geometry map.
+        
+        Modify the RenderGeometryMap to support mapping to some repaintContainer ancestor.
+        Add a RenderObject walk that is necessary to detect flipped writing mode blocks.
+        
+        Pass the RenderGeometryMap as an optional parameter to outlineBoundsForRepaint.
+        
+        * page/FrameView.cpp:
+        (WebCore::FrameView::layout): Make a RenderGeometryMap and pass it down
+        to updateLayerPositions(). For partial layouts, we have to push layers
+        between the root and the enclosing layer of the layout subtree.
+        The geometry map used for repainting does not use SnapOffsetForTransforms,
+        so initialize it explicitly with just the UseTransforms flag.
+        (WebCore::FrameView::repaintFixedElementsAfterScrolling): Make a RenderGeometryMap
+        to pass along to updateLayerPositionsAfterScroll().
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::outlineBoundsForRepaint): Replace the optional cachedOffsetToRepaintContainer
+        parameter with an optional RenderGeometryMap, and it use to map the compute rect to
+        repaintContainer coordinates.
+        * rendering/RenderBox.h:
+        * rendering/RenderGeometryMap.cpp:
+        (WebCore::RenderGeometryMap::RenderGeometryMap): This now has to store the mapping
+        flags to use, so that its behavior can match that of mapLocalToContainer(). The
+        pertinent flag is the confusingly named SnapOffsetForTransforms.
+        (WebCore::RenderGeometryMap::absolutePoint): Call the new mapToContainer() with
+        a null container.
+        (WebCore::RenderGeometryMap::absoluteRect): Ditto.
+        (WebCore::RenderGeometryMap::mapToContainer): Map to the supplied container,
+        asserting that we found it. Add point- and rect-based mapping methods
+        akin to the old absoluteRect/absolutePoint.
+        (WebCore::canMapViaLayer): We need to test for isRenderFlowThread() here too.
+        (WebCore::RenderGeometryMap::pushMappingsToAncestor): When mapping via
+        layers, ensure that the RenderView is pushed as the first step.
+        * rendering/RenderGeometryMap.h:
+        (RenderGeometryMap):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateLayerPositionsAfterLayout): New wrapper for updateLayerPositions()
+        that makes the geometry map.
+        (WebCore::RenderLayer::updateLayerPositionsAfterScroll): New wrapper for updateLayerPositionsAfterScroll
+        that makes the geometry map.
+        (WebCore::RenderLayer::updateLayerPositions): Now takes an optional RenderGeometryMap.
+        Remove the old offsetFromRoot code. Push and pop layers to/from the geometry map. Use
+        the geometry map to get the offsetFromRoot as needed by overflow controls. Pass
+        it to computeRepaintRects().
+        (WebCore::RenderLayer::computeRepaintRects): Pass the geometry map to outlineBoundsForRepaint().
+        (WebCore::RenderLayer::updateLayerPositionsAfterScroll): Push and pop to/from the
+        geometry map, and pass it to computeRepaintRects().
+        (WebCore::RenderLayer::removeOnlyThisLayer): Remove the offsetFromRootBeforeMove
+        computation; this could use a geometry map in future if it is shown to be a bottleneck.
+        * rendering/RenderLayer.h:
+        (WebCore::RenderLayer::canUseConvertToLayerCoords): It was thought that the isComposited()
+        was there because the older cached offsetFromRoot logic was sensitive to compositing,
+        but convertToLayerCoords() is not affected by compositing so this check is not needed,
+        and actually harmful.
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::OverlapMap::OverlapMap): The geometry map
+        used for overlap testing should not use SnapOffsetForTransforms, so initialize
+        it explicitly with just the UseTransforms flag.
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::outlineBoundsForRepaint):
+        * rendering/svg/RenderSVGModelObject.cpp:
+        (WebCore::RenderSVGModelObject::outlineBoundsForRepaint):
+        * rendering/svg/RenderSVGModelObject.h:
+        (RenderSVGModelObject):
+
 2012-11-16  Alec Flett  <alecflett@chromium.org>
 
         Add tests for explicit serialization values

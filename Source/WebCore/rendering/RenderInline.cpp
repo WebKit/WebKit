@@ -1182,6 +1182,8 @@ const RenderObject* RenderInline::pushMappingToContainer(const RenderLayerModelO
 
     bool offsetDependsOnPoint = false;
     LayoutSize containerOffset = offsetFromContainer(container, LayoutPoint(), &offsetDependsOnPoint);
+    if (geometryMap.mapCoordinatesFlags() & SnapOffsetForTransforms)
+        containerOffset = roundedIntSize(containerOffset);
 
     bool preserve3D = container->style()->preserves3D() || style()->preserves3D();
     if (shouldUseTransformFromContainer(container)) {
