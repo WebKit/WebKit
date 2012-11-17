@@ -343,6 +343,9 @@ void GraphicsLayerAnimation::resume()
 
 void GraphicsLayerAnimations::add(const GraphicsLayerAnimation& animation)
 {
+    // Remove the old state if we are resuming a paused animation.
+    remove(animation.name());
+
     m_animations.append(animation);
 }
 
