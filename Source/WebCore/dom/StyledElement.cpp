@@ -216,8 +216,7 @@ void StyledElement::styleAttributeChanged(const AtomicString& newStyleString)
 
     attributeData()->m_styleAttributeIsDirty = false;
 
-    // FIXME: Why aren't we using setNeedsStyleRecalc(InlineStyleChange) here?
-    setNeedsStyleRecalc();
+    setNeedsStyleRecalc(InlineStyleChange);
     InspectorInstrumentation::didInvalidateStyleAttr(document(), this);
 }
 

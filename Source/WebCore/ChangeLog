@@ -1,3 +1,16 @@
+2012-11-17  Andreas Kling  <akling@apple.com>
+
+        Avoid full style recalc when 'style' attribute changes.
+        <http://webkit.org/b/78718>
+
+        Reviewed by Anders Carlsson.
+
+        Use setNeedsStyleRecalc(InlineStyleChange) when the 'style' attribute changes
+        to reduce the amount of work done in recalcStyle().
+
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::styleAttributeChanged):
+
 2012-11-17  Li Yin  <li.yin@intel.com>
 
         Remove coneGain and distanceGain attributes from PannerNode.idl
