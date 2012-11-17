@@ -57,8 +57,4 @@
     attribute float coneInnerAngle;
     attribute float coneOuterAngle;
     attribute float coneOuterGain;
-
-    // Dynamically calculated gain values          
-    readonly attribute AudioGain coneGain;
-    readonly attribute AudioGain distanceGain;
 };

@@ -1,3 +1,17 @@
+2012-11-17  Li Yin  <li.yin@intel.com>
+
+        Remove coneGain and distanceGain attributes from PannerNode.idl
+        https://bugs.webkit.org/show_bug.cgi?id=102343
+
+        Reviewed by Chris Rogers.
+
+        Removing .coneGain and .distanceGain as publicly accessible values,
+        since normally they only need to be calculated internally.
+
+        No changes to tests, since these attributes were not tested and are being removed.
+
+        * Modules/webaudio/PannerNode.idl:
+
 2012-11-17  Balazs Kelemen  <kbalazs@webkit.org>
 
         [Coordinated Graphics] Resumed animations leave an obsolate GraphicsLayerAnimation behind
