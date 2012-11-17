@@ -1,3 +1,24 @@
+2012-11-17  Simon Fraser  <simon.fraser@apple.com>
+
+        Dump the tile cache extent in layout tests
+        https://bugs.webkit.org/show_bug.cgi?id=102600
+
+        Reviewed by Anders Carlsson.
+
+        When dumping tiled layer stats in layout tests, also dump the extent
+        of the tile grid. This will allow us to detect issues related
+        to zooming, which is not possible with the existing tile coverage rect,
+        which is dumped in layer (not tile) coordinates.
+
+        * platform/graphics/TiledBacking.h: Added tileGridExtent().
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::dumpAdditionalProperties): Dump the tile grid extent.
+        * platform/graphics/ca/mac/TileCache.h: tileCoverageRect() should be OVERRIDE.
+        * platform/graphics/ca/mac/TileCache.mm:
+        (WebCore::TileCache::getTileIndexRangeForRect):
+        (WebCore::TileCache::tileGridExtent): Return a rect with the size of
+        the grid as top,left width,height.
+
 2012-11-17  Andreas Kling  <akling@apple.com>
 
         Avoid full style recalc when 'style' attribute changes.

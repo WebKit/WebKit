@@ -295,7 +295,7 @@ IntRect TileCache::rectForTileIndex(const TileIndex& tileIndex) const
     return rect;
 }
 
-void TileCache::getTileIndexRangeForRect(const IntRect& rect, TileIndex& topLeft, TileIndex& bottomRight)
+void TileCache::getTileIndexRangeForRect(const IntRect& rect, TileIndex& topLeft, TileIndex& bottomRight) const
 {
     IntRect clampedRect = bounds();
     clampedRect.scale(m_scale);
@@ -460,6 +460,16 @@ void TileCache::revalidateTiles()
     if (dirtyRects.isEmpty())
         return;
     platformLayer->owner()->platformCALayerDidCreateTiles(dirtyRects);
+}
+
+IntRect TileCache::tileGridExtent() const
+{
+    TileIndex topLeft;
+    TileIndex bottomRight;
+    getTileIndexRangeForRect(m_tileCoverageRect, topLeft, bottomRight);
+
+    // Return index of top, left tile and the number of tiles across and down.
+    return IntRect(topLeft.x(), topLeft.y(), bottomRight.x() - topLeft.x() + 1, bottomRight.y() - topLeft.y() + 1);
 }
 
 // Return the rect in layer coords, not tile coords.

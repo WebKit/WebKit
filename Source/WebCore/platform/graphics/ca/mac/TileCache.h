@@ -88,15 +88,16 @@ private:
     virtual TileCoverage tileCoverage() const OVERRIDE { return m_tileCoverage; }
     virtual void forceRepaint() OVERRIDE;
     virtual IntSize tileSize() const OVERRIDE { return m_tileSize; }
+    virtual IntRect tileGridExtent() const OVERRIDE;
     virtual void setScrollingPerformanceLoggingEnabled(bool flag) OVERRIDE { m_scrollingPerformanceLoggingEnabled = flag; }
     virtual bool scrollingPerformanceLoggingEnabled() const OVERRIDE { return m_scrollingPerformanceLoggingEnabled; }
-    virtual IntRect tileCoverageRect() const;
+    virtual IntRect tileCoverageRect() const OVERRIDE;
     
     IntRect bounds() const;
 
     typedef IntPoint TileIndex;
     IntRect rectForTileIndex(const TileIndex&) const;
-    void getTileIndexRangeForRect(const IntRect&, TileIndex& topLeft, TileIndex& bottomRight);
+    void getTileIndexRangeForRect(const IntRect&, TileIndex& topLeft, TileIndex& bottomRight) const;
 
     IntRect computeTileCoverageRect() const;
     IntSize tileSizeForCoverageRect(const IntRect&) const;

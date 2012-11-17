@@ -60,7 +60,7 @@ public:
     
     // Exposed for testing
     virtual IntRect tileCoverageRect() const = 0;
-
+    virtual IntRect tileGridExtent() const = 0;
 };
 
 } // namespace WebCore

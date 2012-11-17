@@ -2556,6 +2556,10 @@ void GraphicsLayerCA::dumpAdditionalProperties(TextStream& textStream, int inden
         IntSize tileSize = tiledBacking()->tileSize();
         writeIndent(textStream, indent + 1);
         textStream << "(tile size " << tileSize.width() << " x " << tileSize.height() << ")\n";
+        
+        IntRect gridExtent = tiledBacking()->tileGridExtent();
+        writeIndent(textStream, indent + 1);
+        textStream << "(top left tile " << gridExtent.x() << ", " << gridExtent.y() << " tiles grid " << gridExtent.width() << " x " << gridExtent.height() << ")\n";
     }
 }
 
