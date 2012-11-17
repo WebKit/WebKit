@@ -5,33 +5,17 @@ if (this.importScripts) {
 
 description("An open connection blocks a separate connection's setVersion call");
 
-connections = []
-function test()
-{
-    removeVendorPrefixes();
-    openDBConnection();
-}
-
-function openDBConnection()
-{
-    request = evalAndLog("indexedDB.open('set-version-blocked')");
-    request.onsuccess = openSuccess;
-    request.onerror = unexpectedErrorCallback;
-}
-
-function openSuccess()
+indexedDBTest(prepareDatabase, openAnother);
+function prepareDatabase()
 {
     connection = event.target.result;
-    connections.push(connection);
-    original_version = connection.version;
-    if (connections.length < 2)
-        openDBConnection();
-    else {
-        var versionChangeRequest = evalAndLog("connections[0].setVersion('version 1')");
-        versionChangeRequest.onerror = unexpectedErrorCallback;
-        versionChangeRequest.onsuccess = inSetVersion;
-        versionChangeRequest.onblocked = blocked;
-    }
+}
+
+function openAnother()
+{
+    openRequest = indexedDB.open(dbname, 2);
+    openRequest.onblocked = blocked;
+    openRequest.onupgradeneeded = inSetVersion;
 }
 
 seen_blocked_event = false;
@@ -39,17 +23,16 @@ function blocked()
 {
     evalAndLog("seen_blocked_event = true");
     blocked_event = event;
-    shouldBeEqualToString("blocked_event.version", "version 1");
+    shouldBe("blocked_event.oldVersion", "1");
+    shouldBe("blocked_event.newVersion", "2");
     shouldEvaluateTo("blocked_event.target.readyState", "'pending'");
-    evalAndLog("connections[1].close()");
+    evalAndLog("connection.close()");
 }
 
 function inSetVersion()
 {
     debug("in setVersion.onsuccess");
     shouldBeTrue("seen_blocked_event");
-    deleteAllObjectStores(connections[0]);
+    deleteAllObjectStores(connection);
     finishJSTest();
 }
-
-test();

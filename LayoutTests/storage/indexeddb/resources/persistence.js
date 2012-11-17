@@ -5,15 +5,25 @@ if (this.importScripts) {
 
 description("Test IndexedDB persistence");
 
-function test()
+indexedDBTest(prepareDatabase, unexpectedSuccessCallback);
+function prepareDatabase()
 {
-    removeVendorPrefixes();
-    evalAndLog("dbname = self.location.pathname");
+    request = event.target;
+    var db = request.result;
+    var trans = request.transaction;
+    trans.abort();
+    request.onerror = function() {
+        db.close();
+        first();
+    };
+}
 
-    openAndChangeVersion("1", function (connection) {
+function first()
+{
+    openAndChangeVersion(1, function (connection) {
         db = connection;
-        shouldBeEqualToString("db.version", "1");
-        shouldBeEqualToString("db.name", "dbname");
+        shouldBe("db.version", "1");
+        shouldBeEqualToString("db.name", dbname);
         shouldBe("db.objectStoreNames.length", "0");
         evalAndLog("db.createObjectStore('store1')");
         shouldBe("db.objectStoreNames.length", "1");
@@ -22,10 +32,10 @@ function test()
 
 function second()
 {
-    openAndChangeVersion("2", function (connection) {
+    openAndChangeVersion(2, function (connection) {
         db = connection;
-        shouldBeEqualToString("db.version", "2");
-        shouldBeEqualToString("db.name", "dbname");
+        shouldBe("db.version", "2");
+        shouldBeEqualToString("db.name", dbname);
         shouldBe("db.objectStoreNames.length", "1");
         shouldBeTrue("db.objectStoreNames.contains('store1')");
         evalAndLog("db.createObjectStore('store2')");
@@ -37,10 +47,10 @@ function second()
 
 function third()
 {
-    openAndChangeVersion("3", function (connection) {
+    openAndChangeVersion(3, function (connection) {
         db = connection;
-        shouldBeEqualToString("db.version", "3");
-        shouldBeEqualToString("db.name", "dbname");
+        shouldBe("db.version", "3");
+        shouldBeEqualToString("db.name", dbname);
         shouldBe("db.objectStoreNames.length", "2");
         shouldBeTrue("db.objectStoreNames.contains('store1')");
         shouldBeTrue("db.objectStoreNames.contains('store2')");
@@ -53,10 +63,10 @@ function third()
 
 function fourth()
 {
-    openAndChangeVersion("4", function (connection) {
+    openAndChangeVersion(4, function (connection) {
         db = connection;
-        shouldBeEqualToString("db.version", "4");
-        shouldBeEqualToString("db.name", "dbname");
+        shouldBe("db.version", "4");
+        shouldBeEqualToString("db.name", dbname);
         shouldBe("db.objectStoreNames.length", "1");
         shouldBeFalse("db.objectStoreNames.contains('store1')");
         shouldBeTrue("db.objectStoreNames.contains('store2')");
@@ -69,10 +79,10 @@ function fourth()
 
 function fifth()
 {
-    openAndChangeVersion("5", function (connection) {
+    openAndChangeVersion(5, function (connection) {
         db = connection;
-        shouldBeEqualToString("db.version", "5");
-        shouldBeEqualToString("db.name", "dbname");
+        shouldBe("db.version", "5");
+        shouldBeEqualToString("db.name", dbname);
         shouldBe("db.objectStoreNames.length", "0");
         shouldBeFalse("db.objectStoreNames.contains('store1')");
         shouldBeFalse("db.objectStoreNames.contains('store2')");
@@ -83,23 +93,16 @@ function fifth()
 function openAndChangeVersion(version, callback, next)
 {
     debug("");
-    evalAndLog("request = indexedDB.open('dbname')");
+    evalAndLog("request = indexedDB.open(dbname, " + version + ")");
+    request.onblocked = unexpectedBlockedCallback;
     request.onerror = unexpectedErrorCallback;
-    request.onsuccess = function () {
+    request.onupgradeneeded = function () {
         evalAndLog("db = request.result");
         shouldBeNonNull("db");
-        request = evalAndLog("db.setVersion(" + JSON.stringify(version) + ")");
-        request.onerror = unexpectedErrorCallback;
-        request.onsuccess = function () {
-            var trans = request.result;
-            trans.onabort = unexpectedAbortCallback;
-            callback(db);
-            trans.oncomplete = function () {
-                evalAndLog("db.close()");
-                next();
-            };
-        };
+        callback(db);
     };
+    request.onsuccess = function() {
+        evalAndLog("db.close()");
+        next();
+    }
 }
-
-test();

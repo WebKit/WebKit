@@ -64,9 +64,9 @@ function unexpectedCompleteCallback()
     finishJSTest();
 }
 
-function unexpectedBlockedCallback()
+function unexpectedBlockedCallback(e)
 {
-    testFailed("onblocked called unexpectedly");
+    testFailed("onblocked called unexpectedly. oldVersion = " + e.oldVersion + ", newVersion = " + e.newVersion);
     finishJSTest();
 }
 

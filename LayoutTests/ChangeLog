@@ -1,3 +1,35 @@
+2012-11-16  David Grogan  <dgrogan@chromium.org>
+
+        IndexedDB: setVersion excision batch 9
+        https://bugs.webkit.org/show_bug.cgi?id=102455
+
+        Reviewed by Tony Chang.
+
+        * storage/indexeddb/persistence-expected.txt:
+        * storage/indexeddb/resources/persistence.js:
+        (prepareDatabase):
+        Little awkwardness to get the initial version number to be 0 (actually,
+        because of a bug it's "") so that first() will trigger a
+        versionchange.
+        (first):
+
+        * storage/indexeddb/resources/set_version_blocked.js:
+          Small "blocked" test. It's probably redundant due to our crazier
+          tests, but it is nice to have a succinct test that checks one thing.
+
+        * storage/indexeddb/resources/shared.js:
+        (unexpectedBlockedCallback):
+        * storage/indexeddb/resources/transaction-basics.js:
+          This test is a mess, obviously written near the dawn of IDB when no
+          one knew how to write an effective test for it. In the interests of
+          preventing the diff from exploding I didn't take all the
+          clarification opportunities that were there.
+
+        * storage/indexeddb/resources/transaction-error.js:
+        * storage/indexeddb/set_version_blocked-expected.txt:
+        * storage/indexeddb/transaction-basics-expected.txt:
+        * storage/indexeddb/transaction-error-expected.txt:
+
 2012-11-16  Dimitri Glazkov  <dglazkov@chromium.org>
 
         [Chromium] Removed unnecessary expectation.

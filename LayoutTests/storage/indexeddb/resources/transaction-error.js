@@ -5,32 +5,13 @@ if (this.importScripts) {
 
 description("Test IDBTransaction.error cases.");
 
-function test()
+indexedDBTest(prepareDatabase, startTest);
+function prepareDatabase()
 {
-    removeVendorPrefixes();
-
-    evalAndLog("dbname = self.location.pathname");
-    request = evalAndLog("indexedDB.deleteDatabase(dbname)");
-    request.onblocked = unexpectedBlockedCallback;
+    db = event.target.result;
+    evalAndLog("store = db.createObjectStore('storeName')");
+    request = evalAndLog("store.add('value', 'key')");
     request.onerror = unexpectedErrorCallback;
-    request.onsuccess = function() {
-        request = evalAndLog("indexedDB.open(dbname)");
-        request.onerror = unexpectedErrorCallback;
-        request.onsuccess = function() {
-            evalAndLog("db = request.result");
-            request = evalAndLog("db.setVersion('1')");
-            request.onblocked = unexpectedBlockedCallback;
-            request.onerror = unexpectedErrorCallback;
-            request.onsuccess = function() {
-                evalAndLog("trans = event.target.result");
-                trans.onabort = unexpectedAbortCallback;
-                evalAndLog("store = db.createObjectStore('storeName')");
-                request = evalAndLog("store.add('value', 'key')");
-                request.onerror = unexpectedErrorCallback;
-                trans.oncomplete = startTest;
-            };
-        };
-    };
 }
 
 function startTest()
@@ -115,11 +96,12 @@ function testErrorFromCommit()
     request.onerror = unexpectedErrorCallback;
     trans.onabort = unexpectedAbortCallback;
     trans.oncomplete = function() {
-        evalAndLog("request = db.setVersion('2')");
-        request.onerror = unexpectedErrorCallback;
+        db.close();
+        evalAndLog("request = indexedDB.open(dbname, 2)");
+        request.onerror = unexpectedSuccessCallback;
         request.onblocked = unexpectedBlockedCallback;
-        request.onsuccess = function() {
-            evalAndLog("trans = request.result");
+        request.onupgradeneeded = function() {
+            evalAndLog("trans = request.transaction");
             debug("This should fail due to the unique constraint:");
             evalAndLog("trans.objectStore('storeName').createIndex('indexName', 'id', {unique: true})");
             trans.oncomplete = unexpectedCompleteCallback;
@@ -134,5 +116,3 @@ function testErrorFromCommit()
         };
     };
 }
-
-test();

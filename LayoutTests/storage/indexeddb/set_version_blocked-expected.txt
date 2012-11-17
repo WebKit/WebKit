@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: The setVersion() method is non-standard and will be removed. Use the "upgradeneeded" event instead.
 An open connection blocks a separate connection's setVersion call
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
@@ -6,13 +5,14 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
 
-indexedDB.open('set-version-blocked')
-indexedDB.open('set-version-blocked')
-connections[0].setVersion('version 1')
+dbname = "set_version_blocked.html"
+indexedDB.deleteDatabase(dbname)
+indexedDB.open(dbname)
 seen_blocked_event = true
-PASS blocked_event.version is "version 1"
+PASS blocked_event.oldVersion is 1
+PASS blocked_event.newVersion is 2
 PASS blocked_event.target.readyState is 'pending'
-connections[1].close()
+connection.close()
 in setVersion.onsuccess
 PASS seen_blocked_event is true
 Deleted all object stores.
