@@ -1545,7 +1545,7 @@ void RenderLayerBacking::paintIntoLayer(RenderLayer* rootLayer, GraphicsContext*
     m_owningLayer->paintLayerContents(context, paintingInfo, paintFlags);
 
     if (m_owningLayer->containsDirtyOverlayScrollbars())
-        m_owningLayer->paintOverlayScrollbars(context, paintDirtyRect, paintBehavior);
+        m_owningLayer->paintLayerContents(context, paintingInfo, paintFlags | RenderLayer::PaintLayerPaintingOverlayScrollbars);
 
     ASSERT(!m_owningLayer->m_usedTransparency);
 }

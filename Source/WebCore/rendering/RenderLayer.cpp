@@ -2717,8 +2717,12 @@ void RenderLayer::paintOverflowControls(GraphicsContext* context, const IntPoint
             return;
 #endif
         RenderView* renderView = renderer()->view();
-        renderView->layer()->setContainsDirtyOverlayScrollbars(true);
-        renderView->frameView()->setContainsScrollableAreaWithOverlayScrollbars(true);
+
+        RenderLayer* paintingRoot = enclosingCompositingLayer();
+        if (!paintingRoot)
+            paintingRoot = renderView->layer();
+
+        paintingRoot->setContainsDirtyOverlayScrollbars(true);
         return;
     }
 
@@ -2936,7 +2940,7 @@ void RenderLayer::paintOverlayScrollbars(GraphicsContext* context, const LayoutR
         return;
 
     LayerPaintingInfo paintingInfo(this, enclosingIntRect(damageRect), paintBehavior, LayoutSize(), paintingRoot);
-    paintLayer(context, paintingInfo, PaintLayerHaveTransparency | PaintLayerTemporaryClipRects | PaintLayerPaintingOverlayScrollbars);
+    paintLayer(context, paintingInfo, PaintLayerPaintingOverlayScrollbars);
 
     m_containsDirtyOverlayScrollbars = false;
 }
@@ -3042,9 +3046,7 @@ void RenderLayer::paintLayer(GraphicsContext* context, const LayerPaintingInfo& 
             paintFlags |= PaintLayerTemporaryClipRects;
         else if (!backing()->paintsIntoWindow()
             && !backing()->paintsIntoCompositedAncestor()
-            && !shouldDoSoftwarePaint(this, paintFlags & PaintLayerPaintingReflection)
-            && !(paintingInfo.rootLayer->containsDirtyOverlayScrollbars()
-            && (paintFlags & PaintLayerPaintingOverlayScrollbars))) {
+            && !shouldDoSoftwarePaint(this, paintFlags & PaintLayerPaintingReflection)) {
             // If this RenderLayer should paint into its backing, that will be done via RenderLayerBacking::paintIntoLayer().
             return;
         }

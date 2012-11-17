@@ -1,3 +1,50 @@
+2012-11-16  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix overlay scrollbar painting in compositing layers
+        https://bugs.webkit.org/show_bug.cgi?id=102442
+
+        Reviewed by Beth Dakin.
+
+        There were two issues with overlay scrollbar painting in
+        compositing layers.
+        
+        First, we'd only ever call setContainsDirtyOverlayScrollbars()
+        on the RenderView's layer, even when encountering an overlay scrollbar
+        in some descendant compositing layer. This meant that we'd never
+        run the paintOverlayScrollbars() code for those child compositing
+        layers, so sometimes scrollbars were missing there.
+        
+        Even after fixing that, we would fail to render scrollbars that
+        were not in the composited RenderLayer itself. This happened because
+        we called into RenderLayer::paintOverlayScrollbars(), which called
+        paintLayer() with flags that only said to paint the overlay scrollbars
+        but not any descendants, so this paint path would not walk child
+        RenderLayers.
+        
+        Also remove the containsScrollableAreaWithOverlayScrollbars() flag on
+        ScrollView which is no longer used.
+
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::ScrollView): Remove containsScrollableAreaWithOverlayScrollbars().
+        (WebCore::ScrollView::paint): Remove setting of m_containsScrollableAreaWithOverlayScrollbars.
+        * platform/ScrollView.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::paintOverflowControls): Call setContainsDirtyOverlayScrollbars()
+        on the compositing ancestor or the root.
+        Remove call to setContainsScrollableAreaWithOverlayScrollbars().
+        (WebCore::RenderLayer::paintOverlayScrollbars): When painting overlay
+        scrollbars, no need to say we have transparency, and no need to use 
+        temporary clip rects.
+        (WebCore::RenderLayer::paintLayer): The PaintLayerPaintingOverlayScrollbars
+        check here was only needed because the compositing entrypoint to painting
+        overlay scrollbars went via paintLayer(), which isn't normally used as
+        a composited painting entry point. Now that we no longer call that, we
+        don't need this special check.
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::paintIntoLayer): Jump into overlay scrollbar
+        painting via paintLayerContents(), not paintOverlayScrollbars(), since
+        the latter does not traverse sublayers.
+
 2012-11-16  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: Assert hit when getting non-existent object store in version change transaction
