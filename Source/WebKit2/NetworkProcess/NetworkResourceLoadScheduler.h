@@ -26,6 +26,7 @@
 #ifndef NetworkResourceLoadScheduler_h
 #define NetworkResourceLoadScheduler_h
 
+#include "NetworkResourceLoader.h"
 #include <WebCore/ResourceLoaderOptions.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/Timer.h>
@@ -63,6 +64,8 @@ public:
     void suspendPendingRequests();
     void resumePendingRequests();
     
+    NetworkResourceLoader* networkResourceLoaderForIdentifier(ResourceLoadIdentifier);
+
 private:
     enum CreateHostPolicy {
         CreateIfNotFound,
@@ -80,6 +83,8 @@ private:
 
     static void removeScheduledLoadIdentifiers(void* context);
     void removeScheduledLoadIdentifiers();
+
+    HashMap<ResourceLoadIdentifier, RefPtr<NetworkResourceLoader> > m_resourceLoaders;
 
     typedef HashMap<String, HostRecord*, StringHash> HostMap;
     HostMap m_hosts;

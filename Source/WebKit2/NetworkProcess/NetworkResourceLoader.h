@@ -58,6 +58,8 @@ public:
     CoreIPC::Connection* connection() const;
     uint64_t destinationID() const { return identifier(); }
     
+    void didReceiveNetworkResourceLoaderMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);
+
     void start();
 
     virtual void connectionToWebProcessDidClose(NetworkConnectionToWebProcess*) OVERRIDE;
@@ -108,6 +110,8 @@ public:
 private:
     NetworkResourceLoader(const NetworkResourceLoadParameters&, ResourceLoadIdentifier, NetworkConnectionToWebProcess*);
 
+    void willSendRequestHandled(uint64_t requestID, const WebCore::ResourceRequest&);
+
     void scheduleStopOnMainThread();
     static void performStops(void*);
 
@@ -120,8 +124,6 @@ private:
     RefPtr<WebCore::ResourceHandle> m_handle;    
     RefPtr<NetworkConnectionToWebProcess> m_connection;
 };
-
-void didReceiveWillSendRequestHandled(uint64_t requestID, const WebCore::ResourceRequest&);
 
 } // namespace WebKit
 

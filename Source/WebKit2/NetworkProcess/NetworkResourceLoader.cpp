@@ -191,11 +191,6 @@ static uint64_t generateWillSendRequestID()
     return OSAtomicIncrement64Barrier(&uniqueWillSendRequestID);
 }
 
-void didReceiveWillSendRequestHandled(uint64_t requestID, const ResourceRequest& request)
-{
-    responseMap().didReceiveResponse(requestID, adoptPtr(new ResourceRequest(request)));
-}
-
 void NetworkResourceLoader::willSendRequest(ResourceHandle*, ResourceRequest& request, const ResourceResponse& redirectResponse)
 {
     // We only expect to get the willSendRequest callback from ResourceHandle as the result of a redirect
@@ -209,6 +204,11 @@ void NetworkResourceLoader::willSendRequest(ResourceHandle*, ResourceRequest& re
     request = *newRequest;
 
     RunLoop::main()->dispatch(WTF::bind(&NetworkResourceLoadScheduler::receivedRedirect, &NetworkProcess::shared().networkResourceLoadScheduler(), m_identifier, request.url()));
+}
+
+void NetworkResourceLoader::willSendRequestHandled(uint64_t requestID, const WebCore::ResourceRequest& newRequest)
+{
+    responseMap().didReceiveResponse(requestID, adoptPtr(new ResourceRequest(newRequest)));
 }
 
 // FIXME (NetworkProcess): Many of the following ResourceHandleClient methods definitely need implementations. A few will not.

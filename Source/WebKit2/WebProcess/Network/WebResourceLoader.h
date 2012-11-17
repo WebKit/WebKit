@@ -29,6 +29,7 @@
 #if ENABLE(NETWORK_PROCESS)
 
 #include "Connection.h"
+#include "MessageSender.h"
 #include "ShareableResource.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -50,11 +51,15 @@ namespace WebKit {
 
 typedef uint64_t ResourceLoadIdentifier;
 
-class WebResourceLoader : public RefCounted<WebResourceLoader> {
+class WebResourceLoader : public RefCounted<WebResourceLoader>, public CoreIPC::MessageSender<WebResourceLoader> {
 public:
     static PassRefPtr<WebResourceLoader> create(PassRefPtr<WebCore::ResourceLoader>);
 
     ~WebResourceLoader();
+
+    // Used by MessageSender.
+    CoreIPC::Connection* connection() const;
+    uint64_t destinationID() const;
 
     void didReceiveWebResourceLoaderMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);
 

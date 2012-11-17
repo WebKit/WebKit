@@ -76,6 +76,13 @@ void NetworkConnectionToWebProcess::didReceiveMessage(CoreIPC::Connection* conne
         didReceiveNetworkConnectionToWebProcessMessage(connection, messageID, decoder);
         return;
     }
+    
+    if (messageID.is<CoreIPC::MessageClassNetworkResourceLoader>()) {
+        NetworkResourceLoader* loader = NetworkProcess::shared().networkResourceLoadScheduler().networkResourceLoaderForIdentifier(decoder.destinationID());
+        if (loader)
+            loader->didReceiveNetworkResourceLoaderMessage(connection, messageID, decoder);
+        return;
+    }
     ASSERT_NOT_REACHED();
 }
 
@@ -143,11 +150,6 @@ void NetworkConnectionToWebProcess::resumePendingRequests()
 void NetworkConnectionToWebProcess::setSerialLoadingEnabled(bool enabled)
 {
     m_serialLoadingEnabled = enabled;
-}
-
-void NetworkConnectionToWebProcess::willSendRequestHandled(uint64_t requestID, const WebCore::ResourceRequest& newRequest)
-{
-    didReceiveWillSendRequestHandled(requestID, newRequest);
 }
 
 } // namespace WebKit

@@ -46,6 +46,8 @@ ResourceLoadIdentifier NetworkResourceLoadScheduler::scheduleResourceLoad(const 
     
     ResourceLoadIdentifier identifier = ++s_currentResourceLoadIdentifier;
     RefPtr<NetworkResourceLoader> loader = NetworkResourceLoader::create(loadParameters, identifier, connection);
+    
+    m_resourceLoaders.add(identifier, loader);
 
     LOG(NetworkScheduling, "(NetworkProcess) NetworkResourceLoadScheduler::scheduleNetworkResourceRequest resource %llu '%s'", identifier, resourceRequest.url().string().utf8().data());
 
@@ -108,8 +110,16 @@ void NetworkResourceLoadScheduler::removeLoadIdentifier(ResourceLoadIdentifier i
     // In this situation we might not have a HostRecord to clean up.
     if (host)
         host->remove(identifier);
+    
+    m_resourceLoaders.remove(identifier);
 
     scheduleServePendingRequests();
+}
+
+NetworkResourceLoader* NetworkResourceLoadScheduler::networkResourceLoaderForIdentifier(ResourceLoadIdentifier identifier)
+{
+    ASSERT(m_resourceLoaders.get(identifier));
+    return m_resourceLoaders.get(identifier).get();
 }
 
 void NetworkResourceLoadScheduler::receivedRedirect(ResourceLoadIdentifier identifier, const WebCore::KURL& redirectURL)

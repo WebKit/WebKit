@@ -82,7 +82,6 @@ private:
     void suspendPendingRequests();
     void resumePendingRequests();
     void setSerialLoadingEnabled(bool);
-    void willSendRequestHandled(uint64_t requestID, const WebCore::ResourceRequest&);
     
     RefPtr<CoreIPC::Connection> m_connection;
     

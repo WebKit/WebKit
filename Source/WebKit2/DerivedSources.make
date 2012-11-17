@@ -79,6 +79,7 @@ MESSAGE_RECEIVERS = \
     WebCookieManagerProxy \
     WebConnection \
     NetworkConnectionToWebProcess \
+    NetworkResourceLoader \
     RemoteLayerTreeHost \
     WebContext \
     WebDatabaseManager \

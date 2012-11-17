@@ -32,6 +32,7 @@
 #include "Logging.h"
 #include "NetworkConnectionToWebProcessMessages.h"
 #include "NetworkProcessConnection.h"
+#include "NetworkResourceLoaderMessages.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebProcess.h"
 #include <WebCore/ResourceLoader.h>
@@ -54,6 +55,16 @@ WebResourceLoader::~WebResourceLoader()
 {
 }
 
+CoreIPC::Connection* WebResourceLoader::connection() const
+{
+    return WebProcess::shared().networkConnection()->connection();
+}
+
+uint64_t WebResourceLoader::destinationID() const
+{
+    return m_coreLoader->identifier();
+}
+
 void WebResourceLoader::willSendRequest(uint64_t requestID, const ResourceRequest& proposedRequest, const ResourceResponse& redirectResponse)
 {
     LOG(Network, "(WebProcess) WebResourceLoader::willSendRequest to '%s'", proposedRequest.url().string().utf8().data());
@@ -61,7 +72,7 @@ void WebResourceLoader::willSendRequest(uint64_t requestID, const ResourceReques
     ResourceRequest newRequest = proposedRequest;
     m_coreLoader->willSendRequest(newRequest, redirectResponse);
 
-    WebProcess::shared().networkConnection()->connection()->send(Messages::NetworkConnectionToWebProcess::WillSendRequestHandled(requestID, newRequest), 0);
+    send(Messages::NetworkResourceLoader::WillSendRequestHandled(requestID, newRequest));
 }
 
 void WebResourceLoader::didReceiveResponse(const WebCore::ResourceResponse& response)
