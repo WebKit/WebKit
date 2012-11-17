@@ -74,6 +74,7 @@ namespace WebKit {
         WEBKIT_EXPORT void setActivatedSubmit(bool);
         WEBKIT_EXPORT int size() const;
         WEBKIT_EXPORT void setValue(const WebString&, bool sendChangeEvent = false);
+        WEBKIT_EXPORT void setChecked(bool, bool sendChangeEvent = false);
         WEBKIT_EXPORT WebString value() const;
         // This returns the non-sanitized, exact value inside the text field.
         WEBKIT_EXPORT WebString editingValue() const;
