@@ -1,3 +1,11 @@
+2012-11-17  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening. Fixing a test that's failing due to changes
+        made in r134949 and wasn't updated yet.
+
+        * http/tests/websocket/tests/hybi/workers/close-expected.txt:
+        * http/tests/websocket/tests/hybi/workers/resources/close.js:
+
 2012-11-17  Li Yin  <li.yin@intel.com>
 
         biquadfilternode-basic.html test should cover default value of frequency, Q and gain.

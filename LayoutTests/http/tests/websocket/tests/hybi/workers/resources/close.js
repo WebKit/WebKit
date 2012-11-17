@@ -45,7 +45,7 @@ var closeEvent;
 var code;
 var reason;
 var result;
-var invalidAccessErr = "INVALID_ACCESS_ERR";
+var invalidAccessErr = "InvalidAccessError";
 var syntaxErr = "SyntaxError";
 var normalClosure = 1000;
 var abnormalClosure = 1006;

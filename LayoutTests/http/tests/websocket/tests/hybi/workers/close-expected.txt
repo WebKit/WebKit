@@ -7,43 +7,43 @@ Verify WebSocket::close behaviors in Worker.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 Invalid code test: 0
-Code 999 must cause INVALID_ACCESS_ERR.
+Code 999 must cause InvalidAccessError.
 PASS PASS: worker: exceptionName is invalidAccessErr
 Invalid code test: 1
-Code 1001 must cause INVALID_ACCESS_ERR.
+Code 1001 must cause InvalidAccessError.
 PASS PASS: worker: exceptionName is invalidAccessErr
 Invalid code test: 2
-Code 2999 must cause INVALID_ACCESS_ERR.
+Code 2999 must cause InvalidAccessError.
 PASS PASS: worker: exceptionName is invalidAccessErr
 Invalid code test: 3
-Code 5000 must cause INVALID_ACCESS_ERR.
+Code 5000 must cause InvalidAccessError.
 PASS PASS: worker: exceptionName is invalidAccessErr
 Invalid code test: 4
-Code 66536 must cause INVALID_ACCESS_ERR.
+Code 66536 must cause InvalidAccessError.
 PASS PASS: worker: exceptionName is invalidAccessErr
 Invalid code test: 5
-Code 4294968296 must cause INVALID_ACCESS_ERR.
+Code 4294968296 must cause InvalidAccessError.
 PASS PASS: worker: exceptionName is invalidAccessErr
 Invalid code test: 6
-Code 2999.9 must cause INVALID_ACCESS_ERR.
+Code 2999.9 must cause InvalidAccessError.
 PASS PASS: worker: exceptionName is invalidAccessErr
 Invalid code test: 7
-Code NaN must cause INVALID_ACCESS_ERR.
+Code NaN must cause InvalidAccessError.
 PASS PASS: worker: exceptionName is invalidAccessErr
 Invalid code test: 8
-Code 0 must cause INVALID_ACCESS_ERR.
+Code 0 must cause InvalidAccessError.
 PASS PASS: worker: exceptionName is invalidAccessErr
 Invalid code test: 9
-Code 100 must cause INVALID_ACCESS_ERR.
+Code 100 must cause InvalidAccessError.
 PASS PASS: worker: exceptionName is invalidAccessErr
 Invalid code test: 10
-Code Infinity must cause INVALID_ACCESS_ERR.
+Code Infinity must cause InvalidAccessError.
 PASS PASS: worker: exceptionName is invalidAccessErr
 Invalid code test: 11
-Code -Infinity must cause INVALID_ACCESS_ERR.
+Code -Infinity must cause InvalidAccessError.
 PASS PASS: worker: exceptionName is invalidAccessErr
 Invalid code test: 12
-Code NaN must cause INVALID_ACCESS_ERR.
+Code NaN must cause InvalidAccessError.
 PASS PASS: worker: exceptionName is invalidAccessErr
 PASS PASS: onerror() was called.
 runCodeTest: onclose().
