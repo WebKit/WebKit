@@ -1,3 +1,9 @@
+2012-11-16  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        [Chromium] Removed unnecessary expectation.
+
+        * platform/chromium-win/fast/canvas/canvas-shadow-expected.txt: Removed.
+
 2012-11-16  Pablo Flouret  <pablof@motorola.com>
 
         [JSC] Don't sanitize window.onerror information on crossorigin-enabled scripts
