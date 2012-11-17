@@ -1,3 +1,49 @@
+2012-11-16  David Grogan  <dgrogan@chromium.org>
+
+        IndexedDB: setVersion excision batch 10
+        https://bugs.webkit.org/show_bug.cgi?id=102565
+
+        Reviewed by Tony Chang.
+
+        * storage/indexeddb/mozilla/resources/versionchange.js: Removed.
+          Very similar to a lot of our other tests.
+
+        * storage/indexeddb/resources/set_version_queue.js: Removed.
+          Tests 4 already-open connections calling setVersion, no longer
+          applicable. Though something similar will be set up when we
+          implement 4.1.3#Note2:
+          if two databases with the same name and origin, but with different
+          versions, are being opened at the same time, the one with the highest
+          version will attempt to be opened first.
+
+        * storage/indexeddb/resources/setversion-blocks-open.js: Removed.
+          Tests the same thing as version-change-exclusive, even though
+          version-change-exclusive's description had been inaccurate.
+
+        * storage/indexeddb/resources/setversion-blocks-setversion.js: Removed.
+          Behavior under test is no longer possible. (multiple setVersion
+          calls from same connection.)
+
+        * storage/indexeddb/resources/shared.js:
+        (indexedDBTest):
+        Added another optional parameter for version-change-exclusive.
+
+        * storage/indexeddb/resources/three-setversion-calls.js: Removed.
+          Behavior under test is no longer possible. (multiple setVersion
+          calls from same connection.)
+
+        * storage/indexeddb/resources/two-version-changes.js: Removed.
+          Behavior under test is no longer possible. (multiple setVersion
+          calls from same connection.)
+
+        * storage/indexeddb/resources/version-change-abort.js:
+          Straightforward conversion.
+
+        * storage/indexeddb/resources/version-change-exclusive.js:
+          The previous description didn't accurately describe the test.
+
+        --Corresponding .html and -expected files also removed.
+
 2012-11-16  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: Assert hit when getting non-existent object store in version change transaction

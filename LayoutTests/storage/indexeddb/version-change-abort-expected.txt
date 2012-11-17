@@ -1,5 +1,4 @@
-CONSOLE MESSAGE: The setVersion() method is non-standard and will be removed. Use the "upgradeneeded" event instead.
-CONSOLE MESSAGE: line 71: Uncaught Error: This should *NOT* be caught!
+CONSOLE MESSAGE: line 52: Uncaught Error: This should *NOT* be caught!
 Ensure that aborted VERSION_CHANGE transactions are completely rolled back
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
@@ -7,26 +6,25 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
 
-indexedDB.open('version-change-abort')
-db = event.target.result
-
-vcreq = db.setVersion('version 1')
-setVersion1() callback
-PASS vcreq.result instanceof IDBTransaction is true
+dbname = "version-change-abort.html"
+indexedDB.deleteDatabase(dbname)
+indexedDB.open(dbname)
+PASS trans instanceof IDBTransaction is true
 store = db.createObjectStore('store1')
 setVersion1 complete
-PASS db.version is "version 1"
+PASS db.version is 1
 
-vcreq = db.setVersion('version 2')
+vcreq = indexedDB.open(dbname, 2)
 setVersion2() callback
-PASS db.version is "version 2"
-PASS vcreq.result instanceof IDBTransaction is true
+PASS db.version is 2
+PASS vcreq.transaction instanceof IDBTransaction is true
 store = db.deleteObjectStore('store1')
 store = db.createObjectStore('store2')
 raising exception
 
 setVersion2Abort() callback
-PASS db.version is "version 1"
+request = indexedDB.open(dbname)
+PASS db.version is 1
 PASS db.objectStoreNames.contains('store1') is true
 PASS db.objectStoreNames.contains('store2') is false
 PASS successfullyParsed is true

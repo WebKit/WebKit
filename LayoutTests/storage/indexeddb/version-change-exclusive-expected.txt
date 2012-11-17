@@ -1,18 +1,15 @@
-CONSOLE MESSAGE: The setVersion() method is non-standard and will be removed. Use the "upgradeneeded" event instead.
-Ensure VERSION_CHANGE transaction doesn't run concurrently with other transactions
+Ensure pending open waits for version change transaction to complete.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
 indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
 
-self.state = 'starting'
-indexedDB.open('version-change-exclusive')
-db = event.target.result
-calling setVersion() - callback should run immediately
-db.setVersion('version 1')
+dbname = "version-change-exclusive.html"
+indexedDB.deleteDatabase(dbname)
+indexedDB.open(dbname)
 calling open() - callback should wait until VERSION_CHANGE transaction is complete
-indexedDB.open('version-change-exclusive')
+indexedDB.open(dbname)
 setVersion() callback
 starting work in VERSION_CHANGE transaction
 self.state = 'VERSION_CHANGE started'

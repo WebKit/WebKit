@@ -201,5 +201,7 @@ function indexedDBTest(upgradeCallback, optionalOpenCallback, optionalParameters
         if (optionalOpenCallback)
             openRequest.onsuccess = optionalOpenCallback;
         delete self.openRequest;
+        if (optionalParameters && 'runAfterOpen' in optionalParameters)
+            (optionalParameters['runAfterOpen'])();
     };
 }

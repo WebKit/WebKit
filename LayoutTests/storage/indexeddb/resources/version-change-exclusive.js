@@ -3,41 +3,21 @@ if (this.importScripts) {
     importScripts('shared.js');
 }
 
-description("Ensure VERSION_CHANGE transaction doesn't run concurrently with other transactions");
+description("Ensure pending open waits for version change transaction to complete.");
 
-function test()
+indexedDBTest(prepareDatabase, null, {"runAfterOpen": concurrentOpen});
+
+function concurrentOpen()
 {
-    removeVendorPrefixes();
-    openDBConnection();
-}
-
-function openDBConnection()
-{
-    evalAndLog("self.state = 'starting'");
-    request = evalAndLog("indexedDB.open('version-change-exclusive')");
-    request.onsuccess = openSuccess;
-    request.onerror = unexpectedErrorCallback;
-}
-
-function openSuccess()
-{
-    self.db = evalAndLog("db = event.target.result");
-
-    debug("calling setVersion() - callback should run immediately");
-    var versionChangeRequest = evalAndLog("db.setVersion('version 1')");
-    versionChangeRequest.onerror = unexpectedErrorCallback;
-    versionChangeRequest.onsuccess = inSetVersion;
-
-    // and concurrently...
-
     debug("calling open() - callback should wait until VERSION_CHANGE transaction is complete");
-    var openRequest = evalAndLog("indexedDB.open('version-change-exclusive')");
+    var openRequest = evalAndLog("indexedDB.open(dbname)");
     openRequest.onsuccess = openAgainSuccess;
     openRequest.onerror = unexpectedErrorCallback;
 }
 
-function inSetVersion()
+function prepareDatabase()
 {
+    db = event.target.result;
     debug("setVersion() callback");
     debug("starting work in VERSION_CHANGE transaction");
     evalAndLog("self.state = 'VERSION_CHANGE started'");
@@ -69,5 +49,3 @@ function openAgainSuccess()
     shouldBeEqualToString("self.state", "VERSION_CHANGE finished");
     finishJSTest();
 }
-
-test();
