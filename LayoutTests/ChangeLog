@@ -1,5 +1,13 @@
 2012-11-16  Simon Fraser  <simon.fraser@apple.com>
 
+        Rebaseline.
+
+        * platform/mac-wk2/svg/zoom/page/zoom-svg-through-object-with-absolute-size-expected.txt:
+        * platform/mac-wk2/svg/zoom/page/zoom-svg-through-object-with-huge-size-expected.txt:
+        * platform/mac-wk2/svg/zoom/page/zoom-svg-through-object-with-override-size-expected.txt:
+
+2012-11-16  Simon Fraser  <simon.fraser@apple.com>
+
         Rebaseline some editing tests.
 
         * platform/mac-wk2/editing/selection/caret-ltr-right-expected.txt: Removed.
