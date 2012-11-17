@@ -71,11 +71,13 @@ void WebProcess::platformSetCacheModel(CacheModel cacheModel)
 {
 #if USE(CFNETWORK)
     RetainPtr<CFStringRef> cfurlCacheDirectory;
+
+#if NEEDS_FIXING_AFTER_R134960
     if (CFURLStorageSessionRef defaultStorageSession = ResourceHandle::defaultStorageSession())
         cfurlCacheDirectory.adoptCF(wkCopyFoundationCacheDirectory(defaultStorageSession));
     else
         cfurlCacheDirectory.adoptCF(wkCopyFoundationCacheDirectory(0));
-
+#endif
     if (!cfurlCacheDirectory)
         cfurlCacheDirectory = WebCore::localUserSpecificStorageDirectory().createCFString();
 
@@ -101,11 +103,12 @@ void WebProcess::platformSetCacheModel(CacheModel cacheModel)
     pageCache()->setCapacity(pageCacheCapacity);
 
     RetainPtr<CFURLCacheRef> cfurlCache;
+#if NEEDS_FIXING_AFTER_R134960
     if (CFURLStorageSessionRef defaultStorageSession = ResourceHandle::defaultStorageSession())
         cfurlCache.adoptCF(wkCopyURLCache(defaultStorageSession));
     else
         cfurlCache.adoptCF(CFURLCacheCopySharedURLCache());
-
+#endif
     CFURLCacheSetMemoryCapacity(cfurlCache.get(), urlCacheMemoryCapacity);
     CFURLCacheSetDiskCapacity(cfurlCache.get(), max<unsigned long>(urlCacheDiskCapacity, CFURLCacheDiskCapacity(cfurlCache.get()))); // Don't shrink a big disk cache, since that would cause churn.
 #endif
@@ -118,11 +121,12 @@ void WebProcess::platformClearResourceCaches(ResourceCachesToClear cachesToClear
         return;
 
     RetainPtr<CFURLCacheRef> cache;
+#if NEEDS_FIXING_AFTER_R134960
     if (CFURLStorageSessionRef defaultStorageSession = ResourceHandle::defaultStorageSession())
         cache.adoptCF(wkCopyURLCache(defaultStorageSession));
     else
         cache.adoptCF(CFURLCacheCopySharedURLCache());
-
+#endif
     CFURLCacheRemoveAllCachedResponses(cache.get());
 #endif // USE(CFNETWORK)
 }
@@ -133,7 +137,9 @@ void WebProcess::platformInitializeWebProcess(const WebProcessCreationParameters
 
 #if USE(CFNETWORK)
     RetainPtr<CFURLStorageSessionRef> defaultStorageSession(AdoptCF, wkDeserializeStorageSession(parameters.serializedDefaultStorageSession.get()));
+#if NEEDS_FIXING_AFTER_R134960
     ResourceHandle::setDefaultStorageSession(defaultStorageSession.get());
+#endif
 
     WebCookieManager::shared().setHTTPCookieAcceptPolicy(parameters.initialHTTPCookieAcceptPolicy);
 

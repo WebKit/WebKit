@@ -2179,7 +2179,7 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
     settings->setFrameFlatteningEnabled(store.getBoolValueForKey(WebPreferencesKey::frameFlatteningEnabledKey()));
 
     bool privateBrowsingEnabled = store.getBoolValueForKey(WebPreferencesKey::privateBrowsingEnabledKey());
-#if PLATFORM(MAC) || USE(CFNETWORK)
+#if (PLATFORM(MAC) || USE(CFNETWORK)) && !PLATFORM(WIN)
     if (privateBrowsingEnabled)
         WebFrameNetworkingContext::ensurePrivateBrowsingSession();
     else

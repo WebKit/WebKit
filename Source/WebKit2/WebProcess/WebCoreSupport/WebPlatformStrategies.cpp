@@ -109,10 +109,7 @@ void WebPlatformStrategies::notifyCookiesChanged()
 #if PLATFORM(WIN) && USE(CFNETWORK)
 RetainPtr<CFHTTPCookieStorageRef> WebPlatformStrategies::defaultCookieStorage()
 {
-    if (CFURLStorageSessionRef session = WebFrameNetworkingContext::defaultStorageSession())
-        return adoptCF(WKCopyHTTPCookieStorage(session));
-
-    return WKGetDefaultHTTPCookieStorage();
+    return 0;
 }
 #endif
 

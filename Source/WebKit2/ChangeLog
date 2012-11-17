@@ -1,3 +1,28 @@
+2012-11-16  Sam Weinig  <weinig@apple.com>
+
+        Fix the windows build.
+
+        * WebProcess/Cookies/cf/WebCookieManagerCFNet.cpp:
+        (WebKit::WebCookieManager::platformSetHTTPCookieAcceptPolicy):
+        (WebKit::WebCookieManager::platformGetHTTPCookieAcceptPolicy):
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::setPrivateBrowsingEnabled):
+        (WebKit::InjectedBundle::switchNetworkLoaderToNewTestingSession):
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+        (WebKit::WebPlatformStrategies::defaultCookieStorage):
+        * WebProcess/WebCoreSupport/win/WebFrameNetworkingContext.h:
+        (WebFrameNetworkingContext):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+        * WebProcess/WebPage/win/WebPageWin.cpp:
+        (WebKit::cachedResponseForURL):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeWebProcess):
+        * WebProcess/win/WebProcessWin.cpp:
+        (WebKit::WebProcess::platformSetCacheModel):
+        (WebKit::WebProcess::platformClearResourceCaches):
+        (WebKit::WebProcess::platformInitializeWebProcess):
+
 2012-11-16  Alec Flett  <alecflett@chromium.org>
 
         Add tests for explicit serialization values

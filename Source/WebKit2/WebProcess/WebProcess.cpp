@@ -279,7 +279,7 @@ void WebProcess::initializeWebProcess(const WebProcessCreationParameters& parame
     if (parameters.shouldUseFontSmoothing)
         setShouldUseFontSmoothing(true);
 
-#if PLATFORM(MAC) || USE(CFNETWORK)
+#if (PLATFORM(MAC) || USE(CFNETWORK)) && !PLATFORM(WIN)
     // FIXME (NetworkProcess): Send this identifier to network process.
     WebFrameNetworkingContext::setPrivateBrowsingStorageSessionIdentifierBase(parameters.uiProcessBundleIdentifier);
 #endif

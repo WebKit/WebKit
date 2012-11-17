@@ -50,14 +50,22 @@ void WebCookieManager::platformSetHTTPCookieAcceptPolicy(HTTPCookieAcceptPolicy 
 
     CFHTTPCookieStorageSetCookieAcceptPolicy(defaultCookieStorage, policy);
 
+    ASSERT_NOT_REACHED();
+#if NEEDS_FIXING_AFTER_R134960
     if (RetainPtr<CFHTTPCookieStorageRef> cookieStorage = currentCFHTTPCookieStorage())
         CFHTTPCookieStorageSetCookieAcceptPolicy(cookieStorage.get(), policy);
+#endif
 }
 
 HTTPCookieAcceptPolicy WebCookieManager::platformGetHTTPCookieAcceptPolicy()
 {
+    ASSERT_NOT_REACHED();
+#if NEEDS_FIXING_AFTER_R134960
     RetainPtr<CFHTTPCookieStorageRef> cookieStorage = currentCFHTTPCookieStorage();
     return CFHTTPCookieStorageGetCookieAcceptPolicy(cookieStorage.get());
+#else
+    return 0;
+#endif
 }
 
 } // namespace WebKit
