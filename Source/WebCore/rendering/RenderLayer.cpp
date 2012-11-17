@@ -1733,29 +1733,32 @@ void RenderLayer::scrollTo(int x, int y)
     Frame* frame = renderer()->frame();
     InspectorInstrumentation::willScrollLayer(frame);
 
-    // Update the positions of our child layers (if needed as only fixed layers should be impacted by a scroll).
-    // We don't update compositing layers, because we need to do a deep update from the compositing ancestor.
-    updateLayerPositionsAfterScroll();
-
     RenderView* view = renderer()->view();
     
     // We should have a RenderView if we're trying to scroll.
     ASSERT(view);
-    if (view) {
-        // Update regions, scrolling may change the clip of a particular region.
+
+    // Update the positions of our child layers (if needed as only fixed layers should be impacted by a scroll).
+    // We don't update compositing layers, because we need to do a deep update from the compositing ancestor.
+    bool inLayout = view ? view->frameView()->isInLayout() : false;
+    if (!inLayout) {
+        // If we're in the middle of layout, we'll just update layers once layout has finished.
+        updateLayerPositionsAfterScroll();
+        if (view) {
+            // Update regions, scrolling may change the clip of a particular region.
 #if ENABLE(DASHBOARD_SUPPORT) || ENABLE(DRAGGABLE_REGION)
-        view->frameView()->updateAnnotatedRegions();
+            view->frameView()->updateAnnotatedRegions();
 #endif
+            view->updateWidgetPositions();
+        }
 
-        view->updateWidgetPositions();
-    }
-
-    if (!m_updatingMarqueePosition) {
-        // Avoid updating compositing layers if, higher on the stack, we're already updating layer
-        // positions. Updating layer positions requires a full walk of up-to-date RenderLayers, and
-        // in this case we're still updating their positions; we'll update compositing layers later
-        // when that completes.
-        updateCompositingLayersAfterScroll();
+        if (!m_updatingMarqueePosition) {
+            // Avoid updating compositing layers if, higher on the stack, we're already updating layer
+            // positions. Updating layer positions requires a full walk of up-to-date RenderLayers, and
+            // in this case we're still updating their positions; we'll update compositing layers later
+            // when that completes.
+            updateCompositingLayersAfterScroll();
+        }
     }
 
     RenderLayerModelObject* repaintContainer = renderer()->containerForRepaint();
