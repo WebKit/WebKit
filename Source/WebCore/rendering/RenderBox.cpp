@@ -1596,7 +1596,7 @@ void RenderBox::computeRectForRepaint(const RenderLayerModelObject* repaintConta
 
     // We are now in our parent container's coordinate space.  Apply our transform to obtain a bounding box
     // in the parent's coordinate space that encloses us.
-    if (layer() && layer()->transform()) {
+    if (hasLayer() && layer()->transform()) {
         fixed = position == FixedPosition;
         rect = layer()->transform()->mapRect(pixelSnappedIntRect(rect));
         topLeft = rect.location();
@@ -1614,14 +1614,11 @@ void RenderBox::computeRectForRepaint(const RenderLayerModelObject* repaintConta
         topLeft += layer()->offsetForInFlowPosition();
     }
     
-    if (o->isBlockFlow() && position != AbsolutePosition && position != FixedPosition) {
-        RenderBlock* cb = toRenderBlock(o);
-        if (cb->hasColumns()) {
-            LayoutRect repaintRect(topLeft, rect.size());
-            cb->adjustRectForColumns(repaintRect);
-            topLeft = repaintRect.location();
-            rect = repaintRect;
-        }
+    if (position != AbsolutePosition && position != FixedPosition && o->hasColumns() && o->isBlockFlow()) {
+        LayoutRect repaintRect(topLeft, rect.size());
+        toRenderBlock(o)->adjustRectForColumns(repaintRect);
+        topLeft = repaintRect.location();
+        rect = repaintRect;
     }
 
     // FIXME: We ignore the lightweight clipping rect that controls use, since if |o| is in mid-layout,
