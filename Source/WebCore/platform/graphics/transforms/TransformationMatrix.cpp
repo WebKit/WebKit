@@ -28,7 +28,6 @@
 #include "TransformationMatrix.h"
 
 #include "AffineTransform.h"
-#include "FloatPoint3D.h"
 #include "FloatRect.h"
 #include "FloatQuad.h"
 #include "IntRect.h"
@@ -647,9 +646,7 @@ FloatPoint TransformationMatrix::mapPoint(const FloatPoint& p) const
     if (isIdentityOrTranslation())
         return FloatPoint(p.x() + static_cast<float>(m_matrix[3][0]), p.y() + static_cast<float>(m_matrix[3][1]));
 
-    double x, y;
-    multVecMatrix(p.x(), p.y(), x, y);
-    return FloatPoint(static_cast<float>(x), static_cast<float>(y));
+    return internalMapPoint(p);
 }
 
 FloatPoint3D TransformationMatrix::mapPoint(const FloatPoint3D& p) const
@@ -659,9 +656,7 @@ FloatPoint3D TransformationMatrix::mapPoint(const FloatPoint3D& p) const
                             p.y() + static_cast<float>(m_matrix[3][1]),
                             p.z() + static_cast<float>(m_matrix[3][2]));
 
-    double x, y, z;
-    multVecMatrix(p.x(), p.y(), p.z(), x, y, z);
-    return FloatPoint3D(static_cast<float>(x), static_cast<float>(y), static_cast<float>(z));
+    return internalMapPoint(p);
 }
 
 IntRect TransformationMatrix::mapRect(const IntRect &rect) const
@@ -682,8 +677,16 @@ FloatRect TransformationMatrix::mapRect(const FloatRect& r) const
         return mappedRect;
     }
 
-    FloatQuad resultQuad = mapQuad(FloatQuad(r));
-    return resultQuad.boundingBox();
+    FloatQuad result;
+
+    float maxX = r.maxX();
+    float maxY = r.maxY();
+    result.setP1(internalMapPoint(FloatPoint(r.x(), r.y())));
+    result.setP2(internalMapPoint(FloatPoint(maxX, r.y())));
+    result.setP3(internalMapPoint(FloatPoint(maxX, maxY)));
+    result.setP4(internalMapPoint(FloatPoint(r.x(), maxY)));
+
+    return result.boundingBox();
 }
 
 FloatQuad TransformationMatrix::mapQuad(const FloatQuad& q) const
@@ -695,10 +698,10 @@ FloatQuad TransformationMatrix::mapQuad(const FloatQuad& q) const
     }
 
     FloatQuad result;
-    result.setP1(mapPoint(q.p1()));
-    result.setP2(mapPoint(q.p2()));
-    result.setP3(mapPoint(q.p3()));
-    result.setP4(mapPoint(q.p4()));
+    result.setP1(internalMapPoint(q.p1()));
+    result.setP2(internalMapPoint(q.p2()));
+    result.setP3(internalMapPoint(q.p3()));
+    result.setP4(internalMapPoint(q.p4()));
     return result;
 }
 

@@ -1,3 +1,32 @@
+2012-11-16  Benjamin Poulain  <bpoulain@apple.com>
+
+        Improve the performance of rect transform
+        https://bugs.webkit.org/show_bug.cgi?id=101828
+
+        Reviewed by Simon Fraser.
+
+        Mapping a rect and a quad by a transform is a common operation because
+        we use it to recompute the repaint rect, overflow rect, etc.
+
+        The way it was done, is by transforming through mapRect()->mapQuad()->4 times mapPoint().
+        Each of those functions tests isIdentityOrTranslation() which has to read the whole matrix
+        and perform many comparison.
+        Because of that, the simple mapping of a rect was loading and checking the matrix 5 times
+        too many.
+
+        This patch just cut the intermediary calls.
+
+        On ARM, putting the operation together also has the advantage of loading the matrix
+        only once in registers and reusing it for every point.
+
+        * platform/graphics/transforms/TransformationMatrix.cpp:
+        (WebCore::TransformationMatrix::mapPoint):
+        (WebCore::TransformationMatrix::mapRect):
+        * platform/graphics/transforms/TransformationMatrix.h:
+        (WebCore):
+        (WebCore::TransformationMatrix::mapPointImpl): New convenience function to perform the
+        point project without doing isIdentityOrTranslation().
+
 2012-11-16  Simon Fraser  <simon.fraser@apple.com>
 
         Avoid calling the virtual isBlockFlow() in RenderBox::computeRectForRepaint()

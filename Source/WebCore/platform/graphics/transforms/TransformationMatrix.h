@@ -27,6 +27,7 @@
 #define TransformationMatrix_h
 
 #include "FloatPoint.h"
+#include "FloatPoint3D.h"
 #include "IntPoint.h"
 #include <string.h> //for memcpy
 #include <wtf/FastAllocBase.h>
@@ -65,7 +66,6 @@ namespace WebCore {
 class AffineTransform;
 class IntRect;
 class LayoutRect;
-class FloatPoint3D;
 class FloatRect;
 class FloatQuad;
 
@@ -379,9 +379,24 @@ public:
 private:
     // multiply passed 2D point by matrix (assume z=0)
     void multVecMatrix(double x, double y, double& dstX, double& dstY) const;
+    FloatPoint internalMapPoint(const FloatPoint& sourcePoint) const
+    {
+        double resultX;
+        double resultY;
+        multVecMatrix(sourcePoint.x(), sourcePoint.y(), resultX, resultY);
+        return FloatPoint(static_cast<float>(resultX), static_cast<float>(resultY));
+    }
 
     // multiply passed 3D point by matrix
     void multVecMatrix(double x, double y, double z, double& dstX, double& dstY, double& dstZ) const;
+    FloatPoint3D internalMapPoint(const FloatPoint3D& sourcePoint) const
+    {
+        double resultX;
+        double resultY;
+        double resultZ;
+        multVecMatrix(sourcePoint.x(), sourcePoint.y(), sourcePoint.z(), resultX, resultY, resultZ);
+        return FloatPoint3D(static_cast<float>(resultX), static_cast<float>(resultY), static_cast<float>(resultZ));
+    }
 
     void setMatrix(const Matrix4 m)
     {
