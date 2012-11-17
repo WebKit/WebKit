@@ -1,3 +1,32 @@
+2012-11-16  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r134817.
+        http://trac.webkit.org/changeset/134817
+        https://bugs.webkit.org/show_bug.cgi?id=102576
+
+        Broke iframes and causing tons of crashes on ClusterFuzz
+        (Requested by inferno-sec on #webkit).
+
+        * dom/ContainerNode.cpp:
+        (WebCore::willRemoveChildren):
+        * dom/ContainerNodeAlgorithms.cpp:
+        (WebCore::ChildFrameDisconnector::collectDescendant):
+        * dom/ContainerNodeAlgorithms.h:
+        (WebCore::ChildFrameDisconnector::ChildFrameDisconnector):
+        (WebCore::ChildFrameDisconnector::~ChildFrameDisconnector):
+        (ChildFrameDisconnector):
+        (WebCore::ChildFrameDisconnector::collectDescendant):
+        (WebCore::ChildFrameDisconnector::disconnect):
+        * dom/Node.cpp:
+        * dom/Node.h:
+        (Node):
+        * dom/NodeRareData.h:
+        (WebCore::NodeRareData::NodeRareData):
+        (NodeRareData):
+        * html/HTMLFrameOwnerElement.cpp:
+        (WebCore::HTMLFrameOwnerElement::setContentFrame):
+        (WebCore::HTMLFrameOwnerElement::disconnectContentFrame):
+
 2012-11-16  Simon Fraser  <simon.fraser@apple.com>
 
         Fix overlay scrollbar painting in compositing layers

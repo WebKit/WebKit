@@ -27,7 +27,6 @@
 #include "DynamicNodeList.h"
 #include "MutationObserver.h"
 #include "MutationObserverRegistration.h"
-#include "Page.h"
 #include "QualifiedName.h"
 #include "TagNodeList.h"
 #include <wtf/HashSet.h>
@@ -191,7 +190,6 @@ public:
         , m_needsFocusAppearanceUpdateSoonAfterAttach(false)
         , m_styleAffectedByEmpty(false)
         , m_isInCanvasSubtree(false)
-        , m_connectedFrameCount(0)
 #if ENABLE(FULLSCREEN_API)
         , m_containsFullScreenElement(false)
 #endif
@@ -299,10 +297,6 @@ public:
     bool isFocused() const { return m_isFocused; }
     void setFocused(bool focused) { m_isFocused = focused; }
 
-    unsigned connectedSubframeCount() const { return m_connectedFrameCount; }
-    void incrementConnectedSubframeCount() { m_connectedFrameCount++; }
-    void decrementConnectedSubframeCount() { ASSERT(m_connectedFrameCount); m_connectedFrameCount--; }
-
     virtual void reportMemoryUsage(MemoryObjectInfo*) const;
 
 protected:
@@ -328,7 +322,6 @@ private:
     bool m_needsFocusAppearanceUpdateSoonAfterAttach : 1;
     bool m_styleAffectedByEmpty : 1;
     bool m_isInCanvasSubtree : 1;
-    unsigned m_connectedFrameCount : 10;
 #if ENABLE(FULLSCREEN_API)
     bool m_containsFullScreenElement : 1;
 #endif
@@ -344,9 +337,6 @@ private:
     mutable RefPtr<DOMSettableTokenList> m_itemType;
 #endif
 };
-
-// Ensure the 10 bits reserved for the m_connectedFrameCount cannot overflow
-COMPILE_ASSERT(Page::maxNumberOfFrames < 1024, Frame_limit_should_fit_in_rare_data_count);
 
 } // namespace WebCore
 
