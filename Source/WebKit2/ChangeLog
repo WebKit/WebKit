@@ -1,3 +1,15 @@
+2012-11-16  Alec Flett  <alecflett@chromium.org>
+
+        Add tests for explicit serialization values
+        https://bugs.webkit.org/show_bug.cgi?id=96818
+
+        Reviewed by Adam Barth.
+
+        Add exports for SerializedScriptValue changes.
+
+        * win/WebKit2.def:
+        * win/WebKit2CFLite.def:
+
 2012-11-16  Kiran Muppala  <cmuppala@apple.com>
 
         Set task priority of WebKit2 processes to zero on Mac
