@@ -1,3 +1,16 @@
+2012-11-16  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: Assert hit when getting non-existent object store in version change transaction
+        https://bugs.webkit.org/show_bug.cgi?id=102547
+
+        Reviewed by Tony Chang.
+
+        Regression test - make sure that .objectStore() and .index() fail on unknown names
+        in "versionchange" transactions.
+
+        * storage/indexeddb/object-lookups-in-versionchange-expected.txt: Added.
+        * storage/indexeddb/object-lookups-in-versionchange.html: Added.
+
 2012-11-16  Simon Fraser  <simon.fraser@apple.com>
 
         Eliminate ancestor tree walk computing outlineBoundsForRepaint() when updating layer positions
