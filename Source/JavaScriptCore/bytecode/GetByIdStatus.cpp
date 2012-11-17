@@ -151,7 +151,7 @@ GetByIdStatus GetByIdStatus::computeFor(CodeBlock* profiledBlock, unsigned bytec
     
     // Finally figure out if we can derive an access strategy.
     GetByIdStatus result;
-    result.m_wasSeenInJIT = true;
+    result.m_wasSeenInJIT = true; // This is interesting for bytecode dumping only.
     switch (stubInfo.accessType) {
     case access_unset:
         return computeFromLLInt(profiledBlock, bytecodeIndex, ident);
@@ -250,6 +250,36 @@ GetByIdStatus GetByIdStatus::computeFor(CodeBlock* profiledBlock, unsigned bytec
 #else // ENABLE(JIT)
     return GetByIdStatus(NoInformation, false);
 #endif // ENABLE(JIT)
+}
+
+GetByIdStatus GetByIdStatus::computeFor(JSGlobalData& globalData, Structure* structure, Identifier& ident)
+{
+    // For now we only handle the super simple self access case. We could handle the
+    // prototype case in the future.
+    
+    if (PropertyName(ident).asIndex() != PropertyName::NotAnIndex)
+        return GetByIdStatus(TakesSlowPath);
+    
+    if (structure->typeInfo().overridesGetOwnPropertySlot())
+        return GetByIdStatus(TakesSlowPath);
+    
+    if (!structure->propertyAccessesAreCacheable())
+        return GetByIdStatus(TakesSlowPath);
+    
+    GetByIdStatus result;
+    result.m_wasSeenInJIT = false; // To my knowledge nobody that uses computeFor(JSGlobalData&, Structure*, Identifier&) reads this field, but I might as well be honest: no, it wasn't seen in the JIT, since I computed it statically.
+    unsigned attributes;
+    JSCell* specificValue;
+    result.m_offset = structure->get(globalData, ident, attributes, specificValue);
+    if (!isValidOffset(result.m_offset))
+        return GetByIdStatus(TakesSlowPath); // It's probably a prototype lookup. Give up on life for now, even though we could totally be way smarter about it.
+    if (attributes & Accessor)
+        return GetByIdStatus(MakesCalls);
+    if (structure->isDictionary())
+        specificValue = 0;
+    result.m_structureSet.add(structure);
+    result.m_specificValue = JSValue(specificValue);
+    return result;
 }
 
 } // namespace JSC

@@ -51,6 +51,13 @@ public:
     {
     }
     
+    explicit GetByIdStatus(State state)
+        : m_state(state)
+        , m_offset(invalidOffset)
+    {
+        ASSERT(state == NoInformation || state == TakesSlowPath || state == MakesCalls);
+    }
+    
     GetByIdStatus(
         State state, bool wasSeenInJIT, const StructureSet& structureSet = StructureSet(),
         PropertyOffset offset = invalidOffset, JSValue specificValue = JSValue(), Vector<Structure*> chain = Vector<Structure*>())
@@ -65,6 +72,7 @@ public:
     }
     
     static GetByIdStatus computeFor(CodeBlock*, unsigned bytecodeIndex, Identifier&);
+    static GetByIdStatus computeFor(JSGlobalData&, Structure*, Identifier&);
     
     State state() const { return m_state; }
     

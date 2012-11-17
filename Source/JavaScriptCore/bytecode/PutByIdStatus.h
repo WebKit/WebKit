@@ -33,6 +33,8 @@ namespace JSC {
 
 class CodeBlock;
 class Identifier;
+class JSGlobalData;
+class JSGlobalObject;
 class Structure;
 class StructureChain;
 
@@ -60,6 +62,16 @@ public:
     {
     }
     
+    explicit PutByIdStatus(State state)
+        : m_state(state)
+        , m_oldStructure(0)
+        , m_newStructure(0)
+        , m_structureChain(0)
+        , m_offset(invalidOffset)
+    {
+        ASSERT(m_state == NoInformation || m_state == TakesSlowPath);
+    }
+    
     PutByIdStatus(
         State state,
         Structure* oldStructure,
@@ -79,6 +91,7 @@ public:
     }
     
     static PutByIdStatus computeFor(CodeBlock*, unsigned bytecodeIndex, Identifier&);
+    static PutByIdStatus computeFor(JSGlobalData&, JSGlobalObject*, Structure*, Identifier&, bool isDirect);
     
     State state() const { return m_state; }
     

@@ -1,3 +1,56 @@
+2012-11-16  Filip Pizlo  <fpizlo@apple.com>
+
+        Given a PutById or GetById with a proven structure, the DFG should be able to emit a PutByOffset or GetByOffset instead
+        https://bugs.webkit.org/show_bug.cgi?id=102327
+
+        Reviewed by Mark Hahnenberg.
+
+        If the profiler tells us that a GetById or PutById may be polymorphic but our
+        control flow analysis proves that it isn't, we should trust the control flow
+        analysis over the profiler. This arises in cases where GetById or PutById were
+        inlined: the inlined function may have been called from other places that led
+        to polymorphism, but in the current inlined context, there is no polymorphism.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dump):
+        * bytecode/GetByIdStatus.cpp:
+        (JSC::GetByIdStatus::computeFor):
+        (JSC):
+        * bytecode/GetByIdStatus.h:
+        (JSC::GetByIdStatus::GetByIdStatus):
+        (GetByIdStatus):
+        * bytecode/PutByIdStatus.cpp:
+        (JSC::PutByIdStatus::computeFor):
+        (JSC):
+        * bytecode/PutByIdStatus.h:
+        (JSC):
+        (JSC::PutByIdStatus::PutByIdStatus):
+        (PutByIdStatus):
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::execute):
+        * dfg/DFGAbstractValue.h:
+        (JSC::DFG::AbstractValue::bestProvenStructure):
+        (AbstractValue):
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+        (JSC::DFG::ConstantFoldingPhase::addStructureTransitionCheck):
+        (ConstantFoldingPhase):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::convertToGetByOffset):
+        (Node):
+        (JSC::DFG::Node::convertToPutByOffset):
+        (JSC::DFG::Node::hasStorageResult):
+        * runtime/JSGlobalObject.h:
+        (JSC::Structure::prototypeChain):
+        (JSC):
+        (JSC::Structure::isValid):
+        * runtime/Operations.h:
+        (JSC::isPrototypeChainNormalized):
+        (JSC):
+        * runtime/Structure.h:
+        (Structure):
+        (JSC::Structure::transitionDidInvolveSpecificValue):
+
 2012-11-16  Tony Chang  <tony@chromium.org>
 
         Remove ENABLE_CSS_HIERARCHIES since it's no longer in use

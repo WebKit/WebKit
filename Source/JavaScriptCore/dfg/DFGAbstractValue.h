@@ -342,6 +342,15 @@ struct AbstractValue {
         return true;
     }
     
+    Structure* bestProvenStructure() const
+    {
+        if (m_currentKnownStructure.hasSingleton())
+            return m_currentKnownStructure.singleton();
+        if (m_futurePossibleStructure.hasSingleton())
+            return m_futurePossibleStructure.singleton();
+        return 0;
+    }
+    
     void checkConsistency() const
     {
         if (!(m_type & SpecCell)) {

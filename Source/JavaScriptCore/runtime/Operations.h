@@ -356,6 +356,23 @@ namespace JSC {
         }
     }
 
+    inline bool isPrototypeChainNormalized(JSGlobalObject* globalObject, Structure* structure)
+    {
+        for (;;) {
+            if (structure->typeInfo().type() == ProxyType)
+                return false;
+            
+            JSValue v = structure->prototypeForLookup(globalObject);
+            if (v.isNull())
+                return true;
+            
+            structure = v.asCell()->structure();
+            
+            if (structure->isDictionary())
+                return false;
+        }
+    }
+
 } // namespace JSC
 
 #endif // Operations_h

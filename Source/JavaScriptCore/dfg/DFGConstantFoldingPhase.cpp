@@ -33,6 +33,8 @@
 #include "DFGGraph.h"
 #include "DFGInsertionSet.h"
 #include "DFGPhase.h"
+#include "GetByIdStatus.h"
+#include "PutByIdStatus.h"
 
 namespace JSC { namespace DFG {
 
@@ -139,6 +141,190 @@ private:
                 break;
             }
                 
+            case GetById:
+            case GetByIdFlush: {
+                CodeOrigin codeOrigin = node.codeOrigin;
+                NodeIndex child = node.child1().index();
+                unsigned identifierNumber = node.identifierNumber();
+                
+                if (!isCellSpeculation(m_graph[child].prediction()))
+                    break;
+                
+                Structure* structure = m_state.forNode(child).bestProvenStructure();
+                if (!structure)
+                    break;
+                
+                bool needsWatchpoint = !m_state.forNode(child).m_currentKnownStructure.hasSingleton();
+                
+                GetByIdStatus status = GetByIdStatus::computeFor(
+                    globalData(), structure, codeBlock()->identifier(identifierNumber));
+                
+                if (!status.isSimple())
+                    break;
+                
+                ASSERT(status.structureSet().size() == 1);
+                ASSERT(status.chain().isEmpty());
+                ASSERT(status.structureSet().singletonStructure() == structure);
+                
+                // Now before we do anything else, push the CFA forward over the GetById
+                // and make sure we signal to the loop that it should continue and not
+                // do any eliminations.
+                m_state.execute(indexInBlock);
+                eliminated = true;
+                
+                if (needsWatchpoint) {
+                    ASSERT(m_state.forNode(child).m_futurePossibleStructure.isSubsetOf(StructureSet(structure)));
+                    m_graph[child].ref();
+                    Node watchpoint(StructureTransitionWatchpoint, codeOrigin, OpInfo(structure), child);
+                    watchpoint.ref();
+                    NodeIndex watchpointIndex = m_graph.size();
+                    m_graph.append(watchpoint);
+                    m_insertionSet.append(indexInBlock, watchpointIndex);
+                }
+                
+                NodeIndex propertyStorageIndex;
+                
+                m_graph[child].ref();
+                if (isInlineOffset(status.offset()))
+                    propertyStorageIndex = child;
+                else {
+                    Node getButterfly(GetButterfly, codeOrigin, child);
+                    getButterfly.ref();
+                    propertyStorageIndex = m_graph.size();
+                    m_graph.append(getButterfly);
+                    m_insertionSet.append(indexInBlock, propertyStorageIndex);
+                }
+                
+                m_graph[nodeIndex].convertToGetByOffset(m_graph.m_storageAccessData.size(), propertyStorageIndex);
+                
+                StorageAccessData storageAccessData;
+                storageAccessData.offset = indexRelativeToBase(status.offset());
+                storageAccessData.identifierNumber = identifierNumber;
+                m_graph.m_storageAccessData.append(storageAccessData);
+                break;
+            }
+                
+            case PutById:
+            case PutByIdDirect: {
+                CodeOrigin codeOrigin = node.codeOrigin;
+                NodeIndex child = node.child1().index();
+                unsigned identifierNumber = node.identifierNumber();
+                
+                Structure* structure = m_state.forNode(child).bestProvenStructure();
+                if (!structure)
+                    break;
+                
+                bool needsWatchpoint = !m_state.forNode(child).m_currentKnownStructure.hasSingleton();
+                
+                PutByIdStatus status = PutByIdStatus::computeFor(
+                    globalData(),
+                    m_graph.globalObjectFor(codeOrigin),
+                    structure,
+                    codeBlock()->identifier(identifierNumber),
+                    node.op() == PutByIdDirect);
+                
+                if (!status.isSimpleReplace() && !status.isSimpleTransition())
+                    break;
+                
+                ASSERT(status.oldStructure() == structure);
+                
+                // Now before we do anything else, push the CFA forward over the PutById
+                // and make sure we signal to the loop that it should continue and not
+                // do any eliminations.
+                m_state.execute(indexInBlock);
+                eliminated = true;
+                
+                if (needsWatchpoint) {
+                    ASSERT(m_state.forNode(child).m_futurePossibleStructure.isSubsetOf(StructureSet(structure)));
+                    m_graph[child].ref();
+                    Node watchpoint(StructureTransitionWatchpoint, codeOrigin, OpInfo(structure), child);
+                    watchpoint.ref();
+                    NodeIndex watchpointIndex = m_graph.size();
+                    m_graph.append(watchpoint);
+                    m_insertionSet.append(indexInBlock, watchpointIndex);
+                }
+                
+                StructureTransitionData* transitionData = 0;
+                if (status.isSimpleTransition()) {
+                    transitionData = m_graph.addStructureTransitionData(
+                        StructureTransitionData(structure, status.newStructure()));
+                    
+                    if (node.op() == PutById) {
+                        if (!structure->storedPrototype().isNull()) {
+                            addStructureTransitionCheck(
+                                codeOrigin, indexInBlock,
+                                structure->storedPrototype().asCell());
+                        }
+                        
+                        for (WriteBarrier<Structure>* it = status.structureChain()->head(); *it; ++it) {
+                            JSValue prototype = (*it)->storedPrototype();
+                            if (prototype.isNull())
+                                continue;
+                            ASSERT(prototype.isCell());
+                            addStructureTransitionCheck(
+                                codeOrigin, indexInBlock, prototype.asCell());
+                        }
+                    }
+                }
+
+                NodeIndex propertyStorageIndex;
+                
+                m_graph[child].ref();
+                if (isInlineOffset(status.offset()))
+                    propertyStorageIndex = child;
+                else if (status.isSimpleReplace() || structure->outOfLineCapacity() == status.newStructure()->outOfLineCapacity()) {
+                    Node getButterfly(GetButterfly, codeOrigin, child);
+                    getButterfly.ref();
+                    propertyStorageIndex = m_graph.size();
+                    m_graph.append(getButterfly);
+                    m_insertionSet.append(indexInBlock, propertyStorageIndex);
+                } else if (!structure->outOfLineCapacity()) {
+                    ASSERT(status.newStructure()->outOfLineCapacity());
+                    ASSERT(!isInlineOffset(status.offset()));
+                    Node allocateStorage(AllocatePropertyStorage, codeOrigin, OpInfo(transitionData), child);
+                    allocateStorage.ref(); // Once for the use.
+                    allocateStorage.ref(); // Twice because it's must-generate.
+                    propertyStorageIndex = m_graph.size();
+                    m_graph.append(allocateStorage);
+                    m_insertionSet.append(indexInBlock, propertyStorageIndex);
+                } else {
+                    ASSERT(structure->outOfLineCapacity());
+                    ASSERT(status.newStructure()->outOfLineCapacity() > structure->outOfLineCapacity());
+                    ASSERT(!isInlineOffset(status.offset()));
+                    
+                    Node getButterfly(GetButterfly, codeOrigin, child);
+                    getButterfly.ref();
+                    NodeIndex getButterflyIndex = m_graph.size();
+                    m_graph.append(getButterfly);
+                    m_insertionSet.append(indexInBlock, getButterflyIndex);
+                    
+                    m_graph[child].ref();
+                    Node reallocateStorage(ReallocatePropertyStorage, codeOrigin, OpInfo(transitionData), child, getButterflyIndex);
+                    reallocateStorage.ref(); // Once for the use.
+                    reallocateStorage.ref(); // Twice because it's must-generate.
+                    propertyStorageIndex = m_graph.size();
+                    m_graph.append(reallocateStorage);
+                    m_insertionSet.append(indexInBlock, propertyStorageIndex);
+                }
+                
+                if (status.isSimpleTransition()) {
+                    m_graph[child].ref();
+                    Node putStructure(PutStructure, codeOrigin, OpInfo(transitionData), child);
+                    putStructure.ref();
+                    NodeIndex putStructureIndex = m_graph.size();
+                    m_graph.append(putStructure);
+                    m_insertionSet.append(indexInBlock, putStructureIndex);
+                }
+                
+                m_graph[nodeIndex].convertToPutByOffset(m_graph.m_storageAccessData.size(), propertyStorageIndex);
+                
+                StorageAccessData storageAccessData;
+                storageAccessData.offset = indexRelativeToBase(status.offset());
+                storageAccessData.identifierNumber = identifierNumber;
+                m_graph.m_storageAccessData.append(storageAccessData);
+                break;
+            }
+                
             default:
                 break;
             }
@@ -226,6 +412,31 @@ private:
         m_insertionSet.execute(*block);
         
         return changed;
+    }
+    
+    void addStructureTransitionCheck(CodeOrigin codeOrigin, unsigned indexInBlock, JSCell* cell)
+    {
+        Node weakConstant(WeakJSConstant, codeOrigin, OpInfo(cell));
+        weakConstant.ref();
+        weakConstant.predict(speculationFromValue(cell));
+        NodeIndex weakConstantIndex = m_graph.size();
+        m_graph.append(weakConstant);
+        m_insertionSet.append(indexInBlock, weakConstantIndex);
+        
+        if (cell->structure()->transitionWatchpointSetIsStillValid()) {
+            Node watchpoint(StructureTransitionWatchpoint, codeOrigin, OpInfo(cell->structure()), weakConstantIndex);
+            watchpoint.ref();
+            NodeIndex watchpointIndex = m_graph.size();
+            m_graph.append(watchpoint);
+            m_insertionSet.append(indexInBlock, watchpointIndex);
+            return;
+        }
+        
+        Node check(CheckStructure, codeOrigin, OpInfo(m_graph.addStructureSet(cell->structure())), weakConstantIndex);
+        check.ref();
+        NodeIndex checkIndex = m_graph.size();
+        m_graph.append(check);
+        m_insertionSet.append(indexInBlock, checkIndex);
     }
     
     // This is necessary because the CFA may reach conclusions about constants based on its

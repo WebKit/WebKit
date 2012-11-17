@@ -269,6 +269,26 @@ struct Node {
         convertToStructureTransitionWatchpoint(structureSet().singletonStructure());
     }
     
+    void convertToGetByOffset(unsigned storageAccessDataIndex, NodeIndex storage)
+    {
+        ASSERT(m_op == GetById || m_op == GetByIdFlush);
+        m_opInfo = storageAccessDataIndex;
+        children.setChild1(Edge(storage));
+        m_op = GetByOffset;
+        m_flags &= ~NodeClobbersWorld;
+    }
+    
+    void convertToPutByOffset(unsigned storageAccessDataIndex, NodeIndex storage)
+    {
+        ASSERT(m_op == PutById || m_op == PutByIdDirect);
+        m_opInfo = storageAccessDataIndex;
+        children.setChild3(children.child2());
+        children.setChild2(children.child1());
+        children.setChild1(Edge(storage));
+        m_op = PutByOffset;
+        m_flags &= ~NodeClobbersWorld;
+    }
+    
     JSCell* weakConstant()
     {
         ASSERT(op() == WeakJSConstant);
@@ -543,6 +563,11 @@ struct Node {
     bool hasBooleanResult()
     {
         return (m_flags & NodeResultMask) == NodeResultBoolean;
+    }
+
+    bool hasStorageResult()
+    {
+        return (m_flags & NodeResultMask) == NodeResultStorage;
     }
 
     bool isJump()

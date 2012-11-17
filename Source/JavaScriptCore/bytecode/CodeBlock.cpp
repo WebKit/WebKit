@@ -632,11 +632,13 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
         case op_get_callee: {
             int r0 = (++it)->u.operand;
             dataLog("[%4d] op_get_callee %s\n", location, registerName(exec, r0).data());
+            ++it;
             break;
         }
         case op_create_this: {
             int r0 = (++it)->u.operand;
-            dataLog("[%4d] create_this %s", location, registerName(exec, r0).data());
+            int r1 = (++it)->u.operand;
+            dataLog("[%4d] create_this %s, %s", location, registerName(exec, r0).data(), registerName(exec, r1).data());
             dumpBytecodeCommentAndNewLine(location);
             break;
         }
