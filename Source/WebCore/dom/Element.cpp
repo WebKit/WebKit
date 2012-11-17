@@ -304,7 +304,7 @@ bool Element::hasAttribute(const QualifiedName& name) const
 
 const AtomicString& Element::getAttribute(const QualifiedName& name) const
 {
-    if (UNLIKELY(name == styleAttr) && !isStyleAttributeValid())
+    if (UNLIKELY(name == styleAttr) && attributeData() && attributeData()->m_styleAttributeIsDirty)
         updateStyleAttribute();
 
 #if ENABLE(SVG)
@@ -662,7 +662,7 @@ const AtomicString& Element::getAttribute(const AtomicString& name) const
     bool ignoreCase = shouldIgnoreAttributeCase(this);
 
     // Update the 'style' attribute if it's invalid and being requested:
-    if (!isStyleAttributeValid() && equalPossiblyIgnoringCase(name, styleAttr.localName(), ignoreCase))
+    if (attributeData() && attributeData()->m_styleAttributeIsDirty && equalPossiblyIgnoringCase(name, styleAttr.localName(), ignoreCase))
         updateStyleAttribute();
 
 #if ENABLE(SVG)
@@ -1652,7 +1652,7 @@ void Element::removeAttribute(const AtomicString& name)
     AtomicString localName = shouldIgnoreAttributeCase(this) ? name.lower() : name;
     size_t index = attributeData()->getAttributeItemIndex(localName, false);
     if (index == notFound) {
-        if (UNLIKELY(localName == styleAttr) && !isStyleAttributeValid() && isStyledElement())
+        if (UNLIKELY(localName == styleAttr) && attributeData()->m_styleAttributeIsDirty && isStyledElement())
             static_cast<StyledElement*>(this)->removeAllInlineStyleProperties();
         return;
     }
@@ -2444,8 +2444,6 @@ void Element::cloneAttributesFromElement(const Element& other)
     if (hasSyntheticAttrChildNodes())
         detachAllAttrNodesFromElement();
 
-    setIsStyleAttributeValid(other.isStyleAttributeValid());
-
     other.updateInvalidAttributes();
     if (!other.m_attributeData) {
         m_attributeData.clear();
@@ -2476,11 +2474,6 @@ void Element::cloneAttributesFromElement(const Element& other)
 
     for (unsigned i = 0; i < m_attributeData->length(); ++i) {
         const Attribute* attribute = const_cast<const ElementAttributeData*>(m_attributeData.get())->attributeItem(i);
-        // This optimization isn't very nicely factored, but a huge win for cloning elements with inline style.
-        if (isStyledElement() && attribute->name() == HTMLNames::styleAttr) {
-            static_cast<StyledElement*>(this)->styleAttributeChanged(attribute->value(), StyledElement::DoNotReparseStyleAttribute);
-            continue;
-        }
         attributeChanged(attribute->name(), attribute->value());
     }
 }

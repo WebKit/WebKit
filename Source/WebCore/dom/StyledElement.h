@@ -56,10 +56,6 @@ public:
 
     virtual void collectStyleForPresentationAttribute(const Attribute&, StylePropertySet*) { }
 
-    // May be called by ElementAttributeData::cloneDataFrom().
-    enum ShouldReparseStyleAttribute { DoNotReparseStyleAttribute = 0, ReparseStyleAttribute = 1 };
-    void styleAttributeChanged(const AtomicString& newStyleString, ShouldReparseStyleAttribute = ReparseStyleAttribute);
-
 protected:
     StyledElement(const QualifiedName&, Document*, ConstructionType);
 
@@ -75,9 +71,12 @@ protected:
     virtual void addSubresourceAttributeURLs(ListHashSet<KURL>&) const;
 
 private:
+    void styleAttributeChanged(const AtomicString& newStyleString);
+
     virtual void updateStyleAttribute() const;
     void inlineStyleChanged();
     PropertySetCSSStyleDeclaration* inlineStyleCSSOMWrapper();
+    void setInlineStyleFromString(const AtomicString&);
 
     void makePresentationAttributeCacheKey(PresentationAttributeCacheKey&) const;
     void rebuildPresentationAttributeStyle();
@@ -85,7 +84,8 @@ private:
 
 inline void StyledElement::invalidateStyleAttribute()
 {
-    clearIsStyleAttributeValid();
+    ASSERT(attributeData());
+    attributeData()->m_styleAttributeIsDirty = true;
 }
 
 inline const StylePropertySet* StyledElement::presentationAttributeStyle()

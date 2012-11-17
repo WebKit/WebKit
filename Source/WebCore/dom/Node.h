@@ -98,7 +98,7 @@ class PropertyNodeList;
 
 typedef int ExceptionCode;
 
-const int nodeStyleChangeShift = 20;
+const int nodeStyleChangeShift = 19;
 
 // SyntheticStyleChange means that we need to go through the entire style change logic even though
 // no style property has actually changed. It is used to restructure the tree when, for instance,
@@ -710,34 +710,33 @@ private:
         // These bits are used by derived classes, pulled up here so they can
         // be stored in the same memory word as the Node bits above.
         IsParsingChildrenFinishedFlag = 1 << 15, // Element
-        IsStyleAttributeValidFlag = 1 << 16, // StyledElement
 #if ENABLE(SVG)
-        AreSVGAttributesValidFlag = 1 << 17, // Element
-        IsSynchronizingSVGAttributesFlag = 1 << 18, // SVGElement
-        HasSVGRareDataFlag = 1 << 19, // SVGElement
+        AreSVGAttributesValidFlag = 1 << 16, // Element
+        IsSynchronizingSVGAttributesFlag = 1 << 17, // SVGElement
+        HasSVGRareDataFlag = 1 << 18, // SVGElement
 #endif
 
         StyleChangeMask = 1 << nodeStyleChangeShift | 1 << (nodeStyleChangeShift + 1),
 
-        SelfOrAncestorHasDirAutoFlag = 1 << 22,
+        SelfOrAncestorHasDirAutoFlag = 1 << 21,
 
-        HasNameFlag = 1 << 23,
+        HasNameFlag = 1 << 22,
 
-        InNamedFlowFlag = 1 << 24,
-        HasSyntheticAttrChildNodesFlag = 1 << 25,
-        HasCustomCallbacksFlag = 1 << 26,
-        HasScopedHTMLStyleChildFlag = 1 << 27,
-        HasEventTargetDataFlag = 1 << 28,
-        InEdenFlag = 1 << 29,
+        InNamedFlowFlag = 1 << 23,
+        HasSyntheticAttrChildNodesFlag = 1 << 24,
+        HasCustomCallbacksFlag = 1 << 25,
+        HasScopedHTMLStyleChildFlag = 1 << 26,
+        HasEventTargetDataFlag = 1 << 27,
+        InEdenFlag = 1 << 28,
 
 #if ENABLE(SVG)
-        DefaultNodeFlags = IsParsingChildrenFinishedFlag | IsStyleAttributeValidFlag | AreSVGAttributesValidFlag,
+        DefaultNodeFlags = IsParsingChildrenFinishedFlag | AreSVGAttributesValidFlag,
 #else
-        DefaultNodeFlags = IsParsingChildrenFinishedFlag | IsStyleAttributeValidFlag,
+        DefaultNodeFlags = IsParsingChildrenFinishedFlag,
 #endif
     };
 
-    // 2 bits remaining
+    // 3 bits remaining
 
     bool getFlag(NodeFlags mask) const { return m_nodeFlags & mask; }
     void setFlag(bool f, NodeFlags mask) const { m_nodeFlags = (m_nodeFlags & ~mask) | (-(int32_t)f & mask); } 
@@ -837,12 +836,6 @@ private:
         RenderObject* m_renderer;
         NodeRareDataBase* m_rareData;
     } m_data;
-
-public:
-    bool isStyleAttributeValid() const { return getFlag(IsStyleAttributeValidFlag); }
-    void setIsStyleAttributeValid(bool f) { setFlag(f, IsStyleAttributeValidFlag); }
-    void setIsStyleAttributeValid() const { setFlag(IsStyleAttributeValidFlag); }
-    void clearIsStyleAttributeValid() { clearFlag(IsStyleAttributeValidFlag); }
 
 protected:
     bool isParsingChildrenFinished() const { return getFlag(IsParsingChildrenFinishedFlag); }

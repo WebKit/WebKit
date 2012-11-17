@@ -2404,6 +2404,8 @@ static bool isCacheableInMatchedPropertiesCache(const Element* element, const Re
         return false;
     if (style->zoom() != RenderStyle::initialZoom())
         return false;
+    if (style->writingMode() != RenderStyle::initialWritingMode())
+        return false;
     // The cache assumes static knowledge about which properties are inherited.
     if (parentStyle->hasExplicitlyInheritedProperties())
         return false;

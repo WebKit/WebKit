@@ -128,8 +128,9 @@ static PresentationAttributeCacheCleaner& presentationAttributeCacheCleaner()
 
 void StyledElement::updateStyleAttribute() const
 {
-    ASSERT(!isStyleAttributeValid());
-    setIsStyleAttributeValid();
+    ASSERT(attributeData());
+    ASSERT(attributeData()->m_styleAttributeIsDirty);
+    attributeData()->m_styleAttributeIsDirty = false;
     if (const StylePropertySet* inlineStyle = this->inlineStyle())
         const_cast<StyledElement*>(this)->setSynchronizedLazyAttribute(styleAttr, inlineStyle->asText());
 }
@@ -181,30 +182,41 @@ PropertySetCSSStyleDeclaration* StyledElement::inlineStyleCSSOMWrapper()
     return cssomWrapper;
 }
 
-void StyledElement::styleAttributeChanged(const AtomicString& newStyleString, ShouldReparseStyleAttribute shouldReparse)
+inline void StyledElement::setInlineStyleFromString(const AtomicString& newStyleString)
 {
-    if (shouldReparse) {
-        WTF::OrdinalNumber startLineNumber = WTF::OrdinalNumber::beforeFirst();
-        if (document() && document()->scriptableDocumentParser() && !document()->isInDocumentWrite())
-            startLineNumber = document()->scriptableDocumentParser()->lineNumber();
+    RefPtr<StylePropertySet>& inlineStyle = attributeData()->m_inlineStyle;
 
-        if (newStyleString.isNull()) {
-            if (PropertySetCSSStyleDeclaration* cssomWrapper = inlineStyleCSSOMWrapper())
-                cssomWrapper->clearParentElement();
-            mutableAttributeData()->m_inlineStyle.clear();
-        } else if (document()->contentSecurityPolicy()->allowInlineStyle(document()->url(), startLineNumber)) {
-            // We reconstruct the property set instead of mutating if there is no CSSOM wrapper.
-            // This makes wrapperless property sets immutable and so cacheable.
-            RefPtr<StylePropertySet>& inlineStyle = attributeData()->m_inlineStyle;
-            if (inlineStyle && !inlineStyle->isMutable())
-                inlineStyle.clear();
-            if (!inlineStyle)
-                inlineStyle = CSSParser::parseInlineStyleDeclaration(newStyleString, this);
-            else
-                inlineStyle->parseDeclaration(newStyleString, document()->elementSheet()->contents());
-        }
-        setIsStyleAttributeValid();
-    }
+    // Avoid redundant work if we're using shared attribute data with already parsed inline style.
+    if (inlineStyle && !attributeData()->isMutable())
+        return;
+
+    // We reconstruct the property set instead of mutating if there is no CSSOM wrapper.
+    // This makes wrapperless property sets immutable and so cacheable.
+    if (inlineStyle && !inlineStyle->isMutable())
+        inlineStyle.clear();
+
+    if (!inlineStyle)
+        inlineStyle = CSSParser::parseInlineStyleDeclaration(newStyleString, this);
+    else
+        inlineStyle->parseDeclaration(newStyleString, document()->elementSheet()->contents());
+}
+
+void StyledElement::styleAttributeChanged(const AtomicString& newStyleString)
+{
+    WTF::OrdinalNumber startLineNumber = WTF::OrdinalNumber::beforeFirst();
+    if (document() && document()->scriptableDocumentParser() && !document()->isInDocumentWrite())
+        startLineNumber = document()->scriptableDocumentParser()->lineNumber();
+
+    if (newStyleString.isNull()) {
+        if (PropertySetCSSStyleDeclaration* cssomWrapper = inlineStyleCSSOMWrapper())
+            cssomWrapper->clearParentElement();
+        mutableAttributeData()->m_inlineStyle.clear();
+    } else if (document()->contentSecurityPolicy()->allowInlineStyle(document()->url(), startLineNumber))
+        setInlineStyleFromString(newStyleString);
+
+    attributeData()->m_styleAttributeIsDirty = false;
+
+    // FIXME: Why aren't we using setNeedsStyleRecalc(InlineStyleChange) here?
     setNeedsStyleRecalc();
     InspectorInstrumentation::didInvalidateStyleAttr(document(), this);
 }
@@ -220,7 +232,8 @@ void StyledElement::parseAttribute(const Attribute& attribute)
 void StyledElement::inlineStyleChanged()
 {
     setNeedsStyleRecalc(InlineStyleChange);
-    setIsStyleAttributeValid(false);
+    ASSERT(attributeData());
+    attributeData()->m_styleAttributeIsDirty = true;
     InspectorInstrumentation::didInvalidateStyleAttr(document(), this);
 }
     

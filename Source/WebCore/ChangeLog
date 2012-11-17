@@ -1,3 +1,58 @@
+2012-11-16  Andreas Kling  <akling@apple.com>
+
+        Exploit shared attribute data to avoid parsing identical "style" attributes.
+        <http://webkit.org/b/101163>
+
+        Reviewed by Antti Koivisto.
+
+        Track the "inline style dirty" state on ElementAttributeData instead of in a Node flag.
+        This allows us to avoid duplicate work for ElementAttributeData that are shared between multiple elements,
+        since the state is no longer per-Element.
+
+        * css/StyleResolver.cpp:
+        (WebCore::isCacheableInMatchedPropertiesCache):
+
+            Disable the matched properties cache for styles with non-standard writing-mode.
+            This is necessary because some CSS properties have different meaning depending on context -
+            properties handled by CSSProperty::resolveDirectionAwareProperty().
+
+            Now that multiple elements may have identical inlineStyle() pointers, this is necessary to
+            avoid mapping StylePropertySets with direction-aware properties to RenderStyles with differing
+            writing-modes in the matched properties cache.
+
+        * dom/Node.h:
+        * dom/ElementAttributeData.cpp:
+        (WebCore::ElementAttributeData::ElementAttributeData):
+        * dom/ElementAttributeData.h:
+        (WebCore::ElementAttributeData::ElementAttributeData):
+        (ElementAttributeData):
+        * dom/Element.h:
+        (WebCore::Element::updateInvalidAttributes):
+        * dom/Element.cpp:
+        (WebCore::Element::getAttribute):
+        (WebCore::Element::removeAttribute):
+        * dom/StyledElement.h:
+        (WebCore::StyledElement::invalidateStyleAttribute):
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::updateStyleAttribute):
+
+            Move "style attribute dirty" flag to ElementAttributeData.
+
+        (WebCore::Element::cloneAttributesFromElement):
+
+            Remove ugly optimization to avoid reparsing inline style when cloning elements. This now happens
+            automagically since cloning nodes just refs the original attribute data.
+
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::updateStyleAttribute):
+        (WebCore::StyledElement::setInlineStyleFromString):
+        (WebCore::StyledElement::styleAttributeChanged):
+        (WebCore::StyledElement::inlineStyleChanged):
+
+            Avoid reparsing the inline style if the element's attribute data is immutable and already has
+            a parsed inlineStyle(). Split the set-inline-style-from-string code out of styleAttributeChanged()
+            to make the code more understandable.
+
 2012-11-16  Simon Fraser  <simon.fraser@apple.com>
 
         Don't update layer positions on scrolling if we're in the middle of layout

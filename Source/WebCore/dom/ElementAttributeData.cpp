@@ -83,6 +83,7 @@ ElementAttributeData::ElementAttributeData(const ElementAttributeData& other, bo
     : m_isMutable(isMutable)
     , m_arraySize(isMutable ? 0 : other.length())
     , m_presentationAttributeStyleIsDirty(other.m_presentationAttributeStyleIsDirty)
+    , m_styleAttributeIsDirty(other.m_styleAttributeIsDirty)
     , m_presentationAttributeStyle(other.m_presentationAttributeStyle)
     , m_classNames(other.m_classNames)
     , m_idForStyleResolution(other.m_idForStyleResolution)
