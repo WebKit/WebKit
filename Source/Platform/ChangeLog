@@ -1,3 +1,16 @@
+2012-11-16  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Add conversion between WebTransformation and gfx::Transform
+        https://bugs.webkit.org/show_bug.cgi?id=102575
+
+        Reviewed by James Robinson.
+
+        * chromium/public/WebTransformationMatrix.h:
+        (WebTransformationMatrix):
+        (WebKit::WebTransformationMatrix::WebTransformationMatrix):
+        (WebKit::WebTransformationMatrix::operator=):
+        (WebKit::WebTransformationMatrix::operator gfx::Transform):
+
 2012-11-16  Tommy Widenflycht  <tommyw@google.com>
 
         MediaStream API: Update RTCPeerConnection states to match the latest editors draft

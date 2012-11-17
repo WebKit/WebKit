@@ -36,6 +36,8 @@
 #include "FloatPoint3D.h"
 #include "FloatQuad.h"
 #include "TransformationMatrix.h"
+#else
+#include <ui/gfx/transform.h>
 #endif
 
 #include "WebCommon.h"
@@ -137,6 +139,32 @@ public:
     // Conversions between WebKit::WebTransformationMatrix and WebCore::TransformationMatrix
     explicit WebTransformationMatrix(const WebCore::TransformationMatrix&);
     WebCore::TransformationMatrix toWebCoreTransform() const;
+#else
+    // FIXME: Make this implicit once compositor is not using this class internally.
+    explicit WebTransformationMatrix(const gfx::Transform& transform)
+    {
+        for (int i = 0; i < 4; ++i)
+            for (int j = 0; j < 4; ++j)
+                m_matrix[i][j] = transform.matrix().getDouble(j, i);
+    }
+
+    WebTransformationMatrix& operator=(const gfx::Transform& transform)
+    {
+        for (int i = 0; i < 4; ++i)
+            for (int j = 0; j < 4; ++j)
+                m_matrix[i][j] = transform.matrix().getDouble(j, i);
+        return *this;
+    }
+
+    // FIXME: Make this an operator once compositor is not using this class internally.
+    gfx::Transform toTransform() const
+    {
+        gfx::Transform transform;
+        for (int i = 0; i < 4; ++i)
+            for (int j = 0; j < 4; ++j)
+                transform.matrix().setDouble(i, j, m_matrix[j][i]);
+        return transform;
+    }
 #endif
 
 protected:
