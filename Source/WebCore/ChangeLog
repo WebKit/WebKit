@@ -1,3 +1,10 @@
+2012-11-16  Patrick Gansterer  <paroga@webkit.org>
+
+        Build fix for !USE(ACCELERATED_COMPOSITING) after r135029.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::paintOverflowControls):
+
 2012-11-16  Benjamin Poulain  <bpoulain@apple.com>
 
         Improve the performance of rect transform

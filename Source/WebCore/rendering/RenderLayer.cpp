@@ -2718,7 +2718,10 @@ void RenderLayer::paintOverflowControls(GraphicsContext* context, const IntPoint
 #endif
         RenderView* renderView = renderer()->view();
 
-        RenderLayer* paintingRoot = enclosingCompositingLayer();
+        RenderLayer* paintingRoot = 0;
+#if USE(ACCELERATED_COMPOSITING)
+        paintingRoot = enclosingCompositingLayer();
+#endif
         if (!paintingRoot)
             paintingRoot = renderView->layer();
 
