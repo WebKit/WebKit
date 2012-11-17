@@ -11,17 +11,9 @@ function test() {
                 InspectorTest.addResult("FAIL: no stack trace attached to message #" + i);
             } else {
                 InspectorTest.addResult("Stack Trace:\n");
-                for (var j = 0; j < trace.length; j++) {
-                    var url = trace[j].url;
-                    var lineNumber = trace[j].lineNumber;
-                    var columnNumber = trace[j].columnNumber;
-                    if (!trace[j].url) {
-                        url = "(internal script)";
-                        lineNumber = "(line number)";
-                        columnNumber = "(column number)";
-                    }
-                    InspectorTest.addResult("    " + j + ") " + url + " / " + trace[j].functionName + " / " + lineNumber + " / " + columnNumber);
-                }
+                InspectorTest.addResult("    url: " + trace[0].url);
+                InspectorTest.addResult("    function: " + trace[0].functionName);
+                InspectorTest.addResult("    line: " + trace[0].lineNumber);
             }
         }
         InspectorTest.completeTest();

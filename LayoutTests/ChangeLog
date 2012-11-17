@@ -1,3 +1,34 @@
+2012-11-17  Mike West  <mkwst@chromium.org>
+
+        Web Inspector: http/tests/inspector/stacktraces/* are flakey in JSC
+        https://bugs.webkit.org/show_bug.cgi?id=102380
+
+        Reviewed by Yury Semikhatsky.
+
+        The inspector stacktrace tests are quite flakey at the moment under JSC.
+        This patch drops detail out of the test that a) isn't relevent to what's
+        being tested, and b) varies under JSC for no discernable reason. A side
+        benifit of this change is that we can drop most platform-specific test
+        results, as we're now only looking at data that JSC and V8 agree upon.
+
+        * http/tests/inspector/stacktraces/csp-injected-content-warning-contains-stacktrace-expected.txt:
+        * http/tests/inspector/stacktraces/csp-inline-warning-contains-stacktrace-expected.txt:
+        * http/tests/inspector/stacktraces/csp-setInterval-warning-contains-stacktrace-expected.txt:
+        * http/tests/inspector/stacktraces/csp-setTimeout-warning-contains-stacktrace-expected.txt:
+            Reset tests based on the new level of detail.
+        * http/tests/inspector/stacktraces/resources/stacktrace-test.js:
+        (test.addMessage):
+        (test):
+            Limit the detail of the output to the top frame of the stack, and
+            drop the column number (which was always 0 in JSC).
+        * platform/chromium/http/tests/inspector/stacktraces/csp-injected-content-warning-contains-stacktrace-expected.txt: Removed.
+        * platform/chromium/http/tests/inspector/stacktraces/csp-setInterval-warning-contains-stacktrace-expected.txt: Removed.
+        * platform/chromium/http/tests/inspector/stacktraces/csp-setTimeout-warning-contains-stacktrace-expected.txt: Removed.
+            Dropping these platform-specific tests, as this patch limits the test
+            output detail to a subset that V8 and JSC agree upon.
+        * platform/chromium/http/tests/inspector/stacktraces/csp-inline-warning-contains-stacktrace-expected.txt:
+            Can't drop this one, sadly.
+
 2012-11-16  Simon Fraser  <simon.fraser@apple.com>
 
         Rebaseline.
