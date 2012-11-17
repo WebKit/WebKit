@@ -1,3 +1,9 @@
+2012-11-17  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed.  Rolled DEPS.
+
+        * DEPS:
+
 2012-11-17  Istiaque Ahmed  <lazyboy@chromium.org>
 
         Provide page/window coordinates to plugin's local coordinates translation in WebPluginContainer.
