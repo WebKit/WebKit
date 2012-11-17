@@ -113,6 +113,7 @@ public:
     virtual void setOpaque(bool);
     virtual bool isRectTopmost(const WebRect&);
     virtual void setIsAcceptingTouchEvents(bool);
+    virtual WebPoint windowToLocalPoint(const WebPoint&);
 
     // This cannot be null.
     WebPlugin* plugin() { return m_webPlugin; }

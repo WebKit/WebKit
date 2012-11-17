@@ -531,6 +531,15 @@ void WebPluginContainerImpl::setIsAcceptingTouchEvents(bool acceptingTouchEvents
         m_element->document()->didRemoveTouchEventHandler();
 }
 
+WebPoint WebPluginContainerImpl::windowToLocalPoint(const WebPoint& point)
+{
+    ScrollView* view = parent();
+    if (!view)
+        return point;
+    WebPoint windowPoint = view->windowToContents(point);
+    return roundedIntPoint(m_element->renderer()->absoluteToLocal(LayoutPoint(windowPoint), UseTransforms | SnapOffsetForTransforms));
+}
+
 void WebPluginContainerImpl::didReceiveResponse(const ResourceResponse& response)
 {
     // Make sure that the plugin receives window geometry before data, or else
