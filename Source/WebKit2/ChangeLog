@@ -1,3 +1,15 @@
+2012-11-17  Balazs Kelemen  <kbalazs@webkit.org>
+
+        8bit-unaware String usage in NetscapePluginModuleX11.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=102482
+
+        Reviewed by Michael Saboff.
+
+        String::fromUTF8 is not guaranteed to give a 16 bit string.
+
+        * Shared/Plugins/Netscape/x11/NetscapePluginModuleX11.cpp:
+        (WebKit::truncateToSingleLine): Do an explicit 16 bit conversion.
+
 2012-11-16  Jaehun Lim  <ljaehun.lim@samsung.com>
 
         [EFL][WK2] Remove unnecessary #include statemtns
