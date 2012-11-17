@@ -1376,6 +1376,11 @@ webkit.org/b/101539 editing/execCommand/switch-list-type-with-orphaned-li.html [
 
 webkit.org/b/102183 svg/custom/use-instanceRoot-event-listeners.xhtml [ Failure ]
 
+webkit.org/b/102349 fast/dom/shadow/pseudoclass-update-enabled-anchor.html [ ImageOnlyFailure ]
+webkit.org/b/102349 fast/dom/shadow/pseudoclass-update-enabled-area.html [ ImageOnlyFailure ]
+
+webkit.org/b/102586 media/video-src-blob.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing
 #////////////////////////////////////////////////////////////////////////////////////////
