@@ -1,3 +1,15 @@
+2012-11-16  Simon Fraser  <simon.fraser@apple.com>
+
+        Rebaseline some editing tests.
+
+        * platform/mac-wk2/editing/selection/caret-ltr-right-expected.txt: Removed.
+        * platform/mac-wk2/editing/selection/caret-rtl-right-expected.txt: Removed.
+        * platform/mac/TestExpectations:
+        * platform/mac/editing/pasteboard/innerText-inline-table-expected.txt:
+        * platform/mac/editing/selection/iframe-expected.txt:
+        * platform/mac/editing/selection/inline-table-expected.txt:
+        * platform/mac/editing/selection/table-caret-3-expected.txt:
+
 2012-11-16  David Grogan  <dgrogan@chromium.org>
 
         IndexedDB: setVersion excision batch 10
