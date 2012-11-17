@@ -39,6 +39,21 @@ function runTest() {
         testPassed("Biquad filter defaults to low-pass filter.");
     else
         testFailed("Biquad filter should default to low-pass filter.");
+    
+    if (filter.frequency.value === 350)
+        testPassed("The default value of frequency is 350.");
+    else
+        testFailed("The default value of frequency should be 350.");
+    
+    if (filter.Q.value === 1)
+        testPassed("The default value of Q is 1.");
+    else
+        testFailed("The default value of Q should be 1.");
+    
+    if (filter.gain.value === 0)
+        testPassed("The default value of gain is 0.");
+    else
+        testFailed("The default value of gain should be 0.");
 
     // Check that all legal filter types can be set.
     var filterTypeArray = [filter.LOWPASS,

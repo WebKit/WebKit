@@ -1,3 +1,17 @@
+2012-11-17  Li Yin  <li.yin@intel.com>
+
+        biquadfilternode-basic.html test should cover default value of frequency, Q and gain.
+        https://bugs.webkit.org/show_bug.cgi?id=102305
+
+        Reviewed by Chris Rogers.
+
+        Spec: https://dvcs.w3.org/hg/audio/raw-file/tip/webaudio/specification.html#BiquadFilterNode
+        The default values of frequency, Q and gain are clearly specified, we should
+        have related sub test to over them.
+
+        * webaudio/biquadfilternode-basic-expected.txt:
+        * webaudio/biquadfilternode-basic.html:
+
 2012-11-17  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening.
