@@ -46,7 +46,7 @@ var code;
 var reason;
 var result;
 var invalidAccessErr = "INVALID_ACCESS_ERR";
-var syntaxErr = "SYNTAX_ERR";
+var syntaxErr = "SyntaxError";
 var normalClosure = 1000;
 var abnormalClosure = 1006;
 var url = "ws://127.0.0.1:8880/websocket/tests/hybi/close";
@@ -133,7 +133,7 @@ function runCodeTest()
 
 function runInvalidStringTest()
 {
-    // FIXME: unpaired surrogates throw SYNTAX_ERR
+    // FIXME: unpaired surrogates throw SyntaxError
     debug("Skip invalid string test.");
     runReasonTest();
 }
