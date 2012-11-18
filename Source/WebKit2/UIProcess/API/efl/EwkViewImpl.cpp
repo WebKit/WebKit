@@ -352,8 +352,8 @@ void EwkViewImpl::displayTimerFired(Timer<EwkViewImpl>*)
             return;
 
         RefPtr<cairo_t> graphicsContext = adoptRef(cairo_create(surface.get()));
-        cairo_translate(graphicsContext.get(), -m_scrollPosition.x(), -m_scrollPosition.y());
         cairo_scale(graphicsContext.get(), m_scaleFactor, m_scaleFactor);
+        cairo_translate(graphicsContext.get(), -m_scrollPosition.x(), -m_scrollPosition.y());
         renderer->paintToGraphicsContext(graphicsContext.get());
         evas_object_image_data_update_add(sd->image, 0, 0, viewport.width(), viewport.height());
     }
