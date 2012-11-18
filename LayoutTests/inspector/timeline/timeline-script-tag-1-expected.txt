@@ -3,8 +3,10 @@ Tests the Timeline API instrumentation of an HTML script tag.
 
 
 ParseHTML
+----> ScheduleStyleRecalculation
 ----> InvalidateLayout
 ParseHTML
+----> ScheduleStyleRecalculation
 ----> EvaluateScript
 --------> TimeStamp : SCRIPT TAG
 ----> InvalidateLayout

@@ -314,12 +314,11 @@ StyleResolver::StyleResolver(Document* document, bool matchAuthorAndUserStyles)
     resetAuthorStyle();
 
     DocumentStyleSheetCollection* styleSheetCollection = document->styleSheetCollection();
-    // FIXME: This sucks! The user sheet is reparsed every time!
     OwnPtr<RuleSet> tempUserStyle = RuleSet::create();
     if (CSSStyleSheet* pageUserSheet = styleSheetCollection->pageUserSheet())
         tempUserStyle->addRulesFromSheet(pageUserSheet->contents(), *m_medium, this);
-    addAuthorRulesAndCollectUserRulesFromSheets(styleSheetCollection->pageGroupUserSheets(), *tempUserStyle);
-    addAuthorRulesAndCollectUserRulesFromSheets(styleSheetCollection->documentUserSheets(), *tempUserStyle);
+    collectRulesFromUserStyleSheets(styleSheetCollection->injectedUserStyleSheets(), *tempUserStyle);
+    collectRulesFromUserStyleSheets(styleSheetCollection->documentUserStyleSheets(), *tempUserStyle);
     if (tempUserStyle->m_ruleCount > 0 || tempUserStyle->m_pageRules.size() > 0)
         m_userStyle = tempUserStyle.release();
 
@@ -335,18 +334,11 @@ StyleResolver::StyleResolver(Document* document, bool matchAuthorAndUserStyles)
     appendAuthorStyleSheets(0, styleSheetCollection->activeAuthorStyleSheets());
 }
 
-void StyleResolver::addAuthorRulesAndCollectUserRulesFromSheets(const Vector<RefPtr<CSSStyleSheet> >* userSheets, RuleSet& userStyle)
+void StyleResolver::collectRulesFromUserStyleSheets(const Vector<RefPtr<CSSStyleSheet> >& userSheets, RuleSet& userStyle)
 {
-    if (!userSheets)
-        return;
-
-    unsigned length = userSheets->size();
-    for (unsigned i = 0; i < length; i++) {
-        StyleSheetContents* sheet = userSheets->at(i)->contents();
-        if (sheet->isUserStyleSheet())
-            userStyle.addRulesFromSheet(sheet, *m_medium, this);
-        else
-            m_authorStyle->addRulesFromSheet(sheet, *m_medium, this);
+    for (unsigned i = 0; i < userSheets.size(); ++i) {
+        ASSERT(userSheets[i]->contents()->isUserStyleSheet());
+        userStyle.addRulesFromSheet(userSheets[i]->contents(), *m_medium, this);
     }
 }
 
@@ -2589,27 +2581,18 @@ static void collectCSSOMWrappers(HashMap<StyleRule*, RefPtr<CSSStyleRule> >& wra
     collectCSSOMWrappers(wrapperMap, styleSheetWrapper.get());
 }
 
+static void collectCSSOMWrappers(HashMap<StyleRule*, RefPtr<CSSStyleRule> >& wrapperMap, const Vector<RefPtr<CSSStyleSheet> >& sheets)
+{
+    for (unsigned i = 0; i < sheets.size(); ++i)
+        collectCSSOMWrappers(wrapperMap, sheets[i].get());
+}
+
 static void collectCSSOMWrappers(HashMap<StyleRule*, RefPtr<CSSStyleRule> >& wrapperMap, DocumentStyleSheetCollection* styleSheetCollection)
 {
-    const Vector<RefPtr<CSSStyleSheet> >& styleSheets = styleSheetCollection->activeAuthorStyleSheets();
-    for (unsigned i = 0; i < styleSheets.size(); ++i)
-        collectCSSOMWrappers(wrapperMap, styleSheets[i].get());
-
+    collectCSSOMWrappers(wrapperMap, styleSheetCollection->activeAuthorStyleSheets());
     collectCSSOMWrappers(wrapperMap, styleSheetCollection->pageUserSheet());
-    {
-        const Vector<RefPtr<CSSStyleSheet> >* pageGroupUserSheets = styleSheetCollection->pageGroupUserSheets();
-        if (pageGroupUserSheets) {
-            for (size_t i = 0, size = pageGroupUserSheets->size(); i < size; ++i)
-                collectCSSOMWrappers(wrapperMap, pageGroupUserSheets->at(i).get());
-        }
-    }
-    {
-        const Vector<RefPtr<CSSStyleSheet> >* documentUserSheets = styleSheetCollection->documentUserSheets();
-        if (documentUserSheets) {
-            for (size_t i = 0, size = documentUserSheets->size(); i < size; ++i)
-                collectCSSOMWrappers(wrapperMap, documentUserSheets->at(i).get());
-        }
-    }
+    collectCSSOMWrappers(wrapperMap, styleSheetCollection->injectedUserStyleSheets());
+    collectCSSOMWrappers(wrapperMap, styleSheetCollection->documentUserStyleSheets());
 }
 
 CSSStyleRule* StyleResolver::ensureFullCSSOMWrapperForInspector(StyleRule* rule)
