@@ -1,3 +1,33 @@
+2012-11-18  Adam Barth  <abarth@webkit.org>
+
+        Unreviewed.
+
+        Update run-bindings-tests baselines after
+        http://trac.webkit.org/changeset/135063
+
+        * bindings/scripts/test/JS/JSTestActiveDOMObject.h:
+        (JSTestActiveDOMObjectOwner):
+        * bindings/scripts/test/JS/JSTestCustomNamedGetter.h:
+        (JSTestCustomNamedGetterOwner):
+        * bindings/scripts/test/JS/JSTestEventConstructor.h:
+        (JSTestEventConstructorOwner):
+        * bindings/scripts/test/JS/JSTestEventTarget.h:
+        (JSTestEventTargetOwner):
+        * bindings/scripts/test/JS/JSTestException.h:
+        (JSTestExceptionOwner):
+        * bindings/scripts/test/JS/JSTestInterface.h:
+        (JSTestInterfaceOwner):
+        * bindings/scripts/test/JS/JSTestMediaQueryListListener.h:
+        (JSTestMediaQueryListListenerOwner):
+        * bindings/scripts/test/JS/JSTestNamedConstructor.h:
+        (JSTestNamedConstructorOwner):
+        * bindings/scripts/test/JS/JSTestObj.h:
+        (JSTestObjOwner):
+        * bindings/scripts/test/JS/JSTestOverloadedConstructors.h:
+        (JSTestOverloadedConstructorsOwner):
+        * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.h:
+        (JSTestSerializedScriptValueInterfaceOwner):
+
 2012-11-18  Simon Fraser  <simon.fraser@apple.com>
 
         Make convertToLayerCoords iterative, rather than recursive

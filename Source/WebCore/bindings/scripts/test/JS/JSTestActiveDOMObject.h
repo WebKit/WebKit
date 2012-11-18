@@ -66,6 +66,7 @@ protected:
 };
 
 class JSTestActiveDOMObjectOwner : public JSC::WeakHandleOwner {
+public:
     virtual bool isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void* context, JSC::SlotVisitor&);
     virtual void finalize(JSC::Handle<JSC::Unknown>, void* context);
 };
