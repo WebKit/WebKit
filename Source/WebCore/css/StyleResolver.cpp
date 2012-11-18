@@ -1164,9 +1164,6 @@ static inline bool haveIdenticalStyleAffectingAttributes(StyledElement* a, Style
         return false;
     if (a->fastGetAttribute(langAttr) != b->fastGetAttribute(langAttr))
         return false;
-    // FIXME: This is probably not necessary.
-    if (a->fastGetAttribute(cellpaddingAttr) != b->fastGetAttribute(cellpaddingAttr))
-        return false;
     if (a->hasClass()) {
 #if ENABLE(SVG)
         // SVG elements require a (slow!) getAttribute comparision because "class" is an animatable attribute for SVG.

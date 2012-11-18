@@ -1,3 +1,16 @@
+2012-11-18  Andreas Kling  <akling@apple.com>
+
+        StyleResolver: No need to compare "cellpadding" attributes when evaluating style sharing candidates.
+        <http://webkit.org/b/102596>
+
+        Reviewed by Antti Koivisto.
+
+        Differences in the cellpadding attribute is caught by comparing additionalPresentationAttributeStyle()
+        later on in canShareStyleWithElement() and we shouldn't waste time on comparing them.
+
+        * css/StyleResolver.cpp:
+        (WebCore::haveIdenticalStyleAffectingAttributes):
+
 2012-11-17  Jon Lee  <jonlee@apple.com>
 
         Simulated mouse events should return an accurate offset
