@@ -363,7 +363,7 @@ void HTMLMediaElement::parseAttribute(const QualifiedName& name, const AtomicStr
 {
     if (name == srcAttr) {
         // Trigger a reload, as long as the 'src' attribute is present.
-        if (fastHasAttribute(srcAttr)) {
+        if (!value.isNull()) {
             clearMediaPlayer(MediaResource);
             scheduleLoad(MediaResource);
         }

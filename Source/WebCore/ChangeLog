@@ -1,3 +1,16 @@
+2012-11-18  Andreas Kling  <akling@apple.com>
+
+        HTMLMediaElement: Skip unnecessary attribute lookup in parsing of "src" attribute.
+        <http://webkit.org/b/102614>
+
+        Reviewed by Anders Carlsson.
+
+        When parsing the "src" attribute, we don't need to look it up with fastHasAttribute()
+        to know if it's present. If it's not present, 'value' argument will be null.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::parseAttribute):
+
 2012-11-18  Kondapally Kalyan  <kalyan.kondapally@intel.com>
 
         [EFL] Refactor GraphicsContext3DEFL.
