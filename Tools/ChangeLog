@@ -1,3 +1,13 @@
+2012-11-17  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Remove unused code I wrote a long time ago from gardeningserver.py
+        https://bugs.webkit.org/show_bug.cgi?id=102605
+
+        Reviewed by Adam Barth.
+
+        * Scripts/webkitpy/tool/servers/gardeningserver.py: Removed.
+        * Scripts/webkitpy/tool/servers/gardeningserver_unittest.py: Removed.
+
 2012-11-16  Tony Chang  <tony@chromium.org>
 
         Remove ENABLE_CSS_HIERARCHIES since it's no longer in use

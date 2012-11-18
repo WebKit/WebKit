@@ -83,17 +83,6 @@ class TestGardeningHTTPRequestHandler(GardeningHTTPRequestHandler):
         print "== End JSON Response =="
 
 
-class BuildCoverageExtrapolatorTest(unittest.TestCase):
-    def test_extrapolate(self):
-        # FIXME: Make this test not rely on actual (not mock) port objects.
-        host = MockHost()
-        port = host.port_factory.get('chromium-win-win7', None)
-        converter = TestConfigurationConverter(port.all_test_configurations(), port.configuration_specifier_macros())
-        extrapolator = BuildCoverageExtrapolator(converter)
-        self.assertEqual(extrapolator.extrapolate_test_configurations("WebKit XP"), set([TestConfiguration(version='xp', architecture='x86', build_type='release')]))
-        self.assertRaises(KeyError, extrapolator.extrapolate_test_configurations, "Potato")
-
-
 class GardeningServerTest(unittest.TestCase):
     def _post_to_path(self, path, body=None, expected_stderr=None, expected_stdout=None, server=None):
         handler = TestGardeningHTTPRequestHandler(server or MockServer())

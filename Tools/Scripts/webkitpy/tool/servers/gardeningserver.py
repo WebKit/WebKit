@@ -38,21 +38,6 @@ from webkitpy.layout_tests.port import builders
 _log = logging.getLogger(__name__)
 
 
-class BuildCoverageExtrapolator(object):
-    def __init__(self, test_configuration_converter):
-        self._test_configuration_converter = test_configuration_converter
-
-    @memoized
-    def _covered_test_configurations_for_builder_name(self):
-        coverage = {}
-        for builder_name in builders.all_builder_names():
-            coverage[builder_name] = self._test_configuration_converter.to_config_set(builders.coverage_specifiers_for_builder_name(builder_name))
-        return coverage
-
-    def extrapolate_test_configurations(self, builder_name):
-        return self._covered_test_configurations_for_builder_name()[builder_name]
-
-
 class GardeningHTTPServer(SocketServer.ThreadingMixIn, BaseHTTPServer.HTTPServer):
     def __init__(self, httpd_port, config):
         server_name = ''
