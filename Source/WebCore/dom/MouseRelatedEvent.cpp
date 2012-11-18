@@ -164,14 +164,12 @@ void MouseRelatedEvent::computeRelativePosition()
     targetNode->document()->updateStyleIfNeeded();
 
     // Adjust offsetLocation to be relative to the target's position.
-    if (!isSimulated()) {
-        if (RenderObject* r = targetNode->renderer()) {
-            FloatPoint localPos = r->absoluteToLocal(absoluteLocation(), UseTransforms | SnapOffsetForTransforms);
-            m_offsetLocation = roundedLayoutPoint(localPos);
-            float scaleFactor = 1 / (pageZoomFactor(this) * frameScaleFactor(this));
-            if (scaleFactor != 1.0f)
-                m_offsetLocation.scale(scaleFactor, scaleFactor);
-        }
+    if (RenderObject* r = targetNode->renderer()) {
+        FloatPoint localPos = r->absoluteToLocal(absoluteLocation(), UseTransforms | SnapOffsetForTransforms);
+        m_offsetLocation = roundedLayoutPoint(localPos);
+        float scaleFactor = 1 / (pageZoomFactor(this) * frameScaleFactor(this));
+        if (scaleFactor != 1.0f)
+            m_offsetLocation.scale(scaleFactor, scaleFactor);
     }
 
     // Adjust layerLocation to be relative to the layer.

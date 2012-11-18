@@ -1,3 +1,26 @@
+2012-11-17  Jon Lee  <jonlee@apple.com>
+
+        Simulated mouse events should return an accurate offset
+        https://bugs.webkit.org/show_bug.cgi?id=102606
+        <rdar://problem/12725627>
+
+        Reviewed by Brady Eidson.
+
+        A check to see if the event is simulated prior to calculating the offset has existed for a
+        long time (since at least r14916). Back then the check was needed because the offset was
+        incrementally adjusted when the target was assigned (through
+        MouseRelatedEvent::receivedTarget()).
+
+        Since r82225, we started calculating the offset only when needed, and calculating the offset
+        from scratch rather than incrementally adjusting it. Since we recalculate from scratch,
+        the isSimulated check is irrelevant, and we should remove it.
+
+        Tests are not possible because all uses of simulated mouse events provide no underlying
+        event, so the offset is never recalculated.
+
+        * dom/MouseRelatedEvent.cpp:
+        (WebCore::MouseRelatedEvent::computeRelativePosition): Remove the m_isSimulated check.
+
 2012-11-17  Simon Fraser  <simon.fraser@apple.com>
 
         Don't say there are dirty overlay scrollbars when they are clipped out
