@@ -1,3 +1,21 @@
+2012-11-17  Simon Fraser  <simon.fraser@apple.com>
+
+        Simplify bounds computation for the RenderView's layer
+        https://bugs.webkit.org/show_bug.cgi?id=102597
+
+        Reviewed by Anders Carlsson.
+
+        Computing the bounds of the main layer (that of the RenderView) used to do
+        a full RenderLayer walk, taking the union of the bounds of all the sublayers,
+        which is very expensive on large pages.
+        
+        For the RenderView we can avoid that entirely and just use the RenderView's
+        document rect. Since page scaling happens as a transform on this layer,
+        we want the unscaled document rect.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::calculateLayerBounds):
+
 2012-11-17  Eric Seidel  <eric@webkit.org>
 
         Add ScriptWrappable to more WebCore classes which are commonly JS-wrapped
