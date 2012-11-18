@@ -277,7 +277,6 @@ IF (WTF_USE_3D_GRAPHICS)
   LIST(APPEND WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/platform/graphics/opengl"
     "${WEBCORE_DIR}/platform/graphics/surfaces"
-    "${WEBCORE_DIR}/platform/graphics/surfaces/glx"
     "${WEBCORE_DIR}/platform/graphics/texmap"
   )
   LIST(APPEND WebCore_SOURCES
@@ -287,13 +286,9 @@ IF (WTF_USE_3D_GRAPHICS)
     platform/graphics/efl/GraphicsContext3DPrivate.cpp
     platform/graphics/opengl/Extensions3DOpenGL.cpp
     platform/graphics/opengl/Extensions3DOpenGLCommon.cpp
-    platform/graphics/opengl/GLPlatformContext.cpp
-    platform/graphics/opengl/GLPlatformSurface.cpp
     platform/graphics/opengl/GraphicsContext3DOpenGL.cpp
     platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp
     platform/graphics/surfaces/GraphicsSurface.cpp
-    platform/graphics/surfaces/glx/GLXSurface.cpp
-    platform/graphics/surfaces/glx/GLXContext.cpp
     platform/graphics/surfaces/qt/GraphicsSurfaceGLX.cpp
     platform/graphics/texmap/TextureMapperGL.cpp
     platform/graphics/texmap/TextureMapperShaderManager.cpp

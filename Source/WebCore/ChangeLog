@@ -1,3 +1,41 @@
+2012-11-18  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r135074.
+        http://trac.webkit.org/changeset/135074
+        https://bugs.webkit.org/show_bug.cgi?id=102619
+
+        Made most layout tests crash. (Requested by rakuco on
+        #webkit).
+
+        * PlatformEfl.cmake:
+        * platform/graphics/efl/GraphicsContext3DEfl.cpp:
+        (WebCore::GraphicsContext3D::create):
+        (WebCore::GraphicsContext3D::GraphicsContext3D):
+        (WebCore::GraphicsContext3D::~GraphicsContext3D):
+        (WebCore::GraphicsContext3D::makeContextCurrent):
+        (WebCore::GraphicsContext3D::setContextLostCallback):
+        * platform/graphics/efl/GraphicsContext3DPrivate.cpp:
+        (WebCore::GraphicsContext3DPrivate::GraphicsContext3DPrivate):
+        (WebCore::GraphicsContext3DPrivate::~GraphicsContext3DPrivate):
+        (WebCore::GraphicsContext3DPrivate::createSurface):
+        (WebCore::GraphicsContext3DPrivate::setCurrentGLContext):
+        (WebCore::GraphicsContext3DPrivate::platformGraphicsContext3D):
+        (WebCore::GraphicsContext3DPrivate::makeContextCurrent):
+        (WebCore::GraphicsContext3DPrivate::createGraphicsSurfaces):
+        (WebCore::GraphicsContext3DPrivate::copyToGraphicsSurface):
+        (WebCore::GraphicsContext3DPrivate::graphicsSurfaceToken):
+        * platform/graphics/efl/GraphicsContext3DPrivate.h:
+        (GraphicsContext3DPrivate):
+        * platform/graphics/opengl/GLDefs.h: Removed.
+        * platform/graphics/opengl/GLPlatformContext.cpp: Removed.
+        * platform/graphics/opengl/GLPlatformContext.h: Removed.
+        * platform/graphics/opengl/GLPlatformSurface.cpp: Removed.
+        * platform/graphics/opengl/GLPlatformSurface.h: Removed.
+        * platform/graphics/surfaces/glx/GLXContext.cpp: Removed.
+        * platform/graphics/surfaces/glx/GLXContext.h: Removed.
+        * platform/graphics/surfaces/glx/GLXSurface.cpp: Removed.
+        * platform/graphics/surfaces/glx/GLXSurface.h: Removed.
+
 2012-11-18  Antti Koivisto  <antti@apple.com>
 
         REGRESSION(r129644): User StyleSheet not applying
