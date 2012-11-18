@@ -38,13 +38,14 @@ using namespace WebCore;
 namespace WebKit {
 
 WebCursorInfo::WebCursorInfo(const Cursor& cursor)
-{
-    type = static_cast<Type>(cursor.type());
-    hotSpot = cursor.hotSpot();
-    customImage = cursor.image();
+    : type(static_cast<Type>(cursor.type()))
+    , hotSpot(cursor.hotSpot())
+    , imageScaleFactor(1)
+    , customImage(cursor.image())
 #ifdef WIN32
-    externalHandle = 0;
+    , externalHandle(0)
 #endif
+{
 }
 
 } // namespace WebKit

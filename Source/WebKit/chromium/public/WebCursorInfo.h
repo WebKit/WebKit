@@ -95,6 +95,7 @@ struct WebCursorInfo {
 
     Type type;
     WebPoint hotSpot;
+    float imageScaleFactor;
     WebImage customImage;
 
 #ifdef WIN32
@@ -107,6 +108,7 @@ struct WebCursorInfo {
 
     explicit WebCursorInfo(Type type = TypePointer)
         : type(type)
+        , imageScaleFactor(1)
     {
 #ifdef WIN32
         externalHandle = 0;

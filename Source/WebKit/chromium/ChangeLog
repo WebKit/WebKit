@@ -1,3 +1,18 @@
+2012-11-18  Rick Byers  <rbyers@chromium.org>
+
+        [chromium] add WebCursorInfo::imageScaleFactor
+        https://bugs.webkit.org/show_bug.cgi?id=102612
+
+        Reviewed by Adam Barth.
+
+        Add cursor image scale factor (currently always 1) to chromium API, in preparation for
+        high-dpi cursor support in bug 99493.
+
+        * public/WebCursorInfo.h:
+        (WebKit::WebCursorInfo::WebCursorInfo):
+        * src/WebCursorInfo.cpp:
+        (WebKit::WebCursorInfo::WebCursorInfo):
+
 2012-11-17  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed.  Rolled DEPS.
