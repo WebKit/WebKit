@@ -1,3 +1,20 @@
+2012-11-18  Simon Fraser  <simon.fraser@apple.com>
+
+        Make convertToLayerCoords iterative, rather than recursive
+        https://bugs.webkit.org/show_bug.cgi?id=102618
+
+        Reviewed by Antti Koivisto.
+
+        RenderLayer::convertToLayerCoords() is a hot function on profiles.
+        Change it to be iterative, rather than recursive, so that the
+        bulk of the function can be inlined.
+        
+        Was tested with assertions against the old code during development.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::accumulateOffsetTowardsAncestor):
+        (WebCore::RenderLayer::convertToLayerCoords):
+
 2012-11-18  Andreas Kling  <akling@apple.com>
 
         Inline the StyledElement constructor.

@@ -1479,36 +1479,37 @@ void RenderLayer::convertToPixelSnappedLayerCoords(const RenderLayer* ancestorLa
     roundedRect = pixelSnappedIntRect(rect);
 }
 
-void RenderLayer::convertToLayerCoords(const RenderLayer* ancestorLayer, LayoutPoint& location) const
+// Returns the layer reached on the walk up towards the ancestor.
+static inline const RenderLayer* accumulateOffsetTowardsAncestor(const RenderLayer* layer, const RenderLayer* ancestorLayer, LayoutPoint& location)
 {
-    if (ancestorLayer == this)
-        return;
+    ASSERT(ancestorLayer != layer);
 
-    EPosition position = renderer()->style()->position();
+    const RenderLayerModelObject* renderer = layer->renderer();
+    EPosition position = renderer->style()->position();
 
     // FIXME: Positioning of out-of-flow(fixed, absolute) elements collected in a RenderFlowThread
     // may need to be revisited in a future patch.
     // If the fixed renderer is inside a RenderFlowThread, we should not compute location using localToAbsolute,
     // since localToAbsolute maps the coordinates from named flow to regions coordinates and regions can be
     // positioned in a completely different place in the viewport (RenderView).
-    if (position == FixedPosition && !renderer()->inRenderFlowThread() && (!ancestorLayer || ancestorLayer == renderer()->view()->layer())) {
+    if (position == FixedPosition && !renderer->inRenderFlowThread() && (!ancestorLayer || ancestorLayer == renderer->view()->layer())) {
         // If the fixed layer's container is the root, just add in the offset of the view. We can obtain this by calling
         // localToAbsolute() on the RenderView.
-        FloatPoint absPos = renderer()->localToAbsolute(FloatPoint(), IsFixed);
+        FloatPoint absPos = renderer->localToAbsolute(FloatPoint(), IsFixed);
         location += LayoutSize(absPos.x(), absPos.y());
-        return;
+        return ancestorLayer;
     }
 
     // For the fixed positioned elements inside a render flow thread, we should also skip the code path below
     // Otherwise, for the case of ancestorLayer == rootLayer and fixed positioned element child of a transformed
     // element in render flow thread, we will hit the fixed positioned container before hitting the ancestor layer.
-    if (position == FixedPosition && !renderer()->inRenderFlowThread()) {
+    if (position == FixedPosition && !renderer->inRenderFlowThread()) {
         // For a fixed layers, we need to walk up to the root to see if there's a fixed position container
         // (e.g. a transformed layer). It's an error to call convertToLayerCoords() across a layer with a transform,
         // so we should always find the ancestor at or before we find the fixed position container.
         RenderLayer* fixedPositionContainerLayer = 0;
         bool foundAncestor = false;
-        for (RenderLayer* currLayer = parent(); currLayer; currLayer = currLayer->parent()) {
+        for (RenderLayer* currLayer = layer->parent(); currLayer; currLayer = currLayer->parent()) {
             if (currLayer == ancestorLayer)
                 foundAncestor = true;
 
@@ -1523,20 +1524,20 @@ void RenderLayer::convertToLayerCoords(const RenderLayer* ancestorLayer, LayoutP
 
         if (fixedPositionContainerLayer != ancestorLayer) {
             LayoutPoint fixedContainerCoords;
-            convertToLayerCoords(fixedPositionContainerLayer, fixedContainerCoords);
+            layer->convertToLayerCoords(fixedPositionContainerLayer, fixedContainerCoords);
 
             LayoutPoint ancestorCoords;
             ancestorLayer->convertToLayerCoords(fixedPositionContainerLayer, ancestorCoords);
 
             location += (fixedContainerCoords - ancestorCoords);
-            return;
+            return ancestorLayer;
         }
     }
     
     RenderLayer* parentLayer;
     if (position == AbsolutePosition || position == FixedPosition) {
         // Do what enclosingPositionedAncestor() does, but check for ancestorLayer along the way.
-        parentLayer = parent();
+        parentLayer = layer->parent();
         bool foundAncestorFirst = false;
         while (parentLayer) {
             // RenderFlowThread is a positioned container, child of RenderView, positioned at (0,0).
@@ -1555,8 +1556,8 @@ void RenderLayer::convertToLayerCoords(const RenderLayer* ancestorLayer, LayoutP
 
         // We should not reach RenderView layer past the RenderFlowThread layer for any
         // children of the RenderFlowThread.
-        if (renderer()->inRenderFlowThread() && !renderer()->isRenderFlowThread())
-            ASSERT(parentLayer != renderer()->view()->layer());
+        if (renderer->inRenderFlowThread() && !renderer->isRenderFlowThread())
+            ASSERT(parentLayer != renderer->view()->layer());
 
         if (foundAncestorFirst) {
             // Found ancestorLayer before the abs. positioned container, so compute offset of both relative
@@ -1564,23 +1565,32 @@ void RenderLayer::convertToLayerCoords(const RenderLayer* ancestorLayer, LayoutP
             RenderLayer* positionedAncestor = parentLayer->enclosingPositionedAncestor();
 
             LayoutPoint thisCoords;
-            convertToLayerCoords(positionedAncestor, thisCoords);
+            layer->convertToLayerCoords(positionedAncestor, thisCoords);
             
             LayoutPoint ancestorCoords;
             ancestorLayer->convertToLayerCoords(positionedAncestor, ancestorCoords);
 
             location += (thisCoords - ancestorCoords);
-            return;
+            return ancestorLayer;
         }
     } else
-        parentLayer = parent();
+        parentLayer = layer->parent();
     
     if (!parentLayer)
+        return 0;
+
+    location += toSize(layer->location());
+    return parentLayer;
+}
+
+void RenderLayer::convertToLayerCoords(const RenderLayer* ancestorLayer, LayoutPoint& location) const
+{
+    if (ancestorLayer == this)
         return;
 
-    parentLayer->convertToLayerCoords(ancestorLayer, location);
-
-    location += toSize(m_topLeft);
+    const RenderLayer* currLayer = this;
+    while (currLayer && currLayer != ancestorLayer)
+        currLayer = accumulateOffsetTowardsAncestor(currLayer, ancestorLayer, location);
 }
 
 void RenderLayer::convertToLayerCoords(const RenderLayer* ancestorLayer, LayoutRect& rect) const
