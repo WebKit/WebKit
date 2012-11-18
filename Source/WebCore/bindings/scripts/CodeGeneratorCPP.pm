@@ -28,7 +28,6 @@ package CodeGeneratorCPP;
 use constant FileNamePrefix => "WebDOM";
 
 # Global Variables
-my $module = "";
 my $outputDir = "";
 
 my @headerContentHeader = ();
@@ -124,15 +123,6 @@ sub GenerateInterface
 
     # Write changes.
     $object->WriteData(FileNamePrefix . $name);
-}
-
-# Params: 'idlDocument' struct
-sub GenerateModule
-{
-    my $object = shift;
-    my $dataNode = shift;
-
-    $module = $dataNode->module;
 }
 
 sub GetClassName

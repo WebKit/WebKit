@@ -32,7 +32,6 @@ use constant FileNamePrefix => "JS";
 
 my $codeGenerator;
 
-my $module = "";
 my $outputDir = "";
 my $writeDependencies = 0;
 
@@ -169,15 +168,6 @@ END
     return JSValue::encode(jsUndefined());
 END
     return @GenerateEventListenerImpl;
-}
-
-# Params: 'idlDocument' struct
-sub GenerateModule
-{
-    my $object = shift;
-    my $dataNode = shift;
-
-    $module = $dataNode->module;
 }
 
 sub GetParentClassName

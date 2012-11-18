@@ -133,9 +133,6 @@ sub ProcessDocument
         return;
     }
 
-    # Start the actual code generation!
-    $codeGenerator->GenerateModule($useDocument, $defines);
-
     my $classes = $useDocument->classes;
     foreach my $class (@$classes) {
         print "Generating $useGenerator bindings code for IDL interface \"" . $class->name . "\"...\n" if $verbose;

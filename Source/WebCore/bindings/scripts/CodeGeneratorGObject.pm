@@ -73,9 +73,6 @@ my $licenceTemplate = << "EOF";
 */
 EOF
 
-sub GenerateModule {
-}
-
 sub GetParentClassName {
     my $dataNode = shift;
 

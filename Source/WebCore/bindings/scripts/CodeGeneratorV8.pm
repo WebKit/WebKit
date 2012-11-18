@@ -32,7 +32,6 @@ use constant FileNamePrefix => "V8";
 
 my $codeGenerator;
 
-my $module = "";
 my $outputDir = "";
 my $outputHeadersDir = "";
 
@@ -98,15 +97,6 @@ sub GenerateInterface
     }
 
     $object->WriteData($dataNode);
-}
-
-# Params: 'idlDocument' struct
-sub GenerateModule
-{
-    my $object = shift;
-    my $dataNode = shift;
-
-    $module = $dataNode->module;
 }
 
 sub AddToImplIncludes

@@ -29,7 +29,6 @@ package CodeGeneratorObjC;
 use constant FileNamePrefix => "DOM";
 
 # Global Variables
-my $module = "";
 my $outputDir = "";
 my $writeDependencies = 0;
 my %publicInterfaces = ();
@@ -299,15 +298,6 @@ sub GenerateInterface
     }
 
     die if $fatalError;
-}
-
-# Params: 'idlDocument' struct
-sub GenerateModule
-{
-    my $object = shift;
-    my $dataNode = shift;
-
-    $module = $dataNode->module;
 }
 
 sub GetClassName
