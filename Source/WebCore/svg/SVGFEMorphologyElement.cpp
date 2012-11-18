@@ -88,27 +88,26 @@ bool SVGFEMorphologyElement::isSupportedAttribute(const QualifiedName& attrName)
     return supportedAttributes.contains<QualifiedName, SVGAttributeHashTranslator>(attrName);
 }
 
-void SVGFEMorphologyElement::parseAttribute(const Attribute& attribute)
+void SVGFEMorphologyElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
-    if (!isSupportedAttribute(attribute.name())) {
-        SVGFilterPrimitiveStandardAttributes::parseAttribute(attribute);
+    if (!isSupportedAttribute(name)) {
+        SVGFilterPrimitiveStandardAttributes::parseAttribute(name, value);
         return;
     }
 
-    const AtomicString& value = attribute.value();
-    if (attribute.name() == SVGNames::operatorAttr) {
+    if (name == SVGNames::operatorAttr) {
         MorphologyOperatorType propertyValue = SVGPropertyTraits<MorphologyOperatorType>::fromString(value);
         if (propertyValue > 0)
             set_operatorBaseValue(propertyValue);
         return;
     }
 
-    if (attribute.name() == SVGNames::inAttr) {
+    if (name == SVGNames::inAttr) {
         setIn1BaseValue(value);
         return;
     }
 
-    if (attribute.name() == SVGNames::radiusAttr) {
+    if (name == SVGNames::radiusAttr) {
         float x, y;
         if (parseNumberOptionalNumber(value, x, y)) {
             setRadiusXBaseValue(x);

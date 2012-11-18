@@ -82,17 +82,17 @@ void HTMLFrameElement::attach()
     }
 }
 
-void HTMLFrameElement::parseAttribute(const Attribute& attribute)
+void HTMLFrameElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
-    if (attribute.name() == frameborderAttr) {
-        m_frameBorder = attribute.value().toInt();
-        m_frameBorderSet = !attribute.isNull();
+    if (name == frameborderAttr) {
+        m_frameBorder = value.toInt();
+        m_frameBorderSet = !value.isNull();
         // FIXME: If we are already attached, this has no effect.
-    } else if (attribute.name() == noresizeAttr) {
+    } else if (name == noresizeAttr) {
         if (renderer())
             renderer()->updateFromElement();
     } else
-        HTMLFrameElementBase::parseAttribute(attribute);
+        HTMLFrameElementBase::parseAttribute(name, value);
 }
 
 } // namespace WebCore

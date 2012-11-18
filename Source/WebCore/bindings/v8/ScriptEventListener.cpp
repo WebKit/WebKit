@@ -31,7 +31,6 @@
 #include "config.h"
 #include "ScriptEventListener.h"
 
-#include "Attribute.h"
 #include "Document.h"
 #include "EventListener.h"
 #include "Frame.h"
@@ -49,10 +48,10 @@ static const String& eventParameterName(bool isSVGEvent)
     return isSVGEvent ? evtString : eventString;
 }
 
-PassRefPtr<V8LazyEventListener> createAttributeEventListener(Node* node, const Attribute& attribute)
+PassRefPtr<V8LazyEventListener> createAttributeEventListener(Node* node, const QualifiedName& name, const AtomicString& value)
 {
     ASSERT(node);
-    if (attribute.isNull())
+    if (value.isNull())
         return 0;
 
     // FIXME: Very strange: we initialize zero-based number with '1'.
@@ -67,15 +66,15 @@ PassRefPtr<V8LazyEventListener> createAttributeEventListener(Node* node, const A
         sourceURL = node->document()->url().string();
     }
 
-    return V8LazyEventListener::create(attribute.localName().string(), eventParameterName(node->isSVGElement()), attribute.value(), sourceURL, position, node, WorldContextHandle(UseMainWorld));
+    return V8LazyEventListener::create(name.localName().string(), eventParameterName(node->isSVGElement()), value, sourceURL, position, node, WorldContextHandle(UseMainWorld));
 }
 
-PassRefPtr<V8LazyEventListener> createAttributeEventListener(Frame* frame, const Attribute& attribute)
+PassRefPtr<V8LazyEventListener> createAttributeEventListener(Frame* frame, const QualifiedName& name, const AtomicString& value)
 {
     if (!frame)
         return 0;
 
-    if (attribute.isNull())
+    if (value.isNull())
         return 0;
 
     ScriptController* scriptController = frame->script();
@@ -85,7 +84,7 @@ PassRefPtr<V8LazyEventListener> createAttributeEventListener(Frame* frame, const
     TextPosition position = scriptController->eventHandlerPosition();
     String sourceURL = frame->document()->url().string();
 
-    return V8LazyEventListener::create(attribute.localName().string(), eventParameterName(frame->document()->isSVGDocument()), attribute.value(), sourceURL, position, 0, WorldContextHandle(UseMainWorld));
+    return V8LazyEventListener::create(name.localName().string(), eventParameterName(frame->document()->isSVGDocument()), value, sourceURL, position, 0, WorldContextHandle(UseMainWorld));
 }
 
 String eventListenerHandlerBody(Document* document, EventListener* listener)

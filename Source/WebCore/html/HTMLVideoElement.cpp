@@ -104,9 +104,9 @@ bool HTMLVideoElement::isPresentationAttribute(const QualifiedName& name) const
     return HTMLMediaElement::isPresentationAttribute(name);
 }
 
-void HTMLVideoElement::parseAttribute(const Attribute& attribute)
+void HTMLVideoElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
-    if (attribute.name() == posterAttr) {
+    if (name == posterAttr) {
         // Force a poster recalc by setting m_displayMode to Unknown directly before calling updateDisplayState.
         HTMLMediaElement::setDisplayMode(Unknown);
         updateDisplayState();
@@ -121,7 +121,7 @@ void HTMLVideoElement::parseAttribute(const Attribute& attribute)
         }
 #endif
     } else
-        HTMLMediaElement::parseAttribute(attribute);
+        HTMLMediaElement::parseAttribute(name, value);
 }
 
 bool HTMLVideoElement::supportsFullscreen() const

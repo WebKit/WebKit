@@ -159,18 +159,18 @@ bool SVGAnimationElement::isSupportedAttribute(const QualifiedName& attrName)
     return supportedAttributes.contains<QualifiedName, SVGAttributeHashTranslator>(attrName);
 }
 
-void SVGAnimationElement::parseAttribute(const Attribute& attribute)
+void SVGAnimationElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
-    if (!isSupportedAttribute(attribute.name())) {
-        SVGSMILElement::parseAttribute(attribute);
+    if (!isSupportedAttribute(name)) {
+        SVGSMILElement::parseAttribute(name, value);
         return;
     }
 
-    if (attribute.name() == SVGNames::valuesAttr) {
+    if (name == SVGNames::valuesAttr) {
         // Per the SMIL specification, leading and trailing white space,
         // and white space before and after semicolon separators, is allowed and will be ignored.
         // http://www.w3.org/TR/SVG11/animate.html#ValuesAttribute
-        attribute.value().string().split(';', m_values);
+        value.string().split(';', m_values);
         for (unsigned i = 0; i < m_values.size(); ++i)
             m_values[i] = m_values[i].stripWhiteSpace();
 
@@ -178,43 +178,43 @@ void SVGAnimationElement::parseAttribute(const Attribute& attribute)
         return;
     }
 
-    if (attribute.name() == SVGNames::keyTimesAttr) {
-        parseKeyTimes(attribute.value(), m_keyTimes, true);
+    if (name == SVGNames::keyTimesAttr) {
+        parseKeyTimes(value, m_keyTimes, true);
         return;
     }
 
-    if (attribute.name() == SVGNames::keyPointsAttr) {
+    if (name == SVGNames::keyPointsAttr) {
         if (hasTagName(SVGNames::animateMotionTag)) {
             // This is specified to be an animateMotion attribute only but it is simpler to put it here 
             // where the other timing calculatations are.
-            parseKeyTimes(attribute.value(), m_keyPoints, false);
+            parseKeyTimes(value, m_keyPoints, false);
         }
         return;
     }
 
-    if (attribute.name() == SVGNames::keySplinesAttr) {
-        parseKeySplines(attribute.value(), m_keySplines);
+    if (name == SVGNames::keySplinesAttr) {
+        parseKeySplines(value, m_keySplines);
         return;
     }
 
-    if (attribute.name() == SVGNames::attributeTypeAttr) {
-        setAttributeType(attribute.value());
+    if (name == SVGNames::attributeTypeAttr) {
+        setAttributeType(value);
         return;
     }
 
-    if (attribute.name() == SVGNames::calcModeAttr) {
-        setCalcMode(attribute.value());
+    if (name == SVGNames::calcModeAttr) {
+        setCalcMode(value);
         return;
     }
 
-    if (attribute.name() == SVGNames::fromAttr || attribute.name() == SVGNames::toAttr || attribute.name() == SVGNames::byAttr) {
+    if (name == SVGNames::fromAttr || name == SVGNames::toAttr || name == SVGNames::byAttr) {
         updateAnimationMode();
         return;
     }
 
-    if (SVGTests::parseAttribute(attribute))
+    if (SVGTests::parseAttribute(name, value))
         return;
-    if (SVGExternalResourcesRequired::parseAttribute(attribute))
+    if (SVGExternalResourcesRequired::parseAttribute(name, value))
         return;
 
     ASSERT_NOT_REACHED();

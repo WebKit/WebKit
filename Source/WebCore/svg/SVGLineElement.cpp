@@ -81,27 +81,27 @@ bool SVGLineElement::isSupportedAttribute(const QualifiedName& attrName)
     return supportedAttributes.contains<QualifiedName, SVGAttributeHashTranslator>(attrName);
 }
 
-void SVGLineElement::parseAttribute(const Attribute& attribute)
+void SVGLineElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
     SVGParsingError parseError = NoError;
 
-    if (!isSupportedAttribute(attribute.name()))
-        SVGStyledTransformableElement::parseAttribute(attribute);
-    else if (attribute.name() == SVGNames::x1Attr)
-        setX1BaseValue(SVGLength::construct(LengthModeWidth, attribute.value(), parseError));
-    else if (attribute.name() == SVGNames::y1Attr)
-        setY1BaseValue(SVGLength::construct(LengthModeHeight, attribute.value(), parseError));
-    else if (attribute.name() == SVGNames::x2Attr)
-        setX2BaseValue(SVGLength::construct(LengthModeWidth, attribute.value(), parseError));
-    else if (attribute.name() == SVGNames::y2Attr)
-        setY2BaseValue(SVGLength::construct(LengthModeHeight, attribute.value(), parseError));
-    else if (SVGTests::parseAttribute(attribute)
-             || SVGLangSpace::parseAttribute(attribute)
-             || SVGExternalResourcesRequired::parseAttribute(attribute)) {
+    if (!isSupportedAttribute(name))
+        SVGStyledTransformableElement::parseAttribute(name, value);
+    else if (name == SVGNames::x1Attr)
+        setX1BaseValue(SVGLength::construct(LengthModeWidth, value, parseError));
+    else if (name == SVGNames::y1Attr)
+        setY1BaseValue(SVGLength::construct(LengthModeHeight, value, parseError));
+    else if (name == SVGNames::x2Attr)
+        setX2BaseValue(SVGLength::construct(LengthModeWidth, value, parseError));
+    else if (name == SVGNames::y2Attr)
+        setY2BaseValue(SVGLength::construct(LengthModeHeight, value, parseError));
+    else if (SVGTests::parseAttribute(name, value)
+             || SVGLangSpace::parseAttribute(name, value)
+             || SVGExternalResourcesRequired::parseAttribute(name, value)) {
     } else
         ASSERT_NOT_REACHED();
 
-    reportAttributeParsingError(parseError, attribute);
+    reportAttributeParsingError(parseError, name, value);
 }
 
 void SVGLineElement::svgAttributeChanged(const QualifiedName& attrName)

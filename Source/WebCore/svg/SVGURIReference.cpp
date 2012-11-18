@@ -30,10 +30,10 @@
 
 namespace WebCore {
 
-bool SVGURIReference::parseAttribute(const Attribute& attribute)
+bool SVGURIReference::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
-    if (attribute.name().matches(XLinkNames::hrefAttr)) {
-        setHrefBaseValue(attribute.value());
+    if (name.matches(XLinkNames::hrefAttr)) {
+        setHrefBaseValue(value);
         return true;
     }
 

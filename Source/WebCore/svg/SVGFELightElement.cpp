@@ -106,60 +106,59 @@ bool SVGFELightElement::isSupportedAttribute(const QualifiedName& attrName)
     return supportedAttributes.contains<QualifiedName, SVGAttributeHashTranslator>(attrName);
 }
 
-void SVGFELightElement::parseAttribute(const Attribute& attribute)
+void SVGFELightElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
-    if (!isSupportedAttribute(attribute.name())) {
-        SVGElement::parseAttribute(attribute);
+    if (!isSupportedAttribute(name)) {
+        SVGElement::parseAttribute(name, value);
         return;
     }
 
-    const AtomicString& value = attribute.value();
-    if (attribute.name() == SVGNames::azimuthAttr) {
+    if (name == SVGNames::azimuthAttr) {
         setAzimuthBaseValue(value.toFloat());
         return;
     }
 
-    if (attribute.name() == SVGNames::elevationAttr) {
+    if (name == SVGNames::elevationAttr) {
         setElevationBaseValue(value.toFloat());
         return;
     }
 
-    if (attribute.name() == SVGNames::xAttr) {
+    if (name == SVGNames::xAttr) {
         setXBaseValue(value.toFloat());
         return;
     }
 
-    if (attribute.name() == SVGNames::yAttr) {
+    if (name == SVGNames::yAttr) {
         setYBaseValue(value.toFloat());
         return;
     }
 
-    if (attribute.name() == SVGNames::zAttr) {
+    if (name == SVGNames::zAttr) {
         setZBaseValue(value.toFloat());
         return;
     }
 
-    if (attribute.name() == SVGNames::pointsAtXAttr) {
+    if (name == SVGNames::pointsAtXAttr) {
         setPointsAtXBaseValue(value.toFloat());
         return;
     }
 
-    if (attribute.name() == SVGNames::pointsAtYAttr) {
+    if (name == SVGNames::pointsAtYAttr) {
         setPointsAtYBaseValue(value.toFloat());
         return;
     }
 
-    if (attribute.name() == SVGNames::pointsAtZAttr) {
+    if (name == SVGNames::pointsAtZAttr) {
         setPointsAtZBaseValue(value.toFloat());
         return;
     }
 
-    if (attribute.name() == SVGNames::specularExponentAttr) {
+    if (name == SVGNames::specularExponentAttr) {
         setSpecularExponentBaseValue(value.toFloat());
         return;
     }
 
-    if (attribute.name() == SVGNames::limitingConeAngleAttr) {
+    if (name == SVGNames::limitingConeAngleAttr) {
         setLimitingConeAngleBaseValue(value.toFloat());
         return;
     }

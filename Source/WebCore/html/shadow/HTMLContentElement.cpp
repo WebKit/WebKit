@@ -98,16 +98,16 @@ void HTMLContentElement::ensureSelectParsed()
         m_selectorList = CSSSelectorList();
 }
 
-void HTMLContentElement::parseAttribute(const Attribute& attribute)
+void HTMLContentElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
-    if (attribute.name() == selectAttr) {
+    if (name == selectAttr) {
         if (ShadowRoot* root = shadowRoot()) {
             root->owner()->setShouldCollectSelectFeatureSet();
             root->owner()->invalidateDistribution();
         }
         m_shouldParseSelectorList = true;
     } else
-        InsertionPoint::parseAttribute(attribute);
+        InsertionPoint::parseAttribute(name, value);
 }
 
 Node::InsertionNotificationRequest HTMLContentElement::insertedInto(ContainerNode* insertionPoint)

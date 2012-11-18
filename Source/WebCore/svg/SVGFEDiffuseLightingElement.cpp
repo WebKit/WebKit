@@ -90,30 +90,29 @@ bool SVGFEDiffuseLightingElement::isSupportedAttribute(const QualifiedName& attr
     return supportedAttributes.contains<QualifiedName, SVGAttributeHashTranslator>(attrName);
 }
 
-void SVGFEDiffuseLightingElement::parseAttribute(const Attribute& attribute)
+void SVGFEDiffuseLightingElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
-    if (!isSupportedAttribute(attribute.name()) || attribute.name() == SVGNames::lighting_colorAttr) {
-        SVGFilterPrimitiveStandardAttributes::parseAttribute(attribute);
+    if (!isSupportedAttribute(name) || name == SVGNames::lighting_colorAttr) {
+        SVGFilterPrimitiveStandardAttributes::parseAttribute(name, value);
         return;
     }
 
-    const AtomicString& value = attribute.value();
-    if (attribute.name() == SVGNames::inAttr) {
+    if (name == SVGNames::inAttr) {
         setIn1BaseValue(value);
         return;
     }
 
-    if (attribute.name() == SVGNames::surfaceScaleAttr) {
+    if (name == SVGNames::surfaceScaleAttr) {
         setSurfaceScaleBaseValue(value.toFloat());
         return;
     }
 
-    if (attribute.name() == SVGNames::diffuseConstantAttr) {
+    if (name == SVGNames::diffuseConstantAttr) {
         setDiffuseConstantBaseValue(value.toFloat());
         return;
     }
 
-    if (attribute.name() == SVGNames::kernelUnitLengthAttr) {
+    if (name == SVGNames::kernelUnitLengthAttr) {
         float x, y;
         if (parseNumberOptionalNumber(value, x, y)) {
             setKernelUnitLengthXBaseValue(x);

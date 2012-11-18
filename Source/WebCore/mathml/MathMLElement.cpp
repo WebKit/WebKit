@@ -65,16 +65,16 @@ int MathMLElement::rowSpan() const
     return std::max(1, rowSpanValue.toInt());
 }
 
-void MathMLElement::parseAttribute(const Attribute& attribute)
+void MathMLElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
-    if (attribute.name() == rowspanAttr) {
+    if (name == rowspanAttr) {
         if (renderer() && renderer()->isTableCell() && hasTagName(mtdTag))
             toRenderTableCell(renderer())->colSpanOrRowSpanChanged();
-    } else if (attribute.name() == columnspanAttr) {
+    } else if (name == columnspanAttr) {
         if (renderer() && renderer()->isTableCell() && hasTagName(mtdTag))
             toRenderTableCell(renderer())->colSpanOrRowSpanChanged();
     } else
-        StyledElement::parseAttribute(attribute);
+        StyledElement::parseAttribute(name, value);
 }
 
 bool MathMLElement::isPresentationAttribute(const QualifiedName& name) const

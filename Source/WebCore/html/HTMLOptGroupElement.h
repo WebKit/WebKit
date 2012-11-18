@@ -46,7 +46,7 @@ private:
     virtual bool supportsFocus() const;
     virtual bool isFocusable() const;
     virtual bool isEnabledFormControl() const OVERRIDE { return !disabled(); }
-    virtual void parseAttribute(const Attribute&) OVERRIDE;
+    virtual void parseAttribute(const QualifiedName&, const AtomicString&) OVERRIDE;
     virtual bool rendererIsNeeded(const NodeRenderingContext&) { return false; }
     virtual void attach();
     virtual void detach();

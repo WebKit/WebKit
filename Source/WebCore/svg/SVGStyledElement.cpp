@@ -298,19 +298,19 @@ void SVGStyledElement::collectStyleForPresentationAttribute(const Attribute& att
         addPropertyToPresentationAttributeStyle(style, propertyID, attribute.value());
 }
 
-void SVGStyledElement::parseAttribute(const Attribute& attribute)
+void SVGStyledElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
     // SVG animation has currently requires special storage of values so we set
     // the className here.  svgAttributeChanged actually causes the resulting
     // style updates (instead of StyledElement::parseAttribute). We don't
     // tell StyledElement about the change to avoid parsing the class list twice
-    if (attribute.name() == HTMLNames::classAttr) {
-        setClassNameBaseValue(attribute.value());
+    if (name == HTMLNames::classAttr) {
+        setClassNameBaseValue(value);
         return;
     }
 
     // id is handled by StyledElement which SVGElement inherits from
-    SVGElement::parseAttribute(attribute);
+    SVGElement::parseAttribute(name, value);
 }
 
 bool SVGStyledElement::isKnownAttribute(const QualifiedName& attrName)

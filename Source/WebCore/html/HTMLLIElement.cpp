@@ -76,13 +76,13 @@ void HTMLLIElement::collectStyleForPresentationAttribute(const Attribute& attrib
         HTMLElement::collectStyleForPresentationAttribute(attribute, style);
 }
 
-void HTMLLIElement::parseAttribute(const Attribute& attribute)
+void HTMLLIElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
-    if (attribute.name() == valueAttr) {
+    if (name == valueAttr) {
         if (renderer() && renderer()->isListItem())
-            parseValue(attribute.value());
+            parseValue(value);
     } else
-        HTMLElement::parseAttribute(attribute);
+        HTMLElement::parseAttribute(name, value);
 }
 
 void HTMLLIElement::attach()

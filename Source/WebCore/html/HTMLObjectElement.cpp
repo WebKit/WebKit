@@ -94,19 +94,19 @@ void HTMLObjectElement::collectStyleForPresentationAttribute(const Attribute& at
         HTMLPlugInImageElement::collectStyleForPresentationAttribute(attribute, style);
 }
 
-void HTMLObjectElement::parseAttribute(const Attribute& attribute)
+void HTMLObjectElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
-    if (attribute.name() == formAttr)
+    if (name == formAttr)
         formAttributeChanged();
-    else if (attribute.name() == typeAttr) {
-        m_serviceType = attribute.value().lower();
+    else if (name == typeAttr) {
+        m_serviceType = value.lower();
         size_t pos = m_serviceType.find(";");
         if (pos != notFound)
             m_serviceType = m_serviceType.left(pos);
         if (renderer())
             setNeedsWidgetUpdate(true);
-    } else if (attribute.name() == dataAttr) {
-        m_url = stripLeadingAndTrailingHTMLSpaces(attribute.value());
+    } else if (name == dataAttr) {
+        m_url = stripLeadingAndTrailingHTMLSpaces(value);
         if (renderer()) {
             setNeedsWidgetUpdate(true);
             if (isImageType()) {
@@ -115,16 +115,16 @@ void HTMLObjectElement::parseAttribute(const Attribute& attribute)
                 m_imageLoader->updateFromElementIgnoringPreviousError();
             }
         }
-    } else if (attribute.name() == classidAttr) {
-        m_classId = attribute.value();
+    } else if (name == classidAttr) {
+        m_classId = value;
         if (renderer())
             setNeedsWidgetUpdate(true);
-    } else if (attribute.name() == onloadAttr)
-        setAttributeEventListener(eventNames().loadEvent, createAttributeEventListener(this, attribute));
-    else if (attribute.name() == onbeforeloadAttr)
-        setAttributeEventListener(eventNames().beforeloadEvent, createAttributeEventListener(this, attribute));
+    } else if (name == onloadAttr)
+        setAttributeEventListener(eventNames().loadEvent, createAttributeEventListener(this, name, value));
+    else if (name == onbeforeloadAttr)
+        setAttributeEventListener(eventNames().beforeloadEvent, createAttributeEventListener(this, name, value));
     else
-        HTMLPlugInImageElement::parseAttribute(attribute);
+        HTMLPlugInImageElement::parseAttribute(name, value);
 }
 
 static void mapDataParamToSrc(Vector<String>* paramNames, Vector<String>* paramValues)

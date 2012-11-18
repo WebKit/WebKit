@@ -77,29 +77,28 @@ void HTMLIFrameElement::collectStyleForPresentationAttribute(const Attribute& at
         HTMLFrameElementBase::collectStyleForPresentationAttribute(attribute, style);
 }
 
-void HTMLIFrameElement::parseAttribute(const Attribute& attribute)
+void HTMLIFrameElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
-    if (attribute.name() == nameAttr) {
-        const AtomicString& newName = attribute.value();
+    if (name == nameAttr) {
         if (inDocument() && document()->isHTMLDocument()) {
             HTMLDocument* document = static_cast<HTMLDocument*>(this->document());
             document->removeExtraNamedItem(m_name);
-            document->addExtraNamedItem(newName);
+            document->addExtraNamedItem(value);
         }
-        m_name = newName;
-    } else if (attribute.name() == sandboxAttr) {
+        m_name = value;
+    } else if (name == sandboxAttr) {
         String invalidTokens;
-        setSandboxFlags(attribute.isNull() ? SandboxNone : SecurityContext::parseSandboxPolicy(attribute.value(), invalidTokens));
+        setSandboxFlags(value.isNull() ? SandboxNone : SecurityContext::parseSandboxPolicy(value, invalidTokens));
         if (!invalidTokens.isNull()) {
             int line = document()->scriptableDocumentParser() ? document()->scriptableDocumentParser()->lineNumber().oneBasedInt() : 0;
             document()->addConsoleMessage(HTMLMessageSource, LogMessageType, ErrorMessageLevel, "Error while parsing the 'sandbox' attribute: " + invalidTokens, document()->url().string(), line);
         }
-    } else if (attribute.name() == seamlessAttr) {
+    } else if (name == seamlessAttr) {
         // If we're adding or removing the seamless attribute, we need to force the content document to recalculate its StyleResolver.
         if (contentDocument())
             contentDocument()->styleResolverChanged(DeferRecalcStyle);
     } else
-        HTMLFrameElementBase::parseAttribute(attribute);
+        HTMLFrameElementBase::parseAttribute(name, value);
 }
 
 bool HTMLIFrameElement::rendererIsNeeded(const NodeRenderingContext& context)

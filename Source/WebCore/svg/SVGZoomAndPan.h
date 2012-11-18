@@ -59,13 +59,13 @@ public:
     static bool parseZoomAndPan(const UChar*& start, const UChar* end, SVGZoomAndPanType&);
 
     template<class SVGElementTarget>
-    static bool parseAttribute(SVGElementTarget* target, const Attribute& attribute)
+    static bool parseAttribute(SVGElementTarget* target, const QualifiedName& name, const AtomicString& value)
     {
         ASSERT(target);
         ASSERT(target->document());
-        if (attribute.name() == SVGNames::zoomAndPanAttr) {
-            const UChar* start = attribute.value().characters();
-            const UChar* end = start + attribute.value().length();
+        if (name == SVGNames::zoomAndPanAttr) {
+            const UChar* start = value.characters();
+            const UChar* end = start + value.length();
             SVGZoomAndPanType zoomAndPan = SVGZoomAndPanUnknown;
             parseZoomAndPan(start, end, zoomAndPan);
             target->setZoomAndPan(zoomAndPan);

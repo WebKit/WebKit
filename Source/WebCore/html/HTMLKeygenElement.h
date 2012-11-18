@@ -43,7 +43,7 @@ private:
 
     virtual bool canStartSelection() const { return false; }
 
-    virtual void parseAttribute(const Attribute&) OVERRIDE;
+    virtual void parseAttribute(const QualifiedName&, const AtomicString&) OVERRIDE;
 
     virtual bool appendFormData(FormDataList&, bool);
     virtual const AtomicString& formControlType() const;

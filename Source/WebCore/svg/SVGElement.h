@@ -128,7 +128,7 @@ public:
 protected:
     SVGElement(const QualifiedName&, Document*, ConstructionType = CreateSVGElement);
 
-    virtual void parseAttribute(const Attribute&) OVERRIDE;
+    virtual void parseAttribute(const QualifiedName&, const AtomicString&) OVERRIDE;
 
     virtual void finishParsingChildren();
     virtual void attributeChanged(const QualifiedName&, const AtomicString&) OVERRIDE;
@@ -139,7 +139,7 @@ protected:
     SVGElementRareData* svgRareData() const;
     SVGElementRareData* ensureSVGRareData();
 
-    void reportAttributeParsingError(SVGParsingError, const Attribute&);
+    void reportAttributeParsingError(SVGParsingError, const QualifiedName&, const AtomicString&);
 
     // FIXME: Author shadows should be allowed
     // https://bugs.webkit.org/show_bug.cgi?id=77938

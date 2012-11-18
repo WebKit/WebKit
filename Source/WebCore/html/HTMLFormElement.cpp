@@ -428,35 +428,35 @@ void HTMLFormElement::requestAutocompleteTimerFired(Timer<HTMLFormElement>*)
 }
 #endif
 
-void HTMLFormElement::parseAttribute(const Attribute& attribute)
+void HTMLFormElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
-    if (attribute.name() == actionAttr)
-        m_attributes.parseAction(attribute.value());
-    else if (attribute.name() == targetAttr)
-        m_attributes.setTarget(attribute.value());
-    else if (attribute.name() == methodAttr)
-        m_attributes.updateMethodType(attribute.value());
-    else if (attribute.name() == enctypeAttr)
-        m_attributes.updateEncodingType(attribute.value());
-    else if (attribute.name() == accept_charsetAttr)
-        m_attributes.setAcceptCharset(attribute.value());
-    else if (attribute.name() == autocompleteAttr) {
+    if (name == actionAttr)
+        m_attributes.parseAction(value);
+    else if (name == targetAttr)
+        m_attributes.setTarget(value);
+    else if (name == methodAttr)
+        m_attributes.updateMethodType(value);
+    else if (name == enctypeAttr)
+        m_attributes.updateEncodingType(value);
+    else if (name == accept_charsetAttr)
+        m_attributes.setAcceptCharset(value);
+    else if (name == autocompleteAttr) {
         if (!shouldAutocomplete())
             document()->registerForPageCacheSuspensionCallbacks(this);
         else
             document()->unregisterForPageCacheSuspensionCallbacks(this);
-    } else if (attribute.name() == onsubmitAttr)
-        setAttributeEventListener(eventNames().submitEvent, createAttributeEventListener(this, attribute));
-    else if (attribute.name() == onresetAttr)
-        setAttributeEventListener(eventNames().resetEvent, createAttributeEventListener(this, attribute));
+    } else if (name == onsubmitAttr)
+        setAttributeEventListener(eventNames().submitEvent, createAttributeEventListener(this, name, value));
+    else if (name == onresetAttr)
+        setAttributeEventListener(eventNames().resetEvent, createAttributeEventListener(this, name, value));
 #if ENABLE(REQUEST_AUTOCOMPLETE)
-    else if (attribute.name() == onautocompleteAttr)
-        setAttributeEventListener(eventNames().autocompleteEvent, createAttributeEventListener(this, attribute));
-    else if (attribute.name() == onautocompleteerrorAttr)
-        setAttributeEventListener(eventNames().autocompleteerrorEvent, createAttributeEventListener(this, attribute));
+    else if (name == onautocompleteAttr)
+        setAttributeEventListener(eventNames().autocompleteEvent, createAttributeEventListener(this, name, value));
+    else if (name == onautocompleteerrorAttr)
+        setAttributeEventListener(eventNames().autocompleteerrorEvent, createAttributeEventListener(this, name, value));
 #endif
     else
-        HTMLElement::parseAttribute(attribute);
+        HTMLElement::parseAttribute(name, value);
 }
 
 template<class T, size_t n> static void removeFromVector(Vector<T*, n> & vec, T* item)

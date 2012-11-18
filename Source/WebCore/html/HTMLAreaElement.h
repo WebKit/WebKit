@@ -50,7 +50,7 @@ public:
 private:
     HTMLAreaElement(const QualifiedName&, Document*);
 
-    virtual void parseAttribute(const Attribute&) OVERRIDE;
+    virtual void parseAttribute(const QualifiedName&, const AtomicString&) OVERRIDE;
     virtual bool supportsFocus() const;
     virtual String target() const;
     virtual bool isKeyboardFocusable(KeyboardEvent*) const;

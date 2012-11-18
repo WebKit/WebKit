@@ -250,25 +250,25 @@ void SVGTextContentElement::collectStyleForPresentationAttribute(const Attribute
     }
 }
 
-void SVGTextContentElement::parseAttribute(const Attribute& attribute)
+void SVGTextContentElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
     SVGParsingError parseError = NoError;
 
-    if (!isSupportedAttribute(attribute.name()))
-        SVGStyledElement::parseAttribute(attribute);
-    else if (attribute.name() == SVGNames::lengthAdjustAttr) {
-        SVGLengthAdjustType propertyValue = SVGPropertyTraits<SVGLengthAdjustType>::fromString(attribute.value());
+    if (!isSupportedAttribute(name))
+        SVGStyledElement::parseAttribute(name, value);
+    else if (name == SVGNames::lengthAdjustAttr) {
+        SVGLengthAdjustType propertyValue = SVGPropertyTraits<SVGLengthAdjustType>::fromString(value);
         if (propertyValue > 0)
             setLengthAdjustBaseValue(propertyValue);
-    } else if (attribute.name() == SVGNames::textLengthAttr) {
-        m_textLength.value = SVGLength::construct(LengthModeOther, attribute.value(), parseError, ForbidNegativeLengths);
-    } else if (SVGTests::parseAttribute(attribute)
-               || SVGExternalResourcesRequired::parseAttribute(attribute)) {
-    } else if (SVGLangSpace::parseAttribute(attribute)) {
+    } else if (name == SVGNames::textLengthAttr) {
+        m_textLength.value = SVGLength::construct(LengthModeOther, value, parseError, ForbidNegativeLengths);
+    } else if (SVGTests::parseAttribute(name, value)
+               || SVGExternalResourcesRequired::parseAttribute(name, value)) {
+    } else if (SVGLangSpace::parseAttribute(name, value)) {
     } else
         ASSERT_NOT_REACHED();
 
-    reportAttributeParsingError(parseError, attribute);
+    reportAttributeParsingError(parseError, name, value);
 }
 
 void SVGTextContentElement::svgAttributeChanged(const QualifiedName& attrName)

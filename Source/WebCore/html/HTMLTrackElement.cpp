@@ -95,28 +95,28 @@ void HTMLTrackElement::removedFrom(ContainerNode* insertionPoint)
     HTMLElement::removedFrom(insertionPoint);
 }
 
-void HTMLTrackElement::parseAttribute(const Attribute& attribute)
+void HTMLTrackElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
     if (RuntimeEnabledFeatures::webkitVideoTrackEnabled()) {
-        if (attribute.name() == srcAttr) {
-            if (!attribute.isEmpty() && mediaElement())
+        if (name == srcAttr) {
+            if (!value.isEmpty() && mediaElement())
                 scheduleLoad();
             // 4.8.10.12.3 Sourcing out-of-band text tracks
             // As the kind, label, and srclang attributes are set, changed, or removed, the text track must update accordingly...
-        } else if (attribute.name() == kindAttr)
-            track()->setKind(attribute.value());
-        else if (attribute.name() == labelAttr)
-            track()->setLabel(attribute.value());
-        else if (attribute.name() == srclangAttr)
-            track()->setLanguage(attribute.value());
+        } else if (name == kindAttr)
+            track()->setKind(value);
+        else if (name == labelAttr)
+            track()->setLabel(value);
+        else if (name == srclangAttr)
+            track()->setLanguage(value);
     }
 
-    if (attribute.name() == onloadAttr)
-        setAttributeEventListener(eventNames().loadEvent, createAttributeEventListener(this, attribute));
-    else if (attribute.name() == onerrorAttr)
-        setAttributeEventListener(eventNames().errorEvent, createAttributeEventListener(this, attribute));
+    if (name == onloadAttr)
+        setAttributeEventListener(eventNames().loadEvent, createAttributeEventListener(this, name, value));
+    else if (name == onerrorAttr)
+        setAttributeEventListener(eventNames().errorEvent, createAttributeEventListener(this, name, value));
     else
-        HTMLElement::parseAttribute(attribute);
+        HTMLElement::parseAttribute(name, value);
 }
 
 KURL HTMLTrackElement::src() const

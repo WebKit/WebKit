@@ -52,10 +52,10 @@ static const String& eventParameterName(bool isSVGEvent)
     return isSVGEvent ? evtString : eventString;
 }
 
-PassRefPtr<JSLazyEventListener> createAttributeEventListener(Node* node, const Attribute& attribute)
+PassRefPtr<JSLazyEventListener> createAttributeEventListener(Node* node, const QualifiedName& name, const AtomicString& value)
 {
     ASSERT(node);
-    if (attribute.isNull())
+    if (value.isNull())
         return 0;
 
     TextPosition position = TextPosition::minimumPosition();
@@ -71,15 +71,15 @@ PassRefPtr<JSLazyEventListener> createAttributeEventListener(Node* node, const A
         sourceURL = node->document()->url().string();
     }
 
-    return JSLazyEventListener::create(attribute.localName().string(), eventParameterName(node->isSVGElement()), attribute.value(), node, sourceURL, position, 0, mainThreadNormalWorld());
+    return JSLazyEventListener::create(name.localName().string(), eventParameterName(node->isSVGElement()), value, node, sourceURL, position, 0, mainThreadNormalWorld());
 }
 
-PassRefPtr<JSLazyEventListener> createAttributeEventListener(Frame* frame, const Attribute& attribute)
+PassRefPtr<JSLazyEventListener> createAttributeEventListener(Frame* frame, const QualifiedName& name, const AtomicString& value)
 {
     if (!frame)
         return 0;
 
-    if (attribute.isNull())
+    if (value.isNull())
         return 0;
 
     ScriptController* scriptController = frame->script();
@@ -89,7 +89,7 @@ PassRefPtr<JSLazyEventListener> createAttributeEventListener(Frame* frame, const
     TextPosition position = scriptController->eventHandlerPosition();
     String sourceURL = frame->document()->url().string();
     JSObject* wrapper = toJSDOMWindow(frame, mainThreadNormalWorld());
-    return JSLazyEventListener::create(attribute.localName().string(), eventParameterName(frame->document()->isSVGDocument()), attribute.value(), 0, sourceURL, position, wrapper, mainThreadNormalWorld());
+    return JSLazyEventListener::create(name.localName().string(), eventParameterName(frame->document()->isSVGDocument()), value, 0, sourceURL, position, wrapper, mainThreadNormalWorld());
 }
 
 String eventListenerHandlerBody(Document* document, EventListener* eventListener)

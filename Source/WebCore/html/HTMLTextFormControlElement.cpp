@@ -503,16 +503,16 @@ void HTMLTextFormControlElement::selectionChanged(bool userTriggered)
     }
 }
 
-void HTMLTextFormControlElement::parseAttribute(const Attribute& attribute)
+void HTMLTextFormControlElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
-    if (attribute.name() == placeholderAttr)
+    if (name == placeholderAttr)
         updatePlaceholderVisibility(true);
-    else if (attribute.name() == onselectAttr)
-        setAttributeEventListener(eventNames().selectEvent, createAttributeEventListener(this, attribute));
-    else if (attribute.name() == onchangeAttr)
-        setAttributeEventListener(eventNames().changeEvent, createAttributeEventListener(this, attribute));
+    else if (name == onselectAttr)
+        setAttributeEventListener(eventNames().selectEvent, createAttributeEventListener(this, name, value));
+    else if (name == onchangeAttr)
+        setAttributeEventListener(eventNames().changeEvent, createAttributeEventListener(this, name, value));
     else
-        HTMLFormControlElementWithState::parseAttribute(attribute);
+        HTMLFormControlElementWithState::parseAttribute(name, value);
 }
 
 bool HTMLTextFormControlElement::lastChangeWasUserEdit() const

@@ -69,23 +69,23 @@ bool SVGViewElement::isSupportedAttribute(const QualifiedName& attrName)
     return supportedAttributes.contains<QualifiedName, SVGAttributeHashTranslator>(attrName);
 }
 
-void SVGViewElement::parseAttribute(const Attribute& attribute)
+void SVGViewElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
-    if (!isSupportedAttribute(attribute.name())) {
-        SVGStyledElement::parseAttribute(attribute);
+    if (!isSupportedAttribute(name)) {
+        SVGStyledElement::parseAttribute(name, value);
         return;
     }
 
-    if (attribute.name() == SVGNames::viewTargetAttr) {
-        viewTarget().reset(attribute.value());
+    if (name == SVGNames::viewTargetAttr) {
+        viewTarget().reset(value);
         return;
     }
 
-    if (SVGExternalResourcesRequired::parseAttribute(attribute))
+    if (SVGExternalResourcesRequired::parseAttribute(name, value))
         return;
-    if (SVGFitToViewBox::parseAttribute(this, attribute))
+    if (SVGFitToViewBox::parseAttribute(this, name, value))
         return;
-    if (SVGZoomAndPan::parseAttribute(this, attribute))
+    if (SVGZoomAndPan::parseAttribute(this, name, value))
         return;
 
     ASSERT_NOT_REACHED();

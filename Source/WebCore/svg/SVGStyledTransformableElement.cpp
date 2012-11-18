@@ -98,16 +98,16 @@ bool SVGStyledTransformableElement::isSupportedAttribute(const QualifiedName& at
     return supportedAttributes.contains<QualifiedName, SVGAttributeHashTranslator>(attrName);
 }
 
-void SVGStyledTransformableElement::parseAttribute(const Attribute& attribute)
+void SVGStyledTransformableElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
-    if (!isSupportedAttribute(attribute.name())) {
-        SVGStyledLocatableElement::parseAttribute(attribute);
+    if (!isSupportedAttribute(name)) {
+        SVGStyledLocatableElement::parseAttribute(name, value);
         return;
     }
 
-    if (attribute.name() == SVGNames::transformAttr) {
+    if (name == SVGNames::transformAttr) {
         SVGTransformList newList;
-        newList.parse(attribute.value());
+        newList.parse(value);
         detachAnimatedTransformListWrappers(newList.size());
         setTransformBaseValue(newList);
         return;

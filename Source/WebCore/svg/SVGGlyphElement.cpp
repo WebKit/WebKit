@@ -53,12 +53,12 @@ void SVGGlyphElement::invalidateGlyphCache()
     }
 }
 
-void SVGGlyphElement::parseAttribute(const Attribute& attribute)
+void SVGGlyphElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
-    if (attribute.name() == SVGNames::dAttr)
+    if (name == SVGNames::dAttr)
         invalidateGlyphCache();
     else
-        SVGStyledElement::parseAttribute(attribute);
+        SVGStyledElement::parseAttribute(name, value);
 }
 
 Node::InsertionNotificationRequest SVGGlyphElement::insertedInto(ContainerNode* rootParent)

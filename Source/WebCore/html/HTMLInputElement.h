@@ -338,7 +338,7 @@ private:
 
     virtual void accessKeyAction(bool sendMouseEvents);
 
-    virtual void parseAttribute(const Attribute&) OVERRIDE;
+    virtual void parseAttribute(const QualifiedName&, const AtomicString&) OVERRIDE;
     virtual bool isPresentationAttribute(const QualifiedName&) const OVERRIDE;
     virtual void collectStyleForPresentationAttribute(const Attribute&, StylePropertySet*) OVERRIDE;
     virtual void finishParsingChildren();
@@ -394,7 +394,7 @@ private:
 #if ENABLE(DATALIST_ELEMENT)
     void resetListAttributeTargetObserver();
 #endif
-    void parseMaxLengthAttribute(const Attribute&);
+    void parseMaxLengthAttribute(const AtomicString&);
     void updateValueIfNeeded();
 
     // Returns null if this isn't associated with any radio button group.

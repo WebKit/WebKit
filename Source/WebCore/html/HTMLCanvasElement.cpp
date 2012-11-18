@@ -111,11 +111,11 @@ HTMLCanvasElement::~HTMLCanvasElement()
     m_context.clear(); // Ensure this goes away before the ImageBuffer.
 }
 
-void HTMLCanvasElement::parseAttribute(const Attribute& attribute)
+void HTMLCanvasElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
-    if (attribute.name() == widthAttr || attribute.name() == heightAttr)
+    if (name == widthAttr || name == heightAttr)
         reset();
-    HTMLElement::parseAttribute(attribute);
+    HTMLElement::parseAttribute(name, value);
 }
 
 RenderObject* HTMLCanvasElement::createRenderer(RenderArena* arena, RenderStyle* style)

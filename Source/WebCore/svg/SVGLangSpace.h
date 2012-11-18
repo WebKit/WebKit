@@ -37,7 +37,7 @@ public:
     const AtomicString& xmlspace() const;
     void setXmlspace(const AtomicString& xmlSpace);
 
-    bool parseAttribute(const Attribute&);
+    bool parseAttribute(const QualifiedName&, const AtomicString&);
     bool isKnownAttribute(const QualifiedName&);
     void addSupportedAttributes(HashSet<QualifiedName>&);
 

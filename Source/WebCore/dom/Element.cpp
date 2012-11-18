@@ -758,7 +758,7 @@ static bool checkNeedsStyleInvalidationForIdChange(const AtomicString& oldId, co
 
 void Element::attributeChanged(const QualifiedName& name, const AtomicString& newValue)
 {
-    parseAttribute(Attribute(name, newValue));
+    parseAttribute(name, newValue);
 
     document()->incDOMTreeVersion();
 
@@ -789,10 +789,10 @@ void Element::attributeChanged(const QualifiedName& name, const AtomicString& ne
         document()->axObjectCache()->handleAttributeChanged(name, this);
 }
 
-void Element::parseAttribute(const Attribute& attribute)
+void Element::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
-    if (attribute.name() == classAttr)
-        classAttributeChanged(attribute.value());
+    if (name == classAttr)
+        classAttributeChanged(value);
 }
 
 template <typename CharacterType>

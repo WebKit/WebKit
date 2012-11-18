@@ -94,14 +94,14 @@ bool HTMLProgressElement::supportsFocus() const
     return Node::supportsFocus() && !disabled();
 }
 
-void HTMLProgressElement::parseAttribute(const Attribute& attribute)
+void HTMLProgressElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
-    if (attribute.name() == valueAttr)
+    if (name == valueAttr)
         didElementStateChange();
-    else if (attribute.name() == maxAttr)
+    else if (name == maxAttr)
         didElementStateChange();
     else
-        LabelableElement::parseAttribute(attribute);
+        LabelableElement::parseAttribute(name, value);
 }
 
 void HTMLProgressElement::attach()

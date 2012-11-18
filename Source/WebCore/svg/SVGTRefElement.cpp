@@ -222,16 +222,15 @@ bool SVGTRefElement::isSupportedAttribute(const QualifiedName& attrName)
     return supportedAttributes.contains<QualifiedName, SVGAttributeHashTranslator>(attrName);
 }
 
-void SVGTRefElement::parseAttribute(const Attribute& attribute)
+void SVGTRefElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
-    if (!isSupportedAttribute(attribute.name())) {
-        SVGTextPositioningElement::parseAttribute(attribute);
+    if (!isSupportedAttribute(name)) {
+        SVGTextPositioningElement::parseAttribute(name, value);
         return;
     }
 
-    if (SVGURIReference::parseAttribute(attribute)) {
+    if (SVGURIReference::parseAttribute(name, value))
         return;
-    }
 
     ASSERT_NOT_REACHED();
 }

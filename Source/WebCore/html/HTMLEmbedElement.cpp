@@ -92,24 +92,24 @@ void HTMLEmbedElement::collectStyleForPresentationAttribute(const Attribute& att
         HTMLPlugInImageElement::collectStyleForPresentationAttribute(attribute, style);
 }
 
-void HTMLEmbedElement::parseAttribute(const Attribute& attribute)
+void HTMLEmbedElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
-    if (attribute.name() == typeAttr) {
-        m_serviceType = attribute.value().string().lower();
+    if (name == typeAttr) {
+        m_serviceType = value.string().lower();
         size_t pos = m_serviceType.find(";");
         if (pos != notFound)
             m_serviceType = m_serviceType.left(pos);
-    } else if (attribute.name() == codeAttr)
-        m_url = stripLeadingAndTrailingHTMLSpaces(attribute.value());
-    else if (attribute.name() == srcAttr) {
-        m_url = stripLeadingAndTrailingHTMLSpaces(attribute.value());
+    } else if (name == codeAttr)
+        m_url = stripLeadingAndTrailingHTMLSpaces(value);
+    else if (name == srcAttr) {
+        m_url = stripLeadingAndTrailingHTMLSpaces(value);
         if (renderer() && isImageType()) {
             if (!m_imageLoader)
                 m_imageLoader = adoptPtr(new HTMLImageLoader(this));
             m_imageLoader->updateFromElementIgnoringPreviousError();
         }
     } else
-        HTMLPlugInImageElement::parseAttribute(attribute);
+        HTMLPlugInImageElement::parseAttribute(name, value);
 }
 
 void HTMLEmbedElement::parametersForPlugin(Vector<String>& paramNames, Vector<String>& paramValues)

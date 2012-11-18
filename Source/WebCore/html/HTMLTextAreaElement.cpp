@@ -162,10 +162,10 @@ void HTMLTextAreaElement::collectStyleForPresentationAttribute(const Attribute& 
         HTMLTextFormControlElement::collectStyleForPresentationAttribute(attribute, style);
 }
 
-void HTMLTextAreaElement::parseAttribute(const Attribute& attribute)
+void HTMLTextAreaElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
-    if (attribute.name() == rowsAttr) {
-        int rows = attribute.value().toInt();
+    if (name == rowsAttr) {
+        int rows = value.toInt();
         if (rows <= 0)
             rows = defaultRows;
         if (m_rows != rows) {
@@ -173,8 +173,8 @@ void HTMLTextAreaElement::parseAttribute(const Attribute& attribute)
             if (renderer())
                 renderer()->setNeedsLayoutAndPrefWidthsRecalc();
         }
-    } else if (attribute.name() == colsAttr) {
-        int cols = attribute.value().toInt();
+    } else if (name == colsAttr) {
+        int cols = value.toInt();
         if (cols <= 0)
             cols = defaultCols;
         if (m_cols != cols) {
@@ -182,13 +182,13 @@ void HTMLTextAreaElement::parseAttribute(const Attribute& attribute)
             if (renderer())
                 renderer()->setNeedsLayoutAndPrefWidthsRecalc();
         }
-    } else if (attribute.name() == wrapAttr) {
+    } else if (name == wrapAttr) {
         // The virtual/physical values were a Netscape extension of HTML 3.0, now deprecated.
         // The soft/hard /off values are a recommendation for HTML 4 extension by IE and NS 4.
         WrapMethod wrap;
-        if (equalIgnoringCase(attribute.value(), "physical") || equalIgnoringCase(attribute.value(), "hard") || equalIgnoringCase(attribute.value(), "on"))
+        if (equalIgnoringCase(value, "physical") || equalIgnoringCase(value, "hard") || equalIgnoringCase(value, "on"))
             wrap = HardWrap;
-        else if (equalIgnoringCase(attribute.value(), "off"))
+        else if (equalIgnoringCase(value, "off"))
             wrap = NoWrap;
         else
             wrap = SoftWrap;
@@ -197,12 +197,12 @@ void HTMLTextAreaElement::parseAttribute(const Attribute& attribute)
             if (renderer())
                 renderer()->setNeedsLayoutAndPrefWidthsRecalc();
         }
-    } else if (attribute.name() == accesskeyAttr) {
+    } else if (name == accesskeyAttr) {
         // ignore for the moment
-    } else if (attribute.name() == maxlengthAttr)
+    } else if (name == maxlengthAttr)
         setNeedsValidityCheck();
     else
-        HTMLTextFormControlElement::parseAttribute(attribute);
+        HTMLTextFormControlElement::parseAttribute(name, value);
 }
 
 RenderObject* HTMLTextAreaElement::createRenderer(RenderArena* arena, RenderStyle*)

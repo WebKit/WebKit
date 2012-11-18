@@ -369,48 +369,48 @@ bool HTMLTableElement::isPresentationAttribute(const QualifiedName& name) const
     return HTMLElement::isPresentationAttribute(name);
 }
 
-void HTMLTableElement::parseAttribute(const Attribute& attribute)
+void HTMLTableElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
     CellBorders bordersBefore = cellBorders();
     unsigned short oldPadding = m_padding;
 
-    if (attribute.name() == borderAttr)  {
+    if (name == borderAttr)  {
         // FIXME: This attribute is a mess.
         m_borderAttr = true;
-        if (!attribute.isNull()) {
-            int border = attribute.isEmpty() ? 1 : attribute.value().toInt();
+        if (!value.isNull()) {
+            int border = value.isEmpty() ? 1 : value.toInt();
             m_borderAttr = border;
         }
-    } else if (attribute.name() == bordercolorAttr) {
-        m_borderColorAttr = !attribute.isEmpty();
-    } else if (attribute.name() == frameAttr) {
+    } else if (name == bordercolorAttr) {
+        m_borderColorAttr = !value.isEmpty();
+    } else if (name == frameAttr) {
         // FIXME: This attribute is a mess.
         bool borderTop;
         bool borderRight;
         bool borderBottom;
         bool borderLeft;
-        m_frameAttr = getBordersFromFrameAttributeValue(attribute.value(), borderTop, borderRight, borderBottom, borderLeft);
-    } else if (attribute.name() == rulesAttr) {
+        m_frameAttr = getBordersFromFrameAttributeValue(value, borderTop, borderRight, borderBottom, borderLeft);
+    } else if (name == rulesAttr) {
         m_rulesAttr = UnsetRules;
-        if (equalIgnoringCase(attribute.value(), "none"))
+        if (equalIgnoringCase(value, "none"))
             m_rulesAttr = NoneRules;
-        else if (equalIgnoringCase(attribute.value(), "groups"))
+        else if (equalIgnoringCase(value, "groups"))
             m_rulesAttr = GroupsRules;
-        else if (equalIgnoringCase(attribute.value(), "rows"))
+        else if (equalIgnoringCase(value, "rows"))
             m_rulesAttr = RowsRules;
-        if (equalIgnoringCase(attribute.value(), "cols"))
+        else if (equalIgnoringCase(value, "cols"))
             m_rulesAttr = ColsRules;
-        if (equalIgnoringCase(attribute.value(), "all"))
+        else if (equalIgnoringCase(value, "all"))
             m_rulesAttr = AllRules;
-    } else if (attribute.name() == cellpaddingAttr) {
-        if (!attribute.value().isEmpty())
-            m_padding = max(0, attribute.value().toInt());
+    } else if (name == cellpaddingAttr) {
+        if (!value.isEmpty())
+            m_padding = max(0, value.toInt());
         else
             m_padding = 1;
-    } else if (attribute.name() == colsAttr) {
+    } else if (name == colsAttr) {
         // ###
     } else
-        HTMLElement::parseAttribute(attribute);
+        HTMLElement::parseAttribute(name, value);
 
     if (bordersBefore != cellBorders() || oldPadding != m_padding) {
         m_sharedCellStyle = 0;

@@ -359,24 +359,24 @@ bool HTMLMediaElement::isMouseFocusable() const
     return false;
 }
 
-void HTMLMediaElement::parseAttribute(const Attribute& attribute)
+void HTMLMediaElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
-    if (attribute.name() == srcAttr) {
+    if (name == srcAttr) {
         // Trigger a reload, as long as the 'src' attribute is present.
         if (fastHasAttribute(srcAttr)) {
             clearMediaPlayer(MediaResource);
             scheduleLoad(MediaResource);
         }
-    } else if (attribute.name() == controlsAttr)
+    } else if (name == controlsAttr)
         configureMediaControls();
 #if PLATFORM(MAC)
-    else if (attribute.name() == loopAttr)
+    else if (name == loopAttr)
         updateDisableSleep();
 #endif
-    else if (attribute.name() == preloadAttr) {
-        if (equalIgnoringCase(attribute.value(), "none"))
+    else if (name == preloadAttr) {
+        if (equalIgnoringCase(value, "none"))
             m_preload = MediaPlayer::None;
-        else if (equalIgnoringCase(attribute.value(), "metadata"))
+        else if (equalIgnoringCase(value, "metadata"))
             m_preload = MediaPlayer::MetaData;
         else {
             // The spec does not define an "invalid value default" but "auto" is suggested as the
@@ -388,60 +388,60 @@ void HTMLMediaElement::parseAttribute(const Attribute& attribute)
         if (!autoplay() && m_player)
             m_player->setPreload(m_preload);
 
-    } else if (attribute.name() == mediagroupAttr)
-        setMediaGroup(attribute.value());
-    else if (attribute.name() == onabortAttr)
-        setAttributeEventListener(eventNames().abortEvent, createAttributeEventListener(this, attribute));
-    else if (attribute.name() == onbeforeloadAttr)
-        setAttributeEventListener(eventNames().beforeloadEvent, createAttributeEventListener(this, attribute));
-    else if (attribute.name() == oncanplayAttr)
-        setAttributeEventListener(eventNames().canplayEvent, createAttributeEventListener(this, attribute));
-    else if (attribute.name() == oncanplaythroughAttr)
-        setAttributeEventListener(eventNames().canplaythroughEvent, createAttributeEventListener(this, attribute));
-    else if (attribute.name() == ondurationchangeAttr)
-        setAttributeEventListener(eventNames().durationchangeEvent, createAttributeEventListener(this, attribute));
-    else if (attribute.name() == onemptiedAttr)
-        setAttributeEventListener(eventNames().emptiedEvent, createAttributeEventListener(this, attribute));
-    else if (attribute.name() == onendedAttr)
-        setAttributeEventListener(eventNames().endedEvent, createAttributeEventListener(this, attribute));
-    else if (attribute.name() == onerrorAttr)
-        setAttributeEventListener(eventNames().errorEvent, createAttributeEventListener(this, attribute));
-    else if (attribute.name() == onloadeddataAttr)
-        setAttributeEventListener(eventNames().loadeddataEvent, createAttributeEventListener(this, attribute));
-    else if (attribute.name() == onloadedmetadataAttr)
-        setAttributeEventListener(eventNames().loadedmetadataEvent, createAttributeEventListener(this, attribute));
-    else if (attribute.name() == onloadstartAttr)
-        setAttributeEventListener(eventNames().loadstartEvent, createAttributeEventListener(this, attribute));
-    else if (attribute.name() == onpauseAttr)
-        setAttributeEventListener(eventNames().pauseEvent, createAttributeEventListener(this, attribute));
-    else if (attribute.name() == onplayAttr)
-        setAttributeEventListener(eventNames().playEvent, createAttributeEventListener(this, attribute));
-    else if (attribute.name() == onplayingAttr)
-        setAttributeEventListener(eventNames().playingEvent, createAttributeEventListener(this, attribute));
-    else if (attribute.name() == onprogressAttr)
-        setAttributeEventListener(eventNames().progressEvent, createAttributeEventListener(this, attribute));
-    else if (attribute.name() == onratechangeAttr)
-        setAttributeEventListener(eventNames().ratechangeEvent, createAttributeEventListener(this, attribute));
-    else if (attribute.name() == onseekedAttr)
-        setAttributeEventListener(eventNames().seekedEvent, createAttributeEventListener(this, attribute));
-    else if (attribute.name() == onseekingAttr)
-        setAttributeEventListener(eventNames().seekingEvent, createAttributeEventListener(this, attribute));
-    else if (attribute.name() == onstalledAttr)
-        setAttributeEventListener(eventNames().stalledEvent, createAttributeEventListener(this, attribute));
-    else if (attribute.name() == onsuspendAttr)
-        setAttributeEventListener(eventNames().suspendEvent, createAttributeEventListener(this, attribute));
-    else if (attribute.name() == ontimeupdateAttr)
-        setAttributeEventListener(eventNames().timeupdateEvent, createAttributeEventListener(this, attribute));
-    else if (attribute.name() == onvolumechangeAttr)
-        setAttributeEventListener(eventNames().volumechangeEvent, createAttributeEventListener(this, attribute));
-    else if (attribute.name() == onwaitingAttr)
-        setAttributeEventListener(eventNames().waitingEvent, createAttributeEventListener(this, attribute));
-    else if (attribute.name() == onwebkitbeginfullscreenAttr)
-        setAttributeEventListener(eventNames().webkitbeginfullscreenEvent, createAttributeEventListener(this, attribute));
-    else if (attribute.name() == onwebkitendfullscreenAttr)
-        setAttributeEventListener(eventNames().webkitendfullscreenEvent, createAttributeEventListener(this, attribute));
+    } else if (name == mediagroupAttr)
+        setMediaGroup(value);
+    else if (name == onabortAttr)
+        setAttributeEventListener(eventNames().abortEvent, createAttributeEventListener(this, name, value));
+    else if (name == onbeforeloadAttr)
+        setAttributeEventListener(eventNames().beforeloadEvent, createAttributeEventListener(this, name, value));
+    else if (name == oncanplayAttr)
+        setAttributeEventListener(eventNames().canplayEvent, createAttributeEventListener(this, name, value));
+    else if (name == oncanplaythroughAttr)
+        setAttributeEventListener(eventNames().canplaythroughEvent, createAttributeEventListener(this, name, value));
+    else if (name == ondurationchangeAttr)
+        setAttributeEventListener(eventNames().durationchangeEvent, createAttributeEventListener(this, name, value));
+    else if (name == onemptiedAttr)
+        setAttributeEventListener(eventNames().emptiedEvent, createAttributeEventListener(this, name, value));
+    else if (name == onendedAttr)
+        setAttributeEventListener(eventNames().endedEvent, createAttributeEventListener(this, name, value));
+    else if (name == onerrorAttr)
+        setAttributeEventListener(eventNames().errorEvent, createAttributeEventListener(this, name, value));
+    else if (name == onloadeddataAttr)
+        setAttributeEventListener(eventNames().loadeddataEvent, createAttributeEventListener(this, name, value));
+    else if (name == onloadedmetadataAttr)
+        setAttributeEventListener(eventNames().loadedmetadataEvent, createAttributeEventListener(this, name, value));
+    else if (name == onloadstartAttr)
+        setAttributeEventListener(eventNames().loadstartEvent, createAttributeEventListener(this, name, value));
+    else if (name == onpauseAttr)
+        setAttributeEventListener(eventNames().pauseEvent, createAttributeEventListener(this, name, value));
+    else if (name == onplayAttr)
+        setAttributeEventListener(eventNames().playEvent, createAttributeEventListener(this, name, value));
+    else if (name == onplayingAttr)
+        setAttributeEventListener(eventNames().playingEvent, createAttributeEventListener(this, name, value));
+    else if (name == onprogressAttr)
+        setAttributeEventListener(eventNames().progressEvent, createAttributeEventListener(this, name, value));
+    else if (name == onratechangeAttr)
+        setAttributeEventListener(eventNames().ratechangeEvent, createAttributeEventListener(this, name, value));
+    else if (name == onseekedAttr)
+        setAttributeEventListener(eventNames().seekedEvent, createAttributeEventListener(this, name, value));
+    else if (name == onseekingAttr)
+        setAttributeEventListener(eventNames().seekingEvent, createAttributeEventListener(this, name, value));
+    else if (name == onstalledAttr)
+        setAttributeEventListener(eventNames().stalledEvent, createAttributeEventListener(this, name, value));
+    else if (name == onsuspendAttr)
+        setAttributeEventListener(eventNames().suspendEvent, createAttributeEventListener(this, name, value));
+    else if (name == ontimeupdateAttr)
+        setAttributeEventListener(eventNames().timeupdateEvent, createAttributeEventListener(this, name, value));
+    else if (name == onvolumechangeAttr)
+        setAttributeEventListener(eventNames().volumechangeEvent, createAttributeEventListener(this, name, value));
+    else if (name == onwaitingAttr)
+        setAttributeEventListener(eventNames().waitingEvent, createAttributeEventListener(this, name, value));
+    else if (name == onwebkitbeginfullscreenAttr)
+        setAttributeEventListener(eventNames().webkitbeginfullscreenEvent, createAttributeEventListener(this, name, value));
+    else if (name == onwebkitendfullscreenAttr)
+        setAttributeEventListener(eventNames().webkitendfullscreenEvent, createAttributeEventListener(this, name, value));
     else
-        HTMLElement::parseAttribute(attribute);
+        HTMLElement::parseAttribute(name, value);
 }
 
 void HTMLMediaElement::finishParsingChildren()

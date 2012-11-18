@@ -123,18 +123,18 @@ bool SVGTests::isValid() const
     return true;
 }
 
-bool SVGTests::parseAttribute(const Attribute& attribute)
+bool SVGTests::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
-    if (attribute.name() == SVGNames::requiredFeaturesAttr) {
-        m_requiredFeatures.value.reset(attribute.value());
+    if (name == SVGNames::requiredFeaturesAttr) {
+        m_requiredFeatures.value.reset(value);
         return true;
     }
-    if (attribute.name() == SVGNames::requiredExtensionsAttr) {
-        m_requiredExtensions.value.reset(attribute.value());
+    if (name == SVGNames::requiredExtensionsAttr) {
+        m_requiredExtensions.value.reset(value);
         return true;
     }
-    if (attribute.name() == SVGNames::systemLanguageAttr) {
-        m_systemLanguage.value.reset(attribute.value());
+    if (name == SVGNames::systemLanguageAttr) {
+        m_systemLanguage.value.reset(value);
         return true;
     }
     

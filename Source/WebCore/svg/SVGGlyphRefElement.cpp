@@ -64,24 +64,24 @@ bool SVGGlyphRefElement::hasValidGlyphElement(String& glyphName) const
     return true;
 }
 
-void SVGGlyphRefElement::parseAttribute(const Attribute& attribute)
+void SVGGlyphRefElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
-    const UChar* startPtr = attribute.value().characters();
-    const UChar* endPtr = startPtr + attribute.value().length();
+    const UChar* startPtr = value.characters();
+    const UChar* endPtr = startPtr + value.length();
 
     // FIXME: We need some error handling here.
-    if (attribute.name() == SVGNames::xAttr)
+    if (name == SVGNames::xAttr)
         parseNumber(startPtr, endPtr, m_x);
-    else if (attribute.name() == SVGNames::yAttr)
+    else if (name == SVGNames::yAttr)
         parseNumber(startPtr, endPtr, m_y);
-    else if (attribute.name() == SVGNames::dxAttr)
+    else if (name == SVGNames::dxAttr)
         parseNumber(startPtr, endPtr, m_dx);
-    else if (attribute.name() == SVGNames::dyAttr)
+    else if (name == SVGNames::dyAttr)
         parseNumber(startPtr, endPtr, m_dy);
     else {
-        if (SVGURIReference::parseAttribute(attribute))
+        if (SVGURIReference::parseAttribute(name, value))
             return;
-        SVGStyledElement::parseAttribute(attribute);
+        SVGStyledElement::parseAttribute(name, value);
     }
 }
 

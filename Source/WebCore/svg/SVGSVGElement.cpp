@@ -233,7 +233,7 @@ void SVGSVGElement::updateCurrentTranslate()
         document()->renderer()->repaint();
 }
 
-void SVGSVGElement::parseAttribute(const Attribute& attribute)
+void SVGSVGElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
     SVGParsingError parseError = NoError;
 
@@ -241,14 +241,14 @@ void SVGSVGElement::parseAttribute(const Attribute& attribute)
         bool setListener = true;
 
         // Only handle events if we're the outermost <svg> element
-        if (attribute.name() == HTMLNames::onunloadAttr)
-            document()->setWindowAttributeEventListener(eventNames().unloadEvent, createAttributeEventListener(document()->frame(), attribute));
-        else if (attribute.name() == HTMLNames::onresizeAttr)
-            document()->setWindowAttributeEventListener(eventNames().resizeEvent, createAttributeEventListener(document()->frame(), attribute));
-        else if (attribute.name() == HTMLNames::onscrollAttr)
-            document()->setWindowAttributeEventListener(eventNames().scrollEvent, createAttributeEventListener(document()->frame(), attribute));
-        else if (attribute.name() == SVGNames::onzoomAttr)
-            document()->setWindowAttributeEventListener(eventNames().zoomEvent, createAttributeEventListener(document()->frame(), attribute));
+        if (name == HTMLNames::onunloadAttr)
+            document()->setWindowAttributeEventListener(eventNames().unloadEvent, createAttributeEventListener(document()->frame(), name, value));
+        else if (name == HTMLNames::onresizeAttr)
+            document()->setWindowAttributeEventListener(eventNames().resizeEvent, createAttributeEventListener(document()->frame(), name, value));
+        else if (name == HTMLNames::onscrollAttr)
+            document()->setWindowAttributeEventListener(eventNames().scrollEvent, createAttributeEventListener(document()->frame(), name, value));
+        else if (name == SVGNames::onzoomAttr)
+            document()->setWindowAttributeEventListener(eventNames().zoomEvent, createAttributeEventListener(document()->frame(), name, value));
         else
             setListener = false;
  
@@ -256,27 +256,27 @@ void SVGSVGElement::parseAttribute(const Attribute& attribute)
             return;
     }
 
-    if (attribute.name() == HTMLNames::onabortAttr)
-        document()->setWindowAttributeEventListener(eventNames().abortEvent, createAttributeEventListener(document()->frame(), attribute));
-    else if (attribute.name() == HTMLNames::onerrorAttr)
-        document()->setWindowAttributeEventListener(eventNames().errorEvent, createAttributeEventListener(document()->frame(), attribute));
-    else if (attribute.name() == SVGNames::xAttr)
-        setXBaseValue(SVGLength::construct(LengthModeWidth, attribute.value(), parseError));
-    else if (attribute.name() == SVGNames::yAttr)
-        setYBaseValue(SVGLength::construct(LengthModeHeight, attribute.value(), parseError));
-    else if (attribute.name() == SVGNames::widthAttr)
-        setWidthBaseValue(SVGLength::construct(LengthModeWidth, attribute.value(), parseError, ForbidNegativeLengths));
-    else if (attribute.name() == SVGNames::heightAttr)
-        setHeightBaseValue(SVGLength::construct(LengthModeHeight, attribute.value(), parseError, ForbidNegativeLengths));
-    else if (SVGTests::parseAttribute(attribute)
-               || SVGLangSpace::parseAttribute(attribute)
-               || SVGExternalResourcesRequired::parseAttribute(attribute)
-               || SVGFitToViewBox::parseAttribute(this, attribute)
-               || SVGZoomAndPan::parseAttribute(this, attribute)) {
+    if (name == HTMLNames::onabortAttr)
+        document()->setWindowAttributeEventListener(eventNames().abortEvent, createAttributeEventListener(document()->frame(), name, value));
+    else if (name == HTMLNames::onerrorAttr)
+        document()->setWindowAttributeEventListener(eventNames().errorEvent, createAttributeEventListener(document()->frame(), name, value));
+    else if (name == SVGNames::xAttr)
+        setXBaseValue(SVGLength::construct(LengthModeWidth, value, parseError));
+    else if (name == SVGNames::yAttr)
+        setYBaseValue(SVGLength::construct(LengthModeHeight, value, parseError));
+    else if (name == SVGNames::widthAttr)
+        setWidthBaseValue(SVGLength::construct(LengthModeWidth, value, parseError, ForbidNegativeLengths));
+    else if (name == SVGNames::heightAttr)
+        setHeightBaseValue(SVGLength::construct(LengthModeHeight, value, parseError, ForbidNegativeLengths));
+    else if (SVGTests::parseAttribute(name, value)
+               || SVGLangSpace::parseAttribute(name, value)
+               || SVGExternalResourcesRequired::parseAttribute(name, value)
+               || SVGFitToViewBox::parseAttribute(this, name, value)
+               || SVGZoomAndPan::parseAttribute(this, name, value)) {
     } else
-        SVGStyledLocatableElement::parseAttribute(attribute);
+        SVGStyledLocatableElement::parseAttribute(name, value);
 
-    reportAttributeParsingError(parseError, attribute);
+    reportAttributeParsingError(parseError, name, value);
 }
 
 void SVGSVGElement::svgAttributeChanged(const QualifiedName& attrName)

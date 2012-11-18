@@ -105,16 +105,16 @@ void HTMLTableCellElement::collectStyleForPresentationAttribute(const Attribute&
         HTMLTablePartElement::collectStyleForPresentationAttribute(attribute, style);
 }
 
-void HTMLTableCellElement::parseAttribute(const Attribute& attribute)
+void HTMLTableCellElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
-    if (attribute.name() == rowspanAttr) {
+    if (name == rowspanAttr) {
         if (renderer() && renderer()->isTableCell())
             toRenderTableCell(renderer())->colSpanOrRowSpanChanged();
-    } else if (attribute.name() == colspanAttr) {
+    } else if (name == colspanAttr) {
         if (renderer() && renderer()->isTableCell())
             toRenderTableCell(renderer())->colSpanOrRowSpanChanged();
     } else
-        HTMLTablePartElement::parseAttribute(attribute);
+        HTMLTablePartElement::parseAttribute(name, value);
 }
 
 const StylePropertySet* HTMLTableCellElement::additionalPresentationAttributeStyle()

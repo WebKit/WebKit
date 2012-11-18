@@ -91,28 +91,28 @@ bool SVGRadialGradientElement::isSupportedAttribute(const QualifiedName& attrNam
     return supportedAttributes.contains<QualifiedName, SVGAttributeHashTranslator>(attrName);
 }
 
-void SVGRadialGradientElement::parseAttribute(const Attribute& attribute)
+void SVGRadialGradientElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
     SVGParsingError parseError = NoError;
 
-    if (!isSupportedAttribute(attribute.name()))
-        SVGGradientElement::parseAttribute(attribute);
-    else if (attribute.name() == SVGNames::cxAttr)
-        setCxBaseValue(SVGLength::construct(LengthModeWidth, attribute.value(), parseError));
-    else if (attribute.name() == SVGNames::cyAttr)
-        setCyBaseValue(SVGLength::construct(LengthModeHeight, attribute.value(), parseError));
-    else if (attribute.name() == SVGNames::rAttr)
-        setRBaseValue(SVGLength::construct(LengthModeOther, attribute.value(), parseError, ForbidNegativeLengths));
-    else if (attribute.name() == SVGNames::fxAttr)
-        setFxBaseValue(SVGLength::construct(LengthModeWidth, attribute.value(), parseError));
-    else if (attribute.name() == SVGNames::fyAttr)
-        setFyBaseValue(SVGLength::construct(LengthModeHeight, attribute.value(), parseError));
-    else if (attribute.name() == SVGNames::frAttr)
-        setFrBaseValue(SVGLength::construct(LengthModeOther, attribute.value(), parseError, ForbidNegativeLengths));
+    if (!isSupportedAttribute(name))
+        SVGGradientElement::parseAttribute(name, value);
+    else if (name == SVGNames::cxAttr)
+        setCxBaseValue(SVGLength::construct(LengthModeWidth, value, parseError));
+    else if (name == SVGNames::cyAttr)
+        setCyBaseValue(SVGLength::construct(LengthModeHeight, value, parseError));
+    else if (name == SVGNames::rAttr)
+        setRBaseValue(SVGLength::construct(LengthModeOther, value, parseError, ForbidNegativeLengths));
+    else if (name == SVGNames::fxAttr)
+        setFxBaseValue(SVGLength::construct(LengthModeWidth, value, parseError));
+    else if (name == SVGNames::fyAttr)
+        setFyBaseValue(SVGLength::construct(LengthModeHeight, value, parseError));
+    else if (name == SVGNames::frAttr)
+        setFrBaseValue(SVGLength::construct(LengthModeOther, value, parseError, ForbidNegativeLengths));
     else
         ASSERT_NOT_REACHED();
 
-    reportAttributeParsingError(parseError, attribute);
+    reportAttributeParsingError(parseError, name, value);
 }
 
 void SVGRadialGradientElement::svgAttributeChanged(const QualifiedName& attrName)

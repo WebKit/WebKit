@@ -70,21 +70,21 @@ PassRefPtr<HTMLStyleElement> HTMLStyleElement::create(const QualifiedName& tagNa
     return adoptRef(new HTMLStyleElement(tagName, document, createdByParser));
 }
 
-void HTMLStyleElement::parseAttribute(const Attribute& attribute)
+void HTMLStyleElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
-    if (attribute.name() == titleAttr && m_sheet)
-        m_sheet->setTitle(attribute.value());
-    else if (attribute.name() == onloadAttr)
-        setAttributeEventListener(eventNames().loadEvent, createAttributeEventListener(this, attribute));
-    else if (attribute.name() == onerrorAttr)
-        setAttributeEventListener(eventNames().errorEvent, createAttributeEventListener(this, attribute));
-    else if (attribute.name() == scopedAttr && ContextFeatures::styleScopedEnabled(document()))
-        scopedAttributeChanged(!attribute.isNull());
-    else if (attribute.name() == mediaAttr && inDocument() && document()->renderer() && m_sheet) {
-        m_sheet->setMediaQueries(MediaQuerySet::createAllowingDescriptionSyntax(attribute.value()));
+    if (name == titleAttr && m_sheet)
+        m_sheet->setTitle(value);
+    else if (name == onloadAttr)
+        setAttributeEventListener(eventNames().loadEvent, createAttributeEventListener(this, name, value));
+    else if (name == onerrorAttr)
+        setAttributeEventListener(eventNames().errorEvent, createAttributeEventListener(this, name, value));
+    else if (name == scopedAttr && ContextFeatures::styleScopedEnabled(document()))
+        scopedAttributeChanged(!value.isNull());
+    else if (name == mediaAttr && inDocument() && document()->renderer() && m_sheet) {
+        m_sheet->setMediaQueries(MediaQuerySet::createAllowingDescriptionSyntax(value));
         document()->styleResolverChanged(RecalcStyleImmediately);
     } else
-        HTMLElement::parseAttribute(attribute);
+        HTMLElement::parseAttribute(name, value);
 }
 
 void HTMLStyleElement::scopedAttributeChanged(bool scoped)

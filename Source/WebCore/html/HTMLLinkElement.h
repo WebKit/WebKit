@@ -73,7 +73,7 @@ public:
     static void dispatchPendingLoadEvents();
 
 private:
-    virtual void parseAttribute(const Attribute&) OVERRIDE;
+    virtual void parseAttribute(const QualifiedName&, const AtomicString&) OVERRIDE;
 
     virtual bool shouldLoadLink();
     void process();

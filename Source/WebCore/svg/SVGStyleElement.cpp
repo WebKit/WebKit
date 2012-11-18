@@ -110,20 +110,20 @@ bool SVGStyleElement::isSupportedAttribute(const QualifiedName& attrName)
     return supportedAttributes.contains<QualifiedName, SVGAttributeHashTranslator>(attrName);
 }
 
-void SVGStyleElement::parseAttribute(const Attribute& attribute)
+void SVGStyleElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
-    if (!isSupportedAttribute(attribute.name())) {
-        SVGElement::parseAttribute(attribute);
+    if (!isSupportedAttribute(name)) {
+        SVGElement::parseAttribute(name, value);
         return;
     }
 
-    if (attribute.name() == SVGNames::titleAttr) {
+    if (name == SVGNames::titleAttr) {
         if (m_sheet)
-            m_sheet->setTitle(attribute.value());
+            m_sheet->setTitle(value);
         return;
     }
 
-    if (SVGLangSpace::parseAttribute(attribute))
+    if (SVGLangSpace::parseAttribute(name, value))
         return;
 
     ASSERT_NOT_REACHED();

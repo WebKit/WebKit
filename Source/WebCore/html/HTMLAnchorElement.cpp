@@ -214,29 +214,29 @@ void HTMLAnchorElement::setActive(bool down, bool pause)
     ContainerNode::setActive(down, pause);
 }
 
-void HTMLAnchorElement::parseAttribute(const Attribute& attribute)
+void HTMLAnchorElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
-    if (attribute.name() == hrefAttr) {
+    if (name == hrefAttr) {
         bool wasLink = isLink();
-        setIsLink(!attribute.isNull());
+        setIsLink(!value.isNull());
         if (wasLink != isLink()) {
             setNeedsStyleRecalc();
             invalidateParentDistributionIfNecessary(this, SelectRuleFeatureSet::RuleFeatureLink | SelectRuleFeatureSet::RuleFeatureVisited | SelectRuleFeatureSet::RuleFeatureEnabled);
         }
         if (isLink()) {
-            String parsedURL = stripLeadingAndTrailingHTMLSpaces(attribute.value());
+            String parsedURL = stripLeadingAndTrailingHTMLSpaces(value);
             if (document()->isDNSPrefetchEnabled()) {
                 if (protocolIs(parsedURL, "http") || protocolIs(parsedURL, "https") || parsedURL.startsWith("//"))
                     prefetchDNS(document()->completeURL(parsedURL).host());
             }
         }
         invalidateCachedVisitedLinkHash();
-    } else if (attribute.name() == nameAttr || attribute.name() == titleAttr) {
+    } else if (name == nameAttr || name == titleAttr) {
         // Do nothing.
-    } else if (attribute.name() == relAttr)
-        setRel(attribute.value());
+    } else if (name == relAttr)
+        setRel(value);
     else
-        HTMLElement::parseAttribute(attribute);
+        HTMLElement::parseAttribute(name, value);
 }
 
 void HTMLAnchorElement::accessKeyAction(bool sendMouseEvents)

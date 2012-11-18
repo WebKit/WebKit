@@ -43,7 +43,7 @@ private:
     virtual bool hasValidAttributeType();
 
     bool isSupportedAttribute(const QualifiedName&);
-    virtual void parseAttribute(const Attribute&) OVERRIDE;
+    virtual void parseAttribute(const QualifiedName&, const AtomicString&) OVERRIDE;
 
     SVGTransform::SVGTransformType m_type;
 };

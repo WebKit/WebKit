@@ -1,5 +1,472 @@
 2012-11-18  Andreas Kling  <akling@apple.com>
 
+        Element::parseAttribute() should take name & value as separate arguments.
+        <http://webkit.org/b/102608>
+
+        Reviewed by Antti Koivisto.
+
+        Update the signature of parseAttribute() to take a QualifiedName/AtomicString combo instead
+        of an Attribute. This lets us pass avoid refcount churn in Element::attributeChanged() since
+        creating a temporary Attribute is no longer necessary.
+
+        This was surprisingly hot (~1%) on the DOM/CreateNodes performance test.
+
+        * bindings/js/ScriptEventListener.cpp:
+        (WebCore::createAttributeEventListener):
+        * bindings/js/ScriptEventListener.h:
+        (WebCore):
+        * bindings/v8/ScriptEventListener.cpp:
+        (WebCore::createAttributeEventListener):
+        * bindings/v8/ScriptEventListener.h:
+        (WebCore):
+        * dom/Element.cpp:
+        (WebCore::Element::attributeChanged):
+        (WebCore::Element::parseAttribute):
+        * dom/Element.h:
+        (Element):
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::parseAttribute):
+        * dom/StyledElement.h:
+        (StyledElement):
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::parseAttribute):
+        * html/HTMLAnchorElement.h:
+        (HTMLAnchorElement):
+        * html/HTMLAppletElement.cpp:
+        (WebCore::HTMLAppletElement::parseAttribute):
+        * html/HTMLAppletElement.h:
+        (HTMLAppletElement):
+        * html/HTMLAreaElement.cpp:
+        (WebCore::HTMLAreaElement::parseAttribute):
+        * html/HTMLAreaElement.h:
+        (HTMLAreaElement):
+        * html/HTMLBaseElement.cpp:
+        (WebCore::HTMLBaseElement::parseAttribute):
+        * html/HTMLBaseElement.h:
+        (HTMLBaseElement):
+        * html/HTMLBodyElement.cpp:
+        (WebCore::HTMLBodyElement::parseAttribute):
+        * html/HTMLBodyElement.h:
+        (HTMLBodyElement):
+        * html/HTMLButtonElement.cpp:
+        (WebCore::HTMLButtonElement::parseAttribute):
+        * html/HTMLButtonElement.h:
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::parseAttribute):
+        * html/HTMLCanvasElement.h:
+        (HTMLCanvasElement):
+        * html/HTMLDetailsElement.cpp:
+        (WebCore::HTMLDetailsElement::parseAttribute):
+        * html/HTMLDetailsElement.h:
+        (HTMLDetailsElement):
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::parseAttribute):
+        (WebCore::HTMLElement::dirAttributeChanged):
+        * html/HTMLElement.h:
+        (HTMLElement):
+        * html/HTMLEmbedElement.cpp:
+        (WebCore::HTMLEmbedElement::parseAttribute):
+        * html/HTMLEmbedElement.h:
+        (HTMLEmbedElement):
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::parseAttribute):
+        * html/HTMLFormControlElement.h:
+        (HTMLFormControlElement):
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::parseAttribute):
+        * html/HTMLFormElement.h:
+        (HTMLFormElement):
+        * html/HTMLFrameElement.cpp:
+        (WebCore::HTMLFrameElement::parseAttribute):
+        * html/HTMLFrameElement.h:
+        (HTMLFrameElement):
+        * html/HTMLFrameElementBase.cpp:
+        (WebCore::HTMLFrameElementBase::parseAttribute):
+        * html/HTMLFrameElementBase.h:
+        (HTMLFrameElementBase):
+        * html/HTMLFrameSetElement.cpp:
+        (WebCore::HTMLFrameSetElement::parseAttribute):
+        * html/HTMLFrameSetElement.h:
+        (HTMLFrameSetElement):
+        * html/HTMLIFrameElement.cpp:
+        (WebCore::HTMLIFrameElement::parseAttribute):
+        * html/HTMLIFrameElement.h:
+        (HTMLIFrameElement):
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::parseAttribute):
+        * html/HTMLImageElement.h:
+        (HTMLImageElement):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::parseAttribute):
+        (WebCore::HTMLInputElement::parseMaxLengthAttribute):
+        * html/HTMLInputElement.h:
+        (HTMLInputElement):
+        * html/HTMLKeygenElement.cpp:
+        (WebCore::HTMLKeygenElement::parseAttribute):
+        * html/HTMLKeygenElement.h:
+        (HTMLKeygenElement):
+        * html/HTMLLIElement.cpp:
+        (WebCore::HTMLLIElement::parseAttribute):
+        * html/HTMLLIElement.h:
+        (HTMLLIElement):
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::parseAttribute):
+        * html/HTMLLinkElement.h:
+        (HTMLLinkElement):
+        * html/HTMLMapElement.cpp:
+        (WebCore::HTMLMapElement::parseAttribute):
+        * html/HTMLMapElement.h:
+        (HTMLMapElement):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::parseAttribute):
+        * html/HTMLMediaElement.h:
+        * html/HTMLMetaElement.cpp:
+        (WebCore::HTMLMetaElement::parseAttribute):
+        * html/HTMLMetaElement.h:
+        (HTMLMetaElement):
+        * html/HTMLMeterElement.cpp:
+        (WebCore::HTMLMeterElement::parseAttribute):
+        * html/HTMLMeterElement.h:
+        (HTMLMeterElement):
+        * html/HTMLOListElement.cpp:
+        (WebCore::HTMLOListElement::parseAttribute):
+        * html/HTMLOListElement.h:
+        (HTMLOListElement):
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::parseAttribute):
+        * html/HTMLObjectElement.h:
+        (HTMLObjectElement):
+        * html/HTMLOptGroupElement.cpp:
+        (WebCore::HTMLOptGroupElement::parseAttribute):
+        * html/HTMLOptGroupElement.h:
+        * html/HTMLOptionElement.cpp:
+        (WebCore::HTMLOptionElement::parseAttribute):
+        * html/HTMLOptionElement.h:
+        (HTMLOptionElement):
+        * html/HTMLOutputElement.cpp:
+        (WebCore::HTMLOutputElement::parseAttribute):
+        * html/HTMLOutputElement.h:
+        (HTMLOutputElement):
+        * html/HTMLProgressElement.cpp:
+        (WebCore::HTMLProgressElement::parseAttribute):
+        * html/HTMLProgressElement.h:
+        * html/HTMLScriptElement.cpp:
+        (WebCore::HTMLScriptElement::parseAttribute):
+        * html/HTMLScriptElement.h:
+        (HTMLScriptElement):
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::parseAttribute):
+        (WebCore::HTMLSelectElement::parseMultipleAttribute):
+        * html/HTMLSelectElement.h:
+        * html/HTMLStyleElement.cpp:
+        (WebCore::HTMLStyleElement::parseAttribute):
+        * html/HTMLStyleElement.h:
+        (HTMLStyleElement):
+        * html/HTMLTableCellElement.cpp:
+        (WebCore::HTMLTableCellElement::parseAttribute):
+        * html/HTMLTableCellElement.h:
+        (HTMLTableCellElement):
+        * html/HTMLTableColElement.cpp:
+        (WebCore::HTMLTableColElement::parseAttribute):
+        * html/HTMLTableColElement.h:
+        (HTMLTableColElement):
+        * html/HTMLTableElement.cpp:
+        (WebCore::HTMLTableElement::parseAttribute):
+        * html/HTMLTableElement.h:
+        (HTMLTableElement):
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::parseAttribute):
+        * html/HTMLTextAreaElement.h:
+        (HTMLTextAreaElement):
+        * html/HTMLTextFormControlElement.cpp:
+        (WebCore::HTMLTextFormControlElement::parseAttribute):
+        * html/HTMLTextFormControlElement.h:
+        (HTMLTextFormControlElement):
+        * html/HTMLTrackElement.cpp:
+        (WebCore::HTMLTrackElement::parseAttribute):
+        * html/HTMLTrackElement.h:
+        (HTMLTrackElement):
+        * html/HTMLVideoElement.cpp:
+        (WebCore::HTMLVideoElement::parseAttribute):
+        * html/HTMLVideoElement.h:
+        (HTMLVideoElement):
+        * html/shadow/HTMLContentElement.cpp:
+        (WebCore::HTMLContentElement::parseAttribute):
+        * html/shadow/HTMLContentElement.h:
+        (HTMLContentElement):
+        * mathml/MathMLElement.cpp:
+        (WebCore::MathMLElement::parseAttribute):
+        * mathml/MathMLElement.h:
+        (MathMLElement):
+        * svg/SVGAElement.cpp:
+        (WebCore::SVGAElement::parseAttribute):
+        * svg/SVGAElement.h:
+        (SVGAElement):
+        * svg/SVGAnimateMotionElement.cpp:
+        (WebCore::SVGAnimateMotionElement::parseAttribute):
+        * svg/SVGAnimateMotionElement.h:
+        (SVGAnimateMotionElement):
+        * svg/SVGAnimateTransformElement.cpp:
+        (WebCore::SVGAnimateTransformElement::parseAttribute):
+        * svg/SVGAnimateTransformElement.h:
+        (SVGAnimateTransformElement):
+        * svg/SVGAnimationElement.cpp:
+        (WebCore::SVGAnimationElement::parseAttribute):
+        * svg/SVGAnimationElement.h:
+        (SVGAnimationElement):
+        * svg/SVGCircleElement.cpp:
+        (WebCore::SVGCircleElement::parseAttribute):
+        * svg/SVGCircleElement.h:
+        (SVGCircleElement):
+        * svg/SVGClipPathElement.cpp:
+        (WebCore::SVGClipPathElement::parseAttribute):
+        * svg/SVGClipPathElement.h:
+        (SVGClipPathElement):
+        * svg/SVGComponentTransferFunctionElement.cpp:
+        (WebCore::SVGComponentTransferFunctionElement::parseAttribute):
+        * svg/SVGComponentTransferFunctionElement.h:
+        (SVGComponentTransferFunctionElement):
+        * svg/SVGCursorElement.cpp:
+        (WebCore::SVGCursorElement::parseAttribute):
+        * svg/SVGCursorElement.h:
+        (SVGCursorElement):
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::reportAttributeParsingError):
+        (WebCore::SVGElement::parseAttribute):
+        * svg/SVGElement.h:
+        (SVGElement):
+        * svg/SVGEllipseElement.cpp:
+        (WebCore::SVGEllipseElement::parseAttribute):
+        * svg/SVGEllipseElement.h:
+        (SVGEllipseElement):
+        * svg/SVGExternalResourcesRequired.cpp:
+        (WebCore::SVGExternalResourcesRequired::parseAttribute):
+        * svg/SVGExternalResourcesRequired.h:
+        (SVGExternalResourcesRequired):
+        * svg/SVGFEBlendElement.cpp:
+        (WebCore::SVGFEBlendElement::parseAttribute):
+        * svg/SVGFEBlendElement.h:
+        (SVGFEBlendElement):
+        * svg/SVGFEColorMatrixElement.cpp:
+        (WebCore::SVGFEColorMatrixElement::parseAttribute):
+        * svg/SVGFEColorMatrixElement.h:
+        (SVGFEColorMatrixElement):
+        * svg/SVGFEComponentTransferElement.cpp:
+        (WebCore::SVGFEComponentTransferElement::parseAttribute):
+        * svg/SVGFEComponentTransferElement.h:
+        (SVGFEComponentTransferElement):
+        * svg/SVGFECompositeElement.cpp:
+        (WebCore::SVGFECompositeElement::parseAttribute):
+        * svg/SVGFECompositeElement.h:
+        (SVGFECompositeElement):
+        * svg/SVGFEConvolveMatrixElement.cpp:
+        (WebCore::SVGFEConvolveMatrixElement::parseAttribute):
+        * svg/SVGFEConvolveMatrixElement.h:
+        (SVGFEConvolveMatrixElement):
+        * svg/SVGFEDiffuseLightingElement.cpp:
+        (WebCore::SVGFEDiffuseLightingElement::parseAttribute):
+        * svg/SVGFEDiffuseLightingElement.h:
+        (SVGFEDiffuseLightingElement):
+        * svg/SVGFEDisplacementMapElement.cpp:
+        (WebCore::SVGFEDisplacementMapElement::parseAttribute):
+        * svg/SVGFEDisplacementMapElement.h:
+        (SVGFEDisplacementMapElement):
+        * svg/SVGFEDropShadowElement.cpp:
+        (WebCore::SVGFEDropShadowElement::parseAttribute):
+        * svg/SVGFEDropShadowElement.h:
+        (SVGFEDropShadowElement):
+        * svg/SVGFEGaussianBlurElement.cpp:
+        (WebCore::SVGFEGaussianBlurElement::parseAttribute):
+        * svg/SVGFEGaussianBlurElement.h:
+        (SVGFEGaussianBlurElement):
+        * svg/SVGFEImageElement.cpp:
+        (WebCore::SVGFEImageElement::parseAttribute):
+        * svg/SVGFEImageElement.h:
+        (SVGFEImageElement):
+        * svg/SVGFELightElement.cpp:
+        (WebCore::SVGFELightElement::parseAttribute):
+        * svg/SVGFELightElement.h:
+        (SVGFELightElement):
+        * svg/SVGFEMergeNodeElement.cpp:
+        (WebCore::SVGFEMergeNodeElement::parseAttribute):
+        * svg/SVGFEMergeNodeElement.h:
+        (SVGFEMergeNodeElement):
+        * svg/SVGFEMorphologyElement.cpp:
+        (WebCore::SVGFEMorphologyElement::parseAttribute):
+        * svg/SVGFEMorphologyElement.h:
+        (SVGFEMorphologyElement):
+        * svg/SVGFEOffsetElement.cpp:
+        (WebCore::SVGFEOffsetElement::parseAttribute):
+        * svg/SVGFEOffsetElement.h:
+        (SVGFEOffsetElement):
+        * svg/SVGFESpecularLightingElement.cpp:
+        (WebCore::SVGFESpecularLightingElement::parseAttribute):
+        * svg/SVGFESpecularLightingElement.h:
+        (SVGFESpecularLightingElement):
+        * svg/SVGFETileElement.cpp:
+        (WebCore::SVGFETileElement::parseAttribute):
+        * svg/SVGFETileElement.h:
+        (SVGFETileElement):
+        * svg/SVGFETurbulenceElement.cpp:
+        (WebCore::SVGFETurbulenceElement::parseAttribute):
+        * svg/SVGFETurbulenceElement.h:
+        (SVGFETurbulenceElement):
+        * svg/SVGFilterElement.cpp:
+        (WebCore::SVGFilterElement::parseAttribute):
+        * svg/SVGFilterElement.h:
+        (SVGFilterElement):
+        * svg/SVGFilterPrimitiveStandardAttributes.cpp:
+        (WebCore::SVGFilterPrimitiveStandardAttributes::parseAttribute):
+        * svg/SVGFilterPrimitiveStandardAttributes.h:
+        (SVGFilterPrimitiveStandardAttributes):
+        * svg/SVGFitToViewBox.h:
+        (WebCore::SVGFitToViewBox::parseAttribute):
+        * svg/SVGFontFaceElement.cpp:
+        (WebCore::SVGFontFaceElement::parseAttribute):
+        * svg/SVGFontFaceElement.h:
+        (SVGFontFaceElement):
+        * svg/SVGFontFaceUriElement.cpp:
+        (WebCore::SVGFontFaceUriElement::parseAttribute):
+        * svg/SVGFontFaceUriElement.h:
+        (SVGFontFaceUriElement):
+        * svg/SVGForeignObjectElement.cpp:
+        (WebCore::SVGForeignObjectElement::parseAttribute):
+        * svg/SVGForeignObjectElement.h:
+        (SVGForeignObjectElement):
+        * svg/SVGGElement.cpp:
+        (WebCore::SVGGElement::parseAttribute):
+        * svg/SVGGElement.h:
+        (SVGGElement):
+        * svg/SVGGlyphElement.cpp:
+        (WebCore::SVGGlyphElement::parseAttribute):
+        * svg/SVGGlyphElement.h:
+        (SVGGlyphElement):
+        * svg/SVGGlyphRefElement.cpp:
+        (WebCore::SVGGlyphRefElement::parseAttribute):
+        * svg/SVGGlyphRefElement.h:
+        * svg/SVGGradientElement.cpp:
+        (WebCore::SVGGradientElement::parseAttribute):
+        * svg/SVGGradientElement.h:
+        * svg/SVGImageElement.cpp:
+        (WebCore::SVGImageElement::parseAttribute):
+        * svg/SVGImageElement.h:
+        (SVGImageElement):
+        * svg/SVGLangSpace.cpp:
+        (WebCore::SVGLangSpace::parseAttribute):
+        * svg/SVGLangSpace.h:
+        (SVGLangSpace):
+        * svg/SVGLineElement.cpp:
+        (WebCore::SVGLineElement::parseAttribute):
+        * svg/SVGLineElement.h:
+        (SVGLineElement):
+        * svg/SVGLinearGradientElement.cpp:
+        (WebCore::SVGLinearGradientElement::parseAttribute):
+        * svg/SVGLinearGradientElement.h:
+        (SVGLinearGradientElement):
+        * svg/SVGMPathElement.cpp:
+        (WebCore::SVGMPathElement::parseAttribute):
+        * svg/SVGMPathElement.h:
+        (SVGMPathElement):
+        * svg/SVGMarkerElement.cpp:
+        (WebCore::SVGMarkerElement::parseAttribute):
+        * svg/SVGMarkerElement.h:
+        (SVGMarkerElement):
+        * svg/SVGMaskElement.cpp:
+        (WebCore::SVGMaskElement::parseAttribute):
+        * svg/SVGMaskElement.h:
+        (SVGMaskElement):
+        * svg/SVGPathElement.cpp:
+        (WebCore::SVGPathElement::parseAttribute):
+        * svg/SVGPathElement.h:
+        (SVGPathElement):
+        * svg/SVGPatternElement.cpp:
+        (WebCore::SVGPatternElement::parseAttribute):
+        * svg/SVGPatternElement.h:
+        (SVGPatternElement):
+        * svg/SVGPolyElement.cpp:
+        (WebCore::SVGPolyElement::parseAttribute):
+        * svg/SVGPolyElement.h:
+        (SVGPolyElement):
+        * svg/SVGRadialGradientElement.cpp:
+        (WebCore::SVGRadialGradientElement::parseAttribute):
+        * svg/SVGRadialGradientElement.h:
+        (SVGRadialGradientElement):
+        * svg/SVGRectElement.cpp:
+        (WebCore::SVGRectElement::parseAttribute):
+        * svg/SVGRectElement.h:
+        (SVGRectElement):
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::parseAttribute):
+        * svg/SVGSVGElement.h:
+        (SVGSVGElement):
+        * svg/SVGScriptElement.cpp:
+        (WebCore::SVGScriptElement::parseAttribute):
+        * svg/SVGScriptElement.h:
+        (SVGScriptElement):
+        * svg/SVGStopElement.cpp:
+        (WebCore::SVGStopElement::parseAttribute):
+        * svg/SVGStopElement.h:
+        (SVGStopElement):
+        * svg/SVGStyleElement.cpp:
+        (WebCore::SVGStyleElement::parseAttribute):
+        * svg/SVGStyleElement.h:
+        (SVGStyleElement):
+        * svg/SVGStyledElement.cpp:
+        (WebCore::SVGStyledElement::parseAttribute):
+        * svg/SVGStyledElement.h:
+        (SVGStyledElement):
+        * svg/SVGStyledTransformableElement.cpp:
+        (WebCore::SVGStyledTransformableElement::parseAttribute):
+        * svg/SVGStyledTransformableElement.h:
+        (SVGStyledTransformableElement):
+        * svg/SVGSymbolElement.cpp:
+        (WebCore::SVGSymbolElement::parseAttribute):
+        * svg/SVGSymbolElement.h:
+        (SVGSymbolElement):
+        * svg/SVGTRefElement.cpp:
+        (WebCore::SVGTRefElement::parseAttribute):
+        * svg/SVGTRefElement.h:
+        (SVGTRefElement):
+        * svg/SVGTests.cpp:
+        (WebCore::SVGTests::parseAttribute):
+        * svg/SVGTests.h:
+        (SVGTests):
+        * svg/SVGTextContentElement.cpp:
+        (WebCore::SVGTextContentElement::parseAttribute):
+        * svg/SVGTextContentElement.h:
+        (SVGTextContentElement):
+        * svg/SVGTextElement.cpp:
+        (WebCore::SVGTextElement::parseAttribute):
+        * svg/SVGTextElement.h:
+        (SVGTextElement):
+        * svg/SVGTextPathElement.cpp:
+        (WebCore::SVGTextPathElement::parseAttribute):
+        * svg/SVGTextPathElement.h:
+        * svg/SVGTextPositioningElement.cpp:
+        (WebCore::SVGTextPositioningElement::parseAttribute):
+        * svg/SVGTextPositioningElement.h:
+        (SVGTextPositioningElement):
+        * svg/SVGURIReference.cpp:
+        (WebCore::SVGURIReference::parseAttribute):
+        * svg/SVGURIReference.h:
+        (SVGURIReference):
+        * svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::parseAttribute):
+        * svg/SVGUseElement.h:
+        (SVGUseElement):
+        * svg/SVGViewElement.cpp:
+        (WebCore::SVGViewElement::parseAttribute):
+        * svg/SVGViewElement.h:
+        (SVGViewElement):
+        * svg/SVGZoomAndPan.h:
+        (WebCore::SVGZoomAndPan::parseAttribute):
+        * svg/animation/SVGSMILElement.cpp:
+        (WebCore::SVGSMILElement::parseAttribute):
+        * svg/animation/SVGSMILElement.h:
+        (SVGSMILElement):
+
+2012-11-18  Andreas Kling  <akling@apple.com>
+
         StyleResolver: No need to compare "cellpadding" attributes when evaluating style sharing candidates.
         <http://webkit.org/b/102596>
 

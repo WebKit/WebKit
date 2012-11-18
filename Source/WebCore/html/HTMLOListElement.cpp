@@ -78,25 +78,25 @@ void HTMLOListElement::collectStyleForPresentationAttribute(const Attribute& att
         HTMLElement::collectStyleForPresentationAttribute(attribute, style);
 }
 
-void HTMLOListElement::parseAttribute(const Attribute& attribute)
+void HTMLOListElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
-    if (attribute.name() == startAttr) {
+    if (name == startAttr) {
         int oldStart = start();
         bool canParse;
-        int parsedStart = attribute.value().toInt(&canParse);
+        int parsedStart = value.toInt(&canParse);
         m_hasExplicitStart = canParse;
         m_start = canParse ? parsedStart : 0xBADBEEF;
         if (oldStart == start())
             return;
         updateItemValues();
-    } else if (attribute.name() == reversedAttr) {
-        bool reversed = !attribute.isNull();
+    } else if (name == reversedAttr) {
+        bool reversed = !value.isNull();
         if (reversed == m_isReversed)
             return;
         m_isReversed = reversed;
         updateItemValues();
     } else
-        HTMLElement::parseAttribute(attribute);
+        HTMLElement::parseAttribute(name, value);
 }
 
 void HTMLOListElement::setStart(int start)

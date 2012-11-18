@@ -218,31 +218,31 @@ bool SVGPathElement::isSupportedAttribute(const QualifiedName& attrName)
     return supportedAttributes.contains<QualifiedName, SVGAttributeHashTranslator>(attrName);
 }
 
-void SVGPathElement::parseAttribute(const Attribute& attribute)
+void SVGPathElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
-    if (!isSupportedAttribute(attribute.name())) {
-        SVGStyledTransformableElement::parseAttribute(attribute);
+    if (!isSupportedAttribute(name)) {
+        SVGStyledTransformableElement::parseAttribute(name, value);
         return;
     }
 
-    if (attribute.name() == SVGNames::dAttr) {
-        if (!buildSVGPathByteStreamFromString(attribute.value(), m_pathByteStream.get(), UnalteredParsing))
-            document()->accessSVGExtensions()->reportError("Problem parsing d=\"" + attribute.value() + "\"");
+    if (name == SVGNames::dAttr) {
+        if (!buildSVGPathByteStreamFromString(value, m_pathByteStream.get(), UnalteredParsing))
+            document()->accessSVGExtensions()->reportError("Problem parsing d=\"" + value + "\"");
         return;
     }
 
-    if (attribute.name() == SVGNames::pathLengthAttr) {
-        setPathLengthBaseValue(attribute.value().toFloat());
+    if (name == SVGNames::pathLengthAttr) {
+        setPathLengthBaseValue(value.toFloat());
         if (pathLengthBaseValue() < 0)
             document()->accessSVGExtensions()->reportError("A negative value for path attribute <pathLength> is not allowed");
         return;
     }
 
-    if (SVGTests::parseAttribute(attribute))
+    if (SVGTests::parseAttribute(name, value))
         return;
-    if (SVGLangSpace::parseAttribute(attribute))
+    if (SVGLangSpace::parseAttribute(name, value))
         return;
-    if (SVGExternalResourcesRequired::parseAttribute(attribute))
+    if (SVGExternalResourcesRequired::parseAttribute(name, value))
         return;
 
     ASSERT_NOT_REACHED();

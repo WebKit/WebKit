@@ -67,27 +67,26 @@ bool SVGFEColorMatrixElement::isSupportedAttribute(const QualifiedName& attrName
     return supportedAttributes.contains<QualifiedName, SVGAttributeHashTranslator>(attrName);
 }
 
-void SVGFEColorMatrixElement::parseAttribute(const Attribute& attribute)
+void SVGFEColorMatrixElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
-    if (!isSupportedAttribute(attribute.name())) {
-        SVGFilterPrimitiveStandardAttributes::parseAttribute(attribute);
+    if (!isSupportedAttribute(name)) {
+        SVGFilterPrimitiveStandardAttributes::parseAttribute(name, value);
         return;
     }
 
-    const AtomicString& value = attribute.value();
-    if (attribute.name() == SVGNames::typeAttr) {
-        ColorMatrixType propertyValue = SVGPropertyTraits<ColorMatrixType>::fromString(attribute.value());
+    if (name == SVGNames::typeAttr) {
+        ColorMatrixType propertyValue = SVGPropertyTraits<ColorMatrixType>::fromString(value);
         if (propertyValue > 0)
             setTypeBaseValue(propertyValue);
         return;
     }
 
-    if (attribute.name() == SVGNames::inAttr) {
+    if (name == SVGNames::inAttr) {
         setIn1BaseValue(value);
         return;
     }
 
-    if (attribute.name() == SVGNames::valuesAttr) {
+    if (name == SVGNames::valuesAttr) {
         SVGNumberList newList;
         newList.parse(value);
         detachAnimatedValuesListWrappers(newList.size());

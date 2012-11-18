@@ -57,7 +57,7 @@ protected:
     virtual void removedFrom(ContainerNode*) OVERRIDE;
 
 private:
-    virtual void parseAttribute(const Attribute&) OVERRIDE;
+    virtual void parseAttribute(const QualifiedName&, const AtomicString&) OVERRIDE;
     void ensureSelectParsed();
     bool validateSelect() const;
 

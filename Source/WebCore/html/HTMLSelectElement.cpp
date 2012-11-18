@@ -284,15 +284,15 @@ bool HTMLSelectElement::isPresentationAttribute(const QualifiedName& name) const
     return HTMLFormControlElementWithState::isPresentationAttribute(name);
 }
 
-void HTMLSelectElement::parseAttribute(const Attribute& attribute)
+void HTMLSelectElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
-    if (attribute.name() == sizeAttr) {
+    if (name == sizeAttr) {
         int oldSize = m_size;
         // Set the attribute value to a number.
         // This is important since the style rules for this attribute can determine the appearance property.
-        int size = attribute.value().toInt();
+        int size = value.toInt();
         String attrSize = String::number(size);
-        if (attrSize != attribute.value()) {
+        if (attrSize != value) {
             // FIXME: This is horribly factored.
             if (Attribute* sizeAttribute = getAttributeItem(sizeAttr))
                 sizeAttribute->setValue(attrSize);
@@ -309,14 +309,14 @@ void HTMLSelectElement::parseAttribute(const Attribute& attribute)
             reattach();
             setRecalcListItems();
         }
-    } else if (attribute.name() == multipleAttr)
-        parseMultipleAttribute(attribute);
-    else if (attribute.name() == accesskeyAttr) {
+    } else if (name == multipleAttr)
+        parseMultipleAttribute(value);
+    else if (name == accesskeyAttr) {
         // FIXME: ignore for the moment.
-    } else if (attribute.name() == onchangeAttr)
-        setAttributeEventListener(eventNames().changeEvent, createAttributeEventListener(this, attribute));
+    } else if (name == onchangeAttr)
+        setAttributeEventListener(eventNames().changeEvent, createAttributeEventListener(this, name, value));
     else
-        HTMLFormControlElementWithState::parseAttribute(attribute);
+        HTMLFormControlElementWithState::parseAttribute(name, value);
 }
 
 bool HTMLSelectElement::isKeyboardFocusable(KeyboardEvent* event) const
@@ -1000,10 +1000,10 @@ void HTMLSelectElement::restoreFormControlState(const FormControlState& state)
     setNeedsValidityCheck();
 }
 
-void HTMLSelectElement::parseMultipleAttribute(const Attribute& attribute)
+void HTMLSelectElement::parseMultipleAttribute(const AtomicString& value)
 {
     bool oldUsesMenuList = usesMenuList();
-    m_multiple = !attribute.isNull();
+    m_multiple = !value.isNull();
     setNeedsValidityCheck();
     if (oldUsesMenuList != usesMenuList())
         reattachIfAttached();

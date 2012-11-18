@@ -220,12 +220,12 @@ void StyledElement::styleAttributeChanged(const AtomicString& newStyleString)
     InspectorInstrumentation::didInvalidateStyleAttr(document(), this);
 }
 
-void StyledElement::parseAttribute(const Attribute& attribute)
+void StyledElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
-    if (attribute.name() == styleAttr)
-        styleAttributeChanged(attribute.value());
+    if (name == styleAttr)
+        styleAttributeChanged(value);
     else
-        Element::parseAttribute(attribute);
+        Element::parseAttribute(name, value);
 }
 
 void StyledElement::inlineStyleChanged()

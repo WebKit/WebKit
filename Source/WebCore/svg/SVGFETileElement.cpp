@@ -60,15 +60,15 @@ bool SVGFETileElement::isSupportedAttribute(const QualifiedName& attrName)
     return supportedAttributes.contains<QualifiedName, SVGAttributeHashTranslator>(attrName);
 }
 
-void SVGFETileElement::parseAttribute(const Attribute& attribute)
+void SVGFETileElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
-    if (!isSupportedAttribute(attribute.name())) {
-        SVGFilterPrimitiveStandardAttributes::parseAttribute(attribute);
+    if (!isSupportedAttribute(name)) {
+        SVGFilterPrimitiveStandardAttributes::parseAttribute(name, value);
         return;
     }
 
-    if (attribute.name() == SVGNames::inAttr) {
-        setIn1BaseValue(attribute.value());
+    if (name == SVGNames::inAttr) {
+        setIn1BaseValue(value);
         return;
     }
 
