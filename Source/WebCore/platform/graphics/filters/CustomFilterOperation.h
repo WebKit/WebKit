@@ -49,6 +49,7 @@ public:
     }
     
     CustomFilterProgram* program() const { return m_program.get(); }
+    void setProgram(PassRefPtr<CustomFilterProgram> program) { m_program = program; }
     
     const CustomFilterParameterList& parameters() const { return m_parameters; }
     
@@ -65,6 +66,10 @@ public:
     virtual bool blendingNeedsRendererSize() const { return true; }
     
     virtual PassRefPtr<FilterOperation> blend(const FilterOperation* from, double progress, const LayoutSize&, bool blendToPassthrough = false);
+
+protected:
+    CustomFilterOperation(PassRefPtr<CustomFilterProgram>, const CustomFilterParameterList&, unsigned meshRows, unsigned meshColumns, CustomFilterMeshBoxType, CustomFilterMeshType);
+    
 private:
     virtual bool operator==(const FilterOperation& o) const
     {
@@ -79,8 +84,6 @@ private:
             && m_meshType == other->m_meshType
             && m_parameters == other->m_parameters;
     }
-    
-    CustomFilterOperation(PassRefPtr<CustomFilterProgram>, const CustomFilterParameterList&, unsigned meshRows, unsigned meshColumns, CustomFilterMeshBoxType, CustomFilterMeshType);
 
     RefPtr<CustomFilterProgram> m_program;
     CustomFilterParameterList m_parameters;

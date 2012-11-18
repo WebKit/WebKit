@@ -37,6 +37,13 @@
 #include <wtf/Atomics.h>
 #include <wtf/MainThread.h>
 
+#if ENABLE(CSS_SHADERS)
+#include "CustomFilterProgram.h"
+#include "CustomFilterProgramInfo.h"
+#include "WebCustomFilterOperation.h"
+#include "WebCustomFilterProgram.h"
+#endif
+
 namespace WebKit {
 
 using namespace WebCore;
@@ -283,9 +290,44 @@ void LayerTreeRenderer::setLayerFilters(WebLayerID id, const FilterOperations& f
     ASSERT(it != m_layers.end());
 
     GraphicsLayer* layer = it->value;
+#if ENABLE(CSS_SHADERS)
+    injectCachedCustomFilterPrograms(filters);
+#endif
     layer->setFilters(filters);
 }
 #endif
+
+#if ENABLE(CSS_SHADERS)
+void LayerTreeRenderer::injectCachedCustomFilterPrograms(const FilterOperations& filters) const
+{
+    for (size_t i = 0; i < filters.size(); ++i) {
+        FilterOperation* operation = filters.operations().at(i).get();
+        if (operation->getOperationType() != FilterOperation::CUSTOM)
+            continue;
+
+        WebCustomFilterOperation* customOperation = static_cast<WebCustomFilterOperation*>(operation);
+        ASSERT(!customOperation->program());
+        CustomFilterProgramMap::const_iterator iter = m_customFilterPrograms.find(customOperation->programID());
+        ASSERT(iter != m_customFilterPrograms.end());
+        customOperation->setProgram(iter->value.get());
+    }
+}
+
+void LayerTreeRenderer::createCustomFilterProgram(int id, const WebCore::CustomFilterProgramInfo& programInfo)
+{
+    ASSERT(!m_customFilterPrograms.contains(id));
+    m_customFilterPrograms.set(id, WebCustomFilterProgram::create(programInfo.vertexShaderString(), programInfo.fragmentShaderString(), programInfo.programType(), programInfo.mixSettings(), programInfo.meshType()));
+}
+
+void LayerTreeRenderer::removeCustomFilterProgram(int id)
+{
+    CustomFilterProgramMap::iterator iter = m_customFilterPrograms.find(id);
+    ASSERT(iter != m_customFilterPrograms.end());
+    if (m_textureMapper)
+        m_textureMapper->removeCachedCustomFilterProgram(iter->value.get());
+    m_customFilterPrograms.remove(iter);
+}
+#endif // ENABLE(CSS_SHADERS)
 
 void LayerTreeRenderer::setLayerState(WebLayerID id, const WebLayerInfo& layerInfo)
 {
@@ -577,6 +619,17 @@ void LayerTreeRenderer::setLayerAnimations(WebLayerID id, const GraphicsLayerAni
     GraphicsLayerTextureMapper* layer = toGraphicsLayerTextureMapper(layerByID(id));
     if (!layer)
         return;
+#if ENABLE(CSS_SHADERS)
+    for (size_t i = 0; i < animations.animations().size(); ++i) {
+        const KeyframeValueList& keyframes = animations.animations().at(i).keyframes();
+        if (keyframes.property() != AnimatedPropertyWebkitFilter)
+            continue;
+        for (size_t j = 0; j < keyframes.size(); ++j) {
+            const FilterAnimationValue* filterValue = static_cast<const FilterAnimationValue*>(keyframes.at(i));
+            injectCachedCustomFilterPrograms(*filterValue->value());
+        }
+    }
+#endif
     layer->setAnimations(animations);
 }
 

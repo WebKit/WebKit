@@ -30,6 +30,10 @@
 #include "WebPageProxy.h"
 #include "WebProcessProxy.h"
 
+#if ENABLE(CSS_SHADERS)
+#include "CustomFilterProgramInfo.h"
+#endif
+
 namespace WebKit {
 
 using namespace WebCore;
@@ -112,6 +116,17 @@ void LayerTreeCoordinatorProxy::setCompositingLayerChildren(WebLayerID id, const
 void LayerTreeCoordinatorProxy::setCompositingLayerFilters(WebLayerID id, const FilterOperations& filters)
 {
     dispatchUpdate(bind(&LayerTreeRenderer::setLayerFilters, m_renderer.get(), id, filters));
+}
+#endif
+
+#if ENABLE(CSS_SHADERS)
+void LayerTreeCoordinatorProxy::removeCustomFilterProgram(int id)
+{
+    dispatchUpdate(bind(&LayerTreeRenderer::removeCustomFilterProgram, m_renderer.get(), id));
+}
+void LayerTreeCoordinatorProxy::createCustomFilterProgram(int id, const WebCore::CustomFilterProgramInfo& programInfo)
+{
+    dispatchUpdate(bind(&LayerTreeRenderer::createCustomFilterProgram, m_renderer.get(), id, programInfo));
 }
 #endif
 

@@ -56,9 +56,9 @@ public:
     using RefCounted<WebCustomFilterProgramProxy>::ref;
     using RefCounted<WebCustomFilterProgramProxy>::deref;
 
-    static PassRefPtr<WebCustomFilterProgramProxy> create(WebCustomFilterProgramProxyClient* client)
+    static PassRefPtr<WebCustomFilterProgramProxy> create()
     {
-        return adoptRef(new WebCustomFilterProgramProxy(client));
+        return adoptRef(new WebCustomFilterProgramProxy());
     }
 
     int id() const { return m_id; }
@@ -73,8 +73,8 @@ public:
     WebCustomFilterProgramProxyClient* client() const { return m_client; }
 
 private:
-    WebCustomFilterProgramProxy(WebCustomFilterProgramProxyClient* client)
-        : m_client(client)
+    WebCustomFilterProgramProxy()
+        : m_client(0)
         , m_id(s_nextId++)
     {
     }

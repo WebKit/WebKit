@@ -921,6 +921,11 @@ static void prepareFilterProgram(TextureMapperShaderProgram* program, const Filt
 }
 
 #if ENABLE(CSS_SHADERS)
+void TextureMapperGL::removeCachedCustomFilterProgram(CustomFilterProgram* program)
+{
+    m_customFilterPrograms.remove(program);
+}
+
 bool TextureMapperGL::drawUsingCustomFilter(BitmapTexture& target, const BitmapTexture& source, const FilterOperation& filter)
 {
     RefPtr<CustomFilterRenderer> renderer;
@@ -932,9 +937,13 @@ bool TextureMapperGL::drawUsingCustomFilter(BitmapTexture& target, const BitmapT
         RefPtr<CustomFilterProgram> program = customFilter->program();
         renderer = CustomFilterRenderer::create(m_context3D, program->programType(), customFilter->parameters(), 
             customFilter->meshRows(), customFilter->meshColumns(), customFilter->meshBoxType(), customFilter->meshType());
-        // FIXME: Optimize this by keeping a reference to the program across frames.
-        // https://bugs.webkit.org/show_bug.cgi?id=101801
-        RefPtr<CustomFilterCompiledProgram> compiledProgram = CustomFilterCompiledProgram::create(m_context3D, program->vertexShaderString(), program->fragmentShaderString(), program->programType());
+        RefPtr<CustomFilterCompiledProgram> compiledProgram;
+        CustomFilterProgramMap::iterator iter = m_customFilterPrograms.find(program.get());
+        if (iter == m_customFilterPrograms.end()) {
+            compiledProgram = CustomFilterCompiledProgram::create(m_context3D, program->vertexShaderString(), program->fragmentShaderString(), program->programType());
+            m_customFilterPrograms.set(program.get(), compiledProgram);
+        } else
+            compiledProgram = iter->value;
         renderer->setCompiledProgram(compiledProgram.release());
         break;
     }

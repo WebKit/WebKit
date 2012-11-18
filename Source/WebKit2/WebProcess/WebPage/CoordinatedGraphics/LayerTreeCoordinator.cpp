@@ -355,17 +355,21 @@ void LayerTreeCoordinator::checkCustomFilterProgramProxies(const FilterOperation
         const ValidatedCustomFilterOperation* customOperation = static_cast<const ValidatedCustomFilterOperation*>(operation);
         ASSERT(customOperation->validatedProgram()->isInitialized());
         TextureMapperPlatformCompiledProgram* program = customOperation->validatedProgram()->platformCompiledProgram();
-        if (!program->client())
-            program->setClient(WebCustomFilterProgramProxy::create(this));
+        
+        RefPtr<WebCustomFilterProgramProxy> customFilterProgramProxy;
+        if (program->client())
+            customFilterProgramProxy = static_cast<WebCustomFilterProgramProxy*>(program->client());
         else {
-            WebCustomFilterProgramProxy* customFilterProgramProxy = static_cast<WebCustomFilterProgramProxy*>(program->client());
-            if (!customFilterProgramProxy->client()) {
-                // Just in case the LayerTreeCoordinator was destroyed and recreated.
-                customFilterProgramProxy->setClient(this);
-            } else {
-                // If the client was not disconnected then this coordinator must be the client for it.
-                ASSERT(customFilterProgramProxy->client() == this);
-            }
+            customFilterProgramProxy = WebCustomFilterProgramProxy::create();
+            program->setClient(customFilterProgramProxy);
+        }
+        
+        if (!customFilterProgramProxy->client()) {
+            customFilterProgramProxy->setClient(this);
+            m_webPage->send(Messages::LayerTreeCoordinatorProxy::CreateCustomFilterProgram(customFilterProgramProxy->id(), customOperation->validatedProgram()->validatedProgramInfo()));
+        } else {
+            // If the client was not disconnected then this coordinator must be the client for it.
+            ASSERT(customFilterProgramProxy->client() == this);
         }
     }
 }
@@ -375,8 +379,7 @@ void LayerTreeCoordinator::removeCustomFilterProgramProxy(WebCustomFilterProgram
     // At this time the shader is not needed anymore, so we remove it from our set and 
     // send a message to the other process to delete it.
     m_customFilterPrograms.remove(customFilterProgramProxy);
-    // FIXME: Send a message to delete the object on the UI process.
-    // https://bugs.webkit.org/show_bug.cgi?id=101801
+    m_webPage->send(Messages::LayerTreeCoordinatorProxy::RemoveCustomFilterProgram(customFilterProgramProxy->id()));
 }
 
 void LayerTreeCoordinator::disconnectCustomFilterPrograms()
@@ -650,7 +653,19 @@ WebCore::IntRect LayerTreeCoordinator::visibleContentsRect() const
 void LayerTreeCoordinator::setLayerAnimations(WebLayerID layerID, const GraphicsLayerAnimations& animations)
 {
     m_shouldSyncFrame = true;
-    m_webPage->send(Messages::LayerTreeCoordinatorProxy::SetLayerAnimations(layerID, animations.getActiveAnimations()));
+    GraphicsLayerAnimations activeAnimations = animations.getActiveAnimations();
+#if ENABLE(CSS_SHADERS)
+    for (size_t i = 0; i < activeAnimations.animations().size(); ++i) {
+        const KeyframeValueList& keyframes = animations.animations().at(i).keyframes();
+        if (keyframes.property() != AnimatedPropertyWebkitFilter)
+            continue;
+        for (size_t j = 0; j < keyframes.size(); ++j) {
+            const FilterAnimationValue* filterValue = static_cast<const FilterAnimationValue*>(keyframes.at(i));
+            checkCustomFilterProgramProxies(*filterValue->value());
+        }
+    }
+#endif
+    m_webPage->send(Messages::LayerTreeCoordinatorProxy::SetLayerAnimations(layerID, activeAnimations));
 }
 
 void LayerTreeCoordinator::setVisibleContentsRect(const IntRect& rect, float scale, const FloatPoint& trajectoryVector)

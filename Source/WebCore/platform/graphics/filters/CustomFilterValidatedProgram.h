@@ -82,6 +82,8 @@ public:
     ~CustomFilterValidatedProgram();
 
     const CustomFilterProgramInfo& programInfo() const { return m_programInfo; }
+    CustomFilterProgramInfo validatedProgramInfo() const;
+    
     PassRefPtr<CustomFilterCompiledProgram> compiledProgram();
 
     const String& validatedVertexShader() const 

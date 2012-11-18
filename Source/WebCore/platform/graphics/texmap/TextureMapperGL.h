@@ -30,6 +30,8 @@
 
 namespace WebCore {
 
+class CustomFilterProgram;
+class CustomFilterCompiledProgram;
 class TextureMapperGLData;
 class GraphicsContext;
 class TextureMapperShaderProgram;
@@ -74,6 +76,7 @@ public:
 #endif
 #if ENABLE(CSS_SHADERS)
     bool drawUsingCustomFilter(BitmapTexture& targetTexture, const BitmapTexture& sourceTexture, const FilterOperation&);
+    virtual void removeCachedCustomFilterProgram(CustomFilterProgram*);
 #endif
 
     void setEnableEdgeDistanceAntialiasing(bool enabled) { m_enableEdgeDistanceAntialiasing = enabled; }
@@ -127,6 +130,11 @@ private:
     TextureMapperGLData* m_data;
     ClipStack m_clipStack;
     bool m_enableEdgeDistanceAntialiasing;
+
+#if ENABLE(CSS_SHADERS)
+    typedef HashMap<CustomFilterProgram*, RefPtr<CustomFilterCompiledProgram> > CustomFilterProgramMap;
+    CustomFilterProgramMap m_customFilterPrograms;
+#endif
 
     friend class BitmapTextureGL;
 };

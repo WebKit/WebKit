@@ -1,3 +1,41 @@
+2012-11-17  Alexandru Chiculita  <achicu@adobe.com>
+
+        [Texmap][CSS Shaders] Reuse the precompiled shader for custom filters in TextureMapperGL
+        https://bugs.webkit.org/show_bug.cgi?id=101801
+
+        Reviewed by Noam Rosenthal.
+
+        Added a HashMap in TextureMapperGL to store the precompiled versions of the shaders.
+        Also added a new API on TextureMapper that receives a notification when the shader
+        is no longer needed.
+
+        No new tests, the code is tested by existing tests.
+
+        * platform/graphics/filters/CustomFilterOperation.h:
+        (WebCore::CustomFilterOperation::setProgram):
+        (CustomFilterOperation): Made the constructor protected, so that we can overwrite the class in WK2.
+        * platform/graphics/filters/CustomFilterValidatedProgram.cpp:
+        (WebCore::CustomFilterValidatedProgram::validatedProgramInfo):
+        (WebCore):
+        * platform/graphics/filters/CustomFilterValidatedProgram.h:
+        (CustomFilterValidatedProgram):
+        * platform/graphics/texmap/TextureMapper.h:
+        (WebCore):
+        (TextureMapper):
+        (WebCore::TextureMapper::removeCachedCustomFilterProgram):
+        Function to be called by the platform code, when the shader is no longer
+        needed. This implementation is empty and overridden in TextureMapperGL.
+        * platform/graphics/texmap/TextureMapperGL.cpp:
+        (WebCore::TextureMapperGL::removeCachedCustomFilterProgram):
+        Removes the compiled shader from the cache. This is called from WK2 when the compiled shader
+        is no longer needed.
+        (WebCore):
+        (WebCore::TextureMapperGL::drawUsingCustomFilter): The first time it uses a new
+        shader it will cache the compiled version until removeCachedCustomFilterProgram is called.
+        * platform/graphics/texmap/TextureMapperGL.h:
+        (WebCore):
+        (TextureMapperGL):
+
 2012-11-17  Brady Eidson  <beidson@apple.com>
 
         Add an integer identifier field to AuthenticationChallengeBase.

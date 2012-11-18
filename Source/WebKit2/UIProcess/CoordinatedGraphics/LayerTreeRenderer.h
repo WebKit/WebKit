@@ -38,6 +38,11 @@
 #include <wtf/HashSet.h>
 #include <wtf/ThreadingPrimitives.h>
 
+namespace WebCore {
+class CustomFilterProgram;
+class CustomFilterProgramInfo;
+}
+
 namespace WebKit {
 
 class CoordinatedBackingStore;
@@ -83,6 +88,11 @@ public:
     void setLayerState(WebLayerID, const WebLayerInfo&);
 #if ENABLE(CSS_FILTERS)
     void setLayerFilters(WebLayerID, const WebCore::FilterOperations&);
+#endif
+#if ENABLE(CSS_SHADERS)
+    void injectCachedCustomFilterPrograms(const WebCore::FilterOperations& filters) const;
+    void createCustomFilterProgram(int id, const WebCore::CustomFilterProgramInfo&);
+    void removeCustomFilterProgram(int id);
 #endif
 
     void createTile(WebLayerID, int, float scale);
@@ -171,6 +181,11 @@ private:
     WebCore::TextureMapper::AccelerationMode m_accelerationMode;
     WebCore::Color m_backgroundColor;
     bool m_setDrawsBackground;
+
+#if ENABLE(CSS_SHADERS)
+    typedef HashMap<int, RefPtr<WebCore::CustomFilterProgram> > CustomFilterProgramMap;
+    CustomFilterProgramMap m_customFilterPrograms;
+#endif
 };
 
 };
