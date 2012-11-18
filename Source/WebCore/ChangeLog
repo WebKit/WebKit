@@ -1,5 +1,19 @@
 2012-11-18  Andreas Kling  <akling@apple.com>
 
+        Inline the StyledElement constructor.
+        <http://webkit.org/b/102615>
+
+        Reviewed by Antti Koivisto.
+
+        StyledElement sits between Element and HTMLElement in the inheritance chain, and both of those are inline. 
+        Knocks ~0.4% of samples off of the DOM/CreateNodes performance test.
+
+        * dom/StyledElement.cpp:
+        * dom/StyledElement.h:
+        (WebCore::StyledElement::StyledElement):
+
+2012-11-18  Andreas Kling  <akling@apple.com>
+
         HTMLMediaElement: Skip unnecessary attribute lookup in parsing of "src" attribute.
         <http://webkit.org/b/102614>
 

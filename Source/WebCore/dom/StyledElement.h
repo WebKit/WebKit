@@ -57,7 +57,10 @@ public:
     virtual void collectStyleForPresentationAttribute(const Attribute&, StylePropertySet*) { }
 
 protected:
-    StyledElement(const QualifiedName&, Document*, ConstructionType);
+    StyledElement(const QualifiedName& name, Document* document, ConstructionType type)
+        : Element(name, document, type)
+    {
+    }
 
     virtual void attributeChanged(const QualifiedName&, const AtomicString&) OVERRIDE;
     virtual void parseAttribute(const QualifiedName&, const AtomicString&) OVERRIDE;

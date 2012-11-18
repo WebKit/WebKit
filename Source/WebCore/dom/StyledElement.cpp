@@ -135,11 +135,6 @@ void StyledElement::updateStyleAttribute() const
         const_cast<StyledElement*>(this)->setSynchronizedLazyAttribute(styleAttr, inlineStyle->asText());
 }
 
-StyledElement::StyledElement(const QualifiedName& name, Document* document, ConstructionType type)
-    : Element(name, document, type)
-{
-}
-
 StyledElement::~StyledElement()
 {
     if (PropertySetCSSStyleDeclaration* cssomWrapper = inlineStyleCSSOMWrapper())
