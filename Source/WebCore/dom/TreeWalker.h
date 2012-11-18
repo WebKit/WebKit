@@ -26,6 +26,7 @@
 #define TreeWalker_h
 
 #include "NodeFilter.h"
+#include "ScriptWrappable.h"
 #include "Traversal.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -34,7 +35,7 @@ namespace WebCore {
 
     typedef int ExceptionCode;
 
-    class TreeWalker : public RefCounted<TreeWalker>, public Traversal {
+    class TreeWalker : public ScriptWrappable, public RefCounted<TreeWalker>, public Traversal {
     public:
         static PassRefPtr<TreeWalker> create(PassRefPtr<Node> rootNode, unsigned whatToShow, PassRefPtr<NodeFilter> filter, bool expandEntityReferences)
         {

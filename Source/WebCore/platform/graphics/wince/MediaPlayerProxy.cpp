@@ -101,9 +101,9 @@ void WebMediaPlayerProxy::initEngine()
     String serviceType;
 
     // add all attributes set on the embed object
-    if (NamedNodeMap* attributes = element->attributes()) {
-        for (unsigned i = 0; i < attributes->length(); ++i) {
-            Attribute* it = attributes->attributeItem(i);
+    if (element->hasAttributes()) {
+        for (unsigned i = 0; i < element->attributeCount(); ++i) {
+            Attribute* it = element->attributeItem(i);
             paramNames.append(it->name().localName().string());
             paramValues.append(it->value().string());
         }

@@ -22,6 +22,7 @@
 
 #include "FrameDestructionObserver.h"
 #include "DOMMimeType.h"
+#include "ScriptWrappable.h"
 #include <wtf/Forward.h>
 #include <wtf/RefPtr.h>
 #include <wtf/RefCounted.h>
@@ -31,7 +32,7 @@ namespace WebCore {
 class Plugin;
 class PluginData;
 
-class DOMPlugin : public RefCounted<DOMPlugin>, public FrameDestructionObserver {
+class DOMPlugin : public ScriptWrappable, public RefCounted<DOMPlugin>, public FrameDestructionObserver {
 public:
     static PassRefPtr<DOMPlugin> create(PluginData* pluginData, Frame* frame, unsigned index) { return adoptRef(new DOMPlugin(pluginData, frame, index)); }
     ~DOMPlugin();

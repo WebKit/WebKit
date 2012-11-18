@@ -35,6 +35,7 @@
 #include "PositionError.h"
 #include "PositionErrorCallback.h"
 #include "PositionOptions.h"
+#include "ScriptWrappable.h"
 #include "Timer.h"
 
 namespace WebCore {
@@ -47,7 +48,7 @@ class GeolocationPosition;
 class Page;
 class ScriptExecutionContext;
 
-class Geolocation : public RefCounted<Geolocation>, public ActiveDOMObject
+class Geolocation : public ScriptWrappable, public RefCounted<Geolocation>, public ActiveDOMObject
 {
 public:
     static PassRefPtr<Geolocation> create(ScriptExecutionContext*);

@@ -25,6 +25,7 @@
 #ifndef NamedNodeMap_h
 #define NamedNodeMap_h
 
+#include "ScriptWrappable.h"
 #include <wtf/PassOwnPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/text/WTFString.h>
@@ -36,7 +37,7 @@ class Element;
 
 typedef int ExceptionCode;
 
-class NamedNodeMap {
+class NamedNodeMap : public ScriptWrappable {
     WTF_MAKE_FAST_ALLOCATED;
     friend class Element;
 public:

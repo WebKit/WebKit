@@ -1,3 +1,52 @@
+2012-11-17  Eric Seidel  <eric@webkit.org>
+
+        Add ScriptWrappable to more WebCore classes which are commonly JS-wrapped
+        https://bugs.webkit.org/show_bug.cgi?id=102601
+
+        Reviewed by Adam Barth.
+
+        From my investigations all of these classes exist only to be exposed
+        to the web (via JavaScript) and are not used internally by WebCore.
+        I beleive all of them always have wrappers.
+        These were found using this code:
+        https://bugs.webkit.org/show_bug.cgi?id=102539#c2
+
+        Geolocation -- navigator.geolocation
+        WebKitCSSMatrix -- represent matrixes in JS through various APIs
+        DOMStringMap, NamedNodeMap, NodeIterator, TreeWalker -- exclusively for the DOM API
+        Blob, FileList - used by the File, Clipboard and XHR, also exclusively as API
+        ValidityState -- formControl.validity
+        CanvasRenderingContext -- canvas.getContext()
+        DOMApplicationCache -- window.appcache
+        Screen -- window.screen
+        DOMMimeTypeArray -- navigator.mimetypes
+        DOMPlugin -- navigator.plugins[0]
+        DOMPluginArray -- navigator.plugins
+
+        * Modules/geolocation/Geolocation.h:
+        * css/WebKitCSSMatrix.h:
+        * dom/DOMStringMap.h:
+        * dom/NamedNodeMap.h:
+        * dom/NodeIterator.h:
+        * dom/TreeWalker.h:
+        * fileapi/Blob.h:
+        * fileapi/FileList.h: (had to un-indent to make check-webkit-style happy)
+        (FileList):
+        (WebCore::FileList::create):
+        (WebCore::FileList::length):
+        (WebCore::FileList::isEmpty):
+        (WebCore::FileList::clear):
+        (WebCore::FileList::append):
+        * html/ValidityState.h:
+        * html/canvas/CanvasRenderingContext.h:
+        * loader/appcache/DOMApplicationCache.h:
+        * page/Screen.h:
+        * platform/graphics/wince/MediaPlayerProxy.cpp:
+        (WebCore::WebMediaPlayerProxy::initEngine): This code was wrong, fixed to use internal APIs.
+        * plugins/DOMMimeTypeArray.h:
+        * plugins/DOMPlugin.h:
+        * plugins/DOMPluginArray.h:
+
 2012-11-17  Alexandru Chiculita  <achicu@adobe.com>
 
         [Texmap][CSS Shaders] Reuse the precompiled shader for custom filters in TextureMapperGL

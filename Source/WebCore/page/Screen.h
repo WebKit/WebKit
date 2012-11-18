@@ -31,6 +31,7 @@
 #define Screen_h
 
 #include "DOMWindowProperty.h"
+#include "ScriptWrappable.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 
@@ -38,7 +39,7 @@ namespace WebCore {
 
     class Frame;
 
-    class Screen : public RefCounted<Screen>, public DOMWindowProperty {
+    class Screen : public ScriptWrappable, public RefCounted<Screen>, public DOMWindowProperty {
     public:
         static PassRefPtr<Screen> create(Frame *frame) { return adoptRef(new Screen(frame)); }
 

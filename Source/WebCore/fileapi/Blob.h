@@ -33,6 +33,7 @@
 
 #include "BlobData.h"
 #include "KURL.h"
+#include "ScriptWrappable.h"
 #include <wtf/PassOwnPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -43,7 +44,7 @@ namespace WebCore {
 
 class ScriptExecutionContext;
 
-class Blob : public RefCounted<Blob> {
+class Blob : public ScriptWrappable, public RefCounted<Blob> {
 public:
     static PassRefPtr<Blob> create()
     {

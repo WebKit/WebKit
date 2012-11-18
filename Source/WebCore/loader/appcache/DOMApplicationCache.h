@@ -30,6 +30,7 @@
 #include "DOMWindowProperty.h"
 #include "EventNames.h"
 #include "EventTarget.h"
+#include "ScriptWrappable.h"
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/PassRefPtr.h>
@@ -42,7 +43,7 @@ namespace WebCore {
 class Frame;
 class KURL;
 
-class DOMApplicationCache : public RefCounted<DOMApplicationCache>, public EventTarget, public DOMWindowProperty {
+class DOMApplicationCache : public ScriptWrappable, public RefCounted<DOMApplicationCache>, public EventTarget, public DOMWindowProperty {
 public:
     static PassRefPtr<DOMApplicationCache> create(Frame* frame) { return adoptRef(new DOMApplicationCache(frame)); }
     ~DOMApplicationCache() { ASSERT(!m_frame); }

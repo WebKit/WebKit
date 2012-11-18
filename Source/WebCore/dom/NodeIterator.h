@@ -26,6 +26,7 @@
 #define NodeIterator_h
 
 #include "NodeFilter.h"
+#include "ScriptWrappable.h"
 #include "Traversal.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -34,7 +35,7 @@ namespace WebCore {
 
     typedef int ExceptionCode;
 
-    class NodeIterator : public RefCounted<NodeIterator>, public Traversal {
+    class NodeIterator : public ScriptWrappable, public RefCounted<NodeIterator>, public Traversal {
     public:
         static PassRefPtr<NodeIterator> create(PassRefPtr<Node> rootNode, unsigned whatToShow, PassRefPtr<NodeFilter> filter, bool expandEntityReferences)
         {
