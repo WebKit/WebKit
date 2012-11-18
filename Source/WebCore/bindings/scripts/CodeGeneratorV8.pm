@@ -28,8 +28,6 @@ package CodeGeneratorV8;
 
 use strict;
 
-use Digest::MD5;
-
 use constant FileNamePrefix => "V8";
 
 my $codeGenerator;
@@ -771,12 +769,6 @@ sub GenerateHeaderCustomCall
     }
 }
 
-sub IsVisibleAcrossOrigins
-{
-    my $dataNode = shift;
-    return $dataNode->extendedAttributes->{"CheckSecurity"} && !($dataNode->name eq "DOMWindow");
-}
-
 sub IsConstructable
 {
     my $dataNode = shift;
@@ -804,7 +796,8 @@ sub GenerateDomainSafeFunctionGetter
         $signature = "v8::Local<v8::Signature>()";
     }
 
-    my $newTemplateString = GenerateNewFunctionTemplate($function, $interfaceName, $signature);
+    my $callback = GetFunctionTemplateCallbackName($function, $interfaceName);
+    my $newTemplateString = "v8::FunctionTemplate::New($callback, v8Undefined(), $signature)";
 
     AddToImplIncludes("Frame.h");
     push(@implContentDecls, <<END);
@@ -1142,7 +1135,7 @@ END
         AddToImplIncludes($attrType.".h");
         push(@implContentDecls, "    return toV8Fast($result, info, imp);\n");
     } else {
-        push(@implContentDecls, "    " . ReturnNativeToJSValue($attribute->signature, $result, "info.Holder()", "info.GetIsolate()").";\n");
+        push(@implContentDecls, "    return " . NativeToJSValue($attribute->signature, $result, "info.Holder()", "info.GetIsolate()").";\n");
     }
 
     push(@implContentDecls, "}\n\n");  # end of getter
@@ -1373,16 +1366,6 @@ sub GetFunctionTemplateCallbackName
     } else {
         return "${interfaceName}V8Internal::${name}Callback";
     }
-}
-
-sub GenerateNewFunctionTemplate
-{
-    my $function = shift;
-    my $interfaceName = shift;
-    my $signature = shift;
-
-    my $callback = GetFunctionTemplateCallbackName($function, $interfaceName);
-    return "v8::FunctionTemplate::New($callback, v8Undefined(), $signature)";
 }
 
 sub GenerateEventListenerCallback
@@ -3639,7 +3622,7 @@ sub GenerateFunctionCallString()
     }
 
     $return .= ".release()" if ($returnIsRef);
-    $result .= $indent . ReturnNativeToJSValue($function->signature, $return, "args.Holder()", "args.GetIsolate()") . ";\n";
+    $result .= $indent . "return " . NativeToJSValue($function->signature, $return, "args.Holder()", "args.GetIsolate()") . ";\n";
 
     return $result;
 }
@@ -4148,11 +4131,6 @@ sub NativeToJSValue
     return "toV8($value$getCreationContextArg$getIsolateArg)";
 }
 
-sub ReturnNativeToJSValue
-{
-    return "return " . NativeToJSValue(@_);
-}
-
 # Internal helper
 sub WriteData
 {
@@ -4272,14 +4250,6 @@ sub GetPassRefPtrType
 
     my $angleBracketSpace = $className =~ />$/ ? " " : "";
     return "PassRefPtr<${className}${angleBracketSpace}>";
-}
-
-sub DebugPrint
-{
-    my $output = shift;
-
-    print $output;
-    print "\n";
 }
 
 1;
