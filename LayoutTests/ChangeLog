@@ -1,3 +1,11 @@
+2012-11-18  Simon Fraser  <simon.fraser@apple.com>
+
+        Rebaselines.
+
+        * platform/mac/fast/media/mq-js-media-except-02-expected.txt:
+        * platform/mac/fast/media/mq-js-media-except-03-expected.txt:
+        * platform/mac/svg/custom/baseval-animval-equality-expected.txt:
+
 2012-11-18  Antti Koivisto  <antti@apple.com>
 
         REGRESSION(r129644): User StyleSheet not applying
