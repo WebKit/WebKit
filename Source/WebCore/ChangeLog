@@ -1,3 +1,172 @@
+2012-11-18  Kondapally Kalyan  <kalyan.kondapally@intel.com>
+
+        [EFL] Refactor GraphicsContext3DEFL.
+        https://bugs.webkit.org/show_bug.cgi?id=101291.
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        GraphicsContext3DEfl creates GraphicsContext3DPrivate, which acts as its platform Layer.
+        GraphicsContext3DPrivate needs to handle the following cases:
+        1) To provide an off-screen buffer for accelerated composition.
+        2) Render to a current context.
+        3) To render directly to host window. (currently not supported.)
+
+        Before this patch Evas was used to provide us an off-screen context and buffer. GLX was used in
+        the other supported case. Evas acts as a glue layer to provide us with appropriate
+        GL bindings (OpenGL functions), GL context and drawable (surface/offscreenbuffer).
+        However, primitive rendering is handled by TextureMapper and OpenGLShims is used to load the needed GL functions.
+
+        It would be for our advantage to be able to take in to use any optimisations/extensions
+        provided by underlying drivers, specific to a platform (e.g. GLX_MESA_copy_sub_buffer etc.).
+        This patch introduces an abstraction layer to make it easy to add support for any GL backend (GLX, EGL etc.)
+        and do any platform specific optimizations as needed without complicating GraphicsContext3DPrivate class.
+        Two new classes are added with this implementation, GLPlatformContext and GLPlatformSurface.
+        GraphicsContext3DPrivate would create and own a GLPlatformContext and GLPlatformSurface.
+
+        GLPlatformContext encapsulates an OpenGL context hiding any platform specific management.
+        It uses GL extension ARB_robustness (when available) to detect driver resets.
+        It defines a simple interface for things that need to be handled by the context. Support
+        for multi-threaded usage and shared context-group would be added later.
+
+        GLPlatformSurface encapsulates an OpenGL drawable hiding any platform specific management.
+        It defines a simple interface for things that need to be handled by the surface.
+        It creates an off-screen rendering area. Any GLPlatformContext (compatible with the surface)
+        can be used to render into this off-screen area.
+
+        This patch also adds GLX implementation. To keep the patch to minimum EGL support would be added in another changeset.
+
+        * PlatformEfl.cmake:
+        * platform/graphics/efl/GraphicsContext3DEfl.cpp:
+        (WebCore::GraphicsContext3D::create):
+        (WebCore::GraphicsContext3D::GraphicsContext3D):
+        (WebCore::GraphicsContext3D::~GraphicsContext3D):
+        (WebCore::GraphicsContext3D::makeContextCurrent):
+        (WebCore::GraphicsContext3D::setContextLostCallback):
+        * platform/graphics/efl/GraphicsContext3DPrivate.cpp:
+        (WebCore::GraphicsContext3DPrivate::GraphicsContext3DPrivate):
+        (GraphicsContext3DPrivate::~GraphicsContext3DPrivate):
+        (GraphicsContext3DPrivate::releaseResources):
+        (GraphicsContext3DPrivate::setContextLostCallback):
+        (GraphicsContext3DPrivate::platformGraphicsContext3D):
+        (GraphicsContext3DPrivate::makeContextCurrent):
+        (GraphicsContext3DPrivate::createGraphicsSurfaces):
+        (GraphicsContext3DPrivate::copyToGraphicsSurface):
+        (GraphicsContext3DPrivate::graphicsSurfaceToken):
+        * platform/graphics/efl/GraphicsContext3DPrivate.h:
+        (GraphicsContext3DPrivate):
+        * platform/graphics/opengl/GLDefs.h: Added.
+        (WebCore):
+        * platform/graphics/opengl/GLPlatformContext.cpp: Added.
+        (WebCore):
+        (WebCore::GLPlatformContext::createContext):
+        (WebCore::GLPlatformContext::createOffScreenContext):
+        (WebCore::GLPlatformContext::createCurrentContextWrapper):
+        (WebCore::GLPlatformContext::GLPlatformContext):
+        (WebCore::GLPlatformContext::~GLPlatformContext):
+        (WebCore::GLPlatformContext::makeCurrent):
+        (WebCore::GLPlatformContext::isValid):
+        (WebCore::GLPlatformContext::releaseCurrent):
+        (WebCore::GLPlatformContext::handle):
+        (WebCore::GLPlatformContext::isCurrentContext):
+        (WebCore::GLPlatformContext::initialize):
+        (WebCore::GLPlatformContext::getCurrent):
+        (WebCore::GLPlatformContext::platformMakeCurrent):
+        (WebCore::GLPlatformContext::platformReleaseCurrent):
+        (WebCore::GLPlatformContext::destroy):
+        * platform/graphics/opengl/GLPlatformContext.h: Added.
+        (WebCore):
+        (GLPlatformContext):
+        * platform/graphics/opengl/GLPlatformSurface.cpp: Added.
+        (WebCore):
+        (WebCore::GLPlatformSurface::createOffscreenSurface):
+        (WebCore::GLPlatformSurface::createTransportSurface):
+        (WebCore::GLPlatformSurface::GLPlatformSurface):
+        (WebCore::GLPlatformSurface::~GLPlatformSurface):
+        (WebCore::GLPlatformSurface::handle):
+        (WebCore::GLPlatformSurface::geometry):
+        (WebCore::GLPlatformSurface::sharedDisplay):
+        (WebCore::GLPlatformSurface::configuration):
+        (WebCore::GLPlatformSurface::swapBuffers):
+        (WebCore::GLPlatformSurface::copyTexture):
+        (WebCore::GLPlatformSurface::updateContents):
+        (WebCore::GLPlatformSurface::setGeometry):
+        (WebCore::GLPlatformSurface::destroy):
+        * platform/graphics/opengl/GLPlatformSurface.h: Added.
+        (WebCore):
+        (GLPlatformSurface):
+            GLXOffScreenContext creates an off-screen context. This is used when
+            renderstyle is RenderOffscreen.
+            It uses GL extension GLX_ARB_create_context (when available)
+            to create a context else falls back to use glXCreateNewContext.
+        * platform/graphics/surfaces/glx/GLXContext.cpp: Added.
+        (WebCore):
+        (WebCore::initializeARBExtensions):
+        (WebCore::GLXOffScreenContext::GLXOffScreenContext):
+        (WebCore::GLXOffScreenContext::initialize):
+        (WebCore::GLXOffScreenContext::~GLXOffScreenContext):
+        (WebCore::GLXOffScreenContext::isCurrentContext):
+        (WebCore::GLXOffScreenContext::platformMakeCurrent):
+        (WebCore::GLXOffScreenContext::platformReleaseCurrent):
+        (WebCore::GLXOffScreenContext::freeResources):
+        (WebCore::GLXOffScreenContext::destroy):
+            GLXCurrentContextWrapper acts as a wrapper for current context.
+            This is used when renderstyle is RenderToCurrentGLContext.
+        * platform/graphics/surfaces/glx/GLXContext.h: Added.
+        (WebCore):
+        (GLXCurrentContextWrapper):
+        (WebCore::GLXCurrentContextWrapper::GLXCurrentContextWrapper):
+        (WebCore::GLXCurrentContextWrapper::~GLXCurrentContextWrapper):
+        (GLXOffScreenContext):
+        * platform/graphics/surfaces/glx/GLXSurface.cpp: Added.
+        (WebCore):
+        (WebCore::GLXSurface::GLXSurface):
+        (WebCore::GLXSurface::~GLXSurface):
+        (WebCore::GLXSurface::visualInfo):
+        (WebCore::GLXSurface::xWindow):
+        (WebCore::GLXSurface::pBufferConfiguration):
+        (WebCore::GLXSurface::transportSurfaceConfiguration):
+        (WebCore::GLXSurface::isXRenderExtensionSupported):
+            GLXTransportSurface creates Window and uses it as an off-screen surface.
+            Any GLContext that was created with respect to configuration can be used
+            to render into this.
+            This is used when contents of the buffer are to be provided to UI Process
+            for display.
+        (WebCore::GLXTransportSurface::GLXTransportSurface):
+        (WebCore::GLXTransportSurface::~GLXTransportSurface):
+        (WebCore::GLXTransportSurface::configuration):
+        (WebCore::GLXTransportSurface::swapBuffers):
+        (WebCore::GLXTransportSurface::setGeometry):
+        (WebCore::GLXTransportSurface::initialize):
+        (WebCore::GLXTransportSurface::destroy):
+        (WebCore::GLXTransportSurface::freeResources):
+           GLXPBuffer, Creates a GL surface (PBuffer) used for offscreen rendering.
+           Any GLContext that was created with respect to configuration can be used
+           to render into this.
+        (WebCore::GLXPBuffer::GLXPBuffer):
+        (WebCore::GLXPBuffer::~GLXPBuffer):
+        (WebCore::GLXPBuffer::initialize):
+        (WebCore::GLXPBuffer::configuration):
+        (WebCore::GLXPBuffer::destroy):
+        (WebCore::GLXPBuffer::freeResources):
+        * platform/graphics/surfaces/glx/GLXSurface.h: Added.
+        (WebCore):
+            Creates X resources which are shared between surface and context.
+        (SharedX11Resources):
+        (WebCore::SharedX11Resources::create):
+        (WebCore::SharedX11Resources::deref):
+        (WebCore::SharedX11Resources::getXWindow):
+        (WebCore::SharedX11Resources::display):
+        (WebCore::SharedX11Resources::visualInfo):
+        (WebCore::SharedX11Resources::createConfig):
+        (WebCore::SharedX11Resources::pBufferContextConfig):
+        (WebCore::SharedX11Resources::surfaceContextConfig):
+        (WebCore::SharedX11Resources::isXRenderExtensionSupported):
+        (WebCore::SharedX11Resources::SharedX11Resources):
+        (WebCore::SharedX11Resources::~SharedX11Resources):
+        (GLXSurface):
+        (GLXTransportSurface):
+        (GLXPBuffer):
+
 2012-11-18  Andreas Kling  <akling@apple.com>
 
         Element::parseAttribute() should take name & value as separate arguments.
