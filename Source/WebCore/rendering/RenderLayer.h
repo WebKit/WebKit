@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2003, 2009, 2012 Apple Inc. All rights reserved.
  *
  * Portions are Copyright (C) 1998 Netscape Communications Corporation.
  *
@@ -532,21 +532,39 @@ public:
 
     enum ShouldRespectOverflowClip { IgnoreOverflowClip, RespectOverflowClip };
 
+    struct ClipRectsContext {
+        ClipRectsContext(const RenderLayer* inRootLayer, RenderRegion* inRegion, ClipRectsType inClipRectsType, OverlayScrollbarSizeRelevancy inOverlayScrollbarSizeRelevancy = IgnoreOverlayScrollbarSize, ShouldRespectOverflowClip inRespectOverflowClip = RespectOverflowClip)
+            : rootLayer(inRootLayer)
+            , region(inRegion)
+            , clipRectsType(inClipRectsType)
+            , overlayScrollbarSizeRelevancy(inOverlayScrollbarSizeRelevancy)
+            , respectOverflowClip(inRespectOverflowClip)
+        { }
+        const RenderLayer* rootLayer;
+        RenderRegion* region;
+        ClipRectsType clipRectsType;
+        OverlayScrollbarSizeRelevancy overlayScrollbarSizeRelevancy;
+        ShouldRespectOverflowClip respectOverflowClip;
+    };
+
     // This method figures out our layerBounds in coordinates relative to
     // |rootLayer}.  It also computes our background and foreground clip rects
     // for painting/event handling.
     // Pass offsetFromRoot if known.
-    void calculateRects(const RenderLayer* rootLayer, RenderRegion*, ClipRectsType, const LayoutRect& paintDirtyRect, LayoutRect& layerBounds,
-                        ClipRect& backgroundRect, ClipRect& foregroundRect, ClipRect& outlineRect, const LayoutPoint* offsetFromRoot = 0,
-                        OverlayScrollbarSizeRelevancy = IgnoreOverlayScrollbarSize, ShouldRespectOverflowClip = RespectOverflowClip) const;
+    void calculateRects(const ClipRectsContext&, const LayoutRect& paintDirtyRect, LayoutRect& layerBounds,
+        ClipRect& backgroundRect, ClipRect& foregroundRect, ClipRect& outlineRect, const LayoutPoint* offsetFromRoot = 0) const;
 
     // Compute and cache clip rects computed with the given layer as the root
-    void updateClipRects(const RenderLayer* rootLayer, RenderRegion*, ClipRectsType, OverlayScrollbarSizeRelevancy = IgnoreOverlayScrollbarSize, ShouldRespectOverflowClip = RespectOverflowClip);
+    void updateClipRects(const ClipRectsContext&);
     // Compute and return the clip rects. If useCached is true, will used previously computed clip rects on ancestors
     // (rather than computing them all from scratch up the parent chain).
-    void calculateClipRects(const RenderLayer* rootLayer, RenderRegion*, ClipRectsType, ClipRects&, OverlayScrollbarSizeRelevancy = IgnoreOverlayScrollbarSize, ShouldRespectOverflowClip = RespectOverflowClip) const;
+    void calculateClipRects(const ClipRectsContext&, ClipRects&) const;
 
-    ClipRects* clipRects(ClipRectsType type) const { ASSERT(type < NumCachedClipRectsTypes); return m_clipRectsCache ? m_clipRectsCache->m_clipRects[type].get() : 0; }
+    ClipRects* clipRects(ClipRectsType type) const
+    {
+        ASSERT(type < NumCachedClipRectsTypes);
+        return m_clipRectsCache ? m_clipRectsCache->m_clipRects[type].get() : 0;
+    }
 
     LayoutRect childrenClipRect() const; // Returns the foreground clip rect of the layer in the document's coordinate space.
     LayoutRect selfClipRect() const; // Returns the background clip rect of the layer in the document's coordinate space.
@@ -863,8 +881,9 @@ private:
     void updateOrRemoveFilterEffectRenderer();
 #endif
 
-    void parentClipRects(const RenderLayer* rootLayer, RenderRegion*, ClipRectsType, ClipRects&, OverlayScrollbarSizeRelevancy = IgnoreOverlayScrollbarSize, ShouldRespectOverflowClip = RespectOverflowClip) const;
-    ClipRect backgroundClipRect(const RenderLayer* rootLayer, RenderRegion*, ClipRectsType, OverlayScrollbarSizeRelevancy = IgnoreOverlayScrollbarSize, ShouldRespectOverflowClip = RespectOverflowClip) const;
+    void parentClipRects(const ClipRectsContext&, ClipRects&) const;
+    ClipRect backgroundClipRect(const ClipRectsContext&) const;
+
     LayoutRect paintingExtent(const RenderLayer* rootLayer, const LayoutRect& paintDirtyRect, PaintBehavior);
 
     RenderLayer* enclosingTransformedAncestor() const;

@@ -1,5 +1,44 @@
 2012-11-17  Simon Fraser  <simon.fraser@apple.com>
 
+        Reduce the crazy number of parameters to RenderLayer clip-rect functions
+        https://bugs.webkit.org/show_bug.cgi?id=102604
+
+        Reviewed by Dan Bernstein.
+
+        Many of the RenderLayer member functions related to clip rect computation
+        took a long list of similar parameters. Gather these into a struct, ClipRectsContext,
+        that we pass to these functions
+        
+        No functional changes.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::paintLayer):
+        (WebCore::RenderLayer::paintLayerContents):
+        (WebCore::RenderLayer::hitTestLayer):
+        (WebCore::RenderLayer::updateClipRects):
+        (WebCore::RenderLayer::calculateClipRects):
+        (WebCore::RenderLayer::parentClipRects):
+        (WebCore::RenderLayer::backgroundClipRect):
+        (WebCore::RenderLayer::calculateRects):
+        (WebCore::RenderLayer::childrenClipRect):
+        (WebCore::RenderLayer::selfClipRect):
+        (WebCore::RenderLayer::localClipRect):
+        * rendering/RenderLayer.h:
+        (WebCore::RenderLayer::ClipRectsContext::ClipRectsContext):
+        (ClipRectsContext):
+        (RenderLayer):
+        (WebCore::RenderLayer::clipRects):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateCompositedBounds):
+        (WebCore::RenderLayerBacking::updateGraphicsLayerGeometry):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::addToOverlapMap):
+        (WebCore::RenderLayerCompositor::clippedByAncestor):
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::writeLayers):
+
+2012-11-17  Simon Fraser  <simon.fraser@apple.com>
+
         Simplify bounds computation for the RenderView's layer
         https://bugs.webkit.org/show_bug.cgi?id=102597
 

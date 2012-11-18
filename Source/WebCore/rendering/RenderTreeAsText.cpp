@@ -726,7 +726,7 @@ static void writeLayers(TextStream& ts, const RenderLayer* rootLayer, RenderLaye
     // Calculate the clip rects we should use.
     LayoutRect layerBounds;
     ClipRect damageRect, clipRectToApply, outlineRect;
-    l->calculateRects(rootLayer, 0, TemporaryClipRects, paintDirtyRect, layerBounds, damageRect, clipRectToApply, outlineRect);
+    l->calculateRects(RenderLayer::ClipRectsContext(rootLayer, 0, TemporaryClipRects), paintDirtyRect, layerBounds, damageRect, clipRectToApply, outlineRect);
 
     // Ensure our lists are up-to-date.
     l->updateLayerListsIfNeeded();

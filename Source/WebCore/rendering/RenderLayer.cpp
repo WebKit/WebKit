@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008, 2009, 2010, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2008, 2009, 2010, 2011, 2012 Apple Inc. All rights reserved.
  *
  * Portions are Copyright (C) 1998 Netscape Communications Corporation.
  *
@@ -3089,8 +3089,9 @@ void RenderLayer::paintLayer(GraphicsContext* context, const LayerPaintingInfo& 
         // Make sure the parent's clip rects have been calculated.
         ClipRect clipRect = paintingInfo.paintDirtyRect;
         if (parent()) {
-            clipRect = backgroundClipRect(paintingInfo.rootLayer, paintingInfo.region, (paintFlags & PaintLayerTemporaryClipRects) ? TemporaryClipRects : PaintingClipRects,
+            ClipRectsContext clipRectsContext(paintingInfo.rootLayer, paintingInfo.region, (paintFlags & PaintLayerTemporaryClipRects) ? TemporaryClipRects : PaintingClipRects,
                 IgnoreOverlayScrollbarSize, (paintFlags & PaintLayerPaintingOverflowContents) ? IgnoreOverflowClip : RespectOverflowClip);
+            clipRect = backgroundClipRect(clipRectsContext);
             clipRect.intersect(paintingInfo.paintDirtyRect);
         
             // Push the parent coordinate space's clip.
@@ -3266,8 +3267,8 @@ void RenderLayer::paintLayerContents(GraphicsContext* context, const LayerPainti
     LayoutPoint paintOffset;
 
     if (shouldPaintContent || shouldPaintOutline || isPaintingOverlayScrollbars) {
-        calculateRects(localPaintingInfo.rootLayer, localPaintingInfo.region, (localPaintFlags & PaintLayerTemporaryClipRects) ? TemporaryClipRects : PaintingClipRects, localPaintingInfo.paintDirtyRect, layerBounds, damageRect, clipRectToApply, outlineRect, &offsetFromRoot,
-            IgnoreOverlayScrollbarSize, localPaintFlags & PaintLayerPaintingOverflowContents ? IgnoreOverflowClip : RespectOverflowClip);
+        ClipRectsContext clipRectsContext(localPaintingInfo.rootLayer, localPaintingInfo.region, (localPaintFlags & PaintLayerTemporaryClipRects) ? TemporaryClipRects : PaintingClipRects, IgnoreOverlayScrollbarSize, localPaintFlags & PaintLayerPaintingOverflowContents ? IgnoreOverflowClip : RespectOverflowClip);
+        calculateRects(clipRectsContext, localPaintingInfo.paintDirtyRect, layerBounds, damageRect, clipRectToApply, outlineRect, &offsetFromRoot);
         paintOffset = toPoint(layerBounds.location() - renderBoxLocation() + localPaintingInfo.subPixelAccumulation);
         if (this == localPaintingInfo.rootLayer)
             paintOffset = roundedIntPoint(paintOffset);
@@ -3696,7 +3697,8 @@ RenderLayer* RenderLayer::hitTestLayer(RenderLayer* rootLayer, RenderLayer* cont
     if (transform() && !appliedTransform) {
         // Make sure the parent's clip rects have been calculated.
         if (parent()) {
-            ClipRect clipRect = backgroundClipRect(rootLayer, hitTestLocation.region(), RootRelativeClipRects, IncludeOverlayScrollbarSize);
+            ClipRectsContext clipRectsContext(rootLayer, hitTestLocation.region(), RootRelativeClipRects, IncludeOverlayScrollbarSize);
+            ClipRect clipRect = backgroundClipRect(clipRectsContext);
             // Go ahead and test the enclosing clip now.
             if (!clipRect.intersects(hitTestLocation))
                 return 0;
@@ -3763,7 +3765,9 @@ RenderLayer* RenderLayer::hitTestLayer(RenderLayer* rootLayer, RenderLayer* cont
     ClipRect bgRect;
     ClipRect fgRect;
     ClipRect outlineRect;
-    calculateRects(rootLayer, hitTestLocation.region(), RootRelativeClipRects, hitTestRect, layerBounds, bgRect, fgRect, outlineRect, 0, IncludeOverlayScrollbarSize);
+
+    ClipRectsContext clipRectsContext(rootLayer, hitTestLocation.region(), RootRelativeClipRects, IncludeOverlayScrollbarSize);
+    calculateRects(clipRectsContext, hitTestRect, layerBounds, bgRect, fgRect, outlineRect);
     
     // The following are used for keeping track of the z-depth of the hit point of 3d-transformed
     // descendants.
@@ -4046,24 +4050,25 @@ RenderLayer* RenderLayer::hitTestChildLayerColumns(RenderLayer* childLayer, Rend
     return 0;
 }
 
-void RenderLayer::updateClipRects(const RenderLayer* rootLayer, RenderRegion* region, ClipRectsType clipRectsType, OverlayScrollbarSizeRelevancy relevancy, ShouldRespectOverflowClip respectOverflowClip)
+void RenderLayer::updateClipRects(const ClipRectsContext& clipRectsContext)
 {
+    ClipRectsType clipRectsType = clipRectsContext.clipRectsType;
     ASSERT(clipRectsType < NumCachedClipRectsTypes);
     if (m_clipRectsCache && m_clipRectsCache->m_clipRects[clipRectsType]) {
-        ASSERT(rootLayer == m_clipRectsCache->m_clipRectsRoot[clipRectsType]);
-        ASSERT(m_clipRectsCache->m_respectingOverflowClip[clipRectsType] == (respectOverflowClip == RespectOverflowClip));
-        ASSERT(m_clipRectsCache->m_scrollbarRelevancy[clipRectsType] == relevancy);
+        ASSERT(clipRectsContext.rootLayer == m_clipRectsCache->m_clipRectsRoot[clipRectsType]);
+        ASSERT(m_clipRectsCache->m_respectingOverflowClip[clipRectsType] == (clipRectsContext.respectOverflowClip == RespectOverflowClip));
+        ASSERT(m_clipRectsCache->m_scrollbarRelevancy[clipRectsType] == clipRectsContext.overlayScrollbarSizeRelevancy);
         return; // We have the correct cached value.
     }
     
     // For transformed layers, the root layer was shifted to be us, so there is no need to
     // examine the parent.  We want to cache clip rects with us as the root.
-    RenderLayer* parentLayer = rootLayer != this ? parent() : 0;
+    RenderLayer* parentLayer = clipRectsContext.rootLayer != this ? parent() : 0;
     if (parentLayer)
-        parentLayer->updateClipRects(rootLayer, region, clipRectsType, relevancy, respectOverflowClip);
+        parentLayer->updateClipRects(clipRectsContext);
 
     ClipRects clipRects;
-    calculateClipRects(rootLayer, region, clipRectsType, clipRects, relevancy, respectOverflowClip);
+    calculateClipRects(clipRectsContext, clipRects);
 
     if (!m_clipRectsCache)
         m_clipRectsCache = adoptPtr(new ClipRectsCache);
@@ -4074,13 +4079,13 @@ void RenderLayer::updateClipRects(const RenderLayer* rootLayer, RenderRegion* re
         m_clipRectsCache->m_clipRects[clipRectsType] = ClipRects::create(clipRects);
 
 #ifndef NDEBUG
-    m_clipRectsCache->m_clipRectsRoot[clipRectsType] = rootLayer;
-    m_clipRectsCache->m_respectingOverflowClip[clipRectsType] = respectOverflowClip == RespectOverflowClip;
-    m_clipRectsCache->m_scrollbarRelevancy[clipRectsType] = relevancy;
+    m_clipRectsCache->m_clipRectsRoot[clipRectsType] = clipRectsContext.rootLayer;
+    m_clipRectsCache->m_respectingOverflowClip[clipRectsType] = clipRectsContext.respectOverflowClip == RespectOverflowClip;
+    m_clipRectsCache->m_scrollbarRelevancy[clipRectsType] = clipRectsContext.overlayScrollbarSizeRelevancy;
 #endif
 }
 
-void RenderLayer::calculateClipRects(const RenderLayer* rootLayer, RenderRegion* region, ClipRectsType clipRectsType, ClipRects& clipRects, OverlayScrollbarSizeRelevancy relevancy, ShouldRespectOverflowClip respectOverflowClip) const
+void RenderLayer::calculateClipRects(const ClipRectsContext& clipRectsContext, ClipRects& clipRects) const
 {
     if (!parent()) {
         // The root layer's clip rect is always infinite.
@@ -4088,18 +4093,22 @@ void RenderLayer::calculateClipRects(const RenderLayer* rootLayer, RenderRegion*
         return;
     }
     
+    ClipRectsType clipRectsType = clipRectsContext.clipRectsType;
     bool useCached = clipRectsType != TemporaryClipRects;
 
     // For transformed layers, the root layer was shifted to be us, so there is no need to
     // examine the parent.  We want to cache clip rects with us as the root.
-    RenderLayer* parentLayer = rootLayer != this ? parent() : 0;
+    RenderLayer* parentLayer = clipRectsContext.rootLayer != this ? parent() : 0;
     
     // Ensure that our parent's clip has been calculated so that we can examine the values.
     if (parentLayer) {
         if (useCached && parentLayer->clipRects(clipRectsType))
             clipRects = *parentLayer->clipRects(clipRectsType);
-        else
-            parentLayer->calculateClipRects(rootLayer, region, clipRectsType, clipRects, IgnoreOverlayScrollbarSize, respectOverflowClip);
+        else {
+            ClipRectsContext parentContext(clipRectsContext);
+            parentContext.overlayScrollbarSizeRelevancy = IgnoreOverlayScrollbarSize; // FIXME: why?
+            parentLayer->calculateClipRects(parentContext, clipRects);
+        }
     } else
         clipRects.reset(PaintInfo::infiniteRect());
 
@@ -4115,22 +4124,22 @@ void RenderLayer::calculateClipRects(const RenderLayer* rootLayer, RenderRegion*
         clipRects.setOverflowClipRect(clipRects.posClipRect());
     
     // Update the clip rects that will be passed to child layers.
-    if ((renderer()->hasOverflowClip() && (respectOverflowClip == RespectOverflowClip || this != rootLayer)) || renderer()->hasClip()) {
+    if ((renderer()->hasOverflowClip() && (clipRectsContext.respectOverflowClip == RespectOverflowClip || this != clipRectsContext.rootLayer)) || renderer()->hasClip()) {
         // This layer establishes a clip of some kind.
 
         // This offset cannot use convertToLayerCoords, because sometimes our rootLayer may be across
         // some transformed layer boundary, for example, in the RenderLayerCompositor overlapMap, where
         // clipRects are needed in view space.
         LayoutPoint offset;
-        offset = roundedLayoutPoint(renderer()->localToContainerPoint(FloatPoint(), rootLayer->renderer()));
+        offset = roundedLayoutPoint(renderer()->localToContainerPoint(FloatPoint(), clipRectsContext.rootLayer->renderer()));
         RenderView* view = renderer()->view();
         ASSERT(view);
-        if (view && clipRects.fixed() && rootLayer->renderer() == view) {
+        if (view && clipRects.fixed() && clipRectsContext.rootLayer->renderer() == view) {
             offset -= view->frameView()->scrollOffsetForFixedPosition();
         }
         
         if (renderer()->hasOverflowClip()) {
-            ClipRect newOverflowClip = toRenderBox(renderer())->overflowClipRect(offset, region, relevancy);
+            ClipRect newOverflowClip = toRenderBox(renderer())->overflowClipRect(offset, clipRectsContext.region, clipRectsContext.overlayScrollbarSizeRelevancy);
             if (renderer()->style()->hasBorderRadius())
                 newOverflowClip.setHasRadius(true);
             clipRects.setOverflowClipRect(intersection(newOverflowClip, clipRects.overflowClipRect()));
@@ -4138,7 +4147,7 @@ void RenderLayer::calculateClipRects(const RenderLayer* rootLayer, RenderRegion*
                 clipRects.setPosClipRect(intersection(newOverflowClip, clipRects.posClipRect()));
         }
         if (renderer()->hasClip()) {
-            LayoutRect newPosClip = toRenderBox(renderer())->clipRect(offset, region);
+            LayoutRect newPosClip = toRenderBox(renderer())->clipRect(offset, clipRectsContext.region);
             clipRects.setPosClipRect(intersection(newPosClip, clipRects.posClipRect()));
             clipRects.setOverflowClipRect(intersection(newPosClip, clipRects.overflowClipRect()));
             clipRects.setFixedClipRect(intersection(newPosClip, clipRects.fixedClipRect()));
@@ -4146,16 +4155,16 @@ void RenderLayer::calculateClipRects(const RenderLayer* rootLayer, RenderRegion*
     }
 }
 
-void RenderLayer::parentClipRects(const RenderLayer* rootLayer, RenderRegion* region, ClipRectsType clipRectsType, ClipRects& clipRects, OverlayScrollbarSizeRelevancy relevancy, ShouldRespectOverflowClip respectOverflowClip) const
+void RenderLayer::parentClipRects(const ClipRectsContext& clipRectsContext, ClipRects& clipRects) const
 {
     ASSERT(parent());
-    if (clipRectsType == TemporaryClipRects) {
-        parent()->calculateClipRects(rootLayer, region, clipRectsType, clipRects, relevancy, respectOverflowClip);
+    if (clipRectsContext.clipRectsType == TemporaryClipRects) {
+        parent()->calculateClipRects(clipRectsContext, clipRects);
         return;
     }
 
-    parent()->updateClipRects(rootLayer, region, clipRectsType, relevancy, respectOverflowClip);
-    clipRects = *parent()->clipRects(clipRectsType);
+    parent()->updateClipRects(clipRectsContext);
+    clipRects = *parent()->clipRects(clipRectsContext.clipRectsType);
 }
 
 static inline ClipRect backgroundClipRectForPosition(const ClipRects& parentRects, EPosition position)
@@ -4169,28 +4178,27 @@ static inline ClipRect backgroundClipRectForPosition(const ClipRects& parentRect
     return parentRects.overflowClipRect();
 }
 
-ClipRect RenderLayer::backgroundClipRect(const RenderLayer* rootLayer, RenderRegion* region, ClipRectsType clipRectsType, OverlayScrollbarSizeRelevancy relevancy, ShouldRespectOverflowClip respectOverflowClip) const
+ClipRect RenderLayer::backgroundClipRect(const ClipRectsContext& clipRectsContext) const
 {
     ASSERT(parent());
     ClipRects parentRects;
-    parentClipRects(rootLayer, region, clipRectsType, parentRects, relevancy, respectOverflowClip);
+    parentClipRects(clipRectsContext, parentRects);
     ClipRect backgroundClipRect = backgroundClipRectForPosition(parentRects, renderer()->style()->position());
     RenderView* view = renderer()->view();
     ASSERT(view);
 
     // Note: infinite clipRects should not be scrolled here, otherwise they will accidentally no longer be considered infinite.
-    if (parentRects.fixed() && rootLayer->renderer() == view && backgroundClipRect != PaintInfo::infiniteRect())
+    if (parentRects.fixed() && clipRectsContext.rootLayer->renderer() == view && backgroundClipRect != PaintInfo::infiniteRect())
         backgroundClipRect.move(view->frameView()->scrollOffsetForFixedPosition());
 
     return backgroundClipRect;
 }
 
-void RenderLayer::calculateRects(const RenderLayer* rootLayer, RenderRegion* region, ClipRectsType clipRectsType, const LayoutRect& paintDirtyRect, LayoutRect& layerBounds,
-                                 ClipRect& backgroundRect, ClipRect& foregroundRect, ClipRect& outlineRect, const LayoutPoint* offsetFromRoot,
-                                 OverlayScrollbarSizeRelevancy relevancy, ShouldRespectOverflowClip respectOverflowClip) const
+void RenderLayer::calculateRects(const ClipRectsContext& clipRectsContext, const LayoutRect& paintDirtyRect, LayoutRect& layerBounds,
+    ClipRect& backgroundRect, ClipRect& foregroundRect, ClipRect& outlineRect, const LayoutPoint* offsetFromRoot) const
 {
-    if (rootLayer != this && parent()) {
-        backgroundRect = backgroundClipRect(rootLayer, region, clipRectsType, relevancy, respectOverflowClip);
+    if (clipRectsContext.rootLayer != this && parent()) {
+        backgroundRect = backgroundClipRect(clipRectsContext);
         backgroundRect.intersect(paintDirtyRect);
     } else
         backgroundRect = paintDirtyRect;
@@ -4202,21 +4210,21 @@ void RenderLayer::calculateRects(const RenderLayer* rootLayer, RenderRegion* reg
     if (offsetFromRoot)
         offset = *offsetFromRoot;
     else
-        convertToLayerCoords(rootLayer, offset);
+        convertToLayerCoords(clipRectsContext.rootLayer, offset);
     layerBounds = LayoutRect(offset, size());
 
     // Update the clip rects that will be passed to child layers.
     if (renderer()->hasClipOrOverflowClip()) {
         // This layer establishes a clip of some kind.
-        if (renderer()->hasOverflowClip() && (this != rootLayer || respectOverflowClip == RespectOverflowClip)) {
-            foregroundRect.intersect(toRenderBox(renderer())->overflowClipRect(offset, region, relevancy));
+        if (renderer()->hasOverflowClip() && (this != clipRectsContext.rootLayer || clipRectsContext.respectOverflowClip == RespectOverflowClip)) {
+            foregroundRect.intersect(toRenderBox(renderer())->overflowClipRect(offset, clipRectsContext.region, clipRectsContext.overlayScrollbarSizeRelevancy));
             if (renderer()->style()->hasBorderRadius())
                 foregroundRect.setHasRadius(true);
         }
 
         if (renderer()->hasClip()) {
             // Clip applies to *us* as well, so go ahead and update the damageRect.
-            LayoutRect newPosClip = toRenderBox(renderer())->clipRect(offset, region);
+            LayoutRect newPosClip = toRenderBox(renderer())->clipRect(offset, clipRectsContext.region);
             backgroundRect.intersect(newPosClip);
             foregroundRect.intersect(newPosClip);
             outlineRect.intersect(newPosClip);
@@ -4231,13 +4239,13 @@ void RenderLayer::calculateRects(const RenderLayer* rootLayer, RenderRegion* reg
             LayoutRect layerBoundsWithVisualOverflow = renderBox()->visualOverflowRect();
             renderBox()->flipForWritingMode(layerBoundsWithVisualOverflow); // Layers are in physical coordinates, so the overflow has to be flipped.
             layerBoundsWithVisualOverflow.moveBy(offset);
-            if (this != rootLayer || respectOverflowClip == RespectOverflowClip)
+            if (this != clipRectsContext.rootLayer || clipRectsContext.respectOverflowClip == RespectOverflowClip)
                 backgroundRect.intersect(layerBoundsWithVisualOverflow);
         } else {
             // Shift the bounds to be for our region only.
-            LayoutRect bounds = renderBox()->borderBoxRectInRegion(region);
+            LayoutRect bounds = renderBox()->borderBoxRectInRegion(clipRectsContext.region);
             bounds.moveBy(offset);
-            if (this != rootLayer || respectOverflowClip == RespectOverflowClip)
+            if (this != clipRectsContext.rootLayer || clipRectsContext.respectOverflowClip == RespectOverflowClip)
                 backgroundRect.intersect(bounds);
         }
     }
@@ -4251,8 +4259,9 @@ LayoutRect RenderLayer::childrenClipRect() const
     RenderLayer* clippingRootLayer = clippingRootForPainting();
     LayoutRect layerBounds;
     ClipRect backgroundRect, foregroundRect, outlineRect;
+    ClipRectsContext clipRectsContext(clippingRootLayer, 0, TemporaryClipRects);
     // Need to use temporary clip rects, because the value of 'dontClipToOverflow' may be different from the painting path (<rdar://problem/11844909>).
-    calculateRects(clippingRootLayer, 0, TemporaryClipRects, renderView->unscaledDocumentRect(), layerBounds, backgroundRect, foregroundRect, outlineRect);
+    calculateRects(clipRectsContext, renderView->unscaledDocumentRect(), layerBounds, backgroundRect, foregroundRect, outlineRect);
     return clippingRootLayer->renderer()->localToAbsoluteQuad(FloatQuad(foregroundRect.rect()), SnapOffsetForTransforms).enclosingBoundingBox();
 }
 
@@ -4264,7 +4273,8 @@ LayoutRect RenderLayer::selfClipRect() const
     RenderLayer* clippingRootLayer = clippingRootForPainting();
     LayoutRect layerBounds;
     ClipRect backgroundRect, foregroundRect, outlineRect;
-    calculateRects(clippingRootLayer, 0, PaintingClipRects, renderView->documentRect(), layerBounds, backgroundRect, foregroundRect, outlineRect);
+    ClipRectsContext clipRectsContext(clippingRootLayer, 0, PaintingClipRects);
+    calculateRects(clipRectsContext, renderView->documentRect(), layerBounds, backgroundRect, foregroundRect, outlineRect);
     return clippingRootLayer->renderer()->localToAbsoluteQuad(FloatQuad(backgroundRect.rect()), SnapOffsetForTransforms).enclosingBoundingBox();
 }
 
@@ -4275,7 +4285,8 @@ LayoutRect RenderLayer::localClipRect() const
     RenderLayer* clippingRootLayer = clippingRootForPainting();
     LayoutRect layerBounds;
     ClipRect backgroundRect, foregroundRect, outlineRect;
-    calculateRects(clippingRootLayer, 0, PaintingClipRects, PaintInfo::infiniteRect(), layerBounds, backgroundRect, foregroundRect, outlineRect);
+    ClipRectsContext clipRectsContext(clippingRootLayer, 0, PaintingClipRects);
+    calculateRects(clipRectsContext, PaintInfo::infiniteRect(), layerBounds, backgroundRect, foregroundRect, outlineRect);
 
     LayoutRect clipRect = backgroundRect.rect();
     if (clipRect == PaintInfo::infiniteRect())
