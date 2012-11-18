@@ -1,3 +1,13 @@
+2012-11-17  Brady Eidson  <beidson@apple.com>
+
+        Add an integer identifier field to AuthenticationChallengeBase.
+        https://bugs.webkit.org/show_bug.cgi?id=102593
+
+        Reviewed by Darin Adler.
+
+        * WebURLAuthenticationChallenge.cpp:
+        (WebURLAuthenticationChallenge::initWithProtectionSpace): Adopt the new constructor with a dummy identifier.
+
 2012-11-16  Brent Fulgham  <bfulgham@webkit.org>
 
         [WinCairo] Unreviewed build fix after r134960.

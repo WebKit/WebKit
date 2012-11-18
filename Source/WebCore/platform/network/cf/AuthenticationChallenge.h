@@ -49,7 +49,7 @@ namespace WebCore {
 class AuthenticationChallenge : public AuthenticationChallengeBase {
 public:
     AuthenticationChallenge() {}
-    AuthenticationChallenge(const ProtectionSpace& protectionSpace, const Credential& proposedCredential, unsigned previousFailureCount, const ResourceResponse& response, const ResourceError& error);
+    AuthenticationChallenge(const ProtectionSpace&, const Credential& proposedCredential, unsigned previousFailureCount, const ResourceResponse&, const ResourceError&, uint64_t identifier);
 #if USE(CFNETWORK)
     AuthenticationChallenge(CFURLAuthChallengeRef, AuthenticationClient*);
 

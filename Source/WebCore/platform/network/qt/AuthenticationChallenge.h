@@ -37,9 +37,10 @@ public:
     {
     }
 
-    AuthenticationChallenge(const ProtectionSpace& protectionSpace, const Credential& proposedCredential, unsigned previousFailureCount, const ResourceResponse& response, const ResourceError& error)
+    AuthenticationChallenge(const ProtectionSpace& protectionSpace, const Credential& proposedCredential, unsigned previousFailureCount, const ResourceResponse& response, const ResourceError& error, uint64_t identifier)
         : AuthenticationChallengeBase(protectionSpace, proposedCredential, previousFailureCount, response, error)
     {
+        m_identifier = identifier;
     }
 
     AuthenticationClient* authenticationClient() const { return 0; } // FIXME: Implement!

@@ -47,6 +47,8 @@ public:
     
     bool isNull() const;
     void nullify();
+    
+    uint64_t identifier() const { return m_identifier; }
 
     static bool compare(const AuthenticationChallenge& a, const AuthenticationChallenge& b);
 
@@ -60,6 +62,7 @@ protected:
     unsigned m_previousFailureCount;
     ResourceResponse m_failureResponse;
     ResourceError m_error;
+    uint64_t m_identifier;
 };
 
 inline bool operator==(const AuthenticationChallenge& a, const AuthenticationChallenge& b) { return AuthenticationChallengeBase::compare(a, b); }

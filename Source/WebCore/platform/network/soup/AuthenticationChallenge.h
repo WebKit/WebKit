@@ -39,9 +39,10 @@ public:
     {
     }
 
-    AuthenticationChallenge(const ProtectionSpace& protectionSpace, const Credential& proposedCredential, unsigned previousFailureCount, const ResourceResponse& response, const ResourceError& error)
+    AuthenticationChallenge(const ProtectionSpace& protectionSpace, const Credential& proposedCredential, unsigned previousFailureCount, const ResourceResponse& response, const ResourceError& error, uint64_t identifier)
         : AuthenticationChallengeBase(protectionSpace, proposedCredential, previousFailureCount, response, error)
     {
+        m_identifier = identifier;
     }
 
     AuthenticationChallenge(SoupSession*, SoupMessage*, SoupAuth*, bool retrying, AuthenticationClient*);

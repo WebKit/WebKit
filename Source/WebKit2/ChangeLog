@@ -1,3 +1,16 @@
+2012-11-17  Brady Eidson  <beidson@apple.com>
+
+        Add an integer identifier field to AuthenticationChallengeBase.
+        https://bugs.webkit.org/show_bug.cgi?id=102593
+
+        Reviewed by Darin Adler.
+
+        Properly encode/decode the identifier when sending the challenge over CoreIPC.
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        (CoreIPC::::encode):
+        (CoreIPC::::decode):
+
 2012-11-17  Balazs Kelemen  <kbalazs@webkit.org>
 
         8bit-unaware String usage in NetscapePluginModuleX11.cpp

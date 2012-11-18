@@ -1,3 +1,43 @@
+2012-11-17  Brady Eidson  <beidson@apple.com>
+
+        Add an integer identifier field to AuthenticationChallengeBase.
+        https://bugs.webkit.org/show_bug.cgi?id=102593
+
+        Reviewed by Darin Adler.
+
+        This is to support linking two different challenges that might not compare as equal but that 
+        represent the same logical authentication challenge.
+
+        One example is in an IPC environment where the platform challenge can only exist in one process.
+
+        No new tests (Platform support, no effect in tested configs).
+
+        * WebCore.exp.in:
+
+        * platform/network/AuthenticationChallengeBase.cpp:
+        (WebCore::AuthenticationChallengeBase::AuthenticationChallengeBase):
+        * platform/network/AuthenticationChallengeBase.h:
+        (WebCore::AuthenticationChallengeBase::identifier):
+
+        * platform/network/cf/AuthenticationChallenge.h:
+        * platform/network/mac/AuthenticationMac.mm:
+        (WebCore::generateUniqueIdentifier):
+        (WebCore::AuthenticationChallenge::AuthenticationChallenge): Generate a new unique identifier whenever
+          constructing a challenge from an NSURLAuthenticationChallenge.
+
+        * platform/network/cf/AuthenticationCF.cpp:
+        (WebCore::generateUniqueIdentifier):
+        (WebCore::AuthenticationChallenge::AuthenticationChallenge): Generate a new unique identifier whenever
+          constructing a challenge from a CFURLAuthChallengeRef.
+
+        Implement the new constructor form for ports relevant to WebKit2:
+        * platform/network/qt/AuthenticationChallenge.h:
+        (WebCore::AuthenticationChallenge::AuthenticationChallenge):
+        * platform/network/soup/AuthenticationChallenge.h:
+        (WebCore::AuthenticationChallenge::AuthenticationChallenge):
+        * platform/network/win/AuthenticationChallenge.h:
+        (WebCore::AuthenticationChallenge::AuthenticationChallenge):
+
 2012-11-17  Simon Fraser  <simon.fraser@apple.com>
 
         Dump the tile cache extent in layout tests
