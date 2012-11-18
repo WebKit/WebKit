@@ -2273,6 +2273,34 @@ IntPoint RenderLayer::currentMousePosition() const
     return renderer()->frame() ? renderer()->frame()->eventHandler()->currentMousePosition() : IntPoint();
 }
 
+IntRect RenderLayer::rectForHorizontalScrollbar(const IntRect& borderBoxRect) const
+{
+    if (!m_hBar)
+        return IntRect();
+
+    const RenderBox* box = renderBox();
+    const IntRect& scrollCorner = scrollCornerRect();
+
+    return IntRect(horizontalScrollbarStart(borderBoxRect.x()),
+        borderBoxRect.maxY() - box->borderBottom() - m_hBar->height(),
+        borderBoxRect.width() - (box->borderLeft() + box->borderRight()) - scrollCorner.width(),
+        m_hBar->height());
+}
+
+IntRect RenderLayer::rectForVerticalScrollbar(const IntRect& borderBoxRect) const
+{
+    if (!m_vBar)
+        return IntRect();
+
+    const RenderBox* box = renderBox();
+    const IntRect& scrollCorner = scrollCornerRect();
+
+    return IntRect(verticalScrollbarStart(borderBoxRect.x(), borderBoxRect.maxX()),
+        borderBoxRect.y() + box->borderTop(),
+        m_vBar->width(),
+        borderBoxRect.height() - (box->borderTop() + box->borderBottom()) - scrollCorner.height());
+}
+
 LayoutUnit RenderLayer::verticalScrollbarStart(int minX, int maxX) const
 {
     const RenderBox* box = renderBox();
@@ -2495,18 +2523,18 @@ void RenderLayer::positionOverflowControls(const IntSize& offsetFromRoot)
     const IntRect borderBox = box->pixelSnappedBorderBoxRect();
     const IntRect& scrollCorner = scrollCornerRect();
     IntRect absBounds(borderBox.location() + offsetFromRoot, borderBox.size());
-    if (m_vBar)
-        m_vBar->setFrameRect(IntRect(verticalScrollbarStart(absBounds.x(), absBounds.maxX()),
-                                     absBounds.y() + box->borderTop(),
-                                     m_vBar->width(),
-                                     absBounds.height() - (box->borderTop() + box->borderBottom()) - scrollCorner.height()));
-
-    if (m_hBar)
-        m_hBar->setFrameRect(IntRect(horizontalScrollbarStart(absBounds.x()),
-                                     absBounds.maxY() - box->borderBottom() - m_hBar->height(),
-                                     absBounds.width() - (box->borderLeft() + box->borderRight()) - scrollCorner.width(),
-                                     m_hBar->height()));
-
+    if (m_vBar) {
+        IntRect vBarRect = rectForVerticalScrollbar(borderBox);
+        vBarRect.move(offsetFromRoot);
+        m_vBar->setFrameRect(vBarRect);
+    }
+    
+    if (m_hBar) {
+        IntRect hBarRect = rectForHorizontalScrollbar(borderBox);
+        hBarRect.move(offsetFromRoot);
+        m_hBar->setFrameRect(hBarRect);
+    }
+    
     if (m_scrollCorner)
         m_scrollCorner->setFrameRect(scrollCorner);
     if (m_resizer)
@@ -2697,6 +2725,25 @@ void RenderLayer::updateScrollInfoAfterLayout()
 #endif
 }
 
+bool RenderLayer::overflowControlsIntersectRect(const IntRect& localRect) const
+{
+    const IntRect borderBox = renderBox()->pixelSnappedBorderBoxRect();
+
+    if (rectForHorizontalScrollbar(borderBox).intersects(localRect))
+        return true;
+
+    if (rectForVerticalScrollbar(borderBox).intersects(localRect))
+        return true;
+
+    if (scrollCornerRect().intersects(localRect))
+        return true;
+    
+    if (resizerCornerRect(this, borderBox).intersects(localRect))
+        return true;
+
+    return false;
+}
+
 void RenderLayer::paintOverflowControls(GraphicsContext* context, const IntPoint& paintOffset, const IntRect& damageRect, bool paintingOverlayControls)
 {
     // Don't do anything if we have no overflow.
@@ -2716,6 +2763,11 @@ void RenderLayer::paintOverflowControls(GraphicsContext* context, const IntPoint
         if ((m_hBar && layerForHorizontalScrollbar()) || (m_vBar && layerForVerticalScrollbar()))
             return;
 #endif
+        IntRect localDamgeRect = damageRect;
+        localDamgeRect.moveBy(-paintOffset);
+        if (!overflowControlsIntersectRect(localDamgeRect))
+            return;
+
         RenderView* renderView = renderer()->view();
 
         RenderLayer* paintingRoot = 0;

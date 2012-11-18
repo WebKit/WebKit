@@ -1,3 +1,30 @@
+2012-11-17  Simon Fraser  <simon.fraser@apple.com>
+
+        Don't say there are dirty overlay scrollbars when they are clipped out
+        https://bugs.webkit.org/show_bug.cgi?id=102609
+
+        Reviewed by Brady Eidson.
+
+        Painting overlay scrollbars involves a second painting pass over the entire
+        RenderLayer subtree for a compositing layer, which can be very expensive.
+        
+        Avoid this when possible by detecting when overflow controls are not in
+        the damage rect.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::rectForHorizontalScrollbar): Compute a local rect
+        for the horizontal scrollbar.
+        (WebCore::RenderLayer::rectForVerticalScrollbar): Compute a local rect
+        for the vertical scrollbar.
+        (WebCore::RenderLayer::positionOverflowControls): Use rectForHorizontalScrollbar()
+        and rectForVerticalScrollbar().
+        (WebCore::RenderLayer::overflowControlsIntersectRect): Return true if any
+        of the present overflow controls intersect the given local rect.
+        (WebCore::RenderLayer::paintOverflowControls): Bail if the damage rect
+        doesn't intersect any of the overflow controls.
+        * rendering/RenderLayer.h:
+        (RenderLayer):
+
 2012-11-17  Adam Barth  <abarth@webkit.org>
 
         REGRESSION (r133633): ASSERTION FAILED: m_wrapper || !m_jsFunction

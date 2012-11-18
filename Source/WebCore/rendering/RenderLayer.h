@@ -930,8 +930,13 @@ private:
     LayoutUnit overflowLeft() const;
     LayoutUnit overflowRight() const;
 
+    IntRect rectForHorizontalScrollbar(const IntRect& borderBoxRect) const;
+    IntRect rectForVerticalScrollbar(const IntRect& borderBoxRect) const;
+
     LayoutUnit verticalScrollbarStart(int minX, int maxX) const;
     LayoutUnit horizontalScrollbarStart(int minX) const;
+
+    bool overflowControlsIntersectRect(const IntRect& localRect) const;
 
 protected:
     // The bitfields are up here so they will fall into the padding from ScrollableArea on 64-bit.
