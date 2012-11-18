@@ -878,7 +878,7 @@ sub GenerateNormalAttrGetter
     my $interfaceName = $dataNode->name;
     my $attrExt = $attribute->signature->extendedAttributes;
     my $attrName = $attribute->signature->name;
-    my $attrType = GetTypeFromSignature($attribute->signature);
+    my $attrType = $attribute->signature->type;
     $codeGenerator->AssertNotSequenceType($attrType);
     my $nativeType = GetNativeTypeFromSignature($attribute->signature, -1);
 
@@ -970,7 +970,7 @@ END
         push(@implContentDecls, "    ExceptionCode ec = 0;\n");
     }
 
-    my $returnType = GetTypeFromSignature($attribute->signature);
+    my $returnType = $attribute->signature->type;
     my $getterString;
 
     if ($getterStringUsesImp) {
@@ -1182,7 +1182,7 @@ sub GenerateNormalAttrSetter
     # Per the Web IDL and ECMAScript specifications, incoming values can always be converted to both
     # strings and numbers, so do not throw TypeError if the attribute is of these types.
     if ($attribute->signature->extendedAttributes->{"StrictTypeChecking"}) {
-        my $argType = GetTypeFromSignature($attribute->signature);
+        my $argType = $attribute->signature->type;
         if (IsWrapperType($argType)) {
             push(@implContentDecls, "    if (!isUndefinedOrNull(value) && !V8${argType}::HasInstance(value)) {\n");
             push(@implContentDecls, "        throwTypeError(0, info.GetIsolate());\n");
@@ -1213,7 +1213,7 @@ END
     ${interfaceName}* imp = V8${interfaceName}::toNative(info.Holder());
 END
     } else {
-        my $attrType = GetTypeFromSignature($attribute->signature);
+        my $attrType = $attribute->signature->type;
         my $reflect = $attribute->signature->extendedAttributes->{"Reflect"};
         if ($reflect && $codeGenerator->IsSubType($dataNode, "Node") && $codeGenerator->IsStringType($attrType)) {
             # Generate super-compact call for regular attribute setter:
@@ -1256,7 +1256,7 @@ END
     }
 
     my $result = "v";
-    my $returnType = GetTypeFromSignature($attribute->signature);
+    my $returnType = $attribute->signature->type;
     if (IsRefPtrType($returnType) && !$codeGenerator->GetArrayType($returnType)) {
         $result = "WTF::getPtr(" . $result . ")";
     }
@@ -1399,7 +1399,7 @@ sub GenerateParametersCheckExpression
     foreach my $parameter (@{$function->parameters}) {
         last if $parameterIndex >= $numParameters;
         my $value = "args[$parameterIndex]";
-        my $type = GetTypeFromSignature($parameter);
+        my $type = $parameter->type;
 
         # Only DOMString or wrapper types are checked.
         # For DOMString with StrictTypeChecking only Null, Undefined and Object
@@ -1801,7 +1801,7 @@ sub GenerateParametersCheck
                 $nativeElementType .= " ";
             }
 
-            my $argType = GetTypeFromSignature($parameter);
+            my $argType = $parameter->type;
             if (IsWrapperType($argType)) {
                 $parameterCheckString .= "    Vector<$nativeElementType> $parameterName;\n";
                 $parameterCheckString .= "    for (int i = $paramIndex; i < args.Length(); ++i) {\n";
@@ -1824,7 +1824,7 @@ sub GenerateParametersCheck
             # types.
             if ($function->signature->extendedAttributes->{"StrictTypeChecking"}) {
                 my $argValue = "args[$paramIndex]";
-                my $argType = GetTypeFromSignature($parameter);
+                my $argType = $parameter->type;
                 if (IsWrapperType($argType)) {
                     $parameterCheckString .= "    if (args.Length() > $paramIndex && !isUndefinedOrNull($argValue) && !V8${argType}::HasInstance($argValue))\n";
                     $parameterCheckString .= "        return throwTypeError(0, args.GetIsolate());\n";
@@ -3507,7 +3507,7 @@ sub GenerateFunctionCallString()
     my %replacements = @_;
 
     my $name = $function->signature->name;
-    my $returnType = GetTypeFromSignature($function->signature);
+    my $returnType = $function->signature->type;
     my $nativeReturnType = GetNativeType($returnType, 0);
     my $result = "";
 
@@ -3617,21 +3617,12 @@ sub GenerateFunctionCallString()
     return $result;
 }
 
-
-sub GetTypeFromSignature
-{
-    my $signature = shift;
-
-    return $signature->type;
-}
-
-
 sub GetNativeTypeFromSignature
 {
     my $signature = shift;
     my $parameterIndex = shift;
 
-    my $type = GetTypeFromSignature($signature);
+    my $type = $signature->type;
 
     if ($type eq "unsigned long" and $signature->extendedAttributes->{"IsIndex"}) {
         # Special-case index arguments because we need to check that they aren't < 0.
@@ -3755,15 +3746,14 @@ sub TranslateParameter
 
     # The IDL uses some pseudo-types which don't really exist.
     if ($signature->type eq "TimeoutHandler") {
-      $signature->type("DOMString");
+        $signature->type("DOMString");
     }
 }
 
 sub TypeCanFailConversion
 {
     my $signature = shift;
-
-    my $type = GetTypeFromSignature($signature);
+    my $type = $signature->type;
 
     AddToImplIncludes("ExceptionCode.h") if $type eq "Attr";
     return 1 if $type eq "Attr";
@@ -3776,7 +3766,7 @@ sub JSValueToNative
     my $value = shift;
     my $getIsolate = shift;
 
-    my $type = GetTypeFromSignature($signature);
+    my $type = $signature->type;
 
     return "$value" if $type eq "JSObject";
     return "$value->BooleanValue()" if $type eq "boolean";
@@ -4037,7 +4027,7 @@ sub NativeToJSValue
     my $getCreationContextArg = $getCreationContext ? ", $getCreationContext" : "";
     my $getIsolate = shift;
     my $getIsolateArg = $getIsolate ? ", $getIsolate" : "";
-    my $type = GetTypeFromSignature($signature);
+    my $type = $signature->type;
 
     return ($getIsolate ? "v8Boolean($value, $getIsolate)" : "v8Boolean($value)") if $type eq "boolean";
     return "v8Undefined()" if $type eq "void";     # equivalent to v8Undefined()
