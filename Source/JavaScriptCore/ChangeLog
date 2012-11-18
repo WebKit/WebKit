@@ -1,3 +1,13 @@
+2012-11-18  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG constant folding phase should say 'changed = true' whenever it changes the graph
+        https://bugs.webkit.org/show_bug.cgi?id=102550
+
+        Rubber stamped by Mark Hahnenberg.
+
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+
 2012-11-17  Elliott Sprehn  <esprehn@chromium.org>
 
         Expose JSObject removeDirect and PrivateName to WebCore

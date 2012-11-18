@@ -111,8 +111,10 @@ private:
                 StructureAbstractValue& structureValue = value.m_futurePossibleStructure;
                 if (structureValue.isSubsetOf(set)
                     && structureValue.hasSingleton()
-                    && isCellSpeculation(value.m_type))
+                    && isCellSpeculation(value.m_type)) {
                     node.convertToStructureTransitionWatchpoint(structureValue.singleton());
+                    changed = true;
+                }
                 break;
             }
                 
@@ -138,6 +140,7 @@ private:
                 if (!isObjectSpeculation(m_state.forNode(node.child1()).m_type))
                     break;
                 node.setOpAndDefaultFlags(Identity);
+                changed = true;
                 break;
             }
                 
