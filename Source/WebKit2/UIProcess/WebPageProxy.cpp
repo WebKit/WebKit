@@ -380,7 +380,10 @@ void WebPageProxy::reattachToWebProcess()
 
     m_isValid = true;
 
-    m_process = m_process->context()->createNewWebProcess();
+    if (m_process->context()->processModel() == ProcessModelSharedSecondaryProcess)
+        m_process = m_process->context()->ensureSharedWebProcess();
+    else
+        m_process = m_process->context()->createNewWebProcess();
     m_process->addExistingWebPage(this, m_pageID);
 
     initializeWebPage();

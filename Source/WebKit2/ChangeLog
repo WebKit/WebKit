@@ -1,3 +1,27 @@
+2012-11-18  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [WK2] REGRESSION: After web process crash a new web process is created for every existing page
+        https://bugs.webkit.org/show_bug.cgi?id=102520
+
+        Reviewed by Alexey Proskuryakov.
+
+        When process model is SharedSecondaryProcess a new shared process
+        should be created instead of a new process per page.
+
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::ensureSharedWebProcess): Ensure a shared web
+        process and return it.
+        (WebKit::WebContext::createWebPage): Update to change in
+        ensureSharedWebProcess() that returns the shared web process now.
+        * UIProcess/WebContext.h:
+        (WebContext): Remove relaunchProcessIfNecessary().
+        (WebKit::WebContext::sendToAllProcessesRelaunchingThemIfNecessary):
+        Use ensureSharedWebProcess() instead of relaunchProcessIfNecessary().
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::reattachToWebProcess): Ensure a shared web
+        process for SharedSecondaryProcess model or create a new web
+        process for multi-process models.
+
 2012-11-17  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
         Remove 8-bit related assertion from NetscapePluginModuleX11.

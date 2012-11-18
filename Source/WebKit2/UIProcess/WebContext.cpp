@@ -322,10 +322,12 @@ void WebContext::setUsesNetworkProcess(bool usesNetworkProcess)
 #endif
 }
 
-void WebContext::ensureSharedWebProcess()
+WebProcessProxy* WebContext::ensureSharedWebProcess()
 {
+    ASSERT(m_processModel == ProcessModelSharedSecondaryProcess);
     if (m_processes.isEmpty())
         createNewWebProcess();
+    return m_processes[0].get();
 }
 
 PassRefPtr<WebProcessProxy> WebContext::createNewWebProcess()
@@ -559,8 +561,7 @@ PassRefPtr<WebPageProxy> WebContext::createWebPage(PageClient* pageClient, WebPa
 {
     RefPtr<WebProcessProxy> process;
     if (m_processModel == ProcessModelSharedSecondaryProcess) {
-        ensureSharedWebProcess();
-        process = m_processes[0];
+        process = ensureSharedWebProcess();
     } else {
         if (m_haveInitialEmptyProcess) {
             process = m_processes.last();
@@ -578,17 +579,6 @@ PassRefPtr<WebPageProxy> WebContext::createWebPage(PageClient* pageClient, WebPa
         pageGroup = m_defaultPageGroup.get();
 
     return process->createWebPage(pageClient, this, pageGroup);
-}
-
-WebProcessProxy* WebContext::relaunchProcessIfNecessary()
-{
-    if (m_processModel == ProcessModelSharedSecondaryProcess) {
-        ensureSharedWebProcess();
-        return m_processes[0].get();
-    }
-
-    ASSERT_NOT_REACHED();
-    return 0;
 }
 
 DownloadProxy* WebContext::download(WebPageProxy* initiatingPage, const ResourceRequest& request)
