@@ -1,3 +1,16 @@
+2012-11-17  Elliott Sprehn  <esprehn@chromium.org>
+
+        Expose JSObject::removeDirect and PrivateName to WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=102546
+
+        Reviewed by Geoffrey Garen.
+
+        Add forwarding header for PrivateName, so JSDependentRetained works.
+
+        No new tests, just adding headers.
+
+        * ForwardingHeaders/runtime/PrivateName.h: Added.
+
 2012-11-17  Simon Fraser  <simon.fraser@apple.com>
 
         Reduce the crazy number of parameters to RenderLayer clip-rect functions

@@ -1,3 +1,14 @@
+2012-11-17  Elliott Sprehn  <esprehn@chromium.org>
+
+        Expose JSObject removeDirect and PrivateName to WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=102546
+
+        Reviewed by Geoffrey Garen.
+
+        Export removeDirect for use in WebCore so JSDependentRetained works.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+
 2012-11-16  Filip Pizlo  <fpizlo@apple.com>
 
         Given a PutById or GetById with a proven structure, the DFG should be able to emit a PutByOffset or GetByOffset instead
