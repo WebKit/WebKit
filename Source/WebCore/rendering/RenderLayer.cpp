@@ -4147,6 +4147,12 @@ IntRect RenderLayer::calculateLayerBounds(const RenderLayer* ancestorLayer, cons
 
     RenderBoxModelObject* renderer = this->renderer();
     LayoutRect boundingBoxRect = localBoundingBox();
+
+    if (isRootLayer()) {
+        // The root layer is always just the size of the document.
+        return renderer->view()->unscaledDocumentRect();
+    }
+
     if (renderer->isBox())
         toRenderBox(renderer)->flipForWritingMode(boundingBoxRect);
     else

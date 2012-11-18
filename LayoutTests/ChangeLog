@@ -1,3 +1,23 @@
+2012-11-18  Simon Fraser  <simon.fraser@apple.com>
+
+        <rdar://problem/12725998> Simplify bounds computation for the RenderView's layer (102597)
+        Merge r135059
+
+    2012-11-17  Simon Fraser  <simon.fraser@apple.com>
+    
+            Simplify bounds computation for the RenderView's layer
+            https://bugs.webkit.org/show_bug.cgi?id=102597
+    
+            Reviewed by Anders Carlsson.
+    
+            Progressions as a result of this change:
+    
+            * compositing/layer-creation/fixed-position-out-of-view-expected.txt: The height
+            is now the page height, since the page is scrollable.
+            * compositing/tiling/tile-cache-zoomed-expected.txt: The main layer now is not
+            affected by the page scale transform.
+            * platform/mac/compositing/tiling/tile-cache-zoomed-expected.txt: Ditto.
+
 2012-11-16  Andy Estes  <aestes@apple.com>
 
         Merge r130102.
