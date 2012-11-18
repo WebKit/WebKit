@@ -1051,7 +1051,13 @@ sub GenerateHeader
         GetCustomIsReachable($dataNode) ||
         $dataNode->extendedAttributes->{"JSCustomFinalize"} ||
         $dataNode->extendedAttributes->{"ActiveDOMObject"}) {
-        push(@headerContent, "class JS${implClassName}Owner : public JSC::WeakHandleOwner {\n");
+        if ($implClassName ne "Node" && $codeGenerator->IsSubType($dataNode, "Node")) {
+            $headerIncludes{"JSNode.h"} = 1;
+            push(@headerContent, "class JS${implClassName}Owner : public JSNodeOwner {\n");
+        } else {
+            push(@headerContent, "class JS${implClassName}Owner : public JSC::WeakHandleOwner {\n");
+        }
+        push(@headerContent, "public:\n");
         push(@headerContent, "    virtual bool isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void* context, JSC::SlotVisitor&);\n");
         push(@headerContent, "    virtual void finalize(JSC::Handle<JSC::Unknown>, void* context);\n");
         push(@headerContent, "};\n");
@@ -2494,6 +2500,10 @@ sub GenerateImplementation
         # check below the isObservable check.
         if ($dataNode->extendedAttributes->{"ActiveDOMObject"}) {
             push(@implContent, "    if (js${implClassName}->impl()->hasPendingActivity())\n");
+            push(@implContent, "        return true;\n");
+        }
+        if ($codeGenerator->IsSubType($dataNode, "Node")) {
+            push(@implContent, "    if (JSNodeOwner::isReachableFromOpaqueRoots(handle, 0, visitor))\n");
             push(@implContent, "        return true;\n");
         }
         push(@implContent, "    if (!isObservable(js${implClassName}))\n");

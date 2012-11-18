@@ -1,3 +1,16 @@
+2012-11-17  Adam Barth  <abarth@webkit.org>
+
+        REGRESSION (r133633): ASSERTION FAILED: m_wrapper || !m_jsFunction
+        https://bugs.webkit.org/show_bug.cgi?id=101428
+
+        Reviewed by Geoffrey Garen.
+
+        Add two calls to gc() to make an ASSERT trigger on every run. One call
+        to gc() does not appear to be sufficient for reasons I don't fully
+        understand.
+
+        * media/media-continues-playing-after-replace-source.html:
+
 2012-11-17  Simon Fraser  <simon.fraser@apple.com>
 
         Simplify bounds computation for the RenderView's layer

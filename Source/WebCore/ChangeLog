@@ -1,3 +1,22 @@
+2012-11-17  Adam Barth  <abarth@webkit.org>
+
+        REGRESSION (r133633): ASSERTION FAILED: m_wrapper || !m_jsFunction
+        https://bugs.webkit.org/show_bug.cgi?id=101428
+
+        Reviewed by Geoffrey Garen.
+
+        JSNodeOwner has some smarts that wrappers of subclasses of Node need to
+        call during garbage collection. This patch teaches subclasses of Node
+        to have their JSMumbleOwner objects inherit from JSNodeOwner.
+
+        The immediate benefit of this patch is that we correctly avoid
+        collecting wrappers for HTMLAudioElements when they are reachable from
+        the DOM.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateHeader):
+        (GenerateImplementation):
+
 2012-11-17  Elliott Sprehn  <esprehn@chromium.org>
 
         Expose JSObject::removeDirect and PrivateName to WebCore

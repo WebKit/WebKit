@@ -6,6 +6,7 @@
 
     <script src=video-test.js></script>
     <script src=media-file.js></script>
+    <script src=../resources/gc.js></script>
     <script>
         var timeupdateEventCount = 0;
         var skippedCount = 0;
@@ -102,6 +103,8 @@
 
         document.write("<audio controls></audio>");
         testAudioElement(0);
+        gc();
+        gc();
     </script>
 
     </body>
