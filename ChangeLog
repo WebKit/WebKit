@@ -1,3 +1,10 @@
+2012-11-18  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix GTK+ build after r135022.
+
+        * Source/autotools/symbols.filter: Add exports for
+        SerializedScriptValue changes.
+
 2012-11-16  Tony Chang  <tony@chromium.org>
 
         Remove ENABLE_CSS_HIERARCHIES since it's no longer in use
