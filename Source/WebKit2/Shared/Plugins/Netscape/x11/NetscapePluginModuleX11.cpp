@@ -160,8 +160,6 @@ void NetscapePluginModule::determineQuirks()
 
 static String truncateToSingleLine(const String& string)
 {
-    ASSERT_ARG(string, !string.is8Bit());
-
     unsigned oldLength = string.length();
     UChar* buffer;
     String stringBuffer(StringImpl::createUninitialized(oldLength + 1, buffer));
