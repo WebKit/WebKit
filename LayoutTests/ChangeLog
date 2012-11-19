@@ -1,3 +1,9 @@
+2012-11-19  Kentaro Hara  <haraken@chromium.org>
+
+        Unreviewed. Rebaselined a text dump.
+
+        * platform/chromium-win/fast/forms/month-multiple-fields/month-multiple-fields-value-set-empty-expected.txt: Added.
+
 2012-11-19  Kristóf Kosztyó  <kkristof@inf.u-szeged.hu>
 
         [Qt] Unreviewed gardening.
