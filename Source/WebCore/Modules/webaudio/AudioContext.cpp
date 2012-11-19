@@ -146,7 +146,6 @@ AudioContext::AudioContext(Document* document)
     , m_isStopScheduled(false)
     , m_isInitialized(false)
     , m_isAudioThreadFinished(false)
-    , m_document(document)
     , m_destinationNode(0)
     , m_isDeletionScheduled(false)
     , m_automaticPullNodesNeedUpdating(false)
@@ -173,7 +172,6 @@ AudioContext::AudioContext(Document* document, unsigned numberOfChannels, size_t
     , m_isStopScheduled(false)
     , m_isInitialized(false)
     , m_isAudioThreadFinished(false)
-    , m_document(document)
     , m_destinationNode(0)
     , m_automaticPullNodesNeedUpdating(false)
     , m_connectionCount(0)
@@ -314,8 +312,6 @@ void AudioContext::stopDispatch(void* userData)
 
 void AudioContext::stop()
 {
-    m_document = 0; // document is going away
-
     // Usually ScriptExecutionContext calls stop twice.
     if (m_isStopScheduled)
         return;
@@ -326,17 +322,6 @@ void AudioContext::stop()
     // ActiveDOMObjects so let's schedule uninitialize() to be called later.
     // FIXME: see if there's a more direct way to handle this issue.
     callOnMainThread(stopDispatch, this);
-}
-
-Document* AudioContext::document() const
-{
-    ASSERT(m_document);
-    return m_document;
-}
-
-bool AudioContext::hasDocument()
-{
-    return m_document;
 }
 
 PassRefPtr<AudioBuffer> AudioContext::createBuffer(unsigned numberOfChannels, size_t numberOfFrames, float sampleRate, ExceptionCode& ec)
@@ -961,7 +946,7 @@ const AtomicString& AudioContext::interfaceName() const
 
 ScriptExecutionContext* AudioContext::scriptExecutionContext() const
 {
-    return document();
+    return m_isStopScheduled ? 0 : ActiveDOMObject::scriptExecutionContext();
 }
 
 void AudioContext::startRendering()
@@ -982,7 +967,7 @@ void AudioContext::fireCompletionEvent()
         return;
 
     // Avoid firing the event if the document has already gone away.
-    if (hasDocument()) {
+    if (scriptExecutionContext()) {
         // Call the offline rendering completion event listener.
         dispatchEvent(OfflineAudioCompletionEvent::create(renderedBuffer));
     }
@@ -1004,7 +989,6 @@ void AudioContext::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::Audio);
     ActiveDOMObject::reportMemoryUsage(memoryObjectInfo);
-    info.addMember(m_document);
     info.addMember(m_destinationNode);
     info.addMember(m_listener);
     info.addMember(m_finishedNodes);

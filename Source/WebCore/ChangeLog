@@ -1,5 +1,33 @@
 2012-11-19  Ilya Tikhonovsky  <loislo@chromium.org>
 
+        webaudio: clean-up. Replace AudioContext::m_document member with ContextDestructionObserver::scriptExecutionContext().
+        https://bugs.webkit.org/show_bug.cgi?id=102649
+
+        Reviewed by Adam Barth.
+
+        AudioContext uses m_document only as a pointer to ScriptExecutionContext.
+        It could be safely replaced with ContextDestructionObserver::m_scriptExecutionContext.
+        The lifetime of m_scriptExecutionContext is slightly different but it could be adjusted by m_isStopScheduled flag.
+
+        No new tests as there is no new functionality.
+
+        * Modules/webaudio/AudioBufferSourceNode.cpp:
+        (WebCore::AudioBufferSourceNode::looping):
+        (WebCore::AudioBufferSourceNode::setLooping):
+        * Modules/webaudio/AudioContext.cpp:
+        (WebCore::AudioContext::AudioContext):
+        (WebCore::AudioContext::stop):
+        (WebCore::AudioContext::scriptExecutionContext):
+        (WebCore::AudioContext::fireCompletionEvent):
+        (WebCore::AudioContext::reportMemoryUsage):
+        * Modules/webaudio/AudioContext.h:
+        (AudioContext):
+        * Modules/webaudio/ScriptProcessorNode.cpp:
+        (WebCore::ScriptProcessorNode::fireProcessEvent):
+        (WebCore::ScriptProcessorNode::scriptExecutionContext):
+
+2012-11-19  Ilya Tikhonovsky  <loislo@chromium.org>
+
         webaudio: leak: AudioContext objects are leaking. They retain 36mb of shared data.
         https://bugs.webkit.org/show_bug.cgi?id=102356
 
