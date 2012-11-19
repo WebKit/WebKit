@@ -62,6 +62,9 @@ window.getComputedStyle = function(element) {}
 /** @param {*} message */
 function postMessage(message) {}
 
+/** @type {*} */
+window.testRunner = null;
+
 /**
  * @constructor
  */

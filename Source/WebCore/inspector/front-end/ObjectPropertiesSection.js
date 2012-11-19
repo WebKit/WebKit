@@ -76,6 +76,10 @@ WebInspector.ObjectPropertiesSection.prototype = {
             return;
         }
 
+        /**
+         * @param {Array.<WebInspector.RemoteObjectProperty>} properties
+         * @param {Array.<WebInspector.RemoteObjectProperty>=} internalProperties
+         */
         function callback(properties, internalProperties)
         {
             if (!properties)

@@ -1,3 +1,10 @@
+2012-11-19  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Unreviewed inspector closure compilation fix.
+
+        * inspector/front-end/ObjectPropertiesSection.js:
+        * inspector/front-end/externs.js:
+
 2012-11-18  Ilya Tikhonovsky  <loislo@chromium.org>
 
         webaudio: clean-up. Replace AudioContext::m_document member with ContextDestructionObserver::scriptExecutionContext().
