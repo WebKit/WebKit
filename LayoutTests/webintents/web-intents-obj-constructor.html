@@ -46,7 +46,7 @@
         shouldThrow("new WebKitIntent({'action':'a','type':'b','service':'not a url'})", "'Error: SyntaxError: DOM Exception 12'");
 
         // |data| must be cloneable.
-        shouldThrow("new WebKitIntent({'action':'a','type':'b','data':window})", "'Error: DATA_CLONE_ERR: DOM Exception 25'");
+        shouldThrow("new WebKitIntent({'action':'a','type':'b','data':window})", "'Error: DataCloneError: DOM Exception 25'");
 
         // |extras|, if present, must be a dictionary.
         shouldNotThrow("new WebKitIntent({'action':'a','type':'b','extras':null})");
@@ -100,7 +100,7 @@
             {"action":"action1",
              "type":"text/plain+badport",
              "data":badchannel.port1};
-        shouldThrow("new WebKitIntent(badPortIntentObj)", "'Error: DATA_CLONE_ERR: DOM Exception 25'");
+        shouldThrow("new WebKitIntent(badPortIntentObj)", "'Error: DataCloneError: DOM Exception 25'");
 
         suggestionsIntent =
             {"action":"action1",

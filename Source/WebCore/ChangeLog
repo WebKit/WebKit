@@ -1,3 +1,16 @@
+2012-11-19  Erik Arvidsson  <arv@chromium.org>
+
+        Update DOMException name: DataCloneError
+        https://bugs.webkit.org/show_bug.cgi?id=102521
+
+        Reviewed by Kentaro Hara.
+
+        Patch 25 of 25 to update DOMException name to match the spec and Firefox.
+
+        Updated existing tests.
+
+        * dom/DOMCoreException.cpp:
+
 2012-11-19  Tom Hudson  <tomhudson@chromium.org>
 
         Improve performance of RenderBoxModelObject::paintTranslucentBorderSides()

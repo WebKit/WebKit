@@ -60,7 +60,7 @@ static struct CoreException {
     { "QuotaExceededError", "An attempt was made to add something to storage that exceeded the quota." },
     { "TIMEOUT_ERR", "A timeout occurred." },
     { "INVALID_NODE_TYPE_ERR", "The supplied node is invalid or has an invalid ancestor for this operation." },
-    { "DATA_CLONE_ERR", "An object could not be cloned." }
+    { "DataCloneError", "An object could not be cloned." }
 };
 
 bool DOMCoreException::initializeDescription(ExceptionCode ec, ExceptionCodeDescription* description)

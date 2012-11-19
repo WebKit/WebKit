@@ -1,3 +1,24 @@
+2012-11-19  Erik Arvidsson  <arv@chromium.org>
+
+        Update DOMException name: DataCloneError
+        https://bugs.webkit.org/show_bug.cgi?id=102521
+
+        Reviewed by Kentaro Hara.
+
+        Updated tests and expectations.
+
+        * fast/dom/Window/anonymous-slot-with-changes-expected.txt:
+        * fast/dom/Window/window-postmessage-clone-expected.txt:
+        * fast/dom/shadow/shadowroot-clonenode-expected.txt:
+        * fast/dom/shadow/shadowroot-clonenode.html:
+        * fast/events/message-port-multi-expected.txt:
+        * fast/filesystem/filesystem-unserializable-expected.txt:
+        * platform/chromium/fast/dom/Window/window-postmessage-clone-expected.txt:
+        * platform/chromium/fast/dom/Window/window-postmessage-clone-really-deep-array-expected.txt:
+        * platform/gtk/fast/dom/Window/window-postmessage-clone-expected.txt:
+        * webintents/web-intents-obj-constructor-expected.txt:
+        * webintents/web-intents-obj-constructor.html:
+
 2012-11-19  Thiago Marcos P. Santos  <thiago.santos@intel.com>
 
         Apply the resolved viewport rules
