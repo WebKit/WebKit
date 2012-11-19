@@ -38,7 +38,7 @@
 #include "PixelDumpSupportCairo.h"
 #include "RefPtrCairo.h"
 #include "WebCoreSupport/DumpRenderTreeSupportEfl.h"
-#include "ewk_view_private.h"
+#include "ewk_view.h"
 
 PassRefPtr<BitmapContext> createBitmapContextFromWebView(bool, bool, bool, bool drawSelectionRect)
 {

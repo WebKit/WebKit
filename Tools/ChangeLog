@@ -1,3 +1,14 @@
+2012-11-18  KyungTae Kim  <ktf.kim@samsung.com>
+
+        [EFL] Not to include "ewk_view_private.h" in Tools
+        https://bugs.webkit.org/show_bug.cgi?id=102644
+
+        Reviewed by Gyuyoung Kim.
+
+        Include ewk_view.h instead of ewk_view_private.h in Tools
+
+        * DumpRenderTree/efl/PixelDumpSupportEfl.cpp:
+
 2012-11-18  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r135104.
