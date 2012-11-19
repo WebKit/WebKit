@@ -127,6 +127,7 @@ my (
     $textAutosizingSupport,
     $tiledBackingStoreSupport,
     $touchEventsSupport,
+    $touchSliderSupport,
     $touchIconLoadingSupport,
     $vibrationSupport,
     $videoSupport,
@@ -392,6 +393,9 @@ my @features = (
 
     { option => "touch-events", desc => "Toggle Touch Events support",
       define => "ENABLE_TOUCH_EVENTS", default => (isQt() || isBlackBerry() || isEfl()), value => \$touchEventsSupport },
+
+    { option => "touch-slider", desc => "Toggle Touch Slider support",
+      define => "ENABLE_TOUCH_SLIDER", default => isBlackBerry(), value => \$touchSliderSupport },
 
     { option => "touch-icon-loading", desc => "Toggle Touch Icon Loading Support",
       define => "ENABLE_TOUCH_ICON_LOADING", default => 0, value => \$touchIconLoadingSupport },

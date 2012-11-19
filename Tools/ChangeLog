@@ -1,3 +1,16 @@
+2012-11-18  Genevieve Mak  <gmak@rim.com>
+
+        [BlackBerry] Enable Touch Sliders
+        https://bugs.webkit.org/show_bug.cgi?id=102516
+
+        Reviewed by Rob Buis.
+
+        Enabled for BlackBerry only
+        PR #242781
+        PR #176014
+
+        * Scripts/webkitperl/FeatureList.pm:
+
 2012-11-17  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Remove unused code I wrote a long time ago from gardeningserver.py

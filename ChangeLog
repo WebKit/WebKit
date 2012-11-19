@@ -1,3 +1,18 @@
+2012-11-18  Genevieve Mak  <gmak@rim.com>
+
+         [BlackBerry] Enable Touch Sliders
+         https://bugs.webkit.org/show_bug.cgi?id=102516
+
+         Reviewed by Rob Buis.
+
+         Enabled for BlackBerry only
+         PR #242781
+         PR #176014
+
+         * Source/cmake/OptionsBlackBerry.cmake:
+         * Source/cmake/WebKitFeatures.cmake:
+         * Source/cmakeconfig.h.cmake:
+
 2012-11-18  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix GTK+ build after r135022.
