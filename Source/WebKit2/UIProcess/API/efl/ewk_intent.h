@@ -42,7 +42,7 @@ extern "C" {
  *
  * @see Ewk_Object
  */
-typedef struct Ewk_Object Ewk_Intent;
+typedef struct EwkObject Ewk_Intent;
 
 /**
  * Query action for this intent.

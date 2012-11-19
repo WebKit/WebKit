@@ -45,7 +45,7 @@ extern "C" {
  *
  * @see Ewk_Object
  */
-typedef struct Ewk_Object Ewk_Form_Submission_Request;
+typedef struct EwkObject Ewk_Form_Submission_Request;
 
 /**
  * Returns the list of field names contained in the form associated to @a request.

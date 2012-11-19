@@ -28,20 +28,20 @@
 
 #include <wtf/RefCounted.h>
 
-class Ewk_Object : public RefCounted<Ewk_Object> {
+class EwkObject : public RefCounted<EwkObject> {
 public:
-    virtual ~Ewk_Object() { }
+    virtual ~EwkObject() { }
     virtual const char* instanceClassName() const = 0;
 };
 
 template <class T>
-inline bool ewk_object_is_of_type(const Ewk_Object* object)
+inline bool ewk_object_is_of_type(const EwkObject* object)
 {
     return (reinterpret_cast<T>(0)->className() == object->instanceClassName());
 }
 
 template <class T>
-inline bool ewk_object_cast_check(const Ewk_Object* object)
+inline bool ewk_object_cast_check(const EwkObject* object)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(object, false);
 
@@ -56,13 +56,13 @@ inline bool ewk_object_cast_check(const Ewk_Object* object)
 }
 
 template <class T>
-inline const T ewk_object_cast(const Ewk_Object* object)
+inline const T ewk_object_cast(const EwkObject* object)
 {
     return ewk_object_cast_check<T>(object) ? static_cast<T>(object) : 0;
 }
 
 template <class T>
-inline T ewk_object_cast(Ewk_Object* object)
+inline T ewk_object_cast(EwkObject* object)
 {
     return ewk_object_cast_check<T>(object) ? static_cast<T>(object) : 0;
 }

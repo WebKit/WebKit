@@ -37,7 +37,7 @@
  * \struct  EwkUrlSchemeRequest
  * @brief   Contains the URL scheme request data.
  */
-class EwkUrlSchemeRequest : public Ewk_Object {
+class EwkUrlSchemeRequest : public EwkObject {
 public:
     EWK_OBJECT_DECLARE(EwkUrlSchemeRequest)
 

@@ -42,7 +42,7 @@ extern "C" {
  *
  * @see Ewk_Object
  */
-typedef struct Ewk_Object Ewk_Url_Scheme_Request;
+typedef struct EwkObject Ewk_Url_Scheme_Request;
 
 /**
  * Query the URL scheme for this request.

@@ -35,19 +35,19 @@
 
 using namespace WebKit;
 
-class Ewk_Database_Manager {
+class EwkDatabaseManager {
 public:
-    static PassOwnPtr<Ewk_Database_Manager> create(PassRefPtr<WebContext> context)
+    static PassOwnPtr<EwkDatabaseManager> create(PassRefPtr<WebContext> context)
     {
         ASSERT(context);
-        return adoptPtr(new Ewk_Database_Manager(context->databaseManagerProxy()));
+        return adoptPtr(new EwkDatabaseManager(context->databaseManagerProxy()));
     }
 
     Eina_List* createOriginList(WKArrayRef wkList) const;
     void getDatabaseOrigins(WKDatabaseManagerGetDatabaseOriginsFunction callback, void* context) const;
 
 private:
-    explicit Ewk_Database_Manager(WebDatabaseManagerProxy*);
+    explicit EwkDatabaseManager(WebDatabaseManagerProxy*);
 
     RefPtr<WebDatabaseManagerProxy> m_databaseManager;
     mutable HashMap<WKSecurityOriginRef, RefPtr<Ewk_Security_Origin> > m_wrapperCache;

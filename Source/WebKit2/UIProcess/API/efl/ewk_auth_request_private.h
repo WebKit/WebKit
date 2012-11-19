@@ -35,7 +35,7 @@ namespace WebKit {
 class AuthenticationChallengeProxy;
 }
 
-class EwkAuthRequest : public Ewk_Object {
+class EwkAuthRequest : public EwkObject {
 public:
     EWK_OBJECT_DECLARE(EwkAuthRequest)
 

@@ -35,11 +35,11 @@
 
 typedef HashMap<WKBackForwardListItemRef, RefPtr<Ewk_Back_Forward_List_Item> > ItemsMap;
 
-class Ewk_Back_Forward_List {
+class EwkBackForwardList {
 public:
-    static PassOwnPtr<Ewk_Back_Forward_List> create(WKBackForwardListRef listRef)
+    static PassOwnPtr<EwkBackForwardList> create(WKBackForwardListRef listRef)
     {
-        return adoptPtr(new Ewk_Back_Forward_List(listRef));
+        return adoptPtr(new EwkBackForwardList(listRef));
     }
 
     Ewk_Back_Forward_List_Item* previousItem() const;
@@ -55,7 +55,7 @@ public:
     Eina_List* createEinaList(WKArrayRef wkList) const;
 
 private:
-    explicit Ewk_Back_Forward_List(WKBackForwardListRef listRef);
+    explicit EwkBackForwardList(WKBackForwardListRef listRef);
 
     Ewk_Back_Forward_List_Item* getFromCacheOrCreate(WKBackForwardListItemRef wkItem) const;
 

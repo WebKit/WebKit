@@ -39,7 +39,7 @@ extern "C" {
 #endif
 
 /** Creates a type name for Ewk_Popup_Menu */
-typedef struct Ewk_Popup_Menu Ewk_Popup_Menu;
+typedef struct EwkPopupMenu Ewk_Popup_Menu;
 
 /**
  * Selects index of current popup menu.

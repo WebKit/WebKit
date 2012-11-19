@@ -35,11 +35,11 @@
  * \struct  Ewk_Popup_Menu_Item
  * @brief   Contains the popup menu data.
  */
-class Ewk_Popup_Menu_Item {
+class EwkPopupMenuItem {
 public:
-    static PassOwnPtr<Ewk_Popup_Menu_Item> create(const WebKit::WebPopupItem& item)
+    static PassOwnPtr<EwkPopupMenuItem> create(const WebKit::WebPopupItem& item)
     {
-        return adoptPtr(new Ewk_Popup_Menu_Item(item));
+        return adoptPtr(new EwkPopupMenuItem(item));
     }
 
     Ewk_Popup_Menu_Item_Type type() const;
@@ -55,7 +55,7 @@ public:
     const char* accessibilityText() const;
 
 private:
-    explicit Ewk_Popup_Menu_Item(const WebKit::WebPopupItem& item);
+    explicit EwkPopupMenuItem(const WebKit::WebPopupItem& item);
 
     Ewk_Popup_Menu_Item_Type m_type;
     Ewk_Text_Direction m_textDirection;

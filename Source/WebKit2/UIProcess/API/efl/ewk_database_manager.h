@@ -41,7 +41,7 @@ extern "C" {
 #endif
 
 /** Creates a type name for Ewk_Database_Manager. */
-typedef struct Ewk_Database_Manager Ewk_Database_Manager;
+typedef struct EwkDatabaseManager Ewk_Database_Manager;
 
 /**
  * @typedef Ewk_Database_Origins_Get_Cb Ewk_Database_Origins_Get_Cb

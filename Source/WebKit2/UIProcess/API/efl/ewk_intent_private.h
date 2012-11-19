@@ -44,7 +44,7 @@ class WebIntentData;
  * \struct  EwkIntent
  * @brief   Contains the intent data.
  */
-class EwkIntent : public Ewk_Object {
+class EwkIntent : public EwkObject {
 public:
     EWK_OBJECT_DECLARE(EwkIntent)
 

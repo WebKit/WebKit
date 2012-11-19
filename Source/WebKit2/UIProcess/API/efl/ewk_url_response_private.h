@@ -37,7 +37,7 @@
  * \struct  EwkUrlResponse
  * @brief   Contains the URL response data.
  */
-class EwkUrlResponse : public Ewk_Object {
+class EwkUrlResponse : public EwkObject {
 public:
     EWK_OBJECT_DECLARE(EwkUrlResponse)
 

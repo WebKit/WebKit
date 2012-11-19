@@ -37,18 +37,18 @@ class EwkViewImpl;
  * \struct  Ewk_Settings
  * @brief   Contains the settings data.
  */
-class Ewk_Settings {
+class EwkSettings {
 public:
-    static PassOwnPtr<Ewk_Settings> create(EwkViewImpl* viewImpl)
+    static PassOwnPtr<EwkSettings> create(EwkViewImpl* viewImpl)
     {
-        return adoptPtr(new Ewk_Settings(viewImpl));
+        return adoptPtr(new EwkSettings(viewImpl));
     }
 
     const WebKit::WebPreferences* preferences() const;
     WebKit::WebPreferences* preferences();
 
 private:
-    explicit Ewk_Settings(EwkViewImpl* viewImpl)
+    explicit EwkSettings(EwkViewImpl* viewImpl)
         : m_viewImpl(viewImpl)
     {
         ASSERT(m_viewImpl);

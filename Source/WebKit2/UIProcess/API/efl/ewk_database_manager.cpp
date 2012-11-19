@@ -37,16 +37,16 @@
 
 using namespace WebKit;
 
-Ewk_Database_Manager::Ewk_Database_Manager(WebDatabaseManagerProxy* databaseManager)
+EwkDatabaseManager::EwkDatabaseManager(WebDatabaseManagerProxy* databaseManager)
     : m_databaseManager(databaseManager)
 { }
 
-void Ewk_Database_Manager::getDatabaseOrigins(WKDatabaseManagerGetDatabaseOriginsFunction callback, void* context) const
+void EwkDatabaseManager::getDatabaseOrigins(WKDatabaseManagerGetDatabaseOriginsFunction callback, void* context) const
 {
     WKDatabaseManagerGetDatabaseOrigins(toAPI(m_databaseManager.get()), context, callback);
 }
 
-Eina_List* Ewk_Database_Manager::createOriginList(WKArrayRef origins) const
+Eina_List* EwkDatabaseManager::createOriginList(WKArrayRef origins) const
 {
     Eina_List* originList = 0;
     const size_t length = WKArrayGetSize(origins);

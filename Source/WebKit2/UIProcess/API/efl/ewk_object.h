@@ -38,7 +38,7 @@ extern "C" {
 #endif
 
 /** Creates a type name for Ewk_Object */
-typedef struct Ewk_Object Ewk_Object;
+typedef struct EwkObject Ewk_Object;
 
 /**
  * Increases the reference count of the given Ewk_Object.

@@ -39,7 +39,7 @@
 
 using namespace WebKit;
 
-Ewk_Cookie_Manager::Ewk_Cookie_Manager(WKCookieManagerRef cookieManagerRef)
+EwkCookieManager::EwkCookieManager(WKCookieManagerRef cookieManagerRef)
     : m_wkCookieManager(cookieManagerRef)
 {
     WKCookieManagerClient wkCookieManagerClient = {
@@ -50,13 +50,13 @@ Ewk_Cookie_Manager::Ewk_Cookie_Manager(WKCookieManagerRef cookieManagerRef)
     WKCookieManagerSetClient(m_wkCookieManager.get(), &wkCookieManagerClient);
 }
 
-Ewk_Cookie_Manager::~Ewk_Cookie_Manager()
+EwkCookieManager::~EwkCookieManager()
 {
     if (isWatchingForChanges())
         WKCookieManagerStopObservingCookieChanges(m_wkCookieManager.get());
 }
 
-void Ewk_Cookie_Manager::setPersistentStorage(const String& filename, SoupCookiePersistentStorageType storage)
+void EwkCookieManager::setPersistentStorage(const String& filename, SoupCookiePersistentStorageType storage)
 {
     bool isWatchingChanges = isWatchingForChanges();
     if (isWatchingChanges)
@@ -68,22 +68,22 @@ void Ewk_Cookie_Manager::setPersistentStorage(const String& filename, SoupCookie
         WKCookieManagerStartObservingCookieChanges(m_wkCookieManager.get());
 }
 
-void Ewk_Cookie_Manager::setHTTPAcceptPolicy(WKHTTPCookieAcceptPolicy policy)
+void EwkCookieManager::setHTTPAcceptPolicy(WKHTTPCookieAcceptPolicy policy)
 {
     WKCookieManagerSetHTTPCookieAcceptPolicy(m_wkCookieManager.get(), policy);
 }
 
-void Ewk_Cookie_Manager::clearHostnameCookies(const String& hostname)
+void EwkCookieManager::clearHostnameCookies(const String& hostname)
 {
     toImpl(m_wkCookieManager.get())->deleteCookiesForHostname(hostname);
 }
 
-void Ewk_Cookie_Manager::clearAllCookies()
+void EwkCookieManager::clearAllCookies()
 {
     WKCookieManagerDeleteAllCookies(m_wkCookieManager.get());
 }
 
-void Ewk_Cookie_Manager::watchChanges(const Cookie_Change_Handler& changeHandler)
+void EwkCookieManager::watchChanges(const Cookie_Change_Handler& changeHandler)
 {
     m_changeHandler = changeHandler;
 
@@ -93,22 +93,22 @@ void Ewk_Cookie_Manager::watchChanges(const Cookie_Change_Handler& changeHandler
         WKCookieManagerStopObservingCookieChanges(m_wkCookieManager.get());
 }
 
-bool Ewk_Cookie_Manager::isWatchingForChanges() const
+bool EwkCookieManager::isWatchingForChanges() const
 {
     return static_cast<bool>(m_changeHandler.callback);
 }
 
-void Ewk_Cookie_Manager::getHostNamesWithCookies(WKCookieManagerGetCookieHostnamesFunction callback, void* userData) const
+void EwkCookieManager::getHostNamesWithCookies(WKCookieManagerGetCookieHostnamesFunction callback, void* userData) const
 {
     WKCookieManagerGetHostnamesWithCookies(m_wkCookieManager.get(), userData, callback);
 }
 
-void Ewk_Cookie_Manager::getHTTPAcceptPolicy(WKCookieManagerGetHTTPCookieAcceptPolicyFunction callback, void* userData) const
+void EwkCookieManager::getHTTPAcceptPolicy(WKCookieManagerGetHTTPCookieAcceptPolicyFunction callback, void* userData) const
 {
     WKCookieManagerGetHTTPCookieAcceptPolicy(m_wkCookieManager.get(), userData, callback);
 }
 
-void Ewk_Cookie_Manager::cookiesDidChange(WKCookieManagerRef, const void* clientInfo)
+void EwkCookieManager::cookiesDidChange(WKCookieManagerRef, const void* clientInfo)
 {
     Ewk_Cookie_Manager* manager = static_cast<Ewk_Cookie_Manager*>(const_cast<void*>(clientInfo));
 

@@ -27,18 +27,18 @@
 #include <WebCore/Color.h>
 #include <wtf/PassOwnPtr.h>
 
-class Ewk_Color_Picker {
+class EwkColorPicker {
 public:
-    static PassOwnPtr<Ewk_Color_Picker> create(WKColorPickerResultListenerRef colorPickerListener, const WebCore::Color& initialColor)
+    static PassOwnPtr<EwkColorPicker> create(WKColorPickerResultListenerRef colorPickerListener, const WebCore::Color& initialColor)
     {
-        return adoptPtr(new Ewk_Color_Picker(colorPickerListener, initialColor));
+        return adoptPtr(new EwkColorPicker(colorPickerListener, initialColor));
     }
 
     const WebCore::Color& color() const;
     void setColor(const WebCore::Color&);
 
 private:
-    Ewk_Color_Picker(WKColorPickerResultListenerRef colorPickerListener, const WebCore::Color& initialColor);
+    EwkColorPicker(WKColorPickerResultListenerRef colorPickerListener, const WebCore::Color& initialColor);
 
     WKRetainPtr<WKColorPickerResultListenerRef> m_colorPickerListener;
     WebCore::Color m_color;

@@ -33,7 +33,7 @@
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
-class EwkResource : public Ewk_Object {
+class EwkResource : public EwkObject {
 public:
     EWK_OBJECT_DECLARE(EwkResource)
 

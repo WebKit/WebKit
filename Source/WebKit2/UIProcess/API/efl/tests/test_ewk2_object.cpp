@@ -39,7 +39,7 @@ using namespace WTF;
 
 extern EWK2UnitTestEnvironment* environment;
 
-class TestEwkObject1 : public Ewk_Object {
+class TestEwkObject1 : public EwkObject {
 public:
     EWK_OBJECT_DECLARE(TestEwkObject)
 
@@ -59,7 +59,7 @@ public:
 
 bool TestEwkObject1::wasDeleted = false;
 
-class TestEwkObject2 : public Ewk_Object {
+class TestEwkObject2 : public EwkObject {
 public:
     EWK_OBJECT_DECLARE(TestEwkObject2)
 
@@ -92,8 +92,8 @@ TEST_F(EWK2UnitTestBase, ewk_object_ref)
 
 TEST_F(EWK2UnitTestBase, ewk_object_is_of_type)
 {
-    RefPtr<Ewk_Object> object1 = TestEwkObject1::create();
-    RefPtr<Ewk_Object> object2 = TestEwkObject2::create();
+    RefPtr<EwkObject> object1 = TestEwkObject1::create();
+    RefPtr<EwkObject> object2 = TestEwkObject2::create();
 
     ASSERT_TRUE(ewk_object_is_of_type<TestEwkObject1*>(object1.get()));
     ASSERT_TRUE(ewk_object_is_of_type<TestEwkObject2*>(object2.get()));
@@ -104,8 +104,8 @@ TEST_F(EWK2UnitTestBase, ewk_object_is_of_type)
 
 TEST_F(EWK2UnitTestBase, ewk_object_cast)
 {
-    RefPtr<Ewk_Object> object1 = TestEwkObject1::create();
-    RefPtr<Ewk_Object> object2 = TestEwkObject2::create();
+    RefPtr<EwkObject> object1 = TestEwkObject1::create();
+    RefPtr<EwkObject> object2 = TestEwkObject2::create();
 
     TestEwkObject1* objectRef1 = ewk_object_cast<TestEwkObject1*>(object1.get());
     ASSERT_TRUE(objectRef1);

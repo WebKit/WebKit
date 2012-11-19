@@ -72,10 +72,10 @@ class IntSize;
 }
 
 class EwkContext;
-class Ewk_Back_Forward_List;
-class Ewk_Color_Picker;
-class Ewk_Popup_Menu;
-class Ewk_Settings;
+class EwkBackForwardList;
+class EwkColorPicker;
+class EwkPopupMenu;
+class EwkSettings;
 
 #if USE(ACCELERATED_COMPOSITING)
 typedef struct _Evas_GL_Context Evas_GL_Context;
@@ -100,8 +100,8 @@ public:
     WKPageRef wkPage();
     WebKit::WebPageProxy* page() { return m_pageProxy.get(); }
     EwkContext* ewkContext() { return m_context.get(); }
-    Ewk_Settings* settings() { return m_settings.get(); }
-    Ewk_Back_Forward_List* backForwardList() { return m_backForwardList.get(); }
+    EwkSettings* settings() { return m_settings.get(); }
+    EwkBackForwardList* backForwardList() { return m_backForwardList.get(); }
 
     WebCore::IntSize size() const;
     bool isFocused() const;
@@ -238,12 +238,12 @@ private:
 #if ENABLE(VIBRATION)
     OwnPtr<WebKit::VibrationClientEfl> m_vibrationClient;
 #endif
-    OwnPtr<Ewk_Back_Forward_List> m_backForwardList;
+    OwnPtr<EwkBackForwardList> m_backForwardList;
 #if USE(TILED_BACKING_STORE)
     float m_scaleFactor;
     WebCore::IntPoint m_scrollPosition;
 #endif
-    OwnPtr<Ewk_Settings> m_settings;
+    OwnPtr<EwkSettings> m_settings;
     const void* m_cursorIdentifier; // This is an address, do not free it.
     WKEinaSharedString m_faviconURL;
     WKEinaSharedString m_url;
@@ -255,9 +255,9 @@ private:
     bool m_touchEventsEnabled;
 #endif
     WebCore::Timer<EwkViewImpl> m_displayTimer;
-    OwnPtr<Ewk_Popup_Menu> m_popupMenu;
+    OwnPtr<EwkPopupMenu> m_popupMenu;
     OwnPtr<WebKit::InputMethodContextEfl> m_inputMethodContext;
-    OwnPtr<Ewk_Color_Picker> m_colorPicker;
+    OwnPtr<EwkColorPicker> m_colorPicker;
     bool m_isHardwareAccelerated;
     bool m_setDrawsBackground;
 };

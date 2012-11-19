@@ -40,7 +40,7 @@
  * \struct  EwkNavigationPolicyDecision
  * @brief   Contains the navigation policy decision data.
  */
-class EwkNavigationPolicyDecision : public Ewk_Object {
+class EwkNavigationPolicyDecision : public EwkObject {
 public:
     EWK_OBJECT_DECLARE(EwkNavigationPolicyDecision)
 

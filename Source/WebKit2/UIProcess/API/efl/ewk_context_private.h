@@ -29,8 +29,8 @@
 
 using namespace WebKit;
 
-class Ewk_Cookie_Manager;
-class Ewk_Favicon_Database;
+class EwkCookieManager;
+class EwkFaviconDatabase;
 
 namespace WebKit {
 class ContextHistoryClientEfl;
@@ -43,7 +43,7 @@ class NetworkInfoProvider;
 #endif
 }
 
-class EwkContext : public Ewk_Object {
+class EwkContext : public EwkObject {
 public:
     EWK_OBJECT_DECLARE(EwkContext)
 

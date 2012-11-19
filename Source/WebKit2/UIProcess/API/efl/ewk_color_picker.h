@@ -28,7 +28,7 @@ extern "C" {
 #endif
 
 /** Creates a type name for @a Ewk_Color_Picker. */
-typedef struct Ewk_Color_Picker Ewk_Color_Picker;
+typedef struct EwkColorPicker Ewk_Color_Picker;
 
 /**
  * Sets the selected color.

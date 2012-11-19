@@ -48,14 +48,14 @@ struct Cookie_Change_Handler {
     { }
 };
 
-class Ewk_Cookie_Manager {
+class EwkCookieManager {
 public:
-    static PassOwnPtr<Ewk_Cookie_Manager> create(WKCookieManagerRef cookieManagerRef)
+    static PassOwnPtr<EwkCookieManager> create(WKCookieManagerRef cookieManagerRef)
     {
         return adoptPtr(new Ewk_Cookie_Manager(cookieManagerRef));
     }
 
-    ~Ewk_Cookie_Manager();
+    ~EwkCookieManager();
 
     void setPersistentStorage(const String& filename, WebKit::SoupCookiePersistentStorageType storage);
 
@@ -69,7 +69,7 @@ public:
     void watchChanges(const Cookie_Change_Handler& changeHandler);
 
 private:
-    explicit Ewk_Cookie_Manager(WKCookieManagerRef cookieManagerRef);
+    explicit EwkCookieManager(WKCookieManagerRef cookieManagerRef);
 
     bool isWatchingForChanges() const;
 

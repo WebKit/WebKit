@@ -35,19 +35,19 @@
 
 using namespace WebKit;
 
-class Ewk_Storage_Manager {
+class EwkStorageManager {
 public:
-    static PassOwnPtr<Ewk_Storage_Manager> create(PassRefPtr<WebContext> context)
+    static PassOwnPtr<EwkStorageManager> create(PassRefPtr<WebContext> context)
     {
         ASSERT(context);
-        return adoptPtr(new Ewk_Storage_Manager(context->keyValueStorageManagerProxy()));
+        return adoptPtr(new EwkStorageManager(context->keyValueStorageManagerProxy()));
     }
 
     Eina_List* createOriginList(WKArrayRef wkList) const;
     void getStorageOrigins(void* context, WKKeyValueStorageManagerGetKeyValueStorageOriginsFunction callback) const;
 
 private:
-    explicit Ewk_Storage_Manager(WebKeyValueStorageManagerProxy* storageManagerProxy);
+    explicit EwkStorageManager(WebKeyValueStorageManagerProxy* storageManagerProxy);
 
     RefPtr<WebKeyValueStorageManagerProxy> m_storageManager;
     mutable HashMap<WKSecurityOriginRef, RefPtr<Ewk_Security_Origin> > m_wrapperCache;

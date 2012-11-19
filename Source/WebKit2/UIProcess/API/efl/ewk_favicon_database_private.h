@@ -71,13 +71,13 @@ typedef HashMap<Ewk_Favicon_Database_Icon_Change_Cb, IconChangeCallbackData> Cha
 typedef Vector<IconRequestCallbackData> PendingIconRequestVector;
 typedef HashMap<String /* pageURL */, PendingIconRequestVector> PendingIconRequestMap;
 
-class Ewk_Favicon_Database {
+class EwkFaviconDatabase {
 public:
-    static PassOwnPtr<Ewk_Favicon_Database> create(WebKit::WebIconDatabase* iconDatabase)
+    static PassOwnPtr<EwkFaviconDatabase> create(WebKit::WebIconDatabase* iconDatabase)
     {
-        return adoptPtr(new Ewk_Favicon_Database(iconDatabase));
+        return adoptPtr(new EwkFaviconDatabase(iconDatabase));
     }
-    ~Ewk_Favicon_Database();
+    ~EwkFaviconDatabase();
 
     String iconURLForPageURL(const String& pageURL) const;
     void iconForPageURL(const String& pageURL, const IconRequestCallbackData& callbackData);
@@ -86,7 +86,7 @@ public:
     void unwatchChanges(Ewk_Favicon_Database_Icon_Change_Cb callback);
 
 private:
-    explicit Ewk_Favicon_Database(WebKit::WebIconDatabase* iconDatabase);
+    explicit EwkFaviconDatabase(WebKit::WebIconDatabase* iconDatabase);
 
     PassRefPtr<cairo_surface_t> getIconSurfaceSynchronously(const String& pageURL) const;
 

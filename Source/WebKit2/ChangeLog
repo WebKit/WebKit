@@ -1,3 +1,169 @@
+2012-11-18  Jaehun Lim  <ljaehun.lim@samsung.com>
+
+        [EFL][WK2] Remove underscore characters in Ewk class names.
+        https://bugs.webkit.org/show_bug.cgi?id=102641
+
+        Reviewed by Gyuyoung Kim.
+
+        WebKit EFL doesn't use '_' in C++ class names.
+
+        * UIProcess/API/efl/EwkViewCallbacks.h:
+        * UIProcess/API/efl/EwkViewImpl.h:
+        (EwkViewImpl::settings):
+        (EwkViewImpl::backForwardList):
+        (EwkViewImpl):
+        * UIProcess/API/efl/ewk_auth_request.h:
+        * UIProcess/API/efl/ewk_auth_request_private.h:
+        * UIProcess/API/efl/ewk_back_forward_list.cpp:
+        (EwkBackForwardList::EwkBackForwardList):
+        (EwkBackForwardList::nextItem):
+        (EwkBackForwardList::previousItem):
+        (EwkBackForwardList::currentItem):
+        (EwkBackForwardList::itemAt):
+        (EwkBackForwardList::size):
+        (EwkBackForwardList::backList):
+        (EwkBackForwardList::forwardList):
+        (EwkBackForwardList::getFromCacheOrCreate):
+        (EwkBackForwardList::createEinaList):
+        (EwkBackForwardList::update):
+        * UIProcess/API/efl/ewk_back_forward_list.h:
+        * UIProcess/API/efl/ewk_back_forward_list_item.h:
+        * UIProcess/API/efl/ewk_back_forward_list_item_private.h:
+        * UIProcess/API/efl/ewk_back_forward_list_private.h:
+        (EwkBackForwardList::create):
+        (EwkBackForwardList):
+        * UIProcess/API/efl/ewk_color_picker.cpp:
+        (EwkColorPicker::EwkColorPicker):
+        (EwkColorPicker::setColor):
+        (EwkColorPicker::color):
+        * UIProcess/API/efl/ewk_color_picker.h:
+        * UIProcess/API/efl/ewk_color_picker_private.h:
+        (EwkColorPicker::create):
+        (EwkColorPicker):
+        * UIProcess/API/efl/ewk_context.h:
+        * UIProcess/API/efl/ewk_context_private.h:
+        * UIProcess/API/efl/ewk_cookie_manager.cpp:
+        (EwkCookieManager::EwkCookieManager):
+        (EwkCookieManager::~EwkCookieManager):
+        (EwkCookieManager::setPersistentStorage):
+        (EwkCookieManager::setHTTPAcceptPolicy):
+        (EwkCookieManager::clearHostnameCookies):
+        (EwkCookieManager::clearAllCookies):
+        (EwkCookieManager::watchChanges):
+        (EwkCookieManager::isWatchingForChanges):
+        (EwkCookieManager::getHostNamesWithCookies):
+        (EwkCookieManager::getHTTPAcceptPolicy):
+        (EwkCookieManager::cookiesDidChange):
+        * UIProcess/API/efl/ewk_cookie_manager.h:
+        * UIProcess/API/efl/ewk_cookie_manager_private.h:
+        (EwkCookieManager::create):
+        (EwkCookieManager):
+        * UIProcess/API/efl/ewk_database_manager.cpp:
+        (EwkDatabaseManager::EwkDatabaseManager):
+        (EwkDatabaseManager::getDatabaseOrigins):
+        (EwkDatabaseManager::createOriginList):
+        * UIProcess/API/efl/ewk_database_manager.h:
+        * UIProcess/API/efl/ewk_database_manager_private.h:
+        (EwkDatabaseManager::create):
+        (EwkDatabaseManager):
+        * UIProcess/API/efl/ewk_download_job.h:
+        * UIProcess/API/efl/ewk_download_job_private.h:
+        * UIProcess/API/efl/ewk_error.cpp:
+        (EwkError::EwkError):
+        (EwkError::url):
+        (EwkError::description):
+        (EwkError::domain):
+        (EwkError::errorCode):
+        (EwkError::isCancellation):
+        * UIProcess/API/efl/ewk_error.h:
+        * UIProcess/API/efl/ewk_error_private.h:
+        (EwkError::create):
+        (EwkError):
+        * UIProcess/API/efl/ewk_favicon_database.cpp:
+        (EwkFaviconDatabase::EwkFaviconDatabase):
+        (EwkFaviconDatabase::~EwkFaviconDatabase):
+        (EwkFaviconDatabase::iconURLForPageURL):
+        (EwkFaviconDatabase::watchChanges):
+        (EwkFaviconDatabase::unwatchChanges):
+        (EwkFaviconDatabase::iconForPageURL):
+        (EwkFaviconDatabase::didChangeIconForPageURL):
+        (EwkFaviconDatabase::getIconSurfaceSynchronously):
+        (EwkFaviconDatabase::iconDataReadyForPageURL):
+        * UIProcess/API/efl/ewk_favicon_database.h:
+        * UIProcess/API/efl/ewk_favicon_database_private.h:
+        (EwkFaviconDatabase::create):
+        (EwkFaviconDatabase):
+        * UIProcess/API/efl/ewk_file_chooser_request.h:
+        * UIProcess/API/efl/ewk_file_chooser_request_private.h:
+        * UIProcess/API/efl/ewk_form_submission_request.h:
+        * UIProcess/API/efl/ewk_form_submission_request_private.h:
+        * UIProcess/API/efl/ewk_intent.h:
+        * UIProcess/API/efl/ewk_intent_private.h:
+        * UIProcess/API/efl/ewk_intent_service.h:
+        * UIProcess/API/efl/ewk_intent_service_private.h:
+        * UIProcess/API/efl/ewk_navigation_data.h:
+        * UIProcess/API/efl/ewk_navigation_data_private.h:
+        * UIProcess/API/efl/ewk_navigation_policy_decision.h:
+        * UIProcess/API/efl/ewk_navigation_policy_decision_private.h:
+        * UIProcess/API/efl/ewk_object.h:
+        * UIProcess/API/efl/ewk_object_private.h:
+        (EwkObject::~EwkObject):
+        (ewk_object_is_of_type):
+        (ewk_object_cast_check):
+        (ewk_object_cast):
+        * UIProcess/API/efl/ewk_popup_menu.cpp:
+        (EwkPopupMenu::EwkPopupMenu):
+        (EwkPopupMenu::~EwkPopupMenu):
+        (EwkPopupMenu::close):
+        (EwkPopupMenu::items):
+        (EwkPopupMenu::selectedIndex):
+        (EwkPopupMenu::setSelectedIndex):
+        * UIProcess/API/efl/ewk_popup_menu.h:
+        * UIProcess/API/efl/ewk_popup_menu_item.cpp:
+        (EwkPopupMenuItem::EwkPopupMenuItem):
+        (EwkPopupMenuItem::type):
+        (EwkPopupMenuItem::textDirection):
+        (EwkPopupMenuItem::text):
+        (EwkPopupMenuItem::tooltipText):
+        (EwkPopupMenuItem::accessibilityText):
+        (EwkPopupMenuItem::hasTextDirectionOverride):
+        (EwkPopupMenuItem::isEnabled):
+        (EwkPopupMenuItem::isLabel):
+        (EwkPopupMenuItem::isSelected):
+        * UIProcess/API/efl/ewk_popup_menu_item.h:
+        * UIProcess/API/efl/ewk_popup_menu_item_private.h:
+        (EwkPopupMenuItem::create):
+        (EwkPopupMenuItem):
+        * UIProcess/API/efl/ewk_popup_menu_private.h:
+        (EwkPopupMenu::create):
+        (EwkPopupMenu):
+        * UIProcess/API/efl/ewk_resource.h:
+        * UIProcess/API/efl/ewk_resource_private.h:
+        * UIProcess/API/efl/ewk_security_origin.h:
+        * UIProcess/API/efl/ewk_security_origin_private.h:
+        * UIProcess/API/efl/ewk_settings.cpp:
+        (EwkSettings::preferences):
+        * UIProcess/API/efl/ewk_settings.h:
+        * UIProcess/API/efl/ewk_settings_private.h:
+        (EwkSettings::create):
+        (EwkSettings::EwkSettings):
+        * UIProcess/API/efl/ewk_storage_manager.cpp:
+        (EwkStorageManager::EwkStorageManager):
+        (EwkStorageManager::getStorageOrigins):
+        (EwkStorageManager::createOriginList):
+        * UIProcess/API/efl/ewk_storage_manager.h:
+        * UIProcess/API/efl/ewk_storage_manager_private.h:
+        (EwkStorageManager::create):
+        (EwkStorageManager):
+        * UIProcess/API/efl/ewk_url_request.h:
+        * UIProcess/API/efl/ewk_url_request_private.h:
+        * UIProcess/API/efl/ewk_url_response.h:
+        * UIProcess/API/efl/ewk_url_response_private.h:
+        * UIProcess/API/efl/ewk_url_scheme_request.h:
+        * UIProcess/API/efl/ewk_url_scheme_request_private.h:
+        * UIProcess/API/efl/tests/test_ewk2_object.cpp:
+        (TEST_F):
+
 2012-11-18  Yael Aharon  <yael.aharon@intel.com>
 
         [EFL][WK2] Wrong transform when using software path.

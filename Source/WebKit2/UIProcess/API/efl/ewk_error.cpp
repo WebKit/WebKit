@@ -36,34 +36,34 @@
 using namespace WebCore;
 using namespace WebKit;
 
-Ewk_Error::Ewk_Error(WKErrorRef errorRef)
+EwkError::EwkError(WKErrorRef errorRef)
     : m_wkError(errorRef)
     , m_url(AdoptWK, WKErrorCopyFailingURL(errorRef))
     , m_description(AdoptWK, WKErrorCopyLocalizedDescription(errorRef))
 { }
 
-const char* Ewk_Error::url() const
+const char* EwkError::url() const
 {
     return m_url;
 }
 
-const char* Ewk_Error::description() const
+const char* EwkError::description() const
 {
     return m_description;
 }
 
-String Ewk_Error::domain() const
+String EwkError::domain() const
 {
     WKRetainPtr<WKStringRef> wkDomain(AdoptWK, WKErrorCopyDomain(m_wkError.get()));
     return toWTFString(wkDomain.get());
 }
 
-int Ewk_Error::errorCode() const
+int EwkError::errorCode() const
 {
     return WKErrorGetErrorCode(m_wkError.get());
 }
 
-bool Ewk_Error::isCancellation() const
+bool EwkError::isCancellation() const
 {
     return toImpl(m_wkError.get())->platformError().isCancellation();
 }

@@ -31,19 +31,19 @@
 using namespace WebCore;
 
 #if ENABLE(INPUT_TYPE_COLOR)
-Ewk_Color_Picker::Ewk_Color_Picker(WKColorPickerResultListenerRef colorPickerListener, const Color& initialColor)
+EwkColorPicker::EwkColorPicker(WKColorPickerResultListenerRef colorPickerListener, const Color& initialColor)
     : m_colorPickerListener(colorPickerListener)
     , m_color(initialColor)
 {
 }
 
-void Ewk_Color_Picker::setColor(const Color& color)
+void EwkColorPicker::setColor(const Color& color)
 {
     WKRetainPtr<WKStringRef> colorString(AdoptWK, WKStringCreateWithUTF8CString(color.serialized().utf8().data()));
     WKColorPickerResultListenerSetColor(m_colorPickerListener.get(), colorString.get());
 }
 
-const Color& Ewk_Color_Picker::color() const
+const Color& EwkColorPicker::color() const
 {
     return m_color;
 }

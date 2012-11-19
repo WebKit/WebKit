@@ -43,12 +43,12 @@
 
 using namespace WebKit;
 
-const WebKit::WebPreferences* Ewk_Settings::preferences() const
+const WebKit::WebPreferences* EwkSettings::preferences() const
 {
     return m_viewImpl->page()->pageGroup()->preferences();
 }
 
-WebKit::WebPreferences* Ewk_Settings::preferences()
+WebKit::WebPreferences* EwkSettings::preferences()
 {
     return m_viewImpl->page()->pageGroup()->preferences();
 }

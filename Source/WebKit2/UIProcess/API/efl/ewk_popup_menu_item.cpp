@@ -32,7 +32,7 @@
 
 using namespace WebKit;
 
-Ewk_Popup_Menu_Item::Ewk_Popup_Menu_Item(const WebKit::WebPopupItem& item)
+EwkPopupMenuItem::EwkPopupMenuItem(const WebKit::WebPopupItem& item)
     : m_type(static_cast<Ewk_Popup_Menu_Item_Type>(item.m_type))
     , m_textDirection(static_cast<Ewk_Text_Direction>(item.m_textDirection))
     , m_hasTextDirectionOverride(item.m_hasTextDirectionOverride)
@@ -44,47 +44,47 @@ Ewk_Popup_Menu_Item::Ewk_Popup_Menu_Item(const WebKit::WebPopupItem& item)
     , m_accessibilityText(item.m_accessibilityText.utf8().data())
 { }
 
-Ewk_Popup_Menu_Item_Type Ewk_Popup_Menu_Item::type() const
+Ewk_Popup_Menu_Item_Type EwkPopupMenuItem::type() const
 {
     return m_type;
 }
 
-Ewk_Text_Direction Ewk_Popup_Menu_Item::textDirection() const
+Ewk_Text_Direction EwkPopupMenuItem::textDirection() const
 {
     return m_textDirection;
 }
 
-const char* Ewk_Popup_Menu_Item::text() const
+const char* EwkPopupMenuItem::text() const
 {
     return m_text;
 }
 
-const char* Ewk_Popup_Menu_Item::tooltipText() const
+const char* EwkPopupMenuItem::tooltipText() const
 {
     return m_tooltipText;
 }
 
-const char* Ewk_Popup_Menu_Item::accessibilityText() const
+const char* EwkPopupMenuItem::accessibilityText() const
 {
     return m_accessibilityText;
 }
 
-bool Ewk_Popup_Menu_Item::hasTextDirectionOverride() const
+bool EwkPopupMenuItem::hasTextDirectionOverride() const
 {
     return m_hasTextDirectionOverride;
 }
 
-bool Ewk_Popup_Menu_Item::isEnabled() const
+bool EwkPopupMenuItem::isEnabled() const
 {
     return m_isEnabled;
 }
 
-bool Ewk_Popup_Menu_Item::isLabel() const
+bool EwkPopupMenuItem::isLabel() const
 {
     return m_isLabel;
 }
 
-bool Ewk_Popup_Menu_Item::isSelected() const
+bool EwkPopupMenuItem::isSelected() const
 {
     return m_isSelected;
 }

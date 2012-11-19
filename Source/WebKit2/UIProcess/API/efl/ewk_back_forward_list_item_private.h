@@ -35,7 +35,7 @@
  * \struct  Ewk_Back_Forward_List
  * @brief   Contains the Back Forward List data.
  */
-class EwkBackForwardListItem : public Ewk_Object {
+class EwkBackForwardListItem : public EwkObject {
 public:
     EWK_OBJECT_DECLARE(EwkBackForwardListItem)
 

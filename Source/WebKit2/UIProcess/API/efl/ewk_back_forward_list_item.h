@@ -42,7 +42,7 @@ extern "C" {
  *
  * @see Ewk_Object
  */
-typedef struct Ewk_Object Ewk_Back_Forward_List_Item;
+typedef struct EwkObject Ewk_Back_Forward_List_Item;
 
 /**
  * Returns URL of the item.

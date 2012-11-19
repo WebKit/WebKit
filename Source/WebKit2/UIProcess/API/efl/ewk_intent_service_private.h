@@ -38,7 +38,7 @@
  * \struct EwkIntentService
  * @brief Contains the intent service data.
  */
-class EwkIntentService : public Ewk_Object {
+class EwkIntentService : public EwkObject {
 public:
     EWK_OBJECT_DECLARE(EwkIntentService)
 

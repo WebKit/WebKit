@@ -38,13 +38,13 @@ class WebPopupMenuProxyEfl;
 
 class EwkViewImpl;
 
-class Ewk_Popup_Menu {
+class EwkPopupMenu {
 public:
-    static PassOwnPtr<Ewk_Popup_Menu> create(EwkViewImpl* viewImpl, WebKit::WebPopupMenuProxyEfl* popupMenuProxy, const Vector<WebKit::WebPopupItem>& items, unsigned selectedIndex)
+    static PassOwnPtr<EwkPopupMenu> create(EwkViewImpl* viewImpl, WebKit::WebPopupMenuProxyEfl* popupMenuProxy, const Vector<WebKit::WebPopupItem>& items, unsigned selectedIndex)
     {
-        return adoptPtr(new Ewk_Popup_Menu(viewImpl, popupMenuProxy, items, selectedIndex));
+        return adoptPtr(new EwkPopupMenu(viewImpl, popupMenuProxy, items, selectedIndex));
     }
-    ~Ewk_Popup_Menu();
+    ~EwkPopupMenu();
 
     void close();
 
@@ -54,7 +54,7 @@ public:
     unsigned selectedIndex() const;
 
 private:
-    Ewk_Popup_Menu(EwkViewImpl* viewImpl, WebKit::WebPopupMenuProxyEfl*, const Vector<WebKit::WebPopupItem>& items, unsigned selectedIndex);
+    EwkPopupMenu(EwkViewImpl* viewImpl, WebKit::WebPopupMenuProxyEfl*, const Vector<WebKit::WebPopupItem>& items, unsigned selectedIndex);
 
     EwkViewImpl* m_viewImpl;
     WebKit::WebPopupMenuProxyEfl* m_popupMenuProxy;

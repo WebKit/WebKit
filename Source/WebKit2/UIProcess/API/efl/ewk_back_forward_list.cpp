@@ -35,38 +35,38 @@
 
 using namespace WebKit;
 
-Ewk_Back_Forward_List::Ewk_Back_Forward_List(WKBackForwardListRef listRef)
+EwkBackForwardList::EwkBackForwardList(WKBackForwardListRef listRef)
     : m_wkList(listRef)
 { }
 
-Ewk_Back_Forward_List_Item* Ewk_Back_Forward_List::nextItem() const
+Ewk_Back_Forward_List_Item* EwkBackForwardList::nextItem() const
 {
     return getFromCacheOrCreate(WKBackForwardListGetForwardItem(m_wkList.get()));
 }
 
-Ewk_Back_Forward_List_Item* Ewk_Back_Forward_List::previousItem() const
+Ewk_Back_Forward_List_Item* EwkBackForwardList::previousItem() const
 {
     return getFromCacheOrCreate(WKBackForwardListGetBackItem(m_wkList.get()));
 }
 
-Ewk_Back_Forward_List_Item* Ewk_Back_Forward_List::currentItem() const
+Ewk_Back_Forward_List_Item* EwkBackForwardList::currentItem() const
 {
     return getFromCacheOrCreate(WKBackForwardListGetCurrentItem(m_wkList.get()));
 }
 
-Ewk_Back_Forward_List_Item* Ewk_Back_Forward_List::itemAt(int index) const
+Ewk_Back_Forward_List_Item* EwkBackForwardList::itemAt(int index) const
 {
     return getFromCacheOrCreate(WKBackForwardListGetItemAtIndex(m_wkList.get(), index));
 }
 
-unsigned Ewk_Back_Forward_List::size() const
+unsigned EwkBackForwardList::size() const
 {
     const unsigned currentItem = WKBackForwardListGetCurrentItem(m_wkList.get()) ? 1 : 0;
 
     return WKBackForwardListGetBackListCount(m_wkList.get()) + WKBackForwardListGetForwardListCount(m_wkList.get()) + currentItem;
 }
 
-WKRetainPtr<WKArrayRef> Ewk_Back_Forward_List::backList(int limit) const
+WKRetainPtr<WKArrayRef> EwkBackForwardList::backList(int limit) const
 {
     if (limit == -1)
         limit = WKBackForwardListGetBackListCount(m_wkList.get());
@@ -75,7 +75,7 @@ WKRetainPtr<WKArrayRef> Ewk_Back_Forward_List::backList(int limit) const
     return adoptWK(WKBackForwardListCopyBackListWithLimit(m_wkList.get(), limit));
 }
 
-WKRetainPtr<WKArrayRef> Ewk_Back_Forward_List::forwardList(int limit) const
+WKRetainPtr<WKArrayRef> EwkBackForwardList::forwardList(int limit) const
 {
     if (limit == -1)
         limit = WKBackForwardListGetForwardListCount(m_wkList.get());
@@ -84,7 +84,7 @@ WKRetainPtr<WKArrayRef> Ewk_Back_Forward_List::forwardList(int limit) const
     return adoptWK(WKBackForwardListCopyForwardListWithLimit(m_wkList.get(), limit));
 }
 
-Ewk_Back_Forward_List_Item* Ewk_Back_Forward_List::getFromCacheOrCreate(WKBackForwardListItemRef wkItem) const
+Ewk_Back_Forward_List_Item* EwkBackForwardList::getFromCacheOrCreate(WKBackForwardListItemRef wkItem) const
 {
     if (!wkItem)
         return 0;
@@ -98,7 +98,7 @@ Ewk_Back_Forward_List_Item* Ewk_Back_Forward_List::getFromCacheOrCreate(WKBackFo
     return item.get();
 }
 
-Eina_List* Ewk_Back_Forward_List::createEinaList(WKArrayRef wkList) const
+Eina_List* EwkBackForwardList::createEinaList(WKArrayRef wkList) const
 {
     if (!wkList)
         return 0;
@@ -119,7 +119,7 @@ Eina_List* Ewk_Back_Forward_List::createEinaList(WKArrayRef wkList) const
  * @internal
  * Updates items cache.
  */
-void Ewk_Back_Forward_List::update(WKBackForwardListItemRef wkAddedItem, WKArrayRef wkRemovedItems)
+void EwkBackForwardList::update(WKBackForwardListItemRef wkAddedItem, WKArrayRef wkRemovedItems)
 {
     if (wkAddedItem) // Checking also here to avoid EINA_SAFETY_ON_NULL_RETURN_VAL warnings.
         getFromCacheOrCreate(wkAddedItem); // Puts new item to the cache.

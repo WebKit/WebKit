@@ -40,7 +40,7 @@ class DownloadProxy;
 
 class EwkViewImpl;
 
-class EwkDownloadJob : public Ewk_Object {
+class EwkDownloadJob : public EwkObject {
 public:
     EWK_OBJECT_DECLARE(EwkDownloadJob)
 

@@ -42,7 +42,7 @@ extern "C" {
  *
  * @see Ewk_Object
  */
-typedef struct Ewk_Object Ewk_File_Chooser_Request;
+typedef struct EwkObject Ewk_File_Chooser_Request;
 
 /**
  * Queries if it is allowed to select multiple files or not.

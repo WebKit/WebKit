@@ -48,7 +48,7 @@ extern "C" {
  *
  * @see Ewk_Object
  */
-typedef struct Ewk_Object Ewk_Download_Job;
+typedef struct EwkObject Ewk_Download_Job;
 
 /// Defines the possible states of a download.
 enum Ewk_Download_Job_State {

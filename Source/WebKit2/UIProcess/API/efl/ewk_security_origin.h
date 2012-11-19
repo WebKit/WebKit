@@ -47,7 +47,7 @@ extern "C" {
  *
  * @see Ewk_Object
  */
-typedef struct Ewk_Object Ewk_Security_Origin;
+typedef struct EwkObject Ewk_Security_Origin;
 
 /**
  * Returns the host of the security origin.

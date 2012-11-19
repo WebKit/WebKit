@@ -32,21 +32,21 @@
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
-typedef struct Ewk_Object Ewk_Auth_Request;
-typedef struct Ewk_Object Ewk_Download_Job;
-typedef struct Ewk_Object Ewk_File_Chooser_Request;
-typedef struct Ewk_Object Ewk_Form_Submission_Request;
-typedef struct Ewk_Object Ewk_Navigation_Policy_Decision;
-typedef struct Ewk_Object Ewk_Resource;
+typedef struct EwkObject Ewk_Auth_Request;
+typedef struct EwkObject Ewk_Download_Job;
+typedef struct EwkObject Ewk_File_Chooser_Request;
+typedef struct EwkObject Ewk_Form_Submission_Request;
+typedef struct EwkObject Ewk_Navigation_Policy_Decision;
+typedef struct EwkObject Ewk_Resource;
 #if ENABLE(WEB_INTENTS)
-typedef struct Ewk_Object Ewk_Intent;
+typedef struct EwkObject Ewk_Intent;
 #endif
 #if ENABLE(WEB_INTENTS_TAG)
-typedef struct Ewk_Object Ewk_Intent_Service;
+typedef struct EwkObject Ewk_Intent_Service;
 #endif
+typedef struct EwkError Ewk_Error;
 
 struct Ewk_Download_Job_Error;
-struct Ewk_Error;
 struct Ewk_Resource_Request;
 struct Ewk_Resource_Load_Response;
 struct Ewk_Resource_Load_Error;

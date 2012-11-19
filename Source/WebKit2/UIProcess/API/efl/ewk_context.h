@@ -54,7 +54,7 @@ extern "C" {
  *
  * @see Ewk_Object
  */
-typedef struct Ewk_Object Ewk_Context;
+typedef struct EwkObject Ewk_Context;
 
 /**
  * \enum    Ewk_Cache_Model

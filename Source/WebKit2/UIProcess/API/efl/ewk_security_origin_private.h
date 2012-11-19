@@ -33,7 +33,7 @@
 #include <WebKit2/WKBase.h>
 #include <wtf/PassRefPtr.h>
 
-class EwkSecurityOrigin : public Ewk_Object {
+class EwkSecurityOrigin : public EwkObject {
 public:
     EWK_OBJECT_DECLARE(EwkSecurityOrigin)
 

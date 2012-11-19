@@ -42,7 +42,7 @@ extern "C" {
  *
  * @see Ewk_Object
  */
-typedef struct Ewk_Object Ewk_Resource;
+typedef struct EwkObject Ewk_Resource;
 
 /**
  * Query URL for this resource.
