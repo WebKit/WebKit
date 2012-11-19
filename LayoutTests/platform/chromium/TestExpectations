@@ -990,9 +990,6 @@ crbug.com/24197 fast/css/disabled-author-styles.html
 # Test itself passes, but causes subsequent tests to fail.
 webkit.org/b/83260 fast/text/international/embed-bidi-style-in-isolate-crash.html
 
-# The test needs to be reworked to work with sub-pixel layout before being rebaselined.
-webkit.org/b/58898 fast/block/float/overhanging-tall-block.html [ Failure ]
-
 # New test added that needs platform specific results
 webkit.org/b/98452 [ Linux Win ] fast/text/vertical-rl-rtl-linebreak.html [ Failure ]
 

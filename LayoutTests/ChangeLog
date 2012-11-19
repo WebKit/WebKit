@@ -1,3 +1,9 @@
+2012-11-18  Kentaro Hara  <haraken@chromium.org>
+
+        Unreviewed. Removed a duplicated entry.
+
+        * platform/chromium/TestExpectations:
+
 2012-11-18  Ryosuke Niwa  <rniwa@webkit.org>
 
         Make namedItem return a node list only in HTMLFormControlsCollection and HTMLOptionsCollection
