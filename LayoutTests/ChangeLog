@@ -1,3 +1,9 @@
+2012-11-19  Jian Li  <jianli@chromium.org>
+
+        Unreviewed. Mark 2 tests as failed on chromium.
+
+        * platform/chromium/TestExpectations:
+
 2012-11-19  Eric Carlson  <eric.carlson@apple.com>
 
         HTMLMediaElement::configureTextTracks should configure all text tracks

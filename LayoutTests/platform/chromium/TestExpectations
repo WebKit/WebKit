@@ -4184,3 +4184,6 @@ webkit.org/b/102294 platform/chromium/virtual/deferred/fast/images/gray-scale-jp
 webkit.org/b/85522 http/tests/security/sandboxed-iframe-form-top.html [ Skip ]
 webkit.org/b/102542 [ Win7 ] platform/chromium/virtual/softwarecompositing/checkerboard.html [ Image ]
 webkit.org/b/102542 [ Linux Mac Win ] compositing/checkerboard.html [ Image ]
+
+webkit.org/b/102724 [ Linux Mac Debug ] svg/carto.net/colourpicker.svg [ Crash ]
+webkit.org/b/102724 [ Linux Mac Debug ] svg/custom/gradient-stop-corner-cases.svg [ Crash ]
