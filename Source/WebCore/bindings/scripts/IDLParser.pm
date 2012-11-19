@@ -36,12 +36,12 @@ use constant EmptyToken => 5;
 # Used to represent a parsed IDL document
 struct( idlDocument => {
     module => '$',   # Module identifier
-    classes => '@',  # All parsed interfaces
+    interfaces => '@',  # All parsed interfaces
     fileName => '$'  # file name
 });
 
 # Used to represent 'interface' blocks
-struct( domClass => {
+struct( domInterface => {
     name => '$',      # Class identifier (without module)
     parents => '@',      # List of strings
     constants => '@',    # List of 'domConstant'
@@ -52,7 +52,7 @@ struct( domClass => {
     isException => '$', # Used for exception interfaces
 });
 
-# Used to represent domClass contents (name of method, signature)
+# Used to represent domInterface contents (name of method, signature)
 struct( domFunction => {
     isStatic => '$',
     signature => '$',    # Return type/Object name/extended attributes
@@ -60,7 +60,7 @@ struct( domFunction => {
     raisesExceptions => '@',  # Possibly raised exceptions.
 });
 
-# Used to represent domClass contents (name of attribute, signature)
+# Used to represent domInterface contents (name of attribute, signature)
 struct( domAttribute => {
     type => '$',              # Attribute type (including namespace)
     isStatic => '$',
@@ -174,7 +174,7 @@ sub Parse
     } else {
         $document = idlDocument->new();
         $document->module("");
-        push(@{$document->classes}, @definitions);
+        push(@{$document->interfaces}, @definitions);
     }
 
     $document->fileName($fileName);
@@ -376,7 +376,7 @@ sub parseInterface
 
     my $next = $self->nextToken();
     if ($next->value() eq "interface") {
-        my $dataNode = domClass->new();
+        my $dataNode = domInterface->new();
         $self->assertTokenValue($self->getToken(), "interface", __LINE__);
         my $interfaceNameToken = $self->getToken();
         $self->assertTokenType($interfaceNameToken, IdentifierToken);
@@ -576,7 +576,7 @@ sub parseException
 
     my $next = $self->nextToken();
     if ($next->value() eq "exception") {
-        my $dataNode = domClass->new();
+        my $dataNode = domInterface->new();
         $self->assertTokenValue($self->getToken(), "exception", __LINE__);
         my $exceptionNameToken = $self->getToken();
         $self->assertTokenType($exceptionNameToken, IdentifierToken);
@@ -2091,7 +2091,7 @@ sub parseModule
         $self->assertTokenValue($self->getToken(), "{", __LINE__);
         $document->module($token->value());
         my $definitions = $self->parseDefinitions();
-        push(@{$document->classes}, @{$definitions});
+        push(@{$document->interfaces}, @{$definitions});
         $self->assertTokenValue($self->getToken(), "}", __LINE__);
         $self->parseOptionalSemicolon();
         return $document;
@@ -2118,7 +2118,7 @@ sub parseInterfaceOld
     my $self = shift;
     my $next = $self->nextToken();
     if ($next->value() eq "interface") {
-        my $dataNode = domClass->new();
+        my $dataNode = domInterface->new();
         $self->assertTokenValue($self->getToken(), "interface", __LINE__);
         my $extendedAttributeList = $self->parseExtendedAttributeListAllowEmpty();
         my $token = $self->getToken();
@@ -2188,7 +2188,7 @@ sub parseExceptionOld
     my $self = shift;
     my $next = $self->nextToken();
     if ($next->value() eq "exception") {
-        my $dataNode = domClass->new();
+        my $dataNode = domInterface->new();
         $self->assertTokenValue($self->getToken(), "exception", __LINE__);
         my $extendedAttributeList = $self->parseExtendedAttributeListAllowEmpty();
         my $token = $self->getToken();

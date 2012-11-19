@@ -80,7 +80,7 @@ foreach my $idlFile (keys %documents) {
     $supplementals{$idlFile} = [];
 }
 foreach my $idlFile (keys %documents) {
-    foreach my $dataNode (@{$documents{$idlFile}->classes}) {
+    foreach my $dataNode (@{$documents{$idlFile}->interfaces}) {
         if ($dataNode->extendedAttributes->{"Supplemental"}) {
             my $targetIdlFile = $interfaceNameToIdlFile{$dataNode->extendedAttributes->{"Supplemental"}};
             push(@{$supplementals{$targetIdlFile}}, $idlFile);
@@ -168,7 +168,7 @@ sub checkIDLAttributes
     my $document = shift;
     my $idlFile = shift;
 
-    foreach my $dataNode (@{$document->classes}) {
+    foreach my $dataNode (@{$document->interfaces}) {
         checkIfIDLAttributesExists($idlAttributes, $dataNode->extendedAttributes, $idlFile);
 
         foreach my $attribute (@{$dataNode->attributes}) {

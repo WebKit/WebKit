@@ -137,12 +137,12 @@ foreach my $idlFile (@supplementedIdlFiles) {
     my $parser = IDLParser->new(!$verbose);
     my $document = $parser->Parse($idlFile, $defines, $preprocessor);
 
-    foreach my $dataNode (@{$document->classes}) {
+    foreach my $dataNode (@{$document->interfaces}) {
         if ($dataNode->extendedAttributes->{"Supplemental"} and $dataNode->extendedAttributes->{"Supplemental"} eq $targetInterfaceName) {
             my $targetDataNode;
-            foreach my $class (@{$targetDocument->classes}) {
-                if ($class->name eq $targetInterfaceName) {
-                    $targetDataNode = $class;
+            foreach my $interface (@{$targetDocument->interfaces}) {
+                if ($interface->name eq $targetInterfaceName) {
+                    $targetDataNode = $interface;
                     last;
                 }
             }

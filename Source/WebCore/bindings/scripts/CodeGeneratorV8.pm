@@ -79,7 +79,6 @@ sub new
     return $reference;
 }
 
-# Params: 'domClass' struct
 sub GenerateInterface
 {
     my $object = shift;
@@ -274,9 +273,9 @@ sub GenerateHeader
     my $interfaceName = $dataNode->name;
     my $v8InterfaceName = "V8$interfaceName";
 
-    # Copy contents of parent classes except the first parent.
+    # Copy contents of parent interfaces except the first parent.
     my @parents;
-    $codeGenerator->AddMethodsConstantsAndAttributesFromParentClasses($dataNode, \@parents, 1);
+    $codeGenerator->AddMethodsConstantsAndAttributesFromParentInterfaces($dataNode, \@parents, 1);
     $codeGenerator->LinkOverloadedFunctions($dataNode);
 
     # Ensure the IsDOMNodeType function is in sync.
@@ -1511,7 +1510,7 @@ sub GenerateFunctionCallback
     }
 
     # Adding and removing event listeners are not standard callback behavior,
-    # but they are extremely consistent across the various classes that take event listeners,
+    # but they are extremely consistent across the various interfaces that take event listeners,
     # so we can generate them as a "special case".
     if ($name eq "addEventListener") {
         GenerateEventListenerCallback($interfaceName, !$codeGenerator->IsSubType($dataNode, "Node"), "add");

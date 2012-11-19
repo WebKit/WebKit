@@ -106,7 +106,6 @@ sub new
     return $reference;
 }
 
-# Params: 'domClass' struct
 sub GenerateInterface
 {
     my $object = shift;
@@ -596,7 +595,7 @@ sub GenerateImplementation
     my @ancestorInterfaceNames = ();
 
     if (@{$dataNode->parents} > 1) {
-        $codeGenerator->AddMethodsConstantsAndAttributesFromParentClasses($dataNode, \@ancestorInterfaceNames);
+        $codeGenerator->AddMethodsConstantsAndAttributesFromParentInterfaces($dataNode, \@ancestorInterfaceNames);
     }
 
     my $interfaceName = $dataNode->name;

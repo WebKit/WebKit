@@ -92,7 +92,6 @@ sub leftShift($$) {
     return (($value << $distance) & 0xFFFFFFFF);
 }
 
-# Params: 'domClass' struct
 sub GenerateInterface
 {
     my $object = shift;
@@ -668,7 +667,7 @@ sub GenerateHeader
     # We only support multiple parents with SVG (for now).
     if (@{$dataNode->parents} > 1) {
         die "A class can't have more than one parent" unless $interfaceName =~ /SVG/;
-        $codeGenerator->AddMethodsConstantsAndAttributesFromParentClasses($dataNode, \@ancestorInterfaceNames);
+        $codeGenerator->AddMethodsConstantsAndAttributesFromParentInterfaces($dataNode, \@ancestorInterfaceNames);
     }
 
     my $hasLegacyParent = $dataNode->extendedAttributes->{"JSLegacyParent"};

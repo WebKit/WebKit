@@ -126,17 +126,17 @@ sub ProcessDocument
     # Dynamically load external code generation perl module
     $codeGenerator = $ifaceName->new($object, $useOutputDir, $useOutputHeadersDir, $useLayerOnTop, $preprocessor, $writeDependencies, $verbose, $targetIdlFilePath);
     unless (defined($codeGenerator)) {
-        my $classes = $useDocument->classes;
-        foreach my $class (@$classes) {
-            print "Skipping $useGenerator code generation for IDL interface \"" . $class->name . "\".\n" if $verbose;
+        my $interfaces = $useDocument->interfaces;
+        foreach my $interface (@$interfaces) {
+            print "Skipping $useGenerator code generation for IDL interface \"" . $interface->name . "\".\n" if $verbose;
         }
         return;
     }
 
-    my $classes = $useDocument->classes;
-    foreach my $class (@$classes) {
-        print "Generating $useGenerator bindings code for IDL interface \"" . $class->name . "\"...\n" if $verbose;
-        $codeGenerator->GenerateInterface($class, $defines);
+    my $interfaces = $useDocument->interfaces;
+    foreach my $interface (@$interfaces) {
+        print "Generating $useGenerator bindings code for IDL interface \"" . $interface->name . "\"...\n" if $verbose;
+        $codeGenerator->GenerateInterface($interface, $defines);
     }
 }
 
@@ -190,7 +190,7 @@ sub ForAllParents
     &$recurse($dataNode);
 }
 
-sub AddMethodsConstantsAndAttributesFromParentClasses
+sub AddMethodsConstantsAndAttributesFromParentInterfaces
 {
     # Add to $dataNode all of its inherited interface members, except for those
     # inherited through $dataNode's first listed parent.  If an array reference
@@ -297,7 +297,7 @@ sub ParseInterface
     my $parser = IDLParser->new(1);
     my $document = $parser->Parse($filename, $defines, $preprocessor, $parentsOnly);
 
-    foreach my $interface (@{$document->classes}) {
+    foreach my $interface (@{$document->interfaces}) {
         return $interface if $interface->name eq $interfaceName;
     }
 
