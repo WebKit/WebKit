@@ -1,3 +1,13 @@
+2012-11-19  Jussi Kukkonen  <jussi.kukkonen@intel.com>
+
+        [EFL][WK2] Enable media tests that pass after r135063
+        https://bugs.webkit.org/show_bug.cgi?id=102657
+
+        Unreviewed gardening, these test no longer crash after
+        https://bugs.webkit.org/show_bug.cgi?id=101428.
+
+        * platform/efl-wk2/TestExpectations:
+
 2012-11-19  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening, rebaselining after r135093.

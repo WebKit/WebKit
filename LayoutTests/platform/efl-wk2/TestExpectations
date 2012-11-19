@@ -53,12 +53,8 @@ webkit.org/b/98747 plugins/document-open.html [ Crash ]
 webkit.org/b/102200 fast/dom/HTMLAnchorElement/anchor-download.html [ Crash Failure ]
 webkit.org/b/102200 fast/dom/HTMLAnchorElement/anchor-nodownload-set.html [ Crash Failure ]
 
-webkit.org/b/101428 media/media-continues-playing-after-replace-source.html [ Crash Failure ]
-
 webkit.org/b/102203 fast/events/attribute-listener-deletion-crash.html [ Crash ]
 webkit.org/b/102204 http/tests/security/frameNavigation/inactive-function-in-popup-navigate-child.html [ Crash ]
-
-webkit.org/b/102217 media/audio-concurrent-supported.html [ Crash ]
 
 # Hitting !decoder.destinationID() assertion.
 webkit.org/b/102651 [ Debug ] networkinformation/multiple-frames.html [ Crash ]
