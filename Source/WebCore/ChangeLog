@@ -1,3 +1,45 @@
+2012-11-19  Alec Flett  <alecflett@chromium.org>
+
+        IndexedDB: simplify RecordIdentifier
+        https://bugs.webkit.org/show_bug.cgi?id=102018
+
+        Reviewed by Tony Chang.
+
+        Make IDBBackingStore's RecordIdentifier be a simple
+        class, existing only as an inline or stack-based instance.
+        This makes much of the copy semantics more explicit, and
+        removes refcounting from an object that only ever had a refcount
+        of 1 or 2.
+
+        No new tests, just a refactor.
+
+        * Modules/indexeddb/IDBBackingStore.cpp:
+        (WebCore::IDBBackingStore::putRecord):
+        (WebCore::IDBBackingStore::deleteRecord):
+        (WebCore::IDBBackingStore::maybeUpdateKeyGeneratorCurrentNumber):
+        (WebCore::IDBBackingStore::keyExistsInObjectStore):
+        (WebCore::IDBBackingStore::putIndexDataForRecord):
+        (WebCore::IDBBackingStore::deleteIndexDataForRecord):
+        (WebCore::ObjectStoreKeyCursorImpl::loadCurrentRow):
+        (ObjectStoreCursorImpl):
+        (WebCore::ObjectStoreCursorImpl::loadCurrentRow):
+        (WebCore::IndexKeyCursorImpl::recordIdentifier):
+        (WebCore::IndexCursorImpl::recordIdentifier):
+        * Modules/indexeddb/IDBBackingStore.h:
+        (WebCore::IDBBackingStore::RecordIdentifier::RecordIdentifier):
+        (WebCore::IDBBackingStore::RecordIdentifier::isValid):
+        (WebCore::IDBBackingStore::RecordIdentifier::reset):
+        (RecordIdentifier):
+        (IDBBackingStore):
+        (WebCore::IDBBackingStore::Cursor::recordIdentifier):
+        (WebCore::IDBBackingStore::Cursor::Cursor):
+        (Cursor):
+        * Modules/indexeddb/IDBObjectStoreBackendImpl.cpp:
+        (WebCore):
+        (WebCore::IDBObjectStoreBackendImpl::setIndexKeys):
+        (WebCore::IDBObjectStoreBackendImpl::putInternal):
+        (WebCore::IDBObjectStoreBackendImpl::deleteInternal):
+
 2012-11-19  Alexander Shalamov  <alexander.shalamov@intel.com>
 
         Improve ContentTypeParser, so that it could be used to validate mime type according to RFC

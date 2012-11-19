@@ -155,16 +155,12 @@ public:
         return true;
     }
 
-    bool writeIndexKeys(const IDBBackingStore::RecordIdentifier* recordIdentifier, IDBBackingStore& backingStore, IDBBackingStore::Transaction* transaction, int64_t databaseId, int64_t objectStoreId) const
+    void writeIndexKeys(const IDBBackingStore::RecordIdentifier& recordIdentifier, IDBBackingStore& backingStore, IDBBackingStore::Transaction* transaction, int64_t databaseId, int64_t objectStoreId) const
     {
         int64_t indexId = m_indexMetadata.id;
         for (size_t i = 0; i < m_indexKeys.size(); ++i) {
-            if (!backingStore.deleteIndexDataForRecord(transaction, databaseId, objectStoreId, indexId, recordIdentifier))
-                return false;
-            if (!backingStore.putIndexDataForRecord(transaction, databaseId, objectStoreId, indexId, *(m_indexKeys)[i].get(), recordIdentifier))
-                return false;
+            backingStore.putIndexDataForRecord(transaction, databaseId, objectStoreId, indexId, *(m_indexKeys)[i].get(), recordIdentifier);
         }
-        return true;
     }
 
 private:
@@ -232,8 +228,8 @@ void IDBObjectStoreBackendImpl::setIndexKeys(PassRefPtr<IDBKey> prpPrimaryKey, c
     RefPtr<IDBTransactionBackendImpl> transaction = IDBTransactionBackendImpl::from(transactionPtr);
 
     // FIXME: This method could be asynchronous, but we need to evaluate if it's worth the extra complexity.
-    RefPtr<IDBBackingStore::RecordIdentifier> recordIdentifier = IDBBackingStore::RecordIdentifier::create();
-    if (!backingStore()->keyExistsInObjectStore(transaction->backingStoreTransaction(), databaseId(), id(), *primaryKey, recordIdentifier.get())) {
+    IDBBackingStore::RecordIdentifier recordIdentifier;
+    if (!backingStore()->keyExistsInObjectStore(transaction->backingStoreTransaction(), databaseId(), id(), *primaryKey, &recordIdentifier)) {
         transaction->abort();
         return;
     }
@@ -248,10 +244,7 @@ void IDBObjectStoreBackendImpl::setIndexKeys(PassRefPtr<IDBKey> prpPrimaryKey, c
 
     for (size_t i = 0; i < indexWriters.size(); ++i) {
         IndexWriter* indexWriter = indexWriters[i].get();
-        if (!indexWriter->writeIndexKeys(recordIdentifier.get(), *backingStore(), transaction->backingStoreTransaction(), databaseId(), m_metadata.id)) {
-            transaction->abort();
-            return;
-        }
+        indexWriter->writeIndexKeys(recordIdentifier, *backingStore(), transaction->backingStoreTransaction(), databaseId(), m_metadata.id);
     }
 }
 
@@ -303,8 +296,8 @@ void IDBObjectStoreBackendImpl::putInternal(ScriptExecutionContext*, PassRefPtr<
 
     ASSERT(key && key->isValid());
 
-    RefPtr<IDBBackingStore::RecordIdentifier> recordIdentifier = IDBBackingStore::RecordIdentifier::create();
-    if (putMode == AddOnly && objectStore->backingStore()->keyExistsInObjectStore(transaction->backingStoreTransaction(), objectStore->databaseId(), objectStore->id(), *key, recordIdentifier.get())) {
+    IDBBackingStore::RecordIdentifier recordIdentifier;
+    if (putMode == AddOnly && objectStore->backingStore()->keyExistsInObjectStore(transaction->backingStoreTransaction(), objectStore->databaseId(), objectStore->id(), *key, &recordIdentifier)) {
         callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::CONSTRAINT_ERR, "Key already exists in the object store."));
         return;
     }
@@ -318,22 +311,11 @@ void IDBObjectStoreBackendImpl::putInternal(ScriptExecutionContext*, PassRefPtr<
 
     // Before this point, don't do any mutation.  After this point, rollback the transaction in case of error.
 
-    if (!objectStore->backingStore()->putRecord(transaction->backingStoreTransaction(), objectStore->databaseId(), objectStore->id(), *key, value->toWireString(), recordIdentifier.get())) {
-        RefPtr<IDBDatabaseError> error = IDBDatabaseError::create(IDBDatabaseException::UNKNOWN_ERR, "Error writing data to stable storage.");
-        callbacks->onError(error);
-        transaction->abort(error);
-        return;
-    }
+    objectStore->backingStore()->putRecord(transaction->backingStoreTransaction(), objectStore->databaseId(), objectStore->id(), *key, value->toWireString(), &recordIdentifier);
 
     for (size_t i = 0; i < indexWriters.size(); ++i) {
         IndexWriter* indexWriter = indexWriters[i].get();
-        if (!indexWriter->writeIndexKeys(recordIdentifier.get(), *objectStore->backingStore(), transaction->backingStoreTransaction(), objectStore->databaseId(), objectStore->m_metadata.id)) {
-
-            RefPtr<IDBDatabaseError> error = IDBDatabaseError::create(IDBDatabaseException::UNKNOWN_ERR, "Error writing data to stable storage.");
-            callbacks->onError(error);
-            transaction->abort(error);
-            return;
-        }
+        indexWriter->writeIndexKeys(recordIdentifier, *objectStore->backingStore(), transaction->backingStoreTransaction(), objectStore->databaseId(), objectStore->m_metadata.id);
     }
 
     if (autoIncrement && putMode != CursorUpdate && key->type() == IDBKey::NumberType)
@@ -361,20 +343,12 @@ void IDBObjectStoreBackendImpl::deleteFunction(PassRefPtr<IDBKeyRange> prpKeyRan
 void IDBObjectStoreBackendImpl::deleteInternal(ScriptExecutionContext*, PassRefPtr<IDBObjectStoreBackendImpl> objectStore, PassRefPtr<IDBKeyRange> keyRange, PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<IDBTransactionBackendImpl> transaction)
 {
     IDB_TRACE("IDBObjectStoreBackendImpl::deleteInternal");
-    RefPtr<IDBBackingStore::RecordIdentifier> recordIdentifier;
 
     RefPtr<IDBBackingStore::Cursor> backingStoreCursor = objectStore->backingStore()->openObjectStoreCursor(transaction->backingStoreTransaction(), objectStore->databaseId(), objectStore->id(), keyRange.get(), IDBCursor::NEXT);
     if (backingStoreCursor) {
 
         do {
-            recordIdentifier = backingStoreCursor->recordIdentifier();
-
-            for (IDBObjectStoreBackendImpl::IndexMap::iterator it = objectStore->m_indexes.begin(); it != objectStore->m_indexes.end(); ++it) {
-                bool success = objectStore->backingStore()->deleteIndexDataForRecord(transaction->backingStoreTransaction(), objectStore->databaseId(), objectStore->id(), it->key, recordIdentifier.get());
-                ASSERT_UNUSED(success, success);
-            }
-
-            objectStore->backingStore()->deleteRecord(transaction->backingStoreTransaction(), objectStore->databaseId(), objectStore->id(), recordIdentifier.get());
+            objectStore->backingStore()->deleteRecord(transaction->backingStoreTransaction(), objectStore->databaseId(), objectStore->id(), backingStoreCursor->recordIdentifier());
 
         } while (backingStoreCursor->continueFunction(0));
     }

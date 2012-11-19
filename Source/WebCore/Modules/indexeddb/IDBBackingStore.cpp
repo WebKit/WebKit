@@ -656,7 +656,7 @@ static int64_t getNewVersionNumber(LevelDBTransaction* transaction, int64_t data
     return version;
 }
 
-bool IDBBackingStore::putRecord(IDBBackingStore::Transaction* transaction, int64_t databaseId, int64_t objectStoreId, const IDBKey& key, const String& value, RecordIdentifier* recordIdentifier)
+void IDBBackingStore::putRecord(IDBBackingStore::Transaction* transaction, int64_t databaseId, int64_t objectStoreId, const IDBKey& key, const String& value, RecordIdentifier* recordIdentifier)
 {
     IDB_TRACE("IDBBackingStore::putRecord");
     ASSERT(key.isValid());
@@ -673,9 +673,7 @@ bool IDBBackingStore::putRecord(IDBBackingStore::Transaction* transaction, int64
     const Vector<char> existsEntryKey = ExistsEntryKey::encode(databaseId, objectStoreId, key);
     levelDBTransaction->put(existsEntryKey, encodeInt(version));
 
-    recordIdentifier->setPrimaryKey(encodeIDBKey(key));
-    recordIdentifier->setVersion(version);
-    return true;
+    recordIdentifier->reset(encodeIDBKey(key), version);
 }
 
 void IDBBackingStore::clearObjectStore(IDBBackingStore::Transaction* transaction, int64_t databaseId, int64_t objectStoreId)
@@ -688,15 +686,15 @@ void IDBBackingStore::clearObjectStore(IDBBackingStore::Transaction* transaction
     deleteRange(levelDBTransaction, startKey, stopKey);
 }
 
-void IDBBackingStore::deleteRecord(IDBBackingStore::Transaction* transaction, int64_t databaseId, int64_t objectStoreId, const RecordIdentifier* recordIdentifier)
+void IDBBackingStore::deleteRecord(IDBBackingStore::Transaction* transaction, int64_t databaseId, int64_t objectStoreId, const RecordIdentifier& recordIdentifier)
 {
     IDB_TRACE("IDBBackingStore::deleteRecord");
     LevelDBTransaction* levelDBTransaction = IDBBackingStore::Transaction::levelDBTransactionFrom(transaction);
 
-    const Vector<char> objectStoreDataKey = ObjectStoreDataKey::encode(databaseId, objectStoreId, recordIdentifier->primaryKey());
+    const Vector<char> objectStoreDataKey = ObjectStoreDataKey::encode(databaseId, objectStoreId, recordIdentifier.primaryKey());
     levelDBTransaction->remove(objectStoreDataKey);
 
-    const Vector<char> existsEntryKey = ExistsEntryKey::encode(databaseId, objectStoreId, recordIdentifier->primaryKey());
+    const Vector<char> existsEntryKey = ExistsEntryKey::encode(databaseId, objectStoreId, recordIdentifier.primaryKey());
     levelDBTransaction->remove(existsEntryKey);
 }
 
@@ -743,19 +741,18 @@ int64_t IDBBackingStore::getKeyGeneratorCurrentNumber(IDBBackingStore::Transacti
     return keyGeneratorCurrentNumber;
 }
 
-bool IDBBackingStore::maybeUpdateKeyGeneratorCurrentNumber(IDBBackingStore::Transaction* transaction, int64_t databaseId, int64_t objectStoreId, int64_t newNumber, bool checkCurrent)
+void IDBBackingStore::maybeUpdateKeyGeneratorCurrentNumber(IDBBackingStore::Transaction* transaction, int64_t databaseId, int64_t objectStoreId, int64_t newNumber, bool checkCurrent)
 {
     LevelDBTransaction* levelDBTransaction = IDBBackingStore::Transaction::levelDBTransactionFrom(transaction);
 
     if (checkCurrent) {
         int64_t currentNumber = getKeyGeneratorCurrentNumber(transaction, databaseId, objectStoreId);
         if (newNumber <= currentNumber)
-            return true;
+            return;
     }
 
     const Vector<char> keyGeneratorCurrentNumberKey = ObjectStoreMetaDataKey::encode(databaseId, objectStoreId, ObjectStoreMetaDataKey::KeyGeneratorCurrentNumber);
     putInt(levelDBTransaction, keyGeneratorCurrentNumberKey, newNumber);
-    return true;
 }
 
 bool IDBBackingStore::keyExistsInObjectStore(IDBBackingStore::Transaction* transaction, int64_t databaseId, int64_t objectStoreId, const IDBKey& key, RecordIdentifier* foundRecordIdentifier)
@@ -772,8 +769,7 @@ bool IDBBackingStore::keyExistsInObjectStore(IDBBackingStore::Transaction* trans
     if (!decodeVarInt(data.begin(), data.end(), version))
         return false;
 
-    foundRecordIdentifier->setPrimaryKey(encodeIDBKey(key));
-    foundRecordIdentifier->setVersion(version);
+    foundRecordIdentifier->reset(encodeIDBKey(key), version);
     return true;
 }
 
@@ -897,21 +893,20 @@ void IDBBackingStore::deleteIndex(IDBBackingStore::Transaction* transaction, int
     deleteRange(levelDBTransaction, indexDataStart, indexDataEnd);
 }
 
-bool IDBBackingStore::putIndexDataForRecord(IDBBackingStore::Transaction* transaction, int64_t databaseId, int64_t objectStoreId, int64_t indexId, const IDBKey& key, const RecordIdentifier* recordIdentifier)
+void IDBBackingStore::putIndexDataForRecord(IDBBackingStore::Transaction* transaction, int64_t databaseId, int64_t objectStoreId, int64_t indexId, const IDBKey& key, const RecordIdentifier& recordIdentifier)
 {
     IDB_TRACE("IDBBackingStore::putIndexDataForRecord");
     ASSERT(key.isValid());
     ASSERT(indexId >= MinimumIndexId);
 
     LevelDBTransaction* levelDBTransaction = IDBBackingStore::Transaction::levelDBTransactionFrom(transaction);
-    const Vector<char> indexDataKey = IndexDataKey::encode(databaseId, objectStoreId, indexId, encodeIDBKey(key), recordIdentifier->primaryKey());
+    const Vector<char> indexDataKey = IndexDataKey::encode(databaseId, objectStoreId, indexId, encodeIDBKey(key), recordIdentifier.primaryKey());
 
     Vector<char> data;
-    data.append(encodeVarInt(recordIdentifier->version()));
-    data.append(recordIdentifier->primaryKey());
+    data.append(encodeVarInt(recordIdentifier.version()));
+    data.append(recordIdentifier.primaryKey());
 
     levelDBTransaction->put(indexDataKey, data);
-    return true;
 }
 
 static bool findGreatestKeyLessThanOrEqual(LevelDBTransaction* transaction, const Vector<char>& target, Vector<char>& foundKey)
@@ -939,12 +934,6 @@ static bool findGreatestKeyLessThanOrEqual(LevelDBTransaction* transaction, cons
         it->next();
     } while (it->isValid() && !compareIndexKeys(it->key(), target));
 
-    return true;
-}
-
-bool IDBBackingStore::deleteIndexDataForRecord(IDBBackingStore::Transaction*, int64_t, int64_t, int64_t, const RecordIdentifier*)
-{
-    // FIXME: This isn't needed since we invalidate index data via the version number mechanism.
     return true;
 }
 
@@ -1188,10 +1177,6 @@ public:
 
     // IDBBackingStore::Cursor
     virtual String value() const { ASSERT_NOT_REACHED(); return String(); }
-    virtual PassRefPtr<IDBBackingStore::RecordIdentifier> recordIdentifier() OVERRIDE
-    {
-        return m_identifier;
-    }
     virtual bool loadCurrentRow();
 
 private:
@@ -1205,7 +1190,6 @@ private:
     {
     }
 
-    RefPtr<IDBBackingStore::RecordIdentifier> m_identifier;
 };
 
 bool ObjectStoreKeyCursorImpl::loadCurrentRow()
@@ -1230,7 +1214,7 @@ bool ObjectStoreKeyCursorImpl::loadCurrentRow()
     }
 
     // FIXME: This re-encodes what was just decoded; try and optimize.
-    m_identifier = IDBBackingStore::RecordIdentifier::create(encodeIDBKey(*m_currentKey), version);
+    m_recordIdentifier.reset(encodeIDBKey(*m_currentKey), version);
 
     return true;
 }
@@ -1249,10 +1233,6 @@ public:
 
     // IDBBackingStore::Cursor
     virtual String value() const { return m_currentValue; }
-    virtual PassRefPtr<IDBBackingStore::RecordIdentifier> recordIdentifier() OVERRIDE
-    {
-        return m_identifier;
-    }
     virtual bool loadCurrentRow();
 
 private:
@@ -1268,7 +1248,6 @@ private:
     }
 
     String m_currentValue;
-    RefPtr<IDBBackingStore::RecordIdentifier> m_identifier;
 };
 
 bool ObjectStoreCursorImpl::loadCurrentRow()
@@ -1293,7 +1272,7 @@ bool ObjectStoreCursorImpl::loadCurrentRow()
     }
 
     // FIXME: This re-encodes what was just decoded; try and optimize.
-    m_identifier = IDBBackingStore::RecordIdentifier::create(encodeIDBKey(*m_currentKey), version);
+    m_recordIdentifier.reset(encodeIDBKey(*m_currentKey), version);
 
     m_currentValue = decodeString(valuePosition, m_iterator->value().end());
 
@@ -1315,7 +1294,7 @@ public:
     // IDBBackingStore::Cursor
     virtual String value() const { ASSERT_NOT_REACHED(); return String(); }
     virtual PassRefPtr<IDBKey> primaryKey() const { return m_primaryKey; }
-    virtual PassRefPtr<IDBBackingStore::RecordIdentifier> recordIdentifier() { ASSERT_NOT_REACHED(); return 0; }
+    virtual const IDBBackingStore::RecordIdentifier& recordIdentifier() const { ASSERT_NOT_REACHED(); return m_recordIdentifier; }
     virtual bool loadCurrentRow();
 
 private:
@@ -1394,7 +1373,7 @@ public:
     // IDBBackingStore::Cursor
     virtual String value() const { return m_value; }
     virtual PassRefPtr<IDBKey> primaryKey() const { return m_primaryKey; }
-    virtual PassRefPtr<IDBBackingStore::RecordIdentifier> recordIdentifier() { ASSERT_NOT_REACHED(); return 0; }
+    virtual const IDBBackingStore::RecordIdentifier& recordIdentifier() const { ASSERT_NOT_REACHED(); return m_recordIdentifier; }
     bool loadCurrentRow();
 
 private:

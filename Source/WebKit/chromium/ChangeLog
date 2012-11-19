@@ -1,3 +1,14 @@
+2012-11-19  Alec Flett  <alecflett@chromium.org>
+
+        IndexedDB: simplify RecordIdentifier
+        https://bugs.webkit.org/show_bug.cgi?id=102018
+
+        Reviewed by Tony Chang.
+
+        Update IDBFakeBackingStore to match its parent class.
+
+        * tests/IDBFakeBackingStore.h:
+
 2012-11-19  Vincent Scheib  <scheib@chromium.org>
 
         [Chromium] Remove WebKit::WebRuntimeFeatures::enablePointerLock.
