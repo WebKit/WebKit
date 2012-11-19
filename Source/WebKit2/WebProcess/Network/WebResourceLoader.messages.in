@@ -28,6 +28,10 @@ messages -> WebResourceLoader {
     DidReceiveData(CoreIPC::DataReference data, int64_t encodedDataLength, bool allAtOnce)
     DidFinishResourceLoad(double finishTime)
     DidFailResourceLoad(WebCore::ResourceError error)
+    
+    CanAuthenticateAgainstProtectionSpace(uint64_t requestID, WebCore::ProtectionSpace protectionSpace)
+    DidReceiveAuthenticationChallenge(WebCore::AuthenticationChallenge challenge)
+    DidCancelAuthenticationChallenge(WebCore::AuthenticationChallenge challenge)
 
     // DidReceiveResource is for when we have the entire resource data available at once, such as when the resource is cached in memory
     DidReceiveResource(WebKit::ShareableResource::Handle resource, double finishTime)

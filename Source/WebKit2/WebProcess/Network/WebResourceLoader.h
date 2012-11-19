@@ -31,6 +31,8 @@
 #include "Connection.h"
 #include "MessageSender.h"
 #include "ShareableResource.h"
+#include <WebCore/AuthenticationChallenge.h>
+#include <WebCore/AuthenticationClient.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -40,6 +42,7 @@ class DataReference;
 }
 
 namespace WebCore {
+class ProtectionSpace;
 class ResourceBuffer;
 class ResourceError;
 class ResourceLoader;
@@ -51,7 +54,7 @@ namespace WebKit {
 
 typedef uint64_t ResourceLoadIdentifier;
 
-class WebResourceLoader : public RefCounted<WebResourceLoader>, public CoreIPC::MessageSender<WebResourceLoader> {
+class WebResourceLoader : public RefCounted<WebResourceLoader>, public CoreIPC::MessageSender<WebResourceLoader>, public WebCore::AuthenticationClient {
 public:
     static PassRefPtr<WebResourceLoader> create(PassRefPtr<WebCore::ResourceLoader>);
 
@@ -63,6 +66,13 @@ public:
 
     void didReceiveWebResourceLoaderMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);
 
+    using RefCounted<WebResourceLoader>::ref;
+    using RefCounted<WebResourceLoader>::deref;
+
+    virtual void receivedCredential(const WebCore::AuthenticationChallenge&, const WebCore::Credential&);
+    virtual void receivedRequestToContinueWithoutCredential(const WebCore::AuthenticationChallenge&);
+    virtual void receivedCancellation(const WebCore::AuthenticationChallenge&);
+
 private:
     WebResourceLoader(PassRefPtr<WebCore::ResourceLoader>);
 
@@ -73,7 +83,15 @@ private:
     void didFailResourceLoad(const WebCore::ResourceError&);
     void didReceiveResource(const ShareableResource::Handle&, double finishTime);
 
+    void canAuthenticateAgainstProtectionSpace(uint64_t requestID, const WebCore::ProtectionSpace&);
+    void didReceiveAuthenticationChallenge(const WebCore::AuthenticationChallenge&);
+    void didCancelAuthenticationChallenge(const WebCore::AuthenticationChallenge&);
+
+    virtual void refAuthenticationClient() { ref(); }
+    virtual void derefAuthenticationClient() { deref(); }
+
     RefPtr<WebCore::ResourceLoader> m_coreLoader;
+    OwnPtr<WebCore::AuthenticationChallenge> m_currentAuthenticationChallenge;
 };
 
 } // namespace WebKit

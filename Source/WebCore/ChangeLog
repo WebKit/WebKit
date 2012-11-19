@@ -1,3 +1,22 @@
+2012-11-19  Brady Eidson  <beidson@apple.com>
+
+        NetworkProcess Authentication.
+        https://bugs.webkit.org/show_bug.cgi?id=102592
+
+        Reviewed by Alexey Proskuryakov.
+
+        Change an ASSERT that assumes there should be a resource handle which is not true with the NetworkProcess.
+
+        Also export some more stuff.
+
+        No new tests (Platform support, no effect in tested configs).
+
+        * WebCore.exp.in:
+
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::didReceiveAuthenticationChallenge): Only ASSERT that the handle has a challenge if
+          there is a handle.
+
 2012-11-19  Alec Flett  <alecflett@chromium.org>
 
         IndexedDB: simplify RecordIdentifier

@@ -97,7 +97,15 @@ void WebResourceLoadScheduler::scheduleLoad(ResourceLoader* resourceLoader, Reso
         DEFINE_STATIC_LOCAL(KURL, dataURL, (KURL(), "data:"));
         request.setURL(dataURL);
     }
-    NetworkResourceLoadParameters loadParameters(request, priority, resourceLoader->shouldSniffContent() ? SniffContent : DoNotSniffContent);
+    
+    // FIXME (NetworkProcess): When the ResourceLoader asks its FrameLoaderClient about using
+    // credential storage it passes along its identifier.
+    // But at this point it doesn't have the correct identifier yet.
+    // In practice clients we know about don't care about the identifier, but this is another reason
+    // we need to make sure ResourceLoaders get correct identifiers right off the bat.
+    StoredCredentials allowStoredCredentials = resourceLoader->shouldUseCredentialStorage() ? AllowStoredCredentials : DoNotAllowStoredCredentials;
+    
+    NetworkResourceLoadParameters loadParameters(request, priority, resourceLoader->shouldSniffContent() ? SniffContent : DoNotSniffContent, allowStoredCredentials);
     if (!WebProcess::shared().networkConnection()->connection()->sendSync(Messages::NetworkConnectionToWebProcess::ScheduleResourceLoad(loadParameters), Messages::NetworkConnectionToWebProcess::ScheduleResourceLoad::Reply(identifier), 0)) {
         // FIXME (NetworkProcess): What should we do if this fails?
         ASSERT_NOT_REACHED();

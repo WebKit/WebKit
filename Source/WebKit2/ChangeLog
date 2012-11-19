@@ -1,3 +1,76 @@
+2012-11-19  Brady Eidson  <beidson@apple.com>
+
+        NetworkProcess Authentication.
+        https://bugs.webkit.org/show_bug.cgi?id=102592
+
+        Reviewed by Alexey Proskuryakov.
+
+        This get's basic HTTP authentication working with the NetworkProcess by dispatching authentication
+        related events to the WebProcess and relying on existing client APIs to answer them.
+
+        Implement ResourceHandleClient methods related to auth challenges and message them to the WebProcess.
+        Also implement messaging back from the WebProcess to response to those auth challenges:
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::willSendRequestResponseMap):
+        (WebKit::NetworkResourceLoader::willSendRequest):
+        (WebKit::NetworkResourceLoader::willSendRequestHandled):
+        (WebKit::NetworkResourceLoader::shouldUseCredentialStorage):
+        (WebKit::NetworkResourceLoader::didReceiveAuthenticationChallenge):
+        (WebKit::NetworkResourceLoader::didCancelAuthenticationChallenge):
+        (WebKit::NetworkResourceLoader::receivedCancellation):
+        (WebKit::NetworkResourceLoader::receivedAuthenticationCredential):
+        (WebKit::NetworkResourceLoader::receivedRequestToContinueWithoutAuthenticationCredential):
+        (WebKit::NetworkResourceLoader::receivedAuthenticationCancellation):
+        (WebKit::canAuthenticateAgainstProtectionSpaceResponseMap):
+        (WebKit::generateCanAuthenticateAgainstProtectionSpaceID):
+        (WebKit::NetworkResourceLoader::canAuthenticateAgainstProtectionSpace):
+        (WebKit::NetworkResourceLoader::canAuthenticateAgainstProtectionSpaceHandled):
+        * NetworkProcess/NetworkResourceLoader.h:
+        * NetworkProcess/NetworkResourceLoader.messages.in:
+
+        Implement messaging to response to auth challenges from the NetworkProcess, and implement
+        AuthenticationClient to response to auth responses from WebProcess clients:
+        * WebProcess/Network/WebResourceLoader.cpp:
+        (WebKit::WebResourceLoader::canAuthenticateAgainstProtectionSpace):
+        (WebKit::WebResourceLoader::didReceiveAuthenticationChallenge):
+        (WebKit::WebResourceLoader::didCancelAuthenticationChallenge):
+        (WebKit::WebResourceLoader::receivedCredential):
+        (WebKit::WebResourceLoader::receivedRequestToContinueWithoutCredential):
+        (WebKit::WebResourceLoader::receivedCancellation):
+        * WebProcess/Network/WebResourceLoader.h:
+        (WebKit::WebResourceLoader::refAuthenticationClient):
+        (WebKit::WebResourceLoader::derefAuthenticationClient):
+        * WebProcess/Network/WebResourceLoader.messages.in:
+
+        Add a BlockingResponseMap for bool responses, which don't need OwnPtr trickery:
+        * Shared/BlockingResponseMap.h:
+        (BlockingBoolResponseMap::waitForResponse):
+        (BlockingBoolResponseMap::didReceiveResponse):
+
+        Add "allowsStoredCredentials" to NetworkResourceLoadParameters so the NetworkProcess
+        already has the answer when the question is asked:
+        * Shared/Network/NetworkResourceLoadParameters.cpp:
+        (WebKit::NetworkResourceLoadParameters::NetworkResourceLoadParameters):
+        (WebKit::NetworkResourceLoadParameters::encode):
+        (WebKit::NetworkResourceLoadParameters::decode):
+        * Shared/Network/NetworkResourceLoadParameters.h:
+        (WebKit::NetworkResourceLoadParameters::allowStoredCredentials):
+
+        Grab the value for "allowsStoredCredentials" when scheduling the load in the NetworkProcess:
+        * WebProcess/Network/WebResourceLoadScheduler.cpp:
+        (WebKit::WebResourceLoadScheduler::scheduleLoad):
+
+        Add a FIXME for client certs:
+        * WebProcess/Authentication/mac/AuthenticationManager.mac.mm:
+        (WebKit::AuthenticationManager::tryUsePlatformCertificateInfoForChallenge):
+
+        Add a FIXME for downloads:
+        * WebProcess/Downloads/mac/DownloadMac.mm:
+
+        Remove unused messaging related methods:
+        * WebProcess/Network/NetworkProcessConnection.cpp:
+        * WebProcess/Network/NetworkProcessConnection.h:
+
 2012-11-19  Kihong Kwon  <kihong.kwon@samsung.com>
 
         Add PROXIMITY_EVENTS feature

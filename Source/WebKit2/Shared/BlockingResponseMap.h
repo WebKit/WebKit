@@ -64,4 +64,36 @@ private:
     HashMap<uint64_t, OwnPtr<T> > m_responses;
 };
 
+class BlockingBoolResponseMap {
+public:
+    bool waitForResponse(uint64_t requestID)
+    {
+        while (true) {
+            MutexLocker locker(m_mutex);
+
+            if (bool response = m_responses.take(requestID))
+                return response;
+
+            m_condition.wait(m_mutex);
+        }
+
+        return false;
+    }
+
+    void didReceiveResponse(uint64_t requestID, bool response)
+    {
+        MutexLocker locker(m_mutex);
+        ASSERT(!m_responses.contains(requestID));
+
+        m_responses.set(requestID, response);
+        m_condition.signal();
+    }
+
+private:
+    Mutex m_mutex;
+    ThreadCondition m_condition;
+
+    HashMap<uint64_t, bool> m_responses;
+};
+
 #endif // BlockingResponseMap_h

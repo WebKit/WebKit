@@ -179,7 +179,7 @@ void NetworkResourceLoader::didFail(ResourceHandle*, const ResourceError& error)
     scheduleStopOnMainThread();
 }
 
-static BlockingResponseMap<ResourceRequest*>& responseMap()
+static BlockingResponseMap<ResourceRequest*>& willSendRequestResponseMap()
 {
     AtomicallyInitializedStatic(BlockingResponseMap<ResourceRequest*>&, responseMap = *new BlockingResponseMap<ResourceRequest*>);
     return responseMap;
@@ -200,7 +200,7 @@ void NetworkResourceLoader::willSendRequest(ResourceHandle*, ResourceRequest& re
 
     send(Messages::WebResourceLoader::WillSendRequest(requestID, request, redirectResponse));
     
-    OwnPtr<ResourceRequest> newRequest = responseMap().waitForResponse(requestID);
+    OwnPtr<ResourceRequest> newRequest = willSendRequestResponseMap().waitForResponse(requestID);
     request = *newRequest;
 
     RunLoop::main()->dispatch(WTF::bind(&NetworkResourceLoadScheduler::receivedRedirect, &NetworkProcess::shared().networkResourceLoadScheduler(), m_identifier, request.url()));
@@ -208,7 +208,7 @@ void NetworkResourceLoader::willSendRequest(ResourceHandle*, ResourceRequest& re
 
 void NetworkResourceLoader::willSendRequestHandled(uint64_t requestID, const WebCore::ResourceRequest& newRequest)
 {
-    responseMap().didReceiveResponse(requestID, adoptPtr(new ResourceRequest(newRequest)));
+    willSendRequestResponseMap().didReceiveResponse(requestID, adoptPtr(new ResourceRequest(newRequest)));
 }
 
 // FIXME (NetworkProcess): Many of the following ResourceHandleClient methods definitely need implementations. A few will not.
@@ -239,32 +239,98 @@ void NetworkResourceLoader::willCacheResponse(WebCore::ResourceHandle*, WebCore:
     notImplemented();
 }
 
-bool NetworkResourceLoader::shouldUseCredentialStorage(WebCore::ResourceHandle*)
+bool NetworkResourceLoader::shouldUseCredentialStorage(ResourceHandle*)
 {
-    notImplemented();
-    return false;
+    // When the WebProcess is handling loading a client is consulted each time this shouldUseCredentialStorage question is asked.
+    // In NetworkProcess mode we ask the WebProcess client up front once and then reuse the cached answer.
+
+    return m_requestParameters.allowStoredCredentials() == AllowStoredCredentials;
 }
 
-void NetworkResourceLoader::didReceiveAuthenticationChallenge(WebCore::ResourceHandle*, const WebCore::AuthenticationChallenge&)
+void NetworkResourceLoader::didReceiveAuthenticationChallenge(ResourceHandle*, const AuthenticationChallenge& challenge)
 {
-    notImplemented();
+    ASSERT(!m_currentAuthenticationChallenge);
+    m_currentAuthenticationChallenge = adoptPtr(new AuthenticationChallenge(challenge));
+
+    send(Messages::WebResourceLoader::DidReceiveAuthenticationChallenge(*m_currentAuthenticationChallenge));
 }
 
-void NetworkResourceLoader::didCancelAuthenticationChallenge(WebCore::ResourceHandle*, const WebCore::AuthenticationChallenge&)
+void NetworkResourceLoader::didCancelAuthenticationChallenge(ResourceHandle*, const AuthenticationChallenge& challenge)
 {
-    notImplemented();
+    ASSERT(m_currentAuthenticationChallenge);
+    ASSERT(m_currentAuthenticationChallenge->identifier() == challenge.identifier());
+
+    send(Messages::WebResourceLoader::DidCancelAuthenticationChallenge(*m_currentAuthenticationChallenge));
+
+    m_currentAuthenticationChallenge.clear();
 }
 
-void NetworkResourceLoader::receivedCancellation(WebCore::ResourceHandle*, const WebCore::AuthenticationChallenge&)
+void NetworkResourceLoader::receivedCancellation(ResourceHandle*, const AuthenticationChallenge& challenge)
 {
-    notImplemented();
+    receivedAuthenticationCancellation(challenge);
+}
+
+void NetworkResourceLoader::receivedAuthenticationCredential(const AuthenticationChallenge& challenge, const Credential& credential)
+{
+    ASSERT(m_currentAuthenticationChallenge);
+    ASSERT(m_currentAuthenticationChallenge->authenticationClient());
+
+    if (m_currentAuthenticationChallenge->identifier() != challenge.identifier())
+        return;
+    
+    m_currentAuthenticationChallenge->authenticationClient()->receivedCredential(*m_currentAuthenticationChallenge, credential);
+    m_currentAuthenticationChallenge.clear();
+}
+
+void NetworkResourceLoader::receivedRequestToContinueWithoutAuthenticationCredential(const AuthenticationChallenge& challenge)
+{
+    ASSERT(m_currentAuthenticationChallenge);
+    ASSERT(m_currentAuthenticationChallenge->authenticationClient());
+
+    if (m_currentAuthenticationChallenge->identifier() != challenge.identifier())
+        return;
+
+    m_currentAuthenticationChallenge->authenticationClient()->receivedRequestToContinueWithoutCredential(*m_currentAuthenticationChallenge);
+    m_currentAuthenticationChallenge.clear();
+}
+
+void NetworkResourceLoader::receivedAuthenticationCancellation(const AuthenticationChallenge& challenge)
+{
+    ASSERT(m_currentAuthenticationChallenge);
+    ASSERT(m_currentAuthenticationChallenge->authenticationClient());
+
+    if (m_currentAuthenticationChallenge->identifier() != challenge.identifier())
+        return;
+
+    m_currentAuthenticationChallenge->authenticationClient()->receivedCancellation(*m_currentAuthenticationChallenge);
+    m_currentAuthenticationChallenge.clear();
 }
 
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)
-bool NetworkResourceLoader::canAuthenticateAgainstProtectionSpace(WebCore::ResourceHandle*, const WebCore::ProtectionSpace&)
+static BlockingBoolResponseMap& canAuthenticateAgainstProtectionSpaceResponseMap()
 {
-    notImplemented();
-    return false;
+    AtomicallyInitializedStatic(BlockingBoolResponseMap&, responseMap = *new BlockingBoolResponseMap);
+    return responseMap;
+}
+
+static uint64_t generateCanAuthenticateAgainstProtectionSpaceID()
+{
+    static int64_t uniqueCanAuthenticateAgainstProtectionSpaceID;
+    return OSAtomicIncrement64Barrier(&uniqueCanAuthenticateAgainstProtectionSpaceID);
+}
+
+bool NetworkResourceLoader::canAuthenticateAgainstProtectionSpace(ResourceHandle*, const ProtectionSpace& protectionSpace)
+{
+    uint64_t requestID = generateCanAuthenticateAgainstProtectionSpaceID();
+
+    send(Messages::WebResourceLoader::CanAuthenticateAgainstProtectionSpace(requestID, protectionSpace));
+
+    return canAuthenticateAgainstProtectionSpaceResponseMap().waitForResponse(requestID);
+}
+
+void NetworkResourceLoader::canAuthenticateAgainstProtectionSpaceHandled(uint64_t requestID, bool canAuthenticate)
+{
+    canAuthenticateAgainstProtectionSpaceResponseMap().didReceiveResponse(requestID, canAuthenticate);
 }
 #endif
 

@@ -61,11 +61,6 @@ void NetworkProcessConnection::didReceiveMessage(CoreIPC::Connection* connection
     ASSERT_NOT_REACHED();
 }
 
-void NetworkProcessConnection::didReceiveSyncMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&, OwnPtr<CoreIPC::MessageEncoder>&)
-{
-    ASSERT_NOT_REACHED();
-}
-
 void NetworkProcessConnection::didClose(CoreIPC::Connection*)
 {
     // The NetworkProcess probably crashed.

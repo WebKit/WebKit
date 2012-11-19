@@ -481,7 +481,8 @@ bool ResourceLoader::shouldUseCredentialStorage()
 
 void ResourceLoader::didReceiveAuthenticationChallenge(const AuthenticationChallenge& challenge)
 {
-    ASSERT(handle()->hasAuthenticationChallenge());
+    ASSERT(!handle() || handle()->hasAuthenticationChallenge());
+
     // Protect this in this delegate method since the additional processing can do
     // anything including possibly derefing this; one example of this is Radar 3266216.
     RefPtr<ResourceLoader> protector(this);
