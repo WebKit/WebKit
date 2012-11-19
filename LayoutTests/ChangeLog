@@ -1,5 +1,20 @@
 2012-11-19  Sheriff Bot  <webkit.review.bot@gmail.com>
 
+        Unreviewed, rolling out r135172.
+        http://trac.webkit.org/changeset/135172
+        https://bugs.webkit.org/show_bug.cgi?id=102710
+
+        Broke some WebKit2 api tests :( (Requested by japhet on
+        #webkit).
+
+        * http/tests/inspector/network/network-iframe-load-and-delete.html:
+        * http/tests/loading/redirect-methods-expected.txt:
+        * http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-expected.txt:
+        * http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-in-body-expected.txt:
+        * http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-parent-same-origin-deny-expected.txt:
+
+2012-11-19  Sheriff Bot  <webkit.review.bot@gmail.com>
+
         Unreviewed, rolling out r134830.
         http://trac.webkit.org/changeset/134830
         https://bugs.webkit.org/show_bug.cgi?id=102701
