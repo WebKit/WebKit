@@ -32,6 +32,7 @@
 
 #include "BytecodeGenerator.h"
 #include "DFGCapabilities.h"
+#include "DFGCommon.h"
 #include "DFGNode.h"
 #include "DFGRepatch.h"
 #include "Debugger.h"
@@ -2193,6 +2194,27 @@ void CodeBlock::finalizeUnconditionally()
         // optimizing.
         alternative()->optimizeAfterWarmUp();
         
+        if (DFG::shouldShowDisassembly()) {
+            dataLog("DFG CodeBlock %p will be jettisoned because of the following dead references:\n", this);
+            for (unsigned i = 0; i < m_dfgData->transitions.size(); ++i) {
+                WeakReferenceTransition& transition = m_dfgData->transitions[i];
+                JSCell* origin = transition.m_codeOrigin.get();
+                JSCell* from = transition.m_from.get();
+                JSCell* to = transition.m_to.get();
+                if ((!origin || Heap::isMarked(origin)) && Heap::isMarked(from))
+                    continue;
+                dataLog("    Transition under %s, ", JSValue(origin).description());
+                dataLog("%s -> ", JSValue(from).description());
+                dataLog("%s.\n", JSValue(to).description());
+            }
+            for (unsigned i = 0; i < m_dfgData->weakReferences.size(); ++i) {
+                JSCell* weak = m_dfgData->weakReferences[i].get();
+                if (Heap::isMarked(weak))
+                    continue;
+                dataLog("    Weak reference %s.\n", JSValue(weak).description());
+            }
+        }
+        
         jettison();
         return;
     }
@@ -2668,6 +2690,8 @@ void CodeBlock::reoptimize()
     ASSERT(replacement() != this);
     ASSERT(replacement()->alternative() == this);
     replacement()->tallyFrequentExitSites();
+    if (DFG::shouldShowDisassembly())
+        dataLog("DFG CodeBlock %p will be jettisoned due to reoptimization of %p.\n", replacement(), this);
     replacement()->jettison();
     countReoptimization();
     optimizeAfterWarmUp();
@@ -2733,6 +2757,8 @@ void ProgramCodeBlock::jettison()
 {
     ASSERT(JITCode::isOptimizingJIT(getJITType()));
     ASSERT(this == replacement());
+    if (DFG::shouldShowDisassembly())
+        dataLog("Jettisoning DFG CodeBlock %p.\n", this);
     static_cast<ProgramExecutable*>(ownerExecutable())->jettisonOptimizedCode(*globalData());
 }
 
@@ -2740,6 +2766,8 @@ void EvalCodeBlock::jettison()
 {
     ASSERT(JITCode::isOptimizingJIT(getJITType()));
     ASSERT(this == replacement());
+    if (DFG::shouldShowDisassembly())
+        dataLog("Jettisoning DFG CodeBlock %p.\n", this);
     static_cast<EvalExecutable*>(ownerExecutable())->jettisonOptimizedCode(*globalData());
 }
 
@@ -2747,6 +2775,8 @@ void FunctionCodeBlock::jettison()
 {
     ASSERT(JITCode::isOptimizingJIT(getJITType()));
     ASSERT(this == replacement());
+    if (DFG::shouldShowDisassembly())
+        dataLog("Jettisoning DFG CodeBlock %p.\n", this);
     static_cast<FunctionExecutable*>(ownerExecutable())->jettisonOptimizedCodeFor(*globalData(), m_isConstructor ? CodeForConstruct : CodeForCall);
 }
 

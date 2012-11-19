@@ -66,6 +66,8 @@ namespace JSC {
     v(bool, useDFGJIT, true) \
     v(bool, useRegExpJIT, true) \
     \
+    v(bool, forceDFGCodeBlockLiveness, false) \
+    \
     /* showDisassembly implies showDFGDisassembly. */ \
     v(bool, showDisassembly, false) \
     v(bool, showDFGDisassembly, false) \

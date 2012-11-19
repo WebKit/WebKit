@@ -1,5 +1,32 @@
 2012-11-18  Filip Pizlo  <fpizlo@apple.com>
 
+        JSC should have more logging in structure-related code
+        https://bugs.webkit.org/show_bug.cgi?id=102630
+
+        Reviewed by Simon Fraser.
+
+        - JSValue::description() now tells you if something is a structure, and if so,
+          what kind of structure it is.
+        
+        - Jettisoning logic now tells you why things are being jettisoned.
+        
+        - It's now possible to turn off GC-triggered jettisoning entirely.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::finalizeUnconditionally):
+        (JSC::CodeBlock::reoptimize):
+        (JSC::ProgramCodeBlock::jettison):
+        (JSC::EvalCodeBlock::jettison):
+        (JSC::FunctionCodeBlock::jettison):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::shouldImmediatelyAssumeLivenessDuringScan):
+        * runtime/JSValue.cpp:
+        (JSC::JSValue::description):
+        * runtime/Options.h:
+        (JSC):
+
+2012-11-18  Filip Pizlo  <fpizlo@apple.com>
+
         DFG constant folding phase should say 'changed = true' whenever it changes the graph
         https://bugs.webkit.org/show_bug.cgi?id=102550
 

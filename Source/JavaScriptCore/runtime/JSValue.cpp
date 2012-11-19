@@ -214,10 +214,18 @@ char* JSValue::description() const
         snprintf(description, size, "Double: %08x:%08x, %lf", u.asTwoInt32s[1], u.asTwoInt32s[0], asDouble());
 #endif
     } else if (isCell()) {
-        snprintf(
-            description, size, "Cell: %p -> %p (%p: %s, %s)",
-            asCell(), isObject() ? asObject(*this)->butterfly() : 0, asCell()->structure(), asCell()->structure()->classInfo()->className,
-            indexingTypeToString(asCell()->structure()->indexingTypeIncludingHistory()));
+        if (asCell()->inherits(&Structure::s_info)) {
+            Structure* structure = jsCast<Structure*>(asCell());
+            snprintf(
+                description, size, "Structure: %p: %s, %s",
+                structure, structure->classInfo()->className,
+                indexingTypeToString(structure->indexingTypeIncludingHistory()));
+        } else {
+            snprintf(
+                description, size, "Cell: %p -> %p (%p: %s, %s)",
+                asCell(), isObject() ? asObject(*this)->butterfly() : 0, asCell()->structure(), asCell()->structure()->classInfo()->className,
+                indexingTypeToString(asCell()->structure()->indexingTypeIncludingHistory()));
+        }
     } else if (isTrue())
         snprintf(description, size, "True");
     else if (isFalse())

@@ -1239,6 +1239,9 @@ namespace JSC {
             // allow them to continue to execute soundly.
             if (m_dfgData->mayBeExecuting)
                 return true;
+            
+            if (Options::forceDFGCodeBlockLiveness())
+                return true;
 
             return false;
         }
