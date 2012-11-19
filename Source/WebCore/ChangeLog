@@ -1,3 +1,18 @@
+2012-11-19  Abhishek Arya  <inferno@chromium.org>
+
+        Crash in ApplyStyleCommand::cleanupUnstyledAppleStyleSpans.
+        https://bugs.webkit.org/show_bug.cgi?id=100150
+
+        Reviewed by Ryosuke Niwa.
+
+        RefPtr startDummySpanAncestor and endDummySpanAncestor since
+        they can go away inside fixRangeAndApplyInlineStyle call.
+
+        Test: editing/style/apply-style-crash.html
+
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::applyInlineStyle):
+
 2012-11-19  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r135172.
