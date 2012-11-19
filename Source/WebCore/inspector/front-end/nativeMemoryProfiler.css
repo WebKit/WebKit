@@ -126,8 +126,8 @@
     padding-right: 5px;
 }
 
-.native-snapshot-view .data-grid .expanded div.size-bar {
-    background-image: -webkit-gradient(linear, left top, left bottom, from(hsla(0, 100%, 100%, 0.85)), to(hsla(0, 100%, 100%, 0.65)));
+.native-snapshot-view .data-grid .dimmed div.size-bar {
+    background-image: -webkit-gradient(linear, left top, left bottom, from(hsla(0, 100%, 100%, 0.7)), to(hsla(0, 100%, 100%, 0.5)));
     color: hsla(0, 0%, 0%, 0.5);
 }
 

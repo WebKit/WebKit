@@ -1,3 +1,15 @@
+2012-11-19  Alexei Filippov  <alph@chromium.org>
+
+        Web Inspector: Dim a component's subitems' color in NMI snapshot
+        https://bugs.webkit.org/show_bug.cgi?id=102224
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/front-end/NativeMemorySnapshotView.js:
+        (WebInspector.NativeSnapshotNode.prototype._createSizeCell):
+        * inspector/front-end/nativeMemoryProfiler.css:
+        (.native-snapshot-view .data-grid .dimmed div.size-bar):
+
 2012-11-19  Erik Arvidsson  <arv@chromium.org>
 
         Update DOMException name: NetworkError
