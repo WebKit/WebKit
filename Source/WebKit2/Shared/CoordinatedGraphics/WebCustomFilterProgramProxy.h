@@ -67,7 +67,7 @@ public:
     virtual void refFromValidatedProgram() { ref(); }
     virtual void derefFromValidatedProgram() { deref(); }
 
-    ~WebCustomFilterProgramProxy();
+    virtual ~WebCustomFilterProgramProxy();
     
     void setClient(WebCustomFilterProgramProxyClient* client) { m_client = client; }
     WebCustomFilterProgramProxyClient* client() const { return m_client; }
