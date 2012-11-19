@@ -1349,7 +1349,7 @@ DaysTable.prototype._markRangeAsSelected = function(day) {
 DaysTable.prototype.selectRange = function(day) {
     this._deselect();
     if (this.startDate() > day.startDate() || this.endDate() < day.endDate())
-        this.picker.showMonth(Month.createFromDate(day.startDate()));
+        this.picker.showMonth(Month.createFromDate(day.startDate()), CalendarPicker.NavigationBehaviour.Animate);
     this._markRangeAsSelected(day);
 };
 

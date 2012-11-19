@@ -1,3 +1,17 @@
+2012-11-19  Keishi Hattori  <keishi@webkit.org>
+
+        REGRESSION (r133565): Calendar picker isn't animating when changing month by pressing 't'
+        https://bugs.webkit.org/show_bug.cgi?id=102660
+
+        Reviewed by Kent Tamura.
+
+        The calendar picker used to animate when you press 't'.
+
+        No new tests.
+
+        * Resources/pagepopups/calendarPicker.js:
+        (DaysTable.prototype.selectRange):
+
 2012-11-19  Kent Tamura  <tkent@chromium.org>
 
         input.value="" should clear date/time input elements with partial values
