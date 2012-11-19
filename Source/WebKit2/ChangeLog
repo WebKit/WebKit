@@ -1,3 +1,11 @@
+2012-11-19  Brady Eidson  <beidson@apple.com>
+
+        Replace an unneeded #include with a forward declaration after r135179.
+
+        Reviewed by nobody, but suggested by Alexey Proskuryakov.
+
+        * WebProcess/Network/WebResourceLoader.h:
+
 2012-11-19  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] REGRESSION(r134955): Plugins are broken due to unresolved symbol in plugin process

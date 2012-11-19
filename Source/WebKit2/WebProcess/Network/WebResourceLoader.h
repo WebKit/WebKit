@@ -31,7 +31,6 @@
 #include "Connection.h"
 #include "MessageSender.h"
 #include "ShareableResource.h"
-#include <WebCore/AuthenticationChallenge.h>
 #include <WebCore/AuthenticationClient.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -42,6 +41,7 @@ class DataReference;
 }
 
 namespace WebCore {
+class AuthenticationChallenge;
 class ProtectionSpace;
 class ResourceBuffer;
 class ResourceError;
