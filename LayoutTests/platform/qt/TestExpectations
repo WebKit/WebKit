@@ -287,6 +287,9 @@ fast/js/names.html
 # Don't have GestureTapCancel event type
 touchadjustment/touch-links-active.html
 
+# Don't have gestureTapDown event type
+fast/events/touch/gesture/gesture-scrollbar.html
+
 # Don't have width/height on GestureLongPress necessary to enable adjustment
 touchadjustment/touch-links-longpress.html
 
