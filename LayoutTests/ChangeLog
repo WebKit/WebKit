@@ -1,3 +1,10 @@
+2012-11-19  Yael Aharon  <yael.aharon@intel.com>
+
+        Unreviewed gardening after r133898.
+        Cleanup the list of compositing tests failures.
+
+        * platform/efl/TestExpectations:
+
 2012-11-19  Shinya Kawanaka  <shinyak@chromium.org>
 
         Changing id, className, or attribute should invalidate distribution
