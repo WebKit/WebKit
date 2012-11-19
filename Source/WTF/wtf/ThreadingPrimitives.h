@@ -50,18 +50,12 @@ namespace WTF {
 
 #if USE(PTHREADS)
 typedef pthread_mutex_t PlatformMutex;
-#if HAVE(PTHREAD_RWLOCK)
-typedef pthread_rwlock_t PlatformReadWriteLock;
-#else
-typedef void* PlatformReadWriteLock;
-#endif
 typedef pthread_cond_t PlatformCondition;
 #elif OS(WINDOWS)
 struct PlatformMutex {
     CRITICAL_SECTION m_internalMutex;
     size_t m_recursionCount;
 };
-typedef void* PlatformReadWriteLock; // FIXME: Implement.
 struct PlatformCondition {
     size_t m_waitersGone;
     size_t m_waitersBlocked;
@@ -75,7 +69,6 @@ struct PlatformCondition {
 };
 #else
 typedef void* PlatformMutex;
-typedef void* PlatformReadWriteLock;
 typedef void* PlatformCondition;
 #endif
     
@@ -112,24 +105,6 @@ public:
 private:
     Mutex& m_mutex;
     bool m_locked;
-};
-
-class ReadWriteLock {
-    WTF_MAKE_NONCOPYABLE(ReadWriteLock);
-public:
-    ReadWriteLock();
-    ~ReadWriteLock();
-
-    void readLock();
-    bool tryReadLock();
-
-    void writeLock();
-    bool tryWriteLock();
-    
-    void unlock();
-
-private:
-    PlatformReadWriteLock m_readWriteLock;
 };
 
 class ThreadCondition {

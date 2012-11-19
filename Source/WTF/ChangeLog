@@ -1,3 +1,20 @@
+2012-11-19  Laszlo Gombos  <l.gombos@samsung.com>
+
+        Remove ReadWriteLock
+        https://bugs.webkit.org/show_bug.cgi?id=101637
+
+        Reviewed by Darin Adler.
+
+        Remove ReadWriteLock as it does not seems to be used.
+
+        * wtf/Platform.h: Remove the definition of HAVE_PTHREAD_RWLOCK.
+
+        * wtf/ThreadingPrimitives.h: Remove the PlatformReadWriteLock type 
+        and the ReadWriteLock class.
+
+        * wtf/ThreadingPthreads.cpp: Remove the implementation of
+        the ReadWriteLock class using pthreads.
+
 2012-11-19  Brady Eidson  <beidson@apple.com>
 
         Add 64-bit specializations for atomicIncrement and atomicDecrement
