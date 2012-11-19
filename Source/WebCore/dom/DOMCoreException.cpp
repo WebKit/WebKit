@@ -55,7 +55,7 @@ static struct CoreException {
     { "SECURITY_ERR", "An attempt was made to break through the security policy of the user agent." },
     // FIXME: Couldn't find a description in the HTML/DOM specifications for NETWORK_ERR, ABORT_ERR, URL_MISMATCH_ERR, and QUOTA_EXCEEDED_ERR
     { "NETWORK_ERR", "A network error occurred." },
-    { "ABORT_ERR", "The user aborted a request." },
+    { "AbortError", "The user aborted a request." },
     { "URL_MISMATCH_ERR", "A worker global scope represented an absolute URL that is not equal to the resulting absolute URL." },
     { "QUOTA_EXCEEDED_ERR", "An attempt was made to add something to storage that exceeded the quota." },
     { "TIMEOUT_ERR", "A timeout occurred." },
