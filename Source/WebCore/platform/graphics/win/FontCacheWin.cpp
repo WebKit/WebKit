@@ -54,7 +54,7 @@ void FontCache::platformInit()
 #endif
 }
 
-IMLangFontLink2* FontCache::getFontLinkInterface()
+IMLangFontLinkType* FontCache::getFontLinkInterface()
 {
     static IMultiLanguage *multiLanguage;
     if (!multiLanguage) {
@@ -62,7 +62,7 @@ IMLangFontLink2* FontCache::getFontLinkInterface()
             return 0;
     }
 
-    static IMLangFontLink2* langFontLink;
+    static IMLangFontLinkType* langFontLink;
     if (!langFontLink) {
         if (multiLanguage->QueryInterface(&langFontLink) != S_OK)
             return 0;
@@ -136,7 +136,7 @@ static const Vector<DWORD, 4>& getCJKCodePageMasks()
     static bool initialized;
     if (!initialized) {
         initialized = true;
-        IMLangFontLink2* langFontLink = fontCache()->getFontLinkInterface();
+        IMLangFontLinkType* langFontLink = fontCache()->getFontLinkInterface();
         if (!langFontLink)
             return codePageMasks;
 
@@ -173,7 +173,7 @@ static bool currentFontContainsCharacter(HDC hdc, UChar character)
     return i && glyphset->ranges[i - 1].wcLow + glyphset->ranges[i - 1].cGlyphs > character;
 }
 
-static HFONT createMLangFont(IMLangFontLink2* langFontLink, HDC hdc, DWORD codePageMask, UChar character = 0)
+static HFONT createMLangFont(IMLangFontLinkType* langFontLink, HDC hdc, DWORD codePageMask, UChar character = 0)
 {
     HFONT MLangFont;
     HFONT hfont = 0;
@@ -195,7 +195,7 @@ PassRefPtr<SimpleFontData> FontCache::getFontDataForCharacters(const Font& font,
     HGDIOBJ oldFont = SelectObject(hdc, primaryFont);
     HFONT hfont = 0;
 
-    if (IMLangFontLink2* langFontLink = getFontLinkInterface()) {
+    if (IMLangFontLinkType* langFontLink = getFontLinkInterface()) {
         // Try MLang font linking first.
         DWORD codePages = 0;
         langFontLink->GetCharCodePages(character, &codePages);

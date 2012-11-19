@@ -54,13 +54,8 @@ public:
     DWORD codePages() const
     {
         if (!m_codePages) {
-#if defined(IMLANG_FONT_LINK) && (IMLANG_FONT_LINK == 2)
-            if (IMLangFontLink2* langFontLink = fontCache()->getFontLinkInterface())
+            if (IMLangFontLinkType* langFontLink = fontCache()->getFontLinkInterface())
                 langFontLink->CodePageToCodePages(m_codePage, &m_codePages);
-#else
-            if (IMLangFontLink* langFontLink = fontCache()->getFontLinkInterface())
-                langFontLink->CodePageToCodePages(m_codePage, &m_codePages);
-#endif
         }
         return m_codePages;
     }
@@ -268,11 +263,7 @@ PassRefPtr<FixedSizeFontData> FixedSizeFontData::create(const AtomicString& fami
 
     GetTextMetrics(g_screenDC, &fontData->m_metrics);
 
-#if defined(IMLANG_FONT_LINK) && (IMLANG_FONT_LINK == 2)
-    if (IMLangFontLink2* langFontLink = fontCache()->getFontLinkInterface()) {
-#else
-    if (IMLangFontLink* langFontLink = fontCache()->getFontLinkInterface()) {
-#endif
+    if (IMLangFontLinkType* langFontLink = fontCache()->getFontLinkInterface()) {
         langFontLink->GetFontCodePages(g_screenDC, fontData->m_hfont.get(), &fontData->m_codePages);
         fontData->m_codePages |= FontPlatformData::getKnownFontCodePages(winFont.lfFaceName);
     }

@@ -54,6 +54,14 @@ class FontSelector;
 class OpenTypeVerticalData;
 class SimpleFontData;
 
+#if PLATFORM(WIN)
+#if !OS(WINCE) || defined(IMLANG_FONT_LINK) && (IMLANG_FONT_LINK == 2)
+typedef IMLangFontLink2 IMLangFontLinkType;
+#else
+typedef IMLangFontLink IMLangFontLinkType;
+#endif
+#endif
+
 class FontCache {
     friend class FontCachePurgePreventer;
 
@@ -72,17 +80,13 @@ public:
     // Also implemented by the platform.
     void platformInit();
 
-#if OS(WINCE) && !PLATFORM(QT)
-#if defined(IMLANG_FONT_LINK) && (IMLANG_FONT_LINK == 2)
-    IMLangFontLink2* getFontLinkInterface();
-#else
-    IMLangFontLink* getFontLinkInterface();
-#endif
+#if PLATFORM(WIN)
+    IMLangFontLinkType* getFontLinkInterface();
+#if OS(WINCE)
     static void comInitialize();
     static void comUninitialize();
     static IMultiLanguage* getMultiLanguageInterface();
-#elif PLATFORM(WIN)
-    IMLangFontLink2* getFontLinkInterface();
+#endif
 #endif
 
     void getTraitsInFamily(const AtomicString&, Vector<unsigned>&);

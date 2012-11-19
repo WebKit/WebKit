@@ -44,12 +44,7 @@ namespace WebCore {
 extern HDC g_screenDC;
 
 static IMultiLanguage *multiLanguage = 0;
-
-#if defined(IMLANG_FONT_LINK) && (IMLANG_FONT_LINK == 2)
-static IMLangFontLink2* langFontLink = 0;
-#else
-static IMLangFontLink* langFontLink = 0;
-#endif
+static IMLangFontLinkType* langFontLink = 0;
 
 IMultiLanguage* FontCache::getMultiLanguageInterface()
 {
@@ -59,11 +54,7 @@ IMultiLanguage* FontCache::getMultiLanguageInterface()
     return multiLanguage;
 }
 
-#if defined(IMLANG_FONT_LINK) && (IMLANG_FONT_LINK == 2)
-IMLangFontLink2* FontCache::getFontLinkInterface()
-#else
-IMLangFontLink* FontCache::getFontLinkInterface()
-#endif
+IMLangFontLinkType* FontCache::getFontLinkInterface()
 {
     if (!langFontLink) {
         if (IMultiLanguage* mli = getMultiLanguageInterface())
@@ -147,11 +138,7 @@ static const Vector<DWORD, 4>& getCJKCodePageMasks()
     static bool initialized;
     if (!initialized) {
         initialized = true;
-#if defined(IMLANG_FONT_LINK) && (IMLANG_FONT_LINK == 2)
-        IMLangFontLink2* langFontLink = fontCache()->getFontLinkInterface();
-#else
-        IMLangFontLink* langFontLink = fontCache()->getFontLinkInterface();
-#endif
+        IMLangFontLinkType* langFontLink = fontCache()->getFontLinkInterface();
         if (!langFontLink)
             return codePageMasks;
 
@@ -234,12 +221,7 @@ PassRefPtr<SimpleFontData> FontCache::getFontDataForCharacters(const Font& font,
     const FontPlatformData& origFont = font.primaryFont()->fontDataForCharacter(character)->platformData();
     unsigned unicodeRange = findCharUnicodeRange(character);
 
-#if defined(IMLANG_FONT_LINK) && (IMLANG_FONT_LINK == 2)
-    if (IMLangFontLink2* langFontLink = getFontLinkInterface())
-#else
-    if (IMLangFontLink* langFontLink = getFontLinkInterface())
-#endif
-    {
+    if (IMLangFontLinkType* langFontLink = getFontLinkInterface()) {
         HGDIOBJ oldFont = GetCurrentObject(g_screenDC, OBJ_FONT);
         HFONT hfont = 0;
         DWORD codePages = 0;

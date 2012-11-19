@@ -1,3 +1,32 @@
+2012-11-18  Patrick Gansterer  <paroga@webkit.org>
+
+        [WIN] Add a IMLangFontLinkType typedef
+        https://bugs.webkit.org/show_bug.cgi?id=102584
+
+        Reviewed by Brent Fulgham.
+
+        Add a central typedef for IMLangFontLink(2) to get rid of a bunch of ifdefs.
+
+        * platform/graphics/FontCache.h:
+        (WebCore):
+        * platform/graphics/win/FontCacheWin.cpp:
+        (WebCore::FontCache::getFontLinkInterface):
+        (WebCore::getCJKCodePageMasks):
+        (WebCore::createMLangFont):
+        (WebCore::FontCache::getFontDataForCharacters):
+        * platform/graphics/win/SimpleFontDataWin.cpp:
+        (WebCore::SimpleFontData::containsCharacters):
+        * platform/graphics/wince/FontCacheWinCE.cpp:
+        (WebCore):
+        (WebCore::FontCache::getFontLinkInterface):
+        (WebCore::getCJKCodePageMasks):
+        (WebCore::FontCache::getFontDataForCharacters):
+        * platform/graphics/wince/FontPlatformData.cpp:
+        (WebCore::FontFamilyCodePageInfo::codePages):
+        (WebCore::FixedSizeFontData::create):
+        * platform/graphics/wince/GlyphPageTreeNodeWinCE.cpp:
+        (WebCore::GlyphPage::fill):
+
 2012-11-18  Mike West  <mkwst@chromium.org>
 
         Web Inspector: Remove unused ConsoleMessage constructor.
