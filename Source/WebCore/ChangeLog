@@ -1,3 +1,30 @@
+2012-11-19  Kentaro Hara  <haraken@chromium.org>
+
+        Unreviewed, rolling out r135116.
+        http://trac.webkit.org/changeset/135116
+        https://bugs.webkit.org/show_bug.cgi?id=102649
+
+        Revert this patch to revert r135111, which caused crashes in
+        several layout tests
+
+        * Modules/webaudio/AudioBufferSourceNode.cpp:
+        (WebCore::AudioBufferSourceNode::looping):
+        (WebCore::AudioBufferSourceNode::setLooping):
+        * Modules/webaudio/AudioContext.cpp:
+        (WebCore::AudioContext::AudioContext):
+        (WebCore::AudioContext::stop):
+        (WebCore::AudioContext::document):
+        (WebCore):
+        (WebCore::AudioContext::hasDocument):
+        (WebCore::AudioContext::scriptExecutionContext):
+        (WebCore::AudioContext::fireCompletionEvent):
+        (WebCore::AudioContext::reportMemoryUsage):
+        * Modules/webaudio/AudioContext.h:
+        (AudioContext):
+        * Modules/webaudio/ScriptProcessorNode.cpp:
+        (WebCore::ScriptProcessorNode::fireProcessEvent):
+        (WebCore::ScriptProcessorNode::scriptExecutionContext):
+
 2012-11-19  Eugene Klyuchnikov  <eustas.bug@gmail.com>
 
         Web Inspector: Refine JsDoc in DebuggerScriptMapping.js

@@ -268,6 +268,8 @@ private:
     bool m_isInitialized;
     bool m_isAudioThreadFinished;
 
+    Document* m_document;
+
     // The context itself keeps a reference to all source nodes.  The source nodes, then reference all nodes they're connected to.
     // In turn, these nodes reference all nodes they're connected to.  All nodes are ultimately connected to the AudioDestinationNode.
     // When the context dereferences a source node, it will be deactivated from the rendering graph along with all other nodes it is
