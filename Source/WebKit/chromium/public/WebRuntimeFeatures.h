@@ -112,9 +112,6 @@ public:
     WEBKIT_EXPORT static void enableFullScreenAPI(bool);
     WEBKIT_EXPORT static bool isFullScreenAPIEnabled();
 
-    // FIXME: Remove this API once chromium no longer has a compile dependency. http://crbug.com/160761
-    WEBKIT_EXPORT static void enablePointerLock(bool);
-
     WEBKIT_EXPORT static void enableMediaSource(bool);
     WEBKIT_EXPORT static bool isMediaSourceEnabled();
 

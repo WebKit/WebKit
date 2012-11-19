@@ -129,7 +129,6 @@ TestShell::TestShell()
     WebRuntimeFeatures::enableDataTransferItems(true);
     WebRuntimeFeatures::enableDeviceMotion(false);
     WebRuntimeFeatures::enableGeolocation(true);
-    WebRuntimeFeatures::enablePointerLock(true);
     WebRuntimeFeatures::enableIndexedDatabase(true);
     WebRuntimeFeatures::enableInputTypeDateTime(true);
     WebRuntimeFeatures::enableInputTypeDateTimeLocal(true);

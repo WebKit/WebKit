@@ -377,12 +377,6 @@ bool WebRuntimeFeatures::isFullScreenAPIEnabled()
 #endif
 }
 
-// FIXME: Remove this API once chromium no longer has a compile dependency. http://crbug.com/160761
-void WebRuntimeFeatures::enablePointerLock(bool enable)
-{
-    UNUSED_PARAM(enable);
-}
-
 void WebRuntimeFeatures::enableMediaSource(bool enable)
 {
 #if ENABLE(MEDIA_SOURCE)
