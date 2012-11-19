@@ -6,6 +6,7 @@
  * Copyright (C) 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
+ * Copyright (C) 2012 Intel Corporation. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -50,6 +51,7 @@ struct ViewportAttributes {
     float maximumScale;
 
     float userScalable;
+    float orientation;
 };
 
 struct ViewportArguments {
@@ -62,23 +64,31 @@ struct ViewportArguments {
         HandheldFriendlyMeta,
         MobileOptimizedMeta,
 #endif
-        ViewportMeta
+        ViewportMeta,
+        CSSDeviceAdaptation
     } type;
 
     enum {
         ValueAuto = -1,
         ValueDeviceWidth = -2,
         ValueDeviceHeight = -3,
+        ValuePortrait = -4,
+        ValueLandscape = -5
     };
 
     ViewportArguments(Type type = Implicit)
         : type(type)
         , width(ValueAuto)
+        , minWidth(ValueAuto)
+        , maxWidth(ValueAuto)
         , height(ValueAuto)
+        , minHeight(ValueAuto)
+        , maxHeight(ValueAuto)
         , zoom(ValueAuto)
         , minZoom(ValueAuto)
         , maxZoom(ValueAuto)
         , userZoom(ValueAuto)
+        , orientation(ValueAuto)
     {
     }
 
@@ -86,22 +96,32 @@ struct ViewportArguments {
     ViewportAttributes resolve(const FloatSize& initialViewportSize, const FloatSize& deviceSize, int defaultWidth) const;
 
     float width;
+    float minWidth;
+    float maxWidth;
     float height;
+    float minHeight;
+    float maxHeight;
     float zoom;
     float minZoom;
     float maxZoom;
     float userZoom;
+    float orientation;
 
     bool operator==(const ViewportArguments& other) const
     {
         // Used for figuring out whether to reset the viewport or not,
         // thus we are not taking type into account.
         return width == other.width
+            && minWidth == other.minWidth
+            && maxWidth == other.maxWidth
             && height == other.height
+            && minHeight == other.minHeight
+            && maxHeight == other.maxHeight
             && zoom == other.zoom
             && minZoom == other.minZoom
             && maxZoom == other.maxZoom
-            && userZoom == other.userZoom;
+            && userZoom == other.userZoom
+            && orientation == other.orientation;
     }
 
     bool operator!=(const ViewportArguments& other) const

@@ -2631,6 +2631,8 @@
             'css/StyleSheetContents.h',
             'css/StyleSheetList.cpp',
             'css/StyleSheetList.h',
+            'css/ViewportStyleResolver.cpp',
+            'css/ViewportStyleResolver.h',
             'css/WebKitCSSArrayFunctionValue.cpp',
             'css/WebKitCSSArrayFunctionValue.h',
             'css/WebKitCSSFilterValue.cpp',

@@ -33,6 +33,7 @@
 #include "SelectorChecker.h"
 #include "StyleInheritedData.h"
 #include "StyleScopeResolver.h"
+#include "ViewportStyleResolver.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/RefPtr.h>
@@ -92,6 +93,7 @@ class StyleSheet;
 class StyleSheetContents;
 class StyleSheetList;
 class StyledElement;
+class ViewportStyleResolver;
 class WebKitCSSFilterValue;
 class WebKitCSSShaderValue;
 class WebKitCSSSVGDocumentValue;
@@ -245,6 +247,9 @@ public:
     bool hasSelectorForAttribute(const AtomicString&) const;
 
     CSSFontSelector* fontSelector() const { return m_fontSelector.get(); }
+#if ENABLE(CSS_DEVICE_ADAPTATION)
+    ViewportStyleResolver* viewportStyleResolver() { return m_viewportStyleResolver.get(); }
+#endif
 
     void addViewportDependentMediaQueryResult(const MediaQueryExp*, bool result);
     bool hasViewportDependentMediaQueries() const { return !m_viewportDependentMediaQueryResults.isEmpty(); }
@@ -492,6 +497,10 @@ private:
 
     RefPtr<CSSFontSelector> m_fontSelector;
     Vector<OwnPtr<MediaQueryResult> > m_viewportDependentMediaQueryResults;
+
+#if ENABLE(CSS_DEVICE_ADAPTATION)
+    RefPtr<ViewportStyleResolver> m_viewportStyleResolver;
+#endif
 
     bool m_applyPropertyToRegularStyle;
     bool m_applyPropertyToVisitedLinkStyle;

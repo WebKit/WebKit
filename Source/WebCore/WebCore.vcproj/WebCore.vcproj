@@ -38118,6 +38118,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\css\ViewportStyleResolver.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\css\ViewportStyleResolver.h"
+				>
+			</File>
+			<File
 				RelativePath="..\css\WebKitCSSArrayFunctionValue.cpp"
 				>
 			</File>

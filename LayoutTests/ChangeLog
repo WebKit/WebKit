@@ -1,3 +1,74 @@
+2012-11-19  Thiago Marcos P. Santos  <thiago.santos@intel.com>
+
+        Apply the resolved viewport rules
+        https://bugs.webkit.org/show_bug.cgi?id=95964
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Imported some of the CSS Device Adaptation tests submitted by
+        Opera to W3C CSS Test Suite. These tests are not yet approved but
+        they have a pretty good coverage of the specification.
+
+        Tests using Math.floor() where modified from the original version
+        using Math.round(), the reason being the round() version fails by
+        1px when the pixel ratio is different from 1.
+
+        Despite the fact they are all passing on the EFL MiniBrowser, I could
+        not enable them yet. WebKitTestRunner does not support fixed layout,
+        but that is the next goal.
+
+        * css3/device-adapt/opera/cascading-001-expected.txt: Added.
+        * css3/device-adapt/opera/cascading-001.xhtml: Added.
+        * css3/device-adapt/opera/cascading-002-expected.txt: Added.
+        * css3/device-adapt/opera/cascading-002.xhtml: Added.
+        * css3/device-adapt/opera/cascading-003-expected.txt: Added.
+        * css3/device-adapt/opera/cascading-003.xhtml: Added.
+        * css3/device-adapt/opera/cascading-004-expected.txt: Added.
+        * css3/device-adapt/opera/cascading-004.xhtml: Added.
+        * css3/device-adapt/opera/constrain-001-expected.txt: Added.
+        * css3/device-adapt/opera/constrain-001.xhtml: Added.
+        * css3/device-adapt/opera/constrain-002-expected.txt: Added.
+        * css3/device-adapt/opera/constrain-002.xhtml: Added.
+        * css3/device-adapt/opera/constrain-003-expected.txt: Added.
+        * css3/device-adapt/opera/constrain-003.xhtml: Added.
+        * css3/device-adapt/opera/constrain-004-expected.txt: Added.
+        * css3/device-adapt/opera/constrain-004.xhtml: Added.
+        * css3/device-adapt/opera/constrain-005-expected.txt: Added.
+        * css3/device-adapt/opera/constrain-005.xhtml: Added.
+        * css3/device-adapt/opera/constrain-006-expected.txt: Added.
+        * css3/device-adapt/opera/constrain-006.xhtml: Added.
+        * css3/device-adapt/opera/constrain-007-expected.txt: Added.
+        * css3/device-adapt/opera/constrain-007.xhtml: Added.
+        * css3/device-adapt/opera/constrain-008-expected.txt: Added.
+        * css3/device-adapt/opera/constrain-008.xhtml: Added.
+        * css3/device-adapt/opera/constrain-009-expected.txt: Added.
+        * css3/device-adapt/opera/constrain-009.xhtml: Added.
+        * css3/device-adapt/opera/constrain-010-expected.txt: Added.
+        * css3/device-adapt/opera/constrain-010.xhtml: Added.
+        * css3/device-adapt/opera/constrain-011-expected.txt: Added.
+        * css3/device-adapt/opera/constrain-011.xhtml: Added.
+        * css3/device-adapt/opera/constrain-012-expected.txt: Added.
+        * css3/device-adapt/opera/constrain-012.xhtml: Added.
+        * css3/device-adapt/opera/constrain-013-expected.txt: Added.
+        * css3/device-adapt/opera/constrain-013.xhtml: Added.
+        * css3/device-adapt/opera/constrain-014-expected.txt: Added.
+        * css3/device-adapt/opera/constrain-014.xhtml: Added.
+        * css3/device-adapt/opera/constrain-015-expected.txt: Added.
+        * css3/device-adapt/opera/constrain-015.xhtml: Added.
+        * css3/device-adapt/opera/constrain-016-expected.txt: Added.
+        * css3/device-adapt/opera/constrain-016.xhtml: Added.
+        * css3/device-adapt/opera/constrain-017-expected.txt: Added.
+        * css3/device-adapt/opera/constrain-017.xhtml: Added.
+        * css3/device-adapt/opera/constrain-020-expected.txt: Added.
+        * css3/device-adapt/opera/constrain-020.xhtml: Added.
+        * css3/device-adapt/opera/syntax-001-expected.txt: Added.
+        * css3/device-adapt/opera/syntax-001.xhtml: Added.
+        * css3/device-adapt/opera/syntax-002-expected.txt: Added.
+        * css3/device-adapt/opera/syntax-002.xhtml: Added.
+        * css3/device-adapt/opera/syntax-003-expected.txt: Added.
+        * css3/device-adapt/opera/syntax-003.xhtml: Added.
+        * platform/efl/TestExpectations:
+
 2012-11-19  Erik Arvidsson  <arv@chromium.org>
 
         Update DOMException name: SecurityError

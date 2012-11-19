@@ -1,3 +1,88 @@
+2012-11-19  Thiago Marcos P. Santos  <thiago.santos@intel.com>
+
+        Apply the resolved viewport rules
+        https://bugs.webkit.org/show_bug.cgi?id=95964
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        This patch implements the CSS Device Adaptation specification. The
+        WebKit implementation relies on the already implemented Viewport Meta
+        infrastructure to notify the browser of viewport changes.
+
+        The implementation was tests with success on the Qt and EFL ports, but
+        basically every port supporting Viewport Meta should be fine.
+
+        The usage of @-webkit-viewport inside media queries (more tests coming
+        to map all the corner cases) is currently limited when the media query
+        depends on the viewport dimensions itself. Defining the width and height
+        based on screen size will fail on ports reporting the screen
+        size as the size of the browser window instead of the device screen.
+
+        Tests: css3/device-adapt/opera/cascading-001.xhtml
+               css3/device-adapt/opera/cascading-002.xhtml
+               css3/device-adapt/opera/cascading-003.xhtml
+               css3/device-adapt/opera/cascading-004.xhtml
+               css3/device-adapt/opera/constrain-001.xhtml
+               css3/device-adapt/opera/constrain-002.xhtml
+               css3/device-adapt/opera/constrain-003.xhtml
+               css3/device-adapt/opera/constrain-004.xhtml
+               css3/device-adapt/opera/constrain-005.xhtml
+               css3/device-adapt/opera/constrain-006.xhtml
+               css3/device-adapt/opera/constrain-007.xhtml
+               css3/device-adapt/opera/constrain-008.xhtml
+               css3/device-adapt/opera/constrain-009.xhtml
+               css3/device-adapt/opera/constrain-010.xhtml
+               css3/device-adapt/opera/constrain-011.xhtml
+               css3/device-adapt/opera/constrain-012.xhtml
+               css3/device-adapt/opera/constrain-013.xhtml
+               css3/device-adapt/opera/constrain-014.xhtml
+               css3/device-adapt/opera/constrain-015.xhtml
+               css3/device-adapt/opera/constrain-016.xhtml
+               css3/device-adapt/opera/constrain-017.xhtml
+               css3/device-adapt/opera/constrain-020.xhtml
+               css3/device-adapt/opera/syntax-001.xhtml
+               css3/device-adapt/opera/syntax-002.xhtml
+               css3/device-adapt/opera/syntax-003.xhtml
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSAllInOne.cpp:
+        * css/RuleSet.cpp:
+        (WebCore::RuleSet::addRulesFromSheet):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::StyleResolver):
+        (WebCore::StyleResolver::appendAuthorStyleSheets):
+        (WebCore::StyleResolver::~StyleResolver):
+        * css/StyleResolver.h:
+        (StyleResolver):
+        (WebCore::StyleResolver::viewportStyleResolver):
+        * css/ViewportStyleResolver.cpp: Added.
+        (WebCore):
+        (WebCore::ViewportStyleResolver::ViewportStyleResolver):
+        (WebCore::ViewportStyleResolver::addViewportRule):
+        (WebCore::ViewportStyleResolver::clearDocument):
+        (WebCore::ViewportStyleResolver::resolve):
+        (WebCore::ViewportStyleResolver::getViewportArgumentValue):
+        * css/ViewportStyleResolver.h: Added.
+        (WebCore):
+        (ViewportStyleResolver):
+        (WebCore::ViewportStyleResolver::create):
+        * dom/Document.h:
+        (WebCore::Document::setViewportArguments):
+        * dom/ViewportArguments.cpp:
+        (WebCore::compareIgnoringAuto):
+        (WebCore):
+        (WebCore::ViewportArguments::resolve):
+        * dom/ViewportArguments.h:
+        (ViewportAttributes):
+        (WebCore::ViewportArguments::ViewportArguments):
+        (ViewportArguments):
+        (WebCore::ViewportArguments::operator==):
+
 2012-11-19  Erik Arvidsson  <arv@chromium.org>
 
         Update DOMException name: SecurityError

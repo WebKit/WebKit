@@ -73,3 +73,4 @@
 #include "StylePropertyShorthand.cpp"
 #include "StyleResolver.cpp"
 #include "StyleScopeResolver.cpp"
+#include "ViewportStyleResolver.cpp"

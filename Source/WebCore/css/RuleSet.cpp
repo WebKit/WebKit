@@ -312,6 +312,14 @@ void RuleSet::addRulesFromSheet(StyleSheetContents* sheet, const MediaQueryEvalu
                             continue;
                         resolver->addKeyframeStyle(static_cast<StyleRuleKeyframes*>(childRule));
                     }
+#if ENABLE(CSS_DEVICE_ADAPTATION)
+                    else if (childRule->isViewportRule() && resolver && !resolver->affectedByViewportChange()) {
+                        // @viewport should not be scoped.
+                        if (scope)
+                            continue;
+                        resolver->viewportStyleResolver()->addViewportRule(static_cast<StyleRuleViewport*>(childRule));
+                    }
+#endif
                 } // for rules
             } // if rules
         } else if (rule->isFontFaceRule() && resolver) {
@@ -339,6 +347,14 @@ void RuleSet::addRulesFromSheet(StyleSheetContents* sheet, const MediaQueryEvalu
 #if ENABLE(SHADOW_DOM)
         else if (rule->isHostRule())
             resolver->addHostRule(static_cast<StyleRuleHost*>(rule), hasDocumentSecurityOrigin, scope);
+#endif
+#if ENABLE(CSS_DEVICE_ADAPTATION)
+        else if (rule->isViewportRule() && resolver) {
+            // @viewport should not be scoped.
+            if (scope)
+                continue;
+            resolver->viewportStyleResolver()->addViewportRule(static_cast<StyleRuleViewport*>(rule));
+        }
 #endif
     }
     if (m_autoShrinkToFitEnabled)

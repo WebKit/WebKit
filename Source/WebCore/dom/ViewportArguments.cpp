@@ -6,6 +6,7 @@
  * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2011 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
+ * Copyright (C) 2012 Intel Corporation. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -43,6 +44,19 @@ namespace WebCore {
 
 const float ViewportArguments::deprecatedTargetDPI = 160;
 
+static const float& compareIgnoringAuto(const float& value1, const float& value2, const float& (*compare) (const float&, const float&))
+{
+    ASSERT(value1 != ViewportArguments::ValueAuto || value2 != ViewportArguments::ValueAuto);
+
+    if (value1 == ViewportArguments::ValueAuto)
+        return value2;
+
+    if (value2 == ViewportArguments::ValueAuto)
+        return value1;
+
+    return compare(value1, value2);
+}
+
 static inline float clampLengthValue(float value)
 {
     ASSERT(value != ViewportArguments::ValueDeviceWidth);
@@ -68,7 +82,11 @@ static inline float clampScaleValue(float value)
 ViewportAttributes ViewportArguments::resolve(const FloatSize& initialViewportSize, const FloatSize& deviceSize, int defaultWidth) const
 {
     float resultWidth = width;
+    float resultMaxWidth = maxWidth;
+    float resultMinWidth = minWidth;
     float resultHeight = height;
+    float resultMinHeight = minHeight;
+    float resultMaxHeight = maxHeight;
     float resultZoom = zoom;
     float resultMinZoom = minZoom;
     float resultMaxZoom = maxZoom;
@@ -92,6 +110,73 @@ ViewportAttributes ViewportArguments::resolve(const FloatSize& initialViewportSi
         break;
     }
 
+    if (type == ViewportArguments::CSSDeviceAdaptation) {
+        switch (int(resultMinWidth)) {
+        case ViewportArguments::ValueDeviceWidth:
+            resultMinWidth = deviceSize.width();
+            break;
+        case ViewportArguments::ValueDeviceHeight:
+            resultMinWidth = deviceSize.height();
+            break;
+        }
+
+        switch (int(resultMaxWidth)) {
+        case ViewportArguments::ValueDeviceWidth:
+            resultMaxWidth = deviceSize.width();
+            break;
+        case ViewportArguments::ValueDeviceHeight:
+            resultMaxWidth = deviceSize.height();
+            break;
+        }
+
+        switch (int(resultMinHeight)) {
+        case ViewportArguments::ValueDeviceWidth:
+            resultMinHeight = deviceSize.width();
+            break;
+        case ViewportArguments::ValueDeviceHeight:
+            resultMinHeight = deviceSize.height();
+            break;
+        }
+
+        switch (int(resultMaxHeight)) {
+        case ViewportArguments::ValueDeviceWidth:
+            resultMaxHeight = deviceSize.width();
+            break;
+        case ViewportArguments::ValueDeviceHeight:
+            resultMaxHeight = deviceSize.height();
+            break;
+        }
+
+        if (resultMinWidth != ViewportArguments::ValueAuto || resultMaxWidth != ViewportArguments::ValueAuto)
+            resultWidth = compareIgnoringAuto(resultMinWidth, compareIgnoringAuto(resultMaxWidth, deviceSize.width(), min), max);
+
+        if (resultMinHeight != ViewportArguments::ValueAuto || resultMaxHeight != ViewportArguments::ValueAuto)
+            resultHeight = compareIgnoringAuto(resultMinHeight, compareIgnoringAuto(resultMaxHeight, deviceSize.height(), min), max);
+
+        if (resultMinZoom != ViewportArguments::ValueAuto && resultMaxZoom != ViewportArguments::ValueAuto)
+            resultMaxZoom = max(resultMinZoom, resultMaxZoom);
+
+        if (resultZoom != ViewportArguments::ValueAuto)
+            resultZoom = compareIgnoringAuto(resultMinZoom, compareIgnoringAuto(resultMaxZoom, resultZoom, min), max);
+
+        if (resultWidth == ViewportArguments::ValueAuto && resultZoom == ViewportArguments::ValueAuto)
+            resultWidth = deviceSize.width();
+
+        if (resultWidth == ViewportArguments::ValueAuto && resultHeight == ViewportArguments::ValueAuto)
+            resultWidth = deviceSize.width() / resultZoom;
+
+        if (resultWidth == ViewportArguments::ValueAuto)
+            resultWidth = resultHeight * deviceSize.width() / deviceSize.height();
+
+        if (resultHeight == ViewportArguments::ValueAuto)
+            resultHeight = resultWidth * deviceSize.height() / deviceSize.width();
+
+        if (resultZoom != ViewportArguments::ValueAuto || resultMaxZoom != ViewportArguments::ValueAuto) {
+            resultWidth = compareIgnoringAuto(resultWidth, deviceSize.width() / compareIgnoringAuto(resultZoom, resultMaxZoom, min), max);
+            resultHeight = compareIgnoringAuto(resultHeight, deviceSize.height() / compareIgnoringAuto(resultZoom, resultMaxZoom, min), max);
+        }
+    }
+
     // Clamp values to valid range.
     resultWidth = clampLengthValue(resultWidth);
     resultHeight = clampLengthValue(resultHeight);
@@ -100,6 +185,7 @@ ViewportAttributes ViewportArguments::resolve(const FloatSize& initialViewportSi
     resultMaxZoom = clampScaleValue(resultMaxZoom);
 
     ViewportAttributes result;
+    result.orientation = orientation;
 
     // Resolve minimum-scale and maximum-scale values according to spec.
     if (resultMinZoom == ViewportArguments::ValueAuto)
@@ -155,6 +241,7 @@ ViewportAttributes ViewportArguments::resolve(const FloatSize& initialViewportSi
     //    result.initialScale = ViewportArguments::ValueAuto;
 
     result.userScalable = resultUserZoom;
+    result.orientation = orientation;
 
     return result;
 }
