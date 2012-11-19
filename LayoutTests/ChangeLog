@@ -1,3 +1,11 @@
+2012-11-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Chromium rebaseline after r135093.
+
+        * platform/chromium-linux/inspector: Added.
+        * platform/chromium-linux/inspector/console: Added.
+        * platform/chromium-linux/inspector/console/console-format-collections-expected.txt: Added.
+
 2012-11-18  KwangYong Choi  <ky0.choi@samsung.com>
 
         [EFL] Gardening, unskip passing tests
