@@ -1,3 +1,18 @@
+2012-11-19  Andrey Adaikin  <aandrey@chromium.org>
+
+        Web Inspector: [Canvas] if many canvases are being instrumented show the screenshot of the first one
+        https://bugs.webkit.org/show_bug.cgi?id=102522
+
+        Reviewed by Yury Semikhatsky.
+
+        When many canvases are being instrumented we'll want to show replay screenshots for each canvas.
+        Meanwhile, show the screenshot of the first one (instead of the last one), as it's likely to be the "main" canvas.
+        Drive-by: add more typification for the JS compiler.
+        Drive-by: create a new canvas for WebGL replay every time (similar to 2D replay) to avoid problems with resetting the context state.
+
+        * inspector/InjectedScriptCanvasModuleSource.js:
+        (.):
+
 2012-11-19  Kentaro Hara  <haraken@chromium.org>
 
         Remove IDLStructure.pm
