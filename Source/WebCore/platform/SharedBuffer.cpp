@@ -180,6 +180,8 @@ void SharedBuffer::append(const char* data, unsigned length)
 
     if (m_size <= segmentSize) {
         // No need to use segments for small resource data
+        if (m_buffer.isEmpty())
+            m_buffer.reserveInitialCapacity(length);
         m_buffer.append(data, length);
         return;
     }

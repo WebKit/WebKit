@@ -1,3 +1,18 @@
+2012-11-18  Andreas Kling  <akling@apple.com>
+
+        Tighten small SharedBuffers by reserving the exact amount of space needed.
+        <http://webkit.org/b/102625>
+
+        Reviewed by Anders Carlsson.
+
+        When adding the first chunk to a small (<4096 bytes) SharedBuffer, reserve the exact
+        amount of space needed instead of leaving it to Vector<char>::append().
+
+        1.86MB progression on Membuster3.
+
+        * platform/SharedBuffer.cpp:
+        (WebCore::SharedBuffer::append):
+
 2012-11-18  Ryosuke Niwa  <rniwa@webkit.org>
 
         Make namedItem return a node list only in HTMLFormControlsCollection and HTMLOptionsCollection
