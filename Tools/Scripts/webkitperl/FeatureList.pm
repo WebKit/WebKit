@@ -111,6 +111,7 @@ my (
     $orientationEventsSupport,
     $pageVisibilityAPISupport,
     $progressTagSupport,
+    $proximityEventsSupport,
     $quotaSupport,
     $resolutionMediaQuerySupport,
     $registerProtocolHandlerSupport,
@@ -348,6 +349,9 @@ my @features = (
 
     { option => "progress-tag", desc => "Toggle Progress Tag support",
       define => "ENABLE_PROGRESS_ELEMENT", default => 1, value => \$progressTagSupport },
+
+    { option => "proximity-events", desc => "Toggle Proximity Events support",
+      define => "ENABLE_PROXIMITY_EVENTS", default => 0, value => \$proximityEventsSupport },
 
     { option => "quota", desc => "Toggle Quota support",
       define => "ENABLE_QUOTA", default => 0, value => \$quotaSupport },
