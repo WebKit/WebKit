@@ -38,6 +38,7 @@
 #include <wtf/OwnArrayPtr.h>
 #include <wtf/PassOwnArrayPtr.h>
 #include <wtf/Platform.h>
+#include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 #include <wtf/Vector.h>
 
@@ -53,6 +54,11 @@ inline WKRetainPtr<WKStringRef> toWK(JSStringRef string)
 inline WKRetainPtr<WKStringRef> toWK(JSRetainPtr<JSStringRef> string)
 {
     return toWK(string.get());
+}
+
+inline WKRetainPtr<WKStringRef> toWK(const WTF::String& string)
+{
+    return adoptWK(WKStringCreateWithUTF8CString(string.utf8().data()));
 }
 
 inline JSRetainPtr<JSStringRef> toJS(WKStringRef string)

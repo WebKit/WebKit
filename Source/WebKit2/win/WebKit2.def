@@ -158,6 +158,7 @@ EXPORTS
         ??0String@WTF@@QAE@PBD@Z
         ??0String@WTF@@QAE@PB_W@Z
         ??0String@WTF@@QAE@PB_WI@Z
+        ??0String@WTF@@QAE@VASCIILiteral@1@@Z
         ??1SerializedScriptValue@WebCore@@QAE@XZ
         ?absoluteBoundingBoxRect@RenderObject@WebCore@@QBE?AVIntRect@2@_N@Z
         ?absoluteBoundingBoxRectIgnoringTransforms@RenderObject@WebCore@@QBE?AVIntRect@2@XZ
@@ -183,6 +184,7 @@ EXPORTS
         ?find@StringImpl@WTF@@QAEIPAV12@I@Z
         ?find@StringImpl@WTF@@QAEIPAV12@@Z
         ?absoluteCaretBounds@FrameSelection@WebCore@@QAE?AVIntRect@2@XZ
+        ?fromUTF8@String@WTF@@SA?AV12@PBE@Z
         ?fromUTF8WithLatin1Fallback@String@WTF@@SA?AV12@PBEI@Z
         ?garbageCollectDocumentResources@CachedResourceLoader@WebCore@@QAEXXZ
         ?getCachedDOMStructure@WebCore@@YAPAVStructure@JSC@@PAVJSDOMGlobalObject@1@PBUClassInfo@3@@Z

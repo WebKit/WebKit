@@ -1,3 +1,23 @@
+2012-11-19  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [WK2][WTR] Memory leak in TestController::initialize()
+        https://bugs.webkit.org/show_bug.cgi?id=102616
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Remove call to WKStringCreateWithUTF8CString() to construct
+        the icon database path which was leaking memory since the
+        returned WKStringRef was not adopted. The code now uses
+        WTF::String instead of std::string and converts it to a
+        WKStringRef using toWK().
+
+        * WebKitTestRunner/StringFunctions.h:
+        (WTR::toWK): Overload toWK() to take a WTF::String in
+        argument.
+        (WTR):
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::initialize):
+
 2012-11-19  Kentaro Hara  <haraken@chromium.org>
 
         Remove IDLStructure.pm
