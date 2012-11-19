@@ -31,6 +31,10 @@
 #include "config.h"
 #include "PlatformMemoryInstrumentation.h"
 
+#if ENABLE(WEB_AUDIO)
+#include "HRTFDatabaseLoader.h"
+#endif
+
 namespace WebCore {
 
 MemoryObjectType PlatformMemoryTypes::Image = "Page.Image";
@@ -38,5 +42,14 @@ MemoryObjectType PlatformMemoryTypes::Loader = "Page.Loader";
 
 MemoryObjectType PlatformMemoryTypes::Audio = "Page.Audio";
 MemoryObjectType PlatformMemoryTypes::AudioSharedData = "Page.Audio.SharedData";
+
+void PlatformMemoryInstrumentation::reportMemoryUsage(WTF::MemoryInstrumentation* memoryInstrumentation)
+{
+#if ENABLE(WEB_AUDIO)
+    memoryInstrumentation->addRootObject(HRTFDatabaseLoader::loader());
+#else
+    UNUSED_PARAM(memoryInstrumentation);
+#endif
+}
 
 } // namespace WebCore

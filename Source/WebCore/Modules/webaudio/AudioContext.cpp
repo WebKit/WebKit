@@ -135,7 +135,7 @@ PassRefPtr<AudioContext> AudioContext::createOfflineContext(Document* document, 
         return 0;
     }
 
-    RefPtr<AudioContext> audioContext(new AudioContext(document, numberOfChannels, numberOfFrames, sampleRate));
+    RefPtr<AudioContext> audioContext(adoptRef(new AudioContext(document, numberOfChannels, numberOfFrames, sampleRate)));
     audioContext->suspendIfNeeded();
     return audioContext.release();
 }
@@ -143,6 +143,7 @@ PassRefPtr<AudioContext> AudioContext::createOfflineContext(Document* document, 
 // Constructor for rendering to the audio hardware.
 AudioContext::AudioContext(Document* document)
     : ActiveDOMObject(document, this)
+    , m_isStopScheduled(false)
     , m_isInitialized(false)
     , m_isAudioThreadFinished(false)
     , m_document(document)
@@ -169,6 +170,7 @@ AudioContext::AudioContext(Document* document)
 // Constructor for offline (non-realtime) rendering.
 AudioContext::AudioContext(Document* document, unsigned numberOfChannels, size_t numberOfFrames, float sampleRate)
     : ActiveDOMObject(document, this)
+    , m_isStopScheduled(false)
     , m_isInitialized(false)
     , m_isAudioThreadFinished(false)
     , m_document(document)
@@ -192,6 +194,10 @@ AudioContext::AudioContext(Document* document, unsigned numberOfChannels, size_t
 
 void AudioContext::constructCommon()
 {
+    // According to spec AudioContext must die only after page navigate.
+    // Lets mark it as ActiveDOMObject with pending activity and unmark it in clear method.
+    setPendingActivity(this);
+
 #if USE(GSTREAMER)
     initializeGStreamer();
 #endif
@@ -207,6 +213,8 @@ AudioContext::~AudioContext()
     fprintf(stderr, "%p: AudioContext::~AudioContext()\n", this);
 #endif
     // AudioNodes keep a reference to their context, so there should be no way to be in the destructor if there are still AudioNodes around.
+    ASSERT(!m_isInitialized);
+    ASSERT(m_isStopScheduled);
     ASSERT(!m_nodesToDelete.size());
     ASSERT(!m_referencedNodes.size());
     ASSERT(!m_finishedNodes.size());
@@ -238,35 +246,45 @@ void AudioContext::lazyInitialize()
     }
 }
 
+void AudioContext::clear()
+{
+    // We have to release our reference to the destination node before the context will ever be deleted since the destination node holds a reference to the context.
+    if (m_destinationNode)
+        m_destinationNode.clear();
+
+    // Audio thread is dead. Nobody will schedule node deletion action. Let's do it ourselves.
+    do {
+        deleteMarkedNodes();
+        m_nodesToDelete.append(m_nodesMarkedForDeletion);
+        m_nodesMarkedForDeletion.clear();
+    } while (m_nodesToDelete.size());
+
+    // It was set in constructCommon.
+    unsetPendingActivity(this);
+}
+
 void AudioContext::uninitialize()
 {
     ASSERT(isMainThread());
 
-    if (m_isInitialized) {
-        // Protect this object from being deleted before we finish uninitializing.
-        RefPtr<AudioContext> protect(this);
+    if (!m_isInitialized)
+        return;
 
-        // This stops the audio thread and all audio rendering.
-        m_destinationNode->uninitialize();
+    // This stops the audio thread and all audio rendering.
+    m_destinationNode->uninitialize();
 
-        // Don't allow the context to initialize a second time after it's already been explicitly uninitialized.
-        m_isAudioThreadFinished = true;
+    // Don't allow the context to initialize a second time after it's already been explicitly uninitialized.
+    m_isAudioThreadFinished = true;
 
-        // We have to release our reference to the destination node before the context will ever be deleted since the destination node holds a reference to the context.
-        m_destinationNode.clear();
-
-        if (!isOfflineContext()) {
-            ASSERT(s_hardwareContextCount);
-            --s_hardwareContextCount;
-        }
-        
-        // Get rid of the sources which may still be playing.
-        derefUnfinishedSourceNodes();
-
-        deleteMarkedNodes();
-
-        m_isInitialized = false;
+    if (!isOfflineContext()) {
+        ASSERT(s_hardwareContextCount);
+        --s_hardwareContextCount;
     }
+
+    // Get rid of the sources which may still be playing.
+    derefUnfinishedSourceNodes();
+
+    m_isInitialized = false;
 }
 
 bool AudioContext::isInitialized() const
@@ -283,7 +301,7 @@ bool AudioContext::isRunnable() const
     return m_hrtfDatabaseLoader->isLoaded();
 }
 
-void AudioContext::uninitializeDispatch(void* userData)
+void AudioContext::stopDispatch(void* userData)
 {
     AudioContext* context = reinterpret_cast<AudioContext*>(userData);
     ASSERT(context);
@@ -291,17 +309,23 @@ void AudioContext::uninitializeDispatch(void* userData)
         return;
 
     context->uninitialize();
+    context->clear();
 }
 
 void AudioContext::stop()
 {
     m_document = 0; // document is going away
 
+    // Usually ScriptExecutionContext calls stop twice.
+    if (m_isStopScheduled)
+        return;
+    m_isStopScheduled = true;
+
     // Don't call uninitialize() immediately here because the ScriptExecutionContext is in the middle
     // of dealing with all of its ActiveDOMObjects at this point. uninitialize() can de-reference other
     // ActiveDOMObjects so let's schedule uninitialize() to be called later.
     // FIXME: see if there's a more direct way to handle this issue.
-    callOnMainThread(uninitializeDispatch, this);
+    callOnMainThread(stopDispatch, this);
 }
 
 Document* AudioContext::document() const
@@ -770,7 +794,11 @@ void AudioContext::handleDeferredFinishDerefs()
 void AudioContext::markForDeletion(AudioNode* node)
 {
     ASSERT(isGraphOwner());
-    m_nodesMarkedForDeletion.append(node);
+
+    if (isAudioThreadFinished())
+        m_nodesToDelete.append(node);
+    else
+        m_nodesMarkedForDeletion.append(node);
 
     // This is probably the best time for us to remove the node from automatic pull list,
     // since all connections are gone and we hold the graph lock. Then when handlePostRenderTasks()
@@ -788,8 +816,7 @@ void AudioContext::scheduleNodeDeletion()
 
     // Make sure to call deleteMarkedNodes() on main thread.    
     if (m_nodesMarkedForDeletion.size() && !m_isDeletionScheduled) {
-        for (unsigned i = 0; i < m_nodesMarkedForDeletion.size(); ++i)
-            m_nodesToDelete.append(m_nodesMarkedForDeletion[i]);
+        m_nodesToDelete.append(m_nodesMarkedForDeletion);
         m_nodesMarkedForDeletion.clear();
 
         m_isDeletionScheduled = true;
@@ -835,7 +862,7 @@ void AudioContext::deleteMarkedNodes()
         // Finally, delete it.
         delete node;
     }
-    
+
     m_isDeletionScheduled = false;
 }
 

@@ -294,3 +294,4 @@ webkit.org/b/102201 fast/dom/Window/open-window-min-size.html [ Failure ]
 webkit.org/b/102202 inspector/timeline/timeline-timer-fired-from-eval-call-site.html [ Failure ]
 
 webkit.org/b/102216 inspector-protocol/nmi-webaudio.html [ Failure ]
+webkit.org/b/102216 inspector-protocol/nmi-webaudio-leak-test.html [ Failure ]

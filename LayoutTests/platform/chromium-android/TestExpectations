@@ -57,6 +57,9 @@ crbug.com/145338 http/tests/notifications
 crbug.com/145338 platform/chromium/fast/forms/color
 crbug.com/145338 platform/chromium/media/video-capture-preview.html # Uses mediastream
 crbug.com/145338 webaudio
+crbug.com/145338 inspector-protocol/nmi-webaudio.html
+crbug.com/145338 inspector-protocol/nmi-webaudio-leak-test.html
+
 
 # This test is only for GTK which is not applicable to Android.
 platform/chromium-linux/fast/text/chromium-linux-fontconfig-renderstyle.html [ WontFix ]

@@ -287,6 +287,9 @@ webkit.org/b/99027 fast/css/image-set-setting.html [ Skip ]
 
 # For now, Web Audio API is disabled
 webkit.org/b/67187 webaudio [ Skip ]
+webkit.org/b/67187 inspector-protocol/nmi-webaudio.html
+webkit.org/b/67187 inspector-protocol/nmi-webaudio-leak-test.html
+
 # These tests include proprietary codecs.
 webkit.org/b/67187 webaudio/codec-tests
 

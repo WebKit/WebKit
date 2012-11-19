@@ -1,0 +1,105 @@
+<html>
+<head>
+<script src="../http/tests/inspector-protocol/resources/protocol-test.js"></script>
+<script>
+
+function runTestOnlyOnce()
+{
+    if (window.testFirstRun)
+        return;
+    window.testFirstRun = 1;
+
+    runTest();
+}
+
+function navigateIFrame()
+{
+    var iframe = document.getElementById("iframe");
+    iframe.src = "resources/blank.html";
+}
+
+function test()
+{
+    function sizeForType(entry, typeNames)
+    {
+        for (var index = 0; index < typeNames.length; ++index) {
+            var typeName = typeNames[index];
+            var found = 0;
+            for (var i = 0; i < entry.children.length; ++i) {
+                var childEntry = entry.children[i];
+                if (childEntry.name === typeName) {
+                    if (index === typeNames.length - 1)
+                        return childEntry.size;
+
+                    if (!childEntry.children)
+                        return -1;
+
+                    entry = childEntry;
+                    found = 1;
+                    break;
+                }
+            }
+            if (!found)
+                return -1;
+        }
+
+        return -1;
+    }
+
+    var pivotSize = 15000000;
+
+    function noAudioSharedData(messageObject)
+    {
+        var size = sizeForType(messageObject["result"]["distribution"], ["Page", "Audio"]);
+        if (size === -1)
+            InspectorTest.log("PASS: No Page.Audio data found");
+        else
+            InspectorTest.log("FAIL: " + size + " bytes of Page.Audio data was found");
+        InspectorTest.completeTest();
+    }
+
+    function iFrameNavigated(messageObject) {
+        InspectorTest.log("PASS: IFrame was navigated to resources/blank.html");
+        InspectorTest.sendCommand('Profiler.collectGarbage', {}, function() { } );
+        InspectorTest.log("Action: Run GC and check Page.Audio data size");
+        InspectorTest.sendCommand('Memory.getProcessMemoryDistribution', {}, noAudioSharedData);
+    }
+
+    function waitForSharedAudioData(messageObject) {
+        var size = sizeForType(messageObject["result"]["distribution"], ["Page", "Audio"]);
+        if (size === -1) {
+            InspectorTest.log("FAIL: No Page.Audio data was found.");
+            InspectorTest.completeTest();
+            return;
+        }
+        if (size < pivotSize)
+            InspectorTest.sendCommand('Memory.getProcessMemoryDistribution', {}, waitForSharedAudioData);
+        else {
+            InspectorTest.log("PASS: Memory size for Page.Audio more than " + pivotSize);
+
+            InspectorTest.sendCommand('Page.enable', {}, function() { } );
+
+            InspectorTest.log("Action: Navigate IFrame to resources/blank.html");
+            InspectorTest.eventHandler["Page.frameNavigated"] = iFrameNavigated;
+            InspectorTest.sendCommand('Runtime.evaluate', {expression: 'navigateIFrame()'}, function() { } );
+        }
+    }
+
+    InspectorTest.log("");
+    InspectorTest.log("Action: Wait for Page.Audio data");
+    InspectorTest.sendCommand('Memory.getProcessMemoryDistribution', {}, waitForSharedAudioData);
+}
+</script>
+</head>
+<body onload="testRunner.waitUntilDone()">
+This test is checking that AudioContext is deleting after navigation.
+It is not possible to count AudioContext objects directly.
+But we could use Native Memory Snapshot which has information about Page.Audio.SharedData.
+All the shared data are retained by HRTFDatabaseLoader refcounted singleton
+and Native Memory Instrumentation is visiting it via public getter.
+
+<iframe id="iframe" onLoad="runTestOnlyOnce()" src="resources/audio-context.html" >
+</iframe>
+
+</body>
+</html>
