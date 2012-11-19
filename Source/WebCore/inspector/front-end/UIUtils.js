@@ -636,56 +636,59 @@ WebInspector.startEditing = function(element, config)
 }
 
 /**
+ * @param {number} seconds
  * @param {boolean=} higherResolution
+ * @return {string}
  */
 Number.secondsToString = function(seconds, higherResolution)
 {
+    if (!isFinite(seconds))
+        return "-";
+
     if (seconds === 0)
         return "0";
 
     var ms = seconds * 1000;
     if (higherResolution && ms < 1000)
-        return WebInspector.UIString("%.3fms", ms);
+        return WebInspector.UIString("%.3f\u2009ms", ms);
     else if (ms < 1000)
-        return WebInspector.UIString("%.0fms", ms);
+        return WebInspector.UIString("%.0f\u2009ms", ms);
 
     if (seconds < 60)
-        return WebInspector.UIString("%.2fs", seconds);
+        return WebInspector.UIString("%.2f\u2009s", seconds);
 
     var minutes = seconds / 60;
     if (minutes < 60)
-        return WebInspector.UIString("%.1fmin", minutes);
+        return WebInspector.UIString("%.1f\u2009min", minutes);
 
     var hours = minutes / 60;
     if (hours < 24)
-        return WebInspector.UIString("%.1fhrs", hours);
+        return WebInspector.UIString("%.1f\u2009hrs", hours);
 
     var days = hours / 24;
-    return WebInspector.UIString("%.1f days", days);
+    return WebInspector.UIString("%.1f\u2009days", days);
 }
 
 /**
- * @param {boolean=} higherResolution
+ * @param {number} bytes
+ * @return {string}
  */
-Number.bytesToString = function(bytes, higherResolution)
+Number.bytesToString = function(bytes)
 {
-    if (typeof higherResolution === "undefined")
-        higherResolution = true;
-
     if (bytes < 1024)
-        return WebInspector.UIString("%.0fB", bytes);
+        return WebInspector.UIString("%.0f\u2009B", bytes);
 
     var kilobytes = bytes / 1024;
-    if (higherResolution && kilobytes < 1024)
-        return WebInspector.UIString("%.2fKB", kilobytes);
-    else if (kilobytes < 1024)
-        return WebInspector.UIString("%.0fKB", kilobytes);
+    if (kilobytes < 100)
+        return WebInspector.UIString("%.1f\u2009KB", kilobytes);
+    if (kilobytes < 1024)
+        return WebInspector.UIString("%.0f\u2009KB", kilobytes);
 
     var megabytes = kilobytes / 1024;
-    if (higherResolution)
-        return WebInspector.UIString("%.2fMB", megabytes);
+    if (megabytes < 100)
+        return WebInspector.UIString("%.1f\u2009MB", megabytes);
     else
-        return WebInspector.UIString("%.0fMB", megabytes);
+        return WebInspector.UIString("%.0f\u2009MB", megabytes);
 }
 
 Number.withThousandsSeparator = function(num)

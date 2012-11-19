@@ -1,3 +1,20 @@
+2012-11-19  Alexei Filippov  <alph@chromium.org>
+
+        Web Inspector: refine time and bytes output formatting
+        https://bugs.webkit.org/show_bug.cgi?id=102265
+
+        Reviewed by Yury Semikhatsky.
+
+        Add a space between number and unit, otherwise it's hard to read things like 88B.
+        Reduce a number of decimal digits in KB and MB formats. 1023.45KB seems to be too detailed.
+
+        * English.lproj/localizedStrings.js:
+        * inspector/front-end/CookiesTable.js:
+        (WebInspector.CookiesTable.prototype._createGridNode):
+        * inspector/front-end/UIUtils.js:
+        (Number.secondsToString):
+        (Number.bytesToString):
+
 2012-11-19  Eugene Klyuchnikov  <eustas.bug@gmail.com>
 
         Web Inspector: Timeline: DomContentLoaded event labeled incorrectly

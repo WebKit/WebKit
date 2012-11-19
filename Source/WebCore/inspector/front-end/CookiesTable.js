@@ -212,7 +212,7 @@ WebInspector.CookiesTable.prototype = {
         if (cookie.type === WebInspector.Cookie.Type.Request)
             data[4] = "";
         else if (cookie.maxAge())
-            data[4] = Number.secondsToString(cookie.maxAge());
+            data[4] = Number.secondsToString(parseInt(cookie.maxAge(), 10));
         else if (cookie.expires())
             data[4] = new Date(cookie.expires()).toGMTString();
         else

@@ -23,16 +23,16 @@ Page reloaded.
       should be moved to the document head in 
       audits-panel-functional.html
     Remove unused CSS rules (4)
-     209B (100%) of CSS is not used by the current page.
-      Inline block #1: 69B (100%) is not used by the current page.
+     209 B (100%) of CSS is not used by the current page.
+      Inline block #1: 69 B (100%) is not used by the current page.
        .unused
        audits-style1.css
-      : 43B (100%) is not used by the current page.
+      : 43 B (100%) is not used by the current page.
        .some-style
-      Inline block #2: 54B (100%) is not used by the current page.
+      Inline block #2: 54 B (100%) is not used by the current page.
        .violation
        audits-style1.css
-      : 43B (100%) is not used by the current page.
+      : 43 B (100%) is not used by the current page.
        .some-style
     Use normal CSS property names instead of vendor-prefixed ones (1)
       audits-panel-functional.html
