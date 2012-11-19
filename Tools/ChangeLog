@@ -1,3 +1,20 @@
+2012-11-19  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        [garden-o-matic] Enable serving garden-o-matic with gardeningserver.
+        https://bugs.webkit.org/show_bug.cgi?id=102703
+
+        Reviewed by Ojan Vafai.
+
+        To enable gardening from a Chrome OS device, we need the ability to serve garden-o-matic
+        from the same origin as the gardening server. This change gently massages the current
+        logic to adapt an extension-sniffing-based approach of identifying static files,
+        rather than requiring an explicit list.
+
+        * Scripts/webkitpy/tool/servers/reflectionhandler.py:
+        (ReflectionHandler): Replaced STATIC_FILE_NAMES with STATIC_FILE_EXTENSIONS.
+        (ReflectionHandler._handle_request): Changed the logic to smell for extensions, rather than specific files.
+        * Scripts/webkitpy/tool/servers/reflectionhandler_unittest.py: Added.
+
 2012-11-19  Ojan Vafai  <ojan@chromium.org>
 
         Add DOM and HTML watchlists and add myself to a bunch of lists

@@ -44,8 +44,8 @@ import BaseHTTPServer
 
 
 class ReflectionHandler(BaseHTTPServer.BaseHTTPRequestHandler):
+    STATIC_FILE_EXTENSIONS = ['.js', '.css', '.html']
     # Subclasses should override.
-    STATIC_FILE_NAMES = None
     STATIC_FILE_DIRECTORY = None
 
     # Setting this flag to True causes the server to send
@@ -78,7 +78,8 @@ class ReflectionHandler(BaseHTTPServer.BaseHTTPRequestHandler):
             self.query = {}
         function_or_file_name = path[1:] or "index.html"
 
-        if function_or_file_name in self.STATIC_FILE_NAMES:
+        _, extension = os.path.splitext(self.path)
+        if extension in self.STATIC_FILE_EXTENSIONS:
             self._serve_static_file(function_or_file_name)
             return
 
