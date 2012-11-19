@@ -53,7 +53,6 @@ class ConsoleMessage {
 public:
     ConsoleMessage(MessageSource, MessageType, MessageLevel, const String& m, const String& u, unsigned li, unsigned long requestIdentifier = 0);
     ConsoleMessage(MessageSource, MessageType, MessageLevel, const String& m, PassRefPtr<ScriptArguments>, PassRefPtr<ScriptCallStack>, unsigned long requestIdentifier = 0);
-    ConsoleMessage(MessageSource, MessageType, MessageLevel, const String& m, const String& responseUrl, unsigned long requestIdentifier);
     ~ConsoleMessage();
 
     void addToFrontend(InspectorFrontend::Console*, InjectedScriptManager*, bool generatePreview);

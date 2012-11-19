@@ -78,18 +78,6 @@ ConsoleMessage::ConsoleMessage(MessageSource s, MessageType t, MessageLevel l, c
     m_callStack = callStack;
 }
 
-ConsoleMessage::ConsoleMessage(MessageSource s, MessageType t, MessageLevel l, const String& m, const String& responseUrl, unsigned long requestIdentifier)
-    : m_source(s)
-    , m_type(t)
-    , m_level(l)
-    , m_message(m)
-    , m_url(responseUrl)
-    , m_line(0)
-    , m_repeatCount(1)
-    , m_requestId(IdentifiersFactory::requestId(requestIdentifier))
-{
-}
-
 ConsoleMessage::~ConsoleMessage()
 {
 }

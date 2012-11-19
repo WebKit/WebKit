@@ -1,3 +1,18 @@
+2012-11-18  Mike West  <mkwst@chromium.org>
+
+        Web Inspector: Remove unused ConsoleMessage constructor.
+        https://bugs.webkit.org/show_bug.cgi?id=102590
+
+        Reviewed by Brent Fulgham.
+
+        We currently have a ConsoleMessage constructor that's unused. Let's
+        kill it.
+
+        * inspector/ConsoleMessage.cpp:
+        * inspector/ConsoleMessage.h:
+        (ConsoleMessage):
+            Removing an unused constructor variant.
+
 2012-11-18  Andreas Kling  <akling@apple.com>
 
         StyledElement: Make handling the "style" attribute a litte faster.
