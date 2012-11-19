@@ -40,7 +40,6 @@ SCRIPTS = \
     $(WebCoreScripts)/CodeGenerator.pm \
     $(WebKitTestRunner)/InjectedBundle/Bindings/CodeGeneratorTestRunner.pm \
     $(WebCoreScripts)/IDLParser.pm \
-    $(WebCoreScripts)/IDLStructure.pm \
     $(WebCoreScripts)/generate-bindings.pl \
 #
 

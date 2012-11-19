@@ -150,7 +150,6 @@ code_generation_dependencies = \
 	Tools/WebKitTestRunner/InjectedBundle/Bindings/CodeGeneratorTestRunner.pm \
 	Source/WebCore/bindings/scripts/CodeGenerator.pm \
 	Source/WebCore/bindings/scripts/IDLParser.pm \
-	Source/WebCore/bindings/scripts/IDLStructure.pm \
 	Source/WebCore/bindings/scripts/InFilesParser.pm \
 	Source/WebCore/bindings/scripts/generate-bindings.pl
 
@@ -168,7 +167,6 @@ EXTRA_DIST += \
 	$(srcdir)/Tools/WebKitTestRunner/InjectedBundle/Bindings/CodeGeneratorTestRunner.pm \
 	$(srcdir)/Source/WebCore/bindings/scripts/CodeGenerator.pm \
 	$(srcdir)/Source/WebCore/bindings/scripts/IDLParser.pm \
-	$(srcdir)/Source/WebCore/bindings/scripts/IDLStructure.pm \
 	$(srcdir)/Source/WebCore/bindings/scripts/InFilesParser.pm \
 	$(srcdir)/Source/WebCore/bindings/scripts/generate-bindings.pl \
 	$(shell ls $(srcdir)/Tools/WebKitTestRunner/InjectedBundle/Bindings/*.idl)

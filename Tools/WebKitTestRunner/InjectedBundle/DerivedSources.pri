@@ -29,7 +29,6 @@ idl.commands = perl -I$${ROOT_WEBKIT_DIR}/Source/WebCore/bindings/scripts -I$$PW
 idl.depends = $${ROOT_WEBKIT_DIR}/Source/WebCore/bindings/scripts/CodeGenerator.pm \
               $$PWD/Bindings/CodeGeneratorTestRunner.pm \
               $${ROOT_WEBKIT_DIR}/Source/WebCore/bindings/scripts/IDLParser.pm \
-              $${ROOT_WEBKIT_DIR}/Source/WebCore/bindings/scripts/IDLStructure.pm \
               $${ROOT_WEBKIT_DIR}/Source/WebCore/bindings/scripts/InFilesParser.pm \
               $${ROOT_WEBKIT_DIR}/Source/WebCore/bindings/scripts/generate-bindings.pl
 GENERATORS += idl

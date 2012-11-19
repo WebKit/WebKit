@@ -1,3 +1,21 @@
+2012-11-19  Kentaro Hara  <haraken@chromium.org>
+
+        Remove IDLStructure.pm
+        https://bugs.webkit.org/show_bug.cgi?id=102642
+
+        Reviewed by Adam Barth.
+
+        Previously IDLStructure.pm was full of regular expressions to
+        parse IDL files. Now a new IDL parser is implemented, IDLStructure.pm
+        just contains several data structures for the IDL parser. We can
+        move them to IDLParser.pm and thus remove IDLStructure.pm.
+
+        No tests. No change in generated code.
+
+        * WebKitTestRunner/DerivedSources.make:
+        * WebKitTestRunner/GNUmakefile.am:
+        * WebKitTestRunner/InjectedBundle/DerivedSources.pri:
+
 2012-11-18  KyungTae Kim  <ktf.kim@samsung.com>
 
         [EFL] Not to include "ewk_view_private.h" in Tools
