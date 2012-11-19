@@ -31,7 +31,6 @@ namespace WebCore {
 
 class FormAssociatedElement;
 class HTMLCollection;
-class HTMLFormCollection;
 
 class HTMLFieldSetElement : public HTMLFormControlElement {
 public:

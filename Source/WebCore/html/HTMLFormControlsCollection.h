@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef HTMLFormCollection_h
-#define HTMLFormCollection_h
+#ifndef HTMLFormControlsCollection_h
+#define HTMLFormControlsCollection_h
 
 #include "HTMLCollection.h"
 
@@ -31,19 +31,20 @@ class FormAssociatedElement;
 class HTMLElement;
 class HTMLImageElement;
 class QualifiedName;
+
 // This class is just a big hack to find form elements even in malformed HTML elements.
 // The famous <table><tr><form><td> problem.
 
-class HTMLFormCollection : public HTMLCollection {
+class HTMLFormControlsCollection : public HTMLCollection {
 public:
-    static PassRefPtr<HTMLFormCollection> create(Element*);
+    static PassRefPtr<HTMLFormControlsCollection> create(Element*);
 
-    virtual ~HTMLFormCollection();
+    virtual ~HTMLFormControlsCollection();
 
     virtual Node* namedItem(const AtomicString& name) const;
 
 private:
-    HTMLFormCollection(Element*);
+    HTMLFormControlsCollection(Element*);
 
     virtual void updateNameCache() const;
 
@@ -52,6 +53,6 @@ private:
     virtual Element* virtualItemAfter(unsigned& offsetInArray, Element*) const OVERRIDE;
 };
 
-} //namespace
+} // namespace
 
 #endif

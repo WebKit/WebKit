@@ -89,6 +89,7 @@
 #include "JSHTMLDocumentCustom.cpp"
 #include "JSHTMLElementCustom.cpp"
 #include "JSHTMLEmbedElementCustom.cpp"
+#include "JSHTMLFormControlsCollectionCustom.cpp"
 #include "JSHTMLFormElementCustom.cpp"
 #include "JSHTMLFrameElementCustom.cpp"
 #include "JSHTMLFrameSetElementCustom.cpp"

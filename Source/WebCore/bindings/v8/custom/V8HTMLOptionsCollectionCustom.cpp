@@ -39,9 +39,50 @@
 #include "V8Collection.h"
 #include "V8HTMLOptionElement.h"
 #include "V8HTMLSelectElementCustom.h"
+#include "V8NamedNodesCollection.h"
 #include "V8Node.h"
+#include "V8NodeList.h"
 
 namespace WebCore {
+
+static v8::Handle<v8::Value> getNamedItems(HTMLOptionsCollection* collection, const AtomicString& name, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate)
+{
+    Vector<RefPtr<Node> > namedItems;
+    collection->namedItems(name, namedItems);
+
+    if (!namedItems.size())
+        return v8Undefined();
+
+    if (namedItems.size() == 1)
+        return toV8(namedItems.at(0).release(), creationContext, isolate);
+
+    return toV8(V8NamedNodesCollection::create(namedItems), creationContext, isolate);
+}
+
+v8::Handle<v8::Value> V8HTMLOptionsCollection::namedPropertyGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+{
+    INC_STATS("DOM.HTMLCollection.NamedPropertyGetter");
+
+    if (!info.Holder()->GetRealNamedPropertyInPrototypeChain(name).IsEmpty())
+        return v8Undefined();
+    if (info.Holder()->HasRealNamedCallbackProperty(name))
+        return v8Undefined();
+
+    HTMLOptionsCollection* imp = V8HTMLOptionsCollection::toNative(info.Holder());
+    return getNamedItems(imp, toWebCoreAtomicString(name), info.Holder(), info.GetIsolate());
+}
+
+v8::Handle<v8::Value> V8HTMLOptionsCollection::namedItemCallback(const v8::Arguments& args)
+{
+    INC_STATS("DOM.HTMLCollection.namedItem()");
+    HTMLOptionsCollection* imp = V8HTMLOptionsCollection::toNative(args.Holder());
+    v8::Handle<v8::Value> result = getNamedItems(imp, toWebCoreString(args[0]), args.Holder(), args.GetIsolate());
+
+    if (result.IsEmpty())
+        return v8::Undefined(args.GetIsolate());
+
+    return result;
+}
 
 v8::Handle<v8::Value> V8HTMLOptionsCollection::removeCallback(const v8::Arguments& args)
 {

@@ -1,3 +1,29 @@
+2012-11-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Make namedItem return a node list only in HTMLFormControlsCollection and HTMLOptionsCollection
+        https://bugs.webkit.org/show_bug.cgi?id=101311
+
+        Reviewed by Darin Adler.
+
+        Added a regression test to ensure form.elements and select.options use correct interfaces,
+        and named getter for those two properties return a NodeList when there are multiple matches.
+
+        Also added appropriate IDL options to HTMLOptionsCollection.idl.
+
+        * fast/dom/collection-nameditem-move-between-documents-expected.txt: Rebaselined since namedItem
+        now correctly returns null when there is no match. This test result demonstrates a bug that
+        HTMLAllCollection doesn't inherit from HTMLCollection.
+        * fast/dom/collection-nameditem-move-between-documents.html: Ditto.
+        * fast/dom/dom-constructors-expected.txt: Rebaselined.
+        * fast/dom/html-collections-named-getter-expected.txt: Added.
+        * fast/dom/html-collections-named-getter.html: Added.
+        * fast/dom/wrapper-classes-expected.txt: Rebaselined. Since we're exposing HTMLOptionsCollection
+        on the window object, the constructor property of an instance of HTMLOptionsCollection object
+        shows up as a function. We should update the test to support this behavior in the future.
+        * inspector/console/console-format-collections-expected.txt: Rebaselined.
+        * platform/chromium/fast/dom/gc-9-expected.txt: Rebaselined since a test case for
+        HTMLOptionsCollection now passes.
+
 2012-11-18  Kentaro Hara  <haraken@chromium.org>
 
         Unreviewed.

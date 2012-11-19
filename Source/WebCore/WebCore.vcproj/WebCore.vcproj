@@ -6990,6 +6990,62 @@
 				>
 			</File>
 			<File
+				RelativePath="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\JSHTMLFormControlsCollection.cpp"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug_Cairo_CFLite|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release_Cairo_CFLite|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug_All|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Production|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\JSHTMLFormControlsCollection.h"
+				>
+			</File>
+			<File
 				RelativePath="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\JSHTMLFormElement.cpp"
 				>
 				<FileConfiguration
@@ -60506,11 +60562,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\html\HTMLFormCollection.cpp"
+				RelativePath="..\html\HTMLFormControlsCollection.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\html\HTMLFormCollection.h"
+				RelativePath="..\html\HTMLFormControlsCollection.h"
 				>
 			</File>
 			<File
@@ -68051,6 +68107,58 @@
 				<File
 					RelativePath="..\bindings\js\JSHTMLEmbedElementCustom.h"
 					>
+				</File>
+				<File
+					RelativePath="..\bindings\js\JSHTMLFormControlsCollectionCustom.cpp"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug_Cairo_CFLite|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release_Cairo_CFLite|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug_All|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Production|Win32"
+						ExcludedFromBuild="true"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+						/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\bindings\js\JSHTMLFormElementCustom.cpp"

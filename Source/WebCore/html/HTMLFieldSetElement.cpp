@@ -25,7 +25,7 @@
 #include "config.h"
 #include "HTMLFieldSetElement.h"
 
-#include "HTMLFormCollection.h"
+#include "HTMLCollection.h"
 #include "HTMLLegendElement.h"
 #include "HTMLNames.h"
 #include "HTMLObjectElement.h"

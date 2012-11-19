@@ -38,7 +38,6 @@ class FormData;
 class HTMLFormControlElement;
 class HTMLImageElement;
 class HTMLInputElement;
-class HTMLFormCollection;
 class TextEncoding;
 
 class HTMLFormElement : public HTMLElement {

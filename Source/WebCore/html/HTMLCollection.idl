@@ -28,7 +28,7 @@
 ] interface HTMLCollection {
     readonly attribute unsigned long length;
     Node item(in [Optional=DefaultIsUndefined] unsigned long index);
-    [Custom] Node namedItem(in [Optional=DefaultIsUndefined] DOMString name);
+    Node namedItem(in [Optional=DefaultIsUndefined] DOMString name);
 
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
     NodeList tags(in [Optional=DefaultIsUndefined] DOMString name);

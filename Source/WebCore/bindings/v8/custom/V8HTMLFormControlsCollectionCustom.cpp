@@ -29,19 +29,31 @@
  */
 
 #include "config.h"
-#include "V8HTMLCollection.h"
+#include "V8HTMLFormControlsCollection.h"
 
 #include "HTMLCollection.h"
+#include "RadioNodeList.h"
 #include "V8Binding.h"
-#include "V8HTMLAllCollection.h"
-#include "V8HTMLFormControlsCollection.h"
-#include "V8HTMLOptionsCollection.h"
-#include "V8NamedNodesCollection.h"
 #include "V8Node.h"
+#include "V8RadioNodeList.h"
 
 namespace WebCore {
 
-v8::Handle<v8::Value> V8HTMLCollection::namedPropertyGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+static v8::Handle<v8::Value> getNamedItems(HTMLFormControlsCollection* collection, const AtomicString& name, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate)
+{
+    Vector<RefPtr<Node> > namedItems;
+    collection->namedItems(name, namedItems);
+
+    if (!namedItems.size())
+        return v8Undefined();
+
+    if (namedItems.size() == 1)
+        return toV8(namedItems.at(0).release(), creationContext, isolate);
+
+    return toV8(collection->base()->radioNodeList(name).get(), creationContext, isolate);
+}
+
+v8::Handle<v8::Value> V8HTMLFormControlsCollection::namedPropertyGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     INC_STATS("DOM.HTMLCollection.NamedPropertyGetter");
 
@@ -50,28 +62,20 @@ v8::Handle<v8::Value> V8HTMLCollection::namedPropertyGetter(v8::Local<v8::String
     if (info.Holder()->HasRealNamedCallbackProperty(name))
         return v8Undefined();
 
-    HTMLCollection* imp = V8HTMLCollection::toNative(info.Holder());
-    Node* item = imp->namedItem(toWebCoreAtomicString(name));
-    if (!item)
-        return v8Undefined();
-    return toV8(item, info.Holder(), info.GetIsolate());
+    HTMLFormControlsCollection* imp = V8HTMLFormControlsCollection::toNative(info.Holder());
+    return getNamedItems(imp, toWebCoreAtomicString(name), info.Holder(), info.GetIsolate());
 }
 
-v8::Handle<v8::Object> wrap(HTMLCollection* impl, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate)
+v8::Handle<v8::Value> V8HTMLFormControlsCollection::namedItemCallback(const v8::Arguments& args)
 {
-    ASSERT(impl);
-    switch (impl->type()) {
-    case FormControls:
-        return wrap(static_cast<HTMLFormControlsCollection*>(impl), creationContext, isolate);
-    case SelectOptions:
-        return wrap(static_cast<HTMLOptionsCollection*>(impl), creationContext, isolate);
-    case DocAll:
-        return wrap(static_cast<HTMLAllCollection*>(impl), creationContext, isolate);
-    default:
-        break;
-    }
+    INC_STATS("DOM.HTMLCollection.namedItem()");
+    HTMLFormControlsCollection* imp = V8HTMLFormControlsCollection::toNative(args.Holder());
+    v8::Handle<v8::Value> result = getNamedItems(imp, toWebCoreString(args[0]), args.Holder(), args.GetIsolate());
 
-    return V8HTMLCollection::createWrapper(impl, creationContext, isolate);
+    if (result.IsEmpty())
+        return v8::Undefined(args.GetIsolate());
+
+    return result;
 }
 
 } // namespace WebCore

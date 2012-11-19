@@ -33,7 +33,7 @@ window.onload = function()
 function step2()
 {
     document.adoptNode(element);
-    shouldBe("typeof children.namedItem('child')", "'undefined'");
+    shouldBeNull("children.namedItem('child')");
     finishJSTest();
 }
 </script>

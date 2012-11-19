@@ -398,7 +398,7 @@ sub GenerateGetOwnPropertySlotBody
 
     my @getOwnPropertySlotImpl = ();
 
-    if ($interfaceName eq "NamedNodeMap" or $interfaceName eq "HTMLCollection" or $interfaceName eq "HTMLAllCollection" or $interfaceName eq "HTMLPropertiesCollection") {
+    if ($interfaceName eq "NamedNodeMap" or $interfaceName =~ /^HTML\w*Collection$/) {
         push(@getOwnPropertySlotImpl, "    ${namespaceMaybe}JSValue proto = thisObject->prototype();\n");
         push(@getOwnPropertySlotImpl, "    if (proto.isObject() && jsCast<${namespaceMaybe}JSObject*>(asObject(proto))->hasProperty(exec, propertyName))\n");
         push(@getOwnPropertySlotImpl, "        return false;\n\n");
@@ -490,7 +490,7 @@ sub GenerateGetOwnPropertyDescriptorBody
         push(@implContent, "        return false;\n");
     }
     
-    if ($interfaceName eq "NamedNodeMap" or $interfaceName eq "HTMLCollection" or $interfaceName eq "HTMLAllCollection" or $interfaceName eq "HTMLPropertiesCollection") {
+    if ($interfaceName eq "NamedNodeMap" or $interfaceName =~ /^HTML\w*Collection$/) {
         push(@getOwnPropertyDescriptorImpl, "    ${namespaceMaybe}JSValue proto = thisObject->prototype();\n");
         push(@getOwnPropertyDescriptorImpl, "    if (proto.isObject() && jsCast<${namespaceMaybe}JSObject*>(asObject(proto))->hasProperty(exec, propertyName))\n");
         push(@getOwnPropertyDescriptorImpl, "        return false;\n\n");
@@ -2430,7 +2430,7 @@ sub GenerateImplementation
             push(@implContent, "    return toJS(exec, thisObj->globalObject(), static_cast<$implClassName*>(thisObj->impl())->item(index));\n");
         }
         push(@implContent, "}\n\n");
-        if ($interfaceName eq "HTMLCollection" or $interfaceName eq "HTMLAllCollection" or $interfaceName eq "RadioNodeList") {
+        if ($interfaceName =~ /^HTML\w*Collection$/ or $interfaceName eq "RadioNodeList") {
             $implIncludes{"JSNode.h"} = 1;
             $implIncludes{"Node.h"} = 1;
         }
@@ -2446,7 +2446,7 @@ sub GenerateImplementation
         push(@implContent, "        return jsNaN();\n");
         push(@implContent, "    return JSValue(result);\n");
         push(@implContent, "}\n\n");
-        if ($interfaceName eq "HTMLCollection" or $interfaceName eq "HTMLAllCollection") {
+        if ($interfaceName =~ /^HTML\w*Collection$/) {
             $implIncludes{"JSNode.h"} = 1;
             $implIncludes{"Node.h"} = 1;
         }

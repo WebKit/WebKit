@@ -1,4 +1,4 @@
-PASS typeof children.namedItem('child') is 'undefined'
+PASS children.namedItem('child') is null
 PASS successfullyParsed is true
 
 TEST COMPLETE

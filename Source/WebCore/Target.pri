@@ -132,6 +132,7 @@ SOURCES += \
      bindings/js/JSHTMLDocumentCustom.cpp \
      bindings/js/JSHTMLElementCustom.cpp \
      bindings/js/JSHTMLEmbedElementCustom.cpp \
+     bindings/js/JSHTMLFormControlsCollectionCustom.cpp \
      bindings/js/JSHTMLFormElementCustom.cpp \
      bindings/js/JSHTMLFrameElementCustom.cpp \
      bindings/js/JSHTMLFrameSetElementCustom.cpp \
@@ -601,7 +602,7 @@ SOURCES += \
     html/HTMLEmbedElement.cpp \
     html/HTMLFieldSetElement.cpp \
     html/HTMLFontElement.cpp \
-    html/HTMLFormCollection.cpp \
+    html/HTMLFormControlsCollection.cpp \
     html/HTMLFormControlElement.cpp \
     html/HTMLFormControlElementWithState.cpp \
     html/HTMLFormElement.cpp \
@@ -1761,7 +1762,7 @@ HEADERS += \
     html/HTMLEmbedElement.h \
     html/HTMLFieldSetElement.h \
     html/HTMLFontElement.h \
-    html/HTMLFormCollection.h \
+    html/HTMLFormControlsCollection.h \
     html/HTMLFormControlElement.h \
     html/HTMLFormControlElementWithState.h \
     html/HTMLFormElement.h \

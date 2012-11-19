@@ -21,7 +21,7 @@
  */
 
 #include "config.h"
-#include "HTMLFormCollection.h"
+#include "HTMLFormControlsCollection.h"
 
 #include "HTMLFieldSetElement.h"
 #include "HTMLFormControlElement.h"
@@ -36,22 +36,22 @@ using namespace HTMLNames;
 // Since the collections are to be "live", we have to do the
 // calculation every time if anything has changed.
 
-HTMLFormCollection::HTMLFormCollection(Element* base)
+HTMLFormControlsCollection::HTMLFormControlsCollection(Element* base)
     : HTMLCollection(base, FormControls, OverridesItemAfter)
 {
     ASSERT(base->hasTagName(formTag) || base->hasTagName(fieldsetTag));
 }
 
-PassRefPtr<HTMLFormCollection> HTMLFormCollection::create(Element* base)
+PassRefPtr<HTMLFormControlsCollection> HTMLFormControlsCollection::create(Element* base)
 {
-    return adoptRef(new HTMLFormCollection(base));
+    return adoptRef(new HTMLFormControlsCollection(base));
 }
 
-HTMLFormCollection::~HTMLFormCollection()
+HTMLFormControlsCollection::~HTMLFormControlsCollection()
 {
 }
 
-const Vector<FormAssociatedElement*>& HTMLFormCollection::formControlElements() const
+const Vector<FormAssociatedElement*>& HTMLFormControlsCollection::formControlElements() const
 {
     ASSERT(base());
     ASSERT(base()->hasTagName(formTag) || base()->hasTagName(fieldsetTag));
@@ -60,14 +60,14 @@ const Vector<FormAssociatedElement*>& HTMLFormCollection::formControlElements() 
     return static_cast<HTMLFieldSetElement*>(base())->associatedElements();
 }
 
-const Vector<HTMLImageElement*>& HTMLFormCollection::formImageElements() const
+const Vector<HTMLImageElement*>& HTMLFormControlsCollection::formImageElements() const
 {
     ASSERT(base());
     ASSERT(base()->hasTagName(formTag));
     return static_cast<HTMLFormElement*>(base())->imageElements();
 }
 
-Element* HTMLFormCollection::virtualItemAfter(unsigned& offset, Element* previousItem) const
+Element* HTMLFormControlsCollection::virtualItemAfter(unsigned& offset, Element* previousItem) const
 {
     const Vector<FormAssociatedElement*>& elementsArray = formControlElements();
     if (previousItem)
@@ -104,7 +104,7 @@ static HTMLElement* firstNamedItem(const Vector<FormAssociatedElement*>& element
     return 0;
 }
 
-Node* HTMLFormCollection::namedItem(const AtomicString& name) const
+Node* HTMLFormControlsCollection::namedItem(const AtomicString& name) const
 {
     // http://msdn.microsoft.com/workshop/author/dhtml/reference/methods/nameditem.asp
     // This method first searches for an object with a matching id
@@ -118,7 +118,7 @@ Node* HTMLFormCollection::namedItem(const AtomicString& name) const
     return firstNamedItem(formControlElements(), imagesElements, nameAttr, name);
 }
 
-void HTMLFormCollection::updateNameCache() const
+void HTMLFormControlsCollection::updateNameCache() const
 {
     if (hasNameCache())
         return;

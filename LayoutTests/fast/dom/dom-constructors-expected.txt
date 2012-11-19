@@ -118,7 +118,7 @@ FAIL TryAllocate('Console') should be exception. Was no constructor.
 PASS TryAllocate('Selection') is 'exception'
 PASS TryAllocate('Window') is 'exception'
 FAIL TryAllocate('History') should be exception. Was no constructor.
-FAIL TryAllocate('HTMLOptionsCollection') should be exception. Was no constructor.
+PASS TryAllocate('HTMLOptionsCollection') is 'exception'
 FAIL TryAllocate('Location') should be exception. Was no constructor.
 FAIL TryAllocate('Navigator') should be exception. Was no constructor.
 FAIL TryAllocate('NodeIterator') should be exception. Was no constructor.

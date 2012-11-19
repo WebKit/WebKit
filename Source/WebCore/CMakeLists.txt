@@ -439,6 +439,7 @@ SET(WebCore_IDL_FILES
     html/HTMLEmbedElement.idl
     html/HTMLFieldSetElement.idl
     html/HTMLFontElement.idl
+    html/HTMLFormControlsCollection.idl
     html/HTMLFormElement.idl
     html/HTMLFrameElement.idl
     html/HTMLFrameSetElement.idl
@@ -1368,7 +1369,7 @@ SET(WebCore_SOURCES
     html/HTMLEmbedElement.cpp
     html/HTMLFieldSetElement.cpp
     html/HTMLFontElement.cpp
-    html/HTMLFormCollection.cpp
+    html/HTMLFormControlsCollection.cpp
     html/HTMLFormControlElement.cpp
     html/HTMLFormControlElementWithState.cpp
     html/HTMLFormElement.cpp

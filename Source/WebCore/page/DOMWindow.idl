@@ -470,6 +470,8 @@
 
     attribute HTMLCollectionConstructor HTMLCollection;
     attribute HTMLAllCollectionConstructor HTMLAllCollection;
+    attribute HTMLFormControlsCollectionConstructor HTMLFormControlsCollection;
+    attribute HTMLOptionsCollectionConstructor HTMLOptionsCollection;
     [Conditional=MICRODATA] attribute HTMLPropertiesCollectionConstructor HTMLPropertiesCollection;
     attribute HTMLUnknownElementConstructor HTMLUnknownElement;
 

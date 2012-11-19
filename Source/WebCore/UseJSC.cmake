@@ -84,6 +84,7 @@ LIST(APPEND WebCore_SOURCES
     bindings/js/JSHTMLDocumentCustom.cpp
     bindings/js/JSHTMLElementCustom.cpp
     bindings/js/JSHTMLEmbedElementCustom.cpp
+    bindings/js/JSHTMLFormControlsCollectionCustom.cpp
     bindings/js/JSHTMLFormElementCustom.cpp
     bindings/js/JSHTMLFrameElementCustom.cpp
     bindings/js/JSHTMLFrameSetElementCustom.cpp

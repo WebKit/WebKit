@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2012 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
@@ -19,25 +19,10 @@
  */
 
 [
-    JSGenerateToNativeObject,
-    CustomIndexedSetter,
+    IndexedGetter,
     NamedGetter,
     GenerateIsReachable=ImplBaseRoot,
     V8DependentLifetime,
-] interface HTMLOptionsCollection : HTMLCollection {
-    attribute long selectedIndex;
-    [CustomSetter] attribute unsigned long length
-        setter raises (DOMException);
-
+] interface HTMLFormControlsCollection : HTMLCollection {
     [Custom] Node namedItem(in [Optional=DefaultIsUndefined] DOMString name);
-
-    [Custom] void add(in [Optional=DefaultIsUndefined] HTMLOptionElement option, 
-                      in [Optional] unsigned long index)
-         raises (DOMException);
-    [Custom] void remove(in [Optional=DefaultIsUndefined] unsigned long index);
-
-#if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
-    Node item(in unsigned long index);
-#endif
 };
-

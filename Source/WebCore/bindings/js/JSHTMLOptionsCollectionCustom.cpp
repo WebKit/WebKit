@@ -28,12 +28,45 @@
 #include "JSHTMLOptionElement.h"
 #include "JSHTMLSelectElement.h"
 #include "JSHTMLSelectElementCustom.h"
+#include "JSNodeList.h"
+#include "StaticNodeList.h"
 
 #include <wtf/MathExtras.h>
 
 using namespace JSC;
 
 namespace WebCore {
+
+static JSValue getNamedItems(ExecState* exec, JSHTMLOptionsCollection* collection, PropertyName propertyName)
+{
+    Vector<RefPtr<Node> > namedItems;
+    const AtomicString& name = propertyNameToAtomicString(propertyName);
+    collection->impl()->namedItems(name, namedItems);
+
+    if (namedItems.isEmpty())
+        return jsUndefined();
+    if (namedItems.size() == 1)
+        return toJS(exec, collection->globalObject(), namedItems[0].get());
+
+    // FIXME: HTML5 specifies that this should be a DynamicNodeList.
+    return toJS(exec, collection->globalObject(), StaticNodeList::adopt(namedItems).get());
+}
+
+bool JSHTMLOptionsCollection::canGetItemsForName(ExecState*, HTMLOptionsCollection* collection, PropertyName propertyName)
+{
+    return collection->hasNamedItem(propertyNameToAtomicString(propertyName));
+}
+
+JSValue JSHTMLOptionsCollection::nameGetter(ExecState* exec, JSValue slotBase, PropertyName propertyName)
+{
+    JSHTMLOptionsCollection* thisObj = jsCast<JSHTMLOptionsCollection*>(asObject(slotBase));
+    return getNamedItems(exec, thisObj, propertyName);
+}
+
+JSValue JSHTMLOptionsCollection::namedItem(ExecState* exec)
+{
+    return getNamedItems(exec, this, Identifier(exec, exec->argument(0).toString(exec)->value(exec)));
+}
 
 void JSHTMLOptionsCollection::setLength(ExecState* exec, JSValue value)
 {

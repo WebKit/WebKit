@@ -3750,6 +3750,7 @@
 		9A1B6F97158869C80011A8C4 /* JSDOMStringListCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A1B6F96158869C80011A8C4 /* JSDOMStringListCustom.cpp */; };
 		9B0FB191140DB5790022588F /* HTTPValidation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9B0FB18F140DB5790022588F /* HTTPValidation.cpp */; };
 		9B0FB192140DB5790022588F /* HTTPValidation.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B0FB190140DB5790022588F /* HTTPValidation.h */; };
+		9B1AB07C1648C7C40051F3F2 /* JSHTMLFormControlsCollectionCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9B1AB07B1648C7C40051F3F2 /* JSHTMLFormControlsCollectionCustom.cpp */; };
 		9B24DE8E15194B9500C59C27 /* HTMLBDIElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B24DE8C15194B9500C59C27 /* HTMLBDIElement.h */; };
 		9B2B7AC11509850A008932CC /* MicroDataItemValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9B2F7CF714562120007F8B50 /* MicroDataItemValue.cpp */; };
 		9B2D8A7914997CCF00ECEF3E /* UndoStep.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B2D8A7814997CCF00ECEF3E /* UndoStep.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -3768,6 +3769,8 @@
 		9BC6C21C13CCC97B008E0337 /* HTMLTextFormControlElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9BC6C21A13CCC97B008E0337 /* HTMLTextFormControlElement.cpp */; };
 		9BD0BF9312A42BF50072FD43 /* ScopedEventQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 9BD0BF9112A42BF50072FD43 /* ScopedEventQueue.h */; };
 		9BD0BF9412A42BF50072FD43 /* ScopedEventQueue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9BD0BF9212A42BF50072FD43 /* ScopedEventQueue.cpp */; };
+		9BF9A8801648DD2F001C6B23 /* JSHTMLFormControlsCollection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9BF9A87E1648DD2F001C6B23 /* JSHTMLFormControlsCollection.cpp */; };
+		9BF9A8811648DD2F001C6B23 /* JSHTMLFormControlsCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = 9BF9A87F1648DD2F001C6B23 /* JSHTMLFormControlsCollection.h */; };
 		9F0D6B2E121BFEBA006C0288 /* InspectorProfilerAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F0D6B2C121BFEBA006C0288 /* InspectorProfilerAgent.cpp */; };
 		9F0D6B2F121BFEBA006C0288 /* InspectorProfilerAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = 9F0D6B2D121BFEBA006C0288 /* InspectorProfilerAgent.h */; };
 		9F3B947E12241758005304E7 /* ScriptHeapSnapshot.h in Headers */ = {isa = PBXBuildFile; fileRef = 9F3B947D12241758005304E7 /* ScriptHeapSnapshot.h */; };
@@ -4354,8 +4357,8 @@
 		A8D065AE0A2446CD005E7203 /* JSHTMLFormElementCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8D065AD0A2446CD005E7203 /* JSHTMLFormElementCustom.cpp */; };
 		A8D06B390A265DCD005E7203 /* HTMLNames.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A8D06B370A265DCD005E7203 /* HTMLNames.h */; settings = {ATTRIBUTES = (); }; };
 		A8D06B3A0A265DCD005E7203 /* HTMLNames.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8D06B380A265DCD005E7203 /* HTMLNames.cpp */; };
-		A8DF3FCE097FA0FC0052981B /* HTMLFormCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = A8DF3FC6097FA0FB0052981B /* HTMLFormCollection.h */; };
-		A8DF3FCF097FA0FC0052981B /* HTMLFormCollection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8DF3FC7097FA0FB0052981B /* HTMLFormCollection.cpp */; };
+		A8DF3FCE097FA0FC0052981B /* HTMLFormControlsCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = A8DF3FC6097FA0FB0052981B /* HTMLFormControlsCollection.h */; };
+		A8DF3FCF097FA0FC0052981B /* HTMLFormControlsCollection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8DF3FC7097FA0FB0052981B /* HTMLFormControlsCollection.cpp */; };
 		A8DF3FD0097FA0FC0052981B /* HTMLCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = A8DF3FC8097FA0FB0052981B /* HTMLCollection.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A8DF3FD1097FA0FC0052981B /* HTMLCollection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8DF3FC9097FA0FB0052981B /* HTMLCollection.cpp */; };
 		A8DF3FD2097FA0FC0052981B /* HTMLBaseFontElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A8DF3FCA097FA0FB0052981B /* HTMLBaseFontElement.h */; };
@@ -11035,6 +11038,8 @@
 		9A1B6F96158869C80011A8C4 /* JSDOMStringListCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMStringListCustom.cpp; sourceTree = "<group>"; };
 		9B0FB18F140DB5790022588F /* HTTPValidation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTTPValidation.cpp; sourceTree = "<group>"; };
 		9B0FB190140DB5790022588F /* HTTPValidation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTTPValidation.h; sourceTree = "<group>"; };
+		9B1AB0791648C69D0051F3F2 /* HTMLFormControlsCollection.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = HTMLFormControlsCollection.idl; sourceTree = "<group>"; };
+		9B1AB07B1648C7C40051F3F2 /* JSHTMLFormControlsCollectionCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLFormControlsCollectionCustom.cpp; sourceTree = "<group>"; };
 		9B24DE8C15194B9500C59C27 /* HTMLBDIElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLBDIElement.h; sourceTree = "<group>"; };
 		9B2D8A7814997CCF00ECEF3E /* UndoStep.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UndoStep.h; sourceTree = "<group>"; };
 		9B2F7CF714562120007F8B50 /* MicroDataItemValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MicroDataItemValue.cpp; sourceTree = "<group>"; };
@@ -11054,6 +11059,8 @@
 		9BC6C21A13CCC97B008E0337 /* HTMLTextFormControlElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLTextFormControlElement.cpp; sourceTree = "<group>"; };
 		9BD0BF9112A42BF50072FD43 /* ScopedEventQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScopedEventQueue.h; sourceTree = "<group>"; };
 		9BD0BF9212A42BF50072FD43 /* ScopedEventQueue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScopedEventQueue.cpp; sourceTree = "<group>"; };
+		9BF9A87E1648DD2F001C6B23 /* JSHTMLFormControlsCollection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLFormControlsCollection.cpp; sourceTree = "<group>"; };
+		9BF9A87F1648DD2F001C6B23 /* JSHTMLFormControlsCollection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSHTMLFormControlsCollection.h; sourceTree = "<group>"; };
 		9F0D6B2C121BFEBA006C0288 /* InspectorProfilerAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorProfilerAgent.cpp; sourceTree = "<group>"; };
 		9F0D6B2D121BFEBA006C0288 /* InspectorProfilerAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorProfilerAgent.h; sourceTree = "<group>"; };
 		9F3B947D12241758005304E7 /* ScriptHeapSnapshot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptHeapSnapshot.h; sourceTree = "<group>"; };
@@ -11538,8 +11545,8 @@
 		A8D065AD0A2446CD005E7203 /* JSHTMLFormElementCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLFormElementCustom.cpp; sourceTree = "<group>"; };
 		A8D06B370A265DCD005E7203 /* HTMLNames.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HTMLNames.h; sourceTree = "<group>"; };
 		A8D06B380A265DCD005E7203 /* HTMLNames.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLNames.cpp; sourceTree = "<group>"; };
-		A8DF3FC6097FA0FB0052981B /* HTMLFormCollection.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HTMLFormCollection.h; sourceTree = "<group>"; };
-		A8DF3FC7097FA0FB0052981B /* HTMLFormCollection.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLFormCollection.cpp; sourceTree = "<group>"; };
+		A8DF3FC6097FA0FB0052981B /* HTMLFormControlsCollection.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HTMLFormControlsCollection.h; sourceTree = "<group>"; };
+		A8DF3FC7097FA0FB0052981B /* HTMLFormControlsCollection.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLFormControlsCollection.cpp; sourceTree = "<group>"; };
 		A8DF3FC8097FA0FB0052981B /* HTMLCollection.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HTMLCollection.h; sourceTree = "<group>"; };
 		A8DF3FC9097FA0FB0052981B /* HTMLCollection.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLCollection.cpp; sourceTree = "<group>"; };
 		A8DF3FCA097FA0FB0052981B /* HTMLBaseFontElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HTMLBaseFontElement.h; sourceTree = "<group>"; };
@@ -17586,8 +17593,9 @@
 				A8CFF7980A156978000A4234 /* HTMLFontElement.cpp */,
 				A8CFF79C0A156978000A4234 /* HTMLFontElement.h */,
 				1AE2A9F50A1CDA5700B42B25 /* HTMLFontElement.idl */,
-				A8DF3FC7097FA0FB0052981B /* HTMLFormCollection.cpp */,
-				A8DF3FC6097FA0FB0052981B /* HTMLFormCollection.h */,
+				A8DF3FC7097FA0FB0052981B /* HTMLFormControlsCollection.cpp */,
+				A8DF3FC6097FA0FB0052981B /* HTMLFormControlsCollection.h */,
+				9B1AB0791648C69D0051F3F2 /* HTMLFormControlsCollection.idl */,
 				A81369B3097374F500D74463 /* HTMLFormControlElement.cpp */,
 				A81369B2097374F500D74463 /* HTMLFormControlElement.h */,
 				E14F1C4214B5DAC600EA9009 /* HTMLFormControlElementWithState.cpp */,
@@ -18473,6 +18481,8 @@
 				1AE2AA130A1CDAB300B42B25 /* JSHTMLFieldSetElement.h */,
 				1AE2AA140A1CDAB300B42B25 /* JSHTMLFontElement.cpp */,
 				1AE2AA150A1CDAB300B42B25 /* JSHTMLFontElement.h */,
+				9BF9A87E1648DD2F001C6B23 /* JSHTMLFormControlsCollection.cpp */,
+				9BF9A87F1648DD2F001C6B23 /* JSHTMLFormControlsCollection.h */,
 				A8D064F90A23C0CC005E7203 /* JSHTMLFormElement.cpp */,
 				A8D064FA0A23C0CC005E7203 /* JSHTMLFormElement.h */,
 				BC4918C00BFEA050009D6316 /* JSHTMLFrameElement.cpp */,
@@ -20521,6 +20531,7 @@
 				BC5823F40C0A98DF0053F1B5 /* JSHTMLElementCustom.cpp */,
 				BC6D44BD0C07EFB60072D2C9 /* JSHTMLEmbedElementCustom.cpp */,
 				E1AD14201295EA6B00ACA989 /* JSHTMLEmbedElementCustom.h */,
+				9B1AB07B1648C7C40051F3F2 /* JSHTMLFormControlsCollectionCustom.cpp */,
 				A8D065AD0A2446CD005E7203 /* JSHTMLFormElementCustom.cpp */,
 				BC2ED7A40C6C0F3600920BFF /* JSHTMLFrameElementCustom.cpp */,
 				BCD41ABA0C060DE800C0E446 /* JSHTMLFrameSetElementCustom.cpp */,
@@ -23771,7 +23782,7 @@
 				A81369D4097374F600D74463 /* HTMLFieldSetElement.h in Headers */,
 				A8CFF7A60A156978000A4234 /* HTMLFontElement.h in Headers */,
 				977B386F122883E900B81FF8 /* HTMLFormattingElementList.h in Headers */,
-				A8DF3FCE097FA0FC0052981B /* HTMLFormCollection.h in Headers */,
+				A8DF3FCE097FA0FC0052981B /* HTMLFormControlsCollection.h in Headers */,
 				A81369CE097374F600D74463 /* HTMLFormControlElement.h in Headers */,
 				E14F1C4514B5DAC600EA9009 /* HTMLFormControlElementWithState.h in Headers */,
 				A81369D0097374F600D74463 /* HTMLFormElement.h in Headers */,
@@ -24157,6 +24168,7 @@
 				E1AD14211295EA6B00ACA989 /* JSHTMLEmbedElementCustom.h in Headers */,
 				1AE2AA270A1CDAB400B42B25 /* JSHTMLFieldSetElement.h in Headers */,
 				1AE2AA290A1CDAB400B42B25 /* JSHTMLFontElement.h in Headers */,
+				9BF9A8811648DD2F001C6B23 /* JSHTMLFormControlsCollection.h in Headers */,
 				A8D064FC0A23C0CC005E7203 /* JSHTMLFormElement.h in Headers */,
 				BC4918C70BFEA050009D6316 /* JSHTMLFrameElement.h in Headers */,
 				BC926F810C0552470082776B /* JSHTMLFrameSetElement.h in Headers */,
@@ -26989,7 +27001,7 @@
 				A81369D5097374F600D74463 /* HTMLFieldSetElement.cpp in Sources */,
 				A8CFF7A20A156978000A4234 /* HTMLFontElement.cpp in Sources */,
 				977B386E122883E900B81FF8 /* HTMLFormattingElementList.cpp in Sources */,
-				A8DF3FCF097FA0FC0052981B /* HTMLFormCollection.cpp in Sources */,
+				A8DF3FCF097FA0FC0052981B /* HTMLFormControlsCollection.cpp in Sources */,
 				A81369CF097374F600D74463 /* HTMLFormControlElement.cpp in Sources */,
 				E14F1C4414B5DAC600EA9009 /* HTMLFormControlElementWithState.cpp in Sources */,
 				A81369D1097374F600D74463 /* HTMLFormElement.cpp in Sources */,
@@ -27404,6 +27416,8 @@
 				BC6D44BE0C07EFB60072D2C9 /* JSHTMLEmbedElementCustom.cpp in Sources */,
 				1AE2AA260A1CDAB400B42B25 /* JSHTMLFieldSetElement.cpp in Sources */,
 				1AE2AA280A1CDAB400B42B25 /* JSHTMLFontElement.cpp in Sources */,
+				9BF9A8801648DD2F001C6B23 /* JSHTMLFormControlsCollection.cpp in Sources */,
+				9B1AB07C1648C7C40051F3F2 /* JSHTMLFormControlsCollectionCustom.cpp in Sources */,
 				A8D064FB0A23C0CC005E7203 /* JSHTMLFormElement.cpp in Sources */,
 				A8D065AE0A2446CD005E7203 /* JSHTMLFormElementCustom.cpp in Sources */,
 				BC4918C60BFEA050009D6316 /* JSHTMLFrameElement.cpp in Sources */,

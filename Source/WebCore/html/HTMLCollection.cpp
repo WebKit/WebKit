@@ -51,7 +51,6 @@ static bool shouldOnlyIncludeDirectChildren(CollectionType type)
     case DocForms:
     case DocImages:
     case DocLinks:
-    case DocObjects:
     case DocScripts:
     case DocumentNamedItems:
     case MapAreas:
@@ -83,7 +82,6 @@ static NodeListRootType rootTypeFromCollectionType(CollectionType type)
     case DocImages:
     case DocApplets:
     case DocEmbeds:
-    case DocObjects:
     case DocForms:
     case DocLinks:
     case DocAnchors:
@@ -117,7 +115,6 @@ static NodeListInvalidationType invalidationTypeExcludingIdAndNameAttributes(Col
     switch (type) {
     case DocImages:
     case DocEmbeds:
-    case DocObjects:
     case DocForms:
     case DocAnchors: // Depends on name attribute.
     case DocScripts:
@@ -214,8 +211,6 @@ static inline bool isAcceptableElement(CollectionType type, Element* element)
         return element->hasLocalName(appletTag) || (element->hasLocalName(objectTag) && static_cast<HTMLObjectElement*>(element)->containsJavaApplet());
     case DocEmbeds:
         return element->hasLocalName(embedTag);
-    case DocObjects:
-        return element->hasLocalName(objectTag);
     case DocLinks:
         return (element->hasLocalName(aTag) || element->hasLocalName(areaTag)) && element->fastHasAttribute(hrefAttr);
     case DocAnchors:

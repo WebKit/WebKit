@@ -106,6 +106,7 @@ LIST(APPEND WebCore_SOURCES
     bindings/v8/custom/V8HTMLCollectionCustom.cpp
     bindings/v8/custom/V8HTMLDocumentCustom.cpp
     bindings/v8/custom/V8HTMLElementCustom.cpp
+    bindings/v8/custom/V8HTMLFormControlsCollectionCustom.cpp
     bindings/v8/custom/V8HTMLFormElementCustom.cpp
     bindings/v8/custom/V8HTMLFrameElementCustom.cpp
     bindings/v8/custom/V8HTMLFrameSetElementCustom.cpp

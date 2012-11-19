@@ -1,3 +1,100 @@
+2012-11-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Make namedItem return a node list only in HTMLFormControlsCollection and HTMLOptionsCollection
+        https://bugs.webkit.org/show_bug.cgi?id=101311
+
+        Reviewed by Darin Adler.
+
+        Introduce two new interfaces HTMLFormControlsCollection and HTMLOptionsCollection to be used by form.elements
+        and select.options. These two interfaces have the named getter and namedItem that returns a live NodeList when
+        there are multiple matches. Introducing these two interfaces allow us to make "regular" HTMLCollection's named
+        getter and namedItem return exactly one node or null as specified in HTML5:
+        http://www.whatwg.org/specs/web-apps/current-work/multipage/common-dom-interfaces.html#collections-0
+
+        Unfortunately, HTMLOptionsCollection still has a bug that its named getter and namedItem returns
+        a static NodeList instead of a live NodeList (DynamicNodeList) at the moment.
+
+        Also got rid of Document::objects since it's not exposed in IDL or called anywhere.
+
+        Test: fast/dom/html-collections-namedItem.html
+
+        * CMakeLists.txt:
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * DerivedSources.pri:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * UseJSC.cmake:
+        * UseV8.cmake:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSBindingsAllInOne.cpp:
+        * bindings/js/JSHTMLAllCollectionCustom.cpp:
+        (WebCore::getNamedItems):
+        * bindings/js/JSHTMLCollectionCustom.cpp:
+        (WebCore::JSHTMLCollection::nameGetter): Now returns exactly one node or null.
+        (WebCore::toJS):
+        * bindings/js/JSHTMLFormControlsCollectionCustom.cpp: Added.
+        (WebCore::getNamedItems): Returns RadioNodeList when there are multiple matches.
+        (WebCore::JSHTMLFormControlsCollection::canGetItemsForName):
+        (WebCore::JSHTMLFormControlsCollection::nameGetter):
+        (WebCore::JSHTMLFormControlsCollection::namedItem):
+        * bindings/js/JSHTMLOptionsCollectionCustom.cpp:
+        (WebCore::getNamedItems): Returns a static NodeList when there are multiple matches.
+        This is a bug. It should be a live NodeList instead.
+        (WebCore::JSHTMLOptionsCollection::canGetItemsForName):
+        (WebCore::JSHTMLOptionsCollection::nameGetter):
+        (WebCore::JSHTMLOptionsCollection::namedItem):
+        * bindings/js/CodeGeneratorJS.pm: Include JSNode.js for all HTML*Collection interfaces for simplicity.
+        * bindings/js/CodeGeneratorV8.pm: HTMLOptionsCollection now inherits from HTMLCollection. See
+        http://www.whatwg.org/specs/web-apps/current-work/multipage/common-dom-interfaces.html#htmloptionscollection
+        * bindings/v8/custom/V8HTMLAllCollectionCustom.cpp: Pass in isolate when we can.
+        (WebCore::getNamedItems): Added a comment about how we should be returning
+        a HTMLCollection when there are multiple matches.
+        (WebCore::getItem):
+        (WebCore::V8HTMLAllCollection::namedPropertyGetter):
+        (WebCore::V8HTMLAllCollection::namedItemCallback):
+        * bindings/v8/custom/V8HTMLCollectionCustom.cpp: Now returns exactly one node or null.
+        (WebCore::V8HTMLCollection::namedPropertyGetter):
+        (WebCore::toV8):
+        * bindings/v8/custom/V8HTMLFormControlsCollectionCustom.cpp: Added.
+        (WebCore::getNamedItems): Returns RadioNodeList when there are multiple matches.
+        (WebCore::V8HTMLFormControlsCollection::namedPropertyGetter):
+        (WebCore::V8HTMLFormControlsCollection::namedItemCallback):
+        * bindings/v8/custom/V8HTMLOptionsCollectionCustom.cpp:
+        (WebCore::getNamedItems): Returns a static NodeList when there are multiple matches.
+        This is a bug. It should be a live NodeList instead.
+        (WebCore::V8HTMLOptionsCollection::namedPropertyGetter):
+        (WebCore::V8HTMLOptionsCollection::namedItemCallback):
+        * dom/Document.cpp: Removed Document::objects since it was not used anywhere.
+        * dom/Document.h:
+        (Document):
+        * dom/Element.cpp:
+        (WebCore::ElementRareData::ensureCachedHTMLCollection): form.elements should instantiate
+        a HTMLFormControlsCollection instead of a HTMLCollection.
+        * html/CollectionType.h:
+        * html/HTMLCollection.idl: Removed [Custom] since namedItem is a regular function call now.
+        * html/HTMLFieldSetElement.cpp:
+        * html/HTMLFieldSetElement.h:
+        * html/HTMLFormCollection.cpp: Removed.
+        * html/HTMLFormCollection.h: Removed.
+        * html/HTMLFormControlsCollection.cpp: Copied from Source/WebCore/html/HTMLFormCollection.cpp.
+        (WebCore::HTMLFormControlsCollection::HTMLFormControlsCollection):
+        (WebCore::HTMLFormControlsCollection::create):
+        (WebCore::HTMLFormControlsCollection::~HTMLFormControlsCollection):
+        (WebCore::HTMLFormControlsCollection::formControlElements):
+        (WebCore::HTMLFormControlsCollection::formImageElements):
+        (WebCore::HTMLFormControlsCollection::virtualItemAfter):
+        (WebCore::HTMLFormControlsCollection::namedItem):
+        (WebCore::HTMLFormControlsCollection::updateNameCache):
+        * html/HTMLFormControlsCollection.h: Copied from Source/WebCore/html/HTMLFormCollection.h.
+        (HTMLFormControlsCollection):
+        * html/HTMLFormControlsCollection.idl: Added.
+        * html/HTMLFormElement.cpp:
+        * html/HTMLFormElement.h:
+        * html/HTMLOptionsCollection.idl:
+
 2012-11-18  Kentaro Hara  <haraken@chromium.org>
 
         [V8] Rename $className to $v8InterfaceName

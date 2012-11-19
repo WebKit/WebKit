@@ -163,6 +163,7 @@
 #include "JSHTMLEmbedElement.cpp"
 #include "JSHTMLFieldSetElement.cpp"
 #include "JSHTMLFontElement.cpp"
+#include "JSHTMLFormControlsCollection.cpp"
 #include "JSHTMLFormElement.cpp"
 #include "JSHTMLFrameElement.cpp"
 #include "JSHTMLFrameSetElement.cpp"

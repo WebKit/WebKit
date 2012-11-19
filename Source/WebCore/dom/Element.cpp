@@ -46,7 +46,7 @@
 #include "HTMLCollection.h"
 #include "HTMLDocument.h"
 #include "HTMLElement.h"
-#include "HTMLFormCollection.h"
+#include "HTMLFormControlsCollection.h"
 #include "HTMLFrameOwnerElement.h"
 #include "HTMLLabelElement.h"
 #include "HTMLNames.h"
@@ -2337,7 +2337,7 @@ PassRefPtr<HTMLCollection> ElementRareData::ensureCachedHTMLCollection(Element* 
         collection = HTMLOptionsCollection::create(element);
     } else if (type == FormControls) {
         ASSERT(element->hasTagName(formTag) || element->hasTagName(fieldsetTag));
-        collection = HTMLFormCollection::create(element);
+        collection = HTMLFormControlsCollection::create(element);
 #if ENABLE(MICRODATA)
     } else if (type == ItemProperties) {
         collection = HTMLPropertiesCollection::create(element);

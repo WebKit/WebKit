@@ -300,6 +300,7 @@ BINDING_IDLS = \
     $(WebCore)/html/HTMLEmbedElement.idl \
     $(WebCore)/html/HTMLFieldSetElement.idl \
     $(WebCore)/html/HTMLFontElement.idl \
+    $(WebCore)/html/HTMLFormControlsCollection.idl \
     $(WebCore)/html/HTMLFormElement.idl \
     $(WebCore)/html/HTMLFrameElement.idl \
     $(WebCore)/html/HTMLFrameSetElement.idl \

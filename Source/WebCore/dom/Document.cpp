@@ -4397,11 +4397,6 @@ PassRefPtr<HTMLCollection> Document::plugins()
     return cachedCollection(DocEmbeds);
 }
 
-PassRefPtr<HTMLCollection> Document::objects()
-{
-    return cachedCollection(DocObjects);
-}
-
 PassRefPtr<HTMLCollection> Document::scripts()
 {
     return cachedCollection(DocScripts);

@@ -2532,13 +2532,6 @@ sub GenerateImplementationNamedPropertyGetter
     my $interfaceName = $dataNode->name;
     my $hasCustomNamedGetter = $dataNode->extendedAttributes->{"CustomNamedGetter"} || $dataNode->extendedAttributes->{"CustomGetOwnPropertySlot"};
 
-    # FIXME: Remove hard-coded HTMLOptionsCollection reference by changing HTMLOptionsCollection to not inherit
-    # from HTMLCollection per W3C spec (http://www.w3.org/TR/2003/REC-DOM-Level-2-HTML-20030109/html.html#HTMLOptionsCollection).
-    if ($interfaceName eq "HTMLOptionsCollection") {
-        $interfaceName = "HTMLCollection";
-        $hasCustomNamedGetter = 1;
-    }
-
     if ($interfaceName eq "HTMLAppletElement" || $interfaceName eq "HTMLEmbedElement" || $interfaceName eq "HTMLObjectElement") {
         $hasCustomNamedGetter = 1;
     }

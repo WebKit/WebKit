@@ -439,7 +439,6 @@ public:
     PassRefPtr<HTMLCollection> links();
     PassRefPtr<HTMLCollection> forms();
     PassRefPtr<HTMLCollection> anchors();
-    PassRefPtr<HTMLCollection> objects();
     PassRefPtr<HTMLCollection> scripts();
     PassRefPtr<HTMLCollection> all();
     void removeCachedHTMLCollection(HTMLCollection*, CollectionType);

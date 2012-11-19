@@ -355,6 +355,7 @@ IDL_BINDINGS += \
     $$PWD/html/HTMLEmbedElement.idl \
     $$PWD/html/HTMLFieldSetElement.idl \
     $$PWD/html/HTMLFontElement.idl \
+    $$PWD/html/HTMLFormControlsCollection.idl \
     $$PWD/html/HTMLFormElement.idl \
     $$PWD/html/HTMLFrameElement.idl \
     $$PWD/html/HTMLFrameSetElement.idl \

@@ -51,6 +51,8 @@ static v8::Handle<v8::Value> getNamedItems(HTMLAllCollection* collection, Atomic
     if (namedItems.size() == 1)
         return toV8(namedItems.at(0).release(), creationContext, isolate);
 
+    // FIXME: HTML5 specification says this should be a HTMLCollection.
+    // http://www.whatwg.org/specs/web-apps/current-work/multipage/common-dom-interfaces.html#htmlallcollection
     return toV8(V8NamedNodesCollection::create(namedItems), creationContext, isolate);
 }
 

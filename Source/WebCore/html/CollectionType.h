@@ -31,7 +31,6 @@ enum CollectionType {
     DocImages,    // all <img> elements in the document
     DocApplets,   // all <object> and <applet> elements
     DocEmbeds,    // all <embed> elements
-    DocObjects,   // all <object> elements
     DocForms,     // all <form> elements
     DocLinks,     // all <a> _and_ <area> elements with a value for href
     DocAnchors,   // all <a> elements with a value for name
