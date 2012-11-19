@@ -31,7 +31,7 @@
 #include "config.h"
 #include "MIMEHeader.h"
 
-#include "ContentTypeParser.h"
+#include "ParsedContentType.h"
 #include "SharedBufferChunkReader.h"
 #include <wtf/HashMap.h>
 #include <wtf/text/CString.h>
@@ -85,14 +85,13 @@ PassRefPtr<MIMEHeader> MIMEHeader::parseHeader(SharedBufferChunkReader* buffer)
     KeyValueMap keyValuePairs = retrieveKeyValuePairs(buffer);
     KeyValueMap::iterator mimeParametersIterator = keyValuePairs.find("content-type");
     if (mimeParametersIterator != keyValuePairs.end()) {
-        // FIXME: make ContentTypeParser more flexible so we don't have to synthesize the "Content-Type:".
-        ContentTypeParser contentTypeParser(makeString("Content-Type:", mimeParametersIterator->value));
-        mimeHeader->m_contentType = contentTypeParser.mimeType();
+        ParsedContentType parsedContentType(mimeParametersIterator->value);
+        mimeHeader->m_contentType = parsedContentType.mimeType();
         if (!mimeHeader->isMultipart())
-            mimeHeader->m_charset = contentTypeParser.charset().stripWhiteSpace();
+            mimeHeader->m_charset = parsedContentType.charset().stripWhiteSpace();
         else {
-            mimeHeader->m_multipartType = contentTypeParser.parameterValueForName("type");
-            mimeHeader->m_endOfPartBoundary = contentTypeParser.parameterValueForName("boundary");
+            mimeHeader->m_multipartType = parsedContentType.parameterValueForName("type");
+            mimeHeader->m_endOfPartBoundary = parsedContentType.parameterValueForName("boundary");
             if (mimeHeader->m_endOfPartBoundary.isNull()) {
                 LOG_ERROR("No boundary found in multipart MIME header.");
                 return 0;

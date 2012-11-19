@@ -1,5 +1,6 @@
  /*
  * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2012 Intel Corporation. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -29,14 +30,20 @@
  */
 
 #include "config.h"
-#include "ContentTypeParser.h"
+#include "ParsedContentType.h"
 
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
-static void skipSpaces(const String& input, size_t& startIndex)
+class DummyParsedContentType {
+public:
+    void setContentType(const SubstringRange&) const { }
+    void setContentTypeParameter(const SubstringRange&, const SubstringRange&) const { }
+};
+
+static void skipSpaces(const String& input, unsigned& startIndex)
 {
     while (startIndex < input.length() && input[startIndex] == ' ')
         ++startIndex;
@@ -47,66 +54,54 @@ static bool isTokenCharacter(char c)
     return isASCII(c) && c > ' ' && c != '"' && c != '(' && c != ')' && c != ',' && c != '/' && (c < ':' || c > '@') && (c < '[' || c > ']');
 }
 
-static String parseToken(const String& input, size_t& startIndex)
+static SubstringRange parseToken(const String& input, unsigned& startIndex)
 {
-    if (startIndex >= input.length())
-        return String();
+    unsigned inputLength = input.length();
+    unsigned tokenStart = startIndex;
+    unsigned& tokenEnd = startIndex;
 
-    StringBuilder stringBuilder;
-    while (startIndex < input.length()) {
-        char currentCharacter = input[startIndex];
-        if (!isTokenCharacter(currentCharacter))
-            return stringBuilder.toString();
-        stringBuilder.append(currentCharacter);
-        ++startIndex;
+    if (tokenEnd >= inputLength)
+        return SubstringRange();
+
+    while (tokenEnd < inputLength) {
+        if (!isTokenCharacter(input[tokenEnd]))
+            return SubstringRange(tokenStart, tokenEnd - tokenStart);
+        ++tokenEnd;
     }
-    return stringBuilder.toString();
+
+    return SubstringRange(tokenStart, tokenEnd - tokenStart);
 }
 
-static String parseQuotedString(const String& input, size_t& startIndex)
+static SubstringRange parseQuotedString(const String& input, unsigned& startIndex)
 {
-    if (startIndex >= input.length())
-        return String();
+    unsigned inputLength = input.length();
+    unsigned quotedStringStart = startIndex + 1;
+    unsigned& quotedStringEnd = startIndex;
 
-    if (input[startIndex++] != '"' || startIndex >= input.length())
-        return String();
+    if (quotedStringEnd >= inputLength)
+        return SubstringRange();
 
-    StringBuilder stringBuilder;
+    if (input[quotedStringEnd++] != '"' || quotedStringEnd >= inputLength)
+        return SubstringRange();
+
     bool lastCharacterWasBackslash = false;
     char currentCharacter;
-    while ((currentCharacter = input[startIndex++]) != '"' || lastCharacterWasBackslash) {
-        if (startIndex >= input.length())
-            return String();
+    while ((currentCharacter = input[quotedStringEnd++]) != '"' || lastCharacterWasBackslash) {
+        if (quotedStringEnd >= inputLength)
+            return SubstringRange();
         if (currentCharacter == '\\' && !lastCharacterWasBackslash) {
             lastCharacterWasBackslash = true;
             continue;
         }
         if (lastCharacterWasBackslash)
             lastCharacterWasBackslash = false;
-        stringBuilder.append(currentCharacter);
     }
-    return stringBuilder.toString();
+    return SubstringRange(quotedStringStart, quotedStringEnd - quotedStringStart - 1);
 }
 
-ContentTypeParser::ContentTypeParser(const String& contentType)
-    : m_contentType(contentType.stripWhiteSpace())
+static String substringForRange(const String& string, const SubstringRange& range)
 {
-    parse();
-}
-
-String ContentTypeParser::charset() const
-{
-    return parameterValueForName("charset");
-}
-
-String ContentTypeParser::parameterValueForName(const String& name) const
-{
-    return m_parameters.get(name);
-}
-
-size_t ContentTypeParser::parameterCount() const
-{
-    return m_parameters.size();
+    return string.substring(range.first, range.second);
 }
 
 // From http://tools.ietf.org/html/rfc2045#section-5.1:
@@ -155,67 +150,106 @@ size_t ContentTypeParser::parameterCount() const
 //               ; Must be in quoted-string,
 //               ; to use within parameter values
 
-void ContentTypeParser::parse()
+template <class ReceiverType>
+bool parseContentType(const String& contentType, ReceiverType& receiver)
 {
-    DEFINE_STATIC_LOCAL(const String, contentTypeParameterName, (ASCIILiteral("Content-Type")));
-
-    if (!m_contentType.startsWith(contentTypeParameterName)) {
-        LOG_ERROR("Invalid Content-Type string '%s'", m_contentType.ascii().data());
-        return;
-    }
-    size_t contentTypeLength = m_contentType.length();
-    size_t index = contentTypeParameterName.length();
-    skipSpaces(m_contentType, index);
-    if (index >= contentTypeLength || m_contentType[index] != ':' || ++index >= contentTypeLength)  {
-        LOG_ERROR("Invalid Content-Type string '%s'", m_contentType.ascii().data());
-        return;
+    unsigned index = 0;
+    unsigned contentTypeLength = contentType.length();
+    skipSpaces(contentType, index);
+    if (index >= contentTypeLength)  {
+        LOG_ERROR("Invalid Content-Type string '%s'", contentType.ascii().data());
+        return false;
     }
 
     // There should not be any quoted strings until we reach the parameters.
-    size_t semiColonIndex = m_contentType.find(';', index);
+    size_t semiColonIndex = contentType.find(';', index);
     if (semiColonIndex == notFound) {
-        m_mimeType = m_contentType.substring(index).stripWhiteSpace();
-        return;
+        receiver.setContentType(SubstringRange(index, contentTypeLength - index));
+        return true;
     }
 
-    m_mimeType = m_contentType.substring(index, semiColonIndex - index).stripWhiteSpace();
+    receiver.setContentType(SubstringRange(index, semiColonIndex - index));
     index = semiColonIndex + 1;
     while (true) {
-        skipSpaces(m_contentType, index);
-        String key = parseToken(m_contentType, index);
-        if (key.isEmpty() || index >= contentTypeLength) {
+        skipSpaces(contentType, index);
+        SubstringRange keyRange = parseToken(contentType, index);
+        if (!keyRange.second || index >= contentTypeLength) {
             LOG_ERROR("Invalid Content-Type parameter name.");
-            return;
+            return false;
         }
+
         // Should we tolerate spaces here?
-        if (m_contentType[index++] != '=' || index >= contentTypeLength) {
+        if (contentType[index++] != '=' || index >= contentTypeLength) {
             LOG_ERROR("Invalid Content-Type malformed parameter.");
-            return;
+            return false;
         }
 
         // Should we tolerate spaces here?
         String value;
-        if (m_contentType[index] == '"')
-            value = parseQuotedString(m_contentType, index);
+        SubstringRange valueRange;
+        if (contentType[index] == '"')
+            valueRange = parseQuotedString(contentType, index);
         else
-            value = parseToken(m_contentType, index);
+            valueRange = parseToken(contentType, index);
 
-        if (value.isNull()) {
+        if (!valueRange.second) {
             LOG_ERROR("Invalid Content-Type, invalid parameter value.");
-            return;
+            return false;
         }
 
         // Should we tolerate spaces here?
-        if (index < contentTypeLength && m_contentType[index++] != ';') {
+        if (index < contentTypeLength && contentType[index++] != ';') {
             LOG_ERROR("Invalid Content-Type, invalid character at the end of key/value parameter.");
-            return;
+            return false;
         }
 
-        m_parameters.set(key, value);
+        receiver.setContentTypeParameter(keyRange, valueRange);
 
         if (index >= contentTypeLength)
-            return;
+            return true;
     }
+
+    return true;
+}
+
+bool isValidContentType(const String& contentType)
+{
+    if (contentType.contains('\r') || contentType.contains('\n'))
+        return false;
+
+    DummyParsedContentType parsedContentType = DummyParsedContentType();
+    return parseContentType<DummyParsedContentType>(contentType, parsedContentType);
+}
+
+ParsedContentType::ParsedContentType(const String& contentType)
+    : m_contentType(contentType.stripWhiteSpace())
+{
+    parseContentType<ParsedContentType>(m_contentType, *this);
+}
+
+String ParsedContentType::charset() const
+{
+    return parameterValueForName("charset");
+}
+
+String ParsedContentType::parameterValueForName(const String& name) const
+{
+    return m_parameters.get(name);
+}
+
+size_t ParsedContentType::parameterCount() const
+{
+    return m_parameters.size();
+}
+
+void ParsedContentType::setContentType(const SubstringRange& contentRange)
+{
+    m_mimeType = substringForRange(m_contentType, contentRange).stripWhiteSpace();
+}
+
+void ParsedContentType::setContentTypeParameter(const SubstringRange& key, const SubstringRange& value)
+{
+    m_parameters.set(substringForRange(m_contentType, key), substringForRange(m_contentType, value));
 }
 
 }

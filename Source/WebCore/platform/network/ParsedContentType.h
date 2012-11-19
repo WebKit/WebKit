@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2012 Intel Corporation. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -28,19 +29,22 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ContentTypeParser_h
-#define ContentTypeParser_h
+#ifndef ParsedContentType_h
+#define ParsedContentType_h
 
 #include <wtf/HashMap.h>
 #include <wtf/text/StringHash.h>
-#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
+// <index, length>
+typedef std::pair<unsigned, unsigned> SubstringRange;
+bool isValidContentType(const String&);
+
 // FIXME: add support for comments.
-class ContentTypeParser {
+class ParsedContentType {
 public:
-    explicit ContentTypeParser(const String&);
+    explicit ParsedContentType(const String&);
 
     String mimeType() const { return m_mimeType; }
     String charset() const;
@@ -50,11 +54,13 @@ public:
     size_t parameterCount() const;
 
 private:
-    void parse();
-
-    String m_contentType;
+    template<class ReceiverType>
+    friend bool parseContentType(const String&, ReceiverType&);
+    void setContentType(const SubstringRange&);
+    void setContentTypeParameter(const SubstringRange&, const SubstringRange&);
 
     typedef HashMap<String, String> KeyValuePairs;
+    String m_contentType;
     KeyValuePairs m_parameters;
     String m_mimeType;
 };
@@ -62,5 +68,3 @@ private:
 }
 
 #endif
-
-

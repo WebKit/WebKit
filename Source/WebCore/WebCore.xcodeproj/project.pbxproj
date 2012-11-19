@@ -974,8 +974,6 @@
 		33C0CCD4112C5E6200CE057D /* SecureTextInput.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 33C0CCD2112C5E6200CE057D /* SecureTextInput.cpp */; };
 		33C0CCD5112C5E6200CE057D /* SecureTextInput.h in Headers */ = {isa = PBXBuildFile; fileRef = 33C0CCD3112C5E6200CE057D /* SecureTextInput.h */; };
 		33D0212D131DB37B004091A8 /* CookieStorage.h in Headers */ = {isa = PBXBuildFile; fileRef = E13F01EA1270E10D00DFBA71 /* CookieStorage.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		370D6EDA138454550044103E /* ContentTypeParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 370D6ED8138454550044103E /* ContentTypeParser.cpp */; };
-		370D6EDB138454550044103E /* ContentTypeParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 370D6ED9138454550044103E /* ContentTypeParser.h */; };
 		371941961566B37200A276D8 /* WebCoreNSCellExtras.m in Sources */ = {isa = PBXBuildFile; fileRef = 371941941566B37200A276D8 /* WebCoreNSCellExtras.m */; };
 		371941971566B37200A276D8 /* WebCoreNSCellExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = 371941951566B37200A276D8 /* WebCoreNSCellExtras.h */; };
 		371A67CB11C6C7DB00047B8B /* HyphenationCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 371A67CA11C6C7DB00047B8B /* HyphenationCF.cpp */; };
@@ -1213,6 +1211,8 @@
 		44311CD812E4E24B000A8D19 /* DOMDocumentPrivate.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 44311CD512E4E22D000A8D19 /* DOMDocumentPrivate.h */; };
 		44311CD912E4E257000A8D19 /* DOMDocumentFragmentPrivate.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 44311CD412E4E22D000A8D19 /* DOMDocumentFragmentPrivate.h */; };
 		44311F8212E4E66C000A8D19 /* DOMDocumentFragmentInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 85E711450AC5D5340053270F /* DOMDocumentFragmentInternal.h */; };
+		447958041643B49A001E0A7F /* ParsedContentType.h in Headers */ = {isa = PBXBuildFile; fileRef = 447958031643B47B001E0A7F /* ParsedContentType.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		447958051643B4B2001E0A7F /* ParsedContentType.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 447958021643B47B001E0A7F /* ParsedContentType.cpp */; };
 		448A29BF0A46D9CB0030759F /* JSHTMLOptionsCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = 448A29BD0A46D9CB0030759F /* JSHTMLOptionsCollection.h */; };
 		448A29C00A46D9CB0030759F /* JSHTMLOptionsCollection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 448A29BE0A46D9CB0030759F /* JSHTMLOptionsCollection.cpp */; };
 		448AD27C0A48137A0023D179 /* JSHTMLOptionsCollectionCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 448AD27A0A4813790023D179 /* JSHTMLOptionsCollectionCustom.cpp */; };
@@ -8145,8 +8145,6 @@
 		339B5B62131DAA3200F48D02 /* CookiesStrategy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CookiesStrategy.h; sourceTree = "<group>"; };
 		33C0CCD2112C5E6200CE057D /* SecureTextInput.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SecureTextInput.cpp; sourceTree = "<group>"; };
 		33C0CCD3112C5E6200CE057D /* SecureTextInput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SecureTextInput.h; sourceTree = "<group>"; };
-		370D6ED8138454550044103E /* ContentTypeParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ContentTypeParser.cpp; sourceTree = "<group>"; };
-		370D6ED9138454550044103E /* ContentTypeParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContentTypeParser.h; sourceTree = "<group>"; };
 		371941941566B37200A276D8 /* WebCoreNSCellExtras.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WebCoreNSCellExtras.m; sourceTree = "<group>"; };
 		371941951566B37200A276D8 /* WebCoreNSCellExtras.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebCoreNSCellExtras.h; sourceTree = "<group>"; };
 		371A67CA11C6C7DB00047B8B /* HyphenationCF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HyphenationCF.cpp; sourceTree = "<group>"; };
@@ -8416,6 +8414,8 @@
 		4429AB070CB84F81007647C5 /* DOMTextEventInternal.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMTextEventInternal.h; sourceTree = "<group>"; };
 		44311CD412E4E22D000A8D19 /* DOMDocumentFragmentPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMDocumentFragmentPrivate.h; sourceTree = "<group>"; };
 		44311CD512E4E22D000A8D19 /* DOMDocumentPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMDocumentPrivate.h; sourceTree = "<group>"; };
+		447958021643B47B001E0A7F /* ParsedContentType.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ParsedContentType.cpp; sourceTree = "<group>"; };
+		447958031643B47B001E0A7F /* ParsedContentType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ParsedContentType.h; sourceTree = "<group>"; };
 		448A29BD0A46D9CB0030759F /* JSHTMLOptionsCollection.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLOptionsCollection.h; sourceTree = "<group>"; };
 		448A29BE0A46D9CB0030759F /* JSHTMLOptionsCollection.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLOptionsCollection.cpp; sourceTree = "<group>"; };
 		448AD27A0A4813790023D179 /* JSHTMLOptionsCollectionCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLOptionsCollectionCustom.cpp; sourceTree = "<group>"; };
@@ -15685,8 +15685,6 @@
 				2EB4BCD0121F03E300EC4885 /* BlobResourceHandle.cpp */,
 				2EB4BCD1121F03E300EC4885 /* BlobResourceHandle.h */,
 				2EDEF1F2121B0EFC00726DB2 /* BlobStorageData.h */,
-				370D6ED8138454550044103E /* ContentTypeParser.cpp */,
-				370D6ED9138454550044103E /* ContentTypeParser.h */,
 				E13F01EA1270E10D00DFBA71 /* CookieStorage.h */,
 				514C76580CE923A1007EF3CD /* Credential.cpp */,
 				514C76590CE923A1007EF3CD /* Credential.h */,
@@ -15712,6 +15710,8 @@
 				628D214B12131ED10055DCFC /* NetworkingContext.h */,
 				1A7FA61A0DDA3BBE0028F8A5 /* NetworkStateNotifier.cpp */,
 				1A7FA6180DDA3B3A0028F8A5 /* NetworkStateNotifier.h */,
+				447958021643B47B001E0A7F /* ParsedContentType.cpp */,
+				447958031643B47B001E0A7F /* ParsedContentType.h */,
 				514C765F0CE923A1007EF3CD /* ProtectionSpace.cpp */,
 				514C76600CE923A1007EF3CD /* ProtectionSpace.h */,
 				51A052551058874000CC9E95 /* ProtectionSpaceHash.h */,
@@ -22701,7 +22701,6 @@
 				97C471DC12F925BD0086354B /* ContentSecurityPolicy.h in Headers */,
 				57B791A614C6A62900F202D1 /* ContentSelectorQuery.h in Headers */,
 				41D015CA0F4B5C71004A662F /* ContentType.h in Headers */,
-				370D6EDB138454550044103E /* ContentTypeParser.h in Headers */,
 				97627B8E14FB3CEE002CDCA1 /* ContextDestructionObserver.h in Headers */,
 				A7D3CA11157DF8E900860A97 /* ContextFeatures.h in Headers */,
 				93B6A0E60B0BCA5C00F5027A /* ContextMenu.h in Headers */,
@@ -25777,6 +25776,7 @@
 				570B78C01650CE81001DBE1B /* SelectRuleFeatureSet.h in Headers */,
 				1E50084716516AD800B7E098 /* RenderThemeMacShared.h in Headers */,
 				53EF766B16530A61004CBE49 /* SettingsMacros.h in Headers */,
+				447958041643B49A001E0A7F /* ParsedContentType.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -26293,7 +26293,6 @@
 				97C471DB12F925BD0086354B /* ContentSecurityPolicy.cpp in Sources */,
 				57B791A514C6A62900F202D1 /* ContentSelectorQuery.cpp in Sources */,
 				41D015CB0F4B5C71004A662F /* ContentType.cpp in Sources */,
-				370D6EDA138454550044103E /* ContentTypeParser.cpp in Sources */,
 				97627B8D14FB3CEE002CDCA1 /* ContextDestructionObserver.cpp in Sources */,
 				A7D3CA10157DF8E900860A97 /* ContextFeatures.cpp in Sources */,
 				065AD4F60B0C2EDA005A2B1D /* ContextMenuController.cpp in Sources */,
@@ -28874,6 +28873,7 @@
 				570B78BF1650CE81001DBE1B /* SelectRuleFeatureSet.cpp in Sources */,
 				1E50084816516AD800B7E098 /* RenderThemeMacShared.mm in Sources */,
 				CD7E05221651C28200C1201F /* WebCoreAVFResourceLoader.mm in Sources */,
+				447958051643B4B2001E0A7F /* ParsedContentType.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

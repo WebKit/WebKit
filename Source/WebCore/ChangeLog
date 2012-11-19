@@ -1,3 +1,44 @@
+2012-11-19  Alexander Shalamov  <alexander.shalamov@intel.com>
+
+        Improve ContentTypeParser, so that it could be used to validate mime type according to RFC
+        https://bugs.webkit.org/show_bug.cgi?id=100927
+
+        Reviewed by Alexey Proskuryakov.
+
+        This patch adds ParsedContentType class that represents contents of parsed
+        content type string. isValidContentType function could be used to check if
+        format of the content type string is acorrding to RFC 2616 section 4.2.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/network/MIMEHeader.cpp:
+        (WebCore::MIMEHeader::parseHeader):
+        * platform/network/ParsedContentType.cpp: Renamed from Source/WebCore/platform/network/ContentTypeParser.cpp.
+        (WebCore):
+        (EmptyParsedContentType):
+        (WebCore::EmptyParsedContentType::setContentType):
+        (WebCore::EmptyParsedContentType::setContentTypeParameter):
+        (WebCore::skipSpaces):
+        (WebCore::isTokenCharacter):
+        (WebCore::parseToken):
+        (WebCore::parseQuotedString):
+        (WebCore::substringForRange):
+        (WebCore::parseContentType):
+        (WebCore::isValidContentType):
+        (WebCore::ParsedContentType::ParsedContentType):
+        (WebCore::ParsedContentType::charset):
+        (WebCore::ParsedContentType::parameterValueForName):
+        (WebCore::ParsedContentType::parameterCount):
+        (WebCore::ParsedContentType::setContentType):
+        (WebCore::ParsedContentType::setContentTypeParameter):
+        * platform/network/ParsedContentType.h: Renamed from Source/WebCore/platform/network/ContentTypeParser.h.
+        (WebCore):
+        (ParsedContentType):
+        (WebCore::ParsedContentType::mimeType):
+
 2012-11-19  Erik Arvidsson  <arv@chromium.org>
 
         Update DOMException name: InvalidNodeTypeError

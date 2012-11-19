@@ -5662,8 +5662,6 @@ webcore_platform_sources += \
 	Source/WebCore/platform/network/BlobResourceHandle.cpp \
 	Source/WebCore/platform/network/BlobResourceHandle.h \
 	Source/WebCore/platform/network/BlobStorageData.h \
-	Source/WebCore/platform/network/ContentTypeParser.cpp \
-	Source/WebCore/platform/network/ContentTypeParser.h \
 	Source/WebCore/platform/network/CookieStorage.h \
 	Source/WebCore/platform/network/Credential.cpp \
 	Source/WebCore/platform/network/Credential.h \
@@ -5691,6 +5689,8 @@ webcore_platform_sources += \
 	Source/WebCore/platform/network/ProxyServer.h \
 	Source/WebCore/platform/network/NetworkStateNotifier.cpp \
 	Source/WebCore/platform/network/NetworkStateNotifier.h \
+	Source/WebCore/platform/network/ParsedContentType.cpp \
+	Source/WebCore/platform/network/ParsedContentType.h \
 	Source/WebCore/platform/network/PlatformCookieJar.h \
 	Source/WebCore/platform/network/ProtectionSpaceHash.h \
 	Source/WebCore/platform/network/ProtectionSpace.cpp \
