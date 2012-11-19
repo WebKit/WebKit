@@ -373,9 +373,6 @@ QVariant QGraphicsWebView::inputMethodQuery(Qt::InputMethodQuery query) const
     QPainter::TextAntialiasing and QPainter::SmoothPixmapTransform are enabled by default and will be
     used to render the item in addition of what has been set on the painter given by QGraphicsScene.
 
-    \note This property is not available on Symbian. However, the getter and
-    setter functions can still be used directly.
-
     \sa QPainter::renderHints()
 */
 
