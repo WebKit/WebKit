@@ -829,7 +829,7 @@ static unsigned getPassesRequiredForFilter(FilterOperation::OperationType type)
 }
 
 // Create a normal distribution of 21 values between -2 and 2.
-static const int GaussianKernelHalfWidth = 11;
+static const unsigned GaussianKernelHalfWidth = 11;
 static const float GaussianKernelStep = 0.2;
 
 static inline float gauss(float x)

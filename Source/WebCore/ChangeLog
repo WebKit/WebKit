@@ -1,3 +1,17 @@
+2012-11-19  Yael Aharon  <yael.aharon@intel.com>
+
+        [EFL][TexMap] Complie error when considering warnings as errors
+        https://bugs.webkit.org/show_bug.cgi?id=102705
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Change GaussianKernelHalfWidth to unsigned.
+
+        No new tests.
+
+        * platform/graphics/texmap/TextureMapperGL.cpp:
+        (WebCore):
+
 2012-11-19  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r134830.
