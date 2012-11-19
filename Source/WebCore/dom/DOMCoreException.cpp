@@ -59,7 +59,7 @@ static struct CoreException {
     { "URLMismatchError", "A worker global scope represented an absolute URL that is not equal to the resulting absolute URL." },
     { "QuotaExceededError", "An attempt was made to add something to storage that exceeded the quota." },
     { "TimeoutError", "A timeout occurred." },
-    { "INVALID_NODE_TYPE_ERR", "The supplied node is invalid or has an invalid ancestor for this operation." },
+    { "InvalidNodeTypeError", "The supplied node is invalid or has an invalid ancestor for this operation." },
     { "DataCloneError", "An object could not be cloned." }
 };
 
