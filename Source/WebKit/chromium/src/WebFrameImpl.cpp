@@ -130,6 +130,7 @@
 #include "RenderObject.h"
 #include "RenderTreeAsText.h"
 #include "RenderView.h"
+#include "RenderWidget.h"
 #include "ResourceHandle.h"
 #include "ResourceRequest.h"
 #include "SchemeRegistry.h"
@@ -301,6 +302,23 @@ static long long generateFrameIdentifier()
 {
     static long long next = 0;
     return ++next;
+}
+
+static WebPluginContainerImpl* pluginContainerFromNode(const WebNode& node)
+{
+    if (node.isNull())
+        return 0;
+
+    const Node* coreNode = node.constUnwrap<Node>();
+    if (coreNode->hasTagName(HTMLNames::objectTag) || coreNode->hasTagName(HTMLNames::embedTag)) {
+        RenderObject* object = coreNode->renderer();
+        if (object && object->isWidget()) {
+            Widget* widget = toRenderWidget(object)->widget();
+            if (widget && widget->isPluginContainer())
+                return static_cast<WebPluginContainerImpl*>(widget);
+        }
+    }
+    return 0;
 }
 
 WebPluginContainerImpl* WebFrameImpl::pluginContainerFromFrame(Frame* frame)
@@ -1214,7 +1232,7 @@ bool WebFrameImpl::executeCommand(const WebString& name, const WebNode& node)
     if (command == "Copy") {
         WebPluginContainerImpl* pluginContainer = pluginContainerFromFrame(frame());
         if (!pluginContainer)
-            pluginContainer = static_cast<WebPluginContainerImpl*>(node.pluginContainer());
+            pluginContainer = pluginContainerFromNode(node);
         if (pluginContainer) {
             pluginContainer->copy();
             return true;
@@ -1410,7 +1428,7 @@ int WebFrameImpl::printBegin(const WebPrintParams& printParams, const WebNode& c
         pluginContainer = pluginContainerFromFrame(frame());
     } else {
         // We only support printing plugin nodes for now.
-        pluginContainer = static_cast<WebPluginContainerImpl*>(constrainToNode.pluginContainer());
+        pluginContainer = pluginContainerFromNode(constrainToNode);
     }
 
     if (pluginContainer && pluginContainer->supportsPaginatedPrint())
@@ -1459,7 +1477,7 @@ void WebFrameImpl::printEnd()
 
 bool WebFrameImpl::isPrintScalingDisabledForPlugin(const WebNode& node)
 {
-    WebPluginContainerImpl* pluginContainer =  node.isNull() ? pluginContainerFromFrame(frame()) : static_cast<WebPluginContainerImpl*>(node.pluginContainer());
+    WebPluginContainerImpl* pluginContainer =  node.isNull() ? pluginContainerFromFrame(frame()) : pluginContainerFromNode(node);
 
     if (!pluginContainer || !pluginContainer->supportsPaginatedPrint())
         return false;

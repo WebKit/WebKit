@@ -31,8 +31,6 @@
 #ifndef WebPluginContainer_h
 #define WebPluginContainer_h
 
-#include "platform/WebCommon.h"
-
 struct NPObject;
 
 namespace WebKit {
@@ -42,7 +40,6 @@ class WebPlugin;
 class WebString;
 class WebURL;
 class WebURLRequest;
-struct WebPoint;
 struct WebRect;
 
 class WebPluginContainer {
@@ -113,9 +110,6 @@ public:
 
     // Notifies when the plugin starts/stops accepting touch events.
     virtual void setIsAcceptingTouchEvents(bool) = 0;
-
-    // Converts view's window coordinates to plugin's local coordinates.
-    virtual WebPoint windowToLocalPoint(const WebPoint&) = 0;
 
     virtual WebPlugin* plugin() = 0;
     virtual void setPlugin(WebPlugin*) = 0;

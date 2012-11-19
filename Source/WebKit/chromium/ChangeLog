@@ -1,3 +1,33 @@
+2012-11-18  Kentaro Hara  <haraken@chromium.org>
+
+        Unreviewed, rolling out r135047.
+        http://trac.webkit.org/changeset/135047
+        https://bugs.webkit.org/show_bug.cgi?id=102339
+
+        it broke Chromium Windows/Mac build
+
+        * WebKit.gyp:
+        * WebKit.gypi:
+        * public/WebNode.h:
+        (WebKit):
+        * public/WebPluginContainer.h:
+        (WebKit):
+        (WebPluginContainer):
+        * src/WebFrameImpl.cpp:
+        (WebKit::pluginContainerFromNode):
+        (WebKit):
+        (WebKit::WebFrameImpl::executeCommand):
+        (WebKit::WebFrameImpl::printBegin):
+        (WebKit::WebFrameImpl::isPrintScalingDisabledForPlugin):
+        * src/WebNode.cpp:
+        * src/WebPluginContainerImpl.cpp:
+        * src/WebPluginContainerImpl.h:
+        (WebPluginContainerImpl):
+        * tests/FakeWebPlugin.cpp: Removed.
+        * tests/FakeWebPlugin.h: Removed.
+        * tests/WebPluginContainerTest.cpp: Removed.
+        * tests/data/plugin_container.html: Removed.
+
 2012-11-18  Rick Byers  <rbyers@chromium.org>
 
         [chromium] add WebCursorInfo::imageScaleFactor
