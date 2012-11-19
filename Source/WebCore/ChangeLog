@@ -1,3 +1,23 @@
+2012-11-18  Kentaro Hara  <haraken@chromium.org>
+
+        [V8] Make more use of $v8Interface in CodeGeneratorV8.pm
+        https://bugs.webkit.org/show_bug.cgi?id=102639
+
+        Reviewed by Adam Barth.
+
+        We can replace hard-coded "V8${interfaceName}" with $v8Interface.
+
+        No tests. No change in generated code.
+
+        * bindings/scripts/CodeGeneratorV8.pm:
+        (GenerateNormalAttrGetter):
+        (GenerateNormalAttrSetter):
+        (GenerateFunctionCallback):
+        (GenerateNamedConstructorCallback):
+        (GenerateImplementationIndexer):
+        (GenerateImplementationNamedPropertyGetter):
+        (GenerateImplementation):
+
 2012-11-16  Ilya Tikhonovsky  <loislo@chromium.org>
 
         webaudio: leak: AudioContext objects are leaking. They retain 36mb of shared data.
