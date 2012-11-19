@@ -62,6 +62,10 @@ class WebPopupMenuProxyEfl;
 #if ENABLE(VIBRATION)
 class VibrationClientEfl;
 #endif
+
+#if USE(COORDINATED_GRAPHICS)
+class LayerTreeRenderer;
+#endif
 }
 
 namespace WebCore {
@@ -205,6 +209,10 @@ public:
 private:
     inline Ewk_View_Smart_Data* smartData() const;
     void displayTimerFired(WebCore::Timer<EwkViewImpl>*);
+
+#if USE(COORDINATED_GRAPHICS)
+    WebKit::LayerTreeRenderer* layerTreeRenderer();
+#endif
 
     void informIconChange();
 

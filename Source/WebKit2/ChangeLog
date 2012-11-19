@@ -1,5 +1,25 @@
 2012-11-19  Christophe Dumez  <christophe.dumez@intel.com>
 
+        [EFL][WK2] Fix possible crash in EwkViewImpl::displayTimerFired()
+        https://bugs.webkit.org/show_bug.cgi?id=102682
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add NULL check for DrawingAreaProxy and LayerTreeCoordinatorProxy
+        in displayTimerFired() to avoid crashing if those have already
+        been destroyed by the time to timer is fired.
+
+        * UIProcess/API/efl/EwkViewImpl.cpp:
+        (EwkViewImpl::layerTreeRenderer):
+        (EwkViewImpl::displayTimerFired):
+        (EwkViewImpl::createGLSurface):
+        (EwkViewImpl::enterAcceleratedCompositingMode):
+        * UIProcess/API/efl/EwkViewImpl.h:
+        (WebKit):
+        (EwkViewImpl):
+
+2012-11-19  Christophe Dumez  <christophe.dumez@intel.com>
+
         [WK2][WTR] Memory leak in TestController::initialize()
         https://bugs.webkit.org/show_bug.cgi?id=102616
 

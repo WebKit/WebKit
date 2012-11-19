@@ -327,6 +327,21 @@ AffineTransform EwkViewImpl::transformToScreen() const
     return transform;
 }
 
+#if USE(COORDINATED_GRAPHICS)
+LayerTreeRenderer* EwkViewImpl::layerTreeRenderer()
+{
+    DrawingAreaProxy* drawingArea = page()->drawingArea();
+    if (!drawingArea)
+        return 0;
+
+    WebKit::LayerTreeCoordinatorProxy* layerTreeCoordinatorProxy = drawingArea->layerTreeCoordinatorProxy();
+    if (!layerTreeCoordinatorProxy)
+        return 0;
+
+    return layerTreeCoordinatorProxy->layerTreeRenderer();
+}
+#endif
+
 void EwkViewImpl::displayTimerFired(Timer<EwkViewImpl>*)
 {
 #if USE(COORDINATED_GRAPHICS)
@@ -337,7 +352,10 @@ void EwkViewImpl::displayTimerFired(Timer<EwkViewImpl>*)
     // We are supposed to clip to the actual viewport, nothing less.
     IntRect viewport(sd->view.x, sd->view.y, sd->view.w, sd->view.h);
 
-    LayerTreeRenderer* renderer = page()->drawingArea()->layerTreeCoordinatorProxy()->layerTreeRenderer();
+    LayerTreeRenderer* renderer = layerTreeRenderer();
+    if (!renderer)
+        return;
+
     renderer->setActive(true);
     renderer->setDrawsBackground(m_setDrawsBackground);
     renderer->syncRemoteContent();
@@ -596,7 +614,7 @@ bool EwkViewImpl::createGLSurface(const IntSize& viewSize)
         if (!m_evasGL) {
             WARN("Failed to create Evas_GL, falling back to software mode.");
             m_isHardwareAccelerated = false;
-            page()->drawingArea()->layerTreeCoordinatorProxy()->layerTreeRenderer()->setAccelerationMode(TextureMapper::SoftwareMode);
+            layerTreeRenderer()->setAccelerationMode(TextureMapper::SoftwareMode);
 #if ENABLE(WEBGL)
             m_pageProxy->pageGroup()->preferences()->setWebGLEnabled(false);
 #endif
@@ -641,7 +659,7 @@ bool EwkViewImpl::createGLSurface(const IntSize& viewSize)
 
 bool EwkViewImpl::enterAcceleratedCompositingMode()
 {
-    page()->drawingArea()->layerTreeCoordinatorProxy()->layerTreeRenderer()->setActive(true);
+    layerTreeRenderer()->setActive(true);
 
     if (!m_isHardwareAccelerated)
         return true;
