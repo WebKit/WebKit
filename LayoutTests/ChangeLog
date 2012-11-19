@@ -1,3 +1,16 @@
+2012-11-18  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL][WK2] Skip networkinformation tests wrongly unskipped in r135096
+        https://bugs.webkit.org/show_bug.cgi?id=102650
+
+        Unreviewed EFL gardening.
+
+        Skip again for EFL Debug bots several networkinformation tests
+        that were wrongly unskipped in r135096 as they still hit an
+        assertion.
+
+        * platform/efl-wk2/TestExpectations:
+
 2012-11-18  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Unreviewed: add missed test files for r135111.

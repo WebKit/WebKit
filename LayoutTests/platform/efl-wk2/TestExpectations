@@ -60,6 +60,13 @@ webkit.org/b/102204 http/tests/security/frameNavigation/inactive-function-in-pop
 
 webkit.org/b/102217 media/audio-concurrent-supported.html [ Crash ]
 
+# Hitting !decoder.destinationID() assertion.
+webkit.org/b/102651 [ Debug ] networkinformation/multiple-frames.html [ Crash ]
+webkit.org/b/102651 [ Debug ] networkinformation/basic-all-types-of-events.html [ Crash ]
+webkit.org/b/102651 [ Debug ] networkinformation/updates.html [ Crash ]
+webkit.org/b/102651 [ Debug ] networkinformation/add-listener-from-callback.html [ Crash ]
+webkit.org/b/102651 [ Debug ] networkinformation/basic-operation.html [ Crash ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # FLAKY TESTS
 #////////////////////////////////////////////////////////////////////////////////////////
