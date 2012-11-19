@@ -2383,3 +2383,6 @@ webkit.org/b/98523 fast/images/repaint-subrect-grid.html
 
 # [Qt] New css3/filters/effect-reference-ordering-hw.html crashes
 webkit.org/b/101925 css3/filters/effect-reference-ordering-hw.html
+
+# [Qt] fast/block/float/overhanging-tall-block.html asserts after r135025
+webkit.org/b/102675 [ Debug ] fast/block/float/overhanging-tall-block.html
