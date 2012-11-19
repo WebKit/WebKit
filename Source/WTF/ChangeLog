@@ -1,3 +1,14 @@
+2012-11-19  Brady Eidson  <beidson@apple.com>
+
+        Add 64-bit specializations for atomicIncrement and atomicDecrement
+        https://bugs.webkit.org/show_bug.cgi?id=102702
+
+        Reviewed by Eric Carlson.
+
+        * wtf/Atomics.h:
+        (WTF::atomicIncrement): Add A 64-bit version for Darwin.
+        (WTF::atomicDecrement): Ditto.
+
 2012-11-18  Laszlo Gombos  <l.gombos@samsung.com>
 
         Remove non-existent directories from the make system

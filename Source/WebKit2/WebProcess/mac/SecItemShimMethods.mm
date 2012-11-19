@@ -48,7 +48,7 @@ static BlockingResponseMap<SecItemResponseData>& responseMap()
 static uint64_t generateSecItemRequestID()
 {
     static int64_t uniqueSecItemRequestID;
-    return OSAtomicIncrement64Barrier(&uniqueSecItemRequestID);
+    return atomicIncrement(&uniqueSecItemRequestID);
 }
 
 void didReceiveSecItemResponse(uint64_t requestID, const SecItemResponseData& response)

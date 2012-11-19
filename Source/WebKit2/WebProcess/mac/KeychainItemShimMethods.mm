@@ -150,7 +150,7 @@ static BlockingResponseMap<SecKeychainItemResponseData>& responseMap()
 static uint64_t generateSecKeychainItemRequestID()
 {
     static int64_t uniqueSecKeychainItemRequestID;
-    return OSAtomicIncrement64Barrier(&uniqueSecKeychainItemRequestID);
+    return atomicIncrement(&uniqueSecKeychainItemRequestID);
 }
 
 void didReceiveSecKeychainItemResponse(uint64_t requestID, const SecKeychainItemResponseData& response)

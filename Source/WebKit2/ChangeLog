@@ -1,5 +1,24 @@
 2012-11-19  Brady Eidson  <beidson@apple.com>
 
+        Add 64-bit specializations for atomicIncrement and atomicDecrement
+        https://bugs.webkit.org/show_bug.cgi?id=102702
+
+        Reviewed by Eric Carlson.
+
+        Move away from the Darwin-specific OSAtomicIncrement64Barrier and use WTF::atomicIncrement instead.
+
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::generateWillSendRequestID): Adopt WTF::atomicIncrement.
+        (WebKit::generateCanAuthenticateAgainstProtectionSpaceID): Ditto.
+
+        * WebProcess/mac/KeychainItemShimMethods.mm:
+        (WebKit::generateSecKeychainItemRequestID): Ditto.
+
+        * WebProcess/mac/SecItemShimMethods.mm:
+        (WebKit::generateSecItemRequestID): Ditto.
+
+2012-11-19  Brady Eidson  <beidson@apple.com>
+
         NetworkProcess Authentication.
         https://bugs.webkit.org/show_bug.cgi?id=102592
 

@@ -188,7 +188,7 @@ static BlockingResponseMap<ResourceRequest*>& willSendRequestResponseMap()
 static uint64_t generateWillSendRequestID()
 {
     static int64_t uniqueWillSendRequestID;
-    return OSAtomicIncrement64Barrier(&uniqueWillSendRequestID);
+    return atomicIncrement(&uniqueWillSendRequestID);
 }
 
 void NetworkResourceLoader::willSendRequest(ResourceHandle*, ResourceRequest& request, const ResourceResponse& redirectResponse)
@@ -316,7 +316,7 @@ static BlockingBoolResponseMap& canAuthenticateAgainstProtectionSpaceResponseMap
 static uint64_t generateCanAuthenticateAgainstProtectionSpaceID()
 {
     static int64_t uniqueCanAuthenticateAgainstProtectionSpaceID;
-    return OSAtomicIncrement64Barrier(&uniqueCanAuthenticateAgainstProtectionSpaceID);
+    return atomicIncrement(&uniqueCanAuthenticateAgainstProtectionSpaceID);
 }
 
 bool NetworkResourceLoader::canAuthenticateAgainstProtectionSpace(ResourceHandle*, const ProtectionSpace& protectionSpace)

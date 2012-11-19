@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008, 2010, 2012 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Justin Haygood (jhaygood@reaktix.com)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -97,6 +97,9 @@ inline int atomicDecrement(int volatile* addend) { return InterlockedDecrement(r
 
 inline int atomicIncrement(int volatile* addend) { return OSAtomicIncrement32Barrier(const_cast<int*>(addend)); }
 inline int atomicDecrement(int volatile* addend) { return OSAtomicDecrement32Barrier(const_cast<int*>(addend)); }
+
+inline int64_t atomicIncrement(int64_t volatile* addend) { return OSAtomicIncrement64Barrier(const_cast<int64_t*>(addend)); }
+inline int64_t atomicDecrement(int64_t volatile* addend) { return OSAtomicDecrement64Barrier(const_cast<int64_t*>(addend)); }
 
 #elif OS(QNX)
 #define WTF_USE_LOCKFREE_THREADSAFEREFCOUNTED 1
