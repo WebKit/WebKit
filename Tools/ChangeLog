@@ -1,3 +1,75 @@
+2012-11-19  Jochen Eisinger  <jochen@chromium.org>
+
+        [chromium] move methods that only use the WebKit API from DRTTestRunner to TestRunner
+        https://bugs.webkit.org/show_bug.cgi?id=102676
+
+        Reviewed by Tony Chang.
+
+        In addition, I've replaced parsePageNumber with the more commonly used
+        cppVariantToInt32, moved abortModal to the list of stubbed out methods,
+        and removed setAutomaticLinkDetectionEnabled which wasn't used
+        anywhere.
+
+        * DumpRenderTree/chromium/DRTTestRunner.cpp:
+        (DRTTestRunner::DRTTestRunner):
+        (DRTTestRunner::reset):
+        (DRTTestRunner::overridePreference):
+        * DumpRenderTree/chromium/DRTTestRunner.h:
+        (DRTTestRunner):
+        * DumpRenderTree/chromium/TestRunner/src/TestRunner.cpp:
+        (WebTestRunner::TestRunner::TestRunner):
+        (WebTestRunner::TestRunner::reset):
+        (WebTestRunner):
+        (WebTestRunner::TestRunner::setTabKeyCyclesThroughElements):
+        (WebTestRunner::TestRunner::setAsynchronousSpellCheckingEnabled):
+        (WebTestRunner::TestRunner::execCommand):
+        (WebTestRunner::TestRunner::isCommandEnabled):
+        (WebTestRunner::TestRunner::pauseAnimationAtTimeOnElementWithId):
+        (WebTestRunner::TestRunner::pauseTransitionAtTimeOnElementWithId):
+        (WebTestRunner::TestRunner::elementDoesAutoCompleteForElementWithId):
+        (WebTestRunner::TestRunner::numberOfActiveAnimations):
+        (WebTestRunner::TestRunner::callShouldCloseOnWebView):
+        (WebTestRunner::TestRunner::setDomainRelaxationForbiddenForURLScheme):
+        (WebTestRunner::TestRunner::evaluateScriptInIsolatedWorldAndReturnValue):
+        (WebTestRunner::TestRunner::evaluateScriptInIsolatedWorld):
+        (WebTestRunner::TestRunner::setIsolatedWorldSecurityOrigin):
+        (WebTestRunner::TestRunner::setIsolatedWorldContentSecurityPolicy):
+        (WebTestRunner::TestRunner::addOriginAccessWhitelistEntry):
+        (WebTestRunner::TestRunner::removeOriginAccessWhitelistEntry):
+        (WebTestRunner::TestRunner::hasCustomPageSizeStyle):
+        (WebTestRunner::TestRunner::forceRedSelectionColors):
+        (WebTestRunner::TestRunner::addUserScript):
+        (WebTestRunner::TestRunner::addUserStyleSheet):
+        (WebTestRunner::TestRunner::startSpeechInput):
+        (WebTestRunner::TestRunner::loseCompositorContext):
+        (WebTestRunner::TestRunner::markerTextForListItem):
+        (WebTestRunner::TestRunner::findString):
+        (WebTestRunner::TestRunner::setMinimumTimerInterval):
+        (WebTestRunner::TestRunner::setAutofilled):
+        (WebTestRunner::TestRunner::setValueForUser):
+        (WebTestRunner::TestRunner::enableFixedLayoutMode):
+        (WebTestRunner::TestRunner::setFixedLayoutSize):
+        (WebTestRunner::TestRunner::selectionAsMarkup):
+        (WebTestRunner::TestRunner::setTextSubpixelPositioning):
+        (WebTestRunner::TestRunner::resetPageVisibility):
+        (WebTestRunner::TestRunner::setPageVisibility):
+        (WebTestRunner::TestRunner::setTextDirection):
+        (WebTestRunner::TestRunner::textSurroundingNode):
+        (WebTestRunner::TestRunner::workerThreadCount):
+        (WebTestRunner::TestRunner::cppVariantToBool):
+        (WebTestRunner::TestRunner::cppVariantToInt32):
+        (WebTestRunner::TestRunner::cppVariantToWebString):
+        (WebTestRunner::TestRunner::cppVariantToWebStringArray):
+        (WebTestRunner::TestRunner::printErrorMessage): formerly logErrorToConsole
+        (WebTestRunner::TestRunner::fallbackMethod):
+        * DumpRenderTree/chromium/TestRunner/src/TestRunner.h:
+        (WebKit):
+        (WebTestRunner::TestRunner::setWebView):
+        (TestRunner):
+        * DumpRenderTree/chromium/TestShell.cpp:
+        (TestShell::createMainWindow):
+        (TestShell::~TestShell):
+
 2012-11-19  Yusuke Sato  <yusukes@chromium.org>
 
         [Chromium] Flash cannot receive scroll events when threaded compositing is in use
