@@ -48,7 +48,7 @@ class GardeningHTTPServer(SocketServer.ThreadingMixIn, BaseHTTPServer.HTTPServer
     def url(self, args=None):
         # We can't use urllib.encode() here because that encodes spaces as plus signs and the buildbots don't decode those properly.
         arg_string = ('?' + '&'.join("%s=%s" % (key, urllib.quote(value)) for (key, value) in args.items())) if args else ''
-        return 'file://' + os.path.join(GardeningHTTPRequestHandler.STATIC_FILE_DIRECTORY, 'garden-o-matic.html' + arg_string)
+        return 'http://localhost:8127/garden-o-matic.html' + arg_string
 
 
 class GardeningHTTPRequestHandler(ReflectionHandler):

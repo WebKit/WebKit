@@ -56,7 +56,7 @@ checkout.subversionURLForTest = function(testName)
 checkout.isAvailable = function(callback)
 {
     net.ajax({
-        url: config.kLocalServerURL + '/ping',
+        url: '/ping',
         success: function() {
             callback(true);
         },
@@ -69,7 +69,7 @@ checkout.isAvailable = function(callback)
 checkout.rollout = function(revision, reason, callback, checkoutUnavailable)
 {
     callIfCheckoutAvailable(function() {
-        net.post(config.kLocalServerURL + '/rollout?' + $.param({
+        net.post('/rollout?' + $.param({
             'revision': revision,
             'reason': reason
         }), function() {
@@ -88,7 +88,7 @@ checkout.rebaseline = function(failureInfoList, callback, progressCallback, chec
             tests[failureInfo.testName][failureInfo.builderName] = 
                 base.uniquifyArray(base.flattenArray(failureInfo.failureTypeList.map(results.failureTypeToExtensionList)));
         }
-        net.post(config.kLocalServerURL + '/rebaselineall', JSON.stringify(tests), function() { callback() });
+        net.post('/rebaselineall', JSON.stringify(tests), function() { callback() });
     }, checkoutUnavailable);
 };
 

@@ -42,7 +42,7 @@ function rebaselineWithStatusUpdates(failureInfoList)
     statusView.addMessage(id, 'Performing rebaseline of ' + testName + '...');
 
     checkout.rebaseline(failureInfoList, function() {
-        statusView.addFinalMessage(id, 'Rebaseline done! Please land with "webkit-patch land-cowboy".');
+        statusView.addFinalMessage(id, 'Rebaseline done! Please land with "webkit-patch land-cowhand".');
     }, function(failureInfo) {
         statusView.addMessage(id, failureInfo.testName + ' on ' + ui.displayNameForBuilder(failureInfo.builderName));
     }, function() {
@@ -61,7 +61,7 @@ function updateExpectationsWithStatusUpdates(failureInfoList)
     statusView.addMessage(id, 'Updating expectations of ' + testName + '...');
 
     checkout.updateExpectations(failureInfoList, function() {
-        statusView.addFinalMessage(id, 'Expectations update done! Please land with "webkit-patch land-cowboy".');
+        statusView.addFinalMessage(id, 'Expectations update done! Please land with "webkit-patch land-cowhand".');
     }, function() {
         statusView.addFinalMessage(id, kCheckoutUnavailableMessage);
     });

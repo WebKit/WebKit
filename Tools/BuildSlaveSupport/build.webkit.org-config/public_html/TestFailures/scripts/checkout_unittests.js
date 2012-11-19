@@ -76,7 +76,7 @@ test("rebaseline", 3, function() {
     });
 
     deepEqual(requests, [
-        ["http://127.0.0.1:8127/rebaselineall",
+        ["/rebaselineall",
          JSON.stringify({
              "another/test.svg": {
                  "WebKit Linux": ["png"], 
