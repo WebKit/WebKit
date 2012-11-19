@@ -1,3 +1,16 @@
+2012-11-18  Laszlo Gombos  <l.gombos@samsung.com>
+
+        Remove non-existent directories from the make system
+        https://bugs.webkit.org/show_bug.cgi?id=102632
+
+        Reviewed by Adam Barth.
+
+        Remove (non-existent) symbian references from the exclude list in gyp project files.
+
+        No new tests as there is no new functionality.
+
+        * WebCore.gyp/WebCore.gyp:
+
 2012-11-18  Patrick Gansterer  <paroga@webkit.org>
 
         [WIN] Add a IMLangFontLinkType typedef

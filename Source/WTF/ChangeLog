@@ -1,3 +1,14 @@
+2012-11-18  Laszlo Gombos  <l.gombos@samsung.com>
+
+        Remove non-existent directories from the make system
+        https://bugs.webkit.org/show_bug.cgi?id=102632
+
+        Reviewed by Adam Barth.
+
+        Remove (non-existent) symbian references from the exclude list in gyp project files.
+
+        * WTF.gyp/WTF.gyp:
+
 2012-11-16  Michael Saboff  <msaboff@apple.com>
 
         String::fromUTF8() should take advantage of the ASCII check in convertUTF8ToUTF16()

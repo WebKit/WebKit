@@ -128,7 +128,6 @@ IF(NOT DEFINED CPACK_SOURCE_IGNORE_FILES)
       "/qt/" "/Qt/" "qt\\\\." "Qt\\\\."
       "/qt4/" "/Qt4/" "qt4\\\\." "Qt4\\\\."
       "/skia/" "/Skia/" "skia\\\\." "Skia\\\\."
-      "/symbian/" "/Symbian/" "symbian\\\\." "Symbian\\\\."
       "/v8/" "/V8/" "v8\\\\." "V8\\\\."
       "/V8/" "/V8/" "V8\\\\." "V8\\\\."
       "/win/" "/Win/" "win\\\\." "Win\\\\."
