@@ -1,3 +1,57 @@
+2012-11-19  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Computed grid items' positions shouldn't be using Length
+        https://bugs.webkit.org/show_bug.cgi?id=102537
+
+        Reviewed by Tony Chang.
+
+        This change refactors how we store the grid items' position to use
+        a new type GridPosition. Length was a temporary type as it supported
+        'auto' | <integer> but it was starting to get more and more confusing
+        as we were implementing the layout routines.
+
+        No change in behavior.
+
+        * GNUmakefile.list.am:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        Added the new file to the build systems.
+
+        * rendering/style/RenderStyle.h:
+        Updated after the type change. Also made some getters
+        return a const reference instead of forcing a copy.
+
+        * rendering/style/StyleGridItemData.h:
+        (StyleGridItemData):
+        Ditto, also removed a comment about adding a new type.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::valueForGridPosition):
+        * css/StyleResolver.cpp:
+        (WebCore::createGridPosition):
+        (WebCore::StyleResolver::applyProperty):
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::resolveGridPosition):
+        Updated these sites after switching to GridPosition.
+
+        * rendering/RenderGrid.h:
+        Changed resolveGridPosition signature: it now takes a GridPosition.
+
+        * rendering/style/GridPosition.h: Added.
+        (WebCore::GridPosition::GridPosition):
+        Default constructor, creates an 'auto' position.
+
+        (WebCore::GridPosition::isPositive):
+        (WebCore::GridPosition::type):
+        (WebCore::GridPosition::isAuto):
+        (WebCore::GridPosition::setIntegerPosition):
+        (WebCore::GridPosition::integerPosition):
+        Helper functions.
+
+        (WebCore::GridPosition::operator==):
+        Required comparison operator for StyleGridItemData.
+
 2012-11-19  Thiago Marcos P. Santos  <thiago.santos@intel.com>
 
         Apply the resolved viewport rules

@@ -50,7 +50,7 @@ private:
     void layoutGridItems();
 
     LayoutPoint findChildLogicalPosition(RenderBox*, const Vector<GridTrack>& columnTracks, const Vector<GridTrack>& rowTracks);
-    size_t resolveGridPosition(const Length&) const;
+    size_t resolveGridPosition(const GridPosition&) const;
 };
 
 } // namespace WebCore

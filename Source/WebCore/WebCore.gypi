@@ -598,6 +598,7 @@
             'rendering/style/CursorList.h',
             'rendering/style/DataRef.h',
             'rendering/style/FillLayer.h',
+            'rendering/style/GridPosition.h',
             'rendering/style/LineClampValue.h',
             'rendering/style/NinePieceImage.h',
             'rendering/style/OutlineValue.h',

@@ -28,40 +28,52 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef StyleGridItemData_h
-#define StyleGridItemData_h
-
-
-#include "GridPosition.h"
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefCounted.h>
-#include <wtf/Vector.h>
+#ifndef GridPosition_h
+#define GridPosition_h
 
 namespace WebCore {
 
-class StyleGridItemData : public RefCounted<StyleGridItemData> {
+enum GridPositionType {
+    AutoPosition,
+    IntegerPosition
+};
+
+class GridPosition {
 public:
-    static PassRefPtr<StyleGridItemData> create() { return adoptRef(new StyleGridItemData); }
-    PassRefPtr<StyleGridItemData> copy() const { return adoptRef(new StyleGridItemData(*this)); }
-
-    bool operator==(const StyleGridItemData& o) const
+    GridPosition()
+        : m_type(AutoPosition)
+        , m_integerPosition(0)
     {
-        return m_gridColumn == o.m_gridColumn && m_gridRow == o.m_gridRow;
     }
 
-    bool operator!=(const StyleGridItemData& o) const
+    bool isPositive() const { return integerPosition() > 0; }
+
+    GridPositionType type() const { return m_type; }
+    bool isAuto() const { return m_type == AutoPosition; }
+
+    void setIntegerPosition(int position)
     {
-        return !(*this == o);
+        m_type = IntegerPosition;
+        m_integerPosition = position;
     }
 
-    GridPosition m_gridColumn;
-    GridPosition m_gridRow;
+    int integerPosition() const
+    {
+        ASSERT(type() == IntegerPosition);
+        return m_integerPosition;
+    }
+
+    bool operator==(const GridPosition& other) const
+    {
+        return m_type == other.m_type && m_integerPosition == other.m_integerPosition;
+    }
 
 private:
-    StyleGridItemData();
-    StyleGridItemData(const StyleGridItemData&);
+    GridPositionType m_type;
+    // FIXME: This should probably be a size_t but the spec currently allows any <integer>.
+    int m_integerPosition;
 };
 
 } // namespace WebCore
 
-#endif // StyleGridItemData_h
+#endif // GridPosition_h

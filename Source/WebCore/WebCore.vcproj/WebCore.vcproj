@@ -45499,6 +45499,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\rendering\style\GridPosition.h"
+					>
+				</File>
+				<File
 					RelativePath="..\rendering\style\KeyframeList.cpp"
 					>
 					<FileConfiguration

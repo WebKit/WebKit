@@ -175,35 +175,21 @@ void RenderGrid::layoutGridItems()
         setLogicalHeight(logicalHeight() + rowTracks[i].m_usedBreadth);
 }
 
-size_t RenderGrid::resolveGridPosition(const Length& position) const
+size_t RenderGrid::resolveGridPosition(const GridPosition& position) const
 {
     // FIXME: Handle other values for grid-{row,column} like ranges or line names.
     switch (position.type()) {
-    case Fixed:
+    case IntegerPosition:
         // FIXME: What does a non-positive integer mean for a column/row?
         if (!position.isPositive())
             return 0;
 
-        return position.intValue() - 1;
-    case Auto:
+        return position.integerPosition() - 1;
+    case AutoPosition:
         // FIXME: We should follow 'grid-auto-flow' for resolution.
         // Until then, we use the 'grid-auto-flow: none' behavior (which is the default)
         // and resolve 'auto' as the first row / column.
         return 0;
-    case Relative:
-    case Percent:
-    case Intrinsic:
-    case MinIntrinsic:
-    case MinContent:
-    case MaxContent:
-    case FillAvailable:
-    case FitContent:
-    case Calculated:
-    case ViewportPercentageWidth:
-    case ViewportPercentageHeight:
-    case ViewportPercentageMin:
-    case Undefined:
-        break;
     }
     ASSERT_NOT_REACHED();
     return 0;

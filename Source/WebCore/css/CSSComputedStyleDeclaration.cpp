@@ -1004,13 +1004,12 @@ static PassRefPtr<CSSValue> valueForGridTrackList(const Vector<Length>& trackLen
     return list.release();
 }
 
-static PassRefPtr<CSSValue> valueForGridPosition(const Length& position)
+static PassRefPtr<CSSValue> valueForGridPosition(const GridPosition& position)
 {
     if (position.isAuto())
         return cssValuePool().createIdentifierValue(CSSValueAuto);
 
-    ASSERT(position.isFixed());
-    return cssValuePool().createValue(position.value(), CSSPrimitiveValue::CSS_NUMBER);
+    return cssValuePool().createValue(position.integerPosition(), CSSPrimitiveValue::CSS_NUMBER);
 }
 
 static PassRefPtr<CSSValue> getDelayValue(const AnimationList* animList)
