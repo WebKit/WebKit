@@ -30,14 +30,32 @@
 #include "ImageDecodingStore.h"
 #include "MockImageDecoder.h"
 #include "NativeImageSkia.h"
+#include "SharedBuffer.h"
 #include "SkCanvas.h"
 #include "SkDevice.h"
 #include "SkPicture.h"
 #include <gtest/gtest.h>
+#include <wtf/PassRefPtr.h>
+#include <wtf/RefPtr.h>
 
 using namespace WebCore;
 
 namespace {
+
+// Raw data for a PNG file with 1x1 white pixels.
+const char whitePNG[] = {
+    0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0x00, 0x00,
+    0x00, 0x0d, 0x49, 0x48, 0x44, 0x52, 0x00, 0x00, 0x00, 0x01,
+    0x00, 0x00, 0x00, 0x01, 0x08, 0x02, 0x00, 0x00, 0x00, 0x90,
+    0x77, 0x53, 0xde, 0x00, 0x00, 0x00, 0x01, 0x73, 0x52, 0x47,
+    0x42, 0x00, 0xae, 0xce, 0x1c, 0xe9, 0x00, 0x00, 0x00, 0x09,
+    0x70, 0x48, 0x59, 0x73, 0x00, 0x00, 0x0b, 0x13, 0x00, 0x00,
+    0x0b, 0x13, 0x01, 0x00, 0x9a, 0x9c, 0x18, 0x00, 0x00, 0x00,
+    0x0c, 0x49, 0x44, 0x41, 0x54, 0x08, 0xd7, 0x63, 0xf8, 0xff,
+    0xff, 0x3f, 0x00, 0x05, 0xfe, 0x02, 0xfe, 0xdc, 0xcc, 0x59,
+    0xe7, 0x00, 0x00, 0x00, 0x00, 0x49, 0x45, 0x4e, 0x44, 0xae,
+    0x42, 0x60, 0x82,
+};
 
 static SkCanvas* createRasterCanvas(int width, int height)
 {
@@ -45,20 +63,29 @@ static SkCanvas* createRasterCanvas(int width, int height)
     return new SkCanvas(device);
 }
 
-class DeferredImageDecoderTest : public ::testing::Test {
+class DeferredImageDecoderTest : public ::testing::Test, public MockImageDecoderClient {
 public:
     virtual void SetUp()
     {
         ImageDecodingStore::initializeOnMainThread();
-        m_actualDecoder = new MockImageDecoder();
-        m_actualDecoder->setSize(600, 613);
+        m_data = SharedBuffer::create(whitePNG, sizeof(whitePNG));
+        m_actualDecoder = new MockImageDecoder(this);
+        m_actualDecoder->setSize(1, 1);
         m_lazyDecoder = DeferredImageDecoder::createForTesting(adoptPtr(m_actualDecoder));
+        m_lazyDecoder->setData(m_data.get(), true);
         m_canvas.reset(createRasterCanvas(100, 100));
+        m_frameBufferRequestCount = 0;
     }
 
     virtual void TearDown()
     {
         ImageDecodingStore::shutdown();
+    }
+
+    virtual void decoderBeingDestroyed()
+    {
+        m_frameBufferRequestCount = m_actualDecoder->frameBufferRequestCount();
+        m_actualDecoder = 0;
     }
 
 protected:
@@ -67,23 +94,31 @@ protected:
     OwnPtr<DeferredImageDecoder> m_lazyDecoder;
     SkPicture m_picture;
     SkAutoTUnref<SkCanvas> m_canvas;
+    int m_frameBufferRequestCount;
+    RefPtr<SharedBuffer> m_data;
 };
 
 TEST_F(DeferredImageDecoderTest, drawIntoSkPicture)
 {
     OwnPtr<NativeImageSkia> image(adoptPtr(m_lazyDecoder->frameBufferAtIndex(0)->asNewNativeImage()));
-    EXPECT_EQ(m_actualDecoder->size().width(), image->bitmap().width());
-    EXPECT_EQ(m_actualDecoder->size().height(), image->bitmap().height());
+    EXPECT_EQ(1, image->bitmap().width());
+    EXPECT_EQ(1, image->bitmap().height());
     EXPECT_FALSE(image->bitmap().isNull());
     EXPECT_TRUE(image->bitmap().isImmutable());
 
     SkCanvas* tempCanvas = m_picture.beginRecording(100, 100);
     tempCanvas->drawBitmap(image->bitmap(), 0, 0);
     m_picture.endRecording();
-    EXPECT_EQ(0, m_actualDecoder->frameBufferRequestCount());
+    EXPECT_EQ(0, m_frameBufferRequestCount);
 
     m_canvas->drawPicture(m_picture);
-    EXPECT_EQ(1, m_actualDecoder->frameBufferRequestCount());
+    EXPECT_EQ(0, m_frameBufferRequestCount);
+
+    SkBitmap canvasBitmap;
+    canvasBitmap.setConfig(SkBitmap::kARGB_8888_Config, 100, 100);
+    ASSERT_TRUE(m_canvas->readPixels(&canvasBitmap, 0, 0));
+    SkAutoLockPixels autoLock(canvasBitmap);
+    EXPECT_EQ(SkColorSetARGB(255, 255, 255, 255), canvasBitmap.getColor(0, 0));
 }
 
 TEST_F(DeferredImageDecoderTest, drawScaledIntoSkPicture)
@@ -94,15 +129,22 @@ TEST_F(DeferredImageDecoderTest, drawScaledIntoSkPicture)
     EXPECT_TRUE(scaledBitmap.isImmutable());
     EXPECT_EQ(50, scaledBitmap.width());
     EXPECT_EQ(51, scaledBitmap.height());
-    EXPECT_EQ(0, m_actualDecoder->frameBufferRequestCount());
+    EXPECT_EQ(0, m_frameBufferRequestCount);
 
     SkCanvas* tempCanvas = m_picture.beginRecording(100, 100);
     tempCanvas->drawBitmap(scaledBitmap, 0, 0);
     m_picture.endRecording();
-    EXPECT_EQ(0, m_actualDecoder->frameBufferRequestCount());
+    EXPECT_EQ(0, m_frameBufferRequestCount);
 
     m_canvas->drawPicture(m_picture);
-    EXPECT_EQ(1, m_actualDecoder->frameBufferRequestCount());
+    EXPECT_EQ(0, m_frameBufferRequestCount);
+
+    SkBitmap canvasBitmap;
+    canvasBitmap.setConfig(SkBitmap::kARGB_8888_Config, 100, 100);
+    ASSERT_TRUE(m_canvas->readPixels(&canvasBitmap, 0, 0));
+    SkAutoLockPixels autoLock(canvasBitmap);
+    EXPECT_EQ(SkColorSetARGB(255, 255, 255, 255), canvasBitmap.getColor(0, 0));
+    EXPECT_EQ(SkColorSetARGB(255, 255, 255, 255), canvasBitmap.getColor(49, 50));
 }
 
 } // namespace

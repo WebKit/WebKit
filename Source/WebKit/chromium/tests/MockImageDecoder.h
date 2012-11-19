@@ -29,12 +29,23 @@
 
 namespace WebCore {
 
+class MockImageDecoderClient {
+public:
+    virtual void decoderBeingDestroyed() = 0;
+};
+
 class MockImageDecoder : public ImageDecoder {
 public:
-    MockImageDecoder()
+    MockImageDecoder(MockImageDecoderClient* client)
         : ImageDecoder(ImageSource::AlphaPremultiplied, ImageSource::GammaAndColorProfileApplied)
         , m_frameBufferRequestCount(0)
+        , m_client(client)
     { }
+
+    ~MockImageDecoder()
+    {
+        m_client->decoderBeingDestroyed();
+    }
 
     virtual String filenameExtension() const
     {
@@ -54,6 +65,7 @@ public:
 
 private:
     int m_frameBufferRequestCount;
+    MockImageDecoderClient* m_client;
 };
 
 } // namespace WebCore

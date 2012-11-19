@@ -26,13 +26,7 @@
 #include "config.h"
 #include "ImageDecodingStore.h"
 
-#include "ImageDecoder.h"
-#include "ImageFrameGenerator.h"
 #include "ScaledImageFragment.h"
-#include "SkRect.h"
-#include "SkSize.h"
-
-#include "skia/ext/image_operations.h"
 
 #include <wtf/MainThread.h>
 
@@ -73,62 +67,6 @@ void ImageDecodingStore::shutdown()
 {
     ASSERT(isMainThread());
     setInstanceOnMainThread(0);
-}
-
-void* ImageDecodingStore::lockPixels(PassRefPtr<ImageFrameGenerator> frameGenerator, const SkISize& scaledSize, const SkIRect& scaledSubset)
-{
-    ASSERT(calledOnValidThread());
-    ASSERT(m_lockedSkBitmap.isNull());
-
-    SkISize fullSize = frameGenerator->fullSize();
-
-    // The cache only saves the full size image at the moment.
-    ScaledImageFragment* frameCache = lookupFrameCache(frameGenerator->imageId(), fullSize);
-    SkBitmap bitmap;
-
-    if (!frameCache) {
-        // FIXME: Pixels are owned by the ImageDecoder in the generator. Find
-        // a way to transfer ownership to our cache.
-        ImageFrame* frame = frameGenerator->decoder()->frameBufferAtIndex(0);
-
-        // Saves the frame in cache if this is complete.
-        if (frame->status() == ImageFrame::FrameComplete) {
-            m_frameCache.append(ScaledImageFragment::create(frameGenerator->imageId(), fullSize, frame->getSkBitmap(), true));
-        } else if (frame->status() == ImageFrame::FrameEmpty) {
-            // FIXME: If this is a decoding error. Report this to BitmapImage.
-            return 0;
-        }
-
-        bitmap = frame->getSkBitmap();
-    } else {
-        ASSERT(frameCache->isComplete());
-        bitmap = frameCache->bitmap();
-    }
-
-    if (fullSize != scaledSize) {
-        // Image scaling is done on-the-fly and scaled image is destroyed
-        // after use.
-        // FIXME: Resize just the requested fragment.
-        m_lockedSkBitmap = skia::ImageOperations::Resize(bitmap, skia::ImageOperations::RESIZE_LANCZOS3, scaledSize.width(), scaledSize.height());
-    } else
-        m_lockedSkBitmap = bitmap;
-    m_lockedSkBitmap.lockPixels();
-    return m_lockedSkBitmap.getAddr(scaledSubset.x(), scaledSubset.y());
-}
-
-void ImageDecodingStore::unlockPixels()
-{
-    ASSERT(calledOnValidThread());
-
-    m_lockedSkBitmap.unlockPixels();
-    m_lockedSkBitmap.reset();
-}
-
-void ImageDecodingStore::frameGeneratorBeingDestroyed(ImageFrameGenerator* frameGenerator)
-{
-    ASSERT(calledOnValidThread());
-
-    deleteFrameCache(frameGenerator->imageId());
 }
 
 bool ImageDecodingStore::calledOnValidThread() const

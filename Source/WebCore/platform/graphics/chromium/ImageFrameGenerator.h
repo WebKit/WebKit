@@ -26,9 +26,8 @@
 #ifndef ImageFrameGenerator_h
 #define ImageFrameGenerator_h
 
-#include "SkTypes.h"
+#include "SkBitmap.h"
 #include "SkSize.h"
-#include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -36,31 +35,25 @@
 
 namespace WebCore {
 
-class ImageDecoder;
 class SharedBuffer;
 
 class ImageFrameGenerator : public RefCounted<ImageFrameGenerator> {
 public:
-    static PassRefPtr<ImageFrameGenerator> create(PassOwnPtr<ImageDecoder> decoder, PassRefPtr<SharedBuffer> data, bool allDataReceived)
+    static PassRefPtr<ImageFrameGenerator> create(PassRefPtr<SharedBuffer> data, bool allDataReceived)
     {
-        return adoptRef(new ImageFrameGenerator(decoder, data, allDataReceived));
+        return adoptRef(new ImageFrameGenerator(data, allDataReceived));
     }
 
-    ImageFrameGenerator(PassOwnPtr<ImageDecoder>, PassRefPtr<SharedBuffer>, bool allDataReceived);
+    ImageFrameGenerator(PassRefPtr<SharedBuffer>, bool allDataReceived);
     ~ImageFrameGenerator();
 
-    // Creates the image decoder if needed.
-    ImageDecoder* decoder();
+    SkBitmap decodeAndScale(const SkISize& scaledSize, const SkIRect& scaledSubset);
+
     void setData(PassRefPtr<SharedBuffer>, bool allDataReceived);
 
-    const SkISize& fullSize() const { return m_fullSize; }
-    int imageId() const { return m_imageId; }
-
 private:
-    OwnPtr<ImageDecoder> m_decoder;
     RefPtr<SharedBuffer> m_data;
-    SkISize m_fullSize;
-    int m_imageId;
+    bool m_allDataReceived;
 };
 
 } // namespace WebCore

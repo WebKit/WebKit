@@ -58,6 +58,8 @@ private:
     RefPtr<ImageFrameGenerator> m_frameGenerator;
     SkISize m_scaledSize;
     SkIRect m_scaledSubset;
+
+    SkBitmap m_lockedBitmap;
 };
 
 } // namespace WebCore

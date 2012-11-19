@@ -26,15 +26,10 @@
 #ifndef ImageDecodingStore_h
 #define ImageDecodingStore_h
 
-#include "SkBitmap.h"
-#include "SkRect.h"
 #include "SkSize.h"
 
-#include <wtf/HashMap.h>
-#include <wtf/HashSet.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
-#include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -57,22 +52,13 @@ public:
     static void initializeOnMainThread();
     static void shutdown();
 
-    // You may only lock one set of pixels at a time; overlapping lock calls are not allowed.
-    void* lockPixels(PassRefPtr<ImageFrameGenerator>, const SkISize& scaledSize, const SkIRect& scaledSubset);
-    void unlockPixels();
-
-    void frameGeneratorBeingDestroyed(ImageFrameGenerator*);
-
 private:
     ImageDecodingStore();
     bool calledOnValidThread() const;
-    void createFrameGenerator(PassOwnPtr<ImageDecoder>);
     ScaledImageFragment* lookupFrameCache(int imageId, const SkISize& scaledSize) const;
     void deleteFrameCache(int imageId);
 
     Vector<OwnPtr<ScaledImageFragment> > m_frameCache;
-
-    SkBitmap m_lockedSkBitmap;
 };
 
 } // namespace WebCore

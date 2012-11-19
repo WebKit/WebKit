@@ -1,3 +1,46 @@
+2012-11-19  Alpha Lam  <hclam@chromium.org>
+
+        [chromium] Lazy image decoding without cache
+        https://bugs.webkit.org/show_bug.cgi?id=102021
+
+        Reviewed by Stephen White.
+
+        Goal of this change is to make image decoding in ImageFrameGenerator
+        completely lazy without caching. Image decoding logic is then removed
+        from ImageDecodingStore.
+
+        These methods are removed.
+        - ImageDecodingStore::lockPixels
+        - ImageDecodingStore::unlockPixels
+
+        Instead image decoding and scaling is done in
+        ImageFrameGenerator::decodeAndScale().
+
+        Unit tests are updated:
+        DeferredImageDecoderTest::drawIntoSkPicture
+        DeferredImageDecoderTest::drawScaledIntoSkPicture
+
+        Also covered by layout tests:
+        platform/chromium/virtual/deferred
+
+        * platform/graphics/chromium/DeferredImageDecoder.cpp:
+        (WebCore::DeferredImageDecoder::createLazyDecodingBitmap):
+        * platform/graphics/chromium/ImageDecodingStore.h:
+        (ImageDecodingStore):
+        * platform/graphics/chromium/ImageFrameGenerator.cpp:
+        (WebCore::ImageFrameGenerator::ImageFrameGenerator):
+        (WebCore::ImageFrameGenerator::~ImageFrameGenerator):
+        (WebCore::ImageFrameGenerator::setData):
+        (WebCore::ImageFrameGenerator::decodeAndScale):
+        * platform/graphics/chromium/ImageFrameGenerator.h:
+        (WebCore::ImageFrameGenerator::create):
+        (ImageFrameGenerator):
+        * platform/graphics/chromium/LazyDecodingPixelRef.cpp:
+        (WebCore::LazyDecodingPixelRef::onLockPixels):
+        (WebCore::LazyDecodingPixelRef::onUnlockPixels):
+        * platform/graphics/chromium/LazyDecodingPixelRef.h:
+        (LazyDecodingPixelRef):
+
 2012-11-19  Abhishek Arya  <inferno@chromium.org>
 
         Crash in ApplyStyleCommand::cleanupUnstyledAppleStyleSpans.
