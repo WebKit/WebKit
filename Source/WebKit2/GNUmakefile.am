@@ -543,6 +543,7 @@ Programs_WebKitPluginProcess_LDADD = \
 	$(GSTREAMER_LIBS) \
 	$(GTK2_LIBS) \
 	$(JPEG_LIBS) \
+	$(LIBSECRET_LIBS) \
 	$(LIBSOUP_LIBS) \
 	$(LIBXML_LIBS) \
 	$(LIBXSLT_LIBS) \

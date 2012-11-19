@@ -1,3 +1,13 @@
+2012-11-19  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] REGRESSION(r134955): Plugins are broken due to unresolved symbol in plugin process
+        https://bugs.webkit.org/show_bug.cgi?id=102613
+
+        Unreviewed build fix.
+
+        * GNUmakefile.am: Fix the build after one of my previous patches introduced
+        a link dependency on libsecret.
+
 2012-11-19  Yael Aharon  <yael.aharon@intel.com>
 
         [EFL][WK2] Web Inspector crashes if evas_gl is not available
