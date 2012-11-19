@@ -109,7 +109,7 @@ RequestTracker.prototype = {
     }
     catch (e) {
       // Synchronous case in workers.
-      ok(!this.async && this.timeLimit < 3000 && e.name == "TIMEOUT_ERR", "Unexpected error: " + e);
+      ok(!this.async && this.timeLimit < 3000 && e.name == "TimeoutError", "Unexpected error: " + e);
       TestCounter.testComplete();
     }
   },
