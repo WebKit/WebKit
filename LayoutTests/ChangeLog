@@ -1,3 +1,16 @@
+2012-11-18  Kunihiko Sakamoto  <ksakamoto@chromium.org>
+
+        min/max/step support for calendar picker on datetime/datetime-local
+        https://bugs.webkit.org/show_bug.cgi?id=102628
+
+        Reviewed by Kent Tamura.
+
+        Verify that calendar picker has correct available dates when
+        min/max/step attributes are set in datetime input.
+
+        * platform/chromium/fast/forms/calendar-picker/calendar-picker-datetime-with-step-expected.txt: Added.
+        * platform/chromium/fast/forms/calendar-picker/calendar-picker-datetime-with-step.html: Added.
+
 2012-11-18  Kentaro Hara  <haraken@chromium.org>
 
         Unreviewed. Rebaselined images.

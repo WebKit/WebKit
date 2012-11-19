@@ -1219,7 +1219,8 @@ DaysTable.prototype.attachTo = function(element) {
  * @return {!boolean}
  */
 CalendarPicker.prototype._stepMismatch = function(value) {
-    return (value - this.stepBase) % this.step != 0;
+    var nextAllowedValue = Math.ceil((value - this.stepBase) / this.step) * this.step + this.stepBase;
+    return nextAllowedValue >= value + this.selectionConstructor.DefaultStep
 }
 
 /**
