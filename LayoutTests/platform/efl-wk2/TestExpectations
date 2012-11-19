@@ -53,14 +53,6 @@ webkit.org/b/98747 plugins/document-open.html [ Crash ]
 webkit.org/b/102200 fast/dom/HTMLAnchorElement/anchor-download.html [ Crash Failure ]
 webkit.org/b/102200 fast/dom/HTMLAnchorElement/anchor-nodownload-set.html [ Crash Failure ]
 
-#Crash after r132386
-webkit.org/b/100342 fast/dom/nested-script-exceptions.html [ Crash ]
-webkit.org/b/100342 networkinformation/multiple-frames.html [ Crash ]
-webkit.org/b/100342 networkinformation/basic-all-types-of-events.html [ Crash ]
-webkit.org/b/100342 networkinformation/updates.html [ Crash ]
-webkit.org/b/100342 networkinformation/add-listener-from-callback.html [ Crash ]
-webkit.org/b/100342 networkinformation/basic-operation.html [ Crash ]
-
 webkit.org/b/101428 media/media-continues-playing-after-replace-source.html [ Crash Failure ]
 
 webkit.org/b/102203 fast/events/attribute-listener-deletion-crash.html [ Crash ]

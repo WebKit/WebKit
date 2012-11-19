@@ -1,3 +1,18 @@
+2012-11-18  KwangYong Choi  <ky0.choi@samsung.com>
+
+        [EFL] Gardening, unskip passing tests
+        https://bugs.webkit.org/show_bug.cgi?id=102460
+
+        Unreviewed EFL gardening.
+
+        The tests marked Crash by r132469 are passing now.
+
+        fast/dom/nested-script-exceptions.html, networkinformation/multiple-frames.html,
+        networkinformation/basic-all-types-of-events.html, networkinformation/updates.html,
+        networkinformation/add-listener-from-callback.html, networkinformation/basic-operation.html
+
+        * platform/efl-wk2/TestExpectations:
+
 2012-11-18  Kentaro Hara  <haraken@chromium.org>
 
         Unreviewed. Removed a duplicated entry.
