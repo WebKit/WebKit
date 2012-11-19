@@ -1,3 +1,17 @@
+2012-11-19  Liam Quinn  <lquinn@rim.com>
+
+        [BlackBerry] Remove RTSP handling from FrameLoaderClientBlackBerry
+        https://bugs.webkit.org/show_bug.cgi?id=102692
+
+        Reviewed by Rob Buis.
+
+        Reviewed internally by George Staikos. Internal PR 242750.
+
+        Our RTSP handling in FrameLoaderClientBlackBerry causes HTTP redirects to "rtsp:" URIs to fail. Remove handling of RTSP from this class; it will be moved to the network layer alongside other URI schemes like "data:" and "file:".
+
+        * WebCoreSupport/FrameLoaderClientBlackBerry.cpp:
+        (WebCore::FrameLoaderClientBlackBerry::createDocumentLoader):
+
 2012-11-16  Adam Treat  <atreat@rim.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=102540
