@@ -1,3 +1,15 @@
+2012-11-19  Yael Aharon  <yael.aharon@intel.com>
+
+        [EFL][WK2] Web Inspector crashes if evas_gl is not available
+        https://bugs.webkit.org/show_bug.cgi?id=102531
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Teach Web Inspector to fallback gracefully to the software path when evas_gl engine is not available.
+
+        * UIProcess/efl/WebInspectorProxyEfl.cpp:
+        (WebKit::WebInspectorProxy::platformCreateInspectorPage):
+
 2012-11-19  Brady Eidson  <beidson@apple.com>
 
         Remove the source files for NetworkRequest from the repository.
