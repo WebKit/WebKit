@@ -1,3 +1,54 @@
+2012-11-19  Huang Dongsung  <luxtella@company100.net>
+
+        Coordinated Graphics: refactor syncCanvas to handle the lifecycle clearly.
+        https://bugs.webkit.org/show_bug.cgi?id=102664
+
+        Reviewed by Noam Rosenthal.
+
+        This patch makes sync canvas code handle the lifecycle of the canvas
+        GraphicsSurface in the similar style to a directly image compositing and
+        an update atlas code. This patch moves the canvas lifecycle handling
+        code from LayerTreeRenderer to CoordinatedGraphicsLayer, because
+        CoordinatedGraphicsLayer knows best when to create and remove the canvas
+        GraphicsSurface.
+
+        After this patch, we can remove the canvas GraphicsSurface in UI Process as soon
+        as the canvas platform layer is unset in Web Process.
+
+        * UIProcess/CoordinatedGraphics/LayerTreeCoordinatorProxy.cpp:
+        (WebKit::LayerTreeCoordinatorProxy::createCanvas):
+        (WebKit):
+        (WebKit::LayerTreeCoordinatorProxy::syncCanvas):
+        (WebKit::LayerTreeCoordinatorProxy::destroyCanvas):
+        * UIProcess/CoordinatedGraphics/LayerTreeCoordinatorProxy.h:
+        (LayerTreeCoordinatorProxy):
+        * UIProcess/CoordinatedGraphics/LayerTreeCoordinatorProxy.messages.in:
+        * UIProcess/CoordinatedGraphics/LayerTreeRenderer.cpp:
+        (WebKit::LayerTreeRenderer::createCanvas):
+        (WebKit):
+        (WebKit::LayerTreeRenderer::syncCanvas):
+        (WebKit::LayerTreeRenderer::destroyCanvas):
+        * UIProcess/CoordinatedGraphics/LayerTreeRenderer.h:
+        (LayerTreeRenderer):
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedGraphicsLayer.cpp:
+        (WebCore::CoordinatedGraphicsLayer::CoordinatedGraphicsLayer):
+        (WebCore::CoordinatedGraphicsLayer::setContentsNeedsDisplay):
+        (WebCore::CoordinatedGraphicsLayer::setContentsToCanvas):
+        (WebCore::CoordinatedGraphicsLayer::syncCanvas):
+        (WebCore):
+        (WebCore::CoordinatedGraphicsLayer::destroyCanvasIfNeeded):
+        (WebCore::CoordinatedGraphicsLayer::createCanvasIfNeeded):
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedGraphicsLayer.h:
+        (CoordinatedGraphicsLayerClient):
+        (CoordinatedGraphicsLayer):
+        * WebProcess/WebPage/CoordinatedGraphics/LayerTreeCoordinator.cpp:
+        (WebKit::LayerTreeCoordinator::createCanvas):
+        (WebKit):
+        (WebKit::LayerTreeCoordinator::syncCanvas):
+        (WebKit::LayerTreeCoordinator::destroyCanvas):
+        * WebProcess/WebPage/CoordinatedGraphics/LayerTreeCoordinator.h:
+        (LayerTreeCoordinator):
+
 2012-11-19  Brady Eidson  <beidson@apple.com>
 
         Replace an unneeded #include with a forward declaration after r135179.

@@ -41,12 +41,14 @@
 #include "WebPageProxyMessages.h"
 #include <WebCore/Frame.h>
 #include <WebCore/FrameView.h>
+#include <WebCore/GraphicsSurface.h>
 #include <WebCore/Page.h>
 #include <WebCore/RenderLayer.h>
 #include <WebCore/RenderLayerBacking.h>
 #include <WebCore/RenderLayerCompositor.h>
 #include <WebCore/RenderView.h>
 #include <WebCore/Settings.h>
+#include <WebCore/TextureMapperPlatformLayer.h>
 #include <wtf/TemporaryChange.h>
 
 #if ENABLE(CSS_SHADERS)
@@ -321,10 +323,28 @@ void LayerTreeCoordinator::syncLayerChildren(WebLayerID id, const Vector<WebLaye
 }
 
 #if USE(GRAPHICS_SURFACE)
-void LayerTreeCoordinator::syncCanvas(WebLayerID id, const IntSize& canvasSize, const GraphicsSurfaceToken& token, uint32_t frontBuffer)
+void LayerTreeCoordinator::createCanvas(WebLayerID id, PlatformLayer* canvasPlatformLayer)
 {
     m_shouldSyncFrame = true;
-    m_webPage->send(Messages::LayerTreeCoordinatorProxy::SyncCanvas(id, canvasSize, token, frontBuffer));
+    GraphicsSurfaceToken token = canvasPlatformLayer->graphicsSurfaceToken();
+    IntSize canvasSize = canvasPlatformLayer->platformLayerSize();
+    m_webPage->send(Messages::LayerTreeCoordinatorProxy::CreateCanvas(id, canvasSize, token));
+}
+
+void LayerTreeCoordinator::syncCanvas(WebLayerID id, PlatformLayer* canvasPlatformLayer)
+{
+    m_shouldSyncFrame = true;
+    uint32_t frontBuffer = canvasPlatformLayer->copyToGraphicsSurface();
+    m_webPage->send(Messages::LayerTreeCoordinatorProxy::SyncCanvas(id, frontBuffer));
+}
+
+void LayerTreeCoordinator::destroyCanvas(WebLayerID id)
+{
+    if (m_isPurging)
+        return;
+
+    m_shouldSyncFrame = true;
+    m_webPage->send(Messages::LayerTreeCoordinatorProxy::DestroyCanvas(id));
 }
 #endif
 

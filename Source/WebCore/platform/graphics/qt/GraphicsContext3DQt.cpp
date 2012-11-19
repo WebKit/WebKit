@@ -68,6 +68,7 @@ public:
     virtual void paintToTextureMapper(TextureMapper*, const FloatRect& target, const TransformationMatrix&, float opacity, BitmapTexture* mask);
 #endif
 #if USE(GRAPHICS_SURFACE)
+    virtual IntSize platformLayerSize() const;
     virtual uint32_t copyToGraphicsSurface();
     virtual GraphicsSurfaceToken graphicsSurfaceToken() const;
 #endif
@@ -277,6 +278,11 @@ void GraphicsContext3DPrivate::paintToTextureMapper(TextureMapper* textureMapper
 #endif // USE(ACCELERATED_COMPOSITING)
 
 #if USE(GRAPHICS_SURFACE)
+IntSize GraphicsContext3DPrivate::platformLayerSize() const
+{
+    return IntSize(m_context->m_currentWidth, m_context->m_currentHeight);
+}
+
 uint32_t GraphicsContext3DPrivate::copyToGraphicsSurface()
 {
     if (!m_graphicsSurface)

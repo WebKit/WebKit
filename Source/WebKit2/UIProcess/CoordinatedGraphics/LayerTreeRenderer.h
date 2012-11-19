@@ -75,7 +75,9 @@ public:
     void setVisibleContentsRect(const WebCore::FloatRect&);
     void didChangeScrollPosition(const WebCore::IntPoint& position);
 #if USE(GRAPHICS_SURFACE)
-    void syncCanvas(uint32_t id, const WebCore::IntSize& canvasSize, const WebCore::GraphicsSurfaceToken&, uint32_t frontBuffer);
+    void createCanvas(WebLayerID, const WebCore::IntSize&, PassRefPtr<WebCore::GraphicsSurface>);
+    void syncCanvas(WebLayerID, uint32_t frontBuffer);
+    void destroyCanvas(WebLayerID);
 #endif
 
     void detach();

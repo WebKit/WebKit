@@ -27,7 +27,6 @@
 #include "GraphicsLayer.h"
 #include "GraphicsLayerAnimation.h"
 #include "GraphicsLayerTransform.h"
-#include "GraphicsSurface.h"
 #include "Image.h"
 #include "IntSize.h"
 #include "ShareableBitmap.h"
@@ -37,6 +36,9 @@
 #include "UpdateInfo.h"
 #include "WebLayerTreeInfo.h"
 #include "WebProcess.h"
+#if USE(GRAPHICS_SURFACE)
+#include <WebCore/GraphicsSurfaceToken.h>
+#endif
 #include <WebCore/RunLoop.h>
 #include <wtf/text/StringHash.h>
 
@@ -64,7 +66,9 @@ public:
     virtual void syncLayerFilters(WebLayerID, const WebCore::FilterOperations&) = 0;
 #endif
 #if USE(GRAPHICS_SURFACE)
-    virtual void syncCanvas(WebLayerID, const WebCore::IntSize& canvasSize, const WebCore::GraphicsSurfaceToken&, uint32_t frontBuffer) = 0;
+    virtual void createCanvas(WebLayerID, WebCore::PlatformLayer*) = 0;
+    virtual void syncCanvas(WebLayerID, WebCore::PlatformLayer*) = 0;
+    virtual void destroyCanvas(WebLayerID) = 0;
 #endif
 
     virtual void setLayerAnimations(WebLayerID, const WebCore::GraphicsLayerAnimations&) = 0;
@@ -185,6 +189,9 @@ private:
     void createBackingStore();
     void releaseImageBackingIfNeeded();
 
+    void destroyCanvasIfNeeded();
+    void createCanvasIfNeeded();
+
     bool selfOrAncestorHaveNonAffineTransforms();
     bool shouldUseTiledBackingStore();
     void adjustContentsScale();
@@ -208,6 +215,8 @@ private:
     bool m_shouldSyncAnimations: 1;
     bool m_fixedToViewport : 1;
     bool m_canvasNeedsDisplay : 1;
+    bool m_canvasNeedsCreate : 1;
+    bool m_canvasNeedsDestroy : 1;
 
     WebKit::CoordinatedGraphicsLayerClient* m_coordinator;
     OwnPtr<TiledBackingStore> m_mainBackingStore;
@@ -219,6 +228,9 @@ private:
     RefPtr<WebKit::CoordinatedImageBacking> m_coordinatedImageBacking;
 
     PlatformLayer* m_canvasPlatformLayer;
+#if USE(GRAPHICS_SURFACE)
+    GraphicsSurfaceToken m_canvasToken;
+#endif
     Timer<CoordinatedGraphicsLayer> m_animationStartedTimer;
     GraphicsLayerAnimations m_animations;
     double m_lastAnimationStartTime;

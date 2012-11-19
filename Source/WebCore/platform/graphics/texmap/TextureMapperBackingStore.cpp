@@ -34,19 +34,15 @@
 namespace WebCore {
 
 #if USE(GRAPHICS_SURFACE)
-void TextureMapperSurfaceBackingStore::setGraphicsSurface(const GraphicsSurfaceToken& graphicsSurfaceToken, const IntSize& surfaceSize, uint32_t frontBuffer)
+void TextureMapperSurfaceBackingStore::setGraphicsSurface(PassRefPtr<GraphicsSurface> surface)
 {
-    if (graphicsSurfaceToken != m_graphicsSurfaceToken) {
-        GraphicsSurface::Flags surfaceFlags = GraphicsSurface::SupportsTextureTarget
-                                            | GraphicsSurface::SupportsSharing;
-        setSurface(GraphicsSurface::create(surfaceSize, surfaceFlags, graphicsSurfaceToken));
-        m_graphicsSurfaceSize = surfaceSize;
-    }
+    m_graphicsSurface = surface;
+}
 
-    RefPtr<WebCore::GraphicsSurface> surface = graphicsSurface();
-    if (surface && surface->frontBuffer() != frontBuffer)
-        surface->swapBuffers();
-
+void TextureMapperSurfaceBackingStore::swapBuffersIfNeeded(uint32_t frontBuffer)
+{
+    if (m_graphicsSurface && m_graphicsSurface->frontBuffer() != frontBuffer)
+        m_graphicsSurface->swapBuffers();
 }
 
 PassRefPtr<BitmapTexture> TextureMapperSurfaceBackingStore::texture() const
@@ -60,17 +56,6 @@ void TextureMapperSurfaceBackingStore::paintToTextureMapper(TextureMapper* textu
 {
     if (m_graphicsSurface)
         m_graphicsSurface->paintToTextureMapper(textureMapper, targetRect, transform, opacity, mask);
-}
-
-void TextureMapperSurfaceBackingStore::setSurface(PassRefPtr<GraphicsSurface> surface)
-{
-    if (surface) {
-        m_graphicsSurface = surface;
-        m_graphicsSurfaceToken = m_graphicsSurface->exportToken();
-    } else {
-        m_graphicsSurface = RefPtr<GraphicsSurface>();
-        m_graphicsSurfaceToken = GraphicsSurfaceToken();
-    }
 }
 #endif
 
