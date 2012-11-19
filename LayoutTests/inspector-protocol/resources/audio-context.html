@@ -1,0 +1,18 @@
+<html>
+<script>
+
+var sampleRate = 44100.0;
+var renderLengthSeconds = 0.125;
+
+// Create offline audio context.
+var context = new webkitAudioContext(1, sampleRate * renderLengthSeconds, sampleRate);
+
+// This call forces AudioContext lazy initialization.
+var bufferSource = context.createBufferSource();
+
+context.startRendering();
+
+</script>
+<body>
+</body>
+</html>
