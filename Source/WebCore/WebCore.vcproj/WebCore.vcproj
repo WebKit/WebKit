@@ -72401,6 +72401,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\bindings\scripts\IDLStructure.pm"
+					>
+				</File>
+				<File
 					RelativePath="..\bindings\scripts\preprocess-idls.pl"
 					>
 				</File>

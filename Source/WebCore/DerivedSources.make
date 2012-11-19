@@ -938,6 +938,7 @@ SettingsMacros.h : page/make_settings.pl page/Settings.in
 GENERATE_SCRIPTS = \
     bindings/scripts/CodeGenerator.pm \
     bindings/scripts/IDLParser.pm \
+    bindings/scripts/IDLStructure.pm \
     bindings/scripts/generate-bindings.pl \
     bindings/scripts/preprocessor.pm
 
