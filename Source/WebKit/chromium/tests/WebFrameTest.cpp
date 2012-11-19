@@ -235,7 +235,7 @@ TEST_F(WebFrameTest, DeviceScaleFactorUsesDefaultWithoutViewportTag)
     int viewportHeight = 480;
 
     FixedLayoutTestWebViewClient client;
-    client.m_screenInfo.horizontalDPI = 320;
+    client.m_screenInfo.deviceScaleFactor = 2;
     client.m_windowRect = WebRect(0, 0, viewportWidth, viewportHeight);
 
     WebView* webView = static_cast<WebView*>(FrameTestHelpers::createWebViewAndLoad(m_baseURL + "no_viewport_tag.html", true, 0, &client));
@@ -260,7 +260,7 @@ TEST_F(WebFrameTest, FixedLayoutInitializeAtMinimumPageScale)
     registerMockedHttpURLLoad("fixed_layout.html");
 
     FixedLayoutTestWebViewClient client;
-    client.m_screenInfo.horizontalDPI = 160;
+    client.m_screenInfo.deviceScaleFactor = 1;
     int viewportWidth = 640;
     int viewportHeight = 480;
     client.m_windowRect = WebRect(0, 0, viewportWidth, viewportHeight);
@@ -316,7 +316,7 @@ TEST_F(WebFrameTest, CanOverrideMaximumScaleFactor)
     registerMockedHttpURLLoad("no_scale_for_you.html");
 
     FixedLayoutTestWebViewClient client;
-    client.m_screenInfo.horizontalDPI = 160;
+    client.m_screenInfo.deviceScaleFactor = 1;
     int viewportWidth = 640;
     int viewportHeight = 480;
     client.m_windowRect = WebRect(0, 0, viewportWidth, viewportHeight);

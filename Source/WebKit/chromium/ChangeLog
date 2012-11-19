@@ -1,3 +1,19 @@
+2012-11-19  Sami Kyostila  <skyostil@chromium.org>
+
+        [chromium] Use devicePixelRatio instead of screen DPI for computing viewport attributes
+        https://bugs.webkit.org/show_bug.cgi?id=101767
+
+        Reviewed by Adam Barth.
+
+        Use the newly introduced device scale factor to calculate viewport properties
+        instead of using the screen DPI. No functional changes, because Chromium
+        platforms that have VIEWPORT enabled now also initialize the device scale
+        factor accordingly.
+
+        * src/ChromeClientImpl.cpp:
+        (WebKit::ChromeClientImpl::dispatchViewportPropertiesDidChange):
+        * tests/WebFrameTest.cpp:
+
 2012-11-18  Kentaro Hara  <haraken@chromium.org>
 
         Unreviewed, rolling out r135047.
