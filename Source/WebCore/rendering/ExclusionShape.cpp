@@ -70,8 +70,7 @@ static PassOwnPtr<ExclusionShape> createExclusionPolygon(PassOwnPtr<Vector<Float
 
 PassOwnPtr<ExclusionShape> ExclusionShape::createExclusionShape(const BasicShape* basicShape, float logicalBoxWidth, float logicalBoxHeight, WritingMode writingMode)
 {
-    if (!basicShape)
-        return nullptr;
+    ASSERT(basicShape);
 
     bool horizontalWritingMode = isHorizontalWritingMode(writingMode);
     float boxWidth = horizontalWritingMode ? logicalBoxWidth : logicalBoxHeight;

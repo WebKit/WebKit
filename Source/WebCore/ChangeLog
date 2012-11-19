@@ -1,3 +1,17 @@
+2012-11-19  Hans Muller  <hmuller@adobe.com>
+
+        [CSS Exclusions] remove null exclusion shape check from ExclusionShape::createExclusionShape
+        https://bugs.webkit.org/show_bug.cgi?id=100765
+
+        Reviewed by Dirk Schulze.
+
+        ExclusionShape::createExclusionShape now ASSERTs that its basicShape argument
+        isn't null, since the caller is expected to ensure as much.  No new tests were
+        needed since this is a near-trivial cleanup.
+
+        * rendering/ExclusionShape.cpp:
+        (WebCore::ExclusionShape::createExclusionShape): This method no longer defends against a null basicShape argument by returning null.
+
 2012-11-19  Sami Kyostila  <skyostil@chromium.org>
 
         Use device scale factor instead of physical screen DPI for screen DPI
