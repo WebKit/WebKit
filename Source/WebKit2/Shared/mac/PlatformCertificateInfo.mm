@@ -29,6 +29,7 @@
 #import "ArgumentCodersCF.h"
 #import "ArgumentDecoder.h"
 #import "ArgumentEncoder.h"
+#import <WebCore/AuthenticationChallenge.h>
 #import <WebKitSystemInterface.h>
 
 using namespace WebCore;
@@ -88,5 +89,33 @@ void PlatformCertificateInfo::dump() const
     }
 }
 #endif
+
+bool tryUsePlatformCertificateInfoForChallenge(const AuthenticationChallenge& challenge, const PlatformCertificateInfo& certificateInfo)
+{
+    CFArrayRef chain = certificateInfo.certificateChain();
+    if (!chain)
+        return false;
+        
+    ASSERT(CFArrayGetCount(chain));
+
+    // The passed-in certificate chain includes the identity certificate at index 0, and additional certificates starting at index 1.
+    SecIdentityRef identity;
+    OSStatus result = SecIdentityCreateWithCertificate(NULL, (SecCertificateRef)CFArrayGetValueAtIndex(chain, 0), &identity);
+    if (result != errSecSuccess) {
+        LOG_ERROR("Unable to create SecIdentityRef with certificate - %i", result);
+        [challenge.sender() cancelAuthenticationChallenge:challenge.nsURLAuthenticationChallenge()];
+        return true;
+    }
+
+    CFIndex chainCount = CFArrayGetCount(chain);
+    NSArray *nsChain = chainCount > 1 ? [(NSArray *)chain subarrayWithRange:NSMakeRange(1, chainCount - 1)] : nil;
+
+    NSURLCredential *credential = [NSURLCredential credentialWithIdentity:identity
+                                                             certificates:nsChain
+                                                              persistence:NSURLCredentialPersistenceNone];
+
+    [challenge.sender() useCredential:credential forAuthenticationChallenge:challenge.nsURLAuthenticationChallenge()];
+    return true;
+}
 
 } // namespace WebKit

@@ -30,6 +30,7 @@
 #include "Download.h"
 #include "DownloadProxyMessages.h"
 #include "MessageID.h"
+#include "PlatformCertificateInfo.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebFrame.h"
 #include "WebPage.h"
