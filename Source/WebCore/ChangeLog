@@ -1,3 +1,21 @@
+2012-11-19  Dongwoo Joshua Im  <dw.im@samsung.com>
+
+        [CSS3] Move CSSPropertyWebkitTextAlignLast into isValidKeywordPropertyAndValue function
+        https://bugs.webkit.org/show_bug.cgi?id=102303
+
+        Reviewed by Alexis Menard.
+
+        Move the part which check whether CSSPropertyWebkitTextAlignLast has available value
+        into the isValidKeywordPropertyAndValue function, like the same kind of properties.
+        This will help speed wise in JS.
+
+        No new functionality, no new tests.
+
+        * css/CSSParser.cpp:
+        (WebCore::isValidKeywordPropertyAndValue):
+        (WebCore::isKeywordPropertyID):
+        (WebCore::CSSParser::parseValue):
+
 2012-11-19  Keishi Hattori  <keishi@webkit.org>
 
         REGRESSION (r133565): Calendar picker isn't animating when changing month by pressing 't'
