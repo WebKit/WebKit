@@ -67,6 +67,7 @@
 #include "ScrollAnimator.h"
 #include "ScrollView.h"
 #include "ScrollbarTheme.h"
+#include "ScrollingCoordinator.h"
 #include "TouchEvent.h"
 #include "UserGestureIndicator.h"
 #include "WebPrintParams.h"
@@ -531,6 +532,19 @@ void WebPluginContainerImpl::setIsAcceptingTouchEvents(bool acceptingTouchEvents
         m_element->document()->didRemoveTouchEventHandler();
 }
 
+void WebPluginContainerImpl::setWantsWheelEvents(bool wantsWheelEvents)
+{
+    if (m_wantsWheelEvents == wantsWheelEvents)
+        return;
+    m_wantsWheelEvents = wantsWheelEvents;
+    if (Page* page = m_element->document()->page()) {
+        if (ScrollingCoordinator* scrollingCoordinator = page->scrollingCoordinator()) {
+            if (parent() && parent()->isFrameView())
+                scrollingCoordinator->frameViewLayoutUpdated(static_cast<FrameView*>(parent()));
+        }
+    }
+}
+
 void WebPluginContainerImpl::didReceiveResponse(const ResourceResponse& response)
 {
     // Make sure that the plugin receives window geometry before data, or else
@@ -579,6 +593,11 @@ bool WebPluginContainerImpl::supportsKeyboardFocus() const
 bool WebPluginContainerImpl::canProcessDrag() const
 {
     return m_webPlugin->canProcessDrag();
+}
+
+bool WebPluginContainerImpl::wantsWheelEvents()
+{
+    return m_wantsWheelEvents;
 }
 
 void WebPluginContainerImpl::willDestroyPluginLoadObserver(WebPluginLoadObserver* observer)
@@ -640,6 +659,7 @@ WebPluginContainerImpl::WebPluginContainerImpl(WebCore::HTMLPlugInElement* eleme
     , m_ioSurfaceId(0)
 #endif
     , m_isAcceptingTouchEvents(false)
+    , m_wantsWheelEvents(false)
 {
 }
 

@@ -1,3 +1,17 @@
+2012-11-19  Yusuke Sato  <yusukes@chromium.org>
+
+        [Chromium] Flash cannot receive scroll events when threaded compositing is in use
+        https://bugs.webkit.org/show_bug.cgi?id=101423
+
+        Reviewed by James Robinson.
+
+        Call setWantsWheelEvents(true) in initialize() so that gesture-events and transformed-events tests in
+        LayoutTests/platform/chromium/plugins/ will not fail even if a buildbot introduces threaded compositing
+        in the future.
+
+        * DumpRenderTree/chromium/TestWebPlugin.cpp:
+        (TestWebPlugin::initialize):
+
 2012-11-19  Nate Chapin  <japhet@chromium.org>
 
         Move empty loading to DocumentLoader, simplify FrameLoader::init()

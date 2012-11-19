@@ -184,6 +184,7 @@ bool TestWebPlugin::initialize(WebPluginContainer* container)
     m_container = container;
     m_container->setBackingTextureId(m_colorTexture);
     m_container->setIsAcceptingTouchEvents(m_acceptsTouchEvent);
+    m_container->setWantsWheelEvents(true);
     return true;
 }
 

@@ -1,3 +1,23 @@
+2012-11-19  Yusuke Sato  <yusukes@chromium.org>
+
+        [Chromium] Flash cannot receive scroll events when threaded compositing is in use
+        https://bugs.webkit.org/show_bug.cgi?id=101423
+
+        Reviewed by James Robinson.
+
+        Add setWantsWheelEvents() to Chromium's WebPluginContainer interface so that a plugin can tell the
+        container that the plugin always wants to handle wheel events even when a scroll bar is not shown.
+
+        * public/WebPluginContainer.h:
+        (WebPluginContainer):
+        * src/WebPluginContainerImpl.cpp:
+        (WebKit::WebPluginContainerImpl::setWantsWheelEvents):
+        (WebKit):
+        (WebKit::WebPluginContainerImpl::wantsWheelEvents):
+        (WebKit::WebPluginContainerImpl::WebPluginContainerImpl):
+        * src/WebPluginContainerImpl.h:
+        (WebPluginContainerImpl):
+
 2012-11-19  Alec Flett  <alecflett@chromium.org>
 
         IndexedDB: simplify RecordIdentifier
