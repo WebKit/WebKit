@@ -56,7 +56,7 @@ static struct CoreException {
     // FIXME: Couldn't find a description in the HTML/DOM specifications for NETWORK_ERR, ABORT_ERR, URL_MISMATCH_ERR, and QUOTA_EXCEEDED_ERR
     { "NetworkError", "A network error occurred." },
     { "AbortError", "The user aborted a request." },
-    { "URL_MISMATCH_ERR", "A worker global scope represented an absolute URL that is not equal to the resulting absolute URL." },
+    { "URLMismatchError", "A worker global scope represented an absolute URL that is not equal to the resulting absolute URL." },
     { "QuotaExceededError", "An attempt was made to add something to storage that exceeded the quota." },
     { "TIMEOUT_ERR", "A timeout occurred." },
     { "INVALID_NODE_TYPE_ERR", "The supplied node is invalid or has an invalid ancestor for this operation." },
