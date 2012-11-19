@@ -67,11 +67,6 @@
 
 namespace WebCore {
 
-static bool shouldLoadAsEmptyDocument(const KURL& url)
-{
-    return url.isEmpty() || SchemeRegistry::shouldLoadURLSchemeAsEmptyDocument(url.protocol());
-}
-
 MainResourceLoader::MainResourceLoader(Frame* frame)
     : ResourceLoader(frame, ResourceLoaderOptions(SendCallbacks, SniffContent, BufferData, AllowStoredCredentials, AskClientForCrossOriginCredentials, SkipSecurityCheck))
     , m_dataLoadTimer(this, &MainResourceLoader::handleSubstituteDataLoadNow)
@@ -338,13 +333,10 @@ void MainResourceLoader::continueAfterContentPolicy(PolicyAction contentPolicy, 
     if (!reachedTerminalState())
         ResourceLoader::didReceiveResponse(r);
 
-    if (frameLoader() && !frameLoader()->activeDocumentLoader()->isStopping()) {
-        if (m_substituteData.isValid()) {
-            if (m_substituteData.content()->size())
-                didReceiveData(m_substituteData.content()->data(), m_substituteData.content()->size(), m_substituteData.content()->size(), true);
-            if (frameLoader() && !frameLoader()->activeDocumentLoader()->isStopping()) 
-                didFinishLoading(0);
-        } else if (shouldLoadAsEmptyDocument(url) || frameLoader()->client()->representationExistsForURLScheme(url.protocol()))
+    if (frameLoader() && !frameLoader()->activeDocumentLoader()->isStopping() && m_substituteData.isValid()) {
+        if (m_substituteData.content()->size())
+            didReceiveData(m_substituteData.content()->data(), m_substituteData.content()->size(), m_substituteData.content()->size(), true);
+        if (frameLoader() && !frameLoader()->activeDocumentLoader()->isStopping()) 
             didFinishLoading(0);
     }
 }
@@ -385,7 +377,7 @@ void MainResourceLoader::didReceiveResponse(const ResourceResponse& r)
     // There is a bug in CFNetwork where callbacks can be dispatched even when loads are deferred.
     // See <rdar://problem/6304600> for more details.
 #if !USE(CF)
-    ASSERT(shouldLoadAsEmptyDocument(r.url()) || !defersLoading());
+    ASSERT(!defersLoading());
 #endif
 
     if (m_loadingMultipartContent) {
@@ -500,7 +492,7 @@ void MainResourceLoader::didFinishLoading(double finishTime)
     // There is a bug in CFNetwork where callbacks can be dispatched even when loads are deferred.
     // See <rdar://problem/6304600> for more details.
 #if !USE(CF)
-    ASSERT(shouldLoadAsEmptyDocument(frameLoader()->activeDocumentLoader()->url()) || !defersLoading() || InspectorInstrumentation::isDebuggerPaused(m_frame.get()));
+    ASSERT(!defersLoading() || InspectorInstrumentation::isDebuggerPaused(m_frame.get()));
 #endif
 
     // The additional processing can do anything including possibly removing the last
@@ -561,18 +553,6 @@ void MainResourceLoader::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) c
     info.addMember(m_dataLoadTimer);
 }
 
-void MainResourceLoader::handleEmptyLoad(const KURL& url, bool forURLScheme)
-{
-    String mimeType;
-    if (forURLScheme)
-        mimeType = frameLoader()->client()->generatedMIMETypeForURLScheme(url.protocol());
-    else
-        mimeType = "text/html";
-    
-    ResourceResponse response(url, mimeType, 0, String(), String());
-    didReceiveResponse(response);
-}
-
 void MainResourceLoader::handleSubstituteDataLoadNow(MainResourceLoaderTimer*)
 {
     RefPtr<MainResourceLoader> protect(this);
@@ -609,29 +589,10 @@ void MainResourceLoader::handleSubstituteDataLoadSoon(const ResourceRequest& r)
         handleSubstituteDataLoadNow(0);
 }
 
-bool MainResourceLoader::loadNow(ResourceRequest& r)
+void MainResourceLoader::loadNow(ResourceRequest& r)
 {
-    bool shouldLoadEmptyBeforeRedirect = shouldLoadAsEmptyDocument(r.url());
-
     ASSERT(!m_handle);
-    ASSERT(shouldLoadEmptyBeforeRedirect || !defersLoading());
-
-    // Send this synthetic delegate callback since clients expect it, and
-    // we no longer send the callback from within NSURLConnection for
-    // initial requests.
-    willSendRequest(r, ResourceResponse());
-    ASSERT(!deletionHasBegun());
-
-    // <rdar://problem/4801066>
-    // willSendRequest() is liable to make the call to frameLoader() return NULL, so we need to check that here
-    if (!frameLoader())
-        return false;
-    
-    const KURL& url = r.url();
-    bool shouldLoadEmpty = shouldLoadAsEmptyDocument(url) && !m_substituteData.isValid();
-
-    if (shouldLoadEmptyBeforeRedirect && !shouldLoadEmpty && defersLoading())
-        return true;
+    ASSERT(!defersLoading());
 
 #if USE(PLATFORM_STRATEGIES)
     platformStrategies()->loaderStrategy()->resourceLoadScheduler()->addMainResourceLoad(this);
@@ -641,12 +602,10 @@ bool MainResourceLoader::loadNow(ResourceRequest& r)
 
     if (m_substituteData.isValid())
         handleSubstituteDataLoadSoon(r);
-    else if (shouldLoadEmpty || frameLoader()->client()->representationExistsForURLScheme(url.protocol()))
-        handleEmptyLoad(url, !shouldLoadEmpty);
     else
         m_handle = ResourceHandle::create(m_frame->loader()->networkingContext(), r, this, false, true);
 
-    return false;
+    return;
 }
 
 void MainResourceLoader::load(const ResourceRequest& r, const SubstituteData& substituteData)
@@ -664,23 +623,26 @@ void MainResourceLoader::load(const ResourceRequest& r, const SubstituteData& su
     documentLoader()->timing()->markFetchStart();
     ResourceRequest request(r);
 
+    // Send this synthetic delegate callback since clients expect it, and
+    // we no longer send the callback from within NSURLConnection for
+    // initial requests.
+    willSendRequest(request, ResourceResponse());
+    ASSERT(!deletionHasBegun());
+
+    // <rdar://problem/4801066>
+    // willSendRequest() is liable to make the call to frameLoader() return null, so we need to check that here
+    if (!frameLoader() || request.isNull()) {
+        if (!reachedTerminalState())
+            releaseResources();
+        return;
+    }
+
     documentLoader()->applicationCacheHost()->maybeLoadMainResource(request, m_substituteData);
 
-    bool defer = defersLoading();
-    if (defer) {
-        bool shouldLoadEmpty = shouldLoadAsEmptyDocument(request.url());
-        if (shouldLoadEmpty)
-            defer = false;
-    }
-    if (!defer) {
-        if (loadNow(request)) {
-            // Started as an empty document, but was redirected to something non-empty.
-            ASSERT(defersLoading());
-            defer = true;
-        }
-    }
-    if (defer)
+    if (defersLoading())
         m_initialRequest = request;
+    else
+        loadNow(request);
 }
 
 void MainResourceLoader::setDefersLoading(bool defers)

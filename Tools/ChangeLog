@@ -1,3 +1,18 @@
+2012-11-19  Nate Chapin  <japhet@chromium.org>
+
+        Move empty loading to DocumentLoader, simplify FrameLoader::init()
+        https://bugs.webkit.org/show_bug.cgi?id=101512
+
+        Reviewed by Adam Barth.
+
+        Chromium DRT has some code that doesn't play nicely with empty urls and incorrectly
+        interprets them as a non-empty load. This ensures
+        http/tests/navigation/new-window-redirect-history.html continues to pass
+        in chromium.
+
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::updateForCommittedLoad):
+
 2012-11-19  Vincent Scheib  <scheib@chromium.org>
 
         [Chromium] Remove WebKit::WebRuntimeFeatures::enablePointerLock.

@@ -35,7 +35,7 @@ namespace WebCore {
 
     
 FrameLoaderStateMachine::FrameLoaderStateMachine() 
-    : m_state(Uninitialized)
+    : m_state(CreatingInitialEmptyDocument)
 { 
 }
     
