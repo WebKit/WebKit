@@ -1,3 +1,25 @@
+2012-11-19  Kent Tamura  <tkent@chromium.org>
+
+        input.value="" should clear date/time input elements with partial values
+        https://bugs.webkit.org/show_bug.cgi?id=102645
+
+        Reviewed by Kentaro Hara.
+
+        Tests: fast/forms/date-multiple-fields/date-multiple-fields-value-set-empty.html
+               fast/forms/datetime-multiple-fields/datetime-multiple-fields-value-set-empty.html
+               fast/forms/datetimelocal-multiple-fields/datetimelocal-multiple-fields-value-set-empty.html
+               fast/forms/month-multiple-fields/month-multiple-fields-value-set-empty.html
+               fast/forms/time-multiple-fields/time-multiple-fields-value-set-empty.html
+               fast/forms/week-multiple-fields/week-multiple-fields-value-set-empty.html
+
+        * html/BaseMultipleFieldsDateAndTimeInputType.cpp:
+        (WebCore::BaseMultipleFieldsDateAndTimeInputType::setValue):
+        If the new value is an empty string and sub-fields has values, we should
+        update the UI value to the empty state.
+        * html/DateTimeFieldsState.h:
+        (WebCore::DateTimeFieldsState::hasAnyValue):
+        Added. It returns true if one or more sub-fields are not empty.
+
 2012-11-19  Andrey Adaikin  <aandrey@chromium.org>
 
         Web Inspector: [Canvas] if many canvases are being instrumented show the screenshot of the first one
@@ -12,6 +34,71 @@
 
         * inspector/InjectedScriptCanvasModuleSource.js:
         (.):
+
+2012-11-19  Kentaro Hara  <haraken@chromium.org>
+
+        Remove IDLStructure.pm
+        https://bugs.webkit.org/show_bug.cgi?id=102642
+
+        Reviewed by Adam Barth.
+
+        Previously IDLStructure.pm was full of regular expressions to
+        parse IDL files. Now a new IDL parser is implemented, IDLStructure.pm
+        just contains several data structures for the IDL parser. We can
+        move them to IDLParser.pm and thus remove IDLStructure.pm.
+
+        No tests. No change in generated code.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * DerivedSources.pri:
+        * GNUmakefile.am:
+        * WebCore.gyp/WebCore.gyp:
+        * WebCore.vcproj/MigrateScripts:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/scripts/IDLParser.pm:
+        (Parse):
+        (parseInterface):
+        (parseException):
+        (parseConst):
+        (parseAttributeRest):
+        (parseOperationRest):
+        (parseOptionalOrRequiredArgument):
+        (parseExceptionField):
+        (parseInterfaceOld):
+        (parseExceptionOld):
+        (parseAttributeRestOld):
+        (applyExtendedAttributeList):
+        * bindings/scripts/IDLStructure.pm: Removed.
+
+2012-11-19  Alexei Filippov  <alph@chromium.org>
+
+        Web Inspector: refine time and bytes output formatting
+        https://bugs.webkit.org/show_bug.cgi?id=102265
+
+        Reviewed by Yury Semikhatsky.
+
+        Add a space between number and unit, otherwise it's hard to read things like 88B.
+        Reduce a number of decimal digits in KB and MB formats. 1023.45KB seems to be too detailed.
+
+        * English.lproj/localizedStrings.js:
+        * inspector/front-end/CookiesTable.js:
+        (WebInspector.CookiesTable.prototype._createGridNode):
+        * inspector/front-end/UIUtils.js:
+        (Number.secondsToString):
+        (Number.bytesToString):
+
+2012-11-19  Eugene Klyuchnikov  <eustas.bug@gmail.com>
+
+        Web Inspector: Timeline: DomContentLoaded event labeled incorrectly
+        https://bugs.webkit.org/show_bug.cgi?id=102383
+
+        Reviewed by Yury Semikhatsky.
+
+        Fixed string presentation of event.
+
+        * inspector/front-end/TimelinePresentationModel.js: Fixed string.
 
 2012-11-19  Kentaro Hara  <haraken@chromium.org>
 

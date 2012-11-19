@@ -74,6 +74,7 @@ public:
     bool hasSecond() const { return m_second != emptyValue; }
     bool hasWeekOfYear() const { return m_weekOfYear != emptyValue; }
     bool hasYear() const { return m_year != emptyValue; }
+    bool hasAnyValue() const { return hasAMPM() || hasDayOfMonth() || hasHour() || hasMillisecond() || hasMinute() || hasMonth() || hasSecond() || hasWeekOfYear() || hasYear(); }
 
     void setAMPM(AMPMValue ampm) { m_ampm = ampm; }
     void setDayOfMonth(unsigned dayOfMonth) { m_dayOfMonth = dayOfMonth; }
