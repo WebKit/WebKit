@@ -1,3 +1,16 @@
+2012-11-19  Erik Arvidsson  <arv@chromium.org>
+
+        Update DOMException name: NetworkError
+        https://bugs.webkit.org/show_bug.cgi?id=102503
+
+        Reviewed by Kentaro Hara.
+
+        Patch 19 of 25 to update DOMException name to match the spec and Firefox.
+
+        No code uses DOMException NetworkError. We do use NETWORK_ERR for XMLHttpRequestException. See bug 102506.
+
+        * dom/DOMCoreException.cpp:
+
 2012-11-19  Ilya Tikhonovsky  <loislo@chromium.org>
 
         webaudio: clean-up. Replace AudioContext::m_document member with ContextDestructionObserver::scriptExecutionContext().

@@ -54,7 +54,7 @@ static struct CoreException {
     { "TypeMismatchError", "The type of an object was incompatible with the expected type of the parameter associated to the object." },
     { "SECURITY_ERR", "An attempt was made to break through the security policy of the user agent." },
     // FIXME: Couldn't find a description in the HTML/DOM specifications for NETWORK_ERR, ABORT_ERR, URL_MISMATCH_ERR, and QUOTA_EXCEEDED_ERR
-    { "NETWORK_ERR", "A network error occurred." },
+    { "NetworkError", "A network error occurred." },
     { "AbortError", "The user aborted a request." },
     { "URL_MISMATCH_ERR", "A worker global scope represented an absolute URL that is not equal to the resulting absolute URL." },
     { "QuotaExceededError", "An attempt was made to add something to storage that exceeded the quota." },
