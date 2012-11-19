@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+
+<html>
+<body>
+
+<script src="resources/polyfill.js"></script>
+
+<div id="host1">
+    <div id="selected">A</div>
+    <div>B</div>
+    <div>C</div>
+    <div>D</div>
+    <div>E</div>
+    <div id="F">F</div>
+</div>
+
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+var shadowRoot1 = new WebKitShadowRoot(host1);
+shadowRoot1.innerHTML = '<div id="host2"><shadow></shadow></div>';
+
+var host2 = shadowRoot1.getElementById('host2');
+var shadowRoot2 = new WebKitShadowRoot(host2);
+shadowRoot2.innerHTML = '<content select="#selected"></content>';
+
+setTimeout(function() {
+    A = selected;
+    A.id = '';
+    F.id = 'selected';
+    if (window.testRunner)
+        testRunner.notifyDone();
+}, 0);
+</script>
+</html>

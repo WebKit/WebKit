@@ -523,6 +523,8 @@ private:
 
     void createMutableAttributeData();
 
+    bool shouldInvalidateDistributionWhenAttributeChanged(ElementShadow*, const QualifiedName&, const AtomicString&);
+
 private:
     ElementRareData* elementRareData() const;
     ElementRareData* ensureElementRareData();

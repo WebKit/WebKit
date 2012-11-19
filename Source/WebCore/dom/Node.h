@@ -235,6 +235,7 @@ public:
     virtual bool isPluginElement() const { return false; }
     bool isDocumentNode() const;
     bool isShadowRoot() const { return getFlag(IsShadowRootFlag); }
+    bool isInsertionPoint() const { return getFlag(IsInsertionPointFlag); }
     bool inNamedFlow() const { return getFlag(InNamedFlowFlag); }
     bool hasCustomCallbacks() const { return getFlag(HasCustomCallbacksFlag); }
 
@@ -724,6 +725,7 @@ private:
         HasScopedHTMLStyleChildFlag = 1 << 26,
         HasEventTargetDataFlag = 1 << 27,
         InEdenFlag = 1 << 28,
+        IsInsertionPointFlag = 1 << 29,
 
 #if ENABLE(SVG)
         DefaultNodeFlags = IsParsingChildrenFinishedFlag | AreSVGAttributesValidFlag,
@@ -732,7 +734,7 @@ private:
 #endif
     };
 
-    // 3 bits remaining
+    // 2 bits remaining
 
     bool getFlag(NodeFlags mask) const { return m_nodeFlags & mask; }
     void setFlag(bool f, NodeFlags mask) const { m_nodeFlags = (m_nodeFlags & ~mask) | (-(int32_t)f & mask); } 
@@ -750,7 +752,8 @@ protected:
         CreateHTMLElement = CreateStyledElement | IsHTMLFlag, 
         CreateFrameOwnerElement = CreateHTMLElement | HasCustomCallbacksFlag,
         CreateSVGElement = CreateStyledElement | IsSVGFlag,
-        CreateDocument = CreateContainer | InDocumentFlag
+        CreateDocument = CreateContainer | InDocumentFlag,
+        CreateInsertionPoint = CreateHTMLElement | IsInsertionPointFlag
     };
     Node(Document*, ConstructionType);
 

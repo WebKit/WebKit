@@ -1,3 +1,19 @@
+2012-11-19  Shinya Kawanaka  <shinyak@chromium.org>
+
+        Changing id, className, or attribute should invalidate distribution
+        https://bugs.webkit.org/show_bug.cgi?id=100738
+
+        Reviewed by Dimitri Glazkov.
+
+        Added test code to modify id/class/attribute.
+
+        * DOM/ModifyAttribute.html: Added.
+        * DOM/resources/dom-perf/modify-attribute.js: Added.
+        (ModifyAttribute.CreateElementToSetUp):
+        (ModifyAttribute.ModifyId):
+        (ModifyAttribute.ModifyClass):
+        (ModifyAttribute.ModifyTitle):
+
 2012-11-14  Ryosuke Niwa  <rniwa@webkit.org>
 
         runCount in runner.js should be renamed to iterationCount

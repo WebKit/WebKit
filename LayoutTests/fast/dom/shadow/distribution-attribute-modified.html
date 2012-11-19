@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+
+<html>
+<body>
+
+<script src="resources/polyfill.js"></script>
+
+<div id="host">
+    <div>A</div>
+    <div>B</div>
+    <div>C</div>
+    <div>D</div>
+    <div>E</div>
+    <div id="F">F</div>
+</div>
+
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+var shadowRoot = new WebKitShadowRoot(host);
+shadowRoot.innerHTML = '<content select="div[title]"></content>';
+
+setTimeout(function() {
+    F.title = 'something';
+    if (window.testRunner)
+        testRunner.notifyDone();
+}, 0);
+</script>
+</html>

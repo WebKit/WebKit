@@ -62,7 +62,6 @@ public:
 
     virtual void attach();
     virtual void detach();
-    virtual bool isInsertionPoint() const OVERRIDE { return true; }
 
     bool shouldUseFallbackElements() const;
 
@@ -89,10 +88,8 @@ private:
 
 inline bool isInsertionPoint(const Node* node)
 {
-    if (node->isHTMLElement() && toHTMLElement(node)->isInsertionPoint())
-        return true;
-
-    return false;
+    ASSERT(node);
+    return node->isInsertionPoint();
 }
 
 inline InsertionPoint* toInsertionPoint(Node* node)
@@ -144,9 +141,7 @@ inline Element* parentElementForDistribution(const Node* node)
 
 inline ElementShadow* shadowOfParentForDistribution(const Node* node)
 {
-    if (!node)
-        return 0;
-
+    ASSERT(node);
     if (Element* parent = parentElementForDistribution(node))
         return parent->shadow();
 
@@ -158,7 +153,7 @@ inline InsertionPoint* resolveReprojection(const Node* projectedNode)
     InsertionPoint* insertionPoint = 0;
     const Node* current = projectedNode;
 
-    while (true) {
+    while (current) {
         if (ElementShadow* shadow = shadowOfParentForDistribution(current)) {
             shadow->ensureDistribution();
             if (InsertionPoint* insertedTo = shadow->distributor().findInsertionPointFor(projectedNode)) {

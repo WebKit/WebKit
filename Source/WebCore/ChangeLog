@@ -1,3 +1,73 @@
+2012-11-19  Shinya Kawanaka  <shinyak@chromium.org>
+
+        Changing id, className, or attribute should invalidate distribution
+        https://bugs.webkit.org/show_bug.cgi?id=100738
+
+        Reviewed by Dimitri Glazkov.
+
+        When id, className, or attribute is changed, we might have to invalidate distribution.
+        However, we don't want to do useless invalidation. So we consult with the RuleFeatureSet of ElementShadow
+        to invalidate distribution only if necessary.
+
+        For the code that className is changed, we can share a lot of code between invalidating distribution and
+        invalidating style. So we made checkNeedsStyleInvalidationForClassChange a template method, and share it.
+
+        Since attributeChanged() is a hot method, we don't want to make it slow. So we made one function to determine
+        whether we have to invalidate distribution, and make it called only if necessary. Also, we've optimized
+        shadowOfParentForDistribution() by making isInsertionPoint() de-virtualed. We consuded NodeFlags (IsInsertionPointFlag)
+        for this purpose.
+
+        We've measured how this patch makes changing attribute slow. I've measured each code 3 times.
+        DOM/ModifyAttribute.html is a micro benchmark which changes attribute a lot of times. The result of this benchmark
+        will be the most affected by this patch. However, it's only 2% performance regression.
+
+        DOM/ModifyAttribute.html
+        Before this patch:
+                median  stdev    min    max    [ms]
+          1st    494.0   3.36  490.0  502.0
+          2nd    503.5   3.44  497.0  512.0
+          3rd    494.0   3.48  488.0  499.0
+
+        After this patch:
+                median  stdev  min      max    [ms]
+          1st    504.0   2.00  501.0  509.0
+          2nd    505.5   3.08  500.0  513.0
+          3rd    507.0   2.32  502.0  510.0
+
+        Tests: fast/dom/shadow/distribution-attribute-modified.html
+               fast/dom/shadow/distribution-className-modified.html
+               fast/dom/shadow/distribution-id-modified.html
+               fast/dom/shadow/reprojection-attribute-modified.html
+               fast/dom/shadow/reprojection-className-modified.html
+               fast/dom/shadow/reprojection-id-modified.html
+
+        * dom/Element.cpp:
+        (WebCore::Element::attributeChanged):
+        (WebCore::HasSelectorForClassStyleFunctor::HasSelectorForClassStyleFunctor):
+        (HasSelectorForClassStyleFunctor):
+        (WebCore::HasSelectorForClassStyleFunctor::operator()): Returns true if StyleResolver::hasSelectorForClass returns true.
+        (WebCore):
+        (WebCore::HasSelectorForClassDistributionFunctor::HasSelectorForClassDistributionFunctor):
+        (HasSelectorForClassDistributionFunctor):
+        (WebCore::HasSelectorForClassDistributionFunctor::operator()): Returns true if ElementShadow::hasSelectForClass returns true.
+        (WebCore::checkFunctorForClassChange):
+        (WebCore::checkNeedsStyleInvalidationForClassChange):
+        (WebCore::checkNeedsDistributionInvalidationForClassChange): Extracted the implementation to checkFunctorForClassChange.
+        (WebCore::Element::shouldInvalidateDistributionWhenAttributeChanged):
+        * dom/Element.h:
+        (Element):
+        * dom/Node.h:
+        (WebCore::Node::isInsertionPoint):
+        * html/HTMLElement.h:
+        (HTMLElement):
+        * html/shadow/InsertionPoint.cpp:
+        (WebCore::InsertionPoint::InsertionPoint):
+        * html/shadow/InsertionPoint.h:
+        (InsertionPoint):
+        (WebCore::isInsertionPoint):
+        (WebCore::shadowOfParentForDistribution):
+        (WebCore::resolveReprojection):
+
 2012-11-19  Nate Chapin  <japhet@chromium.org>
 
         Move empty loading to DocumentLoader, simplify FrameLoader::init()

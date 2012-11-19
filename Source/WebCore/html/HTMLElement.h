@@ -106,7 +106,6 @@ public:
     virtual bool isHTMLUnknownElement() const { return false; }
 #endif
 
-    virtual bool isInsertionPoint() const { return false; }
     virtual bool isLabelable() const { return false; }
 
 protected:

@@ -38,7 +38,7 @@
 namespace WebCore {
 
 InsertionPoint::InsertionPoint(const QualifiedName& tagName, Document* document)
-    : HTMLElement(tagName, document)
+    : HTMLElement(tagName, document, CreateInsertionPoint)
     , m_shouldResetStyleInheritance(false)
 {
 }
