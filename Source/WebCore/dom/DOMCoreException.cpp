@@ -57,7 +57,7 @@ static struct CoreException {
     { "NETWORK_ERR", "A network error occurred." },
     { "AbortError", "The user aborted a request." },
     { "URL_MISMATCH_ERR", "A worker global scope represented an absolute URL that is not equal to the resulting absolute URL." },
-    { "QUOTA_EXCEEDED_ERR", "An attempt was made to add something to storage that exceeded the quota." },
+    { "QuotaExceededError", "An attempt was made to add something to storage that exceeded the quota." },
     { "TIMEOUT_ERR", "A timeout occurred." },
     { "INVALID_NODE_TYPE_ERR", "The supplied node is invalid or has an invalid ancestor for this operation." },
     { "DATA_CLONE_ERR", "An object could not be cloned." }
