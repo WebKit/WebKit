@@ -48,9 +48,9 @@ public:
 
 class LoadableTextTrack : public TextTrack, private TextTrackLoaderClient {
 public:
-    static PassRefPtr<LoadableTextTrack> create(HTMLTrackElement* track, const String& kind, const String& label, const String& language, bool isDefault)
+    static PassRefPtr<LoadableTextTrack> create(HTMLTrackElement* track, const String& kind, const String& label, const String& language)
     {
-        return adoptRef(new LoadableTextTrack(track, kind, label, language, isDefault));
+        return adoptRef(new LoadableTextTrack(track, kind, label, language));
     }
     virtual ~LoadableTextTrack();
 
@@ -61,6 +61,9 @@ public:
     size_t trackElementIndex();
     HTMLTrackElement* trackElement() { return m_trackElement; }
 
+    virtual bool isDefault() const OVERRIDE { return m_isDefault; }
+    virtual void setIsDefault(bool isDefault) OVERRIDE  { m_isDefault = isDefault; }
+
 private:
     // TextTrackLoaderClient
     virtual bool shouldLoadCues(TextTrackLoader*) { return true; }
@@ -68,7 +71,7 @@ private:
     virtual void cueLoadingStarted(TextTrackLoader*);
     virtual void cueLoadingCompleted(TextTrackLoader*, bool loadingFailed);
 
-    LoadableTextTrack(HTMLTrackElement*, const String& kind, const String& label, const String& language, bool isDefault);
+    LoadableTextTrack(HTMLTrackElement*, const String& kind, const String& label, const String& language);
 
     void loadTimerFired(Timer<LoadableTextTrack>*);
 
@@ -76,6 +79,7 @@ private:
     Timer<LoadableTextTrack> m_loadTimer;
     OwnPtr<TextTrackLoader> m_loader;
     KURL m_url;
+    bool m_isDefault;
 };
 } // namespace WebCore
 

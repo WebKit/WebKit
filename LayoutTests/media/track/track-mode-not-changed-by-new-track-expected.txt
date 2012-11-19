@@ -18,6 +18,7 @@ EXPECTED (track1.readyState == '2') OK
 EXPECTED (track1.track.mode == 'hidden') OK
 EXPECTED (track1.track.cues.length == '12') OK
 EXPECTED (track1.track.cues[11].startTime == '22') OK
+
 **add a caption track, configured to load automatically
 RUN(track2 = document.createElement('track'))
 RUN(track2.setAttribute('kind', 'captions'))
@@ -30,9 +31,26 @@ EVENT(load) -- <track kind='captions' >
 **check that metadata track state has not changed
 EXPECTED (track1.readyState == '2') OK
 EXPECTED (track1.track.mode == 'hidden') OK
-**and that the captions track state is correct
+**and that the caption track state is correct
 EXPECTED (track2.readyState == '2') OK
 EXPECTED (track2.track.mode == 'showing') OK
+
+**add a subtitle track with video.addTextTrack()
+RUN(track3 = video.addTextTrack('subtitles', 'Subtitle Track', 'en'))
+RUN(track3.mode = 'showing')
+
+EVENT(addtrack)
+**check that metadata track state has not changed
+EXPECTED (track1.readyState == '2') OK
+EXPECTED (track1.track.mode == 'hidden') OK
+**and that the caption track state has not changed
+EXPECTED (track2.readyState == '2') OK
+EXPECTED (track2.track.mode == 'showing') OK
+**and that the subtitle track state is correct
+EXPECTED (event.target == '[object TextTrackList]') OK
+EXPECTED (event instanceof window.TrackEvent == 'true') OK
+EXPECTED (event.track == '[object TextTrack]') OK
+EXPECTED (track3.mode == 'showing') OK
 
 END OF TEST
 

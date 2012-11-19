@@ -230,9 +230,9 @@ public:
         {
         }
 
-        Vector<HTMLTrackElement*> tracks;
-        HTMLTrackElement* visibleTrack;
-        HTMLTrackElement* defaultTrack;
+        Vector<RefPtr<TextTrack> > tracks;
+        RefPtr<TextTrack> visibleTrack;
+        RefPtr<TextTrack> defaultTrack;
         GroupKind kind;
         bool hasSrcLang;
     };

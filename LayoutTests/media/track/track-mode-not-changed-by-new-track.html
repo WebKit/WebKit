@@ -7,17 +7,42 @@
         <script src=../video-test.js></script>
         <script>
 
+            function trackAdded()
+            {
+                consoleWrite("EVENT(" + event.type + ")");
+                consoleWrite("<i>**check that metadata track state has not changed<" + "/i>");
+                testExpected("track1.readyState", HTMLTrackElement.LOADED);
+                testExpected("track1.track.mode", "hidden");
+                consoleWrite("<i>**and that the caption track state has not changed<" + "/i>");
+                testExpected("track2.readyState", HTMLTrackElement.LOADED);
+                testExpected("track2.track.mode", "showing");
+                consoleWrite("<i>**and that the subtitle track state is correct<" + "/i>");
+                testExpected("event.target", video.textTracks);
+                testExpected("event instanceof window.TrackEvent", true);
+                testExpected("event.track", video.textTracks[video.textTracks.length - 1]);
+                testExpected("track3.mode", "showing");
+
+                consoleWrite("");
+                endTest();
+            }
+
             function captionsTrackLoaded()
             {
                 consoleWrite("EVENT(load) -- &lt;track kind='captions' &gt;");
                 consoleWrite("<i>**check that metadata track state has not changed<" + "/i>");
                 testExpected("track1.readyState", HTMLTrackElement.LOADED);
                 testExpected("track1.track.mode", "hidden");
-                consoleWrite("<i>**and that the captions track state is correct<" + "/i>");
+                consoleWrite("<i>**and that the caption track state is correct<" + "/i>");
                 testExpected("track2.readyState", HTMLTrackElement.LOADED);
                 testExpected("track2.track.mode", "showing");
                 consoleWrite("");
-                endTest();
+
+                video.textTracks.addEventListener("addtrack", trackAdded);
+                consoleWrite("<i>**add a subtitle track with video.addTextTrack()<" + "/i>");
+                run("track3 = video.addTextTrack('subtitles', 'Subtitle Track', 'en')");
+                run("track3.mode = 'showing'");
+
+                consoleWrite("");
             }
 
             function metadataTrackLoaded()
@@ -29,7 +54,7 @@
                 testExpected("track1.track.cues.length", 12);
                 testExpected("track1.track.cues[11].startTime", 22);
 
-                consoleWrite("<i>**add a caption track, configured to load automatically<" + "/i>");
+                consoleWrite("<br><i>**add a caption track, configured to load automatically<" + "/i>");
                 run("track2 = document.createElement('track')");
                 run("track2.setAttribute('kind', 'captions')");
                 run("track2.setAttribute('default', 'default')");

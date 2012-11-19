@@ -56,7 +56,6 @@ static String urlForLogging(const KURL& url)
     
 inline HTMLTrackElement::HTMLTrackElement(const QualifiedName& tagName, Document* document)
     : HTMLElement(tagName, document)
-    , m_hasBeenConfigured(false)
 {
     LOG(Media, "HTMLTrackElement::HTMLTrackElement - %p", this);
     ASSERT(hasTagName(trackTag));
@@ -109,6 +108,8 @@ void HTMLTrackElement::parseAttribute(const QualifiedName& name, const AtomicStr
             track()->setLabel(value);
         else if (name == srclangAttr)
             track()->setLanguage(value);
+        else if (name == defaultAttr)
+            track()->setIsDefault(!value.isNull());
     }
 
     if (name == onloadAttr)
@@ -176,7 +177,7 @@ LoadableTextTrack* HTMLTrackElement::ensureTrack()
         String kind = getAttribute(kindAttr);
         if (!TextTrack::isValidKindKeyword(kind))
             kind = TextTrack::subtitlesKeyword();
-        m_track = LoadableTextTrack::create(this, kind, label(), srclang(), isDefault());
+        m_track = LoadableTextTrack::create(this, kind, label(), srclang());
     }
     return m_track.get();
 }

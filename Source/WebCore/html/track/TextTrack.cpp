@@ -107,6 +107,7 @@ TextTrack::TextTrack(ScriptExecutionContext* context, TextTrackClient* client, c
     , m_trackIndex(invalidTrackIndex)
     , m_renderedTrackIndex(invalidTrackIndex)
     , m_showingByDefault(false)
+    , m_hasBeenConfigured(false)
 {
     setKind(kind);
 }
