@@ -91,10 +91,10 @@ v8::Handle<v8::Value> V8AudioContext::constructorCallback(const v8::Arguments& a
         return throwError(v8SyntaxError, "Error creating AudioContext", args.GetIsolate());
     
     // Transform the holder into a wrapper object for the audio context.
-    v8::Handle<v8::Object> wrapper = args.Holder();
-    V8DOMWrapper::createDOMWrapper(audioContext.release(), &info, wrapper);
+    V8DOMWrapper::setDOMWrapper(args.Holder(), &info, audioContext.get());
+    audioContext->ref();
     
-    return wrapper;
+    return args.Holder();
 }
 
 } // namespace WebCore

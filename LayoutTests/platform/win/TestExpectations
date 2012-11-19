@@ -1542,8 +1542,6 @@ css3/selectors3
 
 # For now, Web Audio API is disabled
 webaudio/
-inspector-protocol/nmi-webaudio.html
-inspector-protocol/nmi-webaudio-leak-test.html
 
 # The win port has no support for <track>
 # https://bugs.webkit.org/show_bug.cgi?id=43668

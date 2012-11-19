@@ -1,5 +1,34 @@
 2012-11-19  Kentaro Hara  <haraken@chromium.org>
 
+        Unreviewed, rolling out r135111.
+        http://trac.webkit.org/changeset/135111
+        https://bugs.webkit.org/show_bug.cgi?id=102356
+
+        The patch caused crashes in several layout tests
+
+        * Modules/webaudio/AudioContext.cpp:
+        (WebCore::AudioContext::createOfflineContext):
+        (WebCore::AudioContext::AudioContext):
+        (WebCore::AudioContext::constructCommon):
+        (WebCore::AudioContext::~AudioContext):
+        (WebCore::AudioContext::uninitialize):
+        (WebCore::AudioContext::uninitializeDispatch):
+        (WebCore::AudioContext::stop):
+        (WebCore::AudioContext::markForDeletion):
+        (WebCore::AudioContext::scheduleNodeDeletion):
+        (WebCore::AudioContext::deleteMarkedNodes):
+        * Modules/webaudio/AudioContext.h:
+        (AudioContext):
+        * bindings/v8/custom/V8AudioContextCustom.cpp:
+        (WebCore::V8AudioContext::constructorCallback):
+        * inspector/InspectorMemoryAgent.cpp:
+        (WebCore::InspectorMemoryAgent::getProcessMemoryDistribution):
+        * platform/PlatformMemoryInstrumentation.cpp:
+        (WebCore):
+        * platform/PlatformMemoryInstrumentation.h:
+
+2012-11-19  Kentaro Hara  <haraken@chromium.org>
+
         Unreviewed, rolling out r135116.
         http://trac.webkit.org/changeset/135116
         https://bugs.webkit.org/show_bug.cgi?id=102649

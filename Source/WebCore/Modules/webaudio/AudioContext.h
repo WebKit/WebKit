@@ -255,12 +255,7 @@ private:
 
     void lazyInitialize();
     void uninitialize();
-
-    // ScriptExecutionContext calls stop twice.
-    // We'd like to schedule only one stop action for them.
-    bool m_isStopScheduled;
-    static void stopDispatch(void* userData);
-    void clear();
+    static void uninitializeDispatch(void* userData);
 
     void scheduleNodeDeletion();
     static void deleteMarkedNodesDispatch(void* userData);

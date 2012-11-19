@@ -1,5 +1,24 @@
 2012-11-19  Kentaro Hara  <haraken@chromium.org>
 
+        Unreviewed, rolling out r135111.
+        http://trac.webkit.org/changeset/135111
+        https://bugs.webkit.org/show_bug.cgi?id=102356
+
+        The patch caused crashes in several layout tests
+
+        * inspector-protocol/nmi-webaudio-leak-test-expected.txt: Removed.
+        * inspector-protocol/nmi-webaudio-leak-test.html: Removed.
+        * platform/chromium-android/TestExpectations:
+        * platform/efl-wk2/TestExpectations:
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/qt/TestExpectations:
+        * platform/win/TestExpectations:
+        * platform/wincairo/TestExpectations:
+
+2012-11-19  Kentaro Hara  <haraken@chromium.org>
+
         Unreviewed gardening.
 
         * platform/chromium/TestExpectations:
