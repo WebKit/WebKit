@@ -1,3 +1,14 @@
+2012-11-18  Laszlo Gombos  <l.gombos@samsung.com>
+
+        [CMake] Consolidate common input files
+        https://bugs.webkit.org/show_bug.cgi?id=101632
+
+        Reviewed by Rob Buis.
+
+        Consolidate and sort the list of files.
+
+        * PlatformEfl.cmake:
+
 2012-11-12  Timothy Hatcher  <timothy@apple.com>
 
         Add a dock button to the top right corner of the Web Inspector window (similar to the full screen button).

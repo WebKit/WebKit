@@ -7,22 +7,23 @@ LIST(APPEND WebKit_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/platform/efl"
     "${WEBCORE_DIR}/platform/graphics/cairo"
     "${WEBCORE_DIR}/platform/graphics/efl"
+    "${WEBCORE_DIR}/platform/graphics/freetype"
     "${WEBCORE_DIR}/platform/mock"
     "${WEBCORE_DIR}/platform/network/soup"
     ${CAIRO_INCLUDE_DIRS}
-    ${ECORE_INCLUDE_DIRS}
     ${ECORE_EVAS_INCLUDE_DIRS}
+    ${ECORE_INCLUDE_DIRS}
     ${ECORE_INPUT_INCLUDE_DIRS}
     ${EDJE_INCLUDE_DIRS}
     ${EFREET_INCLUDE_DIRS}
     ${EINA_INCLUDE_DIRS}
     ${EVAS_INCLUDE_DIRS}
+    ${GLIB_INCLUDE_DIRS}
     ${HARFBUZZ_INCLUDE_DIRS}
+    ${LIBSOUP_INCLUDE_DIRS}
     ${LIBXML2_INCLUDE_DIR}
     ${LIBXSLT_INCLUDE_DIR}
     ${SQLITE_INCLUDE_DIR}
-    ${GLIB_INCLUDE_DIRS}
-    ${LIBSOUP_INCLUDE_DIRS}
 )
 
 IF (ENABLE_SVG)
@@ -48,10 +49,6 @@ IF (ENABLE_VIDEO_TRACK)
     "${WEBCORE_DIR}/html/track"
   )
 ENDIF ()
-
-LIST(APPEND WebKit_INCLUDE_DIRECTORIES
-  "${WEBCORE_DIR}/platform/graphics/freetype"
-)
 
 IF (ENABLE_NOTIFICATIONS)
   LIST(APPEND WebKit_INCLUDE_DIRECTORIES

@@ -1965,6 +1965,18 @@ SET(WebCore_SOURCES
     platform/graphics/transforms/TransformState.cpp
     platform/graphics/transforms/TranslateTransformOperation.cpp
 
+    platform/graphics/ImageSource.cpp
+
+    platform/image-decoders/ImageDecoder.cpp
+    platform/image-decoders/bmp/BMPImageDecoder.cpp
+    platform/image-decoders/bmp/BMPImageReader.cpp
+    platform/image-decoders/gif/GIFImageDecoder.cpp
+    platform/image-decoders/gif/GIFImageReader.cpp
+    platform/image-decoders/ico/ICOImageDecoder.cpp
+    platform/image-decoders/jpeg/JPEGImageDecoder.cpp
+    platform/image-decoders/png/PNGImageDecoder.cpp
+    platform/image-decoders/webp/WEBPImageDecoder.cpp
+
     platform/leveldb/LevelDBDatabase.cpp
     platform/leveldb/LevelDBTransaction.cpp
     platform/leveldb/LevelDBWriteBatch.cpp

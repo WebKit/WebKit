@@ -1,8 +1,13 @@
 LIST(APPEND WebCore_INCLUDE_DIRECTORIES
   "${WEBCORE_DIR}/accessibility/efl"
   "${WEBCORE_DIR}/page/efl"
+  "${WEBCORE_DIR}/platform/cairo"
   "${WEBCORE_DIR}/platform/efl"
+  "${WEBCORE_DIR}/platform/graphics/cairo"
   "${WEBCORE_DIR}/platform/graphics/efl"
+  "${WEBCORE_DIR}/platform/graphics/freetype"
+  "${WEBCORE_DIR}/platform/graphics/harfbuzz/"
+  "${WEBCORE_DIR}/platform/graphics/harfbuzz/ng"
   "${WEBCORE_DIR}/platform/linux"
   "${WEBCORE_DIR}/platform/mediastream/gstreamer"
   "${WEBCORE_DIR}/platform/network/soup"
@@ -12,8 +17,10 @@ LIST(APPEND WebCore_INCLUDE_DIRECTORIES
 
 LIST(APPEND WebCore_SOURCES
   accessibility/efl/AccessibilityObjectEfl.cpp
+  editing/SmartReplaceICU.cpp
   page/efl/DragControllerEfl.cpp
   page/efl/EventHandlerEfl.cpp
+  platform/cairo/WidgetBackingStoreCairo.cpp
   platform/Cursor.cpp
   platform/efl/AsyncFileSystemEfl.cpp
   platform/efl/BatteryProviderEfl.cpp
@@ -42,32 +49,58 @@ LIST(APPEND WebCore_SOURCES
   platform/efl/PlatformWheelEventEfl.cpp
   platform/efl/RenderThemeEfl.cpp
   platform/efl/RunLoopEfl.cpp
-  platform/efl/ScrollViewEfl.cpp
   platform/efl/ScrollbarEfl.cpp
   platform/efl/ScrollbarThemeEfl.cpp
+  platform/efl/ScrollViewEfl.cpp
   platform/efl/SharedTimerEfl.cpp
   platform/efl/SoundEfl.cpp
   platform/efl/SystemTimeEfl.cpp
   platform/efl/TemporaryLinkStubs.cpp
   platform/efl/WidgetEfl.cpp
-  platform/graphics/ImageSource.cpp
+
+  platform/graphics/cairo/BitmapImageCairo.cpp
+  platform/graphics/cairo/CairoUtilities.cpp  
+  platform/graphics/cairo/FontCairo.cpp
+  platform/graphics/cairo/FontCairoHarfbuzzNG.cpp
+  platform/graphics/cairo/GradientCairo.cpp
+  platform/graphics/cairo/GraphicsContextCairo.cpp
+  platform/graphics/cairo/ImageBufferCairo.cpp
+  platform/graphics/cairo/ImageCairo.cpp
+  platform/graphics/cairo/IntRectCairo.cpp
+  platform/graphics/cairo/NativeImageCairo.cpp
+  platform/graphics/cairo/OwnPtrCairo.cpp
+  platform/graphics/cairo/PathCairo.cpp  
+  platform/graphics/cairo/PatternCairo.cpp
+  platform/graphics/cairo/PlatformContextCairo.cpp
+  platform/graphics/cairo/PlatformPathCairo.cpp   
+  platform/graphics/cairo/RefPtrCairo.cpp
+  platform/graphics/cairo/TileCairo.cpp  
+  platform/graphics/cairo/TiledBackingStoreBackendCairo.cpp
+  platform/graphics/cairo/TransformationMatrixCairo.cpp
+
   platform/graphics/efl/CairoUtilitiesEfl.cpp
   platform/graphics/efl/IconEfl.cpp
   platform/graphics/efl/ImageEfl.cpp
   platform/graphics/efl/IntPointEfl.cpp
   platform/graphics/efl/IntRectEfl.cpp
-  platform/image-decoders/ImageDecoder.cpp
-  platform/image-decoders/bmp/BMPImageDecoder.cpp
-  platform/image-decoders/bmp/BMPImageReader.cpp
-  platform/image-decoders/gif/GIFImageDecoder.cpp
-  platform/image-decoders/gif/GIFImageReader.cpp
-  platform/image-decoders/ico/ICOImageDecoder.cpp
-  platform/image-decoders/jpeg/JPEGImageDecoder.cpp
-  platform/image-decoders/png/PNGImageDecoder.cpp
-  platform/image-decoders/webp/WEBPImageDecoder.cpp
+
+  platform/graphics/freetype/FontCacheFreeType.cpp
+  platform/graphics/freetype/FontCustomPlatformDataFreeType.cpp
+  platform/graphics/freetype/FontPlatformDataFreeType.cpp
+  platform/graphics/freetype/GlyphPageTreeNodeFreeType.cpp
+  platform/graphics/freetype/SimpleFontDataFreeType.cpp
+
+  platform/graphics/harfbuzz/HarfBuzzShaperBase.cpp
+  platform/graphics/harfbuzz/ng/HarfBuzzNGFaceCairo.cpp
+  platform/graphics/harfbuzz/ng/HarfBuzzNGFace.cpp 
+  platform/graphics/harfbuzz/ng/HarfBuzzShaper.cpp
+
+  platform/graphics/WOFFFileFormat.cpp
+  platform/image-decoders/cairo/ImageDecoderCairo.cpp  
   platform/linux/GamepadDeviceLinux.cpp
   platform/mediastream/gstreamer/MediaStreamCenterGStreamer.cpp
   platform/network/efl/NetworkStateNotifierEfl.cpp
+
   platform/network/soup/AuthenticationChallengeSoup.cpp
   platform/network/soup/CookieJarSoup.cpp
   platform/network/soup/CookieStorageSoup.cpp
@@ -82,11 +115,15 @@ LIST(APPEND WebCore_SOURCES
   platform/network/soup/ResourceResponseSoup.cpp
   platform/network/soup/SocketStreamHandleSoup.cpp
   platform/network/soup/SoupURIUtils.cpp
+
   platform/PlatformStrategies.cpp
   platform/posix/FileSystemPOSIX.cpp
   platform/posix/SharedBufferPOSIX.cpp
   platform/text/efl/TextBreakIteratorInternalICUEfl.cpp
   platform/text/enchant/TextCheckerEnchant.cpp
+  platform/text/TextBreakIteratorICU.cpp   
+  platform/text/TextCodecICU.cpp
+  platform/text/TextEncodingDetectorICU.cpp
 )
 
 IF (ENABLE_BATTERY_STATUS)
@@ -115,63 +152,6 @@ ENDIF ()
 LIST(APPEND WebCore_USER_AGENT_STYLE_SHEETS
     ${WEBCORE_DIR}/css/mediaControlsEfl.css
     ${WEBCORE_DIR}/css/mediaControlsEflFullscreen.css
-)
-
-LIST(APPEND WebCore_INCLUDE_DIRECTORIES
-  "${WEBCORE_DIR}/platform/cairo"
-  "${WEBCORE_DIR}/platform/graphics/cairo"
-)
-LIST(APPEND WebCore_SOURCES
-  platform/cairo/WidgetBackingStoreCairo.cpp
-  platform/graphics/cairo/BitmapImageCairo.cpp
-  platform/graphics/cairo/CairoUtilities.cpp
-  platform/graphics/cairo/FontCairo.cpp
-  platform/graphics/cairo/GradientCairo.cpp
-  platform/graphics/cairo/GraphicsContextCairo.cpp
-  platform/graphics/cairo/ImageBufferCairo.cpp
-  platform/graphics/cairo/ImageCairo.cpp
-  platform/graphics/cairo/IntRectCairo.cpp
-  platform/graphics/cairo/NativeImageCairo.cpp
-  platform/graphics/cairo/OwnPtrCairo.cpp
-  platform/graphics/cairo/PathCairo.cpp
-  platform/graphics/cairo/PatternCairo.cpp
-  platform/graphics/cairo/PlatformContextCairo.cpp
-  platform/graphics/cairo/PlatformPathCairo.cpp
-  platform/graphics/cairo/RefPtrCairo.cpp
-  platform/graphics/cairo/TileCairo.cpp
-  platform/graphics/cairo/TiledBackingStoreBackendCairo.cpp
-  platform/graphics/cairo/TransformationMatrixCairo.cpp
-  platform/image-decoders/cairo/ImageDecoderCairo.cpp
-)
-
-LIST(APPEND WebCore_INCLUDE_DIRECTORIES
-  "${WEBCORE_DIR}/platform/graphics/freetype"
-  "${WEBCORE_DIR}/platform/graphics/harfbuzz/"
-  "${WEBCORE_DIR}/platform/graphics/harfbuzz/ng"
-  ${HARFBUZZ_INCLUDE_DIRS}
-)
-LIST(APPEND WebCore_SOURCES
-  platform/graphics/WOFFFileFormat.cpp
-  platform/graphics/cairo/FontCairoHarfbuzzNG.cpp
-  platform/graphics/freetype/FontCacheFreeType.cpp
-  platform/graphics/freetype/FontCustomPlatformDataFreeType.cpp
-  platform/graphics/freetype/FontPlatformDataFreeType.cpp
-  platform/graphics/freetype/GlyphPageTreeNodeFreeType.cpp
-  platform/graphics/freetype/SimpleFontDataFreeType.cpp
-  platform/graphics/harfbuzz/HarfBuzzShaperBase.cpp
-  platform/graphics/harfbuzz/ng/HarfBuzzNGFace.cpp
-  platform/graphics/harfbuzz/ng/HarfBuzzNGFaceCairo.cpp
-  platform/graphics/harfbuzz/ng/HarfBuzzShaper.cpp
-)
-LIST(APPEND WebCore_LIBRARIES
-  ${HARFBUZZ_LIBRARIES}
-)
-
-LIST(APPEND WebCore_SOURCES
-  editing/SmartReplaceICU.cpp
-  platform/text/TextEncodingDetectorICU.cpp
-  platform/text/TextBreakIteratorICU.cpp
-  platform/text/TextCodecICU.cpp
 )
 
 IF (WTF_USE_TEXTURE_MAPPER)
@@ -205,6 +185,7 @@ LIST(APPEND WebCore_LIBRARIES
   ${GLIB_GOBJECT_LIBRARIES}
   ${LIBSOUP_LIBRARIES}
   ${ZLIB_LIBRARIES}
+  ${HARFBUZZ_LIBRARIES}
 )
 
 LIST(APPEND WebCore_INCLUDE_DIRECTORIES
@@ -227,6 +208,7 @@ LIST(APPEND WebCore_INCLUDE_DIRECTORIES
   ${GLIB_INCLUDE_DIRS}
   ${LIBSOUP_INCLUDE_DIRS}
   ${ZLIB_INCLUDE_DIRS}
+  ${HARFBUZZ_INCLUDE_DIRS}
 )
 
 IF (ENABLE_VIDEO OR ENABLE_WEB_AUDIO)
