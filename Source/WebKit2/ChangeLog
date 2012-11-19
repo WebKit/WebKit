@@ -1,3 +1,17 @@
+2012-11-19  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Test /webkit2/WebKitWebView/create-ready-close is failing after r134586
+        https://bugs.webkit.org/show_bug.cgi?id=102668
+
+        Reviewed by Philippe Normand.
+
+        Check only that window properties match when creating a new window
+        if the expected window properties has been set. Also remove a
+        FIXME and actually check that x and y are equal to the expected
+        one, now that the issue is fixed.
+
+        * UIProcess/API/gtk/tests/TestWebKitWebView.cpp:
+
 2012-11-19  Balazs Kelemen  <kbalazs@webkit.org>
 
         Unreviewed buildfix.
