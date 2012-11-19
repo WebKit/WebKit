@@ -348,12 +348,10 @@ bool CoordinatedGraphicsLayer::setFilters(const FilterOperations& newFilters)
 
 void CoordinatedGraphicsLayer::setContentsToImage(Image* image)
 {
-    if (image) {
+    NativeImagePtr newNativeImagePtr = image ? image->nativeImageForCurrentFrame() : 0;
+    if (newNativeImagePtr) {
         // This code makes the assumption that pointer equality on a NativeImagePtr is a valid way to tell if the image is changed.
         // This assumption is true in Qt, GTK and EFL.
-        NativeImagePtr newNativeImagePtr = image->nativeImageForCurrentFrame();
-        ASSERT(newNativeImagePtr);
-
         if (newNativeImagePtr == m_compositedNativeImagePtr)
             return;
 

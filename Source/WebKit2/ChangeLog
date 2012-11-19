@@ -1,3 +1,19 @@
+2012-11-19  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [CG][WK2] Assertion in CoordinatedGraphicsLayer::setContentsToImage(WebCore::Image*)
+        https://bugs.webkit.org/show_bug.cgi?id=102652
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Handle null return of nativeImageForCurrentFrame similarly to Chromium
+        port in r130610. This can happen if there is an error early in the
+        decoding of an image.
+
+        Test: Already covered by compositing/images/truncated-direct-png-image.html
+
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedGraphicsLayer.cpp:
+        (WebCore::CoordinatedGraphicsLayer::setContentsToImage):
+
 2012-11-18  Jaehun Lim  <ljaehun.lim@samsung.com>
 
         [EFL][WK2] Remove underscore characters in Ewk class names.
