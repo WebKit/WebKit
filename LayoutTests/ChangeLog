@@ -1,3 +1,16 @@
+2012-11-18  Kentaro Hara  <haraken@chromium.org>
+
+        Unreviewed. Rebaselined images.
+
+        * platform/chromium-linux-x86/fast/block/float/overhanging-tall-block-expected.txt: Added.
+        * platform/chromium-linux/fast/block/float/overhanging-tall-block-expected.png: Added.
+        * platform/chromium-linux/fast/block/float/overhanging-tall-block-expected.txt: Added.
+        * platform/chromium-mac-lion/fast/block/float/overhanging-tall-block-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/fast/block/float/overhanging-tall-block-expected.txt: Added.
+        * platform/chromium-win-xp/fast/block/float/overhanging-tall-block-expected.png: Added.
+        * platform/chromium-win-xp/fast/block/float/overhanging-tall-block-expected.txt: Added.
+        * platform/efl-wk1/fast/block/float/overhanging-tall-block-expected.png: Renamed from LayoutTests/platform/efl/fast/block/float/overhanging-tall-block-expected.png.
+
 2012-11-18  Ryosuke Niwa  <rniwa@webkit.org>
 
         Chromium rebaseline after r135093.
