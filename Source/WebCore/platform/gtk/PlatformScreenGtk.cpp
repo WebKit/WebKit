@@ -60,18 +60,6 @@ static GdkVisual* getVisual(Widget* widget)
     return container ? gdk_window_get_visual(gtk_widget_get_window(container)) : 0;
 }
 
-int screenHorizontalDPI(Widget* widget)
-{
-    notImplemented();
-    return 0;
-}
-
-int screenVerticalDPI(Widget* widget)
-{
-    notImplemented();
-    return 0;
-}
-
 int screenDepth(Widget* widget)
 {
     GdkVisual* visual = getVisual(widget);

@@ -48,18 +48,6 @@
 
 namespace WebCore {
 
-int screenHorizontalDPI(Widget*)
-{
-    notImplemented();
-    return 0;
-}
-
-int screenVerticalDPI(Widget*)
-{
-    notImplemented();
-    return 0;
-}
-
 int screenDepth(Widget*)
 {
 #ifdef HAVE_ECORE_X

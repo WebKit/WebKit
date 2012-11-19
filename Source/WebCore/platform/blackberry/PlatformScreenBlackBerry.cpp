@@ -27,18 +27,6 @@
 
 namespace WebCore {
 
-int screenHorizontalDPI(Widget*)
-{
-    FloatSize currentPPI = BlackBerry::Platform::Graphics::Screen::primaryScreen()->pixelsPerInch(-1);
-    return currentPPI.width();
-}
-
-int screenVerticalDPI(Widget*)
-{
-    FloatSize currentPPI = BlackBerry::Platform::Graphics::Screen::primaryScreen()->pixelsPerInch(-1);
-    return currentPPI.height();
-}
-
 bool screenIsMonochrome(Widget*)
 {
     return false;

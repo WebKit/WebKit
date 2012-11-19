@@ -1,3 +1,32 @@
+2012-11-19  Sami Kyostila  <skyostil@chromium.org>
+
+        Use device scale factor instead of physical screen DPI for screen DPI
+        https://bugs.webkit.org/show_bug.cgi?id=101769
+
+        Reviewed by Adam Barth.
+
+        Media queries call WebCore::Screen::{horizontal,vertical}DPI() to determine
+        the dots per CSS inch[1] value for the "screen" media type. On Chromium these
+        functions currently return the physical screen DPI, which is wrong. To fix
+        this, we remove both of these functions entirely and make media queries use
+        the device scale factor multiplied by 96 on all ports.
+
+        [1] http://www.w3.org/TR/css3-mediaqueries/#resolution0
+
+        * page/Screen.cpp:
+        (WebCore::Screen::horizontalDPI):
+        (WebCore::Screen::verticalDPI):
+        * platform/PlatformScreen.h:
+        (WebCore):
+        * platform/blackberry/PlatformScreenBlackBerry.cpp:
+        * platform/chromium/PlatformScreenChromium.cpp:
+        * platform/efl/PlatformScreenEfl.cpp:
+        * platform/gtk/PlatformScreenGtk.cpp:
+        * platform/mac/PlatformScreenMac.mm:
+        * platform/qt/PlatformScreenQt.cpp:
+        * platform/win/PlatformScreenWin.cpp:
+        * platform/wx/ScreenWx.cpp:
+
 2012-11-19  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Computed grid items' positions shouldn't be using Length

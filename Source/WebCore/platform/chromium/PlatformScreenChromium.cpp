@@ -53,22 +53,6 @@ static PlatformPageClient toPlatformPageClient(Widget* widget)
     return hostWindow->platformPageClient();
 }
 
-int screenHorizontalDPI(Widget* widget)
-{
-    PlatformPageClient client = toPlatformPageClient(widget);
-    if (!client)
-        return 0;
-    return client->screenInfo().horizontalDPI;
-}
-
-int screenVerticalDPI(Widget* widget)
-{
-    PlatformPageClient client = toPlatformPageClient(widget);
-    if (!client)
-        return 0;
-    return client->screenInfo().verticalDPI;
-}
-
 int screenDepth(Widget* widget)
 {
     PlatformPageClient client = toPlatformPageClient(widget);

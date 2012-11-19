@@ -66,18 +66,6 @@ static DEVMODE deviceInfoForWidget(Widget* widget)
     return deviceInfo;
 }
 
-int screenHorizontalDPI(Widget* widget)
-{
-    notImplemented();
-    return 0;
-}
-
-int screenVerticalDPI(Widget* widget)
-{
-    notImplemented();
-    return 0;
-}
-
 int screenDepth(Widget* widget)
 {
     DEVMODE deviceInfo = deviceInfoForWidget(widget);
