@@ -3504,6 +3504,7 @@ webkit.org/b/87273 [ Release ] webaudio/audioparam-connect-audioratesignal.html 
 webkit.org/b/97439 [ Release ] webaudio/biquad-getFrequencyResponse.html [ Failure Pass ]
 webkit.org/b/97439 [ Debug ] webaudio/biquad-getFrequencyResponse.html [ Crash Pass ]
 webkit.org/b/102679 [ Linux Debug ] webaudio/audionode-connect-order.html [ Crash Pass ]
+webkit.org/b/102680 [ Linux Debug ] webaudio/audioparam-setTargetAtTime.html [ Crash Pass ]
 
 webkit.org/b/87321 [ XP ] fast/history/history-subframe-with-name.html [ Failure Pass ]
 webkit.org/b/87321 [ XP ] fast/history/history-traversal-is-asynchronous.html [ Failure Pass ]
