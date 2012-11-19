@@ -37,7 +37,6 @@ my $outputHeadersDir = "";
 
 my @headerContent = ();
 my @implContentHeader = ();
-my @implFixedHeader = ();
 my @implContent = ();
 my @implContentDecls = ();
 my %implIncludes = ();
@@ -85,7 +84,6 @@ sub GenerateInterface
 {
     my $object = shift;
     my $dataNode = shift;
-    my $defines = shift;
 
     # Start actual generation
     if ($dataNode->extendedAttributes->{"Callback"}) {
@@ -508,7 +506,6 @@ END
 
     my $noToV8 = $dataNode->extendedAttributes->{"SuppressToJSObject"};
     my $noWrap = $dataNode->extendedAttributes->{"V8NoWrapperCache"} || $noToV8;
-    my $createWrapperArgumentType = GetPassRefPtrType($nativeType);
     if (!$noWrap) {
         my $createWrapperArgumentType = GetPassRefPtrType($nativeType);
         push(@headerContent, <<END);
@@ -622,7 +619,6 @@ END
 sub GetInternalFields
 {
     my $dataNode = shift;
-    my $name = $dataNode->name;
 
     my @customInternalFields = ();
     # We can't ask whether a parent type has a given extendedAttribute,
@@ -994,8 +990,6 @@ END
     }
 
     my $result;
-    my $wrapper;
-
     if ($attribute->signature->type eq "EventListener" && $dataNode->name eq "DOMWindow") {
         push(@implContentDecls, "    if (!imp->document())\n");
         push(@implContentDecls, "        return v8Undefined();\n");
@@ -2269,7 +2263,6 @@ sub GenerateSingleBatchedAttribute
     my $getter;
     my $setter;
     my $propAttr = "v8::None";
-    my $hasCustomSetter = 0;
 
     # Check attributes.
     if ($attrExt->{"NotEnumerable"}) {
@@ -2310,7 +2303,6 @@ sub GenerateSingleBatchedAttribute
 
         # Custom Setter
         if ($attrExt->{"CustomSetter"} || $attrExt->{"V8CustomSetter"} || $attrExt->{"Custom"} || $attrExt->{"V8Custom"}) {
-            $hasCustomSetter = 1;
             $setter = "V8${customAccessor}AccessorSetter";
         }
 
@@ -2592,9 +2584,8 @@ sub GenerateImplementationCustomCall
 {
     my $dataNode = shift;
     my $interfaceName = $dataNode->name;
-    my $hasCustomCall = $dataNode->extendedAttributes->{"CustomCall"};
 
-    if ($hasCustomCall) {
+    if ($dataNode->extendedAttributes->{"CustomCall"}) {
         push(@implContent, "    desc->InstanceTemplate()->SetCallAsFunctionHandler(V8${interfaceName}::callAsFunctionCallback);\n");
     }
 }
@@ -2618,7 +2609,7 @@ sub GenerateImplementation
     my $nativeType = GetNativeTypeForConversions($dataNode);
 
     # - Add default header template
-    push(@implFixedHeader, GenerateImplementationContentHeader($dataNode));
+    push(@implContentHeader, GenerateImplementationContentHeader($dataNode));
 
     AddToImplIncludes("BindingState.h");
     AddToImplIncludes("ContextFeatures.h");
@@ -3196,8 +3187,8 @@ END
 
     my $conditionalString = $codeGenerator->GenerateConditionalString($dataNode);
     push(@implContent, "\n#endif // ${conditionalString}\n") if $conditionalString;
-    
-    # We've already added the header for this file in implFixedHeader, so remove
+
+    # We've already added the header for this file in implContentHeader, so remove
     # it from implIncludes to ensure we don't #include it twice.
     delete $implIncludes{"${v8InterfaceName}.h"};
 }
@@ -3315,7 +3306,7 @@ sub GenerateCallbackImplementation
     my $v8InterfaceName = "V8$interfaceName";
 
     # - Add default header template
-    push(@implFixedHeader, GenerateImplementationContentHeader($dataNode));
+    push(@implContentHeader, GenerateImplementationContentHeader($dataNode));
 
     AddToImplIncludes("ScriptExecutionContext.h");
     AddToImplIncludes("V8Binding.h");
@@ -3518,7 +3509,6 @@ sub GenerateFunctionCallString()
     }
 
     my $index = 0;
-    my $hasScriptState = 0;
 
     my @arguments;
     my $functionName;
@@ -3881,8 +3871,7 @@ sub CreateCustomSignature
                     }
                     AddToImplIncludes("$sequenceType.h");
                 } else {
-                    my $header = GetV8HeaderName($type);
-                    AddToImplIncludes($header);
+                    AddToImplIncludes(GetV8HeaderName($type));
                 }
                 $result .= "V8${type}::GetRawTemplate()";
             }
@@ -4122,7 +4111,7 @@ sub WriteData
     my $implFileName = "$outputDir/$prefix$name.cpp";
 
     # Update a .cpp file if the contents are changed.
-    my $contents = join "", @implContentHeader, @implFixedHeader;
+    my $contents = join "", @implContentHeader;
 
     my @includes = ();
     my %implIncludeConditions = ();
@@ -4160,7 +4149,7 @@ sub WriteData
     $codeGenerator->UpdateFile($implFileName, $contents);
 
     %implIncludes = ();
-    @implFixedHeader = ();
+    @implContentHeader = ();
     @implContentDecls = ();
     @implContent = ();
 
@@ -4212,8 +4201,7 @@ sub GetContextEnableFunction
     }
 
     # Or it fallbacks to the attribute name if the parameter value is missing.
-    my $attributeName = $signature->name;
-    return "ContextFeatures::" . $codeGenerator->WK_lcfirst($attributeName) . "Enabled";
+    return "ContextFeatures::" . $codeGenerator->WK_lcfirst($signature->name) . "Enabled";
 }
 
 sub GetPassRefPtrType
