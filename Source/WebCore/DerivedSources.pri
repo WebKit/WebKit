@@ -758,7 +758,6 @@ generateBindings.depends = ${QMAKE_FUNC_FILE_OUT_PATH}/$$SUPPLEMENTAL_DEPENDENCY
                            $$PWD/bindings/scripts/CodeGenerator.pm \
                            $$PWD/bindings/scripts/CodeGeneratorJS.pm \
                            $$PWD/bindings/scripts/IDLParser.pm \
-                           $$PWD/bindings/scripts/IDLStructure.pm \
                            $$PWD/bindings/scripts/InFilesParser.pm \
                            $$PWD/bindings/scripts/preprocessor.pm
 GENERATORS += generateBindings

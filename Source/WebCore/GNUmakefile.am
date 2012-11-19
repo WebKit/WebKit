@@ -462,7 +462,6 @@ USER_AGENT_STYLE_SHEETS = \
 SCRIPTS_FOR_GENERATE_BINDINGS = \
 	$(WebCore)/bindings/scripts/CodeGenerator.pm \
 	$(WebCore)/bindings/scripts/IDLParser.pm \
-	$(WebCore)/bindings/scripts/IDLStructure.pm \
 	$(WebCore)/bindings/scripts/InFilesCompiler.pm \
 	$(WebCore)/bindings/scripts/InFilesParser.pm \
 	$(WebCore)/bindings/scripts/generate-bindings.pl \
@@ -797,7 +796,6 @@ EXTRA_DIST += \
 	Source/WebCore/bindings/scripts/CodeGenerator.pm \
 	Source/WebCore/bindings/scripts/IDLAttributes.txt \
 	Source/WebCore/bindings/scripts/IDLParser.pm \
-	Source/WebCore/bindings/scripts/IDLStructure.pm \
 	Source/WebCore/bindings/scripts/InFilesCompiler.pm \
 	Source/WebCore/bindings/scripts/InFilesParser.pm \
 	Source/WebCore/bindings/scripts/generate-bindings.pl \

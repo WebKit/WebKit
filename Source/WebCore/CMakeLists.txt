@@ -2742,7 +2742,6 @@ SET(SCRIPTS_RESOLVE_SUPPLEMENTAL
 )
 SET(SCRIPTS_BINDINGS
     ${WEBCORE_DIR}/bindings/scripts/IDLParser.pm
-    ${WEBCORE_DIR}/bindings/scripts/IDLStructure.pm
     ${WEBCORE_DIR}/bindings/scripts/InFilesParser.pm
     ${WEBCORE_DIR}/bindings/scripts/preprocessor.pm
 )

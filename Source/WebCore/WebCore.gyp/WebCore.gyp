@@ -1167,7 +1167,6 @@
             '../bindings/scripts/CodeGenerator.pm',
             '../bindings/scripts/CodeGeneratorV8.pm',
             '../bindings/scripts/IDLParser.pm',
-            '../bindings/scripts/IDLStructure.pm',
             '../bindings/scripts/preprocessor.pm',
             '<(SHARED_INTERMEDIATE_DIR)/supplemental_dependency.tmp',
             '<(additional_idl_files_list)',
