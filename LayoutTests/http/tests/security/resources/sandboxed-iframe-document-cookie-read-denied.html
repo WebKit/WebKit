@@ -9,11 +9,11 @@ function runTest()
             var cookie = document.cookie;
         }
         catch (err) {
-            if (err.name.indexOf("SECURITY_ERR") != -1)
+            if (err.name.indexOf("SecurityError") != -1)
                 return "PASS";
         }
 
-        return "FAIL: SECURITY_ERR not raised";
+        return "FAIL: SecurityError not raised";
     })();
 }
 

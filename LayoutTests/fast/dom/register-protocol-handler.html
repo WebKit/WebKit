@@ -23,11 +23,11 @@ invalid_protocols.forEach(function (protocol) {
     try {
         window.navigator.registerProtocolHandler(protocol, "invalid protocol %s", "title");
     } catch (e) {
-        succeeded = 'SECURITY_ERR' == e.name;
+        succeeded = 'SecurityError' == e.name;
     }
 
     if (succeeded)
-        debug('Pass: Invalid protocol "' + protocol + '" threw SECURITY_ERR exception.');
+        debug('Pass: Invalid protocol "' + protocol + '" threw SecurityError exception.');
     else
         debug('Fail: Invalid protocol "' + protocol + '" allowed.');
 });

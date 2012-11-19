@@ -14,7 +14,7 @@ PASS new WebSocket(null) threw exception Error: SyntaxError: DOM Exception 12.
 PASS new WebSocket("ws://javascript:a") threw exception Error: SyntaxError: DOM Exception 12.
 PASS new WebSocket("/applet") threw exception Error: SyntaxError: DOM Exception 12.
 PASS new WebSocket("javascript:a") threw exception Error: SyntaxError: DOM Exception 12.
-PASS new WebSocket("ws://127.0.0.1:25/") threw exception Error: SECURITY_ERR: DOM Exception 18.
+PASS new WebSocket("ws://127.0.0.1:25/") threw exception Error: SecurityError: DOM Exception 18.
 PASS (new WebSocket("ws://127.0.0.1:8880/a/../websocket/tests/hixie76/simple")).URL is "ws://127.0.0.1:8880/websocket/tests/hixie76/simple"
 PASS (new WebSocket("ws://127.0.0.1:8880/websocket/tests/hixie76/simple?")).URL is "ws://127.0.0.1:8880/websocket/tests/hixie76/simple?"
 PASS (new WebSocket("ws://127.0.0.1:8880/websocket/tests/hixie76/simple?k=v")).URL is "ws://127.0.0.1:8880/websocket/tests/hixie76/simple?k=v"

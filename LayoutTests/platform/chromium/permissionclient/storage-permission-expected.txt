@@ -5,5 +5,5 @@ Length is 1
 Value for FOO is BAR
 Key for index 0 is FOO
 Disabling localStorage access.
-Caught exception trying to get frame localStorage: Error: SECURITY_ERR: DOM Exception 18
+Caught exception trying to get frame localStorage: Error: SecurityError: DOM Exception 18
 

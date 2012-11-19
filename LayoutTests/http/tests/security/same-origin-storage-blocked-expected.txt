@@ -8,9 +8,9 @@ This iframe should return a security error:
 --------
 Frame: '<!--framePath //<!--frame0-->-->'
 --------
-SECURITY_ERR
+SecurityError
 
 --------
 Frame: '<!--framePath //<!--frame1-->-->'
 --------
-SECURITY_ERR
+SecurityError

@@ -14,9 +14,9 @@ TEST COMPLETE
 --------
 Frame: '<!--framePath //<!--frame0-->-->'
 --------
-PASS window.openDatabase('SandboxedIframeStorageDisallowed', '1.0', '', 1) threw exception Error: SECURITY_ERR: DOM Exception 18.
-PASS window.localStorage threw exception Error: SECURITY_ERR: DOM Exception 18.
-PASS window.sessionStorage threw exception Error: SECURITY_ERR: DOM Exception 18.
+PASS window.openDatabase('SandboxedIframeStorageDisallowed', '1.0', '', 1) threw exception Error: SecurityError: DOM Exception 18.
+PASS window.localStorage threw exception Error: SecurityError: DOM Exception 18.
+PASS window.sessionStorage threw exception Error: SecurityError: DOM Exception 18.
 
 
 --------

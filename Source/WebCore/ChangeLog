@@ -1,5 +1,18 @@
 2012-11-19  Erik Arvidsson  <arv@chromium.org>
 
+        Update DOMException name: SecurityError
+        https://bugs.webkit.org/show_bug.cgi?id=102437
+
+        Reviewed by Kentaro Hara.
+
+        Patch 18 of 25 to update DOMException name to match the spec and Firefox.
+
+        Updated existing tests.
+
+        * dom/DOMCoreException.cpp:
+
+2012-11-19  Erik Arvidsson  <arv@chromium.org>
+
         Update DOMException name: URLMismatchError
         https://bugs.webkit.org/show_bug.cgi?id=102511
 

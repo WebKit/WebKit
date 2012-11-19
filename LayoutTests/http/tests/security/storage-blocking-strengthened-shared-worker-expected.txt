@@ -7,4 +7,4 @@ Frame: '<!--framePath //<!--frame0-->-->'
 --------
 Connected successfully
 
-SECURITY_ERR
+SecurityError

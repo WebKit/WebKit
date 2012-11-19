@@ -8,7 +8,7 @@ This iframe should not return any errors:
 --------
 Frame: '<!--framePath //<!--frame0-->-->'
 --------
-SECURITY_ERR
+SecurityError
 
 --------
 Frame: '<!--framePath //<!--frame1-->-->'

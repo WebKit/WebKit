@@ -7,4 +7,4 @@ Frame: '<!--framePath //<!--frame0-->-->'
 --------
 No exception
 
-SECURITY_ERR
+SecurityError

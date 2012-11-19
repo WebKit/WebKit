@@ -1,3 +1,47 @@
+2012-11-19  Erik Arvidsson  <arv@chromium.org>
+
+        Update DOMException name: SecurityError
+        https://bugs.webkit.org/show_bug.cgi?id=102437
+
+        Reviewed by Kentaro Hara.
+
+        Updated tests and expectations.
+
+        * fast/canvas/svg-taint-expected.txt:
+        * fast/dom/Document/invalid-domain-change-throws-exception-expected.txt:
+        * fast/dom/Document/script-tests/invalid-domain-change-throws-exception.js:
+        * fast/dom/register-protocol-handler.html:
+        * fast/frames/resources/sandboxed-iframe-storage-disallowed.html:
+        * fast/frames/sandboxed-iframe-storage-expected.txt:
+        * http/tests/loading/state-object-security-exception-expected.txt:
+        * http/tests/notifications/legacy/show-expected.txt:
+        * http/tests/security/canvas-remote-read-remote-image-blocked-no-crossorigin-expected.txt:
+        * http/tests/security/canvas-remote-read-remote-image-expected.txt:
+        * http/tests/security/canvas-remote-read-remote-image-redirect-expected.txt:
+        * http/tests/security/contentSecurityPolicy/worker-script-src-expected.txt:
+        * http/tests/security/cross-origin-local-storage-expected.txt:
+        * http/tests/security/cross-origin-session-storage-expected.txt:
+        * http/tests/security/cross-origin-websql-expected.txt:
+        * http/tests/security/cross-origin-worker-websql-expected.txt:
+        * http/tests/security/resources/sandboxed-iframe-document-cookie-read-denied.html:
+        * http/tests/security/same-origin-storage-blocked-expected.txt:
+        * http/tests/security/same-origin-websql-blocked-expected.txt:
+        * http/tests/security/setDomainRelaxationForbiddenForURLScheme-expected.txt:
+        * http/tests/security/storage-blocking-loosened-local-storage-expected.txt:
+        * http/tests/security/storage-blocking-loosened-websql-expected.txt:
+        * http/tests/security/storage-blocking-strengthened-local-storage-expected.txt:
+        * http/tests/security/storage-blocking-strengthened-websql-expected.txt:
+        * http/tests/security/webgl-remote-read-remote-image-blocked-no-crossorigin-expected.txt:
+        * http/tests/websocket/tests/hybi/url-parsing-expected.txt:
+        * http/tests/workers/shared-worker-redirect-expected.txt:
+        * http/tests/workers/worker-redirect-expected.txt:
+        * platform/chromium-win/websocket/tests/url-parsing-expected.txt:
+        * platform/chromium/fast/dom/register-protocol-handler-expected.txt:
+        * platform/chromium/http/tests/websocket/tests/hixie76/url-parsing-expected.txt:
+        * platform/chromium/http/tests/websocket/tests/hybi/url-parsing-expected.txt:
+        * platform/chromium/permissionclient/storage-permission-expected.txt:
+        * platform/win-wk2/http/tests/inspector-enabled/database-open-expected.txt:
+
 2012-11-19  Yael Aharon  <yael.aharon@intel.com>
 
         Unreviewed gardening after r133898.

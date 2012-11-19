@@ -5,4 +5,4 @@ This iframe should return a security error:
 --------
 Frame: '<!--framePath //<!--frame0-->-->'
 --------
-SECURITY_ERR
+SecurityError

@@ -52,7 +52,7 @@ static struct CoreException {
     { "InvalidAccessError", "A parameter or an operation was not supported by the underlying object." },
     { "ValidationError", "A call to a method such as insertBefore or removeChild would make the Node invalid with respect to \"partial validity\", this exception would be raised and the operation would not be done." },
     { "TypeMismatchError", "The type of an object was incompatible with the expected type of the parameter associated to the object." },
-    { "SECURITY_ERR", "An attempt was made to break through the security policy of the user agent." },
+    { "SecurityError", "An attempt was made to break through the security policy of the user agent." },
     // FIXME: Couldn't find a description in the HTML/DOM specifications for NETWORK_ERR, ABORT_ERR, URL_MISMATCH_ERR, and QUOTA_EXCEEDED_ERR
     { "NetworkError", "A network error occurred." },
     { "AbortError", "The user aborted a request." },
