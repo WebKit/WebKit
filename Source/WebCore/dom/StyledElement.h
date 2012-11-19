@@ -63,7 +63,6 @@ protected:
     }
 
     virtual void attributeChanged(const QualifiedName&, const AtomicString&) OVERRIDE;
-    virtual void parseAttribute(const QualifiedName&, const AtomicString&) OVERRIDE;
 
     virtual bool isPresentationAttribute(const QualifiedName&) const { return false; }
 

@@ -1,3 +1,25 @@
+2012-11-18  Andreas Kling  <akling@apple.com>
+
+        StyledElement: Make handling the "style" attribute a litte faster.
+        <http://webkit.org/b/102623>
+
+        Reviewed by Ojan Vafai.
+
+        We know that "style" is never a presentation attribute, so avoid the virtual call to isPresentationAttribute()
+        by hoisting the parseAttribute() logic up into attributeChanged().
+        Did the same thing with Element::parseAttribute() for consistency.
+
+        Knocks ~0.6% of samples off of the DOM/CreateNodes performance test.
+
+        * dom/Element.cpp:
+        (WebCore::Element::attributeChanged):
+        * dom/Element.h:
+        (WebCore::Element::parseAttribute):
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::attributeChanged):
+        * dom/StyledElement.h:
+        (StyledElement):
+
 2012-11-18  Laszlo Gombos  <l.gombos@samsung.com>
 
         [CMake] Consolidate common input files

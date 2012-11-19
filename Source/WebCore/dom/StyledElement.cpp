@@ -158,7 +158,9 @@ StylePropertySet* StyledElement::ensureMutableInlineStyle()
 
 void StyledElement::attributeChanged(const QualifiedName& name, const AtomicString& newValue)
 {
-    if (isPresentationAttribute(name)) {
+    if (name == styleAttr)
+        styleAttributeChanged(newValue);
+    else if (isPresentationAttribute(name)) {
         // Avoid dirtying the presentation attribute style if we're using shared attribute data with already generated style.
         if (attributeData()->isMutable() || !attributeData()->m_presentationAttributeStyle)
             attributeData()->m_presentationAttributeStyleIsDirty = true;
@@ -213,14 +215,6 @@ void StyledElement::styleAttributeChanged(const AtomicString& newStyleString)
 
     setNeedsStyleRecalc(InlineStyleChange);
     InspectorInstrumentation::didInvalidateStyleAttr(document(), this);
-}
-
-void StyledElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
-{
-    if (name == styleAttr)
-        styleAttributeChanged(value);
-    else
-        Element::parseAttribute(name, value);
 }
 
 void StyledElement::inlineStyleChanged()

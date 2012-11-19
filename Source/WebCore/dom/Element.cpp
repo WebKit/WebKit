@@ -773,7 +773,9 @@ void Element::attributeChanged(const QualifiedName& name, const AtomicString& ne
             attributeData()->setIdForStyleResolution(newId);
             shouldInvalidateStyle = testShouldInvalidateStyle && checkNeedsStyleInvalidationForIdChange(oldId, newId, styleResolver);
         }
-    } else if (name == HTMLNames::nameAttr)
+    } else if (name == classAttr)
+        classAttributeChanged(newValue);
+    else if (name == HTMLNames::nameAttr)
         setHasName(!newValue.isNull());
     else if (name == HTMLNames::pseudoAttr)
         shouldInvalidateStyle |= testShouldInvalidateStyle && isInShadowTree();
@@ -787,12 +789,6 @@ void Element::attributeChanged(const QualifiedName& name, const AtomicString& ne
 
     if (AXObjectCache::accessibilityEnabled())
         document()->axObjectCache()->handleAttributeChanged(name, this);
-}
-
-void Element::parseAttribute(const QualifiedName& name, const AtomicString& value)
-{
-    if (name == classAttr)
-        classAttributeChanged(value);
 }
 
 template <typename CharacterType>
