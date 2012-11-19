@@ -1570,9 +1570,6 @@ Bug(EFL) media/context-menu-actions.html [ Failure ]
 Bug(EFL) editing/selection/5354455-1.html [ Failure ]
 
 # Regression from r133898
-Bug(EFL) animations/3d/change-transform-in-end-event.html [ Missing ]
-Bug(EFL) animations/3d/matrix-transform-type-animation.html [ Missing ]
-Bug(EFL) animations/3d/state-at-end-event-transform.html [ Missing ]
 Bug(EFL) animations/change-keyframes-name.html [ Failure Pass ]
 Bug(EFL) animations/combo-transform-translate+scale.html [ Failure Pass ]
 Bug(EFL) animations/negative-delay.html [ Failure Pass ]
