@@ -1,3 +1,14 @@
+2012-11-19  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] Update expectation for fast/js/global-constructors.html after r135093
+        https://bugs.webkit.org/show_bug.cgi?id=102653
+
+        Unreviewed EFL gardening.
+
+        Update EFL baseline for fast/js/global-constructors.html after r135093.
+
+        * platform/efl/fast/js/global-constructors-expected.txt: Added.
+
 2012-11-18  Keishi Hattori  <keishi@webkit.org>
 
         [Chromium] Add tests for week suggestion picker
