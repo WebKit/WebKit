@@ -362,6 +362,8 @@
                 'src/DateTimeChooserImpl.h',
                 'src/ChromeClientImpl.cpp',
                 'src/ChromeClientImpl.h',
+                'src/ColorChooserPopupUIController.cpp',
+                'src/ColorChooserPopupUIController.h',
                 'src/ColorChooserUIController.cpp',
                 'src/ColorChooserUIController.h',
                 'src/CompositionUnderlineBuilder.h',

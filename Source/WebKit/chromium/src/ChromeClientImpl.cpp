@@ -37,7 +37,11 @@
 #if ENABLE(INPUT_TYPE_COLOR)
 #include "ColorChooser.h"
 #include "ColorChooserClient.h"
+#if ENABLE(PAGE_POPUP)
+#include "ColorChooserPopupUIController.h"
+#else
 #include "ColorChooserUIController.h"
+#endif
 #endif
 #include "Console.h"
 #include "Cursor.h"
@@ -677,7 +681,14 @@ void ChromeClientImpl::reachedApplicationCacheOriginQuota(SecurityOrigin*, int64
 #if ENABLE(INPUT_TYPE_COLOR)
 PassOwnPtr<ColorChooser> ChromeClientImpl::createColorChooser(ColorChooserClient* chooserClient, const Color&)
 {
-    return adoptPtr(new ColorChooserUIController(this, chooserClient));
+    OwnPtr<ColorChooserUIController> controller;
+#if ENABLE(PAGE_POPUP)
+    controller = adoptPtr(new ColorChooserPopupUIController(this, chooserClient));
+#else
+    controller = adoptPtr(new ColorChooserUIController(this, chooserClient));
+#endif
+    controller->openUI();
+    return controller.release();
 }
 PassOwnPtr<WebColorChooser> ChromeClientImpl::createWebColorChooser(WebColorChooserClient* chooserClient, const WebColor& initialColor)
 {

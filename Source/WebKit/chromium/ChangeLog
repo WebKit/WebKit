@@ -1,3 +1,25 @@
+2012-11-19  Miguel Garcia  <miguelg@chromium.org>
+
+        [Chromium] Remove the dependency of INPUT_TYPE_COLOR on PAGE_POPUP
+        https://bugs.webkit.org/show_bug.cgi?id=102525
+
+        Reviewed by Kent Tamura.
+
+        INPUT_TYPE_COLOR should not depend on PAGE_POPUP, with this change we allow platforms like android to implement the former without depending on the latter.
+
+        Tested by compiling chromium with and without ENABLE_PAGE_POPUP and made sure that forms with input type color would load in both cases.
+
+        * WebKit.gyp:
+        * src/ChromeClientImpl.cpp:
+        (WebKit::ChromeClientImpl::createColorChooser):
+        * src/ColorChooserUIController.cpp:
+        (WebKit::ColorChooserUIController::ColorChooserUIController):
+        (WebKit::ColorChooserUIController::openUI):
+        (WebKit):
+        (WebKit::ColorChooserUIController::endChooser):
+        * src/ColorChooserUIController.h:
+        (ColorChooserUIController):
+
 2012-11-19  Alpha Lam  <hclam@chromium.org>
 
         [chromium] Lazy image decoding without cache

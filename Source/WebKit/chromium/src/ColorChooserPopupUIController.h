@@ -22,53 +22,51 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+#ifndef ColorChooserPopupUIController_h
+#define ColorChooserPopupUIController_h
 
-#ifndef ColorChooserUIController_h
-#define ColorChooserUIController_h
-
-#if ENABLE(INPUT_TYPE_COLOR)
-
-#include "ColorChooser.h"
-#include "PlatformLocale.h"
-#include "WebColorChooserClient.h"
+#if ENABLE(INPUT_TYPE_COLOR) && ENABLE(PAGE_POPUP)
+#include "ColorChooserUIController.h"
+#include "PagePopupClient.h"
 #include <wtf/OwnPtr.h>
 
 namespace WebCore {
 class ColorChooserClient;
+class PagePopup;
 }
 
 namespace WebKit {
 
-class ChromeClientImpl;
-class WebColorChooser;
+class ColorChooserPopupUIController : public ColorChooserUIController, public WebCore::PagePopupClient  {
 
-class ColorChooserUIController : public WebColorChooserClient, public WebCore::ColorChooser {
 public:
-    ColorChooserUIController(ChromeClientImpl*, WebCore::ColorChooserClient*);
-    virtual ~ColorChooserUIController();
+    ColorChooserPopupUIController(ChromeClientImpl*, WebCore::ColorChooserClient*);
+    virtual ~ColorChooserPopupUIController();
 
-    virtual void openUI();
+    // ColorChooserUIController functions:
+    virtual void openUI() OVERRIDE;
 
-    // ColorChooser functions:
-    virtual void setSelectedColor(const WebCore::Color&) OVERRIDE;
-    virtual void endChooser() OVERRIDE;
+    // ColorChooser functions
+    void endChooser() OVERRIDE;
 
-    // WebColorChooserClient functions:
-    virtual void didChooseColor(const WebColor&) OVERRIDE;
-    virtual void didEndChooser() OVERRIDE;
-
-protected:
-    void openColorChooser();
-    OwnPtr<WebColorChooser> m_chooser;
+    // PagePopupClient functions:
+    virtual WebCore::IntSize contentSize() OVERRIDE;
+    virtual void writeDocument(WebCore::DocumentWriter&) OVERRIDE;
+    virtual WebCore::Locale& locale() OVERRIDE;
+    virtual void setValueAndClosePopup(int, const String&) OVERRIDE;
+    virtual void didClosePopup() OVERRIDE;
 
 private:
+    void openPopup();
+    void closePopup();
 
     ChromeClientImpl* m_chromeClient;
     WebCore::ColorChooserClient* m_client;
+    WebCore::PagePopup* m_popup;
+    OwnPtr<WebCore::Locale> m_locale;
 };
-
 }
 
-#endif // ENABLE(INPUT_TYPE_COLOR)
+#endif // ENABLE(INPUT_TYPE_COLOR) && ENABLE(PAGE_POPUP)
 
-#endif // ColorChooserUIController_h
+#endif // ColorChooserPopupUIController_h
