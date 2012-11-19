@@ -509,6 +509,7 @@
 		51B15A8513843A3900321AD8 /* EnvironmentUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 51B15A8313843A3900321AD8 /* EnvironmentUtilities.h */; };
 		51B3005012529D0E000B5CA0 /* WebBackForwardListCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51B3004E12529D0E000B5CA0 /* WebBackForwardListCF.cpp */; };
 		51B3005112529D0E000B5CA0 /* WebPageProxyCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51B3004F12529D0E000B5CA0 /* WebPageProxyCF.cpp */; };
+		51C4032C136749D800DC972D /* AuthenticationManager.mac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51C4032B136749D800DC972D /* AuthenticationManager.mac.mm */; };
 		51CBBA0F165219B6005BE8FD /* NetworkResourceLoadParameters.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51CBBA0D165219B6005BE8FD /* NetworkResourceLoadParameters.cpp */; };
 		51CBBA10165219B6005BE8FD /* NetworkResourceLoadParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = 51CBBA0E165219B6005BE8FD /* NetworkResourceLoadParameters.h */; };
 		51D02F64132EC5B900BEAA96 /* WebIconDatabaseMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51D02F63132EC5B900BEAA96 /* WebIconDatabaseMessageReceiver.cpp */; };
@@ -1754,6 +1755,7 @@
 		51B15A8313843A3900321AD8 /* EnvironmentUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EnvironmentUtilities.h; path = unix/EnvironmentUtilities.h; sourceTree = "<group>"; };
 		51B3004E12529D0E000B5CA0 /* WebBackForwardListCF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebBackForwardListCF.cpp; path = cf/WebBackForwardListCF.cpp; sourceTree = "<group>"; };
 		51B3004F12529D0E000B5CA0 /* WebPageProxyCF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebPageProxyCF.cpp; path = cf/WebPageProxyCF.cpp; sourceTree = "<group>"; };
+		51C4032B136749D800DC972D /* AuthenticationManager.mac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AuthenticationManager.mac.mm; path = mac/AuthenticationManager.mac.mm; sourceTree = "<group>"; };
 		51CBBA0D165219B6005BE8FD /* NetworkResourceLoadParameters.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NetworkResourceLoadParameters.cpp; path = Network/NetworkResourceLoadParameters.cpp; sourceTree = "<group>"; };
 		51CBBA0E165219B6005BE8FD /* NetworkResourceLoadParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NetworkResourceLoadParameters.h; path = Network/NetworkResourceLoadParameters.h; sourceTree = "<group>"; };
 		51D02F63132EC5B900BEAA96 /* WebIconDatabaseMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebIconDatabaseMessageReceiver.cpp; sourceTree = "<group>"; };
@@ -3207,6 +3209,7 @@
 		512F588612A8834700629530 /* Authentication */ = {
 			isa = PBXGroup;
 			children = (
+				51C4032A136749C400DC972D /* mac */,
 				512F588712A8836600629530 /* AuthenticationManager.cpp */,
 				512F588812A8836600629530 /* AuthenticationManager.h */,
 				512F588912A8836600629530 /* AuthenticationManager.messages.in */,
@@ -3276,6 +3279,14 @@
 				BC2DFBA212A761A500E732A3 /* WebPreferencesCF.cpp */,
 			);
 			name = cf;
+			sourceTree = "<group>";
+		};
+		51C4032A136749C400DC972D /* mac */ = {
+			isa = PBXGroup;
+			children = (
+				51C4032B136749D800DC972D /* AuthenticationManager.mac.mm */,
+			);
+			name = mac;
 			sourceTree = "<group>";
 		};
 		51FBB9C1132E079200F327B4 /* IconDatabase */ = {
@@ -5450,6 +5461,7 @@
 				512F589612A8838800629530 /* AuthenticationChallengeProxy.cpp in Sources */,
 				512F589812A8838800629530 /* AuthenticationDecisionListener.cpp in Sources */,
 				512F588A12A8836600629530 /* AuthenticationManager.cpp in Sources */,
+				51C4032C136749D800DC972D /* AuthenticationManager.mac.mm in Sources */,
 				512F58A212A883AD00629530 /* AuthenticationManagerMessageReceiver.cpp in Sources */,
 				1A64256912DE42EC00CAAE2C /* BackingStore.cpp in Sources */,
 				1A64292D12DE5F9800CAAE2C /* BackingStoreMac.mm in Sources */,

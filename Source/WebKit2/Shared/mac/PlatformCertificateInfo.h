@@ -34,10 +34,6 @@ namespace CoreIPC {
     class ArgumentEncoder;
 }
 
-namespace WebCore {
-    class AuthenticationChallenge;
-}
-
 namespace WebKit {
 
 class PlatformCertificateInfo {
@@ -58,8 +54,6 @@ public:
 private:
     RetainPtr<CFArrayRef> m_certificateChain;
 };
-
-bool tryUsePlatformCertificateInfoForChallenge(const WebCore::AuthenticationChallenge&, const PlatformCertificateInfo&);
 
 } // namespace WebKit
 

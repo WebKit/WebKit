@@ -1,3 +1,23 @@
+2012-11-19  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r135201.
+        http://trac.webkit.org/changeset/135201
+        https://bugs.webkit.org/show_bug.cgi?id=102725
+
+        Broke all non-Mac WK2 builds. (Requested by rakuco on
+        #webkit).
+
+        * Shared/mac/PlatformCertificateInfo.h:
+        * Shared/mac/PlatformCertificateInfo.mm:
+        (WebKit):
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/Authentication/AuthenticationManager.cpp:
+        * WebProcess/Authentication/AuthenticationManager.h:
+        (AuthenticationManager):
+        * WebProcess/Authentication/mac/AuthenticationManager.mac.mm: Copied from Source/WebKit2/Shared/mac/PlatformCertificateInfo.mm.
+        (WebKit):
+        (WebKit::AuthenticationManager::tryUsePlatformCertificateInfoForChallenge):
+
 2012-11-19  Brady Eidson  <beidson@apple.com>
 
         Move tryUsePlatformCertificateInfoForChallenge from AuthenticationManager to PlatformCertificateInfo.

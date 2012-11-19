@@ -65,6 +65,8 @@ private:
     // CoreIPC::MessageReceiver
     virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&) OVERRIDE;
     void didReceiveAuthenticationManagerMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);
+
+    bool tryUsePlatformCertificateInfoForChallenge(const WebCore::AuthenticationChallenge&, const PlatformCertificateInfo&);
     
     typedef HashMap<uint64_t, WebCore::AuthenticationChallenge> AuthenticationChallengeMap;
     AuthenticationChallengeMap m_challenges;
