@@ -30,7 +30,7 @@
 
 /**
  * @constructor
- * @implements {WebInspector.SourceMapping}
+ * @implements {WebInspector.ScriptSourceMapping}
  * @param {WebInspector.Workspace} workspace
  * @param {WebInspector.NetworkWorkspaceProvider} networkWorkspaceProvider
  */

@@ -50,3 +50,18 @@ WebInspector.SourceMapping.prototype = {
      */
     uiLocationToRawLocation: function(uiSourceCode, lineNumber, columnNumber) { }
 }
+
+/**
+ * @interface
+ * @extends {WebInspector.SourceMapping}
+ */
+WebInspector.ScriptSourceMapping = function()
+{
+}
+
+WebInspector.ScriptSourceMapping.prototype = {
+    /**
+     * @param {WebInspector.Script} script
+     */
+    addScript: function(script) { }
+}

@@ -1,3 +1,24 @@
+2012-11-19  Eugene Klyuchnikov  <eustas.bug@gmail.com>
+
+        Web Inspector: Refine JsDoc in DebuggerScriptMapping.js
+        https://bugs.webkit.org/show_bug.cgi?id=102673
+
+        Reviewed by Vsevolod Vlasov.
+
+        DebuggerScriptMapping calls public method "addScript" not defined
+        in SourceMapping interface.
+
+        To make things clear I've added ScriptSourceMapping interface that
+        extends SourceMapping interface by adding "addScript" method.
+
+        * inspector/front-end/SourceMapping.js: Added "ScriptSourceMapping".
+        * inspector/front-end/CompilerScriptMapping.js:
+        Updated "@implements" to ScriptSourceMapping.
+        * inspector/front-end/ResourceScriptMapping.js: Ditto.
+        * inspector/front-end/ScriptSnippetModel.js: Ditto.
+        * inspector/front-end/DebuggerScriptMapping.js: Updated signatures.
+        Removed useless code.
+
 2012-11-19  Tim Horton  <timothy_horton@apple.com>
 
         Unreviewed, untested build fix.

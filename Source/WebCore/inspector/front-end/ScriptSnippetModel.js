@@ -482,7 +482,7 @@ WebInspector.SnippetScriptFile.prototype = {
 
 /**
  * @constructor
- * @implements {WebInspector.SourceMapping}
+ * @implements {WebInspector.ScriptSourceMapping}
  * @param {WebInspector.ScriptSnippetModel} scriptSnippetModel
  */
 WebInspector.SnippetScriptMapping = function(scriptSnippetModel)
