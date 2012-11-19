@@ -1,3 +1,28 @@
+2012-11-19  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        webaudio: leak: AudioContext objects are leaking. They retain 36mb of shared data.
+        https://bugs.webkit.org/show_bug.cgi?id=102356
+
+        Reviewed by Adam Barth.
+
+        A clean-up code was moved from uninitialize to clear method.
+        AudioContext marks itself as hasPendingActivity in method constructCommon and unmarks itself in method clear.
+        m_isStopScheduled filters out second ActiveDOMObject::stop call.
+        markForDeletion appends AudioNode pointer to m_nodesToDelete array if there is no active audio thread.
+        adoptRef was added in createOfflineContext method.
+        A guard was added into deleteMarkedNodes.
+
+        * inspector-protocol/nmi-webaudio-leak-test-expected.txt: Added.
+        * inspector-protocol/nmi-webaudio-leak-test.html: Added.
+        * platform/chromium-android/TestExpectations:
+        * platform/efl-wk2/TestExpectations:
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/qt/TestExpectations:
+        * platform/win/TestExpectations:
+        * platform/wincairo/TestExpectations:
+
 2012-11-19  Erik Arvidsson  <arv@chromium.org>
 
         Update DOMException name: QuotaExceededError

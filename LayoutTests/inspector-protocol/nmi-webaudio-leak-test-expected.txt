@@ -1,0 +1,9 @@
+This test is checking that AudioContext is deleting after navigation. It is not possible to count AudioContext objects directly. But we could use Native Memory Snapshot which has information about Page.Audio.SharedData. All the shared data are retained by HRTFDatabaseLoader refcounted singleton and Native Memory Instrumentation is visiting it via public getter. 
+
+Action: Wait for Page.Audio data
+PASS: Memory size for Page.Audio more than 15000000
+Action: Navigate IFrame to resources/blank.html
+PASS: IFrame was navigated to resources/blank.html
+Action: Run GC and check Page.Audio data size
+PASS: No Page.Audio data found
+

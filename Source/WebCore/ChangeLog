@@ -1,3 +1,44 @@
+2012-11-19  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        webaudio: leak: AudioContext objects are leaking. They retain 36mb of shared data.
+        https://bugs.webkit.org/show_bug.cgi?id=102356
+
+        Reviewed by Adam Barth.
+
+        A clean-up code was moved from uninitialize to clear method.
+        AudioContext marks itself as hasPendingActivity in method constructCommon and unmarks itself in method clear.
+        m_isStopScheduled filters out second ActiveDOMObject::stop call.
+        markForDeletion appends AudioNode pointer to m_nodesToDelete array if there is no active audio thread.
+        adoptRef was added in createOfflineContext method.
+        A guard was added into deleteMarkedNodes.
+
+        Test: inspector-protocol/nmi-webaudio-leak-test.html
+
+        * Modules/webaudio/AudioContext.cpp:
+        (WebCore::AudioContext::createOfflineContext):
+        (WebCore::AudioContext::AudioContext):
+        (WebCore::AudioContext::constructCommon):
+        (WebCore::AudioContext::~AudioContext):
+        (WebCore::AudioContext::clear):
+        (WebCore::AudioContext::uninitialize):
+        (WebCore::AudioContext::stopDispatch):
+        (WebCore::AudioContext::stop):
+        (WebCore::AudioContext::markForDeletion):
+        (WebCore::AudioContext::scheduleNodeDeletion):
+        (WebCore::AudioContext::deleteMarkedNodes):
+        * Modules/webaudio/AudioContext.h:
+        (AudioContext):
+        * bindings/v8/custom/V8AudioContextCustom.cpp:
+        (WebCore::V8AudioContext::constructorCallback):
+        * inspector/InspectorMemoryAgent.cpp:
+        (WebCore::InspectorMemoryAgent::getProcessMemoryDistribution):
+        * platform/PlatformMemoryInstrumentation.cpp:
+        (WebCore::PlatformMemoryInstrumentation::reportMemoryUsage):
+        (WebCore):
+        * platform/PlatformMemoryInstrumentation.h:
+        (PlatformMemoryInstrumentation):
+        (WebCore):
+
 2012-11-19  Erik Arvidsson  <arv@chromium.org>
 
         Update DOMException name: QuotaExceededError

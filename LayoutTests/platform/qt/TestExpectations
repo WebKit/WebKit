@@ -403,6 +403,7 @@ fast/dom/HTMLAnchorElement/anchor-download-unset.html
 # For now, Web Audio API is disabled
 webaudio/
 webkit.org/b/101729 inspector-protocol/nmi-webaudio.html
+webkit.org/b/101729 inspector-protocol/nmi-webaudio-leak-test.html
 
 # [Qt] Enable WebGL by default for QtWebKit
 # https://bugs.webkit.org/show_bug.cgi?id=65998
