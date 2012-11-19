@@ -1,5 +1,11 @@
 2012-11-19  Kentaro Hara  <haraken@chromium.org>
 
+        Unreviewed gardening.
+
+        * platform/chromium/TestExpectations:
+
+2012-11-19  Kentaro Hara  <haraken@chromium.org>
+
         Unreviewed, rolling out r135111.
         http://trac.webkit.org/changeset/135111
         https://bugs.webkit.org/show_bug.cgi?id=102356
