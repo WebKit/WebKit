@@ -154,6 +154,12 @@
         "CSS": {
             "filename": r"Source/WebCore/css/",
         },
+        "DOM": {
+            "filename": r"Source/WebCore/dom/",
+        },
+        "HTML": {
+            "filename": r"Source/WebCore/html/",
+        },
         "DOMAttributes": {
             "filename": r"Source/WebCore/dom/.*Attr.*"
                         r"|Source/WebCore/dom/NamedNodeMap\.(cpp|h|idl)"
@@ -301,10 +307,11 @@
         "Cairo": [ "dominik.rottsches@intel.com" ],
         "CMake": [ "rakuco@webkit.org", "gyuyoung.kim@samsung.com" ],
         "CoordinatedGraphics" : [ "noam@webkit.org", "zeno@webkit.org" ],
-        "CSS": [ "alexis@webkit.org", "macpherson@chromium.org", "cmarcelo@webkit.org"],
+        "CSS": [ "alexis@webkit.org", "macpherson@chromium.org", "cmarcelo@webkit.org", "ojan@chromium.org"],
         "ChromiumGraphics": [ "jamesr@chromium.org", "cc-bugs@chromium.org" ],
         "ChromiumPublicApi": [ "abarth@webkit.org", "dglazkov@chromium.org", "fishd@chromium.org", "jamesr@chromium.org", "tkent+wkapi@chromium.org" ],
         "ChromiumTestRunner": [ "jochen@chromium.org" ],
+        "DOM": [ "ojan@chromium.org" ],
         "DOMAttributes": [ "cmarcelo@webkit.org", ],
         "EFL": [ "rakuco@webkit.org", "gyuyoung.kim@samsung.com" ],
         "EFLWebKit2PlatformSpecific": [ "gyuyoung.kim@samsung.com", "rakuco@webkit.org" ],
@@ -316,6 +323,7 @@
         "GStreamerGraphics": [ "alexis@webkit.org", "pnormand@igalia.com", "gns@gnome.org", "mrobinson@webkit.org" ],
         "GtkWebKit2PublicAPI": [ "cgarcia@igalia.com", "gns@gnome.org", "mrobinson@webkit.org" ],
         "Harfbuzz": [ "dominik.rottsches@intel.com" ],
+        "HTML": [ "ojan@chromium.org" ],
         "Loader": [ "japhet@chromium.org" ],
         "MathML": [ "dbarton@mathscribe.com" ],
         "Media": [ "feature-media-reviews@chromium.org", "eric.carlson@apple.com" ],
@@ -326,7 +334,7 @@
         "QtGraphics" : [ "noam@webkit.org" ],
         "QtWebKit2PlatformSpecific": [ "alexis@webkit.org", "cmarcelo@webkit.org", "abecsi@webkit.org" ],
         "QtWebKit2PublicAPI": [ "alexis@webkit.org", "cmarcelo@webkit.org", "abecsi@webkit.org" ],
-        "Rendering": [ "eric@webkit.org" ],
+        "Rendering": [ "eric@webkit.org", "ojan@chromium.org" ],
         "SVG": ["schenney@chromium.org", "pdr@google.com", "fmalita@chromium.org", "dominik.rottsches@intel.com" ],
         "SVNScripts": [ "dbates@webkit.org" ],
         "ScrollingCoordinator": [ "andersca@apple.com", "jamesr@chromium.org", "tonikitoo@webkit.org" ],
@@ -335,21 +343,21 @@
         "Selectors": [ "allan.jensen@digia.com" ],
         "SoupNetwork": [ "rakuco@webkit.org", "gns@gnome.org", "mrobinson@webkit.org", "danw@gnome.org" ],
         "StyleChecker": [ "levin@chromium.org", ],
-        "TestFailures": [ "abarth@webkit.org", "dglazkov@chromium.org" ],
+        "TestFailures": [ "abarth@webkit.org", "dglazkov@chromium.org", "ojan@chromium.org" ],
         "TextureMapper" : [ "noam@webkit.org" ],
         "ThreadingFiles|ThreadingUsage": [ "levin+threading@chromium.org", ],
         "TouchAdjustment" : [ "allan.jensen@digia.com" ],
         "V8Bindings|BindingsScripts": [ "abarth@webkit.org", "japhet@chromium.org", "haraken@chromium.org" ],
-        "WTF": [ "benjamin@webkit.org",],
+        "WTF": [ "benjamin@webkit.org", "ojan@chromium.org"],
         "WatchListScript": [ "levin+watchlist@chromium.org", ],
         "WebGL": [ "dino@apple.com" ],
         "WebIDL": [ "abarth@webkit.org", "ojan@chromium.org" ],
         "WebInspectorAPI": [ "timothy@apple.com", "joepeck@webkit.org" ],
         "WebKitGTKTranslations": [ "gns@gnome.org", "mrobinson@webkit.org" ],
         "WebSocket": [ "yutak@chromium.org" ],
-        "XSS": [ "dbates@webkit.org" ],
+        "XSS": [ "dbates@webkit.org", "ojan@chromium.org" ],
         "webkitperl": [ "dbates@webkit.org" ],
-        "webkitpy": [ "abarth@webkit.org", "ojan@chromium.org", "dpranke@chromium.org" ],
+        "webkitpy": [ "abarth@webkit.org", "dpranke@chromium.org" ],
     },
     "MESSAGE_RULES": {
         "ChromiumPublicApi": [ "Please wait for approval from abarth@webkit.org, dglazkov@chromium.org, "
