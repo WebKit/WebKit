@@ -1,3 +1,14 @@
+2012-11-18  Vivek Galatage  <vivek.vg@samsung.com>
+
+        Add myself to committers.py
+        https://bugs.webkit.org/show_bug.cgi?id=102636
+
+        Reviewed by Laszlo Gombos.
+
+        Add myself to committers.py
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2012-11-18  Genevieve Mak  <gmak@rim.com>
 
         [BlackBerry] Enable Touch Sliders
