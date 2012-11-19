@@ -172,6 +172,12 @@ webkit.org/b/63933 fast/canvas/canvas-webkitLineDash-invalid.html [ Failure ]
 webkit.org/b/63933 platform/chromium/virtual/gpu/fast/canvas/canvas-webkitLineDash.html [ Failure ]
 webkit.org/b/63933 platform/chromium/virtual/gpu/fast/canvas/canvas-webkitLineDash-invalid.html [ Failure ]
 
+# Overflowing LayoutUnits cause RenderGeometryMap assertions 
+webkit.org/b/67434 [ Debug ] fast/overflow/overflow-height-float-not-removed-crash.html [ Skip ] 
+webkit.org/b/67434 [ Debug ] fast/overflow/overflow-height-float-not-removed-crash2.html [ Skip ] 
+webkit.org/b/67434 [ Debug ] fast/overflow/overflow-height-float-not-removed-crash3.html [ Skip ] 
+webkit.org/b/67434 [ Debug ] fast/block/float/overhanging-tall-block.html [ Skip ] 
+
 # Microdata DOM API is not yet enabled.
 webkit.org/b/68610 fast/dom/MicroData
 
