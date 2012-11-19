@@ -57,17 +57,14 @@ struct MutationObserver::ObserverLessThan {
     }
 };
 
-PassRefPtr<MutationObserver> MutationObserver::create(ScriptExecutionContext* context, PassRefPtr<MutationCallback> callback)
+PassRefPtr<MutationObserver> MutationObserver::create(PassRefPtr<MutationCallback> callback)
 {
     ASSERT(isMainThread());
-    RefPtr<MutationObserver> observer = adoptRef(new MutationObserver(context, callback));
-    observer->suspendIfNeeded();
-    return observer.release();
+    return adoptRef(new MutationObserver(callback));
 }
 
-MutationObserver::MutationObserver(ScriptExecutionContext* context, PassRefPtr<MutationCallback> callback)
-    : ActiveDOMObject(context, this)
-    , m_callback(callback)
+MutationObserver::MutationObserver(PassRefPtr<MutationCallback> callback)
+    : m_callback(callback)
     , m_priority(s_observerPriority++)
 {
 }
@@ -141,14 +138,12 @@ void MutationObserver::observationStarted(MutationObserverRegistration* registra
 {
     ASSERT(!m_registrations.contains(registration));
     m_registrations.add(registration);
-    setPendingActivity(this);
 }
 
 void MutationObserver::observationEnded(MutationObserverRegistration* registration)
 {
     ASSERT(m_registrations.contains(registration));
     m_registrations.remove(registration);
-    unsetPendingActivity(this);
 }
 
 typedef HashSet<RefPtr<MutationObserver> > MutationObserverSet;

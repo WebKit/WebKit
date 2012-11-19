@@ -29,7 +29,6 @@
  */
 
 [
-    ActiveDOMObject,
     Conditional=MUTATION_OBSERVERS,
     CustomConstructor,
     ConstructorParameters=1

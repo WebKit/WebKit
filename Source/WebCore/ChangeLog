@@ -1,3 +1,25 @@
+2012-11-19  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r134830.
+        http://trac.webkit.org/changeset/134830
+        https://bugs.webkit.org/show_bug.cgi?id=102701
+
+        ActiveDOMObject is not applicable to MutationObservers due to
+        being tied to a Document (Requested by aklein on #webkit).
+
+        * bindings/js/JSMutationObserverCustom.cpp:
+        (WebCore::JSMutationObserverConstructor::constructJSMutationObserver):
+        * bindings/v8/custom/V8MutationObserverCustom.cpp:
+        (WebCore::V8MutationObserver::constructorCallback):
+        * dom/MutationObserver.cpp:
+        (WebCore::MutationObserver::create):
+        (WebCore::MutationObserver::MutationObserver):
+        (WebCore::MutationObserver::observationStarted):
+        (WebCore::MutationObserver::observationEnded):
+        * dom/MutationObserver.h:
+        (WebCore):
+        * dom/MutationObserver.idl:
+
 2012-11-19  Brady Eidson  <beidson@apple.com>
 
         NetworkProcess Authentication.

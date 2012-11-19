@@ -33,7 +33,6 @@
 
 #if ENABLE(MUTATION_OBSERVERS)
 
-#include "ActiveDOMObject.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/PassRefPtr.h>
@@ -49,14 +48,13 @@ class MutationCallback;
 class MutationObserverRegistration;
 class MutationRecord;
 class Node;
-class ScriptExecutionContext;
 
 typedef int ExceptionCode;
 
 typedef unsigned char MutationObserverOptions;
 typedef unsigned char MutationRecordDeliveryOptions;
 
-class MutationObserver : public RefCounted<MutationObserver>, public ActiveDOMObject {
+class MutationObserver : public RefCounted<MutationObserver> {
 public:
     enum MutationType {
         ChildList = 1 << 0,
@@ -76,10 +74,10 @@ public:
         CharacterDataOldValue = 1 << 6,
     };
 
-    static PassRefPtr<MutationObserver> create(ScriptExecutionContext*, PassRefPtr<MutationCallback>);
+    static PassRefPtr<MutationObserver> create(PassRefPtr<MutationCallback>);
     static void deliverAllMutations();
 
-    virtual ~MutationObserver();
+    ~MutationObserver();
 
     void observe(Node*, const Dictionary&, ExceptionCode&);
     Vector<RefPtr<MutationRecord> > takeRecords();
@@ -92,7 +90,7 @@ public:
 private:
     struct ObserverLessThan;
 
-    MutationObserver(ScriptExecutionContext*, PassRefPtr<MutationCallback>);
+    explicit MutationObserver(PassRefPtr<MutationCallback>);
     void deliver();
 
     static bool validateOptions(MutationObserverOptions);

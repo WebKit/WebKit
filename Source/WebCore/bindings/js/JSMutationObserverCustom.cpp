@@ -54,11 +54,8 @@ EncodedJSValue JSC_HOST_CALL JSMutationObserverConstructor::constructJSMutationO
     }
 
     JSMutationObserverConstructor* jsConstructor = jsCast<JSMutationObserverConstructor*>(exec->callee());
-    RefPtr<JSMutationCallback> callback = JSMutationCallback::create(object, jsConstructor->globalObject());
-    RefPtr<MutationObserver> observer = MutationObserver::create(jsConstructor->globalObject()->scriptExecutionContext(), callback);
-    JSObject* wrapper = asObject(toJS(exec, jsConstructor->globalObject(), observer.release()));
-
-    return JSValue::encode(wrapper);
+    RefPtr<MutationCallback> callback = JSMutationCallback::create(object, jsConstructor->globalObject());
+    return JSValue::encode(asObject(toJS(exec, jsConstructor->globalObject(), MutationObserver::create(callback.release()))));
 }
 
 } // namespace WebCore
