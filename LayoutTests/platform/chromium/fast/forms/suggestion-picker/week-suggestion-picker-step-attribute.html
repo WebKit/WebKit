@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../../../fast/js/resources/js-test-pre.js"></script>
+<script src="../../../../../fast/forms/resources/picker-common.js"></script>
+<script src="resources/suggestion-picker-common.js"></script>
+</head>
+<body style="background-color: #bbbbbb;">
+<p id="description"></p>
+<div id="console"></div>
+<input type=date id=date value="2012-01-01" step="2" list=suggestions>
+<datalist id=suggestions>
+    <option>2012-01-21</option>
+    <option>2012-01-22</option>
+    <option>2012-01-23</option>
+    <option>2012-01-24</option>
+    <option>2012-01-25</option>
+    <option>2012-01-26</option>
+    <option>2012-01-27</option>
+    <option>2012-01-28</option>
+    <option>2012-01-29</option>
+    <option>2012-01-30</option>
+</datalist>
+
+<p id="description" style="opacity: 0"></p>
+<div id="console" style="opacity: 0"></div>
+
+<script>
+description('Tests that step attribute filters out suggestions as expected.');
+
+debug('Check that page popup doesn\'t exist at first.');
+shouldBeNull('document.getElementById("mock-page-popup")');
+
+var dateElement = document.getElementById('date');
+
+window.onload = function() {
+    openPicker(dateElement, test1);
+}
+
+function test1() {
+    popupWindow.focus();
+
+    shouldBe('entryValues().length', '6');
+    shouldBeEqualToString('entryValues()[0]', '2012-01-21');
+    shouldBeEqualToString('entryValues()[1]', '2012-01-23');
+    shouldBeEqualToString('entryValues()[2]', '2012-01-25');
+    shouldBeEqualToString('entryValues()[3]', '2012-01-27');
+    shouldBeEqualToString('entryValues()[4]', '2012-01-29');
+    shouldBeEqualToString('entryValues()[5]', '@openCalendarPicker');
+
+    eventSender.keyDown('\x1B'); // Close picker.
+    waitUntilClosing(test1AfterClosing);
+}
+
+function test1AfterClosing() {
+    dateElement.step = 5;
+    openPicker(dateElement, test2);
+}
+
+function test2() {
+    popupWindow.focus();
+
+    shouldBe('entryValues().length', '3');
+    shouldBeEqualToString('entryValues()[0]', '2012-01-21');
+    shouldBeEqualToString('entryValues()[1]', '2012-01-26');
+    shouldBeEqualToString('entryValues()[2]', '@openCalendarPicker');
+
+    eventSender.keyDown('\x1B'); // Close picker.
+    waitUntilClosing(test2AfterClosing);
+}
+
+function test2AfterClosing() {
+    dateElement.step = 30;
+    openPicker(dateElement, test3);
+}
+
+function test3() {
+    popupWindow.focus();
+
+    shouldBe('entryValues().length', '2');
+    shouldBeEqualToString('entryValues()[0]', '2012-01-21');
+    shouldBeEqualToString('entryValues()[1]', '@openCalendarPicker');
+
+    finishJSTest();
+}
+
+</script>
+<script src="../../../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

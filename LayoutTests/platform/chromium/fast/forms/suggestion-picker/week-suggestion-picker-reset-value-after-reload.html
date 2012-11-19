@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../../../fast/js/resources/js-test-pre.js"></script>
+<script src="../../../../../fast/forms/resources/picker-common.js"></script>
+<script src="resources/suggestion-picker-common.js"></script>
+</head>
+<body>
+<script>
+description('Checks reloading page resets input values');
+
+var iframe;
+var testInput1;
+var testInput2;
+
+function runOnOpenPopup1() {
+    iframe = document.getElementById('iframe');
+
+    popupWindow.focus();
+
+    shouldBeNull('highlightedEntry()');
+    eventSender.keyDown('downArrow');
+    shouldBeEqualToString('highlightedEntry()', '2012-W01');
+    eventSender.keyDown('\n');
+    waitUntilClosing(runOnOpenPopup1AfterClosing);
+}
+
+function runOnOpenPopup1AfterClosing() {
+    shouldBeNull('document.getElementById("mock-page-popup")');
+    shouldBeEqualToString('iframe.contentDocument.getElementById("test1").value', '2012-W01');
+
+    openPicker(iframe.contentDocument.getElementById('test2'), runOnOpenPopup2);
+}
+
+function runOnOpenPopup2() {
+    popupWindow.focus();
+
+    shouldBeNull('highlightedEntry()');
+    eventSender.keyDown('downArrow');
+    shouldBeEqualToString('highlightedEntry()', '2012-W01');
+    eventSender.keyDown('\n');
+    waitUntilClosing(runOnOpenPopup2AfterClosing);
+}
+
+function runOnOpenPopup2AfterClosing() {
+    shouldBeNull('document.getElementById("mock-page-popup")');
+    shouldBeEqualToString('iframe.contentDocument.getElementById("test2").value', '2012-W01');
+
+    iframe.addEventListener('load', function () { parent.runOnIFrameLoad(); });
+    iframe.contentWindow.location.reload();
+}
+
+function runOnIFrameLoad()
+{
+    testInput1 = iframe.contentDocument.getElementById('test1');
+    testInput2 = iframe.contentDocument.getElementById('test2');
+    shouldBeEqualToString('testInput1.value', '');
+    shouldBeEqualToString('testInput2.value', '2002-W02');
+    iframe.parentNode.removeChild(iframe);
+    waitUntilClosing(finishJSTest);
+}
+</script>
+<iframe id=iframe onload="openPicker(event.target.contentDocument.getElementById('test1'), runOnOpenPopup1);" srcdoc="<input type=week id=test1 list=suggestions><input type=week id=test2 value=2002-W02 list=suggestions><datalist id=suggestions><option>2012-W01</option></datalist>"></iframe>
+<script src="../../../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>
