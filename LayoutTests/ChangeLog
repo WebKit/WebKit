@@ -1,3 +1,9 @@
+2012-11-18  Kentaro Hara  <haraken@chromium.org>
+
+        Unreviewed. Marked fast/images/webgl-teximage2d.html as TIMEOUT.
+
+        * platform/chromium/TestExpectations:
+
 2012-11-18  Simon Fraser  <simon.fraser@apple.com>
 
         Rebaselines.
