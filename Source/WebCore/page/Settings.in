@@ -156,3 +156,5 @@ plugInSnapshottingEnabled initial=false
 frameFlatteningEnabled initial=false
 
 allowCustomScrollbarInMainFrame initial=true
+webSecurityEnabled initial=true
+spatialNavigationEnabled initial=false

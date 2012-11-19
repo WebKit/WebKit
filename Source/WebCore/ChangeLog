@@ -1,3 +1,30 @@
+2012-11-19  Tony Chang  <tony@chromium.org>
+
+        Remove 'is' prefix from WebSettings::isWebSecurityEnabled and WebSettings::isSpatialNavigationEnabled
+        https://bugs.webkit.org/show_bug.cgi?id=102548
+
+        Reviewed by Adam Barth.
+
+        This allows us to use Settings.in to generate the code for this.
+
+        I didn't rename any of the WebKit API methods with similar names because that would
+        probably break consumers.  It turns out that the getter is only called from
+        Source/WebKit/efl (most of the time, WebPreferences just sets values on Settings).
+
+        No new tests, just a refactor.
+
+        * WebCore.exp.in: Remove symbols that are now inlined.
+        * WebCore.order: Remove symbols that are now inlined.
+        * dom/Document.cpp:
+        (WebCore::Document::initSecurityContext): Rename.
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings): Remove code since it will be generated.
+        * page/Settings.h:
+        (Settings): Remove code since it will be generated.
+        * page/Settings.in: Add entries to be generated.
+        * page/SpatialNavigation.cpp:
+        (WebCore::isSpatialNavigationEnabled): Fix caller.
+
 2012-11-19  Yael Aharon  <yael.aharon@intel.com>
 
         [EFL][TexMap] Complie error when considering warnings as errors

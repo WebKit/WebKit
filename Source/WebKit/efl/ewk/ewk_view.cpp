@@ -889,7 +889,7 @@ static Ewk_View_Private_Data* _ewk_view_priv_new(Ewk_View_Smart_Data* smartData)
     priv->settings.resizableTextareas = priv->pageSettings->textAreasAreResizable();
     priv->settings.privateBrowsing = priv->pageSettings->privateBrowsingEnabled();
     priv->settings.caretBrowsing = priv->pageSettings->caretBrowsingEnabled();
-    priv->settings.spatialNavigation = priv->pageSettings->isSpatialNavigationEnabled();
+    priv->settings.spatialNavigation = priv->pageSettings->spatialNavigationEnabled();
     priv->settings.localStorage = priv->pageSettings->localStorageEnabled();
     priv->settings.offlineAppCache = true; // XXX no function to read setting; this keeps the original setting
     priv->settings.pageCache = priv->pageSettings->usesPageCache();

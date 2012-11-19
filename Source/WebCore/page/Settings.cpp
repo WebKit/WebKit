@@ -145,7 +145,6 @@ Settings::Settings(Page* page)
 #endif
 #endif
     SETTINGS_INITIALIZER_LIST
-    , m_isSpatialNavigationEnabled(false)
     , m_isJavaEnabled(false)
     , m_isJavaEnabledForLocalFiles(true)
     , m_loadsImagesAutomatically(false)
@@ -154,7 +153,6 @@ Settings::Settings(Page* page)
     , m_isMediaEnabled(true)
     , m_arePluginsEnabled(false)
     , m_isScriptEnabled(false)
-    , m_isWebSecurityEnabled(true)
     , m_textAreasAreResizable(false)
     , m_needsAdobeFrameReloadingQuirk(false)
     , m_isDOMPasteAllowed(false)
@@ -399,16 +397,6 @@ void Settings::imageLoadingSettingsTimerFired(Timer<Settings>*)
 void Settings::setScriptEnabled(bool isScriptEnabled)
 {
     m_isScriptEnabled = isScriptEnabled;
-}
-
-void Settings::setWebSecurityEnabled(bool isWebSecurityEnabled)
-{
-    m_isWebSecurityEnabled = isWebSecurityEnabled;
-}
-
-void Settings::setSpatialNavigationEnabled(bool isSpatialNavigationEnabled)
-{
-    m_isSpatialNavigationEnabled = isSpatialNavigationEnabled;
 }
 
 void Settings::setJavaEnabled(bool isJavaEnabled)

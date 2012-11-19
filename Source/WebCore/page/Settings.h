@@ -140,13 +140,7 @@ namespace WebCore {
         // HTML sandbox attribute into account.
         bool isScriptEnabled() const { return m_isScriptEnabled; }
 
-        void setWebSecurityEnabled(bool);
-        bool isWebSecurityEnabled() const { return m_isWebSecurityEnabled; }
-
         SETTINGS_GETTERS_AND_SETTERS
-
-        void setSpatialNavigationEnabled(bool);
-        bool isSpatialNavigationEnabled() const { return m_isSpatialNavigationEnabled; }
 
         void setJavaEnabled(bool);
         bool isJavaEnabled() const { return m_isJavaEnabled; }
@@ -337,7 +331,6 @@ namespace WebCore {
 
         SETTINGS_MEMBER_VARIABLES
 
-        bool m_isSpatialNavigationEnabled : 1;
         bool m_isJavaEnabled : 1;
         bool m_isJavaEnabledForLocalFiles : 1;
         bool m_loadsImagesAutomatically : 1;
@@ -346,7 +339,6 @@ namespace WebCore {
         bool m_isMediaEnabled : 1;
         bool m_arePluginsEnabled : 1;
         bool m_isScriptEnabled : 1;
-        bool m_isWebSecurityEnabled : 1;
         bool m_textAreasAreResizable : 1;
         bool m_needsAdobeFrameReloadingQuirk : 1;
         bool m_isDOMPasteAllowed : 1;
