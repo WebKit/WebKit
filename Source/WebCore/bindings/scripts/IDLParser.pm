@@ -2083,7 +2083,7 @@ sub parseModule
     my $self = shift;
     my $next = $self->nextToken();
     if ($next->value() eq "module") {
-        my $document = new idlDocument();
+        my $document = idlDocument->new();
         $self->assertTokenValue($self->getToken(), "module", __LINE__);
         my $extendedAttributeList = $self->parseExtendedAttributeListAllowEmpty();
         my $token = $self->getToken();
