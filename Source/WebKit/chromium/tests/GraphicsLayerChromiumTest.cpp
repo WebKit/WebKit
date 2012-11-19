@@ -59,6 +59,8 @@ class GraphicsLayerChromiumTest : public testing::Test {
 public:
     GraphicsLayerChromiumTest()
     {
+        // For these tests, we will enable threaded animations.
+        Platform::current()->compositorSupport()->setAcceleratedAnimationEnabled(true);
         Platform::current()->compositorSupport()->initialize(0);
         m_graphicsLayer = static_pointer_cast<GraphicsLayerChromium>(GraphicsLayer::create(&m_client));
         m_platformLayer = m_graphicsLayer->platformLayer();
