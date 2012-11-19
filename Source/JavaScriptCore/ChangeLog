@@ -1,5 +1,13 @@
 2012-11-18  Filip Pizlo  <fpizlo@apple.com>
 
+        Unreviewed, build fix for !ENABLE(DFG_JIT).
+
+        * dfg/DFGCommon.h:
+        (JSC::DFG::shouldShowDisassembly):
+        (DFG):
+
+2012-11-18  Filip Pizlo  <fpizlo@apple.com>
+
         JSC should have more logging in structure-related code
         https://bugs.webkit.org/show_bug.cgi?id=102630
 

@@ -150,6 +150,12 @@ namespace JSC { namespace DFG {
 
 enum CapabilityLevel { CannotCompile, ShouldProfile, CanCompile, CapabilityLevelNotSet };
 
+// Unconditionally disable DFG disassembly support if the DFG is not compiled in.
+inline bool shouldShowDisassembly()
+{
+    return false;
+}
+
 } } // namespace JSC::DFG
 
 #endif // DFGCommon_h
