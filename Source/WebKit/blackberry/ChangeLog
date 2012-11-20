@@ -1,3 +1,24 @@
+2012-11-20  Andrew Lo  <anlo@rim.com>
+
+        [BlackBerry] Animated gifs pause on scroll or zoom and sometimes don't resume after scroll or zoom completes
+        https://bugs.webkit.org/show_bug.cgi?id=102838
+
+        Reviewed by Rob Buis.
+
+        Internally reviewed by Adam Treat.
+        Internal PR244646
+        When entering scrolling & zooming, we suspend regular render jobs
+        in order to pause animations. When finishing scrolling or zooming,
+        dispatch a render job in order to resume those animations.
+
+        If an animation requests a repaint while the backing store is suspended,
+        add the regular render job to the render queue so that it can be
+        processed later.
+
+        * Api/BackingStore.cpp:
+        (BlackBerry::WebKit::BackingStorePrivate::repaint):
+        (BlackBerry::WebKit::BackingStorePrivate::setScrollingOrZooming):
+
 2012-11-20  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r135295.

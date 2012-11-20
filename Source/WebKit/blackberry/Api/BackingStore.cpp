@@ -397,9 +397,6 @@ void BackingStorePrivate::resumeScreenUpdates(BackingStore::ResumeUpdateOperatio
 void BackingStorePrivate::repaint(const Platform::IntRect& windowRect,
                                   bool contentChanged, bool immediate)
 {
-    if (m_suspendBackingStoreUpdates)
-        return;
-
      // If immediate is true, then we're being asked to perform synchronously.
      // NOTE: WebCore::ScrollView will call this method with immediate:true and contentChanged:false.
      // This is a special case introduced specifically for the Apple's windows port and can be safely ignored I believe.
@@ -428,6 +425,9 @@ void BackingStorePrivate::repaint(const Platform::IntRect& windowRect,
 #endif
 
         if (immediate) {
+            if (m_suspendBackingStoreUpdates)
+                return;
+
             if (render(rect)) {
                 if (!shouldDirectRenderingToWindow() && !m_webPage->d->commitRootLayerIfNeeded())
                     blitVisibleContents();
@@ -2558,6 +2558,8 @@ void BackingStorePrivate::setScrollingOrZooming(bool scrollingOrZooming, bool sh
     else if (shouldBlit && !shouldDirectRenderingToWindow())
         blitVisibleContents();
 #endif
+    if (!scrollingOrZooming && shouldPerformRegularRenderJobs())
+        dispatchRenderJob();
 }
 
 void BackingStorePrivate::lockBackingStore()
