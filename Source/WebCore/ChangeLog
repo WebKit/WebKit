@@ -1,5 +1,23 @@
 2012-11-19  Kentaro Hara  <haraken@chromium.org>
 
+        In CodeGeneratorCPP.pm we should rename $dataNode to $interface
+        https://bugs.webkit.org/show_bug.cgi?id=102752
+
+        Reviewed by Adam Barth.
+
+        $dataNode is misnamed. It should be $interface.
+
+        No tests. No change in behavior.
+
+        * bindings/scripts/CodeGeneratorCPP.pm:
+        (GenerateInterface):
+        (GetParentImplClassName):
+        (GetParent):
+        (GenerateHeader):
+        (GenerateImplementation):
+
+2012-11-19  Kentaro Hara  <haraken@chromium.org>
+
         In CodeGeneratorJS.pm we should rename $dataNode to $interface
         https://bugs.webkit.org/show_bug.cgi?id=102748
 
