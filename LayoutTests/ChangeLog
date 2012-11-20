@@ -1,3 +1,12 @@
+2012-11-20  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
+        [EFL] Gardening.
+
+        Temporarily mark fast/multicol/span/positioned-child-not-removed-crash.html
+        as crashing while the regression is addressed.
+
+        * platform/efl-wk2/TestExpectations:
+
 2012-11-20  Yael Aharon  <yael.aharon@intel.com>
 
         Unreviewed gardening.
