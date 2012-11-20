@@ -1,3 +1,28 @@
+2012-11-20  Elliott Sprehn  <esprehn@chromium.org>
+
+        Store MutationObserver callback in a hidden property for V8
+        https://bugs.webkit.org/show_bug.cgi?id=102555
+
+        Reviewed by Adam Barth.
+
+        To prevent circular reference leaks we should store the MutationObserver
+        callback in a hidden property on the wrapper of the observer.
+
+        This is done by extending the code generator to support a new owner
+        argument to ::create() that lets you set the owner of the callback where
+        the hidden property should be stored.
+
+        Test: ManualTests/leak-cycle-observer-wrapper.html
+
+        * bindings/scripts/CodeGeneratorV8.pm:
+        (GenerateCallbackHeader):
+        (GenerateCallbackImplementation):
+        * bindings/scripts/test/V8/V8TestCallback.cpp: rebaselined.
+        * bindings/scripts/test/V8/V8TestCallback.h: rebaselined.
+        * bindings/v8/V8HiddenPropertyName.h:
+        * bindings/v8/custom/V8MutationObserverCustom.cpp:
+        (WebCore::V8MutationObserver::constructorCallback):
+
 2012-11-20  Abhishek Arya  <inferno@chromium.org>
 
         Crash in FrameLoader::stopLoading.

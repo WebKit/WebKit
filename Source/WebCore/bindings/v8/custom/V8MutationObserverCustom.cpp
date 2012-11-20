@@ -61,11 +61,11 @@ v8::Handle<v8::Value> V8MutationObserver::constructorCallback(const v8::Argument
         return setDOMException(TYPE_MISMATCH_ERR, args.GetIsolate());
 
     ScriptExecutionContext* context = getScriptExecutionContext();
+    v8::Handle<v8::Object> wrapper = args.Holder();
 
-    RefPtr<MutationCallback> callback = V8MutationCallback::create(arg, context);
+    RefPtr<MutationCallback> callback = V8MutationCallback::create(arg, context, wrapper);
     RefPtr<MutationObserver> observer = MutationObserver::create(callback.release());
 
-    v8::Handle<v8::Object> wrapper = args.Holder();
     V8DOMWrapper::createDOMWrapper(observer.release(), &info, wrapper);
     return wrapper;
 }

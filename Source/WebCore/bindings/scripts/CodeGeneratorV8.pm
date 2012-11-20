@@ -3246,11 +3246,11 @@ sub GenerateCallbackHeader
 
     push(@headerContent, <<END);
 public:
-    static PassRefPtr<${v8InterfaceName}> create(v8::Local<v8::Value> value, ScriptExecutionContext* context)
+    static PassRefPtr<${v8InterfaceName}> create(v8::Handle<v8::Value> value, ScriptExecutionContext* context, v8::Handle<v8::Object> owner = v8::Handle<v8::Object>())
     {
         ASSERT(value->IsObject());
         ASSERT(context);
-        return adoptRef(new ${v8InterfaceName}(value->ToObject(), context));
+        return adoptRef(new ${v8InterfaceName}(value->ToObject(), context, owner));
     }
 
     virtual ~${v8InterfaceName}();
@@ -3282,8 +3282,16 @@ END
     push(@headerContent, <<END);
 
 private:
-    ${v8InterfaceName}(v8::Local<v8::Object>, ScriptExecutionContext*);
+    ${v8InterfaceName}(v8::Handle<v8::Object>, ScriptExecutionContext*, v8::Handle<v8::Object>);
 
+    static void weakCallback(v8::Persistent<v8::Value> wrapper, void* parameter)
+    {
+        ${v8InterfaceName}* object = static_cast<${v8InterfaceName}*>(parameter);
+        object->m_callback.Dispose();
+        object->m_callback.Clear();
+    }
+
+    // FIXME: m_callback should be a ScopedPersistent.
     v8::Persistent<v8::Object> m_callback;
     WorldContextHandle m_worldContext;
 };
@@ -3314,16 +3322,21 @@ sub GenerateCallbackImplementation
     push(@implContent, "#include <wtf/Assertions.h>\n\n");
     push(@implContent, "namespace WebCore {\n\n");
     push(@implContent, <<END);
-${v8InterfaceName}::${v8InterfaceName}(v8::Local<v8::Object> callback, ScriptExecutionContext* context)
+${v8InterfaceName}::${v8InterfaceName}(v8::Handle<v8::Object> callback, ScriptExecutionContext* context, v8::Handle<v8::Object> owner)
     : ActiveDOMCallback(context)
     , m_callback(v8::Persistent<v8::Object>::New(callback))
     , m_worldContext(UseCurrentWorld)
 {
+    if (!owner.IsEmpty()) {
+        owner->SetHiddenValue(V8HiddenPropertyName::callback(), callback);
+        m_callback.MakeWeak(this, &${v8InterfaceName}::weakCallback);
+    }
 }
 
 ${v8InterfaceName}::~${v8InterfaceName}()
 {
-    m_callback.Dispose();
+    if (!m_callback.IsEmpty())
+        m_callback.Dispose();
 }
 
 END

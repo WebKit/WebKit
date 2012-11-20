@@ -37,6 +37,7 @@ namespace WebCore {
 
 #define V8_HIDDEN_PROPERTIES(V) \
     V(attributeListener) \
+    V(callback) \
     V(detail) \
     V(document) \
     V(domStringMap) \

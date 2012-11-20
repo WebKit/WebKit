@@ -1,3 +1,16 @@
+2012-11-20  Elliott Sprehn  <esprehn@chromium.org>
+
+        Store MutationObserver callback in a hidden property for V8
+        https://bugs.webkit.org/show_bug.cgi?id=102555
+
+        Reviewed by Adam Barth.
+
+        Test for reference cycle leaks with mutation observers. There doesn't seem
+        to be a way to check this for v8, but if you manually run you can see if it
+        leaks observers.
+
+        * ManualTests/leak-cycle-observer-wrapper.html: Added.
+
 2012-11-20  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Update NEWS and configure.ac for 1.11.2 release
