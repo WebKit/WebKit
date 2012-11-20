@@ -26,6 +26,7 @@
 #ifndef ImageFrameGenerator_h
 #define ImageFrameGenerator_h
 
+#include "SkTypes.h"
 #include "SkBitmap.h"
 #include "SkSize.h"
 #include <wtf/PassOwnPtr.h>

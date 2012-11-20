@@ -1,3 +1,13 @@
+2012-11-19  Alpha Lam  <hclam@chromium.org>
+
+        Not reviewed. Build fix for Chromium.
+
+        Added SkTypes.h includes for Windows.
+
+        * platform/graphics/chromium/ImageDecodingStore.h:
+        * platform/graphics/chromium/ImageFrameGenerator.h:
+        * platform/graphics/chromium/LazyDecodingPixelRef.h:
+
 2012-11-19  Adam Barth  <abarth@webkit.org>
 
         [V8] Simplify V8DOMWindowShell::getEntered

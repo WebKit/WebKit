@@ -26,6 +26,7 @@
 #ifndef ImageDecodingStore_h
 #define ImageDecodingStore_h
 
+#include "SkTypes.h"
 #include "SkSize.h"
 
 #include <wtf/OwnPtr.h>
