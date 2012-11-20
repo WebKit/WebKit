@@ -1,3 +1,23 @@
+2012-11-20  Mike West  <mkwst@chromium.org>
+
+        Remove '#include "ScriptCallStackFactory.h"' include when unnecessary.
+        https://bugs.webkit.org/show_bug.cgi?id=102812
+
+        Reviewed by Jochen Eisinger.
+
+        "ScriptCallStackFactory.h" is included in a few files where it doesn't
+        seem to be required. Since I'm in the process of centralizing stack
+        trace generation anyway, I'll just clean this up as a drive-by.
+
+        * bindings/js/JSConsoleCustom.cpp:
+        * bindings/v8/custom/V8DOMWindowCustom.cpp:
+        * bindings/v8/custom/V8WorkerContextCustom.cpp:
+        * loader/FrameLoader.cpp:
+            Removed "ScriptCallStackFactory.h".
+        * bindings/js/ScheduledAction.cpp:
+            This also included (but didn't use) "ScriptCallStack.h". I've
+            removed it as well.
+
 2012-11-20  Elliott Sprehn  <esprehn@chromium.org>
 
         Merge checks for creating renderers into shouldCreateRenderer

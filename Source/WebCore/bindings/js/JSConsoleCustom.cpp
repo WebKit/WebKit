@@ -31,7 +31,6 @@
 
 #include "Console.h"
 #include "ScriptCallStack.h"
-#include "ScriptCallStackFactory.h"
 #include <wtf/OwnPtr.h>
 
 using namespace JSC;
