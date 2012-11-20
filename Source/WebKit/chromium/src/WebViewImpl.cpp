@@ -850,6 +850,7 @@ void WebViewImpl::setShowFPSCounter(bool show)
 #endif
         m_layerTreeView->setShowFPSCounter(show);
     }
+    settingsImpl()->setShowFPSCounter(show);
 }
 
 bool WebViewImpl::handleKeyEvent(const WebKeyboardEvent& event)

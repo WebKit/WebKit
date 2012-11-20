@@ -1,3 +1,18 @@
+2012-11-20  Eberhard Graether  <egraether@google.com>
+
+        [Chromium] fix FPS counter disappearing when changing page
+        https://bugs.webkit.org/show_bug.cgi?id=102532
+
+        Reviewed by Pavel Feldman.
+
+        When changing the page with opened WebInspector and active FPS counter the WebInspector is
+        reloaded before the WebView switches to accelerated compositing, so the showFPSCounter call
+        to WebLayerTreeView is not yet possible. This fix saves the showFPSCounter value in the
+        WebSettings so it can be read when accelerated compositing is activated.
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::setShowFPSCounter):
+
 2012-11-20  James Simonsen  <simonjam@chromium.org>
 
         Consolidate FrameLoader::load() into one function taking a FrameLoadRequest
