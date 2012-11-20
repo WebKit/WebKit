@@ -1,3 +1,27 @@
+2012-11-19  Patrick Gansterer  <paroga@webkit.org>
+
+        [WIN] Add WebCore::getRegistryValue()
+        https://bugs.webkit.org/show_bug.cgi?id=97828
+
+        Reviewed by Brent Fulgham.
+
+        The new function adds an abstraction to SHGetValue(), which isn't available on WinCE.
+        Changing the existing files allows us to share more code between WinCE and WinNT in a next step.
+
+        * platform/win/MIMETypeRegistryWin.cpp:
+        (WebCore::mimeTypeForExtension):
+        (WebCore):
+        (WebCore::MIMETypeRegistry::getPreferredExtensionForMIMEType):
+        * platform/win/WindowsExtras.h:
+        (WebCore::getRegistryValue):
+        (WebCore):
+        * plugins/win/PluginDatabaseWin.cpp:
+        (WebCore::addPluginPathsFromRegistry):
+        (WebCore::addWindowsMediaPlayerPluginDirectory):
+        (WebCore::addQuickTimePluginDirectory):
+        (WebCore::addAdobeAcrobatPluginDirectory):
+        (WebCore::addJavaPluginDirectory):
+
 2012-11-19  Alpha Lam  <hclam@chromium.org>
 
         Not reviewed. Build fix for Chromium.

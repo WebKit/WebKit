@@ -31,25 +31,13 @@
 #include "Frame.h"
 #include "KURL.h"
 #include "PluginPackage.h"
-#include <windows.h>
-#include <shlwapi.h>
+#include "WindowsExtras.h"
 
 #if OS(WINCE)
 // WINCE doesn't support Registry Key Access Rights. The parameter should always be 0
 #ifndef KEY_ENUMERATE_SUB_KEYS
 #define KEY_ENUMERATE_SUB_KEYS 0
 #endif
-
-DWORD SHGetValue(HKEY hkey, LPCWSTR pszSubKey, LPCWSTR pszValue, LPDWORD pdwType, LPVOID pvData, LPDWORD pcbData)
-{
-    HKEY key;
-    if (RegOpenKeyEx(hkey, pszSubKey, 0, 0, &key) == ERROR_SUCCESS) {
-        DWORD result = RegQueryValueEx(key, pszValue, 0, pdwType, (LPBYTE)pvData, pcbData);
-        RegCloseKey(key);
-        return result;
-    }
-    return ERROR_INVALID_NAME;
-}
 
 BOOL PathRemoveFileSpec(LPWSTR moduleFileNameStr)
 {
@@ -102,7 +90,7 @@ static inline void addPluginPathsFromRegistry(HKEY rootKey, HashSet<String>& pat
         DWORD pathStrSize = sizeof(pathStr);
         DWORD type;
 
-        result = SHGetValue(key, name, TEXT("Path"), &type, (LPBYTE)pathStr, &pathStrSize);
+        result = getRegistryValue(key, name, L"Path", &type, pathStr, &pathStrSize);
         if (result != ERROR_SUCCESS || type != REG_SZ)
             continue;
 
@@ -263,7 +251,7 @@ static inline void addWindowsMediaPlayerPluginDirectory(Vector<String>& director
     WCHAR installationDirectoryStr[_MAX_PATH];
     DWORD installationDirectorySize = sizeof(installationDirectoryStr);
 
-    HRESULT result = SHGetValue(HKEY_LOCAL_MACHINE, TEXT("Software\\Microsoft\\MediaPlayer"), TEXT("Installation Directory"), &type, (LPBYTE)&installationDirectoryStr, &installationDirectorySize);
+    HRESULT result = getRegistryValue(HKEY_LOCAL_MACHINE, L"Software\\Microsoft\\MediaPlayer", L"Installation Directory", &type, &installationDirectoryStr, &installationDirectorySize);
 
     if (result == ERROR_SUCCESS && type == REG_SZ)
         directories.append(String(installationDirectoryStr, installationDirectorySize / sizeof(WCHAR) - 1));
@@ -275,7 +263,7 @@ static inline void addQuickTimePluginDirectory(Vector<String>& directories)
     WCHAR installationDirectoryStr[_MAX_PATH];
     DWORD installationDirectorySize = sizeof(installationDirectoryStr);
 
-    HRESULT result = SHGetValue(HKEY_LOCAL_MACHINE, TEXT("Software\\Apple Computer, Inc.\\QuickTime"), TEXT("InstallDir"), &type, (LPBYTE)&installationDirectoryStr, &installationDirectorySize);
+    HRESULT result = getRegistryValue(HKEY_LOCAL_MACHINE, L"Software\\Apple Computer, Inc.\\QuickTime", L"InstallDir", &type, &installationDirectoryStr, &installationDirectorySize);
 
     if (result == ERROR_SUCCESS && type == REG_SZ) {
         String pluginDir = String(installationDirectoryStr, installationDirectorySize / sizeof(WCHAR) - 1) + "\\plugins";
@@ -317,7 +305,7 @@ static inline void addAdobeAcrobatPluginDirectory(Vector<String>& directories)
         DWORD acrobatInstallPathSize = sizeof(acrobatInstallPathStr);
 
         String acrobatPluginKeyPath = "Software\\Adobe\\Acrobat Reader\\" + latestAcrobatVersionString + "\\InstallPath";
-        result = SHGetValue(HKEY_LOCAL_MACHINE, acrobatPluginKeyPath.charactersWithNullTermination(), 0, &type, (LPBYTE)acrobatInstallPathStr, &acrobatInstallPathSize);
+        result = getRegistryValue(HKEY_LOCAL_MACHINE, acrobatPluginKeyPath.charactersWithNullTermination(), 0, &type, acrobatInstallPathStr, &acrobatInstallPathSize);
 
         if (result == ERROR_SUCCESS) {
             String acrobatPluginDirectory = String(acrobatInstallPathStr, acrobatInstallPathSize / sizeof(WCHAR) - 1) + "\\browser";
@@ -364,10 +352,10 @@ static inline void addJavaPluginDirectory(Vector<String>& directories)
         DWORD useNewPluginSize;
 
         String javaPluginKeyPath = "Software\\JavaSoft\\Java Plug-in\\" + latestJavaVersionString;
-        result = SHGetValue(HKEY_LOCAL_MACHINE, javaPluginKeyPath.charactersWithNullTermination(), TEXT("UseNewJavaPlugin"), &type, (LPVOID)&useNewPluginValue, &useNewPluginSize);
+        result = getRegistryValue(HKEY_LOCAL_MACHINE, javaPluginKeyPath.charactersWithNullTermination(), L"UseNewJavaPlugin", &type, &useNewPluginValue, &useNewPluginSize);
 
         if (result == ERROR_SUCCESS && useNewPluginValue == 1) {
-            result = SHGetValue(HKEY_LOCAL_MACHINE, javaPluginKeyPath.charactersWithNullTermination(), TEXT("JavaHome"), &type, (LPBYTE)javaInstallPathStr, &javaInstallPathSize);
+            result = getRegistryValue(HKEY_LOCAL_MACHINE, javaPluginKeyPath.charactersWithNullTermination(), L"JavaHome", &type, javaInstallPathStr, &javaInstallPathSize);
             if (result == ERROR_SUCCESS) {
                 String javaPluginDirectory = String(javaInstallPathStr, javaInstallPathSize / sizeof(WCHAR) - 1) + "\\bin\\new_plugin";
                 directories.append(javaPluginDirectory);
