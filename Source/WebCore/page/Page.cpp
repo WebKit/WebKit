@@ -852,7 +852,7 @@ void Page::userStyleSheetLocationChanged()
 
     for (Frame* frame = mainFrame(); frame; frame = frame->tree()->traverseNext()) {
         if (frame->document())
-            frame->document()->styleSheetCollection()->updatePageUserSheet();
+            frame->document()->styleSheetCollection()->updatePageUserStyleSheet();
     }
 }
 

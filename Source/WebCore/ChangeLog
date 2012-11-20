@@ -1,3 +1,44 @@
+2012-11-19  Antti Koivisto  <antti@apple.com>
+
+        Collect user style sheets in DocumentStyleSheetCollection
+        https://bugs.webkit.org/show_bug.cgi?id=102683
+
+        Reviewed by Andreas Kling.
+
+        Move the user stylesheet collection logic from StyleResolver to DocumentStyleSheetCollection.
+        
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::StyleResolver):
+        (WebCore::StyleResolver::collectRulesFromUserStyleSheets):
+        (WebCore::collectCSSOMWrappers):
+        * css/StyleResolver.h:
+        (StyleResolver):
+        * dom/DocumentStyleSheetCollection.cpp:
+        (WebCore::DocumentStyleSheetCollection::~DocumentStyleSheetCollection):
+        (WebCore::DocumentStyleSheetCollection::pageUserStyleSheet):
+        (WebCore::DocumentStyleSheetCollection::clearPageUserStyleSheet):
+        (WebCore::DocumentStyleSheetCollection::updatePageUserStyleSheet):
+        (WebCore::DocumentStyleSheetCollection::analyzeStyleSheetChange):
+        (WebCore::collectActiveStyleSheetsFromSeamlessParents):
+        (WebCore::DocumentStyleSheetCollection::updateStyleResolver):
+        
+            Factor the StyleResolver updating code to function.
+
+        (WebCore):
+        (WebCore::DocumentStyleSheetCollection::updateActiveStyleSheets):
+        
+            Collect the user style sheets. Some renaming and other minor refactoring.
+
+        (WebCore::DocumentStyleSheetCollection::reportMemoryUsage):
+        * dom/DocumentStyleSheetCollection.h:
+        (WebCore::DocumentStyleSheetCollection::activeUserStyleSheets):
+        
+            Add activeUserStyleSheets vector that contains all user stylesheets from different sources,
+            similar to activeAuthorStyleSheets.
+
+        (DocumentStyleSheetCollection):
+        (WebCore::DocumentStyleSheetCollection::documentUserStyleSheets):
+
 2012-11-20  Elliott Sprehn  <esprehn@chromium.org>
 
         Remove unneeded optimization in Element::isInTopLayer
