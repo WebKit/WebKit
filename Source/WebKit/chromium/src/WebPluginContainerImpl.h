@@ -115,6 +115,7 @@ public:
     virtual bool isRectTopmost(const WebRect&);
     virtual void setIsAcceptingTouchEvents(bool);
     virtual void setWantsWheelEvents(bool);
+    virtual WebPoint windowToLocalPoint(const WebPoint&);
 
     // This cannot be null.
     WebPlugin* plugin() { return m_webPlugin; }

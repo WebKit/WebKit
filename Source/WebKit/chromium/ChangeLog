@@ -1,3 +1,52 @@
+2012-11-20  Istiaque Ahmed  <lazyboy@chromium.org>
+
+        Provide page/window coordinates to plugin's local coordinates translation in WebPluginContainer.
+        https://bugs.webkit.org/show_bug.cgi?id=102339
+
+        Reviewed by Adam Barth.
+
+        This change will allow converting a page's window coordinates to plugins's local coordinates,
+        taking CSS transformations into account. Embedder page of the plugin can use this information
+        for targetting elements inside the plugin (e.g. devtools can inspect a specific element at the
+        local coordinate position inside plugin).
+
+        * WebKit.gyp:
+        * WebKit.gypi:
+        * public/WebNode.h:
+        (WebKit):
+        * public/WebPluginContainer.h:
+        (WebKit):
+        (WebPluginContainer):
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::executeCommand):
+        (WebKit::WebFrameImpl::printBegin):
+        (WebKit::WebFrameImpl::isPrintScalingDisabledForPlugin):
+        * src/WebNode.cpp:
+        (WebKit::WebNode::pluginContainer):
+        (WebKit):
+        * src/WebPluginContainerImpl.cpp:
+        (WebKit::WebPluginContainerImpl::windowToLocalPoint):
+        (WebKit):
+        * src/WebPluginContainerImpl.h:
+        (WebPluginContainerImpl):
+        * tests/FakeWebPlugin.cpp: Added.
+        (WebKit):
+        (WebKit::FakeWebPlugin::FakeWebPlugin):
+        (WebKit::FakeWebPlugin::~FakeWebPlugin):
+        (WebKit::FakeWebPlugin::initialize):
+        (WebKit::FakeWebPlugin::destroy):
+        * tests/FakeWebPlugin.h: Added.
+        (WebKit):
+        (FakeWebPlugin):
+        * tests/WebPluginContainerTest.cpp: Added.
+        (WebKit):
+        (WebPluginContainerTest):
+        (WebKit::WebPluginContainerTest::WebPluginContainerTest):
+        (WebKit::WebPluginContainerTest::TearDown):
+        (WebKit::getWebPluginContainer):
+        (WebKit::TEST_F):
+        * tests/data/plugin_container.html: Added.
+
 2012-11-20  Alpha Lam  <hclam@chromium.org>
 
         [chromium] Make lazy image decoding thread-safe
