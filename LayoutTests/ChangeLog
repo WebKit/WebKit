@@ -1,3 +1,9 @@
+2012-11-20  Jian Li  <jianli@chromium.org>
+
+        Unreviewed. Updated chromium test expectations.
+
+        * platform/chromium/TestExpectations:
+
 2012-11-20  David Grogan  <dgrogan@chromium.org>
 
         IndexedDB: Remove legacy enum-based constants from IDL
