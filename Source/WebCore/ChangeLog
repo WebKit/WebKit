@@ -1,3 +1,79 @@
+2012-11-19  Matt Falkenhagen  <falken@chromium.org>
+
+        Implement the new stacking layer needed by the Fullscreen API and the new <dialog> element
+        https://bugs.webkit.org/show_bug.cgi?id=84796
+
+        Reviewed by Julien Chaffraix.
+
+        This adds the top layer element stack to Document. The Fullscreen
+        specification mandates that we track the ordering of the DOM nodes in
+        the top layer, not the renderers. That makes it hard to implement on
+        the rendering side only.
+
+        Elements in the top layer get a layer. Layers in the top layer are
+        added to the root layer's child list after normal layers and in the
+        order of the top layer stack. This way, the top layer appears above
+        all other stacking contexts and in the desired order.
+
+        In addition, top layer renderers are added as children of RenderView
+        in top layer order. This is to satisfy requirements such as the
+        containing block of an element in the top layer is the initial
+        containing block. It also allows RenderLayer to know the proper
+        stacking order of the layers without going directly from the top layer
+        elements to their layers.
+
+        So far, only modal dialog elements can be added to the top layer.
+        The plan is to make the Fullscreen API also use the top layer.
+
+        Tests: fast/dom/HTMLDialogElement/top-layer-containing-block.html
+               fast/dom/HTMLDialogElement/top-layer-display-none.html
+               fast/dom/HTMLDialogElement/top-layer-nesting.html
+               fast/dom/HTMLDialogElement/top-layer-stacking-dynamic.html
+               fast/dom/HTMLDialogElement/top-layer-stacking.html
+
+        * WebCore.exp.in:
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::adjustRenderStyle): Elements in the top layer have a stacking context.
+        * dom/Document.cpp:
+        (WebCore):
+        (WebCore::Document::addToTopLayer):
+        (WebCore::Document::removeFromTopLayer):
+        * dom/Document.h:
+        (Document):
+        (WebCore::Document::topLayerElements): Add the top layer element stack to Document.
+        * dom/Element.cpp:
+        (WebCore::Element::removedFrom):
+        (WebCore):
+        (WebCore::Element::isInTopLayer):
+        (WebCore::Element::setIsInTopLayer):
+        * dom/Element.h:
+        * dom/ElementRareData.h:
+        (ElementRareData):
+        * dom/Node.cpp:
+        (WebCore::Node::detach): Add an exception to the assert since top layer elements and their descendants are moved from their
+        regular position in the render tree.
+        * dom/NodeRareData.h:
+        (WebCore::NodeRareData::NodeRareData):
+        (NodeRareData):
+        (WebCore::NodeRareData::isInTopLayer):
+        (WebCore::NodeRareData::setIsInTopLayer):
+        * dom/NodeRenderingContext.cpp:
+        (WebCore):
+        (WebCore::adjustInsertionPointForTopLayerElement):
+        (WebCore::NodeRendererFactory::createRendererIfNeeded): Add renderers for top layer elements as children of RenderView, and
+        in top layer stacking order.
+        * html/HTMLDialogElement.cpp:
+        (WebCore::HTMLDialogElement::close):
+        (WebCore::HTMLDialogElement::showModal):
+        * rendering/RenderLayer.cpp:
+        (WebCore):
+        (WebCore::RenderLayer::isInTopLayer):
+        (WebCore::RenderLayer::isInTopLayerSubtree):
+        (WebCore::RenderLayer::rebuildZOrderLists): Add the top layer stack after normal layer collection.
+        (WebCore::RenderLayer::collectLayers): Avoid adding layers for top layer elements during normal layer collection.
+        * rendering/RenderLayer.h:
+        (RenderLayer):
+
 2012-11-19  Kentaro Hara  <haraken@chromium.org>
 
         In CodeGeneratorObj.pm we should rename $dataNode to $interface.

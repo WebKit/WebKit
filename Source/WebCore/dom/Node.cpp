@@ -112,6 +112,10 @@
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
 
+#ifndef NDEBUG
+#include "RenderLayer.h"
+#endif
+
 #if ENABLE(GESTURE_EVENTS)
 #include "GestureEvent.h"
 #endif
@@ -1306,9 +1310,13 @@ void Node::detach()
 #ifndef NDEBUG
         for (Node* node = this; node; node = node->traverseNextNode(this)) {
             RenderObject* renderer = node->renderer();
-            // RenderFlowThread removes some elements from the regular tree
+            // RenderFlowThread and the top layer remove elements from the regular tree
             // hierarchy. They will be cleaned up when we call detach on them.
+#if ENABLE(DIALOG_ELEMENT)
+            ASSERT(!renderer || renderer->inRenderFlowThread() || (renderer->enclosingLayer()->isInTopLayerSubtree()));
+#else
             ASSERT(!renderer || renderer->inRenderFlowThread());
+#endif
         }
 #endif
     }

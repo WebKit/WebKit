@@ -53,6 +53,7 @@ void HTMLDialogElement::close(ExceptionCode& ec)
         return;
     }
     setBooleanAttribute(openAttr, false);
+    setIsInTopLayer(false);
 }
 
 void HTMLDialogElement::show()
@@ -69,6 +70,7 @@ void HTMLDialogElement::showModal(ExceptionCode& ec)
         return;
     }
     setBooleanAttribute(openAttr, true);
+    setIsInTopLayer(true);
 }
 
 bool HTMLDialogElement::isPresentationAttribute(const QualifiedName& name) const

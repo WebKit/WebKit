@@ -212,6 +212,26 @@ RenderObject* NodeRendererFactory::createRenderer()
     return newRenderer;
 }
 
+#if ENABLE(DIALOG_ELEMENT)
+static void adjustInsertionPointForTopLayerElement(Element* element, RenderObject*& parentRenderer, RenderObject*& nextRenderer)
+{
+    parentRenderer = parentRenderer->view();
+    nextRenderer = 0;
+    const Vector<RefPtr<Element> >& topLayerElements = element->document()->topLayerElements();
+    size_t topLayerPosition = topLayerElements.find(element);
+    ASSERT(topLayerPosition != notFound);
+    // Find the next top layer renderer that's stacked above this element. Note that the immediate next element in the top layer
+    // stack might not have a renderer (due to display: none, or possibly it is not attached yet).
+    for (size_t i = topLayerPosition + 1; i < topLayerElements.size(); ++i) {
+        nextRenderer = topLayerElements[i]->renderer();
+        if (nextRenderer) {
+            ASSERT(nextRenderer->parent() == parentRenderer);
+            break;
+        }
+    }
+}
+#endif
+
 void NodeRendererFactory::createRendererIfNeeded()
 {
     Node* node = m_context.node();
@@ -241,6 +261,12 @@ void NodeRendererFactory::createRendererIfNeeded()
     // Do not call m_context.nextRenderer() here in the first clause, because it expects to have
     // the renderer added to its parent already.
     RenderObject* nextRenderer = m_context.hasFlowThreadParent() ? m_context.parentFlowRenderer()->nextRendererForNode(node) : m_context.nextRenderer();
+
+#if ENABLE(DIALOG_ELEMENT)
+    if (element && element->isInTopLayer())
+        adjustInsertionPointForTopLayerElement(element, parentRenderer, nextRenderer);
+#endif
+
     RenderObject* newRenderer = createRenderer();
 
 #if ENABLE(FULLSCREEN_API)

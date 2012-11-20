@@ -53,6 +53,10 @@ public:
     using NodeRareData::containsFullScreenElement;
     using NodeRareData::setContainsFullScreenElement;
 #endif
+#if ENABLE(DIALOG_ELEMENT)
+    using NodeRareData::isInTopLayer;
+    using NodeRareData::setIsInTopLayer;
+#endif
 
     bool hasCachedHTMLCollections() const
     {

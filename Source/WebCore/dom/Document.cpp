@@ -5488,6 +5488,21 @@ void Document::addDocumentToFullScreenChangeEventQueue(Document* doc)
 }
 #endif
 
+#if ENABLE(DIALOG_ELEMENT)
+void Document::addToTopLayer(Element* element)
+{
+    ASSERT(!m_topLayerElements.contains(element));
+    m_topLayerElements.append(element);
+}
+
+void Document::removeFromTopLayer(Element* element)
+{
+    size_t position = m_topLayerElements.find(element);
+    ASSERT(position != notFound);
+    m_topLayerElements.remove(position);
+}
+#endif
+
 #if ENABLE(POINTER_LOCK)
 void Document::webkitExitPointerLock()
 {

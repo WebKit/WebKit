@@ -3667,6 +3667,23 @@ Node* RenderLayer::enclosingElement() const
     return 0;
 }
 
+#if ENABLE(DIALOG_ELEMENT)
+bool RenderLayer::isInTopLayer() const
+{
+    Node* node = renderer()->node();
+    return node && node->isElementNode() && toElement(node)->isInTopLayer();
+}
+
+bool RenderLayer::isInTopLayerSubtree() const
+{
+    for (const RenderLayer* layer = this; layer; layer = layer->parent()) {
+        if (layer->isInTopLayer())
+            return true;
+    }
+    return false;
+}
+#endif
+
 // Compute the z-offset of the point in the transformState.
 // This is effectively projecting a ray normal to the plane of ancestor, finding where that
 // ray intersects target, and computing the z delta between those two points.
@@ -4786,6 +4803,21 @@ void RenderLayer::rebuildZOrderLists()
     if (m_negZOrderList)
         std::stable_sort(m_negZOrderList->begin(), m_negZOrderList->end(), compareZIndex);
 
+#if ENABLE(DIALOG_ELEMENT)
+    // Append layers for top layer elements after normal layer collection, to ensure they are on top regardless of z-indexes.
+    // The renderers of top layer elements are children of the view, sorted in top layer stacking order.
+    if (isRootLayer()) {
+        RenderObject* view = renderer()->view();
+        for (RenderObject* child = view->firstChild(); child; child = child->nextSibling()) {
+            Element* childElement = child->node()->isElementNode() ? toElement(child->node()) : 0;
+            if (childElement && childElement->isInTopLayer()) {
+                RenderLayer* layer = toRenderLayerModelObject(child)->layer();
+                m_posZOrderList->append(layer);
+            }
+        }
+    }
+#endif
+
     m_zOrderListsDirty = false;
 }
 
@@ -4810,6 +4842,11 @@ void RenderLayer::updateNormalFlowList()
 
 void RenderLayer::collectLayers(bool includeHiddenLayers, Vector<RenderLayer*>*& posBuffer, Vector<RenderLayer*>*& negBuffer)
 {
+#if ENABLE(DIALOG_ELEMENT)
+    if (isInTopLayer())
+        return;
+#endif
+
     updateDescendantDependentFlags();
 
     // Overflow layers are just painted by their enclosing layers, so they don't get put in zorder lists.

@@ -1,3 +1,23 @@
+2012-11-19  Matt Falkenhagen  <falken@chromium.org>
+
+        Implement the new stacking layer needed by the Fullscreen API and the new <dialog> element
+        https://bugs.webkit.org/show_bug.cgi?id=84796
+
+        Reviewed by Julien Chaffraix.
+
+        Add tests for top layer stacking and rendering.
+
+        * fast/dom/HTMLDialogElement/top-layer-containing-block-expected.html: Added.
+        * fast/dom/HTMLDialogElement/top-layer-containing-block.html: Added.
+        * fast/dom/HTMLDialogElement/top-layer-display-none-expected.html: Added.
+        * fast/dom/HTMLDialogElement/top-layer-display-none.html: Added.
+        * fast/dom/HTMLDialogElement/top-layer-nesting-expected.html: Added.
+        * fast/dom/HTMLDialogElement/top-layer-nesting.html: Added.
+        * fast/dom/HTMLDialogElement/top-layer-stacking-dynamic-expected.html: Added.
+        * fast/dom/HTMLDialogElement/top-layer-stacking-dynamic.html: Added.
+        * fast/dom/HTMLDialogElement/top-layer-stacking-expected.html: Added.
+        * fast/dom/HTMLDialogElement/top-layer-stacking.html: Added.
+
 2012-11-19  Yury Semikhatsky  <yurys@chromium.org>
 
         Unreviewed. Fix lint errors on chromium TextExpectations after r135205.

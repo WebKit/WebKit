@@ -2215,6 +2215,10 @@ __ZNK7WebCore8Document16annotatedRegionsEv
 #if ENABLE(DASHBOARD_SUPPORT)
 #endif
 
+#if ENABLE(DIALOG_ELEMENT)
+__ZNK7WebCore11RenderLayer12isInTopLayerEv
+#endif
+
 #if ENABLE(DRAG_SUPPORT)
 __ZN7WebCore12EventHandler17dragSourceEndedAtERKNS_18PlatformMouseEventENS_13DragOperationE
 __ZNK7WebCore12EventHandler17eventMayStartDragERKNS_18PlatformMouseEventE

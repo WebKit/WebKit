@@ -193,6 +193,9 @@ public:
 #if ENABLE(FULLSCREEN_API)
         , m_containsFullScreenElement(false)
 #endif
+#if ENABLE(DIALOG_ELEMENT)
+        , m_isInTopLayer(false)
+#endif
     {
     }
 
@@ -311,6 +314,10 @@ protected:
     bool containsFullScreenElement() { return m_containsFullScreenElement; }
     void setContainsFullScreenElement(bool value) { m_containsFullScreenElement = value; }
 #endif
+#if ENABLE(DIALOG_ELEMENT)
+    bool isInTopLayer() const { return m_isInTopLayer; }
+    void setIsInTopLayer(bool value) { m_isInTopLayer = value; }
+#endif
 
 private:
     TreeScope* m_treeScope;
@@ -324,6 +331,9 @@ private:
     bool m_isInCanvasSubtree : 1;
 #if ENABLE(FULLSCREEN_API)
     bool m_containsFullScreenElement : 1;
+#endif
+#if ENABLE(DIALOG_ELEMENT)
+    bool m_isInTopLayer : 1;
 #endif
 
 #if ENABLE(MUTATION_OBSERVERS)

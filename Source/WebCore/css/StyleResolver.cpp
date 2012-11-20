@@ -1983,6 +1983,9 @@ void StyleResolver::adjustRenderStyle(RenderStyle* style, RenderStyle* parentSty
         // Touch overflow scrolling creates a stacking context.
         || ((style->overflowX() != OHIDDEN || style->overflowY() != OHIDDEN) && style->useTouchOverflowScrolling())
 #endif
+#if ENABLE(DIALOG_ELEMENT)
+        || (e && e->isInTopLayer())
+#endif
         ))
         style->setZIndex(0);
 

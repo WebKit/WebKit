@@ -1151,6 +1151,9 @@ Node::InsertionNotificationRequest Element::insertedInto(ContainerNode* insertio
 
 void Element::removedFrom(ContainerNode* insertionPoint)
 {
+#if ENABLE(DIALOG_ELEMENT)
+    setIsInTopLayer(false);
+#endif
 #if ENABLE(FULLSCREEN_API)
     if (containsFullScreenElement())
         setContainsFullScreenElementOnAncestorsCrossingFrameBoundaries(false);
@@ -2176,6 +2179,34 @@ void Element::setContainsFullScreenElementOnAncestorsCrossingFrameBoundaries(boo
         element->setContainsFullScreenElement(flag);
 }
 #endif    
+
+#if ENABLE(DIALOG_ELEMENT)
+bool Element::isInTopLayer() const
+{
+    return hasRareData() && elementRareData()->isInTopLayer();
+}
+
+void Element::setIsInTopLayer(bool inTopLayer)
+{
+    // To avoid an extra call to elementRareData(), don't use Element::isInTopLayer().
+    ElementRareData* rareData = hasRareData() ? elementRareData() : 0;
+    if (rareData) {
+        if (rareData->isInTopLayer() == inTopLayer)
+            return;
+    } else {
+        if (!inTopLayer)
+            return;
+        rareData = ensureElementRareData();
+    }
+    rareData->setIsInTopLayer(inTopLayer);
+
+    if (inTopLayer)
+        document()->addToTopLayer(this);
+    else
+        document()->removeFromTopLayer(this);
+    setNeedsStyleRecalc(SyntheticStyleChange);
+}
+#endif
 
 #if ENABLE(POINTER_LOCK)
 void Element::webkitRequestPointerLock()
