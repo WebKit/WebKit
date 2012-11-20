@@ -1,3 +1,19 @@
+2012-11-19  Patrick Gansterer  <paroga@webkit.org>
+
+        Port DragDataWin.cpp to WinCE
+        https://bugs.webkit.org/show_bug.cgi?id=97803
+
+        Reviewed by Brent Fulgham.
+
+        Add two simple #if OS(WINCE) to DragDataWin.cpp, so it can be used by the WinCE port too.
+
+        * PlatformWinCE.cmake:
+        * platform/win/DragDataWin.cpp:
+        (WebCore::DragData::containsFiles):
+        (WebCore::DragData::numberOfFiles):
+        (WebCore::DragData::asFilenames):
+        * platform/wince/DragDataWinCE.cpp: Removed.
+
 2012-11-19  Pan Deng  <pan.deng@intel.com>
 
         [Web Inspector] This patch makes script line number search-able in Timeline panel.

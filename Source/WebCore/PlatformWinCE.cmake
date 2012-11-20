@@ -37,6 +37,7 @@ LIST(APPEND WebCore_SOURCES
     platform/win/ContextMenuItemWin.cpp
     platform/win/ContextMenuWin.cpp
     platform/win/CursorWin.cpp
+    platform/win/DragDataWin.cpp
     platform/win/EditorWin.cpp
     platform/win/EventLoopWin.cpp
     platform/win/KeyEventWin.cpp
@@ -59,7 +60,6 @@ LIST(APPEND WebCore_SOURCES
     platform/win/WidgetWin.cpp
     platform/win/WheelEventWin.cpp
 
-    platform/wince/DragDataWince.cpp
     platform/wince/DragImageWince.cpp
     platform/wince/FileSystemWince.cpp
     platform/wince/KURLWince.cpp

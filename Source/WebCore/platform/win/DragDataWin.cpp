@@ -107,11 +107,18 @@ String DragData::asURL(Frame*, FilenameConversionPolicy filenamePolicy, String* 
 
 bool DragData::containsFiles() const
 {
+#if OS(WINCE)
+    return false;
+#else
     return (m_platformDragData) ? SUCCEEDED(m_platformDragData->QueryGetData(cfHDropFormat())) : m_dragDataMap.contains(cfHDropFormat()->cfFormat);
+#endif
 }
 
 unsigned DragData::numberOfFiles() const
 {
+#if OS(WINCE)
+    return 0;
+#else
     if (!m_platformDragData)
         return 0;
 
@@ -130,19 +137,21 @@ unsigned DragData::numberOfFiles() const
     GlobalUnlock(medium.hGlobal);
 
     return numFiles;
+#endif
 }
 
 void DragData::asFilenames(Vector<String>& result) const
 {
+#if !OS(WINCE)
     if (m_platformDragData) {
         WCHAR filename[MAX_PATH];
-        
+
         STGMEDIUM medium;
         if (FAILED(m_platformDragData->GetData(cfHDropFormat(), &medium)))
             return;
-       
+
         HDROP hdrop = reinterpret_cast<HDROP>(GlobalLock(medium.hGlobal)); 
-        
+
         if (!hdrop)
             return;
 
@@ -160,6 +169,7 @@ void DragData::asFilenames(Vector<String>& result) const
         return;
     }
     result = m_dragDataMap.get(cfHDropFormat()->cfFormat);
+#endif
 }
 
 bool DragData::containsPlainText() const
