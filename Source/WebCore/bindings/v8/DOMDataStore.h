@@ -63,10 +63,8 @@ public:
 
     static v8::Handle<v8::Object> getNode(Node* object, v8::Isolate* isolate)
     {
-        if (LIKELY(!DOMWrapperWorld::isolatedWorldsExist())) {
-            ASSERT(wrapperIsStoredInObject(object));
+        if (LIKELY(!DOMWrapperWorld::isolatedWorldsExist()))
             return getWrapperFromObject(object);
-        }
         return current(isolate)->get(object);
     }
 
