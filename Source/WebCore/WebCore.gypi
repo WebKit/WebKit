@@ -5842,7 +5842,6 @@
             'platform/win/WindowMessageBroadcaster.h',
             'platform/win/WindowMessageListener.h',
             'platform/wince/CursorWinCE.cpp',
-            'platform/wince/DragDataWinCE.cpp',
             'platform/wince/DragImageWinCE.cpp',
             'platform/wince/FileSystemWinCE.cpp',
             'platform/wince/KURLWinCE.cpp',

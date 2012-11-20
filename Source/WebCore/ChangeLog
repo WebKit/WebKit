@@ -1,3 +1,11 @@
+2012-11-19  Yury Semikhatsky  <yurys@chromium.org>
+
+        Unreviewed. Fix Chromium Win compilation after r135255.
+        https://bugs.webkit.org/show_bug.cgi?id=97803
+
+        * WebCore.gypi: removed reference to platform/wince/DragDataWince.cpp which
+        was deleted in the aforementioned change.
+
 2012-11-19  Kentaro Hara  <haraken@chromium.org>
 
         [V8] Merge getCachedWrapper(Node*) into DOMDataStore
