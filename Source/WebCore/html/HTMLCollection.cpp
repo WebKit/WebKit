@@ -116,11 +116,8 @@ static NodeListInvalidationType invalidationTypeExcludingIdAndNameAttributes(Col
     case DocImages:
     case DocEmbeds:
     case DocForms:
-    case DocAnchors: // Depends on name attribute.
     case DocScripts:
     case DocAll:
-    case WindowNamedItems: // Depends on id and name attributes.
-    case DocumentNamedItems: // Ditto.
     case NodeChildren:
     case TableTBodies:
     case TSectionRows:
@@ -134,8 +131,14 @@ static NodeListInvalidationType invalidationTypeExcludingIdAndNameAttributes(Col
     case DataListOptions:
         // FIXME: We can do better some day.
         return InvalidateOnAnyAttrChange;
+    case DocAnchors:
+        return InvalidateOnNameAttrChange;
     case DocLinks:
         return InvalidateOnHRefAttrChange;
+    case WindowNamedItems:
+        return InvalidateOnIdNameAttrChange;
+    case DocumentNamedItems:
+        return InvalidateOnIdNameAttrChange;
 #if ENABLE(MICRODATA)
     case ItemProperties:
         return InvalidateOnItemAttrChange;

@@ -1,3 +1,25 @@
+2012-11-20  Ryosuke Niwa  <rniwa@webkit.org>
+
+        HTMLCollection's cache should not be invalidated when id or name attributes are changed
+        https://bugs.webkit.org/show_bug.cgi?id=102843
+
+        Reviewed by Eric Seidel.
+
+        When an id or name attribute changes, only invaliate id and name cache maps when the collection
+        doesn't depend on id and name attributes (e.g. document.images).
+
+        Unfortunately, I could not create a reliable test for this performance problem.
+
+        * dom/DynamicNodeList.cpp:
+        (WebCore::DynamicNodeListCacheBase::invalidateIdNameCacheMaps):
+        * dom/DynamicNodeList.h:
+        (WebCore::DynamicNodeListCacheBase::invalidateCache):
+        (DynamicNodeListCacheBase):
+        * dom/ElementRareData.h:
+        (WebCore::ElementRareData::clearHTMLCollectionCaches):
+        * html/HTMLCollection.cpp:
+        (WebCore::invalidationTypeExcludingIdAndNameAttributes):
+
 2012-11-20  Adam Klein  <adamk@chromium.org>
 
         [v8] Avoid unnecessary call to ToObject() in Callback constructors
