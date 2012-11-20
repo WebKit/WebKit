@@ -1,3 +1,21 @@
+2012-11-19  Filip Pizlo  <fpizlo@apple.com>
+
+        Remove support for ARMv7 errata from the jump code
+        https://bugs.webkit.org/show_bug.cgi?id=102759
+
+        Reviewed by Oliver Hunt.
+
+        The jump replacement code was wrong to begin with since it wasn't doing
+        a cache flush on the inserted padding. And, to my knowledge, we don't need
+        this anymore, so this patch removes all errata code from the ARMv7 port.
+
+        * assembler/ARMv7Assembler.h:
+        (JSC::ARMv7Assembler::computeJumpType):
+        (JSC::ARMv7Assembler::replaceWithJump):
+        (JSC::ARMv7Assembler::maxJumpReplacementSize):
+        (JSC::ARMv7Assembler::canBeJumpT3):
+        (JSC::ARMv7Assembler::canBeJumpT4):
+
 2012-11-19  Patrick Gansterer  <paroga@webkit.org>
 
         [CMake] Create JavaScriptCore ForwardingHeaders
