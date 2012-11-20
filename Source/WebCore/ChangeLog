@@ -1,3 +1,20 @@
+2012-11-20  Elliott Sprehn  <esprehn@chromium.org>
+
+        Merge checks for creating renderers into shouldCreateRenderer
+        https://bugs.webkit.org/show_bug.cgi?id=102768
+
+        Reviewed by Ojan Vafai.
+
+        Merge the checks for if renderers should be created into shouldCreateRenderer
+        so simplify the code and ensure correctness if doing
+        NodeRenderingContext(node).shouldCreateRenderer() in other places in webkit.
+
+        No new tests, just refactoring.
+
+        * dom/NodeRenderingContext.cpp:
+        (WebCore::NodeRenderingContext::shouldCreateRenderer):
+        (WebCore::NodeRendererFactory::createRendererIfNeeded):
+
 2012-11-19  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: simplify? damaged region computation in the editor

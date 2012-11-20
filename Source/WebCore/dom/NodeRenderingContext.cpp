@@ -142,6 +142,8 @@ RenderObject* NodeRenderingContext::parentRenderer() const
 
 bool NodeRenderingContext::shouldCreateRenderer() const
 {
+    if (!m_node->document()->shouldCreateRenderers())
+        return false;
     if (!m_parentDetails.node())
         return false;
     RenderObject* parentRenderer = this->parentRenderer();
@@ -235,12 +237,7 @@ static void adjustInsertionPointForTopLayerElement(Element* element, RenderObjec
 void NodeRendererFactory::createRendererIfNeeded()
 {
     Node* node = m_context.node();
-    Document* document = node->document();
-    if (!document->shouldCreateRenderers())
-        return;
-
     ASSERT(!node->renderer());
-    ASSERT(document->shouldCreateRenderers());
 
     if (!m_context.shouldCreateRenderer())
         return;
@@ -274,6 +271,7 @@ void NodeRendererFactory::createRendererIfNeeded()
     RenderObject* newRenderer = createRenderer();
 
 #if ENABLE(FULLSCREEN_API)
+    Document* document = node->document();
     if (document->webkitIsFullScreen() && document->webkitCurrentFullScreenElement() == node)
         newRenderer = RenderFullScreen::wrapRenderer(newRenderer, parentRenderer, document);
 #endif
