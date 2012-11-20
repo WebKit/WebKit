@@ -89,7 +89,7 @@ public:
     void setWindowIsKey(bool isKey) { m_windowIsKey = isKey; }
     bool windowIsKey() const { return m_windowIsKey; }
 
-#if PLATFORM(MAC) || PLATFORM(EFL)
+#if PLATFORM(MAC) || PLATFORM(EFL) || PLATFORM(QT)
     bool viewSupportsOptions(WKDictionaryRef) const;
 #else
     bool viewSupportsOptions(WKDictionaryRef) const { return true; }
@@ -101,7 +101,7 @@ private:
     PlatformWKView m_view;
     PlatformWindow m_window;
     bool m_windowIsKey;
-#if PLATFORM(EFL)
+#if PLATFORM(EFL) || PLATFORM(QT)
     bool m_usingFixedLayout;
 #endif
 #if PLATFORM(QT)

@@ -77,14 +77,19 @@ private:
     QQuickWebView* m_view;
 };
 
-PlatformWebView::PlatformWebView(WKContextRef contextRef, WKPageGroupRef pageGroupRef, WKDictionaryRef /*options*/)
-    : m_view(new QQuickWebView(contextRef, pageGroupRef))
-    , m_window(new WrapperWindow(m_view))
-    , m_windowIsKey(true)
+PlatformWebView::PlatformWebView(WKContextRef contextRef, WKPageGroupRef pageGroupRef, WKDictionaryRef options)
+    : m_windowIsKey(true)
     , m_modalEventLoop(0)
 {
+    WKRetainPtr<WKStringRef> useFixedLayoutKey(AdoptWK, WKStringCreateWithUTF8CString("UseFixedLayout"));
+    m_usingFixedLayout = options ? WKBooleanGetValue(static_cast<WKBooleanRef>(WKDictionaryGetItemForKey(options, useFixedLayoutKey.get()))) : false;
+    QQuickWebViewExperimental::setFlickableViewportEnabled(m_usingFixedLayout);
+
+    m_view = new QQuickWebView(contextRef, pageGroupRef);
     m_view->setAllowAnyHTTPSCertificateForLocalHost(true);
     m_view->componentComplete();
+
+    m_window = new WrapperWindow(m_view);
 }
 
 PlatformWebView::~PlatformWebView()
@@ -170,6 +175,13 @@ bool PlatformWebView::windowShapshotEnabled()
     if (!hasChecked)
         result = qgetenv("QT_WEBKIT_DISABLE_UIPROCESS_DUMPPIXELS") != "1";
     return result;
+}
+
+bool PlatformWebView::viewSupportsOptions(WKDictionaryRef options) const
+{
+    WKRetainPtr<WKStringRef> useFixedLayoutKey(AdoptWK, WKStringCreateWithUTF8CString("UseFixedLayout"));
+
+    return m_usingFixedLayout == (options ? WKBooleanGetValue(static_cast<WKBooleanRef>(WKDictionaryGetItemForKey(options, useFixedLayoutKey.get()))) : false);
 }
 
 } // namespace WTR

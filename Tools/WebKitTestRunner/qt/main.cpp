@@ -122,7 +122,6 @@ int main(int argc, char** argv)
     WebKit::QtTestSupport::initializeTestFonts();
     QCoreApplication::setAttribute(Qt::AA_Use96Dpi, true);
 
-    QQuickWebViewExperimental::setFlickableViewportEnabled(false);
     QApplication app(argc, argv);
     Launcher launcher(argc, argv);
     QTimer::singleShot(0, &launcher, SLOT(launch()));

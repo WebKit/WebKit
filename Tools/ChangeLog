@@ -1,5 +1,25 @@
 2012-11-20  Thiago Marcos P. Santos  <thiago.santos@intel.com>
 
+        [WTR][Qt] Enable fixedLayout when needed by the test
+        https://bugs.webkit.org/show_bug.cgi?id=102811
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Create a flickable view for CSS Device Adaptation tests. This is
+        crucial for testing them since they will change the size of the
+        viewport.
+
+        * WebKitTestRunner/PlatformWebView.h:
+        (PlatformWebView):
+        * WebKitTestRunner/qt/PlatformWebViewQt.cpp:
+        (WTR::PlatformWebView::PlatformWebView):
+        (WTR::PlatformWebView::viewSupportsOptions):
+        (WTR):
+        * WebKitTestRunner/qt/main.cpp:
+        (main):
+
+2012-11-20  Thiago Marcos P. Santos  <thiago.santos@intel.com>
+
         [WTR] WebKitTestRunner should be able to run tests using fixed layout
         https://bugs.webkit.org/show_bug.cgi?id=102517
 
