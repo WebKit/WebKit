@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2012 Samsung Electronics
+ * Copyright (C) 2012 Intel Corporation. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -48,11 +49,19 @@ static Ecore_Evas* initEcoreEvas()
     return ecoreEvas;
 }
 
-PlatformWebView::PlatformWebView(WKContextRef context, WKPageGroupRef pageGroup, WKDictionaryRef /*options*/)
+PlatformWebView::PlatformWebView(WKContextRef context, WKPageGroupRef pageGroup, WKDictionaryRef options)
 {
+    WKRetainPtr<WKStringRef> useFixedLayoutKey(AdoptWK, WKStringCreateWithUTF8CString("UseFixedLayout"));
+    m_usingFixedLayout = options ? WKBooleanGetValue(static_cast<WKBooleanRef>(WKDictionaryGetItemForKey(options, useFixedLayoutKey.get()))) : false;
+
     m_window = initEcoreEvas();
     Evas* evas = ecore_evas_get(m_window);
-    m_view = toImpl(WKViewCreate(evas, context, pageGroup));
+
+    if (m_usingFixedLayout) {
+        m_view = toImpl(WKViewCreateWithFixedLayout(evas, context, pageGroup));
+        evas_object_resize(m_view, 800, 600);
+    } else
+        m_view = toImpl(WKViewCreate(evas, context, pageGroup));
 
     ewk_view_theme_set(m_view, THEME_DIR"/default.edj");
     m_windowIsKey = false;
@@ -118,6 +127,13 @@ WKRetainPtr<WKImageRef> PlatformWebView::windowSnapshotImage()
     // FIXME: implement to capture pixels in the UI process,
     // which may be necessary to capture things like 3D transforms.
     return 0;
+}
+
+bool PlatformWebView::viewSupportsOptions(WKDictionaryRef options) const
+{
+    WKRetainPtr<WKStringRef> useFixedLayoutKey(AdoptWK, WKStringCreateWithUTF8CString("UseFixedLayout"));
+
+    return m_usingFixedLayout == (options ? WKBooleanGetValue(static_cast<WKBooleanRef>(WKDictionaryGetItemForKey(options, useFixedLayoutKey.get()))) : false);
 }
 
 } // namespace WTR

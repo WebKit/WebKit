@@ -21,9 +21,10 @@
 #ifndef ewk_view_private_h
 #define ewk_view_private_h
 
+#include "EwkViewImpl.h"
 #include <Evas.h>
 #include <WebKit2/WKBase.h>
 
-Evas_Object* ewk_view_base_add(Evas* canvas, WKContextRef, WKPageGroupRef);
+Evas_Object* ewk_view_base_add(Evas* canvas, WKContextRef, WKPageGroupRef, EwkViewImpl::ViewBehavior);
 
 #endif // ewk_view_private_h

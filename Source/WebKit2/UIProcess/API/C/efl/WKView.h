@@ -30,6 +30,8 @@ extern "C" {
 
 WK_EXPORT WKViewRef WKViewCreate(Evas* canvas, WKContextRef context, WKPageGroupRef pageGroup);
 
+WK_EXPORT WKViewRef WKViewCreateWithFixedLayout(Evas* canvas, WKContextRef context, WKPageGroupRef pageGroup);
+
 WK_EXPORT WKPageRef WKViewGetPage(WKViewRef view);
 
 #ifdef __cplusplus

@@ -521,9 +521,9 @@ static inline Evas_Object* createEwkView(Evas* canvas, Evas_Smart* smart, PassRe
  * @internal
  * Constructs a ewk_view Evas_Object with WKType parameters.
  */
-Evas_Object* ewk_view_base_add(Evas* canvas, WKContextRef contextRef, WKPageGroupRef pageGroupRef)
+Evas_Object* ewk_view_base_add(Evas* canvas, WKContextRef contextRef, WKPageGroupRef pageGroupRef, EwkViewImpl::ViewBehavior behavior)
 {
-    return createEwkView(canvas, createEwkViewSmartClass(), EwkContext::create(toImpl(contextRef)), pageGroupRef, EwkViewImpl::LegacyBehavior);
+    return createEwkView(canvas, createEwkViewSmartClass(), EwkContext::create(toImpl(contextRef)), pageGroupRef, behavior);
 }
 
 Evas_Object* ewk_view_smart_add(Evas* canvas, Evas_Smart* smart, Ewk_Context* context)

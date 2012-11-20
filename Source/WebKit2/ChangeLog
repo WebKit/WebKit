@@ -1,3 +1,24 @@
+2012-11-20  Thiago Marcos P. Santos  <thiago.santos@intel.com>
+
+        [WTR] WebKitTestRunner should be able to run tests using fixed layout
+        https://bugs.webkit.org/show_bug.cgi?id=102517
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Update EFL private API so we can create a view with fixed layout. We
+        can keep this as private as I don't see a real life use case for it
+        outside WTR and the WebInspector.
+
+        * UIProcess/API/C/efl/WKView.cpp:
+        (WKViewCreate):
+        (WKViewCreateWithFixedLayout):
+        * UIProcess/API/C/efl/WKView.h:
+        * UIProcess/API/efl/ewk_view.cpp:
+        (ewk_view_base_add):
+        * UIProcess/API/efl/ewk_view_private.h:
+        * UIProcess/efl/WebInspectorProxyEfl.cpp:
+        (WebKit::WebInspectorProxy::platformCreateInspectorPage):
+
 2012-11-20  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         [Qt] PageViewportControllerClient::didChangeViewportAttributes called twice

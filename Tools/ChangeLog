@@ -1,3 +1,30 @@
+2012-11-20  Thiago Marcos P. Santos  <thiago.santos@intel.com>
+
+        [WTR] WebKitTestRunner should be able to run tests using fixed layout
+        https://bugs.webkit.org/show_bug.cgi?id=102517
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        WTR will now request the creation of a view that has a page using
+        fixed layout for CSS Device Adaptation tests, but this feature might
+        be used in the future by any other test that requires a mobile-like type
+        of viewport (i.e. Viewport META tests should be ported).
+
+        The viewport type of the other tests remains unchanged and is restored
+        when the runner leaves the device-adapt/ folder.
+
+        * WebKitTestRunner/PlatformWebView.h:
+        (PlatformWebView):
+        * WebKitTestRunner/TestInvocation.cpp:
+        (WTR):
+        (WTR::shouldUseFixedLayout):
+        (WTR::updateLayoutType):
+        (WTR::TestInvocation::invoke):
+        * WebKitTestRunner/efl/PlatformWebViewEfl.cpp:
+        (WTR::PlatformWebView::PlatformWebView):
+        (WTR::PlatformWebView::viewSupportsOptions):
+        (WTR):
+
 2012-11-20  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] REGRESSION(r128174): Fast build path doesn't work now
