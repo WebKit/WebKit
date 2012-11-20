@@ -1,3 +1,18 @@
+2012-11-20  Adam Klein  <adamk@chromium.org>
+
+        [v8] Avoid unnecessary call to ToObject() in Callback constructors
+        https://bugs.webkit.org/show_bug.cgi?id=102831
+
+        Reviewed by Adam Barth.
+
+        The code already asserted that the argument was an object, so calling
+        ToObject() is unnecessary: a simple Cast() suffices.
+
+        * bindings/scripts/CodeGeneratorV8.pm:
+        (GenerateCallbackHeader):
+        * bindings/scripts/test/V8/V8TestCallback.h:
+        (WebCore::V8TestCallback::create):
+
 2012-11-20  Brent Fulgham  <bfulgham@webkit.org>
 
         [WinCairo] Build fix after r135316

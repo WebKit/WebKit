@@ -3250,7 +3250,7 @@ public:
     {
         ASSERT(value->IsObject());
         ASSERT(context);
-        return adoptRef(new ${v8InterfaceName}(value->ToObject(), context, owner));
+        return adoptRef(new ${v8InterfaceName}(v8::Handle<v8::Object>::Cast(value), context, owner));
     }
 
     virtual ~${v8InterfaceName}();

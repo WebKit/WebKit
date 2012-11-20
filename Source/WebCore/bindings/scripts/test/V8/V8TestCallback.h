@@ -39,7 +39,7 @@ public:
     {
         ASSERT(value->IsObject());
         ASSERT(context);
-        return adoptRef(new V8TestCallback(value->ToObject(), context, owner));
+        return adoptRef(new V8TestCallback(v8::Handle<v8::Object>::Cast(value), context, owner));
     }
 
     virtual ~V8TestCallback();
