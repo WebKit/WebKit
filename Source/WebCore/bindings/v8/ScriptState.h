@@ -56,6 +56,7 @@ public:
         m_exception = exception;
     }
     v8::Local<v8::Value> exception() { return m_exception; }
+    void clearException() { m_exception.Clear(); }
 
     v8::Local<v8::Context> context() const
     {

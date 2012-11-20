@@ -982,7 +982,7 @@ END
         } else {
             $functionName = "imp->${functionName}";
         }
-        unshift(@arguments, GenerateCallWith($attribute->signature->extendedAttributes->{"CallWith"}, \@implContentDecls, "    ", 0, 0));
+        unshift(@arguments, GenerateCallWith($attribute->signature->extendedAttributes->{"CallWith"}, \@implContentDecls, "    ", 0));
         $getterString = "${functionName}(" . join(", ", @arguments) . ")";
     } else {
         $getterString = "impInstance";
@@ -1299,7 +1299,7 @@ END
             } else {
                 $functionName = "imp->${functionName}";
             }
-            unshift(@arguments, GenerateCallWith($attribute->signature->extendedAttributes->{"CallWith"}, \@implContentDecls, "    ", 1, 0));
+            unshift(@arguments, GenerateCallWith($attribute->signature->extendedAttributes->{"CallWith"}, \@implContentDecls, "    ", 1));
             push(@implContentDecls, "    ${functionName}(" . join(", ", @arguments) . ");\n");
         }
     }
@@ -1621,20 +1621,15 @@ sub GenerateCallWith
     my $outputArray = shift;
     my $indent = shift;
     my $returnVoid = shift;
-    my $emptyContext = shift;
     my $function = shift;
 
     my @callWithArgs;
     if ($codeGenerator->ExtendedAttributeContains($callWith, "ScriptState")) {
-        if ($emptyContext) {
-            push(@$outputArray, $indent . "EmptyScriptState state;\n");
-            push(@callWithArgs, "&state");
-        } else {
-            push(@$outputArray, $indent . "ScriptState* state = ScriptState::current();\n");
-            push(@$outputArray, $indent . "if (!state)\n");
-            push(@$outputArray, $indent . "    return" . ($returnVoid ? "" : " v8Undefined()") . ";\n");
-            push(@callWithArgs, "state");
-        }
+        push(@$outputArray, $indent . "ScriptState* currentState = ScriptState::current();\n");
+        push(@$outputArray, $indent . "if (!currentState)\n");
+        push(@$outputArray, $indent . "    return" . ($returnVoid ? "" : " v8Undefined()") . ";\n");
+        push(@$outputArray, $indent . "ScriptState& state = *currentState;\n");
+        push(@callWithArgs, "&state");
     }
     if ($codeGenerator->ExtendedAttributeContains($callWith, "ScriptExecutionContext")) {
         push(@$outputArray, $indent . "ScriptExecutionContext* scriptContext = getScriptExecutionContext();\n");
@@ -3532,7 +3527,7 @@ sub GenerateFunctionCallString()
 
     my $callWith = $function->signature->extendedAttributes->{"CallWith"};
     my @callWithOutput = ();
-    my @callWithArgs = GenerateCallWith($callWith, \@callWithOutput, $indent, 0, 1, $function);
+    my @callWithArgs = GenerateCallWith($callWith, \@callWithOutput, $indent, 0, $function);
     $result .= join("", @callWithOutput);
     unshift(@arguments, @callWithArgs);
     $index += @callWithArgs;
@@ -3590,8 +3585,11 @@ sub GenerateFunctionCallString()
     }
 
     if ($codeGenerator->ExtendedAttributeContains($callWith, "ScriptState")) {
-        $result .= $indent . "if (state.hadException())\n";
-        $result .= $indent . "    return throwError(state.exception(), args.GetIsolate());\n"
+        $result .= $indent . "if (state.hadException()) {\n";
+        $result .= $indent . "    v8::Local<v8::Value> exception = state.exception();\n";
+        $result .= $indent . "    state.clearException();\n";
+        $result .= $indent . "    return throwError(exception, args.GetIsolate());\n";
+        $result .= $indent . "}\n";
     }
 
     if ($isSVGTearOffType) {
