@@ -1,3 +1,38 @@
+2012-11-19  Kentaro Hara  <haraken@chromium.org>
+
+        In CodeGeneratorJS.pm we should rename $dataNode to $interface
+        https://bugs.webkit.org/show_bug.cgi?id=102748
+
+        Reviewed by Adam Barth.
+
+        $dataNode is misnamed. It should be $interface.
+
+        No tests. No change in behavior.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateInterface):
+        (GetParentClassName):
+        (GetGenerateIsReachable):
+        (GetCustomIsReachable):
+        (GenerateGetOwnPropertySlotBody):
+        (GenerateGetOwnPropertyDescriptorBody):
+        (GenerateHeaderContentHeader):
+        (GenerateImplementationContentHeader):
+        (ShouldGenerateToJSDeclaration):
+        (ShouldGenerateToJSImplementation):
+        (GenerateHeader):
+        (GenerateAttributesHashTable):
+        (GenerateOverloadedFunction):
+        (GenerateImplementation):
+        (GenerateArgumentsCountCheck):
+        (GenerateParametersCheck):
+        (GenerateCallbackHeader):
+        (GenerateCallbackImplementation):
+        (WriteData):
+        (GenerateConstructorDeclaration):
+        (GenerateConstructorDefinition):
+        (IsConstructable):
+
 2012-11-19  Adam Barth  <abarth@webkit.org>
 
         [V8] Merge getCachedWrapper(Node*) into DOMDataStore

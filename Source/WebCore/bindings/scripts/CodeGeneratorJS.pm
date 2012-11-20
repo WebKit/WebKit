@@ -95,21 +95,21 @@ sub leftShift($$) {
 sub GenerateInterface
 {
     my $object = shift;
-    my $dataNode = shift;
+    my $interface = shift;
     my $defines = shift;
 
-    $codeGenerator->LinkOverloadedFunctions($dataNode);
+    $codeGenerator->LinkOverloadedFunctions($interface);
 
     # Start actual generation
-    if ($dataNode->extendedAttributes->{"Callback"}) {
-        $object->GenerateCallbackHeader($dataNode);
-        $object->GenerateCallbackImplementation($dataNode);
+    if ($interface->extendedAttributes->{"Callback"}) {
+        $object->GenerateCallbackHeader($interface);
+        $object->GenerateCallbackImplementation($interface);
     } else {
-        $object->GenerateHeader($dataNode);
-        $object->GenerateImplementation($dataNode);
+        $object->GenerateHeader($interface);
+        $object->GenerateImplementation($interface);
     }
 
-    $object->WriteData($dataNode);
+    $object->WriteData($interface);
 }
 
 sub GenerateAttributeEventListenerCall
@@ -171,11 +171,11 @@ END
 
 sub GetParentClassName
 {
-    my $dataNode = shift;
+    my $interface = shift;
 
-    return $dataNode->extendedAttributes->{"JSLegacyParent"} if $dataNode->extendedAttributes->{"JSLegacyParent"};
-    return "JSDOMWrapper" if (@{$dataNode->parents} eq 0);
-    return "JS" . $dataNode->parents(0);
+    return $interface->extendedAttributes->{"JSLegacyParent"} if $interface->extendedAttributes->{"JSLegacyParent"};
+    return "JSDOMWrapper" if (@{$interface->parents} eq 0);
+    return "JS" . $interface->parents(0);
 }
 
 sub GetCallbackClassName
@@ -379,19 +379,19 @@ sub constructorHashTableAccessor
 
 sub GetGenerateIsReachable
 {
-    my $dataNode = shift;
-    return $dataNode->extendedAttributes->{"GenerateIsReachable"} || $dataNode->extendedAttributes->{"JSGenerateIsReachable"};
+    my $interface = shift;
+    return $interface->extendedAttributes->{"GenerateIsReachable"} || $interface->extendedAttributes->{"JSGenerateIsReachable"};
 }
 
 sub GetCustomIsReachable
 {
-    my $dataNode = shift;
-    return $dataNode->extendedAttributes->{"CustomIsReachable"} || $dataNode->extendedAttributes->{"JSCustomIsReachable"};
+    my $interface = shift;
+    return $interface->extendedAttributes->{"CustomIsReachable"} || $interface->extendedAttributes->{"JSCustomIsReachable"};
 }
 
 sub GenerateGetOwnPropertySlotBody
 {
-    my ($dataNode, $interfaceName, $className, $implClassName, $hasAttributes, $inlined) = @_;
+    my ($interface, $interfaceName, $className, $implClassName, $hasAttributes, $inlined) = @_;
 
     my $namespaceMaybe = ($inlined ? "JSC::" : "");
 
@@ -404,7 +404,7 @@ sub GenerateGetOwnPropertySlotBody
     }
 
     my $manualLookupGetterGeneration = sub {
-        my $requiresManualLookup = $dataNode->extendedAttributes->{"IndexedGetter"} || $dataNode->extendedAttributes->{"NamedGetter"};
+        my $requiresManualLookup = $interface->extendedAttributes->{"IndexedGetter"} || $interface->extendedAttributes->{"NamedGetter"};
         if ($requiresManualLookup) {
             push(@getOwnPropertySlotImpl, "    const ${namespaceMaybe}HashEntry* entry = ${className}Table.entry(exec, propertyName);\n");
             push(@getOwnPropertySlotImpl, "    if (entry) {\n");
@@ -414,11 +414,11 @@ sub GenerateGetOwnPropertySlotBody
         }
     };
 
-    if (!$dataNode->extendedAttributes->{"CustomNamedGetter"}) {
+    if (!$interface->extendedAttributes->{"CustomNamedGetter"}) {
         &$manualLookupGetterGeneration();
     }
 
-    if ($dataNode->extendedAttributes->{"IndexedGetter"} || $dataNode->extendedAttributes->{"NumericIndexedGetter"}) {
+    if ($interface->extendedAttributes->{"IndexedGetter"} || $interface->extendedAttributes->{"NumericIndexedGetter"}) {
         push(@getOwnPropertySlotImpl, "    unsigned index = propertyName.asIndex();\n");
 
         # If the item function returns a string then we let the TreatReturnedNullStringAs handle the cases
@@ -428,7 +428,7 @@ sub GenerateGetOwnPropertySlotBody
         } else {
             push(@getOwnPropertySlotImpl, "    if (index != PropertyName::NotAnIndex && index < static_cast<$implClassName*>(thisObject->impl())->length()) {\n");
         }
-        if ($dataNode->extendedAttributes->{"NumericIndexedGetter"}) {
+        if ($interface->extendedAttributes->{"NumericIndexedGetter"}) {
             push(@getOwnPropertySlotImpl, "        slot.setValue(thisObject->getByIndex(exec, index));\n");
         } else {
             push(@getOwnPropertySlotImpl, "        slot.setCustomIndex(thisObject, index, indexGetter);\n");
@@ -437,7 +437,7 @@ sub GenerateGetOwnPropertySlotBody
         push(@getOwnPropertySlotImpl, "    }\n");
     }
 
-    if ($dataNode->extendedAttributes->{"NamedGetter"} || $dataNode->extendedAttributes->{"CustomNamedGetter"}) {
+    if ($interface->extendedAttributes->{"NamedGetter"} || $interface->extendedAttributes->{"CustomNamedGetter"}) {
         push(@getOwnPropertySlotImpl, "    if (canGetItemsForName(exec, static_cast<$implClassName*>(thisObject->impl()), propertyName)) {\n");
         push(@getOwnPropertySlotImpl, "        slot.setCustom(thisObject, thisObject->nameGetter);\n");
         push(@getOwnPropertySlotImpl, "        return true;\n");
@@ -449,21 +449,21 @@ sub GenerateGetOwnPropertySlotBody
         }
     }
 
-    if ($dataNode->extendedAttributes->{"CustomNamedGetter"}) {
+    if ($interface->extendedAttributes->{"CustomNamedGetter"}) {
         &$manualLookupGetterGeneration();
     }
 
-    if ($dataNode->extendedAttributes->{"JSCustomGetOwnPropertySlotAndDescriptor"}) {
+    if ($interface->extendedAttributes->{"JSCustomGetOwnPropertySlotAndDescriptor"}) {
         push(@getOwnPropertySlotImpl, "    if (thisObject->getOwnPropertySlotDelegate(exec, propertyName, slot))\n");
         push(@getOwnPropertySlotImpl, "        return true;\n");
     }
 
     if ($hasAttributes) {
         if ($inlined) {
-            die "Cannot inline if NoStaticTables is set." if ($dataNode->extendedAttributes->{"JSNoStaticTables"});
+            die "Cannot inline if NoStaticTables is set." if ($interface->extendedAttributes->{"JSNoStaticTables"});
             push(@getOwnPropertySlotImpl, "    return ${namespaceMaybe}getStaticValueSlot<$className, Base>(exec, s_info.staticPropHashTable, thisObject, propertyName, slot);\n");
         } else {
-            push(@getOwnPropertySlotImpl, "    return ${namespaceMaybe}getStaticValueSlot<$className, Base>(exec, " . hashTableAccessor($dataNode->extendedAttributes->{"JSNoStaticTables"}, $className) . ", thisObject, propertyName, slot);\n");
+            push(@getOwnPropertySlotImpl, "    return ${namespaceMaybe}getStaticValueSlot<$className, Base>(exec, " . hashTableAccessor($interface->extendedAttributes->{"JSNoStaticTables"}, $className) . ", thisObject, propertyName, slot);\n");
         }
     } else {
         push(@getOwnPropertySlotImpl, "    return Base::getOwnPropertySlot(thisObject, exec, propertyName, slot);\n");
@@ -474,12 +474,12 @@ sub GenerateGetOwnPropertySlotBody
 
 sub GenerateGetOwnPropertyDescriptorBody
 {
-    my ($dataNode, $interfaceName, $className, $implClassName, $hasAttributes, $inlined) = @_;
+    my ($interface, $interfaceName, $className, $implClassName, $hasAttributes, $inlined) = @_;
     
     my $namespaceMaybe = ($inlined ? "JSC::" : "");
     
     my @getOwnPropertyDescriptorImpl = ();
-    if ($dataNode->extendedAttributes->{"CheckSecurity"}) {
+    if ($interface->extendedAttributes->{"CheckSecurity"}) {
         if ($interfaceName eq "DOMWindow") {
             $implIncludes{"BindingSecurity.h"} = 1;
             push(@implContent, "    if (!BindingSecurity::shouldAllowAccessToDOMWindow(exec, jsCast<$className*>(thisObject)->impl()))\n");
@@ -496,7 +496,7 @@ sub GenerateGetOwnPropertyDescriptorBody
     }
     
     my $manualLookupGetterGeneration = sub {
-        my $requiresManualLookup = $dataNode->extendedAttributes->{"IndexedGetter"} || $dataNode->extendedAttributes->{"NamedGetter"};
+        my $requiresManualLookup = $interface->extendedAttributes->{"IndexedGetter"} || $interface->extendedAttributes->{"NamedGetter"};
         if ($requiresManualLookup) {
             push(@getOwnPropertyDescriptorImpl, "    const ${namespaceMaybe}HashEntry* entry = ${className}Table.entry(exec, propertyName);\n");
             push(@getOwnPropertyDescriptorImpl, "    if (entry) {\n");
@@ -508,16 +508,16 @@ sub GenerateGetOwnPropertyDescriptorBody
         }
     };
 
-    if (!$dataNode->extendedAttributes->{"CustomNamedGetter"}) {
+    if (!$interface->extendedAttributes->{"CustomNamedGetter"}) {
         &$manualLookupGetterGeneration();
     }
 
-    if ($dataNode->extendedAttributes->{"IndexedGetter"} || $dataNode->extendedAttributes->{"NumericIndexedGetter"}) {
+    if ($interface->extendedAttributes->{"IndexedGetter"} || $interface->extendedAttributes->{"NumericIndexedGetter"}) {
         push(@getOwnPropertyDescriptorImpl, "    unsigned index = propertyName.asIndex();\n");
         push(@getOwnPropertyDescriptorImpl, "    if (index != PropertyName::NotAnIndex && index < static_cast<$implClassName*>(thisObject->impl())->length()) {\n");
-        if ($dataNode->extendedAttributes->{"NumericIndexedGetter"}) {
+        if ($interface->extendedAttributes->{"NumericIndexedGetter"}) {
             # Assume that if there's a setter, the index will be writable
-            if ($dataNode->extendedAttributes->{"CustomIndexedSetter"}) {
+            if ($interface->extendedAttributes->{"CustomIndexedSetter"}) {
                 push(@getOwnPropertyDescriptorImpl, "        descriptor.setDescriptor(thisObject->getByIndex(exec, index), ${namespaceMaybe}DontDelete);\n");
             } else {
                 push(@getOwnPropertyDescriptorImpl, "        descriptor.setDescriptor(thisObject->getByIndex(exec, index), ${namespaceMaybe}DontDelete | ${namespaceMaybe}ReadOnly);\n");
@@ -526,7 +526,7 @@ sub GenerateGetOwnPropertyDescriptorBody
             push(@getOwnPropertyDescriptorImpl, "        ${namespaceMaybe}PropertySlot slot;\n");
             push(@getOwnPropertyDescriptorImpl, "        slot.setCustomIndex(thisObject, index, indexGetter);\n");
             # Assume that if there's a setter, the index will be writable
-            if ($dataNode->extendedAttributes->{"CustomIndexedSetter"}) {
+            if ($interface->extendedAttributes->{"CustomIndexedSetter"}) {
                 push(@getOwnPropertyDescriptorImpl, "        descriptor.setDescriptor(slot.getValue(exec, propertyName), ${namespaceMaybe}DontDelete);\n");
             } else {
                 push(@getOwnPropertyDescriptorImpl, "        descriptor.setDescriptor(slot.getValue(exec, propertyName), ${namespaceMaybe}DontDelete | ${namespaceMaybe}ReadOnly);\n");
@@ -536,7 +536,7 @@ sub GenerateGetOwnPropertyDescriptorBody
         push(@getOwnPropertyDescriptorImpl, "    }\n");
     }
 
-    if ($dataNode->extendedAttributes->{"NamedGetter"} || $dataNode->extendedAttributes->{"CustomNamedGetter"}) {
+    if ($interface->extendedAttributes->{"NamedGetter"} || $interface->extendedAttributes->{"CustomNamedGetter"}) {
         push(@getOwnPropertyDescriptorImpl, "    if (canGetItemsForName(exec, static_cast<$implClassName*>(thisObject->impl()), propertyName)) {\n");
         push(@getOwnPropertyDescriptorImpl, "        ${namespaceMaybe}PropertySlot slot;\n");
         push(@getOwnPropertyDescriptorImpl, "        slot.setCustom(thisObject, nameGetter);\n");
@@ -550,21 +550,21 @@ sub GenerateGetOwnPropertyDescriptorBody
         }
     }
 
-    if ($dataNode->extendedAttributes->{"CustomNamedGetter"}) {
+    if ($interface->extendedAttributes->{"CustomNamedGetter"}) {
         &$manualLookupGetterGeneration();
     }
 
-    if ($dataNode->extendedAttributes->{"JSCustomGetOwnPropertySlotAndDescriptor"}) {
+    if ($interface->extendedAttributes->{"JSCustomGetOwnPropertySlotAndDescriptor"}) {
         push(@getOwnPropertyDescriptorImpl, "    if (thisObject->getOwnPropertyDescriptorDelegate(exec, propertyName, descriptor))\n");
         push(@getOwnPropertyDescriptorImpl, "        return true;\n");
     }
 
     if ($hasAttributes) {
         if ($inlined) {
-            die "Cannot inline if NoStaticTables is set." if ($dataNode->extendedAttributes->{"JSNoStaticTables"});
+            die "Cannot inline if NoStaticTables is set." if ($interface->extendedAttributes->{"JSNoStaticTables"});
             push(@getOwnPropertyDescriptorImpl, "    return ${namespaceMaybe}getStaticValueDescriptor<$className, Base>(exec, s_info.staticPropHashTable, thisObject, propertyName, descriptor);\n");
         } else {
-            push(@getOwnPropertyDescriptorImpl, "    return ${namespaceMaybe}getStaticValueDescriptor<$className, Base>(exec, " . hashTableAccessor($dataNode->extendedAttributes->{"JSNoStaticTables"}, $className) . ", thisObject, propertyName, descriptor);\n");
+            push(@getOwnPropertyDescriptorImpl, "    return ${namespaceMaybe}getStaticValueDescriptor<$className, Base>(exec, " . hashTableAccessor($interface->extendedAttributes->{"JSNoStaticTables"}, $className) . ", thisObject, propertyName, descriptor);\n");
         }
     } else {
         push(@getOwnPropertyDescriptorImpl, "    return Base::getOwnPropertyDescriptor(thisObject, exec, propertyName, descriptor);\n");
@@ -575,8 +575,8 @@ sub GenerateGetOwnPropertyDescriptorBody
 
 sub GenerateHeaderContentHeader
 {
-    my $dataNode = shift;
-    my $className = "JS" . $dataNode->name;
+    my $interface = shift;
+    my $className = "JS" . $interface->name;
 
     my @headerContentHeader = split("\r", $headerTemplate);
 
@@ -584,20 +584,20 @@ sub GenerateHeaderContentHeader
     push(@headerContentHeader, "\n#ifndef $className" . "_h");
     push(@headerContentHeader, "\n#define $className" . "_h\n\n");
 
-    my $conditionalString = $codeGenerator->GenerateConditionalString($dataNode);
+    my $conditionalString = $codeGenerator->GenerateConditionalString($interface);
     push(@headerContentHeader, "#if ${conditionalString}\n\n") if $conditionalString;
     return @headerContentHeader;
 }
 
 sub GenerateImplementationContentHeader
 {
-    my $dataNode = shift;
-    my $className = "JS" . $dataNode->name;
+    my $interface = shift;
+    my $className = "JS" . $interface->name;
 
     my @implContentHeader = split("\r", $headerTemplate);
 
     push(@implContentHeader, "\n#include \"config.h\"\n");
-    my $conditionalString = $codeGenerator->GenerateConditionalString($dataNode);
+    my $conditionalString = $codeGenerator->GenerateConditionalString($interface);
     push(@implContentHeader, "\n#if ${conditionalString}\n\n") if $conditionalString;
     push(@implContentHeader, "#include \"$className.h\"\n\n");
     return @implContentHeader;
@@ -614,17 +614,17 @@ my %usesToJSNewlyCreated = (
 
 sub ShouldGenerateToJSDeclaration
 {
-    my ($hasParent, $dataNode) = @_;
-    return 0 if ($dataNode->extendedAttributes->{"SuppressToJSObject"});
-    return 1 if (!$hasParent or $dataNode->extendedAttributes->{"JSGenerateToJSObject"} or ($dataNode->extendedAttributes->{"CustomToJSObject"} or $dataNode->extendedAttributes->{"JSCustomToJSObject"}));
+    my ($hasParent, $interface) = @_;
+    return 0 if ($interface->extendedAttributes->{"SuppressToJSObject"});
+    return 1 if (!$hasParent or $interface->extendedAttributes->{"JSGenerateToJSObject"} or ($interface->extendedAttributes->{"CustomToJSObject"} or $interface->extendedAttributes->{"JSCustomToJSObject"}));
     return 0;
 }
 
 sub ShouldGenerateToJSImplementation
 {
-    my ($hasParent, $dataNode) = @_;
-    return 0 if ($dataNode->extendedAttributes->{"SuppressToJSObject"});
-    return 1 if ((!$hasParent or $dataNode->extendedAttributes->{"JSGenerateToJSObject"}) and !($dataNode->extendedAttributes->{"CustomToJSObject"} or $dataNode->extendedAttributes->{"JSCustomToJSObject"}));
+    my ($hasParent, $interface) = @_;
+    return 0 if ($interface->extendedAttributes->{"SuppressToJSObject"});
+    return 1 if ((!$hasParent or $interface->extendedAttributes->{"JSGenerateToJSObject"}) and !($interface->extendedAttributes->{"CustomToJSObject"} or $interface->extendedAttributes->{"JSCustomToJSObject"}));
     return 0;
 }
 
@@ -656,51 +656,51 @@ sub GetFunctionName
 sub GenerateHeader
 {
     my $object = shift;
-    my $dataNode = shift;
+    my $interface = shift;
 
-    my $interfaceName = $dataNode->name;
+    my $interfaceName = $interface->name;
     my $className = "JS$interfaceName";
     my $implClassName = $interfaceName;
     my @ancestorInterfaceNames = ();
     my %structureFlags = ();
 
     # We only support multiple parents with SVG (for now).
-    if (@{$dataNode->parents} > 1) {
+    if (@{$interface->parents} > 1) {
         die "A class can't have more than one parent" unless $interfaceName =~ /SVG/;
-        $codeGenerator->AddMethodsConstantsAndAttributesFromParentInterfaces($dataNode, \@ancestorInterfaceNames);
+        $codeGenerator->AddMethodsConstantsAndAttributesFromParentInterfaces($interface, \@ancestorInterfaceNames);
     }
 
-    my $hasLegacyParent = $dataNode->extendedAttributes->{"JSLegacyParent"};
-    my $hasRealParent = @{$dataNode->parents} > 0;
+    my $hasLegacyParent = $interface->extendedAttributes->{"JSLegacyParent"};
+    my $hasRealParent = @{$interface->parents} > 0;
     my $hasParent = $hasLegacyParent || $hasRealParent;
-    my $parentClassName = GetParentClassName($dataNode);
-    my $needsMarkChildren = $dataNode->extendedAttributes->{"JSCustomMarkFunction"} || $dataNode->extendedAttributes->{"EventTarget"} || $dataNode->name eq "EventTarget";
+    my $parentClassName = GetParentClassName($interface);
+    my $needsMarkChildren = $interface->extendedAttributes->{"JSCustomMarkFunction"} || $interface->extendedAttributes->{"EventTarget"} || $interface->name eq "EventTarget";
 
     # - Add default header template and header protection
-    push(@headerContentHeader, GenerateHeaderContentHeader($dataNode));
+    push(@headerContentHeader, GenerateHeaderContentHeader($interface));
 
     if ($hasParent) {
         $headerIncludes{"$parentClassName.h"} = 1;
     } else {
         $headerIncludes{"JSDOMBinding.h"} = 1;
         $headerIncludes{"<runtime/JSGlobalObject.h>"} = 1;
-        if ($dataNode->isException) {
+        if ($interface->isException) {
             $headerIncludes{"<runtime/ErrorPrototype.h>"} = 1;
         } else {
             $headerIncludes{"<runtime/ObjectPrototype.h>"} = 1;
         }
     }
 
-    if ($dataNode->extendedAttributes->{"CustomCall"}) {
+    if ($interface->extendedAttributes->{"CustomCall"}) {
         $headerIncludes{"<runtime/CallData.h>"} = 1;
     }
 
-    if ($dataNode->extendedAttributes->{"JSInlineGetOwnPropertySlot"}) {
+    if ($interface->extendedAttributes->{"JSInlineGetOwnPropertySlot"}) {
         $headerIncludes{"<runtime/Lookup.h>"} = 1;
         $headerIncludes{"<wtf/AlwaysInline.h>"} = 1;
     }
 
-    if ($hasParent && $dataNode->extendedAttributes->{"JSGenerateToNativeObject"}) {
+    if ($hasParent && $interface->extendedAttributes->{"JSGenerateToNativeObject"}) {
         if ($codeGenerator->IsTypedArrayType($implClassName)) {
             $headerIncludes{"<wtf/$implClassName.h>"} = 1;
         } else {
@@ -719,9 +719,9 @@ sub GenerateHeader
     $svgPropertyOrListPropertyType = $svgPropertyType if $svgPropertyType;
     $svgPropertyOrListPropertyType = $svgListPropertyType if $svgListPropertyType;
 
-    my $numConstants = @{$dataNode->constants};
-    my $numAttributes = @{$dataNode->attributes};
-    my $numFunctions = @{$dataNode->functions};
+    my $numConstants = @{$interface->constants};
+    my $numAttributes = @{$interface->attributes};
+    my $numFunctions = @{$interface->functions};
 
     push(@headerContent, "\nnamespace WebCore {\n\n");
 
@@ -729,13 +729,13 @@ sub GenerateHeader
         $headerIncludes{"$implClassName.h"} = 1;
     } else {
         # Implementation class forward declaration
-        if ($interfaceName eq "DOMWindow" || $dataNode->extendedAttributes->{"IsWorkerContext"}) {
+        if ($interfaceName eq "DOMWindow" || $interface->extendedAttributes->{"IsWorkerContext"}) {
             AddClassForwardIfNeeded($implClassName) unless $svgPropertyOrListPropertyType;
         }
     }
 
     AddClassForwardIfNeeded("JSDOMWindowShell") if $interfaceName eq "DOMWindow";
-    AddClassForwardIfNeeded("JSDictionary") if $codeGenerator->IsConstructorTemplate($dataNode, "Event");
+    AddClassForwardIfNeeded("JSDictionary") if $codeGenerator->IsConstructorTemplate($interface, "Event");
 
     # Class declaration
     push(@headerContent, "class $className : public $parentClassName {\n");
@@ -751,7 +751,7 @@ sub GenerateHeader
         push(@headerContent, "        globalData.heap.addFinalizer(ptr, destroy);\n");
         push(@headerContent, "        return ptr;\n");
         push(@headerContent, "    }\n\n");
-    } elsif ($dataNode->extendedAttributes->{"IsWorkerContext"}) {
+    } elsif ($interface->extendedAttributes->{"IsWorkerContext"}) {
         push(@headerContent, "    static $className* create(JSC::JSGlobalData& globalData, JSC::Structure* structure, PassRefPtr<$implType> impl)\n");
         push(@headerContent, "    {\n");
         push(@headerContent, "        $className* ptr = new (NotNull, JSC::allocateCell<$className>(globalData.heap)) ${className}(globalData, structure, impl);\n");
@@ -759,7 +759,7 @@ sub GenerateHeader
         push(@headerContent, "        globalData.heap.addFinalizer(ptr, destroy);\n");
         push(@headerContent, "        return ptr;\n");
         push(@headerContent, "    }\n\n");
-    } elsif ($dataNode->extendedAttributes->{"MasqueradesAsUndefined"}) {
+    } elsif ($interface->extendedAttributes->{"MasqueradesAsUndefined"}) {
         AddIncludesForTypeInHeader($implType) unless $svgPropertyOrListPropertyType;
         push(@headerContent, "    static $className* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, PassRefPtr<$implType> impl)\n");
         push(@headerContent, "    {\n");
@@ -778,50 +778,50 @@ sub GenerateHeader
         push(@headerContent, "    }\n\n");
     }
 
-    if ($interfaceName eq "DOMWindow" || $dataNode->extendedAttributes->{"IsWorkerContext"}) {
+    if ($interfaceName eq "DOMWindow" || $interface->extendedAttributes->{"IsWorkerContext"}) {
         push(@headerContent, "    static const bool needsDestruction = false;\n\n");
     }
 
     # Prototype
-    push(@headerContent, "    static JSC::JSObject* createPrototype(JSC::ExecState*, JSC::JSGlobalObject*);\n") unless ($dataNode->extendedAttributes->{"ExtendsDOMGlobalObject"});
+    push(@headerContent, "    static JSC::JSObject* createPrototype(JSC::ExecState*, JSC::JSGlobalObject*);\n") unless ($interface->extendedAttributes->{"ExtendsDOMGlobalObject"});
 
-    $headerTrailingIncludes{"${className}Custom.h"} = 1 if $dataNode->extendedAttributes->{"JSCustomHeader"};
+    $headerTrailingIncludes{"${className}Custom.h"} = 1 if $interface->extendedAttributes->{"JSCustomHeader"};
 
-    $implIncludes{"${className}Custom.h"} = 1 if !$dataNode->extendedAttributes->{"JSCustomHeader"} && ($dataNode->extendedAttributes->{"CustomPutFunction"} || $dataNode->extendedAttributes->{"CustomNamedSetter"});
+    $implIncludes{"${className}Custom.h"} = 1 if !$interface->extendedAttributes->{"JSCustomHeader"} && ($interface->extendedAttributes->{"CustomPutFunction"} || $interface->extendedAttributes->{"CustomNamedSetter"});
 
     my $hasComplexGetter =
-        $dataNode->extendedAttributes->{"IndexedGetter"}
-        || $dataNode->extendedAttributes->{"NumericIndexedGetter"}
-        || $dataNode->extendedAttributes->{"CustomGetOwnPropertySlot"}
-        || $dataNode->extendedAttributes->{"JSCustomGetOwnPropertySlotAndDescriptor"}
-        || $dataNode->extendedAttributes->{"NamedGetter"}
-        || $dataNode->extendedAttributes->{"CustomNamedGetter"};
+        $interface->extendedAttributes->{"IndexedGetter"}
+        || $interface->extendedAttributes->{"NumericIndexedGetter"}
+        || $interface->extendedAttributes->{"CustomGetOwnPropertySlot"}
+        || $interface->extendedAttributes->{"JSCustomGetOwnPropertySlotAndDescriptor"}
+        || $interface->extendedAttributes->{"NamedGetter"}
+        || $interface->extendedAttributes->{"CustomNamedGetter"};
     
-    my $hasGetter = $numAttributes > 0 || !$dataNode->extendedAttributes->{"OmitConstructor"} || $hasComplexGetter;
+    my $hasGetter = $numAttributes > 0 || !$interface->extendedAttributes->{"OmitConstructor"} || $hasComplexGetter;
 
     # Getters
     if ($hasGetter) {
         push(@headerContent, "    static bool getOwnPropertySlot(JSC::JSCell*, JSC::ExecState*, JSC::PropertyName, JSC::PropertySlot&);\n");
         push(@headerContent, "    static bool getOwnPropertyDescriptor(JSC::JSObject*, JSC::ExecState*, JSC::PropertyName, JSC::PropertyDescriptor&);\n");
         push(@headerContent, "    static bool getOwnPropertySlotByIndex(JSC::JSCell*, JSC::ExecState*, unsigned propertyName, JSC::PropertySlot&);\n") if ($hasComplexGetter);
-        push(@headerContent, "    bool getOwnPropertySlotDelegate(JSC::ExecState*, JSC::PropertyName, JSC::PropertySlot&);\n") if $dataNode->extendedAttributes->{"JSCustomGetOwnPropertySlotAndDescriptor"};
-        push(@headerContent, "    bool getOwnPropertyDescriptorDelegate(JSC::ExecState*, JSC::PropertyName, JSC::PropertyDescriptor&);\n") if $dataNode->extendedAttributes->{"JSCustomGetOwnPropertySlotAndDescriptor"};
+        push(@headerContent, "    bool getOwnPropertySlotDelegate(JSC::ExecState*, JSC::PropertyName, JSC::PropertySlot&);\n") if $interface->extendedAttributes->{"JSCustomGetOwnPropertySlotAndDescriptor"};
+        push(@headerContent, "    bool getOwnPropertyDescriptorDelegate(JSC::ExecState*, JSC::PropertyName, JSC::PropertyDescriptor&);\n") if $interface->extendedAttributes->{"JSCustomGetOwnPropertySlotAndDescriptor"};
         $structureFlags{"JSC::OverridesGetOwnPropertySlot"} = 1;
         $structureFlags{"JSC::InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero"} = 1;
     }
 
     # Check if we have any writable properties
     my $hasReadWriteProperties = 0;
-    foreach (@{$dataNode->attributes}) {
+    foreach (@{$interface->attributes}) {
         if (!IsReadonly($_) && !$_->isStatic) {
             $hasReadWriteProperties = 1;
         }
     }
 
     my $hasComplexSetter =
-        $dataNode->extendedAttributes->{"CustomPutFunction"}
-        || $dataNode->extendedAttributes->{"CustomNamedSetter"}
-        || $dataNode->extendedAttributes->{"CustomIndexedSetter"};
+        $interface->extendedAttributes->{"CustomPutFunction"}
+        || $interface->extendedAttributes->{"CustomNamedSetter"}
+        || $interface->extendedAttributes->{"CustomIndexedSetter"};
         
     my $hasSetter = $hasReadWriteProperties || $hasComplexSetter;
 
@@ -829,7 +829,7 @@ sub GenerateHeader
     if ($hasSetter) {
         push(@headerContent, "    static void put(JSC::JSCell*, JSC::ExecState*, JSC::PropertyName, JSC::JSValue, JSC::PutPropertySlot&);\n");
         push(@headerContent, "    static void putByIndex(JSC::JSCell*, JSC::ExecState*, unsigned propertyName, JSC::JSValue, bool shouldThrow);\n") if ($hasComplexSetter);
-        push(@headerContent, "    bool putDelegate(JSC::ExecState*, JSC::PropertyName, JSC::JSValue, JSC::PutPropertySlot&);\n") if $dataNode->extendedAttributes->{"CustomNamedSetter"};
+        push(@headerContent, "    bool putDelegate(JSC::ExecState*, JSC::PropertyName, JSC::JSValue, JSC::PutPropertySlot&);\n") if $interface->extendedAttributes->{"CustomNamedSetter"};
     }
 
     if (!$hasParent) {
@@ -849,7 +849,7 @@ sub GenerateHeader
     }
     push(@headerContent, "    static JSC::Structure* createStructure(JSC::JSGlobalData& globalData, JSC::JSGlobalObject* globalObject, JSC::JSValue prototype)\n");
     push(@headerContent, "    {\n");
-    if ($interfaceName eq "DOMWindow" || $dataNode->extendedAttributes->{"IsWorkerContext"}) {
+    if ($interfaceName eq "DOMWindow" || $interface->extendedAttributes->{"IsWorkerContext"}) {
         push(@headerContent, "        return JSC::Structure::create(globalData, globalObject, prototype, JSC::TypeInfo(JSC::GlobalObjectType, StructureFlags), &s_info);\n");
     } else {
         push(@headerContent, "        return JSC::Structure::create(globalData, globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), &s_info);\n");
@@ -857,14 +857,14 @@ sub GenerateHeader
     push(@headerContent, "    }\n\n");
 
     # Custom pushEventHandlerScope function
-    push(@headerContent, "    JSC::JSScope* pushEventHandlerScope(JSC::ExecState*, JSC::JSScope*) const;\n\n") if $dataNode->extendedAttributes->{"JSCustomPushEventHandlerScope"};
+    push(@headerContent, "    JSC::JSScope* pushEventHandlerScope(JSC::ExecState*, JSC::JSScope*) const;\n\n") if $interface->extendedAttributes->{"JSCustomPushEventHandlerScope"};
 
     # Custom call functions
-    push(@headerContent, "    static JSC::CallType getCallData(JSC::JSCell*, JSC::CallData&);\n\n") if $dataNode->extendedAttributes->{"CustomCall"};
+    push(@headerContent, "    static JSC::CallType getCallData(JSC::JSCell*, JSC::CallData&);\n\n") if $interface->extendedAttributes->{"CustomCall"};
 
     # Custom deleteProperty function
-    push(@headerContent, "    static bool deleteProperty(JSC::JSCell*, JSC::ExecState*, JSC::PropertyName);\n") if $dataNode->extendedAttributes->{"CustomDeleteProperty"};
-    push(@headerContent, "    static bool deletePropertyByIndex(JSC::JSCell*, JSC::ExecState*, unsigned);\n") if $dataNode->extendedAttributes->{"CustomDeleteProperty"};
+    push(@headerContent, "    static bool deleteProperty(JSC::JSCell*, JSC::ExecState*, JSC::PropertyName);\n") if $interface->extendedAttributes->{"CustomDeleteProperty"};
+    push(@headerContent, "    static bool deletePropertyByIndex(JSC::JSCell*, JSC::ExecState*, unsigned);\n") if $interface->extendedAttributes->{"CustomDeleteProperty"};
 
     # Custom getPropertyNames function exists on DOMWindow
     if ($interfaceName eq "DOMWindow") {
@@ -873,28 +873,28 @@ sub GenerateHeader
     }
 
     # Custom getOwnPropertyNames function
-    if ($dataNode->extendedAttributes->{"CustomEnumerateProperty"} || $dataNode->extendedAttributes->{"IndexedGetter"} || $dataNode->extendedAttributes->{"NumericIndexedGetter"}) {
+    if ($interface->extendedAttributes->{"CustomEnumerateProperty"} || $interface->extendedAttributes->{"IndexedGetter"} || $interface->extendedAttributes->{"NumericIndexedGetter"}) {
         push(@headerContent, "    static void getOwnPropertyNames(JSC::JSObject*, JSC::ExecState*, JSC::PropertyNameArray&, JSC::EnumerationMode mode = JSC::ExcludeDontEnumProperties);\n");
         $structureFlags{"JSC::OverridesGetPropertyNames"} = 1;       
     }
 
     # Custom defineOwnProperty function
-    push(@headerContent, "    static bool defineOwnProperty(JSC::JSObject*, JSC::ExecState*, JSC::PropertyName, JSC::PropertyDescriptor&, bool shouldThrow);\n") if $dataNode->extendedAttributes->{"JSCustomDefineOwnProperty"};
+    push(@headerContent, "    static bool defineOwnProperty(JSC::JSObject*, JSC::ExecState*, JSC::PropertyName, JSC::PropertyDescriptor&, bool shouldThrow);\n") if $interface->extendedAttributes->{"JSCustomDefineOwnProperty"};
 
     # Override toBoolean to return false for objects that want to 'MasqueradesAsUndefined'.
-    if ($dataNode->extendedAttributes->{"MasqueradesAsUndefined"}) {
+    if ($interface->extendedAttributes->{"MasqueradesAsUndefined"}) {
         $structureFlags{"JSC::MasqueradesAsUndefined"} = 1;
     }
 
     # Constructor object getter
-    push(@headerContent, "    static JSC::JSValue getConstructor(JSC::ExecState*, JSC::JSGlobalObject*);\n") if !$dataNode->extendedAttributes->{"OmitConstructor"};
+    push(@headerContent, "    static JSC::JSValue getConstructor(JSC::ExecState*, JSC::JSGlobalObject*);\n") if !$interface->extendedAttributes->{"OmitConstructor"};
 
     my $numCustomFunctions = 0;
     my $numCustomAttributes = 0;
 
     # Attribute and function enums
     if ($numAttributes > 0) {
-        foreach (@{$dataNode->attributes}) {
+        foreach (@{$interface->attributes}) {
             my $attribute = $_;
             $numCustomAttributes++ if $attribute->signature->extendedAttributes->{"Custom"} || $attribute->signature->extendedAttributes->{"JSCustom"};
             $numCustomAttributes++ if ($attribute->signature->extendedAttributes->{"CustomGetter"} || $attribute->signature->extendedAttributes->{"JSCustomGetter"});
@@ -919,7 +919,7 @@ sub GenerateHeader
     if ($numCustomAttributes > 0) {
         push(@headerContent, "\n    // Custom attributes\n");
 
-        foreach my $attribute (@{$dataNode->attributes}) {
+        foreach my $attribute (@{$interface->attributes}) {
             my $conditionalString = $codeGenerator->GenerateConditionalString($attribute->signature);
             if ($attribute->signature->extendedAttributes->{"Custom"} || $attribute->signature->extendedAttributes->{"JSCustom"} || $attribute->signature->extendedAttributes->{"CustomGetter"} || $attribute->signature->extendedAttributes->{"JSCustomGetter"}) {
                 push(@headerContent, "#if ${conditionalString}\n") if $conditionalString;
@@ -935,13 +935,13 @@ sub GenerateHeader
         }
     }
 
-    foreach my $function (@{$dataNode->functions}) {
+    foreach my $function (@{$interface->functions}) {
         $numCustomFunctions++ if $function->signature->extendedAttributes->{"Custom"} || $function->signature->extendedAttributes->{"JSCustom"};
     }
 
     if ($numCustomFunctions > 0) {
         push(@headerContent, "\n    // Custom functions\n");
-        foreach my $function (@{$dataNode->functions}) {
+        foreach my $function (@{$interface->functions}) {
             next unless $function->signature->extendedAttributes->{"Custom"} or $function->signature->extendedAttributes->{"JSCustom"};
             next if $function->{overloads} && $function->{overloadIndex} != 1;
             my $conditionalString = $codeGenerator->GenerateConditionalString($function->signature);
@@ -958,7 +958,7 @@ sub GenerateHeader
         push(@headerContent, "    void releaseImplIfNotNull() { if (m_impl) { m_impl->deref(); m_impl = 0; } }\n\n");
         push(@headerContent, "private:\n");
         push(@headerContent, "    $implType* m_impl;\n");
-    } elsif ($dataNode->extendedAttributes->{"JSGenerateToNativeObject"}) {
+    } elsif ($interface->extendedAttributes->{"JSGenerateToNativeObject"}) {
         push(@headerContent, "    $implClassName* impl() const\n");
         push(@headerContent, "    {\n");
         push(@headerContent, "        return static_cast<$implClassName*>(Base::impl());\n");
@@ -985,7 +985,7 @@ sub GenerateHeader
     # Constructor
     if ($interfaceName eq "DOMWindow") {
         push(@headerContent, "    $className(JSC::JSGlobalData&, JSC::Structure*, PassRefPtr<$implType>, JSDOMWindowShell*);\n");
-    } elsif ($dataNode->extendedAttributes->{"IsWorkerContext"}) {
+    } elsif ($interface->extendedAttributes->{"IsWorkerContext"}) {
         push(@headerContent, "    $className(JSC::JSGlobalData&, JSC::Structure*, PassRefPtr<$implType>);\n");
     } else {
         push(@headerContent, "    $className(JSC::Structure*, JSDOMGlobalObject*, PassRefPtr<$implType>);\n");
@@ -1000,19 +1000,19 @@ sub GenerateHeader
     push(@headerContent, "Base::StructureFlags;\n");
 
     # Index getter
-    if ($dataNode->extendedAttributes->{"IndexedGetter"}) {
+    if ($interface->extendedAttributes->{"IndexedGetter"}) {
         push(@headerContent, "    static JSC::JSValue indexGetter(JSC::ExecState*, JSC::JSValue, unsigned);\n");
     }
-    if ($dataNode->extendedAttributes->{"NumericIndexedGetter"}) {
+    if ($interface->extendedAttributes->{"NumericIndexedGetter"}) {
         push(@headerContent, "    JSC::JSValue getByIndex(JSC::ExecState*, unsigned index);\n");
     }
 
     # Index setter
-    if ($dataNode->extendedAttributes->{"CustomIndexedSetter"}) {
+    if ($interface->extendedAttributes->{"CustomIndexedSetter"}) {
         push(@headerContent, "    void indexSetter(JSC::ExecState*, unsigned index, JSC::JSValue);\n");
     }
     # Name getter
-    if ($dataNode->extendedAttributes->{"NamedGetter"} || $dataNode->extendedAttributes->{"CustomNamedGetter"}) {
+    if ($interface->extendedAttributes->{"NamedGetter"} || $interface->extendedAttributes->{"CustomNamedGetter"}) {
         push(@headerContent, "private:\n");
         push(@headerContent, "    static bool canGetItemsForName(JSC::ExecState*, $implClassName*, JSC::PropertyName);\n");
         push(@headerContent, "    static JSC::JSValue nameGetter(JSC::ExecState*, JSC::JSValue, JSC::PropertyName);\n");
@@ -1020,27 +1020,27 @@ sub GenerateHeader
 
     push(@headerContent, "};\n\n");
 
-    if ($dataNode->extendedAttributes->{"JSInlineGetOwnPropertySlot"} && !$dataNode->extendedAttributes->{"CustomGetOwnPropertySlot"}) {
+    if ($interface->extendedAttributes->{"JSInlineGetOwnPropertySlot"} && !$interface->extendedAttributes->{"CustomGetOwnPropertySlot"}) {
         push(@headerContent, "ALWAYS_INLINE bool ${className}::getOwnPropertySlot(JSC::JSCell* cell, JSC::ExecState* exec, JSC::PropertyName propertyName, JSC::PropertySlot& slot)\n");
         push(@headerContent, "{\n");
         push(@headerContent, "    ${className}* thisObject = JSC::jsCast<${className}*>(cell);\n");
         push(@headerContent, "    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);\n");
-        push(@headerContent, GenerateGetOwnPropertySlotBody($dataNode, $interfaceName, $className, $implClassName, $numAttributes > 0, 1));
+        push(@headerContent, GenerateGetOwnPropertySlotBody($interface, $interfaceName, $className, $implClassName, $numAttributes > 0, 1));
         push(@headerContent, "}\n\n");
         push(@headerContent, "ALWAYS_INLINE bool ${className}::getOwnPropertyDescriptor(JSC::JSObject* object, JSC::ExecState* exec, JSC::PropertyName propertyName, JSC::PropertyDescriptor& descriptor)\n");
         push(@headerContent, "{\n");
         push(@headerContent, "    ${className}* thisObject = JSC::jsCast<${className}*>(object);\n");
         push(@headerContent, "    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);\n");
-        push(@headerContent, GenerateGetOwnPropertyDescriptorBody($dataNode, $interfaceName, $className, $implClassName, $numAttributes > 0, 1));
+        push(@headerContent, GenerateGetOwnPropertyDescriptorBody($interface, $interfaceName, $className, $implClassName, $numAttributes > 0, 1));
         push(@headerContent, "}\n\n");
     }
 
     if (!$hasParent ||
-        GetGenerateIsReachable($dataNode) ||
-        GetCustomIsReachable($dataNode) ||
-        $dataNode->extendedAttributes->{"JSCustomFinalize"} ||
-        $dataNode->extendedAttributes->{"ActiveDOMObject"}) {
-        if ($implClassName ne "Node" && $codeGenerator->IsSubType($dataNode, "Node")) {
+        GetGenerateIsReachable($interface) ||
+        GetCustomIsReachable($interface) ||
+        $interface->extendedAttributes->{"JSCustomFinalize"} ||
+        $interface->extendedAttributes->{"ActiveDOMObject"}) {
+        if ($implClassName ne "Node" && $codeGenerator->IsSubType($interface, "Node")) {
             $headerIncludes{"JSNode.h"} = 1;
             push(@headerContent, "class JS${implClassName}Owner : public JSNodeOwner {\n");
         } else {
@@ -1063,10 +1063,10 @@ sub GenerateHeader
         push(@headerContent, "}\n");
         push(@headerContent, "\n");
     }
-    if (ShouldGenerateToJSDeclaration($hasParent, $dataNode)) {
+    if (ShouldGenerateToJSDeclaration($hasParent, $interface)) {
         push(@headerContent, "JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, $implType*);\n");
     }
-    if (!$hasParent || $dataNode->extendedAttributes->{"JSGenerateToNativeObject"}) {
+    if (!$hasParent || $interface->extendedAttributes->{"JSGenerateToNativeObject"}) {
         if ($interfaceName eq "NodeFilter") {
             push(@headerContent, "PassRefPtr<NodeFilter> toNodeFilter(JSC::JSGlobalData&, JSC::JSValue);\n");
         } elsif ($interfaceName eq "DOMStringList") {
@@ -1086,7 +1086,7 @@ sub GenerateHeader
     push(@headerContent, "class ${className}Prototype : public JSC::JSNonFinalObject {\n");
     push(@headerContent, "public:\n");
     push(@headerContent, "    typedef JSC::JSNonFinalObject Base;\n");
-    if ($interfaceName ne "DOMWindow" && !$dataNode->extendedAttributes->{"IsWorkerContext"}) {
+    if ($interfaceName ne "DOMWindow" && !$interface->extendedAttributes->{"IsWorkerContext"}) {
         push(@headerContent, "    static JSC::JSObject* self(JSC::ExecState*, JSC::JSGlobalObject*);\n");
     }
 
@@ -1103,7 +1103,7 @@ sub GenerateHeader
         push(@headerContent, "    static bool getOwnPropertyDescriptor(JSC::JSObject*, JSC::ExecState*, JSC::PropertyName, JSC::PropertyDescriptor&);\n");
         $structureFlags{"JSC::OverridesGetOwnPropertySlot"} = 1;
     }
-    if ($dataNode->extendedAttributes->{"JSCustomMarkFunction"} or $needsMarkChildren) {
+    if ($interface->extendedAttributes->{"JSCustomMarkFunction"} or $needsMarkChildren) {
         $structureFlags{"JSC::OverridesVisitChildren"} = 1;
     }
     push(@headerContent,
@@ -1111,13 +1111,13 @@ sub GenerateHeader
         "    {\n" .
         "        return JSC::Structure::create(globalData, globalObject, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), &s_info);\n" .
         "    }\n");
-    if ($dataNode->extendedAttributes->{"JSCustomNamedGetterOnPrototype"}) {
+    if ($interface->extendedAttributes->{"JSCustomNamedGetterOnPrototype"}) {
         push(@headerContent, "    static void put(JSC::JSCell*, JSC::ExecState*, JSC::PropertyName, JSC::JSValue, JSC::PutPropertySlot&);\n");
         push(@headerContent, "    bool putDelegate(JSC::ExecState*, JSC::PropertyName, JSC::JSValue, JSC::PutPropertySlot&);\n");
     }
 
     # Custom defineOwnProperty function
-    push(@headerContent, "    static bool defineOwnProperty(JSC::JSObject*, JSC::ExecState*, JSC::PropertyName, JSC::PropertyDescriptor&, bool shouldThrow);\n") if $dataNode->extendedAttributes->{"JSCustomDefineOwnPropertyOnPrototype"};
+    push(@headerContent, "    static bool defineOwnProperty(JSC::JSObject*, JSC::ExecState*, JSC::PropertyName, JSC::PropertyDescriptor&, bool shouldThrow);\n") if $interface->extendedAttributes->{"JSCustomDefineOwnPropertyOnPrototype"};
 
     push(@headerContent, "\nprivate:\n");
     push(@headerContent, "    ${className}Prototype(JSC::JSGlobalData& globalData, JSC::JSGlobalObject*, JSC::Structure* structure) : JSC::JSNonFinalObject(globalData, structure) { }\n");
@@ -1132,14 +1132,14 @@ sub GenerateHeader
 
     push(@headerContent, "};\n\n");
 
-    if (!$dataNode->extendedAttributes->{"OmitConstructor"}) {
+    if (!$interface->extendedAttributes->{"OmitConstructor"}) {
         $headerIncludes{"JSDOMBinding.h"} = 1;
-        GenerateConstructorDeclaration(\@headerContent, $className, $dataNode, $interfaceName);
+        GenerateConstructorDeclaration(\@headerContent, $className, $interface, $interfaceName);
     }
 
     if ($numFunctions > 0) {
         push(@headerContent,"// Functions\n\n");
-        foreach my $function (@{$dataNode->functions}) {
+        foreach my $function (@{$interface->functions}) {
             next if $function->{overloadIndex} && $function->{overloadIndex} > 1;
             my $conditionalString = $codeGenerator->GenerateConditionalString($function->signature);
             push(@headerContent, "#if ${conditionalString}\n") if $conditionalString;
@@ -1149,9 +1149,9 @@ sub GenerateHeader
         }
     }
 
-    if ($numAttributes > 0 || !$dataNode->extendedAttributes->{"OmitConstructor"}) {
+    if ($numAttributes > 0 || !$interface->extendedAttributes->{"OmitConstructor"}) {
         push(@headerContent,"// Attributes\n\n");
-        foreach my $attribute (@{$dataNode->attributes}) {
+        foreach my $attribute (@{$interface->attributes}) {
             my $conditionalString = $codeGenerator->GenerateConditionalString($attribute->signature);
             push(@headerContent, "#if ${conditionalString}\n") if $conditionalString;
             my $getter = GetAttributeGetterName($interfaceName, $className, $attribute);
@@ -1163,12 +1163,12 @@ sub GenerateHeader
             push(@headerContent, "#endif\n") if $conditionalString;
         }
         
-        if (!$dataNode->extendedAttributes->{"OmitConstructor"}) {
+        if (!$interface->extendedAttributes->{"OmitConstructor"}) {
             my $getter = "js" . $interfaceName . "Constructor";
             push(@headerContent, "JSC::JSValue ${getter}(JSC::ExecState*, JSC::JSValue, JSC::PropertyName);\n");
         }
 
-        if ($dataNode->extendedAttributes->{"ReplaceableConstructor"}) {
+        if ($interface->extendedAttributes->{"ReplaceableConstructor"}) {
             my $constructorFunctionName = "setJS" . $interfaceName . "Constructor";
             push(@headerContent, "void ${constructorFunctionName}(JSC::ExecState*, JSC::JSObject*, JSC::JSValue);\n");
         }
@@ -1176,7 +1176,7 @@ sub GenerateHeader
 
     if ($numConstants > 0) {
         push(@headerContent,"// Constants\n\n");
-        foreach my $constant (@{$dataNode->constants}) {
+        foreach my $constant (@{$interface->constants}) {
             my $conditionalString = $codeGenerator->GenerateConditionalString($constant);
             push(@headerContent, "#if ${conditionalString}\n") if $conditionalString;
             my $getter = "js" . $interfaceName . $codeGenerator->WK_ucfirst($constant->name);
@@ -1185,7 +1185,7 @@ sub GenerateHeader
         }
     }
 
-    my $conditionalString = $codeGenerator->GenerateConditionalString($dataNode);
+    my $conditionalString = $codeGenerator->GenerateConditionalString($interface);
     push(@headerContent, "\n} // namespace WebCore\n\n");
     push(@headerContent, "#endif // ${conditionalString}\n\n") if $conditionalString;
     push(@headerContent, "#endif\n");
@@ -1199,15 +1199,15 @@ sub GenerateHeader
 
 sub GenerateAttributesHashTable($$)
 {
-    my ($object, $dataNode) = @_;
+    my ($object, $interface) = @_;
 
-    # FIXME: These should be functions on $dataNode.
-    my $interfaceName = $dataNode->name;
+    # FIXME: These should be functions on $interface.
+    my $interfaceName = $interface->name;
     my $className = "JS$interfaceName";
     
     # - Add all attributes in a hashtable definition
-    my $numAttributes = @{$dataNode->attributes};
-    $numAttributes++ if !$dataNode->extendedAttributes->{"OmitConstructor"};
+    my $numAttributes = @{$interface->attributes};
+    $numAttributes++ if !$interface->extendedAttributes->{"OmitConstructor"};
 
     return 0  if !$numAttributes;
 
@@ -1222,7 +1222,7 @@ sub GenerateAttributesHashTable($$)
 
     my @entries = ();
 
-    foreach my $attribute (@{$dataNode->attributes}) {
+    foreach my $attribute (@{$interface->attributes}) {
         next if ($attribute->isStatic);
         my $name = $attribute->signature->name;
         push(@hashKeys, $name);
@@ -1250,11 +1250,11 @@ sub GenerateAttributesHashTable($$)
         }
     }
 
-    if (!$dataNode->extendedAttributes->{"OmitConstructor"}) {
+    if (!$interface->extendedAttributes->{"OmitConstructor"}) {
         push(@hashKeys, "constructor");
         my $getter = "js" . $interfaceName . "Constructor";
         push(@hashValue1, $getter);
-        if ($dataNode->extendedAttributes->{"ReplaceableConstructor"}) {
+        if ($interface->extendedAttributes->{"ReplaceableConstructor"}) {
             my $setter = "setJS" . $interfaceName . "Constructor";
             push(@hashValue2, $setter);
             push(@hashSpecials, "DontEnum | DontDelete");
@@ -1356,7 +1356,7 @@ sub GenerateFunctionParametersCheck
 sub GenerateOverloadedFunction
 {
     my $function = shift;
-    my $dataNode = shift;
+    my $interface = shift;
     my $implClassName = shift;
 
     # Generate code for choosing the correct overload to call. Overloads are
@@ -1403,27 +1403,27 @@ END
 
 sub GenerateImplementation
 {
-    my ($object, $dataNode) = @_;
+    my ($object, $interface) = @_;
 
-    my $interfaceName = $dataNode->name;
+    my $interfaceName = $interface->name;
     my $className = "JS$interfaceName";
     my $implClassName = $interfaceName;
 
-    my $hasLegacyParent = $dataNode->extendedAttributes->{"JSLegacyParent"};
-    my $hasRealParent = @{$dataNode->parents} > 0;
+    my $hasLegacyParent = $interface->extendedAttributes->{"JSLegacyParent"};
+    my $hasRealParent = @{$interface->parents} > 0;
     my $hasParent = $hasLegacyParent || $hasRealParent;
-    my $parentClassName = GetParentClassName($dataNode);
-    my $visibleInterfaceName = $codeGenerator->GetVisibleInterfaceName($dataNode);
-    my $eventTarget = $dataNode->extendedAttributes->{"EventTarget"} || ($codeGenerator->IsSubType($dataNode, "EventTarget") && $dataNode->name ne "EventTarget");
-    my $needsMarkChildren = $dataNode->extendedAttributes->{"JSCustomMarkFunction"} || $dataNode->extendedAttributes->{"EventTarget"} || $dataNode->name eq "EventTarget";
+    my $parentClassName = GetParentClassName($interface);
+    my $visibleInterfaceName = $codeGenerator->GetVisibleInterfaceName($interface);
+    my $eventTarget = $interface->extendedAttributes->{"EventTarget"} || ($codeGenerator->IsSubType($interface, "EventTarget") && $interface->name ne "EventTarget");
+    my $needsMarkChildren = $interface->extendedAttributes->{"JSCustomMarkFunction"} || $interface->extendedAttributes->{"EventTarget"} || $interface->name eq "EventTarget";
 
     # - Add default header template
-    push(@implContentHeader, GenerateImplementationContentHeader($dataNode));
+    push(@implContentHeader, GenerateImplementationContentHeader($interface));
 
     AddIncludesForSVGAnimatedType($interfaceName) if $className =~ /^JSSVGAnimated/;
 
     $implIncludes{"<wtf/GetPtr.h>"} = 1;
-    $implIncludes{"<runtime/PropertyNameArray.h>"} = 1 if $dataNode->extendedAttributes->{"IndexedGetter"} || $dataNode->extendedAttributes->{"NumericIndexedGetter"};
+    $implIncludes{"<runtime/PropertyNameArray.h>"} = 1 if $interface->extendedAttributes->{"IndexedGetter"} || $interface->extendedAttributes->{"NumericIndexedGetter"};
 
     AddIncludesForTypeInImpl($interfaceName);
 
@@ -1432,13 +1432,13 @@ sub GenerateImplementation
     push(@implContent, "\nusing namespace JSC;\n\n");
     push(@implContent, "namespace WebCore {\n\n");
 
-    my $numAttributes = GenerateAttributesHashTable($object, $dataNode);
+    my $numAttributes = GenerateAttributesHashTable($object, $interface);
 
-    my $numConstants = @{$dataNode->constants};
-    my $numFunctions = @{$dataNode->functions};
+    my $numConstants = @{$interface->constants};
+    my $numFunctions = @{$interface->functions};
 
     # - Add all constants
-    if (!$dataNode->extendedAttributes->{"OmitConstructor"}) {
+    if (!$interface->extendedAttributes->{"OmitConstructor"}) {
         my $hashSize = $numConstants;
         my $hashName = $className . "ConstructorTable";
 
@@ -1449,7 +1449,7 @@ sub GenerateImplementation
         my %conditionals = ();
 
         # FIXME: we should not need a function for every constant.
-        foreach my $constant (@{$dataNode->constants}) {
+        foreach my $constant (@{$interface->constants}) {
             my $name = $constant->name;
             push(@hashKeys, $name);
             my $getter = "js" . $interfaceName . $codeGenerator->WK_ucfirst($name);
@@ -1467,7 +1467,7 @@ sub GenerateImplementation
             }
         }
 
-        foreach my $attribute (@{$dataNode->attributes}) {
+        foreach my $attribute (@{$interface->attributes}) {
             next unless ($attribute->isStatic);
             my $name = $attribute->signature->name;
             push(@hashKeys, $name);
@@ -1494,7 +1494,7 @@ sub GenerateImplementation
             }
         }
 
-        foreach my $function (@{$dataNode->functions}) {
+        foreach my $function (@{$interface->functions}) {
             next unless ($function->isStatic);
             next if $function->{overloadIndex} && $function->{overloadIndex} > 1;
             my $name = $function->signature->name;
@@ -1524,12 +1524,12 @@ sub GenerateImplementation
                                    \@hashValue1, \@hashValue2,
                                    \%conditionals);
 
-        push(@implContent, $codeGenerator->GenerateCompileTimeCheckForEnumsIfNeeded($dataNode));
+        push(@implContent, $codeGenerator->GenerateCompileTimeCheckForEnumsIfNeeded($interface));
 
         my $protoClassName = "${className}Prototype";
-        GenerateConstructorDefinition(\@implContent, $className, $protoClassName, $interfaceName, $visibleInterfaceName, $dataNode);
-        if ($dataNode->extendedAttributes->{"NamedConstructor"}) {
-            GenerateConstructorDefinition(\@implContent, $className, $protoClassName, $interfaceName, $dataNode->extendedAttributes->{"NamedConstructor"}, $dataNode, "GeneratingNamedConstructor");
+        GenerateConstructorDefinition(\@implContent, $className, $protoClassName, $interfaceName, $visibleInterfaceName, $interface);
+        if ($interface->extendedAttributes->{"NamedConstructor"}) {
+            GenerateConstructorDefinition(\@implContent, $className, $protoClassName, $interfaceName, $interface->extendedAttributes->{"NamedConstructor"}, $interface, "GeneratingNamedConstructor");
         }
     }
 
@@ -1544,7 +1544,7 @@ sub GenerateImplementation
     my %conditionals = ();
 
     # FIXME: we should not need a function for every constant.
-    foreach my $constant (@{$dataNode->constants}) {
+    foreach my $constant (@{$interface->constants}) {
         my $name = $constant->name;
         push(@hashKeys, $name);
         my $getter = "js" . $interfaceName . $codeGenerator->WK_ucfirst($name);
@@ -1558,7 +1558,7 @@ sub GenerateImplementation
         }
     }
 
-    foreach my $function (@{$dataNode->functions}) {
+    foreach my $function (@{$interface->functions}) {
         next if ($function->isStatic);
         next if $function->{overloadIndex} && $function->{overloadIndex} > 1;
         my $name = $function->signature->name;
@@ -1588,7 +1588,7 @@ sub GenerateImplementation
                                \@hashValue1, \@hashValue2,
                                \%conditionals);
 
-    if ($dataNode->extendedAttributes->{"JSNoStaticTables"}) {
+    if ($interface->extendedAttributes->{"JSNoStaticTables"}) {
         push(@implContent, "static const HashTable* get${className}PrototypeTable(ExecState* exec)\n");
         push(@implContent, "{\n");
         push(@implContent, "    return getHashTableForGlobalData(exec->globalData(), &${className}PrototypeTable);\n");
@@ -1597,7 +1597,7 @@ sub GenerateImplementation
     } else {
         push(@implContent, "const ClassInfo ${className}Prototype::s_info = { \"${visibleInterfaceName}Prototype\", &Base::s_info, &${className}PrototypeTable, 0, CREATE_METHOD_TABLE(${className}Prototype) };\n\n");
     }
-    if ($interfaceName ne "DOMWindow" && !$dataNode->extendedAttributes->{"IsWorkerContext"}) {
+    if ($interfaceName ne "DOMWindow" && !$interface->extendedAttributes->{"IsWorkerContext"}) {
         push(@implContent, "JSObject* ${className}Prototype::self(ExecState* exec, JSGlobalObject* globalObject)\n");
         push(@implContent, "{\n");
         push(@implContent, "    return getDOMPrototype<${className}>(exec, globalObject);\n");
@@ -1612,11 +1612,11 @@ sub GenerateImplementation
         if ($numConstants eq 0 && $numFunctions eq 0) {
             push(@implContent, "    return Base::getOwnPropertySlot(thisObject, exec, propertyName, slot);\n");        
         } elsif ($numConstants eq 0) {
-            push(@implContent, "    return getStaticFunctionSlot<JSObject>(exec, " . prototypeHashTableAccessor($dataNode->extendedAttributes->{"JSNoStaticTables"}, $className) . ", thisObject, propertyName, slot);\n");
+            push(@implContent, "    return getStaticFunctionSlot<JSObject>(exec, " . prototypeHashTableAccessor($interface->extendedAttributes->{"JSNoStaticTables"}, $className) . ", thisObject, propertyName, slot);\n");
         } elsif ($numFunctions eq 0) {
-            push(@implContent, "    return getStaticValueSlot<${className}Prototype, JSObject>(exec, " . prototypeHashTableAccessor($dataNode->extendedAttributes->{"JSNoStaticTables"}, $className) . ", thisObject, propertyName, slot);\n");
+            push(@implContent, "    return getStaticValueSlot<${className}Prototype, JSObject>(exec, " . prototypeHashTableAccessor($interface->extendedAttributes->{"JSNoStaticTables"}, $className) . ", thisObject, propertyName, slot);\n");
         } else {
-            push(@implContent, "    return getStaticPropertySlot<${className}Prototype, JSObject>(exec, " . prototypeHashTableAccessor($dataNode->extendedAttributes->{"JSNoStaticTables"}, $className) . ", thisObject, propertyName, slot);\n");
+            push(@implContent, "    return getStaticPropertySlot<${className}Prototype, JSObject>(exec, " . prototypeHashTableAccessor($interface->extendedAttributes->{"JSNoStaticTables"}, $className) . ", thisObject, propertyName, slot);\n");
         }
         push(@implContent, "}\n\n");
 
@@ -1627,16 +1627,16 @@ sub GenerateImplementation
         if ($numConstants eq 0 && $numFunctions eq 0) {
             push(@implContent, "    return Base::getOwnPropertyDescriptor(thisObject, exec, propertyName, descriptor);\n");        
         } elsif ($numConstants eq 0) {
-            push(@implContent, "    return getStaticFunctionDescriptor<JSObject>(exec, " . prototypeHashTableAccessor($dataNode->extendedAttributes->{"JSNoStaticTables"}, $className) . ", thisObject, propertyName, descriptor);\n");
+            push(@implContent, "    return getStaticFunctionDescriptor<JSObject>(exec, " . prototypeHashTableAccessor($interface->extendedAttributes->{"JSNoStaticTables"}, $className) . ", thisObject, propertyName, descriptor);\n");
         } elsif ($numFunctions eq 0) {
-            push(@implContent, "    return getStaticValueDescriptor<${className}Prototype, JSObject>(exec, " . prototypeHashTableAccessor($dataNode->extendedAttributes->{"JSNoStaticTables"}, $className) . ", thisObject, propertyName, descriptor);\n");
+            push(@implContent, "    return getStaticValueDescriptor<${className}Prototype, JSObject>(exec, " . prototypeHashTableAccessor($interface->extendedAttributes->{"JSNoStaticTables"}, $className) . ", thisObject, propertyName, descriptor);\n");
         } else {
-            push(@implContent, "    return getStaticPropertyDescriptor<${className}Prototype, JSObject>(exec, " . prototypeHashTableAccessor($dataNode->extendedAttributes->{"JSNoStaticTables"}, $className) . ", thisObject, propertyName, descriptor);\n");
+            push(@implContent, "    return getStaticPropertyDescriptor<${className}Prototype, JSObject>(exec, " . prototypeHashTableAccessor($interface->extendedAttributes->{"JSNoStaticTables"}, $className) . ", thisObject, propertyName, descriptor);\n");
         }
         push(@implContent, "}\n\n");
     }
 
-    if ($dataNode->extendedAttributes->{"JSCustomNamedGetterOnPrototype"}) {
+    if ($interface->extendedAttributes->{"JSCustomNamedGetterOnPrototype"}) {
         push(@implContent, "void ${className}Prototype::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot& slot)\n");
         push(@implContent, "{\n");
         push(@implContent, "    ${className}Prototype* thisObject = jsCast<${className}Prototype*>(cell);\n");
@@ -1647,7 +1647,7 @@ sub GenerateImplementation
     }
 
     # - Initialize static ClassInfo object
-    if ($numAttributes > 0 && $dataNode->extendedAttributes->{"JSNoStaticTables"}) {
+    if ($numAttributes > 0 && $interface->extendedAttributes->{"JSNoStaticTables"}) {
         push(@implContent, "static const HashTable* get${className}Table(ExecState* exec)\n");
         push(@implContent, "{\n");
         push(@implContent, "    return getHashTableForGlobalData(exec->globalData(), &${className}Table);\n");
@@ -1656,12 +1656,12 @@ sub GenerateImplementation
 
     push(@implContent, "const ClassInfo $className" . "::s_info = { \"${visibleInterfaceName}\", &Base::s_info, ");
 
-    if ($numAttributes > 0 && !$dataNode->extendedAttributes->{"JSNoStaticTables"}) {
+    if ($numAttributes > 0 && !$interface->extendedAttributes->{"JSNoStaticTables"}) {
         push(@implContent, "&${className}Table");
     } else {
         push(@implContent, "0");
     }
-    if ($numAttributes > 0 && $dataNode->extendedAttributes->{"JSNoStaticTables"}) {
+    if ($numAttributes > 0 && $interface->extendedAttributes->{"JSNoStaticTables"}) {
         push(@implContent, ", get${className}Table ");
     } else {
         push(@implContent, ", 0 ");
@@ -1683,7 +1683,7 @@ sub GenerateImplementation
         push(@implContent, "    : $parentClassName(globalData, structure, impl, shell)\n");
         push(@implContent, "{\n");
         push(@implContent, "}\n\n");
-    } elsif ($dataNode->extendedAttributes->{"IsWorkerContext"}) {
+    } elsif ($interface->extendedAttributes->{"IsWorkerContext"}) {
         AddIncludesForTypeInImpl($interfaceName);
         push(@implContent, "${className}::$className(JSGlobalData& globalData, Structure* structure, PassRefPtr<$implType> impl)\n");
         push(@implContent, "    : $parentClassName(globalData, structure, impl)\n");
@@ -1713,13 +1713,13 @@ sub GenerateImplementation
         push(@implContent, "}\n\n");
     }
 
-    if (!$dataNode->extendedAttributes->{"ExtendsDOMGlobalObject"}) {
+    if (!$interface->extendedAttributes->{"ExtendsDOMGlobalObject"}) {
         push(@implContent, "JSObject* ${className}::createPrototype(ExecState* exec, JSGlobalObject* globalObject)\n");
         push(@implContent, "{\n");
         if ($hasParent && $parentClassName ne "JSC::DOMNodeFilter") {
             push(@implContent, "    return ${className}Prototype::create(exec->globalData(), globalObject, ${className}Prototype::createStructure(exec->globalData(), globalObject, ${parentClassName}Prototype::self(exec, globalObject)));\n");
         } else {
-            my $prototype = $dataNode->isException ? "errorPrototype" : "objectPrototype";
+            my $prototype = $interface->isException ? "errorPrototype" : "objectPrototype";
             push(@implContent, "    return ${className}Prototype::create(exec->globalData(), globalObject, ${className}Prototype::createStructure(globalObject->globalData(), globalObject, globalObject->${prototype}()));\n");
         }
         push(@implContent, "}\n\n");
@@ -1747,34 +1747,34 @@ sub GenerateImplementation
     }
 
     my $hasGetter = $numAttributes > 0
-                 || !$dataNode->extendedAttributes->{"OmitConstructor"} 
-                 || $dataNode->extendedAttributes->{"IndexedGetter"}
-                 || $dataNode->extendedAttributes->{"NumericIndexedGetter"}
-                 || $dataNode->extendedAttributes->{"JSCustomGetOwnPropertySlotAndDescriptor"}
-                 || $dataNode->extendedAttributes->{"CustomGetOwnPropertySlot"}
-                 || $dataNode->extendedAttributes->{"NamedGetter"}
-                 || $dataNode->extendedAttributes->{"CustomNamedGetter"};
+                 || !$interface->extendedAttributes->{"OmitConstructor"} 
+                 || $interface->extendedAttributes->{"IndexedGetter"}
+                 || $interface->extendedAttributes->{"NumericIndexedGetter"}
+                 || $interface->extendedAttributes->{"JSCustomGetOwnPropertySlotAndDescriptor"}
+                 || $interface->extendedAttributes->{"CustomGetOwnPropertySlot"}
+                 || $interface->extendedAttributes->{"NamedGetter"}
+                 || $interface->extendedAttributes->{"CustomNamedGetter"};
 
     # Attributes
     if ($hasGetter) {
-        if (!$dataNode->extendedAttributes->{"JSInlineGetOwnPropertySlot"} && !$dataNode->extendedAttributes->{"CustomGetOwnPropertySlot"}) {
+        if (!$interface->extendedAttributes->{"JSInlineGetOwnPropertySlot"} && !$interface->extendedAttributes->{"CustomGetOwnPropertySlot"}) {
             push(@implContent, "bool ${className}::getOwnPropertySlot(JSCell* cell, ExecState* exec, PropertyName propertyName, PropertySlot& slot)\n");
             push(@implContent, "{\n");
             push(@implContent, "    ${className}* thisObject = jsCast<${className}*>(cell);\n");
             push(@implContent, "    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);\n");
-            push(@implContent, GenerateGetOwnPropertySlotBody($dataNode, $interfaceName, $className, $implClassName, $numAttributes > 0, 0));
+            push(@implContent, GenerateGetOwnPropertySlotBody($interface, $interfaceName, $className, $implClassName, $numAttributes > 0, 0));
             push(@implContent, "}\n\n");
             push(@implContent, "bool ${className}::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, PropertyName propertyName, PropertyDescriptor& descriptor)\n");
             push(@implContent, "{\n");
             push(@implContent, "    ${className}* thisObject = jsCast<${className}*>(object);\n");
             push(@implContent, "    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);\n");
-            push(@implContent, GenerateGetOwnPropertyDescriptorBody($dataNode, $interfaceName, $className, $implClassName, $numAttributes > 0, 0));
+            push(@implContent, GenerateGetOwnPropertyDescriptorBody($interface, $interfaceName, $className, $implClassName, $numAttributes > 0, 0));
             push(@implContent, "}\n\n");
         }
 
-        if ($dataNode->extendedAttributes->{"IndexedGetter"} || $dataNode->extendedAttributes->{"NumericIndexedGetter"}
-                || $dataNode->extendedAttributes->{"NamedGetter"} || $dataNode->extendedAttributes->{"CustomNamedGetter"}
-                || $dataNode->extendedAttributes->{"JSCustomGetOwnPropertySlotAndDescriptor"}) {
+        if ($interface->extendedAttributes->{"IndexedGetter"} || $interface->extendedAttributes->{"NumericIndexedGetter"}
+                || $interface->extendedAttributes->{"NamedGetter"} || $interface->extendedAttributes->{"CustomNamedGetter"}
+                || $interface->extendedAttributes->{"JSCustomGetOwnPropertySlotAndDescriptor"}) {
             push(@implContent, "bool ${className}::getOwnPropertySlotByIndex(JSCell* cell, ExecState* exec, unsigned index, PropertySlot& slot)\n");
             push(@implContent, "{\n");
             push(@implContent, "    ${className}* thisObject = jsCast<${className}*>(cell);\n");
@@ -1791,13 +1791,13 @@ sub GenerateImplementation
                 $generatedPropertyName = 1;
             };
             
-            if ($dataNode->extendedAttributes->{"IndexedGetter"} || $dataNode->extendedAttributes->{"NumericIndexedGetter"}) {
+            if ($interface->extendedAttributes->{"IndexedGetter"} || $interface->extendedAttributes->{"NumericIndexedGetter"}) {
                 if (IndexGetterReturnsStrings($implClassName)) {
                     push(@implContent, "    if (index <= MAX_ARRAY_INDEX) {\n");
                 } else {
                     push(@implContent, "    if (index < static_cast<$implClassName*>(thisObject->impl())->length()) {\n");
                 }
-                if ($dataNode->extendedAttributes->{"NumericIndexedGetter"}) {
+                if ($interface->extendedAttributes->{"NumericIndexedGetter"}) {
                     push(@implContent, "        slot.setValue(thisObject->getByIndex(exec, index));\n");
                 } else {
                     push(@implContent, "        slot.setCustomIndex(thisObject, index, thisObject->indexGetter);\n");
@@ -1806,7 +1806,7 @@ sub GenerateImplementation
                 push(@implContent, "    }\n");
             }
             
-            if ($dataNode->extendedAttributes->{"NamedGetter"} || $dataNode->extendedAttributes->{"CustomNamedGetter"}) {
+            if ($interface->extendedAttributes->{"NamedGetter"} || $interface->extendedAttributes->{"CustomNamedGetter"}) {
                 &$propertyNameGeneration();
                 push(@implContent, "    if (canGetItemsForName(exec, static_cast<$implClassName*>(thisObject->impl()), propertyName)) {\n");
                 push(@implContent, "        slot.setCustom(thisObject, thisObject->nameGetter);\n");
@@ -1815,7 +1815,7 @@ sub GenerateImplementation
                 $implIncludes{"wtf/text/AtomicString.h"} = 1;
             }
             
-            if ($dataNode->extendedAttributes->{"JSCustomGetOwnPropertySlotAndDescriptor"}) {
+            if ($interface->extendedAttributes->{"JSCustomGetOwnPropertySlotAndDescriptor"}) {
                 &$propertyNameGeneration();
                 push(@implContent, "    if (thisObject->getOwnPropertySlotDelegate(exec, propertyName, slot))\n");
                 push(@implContent, "        return true;\n");
@@ -1826,7 +1826,7 @@ sub GenerateImplementation
         }
 
         if ($numAttributes > 0) {
-            foreach my $attribute (@{$dataNode->attributes}) {
+            foreach my $attribute (@{$interface->attributes}) {
                 my $name = $attribute->signature->name;
                 my $type = $attribute->signature->type;
                 $codeGenerator->AssertNotSequenceType($type);
@@ -1849,7 +1849,7 @@ sub GenerateImplementation
                     $needsMarkChildren = 1;
                 }
 
-                if ($dataNode->extendedAttributes->{"CheckSecurity"} &&
+                if ($interface->extendedAttributes->{"CheckSecurity"} &&
                     !$attribute->signature->extendedAttributes->{"DoNotCheckSecurity"} &&
                     !$attribute->signature->extendedAttributes->{"DoNotCheckSecurityOnGetter"}) {
                     $implIncludes{"BindingSecurity.h"} = 1;
@@ -1965,14 +1965,14 @@ sub GenerateImplementation
                 push(@implContent, "\n");
             }
 
-            if (!$dataNode->extendedAttributes->{"OmitConstructor"}) {
+            if (!$interface->extendedAttributes->{"OmitConstructor"}) {
                 my $constructorFunctionName = "js" . $interfaceName . "Constructor";
 
                 push(@implContent, "JSValue ${constructorFunctionName}(ExecState* exec, JSValue slotBase, PropertyName)\n");
                 push(@implContent, "{\n");
                 push(@implContent, "    ${className}* domObject = jsCast<$className*>(asObject(slotBase));\n");
 
-                if ($dataNode->extendedAttributes->{"CheckSecurity"}) {
+                if ($interface->extendedAttributes->{"CheckSecurity"}) {
                     $implIncludes{"BindingSecurity.h"} = 1;
                     push(@implContent, "    if (!BindingSecurity::shouldAllowAccessToDOMWindow(exec, domObject->impl()))\n");
                     push(@implContent, "        return jsUndefined();\n");
@@ -1985,45 +1985,45 @@ sub GenerateImplementation
 
         # Check if we have any writable attributes
         my $hasReadWriteProperties = 0;
-        foreach my $attribute (@{$dataNode->attributes}) {
+        foreach my $attribute (@{$interface->attributes}) {
             $hasReadWriteProperties = 1 if !IsReadonly($attribute) && !$attribute->isStatic;
         }
 
         my $hasSetter = $hasReadWriteProperties
-                     || $dataNode->extendedAttributes->{"CustomNamedSetter"}
-                     || $dataNode->extendedAttributes->{"CustomIndexedSetter"};
+                     || $interface->extendedAttributes->{"CustomNamedSetter"}
+                     || $interface->extendedAttributes->{"CustomIndexedSetter"};
 
         if ($hasSetter) {
-            if (!$dataNode->extendedAttributes->{"CustomPutFunction"}) {
+            if (!$interface->extendedAttributes->{"CustomPutFunction"}) {
                 push(@implContent, "void ${className}::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JSValue value, PutPropertySlot& slot)\n");
                 push(@implContent, "{\n");
                 push(@implContent, "    ${className}* thisObject = jsCast<${className}*>(cell);\n");
                 push(@implContent, "    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);\n");
-                if ($dataNode->extendedAttributes->{"CustomIndexedSetter"}) {
+                if ($interface->extendedAttributes->{"CustomIndexedSetter"}) {
                     push(@implContent, "    unsigned index = propertyName.asIndex();\n");
                     push(@implContent, "    if (index != PropertyName::NotAnIndex) {\n");
                     push(@implContent, "        thisObject->indexSetter(exec, index, value);\n");
                     push(@implContent, "        return;\n");
                     push(@implContent, "    }\n");
                 }
-                if ($dataNode->extendedAttributes->{"CustomNamedSetter"}) {
+                if ($interface->extendedAttributes->{"CustomNamedSetter"}) {
                     push(@implContent, "    if (thisObject->putDelegate(exec, propertyName, value, slot))\n");
                     push(@implContent, "        return;\n");
                 }
 
                 if ($hasReadWriteProperties) {
-                    push(@implContent, "    lookupPut<$className, Base>(exec, propertyName, value, " . hashTableAccessor($dataNode->extendedAttributes->{"JSNoStaticTables"}, $className) . ", thisObject, slot);\n");
+                    push(@implContent, "    lookupPut<$className, Base>(exec, propertyName, value, " . hashTableAccessor($interface->extendedAttributes->{"JSNoStaticTables"}, $className) . ", thisObject, slot);\n");
                 } else {
                     push(@implContent, "    Base::put(thisObject, exec, propertyName, value, slot);\n");
                 }
                 push(@implContent, "}\n\n");
                 
-                if ($dataNode->extendedAttributes->{"CustomIndexedSetter"} || $dataNode->extendedAttributes->{"CustomNamedSetter"}) {
+                if ($interface->extendedAttributes->{"CustomIndexedSetter"} || $interface->extendedAttributes->{"CustomNamedSetter"}) {
                     push(@implContent, "void ${className}::putByIndex(JSCell* cell, ExecState* exec, unsigned index, JSValue value, bool shouldThrow)\n");
                     push(@implContent, "{\n");
                     push(@implContent, "    ${className}* thisObject = jsCast<${className}*>(cell);\n");
                     push(@implContent, "    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);\n");
-                    if ($dataNode->extendedAttributes->{"CustomIndexedSetter"}) {
+                    if ($interface->extendedAttributes->{"CustomIndexedSetter"}) {
                         push(@implContent, "    if (index <= MAX_ARRAY_INDEX) {\n");
                         push(@implContent, "        UNUSED_PARAM(shouldThrow);\n");
                         push(@implContent, "        thisObject->indexSetter(exec, index, value);\n");
@@ -2031,7 +2031,7 @@ sub GenerateImplementation
                         push(@implContent, "    }\n");
                     }
                     
-                    if ($dataNode->extendedAttributes->{"CustomNamedSetter"}) {
+                    if ($interface->extendedAttributes->{"CustomNamedSetter"}) {
                         push(@implContent, "    PropertyName propertyName = Identifier::from(exec, index);\n");
                         push(@implContent, "    PutPropertySlot slot(shouldThrow);\n");
                         push(@implContent, "    if (thisObject->putDelegate(exec, propertyName, value, slot))\n");
@@ -2044,7 +2044,7 @@ sub GenerateImplementation
             }
 
             if ($hasReadWriteProperties) {
-                foreach my $attribute (@{$dataNode->attributes}) {
+                foreach my $attribute (@{$interface->attributes}) {
                     if (!IsReadonly($attribute)) {
                         my $name = $attribute->signature->name;
                         my $type = $attribute->signature->type;
@@ -2061,7 +2061,7 @@ sub GenerateImplementation
 
                             push(@implContent, "    UNUSED_PARAM(exec);\n");
 
-                            if ($dataNode->extendedAttributes->{"CheckSecurity"} && !$attribute->signature->extendedAttributes->{"DoNotCheckSecurity"}) {
+                            if ($interface->extendedAttributes->{"CheckSecurity"} && !$attribute->signature->extendedAttributes->{"DoNotCheckSecurity"}) {
                                 if ($interfaceName eq "DOMWindow") {
                                     $implIncludes{"BindingSecurity.h"} = 1;
                                     push(@implContent, "    if (!BindingSecurity::shouldAllowAccessToDOMWindow(exec, jsCast<$className*>(thisObject)->impl()))\n");
@@ -2186,12 +2186,12 @@ sub GenerateImplementation
                 }
             }
 
-            if ($dataNode->extendedAttributes->{"ReplaceableConstructor"}) {
+            if ($interface->extendedAttributes->{"ReplaceableConstructor"}) {
                 my $constructorFunctionName = "setJS" . $interfaceName . "Constructor";
 
                 push(@implContent, "void ${constructorFunctionName}(ExecState* exec, JSObject* thisObject, JSValue value)\n");
                 push(@implContent, "{\n");
-                if ($dataNode->extendedAttributes->{"CheckSecurity"}) {
+                if ($interface->extendedAttributes->{"CheckSecurity"}) {
                     if ($interfaceName eq "DOMWindow") {
                         $implIncludes{"BindingSecurity.h"} = 1;
                         push(@implContent, "    if (!BindingSecurity::shouldAllowAccessToDOMWindow(exec, jsCast<$className*>(thisObject)->impl()))\n");
@@ -2213,12 +2213,12 @@ sub GenerateImplementation
         }
     }
 
-    if (($dataNode->extendedAttributes->{"IndexedGetter"} || $dataNode->extendedAttributes->{"NumericIndexedGetter"}) && !$dataNode->extendedAttributes->{"CustomEnumerateProperty"}) {
+    if (($interface->extendedAttributes->{"IndexedGetter"} || $interface->extendedAttributes->{"NumericIndexedGetter"}) && !$interface->extendedAttributes->{"CustomEnumerateProperty"}) {
         push(@implContent, "void ${className}::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)\n");
         push(@implContent, "{\n");
         push(@implContent, "    ${className}* thisObject = jsCast<${className}*>(object);\n");
         push(@implContent, "    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);\n");
-        if ($dataNode->extendedAttributes->{"IndexedGetter"} || $dataNode->extendedAttributes->{"NumericIndexedGetter"}) {
+        if ($interface->extendedAttributes->{"IndexedGetter"} || $interface->extendedAttributes->{"NumericIndexedGetter"}) {
             push(@implContent, "    for (unsigned i = 0; i < static_cast<${implClassName}*>(thisObject->impl())->length(); ++i)\n");
             push(@implContent, "        propertyNames.add(Identifier::from(exec, i));\n");
         }
@@ -2226,7 +2226,7 @@ sub GenerateImplementation
         push(@implContent, "}\n\n");
     }
 
-    if (!$dataNode->extendedAttributes->{"OmitConstructor"}) {
+    if (!$interface->extendedAttributes->{"OmitConstructor"}) {
         push(@implContent, "JSValue ${className}::getConstructor(ExecState* exec, JSGlobalObject* globalObject)\n{\n");
         push(@implContent, "    return getDOMConstructor<${className}Constructor>(exec, jsCast<JSDOMGlobalObject*>(globalObject));\n");
         push(@implContent, "}\n\n");
@@ -2234,7 +2234,7 @@ sub GenerateImplementation
 
     # Functions
     if ($numFunctions > 0) {
-        foreach my $function (@{$dataNode->functions}) {
+        foreach my $function (@{$interface->functions}) {
             AddIncludesForTypeInImpl($function->signature->type);
 
             my $isCustom = $function->signature->extendedAttributes->{"Custom"} || $function->signature->extendedAttributes->{"JSCustom"};
@@ -2268,17 +2268,17 @@ sub GenerateImplementation
 
             if ($function->isStatic) {
                 if ($isCustom) {
-                    GenerateArgumentsCountCheck(\@implContent, $function, $dataNode);
+                    GenerateArgumentsCountCheck(\@implContent, $function, $interface);
                     push(@implContent, "    return JSValue::encode(${className}::" . $functionImplementationName . "(exec));\n");
                 } else {
-                    GenerateArgumentsCountCheck(\@implContent, $function, $dataNode);
+                    GenerateArgumentsCountCheck(\@implContent, $function, $interface);
 
                     if (@{$function->raisesExceptions}) {
                         push(@implContent, "    ExceptionCode ec = 0;\n");
                     }
 
                     my $numParameters = @{$function->parameters};
-                    my ($functionString, $dummy) = GenerateParametersCheck(\@implContent, $function, $dataNode, $numParameters, $implClassName, $functionImplementationName, $svgPropertyType, $svgPropertyOrListPropertyType, $svgListPropertyType);
+                    my ($functionString, $dummy) = GenerateParametersCheck(\@implContent, $function, $interface, $numParameters, $implClassName, $functionImplementationName, $svgPropertyType, $svgPropertyOrListPropertyType, $svgListPropertyType);
                     GenerateImplementationFunctionCall($function, $functionString, "    ", $svgPropertyType, $implClassName);
                 }
             } else {
@@ -2286,7 +2286,7 @@ sub GenerateImplementation
                     push(@implContent, "    $className* castedThis = toJSDOMWindow(exec->hostThisValue().toThisObject(exec));\n");
                     push(@implContent, "    if (!castedThis)\n");
                     push(@implContent, "        return throwVMTypeError(exec);\n");
-                } elsif ($dataNode->extendedAttributes->{"IsWorkerContext"}) {
+                } elsif ($interface->extendedAttributes->{"IsWorkerContext"}) {
                     push(@implContent, "    $className* castedThis = to${className}(exec->hostThisValue().toThisObject(exec));\n");
                     push(@implContent, "    if (!castedThis)\n");
                     push(@implContent, "        return throwVMTypeError(exec);\n");
@@ -2299,7 +2299,7 @@ sub GenerateImplementation
 
                 push(@implContent, "    ASSERT_GC_OBJECT_INHERITS(castedThis, &${className}::s_info);\n");
 
-                if ($dataNode->extendedAttributes->{"CheckSecurity"} and
+                if ($interface->extendedAttributes->{"CheckSecurity"} and
                     !$function->signature->extendedAttributes->{"DoNotCheckSecurity"}) {
                     $implIncludes{"BindingSecurity.h"} = 1;
                     push(@implContent, "    if (!BindingSecurity::shouldAllowAccessToDOMWindow(exec, castedThis->impl()))\n");
@@ -2309,8 +2309,8 @@ sub GenerateImplementation
                 if ($isCustom) {
                     push(@implContent, "    return JSValue::encode(castedThis->" . $functionImplementationName . "(exec));\n");
                 } else {
-                    if ($function->signature->name eq "set" and $dataNode->extendedAttributes->{"TypedArray"}) {
-                        my $viewType = $dataNode->extendedAttributes->{"TypedArray"};
+                    if ($function->signature->name eq "set" and $interface->extendedAttributes->{"TypedArray"}) {
+                        my $viewType = $interface->extendedAttributes->{"TypedArray"};
                         push(@implContent, "    return JSValue::encode(setWebGLArrayHelper<$implType, $viewType>(exec, castedThis->impl()));\n");
                         push(@implContent, "}\n\n");
                         next;
@@ -2332,7 +2332,7 @@ sub GenerateImplementation
                     } elsif ($function->signature->name eq "removeEventListener") {
                         push(@implContent, GenerateEventListenerCall($className, "remove"));
                     } else {
-                        GenerateArgumentsCountCheck(\@implContent, $function, $dataNode);
+                        GenerateArgumentsCountCheck(\@implContent, $function, $interface);
 
                         if (@{$function->raisesExceptions}) {
                             push(@implContent, "    ExceptionCode ec = 0;\n");
@@ -2345,7 +2345,7 @@ sub GenerateImplementation
                         }
 
                         my $numParameters = @{$function->parameters};
-                        my ($functionString, $dummy) = GenerateParametersCheck(\@implContent, $function, $dataNode, $numParameters, $implClassName, $functionImplementationName, $svgPropertyType, $svgPropertyOrListPropertyType, $svgListPropertyType);
+                        my ($functionString, $dummy) = GenerateParametersCheck(\@implContent, $function, $interface, $numParameters, $implClassName, $functionImplementationName, $svgPropertyType, $svgPropertyOrListPropertyType, $svgListPropertyType);
                         GenerateImplementationFunctionCall($function, $functionString, "    ", $svgPropertyType, $implClassName);
                     }
                 }
@@ -2355,7 +2355,7 @@ sub GenerateImplementation
 
             if (!$isCustom && $isOverloaded && $function->{overloadIndex} == @{$function->{overloads}}) {
                 # Generate a function dispatching call to the rest of the overloads.
-                GenerateOverloadedFunction($function, $dataNode, $implClassName);
+                GenerateOverloadedFunction($function, $interface, $implClassName);
             }
 
             push(@implContent, "#endif\n\n") if $conditional;
@@ -2363,7 +2363,7 @@ sub GenerateImplementation
     }
 
     if ($numFunctions > 0 || $numCachedAttributes > 0) {
-        if ($needsMarkChildren && !$dataNode->extendedAttributes->{"JSCustomMarkFunction"}) {
+        if ($needsMarkChildren && !$interface->extendedAttributes->{"JSCustomMarkFunction"}) {
             push(@implContent, "void ${className}::visitChildren(JSCell* cell, SlotVisitor& visitor)\n");
             push(@implContent, "{\n");
             push(@implContent, "    ${className}* thisObject = jsCast<${className}*>(cell);\n");
@@ -2371,11 +2371,11 @@ sub GenerateImplementation
             push(@implContent, "    COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);\n");
             push(@implContent, "    ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());\n");
             push(@implContent, "    Base::visitChildren(thisObject, visitor);\n");
-            if ($dataNode->extendedAttributes->{"EventTarget"} || $dataNode->name eq "EventTarget") {
+            if ($interface->extendedAttributes->{"EventTarget"} || $interface->name eq "EventTarget") {
                 push(@implContent, "    thisObject->impl()->visitJSEventListeners(visitor);\n");
             }
             if ($numCachedAttributes > 0) {
-                foreach (@{$dataNode->attributes}) {
+                foreach (@{$interface->attributes}) {
                     my $attribute = $_;
                     if ($attribute->signature->extendedAttributes->{"CachedAttribute"}) {
                         push(@implContent, "    visitor.append(&thisObject->m_" . $attribute->signature->name . ");\n");
@@ -2389,12 +2389,12 @@ sub GenerateImplementation
     # Cached attributes are indeed allowed when there is a custom mark/visitChildren function.
     # The custom function must make sure to account for the cached attribute.
     # Uncomment the below line to temporarily enforce generated mark functions when cached attributes are present.
-    # die "Can't generate binding for class with cached attribute and custom mark." if (($numCachedAttributes > 0) and ($dataNode->extendedAttributes->{"JSCustomMarkFunction"}));
+    # die "Can't generate binding for class with cached attribute and custom mark." if (($numCachedAttributes > 0) and ($interface->extendedAttributes->{"JSCustomMarkFunction"}));
 
     if ($numConstants > 0) {
         push(@implContent, "// Constant getters\n\n");
 
-        foreach my $constant (@{$dataNode->constants}) {
+        foreach my $constant (@{$interface->constants}) {
             my $getter = "js" . $interfaceName . $codeGenerator->WK_ucfirst($constant->name);
             my $conditional = $constant->extendedAttributes->{"Conditional"};
 
@@ -2417,7 +2417,7 @@ sub GenerateImplementation
         }
     }
 
-    if ($dataNode->extendedAttributes->{"IndexedGetter"}) {
+    if ($interface->extendedAttributes->{"IndexedGetter"}) {
         push(@implContent, "\nJSValue ${className}::indexGetter(ExecState* exec, JSValue slotBase, unsigned index)\n");
         push(@implContent, "{\n");
         push(@implContent, "    ${className}* thisObj = jsCast<$className*>(asObject(slotBase));\n");
@@ -2435,7 +2435,7 @@ sub GenerateImplementation
         }
     }
 
-    if ($dataNode->extendedAttributes->{"NumericIndexedGetter"}) {
+    if ($interface->extendedAttributes->{"NumericIndexedGetter"}) {
         push(@implContent, "\nJSValue ${className}::getByIndex(ExecState*, unsigned index)\n");
         push(@implContent, "{\n");
         push(@implContent, "    ASSERT_GC_OBJECT_INHERITS(this, &s_info);\n");
@@ -2452,7 +2452,7 @@ sub GenerateImplementation
     }
 
     if ($interfaceName eq "HTMLPropertiesCollection" or $interfaceName eq "DOMNamedFlowCollection") {
-        if ($dataNode->extendedAttributes->{"NamedGetter"}) {
+        if ($interface->extendedAttributes->{"NamedGetter"}) {
             push(@implContent, "bool ${className}::canGetItemsForName(ExecState*, $implClassName* collection, PropertyName propertyName)\n");
             push(@implContent, "{\n");
             push(@implContent, "    return collection->hasNamedItem(propertyNameToAtomicString(propertyName));\n");
@@ -2465,7 +2465,7 @@ sub GenerateImplementation
         }
     }
 
-    if ((!$hasParent && !GetCustomIsReachable($dataNode))|| GetGenerateIsReachable($dataNode) || $dataNode->extendedAttributes->{"ActiveDOMObject"}) {
+    if ((!$hasParent && !GetCustomIsReachable($interface))|| GetGenerateIsReachable($interface) || $interface->extendedAttributes->{"ActiveDOMObject"}) {
         push(@implContent, "static inline bool isObservable(JS${implClassName}* js${implClassName})\n");
         push(@implContent, "{\n");
         push(@implContent, "    if (js${implClassName}->hasCustomProperties())\n");
@@ -2487,38 +2487,38 @@ sub GenerateImplementation
         # wrappers unconditionally keep ActiveDOMObjects with pending activity alive.
         # FIXME: Fix this lifetime issue in the DOM, and move this hasPendingActivity
         # check below the isObservable check.
-        if ($dataNode->extendedAttributes->{"ActiveDOMObject"}) {
+        if ($interface->extendedAttributes->{"ActiveDOMObject"}) {
             push(@implContent, "    if (js${implClassName}->impl()->hasPendingActivity())\n");
             push(@implContent, "        return true;\n");
         }
-        if ($codeGenerator->IsSubType($dataNode, "Node")) {
+        if ($codeGenerator->IsSubType($interface, "Node")) {
             push(@implContent, "    if (JSNodeOwner::isReachableFromOpaqueRoots(handle, 0, visitor))\n");
             push(@implContent, "        return true;\n");
         }
         push(@implContent, "    if (!isObservable(js${implClassName}))\n");
         push(@implContent, "        return false;\n");
-        if (GetGenerateIsReachable($dataNode)) {
+        if (GetGenerateIsReachable($interface)) {
             my $rootString;
-            if (GetGenerateIsReachable($dataNode) eq "Impl") {
+            if (GetGenerateIsReachable($interface) eq "Impl") {
                 $rootString  = "    ${implType}* root = js${implClassName}->impl();\n";
-            } elsif (GetGenerateIsReachable($dataNode) eq "ImplContext") {
+            } elsif (GetGenerateIsReachable($interface) eq "ImplContext") {
                 $rootString  = "    WebGLRenderingContext* root = js${implClassName}->impl()->context();\n";
-            } elsif (GetGenerateIsReachable($dataNode) eq "ImplFrame") {
+            } elsif (GetGenerateIsReachable($interface) eq "ImplFrame") {
                 $rootString  = "    Frame* root = js${implClassName}->impl()->frame();\n";
                 $rootString .= "    if (!root)\n";
                 $rootString .= "        return false;\n";
-            } elsif (GetGenerateIsReachable($dataNode) eq "ImplDocument") {
+            } elsif (GetGenerateIsReachable($interface) eq "ImplDocument") {
                 $rootString  = "    Document* root = js${implClassName}->impl()->document();\n";
                 $rootString .= "    if (!root)\n";
                 $rootString .= "        return false;\n";
-            } elsif (GetGenerateIsReachable($dataNode) eq "ImplElementRoot") {
+            } elsif (GetGenerateIsReachable($interface) eq "ImplElementRoot") {
                 $rootString  = "    Element* element = js${implClassName}->impl()->element();\n";
                 $rootString .= "    if (!element)\n";
                 $rootString .= "        return false;\n";
                 $rootString .= "    void* root = WebCore::root(element);\n";
             } elsif ($interfaceName eq "CanvasRenderingContext") {
                 $rootString  = "    void* root = WebCore::root(js${implClassName}->impl()->canvas());\n";
-            } elsif (GetGenerateIsReachable($dataNode) eq "ImplBaseRoot") {
+            } elsif (GetGenerateIsReachable($interface) eq "ImplBaseRoot") {
                 $rootString  = "    void* root = WebCore::root(js${implClassName}->impl()->base());\n";
             } else {
                 $rootString  = "    void* root = WebCore::root(js${implClassName}->impl());\n";
@@ -2533,11 +2533,11 @@ sub GenerateImplementation
         push(@implContent, "}\n\n");
     }
 
-    if (!$dataNode->extendedAttributes->{"JSCustomFinalize"} &&
+    if (!$interface->extendedAttributes->{"JSCustomFinalize"} &&
         (!$hasParent ||
-         GetGenerateIsReachable($dataNode) ||
-         GetCustomIsReachable($dataNode) ||
-         $dataNode->extendedAttributes->{"ActiveDOMObject"})) {
+         GetGenerateIsReachable($interface) ||
+         GetCustomIsReachable($interface) ||
+         $interface->extendedAttributes->{"ActiveDOMObject"})) {
         push(@implContent, "void JS${implClassName}Owner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)\n");
         push(@implContent, "{\n");
         push(@implContent, "    JS${implClassName}* js${implClassName} = jsCast<JS${implClassName}*>(handle.get().asCell());\n");
@@ -2547,7 +2547,7 @@ sub GenerateImplementation
         push(@implContent, "}\n\n");
     }
 
-    if (ShouldGenerateToJSImplementation($hasParent, $dataNode)) {
+    if (ShouldGenerateToJSImplementation($hasParent, $interface)) {
         push(@implContent, "JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, $implType* impl)\n");
         push(@implContent, "{\n");
         if ($svgPropertyType) {
@@ -2558,7 +2558,7 @@ sub GenerateImplementation
         push(@implContent, "}\n\n");
     }
 
-    if ((!$hasParent or $dataNode->extendedAttributes->{"JSGenerateToNativeObject"}) and !$dataNode->extendedAttributes->{"JSCustomToNativeObject"}) {
+    if ((!$hasParent or $interface->extendedAttributes->{"JSGenerateToNativeObject"}) and !$interface->extendedAttributes->{"JSCustomToNativeObject"}) {
         push(@implContent, "$implType* to${interfaceName}(JSC::JSValue value)\n");
         push(@implContent, "{\n");
         push(@implContent, "    return value.inherits(&${className}::s_info) ? jsCast<$className*>(asObject(value))->impl() : 0");
@@ -2567,7 +2567,7 @@ sub GenerateImplementation
 
     push(@implContent, "\n}\n");
 
-    my $conditionalString = $codeGenerator->GenerateConditionalString($dataNode);
+    my $conditionalString = $codeGenerator->GenerateConditionalString($interface);
     push(@implContent, "\n#endif // ${conditionalString}\n") if $conditionalString;
 }
 
@@ -2602,7 +2602,7 @@ sub GenerateArgumentsCountCheck
 {
     my $outputArray = shift;
     my $function = shift;
-    my $dataNode = shift;
+    my $interface = shift;
 
     my $numMandatoryParams = @{$function->parameters};
     foreach my $param (reverse(@{$function->parameters})) {
@@ -2623,7 +2623,7 @@ sub GenerateParametersCheck
 {
     my $outputArray = shift;
     my $function = shift;
-    my $dataNode = shift;
+    my $interface = shift;
     my $numParameters = shift;
     my $implClassName = shift;
     my $functionImplementationName = shift;
@@ -2803,13 +2803,13 @@ sub GenerateParametersCheck
 sub GenerateCallbackHeader
 {
     my $object = shift;
-    my $dataNode = shift;
+    my $interface = shift;
 
-    my $interfaceName = $dataNode->name;
+    my $interfaceName = $interface->name;
     my $className = "JS$interfaceName";
 
     # - Add default header template and header protection
-    push(@headerContentHeader, GenerateHeaderContentHeader($dataNode));
+    push(@headerContentHeader, GenerateHeaderContentHeader($interface));
 
     $headerIncludes{"ActiveDOMCallback.h"} = 1;
     $headerIncludes{"$interfaceName.h"} = 1;
@@ -2830,10 +2830,10 @@ sub GenerateCallbackHeader
     push(@headerContent, "    virtual ~$className();\n");
 
     # Functions
-    my $numFunctions = @{$dataNode->functions};
+    my $numFunctions = @{$interface->functions};
     if ($numFunctions > 0) {
         push(@headerContent, "\n    // Functions\n");
-        foreach my $function (@{$dataNode->functions}) {
+        foreach my $function (@{$interface->functions}) {
             my @params = @{$function->parameters};
             if (!$function->signature->extendedAttributes->{"Custom"} &&
                 !(GetNativeType($function->signature->type) eq "bool")) {
@@ -2862,20 +2862,20 @@ sub GenerateCallbackHeader
     push(@headerContent, "};\n\n");
 
     push(@headerContent, "} // namespace WebCore\n\n");
-    my $conditionalString = $codeGenerator->GenerateConditionalString($dataNode);
+    my $conditionalString = $codeGenerator->GenerateConditionalString($interface);
     push(@headerContent, "#endif // ${conditionalString}\n\n") if $conditionalString;
     push(@headerContent, "#endif\n");
 }
 
 sub GenerateCallbackImplementation
 {
-    my ($object, $dataNode) = @_;
+    my ($object, $interface) = @_;
 
-    my $interfaceName = $dataNode->name;
+    my $interfaceName = $interface->name;
     my $className = "JS$interfaceName";
 
     # - Add default header template
-    push(@implContentHeader, GenerateImplementationContentHeader($dataNode));
+    push(@implContentHeader, GenerateImplementationContentHeader($interface));
 
     $implIncludes{"ScriptExecutionContext.h"} = 1;
     $implIncludes{"<runtime/JSLock.h>"} = 1;
@@ -2908,10 +2908,10 @@ sub GenerateCallbackImplementation
     push(@implContent, "}\n");
 
     # Functions
-    my $numFunctions = @{$dataNode->functions};
+    my $numFunctions = @{$interface->functions};
     if ($numFunctions > 0) {
         push(@implContent, "\n// Functions\n");
-        foreach my $function (@{$dataNode->functions}) {
+        foreach my $function (@{$interface->functions}) {
             my @params = @{$function->parameters};
             if ($function->signature->extendedAttributes->{"Custom"} ||
                 !(GetNativeType($function->signature->type) eq "bool")) {
@@ -2983,7 +2983,7 @@ END
     }
 
     push(@implContent, "\n}\n");
-    my $conditionalString = $codeGenerator->GenerateConditionalString($dataNode);
+    my $conditionalString = $codeGenerator->GenerateConditionalString($interface);
     push(@implContent, "\n#endif // ${conditionalString}\n") if $conditionalString;
 }
 
@@ -3541,9 +3541,9 @@ sub GenerateHashValue
 sub WriteData
 {
     my $object = shift;
-    my $dataNode = shift;
+    my $interface = shift;
 
-    my $name = $dataNode->name;
+    my $name = $interface->name;
     my $prefix = FileNamePrefix;
     my $headerFileName = "$outputDir/$prefix$name.h";
     my $implFileName = "$outputDir/$prefix$name.cpp";
@@ -3628,7 +3628,7 @@ sub GenerateConstructorDeclaration
 {
     my $outputArray = shift;
     my $className = shift;
-    my $dataNode = shift;
+    my $interface = shift;
     my $interfaceName = shift;
 
     my $constructorClassName = "${className}Constructor";
@@ -3659,17 +3659,17 @@ sub GenerateConstructorDeclaration
     push(@$outputArray, "protected:\n");
     push(@$outputArray, "    static const unsigned StructureFlags = JSC::OverridesGetOwnPropertySlot | JSC::ImplementsHasInstance | DOMConstructorObject::StructureFlags;\n");
 
-    if (IsConstructable($dataNode) && !$dataNode->extendedAttributes->{"NamedConstructor"}) {
+    if (IsConstructable($interface) && !$interface->extendedAttributes->{"NamedConstructor"}) {
         push(@$outputArray, "    static JSC::EncodedJSValue JSC_HOST_CALL construct${className}(JSC::ExecState*);\n");
         push(@$outputArray, "    static JSC::ConstructType getConstructData(JSC::JSCell*, JSC::ConstructData&);\n");
     }
     push(@$outputArray, "};\n\n");
 
-    if ($codeGenerator->IsConstructorTemplate($dataNode, "Event")) {
+    if ($codeGenerator->IsConstructorTemplate($interface, "Event")) {
         push(@$outputArray, "bool fill${interfaceName}Init(${interfaceName}Init&, JSDictionary&);\n\n");
     }
 
-    if ($dataNode->extendedAttributes->{"NamedConstructor"}) {
+    if ($interface->extendedAttributes->{"NamedConstructor"}) {
         push(@$outputArray, <<END);
 class JS${interfaceName}NamedConstructor : public DOMConstructorWithDocument {
 public:
@@ -3708,19 +3708,19 @@ sub GenerateConstructorDefinition
     my $protoClassName = shift;
     my $interfaceName = shift;
     my $visibleInterfaceName = shift;
-    my $dataNode = shift;
+    my $interface = shift;
     my $generatingNamedConstructor = shift;
 
     # FIXME: Add support for overloaded constructors to JS as well.
     # For now mimic the old behaviour by only generating code for the last "Constructor" attribute.
-    my $function = @{$dataNode->constructors}[-1];
+    my $function = @{$interface->constructors}[-1];
 
     my $constructorClassName = $generatingNamedConstructor ? "${className}NamedConstructor" : "${className}Constructor";
-    my $numberOfConstructorParameters = $dataNode->extendedAttributes->{"ConstructorParameters"};
+    my $numberOfConstructorParameters = $interface->extendedAttributes->{"ConstructorParameters"};
     if (!defined $numberOfConstructorParameters) {
-        if ($codeGenerator->IsConstructorTemplate($dataNode, "Event")) {
+        if ($codeGenerator->IsConstructorTemplate($interface, "Event")) {
             $numberOfConstructorParameters = 2;
-        } elsif ($dataNode->extendedAttributes->{"Constructor"}) {
+        } elsif ($interface->extendedAttributes->{"Constructor"}) {
             $numberOfConstructorParameters = @{$function->parameters};
         }
     }
@@ -3732,7 +3732,7 @@ sub GenerateConstructorDefinition
         push(@$outputArray, "{\n");
         push(@$outputArray, "}\n\n");
     } else {
-        if ($dataNode->extendedAttributes->{"JSNoStaticTables"}) {
+        if ($interface->extendedAttributes->{"JSNoStaticTables"}) {
             push(@$outputArray, "static const HashTable* get${constructorClassName}Table(ExecState* exec)\n");
             push(@$outputArray, "{\n");
             push(@$outputArray, "    return getHashTableForGlobalData(exec->globalData(), &${constructorClassName}Table);\n");
@@ -3768,7 +3768,7 @@ sub GenerateConstructorDefinition
 
     if (!$generatingNamedConstructor) {
         my $hasStaticFunctions = 0;
-        foreach my $function (@{$dataNode->functions}) {
+        foreach my $function (@{$interface->functions}) {
             if ($function->isStatic) {
                 $hasStaticFunctions = 1;
                 last;
@@ -3779,17 +3779,17 @@ sub GenerateConstructorDefinition
 
         push(@$outputArray, "bool ${constructorClassName}::getOwnPropertySlot(JSCell* cell, ExecState* exec, PropertyName propertyName, PropertySlot& slot)\n");
         push(@$outputArray, "{\n");
-        push(@$outputArray, "    return getStatic${kind}Slot<${constructorClassName}, JSDOMWrapper>(exec, " . constructorHashTableAccessor($dataNode->extendedAttributes->{"JSNoStaticTables"}, $constructorClassName) . ", jsCast<${constructorClassName}*>(cell), propertyName, slot);\n");
+        push(@$outputArray, "    return getStatic${kind}Slot<${constructorClassName}, JSDOMWrapper>(exec, " . constructorHashTableAccessor($interface->extendedAttributes->{"JSNoStaticTables"}, $constructorClassName) . ", jsCast<${constructorClassName}*>(cell), propertyName, slot);\n");
         push(@$outputArray, "}\n\n");
 
         push(@$outputArray, "bool ${constructorClassName}::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, PropertyName propertyName, PropertyDescriptor& descriptor)\n");
         push(@$outputArray, "{\n");
-        push(@$outputArray, "    return getStatic${kind}Descriptor<${constructorClassName}, JSDOMWrapper>(exec, " . constructorHashTableAccessor($dataNode->extendedAttributes->{"JSNoStaticTables"}, $constructorClassName) . ", jsCast<${constructorClassName}*>(object), propertyName, descriptor);\n");
+        push(@$outputArray, "    return getStatic${kind}Descriptor<${constructorClassName}, JSDOMWrapper>(exec, " . constructorHashTableAccessor($interface->extendedAttributes->{"JSNoStaticTables"}, $constructorClassName) . ", jsCast<${constructorClassName}*>(object), propertyName, descriptor);\n");
         push(@$outputArray, "}\n\n");
     }
 
-    if (IsConstructable($dataNode)) {
-        if ($codeGenerator->IsConstructorTemplate($dataNode, "Event")) {
+    if (IsConstructable($interface)) {
+        if ($codeGenerator->IsConstructorTemplate($interface, "Event")) {
             $implIncludes{"JSDictionary.h"} = 1;
             $implIncludes{"<runtime/Error.h>"} = 1;
 
@@ -3829,7 +3829,7 @@ bool fill${interfaceName}Init(${interfaceName}Init& eventInit, JSDictionary& dic
 {
 END
 
-            foreach my $interfaceBase (@{$dataNode->parents}) {
+            foreach my $interfaceBase (@{$interface->parents}) {
                 push(@implContent, <<END);
     if (!fill${interfaceBase}Init(eventInit, dictionary))
         return false;
@@ -3837,8 +3837,8 @@ END
 END
             }
 
-            for (my $index = 0; $index < @{$dataNode->attributes}; $index++) {
-                my $attribute = @{$dataNode->attributes}[$index];
+            for (my $index = 0; $index < @{$interface->attributes}; $index++) {
+                my $attribute = @{$interface->attributes}[$index];
                 if ($attribute->signature->extendedAttributes->{"InitializedByEventConstructor"}) {
                     my $attributeName = $attribute->signature->name;
                     push(@implContent, <<END);
@@ -3853,9 +3853,9 @@ END
 }
 
 END
-        } elsif ($codeGenerator->IsConstructorTemplate($dataNode, "TypedArray")) {
+        } elsif ($codeGenerator->IsConstructorTemplate($interface, "TypedArray")) {
             $implIncludes{"JSArrayBufferViewHelper.h"} = 1;
-            my $viewType = $dataNode->extendedAttributes->{"TypedArray"};
+            my $viewType = $interface->extendedAttributes->{"TypedArray"};
             push(@$outputArray, "EncodedJSValue JSC_HOST_CALL ${constructorClassName}::construct${className}(ExecState* exec)\n");
             push(@$outputArray, "{\n");
             push(@$outputArray, "    ${constructorClassName}* jsConstructor = jsCast<${constructorClassName}*>(exec->callee());\n");
@@ -3871,13 +3871,13 @@ END
             push(@$outputArray, "    return toJSArrayBufferView<${className}>(exec, globalObject, object);\n");
             push(@$outputArray, "}\n\n");
 
-            if ($dataNode->extendedAttributes->{"CustomIndexedSetter"}) {
+            if ($interface->extendedAttributes->{"CustomIndexedSetter"}) {
                 push(@$outputArray, "void ${className}::indexSetter(JSC::ExecState* exec, unsigned index, JSC::JSValue value)\n");
                 push(@$outputArray, "{\n");
                 push(@$outputArray, "    impl()->set(index, value.toNumber(exec));\n");
                 push(@$outputArray, "}\n\n");
             }
-        } elsif (!($dataNode->extendedAttributes->{"JSCustomConstructor"} || $dataNode->extendedAttributes->{"CustomConstructor"}) && (!$dataNode->extendedAttributes->{"NamedConstructor"} || $generatingNamedConstructor)) {
+        } elsif (!($interface->extendedAttributes->{"JSCustomConstructor"} || $interface->extendedAttributes->{"CustomConstructor"}) && (!$interface->extendedAttributes->{"NamedConstructor"} || $generatingNamedConstructor)) {
             push(@$outputArray, "EncodedJSValue JSC_HOST_CALL ${constructorClassName}::construct${className}(ExecState* exec)\n");
             push(@$outputArray, "{\n");
 
@@ -3887,9 +3887,9 @@ END
 
             $implIncludes{"<runtime/Error.h>"} = 1;
 
-            GenerateArgumentsCountCheck($outputArray, $function, $dataNode);
+            GenerateArgumentsCountCheck($outputArray, $function, $interface);
 
-            if (@{$function->raisesExceptions} || $dataNode->extendedAttributes->{"ConstructorRaisesException"}) {
+            if (@{$function->raisesExceptions} || $interface->extendedAttributes->{"ConstructorRaisesException"}) {
                 $implIncludes{"ExceptionCode.h"} = 1;
                 push(@$outputArray, "    ExceptionCode ec = 0;\n");
             }
@@ -3898,9 +3898,9 @@ END
             # FIXME: Currently [Constructor(...)] does not yet support [Optional] arguments.
             # It just supports [Optional=DefaultIsUndefined] or [Optional=DefaultIsNullString].
             my $numParameters = @{$function->parameters};
-            my ($dummy, $paramIndex) = GenerateParametersCheck($outputArray, $function, $dataNode, $numParameters, $interfaceName, "constructorCallback", undef, undef, undef);
+            my ($dummy, $paramIndex) = GenerateParametersCheck($outputArray, $function, $interface, $numParameters, $interfaceName, "constructorCallback", undef, undef, undef);
 
-            if ($codeGenerator->ExtendedAttributeContains($dataNode->extendedAttributes->{"CallWith"}, "ScriptExecutionContext")) {
+            if ($codeGenerator->ExtendedAttributeContains($interface->extendedAttributes->{"CallWith"}, "ScriptExecutionContext")) {
                 push(@constructorArgList, "context");
                 push(@$outputArray, "    ScriptExecutionContext* context = castedThis->scriptExecutionContext();\n");
                 push(@$outputArray, "    if (!context)\n");
@@ -3917,7 +3917,7 @@ END
                 $index++;
             }
 
-            if ($dataNode->extendedAttributes->{"ConstructorRaisesException"}) {
+            if ($interface->extendedAttributes->{"ConstructorRaisesException"}) {
                 push(@constructorArgList, "ec");
             }
             my $constructorArg = join(", ", @constructorArgList);
@@ -3927,7 +3927,7 @@ END
                 push(@$outputArray, "    RefPtr<${interfaceName}> object = ${interfaceName}::create(${constructorArg});\n");
             }
 
-            if ($dataNode->extendedAttributes->{"ConstructorRaisesException"}) {
+            if ($interface->extendedAttributes->{"ConstructorRaisesException"}) {
                 push(@$outputArray, "    if (ec) {\n");
                 push(@$outputArray, "        setDOMException(exec, ec);\n");
                 push(@$outputArray, "        return JSValue::encode(JSValue());\n");
@@ -3938,7 +3938,7 @@ END
             push(@$outputArray, "}\n\n");
         }
 
-        if (!$dataNode->extendedAttributes->{"NamedConstructor"} || $generatingNamedConstructor) {
+        if (!$interface->extendedAttributes->{"NamedConstructor"} || $generatingNamedConstructor) {
             push(@$outputArray, "ConstructType ${constructorClassName}::getConstructData(JSCell*, ConstructData& constructData)\n");
             push(@$outputArray, "{\n");
             push(@$outputArray, "    constructData.native.function = construct${className};\n");
@@ -3950,9 +3950,9 @@ END
 
 sub IsConstructable
 {
-    my $dataNode = shift;
+    my $interface = shift;
 
-    return $dataNode->extendedAttributes->{"CustomConstructor"} || $dataNode->extendedAttributes->{"JSCustomConstructor"} || $dataNode->extendedAttributes->{"Constructor"} || $dataNode->extendedAttributes->{"NamedConstructor"} || $dataNode->extendedAttributes->{"ConstructorTemplate"};
+    return $interface->extendedAttributes->{"CustomConstructor"} || $interface->extendedAttributes->{"JSCustomConstructor"} || $interface->extendedAttributes->{"Constructor"} || $interface->extendedAttributes->{"NamedConstructor"} || $interface->extendedAttributes->{"ConstructorTemplate"};
 }
 
 1;
