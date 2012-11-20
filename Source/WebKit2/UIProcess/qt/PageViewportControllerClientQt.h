@@ -128,6 +128,7 @@ private:
     void setContentRectVisiblePositionAtScale(const QPointF& location, qreal itemScale);
     void animateContentRectVisible(const QRectF& contentRect);
     void scaleContent(qreal itemScale, const QPointF& centerInCSSCoordinates = QPointF());
+    void clearRelativeZoomState();
 
     ScaleAnimation* m_scaleAnimation;
     QPointF m_lastPinchCenterInViewportCoordinates;

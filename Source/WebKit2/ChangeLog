@@ -1,3 +1,22 @@
+2012-11-20  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        [Qt] Zoom logic confused by page and pinch resize
+        https://bugs.webkit.org/show_bug.cgi?id=102803
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Clear the zoom-out stack after page resize, and ensure the zoom logic can still detect
+        zoom-out and zoom-back when the zoom-out stack is empty.
+
+        * UIProcess/qt/PageViewportControllerClientQt.cpp:
+        (WebKit::PageViewportControllerClientQt::zoomToAreaGestureEnded):
+        (WebKit::PageViewportControllerClientQt::clearRelativeZoomState):
+        (WebKit::PageViewportControllerClientQt::setContentsScale):
+        (WebKit::PageViewportControllerClientQt::pinchGestureStarted):
+        (WebKit::PageViewportControllerClientQt::didChangeViewportAttributes):
+        * UIProcess/qt/PageViewportControllerClientQt.h:
+        (PageViewportControllerClientQt):
+
 2012-11-19  KyungTae Kim  <ktf.kim@samsung.com>
 
         [WK2] Unused parameters on CoordinatedGraphicsLayer.cpp
