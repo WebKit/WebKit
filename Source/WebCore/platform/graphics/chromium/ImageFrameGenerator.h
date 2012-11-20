@@ -33,12 +33,14 @@
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/ThreadSafeRefCounted.h>
+#include <wtf/ThreadingPrimitives.h>
 
 namespace WebCore {
 
 class SharedBuffer;
 
-class ImageFrameGenerator : public RefCounted<ImageFrameGenerator> {
+class ImageFrameGenerator : public ThreadSafeRefCounted<ImageFrameGenerator> {
 public:
     static PassRefPtr<ImageFrameGenerator> create(PassRefPtr<SharedBuffer> data, bool allDataReceived)
     {
@@ -55,6 +57,7 @@ public:
 private:
     RefPtr<SharedBuffer> m_data;
     bool m_allDataReceived;
+    Mutex m_mutex;
 };
 
 } // namespace WebCore

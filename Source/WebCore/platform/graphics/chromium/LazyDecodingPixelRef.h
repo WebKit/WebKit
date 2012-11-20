@@ -33,6 +33,7 @@
 #include "SkSize.h"
 
 #include <wtf/RefPtr.h>
+#include <wtf/ThreadingPrimitives.h>
 
 namespace WebCore {
 
@@ -61,6 +62,7 @@ private:
     SkIRect m_scaledSubset;
 
     SkBitmap m_lockedBitmap;
+    Mutex m_mutex;
 };
 
 } // namespace WebCore

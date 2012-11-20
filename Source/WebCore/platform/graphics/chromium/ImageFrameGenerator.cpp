@@ -46,17 +46,31 @@ ImageFrameGenerator::~ImageFrameGenerator()
 
 void ImageFrameGenerator::setData(PassRefPtr<SharedBuffer> data, bool allDataReceived)
 {
-    m_data = data;
+    // FIXME: Doing a full copy is expensive, instead copy only new data.
+    RefPtr<SharedBuffer> dataCopy = data->copy();
+
+    MutexLocker lock(m_mutex);
+    m_data = dataCopy;
     m_allDataReceived = allDataReceived;
 }
 
 SkBitmap ImageFrameGenerator::decodeAndScale(const SkISize& scaledSize, const SkIRect& scaledSubset)
 {
-    OwnPtr<ImageDecoder> decoder(adoptPtr(ImageDecoder::create(*m_data.get(), ImageSource::AlphaPremultiplied, ImageSource::GammaAndColorProfileApplied)));
+    RefPtr<SharedBuffer> data;
+    bool allDataReceived = false;
+    {
+        MutexLocker lock(m_mutex);
+
+        // FIXME: We should do a shallow copy instead. Now we're restricted by the API of SharedBuffer.
+        data = m_data->copy();
+        allDataReceived = m_allDataReceived;
+    }
+
+    OwnPtr<ImageDecoder> decoder(adoptPtr(ImageDecoder::create(*data.get(), ImageSource::AlphaPremultiplied, ImageSource::GammaAndColorProfileApplied)));
     if (!decoder)
         return SkBitmap();
 
-    decoder->setData(m_data.get(), m_allDataReceived);
+    decoder->setData(data.get(), allDataReceived);
     ImageFrame* frame = decoder->frameBufferAtIndex(0);
     if (!frame)
         return SkBitmap();

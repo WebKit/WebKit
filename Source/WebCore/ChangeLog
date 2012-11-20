@@ -1,3 +1,33 @@
+2012-11-20  Alpha Lam  <hclam@chromium.org>
+
+        [chromium] Make lazy image decoding thread-safe
+        https://bugs.webkit.org/show_bug.cgi?id=102721
+
+        Reviewed by Stephen White.
+
+        Added mutex to LazyDecodingPixelRef such that there is no parallel
+        onLockPixels() running on multiple threads.
+
+        Added mutex to ImageFrameGenerator to protect the use of raw image
+        data.
+
+        The result is that we can decode on threads other than the main
+        thread while data is being supplied on the main thread.
+
+        New unit test:
+        DeferredImageDecoderTest.decodeOnOtherThread
+
+        * platform/graphics/chromium/ImageFrameGenerator.cpp:
+        (WebCore::ImageFrameGenerator::setData):
+        (WebCore::ImageFrameGenerator::decodeAndScale):
+        * platform/graphics/chromium/ImageFrameGenerator.h:
+        (ImageFrameGenerator):
+        * platform/graphics/chromium/LazyDecodingPixelRef.cpp:
+        (WebCore::LazyDecodingPixelRef::onLockPixels):
+        (WebCore::LazyDecodingPixelRef::onUnlockPixels):
+        * platform/graphics/chromium/LazyDecodingPixelRef.h:
+        (LazyDecodingPixelRef):
+
 2012-11-20  Brent Fulgham  <bfulgham@webkit.org>
 
         [Qt] Build fix after r135217.
