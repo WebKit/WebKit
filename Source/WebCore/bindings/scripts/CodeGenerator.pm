@@ -166,16 +166,16 @@ sub UpdateFile
 sub ForAllParents
 {
     my $object = shift;
-    my $dataNode = shift;
+    my $interface = shift;
     my $beforeRecursion = shift;
     my $afterRecursion = shift;
     my $parentsOnly = shift;
 
     my $recurse;
     $recurse = sub {
-        my $interface = shift;
+        my $currentInterface = shift;
 
-        for (@{$interface->parents}) {
+        for (@{$currentInterface->parents}) {
             my $interfaceName = $_;
             my $parentInterface = $object->ParseInterface($interfaceName, $parentsOnly);
 
@@ -187,27 +187,27 @@ sub ForAllParents
         }
     };
 
-    &$recurse($dataNode);
+    &$recurse($interface);
 }
 
 sub AddMethodsConstantsAndAttributesFromParentInterfaces
 {
-    # Add to $dataNode all of its inherited interface members, except for those
-    # inherited through $dataNode's first listed parent.  If an array reference
+    # Add to $interface all of its inherited interface members, except for those
+    # inherited through $interface's first listed parent.  If an array reference
     # is passed in as $parents, the names of all ancestor interfaces visited
     # will be appended to the array.  If $collectDirectParents is true, then
-    # even the names of $dataNode's first listed parent and its ancestors will
+    # even the names of $interface's first listed parent and its ancestors will
     # be appended to $parents.
 
     my $object = shift;
-    my $dataNode = shift;
+    my $interface = shift;
     my $parents = shift;
     my $collectDirectParents = shift;
 
     my $first = 1;
 
-    $object->ForAllParents($dataNode, sub {
-        my $interface = shift;
+    $object->ForAllParents($interface, sub {
+        my $currentInterface = shift;
 
         if ($first) {
             # Ignore first parent class, already handled by the generation itself.
@@ -216,10 +216,10 @@ sub AddMethodsConstantsAndAttributesFromParentInterfaces
             if ($collectDirectParents) {
                 # Just collect the names of the direct ancestor interfaces,
                 # if necessary.
-                push(@$parents, $interface->name);
-                $object->ForAllParents($interface, sub {
-                    my $interface = shift;
-                    push(@$parents, $interface->name);
+                push(@$parents, $currentInterface->name);
+                $object->ForAllParents($currentInterface, sub {
+                    my $currentInterface = shift;
+                    push(@$parents, $currentInterface->name);
                 }, undef, 1);
             }
 
@@ -228,27 +228,27 @@ sub AddMethodsConstantsAndAttributesFromParentInterfaces
         }
 
         # Collect the name of this additional parent.
-        push(@$parents, $interface->name) if $parents;
+        push(@$parents, $currentInterface->name) if $parents;
 
         print "  |  |>  -> Inheriting "
-            . @{$interface->constants} . " constants, "
-            . @{$interface->functions} . " functions, "
-            . @{$interface->attributes} . " attributes...\n  |  |>\n" if $verbose;
+            . @{$currentInterface->constants} . " constants, "
+            . @{$currentInterface->functions} . " functions, "
+            . @{$currentInterface->attributes} . " attributes...\n  |  |>\n" if $verbose;
 
-        # Add this parent's members to $dataNode.
-        push(@{$dataNode->constants}, @{$interface->constants});
-        push(@{$dataNode->functions}, @{$interface->functions});
-        push(@{$dataNode->attributes}, @{$interface->attributes});
+        # Add this parent's members to $interface.
+        push(@{$interface->constants}, @{$currentInterface->constants});
+        push(@{$interface->functions}, @{$currentInterface->functions});
+        push(@{$interface->attributes}, @{$currentInterface->attributes});
     });
 }
 
 sub FindSuperMethod
 {
-    my ($object, $dataNode, $functionName) = @_;
+    my ($object, $interface, $functionName) = @_;
     my $indexer;
-    $object->ForAllParents($dataNode, undef, sub {
-        my $interface = shift;
-        foreach my $function (@{$interface->functions}) {
+    $object->ForAllParents($interface, undef, sub {
+        my $currentInterface = shift;
+        foreach my $function (@{$currentInterface->functions}) {
             if ($function->signature->name eq $functionName) {
                 $indexer = $function->signature;
                 return 'prune';
@@ -331,10 +331,10 @@ sub IsArrayType
 sub IsConstructorTemplate
 {
     my $object = shift;
-    my $dataNode = shift;
+    my $interface = shift;
     my $template = shift;
 
-    return $dataNode->extendedAttributes->{"ConstructorTemplate"} && $dataNode->extendedAttributes->{"ConstructorTemplate"} eq $template;
+    return $interface->extendedAttributes->{"ConstructorTemplate"} && $interface->extendedAttributes->{"ConstructorTemplate"} eq $template;
 }
 
 sub IsPrimitiveType
@@ -502,10 +502,10 @@ sub NamespaceForAttributeName
 # links to its respective overloads (including itself).
 sub LinkOverloadedFunctions
 {
-    my ($object, $dataNode) = @_;
+    my ($object, $interface) = @_;
 
     my %nameToFunctionsMap = ();
-    foreach my $function (@{$dataNode->functions}) {
+    foreach my $function (@{$interface->functions}) {
         my $name = $function->signature->name;
         $nameToFunctionsMap{$name} = [] if !exists $nameToFunctionsMap{$name};
         push(@{$nameToFunctionsMap{$name}}, $function);
@@ -634,13 +634,13 @@ sub GenerateConditionalStringFromAttributeValue
 
 sub GenerateCompileTimeCheckForEnumsIfNeeded
 {
-    my ($generator, $dataNode) = @_;
-    my $interfaceName = $dataNode->name;
+    my ($generator, $interface) = @_;
+    my $interfaceName = $interface->name;
     my @checks = ();
     # If necessary, check that all constants are available as enums with the same value.
-    if (!$dataNode->extendedAttributes->{"DoNotCheckConstants"} && @{$dataNode->constants}) {
+    if (!$interface->extendedAttributes->{"DoNotCheckConstants"} && @{$interface->constants}) {
         push(@checks, "\n");
-        foreach my $constant (@{$dataNode->constants}) {
+        foreach my $constant (@{$interface->constants}) {
             my $reflect = $constant->extendedAttributes->{"Reflect"};
             my $name = $reflect ? $reflect : $constant->name;
             my $value = $constant->value;
@@ -682,22 +682,22 @@ sub ExtendedAttributeContains
 sub GetVisibleInterfaceName
 {
     my $object = shift;
-    my $dataNode = shift;
-    my $interfaceName = $dataNode->extendedAttributes->{"InterfaceName"};
-    return $interfaceName ? $interfaceName : $dataNode->name;
+    my $interface = shift;
+    my $interfaceName = $interface->extendedAttributes->{"InterfaceName"};
+    return $interfaceName ? $interfaceName : $interface->name;
 }
 
 sub IsSubType
 {
     my $object = shift;
-    my $dataNode = shift;
+    my $interface = shift;
     my $interfaceName = shift;
     my $found = 0;
 
-    return 1 if $interfaceName eq $dataNode->name;
-    $object->ForAllParents($dataNode, sub {
-        my $interface = shift;
-        if ($interface->name eq $interfaceName) {
+    return 1 if $interfaceName eq $interface->name;
+    $object->ForAllParents($interface, sub {
+        my $currentInterface = shift;
+        if ($currentInterface->name eq $interfaceName) {
             $found = 1;
         }
         return "prune" if $found;
