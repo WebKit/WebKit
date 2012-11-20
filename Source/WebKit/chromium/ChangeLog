@@ -1,3 +1,12 @@
+2012-11-19  Yury Semikhatsky  <yurys@chromium.org>
+
+        Unreviewed. Fix Chromium Win compilation after r135196.
+        https://bugs.webkit.org/show_bug.cgi?id=102021
+
+        * tests/DeferredImageDecoderTest.cpp: changed char to unsigned char in the array
+        declaration to avoid 'warning C4309' on MSVS when initializing from hex literals.
+        (WebCore):
+
 2012-11-19  Miguel Garcia  <miguelg@chromium.org>
 
         [Chromium] Remove the dependency of INPUT_TYPE_COLOR on PAGE_POPUP
