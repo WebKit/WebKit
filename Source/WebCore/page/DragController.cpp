@@ -42,6 +42,7 @@
 #include "EventHandler.h"
 #include "FloatRect.h"
 #include "Frame.h"
+#include "FrameLoadRequest.h"
 #include "FrameLoader.h"
 #include "FrameSelection.h"
 #include "FrameView.h"
@@ -237,7 +238,7 @@ bool DragController::performDrag(DragData* dragData)
         return false;
 
     m_client->willPerformDragDestinationAction(DragDestinationActionLoad, dragData);
-    m_page->mainFrame()->loader()->load(ResourceRequest(dragData->asURL(m_page->mainFrame())), false);
+    m_page->mainFrame()->loader()->load(FrameLoadRequest(m_page->mainFrame(), ResourceRequest(dragData->asURL(m_page->mainFrame()))));
     return true;
 }
 
