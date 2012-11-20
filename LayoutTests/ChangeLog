@@ -1,3 +1,14 @@
+2012-11-20  Mike Reed  <reed@google.com>
+
+        update TestExpectations before a skia change
+        https://bugs.webkit.org/show_bug.cgi?id=102829
+
+        Reviewed by NOBODY. expectations change only.
+
+        optimization for rectangular blurs (with holes) changes some images in the low bit. mark for rebaselining.
+
+        * platform/chromium/TestExpectations:
+
 2012-11-20  Abhishek Arya  <inferno@chromium.org>
 
         Crash in FrameLoader::stopLoading.
