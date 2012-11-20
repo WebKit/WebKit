@@ -1,3 +1,32 @@
+2012-11-20  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        [GTK] no volume slider in HTML5 media element controls
+        https://bugs.webkit.org/show_bug.cgi?id=97192
+
+        Reviewed by Philippe Normand.
+
+        r115829 was causing this regression so it was partially
+        reverted. The revert causes some small regressions, in the tests
+        but it is better to have the volume slider shown.
+
+        * platform/gtk-wk2/TestExpectations: Updated because it causes
+        some new regressions
+        * platform/gtk/TestExpectations: Updated because it causes some
+        new regressions
+        * platform/gtk/media/audio-controls-rendering-expected.txt: Updated
+        * platform/gtk/media/controls-after-reload-expected.txt: Updated
+        * platform/gtk/media/controls-strict-expected.txt: Updated
+        * platform/gtk/media/controls-styling-expected.txt: Updated
+        * platform/gtk/media/controls-styling-strict-expected.txt: Updated
+        * platform/gtk/media/controls-without-preload-expected.txt: Updated
+        * platform/gtk/media/media-controls-clone-expected.txt: Updated
+        * platform/gtk/media/video-controls-rendering-expected.txt: Updated
+        * platform/gtk/media/video-display-toggle-expected.txt: Updated
+        * platform/gtk/media/video-empty-source-expected.txt: Updated
+        * platform/gtk/media/video-no-audio-expected.txt: Updated
+        * platform/gtk/media/video-volume-slider-expected.txt: Updated
+        * platform/gtk/media/video-zoom-controls-expected.txt: Updated
+
 2012-11-20  Yury Semikhatsky  <yurys@chromium.org>
 
         Unreviewed. Mark inspector/profiler/cpu-profiler-profiling-without-inspector.html

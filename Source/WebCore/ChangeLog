@@ -1,3 +1,19 @@
+2012-11-20  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        [GTK] no volume slider in HTML5 media element controls
+        https://bugs.webkit.org/show_bug.cgi?id=97192
+
+        Reviewed by Philippe Normand.
+
+        r115829 was causing this regression so it was partially
+        reverted. The revert causes some small regressions, in the tests
+        but it is better to have the volume slider shown.
+
+        * css/mediaControlsGtk.css:
+        (audio::-webkit-media-controls-panel)
+        (video::-webkit-media-controls-panel): Partially reverted
+        r115829.
+
 2012-11-19  Antti Koivisto  <antti@apple.com>
 
         Collect user style sheets in DocumentStyleSheetCollection

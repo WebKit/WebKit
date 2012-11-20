@@ -28,7 +28,7 @@ audio {
 audio::-webkit-media-controls-panel, video::-webkit-media-controls-panel {
     -webkit-box-align: end;
     text-align: right;
-    height: 20px;
+    height: 100%;
 }
 
 audio::-webkit-media-controls-mute-button, video::-webkit-media-controls-mute-button {
