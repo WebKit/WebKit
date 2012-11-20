@@ -1,3 +1,18 @@
+2012-11-20  Abhishek Arya  <inferno@chromium.org>
+
+        Crash in FrameLoader::stopLoading.
+        https://bugs.webkit.org/show_bug.cgi?id=99504
+
+        Reviewed by Nate Chapin.
+
+        Frame can be blown away in unload event handler. Need
+        to protect it with a RefPtr.
+
+        Test: fast/frames/frame-unload-crash2.html
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::commitProvisionalLoad):
+
 2012-11-20  Dirk Schulze  <krit@webkit.org>
 
         Remove unnecessary FilterOperations header from RenderBoxModelObject
