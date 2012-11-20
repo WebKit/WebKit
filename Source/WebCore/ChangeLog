@@ -1,3 +1,9 @@
+2012-11-19  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt][Win] Unreviewed speculative buildfix after r135217.
+
+        * platform/win/WindowsExtras.h:
+
 2012-11-19  Yury Semikhatsky  <yurys@chromium.org>
 
         Unreviewed. Fix Chromium Win compilation after r135255.

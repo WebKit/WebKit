@@ -25,8 +25,8 @@
 #ifndef WindowsExtras_h
 #define WindowsExtras_h
 
-#include <shlwapi.h>
 #include <windows.h>
+#include <shlwapi.h>
 
 namespace WebCore {
 
