@@ -1,5 +1,30 @@
 2012-11-19  David Grogan  <dgrogan@chromium.org>
 
+        IndexedDB: last setVersion excision batch
+        https://bugs.webkit.org/show_bug.cgi?id=102713
+
+        Reviewed by Tony Chang.
+
+        * storage/indexeddb/resources/setversion-blocked-by-versionchange-close-in-blocked.js: Removed.
+          The crucial part of this test was a connection closing itself in its
+          blocked callback. This is no longer possible as there's now only a
+          handle to the connection after the blocked event is dealt with.
+
+        * storage/indexeddb/resources/setversion-blocked-by-versionchange-close.js:
+          This test exposes a cascade of errors. h2's should receive 0 blocked
+          errors. Instead it receives 2.
+
+        * storage/indexeddb/resources/setversion-blocked.js: Removed.
+          Tests the same thing as set_version_blocked.
+
+        * storage/indexeddb/resources/setversion-not-blocked.js:
+          Now h2 is the version change connection and h1 is the blocker.
+
+        * storage/indexeddb/setversion-blocked-by-versionchange-close-in-blocked.html: Removed.
+        * storage/indexeddb/setversion-blocked.html: Removed.
+
+2012-11-19  David Grogan  <dgrogan@chromium.org>
+
         IndexedDB: convert delete-closed-database-object to upgradeneeded
         https://bugs.webkit.org/show_bug.cgi?id=102458
 

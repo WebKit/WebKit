@@ -1,5 +1,4 @@
-CONSOLE MESSAGE: The setVersion() method is non-standard and will be removed. Use the "upgradeneeded" event instead.
-Test open and setVersion are blocked if a VERSION_CHANGE transaction is running, and connection closes.
+h2 shouldn't receive any blocked events, and h3 should open after h2 is open
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
@@ -7,33 +6,28 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
 
 dbname = "setversion-blocked-by-versionchange-close.html"
-ver = 1
+indexedDB.deleteDatabase(dbname)
+indexedDB.open(dbname)
 blockedEventFired = false
 versionChangeComplete = false
-indexedDB.open(dbname)
+h2Opened = false
 
-h1OpenOnSuccess():
+openAnother():
 h1 = event.target.result
+indexedDB.open(dbname, 2)
 indexedDB.open(dbname)
+h1.close()
 
-h2OpenOnSuccess():
-h2 = event.target.result
-h1.setVersion(String(ver++))
-indexedDB.open(dbname)
-h2.close()
-
-h1SetVersionOnBlocked():
+h2Blocked():
 blockedEventFired = true
 
-h1SetVersionOnSuccess():
-
-transactionOnComplete():
-versionChangeComplete = true
-
-h3OpenOnSuccess():
+h3Success():
+h3 = event.target.result
+FAIL h3.version should be 2. Was 1.
 FIXME: blocked should not fire as connection was closed. http://webkit.org/b/71130
 FAIL blockedEventFired should be false. Was true.
-PASS versionChangeComplete is true
+FAIL versionChangeComplete should be true. Was false.
+FAIL h2Opened should be true. Was false.
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -5,57 +5,45 @@ if (this.importScripts) {
 
 description("Test that setVersion is not blocked if handle closed in versionchange handler.");
 
-function test() {
-    removeVendorPrefixes();
-    setDBNameFromPath();
-
-    evalAndLog("ver = 1");
-    evalAndLog("blockedEventFired = false");
-
-    request = evalAndLog("indexedDB.open(dbname)");
-    request.onblocked = unexpectedBlockedCallback;
-    request.onerror = unexpectedErrorCallback;
-    request.onsuccess = function h1OpenOnSuccess(evt) {
-        preamble(evt);
-        evalAndLog("h1 = event.target.result");
-
-        h1.onversionchange = unexpectedVersionChangeCallback;
-
-        request = evalAndLog("indexedDB.open(dbname)");
-        request.onblocked = unexpectedBlockedCallback;
-        request.onerror = unexpectedErrorCallback;
-        request.onsuccess = function h1OpenOnSuccess(evt) {
-            preamble(evt);
-            evalAndLog("h2 = event.target.result");
-
-            h2.onversionchange = function h2OnVersionChange(evt) {
-                preamble(evt);
-                debug("old = " + JSON.stringify(event.target.version));
-                debug("new = " + JSON.stringify(event.version));
-
-                evalAndLog("h2.close()");
-            };
-
-            request = evalAndLog("h1.setVersion(String(ver++))");
-            request.onerror = unexpectedErrorCallback;
-            request.onblocked = function h1SetVersionOnBlocked(evt) {
-                preamble(evt);
-                evalAndLog("blockedEventFired = true");
-            };
-            request.onsuccess = function h1SetVersionOnSuccess(evt) {
-                preamble(evt);
-
-                transaction = event.target.result;
-                transaction.onabort = unexpectedAbortCallback;
-                transaction.oncomplete = function transactionOnComplete(evt) {
-                    preamble(evt);
-                    debug("FIXME: blocked should not have fired since connection closed; http://webkit.org/b/71130");
-                    shouldBeFalse("blockedEventFired");
-                    finishJSTest();
-                };
-            };
-        };
-    };
+indexedDBTest(prepareDatabase, onOpen);
+evalAndLog("blockedEventFired = false");
+evalAndLog("versionchangeEventFired = false");
+function prepareDatabase(evt)
+{
+    preamble(evt);
+    evalAndLog("h1 = event.target.result");
+    evalAndLog("h1.onversionchange = h1OnVersionChange");
 }
 
-test();
+function h1OnVersionChange(evt)
+{
+    preamble(evt);
+    evalAndLog("versionchangeEventFired = true");
+    shouldBe("event.oldVersion", "1");
+    shouldBe("event.newVersion", "2");
+    evalAndLog("h1.close()");
+}
+
+function onOpen(evt)
+{
+    request = evalAndLog("indexedDB.open(dbname, 2)");
+    request.onerror = unexpectedErrorCallback;
+    request.onblocked = function h2OpenBlocked(evt) {
+        preamble(evt);
+        shouldBe("event.oldVersion", "1");
+        shouldBe("event.newVersion", "2");
+        evalAndLog("blockedEventFired = true");
+    };
+    request.onupgradeneeded = function h2UpgradeNeeded(evt) {
+        preamble(evt);
+        shouldBe("event.oldVersion", "1");
+        shouldBe("event.newVersion", "2");
+    };
+    request.onsuccess = function h2OpenSuccess(evt) {
+        preamble(evt);
+        shouldBeTrue("versionchangeEventFired");
+        debug("FIXME: blocked should not have fired since connection closed; http://webkit.org/b/71130");
+        shouldBeFalse("blockedEventFired");
+        finishJSTest();
+    };
+}
