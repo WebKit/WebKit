@@ -1,3 +1,19 @@
+2012-11-19  Elliott Sprehn  <esprehn@chromium.org>
+
+        Clean up loop in NodeRenderingContext::nextRenderer and previousRenderer
+        https://bugs.webkit.org/show_bug.cgi?id=102743
+
+        Reviewed by Hajime Morita.
+
+        Clean up while (true) loops in NodeRenderingContext reducing the
+        amount of code and the need for ASSERT_NOT_REACHED.
+
+        No new tests, just simplifcation.
+
+        * dom/NodeRenderingContext.cpp:
+        (WebCore::NodeRenderingContext::nextRenderer):
+        (WebCore::NodeRenderingContext::previousRenderer):
+
 2012-11-19  Shinya Kawanaka  <shinyak@chromium.org>
 
         [Shadow] attribute pseudo should return empty string instead of null when nothing is specified.

@@ -94,19 +94,15 @@ RenderObject* NodeRenderingContext::nextRenderer() const
         return 0;
 
     ComposedShadowTreeWalker walker(m_node);
-    do {
-        walker.nextSibling();
-        if (!walker.get())
-            return 0;
+    for (walker.nextSibling(); walker.get(); walker.nextSibling()) {
         if (RenderObject* renderer = walker.get()->renderer()) {
             // Do not return elements that are attached to a different flow-thread.
             if (renderer->style() && !renderer->style()->flowThread().isEmpty())
                 continue;
             return renderer;
         }
-    } while (true);
+    }
 
-    ASSERT_NOT_REACHED();
     return 0;
 }
 
@@ -122,19 +118,15 @@ RenderObject* NodeRenderingContext::previousRenderer() const
     // however, when I tried adding it, several tests failed.
 
     ComposedShadowTreeWalker walker(m_node);
-    do {
-        walker.previousSibling();
-        if (!walker.get())
-            return 0;
+    for (walker.previousSibling(); walker.get(); walker.previousSibling()) {
         if (RenderObject* renderer = walker.get()->renderer()) {
             // Do not return elements that are attached to a different flow-thread.
             if (renderer->style() && !renderer->style()->flowThread().isEmpty())
                 continue;
             return renderer;
         }
-    } while (true);
+    }
 
-    ASSERT_NOT_REACHED();
     return 0;
 }
 
