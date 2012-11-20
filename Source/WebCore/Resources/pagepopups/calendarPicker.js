@@ -671,6 +671,7 @@ function CalendarPicker(element, config) {
     }
     this._element.classList.add("calendar-picker");
     this._element.classList.add("preparing");
+    this.isPreparing = true;
     this._handleWindowResizeBound = this._handleWindowResize.bind(this);
     window.addEventListener("resize", this._handleWindowResizeBound, false);
     // We assume this._config.min/max are valid dates or months.
@@ -709,6 +710,7 @@ CalendarPicker.NavigationBehaviour = {
 
 CalendarPicker.prototype._handleWindowResize = function() {
     this._element.classList.remove("preparing");
+    this.isPreparing = false;
 };
 
 CalendarPicker.prototype.cleanup = function() {
@@ -1311,6 +1313,8 @@ DaysTable.prototype.navigateToMonth = function(month, navigationBehaviour) {
  * @param {!Month} month
  */
 DaysTable.prototype._startMoveInAnimation = function(month) {
+    if (this.picker.isPreparing)
+        return;
     var daysStyle = this._daysContainer.style;
     daysStyle.position = "relative";
     daysStyle.webkitTransition = "left 0.1s ease";

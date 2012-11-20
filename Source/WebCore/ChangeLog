@@ -1,3 +1,22 @@
+2012-11-19  Keishi Hattori  <keishi@webkit.org>
+
+        Move in animation should be disabled until the calendar picker is loaded.
+        https://bugs.webkit.org/show_bug.cgi?id=102661
+
+        Reviewed by Kent Tamura.
+
+        On weeks where the first day is in the previous month (e.x. 2013-W01)
+        the move in animation happens when you open the calendar picker. This
+        patch disables the move in animation until the calendar picker is fully
+        loaded.
+
+        No new tests.
+
+        * Resources/pagepopups/calendarPicker.js:
+        (CalendarPicker):
+        (CalendarPicker.prototype._handleWindowResize):
+        (DaysTable.prototype._startMoveInAnimation):
+
 2012-11-19  Elliott Sprehn  <esprehn@chromium.org>
 
         Clean up loop in NodeRenderingContext::nextRenderer and previousRenderer
