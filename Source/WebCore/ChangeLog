@@ -1,3 +1,23 @@
+2012-11-20  David Grogan  <dgrogan@chromium.org>
+
+        IndexedDB: Remove legacy enum-based constants from IDL
+        https://bugs.webkit.org/show_bug.cgi?id=85315
+
+        Reviewed by Adam Barth.
+
+        These were only present in an earlier working draft of the spec and have
+        been removed for 8 months. See
+        http://lists.w3.org/Archives/Public/public-webapps/2012JanMar/0957.html
+
+        Tests - legacy-constants.html
+
+        * Modules/indexeddb/IDBCursor.cpp:
+        (WebCore::IDBCursor::stringToDirection):
+        * Modules/indexeddb/IDBCursor.idl:
+        * Modules/indexeddb/IDBTransaction.cpp:
+        (WebCore::IDBTransaction::stringToMode):
+        * Modules/indexeddb/IDBTransaction.idl:
+
 2012-11-20  Elliott Sprehn  <esprehn@chromium.org>
 
         Store MutationObserver callback in a hidden property for V8

@@ -302,14 +302,6 @@ IDBCursor::Direction IDBCursor::stringToDirection(const String& directionString,
     if (directionString == IDBCursor::directionPrevUnique())
         return IDBCursor::PREV_NO_DUPLICATE;
 
-    // FIXME: Remove legacy constants. http://webkit.org/b/85315
-    // FIXME: This is not thread-safe.
-    DEFINE_STATIC_LOCAL(String, consoleMessage, (ASCIILiteral("Numeric direction values are deprecated in openCursor and openKeyCursor. Use \"next\", \"nextunique\", \"prev\", or \"prevunique\".")));
-    if (directionString == "0" || directionString == "1" || directionString == "2" || directionString == "3") {
-        context->addConsoleMessage(JSMessageSource, LogMessageType, WarningMessageLevel, consoleMessage);
-        return static_cast<IDBCursor::Direction>(IDBCursor::NEXT + (directionString[0] - '0'));
-    }
-
     ec = TypeError;
     return IDBCursor::NEXT;
 }

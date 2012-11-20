@@ -351,14 +351,6 @@ IDBTransaction::Mode IDBTransaction::stringToMode(const String& modeString, Scri
     if (modeString == IDBTransaction::modeReadWrite())
         return IDBTransaction::READ_WRITE;
 
-    // FIXME: Remove legacy constants. http://webkit.org/b/85315
-    // FIXME: This is not thread-safe.
-    DEFINE_STATIC_LOCAL(String, consoleMessage, (ASCIILiteral("Numeric transaction modes are deprecated in IDBDatabase.transaction. Use \"readonly\" or \"readwrite\".")));
-    if (modeString == "0" || modeString == "1") {
-        context->addConsoleMessage(JSMessageSource, LogMessageType, WarningMessageLevel, consoleMessage);
-        return static_cast<IDBTransaction::Mode>(IDBTransaction::READ_ONLY + (modeString[0] - '0'));
-    }
-
     ec = TypeError;
     return IDBTransaction::READ_ONLY;
 }

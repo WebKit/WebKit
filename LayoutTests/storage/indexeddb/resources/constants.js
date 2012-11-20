@@ -21,17 +21,6 @@ function test()
     shouldBe("IDBDatabaseException.QUOTA_ERR", "DOMException.QUOTA_EXCEEDED_ERR");
     shouldBe("IDBDatabaseException.ABORT_ERR", "DOMException.ABORT_ERR");
     shouldBe("IDBDatabaseException.NOT_FOUND_ERR", "DOMException.NOT_FOUND_ERR");
-
-    // FIXME: Remove when grace period expires: http://webkit.org/b/85315
-    shouldBe("IDBCursor.NEXT", "0");
-    shouldBe("IDBCursor.NEXT_NO_DUPLICATE", "1");
-    shouldBe("IDBCursor.PREV", "2");
-    shouldBe("IDBCursor.PREV_NO_DUPLICATE", "3");
-
-    // FIXME: Remove when grace period expires: http://webkit.org/b/85315
-    shouldBe("IDBTransaction.READ_ONLY", "0");
-    shouldBe("IDBTransaction.READ_WRITE", "1");
-    shouldBe("IDBTransaction.VERSION_CHANGE", "2");
 }
 
 test();

@@ -28,21 +28,12 @@ function verifyOverloads()
     checkCursorDirection("store.openCursor(0, 'nextunique')", "nextunique");
     checkCursorDirection("store.openCursor(0, 'prev')", "prev");
     checkCursorDirection("store.openCursor(0, 'prevunique')", "prevunique");
-    checkCursorDirection("store.openCursor(0, IDBCursor.NEXT)", "next");
-    checkCursorDirection("store.openCursor(0, IDBCursor.NEXT_NO_DUPLICATE)", "nextunique");
-    checkCursorDirection("store.openCursor(0, IDBCursor.PREV)", "prev");
-    checkCursorDirection("store.openCursor(0, IDBCursor.PREV_NO_DUPLICATE)", "prevunique");
 
-    // FIXME: Remove when grace period expires: http://webkit.org/b/85315
     checkCursorDirection("store.openCursor(IDBKeyRange.only(0))", "next");
     checkCursorDirection("store.openCursor(IDBKeyRange.only(0), 'next')", "next");
     checkCursorDirection("store.openCursor(IDBKeyRange.only(0), 'nextunique')", "nextunique");
     checkCursorDirection("store.openCursor(IDBKeyRange.only(0), 'prev')", "prev");
     checkCursorDirection("store.openCursor(IDBKeyRange.only(0), 'prevunique')", "prevunique");
-    checkCursorDirection("store.openCursor(IDBKeyRange.only(0), IDBCursor.NEXT)", "next");
-    checkCursorDirection("store.openCursor(IDBKeyRange.only(0), IDBCursor.NEXT_NO_DUPLICATE)", "nextunique");
-    checkCursorDirection("store.openCursor(IDBKeyRange.only(0), IDBCursor.PREV)", "prev");
-    checkCursorDirection("store.openCursor(IDBKeyRange.only(0), IDBCursor.PREV_NO_DUPLICATE)", "prevunique");
 
     checkCursorDirection("index.openCursor()", "next");
     checkCursorDirection("index.openCursor(0)", "next");
@@ -50,21 +41,12 @@ function verifyOverloads()
     checkCursorDirection("index.openCursor(0, 'nextunique')", "nextunique");
     checkCursorDirection("index.openCursor(0, 'prev')", "prev");
     checkCursorDirection("index.openCursor(0, 'prevunique')", "prevunique");
-    checkCursorDirection("index.openCursor(0, IDBCursor.NEXT)", "next");
-    checkCursorDirection("index.openCursor(0, IDBCursor.NEXT_NO_DUPLICATE)", "nextunique");
-    checkCursorDirection("index.openCursor(0, IDBCursor.PREV)", "prev");
-    checkCursorDirection("index.openCursor(0, IDBCursor.PREV_NO_DUPLICATE)", "prevunique");
 
-    // FIXME: Remove when grace period expires: http://webkit.org/b/85315
     checkCursorDirection("index.openCursor(IDBKeyRange.only(0))", "next");
     checkCursorDirection("index.openCursor(IDBKeyRange.only(0), 'next')", "next");
     checkCursorDirection("index.openCursor(IDBKeyRange.only(0), 'nextunique')", "nextunique");
     checkCursorDirection("index.openCursor(IDBKeyRange.only(0), 'prev')", "prev");
     checkCursorDirection("index.openCursor(IDBKeyRange.only(0), 'prevunique')", "prevunique");
-    checkCursorDirection("index.openCursor(IDBKeyRange.only(0), IDBCursor.NEXT)", "next");
-    checkCursorDirection("index.openCursor(IDBKeyRange.only(0), IDBCursor.NEXT_NO_DUPLICATE)", "nextunique");
-    checkCursorDirection("index.openCursor(IDBKeyRange.only(0), IDBCursor.PREV)", "prev");
-    checkCursorDirection("index.openCursor(IDBKeyRange.only(0), IDBCursor.PREV_NO_DUPLICATE)", "prevunique");
 
     checkCursorDirection("index.openKeyCursor()", "next");
     checkCursorDirection("index.openKeyCursor(0)", "next");
@@ -72,21 +54,12 @@ function verifyOverloads()
     checkCursorDirection("index.openKeyCursor(0, 'nextunique')", "nextunique");
     checkCursorDirection("index.openKeyCursor(0, 'prev')", "prev");
     checkCursorDirection("index.openKeyCursor(0, 'prevunique')", "prevunique");
-    checkCursorDirection("index.openKeyCursor(0, IDBCursor.NEXT)", "next");
-    checkCursorDirection("index.openKeyCursor(0, IDBCursor.NEXT_NO_DUPLICATE)", "nextunique");
-    checkCursorDirection("index.openKeyCursor(0, IDBCursor.PREV)", "prev");
-    checkCursorDirection("index.openKeyCursor(0, IDBCursor.PREV_NO_DUPLICATE)", "prevunique");
 
-    // FIXME: Remove when grace period expires: http://webkit.org/b/85315
     checkCursorDirection("index.openKeyCursor(IDBKeyRange.only(0))", "next");
     checkCursorDirection("index.openKeyCursor(IDBKeyRange.only(0), 'next')", "next");
     checkCursorDirection("index.openKeyCursor(IDBKeyRange.only(0), 'nextunique')", "nextunique");
     checkCursorDirection("index.openKeyCursor(IDBKeyRange.only(0), 'prev')", "prev");
     checkCursorDirection("index.openKeyCursor(IDBKeyRange.only(0), 'prevunique')", "prevunique");
-    checkCursorDirection("index.openKeyCursor(IDBKeyRange.only(0), IDBCursor.NEXT)", "next");
-    checkCursorDirection("index.openKeyCursor(IDBKeyRange.only(0), IDBCursor.NEXT_NO_DUPLICATE)", "nextunique");
-    checkCursorDirection("index.openKeyCursor(IDBKeyRange.only(0), IDBCursor.PREV)", "prev");
-    checkCursorDirection("index.openKeyCursor(IDBKeyRange.only(0), IDBCursor.PREV_NO_DUPLICATE)", "prevunique");
 
     trans.oncomplete = finishJSTest;
 }

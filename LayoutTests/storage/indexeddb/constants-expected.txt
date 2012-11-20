@@ -17,13 +17,6 @@ PASS IDBDatabaseException.TIMEOUT_ERR is DOMException.TIMEOUT_ERR
 PASS IDBDatabaseException.QUOTA_ERR is DOMException.QUOTA_EXCEEDED_ERR
 PASS IDBDatabaseException.ABORT_ERR is DOMException.ABORT_ERR
 PASS IDBDatabaseException.NOT_FOUND_ERR is DOMException.NOT_FOUND_ERR
-PASS IDBCursor.NEXT is 0
-PASS IDBCursor.NEXT_NO_DUPLICATE is 1
-PASS IDBCursor.PREV is 2
-PASS IDBCursor.PREV_NO_DUPLICATE is 3
-PASS IDBTransaction.READ_ONLY is 0
-PASS IDBTransaction.READ_WRITE is 1
-PASS IDBTransaction.VERSION_CHANGE is 2
 PASS successfullyParsed is true
 
 TEST COMPLETE

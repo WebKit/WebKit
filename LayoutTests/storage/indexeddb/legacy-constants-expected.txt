@@ -1,75 +1,3 @@
-CONSOLE MESSAGE: Numeric transaction modes are deprecated in IDBDatabase.transaction. Use "readonly" or "readwrite".
-CONSOLE MESSAGE: Numeric transaction modes are deprecated in IDBDatabase.transaction. Use "readonly" or "readwrite".
-CONSOLE MESSAGE: Numeric direction values are deprecated in openCursor and openKeyCursor. Use "next", "nextunique", "prev", or "prevunique".
-CONSOLE MESSAGE: Numeric direction values are deprecated in openCursor and openKeyCursor. Use "next", "nextunique", "prev", or "prevunique".
-CONSOLE MESSAGE: Numeric transaction modes are deprecated in IDBDatabase.transaction. Use "readonly" or "readwrite".
-CONSOLE MESSAGE: Numeric direction values are deprecated in openCursor and openKeyCursor. Use "next", "nextunique", "prev", or "prevunique".
-CONSOLE MESSAGE: Numeric direction values are deprecated in openCursor and openKeyCursor. Use "next", "nextunique", "prev", or "prevunique".
-CONSOLE MESSAGE: Numeric transaction modes are deprecated in IDBDatabase.transaction. Use "readonly" or "readwrite".
-CONSOLE MESSAGE: Numeric direction values are deprecated in openCursor and openKeyCursor. Use "next", "nextunique", "prev", or "prevunique".
-CONSOLE MESSAGE: Numeric direction values are deprecated in openCursor and openKeyCursor. Use "next", "nextunique", "prev", or "prevunique".
-CONSOLE MESSAGE: Numeric transaction modes are deprecated in IDBDatabase.transaction. Use "readonly" or "readwrite".
-CONSOLE MESSAGE: Numeric direction values are deprecated in openCursor and openKeyCursor. Use "next", "nextunique", "prev", or "prevunique".
-CONSOLE MESSAGE: Numeric direction values are deprecated in openCursor and openKeyCursor. Use "next", "nextunique", "prev", or "prevunique".
-Test that legacy direction/mode constants work
-
-On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
-
-
-indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
-
-dbname = "legacy-constants.html"
-indexedDB.deleteDatabase(dbname)
-indexedDB.open(dbname)
-store = db.createObjectStore('store')
-store.createIndex('index', 'value')
-
-populating store...
-trans = db.transaction('store', IDBTransaction.READ_WRITE)
-PASS trans.mode is "readwrite"
-store = trans.objectStore('store');
-store.put({value: 111}, 1)
-store.put({value: 222}, 2)
-trans = db.transaction('store', IDBTransaction.READ_ONLY)
-PASS trans.mode is "readonly"
-request = store.openCursor(null, IDBCursor.NEXT)
-PASS cursor.direction is "next"
-cursor.continue();
-PASS cursor.direction is "next"
-cursor.continue();
-request = store.openCursor(1, IDBCursor.NEXT)
-PASS cursor.direction is "next"
-cursor.continue();
-trans = db.transaction('store', IDBTransaction.READ_ONLY)
-PASS trans.mode is "readonly"
-request = store.openCursor(null, IDBCursor.NEXT_NO_DUPLICATE)
-PASS cursor.direction is "nextunique"
-cursor.continue();
-PASS cursor.direction is "nextunique"
-cursor.continue();
-request = store.openCursor(1, IDBCursor.NEXT_NO_DUPLICATE)
-PASS cursor.direction is "nextunique"
-cursor.continue();
-trans = db.transaction('store', IDBTransaction.READ_ONLY)
-PASS trans.mode is "readonly"
-request = store.openCursor(null, IDBCursor.PREV)
-PASS cursor.direction is "prev"
-cursor.continue();
-PASS cursor.direction is "prev"
-cursor.continue();
-request = store.openCursor(1, IDBCursor.PREV)
-PASS cursor.direction is "prev"
-cursor.continue();
-trans = db.transaction('store', IDBTransaction.READ_ONLY)
-PASS trans.mode is "readonly"
-request = store.openCursor(null, IDBCursor.PREV_NO_DUPLICATE)
-PASS cursor.direction is "prevunique"
-cursor.continue();
-PASS cursor.direction is "prevunique"
-cursor.continue();
-request = store.openCursor(1, IDBCursor.PREV_NO_DUPLICATE)
-PASS cursor.direction is "prevunique"
-cursor.continue();
 
 Verify that constants from previous version of the spec (beyond a grace period) have been removed:
 PASS IDBKeyRange.SINGLE is undefined
@@ -80,6 +8,13 @@ PASS IDBKeyRange.RIGHT_BOUND is undefined
 PASS IDBTransaction.LOADING is undefined
 PASS IDBRequest.LOADING is undefined
 PASS IDBRequest.DONE is undefined
+PASS IDBCursor.NEXT is undefined
+PASS IDBCursor.NEXT_NO_DUPLICATE is undefined
+PASS IDBCursor.PREV is undefined
+PASS IDBCursor.PREV_NO_DUPLICATE is undefined
+PASS IDBTransaction.READ_ONLY is undefined
+PASS IDBTransaction.READ_WRITE is undefined
+PASS IDBTransaction.VERSION_CHANGE is undefined
 PASS successfullyParsed is true
 
 TEST COMPLETE

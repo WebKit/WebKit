@@ -1,3 +1,19 @@
+2012-11-20  David Grogan  <dgrogan@chromium.org>
+
+        IndexedDB: Remove legacy enum-based constants from IDL
+        https://bugs.webkit.org/show_bug.cgi?id=85315
+
+        Reviewed by Adam Barth.
+
+        * storage/indexeddb/constants-expected.txt:
+        * storage/indexeddb/cursor-overloads-expected.txt:
+        * storage/indexeddb/cursor-overloads.html:
+        * storage/indexeddb/legacy-constants-expected.txt:
+        * storage/indexeddb/resources/constants.js:
+        (test):
+        * storage/indexeddb/resources/legacy-constants.js:
+        (testObsoleteConstants):
+
 2012-11-20  Jussi Kukkonen  <jussi.kukkonen@intel.com>
 
         animations/stop-animation-on-suspend.html sometimes fails on all platforms
