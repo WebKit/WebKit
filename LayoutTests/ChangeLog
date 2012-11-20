@@ -1,3 +1,17 @@
+2012-11-20  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        [GTK] fast/hidpi/video-controls-in-hidpi.html and fast/layers/video-layer.html need new baseline
+        https://bugs.webkit.org/show_bug.cgi?id=102815
+
+        Reviewed by Philippe Normand.
+
+        Added new GTK baseline for those tests.
+
+        * platform/gtk/fast/hidpi/video-controls-in-hidpi-expected.txt:
+        New GTK baseline
+        * platform/gtk/fast/layers/video-layer-expected.txt: New GTK
+        baseline
+
 2012-11-20  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
         [EFL] Gardening.
