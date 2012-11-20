@@ -1,3 +1,10 @@
+2012-11-19  Yury Semikhatsky  <yurys@chromium.org>
+
+        Unreviewed. Reenable webaudio/biquad-getFrequencyResponse.html test as it should pass after r129418
+        https://bugs.webkit.org/show_bug.cgi?id=97439
+
+        * platform/chromium/TestExpectations:
+
 2012-11-19  Matt Falkenhagen  <falken@chromium.org>
 
         Implement the new stacking layer needed by the Fullscreen API and the new <dialog> element
