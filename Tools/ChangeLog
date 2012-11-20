@@ -1,3 +1,15 @@
+2012-11-20  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] REGRESSION(r128174): Fast build path doesn't work now
+        https://bugs.webkit.org/show_bug.cgi?id=100360
+
+        Reviewed by Tor Arne Vestbø.
+
+        Use a separated .builtRevisions.cache file instead of .qmake.cache to cache built SVN revisions.
+
+        * Scripts/webkitdirs.pm:
+        (buildQMakeProjects):
+
 2012-11-20  Mateusz Leszko  <m.leszko@samsung.com>
 
         [EFL][GTK]Sharing accessibility support in WebKitTestRunner.
