@@ -1,3 +1,13 @@
+2012-11-20  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Fix typos. Apparently XCode failed to text-replace earlier when it was busy making a snapshot :(
+
+        * dom/DynamicNodeList.cpp:
+        (WebCore::DynamicNodeListCacheBase::invalidateIdNameCacheMaps):
+        * dom/DynamicNodeList.h:
+        (WebCore::DynamicNodeListCacheBase::invalidateCache):
+        (DynamicNodeListCacheBase):
+
 2012-11-20  Kentaro Hara  <haraken@chromium.org>
 
         [V8] Introduce GenerateConstructorHeader() to CodeGeneratorV8.pm
