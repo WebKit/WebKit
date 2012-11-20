@@ -167,6 +167,14 @@ void MutationObserver::setHasTransientRegistration()
     activeMutationObservers().add(this);
 }
 
+HashSet<Node*> MutationObserver::getObservedNodes() const
+{
+    HashSet<Node*> observedNodes;
+    for (HashSet<MutationObserverRegistration*>::const_iterator iter = m_registrations.begin(); iter != m_registrations.end(); ++iter)
+        (*iter)->addRegistrationNodesToSet(observedNodes);
+    return observedNodes;
+}
+
 void MutationObserver::deliver()
 {
     // Calling clearTransientRegistrations() can modify m_registrations, so it's necessary

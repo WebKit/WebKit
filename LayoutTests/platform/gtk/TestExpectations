@@ -1387,6 +1387,9 @@ webkit.org/b/102349 fast/dom/shadow/pseudoclass-update-enabled-area.html [ Image
 
 webkit.org/b/102586 media/video-src-blob.html [ Failure ]
 
+webkit.org/b/102744 fast/mutation/observer-wrapper-dropoff.html [ Skip ]
+webkit.org/b/102744 fast/mutation/observer-wrapper-dropoff-transient.html [ Skip ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing
 #////////////////////////////////////////////////////////////////////////////////////////

@@ -60,6 +60,8 @@ public:
     MutationRecordDeliveryOptions deliveryOptions() const { return m_options & (MutationObserver::AttributeOldValue | MutationObserver::CharacterDataOldValue); }
     MutationObserverOptions mutationTypes() const { return m_options & MutationObserver::AllMutationTypes; }
 
+    void addRegistrationNodesToSet(HashSet<Node*>&) const;
+
 private:
     MutationObserverRegistration(PassRefPtr<MutationObserver>, Node*, MutationObserverOptions, const HashSet<AtomicString>& attributeFilter);
 

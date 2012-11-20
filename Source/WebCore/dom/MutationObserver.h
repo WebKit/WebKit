@@ -87,6 +87,8 @@ public:
     void enqueueMutationRecord(PassRefPtr<MutationRecord>);
     void setHasTransientRegistration();
 
+    HashSet<Node*> getObservedNodes() const;
+
 private:
     struct ObserverLessThan;
 

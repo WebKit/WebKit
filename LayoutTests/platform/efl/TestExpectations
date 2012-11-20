@@ -1713,3 +1713,6 @@ webkit.org/b/102364 compositing/overflow/scrolling-without-painting.html [ Failu
 webkit.org/b/102367 fast/forms/zoomed-controls.html [ ImageOnlyFailure Missing ]
 
 webkit.org/b/102493 fast/events/mouse-cursor.html [ Failure ]
+
+webkit.org/b/102744 fast/mutation/observer-wrapper-dropoff.html [ Skip ]
+webkit.org/b/102744 fast/mutation/observer-wrapper-dropoff-transient.html [ Skip ]
