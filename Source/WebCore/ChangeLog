@@ -1,3 +1,16 @@
+2012-11-19  Adam Barth  <abarth@webkit.org>
+
+        DISALLOW_COPY_AND_ASSIGN is not a WebKit macro
+        https://bugs.webkit.org/show_bug.cgi?id=102755
+
+        Reviewed by Sam Weinig.
+
+        WTF_MAKE_NONCOPYABLE is the idiom we use in WebKit.  I don't understand
+        how this compiles.
+
+        * Modules/indexeddb/IDBBackingStore.h:
+        (RecordIdentifier):
+
 2012-11-19  Chris Rogers  <crogers@google.com>
 
         Implement .detune attribute for BiquadFilterNode

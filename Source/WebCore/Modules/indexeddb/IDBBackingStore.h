@@ -62,6 +62,7 @@ public:
     virtual void deleteObjectStore(IDBBackingStore::Transaction*, int64_t databaseId, int64_t objectStoreId);
 
     class RecordIdentifier {
+        WTF_MAKE_NONCOPYABLE(RecordIdentifier);
     public:
         RecordIdentifier(const Vector<char>& primaryKey, int64_t version) : m_primaryKey(primaryKey), m_version(version) { ASSERT(!primaryKey.isEmpty()); }
         RecordIdentifier() : m_primaryKey(), m_version(-1) { }
@@ -73,7 +74,6 @@ public:
     private:
         Vector<char> m_primaryKey; // FIXME: Make it more clear that this is the *encoded* version of the key.
         int64_t m_version;
-        DISALLOW_COPY_AND_ASSIGN(RecordIdentifier);
     };
 
     virtual String getRecord(IDBBackingStore::Transaction*, int64_t databaseId, int64_t objectStoreId, const IDBKey&);
