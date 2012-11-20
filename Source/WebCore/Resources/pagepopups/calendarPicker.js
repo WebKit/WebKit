@@ -742,20 +742,24 @@ CalendarPicker.prototype.fixWindowSize = function() {
     var daysAreaElement = this._element.getElementsByClassName(ClassNames.DaysArea)[0];
     var headers = daysAreaElement.getElementsByClassName(ClassNames.DayLabel);
     var maxCellWidth = 0;
-    for (var i = 0; i < headers.length; ++i) {
+    for (var i = 1; i < headers.length; ++i) {
         if (maxCellWidth < headers[i].offsetWidth)
             maxCellWidth = headers[i].offsetWidth;
     }
+    var weekColumnWidth = headers[0].offsetWidth;
+    if (maxCellWidth > weekColumnWidth)
+        weekColumnWidth = maxCellWidth;
+    headers[0].style.width = weekColumnWidth + "px";
     var DaysAreaContainerBorder = 1;
     var yearMonthEnd;
     var daysAreaEnd;
     if (global.params.isCalendarRTL) {
         var startOffset = this._element.offsetLeft + this._element.offsetWidth;
         yearMonthEnd = startOffset - yearMonthRightElement.offsetLeft;
-        daysAreaEnd = startOffset - (daysAreaElement.offsetLeft + daysAreaElement.offsetWidth) + maxCellWidth * 7 + DaysAreaContainerBorder;
+        daysAreaEnd = startOffset - (daysAreaElement.offsetLeft + daysAreaElement.offsetWidth) + weekColumnWidth + maxCellWidth * 7 + DaysAreaContainerBorder;
     } else {
         yearMonthEnd = yearMonthRightElement.offsetLeft + yearMonthRightElement.offsetWidth;
-        daysAreaEnd = daysAreaElement.offsetLeft + maxCellWidth * 7 + DaysAreaContainerBorder;
+        daysAreaEnd = daysAreaElement.offsetLeft + weekColumnWidth + maxCellWidth * 7 + DaysAreaContainerBorder;
     }
     var maxEnd = Math.max(yearMonthEnd, daysAreaEnd);
     var MainPadding = 6; // FIXME: Fix name.

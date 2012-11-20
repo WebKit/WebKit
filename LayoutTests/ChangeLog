@@ -1,3 +1,14 @@
+2012-11-20  Keishi Hattori  <keishi@webkit.org>
+
+        Week picker width is too small
+        https://bugs.webkit.org/show_bug.cgi?id=102766
+
+        Reviewed by Kent Tamura.
+
+        * platform/chromium-mac/platform/chromium/fast/forms/calendar-picker/week-picker-appearance-expected.png:
+        * platform/chromium-mac/platform/chromium/fast/forms/calendar-picker/week-picker-appearance-step-expected.png:
+        * platform/chromium/TestExpectations:
+
 2012-11-20  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         [GTK] no volume slider in HTML5 media element controls

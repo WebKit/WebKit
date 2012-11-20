@@ -2830,6 +2830,8 @@ webkit.org/b/98906 platform/chromium/fast/forms/suggestion-picker/date-suggestio
 webkit.org/b/99421 platform/chromium/fast/forms/suggestion-picker/week-suggestion-picker-appearance-rtl.html [ Pass ImageOnlyFailure Missing ]
 webkit.org/b/99421 platform/chromium/fast/forms/suggestion-picker/week-suggestion-picker-appearance-with-scroll-bar.html [ Pass ImageOnlyFailure Missing ]
 webkit.org/b/99421 platform/chromium/fast/forms/suggestion-picker/week-suggestion-picker-appearance.html [ Pass ImageOnlyFailure Missing ]
+webkit.org/b/99421 platform/chromium/fast/forms/calendar-picker/week-picker-appearance-step.html [ Pass ImageOnlyFailure Missing ]
+webkit.org/b/99421 platform/chromium/fast/forms/calendar-picker/week-picker-appearance.html [ Pass ImageOnlyFailure Missing ]
 
 # Needs rebaseline
 webkit.org/b/102769 fast/forms/datetime/datetime-appearance-l10n.html [ Pass ImageOnlyFailure Missing ]

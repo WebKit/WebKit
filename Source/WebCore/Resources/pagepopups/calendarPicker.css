@@ -269,7 +269,7 @@ body {
 }
 
 .week-mode .week-column {
-    display: block;
+    display: table-cell;
     border-right: 1px solid #999;
     padding-right: 1px;
 }
