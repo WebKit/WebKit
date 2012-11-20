@@ -68,25 +68,25 @@ static gboolean axObjectEventListener(GSignalInvocationHint *signalHint, guint n
     if (!accessible || !ATK_IS_OBJECT(accessible))
         return TRUE;
 
-    GSignalQuery signal_query;
+    GSignalQuery signalQuery;
     GOwnPtr<gchar> signalName;
     GOwnPtr<gchar> signalValue;
 
-    g_signal_query(signalHint->signal_id, &signal_query);
+    g_signal_query(signalHint->signal_id, &signalQuery);
 
-    if (!g_strcmp0(signal_query.signal_name, "state-change")) {
+    if (!g_strcmp0(signalQuery.signal_name, "state-change")) {
         signalName.set(g_strdup_printf("state-change:%s", g_value_get_string(&paramValues[1])));
         signalValue.set(g_strdup_printf("%d", g_value_get_boolean(&paramValues[2])));
-    } else if (!g_strcmp0(signal_query.signal_name, "focus-event")) {
+    } else if (!g_strcmp0(signalQuery.signal_name, "focus-event")) {
         signalName.set(g_strdup("focus-event"));
         signalValue.set(g_strdup_printf("%d", g_value_get_boolean(&paramValues[1])));
-    } else if (!g_strcmp0(signal_query.signal_name, "children-changed")) {
+    } else if (!g_strcmp0(signalQuery.signal_name, "children-changed")) {
         signalName.set(g_strdup("children-changed"));
         signalValue.set(g_strdup_printf("%d", g_value_get_uint(&paramValues[1])));
-    } else if (!g_strcmp0(signal_query.signal_name, "property-change"))
+    } else if (!g_strcmp0(signalQuery.signal_name, "property-change"))
         signalName.set(g_strdup_printf("property-change:%s", g_quark_to_string(signalHint->detail)));
     else
-        signalName.set(g_strdup(signal_query.signal_name));
+        signalName.set(g_strdup(signalQuery.signal_name));
 
     printAccessibilityEvent(accessible, signalName.get(), signalValue.get());
 
@@ -103,12 +103,12 @@ void AccessibilityController::logAccessibilityEvents()
     rootElement();
 
     // Add global listeners for AtkObject's signals.
-    m_stateChangeListenerId = atk_add_global_event_listener(axObjectEventListener, "Gtk:AtkObject:state-change");
-    m_focusEventListenerId = atk_add_global_event_listener(axObjectEventListener, "Gtk:AtkObject:focus-event");
-    m_activeDescendantChangedListenerId = atk_add_global_event_listener(axObjectEventListener, "Gtk:AtkObject:active-descendant-changed");
-    m_childrenChangedListenerId = atk_add_global_event_listener(axObjectEventListener, "Gtk:AtkObject:children-changed");
-    m_propertyChangedListenerId = atk_add_global_event_listener(axObjectEventListener, "Gtk:AtkObject:property-change");
-    m_visibleDataChangedListenerId = atk_add_global_event_listener(axObjectEventListener, "Gtk:AtkObject:visible-data-changed");
+    m_stateChangeListenerId = atk_add_global_event_listener(axObjectEventListener, "ATK:AtkObject:state-change");
+    m_focusEventListenerId = atk_add_global_event_listener(axObjectEventListener, "ATK:AtkObject:focus-event");
+    m_activeDescendantChangedListenerId = atk_add_global_event_listener(axObjectEventListener, "ATK:AtkObject:active-descendant-changed");
+    m_childrenChangedListenerId = atk_add_global_event_listener(axObjectEventListener, "ATK:AtkObject:children-changed");
+    m_propertyChangedListenerId = atk_add_global_event_listener(axObjectEventListener, "ATK:AtkObject:property-change");
+    m_visibleDataChangedListenerId = atk_add_global_event_listener(axObjectEventListener, "ATK:AtkObject:visible-data-changed");
 
     // Ensure the Atk interface types are registered, otherwise
     // the AtkDocument signal handlers below won't get registered.

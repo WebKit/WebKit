@@ -94,6 +94,8 @@ Libraries_libTestRunnerInjectedBundle_la_SOURCES = \
 	Tools/WebKitTestRunner/InjectedBundle/AccessibilityUIElement.cpp \
 	Tools/WebKitTestRunner/InjectedBundle/AccessibilityUIElement.h \
 	Tools/WebKitTestRunner/InjectedBundle/ActivateFonts.h \
+	Tools/WebKitTestRunner/InjectedBundle/atk/AccessibilityControllerAtk.cpp \
+	Tools/WebKitTestRunner/InjectedBundle/atk/AccessibilityUIElementAtk.cpp \
 	Tools/WebKitTestRunner/InjectedBundle/Bindings/JSWrappable.h \
 	Tools/WebKitTestRunner/InjectedBundle/Bindings/JSWrapper.cpp \
 	Tools/WebKitTestRunner/InjectedBundle/Bindings/JSWrapper.h \
@@ -101,8 +103,6 @@ Libraries_libTestRunnerInjectedBundle_la_SOURCES = \
 	Tools/WebKitTestRunner/InjectedBundle/EventSendingController.h \
 	Tools/WebKitTestRunner/InjectedBundle/GCController.cpp \
 	Tools/WebKitTestRunner/InjectedBundle/GCController.h \
-	Tools/WebKitTestRunner/InjectedBundle/gtk/AccessibilityControllerGtk.cpp \
-	Tools/WebKitTestRunner/InjectedBundle/gtk/AccessibilityUIElementGtk.cpp \
 	Tools/WebKitTestRunner/InjectedBundle/gtk/ActivateFontsGtk.cpp \
 	Tools/WebKitTestRunner/InjectedBundle/gtk/InjectedBundleGtk.cpp \
 	Tools/WebKitTestRunner/InjectedBundle/gtk/TestRunnerGtk.cpp \

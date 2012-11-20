@@ -1,3 +1,16 @@
+2012-11-20  Mateusz Leszko  <m.leszko@samsung.com>
+
+        [EFL][GTK]Sharing accessibility support in WebKitTestRunner.
+        https://bugs.webkit.org/show_bug.cgi?id=99011
+
+        Reviewed by Martin Robinson.
+
+        Accessibility files from gtk folder are moved to atk folder due to common implementation. Event Type naming changed to default, from Gtk to ATK.
+
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityControllerAtk.cpp: Renamed from Tools/WebKitTestRunner/InjectedBundle/gtk/AccessibilityControllerGtk.cpp.
+        (WTR::AccessibilityController::logAccessibilityEvents):
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityUIElementAtk.cpp: Renamed from Tools/WebKitTestRunner/InjectedBundle/gtk/AccessibilityUIElementGtk.cpp.
+
 2012-11-20  Zan Dobersek  <zandobersek@gmail.com>
 
         webkitpy unit tests should run serially when checking code coverage
