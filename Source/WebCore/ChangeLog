@@ -1,3 +1,37 @@
+2012-11-19  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: simplify? damaged region computation in the editor
+        https://bugs.webkit.org/show_bug.cgi?id=102688
+
+        Reviewed by Vsevolod Vlasov.
+
+        This change simplifies the damaged region computation. Drive-by make _getSelection work properly.
+
+        * inspector/front-end/DefaultTextEditor.js:
+        (WebInspector.DefaultTextEditor):
+        (WebInspector.DefaultTextEditor.prototype._handleCut):
+        (WebInspector.TextEditorChunkedPanel.prototype._findFirstVisibleLineNumber.compareLineRowOffsetTops):
+        (WebInspector.TextEditorChunkedPanel.prototype._findFirstVisibleLineNumber):
+        (WebInspector.TextEditorMainPanel.prototype.handleEnterKey.get var):
+        (WebInspector.TextEditorMainPanel.prototype.handleEnterKey):
+        (WebInspector.TextEditorMainPanel.prototype._paintLineChunks):
+        (WebInspector.TextEditorMainPanel.prototype._getSelection):
+        (WebInspector.TextEditorMainPanel.prototype._restoreSelection):
+        (WebInspector.TextEditorMainPanel.prototype._selectionToPosition):
+        (WebInspector.TextEditorMainPanel.prototype._positionToSelection):
+        (WebInspector.TextEditorMainPanel.prototype._handleMutations):
+        (WebInspector.TextEditorMainPanel.prototype._collectDirtyLines):
+        (WebInspector.TextEditorMainPanel.prototype._applyDomUpdates):
+        (WebInspector.TextEditorMainPanel.prototype._guessEditRangeBasedOnSelection):
+        (WebInspector.TextEditorMainPanel.prototype._assertDOMMatchesTextModel):
+        (WebInspector.TextEditorMainPanel.prototype._updateChunksForRanges):
+        (WebInspector.TextEditorMainPanel.prototype._collectLinesFromDOM):
+        (WebInspector.TextEditorMainChunk):
+        (WebInspector.TextEditorMainChunk.prototype.addDecoration):
+        (WebInspector.TextEditorMainChunk.prototype.get endLine):
+        (WebInspector.TextEditorMainChunk.prototype.lineRowContainingLine):
+        (WebInspector.TextEditorMainChunk.prototype.expandedLineRow):
+
 2012-11-19  Erik Arvidsson  <arv@chromium.org>
 
         Remove historical enums from ExceptionCode.h
