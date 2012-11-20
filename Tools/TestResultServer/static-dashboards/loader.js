@@ -160,16 +160,10 @@ loader.Loader.prototype = {
     },
     _handleResultsFileLoadError: function(builderName)
     {
-        var error = 'Failed to load results file for ' + builderName + '.';
+        console.error('Failed to load results file for ' + builderName + '.');
 
-        if (isLayoutTestResults()) {
-            console.error(error);
-            g_buildersThatFailedToLoad.push(builderName);
-        } else {
-            // Avoid to show error/warning messages for non-layout tests. We may be
-            // checking the builders that are not running the tests.
-            console.info('info:' + error);
-        }
+        // FIXME: loader shouldn't depend on state defined in dashboard_base.js.
+        g_buildersThatFailedToLoad.push(builderName);
 
         // Remove this builder from builders, so we don't try to use the
         // data that isn't there.

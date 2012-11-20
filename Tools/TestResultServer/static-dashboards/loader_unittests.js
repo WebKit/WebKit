@@ -107,3 +107,27 @@ test('expectations files loading', 1, function() {
         loader.request = requestFunction;
     }
 });
+
+test('results file failing to load', 2, function() {
+    // FIXME: loader shouldn't depend on state defined in dashboard_base.js.
+    g_buildersThatFailedToLoad = [];
+    g_builders = {};
+
+    var resourceLoader = new loader.Loader();
+    var resourceLoadCount = 0;
+    resourceLoader._handleResourceLoad = function() {
+        resourceLoadCount++;
+    }
+
+    var builder1 = 'builder1';
+    g_builders[builder1] = true;
+    resourceLoader._handleResultsFileLoadError(builder1);
+
+    var builder2 = 'builder2';
+    g_builders[builder2] = true;
+    resourceLoader._handleResultsFileLoadError(builder2);
+
+    deepEqual(g_buildersThatFailedToLoad, [builder1, builder2]);
+    equal(resourceLoadCount, 2);
+
+})

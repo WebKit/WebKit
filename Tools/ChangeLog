@@ -1,3 +1,15 @@
+2012-11-20  Ojan Vafai  <ojan@chromium.org>
+
+        Remove special case for layout tests when builders fail to load
+        https://bugs.webkit.org/show_bug.cgi?id=102842
+
+        Reviewed by Tony Chang.
+
+        Now that we load only builders that actually run the given test
+        type, we can reliably show errors to the users because it
+        represents a broken bot.
+        * TestResultServer/static-dashboards/loader.js:
+
 2012-11-15  Ojan Vafai  <ojan@chromium.org>
 
         Generate a list of builders/test suites from the buildbot json
