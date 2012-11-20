@@ -56,7 +56,6 @@ public:
     static PassRefPtr<ProgressInnerElement> create(Document*);
 private:
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*) OVERRIDE;
-    virtual const AtomicString& shadowPseudoId() const;
     virtual bool rendererIsNeeded(const NodeRenderingContext&);
 };
 
@@ -65,10 +64,11 @@ public:
     ProgressBarElement(Document* document) 
         : ProgressShadowElement(document)
     {
+        DEFINE_STATIC_LOCAL(AtomicString, pseudoId, ("-webkit-progress-bar", AtomicString::ConstructFromLiteral));
+        setPseudo(pseudoId);
     }
 
     static PassRefPtr<ProgressBarElement> create(Document*);
-    virtual const AtomicString& shadowPseudoId() const;
 };
 
 inline PassRefPtr<ProgressBarElement> ProgressBarElement::create(Document* document)
@@ -81,9 +81,10 @@ public:
     ProgressValueElement(Document* document) 
         : ProgressShadowElement(document)
     {
+        DEFINE_STATIC_LOCAL(AtomicString, pseudoId, ("-webkit-progress-value", AtomicString::ConstructFromLiteral));
+        setPseudo(pseudoId);
     }
 
-    virtual const AtomicString& shadowPseudoId() const;
     static PassRefPtr<ProgressValueElement> create(Document*);
     void setWidthPercentage(double);
 };

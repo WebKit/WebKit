@@ -1,3 +1,13 @@
+2012-11-19  Shinya Kawanaka  <shinyak@chromium.org>
+
+        [Refactoring] Remove shadowPseudoId() and use setPseudo() in <progress> ElementShadow.
+        https://bugs.webkit.org/show_bug.cgi?id=101703
+
+        Reviewed by Hajime Morita.
+
+        * editing/style/apply-style-atomic-expected.txt:
+        * fast/dom/HTMLProgressElement/progress-element-markup-expected.txt:
+
 2012-11-19  Yury Semikhatsky  <yurys@chromium.org>
 
         Unreviewed. Reenable webaudio/biquad-getFrequencyResponse.html test as it should pass after r129418
