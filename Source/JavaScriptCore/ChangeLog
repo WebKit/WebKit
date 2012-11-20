@@ -1,3 +1,15 @@
+2012-11-19  Patrick Gansterer  <paroga@webkit.org>
+
+        [CMake] Create JavaScriptCore ForwardingHeaders
+        https://bugs.webkit.org/show_bug.cgi?id=92665
+
+        Reviewed by Brent Fulgham.
+
+        When using CMake to build the Windows port, we need
+        to generate the forwarding headers with it too.
+
+        * CMakeLists.txt:
+
 2012-11-19  Kihong Kwon  <kihong.kwon@samsung.com>
 
         Add PROXIMITY_EVENTS feature
