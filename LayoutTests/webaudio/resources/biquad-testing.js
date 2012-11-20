@@ -434,6 +434,7 @@ function createTestAndRun(context, filterType, filterParameters) {
         filter[k] = context.createBiquadFilter();
         filter[k].type = filterType;
         filter[k].frequency.value = context.sampleRate / 2 * filterParameters[k].cutoff;
+        filter[k].detune.value = (filterParameters[k].detune === undefined) ? 0 : filterParameters[k].detune;
         filter[k].Q.value = filterParameters[k].q;
         filter[k].gain.value = filterParameters[k].gain;
 
@@ -467,8 +468,11 @@ function generateReference(filterType, filterParameters) {
     
     for (var k = 0; k < nFilters; ++k) {
         // Filter an impulse
+        var detune = (filterParameters[k].detune === undefined) ? 0 : filterParameters[k].detune;
+        var frequency = filterParameters[k].cutoff * Math.pow(2, detune / 1200); // Apply detune, converting from Cents.
+        
         var filterCoef = createFilter(filterType,
-                                      filterParameters[k].cutoff,
+                                      frequency,
                                       filterParameters[k].q,
                                       filterParameters[k].gain);
         var y = filterData(filterCoef, data, renderLengthSamples);

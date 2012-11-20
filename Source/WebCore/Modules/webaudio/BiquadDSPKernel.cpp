@@ -47,24 +47,32 @@ void BiquadDSPKernel::updateCoefficientsIfNecessary(bool useSmoothing, bool forc
         double value1;
         double value2;
         double gain;
+        double detune; // in Cents
 
         if (biquadProcessor()->hasSampleAccurateValues()) {
             value1 = biquadProcessor()->parameter1()->finalValue();
             value2 = biquadProcessor()->parameter2()->finalValue();
             gain = biquadProcessor()->parameter3()->finalValue();
+            detune = biquadProcessor()->parameter4()->finalValue();
         } else if (useSmoothing) {
             value1 = biquadProcessor()->parameter1()->smoothedValue();
             value2 = biquadProcessor()->parameter2()->smoothedValue();
             gain = biquadProcessor()->parameter3()->smoothedValue();
+            detune = biquadProcessor()->parameter4()->smoothedValue();
         } else {
             value1 = biquadProcessor()->parameter1()->value();
             value2 = biquadProcessor()->parameter2()->value();
             gain = biquadProcessor()->parameter3()->value();
+            detune = biquadProcessor()->parameter4()->value();
         }
 
         // Convert from Hertz to normalized frequency 0 -> 1.
         double nyquist = this->nyquist();
         double normalizedFrequency = value1 / nyquist;
+
+        // Offset frequency by detune.
+        if (detune)
+            normalizedFrequency *= pow(2, detune / 1200);
 
         // Configure the biquad with the new filter parameters for the appropriate type of filter.
         switch (biquadProcessor()->type()) {

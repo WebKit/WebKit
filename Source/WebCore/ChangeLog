@@ -1,3 +1,26 @@
+2012-11-19  Chris Rogers  <crogers@google.com>
+
+        Implement .detune attribute for BiquadFilterNode
+        https://bugs.webkit.org/show_bug.cgi?id=102737
+
+        Reviewed by Kenneth Russell.
+
+        Similar to OscillatorNode, BiquadFilterNode must have a .detune attribute
+
+        Tests changed: webaudio/biquad-lowpass.html
+
+        * Modules/webaudio/BiquadDSPKernel.cpp:
+        (WebCore::BiquadDSPKernel::updateCoefficientsIfNecessary):
+        * Modules/webaudio/BiquadFilterNode.h:
+        (WebCore::BiquadFilterNode::detune):
+        * Modules/webaudio/BiquadFilterNode.idl:
+        * Modules/webaudio/BiquadProcessor.cpp:
+        (WebCore::BiquadProcessor::BiquadProcessor):
+        (WebCore::BiquadProcessor::checkForDirtyCoefficients):
+        * Modules/webaudio/BiquadProcessor.h:
+        (WebCore::BiquadProcessor::parameter4):
+        (BiquadProcessor):
+
 2012-11-19  Patrick Gansterer  <paroga@webkit.org>
 
         [WIN] Add WebCore::getRegistryValue()

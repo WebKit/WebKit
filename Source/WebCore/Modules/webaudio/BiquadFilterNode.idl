@@ -40,6 +40,7 @@
         setter raises(DOMException);
     
     readonly attribute AudioParam frequency; // in Hertz
+    readonly attribute AudioParam detune; // in Cents
     readonly attribute AudioParam Q; // Quality factor
     readonly attribute AudioParam gain; // in Decibels
 
