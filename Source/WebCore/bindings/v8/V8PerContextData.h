@@ -47,7 +47,7 @@ typedef WTF::HashMap<int, V8NPObjectVector> V8NPObjectMap;
 enum V8ContextEmbedderDataField {
     v8ContextDebugIdIndex,
     v8ContextPerContextDataIndex,
-    v8ContextIsolatedWindowShell,
+    v8ContextIsolatedWorld,
     // Rather than adding more embedder data fields to v8::Context,
     // consider adding the data to V8PerContextData instead.
 };

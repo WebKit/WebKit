@@ -34,7 +34,6 @@
 #include "ScriptController.h"
 #include "V8Binding.h"
 #include "V8DOMWindow.h"
-#include "V8DOMWindowShell.h"
 
 namespace WebCore {
 
@@ -52,7 +51,7 @@ WorldContextHandle::WorldContextHandle(WorldToUse worldToUse)
             return;
         }
 #endif
-        if (V8DOMWindowShell::isolated(context)) {
+        if (DOMWrapperWorld::isolated(context)) {
             m_context = SharedPersistent<v8::Context>::create(context);
             return;
         }
