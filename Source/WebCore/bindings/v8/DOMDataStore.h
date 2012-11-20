@@ -32,6 +32,7 @@
 #define DOMDataStore_h
 
 #include "DOMWrapperMap.h"
+#include "DOMWrapperWorld.h"
 #include "Node.h"
 #include "V8GCController.h"
 #include <v8.h>
@@ -60,6 +61,13 @@ public:
 
     static DOMDataStore* current(v8::Isolate*);
 
+    static v8::Handle<v8::Object> getNode(Node* object, v8::Isolate* isolate)
+    {
+        if (LIKELY(!DOMWrapperWorld::isolatedWorldsExist()))
+            return getWrapperFromObject(object);
+        return current(isolate)->get(object);
+    }
+
     template<typename T>
     inline v8::Handle<v8::Object> get(T* object)
     {
@@ -82,13 +90,13 @@ private:
     bool wrapperIsStoredInObject(void*) const { return false; }
     bool wrapperIsStoredInObject(ScriptWrappable*) const { return m_type == MainWorld; }
 
-    v8::Handle<v8::Object> getWrapperFromObject(void*) const
+    static v8::Handle<v8::Object> getWrapperFromObject(void*)
     {
         ASSERT_NOT_REACHED();
         return v8::Handle<v8::Object>();
     }
 
-    v8::Handle<v8::Object> getWrapperFromObject(ScriptWrappable* object) const
+    static v8::Handle<v8::Object> getWrapperFromObject(ScriptWrappable* object)
     {
         ASSERT(m_type == MainWorld);
         return object->wrapper();

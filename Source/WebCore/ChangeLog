@@ -1,3 +1,31 @@
+2012-11-19  Adam Barth  <abarth@webkit.org>
+
+        [V8] Merge getCachedWrapper(Node*) into DOMDataStore
+        https://bugs.webkit.org/show_bug.cgi?id=102158
+
+        Reviewed by Eric Seidel.
+
+        This patch is an incremental step towards fully merging the Node code
+        path with the general code path. After this patch, at least Nodes flow
+        through the same class.
+
+        * Modules/indexeddb/IDBTransactionCoordinator.h:
+        * bindings/scripts/CodeGeneratorV8.pm:
+        (GenerateHeader):
+        (GenerateToV8Converters):
+        * bindings/v8/DOMDataStore.h:
+        (WebCore::DOMDataStore::getNode):
+        (DOMDataStore):
+        (WebCore::DOMDataStore::getWrapperFromObject):
+        * bindings/v8/DOMWrapperWorld.cpp:
+        (WebCore::DOMWrapperWorld::DOMWrapperWorld):
+        (WebCore):
+        * bindings/v8/DOMWrapperWorld.h:
+        (WebCore):
+        (DOMWrapperWorld):
+        * bindings/v8/V8DOMWrapper.h:
+        (V8DOMWrapper):
+
 2012-11-19  Kentaro Hara  <haraken@chromium.org>
 
         In the IDL parser, we should rename $dataNode to $interface

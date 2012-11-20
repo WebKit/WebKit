@@ -534,7 +534,7 @@ inline v8::Handle<v8::Value> toV8Fast(${nativeType}* impl, const v8::AccessorInf
 END
     } else {
 
-        my $getCachedWrapper = $codeGenerator->IsSubType($dataNode, "Node") ? "V8DOMWrapper::getCachedWrapper(impl)" : "DOMDataStore::current(isolate)->get(impl)";
+        my $getCachedWrapper = $codeGenerator->IsSubType($dataNode, "Node") ? "DOMDataStore::getNode(impl, isolate)" : "DOMDataStore::current(isolate)->get(impl)";
         my $createWrapperCall = $customWrap ? "${v8InterfaceName}::wrap" : "${v8InterfaceName}::createWrapper";
 
         if ($customWrap) {
@@ -587,7 +587,7 @@ inline v8::Handle<v8::Value> toV8Fast(${nativeType}* impl, const v8::AccessorInf
     // in an isolated world. The fastest way we know how to do that is to check
     // whether the holder's inline wrapper is the same wrapper we see in the
     // v8::AccessorInfo.
-    v8::Handle<v8::Object> wrapper = (holder->wrapper() == info.Holder()) ? impl->wrapper() : V8DOMWrapper::getCachedWrapper(impl);
+    v8::Handle<v8::Object> wrapper = (holder->wrapper() == info.Holder()) ? impl->wrapper() : DOMDataStore::getNode(impl, info.GetIsolate());
     if (!wrapper.IsEmpty())
         return wrapper;
     return wrap(impl, info.Holder(), info.GetIsolate());
@@ -3433,7 +3433,7 @@ sub GenerateToV8Converters
 
     my $createWrapperArgumentType = GetPassRefPtrType($nativeType);
     my $baseType = BaseInterfaceName($dataNode);
-    my $getCachedWrapper = $codeGenerator->IsSubType($dataNode, "Node") ? "V8DOMWrapper::getCachedWrapper(impl.get())" : "DOMDataStore::current(isolate)->get(impl.get())";
+    my $getCachedWrapper = $codeGenerator->IsSubType($dataNode, "Node") ? "DOMDataStore::getNode(impl.get(), isolate)" : "DOMDataStore::current(isolate)->get(impl.get())";
 
     push(@implContent, <<END);
 
@@ -3455,7 +3455,7 @@ END
     if (Frame* frame = impl->frame()) {
         if (frame->script()->initializeMainWorld()) {
             // initializeMainWorld may have created a wrapper for the object, retry from the start.
-            v8::Handle<v8::Object> wrapper = V8DOMWrapper::getCachedWrapper(impl.get());
+            v8::Handle<v8::Object> wrapper = DOMDataStore::getNode(impl.get(), isolate);
             if (!wrapper.IsEmpty())
                 return wrapper;
         }

@@ -31,6 +31,7 @@
 #include "config.h"
 #include "DOMWrapperWorld.h"
 
+#include "DOMDataStore.h"
 #include <wtf/MainThread.h>
 #include <wtf/StdLibExtras.h>
 
@@ -46,6 +47,14 @@ PassRefPtr<DOMWrapperWorld>  DOMWrapperWorld::createUninitializedWorld()
 PassRefPtr<DOMWrapperWorld> DOMWrapperWorld::createMainWorld()
 {
     return adoptRef(new DOMWrapperWorld(mainWorldId, mainWorldExtensionGroup));
+}
+
+DOMWrapperWorld::DOMWrapperWorld(int worldId, int extensionGroup)
+    : m_worldId(worldId)
+    , m_extensionGroup(extensionGroup)
+{
+    if (isIsolatedWorld())
+        m_domDataStore = adoptPtr(new DOMDataStore(DOMDataStore::IsolatedWorld));
 }
 
 DOMWrapperWorld* mainThreadNormalWorld()

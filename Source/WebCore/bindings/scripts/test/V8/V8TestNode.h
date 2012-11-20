@@ -56,7 +56,7 @@ private:
 inline v8::Handle<v8::Object> wrap(TestNode* impl, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate = 0)
 {
     ASSERT(impl);
-    ASSERT(V8DOMWrapper::getCachedWrapper(impl).IsEmpty());
+    ASSERT(DOMDataStore::getNode(impl, isolate).IsEmpty());
     return V8TestNode::createWrapper(impl, creationContext, isolate);
 }
 
@@ -64,7 +64,7 @@ inline v8::Handle<v8::Object> toV8Object(TestNode* impl, v8::Handle<v8::Object> 
 {
     if (UNLIKELY(!impl))
         return v8::Handle<v8::Object>();
-    v8::Handle<v8::Object> wrapper = V8DOMWrapper::getCachedWrapper(impl);
+    v8::Handle<v8::Object> wrapper = DOMDataStore::getNode(impl, isolate);
     if (!wrapper.IsEmpty())
         return wrapper;
     return wrap(impl, creationContext, isolate);
@@ -74,7 +74,7 @@ inline v8::Handle<v8::Value> toV8(TestNode* impl, v8::Handle<v8::Object> creatio
 {
     if (UNLIKELY(!impl))
         return v8NullWithCheck(isolate);
-    v8::Handle<v8::Value> wrapper = V8DOMWrapper::getCachedWrapper(impl);
+    v8::Handle<v8::Value> wrapper = DOMDataStore::getNode(impl, isolate);
     if (!wrapper.IsEmpty())
         return wrapper;
     return wrap(impl, creationContext, isolate);
@@ -88,7 +88,7 @@ inline v8::Handle<v8::Value> toV8Fast(TestNode* impl, const v8::AccessorInfo& in
     // in an isolated world. The fastest way we know how to do that is to check
     // whether the holder's inline wrapper is the same wrapper we see in the
     // v8::AccessorInfo.
-    v8::Handle<v8::Object> wrapper = (holder->wrapper() == info.Holder()) ? impl->wrapper() : V8DOMWrapper::getCachedWrapper(impl);
+    v8::Handle<v8::Object> wrapper = (holder->wrapper() == info.Holder()) ? impl->wrapper() : DOMDataStore::getNode(impl, info.GetIsolate());
     if (!wrapper.IsEmpty())
         return wrapper;
     return wrap(impl, info.Holder(), info.GetIsolate());

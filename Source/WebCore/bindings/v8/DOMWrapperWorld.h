@@ -31,7 +31,6 @@
 #ifndef DOMWrapperWorld_h
 #define DOMWrapperWorld_h
 
-#include "DOMDataStore.h"
 #include "SecurityOrigin.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -39,6 +38,8 @@
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
+
+class DOMDataStore;
 
 // This class represent a collection of DOM wrappers for a specific world.
 class DOMWrapperWorld : public WTF::RefCountedBase {
@@ -95,13 +96,7 @@ private:
     static PassRefPtr<DOMWrapperWorld> createMainWorld();
     static void deallocate(DOMWrapperWorld*);
 
-    DOMWrapperWorld(int worldId, int extensionGroup)
-        : m_worldId(worldId)
-        , m_extensionGroup(extensionGroup)
-    {
-        if (isIsolatedWorld())
-            m_domDataStore = adoptPtr(new DOMDataStore(DOMDataStore::IsolatedWorld));
-    }
+    DOMWrapperWorld(int worldId, int extensionGroup);
 
     const int m_worldId;
     const int m_extensionGroup;
