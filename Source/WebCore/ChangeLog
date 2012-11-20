@@ -1,5 +1,27 @@
 2012-11-19  Kentaro Hara  <haraken@chromium.org>
 
+        In CodeGeneratorGObject.pm we should rename $dataNode to $interface
+        https://bugs.webkit.org/show_bug.cgi?id=102751
+
+        Reviewed by Adam Barth.
+
+        $dataNode is misnamed. It should be $interface.
+
+        No tests. No change in behavior.
+
+        * bindings/scripts/CodeGeneratorGObject.pm:
+        (GetParentClassName):
+        (GetParentGObjType):
+        (GenerateProperties):
+        (GenerateFunctions):
+        (GenerateCFile):
+        (GenerateEventTargetIface):
+        (Generate):
+        (WriteData):
+        (GenerateInterface):
+
+2012-11-19  Kentaro Hara  <haraken@chromium.org>
+
         In CodeGenerator.pm we should rename $dataNode to $interface
         https://bugs.webkit.org/show_bug.cgi?id=102754
 

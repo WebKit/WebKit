@@ -74,10 +74,10 @@ my $licenceTemplate = << "EOF";
 EOF
 
 sub GetParentClassName {
-    my $dataNode = shift;
+    my $interface = shift;
 
-    return "WebKitDOMObject" if @{$dataNode->parents} eq 0;
-    return "WebKitDOM" . $dataNode->parents(0);
+    return "WebKitDOMObject" if @{$interface->parents} eq 0;
+    return "WebKitDOM" . $interface->parents(0);
 }
 
 # From String::CamelCase 0.01
@@ -144,10 +144,10 @@ sub ClassNameToGObjectType {
 }
 
 sub GetParentGObjType {
-    my $dataNode = shift;
+    my $interface = shift;
 
-    return "WEBKIT_TYPE_DOM_OBJECT" if @{$dataNode->parents} eq 0;
-    return "WEBKIT_TYPE_DOM_" . ClassNameToGObjectType($dataNode->parents(0));
+    return "WEBKIT_TYPE_DOM_OBJECT" if @{$interface->parents} eq 0;
+    return "WEBKIT_TYPE_DOM_" . ClassNameToGObjectType($interface->parents(0));
 }
 
 sub GetClassName {
@@ -538,14 +538,14 @@ EOF
 }
 
 sub GenerateProperties {
-    my ($object, $interfaceName, $dataNode) = @_;
+    my ($object, $interfaceName, $interface) = @_;
 
     my $clsCaps = substr(ClassNameToGObjectType($className), 12);
     my $lowerCaseIfaceName = "webkit_dom_" . (FixUpDecamelizedName(decamelize($interfaceName)));
 
     my $conditionGuardStart = "";
     my $conditionGuardEnd = "";
-    my $conditionalString = $codeGenerator->GenerateConditionalString($dataNode);
+    my $conditionalString = $codeGenerator->GenerateConditionalString($interface);
     if ($conditionalString) {
         $conditionGuardStart = "#if ${conditionalString}";
         $conditionGuardEnd = "#endif // ${conditionalString}";
@@ -561,7 +561,7 @@ enum {
 EOF
     push(@cBodyProperties, $implContent);
 
-    my @readableProperties = GetReadableProperties($dataNode->attributes);
+    my @readableProperties = GetReadableProperties($interface->attributes);
 
     my $privFunction = GetCoreObject($interfaceName, "coreSelf", "self");
 
@@ -613,7 +613,7 @@ EOF
     foreach my $attribute (@readableProperties) {
         if ($attribute->signature->type ne "EventListener" &&
             $attribute->signature->type ne "MediaQueryListListener") {
-            GenerateProperty($attribute, $interfaceName, \@writeableProperties, $dataNode);
+            GenerateProperty($attribute, $interfaceName, \@writeableProperties, $interface);
         }
     }
 
@@ -1086,14 +1086,14 @@ sub ClassHasFunction {
 }
 
 sub GenerateFunctions {
-    my ($object, $interfaceName, $dataNode) = @_;
+    my ($object, $interfaceName, $interface) = @_;
 
-    foreach my $function (@{$dataNode->functions}) {
-        $object->GenerateFunction($interfaceName, $function, "", $dataNode);
+    foreach my $function (@{$interface->functions}) {
+        $object->GenerateFunction($interfaceName, $function, "", $interface);
     }
 
     TOP:
-    foreach my $attribute (@{$dataNode->attributes}) {
+    foreach my $attribute (@{$interface->attributes}) {
         if (SkipAttribute($attribute) ||
             $attribute->signature->type eq "EventListener" ||
             $attribute->signature->type eq "MediaQueryListListener") {
@@ -1111,7 +1111,7 @@ sub GenerateFunctions {
         my $attrNameUpper = $codeGenerator->WK_ucfirst($attribute->signature->name);
         my $getname = "get${attrNameUpper}";
         my $setname = "set${attrNameUpper}";
-        if (ClassHasFunction($dataNode, $getname) || ClassHasFunction($dataNode, $setname)) {
+        if (ClassHasFunction($interface, $getname) || ClassHasFunction($interface, $setname)) {
             # Very occasionally an IDL file defines getter/setter functions for one of its
             # attributes; in this case we don't need to autogenerate the getter/setter.
             next TOP;
@@ -1122,7 +1122,7 @@ sub GenerateFunctions {
         my $function = new domFunction();
         $function->signature($attribute->signature);
         $function->raisesExceptions($attribute->getterExceptions);
-        $object->GenerateFunction($interfaceName, $function, "get_", $dataNode);
+        $object->GenerateFunction($interfaceName, $function, "get_", $interface);
 
         # FIXME: We are not generating setters for 'Replaceable'
         # attributes now, but we should somehow.
@@ -1150,15 +1150,15 @@ sub GenerateFunctions {
         
         $function->raisesExceptions($attribute->setterExceptions);
         
-        $object->GenerateFunction($interfaceName, $function, "set_", $dataNode);
+        $object->GenerateFunction($interfaceName, $function, "set_", $interface);
     }
 }
 
 sub GenerateCFile {
-    my ($object, $interfaceName, $parentClassName, $parentGObjType, $dataNode) = @_;
+    my ($object, $interfaceName, $parentClassName, $parentGObjType, $interface) = @_;
 
-    if ($dataNode->extendedAttributes->{"EventTarget"}) {
-        $object->GenerateEventTargetIface($dataNode);
+    if ($interface->extendedAttributes->{"EventTarget"}) {
+        $object->GenerateEventTargetIface($interface);
     }
 
     my $implContent = "";
@@ -1186,8 +1186,8 @@ WebCore::${interfaceName}* core(${className}* request)
 EOF
     push(@cBodyPriv, $implContent);
 
-    $object->GenerateProperties($interfaceName, $dataNode);
-    $object->GenerateFunctions($interfaceName, $dataNode);
+    $object->GenerateProperties($interfaceName, $interface);
+    $object->GenerateFunctions($interfaceName, $interface);
 
     my $wrapMethod = << "EOF";
 ${className}* wrap${interfaceName}(WebCore::${interfaceName}* coreObject)
@@ -1224,9 +1224,9 @@ sub UsesManualKitImplementation {
 
 sub GenerateEventTargetIface {
     my $object = shift;
-    my $dataNode = shift;
+    my $interface = shift;
 
-    my $interfaceName = $dataNode->name;
+    my $interfaceName = $interface->name;
     my $decamelize = FixUpDecamelizedName(decamelize($interfaceName));
 
     $implIncludes{"GObjectEventListener.h"} = 1;
@@ -1275,11 +1275,11 @@ EOF
 }
 
 sub Generate {
-    my ($object, $dataNode) = @_;
+    my ($object, $interface) = @_;
 
-    my $parentClassName = GetParentClassName($dataNode);
-    my $parentGObjType = GetParentGObjType($dataNode);
-    my $interfaceName = $dataNode->name;
+    my $parentClassName = GetParentClassName($interface);
+    my $parentGObjType = GetParentGObjType($interface);
+    my $interfaceName = $interface->name;
 
     # Add the default impl header template
     @cPrefix = split("\r", $licenceTemplate);
@@ -1312,22 +1312,22 @@ EOF
     }
 
     $object->GenerateHeader($interfaceName, $parentClassName);
-    $object->GenerateCFile($interfaceName, $parentClassName, $parentGObjType, $dataNode);
+    $object->GenerateCFile($interfaceName, $parentClassName, $parentGObjType, $interface);
     $object->GenerateEndHeader();
 }
 
 # Internal helper
 sub WriteData {
     my $object = shift;
-    my $dataNode = shift;
+    my $interface = shift;
 
     # Write a private header.
-    my $interfaceName = $dataNode->name;
+    my $interfaceName = $interface->name;
     my $filename = "$outputDir/" . $className . "Private.h";
     my $guard = "${className}Private_h";
 
     # Add the guard if the 'Conditional' extended attribute exists
-    my $conditionalString = $codeGenerator->GenerateConditionalString($dataNode);
+    my $conditionalString = $codeGenerator->GenerateConditionalString($interface);
 
     open(PRIVHEADER, ">$filename") or die "Couldn't open file $filename for writing";
 
@@ -1427,13 +1427,13 @@ EOF
 }
 
 sub GenerateInterface {
-    my ($object, $dataNode, $defines) = @_;
+    my ($object, $interface, $defines) = @_;
 
     # Set up some global variables
-    $className = GetClassName($dataNode->name);
+    $className = GetClassName($interface->name);
 
-    $object->Generate($dataNode);
-    $object->WriteData($dataNode);
+    $object->Generate($interface);
+    $object->WriteData($interface);
 }
 
 1;
