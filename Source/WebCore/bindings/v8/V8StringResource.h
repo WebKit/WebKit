@@ -41,14 +41,29 @@ template <typename StringType>
 StringType v8StringToWebCoreString(v8::Handle<v8::String>, ExternalMode);
 String int32ToWebCoreString(int value);
 
-class V8ParameterBase {
+// V8Parameter is an adapter class that converts V8 values to Strings
+// or AtomicStrings as appropriate, using multiple typecast operators.
+enum V8ParameterMode {
+    DefaultMode,
+    WithNullCheck,
+    WithUndefinedOrNullCheck
+};
+
+template <V8ParameterMode Mode = DefaultMode>
+class V8Parameter {
 public:
+    V8Parameter(v8::Local<v8::Value> object)
+        : m_v8Object(object)
+        , m_mode(Externalize)
+        , m_string()
+    {
+    }
+
+    bool prepare();
     operator String() { return toString<String>(); }
     operator AtomicString() { return toString<AtomicString>(); }
 
-protected:
-    V8ParameterBase(v8::Local<v8::Value> object) : m_v8Object(object), m_mode(Externalize), m_string() { }
-
+private:
     bool prepareBase()
     {
         if (m_v8Object.IsEmpty())
@@ -81,11 +96,6 @@ protected:
         m_v8Object.Clear(); // To signal that String is ready.
     }
 
-private:
-    v8::Local<v8::Value> m_v8Object;
-    ExternalMode m_mode;
-    String m_string;
-
     template <class StringType>
     StringType toString()
     {
@@ -94,28 +104,15 @@ private:
 
         return StringType(m_string);
     }
-};
 
-// V8Parameter is an adapter class that converts V8 values to Strings
-// or AtomicStrings as appropriate, using multiple typecast operators.
-enum V8ParameterMode {
-    DefaultMode,
-    WithNullCheck,
-    WithUndefinedOrNullCheck
-};
-
-template <V8ParameterMode MODE = DefaultMode>
-class V8Parameter: public V8ParameterBase {
-public:
-    V8Parameter(v8::Local<v8::Value> object) : V8ParameterBase(object) { }
-    V8Parameter(v8::Local<v8::Value> object, bool) : V8ParameterBase(object) { prepare(); }
-
-    bool prepare();
+    v8::Local<v8::Value> m_v8Object;
+    ExternalMode m_mode;
+    String m_string;
 };
 
 template<> inline bool V8Parameter<DefaultMode>::prepare()
 {
-    return V8ParameterBase::prepareBase();
+    return prepareBase();
 }
 
 template<> inline bool V8Parameter<WithNullCheck>::prepare()
@@ -124,8 +121,7 @@ template<> inline bool V8Parameter<WithNullCheck>::prepare()
         setString(String());
         return true;
     }
-
-    return V8ParameterBase::prepareBase();
+    return prepareBase();
 }
 
 template<> inline bool V8Parameter<WithUndefinedOrNullCheck>::prepare()
@@ -134,8 +130,7 @@ template<> inline bool V8Parameter<WithUndefinedOrNullCheck>::prepare()
         setString(String());
         return true;
     }
-
-    return V8ParameterBase::prepareBase();
+    return prepareBase();
 }
     
 } // namespace WebCore

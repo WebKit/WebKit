@@ -1,3 +1,21 @@
+2012-11-20  Kentaro Hara  <haraken@chromium.org>
+
+        [V8] Remove V8ParameterBase
+        https://bugs.webkit.org/show_bug.cgi?id=102774
+
+        Reviewed by Adam Barth.
+
+        V8ParameterBase is a redundant indirection.
+        We can flatten methods of V8ParameterBase to V8Parameter.
+
+        No tests. No change in behavior.
+
+        * bindings/v8/V8StringResource.h:
+        (WebCore::V8Parameter::V8Parameter):
+        (V8Parameter):
+        (WebCore::V8Parameter::toString):
+        (WebCore::::prepare):
+
 2012-11-20  Kunihiko Sakamoto  <ksakamoto@chromium.org>
 
         Use localized date-time format in datetime input
