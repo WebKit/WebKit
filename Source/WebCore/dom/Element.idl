@@ -120,7 +120,7 @@
     readonly attribute unsigned long childElementCount;
 
 #if defined(ENABLE_SHADOW_DOM)
-    [TreatReturnedNullStringAs=Null, V8EnabledAtRuntime=shadowDOM] attribute DOMString pseudo;
+    [Reflect, V8EnabledAtRuntime=shadowDOM] attribute DOMString pseudo;
 #endif
 
     // DOM 4

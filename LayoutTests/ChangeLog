@@ -1,3 +1,13 @@
+2012-11-19  Shinya Kawanaka  <shinyak@chromium.org>
+
+        [Shadow] attribute pseudo should return empty string instead of null when nothing is specified.
+        https://bugs.webkit.org/show_bug.cgi?id=102753
+
+        Reviewed by Hajime Morita.
+
+        * fast/dom/shadow/pseudo-attribute-expected.txt:
+        * fast/dom/shadow/pseudo-attribute.html:
+
 2012-11-19  Adam Klein  <adamk@chromium.org>
 
         MutationObserver wrapper should not be collected while still observing
