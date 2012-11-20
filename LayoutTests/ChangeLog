@@ -1,3 +1,21 @@
+2012-11-20  Stephen Chenney  <schenney@chromium.org>
+
+        [Chromium] Expectations update
+
+        Unreviewed test expectations update.
+
+        Some results for calendar and month picker may not be up-to-date for the slow bots.
+
+        * platform/chromium-mac-lion/platform/chromium/fast/forms/calendar-picker/calendar-picker-appearance-step-expected.png:
+        * platform/chromium-mac-lion/platform/chromium/fast/forms/calendar-picker/month-picker-appearance-step-expected.png:
+        * platform/chromium-mac-snowleopard/platform/chromium/fast/forms/calendar-picker/calendar-picker-appearance-step-expected.png:
+        * platform/chromium-mac-snowleopard/platform/chromium/fast/forms/calendar-picker/month-picker-appearance-step-expected.png:
+        * platform/chromium-mac/platform/chromium/fast/forms/calendar-picker/calendar-picker-appearance-step-expected.png:
+        * platform/chromium-mac/platform/chromium/fast/forms/calendar-picker/month-picker-appearance-step-expected.png:
+        * platform/chromium-win-xp/fast/block/float/overhanging-tall-block-expected.png: Removed.
+        * platform/chromium-win/fast/block/float/overhanging-tall-block-expected.png:
+        * platform/chromium-win/fast/block/float/overhanging-tall-block-expected.txt:
+
 2012-11-20  Keishi Hattori  <keishi@webkit.org>
 
         Week picker width is too small
