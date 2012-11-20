@@ -57,9 +57,9 @@ DOMDataStore* DOMDataStore::current(v8::Isolate* isolate)
     V8PerIsolateData* data = isolate ? V8PerIsolateData::from(isolate) : V8PerIsolateData::current();
     if (UNLIKELY(!!data->domDataStore()))
         return data->domDataStore();
-    DOMWrapperWorld* isolatedWorld = DOMWrapperWorld::isolated(v8::Context::GetEntered());
-    if (UNLIKELY(!!isolatedWorld))
-        return isolatedWorld->isolatedWorldDOMDataStore();
+    V8DOMWindowShell* shell = V8DOMWindowShell::isolated(v8::Context::GetEntered());
+    if (UNLIKELY(!!shell))
+        return shell->world()->isolatedWorldDOMDataStore();
     return &mainWorldDOMDataStore;
 }
 

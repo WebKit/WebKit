@@ -193,7 +193,10 @@ public:
     static int contextDebugId(v8::Handle<v8::Context>);
 
 private:
-    typedef HashMap<int, OwnPtr<V8DOMWindowShell> > IsolatedWorldMap;
+    // Note: although the pointer is raw, the instance is kept alive by a strong
+    // reference to the v8 context it contains, which is not made weak until we
+    // call world->destroyIsolatedShell().
+    typedef HashMap<int, V8DOMWindowShell*> IsolatedWorldMap;
 
     void reset();
 
@@ -201,6 +204,10 @@ private:
     const String* m_sourceURL;
 
     OwnPtr<V8DOMWindowShell> m_windowShell;
+
+    // The isolated worlds we are tracking for this frame. We hold them alive
+    // here so that they can be used again by future calls to
+    // evaluateInIsolatedWorld().
     IsolatedWorldMap m_isolatedWorlds;
 
     bool m_paused;

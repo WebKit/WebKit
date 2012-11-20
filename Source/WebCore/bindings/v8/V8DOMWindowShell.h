@@ -80,6 +80,11 @@ public:
 
     void destroyGlobal();
 
+    static V8DOMWindowShell* isolated(v8::Handle<v8::Context> context)
+    {
+        return static_cast<V8DOMWindowShell*>(context->GetAlignedPointerFromEmbedderData(v8ContextIsolatedWindowShell));
+    }
+
     V8PerContextData* perContextData() { return m_perContextData.get(); }
     DOMWrapperWorld* world() { return m_world.get(); }
 
@@ -88,7 +93,7 @@ public:
 private:
     V8DOMWindowShell(Frame*, PassRefPtr<DOMWrapperWorld>);
 
-    void disposeContext();
+    void disposeContext(bool weak = false);
 
     void setSecurityToken();
 
