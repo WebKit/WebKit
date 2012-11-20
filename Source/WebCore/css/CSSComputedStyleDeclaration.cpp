@@ -64,6 +64,10 @@
 #include "WebKitFontFamilyNames.h"
 #include <wtf/text/StringBuilder.h>
 
+#if ENABLE(CSS_EXCLUSIONS)
+#include "ExclusionShapeValue.h"
+#endif
+
 #if ENABLE(CSS_SHADERS)
 #include "CustomFilterArrayParameter.h"
 #include "CustomFilterNumberParameter.h"
@@ -2504,11 +2508,15 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(CSSPropert
         case CSSPropertyWebkitShapeInside:
             if (!style->shapeInside())
                 return cssValuePool().createIdentifierValue(CSSValueAuto);
-            return valueForBasicShape(style->shapeInside());
+            else if (style->shapeInside()->type() == ExclusionShapeValue::OUTSIDE)
+                return cssValuePool().createIdentifierValue(CSSValueOutsideShape);
+            ASSERT(style->shapeInside()->type() == ExclusionShapeValue::SHAPE);
+            return valueForBasicShape(style->shapeInside()->shape());
         case CSSPropertyWebkitShapeOutside:
             if (!style->shapeOutside())
                 return cssValuePool().createIdentifierValue(CSSValueAuto);
-            return valueForBasicShape(style->shapeOutside());
+            ASSERT(style->shapeOutside()->type() == ExclusionShapeValue::SHAPE);
+            return valueForBasicShape(style->shapeOutside()->shape());
         case CSSPropertyWebkitWrapThrough:
             return cssValuePool().createValue(style->wrapThrough());
 #endif

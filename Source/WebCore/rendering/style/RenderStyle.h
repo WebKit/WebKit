@@ -34,6 +34,7 @@
 #include "ColorSpace.h"
 #include "CounterDirectives.h"
 #include "DataRef.h"
+#include "ExclusionShapeValue.h"
 #include "FontBaseline.h"
 #include "FontDescription.h"
 #include "GraphicsTypes.h"
@@ -1455,22 +1456,24 @@ public:
     void setKerning(SVGLength k) { accessSVGStyle()->setKerning(k); }
 #endif
 
-    void setShapeInside(PassRefPtr<BasicShape> shape)
+    void setShapeInside(PassRefPtr<ExclusionShapeValue> value)
     {
-        if (rareNonInheritedData->m_shapeInside != shape)
-            rareNonInheritedData.access()->m_shapeInside = shape;
+        if (rareNonInheritedData->m_shapeInside == value)
+            return;
+        rareNonInheritedData.access()->m_shapeInside = value;
     }
-    BasicShape* shapeInside() const { return rareNonInheritedData->m_shapeInside.get(); }
+    ExclusionShapeValue* shapeInside() const { return rareNonInheritedData->m_shapeInside.get(); }
 
-    void setShapeOutside(PassRefPtr<BasicShape> shape)
+    void setShapeOutside(PassRefPtr<ExclusionShapeValue> value)
     {
-        if (rareNonInheritedData->m_shapeOutside != shape)
-            rareNonInheritedData.access()->m_shapeOutside = shape;
+        if (rareNonInheritedData->m_shapeOutside == value)
+            return;
+        rareNonInheritedData.access()->m_shapeOutside = value;
     }
-    BasicShape* shapeOutside() const { return rareNonInheritedData->m_shapeOutside.get(); }
+    ExclusionShapeValue* shapeOutside() const { return rareNonInheritedData->m_shapeOutside.get(); }
 
-    static BasicShape* initialShapeInside() { return 0; }
-    static BasicShape* initialShapeOutside() { return 0; }
+    static ExclusionShapeValue* initialShapeInside() { return 0; }
+    static ExclusionShapeValue* initialShapeOutside() { return 0; }
 
     void setClipPath(PassRefPtr<ClipPathOperation> operation)
     {

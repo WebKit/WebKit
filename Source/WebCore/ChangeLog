@@ -1,3 +1,65 @@
+2012-11-20  Bear Travis  <betravis@adobe.com>
+
+        [CSS Exclusions] Support outside-shape value on shape-inside
+        https://bugs.webkit.org/show_bug.cgi?id=101108
+
+        Reviewed by Dirk Schulze.
+
+        Shape-inside can potentially be: 'auto' | 'outside-shape' | <shape> | <url>.
+        Webkit currently supports the value 'auto' (null) and <shape> (a BasicShape*).
+        This patch adds support for the value 'outside-shape.' It adds the ExclusionShapeValue
+        class, which may be any of the three values: 'auto', 'outside-shape', or <shape>.
+        Bug 102738 tracks adding <url> support.
+
+        Modifying existing tests:
+        LayoutTests/fast/exclusions/parsing-wrap-shape-inside.html
+        LayoutTests/fast/exclusions/parsing-wrap-shape-outside.html
+
+        * GNUmakefile.list.am: Adding ExclusionShapeValue.h to the build files.
+        * Target.pri: Ditto.
+        * WebCore.gypi: Ditto.
+        * WebCore.vcproj/WebCore.vcproj: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        (WebCore):
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue): Modifying code to use
+        ExclusionShapeValue* rather than the previous BasicShape* values.
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue): Handle the outside-shape value.
+        * css/CSSValueKeywords.in: Adding outside-shape value.
+        * css/StyleBuilder.cpp:
+        (WebCore):
+        (WebCore::ApplyPropertyExclusionShape::setValue): Modify code to use
+        ExclusionShapeValue* rather than BasicShape*.
+        (WebCore::ApplyPropertyExclusionShape::applyValue): Ditto.
+        (WebCore::ApplyPropertyExclusionShape::createHandler): Ditto.
+        * page/animation/CSSPropertyAnimation.cpp: Ditto.
+        (WebCore::blendFunc): Ditto.
+        (WebCore::PropertyWrapperExclusionShape::PropertyWrapperExclusionShape): Ditto.
+        (WebCore::CSSPropertyAnimation::ensurePropertyMap): Ditto.
+        * rendering/ExclusionShapeInsideInfo.cpp:
+        (WebCore::ExclusionShapeInsideInfo::isExclusionShapeInsideInfoEnabledForRenderBlock):
+        Ditto.
+        (WebCore::ExclusionShapeInsideInfo::computeShapeSize): Ditto.
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::updateExclusionShapeInsideInfoAfterStyleChange): Ditto.
+        * rendering/RenderBlock.h:
+        (RenderBlock):
+        * rendering/style/ExclusionShapeValue.h: Added.
+        (WebCore):
+        (ExclusionShapeValue): New type to represent the possible values of shape-inside
+        and shape-outside. Only shape-inside can have a value of 'outside-shape.'
+        (WebCore::ExclusionShapeValue::~ExclusionShapeValue):
+        (WebCore::ExclusionShapeValue::type): Returns the value type.
+        (WebCore::ExclusionShapeValue::shape): Returns <shape> value's BasicShape*.
+        (WebCore::ExclusionShapeValue::operator==):
+        (WebCore::ExclusionShapeInfo::createShapeValue):
+        (WebCore::ExclusionShapeInfo::createOutsideValue):
+        (WebCore::ExclusionShapeValue::ExclusionShapeValue):
+        * rendering/style/RenderStyle.h:
+        * rendering/style/StyleRareNonInheritedData.h:
+        (StyleRareNonInheritedData):
+
 2012-11-20  Alpha Lam  <hclam@chromium.org>
 
         [chromium] Make lazy image decoding thread-safe

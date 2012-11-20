@@ -36,6 +36,7 @@
 
 #if ENABLE(CSS_EXCLUSIONS)
 #include "ExclusionShapeInsideInfo.h"
+#include "ExclusionShapeValue.h"
 #endif
 
 namespace WebCore {
@@ -521,7 +522,7 @@ protected:
 private:
 #if ENABLE(CSS_EXCLUSIONS)
     void computeExclusionShapeSize();
-    void updateExclusionShapeInsideInfoAfterStyleChange(const BasicShape*, const BasicShape* oldWrapShape);
+    void updateExclusionShapeInsideInfoAfterStyleChange(const ExclusionShapeValue*, const ExclusionShapeValue* oldExclusionShape);
 #endif
     virtual RenderObjectChildList* virtualChildren() { return children(); }
     virtual const RenderObjectChildList* virtualChildren() const { return children(); }

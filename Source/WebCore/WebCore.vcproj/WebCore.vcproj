@@ -45443,6 +45443,10 @@
 					>
 				</File>
 				<File
+				    RelativePath="..\rendering\style\ExclusionShapeValue.h"
+				    >
+				</File>
+				<File
 					RelativePath="..\rendering\style\FillLayer.cpp"
 					>
 					<FileConfiguration

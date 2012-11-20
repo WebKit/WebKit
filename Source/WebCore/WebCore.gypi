@@ -597,6 +597,7 @@
             'rendering/style/CursorData.h',
             'rendering/style/CursorList.h',
             'rendering/style/DataRef.h',
+            'rendering/style/ExclusionShapeValue.h',
             'rendering/style/FillLayer.h',
             'rendering/style/GridPosition.h',
             'rendering/style/LineClampValue.h',

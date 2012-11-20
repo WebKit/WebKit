@@ -81,6 +81,7 @@ shouldBeEqualToString('testNotInherited("auto", "inherit")', "parent: auto, chil
 
 negative_test("calc()");
 negative_test("none");
+negative_test("outside-shape");
 
 negative_test("rectangle()");
 negative_test("rectangle(10px)");

@@ -4437,6 +4437,7 @@ webcore_sources += \
 	Source/WebCore/rendering/style/CursorData.h \
 	Source/WebCore/rendering/style/CursorList.h \
 	Source/WebCore/rendering/style/DataRef.h \
+	Source/WebCore/rendering/style/ExclusionShapeValue.h \
 	Source/WebCore/rendering/style/FillLayer.cpp \
 	Source/WebCore/rendering/style/FillLayer.h \
 	Source/WebCore/rendering/style/GridPosition.h \

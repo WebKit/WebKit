@@ -914,9 +914,11 @@ off
 optimizeQuality
 -webkit-optimize-contrast
 
-// -webkit-wrap-shape
+// -webkit-shape-inside
+// -webkit-shape-outside
 nonzero
 evenodd
+outside-shape
 
 // -webkit-region-overflow
 // auto

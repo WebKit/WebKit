@@ -58,6 +58,7 @@ function negative_test(value) {
 // positive tests
 
 test("auto", "auto");
+test("outside-shape", "outside-shape");
 test("rectangle(10px, 20px, 30px, 40px)", "rectangle(10px, 20px, 30px, 40px)");
 test("rectangle(10px, 20px, 30px, 40px, 5px)", "rectangle(10px, 20px, 30px, 40px, 5px)");
 test("rectangle(10px, 20px, 30px, 40px, 5px, 10px)", "rectangle(10px, 20px, 30px, 40px, 5px, 10px)");
@@ -71,6 +72,7 @@ test("polygon(evenodd, 10px 20px, 30px 40px, 40px 50px)", "polygon(evenodd, 10px
 test("polygon(nonzero, 10px 20px, 30px 40px, 40px 50px)", "polygon(nonzero, 10px 20px, 30px 40px, 40px 50px)");
 
 shouldBeEqualToString('testNotInherited("auto", "rectangle(10px, 20px, 30px, 40px)")', "parent: auto, child: rectangle(10px, 20px, 30px, 40px)");
+shouldBeEqualToString('testNotInherited("outside-shape", "rectangle(10px, 20px, 30px, 40px)")', "parent: outside-shape, child: rectangle(10px, 20px, 30px, 40px)");
 shouldBeEqualToString('testNotInherited("rectangle(10px, 20px, 30px, 40px)", "initial")', "parent: rectangle(10px, 20px, 30px, 40px), child: auto");
 shouldBeEqualToString('testNotInherited("rectangle(10px, 20px, 30px, 40px)", "")', "parent: rectangle(10px, 20px, 30px, 40px), child: auto");
 shouldBeEqualToString('testNotInherited("rectangle(10px, 20px, 30px, 40px)", "inherit")', "parent: rectangle(10px, 20px, 30px, 40px), child: rectangle(10px, 20px, 30px, 40px)");
