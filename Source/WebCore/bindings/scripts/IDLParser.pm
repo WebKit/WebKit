@@ -376,19 +376,19 @@ sub parseInterface
 
     my $next = $self->nextToken();
     if ($next->value() eq "interface") {
-        my $dataNode = domInterface->new();
+        my $interface = domInterface->new();
         $self->assertTokenValue($self->getToken(), "interface", __LINE__);
         my $interfaceNameToken = $self->getToken();
         $self->assertTokenType($interfaceNameToken, IdentifierToken);
-        $dataNode->name($interfaceNameToken->value());
-        push(@{$dataNode->parents}, @{$self->parseInheritance()});
+        $interface->name($interfaceNameToken->value());
+        push(@{$interface->parents}, @{$self->parseInheritance()});
         $self->assertTokenValue($self->getToken(), "{", __LINE__);
         my $interfaceMembers = $self->parseInterfaceMembers();
         $self->assertTokenValue($self->getToken(), "}", __LINE__);
         $self->assertTokenValue($self->getToken(), ";", __LINE__);
-        applyMemberList($dataNode, $interfaceMembers);
-        applyExtendedAttributeList($dataNode, $extendedAttributeList);
-        return $dataNode;
+        applyMemberList($interface, $interfaceMembers);
+        applyExtendedAttributeList($interface, $extendedAttributeList);
+        return $interface;
     }
     $self->assertUnexpectedToken($next->value(), __LINE__);
 }
@@ -576,20 +576,20 @@ sub parseException
 
     my $next = $self->nextToken();
     if ($next->value() eq "exception") {
-        my $dataNode = domInterface->new();
+        my $interface = domInterface->new();
         $self->assertTokenValue($self->getToken(), "exception", __LINE__);
         my $exceptionNameToken = $self->getToken();
         $self->assertTokenType($exceptionNameToken, IdentifierToken);
-        $dataNode->name($exceptionNameToken->value());
-        $dataNode->isException(1);
-        push(@{$dataNode->parents}, @{$self->parseInheritance()});
+        $interface->name($exceptionNameToken->value());
+        $interface->isException(1);
+        push(@{$interface->parents}, @{$self->parseInheritance()});
         $self->assertTokenValue($self->getToken(), "{", __LINE__);
         my $exceptionMembers = $self->parseExceptionMembers();
         $self->assertTokenValue($self->getToken(), "}", __LINE__);
         $self->assertTokenValue($self->getToken(), ";", __LINE__);
-        applyMemberList($dataNode, $exceptionMembers);
-        applyExtendedAttributeList($dataNode, $extendedAttributeList);
-        return $dataNode;
+        applyMemberList($interface, $exceptionMembers);
+        applyExtendedAttributeList($interface, $extendedAttributeList);
+        return $interface;
     }
     $self->assertUnexpectedToken($next->value(), __LINE__);
 }
@@ -970,11 +970,11 @@ sub parseAttributeOrOperationRest
     }
     if ($next->type() == IdentifierToken || $next->value() =~ /$nextAttributeOrOperationRest_1/) {
         my $returnType = $self->parseReturnType();
-        my $dataNode = $self->parseOperationRest($extendedAttributeList);
-        if (defined ($dataNode)) {
-            $dataNode->signature->type($returnType);
+        my $interface = $self->parseOperationRest($extendedAttributeList);
+        if (defined ($interface)) {
+            $interface->signature->type($returnType);
         }
-        return $dataNode;
+        return $interface;
     }
     $self->assertUnexpectedToken($next->value(), __LINE__);
 }
@@ -1056,11 +1056,11 @@ sub parseOperationOrIterator
     }
     if ($next->type() == IdentifierToken || $next->value() =~ /$nextAttributeOrOperationRest_1/) {
         my $returnType = $self->parseReturnType();
-        my $dataNode = $self->parseOperationOrIteratorRest($extendedAttributeList);
-        if (defined ($dataNode)) {
-            $dataNode->signature->type($returnType);
+        my $interface = $self->parseOperationOrIteratorRest($extendedAttributeList);
+        if (defined ($interface)) {
+            $interface->signature->type($returnType);
         }
-        return $dataNode;
+        return $interface;
     }
     $self->assertUnexpectedToken($next->value(), __LINE__);
 }
@@ -1075,11 +1075,11 @@ sub parseSpecialOperation
         $self->parseSpecial();
         $self->parseSpecials();
         my $returnType = $self->parseReturnType();
-        my $dataNode = $self->parseOperationRest($extendedAttributeList);
-        if (defined ($dataNode)) {
-            $dataNode->signature->type($returnType);
+        my $interface = $self->parseOperationRest($extendedAttributeList);
+        if (defined ($interface)) {
+            $interface->signature->type($returnType);
         }
-        return $dataNode;
+        return $interface;
     }
     $self->assertUnexpectedToken($next->value(), __LINE__);
 }
@@ -2118,21 +2118,21 @@ sub parseInterfaceOld
     my $self = shift;
     my $next = $self->nextToken();
     if ($next->value() eq "interface") {
-        my $dataNode = domInterface->new();
+        my $interface = domInterface->new();
         $self->assertTokenValue($self->getToken(), "interface", __LINE__);
         my $extendedAttributeList = $self->parseExtendedAttributeListAllowEmpty();
         my $token = $self->getToken();
         $self->assertTokenType($token, IdentifierToken);
-        $dataNode->name($token->value());
-        $dataNode->isException(0);
-        push(@{$dataNode->parents}, @{$self->parseInheritance()});
+        $interface->name($token->value());
+        $interface->isException(0);
+        push(@{$interface->parents}, @{$self->parseInheritance()});
         $self->assertTokenValue($self->getToken(), "{", __LINE__);
         my $interfaceMembers = $self->parseInterfaceMembers();
         $self->assertTokenValue($self->getToken(), "}", __LINE__);
         $self->assertTokenValue($self->getToken(), ";", __LINE__);
-        applyMemberList($dataNode, $interfaceMembers);
-        applyExtendedAttributeList($dataNode, $extendedAttributeList);
-        return $dataNode;
+        applyMemberList($interface, $interfaceMembers);
+        applyExtendedAttributeList($interface, $extendedAttributeList);
+        return $interface;
     }
     $self->assertUnexpectedToken($next->value(), __LINE__);
 }
@@ -2188,22 +2188,22 @@ sub parseExceptionOld
     my $self = shift;
     my $next = $self->nextToken();
     if ($next->value() eq "exception") {
-        my $dataNode = domInterface->new();
+        my $interface = domInterface->new();
         $self->assertTokenValue($self->getToken(), "exception", __LINE__);
         my $extendedAttributeList = $self->parseExtendedAttributeListAllowEmpty();
         my $token = $self->getToken();
         $self->assertTokenType($token, IdentifierToken);
-        $dataNode->name($token->value());
-        $dataNode->isException(1);
-        push(@{$dataNode->parents}, @{$self->parseInheritance()});
+        $interface->name($token->value());
+        $interface->isException(1);
+        push(@{$interface->parents}, @{$self->parseInheritance()});
         $self->assertTokenValue($self->getToken(), "{", __LINE__);
         my $exceptionMembers = $self->parseInterfaceMembers();
         #$self->parseExceptionMembers();
         $self->assertTokenValue($self->getToken(), "}", __LINE__);
         $self->assertTokenValue($self->getToken(), ";", __LINE__);
-        applyMemberList($dataNode, $exceptionMembers);
-        applyExtendedAttributeList($dataNode, $extendedAttributeList);
-        return $dataNode;
+        applyMemberList($interface, $exceptionMembers);
+        applyExtendedAttributeList($interface, $extendedAttributeList);
+        return $interface;
     }
     $self->assertUnexpectedToken($next->value(), __LINE__);
 }
@@ -2234,11 +2234,11 @@ sub parseAttributeOrOperationOrIteratorOld
     }
     if ($next->value() =~ /$nextAttributeOrOperationOrIterator_1/) {
         my $qualifier = $self->parseQualifier();
-        my $dataNode = $self->parseAttributeOrOperationRestOld();
-        if (defined ($dataNode) && $qualifier eq "static") {
-            $dataNode->isStatic(1);
+        my $interface = $self->parseAttributeOrOperationRestOld();
+        if (defined ($interface) && $qualifier eq "static") {
+            $interface->isStatic(1);
         }
-        return $dataNode;
+        return $interface;
     }
     if ($next->value() =~ /$nextAttributeOld_1/) {
         return $self->parseAttributeOld();
@@ -2262,11 +2262,11 @@ sub parseAttributeOrOperationRestOld
     }
     if ($next->type() == IdentifierToken || $next->value() =~ /$nextAttributeOrOperationRest_1/) {
         my $returnType = $self->parseReturnType();
-        my $dataNode = $self->parseOperationRest({});
-        if (defined ($dataNode)) {
-            $dataNode->signature->type($returnType);
+        my $interface = $self->parseOperationRest({});
+        if (defined ($interface)) {
+            $interface->signature->type($returnType);
         }
-        return $dataNode;
+        return $interface;
     }
     $self->assertUnexpectedToken($next->value(), __LINE__);
 }
@@ -2421,20 +2421,20 @@ sub parseScopedNames
 
 sub applyMemberList
 {
-    my $dataNode = shift;
+    my $interface = shift;
     my $members = shift;
 
     for my $item (@{$members}) {
         if (ref($item) eq "domAttribute") {
-            push(@{$dataNode->attributes}, $item);
+            push(@{$interface->attributes}, $item);
             next;
         }
         if (ref($item) eq "domConstant") {
-            push(@{$dataNode->constants}, $item);
+            push(@{$interface->constants}, $item);
             next;
         }
         if (ref($item) eq "domFunction") {
-            push(@{$dataNode->functions}, $item);
+            push(@{$interface->functions}, $item);
             next;
         }
     }
@@ -2442,7 +2442,7 @@ sub applyMemberList
 
 sub applyExtendedAttributeList
 {
-    my $dataNode = shift;
+    my $interface = shift;
     my $extendedAttributeList = shift;
 
     if (defined $extendedAttributeList->{"Constructors"}) {
@@ -2455,7 +2455,7 @@ sub applyExtendedAttributeList
             $constructor->signature->extendedAttributes($extendedAttributeList);
             $constructor->parameters($param);
             $constructor->{overloadedIndex} = $index++;
-            push(@{$dataNode->constructors}, $constructor);
+            push(@{$interface->constructors}, $constructor);
         }
         delete $extendedAttributeList->{"Constructors"};
         $extendedAttributeList->{"Constructor"} = "VALUE_IS_MISSING";
@@ -2469,9 +2469,9 @@ sub applyExtendedAttributeList
         my $constructorName = $attributeKeys[0];
         push(@{$newDataNode->parameters}, @{$attributes{$constructorName}});
         $extendedAttributeList->{"NamedConstructor"} = $constructorName;
-        push(@{$dataNode->constructors}, $newDataNode);
+        push(@{$interface->constructors}, $newDataNode);
     }
-    $dataNode->extendedAttributes($extendedAttributeList);
+    $interface->extendedAttributes($extendedAttributeList);
 }
 
 1;

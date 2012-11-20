@@ -137,8 +137,8 @@ foreach my $idlFile (@supplementedIdlFiles) {
     my $parser = IDLParser->new(!$verbose);
     my $document = $parser->Parse($idlFile, $defines, $preprocessor);
 
-    foreach my $dataNode (@{$document->interfaces}) {
-        if ($dataNode->extendedAttributes->{"Supplemental"} and $dataNode->extendedAttributes->{"Supplemental"} eq $targetInterfaceName) {
+    foreach my $interface (@{$document->interfaces}) {
+        if ($interface->extendedAttributes->{"Supplemental"} and $interface->extendedAttributes->{"Supplemental"} eq $targetInterfaceName) {
             my $targetDataNode;
             foreach my $interface (@{$targetDocument->interfaces}) {
                 if ($interface->name eq $targetInterfaceName) {
@@ -149,40 +149,40 @@ foreach my $idlFile (@supplementedIdlFiles) {
             die "Not found an interface ${targetInterfaceName} in ${targetInterfaceName}.idl." unless defined $targetDataNode;
 
             # Support [Supplemental] for attributes.
-            foreach my $attribute (@{$dataNode->attributes}) {
+            foreach my $attribute (@{$interface->attributes}) {
                 # Record that this attribute is implemented by $interfaceName.
                 $attribute->signature->extendedAttributes->{"ImplementedBy"} = $interfaceName;
 
                 # Add interface-wide extended attributes to each attribute.
-                foreach my $extendedAttributeName (keys %{$dataNode->extendedAttributes}) {
+                foreach my $extendedAttributeName (keys %{$interface->extendedAttributes}) {
                     next if ($extendedAttributeName eq "Supplemental");
-                    $attribute->signature->extendedAttributes->{$extendedAttributeName} = $dataNode->extendedAttributes->{$extendedAttributeName};
+                    $attribute->signature->extendedAttributes->{$extendedAttributeName} = $interface->extendedAttributes->{$extendedAttributeName};
                 }
                 push(@{$targetDataNode->attributes}, $attribute);
             }
 
             # Support [Supplemental] for methods.
-            foreach my $function (@{$dataNode->functions}) {
+            foreach my $function (@{$interface->functions}) {
                 # Record that this method is implemented by $interfaceName.
                 $function->signature->extendedAttributes->{"ImplementedBy"} = $interfaceName;
 
                 # Add interface-wide extended attributes to each method.
-                foreach my $extendedAttributeName (keys %{$dataNode->extendedAttributes}) {
+                foreach my $extendedAttributeName (keys %{$interface->extendedAttributes}) {
                     next if ($extendedAttributeName eq "Supplemental");
-                    $function->signature->extendedAttributes->{$extendedAttributeName} = $dataNode->extendedAttributes->{$extendedAttributeName};
+                    $function->signature->extendedAttributes->{$extendedAttributeName} = $interface->extendedAttributes->{$extendedAttributeName};
                 }
                 push(@{$targetDataNode->functions}, $function);
             }
 
             # Support [Supplemental] for constants.
-            foreach my $constant (@{$dataNode->constants}) {
+            foreach my $constant (@{$interface->constants}) {
                 # Record that this constant is implemented by $interfaceName.
                 $constant->extendedAttributes->{"ImplementedBy"} = $interfaceName;
 
                 # Add interface-wide extended attributes to each constant.
-                foreach my $extendedAttributeName (keys %{$dataNode->extendedAttributes}) {
+                foreach my $extendedAttributeName (keys %{$interface->extendedAttributes}) {
                     next if ($extendedAttributeName eq "Supplemental");
-                    $constant->extendedAttributes->{$extendedAttributeName} = $dataNode->extendedAttributes->{$extendedAttributeName};
+                    $constant->extendedAttributes->{$extendedAttributeName} = $interface->extendedAttributes->{$extendedAttributeName};
                 }
                 push(@{$targetDataNode->constants}, $constant);
             }

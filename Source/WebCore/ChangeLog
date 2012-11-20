@@ -1,3 +1,30 @@
+2012-11-19  Kentaro Hara  <haraken@chromium.org>
+
+        In the IDL parser, we should rename $dataNode to $interface
+        https://bugs.webkit.org/show_bug.cgi?id=102746
+
+        Reviewed by Adam Barth.
+
+        $dataNode is misnamed. It should be $interface.
+
+        No tests. No change in behavior.
+
+        * bindings/scripts/IDLParser.pm:
+        (parseInterface):
+        (parseException):
+        (parseAttributeOrOperationRest):
+        (parseOperationOrIterator):
+        (parseSpecialOperation):
+        (parseInterfaceOld):
+        (parseExceptionOld):
+        (parseAttributeOrOperationOrIteratorOld):
+        (parseAttributeOrOperationRestOld):
+        (applyMemberList):
+        (applyExtendedAttributeList):
+        * bindings/scripts/generate-bindings.pl:
+        * bindings/scripts/preprocess-idls.pl:
+        (checkIDLAttributes):
+
 2012-11-19  Adam Klein  <adamk@chromium.org>
 
         MutationObserver wrapper should not be collected while still observing

@@ -80,9 +80,9 @@ foreach my $idlFile (keys %documents) {
     $supplementals{$idlFile} = [];
 }
 foreach my $idlFile (keys %documents) {
-    foreach my $dataNode (@{$documents{$idlFile}->interfaces}) {
-        if ($dataNode->extendedAttributes->{"Supplemental"}) {
-            my $targetIdlFile = $interfaceNameToIdlFile{$dataNode->extendedAttributes->{"Supplemental"}};
+    foreach my $interface (@{$documents{$idlFile}->interfaces}) {
+        if ($interface->extendedAttributes->{"Supplemental"}) {
+            my $targetIdlFile = $interfaceNameToIdlFile{$interface->extendedAttributes->{"Supplemental"}};
             push(@{$supplementals{$targetIdlFile}}, $idlFile);
             # Treats as if this IDL file does not exist.
             delete $supplementals{$idlFile};
@@ -168,14 +168,14 @@ sub checkIDLAttributes
     my $document = shift;
     my $idlFile = shift;
 
-    foreach my $dataNode (@{$document->interfaces}) {
-        checkIfIDLAttributesExists($idlAttributes, $dataNode->extendedAttributes, $idlFile);
+    foreach my $interface (@{$document->interfaces}) {
+        checkIfIDLAttributesExists($idlAttributes, $interface->extendedAttributes, $idlFile);
 
-        foreach my $attribute (@{$dataNode->attributes}) {
+        foreach my $attribute (@{$interface->attributes}) {
             checkIfIDLAttributesExists($idlAttributes, $attribute->signature->extendedAttributes, $idlFile);
         }
 
-        foreach my $function (@{$dataNode->functions}) {
+        foreach my $function (@{$interface->functions}) {
             checkIfIDLAttributesExists($idlAttributes, $function->signature->extendedAttributes, $idlFile);
             foreach my $parameter (@{$function->parameters}) {
                 checkIfIDLAttributesExists($idlAttributes, $parameter->extendedAttributes, $idlFile);
