@@ -1,5 +1,27 @@
 2012-11-19  David Grogan  <dgrogan@chromium.org>
 
+        IndexedDB: Complex series of opens/deleteDatabase fails an ASSERT
+        https://bugs.webkit.org/show_bug.cgi?id=101810
+
+        Reviewed by Tony Chang.
+
+        Removed use of setVersion. Surprisingly straightforward conversion
+        given how gnarly this test is.
+
+        * storage/indexeddb/deletedatabase-delayed-by-versionchange-expected.txt:
+        * storage/indexeddb/resources/deletedatabase-delayed-by-versionchange.js:
+        (h1OpenSuccess.h1.onversionchange):
+        (h1OpenSuccess.request.onsuccess.h2OpenSuccess.h2.onversionchange):
+        (h1OpenSuccess.request.onsuccess.h2OpenSuccess.request.onsuccess):
+        (h1OpenSuccess.request.onsuccess.h2OpenSuccess.request.onblocked.h3Blocked.request.onsuccess):
+        (h1OpenSuccess.request.onsuccess.h2OpenSuccess.request.onblocked):
+        (h1OpenSuccess.request.onsuccess.h2OpenSuccess.request.onupgradeneeded.h3OnUpgradeneeded.transaction.oncomplete):
+        (h1OpenSuccess.request.onsuccess.h2OpenSuccess.request.onupgradeneeded):
+        (h1OpenSuccess.request.onsuccess):
+        (h1OpenSuccess):
+
+2012-11-19  David Grogan  <dgrogan@chromium.org>
+
         IndexedDB: last setVersion excision batch
         https://bugs.webkit.org/show_bug.cgi?id=102713
 

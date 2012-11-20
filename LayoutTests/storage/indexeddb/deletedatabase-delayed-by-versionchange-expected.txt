@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: The setVersion() method is non-standard and will be removed. Use the "upgradeneeded" event instead.
 Test the order when there are pending setVersion, delete and open calls.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
@@ -7,47 +6,61 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
 
 dbname = "deletedatabase-delayed-by-versionchange.html"
-ver = 1
+indexedDB.deleteDatabase(dbname)
+indexedDB.open(dbname)
+
+h1OpenSuccess():
 setVersionBlockedEventFired = false
 versionChangeComplete = false
 deleteDatabaseBlockedEventFired = false
 deleteDatabaseComplete = false
+h1 = event.target.result
+Open h2:
 indexedDB.open(dbname)
 
-openOnSuccess():
-h = event.target.result
-indexedDB.open(dbname)
-
-h2OpenOnSuccess():
-h.setVersion(String(ver++))
+h2OpenSuccess():
+Try to open h3:
+indexedDB.open(dbname, 2)
 indexedDB.deleteDatabase(dbname)
+
+h1OnVersionChange():
+old = 1
+new = 2
 
 h2OnVersionChange():
 old = 1
-new = "1"
+new = 2
 
-setVersionOnBlocked():
+h3Blocked():
 setVersionBlockedEventFired = true
+Try to open h4:
 indexedDB.open(dbname)
 h2.close()
 
-setVersionOnSuccess():
-
-transactionOnComplete():
-versionChangeComplete = true
-
-onVersionChange():
-old = "1"
-new = ""
+h1OnVersionChange():
+FIXME: These shouldn't be undefined. http://crbug.com/153122
+old = undefined
+new = undefined
 
 deleteDatabaseOnBlocked():
 deleteDatabaseBlockedEventFired = true
-h.close()
+h1.close()
+
+deleteDatabaseOnBlocked():
+deleteDatabaseBlockedEventFired = true
+h1.close()
 
 deleteDatabaseOnSuccess():
 deleteDatabaseComplete = true
 
-h3OpenOnSuccess():
+h3OnUpgradeneeded():
+
+transactionOnComplete():
+versionChangeComplete = true
+
+h3OpenSuccess():
+
+h4OpenSuccess():
 PASS setVersionBlockedEventFired is true
 PASS versionChangeComplete is true
 PASS deleteDatabaseBlockedEventFired is true

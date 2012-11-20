@@ -1,3 +1,16 @@
+2012-11-19  David Grogan  <dgrogan@chromium.org>
+
+        IndexedDB: Complex series of opens/deleteDatabase fails an ASSERT
+        https://bugs.webkit.org/show_bug.cgi?id=101810
+
+        Reviewed by Tony Chang.
+
+        Tests - storage/indexeddb/deletedatabase-delayed-by-versionchange.html
+
+        * Modules/indexeddb/IDBDatabaseBackendImpl.cpp:
+        (WebCore::IDBDatabaseBackendImpl::processPendingCalls):
+        The condition tested by this assert is a valid state.
+
 2012-11-19  Peter Wang  <peter.wang@torchmobile.com.cn>
 
         Web Inspector: [JSC] worker debugger shouldn't stop for "willExecuteProgram" instruction

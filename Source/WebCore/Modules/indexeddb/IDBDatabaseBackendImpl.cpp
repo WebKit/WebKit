@@ -412,15 +412,14 @@ void IDBDatabaseBackendImpl::processPendingCalls()
         openConnectionWithVersion(pendingOpenWithVersionCall->callbacks(), pendingOpenWithVersionCall->databaseCallbacks(), pendingOpenWithVersionCall->version());
     }
 
-    // Given the check above, it appears that calls cannot be requeued by
-    // openConnection, but use a different queue for iteration to be safe.
+    // Open calls can be requeued if an openWithVersion call started a version
+    // change transaction.
     Deque<OwnPtr<PendingOpenCall> > pendingOpenCalls;
     m_pendingOpenCalls.swap(pendingOpenCalls);
     while (!pendingOpenCalls.isEmpty()) {
         OwnPtr<PendingOpenCall> pendingOpenCall = pendingOpenCalls.takeFirst();
         openConnection(pendingOpenCall->callbacks(), pendingOpenCall->databaseCallbacks());
     }
-    ASSERT(m_pendingOpenCalls.isEmpty());
 }
 
 PassRefPtr<IDBTransactionBackendInterface> IDBDatabaseBackendImpl::transaction(const Vector<int64_t>& objectStoreIds, unsigned short mode)
