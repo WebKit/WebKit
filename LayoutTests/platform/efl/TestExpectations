@@ -113,9 +113,6 @@ http/tests/misc/acid2-pixel.html
 # BUG: no green in the rectangle
 http/tests/multipart/invalid-image-data.html
 
-# BUG: composited area is transparent
-compositing/geometry/vertical-scroll-composited.html
-
 # BUG: new windows do not have scrollbars
 fast/dom/Window/new-window-opener.html
 
@@ -126,8 +123,6 @@ fast/events/attempt-scroll-with-no-scrollbars.html
 fast/events/mouseout-on-window.html
 
 # BUG: wrong test results that need investigation
-compositing/checkerboard.html
-compositing/framesets/composited-frame-alignment.html
 compositing/images/direct-pdf-image.html
 compositing/reflections/backface-hidden-reflection.html
 editing/selection/extend-selection-after-double-click.html
@@ -1604,6 +1599,7 @@ Bug(EFL) compositing/plugins/1x1-composited-plugin.html [ Failure ]
 Bug(EFL) compositing/plugins/large-to-small-composited-plugin.html [ Failure ]
 
 # Regression from r133898
+Bug(EFL) animations/negative-delay.html [ Failure Pass ]
 Bug(EFL) compositing/bounds-in-flipped-writing-mode.html [ Failure ]
 Bug(EFL) compositing/iframes/leave-compositing-iframe.html [ Failure ]
 Bug(EFL) compositing/iframes/scroll-grandchild-iframe.html [ ImageOnlyFailure ]
