@@ -32,7 +32,6 @@
 #include "EditorClientWinCE.h"
 #include "FocusController.h"
 #include "Frame.h"
-#include "FrameLoadRequest.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClientWinCE.h"
 #include "FrameView.h"
@@ -219,7 +218,7 @@ void WebView::load(const String &url)
 
 void WebView::load(const WebCore::ResourceRequest &request)
 {
-    frame()->loader()->load(FrameLoadRequest(frame(), request));
+    frame()->loader()->load(request, false);
 }
 
 void WebView::reload()

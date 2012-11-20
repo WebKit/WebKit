@@ -30,7 +30,6 @@
 #include "Element.h"
 #include "FocusController.h"
 #include "Frame.h"
-#include "FrameLoadRequest.h"
 #include "FrameLoaderClientQt.h"
 #include "FrameSelection.h"
 #include "FrameTree.h"
@@ -482,10 +481,7 @@ QWebFrame::QWebFrame(QWebPage *parent, QWebFrameData *frameData)
 
     if (!frameData->url.isEmpty()) {
         WebCore::ResourceRequest request(frameData->url, frameData->referrer);
-        WebCore::FrameLoadRequest frameRequest(d->frame, request);
-        frameRequest.setFrameName(frameData->name);
-        frameRequest.setShouldCheckNewWindowPolicy(true);
-        d->frame->loader()->load(frameRequest);
+        d->frame->loader()->load(request, frameData->name, false);
     }
 #if ENABLE(ORIENTATION_EVENTS)
     connect(&d->m_orientation, SIGNAL(readingChanged()), this, SLOT(_q_orientationChanged()));
@@ -850,7 +846,7 @@ void QWebFrame::load(const QNetworkRequest &req,
     if (!body.isEmpty())
         request.setHTTPBody(WebCore::FormData::create(body.constData(), body.size()));
 
-    d->frame->loader()->load(FrameLoadRequest(d->frame, request));
+    d->frame->loader()->load(request, false);
 
     if (d->parentFrame())
         d->page->d->insideOpenCall = false;
@@ -887,8 +883,7 @@ void QWebFrame::setHtml(const QString &html, const QUrl &baseUrl)
     const QByteArray utf8 = html.toUtf8();
     WTF::RefPtr<WebCore::SharedBuffer> data = WebCore::SharedBuffer::create(utf8.constData(), utf8.length());
     WebCore::SubstituteData substituteData(data, WTF::String("text/html"), WTF::String("utf-8"), KURL());
-    FrameLoadRequest frameRequest(d->frame, request, substituteData);
-    d->frame->loader()->load(frameRequest);
+    d->frame->loader()->load(request, substituteData, false);
 }
 
 /*!
@@ -918,8 +913,7 @@ void QWebFrame::setContent(const QByteArray &data, const QString &mimeType, cons
         encoding = extractCharsetFromMediaType(mimeType);
     }
     WebCore::SubstituteData substituteData(buffer, WTF::String(actualMimeType), encoding, KURL());
-    FrameLoadRequest frameRequest(d->frame, request, substituteData);
-    d->frame->loader()->load(frameRequest);
+    d->frame->loader()->load(request, substituteData, false);
 }
 
 /*!

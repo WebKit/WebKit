@@ -56,7 +56,6 @@
 #include "EditorClientBlackBerry.h"
 #include "FocusController.h"
 #include "Frame.h"
-#include "FrameLoadRequest.h"
 #include "FrameLoaderClientBlackBerry.h"
 #if !defined(PUBLIC_BUILD) || !PUBLIC_BUILD
 #include "GeolocationClientMock.h"
@@ -701,10 +700,7 @@ void WebPagePrivate::load(const BlackBerry::Platform::String& url, const BlackBe
 
     request.setSuggestedSaveName(suggestedSaveName);
 
-    FrameLoadRequest frameRequest(m_mainFrame, request);
-    frameRequest.setFrameName("");
-    frameRequest.setShouldCheckNewWindowPolicy(true);
-    m_mainFrame->loader()->load(frameRequest);
+    m_mainFrame->loader()->load(request, "" /* name */, false);
 }
 
 void WebPage::load(const BlackBerry::Platform::String& url, const BlackBerry::Platform::String& networkToken, bool isInitial)
@@ -749,8 +745,7 @@ void WebPagePrivate::loadString(const BlackBerry::Platform::String& string, cons
         extractMIMETypeFromMediaType(contentType),
         extractCharsetFromMediaType(contentType),
         !failingURL.empty() ? parseUrl(failingURL) : KURL());
-    FrameLoadRequest frameRequest(m_mainFrame, request, substituteData);
-    m_mainFrame->loader()->load(frameRequest);
+    m_mainFrame->loader()->load(request, substituteData, false);
 }
 
 void WebPage::loadString(const BlackBerry::Platform::String& string, const BlackBerry::Platform::String& baseURL, const BlackBerry::Platform::String& mimeType, const BlackBerry::Platform::String& failingURL)

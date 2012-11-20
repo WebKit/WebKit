@@ -67,7 +67,6 @@
 #import <WebCore/EventHandler.h>
 #import <WebCore/EventNames.h>
 #import <WebCore/Frame.h>
-#import <WebCore/FrameLoadRequest.h>
 #import <WebCore/FrameLoader.h>
 #import <WebCore/FrameLoaderStateMachine.h>
 #import <WebCore/FrameTree.h>
@@ -1370,7 +1369,7 @@ static bool needsMicrosoftMessengerDOMDocumentWorkaround()
     if (!resourceRequest.url().isValid() && !resourceRequest.url().isEmpty())
         resourceRequest.setURL([NSURL URLWithString:[@"file:" stringByAppendingString:[[request URL] absoluteString]]]);
 
-    coreFrame->loader()->load(FrameLoadRequest(coreFrame, resourceRequest));
+    coreFrame->loader()->load(resourceRequest, false);
 }
 
 static NSURL *createUniqueWebDataURL()
@@ -1401,8 +1400,7 @@ static NSURL *createUniqueWebDataURL()
 
     SubstituteData substituteData(WebCore::SharedBuffer::wrapNSData(data), MIMEType, encodingName, [unreachableURL absoluteURL], responseURL);
 
-    FrameLoadRequest frameRequest(_private->coreFrame, request, substituteData);
-    _private->coreFrame->loader()->load(frameRequest);
+    _private->coreFrame->loader()->load(request, substituteData, false);
 }
 
 

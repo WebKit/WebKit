@@ -1,3 +1,18 @@
+2012-11-20  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r135295.
+        http://trac.webkit.org/changeset/135295
+        https://bugs.webkit.org/show_bug.cgi?id=102834
+
+        This patch causes assertion to some layout tests on chromium
+        (Requested by jianli on #webkit).
+
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::loadRequest):
+        (WebKit::WebFrameImpl::loadData):
+        * src/WebSharedWorkerImpl.cpp:
+        (WebKit::WebSharedWorkerImpl::initializeLoader):
+
 2012-11-20  Eberhard Graether  <egraether@google.com>
 
         [Chromium] fix FPS counter disappearing when changing page

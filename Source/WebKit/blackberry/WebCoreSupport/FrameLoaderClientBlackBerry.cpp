@@ -34,7 +34,6 @@
 #include "CredentialTransformData.h"
 #include "DumpRenderTreeClient.h"
 #include "ExternalExtension.h"
-#include "FrameLoadRequest.h"
 #include "FrameNetworkingContextBlackBerry.h"
 #include "FrameView.h"
 #include "HTMLFormElement.h"
@@ -751,8 +750,7 @@ void FrameLoaderClientBlackBerry::dispatchDidFailProvisionalLoad(const ResourceE
     }
 
     m_loadingErrorPage = true;
-    FrameLoadRequest frameRequest(m_frame, originalRequest, errorData);
-    m_frame->loader()->load(frameRequest);
+    m_frame->loader()->load(originalRequest, errorData, false);
 }
 
 void FrameLoaderClientBlackBerry::dispatchWillSubmitForm(FramePolicyFunction function, PassRefPtr<FormState>)

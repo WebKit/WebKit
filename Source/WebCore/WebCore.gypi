@@ -2962,7 +2962,6 @@
             'loader/FTPDirectoryParser.h',
             'loader/FormState.cpp',
             'loader/FormSubmission.cpp',
-            'loader/FrameLoadRequest.cpp',
             'loader/FrameLoader.cpp',
             'loader/FrameLoaderStateMachine.cpp',
             'loader/HistoryController.cpp',

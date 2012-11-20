@@ -975,7 +975,7 @@ void WebFrameImpl::loadRequest(const WebURLRequest& request)
         return;
     }
 
-    frame()->loader()->load(FrameLoadRequest(frame(), resourceRequest));
+    frame()->loader()->load(resourceRequest, false);
 }
 
 void WebFrameImpl::loadHistoryItem(const WebHistoryItem& item)
@@ -994,6 +994,8 @@ void WebFrameImpl::loadHistoryItem(const WebHistoryItem& item)
 void WebFrameImpl::loadData(const WebData& data, const WebString& mimeType, const WebString& textEncoding, const WebURL& baseURL, const WebURL& unreachableURL, bool replace)
 {
     ASSERT(frame());
+    SubstituteData substData(data, mimeType, textEncoding, unreachableURL);
+    ASSERT(substData.isValid());
 
     // If we are loading substitute data to replace an existing load, then
     // inherit all of the properties of that original request.  This way,
@@ -1006,9 +1008,7 @@ void WebFrameImpl::loadData(const WebData& data, const WebString& mimeType, cons
         request = frame()->loader()->originalRequest();
     request.setURL(baseURL);
 
-    FrameLoadRequest frameRequest(frame(), request, SubstituteData(data, mimeType, textEncoding, unreachableURL));
-    ASSERT(frameRequest.substituteData().isValid());
-    frame()->loader()->load(frameRequest);
+    frame()->loader()->load(request, substData, false);
     if (replace) {
         // Do this to force WebKit to treat the load as replacing the currently
         // loaded page.

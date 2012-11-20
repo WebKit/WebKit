@@ -556,7 +556,7 @@ HRESULT STDMETHODCALLTYPE WebFrame::loadRequest(
     if (!coreFrame)
         return E_FAIL;
 
-    coreFrame->loader()->load(FrameLoadRequest(coreFrame, requestImpl->resourceRequest()));
+    coreFrame->loader()->load(requestImpl->resourceRequest(), false);
     return S_OK;
 }
 
@@ -579,10 +579,8 @@ void WebFrame::loadData(PassRefPtr<WebCore::SharedBuffer> data, BSTR mimeType, B
     SubstituteData substituteData(data, mimeTypeString, encodingString, failingKURL);
 
     // This method is only called from IWebFrame methods, so don't ASSERT that the Frame pointer isn't null.
-    if (Frame* coreFrame = core(this)) {
-        FrameLoadRequest frameRequest(coreFrame, request, substituteData);
-        coreFrame->loader()->load(frameRequest);
-    }
+    if (Frame* coreFrame = core(this))
+        coreFrame->loader()->load(request, substituteData, false);
 }
 
 

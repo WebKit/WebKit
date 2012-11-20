@@ -32,7 +32,6 @@
 #include "FloatRect.h"
 #include "FormState.h"
 #include "Frame.h"
-#include "FrameLoadRequest.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClientWx.h"
 #include "FrameView.h"
@@ -323,9 +322,7 @@ void WebFrame::SetPageSource(const wxString& source, const wxString& baseUrl, co
         WebCore::SubstituteData substituteData(sharedBuffer, mimetype, WTF::String("UTF-8"), WebCore::blankURL(), url);
 
         m_impl->frame->loader()->stop();
-
-        WebCore::FrameLoadRequest frameRequest(m_impl->frame, WebCore::ResourceRequest(url), substituteData);
-        m_impl->frame->loader()->load(frameRequest);
+        m_impl->frame->loader()->load(WebCore::ResourceRequest(url), substituteData, false);
     }
 }
 
