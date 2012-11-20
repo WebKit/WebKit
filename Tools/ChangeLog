@@ -1,3 +1,17 @@
+2012-11-20  Zan Dobersek  <zandobersek@gmail.com>
+
+        webkitpy unit tests should run serially when checking code coverage
+        https://bugs.webkit.org/show_bug.cgi?id=102693
+
+        Reviewed by Dirk Pranke.
+
+        When checking code coverage, the unit tests should not be run in parallel
+        as this causes the tracing functions (set via sys.settrace in the coverage
+        module) being overriden, resulting in incorrect coverage reports.
+
+        * Scripts/webkitpy/test/main.py:
+        (Tester._run_tests):
+
 2012-11-19  Viatcheslav Ostapenko  <v.ostapenko@samsung.com>
 
         [EFL] Add fallback for WebkitTestRunner if opengl is not available.

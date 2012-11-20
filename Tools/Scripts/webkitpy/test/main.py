@@ -135,6 +135,9 @@ class Tester(object):
             self._options.child_processes = 1
 
         if self._options.coverage:
+            _log.warning("Checking code coverage, so running things serially")
+            self._options.child_processes = 1
+
             import webkitpy.thirdparty.autoinstalled.coverage as coverage
             cov = coverage.coverage()
             cov.start()
