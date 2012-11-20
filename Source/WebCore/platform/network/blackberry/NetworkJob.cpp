@@ -64,7 +64,8 @@ inline static bool isUnauthorized(int statusCode)
 }
 
 NetworkJob::NetworkJob()
-    : m_playerId(0)
+    : FrameDestructionObserver(0)
+    , m_playerId(0)
     , m_deleteJobTimer(this, &NetworkJob::fireDeleteJobTimer)
     , m_streamFactory(0)
     , m_isFile(false)
@@ -86,7 +87,6 @@ NetworkJob::NetworkJob()
     , m_redirectCount(0)
     , m_deferredData(*this)
     , m_deferLoadingCount(0)
-    , m_frame(0)
     , m_isAuthenticationChallenging(false)
 {
 }
@@ -103,11 +103,12 @@ bool NetworkJob::initialize(int playerId,
                             const BlackBerry::Platform::NetworkRequest& request,
                             PassRefPtr<ResourceHandle> handle,
                             BlackBerry::Platform::NetworkStreamFactory* streamFactory,
-                            const Frame& frame,
+                            Frame* frame,
                             int deferLoadingCount,
                             int redirectCount)
 {
     BLACKBERRY_ASSERT(handle);
+    BLACKBERRY_ASSERT(frame);
 
     m_playerId = playerId;
     m_pageGroupName = pageGroupName;
@@ -119,14 +120,15 @@ bool NetworkJob::initialize(int playerId,
     m_handle = handle;
 
     m_streamFactory = streamFactory;
-    m_frame = &frame;
 
-    if (m_frame && m_frame->loader()->pageDismissalEventBeingDispatched() != FrameLoader::NoDismissal) {
+    if (frame && frame->loader()->pageDismissalEventBeingDispatched() != FrameLoader::NoDismissal) {
         // In the case the frame will be detached soon, we still need to ping the server, but it is
         // no longer safe to reference the Frame object.
         // See http://trac.webkit.org/changeset/65910 and https://bugs.webkit.org/show_bug.cgi?id=30457.
-        m_frame = 0;
-    }
+        // m_frame would be set to zero.
+        observeFrame(0);
+    } else
+        observeFrame(frame);
 
     m_redirectCount = redirectCount;
     m_deferLoadingCount = deferLoadingCount;
@@ -332,11 +334,7 @@ void NetworkJob::handleNotifyHeaderReceived(const String& key, const String& val
     else if (lowerKey == "content-disposition")
         m_contentDisposition = value;
     else if (lowerKey == "set-cookie") {
-        // FIXME: If a tab is closed, sometimes network data will come in after the frame has been detached from its page but before it is deleted.
-        // If this happens, m_frame->page() will return 0, and m_frame->loader()->client() will be in a bad state and calling into it will crash.
-        // For now we check for this explicitly by checking m_frame->page(). But we should find out why the network job hasn't been cancelled when the frame was detached.
-        // See RIM PR 134207
-        if (m_frame && m_frame->page() && m_frame->loader() && m_frame->loader()->client()
+        if (m_frame && m_frame->loader() && m_frame->loader()->client()
             && static_cast<FrameLoaderClientBlackBerry*>(m_frame->loader()->client())->cookiesEnabled()) {
             handleSetCookieHeader(value);
             // If there are several "Set-Cookie" headers, we should combine the following ones with the first.
@@ -588,7 +586,7 @@ bool NetworkJob::startNewJobWithRequest(ResourceRequest& newRequest, bool increa
         handle,
         newRequest,
         m_streamFactory,
-        *m_frame,
+        m_frame,
         m_deferLoadingCount,
         increaseRedirectCount ? m_redirectCount + 1 : m_redirectCount);
     return true;
@@ -937,6 +935,19 @@ void NetworkJob::notifyChallengeResult(const KURL& url, const ProtectionSpace& p
     newRequest.setURL(url);
     newRequest.setMustHandleInternally(true);
     m_newJobWithCredentialsStarted = startNewJobWithRequest(newRequest);
+}
+
+void NetworkJob::frameDestroyed()
+{
+    if (m_frame && !m_cancelled)
+        cancelJob();
+    FrameDestructionObserver::frameDestroyed();
+}
+
+void NetworkJob::willDetachPage()
+{
+    if (m_frame && !m_cancelled)
+        cancelJob();
 }
 
 } // namespace WebCore

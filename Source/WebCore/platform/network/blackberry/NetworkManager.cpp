@@ -38,7 +38,7 @@ namespace WebCore {
 
 SINGLETON_INITIALIZER_THREADUNSAFE(NetworkManager)
 
-bool NetworkManager::startJob(int playerId, PassRefPtr<ResourceHandle> job, const Frame& frame, bool defersLoading)
+bool NetworkManager::startJob(int playerId, PassRefPtr<ResourceHandle> job, Frame* frame, bool defersLoading)
 {
     ASSERT(job.get());
     // We shouldn't call methods on PassRefPtr so make a new RefPt.
@@ -46,16 +46,16 @@ bool NetworkManager::startJob(int playerId, PassRefPtr<ResourceHandle> job, cons
     return startJob(playerId, refJob, refJob->firstRequest(), frame, defersLoading);
 }
 
-bool NetworkManager::startJob(int playerId, PassRefPtr<ResourceHandle> job, const ResourceRequest& request, const Frame& frame, bool defersLoading)
+bool NetworkManager::startJob(int playerId, PassRefPtr<ResourceHandle> job, const ResourceRequest& request, Frame* frame, bool defersLoading)
 {
-    Page* page = frame.page();
+    Page* page = frame->page();
     if (!page)
         return false;
     BlackBerry::Platform::NetworkStreamFactory* streamFactory = page->chrome()->platformPageClient()->networkStreamFactory();
     return startJob(playerId, page->groupName(), job, request, streamFactory, frame, defersLoading ? 1 : 0);
 }
 
-bool NetworkManager::startJob(int playerId, const String& pageGroupName, PassRefPtr<ResourceHandle> job, const ResourceRequest& request, BlackBerry::Platform::NetworkStreamFactory* streamFactory, const Frame& frame, int deferLoadingCount, int redirectCount)
+bool NetworkManager::startJob(int playerId, const String& pageGroupName, PassRefPtr<ResourceHandle> job, const ResourceRequest& request, BlackBerry::Platform::NetworkStreamFactory* streamFactory, Frame* frame, int deferLoadingCount, int redirectCount)
 {
     // Make sure the ResourceHandle doesn't go out of scope while calling callbacks.
     RefPtr<ResourceHandle> guardJob(job);
@@ -68,14 +68,14 @@ bool NetworkManager::startJob(int playerId, const String& pageGroupName, PassRef
         m_initialURL = KURL();
 
     BlackBerry::Platform::NetworkRequest platformRequest;
-    request.initializePlatformRequest(platformRequest, frame.loader() && frame.loader()->client() && static_cast<FrameLoaderClientBlackBerry*>(frame.loader()->client())->cookiesEnabled(), isInitial, redirectCount);
+    request.initializePlatformRequest(platformRequest, frame->loader() && frame->loader()->client() && static_cast<FrameLoaderClientBlackBerry*>(frame->loader()->client())->cookiesEnabled(), isInitial, redirectCount);
 
-    const String& documentUrl = frame.document()->url().string();
+    const String& documentUrl = frame->document()->url().string();
     if (!documentUrl.isEmpty()) {
         platformRequest.setReferrer(documentUrl);
     }
 
-    platformRequest.setSecurityOrigin(frame.document()->securityOrigin()->toRawString());
+    platformRequest.setSecurityOrigin(frame->document()->securityOrigin()->toRawString());
 
     // Attach any applicable auth credentials to the NetworkRequest.
     AuthenticationChallenge& challenge = guardJob->getInternal()->m_currentWebChallenge;

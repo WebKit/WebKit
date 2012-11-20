@@ -117,7 +117,7 @@ bool ResourceHandle::start(NetworkingContext* context)
     if (!frame || !frame->loader() || !frame->loader()->client() || !client())
         return false;
     int playerId = static_cast<FrameLoaderClientBlackBerry*>(frame->loader()->client())->playerId();
-    return NetworkManager::instance()->startJob(playerId, this, *frame, d->m_defersLoading);
+    return NetworkManager::instance()->startJob(playerId, this, frame, d->m_defersLoading);
 }
 
 void ResourceHandle::pauseLoad(bool pause)
@@ -163,7 +163,7 @@ void ResourceHandle::loadResourceSynchronously(NetworkingContext* context, const
     bool shouldContentSniff = false;
 
     RefPtr<ResourceHandle> handle = adoptRef(new ResourceHandle(request, &syncLoader, defersLoading, shouldContentSniff));
-    NetworkManager::instance()->startJob(playerId, handle, *frame, defersLoading);
+    NetworkManager::instance()->startJob(playerId, handle, frame, defersLoading);
 
     const double syncLoadTimeOut = 60; // seconds
 

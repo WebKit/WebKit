@@ -1,3 +1,40 @@
+2012-11-19  Chris Guan  <chris.guan@torchmobile.com.cn>
+
+        [Blackberry] When a frame is being detached, cancel all its network jobs.
+        https://bugs.webkit.org/show_bug.cgi?id=102758
+
+        Reviewed by George Staikos.
+
+        I use FrameDestructionObserver to refactor Networkjob code.
+        NetworkJob is inheriting from FrameDestructionObserver to be
+        aware of frame's destroyed. When a frame is being detached,
+        the willDetachPage() can be called in which we can cancel 
+        the job. This patch reverted the fix for RIM PR134207 as well.
+
+        Manually test is on 
+        "http://www.reuters.com/article/2012/01/27/us-greece-idUSTRE80P0DE20120127"
+        which triggers a ping loader.
+
+        No behavior changed, no new layout tests.
+
+        * platform/network/blackberry/NetworkJob.cpp:
+        (WebCore::NetworkJob::NetworkJob):
+        (WebCore::NetworkJob::initialize):
+        (WebCore::NetworkJob::handleNotifyHeaderReceived):
+        (WebCore::NetworkJob::startNewJobWithRequest):
+        (WebCore::NetworkJob::frameDestroyed):
+        (WebCore):
+        (WebCore::NetworkJob::willDetachPage):
+        * platform/network/blackberry/NetworkJob.h:
+        (NetworkJob):
+        * platform/network/blackberry/NetworkManager.cpp:
+        (WebCore::NetworkManager::startJob):
+        * platform/network/blackberry/NetworkManager.h:
+        (NetworkManager):
+        * platform/network/blackberry/ResourceHandleBlackBerry.cpp:
+        (WebCore::ResourceHandle::start):
+        (WebCore::ResourceHandle::loadResourceSynchronously):
+
 2012-11-19  Matt Falkenhagen  <falken@chromium.org>
 
         Implement the new stacking layer needed by the Fullscreen API and the new <dialog> element

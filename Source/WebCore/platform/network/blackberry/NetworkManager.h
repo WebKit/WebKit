@@ -42,8 +42,8 @@ class NetworkManager : public BlackBerry::Platform::ThreadUnsafeSingleton<Networ
 public:
     void setInitialURL(const KURL& url) { m_initialURL = url; }
     KURL initialURL() { return m_initialURL; }
-    bool startJob(int playerId, PassRefPtr<ResourceHandle> job, const Frame&, bool defersLoading);
-    bool startJob(int playerId, PassRefPtr<ResourceHandle> job, const ResourceRequest&, const Frame&, bool defersLoading);
+    bool startJob(int playerId, PassRefPtr<ResourceHandle> job, Frame*, bool defersLoading);
+    bool startJob(int playerId, PassRefPtr<ResourceHandle> job, const ResourceRequest&, Frame*, bool defersLoading);
     bool stopJob(PassRefPtr<ResourceHandle>);
     void setDefersLoading(PassRefPtr<ResourceHandle> job, bool defersLoading);
     void pauseLoad(PassRefPtr<ResourceHandle> job, bool pause);
@@ -54,7 +54,7 @@ private:
 
     NetworkJob* findJobForHandle(PassRefPtr<ResourceHandle>);
     void deleteJob(NetworkJob*);
-    bool startJob(int playerId, const String& pageGroupName, PassRefPtr<ResourceHandle>, const ResourceRequest&, BlackBerry::Platform::NetworkStreamFactory*, const Frame&, int deferLoadingCount = 0, int redirectCount = 0);
+    bool startJob(int playerId, const String& pageGroupName, PassRefPtr<ResourceHandle>, const ResourceRequest&, BlackBerry::Platform::NetworkStreamFactory*, Frame*, int deferLoadingCount = 0, int redirectCount = 0);
 
     Vector<NetworkJob*> m_jobs;
     KURL m_initialURL;

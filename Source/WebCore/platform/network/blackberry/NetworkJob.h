@@ -21,7 +21,7 @@
 
 #include "AuthenticationChallengeManager.h"
 #include "DeferredData.h"
-#include "PlatformString.h"
+#include "FrameDestructionObserver.h"
 #include "ResourceHandle.h"
 #include "ResourceResponse.h"
 #include "Timer.h"
@@ -47,7 +47,7 @@ class KURL;
 class ProtectionSpace;
 class ResourceRequest;
 
-class NetworkJob : public AuthenticationChallengeClient, public BlackBerry::Platform::FilterStream {
+class NetworkJob : public AuthenticationChallengeClient, public BlackBerry::Platform::FilterStream, public FrameDestructionObserver {
 public:
     NetworkJob();
     ~NetworkJob();
@@ -58,7 +58,7 @@ public:
                     const BlackBerry::Platform::NetworkRequest&,
                     PassRefPtr<ResourceHandle>,
                     BlackBerry::Platform::NetworkStreamFactory*,
-                    const Frame&,
+                    Frame*,
                     int deferLoadingCount,
                     int redirectCount);
     PassRefPtr<ResourceHandle> handle() const { return m_handle; }
@@ -88,6 +88,10 @@ public:
     virtual int status() const { return m_extendedStatusCode; }
 
     virtual void notifyChallengeResult(const KURL&, const ProtectionSpace&, AuthenticationChallengeResult, const Credential&);
+
+    // Implementation of FrameDestructionObserver pure virtuals.
+    virtual void frameDestroyed();
+    virtual void willDetachPage();
 
 private:
     bool isClientAvailable() const { return !m_cancelled && m_handle && m_handle->client(); }
@@ -174,7 +178,6 @@ private:
 
     DeferredData m_deferredData;
     int m_deferLoadingCount;
-    const Frame* m_frame;
 
     bool m_isAuthenticationChallenging;
 };
