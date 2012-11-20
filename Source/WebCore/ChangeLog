@@ -1,5 +1,21 @@
 2012-11-20  Elliott Sprehn  <esprehn@chromium.org>
 
+        Remove unneeded optimization in Element::isInTopLayer
+        https://bugs.webkit.org/show_bug.cgi?id=102772
+
+        Reviewed by Andreas Kling.
+
+        There's no reason to worry about calling elementRareData() multiple
+        times in this non performance sensitive code path as it's only used
+        in HTMLDialogElement's showModal and close methods.
+
+        No new tests, just simplification.
+
+        * dom/Element.cpp:
+        (WebCore::Element::setIsInTopLayer):
+
+2012-11-20  Elliott Sprehn  <esprehn@chromium.org>
+
         Simplify Element::isSpellCheckingEnabled
         https://bugs.webkit.org/show_bug.cgi?id=102779
 

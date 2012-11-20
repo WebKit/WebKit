@@ -2188,17 +2188,10 @@ bool Element::isInTopLayer() const
 
 void Element::setIsInTopLayer(bool inTopLayer)
 {
-    // To avoid an extra call to elementRareData(), don't use Element::isInTopLayer().
-    ElementRareData* rareData = hasRareData() ? elementRareData() : 0;
-    if (rareData) {
-        if (rareData->isInTopLayer() == inTopLayer)
-            return;
-    } else {
-        if (!inTopLayer)
-            return;
-        rareData = ensureElementRareData();
-    }
-    rareData->setIsInTopLayer(inTopLayer);
+    if (isInTopLayer() == inTopLayer)
+        return;
+
+    ensureElementRareData()->setIsInTopLayer(inTopLayer);
 
     if (inTopLayer)
         document()->addToTopLayer(this);
