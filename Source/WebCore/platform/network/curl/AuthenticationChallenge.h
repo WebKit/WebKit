@@ -37,12 +37,14 @@ public:
     {
     }
 
-    AuthenticationChallenge(const ProtectionSpace& protectionSpace, const Credential& proposedCredential, unsigned previousFailureCount, const ResourceResponse& response, const ResourceError& error)
+    AuthenticationChallenge(const ProtectionSpace& protectionSpace, const Credential& proposedCredential, unsigned previousFailureCount, const ResourceResponse& response, const ResourceError& error, uint64_t identifier)
         : AuthenticationChallengeBase(protectionSpace, proposedCredential, previousFailureCount, response, error)
     {
+        m_identifier = identifier;
     }
 
     AuthenticationClient* authenticationClient() const { return m_authenticationClient.get(); }
+    void setAuthenticationClient(AuthenticationClient* client) { m_authenticationClient = client; }
 
     RefPtr<AuthenticationClient> m_authenticationClient;
 };

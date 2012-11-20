@@ -1,3 +1,14 @@
+2012-11-20  Brent Fulgham  <bfulgham@webkit.org>
+
+        [WinCairo] Build fix after r135316
+
+        * platform/network/curl/AuthenticationChallenge.h: Update stub
+          implementations to match Apple Windows port.
+        (WebCore::AuthenticationChallenge::AuthenticationChallenge): Add
+          missing identifier argument.
+        (WebCore::AuthenticationChallenge::setAuthenticationClient): Supply
+          missing set method.
+
 2012-11-20  Tony Chang  <tony@chromium.org>
 
         When calling DocumentStyleSheetCollection::addUserSheet, pass in a user sheet
