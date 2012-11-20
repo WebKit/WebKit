@@ -1,5 +1,21 @@
 2012-11-20  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
+        [Qt] PageViewportControllerClient::didChangeViewportAttributes called twice
+        https://bugs.webkit.org/show_bug.cgi?id=102790
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Change updateMinimumScaleToFit to no longer call PageViewportControllerClient::didChangeViewportAttributes,
+        but instead return whether it has changed the minimumScaleToFit.
+
+        * UIProcess/PageViewportController.cpp:
+        (WebKit::PageViewportController::didChangeContentsSize):
+        (WebKit::PageViewportController::updateMinimumScaleToFit):
+        * UIProcess/PageViewportController.h:
+        (PageViewportController):
+
+2012-11-20  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
         [Qt] No test of double-click to zoom out
         https://bugs.webkit.org/show_bug.cgi?id=102810
 

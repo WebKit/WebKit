@@ -105,7 +105,8 @@ void PageViewportController::didCommitLoad()
 void PageViewportController::didChangeContentsSize(const IntSize& newSize)
 {
     m_contentsSize = newSize;
-    updateMinimumScaleToFit();
+    if (updateMinimumScaleToFit())
+        m_client->didChangeViewportAttributes();
 }
 
 void PageViewportController::didRenderFrame(const IntSize& contentsSize, const IntRect& coveredRect)
@@ -259,10 +260,10 @@ void PageViewportController::applyPositionAfterRenderingContents(const FloatPoin
     syncVisibleContents();
 }
 
-void PageViewportController::updateMinimumScaleToFit()
+bool PageViewportController::updateMinimumScaleToFit()
 {
     if (m_viewportSize.isEmpty())
-        return;
+        return false;
 
     float minimumScale = WebCore::computeMinimumScaleFactorForContentContained(m_rawAttributes, WebCore::roundedIntSize(m_viewportSize), WebCore::roundedIntSize(m_contentsSize), devicePixelRatio());
 
@@ -272,8 +273,9 @@ void PageViewportController::updateMinimumScaleToFit()
         if (!m_hadUserInteraction && !hasSuspendedContent())
             applyScaleAfterRenderingContents(toViewportScale(minimumScale));
 
-        m_client->didChangeViewportAttributes();
+        return true;
     }
+    return false;
 }
 
 } // namespace WebKit
