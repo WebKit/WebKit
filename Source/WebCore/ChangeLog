@@ -1,3 +1,18 @@
+2012-11-20  Elliott Sprehn  <esprehn@chromium.org>
+
+        Simplify Element::isSpellCheckingEnabled
+        https://bugs.webkit.org/show_bug.cgi?id=102779
+
+        Reviewed by Andreas Kling.
+
+        isSpellCheckingEnabled contains logic that duplicates parentOrHostElement
+        and can be simplified by just calling that.
+
+        No new tests, just simplification.
+
+        * dom/Element.cpp:
+        (WebCore::Element::isSpellCheckingEnabled):
+
 2012-11-20  Kihong Kwon  <kihong.kwon@samsung.com>
 
         Apply DeviceController as parent class of DeviceMotionController.

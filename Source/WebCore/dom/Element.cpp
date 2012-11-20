@@ -2231,8 +2231,7 @@ SpellcheckAttributeState Element::spellcheckAttributeState() const
 
 bool Element::isSpellCheckingEnabled() const
 {
-    const Element* element = this;
-    while (element) {
+    for (const Element* element = this; element; element = element->parentOrHostElement()) {
         switch (element->spellcheckAttributeState()) {
         case SpellcheckAttributeTrue:
             return true;
@@ -2241,14 +2240,6 @@ bool Element::isSpellCheckingEnabled() const
         case SpellcheckAttributeDefault:
             break;
         }
-
-        ContainerNode* parent = const_cast<Element*>(element)->parentOrHostNode();
-        if (parent && parent->isElementNode())
-            element = toElement(parent);
-        else if (parent && parent->isShadowRoot())
-            element = toElement(parent->parentOrHostNode());
-        else
-            element = 0;
     }
 
     return true;
