@@ -2,7 +2,7 @@
 
 <html>
 <head>
-  <title>Test that animations stop on suspend</title>
+  <title>Test that animations stop on suspend, also when they are inside subframes</title>
   <style type="text/css" media="screen">
     iframe {
         border: 1px solid black;
@@ -20,6 +20,7 @@
         background-color: green;
         overflow:hidden;
         -webkit-animation: move 400ms alternate infinite linear;
+        -webkit-animation-play-state:paused;
     }
 
     @-webkit-keyframes move {
@@ -32,10 +33,10 @@
   
     const expectedValues = [
       // [animation-name, time, element-id, property, expected-value, tolerance]
-      ["move", 0.2, "box", "webkitTransform", [1,0,0,1, 100, 0], 30],
-      ["move", 0.2, "iframe.subframe-box", "webkitTransform", [1,0,0,1, 100, 0], 30],
-      ["move", 0.4, "box", "webkitTransform", [1,0,0,1, 200, 0], 30],
-      ["move", 0.4, "iframe.subframe-box", "webkitTransform", [1,0,0,1, 200, 0], 30],
+      ["move", 0.2, "box", "webkitTransform", [1,0,0,1, 100, 0], 40],
+      ["move", 0.2, "iframe.subframe-box", "webkitTransform", [1,0,0,1, 100, 0], 40],
+      ["move", 0.4, "box", "webkitTransform", [1,0,0,1, 200, 0], 40],
+      ["move", 0.4, "iframe.subframe-box", "webkitTransform", [1,0,0,1, 200, 0], 40],
     ];
     
     function suspend()
@@ -56,14 +57,23 @@
         setTimeout(resume, 300);
     }
 
-    runAnimationTest(expectedValues, setTimers, undefined, true);
-    
+    function iframeOnLoad()
+    {
+        var box = document.getElementById("box");
+        var subFrameBox = document.getElementById("iframe").contentDocument.getElementById("subframe-box");
+
+        box.style.webkitAnimationPlayState="running";
+        subFrameBox.style.webkitAnimationPlayState="running";
+
+        runAnimationTest(expectedValues, setTimers, undefined, true);
+    }
+
   </script>
 </head>
 <body>
     <div class="box" id="box"></div>
     <!-- The parent document may into compositing mode by the iframe. -->
-    <iframe id="iframe" src="resources/stop-animation-on-suspend-subframe.html"></iframe>
+    <iframe id="iframe" onload="iframeOnLoad();" src="resources/stop-animation-on-suspend-subframe.html"></iframe>
     <div id="result"></div>
 </body>
 </html>

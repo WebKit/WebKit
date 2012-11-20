@@ -1,3 +1,30 @@
+2012-11-20  Jussi Kukkonen  <jussi.kukkonen@intel.com>
+
+        animations/stop-animation-on-suspend.html sometimes fails on all platforms
+        https://bugs.webkit.org/show_bug.cgi?id=49182
+
+        Reviewed by Antti Koivisto.
+
+        stop-animation-on-suspend incorrectly assumed that animation in a subframe would start
+        roughly at document load. Keep both animations (one in main frame, one in iframe) paused
+        until the iframe is loaded: this way they should run synchronised enough.
+
+        Also increase the tolerance of the test slightly: measuring timing like this is inherently flaky.
+
+        Remove failure expectation from all TestExpectations and remove the clearly wrong expected
+        result for chromium-mac.
+
+        * animations/resources/stop-animation-on-suspend-subframe.html:
+        * animations/stop-animation-on-suspend.html:
+        * platform/chromium/TestExpectations:
+        * platform/chromium-mac/animations/stop-animation-on-suspend-expected.txt:
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/qt-arm/TestExpectations:
+        * platform/win/TestExpectations:
+        * platform/wincairo/TestExpectations:
+
 2012-11-20  Mike Reed  <reed@google.com>
 
         update TestExpectations before a skia change
