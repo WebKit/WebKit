@@ -1,3 +1,11 @@
+2012-11-20  Brent Fulgham  <bfulgham@webkit.org>
+
+        [Qt] Build fix after r135217.
+        https://bugs.webkit.org/show_bug.cgi?id=102787
+
+        * platform/win/WindowsExtras.h: Switch to direct include of
+          <ObjBase.h>, as is done in other <shlwapi.h> includes.
+
 2012-11-20  Ryosuke Niwa  <rniwa@webkit.org>
 
         Fix typos. Apparently XCode failed to text-replace earlier when it was busy making a snapshot :(

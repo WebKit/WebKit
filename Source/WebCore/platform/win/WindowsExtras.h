@@ -26,7 +26,7 @@
 #define WindowsExtras_h
 
 #include <windows.h>
-#undef NOSHLWAPI
+#include <objbase.h>
 #include <shlwapi.h>
 
 namespace WebCore {
