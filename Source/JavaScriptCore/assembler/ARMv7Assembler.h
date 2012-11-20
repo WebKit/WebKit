@@ -2050,12 +2050,12 @@ public:
         ASSERT(from.isSet());
         ASSERT(reinterpret_cast<intptr_t>(to) & 1);
 
-        setPointer(reinterpret_cast<uint16_t*>(reinterpret_cast<intptr_t>(code) + from.m_offset) - 1, to);
+        setPointer(reinterpret_cast<uint16_t*>(reinterpret_cast<intptr_t>(code) + from.m_offset) - 1, to, false);
     }
 
     static void linkPointer(void* code, AssemblerLabel where, void* value)
     {
-        setPointer(reinterpret_cast<char*>(code) + where.m_offset, value);
+        setPointer(reinterpret_cast<char*>(code) + where.m_offset, value, false);
     }
 
     static void relinkJump(void* from, void* to)
@@ -2073,7 +2073,7 @@ public:
         ASSERT(!(reinterpret_cast<intptr_t>(from) & 1));
         ASSERT(reinterpret_cast<intptr_t>(to) & 1);
 
-        setPointer(reinterpret_cast<uint16_t*>(from) - 1, to);
+        setPointer(reinterpret_cast<uint16_t*>(from) - 1, to, true);
     }
     
     static void* readCallTarget(void* from)
@@ -2085,7 +2085,7 @@ public:
     {
         ASSERT(!(reinterpret_cast<intptr_t>(where) & 1));
         
-        setInt32(where, value);
+        setInt32(where, value, true);
     }
     
     static void repatchCompact(void* where, int32_t offset)
@@ -2112,7 +2112,7 @@ public:
     {
         ASSERT(!(reinterpret_cast<intptr_t>(where) & 1));
         
-        setPointer(where, value);
+        setPointer(where, value, true);
     }
 
     static void* readPointer(void* where)
@@ -2148,11 +2148,11 @@ public:
             ptr[0] |= OP_LDR_imm_T3;
             ptr[1] |= (ptr[1] & 0x0F00) << 4;
             ptr[1] &= 0xF0FF;
+            cacheFlush(ptr, sizeof(uint16_t) * 2);
             break;
         default:
             ASSERT_NOT_REACHED();
         }
-        cacheFlush(ptr, sizeof(uint16_t) * 2);
     }
 
     static void replaceWithAddressComputation(void* instructionStart)
@@ -2166,13 +2166,13 @@ public:
             ptr[0] |= OP_ADD_imm_T3;
             ptr[1] |= (ptr[1] & 0xF000) >> 4;
             ptr[1] &= 0x0FFF;
+            cacheFlush(ptr, sizeof(uint16_t) * 2);
             break;
         case OP_ADD_imm_T3:
             break;
         default:
             ASSERT_NOT_REACHED();
         }
-        cacheFlush(ptr, sizeof(uint16_t) * 2);
     }
 
     unsigned debugOffset() { return m_formatter.debugOffset(); }
@@ -2275,7 +2275,7 @@ private:
         return VFPOperand(op);
     }
 
-    static void setInt32(void* code, uint32_t value)
+    static void setInt32(void* code, uint32_t value, bool flush)
     {
         uint16_t* location = reinterpret_cast<uint16_t*>(code);
         ASSERT(isMOV_imm_T3(location - 4) && isMOVT(location - 2));
@@ -2287,7 +2287,8 @@ private:
         location[-2] = twoWordOp5i6Imm4Reg4EncodedImmFirst(OP_MOVT, hi16);
         location[-1] = twoWordOp5i6Imm4Reg4EncodedImmSecond((location[-1] >> 8) & 0xf, hi16);
 
-        cacheFlush(location - 4, 4 * sizeof(uint16_t));
+        if (flush)
+            cacheFlush(location - 4, 4 * sizeof(uint16_t));
     }
     
     static int32_t readInt32(void* code)
@@ -2318,9 +2319,9 @@ private:
         cacheFlush(location, sizeof(uint16_t));
     }
 
-    static void setPointer(void* code, void* value)
+    static void setPointer(void* code, void* value, bool flush)
     {
-        setInt32(code, reinterpret_cast<uint32_t>(value));
+        setInt32(code, reinterpret_cast<uint32_t>(value), flush);
     }
 
     static bool isB(void* address)

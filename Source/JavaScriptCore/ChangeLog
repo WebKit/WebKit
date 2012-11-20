@@ -1,3 +1,28 @@
+2012-11-20  Yong Li  <yoli@rim.com>
+
+        [ARMv7] Neither linkCall() nor linkPointer() should flush code.
+        https://bugs.webkit.org/show_bug.cgi?id=99213
+
+        Reviewed by George Staikos.
+
+        LinkBuffer doesn't need to flush code during linking. It will
+        eventually flush the whole executable. Fixing this gives >%5
+        sunspider boost (on QNX).
+
+        Also make replaceWithLoad() and replaceWithAddressComputation() flush
+        only when necessary.
+
+        * assembler/ARMv7Assembler.h:
+        (JSC::ARMv7Assembler::linkCall):
+        (JSC::ARMv7Assembler::linkPointer):
+        (JSC::ARMv7Assembler::relinkCall):
+        (JSC::ARMv7Assembler::repatchInt32):
+        (JSC::ARMv7Assembler::repatchPointer):
+        (JSC::ARMv7Assembler::replaceWithLoad): Flush only after it did write.
+        (JSC::ARMv7Assembler::replaceWithAddressComputation): Flush only after it did write.
+        (JSC::ARMv7Assembler::setInt32):
+        (JSC::ARMv7Assembler::setPointer):
+
 2012-11-19  Filip Pizlo  <fpizlo@apple.com>
 
         Remove support for ARMv7 errata from the jump code
