@@ -126,6 +126,7 @@ private:
     // CoordinatedImageBacking::Coordinator
     virtual void createImageBacking(CoordinatedImageBackingID) OVERRIDE;
     virtual void updateImageBacking(CoordinatedImageBackingID, const ShareableSurface::Handle&) OVERRIDE;
+    virtual void clearImageBackingContents(CoordinatedImageBackingID) OVERRIDE;
     virtual void removeImageBacking(CoordinatedImageBackingID) OVERRIDE;
 
     void flushPendingImageBackingChanges();

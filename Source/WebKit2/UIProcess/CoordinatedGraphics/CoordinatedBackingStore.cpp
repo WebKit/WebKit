@@ -77,6 +77,13 @@ void CoordinatedBackingStore::removeTile(int id)
     m_tilesToRemove.add(id);
 }
 
+void CoordinatedBackingStore::removeAllTiles()
+{
+    HashMap<int, CoordinatedBackingStoreTile>::iterator end = m_tiles.end();
+    for (HashMap<int, CoordinatedBackingStoreTile>::iterator it = m_tiles.begin(); it != end; ++it)
+        m_tilesToRemove.add(it->key);
+}
+
 void CoordinatedBackingStore::updateTile(int id, const IntRect& sourceRect, const IntRect& tileRect, PassRefPtr<ShareableSurface> backBuffer, const IntPoint& offset)
 {
     HashMap<int, CoordinatedBackingStoreTile>::iterator it = m_tiles.find(id);

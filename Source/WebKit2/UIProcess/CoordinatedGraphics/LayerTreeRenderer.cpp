@@ -511,6 +511,15 @@ void LayerTreeRenderer::updateImageBacking(CoordinatedImageBackingID imageID, Pa
     m_backingStoresWithPendingBuffers.add(backingStore);
 }
 
+void LayerTreeRenderer::clearImageBackingContents(CoordinatedImageBackingID imageID)
+{
+    ASSERT(m_imageBackings.contains(imageID));
+    ImageBackingMap::iterator it = m_imageBackings.find(imageID);
+    RefPtr<CoordinatedBackingStore> backingStore = it->value;
+    backingStore->removeAllTiles();
+    m_backingStoresWithPendingBuffers.add(backingStore);
+}
+
 void LayerTreeRenderer::removeImageBacking(CoordinatedImageBackingID imageID)
 {
     ASSERT(m_imageBackings.contains(imageID));

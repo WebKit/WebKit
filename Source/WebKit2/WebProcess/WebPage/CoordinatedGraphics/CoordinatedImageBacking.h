@@ -35,10 +35,6 @@
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 
-namespace WebCore {
-class CoordinatedGraphicsLayer;
-}
-
 namespace WebKit {
 
 class CoordinatedImageBacking : public RefCounted<CoordinatedImageBacking> {
@@ -47,7 +43,13 @@ public:
     public:
         virtual void createImageBacking(CoordinatedImageBackingID) = 0;
         virtual void updateImageBacking(CoordinatedImageBackingID, const ShareableSurface::Handle&) = 0;
+        virtual void clearImageBackingContents(CoordinatedImageBackingID) = 0;
         virtual void removeImageBacking(CoordinatedImageBackingID) = 0;
+    };
+
+    class Host {
+    public:
+        virtual bool imageBackingVisible() = 0;
     };
 
     static PassRefPtr<CoordinatedImageBacking> create(Coordinator*, PassRefPtr<WebCore::Image>);
@@ -56,8 +58,8 @@ public:
     static CoordinatedImageBackingID getCoordinatedImageBackingID(WebCore::Image*);
     CoordinatedImageBackingID id() const { return m_id; }
 
-    void addLayerClient(WebCore::CoordinatedGraphicsLayer*);
-    void removeLayerClient(WebCore::CoordinatedGraphicsLayer*);
+    void addHost(Host*);
+    void removeHost(Host*);
 
     // When a new image is updated or an animated gif is progressed, CoordinatedGraphicsLayer calls markDirty().
     void markDirty();
@@ -69,16 +71,23 @@ private:
     CoordinatedImageBacking(Coordinator*, PassRefPtr<WebCore::Image>);
 
     void releaseSurfaceIfNeeded();
+    void updateVisibilityIfNeeded(bool& changedToVisible);
+    void clearContentsTimerFired(WebCore::Timer<CoordinatedImageBacking>*);
 
     Coordinator* m_coordinator;
     RefPtr<WebCore::Image> m_image;
+    WebCore::NativeImagePtr m_nativeImagePtr;
     CoordinatedImageBackingID m_id;
-    Vector<WebCore::CoordinatedGraphicsLayer*> m_layerClients;
+    Vector<Host*> m_hosts;
 
     RefPtr<ShareableSurface> m_surface;
     OwnPtr<ShareableSurface::Handle> m_handle;
 
+    WebCore::Timer<CoordinatedImageBacking> m_clearContentsTimer;
+
     bool m_isDirty;
+    bool m_isVisible;
+
 };
 
 }

@@ -37,6 +37,7 @@ messages -> LayerTreeCoordinatorProxy {
     RemoveUpdateAtlas(int atlasID)
     CreateImageBacking(uint64_t imageID)
     UpdateImageBacking(uint64_t imageID, WebKit::ShareableSurface::Handle handle)
+    ClearImageBackingContents(uint64_t imageID)
     RemoveImageBacking(uint64_t imageID)
     DidRenderFrame(WebCore::IntSize contentsSize, WebCore::IntRect coveredRect)
     DidChangeScrollPosition(WebCore::IntPoint position)

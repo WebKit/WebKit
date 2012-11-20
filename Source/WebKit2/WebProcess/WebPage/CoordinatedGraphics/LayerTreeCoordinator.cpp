@@ -576,6 +576,12 @@ void LayerTreeCoordinator::updateImageBacking(CoordinatedImageBackingID imageID,
     m_webPage->send(Messages::LayerTreeCoordinatorProxy::UpdateImageBacking(imageID, handle));
 }
 
+void LayerTreeCoordinator::clearImageBackingContents(CoordinatedImageBackingID imageID)
+{
+    m_shouldSyncFrame = true;
+    m_webPage->send(Messages::LayerTreeCoordinatorProxy::ClearImageBackingContents(imageID));
+}
+
 void LayerTreeCoordinator::removeImageBacking(CoordinatedImageBackingID imageID)
 {
     if (m_isPurging)

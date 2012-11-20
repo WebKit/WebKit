@@ -49,7 +49,9 @@ CoordinatedImageBacking::CoordinatedImageBacking(Coordinator* client, PassRefPtr
     : m_coordinator(client)
     , m_image(image)
     , m_id(getCoordinatedImageBackingID(m_image.get()))
+    , m_clearContentsTimer(this, &CoordinatedImageBacking::clearContentsTimerFired)
     , m_isDirty(false)
+    , m_isVisible(false)
 {
     // FIXME: We would need to decode a small image directly into a GraphicsSurface.
     // http://webkit.org/b/101426
@@ -61,19 +63,19 @@ CoordinatedImageBacking::~CoordinatedImageBacking()
 {
 }
 
-void CoordinatedImageBacking::addLayerClient(CoordinatedGraphicsLayer* layerClient)
+void CoordinatedImageBacking::addHost(Host* host)
 {
-    ASSERT(!m_layerClients.contains(layerClient));
-    m_layerClients.append(layerClient);
+    ASSERT(!m_hosts.contains(host));
+    m_hosts.append(host);
 }
 
-void CoordinatedImageBacking::removeLayerClient(CoordinatedGraphicsLayer* layerClient)
+void CoordinatedImageBacking::removeHost(Host* host)
 {
-    size_t position = m_layerClients.find(layerClient);
+    size_t position = m_hosts.find(host);
     ASSERT(position != notFound);
-    m_layerClients.remove(position);
+    m_hosts.remove(position);
 
-    if (m_layerClients.isEmpty())
+    if (m_hosts.isEmpty())
         m_coordinator->removeImageBacking(id());
 }
 
@@ -86,8 +88,20 @@ void CoordinatedImageBacking::update()
 {
     releaseSurfaceIfNeeded();
 
-    if (!m_isDirty)
+    bool changedToVisible;
+    updateVisibilityIfNeeded(changedToVisible);
+    if (!m_isVisible)
         return;
+
+    if (!changedToVisible) {
+        if (!m_isDirty)
+            return;
+
+        if (m_nativeImagePtr == m_image->nativeImageForCurrentFrame()) {
+            m_isDirty = false;
+            return;
+        }
+    }
 
     m_surface = ShareableSurface::create(m_image->size(), m_image->currentFrameHasAlpha() ? ShareableBitmap::SupportsAlpha : ShareableBitmap::NoFlags, ShareableSurface::SupportsGraphicsSurface);
     m_handle = adoptPtr(new ShareableSurface::Handle());
@@ -102,6 +116,8 @@ void CoordinatedImageBacking::update()
     OwnPtr<GraphicsContext> context = m_surface->createGraphicsContext(rect);
     context->drawImage(m_image.get(), ColorSpaceDeviceRGB, rect, rect);
 
+    m_nativeImagePtr = m_image->nativeImageForCurrentFrame();
+
     m_coordinator->updateImageBacking(id(), *m_handle);
     m_isDirty = false;
 }
@@ -112,6 +128,40 @@ void CoordinatedImageBacking::releaseSurfaceIfNeeded()
     // If m_surface exists, it was created in the previous update.
     m_handle.clear();
     m_surface.clear();
+}
+
+static const double clearContentsTimerInterval = 3;
+
+void CoordinatedImageBacking::updateVisibilityIfNeeded(bool& changedToVisible)
+{
+    bool previousIsVisible = m_isVisible;
+
+    m_isVisible = false;
+    for (size_t i = 0; i < m_hosts.size(); ++i) {
+        if (m_hosts[i]->imageBackingVisible()) {
+            m_isVisible = true;
+            break;
+        }
+    }
+
+    bool changedToInvisible = previousIsVisible && !m_isVisible;
+    if (changedToInvisible) {
+        ASSERT(!m_clearContentsTimer.isActive());
+        m_clearContentsTimer.startOneShot(clearContentsTimerInterval);
+    }
+
+    changedToVisible = !previousIsVisible && m_isVisible;
+
+    if (m_isVisible && m_clearContentsTimer.isActive()) {
+        m_clearContentsTimer.stop();
+        // We don't want to update the texture if we didn't remove the texture.
+        changedToVisible = false;
+    }
+}
+
+void CoordinatedImageBacking::clearContentsTimerFired(WebCore::Timer<CoordinatedImageBacking>*)
+{
+    m_coordinator->clearImageBackingContents(id());
 }
 
 }

@@ -504,7 +504,7 @@ void CoordinatedGraphicsLayer::syncImageBacking()
 
         if (!m_coordinatedImageBacking) {
             m_coordinatedImageBacking = m_coordinator->createImageBackingIfNeeded(m_compositedImage.get());
-            m_coordinatedImageBacking->addLayerClient(this);
+            m_coordinatedImageBacking->addHost(this);
             m_layerInfo.imageID = m_coordinatedImageBacking->id();
         }
 
@@ -603,13 +603,19 @@ void CoordinatedGraphicsLayer::flushCompositingStateForThisLayerOnly()
     syncCanvas();
 }
 
+bool CoordinatedGraphicsLayer::imageBackingVisible()
+{
+    ASSERT(m_coordinatedImageBacking);
+    return tiledBackingStoreVisibleRect().intersects(contentsRect());
+}
+
 void CoordinatedGraphicsLayer::releaseImageBackingIfNeeded()
 {
     if (!m_coordinatedImageBacking)
         return;
 
     ASSERT(m_coordinator);
-    m_coordinatedImageBacking->removeLayerClient(this);
+    m_coordinatedImageBacking->removeHost(this);
     m_coordinatedImageBacking.clear();
     m_layerInfo.imageID = InvalidCoordinatedImageBackingID;
 }

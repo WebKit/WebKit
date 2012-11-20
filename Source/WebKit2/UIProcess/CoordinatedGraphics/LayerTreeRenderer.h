@@ -103,6 +103,7 @@ public:
     void flushLayerChanges();
     void createImageBacking(CoordinatedImageBackingID);
     void updateImageBacking(CoordinatedImageBackingID, PassRefPtr<ShareableSurface>);
+    void clearImageBackingContents(CoordinatedImageBackingID);
     void removeImageBacking(CoordinatedImageBackingID);
     void setLayerAnimations(WebLayerID, const WebCore::GraphicsLayerAnimations&);
     void setAnimationsLocked(bool);

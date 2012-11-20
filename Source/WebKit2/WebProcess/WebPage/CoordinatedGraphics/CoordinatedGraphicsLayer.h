@@ -83,6 +83,7 @@ namespace WebCore {
 
 class CoordinatedGraphicsLayer : public GraphicsLayer
     , public TiledBackingStoreClient
+    , public WebKit::CoordinatedImageBacking::Host
     , public WebKit::CoordinatedTileClient {
 public:
     explicit CoordinatedGraphicsLayer(GraphicsLayerClient*);
@@ -188,6 +189,9 @@ private:
 
     void createBackingStore();
     void releaseImageBackingIfNeeded();
+
+    // CoordinatedImageBacking::Host
+    virtual bool imageBackingVisible() OVERRIDE;
 
     void destroyCanvasIfNeeded();
     void createCanvasIfNeeded();

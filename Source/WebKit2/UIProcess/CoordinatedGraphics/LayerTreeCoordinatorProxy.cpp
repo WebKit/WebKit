@@ -153,6 +153,11 @@ void LayerTreeCoordinatorProxy::updateImageBacking(CoordinatedImageBackingID ima
     dispatchUpdate(bind(&LayerTreeRenderer::updateImageBacking, m_renderer.get(), imageID, ShareableSurface::create(handle)));
 }
 
+void LayerTreeCoordinatorProxy::clearImageBackingContents(CoordinatedImageBackingID imageID)
+{
+    dispatchUpdate(bind(&LayerTreeRenderer::clearImageBackingContents, m_renderer.get(), imageID));
+}
+
 void LayerTreeCoordinatorProxy::removeImageBacking(CoordinatedImageBackingID imageID)
 {
     dispatchUpdate(bind(&LayerTreeRenderer::removeImageBacking, m_renderer.get(), imageID));
