@@ -644,7 +644,7 @@ void CoordinatedGraphicsLayer::setContentsScale(float scale)
 
 float CoordinatedGraphicsLayer::effectiveContentsScale()
 {
-    return shouldUseTiledBackingStore() ? m_contentsScale : 1;
+    return selfOrAncestorHaveNonAffineTransforms() ? 1 : m_contentsScale;
 }
 
 void CoordinatedGraphicsLayer::adjustContentsScale()
@@ -697,16 +697,8 @@ IntRect CoordinatedGraphicsLayer::tiledBackingStoreContentsRect()
     return IntRect(0, 0, size().width(), size().height());
 }
 
-bool CoordinatedGraphicsLayer::shouldUseTiledBackingStore()
-{
-    return !selfOrAncestorHaveNonAffineTransforms();
-}
-
 IntRect CoordinatedGraphicsLayer::tiledBackingStoreVisibleRect()
 {
-    if (!shouldUseTiledBackingStore())
-        return tiledBackingStoreContentsRect();
-
     // Non-invertible layers are not visible.
     if (!m_layerTransform.combined().isInvertible())
         return IntRect();
@@ -807,17 +799,21 @@ bool CoordinatedGraphicsLayer::hasPendingVisibleChanges()
     if (!m_shouldSyncLayerState && !m_shouldSyncChildren && !m_shouldSyncFilters && !m_shouldSyncImageBacking && !m_shouldSyncAnimations && !m_canvasNeedsDisplay)
         return false;
 
-    return selfOrAncestorHaveNonAffineTransforms() || !tiledBackingStoreVisibleRect().isEmpty();
-
+    return tiledBackingStoreVisibleRect().intersects(tiledBackingStoreContentsRect());
 }
 
 void CoordinatedGraphicsLayer::computeTransformedVisibleRect()
 {
-    if (!m_shouldUpdateVisibleRect)
+    // When we have a transform animation, we need to update visible rect every frame to adjust the visible rect of a backing store.
+    bool hasActiveTransformAnimation = selfOrAncestorHasActiveTransformAnimation();
+    if (!m_shouldUpdateVisibleRect && !hasActiveTransformAnimation)
         return;
 
     m_shouldUpdateVisibleRect = false;
-    m_layerTransform.setLocalTransform(transform());
+    TransformationMatrix currentTransform = transform();
+    if (hasActiveTransformAnimation)
+        client()->getCurrentTransform(this, currentTransform);
+    m_layerTransform.setLocalTransform(currentTransform);
     m_layerTransform.setPosition(position());
     m_layerTransform.setAnchorPoint(anchorPoint());
     m_layerTransform.setSize(size());
@@ -839,6 +835,17 @@ static PassOwnPtr<GraphicsLayer> createCoordinatedGraphicsLayer(GraphicsLayerCli
 void CoordinatedGraphicsLayer::initFactory()
 {
     GraphicsLayer::setGraphicsLayerFactory(createCoordinatedGraphicsLayer);
+}
+
+bool CoordinatedGraphicsLayer::selfOrAncestorHasActiveTransformAnimation() const
+{
+    if (m_animations.hasActiveAnimationsOfType(AnimatedPropertyWebkitTransform))
+        return true;
+
+    if (!parent())
+        return false;
+
+    return toCoordinatedGraphicsLayer(parent())->selfOrAncestorHasActiveTransformAnimation();
 }
 
 bool CoordinatedGraphicsLayer::selfOrAncestorHaveNonAffineTransforms()
