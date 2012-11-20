@@ -1,3 +1,16 @@
+2012-11-19  KyungTae Kim  <ktf.kim@samsung.com>
+
+        [WK2] Unused parameters on CoordinatedGraphicsLayer.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=102760
+
+        Reviewed by Laszlo Gombos.
+
+        Because the 'platformLayer' parameter is not used when !USE(GRAPHICS_SURFACE),
+        use UNUSED_PARAM macro to fix build warning -Wunused-parameter
+
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedGraphicsLayer.cpp:
+        (WebCore::CoordinatedGraphicsLayer::setContentsToCanvas):
+
 2012-11-19  Huang Dongsung  <luxtella@company100.net>
 
         Coordinated Graphics: Remove tiles of a layer when they are off the viewport.

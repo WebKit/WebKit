@@ -355,6 +355,8 @@ void CoordinatedGraphicsLayer::setContentsToCanvas(PlatformLayer* platformLayer)
         m_canvasNeedsDisplay = true;
     if (client())
         client()->notifyFlushRequired(this);
+#else
+    UNUSED_PARAM(platformLayer);
 #endif
 }
 
