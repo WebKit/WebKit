@@ -1,3 +1,10 @@
+2012-11-20  Yury Semikhatsky  <yurys@chromium.org>
+
+        Unreviewed. Mark inspector/profiler/cpu-profiler-profiling-without-inspector.html
+        as crashing.
+
+        * platform/chromium/TestExpectations:
+
 2012-11-20  Kunihiko Sakamoto  <ksakamoto@chromium.org>
 
         Use localized date-time format in datetime input
