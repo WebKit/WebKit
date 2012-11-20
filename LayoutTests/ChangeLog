@@ -1,3 +1,20 @@
+2012-11-20  Hans Muller  <hmuller@adobe.com>
+
+        [CSS Exclusions] writing-mode:vertical-rl shape-inside tests are incorrectly configured
+        https://bugs.webkit.org/show_bug.cgi?id=102729
+
+        Reviewed by Dirk Schulze.
+
+        Corrected the dimensions of the border elements in two exclusions tests.  They
+        define a rectangle that's five pixels larger than the tests' rectangular
+        shape-inside exclusions shapes.  They now enclose the shape-inside element's
+        text contents.
+
+        * fast/exclusions/shape-inside/shape-inside-polygon-rectangle-expected.html:
+        * fast/exclusions/shape-inside/shape-inside-polygon-rectangle.html:
+        * fast/exclusions/shape-inside/shape-inside-vertical-text-expected.html:
+        * fast/exclusions/shape-inside/shape-inside-vertical-text.html:
+
 2012-11-20  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         [GTK] fast/hidpi/video-controls-in-hidpi.html and fast/layers/video-layer.html need new baseline
