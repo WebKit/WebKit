@@ -128,7 +128,7 @@ bool ContentDistributor::invalidate(Element* host)
         root->setAssignedTo(0);
 
         for (Node* node = root; node; node = node->traverseNextNode(root)) {
-            if (!isInsertionPoint(node))
+            if (!node->isInsertionPoint())
                 continue;
             needsReattach = needsReattach || true;
             InsertionPoint* point = toInsertionPoint(node);

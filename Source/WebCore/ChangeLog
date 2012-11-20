@@ -1,5 +1,32 @@
 2012-11-19  Shinya Kawanaka  <shinyak@chromium.org>
 
+        [Refactoring] Remove WebCore::isInsertionPoint(Node*)
+        https://bugs.webkit.org/show_bug.cgi?id=102756
+
+        Reviewed by Hajime Morita.
+
+        Now that WebCore::isInsertionPoint(Node* node) does nothing special. We can remove this.
+
+        No new tests, simple refactoring.
+
+        * dom/ComposedShadowTreeWalker.cpp:
+        (WebCore::ComposedShadowTreeWalker::traverseNodeEscapingFallbackContents):
+        * dom/ContainerNode.cpp:
+        (WebCore::childAttachedAllowedWhenAttachingChildren):
+        * html/shadow/ContentDistributor.cpp:
+        (WebCore::ContentDistributor::invalidate):
+        * html/shadow/InsertionPoint.cpp:
+        (WebCore::InsertionPoint::isActive):
+        * html/shadow/InsertionPoint.h:
+        (WebCore::toInsertionPoint):
+        (WebCore::isActiveInsertionPoint):
+        (WebCore::isLowerEncapsulationBoundary):
+        (WebCore::parentNodeForDistribution):
+        * testing/Internals.cpp:
+        (WebCore::Internals::isValidContentSelect):
+
+2012-11-19  Shinya Kawanaka  <shinyak@chromium.org>
+
         [Refactoring] Remove shadowPseudoId() and use setPseudo() in <progress> ElementShadow.
         https://bugs.webkit.org/show_bug.cgi?id=101703
 

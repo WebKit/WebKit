@@ -287,7 +287,7 @@ Element* Internals::getElementByIdInShadowRoot(Node* shadowRoot, const String& i
 
 bool Internals::isValidContentSelect(Element* insertionPoint, ExceptionCode& ec)
 {
-    if (!insertionPoint || !isInsertionPoint(insertionPoint)) {
+    if (!insertionPoint || !insertionPoint->isInsertionPoint()) {
         ec = INVALID_ACCESS_ERR;
         return false;
     }

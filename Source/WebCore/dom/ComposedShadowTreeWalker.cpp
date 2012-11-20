@@ -240,7 +240,7 @@ inline Node* ComposedShadowTreeWalker::escapeFallbackContentElement(const Node* 
 inline Node* ComposedShadowTreeWalker::traverseNodeEscapingFallbackContents(const Node* node, ParentTraversalDetails* details) const
 {
     ASSERT(node);
-    if (!isInsertionPoint(node))
+    if (!node->isInsertionPoint())
         return const_cast<Node*>(node);
     const InsertionPoint* insertionPoint = toInsertionPoint(node);
     return insertionPoint->hasDistribution() ? 0 :

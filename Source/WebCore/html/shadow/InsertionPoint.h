@@ -86,32 +86,26 @@ private:
     bool m_shouldResetStyleInheritance : 1;
 };
 
-inline bool isInsertionPoint(const Node* node)
-{
-    ASSERT(node);
-    return node->isInsertionPoint();
-}
-
 inline InsertionPoint* toInsertionPoint(Node* node)
 {
-    ASSERT(!node || isInsertionPoint(node));
+    ASSERT(!node || node->isInsertionPoint());
     return static_cast<InsertionPoint*>(node);
 }
 
 inline const InsertionPoint* toInsertionPoint(const Node* node)
 {
-    ASSERT(!node || isInsertionPoint(node));
+    ASSERT(!node || node->isInsertionPoint());
     return static_cast<const InsertionPoint*>(node);
 }
 
 inline bool isActiveInsertionPoint(const Node* node)
 {
-    return isInsertionPoint(node) && toInsertionPoint(node)->isActive();
+    return node->isInsertionPoint() && toInsertionPoint(node)->isActive();
 }
 
 inline bool isLowerEncapsulationBoundary(Node* node)
 {
-    if (!node || !isInsertionPoint(node))
+    if (!node || !node->isInsertionPoint())
         return false;
     return toInsertionPoint(node)->isShadowBoundary();
 }
@@ -121,7 +115,7 @@ inline Node* parentNodeForDistribution(const Node* node)
     ASSERT(node);
 
     if (Node* parent = node->parentNode()) {
-        if (isInsertionPoint(parent) && toInsertionPoint(parent)->shouldUseFallbackElements())
+        if (parent->isInsertionPoint() && toInsertionPoint(parent)->shouldUseFallbackElements())
             return parent->parentNode();
         return parent;
     }

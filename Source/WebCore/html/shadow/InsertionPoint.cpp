@@ -85,7 +85,7 @@ bool InsertionPoint::isActive() const
         return false;
     const Node* node = parentNode();
     while (node) {
-        if (WebCore::isInsertionPoint(node))
+        if (node->isInsertionPoint())
             return false;
 
         node = node->parentNode();
