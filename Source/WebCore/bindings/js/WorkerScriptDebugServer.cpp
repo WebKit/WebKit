@@ -61,6 +61,12 @@ void WorkerScriptDebugServer::addListener(ScriptDebugListener* listener)
     recompileAllJSFunctions(0);
 }
 
+void WorkerScriptDebugServer::willExecuteProgram(const JSC::DebuggerCallFrame& debuggerCallFrame, intptr_t sourceID, int lineNumber, int columnNumber)
+{
+    if (!m_paused)
+        createCallFrame(debuggerCallFrame, sourceID, lineNumber, columnNumber);
+}
+
 void WorkerScriptDebugServer::recompileAllJSFunctions(Timer<ScriptDebugServer>*)
 {
     JSC::JSGlobalData* globalData = m_workerContext->script()->globalData();

@@ -1,3 +1,27 @@
+2012-11-19  Peter Wang  <peter.wang@torchmobile.com.cn>
+
+        Web Inspector: [JSC] worker debugger shouldn't stop for "willExecuteProgram" instruction
+        https://bugs.webkit.org/show_bug.cgi?id=102637
+
+        Reviewed by Timothy Hatcher.
+
+        Override the interface "willExecuteProgram" to let WorkerScriptDebugServer to avoid to stop for it.
+
+        No new DRT test case. Sorry, so far it seems impossible to write a case to controle the popupped
+        worker inspector window.
+
+        * bindings/js/ScriptDebugServer.cpp:
+        (WebCore::ScriptDebugServer::createCallFrame):
+        (WebCore::ScriptDebugServer::callEvent):
+        (WebCore::ScriptDebugServer::willExecuteProgram):
+        * bindings/js/ScriptDebugServer.h:
+        (ScriptDebugServer):
+        * bindings/js/WorkerScriptDebugServer.cpp:
+        (WebCore::WorkerScriptDebugServer::willExecuteProgram):
+        (WebCore):
+        * bindings/js/WorkerScriptDebugServer.h:
+        (WorkerScriptDebugServer):
+
 2012-11-19  Pratik Solanki  <psolanki@apple.com>
 
         For single element arrays use the pointer into the CFDataRef instead of copying data

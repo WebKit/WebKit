@@ -127,7 +127,7 @@ protected:
     void dispatchDidParseSource(const ListenerSet& listeners, JSC::SourceProvider*, bool isContentScript);
     void dispatchFailedToParseSource(const ListenerSet& listeners, JSC::SourceProvider*, int errorLine, const String& errorMessage);
 
-    void createCallFrameAndPauseIfNeeded(const JSC::DebuggerCallFrame&, intptr_t sourceID, int lineNumber, int columnNumber);
+    void createCallFrame(const JSC::DebuggerCallFrame&, intptr_t sourceID, int lineNumber, int columnNumber);
     void updateCallFrameAndPauseIfNeeded(const JSC::DebuggerCallFrame&, intptr_t sourceID, int lineNumber, int columnNumber);
     void pauseIfNeeded(JSC::JSGlobalObject* dynamicGlobalObject);
 
