@@ -1,5 +1,19 @@
 2012-11-19  Kentaro Hara  <haraken@chromium.org>
 
+        [V8] Merge getCachedWrapper(Node*) into DOMDataStore
+        https://bugs.webkit.org/show_bug.cgi?id=102158
+
+         Reviewed by Adam Barth.
+
+        A follow-up patch for r135230. This patch adds a correct ASSERTION.
+
+        No tests. No change in behavior.
+
+        * bindings/v8/DOMDataStore.h:
+        (WebCore::DOMDataStore::getNode):
+
+2012-11-19  Kentaro Hara  <haraken@chromium.org>
+
         [JSC] Replace $implClassName with $interfaceName in CodeGeneratorJS.pm
         https://bugs.webkit.org/show_bug.cgi?id=102757
 
