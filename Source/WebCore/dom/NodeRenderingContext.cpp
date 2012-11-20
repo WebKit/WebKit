@@ -245,11 +245,15 @@ void NodeRendererFactory::createRendererIfNeeded()
     if (!m_context.shouldCreateRenderer())
         return;
 
+    ASSERT(m_context.parentRenderer());
+
     Element* element = node->isElementNode() ? toElement(node) : 0;
     if (element)
         m_context.setStyle(element->styleForRenderer());
-    else if (RenderObject* parentRenderer = m_context.parentRenderer())
-        m_context.setStyle(parentRenderer->style());
+    else
+        m_context.setStyle(m_context.parentRenderer()->style());
+
+    ASSERT(m_context.style());
 
     if (!node->rendererIsNeeded(m_context)) {
         if (element && m_context.style()->affectedByEmpty())

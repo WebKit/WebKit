@@ -1,3 +1,23 @@
+2012-11-19  Elliott Sprehn  <esprehn@chromium.org>
+
+        Remove unneeded null check in NodeRendererFactory::createRendererIfNeeded
+        https://bugs.webkit.org/show_bug.cgi?id=102765
+
+        Reviewed by Ojan Vafai.
+
+        If parentRenderer() was null then we return early from
+        createRendererIfNeeded() because shouldCreateRenderer() will return false
+        so there's no reason to check for it again.
+
+        Additionally if either parentRenderer() or style() is null then
+        implementations of rendererIsNeeded() will crash, so add asserts to
+        make this assumption more clear.
+
+        No new tests, just simplification.
+
+        * dom/NodeRenderingContext.cpp:
+        (WebCore::NodeRendererFactory::createRendererIfNeeded):
+
 2012-11-19  Shinya Kawanaka  <shinyak@chromium.org>
 
         [Refactoring] Remove WebCore::isInsertionPoint(Node*)
