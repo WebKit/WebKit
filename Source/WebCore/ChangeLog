@@ -1,3 +1,19 @@
+2012-11-19  Erik Arvidsson  <arv@chromium.org>
+
+        Remove historical enums from ExceptionCode.h
+        https://bugs.webkit.org/show_bug.cgi?id=102095
+
+        Reviewed by Ojan Vafai.
+
+        Remove unused enums from ExceptionCode.
+
+        No new tests. No tests affected.
+
+        * Modules/intents/NavigatorIntents.cpp:
+        (WebCore::NavigatorIntents::webkitStartActivity): The error type for this is unspecified.
+        * dom/DOMCoreException.cpp:
+        * dom/ExceptionCode.h:
+
 2012-11-20  Keishi Hattori  <keishi@webkit.org>
 
         Week picker width is too small

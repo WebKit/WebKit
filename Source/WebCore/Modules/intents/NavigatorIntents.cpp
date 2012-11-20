@@ -61,7 +61,7 @@ void NavigatorIntents::webkitStartActivity(Navigator* navigator,
     }
 
     if (intent->action().isEmpty() || intent->type().isEmpty()) {
-        ec = VALIDATION_ERR;
+        ec = TYPE_MISMATCH_ERR;
         return;
     }
 

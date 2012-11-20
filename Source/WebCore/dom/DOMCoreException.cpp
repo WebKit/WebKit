@@ -36,11 +36,11 @@ static struct CoreException {
     const char* const description;
 } coreExceptions[] = {
     { "IndexSizeError", "Index or size was negative, or greater than the allowed value." },
-    { "DOMStringSizeError", "The specified range of text did not fit into a DOMString." },
+    { 0, 0 }, // DOMStringSizeError
     { "HierarchyRequestError", "A Node was inserted somewhere it doesn't belong." },
     { "WrongDocumentError", "A Node was used in a different document than the one that created it (that doesn't support it)." },
     { "InvalidCharacterError", "An invalid or illegal character was specified, such as in an XML name." },
-    { "NoDataAllowedError", "Data was specified for a Node which does not support data." },
+    { 0, 0 }, // NoDataAllowedError
     { "NoModificationAllowedError", "An attempt was made to modify an object where modifications are not allowed." },
     { "NotFoundError", "An attempt was made to reference a Node in a context where it does not exist." },
     { "NotSupportedError", "The implementation did not support the requested type of object or operation." },
@@ -50,7 +50,7 @@ static struct CoreException {
     { "InvalidModificationError", "An attempt was made to modify the type of the underlying object." },
     { "NamespaceError", "An attempt was made to create or change an object in a way which is incorrect with regard to namespaces." },
     { "InvalidAccessError", "A parameter or an operation was not supported by the underlying object." },
-    { "ValidationError", "A call to a method such as insertBefore or removeChild would make the Node invalid with respect to \"partial validity\", this exception would be raised and the operation would not be done." },
+    { 0, 0 }, // ValidationError
     { "TypeMismatchError", "The type of an object was incompatible with the expected type of the parameter associated to the object." },
     { "SecurityError", "An attempt was made to break through the security policy of the user agent." },
     // FIXME: Couldn't find a description in the HTML/DOM specifications for NETWORK_ERR, ABORT_ERR, URL_MISMATCH_ERR, and QUOTA_EXCEEDED_ERR
