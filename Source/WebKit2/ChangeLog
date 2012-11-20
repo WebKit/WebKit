@@ -1,5 +1,17 @@
 2012-11-20  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
+        [Qt] Large areas highlighted on touch
+        https://bugs.webkit.org/show_bug.cgi?id=97216
+
+        Reviewed by Simon Hausmann.
+
+        Restrict highlighting of scripted event-handlers to inline elements only.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::highlightPotentialActivation):
+
+2012-11-20  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
         [Qt] Zoom logic confused by page and pinch resize
         https://bugs.webkit.org/show_bug.cgi?id=102803
 

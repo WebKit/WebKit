@@ -1698,17 +1698,21 @@ void WebPage::highlightPotentialActivation(const IntPoint& point, const IntSize&
 #endif
         // Find the node to highlight. This is not the same as the node responding the tap gesture, because many
         // pages has a global click handler and we do not want to highlight the body.
-        // Instead find the enclosing link or focusable element, or the last enclosing inline element.
         for (Node* node = adjustedNode; node; node = node->parentOrHostNode()) {
             if (node->isDocumentNode() || node->isFrameOwnerElement())
                 break;
-            if (node->isMouseFocusable() || node->willRespondToMouseClickEvents()) {
+
+            // We always highlight focusable (form-elements), image links or content-editable elements.
+            if (node->isMouseFocusable() || node->isLink() || node->isContentEditable())
                 activationNode = node;
-                break;
+            else if (node->willRespondToMouseClickEvents()) {
+                // Highlight elements with default mouse-click handlers, but highlight only inline elements with
+                // scripted event-handlers.
+                if (!node->Node::willRespondToMouseClickEvents() || (node->renderer() && node->renderer()->isInline()))
+                    activationNode = node;
             }
-            if (node->renderer() && node->renderer()->isInline())
-                activationNode = node;
-            else if (activationNode)
+
+            if (activationNode)
                 break;
         }
 
