@@ -1,3 +1,13 @@
+2012-11-19  Yury Semikhatsky  <yurys@chromium.org>
+
+        Unreviewed. Fix Chromium Debug compilation after r135230.
+        https://bugs.webkit.org/show_bug.cgi?id=102158
+
+        Removed ASSERT that used instance field in a static method.
+
+        * bindings/v8/DOMDataStore.h:
+        (WebCore::DOMDataStore::getWrapperFromObject):
+
 2012-11-19  Chris Guan  <chris.guan@torchmobile.com.cn>
 
         [Blackberry] When a frame is being detached, cancel all its network jobs.

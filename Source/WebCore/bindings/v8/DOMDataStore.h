@@ -98,7 +98,6 @@ private:
 
     static v8::Handle<v8::Object> getWrapperFromObject(ScriptWrappable* object)
     {
-        ASSERT(m_type == MainWorld);
         return object->wrapper();
     }
 
