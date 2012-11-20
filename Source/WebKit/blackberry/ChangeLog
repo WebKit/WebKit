@@ -1,3 +1,18 @@
+2012-11-19  Genevieve Mak  <gmak@rim.com>
+
+        [BlackBerry] Block Zoom picks wrong block
+        https://bugs.webkit.org/show_bug.cgi?id=102728
+
+        Reviewed by Rob Buis.
+
+        Reviewed Internally by Jakob Petsovits
+        Remove transform missed in previous commit for
+        https://bugs.webkit.org/show_bug.cgi?id=101608
+        PR #247198
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::nodeForZoomUnderPoint):
+
 2012-11-19  Liam Quinn  <lquinn@rim.com>
 
         [BlackBerry] Remove RTSP handling from FrameLoaderClientBlackBerry

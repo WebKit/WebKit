@@ -2727,12 +2727,12 @@ double WebPagePrivate::maxBlockZoomScale() const
     return std::min(maximumBlockZoomScale, maximumScale());
 }
 
-Node* WebPagePrivate::nodeForZoomUnderPoint(const IntPoint& point)
+Node* WebPagePrivate::nodeForZoomUnderPoint(const IntPoint& documentPoint)
 {
     if (!m_mainFrame)
         return 0;
 
-    HitTestResult result = m_mainFrame->eventHandler()->hitTestResultAtPoint(mapFromTransformed(point), false);
+    HitTestResult result = m_mainFrame->eventHandler()->hitTestResultAtPoint(documentPoint, false);
 
     Node* node = result.innerNonSharedNode();
 
