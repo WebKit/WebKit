@@ -1855,13 +1855,8 @@ sub GenerateOverloadedConstructorCallback
 v8::Handle<v8::Value> V8${interfaceName}::constructorCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.${interfaceName}.Constructor");
-    if (!args.IsConstructCall())
-        return throwTypeError("DOM object constructor cannot be called as a function.");
-
-    if (ConstructorMode::current() == ConstructorMode::WrapExistingObject)
-        return args.Holder();
-
 END
+    push(@implContent, GenerateConstructorHeader());
 
     my $leastNumMandatoryParams = 255;
     foreach my $constructor (@{$interface->constructors}) {
@@ -1916,13 +1911,7 @@ v8::Handle<v8::Value> V8${interfaceName}::constructor${overloadedIndexString}Cal
 END
 
     if ($function->{overloadedIndex} == 0) {
-       push(@implContent, <<END);
-    if (!args.IsConstructCall())
-        return throwTypeError("DOM object constructor cannot be called as a function.");
-
-    if (ConstructorMode::current() == ConstructorMode::WrapExistingObject)
-        return args.Holder();
-END
+        push(@implContent, GenerateConstructorHeader());
         push(@implContent, GenerateArgumentsCountCheck($function, $interface));
     }
 
@@ -2011,13 +2000,10 @@ sub GenerateEventConstructorCallback
 v8::Handle<v8::Value> V8${interfaceName}::constructorCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.${interfaceName}.Constructor");
+END
+    push(@implContent, GenerateConstructorHeader());
 
-    if (!args.IsConstructCall())
-        return throwTypeError("DOM object constructor cannot be called as a function.");
-
-    if (ConstructorMode::current() == ConstructorMode::WrapExistingObject)
-        return args.Holder();
-
+    push(@implContent, <<END);
     if (args.Length() < 1)
         return throwNotEnoughArgumentsError(args.GetIsolate());
 
@@ -2118,12 +2104,9 @@ static v8::Handle<v8::Value> ${v8InterfaceName}ConstructorCallback(const v8::Arg
 {
     INC_STATS("DOM.${interfaceName}.Constructor");
     ${maybeObserveFeature}
-    if (!args.IsConstructCall())
-        return throwTypeError("DOM object constructor cannot be called as a function.");
-
-    if (ConstructorMode::current() == ConstructorMode::WrapExistingObject)
-        return args.Holder();
-
+END
+    push(@implContent, GenerateConstructorHeader());
+    push(@implContent, <<END);
     Document* document = currentDocument(BindingState::instance());
 
     // Make sure the document is added to the DOM Node map. Otherwise, the ${interfaceName} instance
@@ -2205,6 +2188,18 @@ v8::Persistent<v8::FunctionTemplate> ${v8InterfaceName}Constructor::GetTemplate(
 }
 
 END
+}
+
+sub GenerateConstructorHeader
+{
+    my $content = <<END;
+    if (!args.IsConstructCall())
+        return throwTypeError("DOM object constructor cannot be called as a function.");
+
+    if (ConstructorMode::current() == ConstructorMode::WrapExistingObject)
+        return args.Holder();
+END
+    return $content;
 }
 
 sub GenerateBatchedAttributeData
