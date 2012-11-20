@@ -269,22 +269,22 @@ sub ReadPublicInterfaces
 sub GenerateInterface
 {
     my $object = shift;
-    my $dataNode = shift;
+    my $interface = shift;
     my $defines = shift;
 
     $fatalError = 0;
 
-    my $name = $dataNode->name;
+    my $name = $interface->name;
     my $className = GetClassName($name);
-    my $parentClassName = "DOM" . GetParentImplClassName($dataNode);
-    $isProtocol = $dataNode->extendedAttributes->{ObjCProtocol};
-    $noImpl = $dataNode->extendedAttributes->{ObjCCustomImplementation} || $isProtocol;
+    my $parentClassName = "DOM" . GetParentImplClassName($interface);
+    $isProtocol = $interface->extendedAttributes->{ObjCProtocol};
+    $noImpl = $interface->extendedAttributes->{ObjCCustomImplementation} || $isProtocol;
 
     ReadPublicInterfaces($className, $parentClassName, $defines, $isProtocol);
 
     # Start actual generation..
-    $object->GenerateHeader($dataNode);
-    $object->GenerateImplementation($dataNode) unless $noImpl;
+    $object->GenerateHeader($interface);
+    $object->GenerateImplementation($interface) unless $noImpl;
 
     # Write changes.
     $object->WriteData(FileNamePrefix . $name);
@@ -337,11 +337,11 @@ sub GetImplClassName
 
 sub GetParentImplClassName
 {
-    my $dataNode = shift;
+    my $interface = shift;
 
-    return "Object" if @{$dataNode->parents} eq 0;
+    return "Object" if @{$interface->parents} eq 0;
 
-    my $parent = $dataNode->parents(0);
+    my $parent = $interface->parents(0);
 
     # special cases
     return "Object" if $parent eq "HTMLCollection";
@@ -351,20 +351,20 @@ sub GetParentImplClassName
 
 sub GetParentAndProtocols
 {
-    my $dataNode = shift;
-    my $numParents = @{$dataNode->parents};
+    my $interface = shift;
+    my $numParents = @{$interface->parents};
 
     my $parent = "";
     my @protocols = ();
     if ($numParents eq 0) {
         if ($isProtocol) {
             push(@protocols, "NSObject");
-            push(@protocols, "NSCopying") if $dataNode->name eq "EventTarget";
+            push(@protocols, "NSCopying") if $interface->name eq "EventTarget";
         } else {
             $parent = "DOMObject";
         }
     } elsif ($numParents eq 1) {
-        my $parentName = $dataNode->parents(0);
+        my $parentName = $interface->parents(0);
         if ($isProtocol) {
             die "Parents of protocols must also be protocols." unless IsProtocolType($parentName);
             push(@protocols, "DOM" . $parentName);
@@ -378,7 +378,7 @@ sub GetParentAndProtocols
             }
         }
     } else {
-        my @parents = @{$dataNode->parents};
+        my @parents = @{$interface->parents};
         my $firstParent = shift(@parents);
         if (IsProtocolType($firstParent)) {
             push(@protocols, "DOM" . $firstParent);
@@ -684,18 +684,18 @@ sub GetSVGPropertyTypes
 sub GenerateHeader
 {
     my $object = shift;
-    my $dataNode = shift;
+    my $interface = shift;
 
-    my $interfaceName = $dataNode->name;
+    my $interfaceName = $interface->name;
     my $className = GetClassName($interfaceName);
 
     my $parentName = "";
     my @protocolsToImplement = ();
-    ($parentName, @protocolsToImplement) = GetParentAndProtocols($dataNode);
+    ($parentName, @protocolsToImplement) = GetParentAndProtocols($interface);
 
-    my $numConstants = @{$dataNode->constants};
-    my $numAttributes = @{$dataNode->attributes};
-    my $numFunctions = @{$dataNode->functions};
+    my $numConstants = @{$interface->constants};
+    my $numAttributes = @{$interface->attributes};
+    my $numFunctions = @{$interface->functions};
 
     # - Add default header template
     @headerContentHeader = split("\r", $headerLicenseTemplate);
@@ -734,7 +734,7 @@ sub GenerateHeader
     # - Add constants.
     if ($numConstants > 0) {
         my @headerConstants = ();
-        my @constants = @{$dataNode->constants};
+        my @constants = @{$interface->constants};
         my $combinedConstants = "";
 
         # FIXME: we need a way to include multiple enums.
@@ -776,7 +776,7 @@ sub GenerateHeader
 
     # - Add attribute getters/setters.
     if ($numAttributes > 0) {
-        foreach my $attribute (@{$dataNode->attributes}) {
+        foreach my $attribute (@{$interface->attributes}) {
             next if SkipAttribute($attribute);
             my $attributeName = $attribute->signature->name;
 
@@ -839,9 +839,9 @@ sub GenerateHeader
 
     # - Add functions.
     if ($numFunctions > 0) {
-        foreach my $function (@{$dataNode->functions}) {
+        foreach my $function (@{$interface->functions}) {
             next if SkipFunction($function);
-            next if ($function->signature->name eq "set" and $dataNode->extendedAttributes->{"TypedArray"});
+            next if ($function->signature->name eq "set" and $interface->extendedAttributes->{"TypedArray"});
             my $functionName = $function->signature->name;
 
             my $returnType = GetObjCType($function->signature->type);
@@ -1027,7 +1027,7 @@ sub GenerateHeader
         push(@internalHeaderContent, "$implType* core($className *);\n");
         push(@internalHeaderContent, "$className *kit($implType*);\n");
 
-        if ($dataNode->extendedAttributes->{"ObjCPolymorphic"}) {
+        if ($interface->extendedAttributes->{"ObjCPolymorphic"}) {
             push(@internalHeaderContent, "Class kitClass($implType*);\n");
         }
 
@@ -1042,24 +1042,24 @@ sub GenerateHeader
 sub GenerateImplementation
 {
     my $object = shift;
-    my $dataNode = shift;
+    my $interface = shift;
 
     my @ancestorInterfaceNames = ();
 
-    if (@{$dataNode->parents} > 1) {
-        $codeGenerator->AddMethodsConstantsAndAttributesFromParentInterfaces($dataNode, \@ancestorInterfaceNames);
+    if (@{$interface->parents} > 1) {
+        $codeGenerator->AddMethodsConstantsAndAttributesFromParentInterfaces($interface, \@ancestorInterfaceNames);
     }
 
-    my $interfaceName = $dataNode->name;
+    my $interfaceName = $interface->name;
     my $className = GetClassName($interfaceName);
     my $implClassName = GetImplClassName($interfaceName);
-    my $parentImplClassName = GetParentImplClassName($dataNode);
+    my $parentImplClassName = GetParentImplClassName($interface);
     my $implClassNameWithNamespace = "WebCore::" . $implClassName;
     my $baseClass = GetBaseClass($parentImplClassName);
     my $classHeaderName = GetClassHeaderName($className);
 
-    my $numAttributes = @{$dataNode->attributes};
-    my $numFunctions = @{$dataNode->functions};
+    my $numAttributes = @{$interface->attributes};
+    my $numFunctions = @{$interface->functions};
     my $implType = $implClassNameWithNamespace;
 
     my ($svgPropertyType, $svgListPropertyType, $svgNativeType) = GetSVGPropertyTypes($implClassName);
@@ -1071,7 +1071,7 @@ sub GenerateImplementation
     # - INCLUDES -
     push(@implContentHeader, "\n#import \"config.h\"\n");
 
-    my $conditionalString = $codeGenerator->GenerateConditionalString($dataNode);
+    my $conditionalString = $codeGenerator->GenerateConditionalString($interface);
     push(@implContentHeader, "\n#if ${conditionalString}\n\n") if $conditionalString;
 
     push(@implContentHeader, "#import \"DOMInternal.h\"\n\n");
@@ -1159,7 +1159,7 @@ sub GenerateImplementation
 
     # - Attributes
     if ($numAttributes > 0) {
-        foreach my $attribute (@{$dataNode->attributes}) {
+        foreach my $attribute (@{$interface->attributes}) {
             next if SkipAttribute($attribute);
             AddIncludesForType($attribute->signature->type);
 
@@ -1456,9 +1456,9 @@ sub GenerateImplementation
 
     # - Functions
     if ($numFunctions > 0) {
-        foreach my $function (@{$dataNode->functions}) {
+        foreach my $function (@{$interface->functions}) {
             next if SkipFunction($function);
-            next if ($function->signature->name eq "set" and $dataNode->extendedAttributes->{"TypedArray"});
+            next if ($function->signature->name eq "set" and $interface->extendedAttributes->{"TypedArray"});
             AddIncludesForType($function->signature->type);
 
             my $functionName = $function->signature->name;
@@ -1718,7 +1718,7 @@ sub GenerateImplementation
         push(@implContent, "        return nil;\n");
         push(@implContent, "    if ($className *wrapper = getDOMWrapper(value))\n");
         push(@implContent, "        return [[wrapper retain] autorelease];\n");
-        if ($dataNode->extendedAttributes->{"ObjCPolymorphic"}) {
+        if ($interface->extendedAttributes->{"ObjCPolymorphic"}) {
             push(@implContent, "    $className *wrapper = [[kitClass(value) alloc] _init];\n");
             push(@implContent, "    if (!wrapper)\n");
             push(@implContent, "        return nil;\n");
