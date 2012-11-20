@@ -1,3 +1,15 @@
+2012-11-19  Viatcheslav Ostapenko  <v.ostapenko@samsung.com>
+
+        [EFL] Add fallback for WebkitTestRunner if opengl is not available.
+        https://bugs.webkit.org/show_bug.cgi?id=102704
+
+        Reviewed by Laszlo Gombos.
+
+        Add fallback to non-opengl evas engine in WebkitTestRunner if opengl is not available.
+
+        * WebKitTestRunner/efl/PlatformWebViewEfl.cpp:
+        (WTR::initEcoreEvas):
+
 2012-11-19  Dimitri Glazkov  <dglazkov@chromium.org>
 
         [garden-o-matic] Switch frontend to use the gardeningserver.
