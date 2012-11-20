@@ -1,3 +1,9 @@
+2012-11-19  Yury Semikhatsky  <yurys@chromium.org>
+
+        Unreviewed. Fix lint errors on chromium TextExpectations after r135205.
+
+        * platform/chromium/TestExpectations:
+
 2012-11-19  Shinya Kawanaka  <shinyak@chromium.org>
 
         [Shadow] attribute pseudo should return empty string instead of null when nothing is specified.
