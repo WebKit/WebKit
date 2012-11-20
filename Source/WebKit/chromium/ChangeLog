@@ -1,3 +1,18 @@
+2012-11-20  Tony Chang  <tony@chromium.org>
+
+        When calling DocumentStyleSheetCollection::addUserSheet, pass in a user sheet
+        https://bugs.webkit.org/show_bug.cgi?id=102835
+
+        Reviewed by Ojan Vafai.
+
+        After r135082, Chromium browser_tests were triggering the ASSERT in
+        StyleResolver::collectRulesFromUserStyleSheets. Add an ASSERT that will
+        trigger earlier and make it clear in the Chromium code that we're always
+        inserting user level styles.
+
+        * src/WebDocument.cpp:
+        (WebKit::WebDocument::insertUserStyleSheet):
+
 2012-11-20  Istiaque Ahmed  <lazyboy@chromium.org>
 
         Provide page/window coordinates to plugin's local coordinates translation in WebPluginContainer.

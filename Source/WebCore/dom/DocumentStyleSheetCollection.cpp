@@ -193,6 +193,7 @@ void DocumentStyleSheetCollection::invalidateInjectedStyleSheetCache()
 
 void DocumentStyleSheetCollection::addUserSheet(PassRefPtr<StyleSheetContents> userSheet)
 {
+    ASSERT(userSheet->isUserStyleSheet());
     m_userStyleSheets.append(CSSStyleSheet::create(userSheet, m_document));
     m_document->styleResolverChanged(RecalcStyleImmediately);
 }
