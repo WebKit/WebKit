@@ -51,9 +51,9 @@ class HRTFKernel : public RefCounted<HRTFKernel> {
 public:
     // Note: this is destructive on the passed in AudioChannel.
     // The length of channel must be a power of two.
-    static PassRefPtr<HRTFKernel> create(AudioChannel* channel, size_t fftSize, float sampleRate, bool bassBoost)
+    static PassRefPtr<HRTFKernel> create(AudioChannel* channel, size_t fftSize, float sampleRate)
     {
-        return adoptRef(new HRTFKernel(channel, fftSize, sampleRate, bassBoost));
+        return adoptRef(new HRTFKernel(channel, fftSize, sampleRate));
     }
 
     static PassRefPtr<HRTFKernel> create(PassOwnPtr<FFTFrame> fftFrame, float frameDelay, float sampleRate)
@@ -79,7 +79,7 @@ public:
 
 private:
     // Note: this is destructive on the passed in AudioChannel.
-    HRTFKernel(AudioChannel*, size_t fftSize, float sampleRate, bool bassBoost);
+    HRTFKernel(AudioChannel*, size_t fftSize, float sampleRate);
     
     HRTFKernel(PassOwnPtr<FFTFrame> fftFrame, float frameDelay, float sampleRate)
         : m_fftFrame(fftFrame)

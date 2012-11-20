@@ -1,3 +1,22 @@
+2012-11-19  Chris Rogers  <crogers@google.com>
+
+        Remove empirical bass-boost for HRTF spatialization
+        https://bugs.webkit.org/show_bug.cgi?id=102745
+
+        Reviewed by Kenneth Russell.
+
+        Some empirically-based post-processing is being removed so that we'll
+        now process with the exact HRTF impulse response measurements.
+        Listening tests have determined that this post-processing is not necessary.
+
+        * platform/audio/HRTFElevation.cpp:
+        (WebCore::HRTFElevation::calculateKernelsForAzimuthElevation):
+        * platform/audio/HRTFKernel.cpp:
+        (WebCore::HRTFKernel::HRTFKernel):
+        * platform/audio/HRTFKernel.h:
+        (WebCore::HRTFKernel::create):
+        (HRTFKernel):
+
 2012-11-19  Adam Barth  <abarth@webkit.org>
 
         DISALLOW_COPY_AND_ASSIGN is not a WebKit macro
