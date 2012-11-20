@@ -1,3 +1,9 @@
+2012-11-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update NEWS and configure.ac for 1.11.2 release
+
+        * configure.ac: Bump version numbers.
+
 2012-11-19  Kihong Kwon  <kihong.kwon@samsung.com>
 
         Add PROXIMITY_EVENTS feature

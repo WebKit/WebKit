@@ -1,3 +1,9 @@
+2012-11-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update NEWS and configure.ac for 1.11.2 release
+
+        * NEWS: Added release notes for 1.11.2.
+
 2012-11-16  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Move CredentialBackingStore usage from GtkAuthenticationDialog to ResourceHandleSoup

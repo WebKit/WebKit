@@ -1,4 +1,18 @@
 =================
+WebKitGTK+ 1.11.2
+=================
+
+What's new in WebKitGTK+ 1.11.2?
+
+  - Implement inspector server on Linux for remote debugging.
+  - Add support for password remembering to HTTP authentication
+    dialog in WebKit2 using libsecret.
+  - Add API to get favicons to WebKit2 GTK+ API.
+  - Add API to get the WebKitWebView associated to a WebKitDownload to
+    WebKit2 GTK+.
+  - Add GObject introspection support to WebKit2 GTK+ API.
+
+=================
 WebKitGTK+ 1.11.1
 =================
 
