@@ -1,3 +1,27 @@
+2012-11-20  Robert Kroeger  <rjkroege@chromium.org>
+
+        [chromium] Use embedder-supported gesture curves
+        https://bugs.webkit.org/show_bug.cgi?id=100884
+
+        Reviewed by James Robinson.
+
+        Use embedder-provided gesture animation curves via WebKit api interfaces.
+        Tested by existing tests.
+
+        * src/WebCompositorInputHandlerImpl.cpp:
+        (WebKit::WebCompositorInputHandlerImpl::handleGestureFling):
+        (WebKit::WebCompositorInputHandlerImpl::scrollBy):
+        * src/WebCompositorInputHandlerImpl.h:
+        (WebCompositorInputHandlerImpl):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::scrollBy):
+        (WebKit::WebViewImpl::handleGestureEvent):
+        (WebKit::WebViewImpl::transferActiveWheelFlingAnimation):
+        * src/WebViewImpl.h:
+        (WebCore):
+        (WebKit):
+        (WebViewImpl):
+
 2012-11-20  Tony Chang  <tony@chromium.org>
 
         When calling DocumentStyleSheetCollection::addUserSheet, pass in a user sheet

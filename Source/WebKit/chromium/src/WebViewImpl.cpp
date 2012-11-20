@@ -32,7 +32,6 @@
 #include "WebViewImpl.h"
 
 #include "AXObjectCache.h"
-#include "ActivePlatformGestureAnimation.h"
 #include "AutofillPopupMenuClient.h"
 #include "BackForwardListChromium.h"
 #include "BatteryClientImpl.h"
@@ -145,6 +144,7 @@
 #include "WebViewClient.h"
 #include "WheelEvent.h"
 #include "painting/GraphicsContextBuilder.h"
+#include "src/WebActiveGestureAnimation.h"
 #include <public/Platform.h>
 #include <public/WebCompositorOutputSurface.h>
 #include <public/WebCompositorSupport.h>
@@ -170,7 +170,6 @@
 #endif
 
 #if ENABLE(GESTURE_EVENTS)
-#include "PlatformGestureCurveFactory.h"
 #include "PlatformGestureEvent.h"
 #include "TouchDisambiguation.h"
 #endif
@@ -649,15 +648,15 @@ void WebViewImpl::handleMouseUp(Frame& mainFrame, const WebMouseEvent& event)
 #endif
 }
 
-void WebViewImpl::scrollBy(const WebCore::IntPoint& delta)
+void WebViewImpl::scrollBy(const WebPoint& delta)
 {
     WebMouseWheelEvent syntheticWheel;
     const float tickDivisor = WebCore::WheelEvent::tickMultiplier;
 
-    syntheticWheel.deltaX = delta.x();
-    syntheticWheel.deltaY = delta.y();
-    syntheticWheel.wheelTicksX = delta.x() / tickDivisor;
-    syntheticWheel.wheelTicksY = delta.y() / tickDivisor;
+    syntheticWheel.deltaX = delta.x;
+    syntheticWheel.deltaY = delta.y;
+    syntheticWheel.wheelTicksX = delta.x / tickDivisor;
+    syntheticWheel.wheelTicksY = delta.y / tickDivisor;
     syntheticWheel.hasPreciseScrollingDeltas = true;
     syntheticWheel.x = m_lastWheelPosition.x;
     syntheticWheel.y = m_lastWheelPosition.y;
@@ -705,9 +704,8 @@ bool WebViewImpl::handleGestureEvent(const WebGestureEvent& event)
         m_lastWheelPosition = WebPoint(event.x, event.y);
         m_lastWheelGlobalPosition = WebPoint(event.globalX, event.globalY);
         m_flingModifier = event.modifiers;
-        // FIXME: Make the curve parametrizable from the browser.
-        OwnPtr<PlatformGestureCurve> flingCurve = PlatformGestureCurveFactory::get()->createCurve(event.data.flingStart.sourceDevice, FloatPoint(event.data.flingStart.velocityX, event.data.flingStart.velocityY));
-        m_gestureAnimation = ActivePlatformGestureAnimation::create(flingCurve.release(), this);
+        OwnPtr<WebGestureCurve> flingCurve = adoptPtr(Platform::current()->createFlingAnimationCurve(event.data.flingStart.sourceDevice, WebFloatPoint(event.data.flingStart.velocityX, event.data.flingStart.velocityY), WebSize()));
+        m_gestureAnimation = WebActiveGestureAnimation::createAtAnimationStart(flingCurve.release(), this);
         scheduleAnimation();
         eventSwallowed = true;
         break;
@@ -809,8 +807,8 @@ void WebViewImpl::transferActiveWheelFlingAnimation(const WebActiveWheelFlingPar
     m_lastWheelPosition = parameters.point;
     m_lastWheelGlobalPosition = parameters.globalPoint;
     m_flingModifier = parameters.modifiers;
-    OwnPtr<PlatformGestureCurve> curve = PlatformGestureCurveFactory::get()->createCurve(parameters.sourceDevice, parameters.delta, IntPoint(parameters.cumulativeScroll));
-    m_gestureAnimation = ActivePlatformGestureAnimation::create(curve.release(), this, parameters.startTime);
+    OwnPtr<WebGestureCurve> curve = adoptPtr(Platform::current()->createFlingAnimationCurve(parameters.sourceDevice, WebFloatPoint(parameters.delta), parameters.cumulativeScroll));
+    m_gestureAnimation = WebActiveGestureAnimation::createWithTimeOffset(curve.release(), this, parameters.startTime);
     scheduleAnimation();
 }
 

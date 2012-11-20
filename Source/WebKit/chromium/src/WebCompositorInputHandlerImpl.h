@@ -26,10 +26,11 @@
 #ifndef WebCompositorInputHandlerImpl_h
 #define WebCompositorInputHandlerImpl_h
 
-#include "PlatformGestureCurveTarget.h"
 #include "WebActiveWheelFlingParameters.h"
 #include "WebCompositorInputHandler.h"
 #include "WebInputEvent.h"
+#include <public/WebGestureCurve.h>
+#include <public/WebGestureCurveTarget.h>
 #include <public/WebInputHandler.h>
 #include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>
@@ -41,14 +42,13 @@ class Mutex;
 
 namespace WebCore {
 class IntPoint;
-class PlatformGestureCurve;
 }
 
 namespace WebKit {
 
 class WebCompositorInputHandlerClient;
 
-class WebCompositorInputHandlerImpl : public WebCompositorInputHandler, public WebInputHandler, public WebCore::PlatformGestureCurveTarget {
+class WebCompositorInputHandlerImpl : public WebCompositorInputHandler, public WebInputHandler, public WebGestureCurveTarget {
     WTF_MAKE_NONCOPYABLE(WebCompositorInputHandlerImpl);
 public:
     static WebCompositorInputHandler* fromIdentifier(int identifier);
@@ -64,8 +64,8 @@ public:
     virtual void bindToClient(WebInputHandlerClient*);
     virtual void animate(double monotonicTime);
 
-    // WebCore::PlatformGestureCurveTarget implementation.
-    virtual void scrollBy(const WebCore::IntPoint&);
+    // WebGestureCurveTarget implementation.
+    virtual void scrollBy(const WebPoint&);
 
     int identifier() const { return m_identifier; }
 
@@ -81,7 +81,7 @@ private:
     // Returns true if we actually had an active fling to cancel.
     bool cancelCurrentFling();
 
-    OwnPtr<WebCore::PlatformGestureCurve> m_wheelFlingCurve;
+    OwnPtr<WebGestureCurve> m_wheelFlingCurve;
     // Parameters for the active fling animation, stored in case we need to transfer it out later.
     WebActiveWheelFlingParameters m_wheelFlingParameters;
 
