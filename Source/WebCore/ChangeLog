@@ -1,3 +1,31 @@
+2012-11-19  Tony Chang  <tony@chromium.org>
+
+        Move more non-settings out of InternalSettings
+        https://bugs.webkit.org/show_bug.cgi?id=102711
+
+        Reviewed by Adam Barth.
+
+        Remove userPreferredLanguages, setUserPreferredLanguages and allowRoundingHacks
+        from internal.settings since they are already exposed by window.internals (in
+        fact, no one calls the internal.settings version).
+
+        Move setUsesOverlayScrollbars from internals.settings to internals because it is
+        a global (static) setting and not tied to the lifetime of the Settings object.
+
+        No new tests, there should be no behavior change since this is a refactor.
+
+        * testing/InternalSettings.cpp:
+        (WebCore::InternalSettings::reset): Remove custom reset code.
+        (WebCore::InternalSettings::setUsesOverlayScrollbars): Add exception code handling to make it more consistent with other settings setters.
+        * testing/InternalSettings.h:
+        * testing/InternalSettings.idl: Remove unnecessary methods.
+        * testing/Internals.cpp:
+        (WebCore::Internals::resetToConsistentState): Reset userPreferredLanguages, allowRoundingHacks and overlay scrollbars.
+        (WebCore::Internals::userPreferredLanguages): Don't go through InternalSettings.
+        (WebCore::Internals::setUserPreferredLanguages): Don't go through InternalSettings.
+        (WebCore::Internals::setUsesOverlayScrollbars): Moved from InternalsSettings.
+        (WebCore::Internals::allowRoundingHacks): Don't go through InternalSettings.
+
 2012-11-19  David Grogan  <dgrogan@chromium.org>
 
         IndexedDB: Complex series of opens/deleteDatabase fails an ASSERT

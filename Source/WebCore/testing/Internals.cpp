@@ -212,6 +212,10 @@ Internals::~Internals()
 void Internals::resetToConsistentState(Page* page)
 {
     ASSERT(page);
+
+    TextRun::setAllowsRoundingHacks(false);
+    WebCore::overrideUserPreferredLanguages(Vector<String>());
+    WebCore::Settings::setUsesOverlayScrollbars(false);
 #if ENABLE(INSPECTOR) && ENABLE(JAVASCRIPT_DEBUGGER)
     if (page->inspectorController())
         page->inspectorController()->setProfilerEnabled(false);
@@ -1098,12 +1102,12 @@ int Internals::lastSpellCheckProcessedSequence(Document* document, ExceptionCode
 
 Vector<String> Internals::userPreferredLanguages() const
 {
-    return settings()->userPreferredLanguages();
+    return WebCore::userPreferredLanguages();
 }
 
 void Internals::setUserPreferredLanguages(const Vector<String>& languages)
 {
-    settings()->setUserPreferredLanguages(languages);
+    WebCore::overrideUserPreferredLanguages(languages);
 }
 
 unsigned Internals::wheelEventHandlerCount(Document* document, ExceptionCode& ec)
@@ -1407,7 +1411,7 @@ void Internals::garbageCollectDocumentResources(Document* document, ExceptionCod
 
 void Internals::allowRoundingHacks() const
 {
-    settings()->allowRoundingHacks();
+    TextRun::setAllowsRoundingHacks(true);
 }
 
 String Internals::counterValue(Element* element)
@@ -1638,6 +1642,11 @@ PassRefPtr<SerializedScriptValue> Internals::deserializeBuffer(PassRefPtr<ArrayB
 {
     String value(static_cast<const UChar*>(buffer->data()), buffer->byteLength() / sizeof(UChar));
     return SerializedScriptValue::createFromWire(value);
+}
+
+void Internals::setUsesOverlayScrollbars(bool enabled)
+{
+    WebCore::Settings::setUsesOverlayScrollbars(enabled);
 }
 
 }

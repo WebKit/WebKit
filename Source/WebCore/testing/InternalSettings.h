@@ -86,6 +86,7 @@ public:
         bool m_originalCompositingForScrollableFramesEnabled;
         bool m_originalAcceleratedDrawingEnabled;
         bool m_originalMockScrollbarsEnabled;
+        bool m_originalUsesOverlayScrollbars;
         bool m_langAttributeAwareFormControlUIEnabled;
         bool m_imagesEnabled;
 #if ENABLE(VIDEO_TRACK)
@@ -110,7 +111,7 @@ public:
     void setAcceleratedDrawingEnabled(bool enabled, ExceptionCode&);
     void setAcceleratedFiltersEnabled(bool enabled, ExceptionCode&);
     void setMockScrollbarsEnabled(bool enabled, ExceptionCode&);
-    void setUsesOverlayScrollbars(bool);
+    void setUsesOverlayScrollbars(bool enabled, ExceptionCode&);
     void setPasswordEchoEnabled(bool enabled, ExceptionCode&);
     void setPasswordEchoDurationInSeconds(double durationInSeconds, ExceptionCode&);
     void setFixedElementsLayoutRelativeToFrame(bool, ExceptionCode&);
@@ -147,11 +148,8 @@ public:
     void setSyncXHRInDocumentsEnabled(bool, ExceptionCode&);
     void setWindowFocusRestricted(bool, ExceptionCode&);
     void setDialogElementEnabled(bool, ExceptionCode&);
-    Vector<String> userPreferredLanguages() const;
-    void setUserPreferredLanguages(const Vector<String>&);
     void setPagination(const String& mode, int gap, ExceptionCode& ec) { setPagination(mode, gap, 0, ec); }
     void setPagination(const String& mode, int gap, int pageLength, ExceptionCode&);
-    void allowRoundingHacks() const;
     void setShouldDisplayTrackKind(const String& kind, bool enabled, ExceptionCode&);
     bool shouldDisplayTrackKind(const String& kind, ExceptionCode&);
     void setEnableMockPagePopup(bool, ExceptionCode&);

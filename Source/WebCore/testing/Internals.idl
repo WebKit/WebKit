@@ -220,4 +220,6 @@
 
     SerializedScriptValue deserializeBuffer(in ArrayBuffer buffer);
     ArrayBuffer serializeObject(in SerializedScriptValue obj);
+
+    void setUsesOverlayScrollbars(in boolean enabled);
 };

@@ -32,7 +32,6 @@
     void setAcceleratedDrawingEnabled(in boolean enabled) raises(DOMException);
     void setAcceleratedFiltersEnabled(in boolean enabled) raises(DOMException);
     void setMockScrollbarsEnabled(in boolean enabled) raises(DOMException);
-    void setUsesOverlayScrollbars(in boolean flag);
     void setPasswordEchoEnabled(in boolean enabled) raises(DOMException);
     void setPasswordEchoDurationInSeconds(in double durationInSeconds) raises(DOMException);
     void setFixedElementsLayoutRelativeToFrame(in boolean enabled) raises(DOMException);
@@ -72,9 +71,6 @@
     void setLangAttributeAwareFormControlUIEnabled(in boolean enabled);
 
     void setPagination(in DOMString mode, in long gap, in [Optional] long pageLength) raises(DOMException);
-    sequence<String> userPreferredLanguages();
-    void setUserPreferredLanguages(in sequence<String> languages);
-    void allowRoundingHacks();
     void setEnableMockPagePopup(in boolean enabled) raises(DOMException);
     [Conditional=VIDEO_TRACK] void setShouldDisplayTrackKind(in DOMString kind, in boolean enabled) raises (DOMException);
     [Conditional=VIDEO_TRACK] boolean shouldDisplayTrackKind(in DOMString trackKind) raises (DOMException);
