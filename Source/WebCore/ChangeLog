@@ -1,3 +1,17 @@
+2012-11-19  Pratik Solanki  <psolanki@apple.com>
+
+        For single element arrays use the pointer into the CFDataRef instead of copying data
+        https://bugs.webkit.org/show_bug.cgi?id=102306
+
+        Reviewed by Brent Fulgham.
+
+        Address review comments for slightly nicer code.
+
+        * platform/SharedBuffer.cpp:
+        (WebCore::SharedBuffer::data):
+        * platform/cf/SharedBufferCF.cpp:
+        (WebCore::SharedBuffer::singleDataArrayBuffer):
+
 2012-11-19  Chris Rogers  <crogers@google.com>
 
         Remove empirical bass-boost for HRTF spatialization

@@ -146,15 +146,14 @@ const char* SharedBuffer::data() const
         return platformData();
 
 #if USE(NETWORK_CFDATA_ARRAY_CALLBACK)
-    const char* directBuffer = singleDataArrayBuffer();
-    if (directBuffer)
-        return directBuffer;
+    if (const char* buffer = singleDataArrayBuffer())
+        return buffer;
 #endif
     
     if (m_purgeableBuffer)
         return m_purgeableBuffer->data();
     
-    return buffer().data();
+    return this->buffer().data();
 }
 
 void SharedBuffer::append(SharedBuffer* data)

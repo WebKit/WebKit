@@ -140,10 +140,10 @@ const char *SharedBuffer::singleDataArrayBuffer() const
     if (m_buffer.size())
         return 0;
 
-    if (m_dataArray.size() == 1)
-        return reinterpret_cast<const char*>(CFDataGetBytePtr(m_dataArray.at(0).get()));
+    if (m_dataArray.size() != 1)
+        return 0;
 
-    return 0;
+    return reinterpret_cast<const char*>(CFDataGetBytePtr(m_dataArray.at(0).get()));
 }
 #endif
 
