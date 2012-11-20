@@ -1,3 +1,18 @@
+2012-11-20  Tom Sepez  <tsepez@chromium.org>
+
+        XSSAuditor::decodedSnippetForJavaScript stopping when comma encountered.
+        https://bugs.webkit.org/show_bug.cgi?id=102587
+
+        Reviewed by Adam Barth.
+
+        Rather than returning an empty fragment, continue processing the body
+        of a script tag when the decoded fragment reduces to nothing.
+
+        Test: http/tests/security/xssAuditor/script-tag-with-actual-comma.html
+
+        * html/parser/XSSAuditor.cpp:
+        (WebCore::XSSAuditor::decodedSnippetForJavaScript):
+
 2012-11-20  James Simonsen  <simonjam@chromium.org>
 
         Consolidate FrameLoader::load() into one function taking a FrameLoadRequest

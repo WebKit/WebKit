@@ -614,31 +614,35 @@ String XSSAuditor::decodedSnippetForJavaScript(const HTMLToken& token)
             break;
     }
 
-    // Stop at next comment (using the same rules as above for SVG/XML vs HTML), when we 
-    // encounter a comma, or when we  exceed the maximum length target. The comma rule
-    // covers a common parameter concatenation case performed by some webservers.
-    // After hitting the length target, we can only stop at a point where we know we are
-    // not in the middle of a %-escape sequence. For the sake of simplicity, approximate
-    // not stopping inside a (possibly multiply encoded) %-esacpe sequence by breaking on
-    // whitespace only. We should have enough text in these cases to avoid false positives.
-    for (foundPosition = startPosition; foundPosition < endPosition; foundPosition++) {
-        if (!m_shouldAllowCDATA) {
-            if (startsSingleLineCommentAt(string, foundPosition) || startsMultiLineCommentAt(string, foundPosition)) {
-                endPosition = foundPosition + 2;
-                break;
+    String result;
+    while (startPosition < endPosition && !result.length()) {
+        // Stop at next comment (using the same rules as above for SVG/XML vs HTML), when we 
+        // encounter a comma, or when we  exceed the maximum length target. The comma rule
+        // covers a common parameter concatenation case performed by some webservers.
+        // After hitting the length target, we can only stop at a point where we know we are
+        // not in the middle of a %-escape sequence. For the sake of simplicity, approximate
+        // not stopping inside a (possibly multiply encoded) %-esacpe sequence by breaking on
+        // whitespace only. We should have enough text in these cases to avoid false positives.
+        for (foundPosition = startPosition; foundPosition < endPosition; foundPosition++) {
+            if (!m_shouldAllowCDATA) {
+                if (startsSingleLineCommentAt(string, foundPosition) || startsMultiLineCommentAt(string, foundPosition)) {
+                    foundPosition += 2;
+                    break;
+                }
+                if (startsHTMLCommentAt(string, foundPosition)) {
+                    foundPosition += 4;
+                    break;
+                }
             }
-            if (startsHTMLCommentAt(string, foundPosition)) {
-                endPosition = foundPosition + 4;
+            if (string[foundPosition] == ',' || (foundPosition > startPosition + kMaximumFragmentLengthTarget && isHTMLSpace(string[foundPosition]))) {
                 break;
             }
         }
-        if (string[foundPosition] == ',' || (foundPosition > startPosition + kMaximumFragmentLengthTarget && isHTMLSpace(string[foundPosition]))) {
-            endPosition = foundPosition;
-            break;
-        }
-    }
 
-    return fullyDecodeString(string.substring(startPosition, endPosition - startPosition), m_parser->document()->decoder());
+        result = fullyDecodeString(string.substring(startPosition, foundPosition - startPosition), m_parser->document()->decoder());
+        startPosition = foundPosition + 1;
+    }
+    return result;
 }
 
 bool XSSAuditor::isContainedInRequest(const String& decodedSnippet)
