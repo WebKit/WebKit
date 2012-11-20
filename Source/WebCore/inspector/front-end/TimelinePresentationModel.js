@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2012 Google Inc. All rights reserved.
+ * Copyright (C) 2012 Intel Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -883,8 +884,8 @@ WebInspector.TimelinePresentationModel.Record.prototype = {
                     contentHelper._appendTextRow(WebInspector.UIString("Interval Duration"), Number.secondsToString(this.intervalDuration, true));
                 break;
             default:
-                if (this.details())
-                    contentHelper._appendTextRow(WebInspector.UIString("Details"), this.details());
+                if (this.detailsNode())
+                    contentHelper._appendElementRow(WebInspector.UIString("Details"), this.detailsNode().childNodes[1].cloneNode());
                 break;
         }
 
@@ -911,49 +912,78 @@ WebInspector.TimelinePresentationModel.Record.prototype = {
 
     _refreshDetails: function()
     {
-        delete this._details;
+        delete this._detailsNode;
     },
 
     /**
-     * @return {Object?|string}
+     * @return {?Node}
      */
-    details: function()
+    detailsNode: function()
     {
-        if (!this._details)
-            this._details = this._getRecordDetails();
-        return this._details;
+        if (typeof this._detailsNode === "undefined") {
+            this._detailsNode = this._getRecordDetails();
+
+            if (this._detailsNode) {
+                this._detailsNode.insertBefore(document.createTextNode("("), this._detailsNode.firstChild);
+                this._detailsNode.appendChild(document.createTextNode(")"));
+            }
+        }
+        return this._detailsNode;
     },
 
+    _createSpanWithText: function(textContent)
+    {
+        var node = document.createElement("span");
+        node.textContent = textContent;
+        return node;
+    },
+
+    /**
+     * @return {?Node}
+     */
     _getRecordDetails: function()
     {
+        var details;
         switch (this.type) {
             case WebInspector.TimelineModel.RecordType.GCEvent:
-                return WebInspector.UIString("%s collected", Number.bytesToString(this.data["usedHeapSizeDelta"]));
+                details = WebInspector.UIString("%s collected", Number.bytesToString(this.data["usedHeapSizeDelta"]));
+                break;
             case WebInspector.TimelineModel.RecordType.TimerFire:
-                return this._linkifyScriptLocation(this.data["timerId"]);
+                details = this._linkifyScriptLocation(this.data["timerId"]);
+                break;
             case WebInspector.TimelineModel.RecordType.FunctionCall:
-                return this._linkifyScriptLocation();
+                details = this._linkifyScriptLocation();
+                break;
             case WebInspector.TimelineModel.RecordType.FireAnimationFrame:
-                return this._linkifyScriptLocation(this.data["id"]);
+                details = this._linkifyScriptLocation(this.data["id"]);
+                break;
             case WebInspector.TimelineModel.RecordType.EventDispatch:
-                return this.data ? this.data["type"] : null;
+                details = this.data ? this.data["type"] : null;
+                break;
             case WebInspector.TimelineModel.RecordType.Paint:
-                return this.data["width"] + "\u2009\u00d7\u2009" + this.data["height"];
+                details = this.data["width"] + "\u2009\u00d7\u2009" + this.data["height"];
+                break;
             case WebInspector.TimelineModel.RecordType.DecodeImage:
-                return this.data["imageType"];
+                details = this.data["imageType"];
+                break;
             case WebInspector.TimelineModel.RecordType.ResizeImage:
-                return this.data["cached"] ? WebInspector.UIString("cached") : WebInspector.UIString("non-cached");
+                details = this.data["cached"] ? WebInspector.UIString("cached") : WebInspector.UIString("non-cached");
+                break;
             case WebInspector.TimelineModel.RecordType.TimerInstall:
             case WebInspector.TimelineModel.RecordType.TimerRemove:
-                return this._linkifyTopCallFrame(this.data["timerId"]);
+                details = this._linkifyTopCallFrame(this.data["timerId"]);
+                break;
             case WebInspector.TimelineModel.RecordType.RequestAnimationFrame:
             case WebInspector.TimelineModel.RecordType.CancelAnimationFrame:
-                return this._linkifyTopCallFrame(this.data["id"]);
+                details = this._linkifyTopCallFrame(this.data["id"]);
+                break;
             case WebInspector.TimelineModel.RecordType.ParseHTML:
             case WebInspector.TimelineModel.RecordType.RecalculateStyles:
-                return this._linkifyTopCallFrame();
+                details = this._linkifyTopCallFrame();
+                break;
             case WebInspector.TimelineModel.RecordType.EvaluateScript:
-                return this.url ? this._linkifyLocation(this.url, this.data["lineNumber"], 0) : null;
+                details = this.url ? this._linkifyLocation(this.url, this.data["lineNumber"], 0) : null;
+                break;
             case WebInspector.TimelineModel.RecordType.XHRReadyStateChange:
             case WebInspector.TimelineModel.RecordType.XHRLoad:
             case WebInspector.TimelineModel.RecordType.ScheduleResourceRequest:
@@ -961,14 +991,22 @@ WebInspector.TimelinePresentationModel.Record.prototype = {
             case WebInspector.TimelineModel.RecordType.ResourceReceivedData:
             case WebInspector.TimelineModel.RecordType.ResourceReceiveResponse:
             case WebInspector.TimelineModel.RecordType.ResourceFinish:
-                return WebInspector.displayNameForURL(this.url);
+                details = WebInspector.displayNameForURL(this.url);
+                break;
             case WebInspector.TimelineModel.RecordType.Time:
             case WebInspector.TimelineModel.RecordType.TimeEnd:
             case WebInspector.TimelineModel.RecordType.TimeStamp:
-                return this.data["message"];
+                details = this.data["message"];
+                break;
             default:
-                return this._linkifyScriptLocation() || this._linkifyTopCallFrame() || null;
+                details = this._linkifyScriptLocation() || this._linkifyTopCallFrame() || null;
+                break;
         }
+
+        if (typeof details === "string")
+            return this._createSpanWithText(details);
+
+        return details ? details : null;
     },
 
     /**

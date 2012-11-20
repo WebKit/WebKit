@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2012 Google Inc. All rights reserved.
+ * Copyright (C) 2012 Intel Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -1325,17 +1326,9 @@ WebInspector.TimelineRecordListRow.prototype = {
 
         if (this._dataElement.firstChild)
             this._dataElement.removeChildren();
-        var details = record.details();
-        if (details) {
-            var detailsContainer = document.createElement("span");
-            if (typeof details === "object") {
-                detailsContainer.appendChild(document.createTextNode("("));
-                detailsContainer.appendChild(details);
-                detailsContainer.appendChild(document.createTextNode(")"));
-            } else
-                detailsContainer.textContent = "(" + details + ")";
-            this._dataElement.appendChild(detailsContainer);
-        }
+
+        if (record.detailsNode())
+            this._dataElement.appendChild(record.detailsNode());
     },
 
     highlight: function(regExp, domChanges)
@@ -1357,7 +1350,10 @@ WebInspector.TimelineRecordListRow.prototype = {
  */
 WebInspector.TimelineRecordListRow.testContentMatching = function(record, regExp)
 {
-    return regExp.test(record.title + " (" + record.details() + ")");
+    var toSearchText = record.title;
+    if (record.detailsNode())
+        toSearchText += " " + record.detailsNode().textContent;
+    return regExp.test(toSearchText);
 }
 
 /**
