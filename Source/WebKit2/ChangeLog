@@ -1,5 +1,17 @@
 2012-11-20  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
+        [Qt] No test of double-click to zoom out
+        https://bugs.webkit.org/show_bug.cgi?id=102810
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Adds tests of zoom-stack behaviour, the ability to restore previous zoom levels. It tests
+        that zoom out always goes to lower zoom levels.
+
+        * UIProcess/API/qt/tests/qmltests/WebView/tst_doubleTapToZoom.qml:
+
+2012-11-20  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
         [Qt] Large areas highlighted on touch
         https://bugs.webkit.org/show_bug.cgi?id=97216
 

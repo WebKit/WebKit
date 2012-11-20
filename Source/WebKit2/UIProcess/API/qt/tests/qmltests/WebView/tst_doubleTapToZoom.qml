@@ -8,8 +8,8 @@ import "../common"
 Item {
     TestWebView {
         id: webView
-        width: 480
-        height: 720
+        width: 320
+        height: 240
 
         property variant result
 
@@ -19,7 +19,10 @@ Item {
             "</head>" +
             "<body>" +
             "    <div id='target' " +
-            "         style='position:absolute; left:20; top:20; width:200; height:200;'>" +
+            "         style='position:absolute; left:20; top:20; width:220; height:80;'>" +
+            "    </div>" +
+            "    <div id='smalltarget' " +
+            "         style='position:absolute; left:20; top:120; width:140; height:80;'>" +
             "    </div>" +
             "</body>"
 
@@ -49,7 +52,7 @@ Item {
             scaleSpy.clear()
         }
 
-        function documentSize() {
+        function windowSize() {
             resultSpy.clear();
             var result;
 
@@ -77,19 +80,139 @@ Item {
             scaleSpy.wait()
         }
 
-        function test_basic() {
+        function test_basic_zoomInAndBack() {
             webView.url = webView.content
             verify(webView.waitForViewportReady())
 
-            compare(documentSize(), "480x720")
+            compare(windowSize(), "320x240")
 
             compare(test.contentsScale, 1.0)
 
             var rect = elementRect("target");
             var newScale = webView.width / (rect.width + 2 * 10) // inflated by 10px
-            doubleTapAtPoint(rect.left + rect.height / 2, rect.top + rect.width / 2)
+            doubleTapAtPoint(100, 50)
 
             compare(test.contentsScale, newScale)
+
+            doubleTapAtPoint(100, 50)
+
+            compare(test.contentsScale, 1.0)
+        }
+
+        function test_double_zoomInAndBack() {
+            webView.url = webView.content
+            verify(webView.waitForViewportReady())
+
+            compare(windowSize(), "320x240")
+            compare(test.contentsScale, 1.0)
+
+            var target = elementRect("target");
+            var smalltarget = elementRect("smalltarget");
+            var targetScale = webView.width / (target.width + 2 * 10) // inflated by 10px
+            var smallTargetScale = webView.width / (smalltarget.width + 2 * 10) // inflated by 10px
+
+            doubleTapAtPoint(100, 50)
+
+            compare(test.contentsScale, targetScale)
+
+            doubleTapAtPoint(100, 160)
+
+            compare(test.contentsScale, smallTargetScale)
+
+            // Zoom out by double clicking first the small target and then the large target.
+            doubleTapAtPoint(100, 120)
+
+            compare(test.contentsScale, targetScale)
+
+            doubleTapAtPoint(100, 50)
+
+            compare(test.contentsScale, 1.0)
+        }
+
+        function test_double_zoomInAndBack2() {
+            webView.url = webView.content
+            verify(webView.waitForViewportReady())
+
+            compare(windowSize(), "320x240")
+            compare(test.contentsScale, 1.0)
+
+            var target = elementRect("target");
+            var smalltarget = elementRect("smalltarget");
+            var targetScale = webView.width / (target.width + 2 * 10) // inflated by 10px
+            var smallTargetScale = webView.width / (smalltarget.width + 2 * 10) // inflated by 10px
+
+            doubleTapAtPoint(100, 50)
+
+            compare(test.contentsScale, targetScale)
+
+            doubleTapAtPoint(100, 160)
+
+            compare(test.contentsScale, smallTargetScale)
+
+            // Zoom out by double clicking the small target twice.
+            doubleTapAtPoint(100, 120)
+
+            compare(test.contentsScale, targetScale)
+
+            doubleTapAtPoint(100, 160)
+
+            compare(test.contentsScale, 1.0)
+        }
+
+        function test_double_zoomInOutAndBack() {
+            webView.url = webView.content
+            verify(webView.waitForViewportReady())
+
+            compare(windowSize(), "320x240")
+            compare(test.contentsScale, 1.0)
+
+            var target = elementRect("target");
+            var smalltarget = elementRect("smalltarget");
+            var targetScale = webView.width / (target.width + 2 * 10) // inflated by 10px
+            var smallTargetScale = webView.width / (smalltarget.width + 2 * 10) // inflated by 10px
+
+            doubleTapAtPoint(100, 50)
+
+            compare(test.contentsScale, targetScale)
+
+            doubleTapAtPoint(100, 160)
+
+            compare(test.contentsScale, smallTargetScale)
+
+            // Zoom out by double clicking the large target twice.
+            doubleTapAtPoint(100, 40)
+
+            compare(test.contentsScale, targetScale)
+
+            doubleTapAtPoint(100, 50)
+
+            compare(test.contentsScale, 1.0)
+        }
+
+        function test_double_zoomInOutAndBack2() {
+            webView.url = webView.content
+            verify(webView.waitForViewportReady())
+
+            compare(windowSize(), "320x240")
+            compare(test.contentsScale, 1.0)
+
+            var target = elementRect("target");
+            var smalltarget = elementRect("smalltarget");
+            var targetScale = webView.width / (target.width + 2 * 10) // inflated by 10px
+            var smallTargetScale = webView.width / (smalltarget.width + 2 * 10) // inflated by 10px
+
+            // Zoom in directly to the small target, and then out over the large target.
+            doubleTapAtPoint(100, 140)
+
+            compare(test.contentsScale, smallTargetScale)
+
+            doubleTapAtPoint(100, 20)
+
+            compare(test.contentsScale, targetScale)
+
+            doubleTapAtPoint(100, 50)
+
+            compare(test.contentsScale, 1.0)
         }
     }
 }
