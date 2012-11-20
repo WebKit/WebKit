@@ -74,11 +74,14 @@ test('results files loading', 5, function() {
 
     g_builders = {"WebKit Linux": true, "WebKit Win": true};
 
+    builders.masters['ChromiumWebkit'] = {'tests': {'layout-tests': {builders: ["WebKit Linux", "WebKit Win"]}}};
+    loadBuildersList('@ToT - chromium.org', 'layout-tests');
+
     try {
         resourceLoader._loadResultsFiles();
     } finally {
         g_builders = undefined;
-        g_resultsByBuilder = undefined;
+        g_resultsByBuilder = {};
         loader.request = requestFunction;
     }
 });

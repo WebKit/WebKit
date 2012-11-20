@@ -1,3 +1,63 @@
+2012-11-15  Ojan Vafai  <ojan@chromium.org>
+
+        Generate a list of builders/test suites from the buildbot json
+        https://bugs.webkit.org/show_bug.cgi?id=102443
+
+        Reviewed by Dirk Pranke.
+
+        Instead of the cludgy things we do now to track which bots run which tests,
+        we generate all that data from the buildbots' json files.
+        This is the minimal amount to keep everything working. Once this lands,
+        we can also do a bunch of followup cleanup.
+
+        For now we commit the generated data. In theory, in the future, we could
+        have the test results server generate the data on the fly.
+
+        For the sake of easily understanding what changes when we run the generate script,
+        also checkin a pretty printed version of the output. The pretty printed version
+        is too large to serve as part of the flakiness dashboard though.
+
+        This also has the benefit of making the dashboard load much faster since
+        we no longer ever need to block on requests to buildbot.
+
+        * TestResultServer/generate_builders_json.py: Added.
+        (master_json_url):
+        (builder_json_url):
+        (cached_build_json_url):
+        (fetch_json):
+        (insert_builder_and_test_data):
+        (main):
+        * TestResultServer/generate_builders_json_unittest.py: Added.
+        (GenerateBuildersJsonTest):
+        (GenerateBuildersJsonTest.test_master_json_url):
+        (GenerateBuildersJsonTest.test_builder_json_url):
+        (GenerateBuildersJsonTest.test_cached_build_json_url):
+        (GenerateBuildersJsonTest.test_generate_json_data):
+        (GenerateBuildersJsonTest.test_generate_json_data.dummy_fetch_json):
+        * TestResultServer/static-dashboards/builders-pretty.jsonp: Added.
+        * TestResultServer/static-dashboards/builders.js:
+        (LOAD_BUILDBOT_DATA):
+        (BuilderGroup):
+        (BuilderGroup.prototype.append):
+        (BuilderGroup.prototype.master):
+        (requestBuilderList):
+        * TestResultServer/static-dashboards/builders.jsonp: Added.
+        * TestResultServer/static-dashboards/builders_unittests.js: Added.
+        * TestResultServer/static-dashboards/dashboard_base.js:
+        * TestResultServer/static-dashboards/flakiness_dashboard.js:
+        (showPopupForBuild):
+        (htmlForTestResults):
+        (htmlForIndividualTestOnAllBuildersWithResultsLinks):
+        (loadExpectationsLayoutTests):
+        * TestResultServer/static-dashboards/flakiness_dashboard_unittests.js:
+        (resetGlobals):
+        (test):
+        * TestResultServer/static-dashboards/loader.js:
+        * TestResultServer/static-dashboards/loader_unittests.js:
+        * TestResultServer/static-dashboards/run-embedded-unittests.html:
+        * TestResultServer/static-dashboards/run-unittests.html:
+        * TestResultServer/static-dashboards/timeline_explorer.html:
+
 2012-11-20  Thiago Marcos P. Santos  <thiago.santos@intel.com>
 
         [WTR][Qt] Enable fixedLayout when needed by the test

@@ -1223,7 +1223,7 @@ function showPopupForBuild(e, builder, index, opt_testName)
             'WebKit') +
         '</li>';
 
-    if (master == WEBKIT_BUILDER_MASTER) {
+    if (master.name == WEBKIT_BUILDER_MASTER) {
         var revision = g_resultsByBuilder[builder].webkitRevision[index];
         html += '<li><span class=link onclick="setQueryParameter(\'revision\',' +
             revision + ')">Show results for WebKit r' + revision +
@@ -1291,7 +1291,7 @@ function htmlForTestResults(test)
         var extraClassNames = '';
         var webkitRevision = g_resultsByBuilder[builder].webkitRevision;
         var isWebkitMerge = webkitRevision[i + 1] && webkitRevision[i] != webkitRevision[i + 1];
-        if (isWebkitMerge && master != WEBKIT_BUILDER_MASTER)
+        if (isWebkitMerge && master.name != WEBKIT_BUILDER_MASTER)
             extraClassNames += ' merge';
 
         html += '<td title="' + (resultString || 'NO DATA') + '. Click for more info." class="results ' + currentResult +
@@ -1821,7 +1821,7 @@ function htmlForIndividualTestOnAllBuildersWithResultsLinks(test)
     if (isLayoutTestResults() || isGPUTestResults()) {
         if (isLayoutTestResults())
             html += ' | ' + linkHTMLToToggleState('showLargeExpectations', 'large thumbnails');
-        if (testResults && builderMaster(testResults[0].builder) == WEBKIT_BUILDER_MASTER) {
+        if (testResults && currentBuilderGroup().master().name == WEBKIT_BUILDER_MASTER) {
             var revision = g_currentState.revision || '';
             html += '<form onsubmit="setQueryParameter(\'revision\', revision.value);' +
                 'return false;">Show results for WebKit revision: ' +
@@ -2256,7 +2256,7 @@ function loadExpectationsLayoutTests(test, expectationsContainer)
     revisionContainer.textContent = "Showing results for: "
     expectationsContainer.appendChild(revisionContainer);
     for (var builder in g_builders) {
-        if (builderMaster(builder) == WEBKIT_BUILDER_MASTER) {
+        if (builderMaster(builder).name == WEBKIT_BUILDER_MASTER) {
             var latestRevision = g_currentState.revision || g_resultsByBuilder[builder].webkitRevision[0];
             var buildInfo = buildInfoForRevision(builder, latestRevision);
             var revisionInfo = document.createElement('div');
@@ -2274,7 +2274,7 @@ function loadExpectationsLayoutTests(test, expectationsContainer)
 
     for (var builder in g_builders) {
         var actualResultsBase;
-        if (builderMaster(builder) == WEBKIT_BUILDER_MASTER) {
+        if (builderMaster(builder).name == WEBKIT_BUILDER_MASTER) {
             var latestRevision = g_currentState.revision || g_resultsByBuilder[builder].webkitRevision[0];
             var buildInfo = buildInfoForRevision(builder, latestRevision);
             actualResultsBase = 'http://build.webkit.org/results/' + builder +

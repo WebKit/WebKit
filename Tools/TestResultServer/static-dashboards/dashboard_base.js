@@ -425,11 +425,6 @@ function currentBuilderGroup()
     return currentBuilderGroupCategory()[g_crossDashboardState.group]
 }
 
-function builderMaster(builderName)
-{
-    return BUILDER_TO_MASTER[builderName];
-}
-
 function isTipOfTreeWebKitBuilder()
 {
     return currentBuilderGroup().isToTWebKit;

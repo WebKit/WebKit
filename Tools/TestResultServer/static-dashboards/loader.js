@@ -71,11 +71,6 @@ loader.Loader.prototype = {
     {
         this._loadNext();
     },
-    buildersListLoaded: function()
-    {
-        initBuilders();
-        this._loadNext();
-    },
     _loadNext: function()
     {
         var loadingStep = this._loadingSteps.shift();
@@ -88,6 +83,8 @@ loader.Loader.prototype = {
     _loadBuildersList: function()
     {
         loadBuildersList(g_crossDashboardState.group, g_crossDashboardState.testType);
+        initBuilders();
+        this._loadNext();
     },
     _loadResultsFiles: function()
     {
