@@ -1,3 +1,43 @@
+2012-11-19  Adam Barth  <abarth@webkit.org>
+
+        [V8] Simplify V8DOMWindowShell::getEntered
+        https://bugs.webkit.org/show_bug.cgi?id=102156
+
+        Reviewed by Eric Seidel.
+
+        This patch is an incremental step towards merging
+        V8DOMWrapper::getCachedWrapper(Node*) with the general case for looking
+        up DOM wrappers. In order to merge with the general case, we need to
+        get down to calling v8::Context::GetCurrent once, which means we need
+        to factor the call to v8::Context::GetEntered out of V8DOMWindowShell.
+
+        As a side-benefit to this change, we can remove some redundant checks
+        for isolatedWorldsExist and v8::Context::InContext from callers of
+        V8DOMWindowShell::getEntered, including in getCachedWrapper.
+
+        * bindings/v8/DOMDataStore.cpp:
+        (WebCore::DOMDataStore::current):
+        * bindings/v8/ScriptController.cpp:
+        (WebCore::ScriptController::shouldBypassMainWorldContentSecurityPolicy):
+        (WebCore::ScriptController::currentWorldContext):
+        * bindings/v8/V8DOMWindowShell.h:
+        (WebCore::V8DOMWindowShell::isolated):
+        (WebCore::V8DOMWindowShell::perContextData):
+        (WebCore::V8DOMWindowShell::world):
+        (V8DOMWindowShell):
+        * bindings/v8/V8DOMWrapper.h:
+        (WebCore::V8DOMWrapper::getCachedWrapper):
+        * bindings/v8/WorldContextHandle.cpp:
+        (WebCore::WorldContextHandle::WorldContextHandle):
+        * bindings/v8/custom/V8DocumentCustom.cpp:
+        (WebCore::V8Document::dispatchWrapCustom):
+        * bindings/v8/custom/V8HTMLDocumentCustom.cpp:
+        (WebCore::V8HTMLDocument::dispatchWrapCustom):
+        * bindings/v8/custom/V8SVGDocumentCustom.cpp:
+        (WebCore::V8SVGDocument::dispatchWrapCustom):
+        * bindings/v8/custom/V8XMLHttpRequestConstructor.cpp:
+        (WebCore::V8XMLHttpRequest::constructorCallback):
+
 2012-11-19  Kentaro Hara  <haraken@chromium.org>
 
         Rename idlDocument::classes to idlDocument::interfaces in the IDL parser

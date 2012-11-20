@@ -55,8 +55,10 @@ v8::Handle<v8::Value> V8XMLHttpRequest::constructorCallback(const v8::Arguments&
     ScriptExecutionContext* context = getScriptExecutionContext();
 
     RefPtr<SecurityOrigin> securityOrigin;
-    if (V8DOMWindowShell* isolatedWorldShell = V8DOMWindowShell::getEntered())
-        securityOrigin = isolatedWorldShell->world()->isolatedWorldSecurityOrigin();
+    if (context->isDocument()) {
+        if (DOMWrapperWorld* world = worldForEnteredContextIfIsolated())
+            securityOrigin = world->isolatedWorldSecurityOrigin();
+    }
 
     RefPtr<XMLHttpRequest> xmlHttpRequest = XMLHttpRequest::create(context, securityOrigin);
 

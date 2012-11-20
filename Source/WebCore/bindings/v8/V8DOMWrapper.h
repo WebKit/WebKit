@@ -115,14 +115,15 @@ namespace WebCore {
         static v8::Handle<v8::Object> getCachedWrapper(Node* node)
         {
             ASSERT(isMainThread());
-            if (LIKELY(!DOMWrapperWorld::isolatedWorldsExist()))
+            if (LIKELY(!DOMWrapperWorld::isolatedWorldsExist()) || !v8::Context::InContext())
                 return node->wrapper();
 
-            V8DOMWindowShell* context = V8DOMWindowShell::getEntered();
-            if (LIKELY(!context))
+            v8::Handle<v8::Context> context = v8::Context::GetEntered();
+            V8DOMWindowShell* shell = V8DOMWindowShell::isolated(context);
+            if (LIKELY(!shell))
                 return node->wrapper();
 
-            return context->world()->isolatedWorldDOMDataStore()->get(node);
+            return shell->world()->isolatedWorldDOMDataStore()->get(node);
         }
 
     private:

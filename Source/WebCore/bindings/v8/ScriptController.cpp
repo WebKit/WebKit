@@ -423,8 +423,8 @@ void ScriptController::evaluateInIsolatedWorld(int worldID, const Vector<ScriptS
 
 bool ScriptController::shouldBypassMainWorldContentSecurityPolicy()
 {
-    if (V8DOMWindowShell* isolatedWorldShell = V8DOMWindowShell::getEntered())
-        return isolatedWorldShell->world()->isolatedWorldHasContentSecurityPolicy();
+    if (DOMWrapperWorld* world = worldForEnteredContextIfIsolated())
+        return world->isolatedWorldHasContentSecurityPolicy();
     return false;
 }
 
@@ -442,11 +442,13 @@ void ScriptController::finishedWithEvent(Event* event)
 
 v8::Local<v8::Context> ScriptController::currentWorldContext()
 {
-    if (V8DOMWindowShell* isolatedShell = V8DOMWindowShell::getEntered()) {
-        v8::Persistent<v8::Context> context = isolatedShell->context();
-        if (context.IsEmpty() || m_frame != toFrameIfNotDetached(context))
+    if (v8::Context::InContext()) {
+        v8::Handle<v8::Context> context = v8::Context::GetEntered();
+        if (V8DOMWindowShell::isolated(context)) {
+            if (m_frame == toFrameIfNotDetached(context))
+                return v8::Local<v8::Context>::New(context);
             return v8::Local<v8::Context>();
-        return v8::Local<v8::Context>::New(context);
+        }
     }
     return v8::Local<v8::Context>::New(windowShell(mainThreadNormalWorld())->context());
 }
