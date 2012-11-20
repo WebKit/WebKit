@@ -1,3 +1,19 @@
+2012-11-19  David Grogan  <dgrogan@chromium.org>
+
+        IndexedDB: convert delete-closed-database-object to upgradeneeded
+        https://bugs.webkit.org/show_bug.cgi?id=102458
+
+        Reviewed by Tony Chang.
+
+        This test relies on gc behavior and seems flaky in content_shell.
+
+        * storage/indexeddb/delete-closed-database-object-expected.txt:
+        * storage/indexeddb/resources/delete-closed-database-object.js:
+        (prepareDatabase):
+        (openSuccess.openRequest.onsuccess):
+        (openSuccess):
+        (setVersion):
+
 2012-11-19  Chris Rogers  <crogers@google.com>
 
         Implement .detune attribute for BiquadFilterNode

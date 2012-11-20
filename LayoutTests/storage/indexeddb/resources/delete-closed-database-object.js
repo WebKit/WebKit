@@ -5,45 +5,35 @@ if (this.importScripts) {
 
 description("Ensure that IDBDatabase objects are deleted when there are no retaining paths left");
 
-function test() {
-    removeVendorPrefixes();
-    openDBConnection();
-}
-
-function openDBConnection()
+indexedDBTest(prepareDatabase, openSuccess);
+function prepareDatabase()
 {
-    evalAndLog("self.state = 'starting'");
-    request = evalAndLog("indexedDB.open('delete-closed-database-object')");
-    request.onsuccess = openSuccess;
-    request.onerror = unexpectedErrorCallback;
 }
 
 function openSuccess()
 {
-    self.db = evalAndLog("db = event.target.result");
+    db = event.target.result;
+    evalAndLog("db.close()");
 
-    // Open a second connection to the same database.
-    var request2 = evalAndLog("indexedDB.open('delete-closed-database-object')");
-    request2.onsuccess = openSuccess2;
-    request2.onerror = unexpectedErrorCallback;
-}
-
-function openSuccess2()
-{
-    debug("Second connection successfully established.");
-    // After leaving this function, there are no remaining references to the
-    // second connection, so it should get deleted.
-    setTimeout(setVersion, 2);
+    debug("We can't specify a version here due to http://wkbug.com/102716");
+    var openRequest = evalAndLog("indexedDB.open(dbname)"); // NOTE: No version specified.
+    openRequest.onblocked = unexpectedBlockedCallback;
+    openRequest.onupgradeneeded = unexpectedUpgradeNeededCallback;
+    openRequest.onerror = unexpectedErrorCallback;
+    openRequest.onsuccess = function() {
+        debug("Dropping references to new connection.");
+        // After leaving this function, there are no remaining references to the
+        // db, so it should get deleted.
+        setTimeout(setVersion, 2);
+    };
 }
 
 function setVersion()
 {
-    gc();
-    debug("calling setVersion() - callback should run immediately");
-    var versionChangeRequest = evalAndLog("db.setVersion('version 1')");
-    versionChangeRequest.onerror = unexpectedErrorCallback;
-    versionChangeRequest.onblocked = unexpectedBlockedCallback;
-    versionChangeRequest.onsuccess = finishJSTest;
+    evalAndLog("gc()");
+    debug("Open request should not receive a blocked event:");
+    var request = evalAndLog("indexedDB.open(dbname, 2)");
+    request.onerror = unexpectedErrorCallback;
+    request.onblocked = unexpectedBlockedCallback;
+    request.onsuccess = finishJSTest;
 }
-
-test();
