@@ -2831,6 +2831,9 @@ webkit.org/b/99421 platform/chromium/fast/forms/suggestion-picker/week-suggestio
 webkit.org/b/99421 platform/chromium/fast/forms/suggestion-picker/week-suggestion-picker-appearance-with-scroll-bar.html [ Pass ImageOnlyFailure Missing ]
 webkit.org/b/99421 platform/chromium/fast/forms/suggestion-picker/week-suggestion-picker-appearance.html [ Pass ImageOnlyFailure Missing ]
 
+# Needs rebaseline
+webkit.org/b/102769 fast/forms/datetime/datetime-appearance-l10n.html [ Pass ImageOnlyFailure Missing ]
+
 # New test added in r87324
 crbug.com/83994 [ Win ] platform/win/plugins/call-javascript-that-destroys-plugin.html [ Failure ]
 

@@ -79,11 +79,11 @@ public:
 
     // Returns a date-time format in Unicode TR35 LDML. It should have a seconds
     // field.
-    String dateTimeFormatWithSeconds();
+    virtual String dateTimeFormatWithSeconds() = 0;
 
     // Returns a date-time format in Unicode TR35 LDML. It should have no seconds
     // field.
-    String dateTimeFormatWithoutSeconds();
+    virtual String dateTimeFormatWithoutSeconds() = 0;
 
     // Returns a vector of string of which size is 12. The first item is a
     // localized string of Jan and the last item is a localized string of
@@ -140,11 +140,6 @@ protected:
         GroupSeparatorIndex = 11,
         DecimalSymbolsSize
     };
-
-#if ENABLE(DATE_AND_TIME_INPUT_TYPES)
-    String m_dateTimeFormatWithSeconds;
-    String m_dateTimeFormatWithoutSeconds;
-#endif
 
     Locale() : m_hasLocaleData(false) { }
     virtual void initializeLocaleData() = 0;

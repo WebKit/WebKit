@@ -176,6 +176,16 @@ RetainPtr<NSDateFormatter> LocaleMac::shortTimeFormatter()
     return createDateTimeFormatter(m_locale.get(), m_gregorianCalendar.get(), NSDateFormatterNoStyle, NSDateFormatterShortStyle);
 }
 
+RetainPtr<NSDateFormatter> LocaleMac::dateTimeFormatterWithSeconds()
+{
+    return createDateTimeFormatter(m_locale.get(), m_gregorianCalendar.get(), NSDateFormatterShortStyle, NSDateFormatterMediumStyle);
+}
+
+RetainPtr<NSDateFormatter> LocaleMac::dateTimeFormatterWithoutSeconds()
+{
+    return createDateTimeFormatter(m_locale.get(), m_gregorianCalendar.get(), NSDateFormatterShortStyle, NSDateFormatterShortStyle);
+}
+
 String LocaleMac::dateFormat()
 {
     if (!m_dateFormat.isNull())
@@ -208,6 +218,22 @@ String LocaleMac::shortTimeFormat()
         return m_timeFormatWithoutSeconds;
     m_timeFormatWithoutSeconds = [shortTimeFormatter().get() dateFormat];
     return m_timeFormatWithoutSeconds;
+}
+
+String LocaleMac::dateTimeFormatWithSeconds()
+{
+    if (!m_dateTimeFormatWithSeconds.isNull())
+        return m_dateTimeFormatWithSeconds;
+    m_dateTimeFormatWithSeconds = [dateTimeFormatterWithSeconds().get() dateFormat];
+    return m_dateTimeFormatWithSeconds;
+}
+
+String LocaleMac::dateTimeFormatWithoutSeconds()
+{
+    if (!m_dateTimeFormatWithoutSeconds.isNull())
+        return m_dateTimeFormatWithoutSeconds;
+    m_dateTimeFormatWithoutSeconds = [dateTimeFormatterWithoutSeconds().get() dateFormat];
+    return m_dateTimeFormatWithoutSeconds;
 }
 
 const Vector<String>& LocaleMac::shortMonthLabels()

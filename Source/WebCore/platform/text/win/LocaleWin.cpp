@@ -390,6 +390,30 @@ String LocaleWin::shortTimeFormat()
     return m_timeFormatWithoutSeconds;
 }
 
+String LocaleWin::dateTimeFormatWithSeconds()
+{
+    if (!m_dateTimeFormatWithSeconds.isNull())
+        return m_dateTimeFormatWithSeconds;
+    StringBuilder builder;
+    builder.append(dateFormat());
+    builder.append(' ');
+    builder.append(timeFormat());
+    m_dateTimeFormatWithSeconds = builder.toString();
+    return m_dateTimeFormatWithSeconds;
+}
+
+String LocaleWin::dateTimeFormatWithoutSeconds()
+{
+    if (!m_dateTimeFormatWithoutSeconds.isNull())
+        return m_dateTimeFormatWithoutSeconds;
+    StringBuilder builder;
+    builder.append(dateFormat());
+    builder.append(' ');
+    builder.append(shortTimeFormat());
+    m_dateTimeFormatWithoutSeconds = builder.toString();
+    return m_dateTimeFormatWithoutSeconds;
+}
+
 const Vector<String>& LocaleWin::shortMonthLabels()
 {
     ensureShortMonthLabels();

@@ -44,6 +44,8 @@ private:
     virtual String monthFormat() OVERRIDE;
     virtual String timeFormat() OVERRIDE;
     virtual String shortTimeFormat() OVERRIDE;
+    virtual String dateTimeFormatWithSeconds() OVERRIDE;
+    virtual String dateTimeFormatWithoutSeconds() OVERRIDE;
     virtual const Vector<String>& monthLabels() OVERRIDE;
     virtual const Vector<String>& shortMonthLabels() OVERRIDE;
     virtual const Vector<String>& standAloneMonthLabels() OVERRIDE;
@@ -105,6 +107,16 @@ String LocaleNone::timeFormat()
 String LocaleNone::shortTimeFormat()
 {
     return ASCIILiteral("HH:mm");
+}
+
+String LocaleNone::dateTimeFormatWithSeconds()
+{
+    return ASCIILiteral("dd/MM/yyyyy HH:mm:ss");
+}
+
+String LocaleNone::dateTimeFormatWithoutSeconds()
+{
+    return ASCIILiteral("dd/MM/yyyyy HH:mm");
 }
 
 const Vector<String>& LocaleNone::shortMonthLabels()

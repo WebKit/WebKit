@@ -56,6 +56,8 @@ public:
     virtual String monthFormat() OVERRIDE;
     virtual String timeFormat() OVERRIDE;
     virtual String shortTimeFormat() OVERRIDE;
+    virtual String dateTimeFormatWithSeconds() OVERRIDE;
+    virtual String dateTimeFormatWithoutSeconds() OVERRIDE;
     virtual const Vector<String>& monthLabels() OVERRIDE;
     virtual const Vector<String>& shortMonthLabels() OVERRIDE;
     virtual const Vector<String>& standAloneMonthLabels() OVERRIDE;
@@ -85,6 +87,8 @@ private:
     String m_monthFormat;
     String m_timeFormatWithSeconds;
     String m_timeFormatWithoutSeconds;
+    String m_dateTimeFormatWithSeconds;
+    String m_dateTimeFormatWithoutSeconds;
     Vector<String> m_timeAMPMLabels;
 #endif
 #if ENABLE(CALENDAR_PICKER)

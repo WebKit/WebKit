@@ -299,6 +299,14 @@ void LocaleICU::initializeDateTimeFormat()
     m_shortTimeFormat = openDateFormat(UDAT_SHORT, UDAT_NONE);
     m_timeFormatWithoutSeconds = getDateFormatPattern(m_shortTimeFormat);
 
+    UDateFormat* dateTimeFormatWithSeconds = openDateFormat(UDAT_MEDIUM, UDAT_SHORT);
+    m_dateTimeFormatWithSeconds = getDateFormatPattern(dateTimeFormatWithSeconds);
+    udat_close(dateTimeFormatWithSeconds);
+
+    UDateFormat* dateTimeFormatWithoutSeconds = openDateFormat(UDAT_SHORT, UDAT_SHORT);
+    m_dateTimeFormatWithoutSeconds = getDateFormatPattern(dateTimeFormatWithoutSeconds);
+    udat_close(dateTimeFormatWithSeconds);
+
     OwnPtr<Vector<String> > timeAMPMLabels = createLabelVector(m_mediumTimeFormat, UDAT_AM_PMS, UCAL_AM, 2);
     if (!timeAMPMLabels)
         timeAMPMLabels = createFallbackAMPMLabels();
@@ -357,6 +365,18 @@ String LocaleICU::shortTimeFormat()
 {
     initializeDateTimeFormat();
     return m_timeFormatWithoutSeconds;
+}
+
+String LocaleICU::dateTimeFormatWithSeconds()
+{
+    initializeDateTimeFormat();
+    return m_dateTimeFormatWithSeconds;
+}
+
+String LocaleICU::dateTimeFormatWithoutSeconds()
+{
+    initializeDateTimeFormat();
+    return m_dateTimeFormatWithoutSeconds;
 }
 
 const Vector<String>& LocaleICU::shortMonthLabels()
