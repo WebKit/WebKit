@@ -51,8 +51,6 @@
 #include "DOMSelection.h"
 #include "DOMWindow.h"
 #include "DateComponents.h"
-#include "DeviceMotionController.h"
-#include "DeviceOrientationController.h"
 #include "DocumentEventQueue.h"
 #include "DocumentFragment.h"
 #include "DocumentLoader.h"
@@ -2168,27 +2166,11 @@ void Document::removeAllEventListeners()
 void Document::suspendActiveDOMObjects(ActiveDOMObject::ReasonForSuspension why)
 {
     ScriptExecutionContext::suspendActiveDOMObjects(why);
-
-#if ENABLE(DEVICE_ORIENTATION)
-    if (!page())
-        return;
-
-    if (DeviceMotionController* controller = DeviceMotionController::from(page()))
-        controller->suspendEventsForAllListeners(domWindow());
-#endif
 }
 
 void Document::resumeActiveDOMObjects()
 {
     ScriptExecutionContext::resumeActiveDOMObjects();
-
-#if ENABLE(DEVICE_ORIENTATION)
-    if (!page())
-        return;
-
-    if (DeviceMotionController* controller = DeviceMotionController::from(page()))
-        controller->resumeEventsForAllListeners(domWindow());
-#endif
 }
 
 void Document::clearAXObjectCache()

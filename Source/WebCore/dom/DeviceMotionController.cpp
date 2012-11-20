@@ -1,5 +1,6 @@
 /*
  * Copyright 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2012 Samsung Electronics. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,20 +30,15 @@
 #include "DeviceMotionClient.h"
 #include "DeviceMotionData.h"
 #include "DeviceMotionEvent.h"
+#include "Page.h"
 
 namespace WebCore {
 
 DeviceMotionController::DeviceMotionController(DeviceMotionClient* client)
-    : m_client(client)
-    , m_timer(this, &DeviceMotionController::timerFired)
+    : DeviceController(client)
 {
     ASSERT(m_client);
-    m_client->setController(this);
-}
-
-DeviceMotionController::~DeviceMotionController()
-{
-    m_client->deviceMotionControllerDestroyed();
+    deviceMotionClient()->setController(this);
 }
 
 PassOwnPtr<DeviceMotionController> DeviceMotionController::create(DeviceMotionClient* client)
@@ -50,95 +46,35 @@ PassOwnPtr<DeviceMotionController> DeviceMotionController::create(DeviceMotionCl
     return adoptPtr(new DeviceMotionController(client));
 }
 
-void DeviceMotionController::timerFired(Timer<DeviceMotionController>* timer)
-{
-    ASSERT_UNUSED(timer, timer == &m_timer);
-    ASSERT(m_client->lastMotion());
-    m_timer.stop();
-    
-    RefPtr<DeviceMotionData> deviceMotionData = m_client->lastMotion();
-    RefPtr<DeviceMotionEvent> event = DeviceMotionEvent::create(eventNames().devicemotionEvent, deviceMotionData.get());
- 
-    Vector<RefPtr<DOMWindow> > listenersVector;
-    copyToVector(m_newListeners, listenersVector);
-    m_newListeners.clear();
-    for (size_t i = 0; i < listenersVector.size(); ++i)
-        listenersVector[i]->dispatchEvent(event);
-}
-    
-void DeviceMotionController::addListener(DOMWindow* window)
-{
-    // If the client already has motion data,
-    // immediately trigger an asynchronous response.
-    if (m_client->lastMotion()) {
-        m_newListeners.add(window);
-        if (!m_timer.isActive())
-            m_timer.startOneShot(0);
-    }
-    
-    bool wasEmpty = m_listeners.isEmpty();
-    m_listeners.add(window);
-    if (wasEmpty)
-        m_client->startUpdating();
-}
-
-void DeviceMotionController::removeListener(DOMWindow* window)
-{
-    m_listeners.remove(window);
-    m_suspendedListeners.remove(window);
-    m_newListeners.remove(window);
-    if (m_listeners.isEmpty())
-        m_client->stopUpdating();
-}
-
-void DeviceMotionController::removeAllListeners(DOMWindow* window)
-{
-    // May be called with a DOMWindow that's not a listener.
-    if (!m_listeners.contains(window))
-        return;
-
-    m_listeners.removeAll(window);
-    m_suspendedListeners.removeAll(window);
-    m_newListeners.remove(window);
-    if (m_listeners.isEmpty())
-        m_client->stopUpdating();
-}
-
-void DeviceMotionController::suspendEventsForAllListeners(DOMWindow* window)
-{
-    if (!m_listeners.contains(window))
-        return;
-
-    int count = m_listeners.count(window);
-    removeAllListeners(window);
-    while (count--)
-        m_suspendedListeners.add(window);
-}
-
-void DeviceMotionController::resumeEventsForAllListeners(DOMWindow* window)
-{
-    if (!m_suspendedListeners.contains(window))
-        return;
-
-    int count = m_suspendedListeners.count(window);
-    m_suspendedListeners.removeAll(window);
-    while (count--)
-        addListener(window);
-}
-
 void DeviceMotionController::didChangeDeviceMotion(DeviceMotionData* deviceMotionData)
 {
-    RefPtr<DeviceMotionEvent> event = DeviceMotionEvent::create(eventNames().devicemotionEvent, deviceMotionData);
-    Vector<RefPtr<DOMWindow> > listenersVector;
-    copyToVector(m_listeners, listenersVector);
-    for (size_t i = 0; i < listenersVector.size(); ++i)
-        listenersVector[i]->dispatchEvent(event);
+    dispatchDeviceEvent(DeviceMotionEvent::create(eventNames().devicemotionEvent, deviceMotionData));
+}
+
+DeviceMotionClient* DeviceMotionController::deviceMotionClient()
+{
+    return static_cast<DeviceMotionClient*>(m_client);
+}
+
+bool DeviceMotionController::hasLastData()
+{
+    return deviceMotionClient()->lastMotion();
+}
+
+PassRefPtr<Event> DeviceMotionController::getLastEvent()
+{
+    return DeviceMotionEvent::create(eventNames().devicemotionEvent, deviceMotionClient()->lastMotion());
 }
 
 const AtomicString& DeviceMotionController::supplementName()
 {
     DEFINE_STATIC_LOCAL(AtomicString, name, ("DeviceMotionController", AtomicString::ConstructFromLiteral));
     return name;
+}
+
+DeviceMotionController* DeviceMotionController::from(Page* page)
+{
+    return static_cast<DeviceMotionController*>(Supplement<Page>::from(page, supplementName()));
 }
 
 bool DeviceMotionController::isActiveAt(Page* page)

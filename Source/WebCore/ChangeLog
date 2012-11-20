@@ -1,3 +1,41 @@
+2012-11-20  Kihong Kwon  <kihong.kwon@samsung.com>
+
+        Apply DeviceController as parent class of DeviceMotionController.
+        https://bugs.webkit.org/show_bug.cgi?id=102578
+
+        Reviewed by Hajime Morita.
+
+        DeviceController needs to be applied as parent class of DeviceMotionController
+        because DeviceController which is extracted as parent class of
+        DeviceMotionController and DeviceOrientationController is already added.
+        Therefore duplicated implementation can be removed.
+
+        Covered by existing tests.
+
+        * dom/DeviceMotionClient.h:
+        * dom/DeviceMotionController.cpp:
+        (WebCore::DeviceMotionController::DeviceMotionController):
+        (WebCore::DeviceMotionController::didChangeDeviceMotion):
+        (WebCore::DeviceMotionController::deviceMotionClient):
+        (WebCore::DeviceMotionController::hasLastData):
+        (WebCore::DeviceMotionController::getLastEvent):
+        (WebCore::DeviceMotionController::from):
+        (WebCore):
+        * dom/DeviceMotionController.h:
+        (WebCore):
+        (WebCore::DeviceMotionController::~DeviceMotionController):
+        (DeviceMotionController):
+        * dom/Document.cpp:
+        Remove all implementations which are related DeviceOrientationEvnet and DeviceMotionEvent.
+        Because DeviceController checks suspend and stop status of active dom object before dispatchEvent.
+        (WebCore::Document::suspendActiveDOMObjects):
+        (WebCore::Document::resumeActiveDOMObjects):
+        * loader/EmptyClients.h:
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::addEventListener):
+        (WebCore::DOMWindow::removeEventListener):
+        (WebCore::DOMWindow::removeAllEventListeners):
+
 2012-11-20  Kentaro Hara  <haraken@chromium.org>
 
         [V8] Remove V8ParameterBase

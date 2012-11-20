@@ -1,5 +1,6 @@
 /*
  * Copyright 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2012 Samsung Electronics. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,49 +27,31 @@
 #ifndef DeviceMotionController_h
 #define DeviceMotionController_h
 
-#include "DOMWindow.h"
-#include "Page.h"
-#include "Timer.h"
-#include <wtf/HashCountedSet.h>
+#include "DeviceController.h"
 
 namespace WebCore {
 
-class DeviceMotionData;
 class DeviceMotionClient;
+class DeviceMotionData;
 
-class DeviceMotionController : public Supplement<Page> {
+class DeviceMotionController : public DeviceController {
 public:
-    ~DeviceMotionController();
+    ~DeviceMotionController() { };
 
     static PassOwnPtr<DeviceMotionController> create(DeviceMotionClient*);
 
-    void addListener(DOMWindow*);
-    void removeListener(DOMWindow*);
-    void removeAllListeners(DOMWindow*);
-
-    void suspendEventsForAllListeners(DOMWindow*);
-    void resumeEventsForAllListeners(DOMWindow*);
-
     void didChangeDeviceMotion(DeviceMotionData*);
+    DeviceMotionClient* deviceMotionClient();
 
-    bool isActive() { return !m_listeners.isEmpty(); }
+    virtual bool hasLastData() OVERRIDE;
+    virtual PassRefPtr<Event> getLastEvent() OVERRIDE;
 
     static const AtomicString& supplementName();
-    static DeviceMotionController* from(Page* page) { return static_cast<DeviceMotionController*>(Supplement<Page>::from(page, supplementName())); }
+    static DeviceMotionController* from(Page*);
     static bool isActiveAt(Page*);
 
 private:
     explicit DeviceMotionController(DeviceMotionClient*);
-
-    void timerFired(Timer<DeviceMotionController>*);
-    
-    DeviceMotionClient* m_client;
-    typedef HashCountedSet<RefPtr<DOMWindow> > ListenersCountedSet;
-    ListenersCountedSet m_listeners;
-    ListenersCountedSet m_suspendedListeners;
-    typedef HashSet<RefPtr<DOMWindow> > ListenersSet;
-    ListenersSet m_newListeners;
-    Timer<DeviceMotionController> m_timer;
 };
 
 } // namespace WebCore

@@ -586,8 +586,6 @@ public:
 class EmptyDeviceMotionClient : public DeviceMotionClient {
 public:
     virtual void setController(DeviceMotionController*) { }
-    virtual void startUpdating() { }
-    virtual void stopUpdating() { }
     virtual DeviceMotionData* lastMotion() const { return 0; }
     virtual void deviceMotionControllerDestroyed() { }
 };
