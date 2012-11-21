@@ -1,3 +1,9 @@
+2012-11-21  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed gardening, unskip now passing tests.
+
+        * platform/qt-5.0-wk2/TestExpectations:
+
 2012-11-21  David Grogan  <dgrogan@chromium.org>
 
         IndexedDB: remove setVersion from inspector tests
