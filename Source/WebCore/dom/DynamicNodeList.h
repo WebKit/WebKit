@@ -76,7 +76,7 @@ public:
     {
         if (!attrName || shouldInvalidateTypeOnAttributeChange(invalidationType(), *attrName))
             invalidateCache();
-        else if (isNodeCollectionType(type()) && (*attrName == HTMLNames::idAttr || *attrName == HTMLNames::nameAttr))
+        else if (type() != NodeListCollectionType && (*attrName == HTMLNames::idAttr || *attrName == HTMLNames::nameAttr))
             invalidateIdNameCacheMaps();
     }
     void invalidateCache() const;

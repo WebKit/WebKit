@@ -73,7 +73,7 @@ void DynamicNodeListCacheBase::invalidateCache() const
 
 void DynamicNodeListCacheBase::invalidateIdNameCacheMaps() const
 {
-    ASSERT(isNodeCollectionType(type()));
+    ASSERT(type() != NodeListCollectionType);
     const HTMLCollectionCacheBase* cacheBase = static_cast<const HTMLCollectionCacheBase*>(this);
     cacheBase->m_idCache.clear();
     cacheBase->m_nameCache.clear();

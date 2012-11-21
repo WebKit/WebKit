@@ -1,3 +1,13 @@
+2012-11-20  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Fix another typo. I need to checking that type() != NodeListCollectionType,
+        not that type() >= FirstNodeCollectionType.
+
+        * dom/DynamicNodeList.cpp:
+        (WebCore::DynamicNodeListCacheBase::invalidateIdNameCacheMaps):
+        * dom/DynamicNodeList.h:
+        (WebCore::DynamicNodeListCacheBase::invalidateCache):
+
 2012-11-20  Michael Pruett  <michael@68k.org>
 
         [V8] Pass ScriptState::current() to functions marked with CallWith=ScriptState
