@@ -1,3 +1,9 @@
+2012-11-21  Yury Semikhatsky  <yurys@chromium.org>
+
+        Unreviewed. Updated test expectations.
+
+        * platform/chromium/TestExpectations:
+
 2012-11-21  Kunihiko Sakamoto  <ksakamoto@chromium.org>
 
         Enable datalist UI for input types datetime and datetime-local
