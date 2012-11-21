@@ -1,3 +1,19 @@
+2012-11-21  Kunihiko Sakamoto  <ksakamoto@chromium.org>
+
+        Enable datalist UI for input types datetime and datetime-local
+        https://bugs.webkit.org/show_bug.cgi?id=102882
+
+        Reviewed by Kent Tamura.
+
+        Enabling datalist UI for input types datetime and datetime-local.
+
+        No new tests yet. Tests will be added later in Bug 102888.
+
+        * platform/text/PlatformLocale.cpp:
+        (WebCore::Locale::formatDateTime): Support datetime and datetime-local types.
+        * rendering/RenderThemeChromiumCommon.cpp:
+        (WebCore::RenderThemeChromiumCommon::supportsDataListUI): Add datetime and datetimelocal to the list.
+
 2012-11-20  Kentaro Hara  <haraken@chromium.org>
 
         [V8] Remove v8/custom/V8XMLHttpRequestConstructor.cpp

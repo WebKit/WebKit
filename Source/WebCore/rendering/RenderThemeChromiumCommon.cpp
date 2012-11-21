@@ -33,7 +33,6 @@ namespace WebCore {
 
 bool RenderThemeChromiumCommon::supportsDataListUI(const AtomicString& type)
 {
-    // FIXME: We still need to support datetime, date, month, week, time, datetime-local.
     return type == InputTypeNames::text() || type == InputTypeNames::search() || type == InputTypeNames::url()
         || type == InputTypeNames::telephone() || type == InputTypeNames::email() || type == InputTypeNames::number()
 #if ENABLE(INPUT_TYPE_COLOR)
@@ -42,6 +41,8 @@ bool RenderThemeChromiumCommon::supportsDataListUI(const AtomicString& type)
 #if ENABLE(CALENDAR_PICKER)
         || type == InputTypeNames::date()
 #endif
+        || type == InputTypeNames::datetime()
+        || type == InputTypeNames::datetimelocal()
         || type == InputTypeNames::month()
         || type == InputTypeNames::week()
         || type == InputTypeNames::time()
