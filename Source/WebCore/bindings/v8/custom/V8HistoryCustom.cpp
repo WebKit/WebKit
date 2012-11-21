@@ -65,8 +65,8 @@ v8::Handle<v8::Value> V8History::pushStateCallback(const v8::Arguments& args)
     if (didThrow)
         return v8::Undefined();
 
-    EXCEPTION_BLOCK(V8Parameter<WithUndefinedOrNullCheck>, title, args[1]);
-    EXCEPTION_BLOCK(V8Parameter<WithUndefinedOrNullCheck>, url, MAYBE_MISSING_PARAMETER(args, 2, DefaultIsNullString));
+    STRING_TO_V8PARAMETER_EXCEPTION_BLOCK(V8Parameter<WithUndefinedOrNullCheck>, title, args[1]);
+    STRING_TO_V8PARAMETER_EXCEPTION_BLOCK(V8Parameter<WithUndefinedOrNullCheck>, url, MAYBE_MISSING_PARAMETER(args, 2, DefaultIsNullString));
 
     ExceptionCode ec = 0;
     History* history = V8History::toNative(args.Holder());
@@ -82,8 +82,8 @@ v8::Handle<v8::Value> V8History::replaceStateCallback(const v8::Arguments& args)
     if (didThrow)
         return v8::Undefined();
 
-    EXCEPTION_BLOCK(V8Parameter<WithUndefinedOrNullCheck>, title, args[1]);
-    EXCEPTION_BLOCK(V8Parameter<WithUndefinedOrNullCheck>, url, MAYBE_MISSING_PARAMETER(args, 2, DefaultIsNullString));
+    STRING_TO_V8PARAMETER_EXCEPTION_BLOCK(V8Parameter<WithUndefinedOrNullCheck>, title, args[1]);
+    STRING_TO_V8PARAMETER_EXCEPTION_BLOCK(V8Parameter<WithUndefinedOrNullCheck>, url, MAYBE_MISSING_PARAMETER(args, 2, DefaultIsNullString));
 
     ExceptionCode ec = 0;
     History* history = V8History::toNative(args.Holder());

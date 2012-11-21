@@ -52,35 +52,43 @@ enum V8ParameterMode {
 template <V8ParameterMode Mode = DefaultMode>
 class V8Parameter {
 public:
-    V8Parameter()
-        : m_mode(Externalize)
+    V8Parameter(v8::Local<v8::Value> object)
+        : m_v8Object(object)
+        , m_mode(Externalize)
         , m_string()
     {
     }
 
-    // This can throw. You must use this through the
-    // EXCEPTION_BLOCK() macro.
-    V8Parameter& operator=(v8::Local<v8::Value>);
+    bool prepare();
     operator String() { return toString<String>(); }
     operator AtomicString() { return toString<AtomicString>(); }
 
 private:
-    void prepareBase()
+    bool prepareBase()
     {
         if (m_v8Object.IsEmpty())
-            return;
+            return true;
 
         if (LIKELY(m_v8Object->IsString()))
-            return;
+            return true;
 
         if (LIKELY(m_v8Object->IsInt32())) {
             setString(int32ToWebCoreString(m_v8Object->Int32Value()));
-            return;
+            return true;
         }
 
         m_mode = DoNotExternalize;
+        v8::TryCatch block;
         m_v8Object = m_v8Object->ToString();
+        // Handle the case where an exception is thrown as part of invoking toString on the object.
+        if (block.HasCaught()) {
+            block.ReThrow();
+            return false;
+        }
+        return true;
     }
+
+    v8::Local<v8::Value> object() { return m_v8Object; }
 
     void setString(const String& string)
     {
@@ -102,31 +110,27 @@ private:
     String m_string;
 };
 
-template<> inline V8Parameter<DefaultMode>& V8Parameter<DefaultMode>::operator=(v8::Local<v8::Value> object)
+template<> inline bool V8Parameter<DefaultMode>::prepare()
 {
-    m_v8Object = object;
-    prepareBase();
-    return *this;
+    return prepareBase();
 }
 
-template<> inline V8Parameter<WithNullCheck>& V8Parameter<WithNullCheck>::operator=(v8::Local<v8::Value> object)
+template<> inline bool V8Parameter<WithNullCheck>::prepare()
 {
-    m_v8Object = object;
-    if (m_v8Object.IsEmpty() || m_v8Object->IsNull())
+    if (object().IsEmpty() || object()->IsNull()) {
         setString(String());
-    else
-        prepareBase();
-    return *this;
+        return true;
+    }
+    return prepareBase();
 }
 
-template<> inline V8Parameter<WithUndefinedOrNullCheck>& V8Parameter<WithUndefinedOrNullCheck>::operator=(v8::Local<v8::Value> object)
+template<> inline bool V8Parameter<WithUndefinedOrNullCheck>::prepare()
 {
-    m_v8Object = object;
-    if (m_v8Object.IsEmpty() || m_v8Object->IsNull() || m_v8Object->IsUndefined())
+    if (object().IsEmpty() || object()->IsNull() || object()->IsUndefined()) {
         setString(String());
-    else
-        prepareBase();
-    return *this;
+        return true;
+    }
+    return prepareBase();
 }
     
 } // namespace WebCore

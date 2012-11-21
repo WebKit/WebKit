@@ -72,7 +72,7 @@ v8::Handle<v8::Value> V8TestEventConstructor::constructorCallback(const v8::Argu
     if (args.Length() < 1)
         return throwNotEnoughArgumentsError(args.GetIsolate());
 
-    EXCEPTION_BLOCK(V8Parameter<>, type, args[0]);
+    STRING_TO_V8PARAMETER_EXCEPTION_BLOCK(V8Parameter<>, type, args[0]);
     TestEventConstructorInit eventInit;
     if (args.Length() >= 2) {
         EXCEPTION_BLOCK(Dictionary, options, Dictionary(args[1], args.GetIsolate()));

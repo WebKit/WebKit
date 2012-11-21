@@ -324,7 +324,7 @@ static v8::Handle<v8::Value> handlePostMessageCallback(const v8::Arguments& args
         if (!extractTransferables(args[transferablesArgIndex], portArray, arrayBufferArray, args.GetIsolate()))
             return v8::Undefined();
     }
-    EXCEPTION_BLOCK(V8Parameter<WithUndefinedOrNullCheck>, targetOrigin, args[targetOriginArgIndex]);
+    STRING_TO_V8PARAMETER_EXCEPTION_BLOCK(V8Parameter<WithUndefinedOrNullCheck>, targetOrigin, args[targetOriginArgIndex]);
 
     bool didThrow = false;
     RefPtr<SerializedScriptValue> message =

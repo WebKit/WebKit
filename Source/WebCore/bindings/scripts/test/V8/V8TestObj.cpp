@@ -124,7 +124,7 @@ static v8::Handle<v8::Value> staticStringAttrAttrGetter(v8::Local<v8::String> na
 static void staticStringAttrAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     INC_STATS("DOM.TestObj.staticStringAttr._set");
-    EXCEPTION_BLOCK_VOID(V8Parameter<>, v, value);
+    STRING_TO_V8PARAMETER_EXCEPTION_BLOCK_VOID(V8Parameter<>, v, value);
     TestObj::setStaticStringAttr(v);
     return;
 }
@@ -220,7 +220,7 @@ static void stringAttrAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value
 {
     INC_STATS("DOM.TestObj.stringAttr._set");
     TestObj* imp = V8TestObj::toNative(info.Holder());
-    EXCEPTION_BLOCK_VOID(V8Parameter<>, v, value);
+    STRING_TO_V8PARAMETER_EXCEPTION_BLOCK_VOID(V8Parameter<>, v, value);
     imp->setStringAttr(v);
     return;
 }
@@ -286,7 +286,7 @@ static void reflectedStringAttrAttrSetter(v8::Local<v8::String> name, v8::Local<
 {
     INC_STATS("DOM.TestObj.reflectedStringAttr._set");
     TestObj* imp = V8TestObj::toNative(info.Holder());
-    EXCEPTION_BLOCK_VOID(V8Parameter<WithNullCheck>, v, value);
+    STRING_TO_V8PARAMETER_EXCEPTION_BLOCK_VOID(V8Parameter<WithNullCheck>, v, value);
     imp->setAttribute(WebCore::HTMLNames::reflectedstringattrAttr, v);
     return;
 }
@@ -350,7 +350,7 @@ static void reflectedURLAttrAttrSetter(v8::Local<v8::String> name, v8::Local<v8:
 {
     INC_STATS("DOM.TestObj.reflectedURLAttr._set");
     TestObj* imp = V8TestObj::toNative(info.Holder());
-    EXCEPTION_BLOCK_VOID(V8Parameter<WithNullCheck>, v, value);
+    STRING_TO_V8PARAMETER_EXCEPTION_BLOCK_VOID(V8Parameter<WithNullCheck>, v, value);
     imp->setAttribute(WebCore::HTMLNames::reflectedurlattrAttr, v);
     return;
 }
@@ -366,7 +366,7 @@ static void reflectedStringAttrAttrSetter(v8::Local<v8::String> name, v8::Local<
 {
     INC_STATS("DOM.TestObj.reflectedStringAttr._set");
     TestObj* imp = V8TestObj::toNative(info.Holder());
-    EXCEPTION_BLOCK_VOID(V8Parameter<WithNullCheck>, v, value);
+    STRING_TO_V8PARAMETER_EXCEPTION_BLOCK_VOID(V8Parameter<WithNullCheck>, v, value);
     imp->setAttribute(WebCore::HTMLNames::customContentStringAttrAttr, v);
     return;
 }
@@ -414,7 +414,7 @@ static void reflectedCustomURLAttrAttrSetter(v8::Local<v8::String> name, v8::Loc
 {
     INC_STATS("DOM.TestObj.reflectedCustomURLAttr._set");
     TestObj* imp = V8TestObj::toNative(info.Holder());
-    EXCEPTION_BLOCK_VOID(V8Parameter<WithNullCheck>, v, value);
+    STRING_TO_V8PARAMETER_EXCEPTION_BLOCK_VOID(V8Parameter<WithNullCheck>, v, value);
     imp->setAttribute(WebCore::HTMLNames::customContentURLAttrAttr, v);
     return;
 }
@@ -489,7 +489,7 @@ static void stringAttrWithGetterExceptionAttrSetter(v8::Local<v8::String> name, 
 {
     INC_STATS("DOM.TestObj.stringAttrWithGetterException._set");
     TestObj* imp = V8TestObj::toNative(info.Holder());
-    EXCEPTION_BLOCK_VOID(V8Parameter<>, v, value);
+    STRING_TO_V8PARAMETER_EXCEPTION_BLOCK_VOID(V8Parameter<>, v, value);
     imp->setStringAttrWithGetterException(v);
     return;
 }
@@ -505,7 +505,7 @@ static void stringAttrWithSetterExceptionAttrSetter(v8::Local<v8::String> name, 
 {
     INC_STATS("DOM.TestObj.stringAttrWithSetterException._set");
     TestObj* imp = V8TestObj::toNative(info.Holder());
-    EXCEPTION_BLOCK_VOID(V8Parameter<>, v, value);
+    STRING_TO_V8PARAMETER_EXCEPTION_BLOCK_VOID(V8Parameter<>, v, value);
     ExceptionCode ec = 0;
     imp->setStringAttrWithSetterException(v, ec);
     if (UNLIKELY(ec))
@@ -1057,7 +1057,7 @@ static v8::Handle<v8::Value> voidMethodWithArgsCallback(const v8::Arguments& arg
         return throwNotEnoughArgumentsError(args.GetIsolate());
     TestObj* imp = V8TestObj::toNative(args.Holder());
     EXCEPTION_BLOCK(int, longArg, toInt32(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined)));
-    EXCEPTION_BLOCK(V8Parameter<>, strArg, MAYBE_MISSING_PARAMETER(args, 1, DefaultIsUndefined));
+    STRING_TO_V8PARAMETER_EXCEPTION_BLOCK(V8Parameter<>, strArg, MAYBE_MISSING_PARAMETER(args, 1, DefaultIsUndefined));
     EXCEPTION_BLOCK(TestObj*, objArg, V8TestObj::HasInstance(MAYBE_MISSING_PARAMETER(args, 2, DefaultIsUndefined)) ? V8TestObj::toNative(v8::Handle<v8::Object>::Cast(MAYBE_MISSING_PARAMETER(args, 2, DefaultIsUndefined))) : 0);
     imp->voidMethodWithArgs(longArg, strArg, objArg);
     return v8Undefined();
@@ -1077,7 +1077,7 @@ static v8::Handle<v8::Value> longMethodWithArgsCallback(const v8::Arguments& arg
         return throwNotEnoughArgumentsError(args.GetIsolate());
     TestObj* imp = V8TestObj::toNative(args.Holder());
     EXCEPTION_BLOCK(int, longArg, toInt32(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined)));
-    EXCEPTION_BLOCK(V8Parameter<>, strArg, MAYBE_MISSING_PARAMETER(args, 1, DefaultIsUndefined));
+    STRING_TO_V8PARAMETER_EXCEPTION_BLOCK(V8Parameter<>, strArg, MAYBE_MISSING_PARAMETER(args, 1, DefaultIsUndefined));
     EXCEPTION_BLOCK(TestObj*, objArg, V8TestObj::HasInstance(MAYBE_MISSING_PARAMETER(args, 2, DefaultIsUndefined)) ? V8TestObj::toNative(v8::Handle<v8::Object>::Cast(MAYBE_MISSING_PARAMETER(args, 2, DefaultIsUndefined))) : 0);
     return v8Integer(imp->longMethodWithArgs(longArg, strArg, objArg), args.GetIsolate());
 }
@@ -1097,7 +1097,7 @@ static v8::Handle<v8::Value> objMethodWithArgsCallback(const v8::Arguments& args
         return throwNotEnoughArgumentsError(args.GetIsolate());
     TestObj* imp = V8TestObj::toNative(args.Holder());
     EXCEPTION_BLOCK(int, longArg, toInt32(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined)));
-    EXCEPTION_BLOCK(V8Parameter<>, strArg, MAYBE_MISSING_PARAMETER(args, 1, DefaultIsUndefined));
+    STRING_TO_V8PARAMETER_EXCEPTION_BLOCK(V8Parameter<>, strArg, MAYBE_MISSING_PARAMETER(args, 1, DefaultIsUndefined));
     EXCEPTION_BLOCK(TestObj*, objArg, V8TestObj::HasInstance(MAYBE_MISSING_PARAMETER(args, 2, DefaultIsUndefined)) ? V8TestObj::toNative(v8::Handle<v8::Object>::Cast(MAYBE_MISSING_PARAMETER(args, 2, DefaultIsUndefined))) : 0);
     return toV8(imp->objMethodWithArgs(longArg, strArg, objArg), args.Holder(), args.GetIsolate());
 }
@@ -1131,7 +1131,7 @@ static v8::Handle<v8::Value> methodThatRequiresAllArgsAndThrowsCallback(const v8
     TestObj* imp = V8TestObj::toNative(args.Holder());
     ExceptionCode ec = 0;
     {
-    EXCEPTION_BLOCK(V8Parameter<>, strArg, MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined));
+    STRING_TO_V8PARAMETER_EXCEPTION_BLOCK(V8Parameter<>, strArg, MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined));
     EXCEPTION_BLOCK(TestObj*, objArg, V8TestObj::HasInstance(MAYBE_MISSING_PARAMETER(args, 1, DefaultIsUndefined)) ? V8TestObj::toNative(v8::Handle<v8::Object>::Cast(MAYBE_MISSING_PARAMETER(args, 1, DefaultIsUndefined))) : 0);
     RefPtr<TestObj> result = imp->methodThatRequiresAllArgsAndThrows(strArg, objArg, ec);
     if (UNLIKELY(ec))
@@ -1439,7 +1439,7 @@ static v8::Handle<v8::Value> methodWithOptionalStringCallback(const v8::Argument
         imp->methodWithOptionalString();
         return v8Undefined();
     }
-    EXCEPTION_BLOCK(V8Parameter<>, str, MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined));
+    STRING_TO_V8PARAMETER_EXCEPTION_BLOCK(V8Parameter<>, str, MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined));
     imp->methodWithOptionalString(str);
     return v8Undefined();
 }
@@ -1448,7 +1448,7 @@ static v8::Handle<v8::Value> methodWithOptionalStringIsUndefinedCallback(const v
 {
     INC_STATS("DOM.TestObj.methodWithOptionalStringIsUndefined");
     TestObj* imp = V8TestObj::toNative(args.Holder());
-    EXCEPTION_BLOCK(V8Parameter<>, str, MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined));
+    STRING_TO_V8PARAMETER_EXCEPTION_BLOCK(V8Parameter<>, str, MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined));
     imp->methodWithOptionalStringIsUndefined(str);
     return v8Undefined();
 }
@@ -1457,7 +1457,7 @@ static v8::Handle<v8::Value> methodWithOptionalStringIsNullStringCallback(const 
 {
     INC_STATS("DOM.TestObj.methodWithOptionalStringIsNullString");
     TestObj* imp = V8TestObj::toNative(args.Holder());
-    EXCEPTION_BLOCK(V8Parameter<>, str, MAYBE_MISSING_PARAMETER(args, 0, DefaultIsNullString));
+    STRING_TO_V8PARAMETER_EXCEPTION_BLOCK(V8Parameter<>, str, MAYBE_MISSING_PARAMETER(args, 0, DefaultIsNullString));
     imp->methodWithOptionalStringIsNullString(str);
     return v8Undefined();
 }
@@ -1545,7 +1545,7 @@ static v8::Handle<v8::Value> overloadedMethod1Callback(const v8::Arguments& args
         return throwNotEnoughArgumentsError(args.GetIsolate());
     TestObj* imp = V8TestObj::toNative(args.Holder());
     EXCEPTION_BLOCK(TestObj*, objArg, V8TestObj::HasInstance(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined)) ? V8TestObj::toNative(v8::Handle<v8::Object>::Cast(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined))) : 0);
-    EXCEPTION_BLOCK(V8Parameter<>, strArg, MAYBE_MISSING_PARAMETER(args, 1, DefaultIsUndefined));
+    STRING_TO_V8PARAMETER_EXCEPTION_BLOCK(V8Parameter<>, strArg, MAYBE_MISSING_PARAMETER(args, 1, DefaultIsUndefined));
     imp->overloadedMethod(objArg, strArg);
     return v8Undefined();
 }
@@ -1572,7 +1572,7 @@ static v8::Handle<v8::Value> overloadedMethod3Callback(const v8::Arguments& args
     if (args.Length() < 1)
         return throwNotEnoughArgumentsError(args.GetIsolate());
     TestObj* imp = V8TestObj::toNative(args.Holder());
-    EXCEPTION_BLOCK(V8Parameter<>, strArg, MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined));
+    STRING_TO_V8PARAMETER_EXCEPTION_BLOCK(V8Parameter<>, strArg, MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined));
     imp->overloadedMethod(strArg);
     return v8Undefined();
 }
@@ -1662,7 +1662,7 @@ static v8::Handle<v8::Value> overloadedMethod11Callback(const v8::Arguments& arg
     if (args.Length() < 1)
         return throwNotEnoughArgumentsError(args.GetIsolate());
     TestObj* imp = V8TestObj::toNative(args.Holder());
-    EXCEPTION_BLOCK(V8Parameter<>, strArg, MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined));
+    STRING_TO_V8PARAMETER_EXCEPTION_BLOCK(V8Parameter<>, strArg, MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined));
     imp->overloadedMethod(strArg);
     return v8Undefined();
 }
@@ -1735,7 +1735,7 @@ static v8::Handle<v8::Value> overloadedMethod12Callback(const v8::Arguments& arg
     INC_STATS("DOM.TestObj.overloadedMethod12");
     if (args.Length() < 1)
         return throwNotEnoughArgumentsError(args.GetIsolate());
-    EXCEPTION_BLOCK(V8Parameter<>, type, MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined));
+    STRING_TO_V8PARAMETER_EXCEPTION_BLOCK(V8Parameter<>, type, MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined));
     TestObj::overloadedMethod1(type);
     return v8Undefined();
 }
@@ -1929,7 +1929,7 @@ static v8::Handle<v8::Value> strictFunctionCallback(const v8::Arguments& args)
     TestObj* imp = V8TestObj::toNative(args.Holder());
     ExceptionCode ec = 0;
     {
-    EXCEPTION_BLOCK(V8Parameter<>, str, MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined));
+    STRING_TO_V8PARAMETER_EXCEPTION_BLOCK(V8Parameter<>, str, MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined));
     EXCEPTION_BLOCK(float, a, static_cast<float>(MAYBE_MISSING_PARAMETER(args, 1, DefaultIsUndefined)->NumberValue()));
     EXCEPTION_BLOCK(int, b, toInt32(MAYBE_MISSING_PARAMETER(args, 2, DefaultIsUndefined)));
     RefPtr<bool> result = imp->strictFunction(str, a, b, ec);
@@ -1947,7 +1947,7 @@ static v8::Handle<v8::Value> variadicStringMethodCallback(const v8::Arguments& a
     if (args.Length() < 1)
         return throwNotEnoughArgumentsError(args.GetIsolate());
     TestObj* imp = V8TestObj::toNative(args.Holder());
-    EXCEPTION_BLOCK(V8Parameter<>, head, MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined));
+    STRING_TO_V8PARAMETER_EXCEPTION_BLOCK(V8Parameter<>, head, MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined));
     EXCEPTION_BLOCK(Vector<String>, tail, toNativeArguments<String>(args, 1));
     imp->variadicStringMethod(head, tail);
     return v8Undefined();

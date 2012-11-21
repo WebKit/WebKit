@@ -1,3 +1,84 @@
+2012-11-21  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r135338, r135359, and r135378.
+        http://trac.webkit.org/changeset/135338
+        http://trac.webkit.org/changeset/135359
+        http://trac.webkit.org/changeset/135378
+        https://bugs.webkit.org/show_bug.cgi?id=102981
+
+        Likely caused a 10% regression in
+        dromaeo_domcoreattr/dom_attr_getAttribute (Requested by abarth
+        on #webkit).
+
+        * bindings/scripts/CodeGeneratorV8.pm:
+        (GenerateEventConstructorCallback):
+        (ConvertToV8Parameter):
+        * bindings/scripts/test/V8/V8TestActiveDOMObject.cpp:
+        (WebCore::TestActiveDOMObjectV8Internal::postMessageCallback):
+        * bindings/scripts/test/V8/V8TestCustomNamedGetter.cpp:
+        (WebCore::TestCustomNamedGetterV8Internal::anotherFunctionCallback):
+        * bindings/scripts/test/V8/V8TestEventConstructor.cpp:
+        (WebCore::V8TestEventConstructor::constructorCallback):
+        * bindings/scripts/test/V8/V8TestInterface.cpp:
+        (WebCore::TestInterfaceV8Internal::supplementalStaticAttrAttrSetter):
+        (WebCore::TestInterfaceV8Internal::supplementalStr2AttrSetter):
+        (WebCore::TestInterfaceV8Internal::supplementalMethod2Callback):
+        (WebCore::V8TestInterface::constructorCallback):
+        * bindings/scripts/test/V8/V8TestNamedConstructor.cpp:
+        (WebCore::V8TestNamedConstructorConstructorCallback):
+        * bindings/scripts/test/V8/V8TestObj.cpp:
+        (WebCore::TestObjV8Internal::staticStringAttrAttrSetter):
+        (WebCore::TestObjV8Internal::stringAttrAttrSetter):
+        (WebCore::TestObjV8Internal::reflectedStringAttrAttrSetter):
+        (WebCore::TestObjV8Internal::reflectedURLAttrAttrSetter):
+        (WebCore::TestObjV8Internal::reflectedCustomURLAttrAttrSetter):
+        (WebCore::TestObjV8Internal::stringAttrWithGetterExceptionAttrSetter):
+        (WebCore::TestObjV8Internal::stringAttrWithSetterExceptionAttrSetter):
+        (WebCore::TestObjV8Internal::voidMethodWithArgsCallback):
+        (WebCore::TestObjV8Internal::longMethodWithArgsCallback):
+        (WebCore::TestObjV8Internal::objMethodWithArgsCallback):
+        (WebCore::TestObjV8Internal::methodThatRequiresAllArgsAndThrowsCallback):
+        (WebCore::TestObjV8Internal::methodWithOptionalStringCallback):
+        (WebCore::TestObjV8Internal::methodWithOptionalStringIsUndefinedCallback):
+        (WebCore::TestObjV8Internal::methodWithOptionalStringIsNullStringCallback):
+        (WebCore::TestObjV8Internal::overloadedMethod1Callback):
+        (WebCore::TestObjV8Internal::overloadedMethod3Callback):
+        (WebCore::TestObjV8Internal::overloadedMethod11Callback):
+        (WebCore::TestObjV8Internal::overloadedMethod12Callback):
+        (WebCore::TestObjV8Internal::strictFunctionCallback):
+        (WebCore::TestObjV8Internal::variadicStringMethodCallback):
+        * bindings/scripts/test/V8/V8TestOverloadedConstructors.cpp:
+        (WebCore::V8TestOverloadedConstructors::constructor4Callback):
+        * bindings/scripts/test/V8/V8TestSerializedScriptValueInterface.cpp:
+        (WebCore::V8TestSerializedScriptValueInterface::constructorCallback):
+        * bindings/v8/V8BindingMacros.h:
+        * bindings/v8/V8StringResource.h:
+        (WebCore::V8Parameter::V8Parameter):
+        (V8Parameter):
+        (WebCore::V8Parameter::prepareBase):
+        (WebCore::V8Parameter::object):
+        (WebCore::::prepare):
+        * bindings/v8/custom/V8ConsoleCustom.cpp:
+        (WebCore::V8Console::profileCallback):
+        (WebCore::V8Console::profileEndCallback):
+        * bindings/v8/custom/V8DOMWindowCustom.cpp:
+        (WebCore::handlePostMessageCallback):
+        * bindings/v8/custom/V8DeviceMotionEventCustom.cpp:
+        (WebCore::V8DeviceMotionEvent::initDeviceMotionEventCallback):
+        * bindings/v8/custom/V8DeviceOrientationEventCustom.cpp:
+        (WebCore::V8DeviceOrientationEvent::initDeviceOrientationEventCallback):
+        * bindings/v8/custom/V8HistoryCustom.cpp:
+        (WebCore::V8History::pushStateCallback):
+        (WebCore::V8History::replaceStateCallback):
+        * bindings/v8/custom/V8IntentCustom.cpp:
+        (WebCore::V8Intent::constructorCallbackCustom):
+        * bindings/v8/custom/V8SQLTransactionCustom.cpp:
+        (WebCore::V8SQLTransaction::executeSqlCallback):
+        * bindings/v8/custom/V8SQLTransactionSyncCustom.cpp:
+        (WebCore::V8SQLTransactionSync::executeSqlCallback):
+        * bindings/v8/custom/V8WebGLRenderingContextCustom.cpp:
+        (WebCore::V8WebGLRenderingContext::getExtensionCallback):
+
 2012-11-21  Tien-Ren Chen  <trchen@chromium.org>
 
         Invalidate non-composited content host when page scale factor changes
