@@ -91,6 +91,7 @@ private:
 
     bool m_geometryNeedsUpdate;
     bool m_isAnimating;
+    double m_startTime;
 };
 
 } // namespace WebKit

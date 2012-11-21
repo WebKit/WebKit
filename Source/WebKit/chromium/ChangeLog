@@ -1,3 +1,22 @@
+2012-11-21  W. James MacLean  <wjmaclean@chromium.org>
+
+        [chromium] Link highlight should display for at least 100ms, and fadeout on GestureTap/Longpress.
+        https://bugs.webkit.org/show_bug.cgi?id=102823
+
+        Reviewed by Adrienne Walker.
+
+        Link highlights sometimes disappear so quickly they barely display. Modify
+        so that the highlight is displayed for minimum 100ms before fading out, and
+        also fadeout (as opposed to abrupt clear) on GestureTap and GestureLongPress.
+
+        * src/LinkHighlight.cpp:
+        (WebKit::LinkHighlight::LinkHighlight):
+        (WebKit::LinkHighlight::startHighlightAnimationIfNeeded): Check if min duration achieved, if not add time to fadeout animation.
+        * src/LinkHighlight.h:
+        (LinkHighlight):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::handleGestureEvent): Fadeout instead of clear on GestureTap and GestureLongPress.
+
 2012-11-21  Yury Semikhatsky  <yurys@chromium.org>
 
         Unreviewed. Now that offending patch has been rolled out reenable IDBRequestTest.EventsAfterStopping

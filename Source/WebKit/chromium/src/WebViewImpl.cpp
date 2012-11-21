@@ -684,13 +684,10 @@ bool WebViewImpl::handleGestureEvent(const WebGestureEvent& event)
 #endif
         break;
     case WebInputEvent::GestureTapCancel:
-        if (m_linkHighlight)
-            m_linkHighlight->startHighlightAnimationIfNeeded();
-        break;
     case WebInputEvent::GestureTap:
     case WebInputEvent::GestureLongPress:
-        // If a link highlight is active, kill it.
-        m_linkHighlight.clear();
+        if (m_linkHighlight)
+            m_linkHighlight->startHighlightAnimationIfNeeded();
         break;
     default:
         break;
