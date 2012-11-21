@@ -127,11 +127,10 @@ bool FEColorMatrix::platformApplySkia()
     if (!nativeImage)
         return false;
 
-    SkCanvas* canvas = resultImage->context()->platformContext()->canvas();
     SkPaint paint;
     paint.setColorFilter(filter);
     paint.setXfermodeMode(SkXfermode::kSrc_Mode);
-    canvas->drawBitmap(nativeImage->bitmap(), 0, 0, &paint);
+    resultImage->context()->platformContext()->drawBitmap(nativeImage->bitmap(), 0, 0, &paint);
     return true;
 }
 

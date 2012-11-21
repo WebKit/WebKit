@@ -135,10 +135,10 @@ void Font::drawGlyphs(GraphicsContext* gc, const SimpleFontData* font,
         y += SkFloatToScalar(adv[i].height());
     }
 
-    SkCanvas* canvas = gc->platformContext()->canvas();
+    PlatformContextSkia* platformContext = gc->platformContext();
     if (font->platformData().orientation() == Vertical) {
-        canvas->save();
-        canvas->rotate(-90);
+        platformContext->save();
+        platformContext->rotate(-90);
         SkMatrix rotator;
         rotator.reset();
         rotator.setRotate(90);
@@ -154,7 +154,7 @@ void Font::drawGlyphs(GraphicsContext* gc, const SimpleFontData* font,
         gc->platformContext()->adjustTextRenderMode(&paint);
         paint.setTextEncoding(SkPaint::kGlyphID_TextEncoding);
 
-        canvas->drawPosText(glyphs, numGlyphs * sizeof(uint16_t), pos, paint);
+        platformContext->drawPosText(glyphs, numGlyphs * sizeof(uint16_t), pos, paint);
     }
 
     if ((textMode & TextModeStroke)
@@ -173,10 +173,10 @@ void Font::drawGlyphs(GraphicsContext* gc, const SimpleFontData* font,
             paint.setLooper(0);
         }
 
-        canvas->drawPosText(glyphs, numGlyphs * sizeof(uint16_t), pos, paint);
+        platformContext->drawPosText(glyphs, numGlyphs * sizeof(uint16_t), pos, paint);
     }
     if (font->platformData().orientation() == Vertical)
-        canvas->restore();
+        platformContext->restore();
 }
 
 } // namespace WebCore

@@ -1,3 +1,18 @@
+2012-11-21  Florin Malita  <fmalita@chromium.org>
+
+        [Skia] Encapsulate access to PlatformContextSkia's SkCanvas
+        https://bugs.webkit.org/show_bug.cgi?id=102694
+
+        Reviewed by Stephen White.
+
+        Use PlatformContextSkia's wrapper methods instead of accessing the canvas directly.
+
+        * tests/TransparencyWinTest.cpp:
+        (WebCore::getPixelAt):
+        (WebCore::clearTopLayerAlphaChannel):
+        (WebCore::clearTopLayerAlphaPixel):
+        (WebCore::TEST):
+
 2012-11-20  Rachel Blum  <groby@chromium.org>
 
         [Chromium] Need spellcheck suggestions even if continuous check is off.

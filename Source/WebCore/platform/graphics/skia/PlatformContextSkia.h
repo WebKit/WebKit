@@ -36,6 +36,7 @@
 
 #include "SkCanvas.h"
 #include "SkDashPathEffect.h"
+#include "SkDevice.h"
 #include "SkDrawLooper.h"
 #include "SkPaint.h"
 #include "SkPath.h"
@@ -101,7 +102,6 @@ public:
     // invoked.
     // NOTE: |imageBuffer| may be deleted before the |restore| is invoked.
     void beginLayerClippedToImage(const FloatRect&, const ImageBuffer*);
-    void clipPathAntiAliased(const SkPath&);
 
     // Sets up the common flags on a paint for antialiasing, effects, etc.
     // This is implicitly called by setupPaintFill and setupPaintStroke, but
@@ -161,11 +161,6 @@ public:
     // FIXME: This should be pushed down to GraphicsContext.
     void drawRect(SkRect rect);
 
-    // FIXME: I'm still unsure how I will serialize this call.
-    void paintSkPaint(const SkRect&, const SkPaint&);
-
-    const SkBitmap* bitmap() const;
-
     // Returns if the context is a printing context instead of a display
     // context. Bitmap shouldn't be resampled when printing to keep the best
     // possible quality.
@@ -195,16 +190,60 @@ public:
     // This will be an empty region unless tracking is enabled.
     const OpaqueRegionSkia& opaqueRegion() const { return m_opaqueRegion; }
 
-    // After drawing in the context's canvas, use these functions to notify the context so it can track the opaque region.
+    // After drawing directly to the context's canvas, use this function to notify the context so
+    // it can track the opaque region.
+    // FIXME: this is still needed only because ImageSkia::paintSkBitmap() may need to notify for a
+    //        smaller rect than the one drawn to, due to its clipping logic.
     void didDrawRect(const SkRect&, const SkPaint&, const SkBitmap* = 0);
-    void didDrawPath(const SkPath&, const SkPaint&);
-    void didDrawPoints(SkCanvas::PointMode, int numPoints, const SkPoint[], const SkPaint&);
-    // For drawing operations that do not fill the entire rect.
-    void didDrawBounded(const SkRect&, const SkPaint&);
 
     // Turn off LCD text for the paint if not supported on this context.
     void adjustTextRenderMode(SkPaint*);
     bool couldUseLCDRenderedText();
+
+    enum AntiAliasingMode {
+        NotAntiAliased,
+        AntiAliased
+    };
+    enum AccessMode {
+        ReadOnly,
+        ReadWrite
+    };
+
+    // SkCanvas wrappers.
+    const SkBitmap* bitmap() const;
+    const SkBitmap& layerBitmap(AccessMode = ReadOnly) const;
+    bool readPixels(SkBitmap*, int x, int y,
+        SkCanvas::Config8888 = SkCanvas::kNative_Premul_Config8888);
+    void writePixels(const SkBitmap&, int x, int y,
+        SkCanvas::Config8888 = SkCanvas::kNative_Premul_Config8888);
+    bool isDrawingToLayer() const;
+    bool isVector() const;
+
+    bool clipPath(const SkPath&, AntiAliasingMode = NotAntiAliased,
+        SkRegion::Op = SkRegion::kIntersect_Op);
+    bool clipRect(const SkRect&, AntiAliasingMode = NotAntiAliased,
+        SkRegion::Op = SkRegion::kIntersect_Op);
+    bool getClipBounds(SkRect*) const;
+
+    void setMatrix(const SkMatrix&);
+    const SkMatrix& getTotalMatrix() const;
+    bool concat(const SkMatrix&);
+    bool rotate(SkScalar degrees);
+    bool scale(SkScalar sx, SkScalar sy);
+    bool translate(SkScalar dx, SkScalar dy);
+
+    void drawBitmap(const SkBitmap&, SkScalar, SkScalar, const SkPaint* = 0);
+    void drawBitmapRect(const SkBitmap&, const SkIRect*, const SkRect&, const SkPaint* = 0);
+    void drawOval(const SkRect&, const SkPaint&);
+    void drawPath(const SkPath&, const SkPaint&);
+    void drawPoints(SkCanvas::PointMode, size_t count, const SkPoint pts[], const SkPaint&);
+    void drawRect(const SkRect&, const SkPaint&);
+    void drawIRect(const SkIRect&, const SkPaint&);
+    void drawPosText(const void* text, size_t byteLength, const SkPoint pos[], const SkPaint&);
+    void drawPosTextH(const void* text, size_t byteLength, const SkScalar xpos[], SkScalar constY,
+        const SkPaint&);
+    void drawTextOnPath(const void* text, size_t byteLength, const SkPath&,
+        const SkMatrix*, const SkPaint&);
 
 #if defined(SK_SUPPORT_HINTING_SCALE_FACTOR)
     void setHintingScaleFactor(SkScalar factor) { m_hintingScaleFactor = factor; }
@@ -247,6 +286,146 @@ private:
     SkScalar m_hintingScaleFactor;
 #endif
 };
+
+inline const SkBitmap& PlatformContextSkia::layerBitmap(AccessMode access) const
+{
+    return m_canvas->getTopDevice()->accessBitmap(access == ReadWrite);
+}
+
+inline bool PlatformContextSkia::readPixels(SkBitmap* bitmap, int x, int y,
+    SkCanvas::Config8888 config8888)
+{
+    return m_canvas->readPixels(bitmap, x, y, config8888);
+}
+
+inline void PlatformContextSkia::writePixels(const SkBitmap& bitmap, int x, int y,
+    SkCanvas::Config8888 config8888)
+{
+    m_canvas->writePixels(bitmap, x, y, config8888);
+}
+
+inline bool PlatformContextSkia::isDrawingToLayer() const
+{
+    return m_canvas->isDrawingToLayer();
+}
+
+inline bool PlatformContextSkia::isVector() const
+{
+    return m_canvas->getTopDevice()->getDeviceCapabilities() & SkDevice::kVector_Capability;
+}
+
+inline bool PlatformContextSkia::clipPath(const SkPath& path, AntiAliasingMode aa, SkRegion::Op op)
+{
+    return m_canvas->clipPath(path, op, aa == AntiAliased);
+}
+
+inline bool PlatformContextSkia::clipRect(const SkRect& rect, AntiAliasingMode aa, SkRegion::Op op)
+{
+    return m_canvas->clipRect(rect, op, aa == AntiAliased);
+}
+
+inline bool PlatformContextSkia::getClipBounds(SkRect* bounds) const
+{
+    return m_canvas->getClipBounds(bounds);
+}
+
+inline void PlatformContextSkia::setMatrix(const SkMatrix& matrix)
+{
+    m_canvas->setMatrix(matrix);
+}
+
+inline const SkMatrix& PlatformContextSkia::getTotalMatrix() const
+{
+    return m_canvas->getTotalMatrix();
+}
+
+inline bool PlatformContextSkia::concat(const SkMatrix& matrix)
+{
+    return m_canvas->concat(matrix);
+}
+
+inline bool PlatformContextSkia::rotate(SkScalar degrees)
+{
+    return m_canvas->rotate(degrees);
+}
+
+inline bool PlatformContextSkia::scale(SkScalar sx, SkScalar sy)
+{
+    return m_canvas->scale(sx, sy);
+}
+
+inline bool PlatformContextSkia::translate(SkScalar dx, SkScalar dy)
+{
+    return m_canvas->translate(dx, dy);
+}
+
+inline void PlatformContextSkia::drawBitmap(const SkBitmap& bitmap, SkScalar left, SkScalar top,
+    const SkPaint* paint)
+{
+    m_canvas->drawBitmap(bitmap, left, top, paint);
+}
+
+inline void PlatformContextSkia::drawBitmapRect(const SkBitmap& bitmap, const SkIRect* isrc,
+    const SkRect& dst, const SkPaint* paint)
+{
+    m_canvas->drawBitmapRect(bitmap, isrc, dst, paint);
+}
+
+inline void PlatformContextSkia::drawOval(const SkRect& oval, const SkPaint& paint)
+{
+    m_canvas->drawOval(oval, paint);
+
+    if (m_trackOpaqueRegion)
+        m_opaqueRegion.didDrawBounded(this, oval, paint);
+}
+
+inline void PlatformContextSkia::drawPath(const SkPath& path, const SkPaint& paint)
+{
+    m_canvas->drawPath(path, paint);
+
+    if (m_trackOpaqueRegion)
+        m_opaqueRegion.didDrawPath(this, path, paint);
+}
+
+inline void PlatformContextSkia::drawPoints(SkCanvas::PointMode mode, size_t count,
+    const SkPoint pts[], const SkPaint& paint)
+{
+    m_canvas->drawPoints(mode, count, pts, paint);
+
+    if (m_trackOpaqueRegion)
+        m_opaqueRegion.didDrawPoints(this, mode, count, pts, paint);
+}
+
+inline void PlatformContextSkia::drawRect(const SkRect& rect, const SkPaint& paint)
+{
+    m_canvas->drawRect(rect, paint);
+
+    if (m_trackOpaqueRegion)
+        m_opaqueRegion.didDrawRect(this, rect, paint, 0);
+}
+
+inline void PlatformContextSkia::drawIRect(const SkIRect& rect, const SkPaint& paint)
+{
+    m_canvas->drawIRect(rect, paint);
+}
+
+inline void PlatformContextSkia::drawPosText(const void* text, size_t byteLength,
+    const SkPoint pos[], const SkPaint& paint)
+{
+    m_canvas->drawPosText(text, byteLength, pos, paint);
+}
+
+inline void PlatformContextSkia::drawPosTextH(const void* text, size_t byteLength,
+    const SkScalar xpos[], SkScalar constY, const SkPaint& paint)
+{
+    m_canvas->drawPosTextH(text, byteLength, xpos, constY, paint);
+}
+
+inline void PlatformContextSkia::drawTextOnPath(const void* text, size_t byteLength,
+    const SkPath& path, const SkMatrix* matrix, const SkPaint& paint)
+{
+    m_canvas->drawTextOnPath(text, byteLength, path, matrix, paint);
+}
 
 }
 #endif // PlatformContextSkia_h

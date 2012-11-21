@@ -80,8 +80,7 @@ bool FEBlend::platformApplySkia()
     SkAutoTUnref<SkImageFilter> blend(new SkBlendImageFilter(mode, backgroundSource));
     SkPaint paint;
     paint.setImageFilter(blend);
-    SkCanvas* canvas = resultImage->context()->platformContext()->canvas();
-    canvas->drawBitmap(foregroundBitmap, 0, 0, &paint);
+    resultImage->context()->platformContext()->drawBitmap(foregroundBitmap, 0, 0, &paint);
     return true;
 }
 

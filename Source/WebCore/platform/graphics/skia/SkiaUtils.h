@@ -67,7 +67,7 @@ inline SkScalar WebCoreDoubleToSkScalar(double d)
 // clip, doing the necessary coordinate transforms.
 //
 // srcRect and destRect can be the same.
-void ClipRectToCanvas(const SkCanvas&, const SkRect& srcRect, SkRect* destRect);
+void ClipRectToCanvas(const PlatformContextSkia*, const SkRect& srcRect, SkRect* destRect);
 
 // Determine if a given WebKit point is contained in a path
 bool SkPathContainsPoint(SkPath*, const FloatPoint&, SkPath::FillType);

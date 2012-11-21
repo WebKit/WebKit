@@ -103,7 +103,7 @@ bool FELighting::platformApplySkia()
 
     SkPaint paint;
     paint.setImageFilter(createImageFilter(0))->unref();
-    dstContext->platformContext()->canvas()->drawBitmap(nativeImage->bitmap(), drawingRegion.location().x(), drawingRegion.location().y(), &paint);
+    dstContext->platformContext()->drawBitmap(nativeImage->bitmap(), drawingRegion.location().x(), drawingRegion.location().y(), &paint);
     return true;
 }
 

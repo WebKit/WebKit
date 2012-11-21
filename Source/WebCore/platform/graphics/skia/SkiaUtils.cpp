@@ -106,9 +106,9 @@ Color SkPMColorToWebCoreColor(SkPMColor pm)
     return SkPMColorToColor(pm);
 }
 
-void ClipRectToCanvas(const SkCanvas& canvas, const SkRect& srcRect, SkRect* destRect)
+void ClipRectToCanvas(const PlatformContextSkia* context, const SkRect& srcRect, SkRect* destRect)
 {
-    if (!canvas.getClipBounds(destRect) || !destRect->intersect(srcRect))
+    if (!context->getClipBounds(destRect) || !destRect->intersect(srcRect))
         destRect->setEmpty();
 }
 

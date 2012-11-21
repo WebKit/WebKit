@@ -140,7 +140,7 @@ void TransparencyAwareFontPainter::initializeForGDI()
         // this mode and it will apply the color.
         m_transparency.setTextCompositeColor(color);
         color = SkColorSetRGB(0, 0, 0);
-    } else if (m_createdTransparencyLayer || m_platformContext->canvas()->isDrawingToLayer()) {
+    } else if (m_createdTransparencyLayer || m_platformContext->isDrawingToLayer()) {
         // When we're drawing a web page, we know the background is opaque,
         // but if we're drawing to a layer, we still need extra work.
         layerMode = TransparencyWin::OpaqueCompositeLayer;

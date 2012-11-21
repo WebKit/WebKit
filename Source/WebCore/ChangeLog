@@ -1,3 +1,116 @@
+2012-11-21  Florin Malita  <fmalita@chromium.org>
+
+        [Skia] Encapsulate access to PlatformContextSkia's SkCanvas
+        https://bugs.webkit.org/show_bug.cgi?id=102694
+
+        Reviewed by Stephen White.
+
+        Add SkCanvas-equivalent methods to PlatformContextSkia, and refactor direct canvas call
+        sites to use these wrappers instead. This reduces the number of canvas() users from 90+
+        to 22 (mostly theme/ui code).
+
+        No new tests: refactoring only.
+
+        * platform/chromium/PlatformThemeChromiumLinux.cpp:
+        (WebCore::PlatformThemeChromiumLinux::paintArrowButton):
+        * platform/graphics/chromium/FontChromiumWin.cpp:
+        * platform/graphics/chromium/TransparencyWin.cpp:
+        (WebCore::TransparencyWin::computeLayerSize):
+        (WebCore::TransparencyWin::compositeOpaqueComposite):
+        (WebCore::TransparencyWin::compositeTextComposite):
+        (WebCore::TransparencyWin::makeLayerOpaque):
+        * platform/graphics/filters/skia/FEBlendSkia.cpp:
+        (WebCore::FEBlend::platformApplySkia):
+        * platform/graphics/filters/skia/FEColorMatrixSkia.cpp:
+        (WebCore::FEColorMatrix::platformApplySkia):
+        * platform/graphics/filters/skia/FEComponentTransferSkia.cpp:
+        (WebCore::FEComponentTransfer::platformApplySkia):
+        * platform/graphics/filters/skia/FELightingSkia.cpp:
+        (WebCore::FELighting::platformApplySkia):
+        * platform/graphics/harfbuzz/FontHarfBuzz.cpp:
+        (WebCore::Font::drawGlyphs):
+        (WebCore::Font::drawComplexText):
+        * platform/graphics/skia/FontSkia.cpp:
+        (WebCore::Font::drawGlyphs):
+        * platform/graphics/skia/GraphicsContextSkia.cpp:
+        (WebCore::GraphicsContext::addInnerRoundedRectClip):
+        (WebCore::GraphicsContext::clearRect):
+        (WebCore::GraphicsContext::clip):
+        (WebCore::GraphicsContext::clipOut):
+        (WebCore::GraphicsContext::clipPath):
+        (WebCore::GraphicsContext::concatCTM):
+        (WebCore::GraphicsContext::setCTM):
+        (WebCore::GraphicsContext::drawConvexPolygon):
+        (WebCore::GraphicsContext::clipConvexPolygon):
+        (WebCore::GraphicsContext::drawEllipse):
+        (WebCore::drawOuterPath):
+        (WebCore::GraphicsContext::drawLine):
+        (WebCore::GraphicsContext::drawLineForDocumentMarker):
+        (WebCore::GraphicsContext::drawLineForText):
+        (WebCore::GraphicsContext::fillPath):
+        (WebCore::GraphicsContext::fillRect):
+        (WebCore::GraphicsContext::fillRoundedRect):
+        (WebCore::GraphicsContext::getCTM):
+        (WebCore::GraphicsContext::scale):
+        (WebCore::GraphicsContext::strokeArc):
+        (WebCore::GraphicsContext::strokePath):
+        (WebCore::GraphicsContext::strokeRect):
+        (WebCore::GraphicsContext::rotate):
+        (WebCore::GraphicsContext::translate):
+        (WebCore::GraphicsContext::platformFillEllipse):
+        (WebCore::GraphicsContext::platformStrokeEllipse):
+        * platform/graphics/skia/ImageBufferSkia.cpp:
+        (WebCore::getImageData):
+        (WebCore::ImageBuffer::getUnmultipliedImageData):
+        (WebCore::ImageBuffer::getPremultipliedImageData):
+        (WebCore::ImageBuffer::putByteArray):
+        (WebCore::ImageBuffer::toDataURL):
+        * platform/graphics/skia/ImageSkia.cpp:
+        (WebCore::drawResampledBitmap):
+        (WebCore::hasNon90rotation):
+        (WebCore::paintSkBitmap):
+        (WebCore::Image::drawPattern):
+        * platform/graphics/skia/PlatformContextSkia.cpp:
+        (WebCore::PlatformContextSkia::save):
+        (WebCore::PlatformContextSkia::beginLayerClippedToImage):
+        (WebCore::PlatformContextSkia::restore):
+        (WebCore::PlatformContextSkia::drawRect):
+        (WebCore::PlatformContextSkia::couldUseLCDRenderedText):
+        * platform/graphics/skia/PlatformContextSkia.h:
+        (PlatformContextSkia):
+        (WebCore::PlatformContextSkia::layerBitmap):
+        (WebCore):
+        (WebCore::PlatformContextSkia::readPixels):
+        (WebCore::PlatformContextSkia::writePixels):
+        (WebCore::PlatformContextSkia::isDrawingToLayer):
+        (WebCore::PlatformContextSkia::isVector):
+        (WebCore::PlatformContextSkia::clipPath):
+        (WebCore::PlatformContextSkia::clipRect):
+        (WebCore::PlatformContextSkia::getClipBounds):
+        (WebCore::PlatformContextSkia::setMatrix):
+        (WebCore::PlatformContextSkia::getTotalMatrix):
+        (WebCore::PlatformContextSkia::concat):
+        (WebCore::PlatformContextSkia::rotate):
+        (WebCore::PlatformContextSkia::scale):
+        (WebCore::PlatformContextSkia::translate):
+        (WebCore::PlatformContextSkia::drawBitmap):
+        (WebCore::PlatformContextSkia::drawBitmapRect):
+        (WebCore::PlatformContextSkia::drawOval):
+        (WebCore::PlatformContextSkia::drawPath):
+        (WebCore::PlatformContextSkia::drawPoints):
+        (WebCore::PlatformContextSkia::drawRect):
+        (WebCore::PlatformContextSkia::drawIRect):
+        (WebCore::PlatformContextSkia::drawPosText):
+        (WebCore::PlatformContextSkia::drawPosTextH):
+        (WebCore::PlatformContextSkia::drawTextOnPath):
+        * platform/graphics/skia/SkiaFontWin.cpp:
+        (WebCore::skiaDrawText):
+        (WebCore::paintSkiaText):
+        * platform/graphics/skia/SkiaUtils.cpp:
+        (WebCore::ClipRectToCanvas):
+        * platform/graphics/skia/SkiaUtils.h:
+        (WebCore):
+
 2012-11-21  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Reset the slider thumb location before every layout of the slider container

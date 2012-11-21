@@ -99,7 +99,7 @@ SkColor PlatformThemeChromiumLinux::outlineColor(const SkScalar hsv1[3], const S
 
 void PlatformThemeChromiumLinux::paintArrowButton(GraphicsContext* gc, const IntRect& rect, ArrowDirection direction, ControlStates states)
 {
-    SkCanvas* const canvas = gc->platformContext()->canvas();
+    PlatformContextSkia* platformContext = gc->platformContext();
     int widthMiddle, lengthMiddle;
     SkPaint paint;
     if (direction == North || direction == South) {
@@ -129,7 +129,7 @@ void PlatformThemeChromiumLinux::paintArrowButton(GraphicsContext* gc, const Int
     skrect.set(rect.x(), rect.y(), rect.x() + rect.width(), rect.y() + rect.height());
     // Paint the background (the area visible behind the rounded corners).
     paint.setColor(backgroundColor);
-    canvas->drawIRect(skrect, paint);
+    platformContext->drawIRect(skrect, paint);
 
     // Paint the button's outline and fill the middle
     SkPath outline;
@@ -171,14 +171,14 @@ void PlatformThemeChromiumLinux::paintArrowButton(GraphicsContext* gc, const Int
 
     paint.setStyle(SkPaint::kFill_Style);
     paint.setColor(buttonColor);
-    canvas->drawPath(outline, paint);
+    platformContext->drawPath(outline, paint);
 
     paint.setAntiAlias(true);
     paint.setStyle(SkPaint::kStroke_Style);
     SkScalar thumbHSV[3];
     SkColorToHSV(thumbInactiveColor(), thumbHSV);
     paint.setColor(outlineColor(trackHSV, thumbHSV));
-    canvas->drawPath(outline, paint);
+    platformContext->drawPath(outline, paint);
 
     // If the button is disabled or read-only, the arrow is drawn with the outline color.
     if (states & EnabledState && !(states & ReadOnlyState))
@@ -214,7 +214,7 @@ void PlatformThemeChromiumLinux::paintArrowButton(GraphicsContext* gc, const Int
     }
     path.close();
 
-    canvas->drawPath(path, paint);
+    platformContext->drawPath(path, paint);
 }
 
 } // namespace WebCore

@@ -229,7 +229,7 @@ void PlatformContextSkia::save()
     m_state->m_imageBufferClip.reset();
 
     // Save our native canvas.
-    canvas()->save();
+    m_canvas->save();
 }
 
 void PlatformContextSkia::saveLayer(const SkRect* bounds, const SkPaint* paint)
@@ -275,7 +275,7 @@ void PlatformContextSkia::beginLayerClippedToImage(const FloatRect& rect,
     m_state->m_clip = bounds;
     // Get the absolute coordinates of the stored clipping rectangle to make it
     // independent of any transform changes.
-    canvas()->getTotalMatrix().mapRect(&m_state->m_clip);
+    getTotalMatrix().mapRect(&m_state->m_clip);
 
     SkCanvas::SaveFlags saveFlags = static_cast<SkCanvas::SaveFlags>(SkCanvas::kHasAlphaLayer_SaveFlag | SkCanvas::kFullColorLayer_SaveFlag);
     saveLayer(&bounds, 0, saveFlags);
@@ -297,23 +297,18 @@ void PlatformContextSkia::beginLayerClippedToImage(const FloatRect& rect,
     }
 }
 
-void PlatformContextSkia::clipPathAntiAliased(const SkPath& clipPath)
-{
-    canvas()->clipPath(clipPath, SkRegion::kIntersect_Op, true);
-}
-
 void PlatformContextSkia::restore()
 {
     if (!m_state->m_imageBufferClip.empty()) {
         applyClipFromImage(m_state->m_clip, m_state->m_imageBufferClip);
-        canvas()->restore();
+        m_canvas->restore();
     }
 
     m_stateStack.removeLast();
     m_state = &m_stateStack.last();
 
     // Restore our native canvas.
-    canvas()->restore();
+    m_canvas->restore();
 }
 
 void PlatformContextSkia::drawRect(SkRect rect)
@@ -322,8 +317,7 @@ void PlatformContextSkia::drawRect(SkRect rect)
     int fillcolorNotTransparent = m_state->m_fillColor & 0xFF000000;
     if (fillcolorNotTransparent) {
         setupPaintForFilling(&paint);
-        canvas()->drawRect(rect, paint);
-        didDrawRect(rect, paint);
+        drawRect(rect, paint);
     }
 
     if (m_state->m_strokeStyle != NoStroke
@@ -335,17 +329,13 @@ void PlatformContextSkia::drawRect(SkRect rect)
         paint.setColor(this->effectiveStrokeColor());
 
         SkRect topBorder = { rect.fLeft, rect.fTop, rect.fRight, rect.fTop + 1 };
-        canvas()->drawRect(topBorder, paint);
-        didDrawRect(topBorder, paint);
+        drawRect(topBorder, paint);
         SkRect bottomBorder = { rect.fLeft, rect.fBottom - 1, rect.fRight, rect.fBottom };
-        canvas()->drawRect(bottomBorder, paint);
-        didDrawRect(bottomBorder, paint);
+        drawRect(bottomBorder, paint);
         SkRect leftBorder = { rect.fLeft, rect.fTop + 1, rect.fLeft + 1, rect.fBottom - 1 };
-        canvas()->drawRect(leftBorder, paint);
-        didDrawRect(leftBorder, paint);
+        drawRect(leftBorder, paint);
         SkRect rightBorder = { rect.fRight - 1, rect.fTop + 1, rect.fRight, rect.fBottom - 1 };
-        canvas()->drawRect(rightBorder, paint);
-        didDrawRect(rightBorder, paint);
+        drawRect(rightBorder, paint);
     }
 }
 
@@ -581,13 +571,6 @@ void PlatformContextSkia::setDashPathEffect(SkDashPathEffect* dash)
     }
 }
 
-void PlatformContextSkia::paintSkPaint(const SkRect& rect,
-                                       const SkPaint& paint)
-{
-    m_canvas->drawRect(rect, paint);
-    didDrawRect(rect, paint);
-}
-
 const SkBitmap* PlatformContextSkia::bitmap() const
 {
 #if PLATFORM(CHROMIUM)
@@ -625,24 +608,6 @@ void PlatformContextSkia::didDrawRect(const SkRect& rect, const SkPaint& paint, 
         m_opaqueRegion.didDrawRect(this, rect, paint, bitmap);
 }
 
-void PlatformContextSkia::didDrawPath(const SkPath& path, const SkPaint& paint)
-{
-    if (m_trackOpaqueRegion)
-        m_opaqueRegion.didDrawPath(this, path, paint);
-}
-
-void PlatformContextSkia::didDrawPoints(SkCanvas::PointMode mode, int numPoints, const SkPoint points[], const SkPaint& paint)
-{
-    if (m_trackOpaqueRegion)
-        m_opaqueRegion.didDrawPoints(this, mode, numPoints, points, paint);
-}
-
-void PlatformContextSkia::didDrawBounded(const SkRect& rect, const SkPaint& paint)
-{
-    if (m_trackOpaqueRegion)
-        m_opaqueRegion.didDrawBounded(this, rect, paint);
-}
-
 void PlatformContextSkia::adjustTextRenderMode(SkPaint* paint)
 {
     if (!paint->isLCDRenderText())
@@ -657,7 +622,7 @@ bool PlatformContextSkia::couldUseLCDRenderedText()
     // rendered text cannot be composited correctly when the layer is
     // collapsed. Therefore, subpixel text is disabled when we are drawing
     // onto a layer.
-    if (canvas()->isDrawingToLayer())
+    if (isDrawingToLayer())
         return false;
 
     // If this text is not in an image buffer and so won't be externally

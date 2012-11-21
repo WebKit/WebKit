@@ -98,7 +98,7 @@ void Font::drawGlyphs(GraphicsContext* gc, const SimpleFontData* font,
         y += SkFloatToScalar(adv[i].height());
     }
 
-    SkCanvas* canvas = gc->platformContext()->canvas();
+    PlatformContextSkia* platformContext = gc->platformContext();
     TextDrawingModeFlags textMode = gc->platformContext()->getTextDrawingMode();
 
     // We draw text up to two times (once for fill, once for stroke).
@@ -115,10 +115,10 @@ void Font::drawGlyphs(GraphicsContext* gc, const SimpleFontData* font,
                 path.reset();
                 path.moveTo(vPosBegin[i]);
                 path.lineTo(vPosEnd[i]);
-                canvas->drawTextOnPath(glyphs + i, 2, path, 0, paint);
+                platformContext->drawTextOnPath(glyphs + i, 2, path, 0, paint);
             }
         } else
-            canvas->drawPosText(glyphs, numGlyphs << 1, pos, paint);
+            platformContext->drawPosText(glyphs, numGlyphs << 1, pos, paint);
     }
 
     if ((textMode & TextModeStroke)
@@ -144,10 +144,10 @@ void Font::drawGlyphs(GraphicsContext* gc, const SimpleFontData* font,
                 path.reset();
                 path.moveTo(vPosBegin[i]);
                 path.lineTo(vPosEnd[i]);
-                canvas->drawTextOnPath(glyphs + i, 2, path, 0, paint);
+                platformContext->drawTextOnPath(glyphs + i, 2, path, 0, paint);
             }
         } else
-            canvas->drawPosText(glyphs, numGlyphs << 1, pos, paint);
+            platformContext->drawPosText(glyphs, numGlyphs << 1, pos, paint);
     }
 }
 
@@ -191,7 +191,7 @@ void Font::drawComplexText(GraphicsContext* gc, const TextRun& run,
     FloatPoint adjustedPoint = shaper.adjustStartPoint(point);
     drawGlyphBuffer(gc, run, glyphBuffer, adjustedPoint);
 #else
-    SkCanvas* canvas = gc->platformContext()->canvas();
+    PlatformContextSkia* platformContext = gc->platformContext();
     ComplexTextController controller(this, run, point.x(), point.y());
     if (run.rtl())
         controller.setupForRTL();
@@ -206,13 +206,13 @@ void Font::drawComplexText(GraphicsContext* gc, const TextRun& run,
         if (fill) {
             controller.fontPlatformDataForScriptRun()->setupPaint(&fillPaint);
             gc->platformContext()->adjustTextRenderMode(&fillPaint);
-            canvas->drawPosText(controller.glyphs() + fromGlyph, glyphLength << 1, controller.positions() + fromGlyph, fillPaint);
+            platformContext->drawPosText(controller.glyphs() + fromGlyph, glyphLength << 1, controller.positions() + fromGlyph, fillPaint);
         }
 
         if (stroke) {
             controller.fontPlatformDataForScriptRun()->setupPaint(&strokePaint);
             gc->platformContext()->adjustTextRenderMode(&strokePaint);
-            canvas->drawPosText(controller.glyphs() + fromGlyph, glyphLength << 1, controller.positions() + fromGlyph, strokePaint);
+            platformContext->drawPosText(controller.glyphs() + fromGlyph, glyphLength << 1, controller.positions() + fromGlyph, strokePaint);
         }
     }
 #endif
