@@ -1,5 +1,30 @@
 2012-11-20  Kentaro Hara  <haraken@chromium.org>
 
+        [V8] Remove v8/custom/V8XMLHttpRequestConstructor.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=102876
+
+        Reviewed by Sam Weinig.
+
+        It doesn't make sense to have one custom cpp file for
+        XXX::constructorCallback() only. We can move XXX::constructorCallback()
+        in v8/custom/V8XXXConstructor.cpp to v8/custom/V8XXXCustom.cpp
+        and thus remove v8/custom/V8XXXConstructor.cpp.
+
+        Note: Some XXX::constructorCallback()s are already written in
+        v8/custom/V8XXXCustom.cpp. JSC already has almost all
+        XXX::constructorCallback()s in js/JSXXXCustom.cpp.
+
+        No tests. No change in behavior.
+
+        * UseV8.cmake:
+        * WebCore.gypi:
+        * bindings/v8/custom/V8XMLHttpRequestConstructor.cpp: Removed.
+        * bindings/v8/custom/V8XMLHttpRequestCustom.cpp:
+        (WebCore::V8XMLHttpRequest::constructorCallbackCustom):
+        (WebCore):
+
+2012-11-20  Kentaro Hara  <haraken@chromium.org>
+
         Unreviewed. Rebaselined run-bindings-tests.
 
         * bindings/scripts/test/CPP/WebDOMFloat64Array.cpp:

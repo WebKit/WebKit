@@ -49,6 +49,23 @@
 
 namespace WebCore {
 
+v8::Handle<v8::Value> V8XMLHttpRequest::constructorCallbackCustom(const v8::Arguments& args)
+{
+    ScriptExecutionContext* context = getScriptExecutionContext();
+
+    RefPtr<SecurityOrigin> securityOrigin;
+    if (context->isDocument()) {
+        if (DOMWrapperWorld* world = worldForEnteredContextIfIsolated())
+            securityOrigin = world->isolatedWorldSecurityOrigin();
+    }
+
+    RefPtr<XMLHttpRequest> xmlHttpRequest = XMLHttpRequest::create(context, securityOrigin);
+
+    v8::Handle<v8::Object> wrapper = args.Holder();
+    V8DOMWrapper::createDOMWrapper(xmlHttpRequest.release(), &info, wrapper);
+    return wrapper;
+}
+
 v8::Handle<v8::Value> V8XMLHttpRequest::responseTextAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     INC_STATS("DOM.XMLHttpRequest.responsetext._get");
