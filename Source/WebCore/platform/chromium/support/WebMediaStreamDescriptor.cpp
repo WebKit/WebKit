@@ -147,4 +147,3 @@ void WebMediaStreamDescriptor::assign(const WebMediaStreamDescriptor& other)
 } // namespace WebKit
 
 #endif // ENABLE(MEDIA_STREAM)
-

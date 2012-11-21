@@ -1,3 +1,17 @@
+2012-11-21  Harald Alvestrand  <hta@google.com>
+
+        WebMediaStreamComponent: Add assignment and copy operators
+        https://bugs.webkit.org/show_bug.cgi?id=102915
+
+        Reviewed by Adam Barth.
+
+        Tests that use this functionality are being submitted to Chrome.
+
+        * platform/chromium/support/WebMediaStreamComponent.cpp:
+        (WebKit::WebMediaStreamComponent::assign):
+        (WebKit):
+        * platform/chromium/support/WebMediaStreamDescriptor.cpp:
+
 2012-11-21  Kentaro Hara  <haraken@chromium.org>
 
         [V8] Remove STRING_TO_V8PARAMETER_EXCEPTION_BLOCK()

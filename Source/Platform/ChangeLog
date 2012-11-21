@@ -1,3 +1,15 @@
+2012-11-21  Harald Alvestrand  <hta@google.com>
+
+        WebMediaStreamComponent: Add assignment and copy operators
+        https://bugs.webkit.org/show_bug.cgi?id=102915
+
+        Reviewed by Adam Barth.
+
+        * chromium/public/WebMediaStreamComponent.h:
+        (WebKit::WebMediaStreamComponent::WebMediaStreamComponent):
+        (WebKit::WebMediaStreamComponent::operator=):
+        (WebMediaStreamComponent):
+
 2012-11-19  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Remove the WebCompositorSupport virtual methods from the base class

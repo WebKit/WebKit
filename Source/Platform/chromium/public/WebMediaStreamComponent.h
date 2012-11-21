@@ -47,8 +47,15 @@ class WebString;
 class WebMediaStreamComponent {
 public:
     WebMediaStreamComponent() { }
+    WebMediaStreamComponent(const WebMediaStreamComponent& other) { assign(other); }
     ~WebMediaStreamComponent() { reset(); }
 
+    WebMediaStreamComponent& operator=(const WebMediaStreamComponent& other)
+    {
+        assign(other);
+        return *this;
+    }
+    WEBKIT_EXPORT void assign(const WebMediaStreamComponent&);
     WEBKIT_EXPORT void reset();
     bool isNull() const { return m_private.isNull(); }
 

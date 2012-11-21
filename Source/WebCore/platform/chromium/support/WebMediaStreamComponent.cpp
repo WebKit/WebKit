@@ -81,7 +81,11 @@ WebMediaStreamSource WebMediaStreamComponent::source() const
     return WebMediaStreamSource(m_private.get()->source());
 }
 
+void WebMediaStreamComponent::assign(const WebMediaStreamComponent& other)
+{
+    m_private = other.m_private;
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(MEDIA_STREAM)
-
