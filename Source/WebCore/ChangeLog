@@ -1,5 +1,12 @@
 2012-11-21  Kentaro Hara  <haraken@chromium.org>
 
+        Unreviewed. Build fix.
+
+        * bindings/v8/custom/V8BlobCustom.cpp:
+        (WebCore::V8Blob::constructorCallbackCustom):
+
+2012-11-21  Kentaro Hara  <haraken@chromium.org>
+
         [V8] Rename v8/custom/*Constructor.cpp to v8/custom/*Custom.cpp
         https://bugs.webkit.org/show_bug.cgi?id=102881
 

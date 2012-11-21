@@ -80,6 +80,7 @@ v8::Handle<v8::Value> V8Blob::constructorCallbackCustom(const v8::Arguments& arg
         }
 
         EXCEPTION_BLOCK(bool, containsType, dictionary.get("type", type));
+        UNUSED_PARAM(containsType);
         if (!type.containsOnlyASCII())
             return throwError(v8SyntaxError, "type must consist of ASCII characters", args.GetIsolate());
         type.makeLower();
