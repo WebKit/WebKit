@@ -1,3 +1,23 @@
+2012-11-21  Andras Becsi  <andras.becsi@digia.com>
+
+        [WK2] Viewport meta tag broken after r134801
+        https://bugs.webkit.org/show_bug.cgi?id=102801
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        If the initial-scale attribute is not explicitly specified it is left -1 by the
+        viewport meta algorithm and if the content is not scalable the min and max scales
+        are restricted by restrictScaleFactorToInitialScaleIfNotUserScalable() which resulted
+        in negative scales on the UI side.
+        Make sure that the minimum scale to fit the viewport is calculated before restricting
+        the scales and use this scale as the initial scale if no explicit initial scale was set.
+
+        * UIProcess/PageViewportController.cpp:
+        (WebKit::PageViewportController::PageViewportController):
+        (WebKit::PageViewportController::pageTransitionViewportReady):
+        (WebKit::PageViewportController::didChangeViewportAttributes):
+        (WebKit::PageViewportController::updateMinimumScaleToFit):
+
 2012-11-21  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         [EFL][WK2] Support Context Menu
