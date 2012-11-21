@@ -80,15 +80,8 @@ public:
 
     void destroyGlobal();
 
-#ifndef NDEBUG
-    static void assertContextHasCorrectPrototype();
-#endif
-
     static V8DOMWindowShell* isolated(v8::Handle<v8::Context> context)
     {
-#ifndef NDEBUG
-        assertContextHasCorrectPrototype();
-#endif
         return static_cast<V8DOMWindowShell*>(context->GetAlignedPointerFromEmbedderData(v8ContextIsolatedWindowShell));
     }
 

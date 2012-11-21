@@ -65,14 +65,6 @@
 
 namespace WebCore {
 
-#ifndef NDEBUG
-void V8DOMWindowShell::assertContextHasCorrectPrototype()
-{
-    ASSERT(isMainThread());
-    ASSERT(V8DOMWrapper::isWrapperOfType(toInnerGlobalObject(v8::Context::GetEntered()), &V8DOMWindow::info));
-}
-#endif
-
 static void checkDocumentWrapper(v8::Handle<v8::Object> wrapper, Document* document)
 {
     ASSERT(V8Document::toNative(wrapper) == document);
@@ -336,6 +328,7 @@ bool V8DOMWindowShell::installDOMWindow()
     V8DOMWindow::installPerContextProperties(windowWrapper, window);
 
     V8DOMWrapper::setDOMWrapper(v8::Handle<v8::Object>::Cast(windowWrapper->GetPrototype()), &V8DOMWindow::info, window);
+    V8DOMWrapper::createDOMWrapper(PassRefPtr<DOMWindow>(window), &V8DOMWindow::info, windowWrapper);
 
     // Install the windowWrapper as the prototype of the innerGlobalObject.
     // The full structure of the global object is as follows:
@@ -353,7 +346,6 @@ bool V8DOMWindowShell::installDOMWindow()
     v8::Handle<v8::Object> innerGlobalObject = toInnerGlobalObject(m_context.get());
     V8DOMWrapper::setDOMWrapper(innerGlobalObject, &V8DOMWindow::info, window);
     innerGlobalObject->SetPrototype(windowWrapper);
-    V8DOMWrapper::createDOMWrapper(PassRefPtr<DOMWindow>(window), &V8DOMWindow::info, windowWrapper);
     return true;
 }
 

@@ -1,3 +1,20 @@
+2012-11-21  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r135383.
+        http://trac.webkit.org/changeset/135383
+        https://bugs.webkit.org/show_bug.cgi?id=102935
+
+        IDBRequestTest.* unit tests are failing (Requested by yurys on
+        #webkit).
+
+        * bindings/v8/V8DOMWindowShell.cpp:
+        (WebCore::V8DOMWindowShell::installDOMWindow):
+        * bindings/v8/V8DOMWindowShell.h:
+        (V8DOMWindowShell):
+        (WebCore::V8DOMWindowShell::isolated):
+        * bindings/v8/WorldContextHandle.cpp:
+        (WebCore::WorldContextHandle::WorldContextHandle):
+
 2012-11-21  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         [EFL][WK2] Support Context Menu
