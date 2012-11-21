@@ -76,9 +76,6 @@ void visibleTextQuads(const WebCore::VisibleSelection&, WTF::Vector<WebCore::Flo
 WebCore::VisibleSelection visibleSelectionForRangeInputElement(WebCore::Element*, int start, int end);
 WebCore::VisibleSelection visibleSelectionForInputElement(WebCore::Element*);
 
-WebCore::Node* DOMContainerNodeForPosition(const WebCore::Position&);
-bool isPositionInNode(WebCore::Node*, const WebCore::Position&);
-
 bool elementIdOrNameIndicatesNoAutocomplete(const WebCore::Element*);
 bool elementIdOrNameIndicatesEmail(const WebCore::HTMLInputElement*);
 bool elementIdOrNameIndicatesUrl(const WebCore::HTMLInputElement*);

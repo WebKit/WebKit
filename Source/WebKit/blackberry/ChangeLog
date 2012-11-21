@@ -1,3 +1,23 @@
+2012-11-21  Mike Fenton  <mifenton@rim.com>
+
+        [BlackBerry] Switch to point instead of VisiblePosition comparison for input bounds check
+        https://bugs.webkit.org/show_bug.cgi?id=102962
+
+        Reviewed by Rob Buis.
+
+        PR 247270.
+
+        Switch from using VisiblePosition to determine if we are in a node
+        to a comparison of the field bounds.  This fixes the case where
+        there is no node before the target node to match.
+
+        Reviewed Internally by Gen Mak.
+
+        * WebKitSupport/DOMSupport.cpp:
+        * WebKitSupport/DOMSupport.h:
+        * WebKitSupport/SelectionHandler.cpp:
+        (BlackBerry::WebKit::SelectionHandler::setCaretPosition):
+
 2012-11-20  Andrew Lo  <anlo@rim.com>
 
         [BlackBerry] Animated gifs pause on scroll or zoom and sometimes don't resume after scroll or zoom completes

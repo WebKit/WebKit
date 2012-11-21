@@ -253,14 +253,17 @@ void SelectionHandler::setCaretPosition(const WebCore::IntPoint &position)
 
     VisiblePosition visibleCaretPosition(focusedFrame->visiblePositionForPoint(relativePoint));
 
-    if (!DOMSupport::isPositionInNode(m_webPage->focusedOrMainFrame()->document()->focusedNode(), visibleCaretPosition.deepEquivalent())) {
-        if (unsigned short character = directionOfPointRelativeToRect(relativePoint, currentCaretRect))
-            m_webPage->m_inputHandler->handleKeyboardInput(Platform::KeyboardEvent(character));
+    if (RenderObject* focusedRenderer = focusedFrame->document()->focusedNode()->renderer()) {
+        WebCore::IntRect nodeOutlineBounds(focusedRenderer->absoluteOutlineBounds());
+        if (!nodeOutlineBounds.contains(relativePoint)) {
+            if (unsigned short character = directionOfPointRelativeToRect(relativePoint, currentCaretRect))
+                m_webPage->m_inputHandler->handleKeyboardInput(Platform::KeyboardEvent(character));
 
-        // Send the selection changed in case this does not trigger a selection change to
-        // ensure the caret position is accurate. This may be a duplicate event.
-        selectionPositionChanged(true /* forceUpdateWithoutChange */);
-        return;
+            // Send the selection changed in case this does not trigger a selection change to
+            // ensure the caret position is accurate. This may be a duplicate event.
+            selectionPositionChanged(true /* forceUpdateWithoutChange */);
+            return;
+        }
     }
 
     VisibleSelection newSelection(visibleCaretPosition);

@@ -314,34 +314,6 @@ VisibleSelection visibleSelectionForRangeInputElement(Element* element, int star
     return VisibleSelection(visibleStart, visibleEnd);
 }
 
-Node* DOMContainerNodeForPosition(const Position& position)
-{
-    Node* nodeAtPos = position.containerNode();
-    if (nodeAtPos && nodeAtPos->isInShadowTree())
-        nodeAtPos = nodeAtPos->shadowAncestorNode();
-
-    return nodeAtPos;
-}
-
-bool isPositionInNode(Node* node, const Position& position)
-{
-    if (!node)
-        return false;
-
-    Node* domNodeAtPos = DOMContainerNodeForPosition(position);
-    if (!domNodeAtPos)
-        return false;
-
-    int offset = 0;
-    if (domNodeAtPos == position.containerNode())
-        offset = position.computeOffsetInContainerNode();
-
-    RefPtr<Range> rangeForNode = rangeOfContents(node);
-    int ec;
-
-    return rangeForNode->isPointInRange(domNodeAtPos, offset, ec);
-}
-
 static bool matchesReservedStringEmail(const AtomicString& string)
 {
     return string.contains("email", false /* caseSensitive */);
