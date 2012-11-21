@@ -51,6 +51,7 @@
 #include "SharedBuffer.h"
 #include "TextResourceDecoder.h"
 #include "ThreadableLoader.h"
+#include "WebCoreMemoryInstrumentation.h"
 #include "XMLHttpRequestException.h"
 #include "XMLHttpRequestProgressEvent.h"
 #include "XMLHttpRequestUpload.h"
@@ -1295,6 +1296,32 @@ EventTargetData* XMLHttpRequest::eventTargetData()
 EventTargetData* XMLHttpRequest::ensureEventTargetData()
 {
     return &m_eventTargetData;
+}
+
+void XMLHttpRequest::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+{
+    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::DOM);
+    ScriptWrappable::reportMemoryUsage(memoryObjectInfo);
+    ActiveDOMObject::reportMemoryUsage(memoryObjectInfo);
+    info.addMember(m_upload);
+    info.addMember(m_url);
+    info.addMember(m_method);
+    info.addMember(m_requestHeaders);
+    info.addMember(m_requestEntityBody);
+    info.addMember(m_mimeTypeOverride);
+    info.addMember(m_responseBlob);
+    info.addMember(m_loader);
+    info.addMember(m_response);
+    info.addMember(m_responseEncoding);
+    info.addMember(m_decoder);
+    info.addMember(m_responseBuilder);
+    info.addMember(m_responseDocument);
+    info.addMember(m_binaryResponseBuilder);
+    info.addMember(m_responseArrayBuffer);
+    info.addMember(m_lastSendURL);
+    info.addMember(m_eventTargetData);
+    info.addMember(m_progressEventThrottle);
+    info.addMember(m_securityOrigin);
 }
 
 } // namespace WebCore

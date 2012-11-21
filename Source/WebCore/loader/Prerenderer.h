@@ -59,6 +59,8 @@ public:
 
     static PassOwnPtr<Prerenderer> create(Document*);
 
+    virtual void reportMemoryUsage(MemoryObjectInfo*) const;
+
 private:
     typedef Vector<RefPtr<PrerenderHandle> > HandleVector;
     typedef Vector<KURL> KURLVector;

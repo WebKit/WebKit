@@ -30,6 +30,7 @@
 #include "InspectorInstrumentation.h"
 #include "ScheduledAction.h"
 #include "ScriptExecutionContext.h"
+#include "WebCoreMemoryInstrumentation.h"
 #include <wtf/CurrentTime.h>
 #include <wtf/HashSet.h>
 #include <wtf/StdLibExtras.h>
@@ -205,6 +206,14 @@ double DOMTimer::alignedFireTime(double fireTime) const
     }
 
     return fireTime;
+}
+
+void DOMTimer::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+{
+    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::DOM);
+    SuspendableTimer::reportMemoryUsage(memoryObjectInfo);
+    info.addMember(m_action);
+    info.addMember(m_userGestureToken);
 }
 
 } // namespace WebCore

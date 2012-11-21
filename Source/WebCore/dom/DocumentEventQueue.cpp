@@ -47,6 +47,13 @@ public:
         : SuspendableTimer(context)
         , m_eventQueue(eventQueue) { }
 
+    virtual void reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const OVERRIDE
+    {
+        MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::DOM);
+        SuspendableTimer::reportMemoryUsage(memoryObjectInfo);
+        info.addWeakPointer(m_eventQueue);
+    }
+
 private:
     virtual void fired() { m_eventQueue->pendingEventTimerFired(); }
     DocumentEventQueue* m_eventQueue;

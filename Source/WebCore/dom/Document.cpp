@@ -5906,6 +5906,9 @@ void Document::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     info.addMember(m_eventQueue);
     info.addMember(m_mediaCanStartListeners);
     info.addMember(m_pendingTasks);
+#if ENABLE(LINK_PRERENDER)
+    info.addMember(m_prerenderer);
+#endif
 }
 
 class ImmutableAttributeDataCacheKey {

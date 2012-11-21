@@ -1,3 +1,38 @@
+2012-11-21  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: NMI add instrumentation to widely used ActiveDOMObjects. XMLHttpRequest, Prerenderer, HTMLMediaElement and DOMTimer.
+        https://bugs.webkit.org/show_bug.cgi?id=102818
+
+        Reviewed by Vsevolod Vlasov.
+
+        Our test bot counts pointers which don't match with objects allocated by tcmalloc.
+        This counter becomes nonzero after instrumenting ActiveDOMObject class.
+        It happens because it is the base class for many other classes (~30).
+        And almost all these classes use multiple inheritance.
+
+        * dom/Document.cpp:
+        (WebCore::Document::reportMemoryUsage):
+        * dom/DocumentEventQueue.cpp:
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::reportMemoryUsage):
+        (WebCore):
+        * html/HTMLMediaElement.h:
+        * loader/Prerenderer.cpp:
+        (WebCore::Prerenderer::reportMemoryUsage):
+        (WebCore):
+        * loader/Prerenderer.h:
+        (Prerenderer):
+        * page/DOMTimer.cpp:
+        (WebCore::DOMTimer::reportMemoryUsage):
+        (WebCore):
+        * page/DOMTimer.h:
+        (DOMTimer):
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::reportMemoryUsage):
+        (WebCore):
+        * xml/XMLHttpRequest.h:
+        (XMLHttpRequest):
+
 2012-11-21  Dan Carney  <dcarney@google.com>
 
         [V8] Add context checks to WorldContextHandle and V8DOMWindowShell

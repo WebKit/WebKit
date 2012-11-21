@@ -80,9 +80,11 @@
 #include "ShadowRoot.h"
 #include "TimeRanges.h"
 #include "UUID.h"
+#include "WebCoreMemoryInstrumentation.h"
 #include <limits>
 #include <wtf/CurrentTime.h>
 #include <wtf/MathExtras.h>
+#include <wtf/MemoryInstrumentationVector.h>
 #include <wtf/NonCopyingSort.h>
 #include <wtf/Uint8Array.h>
 #include <wtf/text/CString.h>
@@ -4588,6 +4590,42 @@ CachedResourceLoader* HTMLMediaElement::mediaPlayerCachedResourceLoader()
 void HTMLMediaElement::removeBehaviorsRestrictionsAfterFirstUserGesture()
 {
     m_restrictions = NoRestrictions;
+}
+
+void HTMLMediaElement::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+{
+    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::DOM);
+    HTMLElement::reportMemoryUsage(memoryObjectInfo);
+    ActiveDOMObject::reportMemoryUsage(memoryObjectInfo);
+    info.addMember(m_loadTimer);
+    info.addMember(m_progressEventTimer);
+    info.addMember(m_playbackProgressTimer);
+    info.addMember(m_playedTimeRanges);
+    info.addMember(m_asyncEventQueue);
+    info.addMember(m_currentSrc);
+    info.addMember(m_error);
+    info.addMember(m_currentSourceNode);
+    info.addMember(m_nextChildNodeToConsider);
+    info.addMember(m_player);
+#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
+    info.addMember(m_proxyWidget);
+#endif
+#if ENABLE(MEDIA_SOURCE)
+    info.addMember(m_mediaSourceURL);
+    info.addMember(m_mediaSource);
+#endif
+#if ENABLE(VIDEO_TRACK)
+    info.addMember(m_textTracks);
+    info.addMember(m_textTracksWhenResourceSelectionBegan);
+    info.addMember(m_cueTree);
+    info.addMember(m_currentlyActiveCues);
+#endif
+    info.addMember(m_mediaGroup);
+    info.addMember(m_mediaController);
+
+#if PLATFORM(MAC)
+    info.addMember(m_sleepDisabler);
+#endif
 }
 
 }

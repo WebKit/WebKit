@@ -53,6 +53,8 @@ namespace WebCore {
         // to events like moving a tab to the background.
         void adjustMinimumTimerInterval(double oldMinimumTimerInterval);
 
+        virtual void reportMemoryUsage(MemoryObjectInfo*) const OVERRIDE;
+
     private:
         DOMTimer(ScriptExecutionContext*, PassOwnPtr<ScheduledAction>, int interval, bool singleShot);
         virtual void fired();
