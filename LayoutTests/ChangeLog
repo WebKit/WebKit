@@ -1,3 +1,19 @@
+2012-11-21  Tien-Ren Chen  <trchen@chromium.org>
+
+        Invalidate non-composited content host when page scale factor changes
+        https://bugs.webkit.org/show_bug.cgi?id=100718
+
+        Reviewed by Adam Barth.
+
+        During a scale change, non-composited content layer doesn't get invalidated
+        automatically by the transformation change on RenderView. Need to force
+        update non-composited contents ourself.
+
+        * compositing/repaint/page-scale-repaint-expected.png: Added.
+        * compositing/repaint/page-scale-repaint-expected.txt: Added.
+        * compositing/repaint/page-scale-repaint.html: Added.
+        * compositing/repaint/resources/grid.png: Added.
+
 2012-11-21  Fady Samuel  <fsamuel@chromium.org>
 
         Clear MousePressed state on context menu to avoid initiating a drag

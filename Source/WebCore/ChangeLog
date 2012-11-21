@@ -1,3 +1,19 @@
+2012-11-21  Tien-Ren Chen  <trchen@chromium.org>
+
+        Invalidate non-composited content host when page scale factor changes
+        https://bugs.webkit.org/show_bug.cgi?id=100718
+
+        Reviewed by Adam Barth.
+
+        During a scale change, non-composited content layer doesn't get invalidated
+        automatically by the transformation change on RenderView. Need to force
+        update non-composited contents ourself.
+
+        Test: compositing/repaint/page-scale-repaint.html
+
+        * page/Page.cpp:
+        (WebCore::Page::setPageScaleFactor):
+
 2012-11-21  Ryosuke Niwa  <rniwa@webkit.org>
 
         Yet another EFL & GTK+ build fix after r135429.

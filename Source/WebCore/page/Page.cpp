@@ -677,6 +677,9 @@ void Page::setPageScaleFactor(float scale, const IntPoint& origin)
 
     document->recalcStyle(Node::Force);
 
+    // Transform change on RenderView doesn't trigger repaint on non-composited contents.
+    mainFrame()->view()->invalidateRect(IntRect(LayoutRect::infiniteRect()));
+
 #if USE(ACCELERATED_COMPOSITING)
     mainFrame()->deviceOrPageScaleFactorChanged();
 #endif
