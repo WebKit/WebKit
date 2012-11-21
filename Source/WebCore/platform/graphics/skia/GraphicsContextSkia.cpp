@@ -493,8 +493,7 @@ static inline void drawInnerPath(PlatformContextSkia* context, const SkPath& pat
 #if PLATFORM(CHROMIUM) && OS(DARWIN)
     paint.setAlpha(128);
     paint.setStrokeWidth(width * 0.5f);
-    context->canvas()->drawPath(path, paint);
-    context->didDrawPath(path, paint);
+    context->drawPath(path, paint);
 #endif
 }
 

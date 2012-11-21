@@ -1,5 +1,12 @@
 2012-11-21  Florin Malita  <fmalita@chromium.org>
 
+        [Chromium] Unreviewed Mac build fix after http://trac.webkit.org/changeset/135390.
+
+        * platform/graphics/skia/GraphicsContextSkia.cpp:
+        (WebCore::drawInnerPath):
+
+2012-11-21  Florin Malita  <fmalita@chromium.org>
+
         [Skia] Encapsulate access to PlatformContextSkia's SkCanvas
         https://bugs.webkit.org/show_bug.cgi?id=102694
 
