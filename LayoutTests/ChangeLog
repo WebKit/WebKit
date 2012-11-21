@@ -1,3 +1,9 @@
+2012-11-20  Yury Semikhatsky  <yurys@chromium.org>
+
+        Unreviewed. Fixed webkit_lint complaints about overlapping entries in Chromium TestExpectations.
+
+        * platform/chromium/TestExpectations:
+
 2012-11-20  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed morning gardening, skip a new security
