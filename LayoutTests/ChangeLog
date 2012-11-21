@@ -1,3 +1,15 @@
+2012-11-21  Alexander Pavlov  <apavlov@chromium.org>
+
+        Turn -webkit-text-emphasis into a shorthand property
+        https://bugs.webkit.org/show_bug.cgi?id=102879
+
+        Reviewed by Antti Koivisto.
+
+        Update expected results.
+
+        * fast/css/parsing-text-emphasis-expected.txt:
+        * fast/css/parsing-text-emphasis.html:
+
 2012-11-21  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed gardening, unskip now passing tests.

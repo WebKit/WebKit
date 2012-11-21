@@ -69,13 +69,13 @@
     log("");
     test('-webkit-text-emphasis: initial', '', '', '', 'initial');
     test('-webkit-text-emphasis: inherit', '', '', '', 'inherit');
-    test('-webkit-text-emphasis: red', 'red', '', 'initial');
-    test('-webkit-text-emphasis: "cheese"', 'initial', '', 'cheese');
-    test('-webkit-text-emphasis: red "cheese"', 'red', '', 'cheese');
-    test('-webkit-text-emphasis: "cheese" red', 'red', '', 'cheese');
-    test('-webkit-text-emphasis: filled sesame red', 'red', '', 'filled sesame');
-    test('-webkit-text-emphasis: red filled sesame', 'red', '', 'filled sesame');
+    test('-webkit-text-emphasis: red', 'red', '', 'initial', 'red');
+    test('-webkit-text-emphasis: "cheese"', 'initial', '', 'cheese', 'cheese');
+    test('-webkit-text-emphasis: red "cheese"', 'red', '', 'cheese', 'cheese red');
+    test('-webkit-text-emphasis: "cheese" red', 'red', '', 'cheese', 'cheese red');
+    test('-webkit-text-emphasis: filled sesame red', 'red', '', 'filled sesame', 'filled sesame red');
+    test('-webkit-text-emphasis: red filled sesame', 'red', '', 'filled sesame', 'filled sesame red');
     test('-webkit-text-emphasis: filled red sesame', '', '', '');
-    test('-webkit-text-emphasis: red sesame filled', 'red', '', 'filled sesame');
-    test('-webkit-text-emphasis: sesame filled red', 'red', '', 'filled sesame');
+    test('-webkit-text-emphasis: red sesame filled', 'red', '', 'filled sesame', 'filled sesame red');
+    test('-webkit-text-emphasis: sesame filled red', 'red', '', 'filled sesame', 'filled sesame red');
 </script>

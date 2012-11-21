@@ -173,6 +173,8 @@ String StylePropertySet::getPropertyValue(CSSPropertyID propertyID) const
         return getLayeredShorthandValue(webkitMaskRepeatShorthand());
     case CSSPropertyWebkitMask:
         return getLayeredShorthandValue(webkitMaskShorthand());
+    case CSSPropertyWebkitTextEmphasis:
+        return getShorthandValue(webkitTextEmphasisShorthand());
     case CSSPropertyWebkitTransformOrigin:
         return getShorthandValue(webkitTransformOriginShorthand());
     case CSSPropertyWebkitTransition:

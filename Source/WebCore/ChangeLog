@@ -1,3 +1,15 @@
+2012-11-21  Alexander Pavlov  <apavlov@chromium.org>
+
+        Turn -webkit-text-emphasis into a shorthand property
+        https://bugs.webkit.org/show_bug.cgi?id=102879
+
+        Reviewed by Antti Koivisto.
+
+        -webkit-text-emphasis value is no longer empty.
+
+        * css/StylePropertySet.cpp:
+        (WebCore::StylePropertySet::getPropertyValue): Reconstruct the -webkit-text-emphasis value based on the longhands.
+
 2012-11-21  Kentaro Hara  <haraken@chromium.org>
 
         Unreviewed. Build fix.
