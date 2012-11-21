@@ -1,3 +1,14 @@
+2012-11-21  Kai Koehne  <kai.koehne@digia.com>
+
+        [Qt] MinGW: Don't add OpenGL library dependencies here
+        https://bugs.webkit.org/show_bug.cgi?id=102924
+
+        Reviewed by Simon Hausmann.
+
+        As the comment suggests the dependency is already for WebCore, so add it there instead.
+
+        * WebKit1.pri:
+
 2012-11-18  Laszlo Gombos  <l.gombos@samsung.com>
 
         [CMake] Consolidate common input files

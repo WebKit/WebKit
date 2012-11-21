@@ -30,8 +30,4 @@ have?(QTPRINTSUPPORT): QT += printsupport
 
 use?(TEXTURE_MAPPER_GL)|enable?(WEBGL) {
     QT *= opengl
-    # Make sure OpenGL libs are after the webcore lib so MinGW can resolve symbols
-    win32*:!win32-msvc*: LIBS += $$QMAKE_LIBS_OPENGL
 }
-
-

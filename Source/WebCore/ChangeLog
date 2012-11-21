@@ -1,3 +1,15 @@
+2012-11-21  Kai Koehne  <kai.koehne@digia.com>
+
+        [Qt] MinGW: Explicitly add OpenGL library dependencies
+        https://bugs.webkit.org/show_bug.cgi?id=102924
+
+        Reviewed by Simon Hausmann.
+
+        Adding the dependencies to WebKit1 is too late, because linking will have already failed. Also make sure that 
+        the we link against OpenGLES1 e.g. for Angle.
+
+        * WebCore.pri:
+
 2012-11-21  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         Disambiguate innerNodeFramePoint and mainFramePoint
