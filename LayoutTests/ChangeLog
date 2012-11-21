@@ -1,3 +1,9 @@
+2012-11-21  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed gardening, unskip now passing tests.
+
+        * platform/qt/TestExpectations:
+
 2012-11-21  Yury Semikhatsky  <yurys@chromium.org>
 
         Unreviewed. Mark css3/filters/effect-reference-ordering-hw.html as crashing after crrev.com/168998
