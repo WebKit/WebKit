@@ -28,7 +28,6 @@ package CodeGeneratorCPP;
 use constant FileNamePrefix => "WebDOM";
 
 # Global Variables
-my $outputDir = "";
 
 my @headerContentHeader = ();
 my @headerContent = ();
@@ -96,8 +95,6 @@ sub new
     my $reference = { };
 
     $codeGenerator = shift;
-    $outputDir = shift;
-    shift; # $outputHeadersDir
     shift; # $useLayerOnTop
     shift; # $preprocessor
     shift; # $writeDependencies
@@ -116,12 +113,8 @@ sub GenerateInterface
     my $className = GetClassName($name);
     my $parentClassName = "WebDOM" . GetParentImplClassName($interface);
 
-    # Start actual generation.
     $object->GenerateHeader($interface);
     $object->GenerateImplementation($interface);
-
-    # Write changes.
-    $object->WriteData(FileNamePrefix . $name);
 }
 
 sub GetClassName
@@ -935,15 +928,17 @@ sub GenerateImplementation
     push(@implContent, "\n#endif // ${conditionalString}\n") if $conditionalString;
 }
 
-# Internal helper
 sub WriteData
 {
     my $object = shift;
-    my $name = shift;
+    my $dataNode = shift;
+    my $outputDir = shift;
 
     # Open files for writing...
-    my $headerFileName = "$outputDir/" . $name . ".h";
-    my $implFileName = "$outputDir/" . $name . ".cpp";
+    my $name = $dataNode->name;
+    my $prefix = FileNamePrefix;
+    my $headerFileName = "$outputDir/$prefix$name.h";
+    my $implFileName = "$outputDir/$prefix$name.cpp";
 
     # Update a .h file if the contents are changed.
     my $contents = join "", @headerContentHeader;

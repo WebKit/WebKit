@@ -30,11 +30,10 @@ package CodeGeneratorTestRunner;
 
 sub new
 {
-    my ($class, $codeGenerator, $outputDir, $outputHeaderDir, $layerOnTop, $preprocessor, $writeDependencies, $verbose, $idlFilePath) = @_;
+    my ($class, $codeGenerator, $layerOnTop, $preprocessor, $writeDependencies, $verbose, $idlFilePath) = @_;
 
     my $reference = {
         codeGenerator => $codeGenerator,
-        outputDir => $outputDir,
         idlFilePath => $idlFilePath,
     };
 
@@ -42,23 +41,19 @@ sub new
     return $reference;
 }
 
-sub GenerateModule
+sub GenerateInterface
 {
 }
 
-sub GenerateInterface
+sub WriteData
 {
-    my ($self, $interface, $defines) = @_;
+    my ($self, $interface, $outputDir) = @_;
 
     foreach my $file ($self->_generateHeaderFile($interface), $self->_generateImplementationFile($interface)) {
-        open(FILE, ">", File::Spec->catfile($$self{outputDir}, $$file{name})) or die "Failed to open $$file{name} for writing: $!";
+        open(FILE, ">", File::Spec->catfile($outputDir, $$file{name})) or die "Failed to open $$file{name} for writing: $!";
         print FILE @{$$file{contents}};
         close(FILE) or die "Failed to close $$file{name} after writing: $!";
     }
-}
-
-sub finish
-{
 }
 
 sub _className
