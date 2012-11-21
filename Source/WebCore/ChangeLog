@@ -1,3 +1,14 @@
+2012-11-21  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [EFL][WK2] Support Context Menu
+        https://bugs.webkit.org/show_bug.cgi?id=96200
+
+        Reviewed by Laszlo Gombos.
+
+        * page/ContextMenuController.cpp:
+        (WebCore::ContextMenuController::populate):
+        EFL port also doesn't hide unavailable menus as gtk port.
+
 2012-11-21  Florin Malita  <fmalita@chromium.org>
 
         [Chromium] Unreviewed Mac build fix after http://trac.webkit.org/changeset/135390.

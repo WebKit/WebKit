@@ -47,6 +47,7 @@
 #endif
 
 namespace WebKit {
+class ContextMenuClientEfl;
 class FindClientEfl;
 class FormClientEfl;
 class InputMethodContextEfl;
@@ -55,6 +56,8 @@ class PageLoadClientEfl;
 class PagePolicyClientEfl;
 class PageUIClientEfl;
 class ResourceLoadClientEfl;
+class WebContextMenuItemData;
+class WebContextMenuProxyEfl;
 class WebPageGroup;
 class WebPageProxy;
 class WebPopupItem;
@@ -79,6 +82,7 @@ class IntSize;
 class EwkContext;
 class EwkBackForwardList;
 class EwkColorPicker;
+class EwkContextMenu;
 class EwkPopupMenu;
 class EwkSettings;
 class EwkWindowFeatures;
@@ -168,6 +172,9 @@ public:
 
     void requestPopupMenu(WebKit::WebPopupMenuProxyEfl*, const WebCore::IntRect&, WebCore::TextDirection, double pageScaleFactor, const Vector<WebKit::WebPopupItem>& items, int32_t selectedIndex);
     void closePopupMenu();
+    
+    void showContextMenu(WebKit::WebContextMenuProxyEfl*, const WebCore::IntPoint& position, const Vector<WebKit::WebContextMenuItemData>& items);
+    void hideContextMenu();
 
     void updateTextInputState();
 
@@ -244,6 +251,7 @@ private:
     OwnPtr<WebKit::PagePolicyClientEfl> m_pagePolicyClient;
     OwnPtr<WebKit::PageUIClientEfl> m_pageUIClient;
     OwnPtr<WebKit::ResourceLoadClientEfl> m_resourceLoadClient;
+    OwnPtr<WebKit::ContextMenuClientEfl> m_contextMenuClient;
     OwnPtr<WebKit::FindClientEfl> m_findClient;
     OwnPtr<WebKit::FormClientEfl> m_formClient;
 #if ENABLE(VIBRATION)
@@ -267,6 +275,7 @@ private:
     bool m_touchEventsEnabled;
 #endif
     WebCore::Timer<EwkViewImpl> m_displayTimer;
+    OwnPtr<EwkContextMenu> m_contextMenu;
     OwnPtr<EwkPopupMenu> m_popupMenu;
     OwnPtr<WebKit::InputMethodContextEfl> m_inputMethodContext;
     OwnPtr<EwkColorPicker> m_colorPicker;

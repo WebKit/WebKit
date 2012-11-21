@@ -35,7 +35,7 @@
 #include "NotImplemented.h"
 #include "TextureMapper.h"
 #include "WebContext.h"
-#include "WebContextMenuProxy.h"
+#include "WebContextMenuProxyEfl.h"
 #include "WebPageGroup.h"
 #include "WebPageProxy.h"
 #include "WebPopupMenuProxyEfl.h"
@@ -221,10 +221,9 @@ PassRefPtr<WebPopupMenuProxy> PageClientBase::createPopupMenuProxy(WebPageProxy*
     return WebPopupMenuProxyEfl::create(m_viewImpl, page);
 }
 
-PassRefPtr<WebContextMenuProxy> PageClientBase::createContextMenuProxy(WebPageProxy*)
+PassRefPtr<WebContextMenuProxy> PageClientBase::createContextMenuProxy(WebPageProxy* page)
 {
-    notImplemented();
-    return 0;
+    return WebContextMenuProxyEfl::create(m_viewImpl, page);
 }
 
 #if ENABLE(INPUT_TYPE_COLOR)

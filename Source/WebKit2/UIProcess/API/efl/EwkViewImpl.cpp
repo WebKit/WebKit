@@ -21,6 +21,7 @@
 #include "config.h"
 #include "EwkViewImpl.h"
 
+#include "ContextMenuClientEfl.h"
 #include "EflScreenUtilities.h"
 #include "FindClientEfl.h"
 #include "FormClientEfl.h"
@@ -45,6 +46,7 @@
 #include "WebPreferences.h"
 #include "ewk_back_forward_list_private.h"
 #include "ewk_color_picker_private.h"
+#include "ewk_context_menu_private.h"
 #include "ewk_context_private.h"
 #include "ewk_favicon_database_private.h"
 #include "ewk_popup_menu_item_private.h"
@@ -115,6 +117,7 @@ EwkViewImpl::EwkViewImpl(Evas_Object* view, PassRefPtr<EwkContext> context, Pass
     , m_pagePolicyClient(PagePolicyClientEfl::create(this))
     , m_pageUIClient(PageUIClientEfl::create(this))
     , m_resourceLoadClient(ResourceLoadClientEfl::create(this))
+    , m_contextMenuClient(ContextMenuClientEfl::create(this))
     , m_findClient(FindClientEfl::create(this))
     , m_formClient(FormClientEfl::create(this))
 #if ENABLE(VIBRATION)
@@ -732,6 +735,38 @@ void EwkViewImpl::informContentsSizeChange(const IntSize& size)
 
 COMPILE_ASSERT_MATCHING_ENUM(EWK_TEXT_DIRECTION_RIGHT_TO_LEFT, RTL);
 COMPILE_ASSERT_MATCHING_ENUM(EWK_TEXT_DIRECTION_LEFT_TO_RIGHT, LTR);
+
+void EwkViewImpl::showContextMenu(WebContextMenuProxyEfl* contextMenuProxy, const WebCore::IntPoint& position, const Vector<WebContextMenuItemData>& items)
+{
+    Ewk_View_Smart_Data* sd = smartData();
+    ASSERT(sd->api);
+
+    ASSERT(contextMenuProxy);
+
+    if (!sd->api->context_menu_show)
+        return;
+
+    if (m_contextMenu)
+        hideContextMenu();
+
+    m_contextMenu = Ewk_Context_Menu::create(this, contextMenuProxy, items);
+
+    sd->api->context_menu_show(sd, position.x(), position.y(), m_contextMenu.get());
+}
+
+void EwkViewImpl::hideContextMenu()
+{
+    if (!m_contextMenu)
+        return;
+
+    Ewk_View_Smart_Data* sd = smartData();
+    ASSERT(sd->api);
+
+    if (sd->api->context_menu_hide)
+        sd->api->context_menu_hide(sd);
+
+    m_contextMenu.clear();
+}
 
 void EwkViewImpl::requestPopupMenu(WebPopupMenuProxyEfl* popupMenuProxy, const IntRect& rect, TextDirection textDirection, double pageScaleFactor, const Vector<WebPopupItem>& items, int32_t selectedIndex)
 {

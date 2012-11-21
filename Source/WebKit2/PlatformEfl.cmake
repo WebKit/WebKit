@@ -49,6 +49,8 @@ LIST(APPEND WebKit2_SOURCES
     UIProcess/API/efl/ewk_back_forward_list_item.cpp
     UIProcess/API/efl/ewk_color_picker.cpp
     UIProcess/API/efl/ewk_context.cpp
+    UIProcess/API/efl/ewk_context_menu.cpp
+    UIProcess/API/efl/ewk_context_menu_item.cpp
     UIProcess/API/efl/ewk_cookie_manager.cpp
     UIProcess/API/efl/ewk_database_manager.cpp
     UIProcess/API/efl/ewk_download_job.cpp
@@ -79,6 +81,7 @@ LIST(APPEND WebKit2_SOURCES
 
     UIProcess/efl/BatteryProvider.cpp
     UIProcess/efl/ContextHistoryClientEfl.cpp
+    UIProcess/efl/ContextMenuClientEfl.cpp
     UIProcess/efl/DownloadManagerEfl.cpp
     UIProcess/efl/FindClientEfl.cpp
     UIProcess/efl/FormClientEfl.cpp
@@ -96,6 +99,7 @@ LIST(APPEND WebKit2_SOURCES
     UIProcess/efl/TextCheckerEfl.cpp
     UIProcess/efl/VibrationClientEfl.cpp
     UIProcess/efl/WebContextEfl.cpp
+    UIProcess/efl/WebContextMenuProxyEfl.cpp
     UIProcess/efl/WebFullScreenManagerProxyEfl.cpp
     UIProcess/efl/WebInspectorProxyEfl.cpp
     UIProcess/efl/WebPageProxyEfl.cpp
@@ -257,6 +261,7 @@ SET (EWebKit2_HEADERS
     "${CMAKE_CURRENT_SOURCE_DIR}/UIProcess/API/efl/ewk_context.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/UIProcess/API/efl/ewk_cookie_manager.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/UIProcess/API/efl/ewk_database_manager.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/UIProcess/API/efl/ewk_defines.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/UIProcess/API/efl/ewk_download_job.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/UIProcess/API/efl/ewk_error.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/UIProcess/API/efl/ewk_favicon_database.h"
@@ -364,6 +369,7 @@ SET(EWK2UnitTests_BINARIES
     test_ewk2_color_picker
     test_ewk2_context
     test_ewk2_context_history_callbacks
+    test_ewk2_context_menu
     test_ewk2_cookie_manager
     test_ewk2_database_manager
     test_ewk2_download_job

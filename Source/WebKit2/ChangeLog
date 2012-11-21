@@ -1,3 +1,101 @@
+2012-11-21  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [EFL][WK2] Support Context Menu
+        https://bugs.webkit.org/show_bug.cgi?id=96200
+
+        Reviewed by Laszlo Gombos.
+
+        This patch supports WK2 EFL's context menu as WK1 implementation because we can't use elementary in inside WebKit.
+        Only basic functionalities of context menu are supported. Beside this implementation follows GTK's implementation.
+        For example, ewk_context_menu_new, ewk_context_menu_item_append, ewk_context_menu_item_remove are supported.
+
+        In addition, ewk_defines.h file is added in order to support cross inclusion as GTK port.
+
+        * PlatformEfl.cmake:
+        * UIProcess/API/efl/EWebKit2.h:
+        * UIProcess/API/efl/EwkViewImpl.cpp:
+        (EwkViewImpl::EwkViewImpl):
+        (EwkViewImpl::showContextMenu):
+        (EwkViewImpl::hideContextMenu):
+        * UIProcess/API/efl/EwkViewImpl.h:
+        (WebKit):
+        (EwkViewImpl):
+        * UIProcess/API/efl/ewk_context_menu.cpp: Added.
+        (EwkContextMenu::EwkContextMenu):
+        (EwkContextMenu::~EwkContextMenu):
+        (EwkContextMenu::hide):
+        (Ewk_Context_Menu::appendItem):
+        (Ewk_Context_Menu::removeItem):
+        (EwkContextMenu::contextMenuItemSelected):
+        (ewk_context_menu_new):
+        (ewk_context_menu_new_with_items):
+        (ewk_context_menu_item_append):
+        (ewk_context_menu_item_remove):
+        (ewk_context_menu_hide):
+        (ewk_context_menu_items_get):
+        (ewk_context_menu_item_select):
+        * UIProcess/API/efl/ewk_context_menu.h: Added.
+        * UIProcess/API/efl/ewk_context_menu_item.cpp: Added.
+        (EwkContextMenuItem::EwkContextMenuItem):
+        (ewk_context_menu_item_new):
+        (ewk_context_menu_item_new_with_submenu):
+        (ewk_context_menu_item_type_get):
+        (ewk_context_menu_item_type_set):
+        (ewk_context_menu_item_action_get):
+        (ewk_context_menu_item_action_set):
+        (ewk_context_menu_item_title_get):
+        (ewk_context_menu_item_title_set):
+        (ewk_context_menu_item_checked_get):
+        (ewk_context_menu_item_checked_set):
+        (ewk_context_menu_item_enabled_get):
+        (ewk_context_menu_item_enabled_set):
+        * UIProcess/API/efl/ewk_context_menu_item.h: Added.
+        * UIProcess/API/efl/ewk_context_menu_item_private.h: Added.
+        (EwkContextMenuItem):
+        (EwkContextMenuItem::create):
+        (EwkContextMenuItem::action):
+        (EwkContextMenuItem::setAction):
+        (EwkContextMenuItem::title):
+        (EwkContextMenuItem::setTitle):
+        (EwkContextMenuItem::type):
+        (EwkContextMenuItem::setType):
+        (EwkContextMenuItem::checked):
+        (EwkContextMenuItem::setChecked):
+        (EwkContextMenuItem::enabled):
+        (EwkContextMenuItem::setEnabled):
+        * UIProcess/API/efl/ewk_context_menu_private.h: Added.
+        (WebKit):
+        (EwkContextMenu):
+        (EwkContextMenu::create):
+        (EwkContextMenu::items):
+        * UIProcess/API/efl/ewk_defines.h: Added.
+        * UIProcess/API/efl/ewk_view.h:
+        * UIProcess/API/efl/tests/test_ewk2_context_menu.cpp: Added.
+        (checkBasicContextMenuItem):
+        (showContextMenu):
+        (TEST_F):
+        * UIProcess/efl/ContextMenuClientEfl.cpp: Added.
+        (toContextClientEfl):
+        (ContextMenuClientEfl::ContextMenuClientEfl):
+        (ContextMenuClientEfl::getContextMenuFromProposedMenu):
+        * UIProcess/efl/ContextMenuClientEfl.h: Added.
+        (WebKit):
+        (ContextMenuClientEfl):
+        (WebKit::ContextMenuClientEfl::create):
+        * UIProcess/efl/PageClientBase.cpp:
+        (WebKit::PageClientBase::createContextMenuProxy):
+        * UIProcess/efl/WebContextMenuProxyEfl.cpp: Added.
+        (WebKit):
+        (WebKit::WebContextMenuProxyEfl::WebContextMenuProxyEfl):
+        (WebKit::WebContextMenuProxyEfl::~WebContextMenuProxyEfl):
+        (WebKit::WebContextMenuProxyEfl::showContextMenu):
+        (WebKit::WebContextMenuProxyEfl::hideContextMenu):
+        (WebKit::WebContextMenuProxyEfl::contextMenuItemSelected):
+        * UIProcess/efl/WebContextMenuProxyEfl.h: Added.
+        (WebKit):
+        (WebContextMenuProxyEfl):
+        (WebKit::WebContextMenuProxyEfl::create):
+
 2012-11-21  Jongseok Yang  <js45.yang@samsung.com>
 
         [EFL][WK2] Rename ewk_view_setting_encoding_custom_XXX to ewk_view_custom_encoding_XXX

@@ -33,6 +33,8 @@
 #include "ewk_back_forward_list_item.h"
 #include "ewk_color_picker.h"
 #include "ewk_context.h"
+#include "ewk_context_menu.h"
+#include "ewk_context_menu_item.h"
 #include "ewk_cookie_manager.h"
 #include "ewk_database_manager.h"
 #include "ewk_download_job.h"

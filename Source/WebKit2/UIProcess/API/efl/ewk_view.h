@@ -82,6 +82,7 @@
 #include "ewk_back_forward_list.h"
 #include "ewk_color_picker.h"
 #include "ewk_context.h"
+#include "ewk_context_menu.h"
 #include "ewk_download_job.h"
 #include "ewk_error.h"
 #include "ewk_intent.h"
@@ -112,6 +113,9 @@ typedef struct Ewk_View_Smart_Class Ewk_View_Smart_Class;
 struct Ewk_View_Smart_Class {
     Evas_Smart_Class sc; /**< all but 'data' is free to be changed. */
     unsigned long version;
+
+    Eina_Bool (*context_menu_show)(Ewk_View_Smart_Data *sd, Evas_Coord x, Evas_Coord y, Ewk_Context_Menu *menu);
+    Eina_Bool (*context_menu_hide)(Ewk_View_Smart_Data *sd);
 
     Eina_Bool (*popup_menu_show)(Ewk_View_Smart_Data *sd, Eina_Rectangle rect, Ewk_Text_Direction text_direction, double page_scale_factor, Ewk_Popup_Menu *menu);
     Eina_Bool (*popup_menu_hide)(Ewk_View_Smart_Data *sd);
@@ -169,7 +173,7 @@ struct Ewk_View_Smart_Class {
  * @see EWK_VIEW_SMART_CLASS_INIT_VERSION
  * @see EWK_VIEW_SMART_CLASS_INIT_NAME_VERSION
  */
-#define EWK_VIEW_SMART_CLASS_INIT(smart_class_init) {smart_class_init, EWK_VIEW_SMART_CLASS_VERSION, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
+#define EWK_VIEW_SMART_CLASS_INIT(smart_class_init) {smart_class_init, EWK_VIEW_SMART_CLASS_VERSION, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
 
 /**
  * Initializer to zero a whole Ewk_View_Smart_Class structure.
