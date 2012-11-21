@@ -66,9 +66,6 @@ PASS keyRange.upperOpen is still false
 trying to set readonly property request.result
 request.result = Infinity
 PASS request.result is still [object IDBDatabase]
-trying to set readonly property request.errorCode
-request.errorCode = 666
-PASS request.errorCode is still 0
 trying to set readonly property request.error
 request.error = {}
 PASS request.error is still null

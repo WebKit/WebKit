@@ -22,6 +22,6 @@ function prepareDatabase()
 function postTwiddling()
 {
     evalAndExpectException("db.createObjectStore('bar');", "DOMException.INVALID_STATE_ERR", "'InvalidStateError'");
-    evalAndExpectException("objectStore.deleteIndex('second')", "IDBDatabaseException.TRANSACTION_INACTIVE_ERR", "'TransactionInactiveError'");
+    evalAndExpectException("objectStore.deleteIndex('second')", "0", "'TransactionInactiveError'");
     finishJSTest();
 }

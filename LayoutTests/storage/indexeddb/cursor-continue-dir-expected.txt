@@ -28,7 +28,7 @@ Expect DataError if: The parameter is less than or equal to this cursor's positi
 PASS cursor.key is 1
 Expecting exception from cursor.continue(-1)
 PASS Exception was thrown.
-PASS code is IDBDatabaseException.DATA_ERR
+PASS code is 0
 PASS ename is 'DataError'
 request = store.openCursor(IDBKeyRange.bound(-Infinity, Infinity), 'prev')
 cursor = request.result
@@ -37,7 +37,7 @@ Expect DataError if: The parameter is greater than or equal to this cursor's pos
 PASS cursor.key is 10
 Expecting exception from cursor.continue(11)
 PASS Exception was thrown.
-PASS code is IDBDatabaseException.DATA_ERR
+PASS code is 0
 PASS ename is 'DataError'
 PASS successfullyParsed is true
 

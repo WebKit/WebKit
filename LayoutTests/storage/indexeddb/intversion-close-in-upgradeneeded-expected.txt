@@ -22,7 +22,6 @@ sawTransactionComplete = true
 
 openError():
 PASS sawTransactionComplete is true
-PASS event.target.errorCode is DOMException.ABORT_ERR
 PASS event.target.error.name is 'AbortError'
 PASS event.result is undefined
 

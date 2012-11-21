@@ -37,7 +37,7 @@ namespace WebCore {
 static const struct IDBDatabaseExceptionNameDescription {
     const char* const name;
     const char* const description;
-    const ExceptionCode legacyCode;
+    const ExceptionCode code;
 } idbDatabaseExceptions[] = {
     // These are IDB-specific errors from the spec.
     { "UnknownError", "An unknown error occurred within Indexed Database.", 0 },
@@ -84,8 +84,8 @@ bool IDBDatabaseException::initializeDescription(ExceptionCode ec, ExceptionCode
         return false;
 
     description->typeName = "DOM IDBDatabase";
-    description->code = (entry && entry->legacyCode) ? entry->legacyCode : ec - IDBDatabaseExceptionOffset;
-    description->type = IDBDatabaseExceptionType;
+    description->code = entry->code;
+    description->type = DOMCoreExceptionType;
 
     description->name = entry ? entry->name : 0;
     description->description = entry ? entry->description : 0;
@@ -118,7 +118,7 @@ ExceptionCode IDBDatabaseException::getLegacyErrorCode(ExceptionCode ec)
     const IDBDatabaseExceptionNameDescription* entry = getErrorEntry(ec);
     ASSERT(entry);
 
-    return (entry && entry->legacyCode) ? entry->legacyCode : ec - IDBDatabaseExceptionOffset;
+    return (entry && entry->code) ? entry->code : ec - IDBDatabaseExceptionOffset;
 }
 
 } // namespace WebCore

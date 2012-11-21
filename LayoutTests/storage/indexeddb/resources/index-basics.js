@@ -315,10 +315,10 @@ function index3Count(evt)
     shouldBe("event.target.result", "2");
 
     debug("Passing an invalid key into indexObject.get({}).");
-    evalAndExpectException("indexObject.get({})", "IDBDatabaseException.DATA_ERR", "'DataError'");
+    evalAndExpectException("indexObject.get({})", "0", "'DataError'");
 
     debug("Passing an invalid key into indexObject.getKey({}).");
-    evalAndExpectException("indexObject.getKey({})", "IDBDatabaseException.DATA_ERR", "'DataError'");
+    evalAndExpectException("indexObject.getKey({})", "0", "'DataError'");
 
     finishJSTest();
 }

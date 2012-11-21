@@ -94,7 +94,6 @@ PASS [Worker] code is DOMException.DATA_CLONE_ERR
 PASS [Worker] event.target.result is "key"
 [Worker] event.target.source.add({x: 'foo'}, 'zzz')
 [Worker] addAgainFailure():
-PASS [Worker] event.target.errorCode is IDBDatabaseException.CONSTRAINT_ERR
 PASS [Worker] event.target.error.name is 'ConstraintError'
 [Worker] event.preventDefault()
 [Worker] db.transaction(['storeName'], 'readwrite')
@@ -102,7 +101,7 @@ PASS [Worker] event.target.error.name is 'ConstraintError'
 [Worker] store.add({x: 'somevalue'}, 'somekey')
 [Worker] Expecting exception from store.add({x: 'othervalue'}, null)
 PASS [Worker] Exception was thrown.
-PASS [Worker] code is IDBDatabaseException.DATA_ERR
+PASS [Worker] code is 0
 PASS [Worker] ename is 'DataError'
 [Worker] db.transaction(['storeName'], 'readwrite')
 [Worker] store = transaction.objectStore('storeName')
@@ -127,22 +126,22 @@ PASS [Worker] event.target.result is undefined
 [Worker] Passing an invalid key into store.get().
 [Worker] Expecting exception from store.get({})
 PASS [Worker] Exception was thrown.
-PASS [Worker] code is IDBDatabaseException.DATA_ERR
+PASS [Worker] code is 0
 PASS [Worker] ename is 'DataError'
 [Worker] Passing an invalid key into store.delete().
 [Worker] Expecting exception from store.delete({})
 PASS [Worker] Exception was thrown.
-PASS [Worker] code is IDBDatabaseException.DATA_ERR
+PASS [Worker] code is 0
 PASS [Worker] ename is 'DataError'
 [Worker] Passing an invalid key into store.add().
 [Worker] Expecting exception from store.add(null, {})
 PASS [Worker] Exception was thrown.
-PASS [Worker] code is IDBDatabaseException.DATA_ERR
+PASS [Worker] code is 0
 PASS [Worker] ename is 'DataError'
 [Worker] Passing an invalid key into store.put().
 [Worker] Expecting exception from store.put(null, {})
 PASS [Worker] Exception was thrown.
-PASS [Worker] code is IDBDatabaseException.DATA_ERR
+PASS [Worker] code is 0
 PASS [Worker] ename is 'DataError'
 [Worker] 
 [Worker] testPreConditions():
@@ -158,53 +157,55 @@ PASS [Worker] ename is 'DataError'
 [Worker] The object store uses in-line keys and the key parameter was provided.
 [Worker] Expecting exception from storeWithInLineKeys.put({key: 1}, 'key')
 PASS [Worker] Exception was thrown.
-PASS [Worker] code is IDBDatabaseException.DATA_ERR
+PASS [Worker] code is 0
 PASS [Worker] ename is 'DataError'
 [Worker] The object store uses out-of-line keys and has no key generator and the key parameter was not provided.
 [Worker] Expecting exception from storeWithOutOfLineKeys.put({})
 PASS [Worker] Exception was thrown.
-PASS [Worker] code is IDBDatabaseException.DATA_ERR
+PASS [Worker] code is 0
 PASS [Worker] ename is 'DataError'
 [Worker] The object store uses in-line keys and the result of evaluating the object store's key path yields a value and that value is not a valid key.
 [Worker] Expecting exception from storeWithInLineKeys.put({key: null})
 PASS [Worker] Exception was thrown.
-PASS [Worker] code is IDBDatabaseException.DATA_ERR
+PASS [Worker] code is 0
 PASS [Worker] ename is 'DataError'
 [Worker] The object store uses in-line keys but no key generator and the result of evaluating the object store's key path does not yield a value.
 [Worker] Expecting exception from storeWithInLineKeys.put({})
 PASS [Worker] Exception was thrown.
-PASS [Worker] code is IDBDatabaseException.DATA_ERR
+PASS [Worker] code is 0
 PASS [Worker] ename is 'DataError'
 [Worker] The key parameter was provided but does not contain a valid key.
 [Worker] Expecting exception from storeWithOutOfLineKeys.put({}, null)
 PASS [Worker] Exception was thrown.
-PASS [Worker] code is IDBDatabaseException.DATA_ERR
+PASS [Worker] code is 0
 PASS [Worker] ename is 'DataError'
 [Worker] 
 [Worker] IDBObjectStore.add()
 [Worker] The object store uses in-line keys and the key parameter was provided.
 [Worker] Expecting exception from storeWithInLineKeys.add({key: 1}, 'key')
 PASS [Worker] Exception was thrown.
-PASS [Worker] code is IDBDatabaseException.DATA_ERR
+PASS [Worker] code is 0
 PASS [Worker] ename is 'DataError'
 [Worker] The object store uses out-of-line keys and has no key generator and the key parameter was not provided.
 [Worker] Expecting exception from storeWithOutOfLineKeys.add({})
 PASS [Worker] Exception was thrown.
-PASS [Worker] code is IDBDatabaseException.DATA_ERR
+PASS [Worker] code is 0
 PASS [Worker] ename is 'DataError'
 [Worker] The object store uses in-line keys and the result of evaluating the object store's key path yields a value and that value is not a valid key.
 [Worker] Expecting exception from storeWithInLineKeys.add({key: null})
 PASS [Worker] Exception was thrown.
-PASS [Worker] code is IDBDatabaseException.DATA_ERR
+PASS [Worker] code is 0
 PASS [Worker] ename is 'DataError'
 [Worker] The object store uses in-line keys but no key generator and the result of evaluating the object store's key path does not yield a value.
 [Worker] Expecting exception from storeWithInLineKeys.add({})
 PASS [Worker] Exception was thrown.
-PASS [Worker] code is IDBDatabaseException.DATA_ERR
+PASS [Worker] code is 0
+PASS [Worker] ename is 'DataError'
 [Worker] The key parameter was provided but does not contain a valid key.
 [Worker] Expecting exception from storeWithOutOfLineKeys.add({}, null)
 PASS [Worker] Exception was thrown.
-PASS [Worker] code is IDBDatabaseException.DATA_ERR
+PASS [Worker] code is 0
+PASS [Worker] ename is 'DataError'
 PASS successfullyParsed is true
 
 TEST COMPLETE

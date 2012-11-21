@@ -128,12 +128,12 @@ PASS event.target.result is 2
 Passing an invalid key into indexObject.get({}).
 Expecting exception from indexObject.get({})
 PASS Exception was thrown.
-PASS code is IDBDatabaseException.DATA_ERR
+PASS code is 0
 PASS ename is 'DataError'
 Passing an invalid key into indexObject.getKey({}).
 Expecting exception from indexObject.getKey({})
 PASS Exception was thrown.
-PASS code is IDBDatabaseException.DATA_ERR
+PASS code is 0
 PASS ename is 'DataError'
 PASS successfullyParsed is true
 

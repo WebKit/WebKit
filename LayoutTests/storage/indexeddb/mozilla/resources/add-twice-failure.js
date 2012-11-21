@@ -34,7 +34,7 @@ function addFirstSuccess()
 
 function addSecondExpectedError()
 {
-    shouldBe("event.target.errorCode", "IDBDatabaseException.CONSTRAINT_ERR");
+    shouldBe("event.target.error.name", "'ConstraintError'");
     event.preventDefault();
     finishJSTest();
 }

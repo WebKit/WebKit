@@ -38,9 +38,9 @@
 
     // Methods
     IDBObjectStore objectStore (in DOMString name)
-        raises (IDBDatabaseException);
+        raises (DOMException);
     void abort ()
-        raises (IDBDatabaseException);
+        raises (DOMException);
 
     // Events
     attribute EventListener onabort;

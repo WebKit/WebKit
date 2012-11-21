@@ -32,7 +32,7 @@ function cursorWithKeySuccess()
     shouldBeEqualToString("cursor.value", "myValue");
     debug("");
     debug("Passing an invalid key into .continue({}).");
-    evalAndExpectException("cursor.continue({})", "IDBDatabaseException.DATA_ERR", "'DataError'");
+    evalAndExpectException("cursor.continue({})", "0", "'DataError'");
     debug("");
     openEmptyCursorWithKey();
 }
@@ -72,7 +72,7 @@ function cursorSuccess()
     shouldBeEqualToString("cursor.value", "myValue");
     debug("");
     debug("Passing an invalid key into .continue({}).");
-    evalAndExpectException("event.target.result.continue({})", "IDBDatabaseException.DATA_ERR", "'DataError'");
+    evalAndExpectException("event.target.result.continue({})", "0", "'DataError'");
     debug("");
     openEmptyCursor();
 }

@@ -121,12 +121,12 @@ function testInvalidKeys()
     for (i = 0; i < invalidKeys.length - 1; i += 1) {
         key1 = invalidKeys[i];
         key2 = invalidKeys[i + 1];
-        evalAndExpectException("indexedDB.cmp(" + key1 + ", " + key2 + ")", "IDBDatabaseException.DATA_ERR", "'DataError'");
-        evalAndExpectException("indexedDB.cmp(" + key2 + ", " + key1 + ")", "IDBDatabaseException.DATA_ERR", "'DataError'");
-        evalAndExpectException("indexedDB.cmp(" + key1 + ", 'valid')", "IDBDatabaseException.DATA_ERR", "'DataError'");
-        evalAndExpectException("indexedDB.cmp('valid', " + key1 + ")", "IDBDatabaseException.DATA_ERR", "'DataError'");
-        evalAndExpectException("indexedDB.cmp(" + key2 + ", 'valid')", "IDBDatabaseException.DATA_ERR", "'DataError'");
-        evalAndExpectException("indexedDB.cmp('valid', " + key2 + ")", "IDBDatabaseException.DATA_ERR", "'DataError'");
+        evalAndExpectException("indexedDB.cmp(" + key1 + ", " + key2 + ")", "0", "'DataError'");
+        evalAndExpectException("indexedDB.cmp(" + key2 + ", " + key1 + ")", "0", "'DataError'");
+        evalAndExpectException("indexedDB.cmp(" + key1 + ", 'valid')", "0", "'DataError'");
+        evalAndExpectException("indexedDB.cmp('valid', " + key1 + ")", "0", "'DataError'");
+        evalAndExpectException("indexedDB.cmp(" + key2 + ", 'valid')", "0", "'DataError'");
+        evalAndExpectException("indexedDB.cmp('valid', " + key2 + ")", "0", "'DataError'");
     }
 }
 

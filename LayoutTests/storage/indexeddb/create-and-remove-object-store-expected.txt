@@ -11,7 +11,7 @@ indexedDB.open(dbname)
 db.createObjectStore('tmp')
 Expecting exception from db.createObjectStore('tmp')
 PASS Exception was thrown.
-PASS code is IDBDatabaseException.CONSTRAINT_ERR
+PASS code is 0
 PASS ename is 'ConstraintError'
 trans = db.transaction(['tmp'])
 trans.objectStore('tmp').get(0)

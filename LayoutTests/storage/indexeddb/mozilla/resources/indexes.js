@@ -179,12 +179,6 @@ function testGroup3()
 
 function testGroup4()
 {
-/* this was split out into a separate test
-    debug("Check that the name index enforces its unique constraint.");
-    objectStore = evalAndLog("objectStore = db.transaction(objectStoreName, 'readwrite').objectStore(objectStoreName);");
-    evalAndExpectException("objectStore.add({ name: 'Bob', height: 62, weight: 170 }, '237-23-7738');", "IDBDatabaseException.CONSTRAINT_ERR");
-*/
-
     objectStore = evalAndLog("objectStore = db.transaction(objectStoreName).objectStore(objectStoreName);");
     keyIndex = evalAndLog("keyIndex = objectStoreDataNameSort.length - 1;");
     request = evalAndLog("request = objectStore.index('name').openKeyCursor(null, 'prev');");

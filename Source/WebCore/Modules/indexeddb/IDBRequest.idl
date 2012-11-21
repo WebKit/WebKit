@@ -34,13 +34,11 @@
     JSNoStaticTables
 ] interface IDBRequest {
     readonly attribute IDBAny result
-        getter raises (IDBDatabaseException);
-    readonly attribute unsigned short errorCode
-        getter raises (IDBDatabaseException);
+        getter raises (DOMException);
     readonly attribute DOMError error
-        getter raises (IDBDatabaseException);
+        getter raises (DOMException);
     [TreatReturnedNullStringAs=Undefined] readonly attribute DOMString webkitErrorMessage
-        getter raises (IDBDatabaseException);
+        getter raises (DOMException);
 
     readonly attribute IDBAny source;
     readonly attribute IDBTransaction transaction;

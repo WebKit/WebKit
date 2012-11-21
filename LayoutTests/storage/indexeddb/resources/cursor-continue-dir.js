@@ -31,7 +31,7 @@ function testForwardCursor()
         shouldBeNonNull("cursor");
         debug("Expect DataError if: The parameter is less than or equal to this cursor's position and this cursor's direction is \"next\" or \"nextunique\".");
         shouldBe("cursor.key", "1");
-        evalAndExpectException("cursor.continue(-1)", "IDBDatabaseException.DATA_ERR", "'DataError'");
+        evalAndExpectException("cursor.continue(-1)", "0", "'DataError'");
 
         testReverseCursor();
     };
@@ -46,7 +46,7 @@ function testReverseCursor()
         shouldBeNonNull("cursor");
         debug("Expect DataError if: The parameter is greater than or equal to this cursor's position and this cursor's direction is \"prev\" or \"prevunique\".");
         shouldBe("cursor.key", "10");
-        evalAndExpectException("cursor.continue(11)", "IDBDatabaseException.DATA_ERR", "'DataError'");
+        evalAndExpectException("cursor.continue(11)", "0", "'DataError'");
 
         finishJSTest();
     };

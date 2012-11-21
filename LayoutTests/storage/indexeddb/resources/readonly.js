@@ -80,7 +80,6 @@ function openSuccess()
 {
     request = event.target;
     setReadonlyProperty("request.result", "Infinity");
-    setReadonlyProperty("request.errorCode", "666");
     setReadonlyProperty("request.error", "{}");
     setReadonlyProperty("request.source", "this");
     setReadonlyProperty("request.transaction", "this");

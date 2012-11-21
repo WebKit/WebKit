@@ -23,7 +23,7 @@ function prepareDatabase()
 
 function clear()
 {
-    evalAndExpectException("db.transaction('foo').objectStore('foo').clear();", "IDBDatabaseException.READ_ONLY_ERR");
+    evalAndExpectException("db.transaction('foo').objectStore('foo').clear();", "0", "'ReadOnlyError'");
     evalAndLog("db.transaction('foo', 'readwrite').objectStore('foo').clear();");
     request = evalAndLog("request = db.transaction('foo').objectStore('foo').openCursor();");
     request.onsuccess = areWeClearYet;

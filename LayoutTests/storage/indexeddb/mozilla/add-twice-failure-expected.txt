@@ -13,7 +13,7 @@ key = 10
 request = objectStore.add({}, key);
 PASS request.result is key
 request = objectStore.add({}, key);
-PASS event.target.errorCode is IDBDatabaseException.CONSTRAINT_ERR
+PASS event.target.error.name is 'ConstraintError'
 PASS successfullyParsed is true
 
 TEST COMPLETE

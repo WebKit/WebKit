@@ -211,7 +211,6 @@ defineTest(
         request.onsuccess = unexpectedSuccessCallback;
         request.onerror = function () {
             debug("Error event fired auto-incrementing past 2^53 (as expected)");
-            shouldBe("event.target.errorCode", "IDBDatabaseException.CONSTRAINT_ERR");
             shouldBe("event.target.error.name", "'ConstraintError'");
             evalAndLog("event.preventDefault()");
         };

@@ -47,7 +47,6 @@ function openError(evt)
     preamble(evt);
     shouldBeTrue("sawTransactionComplete");
 
-    shouldBe("event.target.errorCode", "DOMException.ABORT_ERR");
     shouldBe("event.target.error.name", "'AbortError'");
     shouldBe("event.result", "undefined");
 

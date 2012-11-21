@@ -31,11 +31,11 @@
 
     // FIXME: Make this [EnforceRange] unsigned long long once webkit.org/b/96798 lands.
     [CallWith=ScriptExecutionContext] IDBOpenDBRequest open(in DOMString name, in [Optional] long long version)
-        raises (IDBDatabaseException);
+        raises (DOMException);
     [CallWith=ScriptExecutionContext] IDBVersionChangeRequest deleteDatabase(in DOMString name)
-        raises (IDBDatabaseException);
+        raises (DOMException);
 
     short cmp(in IDBKey first, in IDBKey second)
-        raises (IDBDatabaseException);
+        raises (DOMException);
 };
 

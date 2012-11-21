@@ -60,47 +60,47 @@ index = store.createIndex('indexFail', 'x')
 testInactiveAbortedTransaction():
 Expecting exception from index.openCursor()
 PASS Exception was thrown.
-PASS code is IDBDatabaseException.TRANSACTION_INACTIVE_ERR
+PASS code is 0
 PASS ename is 'TransactionInactiveError'
 Expecting exception from index.openKeyCursor()
 PASS Exception was thrown.
-PASS code is IDBDatabaseException.TRANSACTION_INACTIVE_ERR
+PASS code is 0
 PASS ename is 'TransactionInactiveError'
 Expecting exception from index.get(0)
 PASS Exception was thrown.
-PASS code is IDBDatabaseException.TRANSACTION_INACTIVE_ERR
+PASS code is 0
 PASS ename is 'TransactionInactiveError'
 Expecting exception from index.getKey(0)
 PASS Exception was thrown.
-PASS code is IDBDatabaseException.TRANSACTION_INACTIVE_ERR
+PASS code is 0
 PASS ename is 'TransactionInactiveError'
 Expecting exception from index.count()
 PASS Exception was thrown.
-PASS code is IDBDatabaseException.TRANSACTION_INACTIVE_ERR
+PASS code is 0
 PASS ename is 'TransactionInactiveError'
 Expecting exception from store.put(0, 0)
 PASS Exception was thrown.
-PASS code is IDBDatabaseException.TRANSACTION_INACTIVE_ERR
+PASS code is 0
 PASS ename is 'TransactionInactiveError'
 Expecting exception from store.add(0, 0)
 PASS Exception was thrown.
-PASS code is IDBDatabaseException.TRANSACTION_INACTIVE_ERR
+PASS code is 0
 PASS ename is 'TransactionInactiveError'
 Expecting exception from store.delete(0)
 PASS Exception was thrown.
-PASS code is IDBDatabaseException.TRANSACTION_INACTIVE_ERR
+PASS code is 0
 PASS ename is 'TransactionInactiveError'
 Expecting exception from store.clear()
 PASS Exception was thrown.
-PASS code is IDBDatabaseException.TRANSACTION_INACTIVE_ERR
+PASS code is 0
 PASS ename is 'TransactionInactiveError'
 Expecting exception from store.get(0)
 PASS Exception was thrown.
-PASS code is IDBDatabaseException.TRANSACTION_INACTIVE_ERR
+PASS code is 0
 PASS ename is 'TransactionInactiveError'
 Expecting exception from store.openCursor()
 PASS Exception was thrown.
-PASS code is IDBDatabaseException.TRANSACTION_INACTIVE_ERR
+PASS code is 0
 PASS ename is 'TransactionInactiveError'
 
 testSetVersionAbort4():
@@ -118,47 +118,47 @@ index = store.createIndex('indexFail', 'x')
 testInactiveCompletedTransaction():
 Expecting exception from index.openCursor()
 PASS Exception was thrown.
-PASS code is IDBDatabaseException.TRANSACTION_INACTIVE_ERR
+PASS code is 0
 PASS ename is 'TransactionInactiveError'
 Expecting exception from index.openKeyCursor()
 PASS Exception was thrown.
-PASS code is IDBDatabaseException.TRANSACTION_INACTIVE_ERR
+PASS code is 0
 PASS ename is 'TransactionInactiveError'
 Expecting exception from index.get(0)
 PASS Exception was thrown.
-PASS code is IDBDatabaseException.TRANSACTION_INACTIVE_ERR
+PASS code is 0
 PASS ename is 'TransactionInactiveError'
 Expecting exception from index.getKey(0)
 PASS Exception was thrown.
-PASS code is IDBDatabaseException.TRANSACTION_INACTIVE_ERR
+PASS code is 0
 PASS ename is 'TransactionInactiveError'
 Expecting exception from index.count()
 PASS Exception was thrown.
-PASS code is IDBDatabaseException.TRANSACTION_INACTIVE_ERR
+PASS code is 0
 PASS ename is 'TransactionInactiveError'
 Expecting exception from store.put(0, 0)
 PASS Exception was thrown.
-PASS code is IDBDatabaseException.TRANSACTION_INACTIVE_ERR
+PASS code is 0
 PASS ename is 'TransactionInactiveError'
 Expecting exception from store.add(0, 0)
 PASS Exception was thrown.
-PASS code is IDBDatabaseException.TRANSACTION_INACTIVE_ERR
+PASS code is 0
 PASS ename is 'TransactionInactiveError'
 Expecting exception from store.delete(0)
 PASS Exception was thrown.
-PASS code is IDBDatabaseException.TRANSACTION_INACTIVE_ERR
+PASS code is 0
 PASS ename is 'TransactionInactiveError'
 Expecting exception from store.clear()
 PASS Exception was thrown.
-PASS code is IDBDatabaseException.TRANSACTION_INACTIVE_ERR
+PASS code is 0
 PASS ename is 'TransactionInactiveError'
 Expecting exception from store.get(0)
 PASS Exception was thrown.
-PASS code is IDBDatabaseException.TRANSACTION_INACTIVE_ERR
+PASS code is 0
 PASS ename is 'TransactionInactiveError'
 Expecting exception from store.openCursor()
 PASS Exception was thrown.
-PASS code is IDBDatabaseException.TRANSACTION_INACTIVE_ERR
+PASS code is 0
 PASS ename is 'TransactionInactiveError'
 
 testSetVersionAbort5():

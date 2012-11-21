@@ -79,7 +79,7 @@ event.target.result.continue(3.14159)
 PASS event.target.result.primaryKey is 3
 Expecting exception from event.target.result.continue(1)
 PASS Exception was thrown.
-PASS code is IDBDatabaseException.DATA_ERR
+PASS code is 0
 PASS ename is 'DataError'
 
 indexObject.openKeyCursor(null, 'next')
@@ -88,7 +88,7 @@ event.target.result.continue(3.14159)
 PASS event.target.result.primaryKey is 3
 Expecting exception from event.target.result.continue(3.14159)
 PASS Exception was thrown.
-PASS code is IDBDatabaseException.DATA_ERR
+PASS code is 0
 PASS ename is 'DataError'
 
 indexObject.openKeyCursor(null, 'prev')
@@ -97,7 +97,7 @@ event.target.result.continue('A bit2')
 PASS event.target.result.primaryKey is 15
 Expecting exception from event.target.result.continue('A bit3')
 PASS Exception was thrown.
-PASS code is IDBDatabaseException.DATA_ERR
+PASS code is 0
 PASS ename is 'DataError'
 
 indexObject.openKeyCursor(null, 'prev')
@@ -107,11 +107,11 @@ PASS event.target.result.primaryKey is 15
 cursor = event.target.result
 Expecting exception from event.target.result.continue('A bit2')
 PASS Exception was thrown.
-PASS code is IDBDatabaseException.DATA_ERR
+PASS code is 0
 PASS ename is 'DataError'
 Expecting exception from cursor.continue()
 PASS Exception was thrown.
-PASS code is IDBDatabaseException.TRANSACTION_INACTIVE_ERR
+PASS code is 0
 PASS ename is 'TransactionInactiveError'
 PASS successfullyParsed is true
 

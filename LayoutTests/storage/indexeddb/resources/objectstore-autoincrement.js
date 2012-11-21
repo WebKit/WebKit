@@ -116,7 +116,7 @@ function getAbrahamSuccess()
 
     self.store = evalAndLog("store = trans.objectStore('PlainOldStore')");
     debug("Try adding with no key to object store without auto increment.");
-    evalAndExpectException("store.add({name: 'Adam'})", "IDBDatabaseException.DATA_ERR", "'DataError'");
+    evalAndExpectException("store.add({name: 'Adam'})", "0", "'DataError'");
     request = evalAndLog("store.add({name: 'Adam'}, 1)");
     request.onsuccess = addAdamSuccess;
     request.onerror = unexpectedErrorCallback;

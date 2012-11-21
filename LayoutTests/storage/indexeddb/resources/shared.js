@@ -28,7 +28,6 @@ function removeVendorPrefixes()
 {
     IDBCursor = self.IDBCursor || self.webkitIDBCursor;
     IDBDatabase = self.IDBDatabase || self.webkitIDBDatabase;
-    IDBDatabaseException = self.IDBDatabaseException || self.webkitIDBDatabaseException;
     IDBFactory = self.IDBFactory || self.webkitIDBFactory;
     IDBIndex = self.IDBIndex || self.webkitIDBIndex;
     IDBKeyRange = self.IDBKeyRange || self.webkitIDBKeyRange;

@@ -33,12 +33,12 @@
     readonly attribute boolean upperOpen;
 
     static IDBKeyRange only(in IDBKey value)
-        raises (IDBDatabaseException);
+        raises (DOMException);
     static IDBKeyRange lowerBound(in IDBKey bound, in [Optional] boolean open)
-        raises (IDBDatabaseException);
+        raises (DOMException);
     static IDBKeyRange upperBound(in IDBKey bound, in [Optional] boolean open)
-        raises (IDBDatabaseException);
+        raises (DOMException);
     static IDBKeyRange bound(in IDBKey lower, in IDBKey upper, in [Optional] boolean lowerOpen, in [Optional] boolean upperOpen)
-        raises (IDBDatabaseException);
+        raises (DOMException);
 };
 

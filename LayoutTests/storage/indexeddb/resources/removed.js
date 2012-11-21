@@ -8,7 +8,12 @@ description("Ensure that some obsolete IndexedDB features are gone.");
 function test()
 {
     removeVendorPrefixes();
+    setDBNameFromPath();
+
     shouldBeUndefined("self.webkitIDBDatabaseError");
+    shouldBeFalse("'IDBDatabaseException' in self");
+    shouldBeFalse("'errorCode' in indexedDB.open(dbname)");
+
     finishJSTest();
 }
 

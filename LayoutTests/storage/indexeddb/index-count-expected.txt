@@ -86,15 +86,15 @@ index = trans.objectStore('storeName').index('indexName')
 PASS index is non-null.
 Expecting exception from index.count(NaN)
 PASS Exception was thrown.
-PASS code is IDBDatabaseException.DATA_ERR
+PASS code is 0
 PASS ename is 'DataError'
 Expecting exception from index.count({})
 PASS Exception was thrown.
-PASS code is IDBDatabaseException.DATA_ERR
+PASS code is 0
 PASS ename is 'DataError'
 Expecting exception from index.count(/regex/)
 PASS Exception was thrown.
-PASS code is IDBDatabaseException.DATA_ERR
+PASS code is 0
 PASS ename is 'DataError'
 
 test = {"key":0,"expected":1}

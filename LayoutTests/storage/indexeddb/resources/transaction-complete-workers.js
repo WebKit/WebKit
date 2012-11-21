@@ -28,7 +28,7 @@ function createTransaction()
 function emptyTransactionCompleted()
 {
     testPassed("Transaction completed");
-    evalAndExpectException("store.get(0)", "IDBDatabaseException.TRANSACTION_INACTIVE_ERR", "'TransactionInactiveError'");
+    evalAndExpectException("store.get(0)", "0", "'TransactionInactiveError'");
     recursionTest();
 }
 
@@ -61,7 +61,7 @@ function recurse(count)
 function transactionCompleted()
 {
     testPassed("transaction completed");
-    evalAndExpectException("store.get(0)", "IDBDatabaseException.TRANSACTION_INACTIVE_ERR", "'TransactionInactiveError'");
+    evalAndExpectException("store.get(0)", "0", "'TransactionInactiveError'");
 
     debug("");
     debug("trying a timeout callback:");
@@ -78,7 +78,7 @@ function timeoutTest()
     transaction.onabort = unexpectedAbortCallback;
     transaction.oncomplete = function () {
         testPassed("transaction started in setTimeout() callback completed");
-        evalAndExpectException("store.get(0)", "IDBDatabaseException.TRANSACTION_INACTIVE_ERR", "'TransactionInactiveError'");
+        evalAndExpectException("store.get(0)", "0", "'TransactionInactiveError'");
 
         errorTest();
     };
@@ -110,6 +110,6 @@ function errorHandler(e)
 function errorTransactionCompleted()
 {
     testPassed("Transaction completed");
-    evalAndExpectException("store.get(0)", "IDBDatabaseException.TRANSACTION_INACTIVE_ERR", "'TransactionInactiveError'");
+    evalAndExpectException("store.get(0)", "0", "'TransactionInactiveError'");
     finishJSTest();
 }

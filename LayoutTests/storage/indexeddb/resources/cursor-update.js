@@ -140,7 +140,7 @@ function keyPathUpdateCursor()
         return;
     }
 
-    evalAndExpectException("event.target.result.update({id: 100 + counter, number: 100 + counter})", "IDBDatabaseException.DATA_ERR", "'DataError'");
+    evalAndExpectException("event.target.result.update({id: 100 + counter, number: 100 + counter})", "0", "'DataError'");
 
     request = evalAndLog("event.target.result.update({id: counter, number: 100 + counter++})");
     request.onsuccess = function() { evalAndLog("event.target.source.continue()"); };
@@ -205,8 +205,7 @@ function attemptUpdate()
     debug("attemptUpdate()");
     self.cursor = event.target.result;
     if (self.cursor) {
-        evalAndExpectException("cursor.update('myUpdatedValue')",
-                               "IDBDatabaseException.READ_ONLY_ERR", "'ReadOnlyError'");
+        evalAndExpectException("cursor.update('myUpdatedValue')", "0", "'ReadOnlyError'");
         evalAndLog("cursor.continue()");
     }
 }

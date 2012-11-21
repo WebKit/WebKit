@@ -19,7 +19,7 @@ Starting worker: resources/transaction-complete-workers.js
 PASS [Worker] Transaction completed
 [Worker] Expecting exception from store.get(0)
 PASS [Worker] Exception was thrown.
-PASS [Worker] code is IDBDatabaseException.TRANSACTION_INACTIVE_ERR
+PASS [Worker] code is 0
 PASS [Worker] ename is 'TransactionInactiveError'
 [Worker] 
 [Worker] recursionTest():
@@ -48,7 +48,7 @@ PASS [Worker] transaction is still active
 PASS [Worker] transaction completed
 [Worker] Expecting exception from store.get(0)
 PASS [Worker] Exception was thrown.
-PASS [Worker] code is IDBDatabaseException.TRANSACTION_INACTIVE_ERR
+PASS [Worker] code is 0
 PASS [Worker] ename is 'TransactionInactiveError'
 [Worker] 
 [Worker] trying a timeout callback:
@@ -60,7 +60,7 @@ PASS [Worker] ename is 'TransactionInactiveError'
 PASS [Worker] transaction started in setTimeout() callback completed
 [Worker] Expecting exception from store.get(0)
 PASS [Worker] Exception was thrown.
-PASS [Worker] code is IDBDatabaseException.TRANSACTION_INACTIVE_ERR
+PASS [Worker] code is 0
 PASS [Worker] ename is 'TransactionInactiveError'
 [Worker] 
 [Worker] errorTest():
@@ -76,7 +76,7 @@ event.preventDefault()
 PASS [Worker] Transaction completed
 [Worker] Expecting exception from store.get(0)
 PASS [Worker] Exception was thrown.
-PASS [Worker] code is IDBDatabaseException.TRANSACTION_INACTIVE_ERR
+PASS [Worker] code is 0
 PASS [Worker] ename is 'TransactionInactiveError'
 PASS successfullyParsed is true
 

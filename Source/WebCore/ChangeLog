@@ -1,3 +1,36 @@
+2012-11-21  Joshua Bell  <jsbell@chromium.org>
+
+        Remove IDBDatabaseException
+        https://bugs.webkit.org/show_bug.cgi?id=102514
+
+        Reviewed by Adam Barth.
+
+        After the WebKit implementation landed, the IndexedDB spec changed from defining new
+        exception codes with constants hanging off an interface to using DOM4-styled named
+        DOMExceptions. Remove the IDBDatabaseException interface and set codes for IDB-specific
+        exceptions to 0. (The .idl file is retained pending general ExceptionCode cleanup.)
+
+        Also remove IDBRequest.errorCode which was used for reporting asynchronous errors;
+        IDBRequest.error - a DOMError - should be used instead.
+
+        No new tests - covered by plenty of existing tests which have been updated.
+
+        * Modules/indexeddb/DOMWindowIndexedDatabase.idl: Don't expose the interface.
+        * Modules/indexeddb/IDBCursor.idl: Remove reference to IDBDatabaseException.
+        * Modules/indexeddb/IDBDatabase.idl: Ditto.
+        * Modules/indexeddb/IDBDatabaseException.cpp:
+        (IDBDatabaseExceptionNameDescription): Use either a DOMException code or 0.
+        (WebCore::IDBDatabaseException::initializeDescription):
+        (WebCore::IDBDatabaseException::getLegacyErrorCode):
+        * Modules/indexeddb/IDBFactory.idl: Remove reference to IDBDatabaseException.
+        * Modules/indexeddb/IDBIndex.idl: Ditto.
+        * Modules/indexeddb/IDBKeyRange.idl: Ditto.
+        * Modules/indexeddb/IDBObjectStore.idl: Ditto.
+        * Modules/indexeddb/IDBRequest.idl: Ditto.
+        * Modules/indexeddb/IDBTransaction.idl: Ditto.
+        * Modules/indexeddb/WorkerContextIndexedDatabase.idl: Don't expose the interface.
+        * bindings/v8/IDBBindingUtilities.cpp: Remove unneeded #include.
+
 2012-11-21  W. James MacLean  <wjmaclean@chromium.org>
 
         [chromium] Fix indenting in RenderThemeChromiumSkia.h.

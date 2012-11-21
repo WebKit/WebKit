@@ -11,8 +11,6 @@ function test()
     request = evalAndLog("indexedDB.open('basics')");
     shouldBeTrue("'result' in request");
     evalAndExpectException("request.result", "DOMException.INVALID_STATE_ERR", "'InvalidStateError'");
-    shouldBeTrue("'errorCode' in request");
-    evalAndExpectException("request.errorCode", "DOMException.INVALID_STATE_ERR", "'InvalidStateError'");
     shouldBeTrue("'webkitErrorMessage' in request");
     evalAndExpectException("request.webkitErrorMessage", "DOMException.INVALID_STATE_ERR", "'InvalidStateError'");
     evalAndExpectException("request.error", "DOMException.INVALID_STATE_ERR", "'InvalidStateError'");
@@ -35,8 +33,6 @@ function openCallback(evt)
     event = evt;
     shouldBeTrue("'result' in event.target");
     shouldBeTrue("!!event.target.result");
-    shouldBeTrue("'errorCode' in event.target");
-    shouldBe("event.target.errorCode", "0");
     shouldBeTrue("'webkitErrorMessage' in event.target");
     shouldBeUndefined("event.target.webkitErrorMessage");
     shouldBeTrue("'error' in event.target");

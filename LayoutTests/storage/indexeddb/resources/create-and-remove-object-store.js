@@ -11,7 +11,7 @@ function prepareDatabase()
     db = event.target.result;
     event.target.transaction.onabort = unexpectedAbortCallback;
     os = evalAndLog("db.createObjectStore('tmp')");
-    evalAndExpectException("db.createObjectStore('tmp')", "IDBDatabaseException.CONSTRAINT_ERR", "'ConstraintError'");
+    evalAndExpectException("db.createObjectStore('tmp')", "0", "'ConstraintError'");
 }
 
 function setVersionComplete()

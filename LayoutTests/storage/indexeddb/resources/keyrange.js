@@ -119,34 +119,34 @@ function test()
     checkBoundKeyRange("'aaf'", "'abf'", true, true);
 
     debug("Passing an invalid key into only({})");
-    evalAndExpectException("IDBKeyRange.only({})", "IDBDatabaseException.DATA_ERR", "'DataError'");
+    evalAndExpectException("IDBKeyRange.only({})", "0", "'DataError'");
 
     debug("Passing an invalid key into upperBound({})");
-    evalAndExpectException("IDBKeyRange.upperBound({})", "IDBDatabaseException.DATA_ERR", "'DataError'");
+    evalAndExpectException("IDBKeyRange.upperBound({})", "0", "'DataError'");
 
     debug("Passing an invalid key into lowerBound({})");
-    evalAndExpectException("IDBKeyRange.lowerBound({})", "IDBDatabaseException.DATA_ERR", "'DataError'");
+    evalAndExpectException("IDBKeyRange.lowerBound({})", "0", "'DataError'");
 
     debug("Passing an invalid key into bound(null, {})");
-    evalAndExpectException("IDBKeyRange.bound(null, {})", "IDBDatabaseException.DATA_ERR", "'DataError'");
+    evalAndExpectException("IDBKeyRange.bound(null, {})", "0", "'DataError'");
 
     debug("Passing an invalid key into bound({},null)");
-    evalAndExpectException("IDBKeyRange.bound({}, null)", "IDBDatabaseException.DATA_ERR", "'DataError'");
+    evalAndExpectException("IDBKeyRange.bound({}, null)", "0", "'DataError'");
 
     debug("Passing an invalid key into bound({}, {})");
-    evalAndExpectException("IDBKeyRange.bound({}, {})", "IDBDatabaseException.DATA_ERR", "'DataError'");
+    evalAndExpectException("IDBKeyRange.bound({}, {})", "0", "'DataError'");
 
     debug("Lower key greater than higher key, bound(4, 3)");
-    evalAndExpectException("IDBKeyRange.bound(4, 3)", "IDBDatabaseException.DATA_ERR", "'DataError'");
+    evalAndExpectException("IDBKeyRange.bound(4, 3)", "0", "'DataError'");
 
     debug("Equal keys, either of the bounds is open, bound(4, 4, true, false)");
-    evalAndExpectException("IDBKeyRange.bound(4, 4, true, false)", "IDBDatabaseException.DATA_ERR", "'DataError'");
+    evalAndExpectException("IDBKeyRange.bound(4, 4, true, false)", "0", "'DataError'");
 
     debug("Equal keys, either of the bounds is open, bound(4, 4, false, true)");
-    evalAndExpectException("IDBKeyRange.bound(4, 4, false, true)", "IDBDatabaseException.DATA_ERR", "'DataError'");
+    evalAndExpectException("IDBKeyRange.bound(4, 4, false, true)", "0", "'DataError'");
 
     debug("Equal keys, either of the bounds is open, bound(4, 4, true, true)");
-    evalAndExpectException("IDBKeyRange.bound(4, 4, true, true)", "IDBDatabaseException.DATA_ERR");
+    evalAndExpectException("IDBKeyRange.bound(4, 4, true, true)", "0", "'DataError'");
 
     debug("Equal keys, none of the bounds is open, bound(4, 4, false, false)");
     IDBKeyRange.bound(4, 4, false, false);

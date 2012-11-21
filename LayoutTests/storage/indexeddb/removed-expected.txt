@@ -5,7 +5,10 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
 
+dbname = "removed.html"
 PASS self.webkitIDBDatabaseError is undefined.
+PASS 'IDBDatabaseException' in self is false
+PASS 'errorCode' in indexedDB.open(dbname) is false
 PASS successfullyParsed is true
 
 TEST COMPLETE

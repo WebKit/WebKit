@@ -17,6 +17,6 @@ function prepareDatabase()
     db = event.target.result;
     event.target.transaction.onabort = unexpectedAbortCallback;
     objectStore = evalAndLog("objectStore = db.createObjectStore('baz', { keyPath: 'id' });");
-    evalAndExpectException("objectStore.add({id: 5}, 5);", "IDBDatabaseException.DATA_ERR");
+    evalAndExpectException("objectStore.add({id: 5}, 5);", "0", "'DataError'");
     finishJSTest();
 }

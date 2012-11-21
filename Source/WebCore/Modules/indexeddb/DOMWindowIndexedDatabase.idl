@@ -32,7 +32,6 @@
 
     attribute IDBCursorConstructor webkitIDBCursor;
     attribute IDBDatabaseConstructor webkitIDBDatabase;
-    attribute IDBDatabaseExceptionConstructor webkitIDBDatabaseException;
     attribute IDBFactoryConstructor webkitIDBFactory;
     attribute IDBIndexConstructor webkitIDBIndex;
     attribute IDBKeyRangeConstructor webkitIDBKeyRange;
@@ -45,7 +44,6 @@
     attribute IDBCursorConstructor IDBCursor;
     attribute IDBCursorWithValueConstructor IDBCursorWithValue;
     attribute IDBDatabaseConstructor IDBDatabase;
-    attribute IDBDatabaseExceptionConstructor IDBDatabaseException;
     attribute IDBFactoryConstructor IDBFactory;
     attribute IDBIndexConstructor IDBIndex;
     attribute IDBKeyRangeConstructor IDBKeyRange;

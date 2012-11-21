@@ -160,7 +160,7 @@ function ascendingErrorTestLessThan()
             evalAndLog("event.target.result.continue(3.14159)");
         } else if (self.stage == 1) {
             shouldBe("event.target.result.primaryKey", "3");
-            evalAndExpectException("event.target.result.continue(1)", "IDBDatabaseException.DATA_ERR", "'DataError'");
+            evalAndExpectException("event.target.result.continue(1)", "0", "'DataError'");
             ascendingErrorTestEqual();
             return;
         } else {
@@ -182,7 +182,7 @@ function ascendingErrorTestEqual()
             evalAndLog("event.target.result.continue(3.14159)");
         } else if (self.stage == 1) {
             shouldBe("event.target.result.primaryKey", "3");
-            evalAndExpectException("event.target.result.continue(3.14159)", "IDBDatabaseException.DATA_ERR", "'DataError'");
+            evalAndExpectException("event.target.result.continue(3.14159)", "0", "'DataError'");
             descendingErrorTestGreaterThan();
             return;
         } else {
@@ -204,7 +204,7 @@ function descendingErrorTestGreaterThan()
             evalAndLog("event.target.result.continue('A bit2')");
         } else if (self.stage == 1) {
             shouldBe("event.target.result.primaryKey", "15");
-            evalAndExpectException("event.target.result.continue('A bit3')", "IDBDatabaseException.DATA_ERR", "'DataError'");
+            evalAndExpectException("event.target.result.continue('A bit3')", "0", "'DataError'");
             descendingErrorTestEqual();
             return;
         } else {
@@ -227,7 +227,7 @@ function descendingErrorTestEqual()
         } else if (self.stage == 1) {
             shouldBe("event.target.result.primaryKey", "15");
             evalAndLog("cursor = event.target.result");
-            evalAndExpectException("event.target.result.continue('A bit2')", "IDBDatabaseException.DATA_ERR", "'DataError'");
+            evalAndExpectException("event.target.result.continue('A bit2')", "0", "'DataError'");
             return;
         } else {
            testFailed("Illegal stage.");
@@ -238,6 +238,6 @@ function descendingErrorTestEqual()
 
 function onTransactionComplete()
 {
-    evalAndExpectException("cursor.continue()", "IDBDatabaseException.TRANSACTION_INACTIVE_ERR", "'TransactionInactiveError'");
+    evalAndExpectException("cursor.continue()", "0", "'TransactionInactiveError'");
     finishJSTest();
 }

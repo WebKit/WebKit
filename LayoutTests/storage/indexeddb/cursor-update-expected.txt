@@ -108,28 +108,28 @@ trans.objectStore('keyPathStore').openCursor(keyRange)
 keyPathUpdateCursor()
 Expecting exception from event.target.result.update({id: 100 + counter, number: 100 + counter})
 PASS Exception was thrown.
-PASS code is IDBDatabaseException.DATA_ERR
+PASS code is 0
 PASS ename is 'DataError'
 event.target.result.update({id: counter, number: 100 + counter++})
 event.target.source.continue()
 keyPathUpdateCursor()
 Expecting exception from event.target.result.update({id: 100 + counter, number: 100 + counter})
 PASS Exception was thrown.
-PASS code is IDBDatabaseException.DATA_ERR
+PASS code is 0
 PASS ename is 'DataError'
 event.target.result.update({id: counter, number: 100 + counter++})
 event.target.source.continue()
 keyPathUpdateCursor()
 Expecting exception from event.target.result.update({id: 100 + counter, number: 100 + counter})
 PASS Exception was thrown.
-PASS code is IDBDatabaseException.DATA_ERR
+PASS code is 0
 PASS ename is 'DataError'
 event.target.result.update({id: counter, number: 100 + counter++})
 event.target.source.continue()
 keyPathUpdateCursor()
 Expecting exception from event.target.result.update({id: 100 + counter, number: 100 + counter})
 PASS Exception was thrown.
-PASS code is IDBDatabaseException.DATA_ERR
+PASS code is 0
 PASS ename is 'DataError'
 event.target.result.update({id: counter, number: 100 + counter++})
 event.target.source.continue()
@@ -200,25 +200,25 @@ objectStore.openCursor(keyRange)
 attemptUpdate()
 Expecting exception from cursor.update('myUpdatedValue')
 PASS Exception was thrown.
-PASS code is IDBDatabaseException.READ_ONLY_ERR
+PASS code is 0
 PASS ename is 'ReadOnlyError'
 cursor.continue()
 attemptUpdate()
 Expecting exception from cursor.update('myUpdatedValue')
 PASS Exception was thrown.
-PASS code is IDBDatabaseException.READ_ONLY_ERR
+PASS code is 0
 PASS ename is 'ReadOnlyError'
 cursor.continue()
 attemptUpdate()
 Expecting exception from cursor.update('myUpdatedValue')
 PASS Exception was thrown.
-PASS code is IDBDatabaseException.READ_ONLY_ERR
+PASS code is 0
 PASS ename is 'ReadOnlyError'
 cursor.continue()
 attemptUpdate()
 Expecting exception from cursor.update('myUpdatedValue')
 PASS Exception was thrown.
-PASS code is IDBDatabaseException.READ_ONLY_ERR
+PASS code is 0
 PASS ename is 'ReadOnlyError'
 cursor.continue()
 attemptUpdate()

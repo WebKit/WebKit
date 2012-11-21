@@ -95,7 +95,7 @@ function testTimeout()
     evalAndLog("store = transaction.objectStore('store')");
     evalAndLog("index = store.index('index')");
     for (i = 0; i < statements.length; ++i) {
-        evalAndExpectException(statements[i], "IDBDatabaseException.TRANSACTION_INACTIVE_ERR", "'TransactionInactiveError'");
+        evalAndExpectException(statements[i], "0", "'TransactionInactiveError'");
     }
     timeoutComplete = true;
 }

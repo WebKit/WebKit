@@ -20,7 +20,7 @@ PASS cursor.value is "myValue"
 Passing an invalid key into .continue({}).
 Expecting exception from event.target.result.continue({})
 PASS Exception was thrown.
-PASS code is IDBDatabaseException.DATA_ERR
+PASS code is 0
 PASS ename is 'DataError'
 
 Opening an empty cursor.
@@ -37,7 +37,7 @@ PASS cursor.value is "myValue"
 Passing an invalid key into .continue({}).
 Expecting exception from cursor.continue({})
 PASS Exception was thrown.
-PASS code is IDBDatabaseException.DATA_ERR
+PASS code is 0
 PASS ename is 'DataError'
 
 Opening an empty cursor.

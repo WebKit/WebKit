@@ -42,7 +42,6 @@ function addMoreDataFailed()
     // Don't abort the transaction.
     evalAndLog("event.preventDefault()");
 
-    shouldBe("event.target.errorCode", "IDBDatabaseException.CONSTRAINT_ERR");
     shouldBe("event.target.error.name", "'ConstraintError'");
 
     // Update the 'foo' entry in object store, changing the value of x.

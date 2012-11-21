@@ -18,19 +18,19 @@ store = transaction.objectStore('store-with-path')
 Key path doesn't resolve to a value; should yield null, should throw DATA_ERR
 Expecting exception from store.put(null)
 PASS Exception was thrown.
-PASS code is IDBDatabaseException.DATA_ERR
+PASS code is 0
 PASS ename is 'DataError'
 
 Key path doesn't resolve to a value; should yield null, should throw DATA_ERR
 Expecting exception from store.put({})
 PASS Exception was thrown.
-PASS code is IDBDatabaseException.DATA_ERR
+PASS code is 0
 PASS ename is 'DataError'
 
 Key path resolves to a value that is invalid key; should yield 'invalid' key, should throw DATA_ERR
 Expecting exception from store.put({foo: null})
 PASS Exception was thrown.
-PASS code is IDBDatabaseException.DATA_ERR
+PASS code is 0
 PASS ename is 'DataError'
 
 Key path resolves to a value that is valid key; should yield 'string' key, should succeed
@@ -44,13 +44,13 @@ store = transaction.objectStore('store-with-path-and-generator')
 Key path doesn't resolve to a value; should yield null but insertion would fail, so put request should raise exception
 Expecting exception from store.put(null)
 PASS Exception was thrown.
-PASS code is IDBDatabaseException.DATA_ERR
+PASS code is 0
 PASS ename is 'DataError'
 
 Key path doesn't resolve to a value; should yield null but insertion would fail, so put request should raise exception
 Expecting exception from store.put('string')
 PASS Exception was thrown.
-PASS code is IDBDatabaseException.DATA_ERR
+PASS code is 0
 PASS ename is 'DataError'
 
 Key path doesn't resolve to a value; should yield null, key should be generated, put request should succeed
@@ -60,7 +60,7 @@ PASS store.put succeeded
 Key path resolves to a value that is invalid key; should yield 'invalid' key, should throw DATA_ERR
 Expecting exception from store.put({foo: null})
 PASS Exception was thrown.
-PASS code is IDBDatabaseException.DATA_ERR
+PASS code is 0
 PASS ename is 'DataError'
 
 Key path resolves to a value that is valid key; should yield 'string' key, should succeed

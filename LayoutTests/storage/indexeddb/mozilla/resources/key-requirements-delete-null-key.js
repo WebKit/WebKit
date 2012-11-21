@@ -17,6 +17,6 @@ function prepareDatabase()
     db = event.target.result;
     event.target.transaction.onabort = unexpectedAbortCallback;
     objectStore = evalAndLog("objectStore = db.createObjectStore('bar');");
-    evalAndExpectException("objectStore.delete(null);", "IDBDatabaseException.DATA_ERR");
+    evalAndExpectException("objectStore.delete(null);", "0", "'DataError'");
     finishJSTest();
 }

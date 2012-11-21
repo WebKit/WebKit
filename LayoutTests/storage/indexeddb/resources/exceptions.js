@@ -47,7 +47,7 @@ function prepareDatabase()
     debug("");
     debug("IDBFactory.cmp()");
     debug("One of the supplied keys was not a valid key.");
-    evalAndExpectException("indexedDB.cmp(null, 0)", "IDBDatabaseException.DATA_ERR", "'DataError'");
+    evalAndExpectException("indexedDB.cmp(null, 0)", "0", "'DataError'");
 }
 
 function testDatabase()
@@ -69,7 +69,7 @@ function testDatabase()
         debug("");
         debug("IDBDatabase.createObjectStore()");
         debug("If an objectStore with the same name already exists, the implementation must throw a DOMException of type ConstraintError.");
-        evalAndExpectException("db.createObjectStore('store')", "IDBDatabaseException.CONSTRAINT_ERR", "'ConstraintError'");
+        evalAndExpectException("db.createObjectStore('store')", "0", "'ConstraintError'");
         debug("If keyPath is not a valid key path then a DOMException of type SyntaxError must be thrown.");
         evalAndExpectException("db.createObjectStore('fail', {keyPath: '-invalid-'})", "DOMException.SYNTAX_ERR", "'SyntaxError'");
         debug("If the optionalParameters parameter is specified, and autoIncrement is set to true, and the keyPath parameter is specified to the empty string, or specified to an Array, this function must throw a InvalidAccessError exception.");
@@ -138,10 +138,10 @@ function testObjectStore()
     debug("");
     debug("IDBObjectStore.add()");
     debug('This method throws a DOMException of type ReadOnlyError if the transaction which this IDBObjectStore belongs to is has its mode set to "readonly".');
-    evalAndExpectException("storeFromReadOnlyTransaction.add(0, 0)", "IDBDatabaseException.READ_ONLY_ERR", "'ReadOnlyError'");
+    evalAndExpectException("storeFromReadOnlyTransaction.add(0, 0)", "0", "'ReadOnlyError'");
     // "If any of the following conditions are true, this method throws a DOMException of type DataError:" - covered in objectstore-basics.html
     debug("The transaction this IDBObjectStore belongs to is not active.");
-    evalAndExpectException("storeFromInactiveTransaction.add(0, 0)", "IDBDatabaseException.TRANSACTION_INACTIVE_ERR", "'TransactionInactiveError'");
+    evalAndExpectException("storeFromInactiveTransaction.add(0, 0)", "0", "'TransactionInactiveError'");
     // "Occurs if a request is made on a source object that has been deleted or removed." - covered in deleted-objects.html
     debug("The data being stored could not be cloned by the internal structured cloning algorithm.");
     evalAndExpectException("store.add(self, 0)", "DOMException.DATA_CLONE_ERR"); // FIXME: Test 'DataCloneError' name when DOM4 exceptions are used in binding.
@@ -149,35 +149,35 @@ function testObjectStore()
     debug("");
     debug("IDBObjectStore.clear()");
     debug('This method throws a DOMException of type ReadOnlyError if the transaction which this IDBObjectStore belongs to is has its mode set to "readonly".');
-    evalAndExpectException("storeFromReadOnlyTransaction.clear()", "IDBDatabaseException.READ_ONLY_ERR", "'ReadOnlyError'");
+    evalAndExpectException("storeFromReadOnlyTransaction.clear()", "0", "'ReadOnlyError'");
     debug("The transaction this IDBObjectStore belongs to is not active.");
-    evalAndExpectException("storeFromInactiveTransaction.clear()", "IDBDatabaseException.TRANSACTION_INACTIVE_ERR", "'TransactionInactiveError'");
+    evalAndExpectException("storeFromInactiveTransaction.clear()", "0", "'TransactionInactiveError'");
     // "Occurs if a request is made on a source object that has been deleted or removed." - covered in deleted-objects.html
 
     debug("");
     debug("IDBObjectStore.count()");
     debug("If the optional key parameter is not a valid key or a key range, this method throws a DOMException of type DataError.");
-    evalAndExpectException("store.count({})", "IDBDatabaseException.DATA_ERR", "'DataError'");
+    evalAndExpectException("store.count({})", "0", "'DataError'");
     debug("The transaction this IDBObjectStore belongs to is not active.");
-    evalAndExpectException("storeFromInactiveTransaction.count()", "IDBDatabaseException.TRANSACTION_INACTIVE_ERR", "'TransactionInactiveError'");
+    evalAndExpectException("storeFromInactiveTransaction.count()", "0", "'TransactionInactiveError'");
     // "Occurs if a request is made on a source object that has been deleted or removed." - covered in deleted-objects.html
 
     debug("");
     debug("IDBObjectStore.delete()");
     debug('This method throws a DOMException of type ReadOnlyError if the transaction which this IDBObjectStore belongs to is has its mode set to "readonly".');
-    evalAndExpectException("storeFromReadOnlyTransaction.delete(0)", "IDBDatabaseException.READ_ONLY_ERR", "'ReadOnlyError'");
+    evalAndExpectException("storeFromReadOnlyTransaction.delete(0)", "0", "'ReadOnlyError'");
     debug("If the key parameter is not a valid key or a key range this method throws a DOMException of type DataError.");
-    evalAndExpectException("store.delete({})", "IDBDatabaseException.DATA_ERR", "'DataError'");
+    evalAndExpectException("store.delete({})", "0", "'DataError'");
     debug("The transaction this IDBObjectStore belongs to is not active.");
-    evalAndExpectException("storeFromInactiveTransaction.add(0, 0)", "IDBDatabaseException.TRANSACTION_INACTIVE_ERR", "'TransactionInactiveError'");
+    evalAndExpectException("storeFromInactiveTransaction.add(0, 0)", "0", "'TransactionInactiveError'");
     // "Occurs if a request is made on a source object that has been deleted or removed." - covered in deleted-objects.html
 
     debug("");
     debug("IDBObjectStore.get()");
     debug("If the key parameter is not a valid key or a key range, this method throws a DOMException of type DataError.");
-    evalAndExpectException("store.get({})", "IDBDatabaseException.DATA_ERR", "'DataError'");
+    evalAndExpectException("store.get({})", "0", "'DataError'");
     debug("The transaction this IDBObjectStore belongs to is not active.");
-    evalAndExpectException("storeFromInactiveTransaction.get(0)", "IDBDatabaseException.TRANSACTION_INACTIVE_ERR", "'TransactionInactiveError'");
+    evalAndExpectException("storeFromInactiveTransaction.get(0)", "0", "'TransactionInactiveError'");
     // "Occurs if a request is made on a source object that has been deleted or removed." - covered in deleted-objects.html
 
     debug("");
@@ -191,9 +191,9 @@ function testObjectStore()
     debug("");
     debug("IDBObjectStore.openCursor()");
     debug("If the range parameter is specified but is not a valid key or a key range, this method throws a DOMException of type DataError.");
-    evalAndExpectException("store.openCursor({})", "IDBDatabaseException.DATA_ERR", "'DataError'");
+    evalAndExpectException("store.openCursor({})", "0", "'DataError'");
     debug("The transaction this IDBObjectStore belongs to is not active.");
-    evalAndExpectException("storeFromInactiveTransaction.openCursor()", "IDBDatabaseException.TRANSACTION_INACTIVE_ERR", "'TransactionInactiveError'");
+    evalAndExpectException("storeFromInactiveTransaction.openCursor()", "0", "'TransactionInactiveError'");
     debug("The value for the direction parameter is invalid.");
     evalAndExpectExceptionClass("store.openCursor(0, 'invalid-direction')", "TypeError");
     // "Occurs if a request is made on a source object that has been deleted or removed." - covered in deleted-objects.html
@@ -201,10 +201,10 @@ function testObjectStore()
     debug("");
     debug("IDBObjectStore.put()");
     debug('This method throws a DOMException of type ReadOnlyError if the transaction which this IDBObjectStore belongs to is has its mode set to "readonly".');
-    evalAndExpectException("storeFromReadOnlyTransaction.put(0, 0)", "IDBDatabaseException.READ_ONLY_ERR", "'ReadOnlyError'");
+    evalAndExpectException("storeFromReadOnlyTransaction.put(0, 0)", "0", "'ReadOnlyError'");
     // "If any of the following conditions are true, this method throws a DOMException of type DataError:" - covered in objectstore-basics.html
     debug("The transaction this IDBObjectStore belongs to is not active.");
-    evalAndExpectException("storeFromInactiveTransaction.put(0, 0)", "IDBDatabaseException.TRANSACTION_INACTIVE_ERR", "'TransactionInactiveError'");
+    evalAndExpectException("storeFromInactiveTransaction.put(0, 0)", "0", "'TransactionInactiveError'");
     // "Occurs if a request is made on a source object that has been deleted or removed." - covered in deleted-objects.html
     debug("The data being stored could not be cloned by the internal structured cloning algorithm.");
     evalAndExpectException("store.put(self, 0)", "DOMException.DATA_CLONE_ERR"); // FIXME: Test 'DataCloneError' name when DOM4 exceptions are used in binding.
@@ -240,7 +240,7 @@ function onUpgradeNeeded3()
     debug("");
     debug("IDBObjectStore.createIndex()");
     debug("If an index with the same name already exists, the implementation must throw a DOMException of type ConstraintError. ");
-    evalAndExpectException("store.createIndex('index', 'keyPath')", "IDBDatabaseException.CONSTRAINT_ERR", "'ConstraintError'");
+    evalAndExpectException("store.createIndex('index', 'keyPath')", "0", "'ConstraintError'");
     debug("If keyPath is not a valid key path then a DOMException of type SyntaxError must be thrown.");
     evalAndExpectException("store.createIndex('fail', '-invalid-')", "DOMException.SYNTAX_ERR", "'SyntaxError'");
     debug("If keyPath is an Array and the multiEntry property in the optionalParameters is true, then a DOMException of type InvalidAccessError must be thrown.");
@@ -276,33 +276,33 @@ function testIndex()
     debug("");
     debug("IDBIndex.count()");
     debug("If the optional key parameter is not a valid key or a key range, this method throws a DOMException of type DataError.");
-    evalAndExpectException("index.count({})", "IDBDatabaseException.DATA_ERR", "'DataError'");
+    evalAndExpectException("index.count({})", "0", "'DataError'");
     debug("The transaction this IDBIndex belongs to is not active.");
-    evalAndExpectException("indexFromInactiveTransaction.count()", "IDBDatabaseException.TRANSACTION_INACTIVE_ERR", "'TransactionInactiveError'");
+    evalAndExpectException("indexFromInactiveTransaction.count()", "0", "'TransactionInactiveError'");
     // "Occurs if a request is made on a source object that has been deleted or removed." - covered in deleted-objects.html
 
     debug("");
     debug("IDBIndex.get()");
     debug("If the key parameter is not a valid key or a key range, this method throws a DOMException of type DataError.");
-    evalAndExpectException("index.get({})", "IDBDatabaseException.DATA_ERR", "'DataError'");
+    evalAndExpectException("index.get({})", "0", "'DataError'");
     debug("The transaction this IDBIndex belongs to is not active.");
-    evalAndExpectException("indexFromInactiveTransaction.get(0)", "IDBDatabaseException.TRANSACTION_INACTIVE_ERR", "'TransactionInactiveError'");
+    evalAndExpectException("indexFromInactiveTransaction.get(0)", "0", "'TransactionInactiveError'");
     // "Occurs if a request is made on a source object that has been deleted or removed." - covered in deleted-objects.html
 
     debug("");
     debug("IDBIndex.getKey()");
     debug("If the key parameter is not a valid key or a key range, this method throws a DOMException of type DataError.");
-    evalAndExpectException("index.getKey({})", "IDBDatabaseException.DATA_ERR", "'DataError'");
+    evalAndExpectException("index.getKey({})", "0", "'DataError'");
     debug("The transaction this IDBIndex belongs to is not active.");
-    evalAndExpectException("indexFromInactiveTransaction.getKey(0)", "IDBDatabaseException.TRANSACTION_INACTIVE_ERR", "'TransactionInactiveError'");
+    evalAndExpectException("indexFromInactiveTransaction.getKey(0)", "0", "'TransactionInactiveError'");
     // "Occurs if a request is made on a source object that has been deleted or removed." - covered in deleted-objects.html
 
     debug("");
     debug("IDBIndex.openCursor()");
     debug("If the range parameter is specified but is not a valid key or a key range, this method throws a DOMException of type DataError.");
-    evalAndExpectException("index.openCursor({})", "IDBDatabaseException.DATA_ERR", "'DataError'");
+    evalAndExpectException("index.openCursor({})", "0", "'DataError'");
     debug("The transaction this IDBIndex belongs to is not active.");
-    evalAndExpectException("indexFromInactiveTransaction.openCursor()", "IDBDatabaseException.TRANSACTION_INACTIVE_ERR", "'TransactionInactiveError'");
+    evalAndExpectException("indexFromInactiveTransaction.openCursor()", "0", "'TransactionInactiveError'");
     debug("The value for the direction parameter is invalid.");
     evalAndExpectExceptionClass("index.openCursor(0, 'invalid-direction')", "TypeError");
     // "Occurs if a request is made on a source object that has been deleted or removed." - covered in deleted-objects.html
@@ -310,9 +310,9 @@ function testIndex()
     debug("");
     debug("IDBIndex.openKeyCursor()");
     debug("If the range parameter is specified but is not a valid key or a key range, this method throws a DOMException of type DataError.");
-    evalAndExpectException("index.openKeyCursor({})", "IDBDatabaseException.DATA_ERR", "'DataError'");
+    evalAndExpectException("index.openKeyCursor({})", "0", "'DataError'");
     debug("The transaction this IDBIndex belongs to is not active.");
-    evalAndExpectException("indexFromInactiveTransaction.openKeyCursor()", "IDBDatabaseException.TRANSACTION_INACTIVE_ERR", "'TransactionInactiveError'");
+    evalAndExpectException("indexFromInactiveTransaction.openKeyCursor()", "0", "'TransactionInactiveError'");
     debug("The value for the direction parameter is invalid.");
     evalAndExpectExceptionClass("index.openKeyCursor(0, 'invalid-direction')", "TypeError");
     // "Occurs if a request is made on a source object that has been deleted or removed." - covered in deleted-objects.html
@@ -378,7 +378,7 @@ function testCursor()
         evalAndLog("cursor.advance(1)");
         evalAndExpectException("cursor.advance(1)", "DOMException.INVALID_STATE_ERR", "'InvalidStateError'");
         debug("The transaction this IDBCursor belongs to is not active.");
-        evalAndExpectException("cursorFromInactiveTransaction.advance(1)", "IDBDatabaseException.TRANSACTION_INACTIVE_ERR", "'TransactionInactiveError'");
+        evalAndExpectException("cursorFromInactiveTransaction.advance(1)", "0", "'TransactionInactiveError'");
         primaryCursorRequest.onsuccess = testCursorContinue;
     }
 
@@ -386,16 +386,16 @@ function testCursor()
         debug("");
         debug("IDBCursor.continue()");
         debug("The parameter is not a valid key.");
-        evalAndExpectException("cursor.continue({})", "IDBDatabaseException.DATA_ERR", "'DataError'");
+        evalAndExpectException("cursor.continue({})", "0", "'DataError'");
         debug("The parameter is less than or equal to this cursor's position and this cursor's direction is \"next\" or \"nextunique\".");
-        evalAndExpectException("cursor.continue(-Infinity)", "IDBDatabaseException.DATA_ERR", "'DataError'");
+        evalAndExpectException("cursor.continue(-Infinity)", "0", "'DataError'");
         debug("The parameter is greater than or equal to this cursor's position and this cursor's direction is \"prev\" or \"prevunique\".");
-        evalAndExpectException("reverseCursor.continue(100)", "IDBDatabaseException.DATA_ERR", "'DataError'");
+        evalAndExpectException("reverseCursor.continue(100)", "0", "'DataError'");
         debug("Calling this method more than once before new cursor data has been loaded is not allowed and results in a DOMException of type InvalidStateError being thrown.");
         evalAndLog("cursor.continue()");
         evalAndExpectException("cursor.continue()", "DOMException.INVALID_STATE_ERR", "'InvalidStateError'");
         debug("The transaction this IDBCursor belongs to is not active.");
-        evalAndExpectException("cursorFromInactiveTransaction.continue()", "IDBDatabaseException.TRANSACTION_INACTIVE_ERR", "'TransactionInactiveError'");
+        evalAndExpectException("cursorFromInactiveTransaction.continue()", "0", "'TransactionInactiveError'");
         testCursorDelete();
     }
 
@@ -405,7 +405,7 @@ function testCursor()
         debug("If this cursor's got value flag is false, or if this cursor was created using openKeyCursor a DOMException of type InvalidStateError is thrown.");
         evalAndExpectException("keyCursor.delete()", "DOMException.INVALID_STATE_ERR", "'InvalidStateError'");
         debug("The transaction this IDBCursor belongs to is not active.");
-        evalAndExpectException("cursorFromInactiveTransaction.delete()", "IDBDatabaseException.TRANSACTION_INACTIVE_ERR", "'TransactionInactiveError'");
+        evalAndExpectException("cursorFromInactiveTransaction.delete()", "0", "'TransactionInactiveError'");
         primaryCursorRequest.onsuccess = testCursorUpdate;
     }
 
@@ -415,11 +415,11 @@ function testCursor()
         debug("If this cursor's got value flag is false or if this cursor was created using openKeyCursor. This method throws a DOMException of type InvalidStateError.");
         evalAndExpectException("keyCursor.update({})", "DOMException.INVALID_STATE_ERR", "'InvalidStateError'");
         debug("If the effective object store of this cursor uses in-line keys and evaluating the key path of the value parameter results in a different value than the cursor's effective key, this method throws a DOMException of type DataError.");
-        evalAndExpectException("inlineCursor.update({id: 1})", "IDBDatabaseException.DATA_ERR", "'DataError'");
+        evalAndExpectException("inlineCursor.update({id: 1})", "0", "'DataError'");
         debug("If the structured clone algorithm throws an exception, that exception is rethrown.");
         evalAndExpectException("cursor.update(self)", "DOMException.DATA_CLONE_ERR"); // FIXME: Test 'DataCloneError' name when DOM4 exceptions are used in binding.
         debug("The transaction this IDBCursor belongs to is not active.");
-        evalAndExpectException("cursorFromInactiveTransaction.update({})", "IDBDatabaseException.TRANSACTION_INACTIVE_ERR", "'TransactionInactiveError'");
+        evalAndExpectException("cursorFromInactiveTransaction.update({})", "0", "'TransactionInactiveError'");
 
         primaryCursorRequest.onsuccess = null;
         makeReadOnlyCursor();
@@ -440,12 +440,12 @@ function testCursor()
        debug("");
        debug("One more IDBCursor.delete() test:");
        debug('This method throws a DOMException of type ReadOnlyError if the transaction which this IDBCursor belongs to has its mode set to "readonly".');
-       evalAndExpectException("cursorFromReadOnlyTransaction.delete()", "IDBDatabaseException.READ_ONLY_ERR", "'ReadOnlyError'");
+       evalAndExpectException("cursorFromReadOnlyTransaction.delete()", "0", "'ReadOnlyError'");
 
        debug("");
        debug("One more IDBCursor.update() test:");
        debug('This method throws a DOMException of type ReadOnlyError if the transaction which this IDBCursor belongs to has its mode set to "readonly".');
-       evalAndExpectException("cursorFromReadOnlyTransaction.update({})", "IDBDatabaseException.READ_ONLY_ERR", "'ReadOnlyError'");
+       evalAndExpectException("cursorFromReadOnlyTransaction.update({})", "0", "'ReadOnlyError'");
 
        testTransaction();
     }

@@ -129,12 +129,12 @@ PASS [Worker] event.target.result is 2
 [Worker] Passing an invalid key into indexObject.get({}).
 [Worker] Expecting exception from indexObject.get({})
 PASS [Worker] Exception was thrown.
-PASS [Worker] code is IDBDatabaseException.DATA_ERR
+PASS [Worker] code is 0
 PASS [Worker] ename is 'DataError'
 [Worker] Passing an invalid key into indexObject.getKey({}).
 [Worker] Expecting exception from indexObject.getKey({})
 PASS [Worker] Exception was thrown.
-PASS [Worker] code is IDBDatabaseException.DATA_ERR
+PASS [Worker] code is 0
 PASS [Worker] ename is 'DataError'
 PASS successfullyParsed is true
 

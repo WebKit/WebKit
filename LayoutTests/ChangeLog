@@ -1,3 +1,99 @@
+2012-11-21  Joshua Bell  <jsbell@chromium.org>
+
+        Remove IDBDatabaseException
+        https://bugs.webkit.org/show_bug.cgi?id=102514
+
+        Reviewed by Adam Barth.
+
+        Remove references to IDBDatabaseException - DOMExceptions should be thrown with code 0 and
+        a name. Remove references to IDBRequest.errorCode - IDBRequest.error is the new hawtness,
+        and already tested for. Ensure those objects/properties are gone in removed.html
+
+        * storage/indexeddb/basics-expected.txt:
+        * storage/indexeddb/basics-workers-expected.txt:
+        * storage/indexeddb/constants.html: Removed.
+        * storage/indexeddb/constants-expected.txt: Removed.
+        * storage/indexeddb/create-and-remove-object-store-expected.txt:
+        * storage/indexeddb/cursor-continue-dir-expected.txt:
+        * storage/indexeddb/cursor-continue-expected.txt:
+        * storage/indexeddb/cursor-update-expected.txt:
+        * storage/indexeddb/deleteIndex-expected.txt:
+        * storage/indexeddb/exceptions-expected.txt:
+        * storage/indexeddb/factory-cmp-expected.txt:
+        * storage/indexeddb/get-keyrange-expected.txt:
+        * storage/indexeddb/index-basics-expected.txt:
+        * storage/indexeddb/index-basics-workers-expected.txt:
+        * storage/indexeddb/index-count-expected.txt:
+        * storage/indexeddb/index-unique-expected.txt:
+        * storage/indexeddb/intversion-close-in-upgradeneeded-expected.txt:
+        * storage/indexeddb/invalid-keys-expected.txt:
+        * storage/indexeddb/key-generator-expected.txt:
+        * storage/indexeddb/key-type-array-expected.txt:
+        * storage/indexeddb/keypath-edges-expected.txt:
+        * storage/indexeddb/keyrange-expected.txt:
+        * storage/indexeddb/mozilla/add-twice-failure-expected.txt:
+        * storage/indexeddb/mozilla/bad-keypath-expected.txt:
+        * storage/indexeddb/mozilla/clear-expected.txt:
+        * storage/indexeddb/mozilla/key-requirements-delete-null-key-expected.txt:
+        * storage/indexeddb/mozilla/key-requirements-inline-and-passed-expected.txt:
+        * storage/indexeddb/mozilla/key-requirements-put-no-key-expected.txt:
+        * storage/indexeddb/mozilla/key-requirements-put-null-key-expected.txt:
+        * storage/indexeddb/mozilla/readonly-transactions-expected.txt:
+        * storage/indexeddb/mozilla/resources/add-twice-failure.js:
+        * storage/indexeddb/mozilla/resources/bad-keypath.js:
+        * storage/indexeddb/mozilla/resources/clear.js:
+        * storage/indexeddb/mozilla/resources/indexes.js: Elide obsolete comment.
+        * storage/indexeddb/mozilla/resources/key-requirements-delete-null-key.js:
+        * storage/indexeddb/mozilla/resources/key-requirements-inline-and-passed.js:
+        * storage/indexeddb/mozilla/resources/key-requirements-put-no-key.js:
+        * storage/indexeddb/mozilla/resources/key-requirements-put-null-key.js:
+        * storage/indexeddb/mozilla/resources/readonly-transactions.js:
+        * storage/indexeddb/objectstore-autoincrement-expected.txt:
+        * storage/indexeddb/objectstore-basics-expected.txt:
+        * storage/indexeddb/objectstore-basics-workers-expected.txt:
+        * storage/indexeddb/objectstore-count-expected.txt:
+        * storage/indexeddb/open-cursor-expected.txt:
+        * storage/indexeddb/readonly-expected.txt:
+        * storage/indexeddb/removed-expected.txt:
+        * storage/indexeddb/resources/basics.js:
+        * storage/indexeddb/resources/constants.js: Removed.
+        * storage/indexeddb/resources/create-and-remove-object-store.js:
+        * storage/indexeddb/resources/cursor-continue-dir.js:
+        * storage/indexeddb/resources/cursor-continue.js:
+        * storage/indexeddb/resources/cursor-update.js:
+        * storage/indexeddb/resources/deleteIndex.js:
+        * storage/indexeddb/resources/exceptions.js:
+        * storage/indexeddb/resources/factory-cmp.js:
+        * storage/indexeddb/resources/get-keyrange.js:
+        * storage/indexeddb/resources/index-basics.js:
+        * storage/indexeddb/resources/index-count.js:
+        * storage/indexeddb/resources/index-unique.js:
+        * storage/indexeddb/resources/intversion-close-in-upgradeneeded.js:
+        * storage/indexeddb/resources/invalid-keys.js:
+        * storage/indexeddb/resources/key-generator.js:
+        * storage/indexeddb/resources/key-type-array.js:
+        * storage/indexeddb/resources/keypath-edges.js:
+        * storage/indexeddb/resources/keyrange.js:
+        * storage/indexeddb/resources/objectstore-autoincrement.js:
+        * storage/indexeddb/resources/objectstore-basics.js:
+        * storage/indexeddb/resources/objectstore-count.js:
+        * storage/indexeddb/resources/open-cursor.js:
+        * storage/indexeddb/resources/readonly.js:
+        * storage/indexeddb/resources/removed.js:
+        * storage/indexeddb/resources/shared.js:
+        * storage/indexeddb/resources/transaction-abort.js:
+        * storage/indexeddb/resources/transaction-active-flag.js:
+        * storage/indexeddb/resources/transaction-basics.js:
+        * storage/indexeddb/resources/transaction-complete-workers.js:
+        * storage/indexeddb/resources/transaction-error.js:
+        * storage/indexeddb/resources/transaction-read-only.js:
+        * storage/indexeddb/transaction-abort-expected.txt:
+        * storage/indexeddb/transaction-active-flag-expected.txt:
+        * storage/indexeddb/transaction-basics-expected.txt:
+        * storage/indexeddb/transaction-complete-workers-expected.txt:
+        * storage/indexeddb/transaction-error-expected.txt:
+        * storage/indexeddb/transaction-read-only-expected.txt:
+
 2012-11-21  Mike Reed  <reed@google.com>
 
         update expectations in advance of skia deps roll

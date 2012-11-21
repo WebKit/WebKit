@@ -25,6 +25,6 @@ function prepareDatabase()
 
 function addFirstSuccess()
 {
-    evalAndExpectException("request = objectStore.add({});", "IDBDatabaseException.DATA_ERR");
+    evalAndExpectException("request = objectStore.add({});", "0", "'DataError'");
     finishJSTest();
 }

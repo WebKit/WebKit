@@ -16,7 +16,6 @@ trans.oncomplete = unexpectedCompleteCallback
 store = trans.objectStore('storeName')
 store.add({x: 'value2', y: 'zzz2'}, 'key2')
 store.add({x: 'value3', y: 'zzz3'}, 'key3')
-PASS event.target.errorCode is DOMException.ABORT_ERR
 PASS event.target.error.name is 'AbortError'
 PASS trans.error is null
 PASS firstError is false
@@ -24,9 +23,8 @@ PASS secondError is false
 PASS abortFired is false
 Expecting exception from store.add({x: 'value4', y: 'zzz4'}, 'key4')
 PASS Exception was thrown.
-PASS code is IDBDatabaseException.TRANSACTION_INACTIVE_ERR
+PASS code is 0
 PASS ename is 'TransactionInactiveError'
-PASS event.target.errorCode is DOMException.ABORT_ERR
 PASS event.target.error.name is 'AbortError'
 PASS trans.error is null
 PASS firstError is true
@@ -38,7 +36,7 @@ PASS abortFired is false
 PASS trans.error is null
 Expecting exception from store.add({x: 'value5', y: 'zzz5'}, 'key5')
 PASS Exception was thrown.
-PASS code is IDBDatabaseException.TRANSACTION_INACTIVE_ERR
+PASS code is 0
 PASS ename is 'TransactionInactiveError'
 Expecting exception from trans.abort()
 PASS Exception was thrown.

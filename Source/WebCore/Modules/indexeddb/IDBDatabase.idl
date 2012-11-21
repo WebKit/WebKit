@@ -39,17 +39,17 @@
     attribute EventListener onversionchange;
 
     IDBObjectStore createObjectStore(in DOMString name, in [Optional] Dictionary options)
-        raises (IDBDatabaseException);
+        raises (DOMException);
     void deleteObjectStore(in DOMString name)
-        raises (IDBDatabaseException);
+        raises (DOMException);
     [CallWith=ScriptExecutionContext] IDBVersionChangeRequest setVersion(in DOMString version)
-        raises (IDBDatabaseException);
+        raises (DOMException);
     [CallWith=ScriptExecutionContext] IDBTransaction transaction(in DOMStringList storeNames, in [Optional=DefaultIsNullString] DOMString mode)
-        raises (IDBDatabaseException);
+        raises (DOMException);
     [CallWith=ScriptExecutionContext] IDBTransaction transaction(in sequence<String> storeNames, in [Optional=DefaultIsNullString] DOMString mode)
-        raises (IDBDatabaseException);
+        raises (DOMException);
     [CallWith=ScriptExecutionContext] IDBTransaction transaction(in DOMString storeName, in [Optional=DefaultIsNullString] DOMString mode)
-        raises (IDBDatabaseException);
+        raises (DOMException);
 
     void close();
 

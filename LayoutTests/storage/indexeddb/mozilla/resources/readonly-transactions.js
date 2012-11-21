@@ -23,15 +23,15 @@ function prepareDatabase()
 
 function setVersionComplete()
 {
-    evalAndExpectException("db.transaction([osName]).objectStore(osName).add({});", "IDBDatabaseException.READ_ONLY_ERR");
-    evalAndExpectException("db.transaction(osName).objectStore(osName).add({});", "IDBDatabaseException.READ_ONLY_ERR");
+    evalAndExpectException("db.transaction([osName]).objectStore(osName).add({});", "0", "'ReadOnlyError'");
+    evalAndExpectException("db.transaction(osName).objectStore(osName).add({});", "0", "'ReadOnlyError'");
     key1 = evalAndLog("key1 = 1;");
     key2 = evalAndLog("key2 = 2;");
-    evalAndExpectException("db.transaction([osName]).objectStore(osName).put({}, key1);", "IDBDatabaseException.READ_ONLY_ERR");
-    evalAndExpectException("db.transaction(osName).objectStore(osName).put({}, key2);", "IDBDatabaseException.READ_ONLY_ERR");
-    evalAndExpectException("db.transaction([osName]).objectStore(osName).put({}, key1);", "IDBDatabaseException.READ_ONLY_ERR");
-    evalAndExpectException("db.transaction(osName).objectStore(osName).put({}, key1);", "IDBDatabaseException.READ_ONLY_ERR");
-    evalAndExpectException("db.transaction([osName]).objectStore(osName).delete(key1);", "IDBDatabaseException.READ_ONLY_ERR");
-    evalAndExpectException("db.transaction(osName).objectStore(osName).delete(key2);", "IDBDatabaseException.READ_ONLY_ERR");
+    evalAndExpectException("db.transaction([osName]).objectStore(osName).put({}, key1);", "0", "'ReadOnlyError'");
+    evalAndExpectException("db.transaction(osName).objectStore(osName).put({}, key2);", "0", "'ReadOnlyError'");
+    evalAndExpectException("db.transaction([osName]).objectStore(osName).put({}, key1);", "0", "'ReadOnlyError'");
+    evalAndExpectException("db.transaction(osName).objectStore(osName).put({}, key1);", "0", "'ReadOnlyError'");
+    evalAndExpectException("db.transaction([osName]).objectStore(osName).delete(key1);", "0", "'ReadOnlyError'");
+    evalAndExpectException("db.transaction(osName).objectStore(osName).delete(key2);", "0", "'ReadOnlyError'");
     finishJSTest();
 }

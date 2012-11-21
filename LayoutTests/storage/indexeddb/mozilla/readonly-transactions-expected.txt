@@ -11,30 +11,38 @@ indexedDB.open(dbname)
 objectStore = db.createObjectStore(osName, { autoIncrement: true });
 Expecting exception from db.transaction([osName]).objectStore(osName).add({});
 PASS Exception was thrown.
-PASS code is IDBDatabaseException.READ_ONLY_ERR
+PASS code is 0
+PASS ename is 'ReadOnlyError'
 Expecting exception from db.transaction(osName).objectStore(osName).add({});
 PASS Exception was thrown.
-PASS code is IDBDatabaseException.READ_ONLY_ERR
+PASS code is 0
+PASS ename is 'ReadOnlyError'
 key1 = 1;
 key2 = 2;
 Expecting exception from db.transaction([osName]).objectStore(osName).put({}, key1);
 PASS Exception was thrown.
-PASS code is IDBDatabaseException.READ_ONLY_ERR
+PASS code is 0
+PASS ename is 'ReadOnlyError'
 Expecting exception from db.transaction(osName).objectStore(osName).put({}, key2);
 PASS Exception was thrown.
-PASS code is IDBDatabaseException.READ_ONLY_ERR
+PASS code is 0
+PASS ename is 'ReadOnlyError'
 Expecting exception from db.transaction([osName]).objectStore(osName).put({}, key1);
 PASS Exception was thrown.
-PASS code is IDBDatabaseException.READ_ONLY_ERR
+PASS code is 0
+PASS ename is 'ReadOnlyError'
 Expecting exception from db.transaction(osName).objectStore(osName).put({}, key1);
 PASS Exception was thrown.
-PASS code is IDBDatabaseException.READ_ONLY_ERR
+PASS code is 0
+PASS ename is 'ReadOnlyError'
 Expecting exception from db.transaction([osName]).objectStore(osName).delete(key1);
 PASS Exception was thrown.
-PASS code is IDBDatabaseException.READ_ONLY_ERR
+PASS code is 0
+PASS ename is 'ReadOnlyError'
 Expecting exception from db.transaction(osName).objectStore(osName).delete(key2);
 PASS Exception was thrown.
-PASS code is IDBDatabaseException.READ_ONLY_ERR
+PASS code is 0
+PASS ename is 'ReadOnlyError'
 PASS successfullyParsed is true
 
 TEST COMPLETE
