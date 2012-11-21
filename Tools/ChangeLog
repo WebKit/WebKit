@@ -1,3 +1,17 @@
+2012-11-21  Kentaro Hara  <haraken@chromium.org>
+
+        Unreviewed, rolling out r135340.
+        http://trac.webkit.org/changeset/135340
+        https://bugs.webkit.org/show_bug.cgi?id=102492
+
+        It broke Safari's internal build
+
+        * WebKitTestRunner/InjectedBundle/Bindings/CodeGeneratorTestRunner.pm:
+        (new):
+        (GenerateModule):
+        (GenerateInterface):
+        (finish):
+
 2012-11-21  Yael Aharon  <yael.aharon@intel.com>, Gyuyoung Kim <gyuyoung.kim@samsung.com>
 
         [EFL] Turn on WTF_USE_TILED_BACKING_STORE by default

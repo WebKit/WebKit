@@ -45,6 +45,8 @@ sub new {
     my $reference = { };
 
     $codeGenerator = shift;
+    $outputDir = shift;
+    mkdir $outputDir;
 
     bless($reference, $object);
 }
@@ -1314,11 +1316,10 @@ EOF
     $object->GenerateEndHeader();
 }
 
+# Internal helper
 sub WriteData {
     my $object = shift;
     my $interface = shift;
-    my $outputDir = shift;
-    mkdir $outputDir;
 
     # Write a private header.
     my $interfaceName = $interface->name;
@@ -1432,6 +1433,7 @@ sub GenerateInterface {
     $className = GetClassName($interface->name);
 
     $object->Generate($interface);
+    $object->WriteData($interface);
 }
 
 1;

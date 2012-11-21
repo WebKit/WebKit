@@ -32,6 +32,7 @@ use constant FileNamePrefix => "JS";
 
 my $codeGenerator;
 
+my $outputDir = "";
 my $writeDependencies = 0;
 
 my @headerContentHeader = ();
@@ -76,6 +77,8 @@ sub new
     my $reference = { };
 
     $codeGenerator = shift;
+    $outputDir = shift;
+    shift; # $outputHeadersDir
     shift; # $useLayerOnTop
     shift; # $preprocessor
     $writeDependencies = shift;
@@ -105,6 +108,8 @@ sub GenerateInterface
         $object->GenerateHeader($interface);
         $object->GenerateImplementation($interface);
     }
+
+    $object->WriteData($interface);
 }
 
 sub GenerateAttributeEventListenerCall
@@ -3530,11 +3535,11 @@ sub GenerateHashValue
     return $hash;
 }
 
+# Internal helper
 sub WriteData
 {
     my $object = shift;
     my $interface = shift;
-    my $outputDir = shift;
 
     my $name = $interface->name;
     my $prefix = FileNamePrefix;
