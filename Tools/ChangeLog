@@ -1,5 +1,11 @@
 2012-11-20  Ojan Vafai  <ojan@chromium.org>
 
+        Remove perfav master for webkit_unit_tests and test_shell_tests.
+        There are no bots on this master that run these tests.
+        * TestResultServer/static-dashboards/builders.js:
+
+2012-11-20  Ojan Vafai  <ojan@chromium.org>
+
         Remove special case for layout tests when builders fail to load
         https://bugs.webkit.org/show_bug.cgi?id=102842
 

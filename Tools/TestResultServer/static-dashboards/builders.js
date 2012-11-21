@@ -294,7 +294,7 @@ function loadBuildersList(groupName, testType) {
             break;
         }
         break;
-   
+
     case 'test_shell_tests':
     case 'webkit_unit_tests':
         switch(groupName) {
@@ -306,7 +306,6 @@ function loadBuildersList(groupName, testType) {
         case '@DEPS - chromium.org':
             var builderGroup = new BuilderGroup(BuilderGroup.DEPS_WEBKIT);
             requestBuilderList(TEST_SHELL_TESTS_BUILDER_GROUPS, isChromiumWebkitDepsTestRunner, CHROMIUM_WEBKIT_BUILDER_MASTER, groupName, builderGroup, testType);
-            requestBuilderList(TEST_SHELL_TESTS_BUILDER_GROUPS, isChromiumDepsAVTestRunner, CHROMIUM_PERF_AV_BUILDER_MASTER, groupName, builderGroup, testType);
             break;
         }
         break;    
