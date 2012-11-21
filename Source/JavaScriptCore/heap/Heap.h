@@ -174,6 +174,8 @@ namespace JSC {
 
         bool isPagedOut(double deadline);
         void didStartVMShutdown();
+        
+        const JITStubRoutineSet& jitStubRoutines() { return m_jitStubRoutines; }
 
     private:
         friend class CodeBlock;

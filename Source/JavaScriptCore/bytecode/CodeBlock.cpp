@@ -2188,7 +2188,7 @@ void CodeBlock::finalizeUnconditionally()
     // Check if we're not live. If we are, then jettison.
     if (!(shouldImmediatelyAssumeLivenessDuringScan() || m_dfgData->livenessHasBeenProved)) {
         if (verboseUnlinking)
-            dataLog("Code block %p has dead weak references, jettisoning during GC.\n", this);
+            dataLog("Code block %p (executable %p) has dead weak references, jettisoning during GC.\n", this, ownerExecutable());
 
         // Make sure that the baseline JIT knows that it should re-warm-up before
         // optimizing.
@@ -2247,10 +2247,19 @@ void CodeBlock::finalizeUnconditionally()
     if (!!getJITCode()) {
         RepatchBuffer repatchBuffer(this);
         for (unsigned i = 0; i < numberOfCallLinkInfos(); ++i) {
-            if (callLinkInfo(i).isLinked() && !Heap::isMarked(callLinkInfo(i).callee.get())) {
-                if (verboseUnlinking)
-                    dataLog("Clearing call from %p to %p.\n", this, callLinkInfo(i).callee.get());
-                callLinkInfo(i).unlink(*m_globalData, repatchBuffer);
+            if (callLinkInfo(i).isLinked()) {
+                if (ClosureCallStubRoutine* stub = callLinkInfo(i).stub.get()) {
+                    if (!Heap::isMarked(stub->structure())
+                        || !Heap::isMarked(stub->executable())) {
+                        if (verboseUnlinking)
+                            dataLog("Clearing closure call from %p to %p, stub routine %p.\n", this, stub->executable(), stub);
+                        callLinkInfo(i).unlink(*m_globalData, repatchBuffer);
+                    }
+                } else if (!Heap::isMarked(callLinkInfo(i).callee.get())) {
+                    if (verboseUnlinking)
+                        dataLog("Clearing call from %p to %p.\n", this, callLinkInfo(i).callee.get());
+                    callLinkInfo(i).unlink(*m_globalData, repatchBuffer);
+                }
             }
             if (!!callLinkInfo(i).lastSeenCallee
                 && !Heap::isMarked(callLinkInfo(i).lastSeenCallee.get()))
@@ -2605,6 +2614,35 @@ Instruction* CodeBlock::adjustPCIfAtCallSite(Instruction* potentialReturnPC)
 }
 #endif // ENABLE(LLINT)
 
+#if ENABLE(JIT)
+ClosureCallStubRoutine* CodeBlock::findClosureCallForReturnPC(ReturnAddressPtr returnAddress)
+{
+    for (unsigned i = m_callLinkInfos.size(); i--;) {
+        CallLinkInfo& info = m_callLinkInfos[i];
+        if (!info.stub)
+            continue;
+        if (!info.stub->code().executableMemory()->contains(returnAddress.value()))
+            continue;
+        
+        return info.stub.get();
+    }
+    
+    // The stub routine may have been jettisoned. This is rare, but we have to handle it.
+    const JITStubRoutineSet& set = m_globalData->heap.jitStubRoutines();
+    for (unsigned i = set.size(); i--;) {
+        GCAwareJITStubRoutine* genericStub = set.at(i);
+        if (!genericStub->isClosureCall())
+            continue;
+        ClosureCallStubRoutine* stub = static_cast<ClosureCallStubRoutine*>(genericStub);
+        if (!stub->code().executableMemory()->contains(returnAddress.value()))
+            continue;
+        return stub;
+    }
+    
+    return 0;
+}
+#endif
+
 unsigned CodeBlock::bytecodeOffset(ExecState* exec, ReturnAddressPtr returnAddress)
 {
     UNUSED_PARAM(exec);
@@ -2642,13 +2680,42 @@ unsigned CodeBlock::bytecodeOffset(ExecState* exec, ReturnAddressPtr returnAddre
     Vector<CallReturnOffsetToBytecodeOffset>& callIndices = m_rareData->m_callReturnIndexVector;
     if (!callIndices.size())
         return 1;
-    return binarySearch<CallReturnOffsetToBytecodeOffset, unsigned, getCallReturnOffset>(callIndices.begin(), callIndices.size(), getJITCode().offsetOf(returnAddress.value()))->bytecodeOffset;
+    
+    if (getJITCode().getExecutableMemory()->contains(returnAddress.value())) {
+        unsigned callReturnOffset = getJITCode().offsetOf(returnAddress.value());
+        CallReturnOffsetToBytecodeOffset* result =
+            binarySearch<CallReturnOffsetToBytecodeOffset, unsigned, getCallReturnOffset>(callIndices.begin(), callIndices.size(), callReturnOffset);
+        ASSERT(result->callReturnOffset == callReturnOffset);
+        return result->bytecodeOffset;
+    }
+
+    return findClosureCallForReturnPC(returnAddress)->codeOrigin().bytecodeIndex;
 #endif // ENABLE(JIT)
 
 #if !ENABLE(LLINT) && !ENABLE(JIT)
     return 1;
 #endif
 }
+
+#if ENABLE(DFG_JIT)
+bool CodeBlock::codeOriginForReturn(ReturnAddressPtr returnAddress, CodeOrigin& codeOrigin)
+{
+    if (!hasCodeOrigins())
+        return false;
+
+    if (!getJITCode().getExecutableMemory()->contains(returnAddress.value())) {
+        codeOrigin = findClosureCallForReturnPC(returnAddress)->codeOrigin();
+        return true;
+    }
+    
+    unsigned offset = getJITCode().offsetOf(returnAddress.value());
+    CodeOriginAtCallReturnOffset* entry = binarySearch<CodeOriginAtCallReturnOffset, unsigned, getCallReturnOffsetForCodeOrigin>(codeOrigins().begin(), codeOrigins().size(), offset, WTF::KeyMustNotBePresentInArray);
+    if (entry->callReturnOffset != offset)
+        return false;
+    codeOrigin = entry->codeOrigin;
+    return true;
+}
+#endif // ENABLE(DFG_JIT)
 
 void CodeBlock::clearEvalCache()
 {

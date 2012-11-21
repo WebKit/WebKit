@@ -65,6 +65,9 @@ public:
     
     void traceMarkedStubRoutines(SlotVisitor&);
     
+    unsigned size() const { return m_listOfRoutines.size(); }
+    GCAwareJITStubRoutine* at(unsigned i) const { return m_listOfRoutines[i]; }
+    
 private:
     void markSlow(uintptr_t address);
     

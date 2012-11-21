@@ -213,6 +213,18 @@ MacroAssemblerCodeRef linkConstructThunkGenerator(JSGlobalData* globalData)
     return linkForThunkGenerator(globalData, CodeForConstruct);
 }
 
+// For closure optimizations, we only include calls, since if you're using closures for
+// object construction then you're going to lose big time anyway.
+MacroAssemblerCodeRef linkClosureCallThunkGenerator(JSGlobalData* globalData)
+{
+    CCallHelpers jit(globalData);
+    
+    slowPathFor(jit, globalData, operationLinkClosureCall);
+    
+    LinkBuffer patchBuffer(*globalData, &jit, GLOBAL_THUNK_ID);
+    return FINALIZE_CODE(patchBuffer, ("DFG link closure call slow path thunk"));
+}
+
 static MacroAssemblerCodeRef virtualForThunkGenerator(
     JSGlobalData* globalData, CodeSpecializationKind kind)
 {

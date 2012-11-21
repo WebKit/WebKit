@@ -139,6 +139,7 @@ SET(JavaScriptCore_SOURCES
     interpreter/JSStack.cpp
     interpreter/VMInspector.cpp
 
+    jit/ClosureCallStubRoutine.cpp
     jit/ExecutableAllocator.cpp
     jit/HostCallReturnValue.cpp
     jit/GCAwareJITStubRoutine.cpp

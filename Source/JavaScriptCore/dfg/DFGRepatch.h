@@ -41,6 +41,8 @@ void dfgBuildGetByIDProtoList(ExecState*, JSValue, const Identifier&, const Prop
 void dfgRepatchPutByID(ExecState*, JSValue, const Identifier&, const PutPropertySlot&, StructureStubInfo&, PutKind);
 void dfgBuildPutByIdList(ExecState*, JSValue, const Identifier&, const PutPropertySlot&, StructureStubInfo&, PutKind);
 void dfgLinkFor(ExecState*, CallLinkInfo&, CodeBlock*, JSFunction* callee, MacroAssemblerCodePtr, CodeSpecializationKind);
+void dfgLinkSlowFor(ExecState*, CallLinkInfo&, CodeSpecializationKind);
+void dfgLinkClosureCall(ExecState*, CallLinkInfo&, CodeBlock*, Structure*, ExecutableBase*, MacroAssemblerCodePtr);
 void dfgResetGetByID(RepatchBuffer&, StructureStubInfo&);
 void dfgResetPutByID(RepatchBuffer&, StructureStubInfo&);
 

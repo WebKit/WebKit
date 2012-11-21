@@ -357,9 +357,9 @@ public:
         m_propertyAccesses.append(record);
     }
 
-    void addJSCall(Call fastCall, Call slowCall, DataLabelPtr targetToCheck, CallLinkInfo::CallType callType, CodeOrigin codeOrigin)
+    void addJSCall(Call fastCall, Call slowCall, DataLabelPtr targetToCheck, CallLinkInfo::CallType callType, GPRReg callee, CodeOrigin codeOrigin)
     {
-        m_jsCalls.append(JSCallRecord(fastCall, slowCall, targetToCheck, callType, codeOrigin));
+        m_jsCalls.append(JSCallRecord(fastCall, slowCall, targetToCheck, callType, callee, codeOrigin));
     }
     
     void addWeakReference(JSCell* target)
@@ -440,11 +440,12 @@ private:
     Vector<CallExceptionRecord> m_exceptionChecks;
     
     struct JSCallRecord {
-        JSCallRecord(Call fastCall, Call slowCall, DataLabelPtr targetToCheck, CallLinkInfo::CallType callType, CodeOrigin codeOrigin)
+        JSCallRecord(Call fastCall, Call slowCall, DataLabelPtr targetToCheck, CallLinkInfo::CallType callType, GPRReg callee, CodeOrigin codeOrigin)
             : m_fastCall(fastCall)
             , m_slowCall(slowCall)
             , m_targetToCheck(targetToCheck)
             , m_callType(callType)
+            , m_callee(callee)
             , m_codeOrigin(codeOrigin)
         {
         }
@@ -453,6 +454,7 @@ private:
         Call m_slowCall;
         DataLabelPtr m_targetToCheck;
         CallLinkInfo::CallType m_callType;
+        GPRReg m_callee;
         CodeOrigin m_codeOrigin;
     };
     

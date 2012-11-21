@@ -1,5 +1,91 @@
 2012-11-20  Filip Pizlo  <fpizlo@apple.com>
 
+        DFG should be able to cache closure calls (part 2/2)
+        https://bugs.webkit.org/show_bug.cgi?id=102662
+
+        Reviewed by Gavin Barraclough.
+
+        Added caching of calls where the JSFunction* varies, but the Structure* and ExecutableBase*
+        stay the same. This is accomplished by replacing the branch that compares against a constant
+        JSFunction* with a jump to a closure call stub. The closure call stub contains a fast path,
+        and jumps slow directly to the virtual call thunk.
+
+        Looks like a 1% win on V8v7.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Target.pri:
+        * bytecode/CallLinkInfo.cpp:
+        (JSC::CallLinkInfo::unlink):
+        * bytecode/CallLinkInfo.h:
+        (CallLinkInfo):
+        (JSC::CallLinkInfo::isLinked):
+        (JSC::getCallLinkInfoBytecodeIndex):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::finalizeUnconditionally):
+        (JSC):
+        (JSC::CodeBlock::findClosureCallForReturnPC):
+        (JSC::CodeBlock::bytecodeOffset):
+        (JSC::CodeBlock::codeOriginForReturn):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::getCallLinkInfo):
+        (CodeBlock):
+        (JSC::CodeBlock::isIncomingCallAlreadyLinked):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::link):
+        * dfg/DFGJITCompiler.h:
+        (JSC::DFG::JITCompiler::addJSCall):
+        (JSC::DFG::JITCompiler::JSCallRecord::JSCallRecord):
+        (JSCallRecord):
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGRepatch.cpp:
+        (JSC::DFG::linkSlowFor):
+        (DFG):
+        (JSC::DFG::dfgLinkFor):
+        (JSC::DFG::dfgLinkSlowFor):
+        (JSC::DFG::dfgLinkClosureCall):
+        * dfg/DFGRepatch.h:
+        (DFG):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::emitCall):
+        * dfg/DFGThunks.cpp:
+        (DFG):
+        (JSC::DFG::linkClosureCallThunkGenerator):
+        * dfg/DFGThunks.h:
+        (DFG):
+        * heap/Heap.h:
+        (Heap):
+        (JSC::Heap::jitStubRoutines):
+        * heap/JITStubRoutineSet.h:
+        (JSC::JITStubRoutineSet::size):
+        (JSC::JITStubRoutineSet::at):
+        (JITStubRoutineSet):
+        * jit/ClosureCallStubRoutine.cpp: Added.
+        (JSC):
+        (JSC::ClosureCallStubRoutine::ClosureCallStubRoutine):
+        (JSC::ClosureCallStubRoutine::~ClosureCallStubRoutine):
+        (JSC::ClosureCallStubRoutine::markRequiredObjectsInternal):
+        * jit/ClosureCallStubRoutine.h: Added.
+        (JSC):
+        (ClosureCallStubRoutine):
+        (JSC::ClosureCallStubRoutine::structure):
+        (JSC::ClosureCallStubRoutine::executable):
+        (JSC::ClosureCallStubRoutine::codeOrigin):
+        * jit/GCAwareJITStubRoutine.cpp:
+        (JSC::GCAwareJITStubRoutine::GCAwareJITStubRoutine):
+        * jit/GCAwareJITStubRoutine.h:
+        (GCAwareJITStubRoutine):
+        (JSC::GCAwareJITStubRoutine::isClosureCall):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompile):
+
+2012-11-20  Filip Pizlo  <fpizlo@apple.com>
+
         DFG should be able to cache closure calls (part 1/2)
         https://bugs.webkit.org/show_bug.cgi?id=102662
 

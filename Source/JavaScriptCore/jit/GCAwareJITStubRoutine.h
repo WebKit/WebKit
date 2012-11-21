@@ -54,7 +54,7 @@ class JITStubRoutineSet;
 // list which does not get reclaimed all at once).
 class GCAwareJITStubRoutine : public JITStubRoutine {
 public:
-    GCAwareJITStubRoutine(const MacroAssemblerCodeRef&, JSGlobalData&);
+    GCAwareJITStubRoutine(const MacroAssemblerCodeRef&, JSGlobalData&, bool isClosureCall = false);
     virtual ~GCAwareJITStubRoutine();
     
     void markRequiredObjects(SlotVisitor& visitor)
@@ -63,6 +63,8 @@ public:
     }
     
     void deleteFromGC();
+    
+    bool isClosureCall() const { return m_isClosureCall; }
     
 protected:
     virtual void observeZeroRefCount();
@@ -74,6 +76,7 @@ private:
 
     bool m_mayBeExecuting;
     bool m_isJettisoned;
+    bool m_isClosureCall;
 };
 
 // Use this if you want to mark one additional object during GC if your stub

@@ -1930,6 +1930,14 @@
 			Name="jit"
 			>
 			<File
+				RelativePath="..\..\jit\ClosureCallStubRoutine.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\jit\ClosureCallStubRoutine.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\jit\ExecutableAllocator.cpp"
 				>
 			</File>

@@ -24,37 +24,39 @@
  */
 
 #include "config.h"
-#include "CallLinkInfo.h"
-
-#include "DFGOperations.h"
-#include "DFGThunks.h"
-#include "RepatchBuffer.h"
+#include "ClosureCallStubRoutine.h"
 
 #if ENABLE(JIT)
+
+#include "Executable.h"
+#include "Heap.h"
+#include "JSGlobalData.h"
+#include "SlotVisitor.h"
+#include "Structure.h"
+
 namespace JSC {
 
-void CallLinkInfo::unlink(JSGlobalData& globalData, RepatchBuffer& repatchBuffer)
+ClosureCallStubRoutine::ClosureCallStubRoutine(
+    const MacroAssemblerCodeRef& code, JSGlobalData& globalData, const JSCell* owner,
+    Structure* structure, ExecutableBase* executable, const CodeOrigin& codeOrigin)
+    : GCAwareJITStubRoutine(code, globalData, true)
+    , m_structure(globalData, owner, structure)
+    , m_executable(globalData, owner, executable)
+    , m_codeOrigin(codeOrigin)
 {
-    ASSERT(isLinked());
-    
-    repatchBuffer.revertJumpReplacementToBranchPtrWithPatch(RepatchBuffer::startOfBranchPtrWithPatchOnRegister(hotPathBegin), static_cast<MacroAssembler::RegisterID>(calleeGPR), 0);
-    if (isDFG) {
-#if ENABLE(DFG_JIT)
-        repatchBuffer.relink(callReturnLocation, (callType == Construct ? globalData.getCTIStub(DFG::linkConstructThunkGenerator) : globalData.getCTIStub(DFG::linkCallThunkGenerator)).code());
-#else
-        ASSERT_NOT_REACHED();
-#endif
-    } else
-        repatchBuffer.relink(callReturnLocation, callType == Construct ? globalData.jitStubs->ctiVirtualConstructLink() : globalData.jitStubs->ctiVirtualCallLink());
-    hasSeenShouldRepatch = false;
-    callee.clear();
-    stub.clear();
+}
 
-    // It will be on a list if the callee has a code block.
-    if (isOnList())
-        remove();
+ClosureCallStubRoutine::~ClosureCallStubRoutine()
+{
+}
+
+void ClosureCallStubRoutine::markRequiredObjectsInternal(SlotVisitor& visitor)
+{
+    visitor.append(&m_structure);
+    visitor.append(&m_executable);
 }
 
 } // namespace JSC
+
 #endif // ENABLE(JIT)
 

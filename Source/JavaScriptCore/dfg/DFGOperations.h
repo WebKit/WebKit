@@ -181,6 +181,7 @@ size_t DFG_OPERATION operationCompareStrictEqCell(ExecState*, EncodedJSValue enc
 size_t DFG_OPERATION operationCompareStrictEq(ExecState*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2) WTF_INTERNAL;
 char* DFG_OPERATION operationVirtualCall(ExecState*) WTF_INTERNAL;
 char* DFG_OPERATION operationLinkCall(ExecState*) WTF_INTERNAL;
+char* DFG_OPERATION operationLinkClosureCall(ExecState*) WTF_INTERNAL;
 char* DFG_OPERATION operationVirtualConstruct(ExecState*) WTF_INTERNAL;
 char* DFG_OPERATION operationLinkConstruct(ExecState*) WTF_INTERNAL;
 JSCell* DFG_OPERATION operationCreateActivation(ExecState*) WTF_INTERNAL;

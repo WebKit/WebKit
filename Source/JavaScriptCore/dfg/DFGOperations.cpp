@@ -1062,14 +1062,14 @@ char* DFG_OPERATION operationLinkConstruct(ExecState* execCallee)
     return linkFor(execCallee, CodeForConstruct);
 }
 
-inline char* virtualFor(ExecState* execCallee, CodeSpecializationKind kind)
+inline char* virtualForWithFunction(ExecState* execCallee, CodeSpecializationKind kind, JSCell*& calleeAsFunctionCell)
 {
     ExecState* exec = execCallee->callerFrame();
     JSGlobalData* globalData = &exec->globalData();
     NativeCallFrameTracer tracer(globalData, exec);
 
     JSValue calleeAsValue = execCallee->calleeAsValue();
-    JSCell* calleeAsFunctionCell = getJSFunction(calleeAsValue);
+    calleeAsFunctionCell = getJSFunction(calleeAsValue);
     if (UNLIKELY(!calleeAsFunctionCell))
         return reinterpret_cast<char*>(handleHostCall(execCallee, calleeAsValue, kind));
     
@@ -1085,6 +1085,56 @@ inline char* virtualFor(ExecState* execCallee, CodeSpecializationKind kind)
         }
     }
     return reinterpret_cast<char*>(executable->generatedJITCodeWithArityCheckFor(kind).executableAddress());
+}
+
+inline char* virtualFor(ExecState* execCallee, CodeSpecializationKind kind)
+{
+    JSCell* calleeAsFunctionCellIgnored;
+    return virtualForWithFunction(execCallee, kind, calleeAsFunctionCellIgnored);
+}
+
+static bool attemptToOptimizeClosureCall(ExecState* execCallee, JSCell* calleeAsFunctionCell, CallLinkInfo& callLinkInfo)
+{
+    if (!calleeAsFunctionCell)
+        return false;
+    
+    JSFunction* callee = jsCast<JSFunction*>(calleeAsFunctionCell);
+    JSFunction* oldCallee = callLinkInfo.callee.get();
+    
+    if (!oldCallee
+        || oldCallee->structure() != callee->structure()
+        || oldCallee->executable() != callee->executable())
+        return false;
+    
+    ASSERT(callee->executable()->hasJITCodeForCall());
+    MacroAssemblerCodePtr codePtr = callee->executable()->generatedJITCodeForCall().addressForCall();
+    
+    CodeBlock* codeBlock;
+    if (callee->executable()->isHostFunction())
+        codeBlock = 0;
+    else {
+        codeBlock = &jsCast<FunctionExecutable*>(callee->executable())->generatedBytecodeForCall();
+        if (execCallee->argumentCountIncludingThis() < static_cast<size_t>(codeBlock->numParameters()))
+            return false;
+    }
+    
+    dfgLinkClosureCall(
+        execCallee, callLinkInfo, codeBlock,
+        callee->structure(), callee->executable(), codePtr);
+    
+    return true;
+}
+
+char* DFG_OPERATION operationLinkClosureCall(ExecState* execCallee)
+{
+    JSCell* calleeAsFunctionCell;
+    char* result = virtualForWithFunction(execCallee, CodeForCall, calleeAsFunctionCell);
+    CallLinkInfo& callLinkInfo = execCallee->callerFrame()->codeBlock()->getCallLinkInfo(execCallee->returnPC());
+
+    if (!attemptToOptimizeClosureCall(execCallee, calleeAsFunctionCell, callLinkInfo))
+        dfgLinkSlowFor(execCallee, callLinkInfo, CodeForCall);
+    
+    return result;
 }
 
 char* DFG_OPERATION operationVirtualCall(ExecState* execCallee)

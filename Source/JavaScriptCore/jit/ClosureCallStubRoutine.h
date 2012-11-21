@@ -23,38 +23,44 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
-#include "CallLinkInfo.h"
+#ifndef ClosureCallStubRoutine_h
+#define ClosureCallStubRoutine_h
 
-#include "DFGOperations.h"
-#include "DFGThunks.h"
-#include "RepatchBuffer.h"
+#include <wtf/Platform.h>
 
 #if ENABLE(JIT)
+
+#include "CodeOrigin.h"
+#include "GCAwareJITStubRoutine.h"
+
 namespace JSC {
 
-void CallLinkInfo::unlink(JSGlobalData& globalData, RepatchBuffer& repatchBuffer)
-{
-    ASSERT(isLinked());
+class ClosureCallStubRoutine : public GCAwareJITStubRoutine {
+public:
+    ClosureCallStubRoutine(
+        const MacroAssemblerCodeRef&, JSGlobalData&, const JSCell* owner,
+        Structure*, ExecutableBase*, const CodeOrigin&);
     
-    repatchBuffer.revertJumpReplacementToBranchPtrWithPatch(RepatchBuffer::startOfBranchPtrWithPatchOnRegister(hotPathBegin), static_cast<MacroAssembler::RegisterID>(calleeGPR), 0);
-    if (isDFG) {
-#if ENABLE(DFG_JIT)
-        repatchBuffer.relink(callReturnLocation, (callType == Construct ? globalData.getCTIStub(DFG::linkConstructThunkGenerator) : globalData.getCTIStub(DFG::linkCallThunkGenerator)).code());
-#else
-        ASSERT_NOT_REACHED();
-#endif
-    } else
-        repatchBuffer.relink(callReturnLocation, callType == Construct ? globalData.jitStubs->ctiVirtualConstructLink() : globalData.jitStubs->ctiVirtualCallLink());
-    hasSeenShouldRepatch = false;
-    callee.clear();
-    stub.clear();
+    virtual ~ClosureCallStubRoutine();
+    
+    Structure* structure() const { return m_structure.get(); }
+    ExecutableBase* executable() const { return m_executable.get(); }
+    const CodeOrigin& codeOrigin() const { return m_codeOrigin; }
 
-    // It will be on a list if the callee has a code block.
-    if (isOnList())
-        remove();
-}
+protected:
+    virtual void markRequiredObjectsInternal(SlotVisitor&);
+
+private:
+    WriteBarrier<Structure> m_structure;
+    WriteBarrier<ExecutableBase> m_executable;
+    // This allows us to figure out who a call is linked to by searching through
+    // stub routines.
+    CodeOrigin m_codeOrigin;
+};
 
 } // namespace JSC
+
 #endif // ENABLE(JIT)
+
+#endif // ClosureCallStubRoutine_h
 

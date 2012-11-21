@@ -30,17 +30,17 @@
 
 #include "Heap.h"
 #include "JSGlobalData.h"
-
 #include "SlotVisitor.h"
 #include "Structure.h"
 
 namespace JSC {
 
 GCAwareJITStubRoutine::GCAwareJITStubRoutine(
-    const MacroAssemblerCodeRef& code, JSGlobalData& globalData)
+    const MacroAssemblerCodeRef& code, JSGlobalData& globalData, bool isClosureCall)
     : JITStubRoutine(code)
     , m_mayBeExecuting(false)
     , m_isJettisoned(false)
+    , m_isClosureCall(isClosureCall)
 {
     globalData.heap.m_jitStubRoutines.add(this);
 }

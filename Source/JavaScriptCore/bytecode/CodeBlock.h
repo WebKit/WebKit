@@ -245,6 +245,7 @@ namespace JSC {
         
         CallLinkInfo& getCallLinkInfo(unsigned bytecodeIndex)
         {
+            ASSERT(JITCode::isBaselineCode(getJITType()));
             return *(binarySearch<CallLinkInfo, unsigned, getCallLinkInfoBytecodeIndex>(m_callLinkInfos.begin(), m_callLinkInfos.size(), bytecodeIndex));
         }
 #endif // ENABLE(JIT)
@@ -273,6 +274,11 @@ namespace JSC {
         void linkIncomingCall(CallLinkInfo* incoming)
         {
             m_incomingCalls.push(incoming);
+        }
+        
+        bool isIncomingCallAlreadyLinked(CallLinkInfo* incoming)
+        {
+            return m_incomingCalls.isOnList(incoming);
         }
 #endif // ENABLE(JIT)
 
@@ -813,17 +819,7 @@ namespace JSC {
             return m_rareData && !!m_rareData->m_codeOrigins.size();
         }
         
-        bool codeOriginForReturn(ReturnAddressPtr returnAddress, CodeOrigin& codeOrigin)
-        {
-            if (!hasCodeOrigins())
-                return false;
-            unsigned offset = getJITCode().offsetOf(returnAddress.value());
-            CodeOriginAtCallReturnOffset* entry = binarySearch<CodeOriginAtCallReturnOffset, unsigned, getCallReturnOffsetForCodeOrigin>(codeOrigins().begin(), codeOrigins().size(), offset, WTF::KeyMustNotBePresentInArray);
-            if (entry->callReturnOffset != offset)
-                return false;
-            codeOrigin = entry->codeOrigin;
-            return true;
-        }
+        bool codeOriginForReturn(ReturnAddressPtr, CodeOrigin&);
         
         CodeOrigin codeOrigin(unsigned index)
         {
@@ -1187,6 +1183,10 @@ namespace JSC {
 
     private:
         friend class DFGCodeBlocks;
+
+#if ENABLE(JIT)
+        ClosureCallStubRoutine* findClosureCallForReturnPC(ReturnAddressPtr);
+#endif
         
 #if ENABLE(DFG_JIT)
         void tallyFrequentExitSites();

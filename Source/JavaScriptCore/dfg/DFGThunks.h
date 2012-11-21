@@ -45,6 +45,8 @@ MacroAssemblerCodeRef throwExceptionFromCallSlowPathGenerator(JSGlobalData*);
 MacroAssemblerCodeRef linkCallThunkGenerator(JSGlobalData*);
 MacroAssemblerCodeRef linkConstructThunkGenerator(JSGlobalData*);
 
+MacroAssemblerCodeRef linkClosureCallThunkGenerator(JSGlobalData*);
+
 MacroAssemblerCodeRef virtualCallThunkGenerator(JSGlobalData*);
 MacroAssemblerCodeRef virtualConstructThunkGenerator(JSGlobalData*);
 
