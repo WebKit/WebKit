@@ -1,3 +1,10 @@
+2012-11-20  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed morning gardening, skip a new security
+        timeouting test to paint the bots green.
+
+        * platform/qt/TestExpectations:
+
 2012-11-20  Kangil Han  <kangil.han@samsung.com>
 
         [EFL][WK2][WTR] Unskip passed cases under css3/device-adapt/opera/
