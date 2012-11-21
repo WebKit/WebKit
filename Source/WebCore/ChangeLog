@@ -1,3 +1,17 @@
+2012-11-20  Kunihiko Sakamoto  <ksakamoto@chromium.org>
+
+        REGRESSION(r135263): Fix a wrong argument for udat_close
+        https://bugs.webkit.org/show_bug.cgi?id=102856
+
+        Reviewed by Kent Tamura.
+
+        Fixed a bug that passed wrong pointer to udat_close.
+
+        No new tests. No changes in behavior.
+
+        * platform/text/LocaleICU.cpp:
+        (WebCore::LocaleICU::initializeDateTimeFormat): Close correct object.
+
 2012-11-20  Kentaro Hara  <haraken@chromium.org>
 
         Remove $outputDir and $outputHeadersDir from global variables of code generators

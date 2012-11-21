@@ -305,7 +305,7 @@ void LocaleICU::initializeDateTimeFormat()
 
     UDateFormat* dateTimeFormatWithoutSeconds = openDateFormat(UDAT_SHORT, UDAT_SHORT);
     m_dateTimeFormatWithoutSeconds = getDateFormatPattern(dateTimeFormatWithoutSeconds);
-    udat_close(dateTimeFormatWithSeconds);
+    udat_close(dateTimeFormatWithoutSeconds);
 
     OwnPtr<Vector<String> > timeAMPMLabels = createLabelVector(m_mediumTimeFormat, UDAT_AM_PMS, UCAL_AM, 2);
     if (!timeAMPMLabels)
