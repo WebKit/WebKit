@@ -170,6 +170,7 @@ RenderObject* RenderObject::createObject(Node* node, RenderStyle* style)
         return new (arena) RenderRegion(node, 0);
     switch (style->display()) {
     case NONE:
+        ASSERT_NOT_REACHED();
         return 0;
     case INLINE:
         return new (arena) RenderInline(node);
@@ -209,6 +210,7 @@ RenderObject* RenderObject::createObject(Node* node, RenderStyle* style)
         return new (arena) RenderGrid(node);
     }
 
+    ASSERT_NOT_REACHED();
     return 0;
 }
 

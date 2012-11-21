@@ -1,3 +1,22 @@
+2012-11-21  Elliott Sprehn  <esprehn@chromium.org>
+
+        Node::createRenderer should never return null
+        https://bugs.webkit.org/show_bug.cgi?id=102975
+
+        Reviewed by Ojan Vafai.
+
+        Node::createRenderer should never return null, instead Node::rendererIsNeeded
+        should return false if a node doesn't wish to have a renderer. This method
+        never actually returns null right now, but the code makes it look like it
+        could.
+
+        No new tests, just refactoring.
+
+        * dom/NodeRenderingContext.cpp:
+        (WebCore::NodeRenderingContext::createRendererIfNeeded):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::createObject):
+
 2012-11-21  Fady Samuel  <fsamuel@chromium.org>
 
         Clear MousePressed state on context menu to avoid initiating a drag
