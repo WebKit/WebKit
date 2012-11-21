@@ -1,3 +1,15 @@
+2012-11-20  Kangil Han  <kangil.han@samsung.com>
+
+        [EFL][WK2][WTR] Unskip passed cases under css3/device-adapt/opera/
+        https://bugs.webkit.org/show_bug.cgi?id=102868
+
+        Unreviewed, EFL gardening.
+
+        As BUG 102517 has been resolved, we can move those from EFL common to WK1 only.
+
+        * platform/efl-wk1/TestExpectations:
+        * platform/efl/TestExpectations:
+
 2012-11-20  Kentaro Hara  <haraken@chromium.org>
 
         [V8] Introduce constructorCallbackCustom()
