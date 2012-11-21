@@ -1,3 +1,16 @@
+2012-11-21  Andrey Lushnikov  <lushnikov@chromium.com>
+
+        Web Inspector: Ctrl+A closes breakpoint condition editor
+        https://bugs.webkit.org/show_bug.cgi?id=102906
+
+        Reviewed by Pavel Feldman.
+
+        Check if e.target has no ancestors with className
+        "webkit-line-decorations" in DefaultTextEditor._handleKeyDown
+
+        * inspector/front-end/DefaultTextEditor.js:
+        (WebInspector.DefaultTextEditor.prototype._handleKeyDown): Add check
+
 2012-11-21  Tom Hudson  <tomhudson@chromium.org>
 
         Avoid creating degenerate cubics at corners of rounded rects.

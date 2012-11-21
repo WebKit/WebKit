@@ -417,6 +417,11 @@ WebInspector.DefaultTextEditor.prototype = {
 
     _handleKeyDown: function(e)
     {
+        // If the event was not triggered from the entire editor, then
+        // ignore it. https://bugs.webkit.org/show_bug.cgi?id=102906
+        if (e.target.enclosingNodeOrSelfWithClass("webkit-line-decorations"))
+            return;
+
         var shortcutKey = WebInspector.KeyboardShortcut.makeKeyFromEvent(e);
 
         var handler = this._shortcuts[shortcutKey];
