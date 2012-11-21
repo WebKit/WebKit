@@ -3363,6 +3363,7 @@ webkit.org/b/82717 [ SnowLeopard ] storage/websql/database-lock-after-reload.htm
 webkit.org/b/82776 storage/indexeddb/dont-commit-on-blocked.html
 webkit.org/b/82776 storage/indexeddb/pending-version-change-stuck.html
 webkit.org/b/82776 storage/indexeddb/pending-version-change-stuck-works-with-terminate.html
+webkit.org/b/82776 storage/indexeddb/pending-version-change-on-exit.html
 
 webkit.org/b/ [ Win Release ] http/tests/xmlhttprequest/redirect-cross-origin-post.html [ Failure Pass ]
 

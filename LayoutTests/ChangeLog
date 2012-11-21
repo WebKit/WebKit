@@ -1,3 +1,19 @@
+2012-11-20  David Grogan  <dgrogan@chromium.org>
+
+        IndexedDB: remove setVersion from pending-version-change-on-exit.html
+        https://bugs.webkit.org/show_bug.cgi?id=102457
+
+        Reviewed by Tony Chang.
+
+        This test doesn't work in single-process mode because of
+        http://wkb.ug/82776. We run it in content_shell in chromium.
+
+        * platform/chromium/TestExpectations:
+        * storage/indexeddb/pending-version-change-on-exit-expected.txt:
+        * storage/indexeddb/pending-version-change-on-exit.html:
+        * storage/indexeddb/resources/pending-version-change-on-exit.js:
+        (request.onblocked):
+
 2012-11-20  Bear Travis  <betravis@adobe.com>
 
         [CSS Exclusions] Support outside-shape value on shape-inside

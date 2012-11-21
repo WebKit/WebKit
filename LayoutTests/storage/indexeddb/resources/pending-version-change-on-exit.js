@@ -3,19 +3,11 @@ if (this.importScripts) {
     importScripts('shared.js');
 }
 
-function test() {
-  removeVendorPrefixes();
-  dbname = "pending-version-change-on-exit";
-  evalAndLog("request = indexedDB.open(\"" + dbname + "\")");
-  request.onsuccess = function(e) {
-    db = request.result;
-    evalAndLog("request = db.setVersion(1)");
-    request.onsuccess = unexpectedSuccessCallback;
-    request.onblocked = function() {
-      testPassed("worker received blocked event.");
-      finishJSTest();
-    };
-  };
-}
-
-test();
+removeVendorPrefixes();
+dbname = decodeURIComponent(self.location.search.substring(1));
+evalAndLog("request = indexedDB.open(\"" + dbname + "\", 2)");
+request.onupgradeneeded = unexpectedUpgradeNeededCallback;
+request.onblocked = function(e) {
+    testPassed("worker received blocked event.");
+    finishJSTest();
+};

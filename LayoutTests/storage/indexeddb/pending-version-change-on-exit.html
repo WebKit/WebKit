@@ -8,34 +8,41 @@
 
 description("No crashes when there are event listeners in a worker on shutdown");
 
-function test() {
-  removeVendorPrefixes();
-  if (self.location.search == "?second") {
-    testPassed("Didn't crash!");
-    finishJSTest();
-    return;
-  }
-  dbname = "pending-version-change-on-exit";
-  evalAndLog("request = indexedDB.open(\"" + dbname + "\")");
-  request.onsuccess = startTheWorker;
-  request.onblocked = unexpectedBlockedCallback;
-  request.onerror = unexpectedErrorCallback;
+if (self.location.search == "?second") {
+  testPassed("Didn't crash!");
+  finishJSTest();
+} else {
+  evalAndLog("gotVersionChangeEvent = false");
+  indexedDBTest(prepareDatabase, startTheWorker);
+}
+
+function prepareDatabase()
+{
+  debug("inside prepareDatabase");
+  preamble();
+  db = event.target.result;
+  db.onversionchange = function(e) {
+    evalAndLog("gotVersionChangeEvent = true");
+    debug("Got a version change event, e.oldVersion = " + e.oldVersion +
+          " e.newVersion = " + e.newVersion);
+  };
 }
 
 function startTheWorker() {
-  var worker = startWorker("resources/pending-version-change-on-exit.js");
+  var worker = startWorker("resources/pending-version-change-on-exit.js?" + encodeURIComponent(dbname));
   realFinishJSTest = finishJSTest;
   worker.onerror = function(e) {
     testFailed(e.message);
     realFinishJSTest();
   };
   finishJSTest = function() {
-    self.location = self.location + "?second";
+    shouldBeTrue("gotVersionChangeEvent");
+    if (gotVersionChangeEvent)
+      self.location = self.location + "?second";
+    else
+      realFinishJSTest();
   }
 }
-
-test();
-
 </script>
 <script src="../../fast/js/resources/js-test-post.js"></script>
 </body>
