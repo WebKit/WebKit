@@ -1677,6 +1677,7 @@ webkit.org/b/98647 [ Android ] css3/filters/effect-invert-hw.html [ ImageOnlyFai
 webkit.org/b/98647 [ Android ] css3/filters/effect-opacity-hw.html [ ImageOnlyFailure ]
 # Commented out until more generalized failure below is fixed & rebaselined.
 # webkit.org/b/98647 [ Android ] css3/filters/effect-reference-hw.html [ ImageOnlyFailure ]
+webkit.org/b/98647 [ Android ] css3/filters/effect-saturate-hw.html [ ImageOnlyFailure ]
 webkit.org/b/98647 [ Android ] css3/filters/effect-sepia-hw.html [ ImageOnlyFailure ]
 webkit.org/b/98647 [ Android ] css3/filters/filter-change-repaint-composited.html [ ImageOnlyFailure ]
 webkit.org/b/98647 [ Android ] css3/filters/filter-change-repaint.html [ ImageOnlyFailure ]
@@ -4147,7 +4148,7 @@ webkit.org/b/101897 fast/regions/region-style-inline-background-color.html [ Ima
 webkit.org/b/79446 svg/repaint/image-with-clip-path.svg [ Pass ImageOnlyFailure ]
 
 webkit.org/b/100142 css3/filters/effect-reference-hw.html [ Failure ImageOnlyFailure ]
-webkit.org/b/100142 css3/filters/effect-reference-ordering-hw.html [ Failure ImageOnlyFailure Missing ]
+webkit.org/b/100142 webkit.org/b/102898 css3/filters/effect-reference-ordering-hw.html [ Crash Failure ImageOnlyFailure Missing ]
 
 # Only ready for JSC so far, not fixed in v8 yet.
 webkit.org/b/97499 http/tests/security/script-crossorigin-onerror-information.html [ Failure ]
@@ -4217,5 +4218,3 @@ webkit.org/b/102724 crbug.com/9797 crbug.com/161762 [ Debug ] svg/carto.net/colo
 webkit.org/b/102724 crbug.com/9797 crbug.com/161762 [ Release ] svg/carto.net/colourpicker.svg [ ImageOnlyFailure ]
 webkit.org/b/102724 crbug.com/161762 [ Debug ] svg/custom/gradient-stop-corner-cases.svg [ Crash ]
 webkit.org/b/102724 crbug.com/161762 [ Release ] svg/custom/gradient-stop-corner-cases.svg [ ImageOnlyFailure ]
-
-webkit.org/b/102898 webkit.org/b/98647 css3/filters/effect-saturate-hw.html [ Crash ]
