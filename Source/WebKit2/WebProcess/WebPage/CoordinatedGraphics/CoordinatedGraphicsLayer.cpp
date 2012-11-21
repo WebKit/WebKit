@@ -146,10 +146,6 @@ bool CoordinatedGraphicsLayer::setChildren(const Vector<GraphicsLayer*>& childre
     bool ok = GraphicsLayer::setChildren(children);
     if (!ok)
         return false;
-    for (unsigned i = 0; i < children.size(); ++i) {
-        CoordinatedGraphicsLayer* child = toCoordinatedGraphicsLayer(children[i]);
-        child->didChangeLayerState();
-    }
     didChangeChildren();
     return true;
 }
@@ -157,28 +153,24 @@ bool CoordinatedGraphicsLayer::setChildren(const Vector<GraphicsLayer*>& childre
 void CoordinatedGraphicsLayer::addChild(GraphicsLayer* layer)
 {
     GraphicsLayer::addChild(layer);
-    toCoordinatedGraphicsLayer(layer)->didChangeLayerState();
     didChangeChildren();
 }
 
 void CoordinatedGraphicsLayer::addChildAtIndex(GraphicsLayer* layer, int index)
 {
     GraphicsLayer::addChildAtIndex(layer, index);
-    toCoordinatedGraphicsLayer(layer)->didChangeLayerState();
     didChangeChildren();
 }
 
 void CoordinatedGraphicsLayer::addChildAbove(GraphicsLayer* layer, GraphicsLayer* sibling)
 {
     GraphicsLayer::addChildAbove(layer, sibling);
-    toCoordinatedGraphicsLayer(layer)->didChangeLayerState();
     didChangeChildren();
 }
 
 void CoordinatedGraphicsLayer::addChildBelow(GraphicsLayer* layer, GraphicsLayer* sibling)
 {
     GraphicsLayer::addChildBelow(layer, sibling);
-    toCoordinatedGraphicsLayer(layer)->didChangeLayerState();
     didChangeChildren();
 }
 
@@ -188,8 +180,6 @@ bool CoordinatedGraphicsLayer::replaceChild(GraphicsLayer* oldChild, GraphicsLay
     if (!ok)
         return false;
     didChangeChildren();
-    toCoordinatedGraphicsLayer(oldChild)->didChangeLayerState();
-    toCoordinatedGraphicsLayer(newChild)->didChangeLayerState();
     return true;
 }
 
@@ -198,8 +188,6 @@ void CoordinatedGraphicsLayer::removeFromParent()
     if (CoordinatedGraphicsLayer* parentLayer = toCoordinatedGraphicsLayer(parent()))
         parentLayer->didChangeChildren();
     GraphicsLayer::removeFromParent();
-
-    didChangeLayerState();
 }
 
 void CoordinatedGraphicsLayer::setPosition(const FloatPoint& p)
@@ -789,7 +777,6 @@ void CoordinatedGraphicsLayer::purgeBackingStores()
     releaseImageBackingIfNeeded();
 
     didChangeLayerState();
-    didChangeChildren();
 }
 
 void CoordinatedGraphicsLayer::setCoordinator(WebKit::CoordinatedGraphicsLayerClient* coordinator)
