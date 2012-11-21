@@ -1,3 +1,48 @@
+2012-11-21  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        Disambiguate innerNodeFramePoint and mainFramePoint
+        https://bugs.webkit.org/show_bug.cgi?id=98139
+
+        Reviewed by Julien Chaffraix.
+
+        Splits the point() method in HitTestResult into two, innerNodeFramePoint and mainFramePoint().
+        To do this HitTestResult no longer inherits publically from HitTestLocation, which should also
+        help to later separate the two classes completely.
+
+        Many of the call-sites of hitTestResultAtPoint confuses which coordinates the point is in.
+        These have not have been fixed in this patch, and they should be audited by the individual ports.
+
+        * WebCore.exp.in:
+        * dom/Document.cpp:
+        (WebCore::Document::nodesFromRect):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::eventMayStartDrag):
+        (WebCore::EventHandler::hitTestResultAtPoint):
+            Set and maintain pointInMainFrame on the HitTestResult.
+        * rendering/HitTestResult.cpp:
+        (WebCore::HitTestResult::HitTestResult):
+            Construct pointInMainFrame as a copy of pointInInnerNodeFrame. This is correct
+            for all hit-tests outside of the recursion in EventHandler::hitTestResultAtPoint.
+        (WebCore::HitTestResult::operator=):
+        (WebCore::HitTestResult::innerNodeFrame):
+        (WebCore::HitTestResult::append):
+        * rendering/HitTestResult.h:
+        (WebCore::HitTestLocation::point):
+        (HitTestResult):
+            Inherits protected now from HitTestLocation to avoid exposing the ambiguous
+            point() and roundedPoint() methods. 
+            HitTestResult will be split completely from HitTestLocation in a later patch.
+        (WebCore::HitTestResult::isRectBasedTest):
+        (WebCore::HitTestResult::pointInMainFrame):
+        (WebCore::HitTestResult::roundedPointInMainFrame):
+        (WebCore::HitTestResult::setPointInMainFrame):
+        (WebCore::HitTestResult::pointInInnerNodeFrame):
+        (WebCore::HitTestResult::roundedPointInInnerNodeFrame):
+        (WebCore::HitTestResult::localPoint):
+        (WebCore::HitTestResult::setLocalPoint):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::hitTest):
+
 2012-11-21  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r135383.

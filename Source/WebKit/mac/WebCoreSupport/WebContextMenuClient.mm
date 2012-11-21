@@ -356,17 +356,14 @@ void WebContextMenuClient::showContextMenu()
     if (!page)
         return;
     ContextMenuController* controller = page->contextMenuController();
-    Node* node = controller->hitTestResult().innerNonSharedNode();
-    if (!node)
-        return;
-    Frame* frame = node->document()->frame();
+    Frame* frame = controller->hitTestResult().innerNodeFrame();
     if (!frame)
         return;
     FrameView* frameView = frame->view();
     if (!frameView)
         return;
 
-    IntPoint point = frameView->contentsToWindow(controller->hitTestResult().roundedPoint());
+    IntPoint point = frameView->contentsToWindow(controller->hitTestResult().roundedPointInInnerNodeFrame());
     NSView* view = frameView->documentView();
     NSPoint nsScreenPoint = [view convertPoint:point toView:nil];
     // Show the contextual menu for this event.

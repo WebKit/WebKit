@@ -702,8 +702,9 @@ Ewk_Hit_Test* ewk_frame_hit_test_new(const Evas_Object* ewkFrame, int x, int y)
         return 0;
 
     Ewk_Hit_Test* hitTest = new Ewk_Hit_Test;
-    hitTest->x = result.point().x();
-    hitTest->y = result.point().y();
+    // FIXME: This should probably use pointInMainFrame, if it is to match the documentation of ewk_hit_test.
+    hitTest->x = result.pointInInnerNodeFrame().x();
+    hitTest->y = result.pointInInnerNodeFrame().y();
 #if 0
     // FIXME
     hitTest->bounding_box.x = result.boundingBox().x();

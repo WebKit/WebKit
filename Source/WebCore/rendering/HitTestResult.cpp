@@ -197,19 +197,23 @@ HitTestResult::HitTestResult() : HitTestLocation()
 {
 }
 
-HitTestResult::HitTestResult(const LayoutPoint& point) : HitTestLocation(point)
+HitTestResult::HitTestResult(const LayoutPoint& point)
+    : HitTestLocation(point)
+    , m_pointInMainFrame(point)
     , m_isOverWidget(false)
 {
 }
 
 HitTestResult::HitTestResult(const LayoutPoint& centerPoint, unsigned topPadding, unsigned rightPadding, unsigned bottomPadding, unsigned leftPadding)
     : HitTestLocation(centerPoint, topPadding, rightPadding, bottomPadding, leftPadding)
+    , m_pointInMainFrame(centerPoint)
     , m_isOverWidget(false)
 {
 }
 
 HitTestResult::HitTestResult(const HitTestLocation& other)
     : HitTestLocation(other)
+    , m_pointInMainFrame(point())
     , m_isOverWidget(false)
 {
 }
@@ -218,6 +222,7 @@ HitTestResult::HitTestResult(const HitTestResult& other)
     : HitTestLocation(other)
     , m_innerNode(other.innerNode())
     , m_innerNonSharedNode(other.innerNonSharedNode())
+    , m_pointInMainFrame(other.m_pointInMainFrame)
     , m_localPoint(other.localPoint())
     , m_innerURLElement(other.URLElement())
     , m_scrollbar(other.scrollbar())
@@ -236,6 +241,7 @@ HitTestResult& HitTestResult::operator=(const HitTestResult& other)
     HitTestLocation::operator=(other);
     m_innerNode = other.innerNode();
     m_innerNonSharedNode = other.innerNonSharedNode();
+    m_pointInMainFrame = other.m_pointInMainFrame;
     m_localPoint = other.localPoint();
     m_innerURLElement = other.URLElement();
     m_scrollbar = other.scrollbar();
@@ -277,6 +283,15 @@ void HitTestResult::setURLElement(Element* n)
 void HitTestResult::setScrollbar(Scrollbar* s)
 {
     m_scrollbar = s;
+}
+
+Frame* HitTestResult::innerNodeFrame() const
+{
+    if (m_innerNonSharedNode)
+        return m_innerNonSharedNode->document()->frame();
+    if (m_innerNode)
+        return m_innerNode->document()->frame();
+    return 0;
 }
 
 Frame* HitTestResult::targetFrame() const
@@ -746,6 +761,7 @@ void HitTestResult::append(const HitTestResult& other)
         m_innerNode = other.innerNode();
         m_innerNonSharedNode = other.innerNonSharedNode();
         m_localPoint = other.localPoint();
+        m_pointInMainFrame = other.m_pointInMainFrame;
         m_innerURLElement = other.URLElement();
         m_scrollbar = other.scrollbar();
         m_isOverWidget = other.isOverWidget();

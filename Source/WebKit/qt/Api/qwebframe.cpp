@@ -1598,7 +1598,8 @@ QWebHitTestResultPrivate::QWebHitTestResultPrivate(const WebCore::HitTestResult 
 {
     if (!hitTest.innerNode())
         return;
-    pos = hitTest.roundedPoint();
+    // FIXME: This should probably use roundedPointInMainFrame if it is to match the documentation of QWebHitTestResult.
+    pos = hitTest.roundedPointInInnerNodeFrame();
     WebCore::TextDirection dir;
     title = hitTest.title(dir);
     linkText = hitTest.textContent();

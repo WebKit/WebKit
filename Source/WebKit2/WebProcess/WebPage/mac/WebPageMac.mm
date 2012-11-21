@@ -384,9 +384,9 @@ void WebPage::characterIndexForPoint(IntPoint point, uint64_t& index)
         return;
 
     HitTestResult result = frame->eventHandler()->hitTestResultAtPoint(point, false);
-    frame = result.innerNonSharedNode() ? result.innerNonSharedNode()->document()->frame() : m_page->focusController()->focusedOrMainFrame();
+    frame = result.innerNonSharedNode() ? result.innerNodeFrame() : m_page->focusController()->focusedOrMainFrame();
     
-    RefPtr<Range> range = frame->rangeForPoint(result.roundedPoint());
+    RefPtr<Range> range = frame->rangeForPoint(result.roundedPointInInnerNodeFrame());
     if (!range)
         return;
 

@@ -1582,7 +1582,7 @@ IntPoint QWebPagePrivate::TouchAdjuster::findCandidatePointForTouch(const IntPoi
     FrameView* view = document->frame()->view();
 
     // Touch rect in contents coordinates.
-    IntRect touchRect(HitTestResult::rectForPoint(view->windowToContents(IntPoint(x, y)), m_topPadding, m_rightPadding, m_bottomPadding, m_leftPadding));
+    IntRect touchRect(HitTestLocation::rectForPoint(view->windowToContents(IntPoint(x, y)), m_topPadding, m_rightPadding, m_bottomPadding, m_leftPadding));
 
     // Iterate over the list of nodes hit looking for the one whose bounding area
     // has largest intersection with the touch area (point + padding).

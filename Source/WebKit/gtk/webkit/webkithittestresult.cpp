@@ -315,12 +315,15 @@ WebKitHitTestResult* kit(const WebCore::HitTestResult& result)
     if (result.innerNonSharedNode())
         node = kit(result.innerNonSharedNode());
 
+    // FIXME: This should probably use innerNodeFrame, as targetFrame is the potentially different frame the link opens in.
     targetFrame = result.targetFrame();
     if (targetFrame && targetFrame->view()) {
         // Convert document coords to widget coords.
-        point = targetFrame->view()->contentsToWindow(result.roundedPoint());
-    } else
-        point = result.roundedPoint();
+        point = targetFrame->view()->contentsToWindow(result.roundedPointInInnerNodeFrame());
+    } else {
+        // FIXME: This should probably use roundedPointInMainFrame and translate from the mainframe.
+        point = result.roundedPointInInnerNodeFrame();
+    }
 
     return WEBKIT_HIT_TEST_RESULT(g_object_new(WEBKIT_TYPE_HIT_TEST_RESULT,
                                                "link-uri", linkURI.get(),

@@ -787,7 +787,7 @@ bool EventHandler::eventMayStartDrag(const PlatformMouseEvent& event) const
     HitTestResult result(view->windowToContents(event.position()));
     m_frame->contentRenderer()->hitTest(request, result);
     DragState state;
-    return result.innerNode() && page->dragController()->draggableNode(m_frame, result.innerNode(), roundedIntPoint(result.point()), state);
+    return result.innerNode() && page->dragController()->draggableNode(m_frame, result.innerNode(), result.roundedPointInInnerNodeFrame(), state);
 }
 
 void EventHandler::updateSelectionForMouseDrag()
@@ -1140,7 +1140,8 @@ HitTestResult EventHandler::hitTestResultAtPoint(const LayoutPoint& point, bool 
         hitType |= HitTestRequest::IgnoreClipping;
     if (allowShadowContent)
         hitType |= HitTestRequest::AllowShadowContent;
-    m_frame->contentRenderer()->hitTest(HitTestRequest(hitType), result);
+    HitTestRequest request(hitType);
+    m_frame->contentRenderer()->hitTest(request, result);
 
     while (true) {
         Node* n = result.innerNode();
@@ -1157,7 +1158,8 @@ HitTestResult EventHandler::hitTestResultAtPoint(const LayoutPoint& point, bool 
         LayoutPoint widgetPoint(result.localPoint().x() + view->scrollX() - renderWidget->borderLeft() - renderWidget->paddingLeft(), 
             result.localPoint().y() + view->scrollY() - renderWidget->borderTop() - renderWidget->paddingTop());
         HitTestResult widgetHitTestResult(widgetPoint, padding.height(), padding.width(), padding.height(), padding.width());
-        frame->contentRenderer()->hitTest(HitTestRequest(hitType), widgetHitTestResult);
+        widgetHitTestResult.setPointInMainFrame(result.pointInMainFrame());
+        frame->contentRenderer()->hitTest(request, widgetHitTestResult);
         result = widgetHitTestResult;
 
         if (testScrollbars == ShouldHitTestScrollbars) {

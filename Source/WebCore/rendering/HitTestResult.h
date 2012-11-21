@@ -60,7 +60,7 @@ public:
     ~HitTestLocation();
     HitTestLocation& operator=(const HitTestLocation&);
 
-    LayoutPoint point() const { return m_point; }
+    const LayoutPoint& point() const { return m_point; }
     IntPoint roundedPoint() const { return roundedIntPoint(m_point); }
 
     RenderRegion* region() const { return m_region; }
@@ -100,7 +100,8 @@ private:
     bool m_isRectilinear;
 };
 
-class HitTestResult : public HitTestLocation {
+// FIXME: HitTestResult should not be a HitTestLocation, but instead have a HitTestLocation. See https://bugs.webkit.org/show_bug.cgi?id=101590
+class HitTestResult : protected HitTestLocation {
 public:
     typedef ListHashSet<RefPtr<Node> > NodeSet;
 
@@ -115,10 +116,26 @@ public:
 
     Node* innerNode() const { return m_innerNode.get(); }
     Node* innerNonSharedNode() const { return m_innerNonSharedNode.get(); }
-    LayoutPoint localPoint() const { return m_localPoint; }
     Element* URLElement() const { return m_innerURLElement.get(); }
     Scrollbar* scrollbar() const { return m_scrollbar.get(); }
     bool isOverWidget() const { return m_isOverWidget; }
+
+    // Forwarded from HitTestLocation
+    bool isRectBasedTest() const { return HitTestLocation::isRectBasedTest(); }
+
+    // The hit-tested point in the coordinates of the main frame.
+    const LayoutPoint& pointInMainFrame() const { return m_pointInMainFrame; }
+    IntPoint roundedPointInMainFrame() const { return roundedIntPoint(pointInMainFrame()); }
+    void setPointInMainFrame(const LayoutPoint& p) { m_pointInMainFrame = p; }
+
+    // The hit-tested point in the coordinates of the innerNode frame, the frame containing innerNode.
+    const LayoutPoint& pointInInnerNodeFrame() const { return HitTestLocation::point(); }
+    IntPoint roundedPointInInnerNodeFrame() const { return roundedIntPoint(pointInInnerNodeFrame()); }
+    Frame* innerNodeFrame() const;
+
+    // The hit-tested point in the coordinates of the inner node.
+    const LayoutPoint& localPoint() const { return m_localPoint; }
+    void setLocalPoint(const LayoutPoint& p) { m_localPoint = p; }
 
     void setToNonShadowAncestor();
 
@@ -126,7 +143,6 @@ public:
 
     void setInnerNode(Node*);
     void setInnerNonSharedNode(Node*);
-    void setLocalPoint(const LayoutPoint& p) { m_localPoint = p; }
     void setURLElement(Element*);
     void setScrollbar(Scrollbar*);
     void setIsOverWidget(bool b) { m_isOverWidget = b; }
@@ -185,6 +201,7 @@ private:
 
     RefPtr<Node> m_innerNode;
     RefPtr<Node> m_innerNonSharedNode;
+    LayoutPoint m_pointInMainFrame; // The hit-tested point in main-frame coordinates.
     LayoutPoint m_localPoint; // A point in the local coordinate space of m_innerNonSharedNode's renderer. Allows us to efficiently
                               // determine where inside the renderer we hit on subsequent operations.
     RefPtr<Element> m_innerURLElement;

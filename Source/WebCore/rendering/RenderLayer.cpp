@@ -3642,7 +3642,7 @@ bool RenderLayer::hitTest(const HitTestRequest& request, const HitTestLocation& 
         // return ourselves. We do this so mouse events continue getting delivered after a drag has 
         // exited the WebView, and so hit testing over a scrollbar hits the content document.
         if ((request.active() || request.release()) && isRootLayer()) {
-            renderer()->updateHitTestResult(result, toRenderView(renderer())->flipForWritingMode(result.point()));
+            renderer()->updateHitTestResult(result, toRenderView(renderer())->flipForWritingMode(hitTestLocation.point()));
             insideLayer = this;
         }
     }

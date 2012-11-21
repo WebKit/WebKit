@@ -1350,11 +1350,7 @@ bool WebView::handleContextMenuEvent(WPARAM wParam, LPARAM lParam)
     if (!coreMenu)
         return false;
 
-    Node* node = contextMenuController->hitTestResult().innerNonSharedNode();
-    if (!node)
-        return false;
-
-    Frame* frame = node->document()->frame();
+    Frame* frame = contextMenuController->hitTestResult().innerNodeFrame();
     if (!frame)
         return false;
 
@@ -1362,7 +1358,7 @@ bool WebView::handleContextMenuEvent(WPARAM wParam, LPARAM lParam)
     if (!view)
         return false;
 
-    POINT point(view->contentsToWindow(contextMenuController->hitTestResult().roundedPoint()));
+    POINT point(view->contentsToWindow(contextMenuController->hitTestResult().roundedPointInInnerNodeFrame()));
 
     // Translate the point to screen coordinates
     if (!::ClientToScreen(m_viewWindow, &point))

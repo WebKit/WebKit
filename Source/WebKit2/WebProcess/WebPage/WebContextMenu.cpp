@@ -59,10 +59,7 @@ void WebContextMenu::show()
     ContextMenu* menu = controller->contextMenu();
     if (!menu)
         return;
-    Node* node = controller->hitTestResult().innerNonSharedNode();
-    if (!node)
-        return;
-    Frame* frame = node->document()->frame();
+    Frame* frame = controller->hitTestResult().innerNodeFrame();
     if (!frame)
         return;
     FrameView* view = frame->view();
@@ -86,7 +83,7 @@ void WebContextMenu::show()
 
     // Mark the WebPage has having a shown context menu then notify the UIProcess.
     m_page->contextMenuShowing();
-    m_page->send(Messages::WebPageProxy::ShowContextMenu(view->contentsToWindow(controller->hitTestResult().roundedPoint()), webHitTestResultData, proposedMenu, InjectedBundleUserMessageEncoder(userData.get())));
+    m_page->send(Messages::WebPageProxy::ShowContextMenu(view->contentsToWindow(controller->hitTestResult().roundedPointInInnerNodeFrame()), webHitTestResultData, proposedMenu, InjectedBundleUserMessageEncoder(userData.get())));
 }
 
 void WebContextMenu::itemSelected(const WebContextMenuItemData& item)
