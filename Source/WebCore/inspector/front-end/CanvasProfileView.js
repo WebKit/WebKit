@@ -106,7 +106,23 @@ WebInspector.CanvasProfileView.prototype = {
      */
     _enableWaitIcon: function(enable)
     {
-        this._replayImageElement.className = enable ? "wait" : "";
+        function showWaitIcon()
+        {
+            this._replayImageElement.className = "wait";
+            this._debugInfoElement.textContent = "";
+            delete this._showWaitIconTimer;
+        }
+
+        if (enable && this._replayImageElement.src && !this._showWaitIconTimer)
+            this._showWaitIconTimer = setTimeout(showWaitIcon.bind(this), 250);
+        else {
+            if (this._showWaitIconTimer) {
+                clearTimeout(this._showWaitIconTimer);
+                delete this._showWaitIconTimer;
+            }
+            this._replayImageElement.className = enable ? "wait" : "";
+            this._debugInfoElement.textContent = "";
+        }
     },
 
     _replayTraceLog: function()
