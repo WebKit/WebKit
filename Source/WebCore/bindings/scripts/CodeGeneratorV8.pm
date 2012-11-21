@@ -32,8 +32,6 @@ use constant FileNamePrefix => "V8";
 
 my $codeGenerator;
 
-my $outputDir = "";
-my $outputHeadersDir = "";
 
 my @headerContent = ();
 my @implContentHeader = ();
@@ -72,8 +70,6 @@ sub new
     my $reference = { };
 
     $codeGenerator = shift;
-    $outputDir = shift;
-    $outputHeadersDir = shift;
 
     bless($reference, $object);
     return $reference;
@@ -92,8 +88,6 @@ sub GenerateInterface
         $object->GenerateHeader($interface);
         $object->GenerateImplementation($interface);
     }
-
-    $object->WriteData($interface);
 }
 
 sub AddToImplIncludes
@@ -4104,11 +4098,12 @@ sub NativeToJSValue
     return "toV8($value$getCreationContextArg$getIsolateArg)";
 }
 
-# Internal helper
 sub WriteData
 {
     my $object = shift;
     my $interface = shift;
+    my $outputDir = shift;
+    my $outputHeadersDir = shift;
 
     my $name = $interface->name;
     my $prefix = FileNamePrefix;

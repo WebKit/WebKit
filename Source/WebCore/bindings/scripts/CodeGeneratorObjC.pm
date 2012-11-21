@@ -29,7 +29,6 @@ package CodeGeneratorObjC;
 use constant FileNamePrefix => "DOM";
 
 # Global Variables
-my $outputDir = "";
 my $writeDependencies = 0;
 my %publicInterfaces = ();
 my $newPublicClass = 0;
@@ -195,8 +194,6 @@ sub new
     my $reference = { };
 
     $codeGenerator = shift;
-    $outputDir = shift;
-    shift; # $outputHeadersDir
     shift; # $useLayerOnTop
     shift; # $preprocessor
     $writeDependencies = shift;
@@ -285,9 +282,6 @@ sub GenerateInterface
     # Start actual generation..
     $object->GenerateHeader($interface);
     $object->GenerateImplementation($interface) unless $noImpl;
-
-    # Write changes.
-    $object->WriteData(FileNamePrefix . $name);
 
     # Check for missing public API
     if (keys %publicInterfaces > 0) {
@@ -1752,14 +1746,17 @@ sub GenerateImplementation
 sub WriteData
 {
     my $object = shift;
-    my $name = shift;
+    my $dataNode = shift;
+    my $outputDir = shift;
 
     # Open files for writing...
-    my $headerFileName = "$outputDir/" . $name . ".h";
-    my $privateHeaderFileName = "$outputDir/" . $name . "Private.h";
-    my $implFileName = "$outputDir/" . $name . ".mm";
-    my $internalHeaderFileName = "$outputDir/" . $name . "Internal.h";
-    my $depsFileName = "$outputDir/" . $name . ".dep";
+    my $name = $dataNode->name;
+    my $prefix = FileNamePrefix;
+    my $headerFileName = "$outputDir/$prefix$name.h";
+    my $privateHeaderFileName = "$outputDir/$prefix${name}Private.h";
+    my $implFileName = "$outputDir/$prefix$name.mm";
+    my $internalHeaderFileName = "$outputDir/$prefix${name}Internal.h";
+    my $depsFileName = "$outputDir/$prefix$name.dep";
 
     # Write public header.
     my $contents = join "", @headerContentHeader;
