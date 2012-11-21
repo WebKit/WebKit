@@ -1,3 +1,15 @@
+2012-11-20  Alpha Lam  <hclam@chromium.org>
+
+        Unreviewed. Chromium build fix.
+
+        Removed unnecessary mutex unlock that triggered crash on Linux debug build.
+
+        Chromium Linux Debug layout tests should be green:
+        platform/chromium/virtual/deferred/fast/images/image-in-map.html
+
+        * platform/graphics/chromium/LazyDecodingPixelRef.cpp:
+        (WebCore::LazyDecodingPixelRef::onLockPixels):
+
 2012-11-20  Ryosuke Niwa  <rniwa@webkit.org>
 
         Fix another typo. I need to checking that type() != NodeListCollectionType,
