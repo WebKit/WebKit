@@ -41,15 +41,8 @@
 
 namespace WebCore {
 
-v8::Handle<v8::Value> V8Intent::constructorCallback(const v8::Arguments& args)
+v8::Handle<v8::Value> V8Intent::constructorCallbackCustom(const v8::Arguments& args)
 {
-    INC_STATS("DOM.Intent.Constructor");
-
-    if (!args.IsConstructCall())
-        return throwTypeError("DOM object constructor cannot be called as a function.", args.GetIsolate());
-
-    if (ConstructorMode::current() == ConstructorMode::WrapExistingObject)
-        return args.Holder();
     if (args.Length() < 1)
         return throwNotEnoughArgumentsError(args.GetIsolate());
     if (args.Length() == 1) {

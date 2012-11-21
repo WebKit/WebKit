@@ -1,3 +1,14 @@
+2012-11-20  Kentaro Hara  <haraken@chromium.org>
+
+        [V8] Introduce constructorCallbackCustom()
+        https://bugs.webkit.org/show_bug.cgi?id=102763
+
+        Reviewed by Adam Barth.
+
+        Updated a test result.
+
+        * platform/chromium/fast/dom/call-a-constructor-as-a-function-expected.txt:
+
 2012-11-20  Adam Klein  <adamk@chromium.org>
 
         [JSC] MutationObserver wrapper should not be collected while still observing

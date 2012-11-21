@@ -43,16 +43,8 @@
 
 namespace WebCore {
 
-v8::Handle<v8::Value> V8MutationObserver::constructorCallback(const v8::Arguments& args)
+v8::Handle<v8::Value> V8MutationObserver::constructorCallbackCustom(const v8::Arguments& args)
 {
-    INC_STATS("DOM.MutationObserver.Constructor");
-
-    if (!args.IsConstructCall())
-        return throwTypeError("DOM object constructor cannot be called as a function.", args.GetIsolate());
-
-    if (ConstructorMode::current() == ConstructorMode::WrapExistingObject)
-        return args.Holder();
-
     if (args.Length() < 1)
         return throwNotEnoughArgumentsError(args.GetIsolate());
 

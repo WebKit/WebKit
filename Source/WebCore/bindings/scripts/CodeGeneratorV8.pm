@@ -410,6 +410,11 @@ END
     static v8::Handle<v8::Value> constructorCallback(const v8::Arguments&);
 END
     }
+    if (HasCustomConstructor($interface)) {
+        push(@headerContent, <<END);
+    static v8::Handle<v8::Value> constructorCallbackCustom(const v8::Arguments&);
+END
+    }
 
     my @enabledPerContextAttributes;
     foreach my $attribute (@{$interface->attributes}) {
@@ -753,6 +758,13 @@ sub IsConstructable
     my $interface = shift;
 
     return $interface->extendedAttributes->{"CustomConstructor"} || $interface->extendedAttributes->{"V8CustomConstructor"} || $interface->extendedAttributes->{"Constructor"} || $interface->extendedAttributes->{"ConstructorTemplate"};
+}
+
+sub HasCustomConstructor
+{
+    my $interface = shift;
+
+    return $interface->extendedAttributes->{"CustomConstructor"} || $interface->extendedAttributes->{"V8CustomConstructor"};
 }
 
 sub IsReadonly
@@ -1964,6 +1976,27 @@ END
     push(@implContent, "\n");
 }
 
+sub GenerateCustomConstructorCallback
+{
+    my $interface = shift;
+
+    my $interfaceName = $interface->name;
+    my $maybeObserveFeature = GenerateFeatureObservation($interface->extendedAttributes->{"V8MeasureAs"});
+    push(@implContent, <<END);
+v8::Handle<v8::Value> V8${interfaceName}::constructorCallback(const v8::Arguments& args)
+{
+    INC_STATS("DOM.${interfaceName}.Constructor");
+    ${maybeObserveFeature}
+END
+    push(@implContent, GenerateConstructorHeader());
+    push(@implContent, <<END);
+
+    return V8${interfaceName}::constructorCallbackCustom(args);
+}
+
+END
+}
+
 sub GenerateConstructorCallback
 {
     my $interface = shift;
@@ -2846,9 +2879,11 @@ END
 
     push(@implContentDecls, "} // namespace ${interfaceName}V8Internal\n\n");
 
-    if ($interface->extendedAttributes->{"NamedConstructor"} && !($interface->extendedAttributes->{"V8CustomConstructor"} || $interface->extendedAttributes->{"CustomConstructor"})) {
+    if (HasCustomConstructor($interface)) {
+        GenerateCustomConstructorCallback($interface);
+    } elsif ($interface->extendedAttributes->{"NamedConstructor"}) {
         GenerateNamedConstructorCallback(@{$interface->constructors}[0], $interface);
-    } elsif ($interface->extendedAttributes->{"Constructor"} && !($interface->extendedAttributes->{"V8CustomConstructor"} || $interface->extendedAttributes->{"CustomConstructor"})) {
+    } elsif ($interface->extendedAttributes->{"Constructor"}) {
         GenerateConstructorCallback($interface);
     } elsif ($codeGenerator->IsConstructorTemplate($interface, "Event")) {
         GenerateEventConstructorCallback($interface);

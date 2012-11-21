@@ -1,3 +1,76 @@
+2012-11-20  Kentaro Hara  <haraken@chromium.org>
+
+        [V8] Introduce constructorCallbackCustom()
+        https://bugs.webkit.org/show_bug.cgi?id=102763
+
+        Reviewed by Adam Barth.
+
+        Currently custom constructors have the following code:
+
+          v8::Handle<v8::Value> V8XXX::constructorCallback(const v8::Arguments& args) {
+            INC_STATS("DOM.XXX.Constructor");
+            if (!args.IsConstructCall())
+              return throwTypeError("DOM object constructor cannot be called as a function.", args.GetIsolate());
+            if (ConstructorMode::current() == ConstructorMode::WrapExistingObject)
+              return args.Holder();
+
+            /* body of the constructor */;
+          }
+
+        To avoid duplicating the same logic in all custom constructors,
+        this patch changes the generated code as follows:
+
+          // Generated automatically
+          v8::Handle<v8::Value> V8XXX::constructorCallback(const v8::Arguments& args) {
+            INC_STATS("DOM.XXX.Constructor");
+            ${maybeObserveFeature}  // Newly supported for custom constructors.
+            if (!args.IsConstructCall())
+              return throwTypeError("DOM object constructor cannot be called as a function.", args.GetIsolate());
+            if (ConstructorMode::current() == ConstructorMode::WrapExistingObject)
+              return args.Holder();
+
+            V8XXX::constructorCallbackCustom(args);
+          }
+
+          // Written manually
+          v8::Handle<v8::Value> V8XXX::constructorCallback(const v8::Arguments& args) {
+            /* body of the constructor */;
+          }
+
+        No tests. No change in behavior.
+
+        * bindings/scripts/CodeGeneratorV8.pm:
+        (GenerateHeader):
+        (HasCustomConstructor):
+        (GenerateCustomConstructorCallback):
+        (GenerateImplementation):
+        * bindings/scripts/test/V8/V8TestEventConstructor.cpp:
+        (WebCore::V8TestEventConstructor::constructorCallback):
+        * bindings/scripts/test/V8/V8TestNamedConstructor.cpp:
+        (WebCore::V8TestNamedConstructorConstructorCallback):
+        * bindings/scripts/test/V8/V8TestOverloadedConstructors.cpp:
+        (WebCore::V8TestOverloadedConstructors::constructorCallback):
+        * bindings/v8/custom/V8ArrayBufferCustom.cpp:
+        (WebCore::V8ArrayBuffer::constructorCallbackCustom):
+        * bindings/v8/custom/V8AudioContextCustom.cpp:
+        (WebCore::V8AudioContext::constructorCallbackCustom):
+        * bindings/v8/custom/V8BlobCustom.cpp:
+        (WebCore::V8Blob::constructorCallbackCustom):
+        * bindings/v8/custom/V8DOMFormDataCustom.cpp:
+        (WebCore::V8DOMFormData::constructorCallbackCustom):
+        * bindings/v8/custom/V8DataViewCustom.cpp:
+        (WebCore::V8DataView::constructorCallbackCustom):
+        * bindings/v8/custom/V8IntentConstructor.cpp:
+        (WebCore::V8Intent::constructorCallbackCustom):
+        * bindings/v8/custom/V8MessageChannelConstructor.cpp:
+        (WebCore::V8MessageChannel::constructorCallbackCustom):
+        * bindings/v8/custom/V8MutationObserverCustom.cpp:
+        (WebCore::V8MutationObserver::constructorCallbackCustom):
+        * bindings/v8/custom/V8WebKitPointConstructor.cpp:
+        (WebCore::V8WebKitPoint::constructorCallbackCustom):
+        * bindings/v8/custom/V8XMLHttpRequestConstructor.cpp:
+        (WebCore::V8XMLHttpRequest::constructorCallbackCustom):
+
 2012-11-20  Kunihiko Sakamoto  <ksakamoto@chromium.org>
 
         REGRESSION(r135263): Fix a wrong argument for udat_close

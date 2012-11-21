@@ -44,16 +44,8 @@
 
 namespace WebCore {
 
-v8::Handle<v8::Value> V8MessageChannel::constructorCallback(const v8::Arguments& args)
+v8::Handle<v8::Value> V8MessageChannel::constructorCallbackCustom(const v8::Arguments& args)
 {
-    INC_STATS("DOM.MessageChannel.Constructor");
-
-    if (!args.IsConstructCall())
-        return throwTypeError("DOM object constructor cannot be called as a function.", args.GetIsolate());
-
-    if (ConstructorMode::current() == ConstructorMode::WrapExistingObject)
-        return args.Holder();
-
     ScriptExecutionContext* context = getScriptExecutionContext();
 
     RefPtr<MessageChannel> obj = MessageChannel::create(context);

@@ -39,16 +39,8 @@
 
 namespace WebCore {
 
-v8::Handle<v8::Value> V8DOMFormData::constructorCallback(const v8::Arguments& args)
+v8::Handle<v8::Value> V8DOMFormData::constructorCallbackCustom(const v8::Arguments& args)
 {
-    INC_STATS("DOM.FormData.Constructor");
-
-    if (!args.IsConstructCall())
-        return throwTypeError("DOM object constructor cannot be called as a function.", args.GetIsolate());
-
-    if (ConstructorMode::current() == ConstructorMode::WrapExistingObject)
-        return args.Holder();
-
     HTMLFormElement* form = 0;
     if (args.Length() > 0 && V8HTMLFormElement::HasInstance(args[0]))
         form = V8HTMLFormElement::toNative(args[0]->ToObject());

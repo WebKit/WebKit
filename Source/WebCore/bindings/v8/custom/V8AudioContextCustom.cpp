@@ -39,16 +39,8 @@
 
 namespace WebCore {
 
-v8::Handle<v8::Value> V8AudioContext::constructorCallback(const v8::Arguments& args)
+v8::Handle<v8::Value> V8AudioContext::constructorCallbackCustom(const v8::Arguments& args)
 {
-    INC_STATS("DOM.AudioContext.Contructor");
-
-    if (!args.IsConstructCall())
-        return throwTypeError("AudioContext constructor cannot be called as a function.", args.GetIsolate());
-
-    if (ConstructorMode::current() == ConstructorMode::WrapExistingObject)
-        return args.Holder();
-
     Document* document = currentDocument(BindingState::instance());
 
     RefPtr<AudioContext> audioContext;

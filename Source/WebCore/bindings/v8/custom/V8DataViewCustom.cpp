@@ -32,16 +32,8 @@
 
 namespace WebCore {
 
-v8::Handle<v8::Value> V8DataView::constructorCallback(const v8::Arguments& args)
+v8::Handle<v8::Value> V8DataView::constructorCallbackCustom(const v8::Arguments& args)
 {
-    INC_STATS("DOM.DataView.Constructor");
-
-    if (!args.IsConstructCall())
-        return throwTypeError("DOM object constructor cannot be called as a function", args.GetIsolate());
-
-    if (ConstructorMode::current() == ConstructorMode::WrapExistingObject)
-        return args.Holder();
-
     if (!args.Length()) {
         // see constructWebGLArray -- we don't seem to be able to distingish between
         // 'new DataView()' and the call used to construct the cached DataView object.
