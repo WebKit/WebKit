@@ -1,3 +1,17 @@
+2012-11-21  Thiago Marcos P. Santos  <thiago.santos@intel.com>
+
+        [EFL] KURL unit test crashing when tiled backing store is enabled on Release Bots
+        https://bugs.webkit.org/show_bug.cgi?id=102895
+
+        Reviewed by Gyuyoung Kim.
+
+        Change the link order so it wont override the new operator on gtest.
+        Looks like it was crashing because an allocator mismatch (using libc's
+        new and later fastMalloc delete. Thanks to Kangil Han for hinting on
+        the fastMalloc issue.
+
+        * TestWebKitAPI/CMakeLists.txt:
+
 2012-11-21  Kentaro Hara  <haraken@chromium.org>
 
         Unreviewed, rolling out r135340.

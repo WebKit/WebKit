@@ -94,17 +94,15 @@ ADD_TEST(test_wtf ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_wtf)
 SET_TESTS_PROPERTIES(test_wtf PROPERTIES TIMEOUT 60)
 
 SET(test_webcore_LIBRARIES
+    gtest
     ${WTF_LIBRARY_NAME}
     ${WebCore_LIBRARY_NAME}
-    gtest
 )
 
 ADD_EXECUTABLE(test_webcore
     ${test_main_SOURCES}
     ${TESTWEBKITAPI_DIR}/TestsController.cpp
-# FIXME: This code inclusion makes API test crash (test_webcore) when tiled backing store is enabled.
-# https://bugs.webkit.org/show_bug.cgi?id=102895 is filed for the crash.
-#    ${TESTWEBKITAPI_DIR}/Tests/WebCore/KURL.cpp
+    ${TESTWEBKITAPI_DIR}/Tests/WebCore/KURL.cpp
 )
 
 TARGET_LINK_LIBRARIES(test_webcore ${test_webcore_LIBRARIES})
