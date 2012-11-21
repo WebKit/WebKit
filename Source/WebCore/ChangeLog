@@ -1,5 +1,28 @@
 2012-11-21  Kentaro Hara  <haraken@chromium.org>
 
+        [V8] Replace V8Parameter::prepare() with V8Parameter::operator=()
+        https://bugs.webkit.org/show_bug.cgi?id=102870
+
+        Reviewed by Adam Barth.
+
+        This is an incremental step for V8Parameter refactoring.
+        By replacing V8Parameter::prepare() with V8Parameter::operator=(),
+        we can make EXCEPTION_BLOCK() and STRING_TO_V8PARAMETER_EXCEPTION_BLOCK()
+        equivalent (except for a return value).
+
+        Tests: fast/workers/worker-constructor.html
+               storage/websql/sql-error-codes.html
+               inspector/console/alert-toString-exception.html
+               http/tests/websocket/tests/hybi/send-throw.html
+
+        * bindings/v8/V8BindingMacros.h:
+        * bindings/v8/V8StringResource.h:
+        (WebCore::V8Parameter::V8Parameter):
+        (V8Parameter):
+        (WebCore::=):
+
+2012-11-21  Kentaro Hara  <haraken@chromium.org>
+
         [V8] Rename v8/custom/*Constructor.cpp to v8/custom/*Custom.cpp
         https://bugs.webkit.org/show_bug.cgi?id=102881
 

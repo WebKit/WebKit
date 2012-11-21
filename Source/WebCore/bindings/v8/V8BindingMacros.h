@@ -54,10 +54,10 @@ enum ParameterDefaultPolicy {
     }
 
 #define STRING_TO_V8PARAMETER_EXCEPTION_BLOCK(type, var, value) \
-    type var(value);                                            \
+    type var;                                                   \
     {                                                           \
         v8::TryCatch block;                                     \
-        var.prepare();                                          \
+        var = (value);                                          \
         if (block.HasCaught()) {                                \
             block.ReThrow();                                    \
             return v8::Undefined();                             \
@@ -65,10 +65,10 @@ enum ParameterDefaultPolicy {
     }
 
 #define STRING_TO_V8PARAMETER_EXCEPTION_BLOCK_VOID(type, var, value) \
-    type var(value);                                                 \
+    type var;                                                        \
     {                                                                \
         v8::TryCatch block;                                          \
-        var.prepare();                                               \
+        var = (value);                                               \
         if (block.HasCaught()) {                                     \
             block.ReThrow();                                         \
             return;                                                  \

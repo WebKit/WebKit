@@ -52,16 +52,15 @@ enum V8ParameterMode {
 template <V8ParameterMode Mode = DefaultMode>
 class V8Parameter {
 public:
-    V8Parameter(v8::Local<v8::Value> object)
-        : m_v8Object(object)
-        , m_mode(Externalize)
+    V8Parameter()
+        : m_mode(Externalize)
         , m_string()
     {
     }
 
     // This can throw. You must use this through the
     // STRING_TO_V8PARAMETER_EXCEPTION_BLOCK() macro.
-    void prepare();
+    V8Parameter& operator=(v8::Local<v8::Value>);
     operator String() { return toString<String>(); }
     operator AtomicString() { return toString<AtomicString>(); }
 
@@ -83,8 +82,6 @@ private:
         m_v8Object = m_v8Object->ToString();
     }
 
-    v8::Local<v8::Value> object() { return m_v8Object; }
-
     void setString(const String& string)
     {
         m_string = string;
@@ -105,27 +102,31 @@ private:
     String m_string;
 };
 
-template<> inline void V8Parameter<DefaultMode>::prepare()
+template<> inline V8Parameter<DefaultMode>& V8Parameter<DefaultMode>::operator=(v8::Local<v8::Value> object)
 {
+    m_v8Object = object;
     prepareBase();
+    return *this;
 }
 
-template<> inline void V8Parameter<WithNullCheck>::prepare()
+template<> inline V8Parameter<WithNullCheck>& V8Parameter<WithNullCheck>::operator=(v8::Local<v8::Value> object)
 {
-    if (object().IsEmpty() || object()->IsNull()) {
+    m_v8Object = object;
+    if (m_v8Object.IsEmpty() || m_v8Object->IsNull())
         setString(String());
-        return;
-    }
-    prepareBase();
+    else
+        prepareBase();
+    return *this;
 }
 
-template<> inline void V8Parameter<WithUndefinedOrNullCheck>::prepare()
+template<> inline V8Parameter<WithUndefinedOrNullCheck>& V8Parameter<WithUndefinedOrNullCheck>::operator=(v8::Local<v8::Value> object)
 {
-    if (object().IsEmpty() || object()->IsNull() || object()->IsUndefined()) {
+    m_v8Object = object;
+    if (m_v8Object.IsEmpty() || m_v8Object->IsNull() || m_v8Object->IsUndefined())
         setString(String());
-        return;
-    }
-    prepareBase();
+    else
+        prepareBase();
+    return *this;
 }
     
 } // namespace WebCore
