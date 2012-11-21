@@ -1,3 +1,16 @@
+2012-11-21  KyungTae Kim  <ktf.kim@samsung.com>
+
+        Unused parameters on ScrollingCoordinator.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=102884
+
+        Reviewed by Kentaro Hara.
+
+        Because the 'scrollingLayerPositionAction' parameter is not used when !USE(ACCELERATED_COMPOSITING),
+        use UNUSED_PARAM macro to fix build warning -Wunused-parameter
+
+        * page/scrolling/ScrollingCoordinator.cpp:
+        (WebCore::ScrollingCoordinator::updateMainFrameScrollPosition):
+
 2012-11-21  Kentaro Hara  <haraken@chromium.org>
 
         [V8] Replace V8Parameter::prepare() with V8Parameter::operator=()

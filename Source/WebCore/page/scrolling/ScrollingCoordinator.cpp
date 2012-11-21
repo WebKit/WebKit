@@ -311,6 +311,8 @@ void ScrollingCoordinator::updateMainFrameScrollPosition(const IntPoint& scrollP
             syncChildPositions(viewportRect);
         }
     }
+#else
+    UNUSED_PARAM(scrollingLayerPositionAction);
 #endif
 }
 
