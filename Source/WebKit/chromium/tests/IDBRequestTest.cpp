@@ -40,7 +40,7 @@ using namespace WebCore;
 
 namespace {
 
-TEST(IDBRequestTest, EventsAfterStopping)
+TEST(IDBRequestTest, DISABLED_EventsAfterStopping)
 {
     ScriptExecutionContext* context = 0;
     IDBTransaction* transaction = 0;
