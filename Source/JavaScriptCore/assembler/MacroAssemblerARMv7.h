@@ -1761,7 +1761,18 @@ public:
     
     static bool canJumpReplacePatchableBranchPtrWithPatch() { return false; }
     
-    static CodeLocationLabel startOfPatchableBranchPtrWithPatch(CodeLocationDataLabelPtr)
+    static CodeLocationLabel startOfBranchPtrWithPatchOnRegister(CodeLocationDataLabelPtr label)
+    {
+        const unsigned twoWordOpSize = 4;
+        return label.labelAtOffset(-twoWordOpSize * 2);
+    }
+    
+    static void revertJumpReplacementToBranchPtrWithPatch(CodeLocationLabel instructionStart, RegisterID, void* initialValue)
+    {
+        ARMv7Assembler::revertJumpTo_movT3(instructionStart.dataLocation(), dataTempRegister, ARMThumbImmediate::makeUInt16(reinterpret_cast<uintptr_t>(initialValue) & 0xffff));
+    }
+    
+    static CodeLocationLabel startOfPatchableBranchPtrWithPatchOnAddress(CodeLocationDataLabelPtr)
     {
         UNREACHABLE_FOR_PLATFORM();
         return CodeLocationLabel();

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2009, 2010, 2012 Apple Inc. All rights reserved.
  * Copyright (C) 2010 University of Szeged
  *
  * Redistribution and use in source and binary forms, with or without
@@ -507,7 +507,7 @@ public:
 private:
 
     // ARMv7, Appx-A.6.3
-    bool BadReg(RegisterID reg)
+    static bool BadReg(RegisterID reg)
     {
         return (reg == ARMRegisters::sp) || (reg == ARMRegisters::pc);
     }
@@ -1260,6 +1260,18 @@ public:
         ASSERT(!BadReg(rd));
         
         m_formatter.twoWordOp5i6Imm4Reg4EncodedImm(OP_MOV_imm_T3, imm.m_value.imm4, rd, imm);
+    }
+    
+    static void revertJumpTo_movT3(void* instructionStart, RegisterID rd, ARMThumbImmediate imm)
+    {
+        ASSERT(imm.isValid());
+        ASSERT(!imm.isEncodedImm());
+        ASSERT(!BadReg(rd));
+        
+        uint16_t* address = static_cast<uint16_t*>(instructionStart);
+        address[0] = twoWordOp5i6Imm4Reg4EncodedImmFirst(OP_MOV_imm_T3, imm);
+        address[1] = twoWordOp5i6Imm4Reg4EncodedImmSecond(rd, imm);
+        cacheFlush(address, sizeof(uint16_t) * 2);
     }
 
     ALWAYS_INLINE void mov(RegisterID rd, ARMThumbImmediate imm)

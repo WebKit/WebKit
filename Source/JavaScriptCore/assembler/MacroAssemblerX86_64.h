@@ -587,7 +587,7 @@ public:
 
     static bool canJumpReplacePatchableBranchPtrWithPatch() { return true; }
     
-    static CodeLocationLabel startOfPatchableBranchPtrWithPatch(CodeLocationDataLabelPtr label)
+    static CodeLocationLabel startOfBranchPtrWithPatchOnRegister(CodeLocationDataLabelPtr label)
     {
         const int rexBytes = 1;
         const int opcodeBytes = 1;
@@ -597,7 +597,17 @@ public:
         return label.labelAtOffset(-totalBytes);
     }
     
+    static CodeLocationLabel startOfPatchableBranchPtrWithPatchOnAddress(CodeLocationDataLabelPtr label)
+    {
+        return startOfBranchPtrWithPatchOnRegister(label);
+    }
+    
     static void revertJumpReplacementToPatchableBranchPtrWithPatch(CodeLocationLabel instructionStart, Address, void* initialValue)
+    {
+        X86Assembler::revertJumpTo_movq_i64r(instructionStart.executableAddress(), reinterpret_cast<intptr_t>(initialValue), scratchRegister);
+    }
+
+    static void revertJumpReplacementToBranchPtrWithPatch(CodeLocationLabel instructionStart, RegisterID, void* initialValue)
     {
         X86Assembler::revertJumpTo_movq_i64r(instructionStart.executableAddress(), reinterpret_cast<intptr_t>(initialValue), scratchRegister);
     }

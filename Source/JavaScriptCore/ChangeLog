@@ -1,3 +1,51 @@
+2012-11-20  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG should be able to cache closure calls (part 1/2)
+        https://bugs.webkit.org/show_bug.cgi?id=102662
+
+        Reviewed by Gavin Barraclough.
+
+        Add ability to revert a jump replacement back to
+        branchPtrWithPatch(Condition, RegisterID, TrustedImmPtr). This is meant to be
+        a mandatory piece of functionality for all assemblers. I also renamed some of
+        the functions for reverting jump replacements back to
+        patchableBranchPtrWithPatch(Condition, Address, TrustedImmPtr), so as to avoid
+        confusion.
+
+        * assembler/ARMv7Assembler.h:
+        (JSC::ARMv7Assembler::BadReg):
+        (ARMv7Assembler):
+        (JSC::ARMv7Assembler::revertJumpTo_movT3):
+        * assembler/LinkBuffer.h:
+        (JSC):
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::startOfBranchPtrWithPatchOnRegister):
+        (MacroAssemblerARMv7):
+        (JSC::MacroAssemblerARMv7::revertJumpReplacementToBranchPtrWithPatch):
+        (JSC::MacroAssemblerARMv7::startOfPatchableBranchPtrWithPatchOnAddress):
+        * assembler/MacroAssemblerX86.h:
+        (JSC::MacroAssemblerX86::startOfBranchPtrWithPatchOnRegister):
+        (MacroAssemblerX86):
+        (JSC::MacroAssemblerX86::startOfPatchableBranchPtrWithPatchOnAddress):
+        (JSC::MacroAssemblerX86::revertJumpReplacementToBranchPtrWithPatch):
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::startOfBranchPtrWithPatchOnRegister):
+        (JSC::MacroAssemblerX86_64::startOfPatchableBranchPtrWithPatchOnAddress):
+        (MacroAssemblerX86_64):
+        (JSC::MacroAssemblerX86_64::revertJumpReplacementToBranchPtrWithPatch):
+        * assembler/RepatchBuffer.h:
+        (JSC::RepatchBuffer::startOfBranchPtrWithPatchOnRegister):
+        (RepatchBuffer):
+        (JSC::RepatchBuffer::startOfPatchableBranchPtrWithPatchOnAddress):
+        (JSC::RepatchBuffer::revertJumpReplacementToBranchPtrWithPatch):
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::revertJumpTo_cmpl_ir_force32):
+        (X86Assembler):
+        * dfg/DFGRepatch.cpp:
+        (JSC::DFG::replaceWithJump):
+        (JSC::DFG::dfgResetGetByID):
+        (JSC::DFG::dfgResetPutByID):
+
 2012-11-20  Yong Li  <yoli@rim.com>
 
         [ARMv7] Neither linkCall() nor linkPointer() should flush code.

@@ -118,7 +118,7 @@ static void replaceWithJump(RepatchBuffer& repatchBuffer, StructureStubInfo& stu
 {
     if (MacroAssembler::canJumpReplacePatchableBranchPtrWithPatch()) {
         repatchBuffer.replaceWithJump(
-            RepatchBuffer::startOfPatchableBranchPtrWithPatch(
+            RepatchBuffer::startOfPatchableBranchPtrWithPatchOnAddress(
                 stubInfo.callReturnLocation.dataLabelPtrAtOffset(
                     -(intptr_t)stubInfo.patch.dfg.deltaCheckImmToCall)),
             CodeLocationLabel(target));
@@ -1142,7 +1142,7 @@ void dfgResetGetByID(RepatchBuffer& repatchBuffer, StructureStubInfo& stubInfo)
     CodeLocationDataLabelPtr structureLabel = stubInfo.callReturnLocation.dataLabelPtrAtOffset(-(intptr_t)stubInfo.patch.dfg.deltaCheckImmToCall);
     if (MacroAssembler::canJumpReplacePatchableBranchPtrWithPatch()) {
         repatchBuffer.revertJumpReplacementToPatchableBranchPtrWithPatch(
-            RepatchBuffer::startOfPatchableBranchPtrWithPatch(structureLabel),
+            RepatchBuffer::startOfPatchableBranchPtrWithPatchOnAddress(structureLabel),
             MacroAssembler::Address(
                 static_cast<MacroAssembler::RegisterID>(stubInfo.patch.dfg.baseGPR),
                 JSCell::structureOffset()),
@@ -1176,7 +1176,7 @@ void dfgResetPutByID(RepatchBuffer& repatchBuffer, StructureStubInfo& stubInfo)
     CodeLocationDataLabelPtr structureLabel = stubInfo.callReturnLocation.dataLabelPtrAtOffset(-(intptr_t)stubInfo.patch.dfg.deltaCheckImmToCall);
     if (MacroAssembler::canJumpReplacePatchableBranchPtrWithPatch()) {
         repatchBuffer.revertJumpReplacementToPatchableBranchPtrWithPatch(
-            RepatchBuffer::startOfPatchableBranchPtrWithPatch(structureLabel),
+            RepatchBuffer::startOfPatchableBranchPtrWithPatchOnAddress(structureLabel),
             MacroAssembler::Address(
                 static_cast<MacroAssembler::RegisterID>(stubInfo.patch.dfg.baseGPR),
                 JSCell::structureOffset()),

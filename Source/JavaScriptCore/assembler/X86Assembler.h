@@ -1903,6 +1903,23 @@ public:
     }
 #endif
     
+    static void revertJumpTo_cmpl_ir_force32(void* instructionStart, int32_t imm, RegisterID dst)
+    {
+        const int opcodeBytes = 1;
+        const int modRMBytes = 1;
+        ASSERT(opcodeBytes + modRMBytes <= maxJumpReplacementSize());
+        uint8_t* ptr = reinterpret_cast<uint8_t*>(instructionStart);
+        ptr[0] = OP_GROUP1_EvIz;
+        ptr[1] = (X86InstructionFormatter::ModRmRegister << 6) | (GROUP1_OP_CMP << 3) | dst;
+        union {
+            uint32_t asWord;
+            uint8_t asBytes[4];
+        } u;
+        u.asWord = imm;
+        for (unsigned i = opcodeBytes + modRMBytes; i < static_cast<unsigned>(maxJumpReplacementSize()); ++i)
+            ptr[i] = u.asBytes[i - opcodeBytes - modRMBytes];
+    }
+    
     static void revertJumpTo_cmpl_im_force32(void* instructionStart, int32_t imm, int offset, RegisterID dst)
     {
         ASSERT_UNUSED(offset, !offset);

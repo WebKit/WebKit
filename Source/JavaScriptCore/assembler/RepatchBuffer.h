@@ -141,9 +141,14 @@ public:
             replaceWithAddressComputation(label);
     }
 
-    static CodeLocationLabel startOfPatchableBranchPtrWithPatch(CodeLocationDataLabelPtr label)
+    static CodeLocationLabel startOfBranchPtrWithPatchOnRegister(CodeLocationDataLabelPtr label)
     {
-        return MacroAssembler::startOfPatchableBranchPtrWithPatch(label);
+        return MacroAssembler::startOfBranchPtrWithPatchOnRegister(label);
+    }
+    
+    static CodeLocationLabel startOfPatchableBranchPtrWithPatchOnAddress(CodeLocationDataLabelPtr label)
+    {
+        return MacroAssembler::startOfPatchableBranchPtrWithPatchOnAddress(label);
     }
     
     void replaceWithJump(CodeLocationLabel instructionStart, CodeLocationLabel destination)
@@ -154,6 +159,11 @@ public:
     // This is a *bit* of a silly API, since we currently always also repatch the
     // immediate after calling this. But I'm fine with that, since this just feels
     // less yucky.
+    void revertJumpReplacementToBranchPtrWithPatch(CodeLocationLabel instructionStart, MacroAssembler::RegisterID reg, void* value)
+    {
+        MacroAssembler::revertJumpReplacementToBranchPtrWithPatch(instructionStart, reg, value);
+    }
+
     void revertJumpReplacementToPatchableBranchPtrWithPatch(CodeLocationLabel instructionStart, MacroAssembler::Address address, void* value)
     {
         MacroAssembler::revertJumpReplacementToPatchableBranchPtrWithPatch(instructionStart, address, value);
