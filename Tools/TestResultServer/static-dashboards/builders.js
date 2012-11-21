@@ -116,20 +116,9 @@ function BuilderGroup(isToTWebKit)
     this.builders = {};
 }
 
-BuilderGroup.prototype.setbuilder = function(builder, flags) {
-    this.builders[builder] = builder.replace(/[ .()]/g, '_');
-    // FIXME: Remove this at some point, we don't actually use DEFAULT_BUILDER
-    //        in any meaningful way anymore.  We always just default to the
-    //        first builder in alphabetical order.
-    if (flags & BuilderGroup.DEFAULT_BUILDER)
-        this.defaultBuilder = builder;
-};
-
 BuilderGroup.prototype.append = function(builders) {
-    builders.forEach(function(builderAndFlags) {
-        var builder = builderAndFlags[0];
-        var flags = builderAndFlags[1];
-        this.setbuilder(builder, flags);
+    builders.forEach(function(builderName) {
+        this.builders[builderName] = builderName.replace(/[ .()]/g, '_');
     }, this);
 };
 
@@ -137,20 +126,24 @@ BuilderGroup.prototype.setup = function()
 {
     // FIXME: instead of copying these to globals, it would be better if
     // the rest of the code read things from the BuilderGroup instance directly
-    g_defaultBuilderName = this.defaultBuilder;
+    g_defaultBuilderName = this._defaultBuilder();
     g_builders = this.builders;
 };
 
-BuilderGroup.prototype.master = function()
+BuilderGroup.prototype._defaultBuilder = function()
 {
     for (var builder in this.builders)
-        return builderMaster(builder);
+        return builder;
     console.error('There are no builders in this builder group.');
+}
+
+BuilderGroup.prototype.master = function()
+{
+    return builderMaster(this._defaultBuilder());
 }
 
 BuilderGroup.TOT_WEBKIT = true;
 BuilderGroup.DEPS_WEBKIT = false;
-BuilderGroup.DEFAULT_BUILDER = 1 << 1;
 
 var BUILDER_TO_MASTER = {};
 
@@ -159,44 +152,18 @@ function builderMaster(builderName)
     return BUILDER_TO_MASTER[builderName];
 }
 
-function requestBuilderList(builderGroups, builderFilter, masterName, groupName, builderGroup, testType)
+function requestBuilderList(builderGroups, masterName, groupName, builderGroup, testType, opt_builderFilter)
 {
     if (!builderGroups[groupName])
         builderGroups[groupName] = builderGroup;
     var master = builders.masters[masterName];
-    var builderList = generateBuildersFromBuilderList(master.tests[testType].builders, builderFilter);
-    builderList.forEach(function(builderAndFlags) {
-        var builder = builderAndFlags[0];
-        BUILDER_TO_MASTER[builder] = master;
+    var builderList = master.tests[testType].builders;
+    if (opt_builderFilter)
+        builderList = builderList.filter(opt_builderFilter);
+    builderList.forEach(function(builderName) {
+        BUILDER_TO_MASTER[builderName] = master;
     });
     builderGroups[groupName].append(builderList);
-}
-
-function isChromiumDepsGpuTestRunner(builder)
-{
-    return true;
-}
-
-function isChromiumDepsFyiGpuTestRunner(builder)
-{
-    // FIXME: This is kind of wonky, but there's not really a better pattern.
-    return builder.indexOf('(') != -1;
-}
-
-function isChromiumTipOfTreeGpuTestRunner(builder)
-{
-    return builder.indexOf('GPU') != -1;
-}
-
-function isWebkitTestRunner(builder)
-{
-    if (builder.indexOf('EFL') != -1)
-        return builder.indexOf('Build') == -1;
-    if (builder.indexOf('Tests') != -1) {
-        // Apple Windows bots still run old-run-webkit-tests, so they don't upload data.
-        return builder.indexOf('Win') == -1 || (builder.indexOf('Qt') != -1 && builder.indexOf('Chromium') != -1);
-    }
-    return builder.indexOf('GTK') != -1 || builder == 'Qt Linux Release';
 }
 
 function isChromiumContentShellTestRunner(builder)
@@ -207,44 +174,12 @@ function isChromiumContentShellTestRunner(builder)
 function isChromiumWebkitTipOfTreeTestRunner(builder)
 {
     // FIXME: Remove the Android check once the android tests bot is actually uploading results.
-    return builder.indexOf('WebKit') != -1 && builder.indexOf('Builder') == -1 && builder.indexOf('(deps)') == -1 &&
-        builder.indexOf('ASAN') == -1 && !isChromiumContentShellTestRunner(builder) && builder.indexOf('Android') == -1;
+    return builder.indexOf('ASAN') == -1 && !isChromiumContentShellTestRunner(builder) && builder.indexOf('Android') == -1 && !isChromiumWebkitDepsTestRunner(builder);
 }
 
 function isChromiumWebkitDepsTestRunner(builder)
 {
-    return builder.indexOf('WebKit') != -1 && builder.indexOf('Builder') == -1 && builder.indexOf('(deps)') != -1;
-}
-
-function isChromiumDepsGTestRunner(builder)
-{
-    return builder.indexOf('Builder') == -1;
-}
-
-function isChromiumDepsCrosGTestRunner(builder)
-{
-    return builder.indexOf('Tests') != -1;
-}
-
-function isChromiumTipOfTreeGTestRunner(builder)
-{
-    return !isChromiumTipOfTreeGpuTestRunner(builder) && builder.indexOf('Builder') == -1 && builder.indexOf('Perf') == -1 &&
-         builder.indexOf('WebKit') == -1 && builder.indexOf('Valgrind') == -1 && builder.indexOf('Chrome Frame') == -1;
-}
-
-function isChromiumDepsAVTestRunner(builder)
-{
-    return builder.indexOf('Builder') == -1;
-}
-
-function generateBuildersFromBuilderList(builderList, filter)
-{
-    return builderList.filter(filter).map(function(tester, index) {
-        var builder = [tester];
-        if (!index)
-            builder.push(BuilderGroup.DEFAULT_BUILDER);
-        return builder;
-    });
+    return builder.indexOf('(deps)') != -1;
 }
 
 // FIXME: Look into whether we can move the grouping logic into builders.jsonp and get rid of this code.
@@ -255,17 +190,17 @@ function loadBuildersList(groupName, testType) {
         switch(groupName) {
         case '@DEPS - chromium.org':
             var builderGroup = new BuilderGroup(BuilderGroup.DEPS_WEBKIT);
-            requestBuilderList(CHROMIUM_GPU_TESTS_BUILDER_GROUPS, isChromiumDepsGpuTestRunner, CHROMIUM_GPU_BUILDER_MASTER, groupName, builderGroup, testType);
+            requestBuilderList(CHROMIUM_GPU_TESTS_BUILDER_GROUPS, CHROMIUM_GPU_BUILDER_MASTER, groupName, builderGroup, testType);
             break;
 
         case '@DEPS FYI - chromium.org':
             var builderGroup = new BuilderGroup(BuilderGroup.DEPS_WEBKIT);
-            requestBuilderList(CHROMIUM_GPU_TESTS_BUILDER_GROUPS, isChromiumDepsFyiGpuTestRunner, CHROMIUM_GPU_FYI_BUILDER_MASTER, groupName, builderGroup, testType);
+            requestBuilderList(CHROMIUM_GPU_TESTS_BUILDER_GROUPS, CHROMIUM_GPU_FYI_BUILDER_MASTER, groupName, builderGroup, testType);
             break;
 
         case '@ToT - chromium.org':
             var builderGroup = new BuilderGroup(BuilderGroup.TOT_WEBKIT);
-            requestBuilderList(CHROMIUM_GPU_TESTS_BUILDER_GROUPS, isChromiumTipOfTreeGpuTestRunner, CHROMIUM_WEBKIT_BUILDER_MASTER, groupName, builderGroup, testType);
+            requestBuilderList(CHROMIUM_GPU_TESTS_BUILDER_GROUPS, CHROMIUM_WEBKIT_BUILDER_MASTER, groupName, builderGroup, testType);
             break;
         }
         break;
@@ -274,23 +209,23 @@ function loadBuildersList(groupName, testType) {
         switch(groupName) {
         case 'Content Shell @ToT - chromium.org':
             var builderGroup = new BuilderGroup(BuilderGroup.TOT_WEBKIT);
-            requestBuilderList(LAYOUT_TESTS_BUILDER_GROUPS, isChromiumContentShellTestRunner, CHROMIUM_WEBKIT_BUILDER_MASTER, groupName, builderGroup, testType);
+            requestBuilderList(LAYOUT_TESTS_BUILDER_GROUPS, CHROMIUM_WEBKIT_BUILDER_MASTER, groupName, builderGroup, testType, isChromiumContentShellTestRunner);
             break;
 
         case '@ToT - chromium.org':
             var builderGroup = new BuilderGroup(BuilderGroup.TOT_WEBKIT);
-            requestBuilderList(LAYOUT_TESTS_BUILDER_GROUPS, isChromiumWebkitTipOfTreeTestRunner, CHROMIUM_WEBKIT_BUILDER_MASTER, groupName, builderGroup, testType);
+            requestBuilderList(LAYOUT_TESTS_BUILDER_GROUPS, CHROMIUM_WEBKIT_BUILDER_MASTER, groupName, builderGroup, testType, isChromiumWebkitTipOfTreeTestRunner);
             break;
 
         case '@ToT - webkit.org':
             var builderGroup = new BuilderGroup(BuilderGroup.TOT_WEBKIT);
-            requestBuilderList(LAYOUT_TESTS_BUILDER_GROUPS, isWebkitTestRunner, WEBKIT_BUILDER_MASTER, groupName, builderGroup, testType);
+            requestBuilderList(LAYOUT_TESTS_BUILDER_GROUPS, WEBKIT_BUILDER_MASTER, groupName, builderGroup, testType);
             break;
 
         case '@DEPS - chromium.org':
             var builderGroup = new BuilderGroup(BuilderGroup.DEPS_WEBKIT);
-            requestBuilderList(LAYOUT_TESTS_BUILDER_GROUPS, isChromiumWebkitDepsTestRunner, CHROMIUM_WEBKIT_BUILDER_MASTER, groupName, builderGroup, testType);
-            requestBuilderList(LAYOUT_TESTS_BUILDER_GROUPS, isChromiumDepsAVTestRunner, CHROMIUM_PERF_AV_BUILDER_MASTER, groupName, builderGroup, testType);
+            requestBuilderList(LAYOUT_TESTS_BUILDER_GROUPS, CHROMIUM_WEBKIT_BUILDER_MASTER, groupName, builderGroup, testType, isChromiumWebkitDepsTestRunner);
+            requestBuilderList(LAYOUT_TESTS_BUILDER_GROUPS, CHROMIUM_PERF_AV_BUILDER_MASTER, groupName, builderGroup, testType);
             break;
         }
         break;
@@ -300,12 +235,12 @@ function loadBuildersList(groupName, testType) {
         switch(groupName) {
         case '@ToT - chromium.org':
             var builderGroup = new BuilderGroup(BuilderGroup.TOT_WEBKIT);
-            requestBuilderList(TEST_SHELL_TESTS_BUILDER_GROUPS, isChromiumWebkitTipOfTreeTestRunner, CHROMIUM_WEBKIT_BUILDER_MASTER, groupName, builderGroup, testType);
+            requestBuilderList(TEST_SHELL_TESTS_BUILDER_GROUPS, CHROMIUM_WEBKIT_BUILDER_MASTER, groupName, builderGroup, testType, isChromiumWebkitTipOfTreeTestRunner);
             break;
 
         case '@DEPS - chromium.org':
             var builderGroup = new BuilderGroup(BuilderGroup.DEPS_WEBKIT);
-            requestBuilderList(TEST_SHELL_TESTS_BUILDER_GROUPS, isChromiumWebkitDepsTestRunner, CHROMIUM_WEBKIT_BUILDER_MASTER, groupName, builderGroup, testType);
+            requestBuilderList(TEST_SHELL_TESTS_BUILDER_GROUPS, CHROMIUM_WEBKIT_BUILDER_MASTER, groupName, builderGroup, testType, isChromiumWebkitDepsTestRunner);
             break;
         }
         break;    
@@ -314,19 +249,19 @@ function loadBuildersList(groupName, testType) {
         switch(groupName) {
         case '@DEPS - chromium.org':
             var builderGroup = new BuilderGroup(BuilderGroup.DEPS_WEBKIT);
-            requestBuilderList(CHROMIUM_GTESTS_BUILDER_GROUPS, isChromiumDepsGTestRunner, CHROMIUM_WIN_BUILDER_MASTER, groupName, builderGroup, testType);
-            requestBuilderList(CHROMIUM_GTESTS_BUILDER_GROUPS, isChromiumDepsGTestRunner, CHROMIUM_MAC_BUILDER_MASTER, groupName, builderGroup, testType);
-            requestBuilderList(CHROMIUM_GTESTS_BUILDER_GROUPS, isChromiumDepsGTestRunner, CHROMIUM_LINUX_BUILDER_MASTER, groupName, builderGroup, testType);
+            requestBuilderList(CHROMIUM_GTESTS_BUILDER_GROUPS, CHROMIUM_WIN_BUILDER_MASTER, groupName, builderGroup, testType);
+            requestBuilderList(CHROMIUM_GTESTS_BUILDER_GROUPS, CHROMIUM_MAC_BUILDER_MASTER, groupName, builderGroup, testType);
+            requestBuilderList(CHROMIUM_GTESTS_BUILDER_GROUPS, CHROMIUM_LINUX_BUILDER_MASTER, groupName, builderGroup, testType);
             break;
 
         case '@DEPS CrOS - chromium.org':
             var builderGroup = new BuilderGroup(BuilderGroup.DEPS_WEBKIT);
-            requestBuilderList(CHROMIUM_GTESTS_BUILDER_GROUPS, isChromiumDepsCrosGTestRunner, CHROMIUMOS_BUILDER_MASTER, groupName, builderGroup, testType);
+            requestBuilderList(CHROMIUM_GTESTS_BUILDER_GROUPS, CHROMIUMOS_BUILDER_MASTER, groupName, builderGroup, testType);
             break;
 
         case '@ToT - chromium.org':
             var builderGroup = new BuilderGroup(BuilderGroup.TOT_WEBKIT);
-            requestBuilderList(CHROMIUM_GTESTS_BUILDER_GROUPS, isChromiumTipOfTreeGTestRunner, CHROMIUM_WEBKIT_BUILDER_MASTER, groupName, builderGroup, testType);
+            requestBuilderList(CHROMIUM_GTESTS_BUILDER_GROUPS, CHROMIUM_WEBKIT_BUILDER_MASTER, groupName, builderGroup, testType);
             break;
         }
         break;

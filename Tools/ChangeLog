@@ -1,5 +1,31 @@
 2012-11-20  Ojan Vafai  <ojan@chromium.org>
 
+        Simplify builder filters now that we have lists of which builders run which tests
+        https://bugs.webkit.org/show_bug.cgi?id=102849
+
+        Reviewed by Dirk Pranke.
+
+        We only need filters when we load the same master for multiple groups in the
+        same test type, i.e. when we need to only include some of the builders that run
+        a given test suite on a given master.
+
+        Also, get rid of the DEFAULT_BUILDER enum. We were always using the first builder anyways.
+        Now just make it a method on BuilderGroup.
+
+        * TestResultServer/static-dashboards/builders.js:
+        (BuilderGroup.prototype.append):
+        (BuilderGroup.prototype.setup):
+        (BuilderGroup.prototype._defaultBuilder):
+        (BuilderGroup.prototype.master):
+        (requestBuilderList):
+        (isChromiumWebkitTipOfTreeTestRunner):
+        (isChromiumWebkitDepsTestRunner):
+        (loadBuildersList):
+        * TestResultServer/static-dashboards/flakiness_dashboard_unittests.js:
+        (test):
+
+2012-11-20  Ojan Vafai  <ojan@chromium.org>
+
         Remove perfav master for webkit_unit_tests and test_shell_tests.
         There are no bots on this master that run these tests.
         * TestResultServer/static-dashboards/builders.js:
