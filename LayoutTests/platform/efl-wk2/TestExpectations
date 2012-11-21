@@ -179,6 +179,12 @@ webkit.org/b/101417 fast/dom/shadow/shadowdom-for-object-only-shadow.html [ Imag
 # Also flaky at least on GTK+
 webkit.org/b/72698 media/audio-garbage-collect.html
 
+# window.internals does not reset font family mappings (done in other tests), leading to these failures
+webkit.org/b/102370 fast/writing-mode/japanese-ruby-horizontal-bt.html [ Failure Pass ]
+webkit.org/b/102370 fast/writing-mode/japanese-ruby-vertical-lr.html [ Failure Pass ]
+webkit.org/b/102370 fast/writing-mode/japanese-ruby-vertical-rl.html [ Failure Pass ]
+webkit.org/b/102370 fast/text/international/002.html [ Failure Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # FAILING TESTS
 #////////////////////////////////////////////////////////////////////////////////////////
