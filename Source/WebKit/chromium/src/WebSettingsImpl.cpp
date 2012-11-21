@@ -610,6 +610,11 @@ void WebSettingsImpl::setEnableScrollAnimator(bool enabled)
 #endif
 }
 
+void WebSettingsImpl::setEnableTouchAdjustment(bool enabled)
+{
+    m_settings->setTouchAdjustmentEnabled(enabled);
+}
+
 bool WebSettingsImpl::scrollAnimatorEnabled() const
 {
 #if ENABLE(SMOOTH_SCROLLING)

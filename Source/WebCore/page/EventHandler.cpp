@@ -2533,8 +2533,7 @@ bool EventHandler::handleGestureEvent(const PlatformGestureEvent& gestureEvent)
     HitTestRequest::HitTestRequestType hitType = HitTestRequest::TouchEvent;
     if (gestureEvent.type() == PlatformEvent::GestureTapDown) {
 #if ENABLE(TOUCH_ADJUSTMENT)
-        if (!gestureEvent.area().isEmpty())
-            adjustGesturePosition(gestureEvent, adjustedPoint);
+        adjustGesturePosition(gestureEvent, adjustedPoint);
 #endif
         hitType |= HitTestRequest::Active;
     } else if (gestureEvent.type() == PlatformEvent::GestureTap || gestureEvent.type() == PlatformEvent::GestureTapDownCancel)
@@ -2619,8 +2618,7 @@ bool EventHandler::handleGestureTap(const PlatformGestureEvent& gestureEvent)
     // FIXME: Refactor this code to not hit test multiple times. We use the adjusted position to ensure that the correct node is targeted by the later redundant hit tests.
     IntPoint adjustedPoint = gestureEvent.position();
 #if ENABLE(TOUCH_ADJUSTMENT)
-    if (!gestureEvent.area().isEmpty())
-        adjustGesturePosition(gestureEvent, adjustedPoint);
+    adjustGesturePosition(gestureEvent, adjustedPoint);
 #endif
 
     PlatformMouseEvent fakeMouseMove(adjustedPoint, gestureEvent.globalPosition(),
@@ -2702,6 +2700,14 @@ bool EventHandler::handleGestureScrollCore(const PlatformGestureEvent& gestureEv
 #endif
 
 #if ENABLE(TOUCH_ADJUSTMENT)
+bool EventHandler::shouldApplyTouchAdjustment(const PlatformGestureEvent& event) const
+{
+    if (m_frame->settings() && !m_frame->settings()->touchAdjustmentEnabled())
+        return false;
+    return !event.area().isEmpty();
+}
+
+
 bool EventHandler::bestClickableNodeForTouchPoint(const IntPoint& touchCenter, const IntSize& touchRadius, IntPoint& targetPoint, Node*& targetNode)
 {
     HitTestRequest::HitTestRequestType hitType = HitTestRequest::ReadOnly | HitTestRequest::Active;
@@ -2745,6 +2751,9 @@ bool EventHandler::bestZoomableAreaForTouchPoint(const IntPoint& touchCenter, co
 
 bool EventHandler::adjustGesturePosition(const PlatformGestureEvent& gestureEvent, IntPoint& adjustedPoint)
 {
+    if (!shouldApplyTouchAdjustment(gestureEvent))
+        return false;
+
     Node* targetNode = 0;
     switch (gestureEvent.type()) {
     case PlatformEvent::GestureTap:
@@ -2875,8 +2884,7 @@ bool EventHandler::sendContextMenuEventForGesture(const PlatformGestureEvent& ev
 
     IntPoint adjustedPoint = event.position();
 #if ENABLE(TOUCH_ADJUSTMENT)
-    if (!event.area().isEmpty())
-        adjustGesturePosition(event, adjustedPoint);
+    adjustGesturePosition(event, adjustedPoint);
 #endif
     PlatformMouseEvent mouseEvent(adjustedPoint, event.globalPosition(), RightButton, eventType, 1, false, false, false, false, WTF::currentTime());
     // To simulate right-click behavior, we send a right mouse down and then

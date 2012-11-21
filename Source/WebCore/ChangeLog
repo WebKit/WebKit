@@ -1,3 +1,30 @@
+2012-11-21  Kevin Ellis  <kevers@chromium.org>
+
+        [chromium] Add flag to enable/disable touch adjustment at runtime.
+        https://bugs.webkit.org/show_bug.cgi?id=102534
+
+        Reviewed by Antonio Gomes.
+
+        Add setting for enabling or disabling touch adjustment.  Note that for
+        touch adjustment to apply, the compile flag must also be enabled.  A
+        compile only option is insufficient as it does not allow developers to
+        quickly test the impact of touch adjustemnt without recompiling.  Nor
+        does it allow end users to disable touch adjustemnt if they find that
+        touch adjustment is not working well for a particular site.
+
+        No new tests required.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleGestureEvent): Move enable check to adjustGesturePosition.
+        (WebCore::EventHandler::handleGestureTap): Move enable check to adjustGesturePosition.
+        (WebCore::EventHandler::shouldApplyTouchAdjustment): Checks if touch adjustment is enabled.
+        (WebCore):
+        (WebCore::EventHandler::adjustGesturePosition): Add check for enabling of touch adjustment.
+        (WebCore::EventHandler::sendContextMenuEventForGesture): Move enable check to adjustGesturePosition.
+        * page/EventHandler.h:
+        (EventHandler):
+        * page/Settings.in:
+
 2012-11-21  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, build fix after r135410.
