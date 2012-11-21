@@ -220,10 +220,8 @@ TEST_F(WebFrameTest, DispatchMessageEventWithOriginCheck)
 
 class FixedLayoutTestWebViewClient : public WebViewClient {
  public:
-    virtual WebRect windowRect() OVERRIDE { return m_windowRect; }
     virtual WebScreenInfo screenInfo() OVERRIDE { return m_screenInfo; }
 
-    WebRect m_windowRect;
     WebScreenInfo m_screenInfo;
 };
 
@@ -236,7 +234,6 @@ TEST_F(WebFrameTest, DeviceScaleFactorUsesDefaultWithoutViewportTag)
 
     FixedLayoutTestWebViewClient client;
     client.m_screenInfo.deviceScaleFactor = 2;
-    client.m_windowRect = WebRect(0, 0, viewportWidth, viewportHeight);
 
     WebView* webView = static_cast<WebView*>(FrameTestHelpers::createWebViewAndLoad(m_baseURL + "no_viewport_tag.html", true, 0, &client));
 
@@ -263,7 +260,6 @@ TEST_F(WebFrameTest, FixedLayoutInitializeAtMinimumPageScale)
     client.m_screenInfo.deviceScaleFactor = 1;
     int viewportWidth = 640;
     int viewportHeight = 480;
-    client.m_windowRect = WebRect(0, 0, viewportWidth, viewportHeight);
 
     // Make sure we initialize to minimum scale, even if the window size
     // only becomes available after the load begins.
@@ -300,7 +296,6 @@ TEST_F(WebFrameTest, ScaleFactorShouldNotOscillate)
     client.m_screenInfo.horizontalDPI = 212;
     int viewportWidth = 800;
     int viewportHeight = 1057;
-    client.m_windowRect = WebRect(0, 0, viewportWidth, viewportHeight);
 
     WebViewImpl* webViewImpl = static_cast<WebViewImpl*>(FrameTestHelpers::createWebViewAndLoad(m_baseURL + "scale_oscillate.html", true, 0, &client));
     webViewImpl->enableFixedLayoutMode(true);
@@ -319,7 +314,6 @@ TEST_F(WebFrameTest, CanOverrideMaximumScaleFactor)
     client.m_screenInfo.deviceScaleFactor = 1;
     int viewportWidth = 640;
     int viewportHeight = 480;
-    client.m_windowRect = WebRect(0, 0, viewportWidth, viewportHeight);
 
     WebViewImpl* webViewImpl = static_cast<WebViewImpl*>(FrameTestHelpers::createWebViewAndLoad(m_baseURL + "no_scale_for_you.html", true, 0, &client));
     webViewImpl->enableFixedLayoutMode(true);
@@ -334,13 +328,6 @@ TEST_F(WebFrameTest, CanOverrideMaximumScaleFactor)
 }
 
 #if ENABLE(GESTURE_EVENTS)
-class DivAutoZoomTestWebViewClient : public WebViewClient {
-    public:
-    virtual WebRect windowRect() OVERRIDE { return m_windowRect; }
-
-    WebRect m_windowRect;
-};
-
 void setScaleAndScrollAndLayout(WebKit::WebView* webView, WebPoint scroll, float scale)
 {
     webView->setPageScaleFactor(scale, WebPoint(scroll.x, scroll.y));
@@ -351,11 +338,9 @@ TEST_F(WebFrameTest, DivAutoZoomParamsTest)
 {
     registerMockedHttpURLLoad("get_scale_for_auto_zoom_into_div_test.html");
 
-    DivAutoZoomTestWebViewClient client;
     int viewportWidth = 640;
     int viewportHeight = 480;
-    client.m_windowRect = WebRect(0, 0, viewportWidth, viewportHeight);
-    WebKit::WebView* webView = FrameTestHelpers::createWebViewAndLoad(m_baseURL + "get_scale_for_auto_zoom_into_div_test.html", true, 0, &client);
+    WebKit::WebView* webView = FrameTestHelpers::createWebViewAndLoad(m_baseURL + "get_scale_for_auto_zoom_into_div_test.html");
     webView->enableFixedLayoutMode(true);
     webView->setDeviceScaleFactor(2.0f);
     webView->resize(WebSize(viewportWidth, viewportHeight));
@@ -419,12 +404,10 @@ TEST_F(WebFrameTest, DivAutoZoomMultipleDivsTest)
 {
     registerMockedHttpURLLoad("get_multiple_divs_for_auto_zoom_test.html");
 
-    DivAutoZoomTestWebViewClient client;
     int viewportWidth = 640;
     int viewportHeight = 480;
     float doubleTapZoomAlreadyLegibleRatio = 1.2f;
-    client.m_windowRect = WebRect(0, 0, viewportWidth, viewportHeight);
-    WebKit::WebView* webView = FrameTestHelpers::createWebViewAndLoad(m_baseURL + "get_multiple_divs_for_auto_zoom_test.html", true, 0, &client);
+    WebKit::WebView* webView = FrameTestHelpers::createWebViewAndLoad(m_baseURL + "get_multiple_divs_for_auto_zoom_test.html");
     webView->enableFixedLayoutMode(true);
     webView->resize(WebSize(viewportWidth, viewportHeight));
     webView->setPageScaleFactorLimits(1, 4);
@@ -460,12 +443,10 @@ TEST_F(WebFrameTest, DivAutoZoomScaleBoundsTest)
 {
     registerMockedHttpURLLoad("get_scale_bounds_check_for_auto_zoom_test.html");
 
-    DivAutoZoomTestWebViewClient client;
     int viewportWidth = 640;
     int viewportHeight = 480;
     float doubleTapZoomAlreadyLegibleRatio = 1.2f;
-    client.m_windowRect = WebRect(0, 0, viewportWidth, viewportHeight);
-    WebKit::WebView* webView = FrameTestHelpers::createWebViewAndLoad(m_baseURL + "get_scale_bounds_check_for_auto_zoom_test.html", true, 0, &client);
+    WebKit::WebView* webView = FrameTestHelpers::createWebViewAndLoad(m_baseURL + "get_scale_bounds_check_for_auto_zoom_test.html");
     webView->enableFixedLayoutMode(true);
     webView->resize(WebSize(viewportWidth, viewportHeight));
     webView->setPageScaleFactorLimits(1, 4);
@@ -522,14 +503,12 @@ TEST_F(WebFrameTest, DISABLED_DivScrollIntoEditableTest)
 {
     registerMockedHttpURLLoad("get_scale_for_zoom_into_editable_test.html");
 
-    DivAutoZoomTestWebViewClient client;
     int viewportWidth = 640;
     int viewportHeight = 480;
     float leftBoxRatio = 0.3f;
     int caretPadding = 10;
     int minReadableCaretHeight = 18;
-    client.m_windowRect = WebRect(0, 0, viewportWidth, viewportHeight);
-    WebKit::WebView* webView = FrameTestHelpers::createWebViewAndLoad(m_baseURL + "get_scale_for_zoom_into_editable_test.html", true, 0, &client);
+    WebKit::WebView* webView = FrameTestHelpers::createWebViewAndLoad(m_baseURL + "get_scale_for_zoom_into_editable_test.html");
     webView->enableFixedLayoutMode(true);
     webView->resize(WebSize(viewportWidth, viewportHeight));
     webView->setPageScaleFactorLimits(1, 10);

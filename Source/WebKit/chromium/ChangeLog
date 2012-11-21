@@ -1,3 +1,20 @@
+2012-11-21  Tien-Ren Chen  <trchen@chromium.org>
+
+        Use m_webView->size() for viewport update
+        https://bugs.webkit.org/show_bug.cgi?id=102764
+
+        Reviewed by Adam Barth.
+
+        m_webView->client()->windowRect() returns the outer rect of the browser
+        window, which includes the decorations such as the title bar.
+        We should use the size of the WebView for layout and rendering purpose.
+
+        Existing tests are updated to work without windowRect().
+
+        * src/ChromeClientImpl.cpp:
+        (WebKit::ChromeClientImpl::dispatchViewportPropertiesDidChange):
+        * tests/WebFrameTest.cpp:
+
 2012-11-21  Peter Beverloo  <peter@chromium.org>
 
         [Chromium] webkit_unit_tests should depend on forwarder2 for Android

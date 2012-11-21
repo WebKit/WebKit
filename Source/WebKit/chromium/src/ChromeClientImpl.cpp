@@ -626,17 +626,17 @@ void ChromeClientImpl::dispatchViewportPropertiesDidChange(const ViewportArgumen
         return;
 
     WebViewClient* client = m_webView->client();
-    WebRect deviceRect = client->windowRect();
+    WebSize deviceSize = m_webView->size();
     // If the window size has not been set yet don't attempt to set the viewport
-    if (!deviceRect.width || !deviceRect.height)
+    if (!deviceSize.width || !deviceSize.height)
         return;
 
     Settings* settings = m_webView->page()->settings();
     float devicePixelRatio = client->screenInfo().deviceScaleFactor;
     // Call the common viewport computing logic in ViewportArguments.cpp.
     ViewportAttributes computed = computeViewportAttributes(
-        arguments, settings->layoutFallbackWidth(), deviceRect.width, deviceRect.height,
-        devicePixelRatio, IntSize(deviceRect.width, deviceRect.height));
+        arguments, settings->layoutFallbackWidth(), deviceSize.width, deviceSize.height,
+        devicePixelRatio, IntSize(deviceSize.width, deviceSize.height));
 
     restrictScaleFactorToInitialScaleIfNotUserScalable(computed);
 
