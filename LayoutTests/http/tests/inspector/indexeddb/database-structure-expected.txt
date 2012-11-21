@@ -1,19 +1,11 @@
 CONSOLE MESSAGE: line 108: InspectorTest.IndexedDB_callback1
-CONSOLE MESSAGE: The setVersion() method is non-standard and will be removed. Use the "upgradeneeded" event instead.
 CONSOLE MESSAGE: line 108: InspectorTest.IndexedDB_callback2
-CONSOLE MESSAGE: The setVersion() method is non-standard and will be removed. Use the "upgradeneeded" event instead.
 CONSOLE MESSAGE: line 108: InspectorTest.IndexedDB_callback3
-CONSOLE MESSAGE: The setVersion() method is non-standard and will be removed. Use the "upgradeneeded" event instead.
 CONSOLE MESSAGE: line 108: InspectorTest.IndexedDB_callback4
-CONSOLE MESSAGE: The setVersion() method is non-standard and will be removed. Use the "upgradeneeded" event instead.
 CONSOLE MESSAGE: line 108: InspectorTest.IndexedDB_callback5
-CONSOLE MESSAGE: The setVersion() method is non-standard and will be removed. Use the "upgradeneeded" event instead.
 CONSOLE MESSAGE: line 108: InspectorTest.IndexedDB_callback6
-CONSOLE MESSAGE: The setVersion() method is non-standard and will be removed. Use the "upgradeneeded" event instead.
 CONSOLE MESSAGE: line 108: InspectorTest.IndexedDB_callback7
-CONSOLE MESSAGE: The setVersion() method is non-standard and will be removed. Use the "upgradeneeded" event instead.
 CONSOLE MESSAGE: line 108: InspectorTest.IndexedDB_callback8
-CONSOLE MESSAGE: The setVersion() method is non-standard and will be removed. Use the "upgradeneeded" event instead.
 CONSOLE MESSAGE: line 108: InspectorTest.IndexedDB_callback9
 CONSOLE MESSAGE: line 108: InspectorTest.IndexedDB_callback10
 Tests that database names are correctly loaded and saved in IndexedDBModel.
@@ -22,13 +14,11 @@ Dumping database:
 Dumping database:
 testDatabase1
     intVersion: 1
-    version: 
     objectStores:
 
 Dumping database:
 testDatabase1
-    intVersion: -1
-    version: 2
+    intVersion: 2
     objectStores:
     testObjectStore1
         keyPath: "test.key.path"
@@ -37,8 +27,7 @@ testDatabase1
 
 Dumping database:
 testDatabase1
-    intVersion: -1
-    version: 3
+    intVersion: 3
     objectStores:
     testObjectStore1
         keyPath: "test.key.path"
@@ -51,8 +40,7 @@ testDatabase1
 
 Dumping database:
 testDatabase1
-    intVersion: -1
-    version: 4
+    intVersion: 4
     objectStores:
     testObjectStore1
         keyPath: "test.key.path"
@@ -69,8 +57,7 @@ testDatabase1
 
 Dumping database:
 testDatabase1
-    intVersion: -1
-    version: 5
+    intVersion: 5
     objectStores:
     testObjectStore1
         keyPath: "test.key.path"
@@ -91,8 +78,7 @@ testDatabase1
 
 Dumping database:
 testDatabase1
-    intVersion: -1
-    version: 6
+    intVersion: 6
     objectStores:
     testObjectStore1
         keyPath: "test.key.path"
@@ -109,8 +95,7 @@ testDatabase1
 
 Dumping database:
 testDatabase1
-    intVersion: -1
-    version: 7
+    intVersion: 7
     objectStores:
     testObjectStore1
         keyPath: "test.key.path"
@@ -123,8 +108,7 @@ testDatabase1
 
 Dumping database:
 testDatabase1
-    intVersion: -1
-    version: 8
+    intVersion: 8
     objectStores:
     testObjectStore1
         keyPath: "test.key.path"
@@ -133,8 +117,7 @@ testDatabase1
 
 Dumping database:
 testDatabase1
-    intVersion: -1
-    version: 9
+    intVersion: 9
     objectStores:
 
 

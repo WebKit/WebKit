@@ -1,3 +1,22 @@
+2012-11-21  David Grogan  <dgrogan@chromium.org>
+
+        IndexedDB: remove setVersion from inspector tests
+        https://bugs.webkit.org/show_bug.cgi?id=102850
+
+        Reviewed by Vsevolod Vlasov.
+
+        setVersion was contained so the conversion to upgradeneeded was
+        straightforward.
+
+        * http/tests/inspector/indexeddb/database-data-expected.txt:
+        * http/tests/inspector/indexeddb/database-structure-expected.txt:
+        * http/tests/inspector/indexeddb/indexeddb-test.js:
+        (.request.onsuccess.onSuccess.request.onupgradeneeded):
+        (.request.onsuccess.onSuccess.request.onsuccess):
+        (.request.onsuccess):
+        (doWithVersionTransaction):
+        * http/tests/inspector/indexeddb/resources-panel-expected.txt:
+
 2012-11-21  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r135307.

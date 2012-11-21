@@ -138,14 +138,23 @@ function doWithVersionTransaction(databaseName, callback, commitCallback)
 
     function step2(db)
     {
-        var request = db.setVersion(Number(db.version) + 1);
-        request.onblocked = onIndexedDBBlocked;
+        var version = db.version;
+        db.close();
+        request = indexedDB.open(databaseName, version + 1);
         request.onerror = onIndexedDBError;
-        request.onsuccess = step3;
+        request.onupgradeneeded = onUpgradeNeeded;
+        request.onsuccess = onOpened;
 
-        function step3()
+        function onUpgradeNeeded(e)
         {
-            callback(db, request.result);
+            var db = e.target.result;
+            var trans = e.target.transaction;
+            callback(db, trans);
+        }
+
+        function onOpened(e)
+        {
+            var db = e.target.result;
             db.close();
             commitCallback();
         }

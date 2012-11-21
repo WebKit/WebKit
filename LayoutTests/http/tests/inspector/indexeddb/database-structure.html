@@ -19,7 +19,6 @@ function test()
             return;
         InspectorTest.addResult(database.databaseId.name);
         InspectorTest.addResult("    intVersion: " + database.intVersion);
-        InspectorTest.addResult("    version: " + database.version);
         InspectorTest.addResult("    objectStores:");
         var objectStoreNames = [];
         for (var objectStoreName in database.objectStores)
