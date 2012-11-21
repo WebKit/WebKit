@@ -69,11 +69,12 @@ void TiledBackingStore::setTileCreationDelay(double delay)
 void TiledBackingStore::coverWithTilesIfNeeded(const FloatPoint& trajectoryVector)
 {
     IntRect visibleRect = this->visibleRect();
+    IntRect rect = mapFromContents(m_client->tiledBackingStoreContentsRect());
 
     FloatPoint normalizedVector = trajectoryVector;
     normalizedVector.normalize();
 
-    if (m_trajectoryVector == normalizedVector && m_visibleRect == visibleRect)
+    if (m_trajectoryVector == normalizedVector && m_visibleRect == visibleRect && m_rect == rect)
         return;
 
     m_trajectoryVector = normalizedVector;
