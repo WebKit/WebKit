@@ -29,7 +29,6 @@
 #include <QtCore/QPointer>
 #include <QtCore/QSize>
 #include <QtCore/QVariant>
-#include <QtQml/QtQml>
 #include <QtQuick/qquickitem.h>
 
 class QQuickWebViewPrivate;
