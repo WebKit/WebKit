@@ -28,8 +28,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef V8HTMLImageElementConstructor_h
-#define V8HTMLImageElementConstructor_h
+#ifndef V8HTMLImageElementCustom_h
+#define V8HTMLImageElementCustom_h
 
 #include "WrapperTypeInfo.h"
 
@@ -45,4 +45,4 @@ public:
 
 }
 
-#endif // V8HTMLImageElementConstructor_h
+#endif // V8HTMLImageElementCustom_h

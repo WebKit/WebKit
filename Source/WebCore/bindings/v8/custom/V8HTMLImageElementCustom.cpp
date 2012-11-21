@@ -29,7 +29,7 @@
  */
 
 #include "config.h"
-#include "V8HTMLImageElementConstructor.h"
+#include "V8HTMLImageElementCustom.h"
 
 #include "BindingState.h"
 #include "Document.h"

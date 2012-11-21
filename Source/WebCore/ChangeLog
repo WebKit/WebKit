@@ -1,3 +1,35 @@
+2012-11-21  Kentaro Hara  <haraken@chromium.org>
+
+        [V8] Rename v8/custom/*Constructor.cpp to v8/custom/*Custom.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=102881
+
+        Reviewed by Adam Barth.
+
+        Writing constructorCallback()s in *Custom.cpp is a convention of
+        custom bindings of JSC and V8. We can rename v8/custom/*Constructor.cpp
+        to v8/custom/*Custom.cpp.
+
+        No tests. No change in behavior.
+
+        * UseV8.cmake: This file is already out of sync.
+        * WebCore.gypi:
+        * bindings/v8/custom/V8HTMLImageElementCustom.cpp: Renamed from Source/WebCore/bindings/v8/custom/V8HTMLImageElementConstructor.cpp.
+        (WebCore):
+        (WebCore::v8HTMLImageElementConstructorCallback):
+        (WebCore::V8HTMLImageElementConstructor::GetTemplate):
+        * bindings/v8/custom/V8HTMLImageElementCustom.h: Renamed from Source/WebCore/bindings/v8/custom/V8HTMLImageElementConstructor.h.
+        (WebCore):
+        (V8HTMLImageElementConstructor):
+        * bindings/v8/custom/V8IntentCustom.cpp: Renamed from Source/WebCore/bindings/v8/custom/V8IntentConstructor.cpp.
+        (WebCore):
+        (WebCore::V8Intent::constructorCallbackCustom):
+        * bindings/v8/custom/V8MessageChannelCustom.cpp: Renamed from Source/WebCore/bindings/v8/custom/V8MessageChannelConstructor.cpp.
+        (WebCore):
+        (WebCore::V8MessageChannel::constructorCallbackCustom):
+        * bindings/v8/custom/V8WebKitPointCustom.cpp: Renamed from Source/WebCore/bindings/v8/custom/V8WebKitPointConstructor.cpp.
+        (WebCore):
+        (WebCore::V8WebKitPoint::constructorCallbackCustom):
+
 2012-11-21  Andrey Adaikin  <aandrey@chromium.org>
 
         Web Inspector: [Canvas] throttle wait icon in the ui
