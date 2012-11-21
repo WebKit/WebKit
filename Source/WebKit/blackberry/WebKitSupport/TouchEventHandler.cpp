@@ -402,6 +402,9 @@ void TouchEventHandler::drawTapHighlight()
         IntRect rect = focusRingQuads[i].enclosingBoundingBox();
         rect.move(framePos.x(), framePos.y());
         IntRect clippedRect = intersection(clippingRect, rect);
+        // FIXME we shouldn't have any empty rects here PR 246960
+        if (clippedRect.isEmpty())
+            continue;
         clippedRect.inflate(2);
         region = unionRegions(region, Platform::IntRect(clippedRect));
     }

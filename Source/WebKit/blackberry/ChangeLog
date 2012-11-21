@@ -1,3 +1,17 @@
+2012-11-21  Konrad Piascik  <kpiascik@rim.com>
+
+        [BlackBerry] Don't add empty rects to the tap highlight region.
+        https://bugs.webkit.org/show_bug.cgi?id=102966
+
+        Reviewed by George Staikos.
+
+        Internal PR 246960
+        Tap highlight is way too large sometimes.
+        When we add an empty rect it inflates by 2 and causes the tap region to extend to the origin.
+
+        * WebKitSupport/TouchEventHandler.cpp:
+        (BlackBerry::WebKit::TouchEventHandler::drawTapHighlight):
+
 2012-11-21  Mike Fenton  <mifenton@rim.com>
 
         [BlackBerry] Switch to point instead of VisiblePosition comparison for input bounds check
