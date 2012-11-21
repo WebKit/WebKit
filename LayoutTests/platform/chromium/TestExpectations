@@ -1338,8 +1338,6 @@ webkit.org/b/82594 [ SnowLeopard ] svg/text/exs-display-none.svg [ ImageOnlyFail
 webkit.org/b/82594 [ SnowLeopard ] svg/text/ems-display-none.svg [ Failure ImageOnlyFailure Pass ]
 
 # Failing on Skia platforms
-webkit.org/b/83051 [ Android ] svg/css/group-with-shadow.svg [ ImageOnlyFailure ]
-
 webkit.org/b/83183 [ Mac ] svg/as-image/animated-svg-as-image-no-fixed-intrinsic-size.html [ ImageOnlyFailure Pass ]
 
 webkit.org/b/99893 svg/animations/mozilla/animateMotion-mpath-targetChange-1.svg [ ImageOnlyFailure ]
@@ -1362,7 +1360,6 @@ webkit.org/b/83303 [ Win ] svg/custom/mouse-move-on-svg-container-standalone.svg
 webkit.org/b/83303 [ Win ] svg/custom/mouse-move-on-svg-container.xhtml [ ImageOnlyFailure Pass ]
 webkit.org/b/83303 [ Win ] svg/custom/mouse-move-on-svg-root-standalone.svg [ ImageOnlyFailure Pass ]
 webkit.org/b/83303 [ Win ] svg/custom/mouse-move-on-svg-root.xhtml [ ImageOnlyFailure Pass ]
-webkit.org/b/83303 [ Android Linux ] svg/transforms/text-with-pattern-with-svg-transform.svg [ ImageOnlyFailure Pass ]
 
 # This fails image 5-10% of the time. Probably a race condition on timers.
 webkit.org/b/83471 svg/as-image/animated-svg-as-image-same-image.html [ ImageOnlyFailure Pass ]
