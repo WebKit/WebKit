@@ -1,3 +1,15 @@
+2012-11-20  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION(r131106): magnitude-perf.js calls bind on undefined
+        https://bugs.webkit.org/show_bug.cgi?id=102848
+
+        Reviewed by Tony Gentilcore.
+
+        Check the existence of performance.now before calling bind on it.
+
+        * resources/magnitude-perf.js:
+        (Magnitude._runIteration):
+
 2012-11-20  David Grogan  <dgrogan@chromium.org>
 
         IndexedDB: remove setVersion from pending-version-change-on-exit.html
