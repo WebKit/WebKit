@@ -177,13 +177,19 @@ void RenderSliderContainer::layout()
         style()->setDirection(LTR);
     }
 
+    RenderBox* thumb = 0;
+    if (input->sliderThumbElement() && input->sliderThumbElement()->renderer()) {
+        thumb = toRenderBox(input->sliderThumbElement()->renderer());
+        // Reset the thumb location before layout.
+        thumb->setLocation(LayoutPoint());
+    }
+
     RenderFlexibleBox::layout();
 
     style()->setDirection(oldTextDirection);
     // These should always exist, unless someone mutates the shadow DOM (e.g., in the inspector).
-    if (!input->sliderThumbElement() || !input->sliderThumbElement()->renderer())
+    if (!thumb)
         return;
-    RenderBox* thumb = toRenderBox(input->sliderThumbElement()->renderer());
     RenderBox* track = toRenderBox(thumb->parent());
 
     double percentageOffset = sliderPosition(input).toDouble();

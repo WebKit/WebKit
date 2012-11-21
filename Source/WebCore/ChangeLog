@@ -1,3 +1,21 @@
+2012-11-21  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Reset the slider thumb location before every layout of the slider container
+        https://bugs.webkit.org/show_bug.cgi?id=102817
+
+        Reviewed by Tony Chang.
+
+        The location of the slider thumb is set by the slider container
+        assuming the slider thumb has been laid out. When this happens,
+        the location of the slider thumb is reset during the layout
+        ignoring any previous location set. If the slider thumb is not
+        laid out, the previous value is added to the new one by the slider
+        container.
+
+        * html/shadow/SliderThumbElement.cpp:
+        (WebCore::RenderSliderContainer::layout): Reset the location of
+        the slider thumb before calling RenderFlexibleBox::layout().
+
 2012-11-21  Kentaro Hara  <haraken@chromium.org>
 
         Unreviewed, rolling out r135340.
