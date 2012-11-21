@@ -1,3 +1,15 @@
+2012-11-21  W. James MacLean  <wjmaclean@chromium.org>
+
+        [chromium] Change default tap highlight color for Chromium Windows & Linux.
+        https://bugs.webkit.org/show_bug.cgi?id=102939
+
+        Reviewed by Adam Barth.
+
+        Change default tap highlight colour on Chromium Win/Linux to be 18% black.
+
+        * rendering/RenderThemeChromiumSkia.h:
+        (RenderThemeChromiumSkia): Override platformTapHighlightColor() to change default highlight colour.
+
 2012-11-21  Tony Chang  <tony@chromium.org>
 
         Relayout the slider track when a data list is set

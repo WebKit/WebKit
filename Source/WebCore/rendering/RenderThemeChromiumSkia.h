@@ -46,6 +46,13 @@ class RenderThemeChromiumSkia : public RenderTheme {
         virtual String extraMediaControlsStyleSheet();
 #endif
 
+#if ENABLE(TOUCH_EVENTS)
+        virtual Color platformTapHighlightColor() const OVERRIDE
+        {
+            return Color(defaultTapHighlightColor);
+        }
+#endif
+
         // A method asking if the theme's controls actually care about redrawing when hovered.
         virtual bool supportsHover(const RenderStyle*) const;
 
@@ -181,6 +188,8 @@ private:
     int menuListInternalPadding(RenderStyle*, int paddingType) const;
     bool paintMediaButtonInternal(GraphicsContext*, const IntRect&, Image*);
     IntRect convertToPaintingRect(RenderObject* inputRenderer, const RenderObject* partRenderer, LayoutRect partRect, const IntRect& localOffset) const;
+
+    static const RGBA32 defaultTapHighlightColor = 0x2e000000; // 18% black.
 };
 
 } // namespace WebCore
