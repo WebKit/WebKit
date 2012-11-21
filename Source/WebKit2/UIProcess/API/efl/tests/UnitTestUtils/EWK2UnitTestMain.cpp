@@ -20,7 +20,6 @@
 #include "EWK2UnitTestBase.h"
 #include "EWK2UnitTestEnvironment.h"
 #include <getopt.h>
-#include <gtest/gtest.h>
 
 using namespace EWK2UnitTest;
 

@@ -27,10 +27,6 @@
 #include "config.h"
 
 #include "UnitTestUtils/EWK2UnitTestBase.h"
-#include "UnitTestUtils/EWK2UnitTestEnvironment.h"
-#include <EWebKit2.h>
-#include <Ecore.h>
-#include <gtest/gtest.h>
 
 using namespace EWK2UnitTest;
 

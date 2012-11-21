@@ -20,13 +20,7 @@
 #include "config.h"
 
 #include "UnitTestUtils/EWK2UnitTestBase.h"
-#include "UnitTestUtils/EWK2UnitTestEnvironment.h"
 #include "UnitTestUtils/EWK2UnitTestServer.h"
-#include <EWebKit2.h>
-#include <Ecore.h>
-#include <Eina.h>
-#include <Evas.h>
-#include <gtest/gtest.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/UnusedParam.h>

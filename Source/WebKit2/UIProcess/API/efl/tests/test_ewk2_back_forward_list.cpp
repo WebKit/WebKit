@@ -26,11 +26,8 @@
 #include "config.h"
 
 #include "UnitTestUtils/EWK2UnitTestBase.h"
-#include "UnitTestUtils/EWK2UnitTestEnvironment.h"
 #include "UnitTestUtils/EWK2UnitTestServer.h"
 #include "WKEinaSharedString.h"
-#include <EWebKit2.h>
-#include <gtest/gtest.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
 

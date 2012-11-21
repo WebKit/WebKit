@@ -31,10 +31,6 @@
 #include "config.h"
 
 #include "UnitTestUtils/EWK2UnitTestBase.h"
-#include "UnitTestUtils/EWK2UnitTestEnvironment.h"
-#include <EWebKit2.h>
-#include <Ecore.h>
-#include <Eina.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
 

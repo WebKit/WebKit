@@ -26,11 +26,6 @@
 #include "config.h"
 
 #include "UnitTestUtils/EWK2UnitTestBase.h"
-#include "UnitTestUtils/EWK2UnitTestEnvironment.h"
-#include <EWebKit2.h>
-#include <Ecore_Evas.h>
-#include <Evas.h>
-#include <gtest/gtest.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/efl/RefPtrEfl.h>

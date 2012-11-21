@@ -19,7 +19,6 @@
 #ifndef EWK2UnitTestEnvironment_h
 #define EWK2UnitTestEnvironment_h
 
-#include <Eina.h>
 #include <gtest/gtest.h>
 #include <wtf/text/CString.h>
 

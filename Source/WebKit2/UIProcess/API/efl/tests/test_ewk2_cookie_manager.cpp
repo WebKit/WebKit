@@ -21,11 +21,7 @@
 #include "config.h"
 
 #include "UnitTestUtils/EWK2UnitTestBase.h"
-#include "UnitTestUtils/EWK2UnitTestEnvironment.h"
 #include "UnitTestUtils/EWK2UnitTestServer.h"
-#include <EWebKit2.h>
-#include <Ecore.h>
-#include <Eina.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <wtf/OwnPtr.h>
