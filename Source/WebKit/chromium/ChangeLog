@@ -1,5 +1,13 @@
 2012-11-21  Yury Semikhatsky  <yurys@chromium.org>
 
+        Unreviewed. Now that offending patch has been rolled out reenable IDBRequestTest.EventsAfterStopping
+        https://bugs.webkit.org/show_bug.cgi?id=102929
+
+        * tests/IDBRequestTest.cpp:
+        (WebCore::TEST):
+
+2012-11-21  Yury Semikhatsky  <yurys@chromium.org>
+
         Unreviewed. Disable failing test.
         https://bugs.webkit.org/show_bug.cgi?id=102929
 
