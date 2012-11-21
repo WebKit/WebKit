@@ -1,3 +1,20 @@
+2012-11-21  Andreas Kling  <akling@apple.com>
+
+        Update incorrect assertion in ImmutableElementAttributeData(MutableElementAttributeData).
+        <http://webkit.org/b/102972>
+
+        Reviewed by Antti Koivisto.
+
+        Manipulation by editing code may cause an element to have mutable inline style, and this is fine.
+
+        Change the assertion to confirm that the inline style doesn't have a CSSOM wrapper attached,
+        which is where real problems would happen. 
+
+        Fixes an assertion on editing/undo/replace-by-span-then-remove.html
+
+        * dom/ElementAttributeData.cpp:
+        (WebCore::ImmutableElementAttributeData::ImmutableElementAttributeData):
+
 2012-11-21  Kentaro Hara  <haraken@chromium.org>
 
         Remove $outputDir and $outputHeadersDir from global variables of code generators

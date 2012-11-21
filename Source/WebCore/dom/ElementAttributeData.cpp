@@ -73,7 +73,7 @@ ImmutableElementAttributeData::ImmutableElementAttributeData(const MutableElemen
     ASSERT(!other.m_presentationAttributeStyle);
 
     if (other.m_inlineStyle) {
-        ASSERT(!other.m_inlineStyle->isMutable());
+        ASSERT(!other.m_inlineStyle->hasCSSOMWrapper());
         m_inlineStyle = other.m_inlineStyle->immutableCopyIfNeeded();
     }
 
