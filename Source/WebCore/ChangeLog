@@ -1,3 +1,15 @@
+2012-11-21  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Request preview tuning: enable json preview for text/html XHRs
+        https://bugs.webkit.org/show_bug.cgi?id=102892
+
+        Reviewed by Alexander Pavlov.
+
+        * inspector/front-end/RequestPreviewView.js:
+        (WebInspector.RequestPreviewView.prototype._jsonView):
+        (WebInspector.RequestPreviewView.prototype._htmlView):
+        (WebInspector.RequestPreviewView.prototype._createPreviewView):
+
 2012-11-21  Kentaro Hara  <haraken@chromium.org>
 
         [V8] Remove manually written v8::TryCatches in custom bindings

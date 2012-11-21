@@ -66,26 +66,46 @@ WebInspector.RequestPreviewView.prototype = {
         return new WebInspector.EmptyView(WebInspector.UIString("This request has no preview available."));
     },
 
+    _jsonView: function()
+    {
+        var parsedJSON = WebInspector.RequestJSONView.parseJSON(this.request.content);
+        if (parsedJSON)
+            return new WebInspector.RequestJSONView(this.request, parsedJSON);
+    },
+
+    _htmlView: function()
+    {
+        var dataURL = this.request.asDataURL();
+        if (dataURL !== null)
+            return new WebInspector.RequestHTMLView(this.request, dataURL);
+    },
+
     _createPreviewView: function()
     {
         if (this.request.content) {
-            if (this.request.hasErrorStatusCode() || (this.request.type === WebInspector.resourceTypes.XHR && this.request.mimeType === "text/html")) {
-                var dataURL = this.request.asDataURL();
-                if (dataURL !== null)
-                    return new WebInspector.RequestHTMLView(this.request, dataURL);
+            if (this.request.hasErrorStatusCode()) {
+                var htmlView = this._htmlView();
+                if (htmlView)
+                    return htmlView;
             }
-        }
 
-        if (this.request.type === WebInspector.resourceTypes.XHR && this.request.content) {
-            var parsedJSON = WebInspector.RequestJSONView.parseJSON(this.request.content);
-            if (parsedJSON)
-                return new WebInspector.RequestJSONView(this.request, parsedJSON);
-        }
+            if (this.request.type === WebInspector.resourceTypes.XHR) {
+                var jsonView = this._jsonView();
+                if (jsonView)
+                    return jsonView;
+            }
 
-        if (this.request.content && this.request.type === WebInspector.resourceTypes.Script && this.request.mimeType === "application/json") {
-            var parsedJSONP = WebInspector.RequestJSONView.parseJSONP(this.request.content);
-            if (parsedJSONP)
-                return new WebInspector.RequestJSONView(this.request, parsedJSONP);
+            if (this.request.type === WebInspector.resourceTypes.XHR && this.request.mimeType === "text/html") {
+                var htmlView = this._htmlView();
+                if (htmlView)
+                    return htmlView;
+            }
+
+            if (this.request.type === WebInspector.resourceTypes.Script && this.request.mimeType === "application/json") {
+                var jsonView = this._jsonView();
+                if (jsonView)
+                    return jsonView;
+            }
         }
 
         if (this._responseView.sourceView)
