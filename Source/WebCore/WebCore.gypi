@@ -5850,7 +5850,6 @@
             'platform/wince/DragImageWinCE.cpp',
             'platform/wince/FileSystemWinCE.cpp',
             'platform/wince/KURLWinCE.cpp',
-            'platform/wince/MIMETypeRegistryWinCE.cpp',
             'platform/wince/PasteboardWinCE.cpp',
             'platform/wince/SearchPopupMenuWinCE.cpp',
             'platform/wince/SharedTimerWinCE.cpp',

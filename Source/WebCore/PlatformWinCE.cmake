@@ -43,6 +43,7 @@ LIST(APPEND WebCore_SOURCES
     platform/win/KeyEventWin.cpp
     platform/win/LanguageWin.cpp
     platform/win/LocalizedStringsWin.cpp
+    platform/win/MIMETypeRegistryWin.cpp
     platform/win/PasteboardWin.cpp
     platform/win/PopupMenuWin.cpp
     platform/win/PlatformMouseEventWin.cpp
@@ -63,7 +64,6 @@ LIST(APPEND WebCore_SOURCES
     platform/wince/DragImageWince.cpp
     platform/wince/FileSystemWince.cpp
     platform/wince/KURLWince.cpp
-    platform/wince/MIMETypeRegistryWince.cpp
     platform/wince/SharedTimerWince.cpp
 
     platform/network/win/CredentialStorageWin.cpp
