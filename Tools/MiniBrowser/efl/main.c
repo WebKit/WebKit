@@ -181,7 +181,7 @@ on_key_down(void *user_data, Evas *e, Evas_Object *ewk_view, void *event_info)
     } else if (!strcmp(ev->key, "F3")) {
         currentEncoding = (currentEncoding + 1) % (sizeof(encodings) / sizeof(encodings[0]));
         info("Set encoding (F3) pressed. New encoding to %s", encodings[currentEncoding]);
-        ewk_view_setting_encoding_custom_set(ewk_view, encodings[currentEncoding]);
+        ewk_view_custom_encoding_set(ewk_view, encodings[currentEncoding]);
     } else if (!strcmp(ev->key, "F5")) {
         info("Reload (F5) was pressed, reloading.\n");
         ewk_view_reload(ewk_view);

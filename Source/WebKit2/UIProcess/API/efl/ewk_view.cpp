@@ -746,14 +746,14 @@ Eina_Bool ewk_view_html_string_load(Evas_Object* ewkView, const char* html, cons
     return true;
 }
 
-const char* ewk_view_setting_encoding_custom_get(const Evas_Object* ewkView)
+const char* ewk_view_custom_encoding_get(const Evas_Object* ewkView)
 {
     EWK_VIEW_IMPL_GET_OR_RETURN(ewkView, impl, 0);
 
     return impl->customTextEncodingName();
 }
 
-Eina_Bool ewk_view_setting_encoding_custom_set(Evas_Object* ewkView, const char* encoding)
+Eina_Bool ewk_view_custom_encoding_set(Evas_Object* ewkView, const char* encoding)
 {
     EWK_VIEW_IMPL_GET_OR_RETURN(ewkView, impl, false);
 

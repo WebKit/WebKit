@@ -1,3 +1,19 @@
+2012-11-21  Jongseok Yang  <js45.yang@samsung.com>
+
+        [EFL][WK2] Rename ewk_view_setting_encoding_custom_XXX to ewk_view_custom_encoding_XXX
+        https://bugs.webkit.org/show_bug.cgi?id=102867
+
+        Reviewed by Gyuyoung Kim.
+
+        Rename ewk_view_setting_encoding_custom_XXX to ewk_view_custom_encoding_XXX.
+
+        ewk_view_setting_encoding_custom_XXX APIs might be misunderstanded as the "setting" word
+        because ewk_view_setting_encoding_custom_set triggers the "reload" operation.
+        And ewk_view_setting_XXX is not correct because there is ewk_settings object for settings.
+
+        * MiniBrowser/efl/main.c:
+        (on_key_down):
+
 2012-11-20  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r133859.

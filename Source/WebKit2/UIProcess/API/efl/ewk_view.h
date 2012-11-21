@@ -648,7 +648,7 @@ EAPI const char *ewk_view_theme_get(const Evas_Object *o);
  * @return @c eina_strinshare containing the current encoding, or
  *         @c NULL if it's not set
  */
-EAPI const char  *ewk_view_setting_encoding_custom_get(const Evas_Object *o);
+EAPI const char  *ewk_view_custom_encoding_get(const Evas_Object *o);
 
 /**
  * Sets the custom character encoding and reloads the page.
@@ -658,7 +658,7 @@ EAPI const char  *ewk_view_setting_encoding_custom_get(const Evas_Object *o);
  *
  * @return @c EINA_TRUE on success @c EINA_FALSE otherwise
  */
-EAPI Eina_Bool    ewk_view_setting_encoding_custom_set(Evas_Object *o, const char *encoding);
+EAPI Eina_Bool    ewk_view_custom_encoding_set(Evas_Object *o, const char *encoding);
 
 /**
  * Searches and hightlights the given string in the document.

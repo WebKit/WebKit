@@ -136,12 +136,12 @@ TEST_F(EWK2UnitTestBase, ewk_view_navigation)
 
 TEST_F(EWK2UnitTestBase, ewk_view_setting_encoding_custom)
 {
-    ASSERT_FALSE(ewk_view_setting_encoding_custom_get(webView()));
-    ASSERT_TRUE(ewk_view_setting_encoding_custom_set(webView(), "UTF-8"));
-    ASSERT_STREQ("UTF-8", ewk_view_setting_encoding_custom_get(webView()));
+    ASSERT_FALSE(ewk_view_custom_encoding_get(webView()));
+    ASSERT_TRUE(ewk_view_custom_encoding_set(webView(), "UTF-8"));
+    ASSERT_STREQ("UTF-8", ewk_view_custom_encoding_get(webView()));
     // Set the default charset.
-    ASSERT_TRUE(ewk_view_setting_encoding_custom_set(webView(), 0));
-    ASSERT_FALSE(ewk_view_setting_encoding_custom_get(webView()));
+    ASSERT_TRUE(ewk_view_custom_encoding_set(webView(), 0));
+    ASSERT_FALSE(ewk_view_custom_encoding_get(webView()));
 }
 
 static void onFormAboutToBeSubmitted(void* userData, Evas_Object*, void* eventInfo)
