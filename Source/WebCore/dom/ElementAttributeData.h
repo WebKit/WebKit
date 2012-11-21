@@ -56,8 +56,8 @@ public:
 
     const StylePropertySet* inlineStyle() const { return m_inlineStyle.get(); }
 
-    const StylePropertySet* presentationAttributeStyle() const { return m_presentationAttributeStyle.get(); }
-    void setPresentationAttributeStyle(PassRefPtr<StylePropertySet> style) const { m_presentationAttributeStyle = style; }
+    const StylePropertySet* presentationAttributeStyle() const;
+    void setPresentationAttributeStyle(PassRefPtr<StylePropertySet>) const;
 
     size_t length() const;
     bool isEmpty() const { return !length(); }
@@ -107,7 +107,6 @@ protected:
     mutable unsigned m_styleAttributeIsDirty : 1;
 
     mutable RefPtr<StylePropertySet> m_inlineStyle;
-    mutable RefPtr<StylePropertySet> m_presentationAttributeStyle;
     mutable SpaceSplitString m_classNames;
     mutable AtomicString m_idForStyleResolution;
 
@@ -143,6 +142,7 @@ public:
     MutableElementAttributeData(const ImmutableElementAttributeData&);
     MutableElementAttributeData(const MutableElementAttributeData&);
 
+    mutable RefPtr<StylePropertySet> m_presentationAttributeStyle;
     Vector<Attribute, 4> m_attributeVector;
 };
 
@@ -169,6 +169,19 @@ inline size_t ElementAttributeData::length() const
     if (isMutable())
         return mutableAttributeVector().size();
     return m_arraySize;
+}
+
+inline const StylePropertySet* ElementAttributeData::presentationAttributeStyle() const
+{
+    if (!m_isMutable)
+        return 0;
+    return static_cast<const MutableElementAttributeData*>(this)->m_presentationAttributeStyle.get();
+}
+
+inline void ElementAttributeData::setPresentationAttributeStyle(PassRefPtr<StylePropertySet> style) const
+{
+    ASSERT(m_isMutable);
+    static_cast<const MutableElementAttributeData*>(this)->m_presentationAttributeStyle = style;
 }
 
 inline Attribute* ElementAttributeData::getAttributeItem(const AtomicString& name, bool shouldIgnoreAttributeCase)

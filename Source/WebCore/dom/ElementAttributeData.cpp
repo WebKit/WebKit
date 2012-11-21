@@ -33,7 +33,7 @@ namespace WebCore {
 
 struct SameSizeAsElementAttributeData : public RefCounted<SameSizeAsElementAttributeData> {
     unsigned bitfield;
-    void* refPtrs[4];
+    void* refPtrs[3];
 };
 
 COMPILE_ASSERT(sizeof(ElementAttributeData) == sizeof(ElementAttributeData), element_attribute_data_should_stay_small);
@@ -70,6 +70,8 @@ ImmutableElementAttributeData::~ImmutableElementAttributeData()
 ImmutableElementAttributeData::ImmutableElementAttributeData(const MutableElementAttributeData& other)
     : ElementAttributeData(other, false)
 {
+    ASSERT(!other.m_presentationAttributeStyle);
+
     if (other.m_inlineStyle) {
         ASSERT(!other.m_inlineStyle->isMutable());
         m_inlineStyle = other.m_inlineStyle->immutableCopyIfNeeded();
@@ -84,7 +86,6 @@ ElementAttributeData::ElementAttributeData(const ElementAttributeData& other, bo
     , m_arraySize(isMutable ? 0 : other.length())
     , m_presentationAttributeStyleIsDirty(other.m_presentationAttributeStyleIsDirty)
     , m_styleAttributeIsDirty(other.m_styleAttributeIsDirty)
-    , m_presentationAttributeStyle(other.m_presentationAttributeStyle)
     , m_classNames(other.m_classNames)
     , m_idForStyleResolution(other.m_idForStyleResolution)
 {
@@ -93,6 +94,7 @@ ElementAttributeData::ElementAttributeData(const ElementAttributeData& other, bo
 
 MutableElementAttributeData::MutableElementAttributeData(const MutableElementAttributeData& other)
     : ElementAttributeData(other, true)
+    , m_presentationAttributeStyle(other.m_presentationAttributeStyle)
     , m_attributeVector(other.m_attributeVector)
 {
     m_inlineStyle = other.m_inlineStyle ? other.m_inlineStyle->copy() : 0;
@@ -161,11 +163,12 @@ void ElementAttributeData::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo)
     size_t actualSize = m_isMutable ? sizeof(ElementAttributeData) : sizeForImmutableElementAttributeDataWithAttributeCount(m_arraySize);
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::DOM, actualSize);
     info.addMember(m_inlineStyle);
-    info.addMember(m_presentationAttributeStyle);
     info.addMember(m_classNames);
     info.addMember(m_idForStyleResolution);
-    if (m_isMutable)
+    if (m_isMutable) {
+        info.addMember(presentationAttributeStyle());
         info.addMember(mutableAttributeVector());
+    }
     for (unsigned i = 0, len = length(); i < len; i++)
         info.addMember(*attributeItem(i));
 }

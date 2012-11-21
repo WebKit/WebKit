@@ -1022,11 +1022,11 @@ void Element::parserSetAttributes(const Vector<Attribute>& attributeVector, Frag
     }
 
     // When the document is in parsing state, we cache immutable ElementAttributeData objects with the
-    // input attribute vector (and the tag name) as key. (This cache is held by Document.)
+    // input attribute vector as key. (This cache is held by Document.)
     if (!document() || !document()->parsing())
         m_attributeData = ElementAttributeData::createImmutable(filteredAttributes);
     else
-        m_attributeData = document()->cachedImmutableAttributeData(this, filteredAttributes);
+        m_attributeData = document()->cachedImmutableAttributeData(filteredAttributes);
 
     // Iterate over the set of attributes we already have on the stack in case
     // attributeChanged mutates m_attributeData.
@@ -2563,8 +2563,10 @@ void Element::cloneAttributesFromElement(const Element& other)
         updateName(oldName, newName);
 
     // If 'other' has a mutable ElementAttributeData, convert it to an immutable one so we can share it between both elements.
-    // We can only do this if there is no CSSOM wrapper for other's inline style (the isMutable() check.)
-    if (other.m_attributeData->isMutable() && (!other.m_attributeData->inlineStyle() || !other.m_attributeData->inlineStyle()->isMutable()))
+    // We can only do this if there is no CSSOM wrapper for other's inline style, and there are no presentation attributes.
+    if (other.m_attributeData->isMutable()
+        && !other.m_attributeData->presentationAttributeStyle()
+        && (!other.m_attributeData->inlineStyle() || !other.m_attributeData->inlineStyle()->hasCSSOMWrapper()))
         const_cast<Element&>(other).m_attributeData = other.m_attributeData->makeImmutableCopy();
 
     if (!other.m_attributeData->isMutable())

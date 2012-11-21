@@ -1,3 +1,77 @@
+2012-11-21  Andreas Kling  <akling@apple.com>
+
+        Make it possible for elements with different tag names to share attribute data.
+        <http://webkit.org/b/102845>
+
+        Reviewed by Antti Koivisto.
+
+        Allow all elements to share ElementAttributeData with one another. This means that the elements
+        in this hypothetical markup will all point to the same attribute data:
+
+            <div class="foo">
+                <span class="foo">
+                    <hr class="foo"/>
+                </span>
+            </div>
+
+        This optimization happens at the expense of an old one. We no longer share attribute data
+        between elements that have presentation attributes, since they map to different CSS properties
+        depending on what tag they're attached to. These are mostly used in ye olde web 1.0 content
+        though, and we should prefer optimizing in favor of modern markup. The global cache for
+        presentation attribute style in StyledElement.cpp still prevents redundant parsing.
+
+        On the upside, excluding elements with presentation attributes from the data cache means that
+        we can move one pointer (m_presentationAttributeStyle) from ImmutableElementAttributeData
+        to MutableElementAttributeData.
+
+        800kB progression on Membuster3.
+
+        * dom/Document.h:
+        * dom/Document.cpp:
+        (WebCore::ImmutableAttributeDataCacheKey::ImmutableAttributeDataCacheKey):
+        (WebCore::ImmutableAttributeDataCacheKey::operator!=):
+        (WebCore::ImmutableAttributeDataCacheKey::hash):
+        (ImmutableAttributeDataCacheKey):
+        (WebCore::Document::cachedImmutableAttributeData):
+        * dom/Element.cpp:
+        (WebCore::Element::parserSetAttributes):
+
+            Don't use the element's tag name in the key for the immutable attribute data cache.
+
+        (WebCore::Element::cloneAttributesFromElement):
+
+            Prevent cloneNode() from converting mutable attribute data to immutable if it has
+            presentation attributes.
+
+        * dom/ElementAttributeData.cpp:
+        (WebCore::ImmutableElementAttributeData::ImmutableElementAttributeData):
+
+            Add an assertion that mutable-to-immutable conversion never happens with presentation
+            attribute style present.
+
+        (WebCore::ElementAttributeData::ElementAttributeData):
+        (WebCore::MutableElementAttributeData::MutableElementAttributeData):
+        (WebCore::ElementAttributeData::reportMemoryUsage):
+        * dom/ElementAttributeData.h:
+        (ElementAttributeData):
+        (MutableElementAttributeData):
+        (WebCore::ElementAttributeData::presentationAttributeStyle):
+        (WebCore):
+        (WebCore::ElementAttributeData::setPresentationAttributeStyle):
+
+            Move the RefPtr<StylePropertySet> that holds presentation attribute-derived style
+            from the common ElementAttributeData base class to MutableElementAttributeData.
+
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::attributeChanged):
+
+            Always dirty the presentation attribute style when a presentation attribute changes.
+
+        (WebCore::StyledElement::rebuildPresentationAttributeStyle):
+
+            Force promotion to mutable attribute data when it turns out that we need to hang a
+            StylePropertySet with the presentation attribute style off of it.
+
 2012-11-21  Antti Koivisto  <antti@apple.com>
 
         Replace NodeRendererFactory class with a function

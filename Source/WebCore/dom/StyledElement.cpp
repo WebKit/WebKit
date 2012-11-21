@@ -161,9 +161,7 @@ void StyledElement::attributeChanged(const QualifiedName& name, const AtomicStri
     if (name == styleAttr)
         styleAttributeChanged(newValue);
     else if (isPresentationAttribute(name)) {
-        // Avoid dirtying the presentation attribute style if we're using shared attribute data with already generated style.
-        if (attributeData()->isMutable() || !attributeData()->m_presentationAttributeStyle)
-            attributeData()->m_presentationAttributeStyleIsDirty = true;
+        attributeData()->m_presentationAttributeStyleIsDirty = true;
         setNeedsStyleRecalc(InlineStyleChange);
     }
 
@@ -342,8 +340,11 @@ void StyledElement::rebuildPresentationAttributeStyle()
         }
     }
 
-    attributeData()->m_presentationAttributeStyleIsDirty = false;
-    attributeData()->setPresentationAttributeStyle(style->isEmpty() ? 0 : style);
+    // ImmutableElementAttributeData doesn't store presentation attribute style, so make sure we have a MutableElementAttributeData.
+    ElementAttributeData* attributeData = mutableAttributeData();
+
+    attributeData->m_presentationAttributeStyleIsDirty = false;
+    attributeData->setPresentationAttributeStyle(style->isEmpty() ? 0 : style);
 
     if (!cacheHash || cacheIterator->value)
         return;
