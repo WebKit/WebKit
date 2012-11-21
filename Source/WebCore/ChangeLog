@@ -1,3 +1,33 @@
+2012-11-21  Kentaro Hara  <haraken@chromium.org>
+
+        [V8] Move V8DOMWindowShell::initializeV8IfNeeded() to V8Initializer
+        https://bugs.webkit.org/show_bug.cgi?id=102899
+
+        Reviewed by Adam Barth.
+
+        This is an incremental step to kill WorkerContextExecutionProxy.
+        As commented by abarth in bug 97066, we move
+        V8DOMWindowShell::initializeV8IfNeeded() to V8Initializer.
+        This patch renames initializeV8IfNeeded() to initializeMainThreadIfNeeded()
+        because we will add initializeWorkerIfNeeded() in a follow-up patch.
+
+        No tests. No change in behavior.
+
+        * UseV8.cmake:
+        * WebCore.gypi:
+        * bindings/v8/V8DOMWindowShell.cpp:
+        (WebCore::V8DOMWindowShell::initializeIfNeeded):
+        * bindings/v8/V8Initializer.cpp: Added.
+        (WebCore):
+        (WebCore::findFrame):
+        (WebCore::reportFatalError):
+        (WebCore::reportUncaughtException):
+        (WebCore::reportUnsafeJavaScriptAccess):
+        (WebCore::V8Initializer::initializeMainThreadIfNeeded):
+        * bindings/v8/V8Initializer.h: Added.
+        (WebCore):
+        (V8Initializer):
+
 2012-11-21  Alexander Pavlov  <apavlov@chromium.org>
 
         Turn -webkit-text-emphasis into a shorthand property

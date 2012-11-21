@@ -55,6 +55,7 @@ LIST(APPEND WebCore_SOURCES
     bindings/v8/V8GCController.cpp
     bindings/v8/V8GCForContextDispose.cpp
     bindings/v8/V8HiddenPropertyName.cpp
+    bindings/v8/V8Initializer.cpp
     bindings/v8/V8LazyEventListener.cpp
     bindings/v8/V8NodeFilterCondition.cpp
     bindings/v8/V8ObjectConstructor.cpp
