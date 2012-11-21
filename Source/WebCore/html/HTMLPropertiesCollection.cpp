@@ -45,7 +45,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-PassRefPtr<HTMLPropertiesCollection> HTMLPropertiesCollection::create(Node* itemNode)
+PassRefPtr<HTMLPropertiesCollection> HTMLPropertiesCollection::create(Node* itemNode, CollectionType)
 {
     return adoptRef(new HTMLPropertiesCollection(itemNode));
 }
