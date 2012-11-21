@@ -53,26 +53,15 @@ enum ParameterDefaultPolicy {
             return block.ReThrow();       \
     }
 
-#define STRING_TO_V8PARAMETER_EXCEPTION_BLOCK(type, var, value) \
-    type var;                                                   \
-    {                                                           \
-        v8::TryCatch block;                                     \
-        var = (value);                                          \
-        if (block.HasCaught()) {                                \
-            block.ReThrow();                                    \
-            return v8::Undefined();                             \
-        }                                                       \
-    }
-
-#define STRING_TO_V8PARAMETER_EXCEPTION_BLOCK_VOID(type, var, value) \
-    type var;                                                        \
-    {                                                                \
-        v8::TryCatch block;                                          \
-        var = (value);                                               \
-        if (block.HasCaught()) {                                     \
-            block.ReThrow();                                         \
-            return;                                                  \
-        }                                                            \
+#define EXCEPTION_BLOCK_VOID(type, var, value) \
+    type var;                                  \
+    {                                          \
+        v8::TryCatch block;                    \
+        var = (value);                         \
+        if (block.HasCaught()) {               \
+            block.ReThrow();                   \
+            return;                            \
+        }                                      \
     }
 
 #define MAYBE_MISSING_PARAMETER(args, index, policy) \

@@ -2029,7 +2029,7 @@ END
     if (args.Length() < 1)
         return throwNotEnoughArgumentsError(args.GetIsolate());
 
-    STRING_TO_V8PARAMETER_EXCEPTION_BLOCK(V8Parameter<>, type, args[0]);
+    EXCEPTION_BLOCK(V8Parameter<>, type, args[0]);
     ${interfaceName}Init eventInit;
     if (args.Length() >= 2) {
         EXCEPTION_BLOCK(Dictionary, options, Dictionary(args[1], args.GetIsolate()));
@@ -4205,7 +4205,7 @@ sub ConvertToV8Parameter
 
     die "Wrong native type passed: $nativeType" unless $nativeType =~ /^V8Parameter/;
     if ($signature->type eq "DOMString") {
-        my $macro = "STRING_TO_V8PARAMETER_EXCEPTION_BLOCK";
+        my $macro = "EXCEPTION_BLOCK";
         $macro .= "_$suffix" if $suffix;
         return "$macro($nativeType, $variableName, $value);"
     } else {

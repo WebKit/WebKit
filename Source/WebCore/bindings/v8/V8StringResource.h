@@ -59,7 +59,7 @@ public:
     }
 
     // This can throw. You must use this through the
-    // STRING_TO_V8PARAMETER_EXCEPTION_BLOCK() macro.
+    // EXCEPTION_BLOCK() macro.
     V8Parameter& operator=(v8::Local<v8::Value>);
     operator String() { return toString<String>(); }
     operator AtomicString() { return toString<AtomicString>(); }
