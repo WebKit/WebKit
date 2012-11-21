@@ -151,6 +151,11 @@ bool IDBTransactionBackendImpl::isTaskQueueEmpty() const
     return m_preemptiveTaskQueue.isEmpty() && m_taskQueue.isEmpty();
 }
 
+bool IDBTransactionBackendImpl::hasPendingTasks() const
+{
+    return m_pendingEvents || m_pendingPreemptiveEvents || !isTaskQueueEmpty();
+}
+
 void IDBTransactionBackendImpl::registerOpenCursor(IDBCursorBackendImpl* cursor)
 {
     m_openCursors.add(cursor);
@@ -176,12 +181,16 @@ void IDBTransactionBackendImpl::didCompleteTaskEvents()
     ASSERT(m_pendingEvents);
     m_pendingEvents--;
 
+    // A single task has completed and error/success events fired. Schedule
+    // timer to process another.
     if (!m_taskEventTimer.isActive())
         m_taskEventTimer.startOneShot(0);
 }
 
 void IDBTransactionBackendImpl::run()
 {
+    // TransactionCoordinator has started this transaction. Schedule a timer
+    // to process the first task.
     ASSERT(m_state == StartPending || m_state == Running);
     ASSERT(!m_taskTimer.isActive());
 
@@ -200,12 +209,18 @@ void IDBTransactionBackendImpl::start()
 void IDBTransactionBackendImpl::commit()
 {
     IDB_TRACE("IDBTransactionBackendImpl::commit");
+
+    ASSERT(m_state == Unused || m_state == Running);
+
+    // Front-end has requested a commit, but there may be tasks like createIndex which
+    // are considered synchronous by the front-end but are processed asynchronously.
+    if (hasPendingTasks())
+        return;
+
     // The last reference to this object may be released while performing the
     // commit steps below. We therefore take a self reference to keep ourselves
     // alive while executing this method.
     RefPtr<IDBTransactionBackendImpl> protect(this);
-    ASSERT(m_state == Unused || m_state == Running);
-    ASSERT(isTaskQueueEmpty());
 
     bool unused = m_state == Unused;
     m_state = Finished;
@@ -267,7 +282,7 @@ void IDBTransactionBackendImpl::taskEventTimerFired(Timer<IDBTransactionBackendI
     IDB_TRACE("IDBTransactionBackendImpl::taskEventTimerFired");
     ASSERT(m_state == Running);
 
-    if (!m_pendingEvents && !m_pendingPreemptiveEvents && isTaskQueueEmpty()) {
+    if (!hasPendingTasks()) {
         // The last task event has completed and the task
         // queue is empty. Commit the transaction.
         commit();

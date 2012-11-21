@@ -95,8 +95,7 @@ IDBTransaction::IDBTransaction(ScriptExecutionContext* context, PassRefPtr<IDBTr
     , m_objectStoreNames(objectStoreNames)
     , m_openDBRequest(openDBRequest)
     , m_mode(mode)
-    , m_active(true)
-    , m_state(Unused)
+    , m_state(Active)
     , m_hasPendingActivity(true)
     , m_contextStopped(false)
 {
@@ -104,14 +103,12 @@ IDBTransaction::IDBTransaction(ScriptExecutionContext* context, PassRefPtr<IDBTr
 
     if (mode == VERSION_CHANGE) {
         // Not active until the callback.
-        m_active = false;
-        // Implicitly used by the version change itself.
-        m_state = Used;
+        m_state = Inactive;
     }
 
     // We pass a reference of this object before it can be adopted.
     relaxAdoptionRequirement();
-    if (m_active)
+    if (m_state == Active)
         IDBPendingTransactionMonitor::addNewTransaction(this);
     m_database->transactionCreated(this);
 }
@@ -206,11 +203,10 @@ void IDBTransaction::setActive(bool active)
     ASSERT_WITH_MESSAGE(m_state != Finished, "A finished transaction tried to setActive(%s)", active ? "true" : "false");
     if (m_state == Finishing)
         return;
-    ASSERT(m_state == Unused || m_state == Used);
-    ASSERT(active != m_active);
-    m_active = active;
+    ASSERT(active != (m_state == Active));
+    m_state = active ? Active : Inactive;
 
-    if (!active && m_state == Unused)
+    if (!active && m_requestList.isEmpty())
         m_backend->commit();
 }
 
@@ -222,7 +218,6 @@ void IDBTransaction::abort(ExceptionCode& ec)
     }
 
     m_state = Finishing;
-    m_active = false;
 
     while (!m_requestList.isEmpty()) {
         IDBRequest* request = *m_requestList.begin();
@@ -278,10 +273,8 @@ void IDBTransaction::closeOpenCursors()
 void IDBTransaction::registerRequest(IDBRequest* request)
 {
     ASSERT(request);
-    ASSERT(m_state == Unused || m_state == Used);
-    ASSERT(m_active);
+    ASSERT(m_state == Active);
     m_requestList.add(request);
-    m_state = Used;
 }
 
 void IDBTransaction::unregisterRequest(IDBRequest* request)

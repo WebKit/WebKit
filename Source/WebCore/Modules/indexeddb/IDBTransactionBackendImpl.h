@@ -74,8 +74,8 @@ private:
 
     enum State {
         Unused, // Created, but no tasks yet.
-        StartPending, // Enqueued tasks, but SQLite transaction not yet started.
-        Running, // SQLite transaction started but not yet finished.
+        StartPending, // Enqueued tasks, but backing store transaction not yet started.
+        Running, // Backing store transaction started but not yet finished.
         Finished, // Either aborted or committed.
     };
 
@@ -83,6 +83,7 @@ private:
     void commit();
 
     bool isTaskQueueEmpty() const;
+    bool hasPendingTasks() const;
 
     void taskTimerFired(Timer<IDBTransactionBackendImpl>*);
     void taskEventTimerFired(Timer<IDBTransactionBackendImpl>*);

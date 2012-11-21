@@ -1,3 +1,30 @@
+2012-11-20  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: Move control of transaction completion to front end
+        https://bugs.webkit.org/show_bug.cgi?id=100903
+
+        Reviewed by Tony Chang.
+
+        "When a transaction can no longer become active, the implementation must attempt to
+        commit it" - that is, all requests have dispatched success/error events and no further
+        requests have been made. Previously, this was done by the back end waiting for events
+        from the front end, but the front end can more efficiently make the decision.
+
+        There should be no detectable behavior change.
+
+        Tests: storage/indexeddb/transaction-*.html
+
+        * Modules/indexeddb/IDBTransaction.cpp:
+        (WebCore::IDBTransaction::IDBTransaction):
+        (WebCore::IDBTransaction::setActive):
+        (WebCore::IDBTransaction::registerRequest):
+        * Modules/indexeddb/IDBTransaction.h:
+        * Modules/indexeddb/IDBTransactionBackendImpl.cpp:
+        (WebCore::IDBTransactionBackendImpl::hasPendingTasks): Added.
+        (WebCore::IDBTransactionBackendImpl::didCompleteTaskEvents):
+        (WebCore::IDBTransactionBackendImpl::run):
+        (WebCore::IDBTransactionBackendImpl::taskEventTimerFired):
+
 2012-11-20  Kentaro Hara  <haraken@chromium.org>
 
         Unreviewed. Rebaselined run-bindings-tests results.

@@ -500,6 +500,11 @@ bool IDBRequest::dispatchEvent(PassRefPtr<Event> event)
         m_transaction->setActive(true);
 
     bool dontPreventDefault = IDBEventDispatcher::dispatch(event.get(), targets);
+
+    if (m_transaction && m_readyState == DONE)
+        m_transaction->unregisterRequest(this);
+
+    // If this was the last request in the transaction's list, it may commit here.
     if (setTransactionActive)
         m_transaction->setActive(false);
 
@@ -518,9 +523,6 @@ bool IDBRequest::dispatchEvent(PassRefPtr<Event> event)
 
         if (event->type() != eventNames().blockedEvent)
             m_transaction->backend()->didCompleteTaskEvents();
-
-        if (m_readyState == DONE)
-            m_transaction->unregisterRequest(this);
     }
 
     return dontPreventDefault;
