@@ -33,7 +33,7 @@ HTMLOptionsCollection::HTMLOptionsCollection(Element* select)
     ASSERT(select->hasTagName(HTMLNames::selectTag));
 }
 
-PassRefPtr<HTMLOptionsCollection> HTMLOptionsCollection::create(Element* select)
+PassRefPtr<HTMLOptionsCollection> HTMLOptionsCollection::create(Element* select, CollectionType)
 {
     return adoptRef(new HTMLOptionsCollection(select));
 }

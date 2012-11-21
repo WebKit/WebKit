@@ -42,7 +42,7 @@ HTMLFormControlsCollection::HTMLFormControlsCollection(Element* base)
     ASSERT(base->hasTagName(formTag) || base->hasTagName(fieldsetTag));
 }
 
-PassRefPtr<HTMLFormControlsCollection> HTMLFormControlsCollection::create(Element* base)
+PassRefPtr<HTMLFormControlsCollection> HTMLFormControlsCollection::create(Element* base, CollectionType)
 {
     return adoptRef(new HTMLFormControlsCollection(base));
 }

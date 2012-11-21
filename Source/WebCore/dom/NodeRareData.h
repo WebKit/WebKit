@@ -59,7 +59,7 @@ public:
         static const bool safeToCompareToEmptyOrDeleted = DefaultHash<StringType>::Hash::safeToCompareToEmptyOrDeleted;
     };
 
-    typedef HashMap<std::pair<unsigned char, AtomicString>, DynamicSubtreeNodeList*, NodeListCacheMapEntryHash<AtomicString> > NodeListAtomicNameCacheMap;
+    typedef HashMap<std::pair<unsigned char, AtomicString>, DynamicNodeListCacheBase*, NodeListCacheMapEntryHash<AtomicString> > NodeListAtomicNameCacheMap;
     typedef HashMap<std::pair<unsigned char, String>, DynamicSubtreeNodeList*, NodeListCacheMapEntryHash<String> > NodeListNameCacheMap;
     typedef HashMap<QualifiedName, TagNodeList*> TagNodeListCacheNS;
 
@@ -73,6 +73,26 @@ public:
         RefPtr<T> list = T::create(node, name);
         result.iterator->value = list.get();
         return list.release();
+    }
+
+    template<typename T>
+    PassRefPtr<T> addCacheWithAtomicName(Element* node, CollectionType collectionType)
+    {
+        unsigned char type = DynamicNodeList::PastLastNodeListType + collectionType - FirstNodeCollectionType;
+        NodeListAtomicNameCacheMap::AddResult result = m_atomicNameCaches.add(namedNodeListKey(type, starAtom), 0);
+        if (!result.isNewEntry)
+            return static_cast<T*>(result.iterator->value);
+
+        RefPtr<T> list = T::create(node, collectionType);
+        result.iterator->value = list.get();
+        return list.release();
+    }
+
+    template<typename T>
+    T* cacheWithAtomicName(CollectionType collectionType)
+    {
+        unsigned char type = DynamicNodeList::PastLastNodeListType + collectionType - FirstNodeCollectionType;
+        return static_cast<T*>(m_atomicNameCaches.get(namedNodeListKey(type, starAtom)));
     }
 
     template<typename T>
@@ -99,10 +119,17 @@ public:
         return list.release();
     }
 
-    void removeCacheWithAtomicName(DynamicSubtreeNodeList* list, DynamicNodeList::NodeListType listType, const AtomicString& name)
+    void removeCacheWithAtomicName(DynamicNodeListCacheBase* list, DynamicNodeList::NodeListType listType, const AtomicString& name)
     {
         ASSERT_UNUSED(list, list == m_atomicNameCaches.get(namedNodeListKey(listType, name)));
         m_atomicNameCaches.remove(namedNodeListKey(listType, name));
+    }
+
+    void removeCacheWithAtomicName(DynamicNodeListCacheBase* list, CollectionType collectionType)
+    {
+        unsigned char type = DynamicNodeList::PastLastNodeListType + collectionType - FirstNodeCollectionType;
+        ASSERT_UNUSED(list, list == m_atomicNameCaches.get(namedNodeListKey(type, starAtom)));
+        m_atomicNameCaches.remove(namedNodeListKey(type, starAtom));
     }
 
     void removeCacheWithName(DynamicSubtreeNodeList* list, DynamicNodeList::NodeListType listType, const String& name)
@@ -136,21 +163,21 @@ public:
         if (oldDocument != newDocument) {
             NodeListAtomicNameCacheMap::const_iterator atomicNameCacheEnd = m_atomicNameCaches.end();
             for (NodeListAtomicNameCacheMap::const_iterator it = m_atomicNameCaches.begin(); it != atomicNameCacheEnd; ++it) {
-                DynamicSubtreeNodeList* list = it->value;
+                DynamicNodeListCacheBase* list = it->value;
                 oldDocument->unregisterNodeListCache(list);
                 newDocument->registerNodeListCache(list);
             }
 
             NodeListNameCacheMap::const_iterator nameCacheEnd = m_nameCaches.end();
             for (NodeListNameCacheMap::const_iterator it = m_nameCaches.begin(); it != nameCacheEnd; ++it) {
-                DynamicSubtreeNodeList* list = it->value;
+                DynamicNodeListCacheBase* list = it->value;
                 oldDocument->unregisterNodeListCache(list);
                 newDocument->registerNodeListCache(list);
             }
 
             TagNodeListCacheNS::const_iterator tagEnd = m_tagNodeListCacheNS.end();
             for (TagNodeListCacheNS::const_iterator it = m_tagNodeListCacheNS.begin(); it != tagEnd; ++it) {
-                DynamicSubtreeNodeList* list = it->value;
+                DynamicNodeListCacheBase* list = it->value;
                 ASSERT(!list->isRootedAtDocument());
                 oldDocument->unregisterNodeListCache(list);
                 newDocument->registerNodeListCache(list);
@@ -163,12 +190,12 @@ public:
 private:
     NodeListsNodeData() { }
 
-    std::pair<unsigned char, AtomicString> namedNodeListKey(DynamicNodeList::NodeListType listType, const AtomicString& name)
+    std::pair<unsigned char, AtomicString> namedNodeListKey(unsigned char listType, const AtomicString& name)
     {
         return std::pair<unsigned char, AtomicString>(listType, name);
     }
 
-    std::pair<unsigned char, String> namedNodeListKey(DynamicNodeList::NodeListType listType, const String& name)
+    std::pair<unsigned char, String> namedNodeListKey(unsigned char listType, const String& name)
     {
         return std::pair<unsigned char, String>(listType, name);
     }

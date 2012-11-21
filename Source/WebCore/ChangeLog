@@ -1,3 +1,52 @@
+2012-11-20  Ryosuke Niwa  <rniwa@webkit.org>
+
+        HTMLCollection should use the same storage as DynamicNodeList
+        https://bugs.webkit.org/show_bug.cgi?id=102886
+
+        Reviewed by Antti Koivisto.
+
+        This patch removes ElementRareData::m_collection. HTMLCollections are now held by
+        NodeListNodeData in NodeRareData like DynamicNodeLists. This simplifies several
+        Element and Node functions where we used to call into both ElementRareData and
+        NodeRareData to invalidate caches.
+
+        This is a refactoring and there should be no behavioral change.
+
+        * dom/DynamicNodeList.h:
+        * dom/Element.cpp:
+        (WebCore::ElementRareData::ensureCachedHTMLCollection):
+        * dom/ElementRareData.cpp:
+        (WebCore::ElementRareData::reportMemoryUsage):
+        * dom/ElementRareData.h:
+        (ElementRareData):
+        (WebCore::ElementRareData::cachedHTMLCollection):
+        (WebCore::ElementRareData::removeCachedHTMLCollection):
+        * dom/Node.cpp:
+        (WebCore::Node::invalidateNodeListCachesInAncestors):
+        * dom/NodeRareData.h:
+        (NodeListsNodeData):
+        (WebCore::NodeListsNodeData::addCacheWithAtomicName):
+        (WebCore::NodeListsNodeData::cacheWithAtomicName):
+        (WebCore::NodeListsNodeData::removeCacheWithAtomicName):
+        (WebCore::NodeListsNodeData::adoptTreeScope):
+        (WebCore::NodeListsNodeData::namedNodeListKey):
+        * dom/TreeScopeAdopter.cpp:
+        (WebCore::TreeScopeAdopter::moveTreeToNewScope):
+        * html/HTMLFormControlsCollection.cpp:
+        (WebCore::HTMLFormControlsCollection::create):
+        * html/HTMLFormControlsCollection.h:
+        (HTMLFormControlsCollection):
+        * html/HTMLOptionsCollection.cpp:
+        (WebCore::HTMLOptionsCollection::create):
+        * html/HTMLOptionsCollection.h:
+        (HTMLOptionsCollection::create):
+        * html/HTMLPropertiesCollection.h:
+        (HTMLPropertiesCollection::create):
+        * html/HTMLTableRowsCollection.cpp:
+        (WebCore::HTMLTableRowsCollection::create):
+        * html/HTMLTableRowsCollection.h:
+        (HTMLTableRowsCollection):
+
 2012-11-21  Andreas Kling  <akling@apple.com>
 
         Update incorrect assertion in ImmutableElementAttributeData(MutableElementAttributeData).

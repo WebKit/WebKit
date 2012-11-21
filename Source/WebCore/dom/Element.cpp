@@ -2419,33 +2419,25 @@ PassRefPtr<HTMLCollection> Element::ensureCachedHTMLCollection(CollectionType ty
 
 PassRefPtr<HTMLCollection> ElementRareData::ensureCachedHTMLCollection(Element* element, CollectionType type)
 {
-    if (!m_cachedCollections) {
-        m_cachedCollections = adoptPtr(new CachedHTMLCollectionArray);
-        for (unsigned i = 0; i < NumNodeCollectionTypes; i++)
-            (*m_cachedCollections)[i] = 0;
-    }
-
-    if (HTMLCollection* collection = (*m_cachedCollections)[type - FirstNodeCollectionType])
+    if (HTMLCollection* collection = cachedHTMLCollection(type))
         return collection;
 
     RefPtr<HTMLCollection> collection;
     if (type == TableRows) {
         ASSERT(element->hasTagName(tableTag));
-        collection = HTMLTableRowsCollection::create(element);
+        return ensureNodeLists()->addCacheWithAtomicName<HTMLTableRowsCollection>(element, type);
     } else if (type == SelectOptions) {
         ASSERT(element->hasTagName(selectTag));
-        collection = HTMLOptionsCollection::create(element);
+        return ensureNodeLists()->addCacheWithAtomicName<HTMLOptionsCollection>(element, type);
     } else if (type == FormControls) {
         ASSERT(element->hasTagName(formTag) || element->hasTagName(fieldsetTag));
-        collection = HTMLFormControlsCollection::create(element);
+        return ensureNodeLists()->addCacheWithAtomicName<HTMLFormControlsCollection>(element, type);
 #if ENABLE(MICRODATA)
-    } else if (type == ItemProperties) {
-        collection = HTMLPropertiesCollection::create(element);
+    } else if (nodeLists()->type == ItemProperties) {
+        return ensureNodeLists()->addCacheWithAtomicName<HTMLPropertiesCollection>(element, type);
 #endif
-    } else
-        collection = HTMLCollection::create(element, type);
-    (*m_cachedCollections)[type - FirstNodeCollectionType] = collection.get();
-    return collection.release();
+    }
+    return ensureNodeLists()->addCacheWithAtomicName<HTMLCollection>(element, type);
 }
 
 HTMLCollection* Element::cachedHTMLCollection(CollectionType type)

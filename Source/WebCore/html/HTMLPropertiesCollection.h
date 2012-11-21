@@ -43,7 +43,7 @@ class PropertyNodeList;
 
 class HTMLPropertiesCollection : public HTMLCollection {
 public:
-    static PassRefPtr<HTMLPropertiesCollection> create(Node*);
+    static PassRefPtr<HTMLPropertiesCollection> create(Node*, CollectionType);
     virtual ~HTMLPropertiesCollection();
 
     void updateRefElements() const;

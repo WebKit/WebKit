@@ -157,7 +157,7 @@ HTMLTableRowsCollection::HTMLTableRowsCollection(Element* table)
     ASSERT(table->hasTagName(tableTag));
 }
 
-PassRefPtr<HTMLTableRowsCollection> HTMLTableRowsCollection::create(Element* table)
+PassRefPtr<HTMLTableRowsCollection> HTMLTableRowsCollection::create(Element* table, CollectionType)
 {
     return adoptRef(new HTMLTableRowsCollection(table));
 }

@@ -199,6 +199,7 @@ public:
         LabelsNodeListType,
         MicroDataItemListType,
         PropertyNodeListType,
+        PastLastNodeListType,
     };
     DynamicNodeList(PassRefPtr<Node> ownerNode, NodeListType type, NodeListRootType rootType, NodeListInvalidationType invalidationType)
         : DynamicNodeListCacheBase(ownerNode.get(), rootType, invalidationType, type == ChildNodeListType, NodeListCollectionType, DoesNotOverrideItemAfter)

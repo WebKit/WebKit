@@ -1022,8 +1022,6 @@ void Node::invalidateNodeListCachesInAncestors(const QualifiedName* attrName, El
         NodeRareData* data = node->rareData();
         if (data->nodeLists())
             data->nodeLists()->invalidateCaches(attrName);
-        if (node->isElementNode())
-            static_cast<ElementRareData*>(data)->clearHTMLCollectionCaches(attrName);
     }
 }
 

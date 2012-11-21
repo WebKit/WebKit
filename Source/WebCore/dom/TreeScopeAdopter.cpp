@@ -52,8 +52,6 @@ void TreeScopeAdopter::moveTreeToNewScope(Node* root) const
         if (NodeRareData* rareData = node->setTreeScope(newDocument == m_newScope ? 0 : m_newScope)) {
             if (rareData->nodeLists())
                 rareData->nodeLists()->adoptTreeScope(oldDocument, newDocument);
-            if (node->isElementNode())
-                static_cast<ElementRareData*>(rareData)->adoptTreeScope(oldDocument, newDocument);
         }
 
         if (willMoveToNewDocument)

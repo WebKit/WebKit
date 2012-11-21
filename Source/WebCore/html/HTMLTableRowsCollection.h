@@ -38,7 +38,7 @@ class HTMLTableRowElement;
 
 class HTMLTableRowsCollection : public HTMLCollection {
 public:
-    static PassRefPtr<HTMLTableRowsCollection> create(Element*);
+    static PassRefPtr<HTMLTableRowsCollection> create(Element*, CollectionType);
 
     static HTMLTableRowElement* rowAfter(HTMLTableElement*, HTMLTableRowElement*);
     static HTMLTableRowElement* lastRow(HTMLTableElement*);
