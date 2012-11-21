@@ -712,6 +712,8 @@ webkit.org/b/100636 [ Debug ] jquery/traversing.html [ Failure Crash Pass ]
 
 webkit.org/b/96641 media/video-seek-past-end-playing.html [ Failure Pass ]
 
+webkit.org/b/102928 svg/foreignObject/viewport-foreignobject-crash.html [ Crash Failure Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # FAILING TESTS
 #////////////////////////////////////////////////////////////////////////////////////////
