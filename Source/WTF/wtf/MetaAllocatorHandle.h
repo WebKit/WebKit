@@ -69,6 +69,16 @@ public:
     {
         return m_sizeInBytes;
     }
+    
+    bool containsIntegerAddress(uintptr_t address) const
+    {
+        return address - startAsInteger() < sizeInBytes();
+    }
+    
+    bool contains(void* address) const
+    {
+        return containsIntegerAddress(reinterpret_cast<uintptr_t>(address));
+    }
         
     WTF_EXPORT_PRIVATE void shrink(size_t newSizeInBytes);
     

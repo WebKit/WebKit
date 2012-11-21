@@ -83,6 +83,8 @@ public:
 
     void push(T*);
     static void remove(T*);
+    
+    bool isOnList(T*);
 
     iterator begin();
     iterator end();
@@ -150,6 +152,19 @@ template <typename T, typename RawNode> inline void SentinelLinkedList<T, RawNod
     
     node->setPrev(0);
     node->setNext(0);
+}
+
+template <typename T, typename RawNode> inline bool SentinelLinkedList<T, RawNode>::isOnList(T* node)
+{
+    if (!node->isOnList())
+        return false;
+    
+    for (T* iter = begin(); iter != end(); iter = iter->next()) {
+        if (iter == node)
+            return true;
+    }
+    
+    return false;
 }
 
 }
