@@ -119,6 +119,7 @@
                     'type': 'shared_library',
                     'dependencies': [
                         '<(chromium_src_dir)/testing/android/native_test.gyp:native_test_native_code',
+                        '<(chromium_src_dir)/tools/android/forwarder2/forwarder.gyp:forwarder2',
                     ],
                 }],
                 ['OS=="mac"', {
