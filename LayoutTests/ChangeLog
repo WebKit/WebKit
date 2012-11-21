@@ -1,3 +1,12 @@
+2012-11-21  Jussi Kukkonen  <jussi.kukkonen@intel.com>
+
+        [EFL][WK2] Gardening: css3/device-adapt/opera/constrain-006 and -007 fail
+        https://bugs.webkit.org/show_bug.cgi?id=102923
+
+        Unreviewed gardening: these two still fail after using fixed layout in WTR.
+
+        * platform/efl-wk2/TestExpectations:
+
 2012-11-21  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed gardening, unskip s now passing test.
