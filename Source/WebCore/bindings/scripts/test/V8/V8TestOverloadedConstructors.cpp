@@ -105,7 +105,6 @@ v8::Handle<v8::Value> V8TestOverloadedConstructors::constructorCallback(const v8
 
     if (ConstructorMode::current() == ConstructorMode::WrapExistingObject)
         return args.Holder();
-
     if ((args.Length() == 1 && (V8ArrayBuffer::HasInstance(args[0]))))
         return constructor1Callback(args);
     if ((args.Length() == 1 && (V8ArrayBufferView::HasInstance(args[0]))))

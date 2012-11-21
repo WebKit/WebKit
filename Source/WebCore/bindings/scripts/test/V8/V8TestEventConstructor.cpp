@@ -64,13 +64,11 @@ static const V8DOMConfiguration::BatchedAttribute V8TestEventConstructorAttrs[] 
 v8::Handle<v8::Value> V8TestEventConstructor::constructorCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.TestEventConstructor.Constructor");
-
     if (!args.IsConstructCall())
         return throwTypeError("DOM object constructor cannot be called as a function.");
 
     if (ConstructorMode::current() == ConstructorMode::WrapExistingObject)
         return args.Holder();
-
     if (args.Length() < 1)
         return throwNotEnoughArgumentsError(args.GetIsolate());
 
