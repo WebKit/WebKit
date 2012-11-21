@@ -1,3 +1,12 @@
+2012-11-21  Mike Reed  <reed@google.com>
+
+        update expectations in advance of skia deps roll
+        https://bugs.webkit.org/show_bug.cgi?id=102964
+
+        Reviewed by NOBODY. expectations change only.
+
+        * platform/chromium/TestExpectations:
+
 2012-11-21  Jussi Kukkonen  <jussi.kukkonen@intel.com>
 
         [EFL][WK2] gardening: fast/writing-mode/japanese-ruby-* are flaky

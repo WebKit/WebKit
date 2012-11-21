@@ -2226,6 +2226,19 @@ crbug.com/161899  platform/chromium/fast/forms/color/color-suggestion-picker-wit
 crbug.com/161899  platform/chromium/virtual/softwarecompositing/shadows/shadow-drawing.html [ Failure ImageOnlyFailure ]
 crbug.com/161899  svg/filters/shadow-on-rect-with-filter.svg [ Failure ImageOnlyFailure ]
 
+# To be rebaselined after skia rev. 6530 has landed in webkit
+crbug.com/162247  fast/canvas/canvas-incremental-repaint.html [ ImageOnlyFailure ]
+crbug.com/162247  svg/W3C-SVG-1.1/animate-elem-81-t.svg [ ImageOnlyFailure ]
+crbug.com/162247  svg/W3C-SVG-1.1/animate-elem-82-t.svg [ ImageOnlyFailure ]
+crbug.com/162247  svg/W3C-SVG-1.1/painting-stroke-02-t.svg [ ImageOnlyFailure ]
+crbug.com/162247  svg/css/group-with-shadow.svg [ ImageOnlyFailure ]
+crbug.com/162247  svg/custom/linking-a-03-b-transform.svg [ ImageOnlyFailure ]
+crbug.com/162247  svg/custom/linking-a-03-b-viewBox-transform.svg [ ImageOnlyFailure ]
+crbug.com/162247  svg/custom/pattern-rotate.svg [ ImageOnlyFailure ]
+crbug.com/162247  svg/custom/stroke-width-large.svg [ ImageOnlyFailure ]
+crbug.com/162247  svg/custom/use-transform.svg [ ImageOnlyFailure ]
+crbug.com/162247  svg/transforms/text-with-pattern-with-svg-transform.svg [ ImageOnlyFailure ]
+
 crbug.com/43890 [ Win ] http/tests/loading/basic.html [ Failure Pass ]
 
 # The following tests fail on all platforms and need further investigation.
