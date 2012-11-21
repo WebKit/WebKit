@@ -699,6 +699,19 @@ IntRect CoordinatedGraphicsLayer::tiledBackingStoreContentsRect()
     return IntRect(0, 0, size().width(), size().height());
 }
 
+static void clampToContentsRectIfRectIsInfinite(FloatRect& rect, const IntRect& contentsRect)
+{
+    if (rect.width() >= LayoutUnit::nearlyMax() || rect.width() <= LayoutUnit::nearlyMin()) {
+        rect.setX(contentsRect.x());
+        rect.setWidth(contentsRect.width());
+    }
+
+    if (rect.height() >= LayoutUnit::nearlyMax() || rect.height() <= LayoutUnit::nearlyMin()) {
+        rect.setY(contentsRect.y());
+        rect.setHeight(contentsRect.height());
+    }
+}
+
 IntRect CoordinatedGraphicsLayer::tiledBackingStoreVisibleRect()
 {
     // Non-invertible layers are not visible.
@@ -709,7 +722,9 @@ IntRect CoordinatedGraphicsLayer::tiledBackingStoreVisibleRect()
     // The resulting quad might be squewed and the visible rect is the bounding box of this quad,
     // so it might spread further than the real visible area (and then even more amplified by the cover rect multiplier).
     ASSERT(m_cachedInverseTransform == m_layerTransform.combined().inverse());
-    return enclosingIntRect(m_cachedInverseTransform.clampedBoundsOfProjectedQuad(FloatQuad(FloatRect(m_coordinator->visibleContentsRect()))));
+    FloatRect rect = m_cachedInverseTransform.clampedBoundsOfProjectedQuad(FloatQuad(FloatRect(m_coordinator->visibleContentsRect())));
+    clampToContentsRectIfRectIsInfinite(rect, tiledBackingStoreContentsRect());
+    return enclosingIntRect(rect);
 }
 
 Color CoordinatedGraphicsLayer::tiledBackingStoreBackgroundColor() const

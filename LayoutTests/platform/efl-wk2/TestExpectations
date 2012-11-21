@@ -43,9 +43,6 @@ editing/spelling/spelling-linebreak.html [ Pass ]
 #////////////////////////////////////////////////////////////////////////////////////////
 # CRASHES
 #////////////////////////////////////////////////////////////////////////////////////////
-
-webkit.org/b/102313 fast/multicol/span/positioned-child-not-removed-crash.html [ Crash ]
-
 webkit.org/b/92726 fast/dom/register-protocol-handler.html [ Crash ]
 webkit.org/b/92726 fast/dom/unregister-protocol-handler.html [ Crash ]
 
