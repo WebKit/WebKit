@@ -22,7 +22,6 @@
 #include "WebDOMTestEventConstructor.h"
 
 #include "KURL.h"
-#include "TestEventConstructor.h"
 #include "WebDOMString.h"
 #include "WebExceptionHandler.h"
 #include "wtf/text/AtomicString.h"

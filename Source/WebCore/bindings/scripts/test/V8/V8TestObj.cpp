@@ -517,10 +517,11 @@ static v8::Handle<v8::Value> withScriptStateAttributeAttrGetter(v8::Local<v8::St
 {
     INC_STATS("DOM.TestObj.withScriptStateAttribute._get");
     TestObj* imp = V8TestObj::toNative(info.Holder());
-    ScriptState* state = ScriptState::current();
-    if (!state)
+    ScriptState* currentState = ScriptState::current();
+    if (!currentState)
         return v8Undefined();
-    return v8Integer(imp->withScriptStateAttribute(state), info.GetIsolate());
+    ScriptState& state = *currentState;
+    return v8Integer(imp->withScriptStateAttribute(&state), info.GetIsolate());
 }
 
 static void withScriptStateAttributeAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
@@ -528,10 +529,11 @@ static void withScriptStateAttributeAttrSetter(v8::Local<v8::String> name, v8::L
     INC_STATS("DOM.TestObj.withScriptStateAttribute._set");
     TestObj* imp = V8TestObj::toNative(info.Holder());
     int v = toInt32(value);
-    ScriptState* state = ScriptState::current();
-    if (!state)
+    ScriptState* currentState = ScriptState::current();
+    if (!currentState)
         return;
-    imp->setWithScriptStateAttribute(state, v);
+    ScriptState& state = *currentState;
+    imp->setWithScriptStateAttribute(&state, v);
     if (state.hadException())
         throwError(state.exception(), info.GetIsolate());
     return;
@@ -560,10 +562,11 @@ static v8::Handle<v8::Value> withScriptStateAttributeRaisesAttrGetter(v8::Local<
     INC_STATS("DOM.TestObj.withScriptStateAttributeRaises._get");
     TestObj* imp = V8TestObj::toNative(info.Holder());
     ExceptionCode ec = 0;
-    ScriptState* state = ScriptState::current();
-    if (!state)
+    ScriptState* currentState = ScriptState::current();
+    if (!currentState)
         return v8Undefined();
-    RefPtr<TestObj> v = imp->withScriptStateAttributeRaises(state, ec);
+    ScriptState& state = *currentState;
+    RefPtr<TestObj> v = imp->withScriptStateAttributeRaises(&state, ec);
     if (UNLIKELY(ec))
         return setDOMException(ec, info.GetIsolate());
     if (state.hadException())
@@ -576,10 +579,11 @@ static void withScriptStateAttributeRaisesAttrSetter(v8::Local<v8::String> name,
     INC_STATS("DOM.TestObj.withScriptStateAttributeRaises._set");
     TestObj* imp = V8TestObj::toNative(info.Holder());
     TestObj* v = V8TestObj::HasInstance(value) ? V8TestObj::toNative(v8::Handle<v8::Object>::Cast(value)) : 0;
-    ScriptState* state = ScriptState::current();
-    if (!state)
+    ScriptState* currentState = ScriptState::current();
+    if (!currentState)
         return;
-    imp->setWithScriptStateAttributeRaises(state, WTF::getPtr(v));
+    ScriptState& state = *currentState;
+    imp->setWithScriptStateAttributeRaises(&state, WTF::getPtr(v));
     if (state.hadException())
         throwError(state.exception(), info.GetIsolate());
     return;
@@ -611,11 +615,12 @@ static v8::Handle<v8::Value> withScriptExecutionContextAndScriptStateAttributeAt
 {
     INC_STATS("DOM.TestObj.withScriptExecutionContextAndScriptStateAttribute._get");
     TestObj* imp = V8TestObj::toNative(info.Holder());
-    ScriptState* state = ScriptState::current();
-    if (!state)
+    ScriptState* currentState = ScriptState::current();
+    if (!currentState)
         return v8Undefined();
+    ScriptState& state = *currentState;
     ScriptExecutionContext* scriptContext = getScriptExecutionContext();
-    return toV8(imp->withScriptExecutionContextAndScriptStateAttribute(state, scriptContext), info.Holder(), info.GetIsolate());
+    return toV8(imp->withScriptExecutionContextAndScriptStateAttribute(&state, scriptContext), info.Holder(), info.GetIsolate());
 }
 
 static void withScriptExecutionContextAndScriptStateAttributeAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
@@ -623,11 +628,12 @@ static void withScriptExecutionContextAndScriptStateAttributeAttrSetter(v8::Loca
     INC_STATS("DOM.TestObj.withScriptExecutionContextAndScriptStateAttribute._set");
     TestObj* imp = V8TestObj::toNative(info.Holder());
     TestObj* v = V8TestObj::HasInstance(value) ? V8TestObj::toNative(v8::Handle<v8::Object>::Cast(value)) : 0;
-    ScriptState* state = ScriptState::current();
-    if (!state)
+    ScriptState* currentState = ScriptState::current();
+    if (!currentState)
         return;
+    ScriptState& state = *currentState;
     ScriptExecutionContext* scriptContext = getScriptExecutionContext();
-    imp->setWithScriptExecutionContextAndScriptStateAttribute(state, scriptContext, WTF::getPtr(v));
+    imp->setWithScriptExecutionContextAndScriptStateAttribute(&state, scriptContext, WTF::getPtr(v));
     if (state.hadException())
         throwError(state.exception(), info.GetIsolate());
     return;
@@ -638,11 +644,12 @@ static v8::Handle<v8::Value> withScriptExecutionContextAndScriptStateAttributeRa
     INC_STATS("DOM.TestObj.withScriptExecutionContextAndScriptStateAttributeRaises._get");
     TestObj* imp = V8TestObj::toNative(info.Holder());
     ExceptionCode ec = 0;
-    ScriptState* state = ScriptState::current();
-    if (!state)
+    ScriptState* currentState = ScriptState::current();
+    if (!currentState)
         return v8Undefined();
+    ScriptState& state = *currentState;
     ScriptExecutionContext* scriptContext = getScriptExecutionContext();
-    RefPtr<TestObj> v = imp->withScriptExecutionContextAndScriptStateAttributeRaises(state, scriptContext, ec);
+    RefPtr<TestObj> v = imp->withScriptExecutionContextAndScriptStateAttributeRaises(&state, scriptContext, ec);
     if (UNLIKELY(ec))
         return setDOMException(ec, info.GetIsolate());
     if (state.hadException())
@@ -655,11 +662,12 @@ static void withScriptExecutionContextAndScriptStateAttributeRaisesAttrSetter(v8
     INC_STATS("DOM.TestObj.withScriptExecutionContextAndScriptStateAttributeRaises._set");
     TestObj* imp = V8TestObj::toNative(info.Holder());
     TestObj* v = V8TestObj::HasInstance(value) ? V8TestObj::toNative(v8::Handle<v8::Object>::Cast(value)) : 0;
-    ScriptState* state = ScriptState::current();
-    if (!state)
+    ScriptState* currentState = ScriptState::current();
+    if (!currentState)
         return;
+    ScriptState& state = *currentState;
     ScriptExecutionContext* scriptContext = getScriptExecutionContext();
-    imp->setWithScriptExecutionContextAndScriptStateAttributeRaises(state, scriptContext, WTF::getPtr(v));
+    imp->setWithScriptExecutionContextAndScriptStateAttributeRaises(&state, scriptContext, WTF::getPtr(v));
     if (state.hadException())
         throwError(state.exception(), info.GetIsolate());
     return;
@@ -669,11 +677,12 @@ static v8::Handle<v8::Value> withScriptExecutionContextAndScriptStateWithSpacesA
 {
     INC_STATS("DOM.TestObj.withScriptExecutionContextAndScriptStateWithSpacesAttribute._get");
     TestObj* imp = V8TestObj::toNative(info.Holder());
-    ScriptState* state = ScriptState::current();
-    if (!state)
+    ScriptState* currentState = ScriptState::current();
+    if (!currentState)
         return v8Undefined();
+    ScriptState& state = *currentState;
     ScriptExecutionContext* scriptContext = getScriptExecutionContext();
-    return toV8(imp->withScriptExecutionContextAndScriptStateWithSpacesAttribute(state, scriptContext), info.Holder(), info.GetIsolate());
+    return toV8(imp->withScriptExecutionContextAndScriptStateWithSpacesAttribute(&state, scriptContext), info.Holder(), info.GetIsolate());
 }
 
 static void withScriptExecutionContextAndScriptStateWithSpacesAttributeAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
@@ -681,11 +690,12 @@ static void withScriptExecutionContextAndScriptStateWithSpacesAttributeAttrSette
     INC_STATS("DOM.TestObj.withScriptExecutionContextAndScriptStateWithSpacesAttribute._set");
     TestObj* imp = V8TestObj::toNative(info.Holder());
     TestObj* v = V8TestObj::HasInstance(value) ? V8TestObj::toNative(v8::Handle<v8::Object>::Cast(value)) : 0;
-    ScriptState* state = ScriptState::current();
-    if (!state)
+    ScriptState* currentState = ScriptState::current();
+    if (!currentState)
         return;
+    ScriptState& state = *currentState;
     ScriptExecutionContext* scriptContext = getScriptExecutionContext();
-    imp->setWithScriptExecutionContextAndScriptStateWithSpacesAttribute(state, scriptContext, WTF::getPtr(v));
+    imp->setWithScriptExecutionContextAndScriptStateWithSpacesAttribute(&state, scriptContext, WTF::getPtr(v));
     if (state.hadException())
         throwError(state.exception(), info.GetIsolate());
     return;
@@ -1214,10 +1224,16 @@ static v8::Handle<v8::Value> withScriptStateVoidCallback(const v8::Arguments& ar
 {
     INC_STATS("DOM.TestObj.withScriptStateVoid");
     TestObj* imp = V8TestObj::toNative(args.Holder());
-    EmptyScriptState state;
+    ScriptState* currentState = ScriptState::current();
+    if (!currentState)
+        return v8Undefined();
+    ScriptState& state = *currentState;
     imp->withScriptStateVoid(&state);
-    if (state.hadException())
-        return throwError(state.exception(), args.GetIsolate());
+    if (state.hadException()) {
+        v8::Local<v8::Value> exception = state.exception();
+        state.clearException();
+        return throwError(exception, args.GetIsolate());
+    }
     return v8Undefined();
 }
 
@@ -1225,10 +1241,16 @@ static v8::Handle<v8::Value> withScriptStateObjCallback(const v8::Arguments& arg
 {
     INC_STATS("DOM.TestObj.withScriptStateObj");
     TestObj* imp = V8TestObj::toNative(args.Holder());
-    EmptyScriptState state;
+    ScriptState* currentState = ScriptState::current();
+    if (!currentState)
+        return v8Undefined();
+    ScriptState& state = *currentState;
     RefPtr<TestObj> result = imp->withScriptStateObj(&state);
-    if (state.hadException())
-        return throwError(state.exception(), args.GetIsolate());
+    if (state.hadException()) {
+        v8::Local<v8::Value> exception = state.exception();
+        state.clearException();
+        return throwError(exception, args.GetIsolate());
+    }
     return toV8(result.release(), args.Holder(), args.GetIsolate());
 }
 
@@ -1238,12 +1260,18 @@ static v8::Handle<v8::Value> withScriptStateVoidExceptionCallback(const v8::Argu
     TestObj* imp = V8TestObj::toNative(args.Holder());
     ExceptionCode ec = 0;
     {
-    EmptyScriptState state;
+    ScriptState* currentState = ScriptState::current();
+    if (!currentState)
+        return v8Undefined();
+    ScriptState& state = *currentState;
     imp->withScriptStateVoidException(&state, ec);
     if (UNLIKELY(ec))
         goto fail;
-    if (state.hadException())
-        return throwError(state.exception(), args.GetIsolate());
+    if (state.hadException()) {
+        v8::Local<v8::Value> exception = state.exception();
+        state.clearException();
+        return throwError(exception, args.GetIsolate());
+    }
     return v8Undefined();
     }
     fail:
@@ -1256,12 +1284,18 @@ static v8::Handle<v8::Value> withScriptStateObjExceptionCallback(const v8::Argum
     TestObj* imp = V8TestObj::toNative(args.Holder());
     ExceptionCode ec = 0;
     {
-    EmptyScriptState state;
+    ScriptState* currentState = ScriptState::current();
+    if (!currentState)
+        return v8Undefined();
+    ScriptState& state = *currentState;
     RefPtr<TestObj> result = imp->withScriptStateObjException(&state, ec);
     if (UNLIKELY(ec))
         goto fail;
-    if (state.hadException())
-        return throwError(state.exception(), args.GetIsolate());
+    if (state.hadException()) {
+        v8::Local<v8::Value> exception = state.exception();
+        state.clearException();
+        return throwError(exception, args.GetIsolate());
+    }
     return toV8(result.release(), args.Holder(), args.GetIsolate());
     }
     fail:
@@ -1281,11 +1315,17 @@ static v8::Handle<v8::Value> withScriptExecutionContextAndScriptStateCallback(co
 {
     INC_STATS("DOM.TestObj.withScriptExecutionContextAndScriptState");
     TestObj* imp = V8TestObj::toNative(args.Holder());
-    EmptyScriptState state;
+    ScriptState* currentState = ScriptState::current();
+    if (!currentState)
+        return v8Undefined();
+    ScriptState& state = *currentState;
     ScriptExecutionContext* scriptContext = getScriptExecutionContext();
     imp->withScriptExecutionContextAndScriptState(&state, scriptContext);
-    if (state.hadException())
-        return throwError(state.exception(), args.GetIsolate());
+    if (state.hadException()) {
+        v8::Local<v8::Value> exception = state.exception();
+        state.clearException();
+        return throwError(exception, args.GetIsolate());
+    }
     return v8Undefined();
 }
 
@@ -1295,13 +1335,19 @@ static v8::Handle<v8::Value> withScriptExecutionContextAndScriptStateObjExceptio
     TestObj* imp = V8TestObj::toNative(args.Holder());
     ExceptionCode ec = 0;
     {
-    EmptyScriptState state;
+    ScriptState* currentState = ScriptState::current();
+    if (!currentState)
+        return v8Undefined();
+    ScriptState& state = *currentState;
     ScriptExecutionContext* scriptContext = getScriptExecutionContext();
     RefPtr<TestObj> result = imp->withScriptExecutionContextAndScriptStateObjException(&state, scriptContext, ec);
     if (UNLIKELY(ec))
         goto fail;
-    if (state.hadException())
-        return throwError(state.exception(), args.GetIsolate());
+    if (state.hadException()) {
+        v8::Local<v8::Value> exception = state.exception();
+        state.clearException();
+        return throwError(exception, args.GetIsolate());
+    }
     return toV8(result.release(), args.Holder(), args.GetIsolate());
     }
     fail:
@@ -1312,11 +1358,17 @@ static v8::Handle<v8::Value> withScriptExecutionContextAndScriptStateWithSpacesC
 {
     INC_STATS("DOM.TestObj.withScriptExecutionContextAndScriptStateWithSpaces");
     TestObj* imp = V8TestObj::toNative(args.Holder());
-    EmptyScriptState state;
+    ScriptState* currentState = ScriptState::current();
+    if (!currentState)
+        return v8Undefined();
+    ScriptState& state = *currentState;
     ScriptExecutionContext* scriptContext = getScriptExecutionContext();
     RefPtr<TestObj> result = imp->withScriptExecutionContextAndScriptStateWithSpaces(&state, scriptContext);
-    if (state.hadException())
-        return throwError(state.exception(), args.GetIsolate());
+    if (state.hadException()) {
+        v8::Local<v8::Value> exception = state.exception();
+        state.clearException();
+        return throwError(exception, args.GetIsolate());
+    }
     return toV8(result.release(), args.Holder(), args.GetIsolate());
 }
 

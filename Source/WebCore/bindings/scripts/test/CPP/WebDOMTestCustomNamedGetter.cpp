@@ -22,7 +22,6 @@
 #include "WebDOMTestCustomNamedGetter.h"
 
 #include "KURL.h"
-#include "TestCustomNamedGetter.h"
 #include "WebDOMString.h"
 #include "WebExceptionHandler.h"
 #include "wtf/text/AtomicString.h"

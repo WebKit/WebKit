@@ -23,7 +23,6 @@
 
 #include "KURL.h"
 #include "Node.h"
-#include "TestActiveDOMObject.h"
 #include "WebDOMNode.h"
 #include "WebDOMString.h"
 #include "WebExceptionHandler.h"

@@ -22,7 +22,6 @@
 #include "WebDOMTestException.h"
 
 #include "KURL.h"
-#include "TestException.h"
 #include "WebDOMString.h"
 #include "WebExceptionHandler.h"
 #include "wtf/text/AtomicString.h"

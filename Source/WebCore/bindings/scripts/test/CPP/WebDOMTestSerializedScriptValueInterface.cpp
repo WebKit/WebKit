@@ -27,7 +27,6 @@
 #include "Array.h"
 #include "MessagePortArray.h"
 #include "SerializedScriptValue.h"
-#include "TestSerializedScriptValueInterface.h"
 #include "WebDOMArray.h"
 #include "WebDOMMessagePortArray.h"
 #include "WebExceptionHandler.h"

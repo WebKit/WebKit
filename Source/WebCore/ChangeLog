@@ -1,5 +1,42 @@
 2012-11-20  Kentaro Hara  <haraken@chromium.org>
 
+        Unreviewed. Rebaselined run-bindings-tests.
+
+        * bindings/scripts/test/CPP/WebDOMFloat64Array.cpp:
+        * bindings/scripts/test/CPP/WebDOMTestActiveDOMObject.cpp:
+        * bindings/scripts/test/CPP/WebDOMTestCallback.cpp:
+        * bindings/scripts/test/CPP/WebDOMTestCustomNamedGetter.cpp:
+        * bindings/scripts/test/CPP/WebDOMTestEventConstructor.cpp:
+        * bindings/scripts/test/CPP/WebDOMTestEventTarget.cpp:
+        * bindings/scripts/test/CPP/WebDOMTestException.cpp:
+        * bindings/scripts/test/CPP/WebDOMTestInterface.cpp:
+        * bindings/scripts/test/CPP/WebDOMTestMediaQueryListListener.cpp:
+        * bindings/scripts/test/CPP/WebDOMTestNamedConstructor.cpp:
+        * bindings/scripts/test/CPP/WebDOMTestNode.cpp:
+        * bindings/scripts/test/CPP/WebDOMTestObj.cpp:
+        * bindings/scripts/test/CPP/WebDOMTestOverloadedConstructors.cpp:
+        * bindings/scripts/test/CPP/WebDOMTestSerializedScriptValueInterface.cpp:
+        * bindings/scripts/test/V8/V8TestObj.cpp:
+        (WebCore::TestObjV8Internal::withScriptStateAttributeAttrGetter):
+        (WebCore::TestObjV8Internal::withScriptStateAttributeAttrSetter):
+        (WebCore::TestObjV8Internal::withScriptStateAttributeRaisesAttrGetter):
+        (WebCore::TestObjV8Internal::withScriptStateAttributeRaisesAttrSetter):
+        (WebCore::TestObjV8Internal::withScriptExecutionContextAndScriptStateAttributeAttrGetter):
+        (WebCore::TestObjV8Internal::withScriptExecutionContextAndScriptStateAttributeAttrSetter):
+        (WebCore::TestObjV8Internal::withScriptExecutionContextAndScriptStateAttributeRaisesAttrGetter):
+        (WebCore::TestObjV8Internal::withScriptExecutionContextAndScriptStateAttributeRaisesAttrSetter):
+        (WebCore::TestObjV8Internal::withScriptExecutionContextAndScriptStateWithSpacesAttributeAttrGetter):
+        (WebCore::TestObjV8Internal::withScriptExecutionContextAndScriptStateWithSpacesAttributeAttrSetter):
+        (WebCore::TestObjV8Internal::withScriptStateVoidCallback):
+        (WebCore::TestObjV8Internal::withScriptStateObjCallback):
+        (WebCore::TestObjV8Internal::withScriptStateVoidExceptionCallback):
+        (WebCore::TestObjV8Internal::withScriptStateObjExceptionCallback):
+        (WebCore::TestObjV8Internal::withScriptExecutionContextAndScriptStateCallback):
+        (WebCore::TestObjV8Internal::withScriptExecutionContextAndScriptStateObjExceptionCallback):
+        (WebCore::TestObjV8Internal::withScriptExecutionContextAndScriptStateWithSpacesCallback):
+
+2012-11-20  Kentaro Hara  <haraken@chromium.org>
+
         [V8] Introduce constructorCallbackCustom()
         https://bugs.webkit.org/show_bug.cgi?id=102763
 
