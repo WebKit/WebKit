@@ -40,6 +40,10 @@
 #include "TimeRanges.h"
 #include <wtf/text/CString.h>
 
+#if ENABLE(VIDEO_TRACK)
+#include "InbandTextTrackPrivate.h"
+#endif
+
 #if PLATFORM(QT)
 #include <QtGlobal>
 #endif
@@ -1108,6 +1112,18 @@ CachedResourceLoader* MediaPlayer::cachedResourceLoader()
 
     return m_mediaPlayerClient->mediaPlayerCachedResourceLoader();
 }
+
+#if ENABLE(VIDEO_TRACK)
+void MediaPlayer::getTextTracks(Vector<RefPtr<InbandTextTrackPrivate> >& tracks)
+{
+    m_private->getTextTracks(tracks);
+}
+
+void MediaPlayer::setTextTrackClient(TextTrackClient* client)
+{
+    m_private->setTextTrackClient(client);
+}
+#endif
 
 }
 

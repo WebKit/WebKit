@@ -59,8 +59,10 @@ namespace WebCore {
 class AudioSourceProvider;
 class Document;
 class GStreamerGWorld;
+class InbandTextTrackPrivate;
 class MediaPlayerPrivateInterface;
 class MediaSource;
+class TextTrackClient;
 
 // Structure that will hold every native
 // types supported by the current media player.
@@ -426,6 +428,11 @@ public:
     String engineDescription() const;
 
     CachedResourceLoader* cachedResourceLoader();
+
+#if ENABLE(VIDEO_TRACK)
+    void getTextTracks(Vector<RefPtr<InbandTextTrackPrivate> >&);
+    void setTextTrackClient(TextTrackClient*);
+#endif
 
 private:
     MediaPlayer(MediaPlayerClient*);

@@ -1,3 +1,62 @@
+2012-11-21  Eric Carlson  <eric.carlson@apple.com>
+
+        In-band text tracks infrastructure
+        https://bugs.webkit.org/show_bug.cgi?id=102830
+
+        Reviewed by Philippe Normand.
+
+        Add the infrastructure necessary to allow a port-specific media engine to expose in-band text
+        tracks.
+
+        No new tests, this patch only adds plumbing. Existing tests verify that these changes don't
+        break existing functionality.
+
+        * CMakeLists.txt: Add new project files.
+        * GNUmakefile.list.am: Ditto.
+        * Target.pri: Ditto.
+        * WebCore.gypi: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::setReadyState): Call processInbandTextTracks when readyState reaches
+            HAVE_METADATA
+        (WebCore::HTMLMediaElement::processInbandTextTracks): Fetch the in-band text tracks from the 
+            media player and processes them.
+        * html/HTMLMediaElement.h:
+
+        * html/track/InbandTextTrack.cpp: Added.
+        * html/track/InbandTextTrack.h: Added.
+        * html/track/InbandTextTrackPrivate.h: Added.
+
+        * html/track/TextTrack.h:
+        (TextTrack):
+        (WebCore::TextTrack::clearClient): Remove virtual, it is unnecessary
+        (WebCore::TextTrack::mode): Make virtual so derived classes can override.
+        (WebCore::TextTrack::setMode): Ditto.
+
+        * html/track/TextTrackList.cpp:
+        (TextTrackList::length): Update to deal with in-band tracks.
+        (TextTrackList::getTrackIndex): Ditto.
+        (TextTrackList::getTrackIndexRelativeToRenderedTracks): Ditto.
+        (TextTrackList::item): Ditto.
+        (TextTrackList::invalidateTrackIndexesAfterTrack): New, invalidate the cached track indexes of
+            all tracks after another.
+        (TextTrackList::append): Update to deal with in-band tracks.
+        (TextTrackList::remove): Update to deal with in-band tracks.
+        (TextTrackList::scheduleAddTrackEvent): Remove typo.
+        * html/track/TextTrackList.h:
+
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::getTextTracks): New, pass through to the media engine.
+        (WebCore::MediaPlayer::setTextTrackClient):
+        * platform/graphics/MediaPlayer.h:
+
+        * platform/graphics/MediaPlayerPrivate.h:
+        (WebCore::MediaPlayerPrivateInterface::setPreload): Cleanup.
+        (WebCore::MediaPlayerPrivateInterface::sourceEndOfStream): Ditto.
+        (WebCore::MediaPlayerPrivateInterface::getTextTracks): New client method.
+        (WebCore::MediaPlayerPrivateInterface::setTextTrackClient): Ditto.
+
 2012-11-21  Kai Koehne  <kai.koehne@digia.com>
 
         [Qt] MinGW: Explicitly add OpenGL library dependencies

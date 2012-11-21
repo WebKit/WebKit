@@ -3601,6 +3601,9 @@ webcore_sources += \
 	Source/WebCore/html/TimeInputType.h \
 	Source/WebCore/html/TimeRanges.cpp \
 	Source/WebCore/html/TimeRanges.h \
+	Source/WebCore/html/track/InbandTextTrack.cpp \
+	Source/WebCore/html/track/InbandTextTrack.h \
+	Source/WebCore/html/track/InbandTextTrackPrivate.h \
 	Source/WebCore/html/track/LoadableTextTrack.cpp \
 	Source/WebCore/html/track/LoadableTextTrack.h \
 	Source/WebCore/html/track/TextTrack.cpp \

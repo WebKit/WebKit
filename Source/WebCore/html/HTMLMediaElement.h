@@ -69,6 +69,8 @@ class DisplaySleepDisabler;
 #endif
 
 #if ENABLE(VIDEO_TRACK)
+class InbandTextTrackPrivate;
+
 typedef PODIntervalTree<double, TextTrackCue*> CueIntervalTree;
 typedef Vector<CueIntervalTree::IntervalType> CueList;
 #endif
@@ -212,6 +214,8 @@ public:
     PassRefPtr<TextTrack> addTextTrack(const String& kind, const String& label, const String& language, ExceptionCode&);
     PassRefPtr<TextTrack> addTextTrack(const String& kind, const String& label, ExceptionCode& ec) { return addTextTrack(kind, label, emptyString(), ec); }
     PassRefPtr<TextTrack> addTextTrack(const String& kind, ExceptionCode& ec) { return addTextTrack(kind, emptyString(), emptyString(), ec); }
+
+    void processInbandTextTracks();
 
     TextTrackList* textTracks();
     CueList currentlyActiveCues() const { return m_currentlyActiveCues; }

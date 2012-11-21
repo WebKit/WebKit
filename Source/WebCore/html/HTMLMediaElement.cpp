@@ -100,6 +100,8 @@
 
 #if ENABLE(VIDEO_TRACK)
 #include "HTMLTrackElement.h"
+#include "InbandTextTrack.h"
+#include "InbandTextTrackPrivate.h"
 #include "RuntimeEnabledFeatures.h"
 #include "TextTrackCueList.h"
 #include "TextTrackList.h"
@@ -1740,6 +1742,10 @@ void HTMLMediaElement::setReadyState(MediaPlayer::ReadyState state)
         prepareMediaFragmentURI();
         scheduleEvent(eventNames().durationchangeEvent);
         scheduleEvent(eventNames().loadedmetadataEvent);
+#if ENABLE(VIDEO_TRACK)
+        if (m_player && m_player->hasClosedCaptions())
+            processInbandTextTracks();
+#endif
         if (hasMediaControls())
             mediaControls()->loadedMetadata();
         if (renderer())
@@ -2718,6 +2724,50 @@ float HTMLMediaElement::percentLoaded() const
 }
 
 #if ENABLE(VIDEO_TRACK)
+void HTMLMediaElement::processInbandTextTracks()
+{
+    if (!RuntimeEnabledFeatures::webkitVideoTrackEnabled())
+        return;
+
+    Vector<RefPtr<InbandTextTrackPrivate> > privateTextTracks;
+    m_player->getTextTracks(privateTextTracks);
+
+    if (!privateTextTracks.size())
+        return;
+
+    for (size_t i = 0; i < privateTextTracks.size(); ++i) {
+        // 4.8.10.12.2 Sourcing in-band text tracks
+        // 1. Associate the relevant data with a new text track and its corresponding new TextTrack object.
+        
+        // 2. Set the new text track's kind, label, and language based on the semantics of the relevant data,
+        // as defined by the relevant specification. If there is no label in that data, then the label must
+        // be set to the empty string.
+        //   - This is done by the media engine when it creates the InbandTextTrackPrivate.
+        RefPtr<TextTrack> textTrack = InbandTextTrack::create(ActiveDOMObject::scriptExecutionContext(), this, privateTextTracks[i]);
+        
+        // 5. Populate the new text track's list of cues with the cues parsed so far, folllowing the guidelines for exposing
+        // cues, and begin updating it dynamically as necessary.
+        //   - This will happen automatically as the media engine loads the cues
+        
+        // 6. Set the new text track's readiness state to loaded.
+        textTrack->setReadinessState(TextTrack::Loaded);
+        
+        // 7. Set the new text track's mode to the mode consistent with the user's preferences and the requirements of
+        // the relevant specification for the data.
+        //  - This will happen in configureTextTracks()
+        
+        // 8. Add the new text track to the media element's list of text tracks.
+        textTracks()->append(textTrack);
+        
+        // 9. Fire an event with the name addtrack, that does not bubble and is not cancelable, and that uses the TrackEvent
+        // interface, with the track attribute initialized to the text track's TextTrack object, at the media element's
+        // textTracks attribute's TextTrackList object.
+        //  - This was done in TextTrackList::append
+    }
+
+    configureTextTracks();
+}
+
 PassRefPtr<TextTrack> HTMLMediaElement::addTextTrack(const String& kind, const String& label, const String& language, ExceptionCode& ec)
 {
     if (!RuntimeEnabledFeatures::webkitVideoTrackEnabled())
@@ -2812,7 +2862,6 @@ void HTMLMediaElement::willRemoveTrack(HTMLTrackElement* trackElement)
     if (!m_textTracks)
         return;
     
-
     // 4.8.10.12.3 Sourcing out-of-band text tracks
     // When a track element's parent element changes and the old parent was a media element, 
     // then the user agent must remove the track element's corresponding text track from the 

@@ -1549,6 +1549,7 @@ SET(WebCore_SOURCES
     html/shadow/SpinButtonElement.cpp
     html/shadow/TextControlInnerElements.cpp
 
+    html/track/InbandTextTrack.cpp
     html/track/LoadableTextTrack.cpp
     html/track/TextTrack.cpp
     html/track/TextTrackCue.cpp

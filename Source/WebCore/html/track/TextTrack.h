@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2011, 2012 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -83,8 +84,8 @@ public:
     static const AtomicString& hiddenKeyword();
     static const AtomicString& showingKeyword();
 
-    AtomicString mode() const;
-    void setMode(const AtomicString&);
+    virtual AtomicString mode() const;
+    virtual void setMode(const AtomicString&);
 
     bool showingByDefault() const { return m_showingByDefault; }
     void setShowingByDefault(bool showing) { m_showingByDefault = showing; }
@@ -96,7 +97,7 @@ public:
     TextTrackCueList* cues();
     TextTrackCueList* activeCues() const;
 
-    virtual void clearClient() { m_client = 0; }
+    void clearClient() { m_client = 0; }
     TextTrackClient* client() { return m_client; }
 
     void addCue(PassRefPtr<TextTrackCue>, ExceptionCode&);
