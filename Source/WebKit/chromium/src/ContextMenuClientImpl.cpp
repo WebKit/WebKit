@@ -298,8 +298,9 @@ PlatformMenuDescription ContextMenuClientImpl::getCustomMenuFromDefaultItems(
                         selectedFrame->selection()->setSelection(selection, WordGranularity);
                 }
             }
-        } else if (m_webView->focusedWebCoreFrame()->editor()->isContinuousSpellCheckingEnabled()) {
-            data.isSpellCheckingEnabled = true;
+        } else {
+            data.isSpellCheckingEnabled = 
+                m_webView->focusedWebCoreFrame()->editor()->isContinuousSpellCheckingEnabled();
             // Spellchecking might be enabled for the field, but could be disabled on the node.
             if (m_webView->focusedWebCoreFrame()->editor()->isSpellCheckingEnabledInFocusedNode()) {
                 data.misspelledWord = selectMisspelledWord(defaultMenu, selectedFrame);

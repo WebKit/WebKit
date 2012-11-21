@@ -1,3 +1,15 @@
+2012-11-20  Rachel Blum  <groby@chromium.org>
+
+        [Chromium] Need spellcheck suggestions even if continuous check is off.
+        https://bugs.webkit.org/show_bug.cgi?id=102535
+
+        Reviewed by Hajime Morita.
+
+        Make sure the context menu always has suggestions for misspelled words.
+
+        * src/ContextMenuClientImpl.cpp:
+        (WebKit::ContextMenuClientImpl::getCustomMenuFromDefaultItems):
+
 2012-11-20  Robert Kroeger  <rjkroege@chromium.org>
 
         [chromium] Use embedder-supported gesture curves
