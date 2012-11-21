@@ -1,3 +1,20 @@
+2012-11-21  Tony Chang  <tony@chromium.org>
+
+        Relayout the slider track when a data list is set
+        https://bugs.webkit.org/show_bug.cgi?id=102851
+
+        Reviewed by Ojan Vafai.
+
+        Previously, we would relayout the <input>.  Once we fix bug 102352, this
+        causes the slider track to not relayout.  It should relayout because it
+        draws the data list tick marks and needs to provide space for them.
+
+        No new tests, not testable until bug 102352 is fixed. Specifically,
+        fast/forms/datalist/update-range-with-datalist.html reveals the bug.
+
+        * html/RangeInputType.cpp:
+        (WebCore::RangeInputType::listAttributeTargetChanged):
+
 2012-11-21  Kevin Ellis  <kevers@chromium.org>
 
         [chromium] Add flag to enable/disable touch adjustment at runtime.
