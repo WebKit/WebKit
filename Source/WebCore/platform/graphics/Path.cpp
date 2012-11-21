@@ -165,21 +165,25 @@ void Path::addBeziersForRoundedRect(const FloatRect& rect, const FloatSize& topL
     moveTo(FloatPoint(rect.x() + topLeftRadius.width(), rect.y()));
 
     addLineTo(FloatPoint(rect.maxX() - topRightRadius.width(), rect.y()));
-    addBezierCurveTo(FloatPoint(rect.maxX() - topRightRadius.width() * gCircleControlPoint, rect.y()),
-                     FloatPoint(rect.maxX(), rect.y() + topRightRadius.height() * gCircleControlPoint),
-                     FloatPoint(rect.maxX(), rect.y() + topRightRadius.height()));
+    if (topRightRadius.width() > 0 || topRightRadius.height() > 0)
+        addBezierCurveTo(FloatPoint(rect.maxX() - topRightRadius.width() * gCircleControlPoint, rect.y()),
+            FloatPoint(rect.maxX(), rect.y() + topRightRadius.height() * gCircleControlPoint),
+            FloatPoint(rect.maxX(), rect.y() + topRightRadius.height()));
     addLineTo(FloatPoint(rect.maxX(), rect.maxY() - bottomRightRadius.height()));
-    addBezierCurveTo(FloatPoint(rect.maxX(), rect.maxY() - bottomRightRadius.height() * gCircleControlPoint),
-                     FloatPoint(rect.maxX() - bottomRightRadius.width() * gCircleControlPoint, rect.maxY()),
-                     FloatPoint(rect.maxX() - bottomRightRadius.width(), rect.maxY()));
+    if (bottomRightRadius.width() > 0 || bottomRightRadius.height() > 0)
+        addBezierCurveTo(FloatPoint(rect.maxX(), rect.maxY() - bottomRightRadius.height() * gCircleControlPoint),
+            FloatPoint(rect.maxX() - bottomRightRadius.width() * gCircleControlPoint, rect.maxY()),
+            FloatPoint(rect.maxX() - bottomRightRadius.width(), rect.maxY()));
     addLineTo(FloatPoint(rect.x() + bottomLeftRadius.width(), rect.maxY()));
-    addBezierCurveTo(FloatPoint(rect.x() + bottomLeftRadius.width() * gCircleControlPoint, rect.maxY()),
-                     FloatPoint(rect.x(), rect.maxY() - bottomLeftRadius.height() * gCircleControlPoint),
-                     FloatPoint(rect.x(), rect.maxY() - bottomLeftRadius.height()));
+    if (bottomLeftRadius.width() > 0 || bottomLeftRadius.height() > 0)
+        addBezierCurveTo(FloatPoint(rect.x() + bottomLeftRadius.width() * gCircleControlPoint, rect.maxY()),
+            FloatPoint(rect.x(), rect.maxY() - bottomLeftRadius.height() * gCircleControlPoint),
+            FloatPoint(rect.x(), rect.maxY() - bottomLeftRadius.height()));
     addLineTo(FloatPoint(rect.x(), rect.y() + topLeftRadius.height()));
-    addBezierCurveTo(FloatPoint(rect.x(), rect.y() + topLeftRadius.height() * gCircleControlPoint),
-                     FloatPoint(rect.x() + topLeftRadius.width() * gCircleControlPoint, rect.y()),
-                     FloatPoint(rect.x() + topLeftRadius.width(), rect.y()));
+    if (topLeftRadius.width() > 0 || topLeftRadius.height() > 0)
+        addBezierCurveTo(FloatPoint(rect.x(), rect.y() + topLeftRadius.height() * gCircleControlPoint),
+            FloatPoint(rect.x() + topLeftRadius.width() * gCircleControlPoint, rect.y()),
+            FloatPoint(rect.x() + topLeftRadius.width(), rect.y()));
 
     closeSubpath();
 }

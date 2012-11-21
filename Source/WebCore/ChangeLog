@@ -1,3 +1,15 @@
+2012-11-21  Tom Hudson  <tomhudson@chromium.org>
+
+        Avoid creating degenerate cubics at corners of rounded rects.
+        https://bugs.webkit.org/show_bug.cgi?id=102945
+
+        Reviewed by Stephen White.
+
+        Covered by existing layout tests.
+
+        * platform/graphics/Path.cpp:
+        (Path::addBeziersForRoundedRect):
+
 2012-11-21  Eric Carlson  <eric.carlson@apple.com>
 
         In-band text tracks infrastructure
