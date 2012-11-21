@@ -644,6 +644,14 @@ void InspectorIndexedDBAgent::requestDatabaseNamesForFrame(ErrorString* errorStr
     IDBFactory* idbFactory = assertIDBFactory(errorString, document);
     if (!idbFactory)
         return;
+
+#if USE(V8)
+    v8::HandleScope handleScope;
+    v8::Handle<v8::Context> context = document->frame()->script()->mainWorldContext();
+    ASSERT(!context.IsEmpty());
+    v8::Context::Scope contextScope(context);
+#endif
+
     RefPtr<IDBRequest> idbRequest = idbFactory->getDatabaseNames(document);
     idbRequest->addEventListener(eventNames().successEvent, GetDatabaseNamesCallback::create(requestCallback, document->securityOrigin()->toString()), false);
 }
@@ -656,6 +664,13 @@ void InspectorIndexedDBAgent::requestDatabase(ErrorString* errorString, const St
     IDBFactory* idbFactory = assertIDBFactory(errorString, document);
     if (!idbFactory)
         return;
+
+#if USE(V8)
+    v8::HandleScope handleScope;
+    v8::Handle<v8::Context> context = document->frame()->script()->mainWorldContext();
+    ASSERT(!context.IsEmpty());
+    v8::Context::Scope contextScope(context);
+#endif
 
     RefPtr<DatabaseLoader> databaseLoader = DatabaseLoader::create(document, requestCallback);
     databaseLoader->start(idbFactory, document->securityOrigin(), databaseName);
@@ -680,6 +695,13 @@ void InspectorIndexedDBAgent::requestData(ErrorString* errorString, const String
         *errorString = "Can not parse key range.";
         return;
     }
+
+#if USE(V8)
+    v8::HandleScope handleScope;
+    v8::Handle<v8::Context> context = document->frame()->script()->mainWorldContext();
+    ASSERT(!context.IsEmpty());
+    v8::Context::Scope contextScope(context);
+#endif
 
     RefPtr<DataLoader> dataLoader = DataLoader::create(document, requestCallback, injectedScript, objectStoreName, indexName, idbKeyRange, skipCount, pageSize);
     dataLoader->start(idbFactory, document->securityOrigin(), databaseName);

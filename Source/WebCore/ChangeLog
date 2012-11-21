@@ -1,3 +1,19 @@
+2012-11-21  Dan Carney  <dcarney@google.com>
+
+        [V8] Inspector does not callback IDB methods in context
+        https://bugs.webkit.org/show_bug.cgi?id=101725
+
+        Reviewed by Adam Barth.
+
+        Inserted v8 context before calling out to IDB.
+
+        No new tests.
+
+        * inspector/InspectorIndexedDBAgent.cpp:
+        (WebCore::InspectorIndexedDBAgent::requestDatabaseNamesForFrame):
+        (WebCore::InspectorIndexedDBAgent::requestDatabase):
+        (WebCore::InspectorIndexedDBAgent::requestData):
+
 2012-11-21  Huang Dongsung  <luxtella@company100.net>
 
         REGRESSION(134048): TiledBackingStore must create tiles when the contents rect is changed.
