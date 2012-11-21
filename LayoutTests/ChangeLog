@@ -9,7 +9,14 @@
 
 2012-11-21  Csaba Osztrogonác  <ossy@webkit.org>
 
-        [Qt] Unreviewed gardening, unskip s now passing test.
+        Unreviewed gardening, unskip a now passing test.
+
+        * platform/mac-wk2/TestExpectations:
+        * platform/qt-5.0-wk2/TestExpectations:
+
+2012-11-21  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed gardening, unskip a now passing test.
 
         * platform/qt-5.0-wk2/TestExpectations:
         * platform/qt/TestExpectations:

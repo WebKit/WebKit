@@ -187,10 +187,6 @@ fast/events/pageshow-pagehide-on-back-cached.html
 # https://bugs.webkit.org/show_bug.cgi?id=81622
 http/tests/navigation/https-in-page-cache.html
 
-# [WK2] http/tests/security/contentSecurityPolicy/script-src-star-cross-scheme.html fails after r97360
-# https://bugs.webkit.org/show_bug.cgi?id=70245
-http/tests/security/contentSecurityPolicy/script-src-star-cross-scheme.html
-
 # [WK2] Four http/tests/xmlhttprequest tests fail on mac-wk2
 # https://bugs.webkit.org/show_bug.cgi?id=81627
 http/tests/xmlhttprequest/basic-auth-default.html
