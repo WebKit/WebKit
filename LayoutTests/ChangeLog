@@ -1,3 +1,18 @@
+2012-11-21  Rick Byers  <rbyers@chromium.org>
+
+        Multi-frame CUR file test hangs on mac port 
+        https://bugs.webkit.org/show_bug.cgi?id=101811
+
+        Reviewed by Alexey Proskuryakov.
+
+        Fix tests to not hang on unexpected image load failure.
+        Expect multi-frame CUR files to fail to load on Mac.
+
+        * fast/events/mouse-cursor.html:
+        * fast/events/mouse-cursor-multiframecur.html:
+        * platform/mac/TestExpectations:
+        * platform/mac/fast/events/mouse-cursor-multiframecur-expected.txt: Added.
+
 2012-11-21  Tien-Ren Chen  <trchen@chromium.org>
 
         Invalidate non-composited content host when page scale factor changes

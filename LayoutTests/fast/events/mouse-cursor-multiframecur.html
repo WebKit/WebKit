@@ -7,7 +7,7 @@
 </head>
 <body>
 <p id="description"></p>
-<p><a href=https://bugs.webkit.org/show_bug.cgi?id=100550>Bug 100059</a></p>
+<p><a href=https://bugs.webkit.org/show_bug.cgi?id=100059>Bug 100059</a></p>
 <div id="test-container">
   <div>Implicit default cursor</div>
   <div style='cursor: url(resources/greenbox-3frames.cur), pointer'>CUR file with 3 frames, largest of which (2nd frame) is 20x12 with hotspot at (18,11).</div>
@@ -17,23 +17,26 @@
 <script>
 var imagesLeftToLoad = 0;
 
-function onImageLoad(e) {
+function onImageLoad(success, path, e) {
 
-    // This debug output is non-deterministic and contains absolute URLs - only show when
-    // not running in DRT
+    // This debug output order is non-deterministic - only show when not running in DRT
     if (!window.testRunner)
-        debug( 'Event "' + e.type + '": ' + e.target.src);
+        debug( 'Event "' + e.type + '": ' + path);
         
     imagesLeftToLoad--;
+    
+    if (!success) {
+        // Note that on the Mac port, CUR files are loaded using CoreGraphics, and it doesn't
+        // appear to support multi-frame CUR files, so the load will fail in this case.
+        // We explicitly look for this behavior on Mac so that if it ever starts being supported,
+        // we can ensure the behavior is consistent with the other ports.
+        testFailed('Got unexpected \'' + e.type + '\' event for image: ' + path); 
+    }
+
     if (imagesLeftToLoad == 0)
         runTests();
     if (imagesLeftToLoad < 0)
         testFailed('Got more load/error callback than expected.');
-}
-
-function onImageUnexpected(e) {
-	imagesLeftToLoad--;
-    testFailed('Got unexpected \'' + e.type + '\' event for image: ' + e.target.src); 
 }
 
 function runTests() {
@@ -82,9 +85,10 @@ imagesLeftToLoad = imagesToLoad.length;
 for (var i = 0; i < imagesToLoad.length; i++) {
     var img = new Image();
     var expectError = imagesToLoad[i].error; 
-    img.addEventListener('load', expectError ? onImageUnexpected : onImageLoad);
-    img.addEventListener('error', expectError ? onImageLoad : onImageUnexpected);
-    img.src = imagesToLoad[i].url;
+    var url = imagesToLoad[i].url;
+    img.addEventListener('load', onImageLoad.bind(undefined, !expectError, url));
+    img.addEventListener('error', onImageLoad.bind(undefined, expectError, url));
+    img.src = url;
 }
 
 </script>

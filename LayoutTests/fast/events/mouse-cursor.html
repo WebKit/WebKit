@@ -44,23 +44,21 @@
 <script>
 var imagesLeftToLoad = 0;
 
-function onImageLoad(e) {
+function onImageLoad(success, e) {
 
     // This debug output is non-deterministic and contains absolute URLs - only show when
     // not running in DRT
     if (!window.testRunner)
         debug( 'Event "' + e.type + '": ' + e.target.src);
+    
+    if (!success)
+        testFailed('Got unexpected \'' + e.type + '\' event for image: ' + e.target.src); 
         
     imagesLeftToLoad--;
     if (imagesLeftToLoad == 0)
         runTests();
     if (imagesLeftToLoad < 0)
         testFailed('Got more load/error callback than expected.');
-}
-
-function onImageUnexpected(e) {
-	imagesLeftToLoad--;
-    testFailed('Got unexpected \'' + e.type + '\' event for image: ' + e.target.src); 
 }
 
 function runTests() {
@@ -117,8 +115,8 @@ imagesLeftToLoad = imagesToLoad.length;
 for (var i = 0; i < imagesToLoad.length; i++) {
     var img = new Image();
     var expectError = imagesToLoad[i].error; 
-    img.addEventListener('load', expectError ? onImageUnexpected : onImageLoad);
-    img.addEventListener('error', expectError ? onImageLoad : onImageUnexpected);
+    img.addEventListener('load', onImageLoad.bind(undefined, !expectError));
+    img.addEventListener('error', onImageLoad.bind(undefined, expectError));
     img.src = imagesToLoad[i].url;
 }
 
