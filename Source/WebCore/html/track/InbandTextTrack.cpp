@@ -35,6 +35,8 @@
 #include "MediaPlayer.h"
 #include "TextTrackCueList.h"
 
+#include <wtf/UnusedParam.h>
+
 namespace WebCore {
 
 InbandTextTrack::InbandTextTrack(ScriptExecutionContext* context, TextTrackClient* client, PassRefPtr<InbandTextTrackPrivate> tracksPrivate)
@@ -93,6 +95,7 @@ size_t InbandTextTrack::inbandTrackIndex()
 
 void InbandTextTrack::addCue(InbandTextTrackPrivate* trackPrivate, double start, double end, const String& id, const String& content, const String& settings)
 {
+    UNUSED_PARAM(trackPrivate);
     ASSERT(trackPrivate == m_private);
 
     RefPtr<TextTrackCue> cue = TextTrackCue::create(scriptExecutionContext(), start, end, content);
