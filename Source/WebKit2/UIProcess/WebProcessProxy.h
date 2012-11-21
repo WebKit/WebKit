@@ -60,7 +60,7 @@ class WebContext;
 class WebPageGroup;
 struct WebNavigationDataStore;
 
-class WebProcessProxy : public ThreadSafeRefCounted<WebProcessProxy>, CoreIPC::Connection::Client, ResponsivenessTimer::Client, ProcessLauncher::Client,  CoreIPC::Connection::QueueClient {
+class WebProcessProxy : public ThreadSafeRefCounted<WebProcessProxy>, CoreIPC::Connection::Client, ResponsivenessTimer::Client, ProcessLauncher::Client, CoreIPC::Connection::QueueClient {
 public:
     typedef HashMap<uint64_t, RefPtr<WebFrameProxy> > WebFrameProxyMap;
     typedef HashMap<uint64_t, RefPtr<WebBackForwardListItem> > WebBackForwardListItemMap;
@@ -78,14 +78,14 @@ public:
     CoreIPC::Connection* connection() const
     { 
         ASSERT(m_connection);
-        
-        return m_connection->connection(); 
+        return m_connection.get();
     }
 
+    void addMessageReceiver(CoreIPC::StringReference messageReceiverName, CoreIPC::MessageReceiver*);
     void addMessageReceiver(CoreIPC::StringReference messageReceiverName, uint64_t destinationID, CoreIPC::MessageReceiver*);
     void removeMessageReceiver(CoreIPC::StringReference messageReceiverName, uint64_t destinationID);
 
-    WebConnection* webConnection() const { return m_connection.get(); }
+    WebConnection* webConnection() const { return m_webConnection.get(); }
 
     WebContext* context() const { return m_context.get(); }
 
@@ -207,9 +207,9 @@ private:
 
     ResponsivenessTimer m_responsivenessTimer;
     
-    // This is not a CoreIPC::Connection so that we can wrap the CoreIPC::Connection in
-    // an API object.
-    RefPtr<WebConnectionToWebProcess> m_connection;
+
+    RefPtr<CoreIPC::Connection> m_connection;
+    RefPtr<WebConnectionToWebProcess> m_webConnection;
     CoreIPC::MessageReceiverMap m_messageReceiverMap;
 
     Vector<std::pair<CoreIPC::Connection::OutgoingMessage, unsigned> > m_pendingMessages;

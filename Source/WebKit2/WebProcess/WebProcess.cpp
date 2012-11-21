@@ -188,12 +188,15 @@ void WebProcess::initialize(CoreIPC::Connection::Identifier serverIdentifier, Ru
 {
     ASSERT(!m_connection);
 
-    m_connection = WebConnectionToUIProcess::create(this, serverIdentifier, runLoop);
+    m_connection = CoreIPC::Connection::createClientConnection(serverIdentifier, this, runLoop);
+    m_connection->setDidCloseOnConnectionWorkQueueCallback(ChildProcess::didCloseOnConnectionWorkQueue);
+    m_connection->setShouldExitOnSyncMessageSendFailure(true);
+    m_connection->addQueueClient(&m_eventDispatcher);
+    m_connection->addQueueClient(this);
+    m_connection->open();
 
-    m_connection->connection()->addQueueClient(&m_eventDispatcher);
-    m_connection->connection()->addQueueClient(this);
+    m_webConnection = WebConnectionToUIProcess::create(this);
 
-    m_connection->connection()->open();
     m_runLoop = runLoop;
 
     startRandomCrashThreadIfRequested();
@@ -659,6 +662,9 @@ void WebProcess::terminate()
     // Invalidate our connection.
     m_connection->invalidate();
     m_connection = nullptr;
+
+    m_webConnection->invalidate();
+    m_webConnection = nullptr;
 
     platformTerminate();
     m_runLoop->stop();

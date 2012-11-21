@@ -26,32 +26,27 @@
 #ifndef WebConnectionToUIProcess_h
 #define WebConnectionToUIProcess_h
 
-#include "Connection.h"
 #include "WebConnection.h"
 
 namespace WebKit {
 
 class WebProcess;
 
-class WebConnectionToUIProcess : public WebConnection, CoreIPC::Connection::Client {
+class WebConnectionToUIProcess : public WebConnection {
 public:
-    static PassRefPtr<WebConnectionToUIProcess> create(WebProcess*, CoreIPC::Connection::Identifier, WebCore::RunLoop*);
+    static PassRefPtr<WebConnectionToUIProcess> create(WebProcess*);
+
+    void invalidate();
 
 private:
-    WebConnectionToUIProcess(WebProcess*, CoreIPC::Connection::Identifier, WebCore::RunLoop*);
+    WebConnectionToUIProcess(WebProcess*);
 
     // WebConnection
     virtual void encodeMessageBody(CoreIPC::ArgumentEncoder&, APIObject*) OVERRIDE;
     virtual bool decodeMessageBody(CoreIPC::ArgumentDecoder&, RefPtr<APIObject>&) OVERRIDE;
-
-    // CoreIPC::Connection::Client
-    virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&) OVERRIDE;
-    virtual void didReceiveSyncMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&, OwnPtr<CoreIPC::MessageEncoder>&) OVERRIDE;
-    virtual void didClose(CoreIPC::Connection*);
-    virtual void didReceiveInvalidMessage(CoreIPC::Connection*, CoreIPC::StringReference messageReceiverName, CoreIPC::StringReference messageName) OVERRIDE;
-#if PLATFORM(WIN)
-    virtual Vector<HWND> windowsToReceiveSentMessagesWhileWaitingForSyncReply();
-#endif
+    virtual CoreIPC::Connection* connection() const OVERRIDE;
+    virtual uint64_t destinationID() const OVERRIDE;
+    virtual bool hasValidConnection() const OVERRIDE;
 
     WebProcess* m_process;
 };

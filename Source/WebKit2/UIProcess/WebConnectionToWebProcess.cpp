@@ -26,28 +26,26 @@
 #include "config.h"
 #include "WebConnectionToWebProcess.h"
 
-#include "WebConnectionMessageKinds.h"
+#include "WebConnectionMessages.h"
 #include "WebContextUserMessageCoders.h"
 #include "WebProcessProxy.h"
 
-using namespace WebCore;
-
 namespace WebKit {
 
-PassRefPtr<WebConnectionToWebProcess> WebConnectionToWebProcess::create(WebProcessProxy* process, CoreIPC::Connection::Identifier connectionIdentifier, RunLoop* runLoop)
+PassRefPtr<WebConnectionToWebProcess> WebConnectionToWebProcess::create(WebProcessProxy* process)
 {
-    return adoptRef(new WebConnectionToWebProcess(process, connectionIdentifier, runLoop));
+    return adoptRef(new WebConnectionToWebProcess(process));
 }
 
-WebConnectionToWebProcess::WebConnectionToWebProcess(WebProcessProxy* process, CoreIPC::Connection::Identifier connectionIdentifier, RunLoop* runLoop)
-    : WebConnection(CoreIPC::Connection::createServerConnection(connectionIdentifier, this, runLoop))
-    , m_process(process)
+WebConnectionToWebProcess::WebConnectionToWebProcess(WebProcessProxy* process)
+    : m_process(process)
 {
-#if OS(DARWIN)
-    m_connection->setShouldCloseConnectionOnMachExceptions();
-#elif PLATFORM(QT) && !OS(WINDOWS)
-    m_connection->setShouldCloseConnectionOnProcessTermination(process->processIdentifier());
-#endif
+    m_process->addMessageReceiver(Messages::WebConnection::messageReceiverName(), this);
+}
+
+void WebConnectionToWebProcess::invalidate()
+{
+    m_process = 0;
 }
 
 // WebConnection
@@ -60,62 +58,22 @@ void WebConnectionToWebProcess::encodeMessageBody(CoreIPC::ArgumentEncoder& enco
 bool WebConnectionToWebProcess::decodeMessageBody(CoreIPC::ArgumentDecoder& decoder, RefPtr<APIObject>& messageBody)
 {
     WebContextUserMessageDecoder messageBodyDecoder(messageBody, m_process);
-
-    if (!decoder.decode(messageBodyDecoder))
-        return false;
-
-    return true;
+    return decoder.decode(messageBodyDecoder);
 }
 
-// CoreIPC::Connection::Client
-
-void WebConnectionToWebProcess::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder)
+CoreIPC::Connection* WebConnectionToWebProcess::connection() const
 {
-    if (messageID.is<CoreIPC::MessageClassWebConnection>()) {
-        didReceiveWebConnectionMessage(connection, messageID, decoder);
-        return;
-    }
-
-    m_process->didReceiveMessage(connection, messageID, decoder);
+    return m_process->connection();
 }
 
-void WebConnectionToWebProcess::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder, OwnPtr<CoreIPC::MessageEncoder>& replyEncoder)
+uint64_t WebConnectionToWebProcess::destinationID() const
 {
-    m_process->didReceiveSyncMessage(connection, messageID, decoder, replyEncoder);
+    return 0;
 }
 
-void WebConnectionToWebProcess::didClose(CoreIPC::Connection* connection)
+bool WebConnectionToWebProcess::hasValidConnection() const
 {
-    RefPtr<WebConnectionToWebProcess> protector(this);
-
-    m_process->didClose(connection);
-
-    // Tell the API client that the connection closed.
-    m_client.didClose(this);
+    return m_process;
 }
-
-void WebConnectionToWebProcess::didReceiveInvalidMessage(CoreIPC::Connection* connection, CoreIPC::StringReference messageReceiverName, CoreIPC::StringReference messageName)
-{
-    RefPtr<WebConnectionToWebProcess> protector = this;
-    RefPtr<WebProcessProxy> process = m_process;
-
-    // This will invalidate the CoreIPC::Connection and the WebProcessProxy member
-    // variables, so we should be careful not to use them after this call.
-    process->didReceiveInvalidMessage(connection, messageReceiverName, messageName);
-
-    // Since we've invalidated the connection we'll never get a CoreIPC::Connection::Client::didClose
-    // callback so we'll explicitly call it here instead.
-    process->didClose(connection);
-
-    // Tell the API client that the connection closed.
-    m_client.didClose(this);
-}
-
-#if PLATFORM(WIN)
-Vector<HWND> WebConnectionToWebProcess::windowsToReceiveSentMessagesWhileWaitingForSyncReply()
-{
-    return m_process->windowsToReceiveSentMessagesWhileWaitingForSyncReply();
-}
-#endif
 
 } // namespace WebKit

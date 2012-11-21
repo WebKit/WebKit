@@ -27,24 +27,27 @@
 #include "WebConnectionToUIProcess.h"
 
 #include "InjectedBundleUserMessageCoders.h"
-#include "WebConnectionMessageKinds.h"
+#include "WebConnectionMessages.h"
 #include "WebProcess.h"
 
 using namespace WebCore;
 
 namespace WebKit {
 
-PassRefPtr<WebConnectionToUIProcess> WebConnectionToUIProcess::create(WebProcess* process, CoreIPC::Connection::Identifier connectionIdentifier, RunLoop* runLoop)
+PassRefPtr<WebConnectionToUIProcess> WebConnectionToUIProcess::create(WebProcess* process)
 {
-    return adoptRef(new WebConnectionToUIProcess(process, connectionIdentifier, runLoop));
+    return adoptRef(new WebConnectionToUIProcess(process));
 }
 
-WebConnectionToUIProcess::WebConnectionToUIProcess(WebProcess* process, CoreIPC::Connection::Identifier connectionIdentifier, RunLoop* runLoop)
-    : WebConnection(CoreIPC::Connection::createClientConnection(connectionIdentifier, this, runLoop))
-    , m_process(process)
+WebConnectionToUIProcess::WebConnectionToUIProcess(WebProcess* process)
+    : m_process(process)
 {
-    m_connection->setDidCloseOnConnectionWorkQueueCallback(ChildProcess::didCloseOnConnectionWorkQueue);
-    m_connection->setShouldExitOnSyncMessageSendFailure(true);
+    m_process->addMessageReceiver(Messages::WebConnection::messageReceiverName(), this);
+}
+
+void WebConnectionToUIProcess::invalidate()
+{
+    m_process = 0;
 }
 
 // WebConnection
@@ -60,37 +63,19 @@ bool WebConnectionToUIProcess::decodeMessageBody(CoreIPC::ArgumentDecoder& decod
     return decoder.decode(messageBodyDecoder);
 }
 
-// CoreIPC::Connection::Client
-void WebConnectionToUIProcess::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder)
+CoreIPC::Connection* WebConnectionToUIProcess::connection() const
 {
-    if (messageID.is<CoreIPC::MessageClassWebConnection>()) {
-        didReceiveWebConnectionMessage(connection, messageID, decoder);
-        return;
-    }
-
-    m_process->didReceiveMessage(connection, messageID, decoder);
+    return m_process->connection();
 }
 
-void WebConnectionToUIProcess::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder, OwnPtr<CoreIPC::MessageEncoder>& replyEncoder)
+uint64_t WebConnectionToUIProcess::destinationID() const
 {
-    m_process->didReceiveSyncMessage(connection, messageID, decoder, replyEncoder);
+    return 0;
 }
 
-void WebConnectionToUIProcess::didClose(CoreIPC::Connection* connection)
+bool WebConnectionToUIProcess::hasValidConnection() const
 {
-    m_process->didClose(connection);
+    return m_process;
 }
-
-void WebConnectionToUIProcess::didReceiveInvalidMessage(CoreIPC::Connection* connection, CoreIPC::StringReference messageReceiverName, CoreIPC::StringReference messageName)
-{
-    m_process->didReceiveInvalidMessage(connection, messageReceiverName, messageName);
-}
-
-#if PLATFORM(WIN)
-Vector<HWND> WebConnectionToUIProcess::windowsToReceiveSentMessagesWhileWaitingForSyncReply()
-{
-    return m_process->windowsToReceiveSentMessagesWhileWaitingForSyncReply();
-}
-#endif
 
 } // namespace WebKit

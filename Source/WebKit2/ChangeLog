@@ -1,3 +1,63 @@
+2012-11-19  Sam Weinig  <sam@webkit.org>
+
+        Simplify WebConnection by removing its underlying CoreIPC::Connection
+        https://bugs.webkit.org/show_bug.cgi?id=102771
+
+        Reviewed by Anders Carlsson.
+
+        Instead of having WebConnection subclasses own the CoreIPC::Connection,
+        move back to having the WebProcess and WebProcessProxy own it (and be
+        its Connection::Client) and use the new MessageReceiver class to vend
+        messages to the WebConnection.
+
+        * Shared/WebConnection.cpp:
+        (WebKit::WebConnection::WebConnection):
+        (WebKit::WebConnection::postMessage):
+        (WebKit::WebConnection::didClose):
+        (WebKit::WebConnection::didReceiveMessage):
+        * Shared/WebConnection.h:
+        Make WebConnection both a MessageReceiver and MessageSender
+        and add virtual functions for derived classes to fill in.
+
+        * UIProcess/WebConnectionToWebProcess.cpp:
+        (WebKit::WebConnectionToWebProcess::create):
+        (WebKit::WebConnectionToWebProcess::WebConnectionToWebProcess):
+        (WebKit::WebConnectionToWebProcess::invalidate):
+        (WebKit::WebConnectionToWebProcess::decodeMessageBody):
+        (WebKit::WebConnectionToWebProcess::connection):
+        (WebKit::WebConnectionToWebProcess::destinationID):
+        (WebKit::WebConnectionToWebProcess::hasValidConnection):
+        * UIProcess/WebConnectionToWebProcess.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::~WebProcessProxy):
+        (WebKit::WebProcessProxy::fromConnection):
+        (WebKit::WebProcessProxy::disconnect):
+        (WebKit::WebProcessProxy::addMessageReceiver):
+        (WebKit::WebProcessProxy::didClose):
+        (WebKit::WebProcessProxy::didReceiveInvalidMessage):
+        (WebKit::WebProcessProxy::didFinishLaunching):
+        * UIProcess/WebProcessProxy.h:
+        (WebKit::WebProcessProxy::connection):
+        (WebProcessProxy):
+        (WebKit::WebProcessProxy::webConnection):
+        * WebProcess/WebConnectionToUIProcess.cpp:
+        (WebKit::WebConnectionToUIProcess::create):
+        (WebKit::WebConnectionToUIProcess::WebConnectionToUIProcess):
+        (WebKit):
+        (WebKit::WebConnectionToUIProcess::invalidate):
+        (WebKit::WebConnectionToUIProcess::connection):
+        (WebKit::WebConnectionToUIProcess::destinationID):
+        (WebKit::WebConnectionToUIProcess::hasValidConnection):
+        * WebProcess/WebConnectionToUIProcess.h:
+        (WebConnectionToUIProcess):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initialize):
+        (WebKit::WebProcess::terminate):
+        * WebProcess/WebProcess.h:
+        (WebKit::WebProcess::connection):
+        (WebKit::WebProcess::webConnectionToUIProcess):
+        Move the CoreIPC::Connection back to the processes.
+
 2012-11-20  Jinwoo Song  <jinwoo7.song@samsung.com>
 
         [EFL][WK2] Add Ewk_Window_Features API and related UI callbacks

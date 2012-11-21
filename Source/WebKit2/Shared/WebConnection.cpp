@@ -27,15 +27,13 @@
 #include "WebConnection.h"
 
 #include "ArgumentCoders.h"
-#include "Connection.h"
 #include "DataReference.h"
 #include "WebConnectionMessages.h"
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {
 
-WebConnection::WebConnection(PassRefPtr<CoreIPC::Connection> connection)
-    : m_connection(connection)
+WebConnection::WebConnection()
 {
 }
 
@@ -50,14 +48,24 @@ void WebConnection::initializeConnectionClient(const WKConnectionClient* client)
 
 void WebConnection::postMessage(const String& messageName, APIObject* messageBody)
 {
-    if (!m_connection)
+    if (!hasValidConnection())
         return;
 
     OwnPtr<CoreIPC::MessageEncoder> encoder = CoreIPC::MessageEncoder::create(Messages::WebConnection::HandleMessage::receiverName(), Messages::WebConnection::HandleMessage::name(), 0);
     encoder->encode(messageName);
     encodeMessageBody(*encoder, messageBody);
 
-    m_connection->sendMessage(CoreIPC::MessageID(Messages::WebConnection::HandleMessage::messageID), encoder.release());
+    sendMessage(CoreIPC::MessageID(Messages::WebConnection::HandleMessage::messageID), encoder.release());
+}
+
+void WebConnection::didClose()
+{
+    m_client.didClose(this);
+}
+
+void WebConnection::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::MessageDecoder& decoder)
+{
+    didReceiveWebConnectionMessage(connection, messageID, decoder);
 }
 
 void WebConnection::handleMessage(CoreIPC::MessageDecoder& decoder)
@@ -71,12 +79,6 @@ void WebConnection::handleMessage(CoreIPC::MessageDecoder& decoder)
         return;
 
     m_client.didReceiveMessage(this, messageName, messageBody.get());
-}
-
-void WebConnection::invalidate()
-{
-    m_connection->invalidate();
-    m_connection = nullptr;
 }
 
 } // namespace WebKit

@@ -115,15 +115,14 @@ public:
 
     void initialize(CoreIPC::Connection::Identifier, WebCore::RunLoop*);
 
-    CoreIPC::Connection* connection() const { return m_connection->connection(); }
+    CoreIPC::Connection* connection() const { return m_connection.get(); }
     WebCore::RunLoop* runLoop() const { return m_runLoop; }
 
     void addMessageReceiver(CoreIPC::StringReference messageReceiverName, CoreIPC::MessageReceiver*);
     void addMessageReceiver(CoreIPC::StringReference messageReceiverName, uint64_t destinationID, CoreIPC::MessageReceiver*);
-
     void removeMessageReceiver(CoreIPC::StringReference messageReceiverName, uint64_t destinationID);
 
-    WebConnectionToUIProcess* webConnectionToUIProcess() const { return m_connection.get(); }
+    WebConnectionToUIProcess* webConnectionToUIProcess() const { return m_webConnection.get(); }
 
     WebPage* webPage(uint64_t pageID) const;
     void createWebPage(uint64_t pageID, const WebPageCreationParameters&);
@@ -309,8 +308,10 @@ private:
     void unregisterSchemeForCustomProtocol(const WTF::String&);
 #endif
 
-    RefPtr<WebConnectionToUIProcess> m_connection;
+    RefPtr<CoreIPC::Connection> m_connection;
     CoreIPC::MessageReceiverMap m_messageReceiverMap;
+
+    RefPtr<WebConnectionToUIProcess> m_webConnection;
 
     HashMap<uint64_t, RefPtr<WebPage> > m_pageMap;
     HashMap<uint64_t, RefPtr<WebPageGroupProxy> > m_pageGroupMap;
