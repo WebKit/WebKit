@@ -1,3 +1,30 @@
+2012-11-21  Kentaro Hara  <haraken@chromium.org>
+
+        Unreviewed, rolling out r135358.
+        http://trac.webkit.org/changeset/135358
+        https://bugs.webkit.org/show_bug.cgi?id=102881
+
+        It broke Chromium/Linux build
+
+        * UseV8.cmake:
+        * WebCore.gypi:
+        * bindings/v8/custom/V8HTMLImageElementConstructor.cpp: Renamed from Source/WebCore/bindings/v8/custom/V8HTMLImageElementCustom.cpp.
+        (WebCore):
+        (WebCore::v8HTMLImageElementConstructorCallback):
+        (WebCore::V8HTMLImageElementConstructor::GetTemplate):
+        * bindings/v8/custom/V8HTMLImageElementConstructor.h: Renamed from Source/WebCore/bindings/v8/custom/V8HTMLImageElementCustom.h.
+        (WebCore):
+        (V8HTMLImageElementConstructor):
+        * bindings/v8/custom/V8IntentConstructor.cpp: Renamed from Source/WebCore/bindings/v8/custom/V8IntentCustom.cpp.
+        (WebCore):
+        (WebCore::V8Intent::constructorCallbackCustom):
+        * bindings/v8/custom/V8MessageChannelConstructor.cpp: Renamed from Source/WebCore/bindings/v8/custom/V8MessageChannelCustom.cpp.
+        (WebCore):
+        (WebCore::V8MessageChannel::constructorCallbackCustom):
+        * bindings/v8/custom/V8WebKitPointConstructor.cpp: Renamed from Source/WebCore/bindings/v8/custom/V8WebKitPointCustom.cpp.
+        (WebCore):
+        (WebCore::V8WebKitPoint::constructorCallbackCustom):
+
 2012-11-21  KyungTae Kim  <ktf.kim@samsung.com>
 
         Unused parameters on ScrollingCoordinator.cpp

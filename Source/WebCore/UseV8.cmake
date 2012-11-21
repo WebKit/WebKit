@@ -110,9 +110,10 @@ LIST(APPEND WebCore_SOURCES
     bindings/v8/custom/V8HTMLFormElementCustom.cpp
     bindings/v8/custom/V8HTMLFrameElementCustom.cpp
     bindings/v8/custom/V8HTMLFrameSetElementCustom.cpp
-    bindings/v8/custom/V8HTMLImageElementCustom.cpp
+    bindings/v8/custom/V8HTMLImageElementConstructor.cpp
     bindings/v8/custom/V8HTMLInputElementCustom.cpp
     bindings/v8/custom/V8HTMLLinkElementCustom.cpp
+    bindings/v8/custom/V8HTMLOptionElementConstructor.cpp
     bindings/v8/custom/V8HTMLOptionsCollectionCustom.cpp
     bindings/v8/custom/V8HTMLOutputElementCustom.cpp
     bindings/v8/custom/V8HTMLPlugInElementCustom.cpp
@@ -125,7 +126,7 @@ LIST(APPEND WebCore_SOURCES
     bindings/v8/custom/V8InjectedScriptManager.cpp
     bindings/v8/custom/V8InspectorFrontendHostCustom.cpp
     bindings/v8/custom/V8LocationCustom.cpp
-    bindings/v8/custom/V8MessageChannelCustom.cpp
+    bindings/v8/custom/V8MessageChannelConstructor.cpp
     bindings/v8/custom/V8MessageEventCustom.cpp
     bindings/v8/custom/V8MessagePortCustom.cpp
     bindings/v8/custom/V8MicroDataItemValueCustom.cpp
@@ -148,7 +149,7 @@ LIST(APPEND WebCore_SOURCES
     bindings/v8/custom/V8StyleSheetListCustom.cpp
     bindings/v8/custom/V8WebGLRenderingContextCustom.cpp
     bindings/v8/custom/V8WebKitAnimationCustom.cpp
-    bindings/v8/custom/V8WebKitPointCustom.cpp
+    bindings/v8/custom/V8WebKitPointConstructor.cpp
     bindings/v8/custom/V8WorkerContextCustom.cpp
     bindings/v8/custom/V8WorkerCustom.cpp
     bindings/v8/custom/V8XMLHttpRequestCustom.cpp
