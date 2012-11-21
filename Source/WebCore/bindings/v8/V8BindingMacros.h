@@ -55,13 +55,25 @@ enum ParameterDefaultPolicy {
 
 #define STRING_TO_V8PARAMETER_EXCEPTION_BLOCK(type, var, value) \
     type var(value);                                            \
-    if (!var.prepare())                                         \
-        return v8::Undefined();
+    {                                                           \
+        v8::TryCatch block;                                     \
+        var.prepare();                                          \
+        if (block.HasCaught()) {                                \
+            block.ReThrow();                                    \
+            return v8::Undefined();                             \
+        }                                                       \
+    }
 
 #define STRING_TO_V8PARAMETER_EXCEPTION_BLOCK_VOID(type, var, value) \
     type var(value);                                                 \
-    if (!var.prepare())                                              \
-        return;
+    {                                                                \
+        v8::TryCatch block;                                          \
+        var.prepare();                                               \
+        if (block.HasCaught()) {                                     \
+            block.ReThrow();                                         \
+            return;                                                  \
+        }                                                            \
+    }
 
 #define MAYBE_MISSING_PARAMETER(args, index, policy) \
     (((policy) == DefaultIsNullString && (index) >= (args).Length()) ? (v8::Local<v8::Value>()) : ((args)[(index)]))

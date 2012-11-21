@@ -59,33 +59,28 @@ public:
     {
     }
 
-    bool prepare();
+    // This can throw. You must use this through the
+    // STRING_TO_V8PARAMETER_EXCEPTION_BLOCK() macro.
+    void prepare();
     operator String() { return toString<String>(); }
     operator AtomicString() { return toString<AtomicString>(); }
 
 private:
-    bool prepareBase()
+    void prepareBase()
     {
         if (m_v8Object.IsEmpty())
-            return true;
+            return;
 
         if (LIKELY(m_v8Object->IsString()))
-            return true;
+            return;
 
         if (LIKELY(m_v8Object->IsInt32())) {
             setString(int32ToWebCoreString(m_v8Object->Int32Value()));
-            return true;
+            return;
         }
 
         m_mode = DoNotExternalize;
-        v8::TryCatch block;
         m_v8Object = m_v8Object->ToString();
-        // Handle the case where an exception is thrown as part of invoking toString on the object.
-        if (block.HasCaught()) {
-            block.ReThrow();
-            return false;
-        }
-        return true;
     }
 
     v8::Local<v8::Value> object() { return m_v8Object; }
@@ -110,27 +105,27 @@ private:
     String m_string;
 };
 
-template<> inline bool V8Parameter<DefaultMode>::prepare()
+template<> inline void V8Parameter<DefaultMode>::prepare()
 {
-    return prepareBase();
+    prepareBase();
 }
 
-template<> inline bool V8Parameter<WithNullCheck>::prepare()
+template<> inline void V8Parameter<WithNullCheck>::prepare()
 {
     if (object().IsEmpty() || object()->IsNull()) {
         setString(String());
-        return true;
+        return;
     }
-    return prepareBase();
+    prepareBase();
 }
 
-template<> inline bool V8Parameter<WithUndefinedOrNullCheck>::prepare()
+template<> inline void V8Parameter<WithUndefinedOrNullCheck>::prepare()
 {
     if (object().IsEmpty() || object()->IsNull() || object()->IsUndefined()) {
         setString(String());
-        return true;
+        return;
     }
-    return prepareBase();
+    prepareBase();
 }
     
 } // namespace WebCore
