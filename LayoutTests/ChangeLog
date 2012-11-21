@@ -1,5 +1,12 @@
 2012-11-21  Csaba Osztrogonác  <ossy@webkit.org>
 
+        [Qt] Unreviewed gardening, unskip a now passing test, update an expected file.
+
+        * platform/qt-5.0/TestExpectations:
+        * platform/qt-5.0/editing/selection/click-left-of-rtl-wrapping-text-expected.txt:
+
+2012-11-21  Csaba Osztrogonác  <ossy@webkit.org>
+
         [Qt] Unreviewed gardening, unskip now passing tests.
 
         * platform/qt/TestExpectations:
