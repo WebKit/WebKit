@@ -149,6 +149,9 @@ plugins/npp-set-window-called-during-destruction.html
 plugins/reloadplugins-and-pages.html
 plugins/mouse-click-iframe-to-plugin.html
 
+# [Qt][WK2] plugins/refcount-leaks.html fails
+webkit.org/b/98640 plugins/refcount-leaks.html
+
 # Unexplained failures
 fast/table/giantCellspacing.html
 media/video-zoom-controls.html
