@@ -57,8 +57,6 @@ enum CallbackType {
     AuthenticationRequest,
     BackForwardListChange,
     CancelVibration,
-    CloseWindow,
-    CreateWindow,
     DownloadJobCancelled,
     DownloadJobFailed,
     DownloadJobFinished,
@@ -69,6 +67,7 @@ enum CallbackType {
     LoadError,
     LoadFinished,
     LoadProgress,
+    MenuBarVisible,
     ProvisionalLoadFailed,
     ProvisionalLoadRedirect,
     ProvisionalLoadStarted,
@@ -77,15 +76,18 @@ enum CallbackType {
     ResourceLoadFailed,
     ResourceLoadFinished,
     ResourceRequestSent,
+    StatusBarVisible,
     NavigationPolicyDecision,
     NewWindowPolicyDecision,
     TextFound,
     TitleChange,
+    ToolbarVisible,
     TooltipTextUnset,
     TooltipTextSet,
     URLChanged,
     Vibrate,
     WebProcessCrashed,
+    WindowResizable,
 #if ENABLE(WEB_INTENTS)
     IntentRequest,
 #endif
@@ -164,8 +166,6 @@ struct CallBackInfo<callbackType> {                           \
 DECLARE_EWK_VIEW_CALLBACK(AuthenticationRequest, "authentication,request", Ewk_Auth_Request);
 DECLARE_EWK_VIEW_CALLBACK(BackForwardListChange, "back,forward,list,changed", void);
 DECLARE_EWK_VIEW_CALLBACK(CancelVibration, "cancel,vibration", void);
-DECLARE_EWK_VIEW_CALLBACK(CloseWindow, "close,window", void);
-DECLARE_EWK_VIEW_CALLBACK(CreateWindow, "create,window", Evas_Object*);
 DECLARE_EWK_VIEW_CALLBACK(DownloadJobCancelled, "download,cancelled", Ewk_Download_Job);
 DECLARE_EWK_VIEW_CALLBACK(DownloadJobFailed, "download,failed", Ewk_Download_Job_Error);
 DECLARE_EWK_VIEW_CALLBACK(DownloadJobFinished, "download,finished", Ewk_Download_Job);
@@ -179,6 +179,7 @@ DECLARE_EWK_VIEW_CALLBACK(LoadProgress, "load,progress", double);
 DECLARE_EWK_VIEW_CALLBACK(ProvisionalLoadFailed, "load,provisional,failed", Ewk_Error);
 DECLARE_EWK_VIEW_CALLBACK(ProvisionalLoadRedirect, "load,provisional,redirect", void);
 DECLARE_EWK_VIEW_CALLBACK(ProvisionalLoadStarted, "load,provisional,started", void);
+DECLARE_EWK_VIEW_CALLBACK(MenuBarVisible, "menubar,visible", bool);
 DECLARE_EWK_VIEW_CALLBACK(NavigationPolicyDecision, "policy,decision,navigation", Ewk_Navigation_Policy_Decision);
 DECLARE_EWK_VIEW_CALLBACK(NewWindowPolicyDecision, "policy,decision,new,window", Ewk_Navigation_Policy_Decision);
 DECLARE_EWK_VIEW_CALLBACK(ResourceLoadStarted, "resource,request,new", Ewk_Resource_Request);
@@ -186,13 +187,16 @@ DECLARE_EWK_VIEW_CALLBACK(ResourceLoadResponse, "resource,request,response", Ewk
 DECLARE_EWK_VIEW_CALLBACK(ResourceLoadFailed, "resource,request,failed", Ewk_Resource_Load_Error);
 DECLARE_EWK_VIEW_CALLBACK(ResourceLoadFinished, "resource,request,finished", Ewk_Resource);
 DECLARE_EWK_VIEW_CALLBACK(ResourceRequestSent, "resource,request,sent", Ewk_Resource_Request);
+DECLARE_EWK_VIEW_CALLBACK(StatusBarVisible, "statusbar,visible", bool);
 DECLARE_EWK_VIEW_CALLBACK(TextFound, "text,found", unsigned);
 DECLARE_EWK_VIEW_CALLBACK(TitleChange, "title,changed", char);
+DECLARE_EWK_VIEW_CALLBACK(ToolbarVisible, "toolbar,visible", bool);
 DECLARE_EWK_VIEW_CALLBACK(TooltipTextUnset, "tooltip,text,unset", void);
 DECLARE_EWK_VIEW_CALLBACK(TooltipTextSet, "tooltip,text,set", char);
 DECLARE_EWK_VIEW_CALLBACK(URLChanged, "url,changed", char);
 DECLARE_EWK_VIEW_CALLBACK(Vibrate, "vibrate", uint64_t);
 DECLARE_EWK_VIEW_CALLBACK(WebProcessCrashed, "webprocess,crashed", bool);
+DECLARE_EWK_VIEW_CALLBACK(WindowResizable, "window,resizable", bool);
 #if ENABLE(WEB_INTENTS)
 DECLARE_EWK_VIEW_CALLBACK(IntentRequest, "intent,request,new", Ewk_Intent);
 #endif

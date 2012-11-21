@@ -284,20 +284,6 @@ on_back_forward_list_changed(void *user_data, Evas_Object *ewk_view, void *event
     elm_object_disabled_set(window->forward_button, !ewk_view_forward_possible(ewk_view));
 }
 
-static Evas_Object*
-on_new_window(Ewk_View_Smart_Data *sd, Evas_Coord width, Evas_Coord height)
-{
-    Browser_Window *window = window_create(NULL, width, height);
-    windows = eina_list_append(windows, window);
-    return window->ewk_view;
-}
-
-static void
-on_close_window(void *user_data, Evas_Object *ewk_view, void *event_info)
-{
-    window_close((Browser_Window *)user_data);
-}
-
 static void
 on_progress(void *user_data, Evas_Object *ewk_view, void *event_info)
 {
@@ -763,6 +749,39 @@ static Eina_Bool on_fullscreen_exit(Ewk_View_Smart_Data *sd)
     return EINA_TRUE;
 }
 
+static Evas_Object *
+on_window_create(Ewk_View_Smart_Data *smartData, const Ewk_Window_Features *window_features)
+{
+    int x = 0;
+    int y = 0;
+    int width = 0;
+    int height = 0;
+
+    ewk_window_features_geometry_get(window_features, &x, &y, &width, &height);
+
+    if (!width)
+        width = window_width;
+
+    if (!height)
+        height = window_height;
+
+    Browser_Window *window = window_create(NULL, width, height);
+    Evas_Object *new_view = window->ewk_view;
+
+    windows = eina_list_append(windows, window);
+
+    info("minibrowser: location(%d,%d) size=(%d,%d)\n", x, y, width, height);
+
+    return new_view;
+}
+
+static void
+on_window_close(Ewk_View_Smart_Data *smartData)
+{
+    Browser_Window *window = window_find_with_ewk_view(smartData->self);
+    window_close(window);
+}
+
 static void
 auth_popup_close(Auth_Data *auth_data)
 {
@@ -1030,7 +1049,8 @@ static Browser_Window *window_create(const char *url, int width, int height)
     ewkViewClass->window_geometry_set = on_window_geometry_set;
     ewkViewClass->fullscreen_enter = on_fullscreen_enter;
     ewkViewClass->fullscreen_exit = on_fullscreen_exit;
-    ewkViewClass->window_create_new = on_new_window;
+    ewkViewClass->window_create = on_window_create;
+    ewkViewClass->window_close = on_window_close;
 
     Evas *evas = evas_object_evas_get(window->elm_window);
     Evas_Smart *smart = evas_smart_class_new(&ewkViewClass->sc);
@@ -1047,7 +1067,6 @@ static Browser_Window *window_create(const char *url, int width, int height)
     ewk_settings_preferred_minimum_contents_width_set(settings, 0);
 
     evas_object_smart_callback_add(window->ewk_view, "authentication,request", on_authentication_request, window);
-    evas_object_smart_callback_add(window->ewk_view, "close,window", on_close_window, window);
     evas_object_smart_callback_add(window->ewk_view, "download,failed", on_download_failed, window);
     evas_object_smart_callback_add(window->ewk_view, "download,finished", on_download_finished, window);
     evas_object_smart_callback_add(window->ewk_view, "download,request", on_download_request, window);

@@ -58,5 +58,6 @@
 #include "ewk_url_response.h"
 #include "ewk_url_scheme_request.h"
 #include "ewk_view.h"
+#include "ewk_window_features.h"
 
 #endif // EWebKit2_h

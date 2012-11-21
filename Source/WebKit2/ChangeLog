@@ -1,3 +1,43 @@
+2012-11-20  Jinwoo Song  <jinwoo7.song@samsung.com>
+
+        [EFL][WK2] Add Ewk_Window_Features API and related UI callbacks
+        https://bugs.webkit.org/show_bug.cgi?id=99114
+
+        Reviewed by Gyuyoung Kim.
+
+        Added Ewk_Window_Features API so that we can create new windows
+        with various window features such as location, size, toolbar, menubar,
+        statusbar, locationbar, scrollbar, resizable, and fullscreen.
+
+        UI client callbacks related to window features also implemented
+        so that it is possible to retrieve the window object property values.
+
+        * PlatformEfl.cmake:
+        * UIProcess/API/efl/EWebKit2.h:
+        * UIProcess/API/efl/EwkViewCallbacks.h:
+        (EwkViewCallbacks):
+        * UIProcess/API/efl/EwkViewImpl.cpp:
+        (EwkViewImpl::windowFeatures):
+        (EwkViewImpl::createNewPage):
+        (EwkViewImpl::closePage):
+        * UIProcess/API/efl/EwkViewImpl.h:
+        (EwkViewImpl):
+        * UIProcess/API/efl/ewk_view.h:
+        * UIProcess/efl/PageUIClientEfl.cpp:
+        (WebKit::PageUIClientEfl::createNewPage):
+        (WebKit::PageUIClientEfl::toolbarsAreVisible):
+        (WebKit):
+        (WebKit::PageUIClientEfl::setToolbarsAreVisible):
+        (WebKit::PageUIClientEfl::menuBarIsVisible):
+        (WebKit::PageUIClientEfl::setMenuBarIsVisible):
+        (WebKit::PageUIClientEfl::statusBarIsVisible):
+        (WebKit::PageUIClientEfl::setStatusBarIsVisible):
+        (WebKit::PageUIClientEfl::isResizable):
+        (WebKit::PageUIClientEfl::setIsResizable):
+        (WebKit::PageUIClientEfl::PageUIClientEfl):
+        * UIProcess/efl/PageUIClientEfl.h:
+        (PageUIClientEfl):
+
 2012-11-20  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r135295.

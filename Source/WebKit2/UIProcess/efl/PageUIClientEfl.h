@@ -50,6 +50,14 @@ private:
     static void runJavaScriptAlert(WKPageRef, WKStringRef, WKFrameRef, const void*);
     static bool runJavaScriptConfirm(WKPageRef, WKStringRef, WKFrameRef, const void*);
     static WKStringRef runJavaScriptPrompt(WKPageRef, WKStringRef, WKStringRef, WKFrameRef, const void*);
+    static bool toolbarsAreVisible(WKPageRef, const void* clientInfo);
+    static void setToolbarsAreVisible(WKPageRef, bool, const void* clientInfo);
+    static bool menuBarIsVisible(WKPageRef, const void* clientInfo);
+    static void setMenuBarIsVisible(WKPageRef, bool, const void* clientInfo);
+    static bool statusBarIsVisible(WKPageRef, const void* clientInfo);
+    static void setStatusBarIsVisible(WKPageRef, bool, const void* clientInfo);
+    static bool isResizable(WKPageRef, const void* clientInfo);
+    static void setIsResizable(WKPageRef, bool, const void* clientInfo);
 #if ENABLE(INPUT_TYPE_COLOR)
     static void showColorPicker(WKPageRef, WKStringRef initialColor, WKColorPickerResultListenerRef, const void*);
     static void hideColorPicker(WKPageRef, const void*);

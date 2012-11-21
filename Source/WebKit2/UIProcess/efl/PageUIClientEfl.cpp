@@ -32,6 +32,7 @@
 #include "WKEvent.h"
 #include "WKString.h"
 #include "ewk_file_chooser_request_private.h"
+#include "ewk_window_features_private.h"
 #include <Ecore_Evas.h>
 #include <WebCore/Color.h>
 
@@ -49,9 +50,9 @@ void PageUIClientEfl::closePage(WKPageRef, const void* clientInfo)
     toPageUIClientEfl(clientInfo)->m_viewImpl->closePage();
 }
 
-WKPageRef PageUIClientEfl::createNewPage(WKPageRef, WKURLRequestRef, WKDictionaryRef windowFeatures, WKEventModifiers, WKEventMouseButton, const void* clientInfo)
+WKPageRef PageUIClientEfl::createNewPage(WKPageRef, WKURLRequestRef, WKDictionaryRef wkWindowFeatures, WKEventModifiers, WKEventMouseButton, const void* clientInfo)
 {
-    return toPageUIClientEfl(clientInfo)->m_viewImpl->createNewPage(windowFeatures);
+    return toPageUIClientEfl(clientInfo)->m_viewImpl->createNewPage(toImpl(wkWindowFeatures));
 }
 
 void PageUIClientEfl::runJavaScriptAlert(WKPageRef, WKStringRef alertText, WKFrameRef, const void* clientInfo)
@@ -68,6 +69,62 @@ WKStringRef PageUIClientEfl::runJavaScriptPrompt(WKPageRef, WKStringRef message,
 {
     WKEinaSharedString value = toPageUIClientEfl(clientInfo)->m_viewImpl->requestJSPromptPopup(WKEinaSharedString(message), WKEinaSharedString(defaultValue));
     return value ? WKStringCreateWithUTF8CString(value) : 0;
+}
+
+bool PageUIClientEfl::toolbarsAreVisible(WKPageRef, const void* clientInfo)
+{
+    EwkWindowFeatures* features = toPageUIClientEfl(clientInfo)->m_viewImpl->windowFeatures();
+    ASSERT(features);
+    return features->toolbarVisible();
+}
+
+void PageUIClientEfl::setToolbarsAreVisible(WKPageRef, bool toolbarVisible, const void* clientInfo)
+{
+    EwkWindowFeatures* features = toPageUIClientEfl(clientInfo)->m_viewImpl->windowFeatures();
+    ASSERT(features);
+    features->setToolbarVisible(toolbarVisible);
+}
+
+bool PageUIClientEfl::menuBarIsVisible(WKPageRef, const void* clientInfo)
+{
+    EwkWindowFeatures* features = toPageUIClientEfl(clientInfo)->m_viewImpl->windowFeatures();
+    ASSERT(features);
+    return features->menuBarVisible();
+}
+
+void PageUIClientEfl::setMenuBarIsVisible(WKPageRef, bool menuBarVisible, const void* clientInfo)
+{
+    EwkWindowFeatures* features = toPageUIClientEfl(clientInfo)->m_viewImpl->windowFeatures();
+    ASSERT(features);
+    features->setMenuBarVisible(menuBarVisible);
+}
+
+bool PageUIClientEfl::statusBarIsVisible(WKPageRef, const void* clientInfo)
+{
+    EwkWindowFeatures* features = toPageUIClientEfl(clientInfo)->m_viewImpl->windowFeatures();
+    ASSERT(features);
+    return features->statusBarVisible();
+}
+
+void PageUIClientEfl::setStatusBarIsVisible(WKPageRef, bool statusBarVisible, const void* clientInfo)
+{
+    EwkWindowFeatures* features = toPageUIClientEfl(clientInfo)->m_viewImpl->windowFeatures();
+    ASSERT(features);
+    features->setStatusBarVisible(statusBarVisible);
+}
+
+bool PageUIClientEfl::isResizable(WKPageRef, const void* clientInfo)
+{
+    EwkWindowFeatures* features = toPageUIClientEfl(clientInfo)->m_viewImpl->windowFeatures();
+    ASSERT(features);
+    return features->resizable();
+}
+
+void PageUIClientEfl::setIsResizable(WKPageRef, bool resizable, const void* clientInfo)
+{
+    EwkWindowFeatures* features = toPageUIClientEfl(clientInfo)->m_viewImpl->windowFeatures();
+    ASSERT(features);
+    features->setResizable(resizable);
 }
 
 #if ENABLE(INPUT_TYPE_COLOR)
@@ -141,6 +198,14 @@ PageUIClientEfl::PageUIClientEfl(EwkViewImpl* viewImpl)
     uiClient.runJavaScriptAlert = runJavaScriptAlert;
     uiClient.runJavaScriptConfirm = runJavaScriptConfirm;
     uiClient.runJavaScriptPrompt = runJavaScriptPrompt;
+    uiClient.toolbarsAreVisible = toolbarsAreVisible;
+    uiClient.setToolbarsAreVisible = setToolbarsAreVisible;
+    uiClient.menuBarIsVisible = menuBarIsVisible;
+    uiClient.setMenuBarIsVisible = setMenuBarIsVisible;
+    uiClient.statusBarIsVisible = statusBarIsVisible;
+    uiClient.setStatusBarIsVisible = setStatusBarIsVisible;
+    uiClient.isResizable = isResizable;
+    uiClient.setIsResizable = setIsResizable;
     uiClient.takeFocus = takeFocus;
     uiClient.focus = focus;
     uiClient.unfocus = unfocus;

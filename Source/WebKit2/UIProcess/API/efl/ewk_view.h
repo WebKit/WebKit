@@ -30,8 +30,6 @@
  *   ewk_auth_request_ref() on the request object to process the authentication asynchronously.
  * - "back,forward,list,changed", void: reports that the view's back / forward list had changed.
  * - "cancel,vibration", void: request to cancel the vibration.
- * - "close,window", void: window is closed.
- * - "create,window", Evas_Object**: a new window is created.
  * - "download,cancelled", Ewk_Download_Job*: reports that a download was effectively cancelled.
  * - "download,failed", Ewk_Download_Job_Error*: reports that a download failed with the given error.
  * - "download,finished", Ewk_Download_Job*: reports that a download completed successfully.
@@ -94,6 +92,7 @@
 #include "ewk_touch.h"
 #include "ewk_url_request.h"
 #include "ewk_url_response.h"
+#include "ewk_window_features.h"
 #include <Evas.h>
 
 #ifdef __cplusplus
@@ -148,16 +147,17 @@ struct Ewk_View_Smart_Class {
     //   - Web database.
     unsigned long long (*exceeded_database_quota)(Ewk_View_Smart_Data *sd, const char *databaseName, const char *displayName, unsigned long long currentQuota, unsigned long long currentOriginUsage, unsigned long long currentDatabaseUsage, unsigned long long expectedUsage);
 
-    // new window:
-    //   - Create a new window with specified size
-    Evas_Object* (*window_create_new)(Ewk_View_Smart_Data *sd, Evas_Coord width, Evas_Coord height);
+    // window creation and closing:
+    //   - Create a new window with specified features and close window.
+    Evas_Object *(*window_create)(Ewk_View_Smart_Data *sd, const Ewk_Window_Features *window_features);
+    void (*window_close)(Ewk_View_Smart_Data *sd);
 };
 
 /**
  * The version you have to put into the version field
  * in the @a Ewk_View_Smart_Class structure.
  */
-#define EWK_VIEW_SMART_CLASS_VERSION 7UL
+#define EWK_VIEW_SMART_CLASS_VERSION 8UL
 
 /**
  * Initializer for whole Ewk_View_Smart_Class structure.
@@ -169,7 +169,7 @@ struct Ewk_View_Smart_Class {
  * @see EWK_VIEW_SMART_CLASS_INIT_VERSION
  * @see EWK_VIEW_SMART_CLASS_INIT_NAME_VERSION
  */
-#define EWK_VIEW_SMART_CLASS_INIT(smart_class_init) {smart_class_init, EWK_VIEW_SMART_CLASS_VERSION, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
+#define EWK_VIEW_SMART_CLASS_INIT(smart_class_init) {smart_class_init, EWK_VIEW_SMART_CLASS_VERSION, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
 
 /**
  * Initializer to zero a whole Ewk_View_Smart_Class structure.

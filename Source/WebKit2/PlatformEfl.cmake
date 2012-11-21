@@ -73,6 +73,7 @@ LIST(APPEND WebKit2_SOURCES
     UIProcess/API/efl/ewk_url_response.cpp
     UIProcess/API/efl/ewk_url_scheme_request.cpp
     UIProcess/API/efl/ewk_view.cpp
+    UIProcess/API/efl/ewk_window_features.cpp
 
     UIProcess/cairo/BackingStoreCairo.cpp
 
@@ -279,6 +280,7 @@ SET (EWebKit2_HEADERS
     "${CMAKE_CURRENT_SOURCE_DIR}/UIProcess/API/efl/ewk_url_response.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/UIProcess/API/efl/ewk_url_scheme_request.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/UIProcess/API/efl/ewk_view.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/UIProcess/API/efl/ewk_window_features.h"
 )
 
 INSTALL(FILES ${CMAKE_BINARY_DIR}/WebKit2/efl/ewebkit2.pc DESTINATION lib/pkgconfig)
@@ -376,6 +378,7 @@ SET(EWK2UnitTests_BINARIES
     test_ewk2_storage_manager
     test_ewk2_text_checker
     test_ewk2_view
+    test_ewk2_window_features
 )
 
 IF (ENABLE_API_TESTS)

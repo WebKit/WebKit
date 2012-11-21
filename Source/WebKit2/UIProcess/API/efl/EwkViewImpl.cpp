@@ -54,6 +54,7 @@
 #include "ewk_settings_private.h"
 #include "ewk_view.h"
 #include "ewk_view_private.h"
+#include "ewk_window_features_private.h"
 #include <Ecore_Evas.h>
 #include <Ecore_X.h>
 #include <Edje.h>
@@ -850,37 +851,45 @@ void EwkViewImpl::informURLChange()
     informIconChange();
 }
 
-WKPageRef EwkViewImpl::createNewPage(WKDictionaryRef windowFeatures)
+EwkWindowFeatures* EwkViewImpl::windowFeatures()
+{
+    if (!m_windowFeatures)
+        m_windowFeatures = EwkWindowFeatures::create(0, this);
+
+    return m_windowFeatures.get();
+}
+
+WKPageRef EwkViewImpl::createNewPage(ImmutableDictionary* windowFeatures)
 {
     Ewk_View_Smart_Data* sd = smartData();
     ASSERT(sd->api);
 
-    Evas_Object* newEwkView = 0;
-
-    // Extract the width and height from the window attributes and pass them along to the embedder.
-    WKRetainPtr<WKStringRef> widthStr(AdoptWK, WKStringCreateWithUTF8CString("width"));
-    WKRetainPtr<WKStringRef> heightStr(AdoptWK, WKStringCreateWithUTF8CString("height"));
-
-    WKTypeRef ref = WKDictionaryGetItemForKey(windowFeatures, widthStr.get());
-    unsigned width = ref ? WKDoubleGetValue(static_cast<WKDoubleRef>(ref)) : 0;
-    ref = WKDictionaryGetItemForKey(windowFeatures, heightStr.get());
-    unsigned height = ref ? WKDoubleGetValue(static_cast<WKDoubleRef>(ref)) : 0;
-
-    if (!sd->api->window_create_new)
+    if (!sd->api->window_create)
         return 0;
 
-    if (!(newEwkView = sd->api->window_create_new(sd, width, height)))
+    RefPtr<EwkWindowFeatures> ewkWindowFeatures = EwkWindowFeatures::create(windowFeatures, this);
+
+    Evas_Object* newEwkView = sd->api->window_create(sd, ewkWindowFeatures.get());
+    if (!newEwkView)
         return 0;
 
     EwkViewImpl* newViewImpl = EwkViewImpl::fromEvasObject(newEwkView);
     ASSERT(newViewImpl);
+
+    newViewImpl->m_windowFeatures = ewkWindowFeatures;
 
     return static_cast<WKPageRef>(WKRetain(newViewImpl->page()));
 }
 
 void EwkViewImpl::closePage()
 {
-    smartCallback<CloseWindow>().call();
+    Ewk_View_Smart_Data* sd = smartData();
+    ASSERT(sd->api);
+
+    if (!sd->api->window_close)
+        return;
+
+    sd->api->window_close(sd);
 }
 
 void EwkViewImpl::onMouseDown(void* data, Evas*, Evas_Object*, void* eventInfo)
