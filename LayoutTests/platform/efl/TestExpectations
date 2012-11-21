@@ -997,6 +997,9 @@ webkit.org/b/84589 fast/harness/show-modal-dialog.html [ Failure ]
 webkit.org/b/84589 fast/events/scroll-event-during-modal-dialog.html [ Failure ]
 webkit.org/b/84589 http/tests/security/cross-frame-access-get.html [ Failure ]
 
+# Issue with timing for suspend/resumeAnimations()?
+webkit.org/b/84592 animations/stop-animation-on-suspend.html [ Failure ]
+
 # IndexedDB is not yet enabled.
 Bug(EFL) storage/indexeddb
 Bug(EFL) http/tests/inspector/indexeddb

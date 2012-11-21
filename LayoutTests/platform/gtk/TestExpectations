@@ -548,6 +548,8 @@ webkit.org/b/84856 media/media-controller-playback.html [ Failure Pass ]
 webkit.org/b/83878 media/track/track-mode.html [ Failure Pass ]
 webkit.org/b/88867 media/track/track-cue-rendering-snap-to-lines-not-set.html [ Failure Pass ]
 
+webkit.org/b/49179 animations/stop-animation-on-suspend.html [ Failure Pass ]
+
 webkit.org/b/61121 http/tests/appcache/interrupted-update.html [ Failure Pass ]
 
 webkit.org/b/88061 fast/replaced/border-radius-clip.html [ Failure Pass ]

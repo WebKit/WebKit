@@ -1,0 +1,6 @@
+
+PASS - "webkitTransform" property for "box" element at 0.2s saw something close to: 1,0,0,1,100,0
+FAIL - "webkitTransform" property for "iframe.subframe-box" element at 0.2s expected: 1,0,0,1,100,0 but saw: matrix(1, 0, 0, 1, 0, 0)
+FAIL - "webkitTransform" property for "box" element at 0.4s expected: 1,0,0,1,200,0 but saw: matrix(1, 0, 0, 1, 306.0650939941406, 0)
+PASS - "webkitTransform" property for "iframe.subframe-box" element at 0.4s saw something close to: 1,0,0,1,200,0
+

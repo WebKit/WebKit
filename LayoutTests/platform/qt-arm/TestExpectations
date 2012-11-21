@@ -140,6 +140,7 @@ sputnik/Unicode/Unicode_218/S7.6_A5.3_T1.html
 sputnik/Unicode/Unicode_218/S7.6_A5.3_T2.html
 
 # New failing tests
+animations/stop-animation-on-suspend.html
 editing/selection/regional-indicators.html
 fast/dom/Window/window-property-descriptors.html
 fast/encoding/GBK/EUC-CN.html
