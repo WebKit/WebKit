@@ -2433,7 +2433,7 @@ PassRefPtr<HTMLCollection> ElementRareData::ensureCachedHTMLCollection(Element* 
         ASSERT(element->hasTagName(formTag) || element->hasTagName(fieldsetTag));
         return ensureNodeLists()->addCacheWithAtomicName<HTMLFormControlsCollection>(element, type);
 #if ENABLE(MICRODATA)
-    } else if (nodeLists()->type == ItemProperties) {
+    } else if (type == ItemProperties) {
         return ensureNodeLists()->addCacheWithAtomicName<HTMLPropertiesCollection>(element, type);
 #endif
     }

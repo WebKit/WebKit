@@ -1,3 +1,10 @@
+2012-11-21  Ryosuke Niwa  <rniwa@webkit.org>
+
+        EFL and GTK+ build fix after r135429.
+
+        * dom/Element.cpp:
+        (WebCore::ElementRareData::ensureCachedHTMLCollection):
+
 2012-11-20  Ryosuke Niwa  <rniwa@webkit.org>
 
         HTMLCollection should use the same storage as DynamicNodeList
