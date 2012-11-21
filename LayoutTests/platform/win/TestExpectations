@@ -2427,6 +2427,3 @@ fast/xmlhttprequest/xmlhttprequest-recursive-sync-event.html
 fast/css3-text/css3-text-align-last/getComputedStyle/getComputedStyle-text-align-last-inherited.html
 fast/css3-text/css3-text-align-last/getComputedStyle/getComputedStyle-text-align-last.html
 fast/css3-text/css3-text-decoration/getComputedStyle/getComputedStyle-text-decoration-line.html
-
-webkit.org/b/102744 fast/mutation/observer-wrapper-dropoff.html [ Skip ]
-webkit.org/b/102744 fast/mutation/observer-wrapper-dropoff-transient.html [ Skip ]

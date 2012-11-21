@@ -2386,6 +2386,3 @@ webkit.org/b/101925 css3/filters/effect-reference-ordering-hw.html
 
 # [Qt] fast/block/float/overhanging-tall-block.html asserts after r135025
 webkit.org/b/102675 [ Debug ] fast/block/float/overhanging-tall-block.html
-
-webkit.org/b/102744 fast/mutation/observer-wrapper-dropoff.html [ Skip ]
-webkit.org/b/102744 fast/mutation/observer-wrapper-dropoff-transient.html [ Skip ]

@@ -1,3 +1,19 @@
+2012-11-20  Adam Klein  <adamk@chromium.org>
+
+        [JSC] MutationObserver wrapper should not be collected while still observing
+        https://bugs.webkit.org/show_bug.cgi?id=102744
+
+        Reviewed by Adam Barth.
+
+        Remove suppressions for wrapper dropoff tests.
+
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/qt/TestExpectations:
+        * platform/win/TestExpectations:
+        * platform/wincairo/TestExpectations:
+
 2012-11-20  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION(r131106): magnitude-perf.js calls bind on undefined

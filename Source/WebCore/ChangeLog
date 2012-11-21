@@ -1,3 +1,19 @@
+2012-11-20  Adam Klein  <adamk@chromium.org>
+
+        [JSC] MutationObserver wrapper should not be collected while still observing
+        https://bugs.webkit.org/show_bug.cgi?id=102744
+
+        Reviewed by Adam Barth.
+
+        This is the JSC side of the change landed for V8 in r135228.
+        It ensures MutationObserver wrapper objects are kept alive as long as
+        any observed nodes.
+
+        * bindings/js/JSMutationObserverCustom.cpp:
+        (WebCore::JSMutationObserverOwner::isReachableFromOpaqueRoots): Keep MutationObserver wrappers alive
+        if any of their observed nodes' roots is an opaque root.
+        * dom/MutationObserver.idl: Add JSCustomIsReachable
+
 2012-11-20  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: Move control of transaction completion to front end
