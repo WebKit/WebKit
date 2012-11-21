@@ -219,10 +219,8 @@ void NodeRenderingContext::createRendererIfNeeded()
             element->setStyleAffectedByEmpty();
         return;
     }
-    RenderObject* parentRenderer = m_parentFlowRenderer ? m_parentFlowRenderer : this->parentRenderer();
-    // Do not call m_context.nextRenderer() here in the first clause, because it expects to have
-    // the renderer added to its parent already.
-    RenderObject* nextRenderer = m_parentFlowRenderer ? m_parentFlowRenderer->nextRendererForNode(m_node) : this->nextRenderer();
+    RenderObject* parentRenderer = this->parentRenderer();
+    RenderObject* nextRenderer = this->nextRenderer();
 
 #if ENABLE(DIALOG_ELEMENT)
     if (element && element->isInTopLayer())

@@ -1,3 +1,24 @@
+2012-11-21  Elliott Sprehn  <esprehn@chromium.org>
+
+        Remove unnecessary ternaries in createRendererIfNeeded
+        https://bugs.webkit.org/show_bug.cgi?id=102974
+
+        Reviewed by Ojan Vafai.
+
+        parentRenderer, nextRenderer and previousRenderer all handle flow
+        threads automatically so there's no reason to duplicate the check in 
+        createRendererIfNeeded.
+
+        Note that while these methods first check the node for a renderer and
+        then delegate to the flow thread the node never has a renderer when
+        calling createRendererIfNeeded per the assertion at the top so this
+        change is equivalent.
+
+        No new tests, just refactoring.
+
+        * dom/NodeRenderingContext.cpp:
+        (WebCore::NodeRenderingContext::createRendererIfNeeded):
+
 2012-11-21  Ryosuke Niwa  <rniwa@webkit.org>
 
         EFL and GTK+ build fix after r135429.
