@@ -1399,7 +1399,7 @@ ContainerNode* Node::parentNodeForRenderingAndStyle()
 
 void Node::createRendererIfNeeded()
 {
-    NodeRendererFactory(this).createRendererIfNeeded();
+    NodeRenderingContext(this).createRendererIfNeeded();
 }
 
 bool Node::rendererIsNeeded(const NodeRenderingContext& context)

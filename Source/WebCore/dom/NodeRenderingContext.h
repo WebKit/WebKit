@@ -48,6 +48,8 @@ public:
     NodeRenderingContext(Node*, RenderStyle*);
     ~NodeRenderingContext();
 
+    void createRendererIfNeeded();
+
     Node* node() const;
     ContainerNode* parentNodeForRenderingAndStyle() const;
     bool resetStyleInheritance() const;
@@ -56,19 +58,15 @@ public:
     RenderObject* previousRenderer() const;
     InsertionPoint* insertionPoint() const;
 
-    RenderStyle* style() const;
-    void setStyle(PassRefPtr<RenderStyle>);
-    PassRefPtr<RenderStyle> releaseStyle();
-
-    bool shouldCreateRenderer() const;
+    const RenderStyle* style() const;
 
     bool isOnUpperEncapsulationBoundary() const;
     bool isOnEncapsulationBoundary() const;
-    bool hasFlowThreadParent() const { return m_parentFlowRenderer; }
-    RenderNamedFlowThread* parentFlowRenderer() const { return m_parentFlowRenderer; }
-    void moveToFlowThreadIfNeeded();
 
 private:
+    bool shouldCreateRenderer() const;
+    void moveToFlowThreadIfNeeded();
+
     Node* m_node;
     ComposedShadowTreeWalker::ParentTraversalDetails m_parentDetails;
     RefPtr<RenderStyle> m_style;
@@ -91,7 +89,7 @@ inline bool NodeRenderingContext::resetStyleInheritance() const
     return m_parentDetails.resetStyleInheritance();
 }
 
-inline RenderStyle* NodeRenderingContext::style() const
+inline const RenderStyle* NodeRenderingContext::style() const
 {
     return m_style.get();
 }
@@ -99,26 +97,6 @@ inline RenderStyle* NodeRenderingContext::style() const
 inline InsertionPoint* NodeRenderingContext::insertionPoint() const
 {
     return m_parentDetails.insertionPoint();
-}
-
-class NodeRendererFactory {
-    WTF_MAKE_NONCOPYABLE(NodeRendererFactory);
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    explicit NodeRendererFactory(Node*);
-
-    const NodeRenderingContext& context() const;
-    void createRendererIfNeeded();
-
-private:
-    RenderObject* createRenderer();
-
-    NodeRenderingContext m_context;
-};
-
-inline const NodeRenderingContext& NodeRendererFactory::context() const
-{
-    return m_context;
 }
 
 } // namespace WebCore

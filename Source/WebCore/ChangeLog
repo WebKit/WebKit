@@ -1,3 +1,24 @@
+2012-11-21  Antti Koivisto  <antti@apple.com>
+
+        Replace NodeRendererFactory class with a function
+        https://bugs.webkit.org/show_bug.cgi?id=102950
+
+        Reviewed by Andreas Kling.
+
+        Simplify the code by turning NodeRendererFactory single-use class into function of NodeRenderingContext.
+
+        * dom/Node.cpp:
+        (WebCore::Node::createRendererIfNeeded):
+        * dom/NodeRenderingContext.cpp:
+        (WebCore::NodeRenderingContext::NodeRenderingContext):
+        (WebCore):
+        (WebCore::NodeRenderingContext::moveToFlowThreadIfNeeded):
+        (WebCore::NodeRenderingContext::createRendererIfNeeded):
+        * dom/NodeRenderingContext.h:
+        (NodeRenderingContext):
+        (WebCore::NodeRenderingContext::style):
+        (WebCore):
+
 2012-11-21  W. James MacLean  <wjmaclean@chromium.org>
 
         [chromium] Change default tap highlight color for Chromium Windows & Linux.

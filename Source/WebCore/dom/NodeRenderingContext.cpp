@@ -52,7 +52,6 @@ using namespace HTMLNames;
 
 NodeRenderingContext::NodeRenderingContext(Node* node)
     : m_node(node)
-    , m_style(0)
     , m_parentFlowRenderer(0)
 {
     ComposedShadowTreeWalker::findParent(m_node, &m_parentDetails);
@@ -67,17 +66,6 @@ NodeRenderingContext::NodeRenderingContext(Node* node, RenderStyle* style)
 
 NodeRenderingContext::~NodeRenderingContext()
 {
-}
-
-void NodeRenderingContext::setStyle(PassRefPtr<RenderStyle> style)
-{
-    m_style = style;
-    moveToFlowThreadIfNeeded();
-}
-
-PassRefPtr<RenderStyle> NodeRenderingContext::releaseStyle()
-{
-    return m_style.release();
 }
 
 RenderObject* NodeRenderingContext::nextRenderer() const
@@ -158,10 +146,11 @@ bool NodeRenderingContext::shouldCreateRenderer() const
 
 void NodeRenderingContext::moveToFlowThreadIfNeeded()
 {
+    ASSERT(m_style);
     if (!m_node->document()->cssRegionsEnabled())
         return;
 
-    if (!m_node->isElementNode() || !m_style || m_style->flowThread().isEmpty())
+    if (!m_node->isElementNode() || m_style->flowThread().isEmpty())
         return;
 
     // FIXME: Do not collect elements if they are in shadow tree.
@@ -192,28 +181,6 @@ bool NodeRenderingContext::isOnUpperEncapsulationBoundary() const
     return m_node->parentNode() && m_node->parentNode()->isShadowRoot();
 }
 
-NodeRendererFactory::NodeRendererFactory(Node* node)
-    : m_context(node)
-{
-}
-
-RenderObject* NodeRendererFactory::createRenderer()
-{
-    Node* node = m_context.node();
-    RenderObject* newRenderer = node->createRenderer(node->document()->renderArena(), m_context.style());
-    if (!newRenderer)
-        return 0;
-
-    if (!m_context.parentRenderer()->isChildAllowed(newRenderer, m_context.style())) {
-        newRenderer->destroy();
-        return 0;
-    }
-
-    node->setRenderer(newRenderer);
-    newRenderer->setAnimatableStyle(m_context.releaseStyle()); // setAnimatableStyle() can depend on renderer() already being set.
-    return newRenderer;
-}
-
 #if ENABLE(DIALOG_ELEMENT)
 static void adjustInsertionPointForTopLayerElement(Element* element, RenderObject*& parentRenderer, RenderObject*& nextRenderer)
 {
@@ -234,51 +201,52 @@ static void adjustInsertionPointForTopLayerElement(Element* element, RenderObjec
 }
 #endif
 
-void NodeRendererFactory::createRendererIfNeeded()
+void NodeRenderingContext::createRendererIfNeeded()
 {
-    Node* node = m_context.node();
-    ASSERT(!node->renderer());
+    ASSERT(!m_node->renderer());
 
-    if (!m_context.shouldCreateRenderer())
+    if (!shouldCreateRenderer())
         return;
+    Element* element = m_node->isElementNode() ? toElement(m_node) : 0;
+    
+    m_style = element ? element->styleForRenderer() : parentRenderer()->style();
+    ASSERT(m_style);
 
-    ASSERT(m_context.parentRenderer());
+    moveToFlowThreadIfNeeded();
 
-    Element* element = node->isElementNode() ? toElement(node) : 0;
-    if (element)
-        m_context.setStyle(element->styleForRenderer());
-    else
-        m_context.setStyle(m_context.parentRenderer()->style());
-
-    ASSERT(m_context.style());
-
-    if (!node->rendererIsNeeded(m_context)) {
-        if (element && m_context.style()->affectedByEmpty())
+    if (!m_node->rendererIsNeeded(*this)) {
+        if (element && m_style->affectedByEmpty())
             element->setStyleAffectedByEmpty();
         return;
     }
-
-    RenderObject* parentRenderer = m_context.hasFlowThreadParent() ? m_context.parentFlowRenderer() : m_context.parentRenderer();
+    RenderObject* parentRenderer = m_parentFlowRenderer ? m_parentFlowRenderer : this->parentRenderer();
     // Do not call m_context.nextRenderer() here in the first clause, because it expects to have
     // the renderer added to its parent already.
-    RenderObject* nextRenderer = m_context.hasFlowThreadParent() ? m_context.parentFlowRenderer()->nextRendererForNode(node) : m_context.nextRenderer();
+    RenderObject* nextRenderer = m_parentFlowRenderer ? m_parentFlowRenderer->nextRendererForNode(m_node) : this->nextRenderer();
 
 #if ENABLE(DIALOG_ELEMENT)
     if (element && element->isInTopLayer())
         adjustInsertionPointForTopLayerElement(element, parentRenderer, nextRenderer);
 #endif
 
-    RenderObject* newRenderer = createRenderer();
-
-#if ENABLE(FULLSCREEN_API)
-    Document* document = node->document();
-    if (document->webkitIsFullScreen() && document->webkitCurrentFullScreenElement() == node)
-        newRenderer = RenderFullScreen::wrapRenderer(newRenderer, parentRenderer, document);
-#endif
-
+    Document* document = m_node->document();
+    RenderObject* newRenderer = m_node->createRenderer(document->renderArena(), m_style.get());
     if (!newRenderer)
         return;
+    if (!parentRenderer->isChildAllowed(newRenderer, m_style.get())) {
+        newRenderer->destroy();
+        return;
+    }
+    m_node->setRenderer(newRenderer);
+    newRenderer->setAnimatableStyle(m_style.release()); // setAnimatableStyle() can depend on renderer() already being set.
 
+#if ENABLE(FULLSCREEN_API)
+    if (document->webkitIsFullScreen() && document->webkitCurrentFullScreenElement() == m_node) {
+        newRenderer = RenderFullScreen::wrapRenderer(newRenderer, parentRenderer, document);
+        if (!newRenderer)
+            return;
+    }
+#endif
     // Note: Adding newRenderer instead of renderer(). renderer() may be a child of newRenderer.
     parentRenderer->addChild(newRenderer, nextRenderer);
 }
