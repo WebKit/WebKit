@@ -1,5 +1,26 @@
 2012-11-21  Kentaro Hara  <haraken@chromium.org>
 
+        [V8] Remove manually written v8::TryCatches in custom bindings
+        https://bugs.webkit.org/show_bug.cgi?id=102883
+
+        Reviewed by Adam Barth.
+
+        We can replace them with the EXCEPTION_BLOCK() macro or its friends.
+
+        No new tests. This patch shouldn't change any behavior.
+
+        * bindings/v8/custom/V8DOMWindowCustom.cpp:
+        (WebCore::handlePostMessageCallback):
+        * bindings/v8/custom/V8DocumentCustom.cpp:
+        (WebCore::V8Document::evaluateCallback):
+        * bindings/v8/custom/V8HTMLOptionsCollectionCustom.cpp:
+        (WebCore::V8HTMLOptionsCollection::addCallback):
+        * bindings/v8/custom/V8HistoryCustom.cpp:
+        (WebCore::V8History::pushStateCallback):
+        (WebCore::V8History::replaceStateCallback):
+
+2012-11-21  Kentaro Hara  <haraken@chromium.org>
+
         Unreviewed, rolling out r135358.
         http://trac.webkit.org/changeset/135358
         https://bugs.webkit.org/show_bug.cgi?id=102881

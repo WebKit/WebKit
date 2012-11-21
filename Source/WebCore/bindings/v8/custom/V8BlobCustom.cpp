@@ -73,20 +73,13 @@ v8::Handle<v8::Value> V8Blob::constructorCallbackCustom(const v8::Arguments& arg
 
         EXCEPTION_BLOCK(Dictionary, dictionary, Dictionary(args[1], args.GetIsolate()));
 
-        v8::TryCatch tryCatchEndings;
-        bool containsEndings = dictionary.get("endings", endings);
-        if (tryCatchEndings.HasCaught())
-            return throwError(tryCatchEndings.Exception(), args.GetIsolate());
-
+        EXCEPTION_BLOCK(bool, containsEndings, dictionary.get("endings", endings));
         if (containsEndings) {
             if (endings != "transparent" && endings != "native")
                 return throwTypeError("The endings property must be either \"transparent\" or \"native\"", args.GetIsolate());
         }
 
-        v8::TryCatch tryCatchType;
-        dictionary.get("type", type);
-        if (tryCatchType.HasCaught())
-            return throwError(tryCatchType.Exception(), args.GetIsolate());
+        EXCEPTION_BLOCK(bool, containsType, dictionary.get("type", type));
         if (!type.containsOnlyASCII())
             return throwError(v8SyntaxError, "type must consist of ASCII characters", args.GetIsolate());
         type.makeLower();

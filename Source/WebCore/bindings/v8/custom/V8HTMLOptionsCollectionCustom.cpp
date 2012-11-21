@@ -105,12 +105,7 @@ v8::Handle<v8::Value> V8HTMLOptionsCollection::addCallback(const v8::Arguments& 
         imp->add(option, ec);
     else {
         bool ok;
-        v8::TryCatch try_catch;
-        int index = toInt32(args[1], ok);
-
-        if (try_catch.HasCaught())
-            return v8::Undefined();
-
+        EXCEPTION_BLOCK(int, index, toInt32(args[1], ok));
         if (!ok)
             ec = TYPE_MISMATCH_ERR;
         else
