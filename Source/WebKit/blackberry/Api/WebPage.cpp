@@ -5155,12 +5155,16 @@ void WebPage::enableWebInspector()
 
     d->m_page->inspectorController()->connectFrontend(d->m_inspectorClient);
     d->m_page->settings()->setDeveloperExtrasEnabled(true);
+    d->setPreventsScreenDimming(true);
 }
 
 void WebPage::disableWebInspector()
 {
-    d->m_page->inspectorController()->disconnectFrontend();
-    d->m_page->settings()->setDeveloperExtrasEnabled(false);
+    if (isWebInspectorEnabled()) {
+        d->m_page->inspectorController()->disconnectFrontend();
+        d->m_page->settings()->setDeveloperExtrasEnabled(false);
+        d->setPreventsScreenDimming(false);
+    }
 }
 
 bool WebPage::isWebInspectorEnabled()

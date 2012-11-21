@@ -1,5 +1,20 @@
 2012-11-21  Konrad Piascik  <kpiascik@rim.com>
 
+        [BlackBerry] Prevent screen from dimming on device when inspector front-end is connected
+        https://bugs.webkit.org/show_bug.cgi?id=102978
+
+        Reviewed by Rob Buis.
+
+        Internal PR 200848
+        We prevent screen from going dim when the front-end is connected and return to normal when
+        the front-end disconnects.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPage::enableWebInspector):
+        (BlackBerry::WebKit::WebPage::disableWebInspector):
+
+2012-11-21  Konrad Piascik  <kpiascik@rim.com>
+
         [BlackBerry] Don't add empty rects to the tap highlight region.
         https://bugs.webkit.org/show_bug.cgi?id=102966
 
