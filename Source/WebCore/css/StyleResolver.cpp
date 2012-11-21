@@ -1163,7 +1163,7 @@ static inline bool haveIdenticalStyleAffectingAttributes(StyledElement* a, Style
                 return false;
         } else
 #endif
-        if (a->fastGetAttribute(classAttr) != b->fastGetAttribute(classAttr))
+        if (a->attributeData()->classNames() != b->attributeData()->classNames())
             return false;
     }
 

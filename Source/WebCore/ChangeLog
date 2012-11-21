@@ -1,3 +1,20 @@
+2012-11-21  Andreas Kling  <akling@apple.com>
+
+        Style sharing: Compare class lists via SpaceSplitString instead of string comparison.
+        <http://webkit.org/b/102982>
+
+        Reviewed by Antti Koivisto.
+
+        Add an operator!= to SpaceSplitString and use that check if two elements are eligible
+        for style sharing instead of comparing the fastGetAttribute(classAttr) return values.
+        This works because SpaceSplitString maps equal strings to the same data internally.
+
+        * css/StyleResolver.cpp:
+        (WebCore::haveIdenticalStyleAffectingAttributes):
+        * dom/SpaceSplitString.h:
+        (WebCore::SpaceSplitString::operator!=):
+        (SpaceSplitString):
+
 2012-11-21  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r135338, r135359, and r135378.

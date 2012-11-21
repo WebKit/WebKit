@@ -70,6 +70,8 @@ namespace WebCore {
         SpaceSplitString() { }
         SpaceSplitString(const AtomicString& string, bool shouldFoldCase) { set(string, shouldFoldCase); }
 
+        bool operator!=(const SpaceSplitString& other) const { return m_data != other.m_data; }
+
         void set(const AtomicString&, bool shouldFoldCase);
         void clear() { m_data.clear(); }
 
