@@ -1,3 +1,16 @@
+2012-11-21  W. James MacLean  <wjmaclean@chromium.org>
+
+        [chromium] Fix indenting in RenderThemeChromiumSkia.h.
+        https://bugs.webkit.org/show_bug.cgi?id=102965
+
+        Reviewed by Adam Barth.
+
+        Much of RenderThemeChromiumSkia.h was indented too far, making the
+        file confusing to read. This CL removes the extra indents.
+
+        * rendering/RenderThemeChromiumSkia.h:
+        (RenderThemeChromiumSkia):
+
 2012-11-21  Andreas Kling  <akling@apple.com>
 
         Make it possible for elements with different tag names to share attribute data.

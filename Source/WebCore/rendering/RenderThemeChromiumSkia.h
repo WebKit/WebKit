@@ -36,142 +36,142 @@ namespace WebCore {
 class RenderProgress;
 
 class RenderThemeChromiumSkia : public RenderTheme {
-    public:
-        RenderThemeChromiumSkia();
-        virtual ~RenderThemeChromiumSkia();
+public:
+    RenderThemeChromiumSkia();
+    virtual ~RenderThemeChromiumSkia();
 
-        virtual String extraDefaultStyleSheet();
-        virtual String extraQuirksStyleSheet();
+    virtual String extraDefaultStyleSheet();
+    virtual String extraQuirksStyleSheet();
 #if ENABLE(VIDEO)
-        virtual String extraMediaControlsStyleSheet();
+    virtual String extraMediaControlsStyleSheet();
 #endif
 
 #if ENABLE(TOUCH_EVENTS)
-        virtual Color platformTapHighlightColor() const OVERRIDE
-        {
-            return Color(defaultTapHighlightColor);
-        }
+    virtual Color platformTapHighlightColor() const OVERRIDE
+    {
+        return Color(defaultTapHighlightColor);
+    }
 #endif
 
-        // A method asking if the theme's controls actually care about redrawing when hovered.
-        virtual bool supportsHover(const RenderStyle*) const;
+    // A method asking if the theme's controls actually care about redrawing when hovered.
+    virtual bool supportsHover(const RenderStyle*) const;
 
-        // A method asking if the theme is able to draw the focus ring.
-        virtual bool supportsFocusRing(const RenderStyle*) const;
+    // A method asking if the theme is able to draw the focus ring.
+    virtual bool supportsFocusRing(const RenderStyle*) const;
 
-        virtual bool supportsDataListUI(const AtomicString& type) const OVERRIDE;
+    virtual bool supportsDataListUI(const AtomicString& type) const OVERRIDE;
 
 #if ENABLE(VIDEO_TRACK)
-        virtual bool supportsClosedCaptioning() const OVERRIDE;
+    virtual bool supportsClosedCaptioning() const OVERRIDE;
 #endif
-        // The platform selection color.
-        virtual Color platformActiveSelectionBackgroundColor() const;
-        virtual Color platformInactiveSelectionBackgroundColor() const;
-        virtual Color platformActiveSelectionForegroundColor() const;
-        virtual Color platformInactiveSelectionForegroundColor() const;
-        virtual Color platformFocusRingColor() const;
+    // The platform selection color.
+    virtual Color platformActiveSelectionBackgroundColor() const;
+    virtual Color platformInactiveSelectionBackgroundColor() const;
+    virtual Color platformActiveSelectionForegroundColor() const;
+    virtual Color platformInactiveSelectionForegroundColor() const;
+    virtual Color platformFocusRingColor() const;
 
-        // To change the blink interval, override caretBlinkIntervalInternal instead of this one so that we may share layout test code an intercepts.
-        virtual double caretBlinkInterval() const;
+    // To change the blink interval, override caretBlinkIntervalInternal instead of this one so that we may share layout test code an intercepts.
+    virtual double caretBlinkInterval() const;
 
-        // System fonts.
-        virtual void systemFont(int propId, FontDescription&) const;
+    // System fonts.
+    virtual void systemFont(int propId, FontDescription&) const;
 
-        virtual int minimumMenuListSize(RenderStyle*) const;
+    virtual int minimumMenuListSize(RenderStyle*) const;
 
-        virtual void setCheckboxSize(RenderStyle*) const;
+    virtual void setCheckboxSize(RenderStyle*) const;
 
-        virtual void setRadioSize(RenderStyle*) const;
+    virtual void setRadioSize(RenderStyle*) const;
 
-        virtual void adjustButtonStyle(StyleResolver*, RenderStyle*, Element*) const;
+    virtual void adjustButtonStyle(StyleResolver*, RenderStyle*, Element*) const;
 
-        virtual bool paintTextArea(RenderObject*, const PaintInfo&, const IntRect&);
+    virtual bool paintTextArea(RenderObject*, const PaintInfo&, const IntRect&);
 
-        virtual void adjustSearchFieldStyle(StyleResolver*, RenderStyle*, Element*) const;
-        virtual bool paintSearchField(RenderObject*, const PaintInfo&, const IntRect&);
+    virtual void adjustSearchFieldStyle(StyleResolver*, RenderStyle*, Element*) const;
+    virtual bool paintSearchField(RenderObject*, const PaintInfo&, const IntRect&);
 
-        virtual void adjustSearchFieldCancelButtonStyle(StyleResolver*, RenderStyle*, Element*) const;
-        virtual bool paintSearchFieldCancelButton(RenderObject*, const PaintInfo&, const IntRect&);
+    virtual void adjustSearchFieldCancelButtonStyle(StyleResolver*, RenderStyle*, Element*) const;
+    virtual bool paintSearchFieldCancelButton(RenderObject*, const PaintInfo&, const IntRect&);
 
-        virtual void adjustSearchFieldDecorationStyle(StyleResolver*, RenderStyle*, Element*) const;
+    virtual void adjustSearchFieldDecorationStyle(StyleResolver*, RenderStyle*, Element*) const;
 
-        virtual void adjustSearchFieldResultsDecorationStyle(StyleResolver*, RenderStyle*, Element*) const;
-        virtual bool paintSearchFieldResultsDecoration(RenderObject*, const PaintInfo&, const IntRect&);
+    virtual void adjustSearchFieldResultsDecorationStyle(StyleResolver*, RenderStyle*, Element*) const;
+    virtual bool paintSearchFieldResultsDecoration(RenderObject*, const PaintInfo&, const IntRect&);
 
-        virtual void adjustSearchFieldResultsButtonStyle(StyleResolver*, RenderStyle*, Element*) const;
-        virtual bool paintSearchFieldResultsButton(RenderObject*, const PaintInfo&, const IntRect&);
+    virtual void adjustSearchFieldResultsButtonStyle(StyleResolver*, RenderStyle*, Element*) const;
+    virtual bool paintSearchFieldResultsButton(RenderObject*, const PaintInfo&, const IntRect&);
 
-        virtual bool paintMediaSliderTrack(RenderObject*, const PaintInfo&, const IntRect&);
-        virtual bool paintMediaVolumeSliderTrack(RenderObject*, const PaintInfo&, const IntRect&);
-        virtual void adjustSliderThumbSize(RenderStyle*, Element*) const;
-        virtual bool paintMediaSliderThumb(RenderObject*, const PaintInfo&, const IntRect&);
-        virtual bool paintMediaToggleClosedCaptionsButton(RenderObject*, const PaintInfo&, const IntRect&);
-        virtual bool paintMediaVolumeSliderThumb(RenderObject*, const PaintInfo&, const IntRect&);
-        virtual bool paintMediaPlayButton(RenderObject*, const PaintInfo&, const IntRect&);
-        virtual bool paintMediaMuteButton(RenderObject*, const PaintInfo&, const IntRect&);
-        virtual String formatMediaControlsTime(float time) const;
-        virtual String formatMediaControlsCurrentTime(float currentTime, float duration) const;
-        virtual String formatMediaControlsRemainingTime(float currentTime, float duration) const;
-        virtual bool paintMediaFullscreenButton(RenderObject*, const PaintInfo&, const IntRect&);
+    virtual bool paintMediaSliderTrack(RenderObject*, const PaintInfo&, const IntRect&);
+    virtual bool paintMediaVolumeSliderTrack(RenderObject*, const PaintInfo&, const IntRect&);
+    virtual void adjustSliderThumbSize(RenderStyle*, Element*) const;
+    virtual bool paintMediaSliderThumb(RenderObject*, const PaintInfo&, const IntRect&);
+    virtual bool paintMediaToggleClosedCaptionsButton(RenderObject*, const PaintInfo&, const IntRect&);
+    virtual bool paintMediaVolumeSliderThumb(RenderObject*, const PaintInfo&, const IntRect&);
+    virtual bool paintMediaPlayButton(RenderObject*, const PaintInfo&, const IntRect&);
+    virtual bool paintMediaMuteButton(RenderObject*, const PaintInfo&, const IntRect&);
+    virtual String formatMediaControlsTime(float time) const;
+    virtual String formatMediaControlsCurrentTime(float currentTime, float duration) const;
+    virtual String formatMediaControlsRemainingTime(float currentTime, float duration) const;
+    virtual bool paintMediaFullscreenButton(RenderObject*, const PaintInfo&, const IntRect&);
 
-        // MenuList refers to an unstyled menulist (meaning a menulist without
-        // background-color or border set) and MenuListButton refers to a styled
-        // menulist (a menulist with background-color or border set). They have
-        // this distinction to support showing aqua style themes whenever they
-        // possibly can, which is something we don't want to replicate.
-        //
-        // In short, we either go down the MenuList code path or the MenuListButton
-        // codepath. We never go down both. And in both cases, they render the
-        // entire menulist.
-        virtual void adjustMenuListStyle(StyleResolver*, RenderStyle*, Element*) const;
-        virtual void adjustMenuListButtonStyle(StyleResolver*, RenderStyle*, Element*) const;
-        virtual bool paintMenuListButton(RenderObject*, const PaintInfo&, const IntRect&);
+    // MenuList refers to an unstyled menulist (meaning a menulist without
+    // background-color or border set) and MenuListButton refers to a styled
+    // menulist (a menulist with background-color or border set). They have
+    // this distinction to support showing aqua style themes whenever they
+    // possibly can, which is something we don't want to replicate.
+    //
+    // In short, we either go down the MenuList code path or the MenuListButton
+    // codepath. We never go down both. And in both cases, they render the
+    // entire menulist.
+    virtual void adjustMenuListStyle(StyleResolver*, RenderStyle*, Element*) const;
+    virtual void adjustMenuListButtonStyle(StyleResolver*, RenderStyle*, Element*) const;
+    virtual bool paintMenuListButton(RenderObject*, const PaintInfo&, const IntRect&);
 
 #if ENABLE(PROGRESS_ELEMENT)
-        virtual double animationRepeatIntervalForProgressBar(RenderProgress*) const;
-        virtual double animationDurationForProgressBar(RenderProgress*) const;
+    virtual double animationRepeatIntervalForProgressBar(RenderProgress*) const;
+    virtual double animationDurationForProgressBar(RenderProgress*) const;
 #endif
 
-        // These methods define the padding for the MenuList's inner block.
-        virtual int popupInternalPaddingLeft(RenderStyle*) const;
-        virtual int popupInternalPaddingRight(RenderStyle*) const;
-        virtual int popupInternalPaddingTop(RenderStyle*) const;
-        virtual int popupInternalPaddingBottom(RenderStyle*) const;
+    // These methods define the padding for the MenuList's inner block.
+    virtual int popupInternalPaddingLeft(RenderStyle*) const;
+    virtual int popupInternalPaddingRight(RenderStyle*) const;
+    virtual int popupInternalPaddingTop(RenderStyle*) const;
+    virtual int popupInternalPaddingBottom(RenderStyle*) const;
 
 #if ENABLE(VIDEO)
-        // Media controls
-        virtual bool hasOwnDisabledStateHandlingFor(ControlPart) const { return true; }
-        virtual bool usesVerticalVolumeSlider() const { return false; }
+    // Media controls
+    virtual bool hasOwnDisabledStateHandlingFor(ControlPart) const { return true; }
+    virtual bool usesVerticalVolumeSlider() const { return false; }
 #endif
 
-        // Provide a way to pass the default font size from the Settings object
-        // to the render theme.  FIXME: http://b/1129186 A cleaner way would be
-        // to remove the default font size from this object and have callers
-        // that need the value to get it directly from the appropriate Settings
-        // object.
-        static void setDefaultFontSize(int);
+    // Provide a way to pass the default font size from the Settings object
+    // to the render theme. FIXME: http://b/1129186 A cleaner way would be
+    // to remove the default font size from this object and have callers
+    // that need the value to get it directly from the appropriate Settings
+    // object.
+    static void setDefaultFontSize(int);
 
-    protected:
-        virtual double caretBlinkIntervalInternal() const;
+protected:
+    virtual double caretBlinkIntervalInternal() const;
 
-        virtual int menuListArrowPadding() const;
+    virtual int menuListArrowPadding() const;
 
-        static void setSizeIfAuto(RenderStyle*, const IntSize&);
+    static void setSizeIfAuto(RenderStyle*, const IntSize&);
 
 #if ENABLE(PROGRESS_ELEMENT)
-        IntRect determinateProgressValueRectFor(RenderProgress*, const IntRect&) const;
-        IntRect indeterminateProgressValueRectFor(RenderProgress*, const IntRect&) const;
-        IntRect progressValueRectFor(RenderProgress*, const IntRect&) const;
+    IntRect determinateProgressValueRectFor(RenderProgress*, const IntRect&) const;
+    IntRect indeterminateProgressValueRectFor(RenderProgress*, const IntRect&) const;
+    IntRect progressValueRectFor(RenderProgress*, const IntRect&) const;
 
-        class DirectionFlippingScope {
-        public:
-            DirectionFlippingScope(RenderObject*, const PaintInfo&, const IntRect&);
-            ~DirectionFlippingScope();
+    class DirectionFlippingScope {
+    public:
+        DirectionFlippingScope(RenderObject*, const PaintInfo&, const IntRect&);
+        ~DirectionFlippingScope();
 
-        private:
-            bool m_needsFlipping;
-            const PaintInfo& m_paintInfo;
-        };
+    private:
+        bool m_needsFlipping;
+        const PaintInfo& m_paintInfo;
+    };
 #endif
 
 private:
