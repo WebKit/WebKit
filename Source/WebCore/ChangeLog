@@ -1,3 +1,19 @@
+2012-11-20  Adam Barth  <abarth@webkit.org>
+
+        7% regression in dromaeo_domcorequery/dom_query_getElementsByTagName__not_in_document
+        https://bugs.webkit.org/show_bug.cgi?id=102852
+
+        Reviewed by Kentaro Hara.
+
+        In http://trac.webkit.org/changeset/135208/, we lost the early-exit
+        check for whether isolatedWorldsExist() in this code path. This
+        regression points to benchmarks that we can further improve by
+        continuing to merge the general ScriptWrappable code path with the Node
+        code path.
+
+        * bindings/v8/DOMDataStore.cpp:
+        (WebCore::DOMDataStore::current):
+
 2012-11-20  Kentaro Hara  <haraken@chromium.org>
 
         [V8] Change a return type of V8Parameter::prepare() from bool to void
