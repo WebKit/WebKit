@@ -1,3 +1,13 @@
+2012-11-21  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: reparenting view does not detach from the previous parent.
+        https://bugs.webkit.org/show_bug.cgi?id=102902
+
+        Reviewed by Vsevolod Vlasov.
+
+        * inspector/front-end/View.js:
+        (WebInspector.View.prototype.show):
+
 2012-11-21  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: NMI add instrumentation to widely used ActiveDOMObjects. XMLHttpRequest, Prerenderer, HTMLMediaElement and DOMTimer.

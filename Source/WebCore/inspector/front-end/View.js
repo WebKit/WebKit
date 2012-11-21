@@ -166,6 +166,9 @@ WebInspector.View.prototype = {
 
         // Update view hierarchy
         if (this.element.parentElement !== parentElement) {
+            if (this.element.parentElement)
+                this.detach();
+
             var currentParent = parentElement;
             while (currentParent && !currentParent.__view)
                 currentParent = currentParent.parentElement;

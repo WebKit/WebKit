@@ -287,6 +287,18 @@ function test()
             parentView.detachOnWillHide = childView;
             parentView.detach();
             next();
+        },
+
+        function testShowDetachesFromPrevious(next)
+        {
+            var parentView1 = new TestView("Parent1");
+            var parentView2 = new TestView("Parent2");
+            var childView = new TestView("Child");
+            parentView1.show(WebInspector.inspectorView.element);
+            parentView2.show(WebInspector.inspectorView.element);
+            childView.show(parentView1.element);
+            childView.show(parentView2.element);
+            next();
         }
     ]);
 }
