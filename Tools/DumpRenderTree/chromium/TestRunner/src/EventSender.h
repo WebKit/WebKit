@@ -69,6 +69,7 @@ public:
     void dumpFilenameBeingDragged(const CppArgumentList&, CppVariant*);
 
     // JS callback methods.
+    void contextClick(const CppArgumentList&, CppVariant*);
     void mouseDown(const CppArgumentList&, CppVariant*);
     void mouseUp(const CppArgumentList&, CppVariant*);
     void mouseMoveTo(const CppArgumentList&, CppVariant*);
@@ -114,7 +115,6 @@ public:
     void gestureEvent(WebKit::WebInputEvent::Type, const CppArgumentList&);
 
     // Unimplemented stubs
-    void contextClick(const CppArgumentList&, CppVariant*);
     void enableDOMUIEventLogging(const CppArgumentList&, CppVariant*);
     void fireKeyboardEventsToElement(const CppArgumentList&, CppVariant*);
     void clearKillRing(const CppArgumentList&, CppVariant*);

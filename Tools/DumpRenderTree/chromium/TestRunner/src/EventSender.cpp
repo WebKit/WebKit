@@ -836,14 +836,19 @@ void EventSender::contextClick(const CppArgumentList& arguments, CppVariant* res
 
     // Generate right mouse down and up.
     WebMouseEvent event;
-    pressedButton = WebMouseEvent::ButtonRight;
+    // This is a hack to work around only allowing a single pressed button since we want to
+    // test the case where both the left and right mouse buttons are pressed.
+    if (pressedButton == WebMouseEvent::ButtonNone)
+        pressedButton = WebMouseEvent::ButtonRight;
     initMouseEvent(WebInputEvent::MouseDown, WebMouseEvent::ButtonRight, lastMousePos, &event, getCurrentEventTimeSec(m_delegate));
     webview()->handleInputEvent(event);
 
+#if OS(WINDOWS)
     initMouseEvent(WebInputEvent::MouseUp, WebMouseEvent::ButtonRight, lastMousePos, &event, getCurrentEventTimeSec(m_delegate));
     webview()->handleInputEvent(event);
 
     pressedButton = WebMouseEvent::ButtonNone;
+#endif
 
     WebContextMenuData* lastContextMenu = m_delegate->lastContextMenuData();
     result->set(WebBindings::makeStringArray(makeMenuItemStringsFor(lastContextMenu, m_delegate)));

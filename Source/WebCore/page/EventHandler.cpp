@@ -2780,6 +2780,8 @@ bool EventHandler::sendContextMenuEvent(const PlatformMouseEvent& event)
     if (!v)
         return false;
     
+    // Clear mouse press state to avoid initiating a drag while context menu is up.
+    m_mousePressed = false;
     bool swallowEvent;
     LayoutPoint viewportPos = v->windowToContents(event.position());
     HitTestRequest request(HitTestRequest::Active);
@@ -2809,6 +2811,9 @@ bool EventHandler::sendContextMenuEventForKey()
     Document* doc = m_frame->document();
     if (!doc)
         return false;
+
+    // Clear mouse press state to avoid initiating a drag while context menu is up.
+    m_mousePressed = false;
 
     static const int kContextMenuMargin = 1;
 

@@ -1,3 +1,17 @@
+2012-11-21  Fady Samuel  <fsamuel@chromium.org>
+
+        Clear MousePressed state on context menu to avoid initiating a drag
+        https://bugs.webkit.org/show_bug.cgi?id=101786
+
+        Reviewed by Ojan Vafai.
+
+        * DumpRenderTree/chromium/TestRunner/src/EventSender.cpp:
+        (WebTestRunner):
+        (WebTestRunner::EventSender::EventSender):
+        (WebTestRunner::EventSender::contextClick):
+        Only send a MouseUp on Windows. Keep the current mouse pressed state when
+        calling up a context menu.
+
 2012-11-21  Thiago Marcos P. Santos  <thiago.santos@intel.com>
 
         [EFL] KURL unit test crashing when tiled backing store is enabled on Release Bots
