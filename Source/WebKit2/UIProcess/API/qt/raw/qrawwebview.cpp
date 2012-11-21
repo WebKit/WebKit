@@ -376,7 +376,6 @@ void QRawWebView::paint(const QMatrix4x4& transform, float opacity, unsigned pai
         return;
 
     renderer->setActive(true);
-    renderer->syncRemoteContent();
 
     WebCore::FloatRect rect(0, 0, d->m_size.width(), d->m_size.height());
 

@@ -122,6 +122,7 @@ void LayerTreeRenderer::paintToCurrentGLContext(const TransformationMatrix& matr
     if (!m_textureMapper)
         m_textureMapper = TextureMapper::create(TextureMapper::OpenGLMode);
     ASSERT(m_textureMapper->accelerationMode() == TextureMapper::OpenGLMode);
+    syncRemoteContent();
 
     adjustPositionForFixedLayers();
     GraphicsLayer* currentRootLayer = rootLayer();
@@ -580,10 +581,6 @@ void LayerTreeRenderer::ensureRootLayer()
 {
     if (m_rootLayer)
         return;
-    if (!m_textureMapper) {
-        m_textureMapper = TextureMapper::create(m_accelerationMode);
-        static_cast<TextureMapperGL*>(m_textureMapper.get())->setEnableEdgeDistanceAntialiasing(true);
-    }
 
     m_rootLayer = createLayer(InvalidWebLayerID);
     m_rootLayer->setMasksToBounds(false);
@@ -592,6 +589,8 @@ void LayerTreeRenderer::ensureRootLayer()
 
     // The root layer should not have zero size, or it would be optimized out.
     m_rootLayer->setSize(FloatSize(1.0, 1.0));
+
+    ASSERT(m_textureMapper);
     toTextureMapperLayer(m_rootLayer.get())->setTextureMapper(m_textureMapper.get());
 }
 

@@ -362,7 +362,6 @@ void EwkViewImpl::displayTimerFired(Timer<EwkViewImpl>*)
 
     renderer->setActive(true);
     renderer->setDrawsBackground(m_setDrawsBackground);
-    renderer->syncRemoteContent();
     if (m_isHardwareAccelerated) {
         renderer->paintToCurrentGLContext(transformToScene().toTransformationMatrix(), /* opacity */ 1, viewport);
         // sd->image is tied to a native surface. The native surface is in the parent's coordinates,

@@ -87,7 +87,6 @@ QSGNode* QQuickWebPage::updatePaintNode(QSGNode* oldNode, UpdatePaintNodeData*)
     if (!node)
         node = new QtWebPageSGNode();
     node->setRenderer(renderer);
-    renderer->syncRemoteContent();
 
     node->setScale(d->contentsScale);
     QColor backgroundColor = d->webPageProxy->drawsTransparentBackground() ? Qt::transparent : Qt::white;
