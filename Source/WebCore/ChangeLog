@@ -1,3 +1,31 @@
+2012-11-22  Kentaro Hara  <haraken@chromium.org>
+
+        [V8] Rename toWebCoreStringWithNullOrUndefinedCheck() with toWebCoreStringWithUndefinedOrNullCheck()
+        https://bugs.webkit.org/show_bug.cgi?id=103013
+
+        Reviewed by Adam Barth.
+
+        IDL attributes and other V8 and JSC files use "UndefinedOrNull" instead of "NullOrUndefined".
+
+        No tests. No change in behavior.
+
+        * bindings/v8/JavaScriptCallFrame.cpp:
+        (WebCore::JavaScriptCallFrame::functionName):
+        * bindings/v8/ScriptDebugServer.cpp:
+        (WebCore::ScriptDebugServer::setScriptSource):
+        (WebCore::ScriptDebugServer::dispatchDidParseSource):
+        (WebCore::ScriptDebugServer::compileScript):
+        (WebCore::ScriptDebugServer::runScript):
+        * bindings/v8/ScriptEventListener.cpp:
+        (WebCore::eventListenerHandlerLocation):
+        * bindings/v8/V8Binding.h:
+        (WebCore::toWebCoreStringWithUndefinedOrNullCheck):
+        * bindings/v8/custom/V8DOMWindowCustom.cpp:
+        (WebCore::V8DOMWindow::showModalDialogCallback):
+        (WebCore::V8DOMWindow::openCallback):
+        * bindings/v8/custom/V8JavaScriptCallFrameCustom.cpp:
+        (WebCore::V8JavaScriptCallFrame::evaluateCallback):
+
 2012-11-22  Harald Alvestrand  <hta@google.com>
 
         Name enumerator function for GetStats RTCStatsElement

@@ -41,7 +41,7 @@ v8::Handle<v8::Value> V8JavaScriptCallFrame::evaluateCallback(const v8::Argument
 {
     INC_STATS("V8JavaScriptCallFrame.evaluateCallback()");
     JavaScriptCallFrame* impl = V8JavaScriptCallFrame::toNative(args.Holder());
-    String expression = toWebCoreStringWithNullOrUndefinedCheck(args[0]);
+    String expression = toWebCoreStringWithUndefinedOrNullCheck(args[0]);
     return impl->evaluate(expression);
 }
 

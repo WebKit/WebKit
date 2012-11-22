@@ -118,7 +118,7 @@ bool eventListenerHandlerLocation(Document* document, EventListener* listener, S
 
     v8::Handle<v8::Function> function = v8::Handle<v8::Function>::Cast(object);
     v8::Handle<v8::Value> scriptIdValue = function->GetScriptId();
-    scriptId = toWebCoreStringWithNullOrUndefinedCheck(scriptIdValue);
+    scriptId = toWebCoreStringWithUndefinedOrNullCheck(scriptIdValue);
     v8::ScriptOrigin origin = function->GetScriptOrigin();
     if (origin.ResourceName()->IsString() && !origin.ResourceName().IsEmpty())
         sourceName = toWebCoreString(origin.ResourceName());

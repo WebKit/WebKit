@@ -333,7 +333,7 @@ namespace WebCore {
         return value->IsNull() ? String() : toWebCoreString(value);
     }
 
-    inline String toWebCoreStringWithNullOrUndefinedCheck(v8::Handle<v8::Value> value)
+    inline String toWebCoreStringWithUndefinedOrNullCheck(v8::Handle<v8::Value> value)
     {
         return (value->IsNull() || value->IsUndefined()) ? String() : toWebCoreString(value);
     }

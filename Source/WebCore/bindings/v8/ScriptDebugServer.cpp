@@ -239,7 +239,7 @@ bool ScriptDebugServer::setScriptSource(const String& sourceID, const String& ne
     if (tryCatch.HasCaught()) {
         v8::Local<v8::Message> message = tryCatch.Message();
         if (!message.IsEmpty())
-            *error = toWebCoreStringWithNullOrUndefinedCheck(message->Get());
+            *error = toWebCoreStringWithUndefinedOrNullCheck(message->Get());
         else
             *error = "Unknown error.";
         return false;
@@ -377,12 +377,12 @@ void ScriptDebugServer::handleV8DebugEvent(const v8::Debug::EventDetails& eventD
 
 void ScriptDebugServer::dispatchDidParseSource(ScriptDebugListener* listener, v8::Handle<v8::Object> object)
 {
-    String sourceID = toWebCoreStringWithNullOrUndefinedCheck(object->Get(v8::String::New("id")));
+    String sourceID = toWebCoreStringWithUndefinedOrNullCheck(object->Get(v8::String::New("id")));
 
     ScriptDebugListener::Script script;
-    script.url = toWebCoreStringWithNullOrUndefinedCheck(object->Get(v8::String::New("name")));
-    script.source = toWebCoreStringWithNullOrUndefinedCheck(object->Get(v8::String::New("source")));
-    script.sourceMappingURL = toWebCoreStringWithNullOrUndefinedCheck(object->Get(v8::String::New("sourceMappingURL")));
+    script.url = toWebCoreStringWithUndefinedOrNullCheck(object->Get(v8::String::New("name")));
+    script.source = toWebCoreStringWithUndefinedOrNullCheck(object->Get(v8::String::New("source")));
+    script.sourceMappingURL = toWebCoreStringWithUndefinedOrNullCheck(object->Get(v8::String::New("sourceMappingURL")));
     script.startLine = object->Get(v8::String::New("startLine"))->ToInteger()->Value();
     script.startColumn = object->Get(v8::String::New("startColumn"))->ToInteger()->Value();
     script.endLine = object->Get(v8::String::New("endLine"))->ToInteger()->Value();
@@ -444,13 +444,13 @@ void ScriptDebugServer::compileScript(ScriptState* state, const String& expressi
     if (tryCatch.HasCaught()) {
         v8::Local<v8::Message> message = tryCatch.Message();
         if (!message.IsEmpty())
-            *exceptionMessage = toWebCoreStringWithNullOrUndefinedCheck(message->Get());
+            *exceptionMessage = toWebCoreStringWithUndefinedOrNullCheck(message->Get());
         return;
     }
     if (script.IsEmpty())
         return;
 
-    *scriptId = toWebCoreStringWithNullOrUndefinedCheck(script->Id());
+    *scriptId = toWebCoreStringWithUndefinedOrNullCheck(script->Id());
     m_compiledScripts.set(*scriptId, adoptPtr(new ScopedPersistent<v8::Script>(script)));
 }
 
@@ -488,7 +488,7 @@ void ScriptDebugServer::runScript(ScriptState* state, const String& scriptId, Sc
         *result = ScriptValue(tryCatch.Exception());
         v8::Local<v8::Message> message = tryCatch.Message();
         if (!message.IsEmpty())
-            *exceptionMessage = toWebCoreStringWithNullOrUndefinedCheck(message->Get());
+            *exceptionMessage = toWebCoreStringWithUndefinedOrNullCheck(message->Get());
     } else
         *result = ScriptValue(value);
 }
