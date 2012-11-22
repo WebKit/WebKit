@@ -1,3 +1,9 @@
+2012-11-21  Vineet Chaudhary  <rgf748@motorola.com>
+
+        Unreviewed. Adding myself to committers.py.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2012-11-21  Tien-Ren Chen  <trchen@chromium.org>
 
         [chromium] Device scale factor should be no-op when applyDeviceScaleFactorInCompositor == 0
