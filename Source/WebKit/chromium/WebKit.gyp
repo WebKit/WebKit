@@ -720,6 +720,7 @@
                                 'tests/FakeWebPlugin.cpp',
                                 'tests/FrameTestHelpers.cpp',
                                 'tests/IDBBindingUtilitiesTest.cpp',
+                                'tests/IDBRequestTest.cpp',
                                 'tests/LevelDBTest.cpp',
                                 'tests/ListenerLeakTest.cpp',
                                 'tests/LinkHighlightTest.cpp',

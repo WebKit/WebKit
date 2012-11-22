@@ -1,3 +1,20 @@
+2012-11-22  Dan Carney  <dcarney@google.com>
+
+        IDBRequestTest needs a v8 context
+        https://bugs.webkit.org/show_bug.cgi?id=102941
+
+        Reviewed by Jochen Eisinger.
+
+        Added v8 context to IDBRequestTest tests.
+
+        * tests/IDBRequestTest.cpp:
+        (IDBRequestTest):
+        (WebKit::IDBRequestTest::IDBRequestTest):
+        (WebKit::IDBRequestTest::context):
+        (WebKit::IDBRequestTest::scriptExecutionContext):
+        (WebKit):
+        (WebKit::TEST_F):
+
 2012-11-21  Tien-Ren Chen  <trchen@chromium.org>
 
         [chromium] Device scale factor should be no-op when applyDeviceScaleFactorInCompositor == 0
