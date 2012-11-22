@@ -1,5 +1,15 @@
 2012-11-22  Stephen Chenney  <schenney@chromium.org>
 
+        Test expectations update after enabling Skia changes.
+
+        Unreviewed expectations update.
+
+        Partial update, covering all but eh SVG tests.
+
+        * To many files to list.
+
+2012-11-22  Stephen Chenney  <schenney@chromium.org>
+
         [Chromium] Test expectations update after enabling Skia changes.
 
         Unreviewed Chromium expectations update.

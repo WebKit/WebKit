@@ -2897,7 +2897,6 @@ webkit.org/b/62580 fast/loader/inherit-charset-to-empty-frame.html [ Failure Pas
 # Has been timing out since r88913.
 webkit.org/b/62754 [ Android Linux Mac Release ] http/tests/misc/object-embedding-svg-delayed-size-negotiation-2.htm [ Failure Timeout ]
 webkit.org/b/62754 [ Android Linux Mac Debug ] http/tests/misc/object-embedding-svg-delayed-size-negotiation-2.htm [ Failure Slow ]
-webkit.org/b/62754 [ Win ] http/tests/misc/object-embedding-svg-delayed-size-negotiation-2.htm [ Failure ]
 
 crbug.com/87732 fast/regex/toString.html [ Failure ]
 
@@ -4027,7 +4026,7 @@ webkit.org/b/89167 media/track/track-cue-rendering-vertical.html [ Failure ]
 #webkit.org/b/98766 [ Android ] media/track/track-cue-rendering-horizontal.html [ Failure ]
 
 # Require rebaselining after webkig.org/b/88871
-webkit.org/b/88871 [ Mac Win Linux ] media/video-empty-source.html [ Failure ]
+webkit.org/b/88871 [ Linux Mac ] media/video-empty-source.html [ Failure ]
 
 webkit.org/b/98686 editing/pasteboard/data-transfer-items.html [ Failure ]
 
