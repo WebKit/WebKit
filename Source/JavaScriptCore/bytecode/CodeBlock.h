@@ -163,7 +163,8 @@ namespace JSC {
 
         static void dumpStatistics();
 
-        void dump(ExecState*);
+        void dump();
+        void dump(unsigned bytecodeOffset);
         void printStructures(const Instruction*);
         void printStructure(const char* name, const Instruction*, int operand);
 
@@ -1211,17 +1212,17 @@ namespace JSC {
                 m_constantRegisters[i].set(*m_globalData, ownerExecutable(), constants[i].get());
         }
 
-        void dump(ExecState*, const Vector<Instruction>::const_iterator& begin, Vector<Instruction>::const_iterator&);
+        void dump(ExecState*, const Instruction* begin, const Instruction*&);
 
         CString registerName(ExecState*, int r) const;
-        void printUnaryOp(ExecState*, int location, Vector<Instruction>::const_iterator&, const char* op);
-        void printBinaryOp(ExecState*, int location, Vector<Instruction>::const_iterator&, const char* op);
-        void printConditionalJump(ExecState*, const Vector<Instruction>::const_iterator&, Vector<Instruction>::const_iterator&, int location, const char* op);
-        void printGetByIdOp(ExecState*, int location, Vector<Instruction>::const_iterator&);
+        void printUnaryOp(ExecState*, int location, const Instruction*&, const char* op);
+        void printBinaryOp(ExecState*, int location, const Instruction*&, const char* op);
+        void printConditionalJump(ExecState*, const Instruction*, const Instruction*&, int location, const char* op);
+        void printGetByIdOp(ExecState*, int location, const Instruction*&);
         void printGetByIdCacheStatus(ExecState*, int location);
         enum CacheDumpMode { DumpCaches, DontDumpCaches };
-        void printCallOp(ExecState*, int location, Vector<Instruction>::const_iterator&, const char* op, CacheDumpMode);
-        void printPutByIdOp(ExecState*, int location, Vector<Instruction>::const_iterator&, const char* op);
+        void printCallOp(ExecState*, int location, const Instruction*&, const char* op, CacheDumpMode);
+        void printPutByIdOp(ExecState*, int location, const Instruction*&, const char* op);
         void visitStructures(SlotVisitor&, Instruction* vPC);
         
 #if ENABLE(DFG_JIT)

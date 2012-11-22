@@ -1986,6 +1986,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\jit\JITDisassembler.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\jit\JITDisassembler.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\jit\JITExceptions.cpp"
 				>
 			</File>

@@ -164,7 +164,7 @@ NEVER_INLINE static const char* debugHookName(int debugHookID)
     return "";
 }
 
-void CodeBlock::printUnaryOp(ExecState* exec, int location, Vector<Instruction>::const_iterator& it, const char* op)
+void CodeBlock::printUnaryOp(ExecState* exec, int location, const Instruction*& it, const char* op)
 {
     int r0 = (++it)->u.operand;
     int r1 = (++it)->u.operand;
@@ -173,7 +173,7 @@ void CodeBlock::printUnaryOp(ExecState* exec, int location, Vector<Instruction>:
     dumpBytecodeCommentAndNewLine(location);
 }
 
-void CodeBlock::printBinaryOp(ExecState* exec, int location, Vector<Instruction>::const_iterator& it, const char* op)
+void CodeBlock::printBinaryOp(ExecState* exec, int location, const Instruction*& it, const char* op)
 {
     int r0 = (++it)->u.operand;
     int r1 = (++it)->u.operand;
@@ -182,7 +182,7 @@ void CodeBlock::printBinaryOp(ExecState* exec, int location, Vector<Instruction>
     dumpBytecodeCommentAndNewLine(location);
 }
 
-void CodeBlock::printConditionalJump(ExecState* exec, const Vector<Instruction>::const_iterator&, Vector<Instruction>::const_iterator& it, int location, const char* op)
+void CodeBlock::printConditionalJump(ExecState* exec, const Instruction*, const Instruction*& it, int location, const char* op)
 {
     int r0 = (++it)->u.operand;
     int offset = (++it)->u.operand;
@@ -190,7 +190,7 @@ void CodeBlock::printConditionalJump(ExecState* exec, const Vector<Instruction>:
     dumpBytecodeCommentAndNewLine(location);
 }
 
-void CodeBlock::printGetByIdOp(ExecState* exec, int location, Vector<Instruction>::const_iterator& it)
+void CodeBlock::printGetByIdOp(ExecState* exec, int location, const Instruction*& it)
 {
     const char* op;
     switch (exec->interpreter()->getOpcodeID(it->u.opcode)) {
@@ -396,7 +396,7 @@ void CodeBlock::printGetByIdCacheStatus(ExecState* exec, int location)
 #endif
 }
 
-void CodeBlock::printCallOp(ExecState* exec, int location, Vector<Instruction>::const_iterator& it, const char* op, CacheDumpMode cacheDumpMode)
+void CodeBlock::printCallOp(ExecState* exec, int location, const Instruction*& it, const char* op, CacheDumpMode cacheDumpMode)
 {
     int func = (++it)->u.operand;
     int argCount = (++it)->u.operand;
@@ -426,7 +426,7 @@ void CodeBlock::printCallOp(ExecState* exec, int location, Vector<Instruction>::
     it += 2;
 }
 
-void CodeBlock::printPutByIdOp(ExecState* exec, int location, Vector<Instruction>::const_iterator& it, const char* op)
+void CodeBlock::printPutByIdOp(ExecState* exec, int location, const Instruction*& it, const char* op)
 {
     int r0 = (++it)->u.operand;
     int id0 = (++it)->u.operand;
@@ -480,8 +480,12 @@ void CodeBlock::printStructures(const Instruction* vPC)
     ASSERT(vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_generic) || vPC[0].u.opcode == interpreter->getOpcode(op_put_by_id_generic) || vPC[0].u.opcode == interpreter->getOpcode(op_call) || vPC[0].u.opcode == interpreter->getOpcode(op_call_eval) || vPC[0].u.opcode == interpreter->getOpcode(op_construct));
 }
 
-void CodeBlock::dump(ExecState* exec)
+void CodeBlock::dump()
 {
+    // We only use the ExecState* for things that don't actually lead to JS execution,
+    // like converting a JSString to a String. Hence the globalExec is appropriate.
+    ExecState* exec = m_globalObject->globalExec();
+    
     size_t instructionCount = 0;
 
     for (size_t i = 0; i < instructions().size(); i += opcodeLengths[exec->interpreter()->getOpcodeID(instructions()[i].u.opcode)])
@@ -505,9 +509,9 @@ void CodeBlock::dump(ExecState* exec)
         dataLog("; activation in r%d", activationRegister());
     dataLog("\n\n");
 
-    Vector<Instruction>::const_iterator begin = instructions().begin();
-    Vector<Instruction>::const_iterator end = instructions().end();
-    for (Vector<Instruction>::const_iterator it = begin; it != end; ++it)
+    const Instruction* begin = instructions().begin();
+    const Instruction* end = instructions().end();
+    for (const Instruction* it = begin; it != end; ++it)
         dump(exec, begin, it);
 
     if (!m_identifiers.isEmpty()) {
@@ -603,7 +607,7 @@ void CodeBlock::dump(ExecState* exec)
     dataLog("\n");
 }
 
-void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator& begin, Vector<Instruction>::const_iterator& it)
+void CodeBlock::dump(ExecState* exec, const Instruction* begin, const Instruction*& it)
 {
     int location = it - begin;
     switch (exec->interpreter()->getOpcodeID(it->u.opcode)) {
@@ -1454,6 +1458,13 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
     }
 }
 
+void CodeBlock::dump(unsigned bytecodeOffset)
+{
+    ExecState* exec = m_globalObject->globalExec();
+    const Instruction* it = instructions().begin() + bytecodeOffset;
+    dump(exec, instructions().begin(), it);
+}
+
 #if DUMP_CODE_BLOCK_STATISTICS
 static HashSet<CodeBlock*> liveCodeBlockSet;
 #endif
@@ -1881,7 +1892,7 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
     m_instructions = WTF::RefCountedArray<Instruction>(instructions);
 
     if (BytecodeGenerator::dumpsGeneratedCode())
-        dump(m_globalObject->globalExec());
+        dump();
     m_globalData->finishedCompiling(this);
 }
 

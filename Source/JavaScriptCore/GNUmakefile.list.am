@@ -398,6 +398,8 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/jit/JITCall.cpp \
 	Source/JavaScriptCore/jit/JITCode.h \
 	Source/JavaScriptCore/jit/JITCompilationEffort.h \
+	Source/JavaScriptCore/jit/JITDisassembler.cpp \
+	Source/JavaScriptCore/jit/JITDisassembler.h \
 	Source/JavaScriptCore/jit/JITDriver.h \
 	Source/JavaScriptCore/jit/JIT.cpp \
 	Source/JavaScriptCore/jit/JIT.h \

@@ -1,3 +1,56 @@
+2012-11-20  Filip Pizlo  <fpizlo@apple.com>
+
+        Baseline JIT's disassembly should be just as pretty as the DFG's
+        https://bugs.webkit.org/show_bug.cgi?id=102873
+
+        Reviewed by Sam Weinig.
+
+        Integrated the CodeBlock's bytecode dumper with the JIT's disassembler. Also fixed
+        some type goof-ups (instructions are not in a Vector<Instruction> so using a Vector
+        iterator makes no sense) and stream-lined some things (you don't actually need a
+        full-fledged ExecState* to dump bytecode).
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Target.pri:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::printUnaryOp):
+        (JSC::CodeBlock::printBinaryOp):
+        (JSC::CodeBlock::printConditionalJump):
+        (JSC::CodeBlock::printGetByIdOp):
+        (JSC::CodeBlock::printCallOp):
+        (JSC::CodeBlock::printPutByIdOp):
+        (JSC::CodeBlock::dump):
+        (JSC):
+        (JSC::CodeBlock::CodeBlock):
+        * bytecode/CodeBlock.h:
+        (CodeBlock):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::dumpCallFrame):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::privateCompileSlowCases):
+        (JSC::JIT::privateCompile):
+        * jit/JIT.h:
+        (JIT):
+        * jit/JITDisassembler.cpp: Added.
+        (JSC):
+        (JSC::JITDisassembler::JITDisassembler):
+        (JSC::JITDisassembler::~JITDisassembler):
+        (JSC::JITDisassembler::dump):
+        (JSC::JITDisassembler::dumpForInstructions):
+        (JSC::JITDisassembler::dumpDisassembly):
+        * jit/JITDisassembler.h: Added.
+        (JSC):
+        (JITDisassembler):
+        (JSC::JITDisassembler::setStartOfCode):
+        (JSC::JITDisassembler::setForBytecodeMainPath):
+        (JSC::JITDisassembler::setForBytecodeSlowPath):
+        (JSC::JITDisassembler::setEndOfSlowPath):
+        (JSC::JITDisassembler::setEndOfCode):
+
 2012-11-21  Daniel Bates  <dbates@webkit.org>
 
         JavaScript fails to concatenate large strings
