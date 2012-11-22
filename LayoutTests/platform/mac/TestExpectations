@@ -5,6 +5,9 @@
 # <rdar://problem/5647952> fast/events/mouseout-on-window.html needs mac DRT to issue mouse out events
 fast/events/mouseout-on-window.html
 
+# Different behavior expectatations on mac: https://bugs.webkit.org/show_bug.cgi?id=102987
+fast/events/context-nodrag.html
+
 # <rdar://problem/5643675> window.scrollTo scrolls a window with no scrollbars
 fast/events/attempt-scroll-with-no-scrollbars.html
 
