@@ -147,10 +147,6 @@
     [V8EnabledAtRuntime] void webkitRequestFullscreen();
 #endif
 
-#if defined(ENABLE_SHADOW_DOM) && ENABLE_SHADOW_DOM
-    [V8EnabledAtRuntime=shadowDOM] ShadowRoot createShadowRoot() raises(DOMException);
-#endif
-
     [Conditional=POINTER_LOCK] void webkitRequestPointerLock();
 
     // CSS Regions API
