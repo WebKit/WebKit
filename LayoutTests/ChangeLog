@@ -1,3 +1,13 @@
+2012-11-22  Stephen White  <senorblanco@chromium.org>
+
+        [Chromium] Unreviewed gardening.  New baselines for test effect-reference-ordering-hw.
+
+        * platform/chromium-linux/css3/filters/effect-reference-ordering-hw-expected.png: Added.
+        * platform/chromium-mac/css3/filters/effect-reference-ordering-hw-expected.png: Added.
+        * platform/chromium-mac/css3/filters/effect-reference-ordering-hw-expected.txt: Added.
+        * platform/chromium-win/css3/filters/effect-reference-ordering-hw-expected.png: Added.
+        * platform/chromium-win/css3/filters/effect-reference-ordering-hw-expected.txt: Added.
+
 2012-11-22  Stephen Chenney  <schenney@chromium.org>
 
         Test expectations update after enabling Skia changes.
