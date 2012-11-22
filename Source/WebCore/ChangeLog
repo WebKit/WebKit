@@ -1,3 +1,30 @@
+2012-11-21  Michael Pruett  <michael@68k.org>
+
+        IndexedDB: Obtain ScriptState from IDL binding generator
+        https://bugs.webkit.org/show_bug.cgi?id=102552
+
+        Reviewed by Kentaro Hara.
+
+        Obtain ScriptState from IDL binding generator rather than directly
+        calling ScriptState::current() since that method does not exist
+        in JSC.
+
+        Tests: storage/indexeddb/*
+
+        * Modules/indexeddb/IDBCursor.cpp:
+        (WebCore::IDBCursor::update):
+        * Modules/indexeddb/IDBCursor.h:
+        (IDBCursor):
+        * Modules/indexeddb/IDBCursor.idl:
+        * Modules/indexeddb/IDBObjectStore.cpp:
+        (WebCore::IDBObjectStore::add):
+        (WebCore::IDBObjectStore::put):
+        * Modules/indexeddb/IDBObjectStore.h:
+        (WebCore::IDBObjectStore::add):
+        (WebCore::IDBObjectStore::put):
+        (IDBObjectStore):
+        * Modules/indexeddb/IDBObjectStore.idl:
+
 2012-11-21  Filip Pizlo  <fpizlo@apple.com>
 
         Rename dataLog() and dataLogV() to dataLogF() and dataLogFV()

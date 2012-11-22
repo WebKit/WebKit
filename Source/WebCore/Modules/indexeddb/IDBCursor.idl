@@ -33,7 +33,7 @@
     readonly attribute any primaryKey;
     readonly attribute IDBAny source;
 
-    [CallWith=ScriptExecutionContext] IDBRequest update(in any value)
+    [CallWith=ScriptState] IDBRequest update(in any value)
         raises (DOMException);
     // FIXME: Make this [EnforceRange] unsigned long once webkit.org/b/96798 lands.
     void advance(in long long count)

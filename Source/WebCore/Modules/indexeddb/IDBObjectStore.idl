@@ -33,9 +33,9 @@
     readonly attribute IDBTransaction transaction;
     readonly attribute boolean autoIncrement;
 
-    [CallWith=ScriptExecutionContext] IDBRequest put(in any value, in [Optional] IDBKey key)
+    [CallWith=ScriptState] IDBRequest put(in any value, in [Optional] IDBKey key)
         raises (DOMException);
-    [CallWith=ScriptExecutionContext] IDBRequest add(in any value, in [Optional] IDBKey key)
+    [CallWith=ScriptState] IDBRequest add(in any value, in [Optional] IDBKey key)
         raises (DOMException);
     [CallWith=ScriptExecutionContext, ImplementedAs=deleteFunction] IDBRequest delete(in IDBKeyRange? keyRange)
         raises (DOMException);
