@@ -4,6 +4,16 @@
 
         Unreviewed Chromium expectations update.
 
+        Update of remaining platform-specific expectations for linux. Other platforms to come.
+
+        Too many files to list.
+
+2012-11-22  Stephen Chenney  <schenney@chromium.org>
+
+        [Chromium] Test expectations update after enabling Skia changes.
+
+        Unreviewed Chromium expectations update.
+
         Update of svg results.
 
         Too many files to list. All Chromium platform results for svg tests.

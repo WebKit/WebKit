@@ -3,53 +3,53 @@ This tests the length property of constructors.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS ArrayBuffer.length is 1
-FAIL AudioContext.length should be 0. Threw exception ReferenceError: Can't find variable: AudioContext
-PASS BeforeLoadEvent.length is 2
-PASS Blob.length is 2
-PASS CloseEvent.length is 2
-PASS CustomEvent.length is 2
-FAIL DOMFormData.length should be 0. Threw exception ReferenceError: Can't find variable: DOMFormData
+FAIL ArrayBuffer.length should be 1. Was 0.
+FAIL AudioContext.length should be 0. Threw exception ReferenceError: AudioContext is not defined
+FAIL BeforeLoadEvent.length should be 2. Was 0.
+FAIL Blob.length should be 2. Was 0.
+FAIL CloseEvent.length should be 2. Was 0.
+FAIL CustomEvent.length should be 2. Was 0.
+FAIL DOMFormData.length should be 0. Threw exception ReferenceError: DOMFormData is not defined
 PASS DOMParser.length is 0
-PASS DataView.length is 3
-PASS ErrorEvent.length is 2
-PASS Event.length is 2
-PASS EventSource.length is 1
-PASS Float32Array.length is 1
-PASS Float64Array.length is 1
+FAIL DataView.length should be 3. Was 0.
+FAIL ErrorEvent.length should be 2. Was 0.
+FAIL Event.length should be 2. Was 0.
+FAIL EventSource.length should be 1. Was 0.
+FAIL Float32Array.length should be 1. Was 0.
+FAIL Float64Array.length should be 1. Was 0.
 PASS FileReader.length is 0
-FAIL FileReaderSync.length should be 0. Threw exception ReferenceError: Can't find variable: FileReaderSync
-PASS HashChangeEvent.length is 2
-PASS Int16Array.length is 1
-PASS Int32Array.length is 1
-PASS Int8Array.length is 1
-FAIL Intent.length should be 3. Threw exception ReferenceError: Can't find variable: Intent
+FAIL FileReaderSync.length should be 0. Threw exception ReferenceError: FileReaderSync is not defined
+FAIL HashChangeEvent.length should be 2. Was 0.
+FAIL Int16Array.length should be 1. Was 0.
+FAIL Int32Array.length should be 1. Was 0.
+FAIL Int8Array.length should be 1. Was 0.
+FAIL Intent.length should be 3. Threw exception ReferenceError: Intent is not defined
 PASS MediaController.length is 0
-FAIL MediaStream.length should be 2. Threw exception ReferenceError: Can't find variable: MediaStream
+FAIL MediaStream.length should be 2. Threw exception ReferenceError: MediaStream is not defined
 PASS MessageChannel.length is 0
-PASS MessageEvent.length is 2
-PASS OverflowEvent.length is 2
-PASS PageTransitionEvent.length is 2
-FAIL PeerConnection.length should be 2. Threw exception ReferenceError: Can't find variable: PeerConnection
-PASS PopStateEvent.length is 2
-PASS ProgressEvent.length is 2
-FAIL ShadowRoot.length should be 1. Threw exception ReferenceError: Can't find variable: ShadowRoot
-PASS SharedWorker.length is 2
-PASS StorageEvent.length is 2
-PASS TextTrackCue.length is 3
-PASS TrackEvent.length is 2
-PASS Uint16Array.length is 1
-PASS Uint32Array.length is 1
-PASS Uint8Array.length is 1
-PASS Uint8ClampedArray.length is 1
-PASS WebGLContextEvent.length is 2
-PASS WebKitAnimationEvent.length is 2
-PASS WebKitCSSMatrix.length is 1
-PASS WebKitMutationObserver.length is 1
-PASS WebKitPoint.length is 2
-PASS WebKitTransitionEvent.length is 2
-PASS WebSocket.length is 1
-PASS Worker.length is 1
+FAIL MessageEvent.length should be 2. Was 0.
+FAIL OverflowEvent.length should be 2. Was 0.
+FAIL PageTransitionEvent.length should be 2. Was 0.
+FAIL PeerConnection.length should be 2. Threw exception ReferenceError: PeerConnection is not defined
+FAIL PopStateEvent.length should be 2. Was 0.
+FAIL ProgressEvent.length should be 2. Was 0.
+FAIL ShadowRoot.length should be 1. Threw exception ReferenceError: ShadowRoot is not defined
+FAIL SharedWorker.length should be 2. Threw exception ReferenceError: SharedWorker is not defined
+FAIL StorageEvent.length should be 2. Was 0.
+FAIL TextTrackCue.length should be 3. Was 0.
+FAIL TrackEvent.length should be 2. Was 0.
+FAIL Uint16Array.length should be 1. Was 0.
+FAIL Uint32Array.length should be 1. Was 0.
+FAIL Uint8Array.length should be 1. Was 0.
+FAIL Uint8ClampedArray.length should be 1. Was 0.
+FAIL WebGLContextEvent.length should be 2. Was 0.
+FAIL WebKitAnimationEvent.length should be 2. Was 0.
+FAIL WebKitCSSMatrix.length should be 1. Was 0.
+FAIL WebKitMutationObserver.length should be 1. Was 0.
+FAIL WebKitPoint.length should be 2. Was 0.
+FAIL WebKitTransitionEvent.length should be 2. Was 0.
+FAIL WebSocket.length should be 1. Was 0.
+FAIL Worker.length should be 1. Was 0.
 PASS URL.length is 0
 PASS XMLHttpRequest.length is 0
 PASS XMLSerializer.length is 0

@@ -1,5 +1,6 @@
-document-write-plaintext.js has MIME type text/javascript
-script1.js has MIME type text/javascript
+CONSOLE MESSAGE: line 7: Uncaught TypeError: Object [object Object] has no method 'setSerializeHTTPLoads'
+document-write-plaintext.js has MIME type application/javascript
+script1.js has MIME type application/javascript
 
 This test requires DumpRenderTree to see the log of what resources are loaded. 
 
