@@ -1,3 +1,14 @@
+2012-11-22  Pierre Rossi  <pierre.rossi@gmail.com>
+
+        [Qt] REGRESSION(r135515): It made 3-3 tests fail and crash
+        https://bugs.webkit.org/show_bug.cgi?id=103073
+
+        Rubber-stamped by Simon Hausmann.
+
+        Unskip the tests that had regressed.
+
+        * platform/qt/TestExpectations:
+
 2012-11-22  Stephen Chenney  <schenney@chromium.org>
 
         [Chromium] Test expectations update after enabling Skia changes.

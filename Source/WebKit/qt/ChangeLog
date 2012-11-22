@@ -1,3 +1,19 @@
+2012-11-22  Pierre Rossi  <pierre.rossi@gmail.com>
+
+        [Qt] REGRESSION(r135515): It made 3-3 tests fail and crash
+        https://bugs.webkit.org/show_bug.cgi?id=103073
+
+        Rubber-stamped by Simon Hausmann.
+
+        Removing the QNetworkAccessManager member in FrameNetworkingContextQt
+        was right, but we need to be careful as to how we fetch it back.
+        Since the WebCore Page is not always valid, get the QNAM instance
+        straight from the frame adapter through its page adapter instead.
+
+        * WebCoreSupport/ChromeClientQt.cpp: [Style nit] Remove stray emit.
+        * WebCoreSupport/FrameNetworkingContextQt.cpp:
+        (WebCore::FrameNetworkingContextQt::networkAccessManager):
+
 2012-11-22  Simon Hausmann  <simon.hausmann@digia.com>
 
         Unreviewed MSVC Windows build fix: Include header files referenced in RefPtr

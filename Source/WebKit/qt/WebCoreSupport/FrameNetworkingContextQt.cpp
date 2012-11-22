@@ -20,6 +20,7 @@
 #include "config.h"
 #include "FrameNetworkingContextQt.h"
 
+#include "QWebFrameAdapter.h"
 #include "QWebPageAdapter.h"
 #include "qwebsettings.h"
 
@@ -48,7 +49,7 @@ QObject* FrameNetworkingContextQt::originatingObject() const
 
 QNetworkAccessManager* FrameNetworkingContextQt::networkAccessManager() const
 {
-    return QWebPageAdapter::kit(frame()->page())->networkAccessManager();
+    return QWebFrameAdapter::kit(frame())->pageAdapter->networkAccessManager();
 }
 
 bool FrameNetworkingContextQt::mimeSniffingEnabled() const
