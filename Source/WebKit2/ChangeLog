@@ -1,3 +1,16 @@
+2012-11-22  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        REGRESSION(r135399): Wrong assertion causing an assertion failure: m_rawAttributes.initialScale > 0
+        https://bugs.webkit.org/show_bug.cgi?id=102971
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        m_rawAttributes.initialScale has to be initialized even if m_minimumScaleToFit hasn't changed
+        it's value.
+
+        * UIProcess/PageViewportController.cpp:
+        (WebKit::PageViewportController::didChangeViewportAttributes):
+
 2012-11-22  Eunmi Lee  <eunmi15.lee@samsung.com>
 
         [EFL][WK2] Correct the parameters of WebPlatformTouchPoint.

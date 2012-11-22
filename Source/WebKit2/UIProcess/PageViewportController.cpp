@@ -219,8 +219,7 @@ void PageViewportController::didChangeViewportAttributes(const WebCore::Viewport
     m_rawAttributes = newAttributes;
     m_allowsUserScaling = !!m_rawAttributes.userScalable;
 
-    if (!updateMinimumScaleToFit())
-        return;
+    bool minimumScaleUpdated = updateMinimumScaleToFit();
 
     ASSERT(m_minimumScaleToFit > 0);
 
@@ -230,7 +229,8 @@ void PageViewportController::didChangeViewportAttributes(const WebCore::Viewport
 
     WebCore::restrictScaleFactorToInitialScaleIfNotUserScalable(m_rawAttributes);
 
-    m_client->didChangeViewportAttributes();
+    if (minimumScaleUpdated)
+        m_client->didChangeViewportAttributes();
 }
 
 WebCore::FloatSize PageViewportController::viewportSizeInContentsCoordinates() const
