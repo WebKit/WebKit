@@ -1,3 +1,17 @@
+2012-11-22  Stephen Chenney  <schenney@chromium.org>
+
+        Fixing some Chromium test expectations.
+
+        Unreviewed expectations update
+
+        * platform/chromium-mac/fast/css/font-smoothing-expected.png:
+        * platform/chromium-mac/fast/css/text-rendering-expected.png:
+        * platform/chromium-mac/svg/W3C-SVG-1.1/filters-conv-01-f-expected.png:
+        * platform/chromium-mac/svg/text/scaling-font-with-geometric-precision-expected.png:
+        * platform/chromium-win/fast/css/font-smoothing-expected.png: Added.
+        * platform/chromium/fast/css/font-smoothing-expected.png: Removed.
+        * platform/chromium/fast/css/text-rendering-expected.png: Removed.
+
 2012-11-22  Yury Semikhatsky  <yurys@chromium.org>
 
         Chromium gardening. Rebaseline compositing tests
