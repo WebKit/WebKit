@@ -1,3 +1,37 @@
+2012-11-21  Cosmin Truta  <ctruta@rim.com>
+
+        Numeric identifiers of events should not be globally sequential
+        https://bugs.webkit.org/show_bug.cgi?id=102244
+
+        Reviewed by Alexey Proskuryakov.
+
+        The functions setTimeout, setInterval and navigator.geolocation.watchPosition
+        are currently returning values that are unique across all JavaScript execution
+        contexts, due to their dependency on global variables.
+        Such a guarantee is unnecessarily strong. In this patch, we constrain uniqueness
+        to these functions' own script execution context only.
+
+        Tests: fast/dom/Geolocation/watchPosition-unique.html
+               fast/dom/Window/setTimeout-setInterval-unique.html
+
+        * Modules/geolocation/Geolocation.cpp:
+        (WebCore): Remove firstAvailableWatchId.
+        (WebCore::Geolocation::watchPosition): Get new watchID from script execution context.
+        (WebCore::Geolocation::clearWatch): Invalid watchID means less than or equal to 0.
+        * Modules/geolocation/Geolocation.h:
+        (Geolocation): Renamed the argument of Geolocation::clearWatch to WatchID.
+        * dom/ScriptExecutionContext.cpp:
+        (WebCore::ScriptExecutionContext::ScriptExecutionContext): Update initialization.
+        (WebCore::ScriptExecutionContext::newUniqueID): Add.
+        * dom/ScriptExecutionContext.h:
+        (ScriptExecutionContext): Add m_sequentialID.
+        (WebCore::ScriptExecutionContext::addTimeout): Inline.
+        (WebCore::ScriptExecutionContext::removeTimeout): Inline.
+        (WebCore::ScriptExecutionContext::findTimeout): Inline.
+        * page/DOMTimer.cpp:
+        (WebCore): Remove timeoutId.
+        (WebCore::DOMTimer::DOMTimer): Get new timeoutId from script execution context.
+
 2012-11-21  Ryosuke Niwa  <rniwa@webkit.org>
 
         CollectionType and DynamicNodeList::NodeListType should be merged

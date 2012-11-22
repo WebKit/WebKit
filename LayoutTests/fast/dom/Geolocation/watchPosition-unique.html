@@ -1,0 +1,28 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+
+description("Tests that navigator.geolocation.watchPosition returns unique results within its script execution context.");
+
+if (window.testRunner)
+    testRunner.setMockGeolocationPosition(51.478, -0.166, 100.0);
+
+var watchID1 = navigator.geolocation.watchPosition(function() { });
+var watchID2 = navigator.geolocation.watchPosition(function() { });
+var watchID3 = navigator.geolocation.watchPosition(function() { });
+
+shouldBeTrue("watchID1 > 0");
+shouldBeTrue("watchID2 > 0");
+shouldBeTrue("watchID3 > 0");
+shouldBeTrue("watchID1 !== watchID2");
+shouldBeTrue("watchID1 !== watchID3");
+shouldBeTrue("watchID2 !== watchID3");
+
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>
