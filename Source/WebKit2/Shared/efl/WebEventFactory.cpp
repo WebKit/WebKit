@@ -250,7 +250,7 @@ WebTouchEvent WebEventFactory::createWebTouchEvent(Ewk_Touch_Event_Type type, co
         }
 
         IntPoint pos(point->x, point->y);
-        touchPoints.append(WebPlatformTouchPoint(point->id, state, toWebContent.mapPoint(pos), toDeviceScreen.mapPoint(pos)));
+        touchPoints.append(WebPlatformTouchPoint(point->id, state, toDeviceScreen.mapPoint(pos), toWebContent.mapPoint(pos)));
     }
 
     return WebTouchEvent(typeForTouchEvent(type), touchPoints, modifiersForEvent(modifiers), timestamp);

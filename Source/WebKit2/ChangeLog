@@ -1,3 +1,16 @@
+2012-11-22  Eunmi Lee  <eunmi15.lee@samsung.com>
+
+        [EFL][WK2] Correct the parameters of WebPlatformTouchPoint.
+        https://bugs.webkit.org/show_bug.cgi?id=102865
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Set the screen position as a third parameter and contents position as
+        a fourth parameter of WebPlatformTouchPoint().
+
+        * Shared/efl/WebEventFactory.cpp:
+        (WebKit::WebEventFactory::createWebTouchEvent):
+
 2012-11-22  Huang Dongsung  <luxtella@company100.net>
 
         Coordinated Graphics: Remove an invisible TiledBackingStore of CoordinatedGraphicsLayer.
