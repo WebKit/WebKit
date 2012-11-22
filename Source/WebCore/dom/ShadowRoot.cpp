@@ -46,6 +46,13 @@
 #include "StyleResolver.h"
 #include "markup.h"
 
+// FIXME: This shouldn't happen. https://bugs.webkit.org/show_bug.cgi?id=88834
+#define GuardOrphanShadowRoot(rejectStatement) \
+    if (!this->host()) {                       \
+        rejectStatement;                       \
+        return;                                \
+    }
+
 namespace WebCore {
 
 ShadowRoot::ShadowRoot(Document* document)
@@ -171,6 +178,8 @@ String ShadowRoot::innerHTML() const
 
 void ShadowRoot::setInnerHTML(const String& markup, ExceptionCode& ec)
 {
+    GuardOrphanShadowRoot(ec = INVALID_ACCESS_ERR);
+
     if (RefPtr<DocumentFragment> fragment = createFragmentForInnerOuterHTML(markup, host(), AllowScriptingContent, ec))
         replaceChildrenWithFragment(this, fragment.release(), ec);
 }
@@ -209,6 +218,8 @@ bool ShadowRoot::applyAuthorStyles() const
 
 void ShadowRoot::setApplyAuthorStyles(bool value)
 {
+    GuardOrphanShadowRoot({ });
+
     if (m_applyAuthorStyles != value) {
         m_applyAuthorStyles = value;
         host()->setNeedsStyleRecalc();
@@ -222,6 +233,8 @@ bool ShadowRoot::resetStyleInheritance() const
 
 void ShadowRoot::setResetStyleInheritance(bool value)
 {
+    GuardOrphanShadowRoot({ });
+
     if (value != m_resetStyleInheritance) {
         m_resetStyleInheritance = value;
         if (attached() && owner())
@@ -275,6 +288,8 @@ void ShadowRoot::removedFrom(ContainerNode* insertionPoint)
 
 void ShadowRoot::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)
 {
+    GuardOrphanShadowRoot({ });
+
     ContainerNode::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
     owner()->invalidateDistribution();
 }

@@ -1,3 +1,13 @@
+2012-11-21  Hajime Morrita  <morrita@google.com>
+
+        [Shadow DOM][V8] Assertion failure when shadow host is reclaimed before ShadowRoot
+        https://bugs.webkit.org/show_bug.cgi?id=102893
+
+        Reviewed by Kentaro Hara.
+
+        * fast/dom/shadow/host-wrapper-reclaimed-expected.txt: Added.
+        * fast/dom/shadow/host-wrapper-reclaimed.html: Added.
+
 2012-11-21  Daniel Bates  <dbates@webkit.org>
 
         JavaScript fails to concatenate large strings

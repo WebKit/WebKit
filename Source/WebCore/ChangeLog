@@ -1,3 +1,28 @@
+2012-11-21  Hajime Morrita  <morrita@google.com>
+
+        [Shadow DOM][V8] Assertion failure when shadow host is reclaimed before ShadowRoot
+        https://bugs.webkit.org/show_bug.cgi?id=102893
+
+        Reviewed by Kentaro Hara.
+
+        Due to bug 88834, shadow hosts can be reclaimed before
+        corresponding ShadowRoots are.  This breaks an invariant, that is,
+        the host is always available for any ShadowRoot.  This change adds
+        guards for the possibly broken invariant.
+
+        Since bug 88834 is planned to be fixed shortly, this change
+        doesn't aim to fix this problem by make it work correctly, but
+        just lays a safety net which is needed until the root cause is
+        gone.
+
+        Test: fast/dom/shadow/host-wrapper-reclaimed.html
+
+        * dom/ShadowRoot.cpp:
+        (WebCore::ShadowRoot::setInnerHTML):
+        (WebCore::ShadowRoot::setApplyAuthorStyles):
+        (WebCore::ShadowRoot::setResetStyleInheritance):
+        (WebCore::ShadowRoot::childrenChanged):
+
 2012-11-21  Dirk Schulze  <krit@webkit.org>
 
         Make CachedSVGDocumentReference independent of FilterOperation

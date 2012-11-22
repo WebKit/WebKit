@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+function makeOrphanShadow() {
+    var host = document.createElement("div");
+    var shadow = new WebKitShadowRoot(host);
+    return shadow;
+};
+
+var shadow = makeOrphanShadow();
+gc(true);
+
+try { shadow.innerHTML = "Hello"; } catch(e) { }
+shadow.appendChild(document.createElement("span"));
+shadow.resetStyleInheritance = true;
+shadow.applyAuthorStyles = false;
+
+document.body.innerHTML = "PASS unless crash.";
+</script>
+</body>
+</html>
