@@ -190,7 +190,7 @@ private:
 };
 
 template<typename T, typename Traits>
-void dumpOperands(Operands<T, Traits>& operands, FILE* out)
+void dumpOperands(const Operands<T, Traits>& operands, FILE* out)
 {
     for (size_t argument = 0; argument < operands.numberOfArguments(); ++argument) {
         if (argument)
@@ -203,16 +203,6 @@ void dumpOperands(Operands<T, Traits>& operands, FILE* out)
             fprintf(out, " ");
         Traits::dump(operands.local(local), out);
     }
-}
-
-template<typename T, typename Traits>
-void dumpOperands(const Operands<T, Traits>& operands, FILE* out)
-{
-    // Use const-cast because:
-    // 1) I don't feel like writing this code twice, and
-    // 2) Some dump() methods may not be const, and I don't really care if that's
-    //    the case.
-    dumpOperands(*const_cast<Operands<T, Traits>*>(&operands), out);
 }
 
 } // namespace JSC

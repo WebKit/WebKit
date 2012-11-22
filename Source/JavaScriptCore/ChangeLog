@@ -1,3 +1,14 @@
+2012-11-21  Filip Pizlo  <fpizlo@apple.com>
+
+        dumpOperands() claims that it needs a non-const Operands& when that is completely false
+        https://bugs.webkit.org/show_bug.cgi?id=103005
+
+        Reviewed by Eric Carlson.
+
+        * bytecode/Operands.h:
+        (JSC::dumpOperands):
+        (JSC):
+
 2012-11-20  Filip Pizlo  <fpizlo@apple.com>
 
         Baseline JIT's disassembly should be just as pretty as the DFG's
