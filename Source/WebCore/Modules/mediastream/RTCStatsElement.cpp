@@ -47,6 +47,16 @@ String RTCStatsElement::stat(const String& name) const
     return m_stats.get(name);
 }
 
+Vector<String> RTCStatsElement::names() const
+{
+    Vector<String> result;
+    for (HashMap<String, String>::const_iterator it = m_stats.begin();
+        it != m_stats.end(); ++it) {
+        result.append(it->key);
+    }
+    return result;
+}
+
 void RTCStatsElement::addStatistic(const String& name, const String& value)
 {
     m_stats.add(name, value);

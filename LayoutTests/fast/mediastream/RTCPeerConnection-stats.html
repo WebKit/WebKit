@@ -1,3 +1,4 @@
+
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
@@ -51,6 +52,8 @@ function statsHandler2(status)
     local = result[0].local;
     timestamp = local.timestamp;
     shouldBeGreaterThanOrEqual('timestamp', 'startTime');
+    shouldBeGreaterThanOrEqual('local.names().length', '1');
+    shouldBeGreaterThanOrEqual('local.names().indexOf("type")', '0');
     shouldBe('local.stat("type")', '"audio"');
     finishJSTest();
 }

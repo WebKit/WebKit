@@ -14,6 +14,8 @@ PASS pc.getStats(statsHandler2) did not throw exception.
 PASS statsHandler2 was called
 PASS result.length is >= 2
 PASS timestamp is >= startTime
+PASS local.names().length is >= 1
+PASS local.names().indexOf("type") is >= 0
 PASS local.stat("type") is "audio"
 PASS successfullyParsed is true
 

@@ -1,3 +1,13 @@
+2012-11-22  Harald Alvestrand  <hta@google.com>
+
+        Name enumerator function for GetStats RTCStatsElement
+        https://bugs.webkit.org/show_bug.cgi?id=102933
+
+        Reviewed by Adam Barth.
+
+        * fast/mediastream/RTCPeerConnection-stats-expected.txt:
+        * fast/mediastream/RTCPeerConnection-stats.html:
+
 2012-11-22  Kristóf Kosztyó  <kkristof@inf.u-szeged.hu>
 
         [Qt] Unreviewed gardening
