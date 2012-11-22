@@ -64,6 +64,27 @@ DOMWrapperWorld* mainThreadNormalWorld()
     return cachedNormalWorld.get();
 }
 
+static void isolatedWorldWeakCallback(v8::Persistent<v8::Value> object, void* parameter)
+{
+    object.Dispose();
+    object.Clear();
+    static_cast<DOMWrapperWorld*>(parameter)->deref();
+}
+
+void DOMWrapperWorld::makeContextWeak(v8::Handle<v8::Context> context)
+{
+    ASSERT(isIsolatedWorld());
+    ASSERT(isolated(context) == this);
+    v8::Persistent<v8::Context>::New(context).MakeWeak(this, isolatedWorldWeakCallback);
+    // Matching deref is in weak callback.
+    this->ref();
+}
+
+void DOMWrapperWorld::setIsolatedWorldField(v8::Handle<v8::Context> context)
+{
+    context->SetAlignedPointerInEmbedderData(v8ContextIsolatedWorld, isMainWorld() ? 0 : this);
+}
+
 typedef HashMap<int, DOMWrapperWorld*> WorldMap;
 static WorldMap& isolatedWorldMap()
 {

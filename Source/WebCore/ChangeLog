@@ -1,3 +1,46 @@
+2012-11-21  Dan Carney  <dcarney@google.com>
+
+        Remove V8DOMWindowShell::getEntered
+        https://bugs.webkit.org/show_bug.cgi?id=96637
+
+        Reviewed by Adam Barth.
+
+        V8DOMWindowShell::getEntered was refactored so that the window shell
+        no longer has to be kept alive by a v8 context. Instead, only
+        the DOMWrapperWorld will be kept alive.
+
+        No new tests. No change in functionality.
+
+        * bindings/v8/DOMDataStore.cpp:
+        (WebCore::DOMDataStore::current):
+        * bindings/v8/DOMWrapperWorld.cpp:
+        (WebCore::isolatedWorldWeakCallback):
+        (WebCore):
+        (WebCore::DOMWrapperWorld::makeContextWeak):
+        (WebCore::DOMWrapperWorld::setIsolatedWorldField):
+        * bindings/v8/DOMWrapperWorld.h:
+        (DOMWrapperWorld):
+        (WebCore::DOMWrapperWorld::isolated):
+        * bindings/v8/ScriptController.cpp:
+        (WebCore::ScriptController::existingWindowShell):
+        (WebCore::ScriptController::windowShell):
+        (WebCore::ScriptController::evaluateInIsolatedWorld):
+        (WebCore::ScriptController::currentWorldContext):
+        (WebCore::ScriptController::collectIsolatedContexts):
+        * bindings/v8/ScriptController.h:
+        (ScriptController):
+        * bindings/v8/V8Binding.h:
+        (WebCore::worldForEnteredContextIfIsolated):
+        * bindings/v8/V8DOMWindowShell.cpp:
+        (WebCore::V8DOMWindowShell::destroyIsolatedShell):
+        (WebCore::V8DOMWindowShell::disposeContext):
+        (WebCore::V8DOMWindowShell::initializeIfNeeded):
+        * bindings/v8/V8DOMWindowShell.h:
+        (V8DOMWindowShell):
+        * bindings/v8/V8PerContextData.h:
+        * bindings/v8/WorldContextHandle.cpp:
+        (WebCore::WorldContextHandle::WorldContextHandle):
+
 2012-11-21  Cosmin Truta  <ctruta@rim.com>
 
         Numeric identifiers of events should not be globally sequential

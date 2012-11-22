@@ -32,10 +32,10 @@
 #define V8Binding_h
 
 #include "BindingSecurity.h"
+#include "DOMWrapperWorld.h"
 #include "Document.h"
 #include "V8BindingMacros.h"
 #include "V8DOMConfiguration.h"
-#include "V8DOMWindowShell.h"
 #include "V8DOMWrapper.h"
 #include "V8HiddenPropertyName.h"
 #include "V8ObjectConstructor.h"
@@ -383,10 +383,7 @@ namespace WebCore {
     {
         if (!v8::Context::InContext())
             return 0;
-        V8DOMWindowShell* shell = V8DOMWindowShell::isolated(v8::Context::GetEntered());
-        if (!shell)
-            return 0;
-        return shell->world();
+        return DOMWrapperWorld::isolated(v8::Context::GetEntered());
     }
 
     // If the current context causes out of memory, JavaScript setting
