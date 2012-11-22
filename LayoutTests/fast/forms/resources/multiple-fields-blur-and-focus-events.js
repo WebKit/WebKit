@@ -39,7 +39,8 @@ function startTestFor(typeName)
         document.getElementById("before").focus();
         shouldBeEqualToString('keyDown("\t"); state()', 'blur=0 focus=1');
         shouldBeEqualToString('keyDown("\t"); state()', 'blur=0 focus=1');
-        shouldBeEqualToString('keyDown("\t"); state()', 'blur=0 focus=1');
+        if (typeName != 'week' && typeName != 'month')
+            shouldBeEqualToString('keyDown("\t"); state()', 'blur=0 focus=1');
         shouldBeEqualToString('keyDown("\t"); state()', 'blur=1 focus=1');
     } else {
         debug('Please run in DumpRenderTree for focus and Tab-key test case');

@@ -1,3 +1,36 @@
+2012-11-22  Keishi Hattori  <keishi@webkit.org>
+
+        Add week-multiple-fields tests
+        https://bugs.webkit.org/show_bug.cgi?id=102045
+
+        Reviewed by Kent Tamura.
+
+        Adding test cases for multiple field week input.
+
+        * fast/forms/resources/multiple-fields-blur-and-focus-events.js:
+        (startTestFor.beginTestCase):
+        (startTestFor):
+        * fast/forms/week-multiple-fields/week-multiple-fields-ax-aria-attributes-expected.txt: Added.
+        * fast/forms/week-multiple-fields/week-multiple-fields-ax-aria-attributes.html: Added.
+        * fast/forms/week-multiple-fields/week-multiple-fields-ax-value-changed-notification-expected.txt: Added.
+        * fast/forms/week-multiple-fields/week-multiple-fields-ax-value-changed-notification.html: Added.
+        * fast/forms/week-multiple-fields/week-multiple-fields-blur-and-focus-events-expected.txt: Added.
+        * fast/forms/week-multiple-fields/week-multiple-fields-blur-and-focus-events.html: Added.
+        * fast/forms/week-multiple-fields/week-multiple-fields-change-layout-by-value-expected.txt: Added.
+        * fast/forms/week-multiple-fields/week-multiple-fields-change-layout-by-value.html: Added.
+        * fast/forms/week-multiple-fields/week-multiple-fields-keyboard-events-expected.txt: Added.
+        * fast/forms/week-multiple-fields/week-multiple-fields-keyboard-events.html: Added.
+        * fast/forms/week-multiple-fields/week-multiple-fields-mouse-events-expected.txt: Added.
+        * fast/forms/week-multiple-fields/week-multiple-fields-mouse-events.html: Added.
+        * fast/forms/week-multiple-fields/week-multiple-fields-preserve-value-after-history-back-expected.txt: Added.
+        * fast/forms/week-multiple-fields/week-multiple-fields-preserve-value-after-history-back.html: Added.
+        * fast/forms/week-multiple-fields/week-multiple-fields-reset-value-after-reloads-expected.txt: Added.
+        * fast/forms/week-multiple-fields/week-multiple-fields-reset-value-after-reloads.html: Added.
+        * fast/forms/week-multiple-fields/week-multiple-fields-spinbutton-change-and-input-events-expected.txt: Added.
+        * fast/forms/week-multiple-fields/week-multiple-fields-spinbutton-change-and-input-events.html: Added.
+        * fast/forms/week-multiple-fields/week-multiple-fields-wheel-event-expected.txt: Added.
+        * fast/forms/week-multiple-fields/week-multiple-fields-wheel-event.html: Added.
+
 2012-11-22  Christophe Dumez  <christophe.dumez@intel.com>
 
         WebKitTestRunner needs layoutTestController.setCacheModel

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script>
+description('Change multiple fields week input UI layout by value');
+var testInput = document.createElement('input');
+testInput.type = 'week';
+testInput.max = '9999-W52';
+document.body.appendChild(testInput);
+var widthOfEmptyValue = testInput.offsetWidth;
+
+testInput.value = '10000-W01';
+var widthOfOverflowValue = testInput.offsetWidth;
+shouldBeTrue('widthOfEmptyValue < widthOfOverflowValue');
+
+testInput.value = '2012-W10';
+var widthOfValidValue = testInput.offsetWidth;
+shouldBe('widthOfEmptyValue', 'widthOfValidValue');
+
+testInput.remove();
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,16 @@
+This test checks aria-help attribute of fields in multiple fields week input UI.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Non-empty value
+PASS focusedFieldValueDescription() is "AXHelp: Week, AXValueDescription: 10, 1, 53"
+PASS focusedFieldValueDescription() is "AXHelp: Year, AXValueDescription: 2012, 1, 275760"
+Empty value
+PASS focusedFieldValueDescription() is "AXHelp: Year, AXValueDescription: blank, 1, 275760"
+PASS focusedFieldValueDescription() is "AXHelp: Week, AXValueDescription: blank, 1, 53"
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
