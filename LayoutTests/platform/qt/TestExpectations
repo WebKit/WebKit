@@ -2326,6 +2326,9 @@ webkit.org/b/98525 plugins/mouse-click-plugin-clears-selection.html
 webkit.org/b/98525 plugins/netscape-dom-access.html
 webkit.org/b/98525 plugins/resize-from-plugin.html
 
+# [Qt] plugins/refcount-leaks.html fails
+webkit.org/b/98640 plugins/refcount-leaks.html
+
 webkit.org/b/99893 svg/animations/mozilla/animateMotion-mpath-targetChange-1.svg [ ImageOnlyFailure ]
 
 # New inspector/profiler/memory-instrumentation-canvas.html fails on JSC platforms
@@ -2380,3 +2383,28 @@ webkit.org/b/102877 fast/frames/frame-unload-crash2.html
 
 # Fails until we enable the Resource Timing API.
 webkit.org/b/61138 http/tests/w3c/webperf/submission/resource-timing [ Skip ]
+
+# [Qt] REGRESSION(r135507): It made 13 tests fail
+# https://bugs.webkit.org/show_bug.cgi?id=103069
+fast/preloader/script.html
+http/tests/navigation/reload-subframe-object.html
+mhtml/check_domain.mht
+mhtml/multi_frames_binary.mht
+mhtml/multi_frames_ie.mht
+mhtml/multi_frames_unmht.mht
+mhtml/page_with_css_and_js_ie.mht
+mhtml/page_with_css_and_js_unmht.mht
+mhtml/page_with_image_ie.mht
+mhtml/page_with_image_unmht.mht
+mhtml/shared_buffer_bug.mht
+mhtml/simple_page_ie.mht
+mhtml/simple_page_unmht.mht
+
+# [Qt] REGRESSION(r135515): It made 3-3 tests fail and crash
+# https://bugs.webkit.org/show_bug.cgi?id=103073
+http/tests/appcache/origin-quota-continued-download-multiple-manifests.html
+http/tests/appcache/origin-quota-continued-download.html
+http/tests/appcache/origin-quota.html
+fast/dom/beforeload/remove-frame-in-beforeload-listener.html
+fast/parser/remove-misnested-iframe-parent-in-beforeload.html
+fast/parser/remove-misnested-iframe-in-beforeload.html

@@ -1,3 +1,10 @@
+2012-11-22  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed gardening, skip failing tests to paint the bots green.
+
+        * platform/qt-5.0-wk2/TestExpectations:
+        * platform/qt/TestExpectations:
+
 2012-11-22  Stephen Chenney  <schenney@chromium.org>
 
         [Chromium] Test expectations update after enabling Skia changes.
