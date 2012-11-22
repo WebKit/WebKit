@@ -118,6 +118,9 @@ webkit.org/b/101362 [ Debug ] fast/dom/Window/customized-property-survives-gc.ht
 # TEMPORARILY SKIPPED TESTS
 # -----------------------------------------------------------------
 
+# Context menu behavior differs on Mac. This test needs to be adjusted for Mac.
+webkit.org/b/102987 [ Mac ] fast/events/context-nodrag.html [ Skip ]
+
 # Fails due to different window.close() rules.  We need to decide whether we
 # ever expect to pass this.
 crbug.com/24189 fast/dom/open-and-close-by-DOM.html [ Skip ]
