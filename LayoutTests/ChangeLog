@@ -1,3 +1,63 @@
+2012-11-22  Stephen Chenney  <schenney@chromium.org>
+
+        [Chromium] Test expectations update after enabling Skia changes.
+
+        Unreviewed Chromium expectations update.
+
+        Partial update, many more to come.
+
+        * platform/chromium-linux/compositing/culling/filter-occlusion-blur-expected.png:
+        * platform/chromium-linux/compositing/culling/filter-occlusion-blur-large-expected.png:
+        * platform/chromium-mac-lion/compositing/geometry/fixed-position-iframe-composited-page-scale-down-expected.png:
+        * platform/chromium-mac-lion/compositing/geometry/fixed-position-iframe-composited-page-scale-expected.png:
+        * platform/chromium-mac-lion/compositing/geometry/fixed-position-transform-composited-page-scale-down-expected.png:
+        * platform/chromium-mac-lion/compositing/reflections/nested-reflection-transformed-expected.png:
+        * platform/chromium-mac-lion/compositing/reflections/nested-reflection-transformed2-expected.png:
+        * platform/chromium-mac-lion/compositing/reflections/reflection-in-composited-expected.png:
+        * platform/chromium-mac-lion/compositing/video/video-controls-layer-creation-expected.png:
+        * platform/chromium-mac-lion/css1/basic/class_as_selector-expected.png:
+        * platform/chromium-mac-lion/css1/basic/containment-expected.png:
+        * platform/chromium-mac-lion/css1/basic/contextual_selectors-expected.png:
+        * platform/chromium-mac-lion/css1/basic/id_as_selector-expected.png:
+        * platform/chromium-mac-lion/css1/box_properties/border_bottom-expected.png:
+        * platform/chromium-mac-snowleopard/compositing/geometry/fixed-position-iframe-composited-page-scale-down-expected.png:
+        * platform/chromium-mac-snowleopard/compositing/plugins/composited-plugin-expected.png:
+        * platform/chromium-mac-snowleopard/compositing/reflections/nested-reflection-transformed-expected.png:
+        * platform/chromium-mac-snowleopard/compositing/reflections/nested-reflection-transformed2-expected.png:
+        * platform/chromium-mac-snowleopard/compositing/reflections/reflection-in-composited-expected.png:
+        * platform/chromium-mac-snowleopard/compositing/video/video-controls-layer-creation-expected.png:
+        * platform/chromium-mac-snowleopard/css1/basic/class_as_selector-expected.png:
+        * platform/chromium-mac-snowleopard/css1/basic/containment-expected.png:
+        * platform/chromium-mac-snowleopard/css1/basic/contextual_selectors-expected.png:
+        * platform/chromium-mac-snowleopard/css1/basic/id_as_selector-expected.png:
+        * platform/chromium-mac-snowleopard/css1/box_properties/border_bottom-expected.png:
+        * platform/chromium-mac/compositing/geometry/fixed-position-iframe-composited-page-scale-down-expected.png:
+        * platform/chromium-mac/compositing/geometry/fixed-position-iframe-composited-page-scale-expected.png:
+        * platform/chromium-mac/compositing/geometry/fixed-position-transform-composited-page-scale-down-expected.png:
+        * platform/chromium-mac/compositing/reflections/nested-reflection-transformed-expected.png:
+        * platform/chromium-mac/compositing/reflections/nested-reflection-transformed2-expected.png:
+        * platform/chromium-mac/compositing/reflections/reflection-in-composited-expected.png:
+        * platform/chromium-mac/compositing/video/video-controls-layer-creation-expected.png:
+        * platform/chromium-mac/css1/basic/class_as_selector-expected.png:
+        * platform/chromium-mac/css1/basic/containment-expected.png:
+        * platform/chromium-mac/css1/basic/contextual_selectors-expected.png:
+        * platform/chromium-mac/css1/basic/id_as_selector-expected.png:
+        * platform/chromium-mac/css1/box_properties/border_bottom-expected.png:
+        * platform/chromium-win-xp/compositing/reflections: Removed.
+        * platform/chromium-win-xp/css1/basic: Removed.
+        * platform/chromium-win/compositing/culling/filter-occlusion-alpha-large-expected.png:
+        * platform/chromium-win/compositing/geometry/fixed-position-iframe-composited-page-scale-down-expected.png:
+        * platform/chromium-win/compositing/geometry/fixed-position-iframe-composited-page-scale-expected.png:
+        * platform/chromium-win/compositing/reflections/nested-reflection-transformed-expected.png:
+        * platform/chromium-win/compositing/reflections/nested-reflection-transformed2-expected.png:
+        * platform/chromium-win/compositing/reflections/reflection-in-composited-expected.png:
+        * platform/chromium-win/compositing/video/video-controls-layer-creation-expected.png:
+        * platform/chromium-win/css1/basic/class_as_selector-expected.png:
+        * platform/chromium-win/css1/basic/containment-expected.png:
+        * platform/chromium-win/css1/basic/contextual_selectors-expected.png:
+        * platform/chromium-win/css1/basic/id_as_selector-expected.png:
+        * platform/chromium-win/css1/box_properties/border_bottom-expected.png:
+
 2012-11-22  Daniel Bates  <dbates@webkit.org>
 
         JavaScript fails to concatenate large strings
