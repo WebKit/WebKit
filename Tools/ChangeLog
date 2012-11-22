@@ -1,3 +1,20 @@
+2012-11-22  Sudarsana Nagineni  <sudarsana.nagineni@intel.com>
+
+        [EFL][WK2] Enable WKPreferences and AboutBlankLoad API tests
+        https://bugs.webkit.org/show_bug.cgi?id=102926
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add missing bits needed by WKPreferences and AboutBlankLoad API
+        tests in the test harness and enable these tests on EFL port.
+
+        * TestWebKitAPI/PlatformEfl.cmake:
+        * TestWebKitAPI/Tests/WebKit2/WKPreferences.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/efl/PlatformUtilities.cpp:
+        (TestWebKitAPI::Util::MIMETypeForWKURLResponse):
+        (Util):
+
 2012-11-21  Zan Dobersek  <zandobersek@gmail.com>
 
         [GTK][WTR] Implement AccessibilityUIElement::stringValue

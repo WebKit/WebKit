@@ -64,6 +64,11 @@ WKURLRef URLForNonExistentResource()
     return WKURLCreateWithUTF8CString("file:///does-not-exist.html");
 }
 
+WKRetainPtr<WKStringRef> MIMETypeForWKURLResponse(WKURLResponseRef wkResponse)
+{
+    return adoptWK(WKURLResponseCopyMIMEType(wkResponse));
+}
+
 } // namespace Util
 
 } // namespace TestWebKitAPI
