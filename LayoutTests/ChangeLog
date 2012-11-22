@@ -1,3 +1,11 @@
+2012-11-22  Kristóf Kosztyó  <kkristof@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardening
+
+        Add platform specific exception.
+
+        * platform/qt/fast/js/concat-large-strings-crash-expected.txt: Added.
+
 2012-11-22  Yury Semikhatsky  <yurys@chromium.org>
 
         Unreviewed. Rebaselined new tests added in r135454.
