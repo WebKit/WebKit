@@ -76909,6 +76909,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\TimelinePanelDescriptor.js"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\TimelinePresentationModel.js"
 					>
 				</File>

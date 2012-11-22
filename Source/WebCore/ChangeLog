@@ -1,3 +1,56 @@
+2012-11-22  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r134927 and r134944.
+        http://trac.webkit.org/changeset/134927
+        http://trac.webkit.org/changeset/134944
+        https://bugs.webkit.org/show_bug.cgi?id=103028
+
+        Reverting the reverts after merging. (Requested by vsevik on
+        #webkit).
+
+        * English.lproj/localizedStrings.js:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * inspector/compile-front-end.py:
+        * inspector/front-end/AdvancedSearchController.js:
+        * inspector/front-end/CallStackSidebarPane.js:
+        (WebInspector.CallStackSidebarPane.prototype.registerShortcuts):
+        * inspector/front-end/ConsoleView.js:
+        (WebInspector.ConsoleView.prototype._registerShortcuts):
+        * inspector/front-end/ElementsPanel.js:
+        (WebInspector.ElementsPanel):
+        * inspector/front-end/ElementsPanelDescriptor.js:
+        (WebInspector.ElementsPanelDescriptor.prototype.registerShortcuts):
+        * inspector/front-end/GoToLineDialog.js:
+        (WebInspector.GoToLineDialog.install):
+        * inspector/front-end/KeyboardShortcut.js:
+        (WebInspector.KeyboardShortcut._keyName):
+        * inspector/front-end/Panel.js:
+        (WebInspector.Panel.prototype.registerShortcuts):
+        (WebInspector.PanelDescriptor.prototype.panel):
+        (WebInspector.PanelDescriptor.prototype.registerShortcuts):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel):
+        (WebInspector.ScriptsPanel.prototype._createDebugToolbar):
+        (WebInspector.ScriptsPanel.prototype._createButtonAndRegisterShortcuts):
+        * inspector/front-end/ScriptsPanelDescriptor.js:
+        (WebInspector.ScriptsPanelDescriptor.prototype.registerShortcuts):
+        * inspector/front-end/ShortcutsScreen.js:
+        (WebInspector.ShortcutsScreen):
+        (WebInspector.ShortcutsSection):
+        (WebInspector.ShortcutsSection.prototype._renderKey):
+        * inspector/front-end/StylesSidebarPane.js:
+        * inspector/front-end/TimelinePanel.js:
+        (WebInspector.TimelinePanel.prototype._registerShortcuts):
+        * inspector/front-end/TimelinePanelDescriptor.js: Copied from Source/WebCore/inspector/front-end/ScriptsPanelDescriptor.js.
+        (WebInspector.TimelinePanelDescriptor):
+        (WebInspector.TimelinePanelDescriptor.prototype.registerShortcuts):
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/inspector.html:
+        * inspector/front-end/inspector.js:
+        (WebInspector._panelDescriptors):
+        (WebInspector._registerShortcuts):
+
 2012-11-21  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r135433 and r135479.

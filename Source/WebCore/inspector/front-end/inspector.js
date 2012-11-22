@@ -41,7 +41,7 @@ var WebInspector = {
         var resources = new WebInspector.PanelDescriptor("resources", WebInspector.UIString("Resources"), "ResourcesPanel", "ResourcesPanel.js");
         var network = new WebInspector.NetworkPanelDescriptor();
         var scripts = new WebInspector.ScriptsPanelDescriptor();
-        var timeline = new WebInspector.PanelDescriptor("timeline", WebInspector.UIString("Timeline"), "TimelinePanel", "TimelinePanel.js");
+        var timeline = new WebInspector.TimelinePanelDescriptor();
         var profiles = new WebInspector.PanelDescriptor("profiles", WebInspector.UIString("Profiles"), "ProfilesPanel", "ProfilesPanel.js");
         var audits = new WebInspector.PanelDescriptor("audits", WebInspector.UIString("Audits"), "AuditsPanel", "AuditsPanel.js");
         var console = new WebInspector.PanelDescriptor("console", WebInspector.UIString("Console"), "ConsolePanel");
@@ -55,7 +55,6 @@ var WebInspector = {
             panelDescriptors.push(console);
             return panelDescriptors;
         }
-        var allDescriptors = [elements, resources, network, scripts, timeline, profiles, audits, console];
         var hiddenPanels = InspectorFrontendHost.hiddenPanels();
         for (var i = 0; i < allDescriptors.length; ++i) {
             if (hiddenPanels.indexOf(allDescriptors[i].name()) === -1)
@@ -379,13 +378,16 @@ WebInspector.doLoadedDone = function()
 
 WebInspector._doLoadedDoneWithCapabilities = function()
 {
-    var panelDescriptors = this._panelDescriptors();
-    WebInspector.shortcutsScreen = new WebInspector.ShortcutsScreen(this._registerShortcuts.bind(this, panelDescriptors));
+    WebInspector.shortcutsScreen = new WebInspector.ShortcutsScreen();
+    this._registerShortcuts();
 
     // set order of some sections explicitly
-    WebInspector.shortcutsScreen.section(WebInspector.UIString("All Panels"));
     WebInspector.shortcutsScreen.section(WebInspector.UIString("Console"));
     WebInspector.shortcutsScreen.section(WebInspector.UIString("Elements Panel"));
+
+    var panelDescriptors = this._panelDescriptors();
+    for (var i = 0; i < panelDescriptors.length; ++i)
+        panelDescriptors[i].registerShortcuts();
 
     this.console = new WebInspector.ConsoleModel();
     this.console.addEventListener(WebInspector.ConsoleModel.Events.ConsoleCleared, this._updateErrorAndWarningCounts, this);
@@ -613,46 +615,46 @@ WebInspector.openResource = function(resourceURL, inResourcesPanel)
         InspectorFrontendHost.openInNewTab(resourceURL);
 }
 
-WebInspector._registerShortcuts = function(panelDescriptors)
+WebInspector._registerShortcuts = function()
 {
     var shortcut = WebInspector.KeyboardShortcut;
     var section = WebInspector.shortcutsScreen.section(WebInspector.UIString("All Panels"));
     var keys = [
-        shortcut.shortcutToString("]", shortcut.Modifiers.CtrlOrMeta),
-        shortcut.shortcutToString("[", shortcut.Modifiers.CtrlOrMeta)
+        shortcut.makeDescriptor("]", shortcut.Modifiers.CtrlOrMeta),
+        shortcut.makeDescriptor("[", shortcut.Modifiers.CtrlOrMeta)
     ];
     section.addRelatedKeys(keys, WebInspector.UIString("Go to the panel to the left/right"));
 
     var keys = [
-        shortcut.shortcutToString("[", shortcut.Modifiers.CtrlOrMeta | shortcut.Modifiers.Alt),
-        shortcut.shortcutToString("]", shortcut.Modifiers.CtrlOrMeta | shortcut.Modifiers.Alt)
+        shortcut.makeDescriptor("[", shortcut.Modifiers.CtrlOrMeta | shortcut.Modifiers.Alt),
+        shortcut.makeDescriptor("]", shortcut.Modifiers.CtrlOrMeta | shortcut.Modifiers.Alt)
     ];
     section.addRelatedKeys(keys, WebInspector.UIString("Go back/forward in panel history"));
 
-    section.addKey(shortcut.shortcutToString(shortcut.Keys.Esc), WebInspector.UIString("Toggle console"));
-    section.addKey(shortcut.shortcutToString("f", shortcut.Modifiers.CtrlOrMeta), WebInspector.UIString("Search"));
+    section.addKey(shortcut.makeDescriptor(shortcut.Keys.Esc), WebInspector.UIString("Toggle console"));
+    section.addKey(shortcut.makeDescriptor("f", shortcut.Modifiers.CtrlOrMeta), WebInspector.UIString("Search"));
 
     var advancedSearchShortcut = WebInspector.AdvancedSearchController.createShortcut();
-    section.addKey(advancedSearchShortcut.name, WebInspector.UIString("Search across all sources"));
+    section.addKey(advancedSearchShortcut, WebInspector.UIString("Search across all sources"));
 
     var openResourceShortcut = WebInspector.KeyboardShortcut.makeDescriptor("o", WebInspector.KeyboardShortcut.Modifiers.CtrlOrMeta);
-    section.addKey(openResourceShortcut.name, WebInspector.UIString("Go to source"));
+    section.addKey(openResourceShortcut, WebInspector.UIString("Go to source"));
 
     if (WebInspector.isMac()) {
         keys = [
-            shortcut.shortcutToString("g", shortcut.Modifiers.Meta),
-            shortcut.shortcutToString("g", shortcut.Modifiers.Meta | shortcut.Modifiers.Shift)
+            shortcut.makeDescriptor("g", shortcut.Modifiers.Meta),
+            shortcut.makeDescriptor("g", shortcut.Modifiers.Meta | shortcut.Modifiers.Shift)
         ];
         section.addRelatedKeys(keys, WebInspector.UIString("Find next/previous"));
     }
 
     var goToShortcut = WebInspector.GoToLineDialog.createShortcut();
-    section.addKey(goToShortcut.name, WebInspector.UIString("Go to line"));
-
-    for (var i = 0; i < panelDescriptors.length; ++i)
-        panelDescriptors[i].panel();
+    section.addKey(goToShortcut, WebInspector.UIString("Go to line"));
 }
 
+/**
+ * @param {KeyboardEvent} event
+ */
 WebInspector.documentKeyDown = function(event)
 {
     const helpKey = WebInspector.isMac() ? "U+003F" : "U+00BF"; // "?" for both platforms

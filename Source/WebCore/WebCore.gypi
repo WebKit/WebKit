@@ -6499,6 +6499,7 @@
             'inspector/front-end/TextPrompt.js',
             'inspector/front-end/TimelineGrid.js',
             'inspector/front-end/TimelineManager.js',
+            'inspector/front-end/TimelinePanelDescriptor.js',
             'inspector/front-end/Toolbar.js',
             'inspector/front-end/treeoutline.js',
             'inspector/front-end/UISourceCode.js',
