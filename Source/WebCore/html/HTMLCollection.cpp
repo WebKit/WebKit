@@ -69,7 +69,14 @@ static bool shouldOnlyIncludeDirectChildren(CollectionType type)
     case TSectionRows:
     case TableTBodies:
         return true;
-    case NodeListCollectionType:
+    case ChildNodeListType:
+    case ClassNodeListType:
+    case NameNodeListType:
+    case TagNodeListType:
+    case RadioNodeListType:
+    case LabelsNodeListType:
+    case MicroDataItemListType:
+    case PropertyNodeListType:
         break;
     }
     ASSERT_NOT_REACHED();
@@ -103,8 +110,16 @@ static NodeListRootType rootTypeFromCollectionType(CollectionType type)
     case SelectedOptions:
     case DataListOptions:
     case MapAreas:
-    case NodeListCollectionType:
         return NodeListIsRootedAtNode;
+    case ChildNodeListType:
+    case ClassNodeListType:
+    case NameNodeListType:
+    case TagNodeListType:
+    case RadioNodeListType:
+    case LabelsNodeListType:
+    case MicroDataItemListType:
+    case PropertyNodeListType:
+        break;
     }
     ASSERT_NOT_REACHED();
     return NodeListIsRootedAtNode;
@@ -145,7 +160,14 @@ static NodeListInvalidationType invalidationTypeExcludingIdAndNameAttributes(Col
 #endif
     case FormControls:
         return InvalidateForFormControls;
-    case NodeListCollectionType:
+    case ChildNodeListType:
+    case ClassNodeListType:
+    case NameNodeListType:
+    case TagNodeListType:
+    case RadioNodeListType:
+    case LabelsNodeListType:
+    case MicroDataItemListType:
+    case PropertyNodeListType:
         break;
     }
     ASSERT_NOT_REACHED();
@@ -229,7 +251,14 @@ static inline bool isAcceptableElement(CollectionType type, Element* element)
     case DocumentNamedItems:
     case TableRows:
     case WindowNamedItems:
-    case NodeListCollectionType:
+    case ChildNodeListType:
+    case ClassNodeListType:
+    case NameNodeListType:
+    case TagNodeListType:
+    case RadioNodeListType:
+    case LabelsNodeListType:
+    case MicroDataItemListType:
+    case PropertyNodeListType:
         ASSERT_NOT_REACHED();
     }
     return false;
@@ -267,7 +296,7 @@ Node* DynamicNodeListCacheBase::iterateForNextNode(Node* current) const
     CollectionType collectionType = type();
     Node* rootNode = this->rootNode();
     for (; current; current = nextNode<forward>(rootNode, current, onlyIncludeDirectChildren)) {
-        if (collectionType == NodeListCollectionType) {
+        if (isNodeList(collectionType)) {
             if (current->isElementNode() && static_cast<const DynamicNodeList*>(this)->nodeMatches(toElement(current)))
                 return toElement(current);
         } else {
@@ -289,7 +318,7 @@ Node* DynamicNodeListCacheBase::itemBeforeOrAfter(Node* previous) const
     else
         current = firstNode(forward, rootNode(), shouldOnlyIncludeDirectChildren());
 
-    if (type() == NodeListCollectionType && shouldOnlyIncludeDirectChildren()) // ChildNodeList
+    if (isNodeList(type()) && shouldOnlyIncludeDirectChildren()) // ChildNodeList
         return current;
 
     return iterateForNextNode<forward>(current);
@@ -367,7 +396,7 @@ Node* DynamicNodeListCacheBase::itemCommon(unsigned offset) const
 #if ENABLE(MICRODATA)
     if (type() == ItemProperties)
         static_cast<const HTMLPropertiesCollection*>(this)->updateRefElements();
-    if (type() == NodeListCollectionType && rootType() == NodeListIsRootedAtDocumentIfOwnerHasItemrefAttr)
+    else if (type() == PropertyNodeListType)
         static_cast<const PropertyNodeList*>(this)->updateRefElements();
 #endif
 

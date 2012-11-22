@@ -1,3 +1,66 @@
+2012-11-21  Ryosuke Niwa  <rniwa@webkit.org>
+
+        CollectionType and DynamicNodeList::NodeListType should be merged
+        https://bugs.webkit.org/show_bug.cgi?id=102983
+
+        Reviewed by Antti Koivisto.
+
+        Merged DynamicNodeList::NodeListType (for live NodeList) into CollectionType.
+
+        * dom/ClassNodeList.cpp:
+        (WebCore::ClassNodeList::~ClassNodeList):
+        * dom/Document.cpp:
+        (WebCore::Document::registerNodeListCache):
+        (WebCore::Document::unregisterNodeListCache):
+        (WebCore::Document::getItems):
+        * dom/DynamicNodeList.cpp:
+        (WebCore::DynamicNodeListCacheBase::invalidateCache):
+        (WebCore::DynamicNodeListCacheBase::invalidateIdNameCacheMaps):
+        * dom/DynamicNodeList.h:
+        (WebCore::DynamicNodeListCacheBase::DynamicNodeListCacheBase):
+        (WebCore::DynamicNodeListCacheBase::hasIdNameCache): Added. Returns iff this is a HTMLCollection.
+        (WebCore::DynamicNodeListCacheBase::invalidateCache):
+        (WebCore::DynamicNodeList::DynamicNodeList):
+        (WebCore::DynamicSubtreeNodeList::DynamicSubtreeNodeList):
+        * dom/MicroDataItemList.cpp:
+        (WebCore::MicroDataItemList::~MicroDataItemList):
+        * dom/NameNodeList.cpp:
+        (WebCore::NameNodeList::~NameNodeList):
+        * dom/Node.cpp:
+        (WebCore::Node::getElementsByTagName):
+        (WebCore::Node::getElementsByName):
+        (WebCore::Node::getElementsByClassName):
+        (WebCore::Node::radioNodeList):
+        (WebCore::Node::propertyNodeList):
+        * dom/NodeRareData.h:
+        (WebCore::NodeListsNodeData::addCacheWithAtomicName): No longer converts CollectionType to
+        a NodeListType equivalent since two enums have been merged.
+        (WebCore::NodeListsNodeData::cacheWithAtomicName): Ditto.
+        (WebCore::NodeListsNodeData::addCacheWithName): Ditto.
+        (WebCore::NodeListsNodeData::removeCacheWithAtomicName): Ditto.
+        (WebCore::NodeListsNodeData::removeCacheWithName): Ditto.
+        (WebCore::NodeListsNodeData::namedNodeListKey): Ignore types before FirstNodeCollectionType
+        to minimize the hash conflicts.
+        * dom/PropertyNodeList.cpp:
+        (WebCore::PropertyNodeList::~PropertyNodeList):
+        * dom/TagNodeList.cpp:
+        (WebCore::TagNodeList::~TagNodeList):
+        * html/CollectionType.h:
+        (WebCore::isNodeList): Added.
+        * html/HTMLCollection.cpp:
+        (WebCore::shouldOnlyIncludeDirectChildren):
+        (WebCore::rootTypeFromCollectionType):
+        (WebCore::invalidationTypeExcludingIdAndNameAttributes):
+        (WebCore::isAcceptableElement):
+        (WebCore::DynamicNodeListCacheBase::iterateForNextNode):
+        (WebCore::DynamicNodeListCacheBase::itemBeforeOrAfter):
+        * html/LabelableElement.cpp:
+        (WebCore::LabelableElement::labels):
+        * html/LabelsNodeList.cpp:
+        (WebCore::LabelsNodeList::~LabelsNodeList):
+        * html/RadioNodeList.cpp:
+        (WebCore::RadioNodeList::~RadioNodeList):
+
 2012-11-21  Michael Pruett  <michael@68k.org>
 
         IndexedDB: Obtain ScriptState from IDL binding generator

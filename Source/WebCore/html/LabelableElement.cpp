@@ -47,7 +47,7 @@ PassRefPtr<NodeList> LabelableElement::labels()
     if (!document())
         return 0;
 
-    return ensureRareData()->ensureNodeLists()->addCacheWithAtomicName<LabelsNodeList>(this, DynamicNodeList::LabelsNodeListType, starAtom);
+    return ensureRareData()->ensureNodeLists()->addCacheWithAtomicName<LabelsNodeList>(this, LabelsNodeListType, starAtom);
 }
 
 } // namespace Webcore

@@ -40,7 +40,7 @@ NameNodeList::NameNodeList(PassRefPtr<Node> rootNode, const AtomicString& name)
 
 NameNodeList::~NameNodeList()
 {
-    ownerNode()->nodeLists()->removeCacheWithAtomicName(this, DynamicNodeList::NameNodeListType, m_name);
+    ownerNode()->nodeLists()->removeCacheWithAtomicName(this, NameNodeListType, m_name);
 } 
 
 bool NameNodeList::nodeMatches(Element* testNode) const

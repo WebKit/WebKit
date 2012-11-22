@@ -64,9 +64,9 @@ public:
     typedef HashMap<QualifiedName, TagNodeList*> TagNodeListCacheNS;
 
     template<typename T>
-    PassRefPtr<T> addCacheWithAtomicName(Node* node, DynamicNodeList::NodeListType listType, const AtomicString& name)
+    PassRefPtr<T> addCacheWithAtomicName(Node* node, CollectionType collectionType, const AtomicString& name)
     {
-        NodeListAtomicNameCacheMap::AddResult result = m_atomicNameCaches.add(namedNodeListKey(listType, name), 0);
+        NodeListAtomicNameCacheMap::AddResult result = m_atomicNameCaches.add(namedNodeListKey(collectionType, name), 0);
         if (!result.isNewEntry)
             return static_cast<T*>(result.iterator->value);
 
@@ -78,8 +78,7 @@ public:
     template<typename T>
     PassRefPtr<T> addCacheWithAtomicName(Element* node, CollectionType collectionType)
     {
-        unsigned char type = DynamicNodeList::PastLastNodeListType + collectionType - FirstNodeCollectionType;
-        NodeListAtomicNameCacheMap::AddResult result = m_atomicNameCaches.add(namedNodeListKey(type, starAtom), 0);
+        NodeListAtomicNameCacheMap::AddResult result = m_atomicNameCaches.add(namedNodeListKey(collectionType, starAtom), 0);
         if (!result.isNewEntry)
             return static_cast<T*>(result.iterator->value);
 
@@ -91,14 +90,13 @@ public:
     template<typename T>
     T* cacheWithAtomicName(CollectionType collectionType)
     {
-        unsigned char type = DynamicNodeList::PastLastNodeListType + collectionType - FirstNodeCollectionType;
-        return static_cast<T*>(m_atomicNameCaches.get(namedNodeListKey(type, starAtom)));
+        return static_cast<T*>(m_atomicNameCaches.get(namedNodeListKey(collectionType, starAtom)));
     }
 
     template<typename T>
-    PassRefPtr<T> addCacheWithName(Node* node, DynamicNodeList::NodeListType listType, const String& name)
+    PassRefPtr<T> addCacheWithName(Node* node, CollectionType collectionType, const String& name)
     {
-        NodeListNameCacheMap::AddResult result = m_nameCaches.add(namedNodeListKey(listType, name), 0);
+        NodeListNameCacheMap::AddResult result = m_nameCaches.add(namedNodeListKey(collectionType, name), 0);
         if (!result.isNewEntry)
             return static_cast<T*>(result.iterator->value);
 
@@ -119,23 +117,16 @@ public:
         return list.release();
     }
 
-    void removeCacheWithAtomicName(DynamicNodeListCacheBase* list, DynamicNodeList::NodeListType listType, const AtomicString& name)
+    void removeCacheWithAtomicName(DynamicNodeListCacheBase* list, CollectionType collectionType, const AtomicString& name = starAtom)
     {
-        ASSERT_UNUSED(list, list == m_atomicNameCaches.get(namedNodeListKey(listType, name)));
-        m_atomicNameCaches.remove(namedNodeListKey(listType, name));
+        ASSERT_UNUSED(list, list == m_atomicNameCaches.get(namedNodeListKey(collectionType, name)));
+        m_atomicNameCaches.remove(namedNodeListKey(collectionType, name));
     }
 
-    void removeCacheWithAtomicName(DynamicNodeListCacheBase* list, CollectionType collectionType)
+    void removeCacheWithName(DynamicSubtreeNodeList* list, CollectionType collectionType, const String& name)
     {
-        unsigned char type = DynamicNodeList::PastLastNodeListType + collectionType - FirstNodeCollectionType;
-        ASSERT_UNUSED(list, list == m_atomicNameCaches.get(namedNodeListKey(type, starAtom)));
-        m_atomicNameCaches.remove(namedNodeListKey(type, starAtom));
-    }
-
-    void removeCacheWithName(DynamicSubtreeNodeList* list, DynamicNodeList::NodeListType listType, const String& name)
-    {
-        ASSERT_UNUSED(list, list == m_nameCaches.get(namedNodeListKey(listType, name)));
-        m_nameCaches.remove(namedNodeListKey(listType, name));
+        ASSERT_UNUSED(list, list == m_nameCaches.get(namedNodeListKey(collectionType, name)));
+        m_nameCaches.remove(namedNodeListKey(collectionType, name));
     }
 
     void removeCacheWithQualifiedName(DynamicSubtreeNodeList* list, const AtomicString& namespaceURI, const AtomicString& localName)
@@ -190,14 +181,16 @@ public:
 private:
     NodeListsNodeData() { }
 
-    std::pair<unsigned char, AtomicString> namedNodeListKey(unsigned char listType, const AtomicString& name)
+    std::pair<unsigned char, AtomicString> namedNodeListKey(CollectionType type, const AtomicString& name)
     {
-        return std::pair<unsigned char, AtomicString>(listType, name);
+        ASSERT(type >= FirstNodeCollectionType);
+        return std::pair<unsigned char, AtomicString>(type - FirstNodeCollectionType, name);
     }
 
-    std::pair<unsigned char, String> namedNodeListKey(unsigned char listType, const String& name)
+    std::pair<unsigned char, String> namedNodeListKey(CollectionType type, const String& name)
     {
-        return std::pair<unsigned char, String>(listType, name);
+        ASSERT(type >= FirstNodeCollectionType);
+        return std::pair<unsigned char, String>(type - FirstNodeCollectionType, name);
     }
 
     NodeListAtomicNameCacheMap m_atomicNameCaches;

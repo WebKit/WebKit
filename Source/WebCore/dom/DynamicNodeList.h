@@ -64,10 +64,11 @@ public:
         ASSERT(m_rootType == static_cast<unsigned>(rootType));
         ASSERT(m_invalidationType == static_cast<unsigned>(invalidationType));
         ASSERT(m_collectionType == static_cast<unsigned>(collectionType));
-        ASSERT(!m_overridesItemAfter || m_collectionType != NodeListCollectionType);
+        ASSERT(!m_overridesItemAfter || !isNodeList(collectionType));
     }
 
 public:
+    ALWAYS_INLINE bool hasIdNameCache() const { return !isNodeList(type()); }
     ALWAYS_INLINE bool isRootedAtDocument() const { return m_rootType == NodeListIsRootedAtDocument || m_rootType == NodeListIsRootedAtDocumentIfOwnerHasItemrefAttr; }
     ALWAYS_INLINE NodeListInvalidationType invalidationType() const { return static_cast<NodeListInvalidationType>(m_invalidationType); }
     ALWAYS_INLINE CollectionType type() const { return static_cast<CollectionType>(m_collectionType); }
@@ -76,7 +77,7 @@ public:
     {
         if (!attrName || shouldInvalidateTypeOnAttributeChange(invalidationType(), *attrName))
             invalidateCache();
-        else if (type() != NodeListCollectionType && (*attrName == HTMLNames::idAttr || *attrName == HTMLNames::nameAttr))
+        else if (hasIdNameCache() && (*attrName == HTMLNames::idAttr || *attrName == HTMLNames::nameAttr))
             invalidateIdNameCacheMaps();
     }
     void invalidateCache() const;
@@ -190,19 +191,9 @@ ALWAYS_INLINE bool DynamicNodeListCacheBase::ownerNodeHasItemRefAttribute() cons
 
 class DynamicNodeList : public NodeList, public DynamicNodeListCacheBase {
 public:
-    enum NodeListType {
-        ChildNodeListType,
-        ClassNodeListType,
-        NameNodeListType,
-        TagNodeListType,
-        RadioNodeListType,
-        LabelsNodeListType,
-        MicroDataItemListType,
-        PropertyNodeListType,
-        PastLastNodeListType,
-    };
-    DynamicNodeList(PassRefPtr<Node> ownerNode, NodeListType type, NodeListRootType rootType, NodeListInvalidationType invalidationType)
-        : DynamicNodeListCacheBase(ownerNode.get(), rootType, invalidationType, type == ChildNodeListType, NodeListCollectionType, DoesNotOverrideItemAfter)
+    DynamicNodeList(PassRefPtr<Node> ownerNode, CollectionType collectionType, NodeListRootType rootType, NodeListInvalidationType invalidationType)
+        : DynamicNodeListCacheBase(ownerNode.get(), rootType, invalidationType, collectionType == ChildNodeListType,
+        collectionType, DoesNotOverrideItemAfter)
     { }
     virtual ~DynamicNodeList() { }
 
@@ -226,7 +217,7 @@ public:
     }
 
 protected:
-    DynamicSubtreeNodeList(PassRefPtr<Node> node, NodeListType type, NodeListInvalidationType invalidationType, NodeListRootType rootType = NodeListIsRootedAtNode)
+    DynamicSubtreeNodeList(PassRefPtr<Node> node, CollectionType type, NodeListInvalidationType invalidationType, NodeListRootType rootType = NodeListIsRootedAtNode)
         : DynamicNodeList(node, type, rootType, invalidationType)
     {
         document()->registerNodeListCache(this);
