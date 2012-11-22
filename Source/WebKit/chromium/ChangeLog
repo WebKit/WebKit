@@ -1,3 +1,14 @@
+2012-11-22  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Add OS!="ios" to guard for gcc_version in WebKit.gyp
+        https://bugs.webkit.org/show_bug.cgi?id=103007
+
+        Reviewed by Adam Barth.
+
+        This matches the guards used in chromium's chrome/chrome_browser.gypi.
+
+        * WebKit.gyp:
+
 2012-11-22  Stephen Chenney  <schenney@chromium.org>
 
         [Chromium]: Removing gyp flags controlling Skia features.
