@@ -1,3 +1,29 @@
+2012-11-22  Kent Tamura  <tkent@chromium.org>
+
+        INPUT_MULTIPLE_FIELDS_UI: Refactoring: Do not call updateInnerTextValue if only read-only sub-fields have values
+        https://bugs.webkit.org/show_bug.cgi?id=103033
+
+        Reviewed by Kentaro Hara.
+
+        input[type=time] can have read-only sub fields. If only read-only fields
+        have values, we don't need to call updateInnerTextValue when
+        HTMLInputElement::value is set to "".
+
+        Tests: this patch doesn't change any visible behavior, but we add test cases to
+        fast/forms/time-multiple-fields/time-multiple-fields-value-set-empty.html
+        just in case.
+
+        * html/shadow/DateTimeEditElement.h:
+        (DateTimeEditElement): Declare anyEditableFieldsHaveValues.
+        * html/shadow/DateTimeEditElement.cpp:
+        (WebCore::DateTimeEditElement::anyEditableFieldsHaveValues):
+        Added. This function checks value existence against only editable sub-fields.
+        * html/BaseMultipleFieldsDateAndTimeInputType.cpp:
+        (WebCore::BaseMultipleFieldsDateAndTimeInputType::setValue):
+        Call DateTimeEditElement::anyEditableFieldsHaveValues() instead of
+        DateTimeFieldsState::hasAnyValue().
+        * html/DateTimeFieldsState.h: Remove hasAnyValue.
+
 2012-11-22  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         [Qt] Lookup mimetypes using QMimeDatabase

@@ -6,6 +6,13 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 Empty text: --:-- --
 PASS eventSender.keyDown("upArrow"); getUserAgentShadowTextContent(input) is not emptyText
 PASS input.value = ""; getUserAgentShadowTextContent(input) is emptyText
+
+Initial text: --:--:45 --
+Empty value should not clear read-only fields.
+PASS input.value = ""; getUserAgentShadowTextContent(input) is "--:--:45 --"
+Empty value should clear only editable fields.
+PASS eventSender.keyDown("upArrow"); getUserAgentShadowTextContent(input) is "01:--:45 --"
+PASS input.value = ""; getUserAgentShadowTextContent(input) is "--:--:45 --"
 PASS successfullyParsed is true
 
 TEST COMPLETE

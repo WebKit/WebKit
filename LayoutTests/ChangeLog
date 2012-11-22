@@ -1,3 +1,13 @@
+2012-11-22  Kent Tamura  <tkent@chromium.org>
+
+        INPUT_MULTIPLE_FIELDS_UI: Refactoring: Do not call updateInnerTextValue if only read-only sub-fields have values
+        https://bugs.webkit.org/show_bug.cgi?id=103033
+
+        Reviewed by Kentaro Hara.
+
+        * fast/forms/time-multiple-fields/time-multiple-fields-value-set-empty-expected.txt:
+        * fast/forms/time-multiple-fields/time-multiple-fields-value-set-empty.html:
+
 2012-11-22  Keishi Hattori  <keishi@webkit.org>
 
         Add week-multiple-fields tests

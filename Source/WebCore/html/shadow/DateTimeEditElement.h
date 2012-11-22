@@ -86,6 +86,7 @@ public:
 
     virtual ~DateTimeEditElement();
     void addField(PassRefPtr<DateTimeFieldElement>);
+    bool anyEditableFieldsHaveValues() const;
     void blurByOwner();
     virtual void defaultEventHandler(Event*) OVERRIDE;
     void disabledStateChanged();

@@ -317,6 +317,15 @@ void DateTimeEditElement::addField(PassRefPtr<DateTimeFieldElement> field)
     appendChild(field);
 }
 
+bool DateTimeEditElement::anyEditableFieldsHaveValues() const
+{
+    for (size_t fieldIndex = 0; fieldIndex < m_fields.size(); ++fieldIndex) {
+        if (!m_fields[fieldIndex]->isReadOnly() && m_fields[fieldIndex]->hasValue())
+            return true;
+    }
+    return false;
+}
+
 void DateTimeEditElement::blurByOwner()
 {
     if (DateTimeFieldElement* field = focusedField())
