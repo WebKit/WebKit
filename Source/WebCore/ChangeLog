@@ -1,3 +1,24 @@
+2012-11-22  Cosmin Truta  <ctruta@rim.com>
+
+        Move URL-checking code into Frame
+        https://bugs.webkit.org/show_bug.cgi?id=103014
+
+        Reviewed by Ojan Vafai.
+
+        Move the common URL checking logic from HTMLFrameElementBase::isURLAllowed
+        and HTMLPlugInImageElement::allowedToLoadFrameURL into Frame::isURLAllowed.
+
+        No new tests. Refactoring.
+
+        * html/HTMLFrameElementBase.cpp:
+        (WebCore::HTMLFrameElementBase::isURLAllowed): Call Frame::isURLAllowed.
+        * html/HTMLPlugInImageElement.cpp:
+        (WebCore::HTMLPlugInImageElement::allowedToLoadFrameURL): Call Frame::isURLAllowed.
+        * page/Frame.cpp:
+        (WebCore::Frame::isURLAllowed): Added.
+        * page/Frame.h:
+        (Frame): Added isURLAllowed.
+
 2012-11-22  Kentaro Hara  <haraken@chromium.org>
 
         [V8] Rename toWebCoreStringWithNullOrUndefinedCheck() with toWebCoreStringWithUndefinedOrNullCheck()

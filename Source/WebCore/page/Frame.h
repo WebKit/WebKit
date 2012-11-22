@@ -202,6 +202,8 @@ namespace WebCore {
         // Should only be called on the main frame of a page.
         void notifyChromeClientWheelEventHandlerCountChanged() const;
 
+        bool isURLAllowed(const KURL&) const;
+
     // ========
 
     private:

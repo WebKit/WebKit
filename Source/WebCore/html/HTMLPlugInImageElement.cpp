@@ -88,28 +88,13 @@ bool HTMLPlugInImageElement::isImageType()
 // depending on <param> values. 
 bool HTMLPlugInImageElement::allowedToLoadFrameURL(const String& url)
 {
-    ASSERT(document());
-    ASSERT(document()->frame());
-    if (document()->frame()->page()->subframeCount() >= Page::maxNumberOfFrames)
-        return false;
-
     KURL completeURL = document()->completeURL(url);
-    
+
     if (contentFrame() && protocolIsJavaScript(completeURL)
         && !document()->securityOrigin()->canAccess(contentDocument()->securityOrigin()))
         return false;
-    
-    // We allow one level of self-reference because some sites depend on that.
-    // But we don't allow more than one.
-    bool foundSelfReference = false;
-    for (Frame* frame = document()->frame(); frame; frame = frame->tree()->parent()) {
-        if (equalIgnoringFragmentIdentifier(frame->document()->url(), completeURL)) {
-            if (foundSelfReference)
-                return false;
-            foundSelfReference = true;
-        }
-    }
-    return true;
+
+    return document()->frame()->isURLAllowed(completeURL);
 }
 
 // We don't use m_url, or m_serviceType as they may not be the final values

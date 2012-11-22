@@ -66,22 +66,10 @@ bool HTMLFrameElementBase::isURLAllowed() const
             return false;
     }
 
-    if (Frame* parentFrame = document()->frame()) {
-        if (parentFrame->page()->subframeCount() >= Page::maxNumberOfFrames)
-            return false;
-    }
+    Frame* parentFrame = document()->frame();
+    if (parentFrame)
+        return parentFrame->isURLAllowed(completeURL);
 
-    // We allow one level of self-reference because some sites depend on that.
-    // But we don't allow more than one.
-    bool foundSelfReference = false;
-    for (Frame* frame = document()->frame(); frame; frame = frame->tree()->parent()) {
-        if (equalIgnoringFragmentIdentifier(frame->document()->url(), completeURL)) {
-            if (foundSelfReference)
-                return false;
-            foundSelfReference = true;
-        }
-    }
-    
     return true;
 }
 
