@@ -326,6 +326,28 @@ LayoutUnit RenderTable::convertStyleLogicalWidthToComputedWidth(const Length& st
     return minimumValueForLength(styleLogicalWidth, availableWidth, view()) + borders;
 }
 
+LayoutUnit RenderTable::convertStyleLogicalHeightToComputedHeight(const Length& styleLogicalHeight)
+{
+    LayoutUnit computedLogicalHeight = 0;
+    if (styleLogicalHeight.isFixed()) {
+        // HTML tables size as though CSS height includes border/padding, CSS tables do not.
+        LayoutUnit borders = LayoutUnit();
+        // FIXME: We cannot apply box-sizing: content-box on <table> which other browsers allow.
+        if ((node() && node()->hasTagName(tableTag)) || style()->boxSizing() == BORDER_BOX) {
+            LayoutUnit borderAndPaddingBefore = borderBefore() + (collapseBorders() ? LayoutUnit() : paddingBefore());
+            LayoutUnit borderAndPaddingAfter = borderAfter() + (collapseBorders() ? LayoutUnit() : paddingAfter());
+            borders = borderAndPaddingBefore + borderAndPaddingAfter;
+        }
+        computedLogicalHeight = styleLogicalHeight.value() - borders;
+    } else if (styleLogicalHeight.isPercent())
+        computedLogicalHeight = computePercentageLogicalHeight(styleLogicalHeight);
+    else if (styleLogicalHeight.isViewportPercentage())
+        computedLogicalHeight = minimumValueForLength(styleLogicalHeight, 0, view());
+    else
+        ASSERT_NOT_REACHED();
+    return max<LayoutUnit>(0, computedLogicalHeight);
+}
+
 void RenderTable::layoutCaption(RenderTableCaption* caption)
 {
     LayoutRect captionRect(caption->frameRect());
@@ -443,17 +465,19 @@ void RenderTable::layout()
         updateLogicalHeight();
 
     Length logicalHeightLength = style()->logicalHeight();
-    LayoutUnit computedLogicalHeight = 0;
-    if (logicalHeightLength.isFixed()) {
-        // HTML tables size as though CSS height includes border/padding, CSS tables do not.
-        LayoutUnit borders = 0;
-        // FIXME: We cannot apply box-sizing: content-box on <table> which other browsers allow.
-        if ((node() && node()->hasTagName(tableTag)) || style()->boxSizing() == BORDER_BOX)
-            borders = borderAndPaddingBefore + borderAndPaddingAfter;
-        computedLogicalHeight = logicalHeightLength.value() - borders;
-    } else if (logicalHeightLength.isPercent())
-        computedLogicalHeight = computePercentageLogicalHeight(logicalHeightLength);
-    computedLogicalHeight = max<LayoutUnit>(0, computedLogicalHeight);
+    LayoutUnit computedLogicalHeight = convertStyleLogicalHeightToComputedHeight(logicalHeightLength);
+    
+    Length logicalMaxHeightLength = style()->logicalMaxHeight();
+    if (logicalMaxHeightLength.isSpecified() && !logicalMaxHeightLength.isNegative()) {
+        LayoutUnit computedMaxLogicalHeight = convertStyleLogicalHeightToComputedHeight(logicalMaxHeightLength);
+        computedLogicalHeight = min(computedLogicalHeight, computedMaxLogicalHeight);
+    }
+
+    Length logicalMinHeightLength = style()->logicalMinHeight();
+    if (logicalMinHeightLength.isSpecified() && !logicalMinHeightLength.isNegative()) {
+        LayoutUnit computedMinLogicalHeight = convertStyleLogicalHeightToComputedHeight(logicalMinHeightLength);
+        computedLogicalHeight = max(computedLogicalHeight, computedMinLogicalHeight);
+    }
 
     distributeExtraLogicalHeight(floorToInt(computedLogicalHeight - totalSectionLogicalHeight));
 

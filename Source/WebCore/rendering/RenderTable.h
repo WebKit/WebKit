@@ -291,6 +291,7 @@ private:
     virtual void updateLogicalWidth() OVERRIDE;
 
     LayoutUnit convertStyleLogicalWidthToComputedWidth(const Length& styleLogicalWidth, LayoutUnit availableWidth);
+    LayoutUnit convertStyleLogicalHeightToComputedHeight(const Length& styleLogicalHeight);
 
     virtual LayoutRect overflowClipRect(const LayoutPoint& location, RenderRegion*, OverlayScrollbarSizeRelevancy = IgnoreOverlayScrollbarSize);
 
