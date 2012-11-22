@@ -5909,6 +5909,7 @@ void Document::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 #if ENABLE(LINK_PRERENDER)
     info.addMember(m_prerenderer);
 #endif
+    info.addMember(m_listsInvalidatedAtDocument);
 }
 
 class ImmutableAttributeDataCacheKey {

@@ -67,6 +67,10 @@ public:
         ASSERT(!m_overridesItemAfter || !isNodeList(collectionType));
     }
 
+    virtual ~DynamicNodeListCacheBase() { }
+
+    virtual void reportMemoryUsage(MemoryObjectInfo*) const;
+
 public:
     ALWAYS_INLINE bool hasIdNameCache() const { return !isNodeList(type()); }
     ALWAYS_INLINE bool isRootedAtDocument() const { return m_rootType == NodeListIsRootedAtDocument || m_rootType == NodeListIsRootedAtDocumentIfOwnerHasItemrefAttr; }
@@ -205,6 +209,8 @@ public:
     // Other methods (not part of DOM)
     virtual bool nodeMatches(Element*) const = 0;
 
+    virtual void reportMemoryUsage(MemoryObjectInfo*) const OVERRIDE;
+
 private:
     virtual bool isDynamicNodeList() const OVERRIDE { return true; }
 };
@@ -215,6 +221,8 @@ public:
     {
         document()->unregisterNodeListCache(this);
     }
+
+    virtual void reportMemoryUsage(MemoryObjectInfo*) const OVERRIDE;
 
 protected:
     DynamicSubtreeNodeList(PassRefPtr<Node> node, CollectionType type, NodeListInvalidationType invalidationType, NodeListRootType rootType = NodeListIsRootedAtNode)

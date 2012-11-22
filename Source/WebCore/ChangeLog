@@ -1,3 +1,31 @@
+2012-11-21  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: NMI add instrumentation to DynamicNodeList classes hierarchy.
+        https://bugs.webkit.org/show_bug.cgi?id=103025
+
+        Reviewed by Yury Semikhatsky.
+
+        RNiwa changed pointer type in NodeRareData::NodeListAtomicNameCacheMap from the topmost
+        DynamicSubtreeNodeList to the base DynamicNodeListCacheBase at r135429.
+        As a result we got non zero count of pointers that don't match with tcmalloc data,
+        because DynamicNodeList uses multiple inheritance.
+        It could be fixed with help of explicit native memory instrumentation for DynamicNodeList class hierarchy.
+
+        No change in behavior, so no new tests.
+
+        * dom/Document.cpp: drive by fix.
+        (WebCore::Document::reportMemoryUsage):
+        * dom/DynamicNodeList.cpp:
+        (WebCore::DynamicNodeListCacheBase::reportMemoryUsage):
+        (WebCore):
+        (WebCore::DynamicNodeList::reportMemoryUsage):
+        (WebCore::DynamicSubtreeNodeList::reportMemoryUsage):
+        * dom/DynamicNodeList.h:
+        (WebCore::DynamicNodeListCacheBase::~DynamicNodeListCacheBase):
+        (DynamicNodeListCacheBase):
+        (DynamicNodeList):
+        (DynamicSubtreeNodeList):
+
 2012-11-22  Kentaro Hara  <haraken@chromium.org>
 
         Unreviewed, rolling out r135482.
