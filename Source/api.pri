@@ -14,12 +14,15 @@ WEBKIT_DESTDIR = $${ROOT_BUILD_DIR}/lib
 
 WEBKIT += wtf javascriptcore webcore
 
-build?(webkit1): WEBKIT += webkit1
+build?(webkit1): WEBKIT += webkitwidgets webkit1
 build?(webkit2): WEBKIT += webkit2
 
 # Ensure that changes to the WebKit1 and WebKit2 API will trigger a qmake of this
 # file, which in turn runs syncqt to update the forwarding headers.
-build?(webkit1): QMAKE_INTERNAL_INCLUDED_FILES *= WebKit/WebKit1.pro
+build?(webkit1): {
+    QMAKE_INTERNAL_INCLUDED_FILES *= WebKit/WebKit1.pro
+    QMAKE_INTERNAL_INCLUDED_FILES *= WebKit/WebKitWidgets.pro
+}
 build?(webkit2): QMAKE_INTERNAL_INCLUDED_FILES *= WebKit2/Target.pri
 
 use?(3D_GRAPHICS): WEBKIT += angle

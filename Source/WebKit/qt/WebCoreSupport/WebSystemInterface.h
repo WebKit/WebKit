@@ -26,6 +26,11 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifndef WebSystemInterface_h
+#define WebSystemInterface_h
+
 #include <stdint.h>
 
 void InitWebCoreSystemInterface();
+
+#endif

@@ -30,9 +30,8 @@
 #include "HitTestResult.h"
 #include "KURL.h"
 #include "NotImplemented.h"
-#include <wtf/RefCounted.h>
 
-#include <stdio.h>
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
     

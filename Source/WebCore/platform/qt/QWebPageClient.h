@@ -91,7 +91,7 @@ public:
 
     virtual QPalette palette() const = 0;
     virtual int screenNumber() const = 0;
-    virtual QWidget* ownerWidget() const = 0;
+    virtual QObject* ownerWidget() const = 0;
     virtual QRect geometryRelativeToOwnerWidget() const = 0;
 
     virtual QObject* pluginParent() const = 0;

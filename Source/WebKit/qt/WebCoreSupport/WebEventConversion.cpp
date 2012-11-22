@@ -27,13 +27,8 @@
 #include "PlatformTouchEvent.h"
 #include "PlatformTouchPoint.h"
 #include "PlatformWheelEvent.h"
-#include <QApplication>
-#include <QGesture>
-#include <QGestureEvent>
-#include <QGraphicsSceneMouseEvent>
 #include <QTouchEvent>
 #include <QWheelEvent>
-#include <QWidget>
 #include <wtf/CurrentTime.h>
 
 namespace WebCore {
@@ -53,54 +48,28 @@ static void mouseEventModifiersFromQtKeyboardModifiers(Qt::KeyboardModifiers key
 
 static void mouseEventTypeAndMouseButtonFromQEvent(const QEvent* event, PlatformEvent::Type& mouseEventType, MouseButton& mouseButton)
 {
-    enum { MouseEvent, GraphicsSceneMouseEvent } frameworkMouseEventType;
     switch (event->type()) {
     case QEvent::MouseButtonDblClick:
     case QEvent::MouseButtonPress:
-        frameworkMouseEventType = MouseEvent;
         mouseEventType = PlatformEvent::MousePressed;
         break;
     case QEvent::MouseButtonRelease:
-        frameworkMouseEventType = MouseEvent;
         mouseEventType = PlatformEvent::MouseReleased;
         break;
     case QEvent::MouseMove:
-        frameworkMouseEventType = MouseEvent;
-        mouseEventType = PlatformEvent::MouseMoved;
-        break;
-    case QEvent::GraphicsSceneMouseDoubleClick:
-    case QEvent::GraphicsSceneMousePress:
-        frameworkMouseEventType = GraphicsSceneMouseEvent;
-        mouseEventType = PlatformEvent::MousePressed;
-        break;
-    case QEvent::GraphicsSceneMouseRelease:
-        frameworkMouseEventType = GraphicsSceneMouseEvent;
-        mouseEventType = PlatformEvent::MouseReleased;
-        break;
-    case QEvent::GraphicsSceneMouseMove:
-        frameworkMouseEventType = GraphicsSceneMouseEvent;
         mouseEventType = PlatformEvent::MouseMoved;
         break;
     default:
         ASSERT_NOT_REACHED();
-        frameworkMouseEventType = MouseEvent;
         mouseEventType = PlatformEvent::MouseMoved;
         break;
     }
 
     Qt::MouseButtons mouseButtons;
-    switch (frameworkMouseEventType) {
-    case MouseEvent: {
-        const QMouseEvent* mouseEvent = static_cast<const QMouseEvent*>(event);
-        mouseButtons = mouseEventType == PlatformEvent::MouseMoved ? mouseEvent->buttons() : mouseEvent->button();
-        break;
-    }
-    case GraphicsSceneMouseEvent: {
-        const QGraphicsSceneMouseEvent* mouseEvent = static_cast<const QGraphicsSceneMouseEvent*>(event);
-        mouseButtons = mouseEventType == PlatformEvent::MouseMoved ? mouseEvent->buttons() : mouseEvent->button();
-        break;
-    }
-    }
+
+    const QMouseEvent* mouseEvent = static_cast<const QMouseEvent*>(event);
+    mouseButtons = mouseEventType == PlatformEvent::MouseMoved ? mouseEvent->buttons() : mouseEvent->button();
+
 
     if (mouseButtons & Qt::LeftButton)
         mouseButton = LeftButton;
@@ -114,26 +83,8 @@ static void mouseEventTypeAndMouseButtonFromQEvent(const QEvent* event, Platform
 
 class WebKitPlatformMouseEvent : public PlatformMouseEvent {
 public:
-    WebKitPlatformMouseEvent(QGraphicsSceneMouseEvent*, int clickCount);
     WebKitPlatformMouseEvent(QInputEvent*, int clickCount);
 };
-
-WebKitPlatformMouseEvent::WebKitPlatformMouseEvent(QGraphicsSceneMouseEvent* event, int clickCount)
-{
-    m_timestamp = WTF::currentTime();
-
-    // FIXME: Why don't we handle a context menu event here as we do in PlatformMouseEvent(QInputEvent*, int)?
-    // See <https://bugs.webkit.org/show_bug.cgi?id=60728>.
-    PlatformEvent::Type type;
-    mouseEventTypeAndMouseButtonFromQEvent(event, type, m_button);
-
-    m_type = type;
-    m_position = IntPoint(event->pos().toPoint());
-    m_globalPosition = IntPoint(event->screenPos());
-
-    m_clickCount = clickCount;
-    mouseEventModifiersFromQtKeyboardModifiers(event->modifiers(), m_modifiers);
-}
 
 WebKitPlatformMouseEvent::WebKitPlatformMouseEvent(QInputEvent* event, int clickCount)
 {
@@ -169,21 +120,15 @@ PlatformMouseEvent convertMouseEvent(QInputEvent* event, int clickCount)
     return WebKitPlatformMouseEvent(event, clickCount);
 }
 
-PlatformMouseEvent convertMouseEvent(QGraphicsSceneMouseEvent* event, int clickCount)
-{
-    return WebKitPlatformMouseEvent(event, clickCount);
-}
-
 class WebKitPlatformWheelEvent : public PlatformWheelEvent {
 public:
-    WebKitPlatformWheelEvent(QGraphicsSceneWheelEvent*);
-    WebKitPlatformWheelEvent(QWheelEvent*);
+    WebKitPlatformWheelEvent(QWheelEvent*, int wheelScrollLines);
 
 private:
-    void applyDelta(int delta, Qt::Orientation);
+    void applyDelta(int delta, Qt::Orientation, int wheelScrollLines);
 };
 
-void WebKitPlatformWheelEvent::applyDelta(int delta, Qt::Orientation orientation)
+void WebKitPlatformWheelEvent::applyDelta(int delta, Qt::Orientation orientation, int wheelScrollLines)
 {
     if (orientation == Qt::Horizontal) {
         m_deltaX = delta;
@@ -198,22 +143,11 @@ void WebKitPlatformWheelEvent::applyDelta(int delta, Qt::Orientation orientation
     // Since we request the scroll delta by the pixel, convert the wheel delta to pixel delta using the standard scroll step.
     // Use the same single scroll step as QTextEdit (in QTextEditPrivate::init [h,v]bar->setSingleStep)
     static const float cDefaultQtScrollStep = 20.f;
-    m_deltaX = m_wheelTicksX * QApplication::wheelScrollLines() * cDefaultQtScrollStep;
-    m_deltaY = m_wheelTicksY * QApplication::wheelScrollLines() * cDefaultQtScrollStep;
+    m_deltaX = m_wheelTicksX * wheelScrollLines * cDefaultQtScrollStep;
+    m_deltaY = m_wheelTicksY * wheelScrollLines * cDefaultQtScrollStep;
 }
 
-WebKitPlatformWheelEvent::WebKitPlatformWheelEvent(QGraphicsSceneWheelEvent* e)
-{
-    m_timestamp = WTF::currentTime();
-    mouseEventModifiersFromQtKeyboardModifiers(e->modifiers(), m_modifiers);
-    m_position = e->pos().toPoint();
-    m_globalPosition = e->screenPos();
-    m_granularity = ScrollByPixelWheelEvent;
-    m_directionInvertedFromDevice = false;
-    applyDelta(e->delta(), e->orientation());
-}
-
-WebKitPlatformWheelEvent::WebKitPlatformWheelEvent(QWheelEvent* e)
+WebKitPlatformWheelEvent::WebKitPlatformWheelEvent(QWheelEvent* e, int wheelScrollLines)
 {
     m_timestamp = WTF::currentTime();
     mouseEventModifiersFromQtKeyboardModifiers(e->modifiers(), m_modifiers);
@@ -221,7 +155,7 @@ WebKitPlatformWheelEvent::WebKitPlatformWheelEvent(QWheelEvent* e)
     m_globalPosition = e->globalPos();
     m_granularity = ScrollByPixelWheelEvent;
     m_directionInvertedFromDevice = false;
-    applyDelta(e->delta(), e->orientation());
+    applyDelta(e->delta(), e->orientation(), wheelScrollLines);
 }
 
 #if ENABLE(TOUCH_EVENTS)
@@ -309,43 +243,35 @@ WebKitPlatformTouchPoint::WebKitPlatformTouchPoint(const QTouchEvent::TouchPoint
 #if ENABLE(GESTURE_EVENTS)
 class WebKitPlatformGestureEvent : public PlatformGestureEvent {
 public:
-    WebKitPlatformGestureEvent(const QGestureEvent*, const QGesture*);
+    WebKitPlatformGestureEvent(QGestureEventFacade*);
 };
 
-WebKitPlatformGestureEvent::WebKitPlatformGestureEvent(const QGestureEvent* event, const QGesture* gesture)
+static inline PlatformEvent::Type toPlatformEventType(Qt::GestureType type)
 {
-    switch (gesture->gestureType()) {
-    case Qt::TapGesture: {
-        m_type = PlatformEvent::GestureTap;
-        QPointF globalPos = static_cast<const QTapGesture*>(gesture)->position();
-        m_globalPosition = globalPos.toPoint();
-        m_position = event->widget()->mapFromGlobal(globalPos.toPoint());
-        break;
-    }
-    case Qt::TapAndHoldGesture: {
-        m_type = PlatformEvent::GestureLongPress;
-        QPointF globalPos = static_cast<const QTapAndHoldGesture*>(gesture)->position();
-        m_globalPosition = globalPos.toPoint();
-        m_position = event->widget()->mapFromGlobal(globalPos.toPoint());
-        break;
-    }
+    switch (type) {
+    case Qt::TapGesture:
+        return PlatformEvent::GestureTap;
+    case Qt::TapAndHoldGesture:
+        return PlatformEvent::GestureLongPress;
     default:
         ASSERT_NOT_REACHED();
-        break;
+        return PlatformEvent::NoType;
     }
+}
+
+WebKitPlatformGestureEvent::WebKitPlatformGestureEvent(QGestureEventFacade* event)
+{
+    m_type = toPlatformEventType(event->type);
+    m_globalPosition = event->globalPos;
+    m_position = event->pos;
     m_timestamp = WTF::currentTime();
 }
 
 #endif
 
-PlatformWheelEvent convertWheelEvent(QWheelEvent* event)
+PlatformWheelEvent convertWheelEvent(QWheelEvent* event, int wheelScrollLines)
 {
-    return WebKitPlatformWheelEvent(event);
-}
-
-PlatformWheelEvent convertWheelEvent(QGraphicsSceneWheelEvent* event)
-{
-    return WebKitPlatformWheelEvent(event);
+    return WebKitPlatformWheelEvent(event, wheelScrollLines);
 }
 
 #if ENABLE(TOUCH_EVENTS)
@@ -356,10 +282,9 @@ PlatformTouchEvent convertTouchEvent(QTouchEvent* event)
 #endif
 
 #if ENABLE(GESTURE_EVENTS)
-PlatformGestureEvent convertGesture(QGestureEvent* event, QGesture* gesture)
+PlatformGestureEvent convertGesture(QGestureEventFacade* event)
 {
-    return WebKitPlatformGestureEvent(event, gesture);
+    return WebKitPlatformGestureEvent(event);
 }
 #endif
-
 }

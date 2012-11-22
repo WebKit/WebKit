@@ -31,15 +31,14 @@
 #include "qwebframe_p.h"
 #include "qwebpage.h"
 #include "qwebpage_p.h"
+#include <Settings.h>
 #include <qgraphicsscene.h>
 #include <qgraphicsview.h>
 #include <qgraphicswidget.h>
+#include <qmetaobject.h>
 #include <qscrollbar.h>
 #include <qstyleoption.h>
 #include <qwidget.h>
-#include <QtCore/qmetaobject.h>
-
-#include <Settings.h>
 
 namespace WebCore {
 
@@ -75,18 +74,18 @@ public:
 
     virtual void scroll(int dx, int dy, const QRect&);
     virtual void update(const QRect& dirtyRect);
-    virtual void setInputMethodEnabled(bool enable);
+    virtual void setInputMethodEnabled(bool);
     virtual bool inputMethodEnabled() const;
-    virtual void setInputMethodHints(Qt::InputMethodHints hints);
+    virtual void setInputMethodHints(Qt::InputMethodHints);
 
 #ifndef QT_NO_CURSOR
     virtual QCursor cursor() const;
-    virtual void updateCursor(const QCursor& cursor);
+    virtual void updateCursor(const QCursor&);
 #endif
 
     virtual QPalette palette() const;
     virtual int screenNumber() const;
-    virtual QWidget* ownerWidget() const;
+    virtual QObject* ownerWidget() const;
     virtual QRect geometryRelativeToOwnerWidget() const;
 
     virtual QObject* pluginParent() const;
@@ -100,9 +99,7 @@ public:
     virtual void setWidgetVisible(Widget*, bool visible);
 
 #if USE(3D_GRAPHICS)
-    virtual void createPlatformGraphicsContext3D(PlatformGraphicsContext3D*,
-                                                 PlatformGraphicsSurface3D*,
-                                                 QObject**);
+    virtual void createPlatformGraphicsContext3D(PlatformGraphicsContext3D*, PlatformGraphicsSurface3D*, QObject**);
 #endif
 
     QWidget* view;
@@ -132,9 +129,9 @@ public:
 class QGraphicsItemOverlay : public QGraphicsObject {
     public:
     QGraphicsItemOverlay(QGraphicsWidget* view, QWebPage* p)
-            :QGraphicsObject(view)
-            , q(view)
-            , page(p)
+        : QGraphicsObject(view)
+        , q(view)
+        , page(p)
     {
         setPos(0, 0);
         setFlag(QGraphicsItem::ItemUsesExtendedStyleOption, true);
@@ -172,7 +169,7 @@ public:
 #endif
         , overlay(0)
     {
-       Q_ASSERT(view);
+        Q_ASSERT(view);
 #if USE(ACCELERATED_COMPOSITING)
         // the overlay and stays alive for the lifetime of
         // this QGraphicsWebView as the scrollbars are needed when there's no compositing
@@ -186,18 +183,18 @@ public:
 
     virtual void scroll(int dx, int dy, const QRect&);
     virtual void update(const QRect& dirtyRect);
-    virtual void setInputMethodEnabled(bool enable);
+    virtual void setInputMethodEnabled(bool);
     virtual bool inputMethodEnabled() const;
-    virtual void setInputMethodHints(Qt::InputMethodHints hints);
+    virtual void setInputMethodHints(Qt::InputMethodHints);
 
 #ifndef QT_NO_CURSOR
     virtual QCursor cursor() const;
-    virtual void updateCursor(const QCursor& cursor);
+    virtual void updateCursor(const QCursor&);
 #endif
 
     virtual QPalette palette() const;
     virtual int screenNumber() const;
-    virtual QWidget* ownerWidget() const;
+    virtual QObject* ownerWidget() const;
     virtual QRect geometryRelativeToOwnerWidget() const;
 
     virtual QObject* pluginParent() const;
@@ -209,9 +206,7 @@ public:
     virtual void setWidgetVisible(Widget*, bool);
 
 #if USE(3D_GRAPHICS)
-    virtual void createPlatformGraphicsContext3D(PlatformGraphicsContext3D*,
-                                                 PlatformGraphicsSurface3D*,
-                                                 QObject**);
+    virtual void createPlatformGraphicsContext3D(PlatformGraphicsContext3D*, PlatformGraphicsSurface3D*, QObject**);
 #endif
 
 #if USE(TILED_BACKING_STORE)

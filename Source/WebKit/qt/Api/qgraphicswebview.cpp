@@ -88,7 +88,7 @@ public:
 
     PageClientQGraphicsWidget* pageClient() const
     {
-        return static_cast<WebCore::PageClientQGraphicsWidget*> (page->d->client.get());
+        return static_cast<WebCore::PageClientQGraphicsWidget*> (page->d->client.data());
     } 
 };
 
@@ -468,7 +468,7 @@ void QGraphicsWebViewPrivate::detachCurrentPage()
         return;
 
     page->d->view = 0;
-    page->d->client = nullptr;
+    page->d->client.reset();
 
     // if the page was created by us, we own it and need to
     // destroy it as well.
@@ -501,7 +501,7 @@ void QGraphicsWebView::setPage(QWebPage* page)
     if (!d->page)
         return;
 
-    d->page->d->client = adoptPtr(new PageClientQGraphicsWidget(this, page));
+    d->page->d->client.reset(new PageClientQGraphicsWidget(this, page));
 
     if (d->overlay())
         d->overlay()->prepareGraphicsItemGeometryChange();

@@ -33,10 +33,8 @@
 #include "GeolocationPosition.h"
 #include "HTMLFormElement.h"
 #include "Page.h"
-#include "qwebframe.h"
-#include "qwebframe_p.h"
-#include "qwebpage.h"
-#include "qwebpage_p.h"
+#include "QWebFrameAdapter.h"
+#include "QWebPageAdapter.h"
 
 #include <QtLocation/QGeoPositionInfoSource>
 
@@ -44,8 +42,8 @@ namespace WebCore {
 
 static const char failedToStartServiceErrorMessage[] = "Failed to start Geolocation service";
 
-GeolocationClientQt::GeolocationClientQt(const QWebPage* page)
-    : m_page(page)
+GeolocationClientQt::GeolocationClientQt(const QWebPageAdapter* page)
+    : m_webPage(page)
     , m_lastPosition(0)
     , m_location(0)
 {
@@ -85,12 +83,9 @@ void GeolocationClientQt::positionUpdated(const QGeoPositionInfo& geoPosition)
 
     double timeStampInSeconds = geoPosition.timestamp().toMSecsSinceEpoch() / 1000;
 
-    m_lastPosition = GeolocationPosition::create(timeStampInSeconds, latitude, longitude,
-                                                 accuracy, providesAltitude, altitude,
-                                                 providesAltitudeAccuracy, altitudeAccuracy,
-                                                 providesHeading, heading, providesSpeed, speed);
+    m_lastPosition = GeolocationPosition::create(timeStampInSeconds, latitude, longitude, accuracy, providesAltitude, altitude, providesAltitudeAccuracy, altitudeAccuracy, providesHeading, heading, providesSpeed, speed);
 
-    WebCore::Page* page = QWebPagePrivate::core(m_page);
+    WebCore::Page* page = m_webPage->page;
     GeolocationController::from(page)->positionChanged(m_lastPosition.get());
 }
 
@@ -100,7 +95,7 @@ void GeolocationClientQt::startUpdating()
         connect(m_location, SIGNAL(positionUpdated(QGeoPositionInfo)), this, SLOT(positionUpdated(QGeoPositionInfo)));
 
     if (!m_location) {
-        WebCore::Page* page = QWebPagePrivate::core(m_page);
+        WebCore::Page* page = m_webPage->page;
         RefPtr<WebCore::GeolocationError> error = GeolocationError::create(GeolocationError::PositionUnavailable, failedToStartServiceErrorMessage);
         GeolocationController::from(page)->errorOccurred(error.get());
         return;
@@ -124,14 +119,14 @@ void GeolocationClientQt::setEnableHighAccuracy(bool)
 void GeolocationClientQt::requestPermission(Geolocation* geolocation)
 {
     ASSERT(geolocation);
-    QWebFrame* webFrame = QWebFramePrivate::kit(geolocation->frame());
+    QWebFrameAdapter* webFrame = QWebFrameAdapter::kit(geolocation->frame());
     GeolocationPermissionClientQt::geolocationPermissionClient()->requestGeolocationPermissionForFrame(webFrame, geolocation);
 }
 
 void GeolocationClientQt::cancelPermissionRequest(Geolocation* geolocation)
 {
     ASSERT(geolocation);
-    QWebFrame* webFrame = QWebFramePrivate::kit(geolocation->frame());
+    QWebFrameAdapter* webFrame = QWebFrameAdapter::kit(geolocation->frame());
     GeolocationPermissionClientQt::geolocationPermissionClient()->cancelGeolocationPermissionRequestForFrame(webFrame, geolocation);
 }
 

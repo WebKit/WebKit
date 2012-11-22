@@ -46,6 +46,7 @@ class QWebFrameData;
 class QWebHistoryItem;
 class QWebHitTestResult;
 class QWebNetworkInterface;
+class QWebPageAdapter;
 class QWebPagePrivate;
 class QWebPluginFactory;
 class QWebSecurityOrigin;
@@ -365,7 +366,7 @@ public:
     virtual bool extension(Extension extension, const ExtensionOption *option = 0, ExtensionReturn *output = 0);
     virtual bool supportsExtension(Extension extension) const;
 
-    inline QWebPagePrivate* handle() const { return d; }
+    QWebPageAdapter* handle() const;
 
 public Q_SLOTS:
     bool shouldInterruptJavaScript();

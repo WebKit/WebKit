@@ -81,7 +81,7 @@ bool LoadAlternateHTMLStringItem::invoke() const
     if (!frame)
         return false;
 
-    DumpRenderTreeSupportQt::setAlternateHtml(frame, m_content, QUrl(m_baseURL), QUrl(m_failingURL));
+    DumpRenderTreeSupportQt::setAlternateHtml(frame->handle(), m_content, QUrl(m_baseURL), QUrl(m_failingURL));
     return true;
 }
 

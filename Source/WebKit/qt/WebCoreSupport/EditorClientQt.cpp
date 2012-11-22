@@ -32,7 +32,6 @@
 #include "EditorClientQt.h"
 
 #include "Document.h"
-#include "UndoStepQt.h"
 #include "Editor.h"
 #include "FocusController.h"
 #include "Frame.h"
@@ -44,6 +43,7 @@
 #include "Page.h"
 #include "Pasteboard.h"
 #include "PlatformKeyboardEvent.h"
+#include "QWebPageAdapter.h"
 #include "QWebPageClient.h"
 #include "Range.h"
 #include "Settings.h"
@@ -51,11 +51,10 @@
 #include "StylePropertySet.h"
 #include "WindowsKeyboardCodes.h"
 #include "qguiapplication.h"
-#include "qwebpage.h"
-#include "qwebpage_p.h"
 
 #include <QClipboard>
-#include <QUndoStack>
+#include <QKeyEvent>
+#include <QKeySequence>
 #include <stdio.h>
 #include <wtf/OwnPtr.h>
 
@@ -80,8 +79,8 @@ static QString dumpRange(WebCore::Range *range)
     WebCore::ExceptionCode code;
 
     QString str = QString::fromLatin1("range from %1 of %2 to %3 of %4")
-            .arg(range->startOffset(code)).arg(dumpPath(range->startContainer(code)))
-            .arg(range->endOffset(code)).arg(dumpPath(range->endContainer(code)));
+        .arg(range->startOffset(code)).arg(dumpPath(range->startContainer(code)))
+        .arg(range->endOffset(code)).arg(dumpPath(range->endContainer(code)));
 
     return str;
 }
@@ -104,7 +103,7 @@ bool EditorClientQt::shouldDeleteRange(Range* range)
 
 bool EditorClientQt::shouldShowDeleteInterface(HTMLElement* element)
 {
-    if (QWebPagePrivate::drtRun)
+    if (QWebPageAdapter::drtRun)
         return element->getAttribute(classAttr) == "needsDeletionUI";
     return false;
 }
@@ -148,7 +147,7 @@ bool EditorClientQt::shouldInsertText(const String& string, Range* range, Editor
         };
 
         printf("EDITING DELEGATE: shouldInsertText:%s replacingDOMRange:%s givenAction:%s\n",
-               QString(string).toUtf8().constData(), dumpRange(range).toUtf8().constData(), insertactionstring[action]);
+            QString(string).toUtf8().constData(), dumpRange(range).toUtf8().constData(), insertactionstring[action]);
     }
     return acceptsEditing;
 }
@@ -166,19 +165,18 @@ bool EditorClientQt::shouldChangeSelectedRange(Range* currentRange, Range* propo
         };
 
         printf("EDITING DELEGATE: shouldChangeSelectedDOMRange:%s toDOMRange:%s affinity:%s stillSelecting:%s\n",
-               dumpRange(currentRange).toUtf8().constData(),
-               dumpRange(proposedRange).toUtf8().constData(),
-               affinitystring[selectionAffinity], boolstring[stillSelecting]);
+            dumpRange(currentRange).toUtf8().constData(),
+            dumpRange(proposedRange).toUtf8().constData(),
+            affinitystring[selectionAffinity], boolstring[stillSelecting]);
     }
     return acceptsEditing;
 }
 
-bool EditorClientQt::shouldApplyStyle(WebCore::StylePropertySet* style,
-                                      WebCore::Range* range)
+bool EditorClientQt::shouldApplyStyle(WebCore::StylePropertySet* style, WebCore::Range* range)
 {
     if (dumpEditingCallbacks)
         printf("EDITING DELEGATE: shouldApplyStyle:%s toElementsInDOMRange:%s\n",
-               QString(style->asText()).toUtf8().constData(), dumpRange(range).toUtf8().constData());
+            QString(style->asText()).toUtf8().constData(), dumpRange(range).toUtf8().constData());
     return acceptsEditing;
 }
 
@@ -199,9 +197,8 @@ void EditorClientQt::respondToChangedContents()
 {
     if (dumpEditingCallbacks)
         printf("EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification\n");
-    m_page->d->updateEditorActions();
 
-    emit m_page->contentsChanged();
+    m_page->respondToChangedContents();
 }
 
 void EditorClientQt::respondToChangedSelection(Frame* frame)
@@ -220,8 +217,7 @@ void EditorClientQt::respondToChangedSelection(Frame* frame)
         Pasteboard::generalPasteboard()->setSelectionMode(oldSelectionMode);
     }
 
-    m_page->d->updateEditorActions();
-    emit m_page->selectionChanged();
+    m_page->respondToChangedSelection();
     if (!frame->editor()->ignoreCompositionSelectionChange())
         emit m_page->microFocusChanged();
 }
@@ -250,10 +246,10 @@ bool EditorClientQt::selectWordBeforeMenuEvent()
 void EditorClientQt::registerUndoStep(WTF::PassRefPtr<WebCore::UndoStep> step)
 {
 #ifndef QT_NO_UNDOSTACK
-    Frame* frame = m_page->d->page->focusController()->focusedOrMainFrame();
+    Frame* frame = m_page->page->focusController()->focusedOrMainFrame();
     if (m_inUndoRedo || (frame && !frame->editor()->lastEditCommand() /* HACK!! Don't recreate undos */))
         return;
-    m_page->undoStack()->push(new UndoStepQt(step));
+    m_page->registerUndoStep(step);
 #endif // QT_NO_UNDOSTACK
 }
 
@@ -264,7 +260,7 @@ void EditorClientQt::registerRedoStep(WTF::PassRefPtr<WebCore::UndoStep>)
 void EditorClientQt::clearUndoRedoOperations()
 {
 #ifndef QT_NO_UNDOSTACK
-    return m_page->undoStack()->clear();
+    return m_page->clearUndoStack();
 #endif
 }
 
@@ -283,7 +279,7 @@ bool EditorClientQt::canUndo() const
 #ifdef QT_NO_UNDOSTACK
     return false;
 #else
-    return m_page->undoStack()->canUndo();
+    return m_page->canUndo();
 #endif
 }
 
@@ -292,7 +288,7 @@ bool EditorClientQt::canRedo() const
 #ifdef QT_NO_UNDOSTACK
     return false;
 #else
-    return m_page->undoStack()->canRedo();
+    return m_page->canRedo();
 #endif
 }
 
@@ -300,7 +296,7 @@ void EditorClientQt::undo()
 {
 #ifndef QT_NO_UNDOSTACK
     m_inUndoRedo = true;
-    m_page->undoStack()->undo();
+    m_page->undo();
     m_inUndoRedo = false;
 #endif
 }
@@ -309,7 +305,7 @@ void EditorClientQt::redo()
 {
 #ifndef QT_NO_UNDOSTACK
     m_inUndoRedo = true;
-    m_page->undoStack()->redo();
+    m_page->redo();
     m_inUndoRedo = false;
 #endif
 }
@@ -324,7 +320,7 @@ bool EditorClientQt::shouldInsertNode(Node* node, Range* range, EditorInsertActi
         };
 
         printf("EDITING DELEGATE: shouldInsertNode:%s replacingDOMRange:%s givenAction:%s\n", dumpPath(node).toUtf8().constData(),
-               dumpRange(range).toUtf8().constData(), insertactionstring[action]);
+            dumpRange(range).toUtf8().constData(), insertactionstring[action]);
     }
     return acceptsEditing;
 }
@@ -336,18 +332,18 @@ void EditorClientQt::pageDestroyed()
 
 bool EditorClientQt::smartInsertDeleteEnabled()
 {
-    return m_page->d->smartInsertDeleteEnabled;
+    return m_smartInsertDeleteEnabled;
 }
 
 void EditorClientQt::toggleSmartInsertDelete()
 {
-    bool current = m_page->d->smartInsertDeleteEnabled;
-    m_page->d->smartInsertDeleteEnabled = !current;
+    bool current = m_smartInsertDeleteEnabled;
+    m_smartInsertDeleteEnabled = !current;
 }
 
 bool EditorClientQt::isSelectTrailingWhitespaceEnabled()
 {
-    return m_page->d->selectTrailingWhitespaceEnabled;
+    return m_selectTrailingWhitespaceEnabled;
 }
 
 void EditorClientQt::toggleContinuousSpellChecking()
@@ -416,7 +412,7 @@ const char* editorCommandForKeyDownEvent(const KeyboardEvent* event)
 
 void EditorClientQt::handleKeyboardEvent(KeyboardEvent* event)
 {
-    Frame* frame = m_page->d->page->focusController()->focusedOrMainFrame();
+    Frame* frame = m_page->page->focusController()->focusedOrMainFrame();
     if (!frame)
         return;
 
@@ -444,20 +440,19 @@ void EditorClientQt::handleKeyboardEvent(KeyboardEvent* event)
         }
 
 #ifndef QT_NO_SHORTCUT
-        QWebPage::WebAction action = QWebPagePrivate::editorActionForKeyEvent(kevent->qtEvent());
-        if (action != QWebPage::NoWebAction && !doSpatialNavigation) {
-            const char* cmd = QWebPagePrivate::editorCommandForWebActions(action);
+        const char* cmd = m_page->editorCommandForKeyEvent(kevent->qtEvent());
+        if (cmd && !doSpatialNavigation) {
             // WebKit doesn't have enough information about mode to decide how commands that just insert text if executed via Editor should be treated,
             // so we leave it upon WebCore to either handle them immediately (e.g. Tab that changes focus) or let a keypress event be generated
             // (e.g. Tab that inserts a Tab character, or Enter).
-            if (cmd && frame->editor()->command(cmd).isTextInsertion()
+            if (frame->editor()->command(cmd).isTextInsertion()
                 && kevent->type() == PlatformEvent::RawKeyDown)
                 return;
 
-            m_page->triggerAction(action);
+            m_page->triggerActionForKeyEvent(kevent->qtEvent());
             event->setDefaultHandled();
             return;
-        } else 
+        }
 #endif // QT_NO_SHORTCUT
         {
             String commandName = editorCommandForKeyDownEvent(event);
@@ -501,7 +496,7 @@ void EditorClientQt::handleKeyboardEvent(KeyboardEvent* event)
     }
 
     // Non editable content.
-    if (m_page->handle()->page->settings()->caretBrowsingEnabled()) {
+    if (m_page->page->settings()->caretBrowsingEnabled()) {
         switch (kevent->windowsVirtualKeyCode()) {
         case VK_LEFT:
         case VK_RIGHT:
@@ -511,15 +506,13 @@ void EditorClientQt::handleKeyboardEvent(KeyboardEvent* event)
         case VK_END:
             {
 #ifndef QT_NO_SHORTCUT
-                QWebPage::WebAction action = QWebPagePrivate::editorActionForKeyEvent(kevent->qtEvent());
-                ASSERT(action != QWebPage::NoWebAction);
-                m_page->triggerAction(action);
+                m_page->triggerActionForKeyEvent(kevent->qtEvent());
                 event->setDefaultHandled();
 #endif
                 return;
             }
         case VK_PRIOR: // PageUp
-        case VK_NEXT:  // PageDown
+        case VK_NEXT: // PageDown
             {
                 String commandName = editorCommandForKeyDownEvent(event);
                 ASSERT(!commandName.isEmpty());
@@ -532,7 +525,7 @@ void EditorClientQt::handleKeyboardEvent(KeyboardEvent* event)
 
 #ifndef QT_NO_SHORTCUT
     if (kevent->qtEvent() == QKeySequence::Copy) {
-        m_page->triggerAction(QWebPage::Copy);
+        m_page->triggerCopyAction();
         event->setDefaultHandled();
         return;
     }
@@ -543,8 +536,12 @@ void EditorClientQt::handleInputMethodKeydown(KeyboardEvent*)
 {
 }
 
-EditorClientQt::EditorClientQt(QWebPage* page)
-    : m_page(page), m_editing(false), m_inUndoRedo(false)
+EditorClientQt::EditorClientQt(QWebPageAdapter* pageAdapter)
+    : m_page(pageAdapter)
+    , m_editing(false)
+    , m_inUndoRedo(false)
+    , m_smartInsertDeleteEnabled(true)
+    , m_selectTrailingWhitespaceEnabled(false)
 {
 }
 
@@ -607,12 +604,12 @@ void EditorClientQt::willSetInputMethodState()
 
 void EditorClientQt::setInputMethodState(bool active)
 {
-    QWebPageClient* webPageClient = m_page->d->client.get();
+    QWebPageClient* webPageClient = m_page->client.data();
     if (webPageClient) {
         Qt::InputMethodHints hints;
 
         HTMLInputElement* inputElement = 0;
-        Frame* frame = m_page->d->page->focusController()->focusedOrMainFrame();
+        Frame* frame = m_page->page->focusController()->focusedOrMainFrame();
         if (frame && frame->document() && frame->document()->focusedNode())
             if (frame->document()->focusedNode()->hasTagName(HTMLNames::inputTag))
                 inputElement = static_cast<HTMLInputElement*>(frame->document()->focusedNode());

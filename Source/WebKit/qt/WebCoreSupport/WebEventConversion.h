@@ -19,17 +19,22 @@
     Boston, MA 02110-1301, USA.
 */
 
-#include <qglobal.h>
+#ifndef WebEventConversion_h
+#define WebEventConversion_h
+
+#include <QPoint>
 
 QT_BEGIN_NAMESPACE
 class QInputEvent;
-class QGraphicsSceneMouseEvent;
 class QWheelEvent;
-class QGraphicsSceneWheelEvent;
 class QTouchEvent;
-class QGesture;
-class QGestureEvent;
 QT_END_NAMESPACE
+
+struct QGestureEventFacade {
+    Qt::GestureType type;
+    QPoint globalPos;
+    QPoint pos;
+};
 
 namespace WebCore {
 
@@ -37,9 +42,7 @@ class PlatformMouseEvent;
 class PlatformWheelEvent;
 
 PlatformMouseEvent convertMouseEvent(QInputEvent*, int clickCount);
-PlatformMouseEvent convertMouseEvent(QGraphicsSceneMouseEvent*, int clickCount);
-PlatformWheelEvent convertWheelEvent(QWheelEvent*);
-PlatformWheelEvent convertWheelEvent(QGraphicsSceneWheelEvent*);
+PlatformWheelEvent convertWheelEvent(QWheelEvent*, int wheelScrollLines);
 
 #if ENABLE(TOUCH_EVENTS)
 class PlatformTouchEvent;
@@ -48,6 +51,8 @@ PlatformTouchEvent convertTouchEvent(QTouchEvent*);
 
 #if ENABLE(GESTURE_EVENTS)
 class PlatformGestureEvent;
-PlatformGestureEvent convertGesture(QGestureEvent*, QGesture*);
+PlatformGestureEvent convertGesture(QGestureEventFacade*);
 #endif
 }
+
+#endif

@@ -431,7 +431,7 @@ QStringList EventSender::contextClick()
         QContextMenuEvent ctxEvent(QContextMenuEvent::Mouse, m_mousePos);
         sendEvent(m_page->view(), &ctxEvent);
     }
-    return DumpRenderTreeSupportQt::contextMenu(m_page);
+    return DumpRenderTreeSupportQt::contextMenu(m_page->handle());
 }
 
 void EventSender::scheduleAsynchronousClick()
@@ -616,7 +616,7 @@ void EventSender::textZoomOut()
 void EventSender::scalePageBy(float scaleFactor, float x, float y)
 {
     if (QWebFrame* frame = m_page->mainFrame())
-        DumpRenderTreeSupportQt::scalePageBy(frame, scaleFactor, QPoint(x, y));
+        DumpRenderTreeSupportQt::scalePageBy(frame->handle(), scaleFactor, QPoint(x, y));
 }
 
 QWebFrame* EventSender::frameUnderMouse() const

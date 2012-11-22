@@ -26,7 +26,7 @@
 #include <QtCore/qglobal.h>
 #include <QtCore/qshareddata.h>
 
-class QWebPagePrivate;
+class QWebPageAdapter;
 
 class QWEBKIT_EXPORT QWebHistoryItemPrivate : public QSharedData {
 public:
@@ -63,7 +63,7 @@ public:
         lst->deref();
     }
 
-    QWebPagePrivate* page();
+    QWebPageAdapter* page();
 
     WebCore::BackForwardListImpl* lst;
 };

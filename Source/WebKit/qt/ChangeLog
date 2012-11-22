@@ -1,3 +1,538 @@
+2012-11-22  Simon Hausmann  <simon.hausmann@digia.com>, Pierre Rossi <pierre.rossi@digia.com>
+
+        [Qt] Separate QWidget dependant code into separate WebKitWidgets static library
+        https://bugs.webkit.org/show_bug.cgi?id=102800
+
+        Reviewed by Tor Arne Vestbø.
+
+        This patch separates code that needs to use QWidget related APIs in
+        WebKit/qt/WebCoreSupport and Api from code that doesn't. This means for
+        example FrameLoaderClientQt.cpp remains in the WebKit1 static library,
+        while qwebpage.cpp and qwebframe.cpp become part of the WebKitWidgets
+        static library. WebKit1 is compiled without QT += widgets and therefore
+        any widget related dependency has been moved "up" and out of WebKit1 into
+        the WebKitWidgets library.
+
+        Between the code in WebKit.a and WebKitWidgets.a new adapters and
+        interfaces have been introduced, such as QWebPageAdapter and
+        QWebFrameAdapter. QWebPageAdapter, when used from WebKit1, is a way to
+        call out into the API layer, implemented by QWebPage (QWebPagePrivate).
+        The other way around if QWebPage wants to access WebCore or
+        WebCoreSupport related functionality, it will go through
+        QWebPageAdapater (as base class). The separation in the direction up
+        into the API layer is complete with this patch, no code in WebKit1
+        depends on QtWidgets. The separation the other way around, code in the
+        API layer not using any WebCore types, is not complete yet.
+
+        Some classes such as QWebSettings, QWebElement or
+        DumpRenderTreeSupportQt remain in WebKit1. While they are API layer,
+        they do not depend on widget related Qt APIs and they make much more
+        use of WebCore internal APIs and therefore are easier to keep in
+        WebKit1.
+
+        In the future we plan to place a real shared library boundary between
+        WebKit1 and WebKitWidgets, by keeping the WebKit1 static library as
+        part of the QtWebKit shared library and by turning the WebKitWidgets
+        static library into a shared one.
+
+
+        * Api/qgraphicswebview.cpp:
+        (QGraphicsWebViewPrivate::pageClient):
+        (QGraphicsWebViewPrivate::detachCurrentPage):
+        (QGraphicsWebView::setPage):
+        * Api/qwebelement.cpp:
+        (QWebElement::webFrame):
+        * Api/qwebframe.cpp:
+        (QWebFramePrivate::setPage):
+        (QWebFramePrivate::didStartProvisionalLoad):
+        (QWebFramePrivate::handleProgressFinished):
+        (QWebFramePrivate::emitInitialLayoutCompleted):
+        (QWebFramePrivate::emitIconChanged):
+        (QWebFramePrivate::emitLoadStarted):
+        (QWebFramePrivate::emitLoadFinished):
+        (QWebFramePrivate::createChildFrame):
+        (QWebFramePrivate::apiHandle):
+        (QWebFramePrivate::handle):
+        (QWebFramePrivate::contentsSizeDidChange):
+        (QWebFramePrivate::scrollBarPolicy):
+        (QWebFrame::QWebFrame):
+        (QWebFrame::~QWebFrame):
+        (QWebFrame::setUrl):
+        (QWebFrame::load):
+        (QWebFrame::scrollPosition):
+        (QWebFrame::geometry):
+        (QWebFramePrivate::kit):
+        (QWebFrame::handle):
+        * Api/qwebframe.h:
+        * Api/qwebframe_p.h:
+        (QWebFramePrivate::QWebFramePrivate):
+        (QWebFramePrivate):
+        * Api/qwebhistory.cpp:
+        (QWebHistoryPrivate::page):
+        * Api/qwebhistory_p.h:
+        (QWebHistoryPrivate):
+        * Api/qwebinspector.cpp:
+        (QWebInspectorPrivate::setFrontend):
+        * Api/qwebinspector_p.h:
+        (QWebInspectorPrivate):
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::QWebPagePrivate):
+        (QWebPagePrivate::~QWebPagePrivate):
+        (QWebPagePrivate::core):
+        (QWebPagePrivate::show):
+        (QWebPagePrivate::setFocus):
+        (QWebPagePrivate::unfocus):
+        (QWebPagePrivate::setWindowRect):
+        (QWebPagePrivate::viewportSize):
+        (QWebPagePrivate::createWindow):
+        (QWebPagePrivate::javaScriptConsoleMessage):
+        (QWebPagePrivate::javaScriptAlert):
+        (QWebPagePrivate::javaScriptConfirm):
+        (QWebPagePrivate::javaScriptPrompt):
+        (QWebPagePrivate::printRequested):
+        (QWebPagePrivate::databaseQuotaExceeded):
+        (QWebPagePrivate::applicationCacheQuotaExceeded):
+        (QWebPagePrivate::setToolTip):
+        (QWebPagePrivate::createFullScreenVideoHandler):
+        (QWebPagePrivate::mainFrameAdapter):
+        (QWebPagePrivate::chooseFiles):
+        (QWebPagePrivate::acceptNavigationRequest):
+        (QWebPagePrivate::emitRestoreFrameStateRequested):
+        (QWebPagePrivate::emitSaveFrameStateRequested):
+        (QWebPagePrivate::emitDownloadRequested):
+        (QWebPagePrivate::emitFrameCreated):
+        (QWebPagePrivate::errorPageExtension):
+        (QWebPagePrivate::createPlugin):
+        (QWebPagePrivate::adapterForWidget):
+        (QWebPagePrivate::createMainFrame):
+        (QWebPagePrivate::createContextMenu):
+        (QWebPagePrivate::inspectorHandle):
+        (QWebPagePrivate::setInspectorFrontend):
+        (QWebPagePrivate::setInspectorWindowTitle):
+        (QWebPagePrivate::createWebInspector):
+        (iterateContextMenu):
+        (QWebPagePrivate::menuActionsAsText):
+        (QWebPagePrivate::emitViewportChangeRequested):
+        (QWebPagePrivate::mouseMoveEvent):
+        (QWebPagePrivate::mousePressEvent):
+        (QWebPagePrivate::mouseDoubleClickEvent):
+        (QWebPagePrivate::mouseTripleClickEvent):
+        (QWebPagePrivate::mouseReleaseEvent):
+        (QWebPagePrivate::handleSoftwareInputPanel):
+        (QWebPagePrivate::wheelEvent):
+        (QWebPagePrivate::gestureEvent):
+        (QWebPage::setView):
+        (QWebPage::javaScriptConsoleMessage):
+        (QWebPage::javaScriptAlert):
+        (QWebPage::javaScriptConfirm):
+        (QWebPage::javaScriptPrompt):
+        (QWebPage::shouldInterruptJavaScript):
+        (QWebPage::setFeaturePermission):
+        (QWebPagePrivate::colorSelectionRequested):
+        (QWebPagePrivate::createSelectPopup):
+        (QWebPagePrivate::viewRectRelativeToWindow):
+        (QWebPagePrivate::geolocationPermissionRequested):
+        (QWebPagePrivate::geolocationPermissionRequestCancelled):
+        (QWebPagePrivate::notificationsPermissionRequested):
+        (QWebPagePrivate::notificationsPermissionRequestCancelled):
+        (QWebPagePrivate::respondToChangedContents):
+        (QWebPagePrivate::respondToChangedSelection):
+        (QWebPagePrivate::microFocusChanged):
+        (QWebPagePrivate::triggerCopyAction):
+        (QWebPagePrivate::triggerActionForKeyEvent):
+        (QWebPagePrivate::clearUndoStack):
+        (QWebPagePrivate::canUndo):
+        (QWebPagePrivate::canRedo):
+        (QWebPagePrivate::undo):
+        (QWebPagePrivate::redo):
+        (QWebPagePrivate::createUndoStep):
+        (QWebPagePrivate::editorCommandForKeyEvent):
+        (QWebPage::viewportSize):
+        (QWebPage::setViewportSize):
+        (QWebPage::viewportAttributesForSize):
+        (QWebPage::event):
+        (QWebPage::extension):
+        (QWebPage::handle):
+        (QWebPage::chooseFile):
+        (QWebPage::setNetworkAccessManager):
+        (QWebPage::networkAccessManager):
+        * Api/qwebpage.h:
+        * Api/qwebpage_p.h:
+        (WebCore):
+        (QWebPagePrivate):
+        * Api/qwebsettings.cpp:
+        * Api/qwebsettings.h:
+        * Api/qwebview.cpp:
+        (QWebViewPrivate::detachCurrentPage):
+        * WebCoreSupport/ChromeClientQt.cpp:
+        (WebCore::ChromeClientQt::ChromeClientQt):
+        (WebCore::ChromeClientQt::setWindowRect):
+        (WebCore::ChromeClientQt::focus):
+        (WebCore::ChromeClientQt::unfocus):
+        (WebCore::ChromeClientQt::createWindow):
+        (WebCore::ChromeClientQt::show):
+        (WebCore::ChromeClientQt::setToolbarsVisible):
+        (WebCore::ChromeClientQt::setStatusbarVisible):
+        (WebCore::ChromeClientQt::setMenubarVisible):
+        (WebCore::ChromeClientQt::addMessageToConsole):
+        (WebCore::ChromeClientQt::closeWindowSoon):
+        (WebCore::ChromeClientQt::runJavaScriptAlert):
+        (WebCore::ChromeClientQt::runJavaScriptConfirm):
+        (WebCore::ChromeClientQt::runJavaScriptPrompt):
+        (WebCore::ChromeClientQt::setStatusbarText):
+        (WebCore::ChromeClientQt::shouldInterruptJavaScript):
+        (WebCore::ChromeClientQt::keyboardUIMode):
+        (WebCore::ChromeClientQt::windowResizerRect):
+        * WebCoreSupport/ChromeClientQt.h:
+        (ChromeClientQt):
+        * WebCoreSupport/ContextMenuClientQt.cpp:
+        * WebCoreSupport/ContextMenuClientQt.h:
+        (ContextMenuClientQt):
+        * WebCoreSupport/DefaultFullScreenVideoHandler.cpp: Added.
+        (DefaultFullScreenVideoHandler::DefaultFullScreenVideoHandler):
+        (DefaultFullScreenVideoHandler::~DefaultFullScreenVideoHandler):
+        (DefaultFullScreenVideoHandler::requiresFullScreenForVideoPlayback):
+        (DefaultFullScreenVideoHandler::enterFullScreen):
+        (DefaultFullScreenVideoHandler::exitFullScreen):
+        * WebCoreSupport/DefaultFullScreenVideoHandler.h: Copied from Source/WebKit/qt/WebCoreSupport/QtWebComboBox.h.
+        (WebKit):
+        (DefaultFullScreenVideoHandler):
+        * WebCoreSupport/DragClientQt.cpp:
+        (WebCore::DragClientQt::startDrag):
+        * WebCoreSupport/DragClientQt.h:
+        (WebCore):
+        (WebCore::DragClientQt::DragClientQt):
+        (DragClientQt):
+        * WebCoreSupport/DumpRenderTreeSupportQt.cpp:
+        (toGeolocationClientMock):
+        (toDeviceOrientationClientMock):
+        (DumpRenderTreeSupportQt::initialize):
+        (DumpRenderTreeSupportQt::setDumpRenderTreeModeEnabled):
+        (DumpRenderTreeSupportQt::setFrameFlatteningEnabled):
+        (DumpRenderTreeSupportQt::webPageSetGroupName):
+        (DumpRenderTreeSupportQt::webPageGroupName):
+        (DumpRenderTreeSupportQt::webInspectorExecuteScript):
+        (DumpRenderTreeSupportQt::webInspectorShow):
+        (DumpRenderTreeSupportQt::webInspectorClose):
+        (DumpRenderTreeSupportQt::hasDocumentElement):
+        (DumpRenderTreeSupportQt::pauseAnimation):
+        (DumpRenderTreeSupportQt::pauseTransitionOfProperty):
+        (DumpRenderTreeSupportQt::numberOfActiveAnimations):
+        (DumpRenderTreeSupportQt::clearFrameName):
+        (DumpRenderTreeSupportQt::setCaretBrowsingEnabled):
+        (DumpRenderTreeSupportQt::setAuthorAndUserStylesEnabled):
+        (DumpRenderTreeSupportQt::setSmartInsertDeleteEnabled):
+        (DumpRenderTreeSupportQt::setSelectTrailingWhitespaceEnabled):
+        (DumpRenderTreeSupportQt::executeCoreCommandByName):
+        (DumpRenderTreeSupportQt::isCommandEnabled):
+        (DumpRenderTreeSupportQt::findString):
+        (DumpRenderTreeSupportQt::selectedRange):
+        (DumpRenderTreeSupportQt::firstRectForCharacterRange):
+        (DumpRenderTreeSupportQt::elementDoesAutoCompleteForElementWithId):
+        (DumpRenderTreeSupportQt::setWindowsBehaviorAsEditingBehavior):
+        (DumpRenderTreeSupportQt::viewportAsText):
+        (DumpRenderTreeSupportQt::scalePageBy):
+        (DumpRenderTreeSupportQt::setMockDeviceOrientation):
+        (DumpRenderTreeSupportQt::resetGeolocationMock):
+        (DumpRenderTreeSupportQt::setMockGeolocationPermission):
+        (DumpRenderTreeSupportQt::setMockGeolocationPosition):
+        (DumpRenderTreeSupportQt::setMockGeolocationPositionUnavailableError):
+        (DumpRenderTreeSupportQt::numberOfPendingGeolocationPermissionRequests):
+        (DumpRenderTreeSupportQt::shouldClose):
+        (DumpRenderTreeSupportQt::evaluateScriptInIsolatedWorld):
+        (DumpRenderTreeSupportQt::addUserStyleSheet):
+        (DumpRenderTreeSupportQt::removeUserStyleSheets):
+        (DumpRenderTreeSupportQt::setDefersLoading):
+        (DumpRenderTreeSupportQt::goBack):
+        (DumpRenderTreeSupportQt::responseMimeType):
+        (DumpRenderTreeSupportQt::clearOpener):
+        (DumpRenderTreeSupportQt::setInteractiveFormValidationEnabled):
+        (DumpRenderTreeSupportQt::contextMenu):
+        (DumpRenderTreeSupportQt::setMinimumTimerInterval):
+        (DumpRenderTreeSupportQt::thirdPartyCookiePolicyAllows):
+        (DumpRenderTreeSupportQt::mediaContentUrlByElementId):
+        (DumpRenderTreeSupportQt::setAlternateHtml):
+        (DumpRenderTreeSupportQt::confirmComposition):
+        (DumpRenderTreeSupportQt::injectInternalsObject):
+        (DumpRenderTreeSupportQt::resetInternalsObject):
+        (DumpRenderTreeSupportQt::paintPagesWithBoundaries):
+        (DumpRenderTreeSupportQt::setTrackRepaintRects):
+        (DumpRenderTreeSupportQt::trackRepaintRects):
+        (DumpRenderTreeSupportQt::getTrackedRepaintRects):
+        * WebCoreSupport/DumpRenderTreeSupportQt.h:
+        * WebCoreSupport/EditorClientQt.cpp:
+        (dumpRange):
+        (WebCore::EditorClientQt::shouldShowDeleteInterface):
+        (WebCore::EditorClientQt::shouldInsertText):
+        (WebCore::EditorClientQt::shouldChangeSelectedRange):
+        (WebCore::EditorClientQt::shouldApplyStyle):
+        (WebCore::EditorClientQt::respondToChangedContents):
+        (WebCore::EditorClientQt::respondToChangedSelection):
+        (WebCore::EditorClientQt::registerUndoStep):
+        (WebCore::EditorClientQt::clearUndoRedoOperations):
+        (WebCore::EditorClientQt::canUndo):
+        (WebCore::EditorClientQt::canRedo):
+        (WebCore::EditorClientQt::undo):
+        (WebCore::EditorClientQt::redo):
+        (WebCore::EditorClientQt::shouldInsertNode):
+        (WebCore::EditorClientQt::smartInsertDeleteEnabled):
+        (WebCore::EditorClientQt::toggleSmartInsertDelete):
+        (WebCore::EditorClientQt::isSelectTrailingWhitespaceEnabled):
+        (WebCore::EditorClientQt::handleKeyboardEvent):
+        (WebCore::EditorClientQt::EditorClientQt):
+        (WebCore::EditorClientQt::setInputMethodState):
+        * WebCoreSupport/EditorClientQt.h:
+        (EditorClientQt):
+        (WebCore::EditorClientQt::setSmartInsertDeleteEnabled):
+        (WebCore::EditorClientQt::setSelectTrailingWhitespaceEnabled):
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (drtDescriptionSuitableForTestResult):
+        (WebCore::FrameLoaderClientQt::setFrame):
+        (WebCore::FrameLoaderClientQt::transitionToCommittedForNewPage):
+        (WebCore::FrameLoaderClientQt::dispatchDidChangeLocationWithinPage):
+        (WebCore::FrameLoaderClientQt::dispatchDidStartProvisionalLoad):
+        (WebCore::FrameLoaderClientQt::dispatchDidCommitLoad):
+        (WebCore::FrameLoaderClientQt::dispatchDidFinishDocumentLoad):
+        (WebCore::FrameLoaderClientQt::dispatchDidFinishLoad):
+        (WebCore::FrameLoaderClientQt::dispatchDidLayout):
+        (WebCore::FrameLoaderClientQt::dispatchWillSubmitForm):
+        (WebCore::FrameLoaderClientQt::postProgressStartedNotification):
+        (WebCore::FrameLoaderClientQt::postProgressFinishedNotification):
+        (WebCore::FrameLoaderClientQt::frameLoadCompleted):
+        (WebCore::FrameLoaderClientQt::restoreViewState):
+        (WebCore::FrameLoaderClientQt::userAgent):
+        (WebCore::FrameLoaderClientQt::dispatchDidReceiveIcon):
+        (WebCore::FrameLoaderClientQt::frameLoaderDestroyed):
+        (WebCore::FrameLoaderClientQt::dispatchDidClearWindowObjectInWorld):
+        (WebCore::FrameLoaderClientQt::didPerformFirstNavigation):
+        (WebCore::FrameLoaderClientQt::onIconLoadedForPageURL):
+        (WebCore::FrameLoaderClientQt::updateGlobalHistoryRedirectLinks):
+        (WebCore::FrameLoaderClientQt::saveViewStateToItem):
+        (WebCore::FrameLoaderClientQt::cancelledError):
+        (WebCore::FrameLoaderClientQt::blockedError):
+        (WebCore::FrameLoaderClientQt::cannotShowURLError):
+        (WebCore::FrameLoaderClientQt::interruptedForPolicyChangeError):
+        (WebCore::FrameLoaderClientQt::cannotShowMIMETypeError):
+        (WebCore::FrameLoaderClientQt::fileDoesNotExistError):
+        (WebCore::FrameLoaderClientQt::pluginWillHandleLoadError):
+        (WebCore::FrameLoaderClientQt::download):
+        (WebCore::FrameLoaderClientQt::dispatchWillSendRequest):
+        (WebCore::FrameLoaderClientQt::dispatchDidReceiveResponse):
+        (WebCore::FrameLoaderClientQt::dispatchDidFinishLoading):
+        (WebCore::FrameLoaderClientQt::dispatchDidFailLoading):
+        (WebCore::FrameLoaderClientQt::callErrorPageExtension):
+        (WebCore::FrameLoaderClientQt::dispatchCreatePage):
+        (WebCore::FrameLoaderClientQt::dispatchDecidePolicyForNewWindowAction):
+        (WebCore::FrameLoaderClientQt::dispatchDecidePolicyForNavigationAction):
+        (WebCore::FrameLoaderClientQt::startDownload):
+        (WebCore::FrameLoaderClientQt::createFrame):
+        (WebCore::FrameLoaderClientQt::createPlugin):
+        (WebCore::FrameLoaderClientQt::createJavaAppletWidget):
+        (WebCore::FrameLoaderClientQt::chooseFile):
+        (WebCore::FrameLoaderClientQt::createNetworkingContext):
+        (WebCore):
+        (WebCore::FrameLoaderClientQt::webFrame):
+        (WebCore::FrameLoaderClientQt::emitLoadStarted):
+        (WebCore::FrameLoaderClientQt::emitLoadFinished):
+        * WebCoreSupport/FrameLoaderClientQt.h:
+        (FrameLoaderClientQt):
+        * WebCoreSupport/FrameNetworkingContextQt.cpp:
+        (WebCore::FrameNetworkingContextQt::FrameNetworkingContextQt):
+        (WebCore::FrameNetworkingContextQt::create):
+        (WebCore::FrameNetworkingContextQt::networkAccessManager):
+        * WebCoreSupport/FrameNetworkingContextQt.h:
+        (FrameNetworkingContextQt):
+        * WebCoreSupport/FullScreenVideoQt.cpp:
+        (WebCore):
+        (WebCore::FullScreenVideoQt::FullScreenVideoQt):
+        * WebCoreSupport/FullScreenVideoQt.h:
+        (WebCore):
+        * WebCoreSupport/FullScreenVideoWidget.cpp:
+        * WebCoreSupport/FullScreenVideoWidget.h:
+        * WebCoreSupport/GeolocationClientQt.cpp:
+        (WebCore::GeolocationClientQt::GeolocationClientQt):
+        (WebCore::GeolocationClientQt::positionUpdated):
+        (WebCore::GeolocationClientQt::startUpdating):
+        (WebCore::GeolocationClientQt::requestPermission):
+        (WebCore::GeolocationClientQt::cancelPermissionRequest):
+        * WebCoreSupport/GeolocationClientQt.h:
+        (GeolocationClientQt):
+        * WebCoreSupport/GeolocationPermissionClientQt.cpp:
+        (WebCore::GeolocationPermissionClientQt::requestGeolocationPermissionForFrame):
+        (WebCore::GeolocationPermissionClientQt::cancelGeolocationPermissionRequestForFrame):
+        (WebCore::GeolocationPermissionClientQt::setPermission):
+        * WebCoreSupport/GeolocationPermissionClientQt.h:
+        (GeolocationPermissionClientQt):
+        * WebCoreSupport/InitWebCoreQt.cpp:
+        (WebKit):
+        (WebKit::setWebKitWidgetsInitCallback):
+        (WebKit::initializeWebKitQt):
+        (WebKit::setImagePlatformResource):
+        (WebCore::initializeWebCoreQt):
+        * WebCoreSupport/InitWebCoreQt.h:
+        (WebCore):
+        (WebKit):
+        * WebCoreSupport/InitWebKitQt.cpp: Added.
+        (WebKit):
+        (WebKit::initializeWebKitWidgets):
+        * WebCoreSupport/InitWebKitQt.h: Copied from Source/WebKit/qt/WebCoreSupport/QtWebComboBox.h.
+        (WebKit):
+        * WebCoreSupport/InspectorClientQt.cpp:
+        (WebCore):
+        (WebCore::InspectorClientQt::InspectorClientQt):
+        (WebCore::InspectorClientQt::openInspectorFrontend):
+        (WebCore::InspectorClientQt::attachAndReplaceRemoteFrontend):
+        (WebCore::InspectorClientQt::detachRemoteFrontend):
+        (WebCore::InspectorClientQt::hideHighlight):
+        (WebCore::InspectorClientQt::sendMessageToFrontend):
+        (WebCore::InspectorFrontendClientQt::InspectorFrontendClientQt):
+        (WebCore::InspectorFrontendClientQt::updateWindowTitle):
+        (WebCore::InspectorFrontendClientQt::destroyInspectorView):
+        * WebCoreSupport/InspectorClientQt.h:
+        (InspectorClientQt):
+        (InspectorFrontendClientQt):
+        * WebCoreSupport/InspectorClientWebPage.cpp: Added.
+        (InspectorClientWebPage::InspectorClientWebPage):
+        (InspectorClientWebPage::createWindow):
+        (InspectorClientWebPage::javaScriptWindowObjectCleared):
+        * WebCoreSupport/InspectorClientWebPage.h: Copied from Source/WebKit/qt/WebCoreSupport/WebSystemInterface.h.
+        (WebKit):
+        (InspectorClientWebPage):
+        * WebCoreSupport/InspectorServerQt.cpp:
+        (WebCore::InspectorServerRequestHandlerQt::tcpReadyRead):
+        (WebCore::InspectorServerRequestHandlerQt::webSocketReadyRead):
+        * WebCoreSupport/InspectorServerQt.h:
+        (InspectorServerQt):
+        (InspectorServerRequestHandlerQt):
+        * WebCoreSupport/NotificationPresenterClientQt.cpp:
+        (WebCore::NotificationWrapper::NotificationWrapper):
+        (WebCore::NotificationPresenterClientQt::displayNotification):
+        (WebCore::NotificationPresenterClientQt::requestPermission):
+        (WebCore::NotificationPresenterClientQt::cancelRequestsForPermission):
+        (WebCore::NotificationPresenterClientQt::dumpShowText):
+        (WebCore::NotificationPresenterClientQt::toPage):
+        (WebCore::NotificationPresenterClientQt::toFrame):
+        * WebCoreSupport/NotificationPresenterClientQt.h:
+        (WebCore::NotificationWrapper::~NotificationWrapper):
+        (NotificationWrapper):
+        (NotificationPresenterClientQt):
+        (WebCore::NotificationPresenterClientQt::hasSystemTrayIcon):
+        (WebCore::NotificationPresenterClientQt::setSystemTrayIcon):
+        (CallbacksInfo):
+        (WebCore):
+        * WebCoreSupport/PageClientQt.cpp:
+        (createPlatformGraphicsContext3DFromWidget):
+        (QWebPageClient::ownerWindow):
+        (WebCore::PageClientQWidget::ownerWidget):
+        (WebCore::PageClientQWidget::createPlatformGraphicsContext3D):
+        (WebCore::PageClientQGraphicsWidget::ownerWidget):
+        (WebCore::PageClientQGraphicsWidget::createPlatformGraphicsContext3D):
+        * WebCoreSupport/PageClientQt.h:
+        (PageClientQWidget):
+        (WebCore::QGraphicsItemOverlay::QGraphicsItemOverlay):
+        (WebCore::PageClientQGraphicsWidget::PageClientQGraphicsWidget):
+        (PageClientQGraphicsWidget):
+        * WebCoreSupport/PlatformStrategiesQt.cpp:
+        (PlatformStrategiesQt::getPluginInfo):
+        * WebCoreSupport/PopupMenuQt.cpp:
+        (SelectData::SelectData):
+        * WebCoreSupport/QGraphicsWidgetPluginImpl.cpp: Added.
+        (QGraphicsWidgetPluginImpl::~QGraphicsWidgetPluginImpl):
+        (QGraphicsWidgetPluginImpl::update):
+        (QGraphicsWidgetPluginImpl::setGeometryAndClip):
+        (QGraphicsWidgetPluginImpl::setVisible):
+        (QGraphicsWidgetPluginImpl::setWidgetParent):
+        (QGraphicsWidgetPluginImpl::handle):
+        * WebCoreSupport/QGraphicsWidgetPluginImpl.h: Added.
+        (QGraphicsWidgetPluginImpl):
+        (QGraphicsWidgetPluginImpl::QGraphicsWidgetPluginImpl):
+        * WebCoreSupport/QWebFrameAdapter.cpp: Added.
+        (cacheLoadControlToCachePolicy):
+        (QWebFrameData::QWebFrameData):
+        (QWebFrameAdapter::QWebFrameAdapter):
+        (QWebFrameAdapter::~QWebFrameAdapter):
+        (QWebFrameAdapter::load):
+        (QWebFrameAdapter::handleGestureEvent):
+        (QWebFrameAdapter::scrollPosition):
+        (QWebFrameAdapter::frameRect):
+        (QWebFrameAdapter::init):
+        (QWebFrameAdapter::kit):
+        (QWebFrameAdapter::ensureAbsoluteUrl):
+        * WebCoreSupport/QWebFrameAdapter.h: Added.
+        (WebCore):
+        (QWebFrameData):
+        (QWebFrameAdapter):
+        (QWebFrameAdapter::hasView):
+        * WebCoreSupport/QWebPageAdapter.cpp: Added.
+        (QWebPageAdapter::QWebPageAdapter):
+        (QWebPageAdapter::~QWebPageAdapter):
+        (QWebPageAdapter::init):
+        (QWebPageAdapter::deletePage):
+        (QWebPageAdapter::kit):
+        (QWebPageAdapter::viewportArguments):
+        (QWebPageAdapter::registerUndoStep):
+        (QWebPageAdapter::setNetworkAccessManager):
+        (QWebPageAdapter::networkAccessManager):
+        * WebCoreSupport/QWebPageAdapter.h: Added.
+        (WebCore):
+        (QWebPageAdapter):
+        (ErrorPageOption):
+        (ErrorPageReturn):
+        * WebCoreSupport/QWebUndoCommand.cpp: Copied from Source/WebKit/qt/WebCoreSupport/QtWebComboBox.h.
+        (QWebUndoCommand::QWebUndoCommand):
+        (QWebUndoCommand::undo):
+        (QWebUndoCommand::redo):
+        * WebCoreSupport/QWebUndoCommand.h: Copied from Source/WebKit/qt/WebCoreSupport/QtWebComboBox.h.
+        (QWebUndoCommand):
+        * WebCoreSupport/QWidgetPluginImpl.cpp: Added.
+        (QWidgetPluginImpl::~QWidgetPluginImpl):
+        (QWidgetPluginImpl::update):
+        (QWidgetPluginImpl::setGeometryAndClip):
+        (QWidgetPluginImpl::setVisible):
+        (QWidgetPluginImpl::setStyleSheet):
+        (QWidgetPluginImpl::setWidgetParent):
+        (QWidgetPluginImpl::handle):
+        * WebCoreSupport/QWidgetPluginImpl.h: Copied from Source/WebKit/qt/WebCoreSupport/QtWebComboBox.h.
+        (QWidgetPluginImpl):
+        (QWidgetPluginImpl::QWidgetPluginImpl):
+        * WebCoreSupport/QtFallbackWebPopup.cpp:
+        (WebCore::QtFallbackWebPopup::QtFallbackWebPopup):
+        (WebCore::QtFallbackWebPopup::show):
+        (WebCore::QtFallbackWebPopup::pageClient):
+        * WebCoreSupport/QtFallbackWebPopup.h:
+        (QtFallbackWebPopup):
+        * WebCoreSupport/QtPluginWidgetAdapter.h: Copied from Source/WebKit/qt/WebCoreSupport/QtWebComboBox.h.
+        (QtPluginWidgetAdapter):
+        * WebCoreSupport/QtWebComboBox.cpp:
+        (WebCore::QtWebComboBox::showPopupAtCursorPosition):
+        * WebCoreSupport/QtWebComboBox.h:
+        * WebCoreSupport/SearchPopupMenuQt.h:
+        (SearchPopupMenuQt):
+        * WebCoreSupport/UndoStepQt.cpp:
+        (UndoStepQt::UndoStepQt):
+        (UndoStepQt::text):
+        * WebCoreSupport/UndoStepQt.h:
+        (UndoStepQt):
+        * WebCoreSupport/WebEventConversion.cpp:
+        (WebCore::mouseEventTypeAndMouseButtonFromQEvent):
+        (WebKitPlatformWheelEvent):
+        (WebCore::WebKitPlatformWheelEvent::applyDelta):
+        (WebCore::WebKitPlatformWheelEvent::WebKitPlatformWheelEvent):
+        (WebKitPlatformGestureEvent):
+        (WebCore::toPlatformEventType):
+        (WebCore::WebKitPlatformGestureEvent::WebKitPlatformGestureEvent):
+        (WebCore):
+        (WebCore::convertWheelEvent):
+        (WebCore::convertGesture):
+        * WebCoreSupport/WebEventConversion.h:
+        (QGestureEventFacade):
+        (WebCore):
+        * WebCoreSupport/WebSystemInterface.h:
+        * tests/qwebpage/tst_qwebpage.cpp:
+        (tst_QWebPage::loadHtml5Video):
+        (tst_QWebPage::multiplePageGroupsAndLocalStorage):
+        (tst_QWebPage::thirdPartyCookiePolicy):
+
 2012-11-21  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         Position in QWebHitTestResult does not match documentation

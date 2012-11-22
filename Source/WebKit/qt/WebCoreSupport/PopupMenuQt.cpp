@@ -29,12 +29,11 @@
 #include "ChromeClientQt.h"
 #include "FrameView.h"
 #include "PopupMenuClient.h"
-
 #include "qwebkitplatformplugin.h"
 
 class SelectData : public QWebSelectData {
 public:
-    SelectData(WebCore::PopupMenuClient*& data) : d(data) {}
+    SelectData(WebCore::PopupMenuClient*& data) : d(data) { }
 
     virtual ItemType itemType(int) const;
     virtual QString itemText(int idx) const { return QString(d ? d->itemText(idx) : ""); }

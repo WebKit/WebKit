@@ -41,8 +41,10 @@ class QPrinter;
 QT_END_NAMESPACE
 
 class QWebNetworkRequest;
+class QWebFrameAdapter;
 class QWebFramePrivate;
 class QWebPage;
+class QWebPageAdapter;
 class QWebHitTestResult;
 class QWebHistoryItem;
 class QWebSecurityOrigin;
@@ -115,8 +117,8 @@ class QWEBKIT_EXPORT QWebFrame : public QObject {
     Q_PROPERTY(QPoint scrollPosition READ scrollPosition WRITE setScrollPosition)
     Q_PROPERTY(bool focus READ hasFocus)
 private:
-    QWebFrame(QWebPage *parent, QWebFrameData *frameData);
-    QWebFrame(QWebFrame *parent, QWebFrameData *frameData);
+    QWebFrame(QWebPage *parentPage);
+    QWebFrame(QWebFrame* parent, QWebFrameData*);
     ~QWebFrame();
 
 public:
@@ -200,6 +202,7 @@ public:
     virtual bool event(QEvent *);
 
     QWebSecurityOrigin securityOrigin() const;
+    QWebFrameAdapter* handle() const;
 
 public Q_SLOTS:
     QVariant evaluateJavaScript(const QString& scriptSource);

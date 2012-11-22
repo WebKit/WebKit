@@ -32,10 +32,9 @@
 #include "GeolocationPermissionClientQt.h"
 
 #include "Geolocation.h"
-
-#include "qwebframe.h"
+#include "QWebFrameAdapter.h"
+#include "QWebPageAdapter.h"
 #include "qwebkitglobal.h"
-#include "qwebpage.h"
 
 namespace WebCore {
 
@@ -60,36 +59,30 @@ GeolocationPermissionClientQt::~GeolocationPermissionClientQt()
 {
 }
 
-void GeolocationPermissionClientQt::requestGeolocationPermissionForFrame(QWebFrame* webFrame, Geolocation* listener)
+void GeolocationPermissionClientQt::requestGeolocationPermissionForFrame(QWebFrameAdapter* webFrame, Geolocation* listener)
 {
     m_pendingPermissionRequests.insert(webFrame, listener);
 
-    QWebPage* page = webFrame->page();
-    emit page->featurePermissionRequested(webFrame, QWebPage::Geolocation);
+    QWebPageAdapter* page = QWebPageAdapter::kit(webFrame->frame->page());
+    page->geolocationPermissionRequested(webFrame);
 }
 
 
-void GeolocationPermissionClientQt::cancelGeolocationPermissionRequestForFrame(QWebFrame* webFrame, Geolocation* listener)
+void GeolocationPermissionClientQt::cancelGeolocationPermissionRequestForFrame(QWebFrameAdapter* webFrame, Geolocation* listener)
 {
     m_pendingPermissionRequests.remove(webFrame);
 
-    QWebPage* page = webFrame->page();
-    emit page->featurePermissionRequestCanceled(webFrame, QWebPage::Geolocation);
+    QWebPageAdapter* page = QWebPageAdapter::kit(webFrame->frame->page());
+    page->geolocationPermissionRequestCancelled(webFrame);
 }
 
-void GeolocationPermissionClientQt::setPermission(QWebFrame* webFrame, QWebPage::PermissionPolicy permission)
+void GeolocationPermissionClientQt::setPermission(QWebFrameAdapter* webFrame, bool granted)
 {  
     if (!m_pendingPermissionRequests.contains(webFrame)) 
         return;
 
     Geolocation* listener = m_pendingPermissionRequests.value(webFrame);
-
-    if (permission == QWebPage::PermissionGrantedByUser)
-        listener->setIsAllowed(true);
-    else if (permission == QWebPage::PermissionDeniedByUser)
-        listener->setIsAllowed(false);
-    else
-        return;
+    listener->setIsAllowed(granted);
 
     m_pendingPermissionRequests.remove(webFrame);
 }

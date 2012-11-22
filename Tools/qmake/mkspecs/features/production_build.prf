@@ -8,7 +8,7 @@ CONFIG *= use_all_in_one_files
 # by compiling any static library like WTF or JSC with release flags instead and keep debug
 # symbols for the static libraries that implement API.
 linux-*|win32-g++*:if(CONFIG(debug, debug|release)|contains(QT_CONFIG,separate_debug_info)):contains(TEMPLATE, lib):staticlib {
-    !equals(TARGET, WebKit2):!equals(TARGET, WebKit1) {
+    !equals(TARGET, WebKit2):!equals(TARGET, WebKitWidgets) {
         CONFIG += no_debug_info
         CONFIG -= separate_debug_info
         QMAKE_CFLAGS += $$QMAKE_CFLAGS_RELEASE

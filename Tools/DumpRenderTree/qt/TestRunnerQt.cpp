@@ -92,7 +92,7 @@ void TestRunner::reset()
     DumpRenderTreeSupportQt::setCustomPolicyDelegate(false, false);
     DumpRenderTreeSupportQt::dumpHistoryCallbacks(false);
     DumpRenderTreeSupportQt::dumpVisitedLinksCallbacks(false);
-    DumpRenderTreeSupportQt::resetGeolocationMock(m_drt->webPage());
+    DumpRenderTreeSupportQt::resetGeolocationMock(m_drt->pageAdapter());
     setIconDatabaseEnabled(false);
     clearAllDatabases();
     // The default state for DRT is to block third-party cookies, mimicing the Mac port
@@ -243,7 +243,7 @@ void TestRunner::simulateLegacyWebNotificationClick(const QString& title)
 
 void TestRunner::display()
 {
-    DumpRenderTreeSupportQt::setTrackRepaintRects(m_topLoadingFrame, true);
+    DumpRenderTreeSupportQt::setTrackRepaintRects(m_topLoadingFrame->handle(), true);
     emit showPage();
 }
 
@@ -417,7 +417,7 @@ QString TestRunner::decodeHostName(const QString& host)
 
 void TestRunner::closeWebInspector()
 {
-    DumpRenderTreeSupportQt::webInspectorClose(m_drt->webPage());
+    DumpRenderTreeSupportQt::webInspectorClose(m_drt->pageAdapter());
     m_drt->webPage()->settings()->setAttribute(QWebSettings::DeveloperExtrasEnabled, false);
 }
 
@@ -434,27 +434,27 @@ void TestRunner::setAsynchronousSpellCheckingEnabled(bool)
 void TestRunner::showWebInspector()
 {
     m_drt->webPage()->settings()->setAttribute(QWebSettings::DeveloperExtrasEnabled, true);
-    DumpRenderTreeSupportQt::webInspectorShow(m_drt->webPage());
+    DumpRenderTreeSupportQt::webInspectorShow(m_drt->pageAdapter());
 }
 
 void TestRunner::evaluateInWebInspector(long callId, const QString& script)
 {
-    DumpRenderTreeSupportQt::webInspectorExecuteScript(m_drt->webPage(), callId, script);
+    DumpRenderTreeSupportQt::webInspectorExecuteScript(m_drt->pageAdapter(), callId, script);
 }
 
 void TestRunner::setFrameFlatteningEnabled(bool enabled)
 {
-    DumpRenderTreeSupportQt::setFrameFlatteningEnabled(m_drt->webPage(), enabled);
+    DumpRenderTreeSupportQt::setFrameFlatteningEnabled(m_drt->pageAdapter(), enabled);
 }
 
 void TestRunner::goBack()
 {
-    DumpRenderTreeSupportQt::goBack(m_drt->webPage());
+    DumpRenderTreeSupportQt::goBack(m_drt->pageAdapter());
 }
 
 void TestRunner::setDefersLoading(bool flag)
 {
-    DumpRenderTreeSupportQt::setDefersLoading(m_drt->webPage(), flag);
+    DumpRenderTreeSupportQt::setDefersLoading(m_drt->pageAdapter(), flag);
 }
 
 void TestRunner::setAllowUniversalAccessFromFileURLs(bool enabled)
@@ -544,7 +544,7 @@ bool TestRunner::pauseAnimationAtTimeOnElementWithId(const QString& animationNam
 {
     QWebFrame* frame = m_drt->webPage()->mainFrame();
     Q_ASSERT(frame);
-    return DumpRenderTreeSupportQt::pauseAnimation(frame, animationName, time, elementId);
+    return DumpRenderTreeSupportQt::pauseAnimation(frame->handle(), animationName, time, elementId);
 }
 
 bool TestRunner::pauseTransitionAtTimeOnElementWithId(const QString& propertyName,
@@ -553,14 +553,14 @@ bool TestRunner::pauseTransitionAtTimeOnElementWithId(const QString& propertyNam
 {
     QWebFrame* frame = m_drt->webPage()->mainFrame();
     Q_ASSERT(frame);
-    return DumpRenderTreeSupportQt::pauseTransitionOfProperty(frame, propertyName, time, elementId);
+    return DumpRenderTreeSupportQt::pauseTransitionOfProperty(frame->handle(), propertyName, time, elementId);
 }
 
 unsigned TestRunner::numberOfActiveAnimations() const
 {
     QWebFrame* frame = m_drt->webPage()->mainFrame();
     Q_ASSERT(frame);
-    return DumpRenderTreeSupportQt::numberOfActiveAnimations(frame);
+    return DumpRenderTreeSupportQt::numberOfActiveAnimations(frame->handle());
 }
 
 void TestRunner::disableImageLoading()
@@ -698,12 +698,12 @@ void TestRunner::setUserStyleSheetLocation(const QString& url)
 
 void TestRunner::setCaretBrowsingEnabled(bool value)
 {
-    DumpRenderTreeSupportQt::setCaretBrowsingEnabled(m_drt->webPage(), value);
+    DumpRenderTreeSupportQt::setCaretBrowsingEnabled(m_drt->pageAdapter(), value);
 }
 
 void TestRunner::setAuthorAndUserStylesEnabled(bool value)
 {
-    DumpRenderTreeSupportQt::setAuthorAndUserStylesEnabled(m_drt->webPage(), value);
+    DumpRenderTreeSupportQt::setAuthorAndUserStylesEnabled(m_drt->pageAdapter(), value);
 }
 
 void TestRunner::setUserStyleSheetEnabled(bool enabled)
@@ -728,7 +728,7 @@ int TestRunner::workerThreadCount()
 
 bool TestRunner::callShouldCloseOnWebView()
 {
-    return DumpRenderTreeSupportQt::shouldClose(m_drt->webPage()->mainFrame());
+    return DumpRenderTreeSupportQt::shouldClose(m_drt->mainFrameAdapter());
 }
 
 void TestRunner::setScrollbarPolicy(const QString& orientation, const QString& policy)
@@ -757,27 +757,27 @@ void TestRunner::setScrollbarPolicy(const QString& orientation, const QString& p
 
 void TestRunner::setSmartInsertDeleteEnabled(bool enable)
 {
-    DumpRenderTreeSupportQt::setSmartInsertDeleteEnabled(m_drt->webPage(), enable);
+    DumpRenderTreeSupportQt::setSmartInsertDeleteEnabled(m_drt->pageAdapter(), enable);
 }
 
 void TestRunner::setSelectTrailingWhitespaceEnabled(bool enable)
 {
-    DumpRenderTreeSupportQt::setSelectTrailingWhitespaceEnabled(m_drt->webPage(), enable);
+    DumpRenderTreeSupportQt::setSelectTrailingWhitespaceEnabled(m_drt->pageAdapter(), enable);
 }
 
 void TestRunner::execCommand(const QString& name, const QString& value)
 {
-    DumpRenderTreeSupportQt::executeCoreCommandByName(m_drt->webPage(), name, value);
+    DumpRenderTreeSupportQt::executeCoreCommandByName(m_drt->pageAdapter(), name, value);
 }
 
 bool TestRunner::isCommandEnabled(const QString& name) const
 {
-    return DumpRenderTreeSupportQt::isCommandEnabled(m_drt->webPage(), name);
+    return DumpRenderTreeSupportQt::isCommandEnabled(m_drt->pageAdapter(), name);
 }
 
 bool TestRunner::findString(const QString& string, const QStringList& optionArray)
 {
-    return DumpRenderTreeSupportQt::findString(m_drt->webPage(), string, optionArray);
+    return DumpRenderTreeSupportQt::findString(m_drt->pageAdapter(), string, optionArray);
 }
 
 QString TestRunner::markerTextForListItem(const QWebElement& listItem)
@@ -792,7 +792,7 @@ QVariantMap TestRunner::computedStyleIncludingVisitedInfo(const QWebElement& ele
 
 bool TestRunner::elementDoesAutoCompleteForElementWithId(const QString& elementId)
 {
-    return DumpRenderTreeSupportQt::elementDoesAutoCompleteForElementWithId(m_drt->webPage()->mainFrame(), elementId);
+    return DumpRenderTreeSupportQt::elementDoesAutoCompleteForElementWithId(m_drt->mainFrameAdapter(), elementId);
 }
 
 void TestRunner::authenticateSession(const QString&, const QString&, const QString&)
@@ -812,7 +812,7 @@ void TestRunner::setMockDeviceOrientation(bool canProvideAlpha, double alpha, bo
 {
     QList<WebCore::WebPage*> pages = m_drt->getAllPages();
     foreach (WebCore::WebPage* page, pages)
-        DumpRenderTreeSupportQt::setMockDeviceOrientation(page, canProvideAlpha, alpha, canProvideBeta, beta, canProvideGamma, gamma);
+        DumpRenderTreeSupportQt::setMockDeviceOrientation(page->handle(), canProvideAlpha, alpha, canProvideBeta, beta, canProvideGamma, gamma);
 }
 
 void TestRunner::setGeolocationPermission(bool allow)
@@ -820,7 +820,7 @@ void TestRunner::setGeolocationPermission(bool allow)
     setGeolocationPermissionCommon(allow);
     QList<WebCore::WebPage*> pages = m_drt->getAllPages();
     foreach (WebCore::WebPage* page, pages)
-        DumpRenderTreeSupportQt::setMockGeolocationPermission(page, allow);
+        DumpRenderTreeSupportQt::setMockGeolocationPermission(page->handle(), allow);
 }
 
 int TestRunner::numberOfPendingGeolocationPermissionRequests()
@@ -828,7 +828,7 @@ int TestRunner::numberOfPendingGeolocationPermissionRequests()
     int pendingPermissionCount = 0;
     QList<WebCore::WebPage*> pages = m_drt->getAllPages();
     foreach (WebCore::WebPage* page, pages)
-        pendingPermissionCount += DumpRenderTreeSupportQt::numberOfPendingGeolocationPermissionRequests(page);
+        pendingPermissionCount += DumpRenderTreeSupportQt::numberOfPendingGeolocationPermissionRequests(page->handle());
 
     return pendingPermissionCount;
 }
@@ -843,14 +843,14 @@ void TestRunner::setMockGeolocationPositionUnavailableError(const QString& messa
 {
     QList<WebCore::WebPage*> pages = m_drt->getAllPages();
     foreach (WebCore::WebPage* page, pages)
-        DumpRenderTreeSupportQt::setMockGeolocationPositionUnavailableError(page, message);
+        DumpRenderTreeSupportQt::setMockGeolocationPositionUnavailableError(page->handle(), message);
 }
 
 void TestRunner::setMockGeolocationPosition(double latitude, double longitude, double accuracy)
 {
     QList<WebCore::WebPage*> pages = m_drt->getAllPages();
     foreach (WebCore::WebPage* page, pages)
-        DumpRenderTreeSupportQt::setMockGeolocationPosition(page, latitude, longitude, accuracy);
+        DumpRenderTreeSupportQt::setMockGeolocationPosition(page->handle(), latitude, longitude, accuracy);
 }
 
 void TestRunner::addMockSpeechInputResult(const QString& result, double confidence, const QString& language)
@@ -878,12 +878,12 @@ void TestRunner::evaluateScriptInIsolatedWorldAndReturnValue(int worldID, const 
 
 void TestRunner::evaluateScriptInIsolatedWorld(int worldID, const QString& script)
 {
-    DumpRenderTreeSupportQt::evaluateScriptInIsolatedWorld(m_drt->webPage()->mainFrame(), worldID, script);
+    DumpRenderTreeSupportQt::evaluateScriptInIsolatedWorld(m_drt->mainFrameAdapter(), worldID, script);
 }
 
 void TestRunner::addUserStyleSheet(const QString& sourceCode)
 {
-    DumpRenderTreeSupportQt::addUserStyleSheet(m_drt->webPage(), sourceCode);
+    DumpRenderTreeSupportQt::addUserStyleSheet(m_drt->pageAdapter(), sourceCode);
 }
 
 void TestRunner::removeAllVisitedLinks()
@@ -900,7 +900,7 @@ void TestRunner::addURLToRedirect(const QString& origin, const QString& destinat
 
 void TestRunner::setMinimumTimerInterval(double minimumTimerInterval)
 {
-    DumpRenderTreeSupportQt::setMinimumTimerInterval(m_drt->webPage(), minimumTimerInterval);
+    DumpRenderTreeSupportQt::setMinimumTimerInterval(m_drt->pageAdapter(), minimumTimerInterval);
 }
 
 void TestRunner::originsWithLocalStorage()

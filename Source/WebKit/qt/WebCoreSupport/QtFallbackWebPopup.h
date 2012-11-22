@@ -23,8 +23,6 @@
 #include "qwebkitplatformplugin.h"
 #include <wtf/Platform.h>
 
-#include <QComboBox>
-
 #ifndef QT_NO_COMBOBOX
 
 QT_BEGIN_NAMESPACE
@@ -32,16 +30,16 @@ class QGraphicsProxyWidget;
 QT_END_NAMESPACE
 
 class QWebPageClient;
+class QWebPageAdapter;
 
 namespace WebCore {
 
-class ChromeClientQt;
 class QtWebComboBox;
 
 class QtFallbackWebPopup : public QWebSelectMethod {
     Q_OBJECT
 public:
-    QtFallbackWebPopup(const ChromeClientQt*);
+    QtFallbackWebPopup(const QWebPageAdapter*);
     ~QtFallbackWebPopup();
 
     virtual void show(const QWebSelectData&);
@@ -59,7 +57,7 @@ private Q_SLOTS:
 
 private:
     QtWebComboBox* m_combo;
-    const ChromeClientQt* m_chromeClient;
+    const QWebPageAdapter* m_page;
     QRect m_geometry;
     QFont m_font;
 

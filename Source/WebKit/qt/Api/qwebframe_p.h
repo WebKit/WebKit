@@ -21,24 +21,25 @@
 #ifndef QWEBFRAME_P_H
 #define QWEBFRAME_P_H
 
+#include "QWebFrameAdapter.h"
+
 #include "qwebframe.h"
 #include "qwebpage_p.h"
 
 #include "EventHandler.h"
+#include "Frame.h"
 #include "GraphicsContext.h"
 #include "KURL.h"
 #if ENABLE(ORIENTATION_EVENTS)
 #include "qorientationsensor.h"
 #endif // ENABLE(ORIENTATION_EVENTS).
 #include "qwebelement.h"
-#include "wtf/RefPtr.h"
-#include "Frame.h"
-#include "ViewportArguments.h"
-#include <wtf/text/WTFString.h>
-
 #if USE(ACCELERATED_COMPOSITING)
 #include "texmap/TextureMapper.h"
 #endif
+#include "ViewportArguments.h"
+#include <wtf/RefPtr.h>
+#include <wtf/text/WTFString.h>
 
 
 namespace WebCore {
@@ -50,42 +51,17 @@ namespace WebCore {
 }
 class QWebPage;
 
-class QWebFrameData {
-public:
-    QWebFrameData(WebCore::Page*, WebCore::Frame* parentFrame = 0,
-                  WebCore::HTMLFrameOwnerElement* = 0,
-                  const WTF::String& frameName = WTF::String());
-
-    WebCore::KURL url;
-    WTF::String name;
-    WebCore::HTMLFrameOwnerElement* ownerElement;
-    WebCore::Page* page;
-    RefPtr<WebCore::Frame> frame;
-    WebCore::FrameLoaderClientQt* frameLoaderClient;
-
-    WTF::String referrer;
-    bool allowsScrolling;
-    int marginWidth;
-    int marginHeight;
-};
-
-class QWebFramePrivate {
+class QWebFramePrivate : public QWebFrameAdapter {
 public:
     QWebFramePrivate()
         : q(0)
         , horizontalScrollBarPolicy(Qt::ScrollBarAsNeeded)
         , verticalScrollBarPolicy(Qt::ScrollBarAsNeeded)
-        , frameLoaderClient(0)
-        , frame(0)
         , page(0)
-        , allowsScrolling(true)
-        , marginWidth(-1)
-        , marginHeight(-1)
 #if USE(ACCELERATED_COMPOSITING)
         , rootTextureMapperLayer(0)
 #endif
         {}
-    void init(QWebFrame* qframe, QWebFrameData* frameData);
     void setPage(QWebPage*);
 
     inline QWebFrame *parentFrame() { return qobject_cast<QWebFrame*>(q->parent()); }
@@ -95,6 +71,7 @@ public:
 
     static WebCore::Frame* core(const QWebFrame*);
     static QWebFrame* kit(const WebCore::Frame*);
+    static QWebFrame* kit(const QWebFrameAdapter*);
 
     void renderRelativeCoords(WebCore::GraphicsContext*, QFlags<QWebFrame::RenderLayer>, const QRegion& clip);
 #if USE(TILED_BACKING_STORE)
@@ -105,22 +82,29 @@ public:
     void renderCompositedLayers(WebCore::GraphicsContext*, const WebCore::IntRect& clip);
 #endif
     void renderFrameExtras(WebCore::GraphicsContext*, QFlags<QWebFrame::RenderLayer>, const QRegion& clip);
-    void emitUrlChanged();
     void _q_orientationChanged();
 
-    void didClearWindowObject();
+
+    // Adapter implementation
+    virtual QWebFrame* apiHandle() OVERRIDE;
+    virtual QObject* handle() OVERRIDE;
+    virtual void contentsSizeDidChange(const QSize &) OVERRIDE;
+    virtual int scrollBarPolicy(Qt::Orientation) const OVERRIDE;
+    virtual void emitUrlChanged() OVERRIDE;
+    virtual void didStartProvisionalLoad() OVERRIDE;
+    virtual void didClearWindowObject() OVERRIDE;
+    virtual bool handleProgressFinished(QPoint*) OVERRIDE;
+    virtual void emitInitialLayoutCompleted() OVERRIDE;
+    virtual void emitIconChanged() OVERRIDE;
+    virtual void emitLoadStarted(bool originatingLoad) OVERRIDE;
+    virtual void emitLoadFinished(bool originatingLoad, bool ok) OVERRIDE;
+    virtual QWebFrameAdapter* createChildFrame(QWebFrameData*) OVERRIDE;
 
     QWebFrame *q;
     Qt::ScrollBarPolicy horizontalScrollBarPolicy;
     Qt::ScrollBarPolicy verticalScrollBarPolicy;
-    WebCore::FrameLoaderClientQt *frameLoaderClient;
-    WebCore::Frame *frame;
     QWebPage *page;
-    WebCore::KURL url;
 
-    bool allowsScrolling;
-    int marginWidth;
-    int marginHeight;
 #if USE(ACCELERATED_COMPOSITING)
     WebCore::TextureMapperLayer* rootTextureMapperLayer;
     OwnPtr<WebCore::TextureMapper> textureMapper;

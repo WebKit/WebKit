@@ -28,13 +28,13 @@
 
 #include "DragClient.h"
 
-class QWebPage;
-
 namespace WebCore {
+
+class ChromeClient;
 
 class DragClientQt : public DragClient {
 public:
-    DragClientQt(QWebPage* webPage) : m_webPage(webPage) {};
+    DragClientQt(ChromeClient* chromeClient) : m_chromeClient(chromeClient) { };
     virtual void willPerformDragDestinationAction(DragDestinationAction, DragData*);
     virtual DragDestinationAction actionMaskForDrag(DragData*);
     virtual void dragControllerDestroyed();
@@ -42,7 +42,7 @@ public:
     virtual void willPerformDragSourceAction(DragSourceAction, const IntPoint&, Clipboard*);    
     virtual void startDrag(DragImageRef, const IntPoint& dragImageOrigin, const IntPoint& eventPos, Clipboard*, Frame*, bool linkDrag = false);
 private:
-    QWebPage* m_webPage;
+    ChromeClient* m_chromeClient;
 };
 
 }

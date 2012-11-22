@@ -39,6 +39,7 @@
 #include "JSHTMLElement.h"
 #include "JSObject.h"
 #include "PropertyNameArray.h"
+#include <QWebFrameAdapter.h>
 #include <parser/SourceCode.h>
 #include "qt_runtime.h"
 #include "NodeList.h"
@@ -47,8 +48,6 @@
 #include "StaticNodeList.h"
 #include "StyleResolver.h"
 #include "markup.h"
-#include "qwebframe.h"
-#include "qwebframe_p.h"
 #include "runtime_root.h"
 #include <JSDocument.h>
 #include <wtf/Vector.h>
@@ -706,7 +705,8 @@ QWebFrame *QWebElement::webFrame() const
     Frame* frame = document->frame();
     if (!frame)
         return 0;
-    return QWebFramePrivate::kit(frame);
+    QWebFrameAdapter* frameAdapter = QWebFrameAdapter::kit(frame);
+    return frameAdapter->apiHandle();
 }
 
 static bool setupScriptContext(WebCore::Element* element, JSC::JSValue& thisValue, ScriptState*& state, ScriptController*& scriptController)

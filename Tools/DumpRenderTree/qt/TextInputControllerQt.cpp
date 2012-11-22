@@ -149,15 +149,15 @@ void TextInputController::insertText(const QString& string)
 
 QVariantList TextInputController::selectedRange()
 {
-    return DumpRenderTreeSupportQt::selectedRange(qobject_cast<QWebPage*>(parent()));
+    return DumpRenderTreeSupportQt::selectedRange(qobject_cast<QWebPage*>(parent())->handle());
 }
 
 QVariantList TextInputController::firstRectForCharacterRange(int location, int length)
 {
-    return DumpRenderTreeSupportQt::firstRectForCharacterRange(qobject_cast<QWebPage*>(parent()), location, length);
+    return DumpRenderTreeSupportQt::firstRectForCharacterRange(qobject_cast<QWebPage*>(parent())->handle(), location, length);
 }
 
 void TextInputController::unmarkText()
 {
-    DumpRenderTreeSupportQt::confirmComposition(qobject_cast<QWebPage*>(parent()), 0);
+    DumpRenderTreeSupportQt::confirmComposition(qobject_cast<QWebPage*>(parent())->handle(), 0);
 }

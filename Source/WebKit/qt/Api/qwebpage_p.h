@@ -21,29 +21,22 @@
 #ifndef QWEBPAGE_P_H
 #define QWEBPAGE_P_H
 
-#include <QPointer>
+#include "QWebPageAdapter.h"
 
+#include "qwebframe.h"
+#include "qwebhistory.h"
+#include "qwebpage.h"
+
+#include <QPointer>
 #include <qbasictimer.h>
-#include <qnetworkproxy.h>
 #include <qevent.h>
 #include <qgesture.h>
 #include <qgraphicssceneevent.h>
+#include <qgraphicswidget.h>
+#include <qnetworkproxy.h>
 
-#include "qwebpage.h"
-#include "qwebhistory.h"
-#include "qwebframe.h"
-
-#include "IntPoint.h"
-#include "KURL.h"
-
-#include <wtf/OwnPtr.h>
-#include <wtf/RefPtr.h>
-#include <wtf/text/WTFString.h>
-
-#include "ViewportArguments.h"
 
 namespace WebCore {
-    class ChromeClientQt;
     class ContextMenuClientQt;
     class ContextMenuItem;
     class ContextMenu;
@@ -54,7 +47,6 @@ namespace WebCore {
     class IntRect;
     class Node;
     class NodeList;
-    class Page;
     class Frame;
 }
 
@@ -64,8 +56,10 @@ class QMenu;
 class QBitArray;
 QT_END_NAMESPACE
 
+class QtPluginWidgetAdapter;
 class QWebInspector;
-class QWebPageClient;
+class QWebFrameAdapter;
+class UndoStepQt;
 
 class QtViewportAttributesPrivate : public QSharedData {
 public:
@@ -76,13 +70,73 @@ public:
     QWebPage::ViewportAttributes* q;
 };
 
-class QWebPagePrivate {
+class QWebPagePrivate : public QWebPageAdapter {
 public:
     QWebPagePrivate(QWebPage*);
     ~QWebPagePrivate();
 
     static WebCore::Page* core(const QWebPage*);
-    static QWebPagePrivate* priv(QWebPage*);
+
+    // Adapter implementation
+    virtual void show() OVERRIDE;
+    virtual void setFocus() OVERRIDE;
+    virtual void unfocus() OVERRIDE;
+    virtual void setWindowRect(const QRect &) OVERRIDE;
+    virtual QSize viewportSize() const OVERRIDE;
+    virtual QWebPageAdapter* createWindow(bool /*dialog*/) OVERRIDE;
+    virtual QObject* handle() OVERRIDE { return q; }
+    virtual void javaScriptConsoleMessage(const QString& message, int lineNumber, const QString& sourceID) OVERRIDE;
+    virtual void javaScriptAlert(QWebFrameAdapter*, const QString& msg) OVERRIDE;
+    virtual bool javaScriptConfirm(QWebFrameAdapter*, const QString& msg) OVERRIDE;
+    virtual bool javaScriptPrompt(QWebFrameAdapter*, const QString& msg, const QString& defaultValue, QString* result) OVERRIDE;
+    virtual void printRequested(QWebFrameAdapter*) OVERRIDE;
+    virtual void databaseQuotaExceeded(QWebFrameAdapter*, const QString& databaseName) OVERRIDE;
+    virtual void applicationCacheQuotaExceeded(QWebSecurityOrigin*, quint64 defaultOriginQuota, quint64 totalSpaceNeeded) OVERRIDE;
+    virtual void setToolTip(const QString&) OVERRIDE;
+#if USE(QT_MULTIMEDIA)
+    virtual QWebFullScreenVideoHandler* createFullScreenVideoHandler() OVERRIDE;
+#endif
+    virtual QWebFrameAdapter* mainFrameAdapter() OVERRIDE;
+    virtual QStringList chooseFiles(QWebFrameAdapter*, bool allowMultiple, const QStringList& suggestedFileNames) OVERRIDE;
+    virtual QColor colorSelectionRequested(const QColor& selectedColor) OVERRIDE;
+    virtual QWebSelectMethod* createSelectPopup() OVERRIDE;
+    virtual QRect viewRectRelativeToWindow() OVERRIDE;
+    virtual void geolocationPermissionRequested(QWebFrameAdapter*) OVERRIDE;
+    virtual void geolocationPermissionRequestCancelled(QWebFrameAdapter*) OVERRIDE;
+    virtual void notificationsPermissionRequested(QWebFrameAdapter*) OVERRIDE;
+    virtual void notificationsPermissionRequestCancelled(QWebFrameAdapter*) OVERRIDE;
+
+    virtual void respondToChangedContents() OVERRIDE;
+    virtual void respondToChangedSelection() OVERRIDE;
+    virtual void microFocusChanged() OVERRIDE;
+    virtual void triggerCopyAction() OVERRIDE;
+    virtual void triggerActionForKeyEvent(QKeyEvent*) OVERRIDE;
+    virtual void clearUndoStack() OVERRIDE;
+    virtual bool canUndo() const OVERRIDE;
+    virtual bool canRedo() const OVERRIDE;
+    virtual void undo() OVERRIDE;
+    virtual void redo() OVERRIDE;
+    virtual void createUndoStep(QSharedPointer<UndoStepQt>) OVERRIDE;
+    virtual const char* editorCommandForKeyEvent(QKeyEvent*) OVERRIDE;
+
+    void updateNavigationActions() OVERRIDE;
+
+    virtual QObject* inspectorHandle() OVERRIDE;
+    virtual void setInspectorFrontend(QObject*) OVERRIDE;
+    virtual void setInspectorWindowTitle(const QString&) OVERRIDE;
+    virtual void createWebInspector(QObject** inspectorView, QWebPageAdapter** inspectorPage) OVERRIDE;
+    virtual QStringList menuActionsAsText() OVERRIDE;
+    virtual void emitViewportChangeRequested() OVERRIDE;
+    virtual bool acceptNavigationRequest(QWebFrameAdapter*, const QNetworkRequest&, int type) OVERRIDE;
+    virtual void emitRestoreFrameStateRequested(QWebFrameAdapter*) OVERRIDE;
+    virtual void emitSaveFrameStateRequested(QWebFrameAdapter*, QWebHistoryItem*) OVERRIDE;
+    virtual void emitDownloadRequested(const QNetworkRequest&) OVERRIDE;
+    virtual void emitFrameCreated(QWebFrameAdapter*) OVERRIDE;
+    virtual QString userAgentForUrl(const QUrl &url) const OVERRIDE { return q->userAgentForUrl(url); }
+    virtual bool supportsErrorPageExtension() const OVERRIDE { return q->supportsExtension(QWebPage::ErrorPageExtension); }
+    virtual bool errorPageExtension(ErrorPageOption *, ErrorPageReturn *) OVERRIDE;
+    virtual QtPluginWidgetAdapter* createPlugin(const QString &, const QUrl &, const QStringList &, const QStringList &) OVERRIDE;
+    virtual QtPluginWidgetAdapter* adapterForWidget(QObject *) const OVERRIDE;
 
     void createMainFrame();
 #ifndef QT_NO_CONTEXTMENU
@@ -92,23 +146,20 @@ public:
     void _q_webActionTriggered(bool checked);
     void _q_cleanupLeakMessages();
     void updateAction(QWebPage::WebAction action);
-    void updateNavigationActions();
     void updateEditorActions();
-
-    QColor colorSelectionRequested(const QColor& selectedColor);
 
     void timerEvent(QTimerEvent*);
 
-    template<class T> void mouseMoveEvent(T*);
-    template<class T> void mousePressEvent(T*);
-    template<class T> void mouseDoubleClickEvent(T*);
-    template<class T> void mouseTripleClickEvent(T*);
-    template<class T> void mouseReleaseEvent(T*);
+    void mouseMoveEvent(QMouseEvent*);
+    void mousePressEvent(QMouseEvent*);
+    void mouseDoubleClickEvent(QMouseEvent*);
+    void mouseTripleClickEvent(QMouseEvent*);
+    void mouseReleaseEvent(QMouseEvent*);
 #ifndef QT_NO_CONTEXTMENU
     void contextMenuEvent(const QPoint& globalPos);
 #endif
 #ifndef QT_NO_WHEELEVENT
-    template<class T> void wheelEvent(T*);
+    void wheelEvent(QWheelEvent*);
 #endif
     void keyPressEvent(QKeyEvent*);
     void keyReleaseEvent(QKeyEvent*);
@@ -159,16 +210,12 @@ public:
     WebCore::InspectorController* inspectorController();
     quint16 inspectorServerPort();
 
-    WebCore::ViewportArguments viewportArguments();
-
 #ifndef QT_NO_SHORTCUT
     static QWebPage::WebAction editorActionForKeyEvent(QKeyEvent* event);
 #endif
     static const char* editorCommandForWebActions(QWebPage::WebAction action);
 
     QWebPage *q;
-    WebCore::Page *page;
-    OwnPtr<QWebPageClient> client;
     QPointer<QWebFrame> mainFrame;
 
 #ifndef QT_NO_UNDOSTACK
@@ -177,7 +224,6 @@ public:
 
     QPointer<QWidget> view;
 
-    bool insideOpenCall;
     quint64 m_totalBytes;
     quint64 m_bytesReceived;
 
@@ -186,15 +232,9 @@ public:
 
     bool clickCausedFocus;
 
-    bool acceptNavigationRequest(QWebFrame *frame, const QNetworkRequest &request, QWebPage::NavigationType type);
-    QNetworkAccessManager *networkManager;
-
-    bool forwardUnsupportedContent;
-    bool smartInsertDeleteEnabled;
-    bool selectTrailingWhitespaceEnabled;
     QWebPage::LinkDelegationPolicy linkPolicy;
 
-    QSize viewportSize;
+    QSize m_viewportSize;
     QSize fixedLayoutSize;
 
     QWebHistory history;
@@ -202,20 +242,15 @@ public:
 #ifndef QT_NO_CONTEXTMENU
     QPointer<QMenu> currentContextMenu;
 #endif
-    QWebSettings *settings;
     QPalette palette;
     bool useFixedLayout;
 
     QAction *actions[QWebPage::WebActionCount];
 
-    QWebPluginFactory *pluginFactory;
-
     QWidget* inspectorFrontend;
     QWebInspector* inspector;
     bool inspectorIsInternalOnly; // True if created through the Inspect context menu action
     Qt::DropAction m_lastDropAction;
-
-    static bool drtRun;
 };
 
 #endif

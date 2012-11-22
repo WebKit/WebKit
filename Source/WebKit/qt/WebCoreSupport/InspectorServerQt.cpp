@@ -23,16 +23,15 @@
 #include "InspectorClientQt.h"
 #include "InspectorController.h"
 #include "Page.h"
+#include "QWebFrameAdapter.h"
+#include "QWebPageAdapter.h"
 #include "qhttpheader_p.h"
-#include "qwebpage.h"
-#include "qwebpage_p.h"
 #include <QFile>
 #include <QString>
 #include <QStringList>
 #include <QTcpServer>
 #include <QTcpSocket>
 #include <QUrl>
-#include <QWidget>
 #include <qendian.h>
 #include <wtf/SHA1.h>
 #include <wtf/text/Base64.h>
@@ -224,12 +223,11 @@ void InspectorServerRequestHandlerQt::tcpReadyRead()
         // If no path is specified, generate an index page.
         if (m_path.isEmpty() || (m_path == QString(QLatin1Char('/')))) {
             QString indexHtml = QLatin1String("<html><head><title>Remote Web Inspector</title></head><body><ul>\n");
-            for (QMap<int, InspectorClientQt* >::const_iterator it = m_server->m_inspectorClients.begin();
-                 it != m_server->m_inspectorClients.end(); 
-                 ++it) {
+            for (QMap<int, InspectorClientQt* >::const_iterator it = m_server->m_inspectorClients.begin(); it != m_server->m_inspectorClients.end(); ++it) {
+
                 indexHtml.append(QString::fromLatin1("<li><a href=\"/webkit/inspector/inspector.html?page=%1\">%2</li>\n")
-                                 .arg(it.key())
-                                 .arg(it.value()->m_inspectedWebPage->mainFrame()->url().toString()));
+                    .arg(it.key())
+                    .arg(QUrl(it.value()->m_inspectedWebPage->mainFrameAdapter()->url).toString()));
             }
             indexHtml.append(QLatin1String("</ul></body></html>"));
             response = indexHtml.toLatin1();
@@ -356,8 +354,8 @@ void InspectorServerRequestHandlerQt::webSocketReadyRead()
         
 #if ENABLE(INSPECTOR)
         if (m_inspectorClient) {
-          InspectorController* inspectorController = m_inspectorClient->m_inspectedWebPage->d->page->inspectorController();
-          inspectorController->dispatchMessageFromFrontend(QString::fromUtf8(payload));
+            InspectorController* inspectorController = m_inspectorClient->m_inspectedWebPage->page->inspectorController();
+            inspectorController->dispatchMessageFromFrontend(QString::fromUtf8(payload));
         }
 #endif
 

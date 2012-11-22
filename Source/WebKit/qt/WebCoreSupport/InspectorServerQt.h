@@ -45,8 +45,8 @@ public:
 
     void listen(quint16 port);
 
-    void registerClient(InspectorClientQt* client);
-    void unregisterClient(InspectorClientQt* client);
+    void registerClient(InspectorClientQt*);
+    void unregisterClient(InspectorClientQt*);
 
     void close();
     InspectorClientQt* inspectorClientForPage(int pageNum);
@@ -70,7 +70,7 @@ class InspectorServerRequestHandlerQt : public QObject {
     Q_OBJECT
 public:
 
-    InspectorServerRequestHandlerQt(QTcpSocket *tcpConnection, InspectorServerQt *server);
+    InspectorServerRequestHandlerQt(QTcpSocket* tcpConnection, InspectorServerQt*);
     virtual ~InspectorServerRequestHandlerQt();
     virtual int webSocketSend(const QString& message);
     virtual int webSocketSend(const char *payload, size_t length);

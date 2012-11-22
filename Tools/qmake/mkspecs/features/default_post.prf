@@ -177,7 +177,7 @@ contains(QT, webkitwidgets) {
     # need to link to any intermediate shared libraries.
     force_static_libs_as_shared {
         WEBKIT += wtf javascriptcore webcore
-        build?(webkit1): WEBKIT += webkit1
+        build?(webkit1): WEBKIT += webkitwidgets webkit1
         build?(webkit2): WEBKIT += webkit2
     }
 

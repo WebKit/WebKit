@@ -20,15 +20,16 @@
 #include "config.h"
 #include "qwebhistory.h"
 #include "qwebhistory_p.h"
-#include "qwebframe_p.h"
 
 #include "BackForwardListImpl.h"
+#include "Frame.h"
 #include "IconDatabaseBase.h"
 #include "Image.h"
 #include "IntSize.h"
 #include "KURL.h"
 #include "Page.h"
 #include "PageGroup.h"
+#include <QWebPageAdapter.h>
 #include <wtf/text/WTFString.h>
 
 #include <QSharedData>
@@ -552,9 +553,9 @@ QDataStream& operator>>(QDataStream& source, QWebHistory& history)
     return source;
 }
 
-QWebPagePrivate* QWebHistoryPrivate::page()
+QWebPageAdapter* QWebHistoryPrivate::page()
 {
-    return QWebFramePrivate::kit(static_cast<WebCore::BackForwardListImpl*>(lst)->page()->mainFrame())->page()->handle();
+    return QWebPageAdapter::kit(static_cast<WebCore::BackForwardListImpl*>(lst)->page());
 }
 
 WebCore::HistoryItem* QWebHistoryItemPrivate::core(const QWebHistoryItem* q)

@@ -25,6 +25,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "config.h"
 #include "FullScreenVideoWidget.h"
 
 #include <QApplication>
@@ -35,7 +36,7 @@
 
 static const int gHideMouseCursorDelay = 3000;
 
-namespace WebCore {
+namespace WebKit {
 
 FullScreenVideoWidget::FullScreenVideoWidget()
     : QVideoWidget()

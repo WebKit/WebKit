@@ -548,7 +548,7 @@ void tst_QWebPage::loadHtml5Video()
     QByteArray url("http://does.not/exist?a=1%2Cb=2");
     m_view->setHtml("<p><video id ='video' src='" + url + "' autoplay/></p>");
     QTest::qWait(2000);
-    QUrl mUrl = DumpRenderTreeSupportQt::mediaContentUrlByElementId(m_page->mainFrame(), "video");
+    QUrl mUrl = DumpRenderTreeSupportQt::mediaContentUrlByElementId(m_page->mainFrame()->handle(), "video");
     QEXPECT_FAIL("", "https://bugs.webkit.org/show_bug.cgi?id=65452", Continue);
     QCOMPARE(mUrl.toEncoded(), url);
 #else
@@ -1026,12 +1026,12 @@ void tst_QWebPage::multiplePageGroupsAndLocalStorage()
 
     view1.page()->settings()->setAttribute(QWebSettings::LocalStorageEnabled, true);
     view1.page()->settings()->setLocalStoragePath(QDir::toNativeSeparators(tmpDirPath() + "/path1"));
-    DumpRenderTreeSupportQt::webPageSetGroupName(view1.page(), "group1");
+    DumpRenderTreeSupportQt::webPageSetGroupName(view1.page()->handle(), "group1");
     view2.page()->settings()->setAttribute(QWebSettings::LocalStorageEnabled, true);    
     view2.page()->settings()->setLocalStoragePath(QDir::toNativeSeparators(tmpDirPath() + "/path2"));
-    DumpRenderTreeSupportQt::webPageSetGroupName(view2.page(), "group2");
-    QCOMPARE(DumpRenderTreeSupportQt::webPageGroupName(view1.page()), QString("group1"));
-    QCOMPARE(DumpRenderTreeSupportQt::webPageGroupName(view2.page()), QString("group2"));
+    DumpRenderTreeSupportQt::webPageSetGroupName(view2.page()->handle(), "group2");
+    QCOMPARE(DumpRenderTreeSupportQt::webPageGroupName(view1.page()->handle()), QString("group1"));
+    QCOMPARE(DumpRenderTreeSupportQt::webPageGroupName(view2.page()->handle()), QString("group2"));
 
 
     view1.setHtml(QString("<html><body> </body></html>"), QUrl("http://www.myexample.com"));
@@ -3062,35 +3062,35 @@ void tst_QWebPage::thirdPartyCookiePolicy()
     QVERIFY(m_page->networkAccessManager()->cookieJar());
 
     // These are all first-party cookies, so should pass.
-    QVERIFY(DumpRenderTreeSupportQt::thirdPartyCookiePolicyAllows(m_page,
+    QVERIFY(DumpRenderTreeSupportQt::thirdPartyCookiePolicyAllows(m_page->handle(),
             QUrl("http://www.example.com"), QUrl("http://example.com")));
-    QVERIFY(DumpRenderTreeSupportQt::thirdPartyCookiePolicyAllows(m_page,
+    QVERIFY(DumpRenderTreeSupportQt::thirdPartyCookiePolicyAllows(m_page->handle(),
             QUrl("http://www.example.com"), QUrl("http://doc.example.com")));
-    QVERIFY(DumpRenderTreeSupportQt::thirdPartyCookiePolicyAllows(m_page,
+    QVERIFY(DumpRenderTreeSupportQt::thirdPartyCookiePolicyAllows(m_page->handle(),
             QUrl("http://aaa.www.example.com"), QUrl("http://doc.example.com")));
-    QVERIFY(DumpRenderTreeSupportQt::thirdPartyCookiePolicyAllows(m_page,
+    QVERIFY(DumpRenderTreeSupportQt::thirdPartyCookiePolicyAllows(m_page->handle(),
             QUrl("http://example.com"), QUrl("http://www.example.com")));
-    QVERIFY(DumpRenderTreeSupportQt::thirdPartyCookiePolicyAllows(m_page,
+    QVERIFY(DumpRenderTreeSupportQt::thirdPartyCookiePolicyAllows(m_page->handle(),
             QUrl("http://www.example.co.uk"), QUrl("http://example.co.uk")));
-    QVERIFY(DumpRenderTreeSupportQt::thirdPartyCookiePolicyAllows(m_page,
+    QVERIFY(DumpRenderTreeSupportQt::thirdPartyCookiePolicyAllows(m_page->handle(),
             QUrl("http://www.example.co.uk"), QUrl("http://doc.example.co.uk")));
-    QVERIFY(DumpRenderTreeSupportQt::thirdPartyCookiePolicyAllows(m_page,
+    QVERIFY(DumpRenderTreeSupportQt::thirdPartyCookiePolicyAllows(m_page->handle(),
             QUrl("http://aaa.www.example.co.uk"), QUrl("http://doc.example.co.uk")));
-    QVERIFY(DumpRenderTreeSupportQt::thirdPartyCookiePolicyAllows(m_page,
+    QVERIFY(DumpRenderTreeSupportQt::thirdPartyCookiePolicyAllows(m_page->handle(),
             QUrl("http://example.co.uk"), QUrl("http://www.example.co.uk")));
 
     // These are all third-party cookies, so should fail.
-    QVERIFY(!DumpRenderTreeSupportQt::thirdPartyCookiePolicyAllows(m_page,
+    QVERIFY(!DumpRenderTreeSupportQt::thirdPartyCookiePolicyAllows(m_page->handle(),
             QUrl("http://www.example.com"), QUrl("http://slashdot.org")));
-    QVERIFY(!DumpRenderTreeSupportQt::thirdPartyCookiePolicyAllows(m_page,
+    QVERIFY(!DumpRenderTreeSupportQt::thirdPartyCookiePolicyAllows(m_page->handle(),
             QUrl("http://example.com"), QUrl("http://anotherexample.com")));
-    QVERIFY(!DumpRenderTreeSupportQt::thirdPartyCookiePolicyAllows(m_page,
+    QVERIFY(!DumpRenderTreeSupportQt::thirdPartyCookiePolicyAllows(m_page->handle(),
             QUrl("http://anotherexample.com"), QUrl("http://example.com")));
-    QVERIFY(!DumpRenderTreeSupportQt::thirdPartyCookiePolicyAllows(m_page,
+    QVERIFY(!DumpRenderTreeSupportQt::thirdPartyCookiePolicyAllows(m_page->handle(),
             QUrl("http://www.example.co.uk"), QUrl("http://slashdot.co.uk")));
-    QVERIFY(!DumpRenderTreeSupportQt::thirdPartyCookiePolicyAllows(m_page,
+    QVERIFY(!DumpRenderTreeSupportQt::thirdPartyCookiePolicyAllows(m_page->handle(),
             QUrl("http://example.co.uk"), QUrl("http://anotherexample.co.uk")));
-    QVERIFY(!DumpRenderTreeSupportQt::thirdPartyCookiePolicyAllows(m_page,
+    QVERIFY(!DumpRenderTreeSupportQt::thirdPartyCookiePolicyAllows(m_page->handle(),
             QUrl("http://anotherexample.co.uk"), QUrl("http://example.co.uk")));
 }
 

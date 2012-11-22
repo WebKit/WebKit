@@ -163,6 +163,7 @@ public:
     inline QWebSettingsPrivate* handle() const { return d; }
 
 private:
+    friend class QWebPageAdapter;
     friend class QWebPagePrivate;
     friend class QWebSettingsPrivate;
 

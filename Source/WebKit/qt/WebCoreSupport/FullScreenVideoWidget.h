@@ -35,7 +35,7 @@ QT_BEGIN_NAMESPACE
 class QMediaPlayer;
 QT_END_NAMESPACE
 
-namespace WebCore {
+namespace WebKit {
 
 class FullScreenVideoWidget : public QVideoWidget {
     Q_OBJECT

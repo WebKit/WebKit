@@ -23,7 +23,6 @@
 
 #include "ChromeClientQt.h"
 #if USE(QT_MULTIMEDIA)
-#include "FullScreenVideoWidget.h"
 #include "MediaPlayerPrivateQt.h"
 #endif
 #include "HTMLNames.h"
@@ -40,10 +39,8 @@
 #endif
 
 #if USE(QT_MULTIMEDIA)
-#include <QGraphicsVideoItem>
 #include <QMediaPlayer>
 #endif
-#include <QWidget>
 
 namespace WebCore {
 
@@ -90,49 +87,6 @@ void GStreamerFullScreenVideoHandler::exitFullScreen()
 }
 #endif
 
-#if USE(QT_MULTIMEDIA)
-bool DefaultFullScreenVideoHandler::s_shouldForceFullScreenVideoPlayback = false;
-
-DefaultFullScreenVideoHandler::DefaultFullScreenVideoHandler()
-    : QWebFullScreenVideoHandler()
-    , m_fullScreenWidget(new FullScreenVideoWidget)
-{
-    connect(m_fullScreenWidget, SIGNAL(didExitFullScreen()), this, SIGNAL(fullScreenClosed()));
-    m_fullScreenWidget->hide();
-
-    m_fullScreenWidget->close();
-}
-
-DefaultFullScreenVideoHandler::~DefaultFullScreenVideoHandler()
-{
-    delete m_fullScreenWidget;
-}
-
-bool DefaultFullScreenVideoHandler::requiresFullScreenForVideoPlayback() const
-{
-    static bool initialized = false;
-    if (!initialized) {
-        QByteArray forceFullScreen = qgetenv("QT_WEBKIT_FORCE_FULLSCREEN_VIDEO");
-        if (!forceFullScreen.isEmpty())
-            s_shouldForceFullScreenVideoPlayback = true;
-
-        initialized = true;
-    }
-
-    return s_shouldForceFullScreenVideoPlayback;
-}
-
-void DefaultFullScreenVideoHandler::enterFullScreen(QMediaPlayer* player)
-{
-    m_fullScreenWidget->show(player);
-}
-
-void DefaultFullScreenVideoHandler::exitFullScreen()
-{
-    m_fullScreenWidget->close();
-}
-#endif
-
 FullScreenVideoQt::FullScreenVideoQt(ChromeClientQt* chromeClient)
     : m_chromeClient(chromeClient)
     , m_videoElement(0)
@@ -140,10 +94,7 @@ FullScreenVideoQt::FullScreenVideoQt(ChromeClientQt* chromeClient)
     Q_ASSERT(m_chromeClient);
 
 #if USE(QT_MULTIMEDIA)
-    m_FullScreenVideoHandler = m_chromeClient->m_platformPlugin.createFullScreenVideoHandler().leakPtr();
-    if (!m_FullScreenVideoHandler)
-        m_FullScreenVideoHandler = new DefaultFullScreenVideoHandler;
-
+    m_FullScreenVideoHandler = m_chromeClient->createFullScreenVideoHandler();
     if (m_FullScreenVideoHandler)
         connect(m_FullScreenVideoHandler, SIGNAL(fullScreenClosed()), this, SLOT(aboutToClose()));
 #endif

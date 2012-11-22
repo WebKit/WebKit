@@ -35,7 +35,7 @@ public:
     , frontend(0)
     {}
 
-    void setFrontend(QWidget* newFrontend);
+    void setFrontend(QObject* newFrontend);
     void adjustFrontendSize(const QSize& size);
 
     QWebInspector* q;

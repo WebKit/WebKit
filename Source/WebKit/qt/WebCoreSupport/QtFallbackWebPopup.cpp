@@ -23,18 +23,18 @@
 
 #ifndef QT_NO_COMBOBOX
 
-#include "ChromeClientQt.h"
-#include "QtWebComboBox.h"
+#include "QWebPageAdapter.h"
 #include "QWebPageClient.h"
+#include "QtWebComboBox.h"
 #include "qgraphicswebview.h"
 #include <QGraphicsProxyWidget>
 #include <QtGui/QStandardItemModel>
 
 namespace WebCore {
 
-QtFallbackWebPopup::QtFallbackWebPopup(const ChromeClientQt* chromeClient)
+QtFallbackWebPopup::QtFallbackWebPopup(const QWebPageAdapter* page)
     : m_combo(0)
-    , m_chromeClient(chromeClient)
+    , m_page(page)
 {
 }
 
@@ -63,9 +63,8 @@ void QtFallbackWebPopup::show(const QWebSelectData& data)
         proxy->setWidget(m_combo);
         proxy->setGeometry(rect);
     } else {
-        m_combo->setParent(pageClient()->ownerWidget());
-        m_combo->setGeometry(QRect(rect.left(), rect.top(),
-                               rect.width(), m_combo->sizeHint().height()));
+        m_combo->setParent(qobject_cast<QWidget*>(pageClient()->ownerWidget()));
+        m_combo->setGeometry(QRect(rect.left(), rect.top(), rect.width(), m_combo->sizeHint().height()));
     }
 
     m_combo->showPopupAtCursorPosition();
@@ -131,7 +130,7 @@ void QtFallbackWebPopup::deleteComboBox()
 
 QWebPageClient* QtFallbackWebPopup::pageClient() const
 {
-    return m_chromeClient->platformPageClient();
+    return m_page->client.data();
 }
 
 }

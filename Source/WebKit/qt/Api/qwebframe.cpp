@@ -106,54 +106,6 @@ QT_BEGIN_NAMESPACE
 extern Q_GUI_EXPORT int qt_defaultDpi();
 QT_END_NAMESPACE
 
-static inline ResourceRequestCachePolicy cacheLoadControlToCachePolicy(uint cacheLoadControl)
-{
-    switch (cacheLoadControl) {
-    case QNetworkRequest::AlwaysNetwork:
-        return WebCore::ReloadIgnoringCacheData;
-    case QNetworkRequest::PreferCache:
-        return WebCore::ReturnCacheDataElseLoad;
-    case QNetworkRequest::AlwaysCache:
-        return WebCore::ReturnCacheDataDontLoad;
-    default:
-        break;
-    }
-    return WebCore::UseProtocolCachePolicy;
-}
-
-QWebFrameData::QWebFrameData(WebCore::Page* parentPage, WebCore::Frame* parentFrame,
-                             WebCore::HTMLFrameOwnerElement* ownerFrameElement,
-                             const WTF::String& frameName)
-    : name(frameName)
-    , ownerElement(ownerFrameElement)
-    , page(parentPage)
-    , allowsScrolling(true)
-    , marginWidth(0)
-    , marginHeight(0)
-{
-    frameLoaderClient = new FrameLoaderClientQt();
-    frame = Frame::create(page, ownerElement, frameLoaderClient);
-
-    // FIXME: All of the below should probably be moved over into WebCore
-    frame->tree()->setName(name);
-    if (parentFrame)
-        parentFrame->tree()->appendChild(frame);
-}
-
-void QWebFramePrivate::init(QWebFrame *qframe, QWebFrameData *frameData)
-{
-    q = qframe;
-
-    allowsScrolling = frameData->allowsScrolling;
-    marginWidth = frameData->marginWidth;
-    marginHeight = frameData->marginHeight;
-    frame = frameData->frame.get();
-    frameLoaderClient = frameData->frameLoaderClient;
-    frameLoaderClient->setFrame(qframe, frame);
-
-    frame->init();
-}
-
 void QWebFramePrivate::setPage(QWebPage* newPage)
 {
     if (page == newPage)
@@ -166,6 +118,7 @@ void QWebFramePrivate::setPage(QWebPage* newPage)
         q->setParent(newPage);
 
     page = newPage;
+    pageAdapter = newPage->handle();
     emit q->pageChanged();
 }
 
@@ -375,6 +328,11 @@ void QWebFramePrivate::emitUrlChanged()
     emit q->urlChanged(url);
 }
 
+void QWebFramePrivate::didStartProvisionalLoad()
+{
+    emit q->provisionalLoad();
+}
+
 void QWebFramePrivate::_q_orientationChanged()
 {
 #if ENABLE(ORIENTATION_EVENTS)
@@ -407,6 +365,65 @@ void QWebFramePrivate::_q_orientationChanged()
 void QWebFramePrivate::didClearWindowObject()
 {
     emit q->javaScriptWindowObjectCleared();
+}
+
+bool QWebFramePrivate::handleProgressFinished(QPoint *localPos)
+{
+    QWidget *view = q->page()->view();
+    if (!view || !localPos)
+        return false;
+    *localPos = view->mapFromGlobal(QCursor::pos());
+    return view->hasFocus() && view->rect().contains(*localPos);
+}
+
+void QWebFramePrivate::emitInitialLayoutCompleted()
+{
+    emit q->initialLayoutCompleted();
+}
+
+void QWebFramePrivate::emitIconChanged()
+{
+    emit q->iconChanged();
+}
+
+void QWebFramePrivate::emitLoadStarted(bool originatingLoad)
+{
+    if (page && originatingLoad)
+        emit page->loadStarted();
+    emit q->loadStarted();
+}
+
+void QWebFramePrivate::emitLoadFinished(bool originatingLoad, bool ok)
+{
+    if (page && originatingLoad)
+        emit page->loadFinished(ok);
+    emit q->loadFinished(ok);
+}
+
+QWebFrameAdapter* QWebFramePrivate::createChildFrame(QWebFrameData* frameData)
+{
+    QWebFrame* newFrame = new QWebFrame(/*parent frame*/q, frameData);
+    return newFrame->d;
+}
+
+QWebFrame *QWebFramePrivate::apiHandle()
+{
+    return q;
+}
+
+QObject *QWebFramePrivate::handle()
+{
+    return q;
+}
+
+void QWebFramePrivate::contentsSizeDidChange(const QSize &size)
+{
+    emit q->contentsSizeChanged(size);
+}
+
+int QWebFramePrivate::scrollBarPolicy(Qt::Orientation orientation) const
+{
+    return (int) q->scrollBarPolicy(orientation);
 }
 
 /*!
@@ -472,29 +489,27 @@ void QWebFramePrivate::didClearWindowObject()
     \value AllLayers Includes all the above layers
 */
 
-QWebFrame::QWebFrame(QWebPage *parent, QWebFrameData *frameData)
-    : QObject(parent)
+QWebFrame::QWebFrame(QWebPage *parentPage)
+    : QObject(parentPage)
     , d(new QWebFramePrivate)
 {
-    d->page = parent;
-    d->init(this, frameData);
+    d->page = parentPage;
+    d->q = this;
+    d->init(/*page adapter*/ parentPage->handle());
 
-    if (!frameData->url.isEmpty()) {
-        WebCore::ResourceRequest request(frameData->url, frameData->referrer);
-        d->frame->loader()->load(request, frameData->name, false);
-    }
 #if ENABLE(ORIENTATION_EVENTS)
     connect(&d->m_orientation, SIGNAL(readingChanged()), this, SLOT(_q_orientationChanged()));
     d->m_orientation.start();
 #endif
 }
 
-QWebFrame::QWebFrame(QWebFrame *parent, QWebFrameData *frameData)
+QWebFrame::QWebFrame(QWebFrame* parent, QWebFrameData* frameData)
     : QObject(parent)
     , d(new QWebFramePrivate)
 {
     d->page = parent->d->page;
-    d->init(this, frameData);
+    d->q = this;
+    d->init(parent->d->pageAdapter, frameData);
 #if ENABLE(ORIENTATION_EVENTS)
     connect(&d->m_orientation, SIGNAL(readingChanged()), this, SLOT(_q_orientationChanged()));
     d->m_orientation.start();
@@ -503,9 +518,6 @@ QWebFrame::QWebFrame(QWebFrame *parent, QWebFrameData *frameData)
 
 QWebFrame::~QWebFrame()
 {
-    if (d->frame && d->frame->loader() && d->frame->loader()->client())
-        static_cast<FrameLoaderClientQt*>(d->frame->loader()->client())->m_webFrame = 0;
-
     delete d;
 }
 
@@ -674,22 +686,6 @@ static inline bool isCoreFrameClear(WebCore::Frame* frame)
     return frame->document()->url().isEmpty();
 }
 
-static inline QUrl ensureAbsoluteUrl(const QUrl &url)
-{
-    if (!url.isValid() || !url.isRelative())
-        return url;
-
-    // This contains the URL with absolute path but without 
-    // the query and the fragment part.
-    QUrl baseUrl = QUrl::fromLocalFile(QFileInfo(url.toLocalFile()).absoluteFilePath()); 
-
-    // The path is removed so the query and the fragment parts are there.
-    QString pathRemoved = url.toString(QUrl::RemovePath);
-    QUrl toResolve(pathRemoved);
-    
-    return baseUrl.resolved(toResolve);
-}
-
 /*!
     \property QWebFrame::url
     \brief the url of the frame currently viewed
@@ -704,7 +700,7 @@ static inline QUrl ensureAbsoluteUrl(const QUrl &url)
 void QWebFrame::setUrl(const QUrl &url)
 {
     clearCoreFrame(d->frame);
-    const QUrl absolute = ensureAbsoluteUrl(url);
+    const QUrl absolute = QWebFrameAdapter::ensureAbsoluteUrl(url);
     d->url = absolute;
     load(absolute);
 }
@@ -798,58 +794,7 @@ void QWebFrame::load(const QNetworkRequest &req,
                      QNetworkAccessManager::Operation operation,
                      const QByteArray &body)
 {
-    if (d->parentFrame())
-        d->page->d->insideOpenCall = true;
-
-    QUrl url = ensureAbsoluteUrl(req.url());
-
-    WebCore::ResourceRequest request(url);
-
-    switch (operation) {
-        case QNetworkAccessManager::HeadOperation:
-            request.setHTTPMethod("HEAD");
-            break;
-        case QNetworkAccessManager::GetOperation:
-            request.setHTTPMethod("GET");
-            break;
-        case QNetworkAccessManager::PutOperation:
-            request.setHTTPMethod("PUT");
-            break;
-        case QNetworkAccessManager::PostOperation:
-            request.setHTTPMethod("POST");
-            break;
-        case QNetworkAccessManager::DeleteOperation:
-            request.setHTTPMethod("DELETE");
-            break;
-        case QNetworkAccessManager::CustomOperation:
-            request.setHTTPMethod(req.attribute(QNetworkRequest::CustomVerbAttribute).toByteArray().constData());
-            break;
-        case QNetworkAccessManager::UnknownOperation:
-            // eh?
-            break;
-    }
-
-    QVariant cacheLoad = req.attribute(QNetworkRequest::CacheLoadControlAttribute);
-    if (cacheLoad.isValid()) {
-        bool ok;
-        uint cacheLoadValue = cacheLoad.toUInt(&ok);
-        if (ok)
-            request.setCachePolicy(cacheLoadControlToCachePolicy(cacheLoadValue));
-    }
-
-    QList<QByteArray> httpHeaders = req.rawHeaderList();
-    for (int i = 0; i < httpHeaders.size(); ++i) {
-        const QByteArray &headerName = httpHeaders.at(i);
-        request.addHTTPHeaderField(QString::fromLatin1(headerName), QString::fromLatin1(req.rawHeader(headerName)));
-    }
-
-    if (!body.isEmpty())
-        request.setHTTPBody(WebCore::FormData::create(body.constData(), body.size()));
-
-    d->frame->loader()->load(request, false);
-
-    if (d->parentFrame())
-        d->page->d->insideOpenCall = false;
+    d->load(req, operation, body);
 }
 
 /*!
@@ -1088,10 +1033,7 @@ void QWebFrame::scroll(int dx, int dy)
 
 QPoint QWebFrame::scrollPosition() const
 {
-    if (!d->frame->view())
-        return QPoint(0, 0);
-
-    IntSize ofs = d->frame->view()->scrollOffset();
+    IntSize ofs = d->scrollPosition();
     return QPoint(ofs.width(), ofs.height());
 }
 
@@ -1248,9 +1190,7 @@ QPoint QWebFrame::pos() const
 */
 QRect QWebFrame::geometry() const
 {
-    if (!d->frame->view())
-        return QRect();
-    return d->frame->view()->frameRect();
+    return d->frameRect();
 }
 
 /*!
@@ -1477,6 +1417,11 @@ WebCore::Frame* QWebFramePrivate::core(const QWebFrame* webFrame)
 QWebFrame* QWebFramePrivate::kit(const WebCore::Frame* coreFrame)
 {
     return qobject_cast<QWebFrame*>(coreFrame->loader()->networkingContext()->originatingObject());
+}
+
+QWebFrame *QWebFramePrivate::kit(const QWebFrameAdapter* frameAdapter)
+{
+    return static_cast<const QWebFramePrivate*>(frameAdapter)->q;
 }
 
 
@@ -1857,6 +1802,14 @@ QWebFrame *QWebHitTestResult::frame() const
     if (!d)
         return 0;
     return d->frame.data();
+}
+
+/*!
+ * \internal
+ */
+QWebFrameAdapter *QWebFrame::handle() const
+{
+    return d;
 }
 
 #include "moc_qwebframe.cpp"

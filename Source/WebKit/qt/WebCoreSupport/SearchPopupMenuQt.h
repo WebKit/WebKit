@@ -27,7 +27,7 @@ namespace WebCore {
 
 class SearchPopupMenuQt : public SearchPopupMenu {
 public:
-    SearchPopupMenuQt(PassRefPtr<PopupMenu> popup);
+    SearchPopupMenuQt(PassRefPtr<PopupMenu>);
 
     virtual PopupMenu* popupMenu();
     virtual void saveRecentSearches(const AtomicString& name, const Vector<String>& searchItems);

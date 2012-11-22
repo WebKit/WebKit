@@ -41,8 +41,7 @@ QtWebComboBox::QtWebComboBox()
 
 void QtWebComboBox::showPopupAtCursorPosition()
 {
-    QMouseEvent event(QEvent::MouseButtonPress, QCursor::pos(), Qt::LeftButton,
-                      Qt::LeftButton, Qt::NoModifier);
+    QMouseEvent event(QEvent::MouseButtonPress, QCursor::pos(), Qt::LeftButton, Qt::LeftButton, Qt::NoModifier);
     QCoreApplication::sendEvent(this, &event);
 }
 

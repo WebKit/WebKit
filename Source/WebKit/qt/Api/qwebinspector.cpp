@@ -184,12 +184,12 @@ void QWebInspector::closeEvent(QCloseEvent* event)
 }
 
 /*! \internal */
-void QWebInspectorPrivate::setFrontend(QWidget* newFrontend)
+void QWebInspectorPrivate::setFrontend(QObject* newFrontend)
 {
     if (frontend)
         frontend->setParent(0);
 
-    frontend = newFrontend;
+    frontend = qobject_cast<QWidget*>(newFrontend);
 
     if (frontend) {
         frontend->setParent(q);

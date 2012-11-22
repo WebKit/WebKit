@@ -30,14 +30,13 @@
 #ifndef FrameLoaderClientQt_h
 #define FrameLoaderClientQt_h
 
-
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
 #include "KURL.h"
-#include "WebCore/plugins/PluginView.h"
 #include "ResourceError.h"
 #include "ResourceResponse.h"
+#include "WebCore/plugins/PluginView.h"
 #include <QUrl>
 #include <qobject.h>
 #include <wtf/Forward.h>
@@ -49,6 +48,7 @@ class QNetworkReply;
 QT_END_NAMESPACE
 
 class QWebFrame;
+class QWebFrameAdapter;
 
 namespace WebCore {
 
@@ -65,8 +65,8 @@ struct LoadErrorResetToken;
 class FrameLoaderClientQt : public QObject, public FrameLoaderClient {
     Q_OBJECT
 
-    friend class ::QWebFrame;
-    void callPolicyFunction(FramePolicyFunction function, PolicyAction action);
+    friend class ::QWebFrameAdapter;
+    void callPolicyFunction(FramePolicyFunction, PolicyAction);
     bool callErrorPageExtension(const ResourceError&);
 
 Q_SIGNALS:
@@ -79,7 +79,7 @@ public:
     ~FrameLoaderClientQt();
     virtual void frameLoaderDestroyed();
 
-    void setFrame(QWebFrame* webFrame, Frame* frame);
+    void setFrame(QWebFrameAdapter*, Frame*);
 
     virtual bool hasWebView() const; // mainly for assertions
 
@@ -128,9 +128,9 @@ public:
     virtual WebCore::Frame* dispatchCreatePage(const WebCore::NavigationAction&);
     virtual void dispatchShow();
 
-    virtual void dispatchDecidePolicyForResponse(FramePolicyFunction function, const WebCore::ResourceResponse&, const WebCore::ResourceRequest&);
-    virtual void dispatchDecidePolicyForNewWindowAction(FramePolicyFunction function, const WebCore::NavigationAction&, const WebCore::ResourceRequest&, PassRefPtr<FormState>, const WTF::String&);
-    virtual void dispatchDecidePolicyForNavigationAction(FramePolicyFunction function, const WebCore::NavigationAction&, const WebCore::ResourceRequest&, PassRefPtr<FormState>);
+    virtual void dispatchDecidePolicyForResponse(FramePolicyFunction, const WebCore::ResourceResponse&, const WebCore::ResourceRequest&);
+    virtual void dispatchDecidePolicyForNewWindowAction(FramePolicyFunction, const WebCore::NavigationAction&, const WebCore::ResourceRequest&, PassRefPtr<FormState>, const WTF::String&);
+    virtual void dispatchDecidePolicyForNavigationAction(FramePolicyFunction, const WebCore::NavigationAction&, const WebCore::ResourceRequest&, PassRefPtr<FormState>);
     virtual void cancelPolicyCheck();
 
     virtual void dispatchUnableToImplementPolicy(const WebCore::ResourceError&);
@@ -204,8 +204,7 @@ public:
     virtual bool canCachePage() const;
     virtual void download(WebCore::ResourceHandle*, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&);
 
-    virtual PassRefPtr<Frame> createFrame(const KURL& url, const String& name, HTMLFrameOwnerElement* ownerElement,
-                               const String& referrer, bool allowsScrolling, int marginWidth, int marginHeight);
+    virtual PassRefPtr<Frame> createFrame(const KURL&, const String& name, HTMLFrameOwnerElement*, const String& referrer, bool allowsScrolling, int marginWidth, int marginHeight);
     virtual PassRefPtr<Widget> createPlugin(const IntSize&, HTMLPlugInElement*, const KURL&, const Vector<String>&, const Vector<String>&, const String&, bool);
     virtual void recreatePlugin(Widget*) { }
     virtual void redirectDataToPlugin(Widget* pluginWidget);
@@ -226,6 +225,8 @@ public:
     virtual PassRefPtr<FrameNetworkingContext> createNetworkingContext();
 
     const KURL& lastRequestedUrl() const { return m_lastRequestedUrl; }
+
+    QWebFrameAdapter* webFrame() const;
 
     static bool dumpFrameLoaderCallbacks;
     static bool dumpProgressFinishedCallback;
@@ -251,7 +252,7 @@ private:
     void emitLoadFinished(bool ok);
 
     Frame *m_frame;
-    QWebFrame *m_webFrame;
+    QWebFrameAdapter *m_webFrame;
     ResourceResponse m_response;
 
     // Plugin view to redirect data to
