@@ -37,14 +37,14 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, const Operands<ValueRecov
 {
     // 1) Pro-forma stuff.
 #if DFG_ENABLE(DEBUG_VERBOSE)
-    dataLog("OSR exit for Node @%d (", (int)exit.m_nodeIndex);
+    dataLogF("OSR exit for Node @%d (", (int)exit.m_nodeIndex);
     for (CodeOrigin codeOrigin = exit.m_codeOrigin; ; codeOrigin = codeOrigin.inlineCallFrame->caller) {
-        dataLog("bc#%u", codeOrigin.bytecodeIndex);
+        dataLogF("bc#%u", codeOrigin.bytecodeIndex);
         if (!codeOrigin.inlineCallFrame)
             break;
-        dataLog(" -> %p ", codeOrigin.inlineCallFrame->executable.get());
+        dataLogF(" -> %p ", codeOrigin.inlineCallFrame->executable.get());
     }
-    dataLog(")  ");
+    dataLogF(")  ");
     dumpOperands(operands, WTF::dataFile());
 #endif
 #if DFG_ENABLE(VERBOSE_SPECULATION_FAILURE)
@@ -138,7 +138,7 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, const Operands<ValueRecov
             EncodedJSValue* bucket = exit.m_valueProfile.getSpecFailBucket(0);
             
 #if DFG_ENABLE(VERBOSE_SPECULATION_FAILURE)
-            dataLog("  (have exit profile, bucket %p)  ", bucket);
+            dataLogF("  (have exit profile, bucket %p)  ", bucket);
 #endif
             
             if (exit.m_jsValueSource.isAddress()) {
@@ -243,24 +243,24 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, const Operands<ValueRecov
     }
     
 #if DFG_ENABLE(DEBUG_VERBOSE)
-    dataLog("  ");
+    dataLogF("  ");
     if (numberOfPoisonedVirtualRegisters)
-        dataLog("Poisoned=%u ", numberOfPoisonedVirtualRegisters);
+        dataLogF("Poisoned=%u ", numberOfPoisonedVirtualRegisters);
     if (numberOfDisplacedVirtualRegisters)
-        dataLog("Displaced=%u ", numberOfDisplacedVirtualRegisters);
+        dataLogF("Displaced=%u ", numberOfDisplacedVirtualRegisters);
     if (haveUnboxedInt32s)
-        dataLog("UnboxedInt32 ");
+        dataLogF("UnboxedInt32 ");
     if (haveUnboxedDoubles)
-        dataLog("UnboxedDoubles ");
+        dataLogF("UnboxedDoubles ");
     if (haveUInt32s)
-        dataLog("UInt32 ");
+        dataLogF("UInt32 ");
     if (haveFPRs)
-        dataLog("FPR ");
+        dataLogF("FPR ");
     if (haveConstants)
-        dataLog("Constants ");
+        dataLogF("Constants ");
     if (haveUndefined)
-        dataLog("Undefined ");
-    dataLog(" ");
+        dataLogF("Undefined ");
+    dataLogF(" ");
 #endif
     
     ScratchBuffer* scratchBuffer = m_jit.globalData()->scratchBufferForSize(sizeof(EncodedJSValue) * std::max(haveUInt32s ? 2u : 0u, numberOfPoisonedVirtualRegisters + (numberOfDisplacedVirtualRegisters <= GPRInfo::numberOfRegisters ? 0 : numberOfDisplacedVirtualRegisters)));
@@ -710,7 +710,7 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, const Operands<ValueRecov
     m_jit.jump(GPRInfo::regT1);
 
 #if DFG_ENABLE(DEBUG_VERBOSE)
-    dataLog("-> %p\n", jumpTarget);
+    dataLogF("-> %p\n", jumpTarget);
 #endif
 }
 

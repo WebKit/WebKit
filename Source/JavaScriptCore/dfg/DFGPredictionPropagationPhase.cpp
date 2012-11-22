@@ -186,7 +186,7 @@ private:
         NodeFlags flags = node.flags() & NodeBackPropMask;
 
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-        dataLog("   %s @%u: %s ", Graph::opName(op), m_compileIndex, nodeFlagsAsString(flags));
+        dataLogF("   %s @%u: %s ", Graph::opName(op), m_compileIndex, nodeFlagsAsString(flags));
 #endif
         
         bool changed = false;
@@ -782,7 +782,7 @@ private:
         }
 
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-        dataLog("%s\n", speculationToString(m_graph[m_compileIndex].prediction()));
+        dataLogF("%s\n", speculationToString(m_graph[m_compileIndex].prediction()));
 #endif
         
         m_changed |= changed;
@@ -815,7 +815,7 @@ private:
     void propagateForward()
     {
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-        dataLog("Propagating predictions forward [%u]\n", ++m_count);
+        dataLogF("Propagating predictions forward [%u]\n", ++m_count);
 #endif
         for (m_compileIndex = 0; m_compileIndex < m_graph.size(); ++m_compileIndex)
             propagate(m_graph[m_compileIndex]);
@@ -824,7 +824,7 @@ private:
     void propagateBackward()
     {
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-        dataLog("Propagating predictions backward [%u]\n", ++m_count);
+        dataLogF("Propagating predictions backward [%u]\n", ++m_count);
 #endif
         for (m_compileIndex = m_graph.size(); m_compileIndex-- > 0;)
             propagate(m_graph[m_compileIndex]);
@@ -833,7 +833,7 @@ private:
     void doRoundOfDoubleVoting()
     {
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-        dataLog("Voting on double uses of locals [%u]\n", m_count);
+        dataLogF("Voting on double uses of locals [%u]\n", m_count);
 #endif
         for (unsigned i = 0; i < m_graph.m_variableAccessData.size(); ++i)
             m_graph.m_variableAccessData[i].find()->clearVotes();

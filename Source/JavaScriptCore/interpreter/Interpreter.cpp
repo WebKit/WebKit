@@ -386,10 +386,10 @@ void Interpreter::dumpCallFrame(CallFrame* callFrame)
 
 void Interpreter::dumpRegisters(CallFrame* callFrame)
 {
-    dataLog("Register frame: \n\n");
-    dataLog("-----------------------------------------------------------------------------\n");
-    dataLog("            use            |   address  |                value               \n");
-    dataLog("-----------------------------------------------------------------------------\n");
+    dataLogF("Register frame: \n\n");
+    dataLogF("-----------------------------------------------------------------------------\n");
+    dataLogF("            use            |   address  |                value               \n");
+    dataLogF("-----------------------------------------------------------------------------\n");
 
     CodeBlock* codeBlock = callFrame->codeBlock();
     const Register* it;
@@ -401,32 +401,32 @@ void Interpreter::dumpRegisters(CallFrame* callFrame)
         JSValue v = it->jsValue();
         int registerNumber = it - callFrame->registers();
         String name = codeBlock->nameForRegister(registerNumber);
-        dataLog("[r% 3d %14s]      | %10p | %-16s 0x%lld \n", registerNumber, name.ascii().data(), it, v.description(), (long long)JSValue::encode(v));
+        dataLogF("[r% 3d %14s]      | %10p | %-16s 0x%lld \n", registerNumber, name.ascii().data(), it, v.description(), (long long)JSValue::encode(v));
         it++;
     }
     
-    dataLog("-----------------------------------------------------------------------------\n");
-    dataLog("[ArgumentCount]            | %10p | %lu \n", it, (unsigned long) callFrame->argumentCount());
+    dataLogF("-----------------------------------------------------------------------------\n");
+    dataLogF("[ArgumentCount]            | %10p | %lu \n", it, (unsigned long) callFrame->argumentCount());
     ++it;
-    dataLog("[CallerFrame]              | %10p | %p \n", it, callFrame->callerFrame());
+    dataLogF("[CallerFrame]              | %10p | %p \n", it, callFrame->callerFrame());
     ++it;
-    dataLog("[Callee]                   | %10p | %p \n", it, callFrame->callee());
+    dataLogF("[Callee]                   | %10p | %p \n", it, callFrame->callee());
     ++it;
-    dataLog("[ScopeChain]               | %10p | %p \n", it, callFrame->scope());
+    dataLogF("[ScopeChain]               | %10p | %p \n", it, callFrame->scope());
     ++it;
 #if ENABLE(JIT)
     AbstractPC pc = callFrame->abstractReturnPC(callFrame->globalData());
     if (pc.hasJITReturnAddress())
-        dataLog("[ReturnJITPC]              | %10p | %p \n", it, pc.jitReturnAddress().value());
+        dataLogF("[ReturnJITPC]              | %10p | %p \n", it, pc.jitReturnAddress().value());
 #endif
     unsigned bytecodeOffset = 0;
     int line = 0;
     getCallerInfo(&callFrame->globalData(), callFrame, line, bytecodeOffset);
-    dataLog("[ReturnVPC]                | %10p | %d (line %d)\n", it, bytecodeOffset, line);
+    dataLogF("[ReturnVPC]                | %10p | %d (line %d)\n", it, bytecodeOffset, line);
     ++it;
-    dataLog("[CodeBlock]                | %10p | %p \n", it, callFrame->codeBlock());
+    dataLogF("[CodeBlock]                | %10p | %p \n", it, callFrame->codeBlock());
     ++it;
-    dataLog("-----------------------------------------------------------------------------\n");
+    dataLogF("-----------------------------------------------------------------------------\n");
 
     int registerCount = 0;
 
@@ -436,23 +436,23 @@ void Interpreter::dumpRegisters(CallFrame* callFrame)
             JSValue v = it->jsValue();
             int registerNumber = it - callFrame->registers();
             String name = codeBlock->nameForRegister(registerNumber);
-            dataLog("[r% 3d %14s]      | %10p | %-16s 0x%lld \n", registerNumber, name.ascii().data(), it, v.description(), (long long)JSValue::encode(v));
+            dataLogF("[r% 3d %14s]      | %10p | %-16s 0x%lld \n", registerNumber, name.ascii().data(), it, v.description(), (long long)JSValue::encode(v));
             ++it;
             ++registerCount;
         } while (it != end);
     }
-    dataLog("-----------------------------------------------------------------------------\n");
+    dataLogF("-----------------------------------------------------------------------------\n");
 
     end = it + codeBlock->m_numCalleeRegisters - codeBlock->m_numVars;
     if (it != end) {
         do {
             JSValue v = (*it).jsValue();
-            dataLog("[r% 3d]                     | %10p | %-16s 0x%lld \n", registerCount, it, v.description(), (long long)JSValue::encode(v));
+            dataLogF("[r% 3d]                     | %10p | %-16s 0x%lld \n", registerCount, it, v.description(), (long long)JSValue::encode(v));
             ++it;
             ++registerCount;
         } while (it != end);
     }
-    dataLog("-----------------------------------------------------------------------------\n");
+    dataLogF("-----------------------------------------------------------------------------\n");
 }
 
 #endif

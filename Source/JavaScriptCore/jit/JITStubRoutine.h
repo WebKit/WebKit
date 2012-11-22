@@ -150,11 +150,11 @@ protected:
 };
 
 // Helper for the creation of simple stub routines that need no help from the GC.
-#define FINALIZE_CODE_FOR_STUB(patchBuffer, dataLogArguments) \
-    (adoptRef(new JITStubRoutine(FINALIZE_CODE((patchBuffer), dataLogArguments))))
+#define FINALIZE_CODE_FOR_STUB(patchBuffer, dataLogFArguments) \
+    (adoptRef(new JITStubRoutine(FINALIZE_CODE((patchBuffer), dataLogFArguments))))
 
-#define FINALIZE_CODE_FOR_DFG_STUB(patchBuffer, dataLogArguments) \
-    (adoptRef(new JITStubRoutine(FINALIZE_DFG_CODE((patchBuffer), dataLogArguments))))
+#define FINALIZE_CODE_FOR_DFG_STUB(patchBuffer, dataLogFArguments) \
+    (adoptRef(new JITStubRoutine(FINALIZE_DFG_CODE((patchBuffer), dataLogFArguments))))
 
 } // namespace JSC
 

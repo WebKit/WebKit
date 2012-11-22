@@ -1,5 +1,223 @@
 2012-11-21  Filip Pizlo  <fpizlo@apple.com>
 
+        Rename dataLog() and dataLogV() to dataLogF() and dataLogFV()
+        https://bugs.webkit.org/show_bug.cgi?id=103001
+
+        Rubber stamped by Dan Bernstein.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * assembler/LinkBuffer.cpp:
+        (JSC::LinkBuffer::finalizeCodeWithDisassembly):
+        (JSC::LinkBuffer::dumpLinkStatistics):
+        (JSC::LinkBuffer::dumpCode):
+        * assembler/LinkBuffer.h:
+        (JSC):
+        * assembler/SH4Assembler.h:
+        (JSC::SH4Assembler::vprintfStdoutInstr):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpBytecodeCommentAndNewLine):
+        (JSC::CodeBlock::printUnaryOp):
+        (JSC::CodeBlock::printBinaryOp):
+        (JSC::CodeBlock::printConditionalJump):
+        (JSC::CodeBlock::printGetByIdOp):
+        (JSC::dumpStructure):
+        (JSC::dumpChain):
+        (JSC::CodeBlock::printGetByIdCacheStatus):
+        (JSC::CodeBlock::printCallOp):
+        (JSC::CodeBlock::printPutByIdOp):
+        (JSC::CodeBlock::printStructure):
+        (JSC::CodeBlock::printStructures):
+        (JSC::CodeBlock::dump):
+        (JSC::CodeBlock::dumpStatistics):
+        (JSC::CodeBlock::finalizeUnconditionally):
+        (JSC::CodeBlock::resetStubInternal):
+        (JSC::CodeBlock::reoptimize):
+        (JSC::ProgramCodeBlock::jettison):
+        (JSC::EvalCodeBlock::jettison):
+        (JSC::FunctionCodeBlock::jettison):
+        (JSC::CodeBlock::shouldOptimizeNow):
+        (JSC::CodeBlock::tallyFrequentExitSites):
+        (JSC::CodeBlock::dumpValueProfiles):
+        * bytecode/Opcode.cpp:
+        (JSC::OpcodeStats::~OpcodeStats):
+        * bytecode/SamplingTool.cpp:
+        (JSC::SamplingFlags::stop):
+        (JSC::SamplingRegion::dumpInternal):
+        (JSC::SamplingTool::dump):
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::initialize):
+        (JSC::DFG::AbstractState::endBasicBlock):
+        (JSC::DFG::AbstractState::mergeStateAtTail):
+        (JSC::DFG::AbstractState::mergeToSuccessors):
+        * dfg/DFGAbstractValue.h:
+        (JSC::DFG::AbstractValue::dump):
+        * dfg/DFGArgumentsSimplificationPhase.cpp:
+        (JSC::DFG::ArgumentsSimplificationPhase::run):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::injectLazyOperandSpeculation):
+        (JSC::DFG::ByteCodeParser::getPredictionWithoutOSRExit):
+        (JSC::DFG::ByteCodeParser::getArrayModeAndEmitChecks):
+        (JSC::DFG::ByteCodeParser::makeSafe):
+        (JSC::DFG::ByteCodeParser::makeDivSafe):
+        (JSC::DFG::ByteCodeParser::handleCall):
+        (JSC::DFG::ByteCodeParser::handleInlining):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        (JSC::DFG::ByteCodeParser::processPhiStack):
+        (JSC::DFG::ByteCodeParser::linkBlock):
+        (JSC::DFG::ByteCodeParser::InlineStackEntry::InlineStackEntry):
+        (JSC::DFG::ByteCodeParser::parseCodeBlock):
+        (JSC::DFG::ByteCodeParser::parse):
+        * dfg/DFGCFAPhase.cpp:
+        (JSC::DFG::CFAPhase::performBlockCFA):
+        (JSC::DFG::CFAPhase::performForwardCFA):
+        * dfg/DFGCFGSimplificationPhase.cpp:
+        (JSC::DFG::CFGSimplificationPhase::run):
+        (JSC::DFG::CFGSimplificationPhase::fixPossibleGetLocal):
+        (JSC::DFG::CFGSimplificationPhase::fixPhis):
+        (JSC::DFG::CFGSimplificationPhase::fixJettisonedPredecessors):
+        (JSC::DFG::CFGSimplificationPhase::removePotentiallyDeadPhiReference):
+        (JSC::DFG::CFGSimplificationPhase::mergeBlocks):
+        * dfg/DFGCSEPhase.cpp:
+        (JSC::DFG::CSEPhase::endIndexForPureCSE):
+        (JSC::DFG::CSEPhase::setReplacement):
+        (JSC::DFG::CSEPhase::eliminate):
+        (JSC::DFG::CSEPhase::performNodeCSE):
+        * dfg/DFGCapabilities.cpp:
+        (JSC::DFG::debugFail):
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+        (JSC::DFG::ConstantFoldingPhase::paintUnreachableCode):
+        * dfg/DFGDisassembler.cpp:
+        (JSC::DFG::Disassembler::dump):
+        * dfg/DFGDriver.cpp:
+        (JSC::DFG::compile):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        (JSC::DFG::FixupPhase::fixDoubleEdge):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::printWhiteSpace):
+        (JSC::DFG::Graph::dumpCodeOrigin):
+        (JSC::DFG::Graph::dump):
+        (JSC::DFG::Graph::dumpBlockHeader):
+        (JSC::DFG::Graph::predictArgumentTypes):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::link):
+        * dfg/DFGOSREntry.cpp:
+        (JSC::DFG::prepareOSREntry):
+        * dfg/DFGOSRExitCompiler.cpp:
+        * dfg/DFGOSRExitCompiler32_64.cpp:
+        (JSC::DFG::OSRExitCompiler::compileExit):
+        * dfg/DFGOSRExitCompiler64.cpp:
+        (JSC::DFG::OSRExitCompiler::compileExit):
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGPhase.cpp:
+        (JSC::DFG::Phase::beginPhase):
+        * dfg/DFGPhase.h:
+        (JSC::DFG::runAndLog):
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        (JSC::DFG::PredictionPropagationPhase::propagateForward):
+        (JSC::DFG::PredictionPropagationPhase::propagateBackward):
+        (JSC::DFG::PredictionPropagationPhase::doRoundOfDoubleVoting):
+        * dfg/DFGRegisterBank.h:
+        (JSC::DFG::RegisterBank::dump):
+        * dfg/DFGScoreBoard.h:
+        (JSC::DFG::ScoreBoard::use):
+        (JSC::DFG::ScoreBoard::dump):
+        * dfg/DFGSlowPathGenerator.h:
+        (JSC::DFG::SlowPathGenerator::generate):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::terminateSpeculativeExecution):
+        (JSC::DFG::SpeculativeJIT::terminateSpeculativeExecutionWithConditionalDirection):
+        (JSC::DFG::SpeculativeJIT::runSlowPathGenerators):
+        (JSC::DFG::SpeculativeJIT::dump):
+        (JSC::DFG::SpeculativeJIT::checkConsistency):
+        (JSC::DFG::SpeculativeJIT::compile):
+        (JSC::DFG::SpeculativeJIT::checkGeneratedTypeForToInt32):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::fillSpeculateIntInternal):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateDouble):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateCell):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateBoolean):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::fillSpeculateIntInternal):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateDouble):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateCell):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateBoolean):
+        * dfg/DFGStructureCheckHoistingPhase.cpp:
+        (JSC::DFG::StructureCheckHoistingPhase::run):
+        * dfg/DFGValidate.cpp:
+        (Validate):
+        (JSC::DFG::Validate::reportValidationContext):
+        (JSC::DFG::Validate::dumpData):
+        (JSC::DFG::Validate::dumpGraphIfAppropriate):
+        * dfg/DFGVariableEventStream.cpp:
+        (JSC::DFG::VariableEventStream::logEvent):
+        (JSC::DFG::VariableEventStream::reconstruct):
+        * dfg/DFGVirtualRegisterAllocationPhase.cpp:
+        (JSC::DFG::VirtualRegisterAllocationPhase::run):
+        * heap/Heap.cpp:
+        * heap/HeapStatistics.cpp:
+        (JSC::HeapStatistics::logStatistics):
+        (JSC::HeapStatistics::showObjectStatistics):
+        * heap/MarkStack.h:
+        * heap/MarkedBlock.h:
+        * heap/SlotVisitor.cpp:
+        (JSC::SlotVisitor::validate):
+        * interpreter/CallFrame.cpp:
+        (JSC::CallFrame::dumpCaller):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::dumpRegisters):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::privateCompileSlowCases):
+        (JSC::JIT::privateCompile):
+        * jit/JITDisassembler.cpp:
+        (JSC::JITDisassembler::dump):
+        (JSC::JITDisassembler::dumpForInstructions):
+        * jit/JITStubRoutine.h:
+        (JSC):
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        * jit/JumpReplacementWatchpoint.cpp:
+        (JSC::JumpReplacementWatchpoint::fireInternal):
+        * llint/LLIntExceptions.cpp:
+        (JSC::LLInt::interpreterThrowInCaller):
+        (JSC::LLInt::returnToThrow):
+        (JSC::LLInt::callToThrow):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::llint_trace_operand):
+        (JSC::LLInt::llint_trace_value):
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        (JSC::LLInt::traceFunctionPrologue):
+        (JSC::LLInt::jitCompileAndSetHeuristics):
+        (JSC::LLInt::entryOSR):
+        (JSC::LLInt::handleHostCall):
+        (JSC::LLInt::setUpCall):
+        * profiler/Profile.cpp:
+        (JSC::Profile::debugPrintData):
+        (JSC::Profile::debugPrintDataSampleStyle):
+        * profiler/ProfileNode.cpp:
+        (JSC::ProfileNode::debugPrintData):
+        (JSC::ProfileNode::debugPrintDataSampleStyle):
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::dumpRegExpTrace):
+        * runtime/RegExp.cpp:
+        (JSC::RegExp::matchCompareWithInterpreter):
+        * runtime/SamplingCounter.cpp:
+        (JSC::AbstractSamplingCounter::dump):
+        * runtime/Structure.cpp:
+        (JSC::Structure::dumpStatistics):
+        (JSC::PropertyMapStatisticsExitLogger::~PropertyMapStatisticsExitLogger):
+        * tools/CodeProfile.cpp:
+        (JSC::CodeProfile::report):
+        * tools/ProfileTreeNode.h:
+        (JSC::ProfileTreeNode::dumpInternal):
+        * yarr/YarrInterpreter.cpp:
+        (JSC::Yarr::ByteCompiler::dumpDisjunction):
+
+2012-11-21  Filip Pizlo  <fpizlo@apple.com>
+
         It should be possible to say disassemble(stuff) instead of having to say if (!tryToDisassemble(stuff)) dataLog("I failed")
         https://bugs.webkit.org/show_bug.cgi?id=103010
 

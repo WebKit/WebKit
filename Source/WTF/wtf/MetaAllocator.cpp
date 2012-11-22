@@ -449,7 +449,7 @@ void MetaAllocator::freeFreeSpaceNode(FreeSpaceNode* node)
 #if ENABLE(META_ALLOCATOR_PROFILE)
 void MetaAllocator::dumpProfile()
 {
-    dataLog("%d: MetaAllocator(%p): num allocations = %u, num frees = %u, allocated = %lu, reserved = %lu, committed = %lu\n",
+    dataLogF("%d: MetaAllocator(%p): num allocations = %u, num frees = %u, allocated = %lu, reserved = %lu, committed = %lu\n",
             getpid(), this, m_numAllocations, m_numFrees, m_bytesAllocated, m_bytesReserved, m_bytesCommitted);
 }
 #endif

@@ -256,7 +256,7 @@ private:
             m_inlineStackTop->m_lazyOperands.prediction(
                 LazyOperandValueProfileKey(m_currentIndex, node.local()));
 #if DFG_ENABLE(DEBUG_VERBOSE)
-        dataLog("Lazy operand [@%u, bc#%u, r%d] prediction: %s\n",
+        dataLogF("Lazy operand [@%u, bc#%u, r%d] prediction: %s\n",
                 nodeIndex, m_currentIndex, node.local(), speculationToString(prediction));
 #endif
         node.variableAccessData()->predict(prediction);
@@ -876,7 +876,7 @@ private:
         
         SpeculatedType prediction = m_inlineStackTop->m_profiledBlock->valueProfilePredictionForBytecodeOffset(bytecodeIndex);
 #if DFG_ENABLE(DEBUG_VERBOSE)
-        dataLog("Dynamic [@%u, bc#%u] prediction: %s\n", nodeIndex, bytecodeIndex, speculationToString(prediction));
+        dataLogF("Dynamic [@%u, bc#%u] prediction: %s\n", nodeIndex, bytecodeIndex, speculationToString(prediction));
 #endif
         
         return prediction;
@@ -922,8 +922,8 @@ private:
         
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
         if (m_inlineStackTop->m_profiledBlock->numberOfRareCaseProfiles())
-            dataLog("Slow case profile for bc#%u: %u\n", m_currentIndex, m_inlineStackTop->m_profiledBlock->rareCaseProfileForBytecodeOffset(m_currentIndex)->m_counter);
-        dataLog("Array profile for bc#%u: %p%s%s, %u\n", m_currentIndex, profile->expectedStructure(), profile->structureIsPolymorphic() ? " (polymorphic)" : "", profile->mayInterceptIndexedAccesses() ? " (may intercept)" : "", profile->observedArrayModes());
+            dataLogF("Slow case profile for bc#%u: %u\n", m_currentIndex, m_inlineStackTop->m_profiledBlock->rareCaseProfileForBytecodeOffset(m_currentIndex)->m_counter);
+        dataLogF("Array profile for bc#%u: %p%s%s, %u\n", m_currentIndex, profile->expectedStructure(), profile->structureIsPolymorphic() ? " (polymorphic)" : "", profile->mayInterceptIndexedAccesses() ? " (may intercept)" : "", profile->observedArrayModes());
 #endif
         
         bool makeSafe =
@@ -967,13 +967,13 @@ private:
             if (m_inlineStackTop->m_profiledBlock->likelyToTakeDeepestSlowCase(m_currentIndex)
                 || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, Overflow)) {
 #if DFG_ENABLE(DEBUG_VERBOSE)
-                dataLog("Making ArithMul @%u take deepest slow case.\n", nodeIndex);
+                dataLogF("Making ArithMul @%u take deepest slow case.\n", nodeIndex);
 #endif
                 m_graph[nodeIndex].mergeFlags(NodeMayOverflow | NodeMayNegZero);
             } else if (m_inlineStackTop->m_profiledBlock->likelyToTakeSlowCase(m_currentIndex)
                        || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, NegativeZero)) {
 #if DFG_ENABLE(DEBUG_VERBOSE)
-                dataLog("Making ArithMul @%u take faster slow case.\n", nodeIndex);
+                dataLogF("Making ArithMul @%u take faster slow case.\n", nodeIndex);
 #endif
                 m_graph[nodeIndex].mergeFlags(NodeMayNegZero);
             }
@@ -1003,7 +1003,7 @@ private:
             return nodeIndex;
         
 #if DFG_ENABLE(DEBUG_VERBOSE)
-        dataLog("Making %s @%u safe at bc#%u because special fast-case counter is at %u and exit profiles say %d, %d\n", Graph::opName(m_graph[nodeIndex].op()), nodeIndex, m_currentIndex, m_inlineStackTop->m_profiledBlock->specialFastCaseProfileForBytecodeOffset(m_currentIndex)->m_counter, m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, Overflow), m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, NegativeZero));
+        dataLogF("Making %s @%u safe at bc#%u because special fast-case counter is at %u and exit profiles say %d, %d\n", Graph::opName(m_graph[nodeIndex].op()), nodeIndex, m_currentIndex, m_inlineStackTop->m_profiledBlock->specialFastCaseProfileForBytecodeOffset(m_currentIndex)->m_counter, m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, Overflow), m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, NegativeZero));
 #endif
         
         // FIXME: It might be possible to make this more granular. The DFG certainly can
@@ -1277,19 +1277,19 @@ void ByteCodeParser::handleCall(Interpreter* interpreter, Instruction* currentIn
         m_inlineStackTop->m_profiledBlock, m_currentIndex);
     
 #if DFG_ENABLE(DEBUG_VERBOSE)
-    dataLog("For call at @%lu bc#%u: ", m_graph.size(), m_currentIndex);
+    dataLogF("For call at @%lu bc#%u: ", m_graph.size(), m_currentIndex);
     if (callLinkStatus.isSet()) {
         if (callLinkStatus.couldTakeSlowPath())
-            dataLog("could take slow path, ");
-        dataLog("target = %p\n", callLinkStatus.callTarget());
+            dataLogF("could take slow path, ");
+        dataLogF("target = %p\n", callLinkStatus.callTarget());
     } else
-        dataLog("not set.\n");
+        dataLogF("not set.\n");
 #endif
     
     if (m_graph.isFunctionConstant(callTarget)) {
         callType = ConstantFunction;
 #if DFG_ENABLE(DEBUG_VERBOSE)
-        dataLog("Call at [@%lu, bc#%u] has a function constant: %p, exec %p.\n",
+        dataLogF("Call at [@%lu, bc#%u] has a function constant: %p, exec %p.\n",
                 m_graph.size(), m_currentIndex,
                 m_graph.valueOfFunctionConstant(callTarget),
                 m_graph.valueOfFunctionConstant(callTarget)->executable());
@@ -1297,7 +1297,7 @@ void ByteCodeParser::handleCall(Interpreter* interpreter, Instruction* currentIn
     } else if (m_graph.isInternalFunctionConstant(callTarget)) {
         callType = ConstantInternalFunction;
 #if DFG_ENABLE(DEBUG_VERBOSE)
-        dataLog("Call at [@%lu, bc#%u] has an internal function constant: %p.\n",
+        dataLogF("Call at [@%lu, bc#%u] has an internal function constant: %p.\n",
                 m_graph.size(), m_currentIndex,
                 m_graph.valueOfInternalFunctionConstant(callTarget));
 #endif
@@ -1305,14 +1305,14 @@ void ByteCodeParser::handleCall(Interpreter* interpreter, Instruction* currentIn
                && !m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCache)) {
         callType = LinkedFunction;
 #if DFG_ENABLE(DEBUG_VERBOSE)
-        dataLog("Call at [@%lu, bc#%u] is linked to: %p, exec %p.\n",
+        dataLogF("Call at [@%lu, bc#%u] is linked to: %p, exec %p.\n",
                 m_graph.size(), m_currentIndex, callLinkStatus.callTarget(),
                 callLinkStatus.callTarget()->executable());
 #endif
     } else {
         callType = UnknownFunction;
 #if DFG_ENABLE(DEBUG_VERBOSE)
-        dataLog("Call at [@%lu, bc#%u] is has an unknown or ambiguous target.\n",
+        dataLogF("Call at [@%lu, bc#%u] is has an unknown or ambiguous target.\n",
                 m_graph.size(), m_currentIndex);
 #endif
     }
@@ -1437,7 +1437,7 @@ bool ByteCodeParser::handleInlining(bool usesResult, int callTarget, NodeIndex c
     ASSERT(canInlineFunctionFor(codeBlock, kind));
 
 #if DFG_ENABLE(DEBUG_VERBOSE)
-    dataLog("Inlining executable %p.\n", executable);
+    dataLogF("Inlining executable %p.\n", executable);
 #endif
     
     // Now we know without a doubt that we are committed to inlining. So begin the process
@@ -1522,7 +1522,7 @@ bool ByteCodeParser::handleInlining(bool usesResult, int callTarget, NodeIndex c
         // caller. It doesn't need to be linked to, but it needs outgoing links.
         if (!inlineStackEntry.m_unlinkedBlocks.isEmpty()) {
 #if DFG_ENABLE(DEBUG_VERBOSE)
-            dataLog("Reascribing bytecode index of block %p from bc#%u to bc#%u (inline return case).\n", lastBlock, lastBlock->bytecodeBegin, m_currentIndex);
+            dataLogF("Reascribing bytecode index of block %p from bc#%u to bc#%u (inline return case).\n", lastBlock, lastBlock->bytecodeBegin, m_currentIndex);
 #endif
             // For debugging purposes, set the bytecodeBegin. Note that this doesn't matter
             // for release builds because this block will never serve as a potential target
@@ -1534,7 +1534,7 @@ bool ByteCodeParser::handleInlining(bool usesResult, int callTarget, NodeIndex c
         m_currentBlock = m_graph.m_blocks.last().get();
 
 #if DFG_ENABLE(DEBUG_VERBOSE)
-        dataLog("Done inlining executable %p, continuing code generation at epilogue.\n", executable);
+        dataLogF("Done inlining executable %p, continuing code generation at epilogue.\n", executable);
 #endif
         return true;
     }
@@ -1561,7 +1561,7 @@ bool ByteCodeParser::handleInlining(bool usesResult, int callTarget, NodeIndex c
     // Need to create a new basic block for the continuation at the caller.
     OwnPtr<BasicBlock> block = adoptPtr(new BasicBlock(nextOffset, m_numArguments, m_numLocals));
 #if DFG_ENABLE(DEBUG_VERBOSE)
-    dataLog("Creating inline epilogue basic block %p, #%zu for %p bc#%u at inline depth %u.\n", block.get(), m_graph.m_blocks.size(), m_inlineStackTop->executable(), m_currentIndex, CodeOrigin::inlineDepthForCallFrame(m_inlineStackTop->m_inlineCallFrame));
+    dataLogF("Creating inline epilogue basic block %p, #%zu for %p bc#%u at inline depth %u.\n", block.get(), m_graph.m_blocks.size(), m_inlineStackTop->executable(), m_currentIndex, CodeOrigin::inlineDepthForCallFrame(m_inlineStackTop->m_inlineCallFrame));
 #endif
     m_currentBlock = block.get();
     ASSERT(m_inlineStackTop->m_caller->m_blockLinkingTargets.isEmpty() || m_graph.m_blocks[m_inlineStackTop->m_caller->m_blockLinkingTargets.last()]->bytecodeBegin < nextOffset);
@@ -1573,7 +1573,7 @@ bool ByteCodeParser::handleInlining(bool usesResult, int callTarget, NodeIndex c
     // At this point we return and continue to generate code for the caller, but
     // in the new basic block.
 #if DFG_ENABLE(DEBUG_VERBOSE)
-    dataLog("Done inlining executable %p, continuing code generation in new block.\n", executable);
+    dataLogF("Done inlining executable %p, continuing code generation in new block.\n", executable);
 #endif
     return true;
 }
@@ -2077,7 +2077,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                 addToGraph(Jump, OpInfo(m_currentIndex));
             else {
 #if DFG_ENABLE(DEBUG_VERBOSE)
-                dataLog("Refusing to plant jump at limit %u because block %p is empty.\n", limit, m_currentBlock);
+                dataLogF("Refusing to plant jump at limit %u because block %p is empty.\n", limit, m_currentBlock);
 #endif
             }
             return shouldContinueParsing;
@@ -2104,9 +2104,9 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                     m_inlineStackTop->m_profiledBlock->valueProfileForBytecodeOffset(m_currentProfilingIndex);
                 profile->computeUpdatedPrediction();
 #if DFG_ENABLE(DEBUG_VERBOSE)
-                dataLog("[@%lu bc#%u]: profile %p: ", m_graph.size(), m_currentProfilingIndex, profile);
+                dataLogF("[@%lu bc#%u]: profile %p: ", m_graph.size(), m_currentProfilingIndex, profile);
                 profile->dump(WTF::dataFile());
-                dataLog("\n");
+                dataLogF("\n");
 #endif
                 if (profile->m_singletonValueIsTop
                     || !profile->m_singletonValue
@@ -3274,12 +3274,12 @@ void ByteCodeParser::processPhiStack()
         VariableAccessData* dataForPhi = m_graph[entry.m_phi].variableAccessData();
 
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-        dataLog("   Handling phi entry for var %u, phi @%u.\n", entry.m_varNo, entry.m_phi);
+        dataLogF("   Handling phi entry for var %u, phi @%u.\n", entry.m_varNo, entry.m_phi);
 #endif
         
         for (size_t i = 0; i < predecessors.size(); ++i) {
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-            dataLog("     Dealing with predecessor block %u.\n", predecessors[i]);
+            dataLogF("     Dealing with predecessor block %u.\n", predecessors[i]);
 #endif
             
             BasicBlock* predecessorBlock = m_graph.m_blocks[predecessors[i]].get();
@@ -3289,7 +3289,7 @@ void ByteCodeParser::processPhiStack()
             NodeIndex valueInPredecessor = var;
             if (valueInPredecessor == NoNode) {
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-                dataLog("      Did not find node, adding phi.\n");
+                dataLogF("      Did not find node, adding phi.\n");
 #endif
 
                 valueInPredecessor = insertPhiNode(OpInfo(newVariableAccessData(stackType == ArgumentPhiStack ? argumentToOperand(varNo) : static_cast<int>(varNo), false)), predecessorBlock);
@@ -3301,7 +3301,7 @@ void ByteCodeParser::processPhiStack()
                 phiStack.append(PhiStackEntry(predecessorBlock, valueInPredecessor, varNo));
             } else if (m_graph[valueInPredecessor].op() == GetLocal) {
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-                dataLog("      Found GetLocal @%u.\n", valueInPredecessor);
+                dataLogF("      Found GetLocal @%u.\n", valueInPredecessor);
 #endif
 
                 // We want to ensure that the VariableAccessDatas are identical between the
@@ -3313,7 +3313,7 @@ void ByteCodeParser::processPhiStack()
                 valueInPredecessor = m_graph[valueInPredecessor].child1().index();
             } else {
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-                dataLog("      Found @%u.\n", valueInPredecessor);
+                dataLogF("      Found @%u.\n", valueInPredecessor);
 #endif
             }
             ASSERT(m_graph[valueInPredecessor].op() == SetLocal
@@ -3328,48 +3328,48 @@ void ByteCodeParser::processPhiStack()
 
             Node* phiNode = &m_graph[entry.m_phi];
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-            dataLog("      Ref count of @%u = %u.\n", entry.m_phi, phiNode->refCount());
+            dataLogF("      Ref count of @%u = %u.\n", entry.m_phi, phiNode->refCount());
 #endif
             if (phiNode->refCount()) {
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-                dataLog("      Reffing @%u.\n", valueInPredecessor);
+                dataLogF("      Reffing @%u.\n", valueInPredecessor);
 #endif
                 m_graph.ref(valueInPredecessor);
             }
 
             if (!phiNode->child1()) {
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-                dataLog("      Setting @%u->child1 = @%u.\n", entry.m_phi, valueInPredecessor);
+                dataLogF("      Setting @%u->child1 = @%u.\n", entry.m_phi, valueInPredecessor);
 #endif
                 phiNode->children.setChild1(Edge(valueInPredecessor));
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-                dataLog("      Children of @%u: ", entry.m_phi);
+                dataLogF("      Children of @%u: ", entry.m_phi);
                 phiNode->dumpChildren(WTF::dataFile());
-                dataLog(".\n");
+                dataLogF(".\n");
 #endif
                 continue;
             }
             if (!phiNode->child2()) {
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-                dataLog("      Setting @%u->child2 = @%u.\n", entry.m_phi, valueInPredecessor);
+                dataLogF("      Setting @%u->child2 = @%u.\n", entry.m_phi, valueInPredecessor);
 #endif
                 phiNode->children.setChild2(Edge(valueInPredecessor));
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-                dataLog("      Children of @%u: ", entry.m_phi);
+                dataLogF("      Children of @%u: ", entry.m_phi);
                 phiNode->dumpChildren(WTF::dataFile());
-                dataLog(".\n");
+                dataLogF(".\n");
 #endif
                 continue;
             }
             if (!phiNode->child3()) {
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-                dataLog("      Setting @%u->child3 = @%u.\n", entry.m_phi, valueInPredecessor);
+                dataLogF("      Setting @%u->child3 = @%u.\n", entry.m_phi, valueInPredecessor);
 #endif
                 phiNode->children.setChild3(Edge(valueInPredecessor));
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-                dataLog("      Children of @%u: ", entry.m_phi);
+                dataLogF("      Children of @%u: ", entry.m_phi);
                 phiNode->dumpChildren(WTF::dataFile());
-                dataLog(".\n");
+                dataLogF(".\n");
 #endif
                 continue;
             }
@@ -3377,7 +3377,7 @@ void ByteCodeParser::processPhiStack()
             NodeIndex newPhi = insertPhiNode(OpInfo(dataForPhi), entry.m_block);
             
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-            dataLog("      Splitting @%u, created @%u.\n", entry.m_phi, newPhi);
+            dataLogF("      Splitting @%u, created @%u.\n", entry.m_phi, newPhi);
 #endif
 
             phiNode = &m_graph[entry.m_phi]; // reload after vector resize
@@ -3388,17 +3388,17 @@ void ByteCodeParser::processPhiStack()
             newPhiNode.children = phiNode->children;
 
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-            dataLog("      Children of @%u: ", newPhi);
+            dataLogF("      Children of @%u: ", newPhi);
             newPhiNode.dumpChildren(WTF::dataFile());
-            dataLog(".\n");
+            dataLogF(".\n");
 #endif
 
             phiNode->children.initialize(newPhi, valueInPredecessor, NoNode);
 
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-            dataLog("      Children of @%u: ", entry.m_phi);
+            dataLogF("      Children of @%u: ", entry.m_phi);
             phiNode->dumpChildren(WTF::dataFile());
-            dataLog(".\n");
+            dataLogF(".\n");
 #endif
         }
     }
@@ -3425,7 +3425,7 @@ void ByteCodeParser::linkBlock(BasicBlock* block, Vector<BlockIndex>& possibleTa
     case Jump:
         node.setTakenBlockIndex(m_graph.blockIndexForBytecodeOffset(possibleTargets, node.takenBytecodeOffsetDuringParsing()));
 #if DFG_ENABLE(DEBUG_VERBOSE)
-        dataLog("Linked basic block %p to %p, #%u.\n", block, m_graph.m_blocks[node.takenBlockIndex()].get(), node.takenBlockIndex());
+        dataLogF("Linked basic block %p to %p, #%u.\n", block, m_graph.m_blocks[node.takenBlockIndex()].get(), node.takenBlockIndex());
 #endif
         break;
         
@@ -3433,13 +3433,13 @@ void ByteCodeParser::linkBlock(BasicBlock* block, Vector<BlockIndex>& possibleTa
         node.setTakenBlockIndex(m_graph.blockIndexForBytecodeOffset(possibleTargets, node.takenBytecodeOffsetDuringParsing()));
         node.setNotTakenBlockIndex(m_graph.blockIndexForBytecodeOffset(possibleTargets, node.notTakenBytecodeOffsetDuringParsing()));
 #if DFG_ENABLE(DEBUG_VERBOSE)
-        dataLog("Linked basic block %p to %p, #%u and %p, #%u.\n", block, m_graph.m_blocks[node.takenBlockIndex()].get(), node.takenBlockIndex(), m_graph.m_blocks[node.notTakenBlockIndex()].get(), node.notTakenBlockIndex());
+        dataLogF("Linked basic block %p to %p, #%u and %p, #%u.\n", block, m_graph.m_blocks[node.takenBlockIndex()].get(), node.takenBlockIndex(), m_graph.m_blocks[node.notTakenBlockIndex()].get(), node.notTakenBlockIndex());
 #endif
         break;
         
     default:
 #if DFG_ENABLE(DEBUG_VERBOSE)
-        dataLog("Marking basic block %p as linked.\n", block);
+        dataLogF("Marking basic block %p as linked.\n", block);
 #endif
         break;
     }
@@ -3548,9 +3548,9 @@ ByteCodeParser::InlineStackEntry::InlineStackEntry(
         }
 
 #if DFG_ENABLE(DEBUG_VERBOSE)
-        dataLog("Current captured variables: ");
+        dataLogF("Current captured variables: ");
         inlineCallFrame.capturedVars.dump(WTF::dataFile());
-        dataLog("\n");
+        dataLogF("\n");
 #endif
         
         byteCodeParser->m_codeBlock->inlineCallFrames().append(inlineCallFrame);
@@ -3657,7 +3657,7 @@ void ByteCodeParser::parseCodeBlock()
     CodeBlock* codeBlock = m_inlineStackTop->m_codeBlock;
     
 #if DFG_ENABLE(DEBUG_VERBOSE)
-    dataLog("Parsing code block %p. codeType = %s, captureCount = %u, needsFullScopeChain = %s, needsActivation = %s, isStrictMode = %s\n",
+    dataLogF("Parsing code block %p. codeType = %s, captureCount = %u, needsFullScopeChain = %s, needsActivation = %s, isStrictMode = %s\n",
             codeBlock,
             codeTypeToString(codeBlock->codeType()),
             codeBlock->symbolTable() ? codeBlock->symbolTable()->captureCount() : 0,
@@ -3671,7 +3671,7 @@ void ByteCodeParser::parseCodeBlock()
         // The maximum bytecode offset to go into the current basicblock is either the next jump target, or the end of the instructions.
         unsigned limit = jumpTargetIndex < codeBlock->numberOfJumpTargets() ? codeBlock->jumpTarget(jumpTargetIndex) : codeBlock->instructions().size();
 #if DFG_ENABLE(DEBUG_VERBOSE)
-        dataLog("Parsing bytecode with limit %p bc#%u at inline depth %u.\n", m_inlineStackTop->executable(), limit, CodeOrigin::inlineDepthForCallFrame(m_inlineStackTop->m_inlineCallFrame));
+        dataLogF("Parsing bytecode with limit %p bc#%u at inline depth %u.\n", m_inlineStackTop->executable(), limit, CodeOrigin::inlineDepthForCallFrame(m_inlineStackTop->m_inlineCallFrame));
 #endif
         ASSERT(m_currentIndex < limit);
 
@@ -3693,13 +3693,13 @@ void ByteCodeParser::parseCodeBlock()
                     // Change its bytecode begin and continue.
                     m_currentBlock = m_graph.m_blocks.last().get();
 #if DFG_ENABLE(DEBUG_VERBOSE)
-                    dataLog("Reascribing bytecode index of block %p from bc#%u to bc#%u (peephole case).\n", m_currentBlock, m_currentBlock->bytecodeBegin, m_currentIndex);
+                    dataLogF("Reascribing bytecode index of block %p from bc#%u to bc#%u (peephole case).\n", m_currentBlock, m_currentBlock->bytecodeBegin, m_currentIndex);
 #endif
                     m_currentBlock->bytecodeBegin = m_currentIndex;
                 } else {
                     OwnPtr<BasicBlock> block = adoptPtr(new BasicBlock(m_currentIndex, m_numArguments, m_numLocals));
 #if DFG_ENABLE(DEBUG_VERBOSE)
-                    dataLog("Creating basic block %p, #%zu for %p bc#%u at inline depth %u.\n", block.get(), m_graph.m_blocks.size(), m_inlineStackTop->executable(), m_currentIndex, CodeOrigin::inlineDepthForCallFrame(m_inlineStackTop->m_inlineCallFrame));
+                    dataLogF("Creating basic block %p, #%zu for %p bc#%u at inline depth %u.\n", block.get(), m_graph.m_blocks.size(), m_inlineStackTop->executable(), m_currentIndex, CodeOrigin::inlineDepthForCallFrame(m_inlineStackTop->m_inlineCallFrame));
 #endif
                     m_currentBlock = block.get();
                     ASSERT(m_inlineStackTop->m_unlinkedBlocks.isEmpty() || m_graph.m_blocks[m_inlineStackTop->m_unlinkedBlocks.last().m_blockIndex]->bytecodeBegin < m_currentIndex);
@@ -3756,14 +3756,14 @@ bool ByteCodeParser::parse()
     linkBlocks(inlineStackEntry.m_unlinkedBlocks, inlineStackEntry.m_blockLinkingTargets);
     m_graph.determineReachability();
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-    dataLog("Processing local variable phis.\n");
+    dataLogF("Processing local variable phis.\n");
 #endif
     
     m_currentProfilingIndex = m_currentIndex;
     
     processPhiStack<LocalPhiStack>();
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-    dataLog("Processing argument phis.\n");
+    dataLogF("Processing argument phis.\n");
 #endif
     processPhiStack<ArgumentPhiStack>();
 

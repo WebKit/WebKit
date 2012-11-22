@@ -135,17 +135,17 @@ void Structure::dumpStatistics()
         }
     }
 
-    dataLog("Number of live Structures: %d\n", liveStructureSet.size());
-    dataLog("Number of Structures using the single item optimization for transition map: %d\n", numberUsingSingleSlot);
-    dataLog("Number of Structures that are leaf nodes: %d\n", numberLeaf);
-    dataLog("Number of Structures that singletons: %d\n", numberSingletons);
-    dataLog("Number of Structures with PropertyMaps: %d\n", numberWithPropertyMaps);
+    dataLogF("Number of live Structures: %d\n", liveStructureSet.size());
+    dataLogF("Number of Structures using the single item optimization for transition map: %d\n", numberUsingSingleSlot);
+    dataLogF("Number of Structures that are leaf nodes: %d\n", numberLeaf);
+    dataLogF("Number of Structures that singletons: %d\n", numberSingletons);
+    dataLogF("Number of Structures with PropertyMaps: %d\n", numberWithPropertyMaps);
 
-    dataLog("Size of a single Structures: %d\n", static_cast<unsigned>(sizeof(Structure)));
-    dataLog("Size of sum of all property maps: %d\n", totalPropertyMapsSize);
-    dataLog("Size of average of all property maps: %f\n", static_cast<double>(totalPropertyMapsSize) / static_cast<double>(liveStructureSet.size()));
+    dataLogF("Size of a single Structures: %d\n", static_cast<unsigned>(sizeof(Structure)));
+    dataLogF("Size of sum of all property maps: %d\n", totalPropertyMapsSize);
+    dataLogF("Size of average of all property maps: %f\n", static_cast<double>(totalPropertyMapsSize) / static_cast<double>(liveStructureSet.size()));
 #else
-    dataLog("Dumping Structure statistics is not enabled.\n");
+    dataLogF("Dumping Structure statistics is not enabled.\n");
 #endif
 }
 
@@ -695,11 +695,11 @@ static PropertyMapStatisticsExitLogger logger;
 
 PropertyMapStatisticsExitLogger::~PropertyMapStatisticsExitLogger()
 {
-    dataLog("\nJSC::PropertyMap statistics\n\n");
-    dataLog("%d probes\n", numProbes);
-    dataLog("%d collisions (%.1f%%)\n", numCollisions, 100.0 * numCollisions / numProbes);
-    dataLog("%d rehashes\n", numRehashes);
-    dataLog("%d removes\n", numRemoves);
+    dataLogF("\nJSC::PropertyMap statistics\n\n");
+    dataLogF("%d probes\n", numProbes);
+    dataLogF("%d collisions (%.1f%%)\n", numCollisions, 100.0 * numCollisions / numProbes);
+    dataLogF("%d rehashes\n", numRehashes);
+    dataLogF("%d removes\n", numRemoves);
 }
 
 #endif

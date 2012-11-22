@@ -72,7 +72,7 @@ inline bool compile(CompileMode compileMode, ExecState* exec, CodeBlock* codeBlo
         return false;
     
 #if DFG_ENABLE(DEBUG_VERBOSE)
-    dataLog("DFG compiling code block %p(%p) for executable %p, number of instructions = %u.\n", codeBlock, codeBlock->alternative(), codeBlock->ownerExecutable(), codeBlock->instructionCount());
+    dataLogF("DFG compiling code block %p(%p) for executable %p, number of instructions = %u.\n", codeBlock, codeBlock->alternative(), codeBlock->ownerExecutable(), codeBlock->instructionCount());
 #endif
     
     // Derive our set of must-handle values. The compilation must be at least conservative
@@ -119,7 +119,7 @@ inline bool compile(CompileMode compileMode, ExecState* exec, CodeBlock* codeBlo
     dfg.m_fixpointState = FixpointNotConverged;
     for (;; ++cnt) {
 #if DFG_ENABLE(DEBUG_VERBOSE)
-        dataLog("DFG beginning optimization fixpoint iteration #%u.\n", cnt);
+        dataLogF("DFG beginning optimization fixpoint iteration #%u.\n", cnt);
 #endif
         bool changed = false;
         performCFA(dfg);
@@ -135,13 +135,13 @@ inline bool compile(CompileMode compileMode, ExecState* exec, CodeBlock* codeBlo
     dfg.m_fixpointState = FixpointConverged;
     performCSE(dfg);
 #if DFG_ENABLE(DEBUG_VERBOSE)
-    dataLog("DFG optimization fixpoint converged in %u iterations.\n", cnt);
+    dataLogF("DFG optimization fixpoint converged in %u iterations.\n", cnt);
 #endif
     performVirtualRegisterAllocation(dfg);
 
     GraphDumpMode modeForFinalValidate = DumpGraph;
 #if DFG_ENABLE(DEBUG_VERBOSE)
-    dataLog("Graph after optimization:\n");
+    dataLogF("Graph after optimization:\n");
     dfg.dump();
     modeForFinalValidate = DontDumpGraph;
 #endif

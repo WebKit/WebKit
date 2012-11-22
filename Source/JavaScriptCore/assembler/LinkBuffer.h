@@ -263,9 +263,9 @@ private:
 #endif
 };
 
-#define FINALIZE_CODE_IF(condition, linkBufferReference, dataLogArgumentsForHeading)  \
+#define FINALIZE_CODE_IF(condition, linkBufferReference, dataLogFArgumentsForHeading)  \
     (UNLIKELY((condition))                                              \
-     ? ((linkBufferReference).finalizeCodeWithDisassembly dataLogArgumentsForHeading) \
+     ? ((linkBufferReference).finalizeCodeWithDisassembly dataLogFArgumentsForHeading) \
      : (linkBufferReference).finalizeCodeWithoutDisassembly())
 
 // Use this to finalize code, like so:
@@ -281,14 +281,14 @@ private:
 //
 // ... and so on.
 //
-// Note that the dataLogArgumentsForHeading are only evaluated when showDisassembly
+// Note that the dataLogFArgumentsForHeading are only evaluated when showDisassembly
 // is true, so you can hide expensive disassembly-only computations inside there.
 
-#define FINALIZE_CODE(linkBufferReference, dataLogArgumentsForHeading)  \
-    FINALIZE_CODE_IF(Options::showDisassembly(), linkBufferReference, dataLogArgumentsForHeading)
+#define FINALIZE_CODE(linkBufferReference, dataLogFArgumentsForHeading)  \
+    FINALIZE_CODE_IF(Options::showDisassembly(), linkBufferReference, dataLogFArgumentsForHeading)
 
-#define FINALIZE_DFG_CODE(linkBufferReference, dataLogArgumentsForHeading)  \
-    FINALIZE_CODE_IF((Options::showDisassembly() || Options::showDFGDisassembly()), linkBufferReference, dataLogArgumentsForHeading)
+#define FINALIZE_DFG_CODE(linkBufferReference, dataLogFArgumentsForHeading)  \
+    FINALIZE_CODE_IF((Options::showDisassembly() || Options::showDFGDisassembly()), linkBufferReference, dataLogFArgumentsForHeading)
 
 } // namespace JSC
 

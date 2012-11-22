@@ -75,28 +75,28 @@ void HeapStatistics::logStatistics()
 #error "The HeapStatistics module is not supported on this platform."
 #endif
     if (!vmName || !suiteName || !benchmarkName)
-        dataLog("HeapStatistics: {\"max_rss\": %ld", usage.ru_maxrss);
+        dataLogF("HeapStatistics: {\"max_rss\": %ld", usage.ru_maxrss);
     else
-        dataLog("HeapStatistics: {\"max_rss\": %ld, \"vm_name\": \"%s\", \"suite_name\": \"%s\", \"benchmark_name\": \"%s\"", 
+        dataLogF("HeapStatistics: {\"max_rss\": %ld, \"vm_name\": \"%s\", \"suite_name\": \"%s\", \"benchmark_name\": \"%s\"", 
             usage.ru_maxrss, vmName, suiteName, benchmarkName); 
 
     if (Options::recordGCPauseTimes()) {
-        dataLog(", \"pause_times\": [");
+        dataLogF(", \"pause_times\": [");
         Vector<double>::iterator startIt = s_pauseTimeStarts->begin();
         Vector<double>::iterator endIt = s_pauseTimeEnds->begin();
         if (startIt != s_pauseTimeStarts->end() && endIt != s_pauseTimeEnds->end()) {
-            dataLog("[%f, %f]", *startIt, *endIt);
+            dataLogF("[%f, %f]", *startIt, *endIt);
             ++startIt;
             ++endIt;
         }
         while (startIt != s_pauseTimeStarts->end() && endIt != s_pauseTimeEnds->end()) {
-            dataLog(", [%f, %f]", *startIt, *endIt);
+            dataLogF(", [%f, %f]", *startIt, *endIt);
             ++startIt;
             ++endIt;
         }
-        dataLog("], \"start_time\": %f, \"end_time\": %f", s_startTime, s_endTime);
+        dataLogF("], \"start_time\": %f, \"end_time\": %f", s_startTime, s_endTime);
     }
-    dataLog("}\n");
+    dataLogF("}\n");
 }
 
 void HeapStatistics::exitWithFailure()
@@ -228,20 +228,20 @@ inline size_t StorageStatistics::storageCapacity()
 
 void HeapStatistics::showObjectStatistics(Heap* heap)
 {
-    dataLog("\n=== Heap Statistics: ===\n");
-    dataLog("size: %ldkB\n", static_cast<long>(heap->m_sizeAfterLastCollect / KB));
-    dataLog("capacity: %ldkB\n", static_cast<long>(heap->capacity() / KB));
-    dataLog("pause time: %lfms\n\n", heap->m_lastGCLength);
+    dataLogF("\n=== Heap Statistics: ===\n");
+    dataLogF("size: %ldkB\n", static_cast<long>(heap->m_sizeAfterLastCollect / KB));
+    dataLogF("capacity: %ldkB\n", static_cast<long>(heap->capacity() / KB));
+    dataLogF("pause time: %lfms\n\n", heap->m_lastGCLength);
 
     StorageStatistics storageStatistics;
     heap->m_objectSpace.forEachLiveCell(storageStatistics);
-    dataLog("wasted .property storage: %ldkB (%ld%%)\n",
+    dataLogF("wasted .property storage: %ldkB (%ld%%)\n",
         static_cast<long>(
             (storageStatistics.storageCapacity() - storageStatistics.storageSize()) / KB),
         static_cast<long>(
             (storageStatistics.storageCapacity() - storageStatistics.storageSize()) * 100
                 / storageStatistics.storageCapacity()));
-    dataLog("objects with out-of-line .property storage: %ld (%ld%%)\n",
+    dataLogF("objects with out-of-line .property storage: %ld (%ld%%)\n",
         static_cast<long>(
             storageStatistics.objectWithOutOfLineStorageCount()),
         static_cast<long>(

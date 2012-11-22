@@ -230,7 +230,7 @@ void JIT::privateCompileMainPass()
         m_labels[m_bytecodeOffset] = label();
 
 #if ENABLE(JIT_VERBOSE)
-        dataLog("Old JIT emitting code for bc#%u at offset 0x%lx.\n", m_bytecodeOffset, (long)debugOffset());
+        dataLogF("Old JIT emitting code for bc#%u at offset 0x%lx.\n", m_bytecodeOffset, (long)debugOffset());
 #endif
 
         switch (m_interpreter->getOpcodeID(currentInstruction->u.opcode)) {
@@ -451,7 +451,7 @@ void JIT::privateCompileSlowCases()
 #endif
 
 #if ENABLE(JIT_VERBOSE)
-        dataLog("Old JIT emitting slow code for bc#%u at offset 0x%lx.\n", m_bytecodeOffset, (long)debugOffset());
+        dataLogF("Old JIT emitting slow code for bc#%u at offset 0x%lx.\n", m_bytecodeOffset, (long)debugOffset());
 #endif
         
         if (m_disassembler)
@@ -835,7 +835,7 @@ JITCode JIT::privateCompile(CodePtr* functionEntryArityCheck, JITCompilationEffo
     m_codeBlock->shrinkToFit(CodeBlock::LateShrink);
     
 #if ENABLE(JIT_VERBOSE)
-    dataLog("JIT generated code for %p at [%p, %p).\n", m_codeBlock, result.executableMemory()->start(), result.executableMemory()->end());
+    dataLogF("JIT generated code for %p at [%p, %p).\n", m_codeBlock, result.executableMemory()->start(), result.executableMemory()->end());
 #endif
     
     return JITCode(result, JITCode::BaselineJIT);

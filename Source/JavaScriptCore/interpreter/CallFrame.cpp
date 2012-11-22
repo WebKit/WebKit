@@ -40,7 +40,7 @@ void CallFrame::dumpCaller()
     JSValue function;
     
     interpreter()->retrieveLastCaller(this, signedLineNumber, sourceID, urlString, function);
-    dataLog("Callpoint => %s:%d\n", urlString.utf8().data(), signedLineNumber);
+    dataLogF("Callpoint => %s:%d\n", urlString.utf8().data(), signedLineNumber);
 }
 
 JSStack* CallFrame::stack()

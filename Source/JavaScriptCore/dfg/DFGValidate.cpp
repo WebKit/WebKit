@@ -45,9 +45,9 @@ public:
     
     #define VALIDATE(context, assertion) do { \
         if (!(assertion)) { \
-            dataLog("\n\n\nAt "); \
+            dataLogF("\n\n\nAt "); \
             reportValidationContext context; \
-            dataLog(": validation %s (%s:%d) failed.\n", #assertion, __FILE__, __LINE__); \
+            dataLogF(": validation %s (%s:%d) failed.\n", #assertion, __FILE__, __LINE__); \
             dumpGraphIfAppropriate(); \
             WTFReportAssertionFailure(__FILE__, __LINE__, WTF_PRETTY_FUNCTION, #assertion); \
             CRASH(); \
@@ -56,13 +56,13 @@ public:
     
     #define V_EQUAL(context, left, right) do { \
         if (left != right) { \
-            dataLog("\n\n\nAt "); \
+            dataLogF("\n\n\nAt "); \
             reportValidationContext context; \
-            dataLog(": validation (%s = ", #left); \
+            dataLogF(": validation (%s = ", #left); \
             dumpData(left); \
-            dataLog(") == (%s = ", #right); \
+            dataLogF(") == (%s = ", #right); \
             dumpData(right); \
-            dataLog(") (%s:%d) failed.\n", __FILE__, __LINE__); \
+            dataLogF(") (%s:%d) failed.\n", __FILE__, __LINE__); \
             dumpGraphIfAppropriate(); \
             WTFReportAssertionFailure(__FILE__, __LINE__, WTF_PRETTY_FUNCTION, #left " == " #right); \
             CRASH(); \
@@ -290,60 +290,60 @@ private:
     
     void reportValidationContext(NodeIndex nodeIndex)
     {
-        dataLog("@%u", nodeIndex);
+        dataLogF("@%u", nodeIndex);
     }
     
     enum BlockTag { Block };
     void reportValidationContext(BlockTag, BlockIndex blockIndex)
     {
-        dataLog("Block #%u", blockIndex);
+        dataLogF("Block #%u", blockIndex);
     }
     
     void reportValidationContext(NodeIndex nodeIndex, Edge edge)
     {
-        dataLog("@%u -> %s@%u", nodeIndex, useKindToString(edge.useKind()), edge.index());
+        dataLogF("@%u -> %s@%u", nodeIndex, useKindToString(edge.useKind()), edge.index());
     }
     
     void reportValidationContext(
         VirtualRegister local, BlockIndex sourceBlockIndex, BlockTag, BlockIndex destinationBlockIndex)
     {
-        dataLog("r%d in Block #%u -> #%u", local, sourceBlockIndex, destinationBlockIndex);
+        dataLogF("r%d in Block #%u -> #%u", local, sourceBlockIndex, destinationBlockIndex);
     }
     
     void reportValidationContext(
         VirtualRegister local, BlockIndex sourceBlockIndex, NodeIndex prevNodeIndex)
     {
-        dataLog("@%u for r%d in Block #%u", prevNodeIndex, local, sourceBlockIndex);
+        dataLogF("@%u for r%d in Block #%u", prevNodeIndex, local, sourceBlockIndex);
     }
     
     void reportValidationContext(
         NodeIndex nodeIndex, BlockIndex blockIndex)
     {
-        dataLog("@%u in Block #%u", nodeIndex, blockIndex);
+        dataLogF("@%u in Block #%u", nodeIndex, blockIndex);
     }
     
     void reportValidationContext(
         NodeIndex nodeIndex, NodeIndex nodeIndex2, BlockIndex blockIndex)
     {
-        dataLog("@%u and @%u in Block #%u", nodeIndex, nodeIndex2, blockIndex);
+        dataLogF("@%u and @%u in Block #%u", nodeIndex, nodeIndex2, blockIndex);
     }
     
     void reportValidationContext(
         NodeIndex nodeIndex, BlockIndex blockIndex, NodeIndex expectedNodeIndex, Edge incomingEdge)
     {
-        dataLog("@%u in Block #%u, searching for @%u from @%u", nodeIndex, blockIndex, expectedNodeIndex, incomingEdge.index());
+        dataLogF("@%u in Block #%u, searching for @%u from @%u", nodeIndex, blockIndex, expectedNodeIndex, incomingEdge.index());
     }
     
     void dumpData(unsigned value)
     {
-        dataLog("%u", value);
+        dataLogF("%u", value);
     }
     
     void dumpGraphIfAppropriate()
     {
         if (m_graphDumpMode == DontDumpGraph)
             return;
-        dataLog("Graph at time of failure:\n");
+        dataLogF("Graph at time of failure:\n");
         m_graph.dump();
     }
 };

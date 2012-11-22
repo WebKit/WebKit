@@ -36,9 +36,9 @@ namespace JSC { namespace DFG {
 
 void VariableEventStream::logEvent(const VariableEvent& event)
 {
-    dataLog("seq#%u:", static_cast<unsigned>(size()));
+    dataLogF("seq#%u:", static_cast<unsigned>(size()));
     event.dump(WTF::dataFile());
-    dataLog(" ");
+    dataLogF(" ");
 }
 
 struct MinifiedGenerationInfo {
@@ -103,7 +103,7 @@ void VariableEventStream::reconstruct(
         startIndex--;
     
 #if DFG_ENABLE(DEBUG_VERBOSE)
-    dataLog("Computing OSR exit recoveries starting at seq#%u.\n", startIndex);
+    dataLogF("Computing OSR exit recoveries starting at seq#%u.\n", startIndex);
 #endif
 
     // Step 2: Create a mock-up of the DFG's state and execute the events.

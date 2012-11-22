@@ -1213,7 +1213,7 @@ Vector<char> asciiDebug(String& string);
 
 void String::show() const
 {
-    dataLog("%s\n", asciiDebug(impl()).data());
+    dataLogF("%s\n", asciiDebug(impl()).data());
 }
 
 String* string(const char* s)

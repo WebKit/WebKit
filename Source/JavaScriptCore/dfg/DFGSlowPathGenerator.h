@@ -49,7 +49,7 @@ public:
     void generate(SpeculativeJIT* jit)
     {
 #if DFG_ENABLE(DEBUG_VERBOSE)
-        dataLog("Generating slow path %p at offset 0x%x\n", this, jit->m_jit.debugOffset());
+        dataLogF("Generating slow path %p at offset 0x%x\n", this, jit->m_jit.debugOffset());
 #endif
         m_label = jit->m_jit.label();
         jit->m_compileIndex = m_compileIndex;

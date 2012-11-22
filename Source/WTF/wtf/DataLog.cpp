@@ -82,20 +82,20 @@ FILE* dataFile()
 }
 #endif // DATA_LOG_TO_FILE
 
-void dataLogV(const char* format, va_list argList)
+void dataLogFV(const char* format, va_list argList)
 {
     vfprintf(dataFile(), format, argList);
 }
 
-void dataLog(const char* format, ...)
+void dataLogF(const char* format, ...)
 {
     va_list argList;
     va_start(argList, format);
-    dataLogV(format, argList);
+    dataLogFV(format, argList);
     va_end(argList);
 }
 
-void dataLogString(const char* str)
+void dataLogFString(const char* str)
 {
     fputs(str, dataFile());
 }

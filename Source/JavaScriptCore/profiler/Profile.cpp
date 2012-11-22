@@ -103,7 +103,7 @@ void Profile::restoreAll()
 #ifndef NDEBUG
 void Profile::debugPrintData() const
 {
-    dataLog("Call graph:\n");
+    dataLogF("Call graph:\n");
     m_head->debugPrintData(0);
 }
 
@@ -119,18 +119,18 @@ void Profile::debugPrintDataSampleStyle() const
     typedef Vector<NameCountPair> NameCountPairVector;
 
     FunctionCallHashCount countedFunctions;
-    dataLog("Call graph:\n");
+    dataLogF("Call graph:\n");
     m_head->debugPrintDataSampleStyle(0, countedFunctions);
 
-    dataLog("\nTotal number in stack:\n");
+    dataLogF("\nTotal number in stack:\n");
     NameCountPairVector sortedFunctions(countedFunctions.size());
     copyToVector(countedFunctions, sortedFunctions);
 
     std::sort(sortedFunctions.begin(), sortedFunctions.end(), functionNameCountPairComparator);
     for (NameCountPairVector::iterator it = sortedFunctions.begin(); it != sortedFunctions.end(); ++it)
-        dataLog("        %-12d%s\n", (*it).value, String((*it).key).utf8().data());
+        dataLogF("        %-12d%s\n", (*it).value, String((*it).key).utf8().data());
 
-    dataLog("\nSort by top of stack, same collapsed (when >= 5):\n");
+    dataLogF("\nSort by top of stack, same collapsed (when >= 5):\n");
 }
 #endif
 

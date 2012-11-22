@@ -61,7 +61,7 @@ int StackStats::s_maxLayoutReentryDepth = 0;
 void StackStats::initialize()
 {
     s_sharedLock = new Mutex();
-    dataLog(" === LOG new stack stats ========\n");
+    dataLogF(" === LOG new stack stats ========\n");
 }
 
 StackStats::PerThreadStats::PerThreadStats()
@@ -71,7 +71,7 @@ StackStats::PerThreadStats::PerThreadStats()
     m_stackStart = (char*)stack.origin();
     m_currentCheckPoint = 0;
 
-    dataLog(" === THREAD new stackStart %p ========\n", m_stackStart);
+    dataLogF(" === THREAD new stackStart %p ========\n", m_stackStart);
 }
 
 StackStats::CheckPoint::CheckPoint()
@@ -125,7 +125,7 @@ StackStats::CheckPoint::CheckPoint()
 
     // Log this checkpoint if needed:
     if (needToLog)
-        dataLog(" CHECKPOINT %p diff %d/%.1fk/max %.1fk | reentry %d/max %d | height %.1fk/max %.1fk | stack %p size %.1fk\n",
+        dataLogF(" CHECKPOINT %p diff %d/%.1fk/max %.1fk | reentry %d/max %d | height %.1fk/max %.1fk | stack %p size %.1fk\n",
             this, diff, diff / 1024.0, StackStats::s_maxCheckPointDiff / 1024.0,
             t.m_reentryDepth, StackStats::s_maxReentryDepth,
             height / 1024.0, StackStats::s_maxStackHeight / 1024.0,
@@ -154,7 +154,7 @@ StackStats::CheckPoint::~CheckPoint()
         if (!isGrowingDownward)
             height = -height;
 
-        dataLog(" POP to %p diff max %.1fk | reentry %d/%d max | height %.1fk/max %.1fk | stack %p size %.1fk)\n",
+        dataLogF(" POP to %p diff max %.1fk | reentry %d/%d max | height %.1fk/max %.1fk | stack %p size %.1fk)\n",
             this, StackStats::s_maxCheckPointDiff / 1024.0,
             t.m_reentryDepth, StackStats::s_maxReentryDepth,
             height / 1024.0, StackStats::s_maxStackHeight / 1024.0,
@@ -208,7 +208,7 @@ void StackStats::probe()
 #endif
 
     if (needToLog)
-        dataLog(" PROBE %p diff %d/%.1fk/max %.1fk | reentry %d/max %d | height %.1fk/max %.1fk | stack %p size %.1fk\n",
+        dataLogF(" PROBE %p diff %d/%.1fk/max %.1fk | reentry %d/max %d | height %.1fk/max %.1fk | stack %p size %.1fk\n",
             current, diff, diff / 1024.0, StackStats::s_maxCheckPointDiff / 1024.0,
             t.m_reentryDepth, StackStats::s_maxReentryDepth,
             height / 1024.0, StackStats::s_maxStackHeight / 1024.0,
@@ -286,7 +286,7 @@ StackStats::LayoutCheckPoint::LayoutCheckPoint()
 #endif
 
     if (needToLog)
-        dataLog(" LAYOUT %p diff %d/%.1fk/max %.1fk | reentry %d/max %d | height %.1fk/max %.1fk | stack %p size %.1fk\n",
+        dataLogF(" LAYOUT %p diff %d/%.1fk/max %.1fk | reentry %d/max %d | height %.1fk/max %.1fk | stack %p size %.1fk\n",
             current, diff, diff / 1024.0, StackStats::s_maxLayoutCheckPointDiff / 1024.0,
             m_depth, StackStats::s_maxLayoutReentryDepth,
             totalDiff / 1024.0, StackStats::s_maxTotalLayoutCheckPointDiff / 1024.0,

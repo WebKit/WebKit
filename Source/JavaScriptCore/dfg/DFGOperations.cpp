@@ -1522,7 +1522,7 @@ void DFG_OPERATION debugOperationPrintSpeculationFailure(ExecState* exec, void* 
     SpeculationFailureDebugInfo* debugInfo = static_cast<SpeculationFailureDebugInfo*>(debugInfoRaw);
     CodeBlock* codeBlock = debugInfo->codeBlock;
     CodeBlock* alternative = codeBlock->alternative();
-    dataLog("Speculation failure in %p at @%u with executeCounter = %s, "
+    dataLogF("Speculation failure in %p at @%u with executeCounter = %s, "
             "reoptimizationRetryCounter = %u, optimizationDelayCounter = %u, "
             "osrExitCounter = %u\n",
             codeBlock,
@@ -1537,7 +1537,7 @@ void DFG_OPERATION debugOperationPrintSpeculationFailure(ExecState* exec, void* 
 extern "C" void DFG_OPERATION triggerReoptimizationNow(CodeBlock* codeBlock)
 {
 #if ENABLE(JIT_VERBOSE_OSR)
-    dataLog("%p: Entered reoptimize\n", codeBlock);
+    dataLogF("%p: Entered reoptimize\n", codeBlock);
 #endif
     // We must be called with the baseline code block.
     ASSERT(JITCode::isBaselineCode(codeBlock->getJITType()));

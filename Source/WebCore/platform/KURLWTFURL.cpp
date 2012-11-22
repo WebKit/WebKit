@@ -408,11 +408,11 @@ void KURL::print() const
         m_urlImpl->m_parsedURL.print();
     else {
         if (isNull())
-            dataLog("Null KURL");
+            dataLogF("Null KURL");
         else if (isEmpty())
-            dataLog("Empty KURL");
+            dataLogF("Empty KURL");
         else {
-            dataLog("Invalid KURL from string =");
+            dataLogF("Invalid KURL from string =");
             m_urlImpl->m_invalidUrlString.show();
         }
     }

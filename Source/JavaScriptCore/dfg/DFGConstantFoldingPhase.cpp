@@ -67,7 +67,7 @@ private:
     bool foldConstants(BlockIndex blockIndex)
     {
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-        dataLog("Constant folding considering Block #%u.\n", blockIndex);
+        dataLogF("Constant folding considering Block #%u.\n", blockIndex);
 #endif
         BasicBlock* block = m_graph.m_blocks[blockIndex].get();
         bool changed = false;
@@ -454,7 +454,7 @@ private:
         bool changed = false;
         
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-        dataLog("Painting unreachable code in Block #%u.\n", blockIndex);
+        dataLogF("Painting unreachable code in Block #%u.\n", blockIndex);
 #endif
         BasicBlock* block = m_graph.m_blocks[blockIndex].get();
         m_state.beginBasicBlock(block);

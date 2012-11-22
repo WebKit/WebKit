@@ -152,9 +152,9 @@ void AbstractState::initialize(Graph& graph)
             int operand = graph.m_mustHandleValues.operandForIndex(i);
             block->valuesAtHead.operand(operand).merge(value);
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-            dataLog("    Initializing Block #%u, operand r%d, to ", blockIndex, operand);
+            dataLogF("    Initializing Block #%u, operand r%d, to ", blockIndex, operand);
             block->valuesAtHead.operand(operand).dump(WTF::dataFile());
-            dataLog("\n");
+            dataLogF("\n");
 #endif
         }
         block->cfaShouldRevisit = true;
@@ -181,7 +181,7 @@ bool AbstractState::endBasicBlock(MergeMode mergeMode)
     if (mergeMode != DontMerge || !ASSERT_DISABLED) {
         for (size_t argument = 0; argument < block->variablesAtTail.numberOfArguments(); ++argument) {
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-            dataLog("        Merging state for argument %zu.\n", argument);
+            dataLogF("        Merging state for argument %zu.\n", argument);
 #endif
             AbstractValue& destination = block->valuesAtTail.argument(argument);
             changed |= mergeStateAtTail(destination, m_variables.argument(argument), block->variablesAtTail.argument(argument));
@@ -189,7 +189,7 @@ bool AbstractState::endBasicBlock(MergeMode mergeMode)
         
         for (size_t local = 0; local < block->variablesAtTail.numberOfLocals(); ++local) {
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-            dataLog("        Merging state for local %zu.\n", local);
+            dataLogF("        Merging state for local %zu.\n", local);
 #endif
             AbstractValue& destination = block->valuesAtTail.local(local);
             changed |= mergeStateAtTail(destination, m_variables.local(local), block->variablesAtTail.local(local));
@@ -199,7 +199,7 @@ bool AbstractState::endBasicBlock(MergeMode mergeMode)
     ASSERT(mergeMode != DontMerge || !changed);
     
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-    dataLog("        Branch direction = %s\n", branchDirectionToString(m_branchDirection));
+    dataLogF("        Branch direction = %s\n", branchDirectionToString(m_branchDirection));
 #endif
     
     reset();
@@ -1787,15 +1787,15 @@ inline bool AbstractState::mergeStateAtTail(AbstractValue& destination, Abstract
         return false;
     
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-    dataLog("          It's live, node @%u.\n", nodeIndex);
+    dataLogF("          It's live, node @%u.\n", nodeIndex);
 #endif
     
     if (node.variableAccessData()->isCaptured()) {
         source = inVariable;
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-        dataLog("          Transfering ");
+        dataLogF("          Transfering ");
         source.dump(WTF::dataFile());
-        dataLog(" from last access due to captured variable.\n");
+        dataLogF(" from last access due to captured variable.\n");
 #endif
     } else {
         switch (node.op()) {
@@ -1805,9 +1805,9 @@ inline bool AbstractState::mergeStateAtTail(AbstractValue& destination, Abstract
             // The block transfers the value from head to tail.
             source = inVariable;
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-            dataLog("          Transfering ");
+            dataLogF("          Transfering ");
             source.dump(WTF::dataFile());
-            dataLog(" from head to tail.\n");
+            dataLogF(" from head to tail.\n");
 #endif
             break;
             
@@ -1815,9 +1815,9 @@ inline bool AbstractState::mergeStateAtTail(AbstractValue& destination, Abstract
             // The block refines the value with additional speculations.
             source = forNode(nodeIndex);
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-            dataLog("          Refining to ");
+            dataLogF("          Refining to ");
             source.dump(WTF::dataFile());
-            dataLog("\n");
+            dataLogF("\n");
 #endif
             break;
             
@@ -1830,9 +1830,9 @@ inline bool AbstractState::mergeStateAtTail(AbstractValue& destination, Abstract
             } else
                 source = forNode(node.child1());
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-            dataLog("          Setting to ");
+            dataLogF("          Setting to ");
             source.dump(WTF::dataFile());
-            dataLog("\n");
+            dataLogF("\n");
 #endif
             break;
         
@@ -1846,7 +1846,7 @@ inline bool AbstractState::mergeStateAtTail(AbstractValue& destination, Abstract
         // Abstract execution did not change the output value of the variable, for this
         // basic block, on this iteration.
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-        dataLog("          Not changed!\n");
+        dataLogF("          Not changed!\n");
 #endif
         return false;
     }
@@ -1856,7 +1856,7 @@ inline bool AbstractState::mergeStateAtTail(AbstractValue& destination, Abstract
     // true to indicate that the fixpoint must go on!
     destination = source;
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-    dataLog("          Changed!\n");
+    dataLogF("          Changed!\n");
 #endif
     return true;
 }
@@ -1897,7 +1897,7 @@ inline bool AbstractState::mergeToSuccessors(
     case Jump: {
         ASSERT(basicBlock->cfaBranchDirection == InvalidBranchDirection);
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-        dataLog("        Merging to block #%u.\n", terminal.takenBlockIndex());
+        dataLogF("        Merging to block #%u.\n", terminal.takenBlockIndex());
 #endif
         return merge(basicBlock, graph.m_blocks[terminal.takenBlockIndex()].get());
     }
@@ -1906,12 +1906,12 @@ inline bool AbstractState::mergeToSuccessors(
         ASSERT(basicBlock->cfaBranchDirection != InvalidBranchDirection);
         bool changed = false;
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-        dataLog("        Merging to block #%u.\n", terminal.takenBlockIndex());
+        dataLogF("        Merging to block #%u.\n", terminal.takenBlockIndex());
 #endif
         if (basicBlock->cfaBranchDirection != TakeFalse)
             changed |= merge(basicBlock, graph.m_blocks[terminal.takenBlockIndex()].get());
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-        dataLog("        Merging to block #%u.\n", terminal.notTakenBlockIndex());
+        dataLogF("        Merging to block #%u.\n", terminal.notTakenBlockIndex());
 #endif
         if (basicBlock->cfaBranchDirection != TakeTrue)
             changed |= merge(basicBlock, graph.m_blocks[terminal.notTakenBlockIndex()].get());

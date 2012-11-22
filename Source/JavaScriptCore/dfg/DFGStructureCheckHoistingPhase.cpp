@@ -167,7 +167,7 @@ public:
             if (iter == m_map.end())
                 continue;
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-            dataLog("Zeroing the structure to hoist for %s because the ratio is %lf.\n",
+            dataLogF("Zeroing the structure to hoist for %s because the ratio is %lf.\n",
                     m_graph.nameOfVariableAccessData(variable), variable->voteRatio());
 #endif
             iter->value.m_structure = 0;
@@ -200,7 +200,7 @@ public:
                 JSValue value = m_graph.m_mustHandleValues[i];
                 if (!value || !value.isCell()) {
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-                    dataLog("Zeroing the structure to hoist for %s because the OSR entry value is not a cell: %s.\n",
+                    dataLogF("Zeroing the structure to hoist for %s because the OSR entry value is not a cell: %s.\n",
                             m_graph.nameOfVariableAccessData(variable), value.description());
 #endif
                     iter->value.m_structure = 0;
@@ -208,7 +208,7 @@ public:
                 }
                 if (value.asCell()->structure() != iter->value.m_structure) {
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-                    dataLog("Zeroing the structure to hoist for %s because the OSR entry value has structure %p and we wanted %p.\n",
+                    dataLogF("Zeroing the structure to hoist for %s because the OSR entry value has structure %p and we wanted %p.\n",
                             m_graph.nameOfVariableAccessData(variable), value.asCell()->structure(), iter->value.m_structure);
 #endif
                     iter->value.m_structure = 0;
@@ -223,10 +223,10 @@ public:
         for (HashMap<VariableAccessData*, CheckData>::iterator it = m_map.begin();
              it != m_map.end(); ++it) {
             if (!it->value.m_structure) {
-                dataLog("Not hoisting checks for %s because of heuristics.\n", m_graph.nameOfVariableAccessData(it->key));
+                dataLogF("Not hoisting checks for %s because of heuristics.\n", m_graph.nameOfVariableAccessData(it->key));
                 continue;
             }
-            dataLog("Hoisting checks for %s\n", m_graph.nameOfVariableAccessData(it->key));
+            dataLogF("Hoisting checks for %s\n", m_graph.nameOfVariableAccessData(it->key));
         }
 #endif // DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
         

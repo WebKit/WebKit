@@ -44,7 +44,7 @@ void* prepareOSREntry(ExecState* exec, CodeBlock* codeBlock, unsigned bytecodeIn
     ASSERT(!codeBlock->jitCodeMap());
 
 #if ENABLE(JIT_VERBOSE_OSR)
-    dataLog("OSR in %p(%p) from bc#%u\n", codeBlock, codeBlock->alternative(), bytecodeIndex);
+    dataLogF("OSR in %p(%p) from bc#%u\n", codeBlock, codeBlock->alternative(), bytecodeIndex);
 #endif
     
     JSGlobalData* globalData = &exec->globalData();
@@ -52,7 +52,7 @@ void* prepareOSREntry(ExecState* exec, CodeBlock* codeBlock, unsigned bytecodeIn
     
     if (!entry) {
 #if ENABLE(JIT_VERBOSE_OSR)
-        dataLog("    OSR failed because the entrypoint was optimized out.\n");
+        dataLogF("    OSR failed because the entrypoint was optimized out.\n");
 #endif
         return 0;
     }
@@ -86,9 +86,9 @@ void* prepareOSREntry(ExecState* exec, CodeBlock* codeBlock, unsigned bytecodeIn
     for (size_t argument = 0; argument < entry->m_expectedValues.numberOfArguments(); ++argument) {
         if (argument >= exec->argumentCountIncludingThis()) {
 #if ENABLE(JIT_VERBOSE_OSR)
-            dataLog("    OSR failed because argument %zu was not passed, expected ", argument);
+            dataLogF("    OSR failed because argument %zu was not passed, expected ", argument);
             entry->m_expectedValues.argument(argument).dump(WTF::dataFile());
-            dataLog(".\n");
+            dataLogF(".\n");
 #endif
             return 0;
         }
@@ -101,9 +101,9 @@ void* prepareOSREntry(ExecState* exec, CodeBlock* codeBlock, unsigned bytecodeIn
         
         if (!entry->m_expectedValues.argument(argument).validate(value)) {
 #if ENABLE(JIT_VERBOSE_OSR)
-            dataLog("    OSR failed because argument %zu is %s, expected ", argument, value.description());
+            dataLogF("    OSR failed because argument %zu is %s, expected ", argument, value.description());
             entry->m_expectedValues.argument(argument).dump(WTF::dataFile());
-            dataLog(".\n");
+            dataLogF(".\n");
 #endif
             return 0;
         }
@@ -113,7 +113,7 @@ void* prepareOSREntry(ExecState* exec, CodeBlock* codeBlock, unsigned bytecodeIn
         if (entry->m_localsForcedDouble.get(local)) {
             if (!exec->registers()[local].jsValue().isNumber()) {
 #if ENABLE(JIT_VERBOSE_OSR)
-                dataLog("    OSR failed because variable %zu is %s, expected number.\n", local, exec->registers()[local].jsValue().description());
+                dataLogF("    OSR failed because variable %zu is %s, expected number.\n", local, exec->registers()[local].jsValue().description());
 #endif
                 return 0;
             }
@@ -121,9 +121,9 @@ void* prepareOSREntry(ExecState* exec, CodeBlock* codeBlock, unsigned bytecodeIn
         }
         if (!entry->m_expectedValues.local(local).validate(exec->registers()[local].jsValue())) {
 #if ENABLE(JIT_VERBOSE_OSR)
-            dataLog("    OSR failed because variable %zu is %s, expected ", local, exec->registers()[local].jsValue().description());
+            dataLogF("    OSR failed because variable %zu is %s, expected ", local, exec->registers()[local].jsValue().description());
             entry->m_expectedValues.local(local).dump(WTF::dataFile());
-            dataLog(".\n");
+            dataLogF(".\n");
 #endif
             return 0;
         }
@@ -138,13 +138,13 @@ void* prepareOSREntry(ExecState* exec, CodeBlock* codeBlock, unsigned bytecodeIn
     
     if (!globalData->interpreter->stack().grow(&exec->registers()[codeBlock->m_numCalleeRegisters])) {
 #if ENABLE(JIT_VERBOSE_OSR)
-        dataLog("    OSR failed because stack growth failed.\n");
+        dataLogF("    OSR failed because stack growth failed.\n");
 #endif
         return 0;
     }
     
 #if ENABLE(JIT_VERBOSE_OSR)
-    dataLog("    OSR should succeed.\n");
+    dataLogF("    OSR should succeed.\n");
 #endif
     
     // 3) Perform data format conversions.
@@ -162,7 +162,7 @@ void* prepareOSREntry(ExecState* exec, CodeBlock* codeBlock, unsigned bytecodeIn
     void* result = codeBlock->getJITCode().executableAddressAtOffset(entry->m_machineCodeOffset);
     
 #if ENABLE(JIT_VERBOSE_OSR)
-    dataLog("    OSR returning machine code address %p.\n", result);
+    dataLogF("    OSR returning machine code address %p.\n", result);
 #endif
     
     return result;

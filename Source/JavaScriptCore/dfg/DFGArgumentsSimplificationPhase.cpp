@@ -359,49 +359,49 @@ public:
         }
         
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-        dataLog("Arguments aliasing states:\n");
+        dataLogF("Arguments aliasing states:\n");
         for (unsigned i = 0; i < m_graph.m_variableAccessData.size(); ++i) {
             VariableAccessData* variableAccessData = &m_graph.m_variableAccessData[i];
             if (!variableAccessData->isRoot())
                 continue;
-            dataLog("   r%d(%s): ", variableAccessData->local(), m_graph.nameOfVariableAccessData(variableAccessData));
+            dataLogF("   r%d(%s): ", variableAccessData->local(), m_graph.nameOfVariableAccessData(variableAccessData));
             if (variableAccessData->isCaptured())
-                dataLog("Captured");
+                dataLogF("Captured");
             else {
                 ArgumentsAliasingData& data =
                     m_argumentsAliasing.find(variableAccessData)->value;
                 bool first = true;
                 if (data.callContextIsValid()) {
                     if (!first)
-                        dataLog(", ");
-                    dataLog("Have Call Context: %p", data.callContext);
+                        dataLogF(", ");
+                    dataLogF("Have Call Context: %p", data.callContext);
                     first = false;
                     if (!m_createsArguments.contains(data.callContext))
-                        dataLog(" (Does Not Create Arguments)");
+                        dataLogF(" (Does Not Create Arguments)");
                 }
                 if (data.argumentsAssignmentIsValid()) {
                     if (!first)
-                        dataLog(", ");
-                    dataLog("Arguments Assignment Is Valid");
+                        dataLogF(", ");
+                    dataLogF("Arguments Assignment Is Valid");
                     first = false;
                 }
                 if (!data.escapes) {
                     if (!first)
-                        dataLog(", ");
-                    dataLog("Does Not Escape");
+                        dataLogF(", ");
+                    dataLogF("Does Not Escape");
                     first = false;
                 }
                 if (!first)
-                    dataLog(", ");
+                    dataLogF(", ");
                 if (data.isValid()) {
                     if (m_createsArguments.contains(data.callContext))
-                        dataLog("VALID");
+                        dataLogF("VALID");
                     else
-                        dataLog("INVALID (due to argument creation)");
+                        dataLogF("INVALID (due to argument creation)");
                 } else
-                    dataLog("INVALID (due to bad variable use)");
+                    dataLogF("INVALID (due to bad variable use)");
             }
-            dataLog("\n");
+            dataLogF("\n");
         }
 #endif
         

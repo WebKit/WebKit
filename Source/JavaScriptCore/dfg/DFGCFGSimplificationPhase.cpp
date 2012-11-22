@@ -66,7 +66,7 @@ public:
                         ASSERT(m_graph.m_blocks[m_graph.successor(block, 0)]->m_predecessors[0]
                                == blockIndex);
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-                        dataLog("CFGSimplify: Jump merge on Block #%u to Block #%u.\n",
+                        dataLogF("CFGSimplify: Jump merge on Block #%u to Block #%u.\n",
                                 blockIndex, m_graph.successor(block, 0));
 #endif
                         if (extremeLogging)
@@ -76,14 +76,14 @@ public:
                         break;
                     } else {
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-                        dataLog("Not jump merging on Block #%u to Block #%u because predecessors = ",
+                        dataLogF("Not jump merging on Block #%u to Block #%u because predecessors = ",
                                 blockIndex, m_graph.successor(block, 0));
                         for (unsigned i = 0; i < m_graph.m_blocks[m_graph.successor(block, 0)]->m_predecessors.size(); ++i) {
                             if (i)
-                                dataLog(", ");
-                            dataLog("#%u", m_graph.m_blocks[m_graph.successor(block, 0)]->m_predecessors[i]);
+                                dataLogF(", ");
+                            dataLogF("#%u", m_graph.m_blocks[m_graph.successor(block, 0)]->m_predecessors[i]);
                         }
-                        dataLog(".\n");
+                        dataLogF(".\n");
 #endif
                     }
                 
@@ -105,7 +105,7 @@ public:
                             m_graph.successorForCondition(block, condition)].get();
                         if (targetBlock->m_predecessors.size() == 1) {
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-                            dataLog("CFGSimplify: Known condition (%s) branch merge on Block #%u to Block #%u, jettisoning Block #%u.\n",
+                            dataLogF("CFGSimplify: Known condition (%s) branch merge on Block #%u to Block #%u, jettisoning Block #%u.\n",
                                     condition ? "true" : "false",
                                     blockIndex, m_graph.successorForCondition(block, condition),
                                     m_graph.successorForCondition(block, !condition));
@@ -118,7 +118,7 @@ public:
                                 m_graph.successorForCondition(block, !condition));
                         } else {
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-                            dataLog("CFGSimplify: Known condition (%s) branch->jump conversion on Block #%u to Block #%u, jettisoning Block #%u.\n",
+                            dataLogF("CFGSimplify: Known condition (%s) branch->jump conversion on Block #%u to Block #%u, jettisoning Block #%u.\n",
                                     condition ? "true" : "false",
                                     blockIndex, m_graph.successorForCondition(block, condition),
                                     m_graph.successorForCondition(block, !condition));
@@ -152,13 +152,13 @@ public:
                         ASSERT(targetBlock->isReachable);
                         if (targetBlock->m_predecessors.size() == 1) {
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-                            dataLog("CFGSimplify: Branch to same successor merge on Block #%u to Block #%u.\n",
+                            dataLogF("CFGSimplify: Branch to same successor merge on Block #%u to Block #%u.\n",
                                     blockIndex, targetBlockIndex);
 #endif
                             mergeBlocks(blockIndex, targetBlockIndex, NoBlock);
                         } else {
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-                            dataLog("CFGSimplify: Branch->jump conversion to same successor on Block #%u to Block #%u.\n",
+                            dataLogF("CFGSimplify: Branch->jump conversion to same successor on Block #%u to Block #%u.\n",
                                     blockIndex, targetBlockIndex);
 #endif
                             ASSERT(m_graph[block->last()].isTerminal());
@@ -179,7 +179,7 @@ public:
                     }
                     
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-                    dataLog("Not branch simplifying on Block #%u because the successors differ and the condition is not known.\n",
+                    dataLogF("Not branch simplifying on Block #%u because the successors differ and the condition is not known.\n",
                             blockIndex);
 #endif
                 
@@ -287,22 +287,22 @@ private:
         if (child.op() != GetLocal)
             return;
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-        dataLog("    Considering GetLocal at @%u, local r%d.\n", edge.index(), child.local());
+        dataLogF("    Considering GetLocal at @%u, local r%d.\n", edge.index(), child.local());
 #endif
         if (child.variableAccessData()->isCaptured()) {
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-            dataLog("        It's captured.\n");
+            dataLogF("        It's captured.\n");
 #endif
             return;
         }
         NodeIndex originalNodeIndex = block->variablesAtTail.operand(child.local());
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-        dataLog("        Dealing with original @%u.\n", originalNodeIndex);
+        dataLogF("        Dealing with original @%u.\n", originalNodeIndex);
 #endif
         ASSERT(originalNodeIndex != NoNode);
         Node* originalNode = &m_graph[originalNodeIndex];
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-        dataLog("        Original has local r%d.\n", originalNode->local());
+        dataLogF("        Original has local r%d.\n", originalNode->local());
 #endif
         ASSERT(child.local() == originalNode->local());
         if (changeRef)
@@ -327,14 +327,14 @@ private:
         switch (originalNode->op()) {
         case SetLocal: {
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-            dataLog("        It's a SetLocal.\n");
+            dataLogF("        It's a SetLocal.\n");
 #endif
             m_graph.changeIndex(edge, originalNode->child1().index(), changeRef);
             break;
         }
         case GetLocal: {
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-            dataLog("        It's a GetLocal.\n");
+            dataLogF("        It's a GetLocal.\n");
 #endif
             m_graph.changeIndex(edge, originalNodeIndex, changeRef);
             break;
@@ -342,7 +342,7 @@ private:
         case Phi:
         case SetArgument: {
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-            dataLog("        It's Phi/SetArgument.\n");
+            dataLogF("        It's Phi/SetArgument.\n");
 #endif
             // Keep the GetLocal!
             break;
@@ -380,7 +380,7 @@ private:
             Node& phiNode = m_graph[phiNodeIndex];
             NodeIndex myNodeIndex = sourceBlock->variablesAtTail.operand(phiNode.local());
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-            dataLog("Considering removing reference from phi @%u to @%u on local r%d:",
+            dataLogF("Considering removing reference from phi @%u to @%u on local r%d:",
                     phiNodeIndex, myNodeIndex, phiNode.local());
 #endif
             if (myNodeIndex == NoNode) {
@@ -394,7 +394,7 @@ private:
             for (unsigned j = 0; j < AdjacencyList::Size; ++j)
                 removePotentiallyDeadPhiReference(myNodeIndex, phiNode, j, sourceBlock->isReachable);
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-            dataLog("\n");
+            dataLogF("\n");
 #endif
         }
     }
@@ -402,7 +402,7 @@ private:
     void fixJettisonedPredecessors(BlockIndex blockIndex, BlockIndex jettisonedBlockIndex)
     {
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-        dataLog("Fixing predecessors and phis due to jettison of Block #%u from Block #%u.\n",
+        dataLogF("Fixing predecessors and phis due to jettison of Block #%u from Block #%u.\n",
                 jettisonedBlockIndex, blockIndex);
 #endif
         BasicBlock* jettisonedBlock = m_graph.m_blocks[jettisonedBlockIndex].get();
@@ -422,7 +422,7 @@ private:
         if (phiNode.children.child(edgeIndex).indexUnchecked() != myNodeIndex)
             return;
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-        dataLog(" Removing reference at child %u.", edgeIndex);
+        dataLogF(" Removing reference at child %u.", edgeIndex);
 #endif
         if (changeRef && phiNode.shouldGenerate())
             m_graph.deref(myNodeIndex);
@@ -710,7 +710,7 @@ private:
                 bool changeRef = phiNode.shouldGenerate();
                 OperandSubstitution substitution = substitutions.operand(phiNode.local());
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-                dataLog("    Performing operand substitution @%u -> @%u.\n",
+                dataLogF("    Performing operand substitution @%u -> @%u.\n",
                         substitution.oldChild, substitution.newChild);
 #endif
                 if (!phiNode.child1())

@@ -520,24 +520,24 @@ void RegExp::matchCompareWithInterpreter(const String& s, int startOffset, int* 
             differences++;
 
     if (differences) {
-        dataLog("RegExp Discrepency for /%s/\n    string input ", pattern().utf8().data());
+        dataLogF("RegExp Discrepency for /%s/\n    string input ", pattern().utf8().data());
         unsigned segmentLen = s.length() - static_cast<unsigned>(startOffset);
 
-        dataLog((segmentLen < 150) ? "\"%s\"\n" : "\"%148s...\"\n", s.utf8().data() + startOffset);
+        dataLogF((segmentLen < 150) ? "\"%s\"\n" : "\"%148s...\"\n", s.utf8().data() + startOffset);
 
         if (jitResult != interpreterResult) {
-            dataLog("    JIT result = %d, blah interpreted result = %d\n", jitResult, interpreterResult);
+            dataLogF("    JIT result = %d, blah interpreted result = %d\n", jitResult, interpreterResult);
             differences--;
         } else {
-            dataLog("    Correct result = %d\n", jitResult);
+            dataLogF("    Correct result = %d\n", jitResult);
         }
 
         if (differences) {
             for (unsigned j = 2, i = 0; i < m_numSubpatterns; j +=2, i++) {
                 if (offsetVector[j] != interpreterOffsetVector[j])
-                    dataLog("    JIT offset[%d] = %d, interpreted offset[%d] = %d\n", j, offsetVector[j], j, interpreterOffsetVector[j]);
+                    dataLogF("    JIT offset[%d] = %d, interpreted offset[%d] = %d\n", j, offsetVector[j], j, interpreterOffsetVector[j]);
                 if ((offsetVector[j] >= 0) && (offsetVector[j+1] != interpreterOffsetVector[j+1]))
-                    dataLog("    JIT offset[%d] = %d, interpreted offset[%d] = %d\n", j+1, offsetVector[j+1], j+1, interpreterOffsetVector[j+1]);
+                    dataLogF("    JIT offset[%d] = %d, interpreted offset[%d] = %d\n", j+1, offsetVector[j+1], j+1, interpreterOffsetVector[j+1]);
             }
         }
     }

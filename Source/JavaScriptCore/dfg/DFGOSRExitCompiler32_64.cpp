@@ -37,14 +37,14 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, const Operands<ValueRecov
 {
     // 1) Pro-forma stuff.
 #if DFG_ENABLE(DEBUG_VERBOSE)
-    dataLog("OSR exit for Node @%d (", (int)exit.m_nodeIndex);
+    dataLogF("OSR exit for Node @%d (", (int)exit.m_nodeIndex);
     for (CodeOrigin codeOrigin = exit.m_codeOrigin; ; codeOrigin = codeOrigin.inlineCallFrame->caller) {
-        dataLog("bc#%u", codeOrigin.bytecodeIndex);
+        dataLogF("bc#%u", codeOrigin.bytecodeIndex);
         if (!codeOrigin.inlineCallFrame)
             break;
-        dataLog(" -> %p ", codeOrigin.inlineCallFrame->executable.get());
+        dataLogF(" -> %p ", codeOrigin.inlineCallFrame->executable.get());
     }
-    dataLog(") at JIT offset 0x%x  ", m_jit.debugOffset());
+    dataLogF(") at JIT offset 0x%x  ", m_jit.debugOffset());
     dumpOperands(operands, WTF::dataFile());
 #endif
 #if DFG_ENABLE(VERBOSE_SPECULATION_FAILURE)
@@ -762,7 +762,7 @@ void OSRExitCompiler::compileExit(const OSRExit& exit, const Operands<ValueRecov
     m_jit.jump(GPRInfo::regT2);
 
 #if DFG_ENABLE(DEBUG_VERBOSE)
-    dataLog("   -> %p\n", jumpTarget);
+    dataLogF("   -> %p\n", jumpTarget);
 #endif
 }
 

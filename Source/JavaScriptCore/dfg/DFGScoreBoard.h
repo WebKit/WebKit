@@ -113,7 +113,7 @@ public:
         ASSERT(m_used[index] != max());
         if (node.refCount() == ++m_used[index]) {
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-            dataLog(" Freeing virtual register %u.", index);
+            dataLogF(" Freeing virtual register %u.", index);
 #endif
             // If the use count in the scoreboard reaches the use count for the node,
             // then this was its last use; the virtual register is now free.
@@ -122,7 +122,7 @@ public:
             m_free.append(index);
         } else {
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-            dataLog(" Virtual register %u is at %u/%u uses.", index, m_used[index], node.refCount());
+            dataLogF(" Virtual register %u is at %u/%u uses.", index, m_used[index], node.refCount());
 #endif
         }
     }
@@ -148,26 +148,26 @@ public:
 #ifndef NDEBUG
     void dump()
     {
-        dataLog("    USED: [ ");
+        dataLogF("    USED: [ ");
         for (unsigned i = 0; i < m_used.size(); ++i) {
             if (!m_free.contains(i)) {
-                dataLog("%d:", i);
+                dataLogF("%d:", i);
                 if (m_used[i] == max())
-                    dataLog("local ");
+                    dataLogF("local ");
                 else
-                    dataLog("%d ", m_used[i]);
+                    dataLogF("%d ", m_used[i]);
             }
         }
-        dataLog("]\n");
+        dataLogF("]\n");
 
-        dataLog("    FREE: [ ");
+        dataLogF("    FREE: [ ");
         for (unsigned i = 0; i < m_used.size(); ++i) {
             if (m_free.contains(i) && m_used[i] != max()) {
                 ASSERT(!m_used[i]);
-                dataLog("%d ", i);
+                dataLogF("%d ", i);
             }
         }
-        dataLog("]\n");
+        dataLogF("]\n");
     }
 
 #endif

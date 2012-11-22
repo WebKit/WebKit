@@ -336,12 +336,12 @@ void SlotVisitor::finalizeUnconditionalFinalizers()
 void SlotVisitor::validate(JSCell* cell)
 {
     if (!cell) {
-        dataLog("cell is NULL\n");
+        dataLogF("cell is NULL\n");
         CRASH();
     }
 
     if (!cell->structure()) {
-        dataLog("cell at %p has a null structure\n" , cell);
+        dataLogF("cell at %p has a null structure\n" , cell);
         CRASH();
     }
 
@@ -354,7 +354,7 @@ void SlotVisitor::validate(JSCell* cell)
             parentClassName = cell->structure()->structure()->JSCell::classInfo()->className;
         if (cell->structure()->JSCell::classInfo())
             ourClassName = cell->structure()->JSCell::classInfo()->className;
-        dataLog("parent structure (%p <%s>) of cell at %p doesn't match cell's structure (%p <%s>)\n",
+        dataLogF("parent structure (%p <%s>) of cell at %p doesn't match cell's structure (%p <%s>)\n",
                 cell->structure()->structure(), parentClassName, cell, cell->structure(), ourClassName);
         CRASH();
     }

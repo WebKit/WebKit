@@ -67,14 +67,14 @@ void SamplingFlags::stop()
         total += s_flagCounts[i];
 
     if (total) {
-        dataLog("\nSamplingFlags: sample counts with flags set: (%lld total)\n", total);
+        dataLogF("\nSamplingFlags: sample counts with flags set: (%lld total)\n", total);
         for (unsigned i = 0; i <= 32; ++i) {
             if (s_flagCounts[i])
-                dataLog("  [ %02d ] : %lld\t\t(%03.2f%%)\n", i, s_flagCounts[i], (100.0 * s_flagCounts[i]) / total);
+                dataLogF("  [ %02d ] : %lld\t\t(%03.2f%%)\n", i, s_flagCounts[i], (100.0 * s_flagCounts[i]) / total);
         }
-        dataLog("\n");
+        dataLogF("\n");
     } else
-    dataLog("\nSamplingFlags: no samples.\n\n");
+    dataLogF("\nSamplingFlags: no samples.\n\n");
 }
 uint64_t SamplingFlags::s_flagCounts[33];
 
@@ -151,7 +151,7 @@ void SamplingRegion::dump()
 void SamplingRegion::dumpInternal()
 {
     if (!s_spectrum) {
-        dataLog("\nSamplingRegion: was never sampled.\n\n");
+        dataLogF("\nSamplingRegion: was never sampled.\n\n");
         return;
     }
     
@@ -161,10 +161,10 @@ void SamplingRegion::dumpInternal()
     for (unsigned i = list.size(); i--;)
         total += list[i].count;
     
-    dataLog("\nSamplingRegion: sample counts for regions: (%lu samples)\n", total);
+    dataLogF("\nSamplingRegion: sample counts for regions: (%lu samples)\n", total);
 
     for (unsigned i = list.size(); i--;)
-        dataLog("    %3.2lf%%  %s\n", (100.0 * list[i].count) / total, list[i].key);
+        dataLogF("    %3.2lf%%  %s\n", (100.0 * list[i].count) / total, list[i].key);
 }
 #else // ENABLE(SAMPLING_REGIONS)
 void SamplingRegion::dump() { }
@@ -371,10 +371,10 @@ void SamplingTool::dump(ExecState* exec)
 
     // (2) Print Opcode sampling results.
 
-    dataLog("\nBytecode samples [*]\n");
-    dataLog("                             sample   %% of       %% of     |   cti     cti %%\n");
-    dataLog("opcode                       count     VM        total    |  count   of self\n");
-    dataLog("-------------------------------------------------------   |  ----------------\n");
+    dataLogF("\nBytecode samples [*]\n");
+    dataLogF("                             sample   %% of       %% of     |   cti     cti %%\n");
+    dataLogF("opcode                       count     VM        total    |  count   of self\n");
+    dataLogF("-------------------------------------------------------   |  ----------------\n");
 
     for (int i = 0; i < numOpcodeIDs; ++i) {
         long long count = opcodeSampleInfo[i].count;
@@ -392,15 +392,15 @@ void SamplingTool::dump(ExecState* exec)
         debugDebugPrintf("%s:%s%-6lld %.3f%%\t%.3f%%\t  |   %-6lld %.3f%%\n", opcodeName, opcodePadding, count, percentOfVM, percentOfTotal, countInCTIFunctions, percentInCTIFunctions);
     }
     
-    dataLog("\n[*] Samples inside host code are not charged to any Bytecode.\n\n");
-    dataLog("\tSamples inside VM:\t\t%lld / %lld (%.3f%%)\n", m_opcodeSampleCount, m_sampleCount, (static_cast<double>(m_opcodeSampleCount) * 100) / m_sampleCount);
-    dataLog("\tSamples inside host code:\t%lld / %lld (%.3f%%)\n\n", m_sampleCount - m_opcodeSampleCount, m_sampleCount, (static_cast<double>(m_sampleCount - m_opcodeSampleCount) * 100) / m_sampleCount);
-    dataLog("\tsample count:\tsamples inside this opcode\n");
-    dataLog("\t%% of VM:\tsample count / all opcode samples\n");
-    dataLog("\t%% of total:\tsample count / all samples\n");
-    dataLog("\t--------------\n");
-    dataLog("\tcti count:\tsamples inside a CTI function called by this opcode\n");
-    dataLog("\tcti %% of self:\tcti count / sample count\n");
+    dataLogF("\n[*] Samples inside host code are not charged to any Bytecode.\n\n");
+    dataLogF("\tSamples inside VM:\t\t%lld / %lld (%.3f%%)\n", m_opcodeSampleCount, m_sampleCount, (static_cast<double>(m_opcodeSampleCount) * 100) / m_sampleCount);
+    dataLogF("\tSamples inside host code:\t%lld / %lld (%.3f%%)\n\n", m_sampleCount - m_opcodeSampleCount, m_sampleCount, (static_cast<double>(m_sampleCount - m_opcodeSampleCount) * 100) / m_sampleCount);
+    dataLogF("\tsample count:\tsamples inside this opcode\n");
+    dataLogF("\t%% of VM:\tsample count / all opcode samples\n");
+    dataLogF("\t%% of total:\tsample count / all samples\n");
+    dataLogF("\t--------------\n");
+    dataLogF("\tcti count:\tsamples inside a CTI function called by this opcode\n");
+    dataLogF("\tcti %% of self:\tcti count / sample count\n");
     
 #if ENABLE(CODEBLOCK_SAMPLING)
 
@@ -416,7 +416,7 @@ void SamplingTool::dump(ExecState* exec)
 
     // (4) Print data from 'codeBlockSamples' array.
 
-    dataLog("\nCodeBlock samples\n\n"); 
+    dataLogF("\nCodeBlock samples\n\n"); 
 
     for (int i = 0; i < scopeCount; ++i) {
         ScriptSampleRecord* record = codeBlockSamples[i];
@@ -426,21 +426,21 @@ void SamplingTool::dump(ExecState* exec)
 
         if (blockPercent >= 1) {
             //Instruction* code = codeBlock->instructions().begin();
-            dataLog("#%d: %s:%d: %d / %lld (%.3f%%)\n", i + 1, record->m_executable->sourceURL().utf8().data(), codeBlock->lineNumberForBytecodeOffset(0), record->m_sampleCount, m_sampleCount, blockPercent);
+            dataLogF("#%d: %s:%d: %d / %lld (%.3f%%)\n", i + 1, record->m_executable->sourceURL().utf8().data(), codeBlock->lineNumberForBytecodeOffset(0), record->m_sampleCount, m_sampleCount, blockPercent);
             if (i < 10) {
                 HashMap<unsigned,unsigned> lineCounts;
                 codeBlock->dump(exec);
 
-                dataLog("    Opcode and line number samples [*]\n\n");
+                dataLogF("    Opcode and line number samples [*]\n\n");
                 for (unsigned op = 0; op < record->m_size; ++op) {
                     int count = record->m_samples[op];
                     if (count) {
-                        dataLog("    [% 4d] has sample count: % 4d\n", op, count);
+                        dataLogF("    [% 4d] has sample count: % 4d\n", op, count);
                         unsigned line = codeBlock->lineNumberForBytecodeOffset(op);
                         lineCounts.set(line, (lineCounts.contains(line) ? lineCounts.get(line) : 0) + count);
                     }
                 }
-                dataLog("\n");
+                dataLogF("\n");
 
                 int linesCount = lineCounts.size();
                 Vector<LineCountInfo> lineCountInfo(linesCount);
@@ -453,12 +453,12 @@ void SamplingTool::dump(ExecState* exec)
                 qsort(lineCountInfo.begin(), linesCount, sizeof(LineCountInfo), compareLineCountInfoSampling);
 
                 for (lineno = 0; lineno < linesCount; ++lineno) {
-                    dataLog("    Line #%d has sample count %d.\n", lineCountInfo[lineno].line, lineCountInfo[lineno].count);
+                    dataLogF("    Line #%d has sample count %d.\n", lineCountInfo[lineno].line, lineCountInfo[lineno].count);
                 }
-                dataLog("\n");
-                dataLog("    [*] Samples inside host code are charged to the calling Bytecode.\n");
-                dataLog("        Samples on a call / return boundary are not charged to a specific opcode or line.\n\n");
-                dataLog("            Samples on a call / return boundary: %d / %d (%.3f%%)\n\n", record->m_sampleCount - record->m_opcodeSampleCount, record->m_sampleCount, (static_cast<double>(record->m_sampleCount - record->m_opcodeSampleCount) * 100) / record->m_sampleCount);
+                dataLogF("\n");
+                dataLogF("    [*] Samples inside host code are charged to the calling Bytecode.\n");
+                dataLogF("        Samples on a call / return boundary are not charged to a specific opcode or line.\n\n");
+                dataLogF("            Samples on a call / return boundary: %d / %d (%.3f%%)\n\n", record->m_sampleCount - record->m_opcodeSampleCount, record->m_sampleCount, (static_cast<double>(record->m_sampleCount - record->m_opcodeSampleCount) * 100) / record->m_sampleCount);
             }
         }
     }

@@ -47,7 +47,7 @@ void JumpReplacementWatchpoint::fireInternal()
     void* source = bitwise_cast<void*>(m_source);
     void* destination = bitwise_cast<void*>(m_destination);
     if (Options::showDisassembly())
-        dataLog("Firing jump replacement watchpoint from %p, to %p.\n", source, destination);
+        dataLogF("Firing jump replacement watchpoint from %p, to %p.\n", source, destination);
     MacroAssembler::replaceWithJump(CodeLocationLabel(source), CodeLocationLabel(destination));
     if (isOnList())
         remove();

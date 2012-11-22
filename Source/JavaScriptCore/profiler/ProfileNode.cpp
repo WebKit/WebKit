@@ -294,9 +294,9 @@ void ProfileNode::debugPrintData(int indentLevel) const
 {
     // Print function names
     for (int i = 0; i < indentLevel; ++i)
-        dataLog("  ");
+        dataLogF("  ");
 
-    dataLog("Function Name %s %d SelfTime %.3fms/%.3f%% TotalTime %.3fms/%.3f%% VSelf %.3fms VTotal %.3fms Visible %s Next Sibling %s\n",
+    dataLogF("Function Name %s %d SelfTime %.3fms/%.3f%% TotalTime %.3fms/%.3f%% VSelf %.3fms VTotal %.3fms Visible %s Next Sibling %s\n",
         functionName().utf8().data(), 
         m_numberOfCalls, m_actualSelfTime, selfPercent(), m_actualTotalTime, totalPercent(),
         m_visibleSelfTime, m_visibleTotalTime, 
@@ -313,20 +313,20 @@ void ProfileNode::debugPrintData(int indentLevel) const
 // print the profiled data in a format that matches the tool sample's output.
 double ProfileNode::debugPrintDataSampleStyle(int indentLevel, FunctionCallHashCount& countedFunctions) const
 {
-    dataLog("    ");
+    dataLogF("    ");
 
     // Print function names
     const char* name = functionName().utf8().data();
     double sampleCount = m_actualTotalTime * 1000;
     if (indentLevel) {
         for (int i = 0; i < indentLevel; ++i)
-            dataLog("  ");
+            dataLogF("  ");
 
          countedFunctions.add(functionName().impl());
 
-        dataLog("%.0f %s\n", sampleCount ? sampleCount : 1, name);
+        dataLogF("%.0f %s\n", sampleCount ? sampleCount : 1, name);
     } else
-        dataLog("%s\n", name);
+        dataLogF("%s\n", name);
 
     ++indentLevel;
 
@@ -338,11 +338,11 @@ double ProfileNode::debugPrintDataSampleStyle(int indentLevel, FunctionCallHashC
     sumOfChildrensCount *= 1000;    //
     // Print remainder of samples to match sample's output
     if (sumOfChildrensCount < sampleCount) {
-        dataLog("    ");
+        dataLogF("    ");
         while (indentLevel--)
-            dataLog("  ");
+            dataLogF("  ");
 
-        dataLog("%.0f %s\n", sampleCount - sumOfChildrensCount, functionName().utf8().data());
+        dataLogF("%.0f %s\n", sampleCount - sumOfChildrensCount, functionName().utf8().data());
     }
 
     return m_actualTotalTime;

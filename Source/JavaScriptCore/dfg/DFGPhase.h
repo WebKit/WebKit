@@ -83,7 +83,7 @@ bool runAndLog(PhaseType& phase)
     bool result = phase.run();
 #if DFG_ENABLE(DEBUG_VERBOSE)
     if (result)
-        dataLog("Phase %s changed the IR.\n", phase.name());
+        dataLogF("Phase %s changed the IR.\n", phase.name());
 #endif
     return result;
 }

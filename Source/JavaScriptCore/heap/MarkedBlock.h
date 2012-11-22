@@ -40,7 +40,7 @@
 
 #if HEAP_LOG_BLOCK_STATE_TRANSITIONS
 #define HEAP_LOG_BLOCK_STATE_TRANSITION(block) do {                     \
-        dataLog(                                                    \
+        dataLogF(                                                    \
             "%s:%d %s: block %s = %p, %d\n",                            \
             __FILE__, __LINE__, __FUNCTION__,                           \
             #block, (block), (block)->m_state);                         \

@@ -1,3 +1,32 @@
+2012-11-21  Filip Pizlo  <fpizlo@apple.com>
+
+        Rename dataLog() and dataLogV() to dataLogF() and dataLogFV()
+        https://bugs.webkit.org/show_bug.cgi?id=103001
+
+        Rubber stamped by Dan Bernstein.
+
+        * wtf/DataLog.cpp:
+        (WTF::dataLogFV):
+        (WTF::dataLogF):
+        (WTF::dataLogFString):
+        * wtf/DataLog.h:
+        (WTF):
+        * wtf/HashTable.cpp:
+        (WTF::HashTableStats::dumpStats):
+        * wtf/HashTable.h:
+        (WTF::HashTable::Stats::dumpStats):
+        * wtf/MetaAllocator.cpp:
+        (WTF::MetaAllocator::dumpProfile):
+        * wtf/StackStats.cpp:
+        (WTF::StackStats::initialize):
+        (WTF::StackStats::PerThreadStats::PerThreadStats):
+        (WTF::StackStats::CheckPoint::CheckPoint):
+        (WTF::StackStats::CheckPoint::~CheckPoint):
+        (WTF::StackStats::probe):
+        (WTF::StackStats::LayoutCheckPoint::LayoutCheckPoint):
+        * wtf/text/WTFString.cpp:
+        (String::show):
+
 2012-11-21  Anthony G. Basile  <blueness@gentoo.org>
 
         Source/WTF/wtf/Assertions.cpp: fix build on a uClibc system

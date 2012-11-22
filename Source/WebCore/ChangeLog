@@ -1,3 +1,15 @@
+2012-11-21  Filip Pizlo  <fpizlo@apple.com>
+
+        Rename dataLog() and dataLogV() to dataLogF() and dataLogFV()
+        https://bugs.webkit.org/show_bug.cgi?id=103001
+
+        Rubber stamped by Dan Bernstein.
+
+        No change in behavior, so no new tests.
+
+        * platform/KURLWTFURL.cpp:
+        (WebCore::KURL::print):
+
 2012-11-21  Kondapally Kalyan  <kalyan.kondapally@intel.com>
 
         [EFL] Refactor GraphicsContext3DEFL.

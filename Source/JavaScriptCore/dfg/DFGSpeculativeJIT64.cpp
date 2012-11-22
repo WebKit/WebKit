@@ -1065,7 +1065,7 @@ template<bool strict>
 GPRReg SpeculativeJIT::fillSpeculateIntInternal(NodeIndex nodeIndex, DataFormat& returnFormat)
 {
 #if DFG_ENABLE(DEBUG_VERBOSE)
-    dataLog("SpecInt@%d   ", nodeIndex);
+    dataLogF("SpecInt@%d   ", nodeIndex);
 #endif
     SpeculatedType type = m_state.forNode(nodeIndex).m_type;
     Node& node = at(nodeIndex);
@@ -1213,7 +1213,7 @@ GPRReg SpeculativeJIT::fillSpeculateIntStrict(NodeIndex nodeIndex)
 FPRReg SpeculativeJIT::fillSpeculateDouble(NodeIndex nodeIndex)
 {
 #if DFG_ENABLE(DEBUG_VERBOSE)
-    dataLog("SpecDouble@%d   ", nodeIndex);
+    dataLogF("SpecDouble@%d   ", nodeIndex);
 #endif
     SpeculatedType type = m_state.forNode(nodeIndex).m_type;
     Node& node = at(nodeIndex);
@@ -1367,7 +1367,7 @@ FPRReg SpeculativeJIT::fillSpeculateDouble(NodeIndex nodeIndex)
 GPRReg SpeculativeJIT::fillSpeculateCell(NodeIndex nodeIndex, bool isForwardSpeculation)
 {
 #if DFG_ENABLE(DEBUG_VERBOSE)
-    dataLog("SpecCell@%d   ", nodeIndex);
+    dataLogF("SpecCell@%d   ", nodeIndex);
 #endif
     SpeculatedType type = m_state.forNode(nodeIndex).m_type;
     Node& node = at(nodeIndex);
@@ -1443,7 +1443,7 @@ GPRReg SpeculativeJIT::fillSpeculateCell(NodeIndex nodeIndex, bool isForwardSpec
 GPRReg SpeculativeJIT::fillSpeculateBoolean(NodeIndex nodeIndex)
 {
 #if DFG_ENABLE(DEBUG_VERBOSE)
-    dataLog("SpecBool@%d   ", nodeIndex);
+    dataLogF("SpecBool@%d   ", nodeIndex);
 #endif
     SpeculatedType type = m_state.forNode(nodeIndex).m_type;
     Node& node = at(nodeIndex);

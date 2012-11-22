@@ -35,14 +35,14 @@ namespace WTF {
 
 WTF_EXPORT_PRIVATE FILE* dataFile();
 
-WTF_EXPORT_PRIVATE void dataLogV(const char* format, va_list) WTF_ATTRIBUTE_PRINTF(1, 0);
-WTF_EXPORT_PRIVATE void dataLog(const char* format, ...) WTF_ATTRIBUTE_PRINTF(1, 2);
-WTF_EXPORT_PRIVATE void dataLogString(const char*);
+WTF_EXPORT_PRIVATE void dataLogFV(const char* format, va_list) WTF_ATTRIBUTE_PRINTF(1, 0);
+WTF_EXPORT_PRIVATE void dataLogF(const char* format, ...) WTF_ATTRIBUTE_PRINTF(1, 2);
+WTF_EXPORT_PRIVATE void dataLogFString(const char*);
 
 } // namespace WTF
 
-using WTF::dataLog;
-using WTF::dataLogString;
+using WTF::dataLogF;
+using WTF::dataLogFString;
 
 #endif // DataLog_h
 

@@ -50,7 +50,7 @@ void interpreterThrowInCaller(ExecState* exec, ReturnAddressPtr pc)
     JSGlobalData* globalData = &exec->globalData();
     NativeCallFrameTracer tracer(globalData, exec);
 #if LLINT_SLOW_PATH_TRACING
-    dataLog("Throwing exception %s.\n", globalData->exception.description());
+    dataLogF("Throwing exception %s.\n", globalData->exception.description());
 #endif
     fixupPCforExceptionIfNeeded(exec);
     genericThrow(
@@ -69,7 +69,7 @@ Instruction* returnToThrow(ExecState* exec, Instruction* pc)
     JSGlobalData* globalData = &exec->globalData();
     NativeCallFrameTracer tracer(globalData, exec);
 #if LLINT_SLOW_PATH_TRACING
-    dataLog("Throwing exception %s (returnToThrow).\n", globalData->exception.description());
+    dataLogF("Throwing exception %s (returnToThrow).\n", globalData->exception.description());
 #endif
     fixupPCforExceptionIfNeeded(exec);
     genericThrow(globalData, exec, globalData->exception, pc - exec->codeBlock()->instructions().begin());
@@ -82,7 +82,7 @@ void* callToThrow(ExecState* exec, Instruction* pc)
     JSGlobalData* globalData = &exec->globalData();
     NativeCallFrameTracer tracer(globalData, exec);
 #if LLINT_SLOW_PATH_TRACING
-    dataLog("Throwing exception %s (callToThrow).\n", globalData->exception.description());
+    dataLogF("Throwing exception %s (callToThrow).\n", globalData->exception.description());
 #endif
     fixupPCforExceptionIfNeeded(exec);
     genericThrow(globalData, exec, globalData->exception, pc - exec->codeBlock()->instructions().begin());

@@ -507,17 +507,17 @@ void JSGlobalData::dumpRegExpTrace()
     RTTraceList::iterator iter = ++m_rtTraceList->begin();
     
     if (iter != m_rtTraceList->end()) {
-        dataLog("\nRegExp Tracing\n");
-        dataLog("                                                            match()    matches\n");
-        dataLog("Regular Expression                          JIT Address      calls      found\n");
-        dataLog("----------------------------------------+----------------+----------+----------\n");
+        dataLogF("\nRegExp Tracing\n");
+        dataLogF("                                                            match()    matches\n");
+        dataLogF("Regular Expression                          JIT Address      calls      found\n");
+        dataLogF("----------------------------------------+----------------+----------+----------\n");
     
         unsigned reCount = 0;
     
         for (; iter != m_rtTraceList->end(); ++iter, ++reCount)
             (*iter)->printTraceData();
 
-        dataLog("%d Regular Expressions\n", reCount);
+        dataLogF("%d Regular Expressions\n", reCount);
     }
     
     m_rtTraceList->clear();

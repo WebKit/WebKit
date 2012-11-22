@@ -46,8 +46,8 @@ JITDisassembler::~JITDisassembler()
 
 void JITDisassembler::dump(LinkBuffer& linkBuffer)
 {
-    dataLog("Baseline JIT code for CodeBlock %p, instruction count = %u:\n", m_codeBlock, m_codeBlock->instructionCount());
-    dataLog("    Code at [%p, %p):\n", linkBuffer.debugAddress(), static_cast<char*>(linkBuffer.debugAddress()) + linkBuffer.debugSize());
+    dataLogF("Baseline JIT code for CodeBlock %p, instruction count = %u:\n", m_codeBlock, m_codeBlock->instructionCount());
+    dataLogF("    Code at [%p, %p):\n", linkBuffer.debugAddress(), static_cast<char*>(linkBuffer.debugAddress()) + linkBuffer.debugSize());
     dumpDisassembly(linkBuffer, m_startOfCode, m_labelForBytecodeIndexInMainPath[0]);
     
     MacroAssembler::Label firstSlowLabel;
@@ -58,9 +58,9 @@ void JITDisassembler::dump(LinkBuffer& linkBuffer)
         }
     }
     dumpForInstructions(linkBuffer, "    ", m_labelForBytecodeIndexInMainPath, firstSlowLabel.isSet() ? firstSlowLabel : m_endOfSlowPath);
-    dataLog("    (End Of Main Path)\n");
+    dataLogF("    (End Of Main Path)\n");
     dumpForInstructions(linkBuffer, "    (S) ", m_labelForBytecodeIndexInSlowPath, m_endOfSlowPath);
-    dataLog("    (End Of Slow Path)\n");
+    dataLogF("    (End Of Slow Path)\n");
 
     dumpDisassembly(linkBuffer, m_endOfSlowPath, m_endOfCode);
 }
@@ -72,7 +72,7 @@ void JITDisassembler::dumpForInstructions(LinkBuffer& linkBuffer, const char* pr
             i++;
             continue;
         }
-        dataLog("%s", prefix);
+        dataLogF("%s", prefix);
         m_codeBlock->dump(i);
         for (unsigned nextIndex = i + 1; ; nextIndex++) {
             if (nextIndex >= labels.size()) {

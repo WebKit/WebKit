@@ -78,47 +78,47 @@ private:
         if (!block->cfaShouldRevisit)
             return;
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-        dataLog("   Block #%u (bc#%u):\n", blockIndex, block->bytecodeBegin);
+        dataLogF("   Block #%u (bc#%u):\n", blockIndex, block->bytecodeBegin);
 #endif
         m_state.beginBasicBlock(block);
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-        dataLog("      head vars: ");
+        dataLogF("      head vars: ");
         dumpOperands(block->valuesAtHead, WTF::dataFile());
-        dataLog("\n");
+        dataLogF("\n");
 #endif
         for (unsigned i = 0; i < block->size(); ++i) {
             NodeIndex nodeIndex = block->at(i);
             if (!m_graph[nodeIndex].shouldGenerate())
                 continue;
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-            dataLog("      %s @%u: ", Graph::opName(m_graph[nodeIndex].op()), nodeIndex);
+            dataLogF("      %s @%u: ", Graph::opName(m_graph[nodeIndex].op()), nodeIndex);
             m_state.dump(WTF::dataFile());
-            dataLog("\n");
+            dataLogF("\n");
 #endif
             if (!m_state.execute(i)) {
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-                dataLog("         Expect OSR exit.\n");
+                dataLogF("         Expect OSR exit.\n");
 #endif
                 break;
             }
         }
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-        dataLog("      tail regs: ");
+        dataLogF("      tail regs: ");
         m_state.dump(WTF::dataFile());
-        dataLog("\n");
+        dataLogF("\n");
 #endif
         m_changed |= m_state.endBasicBlock(AbstractState::MergeToSuccessors);
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-        dataLog("      tail vars: ");
+        dataLogF("      tail vars: ");
         dumpOperands(block->valuesAtTail, WTF::dataFile());
-        dataLog("\n");
+        dataLogF("\n");
 #endif
     }
     
     void performForwardCFA()
     {
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-        dataLog("CFA [%u]\n", ++m_count);
+        dataLogF("CFA [%u]\n", ++m_count);
 #endif
         
         for (BlockIndex block = 0; block < m_graph.m_blocks.size(); ++block)

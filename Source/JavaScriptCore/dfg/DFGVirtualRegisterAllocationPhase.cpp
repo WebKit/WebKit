@@ -43,9 +43,9 @@ public:
     bool run()
     {
 #if DFG_ENABLE(DEBUG_VERBOSE)
-        dataLog("Preserved vars: ");
+        dataLogF("Preserved vars: ");
         m_graph.m_preservedVars.dump(WTF::dataFile());
-        dataLog("\n");
+        dataLogF("\n");
 #endif
         ScoreBoard scoreBoard(m_graph, m_graph.m_preservedVars);
         scoreBoard.assertClear();
@@ -62,8 +62,8 @@ public:
                 NodeIndex nodeIndex = block->at(indexInBlock);
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
                 if (needsNewLine)
-                    dataLog("\n");
-                dataLog("   @%u:", nodeIndex);
+                    dataLogF("\n");
+                dataLogF("   @%u:", nodeIndex);
                 needsNewLine = true;
 #endif
                 Node& node = m_graph[nodeIndex];
@@ -92,7 +92,7 @@ public:
 
                 VirtualRegister virtualRegister = scoreBoard.allocate();
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-                dataLog(" Assigning virtual register %u to node %u.",
+                dataLogF(" Assigning virtual register %u to node %u.",
                         virtualRegister, nodeIndex);
 #endif
                 node.setVirtualRegister(virtualRegister);
@@ -105,7 +105,7 @@ public:
         }
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
         if (needsNewLine)
-            dataLog("\n");
+            dataLogF("\n");
 #endif
 
         // 'm_numCalleeRegisters' is the number of locals and temporaries allocated
@@ -123,7 +123,7 @@ public:
         if ((unsigned)codeBlock()->m_numCalleeRegisters < calleeRegisters)
             codeBlock()->m_numCalleeRegisters = calleeRegisters;
 #if DFG_ENABLE(DEBUG_VERBOSE)
-        dataLog("Num callee registers: %u\n", calleeRegisters);
+        dataLogF("Num callee registers: %u\n", calleeRegisters);
 #endif
         
         return true;

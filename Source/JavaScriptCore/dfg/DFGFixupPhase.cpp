@@ -69,7 +69,7 @@ private:
         NodeType op = node.op();
 
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-        dataLog("   %s @%u: ", Graph::opName(op), m_compileIndex);
+        dataLogF("   %s @%u: ", Graph::opName(op), m_compileIndex);
 #endif
         
         switch (op) {
@@ -412,10 +412,10 @@ private:
 
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
         if (!(node.flags() & NodeHasVarArgs)) {
-            dataLog("new children: ");
+            dataLogF("new children: ");
             node.dumpChildren(WTF::dataFile());
         }
-        dataLog("\n");
+        dataLogF("\n");
 #endif
     }
     
@@ -548,7 +548,7 @@ private:
         NodeIndex resultIndex = (NodeIndex)m_graph.size();
         
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-        dataLog("(replacing @%u->@%u with @%u->@%u) ",
+        dataLogF("(replacing @%u->@%u with @%u->@%u) ",
                 m_compileIndex, edge.index(), m_compileIndex, resultIndex);
 #endif
         

@@ -79,7 +79,7 @@ private:
             result++;
         ASSERT(result <= m_indexInBlock);
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-        dataLog("  limit %u: ", result);
+        dataLogF("  limit %u: ", result);
 #endif
         return result;
     }
@@ -970,7 +970,7 @@ private:
             return false;
         
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-        dataLog("   Replacing @%u -> @%u", m_compileIndex, replacement);
+        dataLogF("   Replacing @%u -> @%u", m_compileIndex, replacement);
 #endif
         
         Node& node = m_graph[m_compileIndex];
@@ -988,7 +988,7 @@ private:
     void eliminate()
     {
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-        dataLog("   Eliminating @%u", m_compileIndex);
+        dataLogF("   Eliminating @%u", m_compileIndex);
 #endif
         
         Node& node = m_graph[m_compileIndex];
@@ -1029,7 +1029,7 @@ private:
             return;
         
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-        dataLog("   %s @%u: ", Graph::opName(m_graph[m_compileIndex].op()), m_compileIndex);
+        dataLogF("   %s @%u: ", Graph::opName(m_graph[m_compileIndex].op()), m_compileIndex);
 #endif
         
         // NOTE: there are some nodes that we deliberately don't CSE even though we
@@ -1317,7 +1317,7 @@ private:
         
         m_lastSeen[node.op()] = m_indexInBlock;
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-        dataLog("\n");
+        dataLogF("\n");
 #endif
     }
     

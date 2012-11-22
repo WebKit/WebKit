@@ -114,19 +114,19 @@ OpcodeStats::~OpcodeStats()
             *(currentPairIndex++) = make_pair(i, j);
     qsort(sortedPairIndices, numOpcodeIDs * numOpcodeIDs, sizeof(pair<int, int>), compareOpcodePairIndices);
     
-    dataLog("\nExecuted opcode statistics\n"); 
+    dataLogF("\nExecuted opcode statistics\n"); 
     
-    dataLog("Total instructions executed: %lld\n\n", totalInstructions);
+    dataLogF("Total instructions executed: %lld\n\n", totalInstructions);
 
-    dataLog("All opcodes by frequency:\n\n");
+    dataLogF("All opcodes by frequency:\n\n");
 
     for (int i = 0; i < numOpcodeIDs; ++i) {
         int index = sortedIndices[i];
-        dataLog("%s:%s %lld - %.2f%%\n", opcodeNames[index], padOpcodeName((OpcodeID)index, 28), opcodeCounts[index], ((double) opcodeCounts[index]) / ((double) totalInstructions) * 100.0);    
+        dataLogF("%s:%s %lld - %.2f%%\n", opcodeNames[index], padOpcodeName((OpcodeID)index, 28), opcodeCounts[index], ((double) opcodeCounts[index]) / ((double) totalInstructions) * 100.0);    
     }
     
-    dataLog("\n");
-    dataLog("2-opcode sequences by frequency: %lld\n\n", totalInstructions);
+    dataLogF("\n");
+    dataLogF("2-opcode sequences by frequency: %lld\n\n", totalInstructions);
     
     for (int i = 0; i < numOpcodeIDs * numOpcodeIDs; ++i) {
         pair<int, int> indexPair = sortedPairIndices[i];
@@ -135,11 +135,11 @@ OpcodeStats::~OpcodeStats()
         if (!count)
             break;
         
-        dataLog("%s%s %s:%s %lld %.2f%%\n", opcodeNames[indexPair.first], padOpcodeName((OpcodeID)indexPair.first, 28), opcodeNames[indexPair.second], padOpcodeName((OpcodeID)indexPair.second, 28), count, ((double) count) / ((double) totalInstructionPairs) * 100.0);
+        dataLogF("%s%s %s:%s %lld %.2f%%\n", opcodeNames[indexPair.first], padOpcodeName((OpcodeID)indexPair.first, 28), opcodeNames[indexPair.second], padOpcodeName((OpcodeID)indexPair.second, 28), count, ((double) count) / ((double) totalInstructionPairs) * 100.0);
     }
     
-    dataLog("\n");
-    dataLog("Most common opcodes and sequences:\n");
+    dataLogF("\n");
+    dataLogF("Most common opcodes and sequences:\n");
 
     for (int i = 0; i < numOpcodeIDs; ++i) {
         int index = sortedIndices[i];
@@ -147,7 +147,7 @@ OpcodeStats::~OpcodeStats()
         double opcodeProportion = ((double) opcodeCount) / ((double) totalInstructions);
         if (opcodeProportion < 0.0001)
             break;
-        dataLog("\n%s:%s %lld - %.2f%%\n", opcodeNames[index], padOpcodeName((OpcodeID)index, 28), opcodeCount, opcodeProportion * 100.0);
+        dataLogF("\n%s:%s %lld - %.2f%%\n", opcodeNames[index], padOpcodeName((OpcodeID)index, 28), opcodeCount, opcodeProportion * 100.0);
 
         for (int j = 0; j < numOpcodeIDs * numOpcodeIDs; ++j) {
             pair<int, int> indexPair = sortedPairIndices[j];
@@ -160,11 +160,11 @@ OpcodeStats::~OpcodeStats()
             if (indexPair.first != index && indexPair.second != index)
                 continue;
 
-            dataLog("    %s%s %s:%s %lld - %.2f%%\n", opcodeNames[indexPair.first], padOpcodeName((OpcodeID)indexPair.first, 28), opcodeNames[indexPair.second], padOpcodeName((OpcodeID)indexPair.second, 28), pairCount, pairProportion * 100.0);
+            dataLogF("    %s%s %s:%s %lld - %.2f%%\n", opcodeNames[indexPair.first], padOpcodeName((OpcodeID)indexPair.first, 28), opcodeNames[indexPair.second], padOpcodeName((OpcodeID)indexPair.second, 28), pairCount, pairProportion * 100.0);
         }
         
     }
-    dataLog("\n");
+    dataLogF("\n");
 }
 
 void OpcodeStats::recordInstruction(int opcode)

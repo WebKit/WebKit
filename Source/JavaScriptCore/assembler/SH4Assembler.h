@@ -2070,7 +2070,7 @@ public:
     static void vprintfStdoutInstr(const char* format, va_list args)
     {
         if (getenv("JavaScriptCoreDumpJIT"))
-            WTF::dataLogV(format, args);
+            WTF::dataLogFV(format, args);
     }
 
     static void printBlockInstr(uint16_t* first, unsigned int offset, int nbInstr)
