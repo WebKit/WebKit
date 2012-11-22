@@ -1,3 +1,35 @@
+2012-11-22  Kentaro Hara  <haraken@chromium.org>
+
+        [V8] WebCoreStringResourceBase should be located in V8StringResource.h
+        https://bugs.webkit.org/show_bug.cgi?id=103002
+
+        Reviewed by Adam Barth.
+
+        Currently WebCoreStringResourceBase is mis-located in V8ValueCache.h.
+        It should be in V8StringResource.h.
+
+        No tests. No change in behavior.
+
+        * bindings/v8/V8StringResource.cpp:
+        (WebCore::WebCoreStringResourceBase::toWebCoreStringResourceBase):
+        (WebCore):
+        (WebCore::WebCoreStringResourceBase::visitStrings):
+        * bindings/v8/V8StringResource.h:
+        (WebCore):
+        (WebCoreStringResourceBase):
+        (WebCore::WebCoreStringResourceBase::WebCoreStringResourceBase):
+        (WebCore::WebCoreStringResourceBase::~WebCoreStringResourceBase):
+        (WebCore::WebCoreStringResourceBase::webcoreString):
+        (WebCore::WebCoreStringResourceBase::atomicString):
+        (WebCore::WebCoreStringResourceBase::memoryConsumption):
+        (WebCoreStringResource16):
+        (WebCore::WebCoreStringResource16::WebCoreStringResource16):
+        (WebCoreStringResource8):
+        (WebCore::WebCoreStringResource8::WebCoreStringResource8):
+        * bindings/v8/V8ValueCache.cpp:
+        * bindings/v8/V8ValueCache.h:
+        (WebCore):
+
 2012-11-21  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: NMI add instrumentation to DynamicNodeList classes hierarchy.

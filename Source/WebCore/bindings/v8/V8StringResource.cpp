@@ -26,9 +26,28 @@
 #include "config.h"
 #include "V8StringResource.h"
 
+#include "BindingVisitors.h"
 #include "V8Binding.h"
 
 namespace WebCore {
+
+WebCoreStringResourceBase* WebCoreStringResourceBase::toWebCoreStringResourceBase(v8::Handle<v8::String> string)
+{
+    v8::String::Encoding encoding;
+    v8::String::ExternalStringResourceBase* resource = string->GetExternalStringResourceBase(&encoding);
+    if (!resource)
+        return 0;
+    if (encoding == v8::String::ASCII_ENCODING)
+        return static_cast<WebCoreStringResource8*>(resource);
+    return static_cast<WebCoreStringResource16*>(resource);
+}
+
+void WebCoreStringResourceBase::visitStrings(ExternalStringVisitor* visitor)
+{
+    visitor->visitJSExternalString(m_plainString.impl());
+    if (m_plainString.impl() != m_atomicString.impl() && !m_atomicString.isNull())
+        visitor->visitJSExternalString(m_atomicString.impl());
+}
 
 template<class StringClass> struct StringTraits {
     static const StringClass& fromStringResource(WebCoreStringResourceBase*);
