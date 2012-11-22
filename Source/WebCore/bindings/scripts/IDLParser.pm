@@ -35,14 +35,13 @@ use constant EmptyToken => 5;
 
 # Used to represent a parsed IDL document
 struct( idlDocument => {
-    module => '$',   # Module identifier
     interfaces => '@',  # All parsed interfaces
     fileName => '$'  # file name
 });
 
 # Used to represent 'interface' blocks
 struct( domInterface => {
-    name => '$',      # Class identifier (without module)
+    name => '$',      # Class identifier
     parents => '@',      # List of strings
     constants => '@',    # List of 'domConstant'
     functions => '@',    # List of 'domFunction'
@@ -173,7 +172,6 @@ sub Parse
         $document = $definitions[0];
     } else {
         $document = idlDocument->new();
-        $document->module("");
         push(@{$document->interfaces}, @definitions);
     }
 
@@ -2069,32 +2067,8 @@ sub parseDefinitionOld
     if ($next->value() eq "typedef") {
         return $self->parseTypedef({});
     }
-    if ($next->value() eq "module") {
-        return $self->parseModule();
-    }
     if ($next->type() == IdentifierToken || $next->value() eq "::") {
         return $self->parseImplementsStatement({});
-    }
-    $self->assertUnexpectedToken($next->value(), __LINE__);
-}
-
-sub parseModule
-{
-    my $self = shift;
-    my $next = $self->nextToken();
-    if ($next->value() eq "module") {
-        my $document = idlDocument->new();
-        $self->assertTokenValue($self->getToken(), "module", __LINE__);
-        my $extendedAttributeList = $self->parseExtendedAttributeListAllowEmpty();
-        my $token = $self->getToken();
-        $self->assertTokenType($token, IdentifierToken);
-        $self->assertTokenValue($self->getToken(), "{", __LINE__);
-        $document->module($token->value());
-        my $definitions = $self->parseDefinitions();
-        push(@{$document->interfaces}, @{$definitions});
-        $self->assertTokenValue($self->getToken(), "}", __LINE__);
-        $self->parseOptionalSemicolon();
-        return $document;
     }
     $self->assertUnexpectedToken($next->value(), __LINE__);
 }

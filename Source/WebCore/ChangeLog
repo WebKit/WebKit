@@ -1,3 +1,20 @@
+2012-11-22  Kentaro Hara  <haraken@chromium.org>
+
+        Remove 'module' from IDL parser
+        https://bugs.webkit.org/show_bug.cgi?id=102670
+
+        Reviewed by Adam Barth.
+
+        The Web IDL spec no longer supports 'module'. We already removed
+        'module's from WebKit IDL files. So this patch removes 'module'
+        from the IDL parser.
+
+        No tests. No change in behavior.
+
+        * bindings/scripts/IDLParser.pm:
+        (Parse):
+        (parseDefinitionOld):
+
 2012-11-22  Dan Carney  <dcarney@google.com>
 
         [V8] fix DOMWrapperWorld destructor
