@@ -1,3 +1,21 @@
+2012-11-22  Kentaro Hara  <haraken@chromium.org>
+
+        [V8] Move AddMessageListener() from WorkerContextExecutionProxy::initializeIfNeeded() to WorkerContextExecutionProxy::initIsolate()
+        https://bugs.webkit.org/show_bug.cgi?id=102998
+
+        Reviewed by Adam Barth.
+
+        This is an incremental step for moving initializeIfNeeded()
+        to V8Initializer.h. Given that AddMessageListener() needs to
+        be called once per Isolate, we can move AddMessageListener()
+        from initializeIfNeeded() to initIsolate().
+
+        No tests. No change in behavior.
+
+        * bindings/v8/WorkerContextExecutionProxy.cpp:
+        (WebCore::WorkerContextExecutionProxy::initIsolate):
+        (WebCore::WorkerContextExecutionProxy::initializeIfNeeded):
+
 2012-11-22  Michael Saboff  <msaboff@apple.com>
 
         HTML integer parsing functions don't natively handle 8 bit strings

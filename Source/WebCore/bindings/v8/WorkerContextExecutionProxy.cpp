@@ -104,6 +104,9 @@ void WorkerContextExecutionProxy::dispose()
 
 void WorkerContextExecutionProxy::initIsolate()
 {
+    // Setup the security handlers and message listener.
+    v8::V8::AddMessageListener(&v8MessageHandler);
+
     // Tell V8 not to call the default OOM handler, binding code will handle it.
     v8::V8::IgnoreOutOfMemoryException();
     v8::V8::SetFatalErrorHandler(reportFatalErrorInV8);
@@ -128,12 +131,6 @@ bool WorkerContextExecutionProxy::initializeIfNeeded()
     // Bail out if the context has already been initialized.
     if (!m_context.isEmpty())
         return true;
-
-    // Setup the security handlers and message listener. This only has
-    // to be done once.
-    static bool isV8Initialized = false;
-    if (!isV8Initialized)
-        v8::V8::AddMessageListener(&v8MessageHandler);
 
     // Create a new environment
     v8::Persistent<v8::ObjectTemplate> globalTemplate;
