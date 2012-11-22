@@ -2212,13 +2212,6 @@ crbug.com/161899  fast/repaint/shadow-multiple-vertical.html [ Failure ImageOnly
 # Not included in tests modified by 81992, but started failing on Android at same time:
 crbug.com/161899 crbug.com/77494 fast/repaint/transform-replaced-shadows.html [ Failure ImageOnlyFailure ]
 crbug.com/161899  fast/transforms/shadows.html [ Failure ImageOnlyFailure ]
-crbug.com/161899  platform/chromium/fast/forms/calendar-picker/calendar-picker-appearance-ru.html [ Failure ImageOnlyFailure ]
-crbug.com/161899  platform/chromium/fast/forms/calendar-picker/calendar-picker-appearance-step.html [ Failure ImageOnlyFailure ]
-crbug.com/161899  platform/chromium/fast/forms/calendar-picker/calendar-picker-appearance.html [ Failure ImageOnlyFailure ]
-crbug.com/161899  platform/chromium/fast/forms/calendar-picker/month-picker-appearance-step.html [ Failure ImageOnlyFailure ]
-crbug.com/161899  platform/chromium/fast/forms/calendar-picker/month-picker-appearance.html [ Failure ImageOnlyFailure ]
-crbug.com/161899  platform/chromium/fast/forms/calendar-picker/week-picker-appearance-step.html [ Failure ImageOnlyFailure ]
-crbug.com/161899 webkit.org/b/99421 platform/chromium/fast/forms/calendar-picker/week-picker-appearance.html [ Failure ImageOnlyFailure Pass Missing ]
 crbug.com/161899  platform/chromium/fast/forms/color/color-suggestion-picker-appearance.html [ Failure ImageOnlyFailure ]
 crbug.com/161899  platform/chromium/fast/forms/color/color-suggestion-picker-one-row-appearance.html [ Failure ImageOnlyFailure ]
 crbug.com/161899  platform/chromium/fast/forms/color/color-suggestion-picker-two-row-appearance.html [ Failure ImageOnlyFailure ]
@@ -2864,14 +2857,6 @@ webkit.org/b/61169 [ Android Linux Win ] css3/images/optimize-contrast-image.htm
 webkit.org/b/96720 fast/forms/time-multiple-fields/time-multiple-fields-preserve-value-after-history-back.html [ Pass Timeout ]
 webkit.org/b/96720 fast/forms/date-multiple-fields/date-multiple-fields-preserve-value-after-history-back.html [ Pass Timeout ]
 webkit.org/b/98906 platform/chromium/fast/forms/suggestion-picker/date-suggestion-picker-mouse-operations.html [ Pass Failure ]
-
-# Needs rebaseline
-webkit.org/b/99421 platform/chromium/fast/forms/suggestion-picker/week-suggestion-picker-appearance-rtl.html [ Pass ImageOnlyFailure Missing ]
-webkit.org/b/99421 platform/chromium/fast/forms/suggestion-picker/week-suggestion-picker-appearance-with-scroll-bar.html [ Pass ImageOnlyFailure Missing ]
-webkit.org/b/99421 platform/chromium/fast/forms/suggestion-picker/week-suggestion-picker-appearance.html [ Pass ImageOnlyFailure Missing ]
-
-# Needs rebaseline
-webkit.org/b/102769 fast/forms/datetime/datetime-appearance-l10n.html [ Pass ImageOnlyFailure Missing ]
 
 # New test added in r87324
 crbug.com/83994 [ Win ] platform/win/plugins/call-javascript-that-destroys-plugin.html [ Failure ]

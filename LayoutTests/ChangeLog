@@ -1,3 +1,67 @@
+2012-11-21  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium] Rebaselin for recent forms changes.
+
+        * platform/chromium-linux-x86/platform/chromium/fast/forms/suggestion-picker/week-suggestion-picker-appearance-rtl-expected.png: Added.
+        * platform/chromium-linux/fast/forms/datetime/datetime-appearance-l10n-expected.png: Added.
+        * platform/chromium-linux/platform/chromium/fast/forms/calendar-picker/calendar-picker-appearance-expected.png:
+        * platform/chromium-linux/platform/chromium/fast/forms/calendar-picker/calendar-picker-appearance-ru-expected.png:
+        * platform/chromium-linux/platform/chromium/fast/forms/calendar-picker/calendar-picker-appearance-step-expected.png:
+        * platform/chromium-linux/platform/chromium/fast/forms/calendar-picker/month-picker-appearance-expected.png:
+        * platform/chromium-linux/platform/chromium/fast/forms/calendar-picker/month-picker-appearance-step-expected.png:
+        * platform/chromium-linux/platform/chromium/fast/forms/calendar-picker/week-picker-appearance-expected.png:
+        * platform/chromium-linux/platform/chromium/fast/forms/calendar-picker/week-picker-appearance-step-expected.png:
+        * platform/chromium-linux/platform/chromium/fast/forms/suggestion-picker/week-suggestion-picker-appearance-expected.png: Added.
+        * platform/chromium-linux/platform/chromium/fast/forms/suggestion-picker/week-suggestion-picker-appearance-rtl-expected.png: Added.
+        * platform/chromium-linux/platform/chromium/fast/forms/suggestion-picker/week-suggestion-picker-appearance-with-scroll-bar-expected.png: Added.
+        * platform/chromium-mac-lion/fast/forms/datetime/datetime-appearance-l10n-expected.png: Added.
+        * platform/chromium-mac-lion/platform/chromium/fast/forms/calendar-picker/calendar-picker-appearance-expected.png:
+        * platform/chromium-mac-lion/platform/chromium/fast/forms/calendar-picker/calendar-picker-appearance-ru-expected.png:
+        * platform/chromium-mac-lion/platform/chromium/fast/forms/calendar-picker/calendar-picker-appearance-step-expected.png:
+        * platform/chromium-mac-lion/platform/chromium/fast/forms/calendar-picker/month-picker-appearance-expected.png:
+        * platform/chromium-mac-lion/platform/chromium/fast/forms/calendar-picker/month-picker-appearance-step-expected.png:
+        * platform/chromium-mac-lion/platform/chromium/fast/forms/calendar-picker/week-picker-appearance-expected.png:
+        * platform/chromium-mac-lion/platform/chromium/fast/forms/calendar-picker/week-picker-appearance-step-expected.png:
+        * platform/chromium-mac-lion/platform/chromium/fast/forms/suggestion-picker/week-suggestion-picker-appearance-expected.png: Added.
+        * platform/chromium-mac-lion/platform/chromium/fast/forms/suggestion-picker/week-suggestion-picker-appearance-rtl-expected.png: Added.
+        * platform/chromium-mac-lion/platform/chromium/fast/forms/suggestion-picker/week-suggestion-picker-appearance-with-scroll-bar-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/forms/datetime/datetime-appearance-l10n-expected.png: Added.
+        * platform/chromium-mac-snowleopard/platform/chromium/fast/forms/calendar-picker/calendar-picker-appearance-expected.png:
+        * platform/chromium-mac-snowleopard/platform/chromium/fast/forms/calendar-picker/calendar-picker-appearance-ru-expected.png:
+        * platform/chromium-mac-snowleopard/platform/chromium/fast/forms/calendar-picker/calendar-picker-appearance-step-expected.png:
+        * platform/chromium-mac-snowleopard/platform/chromium/fast/forms/calendar-picker/month-picker-appearance-expected.png:
+        * platform/chromium-mac-snowleopard/platform/chromium/fast/forms/calendar-picker/month-picker-appearance-step-expected.png:
+        * platform/chromium-mac-snowleopard/platform/chromium/fast/forms/calendar-picker/week-picker-appearance-expected.png:
+        * platform/chromium-mac-snowleopard/platform/chromium/fast/forms/calendar-picker/week-picker-appearance-step-expected.png:
+        * platform/chromium-mac-snowleopard/platform/chromium/fast/forms/suggestion-picker/week-suggestion-picker-appearance-expected.png: Added.
+        * platform/chromium-mac-snowleopard/platform/chromium/fast/forms/suggestion-picker/week-suggestion-picker-appearance-rtl-expected.png: Added.
+        * platform/chromium-mac-snowleopard/platform/chromium/fast/forms/suggestion-picker/week-suggestion-picker-appearance-with-scroll-bar-expected.png: Added.
+        * platform/chromium-mac/platform/chromium/fast/forms/calendar-picker/calendar-picker-appearance-expected.png:
+        * platform/chromium-mac/platform/chromium/fast/forms/calendar-picker/calendar-picker-appearance-ru-expected.png:
+        * platform/chromium-mac/platform/chromium/fast/forms/calendar-picker/calendar-picker-appearance-step-expected.png:
+        * platform/chromium-mac/platform/chromium/fast/forms/calendar-picker/month-picker-appearance-expected.png:
+        * platform/chromium-mac/platform/chromium/fast/forms/calendar-picker/month-picker-appearance-step-expected.png:
+        * platform/chromium-mac/platform/chromium/fast/forms/calendar-picker/week-picker-appearance-expected.png:
+        * platform/chromium-mac/platform/chromium/fast/forms/calendar-picker/week-picker-appearance-step-expected.png:
+        * platform/chromium-mac/platform/chromium/fast/forms/suggestion-picker/week-suggestion-picker-appearance-expected.png:
+        * platform/chromium-mac/platform/chromium/fast/forms/suggestion-picker/week-suggestion-picker-appearance-rtl-expected.png:
+        * platform/chromium-mac/platform/chromium/fast/forms/suggestion-picker/week-suggestion-picker-appearance-with-scroll-bar-expected.png:
+        * platform/chromium-win-xp/fast/forms/datetime/datetime-appearance-l10n-expected.png: Added.
+        * platform/chromium-win-xp/platform/chromium/fast/forms/calendar-picker/calendar-picker-appearance-ru-expected.png:
+        * platform/chromium-win-xp/platform/chromium/fast/forms/suggestion-picker/week-suggestion-picker-appearance-rtl-expected.png: Added.
+        * platform/chromium-win/fast/forms/datetime/datetime-appearance-l10n-expected.png: Added.
+        * platform/chromium-win/platform/chromium/fast/forms/calendar-picker/calendar-picker-appearance-expected.png:
+        * platform/chromium-win/platform/chromium/fast/forms/calendar-picker/calendar-picker-appearance-ru-expected.png:
+        * platform/chromium-win/platform/chromium/fast/forms/calendar-picker/calendar-picker-appearance-step-expected.png:
+        * platform/chromium-win/platform/chromium/fast/forms/calendar-picker/month-picker-appearance-expected.png:
+        * platform/chromium-win/platform/chromium/fast/forms/calendar-picker/month-picker-appearance-step-expected.png:
+        * platform/chromium-win/platform/chromium/fast/forms/calendar-picker/week-picker-appearance-expected.png:
+        * platform/chromium-win/platform/chromium/fast/forms/calendar-picker/week-picker-appearance-step-expected.png:
+        * platform/chromium-win/platform/chromium/fast/forms/suggestion-picker/week-suggestion-picker-appearance-expected.png: Added.
+        * platform/chromium-win/platform/chromium/fast/forms/suggestion-picker/week-suggestion-picker-appearance-rtl-expected.png: Added.
+        * platform/chromium-win/platform/chromium/fast/forms/suggestion-picker/week-suggestion-picker-appearance-with-scroll-bar-expected.png: Added.
+        * platform/chromium/TestExpectations:
+
 2012-11-21  Hajime Morrita  <morrita@google.com>
 
         [Shadow DOM] Implement Element::createShadowRoot()
