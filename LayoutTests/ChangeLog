@@ -1,3 +1,15 @@
+2012-11-22  Yury Semikhatsky  <yurys@chromium.org>
+
+        Chromium gardening. Rebaseline compositing tests
+        https://bugs.webkit.org/show_bug.cgi?id=103039
+
+        Reviewed by Pavel Feldman.
+
+        * platform/chromium-linux/platform/chromium/virtual/softwarecompositing/reflections/nested-reflection-anchor-point-expected.png:
+        * platform/chromium-mac-lion/platform/chromium/virtual/softwarecompositing/reflections/nested-reflection-anchor-point-expected.png:
+        * platform/chromium-mac-snowleopard/platform/chromium/virtual/softwarecompositing/reflections/nested-reflection-anchor-point-expected.png:
+        * platform/chromium-mac/platform/chromium/virtual/softwarecompositing/reflections/nested-reflection-anchor-point-expected.png:
+
 2012-11-22  Harald Alvestrand  <hta@google.com>
 
         Name enumerator function for GetStats RTCStatsElement
