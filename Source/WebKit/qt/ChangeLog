@@ -1,3 +1,10 @@
+2012-11-22  Simon Hausmann  <simon.hausmann@digia.com>
+
+        Unreviewed MSVC Windows build fix: Include header files referenced in RefPtr
+        instances.
+
+        * Api/qwebelement.cpp:
+
 2012-11-22  Simon Hausmann  <simon.hausmann@digia.com>, Pierre Rossi <pierre.rossi@digia.com>
 
         [Qt] Separate QWidget dependant code into separate WebKitWidgets static library
