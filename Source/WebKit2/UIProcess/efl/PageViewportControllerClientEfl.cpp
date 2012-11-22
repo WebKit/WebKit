@@ -33,7 +33,6 @@
 #include "LayerTreeRenderer.h"
 #include "PageViewportController.h"
 #include "TransformationMatrix.h"
-#include "ewk_view_private.h"
 
 using namespace WebCore;
 
