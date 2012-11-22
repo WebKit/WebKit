@@ -26,13 +26,14 @@
 
 #include "CollectionType.h"
 #include "Document.h"
-#include "Element.h"
 #include "HTMLNames.h"
 #include "NodeList.h"
 #include <wtf/Forward.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
+
+class Element;
 
 enum NodeListRootType {
     NodeListIsRootedAtNode,
@@ -97,7 +98,6 @@ protected:
     ALWAYS_INLINE bool isItemCacheValid() const { return m_isItemCacheValid; }
     ALWAYS_INLINE Node* cachedItem() const { return m_cachedItem; }
     ALWAYS_INLINE unsigned cachedItemOffset() const { return m_cachedItemOffset; }
-    unsigned cachedElementsArrayOffset() const;
 
     ALWAYS_INLINE bool isLengthCacheValid() const { return m_isLengthCacheValid; }
     ALWAYS_INLINE unsigned cachedLength() const { return m_cachedLength; }
@@ -135,7 +135,6 @@ private:
     template <bool forward> Node* iterateForNextNode(Node* current) const;
     template<bool forward> Node* itemBeforeOrAfter(Node* previousItem) const;    
     Node* itemBefore(Node* previousItem) const;
-    bool ownerNodeHasItemRefAttribute() const;
 
     RefPtr<Node> m_ownerNode;
     mutable Node* m_cachedItem;
@@ -180,16 +179,6 @@ ALWAYS_INLINE bool DynamicNodeListCacheBase::shouldInvalidateTypeOnAttributeChan
     case InvalidateOnAnyAttrChange:
         return true;
     }
-    return false;
-}
-
-ALWAYS_INLINE bool DynamicNodeListCacheBase::ownerNodeHasItemRefAttribute() const
-{
-#if ENABLE(MICRODATA)
-    if (m_rootType == NodeListIsRootedAtDocumentIfOwnerHasItemrefAttr)
-        return toElement(ownerNode())->fastHasAttribute(HTMLNames::itemrefAttr);
-#endif
-
     return false;
 }
 

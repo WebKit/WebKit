@@ -176,7 +176,7 @@ static NodeListInvalidationType invalidationTypeExcludingIdAndNameAttributes(Col
     
 
 HTMLCollection::HTMLCollection(Node* ownerNode, CollectionType type, ItemAfterOverrideType itemAfterOverrideType)
-    : HTMLCollectionCacheBase(ownerNode, rootTypeFromCollectionType(type), invalidationTypeExcludingIdAndNameAttributes(type),
+    : DynamicNodeListCacheBase(ownerNode, rootTypeFromCollectionType(type), invalidationTypeExcludingIdAndNameAttributes(type),
         WebCore::shouldOnlyIncludeDirectChildren(type), type, itemAfterOverrideType)
 {
     document()->registerNodeListCache(this);
@@ -364,14 +364,9 @@ ALWAYS_INLINE void DynamicNodeListCacheBase::setItemCache(Node* item, unsigned o
     setItemCache(item, offset);
     if (overridesItemAfter()) {
         ASSERT(item->isElementNode());
-        static_cast<const HTMLCollectionCacheBase*>(this)->m_cachedElementsArrayOffset = elementsArrayOffset;
+        static_cast<const HTMLCollection*>(this)->m_cachedElementsArrayOffset = elementsArrayOffset;
     } else
         ASSERT(!elementsArrayOffset);
-}
-
-ALWAYS_INLINE unsigned DynamicNodeListCacheBase::cachedElementsArrayOffset() const
-{
-    return overridesItemAfter() ? static_cast<const HTMLCollectionCacheBase*>(this)->m_cachedElementsArrayOffset : 0;
 }
 
 unsigned DynamicNodeListCacheBase::lengthCommon() const
@@ -441,7 +436,7 @@ Node* DynamicNodeListCacheBase::itemBeforeOrAfterCachedItem(unsigned offset) con
         return 0;
     }
 
-    unsigned offsetInArray = cachedElementsArrayOffset();
+    unsigned offsetInArray = overridesItemAfter() ? static_cast<const HTMLCollection*>(this)->m_cachedElementsArrayOffset : 0;
     while ((currentItem = itemAfter(offsetInArray, currentItem))) {
         currentOffset++;
         if (currentOffset == offset) {
@@ -584,7 +579,7 @@ PassRefPtr<NodeList> HTMLCollection::tags(const String& name)
     return ownerNode()->getElementsByTagName(name);
 }
 
-void HTMLCollectionCacheBase::append(NodeCacheMap& map, const AtomicString& key, Element* element)
+void HTMLCollection::append(NodeCacheMap& map, const AtomicString& key, Element* element)
 {
     OwnPtr<Vector<Element*> >& vector = map.add(key.impl(), nullptr).iterator->value;
     if (!vector)

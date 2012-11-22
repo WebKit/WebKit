@@ -37,7 +37,8 @@ Node* DynamicNodeListCacheBase::rootNode() const
     if (isRootedAtDocument() && m_ownerNode->inDocument())
         return m_ownerNode->document();
 
-    if (ownerNodeHasItemRefAttribute()) {
+#if ENABLE(MICRODATA)
+    if (m_rootType == NodeListIsRootedAtDocumentIfOwnerHasItemrefAttr && toElement(ownerNode())->fastHasAttribute(HTMLNames::itemrefAttr)) {
         if (m_ownerNode->inDocument())
             return m_ownerNode->document();
 
@@ -46,6 +47,7 @@ Node* DynamicNodeListCacheBase::rootNode() const
             root = parent;
         return root;
     }
+#endif
 
     return m_ownerNode.get();
 }
@@ -60,7 +62,7 @@ void DynamicNodeListCacheBase::invalidateCache() const
     if (isNodeList(type()))
         return;
 
-    const HTMLCollectionCacheBase* cacheBase = static_cast<const HTMLCollectionCacheBase*>(this);
+    const HTMLCollection* cacheBase = static_cast<const HTMLCollection*>(this);
     cacheBase->m_idCache.clear();
     cacheBase->m_nameCache.clear();
     cacheBase->m_cachedElementsArrayOffset = 0;
@@ -75,7 +77,7 @@ void DynamicNodeListCacheBase::invalidateCache() const
 void DynamicNodeListCacheBase::invalidateIdNameCacheMaps() const
 {
     ASSERT(hasIdNameCache());
-    const HTMLCollectionCacheBase* cacheBase = static_cast<const HTMLCollectionCacheBase*>(this);
+    const HTMLCollection* cacheBase = static_cast<const HTMLCollection*>(this);
     cacheBase->m_idCache.clear();
     cacheBase->m_nameCache.clear();
 }
