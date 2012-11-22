@@ -185,12 +185,12 @@ void Performance::webkitSetResourceTimingBufferSize(unsigned size)
         dispatchEvent(Event::create(eventNames().webkitresourcetimingbufferfullEvent, false, false));
 }
 
-void Performance::addResourceTiming(const ResourceRequest& request, const ResourceResponse& response, double finishTime, Document* requestingDocument)
+void Performance::addResourceTiming(const String& initiatorName, Document* initiatorDocument, const ResourceRequest& request, const ResourceResponse& response, double initiationTime, double finishTime)
 {
-    if (!response.resourceLoadTiming() || isResourceTimingBufferFull())
+    if (isResourceTimingBufferFull())
         return;
 
-    RefPtr<PerformanceEntry> entry = PerformanceResourceTiming::create(request, response, finishTime, requestingDocument);
+    RefPtr<PerformanceEntry> entry = PerformanceResourceTiming::create(initiatorName, request, response, initiationTime, finishTime, initiatorDocument);
 
     m_resourceTimingBuffer.append(entry);
 

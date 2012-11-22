@@ -35,11 +35,11 @@
 
 namespace WebCore {
 
-PerformanceEntry::PerformanceEntry(const String& name, const String& entryType, double startTime, double duration)
+PerformanceEntry::PerformanceEntry(const String& name, const String& entryType, double startTime, double finishTime)
     : m_name(name)
     , m_entryType(entryType)
     , m_startTime(startTime)
-    , m_duration(duration)
+    , m_duration(finishTime - startTime)
 {
 }
 

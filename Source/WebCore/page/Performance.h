@@ -49,8 +49,6 @@
 namespace WebCore {
 
 class Document;
-class PerformanceEntry;
-class PerformanceEntryList;
 class ResourceRequest;
 class ResourceResponse;
 class UserTiming;
@@ -80,7 +78,7 @@ public:
 
     DEFINE_ATTRIBUTE_EVENT_LISTENER(webkitresourcetimingbufferfull);
 
-    void addResourceTiming(const ResourceRequest&, const ResourceResponse&, double finishTime, Document*);
+    void addResourceTiming(const String& initiatorName, Document*, const ResourceRequest&, const ResourceResponse&, double initiationTime, double finishTime);
 #endif
 
     using RefCounted<Performance>::ref;

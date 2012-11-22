@@ -1,3 +1,44 @@
+2012-11-20  James Simonsen  <simonjam@chromium.org>
+
+        [Resource Timing] Populate PerformanceResourceTiming structs with timing data
+        https://bugs.webkit.org/show_bug.cgi?id=102862
+
+        Reviewed by Tony Gentilcore.
+
+        This allows CachedResourceLoader to pass in all of the necessary values and populates
+        them in the PerformanceResourceTiming struct. A follow up patch will actually call
+        addResourceTiming() as necessary.
+
+        Tests: http/tests/w3c/webperf/submission/resource-timing
+
+        * page/Performance.cpp:
+        (WebCore::Performance::addResourceTiming): Accept all necessary timing data.
+        * page/Performance.h:
+        (WebCore):
+        (Performance):
+        * page/PerformanceEntry.cpp:
+        (WebCore::PerformanceEntry::PerformanceEntry):
+        * page/PerformanceEntry.h:
+        (PerformanceEntry):
+        * page/PerformanceResourceTiming.cpp:
+        (WebCore::monotonicTimeToDocumentMilliseconds):
+        (WebCore):
+        (WebCore::PerformanceResourceTiming::PerformanceResourceTiming):
+        (WebCore::PerformanceResourceTiming::initiatorType): Return the spec'd values.
+        (WebCore::PerformanceResourceTiming::fetchStart):
+        (WebCore::PerformanceResourceTiming::domainLookupStart):
+        (WebCore::PerformanceResourceTiming::domainLookupEnd):
+        (WebCore::PerformanceResourceTiming::connectStart):
+        (WebCore::PerformanceResourceTiming::connectEnd):
+        (WebCore::PerformanceResourceTiming::secureConnectionStart):
+        (WebCore::PerformanceResourceTiming::requestStart):
+        (WebCore::PerformanceResourceTiming::responseStart):
+        (WebCore::PerformanceResourceTiming::responseEnd):
+        (WebCore::PerformanceResourceTiming::resourceTimeToDocumentMilliseconds):
+        * page/PerformanceResourceTiming.h:
+        (WebCore::PerformanceResourceTiming::create):
+        (PerformanceResourceTiming):
+
 2012-11-21  Hajime Morrita  <morrita@google.com>
 
         [Shadow DOM][V8] Assertion failure when shadow host is reclaimed before ShadowRoot
