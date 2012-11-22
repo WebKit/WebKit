@@ -1115,32 +1115,6 @@ bool StyleResolver::canShareStyleWithControl(StyledElement* element) const
     return true;
 }
 
-// This function makes some assumptions that only make sense for attribute styles (we only compare CSSProperty::id() and CSSProperty::value().)
-static inline bool attributeStylesEqual(const StylePropertySet* a, const StylePropertySet* b)
-{
-    if (a == b)
-        return true;
-    if (a->propertyCount() != b->propertyCount())
-        return false;
-    unsigned propertyCount = a->propertyCount();
-    for (unsigned i = 0; i < propertyCount; ++i) {
-        StylePropertySet::PropertyReference aProperty = a->propertyAt(i);
-        unsigned j;
-        for (j = 0; j < propertyCount; ++j) {
-            StylePropertySet::PropertyReference bProperty = b->propertyAt(j);
-            if (aProperty.id() != bProperty.id())
-                continue;
-            // We could get a few more hits by comparing cssText() here, but that gets expensive quickly.
-            if (aProperty.value() != bProperty.value())
-                return false;
-            break;
-        }
-        if (j == propertyCount)
-            return false;
-    }
-    return true;
-}
-
 static inline bool elementHasDirectionAuto(Element* element)
 {
     // FIXME: This line is surprisingly hot, we may wish to inline hasDirectionAuto into StyleResolver.
@@ -1167,7 +1141,7 @@ static inline bool haveIdenticalStyleAffectingAttributes(StyledElement* a, Style
             return false;
     }
 
-    if (a->presentationAttributeStyle() && !attributeStylesEqual(a->presentationAttributeStyle(), b->presentationAttributeStyle()))
+    if (a->presentationAttributeStyle() != b->presentationAttributeStyle())
         return false;
 
 #if ENABLE(PROGRESS_ELEMENT)
@@ -1200,12 +1174,6 @@ bool StyleResolver::canShareStyleWithElement(StyledElement* element) const
     if (element->isSVGElement() && static_cast<SVGElement*>(element)->animatedSMILStyleProperties())
         return false;
 #endif
-    if (!!element->presentationAttributeStyle() != !!m_styledElement->presentationAttributeStyle())
-        return false;
-    const StylePropertySet* additionalPresentationAttributeStyleA = element->additionalPresentationAttributeStyle();
-    const StylePropertySet* additionalPresentationAttributeStyleB = m_styledElement->additionalPresentationAttributeStyle();
-    if (!additionalPresentationAttributeStyleA != !additionalPresentationAttributeStyleB)
-        return false;
     if (element->isLink() != m_element->isLink())
         return false;
     if (style->affectedByUncommonAttributeSelectors())
@@ -1220,8 +1188,9 @@ bool StyleResolver::canShareStyleWithElement(StyledElement* element) const
         return false;
     if (element == element->document()->cssTarget())
         return false;
-
     if (!haveIdenticalStyleAffectingAttributes(element, m_styledElement))
+        return false;
+    if (element->additionalPresentationAttributeStyle() != m_styledElement->additionalPresentationAttributeStyle())
         return false;
 
     if (element->hasID() && m_features.idsInRules.contains(element->idForStyleResolution().impl()))
@@ -1259,9 +1228,6 @@ bool StyleResolver::canShareStyleWithElement(StyledElement* element) const
 #endif
 
     if (elementHasDirectionAuto(element))
-        return false;
-
-    if (additionalPresentationAttributeStyleA && !attributeStylesEqual(additionalPresentationAttributeStyleA, additionalPresentationAttributeStyleB))
         return false;
 
     if (element->isLink() && m_elementLinkState != style->insideLink())

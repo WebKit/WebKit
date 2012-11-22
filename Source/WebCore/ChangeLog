@@ -1,3 +1,19 @@
+2012-11-22  Andreas Kling  <akling@apple.com>
+
+        Style sharing: Remove O(n^2) presentation attribute checks that never found anything anyway.
+        <http://webkit.org/b/103019>
+
+        Reviewed by Ojan Vafai.
+
+        Rely on the global presentation attribute cache and remove the slow-path code that compares
+        the full StylePropertySets for attribute-derived style.
+        There are virtually no cases of logically equivalent presentation attribute styles that don't
+        already share the same memory address. (Zero hits on Apple and Chromium PLT content.)
+
+        * css/StyleResolver.cpp:
+        (WebCore::haveIdenticalStyleAffectingAttributes):
+        (WebCore::StyleResolver::canShareStyleWithElement):
+
 2012-11-22  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: evaluate on hover regressed with the editor change
