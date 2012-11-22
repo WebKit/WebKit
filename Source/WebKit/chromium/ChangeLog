@@ -1,3 +1,13 @@
+2012-11-22  Stephen Chenney  <schenney@chromium.org>
+
+        [Chromium]: Removing gyp flags controlling Skia features.
+
+        Unreviewed, pre-tested rendering changes that have been waiting for a chance to rebaseline tests.
+
+        Enabled fixes for test rendering, and fast patsh for anti-aliased primitives.
+
+        * skia_webkit.gyp:
+
 2012-11-22  Dan Carney  <dcarney@google.com>
 
         IDBRequestTest needs a v8 context

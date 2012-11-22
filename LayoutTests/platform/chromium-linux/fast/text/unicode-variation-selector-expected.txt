@@ -13,14 +13,14 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (0,76) size 784x20
         RenderText {#text} at (0,0) size 273x19
           text run at (0,0) width 273: "Glyph for code point U+845B without UVS: "
-        RenderInline {SPAN} at (0,0) size 16x16
-          RenderText {#text} at (273,1) size 16x16
-            text run at (273,1) width 16: "\x{845B}"
+        RenderInline {SPAN} at (0,0) size 16x19
+          RenderText {#text} at (273,0) size 16x19
+            text run at (273,0) width 16: "\x{845B}"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {DIV} at (0,96) size 784x20
         RenderText {#text} at (0,0) size 254x19
           text run at (0,0) width 254: "Glyph for code point U+845B with UVS: "
-        RenderInline {SPAN} at (0,0) size 16x16
-          RenderText {#text} at (254,1) size 16x16
-            text run at (254,1) width 16: "\x{845B}\x{DB40}\x{DD00}"
+        RenderInline {SPAN} at (0,0) size 16x19
+          RenderText {#text} at (254,0) size 16x19
+            text run at (254,0) width 16: "\x{845B}\x{DB40}\x{DD00}"
         RenderText {#text} at (0,0) size 0x0

@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 17: TypeError: 'undefined' is not an object (evaluating 'style1.color')
+CONSOLE MESSAGE: line 14: Uncaught TypeError: Object [object Object] has no method 'computedStyleIncludingVisitedInfo'
 This link should get colored visited as a result of replaceState() setting it as the current URL
 This link should get colored visited as a result of pushState() adding it to the forward list
 If you're running in a browser, the link should be orange-on-black and you should see "replacedURL.html" in your global history.

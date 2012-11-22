@@ -32,7 +32,7 @@ layer at (0,0) size 450x500
           RenderSVGEllipse {circle} at (0,0) size 40x40 [fill={[type=SOLID] [color=#FF0000]}] [cx=20.00] [cy=20.00] [r=20.00]
         RenderSVGResourcePattern {pattern} [id="pattern8"] [patternUnits=userSpaceOnUse] [patternContentUnits=objectBoundingBox]
           RenderSVGEllipse {circle} at (0,0) size 40x40 [fill={[type=SOLID] [color=#FF0000]}] [cx=20.00] [cy=20.00] [r=20.00]
-        RenderSVGResourceRadialGradient {radialGradient} [id="redToYellow"] [gradientUnits=objectBoundingBox] [center=(0.50,0.50)] [focal=(0.50,0.50)] [radius=0.50]
+        RenderSVGResourceRadialGradient {radialGradient} [id="redToYellow"] [gradientUnits=objectBoundingBox] [center=(0.50,0.50)] [focal=(0.50,0.50)] [radius=0.50] [focalRadius=0.00]
           RenderSVGGradientStop {stop} [offset=0.00] [color=#FF0000]
           RenderSVGGradientStop {stop} [offset=1.00] [color=#FFFF00]
         RenderSVGResourcePattern {pattern} [id="pattern9"] [patternUnits=userSpaceOnUse] [patternContentUnits=objectBoundingBox]

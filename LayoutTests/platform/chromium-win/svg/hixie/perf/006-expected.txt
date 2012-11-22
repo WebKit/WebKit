@@ -109,7 +109,7 @@ layer at (0,0) size 400x400
       RenderSVGInlineText {#text} at (0,0) size 33x6
         chunk 1 text run 1 at (10.00,95.00) startOffset 0 endOffset 14 width 32.25: "Test completed"
     RenderSVGRect {rect} at (0,0) size 400x400 [stroke={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
-    RenderSVGResourceRadialGradient {radialGradient} [id="gradient"] [gradientUnits=objectBoundingBox] [center=(0.50,0.50)] [focal=(0.50,0.50)] [radius=0.50]
+    RenderSVGResourceRadialGradient {radialGradient} [id="gradient"] [gradientUnits=objectBoundingBox] [center=(0.50,0.50)] [focal=(0.50,0.50)] [radius=0.50] [focalRadius=0.00]
       RenderSVGGradientStop {stop} [offset=0.00] [color=#0000FF]
       RenderSVGGradientStop {stop} [offset=0.10] [color=#FF6600]
       RenderSVGGradientStop {stop} [offset=0.90] [color=#FFFF66]

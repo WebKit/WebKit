@@ -37,19 +37,8 @@
       'type': 'none',
       'direct_dependent_settings': {
         'defines': [
-          # temporary for landing Skia rev 3077 with minimal layout test breakage
-          'SK_SIMPLE_TWOCOLOR_VERTICAL_GRADIENTS',
-
-          # Temporarily disable the Skia fix in
-          # http://code.google.com/p/skia/source/detail?r=3037 ; enabling that
-          # fix will require substantial rebaselining.
-          'SK_DRAW_POS_TEXT_IGNORE_SUBPIXEL_LEFT_ALIGN_FIX',
-
-          # Temporarily ignore fix to antialias coverage, until we can rebaseline
-          'SK_USE_LEGACY_AA_COVERAGE',
-
-          # When enabled yields a 10x speedup on some devices.
-          'SK_DISABLE_FAST_AA_STROKE_RECT',
+          # Place defines here that require significant WebKit rebaselining, or that
+          # are otherwise best removed in WebKit and then rolled into Chromium.
         ],
       },
     },

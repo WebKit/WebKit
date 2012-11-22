@@ -12,12 +12,13 @@ layer at (0,0) size 800x600
         RenderText {#text} at (342,0) size 306x19
           text run at (342,0) width 306: ". The cancel button in a search field fails to redraw."
       RenderBlock (anonymous) at (0,36) size 784x26
-        RenderTextControl {INPUT} at (2,2) size 157x22 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-          RenderDeprecatedFlexibleBox {DIV} at (3,3) size 151x16
-            RenderBlock {DIV} at (0,2) size 1x11
-            RenderBlock {DIV} at (1,0) size 138x16
-              RenderBlock {DIV} at (0,0) size 138x16
-                RenderText {#text} at (1,0) size 58x16
-                  text run at (1,0) width 58: "some text"
-            RenderBlock {DIV} at (139,3) size 9x9
+        RenderTextControl {INPUT} at (2,2) size 155x22 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+          RenderDeprecatedFlexibleBox {DIV} at (3,3) size 149x16
+            RenderBlock {DIV} at (0,2) size 1x12
+            RenderBlock {DIV} at (1,0) size 136x16
+            RenderBlock {DIV} at (137,3) size 9x10
         RenderText {#text} at (0,0) size 0x0
+layer at (14,49) size 136x16
+  RenderBlock {DIV} at (0,0) size 136x16
+    RenderText {#text} at (0,0) size 58x16
+      text run at (0,0) width 58: "some text"

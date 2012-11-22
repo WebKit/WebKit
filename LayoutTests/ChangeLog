@@ -1,3 +1,11 @@
+2012-11-22  Stephen Chenney  <schenney@chromium.org>
+
+        [Chromium] Test expectations update.
+
+        Unreviewed changes due to Skia changes.
+
+        Too many files to list (over 1000). All Chromium platform expectations.
+
 2012-11-22  Yury Semikhatsky  <yurys@chromium.org>
 
         Unreviewed. Mark LayoutTests/fast/canvas/canvas-stroke*-gradient-shadow.html as crashing after latest Skia roll.
