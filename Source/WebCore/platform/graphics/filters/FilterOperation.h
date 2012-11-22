@@ -28,6 +28,7 @@
 
 #if ENABLE(CSS_FILTERS)
 
+#include "CachedSVGDocumentReference.h"
 #include "Color.h"
 #include "FilterEffect.h"
 #include "LayoutSize.h"
@@ -163,19 +164,15 @@ public:
         return adoptRef(new ReferenceFilterOperation(url, fragment, type));
     }
 
-    class Data {
-    public:
-        virtual ~Data() { }
-    };
-
     virtual bool affectsOpacity() const { return true; }
     virtual bool movesPixels() const { return true; }
 
     const String& url() const { return m_url; }
     const String& fragment() const { return m_fragment; }
 
-    Data* data() const { return m_data.get(); }
-    void setData(PassOwnPtr<Data> data) { m_data = data; }
+    CachedSVGDocumentReference* cachedSVGDocumentReference() const { return m_cachedSVGDocumentReference.get(); }
+    void setCachedSVGDocumentReference(PassOwnPtr<CachedSVGDocumentReference> cachedSVGDocumentReference) { m_cachedSVGDocumentReference = cachedSVGDocumentReference; }
+
     FilterEffect* filterEffect() const { return m_filterEffect.get(); }
     void setFilterEffect(PassRefPtr<FilterEffect> filterEffect) { m_filterEffect = filterEffect; }
 
@@ -198,7 +195,7 @@ private:
 
     String m_url;
     String m_fragment;
-    OwnPtr<Data> m_data;
+    OwnPtr<CachedSVGDocumentReference> m_cachedSVGDocumentReference;
     RefPtr<FilterEffect> m_filterEffect;
 };
 

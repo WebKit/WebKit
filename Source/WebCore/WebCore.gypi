@@ -3050,6 +3050,7 @@
             'loader/cache/CachedShader.h',
             'loader/cache/CachedSVGDocument.cpp',
             'loader/cache/CachedSVGDocument.h',
+            'loader/cache/CachedSVGDocumentReference.h',
             'loader/cache/CachedTextTrack.cpp',
             'loader/cache/CachedTextTrack.h',
             'loader/cache/CachedXSLStyleSheet.cpp',

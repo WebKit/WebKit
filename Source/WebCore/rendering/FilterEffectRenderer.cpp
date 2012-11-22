@@ -122,10 +122,10 @@ GraphicsContext* FilterEffectRenderer::inputContext()
     return sourceImage() ? sourceImage()->context() : 0;
 }
 
-PassRefPtr<FilterEffect> FilterEffectRenderer::buildReferenceFilter(Document* document, PassRefPtr<FilterEffect> previousEffect, ReferenceFilterOperation* op)
+PassRefPtr<FilterEffect> FilterEffectRenderer::buildReferenceFilter(Document* document, PassRefPtr<FilterEffect> previousEffect, ReferenceFilterOperation* filterOperation)
 {
 #if ENABLE(SVG)
-    CachedSVGDocumentReference* cachedSVGDocumentReference = static_cast<CachedSVGDocumentReference*>(op->data());
+    CachedSVGDocumentReference* cachedSVGDocumentReference = filterOperation->cachedSVGDocumentReference();
     CachedSVGDocument* cachedSVGDocument = cachedSVGDocumentReference ? cachedSVGDocumentReference->document() : 0;
 
     // If we have an SVG document, this is an external reference. Otherwise
@@ -136,7 +136,7 @@ PassRefPtr<FilterEffect> FilterEffectRenderer::buildReferenceFilter(Document* do
     if (!document)
         return 0;
 
-    Element* filter = document->getElementById(op->fragment());
+    Element* filter = document->getElementById(filterOperation->fragment());
     if (!filter)
         return 0;
 
@@ -171,7 +171,7 @@ PassRefPtr<FilterEffect> FilterEffectRenderer::buildReferenceFilter(Document* do
 #else
     UNUSED_PARAM(document);
     UNUSED_PARAM(previousEffect);
-    UNUSED_PARAM(op);
+    UNUSED_PARAM(filterOperation);
     return 0;
 #endif
 }

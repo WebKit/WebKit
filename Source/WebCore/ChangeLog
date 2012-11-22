@@ -1,3 +1,37 @@
+2012-11-21  Dirk Schulze  <krit@webkit.org>
+
+        Make CachedSVGDocumentReference independent of FilterOperation
+        https://bugs.webkit.org/show_bug.cgi?id=102967
+
+        Reviewed by Antti Koivisto.
+
+        Make CachedSVGDocumentReference independent of FilterOperation to reuse the code for clip-path and masking.
+
+        No new tests, refactoring.
+
+        * GNUmakefile.list.am: Move CachedSVGDocumentReference to it's proper location and it to the projects. 
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::loadPendingSVGDocuments):
+        (WebCore::StyleResolver::createFilterOperations):
+        * loader/cache/CachedSVGDocumentReference.h: Renamed from Source/WebCore/css/CachedSVGDocumentReference.h.
+        (WebCore):
+        (CachedSVGDocumentReference):
+        (WebCore::CachedSVGDocumentReference::CachedSVGDocumentReference):
+        (WebCore::CachedSVGDocumentReference::~CachedSVGDocumentReference):
+        (WebCore::CachedSVGDocumentReference::document):
+        * platform/graphics/filters/FilterOperation.h: Rename data() and setData() to
+            cachedSVGDocumentReference() and its setter. Adapt other classes.
+        (WebCore::FilterOperation::ReferenceFilterOperation::cachedSVGDocumentReference):
+        (WebCore::FilterOperation::ReferenceFilterOperation::setCachedSVGDocumentReference):
+        (ReferenceFilterOperation):
+        * rendering/FilterEffectRenderer.cpp:
+        (WebCore::FilterEffectRenderer::buildReferenceFilter):
+        * rendering/RenderLayerFilterInfo.cpp:
+        (WebCore::RenderLayerFilterInfo::updateReferenceFilterClients):
+
 2012-11-21  James Simonsen  <simonjam@chromium.org>
 
         Remove the concept of initiatorDocument from CachedResourceRequest

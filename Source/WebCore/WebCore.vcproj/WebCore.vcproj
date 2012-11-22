@@ -28277,6 +28277,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\loader\cache\CachedSVGDocumentReference.h"
+					>
+				</File>
+				<File
 					RelativePath="..\loader\cache\CachedXSLStyleSheet.cpp"
 					>
 				</File>

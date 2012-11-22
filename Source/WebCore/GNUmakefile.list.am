@@ -3843,6 +3843,7 @@ webcore_sources += \
 	Source/WebCore/loader/cache/CachedStyleSheetClient.h \
 	Source/WebCore/loader/cache/CachedSVGDocument.cpp \
 	Source/WebCore/loader/cache/CachedSVGDocument.h \
+	Source/WebCore/loader/cache/CachedSVGDocumentReference.h \
 	Source/WebCore/loader/cache/CachedTextTrack.cpp \
 	Source/WebCore/loader/cache/CachedTextTrack.h \
 	Source/WebCore/loader/cache/CachedXSLStyleSheet.cpp \

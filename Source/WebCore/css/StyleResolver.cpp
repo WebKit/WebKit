@@ -4588,7 +4588,7 @@ void StyleResolver::loadPendingSVGDocuments()
                 continue;
 
             // Stash the CachedSVGDocument on the reference filter.
-            referenceFilter->setData(adoptPtr(new CachedSVGDocumentReference(cachedDocument)));
+            referenceFilter->setCachedSVGDocumentReference(adoptPtr(new CachedSVGDocumentReference(cachedDocument)));
         }
     }
     m_pendingSVGDocuments.clear();
@@ -4933,7 +4933,7 @@ bool StyleResolver::createFilterOperations(CSSValue* inValue, RenderStyle* style
                 if (!svgDocumentValue->loadRequested())
                     m_pendingSVGDocuments.set(operation.get(), svgDocumentValue);
                 else if (svgDocumentValue->cachedSVGDocument())
-                    operation->setData(adoptPtr(new CachedSVGDocumentReference(svgDocumentValue->cachedSVGDocument())));
+                    operation->setCachedSVGDocumentReference(adoptPtr(new CachedSVGDocumentReference(svgDocumentValue->cachedSVGDocument())));
             }
             operations.operations().append(operation);
 #endif
