@@ -945,62 +945,62 @@ WebInspector.TimelinePresentationModel.Record.prototype = {
     {
         var details;
         switch (this.type) {
-            case WebInspector.TimelineModel.RecordType.GCEvent:
-                details = WebInspector.UIString("%s collected", Number.bytesToString(this.data["usedHeapSizeDelta"]));
-                break;
-            case WebInspector.TimelineModel.RecordType.TimerFire:
-                details = this._linkifyScriptLocation(this.data["timerId"]);
-                break;
-            case WebInspector.TimelineModel.RecordType.FunctionCall:
-                details = this._linkifyScriptLocation();
-                break;
-            case WebInspector.TimelineModel.RecordType.FireAnimationFrame:
-                details = this._linkifyScriptLocation(this.data["id"]);
-                break;
-            case WebInspector.TimelineModel.RecordType.EventDispatch:
-                details = this.data ? this.data["type"] : null;
-                break;
-            case WebInspector.TimelineModel.RecordType.Paint:
-                details = this.data["width"] + "\u2009\u00d7\u2009" + this.data["height"];
-                break;
-            case WebInspector.TimelineModel.RecordType.DecodeImage:
-                details = this.data["imageType"];
-                break;
-            case WebInspector.TimelineModel.RecordType.ResizeImage:
-                details = this.data["cached"] ? WebInspector.UIString("cached") : WebInspector.UIString("non-cached");
-                break;
-            case WebInspector.TimelineModel.RecordType.TimerInstall:
-            case WebInspector.TimelineModel.RecordType.TimerRemove:
-                details = this._linkifyTopCallFrame(this.data["timerId"]);
-                break;
-            case WebInspector.TimelineModel.RecordType.RequestAnimationFrame:
-            case WebInspector.TimelineModel.RecordType.CancelAnimationFrame:
-                details = this._linkifyTopCallFrame(this.data["id"]);
-                break;
-            case WebInspector.TimelineModel.RecordType.ParseHTML:
-            case WebInspector.TimelineModel.RecordType.RecalculateStyles:
-                details = this._linkifyTopCallFrame();
-                break;
-            case WebInspector.TimelineModel.RecordType.EvaluateScript:
-                details = this.url ? this._linkifyLocation(this.url, this.data["lineNumber"], 0) : null;
-                break;
-            case WebInspector.TimelineModel.RecordType.XHRReadyStateChange:
-            case WebInspector.TimelineModel.RecordType.XHRLoad:
-            case WebInspector.TimelineModel.RecordType.ScheduleResourceRequest:
-            case WebInspector.TimelineModel.RecordType.ResourceSendRequest:
-            case WebInspector.TimelineModel.RecordType.ResourceReceivedData:
-            case WebInspector.TimelineModel.RecordType.ResourceReceiveResponse:
-            case WebInspector.TimelineModel.RecordType.ResourceFinish:
-                details = WebInspector.displayNameForURL(this.url);
-                break;
-            case WebInspector.TimelineModel.RecordType.Time:
-            case WebInspector.TimelineModel.RecordType.TimeEnd:
-            case WebInspector.TimelineModel.RecordType.TimeStamp:
-                details = this.data["message"];
-                break;
-            default:
-                details = this._linkifyScriptLocation() || this._linkifyTopCallFrame() || null;
-                break;
+        case WebInspector.TimelineModel.RecordType.GCEvent:
+            details = WebInspector.UIString("%s collected", Number.bytesToString(this.data["usedHeapSizeDelta"]));
+            break;
+        case WebInspector.TimelineModel.RecordType.TimerFire:
+            details = this._linkifyScriptLocation(this.data["timerId"]);
+            break;
+        case WebInspector.TimelineModel.RecordType.FunctionCall:
+            details = this._linkifyScriptLocation();
+            break;
+        case WebInspector.TimelineModel.RecordType.FireAnimationFrame:
+            details = this._linkifyScriptLocation(this.data["id"]);
+            break;
+        case WebInspector.TimelineModel.RecordType.EventDispatch:
+            details = this.data ? this.data["type"] : null;
+            break;
+        case WebInspector.TimelineModel.RecordType.Paint:
+            details = this.data["width"] + "\u2009\u00d7\u2009" + this.data["height"];
+            break;
+        case WebInspector.TimelineModel.RecordType.DecodeImage:
+            details = this.data["imageType"];
+            break;
+        case WebInspector.TimelineModel.RecordType.ResizeImage:
+            details = this.data["cached"] ? WebInspector.UIString("cached") : WebInspector.UIString("non-cached");
+            break;
+        case WebInspector.TimelineModel.RecordType.TimerInstall:
+        case WebInspector.TimelineModel.RecordType.TimerRemove:
+            details = this._linkifyTopCallFrame(this.data["timerId"]);
+            break;
+        case WebInspector.TimelineModel.RecordType.RequestAnimationFrame:
+        case WebInspector.TimelineModel.RecordType.CancelAnimationFrame:
+            details = this._linkifyTopCallFrame(this.data["id"]);
+            break;
+        case WebInspector.TimelineModel.RecordType.ParseHTML:
+        case WebInspector.TimelineModel.RecordType.RecalculateStyles:
+            details = this._linkifyTopCallFrame();
+            break;
+        case WebInspector.TimelineModel.RecordType.EvaluateScript:
+            details = this.url ? this._linkifyLocation(this.url, this.data["lineNumber"], 0) : null;
+            break;
+        case WebInspector.TimelineModel.RecordType.XHRReadyStateChange:
+        case WebInspector.TimelineModel.RecordType.XHRLoad:
+        case WebInspector.TimelineModel.RecordType.ScheduleResourceRequest:
+        case WebInspector.TimelineModel.RecordType.ResourceSendRequest:
+        case WebInspector.TimelineModel.RecordType.ResourceReceivedData:
+        case WebInspector.TimelineModel.RecordType.ResourceReceiveResponse:
+        case WebInspector.TimelineModel.RecordType.ResourceFinish:
+            details = WebInspector.displayNameForURL(this.url);
+            break;
+        case WebInspector.TimelineModel.RecordType.Time:
+        case WebInspector.TimelineModel.RecordType.TimeEnd:
+        case WebInspector.TimelineModel.RecordType.TimeStamp:
+            details = this.data["message"];
+            break;
+        default:
+            details = this._linkifyScriptLocation() || this._linkifyTopCallFrame() || null;
+            break;
         }
 
         if (typeof details === "string")
