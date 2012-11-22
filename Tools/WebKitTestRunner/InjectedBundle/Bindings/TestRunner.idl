@@ -72,6 +72,7 @@ interface TestRunner {
     void setTabKeyCyclesThroughElements(in boolean enabled);
     void setSerializeHTTPLoads();
     void dispatchPendingLoadRequests();
+    void setCacheModel(in int model);
 
     // Special DOM functions.
     void clearBackForwardList();

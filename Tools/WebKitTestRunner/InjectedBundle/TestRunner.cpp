@@ -755,6 +755,11 @@ void TestRunner::dispatchPendingLoadRequests()
     WKBundleDispatchPendingLoadRequests(InjectedBundle::shared().bundle());
 }
 
+void TestRunner::setCacheModel(int model)
+{
+    WKBundleSetCacheModel(InjectedBundle::shared().bundle(), model);
+}
+
 void TestRunner::grantWebNotificationPermission(JSStringRef origin)
 {
     WKRetainPtr<WKStringRef> originWK = toWK(origin);

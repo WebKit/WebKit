@@ -141,6 +141,11 @@ void InjectedBundle::removeAllVisitedLinks()
     PageGroup::removeAllVisitedLinks();
 }
 
+void InjectedBundle::setCacheModel(uint32_t cacheModel)
+{
+    WebProcess::shared().setCacheModel(cacheModel);
+}
+
 void InjectedBundle::overrideBoolPreferenceForTestRunner(WebPageGroupProxy* pageGroup, const String& preference, bool enabled)
 {
     const HashSet<Page*>& pages = PageGroup::pageGroup(pageGroup->identifier())->pages();

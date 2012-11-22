@@ -77,6 +77,11 @@ void WKBundleActivateMacFontAscentHack(WKBundleRef bundleRef)
     toImpl(bundleRef)->activateMacFontAscentHack();
 }
 
+void WKBundleSetCacheModel(WKBundleRef bundleRef, uint32_t cacheModel)
+{
+    toImpl(bundleRef)->setCacheModel(cacheModel);
+}
+
 void WKBundleGarbageCollectJavaScriptObjects(WKBundleRef bundleRef)
 {
     toImpl(bundleRef)->garbageCollectJavaScriptObjects();

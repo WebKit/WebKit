@@ -1,3 +1,24 @@
+2012-11-22  Christophe Dumez  <christophe.dumez@intel.com>
+
+        WebKitTestRunner needs layoutTestController.setCacheModel
+        https://bugs.webkit.org/show_bug.cgi?id=42684
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add Bundle C API for WebKitTestRunner to set the
+        cache model.
+
+        * WebProcess/InjectedBundle/API/c/WKBundle.cpp:
+        (WKBundleSetCacheModel):
+        * WebProcess/InjectedBundle/API/c/WKBundlePrivate.h:
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::setCacheModel):
+        (WebKit):
+        * WebProcess/InjectedBundle/InjectedBundle.h:
+        (InjectedBundle):
+        * WebProcess/WebProcess.h:
+        (WebProcess):
+
 2012-11-22  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         REGRESSION(r135399): Wrong assertion causing an assertion failure: m_rawAttributes.initialScale > 0

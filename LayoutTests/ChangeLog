@@ -1,3 +1,16 @@
+2012-11-22  Christophe Dumez  <christophe.dumez@intel.com>
+
+        WebKitTestRunner needs layoutTestController.setCacheModel
+        https://bugs.webkit.org/show_bug.cgi?id=42684
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Unskip fast/dom/HTMLScriptElement/nested-execution.html for
+        WK2 now that WebKitTestRunner implements
+        testRunner.setCacheModel.
+
+        * platform/wk2/TestExpectations:
+
 2012-11-22  Stephen Chenney  <schenney@chromium.org>
 
         Fixing some Chromium test expectations.

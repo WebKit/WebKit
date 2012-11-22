@@ -41,6 +41,7 @@ WK_EXPORT void WKBundleSetShouldTrackVisitedLinks(WKBundleRef bundle, bool shoul
 WK_EXPORT void WKBundleSetAlwaysAcceptCookies(WKBundleRef bundle, bool);
 WK_EXPORT void WKBundleRemoveAllVisitedLinks(WKBundleRef bundle);
 WK_EXPORT void WKBundleActivateMacFontAscentHack(WKBundleRef bundle);
+WK_EXPORT void WKBundleSetCacheModel(WKBundleRef bundle, uint32_t cacheModel);
 // Will make WebProcess ignore this preference until a preferences change notification, only for WebKitTestRunner use.
 WK_EXPORT void WKBundleOverrideBoolPreferenceForTestRunner(WKBundleRef bundle, WKBundlePageGroupRef pageGroup, WKStringRef preference, bool enabled);
 WK_EXPORT void WKBundleSetAllowUniversalAccessFromFileURLs(WKBundleRef bundle, WKBundlePageGroupRef pageGroup, bool enabled);
