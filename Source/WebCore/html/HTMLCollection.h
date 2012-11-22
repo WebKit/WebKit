@@ -87,7 +87,7 @@ private:
     mutable NodeCacheMap m_nameCache;
     mutable unsigned m_cachedElementsArrayOffset;
 
-    friend DynamicNodeListCacheBase;
+    friend class DynamicNodeListCacheBase;
 };
 
 } // namespace
