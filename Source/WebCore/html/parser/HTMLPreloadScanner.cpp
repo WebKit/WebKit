@@ -130,7 +130,7 @@ public:
 
         CachedResourceLoader* cachedResourceLoader = document->cachedResourceLoader();
         CachedResourceRequest request(ResourceRequest(document->completeURL(m_urlToLoad, baseURL)));
-        request.setInitiator(tagName(), document);
+        request.setInitiator(tagName());
         if (m_tagName == scriptTag) {
             request.mutableResourceRequest().setAllowCookies(crossOriginModeAllowsCookies());
             cachedResourceLoader->preload(CachedResource::Script, request, m_charset, scanningBody);

@@ -110,8 +110,8 @@ StyleCachedImageSet* CSSImageSetValue::cachedImageSet(CachedResourceLoader* load
         // All forms of scale should be included: Page::pageScaleFactor(), Frame::pageZoomFactor(),
         // and any CSS transforms. https://bugs.webkit.org/show_bug.cgi?id=81698
         ImageWithScale image = bestImageForScaleFactor();
-        CachedResourceRequest request(ResourceRequest(loader->document()->completeURL(image.imageURL)));
-        request.setInitiator(cachedResourceRequestInitiators().css, document);
+        CachedResourceRequest request(ResourceRequest(document->completeURL(image.imageURL)));
+        request.setInitiator(cachedResourceRequestInitiators().css);
         if (CachedResourceHandle<CachedImage> cachedImage = loader->requestImage(request)) {
             m_imageSet = StyleCachedImageSet::create(cachedImage.get(), image.scaleFactor, this);
             m_accessedBestFitImage = true;

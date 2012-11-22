@@ -67,7 +67,7 @@ void IconLoader::startLoading()
     request.mutableResourceRequest().setTargetType(ResourceRequest::TargetIsFavicon);
 #endif
     request.mutableResourceRequest().setPriority(ResourceLoadPriorityLow);
-    request.setInitiator(cachedResourceRequestInitiators().icon, m_frame->document());
+    request.setInitiator(cachedResourceRequestInitiators().icon);
 
     m_resource = m_frame->document()->cachedResourceLoader()->requestRawResource(request);
     if (m_resource)

@@ -89,7 +89,7 @@ StyleCachedImage* CSSImageValue::cachedImage(CachedResourceLoader* loader, const
         if (initiatorElement)
             request.setInitiator(initiatorElement);
         else
-            request.setInitiator(cachedResourceRequestInitiators().css, loader->document());
+            request.setInitiator(cachedResourceRequestInitiators().css);
         if (CachedResourceHandle<CachedImage> cachedImage = loader->requestImage(request))
             m_image = StyleCachedImage::create(cachedImage.get());
     }

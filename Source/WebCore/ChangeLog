@@ -1,3 +1,38 @@
+2012-11-21  James Simonsen  <simonjam@chromium.org>
+
+        Remove the concept of initiatorDocument from CachedResourceRequest
+        https://bugs.webkit.org/show_bug.cgi?id=102855
+
+        Reviewed by Sam Weinig.
+
+        It turns out this isn't necessary for the new implementation of Resource Timing. Instead,
+        we can get at it from the CachedResourceLoader. I don't think anyone else needed it either.
+
+        No new tests. This was never used.
+
+        * css/CSSFontFaceSrcValue.cpp:
+        (WebCore::CSSFontFaceSrcValue::cachedFont):
+        * css/CSSImageSetValue.cpp:
+        (WebCore::CSSImageSetValue::cachedImageSet):
+        * css/CSSImageValue.cpp:
+        (WebCore::CSSImageValue::cachedImage):
+        * css/StyleRuleImport.cpp:
+        (WebCore::StyleRuleImport::requestStyleSheet):
+        * css/WebKitCSSSVGDocumentValue.cpp:
+        (WebCore::WebKitCSSSVGDocumentValue::load):
+        * css/WebKitCSSShaderValue.cpp:
+        (WebCore::WebKitCSSShaderValue::cachedShader):
+        * html/parser/CSSPreloadScanner.cpp:
+        (WebCore::CSSPreloadScanner::emitRule):
+        * html/parser/HTMLPreloadScanner.cpp:
+        (WebCore::PreloadTask::preload):
+        * loader/cache/CachedResourceRequest.cpp:
+        (WebCore::CachedResourceRequest::setInitiator):
+        * loader/cache/CachedResourceRequest.h:
+        (CachedResourceRequest):
+        * loader/icon/IconLoader.cpp:
+        (WebCore::IconLoader::startLoading):
+
 2012-11-21  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r135437.

@@ -199,7 +199,7 @@ void CSSPreloadScanner::emitRule()
         String value = parseCSSStringOrURL(m_ruleValue.characters(), m_ruleValue.length());
         if (!value.isEmpty()) {
             CachedResourceRequest request(ResourceRequest(m_document->completeURL(value)));
-            request.setInitiator(cachedResourceRequestInitiators().css, m_document);
+            request.setInitiator(cachedResourceRequestInitiators().css);
             m_document->cachedResourceLoader()->preload(CachedResource::CSSStyleSheet, request, String(), m_scanningBody);
         }
         m_state = Initial;

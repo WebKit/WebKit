@@ -57,9 +57,8 @@ public:
     DeferOption defer() const { return m_defer; }
     void setDefer(DeferOption defer) { m_defer = defer; }
     void setInitiator(PassRefPtr<Element>);
-    void setInitiator(const AtomicString& name, PassRefPtr<Document>);
+    void setInitiator(const AtomicString& name);
     const AtomicString& initiatorName() const;
-    PassRefPtr<Document> initiatorDocument();
     PassRefPtr<Element> initiatorElement();
 
 private:
@@ -70,7 +69,6 @@ private:
     bool m_forPreload;
     DeferOption m_defer;
     RefPtr<Element> m_initiatorElement;
-    RefPtr<Document> m_initiatorDocument;
     AtomicString m_initiatorName;
 };
 

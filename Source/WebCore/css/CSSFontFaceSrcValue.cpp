@@ -98,7 +98,7 @@ CachedFont* CSSFontFaceSrcValue::cachedFont(Document* document)
 {
     if (!m_cachedFont) {
         CachedResourceRequest request(ResourceRequest(document->completeURL(m_resource)));
-        request.setInitiator(cachedResourceRequestInitiators().css, document);
+        request.setInitiator(cachedResourceRequestInitiators().css);
         m_cachedFont = document->cachedResourceLoader()->requestFont(request);
     }
     return m_cachedFont.get();

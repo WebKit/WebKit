@@ -66,15 +66,14 @@ CachedResourceRequest::~CachedResourceRequest()
 
 void CachedResourceRequest::setInitiator(PassRefPtr<Element> element)
 {
-    ASSERT(!m_initiatorElement && !m_initiatorDocument);
+    ASSERT(!m_initiatorElement && m_initiatorName.isEmpty());
     m_initiatorElement = element;
 }
 
-void CachedResourceRequest::setInitiator(const AtomicString& name, PassRefPtr<Document> document)
+void CachedResourceRequest::setInitiator(const AtomicString& name)
 {
-    ASSERT(!m_initiatorElement && !m_initiatorDocument);
+    ASSERT(!m_initiatorElement && m_initiatorName.isEmpty());
     m_initiatorName = name;
-    m_initiatorDocument = document;
 }
 
 const AtomicString& CachedResourceRequest::initiatorName() const
@@ -86,13 +85,6 @@ const AtomicString& CachedResourceRequest::initiatorName() const
 
     DEFINE_STATIC_LOCAL(AtomicString, defaultName, ("resource", AtomicString::ConstructFromLiteral));
     return defaultName;
-}
-
-PassRefPtr<Document> CachedResourceRequest::initiatorDocument()
-{
-    if (m_initiatorElement)
-        return m_initiatorElement->document();
-    return m_initiatorDocument;
 }
 
 PassRefPtr<Element> CachedResourceRequest::initiatorElement()
