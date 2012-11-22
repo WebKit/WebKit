@@ -92,10 +92,7 @@ void JITDisassembler::dumpDisassembly(LinkBuffer& linkBuffer, MacroAssembler::La
 {
     CodeLocationLabel fromLocation = linkBuffer.locationOf(from);
     CodeLocationLabel toLocation = linkBuffer.locationOf(to);
-    if (tryToDisassemble(fromLocation, bitwise_cast<uintptr_t>(toLocation.executableAddress()) - bitwise_cast<uintptr_t>(fromLocation.executableAddress()), "        ", WTF::dataFile()))
-        return;
-    
-    dataLog("        disassembly not available for range %p...%p\n", fromLocation.executableAddress(), toLocation.executableAddress());
+    disassemble(fromLocation, bitwise_cast<uintptr_t>(toLocation.executableAddress()) - bitwise_cast<uintptr_t>(fromLocation.executableAddress()), "        ", WTF::dataFile());
 }
 
 } // namespace JSC

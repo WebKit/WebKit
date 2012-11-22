@@ -23,31 +23,21 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef Disassembler_h
-#define Disassembler_h
+#include "config.h"
+#include "Disassembler.h"
 
-#include <stdio.h>
-#include <wtf/Platform.h>
-#include <wtf/StdLibExtras.h>
+#include "MacroAssemblerCodeRef.h"
+#include <wtf/DataLog.h>
 
 namespace JSC {
 
-class MacroAssemblerCodePtr;
-
-#if ENABLE(DISASSEMBLER)
-bool tryToDisassemble(const MacroAssemblerCodePtr&, size_t, const char* prefix, FILE* out);
-#else
-inline bool tryToDisassemble(const MacroAssemblerCodePtr&, size_t, const char*, FILE*)
+void disassemble(const MacroAssemblerCodePtr& codePtr, size_t size, const char* prefix, FILE* out)
 {
-    return false;
+    if (tryToDisassemble(codePtr, size, prefix, out))
+        return;
+    
+    fprintf(out, "%sdisassembly not available for range %p...%p\n", prefix, codePtr.executableAddress(), static_cast<char*>(codePtr.executableAddress()) + size);
 }
-#endif
-
-// Prints either the disassembly, or a line of text indicating that disassembly failed and
-// the range of machine code addresses.
-void disassemble(const MacroAssemblerCodePtr&, size_t, const char* prefix, FILE* out);
 
 } // namespace JSC
-
-#endif // Disassembler_h
 

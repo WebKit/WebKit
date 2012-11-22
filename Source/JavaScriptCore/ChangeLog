@@ -1,5 +1,35 @@
 2012-11-21  Filip Pizlo  <fpizlo@apple.com>
 
+        It should be possible to say disassemble(stuff) instead of having to say if (!tryToDisassemble(stuff)) dataLog("I failed")
+        https://bugs.webkit.org/show_bug.cgi?id=103010
+
+        Reviewed by Anders Carlsson.
+
+        You can still say tryToDisassemble(), which will tell you if it failed; you can then
+        decide what to do instead. But it's better to say disassemble(), which will just print
+        the instruction ranges if tryToDisassemble() failed. This is particularly appropriate
+        since that's what all previous users of tryToDisassemble() would have done in some
+        form or another.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Target.pri:
+        * assembler/LinkBuffer.cpp:
+        (JSC::LinkBuffer::finalizeCodeWithDisassembly):
+        * dfg/DFGDisassembler.cpp:
+        (JSC::DFG::Disassembler::dumpDisassembly):
+        * disassembler/Disassembler.cpp: Added.
+        (JSC):
+        (JSC::disassemble):
+        * disassembler/Disassembler.h:
+        (JSC):
+        * jit/JITDisassembler.cpp:
+        (JSC::JITDisassembler::dumpDisassembly):
+
+2012-11-21  Filip Pizlo  <fpizlo@apple.com>
+
         dumpOperands() claims that it needs a non-const Operands& when that is completely false
         https://bugs.webkit.org/show_bug.cgi?id=103005
 

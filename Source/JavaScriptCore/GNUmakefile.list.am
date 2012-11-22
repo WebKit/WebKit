@@ -252,6 +252,7 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/dfg/DFGVariableAccessData.h \
 	Source/JavaScriptCore/dfg/DFGVirtualRegisterAllocationPhase.cpp \
 	Source/JavaScriptCore/dfg/DFGVirtualRegisterAllocationPhase.h \
+	Source/JavaScriptCore/disassembler/Disassembler.cpp \
 	Source/JavaScriptCore/disassembler/Disassembler.h \
 	Source/JavaScriptCore/heap/CopiedAllocator.h \
 	Source/JavaScriptCore/heap/CopiedBlock.h \

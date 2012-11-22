@@ -140,6 +140,7 @@ SOURCES += \
     dfg/DFGVariableEventStream.cpp \
     dfg/DFGValidate.cpp \
     dfg/DFGVirtualRegisterAllocationPhase.cpp \
+    disassembler/Disassembler.cpp \
     interpreter/AbstractPC.cpp \
     interpreter/CallFrame.cpp \
     interpreter/Interpreter.cpp \

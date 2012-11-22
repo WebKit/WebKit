@@ -185,6 +185,7 @@
 		0F9332A414CA7DD90085F3C6 /* PutByIdStatus.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F93329A14CA7DC10085F3C6 /* PutByIdStatus.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F9332A514CA7DDD0085F3C6 /* StructureSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F93329B14CA7DC10085F3C6 /* StructureSet.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F963B3813FC6FE90002D9B2 /* ValueProfile.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F963B3613FC6FDE0002D9B2 /* ValueProfile.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0F9D3370165DBB90005AD387 /* Disassembler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F9D336E165DBB8D005AD387 /* Disassembler.cpp */; };
 		0F9FC8C314E1B5FE00D52AE0 /* PolymorphicPutByIdList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F9FC8BF14E1B5FB00D52AE0 /* PolymorphicPutByIdList.cpp */; };
 		0F9FC8C414E1B60000D52AE0 /* PolymorphicPutByIdList.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F9FC8C014E1B5FB00D52AE0 /* PolymorphicPutByIdList.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F9FC8C514E1B60400D52AE0 /* PutKind.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F9FC8C114E1B5FB00D52AE0 /* PutKind.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -978,6 +979,7 @@
 		0F93329A14CA7DC10085F3C6 /* PutByIdStatus.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PutByIdStatus.h; sourceTree = "<group>"; };
 		0F93329B14CA7DC10085F3C6 /* StructureSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StructureSet.h; sourceTree = "<group>"; };
 		0F963B3613FC6FDE0002D9B2 /* ValueProfile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ValueProfile.h; sourceTree = "<group>"; };
+		0F9D336E165DBB8D005AD387 /* Disassembler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Disassembler.cpp; path = disassembler/Disassembler.cpp; sourceTree = "<group>"; };
 		0F9FC8BF14E1B5FB00D52AE0 /* PolymorphicPutByIdList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PolymorphicPutByIdList.cpp; sourceTree = "<group>"; };
 		0F9FC8C014E1B5FB00D52AE0 /* PolymorphicPutByIdList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PolymorphicPutByIdList.h; sourceTree = "<group>"; };
 		0F9FC8C114E1B5FB00D52AE0 /* PutKind.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PutKind.h; sourceTree = "<group>"; };
@@ -1749,6 +1751,7 @@
 			isa = PBXGroup;
 			children = (
 				0FF42733158EBD64004CB9FF /* udis86 */,
+				0F9D336E165DBB8D005AD387 /* Disassembler.cpp */,
 				0FF4272F158EBD44004CB9FF /* Disassembler.h */,
 				0FF42730158EBD44004CB9FF /* UDis86Disassembler.cpp */,
 			);
@@ -3617,6 +3620,7 @@
 				A77F1821164088B200640A47 /* CodeCache.cpp in Sources */,
 				0FAF7EFD165BA91B000C8455 /* JITDisassembler.cpp in Sources */,
 				0F73D7AE165A142D00ACAB71 /* ClosureCallStubRoutine.cpp in Sources */,
+				0F9D3370165DBB90005AD387 /* Disassembler.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

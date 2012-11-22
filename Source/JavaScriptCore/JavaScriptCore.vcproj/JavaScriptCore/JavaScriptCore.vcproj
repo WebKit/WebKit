@@ -2142,6 +2142,10 @@
 			Name="disassembler"
 			>
 			<File
+				RelativePath="..\..\disassembler\Disassembler.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\disassembler\Disassembler.h"
 				>
 			</File>

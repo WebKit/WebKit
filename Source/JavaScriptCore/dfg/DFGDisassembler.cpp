@@ -104,10 +104,7 @@ void Disassembler::dumpDisassembly(const char* prefix, LinkBuffer& linkBuffer, M
     CodeLocationLabel end = linkBuffer.locationOf(currentLabel);
     previousLabel = currentLabel;
     ASSERT(bitwise_cast<uintptr_t>(end.executableAddress()) >= bitwise_cast<uintptr_t>(start.executableAddress()));
-    if (tryToDisassemble(start, bitwise_cast<uintptr_t>(end.executableAddress()) - bitwise_cast<uintptr_t>(start.executableAddress()), prefixBuffer.get(), WTF::dataFile()))
-        return;
-    
-    dataLog("%s    disassembly not available for range %p...%p\n", prefixBuffer.get(), start.executableAddress(), end.executableAddress());
+    disassemble(start, bitwise_cast<uintptr_t>(end.executableAddress()) - bitwise_cast<uintptr_t>(start.executableAddress()), prefixBuffer.get(), WTF::dataFile());
 }
 
 } } // namespace JSC::DFG
