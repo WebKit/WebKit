@@ -457,6 +457,10 @@ public:
     virtual void bindTexImage2DCHROMIUM(WGC3Denum target, WGC3Dint imageId) { }
     virtual void releaseTexImage2DCHROMIUM(WGC3Denum target, WGC3Dint imageId) { }
 
+    // GL_CHROMIUM_pixel_transfer_buffer_object
+    virtual void* mapBufferCHROMIUM(WGC3Denum target, WGC3Denum access) { return 0; }
+    virtual WGC3Dboolean unmapBufferCHROMIUM(WGC3Denum target) { return false; }
+
     GrGLInterface* createGrGLInterface();
 
 protected:

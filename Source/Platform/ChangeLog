@@ -1,3 +1,17 @@
+2012-11-22  David Reveman  <reveman@chromium.org>
+
+        [Chromium] Add GL_CHROMIUM_pixel_transfer_buffer_object extension support.
+        https://bugs.webkit.org/show_bug.cgi?id=102528
+
+        Reviewed by James Robinson.
+
+        Add mapBufferCHROMIUM and unmapBufferCHROMIUM prototypes to WebGraphicsContext3D.h.
+
+        * chromium/public/WebGraphicsContext3D.h:
+        (WebGraphicsContext3D):
+        (WebKit::WebGraphicsContext3D::mapBufferCHROMIUM):
+        (WebKit::WebGraphicsContext3D::unmapBufferCHROMIUM):
+
 2012-11-21  Harald Alvestrand  <hta@google.com>
 
         WebMediaStreamComponent: Add assignment and copy operators
