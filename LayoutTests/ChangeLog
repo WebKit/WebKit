@@ -3,6 +3,17 @@
         JavaScript fails to concatenate large strings
         <https://bugs.webkit.org/show_bug.cgi?id=102963>
 
+        Remove Qt-specific results for test concat-large-strings-crash.html
+        since they are identical to the platform-independent expected results
+        as of changeset 135523, <http://trac.webkit.org/changeset/135523>.
+
+        * platform/qt/fast/js/concat-large-strings-crash-expected.txt: Removed.
+
+2012-11-22  Daniel Bates  <dbates@webkit.org>
+
+        JavaScript fails to concatenate large strings
+        <https://bugs.webkit.org/show_bug.cgi?id=102963>
+
         Update test result.
 
         * fast/js/concat-large-strings-crash-expected.txt:
