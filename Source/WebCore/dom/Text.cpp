@@ -238,11 +238,24 @@ bool Text::rendererIsNeeded(const NodeRenderingContext& context)
     return true;
 }
 
+#if ENABLE(SVG)
+static bool isSVGShadowText(Text* text)
+{
+    Node* parentNode = text->parentNode();
+    return parentNode->isShadowRoot() && toShadowRoot(parentNode)->host()->hasTagName(SVGNames::trefTag);
+}
+
+static bool isSVGText(Text* text)
+{
+    Node* parentOrHostNode = text->parentOrHostNode();
+    return parentOrHostNode->isSVGElement() && !parentOrHostNode->hasTagName(SVGNames::foreignObjectTag);
+}
+#endif
+
 RenderObject* Text::createRenderer(RenderArena* arena, RenderStyle* style)
 {
 #if ENABLE(SVG)
-    Node* parentOrHost = parentOrHostNode();
-    if (parentOrHost->isSVGElement() && !parentOrHost->hasTagName(SVGNames::foreignObjectTag))
+    if (isSVGText(this) || isSVGShadowText(this))
         return new (arena) RenderSVGInlineText(this, dataImpl());
 #endif
 
@@ -260,15 +273,18 @@ void Text::attach()
 
 void Text::recalcTextStyle(StyleChange change)
 {
-    if (hasCustomCallbacks())
-        willRecalcTextStyle(change);
-
     RenderObject* renderer = this->renderer();
 
     // The only time we have a renderer and our parent doesn't is if our parent
     // is a shadow root.
-    if (change != NoChange && renderer && !parentNode()->isShadowRoot())
-        renderer->setStyle(parentNode()->renderer()->style());
+    if (change != NoChange && renderer) {
+        if (!parentNode()->isShadowRoot())
+            renderer->setStyle(parentNode()->renderer()->style());
+#if ENABLE(SVG)
+        else if (isSVGShadowText(this))
+            renderer->setStyle(toShadowRoot(parentNode())->host()->renderer()->style());
+#endif
+    }
 
     if (needsStyleRecalc()) {
         if (renderer) {
@@ -301,11 +317,6 @@ PassRefPtr<Text> Text::createWithLengthLimit(Document* document, const String& d
     result->parserAppendData(data, start, maxChars);
 
     return result;
-}
-
-void Text::willRecalcTextStyle(StyleChange)
-{
-    ASSERT_NOT_REACHED();
 }
 
 #ifndef NDEBUG

@@ -54,8 +54,6 @@ protected:
     {
     }
 
-    virtual void willRecalcTextStyle(StyleChange);
-
 private:
     virtual String nodeName() const;
     virtual NodeType nodeType() const;

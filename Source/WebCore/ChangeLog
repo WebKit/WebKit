@@ -1,3 +1,33 @@
+2012-11-22  Antti Koivisto  <antti@apple.com>
+
+        Remove SVGShadowText class
+        https://bugs.webkit.org/show_bug.cgi?id=103088
+
+        Reviewed by Ryosuke Niwa.
+
+        Remove SVGShadowText class and merge the little functionality it has to Text.
+
+        * dom/Text.cpp:
+        (WebCore):
+        (WebCore::isSVGShadowText):
+        
+            Figure out if we are a SVGShadowText from the context.
+
+        (WebCore::isSVGText):
+        (WebCore::Text::createRenderer):
+        (WebCore::Text::recalcTextStyle):
+        
+            Factor SVG special case testing to functions.
+
+        * dom/Text.h:
+        (Text):
+
+            Get rid of the now unnecessary willRecalcTextStyle mechanism.
+
+        * svg/SVGTRefElement.cpp:
+        (WebCore):
+        (WebCore::SVGTRefElement::updateReferencedText):
+
 2012-11-22  Andreas Kling  <akling@apple.com>
 
         Style sharing: Remove O(n^2) presentation attribute checks that never found anything anyway.

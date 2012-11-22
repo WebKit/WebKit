@@ -130,35 +130,6 @@ void SVGTRefTargetEventListener::handleEvent(ScriptExecutionContext*, Event* eve
         m_trefElement->detachTarget();
 }
 
-class SVGShadowText : public Text {
-public:
-    static PassRefPtr<SVGShadowText> create(Document* document, const String& data)
-    {
-        return adoptRef(new SVGShadowText(document, data));
-    }
-private:
-    SVGShadowText(Document* document, const String& data)
-        : Text(document, data, CreateText)
-    {
-        setHasCustomCallbacks();
-    }
-    virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
-    virtual void willRecalcTextStyle(StyleChange);
-};
-
-RenderObject* SVGShadowText::createRenderer(RenderArena* arena, RenderStyle*)
-{
-    return new (arena) RenderSVGInlineText(this, dataImpl());
-}
-
-void SVGShadowText::willRecalcTextStyle(StyleChange change)
-{
-    if (change != NoChange && parentNode()->isShadowRoot()) {
-        if (renderer())
-            renderer()->setStyle(toShadowRoot(parentNode())->host()->renderer()->style());
-    }
-}
-
 inline SVGTRefElement::SVGTRefElement(const QualifiedName& tagName, Document* document)
     : SVGTextPositioningElement(tagName, document)
     , m_targetListener(SVGTRefTargetEventListener::create(this))
@@ -186,9 +157,11 @@ void SVGTRefElement::updateReferencedText(Element* target)
     ASSERT(shadow());
     ShadowRoot* root = shadow()->oldestShadowRoot();
     if (!root->firstChild())
-        root->appendChild(SVGShadowText::create(document(), textContent), ASSERT_NO_EXCEPTION);
-    else
+        root->appendChild(Text::create(document(), textContent), ASSERT_NO_EXCEPTION);
+    else {
+        ASSERT(root->firstChild()->isTextNode());
         root->firstChild()->setTextContent(textContent, ASSERT_NO_EXCEPTION);
+    }
 }
 
 void SVGTRefElement::detachTarget()
