@@ -1,3 +1,20 @@
+2012-11-22  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        [Qt] Correct extensions on preferredFilename
+        https://bugs.webkit.org/show_bug.cgi?id=103054
+
+        Reviewed by Simon Hausmann.
+
+        When guessing a filename we will now ensure it has an extension that is valid for its mimetype.
+        To do this the two missing methods getExtensionsForMIMEType and getPreferredExtensionForMIMEType
+        have been added to the Qt implementation of MIMETypeRegistry.
+
+        * platform/network/qt/QNetworkReplyHandler.cpp:
+        (WebCore::QNetworkReplyHandler::sendResponseIfNeeded):
+        * platform/qt/MIMETypeRegistryQt.cpp:
+        (WebCore::MIMETypeRegistry::getExtensionsForMIMEType):
+        (WebCore::MIMETypeRegistry::getPreferredExtensionForMIMEType):
+
 2012-11-22  Kent Tamura  <tkent@chromium.org>
 
         INPUT_MULTIPLE_FIELDS_UI: Refactoring: Do not call updateInnerTextValue if only read-only sub-fields have values

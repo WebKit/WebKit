@@ -32,6 +32,7 @@
 #include <QDateTime>
 #include <QFile>
 #include <QFileInfo>
+#include <QMimeDatabase>
 #include <QNetworkCookie>
 #include <QNetworkReply>
 
@@ -581,8 +582,21 @@ void QNetworkReplyHandler::sendResponseIfNeeded()
 
         if (!suggestedFilename.isEmpty())
             response.setSuggestedFilename(suggestedFilename);
-        else
-            response.setSuggestedFilename(url.lastPathComponent());
+        else {
+            Vector<String> extensions = MIMETypeRegistry::getExtensionsForMIMEType(mimeType);
+            if (extensions.isEmpty())
+                response.setSuggestedFilename(url.lastPathComponent());
+            else {
+                // If the suffix doesn't match the MIME type, correct the suffix.
+                QString filename = url.lastPathComponent();
+                const String suffix = QMimeDatabase().suffixForFileName(filename);
+                if (!extensions.contains(suffix)) {
+                    filename.chop(suffix.length());
+                    filename += MIMETypeRegistry::getPreferredExtensionForMIMEType(mimeType);
+                }
+                response.setSuggestedFilename(filename);
+            }
+        }
 
         response.setHTTPStatusCode(statusCode);
         response.setHTTPStatusText(m_replyWrapper->reply()->attribute(QNetworkRequest::HttpReasonPhraseAttribute).toByteArray().constData());

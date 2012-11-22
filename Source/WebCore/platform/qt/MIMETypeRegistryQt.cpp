@@ -56,6 +56,28 @@ String MIMETypeRegistry::getMIMETypeForPath(const String& path)
     return defaultMIMEType();
 }
 
+Vector<String> MIMETypeRegistry::getExtensionsForMIMEType(const String& mimeTypeName)
+{
+    Vector<String> extensions;
+    QMimeType mimeType = QMimeDatabase().mimeTypeForName(mimeTypeName);
+    if (mimeType.isValid() && !mimeType.isDefault()) {
+        Q_FOREACH(const QString& suffix, mimeType.suffixes()) {
+            extensions.append(suffix);
+        }
+    }
+
+    return extensions;
+}
+
+String MIMETypeRegistry::getPreferredExtensionForMIMEType(const String& mimeTypeName)
+{
+    QMimeType mimeType = QMimeDatabase().mimeTypeForName(mimeTypeName);
+    if (mimeType.isValid() && !mimeType.isDefault())
+        return mimeType.preferredSuffix();
+
+    return String();
+}
+
 String MIMETypeRegistry::getNormalizedMIMEType(const String& mimeTypeName)
 {
     // This looks up the mime type object by preferred name or alias, and returns the preferred name.
