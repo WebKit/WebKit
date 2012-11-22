@@ -190,7 +190,7 @@ static PassRefPtr<CSSRuleList> asCSSRuleList(CSSStyleSheet* styleSheet)
     Vector<RefPtr<CSSRule> >& listRules = list->rules();
     for (unsigned i = 0, size = styleSheet->length(); i < size; ++i) {
         CSSRule* item = styleSheet->item(i);
-        if (item->isCharsetRule())
+        if (item->type() == CSSRule::CHARSET_RULE)
             continue;
         listRules.append(item);
     }
@@ -202,10 +202,10 @@ static PassRefPtr<CSSRuleList> asCSSRuleList(CSSRule* rule)
     if (!rule)
         return 0;
 
-    if (rule->isMediaRule())
+    if (rule->type() == CSSRule::MEDIA_RULE)
         return static_cast<CSSMediaRule*>(rule)->cssRules();
 
-    if (rule->isKeyframesRule())
+    if (rule->type() == CSSRule::WEBKIT_KEYFRAMES_RULE)
         return static_cast<WebKitCSSKeyframesRule*>(rule)->cssRules();
 
     return 0;
@@ -219,11 +219,11 @@ static void fillMediaListChain(CSSRule* rule, Array<TypeBuilder::CSS::CSSMedia>*
     while (parentRule) {
         CSSStyleSheet* parentStyleSheet = 0;
         bool isMediaRule = true;
-        if (parentRule->isMediaRule()) {
+        if (parentRule->type() == CSSRule::MEDIA_RULE) {
             CSSMediaRule* mediaRule = static_cast<CSSMediaRule*>(parentRule);
             mediaList = mediaRule->media();
             parentStyleSheet = mediaRule->parentStyleSheet();
-        } else if (parentRule->isImportRule()) {
+        } else if (parentRule->type() == CSSRule::IMPORT_RULE) {
             CSSImportRule* importRule = static_cast<CSSImportRule*>(parentRule);
             mediaList = importRule->media();
             parentStyleSheet = importRule->parentStyleSheet();

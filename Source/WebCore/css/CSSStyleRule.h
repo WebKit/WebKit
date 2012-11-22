@@ -1,7 +1,7 @@
 /*
  * (C) 1999-2003 Lars Knoll (knoll@kde.org)
  * (C) 2002-2003 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2002, 2006, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2002, 2006, 2008, 2012 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -23,8 +23,6 @@
 #define CSSStyleRule_h
 
 #include "CSSRule.h"
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
@@ -36,21 +34,20 @@ class CSSStyleRule : public CSSRule {
 public:
     static PassRefPtr<CSSStyleRule> create(StyleRule* rule, CSSStyleSheet* sheet) { return adoptRef(new CSSStyleRule(rule, sheet)); }
 
-    ~CSSStyleRule();
+    virtual ~CSSStyleRule();
+
+    virtual CSSRule::Type type() const { return STYLE_RULE; }
+    virtual String cssText() const OVERRIDE;
+    virtual void reattach(StyleRuleBase*) OVERRIDE;
+    virtual void reportMemoryUsage(MemoryObjectInfo*) const OVERRIDE;
 
     String selectorText() const;
     void setSelectorText(const String&);
 
     CSSStyleDeclaration* style() const;
 
-    String cssText() const;
-    
     // FIXME: Not CSSOM. Remove.
     StyleRule* styleRule() const { return m_styleRule.get(); }
-
-    void reattach(StyleRule*);
-
-    void reportDescendantMemoryUsage(MemoryObjectInfo*) const;
 
 private:
     CSSStyleRule(StyleRule*, CSSStyleSheet*);
@@ -58,7 +55,6 @@ private:
     String generateSelectorText() const;
 
     RefPtr<StyleRule> m_styleRule;    
-
     mutable RefPtr<StyleRuleCSSStyleDeclaration> m_propertiesCSSOMWrapper;
 };
 

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2012 Intel Corporation. All rights reserved.
+ * Copyright (C) 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -41,7 +42,7 @@
 namespace WebCore {
 
 WebKitCSSViewportRule::WebKitCSSViewportRule(StyleRuleViewport* viewportRule, CSSStyleSheet* sheet)
-    : CSSRule(sheet, CSSRule::WEBKIT_VIEWPORT_RULE)
+    : CSSRule(sheet)
     , m_viewportRule(viewportRule)
 {
 }
@@ -75,19 +76,20 @@ String WebKitCSSViewportRule::cssText() const
     return result.toString();
 }
 
-void WebKitCSSViewportRule::reattach(StyleRuleViewport* rule)
+void WebKitCSSViewportRule::reattach(StyleRuleBase* rule)
 {
     ASSERT(rule);
-    m_viewportRule = rule;
+    ASSERT(rule->isViewportRule());
+    m_viewportRule = static_cast<StyleRuleViewport*>(rule);
 
     if (m_propertiesCSSOMWrapper)
         m_propertiesCSSOMWrapper->reattach(m_viewportRule->mutableProperties());
 }
 
-void WebKitCSSViewportRule::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+void WebKitCSSViewportRule::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
-    CSSRule::reportBaseClassMemoryUsage(memoryObjectInfo);
+    CSSRule::reportMemoryUsage(memoryObjectInfo);
     info.addMember(m_viewportRule);
     info.addMember(m_propertiesCSSOMWrapper);
 }

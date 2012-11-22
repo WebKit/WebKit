@@ -35,21 +35,21 @@ class CSSImportRule : public CSSRule {
 public:
     static PassRefPtr<CSSImportRule> create(StyleRuleImport* rule, CSSStyleSheet* sheet) { return adoptRef(new CSSImportRule(rule, sheet)); }
     
-    ~CSSImportRule();
+    virtual ~CSSImportRule();
+
+    virtual CSSRule::Type type() const OVERRIDE { return IMPORT_RULE; }
+    virtual String cssText() const OVERRIDE;
+    virtual void reattach(StyleRuleBase*) OVERRIDE;
+    virtual void reportMemoryUsage(MemoryObjectInfo*) const OVERRIDE;
 
     String href() const;
     MediaList* media() const;
     CSSStyleSheet* styleSheet() const;
-    
-    String cssText() const;
-
-    void reportDescendantMemoryUsage(MemoryObjectInfo*) const;
 
 private:
     CSSImportRule(StyleRuleImport*, CSSStyleSheet*);
 
     RefPtr<StyleRuleImport> m_importRule;
-
     mutable RefPtr<MediaList> m_mediaCSSOMWrapper;
     mutable RefPtr<CSSStyleSheet> m_styleSheetCSSOMWrapper;
 };

@@ -518,7 +518,7 @@ private:
 // static
 CSSStyleRule* InspectorCSSAgent::asCSSStyleRule(CSSRule* rule)
 {
-    if (!rule->isStyleRule())
+    if (rule->type() != CSSRule::STYLE_RULE)
         return 0;
     return static_cast<CSSStyleRule*>(rule);
 }
@@ -1027,7 +1027,7 @@ void InspectorCSSAgent::collectStyleSheets(CSSStyleSheet* styleSheet, TypeBuilde
     result->addItem(inspectorStyleSheet->buildObjectForStyleSheetInfo());
     for (unsigned i = 0, size = styleSheet->length(); i < size; ++i) {
         CSSRule* rule = styleSheet->item(i);
-        if (rule->isImportRule()) {
+        if (rule->type() == CSSRule::IMPORT_RULE) {
             CSSStyleSheet* importedStyleSheet = static_cast<CSSImportRule*>(rule)->styleSheet();
             if (importedStyleSheet)
                 collectStyleSheets(importedStyleSheet, result);

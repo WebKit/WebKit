@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011 Adobe Systems Incorporated. All rights reserved.
+ * Copyright (C) 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -41,7 +42,7 @@
 
 namespace WebCore {
 WebKitCSSRegionRule::WebKitCSSRegionRule(StyleRuleRegion* regionRule, CSSStyleSheet* parent)
-    : CSSRule(parent, CSSRule::WEBKIT_REGION_RULE)
+    : CSSRule(parent)
     , m_regionRule(regionRule)
     , m_childRuleCSSOMWrappers(regionRule->childRules().size())
 {
@@ -99,20 +100,21 @@ CSSRuleList* WebKitCSSRegionRule::cssRules() const
     return m_ruleListCSSOMWrapper.get();
 }
 
-void WebKitCSSRegionRule::reattach(StyleRuleRegion* rule)
+void WebKitCSSRegionRule::reattach(StyleRuleBase* rule)
 {
     ASSERT(rule);
-    m_regionRule = rule;
+    ASSERT(rule->isRegionRule());
+    m_regionRule = static_cast<StyleRuleRegion*>(rule);
     for (unsigned i = 0; i < m_childRuleCSSOMWrappers.size(); ++i) {
         if (m_childRuleCSSOMWrappers[i])
             m_childRuleCSSOMWrappers[i]->reattach(m_regionRule->childRules()[i].get());
     }
 }
 
-void WebKitCSSRegionRule::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+void WebKitCSSRegionRule::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
-    CSSRule::reportBaseClassMemoryUsage(memoryObjectInfo);
+    CSSRule::reportMemoryUsage(memoryObjectInfo);
     info.addMember(m_regionRule);
     info.addMember(m_childRuleCSSOMWrappers);
     info.addMember(m_ruleListCSSOMWrapper);

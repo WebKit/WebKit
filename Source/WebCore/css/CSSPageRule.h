@@ -1,7 +1,7 @@
 /*
  * (C) 1999-2003 Lars Knoll (knoll@kde.org)
  * (C) 2002-2003 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2002, 2006, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2002, 2006, 2008, 2012 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -23,8 +23,6 @@
 #define CSSPageRule_h
 
 #include "CSSRule.h"
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
@@ -37,24 +35,22 @@ class CSSPageRule : public CSSRule {
 public:
     static PassRefPtr<CSSPageRule> create(StyleRulePage* rule, CSSStyleSheet* sheet) { return adoptRef(new CSSPageRule(rule, sheet)); }
 
-    ~CSSPageRule();
+    virtual ~CSSPageRule();
+
+    virtual CSSRule::Type type() const OVERRIDE { return PAGE_RULE; }
+    virtual String cssText() const OVERRIDE;
+    virtual void reattach(StyleRuleBase*) OVERRIDE;
+    virtual void reportMemoryUsage(MemoryObjectInfo*) const OVERRIDE;
 
     CSSStyleDeclaration* style() const;
 
     String selectorText() const;
     void setSelectorText(const String&);
 
-    String cssText() const;
-
-    void reattach(StyleRulePage*);
-
-    void reportDescendantMemoryUsage(MemoryObjectInfo*) const;
-
 private:
     CSSPageRule(StyleRulePage*, CSSStyleSheet*);
     
     RefPtr<StyleRulePage> m_pageRule;
-
     mutable RefPtr<StyleRuleCSSStyleDeclaration> m_propertiesCSSOMWrapper;
 };
 

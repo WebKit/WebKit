@@ -1,3 +1,99 @@
+2012-11-21  Andreas Kling  <akling@apple.com>
+
+        Re-virtualize CSSRule.
+        <http://webkit.org/b/103003>
+
+        Reviewed by Anders Carlsson.
+
+        Make CSSRule virtual once again, since it's no longer important to keep it as small as possible.
+        StyleRuleBase and its various subclasses are the relevant ones now.
+
+        * css/CSSCharsetRule.cpp:
+        (WebCore::CSSCharsetRule::CSSCharsetRule):
+        (WebCore::CSSCharsetRule::reportMemoryUsage):
+        * css/CSSCharsetRule.h:
+        (WebCore::CSSCharsetRule::~CSSCharsetRule):
+        (WebCore::CSSCharsetRule::encoding):
+        (WebCore::CSSCharsetRule::setEncoding):
+        * css/CSSFontFaceRule.cpp:
+        (WebCore::CSSFontFaceRule::CSSFontFaceRule):
+        (WebCore::CSSFontFaceRule::reattach):
+        (WebCore::CSSFontFaceRule::reportMemoryUsage):
+        * css/CSSFontFaceRule.h:
+        (CSSFontFaceRule):
+        * css/CSSImportRule.cpp:
+        (WebCore::CSSImportRule::CSSImportRule):
+        (WebCore::CSSImportRule::reportMemoryUsage):
+        (WebCore::CSSImportRule::reattach):
+        (WebCore):
+        * css/CSSImportRule.h:
+        (CSSImportRule):
+        * css/CSSMediaRule.cpp:
+        (WebCore::CSSMediaRule::CSSMediaRule):
+        (WebCore::CSSMediaRule::reattach):
+        (WebCore::CSSMediaRule::reportMemoryUsage):
+        * css/CSSMediaRule.h:
+        (CSSMediaRule):
+        * css/CSSPageRule.cpp:
+        (WebCore::CSSPageRule::CSSPageRule):
+        (WebCore::CSSPageRule::reattach):
+        (WebCore::CSSPageRule::reportMemoryUsage):
+        * css/CSSPageRule.h:
+        (CSSPageRule):
+        * css/CSSRule.cpp:
+        (SameSizeAsCSSRule):
+        (WebCore::CSSRule::reportMemoryUsage):
+        * css/CSSRule.h:
+        (WebCore::CSSRule::~CSSRule):
+        (CSSRule):
+        (WebCore::CSSRule::CSSRule):
+        * css/CSSStyleRule.cpp:
+        (WebCore::CSSStyleRule::CSSStyleRule):
+        (WebCore::CSSStyleRule::reattach):
+        (WebCore::CSSStyleRule::reportMemoryUsage):
+        * css/CSSStyleRule.h:
+        (CSSStyleRule):
+        (WebCore::CSSStyleRule::type):
+        * css/CSSStyleSheet.cpp:
+        (WebCore::CSSStyleSheet::rules):
+        * css/CSSUnknownRule.h:
+        (WebCore::CSSUnknownRule::CSSUnknownRule):
+        (WebCore::CSSUnknownRule::~CSSUnknownRule):
+        * css/StyleResolver.cpp:
+        (WebCore::collectCSSOMWrappers):
+        * css/WebKitCSSKeyframeRule.cpp:
+        (WebCore::WebKitCSSKeyframeRule::WebKitCSSKeyframeRule):
+        (WebCore::WebKitCSSKeyframeRule::reportMemoryUsage):
+        (WebCore::WebKitCSSKeyframeRule::reattach):
+        (WebCore):
+        * css/WebKitCSSKeyframeRule.h:
+        (WebKitCSSKeyframeRule):
+        * css/WebKitCSSKeyframesRule.cpp:
+        (WebCore::WebKitCSSKeyframesRule::WebKitCSSKeyframesRule):
+        (WebCore::WebKitCSSKeyframesRule::reattach):
+        (WebCore::WebKitCSSKeyframesRule::reportMemoryUsage):
+        * css/WebKitCSSKeyframesRule.h:
+        (WebKitCSSKeyframesRule):
+        * css/WebKitCSSRegionRule.cpp:
+        (WebCore::WebKitCSSRegionRule::WebKitCSSRegionRule):
+        (WebCore::WebKitCSSRegionRule::reattach):
+        (WebCore::WebKitCSSRegionRule::reportMemoryUsage):
+        * css/WebKitCSSRegionRule.h:
+        (WebKitCSSRegionRule):
+        * css/WebKitCSSViewportRule.cpp:
+        (WebCore::WebKitCSSViewportRule::WebKitCSSViewportRule):
+        (WebCore::WebKitCSSViewportRule::reattach):
+        (WebCore::WebKitCSSViewportRule::reportMemoryUsage):
+        * css/WebKitCSSViewportRule.h:
+        * inspector/InspectorCSSAgent.cpp:
+        (WebCore::InspectorCSSAgent::asCSSStyleRule):
+        (WebCore::InspectorCSSAgent::collectStyleSheets):
+        * inspector/InspectorStyleSheet.cpp:
+        (WebCore::asCSSRuleList):
+        (WebCore::fillMediaListChain):
+        * page/PageSerializer.cpp:
+        (WebCore::PageSerializer::serializeCSSStyleSheet):
+
 2012-11-21  Hajime Morrita  <morrita@google.com>
 
         [Shadow DOM] Implement Element::createShadowRoot()

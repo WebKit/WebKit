@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008, 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,10 +27,8 @@
 #define WebKitCSSKeyframesRule_h
 
 #include "CSSRule.h"
-#include "ExceptionCode.h"
 #include "StyleRule.h"
 #include <wtf/Forward.h>
-#include <wtf/RefPtr.h>
 #include <wtf/text/AtomicString.h>
 
 namespace WebCore {
@@ -72,7 +70,12 @@ class WebKitCSSKeyframesRule : public CSSRule {
 public:
     static PassRefPtr<WebKitCSSKeyframesRule> create(StyleRuleKeyframes* rule, CSSStyleSheet* sheet) { return adoptRef(new WebKitCSSKeyframesRule(rule, sheet)); }
 
-    ~WebKitCSSKeyframesRule();
+    virtual ~WebKitCSSKeyframesRule();
+
+    virtual CSSRule::Type type() const OVERRIDE { return WEBKIT_KEYFRAMES_RULE; }
+    virtual String cssText() const OVERRIDE;
+    virtual void reattach(StyleRuleBase*) OVERRIDE;
+    virtual void reportMemoryUsage(MemoryObjectInfo*) const OVERRIDE;
 
     String name() const { return m_keyframesRule->name(); }
     void setName(const String&);
@@ -83,21 +86,14 @@ public:
     void deleteRule(const String& key);
     WebKitCSSKeyframeRule* findRule(const String& key);
 
-    String cssText() const;
-
     // For IndexedGetter and CSSRuleList.
     unsigned length() const;
     WebKitCSSKeyframeRule* item(unsigned index) const;
-
-    void reattach(StyleRuleKeyframes*);
-
-    void reportDescendantMemoryUsage(MemoryObjectInfo*) const;
 
 private:
     WebKitCSSKeyframesRule(StyleRuleKeyframes*, CSSStyleSheet* parent);
 
     RefPtr<StyleRuleKeyframes> m_keyframesRule;
-
     mutable Vector<RefPtr<WebKitCSSKeyframeRule> > m_childRuleCSSOMWrappers;
     mutable OwnPtr<CSSRuleList> m_ruleListCSSOMWrapper;
 };

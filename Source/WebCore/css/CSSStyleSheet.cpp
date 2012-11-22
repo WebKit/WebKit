@@ -262,7 +262,7 @@ PassRefPtr<CSSRuleList> CSSStyleSheet::rules()
     unsigned ruleCount = length();
     for (unsigned i = 0; i < ruleCount; ++i) {
         CSSRule* rule = item(i);
-        if (rule->isCharsetRule())
+        if (rule->type() == CSSRule::CHARSET_RULE)
             continue;
         nonCharsetRules->rules().append(rule);
     }

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011 Adobe Systems Incorporated. All rights reserved.
+ * Copyright (C) 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,8 +32,6 @@
 #define WebKitCSSRegionRule_h
 
 #include "CSSRule.h"
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 
 #if ENABLE(CSS_REGIONS)
@@ -46,24 +45,23 @@ class WebKitCSSRegionRule : public CSSRule {
 public:
     static PassRefPtr<WebKitCSSRegionRule> create(StyleRuleRegion* rule, CSSStyleSheet* sheet) { return adoptRef(new WebKitCSSRegionRule(rule, sheet)); }
 
-    ~WebKitCSSRegionRule();
+    virtual ~WebKitCSSRegionRule();
 
-    String cssText() const;
+    virtual CSSRule::Type type() const OVERRIDE { return WEBKIT_REGION_RULE; }
+    virtual String cssText() const OVERRIDE;
+    virtual void reattach(StyleRuleBase*) OVERRIDE;
+    virtual void reportMemoryUsage(MemoryObjectInfo*) const OVERRIDE;
+
     CSSRuleList* cssRules() const;
     
     // For CSSRuleList
     unsigned length() const;
     CSSRule* item(unsigned index) const;
 
-    void reattach(StyleRuleRegion*);
-
-    void reportDescendantMemoryUsage(MemoryObjectInfo*) const;
-
 private:
     WebKitCSSRegionRule(StyleRuleRegion*, CSSStyleSheet* parent);
 
     RefPtr<StyleRuleRegion> m_regionRule;
-    
     mutable Vector<RefPtr<CSSRule> > m_childRuleCSSOMWrappers;
     mutable OwnPtr<CSSRuleList> m_ruleListCSSOMWrapper;
     

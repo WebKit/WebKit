@@ -1,7 +1,7 @@
 /*
  * (C) 1999-2003 Lars Knoll (knoll@kde.org)
  * (C) 2002-2003 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2002, 2005, 2006, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2002, 2005, 2006, 2008, 2012 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -22,6 +22,7 @@
 #include "config.h"
 #include "CSSFontFaceRule.h"
 
+#include "PropertySetCSSStyleDeclaration.h"
 #include "StylePropertySet.h"
 #include "StyleRule.h"
 #include "WebCoreMemoryInstrumentation.h"
@@ -30,7 +31,7 @@
 namespace WebCore {
 
 CSSFontFaceRule::CSSFontFaceRule(StyleRuleFontFace* fontFaceRule, CSSStyleSheet* parent)
-    : CSSRule(parent, CSSRule::FONT_FACE_RULE)
+    : CSSRule(parent)
     , m_fontFaceRule(fontFaceRule)
 {
 }
@@ -60,18 +61,19 @@ String CSSFontFaceRule::cssText() const
     return result.toString();
 }
 
-void CSSFontFaceRule::reattach(StyleRuleFontFace* rule)
+void CSSFontFaceRule::reattach(StyleRuleBase* rule)
 {
     ASSERT(rule);
-    m_fontFaceRule = rule;
+    ASSERT(rule->isFontFaceRule());
+    m_fontFaceRule = static_cast<StyleRuleFontFace*>(rule);
     if (m_propertiesCSSOMWrapper)
         m_propertiesCSSOMWrapper->reattach(m_fontFaceRule->mutableProperties());
 }
 
-void CSSFontFaceRule::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+void CSSFontFaceRule::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
-    CSSRule::reportBaseClassMemoryUsage(memoryObjectInfo);
+    CSSRule::reportMemoryUsage(memoryObjectInfo);
     info.addMember(m_fontFaceRule);
     info.addMember(m_propertiesCSSOMWrapper);
 }

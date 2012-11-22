@@ -1,7 +1,7 @@
 /*
  * (C) 1999-2003 Lars Knoll (knoll@kde.org)
  * (C) 2002-2003 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2002, 2006, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2002, 2006, 2008, 2012 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Samuel Weinig (sam@webkit.org)
  *
  * This library is free software; you can redistribute it and/or
@@ -25,7 +25,6 @@
 
 #include "CSSRule.h"
 #include "MediaList.h"
-#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
@@ -36,29 +35,27 @@ class CSSMediaRule : public CSSRule {
 public:
     static PassRefPtr<CSSMediaRule> create(StyleRuleMedia* rule, CSSStyleSheet* sheet) { return adoptRef(new CSSMediaRule(rule, sheet)); }
 
-    ~CSSMediaRule();
+    virtual ~CSSMediaRule();
+
+    virtual CSSRule::Type type() const OVERRIDE { return MEDIA_RULE; }
+    virtual void reattach(StyleRuleBase*) OVERRIDE;
+    virtual void reportMemoryUsage(MemoryObjectInfo*) const OVERRIDE;
+    virtual String cssText() const OVERRIDE;
 
     MediaList* media() const;
     CSSRuleList* cssRules() const;
 
     unsigned insertRule(const String& rule, unsigned index, ExceptionCode&);
     void deleteRule(unsigned index, ExceptionCode&);
-
-    String cssText() const;
         
     // For CSSRuleList
     unsigned length() const;
     CSSRule* item(unsigned index) const;
 
-    void reattach(StyleRuleMedia*);
-
-    void reportDescendantMemoryUsage(MemoryObjectInfo*) const;
-
 private:
     CSSMediaRule(StyleRuleMedia*, CSSStyleSheet*);
     
     RefPtr<StyleRuleMedia> m_mediaRule;
-
     mutable RefPtr<MediaList> m_mediaCSSOMWrapper;
     mutable Vector<RefPtr<CSSRule> > m_childRuleCSSOMWrappers;
     mutable OwnPtr<CSSRuleList> m_ruleListCSSOMWrapper;

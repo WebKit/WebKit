@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2012 Intel Corporation. All rights reserved.
+ * Copyright (C) 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,8 +34,6 @@
 #if ENABLE(CSS_DEVICE_ADAPTATION)
 
 #include "CSSRule.h"
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
@@ -50,19 +49,17 @@ public:
     }
     ~WebKitCSSViewportRule();
 
+    virtual CSSRule::Type type() const OVERRIDE { return WEBKIT_VIEWPORT_RULE; }
+    virtual String cssText() const OVERRIDE;
+    virtual void reattach(StyleRuleBase*) OVERRIDE;
+    virtual void reportMemoryUsage(MemoryObjectInfo*) const OVERRIDE;
+
     CSSStyleDeclaration* style() const;
-
-    String cssText() const;
-
-    void reattach(StyleRuleViewport*);
-
-    void reportDescendantMemoryUsage(MemoryObjectInfo*) const;
 
 private:
     WebKitCSSViewportRule(StyleRuleViewport*, CSSStyleSheet*);
 
     RefPtr<StyleRuleViewport> m_viewportRule;
-
     mutable RefPtr<StyleRuleCSSStyleDeclaration> m_propertiesCSSOMWrapper;
 };
 

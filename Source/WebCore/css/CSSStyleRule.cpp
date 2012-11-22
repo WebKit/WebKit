@@ -1,7 +1,7 @@
 /*
  * (C) 1999-2003 Lars Knoll (knoll@kde.org)
  * (C) 2002-2003 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2002, 2005, 2006, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2002, 2005, 2006, 2008, 2012 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -42,7 +42,7 @@ static SelectorTextCache& selectorTextCache()
 }
 
 CSSStyleRule::CSSStyleRule(StyleRule* styleRule, CSSStyleSheet* parent)
-    : CSSRule(parent, CSSRule::STYLE_RULE)
+    : CSSRule(parent)
     , m_styleRule(styleRule)
 {
 }
@@ -122,17 +122,19 @@ String CSSStyleRule::cssText() const
     return result.toString();
 }
 
-void CSSStyleRule::reattach(StyleRule* rule)
+void CSSStyleRule::reattach(StyleRuleBase* rule)
 {
-    m_styleRule = rule;
+    ASSERT(rule);
+    ASSERT(rule->isStyleRule());
+    m_styleRule = static_cast<StyleRule*>(rule);
     if (m_propertiesCSSOMWrapper)
         m_propertiesCSSOMWrapper->reattach(m_styleRule->mutableProperties());
 }
 
-void CSSStyleRule::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+void CSSStyleRule::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
-    CSSRule::reportBaseClassMemoryUsage(memoryObjectInfo);
+    CSSRule::reportMemoryUsage(memoryObjectInfo);
     info.addMember(m_styleRule);
     info.addMember(m_propertiesCSSOMWrapper);
 }

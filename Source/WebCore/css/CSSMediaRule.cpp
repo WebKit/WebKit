@@ -35,7 +35,7 @@
 namespace WebCore {
 
 CSSMediaRule::CSSMediaRule(StyleRuleMedia* mediaRule, CSSStyleSheet* parent)
-    : CSSRule(parent, CSSRule::MEDIA_RULE)
+    : CSSRule(parent)
     , m_mediaRule(mediaRule)
     , m_childRuleCSSOMWrappers(mediaRule->childRules().size())
 {
@@ -164,10 +164,11 @@ CSSRuleList* CSSMediaRule::cssRules() const
     return m_ruleListCSSOMWrapper.get();
 }
 
-void CSSMediaRule::reattach(StyleRuleMedia* rule)
+void CSSMediaRule::reattach(StyleRuleBase* rule)
 {
     ASSERT(rule);
-    m_mediaRule = rule;
+    ASSERT(rule->isMediaRule());
+    m_mediaRule = static_cast<StyleRuleMedia*>(rule);
     if (m_mediaCSSOMWrapper && m_mediaRule->mediaQueries())
         m_mediaCSSOMWrapper->reattach(m_mediaRule->mediaQueries());
     for (unsigned i = 0; i < m_childRuleCSSOMWrappers.size(); ++i) {
@@ -176,10 +177,10 @@ void CSSMediaRule::reattach(StyleRuleMedia* rule)
     }
 }
 
-void CSSMediaRule::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+void CSSMediaRule::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
-    CSSRule::reportBaseClassMemoryUsage(memoryObjectInfo);
+    CSSRule::reportMemoryUsage(memoryObjectInfo);
     info.addMember(m_mediaCSSOMWrapper);
     info.addMember(m_childRuleCSSOMWrappers);
     info.addMember(m_ruleListCSSOMWrapper);
