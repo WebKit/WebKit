@@ -70,10 +70,6 @@ EwkViewImpl* PageClientBase::viewImpl() const
 PassOwnPtr<DrawingAreaProxy> PageClientBase::createDrawingAreaProxy()
 {
     OwnPtr<DrawingAreaProxy> drawingArea = DrawingAreaProxyImpl::create(m_viewImpl->page());
-#if USE(ACCELERATED_COMPOSITING)
-    if (!m_viewImpl->isHardwareAccelerated())
-        drawingArea->layerTreeCoordinatorProxy()->layerTreeRenderer()->setAccelerationMode(TextureMapper::SoftwareMode);
-#endif
     return drawingArea.release();
 }
 

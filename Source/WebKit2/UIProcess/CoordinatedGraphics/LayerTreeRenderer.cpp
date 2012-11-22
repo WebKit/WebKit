@@ -48,37 +48,12 @@ namespace WebKit {
 
 using namespace WebCore;
 
-template<class T> class MainThreadGuardedInvoker {
-public:
-    static void call(PassRefPtr<T> objectToGuard, const Function<void()>& function)
-    {
-        MainThreadGuardedInvoker<T>* invoker = new MainThreadGuardedInvoker<T>(objectToGuard, function);
-        callOnMainThread(invoke, invoker);
-    }
-
-private:
-    MainThreadGuardedInvoker(PassRefPtr<T> object, const Function<void()>& newFunction)
-        : objectToGuard(object)
-        , function(newFunction)
-    {
-    }
-
-    RefPtr<T> objectToGuard;
-    Function<void()> function;
-    static void invoke(void* data)
-    {
-        MainThreadGuardedInvoker<T>* invoker = static_cast<MainThreadGuardedInvoker<T>*>(data);
-        invoker->function();
-        delete invoker;
-    }
-};
-
 void LayerTreeRenderer::dispatchOnMainThread(const Function<void()>& function)
 {
     if (isMainThread())
         function();
     else
-        MainThreadGuardedInvoker<LayerTreeRenderer>::call(this, function);
+        callOnMainThread(function);
 }
 
 static FloatPoint boundedScrollPosition(const FloatPoint& scrollPosition, const FloatRect& visibleContentRect, const FloatSize& contentSize)
@@ -99,10 +74,10 @@ LayerTreeRenderer::LayerTreeRenderer(LayerTreeCoordinatorProxy* layerTreeCoordin
 #if ENABLE(REQUEST_ANIMATION_FRAME)
     , m_animationFrameRequested(false)
 #endif
-    , m_accelerationMode(TextureMapper::OpenGLMode)
     , m_backgroundColor(Color::white)
     , m_setDrawsBackground(false)
 {
+    ASSERT(isMainThread());
 }
 
 LayerTreeRenderer::~LayerTreeRenderer()
@@ -171,6 +146,7 @@ void LayerTreeRenderer::paintToCurrentGLContext(const TransformationMatrix& matr
 #if ENABLE(REQUEST_ANIMATION_FRAME)
 void LayerTreeRenderer::animationFrameReady()
 {
+    ASSERT(isMainThread());
     if (m_layerTreeCoordinatorProxy)
         m_layerTreeCoordinatorProxy->animationFrameReady();
 }
@@ -216,6 +192,7 @@ void LayerTreeRenderer::setVisibleContentsRect(const FloatRect& rect)
 
 void LayerTreeRenderer::updateViewport()
 {
+    ASSERT(isMainThread());
     if (m_layerTreeCoordinatorProxy)
         m_layerTreeCoordinatorProxy->updateViewport();
 }
@@ -573,6 +550,7 @@ void LayerTreeRenderer::flushLayerChanges()
 
 void LayerTreeRenderer::renderNextFrame()
 {
+    ASSERT(isMainThread());
     if (m_layerTreeCoordinatorProxy)
         m_layerTreeCoordinatorProxy->renderNextFrame();
 }
@@ -615,6 +593,7 @@ void LayerTreeRenderer::syncRemoteContent()
 
 void LayerTreeRenderer::purgeGLResources()
 {
+    ASSERT(isMainThread());
     TextureMapperLayer* layer = toTextureMapperLayer(rootLayer());
 
     if (layer)
@@ -634,8 +613,8 @@ void LayerTreeRenderer::purgeGLResources()
     m_backingStoresWithPendingBuffers.clear();
 
     setActive(false);
-
-    dispatchOnMainThread(bind(&LayerTreeRenderer::purgeBackingStores, this));
+    if (m_layerTreeCoordinatorProxy)
+        m_layerTreeCoordinatorProxy->purgeBackingStores();
 }
 
 void LayerTreeRenderer::setLayerAnimations(WebLayerID id, const GraphicsLayerAnimations& animations)
@@ -662,14 +641,9 @@ void LayerTreeRenderer::setAnimationsLocked(bool locked)
     m_animationsLocked = locked;
 }
 
-void LayerTreeRenderer::purgeBackingStores()
-{
-    if (m_layerTreeCoordinatorProxy)
-        m_layerTreeCoordinatorProxy->purgeBackingStores();
-}
-
 void LayerTreeRenderer::detach()
 {
+    ASSERT(isMainThread());
     m_layerTreeCoordinatorProxy = 0;
 }
 
@@ -685,6 +659,7 @@ void LayerTreeRenderer::appendUpdate(const Function<void()>& function)
 
 void LayerTreeRenderer::setActive(bool active)
 {
+    ASSERT(isMainThread());
     if (m_isActive == active)
         return;
 

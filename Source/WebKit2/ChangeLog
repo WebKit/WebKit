@@ -1,3 +1,35 @@
+2012-11-22  Huang Dongsung  <luxtella@company100.net>
+
+        Coordinated Graphics: refactor LayerTreeRenderer.
+        https://bugs.webkit.org/show_bug.cgi?id=103004
+
+        Reviewed by Noam Rosenthal.
+
+        This patch changes two subjects.
+        1. Add ASSERT(isMainThread()) in all methods that are called in the main thread.
+        In addition, make dispatchOnMainThread() use callOnMainThread(const Function<void()>&
+        function) instead of its own implementation.
+
+        2. Remove setAccelerationMode() because we don't use m_accelerationMode member
+        except for the setter.
+
+        * UIProcess/API/efl/EwkViewImpl.cpp:
+        (EwkViewImpl::createGLSurface):
+        * UIProcess/CoordinatedGraphics/LayerTreeRenderer.cpp:
+        (WebKit):
+        (WebKit::LayerTreeRenderer::dispatchOnMainThread):
+        (WebKit::LayerTreeRenderer::LayerTreeRenderer):
+        (WebKit::LayerTreeRenderer::animationFrameReady):
+        (WebKit::LayerTreeRenderer::updateViewport):
+        (WebKit::LayerTreeRenderer::renderNextFrame):
+        (WebKit::LayerTreeRenderer::purgeGLResources):
+        (WebKit::LayerTreeRenderer::detach):
+        (WebKit::LayerTreeRenderer::setActive):
+        * UIProcess/CoordinatedGraphics/LayerTreeRenderer.h:
+        (LayerTreeRenderer):
+        * UIProcess/efl/PageClientBase.cpp:
+        (WebKit::PageClientBase::createDrawingAreaProxy):
+
 2012-11-21  Jinwoo Song  <jinwoo7.song@samsung.com>
 
         [EFL][WK2] Use consistent class names in the clients
