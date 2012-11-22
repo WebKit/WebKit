@@ -207,7 +207,6 @@ public:
     Evas_GL* evasGL() { return m_evasGL.get(); }
     Evas_GL_Context* evasGLContext() { return m_evasGLContext ? m_evasGLContext->context() : 0; }
     Evas_GL_Surface* evasGLSurface() { return m_evasGLSurface ? m_evasGLSurface->surface() : 0; }
-    void clearEvasGLSurface() { m_evasGLSurface.clear(); }
 #endif
 
     // FIXME: needs refactoring (split callback invoke)

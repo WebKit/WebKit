@@ -642,7 +642,7 @@ bool EwkViewImpl::createGLSurface(const IntSize& viewSize)
         EVAS_GL_MULTISAMPLE_NONE
     };
 
-    ASSERT(!m_evasGLSurface);
+    // Replaces if non-null, and frees existing surface after (OwnPtr).
     m_evasGLSurface = EvasGLSurface::create(evasGL(), &evasGLConfig, viewSize);
     if (!m_evasGLSurface)
         return false;

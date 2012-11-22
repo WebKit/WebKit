@@ -1,3 +1,21 @@
+2012-11-22  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        [WK2][EFL] No need to remove surface before replacing
+        https://bugs.webkit.org/show_bug.cgi?id=103055
+
+        Rubberstamped by Simon Hausmann.
+
+        The surface is stored in a OwnPtr which automatically
+        frees the existing surface after replacing it with a new
+        one. For some reason, this also fixes resizing issues on
+        my Nvidia driver.
+
+        * UIProcess/API/efl/EwkViewImpl.cpp:
+        (EwkViewImpl::createGLSurface):
+        * UIProcess/API/efl/EwkViewImpl.h:
+        * UIProcess/API/efl/ewk_view.cpp:
+        (_ewk_view_smart_calculate):
+
 2012-11-22  Christophe Dumez  <christophe.dumez@intel.com>
 
         WebKitTestRunner needs layoutTestController.setCacheModel
