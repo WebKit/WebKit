@@ -748,7 +748,7 @@ void CoordinatedGraphicsLayer::removeTile(int tileID)
 
 void CoordinatedGraphicsLayer::updateContentBuffers()
 {
-    if (!drawsContent()) {
+    if (!drawsContent() || !contentsAreVisible() || m_size.isEmpty()) {
         m_mainBackingStore.clear();
         m_previousBackingStore.clear();
         return;
