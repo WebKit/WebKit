@@ -34,38 +34,28 @@
 #include "ScriptController.h"
 #include "V8Binding.h"
 #include "V8DOMWindow.h"
-#include "V8DedicatedWorkerContext.h"
-#include "V8SharedWorkerContext.h"
+#include "V8DOMWindowShell.h"
 
 namespace WebCore {
 
 WorldContextHandle::WorldContextHandle(WorldToUse worldToUse)
     : m_worldToUse(worldToUse)
 {
-    ASSERT(worldToUse != UseWorkerWorld);
-
     if (worldToUse == UseMainWorld || worldToUse == UseWorkerWorld)
         return;
 
-    if (!v8::Context::InContext())
-        CRASH();
-
-    v8::Handle<v8::Context> context = v8::Context::GetCurrent();
+    if (v8::Context::InContext()) {
+        v8::Handle<v8::Context> context = v8::Context::GetCurrent();
 #if ENABLE(WORKERS)
-    if (UNLIKELY(!V8DOMWrapper::isWrapperOfType(toInnerGlobalObject(context), &V8DOMWindow::info))) {
-#if ENABLE(SHARED_WORKERS)
-        ASSERT(V8DOMWrapper::isWrapperOfType(toInnerGlobalObject(context)->GetPrototype(), &V8DedicatedWorkerContext::info) || V8DOMWrapper::isWrapperOfType(toInnerGlobalObject(context)->GetPrototype(), &V8SharedWorkerContext::info));
-#else
-        ASSERT(V8DOMWrapper::isWrapperOfType(toInnerGlobalObject(context)->GetPrototype(), &V8DedicatedWorkerContext::info));
+        if (UNLIKELY(!V8DOMWrapper::isWrapperOfType(toInnerGlobalObject(context), &V8DOMWindow::info))) {
+            m_worldToUse = UseWorkerWorld;
+            return;
+        }
 #endif
-        m_worldToUse = UseWorkerWorld;
-        return;
-    }
-#endif
-
-    if (DOMWrapperWorld::isolated(context)) {
-        m_context = SharedPersistent<v8::Context>::create(context);
-        return;
+        if (V8DOMWindowShell::isolated(context)) {
+            m_context = SharedPersistent<v8::Context>::create(context);
+            return;
+        }
     }
 
     m_worldToUse = UseMainWorld;
