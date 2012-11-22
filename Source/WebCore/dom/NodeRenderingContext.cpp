@@ -229,11 +229,8 @@ void NodeRenderingContext::createRendererIfNeeded()
 
     Document* document = m_node->document();
     RenderObject* newRenderer = m_node->createRenderer(document->renderArena(), m_style.get());
-    if (!newRenderer) {
-        ASSERT_NOT_REACHED();
+    if (!newRenderer)
         return;
-    }
-
     if (!parentRenderer->isChildAllowed(newRenderer, m_style.get())) {
         newRenderer->destroy();
         return;
