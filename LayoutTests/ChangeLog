@@ -1,3 +1,11 @@
+2012-11-22  Robert Kroeger  <rjkroege@chromium.org>
+
+        [Chromium] Unreviwed gardening. Updated test expectations for failure
+        in complex-joining-using-gpos.html
+        https://bugs.webkit.org/show_bug.cgi?id=101377
+
+        * platform/chromium/TestExpectations:
+
 2012-11-22  Stephen White  <senorblanco@chromium.org>
 
         [Chromium] Unreviewed gardening.  Remove a now-passing test from TestExpectations.
