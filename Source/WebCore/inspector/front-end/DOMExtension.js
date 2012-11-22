@@ -200,6 +200,13 @@ Element.prototype.isScrolledToBottom = function()
     return this.scrollTop + this.clientHeight === this.scrollHeight;
 }
 
+Element.prototype.remove = function()
+{
+    if (this.parentElement)
+        this.parentElement.removeChild(this);
+}
+
+
 /**
  * @constructor
  * @param {number} width

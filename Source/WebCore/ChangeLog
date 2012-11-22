@@ -1,3 +1,23 @@
+2012-11-22  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: evaluate on hover regressed with the editor change
+        https://bugs.webkit.org/show_bug.cgi?id=103063
+
+        Reviewed by Vsevolod Vlasov.
+
+        We are no longer mutating the editor's dom from outside.
+
+        * inspector/front-end/DOMExtension.js:
+        (Element.prototype.remove):
+        * inspector/front-end/DefaultTextEditor.js:
+        (WebInspector.DefaultTextEditor.prototype.highlightRangesWithStyleClass):
+        (WebInspector.DefaultTextEditor.prototype.highlightExpression):
+        (WebInspector.DefaultTextEditor.prototype.hideHighlightedExpression):
+        * inspector/front-end/JavaScriptSourceFrame.js:
+        (WebInspector.JavaScriptSourceFrame.prototype._getPopoverAnchor):
+        (WebInspector.JavaScriptSourceFrame.prototype._onHidePopover):
+        (WebInspector.JavaScriptSourceFrame.prototype._highlightExpression):
+
 2012-09-26  Gustavo Noronha Silva  <gns@gnome.org>
 
         [GTK] Split SVG from WebCore to work-around make limitation

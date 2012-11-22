@@ -289,7 +289,7 @@ WebInspector.JavaScriptSourceFrame.prototype = {
 
         // 2. 'highlight' them with artificial style to detect word boundaries
         var changes = [];
-        WebInspector.highlightRangesWithStyleClass(lineElement, ranges, "source-frame-token", changes);
+        this.textEditor.highlightRangesWithStyleClass(lineElement, ranges, "source-frame-token", changes);
         var lineOffsetLeft = lineElement.totalOffsetLeft();
         for (var child = lineElement.firstChild; child; child = child.nextSibling) {
             if (child.nodeType !== Node.ELEMENT_NODE || !child.hasStyleClass("source-frame-token"))
@@ -338,38 +338,17 @@ WebInspector.JavaScriptSourceFrame.prototype = {
             return;
         // FIXME: the text editor should maintain highlight on its own. The check below is a workaround for
         // the case when highlight element is detached from DOM by the TextEditor when re-building the DOM.
-        var parentElement = highlightElement.parentElement;
-        if (parentElement) {
-            var child = highlightElement.firstChild;
-            while (child) {
-                var nextSibling = child.nextSibling;
-                parentElement.insertBefore(child, highlightElement);
-                child = nextSibling;
-            }
-            parentElement.removeChild(highlightElement);
-        }
+        this.textEditor.hideHighlightedExpression(highlightElement);
         delete this._highlightElement;
     },
 
+    /**
+     * @param {Element} element
+     * @return {Element}
+     */
     _highlightExpression: function(element)
     {
-        // Collect tokens belonging to evaluated expression.
-        var tokens = [ element ];
-        var token = element.previousSibling;
-        while (token && (token.className === "webkit-javascript-ident" || token.className === "source-frame-token" || token.className === "webkit-javascript-keyword" || token.textContent.trim() === ".")) {
-            tokens.push(token);
-            token = token.previousSibling;
-        }
-        tokens.reverse();
-
-        // Wrap them with highlight element.
-        var parentElement = element.parentElement;
-        var nextElement = element.nextSibling;
-        var container = document.createElement("span");
-        for (var i = 0; i < tokens.length; ++i)
-            container.appendChild(tokens[i]);
-        parentElement.insertBefore(container, nextElement);
-        return container;
+        return this.textEditor.highlightExpression(element, { "webkit-javascript-ident": true, "source-frame-token": true, "webkit-javascript-keyword": true }, { ".": true });
     },
 
     /**
