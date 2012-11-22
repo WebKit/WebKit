@@ -1,3 +1,15 @@
+2012-11-21  Ryuan Choi  <ryuan.choi@gmail.com>
+
+        [EFL] Remove unnecessary definition, -DENABLE_SPELLCHECK=1
+        https://bugs.webkit.org/show_bug.cgi?id=102988
+
+        Reviewed by Laszlo Gombos.
+
+        Removed -DENABLE_SPELLCHECK=1 because feature macros are controlled by
+        WEBKIT_OPTION_XXX and cmakeconfig.h.cmake.
+
+        * Source/cmake/OptionsEfl.cmake:
+
 2012-11-21  Kondapally Kalyan  <kalyan.kondapally@intel.com>
 
         [EFL] GLX detection is broken.
