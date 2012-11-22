@@ -1,3 +1,18 @@
+2012-11-21  Zan Dobersek  <zandobersek@gmail.com>
+
+        [GTK][WTR] Implement AccessibilityUIElement::stringValue
+        https://bugs.webkit.org/show_bug.cgi?id=102951
+
+        Reviewed by Martin Robinson.
+
+        Implement AccessibilityUIElement::stringValue in the ATK backend
+        in the same manner it is implemented in DumpRenderTree.
+
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityUIElementAtk.cpp:
+        (WTR::replaceCharactersForResults):
+        (WTR):
+        (WTR::AccessibilityUIElement::stringValue):
+
 2012-11-21  Vineet Chaudhary  <rgf748@motorola.com>
 
         Unreviewed. Adding myself to committers.py.

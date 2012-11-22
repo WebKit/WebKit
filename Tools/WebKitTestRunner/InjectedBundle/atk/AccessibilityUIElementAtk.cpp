@@ -35,6 +35,9 @@
 #include <wtf/Assertions.h>
 #include <wtf/gobject/GOwnPtr.h>
 #include <wtf/gobject/GRefPtr.h>
+#include <wtf/text/CString.h>
+#include <wtf/text/WTFString.h>
+#include <wtf/unicode/CharacterNames.h>
 
 namespace WTR {
 
@@ -119,6 +122,22 @@ static void alterCurrentValue(PlatformUIElement element, int factor)
     g_value_unset(&newValue);
     g_value_unset(&increment);
     g_value_unset(&currentValue);
+}
+
+static gchar* replaceCharactersForResults(gchar* str)
+{
+    WTF::String uString = WTF::String::fromUTF8(str);
+
+    // The object replacement character is passed along to ATs so we need to be
+    // able to test for their presence and do so without causing test failures.
+    uString.replace(objectReplacementCharacter, "<obj>");
+
+    // The presence of newline characters in accessible text of a single object
+    // is appropriate, but it makes test results (especially the accessible tree)
+    // harder to read.
+    uString.replace("\n", "<\\n>");
+
+    return g_strdup(uString.utf8().data());
 }
 
 AccessibilityUIElement::AccessibilityUIElement(PlatformUIElement element)
@@ -406,8 +425,14 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::orientation() const
 
 JSRetainPtr<JSStringRef> AccessibilityUIElement::stringValue()
 {
-    // FIXME: implement
-    return JSStringCreateWithCharacters(0, 0);
+    if (!m_element || !ATK_IS_TEXT(m_element))
+        return JSStringCreateWithCharacters(0, 0);
+
+    GOwnPtr<gchar> text(atk_text_get_text(ATK_TEXT(m_element), 0, -1));
+    GOwnPtr<gchar> textWithReplacedCharacters(replaceCharactersForResults(text.get()));
+    GOwnPtr<gchar> axValue(g_strdup_printf("AXValue: %s", textWithReplacedCharacters.get()));
+
+    return JSStringCreateWithUTF8CString(axValue.get());
 }
 
 JSRetainPtr<JSStringRef> AccessibilityUIElement::language()
