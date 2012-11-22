@@ -599,6 +599,7 @@ public:
     LinkHighlight* linkHighlight() { return m_linkHighlight.get(); }
 #endif
 
+    WebSettingsImpl* settingsImpl();
 
 private:
     bool computePageScaleFactorLimits();
@@ -677,8 +678,6 @@ private:
     virtual bool handleGestureEvent(const WebGestureEvent&) OVERRIDE;
     virtual bool handleKeyEvent(const WebKeyboardEvent&) OVERRIDE;
     virtual bool handleCharEvent(const WebKeyboardEvent&) OVERRIDE;
-
-    WebSettingsImpl* settingsImpl();
 
     WebViewClient* m_client;
     WebAutofillClient* m_autofillClient;

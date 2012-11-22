@@ -81,15 +81,17 @@ void PageWidgetDelegate::layout(Page* page)
     view->updateLayoutAndStyleIfNeededRecursive();
 }
 
-void PageWidgetDelegate::paint(Page* page, PageOverlayList* overlays, WebCanvas* canvas, const WebRect& rect, CanvasBackground background)
+void PageWidgetDelegate::paint(Page* page, PageOverlayList* overlays, WebCanvas* canvas, const WebRect& rect, CanvasBackground background, bool applyDeviceScale)
 {
     if (rect.isEmpty())
         return;
     GraphicsContextBuilder builder(canvas);
     GraphicsContext& gc = builder.context();
     gc.platformContext()->setDrawingToImageBuffer(background == Opaque ? false : true);
-    gc.applyDeviceScaleFactor(page->deviceScaleFactor());
-    gc.platformContext()->setDeviceScaleFactor(page->deviceScaleFactor());
+    if (applyDeviceScale) {
+        gc.applyDeviceScaleFactor(page->deviceScaleFactor());
+        gc.platformContext()->setDeviceScaleFactor(page->deviceScaleFactor());
+    }
     IntRect dirtyRect(rect);
     gc.save();
     FrameView* view = mainFrameView(page);
