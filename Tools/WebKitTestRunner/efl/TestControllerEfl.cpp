@@ -57,6 +57,10 @@ void TestController::platformInitialize()
     }
 }
 
+void TestController::platformDestroy()
+{
+}
+
 void TestController::platformRunUntil(bool& condition, double timeout)
 {
     if (timeout == m_noTimeout) {

@@ -121,6 +121,10 @@ void TestController::platformInitialize()
     webProcessCrashingEvent = ::CreateEventA(0, FALSE, FALSE, webProcessCrashingEventName);
 }
 
+void TestController::platformDestroy()
+{
+}
+
 void TestController::initializeInjectedBundlePath()
 {
     CFStringRef exeContainerPath = CFURLCopyFileSystemPath(CFURLCreateCopyDeletingLastPathComponent(0, CFBundleCopyExecutableURL(CFBundleGetMainBundle())), kCFURLWindowsPathStyle);

@@ -32,44 +32,106 @@
 
 #include <cstdlib>
 #include <QCoreApplication>
-#include <QElapsedTimer>
 #include <QEventLoop>
 #include <QFileInfo>
 #include <QLibrary>
 #include <QObject>
-#include <qquickwebview_p.h>
+#include <QTimer>
 #include <QtGlobal>
+#include <qquickwebview_p.h>
 #include <wtf/Platform.h>
 #include <wtf/text/WTFString.h>
 
 namespace WTR {
 
+class TestController::RunLoop : public QObject {
+    Q_OBJECT
+public:
+    RunLoop();
+
+    void runUntil(double timeout);
+    void notifyDone();
+    void runModal(PlatformWebView*);
+public Q_SLOTS:
+    void timerFired();
+private:
+    QEventLoop m_runUntilLoop;
+    QEventLoop m_modalLoop;
+    QTimer m_runUntilLoopTimer;
+    bool m_runUntilLoopClosePending;
+};
+
+TestController::RunLoop::RunLoop()
+    : m_runUntilLoopClosePending(false)
+{
+    m_runUntilLoopTimer.setSingleShot(true);
+    QObject::connect(&m_runUntilLoopTimer, SIGNAL(timeout()), this, SLOT(timerFired()));
+}
+
+void TestController::RunLoop::runUntil(double timeout)
+{
+    ASSERT(!m_runUntilLoop.isRunning());
+    if (timeout) {
+        const int timeoutInMilliSecs = timeout * 1000;
+        m_runUntilLoopTimer.start(timeoutInMilliSecs);
+    }
+    m_runUntilLoop.exec(QEventLoop::ExcludeUserInputEvents);
+}
+
+void TestController::RunLoop::notifyDone()
+{
+    if (m_modalLoop.isRunning()) {
+        // Wait for the modal loop first. We only kill it if we timeout.
+        m_runUntilLoopClosePending = true;
+        return;
+    }
+
+    m_runUntilLoopTimer.stop();
+    m_runUntilLoop.exit();
+}
+
+void TestController::RunLoop::timerFired()
+{
+    if (m_modalLoop.isRunning()) {
+        m_runUntilLoopClosePending = true;
+        m_modalLoop.exit();
+        return;
+    }
+
+    m_runUntilLoop.exit();
+}
+
+void TestController::RunLoop::runModal(PlatformWebView* view)
+{
+    ASSERT(!m_modalLoop.isRunning());
+    view->setModalEventLoop(&m_modalLoop);
+    m_modalLoop.exec(QEventLoop::ExcludeUserInputEvents);
+
+    if (m_runUntilLoopClosePending)
+        m_runUntilLoop.exit();
+}
+
 void TestController::notifyDone()
 {
+    m_runLoop->notifyDone();
 }
 
 void TestController::platformInitialize()
 {
+    m_runLoop = new RunLoop;
     QQuickWebView::platformInitialize();
+}
+
+void TestController::platformDestroy()
+{
+    delete m_runLoop;
 }
 
 void TestController::platformRunUntil(bool& condition, double timeout)
 {
-    if (qgetenv("QT_WEBKIT2_DEBUG") == "1" || timeout == m_noTimeout) {
-        // Never timeout if we are debugging or not meant to timeout.
-        while (!condition)
-            QCoreApplication::processEvents(QEventLoop::ExcludeUserInputEvents, 50);
-        return;
-    }
-
-    int timeoutInMSecs = timeout * 1000;
-    QElapsedTimer timer;
-    timer.start();
-    while (!condition) {
-        if (timer.elapsed() > timeoutInMSecs)
-            return;
-        QCoreApplication::processEvents(QEventLoop::ExcludeUserInputEvents, timeoutInMSecs - timer.elapsed());
-    }
+    UNUSED_PARAM(condition);
+    const bool shouldTimeout = !(qgetenv("QT_WEBKIT2_DEBUG") == "1" || timeout == m_noTimeout);
+    m_runLoop->runUntil(shouldTimeout ? timeout : 0);
 }
 
 static bool isExistingLibrary(const QString& path)
@@ -113,9 +175,7 @@ void TestController::platformInitializeContext()
 
 void TestController::runModal(PlatformWebView* view)
 {
-    QEventLoop eventLoop;
-    view->setModalEventLoop(&eventLoop);
-    eventLoop.exec(QEventLoop::ExcludeUserInputEvents);
+    shared().m_runLoop->runModal(view);
 }
 
 const char* TestController::platformLibraryPathForTesting()
@@ -124,3 +184,5 @@ const char* TestController::platformLibraryPathForTesting()
 }
 
 } // namespace WTR
+
+#include "TestControllerQt.moc"

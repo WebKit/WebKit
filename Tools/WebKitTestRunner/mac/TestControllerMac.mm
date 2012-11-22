@@ -40,6 +40,10 @@ void TestController::platformInitialize()
 {
 }
 
+void TestController::platformDestroy()
+{
+}
+
 void TestController::initializeInjectedBundlePath()
 {
     NSString *nsBundlePath = [[[NSBundle mainBundle] bundlePath] stringByAppendingPathComponent:@"WebKitTestRunnerInjectedBundle.bundle"];

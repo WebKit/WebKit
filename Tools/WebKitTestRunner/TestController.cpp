@@ -109,6 +109,7 @@ TestController::TestController(int argc, const char* argv[])
 
 TestController::~TestController()
 {
+    platformDestroy();
 }
 
 static WKRect getWindowFrame(WKPageRef page, const void* clientInfo)

@@ -1,3 +1,47 @@
+2012-11-22  Balazs Kelemen  <kbalazs@webkit.org>
+
+        [Qt][WTR] TestController::platformRunUntil should not do busy waiting
+        https://bugs.webkit.org/show_bug.cgi?id=101327
+
+        Reviewed by Simon Hausmann.
+
+        Avoid busy waiting for events in platformRunUntil while making
+        sure we don't change the behavior of modal event loops.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::~TestController):
+        * WebKitTestRunner/TestController.h:
+        (TestController):
+        * WebKitTestRunner/efl/TestControllerEfl.cpp:
+        (WTR::TestController::platformDestroy):
+        (WTR):
+        * WebKitTestRunner/gtk/TestControllerGtk.cpp:
+        (WTR::TestController::platformDestroy):
+        (WTR):
+        * WebKitTestRunner/mac/TestControllerMac.mm:
+        (WTR::TestController::platformDestroy):
+        (WTR):
+        * WebKitTestRunner/qt/TestControllerQt.cpp:
+        (TestController::RunLoop): Helper class to handle
+        the event loop logic
+        (WTR):
+        (WTR::TestController::RunLoop::RunLoop):
+        (WTR::TestController::RunLoop::runUntil): Use QEventLoop to implement
+        the run loop. This is the appropriate API to push the WaitForMoreEvents
+        flag to QCoreApplication::processEvents and also being able to exit the
+        loop if we have timed out.
+        (WTR::TestController::RunLoop::notifyDone):
+        (WTR::TestController::RunLoop::timerFired):
+        (WTR::TestController::RunLoop::runModal):
+        (WTR::TestController::notifyDone):
+        (WTR::TestController::platformInitialize):
+        (WTR::TestController::platformDestroy):
+        (WTR::TestController::platformRunUntil):
+        (WTR::TestController::runModal):
+        * WebKitTestRunner/win/TestControllerWin.cpp:
+        (WTR::TestController::platformDestroy):
+        (WTR):
+
 2012-11-22  Sudarsana Nagineni  <sudarsana.nagineni@intel.com>
 
         [EFL][WK2] Enable WKPreferences and AboutBlankLoad API tests
