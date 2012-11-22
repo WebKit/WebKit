@@ -1,3 +1,13 @@
+2012-11-22  Stephen Chenney  <schenney@chromium.org>
+
+        Test expectations update after enabling Skia changes.
+
+        Unreviewed expectations update.
+
+        All the SVG tests. We should now be done.
+
+        * To many files to list.
+
 2012-11-22  Stephen White  <senorblanco@chromium.org>
 
         [Chromium] Unreviewed gardening.  New baselines for test effect-reference-ordering-hw.
