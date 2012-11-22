@@ -52,12 +52,12 @@ void ResourceLoadClientEfl::didInitiateLoadForResource(WKPageRef, WKFrameRef wkF
     bool isMainResource = (WKFrameIsMainFrame(wkFrame) && pageIsProvisionallyLoading);
     WKRetainPtr<WKURLRef> wkUrl(AdoptWK, WKURLRequestCopyURL(wkRequest));
 
-    RefPtr<Ewk_Resource> resource = EwkResource::create(wkUrl.get(), isMainResource);
+    RefPtr<EwkResource> resource = EwkResource::create(wkUrl.get(), isMainResource);
 
     // Keep the resource internally to reuse it later.
     resourceLoadClient->m_loadingResourcesMap.add(resourceIdentifier, resource);
 
-    RefPtr<Ewk_Url_Request> request = EwkUrlRequest::create(wkRequest);
+    RefPtr<EwkUrlRequest> request = EwkUrlRequest::create(wkRequest);
     Ewk_Resource_Request resourceRequest = {resource.get(), request.get(), 0};
     resourceLoadClient->m_viewImpl->smartCallback<ResourceLoadStarted>().call(&resourceRequest);
 }
@@ -66,13 +66,13 @@ void ResourceLoadClientEfl::didSendRequestForResource(WKPageRef, WKFrameRef, uin
 {
     ResourceLoadClientEfl* resourceLoadClient = toResourceLoadClientEfl(clientInfo);
 
-    RefPtr<Ewk_Resource> resource = resourceLoadClient->m_loadingResourcesMap.get(resourceIdentifier);
+    RefPtr<EwkResource> resource = resourceLoadClient->m_loadingResourcesMap.get(resourceIdentifier);
     // Only process if we know about this resource.
     if (!resource)
         return;
 
-    RefPtr<Ewk_Url_Request> request = EwkUrlRequest::create(wkRequest);
-    RefPtr<Ewk_Url_Response> redirectResponse = EwkUrlResponse::create(wkRedirectResponse);
+    RefPtr<EwkUrlRequest> request = EwkUrlRequest::create(wkRequest);
+    RefPtr<EwkUrlResponse> redirectResponse = EwkUrlResponse::create(wkRedirectResponse);
     Ewk_Resource_Request resourceRequest = {resource.get(), request.get(), redirectResponse.get()};
     resourceLoadClient->m_viewImpl->smartCallback<ResourceRequestSent>().call(&resourceRequest);
 }
@@ -81,12 +81,12 @@ void ResourceLoadClientEfl::didReceiveResponseForResource(WKPageRef, WKFrameRef,
 {
     ResourceLoadClientEfl* resourceLoadClient = toResourceLoadClientEfl(clientInfo);
 
-    RefPtr<Ewk_Resource> resource = resourceLoadClient->m_loadingResourcesMap.get(resourceIdentifier);
+    RefPtr<EwkResource> resource = resourceLoadClient->m_loadingResourcesMap.get(resourceIdentifier);
     // Only process if we know about this resource.
     if (!resource)
         return;
 
-    RefPtr<Ewk_Url_Response> response = EwkUrlResponse::create(wkResponse);
+    RefPtr<EwkUrlResponse> response = EwkUrlResponse::create(wkResponse);
     Ewk_Resource_Load_Response resourceLoadResponse = {resource.get(), response.get()};
     resourceLoadClient->m_viewImpl->smartCallback<ResourceLoadResponse>().call(&resourceLoadResponse);
 }
@@ -95,7 +95,7 @@ void ResourceLoadClientEfl::didFinishLoadForResource(WKPageRef, WKFrameRef, uint
 {
     ResourceLoadClientEfl* resourceLoadClient = toResourceLoadClientEfl(clientInfo);
 
-    RefPtr<Ewk_Resource> resource = resourceLoadClient->m_loadingResourcesMap.get(resourceIdentifier);
+    RefPtr<EwkResource> resource = resourceLoadClient->m_loadingResourcesMap.get(resourceIdentifier);
     // Only process if we know about this resource.
     if (!resource)
         return;
@@ -107,12 +107,12 @@ void ResourceLoadClientEfl::didFailLoadForResource(WKPageRef, WKFrameRef, uint64
 {
     ResourceLoadClientEfl* resourceLoadClient = toResourceLoadClientEfl(clientInfo);
 
-    RefPtr<Ewk_Resource> resource = resourceLoadClient->m_loadingResourcesMap.take(resourceIdentifier);
+    RefPtr<EwkResource> resource = resourceLoadClient->m_loadingResourcesMap.take(resourceIdentifier);
     // Only process if we know about this resource.
     if (!resource)
         return;
 
-    OwnPtr<Ewk_Error> ewkError = Ewk_Error::create(wkError);
+    OwnPtr<EwkError> ewkError = EwkError::create(wkError);
     Ewk_Resource_Load_Error resourceLoadError = {resource.get(), ewkError.get()};
     resourceLoadClient->m_viewImpl->smartCallback<ResourceLoadFailed>().call(&resourceLoadError);
     resourceLoadClient->m_viewImpl->smartCallback<ResourceLoadFinished>().call(resource.get());

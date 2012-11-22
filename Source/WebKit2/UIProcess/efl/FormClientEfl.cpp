@@ -43,7 +43,7 @@ void FormClientEfl::willSubmitForm(WKPageRef, WKFrameRef /*frame*/, WKFrameRef /
 {
     FormClientEfl* formClient = toFormClientEfl(clientInfo);
 
-    RefPtr<Ewk_Form_Submission_Request> request = EwkFormSubmissionRequest::create(values, listener);
+    RefPtr<EwkFormSubmissionRequest> request = EwkFormSubmissionRequest::create(values, listener);
     formClient->m_viewImpl->smartCallback<NewFormSubmissionRequest>().call(request.get());
 }
 

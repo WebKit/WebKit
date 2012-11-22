@@ -1,3 +1,46 @@
+2012-11-21  Jinwoo Song  <jinwoo7.song@samsung.com>
+
+        [EFL][WK2] Use consistent class names in the clients
+        https://bugs.webkit.org/show_bug.cgi?id=102684
+
+        Reviewed by Gyuyoung Kim.
+
+        WebKit EFL classes do not use '_' since r135117 but '_' is still remained
+        in some clients classes. This patch removed the '_' to make class names
+        to be consistent.
+
+        * UIProcess/efl/ContextHistoryClientEfl.cpp:
+        (WebKit::ContextHistoryClientEfl::didNavigateWithNavigationData):
+        * UIProcess/efl/DownloadManagerEfl.cpp:
+        (WebKit::DownloadManagerEfl::didFail):
+        * UIProcess/efl/FormClientEfl.cpp:
+        (WebKit::FormClientEfl::willSubmitForm):
+        * UIProcess/efl/PageLoadClientEfl.cpp:
+        (WebKit::PageLoadClientEfl::didReceiveIntentForFrame):
+        (WebKit::PageLoadClientEfl::registerIntentServiceForFrame):
+        (WebKit::PageLoadClientEfl::didFailLoadWithErrorForFrame):
+        (WebKit::PageLoadClientEfl::didFailProvisionalLoadWithErrorForFrame):
+        (WebKit::PageLoadClientEfl::didReceiveAuthenticationChallengeInFrame):
+        * UIProcess/efl/PagePolicyClientEfl.cpp:
+        (WebKit::PagePolicyClientEfl::decidePolicyForNavigationAction):
+        (WebKit::PagePolicyClientEfl::decidePolicyForNewWindowAction):
+        * UIProcess/efl/PageUIClientEfl.cpp:
+        (WebKit::PageUIClientEfl::runOpenPanel):
+        * UIProcess/efl/RequestManagerClientEfl.cpp:
+        (WebKit::EwkUrlSchemeHandler::EwkUrlSchemeHandler):
+        (WebKit::RequestManagerClientEfl::didReceiveURIRequest):
+        (WebKit::RequestManagerClientEfl::registerURLSchemeHandler):
+        * UIProcess/efl/RequestManagerClientEfl.h:
+        (RequestManagerClientEfl):
+        * UIProcess/efl/ResourceLoadClientEfl.cpp:
+        (WebKit::ResourceLoadClientEfl::didInitiateLoadForResource):
+        (WebKit::ResourceLoadClientEfl::didSendRequestForResource):
+        (WebKit::ResourceLoadClientEfl::didReceiveResponseForResource):
+        (WebKit::ResourceLoadClientEfl::didFinishLoadForResource):
+        (WebKit::ResourceLoadClientEfl::didFailLoadForResource):
+        * UIProcess/efl/ResourceLoadClientEfl.h:
+        (ResourceLoadClientEfl):
+
 2012-11-21  Jaehun Lim  <ljaehun.lim@samsung.com>
 
         [EFL][WK2] Remove #include "ewk_view_private.h" in PageViewportControllerClientEfl.cpp

@@ -59,7 +59,7 @@ void PageLoadClientEfl::didReceiveTitleForFrame(WKPageRef, WKStringRef title, WK
 void PageLoadClientEfl::didReceiveIntentForFrame(WKPageRef, WKFrameRef, WKIntentDataRef intent, WKTypeRef, const void* clientInfo)
 {
     EwkViewImpl* viewImpl = toPageLoadClientEfl(clientInfo)->viewImpl();
-    RefPtr<Ewk_Intent> ewkIntent = EwkIntent::create(intent);
+    RefPtr<EwkIntent> ewkIntent = EwkIntent::create(intent);
     viewImpl->smartCallback<IntentRequest>().call(ewkIntent.get());
 }
 #endif
@@ -68,7 +68,7 @@ void PageLoadClientEfl::didReceiveIntentForFrame(WKPageRef, WKFrameRef, WKIntent
 void PageLoadClientEfl::registerIntentServiceForFrame(WKPageRef, WKFrameRef, WKIntentServiceInfoRef serviceInfo, WKTypeRef, const void* clientInfo)
 {
     EwkViewImpl* viewImpl = toPageLoadClientEfl(clientInfo)->viewImpl();
-    RefPtr<Ewk_Intent_Service> ewkIntentService = EwkIntentService::create(serviceInfo);
+    RefPtr<EwkIntentService> ewkIntentService = EwkIntentService::create(serviceInfo);
     viewImpl->smartCallback<IntentServiceRegistration>().call(ewkIntentService.get());
 }
 #endif
@@ -95,7 +95,7 @@ void PageLoadClientEfl::didFailLoadWithErrorForFrame(WKPageRef, WKFrameRef frame
         return;
 
     EwkViewImpl* viewImpl = toPageLoadClientEfl(clientInfo)->viewImpl();
-    OwnPtr<Ewk_Error> ewkError = Ewk_Error::create(error);
+    OwnPtr<EwkError> ewkError = EwkError::create(error);
     viewImpl->smartCallback<LoadError>().call(ewkError.get());
     viewImpl->smartCallback<LoadFinished>().call();
 }
@@ -126,7 +126,7 @@ void PageLoadClientEfl::didFailProvisionalLoadWithErrorForFrame(WKPageRef, WKFra
         return;
 
     EwkViewImpl* viewImpl = toPageLoadClientEfl(clientInfo)->viewImpl();
-    OwnPtr<Ewk_Error> ewkError = Ewk_Error::create(error);
+    OwnPtr<EwkError> ewkError = EwkError::create(error);
     viewImpl->smartCallback<ProvisionalLoadFailed>().call(ewkError.get());
 }
 
@@ -166,7 +166,7 @@ void PageLoadClientEfl::didReceiveAuthenticationChallengeInFrame(WKPageRef, WKFr
 {
     EwkViewImpl* viewImpl = toPageLoadClientEfl(clientInfo)->viewImpl();
 
-    RefPtr<Ewk_Auth_Request> authenticationRequest = EwkAuthRequest::create(toImpl(authenticationChallenge));
+    RefPtr<EwkAuthRequest> authenticationRequest = EwkAuthRequest::create(toImpl(authenticationChallenge));
     viewImpl->smartCallback<AuthenticationRequest>().call(authenticationRequest.get());
 }
 

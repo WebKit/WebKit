@@ -51,7 +51,7 @@ private:
     static void didReceiveURIRequest(WKSoupRequestManagerRef, WKURLRef, WKPageRef, uint64_t requestID, const void* clientInfo);
 
     WKRetainPtr<WKSoupRequestManagerRef> m_soupRequestManager;
-    HashMap<String, class Ewk_Url_Scheme_Handler> m_urlSchemeHandlers;
+    HashMap<String, class EwkUrlSchemeHandler> m_urlSchemeHandlers;
 };
 
 } // namespace WebKit

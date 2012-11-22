@@ -179,7 +179,7 @@ void PageUIClientEfl::setWindowFrame(WKPageRef, WKRect frame, const void* client
 void PageUIClientEfl::runOpenPanel(WKPageRef, WKFrameRef, WKOpenPanelParametersRef parameters, WKOpenPanelResultListenerRef listener, const void* clientInfo)
 {
     EwkViewImpl* viewImpl = toPageUIClientEfl(clientInfo)->m_viewImpl;
-    RefPtr<Ewk_File_Chooser_Request> fileChooserRequest = EwkFileChooserRequest::create(toImpl(parameters), toImpl(listener));
+    RefPtr<EwkFileChooserRequest> fileChooserRequest = EwkFileChooserRequest::create(toImpl(parameters), toImpl(listener));
     viewImpl->smartCallback<FileChooserRequest>().call(fileChooserRequest.get());
 }
 

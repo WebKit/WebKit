@@ -53,7 +53,7 @@ void ContextHistoryClientEfl::didNavigateWithNavigationData(WKContextRef, WKPage
     if (!historyClient->m_navigate)
         return;
 
-    RefPtr<Ewk_Navigation_Data> navigationDataEwk = EwkNavigationData::create(navigationData);
+    RefPtr<EwkNavigationData> navigationDataEwk = EwkNavigationData::create(navigationData);
     historyClient->m_navigate(EwkViewImpl::viewFromPageViewMap(page), navigationDataEwk.get(), historyClient->m_userData);
 }
 

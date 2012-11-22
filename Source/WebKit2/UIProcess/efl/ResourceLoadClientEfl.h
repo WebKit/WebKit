@@ -56,7 +56,7 @@ private:
     static void onViewProvisionalLoadStarted(void* userData, Evas_Object* view, void* clientInfo);
 
     EwkViewImpl* m_viewImpl;
-    HashMap< uint64_t, RefPtr<Ewk_Resource> > m_loadingResourcesMap;
+    HashMap< uint64_t, RefPtr<EwkResource> > m_loadingResourcesMap;
 };
 
 } // namespace WebKit
