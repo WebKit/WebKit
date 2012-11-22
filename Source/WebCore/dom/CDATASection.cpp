@@ -27,7 +27,7 @@
 namespace WebCore {
 
 inline CDATASection::CDATASection(Document* document, const String& data)
-    : Text(document, data)
+    : Text(document, data, CreateText)
 {
 }
 

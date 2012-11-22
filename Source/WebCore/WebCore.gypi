@@ -3841,8 +3841,6 @@
             'dom/DocumentType.cpp',
             'dom/DynamicNodeList.cpp',
             'dom/DynamicNodeList.h',
-            'dom/EditingText.cpp',
-            'dom/EditingText.h',
             'dom/ElementShadow.cpp',
             'dom/Element.cpp',
             'dom/ElementAttributeData.cpp',

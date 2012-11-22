@@ -42,7 +42,12 @@ namespace WebCore {
 
 PassRefPtr<Text> Text::create(Document* document, const String& data)
 {
-    return adoptRef(new Text(document, data));
+    return adoptRef(new Text(document, data, CreateText));
+}
+
+PassRefPtr<Text> Text::createEditingText(Document* document, const String& data)
+{
+    return adoptRef(new Text(document, data, CreateEditingText));
 }
 
 PassRefPtr<Text> Text::splitText(unsigned offset, ExceptionCode& ec)
@@ -192,6 +197,8 @@ PassRefPtr<Node> Text::cloneNode(bool /*deep*/)
 
 bool Text::rendererIsNeeded(const NodeRenderingContext& context)
 {
+    if (isEditingText())
+        return true;
     if (!CharacterData::rendererIsNeeded(context))
         return false;
 

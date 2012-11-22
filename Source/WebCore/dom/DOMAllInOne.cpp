@@ -68,7 +68,6 @@
 #include "DocumentParser.cpp"
 #include "DocumentType.cpp"
 #include "DynamicNodeList.cpp"
-#include "EditingText.cpp"
 #include "Element.cpp"
 #include "ElementAttributeData.cpp"
 #include "ElementShadow.cpp"

@@ -40,7 +40,6 @@
 #include "DOMWindow.h"
 #include "CachedResourceLoader.h"
 #include "DocumentType.h"
-#include "EditingText.h"
 #include "EditorClient.h"
 #include "EventNames.h"
 #include "FloatQuad.h"

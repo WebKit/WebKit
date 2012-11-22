@@ -43,7 +43,6 @@
 #include "DictationCommand.h"
 #include "DocumentFragment.h"
 #include "DocumentMarkerController.h"
-#include "EditingText.h"
 #include "EditorClient.h"
 #include "EventHandler.h"
 #include "EventNames.h"

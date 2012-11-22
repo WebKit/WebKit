@@ -138,7 +138,7 @@ public:
     }
 private:
     SVGShadowText(Document* document, const String& data)
-        : Text(document, data)
+        : Text(document, data, CreateText)
     {
         setHasCustomCallbacks();
     }

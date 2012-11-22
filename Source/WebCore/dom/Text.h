@@ -33,6 +33,7 @@ public:
 
     static PassRefPtr<Text> create(Document*, const String&);
     static PassRefPtr<Text> createWithLengthLimit(Document*, const String&, unsigned positionInString, unsigned lengthLimit = defaultLengthLimit);
+    static PassRefPtr<Text> createEditingText(Document*, const String&);
 
     PassRefPtr<Text> splitText(unsigned offset, ExceptionCode&);
 
@@ -48,8 +49,8 @@ public:
     virtual bool canContainRangeEndPoint() const { return true; }
 
 protected:
-    Text(Document* document, const String& data)
-        : CharacterData(document, data, CreateText)
+    Text(Document* document, const String& data, ConstructionType type)
+        : CharacterData(document, data, type)
     {
     }
 

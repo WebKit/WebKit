@@ -1146,7 +1146,6 @@ SET(WebCore_SOURCES
     dom/DocumentStyleSheetCollection.cpp
     dom/DocumentType.cpp
     dom/DynamicNodeList.cpp
-    dom/EditingText.cpp
     dom/Element.cpp
     dom/ElementAttributeData.cpp
     dom/ElementRareData.cpp

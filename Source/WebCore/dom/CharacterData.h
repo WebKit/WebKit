@@ -54,7 +54,7 @@ protected:
         : Node(document, type)
         , m_data(!text.isNull() ? text : emptyString())
     {
-        ASSERT(type == CreateOther || type == CreateText);
+        ASSERT(type == CreateOther || type == CreateText || type == CreateEditingText);
     }
 
     virtual bool rendererIsNeeded(const NodeRenderingContext&);

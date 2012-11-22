@@ -28,7 +28,6 @@
 
 #include "AXObjectCache.h"
 #include "Document.h"
-#include "EditingText.h"
 #include "Editor.h"
 #include "Frame.h"
 #include "HTMLBRElement.h"

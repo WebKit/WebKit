@@ -1,3 +1,50 @@
+2012-11-22  Antti Koivisto  <antti@apple.com>
+
+        Merge EditingText into Text
+        https://bugs.webkit.org/show_bug.cgi?id=103060
+
+        Reviewed by Ryosuke Niwa.
+
+        Remove the EditingText class. Its only function beyond the regular Text is that it always creates a renderer.
+        It can be replaced with a bit.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/CDATASection.cpp:
+        (WebCore::CDATASection::CDATASection):
+        * dom/Document.cpp:
+        (WebCore::Document::createEditingTextNode):
+        * dom/Document.h:
+        (WebCore):
+        (Document):
+        * dom/EditingText.cpp: Removed.
+        * dom/EditingText.h: Removed.
+        * dom/Node.h:
+        (WebCore::Node::hasName):
+        (WebCore::Node::isEditingText):
+        (WebCore::Node::setHasName):
+        
+            Use the same bit as hasName() which is Element specific.
+
+        * dom/Text.cpp:
+        (WebCore::Text::create):
+        (WebCore):
+        (WebCore::Text::createEditingText):
+        (WebCore::Text::rendererIsNeeded):
+        * dom/Text.h:
+        (Text):
+        (WebCore::Text::Text):
+        * editing/Editor.cpp:
+        * editing/InsertTextCommand.cpp:
+        * editing/ReplaceSelectionCommand.cpp:
+        * editing/htmlediting.cpp:
+        * editing/mac/EditorMac.mm:
+        * page/Frame.cpp:
+
 2012-11-22  Eugene Klyuchnikov  <eustas.bug@gmail.com>
 
         Web Inspector: Timeline: Disclosure arrows rendered underneath frame boundaries

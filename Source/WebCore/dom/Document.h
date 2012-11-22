@@ -81,7 +81,6 @@ class DocumentStyleSheetCollection;
 class DocumentType;
 class DocumentWeakReference;
 class DynamicNodeListCacheBase;
-class EditingText;
 class Element;
 class ElementAttributeData;
 class EntityReference;
@@ -525,7 +524,7 @@ public:
 
     // Special support for editing
     PassRefPtr<CSSStyleDeclaration> createCSSStyleDeclaration();
-    PassRefPtr<EditingText> createEditingTextNode(const String&);
+    PassRefPtr<Text> createEditingTextNode(const String&);
 
     void recalcStyle(StyleChange = NoChange);
     bool childNeedsAndNotInStyleRecalc();

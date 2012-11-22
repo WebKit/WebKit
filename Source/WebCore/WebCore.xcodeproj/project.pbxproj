@@ -1770,8 +1770,6 @@
 		6550B6A0099DF0270090D781 /* CharacterData.h in Headers */ = {isa = PBXBuildFile; fileRef = 6550B696099DF0270090D781 /* CharacterData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6550B6A1099DF0270090D781 /* Comment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6550B697099DF0270090D781 /* Comment.cpp */; };
 		6550B6A2099DF0270090D781 /* Comment.h in Headers */ = {isa = PBXBuildFile; fileRef = 6550B698099DF0270090D781 /* Comment.h */; };
-		6550B6A3099DF0270090D781 /* EditingText.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6550B699099DF0270090D781 /* EditingText.cpp */; };
-		6550B6A4099DF0270090D781 /* EditingText.h in Headers */ = {isa = PBXBuildFile; fileRef = 6550B69A099DF0270090D781 /* EditingText.h */; };
 		6550B6A5099DF0270090D781 /* Text.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6550B69B099DF0270090D781 /* Text.cpp */; };
 		6550B6A6099DF0270090D781 /* Text.h in Headers */ = {isa = PBXBuildFile; fileRef = 6550B69C099DF0270090D781 /* Text.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		65653F2D0D9727D200CA9723 /* SVGAltGlyphElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65653F2A0D9727D200CA9723 /* SVGAltGlyphElement.cpp */; };
@@ -9018,8 +9016,6 @@
 		6550B696099DF0270090D781 /* CharacterData.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CharacterData.h; sourceTree = "<group>"; };
 		6550B697099DF0270090D781 /* Comment.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Comment.cpp; sourceTree = "<group>"; };
 		6550B698099DF0270090D781 /* Comment.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Comment.h; sourceTree = "<group>"; };
-		6550B699099DF0270090D781 /* EditingText.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = EditingText.cpp; sourceTree = "<group>"; };
-		6550B69A099DF0270090D781 /* EditingText.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = EditingText.h; sourceTree = "<group>"; };
 		6550B69B099DF0270090D781 /* Text.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Text.cpp; sourceTree = "<group>"; };
 		6550B69C099DF0270090D781 /* Text.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Text.h; sourceTree = "<group>"; };
 		65653F2A0D9727D200CA9723 /* SVGAltGlyphElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGAltGlyphElement.cpp; sourceTree = "<group>"; };
@@ -21891,8 +21887,6 @@
 				05FD69DF12845D4300B2BEB3 /* DOMTimeStamp.h */,
 				BC7FA61E0D1F0CBD00DB22A9 /* DynamicNodeList.cpp */,
 				BC7FA61F0D1F0CBD00DB22A9 /* DynamicNodeList.h */,
-				6550B699099DF0270090D781 /* EditingText.cpp */,
-				6550B69A099DF0270090D781 /* EditingText.h */,
 				A8C4A7F609D563270003AC8D /* Element.cpp */,
 				A8C4A7F509D563270003AC8D /* Element.h */,
 				93EEC1EA09C2877700C515D1 /* Element.idl */,
@@ -23541,7 +23535,6 @@
 				4F1534E011B533020021FD86 /* EditingBehaviorTypes.h in Headers */,
 				3AC648B2129E146500C3EB25 /* EditingBoundary.h in Headers */,
 				9BAB6C6C12550631001626D4 /* EditingStyle.h in Headers */,
-				6550B6A4099DF0270090D781 /* EditingText.h in Headers */,
 				4B3043CD0AE0373B00A82647 /* Editor.h in Headers */,
 				1AF326790D78B9440068F0C4 /* EditorClient.h in Headers */,
 				4BAE95B10B2FA9CE00AED8A0 /* EditorDeleteAction.h in Headers */,
@@ -26805,7 +26798,6 @@
 				FD6ED2C3136B8E42003CF072 /* DynamicsCompressorNode.cpp in Sources */,
 				93309DE3099E64920056E581 /* EditCommand.cpp in Sources */,
 				9BAB6C6D12550631001626D4 /* EditingStyle.cpp in Sources */,
-				6550B6A3099DF0270090D781 /* EditingText.cpp in Sources */,
 				4B3043CC0AE0373B00A82647 /* Editor.cpp in Sources */,
 				93A38B4B0D0E5808006872C2 /* EditorCommand.cpp in Sources */,
 				ED501DC60B249F2900AE18D9 /* EditorMac.mm in Sources */,

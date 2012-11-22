@@ -57,7 +57,6 @@
 #include "DocumentMarkerController.h"
 #include "DocumentStyleSheetCollection.h"
 #include "DocumentType.h"
-#include "EditingText.h"
 #include "Editor.h"
 #include "Element.h"
 #include "ElementShadow.h"
@@ -918,9 +917,9 @@ PassRefPtr<EntityReference> Document::createEntityReference(const String& name, 
     return EntityReference::create(this, name);
 }
 
-PassRefPtr<EditingText> Document::createEditingTextNode(const String& text)
+PassRefPtr<Text> Document::createEditingTextNode(const String& text)
 {
-    return EditingText::create(this, text);
+    return Text::createEditingText(this, text);
 }
 
 PassRefPtr<CSSStyleDeclaration> Document::createCSSStyleDeclaration()
