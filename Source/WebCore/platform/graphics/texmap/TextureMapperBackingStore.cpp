@@ -96,7 +96,7 @@ void TextureMapperTiledBackingStore::updateContentsFromImageIfNeeded(TextureMapp
     if (!m_image)
         return;
 
-    updateContents(textureMapper, m_image.get(), BitmapTexture::UpdateCannotModifyOriginalImageData);
+    updateContents(textureMapper, m_image.get(), m_image->size(), m_image->rect(), BitmapTexture::UpdateCannotModifyOriginalImageData);
     m_image.clear();
 }
 

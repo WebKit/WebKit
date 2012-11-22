@@ -88,23 +88,22 @@ private:
 
 class TextureMapperTiledBackingStore : public TextureMapperBackingStore {
 public:
-    void updateContentsFromLayer(TextureMapper*, GraphicsLayer*, const IntRect&);
-    virtual ~TextureMapperTiledBackingStore() { }
-    virtual void paintToTextureMapper(TextureMapper*, const FloatRect&, const TransformationMatrix&, float, BitmapTexture*);
-    virtual PassRefPtr<BitmapTexture> texture() const;
-    void updateContents(TextureMapper*, Image*, const FloatSize&, const IntRect&, BitmapTexture::UpdateContentsFlag);
-    void updateContents(TextureMapper* textureMapper, Image* image, BitmapTexture::UpdateContentsFlag updateContentsFlag) { updateContents(textureMapper, image, image->size(), image->rect(), updateContentsFlag); }
-    inline FloatRect rect() const { return FloatRect(FloatPoint::zero(), m_size); }
     static PassRefPtr<TextureMapperTiledBackingStore> create() { return adoptRef(new TextureMapperTiledBackingStore); }
-    void setContentsToImage(Image* image) { m_image = image; }
-    void updateContentsFromImageIfNeeded(TextureMapper*);
+    virtual ~TextureMapperTiledBackingStore() { }
 
+    virtual PassRefPtr<BitmapTexture> texture() const OVERRIDE;
+    virtual void paintToTextureMapper(TextureMapper*, const FloatRect&, const TransformationMatrix&, float, BitmapTexture*) OVERRIDE;
+    void updateContents(TextureMapper*, Image*, const FloatSize&, const IntRect&, BitmapTexture::UpdateContentsFlag);
+
+    void setContentsToImage(Image* image) { m_image = image; }
     void setShowDebugBorders(bool drawsDebugBorders) { m_drawsDebugBorders = drawsDebugBorders; }
     void setDebugBorder(const Color&, float width);
 
 private:
     TextureMapperTiledBackingStore();
     void createOrDestroyTilesIfNeeded(const FloatSize& backingStoreSize, const IntSize& tileSize, bool hasAlpha);
+    void updateContentsFromImageIfNeeded(TextureMapper*);
+    inline FloatRect rect() const { return FloatRect(FloatPoint::zero(), m_size); }
 
     Vector<TextureMapperTile> m_tiles;
     FloatSize m_size;
