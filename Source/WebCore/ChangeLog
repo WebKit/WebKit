@@ -1,5 +1,25 @@
 2012-11-22  Kentaro Hara  <haraken@chromium.org>
 
+        Rename the "eden" bit to something more descriptive
+        https://bugs.webkit.org/show_bug.cgi?id=102985
+
+        Reviewed by Adam Barth.
+
+        InEdenFlag is not descriptive. Per the discussion in IRC,
+        we rename InEdenFlag to V8CollectableDuringMinorGCFlag.
+
+        No tests. No change in behavior.
+
+        * bindings/v8/V8GCController.cpp:
+        (WebCore::gcTree):
+        (WebCore::V8GCController::didCreateWrapperForNode):
+        (WebCore::V8GCController::minorGCPrologue):
+        * dom/Node.h:
+        (WebCore::Node::isV8CollectableDuringMinorGC):
+        (WebCore::Node::setV8CollectableDuringMinorGC):
+
+2012-11-22  Kentaro Hara  <haraken@chromium.org>
+
         [V8] Move AddMessageListener() from WorkerContextExecutionProxy::initializeIfNeeded() to WorkerContextExecutionProxy::initIsolate()
         https://bugs.webkit.org/show_bug.cgi?id=102998
 

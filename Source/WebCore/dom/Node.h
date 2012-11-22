@@ -356,8 +356,8 @@ public:
     bool hasEventTargetData() const { return getFlag(HasEventTargetDataFlag); }
     void setHasEventTargetData(bool flag) { setFlag(flag, HasEventTargetDataFlag); }
 
-    bool inEden() const { return getFlag(InEdenFlag); }
-    void setEden(bool flag) { setFlag(flag, InEdenFlag); }
+    bool isV8CollectableDuringMinorGC() const { return getFlag(V8CollectableDuringMinorGCFlag); }
+    void setV8CollectableDuringMinorGC(bool flag) { setFlag(flag, V8CollectableDuringMinorGCFlag); }
 
     enum ShouldSetAttached {
         SetAttached,
@@ -724,7 +724,7 @@ private:
         HasCustomCallbacksFlag = 1 << 25,
         HasScopedHTMLStyleChildFlag = 1 << 26,
         HasEventTargetDataFlag = 1 << 27,
-        InEdenFlag = 1 << 28,
+        V8CollectableDuringMinorGCFlag = 1 << 28,
         IsInsertionPointFlag = 1 << 29,
 
 #if ENABLE(SVG)
