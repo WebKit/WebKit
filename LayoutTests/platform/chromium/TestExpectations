@@ -4220,3 +4220,5 @@ webkit.org/b/61138 http/tests/w3c/webperf/submission/resource-timing [ Skip ]
 
 webkit.org/b/103062 [ Debug ] fast/canvas/canvas-strokePath-gradient-shadow.html [ Crash ]
 webkit.org/b/103062 [ Debug ] fast/canvas/canvas-strokeRect-gradient-shadow.html [ Crash ]
+
+webkit.org/b/103093 [ MountainLion ] media/video-preload.html [ Crash ]

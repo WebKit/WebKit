@@ -1,5 +1,13 @@
 2012-11-22  Robert Kroeger  <rjkroege@chromium.org>
 
+        Unreviewed gardening: Updated test expectations for MountainLion crash in
+        media/video-preload.html.
+        https://bugs.webkit.org/show_bug.cgi?id=103093
+
+        * platform/chromium/TestExpectations:
+
+2012-11-22  Robert Kroeger  <rjkroege@chromium.org>
+
         [Chromium] Unreviwed gardening. Updated test expectations for failure
         in complex-joining-using-gpos.html
         https://bugs.webkit.org/show_bug.cgi?id=101377
