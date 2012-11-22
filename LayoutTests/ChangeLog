@@ -1,3 +1,21 @@
+2012-11-21  Hajime Morrita  <morrita@google.com>
+
+        [Shadow DOM] Implement Element::createShadowRoot()
+        https://bugs.webkit.org/show_bug.cgi?id=102911
+
+        Reviewed by Kentaro Hara.
+
+        The coverage might not seem comprehensive at a glance. However,
+        this is just an alias of ShadowRoot constructor and there are
+        bunch of test cases which cover it.
+
+        As bug 102913 will convert such callsites to use createShadowRoot(),
+        the API will get be covered well then.
+
+        * fast/dom/shadow/shadow-aware-create-shdow-root-expected.txt: Added.
+        * fast/dom/shadow/shadow-aware-create-shdow-root.html: Added.
+          Further ShadowAware API will come here.
+
 2012-11-21  Dana Jansens  <danakj@chromium.org>
 
         Remove crashing expectation for css3/filters/effect-reference-ordering-hw.html

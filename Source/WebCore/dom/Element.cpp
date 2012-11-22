@@ -1429,6 +1429,11 @@ ElementShadow* Element::ensureShadow()
     return data->m_shadow.get();
 }
 
+PassRefPtr<ShadowRoot> Element::createShadowRoot(ExceptionCode& ec)
+{
+    return ShadowRoot::create(this, ec);
+}
+
 ShadowRoot* Element::userAgentShadowRoot() const
 {
     if (ElementShadow* elementShadow = shadow()) {
