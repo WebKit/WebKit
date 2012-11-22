@@ -1,14 +1,14 @@
-layer at (0,0) size 800x34529475
+layer at (0,0) size 800x24931612
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x34529475 backgroundClip at (0,0) size 800x17895697 clip at (0,0) size 800x17895697 outlineClip at (0,0) size 800x17895697
-  RenderBlock {HTML} at (0,0) size 800x34529476
-    RenderBody {BODY} at (8,8) size 784x34529460
-      RenderBlock {DIV} at (0,0) size 784x11509821
-      RenderBlock {DIV} at (0,11509823) size 784x23019637
-      RenderBlock {DIV} at (0,34529461) size 784x1
-layer at (10,10) size 161x11509817 clip at (11,11) size 159x11509815
-  RenderTextControl {TEXTAREA} at (2,1) size 161x11509818 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+layer at (0,0) size 800x24931612 backgroundClip at (0,0) size 800x16777216 clip at (0,0) size 800x16777216 outlineClip at (0,0) size 800x16777216
+  RenderBlock {HTML} at (0,0) size 800x24931612
+    RenderBody {BODY} at (8,8) size 784x24931596
+      RenderBlock {DIV} at (0,0) size 784x24931594
+      RenderBlock {DIV} at (0,24931596) size 784x0
+      RenderBlock {DIV} at (0,24931598) size 784x0
+layer at (10,10) size 161x24931590 backgroundClip at (10,10) size 161x16777206 clip at (11,11) size 159x16777205 outlineClip at (0,0) size 800x16777216
+  RenderTextControl {TEXTAREA} at (2,2) size 161x24931590 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 155x13
-layer at (8,11509831) size 784x11509817 backgroundClip at (8,11509831) size 784x6385866 clip at (9,11509832) size 782x6385865 outlineClip at (0,0) size 800x17895697
-  RenderTextControl {TEXTAREA} at (0,0) size 784x11509818 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
-    RenderBlock {DIV} at (3,3) size 778x13
+layer at (10,-17245668) size 161x24931590 backgroundClip at (10,0) size 161x7685922 clip at (11,0) size 159x7685921 outlineClip at (0,0) size 800x16777216
+  RenderTextControl {TEXTAREA} at (2,24931592) size 161x-42177274 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
+    RenderBlock {DIV} at (3,3) size 155x13

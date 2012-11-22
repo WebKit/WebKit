@@ -2681,7 +2681,7 @@ crbug.com/74497 platform/win/plugins/windowless-paint-rect-coordinates.html [ Fa
 webkit.org/b/55300 fast/images/support-broken-image-delegate.html [ Failure ]
 
 # introduced by Dave Hyatt in WK r80582
-crbug.com/75561 [ Android Linux Win ] fast/writing-mode/text-orientation-basic.html [ Failure ]
+crbug.com/75561 [ Android Linux ] fast/writing-mode/text-orientation-basic.html [ Failure ]
 
 webkit.org/b/56060 [ Linux ] fast/images/favicon-as-image.html [ Failure ]
 
@@ -2756,7 +2756,7 @@ crbug.com/78998 [ Debug ] fast/frames/frame-element-name.html [ Failure Pass ]
 webkit.org/b/58193 [ Win7 ] http/tests/local/fileapi/send-sliced-dragged-file.html [ Failure Pass Timeout ]
 
 # Regression caused by r83514.
-crbug.com/79110 [ Android Linux Win ] fast/overflow/infiniteRecursionGuard.html [ Failure ]
+crbug.com/79110 [ Android Linux ] fast/overflow/infiniteRecursionGuard.html [ Failure ]
 
 # Regression caused by r83628.
 crbug.com/79241 http/tests/misc/favicon-loads-with-icon-loading-override.html [ Failure ]
