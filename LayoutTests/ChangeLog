@@ -1,5 +1,15 @@
 2012-11-22  Stephen Chenney  <schenney@chromium.org>
 
+        Chromium expectations fix.
+
+        Unreviewed removal of bad expectations.
+
+        * platform/chromium/svg/animations/animate-text-nested-transforms-expected.txt: Removed.
+        * platform/chromium/svg/custom/getscreenctm-in-mixed-content2-expected.txt: Removed.
+        * platform/chromium/svg/custom/svg-fonts-in-text-controls-expected.txt: Removed.
+
+2012-11-22  Stephen Chenney  <schenney@chromium.org>
+
         [Chromium] Test expectations update after enabling Skia changes.
 
         Unreviewed Chromium expectations update.
