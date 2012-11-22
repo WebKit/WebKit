@@ -1,3 +1,15 @@
+2012-09-26  Gustavo Noronha Silva  <gns@gnome.org>
+
+        [GTK] Split SVG from WebCore to work-around make limitation
+        https://bugs.webkit.org/show_bug.cgi?id=97735
+
+        Reviewed by Carlos Garcia Campos.
+
+        Add a new libtool convenience library, libWebCoreSVG.la, to work-around
+        make limitation when linking libWebCore.
+
+        * GNUmakefile.am: variables for the new library.
+
 2012-11-22  Simon Hausmann  <simon.hausmann@digia.com>, Pierre Rossi <pierre.rossi@digia.com>
 
         [Qt] Separate QWidget dependant code into separate WebKitWidgets static library

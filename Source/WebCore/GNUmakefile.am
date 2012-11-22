@@ -274,6 +274,31 @@ DerivedSources/WebCore/MathMLElementFactory.cpp DerivedSources/WebCore/MathMLNam
 # FIXME: allow a more fine-grained inclusion/generation of sources per SVG feature
 # ----
 if ENABLE_SVG
+nodist_libWebCoreSVG_la_SOURCES = \
+	$(webcore_svg_built_sources)
+
+libWebCoreSVG_la_SOURCES = \
+	$(webcore_svg_sources)
+
+libWebCoreSVG_la_CXXFLAGS = \
+	$(SYMBOL_VISIBILITY_INLINES) \
+	$(global_cxxflags)
+
+libWebCoreSVG_la_CFLAGS = \
+	$(SYMBOL_VISIBILITY) \
+	$(global_cflags)
+
+libWebCoreSVG_la_CPPFLAGS = \
+	-DBUILDING_WebCore \
+	-DBUILDING_WEBKIT \
+	$(global_cppflags) \
+	$(webcore_cppflags) \
+	$(webcoregtk_cppflags) \
+	$(javascriptcore_cppflags) \
+	-fno-strict-aliasing \
+	$(CAIRO_CFLAGS) \
+	$(LIBSOUP_CFLAGS)
+
 feature_defines_overrides += ENABLE_SVG=1
 WEBCORE_CSS_PROPERTY_NAMES += $(WebCore)/css/SVGCSSPropertyNames.in
 WEBCORE_CSS_VALUE_KEYWORDS += $(WebCore)/css/SVGCSSValueKeywords.in
@@ -605,6 +630,11 @@ noinst_LTLIBRARIES += \
 	libWebCoreModules.la \
 	libWebCore.la
 
+if ENABLE_SVG
+noinst_LTLIBRARIES += \
+	libWebCoreSVG.la
+endif
+
 # Artificial dependency to try to force a relink of the WebCore libraries
 # When their makefiles change.
 webcore_lib_for_dep = libWebCore.la
@@ -615,6 +645,9 @@ $(webcoremodules_lib_for_dep): $(srcdir)/Source/WebCore/GNUmakefile.am $(srcdir)
 
 webcoreplatform_lib_for_dep = libWebcorePlatform.la
 $(webcoreplatform_lib_for_dep): $(srcdir)/Source/WebCore/GNUmakefile.am $(srcdir)/Source/WebCore/GNUmakefile.list.am
+
+webcoresvg_lib_for_dep = libWebCoreSVG.la
+$(webcoresvg_lib_for_dep): $(srcdir)/Source/WebCore/GNUmakefile.am $(srcdir)/Source/WebCore/GNUmakefile.list.am
 
 nodist_EXTRA_libWebCore_la_SOURCES = \
 	$(webcore_built_nosources)
