@@ -1,5 +1,11 @@
 2012-11-21  Kent Tamura  <tkent@chromium.org>
 
+        [Chromium] Correct svn:mime-type for platform/chromium-win/**/*.png
+
+        * <Omit the file list>
+
+2012-11-21  Kent Tamura  <tkent@chromium.org>
+
         [Chromium] Correct svn:mime-type for platform/chromium-mac/**/*.png
 
         * <Omit the file list>
