@@ -55,62 +55,10 @@ using namespace WTF;
 namespace BlackBerry {
 namespace WebKit {
 
-static bool hasMouseMoveListener(Element* element)
-{
-    ASSERT(element);
-    return element->hasEventListeners(eventNames().mousemoveEvent) || element->document()->hasEventListeners(eventNames().mousemoveEvent);
-}
-
-static bool hasTouchListener(Element* element)
-{
-    ASSERT(element);
-    return element->hasEventListeners(eventNames().touchstartEvent)
-        || element->hasEventListeners(eventNames().touchmoveEvent)
-        || element->hasEventListeners(eventNames().touchcancelEvent)
-        || element->hasEventListeners(eventNames().touchendEvent);
-}
-
-static bool isRangeControlElement(Element* element)
-{
-    ASSERT(element);
-    if (!element->hasTagName(HTMLNames::inputTag))
-        return false;
-
-    HTMLInputElement* inputElement = static_cast<HTMLInputElement*>(element);
-    return inputElement->isRangeControl();
-}
-
-static bool shouldConvertTouchToMouse(Element* element)
-{
-    if (!element)
-        return false;
-
-    if ((element->hasTagName(HTMLNames::objectTag) || element->hasTagName(HTMLNames::embedTag)) && static_cast<HTMLPlugInElement*>(element))
-        return true;
-
-    // Input Range element is a special case that requires natural mouse events
-    // in order to allow dragging of the slider handle.
-    // Input Range element might appear in the webpage, or it might appear in the shadow tree,
-    // like the timeline and volume media controls all use Input Range.
-    // won't operate on the shadow node of other element type, because the webpages
-    // aren't able to attach listeners to shadow content.
-    do {
-        if (isRangeControlElement(element))
-            return true;
-        element = toElement(element->shadowAncestorNode()); // If an element is not in shadow tree, shadowAncestorNode returns itself.
-    } while (element->isInShadowTree());
-
-    // Check if the element has a mouse listener and no touch listener. If so,
-    // the field will require touch events be converted to mouse events to function properly.
-    return hasMouseMoveListener(element) && !hasTouchListener(element);
-
-}
-
 TouchEventHandler::TouchEventHandler(WebPagePrivate* webpage)
     : m_webPage(webpage)
-    , m_didCancelTouch(false)
-    , m_convertTouchToMouse(false)
     , m_existingTouchMode(ProcessedTouchEvents)
+    , m_shouldRequestSpellCheckOptions(false)
 {
 }
 
@@ -118,147 +66,51 @@ TouchEventHandler::~TouchEventHandler()
 {
 }
 
-bool TouchEventHandler::shouldSuppressMouseDownOnTouchDown() const
+void TouchEventHandler::doFatFingers(Platform::TouchPoint& point)
 {
-    return m_lastFatFingersResult.isTextInput() || m_webPage->m_inputHandler->isInputMode() || m_webPage->m_selectionHandler->isSelectionActive();
+    m_lastScreenPoint = point.m_screenPos;
+    m_lastFatFingersResult.reset(); // Theoretically this shouldn't be required. Keep it just in case states get mangled.
+    IntPoint contentPos(m_webPage->mapFromViewportToContents(point.m_pos));
+    m_webPage->postponeDocumentStyleRecalc();
+    m_lastFatFingersResult = FatFingers(m_webPage, contentPos, FatFingers::ClickableElement).findBestPoint();
+    m_webPage->resumeDocumentStyleRecalc();
 }
 
-void TouchEventHandler::touchEventCancel()
+void TouchEventHandler::sendClickAtFatFingersPoint()
 {
-    m_webPage->m_inputHandler->processPendingKeyboardVisibilityChange();
-
-    // Input elements delay mouse down and do not need to be released on touch cancel.
-    if (!shouldSuppressMouseDownOnTouchDown())
-        m_webPage->m_page->focusController()->focusedOrMainFrame()->eventHandler()->setMousePressed(false);
-
-    m_convertTouchToMouse = m_webPage->m_touchEventMode == PureTouchEventsWithMouseConversion;
-    m_didCancelTouch = true;
-
-    // If we cancel a single touch event, we need to also clean up any hover
-    // state we get into by synthetically moving the mouse to the m_fingerPoint.
-    Element* elementUnderFatFinger = m_lastFatFingersResult.positionWasAdjusted() ? m_lastFatFingersResult.nodeAsElementIfApplicable() : 0;
-    do {
-        if (!elementUnderFatFinger || !elementUnderFatFinger->renderer())
-            break;
-
-        if (!elementUnderFatFinger->renderer()->style()->affectedByHoverRules()
-            && !elementUnderFatFinger->renderer()->style()->affectedByActiveRules())
-            break;
-
-        HitTestRequest request(HitTestRequest::TouchEvent | HitTestRequest::Release);
-        // The HitTestResult point is not actually needed.
-        HitTestResult result(IntPoint::zero());
-        result.setInnerNode(elementUnderFatFinger);
-
-        Document* document = elementUnderFatFinger->document();
-        ASSERT(document);
-        document->renderView()->layer()->updateHoverActiveState(request, result);
-        document->updateStyleIfNeeded();
-
-        // Updating the document style may destroy the renderer.
-        if (!elementUnderFatFinger->renderer())
-            break;
-
-        elementUnderFatFinger->renderer()->repaint();
-        ASSERT(!elementUnderFatFinger->hovered());
-    } while (0);
-
-    m_lastFatFingersResult.reset();
+    handleFatFingerPressed();
+    PlatformMouseEvent mouseRelease(m_webPage->mapFromContentsToViewport(m_lastFatFingersResult.adjustedPosition()), m_lastScreenPoint, PlatformEvent::MouseReleased, 1, LeftButton, TouchScreen);
+    m_webPage->handleMouseEvent(mouseRelease);
 }
 
-void TouchEventHandler::touchHoldEvent()
-{
-    // This is a hack for our hack that converts the touch pressed event that we've delayed because the user has focused a input field
-    // to the page as a mouse pressed event.
-    if (shouldSuppressMouseDownOnTouchDown())
-        handleFatFingerPressed();
-
-    // Clear the focus ring indication if tap-and-hold'ing on a link.
-    if (m_lastFatFingersResult.node() && m_lastFatFingersResult.node()->isLink())
-        m_webPage->clearFocusNode();
-}
-
-static bool isMainFrameScrollable(const WebPagePrivate* page)
-{
-    return page->viewportSize().width() < page->contentsSize().width() || page->viewportSize().height() < page->contentsSize().height();
-}
-
-
-void TouchEventHandler::playSoundIfAnchorIsTarget() const
-{
-    if (m_lastFatFingersResult.node() && m_lastFatFingersResult.node()->isLink())
-        BlackBerry::Platform::SystemSound::instance()->playSound(BlackBerry::Platform::SystemSoundType::InputKeypress);
-}
-
-bool TouchEventHandler::handleTouchPoint(Platform::TouchPoint& point, bool useFatFingers)
+void TouchEventHandler::handleTouchPoint(Platform::TouchPoint& point)
 {
     // Enable input mode on any touch event.
     m_webPage->m_inputHandler->setInputModeEnabled();
-    bool pureWithMouseConversion = m_webPage->m_touchEventMode == PureTouchEventsWithMouseConversion;
-    bool alwaysEnableMouseConversion = pureWithMouseConversion || (!isMainFrameScrollable(m_webPage) && !m_webPage->m_inRegionScroller->d->isActive());
-
     switch (point.m_state) {
     case Platform::TouchPoint::TouchPressed:
         {
-            // FIXME: bypass FatFingers if useFatFingers is false
-            m_lastFatFingersResult.reset(); // Theoretically this shouldn't be required. Keep it just in case states get mangled.
-            m_didCancelTouch = false;
-            m_lastScreenPoint = point.m_screenPos;
+            doFatFingers(point);
 
-            IntPoint contentPos(m_webPage->mapFromViewportToContents(point.m_pos));
-
-            m_webPage->postponeDocumentStyleRecalc();
-            m_lastFatFingersResult = FatFingers(m_webPage, contentPos, FatFingers::ClickableElement).findBestPoint();
-
-            Element* elementUnderFatFinger = 0;
-            if (m_lastFatFingersResult.positionWasAdjusted() && m_lastFatFingersResult.node()) {
-                ASSERT(m_lastFatFingersResult.node()->isElementNode());
-                elementUnderFatFinger = m_lastFatFingersResult.nodeAsElementIfApplicable();
-            }
-
-            // Set or reset the touch mode.
-            Element* possibleTargetNodeForMouseMoveEvents = static_cast<Element*>(m_lastFatFingersResult.positionWasAdjusted() ? elementUnderFatFinger : m_lastFatFingersResult.node());
-            m_convertTouchToMouse = alwaysEnableMouseConversion ? true : shouldConvertTouchToMouse(possibleTargetNodeForMouseMoveEvents);
-
-            if (!possibleTargetNodeForMouseMoveEvents || (!possibleTargetNodeForMouseMoveEvents->hasEventListeners(eventNames().touchmoveEvent) && !m_convertTouchToMouse))
-                m_webPage->client()->notifyNoMouseMoveOrTouchMoveHandlers();
-
-            m_webPage->resumeDocumentStyleRecalc();
-
+            // FIXME Draw tap highlight as soon as possible if we can
+            Element* elementUnderFatFinger = m_lastFatFingersResult.nodeAsElementIfApplicable();
             if (elementUnderFatFinger)
                 drawTapHighlight();
 
-            // Lets be conservative here: since we have problems on major website having
-            // mousemove listener for no good reason (e.g. google.com, desktop edition),
-            // let only delay client notifications when there is not input text node involved.
-            if (m_convertTouchToMouse
-                && (m_webPage->m_inputHandler->isInputMode() && !m_lastFatFingersResult.isTextInput())) {
-                m_webPage->m_inputHandler->setDelayKeyboardVisibilityChange(true);
-                handleFatFingerPressed();
-            } else if (!shouldSuppressMouseDownOnTouchDown())
-                handleFatFingerPressed();
+            // Check for text selection
+            if (m_lastFatFingersResult.isTextInput()) {
+                elementUnderFatFinger = m_lastFatFingersResult.nodeAsElementIfApplicable(FatFingersResult::ShadowContentNotAllowed, true /* shouldUseRootEditableElement */);
+                m_shouldRequestSpellCheckOptions = m_webPage->m_inputHandler->shouldRequestSpellCheckingOptionsForPoint(point.m_pos, elementUnderFatFinger, m_spellCheckOptionRequest);
+            }
 
-            return true;
+            handleFatFingerPressed();
+            break;
         }
     case Platform::TouchPoint::TouchReleased:
         {
-            imf_sp_text_t spellCheckOptionRequest;
-            bool shouldRequestSpellCheckOptions = false;
 
-            if (m_lastFatFingersResult.isTextInput())
-                shouldRequestSpellCheckOptions = m_webPage->m_inputHandler->shouldRequestSpellCheckingOptionsForPoint(point.m_pos
-                                                                                                                      , m_lastFatFingersResult.nodeAsElementIfApplicable(FatFingersResult::ShadowContentNotAllowed, true /* shouldUseRootEditableElement */)
-                                                                                                                      , spellCheckOptionRequest);
-
-            // Apply any suppressed changes. This does not eliminate the need
-            // for the show after the handling of fat finger pressed as it may
-            // have triggered a state change. Leave the change suppressed if
-            // we are triggering spell check options.
-            if (!shouldRequestSpellCheckOptions)
+            if (!m_shouldRequestSpellCheckOptions)
                 m_webPage->m_inputHandler->processPendingKeyboardVisibilityChange();
-
-            if (shouldSuppressMouseDownOnTouchDown())
-                handleFatFingerPressed();
 
             // The rebase has eliminated a necessary event when the mouse does not
             // trigger an actual selection change preventing re-showing of the
@@ -269,52 +121,40 @@ bool TouchEventHandler::handleTouchPoint(Platform::TouchPoint& point, bool useFa
 
             m_webPage->m_tapHighlight->hide();
 
-            IntPoint adjustedPoint;
-            // always use the true touch point if using the meta-tag, otherwise only use it if we sent mouse moves
-            // to the page and its requested.
-            if (pureWithMouseConversion || (m_convertTouchToMouse && !useFatFingers)) {
-                adjustedPoint = point.m_pos;
-                m_convertTouchToMouse = pureWithMouseConversion;
-            } else // Fat finger point in viewport coordinates.
-                adjustedPoint = m_webPage->mapFromContentsToViewport(m_lastFatFingersResult.adjustedPosition());
-
+            IntPoint adjustedPoint = m_webPage->mapFromContentsToViewport(m_lastFatFingersResult.adjustedPosition());
             PlatformMouseEvent mouseEvent(adjustedPoint, m_lastScreenPoint, PlatformEvent::MouseReleased, 1, LeftButton, TouchScreen);
             m_webPage->handleMouseEvent(mouseEvent);
-            m_lastFatFingersResult.reset(); // Reset the fat finger result as its no longer valid when a user's finger is not on the screen.
-            if (shouldRequestSpellCheckOptions) {
+
+            if (m_shouldRequestSpellCheckOptions) {
                 IntPoint pixelPositionRelativeToViewport = m_webPage->mapToTransformed(adjustedPoint);
-                m_webPage->m_inputHandler->requestSpellingCheckingOptions(spellCheckOptionRequest, IntSize(m_lastScreenPoint - pixelPositionRelativeToViewport));
+                m_webPage->m_inputHandler->requestSpellingCheckingOptions(m_spellCheckOptionRequest, IntSize(m_lastScreenPoint - pixelPositionRelativeToViewport));
             }
-            return true;
+
+            m_lastFatFingersResult.reset(); // Reset the fat finger result as its no longer valid when a user's finger is not on the screen.
+            break;
         }
     case Platform::TouchPoint::TouchMoved:
-        if (m_convertTouchToMouse) {
+        {
+            // You can still send mouse move events
             PlatformMouseEvent mouseEvent(point.m_pos, m_lastScreenPoint, PlatformEvent::MouseMoved, 1, LeftButton, TouchScreen);
             m_lastScreenPoint = point.m_screenPos;
-            if (!m_webPage->handleMouseEvent(mouseEvent)) {
-                m_convertTouchToMouse = alwaysEnableMouseConversion;
-                return false;
-            }
-            return true;
+            m_webPage->handleMouseEvent(mouseEvent);
+            break;
         }
-        break;
     default:
         break;
     }
-    return false;
 }
 
 void TouchEventHandler::handleFatFingerPressed()
 {
-    if (!m_didCancelTouch) {
-        // First update the mouse position with a MouseMoved event.
-        PlatformMouseEvent mouseMoveEvent(m_webPage->mapFromContentsToViewport(m_lastFatFingersResult.adjustedPosition()), m_lastScreenPoint, PlatformEvent::MouseMoved, 0, LeftButton, TouchScreen);
-        m_webPage->handleMouseEvent(mouseMoveEvent);
+    // First update the mouse position with a MouseMoved event.
+    PlatformMouseEvent mouseMoveEvent(m_webPage->mapFromContentsToViewport(m_lastFatFingersResult.adjustedPosition()), m_lastScreenPoint, PlatformEvent::MouseMoved, 0, LeftButton, TouchScreen);
+    m_webPage->handleMouseEvent(mouseMoveEvent);
 
-        // Then send the MousePressed event.
-        PlatformMouseEvent mousePressedEvent(m_webPage->mapFromContentsToViewport(m_lastFatFingersResult.adjustedPosition()), m_lastScreenPoint, PlatformEvent::MousePressed, 1, LeftButton, TouchScreen);
-        m_webPage->handleMouseEvent(mousePressedEvent);
-    }
+    // Then send the MousePressed event.
+    PlatformMouseEvent mousePressedEvent(m_webPage->mapFromContentsToViewport(m_lastFatFingersResult.adjustedPosition()), m_lastScreenPoint, PlatformEvent::MousePressed, 1, LeftButton, TouchScreen);
+    m_webPage->handleMouseEvent(mousePressedEvent);
 }
 
 // This method filters what element will get tap-highlight'ed or not. To start with,
@@ -414,6 +254,12 @@ void TouchEventHandler::drawTapHighlight()
     m_webPage->m_tapHighlight->draw(region,
                                     highlightColor.red(), highlightColor.green(), highlightColor.blue(), highlightColor.alpha(),
                                     shouldHideTapHighlightRightAfterScrolling);
+}
+
+void TouchEventHandler::playSoundIfAnchorIsTarget() const
+{
+    if (m_lastFatFingersResult.node() && m_lastFatFingersResult.node()->isLink())
+        BlackBerry::Platform::SystemSound::instance()->playSound(BlackBerry::Platform::SystemSoundType::InputKeypress);
 }
 
 }

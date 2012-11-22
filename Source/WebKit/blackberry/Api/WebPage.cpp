@@ -2258,11 +2258,6 @@ Platform::WebContext WebPagePrivate::webContext(TargetDetectionStrategy strategy
         return context;
     }
 
-    // Unpress the mouse button if we're actually getting context.
-    EventHandler* eventHandler = focusedOrMainFrame()->eventHandler();
-    if (eventHandler->mousePressed())
-        eventHandler->setMousePressed(false);
-
     requestLayoutIfNeeded();
 
     bool nodeAllowSelectionOverride = false;
@@ -2352,6 +2347,10 @@ Platform::WebContext WebPagePrivate::webContext(TargetDetectionStrategy strategy
             String elementText(DOMSupport::inputElementText(element));
             if (!elementText.stripWhiteSpace().isEmpty())
                 context.setText(elementText);
+            else if (!node->focused() && m_touchEventHandler->lastFatFingersResult().isValid() && strategy == RectBased) {
+                // If an input field is empty and not focused send a mouse click so that it gets a cursor and we can paste into it.
+                m_touchEventHandler->sendClickAtFatFingersPoint();
+            }
         }
     }
 
@@ -4007,11 +4006,6 @@ bool WebPage::touchEvent(const Platform::TouchEvent& event)
     if (d->m_needTouchEvents && !event.m_type != Platform::TouchEvent::TouchInjected)
         handled = d->m_mainFrame->eventHandler()->handleTouchEvent(PlatformTouchEvent(&tEvent));
 
-    // Unpress mouse if touch end is consumed by a JavaScript touch handler, otherwise the mouse state will remain pressed
-    // which could either mess up the internal mouse state or start text selection on the next mouse move/down.
-    if (tEvent.m_type == Platform::TouchEvent::TouchEnd && handled && d->m_mainFrame->eventHandler()->mousePressed())
-        d->m_touchEventHandler->touchEventCancel();
-
     if (d->m_preventDefaultOnTouchStart) {
         if (tEvent.m_type == Platform::TouchEvent::TouchEnd || tEvent.m_type == Platform::TouchEvent::TouchCancel)
             d->m_preventDefaultOnTouchStart = false;
@@ -4025,7 +4019,8 @@ bool WebPage::touchEvent(const Platform::TouchEvent& event)
     }
 
     if (event.isTouchHold())
-        d->m_touchEventHandler->touchHoldEvent();
+        d->m_touchEventHandler->doFatFingers(tEvent.m_points[0]);
+
 #endif
 
     return false;
@@ -4108,14 +4103,14 @@ bool WebPagePrivate::dispatchTouchEventToFullScreenPlugin(PluginView* plugin, co
     return handled;
 }
 
-bool WebPage::touchPointAsMouseEvent(const Platform::TouchPoint& point, bool useFatFingers)
+void WebPage::touchPointAsMouseEvent(const Platform::TouchPoint& point)
 {
     if (d->m_page->defersLoading())
-        return false;
+        return;
 
     PluginView* pluginView = d->m_fullScreenPluginView.get();
     if (pluginView)
-        return d->dispatchTouchPointAsMouseEventToFullScreenPlugin(pluginView, point);
+        d->dispatchTouchPointAsMouseEventToFullScreenPlugin(pluginView, point);
 
     d->m_lastUserEventTimestamp = currentTime();
 
@@ -4123,7 +4118,7 @@ bool WebPage::touchPointAsMouseEvent(const Platform::TouchPoint& point, bool use
     tPoint.m_pos = d->mapFromTransformed(tPoint.m_pos);
     tPoint.m_screenPos = tPoint.m_screenPos;
 
-    return d->m_touchEventHandler->handleTouchPoint(tPoint, useFatFingers);
+    d->m_touchEventHandler->handleTouchPoint(tPoint);
 }
 
 void WebPage::playSoundIfAnchorIsTarget() const
@@ -4165,7 +4160,6 @@ void WebPage::touchEventCancel()
     d->m_pluginMayOpenNewTab = false;
     if (d->m_page->defersLoading())
         return;
-    d->m_touchEventHandler->touchEventCancel();
 }
 
 Frame* WebPagePrivate::focusedOrMainFrame() const

@@ -154,7 +154,7 @@ public:
 
     // For conversion to mouse events.
     void touchEventCancel();
-    bool touchPointAsMouseEvent(const Platform::TouchPoint&, bool useFatFingers = true);
+    void touchPointAsMouseEvent(const Platform::TouchPoint&);
 
     void playSoundIfAnchorIsTarget() const;
 
