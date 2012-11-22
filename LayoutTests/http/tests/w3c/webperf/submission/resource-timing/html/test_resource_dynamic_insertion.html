@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>Resource Timing initiator types with dynamic insertion</title>
+<link rel="author" title="Google" href="http://www.google.com/" />
+<link rel="help" href="http://www.w3.org/TR/resource-timing/#dom-performanceresourcetiming-initiatortype"/>
+<script src="/w3c/resources/testharness.js"></script>
+<script src="/w3c/resources/testharnessreport.js"></script>
+<script src="/w3c/webperf/resources/webperftestharness.js"></script>
+<script>
+var iframe;
+function setup_iframe() {
+    iframe = document.getElementById('frameContext');
+    var d = iframe.contentWindow.document;
+    var body = d.createElement('body');
+    d.getElementsByTagName('html')[0].appendChild(body);
+
+    var style = d.createElement('link');
+    style.rel = 'stylesheet';
+    style.href = '/w3c/webperf/resources/generate_resource.php?type=css';
+    body.appendChild(style);
+
+    var image = d.createElement('img');
+    image.src = '/w3c/webperf/resources/generate_resource.php?type=image';
+    body.appendChild(image);
+
+    var subframe = d.createElement('iframe');
+    subframe.src = '/w3c/webperf/resources/generate_resource.php?type=iframe';
+    body.appendChild(subframe);
+}
+function onload_test() {
+    var entries = iframe.contentWindow.performance.webkitGetEntries();
+
+    var expected_entries = {
+        '/w3c/webperf/resources/generate_resource.php?type=css': 'link',
+        '/w3c/webperf/resources/generate_resource.php?type=image': 'img',
+        '/w3c/webperf/resources/generate_resource.php?type=iframe': 'iframe',
+    };
+
+    test_resource_entries(entries, expected_entries);
+}
+window.setup_iframe = setup_iframe;
+</script>
+</head>
+<body>
+<h1>Description</h1>
+<p>This test validates that all of the initiator types are represented even when dynamically inserted.</p>
+<div id="log"></div>
+<iframe id="frameContext" onload="onload_test();" src="/w3c/webperf/resources/inject_resource_test.html"></iframe>
+</body>
+</html>

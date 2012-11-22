@@ -1,0 +1,18 @@
+Description
+
+This test validates that the PerformanceResourceTiming attributes appear in the correct chronological order.
+
+
+
+PASS Only 1 PerformanceEntry should match 
+PASS redirectStart should be 0 
+PASS redirectEnd should be 0 
+PASS fetchStart should be non-zero 
+PASS domainLookupStart should be greater than or equal to fetchStart 
+PASS domainLookupEnd should be greater than or equal to domainLookupStart 
+PASS connectStart should be greater than or equal to domainLookupEnd 
+PASS connectEnd should be greater than or equal to connectStart 
+PASS requestStart should be greater than or equal to connectEnd 
+PASS responseStart should be greater than or equal to requestStart 
+PASS responseEnd should be greater than or equal to responseStart 
+

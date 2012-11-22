@@ -1,0 +1,8 @@
+Description
+
+This test validates that reparenting an element doesn't change the initiator document.
+
+  
+
+PASS /w3c/webperf/resources/generate_resource.php?type=image&id=move_to_parent is expected to have initiatorType img 
+

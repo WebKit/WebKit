@@ -1,0 +1,45 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+        <title>All Resource Types Test Page</title>
+    </head>
+    <body background='generate_resource.php?type=image&id=body'>
+        <script>
+            if (window.parent.hasOwnProperty('on_test_body_created'))
+                window.parent.on_test_body_created();
+        </script>
+        <link rel="stylesheet" href="nested.css"></link>
+        <img src="blank_image.png"></img>
+        <iframe src="blank_page_green.htm" width="100px" height="100px"></iframe>
+        <script src="empty_script.js"></script>
+        <script>
+            var xhr = new XMLHttpRequest;
+            xhr.open("GET", "blank_page_yellow.htm", false);
+            xhr.send();
+        </script>
+        <style>
+            @font-face {
+                font-family: remoteFontAhem;
+                src: url('Ahem.ttf');
+            }
+            iframe {
+                background: url('generate_resource.php?type=image&id=1');
+            }
+            ul {
+                font-family: remoteFontAhem;
+                list-style-image: url('generate_resource.php?type=image&id=2');
+            }
+        </style>
+        <ul>
+            <li>Test</li>
+        </ul>
+        <ol>
+            <li>Test</li>
+        </ol>
+        <embed src="generate_resource.php?type=css&id=embed" type="text/css"></embed>
+        <input type="image" src="generate_resource.php?type=image&id=input"></input>
+        <object type="image/png" data="generate_resource.php?type=image&id=object"></object>
+        <video poster="generate_resource.php?type=image&id=poster"></video>
+    </body>
+</html>

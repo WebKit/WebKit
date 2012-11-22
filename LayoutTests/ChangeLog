@@ -1,3 +1,44 @@
+2012-11-21  James Simonsen  <simonjam@chromium.org>
+
+        [Resource Timing] Create W3C-style test suite
+        https://bugs.webkit.org/show_bug.cgi?id=84883
+
+        Reviewed by Tony Gentilcore.
+
+        The tests are designed to be upstreamed. Eventually, the local ones will be replaced by the official upstream versions.
+
+        * http/tests/w3c/webperf/resources/Ahem.ttf: Added.
+        * http/tests/w3c/webperf/resources/all_resource_types.htm: Added.
+        * http/tests/w3c/webperf/resources/blank_image.png: Added.
+        * http/tests/w3c/webperf/resources/empty_script.js: Added.
+        * http/tests/w3c/webperf/resources/generate_resource.php: Added.
+        * http/tests/w3c/webperf/resources/gray_bg.css: Added.
+        (body):
+        * http/tests/w3c/webperf/resources/green_frame.htm: Added.
+        * http/tests/w3c/webperf/resources/inject_resource_test.html: Added.
+        * http/tests/w3c/webperf/resources/nested.css: Added.
+        (@font-face):
+        (ol):
+        * http/tests/w3c/webperf/resources/webperftestharness.js:
+        (test_greater_or_equals):
+        (test_fail):
+        (test_resource_entries):
+        * http/tests/w3c/webperf/submission/resource-timing/html/test_resource_attribute_order-expected.txt: Added.
+        * http/tests/w3c/webperf/submission/resource-timing/html/test_resource_attribute_order.html: Added.
+        * http/tests/w3c/webperf/submission/resource-timing/html/test_resource_dynamic_insertion-expected.txt: Added.
+        * http/tests/w3c/webperf/submission/resource-timing/html/test_resource_dynamic_insertion.html: Added.
+        * http/tests/w3c/webperf/submission/resource-timing/html/test_resource_frame_initiator_type-expected.txt: Added.
+        * http/tests/w3c/webperf/submission/resource-timing/html/test_resource_frame_initiator_type.html: Added.
+        * http/tests/w3c/webperf/submission/resource-timing/html/test_resource_initiator_types-expected.txt: Added.
+        * http/tests/w3c/webperf/submission/resource-timing/html/test_resource_initiator_types.html: Added.
+        * http/tests/w3c/webperf/submission/resource-timing/html/test_resource_redirects-expected.txt: Added.
+        * http/tests/w3c/webperf/submission/resource-timing/html/test_resource_redirects.html: Added.
+        * http/tests/w3c/webperf/submission/resource-timing/html/test_resource_reparenting-expected.txt: Added.
+        * http/tests/w3c/webperf/submission/resource-timing/html/test_resource_reparenting.html: Added.
+        * http/tests/w3c/webperf/submission/resource-timing/html/test_resource_script_types-expected.txt: Added.
+        * http/tests/w3c/webperf/submission/resource-timing/html/test_resource_script_types.html: Added.
+        * platform/chromium/TestExpectations: Skip these new tests until the flag is flipped.
+
 2012-11-21  Fady Samuel  <fsamuel@chromium.org>
 
         Add fast/events/context-nodrag.html to Mac TestExpectations

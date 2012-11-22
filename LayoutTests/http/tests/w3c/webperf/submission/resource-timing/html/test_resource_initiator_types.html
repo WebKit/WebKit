@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>Resource Timing initiator types</title>
+<link rel="author" title="Google" href="http://www.google.com/" />
+<link rel="help" href="http://www.w3.org/TR/resource-timing/#dom-performanceresourcetiming-initiatortype"/>
+<script src="/w3c/resources/testharness.js"></script>
+<script src="/w3c/resources/testharnessreport.js"></script>
+<script src="/w3c/webperf/resources/webperftestharness.js"></script>
+<script>
+setup({explicit_done: true});
+
+var background_loaded = false;
+var page_loaded = false;
+var ol_font_loaded = false;
+var ul_font_loaded = false;
+
+function check_finished() {
+    if (!ul_font_loaded) {
+        ul_font_loaded = check_font_loaded('ul');
+    }
+    if (!ol_font_loaded) {
+        ol_font_loaded = check_font_loaded('ol');
+    }
+    if (page_loaded && ol_font_loaded && ul_font_loaded && background_loaded) {
+        perform_test();
+    }
+}
+
+function check_font_loaded(type) {
+    var width_var_name = 'original_width_' + type;
+    var element_var_name = 'element_' + type;
+    if (!this.hasOwnProperty(width_var_name)) {
+        var d = document.getElementById('frameContext').contentWindow.document;
+        var list = d.createElement(type);
+        var li = d.createElement('li');
+        li.innerHTML = 'width_test';
+        list.appendChild(li);
+        d.getElementsByTagName('body')[0].appendChild(list);
+        this[element_var_name] = list;
+        this[width_var_name] = li.offsetHeight;
+    }
+    return this[width_var_name] != this[element_var_name].offsetHeight;
+}
+
+function onload_test() {
+    page_loaded = true;
+
+    var image = document.createElement('img');
+    image.src = '/w3c/webperf/resources/generate_resource.php?type=image&id=n1';
+    background_loaded = image.completed;
+    if (!background_loaded) {
+        image.onload = function() {
+            background_loaded = true;
+        }
+    }
+
+    setInterval(check_finished, 100);
+}
+
+function perform_test() {
+    var entries = document.getElementById('frameContext').contentWindow.performance.webkitGetEntries();
+
+    var expected_entries = {
+        '/w3c/webperf/resources/generate_resource.php?type=image&id=body': 'body',
+        '/w3c/webperf/resources/nested.css': 'link',
+        '/w3c/webperf/resources/blank_image.png': 'img',
+        '/w3c/webperf/resources/blank_page_green.htm': 'iframe',
+        '/w3c/webperf/resources/empty_script.js': 'script',
+        '/w3c/webperf/resources/blank_page_yellow.htm': 'xmlhttprequest',
+        '/w3c/webperf/resources/generate_resource.php?type=image&id=1': 'css',
+        '/w3c/webperf/resources/generate_resource.php?type=image&id=2': 'css',
+        '/w3c/webperf/resources/Ahem.ttf': 'css',
+        '/w3c/webperf/resources/generate_resource.php?type=css&id=n1': 'css',
+        '/w3c/webperf/resources/generate_resource.php?type=font&id=n1': 'css',
+        '/w3c/webperf/resources/generate_resource.php?type=image&id=n1': 'css',
+        '/w3c/webperf/resources/generate_resource.php?type=css&id=embed': 'embed',
+        '/w3c/webperf/resources/generate_resource.php?type=image&id=input': 'input',
+        '/w3c/webperf/resources/generate_resource.php?type=image&id=object': 'object',
+        '/w3c/webperf/resources/generate_resource.php?type=image&id=poster': 'video',
+    };
+
+    test_resource_entries(entries, expected_entries);
+    done();
+}
+
+window.on_test_body_created = check_finished;
+</script>
+</head>
+<body>
+<h1>Description</h1>
+<p>This test validates that all of the initiator types are represented.</p>
+<div id="log"></div>
+<iframe id="frameContext" onload="onload_test();" src="/w3c/webperf/resources/all_resource_types.htm" style="width: 250px; height: 250px;"></iframe>
+</body>
+</html>

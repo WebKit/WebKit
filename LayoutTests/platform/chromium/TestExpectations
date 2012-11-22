@@ -4228,3 +4228,6 @@ webkit.org/b/102724 crbug.com/9797 crbug.com/161762 [ Debug ] svg/carto.net/colo
 webkit.org/b/102724 crbug.com/9797 crbug.com/161762 [ Release ] svg/carto.net/colourpicker.svg [ ImageOnlyFailure ]
 webkit.org/b/102724 crbug.com/161762 [ Debug ] svg/custom/gradient-stop-corner-cases.svg [ Crash ]
 webkit.org/b/102724 crbug.com/161762 [ Release ] svg/custom/gradient-stop-corner-cases.svg [ ImageOnlyFailure ]
+
+# Fails until we enable the Resource Timing API.
+webkit.org/b/61138 http/tests/w3c/webperf/submission/resource-timing [ Skip ]

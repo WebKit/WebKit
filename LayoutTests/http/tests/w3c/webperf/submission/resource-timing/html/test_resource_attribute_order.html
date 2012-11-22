@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>Resource Timing attribute order</title>
+<link rel="author" title="Google" href="http://www.google.com/" />
+<link rel="help" href="http://www.w3.org/TR/resource-timing/#performanceresourcetiming"/>
+<script src="/w3c/resources/testharness.js"></script>
+<script src="/w3c/resources/testharnessreport.js"></script>
+<script src="/w3c/webperf/resources/webperftestharness.js"></script>
+<script>
+function setup_iframe() {
+    iframe = document.getElementById('frameContext');
+    var d = iframe.contentWindow.document;
+    var body = d.createElement('body');
+    d.getElementsByTagName('html')[0].appendChild(body);
+
+    var image = d.createElement('img');
+    image.src = '/w3c/webperf/resources/generate_resource.php?type=image';
+    body.appendChild(image);
+}
+function onload_test() {
+    var entries = iframe.contentWindow.performance.webkitGetEntriesByName(window.location.origin + '/w3c/webperf/resources/generate_resource.php?type=image');
+    test_equals(entries.length, 1, 'Only 1 PerformanceEntry should match');
+    var entry = entries[0];
+
+    test_equals(entry.redirectStart, 0, "redirectStart should be 0");
+    test_equals(entry.redirectEnd, 0, "redirectEnd should be 0");
+    test_greater_than(entry.fetchStart, 0, "fetchStart should be non-zero");
+    test_greater_or_equals(entry.domainLookupStart, entry.fetchStart, "domainLookupStart should be greater than or equal to fetchStart");
+    test_greater_or_equals(entry.domainLookupEnd, entry.domainLookupStart, "domainLookupEnd should be greater than or equal to domainLookupStart");
+    test_greater_or_equals(entry.connectStart, entry.domainLookupEnd, "connectStart should be greater than or equal to domainLookupEnd");
+    test_greater_or_equals(entry.connectEnd, entry.connectStart, "connectEnd should be greater than or equal to connectStart");
+    test_greater_or_equals(entry.requestStart, entry.connectEnd, "requestStart should be greater than or equal to connectEnd");
+    test_greater_or_equals(entry.responseStart, entry.requestStart, "responseStart should be greater than or equal to requestStart");
+    test_greater_or_equals(entry.responseEnd, entry.responseStart, "responseEnd should be greater than or equal to responseStart");
+}
+</script>
+</head>
+<body>
+<h1>Description</h1>
+<p>This test validates that the PerformanceResourceTiming attributes appear in the correct chronological order.</p>
+<div id="log"></div>
+<iframe id="frameContext" onload="onload_test();" src="/w3c/webperf/resources/inject_resource_test.html"></iframe>
+</body>
+</html>

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>Resource Timing script initiator types</title>
+<link rel="author" title="Google" href="http://www.google.com/" />
+<link rel="help" href="http://www.w3.org/TR/resource-timing/#dom-performanceresourcetiming-initiatortype"/>
+<script src="/w3c/resources/testharness.js"></script>
+<script src="/w3c/resources/testharnessreport.js"></script>
+<script src="/w3c/webperf/resources/webperftestharness.js"></script>
+<script>
+var iframe;
+function setup_iframe() {
+    var iframe_content =
+        '<script src="/w3c/webperf/resources/generate_resource.php?type=script&id=1"></scr' + 'ipt>' +
+        '<script src="/w3c/webperf/resources/generate_resource.php?type=script&id=2" async></scr' + 'ipt>' +
+        '<script src="/w3c/webperf/resources/generate_resource.php?type=script&id=3" async=false></scr' + 'ipt>' +
+        '<script src="/w3c/webperf/resources/generate_resource.php?type=script&id=4" defer></scr' + 'ipt>' +
+        '<script>' +
+        'document.write("<script src=\\"/w3c/webperf/resources/generate_resource.php?type=script&id=5\\"></scr" + "ipt>");' +
+        'var s1 = document.createElement("script");' +
+        's1.src = "/w3c/webperf/resources/generate_resource.php?type=script&id=6";' +
+        'document.getElementsByTagName("head")[0].appendChild(s1);' +
+        'var s2 = document.createElement("script");' +
+        's2.src = "/w3c/webperf/resources/generate_resource.php?type=script&id=7";' +
+        's2.async = true;' +
+        'document.getElementsByTagName("head")[0].appendChild(s2);' +
+        'var s3 = document.createElement("script");' +
+        's3.src = "/w3c/webperf/resources/generate_resource.php?type=script&id=8";' +
+        's3.async = false;' +
+        'document.getElementsByTagName("head")[0].appendChild(s3);' +
+        'var s4 = document.createElement("script");' +
+        's4.src = "/w3c/webperf/resources/generate_resource.php?type=script&id=9";' +
+        's4.defer = true;' +
+        'document.getElementsByTagName("head")[0].appendChild(s4);' +
+        '</scr' + 'ipt>';
+    iframe = document.getElementById('frameContext');
+    iframe.contentWindow.document.write(iframe_content);
+}
+function onload_test() {
+    var entries = iframe.contentWindow.performance.webkitGetEntries();
+
+    var expected_entries = {
+        '/w3c/webperf/resources/generate_resource.php?type=script&id=1': 'script',
+        '/w3c/webperf/resources/generate_resource.php?type=script&id=2': 'script',
+        '/w3c/webperf/resources/generate_resource.php?type=script&id=3': 'script',
+        '/w3c/webperf/resources/generate_resource.php?type=script&id=4': 'script',
+        '/w3c/webperf/resources/generate_resource.php?type=script&id=5': 'script',
+        '/w3c/webperf/resources/generate_resource.php?type=script&id=6': 'script',
+        '/w3c/webperf/resources/generate_resource.php?type=script&id=7': 'script',
+        '/w3c/webperf/resources/generate_resource.php?type=script&id=8': 'script',
+        '/w3c/webperf/resources/generate_resource.php?type=script&id=9': 'script',
+    };
+
+    test_resource_entries(entries, expected_entries);
+}
+window.setup_iframe = setup_iframe;
+</script>
+</head>
+<body>
+<h1>Description</h1>
+<p>This test validates that all of the different types of script loads are reported with the correct initiator.</p
+<div id="log"></div>
+<iframe id="frameContext" onload="onload_test();" src="/w3c/webperf/resources/inject_resource_test.html"></iframe>
+</body>
+</html>
