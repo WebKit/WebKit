@@ -86,6 +86,7 @@ namespace JSC {
 
             if (ropeBuilder.length() < oldLength) // True for overflow
                 return throwOutOfMemoryError(exec);
+            oldLength = ropeBuilder.length();
         }
 
         return ropeBuilder.release();
@@ -105,6 +106,7 @@ namespace JSC {
 
             if (ropeBuilder.length() < oldLength) // True for overflow
                 return throwOutOfMemoryError(exec);
+            oldLength = ropeBuilder.length();
         }
 
         return ropeBuilder.release();

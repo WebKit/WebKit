@@ -1,3 +1,17 @@
+2012-11-21  Daniel Bates  <dbates@webkit.org>
+
+        JavaScript fails to concatenate large strings
+        <https://bugs.webkit.org/show_bug.cgi?id=102963>
+
+        Reviewed by Michael Saboff.
+
+        Fixes an issue where we inadvertently didn't check the length of
+        a JavaScript string for overflow.
+
+        * runtime/Operations.h:
+        (JSC::jsString):
+        (JSC::jsStringFromArguments):
+
 2012-11-20  Filip Pizlo  <fpizlo@apple.com>
 
         DFG should be able to cache closure calls (part 2/2)

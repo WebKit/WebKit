@@ -1,3 +1,17 @@
+2012-11-21  Daniel Bates  <dbates@webkit.org>
+
+        JavaScript fails to concatenate large strings
+        <https://bugs.webkit.org/show_bug.cgi?id=102963>
+
+        Reviewed by Michael Saboff.
+
+        Add tests to ensure that we handle concatenating large strings.
+
+        * fast/js/concat-large-strings-crash-expected.txt: Added.
+        * fast/js/concat-large-strings-crash.html: Added.
+        * fast/js/concat-large-strings-crash2-expected.txt: Added.
+        * fast/js/concat-large-strings-crash2.html: Added.
+
 2012-11-21  Fady Samuel  <fsamuel@chromium.org>
 
         Add fast/events/context-nodrag.html to Chromium Mac TestExpectations
