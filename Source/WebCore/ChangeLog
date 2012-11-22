@@ -1,3 +1,30 @@
+2012-11-22  Kentaro Hara  <haraken@chromium.org>
+
+        Unreviewed, rolling out r135482.
+        http://trac.webkit.org/changeset/135482
+        https://bugs.webkit.org/show_bug.cgi?id=103002
+
+        It broke Chrome/Linux Debug build
+
+        * bindings/v8/V8StringResource.cpp:
+        * bindings/v8/V8StringResource.h:
+        * bindings/v8/V8ValueCache.cpp:
+        (WebCore::WebCoreStringResourceBase::toWebCoreStringResourceBase):
+        (WebCore):
+        (WebCore::WebCoreStringResourceBase::visitStrings):
+        * bindings/v8/V8ValueCache.h:
+        (WebCore):
+        (WebCoreStringResourceBase):
+        (WebCore::WebCoreStringResourceBase::WebCoreStringResourceBase):
+        (WebCore::WebCoreStringResourceBase::~WebCoreStringResourceBase):
+        (WebCore::WebCoreStringResourceBase::webcoreString):
+        (WebCore::WebCoreStringResourceBase::atomicString):
+        (WebCore::WebCoreStringResourceBase::memoryConsumption):
+        (WebCoreStringResource16):
+        (WebCore::WebCoreStringResource16::WebCoreStringResource16):
+        (WebCoreStringResource8):
+        (WebCore::WebCoreStringResource8::WebCoreStringResource8):
+
 2012-11-22  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r134927 and r134944.
