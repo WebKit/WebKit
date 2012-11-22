@@ -1,3 +1,22 @@
+2012-11-22  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        [Qt] Lookup mimetypes using QMimeDatabase
+        https://bugs.webkit.org/show_bug.cgi?id=102667
+
+        Reviewed by Simon Hausmann.
+
+        The Qt backend of MIMETypeRegistry now looks up using QMimeDatabase.
+
+        * loader/archive/ArchiveFactory.cpp:
+        (WebCore::archiveMIMETypes):
+            Also map the preferred freedesktop mimetype for MIME archives to MIME archive constructor.
+        * platform/MIMETypeRegistry.cpp:
+        (WebCore::MIMETypeRegistry::getNormalizedMIMEType):
+        * platform/qt/MIMETypeRegistryQt.cpp:
+        (WebCore::MIMETypeRegistry::getMIMETypeForExtension):
+        (WebCore::MIMETypeRegistry::getMIMETypeForPath):
+        (WebCore::MIMETypeRegistry::getNormalizedMIMEType):
+
 2012-11-22  Cosmin Truta  <ctruta@rim.com>
 
         Move URL-checking code into Frame

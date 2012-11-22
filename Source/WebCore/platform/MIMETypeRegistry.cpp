@@ -491,6 +491,7 @@ String MIMETypeRegistry::getWellKnownMIMETypeForExtension(const String& extensio
     return findMimeType(commonMediaTypes, sizeof(commonMediaTypes) / sizeof(commonMediaTypes[0]), extension);
 }
 
+#if !PLATFORM(QT)
 String MIMETypeRegistry::getMIMETypeForPath(const String& path)
 {
     size_t pos = path.reverseFind('.');
@@ -500,8 +501,9 @@ String MIMETypeRegistry::getMIMETypeForPath(const String& path)
         if (result.length())
             return result;
     }
-    return "application/octet-stream";
+    return defaultMIMEType();
 }
+#endif
 
 bool MIMETypeRegistry::isSupportedImageMIMEType(const String& mimeType)
 {
@@ -638,6 +640,13 @@ const String& defaultMIMEType()
     return defaultMIMEType;
 }
 
+#if !PLATFORM(QT) && !PLATFORM(BLACKBERRY)
+String MIMETypeRegistry::getNormalizedMIMEType(const String& mimeType)
+{
+    return mimeType;
+}
+#endif
+
 #if PLATFORM(BLACKBERRY)
 typedef HashMap<String, String> MIMETypeAssociationMap;
 
@@ -696,18 +705,16 @@ static const MIMETypeAssociationMap& mimeTypeAssociationMap()
 
     return *mimeTypeMap;
 }
-#endif
 
 String MIMETypeRegistry::getNormalizedMIMEType(const String& mimeType)
 {
-#if PLATFORM(BLACKBERRY)
     MIMETypeAssociationMap::const_iterator it = mimeTypeAssociationMap().find(mimeType);
 
     if (it != mimeTypeAssociationMap().end())
         return it->value;
-#endif
+
     return mimeType;
 }
-
+#endif
 
 } // namespace WebCore

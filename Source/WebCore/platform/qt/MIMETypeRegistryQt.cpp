@@ -29,76 +29,41 @@
 #include "config.h"
 #include "MIMETypeRegistry.h"
 
+#include <QMimeDatabase>
 #include <wtf/Assertions.h>
 #include <wtf/MainThread.h>
 
 namespace WebCore {
 
-struct ExtensionMap {
-    const char* extension;
-    const char* mimeType;
-};
-
-static const ExtensionMap extensionMap[] = {
-    { "bmp", "image/bmp" },
-    { "css", "text/css" },
-    { "gif", "image/gif" },
-    { "html", "text/html" },
-    { "htm", "text/html" },
-    { "ico", "image/x-icon" },
-    { "jpeg", "image/jpeg" },
-    { "jpg", "image/jpeg" },
-    { "js", "application/x-javascript" },
-    { "mng", "video/x-mng" },
-    { "mp4", "video/mp4" },
-    { "m4v", "video/mp4" },
-    { "m4a", "audio/x-m4a" },
-    { "mht", "multipart/related" },
-    { "mhtml", "multipart/related" },
-    { "mp3", "audio/mp3" },
-    { "ogv", "video/ogg" },
-    { "oga", "audio/ogg" },
-    { "ogm", "audio/ogg" },
-    { "ogg", "audio/ogg" },
-    { "webm", "video/webm" },
-    { "webm", "audio/webm" },
-    { "wav", "audio/wav" },
-    { "mov", "video/quicktime" },
-    { "pbm", "image/x-portable-bitmap" },
-    { "pgm", "image/x-portable-graymap" },
-    { "pdf", "application/pdf" },
-    { "png", "image/png" },
-    { "ppm", "image/x-portable-pixmap" },
-    { "rss", "application/rss+xml" },
-    { "svg", "image/svg+xml" },
-    { "text", "text/plain" },
-    { "tif", "image/tiff" },
-    { "tiff", "image/tiff" },
-    { "txt", "text/plain" },
-    { "xbm", "image/x-xbitmap" },
-    { "xml", "text/xml" },
-    { "xpm", "image/x-xpm" },
-    { "xsl", "text/xsl" },
-    { "xhtml", "application/xhtml+xml" },
-    { "wml", "text/vnd.wap.wml" },
-    { "wmlc", "application/vnd.wap.wmlc" },
-    { 0, 0 }
-};
-
 String MIMETypeRegistry::getMIMETypeForExtension(const String &ext)
 {
-    ASSERT(isMainThread());
+    // QMimeDatabase lacks the ability to query by extension alone, so we create a fake filename to lookup.
+    const QString filename = QStringLiteral("filename.") + QString(ext.lower());
 
-    String s = ext.lower();
-
-    const ExtensionMap *e = extensionMap;
-    while (e->extension) {
-        if (s == e->extension)
-            return e->mimeType;
-        ++e;
-    }
+    QMimeType mimeType = QMimeDatabase().mimeTypeForFile(filename, QMimeDatabase::MatchExtension);
+    if (mimeType.isValid() && !mimeType.isDefault())
+        return mimeType.name();
 
     return String();
+}
+
+String MIMETypeRegistry::getMIMETypeForPath(const String& path)
+{
+    QMimeType type = QMimeDatabase().mimeTypeForFile(path, QMimeDatabase::MatchExtension);
+    if (type.isValid())
+        return type.name();
+
+    return defaultMIMEType();
+}
+
+String MIMETypeRegistry::getNormalizedMIMEType(const String& mimeTypeName)
+{
+    // This looks up the mime type object by preferred name or alias, and returns the preferred name.
+    QMimeType mimeType = QMimeDatabase().mimeTypeForName(mimeTypeName);
+    if (mimeType.isValid() && !mimeType.isDefault())
+        return mimeType.name();
+
+    return mimeTypeName;
 }
 
 bool MIMETypeRegistry::isApplicationPluginMIMEType(const String& mimeType)
