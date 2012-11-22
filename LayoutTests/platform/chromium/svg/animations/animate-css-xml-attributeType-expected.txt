@@ -1,0 +1,20 @@
+SVG 1.1 dynamic animation tests
+
+Tests that XML and CSS attributeTypes can be switched between.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS rect.x.animVal.value is 100
+PASS rect.x.baseVal.value is 100
+PASS rect.x.animVal.value is 300
+PASS rect.x.animVal.value is 100
+PASS getComputedStyle(rect).getPropertyCSSValue('opacity').getFloatValue(CSSPrimitiveValue.CSS_NUMBER) is 0.8
+PASS rect.x.animVal.value is 100
+FAIL getComputedStyle(rect).getPropertyCSSValue('opacity').getFloatValue(CSSPrimitiveValue.CSS_NUMBER) should be close to 1. Was 0.800000011920929.
+PASS rect.x.animVal.value is 200
+PASS rect.x.baseVal.value is 100
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
