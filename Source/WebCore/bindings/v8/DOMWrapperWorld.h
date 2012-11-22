@@ -42,7 +42,7 @@ namespace WebCore {
 class DOMDataStore;
 
 // This class represent a collection of DOM wrappers for a specific world.
-class DOMWrapperWorld : public WTF::RefCountedBase {
+class DOMWrapperWorld : public RefCounted<DOMWrapperWorld> {
 public:
     static const int mainWorldId = 0;
     static const int mainWorldExtensionGroup = 0;
@@ -50,6 +50,8 @@ public:
     static const int uninitializedExtensionGroup = -1;
     // If uninitializedWorldId is passed as worldId, the world will be assigned a temporary id instead.
     static PassRefPtr<DOMWrapperWorld> ensureIsolatedWorld(int worldId, int extensionGroup);
+    ~DOMWrapperWorld();
+
     static bool isolatedWorldsExist() { return isolatedWorldCount; }
     static bool isIsolatedWorldId(int worldId) { return worldId != mainWorldId && worldId != uninitializedWorldId; }
     static void getAllWorlds(Vector<RefPtr<DOMWrapperWorld> >& worlds);
@@ -85,16 +87,10 @@ public:
         ASSERT(isIsolatedWorld());
         return m_domDataStore.get();
     }
-    void deref()
-    {
-        if (derefBase())
-            deallocate(this);
-    }
 
 private:
     static int isolatedWorldCount;
     static PassRefPtr<DOMWrapperWorld> createMainWorld();
-    static void deallocate(DOMWrapperWorld*);
 
     DOMWrapperWorld(int worldId, int extensionGroup);
 

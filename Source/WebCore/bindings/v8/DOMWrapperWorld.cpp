@@ -80,29 +80,24 @@ void DOMWrapperWorld::getAllWorlds(Vector<RefPtr<DOMWrapperWorld> >& worlds)
         worlds.append(it->value);
 }
 
-void DOMWrapperWorld::deallocate(DOMWrapperWorld* world)
+DOMWrapperWorld::~DOMWrapperWorld()
 {
-    int worldId = world->worldId();
+    ASSERT(!isMainWorld());
 
-    // Ensure we never deallocate mainThreadNormalWorld
-    if (worldId == mainWorldId)
-        return;
-
-    delete world;
-
-    if (worldId == uninitializedWorldId)
+    if (!isIsolatedWorld())
         return;
 
     WorldMap& map = isolatedWorldMap();
-    WorldMap::iterator i = map.find(worldId);
+    WorldMap::iterator i = map.find(m_worldId);
     if (i == map.end()) {
         ASSERT_NOT_REACHED();
         return;
     }
-    ASSERT(i->value == world);
+    ASSERT(i->value == this);
 
     map.remove(i);
     isolatedWorldCount--;
+    ASSERT(map.size() == isolatedWorldCount);
 }
 
 static int temporaryWorldId = DOMWrapperWorld::uninitializedWorldId-1;
@@ -126,6 +121,8 @@ PassRefPtr<DOMWrapperWorld> DOMWrapperWorld::ensureIsolatedWorld(int worldId, in
     RefPtr<DOMWrapperWorld> world = adoptRef(new DOMWrapperWorld(worldId, extensionGroup));
     map.add(worldId, world.get());
     isolatedWorldCount++;
+    ASSERT(map.size() == isolatedWorldCount);
+
     return world.release();
 }
 

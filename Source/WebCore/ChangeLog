@@ -1,3 +1,22 @@
+2012-11-22  Dan Carney  <dcarney@google.com>
+
+        [V8] fix DOMWrapperWorld destructor
+        https://bugs.webkit.org/show_bug.cgi?id=103066
+
+        Reviewed by Jochen Eisinger.
+
+        DOMWrapperWorld had a workaround in place during deletion.
+        This patch brings it in line with WebKit standards.
+
+        No new tests: refactor.
+
+        * bindings/v8/DOMWrapperWorld.cpp:
+        (WebCore::DOMWrapperWorld::~DOMWrapperWorld):
+        (WebCore::DOMWrapperWorld::ensureIsolatedWorld):
+        * bindings/v8/DOMWrapperWorld.h:
+        (DOMWrapperWorld):
+        (WebCore::DOMWrapperWorld::isolatedWorldDOMDataStore):
+
 2012-11-22  Antti Koivisto  <antti@apple.com>
 
         Remove SVGShadowText class
