@@ -58,9 +58,9 @@ struct StringHash;
 
 // Declarations of string operations
 
-int charactersToIntStrict(const LChar*, size_t, bool* ok = 0, int base = 10);
+WTF_EXPORT_STRING_API int charactersToIntStrict(const LChar*, size_t, bool* ok = 0, int base = 10);
 WTF_EXPORT_STRING_API int charactersToIntStrict(const UChar*, size_t, bool* ok = 0, int base = 10);
-unsigned charactersToUIntStrict(const LChar*, size_t, bool* ok = 0, int base = 10);
+WTF_EXPORT_STRING_API unsigned charactersToUIntStrict(const LChar*, size_t, bool* ok = 0, int base = 10);
 WTF_EXPORT_STRING_API unsigned charactersToUIntStrict(const UChar*, size_t, bool* ok = 0, int base = 10);
 int64_t charactersToInt64Strict(const LChar*, size_t, bool* ok = 0, int base = 10);
 int64_t charactersToInt64Strict(const UChar*, size_t, bool* ok = 0, int base = 10);

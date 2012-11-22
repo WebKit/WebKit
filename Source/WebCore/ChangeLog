@@ -1,3 +1,22 @@
+2012-11-22  Michael Saboff  <msaboff@apple.com>
+
+        HTML integer parsing functions don't natively handle 8 bit strings
+        https://bugs.webkit.org/show_bug.cgi?id=102997
+
+        Reviewed by Filip Pizlo.
+
+        In order to avoid unnecessary up convering of 8 bit strings to 16 bits, added 8 bit paths to
+        parseHTMLInteger() and parseHTMLNonNegativeInteger() by breaking out the core logic into
+        templated helper functions.  These methods are primarily used to process attribute values.
+
+        No new tests needed, functionnality covered by existing tests.
+
+        * html/parser/HTMLParserIdioms.cpp:
+        (WebCore::parseHTMLIntegerInternal):
+        (WebCore::parseHTMLInteger):
+        (WebCore::parseHTMLNonNegativeIntegerInternal):
+        (WebCore::parseHTMLNonNegativeInteger):
+
 2012-11-22  Kentaro Hara  <haraken@chromium.org>
 
         [V8] WebCoreStringResourceBase should be located in V8StringResource.h

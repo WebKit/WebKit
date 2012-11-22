@@ -1,3 +1,17 @@
+2012-11-22  Michael Saboff  <msaboff@apple.com>
+
+        HTML integer parsing functions don't natively handle 8 bit strings
+        https://bugs.webkit.org/show_bug.cgi?id=102997
+
+        Reviewed by Filip Pizlo.
+
+        Added exports to the LChar* versions of charactersToIntStrict() and charactersToUIntStrict()
+        to support the changes made to parseHTMLInteger() and parseHTMLNonNegativeInteger().
+
+        * wtf/text/WTFString.h:
+        (WTF::charactersToIntStrict): Added export
+        (WTF::charactersToUIntStrict): Added export
+
 2012-11-21  Filip Pizlo  <fpizlo@apple.com>
 
         Rename dataLog() and dataLogV() to dataLogF() and dataLogFV()

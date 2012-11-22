@@ -150,14 +150,9 @@ double parseToDoubleForNumberType(const String& string)
     return parseToDoubleForNumberType(string, std::numeric_limits<double>::quiet_NaN());
 }
 
-// http://www.whatwg.org/specs/web-apps/current-work/#rules-for-parsing-integers
-bool parseHTMLInteger(const String& input, int& value)
+template <typename CharacterType>
+static bool parseHTMLIntegerInternal(const CharacterType* position, const CharacterType* end, int& value)
 {
-    // Step 1
-    // Step 2
-    const UChar* position = input.characters();
-    const UChar* end = position + input.length();
-
     // Step 3
     int sign = 1;
 
@@ -197,18 +192,31 @@ bool parseHTMLInteger(const String& input, int& value)
 
     // Step 9
     bool ok;
-    value = sign * charactersToIntStrict(digits.characters(), digits.length(), &ok);
+    if (digits.is8Bit())
+        value = sign * charactersToIntStrict(digits.characters8(), digits.length(), &ok);
+    else
+        value = sign * charactersToIntStrict(digits.characters16(), digits.length(), &ok);
     return ok;
 }
 
-// http://www.whatwg.org/specs/web-apps/current-work/#rules-for-parsing-non-negative-integers
-bool parseHTMLNonNegativeInteger(const String& input, unsigned int& value)
+// http://www.whatwg.org/specs/web-apps/current-work/#rules-for-parsing-integers
+bool parseHTMLInteger(const String& input, int& value)
 {
     // Step 1
     // Step 2
-    const UChar* position = input.characters();
-    const UChar* end = position + input.length();
+    unsigned length = input.length();
+    if (length && input.is8Bit()) {
+        const LChar* start = input.characters8();
+        return parseHTMLIntegerInternal(start, start + length, value);
+    }
 
+    const UChar* start = input.characters();
+    return parseHTMLIntegerInternal(start, start + length, value);
+}
+
+template <typename CharacterType>
+static bool parseHTMLNonNegativeIntegerInternal(const CharacterType* position, const CharacterType* end, unsigned& value)
+{
     // Step 3
     while (position < end) {
         if (!isHTMLSpace(*position))
@@ -244,8 +252,27 @@ bool parseHTMLNonNegativeInteger(const String& input, unsigned int& value)
 
     // Step 9
     bool ok;
-    value = charactersToUIntStrict(digits.characters(), digits.length(), &ok);
+    if (digits.is8Bit())
+        value = charactersToUIntStrict(digits.characters8(), digits.length(), &ok);
+    else
+        value = charactersToUIntStrict(digits.characters16(), digits.length(), &ok);
     return ok;
+}
+
+
+// http://www.whatwg.org/specs/web-apps/current-work/#rules-for-parsing-non-negative-integers
+bool parseHTMLNonNegativeInteger(const String& input, unsigned& value)
+{
+    // Step 1
+    // Step 2
+    unsigned length = input.length();
+    if (length && input.is8Bit()) {
+        const LChar* start = input.characters8();
+        return parseHTMLNonNegativeIntegerInternal(start, start + length, value);
+    }
+    
+    const UChar* start = input.characters();
+    return parseHTMLNonNegativeIntegerInternal(start, start + length, value);
 }
 
 }
