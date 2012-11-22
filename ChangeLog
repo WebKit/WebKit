@@ -1,3 +1,16 @@
+2012-11-21  Kondapally Kalyan  <kalyan.kondapally@intel.com>
+
+        [EFL] GLX detection is broken.
+        https://bugs.webkit.org/show_bug.cgi?id=102687.
+
+        Reviewed by Laszlo Gombos.
+
+        HAVE_GLX is enabled only if WebGL is enabled. This is wrong and we should
+        explicitly test for GLX support.
+        This patch makes changes so that we check for glx.h header and sets HAVE_GLX flag appropriately.
+
+        * Source/cmake/OptionsEfl.cmake:
+
 2012-11-21  Yael Aharon  <yael.aharon@intel.com>
 
         [EFL] Turn on WTF_USE_TILED_BACKING_STORE by default
