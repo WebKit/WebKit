@@ -1,5 +1,6 @@
 /*
     Copyright (C) 2012 Samsung Electronics
+    Copyright (C) 2012 Intel Corporation.
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -20,21 +21,16 @@
 #ifndef GraphicsContext3DPrivate_h
 #define GraphicsContext3DPrivate_h
 
+#if USE(3D_GRAPHICS) || USE(ACCELERATED_COMPOSITING)
+
 #include "GraphicsContext3D.h"
 
 #if USE(TEXTURE_MAPPER_GL)
 #include <texmap/TextureMapperPlatformLayer.h>
 #endif
 
-#if USE(GRAPHICS_SURFACE)
-#include "GraphicsSurface.h"
-#endif
-
-typedef struct _Evas_GL               Evas_GL;
-typedef struct _Evas_GL_Surface       Evas_GL_Surface;
-typedef struct _Evas_GL_Context       Evas_GL_Context;
-typedef struct _Evas_GL_Config        Evas_GL_Config;
-typedef struct _Evas_GL_API           Evas_GL_API;
+#include "GLPlatformContext.h"
+#include <wtf/PassOwnPtr.h>
 
 class PageClientEfl;
 
@@ -48,8 +44,9 @@ public:
     GraphicsContext3DPrivate(GraphicsContext3D*, HostWindow*, GraphicsContext3D::RenderStyle);
     ~GraphicsContext3DPrivate();
 
+    bool createSurface(PageClientEfl*, bool);
     PlatformGraphicsContext3D platformGraphicsContext3D() const;
-
+    void setContextLostCallback(PassOwnPtr<GraphicsContext3D::ContextLostCallback>  callBack);
 #if USE(ACCELERATED_COMPOSITING)
     PlatformLayer* platformLayer() const;
 #endif
@@ -61,31 +58,23 @@ public:
     virtual GraphicsSurfaceToken graphicsSurfaceToken() const;
     void createGraphicsSurfaces(const IntSize&);
 #endif
-
     bool makeContextCurrent();
-    bool createSurface(PageClientEfl*, bool renderDirectlyToEvasGLObject);
-    void setCurrentGLContext(void*, void*);
-
+    void releaseResources();
     GraphicsContext3D::Attributes m_attributes;
     GraphicsContext3D* m_context;
     HostWindow* m_hostWindow;
+    OwnPtr<GLPlatformContext> m_platformContext;
+    OwnPtr<GLPlatformSurface> m_platformSurface;
 #if USE(GRAPHICS_SURFACE)
-    GraphicsSurface::Flags m_surfaceFlags;
-    RefPtr<GraphicsSurface> m_graphicsSurface;
+    GraphicsSurfaceToken m_surfaceHandle;
 #endif
-
+    OwnPtr<GraphicsContext3D::ContextLostCallback> m_contextLostCallback;
     ListHashSet<GC3Denum> m_syntheticErrors;
-
-    OwnPtr<Ecore_Evas> m_ecoreEvas;
-    Evas_GL* m_evasGL;
-    Evas_GL_Context* m_evasGLContext;
-    Evas_GL_Surface* m_evasGLSurface;
-    void* m_glContext;
-    void* m_glSurface;
-    Evas_GL_API* m_api;
-    GraphicsContext3D::RenderStyle m_renderStyle;
+    bool m_pendingSurfaceResize;
 };
 
 } // namespace WebCore
 
-#endif // GraphicsLayerEfl_h
+#endif
+
+#endif

@@ -1,5 +1,6 @@
 /*
     Copyright (C) 2012 Samsung Electronics
+    Copyright (C) 2012 Intel Corporation.
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -27,7 +28,6 @@
 #include "NotImplemented.h"
 #include "OpenGLShims.h"
 #include "PlatformContextCairo.h"
-#include <GL/glx.h>
 
 #if USE(OPENGL_ES_2)
 #include "Extensions3DOpenGLES.h"
@@ -39,6 +39,9 @@ namespace WebCore {
 
 PassRefPtr<GraphicsContext3D> GraphicsContext3D::create(GraphicsContext3D::Attributes attrs, HostWindow* hostWindow, RenderStyle renderStyle)
 {
+    if (renderStyle == RenderDirectlyToHostWindow)
+        return 0;
+
     RefPtr<GraphicsContext3D> context = adoptRef(new GraphicsContext3D(attrs, hostWindow, renderStyle));
     return context->m_private ? context.release() : 0;
 }
@@ -67,29 +70,12 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3D::Attributes attrs, HostWi
     , m_multisampleColorBuffer(0)
     , m_private(adoptPtr(new GraphicsContext3DPrivate(this, hostWindow, renderStyle)))
 {
-    validateAttributes();
-
-    if (!m_private)
-        return;
-
-    static bool initializedShims = false;
-    static bool success = true;
-    if (!initializedShims) {
-        success = initializeOpenGLShims();
-        initializedShims = true;
-    }
-    if (!success) {
+    if (!m_private || !m_private->m_platformContext) {
         m_private = nullptr;
         return;
     }
 
-    if (renderStyle == RenderToCurrentGLContext) {
-        // Evas doesn't allow including gl headers and Evas_GL headers at the same time,
-        // so we need to query the current gl context/surface here instead of in GraphicsContext3DPrivate.
-        void* currentContext = (void*)glXGetCurrentContext();
-        void* currentSurface = (void*)glXGetCurrentDrawable();
-        m_private->setCurrentGLContext(currentContext, currentSurface);
-    }
+    validateAttributes();
 
     if (renderStyle == RenderOffscreen) {
         // Create buffers for the canvas FBO.
@@ -147,14 +133,19 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3D::Attributes attrs, HostWi
     glEnable(GL_POINT_SPRITE);
     glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
 #endif
+    glClearColor(0.0, 0.0, 0.0, 0.0);
 }
 
 GraphicsContext3D::~GraphicsContext3D()
 {
-    if (m_renderStyle == RenderToCurrentGLContext || !m_private)
+    if (!m_private || !makeContextCurrent())
         return;
 
-    makeContextCurrent();
+    if (!m_fbo) {
+        m_private->releaseResources();
+        return;
+    }
+
     glDeleteTextures(1, &m_texture);
 
     if (m_attrs.antialias) {
@@ -165,7 +156,6 @@ GraphicsContext3D::~GraphicsContext3D()
 
         glDeleteFramebuffers(1, &m_multisampleFBO);
     } else if (m_attrs.stencil || m_attrs.depth) {
-
 #if USE(OPENGL_ES_2)
         if (m_attrs.depth)
             glDeleteRenderbuffers(1, &m_depthBuffer);
@@ -175,7 +165,9 @@ GraphicsContext3D::~GraphicsContext3D()
 #endif
         glDeleteRenderbuffers(1, &m_depthStencilBuffer);
     }
+
     glDeleteFramebuffers(1, &m_fbo);
+    m_private->releaseResources();
 }
 
 PlatformGraphicsContext3D GraphicsContext3D::platformGraphicsContext3D()
@@ -197,12 +189,6 @@ PlatformLayer* GraphicsContext3D::platformLayer() const
 
 bool GraphicsContext3D::makeContextCurrent()
 {
-    if (!m_private)
-        return false;
-
-    if (m_renderStyle == RenderToCurrentGLContext)
-        return true;
-
     return m_private->makeContextCurrent();
 }
 
@@ -215,9 +201,9 @@ bool GraphicsContext3D::isGLES2Compliant() const
 #endif
 }
 
-void GraphicsContext3D::setContextLostCallback(PassOwnPtr<ContextLostCallback>) 
+void GraphicsContext3D::setContextLostCallback(PassOwnPtr<ContextLostCallback> callBack)
 {
-    notImplemented();
+    m_private->setContextLostCallback(callBack);
 }
 
 void GraphicsContext3D::setErrorMessageCallback(PassOwnPtr<ErrorMessageCallback>) 
