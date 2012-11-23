@@ -1,5 +1,19 @@
 2012-11-23  Huang Dongsung  <luxtella@company100.net>
 
+        Coordinated Graphics: Match the behavior of selfOrAncestorHaveNonAffineTransforms() to its name.
+        https://bugs.webkit.org/show_bug.cgi?id=103097
+
+        Reviewed by Noam Rosenthal.
+
+        CoordinatedGraphicsLayer::selfOrAncestorHaveNonAffineTransforms() does
+        not check its ancestor. This patch makes this method check its ancestor
+        to match its name.
+
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedGraphicsLayer.cpp:
+        (WebCore::CoordinatedGraphicsLayer::selfOrAncestorHaveNonAffineTransforms):
+
+2012-11-23  Huang Dongsung  <luxtella@company100.net>
+
         Coordinated Graphics: LayerTreeRenderer::removeTile() does not remove tiles actually.
         https://bugs.webkit.org/show_bug.cgi?id=103030
 

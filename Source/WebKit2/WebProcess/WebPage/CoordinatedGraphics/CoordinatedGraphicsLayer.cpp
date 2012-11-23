@@ -860,7 +860,10 @@ bool CoordinatedGraphicsLayer::selfOrAncestorHaveNonAffineTransforms()
     if (!m_layerTransform.combined().isAffine())
         return true;
 
-    return false;
+    if (!parent())
+        return false;
+
+    return toCoordinatedGraphicsLayer(parent())->selfOrAncestorHaveNonAffineTransforms();
 }
 
 bool CoordinatedGraphicsLayer::addAnimation(const KeyframeValueList& valueList, const IntSize& boxSize, const Animation* anim, const String& keyframesName, double delayAsNegativeTimeOffset)
