@@ -1,3 +1,10 @@
+2012-11-23  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed gardening, skip failing tests.
+
+        * platform/qt-5.0-wk2/TestExpectations:
+        * platform/wk2/TestExpectations:
+
 2012-11-23  Christophe Dumez  <christophe.dumez@intel.com>
 
         WebSocket's MessageEvent.origin attribute is an empty string

@@ -622,6 +622,7 @@ fast/mutation/inline-event-listener.html
 editing/selection/context-menu-text-selection.html
 editing/selection/5354455-2.html
 editing/spelling/spellcheck-input-search-crash.html
+fast/events/context-nodrag.html
 
 # eventSender.dragMode is unimplemented in WKTR
 # Mac: https://bugs.webkit.org/show_bug.cgi?id=68552
