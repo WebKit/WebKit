@@ -21,6 +21,14 @@
         * platform/win/TestExpectations:
         * platform/wincairo/TestExpectations:
 
+2012-11-23  Robert Kroeger  <rjkroege@chromium.org>
+
+        Unreviewed gardening. Image rebaseline of
+        fast/text/atsui-small-caps-punctuation-size.html
+
+        * platform/chromium-linux-x86/fast/text/atsui-small-caps-punctuation-size-expected.png: Added.
+        * platform/efl-wk1/fast/text/atsui-small-caps-punctuation-size-expected.png: Renamed from LayoutTests/platform/efl/fast/text/atsui-small-caps-punctuation-size-expected.png.
+
 2012-11-23  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed gardening.
