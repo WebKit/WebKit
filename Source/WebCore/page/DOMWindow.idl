@@ -345,6 +345,10 @@
     attribute WebKitCSSFilterValueConstructor WebKitCSSFilterValue;
 #endif
 
+#if defined(ENABLE_CSS_DEVICE_ADAPTATION) && ENABLE_CSS_DEVICE_ADAPTATION
+    attribute WebKitCSSViewportRuleConstructor WebKitCSSViewportRule;
+#endif
+
     attribute CSSRuleConstructor CSSRule;
     attribute CSSCharsetRuleConstructor CSSCharsetRule;
     attribute CSSFontFaceRuleConstructor CSSFontFaceRule;

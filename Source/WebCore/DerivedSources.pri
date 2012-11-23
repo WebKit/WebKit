@@ -213,6 +213,7 @@ IDL_BINDINGS += \
     $$PWD/css/WebKitCSSMatrix.idl \
     $$PWD/css/WebKitCSSRegionRule.idl \
     $$PWD/css/WebKitCSSTransformValue.idl \
+    $$PWD/css/WebKitCSSViewportRule.idl \
     $$PWD/dom/Attr.idl \
     $$PWD/dom/BeforeLoadEvent.idl \
     $$PWD/dom/CharacterData.idl \

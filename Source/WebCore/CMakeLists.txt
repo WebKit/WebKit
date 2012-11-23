@@ -334,6 +334,7 @@ SET(WebCore_IDL_FILES
     css/WebKitCSSMatrix.idl
     css/WebKitCSSRegionRule.idl
     css/WebKitCSSTransformValue.idl
+    css/WebKitCSSViewportRule.idl
 
     dom/Attr.idl
     dom/BeforeLoadEvent.idl

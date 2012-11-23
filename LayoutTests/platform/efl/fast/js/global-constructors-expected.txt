@@ -332,6 +332,7 @@ PASS WebKitCSSKeyframesRule.toString() is '[object WebKitCSSKeyframesRuleConstru
 PASS WebKitCSSMatrix.toString() is '[object WebKitCSSMatrixConstructor]'
 PASS WebKitCSSRegionRule.toString() is '[object WebKitCSSRegionRuleConstructor]'
 PASS WebKitCSSTransformValue.toString() is '[object WebKitCSSTransformValueConstructor]'
+PASS WebKitCSSViewportRule.toString() is '[object WebKitCSSViewportRuleConstructor]'
 FAIL WebKitIntent.toString() should be [object WebKitIntentConstructor]. Was [object IntentConstructor].
 FAIL WebKitMutationObserver.toString() should be [object WebKitMutationObserverConstructor]. Was [object MutationObserverConstructor].
 PASS WebKitPoint.toString() is '[object WebKitPointConstructor]'

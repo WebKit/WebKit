@@ -42,9 +42,11 @@
 #include "JSWebKitCSSKeyframeRule.h"
 #include "JSWebKitCSSKeyframesRule.h"
 #include "JSWebKitCSSRegionRule.h"
+#include "JSWebKitCSSViewportRule.h"
 #include "WebKitCSSKeyframeRule.h"
 #include "WebKitCSSKeyframesRule.h"
 #include "WebKitCSSRegionRule.h"
+#include "WebKitCSSViewportRule.h"
 
 using namespace JSC;
 
@@ -94,6 +96,11 @@ JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, CSSRule* rule)
         case CSSRule::WEBKIT_KEYFRAMES_RULE:
             wrapper = CREATE_DOM_WRAPPER(exec, globalObject, WebKitCSSKeyframesRule, rule);
             break;
+#if ENABLE(CSS_DEVICE_ADAPTATION)
+        case CSSRule::WEBKIT_VIEWPORT_RULE:
+            wrapper = CREATE_DOM_WRAPPER(exec, globalObject, WebKitCSSViewportRule, rule);
+            break;
+#endif
 #if ENABLE(CSS_REGIONS)
         case CSSRule::WEBKIT_REGION_RULE:
             wrapper = CREATE_DOM_WRAPPER(exec, globalObject, WebKitCSSRegionRule, rule);

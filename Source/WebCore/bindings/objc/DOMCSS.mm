@@ -57,6 +57,10 @@
 #import "DOMWebKitCSSRegionRule.h"
 #endif
 
+#if ENABLE(CSS_DEVICE_ADAPTATION)
+#import "DOMWebKitCSSViewportRule.h"
+#endif
+
 #if ENABLE(SVG_DOM_OBJC_BINDINGS)
 #import "DOMSVGPaint.h"
 #endif
@@ -95,6 +99,10 @@ Class kitClass(WebCore::CSSRule* impl)
             return [DOMWebKitCSSKeyframesRule class];
         case DOM_WEBKIT_KEYFRAME_RULE:
             return [DOMWebKitCSSKeyframeRule class];
+#if ENABLE(CSS_DEVICE_ADAPTATION)
+        case DOM_WEBKIT_VIEWPORT_RULE:
+            return [DOMWebKitCSSViewportRule class];
+#endif
 #if ENABLE(CSS_REGIONS)
         case DOM_WEBKIT_REGION_RULE:
             return [DOMWebKitCSSRegionRule class];

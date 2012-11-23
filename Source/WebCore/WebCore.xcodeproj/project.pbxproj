@@ -1040,6 +1040,11 @@
 		3AC648B2129E146500C3EB25 /* EditingBoundary.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AC648B1129E146500C3EB25 /* EditingBoundary.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		3C244FEAA375AC633F88BE6F /* RenderLayerModelObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C244FE4A375AC633F88BE6F /* RenderLayerModelObject.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		3C244FEBA375AC633F88BE6F /* RenderLayerModelObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3C244FE5A375AC633F88BE6F /* RenderLayerModelObject.cpp */; };
+		3F2B33EB165AF15600E3987C /* DOMWebKitCSSViewportRule.h in Headers */ = {isa = PBXBuildFile; fileRef = 3F2B33E6165AF15500E3987C /* DOMWebKitCSSViewportRule.h */; };
+		3F2B33EC165AF15600E3987C /* DOMWebKitCSSViewportRule.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3F2B33E7165AF15500E3987C /* DOMWebKitCSSViewportRule.mm */; };
+		3F2B33ED165AF15600E3987C /* DOMWebKitCSSViewportRuleInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3F2B33E8165AF15500E3987C /* DOMWebKitCSSViewportRuleInternal.h */; };
+		3F2B33EE165AF15600E3987C /* JSWebKitCSSViewportRule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3F2B33E9165AF15500E3987C /* JSWebKitCSSViewportRule.cpp */; };
+		3F2B33EF165AF15600E3987C /* JSWebKitCSSViewportRule.h in Headers */ = {isa = PBXBuildFile; fileRef = 3F2B33EA165AF15500E3987C /* JSWebKitCSSViewportRule.h */; };
 		3FFFF9A8159D9A550020BBD5 /* WebKitCSSViewportRule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3FFFF9A6159D9A550020BBD5 /* WebKitCSSViewportRule.cpp */; };
 		3FFFF9A9159D9A550020BBD5 /* WebKitCSSViewportRule.h in Headers */ = {isa = PBXBuildFile; fileRef = 3FFFF9A7159D9A550020BBD5 /* WebKitCSSViewportRule.h */; };
 		3FFFF9AD159D9B060020BBD5 /* ViewportStyleResolver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3FFFF9AB159D9B060020BBD5 /* ViewportStyleResolver.cpp */; };
@@ -8217,6 +8222,12 @@
 		3AC648B1129E146500C3EB25 /* EditingBoundary.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EditingBoundary.h; sourceTree = "<group>"; };
 		3C244FE4A375AC633F88BE6F /* RenderLayerModelObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderLayerModelObject.h; sourceTree = "<group>"; };
 		3C244FE5A375AC633F88BE6F /* RenderLayerModelObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderLayerModelObject.cpp; sourceTree = "<group>"; };
+		3F2B33E3165ABD3500E3987C /* WebKitCSSViewportRule.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebKitCSSViewportRule.idl; sourceTree = "<group>"; };
+		3F2B33E6165AF15500E3987C /* DOMWebKitCSSViewportRule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMWebKitCSSViewportRule.h; sourceTree = "<group>"; };
+		3F2B33E7165AF15500E3987C /* DOMWebKitCSSViewportRule.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMWebKitCSSViewportRule.mm; sourceTree = "<group>"; };
+		3F2B33E8165AF15500E3987C /* DOMWebKitCSSViewportRuleInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMWebKitCSSViewportRuleInternal.h; sourceTree = "<group>"; };
+		3F2B33E9165AF15500E3987C /* JSWebKitCSSViewportRule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebKitCSSViewportRule.cpp; sourceTree = "<group>"; };
+		3F2B33EA165AF15500E3987C /* JSWebKitCSSViewportRule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebKitCSSViewportRule.h; sourceTree = "<group>"; };
 		3FFFF9A6159D9A550020BBD5 /* WebKitCSSViewportRule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebKitCSSViewportRule.cpp; sourceTree = "<group>"; };
 		3FFFF9A7159D9A550020BBD5 /* WebKitCSSViewportRule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKitCSSViewportRule.h; sourceTree = "<group>"; };
 		3FFFF9AB159D9B060020BBD5 /* ViewportStyleResolver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ViewportStyleResolver.cpp; sourceTree = "<group>"; };
@@ -16250,6 +16261,9 @@
 				31611E5E0E1C4E1400F6A579 /* DOMWebKitCSSTransformValue.h */,
 				31611E5F0E1C4E1400F6A579 /* DOMWebKitCSSTransformValue.mm */,
 				31611E600E1C4E1400F6A579 /* DOMWebKitCSSTransformValueInternal.h */,
+				3F2B33E6165AF15500E3987C /* DOMWebKitCSSViewportRule.h */,
+				3F2B33E7165AF15500E3987C /* DOMWebKitCSSViewportRule.mm */,
+				3F2B33E8165AF15500E3987C /* DOMWebKitCSSViewportRuleInternal.h */,
 			);
 			name = CSS;
 			sourceTree = "<group>";
@@ -19061,6 +19075,8 @@
 				8ACC24CE148E24B200EFCC0D /* JSWebKitCSSRegionRule.h */,
 				31611E580E1C4DE000F6A579 /* JSWebKitCSSTransformValue.cpp */,
 				31611E590E1C4DE000F6A579 /* JSWebKitCSSTransformValue.h */,
+				3F2B33E9165AF15500E3987C /* JSWebKitCSSViewportRule.cpp */,
+				3F2B33EA165AF15500E3987C /* JSWebKitCSSViewportRule.h */,
 			);
 			name = CSS;
 			sourceTree = "<group>";
@@ -21504,6 +21520,7 @@
 				31611E540E1C4D4A00F6A579 /* WebKitCSSTransformValue.idl */,
 				3FFFF9A6159D9A550020BBD5 /* WebKitCSSViewportRule.cpp */,
 				3FFFF9A7159D9A550020BBD5 /* WebKitCSSViewportRule.h */,
+				3F2B33E3165ABD3500E3987C /* WebKitCSSViewportRule.idl */,
 			);
 			path = css;
 			sourceTree = "<group>";
@@ -25778,6 +25795,9 @@
 				50D32858163B313F0016111E /* ValidatedCustomFilterOperation.h in Headers */,
 				3FFFF9AE159D9B060020BBD5 /* ViewportStyleResolver.h in Headers */,
 				3FFFF9A9159D9A550020BBD5 /* WebKitCSSViewportRule.h in Headers */,
+				3F2B33EB165AF15600E3987C /* DOMWebKitCSSViewportRule.h in Headers */,
+				3F2B33ED165AF15600E3987C /* DOMWebKitCSSViewportRuleInternal.h in Headers */,
+				3F2B33EF165AF15600E3987C /* JSWebKitCSSViewportRule.h in Headers */,
 				93C38BFF164473C700091EB2 /* ScrollingStateFixedNode.h in Headers */,
 				93C38C03164473DD00091EB2 /* ScrollingTreeFixedNode.h in Headers */,
 				E1424C8A164B3B4E00F32D40 /* PlatformCookieJar.h in Headers */,
@@ -28874,6 +28894,8 @@
 				1AA21250163F0DA80000E63F /* AtomicStringCF.cpp in Sources */,
 				50D32857163B313F0016111E /* ValidatedCustomFilterOperation.cpp in Sources */,
 				3FFFF9A8159D9A550020BBD5 /* WebKitCSSViewportRule.cpp in Sources */,
+				3F2B33EC165AF15600E3987C /* DOMWebKitCSSViewportRule.mm in Sources */,
+				3F2B33EE165AF15600E3987C /* JSWebKitCSSViewportRule.cpp in Sources */,
 				4FFC022B1643B710004E1638 /* NodeRareData.cpp in Sources */,
 				4FFC022D1643B726004E1638 /* ElementRareData.cpp in Sources */,
 				93C38BFE164473C700091EB2 /* ScrollingStateFixedNode.cpp in Sources */,

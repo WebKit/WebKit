@@ -1,3 +1,30 @@
+2012-11-23  Thiago Marcos P. Santos  <thiago.santos@intel.com>
+
+        Expose DOM interface for CSS Device Adaptation
+        https://bugs.webkit.org/show_bug.cgi?id=95966
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Added V8 and JSC bindings for CSS Device Adapation.
+
+        Test: css3/device-adapt/opera/cssom-001.xhtml
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * DerivedSources.pri:
+        * GNUmakefile.list.am:
+        * WebCore.gypi:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSCSSRuleCustom.cpp:
+        (WebCore::toJS):
+        * bindings/objc/DOMCSS.mm:
+        (kitClass):
+        * bindings/v8/custom/V8CSSRuleCustom.cpp:
+        (WebCore::wrap):
+        * css/CSSRule.idl:
+        * css/WebKitCSSViewportRule.idl: Added.
+        * page/DOMWindow.idl:
+
 2012-11-22  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r135549.
