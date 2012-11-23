@@ -2033,15 +2033,15 @@ webkit.org/b/73329 [ Android Linux Win ] fast/text/international/hindi-whitespac
 # http://trac.webkit.org/changeset/50852
 # The ColorSpace was only implemented for CG, more port implementation
 # required in order for Chromium to support color correction.
-crbug.com/28005 [ Android Linux Win ] fast/css/color-correction-on-backgrounds.html [ Failure ]
-crbug.com/28005 [ Android Linux Win ] fast/css/color-correction-on-text.html [ Failure ]
+crbug.com/28005 [ Android XP ] fast/css/color-correction-on-backgrounds.html [ Failure ]
+crbug.com/28005 [ Android Win ] fast/css/color-correction-on-text.html [ Failure ]
 crbug.com/28005 [ Android Linux Win ] fast/css/color-correction.html [ Failure ]
-crbug.com/28005 [ Android Linux Win ] fast/css/color-correction-on-box-shadow.html [ Failure ]
+crbug.com/28005 [ Android Linux XP ] fast/css/color-correction-on-box-shadow.html [ Failure ]
 crbug.com/28005 [ Mac ] fast/css/color-correction-on-box-shadow.html [ ImageOnlyFailure ]
 crbug.com/28005 [ Android Linux Win ] fast/css/color-correction-on-text-shadow.html [ Failure ]
 crbug.com/28005 [ Mac ] fast/css/color-correction-on-text-shadow.html [ ImageOnlyFailure ]
-crbug.com/28005 [ Android Linux Win ] fast/css/color-correction-on-background-image.html [ Failure ]
-crbug.com/28005 [ Android Linux Win ] fast/css/color-correction-untagged-images.html [ Failure ]
+crbug.com/28005 [ Android Win ] fast/css/color-correction-on-background-image.html [ Failure ]
+crbug.com/28005 [ Android XP ] fast/css/color-correction-untagged-images.html [ Failure ]
 
 # Timeout on Debug.
 webkit.org/b/82954 [ SnowLeopard Lion Win Linux ] svg/hixie/perf/007.xml [ Pass Slow ]
@@ -2501,11 +2501,11 @@ code.google.com/p/v8/issues/detail?id=2218 fast/js/string-fontcolor.html [ Failu
 code.google.com/p/v8/issues/detail?id=2218 fast/js/string-fontsize.html [ Failure ]
 code.google.com/p/v8/issues/detail?id=2218 fast/js/string-link.html [ Failure ]
 
-webkit.org/b/50282 [ Android Linux Win ] fast/images/imagemap-focus-ring-outline-color-explicitly-inherited-from-map.html [ Failure ]
-webkit.org/b/50282 [ Android Linux Win ] fast/images/imagemap-focus-ring-outline-color-not-inherited-from-map.html [ Failure ]
-webkit.org/b/50282 [ Android Linux Win ] fast/images/imagemap-focus-ring-outline-color.html [ Failure ]
+webkit.org/b/50282 [ Android Win ] fast/images/imagemap-focus-ring-outline-color-explicitly-inherited-from-map.html [ Failure ]
+webkit.org/b/50282 [ Android Win ] fast/images/imagemap-focus-ring-outline-color-not-inherited-from-map.html [ Failure ]
+webkit.org/b/50282 [ Android Win ] fast/images/imagemap-focus-ring-outline-color.html [ Failure ]
 webkit.org/b/50282 [ Android Linux Win ] fast/images/imagemap-circle-focus-ring.html [ Failure ]
-webkit.org/b/50282 [ Android Linux Win ] fast/images/imagemap-polygon-focus-ring.html [ Failure ]
+webkit.org/b/50282 [ Android Linux XP ] fast/images/imagemap-polygon-focus-ring.html [ Failure ]
 
 # Regressed at r73423. All areas are painted green.
 webkit.org/b/50734 [ Android Linux Win ] fast/repaint/positioned-document-element.html [ ImageOnlyFailure ]
@@ -2922,7 +2922,7 @@ webkit.org/b/65009 [ Mac ] scrollbars/scrollbar-drag-thumb-with-large-content.ht
 webkit.org/b/65124 [ Android Linux Win MountainLion ] fast/repaint/japanese-rl-selection-clear.html [ Failure ]
 webkit.org/b/65124 [ Win MountainLion ] fast/repaint/japanese-rl-selection-repaint.html [ Failure ]
 webkit.org/b/65124 [ Android Linux Win MountainLion ] fast/repaint/japanese-rl-selection-repaint-in-regions.html [ Failure ]
-webkit.org/b/65124 [ Android Linux Win ] fast/repaint/line-flow-with-floats-in-regions.html [ Failure ]
+webkit.org/b/65124 [ Android Linux Win7 ] fast/repaint/line-flow-with-floats-in-regions.html [ Failure ]
 
 webkit.org/b/65199 [ Android Linux SnowLeopard Win ] fast/writing-mode/broken-ideograph-small-caps.html [ Failure ]
 
@@ -2983,7 +2983,7 @@ crbug.com/33287 fast/canvas/set-colors.html [ Failure ]
 
 webkit.org/b/69060 [ Android Linux Win ] fast/repaint/selection-clear.html [ Failure ]
 
-webkit.org/b/69103 [ Android Linux Win ] fast/text/line-initial-and-final-swashes.html [ Failure ]
+webkit.org/b/69103 [ Android Linux XP ] fast/text/line-initial-and-final-swashes.html [ Failure ]
 webkit.org/b/69103 [ Mac ] fast/text/line-initial-and-final-swashes.html [ ImageOnlyFailure ]
 
 webkit.org/b/69136 [ Mac ] fast/frames/frame-set-rotation-hit.html [ ImageOnlyFailure ]
@@ -4068,11 +4068,11 @@ webkit.org/b/94240 platform/chromium/virtual/deferred/fast/images/embed-image.ht
 webkit.org/b/94240 [ Linux Win SnowLeopard ] platform/chromium/virtual/deferred/fast/images/favicon-as-image.html [ Failure ]
 webkit.org/b/94240 [ Linux Win SnowLeopard ] platform/chromium/virtual/deferred/fast/images/gif-large-checkerboard.html [ ImageOnlyFailure ]
 webkit.org/b/94240 platform/chromium/virtual/deferred/fast/images/gif-loop-count.html [ ImageOnlyFailure ]
-webkit.org/b/94240 [ Linux Win ] platform/chromium/virtual/deferred/fast/images/imagemap-circle-focus-ring.html [ Failure ]
-webkit.org/b/94240 [ Linux Win ] platform/chromium/virtual/deferred/fast/images/imagemap-focus-ring-outline-color-explicitly-inherited-from-map.html [ Failure ]
-webkit.org/b/94240 [ Linux Win ] platform/chromium/virtual/deferred/fast/images/imagemap-focus-ring-outline-color-not-inherited-from-map.html [ Failure ]
-webkit.org/b/94240 [ Linux Win ] platform/chromium/virtual/deferred/fast/images/imagemap-focus-ring-outline-color.html [ Failure ]
-webkit.org/b/94240 [ Linux Win ] platform/chromium/virtual/deferred/fast/images/imagemap-polygon-focus-ring.html [ Failure ]
+webkit.org/b/94240 [ XP ] platform/chromium/virtual/deferred/fast/images/imagemap-circle-focus-ring.html [ Failure ]
+webkit.org/b/94240 [ Linux Win7 ] platform/chromium/virtual/deferred/fast/images/imagemap-focus-ring-outline-color-explicitly-inherited-from-map.html [ Failure ]
+webkit.org/b/94240 [ Win ] platform/chromium/virtual/deferred/fast/images/imagemap-focus-ring-outline-color-not-inherited-from-map.html [ Failure ]
+webkit.org/b/94240 [ Linux Win7 ] platform/chromium/virtual/deferred/fast/images/imagemap-focus-ring-outline-color.html [ Failure ]
+webkit.org/b/94240 [ Linux Win7 ] platform/chromium/virtual/deferred/fast/images/imagemap-polygon-focus-ring.html [ Failure ]
 webkit.org/b/94240 platform/chromium/virtual/deferred/fast/images/object-image.html [ Failure ]
 webkit.org/b/94240 platform/chromium/virtual/deferred/fast/images/paletted-png-with-color-profile.html [ Missing ]
 webkit.org/b/94240 platform/chromium/virtual/deferred/fast/images/pdf-as-image-landscape.html [ Failure ]

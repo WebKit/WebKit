@@ -1,3 +1,144 @@
+2012-11-22  Yury Semikhatsky  <yurys@chromium.org>
+
+        Unreviewed. Test expectations update after Skia changes.
+
+        * fast/repaint/line-flow-with-floats-in-regions-expected.png: Renamed from LayoutTests/platform/efl/fast/repaint/line-flow-with-floats-in-regions-expected.png.
+        * platform/chromium-linux-x86/fast/images/imagemap-circle-focus-ring-expected.txt: Added.
+        * platform/chromium-linux-x86/fast/images/imagemap-focus-ring-outline-color-expected.txt: Added.
+        * platform/chromium-linux-x86/fast/images/imagemap-focus-ring-outline-color-explicitly-inherited-from-map-expected.txt: Added.
+        * platform/chromium-linux-x86/fast/images/imagemap-focus-ring-outline-color-not-inherited-from-map-expected.txt: Added.
+        * platform/chromium-linux-x86/fast/images/imagemap-polygon-focus-ring-expected.txt: Added.
+        * platform/chromium-linux-x86/platform/chromium/virtual/deferred/fast/images/imagemap-circle-focus-ring-expected.txt: Added.
+        * platform/chromium-linux-x86/platform/chromium/virtual/deferred/fast/images/imagemap-focus-ring-outline-color-expected.txt: Added.
+        * platform/chromium-linux-x86/platform/chromium/virtual/deferred/fast/images/imagemap-focus-ring-outline-color-explicitly-inherited-from-map-expected.txt: Added.
+        * platform/chromium-linux-x86/platform/chromium/virtual/deferred/fast/images/imagemap-focus-ring-outline-color-not-inherited-from-map-expected.txt: Added.
+        * platform/chromium-linux-x86/platform/chromium/virtual/deferred/fast/images/imagemap-polygon-focus-ring-expected.txt: Added.
+        * platform/chromium-linux/fast/css/color-correction-expected.png: Added.
+        * platform/chromium-linux/fast/css/color-correction-on-background-image-expected.png: Added.
+        * platform/chromium-linux/fast/css/color-correction-on-backgrounds-expected.png: Added.
+        * platform/chromium-linux/fast/css/color-correction-on-box-shadow-expected.png: Added.
+        * platform/chromium-linux/fast/css/color-correction-on-text-expected.png: Added.
+        * platform/chromium-linux/fast/css/color-correction-on-text-shadow-expected.png: Added.
+        * platform/chromium-linux/fast/css/color-correction-untagged-images-expected.png: Added.
+        * platform/chromium-linux/fast/css/font-smoothing-expected.png: Added.
+        * platform/chromium-linux/fast/history/visited-link-background-color-expected.png: Copied from LayoutTests/platform/chromium-mac/fast/history/visited-link-background-color-expected.png.
+        * platform/chromium-linux/fast/images/imagemap-circle-focus-ring-expected.png: Added.
+        * platform/chromium-linux/fast/images/imagemap-circle-focus-ring-expected.txt: Added.
+        * platform/chromium-linux/fast/images/imagemap-focus-ring-outline-color-expected.png: Added.
+        * platform/chromium-linux/fast/images/imagemap-focus-ring-outline-color-expected.txt: Added.
+        * platform/chromium-linux/fast/images/imagemap-focus-ring-outline-color-explicitly-inherited-from-map-expected.png: Added.
+        * platform/chromium-linux/fast/images/imagemap-focus-ring-outline-color-explicitly-inherited-from-map-expected.txt: Added.
+        * platform/chromium-linux/fast/images/imagemap-focus-ring-outline-color-not-inherited-from-map-expected.png: Added.
+        * platform/chromium-linux/fast/images/imagemap-focus-ring-outline-color-not-inherited-from-map-expected.txt: Added.
+        * platform/chromium-linux/fast/images/imagemap-polygon-focus-ring-expected.png: Added.
+        * platform/chromium-linux/fast/images/imagemap-polygon-focus-ring-expected.txt: Added.
+        * platform/chromium-linux/fast/text/atsui-pointtooffset-calls-cg-expected.png: Added.
+        * platform/chromium-linux/fast/text/atsui-rtl-override-selection-expected.png: Added.
+        * platform/chromium-linux/fast/text/line-initial-and-final-swashes-expected.png: Added.
+        * platform/chromium-linux/fast/text/midword-break-before-surrogate-pair-2-expected.png: Copied from LayoutTests/platform/chromium-mac/fast/text/midword-break-before-surrogate-pair-2-expected.png.
+        * platform/chromium-linux/platform/chromium/virtual/deferred/fast/images/imagemap-circle-focus-ring-expected.png: Added.
+        * platform/chromium-linux/platform/chromium/virtual/deferred/fast/images/imagemap-circle-focus-ring-expected.txt: Added.
+        * platform/chromium-linux/platform/chromium/virtual/deferred/fast/images/imagemap-focus-ring-outline-color-expected.png: Added.
+        * platform/chromium-linux/platform/chromium/virtual/deferred/fast/images/imagemap-focus-ring-outline-color-expected.txt: Added.
+        * platform/chromium-linux/platform/chromium/virtual/deferred/fast/images/imagemap-focus-ring-outline-color-explicitly-inherited-from-map-expected.png: Added.
+        * platform/chromium-linux/platform/chromium/virtual/deferred/fast/images/imagemap-focus-ring-outline-color-explicitly-inherited-from-map-expected.txt: Added.
+        * platform/chromium-linux/platform/chromium/virtual/deferred/fast/images/imagemap-focus-ring-outline-color-not-inherited-from-map-expected.png: Added.
+        * platform/chromium-linux/platform/chromium/virtual/deferred/fast/images/imagemap-focus-ring-outline-color-not-inherited-from-map-expected.txt: Added.
+        * platform/chromium-linux/platform/chromium/virtual/deferred/fast/images/imagemap-polygon-focus-ring-expected.png: Added.
+        * platform/chromium-linux/platform/chromium/virtual/deferred/fast/images/imagemap-polygon-focus-ring-expected.txt: Added.
+        * platform/chromium-linux/platform/chromium/virtual/deferred/fast/images/object-image-expected.png: Copied from LayoutTests/platform/chromium-mac/fast/text/midword-break-before-surrogate-pair-2-expected.png.
+        * platform/chromium-mac-lion/fast/repaint/line-flow-with-floats-in-regions-expected.png:
+        * platform/chromium-mac-lion/svg/batik/filters/filterRegions-expected.png:
+        * platform/chromium-mac-lion/svg/batik/paints/gradientLimit-expected.png:
+        * platform/chromium-mac-lion/svg/batik/text/smallFonts-expected.png:
+        * platform/chromium-mac-lion/svg/batik/text/textDecoration-expected.png:
+        * platform/chromium-mac-lion/svg/batik/text/textEffect-expected.png:
+        * platform/chromium-mac-lion/svg/batik/text/textEffect2-expected.png:
+        * platform/chromium-mac-lion/svg/batik/text/textFeatures-expected.png:
+        * platform/chromium-mac-lion/svg/batik/text/textLayout-expected.png:
+        * platform/chromium-mac-lion/svg/batik/text/textLayout2-expected.png:
+        * platform/chromium-mac-lion/svg/batik/text/textProperties2-expected.png:
+        * platform/chromium-mac-snowleopard/fast/repaint/line-flow-with-floats-in-regions-expected.png:
+        * platform/chromium-mac-snowleopard/svg/batik/filters/filterRegions-expected.png:
+        * platform/chromium-mac-snowleopard/svg/batik/paints/gradientLimit-expected.png:
+        * platform/chromium-mac-snowleopard/svg/batik/text/smallFonts-expected.png:
+        * platform/chromium-mac-snowleopard/svg/batik/text/textDecoration-expected.png:
+        * platform/chromium-mac-snowleopard/svg/batik/text/textEffect-expected.png:
+        * platform/chromium-mac-snowleopard/svg/batik/text/textEffect2-expected.png:
+        * platform/chromium-mac-snowleopard/svg/batik/text/textFeatures-expected.png:
+        * platform/chromium-mac-snowleopard/svg/batik/text/textLayout-expected.png:
+        * platform/chromium-mac-snowleopard/svg/batik/text/textLayout2-expected.png:
+        * platform/chromium-mac-snowleopard/svg/batik/text/textProperties2-expected.png:
+        * platform/chromium-mac/fast/repaint/line-flow-with-floats-in-regions-expected.png:
+        * platform/chromium-mac/svg/batik/filters/filterRegions-expected.png:
+        * platform/chromium-mac/svg/batik/paints/gradientLimit-expected.png:
+        * platform/chromium-mac/svg/batik/text/smallFonts-expected.png:
+        * platform/chromium-mac/svg/batik/text/textDecoration-expected.png:
+        * platform/chromium-mac/svg/batik/text/textEffect-expected.png:
+        * platform/chromium-mac/svg/batik/text/textEffect2-expected.png:
+        * platform/chromium-mac/svg/batik/text/textFeatures-expected.png:
+        * platform/chromium-mac/svg/batik/text/textLayout-expected.png:
+        * platform/chromium-mac/svg/batik/text/textLayout2-expected.png:
+        * platform/chromium-mac/svg/batik/text/textProperties2-expected.png:
+        * platform/chromium-win-xp/fast/images/imagemap-circle-focus-ring-expected.txt: Added.
+        * platform/chromium-win-xp/fast/images/imagemap-focus-ring-outline-color-expected.txt: Added.
+        * platform/chromium-win-xp/fast/images/imagemap-focus-ring-outline-color-explicitly-inherited-from-map-expected.txt: Added.
+        * platform/chromium-win-xp/fast/images/imagemap-focus-ring-outline-color-not-inherited-from-map-expected.txt: Added.
+        * platform/chromium-win-xp/fast/images/imagemap-polygon-focus-ring-expected.txt: Added.
+        * platform/chromium-win-xp/platform/chromium/virtual/deferred/fast/images/imagemap-circle-focus-ring-expected.txt: Added.
+        * platform/chromium-win-xp/platform/chromium/virtual/deferred/fast/images/imagemap-focus-ring-outline-color-expected.txt: Added.
+        * platform/chromium-win-xp/platform/chromium/virtual/deferred/fast/images/imagemap-focus-ring-outline-color-explicitly-inherited-from-map-expected.txt: Added.
+        * platform/chromium-win-xp/platform/chromium/virtual/deferred/fast/images/imagemap-focus-ring-outline-color-not-inherited-from-map-expected.txt: Added.
+        * platform/chromium-win-xp/platform/chromium/virtual/deferred/fast/images/imagemap-polygon-focus-ring-expected.txt: Added.
+        * platform/chromium-win/fast/images/imagemap-circle-focus-ring-expected.png: Added.
+        * platform/chromium-win/fast/images/imagemap-focus-ring-outline-color-expected.png: Added.
+        * platform/chromium-win/fast/images/imagemap-focus-ring-outline-color-explicitly-inherited-from-map-expected.png: Added.
+        * platform/chromium-win/fast/images/imagemap-focus-ring-outline-color-not-inherited-from-map-expected.png: Added.
+        * platform/chromium-win/fast/images/imagemap-polygon-focus-ring-expected.png: Added.
+        * platform/chromium-win/fast/repaint/line-flow-with-floats-in-regions-expected.png: Added.
+        * platform/chromium-win/fast/text/line-initial-and-final-swashes-expected.png: Added.
+        * platform/chromium-win/platform/chromium/virtual/deferred/fast/images/imagemap-circle-focus-ring-expected.png: Added.
+        * platform/chromium-win/platform/chromium/virtual/deferred/fast/images/imagemap-focus-ring-outline-color-expected.png: Added.
+        * platform/chromium-win/platform/chromium/virtual/deferred/fast/images/imagemap-focus-ring-outline-color-explicitly-inherited-from-map-expected.png: Added.
+        * platform/chromium-win/platform/chromium/virtual/deferred/fast/images/imagemap-focus-ring-outline-color-not-inherited-from-map-expected.png: Added.
+        * platform/chromium-win/platform/chromium/virtual/deferred/fast/images/imagemap-polygon-focus-ring-expected.png: Added.
+        * platform/chromium-win/svg/batik/filters/filterRegions-expected.png:
+        * platform/chromium-win/svg/batik/paints/gradientLimit-expected.png:
+        * platform/chromium-win/svg/batik/text/smallFonts-expected.png:
+        * platform/chromium-win/svg/batik/text/textDecoration-expected.png:
+        * platform/chromium-win/svg/batik/text/textEffect-expected.png:
+        * platform/chromium-win/svg/batik/text/textEffect2-expected.png:
+        * platform/chromium-win/svg/batik/text/textFeatures-expected.png:
+        * platform/chromium-win/svg/batik/text/textLayout-expected.png:
+        * platform/chromium-win/svg/batik/text/textLayout2-expected.png:
+        * platform/chromium-win/svg/batik/text/textProperties2-expected.png:
+        * platform/chromium/TestExpectations:
+        * platform/chromium/fast/history/visited-link-background-color-expected.png: Renamed from LayoutTests/platform/chromium-mac/fast/history/visited-link-background-color-expected.png.
+        * platform/chromium/fast/repaint/line-flow-with-floats-in-regions-expected.png: Removed.
+        * platform/chromium/fast/text/midword-break-before-surrogate-pair-2-expected.png: Renamed from LayoutTests/platform/chromium-mac/fast/text/midword-break-before-surrogate-pair-2-expected.png.
+        * platform/efl-wk1/fast/css/font-smoothing-expected.png: Renamed from LayoutTests/platform/efl/fast/css/font-smoothing-expected.png.
+        * platform/efl-wk1/fast/history/visited-link-background-color-expected.png: Renamed from LayoutTests/platform/efl/fast/history/visited-link-background-color-expected.png.
+        * platform/efl-wk1/fast/images/imagemap-circle-focus-ring-expected.png: Renamed from LayoutTests/platform/efl/fast/images/imagemap-circle-focus-ring-expected.png.
+        * platform/efl-wk1/fast/images/imagemap-focus-ring-outline-color-expected.png: Renamed from LayoutTests/platform/efl/fast/images/imagemap-focus-ring-outline-color-expected.png.
+        * platform/efl-wk1/fast/images/imagemap-focus-ring-outline-color-explicitly-inherited-from-map-expected.png: Renamed from LayoutTests/platform/efl/fast/images/imagemap-focus-ring-outline-color-explicitly-inherited-from-map-expected.png.
+        * platform/efl-wk1/fast/images/imagemap-focus-ring-outline-color-not-inherited-from-map-expected.png: Renamed from LayoutTests/platform/efl/fast/images/imagemap-focus-ring-outline-color-not-inherited-from-map-expected.png.
+        * platform/efl-wk1/fast/images/imagemap-polygon-focus-ring-expected.png: Renamed from LayoutTests/platform/efl/fast/images/imagemap-polygon-focus-ring-expected.png.
+        * platform/efl-wk1/fast/text/atsui-pointtooffset-calls-cg-expected.png: Renamed from LayoutTests/platform/efl/fast/text/atsui-pointtooffset-calls-cg-expected.png.
+        * platform/efl-wk1/fast/text/atsui-rtl-override-selection-expected.png: Renamed from LayoutTests/platform/efl/fast/text/atsui-rtl-override-selection-expected.png.
+        * platform/efl-wk1/fast/text/line-initial-and-final-swashes-expected.png: Renamed from LayoutTests/platform/efl/fast/text/line-initial-and-final-swashes-expected.png.
+        * platform/efl-wk1/fast/text/line-initial-and-final-swashes-expected.txt: Renamed from LayoutTests/platform/efl/fast/text/line-initial-and-final-swashes-expected.txt.
+        * platform/efl-wk1/fast/text/midword-break-before-surrogate-pair-2-expected.png: Renamed from LayoutTests/platform/efl/fast/text/midword-break-before-surrogate-pair-2-expected.png.
+        * platform/efl-wk1/svg/batik/filters/filterRegions-expected.png: Renamed from LayoutTests/platform/efl/svg/batik/filters/filterRegions-expected.png.
+        * platform/efl-wk1/svg/batik/text/smallFonts-expected.png: Renamed from LayoutTests/platform/efl/svg/batik/text/smallFonts-expected.png.
+        * platform/efl-wk1/svg/batik/text/textDecoration-expected.png: Renamed from LayoutTests/platform/efl/svg/batik/text/textDecoration-expected.png.
+        * platform/efl-wk1/svg/batik/text/textEffect-expected.png: Renamed from LayoutTests/platform/efl/svg/batik/text/textEffect-expected.png.
+        * platform/efl-wk1/svg/batik/text/textEffect2-expected.png: Renamed from LayoutTests/platform/efl/svg/batik/text/textEffect2-expected.png.
+        * platform/efl-wk1/svg/batik/text/textFeatures-expected.png: Renamed from LayoutTests/platform/efl/svg/batik/text/textFeatures-expected.png.
+        * platform/efl-wk1/svg/batik/text/textLayout-expected.png: Renamed from LayoutTests/platform/efl/svg/batik/text/textLayout-expected.png.
+        * platform/efl-wk1/svg/batik/text/textLayout2-expected.png: Renamed from LayoutTests/platform/efl/svg/batik/text/textLayout2-expected.png.
+        * platform/efl-wk1/svg/batik/text/textProperties2-expected.png: Renamed from LayoutTests/platform/efl/svg/batik/text/textProperties2-expected.png.
+        * platform/gtk/fast/repaint/line-flow-with-floats-in-regions-expected.png: Removed.
+
 2012-11-22  Dirk Schulze  <krit@webkit.org>
 
         -webkit-mask shorthand switches -webkit-mask-clip and -webkit-mask-origin values
