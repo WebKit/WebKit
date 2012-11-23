@@ -38,7 +38,7 @@ setConfiguration();
 
 # Defer to Android's test runners for running webkit_unit_tests on a device.
 if (checkForArgumentAndRemoveFromARGV('--platform=chromium-android')) {
-    my @runTestCommand = ('build/android/run_tests.py', '--verbose', '--webkit', '--out-directory', sourceDir() . '/out', '-s', 'webkit_unit_tests');
+    my @runTestCommand = ('build/android/run_tests.py', '--verbose', '--webkit', '--exit_code', '--out-directory', sourceDir() . '/out', '-s', 'webkit_unit_tests');
     if (configuration() eq "Release") {
         push @runTestCommand, '--release';
     }

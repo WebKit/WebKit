@@ -83,7 +83,7 @@ setConfiguration();
 # When running TestWebKitAPI for Chromium on Android, defer to the test runner in
 # Chromium as we can't execute the binary locally.
 if (isChromiumAndroid()) {
-    my @runTestCommand = ('build/android/run_tests.py', '--verbose', '--webkit', '--out-directory', sourceDir() . '/out', '-s', 'TestWebKitAPI');
+    my @runTestCommand = ('build/android/run_tests.py', '--verbose', '--webkit', '--exit_code', '--out-directory', sourceDir() . '/out', '-s', 'TestWebKitAPI');
     if (configuration() eq "Release") {
         push @runTestCommand, '--release';
     }

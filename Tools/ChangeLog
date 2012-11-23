@@ -1,3 +1,26 @@
+2012-11-22  Peter Beverloo  <peter@chromium.org>
+
+        [Chromium] Return an accurate exit code when running Android suites, and wait after restarting adb as root
+        https://bugs.webkit.org/show_bug.cgi?id=103065
+
+        Reviewed by Dirk Pranke.
+
+        This addresses two further reliability issues in the Android test running
+        scripts. Firstly, the run_tests.py script needs to have the --exit_code
+        argument passed in order to return non-zero codes, which we need for the
+        build master to distinguish failures from successful runs.
+
+        Secondly, it modifies the layout test runner to briefly wait (through
+        the wait-for-device command) after requesting a device to switch to root
+        mode. Without this waiting period, commands might get lost and thereby
+        unexpectedly fail.
+
+        * Scripts/run-api-tests:
+        * Scripts/run-chromium-webkit-unit-tests:
+        * Scripts/webkitpy/layout_tests/port/chromium_android.py:
+        (ChromiumAndroidDriver._setup_test):
+        (ChromiumAndroidDriver._restart_adb_as_root):
+
 2012-11-22  Simon Hausmann  <simon.hausmann@digia.com>, Pierre Rossi <pierre.rossi@digia.com>
 
         [Qt] Separate QWidget dependant code into separate WebKitWidgets static library
