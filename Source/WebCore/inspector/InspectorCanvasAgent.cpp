@@ -112,11 +112,29 @@ void InspectorCanvasAgent::captureFrame(ErrorString* errorString, String* traceL
     module.captureFrame(errorString, traceLogId);
 }
 
-void InspectorCanvasAgent::getTraceLog(ErrorString* errorString, const String& traceLogId, RefPtr<TypeBuilder::Canvas::TraceLog>& traceLog)
+void InspectorCanvasAgent::startCapturing(ErrorString* errorString, String* traceLogId)
+{
+    ScriptState* scriptState = mainWorldScriptState(m_inspectedPage->mainFrame());
+    InjectedScriptCanvasModule module = InjectedScriptCanvasModule::moduleForState(m_injectedScriptManager, scriptState);
+    if (module.hasNoValue()) {
+        *errorString = "Inspected frame has gone";
+        return;
+    }
+    module.startCapturing(errorString, traceLogId);
+}
+
+void InspectorCanvasAgent::stopCapturing(ErrorString* errorString, const String& traceLogId)
 {
     InjectedScriptCanvasModule module = injectedScriptCanvasModuleForTraceLogId(errorString, traceLogId);
     if (!module.hasNoValue())
-        module.traceLog(errorString, traceLogId, &traceLog);
+        module.stopCapturing(errorString, traceLogId);
+}
+
+void InspectorCanvasAgent::getTraceLog(ErrorString* errorString, const String& traceLogId, const int* startOffset, RefPtr<TypeBuilder::Canvas::TraceLog>& traceLog)
+{
+    InjectedScriptCanvasModule module = injectedScriptCanvasModuleForTraceLogId(errorString, traceLogId);
+    if (!module.hasNoValue())
+        module.traceLog(errorString, traceLogId, startOffset, &traceLog);
 }
 
 void InspectorCanvasAgent::replayTraceLog(ErrorString* errorString, const String& traceLogId, int stepNo, String* result)

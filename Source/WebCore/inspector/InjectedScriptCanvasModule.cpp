@@ -86,28 +86,50 @@ ScriptObject InjectedScriptCanvasModule::callWrapContextFunction(const String& f
 
 void InjectedScriptCanvasModule::captureFrame(ErrorString* errorString, String* traceLogId)
 {
-    ScriptFunctionCall function(injectedScriptObject(), "captureFrame");
+    callStartCapturingFunction("captureFrame", errorString, traceLogId);
+}
+
+void InjectedScriptCanvasModule::startCapturing(ErrorString* errorString, String* traceLogId)
+{
+    callStartCapturingFunction("startCapturing", errorString, traceLogId);
+}
+
+void InjectedScriptCanvasModule::callStartCapturingFunction(const String& functionName, ErrorString* errorString, String* traceLogId)
+{
+    ScriptFunctionCall function(injectedScriptObject(), functionName);
     RefPtr<InspectorValue> resultValue;
     makeCall(function, &resultValue);
     if (!resultValue || resultValue->type() != InspectorValue::TypeString || !resultValue->asString(traceLogId))
-        *errorString = "Internal error: captureFrame";
+        *errorString = "Internal error: " + functionName;
+}
+
+void InjectedScriptCanvasModule::stopCapturing(ErrorString* errorString, const String& traceLogId)
+{
+    callVoidFunctionWithTraceLogIdArgument("stopCapturing", errorString, traceLogId);
 }
 
 void InjectedScriptCanvasModule::dropTraceLog(ErrorString* errorString, const String& traceLogId)
 {
-    ScriptFunctionCall function(injectedScriptObject(), "dropTraceLog");
+    callVoidFunctionWithTraceLogIdArgument("dropTraceLog", errorString, traceLogId);
+}
+
+void InjectedScriptCanvasModule::callVoidFunctionWithTraceLogIdArgument(const String& functionName, ErrorString* errorString, const String& traceLogId)
+{
+    ScriptFunctionCall function(injectedScriptObject(), functionName);
     function.appendArgument(traceLogId);
     bool hadException = false;
     callFunctionWithEvalEnabled(function, hadException);
     ASSERT(!hadException);
     if (hadException)
-        *errorString = "Internal error: dropTraceLog";
+        *errorString = "Internal error: " + functionName;
 }
 
-void InjectedScriptCanvasModule::traceLog(ErrorString* errorString, const String& traceLogId, RefPtr<TypeBuilder::Canvas::TraceLog>* traceLog)
+void InjectedScriptCanvasModule::traceLog(ErrorString* errorString, const String& traceLogId, const int* startOffset, RefPtr<TypeBuilder::Canvas::TraceLog>* traceLog)
 {
     ScriptFunctionCall function(injectedScriptObject(), "traceLog");
     function.appendArgument(traceLogId);
+    if (startOffset)
+        function.appendArgument(*startOffset);
     RefPtr<InspectorValue> resultValue;
     makeCall(function, &resultValue);
     if (!resultValue || resultValue->type() != InspectorValue::TypeObject) {

@@ -2552,12 +2552,50 @@ InjectedScript.prototype = {
         return resource.proxyObject();
     },
 
+    /**
+     * @return {string}
+     */
     captureFrame: function()
     {
+        return this._callStartCapturingFunction(this._manager.captureFrame);
+    },
+
+    /**
+     * @return {string}
+     */
+    startCapturing: function()
+    {
+        return this._callStartCapturingFunction(this._manager.startCapturing);
+    },
+
+    /**
+     * @param {function(this:ResourceTrackingManager)} func
+     * @return {string}
+     */
+    _callStartCapturingFunction: function(func)
+    {
+        var oldTraceLog = this._manager.lastTraceLog();
+        func.call(this._manager);
+        var traceLog = this._manager.lastTraceLog();
+        if (traceLog === oldTraceLog) {
+            for (var id in this._traceLogs) {
+                if (this._traceLogs[id] === traceLog)
+                    return id;
+            }
+        }
         var id = this._makeTraceLogId();
-        this._manager.captureFrame();
-        this._traceLogs[id] = this._manager.lastTraceLog();
+        this._traceLogs[id] = traceLog;
         return id;
+    },
+
+    /**
+     * @param {string} id
+     */
+    stopCapturing: function(id)
+    {
+        var traceLog = this._traceLogs[id];
+        if (traceLog)
+            this._manager.stopCapturing(traceLog);
     },
 
     /**
@@ -2565,26 +2603,34 @@ InjectedScript.prototype = {
      */
     dropTraceLog: function(id)
     {
-        if (this._traceLogPlayer && this._traceLogPlayer.traceLog() === this._traceLogs[id])
+        this.stopCapturing(id);
+        if (this._traceLogPlayer && this._traceLogPlayer.traceLog() === this._traceLogs[id]) {
             this._traceLogPlayer = null;
+            this._replayContexts = [];
+        }
         delete this._traceLogs[id];
     },
 
     /**
      * @param {string} id
+     * @param {number=} startOffset
      * @return {Object|string}
      */
-    traceLog: function(id)
+    traceLog: function(id, startOffset)
     {
         var traceLog = this._traceLogs[id];
         if (!traceLog)
             return "Error: Trace log with this ID not found.";
+        startOffset = Math.max(0, startOffset || 0);
+        var alive = this._manager.capturing() && this._manager.lastTraceLog() === traceLog;
         var result = {
             id: id,
-            calls: []
+            calls: [],
+            alive: alive,
+            startOffset: startOffset
         };
         var calls = traceLog.replayableCalls();
-        for (var i = 0, n = calls.length; i < n; ++i) {
+        for (var i = startOffset, n = calls.length; i < n; ++i) {
             var call = calls[i];
             var args = call.args().map(function(argument) {
                 return argument + "";

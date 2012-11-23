@@ -56,12 +56,16 @@ public:
 #endif
 
     void captureFrame(ErrorString*, String*);
+    void startCapturing(ErrorString*, String*);
+    void stopCapturing(ErrorString*, const String&);
     void dropTraceLog(ErrorString*, const String&);
-    void traceLog(ErrorString*, const String&, RefPtr<TypeBuilder::Canvas::TraceLog>*);
+    void traceLog(ErrorString*, const String&, const int*, RefPtr<TypeBuilder::Canvas::TraceLog>*);
     void replayTraceLog(ErrorString*, const String&, int, String*);
 
 private:
     ScriptObject callWrapContextFunction(const String&, const ScriptObject&);
+    void callStartCapturingFunction(const String&, ErrorString*, String*);
+    void callVoidFunctionWithTraceLogIdArgument(const String&, ErrorString*, const String&);
 };
 
 #endif

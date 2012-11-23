@@ -1,3 +1,37 @@
+2012-11-23  Andrey Adaikin  <aandrey@chromium.org>
+
+        Web Inspector: [Canvas] add startCapturing and stopCapturing methods to protocol
+        https://bugs.webkit.org/show_bug.cgi?id=103053
+
+        Reviewed by Pavel Feldman.
+
+        Add startCapturing and stopCapturing methods to the protocol to instrument several canvas frames in a row.
+        Drive-by: support start offset index in retrieving trace logs in the backend as well as "alive" flag.
+
+        * inspector/InjectedScriptCanvasModule.cpp:
+        (WebCore::InjectedScriptCanvasModule::captureFrame):
+        (WebCore):
+        (WebCore::InjectedScriptCanvasModule::startCapturing):
+        (WebCore::InjectedScriptCanvasModule::callStartCapturingFunction):
+        (WebCore::InjectedScriptCanvasModule::stopCapturing):
+        (WebCore::InjectedScriptCanvasModule::dropTraceLog):
+        (WebCore::InjectedScriptCanvasModule::callVoidFunctionWithTraceLogIdArgument):
+        (WebCore::InjectedScriptCanvasModule::traceLog):
+        * inspector/InjectedScriptCanvasModule.h:
+        (InjectedScriptCanvasModule):
+        * inspector/InjectedScriptCanvasModuleSource.js:
+        (.):
+        * inspector/Inspector.json:
+        * inspector/InspectorCanvasAgent.cpp:
+        (WebCore::InspectorCanvasAgent::startCapturing):
+        (WebCore):
+        (WebCore::InspectorCanvasAgent::stopCapturing):
+        (WebCore::InspectorCanvasAgent::getTraceLog):
+        * inspector/InspectorCanvasAgent.h:
+        (InspectorCanvasAgent):
+        * inspector/front-end/CanvasProfileView.js:
+        (WebInspector.CanvasProfileView):
+
 2012-11-23  Andrey Kosyakov  <caseq@chromium.org>
 
         Web Inspector: dispatch events upon certain user actions on inspector's notification services

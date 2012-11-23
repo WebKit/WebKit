@@ -64,6 +64,7 @@ public:
     virtual void clearFrontend();
     virtual void restore();
 
+    // Called from InspectorCanvasInstrumentation
     ScriptObject wrapCanvas2DRenderingContextForInstrumentation(const ScriptObject&);
 #if ENABLE(WEBGL)
     ScriptObject wrapWebGLRenderingContextForInstrumentation(const ScriptObject&);
@@ -74,12 +75,10 @@ public:
     virtual void disable(ErrorString*);
     virtual void dropTraceLog(ErrorString*, const String&);
     virtual void captureFrame(ErrorString*, String*);
-    virtual void getTraceLog(ErrorString*, const String&, RefPtr<TypeBuilder::Canvas::TraceLog>&);
+    virtual void startCapturing(ErrorString*, String*);
+    virtual void stopCapturing(ErrorString*, const String&);
+    virtual void getTraceLog(ErrorString*, const String&, const int*, RefPtr<TypeBuilder::Canvas::TraceLog>&);
     virtual void replayTraceLog(ErrorString*, const String&, int, String*);
-
-    // Called from the injected script.
-
-    // Called from InspectorInstrumentation
 
 private:
     InspectorCanvasAgent(InstrumentingAgents*, InspectorState*, Page*, InjectedScriptManager*);

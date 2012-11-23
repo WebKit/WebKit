@@ -3180,7 +3180,9 @@
                 "type": "object",
                 "properties": [
                     { "name": "id", "$ref": "TraceLogId" },
-                    { "name": "calls", "type": "array", "items": { "$ref": "Call" } }
+                    { "name": "calls", "type": "array", "items": { "$ref": "Call" } },
+                    { "name": "startOffset", "type": "integer", "optional": true },
+                    { "name": "alive", "type": "boolean", "optional": true }
                 ]
             }
         ],
@@ -3206,9 +3208,22 @@
                 ]
             },
             {
-                "name": "getTraceLog",
+                "name": "startCapturing",
+                "returns": [
+                    { "name": "traceLogId", "$ref": "TraceLogId" }
+                ]
+            },
+            {
+                "name": "stopCapturing",
                 "parameters": [
                     { "name": "traceLogId", "$ref": "TraceLogId" }
+                ]
+            },
+            {
+                "name": "getTraceLog",
+                "parameters": [
+                    { "name": "traceLogId", "$ref": "TraceLogId" },
+                    { "name": "startOffset", "type": "integer", "optional": true }
                 ],
                 "returns": [
                     { "name": "traceLog", "$ref": "TraceLog" }
