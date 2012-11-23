@@ -1,3 +1,48 @@
+2012-11-23  Alexis Menard  <alexis@webkit.org>
+
+        [CSS3 Backgrounds and Borders] Implement new CSS3 background-position parsing.
+        https://bugs.webkit.org/show_bug.cgi?id=102104
+
+        Reviewed by Julien Chaffraix.
+
+        Implement the parsing of the CSS3 background-position property which
+        allows to specify up to four values to position the background. It is
+        documented here :
+        http://www.w3.org/TR/css3-background/#the-background-position . I
+        decided to split up the patch is two pieces, the parsing and later I
+        will do the rendering. I kept the old code as much as possible (i.e.
+        the two values parsing) as it is used not only by background-position
+        but by few other properties. The new four values support is only valid
+        on the property itself but does not work on the shorthand.
+
+        Opera has already implemented this feature.
+
+        I extended backgrounds/background-position-parsing-2.html to cover the
+        new possible values as well as buggy values.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * GNUmakefile.am:
+        * GNUmakefile.features.am:
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseFillPositionComponent): Modify this function
+        to allow creation of CSS primitive values with not only percentage or
+        length but with keywords also as the new <position> type allows to
+        specify keywords, for example top 30px right 20px.
+        (WebCore):
+        (WebCore::isValueConflictingWithCurrentEdge):
+        (WebCore::isBackgroundPositionKeyword):
+        (WebCore::CSSParser::parse3ValuesBackgroundPosition):
+        (WebCore::CSSParser::parse4ValuesBackgroundPosition):
+        (WebCore::CSSParser::parseFillBackgroundPosition): This function counts
+        the number of words for the property value and call dedicated parsing
+        functions for each case. Note that in case of two values we just call the old CSS 2.1
+        method.
+        (WebCore::CSSParser::parseFillPosition):
+        (WebCore::CSSParser::parseFillProperty): Only call the new parsing
+        function if the feature is activated otherwise fallback to the old code
+        path.
+        * css/CSSParser.h:
+
 2012-11-23  Justin Novosad  <junov@google.com>
 
         Adding occlusion detection to reduce overdraw in RenderBox background rendering

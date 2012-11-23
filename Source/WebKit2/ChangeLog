@@ -1,3 +1,14 @@
+2012-11-23  Alexis Menard  <alexis@webkit.org>
+
+        [CSS3 Backgrounds and Borders] Implement new CSS3 background-position parsing.
+        https://bugs.webkit.org/show_bug.cgi?id=102104
+
+        Reviewed by Julien Chaffraix.
+
+        Protect the new feature behind a feature flag.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2012-11-23  Huang Dongsung  <luxtella@company100.net>
 
         Coordinated Graphics: Match the behavior of selfOrAncestorHaveNonAffineTransforms() to its name.

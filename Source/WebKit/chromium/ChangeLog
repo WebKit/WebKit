@@ -1,3 +1,14 @@
+2012-11-23  Alexis Menard  <alexis@webkit.org>
+
+        [CSS3 Backgrounds and Borders] Implement new CSS3 background-position parsing.
+        https://bugs.webkit.org/show_bug.cgi?id=102104
+
+        Reviewed by Julien Chaffraix.
+
+        Protect the new feature behind a feature flag.
+
+        * features.gypi:
+
 2012-11-23  Yury Semikhatsky  <yurys@chromium.org>
 
         Unreviewed. Fix Chromium Win compilation after r135580.

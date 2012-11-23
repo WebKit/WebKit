@@ -3624,7 +3624,7 @@ PassRefPtr<CSSValue> CSSParser::parseFillPositionY(CSSParserValueList* valueList
     return 0;
 }
 
-PassRefPtr<CSSValue> CSSParser::parseFillPositionComponent(CSSParserValueList* valueList, unsigned& cumulativeFlags, FillPositionFlag& individualFlag)
+PassRefPtr<CSSPrimitiveValue> CSSParser::parseFillPositionComponent(CSSParserValueList* valueList, unsigned& cumulativeFlags, FillPositionFlag& individualFlag, FillPositionParsingMode parsingMode)
 {
     int id = valueList->current()->id;
     if (id == CSSValueLeft || id == CSSValueTop || id == CSSValueRight || id == CSSValueBottom || id == CSSValueCenter) {
@@ -3650,6 +3650,10 @@ PassRefPtr<CSSValue> CSSParser::parseFillPositionComponent(CSSParserValueList* v
             cumulativeFlags |= AmbiguousFillPosition;
             individualFlag = AmbiguousFillPosition;
         }
+
+        if (parsingMode == ResolveValuesAsKeyword)
+            return cssValuePool().createIdentifierValue(id);
+
         return cssValuePool().createValue(percent, CSSPrimitiveValue::CSS_PERCENTAGE);
     }
     if (validUnit(valueList->current(), FPercent | FLength)) {
@@ -3668,6 +3672,226 @@ PassRefPtr<CSSValue> CSSParser::parseFillPositionComponent(CSSParserValueList* v
     }
     return 0;
 }
+
+#if ENABLE(CSS3_BACKGROUND)
+static bool isValueConflictingWithCurrentEdge(int value1, int value2)
+{
+    if ((value1 == CSSValueLeft || value1 == CSSValueRight) && (value2 == CSSValueLeft || value2 == CSSValueRight))
+        return true;
+
+    if ((value1 == CSSValueTop || value1 == CSSValueBottom) && (value2 == CSSValueTop || value2 == CSSValueBottom))
+        return true;
+
+    return false;
+}
+
+static bool isBackgroundPositionKeyword(int value)
+{
+    return value == CSSValueLeft || value == CSSValueTop || value == CSSValueBottom || value == CSSValueRight || value == CSSValueCenter;
+}
+
+void CSSParser::parse4ValuesBackgroundPosition(CSSParserValueList* valueList, RefPtr<CSSValue>& value1, RefPtr<CSSValue>& value2, PassRefPtr<CSSPrimitiveValue> parsedValue1, PassRefPtr<CSSPrimitiveValue> parsedValue2)
+{
+    // [ left | right ] [ <percentage] | <length> ] && [ top | bottom ] [ <percentage> | <length> ]
+    // In the case of 4 values <position> requires the second value to be a length or a percentage.
+    if (isBackgroundPositionKeyword(parsedValue2->getIdent()))
+        return;
+
+    unsigned cumulativeFlags = 0;
+    FillPositionFlag value3Flag = InvalidFillPosition;
+    RefPtr<CSSPrimitiveValue> value3 = parseFillPositionComponent(valueList, cumulativeFlags, value3Flag, ResolveValuesAsKeyword);
+    if (!value3)
+        return;
+
+    int ident1 = parsedValue1->getIdent();
+    int ident3 = value3->getIdent();
+
+    if (ident1 == CSSValueCenter)
+        return;
+
+    if (!isBackgroundPositionKeyword(ident3) || ident3 == CSSValueCenter)
+        return;
+
+    // We need to check if the values are not conflicting, e.g. they are not on the same edge. It is
+    // needed as the second call to parseFillPositionComponent was on purpose not checking it. In the
+    // case of two values top 20px is invalid but in the case of 4 values it becomes valid.
+    if (isValueConflictingWithCurrentEdge(ident1, ident3))
+        return;
+
+    valueList->next();
+
+    cumulativeFlags = 0;
+    FillPositionFlag value4Flag = InvalidFillPosition;
+    RefPtr<CSSPrimitiveValue> value4 = parseFillPositionComponent(valueList, cumulativeFlags, value4Flag, ResolveValuesAsKeyword);
+    if (!value4)
+        return;
+
+    // 4th value must be a length or a percentage.
+    if (isBackgroundPositionKeyword(value4->getIdent()))
+        return;
+
+    value1 = createPrimitiveValuePair(parsedValue1, parsedValue2);
+    value2 = createPrimitiveValuePair(value3, value4);
+
+    if (ident1 == CSSValueTop || ident1 == CSSValueBottom)
+        value1.swap(value2);
+
+    valueList->next();
+}
+void CSSParser::parse3ValuesBackgroundPosition(CSSParserValueList* valueList, RefPtr<CSSValue>& value1, RefPtr<CSSValue>& value2, PassRefPtr<CSSPrimitiveValue> parsedValue1, PassRefPtr<CSSPrimitiveValue> parsedValue2)
+{
+    unsigned cumulativeFlags = 0;
+    FillPositionFlag value3Flag = InvalidFillPosition;
+    RefPtr<CSSPrimitiveValue> value3 = parseFillPositionComponent(valueList, cumulativeFlags, value3Flag, ResolveValuesAsKeyword);
+
+    // value3 is not an expected value, we return.
+    if (!value3)
+        return;
+
+    valueList->next();
+
+    bool swapNeeded = false;
+    int ident1 = parsedValue1->getIdent();
+    int ident2 = parsedValue2->getIdent();
+    int ident3 = value3->getIdent();
+
+    int firstPositionKeyword;
+    int secondPositionKeyword;
+
+    if (ident1 == CSSValueCenter) {
+        // <position> requires the first 'center' to be followed by a keyword.
+        if (!isBackgroundPositionKeyword(ident2))
+            return;
+
+        // If 'center' is the first keyword then the last one needs to be a length.
+        if (isBackgroundPositionKeyword(ident3))
+            return;
+
+        firstPositionKeyword = CSSValueLeft;
+        if (ident2 == CSSValueLeft || ident2 == CSSValueRight) {
+            firstPositionKeyword = CSSValueTop;
+            swapNeeded = true;
+        }
+        value1 = createPrimitiveValuePair(cssValuePool().createIdentifierValue(firstPositionKeyword), cssValuePool().createValue(50, CSSPrimitiveValue::CSS_PERCENTAGE));
+        value2 = createPrimitiveValuePair(parsedValue2, value3);
+    } else if (ident3 == CSSValueCenter) {
+        if (isBackgroundPositionKeyword(ident2))
+            return;
+
+        secondPositionKeyword = CSSValueTop;
+        if (ident1 == CSSValueTop || ident1 == CSSValueBottom) {
+            secondPositionKeyword = CSSValueLeft;
+            swapNeeded = true;
+        }
+        value1 = createPrimitiveValuePair(parsedValue1, parsedValue2);
+        value2 = createPrimitiveValuePair(cssValuePool().createIdentifierValue(secondPositionKeyword), cssValuePool().createValue(50, CSSPrimitiveValue::CSS_PERCENTAGE));
+    } else {
+        RefPtr<CSSPrimitiveValue> firstPositionValue;
+        RefPtr<CSSPrimitiveValue> secondPositionValue;
+
+        if (isBackgroundPositionKeyword(ident2)) {
+            // To match CSS grammar, we should only accept: [ center | left | right | bottom | top ] [ left | right | top | bottom ] [ <percentage> | <length> ].
+            ASSERT(ident2 != CSSValueCenter);
+
+            if (isBackgroundPositionKeyword(ident3))
+                return;
+
+            secondPositionValue = value3;
+            secondPositionKeyword = ident2;
+            firstPositionValue = cssValuePool().createValue(0, CSSPrimitiveValue::CSS_PERCENTAGE);
+        } else {
+            // Per CSS, we should only accept: [ right | left | top | bottom ] [ <percentage> | <length> ] [ center | left | right | bottom | top ].
+            if (!isBackgroundPositionKeyword(ident3))
+                return;
+
+            firstPositionValue = parsedValue2;
+            secondPositionKeyword = ident3;
+            secondPositionValue = cssValuePool().createValue(0, CSSPrimitiveValue::CSS_PERCENTAGE);
+        }
+
+        if (isValueConflictingWithCurrentEdge(ident1, secondPositionKeyword))
+            return;
+
+        value1 = createPrimitiveValuePair(parsedValue1, firstPositionValue);
+        value2 = createPrimitiveValuePair(cssValuePool().createIdentifierValue(secondPositionKeyword), secondPositionValue);
+    }
+
+    if (ident1 == CSSValueTop || ident1 == CSSValueBottom || swapNeeded)
+        value1.swap(value2);
+
+#ifndef NDEBUG
+    CSSPrimitiveValue* first = static_cast<CSSPrimitiveValue*>(value1.get());
+    CSSPrimitiveValue* second = static_cast<CSSPrimitiveValue*>(value2.get());
+    ident1 = first->getPairValue()->first()->getIdent();
+    ident2 = second->getPairValue()->first()->getIdent();
+    ASSERT(ident1 == CSSValueLeft || ident1 == CSSValueRight);
+    ASSERT(ident2 == CSSValueBottom || ident2 == CSSValueTop);
+#endif
+}
+
+void CSSParser::parseFillBackgroundPosition(CSSParserValueList* valueList, RefPtr<CSSValue>& value1, RefPtr<CSSValue>& value2)
+{
+    unsigned numberOfValues = 0;
+    for (unsigned i = valueList->currentIndex(); i < valueList->size(); ++i, ++numberOfValues) {
+        CSSParserValue* current = valueList->valueAt(i);
+        if (isComma(current) || !current)
+            break;
+    }
+
+    if (numberOfValues > 4)
+        return;
+
+    // If we are parsing two values, we can safely call the CSS 2.1 parsing function and return.
+    if (numberOfValues <= 2) {
+        parseFillPosition(valueList, value1, value2);
+        return;
+    }
+
+    ASSERT(numberOfValues > 2 && numberOfValues <= 4);
+
+    CSSParserValue* value = valueList->current();
+
+    // <position> requires the first value to be a background keyword.
+    if (!isBackgroundPositionKeyword(value->id))
+        return;
+
+    // Parse the first value. We're just making sure that it is one of the valid keywords or a percentage/length.
+    unsigned cumulativeFlags = 0;
+    FillPositionFlag value1Flag = InvalidFillPosition;
+    FillPositionFlag value2Flag = InvalidFillPosition;
+    value1 = parseFillPositionComponent(valueList, cumulativeFlags, value1Flag, ResolveValuesAsKeyword);
+    if (!value1)
+        return;
+
+    value = valueList->next();
+
+    // In case we are parsing more than two values, relax the check inside of parseFillPositionComponent. top 20px is
+    // a valid start for <position>.
+    cumulativeFlags = AmbiguousFillPosition;
+    value2 = parseFillPositionComponent(valueList, cumulativeFlags, value2Flag, ResolveValuesAsKeyword);
+    if (value2)
+        valueList->next();
+    else {
+        value1.clear();
+        return;
+    }
+
+    RefPtr<CSSPrimitiveValue> parsedValue1 = static_cast<CSSPrimitiveValue*>(value1.get());
+    RefPtr<CSSPrimitiveValue> parsedValue2 = static_cast<CSSPrimitiveValue*>(value2.get());
+
+    value1.clear();
+    value2.clear();
+
+    // Per CSS3 syntax, <position> can't have 'center' as its second keyword as we have more arguments to follow.
+    if (parsedValue2->getIdent() == CSSValueCenter)
+        return;
+
+    if (numberOfValues == 3)
+        parse3ValuesBackgroundPosition(valueList, value1, value2, parsedValue1.release(), parsedValue2.release());
+    else
+        parse4ValuesBackgroundPosition(valueList, value1, value2, parsedValue1.release(), parsedValue2.release());
+}
+#endif
 
 void CSSParser::parseFillPosition(CSSParserValueList* valueList, RefPtr<CSSValue>& value1, RefPtr<CSSValue>& value2)
 {
@@ -3703,8 +3927,8 @@ void CSSParser::parseFillPosition(CSSParserValueList* valueList, RefPtr<CSSValue
     }
 
     if (!value2)
-        // Only one value was specified.  If that value was not a keyword, then it sets the x position, and the y position
-        // is simply 50%.  This is our default.
+        // Only one value was specified. If that value was not a keyword, then it sets the x position, and the y position
+        // is simply 50%. This is our default.
         // For keywords, the keyword was either an x-keyword (left/right), a y-keyword (top/bottom), or an ambiguous keyword (center).
         // For left/right/center, the default of 50% in the y is still correct.
         value2 = cssValuePool().createValue(50, CSSPrimitiveValue::CSS_PERCENTAGE);
@@ -3879,6 +4103,14 @@ bool CSSParser::parseFillProperty(CSSPropertyID propId, CSSPropertyID& propId1, 
                     }
                     break;
                 case CSSPropertyBackgroundPosition:
+#if ENABLE(CSS3_BACKGROUND)
+                    if (!inShorthand()) {
+                        parseFillBackgroundPosition(m_valueList.get(), currValue, currValue2);
+                        // parseFillBackgroundPosition advances the m_valueList pointer
+                        break;
+                    }
+                    // Fall through to CSS 2.1 parsing.
+#endif
                 case CSSPropertyWebkitMaskPosition:
                     parseFillPosition(m_valueList.get(), currValue, currValue2);
                     // parseFillPosition advances the m_valueList pointer

@@ -1,3 +1,15 @@
+2012-11-23  Alexis Menard  <alexis@webkit.org>
+
+        [CSS3 Backgrounds and Borders] Implement new CSS3 background-position parsing.
+        https://bugs.webkit.org/show_bug.cgi?id=102104
+
+        Reviewed by Julien Chaffraix.
+
+        Protect the new feature behind a feature flag.
+
+        * Scripts/webkitperl/FeatureList.pm:
+        * qmake/mkspecs/features/features.pri:
+
 2012-11-23  Mario Sanchez Prada  <mario@webkit.org>
 
         Unreviewed. Update my e-mail address.

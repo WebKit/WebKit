@@ -1,3 +1,26 @@
+2012-11-23  Alexis Menard  <alexis@webkit.org>
+
+        [CSS3 Backgrounds and Borders] Implement new CSS3 background-position parsing.
+        https://bugs.webkit.org/show_bug.cgi?id=102104
+
+        Reviewed by Julien Chaffraix.
+
+        Add new tests to cover the new parsing for the background position
+        property. For now the computed style checks are commented out because
+        the rendering part of the feature is not yet implemented (i.e.
+        FillLayer does not contain yet the feature and this is what
+        CSSComputedStyleDeclaration is using).
+
+        * fast/backgrounds/background-position-parsing-2-expected.txt:
+        * fast/backgrounds/background-position-parsing-2.html:
+        * platform/chromium/TestExpectations:
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/qt/TestExpectations:
+        * platform/win/TestExpectations:
+        * platform/wincairo/TestExpectations:
+
 2012-11-23  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed gardening.
