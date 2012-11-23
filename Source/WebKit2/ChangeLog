@@ -1,3 +1,16 @@
+2012-11-22  KwangYong Choi  <ky0.choi@samsung.com>
+
+        [EFL][WK2] Buildfix when ENABLE_NETSCAPE_PLUGIN_API is disabled
+        https://bugs.webkit.org/show_bug.cgi?id=103044
+
+        Reviewed by Kentaro Hara.
+
+        enum ProcessType has PluginProcess only if ENABLE(PLUGIN_PROCESS) is enabled.
+        So, guard PluginProcess with ENABLE(PLUGIN_PROCESS).
+
+        * UIProcess/Launcher/efl/ProcessLauncherEfl.cpp:
+        (WebKit::ProcessLauncher::launchProcess):
+
 2012-09-26  Gustavo Noronha Silva  <gns@gnome.org>
 
         [GTK] Split SVG from WebCore to work-around make limitation

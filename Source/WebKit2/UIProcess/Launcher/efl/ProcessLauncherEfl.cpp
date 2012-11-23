@@ -49,9 +49,11 @@ void ProcessLauncher::launchProcess()
         case WebProcess:
             executablePath = executablePathOfWebProcess();
             break;
+#if ENABLE(PLUGIN_PROCESS)
         case PluginProcess:
             executablePath = executablePathOfPluginProcess();
             break;
+#endif
         default:
             ASSERT_NOT_REACHED();
             return;
