@@ -293,7 +293,7 @@ TEST_F(WebFrameTest, ScaleFactorShouldNotOscillate)
     registerMockedHttpURLLoad("scale_oscillate.html");
 
     FixedLayoutTestWebViewClient client;
-    client.m_screenInfo.deviceScaleFactor = 1.325;
+    client.m_screenInfo.deviceScaleFactor = static_cast<float>(1.325);
     int viewportWidth = 800;
     int viewportHeight = 1057;
 
