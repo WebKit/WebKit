@@ -602,6 +602,16 @@ void or32(TrustedImm32 imm, RegisterID src, RegisterID dest)
         releaseScratch(scr);
     }
 
+    void load8Signed(BaseIndex address, RegisterID dest)
+    {
+        RegisterID scr = claimScratch();
+        move(address.index, scr);
+        lshift32(TrustedImm32(address.scale), scr);
+        add32(address.base, scr);
+        load8Signed(scr, address.offset, dest);
+        releaseScratch(scr);
+    }
+
     void load32(BaseIndex address, RegisterID dest)
     {
         RegisterID scr = claimScratch();
@@ -647,6 +657,32 @@ void or32(TrustedImm32 imm, RegisterID src, RegisterID dest)
 
         if (dest == base)
             releaseScratch(scr);
+    }
+
+    void load8Signed(RegisterID base, int offset, RegisterID dest)
+    {
+        if (!offset) {
+            m_assembler.movbMemReg(base, dest);
+            return;
+        }
+
+        if ((offset > 0) && (offset < 64) && (dest == SH4Registers::r0)) {
+            m_assembler.movbMemReg(offset, base, dest);
+            return;
+        }
+
+        if (base != dest) {
+            m_assembler.loadConstant((offset), dest);
+            m_assembler.addlRegReg(base, dest);
+            m_assembler.movbMemReg(dest, dest);
+            return;
+        }
+
+        RegisterID scr = claimScratch();
+        m_assembler.loadConstant((offset), scr);
+        m_assembler.addlRegReg(base, scr);
+        m_assembler.movbMemReg(scr, dest);
+        releaseScratch(scr);
     }
 
     void load8(RegisterID base, int offset, RegisterID dest)
@@ -749,11 +785,22 @@ void or32(TrustedImm32 imm, RegisterID src, RegisterID dest)
         extuw(dest, dest);
     }
 
+    void load16Signed(RegisterID src, RegisterID dest)
+    {
+        m_assembler.movwMemReg(src, dest);
+    }
+
     void load16(RegisterID r0, RegisterID src, RegisterID dest)
     {
         ASSERT(r0 == SH4Registers::r0);
         m_assembler.movwR0mr(src, dest);
         extuw(dest, dest);
+    }
+
+    void load16Signed(RegisterID r0, RegisterID src, RegisterID dest)
+    {
+        ASSERT(r0 == SH4Registers::r0);
+        m_assembler.movwR0mr(src, dest);
     }
 
     void load16(BaseIndex address, RegisterID dest)
@@ -771,6 +818,51 @@ void or32(TrustedImm32 imm, RegisterID src, RegisterID dest)
             add32(address.base, scr);
             load16(scr, dest);
         }
+
+        releaseScratch(scr);
+    }
+
+    void load16Signed(BaseIndex address, RegisterID dest)
+    {
+        RegisterID scr = claimScratch();
+
+        move(address.index, scr);
+        lshift32(TrustedImm32(address.scale), scr);
+
+        if (address.offset)
+            add32(TrustedImm32(address.offset), scr);
+        if (address.base == SH4Registers::r0)
+            load16Signed(address.base, scr, dest);
+        else {
+            add32(address.base, scr);
+            load16Signed(scr, dest);
+        }
+
+        releaseScratch(scr);
+    }
+
+    void store8(RegisterID src, BaseIndex address)
+    {
+        RegisterID scr = claimScratch();
+
+        move(address.index, scr);
+        lshift32(TrustedImm32(address.scale), scr);
+        add32(address.base, scr);
+
+        m_assembler.movbRegMem(src, scr);
+
+        releaseScratch(scr);
+    }
+
+    void store16(RegisterID src, BaseIndex address)
+    {
+        RegisterID scr = claimScratch();
+
+        move(address.index, scr);
+        lshift32(TrustedImm32(address.scale), scr);
+        add32(address.base, scr);
+
+        m_assembler.movwRegMem(src, scr);
 
         releaseScratch(scr);
     }
@@ -900,12 +992,58 @@ void or32(TrustedImm32 imm, RegisterID src, RegisterID dest)
         return result;
     }
 
-     // Floating-point operations
+    // Floating-point operations
 
     static bool supportsFloatingPoint() { return true; }
     static bool supportsFloatingPointTruncate() { return true; }
     static bool supportsFloatingPointSqrt() { return true; }
     static bool supportsFloatingPointAbs() { return false; }
+
+    void moveDoubleToInts(FPRegisterID src, RegisterID dest1, RegisterID dest2)
+    {
+        m_assembler.fldsfpul((FPRegisterID)(src + 1));
+        m_assembler.stsfpulReg(dest1);
+        m_assembler.fldsfpul(src);
+        m_assembler.stsfpulReg(dest2);
+    }
+
+    void moveIntsToDouble(RegisterID src1, RegisterID src2, FPRegisterID dest, FPRegisterID scratch)
+    {
+        UNUSED_PARAM(scratch);
+        m_assembler.ldsrmfpul(src1);
+        m_assembler.fstsfpul((FPRegisterID)(dest + 1));
+        m_assembler.ldsrmfpul(src2);
+        m_assembler.fstsfpul(dest);
+    }
+
+    void loadFloat(BaseIndex address, FPRegisterID dest)
+    {
+        RegisterID scr = claimScratch();
+
+        move(address.index, scr);
+        lshift32(TrustedImm32(address.scale), scr);
+        add32(address.base, scr);
+        if (address.offset)
+            add32(TrustedImm32(address.offset), scr);
+
+        m_assembler.fmovsReadrm(scr, dest);
+        releaseScratch(scr);
+    }
+
+    void loadDouble(BaseIndex address, FPRegisterID dest)
+    {
+        RegisterID scr = claimScratch();
+
+        move(address.index, scr);
+        lshift32(TrustedImm32(address.scale), scr);
+        add32(address.base, scr);
+        if (address.offset)
+            add32(TrustedImm32(address.offset), scr);
+
+        m_assembler.fmovsReadrminc(scr, (FPRegisterID)(dest + 1));
+        m_assembler.fmovsReadrm(scr, dest);
+        releaseScratch(scr);
+    }
 
     void loadDouble(ImplicitAddress address, FPRegisterID dest)
     {
@@ -935,6 +1073,21 @@ void or32(TrustedImm32 imm, RegisterID src, RegisterID dest)
         releaseScratch(scr);
     }
 
+    void storeFloat(FPRegisterID src, BaseIndex address)
+    {
+        RegisterID scr = claimScratch();
+
+        move(address.index, scr);
+        lshift32(TrustedImm32(address.scale), scr);
+        add32(address.base, scr);
+        if (address.offset)
+            add32(TrustedImm32(address.offset), scr);
+
+        m_assembler.fmovsWriterm(src, scr);
+
+        releaseScratch(scr);
+    }
+
     void storeDouble(FPRegisterID src, ImplicitAddress address)
     {
         RegisterID scr = claimScratch();
@@ -946,9 +1099,42 @@ void or32(TrustedImm32 imm, RegisterID src, RegisterID dest)
         releaseScratch(scr);
     }
 
+    void storeDouble(FPRegisterID src, BaseIndex address)
+    {
+        RegisterID scr = claimScratch();
+
+        move(address.index, scr);
+        lshift32(TrustedImm32(address.scale), scr);
+        add32(address.base, scr);
+        if (address.offset)
+            add32(TrustedImm32(address.offset), scr);
+
+        m_assembler.fmovsWriterm((FPRegisterID)(src + 1), scr);
+        m_assembler.addlImm8r(4, scr);
+        m_assembler.fmovsWriterm(src, scr);
+
+        releaseScratch(scr);
+    }
+
+    void addDouble(FPRegisterID op1, FPRegisterID op2, FPRegisterID dest)
+    {
+        if (op1 == dest)
+            m_assembler.daddRegReg(op2, dest);
+        else {
+            m_assembler.dmovRegReg(op1, dest);
+            m_assembler.daddRegReg(op2, dest);
+        }
+    }
+
     void addDouble(FPRegisterID src, FPRegisterID dest)
     {
         m_assembler.daddRegReg(src, dest);
+    }
+
+    void addDouble(AbsoluteAddress address, FPRegisterID dest)
+    {
+        loadDouble(address.m_ptr, fscratch);
+        addDouble(fscratch, dest);
     }
 
     void addDouble(Address address, FPRegisterID dest)
@@ -982,6 +1168,18 @@ void or32(TrustedImm32 imm, RegisterID src, RegisterID dest)
     void divDouble(FPRegisterID src, FPRegisterID dest)
     {
         m_assembler.ddivRegReg(src, dest);
+    }
+
+    void convertFloatToDouble(FPRegisterID src, FPRegisterID dst)
+    {
+        m_assembler.fldsfpul(src);
+        m_assembler.dcnvsd(dst);
+    }
+
+    void convertDoubleToFloat(FPRegisterID src, FPRegisterID dst)
+    {
+        m_assembler.dcnvds(src);
+        m_assembler.fstsfpul(dst);
     }
 
     void convertInt32ToDouble(RegisterID src, FPRegisterID dest)
@@ -1893,7 +2091,7 @@ void or32(TrustedImm32 imm, RegisterID src, RegisterID dest)
     void urshift32(RegisterID src, TrustedImm32 shiftamount, RegisterID dest)
     {
         if (src != dest)
-           move(src, dest);
+            move(src, dest);
 
         urshift32(shiftamount, dest);
     }

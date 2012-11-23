@@ -1,3 +1,41 @@
+2012-11-23  Julien BRIANCEAU   <jbrianceau@nds.com>
+
+        [sh4] JavaScriptCore JIT build is broken since r130839
+        Add missing implementation for sh4 arch.
+        https://bugs.webkit.org/show_bug.cgi?id=101479
+
+        Reviewed by Filip Pizlo.
+
+        * assembler/MacroAssemblerSH4.h:
+        (JSC::MacroAssemblerSH4::load8Signed):
+        (MacroAssemblerSH4):
+        (JSC::MacroAssemblerSH4::load16Signed):
+        (JSC::MacroAssemblerSH4::store8):
+        (JSC::MacroAssemblerSH4::store16):
+        (JSC::MacroAssemblerSH4::moveDoubleToInts):
+        (JSC::MacroAssemblerSH4::moveIntsToDouble):
+        (JSC::MacroAssemblerSH4::loadFloat):
+        (JSC::MacroAssemblerSH4::loadDouble):
+        (JSC::MacroAssemblerSH4::storeFloat):
+        (JSC::MacroAssemblerSH4::storeDouble):
+        (JSC::MacroAssemblerSH4::addDouble):
+        (JSC::MacroAssemblerSH4::convertFloatToDouble):
+        (JSC::MacroAssemblerSH4::convertDoubleToFloat):
+        (JSC::MacroAssemblerSH4::urshift32):
+        * assembler/SH4Assembler.h:
+        (JSC::SH4Assembler::sublRegReg):
+        (JSC::SH4Assembler::subvlRegReg):
+        (JSC::SH4Assembler::floatfpulfrn):
+        (JSC::SH4Assembler::fldsfpul):
+        (JSC::SH4Assembler::fstsfpul):
+        (JSC::SH4Assembler::dcnvsd):
+        (SH4Assembler):
+        (JSC::SH4Assembler::movbRegMem):
+        (JSC::SH4Assembler::sizeOfConstantPool):
+        (JSC::SH4Assembler::linkJump):
+        (JSC::SH4Assembler::printInstr):
+        (JSC::SH4Assembler::printBlockInstr):
+
 2012-11-22  Balazs Kilvady  <kilvadyb@homejinni.com>
 
         Fix the MIPS build after r135330
