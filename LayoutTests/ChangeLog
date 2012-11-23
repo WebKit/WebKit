@@ -1,3 +1,15 @@
+2012-11-23  Julian Pastarmov  <pastarmovj@chromium.org>
+
+        REGRESSION (r128633): td changes size during re-layout of table although it shouldn't
+        https://bugs.webkit.org/show_bug.cgi?id=102802
+
+        Reviewed by Ojan Vafai.
+
+        This test checks that table layout of some nested tables in quirks mode is computed correctly.
+
+        * fast/table/nested-tables-with-div-offset-expected.txt: Added.
+        * fast/table/nested-tables-with-div-offset.html: Added.
+
 2012-11-23  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         [Qt] REGRESSION(r135507): It made 13 tests fail

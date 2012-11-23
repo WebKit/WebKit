@@ -2208,25 +2208,27 @@ LayoutUnit RenderBox::computePercentageLogicalHeight(const Length& height) const
 
     if (isHorizontalWritingMode() != cb->isHorizontalWritingMode())
         availableHeight = cb->contentLogicalWidth();
-    else if (cb->isTableCell() && !skippedAutoHeightContainingBlock) {
-        // Table cells violate what the CSS spec says to do with heights. Basically we
-        // don't care if the cell specified a height or not. We just always make ourselves
-        // be a percentage of the cell's current content height.
-        if (!cb->hasOverrideHeight()) {
-            // Normally we would let the cell size intrinsically, but scrolling overflow has to be
-            // treated differently, since WinIE lets scrolled overflow regions shrink as needed.
-            // While we can't get all cases right, we can at least detect when the cell has a specified
-            // height or when the table has a specified height. In these cases we want to initially have
-            // no size and allow the flexing of the table or the cell to its specified height to cause us
-            // to grow to fill the space. This could end up being wrong in some cases, but it is
-            // preferable to the alternative (sizing intrinsically and making the row end up too big).
-            RenderTableCell* cell = toRenderTableCell(cb);
-            if (scrollsOverflowY() && (!cell->style()->logicalHeight().isAuto() || !cell->table()->style()->logicalHeight().isAuto()))
-                return 0;
-            return -1;
+    else if (cb->isTableCell()) {
+        if (!skippedAutoHeightContainingBlock) {
+            // Table cells violate what the CSS spec says to do with heights. Basically we
+            // don't care if the cell specified a height or not. We just always make ourselves
+            // be a percentage of the cell's current content height.
+            if (!cb->hasOverrideHeight()) {
+                // Normally we would let the cell size intrinsically, but scrolling overflow has to be
+                // treated differently, since WinIE lets scrolled overflow regions shrink as needed.
+                // While we can't get all cases right, we can at least detect when the cell has a specified
+                // height or when the table has a specified height. In these cases we want to initially have
+                // no size and allow the flexing of the table or the cell to its specified height to cause us
+                // to grow to fill the space. This could end up being wrong in some cases, but it is
+                // preferable to the alternative (sizing intrinsically and making the row end up too big).
+                RenderTableCell* cell = toRenderTableCell(cb);
+                if (scrollsOverflowY() && (!cell->style()->logicalHeight().isAuto() || !cell->table()->style()->logicalHeight().isAuto()))
+                    return 0;
+                return -1;
+            }
+            availableHeight = cb->overrideLogicalContentHeight();
+            includeBorderPadding = true;
         }
-        availableHeight = cb->overrideLogicalContentHeight();
-        includeBorderPadding = true;
     } else if (cbstyle->logicalHeight().isFixed()) {
         LayoutUnit contentBoxHeightWithScrollbar = cb->adjustContentBoxLogicalHeightForBoxSizing(cbstyle->logicalHeight().value());
         availableHeight = max<LayoutUnit>(0, contentBoxHeightWithScrollbar - cb->scrollbarLogicalHeight());
