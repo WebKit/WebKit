@@ -1396,6 +1396,8 @@ webkit.org/b/102776 media/track/track-cue-rendering-vertical.html [ Failure ]
 # Fails until we enable the Resource Timing API.
 webkit.org/b/61138 http/tests/w3c/webperf/submission/resource-timing [ Skip ]
 
+webkit.org/b/103109 fast/dom/shadow/host-wrapper-reclaimed.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing
 #////////////////////////////////////////////////////////////////////////////////////////

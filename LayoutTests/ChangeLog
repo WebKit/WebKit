@@ -1,3 +1,11 @@
+2012-11-23  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed gardening.
+
+        Adding failure expectation for fast/dom/shadow/host-wrapper-reclaimed.html.
+
+        * platform/gtk/TestExpectations:
+
 2012-11-23  Robert Kroeger  <rjkroege@chromium.org>
 
         Unreviewed: updated test expecations -- additional failures in
