@@ -1,3 +1,18 @@
+2012-11-23  Yury Semikhatsky  <yurys@chromium.org>
+
+        Unreviewed. Update test expectations.
+
+        * platform/chromium-mac-lion/fast/css/font-weight-1-expected.png: Added.
+        * platform/chromium-mac-lion/fast/css/font-weight-1-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/fast/css/font-weight-1-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/css/font-weight-1-expected.txt: Added.
+        * platform/chromium-mac/fast/css/font-weight-1-expected.png: Added.
+        * platform/chromium-mac/fast/css/font-weight-1-expected.txt: Added.
+        * platform/chromium-mac/platform/chromium/virtual/deferred/fast/images/pdf-as-image-expected.png: Added.
+        * platform/chromium-win/fast/css/font-weight-1-expected.png: Renamed from LayoutTests/platform/chromium/fast/css/font-weight-1-expected.png.
+        * platform/chromium-win/platform/chromium/virtual/deferred/fast/images/pdf-as-image-expected.png: Added.
+        * platform/efl-wk1/fast/css/font-weight-1-expected.png: Renamed from LayoutTests/platform/efl/fast/css/font-weight-1-expected.png.
+
 2012-11-23  Thiago Marcos P. Santos  <thiago.santos@intel.com>
 
         Expose DOM interface for CSS Device Adaptation
