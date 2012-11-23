@@ -1133,7 +1133,7 @@ void InputHandler::ensureFocusTextElementVisible(CaretScrollType scrollType)
         zoomScaleRequired = m_webPage->currentScale(); // Don't scale.
 
     // The scroll location we should go to given the zoom required, could be adjusted later.
-    WebCore::FloatPoint offset(selectionFocusRect.location().y() - m_webPage->scrollPosition().x(), selectionFocusRect.location().y() - m_webPage->scrollPosition().y());
+    WebCore::FloatPoint offset(selectionFocusRect.location().x() - m_webPage->scrollPosition().x(), selectionFocusRect.location().y() - m_webPage->scrollPosition().y());
     double inverseScale = zoomScaleRequired / m_webPage->currentScale();
     WebCore::IntPoint destinationScrollLocation = WebCore::IntPoint(max(0, static_cast<int>(roundf(selectionFocusRect.location().x() - offset.x() / inverseScale))),
                                                                     max(0, static_cast<int>(roundf(selectionFocusRect.location().y() - offset.y() / inverseScale))));

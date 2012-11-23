@@ -1,3 +1,18 @@
+2012-11-23  Andrew Lo  <anlo@rim.com>
+
+        [BlackBerry] InputHandler::ensureFocusTextElementVisible incorrectly used y coordinate as x coordinate
+        https://bugs.webkit.org/show_bug.cgi?id=103091
+
+        Reviewed by Yong Li.
+
+        Internally reviewed by Mike Fenton.
+        Internal PR249523
+        Incorrectly used y coordinate as x coordinate in
+        InputHandler::ensureFocusTextElementVisible.
+
+        * WebKitSupport/InputHandler.cpp:
+        (BlackBerry::WebKit::InputHandler::ensureFocusTextElementVisible):
+
 2012-11-22  Jeff Rogers  <jrogers@rim.com>
 
         [BlackBerry] Update Web Notifications Implementation
