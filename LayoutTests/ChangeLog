@@ -1,3 +1,146 @@
+2012-11-22  Stephen Chenney  <schenney@chromium.org>
+
+        Test expectations update after enabling Skia changes.
+
+        Unreviewed expectations update.
+
+        Final rebaselines. These tests did not get correctly rebased the first time through.
+
+        * fast/replaced/border-radius-clip-expected.png: Added.
+        * fast/text/line-initial-and-final-swashes-expected.txt: Added.
+        * platform/chromium-linux-x86/fast/replaced/border-radius-clip-expected.txt: Added.
+        * platform/chromium-linux/fast/replaced/border-radius-clip-expected.png:
+        * platform/chromium-linux/fast/replaced/border-radius-clip-expected.txt: Added.
+        * platform/chromium-linux/transforms/3d/hit-testing/backface-hit-test-expected.png:
+        * platform/chromium-linux/transforms/3d/hit-testing/backface-no-transform-hit-test-expected.png:
+        * platform/chromium-mac-lion/fast/block/basic/fieldset-stretch-to-legend-expected.png: Added.
+        * platform/chromium-mac-lion/fast/css/color-correction-expected.txt: Added.
+        * platform/chromium-mac-lion/fast/css/color-correction-on-background-image-expected.txt: Added.
+        * platform/chromium-mac-lion/fast/css/color-correction-on-backgrounds-expected.txt: Added.
+        * platform/chromium-mac-lion/fast/css/color-correction-on-box-shadow-expected.png: Added.
+        * platform/chromium-mac-lion/fast/css/color-correction-on-box-shadow-expected.txt: Added.
+        * platform/chromium-mac-lion/fast/css/color-correction-on-text-expected.txt: Added.
+        * platform/chromium-mac-lion/fast/css/color-correction-on-text-shadow-expected.png: Added.
+        * platform/chromium-mac-lion/fast/css/color-correction-on-text-shadow-expected.txt: Added.
+        * platform/chromium-mac-lion/fast/css/color-correction-untagged-images-expected.txt: Added.
+        * platform/chromium-mac-lion/fast/css/font-smoothing-expected.txt: Added.
+        * platform/chromium-mac-lion/fast/images/imagemap-circle-focus-ring-expected.txt: Added.
+        * platform/chromium-mac-lion/fast/images/imagemap-focus-ring-outline-color-expected.txt: Added.
+        * platform/chromium-mac-lion/fast/images/imagemap-focus-ring-outline-color-explicitly-inherited-from-map-expected.txt: Added.
+        * platform/chromium-mac-lion/fast/images/imagemap-focus-ring-outline-color-not-inherited-from-map-expected.txt: Added.
+        * platform/chromium-mac-lion/fast/images/imagemap-polygon-focus-ring-expected.txt: Added.
+        * platform/chromium-mac-lion/fast/images/object-image-expected.png: Added.
+        * platform/chromium-mac-lion/fast/repaint/body-background-image-expected.png: Added.
+        * platform/chromium-mac-lion/fast/repaint/body-background-image-expected.txt: Added.
+        * platform/chromium-mac-lion/fast/repaint/overflow-outline-repaint-expected.txt: Added.
+        * platform/chromium-mac-lion/fast/text/atsui-pointtooffset-calls-cg-expected.txt: Added.
+        * platform/chromium-mac-lion/fast/text/atsui-rtl-override-selection-expected.txt: Added.
+        * platform/chromium-mac-lion/fast/text/font-initial-expected.png: Added.
+        * platform/chromium-mac-lion/fast/text/font-initial-expected.txt: Added.
+        * platform/chromium-mac-lion/fast/text/line-initial-and-final-swashes-expected.png: Added.
+        * platform/chromium-mac-lion/platform/chromium/virtual/deferred/fast/images/object-image-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/block/basic/fieldset-stretch-to-legend-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/css/color-correction-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/fast/css/color-correction-on-background-image-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/fast/css/color-correction-on-backgrounds-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/fast/css/color-correction-on-box-shadow-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/css/color-correction-on-box-shadow-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/fast/css/color-correction-on-text-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/fast/css/color-correction-on-text-shadow-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/css/color-correction-on-text-shadow-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/fast/css/color-correction-untagged-images-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/fast/css/font-smoothing-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/fast/images/imagemap-circle-focus-ring-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/fast/images/imagemap-focus-ring-outline-color-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/fast/images/imagemap-focus-ring-outline-color-explicitly-inherited-from-map-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/fast/images/imagemap-focus-ring-outline-color-not-inherited-from-map-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/fast/images/imagemap-polygon-focus-ring-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/fast/repaint/body-background-image-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/repaint/body-background-image-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/fast/repaint/overflow-outline-repaint-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/fast/text/atsui-pointtooffset-calls-cg-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/fast/text/atsui-rtl-override-selection-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/fast/text/font-initial-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/text/font-initial-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/fast/text/line-initial-and-final-swashes-expected.png: Added.
+        * platform/chromium-mac/fast/block/basic/fieldset-stretch-to-legend-expected.png:
+        * platform/chromium-mac/fast/css/color-correction-expected.txt: Added.
+        * platform/chromium-mac/fast/css/color-correction-on-background-image-expected.txt: Added.
+        * platform/chromium-mac/fast/css/color-correction-on-backgrounds-expected.txt: Added.
+        * platform/chromium-mac/fast/css/color-correction-on-box-shadow-expected.png: Added.
+        * platform/chromium-mac/fast/css/color-correction-on-box-shadow-expected.txt: Added.
+        * platform/chromium-mac/fast/css/color-correction-on-text-expected.txt: Added.
+        * platform/chromium-mac/fast/css/color-correction-on-text-shadow-expected.png: Added.
+        * platform/chromium-mac/fast/css/color-correction-on-text-shadow-expected.txt: Added.
+        * platform/chromium-mac/fast/css/color-correction-untagged-images-expected.txt: Added.
+        * platform/chromium-mac/fast/css/font-smoothing-expected.txt: Added.
+        * platform/chromium-mac/fast/history/visited-link-background-color-expected.png: Added.
+        * platform/chromium-mac/fast/images/imagemap-circle-focus-ring-expected.txt: Added.
+        * platform/chromium-mac/fast/images/imagemap-focus-ring-outline-color-expected.txt: Added.
+        * platform/chromium-mac/fast/images/imagemap-focus-ring-outline-color-explicitly-inherited-from-map-expected.txt: Added.
+        * platform/chromium-mac/fast/images/imagemap-focus-ring-outline-color-not-inherited-from-map-expected.txt: Added.
+        * platform/chromium-mac/fast/images/imagemap-polygon-focus-ring-expected.txt: Added.
+        * platform/chromium-mac/fast/images/object-image-expected.png: Added.
+        * platform/chromium-mac/fast/repaint/body-background-image-expected.png: Added.
+        * platform/chromium-mac/fast/repaint/body-background-image-expected.txt: Added.
+        * platform/chromium-mac/fast/repaint/overflow-outline-repaint-expected.txt: Added.
+        * platform/chromium-mac/fast/text/atsui-pointtooffset-calls-cg-expected.txt: Added.
+        * platform/chromium-mac/fast/text/atsui-rtl-override-selection-expected.txt: Added.
+        * platform/chromium-mac/fast/text/font-initial-expected.png: Added.
+        * platform/chromium-mac/fast/text/font-initial-expected.txt: Added.
+        * platform/chromium-mac/fast/text/line-initial-and-final-swashes-expected.png: Added.
+        * platform/chromium-mac/fast/text/midword-break-before-surrogate-pair-2-expected.png: Added.
+        * platform/chromium-mac/platform/chromium/virtual/deferred/fast/images/imagemap-circle-focus-ring-expected.txt: Added.
+        * platform/chromium-mac/platform/chromium/virtual/deferred/fast/images/imagemap-focus-ring-outline-color-expected.txt: Added.
+        * platform/chromium-mac/platform/chromium/virtual/deferred/fast/images/imagemap-focus-ring-outline-color-explicitly-inherited-from-map-expected.txt: Added.
+        * platform/chromium-mac/platform/chromium/virtual/deferred/fast/images/imagemap-focus-ring-outline-color-not-inherited-from-map-expected.txt: Added.
+        * platform/chromium-mac/platform/chromium/virtual/deferred/fast/images/imagemap-polygon-focus-ring-expected.txt: Added.
+        * platform/chromium-mac/platform/chromium/virtual/deferred/fast/images/object-image-expected.png: Added.
+        * platform/chromium-win-xp/fast/replaced/border-radius-clip-expected.txt: Added.
+        * platform/chromium-win/fast/block/basic/fieldset-stretch-to-legend-expected.png:
+        * platform/chromium-win/fast/css/color-correction-expected.png: Added.
+        * platform/chromium-win/fast/css/color-correction-on-background-image-expected.png: Added.
+        * platform/chromium-win/fast/css/color-correction-on-backgrounds-expected.png: Added.
+        * platform/chromium-win/fast/css/color-correction-on-box-shadow-expected.png: Added.
+        * platform/chromium-win/fast/css/color-correction-on-text-expected.png: Added.
+        * platform/chromium-win/fast/css/color-correction-on-text-shadow-expected.png: Added.
+        * platform/chromium-win/fast/css/color-correction-untagged-images-expected.png: Added.
+        * platform/chromium-win/fast/css/font-smoothing-expected.png:
+        * platform/chromium-win/fast/history/visited-link-background-color-expected.png: Added.
+        * platform/chromium-win/fast/images/object-image-expected.png: Added.
+        * platform/chromium-win/fast/repaint/body-background-image-expected.png: Added.
+        * platform/chromium-win/fast/replaced/border-radius-clip-expected.png:
+        * platform/chromium-win/fast/replaced/border-radius-clip-expected.txt:
+        * platform/chromium-win/fast/text/atsui-pointtooffset-calls-cg-expected.png:
+        * platform/chromium-win/fast/text/atsui-rtl-override-selection-expected.png:
+        * platform/chromium-win/fast/text/font-initial-expected.png: Added.
+        * platform/chromium-win/fast/text/line-initial-and-final-swashes-expected.txt: Added.
+        * platform/chromium-win/fast/text/midword-break-before-surrogate-pair-2-expected.png: Added.
+        * platform/chromium-win/platform/chromium/virtual/deferred/fast/images/object-image-expected.png: Added.
+        * platform/chromium/fast/canvas/canvas-scale-strokePath-shadow-expected.txt: Removed.
+        * platform/chromium/fast/css/color-correction-expected.png: Removed.
+        * platform/chromium/fast/css/color-correction-on-background-image-expected.png: Removed.
+        * platform/chromium/fast/css/color-correction-on-backgrounds-expected.png: Removed.
+        * platform/chromium/fast/css/color-correction-on-box-shadow-expected.png: Removed.
+        * platform/chromium/fast/css/color-correction-on-text-expected.png: Removed.
+        * platform/chromium/fast/css/color-correction-on-text-shadow-expected.png: Removed.
+        * platform/chromium/fast/css/color-correction-untagged-images-expected.png: Removed.
+        * platform/chromium/fast/history/visited-link-background-color-expected.png: Removed.
+        * platform/chromium/fast/images/imagemap-circle-focus-ring-expected.png: Removed.
+        * platform/chromium/fast/images/imagemap-focus-ring-outline-color-expected.png: Removed.
+        * platform/chromium/fast/images/imagemap-focus-ring-outline-color-explicitly-inherited-from-map-expected.png: Removed.
+        * platform/chromium/fast/images/imagemap-focus-ring-outline-color-not-inherited-from-map-expected.png: Removed.
+        * platform/chromium/fast/images/imagemap-polygon-focus-ring-expected.png: Removed.
+        * platform/chromium/fast/images/object-image-expected.png: Removed.
+        * platform/chromium/fast/repaint/body-background-image-expected.png: Removed.
+        * platform/chromium/fast/replaced/border-radius-clip-expected.png: Removed.
+        * platform/chromium/fast/text/font-initial-expected.png: Removed.
+        * platform/chromium/fast/text/line-initial-and-final-swashes-expected.png: Removed.
+        * platform/chromium/fast/text/line-initial-and-final-swashes-expected.txt: Removed.
+        * platform/chromium/fast/text/midword-break-before-surrogate-pair-2-expected.png: Removed.
+        * platform/mac/fast/replaced/border-radius-clip-expected.png: Removed.
+        * platform/mac/fast/text/line-initial-and-final-swashes-expected.txt: Removed.
+
 2012-11-22  Pravin D  <pravind.2k4@gmail.com>
 
         max-height property not respected in case of tables
