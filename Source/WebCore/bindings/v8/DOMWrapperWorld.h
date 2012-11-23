@@ -32,6 +32,8 @@
 #define DOMWrapperWorld_h
 
 #include "SecurityOrigin.h"
+#include "V8PerContextData.h"
+#include <v8.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -55,6 +57,20 @@ public:
     static bool isolatedWorldsExist() { return isolatedWorldCount; }
     static bool isIsolatedWorldId(int worldId) { return worldId != mainWorldId && worldId != uninitializedWorldId; }
     static void getAllWorlds(Vector<RefPtr<DOMWrapperWorld> >& worlds);
+
+    void makeContextWeak(v8::Handle<v8::Context>);
+    void setIsolatedWorldField(v8::Handle<v8::Context>);
+#ifndef NDEBUG
+    static void assertContextHasCorrectPrototype(v8::Handle<v8::Context>);
+#endif
+    static DOMWrapperWorld* isolated(v8::Handle<v8::Context> context)
+    {
+#ifndef NDEBUG
+        assertContextHasCorrectPrototype(context);
+#endif
+        return static_cast<DOMWrapperWorld*>(context->GetAlignedPointerFromEmbedderData(v8ContextIsolatedWorld));
+    }
+
     // Associates an isolated world (see above for description) with a security
     // origin. XMLHttpRequest instances used in that world will be considered
     // to come from that origin, not the frame's.

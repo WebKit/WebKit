@@ -32,6 +32,9 @@
 #include "DOMWrapperWorld.h"
 
 #include "DOMDataStore.h"
+#include "V8Binding.h"
+#include "V8DOMWindow.h"
+#include "V8DOMWrapper.h"
 #include <wtf/MainThread.h>
 #include <wtf/StdLibExtras.h>
 
@@ -62,6 +65,35 @@ DOMWrapperWorld* mainThreadNormalWorld()
     ASSERT(isMainThread());
     DEFINE_STATIC_LOCAL(RefPtr<DOMWrapperWorld>, cachedNormalWorld, (DOMWrapperWorld::createMainWorld()));
     return cachedNormalWorld.get();
+}
+
+#ifndef NDEBUG
+void DOMWrapperWorld::assertContextHasCorrectPrototype(v8::Handle<v8::Context> context)
+{
+    ASSERT(isMainThread());
+    ASSERT(V8DOMWrapper::isWrapperOfType(toInnerGlobalObject(context), &V8DOMWindow::info));
+}
+#endif
+
+static void isolatedWorldWeakCallback(v8::Persistent<v8::Value> object, void* parameter)
+{
+    object.Dispose();
+    object.Clear();
+    static_cast<DOMWrapperWorld*>(parameter)->deref();
+}
+
+void DOMWrapperWorld::makeContextWeak(v8::Handle<v8::Context> context)
+{
+    ASSERT(isIsolatedWorld());
+    ASSERT(isolated(context) == this);
+    v8::Persistent<v8::Context>::New(context).MakeWeak(this, isolatedWorldWeakCallback);
+    // Matching deref is in weak callback.
+    this->ref();
+}
+
+void DOMWrapperWorld::setIsolatedWorldField(v8::Handle<v8::Context> context)
+{
+    context->SetAlignedPointerInEmbedderData(v8ContextIsolatedWorld, isMainWorld() ? 0 : this);
 }
 
 typedef HashMap<int, DOMWrapperWorld*> WorldMap;
