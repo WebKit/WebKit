@@ -303,6 +303,12 @@ WebInspector.NetworkLogView.prototype = {
         this._updateOffscreenRows();
 
         this.searchCanceled();
+
+        WebInspector.notifications.dispatchEventToListeners(WebInspector.UserMetrics.UserAction, {
+            action: WebInspector.UserMetrics.UserActionNames.NetworkSort,
+            column: columnIdentifier,
+            sortOrder: this._dataGrid.sortOrder
+        });
     },
 
     _sortByTimeline: function()
@@ -1823,6 +1829,11 @@ WebInspector.NetworkDataGridNode.prototype = {
     {
         this._parentView.dispatchEventToListeners(WebInspector.NetworkLogView.EventTypes.RequestSelected, this._request);
         WebInspector.DataGridNode.prototype.select.apply(this, arguments);
+
+        WebInspector.notifications.dispatchEventToListeners(WebInspector.UserMetrics.UserAction, {
+            action: WebInspector.UserMetrics.UserActionNames.NetworkRequestSelected,
+            url: this._request.url
+        });
     },
 
     _highlightMatchedSubstring: function(regexp)

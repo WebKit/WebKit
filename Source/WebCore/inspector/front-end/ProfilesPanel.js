@@ -522,7 +522,9 @@ WebInspector.ProfilesPanel.prototype = {
         if (!profile.isTemporary) {
             if (!this.visibleView)
                 this.showProfile(profile);
-            this.dispatchEventToListeners("profile added");
+            this.dispatchEventToListeners("profile added", {
+                type: typeId
+            });
         }
     },
 

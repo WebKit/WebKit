@@ -198,6 +198,13 @@ WebInspector.ElementsPanel.prototype = {
         WebInspector.cssModel.forcePseudoState(node.id, node.getUserProperty(WebInspector.ElementsTreeOutline.PseudoStateDecorator.PropertyName));
         this._metricsPaneEdited();
         this._stylesPaneEdited();
+
+        WebInspector.notifications.dispatchEventToListeners(WebInspector.UserMetrics.UserAction, {
+            action: WebInspector.UserMetrics.UserActionNames.ForcedElementState,
+            selector: node.appropriateSelectorFor(false),
+            enabled: enable,
+            state: pseudoClass
+        });
     },
 
     _selectedNodeChanged: function()

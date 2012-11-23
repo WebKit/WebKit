@@ -290,6 +290,7 @@ var WebInspector = {
 }
 
 WebInspector.Events = {
+    InspectorLoaded: "InspectorLoaded",
     InspectorClosing: "InspectorClosing"
 }
 
@@ -493,6 +494,8 @@ WebInspector._doLoadedDoneWithCapabilities = function()
 
     WebInspector.WorkerManager.loadCompleted();
     InspectorFrontendAPI.loadCompleted();
+
+    WebInspector.notifications.dispatchEventToListeners(WebInspector.Events.InspectorLoaded);
 }
 
 var windowLoaded = function()

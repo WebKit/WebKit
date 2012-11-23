@@ -90,8 +90,16 @@ WebInspector.NetworkItemView.prototype = {
 
     _tabSelected: function(event)
     {
-        if (event.data.isUserGesture)
-            WebInspector.settings.resourceViewTab.set(event.data.tabId);
+        if (!event.data.isUserGesture)
+            return;
+
+        WebInspector.settings.resourceViewTab.set(event.data.tabId);
+
+        WebInspector.notifications.dispatchEventToListeners(WebInspector.UserMetrics.UserAction, {
+            action: WebInspector.UserMetrics.UserActionNames.NetworkRequestTabSelected,
+            tab: event.data.tabId,
+            url: this._request.url
+        });
     },
 
     /**

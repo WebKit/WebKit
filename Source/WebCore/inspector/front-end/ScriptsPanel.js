@@ -407,6 +407,12 @@ WebInspector.ScriptsPanel.prototype = {
         if (typeof lineNumber === "number")
             sourceFrame.highlightLine(lineNumber);
         sourceFrame.focus();
+
+        WebInspector.notifications.dispatchEventToListeners(WebInspector.UserMetrics.UserAction, {
+            action: WebInspector.UserMetrics.UserActionNames.OpenSourceLink,
+            url: uiSourceCode.url,
+            lineNumber: lineNumber
+        });
     },
 
     /**
@@ -931,6 +937,12 @@ WebInspector.ScriptsPanel.prototype = {
         var uiSourceCodes = this._workspace.uiSourceCodes();
         for (var i = 0; i < uiSourceCodes.length; ++i)
             uiSourceCodes[i].setFormatted(this._toggleFormatSourceButton.toggled);
+
+        WebInspector.notifications.dispatchEventToListeners(WebInspector.UserMetrics.UserAction, {
+            action: WebInspector.UserMetrics.UserActionNames.TogglePrettyPrint,
+            enabled: this._toggleFormatSourceButton.toggled,
+            url: this._editorContainer.currentFile().url
+        });
     },
 
     addToWatch: function(expression)

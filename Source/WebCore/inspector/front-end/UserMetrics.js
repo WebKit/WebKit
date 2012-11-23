@@ -89,6 +89,22 @@ WebInspector.UserMetrics._PanelCodes = {
     console: 8
 }
 
+WebInspector.UserMetrics.UserAction = "UserAction";
+
+WebInspector.UserMetrics.UserActionNames = {
+    ForcedElementState: "forcedElementState",
+    FileSaved: "fileSaved",
+    RevertRevision: "revertRevision",
+    ApplyOriginalContent: "applyOriginalContent",
+    TogglePrettyPrint: "togglePrettyPrint",
+    SetBreakpoint: "setBreakpoint",
+    OpenSourceLink: "openSourceLink",
+    NetworkSort: "networkSort",
+    NetworkRequestSelected: "networkRequestSelected",
+    NetworkRequestTabSelected: "networkRequestTabSelected",
+    ChoseHeapSnapshotBetween: "choseHeapSnapshotBetween"
+};
+
 WebInspector.UserMetrics.prototype = {
     panelShown: function(panelName)
     {
