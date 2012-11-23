@@ -1,3 +1,14 @@
+2012-11-22  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r135549.
+        http://trac.webkit.org/changeset/135549
+        https://bugs.webkit.org/show_bug.cgi?id=103102
+
+        Multiple layout test crashes (Requested by yurys on #webkit).
+
+        * fast/table/css-table-max-height-expected.txt: Removed.
+        * fast/table/css-table-max-height.html: Removed.
+
 2012-11-22  Rick Byers <rbyers@chromium.org>
 
         window is missing Touch and TouchList - touch event conformance test failure
