@@ -20,9 +20,17 @@
 #include "config.h"
 #include "GraphicsLayerTextureMapper.h"
 
+#include "GraphicsContext.h"
 #include "GraphicsLayerAnimation.h"
 #include "GraphicsLayerFactory.h"
-#include "TextureMapperLayer.h"
+#include "ImageBuffer.h"
+#include "NotImplemented.h"
+#include <wtf/CurrentTime.h>
+
+#if USE(CAIRO)
+#include "CairoUtilities.h"
+#include <wtf/text/CString.h>
+#endif
 
 namespace WebCore {
 
@@ -47,7 +55,9 @@ GraphicsLayerTextureMapper::GraphicsLayerTextureMapper(GraphicsLayerClient* clie
     , m_compositedNativeImagePtr(0)
     , m_changeMask(0)
     , m_needsDisplay(false)
+    , m_hasOwnBackingStore(true)
     , m_fixedToViewport(false)
+    , m_debugBorderWidth(0)
     , m_contentsLayer(0)
     , m_animationStartedTimer(this, &GraphicsLayerTextureMapper::animationStartedTimerFired)
 {
@@ -59,13 +69,6 @@ void GraphicsLayerTextureMapper::notifyChange(TextureMapperLayer::ChangeMask cha
     if (!client())
         return;
     client()->notifyFlushRequired(this);
-}
-
-void GraphicsLayerTextureMapper::didSynchronize()
-{
-    m_changeMask = 0;
-    m_needsDisplay = false;
-    m_needsDisplayRect = IntRect();
 }
 
 void GraphicsLayerTextureMapper::setName(const String& name)
@@ -377,6 +380,7 @@ void GraphicsLayerTextureMapper::setContentsToMedia(TextureMapperPlatformLayer* 
 void GraphicsLayerTextureMapper::flushCompositingStateForThisLayerOnly()
 {
     m_layer->flushCompositingState(this);
+    didFlushCompositingState();
 }
 
 /* \reimp (GraphicsLayer.h)
@@ -384,7 +388,121 @@ void GraphicsLayerTextureMapper::flushCompositingStateForThisLayerOnly()
 void GraphicsLayerTextureMapper::flushCompositingState(const FloatRect&)
 {
     m_layer->flushCompositingState(this, TextureMapperLayer::TraverseDescendants);
+    didFlushCompositingStateRecursive();
 }
+
+void GraphicsLayerTextureMapper::didFlushCompositingState()
+{
+    updateBackingStore();
+    m_changeMask = 0;
+    m_needsDisplay = false;
+    m_needsDisplayRect = IntRect();
+}
+
+void GraphicsLayerTextureMapper::didFlushCompositingStateRecursive()
+{
+    didFlushCompositingState();
+    for (size_t i = 0; i < children().size(); ++i)
+        toGraphicsLayerTextureMapper(children()[i])->didFlushCompositingStateRecursive();
+    if (maskLayer())
+        toGraphicsLayerTextureMapper(maskLayer())->didFlushCompositingStateRecursive();
+    if (replicaLayer())
+        toGraphicsLayerTextureMapper(replicaLayer())->didFlushCompositingStateRecursive();
+}
+
+void GraphicsLayerTextureMapper::updateBackingStore()
+{
+    if (!m_hasOwnBackingStore)
+        return;
+
+    prepareBackingStore();
+    m_layer->setBackingStore(m_backingStore);
+}
+
+void GraphicsLayerTextureMapper::prepareBackingStore()
+{
+    if (!shouldHaveBackingStore()) {
+        m_backingStore.clear();
+        return;
+    }
+
+    IntRect dirtyRect = enclosingIntRect(FloatRect(FloatPoint::zero(), m_size));
+    if (!m_needsDisplay)
+        dirtyRect.intersect(enclosingIntRect(m_needsDisplayRect));
+    if (dirtyRect.isEmpty())
+        return;
+
+    TextureMapper* textureMapper = m_layer->textureMapper();
+    ASSERT(textureMapper);
+
+    if (!m_backingStore)
+        m_backingStore = TextureMapperTiledBackingStore::create();
+
+    // Paint the entire dirty rect into an image buffer. This ensures we only paint once.
+    OwnPtr<ImageBuffer> imageBuffer = ImageBuffer::create(dirtyRect.size());
+    GraphicsContext* context = imageBuffer->context();
+    context->setImageInterpolationQuality(textureMapper->imageInterpolationQuality());
+    context->setTextDrawingMode(textureMapper->textDrawingMode());
+    context->translate(-dirtyRect.x(), -dirtyRect.y());
+    paintGraphicsLayerContents(*context, dirtyRect);
+
+    if (isShowingRepaintCounter()) {
+        incrementRepaintCount();
+        drawRepaintCounter(context);
+    }
+
+    RefPtr<Image> image = imageBuffer->copyImage(DontCopyBackingStore);
+#if PLATFORM(QT)
+    ASSERT(dynamic_cast<TextureMapperTiledBackingStore*>(m_backingStore.get()));
+#endif
+    TextureMapperTiledBackingStore* backingStore = static_cast<TextureMapperTiledBackingStore*>(m_backingStore.get());
+    backingStore->updateContents(textureMapper, image.get(), m_size, dirtyRect, BitmapTexture::UpdateCanModifyOriginalImageData);
+
+    backingStore->setShowDebugBorders(isShowingDebugBorder());
+    backingStore->setDebugBorder(m_debugBorderColor, m_debugBorderWidth);
+
+    m_needsDisplay = false;
+    m_needsDisplayRect = IntRect();
+}
+
+bool GraphicsLayerTextureMapper::shouldHaveBackingStore() const
+{
+    return drawsContent() && contentsAreVisible() && !m_size.isEmpty();
+}
+
+#if USE(CAIRO)
+void GraphicsLayerTextureMapper::drawRepaintCounter(GraphicsContext* context)
+{
+    cairo_t* cr = context->platformContext()->cr();
+    cairo_save(cr);
+
+    CString repaintCount = String::format("%i", this->repaintCount()).utf8();
+    cairo_select_font_face(cr, "sans-serif", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_BOLD);
+    cairo_set_font_size(cr, 18);
+
+    cairo_text_extents_t repaintTextExtents;
+    cairo_text_extents(cr, repaintCount.data(), &repaintTextExtents);
+
+    static const int repaintCountBorderWidth = 10;
+    setSourceRGBAFromColor(cr, isShowingDebugBorder() ? m_debugBorderColor : Color(0, 255, 0, 127));
+    cairo_rectangle(cr, 0, 0,
+        repaintTextExtents.width + (repaintCountBorderWidth * 2),
+        repaintTextExtents.height + (repaintCountBorderWidth * 2));
+    cairo_fill(cr);
+
+    cairo_set_source_rgb(cr, 1, 1, 1);
+    cairo_move_to(cr, repaintCountBorderWidth, repaintTextExtents.height + repaintCountBorderWidth);
+    cairo_show_text(cr, repaintCount.data());
+
+    cairo_restore(cr);
+}
+#else
+void GraphicsLayerTextureMapper::drawRepaintCounter(GraphicsContext* context)
+{
+    notImplemented();
+}
+
+#endif
 
 bool GraphicsLayerTextureMapper::addAnimation(const KeyframeValueList& valueList, const IntSize& boxSize, const Animation* anim, const String& keyframesName, double timeOffset)
 {
@@ -429,7 +547,10 @@ void GraphicsLayerTextureMapper::animationStartedTimerFired(Timer<GraphicsLayerT
 
 void GraphicsLayerTextureMapper::setDebugBorder(const Color& color, float width)
 {
-    m_layer->setDebugBorder(color, width);
+    // The default values for GraphicsLayer debug borders are a little
+    // hard to see (some less than one pixel wide), so we double their size here.
+    m_debugBorderColor = color;
+    m_debugBorderWidth = width * 2;
 }
 
 #if ENABLE(CSS_FILTERS)

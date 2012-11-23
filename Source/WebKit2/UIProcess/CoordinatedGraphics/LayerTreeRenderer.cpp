@@ -86,9 +86,8 @@ LayerTreeRenderer::~LayerTreeRenderer()
 
 PassOwnPtr<GraphicsLayer> LayerTreeRenderer::createLayer(WebLayerID)
 {
-    GraphicsLayer* newLayer = new GraphicsLayerTextureMapper(this);
-    TextureMapperLayer* layer = toTextureMapperLayer(newLayer);
-    layer->setShouldUpdateBackingStoreFromLayer(false);
+    GraphicsLayerTextureMapper* newLayer = new GraphicsLayerTextureMapper(this);
+    newLayer->setHasOwnBackingStore(false);
     return adoptPtr(newLayer);
 }
 
@@ -411,7 +410,7 @@ PassRefPtr<CoordinatedBackingStore> LayerTreeRenderer::getBackingStore(GraphicsL
     RefPtr<CoordinatedBackingStore> backingStore = static_cast<CoordinatedBackingStore*>(layer->backingStore().get());
     if (!backingStore) {
         backingStore = CoordinatedBackingStore::create();
-        layer->setBackingStore(backingStore.get());
+        layer->setBackingStore(backingStore);
     }
     ASSERT(backingStore);
     return backingStore;

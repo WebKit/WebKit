@@ -1,3 +1,61 @@
+2012-11-23  Huang Dongsung  <luxtella@company100.net>
+
+        [TexMap] Remove dependency of TextureMapperLayer on GraphicsLayerTextureMapper.
+        https://bugs.webkit.org/show_bug.cgi?id=103046
+
+        Reviewed by Noam Rosenthal.
+
+        It is a preparation patch for Threaded Coordinated Graphics on WK1.
+
+        We want to make TextureMapperLayer into an actor model. After making an actor
+        model, GraphicsLayerTextureMapper and LayerTreeRenderer will communicate with
+        TextureMapperLayer using message passing. In the first step, we want to hide
+        GraphicsLayerTextureMapper from TextureMapperLayer.
+
+        There are 2 kinds of dependencies of TextureMapperLayer in GraphicsLayerTextureMapper.
+        1. To query layer states
+        2. To paint layer contents
+
+        In this patch, we removed the second dependency. Currently, TextureMapperLayer
+        requests painting contents to GraphicsLayerTextureMapper in WK1 while
+        Coordinated Graphics prepares the contents in LayerTreeRenderer. This patch
+        makes WK1 prepare the contents in GraphicsLayerTextureMapper like
+        LayerTreeRenderer.
+
+        We will remove the first dependency in a follow-up patch.
+
+        Covered by existing layout tests.
+
+        * platform/graphics/texmap/GraphicsLayerTextureMapper.cpp:
+        (WebCore::GraphicsLayerTextureMapper::GraphicsLayerTextureMapper):
+        (WebCore::GraphicsLayerTextureMapper::flushCompositingStateForThisLayerOnly):
+        (WebCore::GraphicsLayerTextureMapper::flushCompositingState):
+        (WebCore):
+        (WebCore::GraphicsLayerTextureMapper::didFlushCompositingState):
+        (WebCore::GraphicsLayerTextureMapper::didFlushCompositingStateRecursive):
+        (WebCore::GraphicsLayerTextureMapper::updateBackingStore):
+        (WebCore::GraphicsLayerTextureMapper::prepareBackingStore):
+        (WebCore::GraphicsLayerTextureMapper::shouldHaveBackingStore):
+        (WebCore::GraphicsLayerTextureMapper::drawRepaintCounter):
+        (WebCore::GraphicsLayerTextureMapper::setDebugBorder):
+        * platform/graphics/texmap/GraphicsLayerTextureMapper.h:
+        (GraphicsLayerTextureMapper):
+        (WebCore::GraphicsLayerTextureMapper::setHasOwnBackingStore):
+        * platform/graphics/texmap/TextureMapperLayer.cpp:
+        (WebCore::TextureMapperLayer::rootLayer):
+        (WebCore::TextureMapperLayer::paintSelf):
+        (WebCore::TextureMapperLayer::textureMapper):
+        (WebCore):
+        (WebCore::TextureMapperLayer::flushCompositingState):
+        (WebCore::TextureMapperLayer::flushCompositingStateSelf):
+        * platform/graphics/texmap/TextureMapperLayer.h:
+        (WebCore):
+        (WebCore::TextureMapperLayer::TextureMapperLayer):
+        (TextureMapperLayer):
+        (WebCore::TextureMapperLayer::setBackingStore):
+        (State):
+        (WebCore::TextureMapperLayer::State::State):
+
 2012-11-23  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [ENCHANT] Infinite loop when end word position is not found
