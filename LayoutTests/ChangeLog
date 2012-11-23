@@ -1,3 +1,10 @@
+2012-11-23  Robert Kroeger  <rjkroege@chromium.org>
+
+        Unreviewed gardening: update test expectations for
+        svg/hixie/perf/007.xml
+
+        * platform/chromium/TestExpectations:
+
 2012-11-23  Alexis Menard  <alexis@webkit.org>
 
         [CSS3 Backgrounds and Borders] Implement new CSS3 background-position parsing.

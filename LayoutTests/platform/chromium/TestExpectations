@@ -2050,7 +2050,7 @@ crbug.com/28005 [ Android Win ] fast/css/color-correction-on-background-image.ht
 crbug.com/28005 [ Android XP ] fast/css/color-correction-untagged-images.html [ Failure ]
 
 # Timeout on Debug.
-webkit.org/b/82954 [ SnowLeopard Lion Win Linux ] svg/hixie/perf/007.xml [ Pass Slow ]
+webkit.org/b/82954 [ Mac Win Linux ] svg/hixie/perf/007.xml [ ImageOnlyFailure Pass Slow ]
 
 crbug.com/22700 [ Android ] fast/canvas/canvas-shadow.html [ Failure ]
 
