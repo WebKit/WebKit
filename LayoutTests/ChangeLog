@@ -1,3 +1,15 @@
+2012-11-23  Krzysztof Czech  <k.czech@samsung.com>
+
+        [EFL] Adapt accessibility feature to WebKitTestRunner.
+        https://bugs.webkit.org/show_bug.cgi?id=100757
+
+        Reviewed by Laszlo Gombos.
+
+        Skipping Accessibility tests for wk1/wk2.
+        Some of the implementation is still missing.
+
+        * platform/efl/TestExpectations:
+
 2012-11-23  Justin Novosad  <junov@google.com>
 
         Page background color bleeds through inner edge of div border with rounded edges
