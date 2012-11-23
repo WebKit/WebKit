@@ -1,3 +1,14 @@
+2012-11-16  Yury Semikhatsky  <yurys@chromium.org>
+
+        Memory instrumentation: extract MemoryObjectInfo declaration into a separate file
+        https://bugs.webkit.org/show_bug.cgi?id=102510
+
+        Reviewed by Pavel Feldman.
+
+        Added missing includes.
+
+        * TestWebKitAPI/Tests/WTF/MemoryInstrumentationTest.cpp:
+
 2012-11-23  Sudarsana Nagineni  <sudarsana.nagineni@intel.com>
 
         [EFL][WK2] Add support for PlatformWebView::simulateSpacebarKeyPress() in TestWebKitAPI

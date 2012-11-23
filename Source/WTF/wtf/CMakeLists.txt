@@ -46,6 +46,17 @@ SET(WTF_HEADERS
     MallocZoneSupport.h
     MathExtras.h
     MediaTime.h
+    MemoryInstrumentation.h
+    MemoryInstrumentationArrayBufferView.h
+    MemoryInstrumentationHashCountedSet.h
+    MemoryInstrumentationHashMap.h
+    MemoryInstrumentationHashSet.h
+    MemoryInstrumentationListHashSet.h
+    MemoryInstrumentationParsedURL.h
+    MemoryInstrumentationSequence.h
+    MemoryInstrumentationString.h
+    MemoryInstrumentationVector.h
+    MemoryObjectInfo.h
     MessageQueue.h
     MetaAllocator.h
     MetaAllocatorHandle.h
@@ -157,6 +168,7 @@ SET(WTF_SOURCES
     MediaTime.cpp
     MetaAllocator.cpp
     OSRandomSource.cpp
+    MemoryInstrumentation.cpp
     NumberOfCores.cpp
     RAMSize.cpp
     PageAllocationAligned.cpp

@@ -45,6 +45,7 @@
 #include <wtf/MemoryInstrumentationListHashSet.h>
 #include <wtf/MemoryInstrumentationString.h>
 #include <wtf/MemoryInstrumentationVector.h>
+#include <wtf/MemoryObjectInfo.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 #include <wtf/text/AtomicString.h>

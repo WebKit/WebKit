@@ -33,6 +33,7 @@
 #include "WebCoreMemoryInstrumentation.h"
 #include <wtf/MemoryInstrumentationHashMap.h>
 #include <wtf/MemoryInstrumentationVector.h>
+#include <wtf/MemoryObjectInfo.h>
 
 namespace WebCore {
 

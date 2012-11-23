@@ -28,6 +28,7 @@
 #include "RenderStyleConstants.h"
 #include "ShadowData.h"
 #include "WebCoreMemoryInstrumentation.h"
+#include <wtf/MemoryObjectInfo.h>
 
 namespace WebCore {
 

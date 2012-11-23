@@ -41,6 +41,7 @@
 #endif
 #include "WebCoreMemoryInstrumentation.h"
 #include <wtf/MemoryInstrumentationVector.h>
+#include <wtf/MemoryObjectInfo.h>
 #include <wtf/StdLibExtras.h>
 #include <algorithm>
 

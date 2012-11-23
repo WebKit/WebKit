@@ -97,6 +97,7 @@ HEADERS += \
     MemoryInstrumentationSequence.h \
     MemoryInstrumentationString.h \
     MemoryInstrumentationVector.h \
+    MemoryObjectInfo.h \
     MessageQueue.h \
     MetaAllocator.h \
     MetaAllocatorHandle.h \
@@ -214,6 +215,7 @@ SOURCES += \
     MD5.cpp \
     MainThread.cpp \
     MediaTime.cpp \
+    MemoryInstrumentation.cpp \
     MetaAllocator.cpp \
     NullPtr.cpp \
     NumberOfCores.cpp \

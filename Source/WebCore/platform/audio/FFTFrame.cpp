@@ -40,6 +40,7 @@
 #include "PlatformMemoryInstrumentation.h"
 #include <wtf/Complex.h>
 #include <wtf/MathExtras.h>
+#include <wtf/MemoryObjectInfo.h>
 #include <wtf/OwnPtr.h>
 
 #if !USE_ACCELERATE_FFT && USE(WEBAUDIO_FFMPEG)
