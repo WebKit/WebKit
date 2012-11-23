@@ -1,3 +1,15 @@
+2012-11-23  Laszlo Gombos  <l.gombos@samsung.com>
+
+        [EFL] Define WTF_PLATFORM_EFL in Platform.h
+        https://bugs.webkit.org/show_bug.cgi?id=101482
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Remove the definition of WTF_PLATFORM_EFL from the build system to
+        make the EFL port consistent with other ports.
+ 
+        * Source/cmake/OptionsEfl.cmake:
+
 2012-11-23  Krzysztof Czech  <k.czech@samsung.com>
 
         [EFL] Platform support for Accessibility feature.

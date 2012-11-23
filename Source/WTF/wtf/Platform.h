@@ -432,6 +432,7 @@
 /* PLATFORM(CHROMIUM) */
 /* PLATFORM(QT) */
 /* PLATFORM(WX) */
+/* PLATFORM(EFL) */
 /* PLATFORM(GTK) */
 /* PLATFORM(BLACKBERRY) */
 /* PLATFORM(MAC) */
@@ -442,6 +443,8 @@
 #define WTF_PLATFORM_QT 1
 #elif defined(BUILDING_WX__)
 #define WTF_PLATFORM_WX 1
+#elif defined(BUILDING_EFL__)
+#define WTF_PLATFORM_EFL 1
 #elif defined(BUILDING_GTK__)
 #define WTF_PLATFORM_GTK 1
 #elif defined(BUILDING_BLACKBERRY__)
