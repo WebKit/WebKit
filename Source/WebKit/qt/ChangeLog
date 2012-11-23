@@ -1,3 +1,18 @@
+2012-11-23  Simon Hausmann  <simon.hausmann@digia.com>
+
+        Unreviewed trivial Qt/Win build fix:
+
+        Include FormState.h/HTMLFormElement.h in the FrameLoaderClient
+        declaration because MSVC needs it. Also fix Q_DECL_EXPORT declarations
+        for functions that are supposed to be exported.
+
+        * Api/qwebelement.cpp:
+        * WebCoreSupport/FrameLoaderClientQt.h:
+        * WebCoreSupport/InitWebCoreQt.h:
+        (WebKit):
+        * WebCoreSupport/InitWebKitQt.h:
+        (WebKit):
+
 2012-11-22  Pierre Rossi  <pierre.rossi@gmail.com>
 
         [Qt] REGRESSION(r135515): It made 3-3 tests fail and crash

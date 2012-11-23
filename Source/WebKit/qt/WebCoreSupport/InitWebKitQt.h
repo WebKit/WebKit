@@ -23,7 +23,7 @@
 
 namespace WebKit {
 
-void initializeWebKitWidgets();
+Q_DECL_EXPORT void initializeWebKitWidgets();
 
 }
 #endif
