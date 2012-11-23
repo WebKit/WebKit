@@ -3047,7 +3047,7 @@ END
     instance->SetAccessCheckCallbacks(V8DOMWindow::namedSecurityCheck, V8DOMWindow::indexedSecurityCheck, v8::External::New(&V8DOMWindow::info), false);
 END
     }
-    if ($interfaceName eq "HTMLDocument") {
+    if ($interfaceName eq "HTMLDocument" or $interfaceName eq "DedicatedWorkerContext" or $interfaceName eq "SharedWorkerContext") {
         push(@implContent, <<END);
     desc->SetHiddenPrototype(true);
 END

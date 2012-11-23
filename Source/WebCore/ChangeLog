@@ -1,3 +1,19 @@
+2012-11-22  Dan Carney  <dcarney@google.com>
+
+        [V8] Make worker context prototype chain match other browsers
+        https://bugs.webkit.org/show_bug.cgi?id=103057
+
+        Reviewed by Adam Barth.
+
+        The following should be defined in a worker:
+        Object.getOwnPropertyDescriptor(this.__proto__, "postMessage")
+        It is currently undefined in chrome only. This patch fixes that.
+
+        No new tests. No change in functionality.
+
+        * bindings/scripts/CodeGeneratorV8.pm:
+        (GenerateImplementation):
+
 2012-11-22  Rafael Brandao  <rafael.lobo@openbossa.org>
 
         Remove PLATFORM(HAIKU) leftovers code
