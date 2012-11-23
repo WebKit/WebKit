@@ -57,8 +57,13 @@ String MIMETypeRegistry::getMIMETypeForExtension(const String &ext)
     const QString filename = QStringLiteral("filename.") + QString(suffix);
 
     QMimeType mimeType = QMimeDatabase().mimeTypeForFile(filename, QMimeDatabase::MatchExtension);
-    if (mimeType.isValid() && !mimeType.isDefault())
+    if (mimeType.isValid() && !mimeType.isDefault()) {
+        // getMIMETypeForExtension is used for preload mimetype check, so image looking files can not be loaded as anything but images.
+        // Script looking files (.php) are loaded normally and will have their mimetype determined later.
+        if (mimeType.inherits(QStringLiteral("application/x-executable")))
+            return String();
         return mimeType.name();
+    }
 
     const ExtensionMap *e = extensionMap;
     while (e->extension) {

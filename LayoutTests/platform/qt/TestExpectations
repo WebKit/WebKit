@@ -2383,8 +2383,3 @@ webkit.org/b/102877 fast/frames/frame-unload-crash2.html
 
 # Fails until we enable the Resource Timing API.
 webkit.org/b/61138 http/tests/w3c/webperf/submission/resource-timing [ Skip ]
-
-# [Qt] REGRESSION(r135507): It made 13 tests fail
-# https://bugs.webkit.org/show_bug.cgi?id=103069
-http/tests/navigation/reload-subframe-object.html
-

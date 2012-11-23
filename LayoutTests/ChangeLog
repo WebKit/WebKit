@@ -1,3 +1,14 @@
+2012-11-23  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        [Qt] REGRESSION(r135507): It made 13 tests fail
+        https://bugs.webkit.org/show_bug.cgi?id=103069
+
+        Reviewed by Simon Hausmann.
+
+        Unskip the last of test regressions now passing.
+
+        * platform/qt/TestExpectations:
+
 2012-11-23  Yury Semikhatsky  <yurys@chromium.org>
 
         Unreviewed. Updated test expectations.

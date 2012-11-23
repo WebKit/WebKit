@@ -1,3 +1,17 @@
+2012-11-23  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        [Qt] REGRESSION(r135507): It made 13 tests fail
+        https://bugs.webkit.org/show_bug.cgi?id=103069
+
+        Reviewed by Simon Hausmann.
+
+        The subframe loading logic depends on that script extensions are not recognized,
+        so avoid recognizing them in getMIMETypeForExtension which is used for pre-load
+        mimetype detection.
+
+        * platform/qt/MIMETypeRegistryQt.cpp:
+        (WebCore::MIMETypeRegistry::getMIMETypeForExtension):
+
 2012-11-23  Jochen Eisinger  <jochen@chromium.org>
 
         REGRESSION (r135455): Compilation without SVG enabled broken
