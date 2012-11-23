@@ -2157,6 +2157,9 @@ crbug.com/40680 fast/media/media-query-list-07.html
 
 crbug.com/117597 svg/batik/filters/feTile.svg [ ImageOnlyFailure ] 
 
+# Test needing new baselines
+webkit.org/b/103089 fast/backgrounds/gradient-background-leakage-2.html [ Pass Missing ImageOnlyFailure Failure ]
+
 # Caused by http://trac.webkit.org/changeset/56394.
 crbug.com/143475 [ Win ] http/tests/xmlhttprequest/xmlhttprequest-50ms-download-dispatch.html [ Failure Pass Timeout ]
 

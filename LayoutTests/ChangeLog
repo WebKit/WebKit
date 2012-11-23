@@ -1,3 +1,19 @@
+2012-11-23  Justin Novosad  <junov@google.com>
+
+        Page background color bleeds through inner edge of div border with rounded edges
+        https://bugs.webkit.org/show_bug.cgi?id=103089
+
+        Reviewed by Stephen White.
+
+        New layout test to verify that there is no color bleeding between
+        a div element's border and background when there are rounded corners
+        an a scale that reduces a thick border down to a width of less than
+        two pixels.
+
+        * fast/backgrounds/gradient-background-leakage-2-expected.txt: Added.
+        * fast/backgrounds/gradient-background-leakage-2.html: Added.
+        * platform/chromium/TestExpectations:
+
 2012-11-23  Robert Kroeger  <rjkroege@chromium.org>
 
         Gardening: update expectations for fast/events/stopPropagation-submit.html flaky
