@@ -23,13 +23,10 @@
 #if ENABLE(SPELLCHECK)
 
 #include <Language.h>
-#include <editing/visible_units.h>
 #include <glib.h>
 #include <text/TextBreakIterator.h>
-#include <wtf/text/CString.h>
-#include <wtf/text/StringBuilder.h>
 
-using namespace WebCore;
+namespace WebCore {
 
 static const size_t maximumNumberOfSuggestions = 10;
 
@@ -66,6 +63,25 @@ void TextCheckerEnchant::learnWord(const String& word)
         enchant_dict_add_to_personal(*iter, word.utf8().data(), -1);
 }
 
+void TextCheckerEnchant::checkSpellingOfWord(const CString& word, int start, int end, int& misspellingLocation, int& misspellingLength)
+{
+    const char* string = word.data();
+    char* startPtr = g_utf8_offset_to_pointer(string, start);
+    int numberOfBytes = static_cast<int>(g_utf8_offset_to_pointer(string, end) - startPtr);
+
+    for (Vector<EnchantDict*>::const_iterator dictIter = m_enchantDictionaries.begin(); dictIter != m_enchantDictionaries.end(); ++dictIter) {
+        if (!enchant_dict_check(*dictIter, startPtr, numberOfBytes)) {
+            // Stop checking, this word is ok in at least one dict.
+            misspellingLocation = -1;
+            misspellingLength = 0;
+            break;
+        }
+
+        misspellingLocation = start;
+        misspellingLength = end - start;
+    }
+}
+
 void TextCheckerEnchant::checkSpellingOfString(const String& string, int& misspellingLocation, int& misspellingLength)
 {
     // Assume that the words in the string are spelled correctly.
@@ -75,46 +91,16 @@ void TextCheckerEnchant::checkSpellingOfString(const String& string, int& misspe
     if (!hasDictionary())
         return;
 
-    size_t numberOfCharacters = string.length();
-    TextBreakIterator* iter = wordBreakIterator(string.characters(), numberOfCharacters);
+    TextBreakIterator* iter = wordBreakIterator(string.characters(), string.length());
     if (!iter)
         return;
 
     CString utf8String = string.utf8();
-    const char* cString = utf8String.data();
-
-    for (size_t i = 0; i < numberOfCharacters + 1; i++) {
-        // We go through each character until we find the beginning of the word
-        // then we get into an inner loop to find the end of the word corresponding
-        // to it.
-        if (isLogicalStartOfWord(iter, i)) {
-            int start = i;
-            int end = i;
-            int wordLength;
-
-            while (!islogicalEndOfWord(iter, end))
-                end++;
-
-            wordLength = end - start;
-            // Set the iterator to be at the current word end, so we don't
-            // check characters twice.
-            i = end;
-
-            char* cstart = g_utf8_offset_to_pointer(cString, start);
-            int numberOfBytes = static_cast<int>(g_utf8_offset_to_pointer(cString, end) - cstart);
-
-            for (Vector<EnchantDict*>::const_iterator dictIter = m_enchantDictionaries.begin(); dictIter != m_enchantDictionaries.end(); ++dictIter) {
-                if (enchant_dict_check(*dictIter, cstart, numberOfBytes)) {
-                    misspellingLocation = start;
-                    misspellingLength = wordLength;
-                } else {
-                    // Stop checking, this word is ok in at least one dict.
-                    misspellingLocation = -1;
-                    misspellingLength = 0;
-                    break;
-                }
-            }
-        }
+    int start = textBreakFirst(iter);
+    for (int end = textBreakNext(iter); end != TextBreakDone; end = textBreakNext(iter)) {
+        if (isWordTextBreak(iter))
+            checkSpellingOfWord(utf8String, start, end, misspellingLocation, misspellingLength);
+        start = end;
     }
 }
 
@@ -211,6 +197,8 @@ void TextCheckerEnchant::freeEnchantBrokerDictionaries()
     for (Vector<EnchantDict*>::const_iterator iter = m_enchantDictionaries.begin(); iter != m_enchantDictionaries.end(); ++iter)
         enchant_broker_free_dict(m_broker, *iter);
 }
+
+} // namespace WebCore
 
 #endif // ENABLE(SPELLCHECK)
 

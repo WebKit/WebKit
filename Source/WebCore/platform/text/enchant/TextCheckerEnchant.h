@@ -26,6 +26,7 @@
 #include <wtf/FastAllocBase.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/Vector.h>
+#include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -49,6 +50,7 @@ public:
 private:
     TextCheckerEnchant();
     void freeEnchantBrokerDictionaries();
+    void checkSpellingOfWord(const CString&, int start, int end, int& misspellingLocation, int& misspellingLength);
 
     EnchantBroker* m_broker;
     Vector<EnchantDict*> m_enchantDictionaries;

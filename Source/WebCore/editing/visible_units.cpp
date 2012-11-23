@@ -322,7 +322,7 @@ static TextBreakIterator* wordBreakIteratorForMaxOffsetBoundary(const VisiblePos
     return wordBreakIterator(string.data(), len);
 } 
 
-bool isLogicalStartOfWord(TextBreakIterator* iter, int position, bool hardLineBreak)
+static bool isLogicalStartOfWord(TextBreakIterator* iter, int position, bool hardLineBreak)
 {
     bool boundary = hardLineBreak ? true : isTextBreak(iter, position);
     if (!boundary)
@@ -333,7 +333,7 @@ bool isLogicalStartOfWord(TextBreakIterator* iter, int position, bool hardLineBr
     return isWordTextBreak(iter);
 }
 
-bool islogicalEndOfWord(TextBreakIterator* iter, int position, bool hardLineBreak)
+static bool islogicalEndOfWord(TextBreakIterator* iter, int position, bool hardLineBreak)
 {
     bool boundary = isTextBreak(iter, position);
     return (hardLineBreak || boundary) && isWordTextBreak(iter);

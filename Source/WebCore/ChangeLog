@@ -1,3 +1,25 @@
+2012-11-23  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [ENCHANT] Infinite loop when end word position is not found
+        https://bugs.webkit.org/show_bug.cgi?id=103139
+
+        Reviewed by Martin Robinson.
+
+        Covered by existing tests in editing/spelling.
+
+        * editing/visible_units.cpp:
+        (WebCore::isLogicalStartOfWord): Make it private again.
+        (WebCore::islogicalEndOfWord): Ditto.
+        * editing/visible_units.h:
+        * platform/text/enchant/TextCheckerEnchant.cpp:
+        (WebCore::TextCheckerEnchant::checkSpellingOfWord): Helper funtion
+        to check a word inside a string using the loaded dictionaries.
+        (WebCore::TextCheckerEnchant::checkSpellingOfString): Optimize and
+        simply the code by using the word iterator to iterate the
+        words.
+        * platform/text/enchant/TextCheckerEnchant.h:
+        (TextCheckerEnchant):
+
 2012-11-23  Zeno Albisser  <zeno@webkit.org>
 
         [Qt] GraphicsContext3DQt makes wrong surface current.
