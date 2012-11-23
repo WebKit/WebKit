@@ -1,3 +1,14 @@
+2012-11-23  Krzysztof Czech  <k.czech@samsung.com>
+
+        [EFL] Platform support for Accessibility feature.
+        https://bugs.webkit.org/show_bug.cgi?id=100848
+
+        Reviewed by Gyuyoung Kim.
+
+        Enable HAVE(ACCESSIBILITY) ifdefs so that EFL port can use it.
+
+        * wtf/Platform.h:
+
 2012-11-22  Michael Saboff  <msaboff@apple.com>
 
         HTML integer parsing functions don't natively handle 8 bit strings

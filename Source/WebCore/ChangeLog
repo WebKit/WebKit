@@ -1,3 +1,21 @@
+2012-11-23  Krzysztof Czech  <k.czech@samsung.com>
+
+        [EFL] Platform support for Accessibility feature.
+        https://bugs.webkit.org/show_bug.cgi?id=100848
+
+        Reviewed by Gyuyoung Kim.
+
+        Add EFL platform's definitions to enable proper accessibility routines.
+
+        No new tests. Covered by existing layout tests.
+
+        * PlatformEfl.cmake: Add accessibility/atk content to compilation.
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::AccessibilityObject):
+        * accessibility/AccessibilityObject.h:
+        (AccessibilityObject):
+        * accessibility/efl/AccessibilityObjectEfl.cpp: Removed. No needed platform specific implementation. ATK shared implementation will be used.
+
 2012-11-23  Thiago Marcos P. Santos  <thiago.santos@intel.com>
 
         Expose DOM interface for CSS Device Adaptation

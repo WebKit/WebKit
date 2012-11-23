@@ -1,3 +1,15 @@
+2012-11-23  Krzysztof Czech  <k.czech@samsung.com>
+
+        [EFL] Platform support for Accessibility feature.
+        https://bugs.webkit.org/show_bug.cgi?id=100848
+
+        Reviewed by Gyuyoung Kim.
+
+        Add support for ATK library.
+
+        * Source/cmake/FindATK.cmake: Added.
+        * Source/cmake/OptionsEfl.cmake:
+
 2012-09-26  Gustavo Noronha Silva  <gns@gnome.org>
 
         [GTK] Split SVG from WebCore to work-around make limitation

@@ -61,7 +61,7 @@ OBJC_CLASS WebAccessibilityObjectWrapper;
 
 typedef WebAccessibilityObjectWrapper AccessibilityObjectWrapper;
 
-#elif PLATFORM(GTK)
+#elif PLATFORM(GTK) || PLATFORM(EFL)
 typedef struct _AtkObject AtkObject;
 typedef struct _AtkObject AccessibilityObjectWrapper;
 #elif PLATFORM(CHROMIUM)
@@ -778,7 +778,7 @@ public:
     virtual String mathFencedCloseString() const { return String(); }
     
 #if HAVE(ACCESSIBILITY)
-#if PLATFORM(GTK)
+#if PLATFORM(GTK) || PLATFORM(EFL)
     AccessibilityObjectWrapper* wrapper() const;
     void setWrapper(AccessibilityObjectWrapper*);
 #elif !PLATFORM(CHROMIUM)
@@ -826,7 +826,7 @@ protected:
     static bool objectMatchesSearchCriteriaWithResultLimit(AccessibilityObject*, AccessibilitySearchCriteria*, AccessibilityChildrenVector&);
     virtual AccessibilityRole buttonRoleType() const;
     
-#if PLATFORM(GTK)
+#if PLATFORM(GTK) || PLATFORM(EFL)
     bool allowsTextRanges() const;
     unsigned getLengthForTextRange() const;
 #else
@@ -838,7 +838,7 @@ protected:
     RetainPtr<WebAccessibilityObjectWrapper> m_wrapper;
 #elif PLATFORM(WIN) && !OS(WINCE)
     COMPtr<AccessibilityObjectWrapper> m_wrapper;
-#elif PLATFORM(GTK)
+#elif PLATFORM(GTK) || PLATFORM(EFL)
     AtkObject* m_wrapper;
 #elif PLATFORM(CHROMIUM)
     bool m_detached;

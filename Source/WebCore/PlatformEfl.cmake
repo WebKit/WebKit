@@ -1,5 +1,5 @@
 LIST(APPEND WebCore_INCLUDE_DIRECTORIES
-  "${WEBCORE_DIR}/accessibility/efl"
+  "${WEBCORE_DIR}/accessibility/atk"
   "${WEBCORE_DIR}/page/efl"
   "${WEBCORE_DIR}/platform/cairo"
   "${WEBCORE_DIR}/platform/efl"
@@ -13,10 +13,26 @@ LIST(APPEND WebCore_INCLUDE_DIRECTORIES
   "${WEBCORE_DIR}/platform/network/soup"
   "${WEBCORE_DIR}/platform/text/efl"
   "${WEBCORE_DIR}/plugins/efl"
+  ${ATK_INCLUDE_DIRS}
 )
 
 LIST(APPEND WebCore_SOURCES
-  accessibility/efl/AccessibilityObjectEfl.cpp
+  accessibility/atk/AXObjectCacheAtk.cpp
+  accessibility/atk/AccessibilityObjectAtk.cpp
+  accessibility/atk/WebKitAccessibleHyperlink.cpp
+  accessibility/atk/WebKitAccessibleInterfaceAction.cpp
+  accessibility/atk/WebKitAccessibleInterfaceComponent.cpp
+  accessibility/atk/WebKitAccessibleInterfaceDocument.cpp
+  accessibility/atk/WebKitAccessibleInterfaceEditableText.cpp
+  accessibility/atk/WebKitAccessibleInterfaceHyperlinkImpl.cpp
+  accessibility/atk/WebKitAccessibleInterfaceHypertext.cpp
+  accessibility/atk/WebKitAccessibleInterfaceImage.cpp
+  accessibility/atk/WebKitAccessibleInterfaceSelection.cpp
+  accessibility/atk/WebKitAccessibleInterfaceTable.cpp
+  accessibility/atk/WebKitAccessibleInterfaceText.cpp
+  accessibility/atk/WebKitAccessibleInterfaceValue.cpp
+  accessibility/atk/WebKitAccessibleUtil.cpp
+  accessibility/atk/WebKitAccessibleWrapperAtk.cpp
   editing/SmartReplaceICU.cpp
   page/efl/DragControllerEfl.cpp
   page/efl/EventHandlerEfl.cpp
@@ -161,6 +177,7 @@ IF (WTF_USE_TEXTURE_MAPPER)
 ENDIF ()
 
 LIST(APPEND WebCore_LIBRARIES
+  ${ATK_LIBRARIES}
   ${CAIRO_LIBRARIES}
   ${ECORE_LIBRARIES}
   ${ECORE_EVAS_LIBRARIES}
