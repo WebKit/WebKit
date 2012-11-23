@@ -1,3 +1,69 @@
+2012-11-22  Jeff Rogers  <jrogers@rim.com>
+
+        [BlackBerry] Update Web Notifications Implementation
+        https://bugs.webkit.org/show_bug.cgi?id=102621
+
+        Reviewed by George Staikos.
+
+        Reviewed internally by George Staikos and Joe Mason
+        Internal PR 172120
+        Add new notifications implementation for the BlackBerry port. Rename
+        existing class to match Client naming. Adds NotificationManager
+        implementation for managing notifications and permissions, and logic
+        for passing the notifications to the platform provider.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::WebPagePrivate):
+        (BlackBerry::WebKit::WebPagePrivate::init):
+        (BlackBerry::WebKit::WebPage::updateNotificationPermission):
+        (WebKit):
+        (BlackBerry::WebKit::WebPage::notificationClicked):
+        (BlackBerry::WebKit::WebPage::notificationClosed):
+        (BlackBerry::WebKit::WebPage::notificationError):
+        (BlackBerry::WebKit::WebPage::notificationShown):
+        * Api/WebPage.h:
+        * Api/WebPageClient.h:
+        * Api/WebPage_p.h:
+        (WebPagePrivate):
+        (BlackBerry::WebKit::WebPagePrivate::notificationManager):
+        * WebCoreSupport/NotificationClientBlackBerry.cpp: Added.
+        (WebCore):
+        (WebCore::NotificationClientBlackBerry::NotificationClientBlackBerry):
+        (WebCore::NotificationClientBlackBerry::show):
+        (WebCore::NotificationClientBlackBerry::cancel):
+        (WebCore::NotificationClientBlackBerry::clearNotifications):
+        (WebCore::NotificationClientBlackBerry::notificationObjectDestroyed):
+        (WebCore::NotificationClientBlackBerry::notificationControllerDestroyed):
+        (WebCore::NotificationClientBlackBerry::requestPermission):
+        (WebCore::NotificationClientBlackBerry::cancelRequestsForPermission):
+        (WebCore::NotificationClientBlackBerry::checkPermission):
+        * WebCoreSupport/NotificationClientBlackBerry.h: Added.
+        (WebKit):
+        (WebCore):
+        (NotificationClientBlackBerry):
+        * WebCoreSupport/NotificationPresenterImpl.cpp: Removed.
+        * WebCoreSupport/NotificationPresenterImpl.h: Removed.
+        * WebKitSupport/NotificationManager.cpp: Added.
+        (WebKit):
+        (BlackBerry::WebKit::NotificationManager::NotificationManager):
+        (BlackBerry::WebKit::NotificationManager::~NotificationManager):
+        (BlackBerry::WebKit::NotificationManager::show):
+        (BlackBerry::WebKit::NotificationManager::cancel):
+        (BlackBerry::WebKit::NotificationManager::clearNotifications):
+        (BlackBerry::WebKit::NotificationManager::notificationObjectDestroyed):
+        (BlackBerry::WebKit::NotificationManager::requestPermission):
+        (BlackBerry::WebKit::NotificationManager::cancelRequestsForPermission):
+        (BlackBerry::WebKit::NotificationManager::checkPermission):
+        (BlackBerry::WebKit::NotificationManager::updatePermission):
+        (BlackBerry::WebKit::NotificationManager::notificationClicked):
+        (BlackBerry::WebKit::NotificationManager::notificationClosed):
+        (BlackBerry::WebKit::NotificationManager::notificationError):
+        (BlackBerry::WebKit::NotificationManager::notificationShown):
+        (BlackBerry::WebKit::NotificationManager::removeNotificationFromContextMap):
+        * WebKitSupport/NotificationManager.h: Added.
+        (WebKit):
+        (NotificationManager):
+
 2012-11-22  Mike Fenton  <mifenton@rim.com>
 
         [BlackBerry] Guard against a lost focusedNode that input handler isn't yet informed of.

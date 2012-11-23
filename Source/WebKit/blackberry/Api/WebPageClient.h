@@ -267,6 +267,19 @@ public:
     virtual void requestUserMedia(const Platform::WebUserMediaRequest&) = 0;
     virtual void cancelUserMediaRequest(const Platform::WebUserMediaRequest&) = 0;
     virtual void updateFindStringResult(int numMatches, int currentIndex) = 0;
+
+    // Match with NotificationClient::Permission.
+    enum Permission {
+        PermissionAllowed, // User has allowed notifications
+        PermissionNotAllowed, // User has not yet allowed
+        PermissionDenied // User has explicitly denied permission
+    };
+    virtual void requestNotificationPermission(const BlackBerry::Platform::String& /*requestId*/, const BlackBerry::Platform::String& /*origin*/) = 0;
+    virtual Permission checkNotificationPermission(const BlackBerry::Platform::String& /*origin*/) = 0;
+    virtual void showNotification(const BlackBerry::Platform::String& /*notificationId*/, const BlackBerry::Platform::String& /*title*/, const BlackBerry::Platform::String& /*body*/, const BlackBerry::Platform::String& /*iconUrl*/, const BlackBerry::Platform::String& /*tag*/, const BlackBerry::Platform::String& /*origin*/) = 0;
+    virtual void cancelNotification(const BlackBerry::Platform::String& /*id*/) = 0;
+    virtual void clearNotifications(const std::vector<BlackBerry::Platform::String>& /*notificationIds*/) = 0;
+    virtual void notificationDestroyed(const BlackBerry::Platform::String& /*notificationId*/) = 0;
 };
 } // namespace WebKit
 } // namespace BlackBerry

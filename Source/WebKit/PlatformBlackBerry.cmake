@@ -114,7 +114,7 @@ LIST(APPEND WebKit_SOURCES
     blackberry/WebCoreSupport/IconDatabaseClientBlackBerry.cpp
     blackberry/WebCoreSupport/InspectorClientBlackBerry.cpp
     blackberry/WebCoreSupport/NetworkInfoClientBlackBerry.cpp
-    blackberry/WebCoreSupport/NotificationPresenterImpl.cpp
+    blackberry/WebCoreSupport/NotificationClientBlackBerry.cpp
     blackberry/WebCoreSupport/PagePopupBlackBerry.cpp
     blackberry/WebCoreSupport/NavigatorContentUtilsClientBlackBerry.cpp
     blackberry/WebCoreSupport/SelectPopupClient.cpp
@@ -132,6 +132,7 @@ LIST(APPEND WebKit_SOURCES
     blackberry/WebKitSupport/InputHandler.cpp
     blackberry/WebKitSupport/InRegionScrollableArea.cpp
     blackberry/WebKitSupport/InspectorOverlayBlackBerry.cpp
+    blackberry/WebKitSupport/NotificationManager.cpp
     blackberry/WebKitSupport/RenderQueue.cpp
     blackberry/WebKitSupport/SelectionHandler.cpp
     blackberry/WebKitSupport/SelectionOverlay.cpp

@@ -93,7 +93,7 @@
 #include "NavigatorContentUtilsClientBlackBerry.h"
 #endif
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
-#include "NotificationPresenterImpl.h"
+#include "NotificationClientBlackBerry.h"
 #endif
 #include "Page.h"
 #include "PageCache.h"
@@ -429,6 +429,9 @@ WebPagePrivate::WebPagePrivate(WebPage* webPage, WebPageClient* client, const In
     , m_autofillManager(AutofillManager::create(this))
     , m_documentStyleRecalcPostponed(false)
     , m_documentChildNeedsStyleRecalc(false)
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
+    , m_notificationManager(this)
+#endif
 {
     static bool isInitialized = false;
     if (!isInitialized) {
@@ -561,7 +564,7 @@ void WebPagePrivate::init(const BlackBerry::Platform::String& pageGroupName)
 #endif
 
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
-    WebCore::provideNotification(m_page, NotificationPresenterImpl::instance());
+    WebCore::provideNotification(m_page, new NotificationClientBlackBerry(this));
 #endif
 
 #if ENABLE(NAVIGATOR_CONTENT_UTILS)
@@ -5887,16 +5890,6 @@ BlackBerry::Platform::String WebPage::textHasAttribute(const BlackBerry::Platfor
     return "";
 }
 
-void WebPage::setAllowNotification(const BlackBerry::Platform::String& domain, bool allow)
-{
-#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
-    static_cast<NotificationPresenterImpl*>(NotificationPresenterImpl::instance())->onPermission(domain.c_str(), allow);
-#else
-    UNUSED_PARAM(domain);
-    UNUSED_PARAM(allow);
-#endif
-}
-
 void WebPage::setJavaScriptCanAccessClipboard(bool enabled)
 {
     d->m_page->settings()->setJavaScriptCanAccessClipboard(enabled);
@@ -6158,6 +6151,52 @@ void WebPagePrivate::didComposite()
     if (!m_page->settings()->developerExtrasEnabled())
         return;
     InspectorInstrumentation::didComposite(m_page);
+}
+
+void WebPage::updateNotificationPermission(const BlackBerry::Platform::String& requestId, bool allowed)
+{
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
+    d->notificationManager().updatePermission(requestId, allowed);
+#else
+    UNUSED_PARAM(requestId);
+    UNUSED_PARAM(allowed);
+#endif
+}
+
+void WebPage::notificationClicked(const BlackBerry::Platform::String& notificationId)
+{
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
+    d->notificationManager().notificationClicked(notificationId);
+#else
+    UNUSED_PARAM(notificationId);
+#endif
+}
+
+void WebPage::notificationClosed(const BlackBerry::Platform::String& notificationId)
+{
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
+    d->notificationManager().notificationClosed(notificationId);
+#else
+    UNUSED_PARAM(notificationId);
+#endif
+}
+
+void WebPage::notificationError(const BlackBerry::Platform::String& notificationId)
+{
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
+    d->notificationManager().notificationError(notificationId);
+#else
+    UNUSED_PARAM(notificationId);
+#endif
+}
+
+void WebPage::notificationShown(const BlackBerry::Platform::String& notificationId)
+{
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
+    d->notificationManager().notificationShown(notificationId);
+#else
+    UNUSED_PARAM(notificationId);
+#endif
 }
 
 }
