@@ -45,10 +45,6 @@ class wxMouseEvent;
 class wxPoint;
 #endif
 
-#if PLATFORM(HAIKU)
-class BMessage;
-#endif
-
 namespace WebCore {
 
     class FloatPoint;
@@ -181,10 +177,6 @@ namespace WebCore {
 
 #if PLATFORM(WX)
         PlatformWheelEvent(const wxMouseEvent&, const wxPoint&);
-#endif
-
-#if PLATFORM(HAIKU)
-        explicit PlatformWheelEvent(BMessage*);
 #endif
 
     protected:

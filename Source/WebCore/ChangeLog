@@ -1,3 +1,13 @@
+2012-11-22  Rafael Brandao  <rafael.lobo@openbossa.org>
+
+        Remove PLATFORM(HAIKU) leftovers code
+        https://bugs.webkit.org/show_bug.cgi?id=103086
+
+        Reviewed by Antti Koivisto.
+
+        * platform/PlatformWheelEvent.h:
+        (PlatformWheelEvent):
+
 2012-11-22  Dirk Schulze  <krit@webkit.org>
 
         -webkit-mask shorthand switches -webkit-mask-clip and -webkit-mask-origin values
