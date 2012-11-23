@@ -1,3 +1,14 @@
+2012-11-23  Robert Kroeger  <rjkroege@chromium.org>
+
+        Unreviewed: updated test expecations -- additional failures in
+        * fast/text/large-text-composed-char.html
+        * fast/text/text-letter-spacing.html
+        * http/tests/inspector/indexeddb/database-data.html
+        and new failures:
+        * fast/frames/frame-unload-crash2.html 
+
+        * platform/chromium/TestExpectations:
+
 2012-11-23  Justin Novosad  <junov@google.com>
 
         Adding occlusion detection to reduce overdraw in RenderBox background rendering
