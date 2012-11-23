@@ -1,3 +1,17 @@
+2012-11-23  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        [Qt] REGRESSION(r135507): It made 13 tests fail
+        https://bugs.webkit.org/show_bug.cgi?id=103069
+
+        Reviewed by Simon Hausmann.
+
+        Fix regression in recognizing MHTML on some platforms.
+
+        * platform/qt/MIMETypeRegistryQt.cpp:
+        (ExtensionMap):
+        (WebCore::MIMETypeRegistry::getMIMETypeForExtension):
+        (WebCore::MIMETypeRegistry::getMIMETypeForPath):
+
 2012-11-22  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: ctrl+end in editor does not select the last symbol.

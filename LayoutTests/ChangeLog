@@ -1,3 +1,15 @@
+2012-11-23  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        [Qt] REGRESSION(r135507): It made 13 tests fail
+        https://bugs.webkit.org/show_bug.cgi?id=103069
+
+        Reviewed by Simon Hausmann.
+
+        Unskip fixed test and update one benign change.
+
+        * platform/qt/TestExpectations:
+        * platform/qt/fast/preloader/script-expected.txt: Added.
+
 2012-11-23  Pierre Rossi  <pierre.rossi@gmail.com>
 
         [Qt] REGRESSION(r135515): 3 appcache tests still failing

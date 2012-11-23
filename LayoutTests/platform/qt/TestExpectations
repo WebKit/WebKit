@@ -2386,17 +2386,5 @@ webkit.org/b/61138 http/tests/w3c/webperf/submission/resource-timing [ Skip ]
 
 # [Qt] REGRESSION(r135507): It made 13 tests fail
 # https://bugs.webkit.org/show_bug.cgi?id=103069
-fast/preloader/script.html
 http/tests/navigation/reload-subframe-object.html
-mhtml/check_domain.mht
-mhtml/multi_frames_binary.mht
-mhtml/multi_frames_ie.mht
-mhtml/multi_frames_unmht.mht
-mhtml/page_with_css_and_js_ie.mht
-mhtml/page_with_css_and_js_unmht.mht
-mhtml/page_with_image_ie.mht
-mhtml/page_with_image_unmht.mht
-mhtml/shared_buffer_bug.mht
-mhtml/simple_page_ie.mht
-mhtml/simple_page_unmht.mht
 
