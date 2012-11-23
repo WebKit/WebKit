@@ -1,3 +1,30 @@
+2012-11-23  Huang Dongsung  <luxtella@company100.net>
+
+        REGRESSION(r135486): ASSERT(isMainThread()) hit in LayerTreeRenderer::setActive(bool)
+        https://bugs.webkit.org/show_bug.cgi?id=103077
+
+        Reviewed by Noam Rosenthal.
+
+        Currently, the painting thread uses purgeGLResources() and setActive().
+        QQuickWebPage::updatePaintNode() indirectly calls both methods after
+        locking the main thread.
+
+        This patch changes two points.
+        1. Remove ASSERT(isMainThread()) in methods that the painting thread can
+        call.
+        2. Make purgeGLResources() and setActive() call methods of
+        LayerTreeCoordinatorProxy via dispatchOnMainThread().
+
+        * UIProcess/CoordinatedGraphics/LayerTreeRenderer.cpp:
+        (WebKit::LayerTreeRenderer::LayerTreeRenderer):
+        (WebKit::LayerTreeRenderer::renderNextFrame):
+        (WebKit::LayerTreeRenderer::purgeGLResources):
+        (WebKit):
+        (WebKit::LayerTreeRenderer::purgeBackingStores):
+        (WebKit::LayerTreeRenderer::setActive):
+        * UIProcess/CoordinatedGraphics/LayerTreeRenderer.h:
+        (LayerTreeRenderer):
+
 2012-11-23  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL][WK2][AC] EwkViewImpl::transformToScreen() does not retrieve the Ecore_X_Window properly

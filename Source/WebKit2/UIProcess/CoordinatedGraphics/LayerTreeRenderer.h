@@ -67,7 +67,6 @@ public:
     };
     explicit LayerTreeRenderer(LayerTreeCoordinatorProxy*);
     virtual ~LayerTreeRenderer();
-    void purgeGLResources();
     void paintToCurrentGLContext(const WebCore::TransformationMatrix&, float, const WebCore::FloatRect&, WebCore::TextureMapper::PaintFlags = 0);
     void paintToGraphicsContext(BackingStore::PlatformGraphicsContext);
     void setContentsSize(const WebCore::FloatSize&);
@@ -81,6 +80,10 @@ public:
 
     void detach();
     void appendUpdate(const Function<void()>&);
+
+    // The painting thread must lock the main thread to use below two methods, because two methods access members that the main thread manages. See m_layerTreeCoordinatorProxy.
+    // Currently, QQuickWebPage::updatePaintNode() locks the main thread before calling both methods.
+    void purgeGLResources();
     void setActive(bool);
 
     void deleteLayer(WebLayerID);
@@ -111,7 +114,6 @@ public:
 
 #if ENABLE(REQUEST_ANIMATION_FRAME)
     void requestAnimationFrame();
-    void animationFrameReady();
 #endif
 
 private:
@@ -121,22 +123,27 @@ private:
     WebCore::GraphicsLayer* rootLayer() { return m_rootLayer.get(); }
 
     void syncRemoteContent();
+    void adjustPositionForFixedLayers();
 
     // Reimplementations from WebCore::GraphicsLayerClient.
     virtual void notifyAnimationStarted(const WebCore::GraphicsLayer*, double) { }
     virtual void notifyFlushRequired(const WebCore::GraphicsLayer*) { }
     virtual void paintContents(const WebCore::GraphicsLayer*, WebCore::GraphicsContext&, WebCore::GraphicsLayerPaintingPhase, const WebCore::IntRect&) OVERRIDE { }
 
-    void updateViewport();
     void dispatchOnMainThread(const Function<void()>&);
-    void adjustPositionForFixedLayers();
+    void updateViewport();
+#if ENABLE(REQUEST_ANIMATION_FRAME)
+    void animationFrameReady();
+#endif
+    void renderNextFrame();
+    void purgeBackingStores();
+
 
     void assignImageBackingToLayer(WebCore::GraphicsLayer*, CoordinatedImageBackingID);
     void removeReleasedImageBackingsIfNeeded();
     void ensureRootLayer();
     void ensureLayer(WebLayerID);
     void commitTileOperations();
-    void renderNextFrame();
 
     PassRefPtr<CoordinatedBackingStore> getBackingStore(WebCore::GraphicsLayer*);
     void removeBackingStoreIfNeeded(WebCore::GraphicsLayer*);
@@ -163,7 +170,10 @@ private:
     SurfaceBackingStoreMap m_surfaceBackingStores;
 #endif
 
+    // Below two members are accessed by only the main thread. The painting thread must lock the main thread to access both members.
     LayerTreeCoordinatorProxy* m_layerTreeCoordinatorProxy;
+    bool m_isActive;
+
     OwnPtr<WebCore::GraphicsLayer> m_rootLayer;
 
     LayerMap m_layers;
@@ -171,7 +181,6 @@ private:
     WebLayerID m_rootLayerID;
     WebCore::IntPoint m_renderedContentsScrollPosition;
     WebCore::IntPoint m_pendingRenderedContentsScrollPosition;
-    bool m_isActive;
     bool m_animationsLocked;
 #if ENABLE(REQUEST_ANIMATION_FRAME)
     bool m_animationFrameRequested;

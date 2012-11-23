@@ -68,8 +68,8 @@ static FloatPoint boundedScrollPosition(const FloatPoint& scrollPosition, const 
 
 LayerTreeRenderer::LayerTreeRenderer(LayerTreeCoordinatorProxy* layerTreeCoordinatorProxy)
     : m_layerTreeCoordinatorProxy(layerTreeCoordinatorProxy)
-    , m_rootLayerID(InvalidWebLayerID)
     , m_isActive(false)
+    , m_rootLayerID(InvalidWebLayerID)
     , m_animationsLocked(false)
 #if ENABLE(REQUEST_ANIMATION_FRAME)
     , m_animationFrameRequested(false)
@@ -550,7 +550,6 @@ void LayerTreeRenderer::flushLayerChanges()
 
 void LayerTreeRenderer::renderNextFrame()
 {
-    ASSERT(isMainThread());
     if (m_layerTreeCoordinatorProxy)
         m_layerTreeCoordinatorProxy->renderNextFrame();
 }
@@ -593,7 +592,6 @@ void LayerTreeRenderer::syncRemoteContent()
 
 void LayerTreeRenderer::purgeGLResources()
 {
-    ASSERT(isMainThread());
     TextureMapperLayer* layer = toTextureMapperLayer(rootLayer());
 
     if (layer)
@@ -613,6 +611,11 @@ void LayerTreeRenderer::purgeGLResources()
     m_backingStoresWithPendingBuffers.clear();
 
     setActive(false);
+    dispatchOnMainThread(bind(&LayerTreeRenderer::purgeBackingStores, this));
+}
+
+void LayerTreeRenderer::purgeBackingStores()
+{
     if (m_layerTreeCoordinatorProxy)
         m_layerTreeCoordinatorProxy->purgeBackingStores();
 }
@@ -659,7 +662,6 @@ void LayerTreeRenderer::appendUpdate(const Function<void()>& function)
 
 void LayerTreeRenderer::setActive(bool active)
 {
-    ASSERT(isMainThread());
     if (m_isActive == active)
         return;
 
@@ -669,7 +671,7 @@ void LayerTreeRenderer::setActive(bool active)
     m_renderQueue.clear();
     m_isActive = active;
     if (m_isActive)
-        renderNextFrame();
+        dispatchOnMainThread(bind(&LayerTreeRenderer::renderNextFrame, this));
 }
 
 void LayerTreeRenderer::setBackgroundColor(const WebCore::Color& color)
