@@ -31,7 +31,6 @@
 #include "InjectedBundlePage.h"
 #include <JavaScriptCore/JSStringRef.h>
 #include <atk/atk.h>
-#include <gtk/gtk.h>
 #include <wtf/Assertions.h>
 #include <wtf/gobject/GOwnPtr.h>
 #include <wtf/gobject/GRefPtr.h>

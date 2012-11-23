@@ -44,7 +44,7 @@ PassRefPtr<AccessibilityController> AccessibilityController::create()
 }
 
 AccessibilityController::AccessibilityController()
-#if PLATFORM(GTK)
+#if PLATFORM(GTK) || PLATFORM(EFL)
     : m_stateChangeListenerId(0)
     , m_focusEventListenerId(0)
     , m_activeDescendantChangedListenerId(0)
@@ -109,7 +109,7 @@ bool AccessibilityController::removeNotificationListener() { return false; }
 PassRefPtr<AccessibilityUIElement> AccessibilityController::accessibleElementById(JSStringRef attribute) { return 0; }
 #endif
 
-#if !PLATFORM(GTK)
+#if !PLATFORM(GTK) && !PLATFORM(EFL)
 void AccessibilityController::logAccessibilityEvents() { }
 void AccessibilityController::resetToConsistentState() { }
 #endif

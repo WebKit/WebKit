@@ -21,7 +21,7 @@ LIST(APPEND WebKitTestRunner_INCLUDE_DIRECTORIES
     ${TOOLS_DIR}/DumpRenderTree/efl/
     ${WEBKIT2_DIR}/UIProcess/API/efl
     "${WTF_DIR}/wtf/gobject"
-
+    ${ATK_INCLUDE_DIRS}
     ${CAIRO_INCLUDE_DIRS}
     ${ECORE_INCLUDE_DIRS}
     ${ECORE_EVAS_INCLUDE_DIRS}
@@ -31,6 +31,7 @@ LIST(APPEND WebKitTestRunner_INCLUDE_DIRECTORIES
 )
 
 LIST(APPEND WebKitTestRunner_LIBRARIES
+    ${ATK_LIBRARIES}
     ${CAIRO_LIBRARIES}
     ${ECORE_LIBRARIES}
     ${ECORE_EVAS_LIBRARIES}
@@ -55,6 +56,8 @@ ENDIF ()
 LIST(APPEND WebKitTestRunnerInjectedBundle_SOURCES
     ${TOOLS_DIR}/DumpRenderTree/efl/FontManagement.cpp
 
+    ${WEBKIT_TESTRUNNER_INJECTEDBUNDLE_DIR}/atk/AccessibilityControllerAtk.cpp
+    ${WEBKIT_TESTRUNNER_INJECTEDBUNDLE_DIR}/atk/AccessibilityUIElementAtk.cpp
     ${WEBKIT_TESTRUNNER_INJECTEDBUNDLE_DIR}/efl/ActivateFontsEfl.cpp
     ${WEBKIT_TESTRUNNER_INJECTEDBUNDLE_DIR}/efl/InjectedBundleEfl.cpp
     ${WEBKIT_TESTRUNNER_INJECTEDBUNDLE_DIR}/efl/TestRunnerEfl.cpp

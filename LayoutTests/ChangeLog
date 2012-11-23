@@ -1,3 +1,15 @@
+2012-11-23  Mateusz Leszko  <m.leszko@samsung.com>
+
+        [EFL][GTK] Adapt accessibility feature to WebKitTestRunner.
+        https://bugs.webkit.org/show_bug.cgi?id=100757
+
+        Reviewed by Laszlo Gombos.
+
+        Unskipping EFL Accessiblity tests for wk2.
+
+        * platform/efl-wk1/TestExpectations:
+        * platform/efl/TestExpectations:
+
 2012-11-23  Robert Kroeger  <rjkroege@chromium.org>
 
         Unreviewed gardening: test expectations failures.
