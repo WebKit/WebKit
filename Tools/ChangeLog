@@ -1,3 +1,22 @@
+2012-11-23  Sudarsana Nagineni  <sudarsana.nagineni@intel.com>
+
+        [EFL][WK2] Add support for PlatformWebView::simulateSpacebarKeyPress() in TestWebKitAPI
+        https://bugs.webkit.org/show_bug.cgi?id=103123
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add support for PlatformWebView::simulateSpacebarKeyPress() and enable
+        WebKit2 API test ResponsivenessTimerDoesntFireEarly.
+
+        * TestWebKitAPI/PlatformEfl.cmake: Enable ResponsivenessTimerDoesntFireEarly
+        test.
+        * TestWebKitAPI/efl/PlatformUtilities.cpp:
+        (TestWebKitAPI::Util::sleep): Use usleep() instead of sleep since the
+        test case is passing 0.5 seconds to sleep.
+        * TestWebKitAPI/efl/PlatformWebView.cpp:
+        (TestWebKitAPI::PlatformWebView::simulateSpacebarKeyPress): Implemented.
+        (TestWebKitAPI):
+
 2012-11-23  Wojciech Bielawski  <w.bielawski@samsung.com>
 
         [WK2][WKTR] WebKitTestRunner needs eventSender.contextClick()
