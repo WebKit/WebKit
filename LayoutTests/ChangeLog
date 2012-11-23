@@ -1,3 +1,9 @@
+2012-11-23  Yury Semikhatsky  <yurys@chromium.org>
+
+        Unreviewed. Updated test expectations.
+
+        * platform/chromium/TestExpectations:
+
 2012-11-23  Jussi Kukkonen  <jussi.kukkonen@intel.com>
 
         fast/events/mouseover-button.html never releases a mouse button

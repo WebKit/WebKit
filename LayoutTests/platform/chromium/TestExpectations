@@ -4075,7 +4075,7 @@ webkit.org/b/94240 [ Linux Win7 ] platform/chromium/virtual/deferred/fast/images
 webkit.org/b/94240 [ Linux Win7 ] platform/chromium/virtual/deferred/fast/images/imagemap-polygon-focus-ring.html [ Failure ]
 webkit.org/b/94240 platform/chromium/virtual/deferred/fast/images/object-image.html [ Failure ]
 webkit.org/b/94240 platform/chromium/virtual/deferred/fast/images/paletted-png-with-color-profile.html [ Missing ]
-webkit.org/b/94240 platform/chromium/virtual/deferred/fast/images/pdf-as-image-landscape.html [ Failure ]
+webkit.org/b/94240 platform/chromium/virtual/deferred/fast/images/pdf-as-image-landscape.html [ Failure ImageOnlyFailure ]
 webkit.org/b/94240 platform/chromium/virtual/deferred/fast/images/pdf-as-image.html [ Failure ]
 webkit.org/b/94240 platform/chromium/virtual/deferred/fast/images/pixel-crack-image-background-webkit-transform-scale.html [ ImageOnlyFailure ]
 webkit.org/b/94240 platform/chromium/virtual/deferred/fast/images/support-broken-image-delegate.html [ Failure ]
