@@ -1,3 +1,12 @@
+2012-11-23  Yury Semikhatsky  <yurys@chromium.org>
+
+        Remove references to non-chromium entries from WebCore.gypi
+        https://bugs.webkit.org/show_bug.cgi?id=103103
+
+        Reviewed by Pavel Feldman.
+
+        * WebCore.gypi: Removed references to files specific for wince, cairo, qt, wx and efl.
+
 2012-11-23  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: inspector overlay is always updated when inspector is open
