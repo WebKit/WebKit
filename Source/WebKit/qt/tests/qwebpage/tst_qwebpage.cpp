@@ -27,6 +27,7 @@
 #include <QLineEdit>
 #include <QMainWindow>
 #include <QMenu>
+#include <QMimeDatabase>
 #include <QPushButton>
 #include <QStateMachine>
 #include <QStyle>
@@ -2969,79 +2970,43 @@ void tst_QWebPage::findText()
     }
 }
 
-struct ImageExtensionMap {
-    const char* extension;
-    const char* mimeType;
-};
-
-static const ImageExtensionMap extensionMap[] = {
-    { "bmp", "image/bmp" },
-    { "css", "text/css" },
-    { "gif", "image/gif" },
-    { "html", "text/html" },
-    { "htm", "text/html" },
-    { "ico", "image/x-icon" },
-    { "jpeg", "image/jpeg" },
-    { "jpg", "image/jpeg" },
-    { "js", "application/x-javascript" },
-    { "mng", "video/x-mng" },
-    { "pbm", "image/x-portable-bitmap" },
-    { "pgm", "image/x-portable-graymap" },
-    { "pdf", "application/pdf" },
-    { "png", "image/png" },
-    { "ppm", "image/x-portable-pixmap" },
-    { "rss", "application/rss+xml" },
-    { "svg", "image/svg+xml" },
-    { "text", "text/plain" },
-    { "tif", "image/tiff" },
-    { "tiff", "image/tiff" },
-    { "txt", "text/plain" },
-    { "xbm", "image/x-xbitmap" },
-    { "xml", "text/xml" },
-    { "xpm", "image/x-xpm" },
-    { "xsl", "text/xsl" },
-    { "xhtml", "application/xhtml+xml" },
-    { "wml", "text/vnd.wap.wml" },
-    { "wmlc", "application/vnd.wap.wmlc" },
-    { 0, 0 }
-};
-
 static QString getMimeTypeForExtension(const QString &ext)
 {
-    const ImageExtensionMap *e = extensionMap;
-    while (e->extension) {
-        if (ext.compare(QLatin1String(e->extension), Qt::CaseInsensitive) == 0)
-            return QLatin1String(e->mimeType);
-        ++e;
-    }
+    QMimeType mimeType = QMimeDatabase().mimeTypeForFile(QStringLiteral("filename.") + ext.toLower(), QMimeDatabase::MatchExtension);
+    if (mimeType.isValid() && !mimeType.isDefault())
+        return mimeType.name();
 
     return QString();
 }
 
 void tst_QWebPage::supportedContentType()
 {
-   QStringList contentTypes;
+    QStringList contentTypes;
 
-   // Add supported non image types...
-   contentTypes << "text/html" << "text/xml" << "text/xsl" << "text/plain" << "text/"
-                << "application/xml" << "application/xhtml+xml" << "application/vnd.wap.xhtml+xml"
-                << "application/rss+xml" << "application/atom+xml" << "application/json";
+    // Add supported non image types...
+    contentTypes << "text/html" << "text/xml" << "text/xsl" << "text/plain" << "text/"
+                 << "application/xml" << "application/xhtml+xml" << "application/vnd.wap.xhtml+xml"
+                 << "application/rss+xml" << "application/atom+xml" << "application/json";
 
-   // Add supported image types...
-   Q_FOREACH(const QByteArray& imageType, QImageWriter::supportedImageFormats()) {
-      const QString mimeType = getMimeTypeForExtension(imageType);
-      if (!mimeType.isEmpty())
-          contentTypes << mimeType;
-   }
+#if ENABLE_MHTML
+    contentTypes << "application/x-mimearchive";
+#endif
 
-   // Get the mime types supported by webkit...
-   const QStringList supportedContentTypes = m_page->supportedContentTypes();
+    // Add supported image types...
+    Q_FOREACH(const QByteArray& imageType, QImageWriter::supportedImageFormats()) {
+        const QString mimeType = getMimeTypeForExtension(imageType);
+        if (!mimeType.isEmpty())
+            contentTypes << mimeType;
+    }
 
-   Q_FOREACH(const QString& mimeType, contentTypes)
-      QVERIFY2(supportedContentTypes.contains(mimeType), QString("'%1' is not a supported content type!").arg(mimeType).toLatin1());
+    // Get the mime types supported by webkit...
+    const QStringList supportedContentTypes = m_page->supportedContentTypes();
+
+    Q_FOREACH(const QString& mimeType, contentTypes)
+        QVERIFY2(supportedContentTypes.contains(mimeType), QString("'%1' is not a supported content type!").arg(mimeType).toLatin1());
       
-   Q_FOREACH(const QString& mimeType, contentTypes)
-      QVERIFY2(m_page->supportsContentType(mimeType), QString("Cannot handle content types '%1'!").arg(mimeType).toLatin1());
+    Q_FOREACH(const QString& mimeType, contentTypes)
+        QVERIFY2(m_page->supportsContentType(mimeType), QString("Cannot handle content types '%1'!").arg(mimeType).toLatin1());
 }
 
 

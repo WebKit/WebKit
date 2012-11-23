@@ -1,3 +1,16 @@
+2012-11-23  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        tst_qwebpage fails after QMimeDatabase patch
+        https://bugs.webkit.org/show_bug.cgi?id=103125
+
+        Reviewed by Simon Hausmann.
+
+        Replace the static extension->mimetype table with a QMimeDatabase lookup
+
+        * tests/qwebpage/tst_qwebpage.cpp:
+        (tst_QWebPage::findText):
+        (tst_QWebPage::supportedContentType):
+
 2012-11-23  Simon Hausmann  <simon.hausmann@digia.com>
 
         [Qt] Compiling against QtWebkit API requires QT_DLL to be defined
