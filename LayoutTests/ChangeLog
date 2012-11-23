@@ -1,3 +1,15 @@
+2012-11-23  Jussi Kukkonen  <jussi.kukkonen@intel.com>
+
+        fast/events/mouseover-button.html never releases a mouse button
+        https://bugs.webkit.org/show_bug.cgi?id=103041
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        mouseover-button.html released the wrong mouse button so subsequent
+        tests would fail: This includes at least svg/text/select-*.svg .
+
+        * fast/events/mouseover-button.html:
+
 2012-11-23  Julian Pastarmov  <pastarmovj@chromium.org>
 
         REGRESSION (r128633): td changes size during re-layout of table although it shouldn't
