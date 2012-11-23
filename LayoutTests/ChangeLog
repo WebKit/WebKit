@@ -1,3 +1,10 @@
+2012-11-23  János Badics  <jbadics@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardening after r135532. It made 3 tests fail.
+        https://bugs.webkit.org/show_bug.cgi?id=103073
+
+        * platform/qt/TestExpectations:
+
 2012-11-23  Yury Semikhatsky  <yurys@chromium.org>
 
         Unreviewed. Update test expectations.
