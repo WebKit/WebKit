@@ -1,3 +1,16 @@
+2012-11-23  Jochen Eisinger  <jochen@chromium.org>
+
+        REGRESSION (r135455): Compilation without SVG enabled broken
+        https://bugs.webkit.org/show_bug.cgi?id=103108
+
+        Reviewed by Yury Semikhatsky.
+
+        Move SVG-only code behind #if ENABLE(SVG) that was accidentially moved
+        outside of the #if block during the refactoring.
+
+        * platform/graphics/filters/FilterOperation.h:
+        (ReferenceFilterOperation):
+
 2012-11-23  Julian Pastarmov  <pastarmovj@chromium.org>
 
         REGRESSION (r128633): td changes size during re-layout of table although it shouldn't

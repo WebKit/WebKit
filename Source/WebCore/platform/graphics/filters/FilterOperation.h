@@ -28,7 +28,6 @@
 
 #if ENABLE(CSS_FILTERS)
 
-#include "CachedSVGDocumentReference.h"
 #include "Color.h"
 #include "FilterEffect.h"
 #include "LayoutSize.h"
@@ -40,6 +39,10 @@
 
 #if PLATFORM(BLACKBERRY)
 #include <wtf/ThreadSafeRefCounted.h>
+#endif
+
+#if ENABLE(SVG)
+#include "CachedSVGDocumentReference.h"
 #endif
 
 // Annoyingly, wingdi.h #defines this.
@@ -170,8 +173,10 @@ public:
     const String& url() const { return m_url; }
     const String& fragment() const { return m_fragment; }
 
+#if ENABLE(SVG)
     CachedSVGDocumentReference* cachedSVGDocumentReference() const { return m_cachedSVGDocumentReference.get(); }
     void setCachedSVGDocumentReference(PassOwnPtr<CachedSVGDocumentReference> cachedSVGDocumentReference) { m_cachedSVGDocumentReference = cachedSVGDocumentReference; }
+#endif
 
     FilterEffect* filterEffect() const { return m_filterEffect.get(); }
     void setFilterEffect(PassRefPtr<FilterEffect> filterEffect) { m_filterEffect = filterEffect; }
@@ -195,7 +200,9 @@ private:
 
     String m_url;
     String m_fragment;
+#if ENABLE(SVG)
     OwnPtr<CachedSVGDocumentReference> m_cachedSVGDocumentReference;
+#endif
     RefPtr<FilterEffect> m_filterEffect;
 };
 
