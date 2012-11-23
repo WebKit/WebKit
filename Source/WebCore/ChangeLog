@@ -1,3 +1,29 @@
+2012-11-23  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        RenderLayer minor clean-up: replace raw pointers with OwnPtrs.
+        https://bugs.webkit.org/show_bug.cgi?id=103134
+
+        Reviewed by Eric Seidel.
+
+        I found that RenderLayer still uses raw pointers to the objects which it owns.
+        Looks like these pointers could be replaced with OwnPtrs.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::RenderLayer):
+        (WebCore::RenderLayer::~RenderLayer):
+        (WebCore::RenderLayer::paintLayerContents):
+        (WebCore::RenderLayer::hitTestLayer):
+        (WebCore::RenderLayer::updateNormalFlowList):
+        (WebCore::RenderLayer::collectLayers):
+        (WebCore::RenderLayer::styleChanged):
+        * rendering/RenderLayer.h:
+        (WebCore::RenderLayer::marquee):
+        (WebCore::RenderLayer::posZOrderList):
+        (WebCore::RenderLayer::negZOrderList):
+        (WebCore::RenderLayer::normalFlowList):
+        (RenderLayer):
+        (WebCore::RenderLayer::clearZOrderLists):
+
 2012-11-23  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL][AC] Mouse cursor is not updated when accelerated compositing is enabled

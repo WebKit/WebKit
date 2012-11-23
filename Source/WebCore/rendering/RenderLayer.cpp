@@ -179,10 +179,6 @@ RenderLayer::RenderLayer(RenderLayerModelObject* renderer)
     , m_next(0)
     , m_first(0)
     , m_last(0)
-    , m_posZOrderList(0)
-    , m_negZOrderList(0)
-    , m_normalFlowList(0)
-    , m_marquee(0)
     , m_staticInlinePosition(0)
     , m_staticBlockPosition(0)
     , m_reflection(0)
@@ -244,11 +240,6 @@ RenderLayer::~RenderLayer()
 
     // Child layers will be deleted by their corresponding render objects, so
     // we don't need to delete them ourselves.
-
-    delete m_posZOrderList;
-    delete m_negZOrderList;
-    delete m_normalFlowList;
-    delete m_marquee;
 
 #if USE(ACCELERATED_COMPOSITING)
     clearBacking(true);
@@ -3421,7 +3412,7 @@ void RenderLayer::paintLayerContents(GraphicsContext* context, const LayerPainti
         }
     
         // Paint any child layers that have overflow.
-        paintList(m_normalFlowList, context, localPaintingInfo, localPaintFlags);
+        paintList(m_normalFlowList.get(), context, localPaintingInfo, localPaintFlags);
     
         // Now walk the sorted list of children with positive z-indices.
         paintList(posZOrderList(), context, localPaintingInfo, localPaintFlags);
@@ -3884,7 +3875,7 @@ RenderLayer* RenderLayer::hitTestLayer(RenderLayer* rootLayer, RenderLayer* cont
     }
 
     // Now check our overflow objects.
-    hitLayer = hitTestList(m_normalFlowList, rootLayer, request, result, hitTestRect, hitTestLocation,
+    hitLayer = hitTestList(m_normalFlowList.get(), rootLayer, request, result, hitTestRect, hitTestLocation,
                            localTransformState.get(), zOffsetForDescendantsPtr, zOffset, unflattenedTransformState.get(), depthSortDescendants);
     if (hitLayer) {
         if (!depthSortDescendants)
@@ -4832,7 +4823,7 @@ void RenderLayer::updateNormalFlowList()
         // Ignore non-overflow layers and reflections.
         if (child->isNormalFlowOnly() && (!m_reflection || reflectionLayer() != child)) {
             if (!m_normalFlowList)
-                m_normalFlowList = new Vector<RenderLayer*>;
+                m_normalFlowList = adoptPtr(new Vector<RenderLayer*>);
             m_normalFlowList->append(child);
         }
     }
@@ -4840,7 +4831,7 @@ void RenderLayer::updateNormalFlowList()
     m_normalFlowListDirty = false;
 }
 
-void RenderLayer::collectLayers(bool includeHiddenLayers, Vector<RenderLayer*>*& posBuffer, Vector<RenderLayer*>*& negBuffer)
+void RenderLayer::collectLayers(bool includeHiddenLayers, OwnPtr<Vector<RenderLayer*> >& posBuffer, OwnPtr<Vector<RenderLayer*> >& negBuffer)
 {
 #if ENABLE(DIALOG_ELEMENT)
     if (isInTopLayer())
@@ -4853,11 +4844,11 @@ void RenderLayer::collectLayers(bool includeHiddenLayers, Vector<RenderLayer*>*&
     bool includeHiddenLayer = includeHiddenLayers || (m_hasVisibleContent || (m_hasVisibleDescendant && isStackingContext()));
     if (includeHiddenLayer && !isNormalFlowOnly() && !renderer()->isRenderFlowThread()) {
         // Determine which buffer the child should be in.
-        Vector<RenderLayer*>*& buffer = (zIndex() >= 0) ? posBuffer : negBuffer;
+        OwnPtr<Vector<RenderLayer*> >& buffer = (zIndex() >= 0) ? posBuffer : negBuffer;
 
         // Create the buffer if it doesn't exist yet.
         if (!buffer)
-            buffer = new Vector<RenderLayer*>;
+            buffer = adoptPtr(new Vector<RenderLayer*>);
         
         // Append ourselves at the end of the appropriate buffer.
         buffer->append(this);
@@ -5086,12 +5077,11 @@ void RenderLayer::styleChanged(StyleDifference, const RenderStyle* oldStyle)
 
     if (renderer()->style()->overflowX() == OMARQUEE && renderer()->style()->marqueeBehavior() != MNONE && renderer()->isBox()) {
         if (!m_marquee)
-            m_marquee = new RenderMarquee(this);
+            m_marquee = adoptPtr(new RenderMarquee(this));
         m_marquee->updateMarqueeStyle();
     }
     else if (m_marquee) {
-        delete m_marquee;
-        m_marquee = 0;
+        m_marquee.clear();
     }
 
     updateStackingContextsAfterStyleChange(oldStyle);
