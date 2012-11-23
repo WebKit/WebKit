@@ -1,3 +1,9 @@
+2012-11-23  Mario Sanchez Prada  <mario@webkit.org>
+
+        Unreviewed. Update my e-mail address.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2012-11-23  Mateusz Leszko  <m.leszko@samsung.com>
 
         [EFL][GTK] Adapt accessibility feature to WebKitTestRunner.
