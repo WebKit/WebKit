@@ -54,6 +54,11 @@ enum {
 };
 
 struct _WebKitPrintOperationPrivate {
+    ~_WebKitPrintOperationPrivate()
+    {
+        g_signal_handler_disconnect(webView, webViewDestroyedId);
+    }
+
     WebKitWebView* webView;
     gulong webViewDestroyedId;
 
@@ -63,16 +68,7 @@ struct _WebKitPrintOperationPrivate {
 
 static guint signals[LAST_SIGNAL] = { 0, };
 
-G_DEFINE_TYPE(WebKitPrintOperation, webkit_print_operation, G_TYPE_OBJECT)
-
-static void webkitPrintOperationFinalize(GObject* object)
-{
-    WebKitPrintOperationPrivate* priv = WEBKIT_PRINT_OPERATION(object)->priv;
-    g_signal_handler_disconnect(priv->webView, priv->webViewDestroyedId);
-
-    priv->~WebKitPrintOperationPrivate();
-    G_OBJECT_CLASS(webkit_print_operation_parent_class)->finalize(object);
-}
+WEBKIT_DEFINE_TYPE(WebKitPrintOperation, webkit_print_operation, G_TYPE_OBJECT)
 
 static void webViewDestroyed(GtkWidget* webView, GObject* printOperation)
 {
@@ -128,17 +124,9 @@ static void webkitPrintOperationSetProperty(GObject* object, guint propId, const
     }
 }
 
-static void webkit_print_operation_init(WebKitPrintOperation* printOperation)
-{
-    WebKitPrintOperationPrivate* priv = G_TYPE_INSTANCE_GET_PRIVATE(printOperation, WEBKIT_TYPE_PRINT_OPERATION, WebKitPrintOperationPrivate);
-    printOperation->priv = priv;
-    new (priv) WebKitPrintOperationPrivate();
-}
-
 static void webkit_print_operation_class_init(WebKitPrintOperationClass* printOperationClass)
 {
     GObjectClass* gObjectClass = G_OBJECT_CLASS(printOperationClass);
-    gObjectClass->finalize = webkitPrintOperationFinalize;
     gObjectClass->constructed = webkitPrintOperationConstructed;
     gObjectClass->get_property = webkitPrintOperationGetProperty;
     gObjectClass->set_property = webkitPrintOperationSetProperty;
@@ -213,8 +201,6 @@ static void webkit_print_operation_class_init(WebKitPrintOperationClass* printOp
                      g_cclosure_marshal_VOID__POINTER,
                      G_TYPE_NONE, 1,
                      G_TYPE_POINTER);
-
-    g_type_class_add_private(printOperationClass, sizeof(WebKitPrintOperationPrivate));
 }
 
 #ifdef HAVE_GTK_UNIX_PRINTING

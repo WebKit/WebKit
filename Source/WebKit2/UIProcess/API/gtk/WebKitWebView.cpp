@@ -116,6 +116,16 @@ typedef HashMap<uint64_t, GRefPtr<WebKitWebResource> > LoadingResourcesMap;
 typedef HashMap<String, GRefPtr<WebKitWebResource> > ResourcesMap;
 
 struct _WebKitWebViewPrivate {
+    ~_WebKitWebViewPrivate()
+    {
+        if (javascriptGlobalContext)
+            JSGlobalContextRelease(javascriptGlobalContext);
+
+        // For modal dialogs, make sure the main loop is stopped when finalizing the webView.
+        if (modalLoop && g_main_loop_is_running(modalLoop.get()))
+            g_main_loop_quit(modalLoop.get());
+    }
+
     WebKitWebContext* context;
     CString title;
     CString customTextEncoding;
@@ -153,7 +163,7 @@ struct _WebKitWebViewPrivate {
 
 static guint signals[LAST_SIGNAL] = { 0, };
 
-G_DEFINE_TYPE(WebKitWebView, webkit_web_view, WEBKIT_TYPE_WEB_VIEW_BASE)
+WEBKIT_DEFINE_TYPE(WebKitWebView, webkit_web_view, WEBKIT_TYPE_WEB_VIEW_BASE)
 
 static inline WebPageProxy* getPage(WebKitWebView* webView)
 {
@@ -441,6 +451,7 @@ static void webkitWebViewConstructed(GObject* object)
     attachFormClientToView(webView);
 
     priv->backForwardList = adoptGRef(webkitBackForwardListCreate(getPage(webView)->backForwardList()));
+    priv->windowProperties = adoptGRef(webkitWindowPropertiesCreate());
 
     GRefPtr<WebKitSettings> settings = adoptGRef(webkit_settings_new());
     webkitWebViewSetSettings(webView, settings.get());
@@ -495,34 +506,15 @@ static void webkitWebViewGetProperty(GObject* object, guint propId, GValue* valu
     }
 }
 
-static void webkitWebViewFinalize(GObject* object)
+static void webkitWebViewDispose(GObject* object)
 {
     WebKitWebView* webView = WEBKIT_WEB_VIEW(object);
-    WebKitWebViewPrivate* priv = webView->priv;
-
-    if (priv->javascriptGlobalContext)
-        JSGlobalContextRelease(priv->javascriptGlobalContext);
-
-    // For modal dialogs, make sure the main loop is stopped when finalizing the webView.
-    if (priv->modalLoop && g_main_loop_is_running(priv->modalLoop.get()))
-        g_main_loop_quit(priv->modalLoop.get());
-
     webkitWebViewCancelFaviconRequest(webView);
     webkitWebViewDisconnectMainResourceResponseChangedSignalHandler(webView);
     webkitWebViewDisconnectSettingsSignalHandlers(webView);
     webkitWebViewDisconnectFaviconDatabaseSignalHandlers(webView);
 
-    priv->~WebKitWebViewPrivate();
-    G_OBJECT_CLASS(webkit_web_view_parent_class)->finalize(object);
-}
-
-static void webkit_web_view_init(WebKitWebView* webView)
-{
-    WebKitWebViewPrivate* priv = G_TYPE_INSTANCE_GET_PRIVATE(webView, WEBKIT_TYPE_WEB_VIEW, WebKitWebViewPrivate);
-    webView->priv = priv;
-    new (priv) WebKitWebViewPrivate();
-
-    webView->priv->windowProperties = adoptGRef(webkitWindowPropertiesCreate());
+    G_OBJECT_CLASS(webkit_web_view_parent_class)->dispose(object);
 }
 
 static gboolean webkitWebViewAccumulatorObjectHandled(GSignalInvocationHint*, GValue* returnValue, const GValue* handlerReturn, gpointer)
@@ -541,7 +533,7 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
     gObjectClass->constructed = webkitWebViewConstructed;
     gObjectClass->set_property = webkitWebViewSetProperty;
     gObjectClass->get_property = webkitWebViewGetProperty;
-    gObjectClass->finalize = webkitWebViewFinalize;
+    gObjectClass->dispose = webkitWebViewDispose;
 
     webViewClass->load_failed = webkitWebViewLoadFail;
     webViewClass->create = webkitWebViewCreate;
@@ -549,8 +541,6 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
     webViewClass->decide_policy = webkitWebViewDecidePolicy;
     webViewClass->permission_request = webkitWebViewPermissionRequest;
     webViewClass->run_file_chooser = webkitWebViewRunFileChooser;
-
-    g_type_class_add_private(webViewClass, sizeof(WebKitWebViewPrivate));
 
     /**
      * WebKitWebView:web-context:

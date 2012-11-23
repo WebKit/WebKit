@@ -20,20 +20,14 @@
 #include "config.h"
 #include "WebKitWebViewBaseAccessible.h"
 
+#include "WebKitPrivate.h"
 #include <gtk/gtk.h>
 
 struct _WebKitWebViewBaseAccessiblePrivate {
     GtkWidget* widget;
 };
 
-G_DEFINE_TYPE(WebKitWebViewBaseAccessible, webkit_web_view_base_accessible, ATK_TYPE_SOCKET)
-
-static void webkitWebViewBaseAccessibleFinalize(GObject* gobject)
-{
-    WebKitWebViewBaseAccessible* accessible = WEBKIT_WEB_VIEW_BASE_ACCESSIBLE(gobject);
-    accessible->priv->~WebKitWebViewBaseAccessiblePrivate();
-    G_OBJECT_CLASS(webkit_web_view_base_accessible_parent_class)->finalize(gobject);
-}
+WEBKIT_DEFINE_TYPE(WebKitWebViewBaseAccessible, webkit_web_view_base_accessible, ATK_TYPE_SOCKET)
 
 static void webkitWebViewBaseAccessibleWidgetDestroyed(GtkWidget* widget, WebKitWebViewBaseAccessible* accessible)
 {
@@ -94,18 +88,8 @@ static gint webkitWebViewBaseAccessibleGetIndexInParent(AtkObject* atkObject)
     return -1;
 }
 
-static void webkit_web_view_base_accessible_init(WebKitWebViewBaseAccessible* accessible)
-{
-    WebKitWebViewBaseAccessiblePrivate* priv = G_TYPE_INSTANCE_GET_PRIVATE(accessible, WEBKIT_TYPE_WEB_VIEW_BASE_ACCESSIBLE, WebKitWebViewBaseAccessiblePrivate);
-    accessible->priv = priv;
-    new (priv) WebKitWebViewBaseAccessiblePrivate();
-}
-
 static void webkit_web_view_base_accessible_class_init(WebKitWebViewBaseAccessibleClass* klass)
 {
-    GObjectClass* gObjectClass = G_OBJECT_CLASS(klass);
-    gObjectClass->finalize = webkitWebViewBaseAccessibleFinalize;
-
     // No need to implement get_n_children() and ref_child() here
     // since this is a subclass of AtkSocket and all the logic related
     // to those functions will be implemented by the ATK bridge.
@@ -113,8 +97,6 @@ static void webkit_web_view_base_accessible_class_init(WebKitWebViewBaseAccessib
     atkObjectClass->initialize = webkitWebViewBaseAccessibleInitialize;
     atkObjectClass->ref_state_set = webkitWebViewBaseAccessibleRefStateSet;
     atkObjectClass->get_index_in_parent = webkitWebViewBaseAccessibleGetIndexInParent;
-
-    g_type_class_add_private(klass, sizeof(WebKitWebViewBaseAccessiblePrivate));
 }
 
 WebKitWebViewBaseAccessible* webkitWebViewBaseAccessibleNew(GtkWidget* widget)

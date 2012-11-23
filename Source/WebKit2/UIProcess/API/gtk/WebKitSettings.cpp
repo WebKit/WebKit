@@ -43,6 +43,19 @@
 using namespace WebKit;
 
 struct _WebKitSettingsPrivate {
+    _WebKitSettingsPrivate()
+        : preferences(WebPreferences::create())
+    {
+        defaultFontFamily = preferences->standardFontFamily().utf8();
+        monospaceFontFamily = preferences->fixedFontFamily().utf8();
+        serifFontFamily = preferences->serifFontFamily().utf8();
+        sansSerifFontFamily = preferences->sansSerifFontFamily().utf8();
+        cursiveFontFamily = preferences->cursiveFontFamily().utf8();
+        fantasyFontFamily = preferences->fantasyFontFamily().utf8();
+        pictographFontFamily = preferences->pictographFontFamily().utf8();
+        defaultCharset = preferences->defaultTextEncodingName().utf8();
+    }
+
     RefPtr<WebPreferences> preferences;
     CString defaultFontFamily;
     CString monospaceFontFamily;
@@ -74,8 +87,7 @@ struct _WebKitSettingsPrivate {
  * </programlisting></informalexample>
  */
 
-
-G_DEFINE_TYPE(WebKitSettings, webkit_settings, G_TYPE_OBJECT)
+WEBKIT_DEFINE_TYPE(WebKitSettings, webkit_settings, G_TYPE_OBJECT)
 
 enum {
     PROP_0,
@@ -405,18 +417,11 @@ static void webKitSettingsGetProperty(GObject* object, guint propId, GValue* val
     }
 }
 
-static void webKitSettingsFinalize(GObject* object)
-{
-    WEBKIT_SETTINGS(object)->priv->~WebKitSettingsPrivate();
-    G_OBJECT_CLASS(webkit_settings_parent_class)->finalize(object);
-}
-
 static void webkit_settings_class_init(WebKitSettingsClass* klass)
 {
     GObjectClass* gObjectClass = G_OBJECT_CLASS(klass);
     gObjectClass->set_property = webKitSettingsSetProperty;
     gObjectClass->get_property = webKitSettingsGetProperty;
-    gObjectClass->finalize = webKitSettingsFinalize;
 
     GParamFlags readWriteConstructParamFlags = static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT);
 
@@ -1062,26 +1067,6 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
                                                          _("Whether to enable smooth scrolling"),
                                                          FALSE,
                                                          readWriteConstructParamFlags));
-
-    g_type_class_add_private(klass, sizeof(WebKitSettingsPrivate));
-}
-
-static void webkit_settings_init(WebKitSettings* settings)
-{
-    WebKitSettingsPrivate* priv = G_TYPE_INSTANCE_GET_PRIVATE(settings, WEBKIT_TYPE_SETTINGS, WebKitSettingsPrivate);
-    settings->priv = priv;
-    new (priv) WebKitSettingsPrivate();
-
-    priv->preferences = WebPreferences::create();
-    priv->defaultFontFamily = priv->preferences->standardFontFamily().utf8();
-    priv->monospaceFontFamily = priv->preferences->fixedFontFamily().utf8();
-    priv->serifFontFamily = priv->preferences->serifFontFamily().utf8();
-    priv->sansSerifFontFamily = priv->preferences->sansSerifFontFamily().utf8();
-    priv->cursiveFontFamily = priv->preferences->cursiveFontFamily().utf8();
-    priv->fantasyFontFamily = priv->preferences->fantasyFontFamily().utf8();
-    priv->pictographFontFamily = priv->preferences->pictographFontFamily().utf8();
-    priv->defaultCharset = priv->preferences->defaultTextEncodingName().utf8();
-
 }
 
 void webkitSettingsAttachSettingsToPage(WebKitSettings* settings, WebPageProxy* page)

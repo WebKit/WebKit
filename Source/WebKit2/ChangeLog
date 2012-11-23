@@ -1,3 +1,106 @@
+2012-11-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Use custom private macros to define GObjects
+        https://bugs.webkit.org/show_bug.cgi?id=99705
+
+        Reviewed by Martin Robinson.
+
+        Add WEBKIT_DEFINE_TYPE macros, similar and compatible with
+        G_DEFINE_TYPE macros, to define GObject types. These macros also
+        define the init and finalize functions reducing the GObject
+        boilerplate and hiding the placement new syntax that causes some
+        confusion. The patch replaces the use of G_DEFINE_TYPE macros by
+        WEBKIT_DEFINE_TYPE ones and removes the init and finalize
+        implementations, moving custom code when needed to the private
+        struct constructor/destructor or constructed/dispose virtual
+        methods when appropriate.
+
+        * UIProcess/API/gtk/WebKitBackForwardList.cpp:
+        * UIProcess/API/gtk/WebKitBackForwardListItem.cpp:
+        (webkit_back_forward_list_item_class_init):
+        * UIProcess/API/gtk/WebKitContextMenu.cpp:
+        (webkitContextMenuDispose):
+        (webkit_context_menu_class_init):
+        * UIProcess/API/gtk/WebKitContextMenuItem.cpp:
+        (_WebKitContextMenuItemPrivate::~_WebKitContextMenuItemPrivate):
+        (_WebKitContextMenuItemPrivate):
+        (webkit_context_menu_item_class_init):
+        * UIProcess/API/gtk/WebKitCookieManager.cpp:
+        (_WebKitCookieManagerPrivate::~_WebKitCookieManagerPrivate):
+        (_WebKitCookieManagerPrivate):
+        * UIProcess/API/gtk/WebKitDownload.cpp:
+        (webkit_download_class_init):
+        * UIProcess/API/gtk/WebKitFaviconDatabase.cpp:
+        (webkit_favicon_database_class_init):
+        * UIProcess/API/gtk/WebKitFileChooserRequest.cpp:
+        (webkitFileChooserRequestDispose):
+        (webkit_file_chooser_request_class_init):
+        * UIProcess/API/gtk/WebKitFindController.cpp:
+        (webkit_find_controller_class_init):
+        * UIProcess/API/gtk/WebKitFormSubmissionRequest.cpp:
+        (webkitFormSubmissionRequestDispose):
+        (webkit_form_submission_request_class_init):
+        * UIProcess/API/gtk/WebKitGeolocationPermissionRequest.cpp:
+        (webkitGeolocationPermissionRequestDispose):
+        (webkit_geolocation_permission_request_class_init):
+        * UIProcess/API/gtk/WebKitHitTestResult.cpp:
+        (webkit_hit_test_result_class_init):
+        * UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp:
+        (webkit_navigation_policy_decision_class_init):
+        * UIProcess/API/gtk/WebKitPlugin.cpp:
+        (_WebKitPluginPrivate::~_WebKitPluginPrivate):
+        (_WebKitPluginPrivate):
+        (webkit_plugin_class_init):
+        * UIProcess/API/gtk/WebKitPolicyDecision.cpp:
+        (webkitPolicyDecisionDispose):
+        (webkit_policy_decision_class_init):
+        (webkit_policy_decision_use):
+        (webkit_policy_decision_ignore):
+        (webkit_policy_decision_download):
+        * UIProcess/API/gtk/WebKitPrintOperation.cpp:
+        (_WebKitPrintOperationPrivate::~_WebKitPrintOperationPrivate):
+        (_WebKitPrintOperationPrivate):
+        (webkit_print_operation_class_init):
+        * UIProcess/API/gtk/WebKitPrivate.h:
+        * UIProcess/API/gtk/WebKitResponsePolicyDecision.cpp:
+        (webkit_response_policy_decision_class_init):
+        * UIProcess/API/gtk/WebKitSecurityManager.cpp:
+        (webkit_security_manager_class_init):
+        * UIProcess/API/gtk/WebKitSettings.cpp:
+        (_WebKitSettingsPrivate::_WebKitSettingsPrivate):
+        (_WebKitSettingsPrivate):
+        (webkit_settings_class_init):
+        * UIProcess/API/gtk/WebKitURIRequest.cpp:
+        (webkit_uri_request_class_init):
+        * UIProcess/API/gtk/WebKitURIResponse.cpp:
+        (webkit_uri_response_class_init):
+        * UIProcess/API/gtk/WebKitURISchemeRequest.cpp:
+        (webkit_uri_scheme_request_class_init):
+        * UIProcess/API/gtk/WebKitWebContext.cpp:
+        * UIProcess/API/gtk/WebKitWebInspector.cpp:
+        (_WebKitWebInspectorPrivate::~_WebKitWebInspectorPrivate):
+        (_WebKitWebInspectorPrivate):
+        (webkit_web_inspector_class_init):
+        * UIProcess/API/gtk/WebKitWebResource.cpp:
+        (webkit_web_resource_class_init):
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (_WebKitWebViewPrivate::~_WebKitWebViewPrivate):
+        (_WebKitWebViewPrivate):
+        (webkitWebViewConstructed):
+        (webkitWebViewDispose):
+        (webkit_web_view_class_init):
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (_WebKitWebViewBasePrivate::_WebKitWebViewBasePrivate):
+        (_WebKitWebViewBasePrivate):
+        (_WebKitWebViewBasePrivate::~_WebKitWebViewBasePrivate):
+        (webkitWebViewBaseDispose):
+        (webkitWebViewBaseConstructed):
+        (webkit_web_view_base_class_init):
+        * UIProcess/API/gtk/WebKitWebViewBaseAccessible.cpp:
+        (webkit_web_view_base_accessible_class_init):
+        * UIProcess/API/gtk/WebKitWindowProperties.cpp:
+        (webkit_window_properties_class_init):
+
 2012-11-22  KwangYong Choi  <ky0.choi@samsung.com>
 
         [EFL][WK2] Buildfix when ENABLE_NETSCAPE_PLUGIN_API is disabled

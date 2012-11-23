@@ -33,18 +33,12 @@ enum {
 
 using namespace WebCore;
 
-G_DEFINE_TYPE(WebKitURIRequest, webkit_uri_request, G_TYPE_OBJECT)
-
 struct _WebKitURIRequestPrivate {
     WebCore::ResourceRequest resourceRequest;
     CString uri;
 };
 
-static void webkitURIRequestFinalize(GObject* object)
-{
-    WEBKIT_URI_REQUEST(object)->priv->~WebKitURIRequestPrivate();
-    G_OBJECT_CLASS(webkit_uri_request_parent_class)->finalize(object);
-}
+WEBKIT_DEFINE_TYPE(WebKitURIRequest, webkit_uri_request, G_TYPE_OBJECT)
 
 static void webkitURIRequestGetProperty(GObject* object, guint propId, GValue* value, GParamSpec* paramSpec)
 {
@@ -75,8 +69,6 @@ static void webkitURIRequestSetProperty(GObject* object, guint propId, const GVa
 static void webkit_uri_request_class_init(WebKitURIRequestClass* requestClass)
 {
     GObjectClass* objectClass = G_OBJECT_CLASS(requestClass);
-
-    objectClass->finalize = webkitURIRequestFinalize;
     objectClass->get_property = webkitURIRequestGetProperty;
     objectClass->set_property = webkitURIRequestSetProperty;
 
@@ -91,15 +83,6 @@ static void webkit_uri_request_class_init(WebKitURIRequestClass* requestClass)
                                                         _("The URI to which the request will be made."),
                                                         0,
                                                         static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY)));
-
-    g_type_class_add_private(requestClass, sizeof(WebKitURIRequestPrivate));
-}
-
-static void webkit_uri_request_init(WebKitURIRequest* request)
-{
-    WebKitURIRequestPrivate* priv = G_TYPE_INSTANCE_GET_PRIVATE(request, WEBKIT_TYPE_URI_REQUEST, WebKitURIRequestPrivate);
-    request->priv = priv;
-    new (priv) WebKitURIRequestPrivate();
 }
 
 /**

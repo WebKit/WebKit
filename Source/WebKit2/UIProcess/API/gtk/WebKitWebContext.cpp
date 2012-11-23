@@ -114,25 +114,11 @@ struct _WebKitWebContextPrivate {
 
 static guint signals[LAST_SIGNAL] = { 0, };
 
-G_DEFINE_TYPE(WebKitWebContext, webkit_web_context, G_TYPE_OBJECT)
-
-static void webkitWebContextFinalize(GObject* object)
-{
-    WEBKIT_WEB_CONTEXT(object)->priv->~WebKitWebContextPrivate();
-    G_OBJECT_CLASS(webkit_web_context_parent_class)->finalize(object);
-}
-
-static void webkit_web_context_init(WebKitWebContext* webContext)
-{
-    WebKitWebContextPrivate* priv = G_TYPE_INSTANCE_GET_PRIVATE(webContext, WEBKIT_TYPE_WEB_CONTEXT, WebKitWebContextPrivate);
-    webContext->priv = priv;
-    new (priv) WebKitWebContextPrivate();
-}
+WEBKIT_DEFINE_TYPE(WebKitWebContext, webkit_web_context, G_TYPE_OBJECT)
 
 static void webkit_web_context_class_init(WebKitWebContextClass* webContextClass)
 {
     GObjectClass* gObjectClass = G_OBJECT_CLASS(webContextClass);
-    gObjectClass->finalize = webkitWebContextFinalize;
 
     /**
      * WebKitWebContext::download-started:
@@ -149,8 +135,6 @@ static void webkit_web_context_class_init(WebKitWebContextClass* webContextClass
                      g_cclosure_marshal_VOID__OBJECT,
                      G_TYPE_NONE, 1,
                      WEBKIT_TYPE_DOWNLOAD);
-
-    g_type_class_add_private(webContextClass, sizeof(WebKitWebContextPrivate));
 }
 
 static gpointer createDefaultWebContext(gpointer)

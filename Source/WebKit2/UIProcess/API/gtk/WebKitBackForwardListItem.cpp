@@ -35,28 +35,10 @@ struct _WebKitBackForwardListItemPrivate {
     CString originalURI;
 };
 
-G_DEFINE_TYPE(WebKitBackForwardListItem, webkit_back_forward_list_item, G_TYPE_INITIALLY_UNOWNED)
-
-static void webkitBackForwardListItemFinalize(GObject* object)
-{
-    WEBKIT_BACK_FORWARD_LIST_ITEM(object)->priv->~WebKitBackForwardListItemPrivate();
-    G_OBJECT_CLASS(webkit_back_forward_list_item_parent_class)->finalize(object);
-}
-
-static void webkit_back_forward_list_item_init(WebKitBackForwardListItem* listItem)
-{
-    WebKitBackForwardListItemPrivate* priv = G_TYPE_INSTANCE_GET_PRIVATE(listItem, WEBKIT_TYPE_BACK_FORWARD_LIST_ITEM, WebKitBackForwardListItemPrivate);
-    listItem->priv = priv;
-    new (priv) WebKitBackForwardListItemPrivate();
-}
+WEBKIT_DEFINE_TYPE(WebKitBackForwardListItem, webkit_back_forward_list_item, G_TYPE_INITIALLY_UNOWNED)
 
 static void webkit_back_forward_list_item_class_init(WebKitBackForwardListItemClass* listItemClass)
 {
-    GObjectClass* gObjectClass = G_OBJECT_CLASS(listItemClass);
-
-    gObjectClass->finalize = webkitBackForwardListItemFinalize;
-
-    g_type_class_add_private(listItemClass, sizeof(WebKitBackForwardListItemPrivate));
 }
 
 typedef HashMap<WebBackForwardListItem*, WebKitBackForwardListItem*> HistoryItemsMap;

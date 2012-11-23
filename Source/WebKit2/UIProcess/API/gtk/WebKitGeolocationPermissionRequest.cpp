@@ -36,15 +36,17 @@ using namespace WebKit;
  * permission to decide whether WebKit should provide the user's
  * location to a website when requested throught the Geolocation API.
  */
+
 static void webkit_permission_request_interface_init(WebKitPermissionRequestIface*);
-G_DEFINE_TYPE_WITH_CODE(WebKitGeolocationPermissionRequest, webkit_geolocation_permission_request, G_TYPE_OBJECT,
-                        G_IMPLEMENT_INTERFACE(WEBKIT_TYPE_PERMISSION_REQUEST,
-                                              webkit_permission_request_interface_init))
 
 struct _WebKitGeolocationPermissionRequestPrivate {
     RefPtr<GeolocationPermissionRequestProxy> request;
     bool madeDecision;
 };
+
+WEBKIT_DEFINE_TYPE_WITH_CODE(
+    WebKitGeolocationPermissionRequest, webkit_geolocation_permission_request, G_TYPE_OBJECT,
+    G_IMPLEMENT_INTERFACE(WEBKIT_TYPE_PERMISSION_REQUEST, webkit_permission_request_interface_init))
 
 static void webkitGeolocationPermissionRequestAllow(WebKitPermissionRequest* request)
 {
@@ -80,29 +82,17 @@ static void webkit_permission_request_interface_init(WebKitPermissionRequestIfac
     iface->deny = webkitGeolocationPermissionRequestDeny;
 }
 
-static void webkit_geolocation_permission_request_init(WebKitGeolocationPermissionRequest* request)
+static void webkitGeolocationPermissionRequestDispose(GObject* object)
 {
-    request->priv = G_TYPE_INSTANCE_GET_PRIVATE(request, WEBKIT_TYPE_GEOLOCATION_PERMISSION_REQUEST, WebKitGeolocationPermissionRequestPrivate);
-    new (request->priv) WebKitGeolocationPermissionRequestPrivate();
-}
-
-static void webkitGeolocationPermissionRequestFinalize(GObject* object)
-{
-    WebKitGeolocationPermissionRequestPrivate* priv = WEBKIT_GEOLOCATION_PERMISSION_REQUEST(object)->priv;
-
     // Default behaviour when no decision has been made is denying the request.
-    if (!priv->madeDecision)
-        priv->request->deny();
-
-    priv->~WebKitGeolocationPermissionRequestPrivate();
-    G_OBJECT_CLASS(webkit_geolocation_permission_request_parent_class)->finalize(object);
+    webkitGeolocationPermissionRequestDeny(WEBKIT_PERMISSION_REQUEST(object));
+    G_OBJECT_CLASS(webkit_geolocation_permission_request_parent_class)->dispose(object);
 }
 
 static void webkit_geolocation_permission_request_class_init(WebKitGeolocationPermissionRequestClass* klass)
 {
     GObjectClass* objectClass = G_OBJECT_CLASS(klass);
-    objectClass->finalize = webkitGeolocationPermissionRequestFinalize;
-    g_type_class_add_private(klass, sizeof(WebKitGeolocationPermissionRequestPrivate));
+    objectClass->dispose = webkitGeolocationPermissionRequestDispose;
 }
 
 WebKitGeolocationPermissionRequest* webkitGeolocationPermissionRequestCreate(GeolocationPermissionRequestProxy* request)

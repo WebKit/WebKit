@@ -55,15 +55,9 @@ struct _WebKitWebResourcePrivate {
     bool isMainResource;
 };
 
+WEBKIT_DEFINE_TYPE(WebKitWebResource, webkit_web_resource, G_TYPE_OBJECT)
+
 static guint signals[LAST_SIGNAL] = { 0, };
-
-G_DEFINE_TYPE(WebKitWebResource, webkit_web_resource, G_TYPE_OBJECT)
-
-static void webkitWebResourceFinalize(GObject* object)
-{
-    WEBKIT_WEB_RESOURCE(object)->priv->~WebKitWebResourcePrivate();
-    G_OBJECT_CLASS(webkit_web_resource_parent_class)->finalize(object);
-}
 
 static void webkitWebResourceGetProperty(GObject* object, guint propId, GValue* value, GParamSpec* paramSpec)
 {
@@ -81,18 +75,10 @@ static void webkitWebResourceGetProperty(GObject* object, guint propId, GValue* 
     }
 }
 
-static void webkit_web_resource_init(WebKitWebResource* resource)
-{
-    WebKitWebResourcePrivate* priv = G_TYPE_INSTANCE_GET_PRIVATE(resource, WEBKIT_TYPE_WEB_RESOURCE, WebKitWebResourcePrivate);
-    resource->priv = priv;
-    new (priv) WebKitWebResourcePrivate();
-}
-
 static void webkit_web_resource_class_init(WebKitWebResourceClass* resourceClass)
 {
     GObjectClass* objectClass = G_OBJECT_CLASS(resourceClass);
     objectClass->get_property = webkitWebResourceGetProperty;
-    objectClass->finalize = webkitWebResourceFinalize;
 
     /**
      * WebKitWebResource:uri:
@@ -194,8 +180,6 @@ static void webkit_web_resource_class_init(WebKitWebResourceClass* resourceClass
                      g_cclosure_marshal_VOID__POINTER,
                      G_TYPE_NONE, 1,
                      G_TYPE_POINTER);
-
-    g_type_class_add_private(resourceClass, sizeof(WebKitWebResourcePrivate));
 }
 
 static void webkitWebResourceUpdateURI(WebKitWebResource* resource, const CString& requestURI)

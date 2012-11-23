@@ -80,6 +80,19 @@ void redirectedWindowDamagedCallback(void* data);
 #endif
 
 struct _WebKitWebViewBasePrivate {
+    _WebKitWebViewBasePrivate()
+        : imContext(adoptGRef(gtk_im_multicontext_new()))
+#if USE(TEXTURE_MAPPER_GL)
+        , redirectedWindow(RedirectedXCompositeWindow::create(IntSize(1, 1)))
+#endif
+    {
+    }
+
+    ~_WebKitWebViewBasePrivate()
+    {
+        pageProxy->close();
+    }
+
     WebKitWebViewChildrenMap children;
     OwnPtr<PageClientImpl> pageClient;
     RefPtr<WebPageProxy> pageProxy;
@@ -120,7 +133,7 @@ struct _WebKitWebViewBasePrivate {
 #endif
 };
 
-G_DEFINE_TYPE(WebKitWebViewBase, webkit_web_view_base, GTK_TYPE_CONTAINER)
+WEBKIT_DEFINE_TYPE(WebKitWebViewBase, webkit_web_view_base, GTK_TYPE_CONTAINER)
 
 static void webkitWebViewBaseNotifyResizerSize(WebKitWebViewBase* webViewBase)
 {
@@ -322,42 +335,29 @@ void webkitWebViewBaseChildMoveResize(WebKitWebViewBase* webView, GtkWidget* chi
     gtk_widget_queue_resize_no_redraw(GTK_WIDGET(webView));
 }
 
-static void webkitWebViewBaseFinalize(GObject* gobject)
+static void webkitWebViewBaseDispose(GObject* gobject)
 {
-    WebKitWebViewBase* webkitWebViewBase = WEBKIT_WEB_VIEW_BASE(gobject);
-    WebKitWebViewBasePrivate* priv = webkitWebViewBase->priv;
-    priv->pageProxy->close();
-
-    webkitWebViewBaseSetToplevelOnScreenWindow(webkitWebViewBase, 0);
-
-    priv->~WebKitWebViewBasePrivate();
-    G_OBJECT_CLASS(webkit_web_view_base_parent_class)->finalize(gobject);
+    webkitWebViewBaseSetToplevelOnScreenWindow(WEBKIT_WEB_VIEW_BASE(gobject), 0);
+    G_OBJECT_CLASS(webkit_web_view_base_parent_class)->dispose(gobject);
 }
 
-static void webkit_web_view_base_init(WebKitWebViewBase* webkitWebViewBase)
+static void webkitWebViewBaseConstructed(GObject* object)
 {
-    WebKitWebViewBasePrivate* priv = G_TYPE_INSTANCE_GET_PRIVATE(webkitWebViewBase, WEBKIT_TYPE_WEB_VIEW_BASE, WebKitWebViewBasePrivate);
-    webkitWebViewBase->priv = priv;
-    new (priv) WebKitWebViewBasePrivate();
+    G_OBJECT_CLASS(webkit_web_view_base_parent_class)->constructed(object);
 
-    priv->shouldForwardNextKeyEvent = FALSE;
-
-    GtkWidget* viewWidget = GTK_WIDGET(webkitWebViewBase);
+    GtkWidget* viewWidget = GTK_WIDGET(object);
     gtk_widget_set_can_focus(viewWidget, TRUE);
-    priv->imContext = adoptGRef(gtk_im_multicontext_new());
-
-    priv->pageClient = PageClientImpl::create(viewWidget);
-
-    priv->dragAndDropHelper.setWidget(viewWidget);
-
     gtk_drag_dest_set(viewWidget, static_cast<GtkDestDefaults>(0), 0, 0,
                       static_cast<GdkDragAction>(GDK_ACTION_COPY | GDK_ACTION_MOVE | GDK_ACTION_LINK | GDK_ACTION_PRIVATE));
     gtk_drag_dest_set_target_list(viewWidget, PasteboardHelper::defaultPasteboardHelper()->targetList());
 
+    WebKitWebViewBasePrivate* priv = WEBKIT_WEB_VIEW_BASE(object)->priv;
+    priv->pageClient = PageClientImpl::create(viewWidget);
+    priv->dragAndDropHelper.setWidget(viewWidget);
+
 #if USE(TEXTURE_MAPPER_GL)
-    priv->redirectedWindow = RedirectedXCompositeWindow::create(IntSize(1, 1));
     if (priv->redirectedWindow)
-        priv->redirectedWindow->setDamageNotifyCallback(redirectedWindowDamagedCallback, webkitWebViewBase);
+        priv->redirectedWindow->setDamageNotifyCallback(redirectedWindowDamagedCallback, object);
 #endif
 }
 
@@ -767,14 +767,13 @@ static void webkit_web_view_base_class_init(WebKitWebViewBaseClass* webkitWebVie
     widgetClass->parent_set = webkitWebViewBaseParentSet;
 
     GObjectClass* gobjectClass = G_OBJECT_CLASS(webkitWebViewBaseClass);
-    gobjectClass->finalize = webkitWebViewBaseFinalize;
+    gobjectClass->constructed = webkitWebViewBaseConstructed;
+    gobjectClass->dispose = webkitWebViewBaseDispose;
 
     GtkContainerClass* containerClass = GTK_CONTAINER_CLASS(webkitWebViewBaseClass);
     containerClass->add = webkitWebViewBaseContainerAdd;
     containerClass->remove = webkitWebViewBaseContainerRemove;
     containerClass->forall = webkitWebViewBaseContainerForall;
-
-    g_type_class_add_private(webkitWebViewBaseClass, sizeof(WebKitWebViewBasePrivate));
 }
 
 WebKitWebViewBase* webkitWebViewBaseCreate(WebContext* context, WebPageGroup* pageGroup)

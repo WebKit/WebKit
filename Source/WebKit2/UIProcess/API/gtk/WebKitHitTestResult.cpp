@@ -74,13 +74,7 @@ struct _WebKitHitTestResultPrivate {
     CString mediaURI;
 };
 
-G_DEFINE_TYPE(WebKitHitTestResult, webkit_hit_test_result, G_TYPE_OBJECT)
-
-static void webkitHitTestResultFinalize(GObject* object)
-{
-    WEBKIT_HIT_TEST_RESULT(object)->priv->~WebKitHitTestResultPrivate();
-    G_OBJECT_CLASS(webkit_hit_test_result_parent_class)->finalize(object);
-}
+WEBKIT_DEFINE_TYPE(WebKitHitTestResult, webkit_hit_test_result, G_TYPE_OBJECT)
 
 static void webkitHitTestResultGetProperty(GObject* object, guint propId, GValue* value, GParamSpec* paramSpec)
 {
@@ -138,19 +132,11 @@ static void webkitHitTestResultSetProperty(GObject* object, guint propId, const 
     }
 }
 
-static void webkit_hit_test_result_init(WebKitHitTestResult* hitTestResult)
-{
-    WebKitHitTestResultPrivate* priv = G_TYPE_INSTANCE_GET_PRIVATE(hitTestResult, WEBKIT_TYPE_HIT_TEST_RESULT, WebKitHitTestResultPrivate);
-    hitTestResult->priv = priv;
-    new (priv) WebKitHitTestResultPrivate();
-}
-
 static void webkit_hit_test_result_class_init(WebKitHitTestResultClass* hitTestResultClass)
 {
     GObjectClass* objectClass = G_OBJECT_CLASS(hitTestResultClass);
     objectClass->get_property = webkitHitTestResultGetProperty;
     objectClass->set_property = webkitHitTestResultSetProperty;
-    objectClass->finalize = webkitHitTestResultFinalize;
 
     GParamFlags paramFlags = static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY);
 
@@ -233,8 +219,6 @@ static void webkit_hit_test_result_class_init(WebKitHitTestResultClass* hitTestR
                                                         _("The media URI"),
                                                         0,
                                                         paramFlags));
-
-    g_type_class_add_private(hitTestResultClass, sizeof(WebKitHitTestResultPrivate));
 }
 
 WebKitHitTestResult* webkitHitTestResultCreate(WebHitTestResult* hitTestResult)

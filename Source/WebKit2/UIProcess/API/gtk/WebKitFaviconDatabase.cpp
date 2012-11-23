@@ -52,14 +52,7 @@ struct _WebKitFaviconDatabasePrivate {
     HashMap<String, String> pageURLToIconURLMap;
 };
 
-G_DEFINE_TYPE(WebKitFaviconDatabase, webkit_favicon_database, G_TYPE_OBJECT)
-
-static void webkit_favicon_database_init(WebKitFaviconDatabase* manager)
-{
-    WebKitFaviconDatabasePrivate* priv = G_TYPE_INSTANCE_GET_PRIVATE(manager, WEBKIT_TYPE_FAVICON_DATABASE, WebKitFaviconDatabasePrivate);
-    manager->priv = priv;
-    new (priv) WebKitFaviconDatabasePrivate();
-}
+WEBKIT_DEFINE_TYPE(WebKitFaviconDatabase, webkit_favicon_database, G_TYPE_OBJECT)
 
 static void webkitFaviconDatabaseDispose(GObject* object)
 {
@@ -72,18 +65,10 @@ static void webkitFaviconDatabaseDispose(GObject* object)
     G_OBJECT_CLASS(webkit_favicon_database_parent_class)->dispose(object);
 }
 
-static void webkitFaviconDatabaseFinalize(GObject* object)
-{
-    WebKitFaviconDatabase* database = WEBKIT_FAVICON_DATABASE(object);
-    database->priv->~WebKitFaviconDatabasePrivate();
-    G_OBJECT_CLASS(webkit_favicon_database_parent_class)->finalize(object);
-}
-
 static void webkit_favicon_database_class_init(WebKitFaviconDatabaseClass* faviconDatabaseClass)
 {
     GObjectClass* gObjectClass = G_OBJECT_CLASS(faviconDatabaseClass);
     gObjectClass->dispose = webkitFaviconDatabaseDispose;
-    gObjectClass->finalize = webkitFaviconDatabaseFinalize;
 
     /**
      * WebKitFaviconDatabase::favicon-changed:
@@ -108,8 +93,6 @@ static void webkit_favicon_database_class_init(WebKitFaviconDatabaseClass* favic
             G_TYPE_NONE, 2,
             G_TYPE_STRING,
             G_TYPE_STRING);
-
-    g_type_class_add_private(faviconDatabaseClass, sizeof(WebKitFaviconDatabasePrivate));
 }
 
 struct GetFaviconSurfaceAsyncData {

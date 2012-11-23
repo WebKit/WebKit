@@ -27,6 +27,11 @@
 using namespace WebKit;
 
 struct _WebKitPluginPrivate {
+    ~_WebKitPluginPrivate()
+    {
+        g_list_free_full(mimeInfoList, reinterpret_cast<GDestroyNotify>(webkit_mime_info_unref));
+    }
+
     PluginModuleInfo pluginInfo;
     CString name;
     CString description;
@@ -34,29 +39,10 @@ struct _WebKitPluginPrivate {
     GList* mimeInfoList;
 };
 
-G_DEFINE_TYPE(WebKitPlugin, webkit_plugin, G_TYPE_OBJECT)
-
-static void webkitPluginFinalize(GObject* object)
-{
-    WebKitPluginPrivate* priv = WEBKIT_PLUGIN(object)->priv;
-    g_list_free_full(priv->mimeInfoList, reinterpret_cast<GDestroyNotify>(webkit_mime_info_unref));
-    priv->~WebKitPluginPrivate();
-    G_OBJECT_CLASS(webkit_plugin_parent_class)->finalize(object);
-}
-
-static void webkit_plugin_init(WebKitPlugin* plugin)
-{
-    WebKitPluginPrivate* priv = G_TYPE_INSTANCE_GET_PRIVATE(plugin, WEBKIT_TYPE_PLUGIN, WebKitPluginPrivate);
-    plugin->priv = priv;
-    new (priv) WebKitPluginPrivate();
-}
+WEBKIT_DEFINE_TYPE(WebKitPlugin, webkit_plugin, G_TYPE_OBJECT)
 
 static void webkit_plugin_class_init(WebKitPluginClass* pluginClass)
 {
-    GObjectClass* gObjectClass = G_OBJECT_CLASS(pluginClass);
-    gObjectClass->finalize = webkitPluginFinalize;
-
-    g_type_class_add_private(pluginClass, sizeof(WebKitPluginPrivate));
 }
 
 WebKitPlugin* webkitPluginCreate(const PluginModuleInfo& pluginInfo)

@@ -47,14 +47,19 @@ enum {
 };
 
 struct _WebKitWebInspectorPrivate {
+    ~_WebKitWebInspectorPrivate()
+    {
+        WKInspectorSetInspectorClientGtk(toAPI(webInspector.get()), 0);
+    }
+
     RefPtr<WebInspectorProxy> webInspector;
     CString inspectedURI;
     unsigned attachedHeight;
 };
 
-static guint signals[LAST_SIGNAL] = { 0, };
+WEBKIT_DEFINE_TYPE(WebKitWebInspector, webkit_web_inspector, G_TYPE_OBJECT)
 
-G_DEFINE_TYPE(WebKitWebInspector, webkit_web_inspector, G_TYPE_OBJECT)
+static guint signals[LAST_SIGNAL] = { 0, };
 
 static void webkitWebInspectorGetProperty(GObject* object, guint propId, GValue* value, GParamSpec* paramSpec)
 {
@@ -72,28 +77,10 @@ static void webkitWebInspectorGetProperty(GObject* object, guint propId, GValue*
     }
 }
 
-static void webkitWebInspectorFinalize(GObject* object)
-{
-    WebKitWebInspectorPrivate* priv = WEBKIT_WEB_INSPECTOR(object)->priv;
-    WKInspectorSetInspectorClientGtk(toAPI(priv->webInspector.get()), 0);
-    priv->~WebKitWebInspectorPrivate();
-    G_OBJECT_CLASS(webkit_web_inspector_parent_class)->finalize(object);
-}
-
-static void webkit_web_inspector_init(WebKitWebInspector* inspector)
-{
-    WebKitWebInspectorPrivate* priv = G_TYPE_INSTANCE_GET_PRIVATE(inspector, WEBKIT_TYPE_WEB_INSPECTOR, WebKitWebInspectorPrivate);
-    inspector->priv = priv;
-    new (priv) WebKitWebInspectorPrivate();
-}
-
 static void webkit_web_inspector_class_init(WebKitWebInspectorClass* findClass)
 {
     GObjectClass* gObjectClass = G_OBJECT_CLASS(findClass);
-    gObjectClass->finalize = webkitWebInspectorFinalize;
     gObjectClass->get_property = webkitWebInspectorGetProperty;
-
-    g_type_class_add_private(findClass, sizeof(WebKitWebInspectorPrivate));
 
     /**
      * WebKitWebInspector:inspected-uri:

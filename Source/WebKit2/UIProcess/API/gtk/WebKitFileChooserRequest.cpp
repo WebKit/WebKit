@@ -56,7 +56,6 @@ using namespace WebCore;
  * WebKit will provide a default handler which will asynchronously run
  * a regular #GtkFileChooserDialog for the user to interact with.
  */
-G_DEFINE_TYPE(WebKitFileChooserRequest, webkit_file_chooser_request, G_TYPE_OBJECT)
 
 struct _WebKitFileChooserRequestPrivate {
     RefPtr<WebOpenPanelParameters> parameters;
@@ -67,6 +66,8 @@ struct _WebKitFileChooserRequestPrivate {
     bool handledRequest;
 };
 
+WEBKIT_DEFINE_TYPE(WebKitFileChooserRequest, webkit_file_chooser_request, G_TYPE_OBJECT)
+
 enum {
     PROP_0,
     PROP_FILTER,
@@ -75,13 +76,7 @@ enum {
     PROP_SELECTED_FILES,
 };
 
-static void webkit_file_chooser_request_init(WebKitFileChooserRequest* request)
-{
-    request->priv = G_TYPE_INSTANCE_GET_PRIVATE(request, WEBKIT_TYPE_FILE_CHOOSER_REQUEST, WebKitFileChooserRequestPrivate);
-    new (request->priv) WebKitFileChooserRequestPrivate();
-}
-
-static void webkitFileChooserRequestFinalize(GObject* object)
+static void webkitFileChooserRequestDispose(GObject* object)
 {
     WebKitFileChooserRequest* request = WEBKIT_FILE_CHOOSER_REQUEST(object);
 
@@ -89,8 +84,7 @@ static void webkitFileChooserRequestFinalize(GObject* object)
     if (!request->priv->handledRequest)
         webkit_file_chooser_request_cancel(request);
 
-    request->priv->~WebKitFileChooserRequestPrivate();
-    G_OBJECT_CLASS(webkit_file_chooser_request_parent_class)->finalize(object);
+    G_OBJECT_CLASS(webkit_file_chooser_request_parent_class)->dispose(object);
 }
 
 static void webkitFileChooserRequestGetProperty(GObject* object, guint propId, GValue* value, GParamSpec* paramSpec)
@@ -118,9 +112,8 @@ static void webkitFileChooserRequestGetProperty(GObject* object, guint propId, G
 static void webkit_file_chooser_request_class_init(WebKitFileChooserRequestClass* requestClass)
 {
     GObjectClass* objectClass = G_OBJECT_CLASS(requestClass);
-    objectClass->finalize = webkitFileChooserRequestFinalize;
+    objectClass->dispose = webkitFileChooserRequestDispose;
     objectClass->get_property = webkitFileChooserRequestGetProperty;
-    g_type_class_add_private(requestClass, sizeof(WebKitFileChooserRequestPrivate));
 
     /**
      * WebKitFileChooserRequest:filter:

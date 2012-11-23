@@ -33,29 +33,18 @@ struct _WebKitContextMenuPrivate {
     WebKitContextMenuItem* parentItem;
 };
 
-G_DEFINE_TYPE(WebKitContextMenu, webkit_context_menu, G_TYPE_OBJECT)
+WEBKIT_DEFINE_TYPE(WebKitContextMenu, webkit_context_menu, G_TYPE_OBJECT)
 
-static void webkitContextMenuFinalize(GObject* object)
+static void webkitContextMenuDispose(GObject* object)
 {
-    WebKitContextMenu* menu = WEBKIT_CONTEXT_MENU(object);
-    webkit_context_menu_remove_all(menu);
-    menu->priv->~WebKitContextMenuPrivate();
-    G_OBJECT_CLASS(webkit_context_menu_parent_class)->finalize(object);
-}
-
-static void webkit_context_menu_init(WebKitContextMenu* menu)
-{
-    WebKitContextMenuPrivate* priv = G_TYPE_INSTANCE_GET_PRIVATE(menu, WEBKIT_TYPE_CONTEXT_MENU, WebKitContextMenuPrivate);
-    menu->priv = priv;
-    new (priv) WebKitContextMenuPrivate();
+    webkit_context_menu_remove_all(WEBKIT_CONTEXT_MENU(object));
+    G_OBJECT_CLASS(webkit_context_menu_parent_class)->dispose(object);
 }
 
 static void webkit_context_menu_class_init(WebKitContextMenuClass* listClass)
 {
     GObjectClass* gObjectClass = G_OBJECT_CLASS(listClass);
-    gObjectClass->finalize = webkitContextMenuFinalize;
-
-    g_type_class_add_private(listClass, sizeof(WebKitContextMenuPrivate));
+    gObjectClass->dispose = webkitContextMenuDispose;
 }
 
 void webkitContextMenuPopulate(WebKitContextMenu* menu, Vector<ContextMenuItem>& contextMenuItems)

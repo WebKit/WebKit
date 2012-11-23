@@ -36,12 +36,17 @@ enum {
 };
 
 struct _WebKitCookieManagerPrivate {
+    ~_WebKitCookieManagerPrivate()
+    {
+        webCookieManager->stopObservingCookieChanges();
+    }
+
     RefPtr<WebCookieManagerProxy> webCookieManager;
 };
 
 static guint signals[LAST_SIGNAL] = { 0, };
 
-G_DEFINE_TYPE(WebKitCookieManager, webkit_cookie_manager, G_TYPE_OBJECT)
+WEBKIT_DEFINE_TYPE(WebKitCookieManager, webkit_cookie_manager, G_TYPE_OBJECT)
 
 COMPILE_ASSERT_MATCHING_ENUM(WEBKIT_COOKIE_PERSISTENT_STORAGE_TEXT, SoupCookiePersistentStorageText);
 COMPILE_ASSERT_MATCHING_ENUM(WEBKIT_COOKIE_PERSISTENT_STORAGE_SQLITE, SoupCookiePersistentStorageSQLite);
@@ -50,27 +55,9 @@ COMPILE_ASSERT_MATCHING_ENUM(WEBKIT_COOKIE_POLICY_ACCEPT_ALWAYS, HTTPCookieAccep
 COMPILE_ASSERT_MATCHING_ENUM(WEBKIT_COOKIE_POLICY_ACCEPT_NEVER, HTTPCookieAcceptPolicyNever);
 COMPILE_ASSERT_MATCHING_ENUM(WEBKIT_COOKIE_POLICY_ACCEPT_NO_THIRD_PARTY, HTTPCookieAcceptPolicyOnlyFromMainDocumentDomain);
 
-static void webkit_cookie_manager_init(WebKitCookieManager* manager)
-{
-    WebKitCookieManagerPrivate* priv = G_TYPE_INSTANCE_GET_PRIVATE(manager, WEBKIT_TYPE_COOKIE_MANAGER, WebKitCookieManagerPrivate);
-    manager->priv = priv;
-    new (priv) WebKitCookieManagerPrivate();
-}
-
-static void webkitCookieManagerFinalize(GObject* object)
-{
-    WebKitCookieManagerPrivate* priv = WEBKIT_COOKIE_MANAGER(object)->priv;
-    priv->webCookieManager->stopObservingCookieChanges();
-    priv->~WebKitCookieManagerPrivate();
-    G_OBJECT_CLASS(webkit_cookie_manager_parent_class)->finalize(object);
-}
-
 static void webkit_cookie_manager_class_init(WebKitCookieManagerClass* findClass)
 {
     GObjectClass* gObjectClass = G_OBJECT_CLASS(findClass);
-    gObjectClass->finalize = webkitCookieManagerFinalize;
-
-    g_type_class_add_private(findClass, sizeof(WebKitCookieManagerPrivate));
 
     /**
      * WebKitCookieManager::changed:

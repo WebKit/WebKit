@@ -63,27 +63,10 @@ struct _WebKitBackForwardListPrivate {
 
 static guint signals[LAST_SIGNAL] = { 0, };
 
-G_DEFINE_TYPE(WebKitBackForwardList, webkit_back_forward_list, G_TYPE_OBJECT)
-
-static void webkitBackForwardListFinalize(GObject* object)
-{
-    WEBKIT_BACK_FORWARD_LIST(object)->priv->~WebKitBackForwardListPrivate();
-    G_OBJECT_CLASS(webkit_back_forward_list_parent_class)->finalize(object);
-}
-
-static void webkit_back_forward_list_init(WebKitBackForwardList* list)
-{
-    WebKitBackForwardListPrivate* priv = G_TYPE_INSTANCE_GET_PRIVATE(list, WEBKIT_TYPE_BACK_FORWARD_LIST, WebKitBackForwardListPrivate);
-    list->priv = priv;
-    new (priv) WebKitBackForwardListPrivate();
-}
+WEBKIT_DEFINE_TYPE(WebKitBackForwardList, webkit_back_forward_list, G_TYPE_OBJECT)
 
 static void webkit_back_forward_list_class_init(WebKitBackForwardListClass* listClass)
 {
-    GObjectClass* gObjectClass = G_OBJECT_CLASS(listClass);
-
-    gObjectClass->finalize = webkitBackForwardListFinalize;
-
     /**
      * WebKitBackForwardList::changed:
      * @back_forward_list: the #WebKitBackForwardList on which the signal was emitted
@@ -105,8 +88,6 @@ static void webkit_back_forward_list_class_init(WebKitBackForwardListClass* list
                      G_TYPE_NONE, 2,
                      WEBKIT_TYPE_BACK_FORWARD_LIST_ITEM,
                      G_TYPE_POINTER);
-
-    g_type_class_add_private(listClass, sizeof(WebKitBackForwardListPrivate));
 }
 
 static WebKitBackForwardListItem* webkitBackForwardListGetOrCreateItem(WebKitBackForwardList* list, WebBackForwardListItem* webListItem)

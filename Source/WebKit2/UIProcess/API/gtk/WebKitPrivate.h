@@ -66,6 +66,57 @@ static void destroy##structName(structName* data) \
     g_slice_free(structName, data); \
 }
 
+#define WEBKIT_DEFINE_TYPE(TypeName, type_name, TYPE_PARENT) _WEBKIT_DEFINE_TYPE_EXTENDED(TypeName, type_name, TYPE_PARENT, 0, { })
+#define WEBKIT_DEFINE_ABSTRACT_TYPE(TypeName, type_name, TYPE_PARENT) _WEBKIT_DEFINE_TYPE_EXTENDED(TypeName, type_name, TYPE_PARENT, G_TYPE_FLAG_ABSTRACT, { })
+#define WEBKIT_DEFINE_TYPE_WITH_CODE(TypeName, type_name, TYPE_PARENT, Code) _WEBKIT_DEFINE_TYPE_EXTENDED_BEGIN(TypeName, type_name, TYPE_PARENT, 0) {Code;} _WEBKIT_DEFINE_TYPE_EXTENDED_END()
+
+#define _WEBKIT_DEFINE_TYPE_EXTENDED(TypeName, type_name, TYPE_PARENT, flags, Code) _WEBKIT_DEFINE_TYPE_EXTENDED_BEGIN(TypeName, type_name, TYPE_PARENT, flags) {Code;} _WEBKIT_DEFINE_TYPE_EXTENDED_END()
+#define _WEBKIT_DEFINE_TYPE_EXTENDED_BEGIN(TypeName, type_name, TYPE_PARENT, flags) \
+\
+static void type_name##_class_init(TypeName##Class* klass); \
+static gpointer type_name##_parent_class = 0; \
+static void type_name##_finalize(GObject* object) \
+{ \
+    TypeName* self = (TypeName*)object; \
+    self->priv->~TypeName##Private(); \
+    G_OBJECT_CLASS(type_name##_parent_class)->finalize(object); \
+} \
+\
+static void type_name##_class_intern_init(gpointer klass) \
+{ \
+    GObjectClass* gObjectClass = G_OBJECT_CLASS(klass); \
+    g_type_class_add_private(klass, sizeof(TypeName##Private)); \
+    type_name##_parent_class = g_type_class_peek_parent(klass); \
+    type_name##_class_init((TypeName##Class*)klass); \
+    gObjectClass->finalize = type_name##_finalize; \
+} \
+\
+static void type_name##_init(TypeName* self) \
+{ \
+    TypeName##Private* priv = G_TYPE_INSTANCE_GET_PRIVATE(self, type_name##_get_type(), TypeName##Private); \
+    self->priv = priv; \
+    new (priv) TypeName##Private(); \
+}\
+GType type_name##_get_type(void) \
+{ \
+    static volatile gsize g_define_type_id__volatile = 0; \
+    if (g_once_init_enter(&g_define_type_id__volatile)) { \
+        GType g_define_type_id = \
+            g_type_register_static_simple( \
+                TYPE_PARENT, \
+                g_intern_static_string(#TypeName), \
+                sizeof(TypeName##Class), \
+                (GClassInitFunc)type_name##_class_intern_init, \
+                sizeof(TypeName), \
+                (GInstanceInitFunc)type_name##_init, \
+                (GTypeFlags)flags); \
+        // Custom code follows.
+#define _WEBKIT_DEFINE_TYPE_EXTENDED_END() \
+        g_once_init_leave(&g_define_type_id__volatile, g_define_type_id); \
+    } \
+    return g_define_type_id__volatile; \
+} // Closes type_name##_get_type().
+
 unsigned wkEventModifiersToGdkModifiers(WKEventModifiers);
 unsigned wkEventMouseButtonToWebKitMouseButton(WKEventMouseButton);
 

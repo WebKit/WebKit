@@ -28,8 +28,6 @@
 
 using namespace WebKit;
 
-G_DEFINE_TYPE(WebKitFormSubmissionRequest, webkit_form_submission_request, G_TYPE_OBJECT)
-
 struct _WebKitFormSubmissionRequestPrivate {
     RefPtr<ImmutableDictionary> webValues;
     RefPtr<WebFormSubmissionListenerProxy> listener;
@@ -37,14 +35,9 @@ struct _WebKitFormSubmissionRequestPrivate {
     bool handledRequest;
 };
 
-static void webkit_form_submission_request_init(WebKitFormSubmissionRequest* request)
-{
-    WebKitFormSubmissionRequestPrivate* priv = G_TYPE_INSTANCE_GET_PRIVATE(request, WEBKIT_TYPE_FORM_SUBMISSION_REQUEST, WebKitFormSubmissionRequestPrivate);
-    request->priv = priv;
-    new (priv) WebKitFormSubmissionRequestPrivate();
-}
+WEBKIT_DEFINE_TYPE(WebKitFormSubmissionRequest, webkit_form_submission_request, G_TYPE_OBJECT)
 
-static void webkitFormSubmissionRequestFinalize(GObject* object)
+static void webkitFormSubmissionRequestDispose(GObject* object)
 {
     WebKitFormSubmissionRequest* request = WEBKIT_FORM_SUBMISSION_REQUEST(object);
 
@@ -52,15 +45,13 @@ static void webkitFormSubmissionRequestFinalize(GObject* object)
     if (!request->priv->handledRequest)
         webkit_form_submission_request_submit(request);
 
-    request->priv->~WebKitFormSubmissionRequestPrivate();
-    G_OBJECT_CLASS(webkit_form_submission_request_parent_class)->finalize(object);
+    G_OBJECT_CLASS(webkit_form_submission_request_parent_class)->dispose(object);
 }
 
 static void webkit_form_submission_request_class_init(WebKitFormSubmissionRequestClass* requestClass)
 {
     GObjectClass* objectClass = G_OBJECT_CLASS(requestClass);
-    objectClass->finalize = webkitFormSubmissionRequestFinalize;
-    g_type_class_add_private(requestClass, sizeof(WebKitFormSubmissionRequestPrivate));
+    objectClass->dispose = webkitFormSubmissionRequestDispose;
 }
 
 WebKitFormSubmissionRequest* webkitFormSubmissionRequestCreate(ImmutableDictionary* values, WebFormSubmissionListenerProxy* listener)

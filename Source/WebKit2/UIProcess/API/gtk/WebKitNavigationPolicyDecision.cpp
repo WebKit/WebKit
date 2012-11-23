@@ -43,8 +43,6 @@ using namespace WebCore;
  * the navigation was triggered by a mouse event.
  */
 
-G_DEFINE_TYPE(WebKitNavigationPolicyDecision, webkit_navigation_policy_decision, WEBKIT_TYPE_POLICY_DECISION)
-
 struct _WebKitNavigationPolicyDecisionPrivate {
     WebKitNavigationType navigationType;
     unsigned modifiers;
@@ -52,6 +50,8 @@ struct _WebKitNavigationPolicyDecisionPrivate {
     GRefPtr<WebKitURIRequest> request;
     CString frameName;
 };
+
+WEBKIT_DEFINE_TYPE(WebKitNavigationPolicyDecision, webkit_navigation_policy_decision, WEBKIT_TYPE_POLICY_DECISION)
 
 enum {
     PROP_0,
@@ -61,18 +61,6 @@ enum {
     PROP_REQUEST,
     PROP_FRAME_NAME,
 };
-
-static void webkit_navigation_policy_decision_init(WebKitNavigationPolicyDecision* decision)
-{
-    decision->priv = G_TYPE_INSTANCE_GET_PRIVATE(decision, WEBKIT_TYPE_NAVIGATION_POLICY_DECISION, WebKitNavigationPolicyDecisionPrivate);
-    new (decision->priv) WebKitNavigationPolicyDecisionPrivate();
-}
-
-static void webkitNavigationPolicyDecisionFinalize(GObject* object)
-{
-    WEBKIT_NAVIGATION_POLICY_DECISION(object)->priv->~WebKitNavigationPolicyDecisionPrivate();
-    G_OBJECT_CLASS(webkit_navigation_policy_decision_parent_class)->finalize(object);
-}
 
 static void webkitNavigationPolicyDecisionGetProperty(GObject* object, guint propId, GValue* value, GParamSpec* paramSpec)
 {
@@ -102,9 +90,7 @@ static void webkitNavigationPolicyDecisionGetProperty(GObject* object, guint pro
 static void webkit_navigation_policy_decision_class_init(WebKitNavigationPolicyDecisionClass* decisionClass)
 {
     GObjectClass* objectClass = G_OBJECT_CLASS(decisionClass);
-    objectClass->finalize = webkitNavigationPolicyDecisionFinalize;
     objectClass->get_property = webkitNavigationPolicyDecisionGetProperty;
-    g_type_class_add_private(decisionClass, sizeof(WebKitNavigationPolicyDecisionPrivate));
 
     /**
      * WebKitNavigationPolicyDecision:navigation-type:

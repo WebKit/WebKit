@@ -35,8 +35,6 @@ using namespace WebKit;
 
 static const unsigned int gReadBufferSize = 8192;
 
-G_DEFINE_TYPE(WebKitURISchemeRequest, webkit_uri_scheme_request, G_TYPE_OBJECT)
-
 struct _WebKitURISchemeRequestPrivate {
     WebKitWebContext* webContext;
     RefPtr<WebSoupRequestManagerProxy> webRequestManager;
@@ -53,24 +51,10 @@ struct _WebKitURISchemeRequestPrivate {
     CString mimeType;
 };
 
-static void webkit_uri_scheme_request_init(WebKitURISchemeRequest* request)
-{
-    WebKitURISchemeRequestPrivate* priv = G_TYPE_INSTANCE_GET_PRIVATE(request, WEBKIT_TYPE_URI_SCHEME_REQUEST, WebKitURISchemeRequestPrivate);
-    request->priv = priv;
-    new (priv) WebKitURISchemeRequestPrivate();
-}
-
-static void webkitURISchemeRequestFinalize(GObject* object)
-{
-    WEBKIT_URI_SCHEME_REQUEST(object)->priv->~WebKitURISchemeRequestPrivate();
-    G_OBJECT_CLASS(webkit_uri_scheme_request_parent_class)->finalize(object);
-}
+WEBKIT_DEFINE_TYPE(WebKitURISchemeRequest, webkit_uri_scheme_request, G_TYPE_OBJECT)
 
 static void webkit_uri_scheme_request_class_init(WebKitURISchemeRequestClass* requestClass)
 {
-    GObjectClass* objectClass = G_OBJECT_CLASS(requestClass);
-    objectClass->finalize = webkitURISchemeRequestFinalize;
-    g_type_class_add_private(requestClass, sizeof(WebKitURISchemeRequestPrivate));
 }
 
 WebKitURISchemeRequest* webkitURISchemeRequestCreate(WebKitWebContext* webContext, WebSoupRequestManagerProxy* webRequestManager, WebURL* webURL, WebPageProxy* initiatingPage, uint64_t requestID)

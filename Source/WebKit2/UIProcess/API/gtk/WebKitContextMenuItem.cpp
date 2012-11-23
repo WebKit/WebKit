@@ -38,33 +38,20 @@ using namespace WebKit;
 using namespace WebCore;
 
 struct _WebKitContextMenuItemPrivate {
+    ~_WebKitContextMenuItemPrivate()
+    {
+        if (subMenu)
+            webkitContextMenuSetParentItem(subMenu.get(), 0);
+    }
+
     OwnPtr<ContextMenuItem> menuItem;
     GRefPtr<WebKitContextMenu> subMenu;
 };
 
-G_DEFINE_TYPE(WebKitContextMenuItem, webkit_context_menu_item, G_TYPE_INITIALLY_UNOWNED)
-
-static void webkitContextMenuItemFinalize(GObject* object)
-{
-    WebKitContextMenuItemPrivate* priv = WEBKIT_CONTEXT_MENU_ITEM(object)->priv;
-    if (priv->subMenu)
-        webkitContextMenuSetParentItem(priv->subMenu.get(), 0);
-    priv->~WebKitContextMenuItemPrivate();
-    G_OBJECT_CLASS(webkit_context_menu_item_parent_class)->finalize(object);
-}
-
-static void webkit_context_menu_item_init(WebKitContextMenuItem* item)
-{
-    WebKitContextMenuItemPrivate* priv = G_TYPE_INSTANCE_GET_PRIVATE(item, WEBKIT_TYPE_CONTEXT_MENU_ITEM, WebKitContextMenuItemPrivate);
-    item->priv = priv;
-    new (priv) WebKitContextMenuItemPrivate();
-}
+WEBKIT_DEFINE_TYPE(WebKitContextMenuItem, webkit_context_menu_item, G_TYPE_INITIALLY_UNOWNED)
 
 static void webkit_context_menu_item_class_init(WebKitContextMenuItemClass* itemClass)
 {
-    GObjectClass* gObjectClass = G_OBJECT_CLASS(itemClass);
-    gObjectClass->finalize = webkitContextMenuItemFinalize;
-    g_type_class_add_private(itemClass, sizeof(WebKitContextMenuItemPrivate));
 }
 
 static bool checkAndWarnIfMenuHasParentItem(WebKitContextMenu* menu)
