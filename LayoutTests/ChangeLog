@@ -1,3 +1,17 @@
+2012-11-22  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: ctrl+end in editor does not select the last symbol.
+        https://bugs.webkit.org/show_bug.cgi?id=103078
+
+        Reviewed by Vsevolod Vlasov.
+
+        * inspector/editor/editor-test.js: Added.
+        (initialize_EditorTests.InspectorTest.createTestEditor):
+        (initialize_EditorTests.InspectorTest.dumpEditorChunks):
+        (initialize_EditorTests):
+        * inspector/editor/text-editor-selection-expected.txt: Added.
+        * inspector/editor/text-editor-selection.html: Added.
+
 2012-11-23  Yury Semikhatsky  <yurys@chromium.org>
 
         Unreviewed. Updated test expectations.

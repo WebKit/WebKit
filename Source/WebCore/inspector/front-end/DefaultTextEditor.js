@@ -455,7 +455,7 @@ WebInspector.DefaultTextEditor.prototype = {
 
     _handleScrollChanged: function(event)
     {
-        var visibleFrom = this._mainPanel.element.scrollTop;
+        var visibleFrom = this._mainPanel._scrollTop();
         var firstVisibleLineNumber = this._mainPanel._findFirstVisibleLineNumber(visibleFrom);
         this._delegate.scrollChanged(firstVisibleLineNumber);
     },
@@ -650,6 +650,18 @@ WebInspector.DefaultTextEditor.prototype = {
             parentElement.removeChild(highlightElement);
         }
         this._mainPanel.endDomUpdates();
+    },
+
+    /**
+     * @param {number} scrollTop
+     * @param {number} clientHeight
+     * @param {number} chunkSize
+     */
+    overrideViewportForTest: function(scrollTop, clientHeight, chunkSize)
+    {
+        this._mainPanel._scrollTopOverrideForTest = scrollTop;
+        this._mainPanel._clientHeightOverrideForTest = clientHeight;
+        this._mainPanel._defaultChunkSize = chunkSize;
     },
 
     __proto__: WebInspector.View.prototype
@@ -922,13 +934,23 @@ WebInspector.TextEditorChunkedPanel.prototype = {
         if (this._paintCoalescingLevel)
             return;
 
-        var visibleFrom = this.element.scrollTop;
-        var visibleTo = this.element.scrollTop + this.element.clientHeight;
+        var visibleFrom = this._scrollTop();
+        var visibleTo = visibleFrom + this._clientHeight();
 
         if (visibleTo) {
             var result = this._findVisibleChunks(visibleFrom, visibleTo);
             this._expandChunks(result.start, result.end);
         }
+    },
+
+    _scrollTop: function()
+    {
+        return typeof this._scrollTopOverrideForTest === "number" ? this._scrollTopOverrideForTest : this.element.scrollTop; 
+    },
+
+    _clientHeight: function()
+    {
+        return typeof this._clientHeightOverrideForTest === "number" ? this._clientHeightOverrideForTest : this.element.clientHeight; 
     },
 
     /**
@@ -1751,7 +1773,7 @@ WebInspector.TextEditorMainPanel.prototype = {
     {
         // First, paint visible lines, so that in case of long lines we should start highlighting
         // the visible area immediately, instead of waiting for the lines above the visible area.
-        var visibleFrom = this.element.scrollTop;
+        var visibleFrom = this._scrollTop();
         var firstVisibleLineNumber = this._findFirstVisibleLineNumber(visibleFrom);
 
         var chunk;
@@ -1986,7 +2008,9 @@ WebInspector.TextEditorMainPanel.prototype = {
         // We reached our container node, traverse within itself until we reach given offset.
         if (node === container && offset) {
             var text = node.textContent;
-            for (var i = 0; i < offset; ++i) {
+            // In case offset == 1 and lineRow is a chunk div, we need to traverse it all.
+            var textOffset = (node._chunk && offset === 1) ? text.length : offset;
+            for (var i = 0; i < textOffset; ++i) {
                 if (text.charAt(i) === "\n") {
                     lineNumber++;
                     column = 0;
@@ -2417,8 +2441,8 @@ WebInspector.TextEditorMainPanel.prototype = {
      */
     _updateHighlightsForRange: function(range)
     {
-        var visibleFrom = this.element.scrollTop;
-        var visibleTo = this.element.scrollTop + this.element.clientHeight;
+        var visibleFrom = this._scrollTop();
+        var visibleTo = visibleFrom + this._clientHeight();
 
         var result = this._findVisibleChunks(visibleFrom, visibleTo);
         var chunk = this._textChunks[result.end - 1];

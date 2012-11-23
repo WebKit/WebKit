@@ -135,6 +135,11 @@ WebInspector.TextRange.prototype = {
     shift: function(lineOffset)
     {
         return new WebInspector.TextRange(this.startLine + lineOffset, this.startColumn, this.endLine + lineOffset, this.endColumn);
+    },
+
+    toString: function()
+    {
+        return JSON.stringify(this);
     }
 }
 

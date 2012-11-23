@@ -1,3 +1,22 @@
+2012-11-22  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: ctrl+end in editor does not select the last symbol.
+        https://bugs.webkit.org/show_bug.cgi?id=103078
+
+        Reviewed by Vsevolod Vlasov.
+
+        Test: inspector/editor/text-editor-selection.html
+
+        * inspector/front-end/DefaultTextEditor.js:
+        (WebInspector.DefaultTextEditor.prototype._handleScrollChanged):
+        (WebInspector.DefaultTextEditor.prototype.overrideViewportForTest):
+        (WebInspector.TextEditorChunkedPanel.prototype._repaintAll):
+        (WebInspector.TextEditorChunkedPanel.prototype._scrollTop):
+        (WebInspector.TextEditorChunkedPanel.prototype._clientHeight):
+        (WebInspector.TextEditorMainPanel.prototype._paintLineChunks):
+        (WebInspector.TextEditorMainPanel.prototype._selectionToPosition):
+        (WebInspector.TextEditorMainPanel.prototype._updateHighlightsForRange):
+
 2012-11-23  Yury Semikhatsky  <yurys@chromium.org>
 
         Remove references to non-chromium entries from WebCore.gypi
