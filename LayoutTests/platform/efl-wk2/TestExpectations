@@ -279,24 +279,10 @@ webkit.org/b/99562 http/tests/plugins/post-url-file.html [ Failure ]
 # Comparison of two javascript objects in C++ is failing.
 webkit.org/b/98739 plugins/npruntime/embed-property-equality.html [ Failure ]
 
-# WebKitTestRunner needs an implementation for eventSender.contextClick
-webkit.org/b/86881 editing/pasteboard/copy-standalone-image-crash.html [ Failure ]
-webkit.org/b/86881 editing/selection/5354455-1.html [ Failure ]
-webkit.org/b/86881 editing/selection/5354455-2.html [ Failure ]
-webkit.org/b/86881 editing/selection/button-right-click.html [ Failure ]
-webkit.org/b/86881 editing/selection/context-menu-on-text.html [ Failure ]
-webkit.org/b/86881 editing/selection/context-menu-text-selection.html [ Failure ]
-webkit.org/b/86881 editing/selection/empty-cell-right-click.html [ Failure ]
-webkit.org/b/86881 editing/shadow/rightclick-on-meter-in-shadow-crash.html [ Failure ]
-webkit.org/b/86881 editing/spelling/context-menu-suggestions.html [ Failure ]
-webkit.org/b/86881 fast/events/context-no-deselect.html [ Failure ]
+# EFL's EventSender contextClick should return objects that implements click() method
+webkit.org/b/98410 editing/pasteboard/copy-standalone-image-crash.html [ Failure ]
+webkit.org/b/98410 media/context-menu-actions.html [ Failure ]
 webkit.org/b/86881 fast/events/context-nodrag.html [ Failure ]
-webkit.org/b/86881 fast/events/context-onmousedown-event.html [ Failure ]
-webkit.org/b/86881 fast/events/contextmenu-scrolled-page-with-frame.html [ Failure ]
-webkit.org/b/86881 fast/events/right-click-focus.html [ Failure ]
-webkit.org/b/86881 fast/events/selectstart-prevent-selection-on-right-click.html [ Failure ]
-webkit.org/b/86881 media/context-menu-actions.html [ Failure ]
-webkit.org/b/86881 media/controls-right-click-on-timebar.html [ Failure ]
 
 webkit.org/b/102201 fast/dom/Window/window-resize.html [ Failure ]
 webkit.org/b/102201 fast/dom/Window/open-window-min-size.html [ Failure ]

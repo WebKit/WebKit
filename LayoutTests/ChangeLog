@@ -1,3 +1,21 @@
+2012-11-23  Wojciech Bielawski  <w.bielawski@samsung.com>
+
+        [WK2][WKTR] WebKitTestRunner needs eventSender.contextClick()
+        https://bugs.webkit.org/show_bug.cgi?id=86881
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Added expected results for two tests for EFL platform. Test expectations changed
+        for EFL WK1/WK2 and GTK platforms
+
+        * platform/efl/TestExpectations:
+        * platform/efl-wk1/TestExpectations:
+        * platform/efl-wk2/TestExpectations:
+        * platform/gkt-wk2/TestExpectations:
+        * platform/gtk/editing/selection/5354455-2-expected.txt:
+        * platform/efl/editing/selection/5354455-2-expected.txt: Added.
+        * platform/efl/fast/events/context-no-deselect-expected.txt: Added.
+
 2012-11-23  Sudarsana Nagineni  <sudarsana.nagineni@intel.com>
 
         [EFL] Newly added tests in r135436 and r135456 are failng

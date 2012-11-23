@@ -132,19 +132,6 @@ Bug(GTK) editing/selection/extend-after-mouse-selection.html [ Failure ]
 # WebKit2 needs textInputController.selectedRange
 Bug(GTK) editing/selection/mixed-editability-10.html [ Failure ]
 
-# Implement eventSender.contextClick
-Bug(GTK) editing/pasteboard/copy-standalone-image-crash.html [ Failure ]
-Bug(GTK) editing/selection/empty-cell-right-click.html [ Failure ]
-Bug(GTK) editing/selection/button-right-click.html [ Failure ]
-Bug(GTK) editing/selection/context-menu-on-text.html [ Failure ]
-Bug(GTK) editing/selection/empty-cell-right-click.html [ Failure ]
-Bug(GTK) fast/events/selectstart-prevent-selection-on-right-click.html [ Failure ]
-Bug(GTK) fast/events/context-no-deselect.html [ Failure ]
-Bug(GTK) fast/events/contextmenu-scrolled-page-with-frame.html [ Failure ]
-Bug(GTK) fast/events/context-onmousedown-event.html [ Failure ]
-Bug(GTK) media/controls-right-click-on-timebar.html [ Failure ]
-Bug(GTK) svg/custom/use-events-crash.svg [ Failure ]
-
 # Implement PageClientImpl::registerEditCommand and handling commands functions
 Bug(GTK) editing/deleting/delete-by-word-002.html [ Failure ]
 Bug(GTK) editing/deleting/delete-and-undo.html [ Failure ]
@@ -592,3 +579,25 @@ webkit.org/b/102776 media/track/track-cue-container-rendering-position.html [ Fa
 # End of Tests working in WK2 and failing in WK1
 #////////////////////////////////////////////////////////////////////////////////////////
 
+
+# Selection doesn't work properly.
+Bug(GTK) editing/selection/context-menu-text-selection.html [ Failure Pass ]
+Bug(GTK) editing/selection/empty-cell-right-click.html [ Failure ]
+Bug(GTK) editing/spelling/context-menu-suggestions.html [ Failure ]
+
+# EventSender's contextClick should return objects that implements click() method
+webkit.org/b/98410 editing/pasteboard/copy-standalone-image-crash.html [ Failure ]
+webkit.org/b/98410 media/context-menu-actions.html [ Failure ]
+
+# An oncontextmenu attribute is not called.
+Bug(GTK) editing/spelling/spellcheck-input-search-crash.html [ Failure ]
+Bug(GTK) fast/events/contextmenu-scrolled-page-with-frame.html [ Failure ]
+
+# An onmousedown attribute is not called.
+Bug(GTK) fast/events/context-onmousedown-event.html [ Failure ]
+
+# An onselectstart attribute is not called.
+Bug(GTK) fast/events/selectstart-prevent-selection-on-right-click.html [ Failure ]
+
+# Start of media player causes timeout
+Bug(GTK) media/controls-right-click-on-timebar.html [ Failure ]

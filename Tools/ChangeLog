@@ -1,3 +1,22 @@
+2012-11-23  Wojciech Bielawski  <w.bielawski@samsung.com>
+
+        [WK2][WKTR] WebKitTestRunner needs eventSender.contextClick()
+        https://bugs.webkit.org/show_bug.cgi?id=86881
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        eventSender object extended with contextClick() method in WebKitTestRunner.
+        contextClick() method returns an array of menu items objects with field 'title' containing title of single
+        context menu entry. According to some tests menu items objects shall also support 'click()' method, but it's not
+        delivered in this patch.
+
+        * WebKitTestRunner/InjectedBundle/Bindings/EventSendingController.idl:
+        * WebKitTestRunner/InjectedBundle/EventSendingController.cpp:
+        (WTR::EventSendingController::contextClick):
+        (WTR):
+        * WebKitTestRunner/InjectedBundle/EventSendingController.h:
+        (EventSendingController):
+
 2012-11-23  Simon Hausmann  <simon.hausmann@digia.com>
 
         [Qt] Compiling against QtWebkit API requires QT_DLL to be defined

@@ -30,13 +30,19 @@
 #include "InjectedBundleBackForwardList.h"
 #include "InjectedBundleNodeHandle.h"
 #include "WKAPICast.h"
+#include "WKArray.h"
 #include "WKBundleAPICast.h"
+#include "WKRetainPtr.h"
+#include "WKString.h"
+#include "WebContextMenu.h"
+#include "WebContextMenuItem.h"
 #include "WebFrame.h"
 #include "WebFullScreenManager.h"
 #include "WebImage.h"
 #include "WebPage.h"
 #include "WebRenderLayer.h"
 #include "WebRenderObject.h"
+#include "WebString.h"
 #include "WebURL.h"
 #include "WebURLRequest.h"
 
@@ -143,6 +149,22 @@ WKBundlePageGroupRef WKBundlePageGetPageGroup(WKBundlePageRef pageRef)
 WKBundleFrameRef WKBundlePageGetMainFrame(WKBundlePageRef pageRef)
 {
     return toAPI(toImpl(pageRef)->mainWebFrame());
+}
+
+WKArrayRef WKBundlePageCopyContextMenuItemTitles(WKBundlePageRef pageRef)
+{
+#if ENABLE(CONTEXT_MENUS)
+    WebContextMenu* contextMenu = toImpl(pageRef)->contextMenu();
+    const Vector<WebContextMenuItemData> &items = contextMenu->items();
+    size_t arrayLength = items.size();
+    OwnArrayPtr<WKTypeRef> itemNames = adoptArrayPtr(new WKTypeRef[arrayLength]);
+    for (size_t i = 0; i < arrayLength; ++i)
+        itemNames[i] = WKStringCreateWithUTF8CString(items[i].title().utf8().data());
+
+    return WKArrayCreateAdoptingValues(itemNames.get(), arrayLength);
+#else
+    return 0;
+#endif
 }
 
 void* WKAccessibilityRootObject(WKBundlePageRef pageRef)

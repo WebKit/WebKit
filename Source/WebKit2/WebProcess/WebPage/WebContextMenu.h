@@ -43,10 +43,12 @@ public:
 
     void show();
     void itemSelected(const WebContextMenuItemData&);
+    Vector<WebContextMenuItemData> items() const;
 
 private:
     WebContextMenu(WebPage*);
-    
+    void menuItemsWithUserData(Vector<WebContextMenuItemData>&, RefPtr<APIObject>&) const;
+
     WebPage* m_page;
 };
 

@@ -1,3 +1,25 @@
+2012-11-23  Wojciech Bielawski  <w.bielawski@samsung.com>
+
+        [WK2][WKTR] WebKitTestRunner needs eventSender.contextClick()
+        https://bugs.webkit.org/show_bug.cgi?id=86881
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        InjectedBundle API extended to retrieve contextMenu entries names.
+        WebContextMenu exteded with function to retrieve menu items.
+        This API is required by layout tests.
+        Common code in WebContextMenu.cpp moved to separate method menuItemsWithUserData().
+        Behaviour of dependend methods is unchanged.
+
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        (WKBundlePageGetContextMenuEntriesNames):
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.h:
+        * WebProcess/WebPage/WebContextMenu.cpp:
+        (WebKit::WebContextMenu::items):
+        (WebKit):
+        * WebProcess/WebPage/WebContextMenu.h:
+        (WebContextMenu):
+
 2012-11-22  Pierre Rossi  <pierre.rossi@gmail.com>
 
         [Qt] Avoid initializing PlatformStrategies twice.

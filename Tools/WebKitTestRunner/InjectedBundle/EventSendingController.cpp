@@ -319,6 +319,37 @@ void EventSendingController::continuousMouseScrollBy(int x, int y, bool paged)
     WKBundlePostSynchronousMessage(InjectedBundle::shared().bundle(), EventSenderMessageName.get(), EventSenderMessageBody.get(), 0);
 }
 
+JSValueRef EventSendingController::contextClick()
+{
+    WKBundlePageRef page = InjectedBundle::shared().page()->page();
+    WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(page);
+    JSContextRef context = WKBundleFrameGetJavaScriptContext(mainFrame);
+#if ENABLE(CONTEXT_MENUS)
+    // Do mouse context click.
+    mouseDown(2, 0);
+    mouseUp(2, 0);
+
+    WKRetainPtr<WKArrayRef> entriesNames = adoptWK(WKBundlePageCopyContextMenuItemTitles(page));
+    JSRetainPtr<JSStringRef> jsPropertyName(Adopt, JSStringCreateWithUTF8CString("title"));
+    size_t entriesSize = WKArrayGetSize(entriesNames.get());
+    OwnArrayPtr<JSValueRef> jsValuesArray = adoptArrayPtr(new JSValueRef[entriesSize]);
+    for (size_t i = 0; i < entriesSize; ++i) {
+        ASSERT(WKGetTypeID(WKArrayGetItemAtIndex(entriesNames.get(), i)) == WKStringGetTypeID());
+
+        WKStringRef wkEntryName = static_cast<WKStringRef>(WKArrayGetItemAtIndex(entriesNames.get(), i));
+        JSObjectRef jsItemObject = JSObjectMake(context, /* JSClassRef */0, /* privData */0);
+        JSRetainPtr<JSStringRef> jsNameCopy(Adopt, WKStringCopyJSString(wkEntryName));
+        JSValueRef jsEntryName = JSValueMakeString(context, jsNameCopy.get());
+        JSObjectSetProperty(context, jsItemObject, jsPropertyName.get(), jsEntryName, kJSPropertyAttributeReadOnly, 0);
+        jsValuesArray[i] = jsItemObject;
+    }
+
+    return JSObjectMakeArray(context, entriesSize, jsValuesArray.get(), 0);
+#else
+    return JSValueMakeUndefined(context);
+#endif
+}
+
 #ifdef USE_WEBPROCESS_EVENT_SIMULATION
 void EventSendingController::updateClickCount(WKEventMouseButton button)
 {
