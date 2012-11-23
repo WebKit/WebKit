@@ -1,3 +1,22 @@
+2012-11-22  Balazs Kilvady  <kilvadyb@homejinni.com>
+
+        Fix the MIPS build after r135330
+        https://bugs.webkit.org/show_bug.cgi?id=102872
+
+        Reviewed by Gavin Barraclough.
+
+        Revert/replace functions added to MIPS port.
+
+        * assembler/MIPSAssembler.h:
+        (JSC::MIPSAssembler::revertJumpToMove):
+        (MIPSAssembler):
+        (JSC::MIPSAssembler::replaceWithJump):
+        * assembler/MacroAssemblerMIPS.h:
+        (MacroAssemblerMIPS):
+        (JSC::MacroAssemblerMIPS::startOfBranchPtrWithPatchOnRegister):
+        (JSC::MacroAssemblerMIPS::revertJumpReplacementToBranchPtrWithPatch):
+        (JSC::MacroAssemblerMIPS::startOfPatchableBranchPtrWithPatchOnAddress):
+
 2012-11-21  Filip Pizlo  <fpizlo@apple.com>
 
         Rename dataLog() and dataLogV() to dataLogF() and dataLogFV()

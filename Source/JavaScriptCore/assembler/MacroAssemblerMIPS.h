@@ -2244,7 +2244,17 @@ public:
 
     static bool canJumpReplacePatchableBranchPtrWithPatch() { return false; }
 
-    static CodeLocationLabel startOfPatchableBranchPtrWithPatch(CodeLocationDataLabelPtr label)
+    static CodeLocationLabel startOfBranchPtrWithPatchOnRegister(CodeLocationDataLabelPtr label)
+    {
+        return label.labelAtOffset(0);
+    }
+
+    static void revertJumpReplacementToBranchPtrWithPatch(CodeLocationLabel instructionStart, RegisterID, void* initialValue)
+    {
+        MIPSAssembler::revertJumpToMove(instructionStart.dataLocation(), immTempRegister, reinterpret_cast<int>(initialValue) & 0xffff);
+    }
+
+    static CodeLocationLabel startOfPatchableBranchPtrWithPatchOnAddress(CodeLocationDataLabelPtr)
     {
         UNREACHABLE_FOR_PLATFORM();
         return CodeLocationLabel();

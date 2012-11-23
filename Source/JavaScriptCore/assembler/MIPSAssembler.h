@@ -825,6 +825,31 @@ public:
 #endif
     }
 
+    static void revertJumpToMove(void* instructionStart, RegisterID rt, int imm)
+    {
+        MIPSWord* insn = static_cast<MIPSWord*>(instructionStart) + 1;
+        ASSERT((*insn & 0xfc000000) == 0x34000000);
+        *insn = (*insn & 0xfc1f0000) | (imm & 0xffff);
+        cacheFlush(insn, sizeof(MIPSWord));
+    }
+
+    static void replaceWithJump(void* instructionStart, void* to)
+    {
+        MIPSWord* instruction = reinterpret_cast<MIPSWord*>(instructionStart);
+        intptr_t jumpTo = reinterpret_cast<intptr_t>(to);
+
+        // lui
+        instruction[0] = 0x3c000000 | (MIPSRegisters::t9 << OP_SH_RT) | ((jumpTo >> 16) & 0xffff);
+        // ori
+        instruction[1] = 0x34000000 | (MIPSRegisters::t9 << OP_SH_RT) | (MIPSRegisters::t9 << OP_SH_RS) | (jumpTo & 0xffff);
+        // jr
+        instruction[2] = 0x00000008 | (MIPSRegisters::t9 << OP_SH_RS);
+        // nop
+        instruction[3] = 0x0;
+
+        cacheFlush(instruction, sizeof(MIPSWord) * 4);
+    }
+
     static void replaceWithLoad(void* instructionStart)
     {
         MIPSWord* insn = reinterpret_cast<MIPSWord*>(instructionStart);
