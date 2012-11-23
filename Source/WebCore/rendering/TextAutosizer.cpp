@@ -235,8 +235,6 @@ bool TextAutosizer::isAutosizingCluster(const RenderBlock* renderer)
         || renderer->isTableCaption()
         || renderer->isFlexibleBoxIncludingDeprecated()
         || renderer->hasColumns()
-        || renderer->style()->overflowX() != OVISIBLE
-        || renderer->style()->overflowY() != OVISIBLE
         || renderer->containingBlock()->isHorizontalWritingMode() != renderer->isHorizontalWritingMode();
     // FIXME: Tables need special handling to multiply all their columns by
     // the same amount even if they're different widths; so do hasColumns()

@@ -1,3 +1,15 @@
+2012-11-22  John Mellor  <johnme@chromium.org>
+
+        Text Autosizing: Improve handling of nested comments on reddit.com
+        https://bugs.webkit.org/show_bug.cgi?id=102409
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Added test to confirm that overflow:hidden no longer triggers a cluster.
+
+        * fast/text-autosizing/cluster-narrow-in-wide-ohidden-expected.html: Added.
+        * fast/text-autosizing/cluster-narrow-in-wide-ohidden.html: Added.
+
 2012-11-22  Stephen Chenney  <schenney@chromium.org>
 
         Test expectations update after enabling Skia changes.

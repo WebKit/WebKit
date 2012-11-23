@@ -1,3 +1,26 @@
+2012-11-22  John Mellor  <johnme@chromium.org>
+
+        Text Autosizing: Improve handling of nested comments on reddit.com
+        https://bugs.webkit.org/show_bug.cgi?id=102409
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        No longer consider overflow != visible as requiring an independent
+        cluster. Some sites (e.g. reddit.com) wrap ordinary blocks (such as
+        comments) in overflow:hidden or overflow:auto, for various reasons
+        (like allowing it to be scrollable, or clipping an element that sticks
+        out). These reasons are not sufficient justification for a new cluster.
+
+        On reddit.com this means that comments will all get the same multiplier,
+        rather than being independently assigned a variety of multipliers based
+        on how much text each comment contains (etc), which significantly
+        improves the look.
+
+        Test: fast/text-autosizing/cluster-narrow-in-wide-ohidden.html
+
+        * rendering/TextAutosizer.cpp:
+        (WebCore::TextAutosizer::isAutosizingCluster):
+
 2012-11-22  Pravin D  <pravind.2k4@gmail.com>
 
         max-height property not respected in case of tables
