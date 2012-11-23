@@ -1,3 +1,11 @@
+2012-11-23  Robert Kroeger  <rjkroege@chromium.org>
+
+        Gardening: updated expectations (pass/timeout) for
+        week-multiple-fields-preserve-value-after-history-back.html
+        https://bugs.webkit.org/show_bug.cgi?id=103152
+
+        * platform/chromium/TestExpectations:
+
 2012-11-23  Krzysztof Czech  <k.czech@samsung.com>
 
         [EFL] Adapt accessibility feature to WebKitTestRunner.
