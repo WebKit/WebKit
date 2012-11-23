@@ -1,3 +1,32 @@
+2012-11-23  Christophe Dumez  <christophe.dumez@intel.com>
+
+        WebSocket's MessageEvent.origin attribute is an empty string
+        https://bugs.webkit.org/show_bug.cgi?id=102889
+
+        Reviewed by Kentaro Hara.
+
+        Fix WebSocket implementation so that the message event's origin
+        attribute is properly set to the Unicode serialization of the
+        origin of the URL that was passed to the WebSocket object's
+        constructor, instead of an empty string.
+
+        The new behavior is according to the specification:
+        http://www.whatwg.org/specs/web-apps/current-work/multipage/network.html#feedback-from-the-protocol
+
+        It also matches the behavior of Firefox.
+
+        Tests: http/tests/websocket/tests/hybi/send-blob-onmessage-origin.html
+               http/tests/websocket/tests/hybi/send-onmessage-origin.html
+
+        * Modules/websockets/WebSocket.cpp:
+        (WebCore::WebSocket::didReceiveMessage):
+        (WebCore::WebSocket::didReceiveBinaryData):
+        * dom/MessageEvent.cpp:
+        (WebCore::MessageEvent::MessageEvent):
+        * dom/MessageEvent.h:
+        (WebCore::MessageEvent::create):
+        (MessageEvent):
+
 2012-11-22  Eugene Klyuchnikov  <eustas.bug@gmail.com>
 
         Web Inspector: No "Save Heap Snapshot" option after canceling save to file dialog.

@@ -508,7 +508,7 @@ void WebSocket::didReceiveMessage(const String& msg)
     if (m_state != OPEN && m_state != CLOSING)
         return;
     ASSERT(scriptExecutionContext());
-    dispatchEvent(MessageEvent::create(msg));
+    dispatchEvent(MessageEvent::create(msg, SecurityOrigin::create(m_url)->toString()));
 }
 
 void WebSocket::didReceiveBinaryData(PassOwnPtr<Vector<char> > binaryData)
@@ -521,12 +521,12 @@ void WebSocket::didReceiveBinaryData(PassOwnPtr<Vector<char> > binaryData)
         OwnPtr<BlobData> blobData = BlobData::create();
         blobData->appendData(rawData.release(), 0, BlobDataItem::toEndOfFile);
         RefPtr<Blob> blob = Blob::create(blobData.release(), size);
-        dispatchEvent(MessageEvent::create(blob.release()));
+        dispatchEvent(MessageEvent::create(blob.release(), SecurityOrigin::create(m_url)->toString()));
         break;
     }
 
     case BinaryTypeArrayBuffer:
-        dispatchEvent(MessageEvent::create(ArrayBuffer::create(binaryData->data(), binaryData->size())));
+        dispatchEvent(MessageEvent::create(ArrayBuffer::create(binaryData->data(), binaryData->size()), SecurityOrigin::create(m_url)->toString()));
         break;
     }
 }

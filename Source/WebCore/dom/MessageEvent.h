@@ -64,17 +64,17 @@ public:
     {
         return adoptRef(new MessageEvent(data, origin, lastEventId, source, ports));
     }
-    static PassRefPtr<MessageEvent> create(const String& data)
+    static PassRefPtr<MessageEvent> create(const String& data, const String& origin = "")
     {
-        return adoptRef(new MessageEvent(data));
+        return adoptRef(new MessageEvent(data, origin));
     }
-    static PassRefPtr<MessageEvent> create(PassRefPtr<Blob> data)
+    static PassRefPtr<MessageEvent> create(PassRefPtr<Blob> data, const String& origin = "")
     {
-        return adoptRef(new MessageEvent(data));
+        return adoptRef(new MessageEvent(data, origin));
     }
-    static PassRefPtr<MessageEvent> create(PassRefPtr<ArrayBuffer> data)
+    static PassRefPtr<MessageEvent> create(PassRefPtr<ArrayBuffer> data, const String& origin = "")
     {
-        return adoptRef(new MessageEvent(data));
+        return adoptRef(new MessageEvent(data, origin));
     }
     static PassRefPtr<MessageEvent> create(const AtomicString& type, const MessageEventInit& initializer)
     {
@@ -119,9 +119,9 @@ private:
     MessageEvent(const ScriptValue& data, const String& origin, const String& lastEventId, PassRefPtr<DOMWindow> source, PassOwnPtr<MessagePortArray>);
     MessageEvent(PassRefPtr<SerializedScriptValue> data, const String& origin, const String& lastEventId, PassRefPtr<DOMWindow> source, PassOwnPtr<MessagePortArray>);
 
-    explicit MessageEvent(const String& data);
-    explicit MessageEvent(PassRefPtr<Blob> data);
-    explicit MessageEvent(PassRefPtr<ArrayBuffer> data);
+    explicit MessageEvent(const String& data, const String& origin);
+    explicit MessageEvent(PassRefPtr<Blob> data, const String& origin);
+    explicit MessageEvent(PassRefPtr<ArrayBuffer> data, const String& origin);
 
     DataType m_dataType;
     ScriptValue m_dataAsScriptValue;

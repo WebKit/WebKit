@@ -1,3 +1,20 @@
+2012-11-23  Christophe Dumez  <christophe.dumez@intel.com>
+
+        WebSocket's MessageEvent.origin attribute is an empty string
+        https://bugs.webkit.org/show_bug.cgi?id=102889
+
+        Reviewed by Kentaro Hara.
+
+        Add layout tests to check that the message event's origin attribute
+        is set to the Unicode serialization of the origin of the URL that
+        was passed to the WebSocket object's constructor, as per the
+        WebSocket specification.
+
+        * http/tests/websocket/tests/hybi/send-blob-onmessage-origin-expected.txt: Added.
+        * http/tests/websocket/tests/hybi/send-blob-onmessage-origin.html: Added.
+        * http/tests/websocket/tests/hybi/send-onmessage-origin-expected.txt: Added.
+        * http/tests/websocket/tests/hybi/send-onmessage-origin.html: Added.
+
 2012-11-22  Eugene Klyuchnikov  <eustas.bug@gmail.com>
 
         Web Inspector: No "Save Heap Snapshot" option after canceling save to file dialog.
