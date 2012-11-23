@@ -414,7 +414,8 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3D::Attributes attrs, HostWi
     glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
 #endif
 
-    glClearColor(0.0, 0.0, 0.0, 0.0);
+    if (renderStyle != RenderToCurrentGLContext)
+        glClearColor(0.0, 0.0, 0.0, 0.0);
 }
 
 GraphicsContext3D::~GraphicsContext3D()

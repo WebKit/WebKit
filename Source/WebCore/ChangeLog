@@ -1,3 +1,19 @@
+2012-11-23  Zeno Albisser  <zeno@webkit.org>
+
+        [Qt] GraphicsContext3DQt should not overwrite glClearColor of sharing context.
+        https://bugs.webkit.org/show_bug.cgi?id=103135
+
+        In case we use GraphicsContext3DQt to render into or
+        read from an existing context, we should not reset
+        the glClearColor on construction.
+        Otherwise we might overwrite an existing definition from
+        the sharing context.
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * platform/graphics/qt/GraphicsContext3DQt.cpp:
+        (WebCore::GraphicsContext3D::GraphicsContext3D):
+
 2012-11-23  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: damaging last chunk does not remove its garbage from DOM
