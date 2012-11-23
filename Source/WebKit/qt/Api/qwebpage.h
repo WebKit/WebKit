@@ -368,8 +368,7 @@ public:
 
     QWebPageAdapter* handle() const;
 
-public Q_SLOTS:
-    bool shouldInterruptJavaScript();
+    virtual bool shouldInterruptJavaScript();
 
 Q_SIGNALS:
     void loadStarted();

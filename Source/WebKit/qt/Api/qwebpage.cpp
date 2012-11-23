@@ -467,6 +467,11 @@ bool QWebPagePrivate::javaScriptPrompt(QWebFrameAdapter *frame, const QString &m
     return q->javaScriptPrompt(QWebFramePrivate::kit(frame), msg, defaultValue, result);
 }
 
+bool QWebPagePrivate::shouldInterruptJavaScript()
+{
+    return q->shouldInterruptJavaScript();
+}
+
 void QWebPagePrivate::printRequested(QWebFrameAdapter *frame)
 {
     emit q->printRequested(QWebFramePrivate::kit(frame));
@@ -2406,10 +2411,6 @@ bool QWebPage::javaScriptPrompt(QWebFrame *frame, const QString& msg, const QStr
     If the user wanted to stop the JavaScript the implementation should return true; otherwise false.
 
     The default implementation executes the query using QMessageBox::information with QMessageBox::Yes and QMessageBox::No buttons.
-
-    \warning Because of binary compatibility constraints, this function is not virtual. If you want to
-    provide your own implementation in a QWebPage subclass, reimplement the shouldInterruptJavaScript()
-    slot in your subclass instead. QtWebKit will dynamically detect the slot and call it.
 */
 bool QWebPage::shouldInterruptJavaScript()
 {

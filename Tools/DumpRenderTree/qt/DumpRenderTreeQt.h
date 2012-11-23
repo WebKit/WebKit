@@ -204,8 +204,9 @@ public:
 
     void permissionSet(QWebPage::Feature feature);
 
+    virtual bool shouldInterruptJavaScript() { return false; }
+
 public Q_SLOTS:
-    bool shouldInterruptJavaScript() { return false; }
     void requestPermission(QWebFrame* frame, QWebPage::Feature feature);
     void cancelPermission(QWebFrame* frame, QWebPage::Feature feature);
 

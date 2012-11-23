@@ -1,3 +1,31 @@
+2012-11-23  Simon Hausmann  <simon.hausmann@digia.com>
+
+        [Qt] QWebPage::shouldInterruptJavaScript should be virtual in Qt 5
+        https://bugs.webkit.org/show_bug.cgi?id=103111
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        This function was added as a slot during Qt 4.x times because adding
+        virtual functions breaks binary compatibility. This constraint is gone
+        with the initial release of WebKit with Qt 5, and therefore we can
+        make it virtual now.
+
+        The change is fully source compatible as existing "re-implementations"
+        as slots will now be called through it being a virtual function. They
+        become unused slots.
+
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::shouldInterruptJavaScript):
+        * Api/qwebpage.h:
+        * Api/qwebpage_p.h:
+        * WebCoreSupport/ChromeClientQt.cpp:
+        (WebCore::ChromeClientQt::shouldInterruptJavaScript):
+        * WebCoreSupport/QWebPageAdapter.h:
+        (QWebPageAdapter):
+        * tests/qwebpage/tst_qwebpage.cpp:
+        (JSTestPage::shouldInterruptJavaScript):
+        (JSTestPage):
+
 2012-11-23  Pierre Rossi  <pierre.rossi@gmail.com>
 
         [Qt] REGRESSION(r135515): 3 appcache tests still failing

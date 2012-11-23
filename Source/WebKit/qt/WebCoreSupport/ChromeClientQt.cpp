@@ -365,9 +365,7 @@ void ChromeClientQt::setStatusbarText(const String& msg)
 
 bool ChromeClientQt::shouldInterruptJavaScript()
 {
-    bool shouldInterrupt = false;
-    QMetaObject::invokeMethod(m_webPage->handle(), "shouldInterruptJavaScript", Qt::DirectConnection, Q_RETURN_ARG(bool, shouldInterrupt));
-    return shouldInterrupt;
+    return m_webPage->shouldInterruptJavaScript();
 }
 
 KeyboardUIMode ChromeClientQt::keyboardUIMode()

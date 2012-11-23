@@ -76,6 +76,7 @@ public:
     virtual void javaScriptAlert(QWebFrameAdapter*, const QString& msg) = 0;
     virtual bool javaScriptConfirm(QWebFrameAdapter*, const QString& msg) = 0;
     virtual bool javaScriptPrompt(QWebFrameAdapter*, const QString& msg, const QString& defaultValue, QString* result) = 0;
+    virtual bool shouldInterruptJavaScript() = 0;
     virtual void printRequested(QWebFrameAdapter*) = 0;
     virtual void databaseQuotaExceeded(QWebFrameAdapter*, const QString& databaseName) = 0;
     virtual void applicationCacheQuotaExceeded(QWebSecurityOrigin*, quint64 defaultOriginQuota, quint64 totalSpaceNeeded) = 0;

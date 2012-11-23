@@ -281,10 +281,11 @@ public:
     JSTestPage(QObject* parent = 0)
     : QWebPage(parent) {}
 
-public Q_SLOTS:
-    bool shouldInterruptJavaScript() {
+    virtual bool shouldInterruptJavaScript()
+    {
         return true;
     }
+public Q_SLOTS:
     void requestPermission(QWebFrame* frame, QWebPage::Feature feature)
     {
         if (m_allowGeolocation)
