@@ -1,3 +1,16 @@
+2012-11-22  Rick Byers <rbyers@chromium.org>
+
+        window is missing Touch and TouchList - touch event conformance test failure
+        https://bugs.webkit.org/show_bug.cgi?id=96295
+
+        Reviewed by Adam Barth.
+
+        * fast/events/touch/document-create-touch-list-expected.txt:
+        * fast/events/touch/script-tests/document-create-touch-list.js: Add instanceof checks
+        * platform/efl/fast/js/global-constructors-expected.txt: Add new expected constructors
+        * platform/qt-5.0/fast/js/global-constructors-expected.txt: Add new expected constructors
+        * platform/qt/fast/js/global-constructors-expected.txt: Add new expected constructors
+
 2012-11-22  Yury Semikhatsky  <yurys@chromium.org>
 
         Unreviewed. Test expectations update after Skia changes.

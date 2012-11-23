@@ -1,3 +1,17 @@
+2012-11-22  Rick Byers  <rbyers@chromium.org>
+
+        window is missing Touch and TouchList - touch event conformance test failure
+        https://bugs.webkit.org/show_bug.cgi?id=96295
+
+        Reviewed by Adam Barth.
+
+        Add Touch and TouchList constructors to window for ENABLE(TOUCH_EVENTS).
+
+        Tests: fast/js/global-constructors.html
+               fast/events/touch/document-create-touch-list.html
+
+        * page/DOMWindow.idl:
+
 2012-11-22  Dan Carney  <dcarney@google.com>
 
         [V8] Make worker context prototype chain match other browsers
