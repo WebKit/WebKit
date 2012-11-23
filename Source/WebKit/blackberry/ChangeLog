@@ -1,3 +1,20 @@
+2012-11-23  Jacky Jiang  <zhajiang@rim.com>
+
+        [BlackBerry] Meta viewport can't be changed dynamically
+        https://bugs.webkit.org/show_bug.cgi?id=103098
+
+        Reviewed by Rob Buis.
+        Internally reviewed by Arvid Nilsson.
+
+        PR: 237072
+        Reset m_userPerformedManualZoom and enable
+        m_shouldZoomToInitialScaleAfterLoadFinished so that we can relayout the
+        page and zoom it to fit the screen when we dynamically change the meta
+        viewport after the load is finished.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::dispatchViewportPropertiesDidChange):
+
 2012-11-23  Genevieve Mak  <gmak@rim.com>
 
         [BlackBerry] Drop Synchronous Mouse Events

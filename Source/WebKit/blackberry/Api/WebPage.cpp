@@ -3467,7 +3467,14 @@ void WebPagePrivate::dispatchViewportPropertiesDidChange(const ViewportArguments
     Platform::IntSize virtualViewport = recomputeVirtualViewportFromViewportArguments();
     m_webPage->setVirtualViewportSize(virtualViewport);
 
-    if (loadState() == WebKit::WebPagePrivate::Committed)
+    // Reset m_userPerformedManualZoom and enable m_shouldZoomToInitialScaleAfterLoadFinished so that we can relayout
+    // the page and zoom it to fit the screen when we dynamically change the meta viewport after the load is finished.
+    bool isLoadFinished = loadState() == Finished;
+    if (isLoadFinished) {
+        m_userPerformedManualZoom = false;
+        setShouldZoomToInitialScaleAfterLoadFinished(true);
+    }
+    if (loadState() == Committed || isLoadFinished)
         zoomToInitialScaleOnLoad();
 }
 
