@@ -157,7 +157,6 @@ const int showTreeCharacterOffset = 39;
 class RenderObject : public CachedImageClient {
     friend class LayoutRepainter;
     friend class RenderBlock;
-    friend class RenderBox;
     friend class RenderLayer;
     friend class RenderObjectChildList;
     friend class RenderSVGContainer;

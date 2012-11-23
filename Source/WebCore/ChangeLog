@@ -1,3 +1,19 @@
+2012-11-23  Adenilson Cavalcanti  <cavalcantii@gmail.com>
+
+        Removing unnecessary RenderBox friend access in RenderObject
+        https://bugs.webkit.org/show_bug.cgi?id=103159
+
+        Reviewed by Eric Seidel.
+
+        RenderObject has several classes marked as friend, between them,
+        there is RenderBox which is derived from it indirectly and is not accessing
+        its forefather private data making unnecessary the 'friend' access level.
+
+        No new tests, no changes in functionality.
+
+        * rendering/RenderObject.h:
+        (RenderObject):
+
 2012-11-23  Alexis Menard  <alexis@webkit.org>
 
         [CSS3 Backgrounds and Borders] Implement new CSS3 background-position parsing.
