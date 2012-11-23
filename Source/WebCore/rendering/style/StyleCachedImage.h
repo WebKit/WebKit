@@ -56,6 +56,7 @@ public:
     virtual void addClient(RenderObject*);
     virtual void removeClient(RenderObject*);
     virtual PassRefPtr<Image> image(RenderObject*, const IntSize&) const;
+    virtual bool hasAlpha(const RenderObject*) const OVERRIDE;
     
 private:
     explicit StyleCachedImage(CachedImage*);

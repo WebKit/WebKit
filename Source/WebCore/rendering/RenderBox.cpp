@@ -1001,7 +1001,14 @@ void RenderBox::paintFillLayers(const PaintInfo& paintInfo, const Color& c, cons
     if (!fillLayer)
         return;
 
-    paintFillLayers(paintInfo, c, fillLayer->next(), rect, bleedAvoidance, op, backgroundObject);
+    // FIXME : It would be possible for the following occlusion culling test to be more aggressive 
+    // on layers with no repeat by testing whether the image covers the layout rect.
+    // Testing that here would imply duplicating a lot of calculations that are currently done in
+    // RenderBoxModelOBject::paintFillLayerExtended. A more efficient solution might be to move
+    // the layer recursion into paintFillLayerExtended, or to compute the layer geometry here
+    // and pass it down.
+    if (fillLayer->next() && (!fillLayer->hasOpaqueImage(this) || !fillLayer->image()->canRender(this, style()->effectiveZoom()) || !fillLayer->hasRepeatXY()))
+        paintFillLayers(paintInfo, c, fillLayer->next(), rect, bleedAvoidance, op, backgroundObject);
     paintFillLayer(paintInfo, c, fillLayer, rect, bleedAvoidance, op, backgroundObject);
 }
 

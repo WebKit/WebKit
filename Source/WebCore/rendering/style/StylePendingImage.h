@@ -66,6 +66,7 @@ public:
         ASSERT_NOT_REACHED();
         return 0;
     }
+    virtual bool hasAlpha(const RenderObject*) const { return true; }
     
 private:
     StylePendingImage(CSSValue* value)

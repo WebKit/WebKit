@@ -64,6 +64,7 @@ public:
     virtual PassRefPtr<Image> image(RenderObject*, const IntSize&) const = 0;
     virtual WrappedImagePtr data() const = 0;
     virtual float imageScaleFactor() const { return 1; }
+    virtual bool hasAlpha(const RenderObject*) const = 0;
 
     ALWAYS_INLINE bool isCachedImage() const { return m_isCachedImage; }
     ALWAYS_INLINE bool isPendingImage() const { return m_isPendingImage; }

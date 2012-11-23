@@ -74,6 +74,8 @@ public:
     IntSize fixedSize(const RenderObject*) const { return IntSize(); }
 
     bool isPending() const { return false; }
+    bool hasAlpha(const RenderObject*) const;
+
     void loadSubimages(CachedResourceLoader*) { }
     PassRefPtr<CSSGradientValue> gradientWithStylesResolved(StyleResolver*);
 

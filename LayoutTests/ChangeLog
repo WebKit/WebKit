@@ -1,3 +1,17 @@
+2012-11-23  Justin Novosad  <junov@google.com>
+
+        Adding occlusion detection to reduce overdraw in RenderBox background rendering
+        https://bugs.webkit.org/show_bug.cgi?id=102557
+
+        Reviewed by Stephen White.
+
+        New test exercises different CSS background style use cases that
+        are candidates for optimization by occlusion culling.
+
+        * fast/backgrounds/background-opaque-images-over-color-expected.txt: Added.
+        * fast/backgrounds/background-opaque-images-over-color.html: Added.
+        * platform/chromium/TestExpectations:
+
 2012-11-23  Robert Kroeger  <rjkroege@chromium.org>
 
         Gardening: updated expectations (pass/timeout) for

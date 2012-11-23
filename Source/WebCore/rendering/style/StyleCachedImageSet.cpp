@@ -116,6 +116,11 @@ PassRefPtr<Image> StyleCachedImageSet::image(RenderObject* renderer, const IntSi
     return m_bestFitImage->imageForRenderer(renderer);
 }
 
+bool StyleCachedImageSet::hasAlpha(const RenderObject* renderer) const
+{
+    return m_bestFitImage->currentFrameHasAlpha(renderer);
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(CSS_IMAGE_SET)

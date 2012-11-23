@@ -89,4 +89,9 @@ PassRefPtr<Image> StyleGeneratedImage::image(RenderObject* renderer, const IntSi
     return m_imageGeneratorValue->image(renderer, size);
 }
 
+bool StyleGeneratedImage::hasAlpha(const RenderObject* renderer) const
+{
+    return m_imageGeneratorValue->hasAlpha(renderer);
+}
+
 }

@@ -280,4 +280,23 @@ bool FillLayer::imagesAreLoaded() const
     return true;
 }
 
+bool FillLayer::hasOpaqueImage(const RenderObject* renderer) const
+{
+    if (!m_image)
+        return false;
+
+    if (m_composite == CompositeClear || m_composite == CompositeCopy)
+        return true;
+
+    if (m_composite == CompositeSourceOver)
+        return !m_image->hasAlpha(renderer);
+
+    return false;
+}
+
+bool FillLayer::hasRepeatXY() const
+{
+    return m_repeatX == RepeatFill && m_repeatY == RepeatFill;
+}
+
 } // namespace WebCore

@@ -52,6 +52,19 @@ static bool subimageIsPending(CSSValue* value)
     return false;
 }
 
+static bool subimageHasAlpha(CSSValue* value, const RenderObject* renderer)
+{
+    if (value->isImageValue())
+        return static_cast<CSSImageValue*>(value)->hasAlpha(renderer);
+
+    if (value->isImageGeneratorValue())
+        return static_cast<CSSImageGeneratorValue*>(value)->hasAlpha(renderer);
+
+    ASSERT_NOT_REACHED();
+
+    return true;
+}
+
 static CachedImage* cachedImageForCSSValue(CSSValue* value, CachedResourceLoader* cachedResourceLoader)
 {
     if (!value)
@@ -124,6 +137,11 @@ IntSize CSSCrossfadeValue::fixedSize(const RenderObject* renderer)
 bool CSSCrossfadeValue::isPending() const
 {
     return subimageIsPending(m_fromValue.get()) || subimageIsPending(m_toValue.get());
+}
+
+bool CSSCrossfadeValue::hasAlpha(const RenderObject* renderer) const
+{
+    return subimageHasAlpha(m_fromValue.get(), renderer) || subimageHasAlpha(m_toValue.get(), renderer);
 }
 
 void CSSCrossfadeValue::loadSubimages(CachedResourceLoader* cachedResourceLoader)

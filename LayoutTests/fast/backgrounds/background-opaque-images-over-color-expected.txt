@@ -1,0 +1,32 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x108
+  RenderBlock {HTML} at (0,0) size 800x108
+    RenderBody {BODY} at (8,8) size 784x0
+      RenderBlock {DIV} at (0,0) size 784x0
+        RenderBlock (floating) {DIV} at (0,0) size 20x100 [bgcolor=#FF0000]
+        RenderBlock (floating) {DIV} at (20,0) size 20x100 [bgcolor=#FF0000]
+        RenderBlock (floating) {DIV} at (40,0) size 20x100 [bgcolor=#FF0000]
+        RenderBlock (floating) {DIV} at (60,0) size 20x100 [bgcolor=#FF0000]
+        RenderBlock (floating) {DIV} at (80,0) size 20x100 [bgcolor=#FF0000]
+        RenderBlock (floating) {DIV} at (100,0) size 20x100 [bgcolor=#FF0000]
+        RenderBlock (floating) {DIV} at (120,0) size 20x100 [bgcolor=#FF0000]
+        RenderBlock (floating) {DIV} at (140,0) size 20x100 [bgcolor=#FF0000]
+        RenderBlock (floating) {DIV} at (160,0) size 20x100 [bgcolor=#FF0000]
+        RenderBlock (floating) {DIV} at (180,0) size 20x100 [bgcolor=#FF0000]
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x108
+  RenderBlock {HTML} at (0,0) size 800x108
+    RenderBody {BODY} at (8,8) size 784x0
+      RenderBlock {DIV} at (0,0) size 784x0
+        RenderBlock (floating) {DIV} at (0,0) size 20x100 [bgcolor=#FF0000]
+        RenderBlock (floating) {DIV} at (20,0) size 20x100 [bgcolor=#FF0000]
+        RenderBlock (floating) {DIV} at (40,0) size 20x100 [bgcolor=#FF0000]
+        RenderBlock (floating) {DIV} at (60,0) size 20x100 [bgcolor=#FF0000]
+        RenderBlock (floating) {DIV} at (80,0) size 20x100 [bgcolor=#FF0000]
+        RenderBlock (floating) {DIV} at (100,0) size 20x100 [bgcolor=#FF0000]
+        RenderBlock (floating) {DIV} at (120,0) size 20x100 [bgcolor=#FF0000]
+        RenderBlock (floating) {DIV} at (140,0) size 20x100 [bgcolor=#FF0000]
+        RenderBlock (floating) {DIV} at (160,0) size 20x100 [bgcolor=#FF0000]
+        RenderBlock (floating) {DIV} at (180,0) size 20x100 [bgcolor=#FF0000]

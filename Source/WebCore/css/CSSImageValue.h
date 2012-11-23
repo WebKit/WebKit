@@ -30,6 +30,7 @@ class CachedResourceLoader;
 class Element;
 class StyleCachedImage;
 class StyleImage;
+class RenderObject;
 
 class CSSImageValue : public CSSValue {
 public:
@@ -50,6 +51,8 @@ public:
     bool hasFailedOrCanceledSubresources() const;
 
     void reportDescendantMemoryUsage(MemoryObjectInfo*) const;
+
+    bool hasAlpha(const RenderObject*) const;
 
 protected:
     CSSImageValue(ClassType, const String& url);

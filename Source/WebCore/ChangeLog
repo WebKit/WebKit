@@ -1,5 +1,87 @@
 2012-11-23  Justin Novosad  <junov@google.com>
 
+        Adding occlusion detection to reduce overdraw in RenderBox background rendering
+        https://bugs.webkit.org/show_bug.cgi?id=102557
+
+        Reviewed by Stephen White.
+
+        Adding hasAlpha method to all classes dervived from CSSImageValue and
+        StyleImage, in order to support occlusion testing. 
+        This allows the FillLayer recursion to stop early when an opaque layer
+        is encountered while applying a CSS background style. This also allows
+        the elimination of background color application when the background is
+        completely covered by an image.  The optimization also skips the
+        clearing of the page's root element when the page background is
+        entirely covered by an image (e.g a tiled bitmap or a gradient)
+
+        Test: fast/backgrounds/background-opaque-images-over-color.html
+
+        * css/CSSCrossfadeValue.cpp:
+        (WebCore::subimageHasAlpha):
+        (WebCore):
+        (WebCore::CSSCrossfadeValue::isPending):
+        (WebCore::CSSCrossfadeValue::hasAlpha):
+        * css/CSSCrossfadeValue.h:
+        (CSSCrossfadeValue):
+        * css/CSSGradientValue.cpp:
+        (WebCore::CSSGradientValue::hasAlpha):
+        (WebCore):
+        * css/CSSGradientValue.h:
+        (CSSGradientValue):
+        * css/CSSImageGeneratorValue.cpp:
+        (WebCore::CSSImageGeneratorValue::hasAlpha):
+        (WebCore):
+        * css/CSSImageGeneratorValue.h:
+        (CSSImageGeneratorValue):
+        * css/CSSImageValue.cpp:
+        (WebCore::CSSImageValue::hasAlpha):
+        (WebCore):
+        * css/CSSImageValue.h:
+        (WebCore):
+        (CSSImageValue):
+        * loader/cache/CachedImage.cpp:
+        (WebCore::CachedImage::currentFrameHasAlpha):
+        Test whether a cached image has alpha, with side effect of ensuring
+        the image is in cache. (new method)
+        (WebCore):
+        * loader/cache/CachedImage.h:
+        (CachedImage):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::paintFillLayers):
+        Added layer recursion early exit when an opaque layer is encountered.
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintFillLayerExtended):
+        Eliminated background color fill when the layer contains an opaque
+        image that covers the entire RenderBox.
+        * rendering/style/FillLayer.cpp:
+        (WebCore::FillLayer::hasOpaqueImage):
+        Returns true if the layer's image is known to be fully opaque.
+        (WebCore):
+        (WebCore::FillLayer::hasRepeatXY):
+        * rendering/style/FillLayer.h:
+        (FillLayer):
+        * rendering/style/StyleCachedImage.cpp:
+        (WebCore::StyleCachedImage::hasAlpha):
+        (WebCore):
+        * rendering/style/StyleCachedImage.h:
+        (StyleCachedImage):
+        * rendering/style/StyleCachedImageSet.cpp:
+        (WebCore::StyleCachedImageSet::hasAlpha):
+        (WebCore):
+        * rendering/style/StyleCachedImageSet.h:
+        (StyleCachedImageSet):
+        * rendering/style/StyleGeneratedImage.cpp:
+        (WebCore::StyleGeneratedImage::hasAlpha):
+        (WebCore):
+        * rendering/style/StyleGeneratedImage.h:
+        (StyleGeneratedImage):
+        * rendering/style/StyleImage.h:
+        (StyleImage):
+        * rendering/style/StylePendingImage.h:
+        (WebCore::StylePendingImage::hasAlpha):
+
+2012-11-23  Justin Novosad  <junov@google.com>
+
         Page background color bleeds through inner edge of div border with rounded edges
         https://bugs.webkit.org/show_bug.cgi?id=103089
 

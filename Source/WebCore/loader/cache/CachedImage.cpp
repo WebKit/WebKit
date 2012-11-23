@@ -475,4 +475,12 @@ void CachedImage::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 #endif
 }
 
+bool CachedImage::currentFrameHasAlpha(const RenderObject* renderer)
+{
+    Image* image = imageForRenderer(renderer);
+    if (image->isBitmapImage())
+        image->nativeImageForCurrentFrame(); // force decode
+    return image->currentFrameHasAlpha();
+}
+
 } // namespace WebCore

@@ -144,6 +144,9 @@ public:
         return m_next ? m_next->hasFixedImage() : false;
     }
 
+    bool hasOpaqueImage(const RenderObject*) const;
+    bool hasRepeatXY() const;
+
     EFillLayerType type() const { return static_cast<EFillLayerType>(m_type); }
 
     void fillUnsetProperties();
