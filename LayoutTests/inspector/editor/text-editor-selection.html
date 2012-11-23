@@ -32,7 +32,7 @@ function test()
         {
             var chunks = textEditor._mainPanel._textChunks;
             var lastChunk = chunks[chunks.length - 1];
-            window.getSelection().setBaseAndExtent(lastChunk.element.firstChild, 20, lastChunk.element.firstChild, 30);
+            window.getSelection().setBaseAndExtent(lastChunk.element.firstChild, 1, lastChunk.element.firstChild, 11);
             InspectorTest.addResult(textEditor._mainPanel._getSelection());
             next();
         },

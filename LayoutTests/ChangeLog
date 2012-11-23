@@ -1,3 +1,21 @@
+2012-11-23  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: damaging last chunk does not remove its garbage from DOM
+        https://bugs.webkit.org/show_bug.cgi?id=103132
+
+        Reviewed by Vsevolod Vlasov.
+
+        * inspector/editor/editor-test.js:
+        (initialize_EditorTests.InspectorTest.createTestEditor):
+        (initialize_EditorTests.InspectorTest.dumpEditorChunks):
+        (initialize_EditorTests.InspectorTest.dumpEditorModel):
+        (initialize_EditorTests.InspectorTest.dumpEditorDOM):
+        (initialize_EditorTests):
+        * inspector/editor/text-editor-remove-chunks-from-dom-expected.txt: Added.
+        * inspector/editor/text-editor-remove-chunks-from-dom.html: Added.
+        * inspector/editor/text-editor-selection-expected.txt:
+        * inspector/editor/text-editor-selection.html:
+
 2012-11-23  Kent Tamura  <tkent@chromium.org>
 
         Correct input[type=number] value sanitization for user-input

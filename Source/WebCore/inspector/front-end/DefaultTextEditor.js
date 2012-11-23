@@ -2076,7 +2076,7 @@ WebInspector.TextEditorMainPanel.prototype = {
 
         var span = this._cachedSpans.pop() || document.createElement("span");
         span.className = "webkit-" + className;
-        if (false) // For paint debugging.
+        if (WebInspector.FALSE) // For paint debugging.
             span.addStyleClass("debug-fadeout");
         span.textContent = content;
         element.insertBefore(span, oldChild);
@@ -2412,27 +2412,33 @@ WebInspector.TextEditorMainPanel.prototype = {
                 this._textChunks[chunkNumber].startLine += linesDiff;
         }
 
+        // Remove damaged chunks from DOM and from textChunks model.
+        var lastUndamagedChunk = firstDamagedChunkNumber > 0 ? this._textChunks[firstDamagedChunkNumber - 1] : null;
+        var firstUndamagedChunk = lastDamagedChunkNumber + 1 < this._textChunks.length ? this._textChunks[lastDamagedChunkNumber + 1] : null;
+        var removeDOMFromNode = lastUndamagedChunk ? lastUndamagedChunk.lastElement().nextSibling : this._container.firstChild;
+        var removeDOMToNode = firstUndamagedChunk ? firstUndamagedChunk.firstElement() : null;
+        for (var node = removeDOMFromNode; node && node !== removeDOMToNode; ) {
+            var nodeToRemove = node;
+            node = node.nextSibling;
+            nodeToRemove.remove();
+        }
+        this._textChunks.splice(firstDamagedChunkNumber, lastDamagedChunkNumber - firstDamagedChunkNumber + 1);
+
         // Compute damaged chunks span
         var startLine = firstDamagedChunk.startLine;
         var endLine = lastDamagedChunk.endLine + linesDiff;
+        var lineSpan = endLine - startLine;
 
         // Re-create chunks for damaged area.
-        var insertedChunks = [];
-        var insertionIndex = lastDamagedChunkNumber + 1;
-
-        var lineSpan = endLine - startLine;
+        var insertionIndex = firstDamagedChunkNumber;
         var chunkSize = Math.ceil(lineSpan / Math.ceil(lineSpan / this._defaultChunkSize));
 
         for (var i = startLine; i < endLine; i += chunkSize) {
             var chunk = this._createNewChunk(i, Math.min(endLine, i + chunkSize));
             this._textChunks.splice(insertionIndex++, 0, chunk);
-            this._container.insertBefore(chunk.element, firstDamagedChunk.anchorElement());
+            this._container.insertBefore(chunk.element, removeDOMToNode);
         }
 
-        // Remove damaged chunks from DOM and the chunks list.
-        var removedChunks = this._textChunks.splice(firstDamagedChunkNumber, lastDamagedChunkNumber - firstDamagedChunkNumber + 1);
-        for (var i = 0; i < removedChunks.length; ++i)
-            removedChunks[i].detachFromDOM();
         this._assertDOMMatchesTextModel();
     },
 
@@ -2721,7 +2727,7 @@ WebInspector.TextEditorMainChunk.prototype = {
         for (var i = this.startLine; i < this.startLine + this.linesCount; ++i)
             lines.push(this._textModel.line(i));
 
-        if (WebInspector.debugDefaultTextEditor)
+        if (WebInspector.FALSE)
             console.log("Rebuilding chunk with " + lines.length + " lines");
 
         this.element.removeChildren();
@@ -2731,19 +2737,14 @@ WebInspector.TextEditorMainChunk.prototype = {
             this.element.appendChild(document.createElement("br"));
     },
 
-    detachFromDOM: function()
-    {
-        if (this._expandedLineRows) {
-            for (var i = 0; i < this._expandedLineRows.length; ++i)
-                this._expandedLineRows[i].remove();
-            delete this._expandedLineRows;
-        } else
-            this.element.remove();
-    },
-
-    anchorElement: function()
+    firstElement: function()
     {
         return this._expandedLineRows ? this._expandedLineRows[0] : this.element;
+    },
+
+    lastElement: function()
+    {
+        return this._expandedLineRows ? this._expandedLineRows[this._expandedLineRows.length - 1] : this.element;
     }
 }
 

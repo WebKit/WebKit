@@ -1,3 +1,19 @@
+2012-11-23  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: damaging last chunk does not remove its garbage from DOM
+        https://bugs.webkit.org/show_bug.cgi?id=103132
+
+        Reviewed by Vsevolod Vlasov.
+
+        Removing everything between undamaged chunks, not registered chunk rows.
+
+        * inspector/front-end/DefaultTextEditor.js:
+        (WebInspector.TextEditorMainPanel.prototype._insertSpanBefore):
+        (WebInspector.TextEditorMainPanel.prototype._updateChunksForRanges):
+        (WebInspector.TextEditorMainChunk.prototype.updateCollapsedLineRow):
+        (WebInspector.TextEditorMainChunk.prototype.firstElement):
+        (WebInspector.TextEditorMainChunk.prototype.lastElement):
+
 2012-11-23  Ilya Tikhonovsky  <loislo@chromium.org>
 
         RenderLayer minor clean-up: replace raw pointers with OwnPtrs.
