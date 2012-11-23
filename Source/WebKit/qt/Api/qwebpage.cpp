@@ -68,6 +68,7 @@
 #include "HTMLNames.h"
 #include "HitTestResult.h"
 #include "Image.h"
+#include "InitWebCoreQt.h"
 #include "InitWebKitQt.h"
 #include "InspectorClientQt.h"
 #include "InspectorClientWebPage.h"
@@ -325,6 +326,7 @@ QWebPagePrivate::QWebPagePrivate(QWebPage *qq)
 #endif
 
     WebKit::initializeWebKitWidgets();
+    WebCore::initializeWebCoreQt();
 
     Page::PageClients pageClients;
     pageClients.chromeClient = new ChromeClientQt(this);

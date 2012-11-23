@@ -1,3 +1,19 @@
+2012-11-22  Pierre Rossi  <pierre.rossi@gmail.com>
+
+        [Qt] Avoid initializing PlatformStrategies twice.
+
+        Rubber-stamped by Simon Hausmann.
+
+        This fixes another regression introduced in r135515:
+        initializeWebKitQt shouldn't implicitely call initializeWebCoreQt
+        since it can be called from WebKit2 to initialize QStyle for testing.
+        This would then lead to things such as PlatformStrategies being
+        initialized twice.
+
+        * qt/MainQt.cpp: No need to initialize anything if we're not using QStyle.
+        (WebKit):
+        (main):
+
 2012-11-22  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Use custom private macros to define GObjects

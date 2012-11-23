@@ -45,7 +45,6 @@ Q_DECL_IMPORT int WebProcessMainQt(QGuiApplication*);
 #if !defined(QT_NO_WIDGETS)
 Q_DECL_IMPORT void initializeWebKitWidgets();
 #endif
-Q_DECL_IMPORT void initializeWebKitQt();
 }
 
 #if !defined(NDEBUG) && defined(Q_OS_UNIX)
@@ -96,10 +95,7 @@ int main(int argc, char** argv)
 #if !defined(QT_NO_WIDGETS)
     if (qgetenv("QT_WEBKIT_THEME_NAME") == "qstyle")
         WebKit::initializeWebKitWidgets();
-    else
 #endif
-        WebKit::initializeWebKitQt();
-
 
     return WebKit::WebProcessMainQt(appInstance);
 }
