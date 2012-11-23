@@ -1,3 +1,20 @@
+2012-11-23  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL][AC] Mouse cursor is not updated when accelerated compositing is enabled
+        https://bugs.webkit.org/show_bug.cgi?id=103131
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Make sure we try to get the Ecore_X_Window using ecore_evas_gl_x11_window_get()
+        in applyFallbackCursor() if accelerated compositing is enabled instead of
+        using ecore_evas_software_x11_window_get(). This fixes mouse cursor update
+        when accelerated compositing is enabled.
+
+        No new tests, no behavior change for layout tests.
+
+        * platform/efl/EflScreenUtilities.cpp:
+        (WebCore::applyFallbackCursor):
+
 2012-11-16  Yury Semikhatsky  <yurys@chromium.org>
 
         Memory instrumentation: extract MemoryObjectInfo declaration into a separate file
