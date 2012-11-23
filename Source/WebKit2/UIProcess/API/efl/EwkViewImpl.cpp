@@ -314,7 +314,14 @@ AffineTransform EwkViewImpl::transformToScreen() const
 
 #ifdef HAVE_ECORE_X
     Ecore_Evas* ecoreEvas = ecore_evas_ecore_evas_get(sd->base.evas);
-    Ecore_X_Window window = ecore_evas_software_x11_window_get(ecoreEvas); // Returns 0 if none.
+
+    Ecore_X_Window window;
+#if USE(ACCELERATED_COMPOSITING)
+    window = ecore_evas_gl_x11_window_get(ecoreEvas);
+    // Fallback to software mode if necessary.
+    if (!window)
+#endif
+    window = ecore_evas_software_x11_window_get(ecoreEvas); // Returns 0 if none.
 
     int x, y; // x, y are relative to parent (in a reparenting window manager).
     while (window) {

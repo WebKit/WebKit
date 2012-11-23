@@ -1,3 +1,17 @@
+2012-11-23  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL][WK2][AC] EwkViewImpl::transformToScreen() does not retrieve the Ecore_X_Window properly
+        https://bugs.webkit.org/show_bug.cgi?id=103133
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        If accelerated compositing is enabled, EwkViewImpl::transformToScreen() should
+        attempt to retrieve the Ecore_X_Window using ecore_evas_gl_x11_window_get() first
+        and only fall back to ecore_evas_software_x11_window_get().
+
+        * UIProcess/API/efl/EwkViewImpl.cpp:
+        (EwkViewImpl::transformToScreen):
+
 2012-11-23  Wojciech Bielawski  <w.bielawski@samsung.com>
 
         [WK2][WKTR] WebKitTestRunner needs eventSender.contextClick()
