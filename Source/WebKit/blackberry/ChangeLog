@@ -1,3 +1,22 @@
+2012-11-23  Genevieve Mak  <gmak@rim.com>
+
+        [BlackBerry] Drop Synchronous Mouse Events
+        https://bugs.webkit.org/show_bug.cgi?id=102980
+
+        Reviewed by Rob Buis.
+
+        Reviewed Internally by George Staikos and Mike Lattanzio.
+        Don't send actual Touch Events to fullscreen plugins unless
+        its a Touch Cancel, DoubleTap or TouchHold.
+        Instead send mouse events as long as its a single finger.
+        PR #242781
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPage::touchPointAsMouseEvent):
+        (BlackBerry::WebKit::WebPagePrivate::dispatchTouchEventToFullScreenPlugin):
+        (WebKit):
+        (BlackBerry::WebKit::WebPagePrivate::dispatchTouchPointAsMouseEventToFullScreenPlugin):
+
 2012-11-23  Andrew Lo  <anlo@rim.com>
 
         [BlackBerry] InputHandler::ensureFocusTextElementVisible incorrectly used y coordinate as x coordinate
