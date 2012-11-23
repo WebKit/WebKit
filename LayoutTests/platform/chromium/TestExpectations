@@ -4222,3 +4222,6 @@ webkit.org/b/103062 [ Debug ] fast/canvas/canvas-strokePath-gradient-shadow.html
 webkit.org/b/103062 [ Debug ] fast/canvas/canvas-strokeRect-gradient-shadow.html [ Crash ]
 
 webkit.org/b/103093 [ MountainLion ] media/video-preload.html [ Crash ]
+webkit.org/b/103148 [ Win Mac ] fast/frames/iframe-scaling-with-scroll.html [ ImageOnlyFailure ]
+webkit.org/b/103148 [ Lion ] fast/frames/iframe-scrolling-attribute.html [ ImageOnlyFailure ]
+webkit.org/b/103148 [ Lion ] fast/table/border-collapsing/004-vertical.html [ ImageOnlyFailure ]
