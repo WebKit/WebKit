@@ -1,3 +1,19 @@
+2012-11-23  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: inspector overlay is always updated when inspector is open
+        https://bugs.webkit.org/show_bug.cgi?id=103106
+
+        Reviewed by Pavel Feldman.
+
+        Provide empty size into the InspectorOverlay if the metrics emulation is disabled,
+        so that it will not get painted in all cases.
+
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::webViewResized): Call InspectorPageAgent::webViewResized() rather than InspectorOverlay::resize().
+        * inspector/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::webViewResized): Provide empty size into InspectorOverlay::resize() if device metrics are not emulated.
+        * inspector/InspectorPageAgent.h:
+
 2012-11-23  Krzysztof Czech  <k.czech@samsung.com>
 
         [EFL] Platform support for Accessibility feature.

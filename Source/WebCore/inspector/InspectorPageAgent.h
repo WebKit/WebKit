@@ -148,6 +148,8 @@ public:
     virtual void clearFrontend();
     virtual void restore();
 
+    void webViewResized(const IntSize&);
+
     // Cross-agents API
     Frame* mainFrame();
     String createIdentifier();
