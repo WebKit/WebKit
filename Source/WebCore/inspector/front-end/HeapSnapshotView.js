@@ -386,7 +386,7 @@ WebInspector.HeapSnapshotView.prototype = {
     _changeFilter: function()
     {
         var profileIndex = this.filterSelectElement.selectedIndex - 1;
-        this.dataGrid._filterSelectIndexChanged(this._profiles(), profileIndex);
+        this.dataGrid.filterSelectIndexChanged(this._profiles(), profileIndex);
 
         if (!this.currentQuery || !this._searchFinishedCallback || !this._searchResults)
             return;
@@ -416,6 +416,9 @@ WebInspector.HeapSnapshotView.prototype = {
         this.dataGrid.changeNameFilter(filter);
     },
 
+    /**
+     * @return {!Array.<!WebInspector.ProfileHeader>}
+     */
     _profiles: function()
     {
         return this.parent.getProfiles(WebInspector.HeapSnapshotProfileType.TypeId);
@@ -803,7 +806,7 @@ WebInspector.HeapSnapshotProfileType.prototype = {
 /**
  * @constructor
  * @extends {WebInspector.ProfileHeader}
- * @param {WebInspector.HeapSnapshotProfileType} type
+ * @param {!WebInspector.HeapSnapshotProfileType} type
  * @param {string} title
  * @param {number=} uid
  * @param {number=} maxJSObjectId

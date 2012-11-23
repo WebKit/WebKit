@@ -1,3 +1,21 @@
+2012-11-23  Eugene Klyuchnikov  <eustas.bug@gmail.com>
+
+        Web Inspector: Refine JsDoc in ProfilesPanel.js
+        https://bugs.webkit.org/show_bug.cgi?id=103042
+
+        Reviewed by Yury Semikhatsky.
+
+        I'm going to make profiler output typed.
+
+        This will require some amount of refactoring.
+
+        Before refactoring I would like to make things
+        unambiguous by adding JsDoc where they are missing.
+
+        * inspector/front-end/ProfilesPanel.js:
+        (WebInspector.ProfilesPanel.prototype._onToggleProfiling):
+        Added to eliminate parameter type ambiguity.
+
 2012-11-23  Kent Tamura  <tkent@chromium.org>
 
         Correct input[type=number] value sanitization for user-input

@@ -373,7 +373,7 @@ WebInspector.CSSSelectorProfileType.prototype = {
 /**
  * @constructor
  * @extends {WebInspector.ProfileHeader}
- * @param {WebInspector.CSSSelectorProfileType} type
+ * @param {!WebInspector.CSSSelectorProfileType} type
  * @param {string} title
  * @param {number=} uid
  * @param {CSSAgent.SelectorProfile=} protocolData

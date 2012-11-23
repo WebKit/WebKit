@@ -276,7 +276,7 @@ WebInspector.CanvasProfileType.prototype = {
 /**
  * @constructor
  * @extends {WebInspector.ProfileHeader}
- * @param {WebInspector.CanvasProfileType} type
+ * @param {!WebInspector.CanvasProfileType} type
  * @param {string} title
  * @param {number=} uid
  */

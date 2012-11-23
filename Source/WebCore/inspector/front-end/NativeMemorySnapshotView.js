@@ -259,7 +259,7 @@ WebInspector.NativeMemoryProfileType.prototype = {
 /**
  * @constructor
  * @extends {WebInspector.ProfileHeader}
- * @param {WebInspector.NativeMemoryProfileType} type
+ * @param {!WebInspector.NativeMemoryProfileType} type
  * @param {string} title
  * @param {number=} uid
  */

@@ -295,7 +295,7 @@ WebInspector.ChunkedXHRReader.prototype = {
 }
 
 /**
- * @param {function(File)} callback
+ * @param {function(!File)} callback
  * @return {Node}
  */
 WebInspector.createFileSelectorElement = function(callback) {

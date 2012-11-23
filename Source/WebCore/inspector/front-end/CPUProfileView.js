@@ -630,7 +630,7 @@ WebInspector.CPUProfileType.prototype = {
 /**
  * @constructor
  * @extends {WebInspector.ProfileHeader}
- * @param {WebInspector.CPUProfileType} type
+ * @param {!WebInspector.CPUProfileType} type
  * @param {string} title
  * @param {number=} uid
  */

@@ -585,7 +585,7 @@ WebInspector.HeapSnapshotConstructorsDataGrid.prototype = {
         this.snapshot.aggregates(false, key, filter, this._aggregatesReceived.bind(this, key));
     },
 
-    _filterSelectIndexChanged: function(profiles, profileIndex)
+    filterSelectIndexChanged: function(profiles, profileIndex)
     {
         this._profileIndex = profileIndex;
 
