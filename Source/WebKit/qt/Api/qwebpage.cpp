@@ -479,7 +479,7 @@ void QWebPagePrivate::databaseQuotaExceeded(QWebFrameAdapter* frame, const QStri
 
 void QWebPagePrivate::applicationCacheQuotaExceeded(QWebSecurityOrigin *origin, quint64 defaultOriginQuota, quint64 c)
 {
-    emit q->applicationCacheQuotaExceeded(origin, defaultOriginQuota, defaultOriginQuota);
+    emit q->applicationCacheQuotaExceeded(origin, defaultOriginQuota, c);
 }
 
 void QWebPagePrivate::setToolTip(const QString &tip)

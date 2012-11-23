@@ -1,3 +1,15 @@
+2012-11-23  Pierre Rossi  <pierre.rossi@gmail.com>
+
+        [Qt] REGRESSION(r135515): 3 appcache tests still failing
+        https://bugs.webkit.org/show_bug.cgi?id=103073
+
+        Rubber-stamped by Simon Hausmann.
+
+        Another sneaky typo.
+
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::applicationCacheQuotaExceeded):
+
 2012-11-22  Pierre Rossi  <pierre.rossi@gmail.com>
 
         [Qt] Avoid initializing PlatformStrategies twice.
