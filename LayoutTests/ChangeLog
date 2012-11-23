@@ -1,3 +1,17 @@
+2012-11-23  Kent Tamura  <tkent@chromium.org>
+
+        Correct input[type=number] value sanitization for user-input
+        https://bugs.webkit.org/show_bug.cgi?id=103018
+
+        Reviewed by Kentaro Hara.
+
+        * fast/forms/number/number-commit-valid-only-expected.txt:
+        * fast/forms/number/number-commit-valid-only.html:
+        Update the expected HTMLInputElement::value results.
+        * fast/forms/number/number-unacceptable-style-expected.txt:
+        * fast/forms/number/number-unacceptable-style.html:
+        Add some checks for HTMLInputElement::value.
+
 2012-11-23  Wojciech Bielawski  <w.bielawski@samsung.com>
 
         [WK2][WKTR] WebKitTestRunner needs eventSender.contextClick()

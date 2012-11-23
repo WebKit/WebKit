@@ -164,8 +164,6 @@ public:
     // The value which is drawn by a renderer.
     String visibleValue() const;
     String convertFromVisibleValue(const String&) const;
-    // Returns true if the specified string can be set as the value of HTMLInputElement.
-    bool isAcceptableValue(const String&) const;
 
     const String& suggestedValue() const;
     void setSuggestedValue(const String&);

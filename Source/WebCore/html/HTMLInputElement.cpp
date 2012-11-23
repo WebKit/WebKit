@@ -555,9 +555,7 @@ void HTMLInputElement::subtreeHasChanged()
     // HTMLInputElement::handleBeforeTextInsertedEvent() has already called
     // sanitizeUserInputValue().
     // sanitizeValue() is needed because IME input doesn't dispatch BeforeTextInsertedEvent.
-    String value = innerTextValue();
-    if (isAcceptableValue(value))
-        setValueFromRenderer(sanitizeValue(convertFromVisibleValue(value)));
+    setValueFromRenderer(sanitizeValue(convertFromVisibleValue(innerTextValue())));
     updatePlaceholderVisibility(false);
     // Recalc for :invalid and hasUnacceptableValue() change.
     setNeedsStyleRecalc();
@@ -1409,11 +1407,6 @@ String HTMLInputElement::visibleValue() const
 String HTMLInputElement::convertFromVisibleValue(const String& visibleValue) const
 {
     return m_inputType->convertFromVisibleValue(visibleValue);
-}
-
-bool HTMLInputElement::isAcceptableValue(const String& proposedValue) const
-{
-    return m_inputType->isAcceptableValue(proposedValue);
 }
 
 String HTMLInputElement::sanitizeValue(const String& proposedValue) const

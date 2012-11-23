@@ -57,7 +57,6 @@ private:
     virtual String localizeValue(const String&) const OVERRIDE;
     virtual String visibleValue() const OVERRIDE;
     virtual String convertFromVisibleValue(const String&) const OVERRIDE;
-    virtual bool isAcceptableValue(const String&) OVERRIDE;
     virtual String sanitizeValue(const String&) const OVERRIDE;
     virtual bool hasUnacceptableValue() OVERRIDE;
     virtual bool shouldRespectSpeechAttribute() OVERRIDE;

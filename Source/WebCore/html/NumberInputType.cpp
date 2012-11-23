@@ -253,12 +253,6 @@ String NumberInputType::convertFromVisibleValue(const String& visibleValue) cons
     return element()->locale().convertFromLocalizedNumber(visibleValue);
 }
 
-bool NumberInputType::isAcceptableValue(const String& proposedValue)
-{
-    String standardValue = convertFromVisibleValue(proposedValue);
-    return standardValue.isEmpty() || isfinite(parseToDoubleForNumberType(standardValue));
-}
-
 String NumberInputType::sanitizeValue(const String& proposedValue) const
 {
     if (proposedValue.isEmpty())
@@ -268,7 +262,10 @@ String NumberInputType::sanitizeValue(const String& proposedValue) const
 
 bool NumberInputType::hasUnacceptableValue()
 {
-    return element()->renderer() && !isAcceptableValue(element()->innerTextValue());
+    if (!element()->renderer())
+        return false;
+    String standardValue = convertFromVisibleValue(element()->innerTextValue());
+    return !standardValue.isEmpty() && !isfinite(parseToDoubleForNumberType(standardValue));
 }
 
 bool NumberInputType::shouldRespectSpeechAttribute()

@@ -1,3 +1,38 @@
+2012-11-23  Kent Tamura  <tkent@chromium.org>
+
+        Correct input[type=number] value sanitization for user-input
+        https://bugs.webkit.org/show_bug.cgi?id=103018
+
+        Reviewed by Kentaro Hara.
+
+        If a number field has non-number string, HTMLInputElement::value is not
+        updated and returns the past valid value. It doesn't match to the value
+        sanitization algorithm defined by the HTML standard [1], and Opera's
+        behavior. We should sanitize non-number strings to "".
+
+        [1] http://www.whatwg.org/specs/web-apps/current-work/multipage/states-of-the-type-attribute.html#number-state-(type=number)
+        > The value sanitization algorithm is as follows: If the value of the
+        > element is not a valid floating-point number, then set it to the empty
+        > string instead.
+
+        No new tests. Update existing tests;
+        fast/forms/number/number-commit-valid-only.html and
+        fast/forms/number/number-unacceptable-style.html
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::subtreeHasChanged):
+        Remove isAcceptableValue check.
+
+        * html/HTMLInputElement.h:
+        (HTMLInputElement): isAcceptableValue is no longer needed.
+        * html/InputType.cpp: Remove isAcceptableValue.
+        * html/InputType.h: Ditto.
+        * html/NumberInputType.cpp: Ditto.
+        (WebCore::NumberInputType::hasUnacceptableValue):
+        Fold the isAcceptableValue content into this.
+        * html/NumberInputType.h:
+        (NumberInputType): Remove isAcceptableValue.
+
 2012-11-23  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r135592.

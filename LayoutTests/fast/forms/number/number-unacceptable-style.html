@@ -32,14 +32,17 @@ debug("Type '-'. The renderer value becomes unacceptable.");
 document.execCommand('InsertText', false, '-');
 shouldBe('colorOf(number)', 'invalidStyleColor');
 shouldBeTrue('number.validity.valid');
+shouldBeEqualToString('number.value', '');
 
 debug("Type '1' additionally. The renderer value becomes acceptable.");
 document.execCommand('InsertText', false, '1');
 shouldBeTrue('colorOf(number) != invalidStyleColor');
+shouldBeEqualToString('number.value', '-1');
 
 debug("Type 'a' additionally. The renderer value becomes unacceptable again.");
 document.execCommand('InsertText', false, 'a');
 shouldBe('colorOf(number)', 'invalidStyleColor');
+shouldBeEqualToString('number.value', '');
 
 debug("The element losts focus. The unacceptable value should be purged and the style should be normal.");
 document.getElementById('another').focus();
@@ -47,7 +50,8 @@ shouldBeTrue('colorOf(number) != invalidStyleColor');
 // Visiblue value is not '-1a'.
 number.focus();
 document.execCommand('SelectAll');
-shouldBe('document.getSelection().toString()', '"-1"');
+shouldBeEqualToString('document.getSelection().toString()', '');
+shouldBeEqualToString('number.value', '');
 
 document.getElementById('parent').innerHTML = '';
 </script>

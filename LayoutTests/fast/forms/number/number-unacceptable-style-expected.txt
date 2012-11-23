@@ -8,13 +8,17 @@ PASS colorOf(number) != invalidStyleColor is true
 Type '-'. The renderer value becomes unacceptable.
 PASS colorOf(number) is invalidStyleColor
 PASS number.validity.valid is true
+PASS number.value is ""
 Type '1' additionally. The renderer value becomes acceptable.
 PASS colorOf(number) != invalidStyleColor is true
+PASS number.value is "-1"
 Type 'a' additionally. The renderer value becomes unacceptable again.
 PASS colorOf(number) is invalidStyleColor
+PASS number.value is ""
 The element losts focus. The unacceptable value should be purged and the style should be normal.
 PASS colorOf(number) != invalidStyleColor is true
-PASS document.getSelection().toString() is "-1"
+PASS document.getSelection().toString() is ""
+PASS number.value is ""
 PASS successfullyParsed is true
 
 TEST COMPLETE

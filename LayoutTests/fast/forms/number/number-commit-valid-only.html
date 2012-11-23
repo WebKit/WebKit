@@ -25,7 +25,7 @@ function checkIt(what, sample, expected)
 
 debug("\nNo restriction");
 checkIt('noRange', "512", "512");
-checkIt('typeMismatch', "+++", "512");
+checkIt('typeMismatch', "+++", "");
 checkIt('empty', "", "");
 
 debug("\nmin/max/step");
@@ -39,7 +39,7 @@ checkIt("inRange", "50", "50");
 checkIt("stepMismatch", "10.5", "10.5");
 checkIt("maximum", "100", "100");
 checkIt("rangeOverflow", "200", "200");
-checkIt("typeMismatch", "abc", "200");
+checkIt("typeMismatch", "abc", "");
 checkIt("empty", "", ""); // empty
 
 </script>
