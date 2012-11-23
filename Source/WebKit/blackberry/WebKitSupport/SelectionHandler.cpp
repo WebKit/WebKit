@@ -234,7 +234,7 @@ bool SelectionHandler::shouldUpdateSelectionOrCaretForPoint(const WebCore::IntPo
 
 void SelectionHandler::setCaretPosition(const WebCore::IntPoint &position)
 {
-    if (!m_webPage->m_inputHandler->isInputMode())
+    if (!m_webPage->m_inputHandler->isInputMode() || !m_webPage->focusedOrMainFrame()->document()->focusedNode())
         return;
 
     m_caretActive = true;

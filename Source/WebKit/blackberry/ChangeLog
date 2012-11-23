@@ -1,3 +1,18 @@
+2012-11-22  Mike Fenton  <mifenton@rim.com>
+
+        [BlackBerry] Guard against a lost focusedNode that input handler isn't yet informed of.
+        https://bugs.webkit.org/show_bug.cgi?id=103071
+
+        Reviewed by Rob Buis.
+
+        Fix potential for a crash if input mode is active but
+        we can't get a focusedNode.
+
+        Reviewed Internally by Gen Mak.
+
+        * WebKitSupport/SelectionHandler.cpp:
+        (BlackBerry::WebKit::SelectionHandler::setCaretPosition):
+
 2012-11-21  Genevieve Mak  <gmak@rim.com>
 
         [BlackBerry] Drop Synchronous Mouse Events
