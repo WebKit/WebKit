@@ -161,11 +161,16 @@ ENDMACRO ()
 
 
 MACRO (GENERATE_GRAMMAR _prefix _input _output_header _output_source _features)
+    # This is a workaround for winflexbison, which does not work corretly when
+    # run in a different working directory than the installation directory.
+    GET_FILENAME_COMPONENT(_working_directory ${BISON_EXECUTABLE} PATH)
+
     ADD_CUSTOM_COMMAND(
         OUTPUT ${_output_header} ${_output_source}
         MAIN_DEPENDENCY ${_input}
         DEPENDS ${_input}
         COMMAND ${PERL_EXECUTABLE} -I ${WEBCORE_DIR}/bindings/scripts ${WEBCORE_DIR}/css/makegrammar.pl --outputDir ${DERIVED_SOURCES_WEBCORE_DIR} --extraDefines "${_features}" --preprocessor "${CODE_GENERATOR_PREPROCESSOR}" --bison "${BISON_EXECUTABLE}" --symbolsPrefix ${_prefix} ${_input}
+        WORKING_DIRECTORY ${_working_directory}
         VERBATIM)
 ENDMACRO ()
 

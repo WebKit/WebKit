@@ -1,3 +1,15 @@
+2012-11-23  Patrick Gansterer  <paroga@webkit.org>
+
+        [CMake] Add support for winflexbison distribution
+        https://bugs.webkit.org/show_bug.cgi?id=102551
+
+        Reviewed by Laszlo Gombos.
+
+        Since GnuWin32 does not provide recent versions of bision and flex supporting
+        the alternative winflexbison distribution is the prefered option.
+
+        * Source/cmake/WebKitMacros.cmake:
+
 2012-11-23  Laszlo Gombos  <l.gombos@samsung.com>
 
         [EFL] Define WTF_PLATFORM_EFL in Platform.h
