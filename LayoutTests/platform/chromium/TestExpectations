@@ -4241,3 +4241,4 @@ webkit.org/b/103148 [ Lion ] fast/text/large-text-composed-char.html [ ImageOnly
 webkit.org/b/103148 [ Lion ] fast/text/text-letter-spacing.html [ ImageOnlyFailure ]
 webkit.org/b/103161 [ Linux Win ] inspector/console/command-line-api-inspect.html [ Pass Failure ]
 webkit.org/b/103161 [ Linux Win ] inspector/runtime/runtime-localStorage-getProperties.html [ Pass Failure ]
+webkit.org/b/103148 [ Linux Win Mac ] svg/batik/text/textPosition2.svg [ ImageOnlyFailure ]
