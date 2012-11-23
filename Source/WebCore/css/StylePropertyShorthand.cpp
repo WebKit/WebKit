@@ -375,8 +375,8 @@ const StylePropertyShorthand& webkitMaskShorthand()
         CSSPropertyWebkitMaskAttachment,
         CSSPropertyWebkitMaskPositionX,
         CSSPropertyWebkitMaskPositionY,
-        CSSPropertyWebkitMaskClip,
-        CSSPropertyWebkitMaskOrigin
+        CSSPropertyWebkitMaskOrigin,
+        CSSPropertyWebkitMaskClip
     };
     DEFINE_STATIC_LOCAL(StylePropertyShorthand, webkitMaskLonghands, (maskProperties, WTF_ARRAY_LENGTH(maskProperties)));
     return webkitMaskLonghands;

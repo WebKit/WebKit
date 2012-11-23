@@ -1,0 +1,66 @@
+Test that clip-path shapes accept different length units
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS innerStyle("-webkit-mask", "none") is "none"
+PASS innerStyle("-webkit-mask", "none, none") is "none, none"
+PASS innerStyle("-webkit-mask", "none, none, none") is "none, none, none"
+PASS innerStyle("-webkit-mask", "url(file:///image.png), none") is "url(file:///image.png), none"
+PASS innerStyle("-webkit-mask", "none, url(file:///image.png)") is "none, url(file:///image.png)"
+PASS innerStyle("-webkit-mask", "top left") is "0% 0%"
+PASS innerStyle("-webkit-mask", "bottom right") is "100% 100%"
+PASS innerStyle("-webkit-mask", "left bottom") is "0% 100%"
+PASS innerStyle("-webkit-mask", "right top") is "100% 0%"
+PASS innerStyle("-webkit-mask", "center") is "50% 50%"
+PASS innerStyle("-webkit-mask", "none top") is "none 50% 0%"
+PASS innerStyle("-webkit-mask", "none bottom") is "none 50% 100%"
+PASS innerStyle("-webkit-mask", "none right") is "none 100% 50%"
+PASS innerStyle("-webkit-mask", "none top right") is "none 100% 0%"
+PASS innerStyle("-webkit-mask", "none bottom left") is "none 0% 100%"
+PASS innerStyle("-webkit-mask", "none right") is "none 100% 50%"
+PASS innerStyle("-webkit-mask", "none left") is "none 0% 50%"
+PASS innerStyle("-webkit-mask", "center 50%") is "50% 50%"
+PASS innerStyle("-webkit-mask", "50px 50%") is "50px 50%"
+PASS innerStyle("-webkit-mask", "center left") is "0% 50%"
+PASS innerStyle("-webkit-mask", "top center") is "50% 0%"
+PASS innerStyle("-webkit-mask", "repeat-x") is "repeat no-repeat"
+PASS innerStyle("-webkit-mask", "repeat-y") is "no-repeat repeat"
+PASS innerStyle("-webkit-mask", "repeat") is "repeat repeat"
+PASS innerStyle("-webkit-mask", "space") is "space space"
+PASS innerStyle("-webkit-mask", "no-repeat") is "no-repeat no-repeat"
+PASS innerStyle("-webkit-mask", "repeat space") is "repeat space"
+PASS innerStyle("-webkit-mask", "repeat round") is "repeat round"
+PASS innerStyle("-webkit-mask", "repeat no-repeat") is "repeat no-repeat"
+PASS innerStyle("-webkit-mask", "repeat space, repeat-x") is "repeat space, repeat no-repeat"
+PASS innerStyle("-webkit-mask", "repeat none") is "none repeat repeat"
+PASS innerStyle("-webkit-mask", "none repeat") is "none repeat repeat"
+PASS innerStyle("-webkit-mask", "padding-box") is "padding-box padding-box"
+PASS innerStyle("-webkit-mask", "border-box") is "border-box border-box"
+PASS innerStyle("-webkit-mask", "content-box") is "content-box content-box"
+PASS innerStyle("-webkit-mask", "padding-box none") is "none padding-box padding-box"
+PASS innerStyle("-webkit-mask", "none padding-box") is "none padding-box padding-box"
+PASS innerStyle("-webkit-mask", "padding-box content-box") is "padding-box content-box"
+PASS innerStyle("-webkit-mask", "content-box content-box") is "content-box content-box"
+PASS innerStyle("-webkit-mask", "padding-box border-box") is "padding-box border-box"
+PASS innerStyle("-webkit-mask", "padding-box border-box none") is "none padding-box border-box"
+PASS innerStyle("-webkit-mask", "none padding-box border-box") is "none padding-box border-box"
+PASS innerStyle("-webkit-mask", "none padding-box content-box") is "none padding-box content-box"
+PASS innerStyle("-webkit-mask", "none padding-box") is "none padding-box padding-box"
+PASS innerStyle("-webkit-mask", "none top") is "none 50% 0%"
+PASS innerStyle("-webkit-mask", "none border-box left top") is "none 0% 0% border-box border-box"
+PASS innerStyle("-webkit-mask", "top none left") is null
+PASS innerStyle("-webkit-mask", "right none bottom") is null
+PASS innerStyle("-webkit-mask", "right right") is null
+PASS innerStyle("-webkit-mask", "left left") is null
+PASS innerStyle("-webkit-mask", "top top") is null
+PASS innerStyle("-webkit-mask", "bottom bottom") is null
+PASS innerStyle("-webkit-mask", "50% none 50%") is null
+PASS innerStyle("-webkit-mask", "repeat-x repeat-x") is null
+PASS innerStyle("-webkit-mask", "space repeat-y") is null
+PASS innerStyle("-webkit-mask", "repeat space space") is null
+PASS innerStyle("-webkit-mask", "padding-box border-box content-box") is null
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

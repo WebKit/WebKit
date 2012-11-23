@@ -1,3 +1,19 @@
+2012-11-22  Dirk Schulze  <krit@webkit.org>
+
+        -webkit-mask shorthand switches -webkit-mask-clip and -webkit-mask-origin values
+        https://bugs.webkit.org/show_bug.cgi?id=103083
+
+        Reviewed by Antti Koivisto.
+
+        The order of CSSPropertyWebkitMaskOrigin and CSSPropertyWebkitMaskClip was not correct
+        for property value. Just changed the order in the property array to match behavior of
+        background and CSS Masking spec.
+
+        Test: fast/masking/parsing-mask.html
+
+        * css/StylePropertyShorthand.cpp:
+        (WebCore::webkitMaskShorthand):
+
 2012-11-22  John Mellor  <johnme@chromium.org>
 
         Text Autosizing: Improve handling of nested comments on reddit.com
