@@ -451,6 +451,7 @@ void LayerTreeRenderer::removeTile(WebLayerID layerID, int tileID)
     RefPtr<CoordinatedBackingStore> backingStore = getBackingStore(layer);
     backingStore->removeTile(tileID);
     resetBackingStoreSizeToLayerSize(layer);
+    m_backingStoresWithPendingBuffers.add(backingStore);
     removeBackingStoreIfNeeded(layer);
 }
 
