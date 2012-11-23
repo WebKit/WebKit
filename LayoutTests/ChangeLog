@@ -1,5 +1,14 @@
 2012-11-23  Robert Kroeger  <rjkroege@chromium.org>
 
+        Unreviewed gardening: text failures in:
+        * inspector/console/command-line-api-inspect.html
+        * inspector/runtime/runtime-localStorage-getProperties.html
+        https://bugs.webkit.org/show_bug.cgi?id=103161
+
+        * platform/chromium/TestExpectations:
+
+2012-11-23  Robert Kroeger  <rjkroege@chromium.org>
+
         Unreviewed gardening: update test expectations for
         svg/hixie/perf/007.xml
 
