@@ -95,11 +95,7 @@ WebScreenInfo WebScreenInfoFactory::screenInfo(NSView* view)
 
     WebScreenInfo results;
 
-    float deviceDPI = 160 * deviceScaleFactor(view);
-    results.horizontalDPI = deviceDPI;
-    results.verticalDPI = deviceDPI;
     results.deviceScaleFactor = static_cast<int>(deviceScaleFactor(view));
-
     results.depth = NSBitsPerPixelFromDepth([screen depth]);
     results.depthPerComponent = NSBitsPerSampleFromDepth([screen depth]);
     results.isMonochrome =

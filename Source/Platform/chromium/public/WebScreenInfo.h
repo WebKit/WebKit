@@ -36,12 +36,6 @@
 namespace WebKit {
 
 struct WebScreenInfo {
-    // The horizontal screen dpi (deprecated).
-    int horizontalDPI;
-
-    // The vertical screen dpi (deprecated).
-    int verticalDPI;
-
     // Device scale factor. Specifies the ratio between physical and logical
     // pixels.
     float deviceScaleFactor;
@@ -74,9 +68,7 @@ struct WebScreenInfo {
     WebRect availableRect;
 
     WebScreenInfo()
-        : horizontalDPI(0)
-        , verticalDPI(0)
-        , deviceScaleFactor(1)
+        : deviceScaleFactor(1)
         , depth(0)
         , depthPerComponent(0)
         , isMonochrome(false) { }

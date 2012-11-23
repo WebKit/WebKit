@@ -65,8 +65,7 @@ WebScreenInfo WebScreenInfoFactory::screenInfo(HWND window)
     ASSERT(hdc);
 
     WebScreenInfo results;
-    results.horizontalDPI = GetDeviceCaps(hdc, LOGPIXELSX);
-    results.verticalDPI = GetDeviceCaps(hdc, LOGPIXELSY);
+    // FIXME: Initialize the device scale factor.
     results.depth = devMode.dmBitsPerPel;
     results.depthPerComponent = devMode.dmBitsPerPel / 3;  // Assumes RGB
     results.isMonochrome = devMode.dmColor == DMCOLOR_MONOCHROME;

@@ -1,3 +1,16 @@
+2012-11-23  Sami Kyostila  <skyostil@chromium.org>
+
+        [chromium] Remove WebScreenInfo.{horizontal,vertical}DPI
+        https://bugs.webkit.org/show_bug.cgi?id=101772
+
+        Reviewed by Adam Barth.
+
+        Now that nothing is using WebScreenInfo.{horizontal,vertical}DPI we can simply
+        remove them.
+
+        * chromium/public/WebScreenInfo.h:
+        (WebKit::WebScreenInfo::WebScreenInfo):
+
 2012-11-22  David Reveman  <reveman@chromium.org>
 
         [Chromium] Add GL_CHROMIUM_pixel_transfer_buffer_object extension support.
