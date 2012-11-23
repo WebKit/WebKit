@@ -156,7 +156,7 @@ contains(TEMPLATE, lib) {
     DEFINES += BUILDING_$${TARGET}
 
     # Triggers the right export macro for the QtWebKit API (see qwebkitglobal.h)
-    DEFINES += BUILDING_WEBKIT
+    !contains(QT, webkitwidgets): DEFINES += BUILDING_WEBKIT
 
     # Prevent name clashes when building both debug and release. Qt5's module
     # system already takes care of this for the top level QtWebKit library.

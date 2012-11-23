@@ -1,5 +1,21 @@
 2012-11-23  Simon Hausmann  <simon.hausmann@digia.com>
 
+        [Qt] Compiling against QtWebkit API requires QT_DLL to be defined
+        https://bugs.webkit.org/show_bug.cgi?id=102942
+
+        Reviewed by Tor Arne Vestbø.
+
+        Remove the requirement of having QT_DLL defined in order for the QWEBKIT_EXPORT
+        macro to be defined as Q_DECL_IMPORT. Instead unify the export macro definition
+        to follow the same rules as other Qt 5 modules, with the exception that instead of
+        QT_BUILD_WEBKIT_LIB we continue to use BUILDING_WEBKIT, because that's used also
+        in other cross-platform header files to determine the correct meaning of export
+        macros.
+
+        * Api/qwebkitglobal.h:
+
+2012-11-23  Simon Hausmann  <simon.hausmann@digia.com>
+
         [Qt] QWebPage::shouldInterruptJavaScript should be virtual in Qt 5
         https://bugs.webkit.org/show_bug.cgi?id=103111
 
