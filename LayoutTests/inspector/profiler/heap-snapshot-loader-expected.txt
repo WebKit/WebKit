@@ -7,3 +7,5 @@ Running: heapSnapshotSaveToFileTest
 
 Running: heapSnapshotLoadFromFileTest
 
+Running: heapSnapshotRejectToSaveToFileTest
+

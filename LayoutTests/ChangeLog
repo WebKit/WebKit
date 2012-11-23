@@ -1,3 +1,16 @@
+2012-11-22  Eugene Klyuchnikov  <eustas.bug@gmail.com>
+
+        Web Inspector: No "Save Heap Snapshot" option after canceling save to file dialog.
+        https://bugs.webkit.org/show_bug.cgi?id=100916
+
+        Reviewed by Yury Semikhatsky.
+
+        Extracted "injectMockProfile" method and reused it in new test.
+
+        * inspector/profiler/heap-snapshot-loader-expected.txt: Added test case.
+        * inspector/profiler/heap-snapshot-loader.html:
+        Refactored and added new test case.
+
 2012-11-23  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         [Qt] REGRESSION(r135507): It made 13 tests fail

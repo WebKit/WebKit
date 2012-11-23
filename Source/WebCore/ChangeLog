@@ -1,3 +1,15 @@
+2012-11-22  Eugene Klyuchnikov  <eustas.bug@gmail.com>
+
+        Web Inspector: No "Save Heap Snapshot" option after canceling save to file dialog.
+        https://bugs.webkit.org/show_bug.cgi?id=100916
+
+        Reviewed by Yury Semikhatsky.
+
+        Fixed order of operations - now receiver is assigned only when save
+        dialog responds.
+
+        * inspector/front-end/HeapSnapshotView.js: Fixed order of operations.
+
 2012-11-23  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         [Qt] REGRESSION(r135507): It made 13 tests fail
