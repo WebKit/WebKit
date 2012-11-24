@@ -113,6 +113,10 @@ PassRefPtr<CSSPrimitiveValue> CSSValuePool::createValue(double value, CSSPrimiti
 
 PassRefPtr<CSSPrimitiveValue> CSSValuePool::createFontFamilyValue(const String& familyName)
 {
+    const int maximumFontFamilyCacheSize = 128;
+    if (m_fontFamilyValueCache.size() >= maximumFontFamilyCacheSize)
+        m_fontFamilyValueCache.remove(m_fontFamilyValueCache.begin());
+
     RefPtr<CSSPrimitiveValue>& value = m_fontFamilyValueCache.add(familyName, 0).iterator->value;
     if (!value)
         value = CSSPrimitiveValue::create(familyName, CSSPrimitiveValue::CSS_STRING);

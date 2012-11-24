@@ -1,3 +1,19 @@
+2012-11-24  Andreas Kling  <akling@apple.com>
+
+        Put computed style 'font-family' values in the CSSValuePool.
+        <http://webkit.org/b/103184>
+
+        Reviewed by Ojan Vafai.
+
+        Use CSSValuePool::createFontFamilyValue() when handing out 'font-family' values from CSSComputedStyleDeclaration.
+        This avoids creating extra CSSPrimitiveValue objects since we already have these in the pool from parsing.
+        Also added a max capacity to the font-family cache (using random eviction.)
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::valueForFamily):
+        * css/CSSValuePool.cpp:
+        (WebCore::CSSValuePool::createFontFamilyValue):
+
 2012-11-24  Hayato Ito  <hayato@chromium.org>
 
         It's confusing that return values of 'bool Node::dispatchEvent(...)' and 'bool Node::dispatchMouseEvent(..)' have the opposite meanings.
