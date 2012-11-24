@@ -1,3 +1,20 @@
+2012-11-23  Kangil Han  <kangil.han@samsung.com>
+
+        Fix unused parameter compile warnings
+        https://bugs.webkit.org/show_bug.cgi?id=103167
+
+        Reviewed by Gyuyoung Kim.
+
+        Remove compile warning messages by omitting parameter name and using UNUSED_PARAM.
+
+        * accessibility/atk/WebKitAccessibleHyperlink.cpp:
+        (webkitAccessibleHyperlinkIsSelectedLink):
+        * accessibility/atk/WebKitAccessibleInterfaceText.cpp:
+        (webkitAccessibleTextGetTextAfterOffset):
+        (webkitAccessibleTextGetTextAtOffset):
+        (webkitAccessibleTextGetTextBeforeOffset):
+        (webkitAccessibleTextGetOffsetAtPoint):
+
 2012-11-23  Michael Saboff  <msaboff@apple.com>
 
         listMarkerText() should create 8 bit strings when possible

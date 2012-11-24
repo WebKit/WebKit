@@ -567,6 +567,12 @@ static gchar* webkitAccessibleTextGetTextAfterOffset(AtkText* text, gint offset,
 #if PLATFORM(GTK)
     return gail_text_util_get_text(getGailTextUtilForAtk(text), getPangoLayoutForAtk(text), GAIL_AFTER_OFFSET, boundaryType, offset, startOffset, endOffset);
 #else
+    UNUSED_PARAM(text);
+    UNUSED_PARAM(offset);
+    UNUSED_PARAM(boundaryType);
+    UNUSED_PARAM(startOffset);
+    UNUSED_PARAM(endOffset);
+
     notImplemented();
     return 0;
 #endif
@@ -577,6 +583,12 @@ static gchar* webkitAccessibleTextGetTextAtOffset(AtkText* text, gint offset, At
 #if PLATFORM(GTK)
     return gail_text_util_get_text(getGailTextUtilForAtk(text), getPangoLayoutForAtk(text), GAIL_AT_OFFSET, boundaryType, offset, startOffset, endOffset);
 #else
+    UNUSED_PARAM(text);
+    UNUSED_PARAM(offset);
+    UNUSED_PARAM(boundaryType);
+    UNUSED_PARAM(startOffset);
+    UNUSED_PARAM(endOffset);
+
     notImplemented();
     return 0;
 #endif
@@ -587,6 +599,12 @@ static gchar* webkitAccessibleTextGetTextBeforeOffset(AtkText* text, gint offset
 #if PLATFORM(GTK)
     return gail_text_util_get_text(getGailTextUtilForAtk(text), getPangoLayoutForAtk(text), GAIL_BEFORE_OFFSET, boundaryType, offset, startOffset, endOffset);
 #else
+    UNUSED_PARAM(text);
+    UNUSED_PARAM(offset);
+    UNUSED_PARAM(boundaryType);
+    UNUSED_PARAM(startOffset);
+    UNUSED_PARAM(endOffset);
+
     notImplemented();
     return 0;
 #endif
@@ -684,7 +702,7 @@ static gint webkitAccessibleTextGetCharacterCount(AtkText* text)
     return accessibilityObjectLength(core(text));
 }
 
-static gint webkitAccessibleTextGetOffsetAtPoint(AtkText* text, gint x, gint y, AtkCoordType coords)
+static gint webkitAccessibleTextGetOffsetAtPoint(AtkText* text, gint x, gint y, AtkCoordType)
 {
     // FIXME: Use the AtkCoordType
     // TODO: Is it correct to ignore range.length?

@@ -281,7 +281,7 @@ static gint webkitAccessibleHyperlinkGetNAnchors(AtkHyperlink* link)
     return 1;
 }
 
-static gboolean webkitAccessibleHyperlinkIsSelectedLink(AtkHyperlink* link)
+static gboolean webkitAccessibleHyperlinkIsSelectedLink(AtkHyperlink*)
 {
     // Not implemented: this function is deprecated in ATK now
     notImplemented();
