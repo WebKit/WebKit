@@ -227,10 +227,10 @@ MouseEvent* MouseEventDispatchMediator::event() const
 bool MouseEventDispatchMediator::dispatchEvent(EventDispatcher* dispatcher) const
 {
     if (dispatcher->node()->disabled()) // Don't even send DOM events for disabled controls..
-        return true;
+        return false;
 
     if (event()->type().isEmpty())
-        return false; // Shouldn't happen.
+        return true; // Shouldn't happen.
 
     EventTarget* relatedTarget = event()->relatedTarget();
     dispatcher->adjustRelatedTarget(event(), relatedTarget);
@@ -239,7 +239,7 @@ bool MouseEventDispatchMediator::dispatchEvent(EventDispatcher* dispatcher) cons
     bool swallowEvent = event()->defaultHandled() || event()->defaultPrevented();
 
     if (event()->type() != eventNames().clickEvent || event()->detail() != 2)
-        return swallowEvent;
+        return !swallowEvent;
     // Special case: If it's a double click event, we also send the dblclick event. This is not part
     // of the DOM specs, but is used for compatibility with the ondblclick="" attribute. This is treated
     // as a separate event in other DOM-compliant browsers like Firefox, and so we do the same.
@@ -252,8 +252,8 @@ bool MouseEventDispatchMediator::dispatchEvent(EventDispatcher* dispatcher) cons
         doubleClickEvent->setDefaultHandled();
     EventDispatcher::dispatchEvent(dispatcher->node(), MouseEventDispatchMediator::create(doubleClickEvent));
     if (doubleClickEvent->defaultHandled() || doubleClickEvent->defaultPrevented())
-        return true;
-    return swallowEvent;
+        return false;
+    return !swallowEvent;
 }
 
 } // namespace WebCore

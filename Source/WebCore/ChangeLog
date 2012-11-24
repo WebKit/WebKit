@@ -1,3 +1,28 @@
+2012-11-24  Hayato Ito  <hayato@chromium.org>
+
+        It's confusing that return values of 'bool Node::dispatchEvent(...)' and 'bool Node::dispatchMouseEvent(..)' have the opposite meanings.
+        https://bugs.webkit.org/show_bug.cgi?id=103058
+
+        Reviewed by Ojan Vafai.
+
+        Refactor MouseEventDispatchMediator::dispatchEvent() and
+        EventHandler::dispatchMouseEvent() so that they return bool
+        which has the same meaning of the return value of
+        Node::dispatchEvent().
+
+        No tests. No change in behavior.
+
+        * dom/MouseEvent.cpp:
+        (WebCore::MouseEventDispatchMediator::dispatchEvent):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleMousePressEvent):
+        (WebCore::EventHandler::handleMouseDoubleClickEvent):
+        (WebCore::EventHandler::handleMouseMoveEvent):
+        (WebCore::EventHandler::handleMouseReleaseEvent):
+        (WebCore::EventHandler::dispatchMouseEvent):
+        (WebCore::EventHandler::sendContextMenuEvent):
+        (WebCore::EventHandler::sendContextMenuEventForKey):
+
 2012-11-23  Kangil Han  <kangil.han@samsung.com>
 
         Fix unused parameter compile warnings
