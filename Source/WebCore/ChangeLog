@@ -1,3 +1,17 @@
+2012-11-24  Brent Fulgham  <bfulgham@webkit.org>
+
+        [WinCairo] Avoid access violation when frame is NULL.
+        https://bugs.webkit.org/show_bug.cgi?id=68753
+
+        BitmapImage::drawFrameMatchingSourceSize causes an access violation
+        if BitmapImage::frameAtIndex returns NULL. (Found by David Delaune).
+
+        Reviewed by Simon Fraser.
+
+        * platform/graphics/win/ImageCairoWin.cpp:
+        (WebCore::BitmapImage::drawFrameMatchingSourceSize): Check for null
+        cairo_surface_t pointer and avoid dereferencing.
+
 2012-11-24  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] Refactor RenderThemeEfl::getThemePartFromCache()

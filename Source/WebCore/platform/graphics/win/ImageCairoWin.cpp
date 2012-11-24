@@ -96,6 +96,9 @@ void BitmapImage::drawFrameMatchingSourceSize(GraphicsContext* ctxt, const Float
     size_t frames = frameCount();
     for (size_t i = 0; i < frames; ++i) {
         cairo_surface_t* image = frameAtIndex(i)->surface();
+        if (!image)
+            continue;
+
         if (cairo_image_surface_get_height(image) == static_cast<size_t>(srcSize.height()) && cairo_image_surface_get_width(image) == static_cast<size_t>(srcSize.width())) {
             size_t currentFrame = m_currentFrame;
             m_currentFrame = i;
