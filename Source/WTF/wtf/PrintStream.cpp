@@ -24,20 +24,28 @@
  */
 
 #include "config.h"
-#include "Disassembler.h"
+#include "PrintStream.h"
 
-#include "MacroAssemblerCodeRef.h"
-#include <wtf/DataLog.h>
+#include <stdio.h>
+#include <wtf/text/CString.h>
+#include <wtf/text/WTFString.h>
 
-namespace JSC {
+namespace WTF {
 
-void disassemble(const MacroAssemblerCodePtr& codePtr, size_t size, const char* prefix, PrintStream& out)
+PrintStream::PrintStream() { }
+PrintStream::~PrintStream() { } // Force the vtable to be in this module
+
+void PrintStream::printf(const char* format, ...)
 {
-    if (tryToDisassemble(codePtr, size, prefix, out))
-        return;
-    
-    out.printf("%sdisassembly not available for range %p...%p\n", prefix, codePtr.executableAddress(), static_cast<char*>(codePtr.executableAddress()) + size);
+    va_list argList;
+    va_start(argList, format);
+    vprintf(format, argList);
+    va_end(argList);
 }
 
-} // namespace JSC
+void PrintStream::flush()
+{
+}
+
+} // namespace WTF
 

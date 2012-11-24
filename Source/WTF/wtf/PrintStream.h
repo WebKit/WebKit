@@ -23,21 +23,37 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
-#include "Disassembler.h"
+#ifndef PrintStream_h
+#define PrintStream_h
 
-#include "MacroAssemblerCodeRef.h"
-#include <wtf/DataLog.h>
+#include <stdarg.h>
+#include <wtf/FastAllocBase.h>
+#include <wtf/Noncopyable.h>
+#include <wtf/Platform.h>
+#include <wtf/StdLibExtras.h>
 
-namespace JSC {
+namespace WTF {
 
-void disassemble(const MacroAssemblerCodePtr& codePtr, size_t size, const char* prefix, PrintStream& out)
-{
-    if (tryToDisassemble(codePtr, size, prefix, out))
-        return;
-    
-    out.printf("%sdisassembly not available for range %p...%p\n", prefix, codePtr.executableAddress(), static_cast<char*>(codePtr.executableAddress()) + size);
-}
+class CString;
+class String;
 
-} // namespace JSC
+class PrintStream {
+    WTF_MAKE_FAST_ALLOCATED; WTF_MAKE_NONCOPYABLE(PrintStream);
+public:
+    PrintStream();
+    virtual ~PrintStream();
+
+    void printf(const char* format, ...) WTF_ATTRIBUTE_PRINTF(2, 3);
+    virtual void vprintf(const char* format, va_list) WTF_ATTRIBUTE_PRINTF(2, 0) = 0;
+
+    // Typically a no-op for many subclasses of PrintStream, this is a hint that
+    // the implementation should flush its buffers if it had not done so already.
+    virtual void flush();
+};
+
+} // namespace WTF
+
+using WTF::PrintStream;
+
+#endif // PrintStream_h
 

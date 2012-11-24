@@ -1942,7 +1942,7 @@ inline bool AbstractState::mergeVariableBetweenBlocks(AbstractValue& destination
     return destination.merge(source);
 }
 
-void AbstractState::dump(FILE* out)
+void AbstractState::dump(PrintStream& out)
 {
     bool first = true;
     for (size_t i = 0; i < m_block->size(); ++i) {
@@ -1953,8 +1953,8 @@ void AbstractState::dump(FILE* out)
         if (first)
             first = false;
         else
-            fprintf(out, " ");
-        fprintf(out, "@%lu:", static_cast<unsigned long>(index));
+            out.printf(" ");
+        out.printf("@%lu:", static_cast<unsigned long>(index));
         value.dump(out);
     }
 }

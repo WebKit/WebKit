@@ -781,6 +781,14 @@
 			>
 		</File>
 		<File
+			RelativePath="..\wtf\FilePrintStream.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\wtf\FilePrintStream.h"
+			>
+		</File>
+		<File
 			RelativePath="..\wtf\FixedArray.h"
 			>
 		</File>
@@ -1094,6 +1102,14 @@
 		</File>
 		<File
 			RelativePath="..\wtf\PossiblyNull.h"
+			>
+		</File>
+		<File
+			RelativePath="..\wtf\PrintStream.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\wtf\PrintStream.h"
 			>
 		</File>
 		<File

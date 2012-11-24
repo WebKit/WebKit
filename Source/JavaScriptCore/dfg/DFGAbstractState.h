@@ -180,7 +180,7 @@ public:
     // MergeToSuccessors.
     bool mergeToSuccessors(Graph&, BasicBlock*);
     
-    void dump(FILE* out);
+    void dump(PrintStream& out);
     
 private:
     void clobberWorld(const CodeOrigin&, unsigned indexInBlock);

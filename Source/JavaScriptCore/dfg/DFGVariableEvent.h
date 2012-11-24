@@ -240,11 +240,11 @@ public:
     
     const VariableRepresentation& variableRepresentation() const { return u; }
     
-    void dump(FILE*) const;
+    void dump(PrintStream&) const;
     
 private:
-    void dumpFillInfo(const char* name, FILE*) const;
-    void dumpSpillInfo(const char* name, FILE*) const;
+    void dumpFillInfo(const char* name, PrintStream&) const;
+    void dumpSpillInfo(const char* name, PrintStream&) const;
     
     NodeIndex m_index;
     

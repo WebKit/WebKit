@@ -1,3 +1,38 @@
+2012-11-21  Filip Pizlo  <fpizlo@apple.com>
+
+        Any function that can log things should be able to easily log them to a memory buffer as well
+        https://bugs.webkit.org/show_bug.cgi?id=103000
+
+        Reviewed by Sam Weinig.
+
+        Change all users of WTF::dataFile() to expect a PrintStream& rather than a FILE*.
+
+        * bytecode/Operands.h:
+        (JSC::OperandValueTraits::dump):
+        (JSC::dumpOperands):
+        (JSC):
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::dump):
+        * dfg/DFGAbstractState.h:
+        (AbstractState):
+        * dfg/DFGAbstractValue.h:
+        (JSC::DFG::AbstractValue::dump):
+        * dfg/DFGCommon.h:
+        (JSC::DFG::NodeIndexTraits::dump):
+        * dfg/DFGStructureAbstractValue.h:
+        (JSC::DFG::StructureAbstractValue::dump):
+        * dfg/DFGVariableEvent.cpp:
+        (JSC::DFG::VariableEvent::dump):
+        (JSC::DFG::VariableEvent::dumpFillInfo):
+        (JSC::DFG::VariableEvent::dumpSpillInfo):
+        * dfg/DFGVariableEvent.h:
+        (VariableEvent):
+        * disassembler/Disassembler.h:
+        (JSC):
+        (JSC::tryToDisassemble):
+        * disassembler/UDis86Disassembler.cpp:
+        (JSC::tryToDisassemble):
+
 2012-11-23  Alexis Menard  <alexis@webkit.org>
 
         [CSS3 Backgrounds and Borders] Implement new CSS3 background-position parsing.

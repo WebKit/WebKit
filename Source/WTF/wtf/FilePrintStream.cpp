@@ -24,20 +24,32 @@
  */
 
 #include "config.h"
-#include "Disassembler.h"
+#include "FilePrintStream.h"
 
-#include "MacroAssemblerCodeRef.h"
-#include <wtf/DataLog.h>
+namespace WTF {
 
-namespace JSC {
-
-void disassemble(const MacroAssemblerCodePtr& codePtr, size_t size, const char* prefix, PrintStream& out)
+FilePrintStream::FilePrintStream(FILE* file, AdoptionMode adoptionMode)
+    : m_file(file)
+    , m_adoptionMode(adoptionMode)
 {
-    if (tryToDisassemble(codePtr, size, prefix, out))
-        return;
-    
-    out.printf("%sdisassembly not available for range %p...%p\n", prefix, codePtr.executableAddress(), static_cast<char*>(codePtr.executableAddress()) + size);
 }
 
-} // namespace JSC
+FilePrintStream::~FilePrintStream()
+{
+    if (m_adoptionMode == Borrow)
+        return;
+    fclose(m_file);
+}
+
+void FilePrintStream::vprintf(const char* format, va_list argList)
+{
+    vfprintf(m_file, format, argList);
+}
+
+void FilePrintStream::flush()
+{
+    fflush(m_file);
+}
+
+} // namespace WTF
 

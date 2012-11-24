@@ -47,6 +47,8 @@ wtf_sources += \
     Source/WTF/wtf/FastBitVector.h \
     Source/WTF/wtf/FastMalloc.cpp \
     Source/WTF/wtf/FastMalloc.h \
+    Source/WTF/wtf/FilePrintStream.cpp \
+    Source/WTF/wtf/FilePrintStream.h \
     Source/WTF/wtf/FixedArray.h \
     Source/WTF/wtf/Float32Array.h \
     Source/WTF/wtf/Float64Array.h \
@@ -128,6 +130,8 @@ wtf_sources += \
     Source/WTF/wtf/PassTraits.h \
     Source/WTF/wtf/Platform.h \
     Source/WTF/wtf/PossiblyNull.h \
+    Source/WTF/wtf/PrintStream.cpp \
+    Source/WTF/wtf/PrintStream.h \
     Source/WTF/wtf/RandomNumber.cpp \
     Source/WTF/wtf/RandomNumber.h \
     Source/WTF/wtf/RandomNumberSeed.h \

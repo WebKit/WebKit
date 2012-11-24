@@ -28,7 +28,7 @@
 
 #include "CallFrame.h"
 #include "JSObject.h"
-
+#include <wtf/PrintStream.h>
 #include <wtf/Vector.h>
 
 namespace JSC {
@@ -43,7 +43,7 @@ template<typename T> struct OperandValueTraits;
 template<typename T>
 struct OperandValueTraits {
     static T defaultValue() { return T(); }
-    static void dump(const T& value, FILE* out) { value.dump(out); }
+    static void dump(const T& value, PrintStream& out) { value.dump(out); }
 };
 
 template<typename T, typename Traits = OperandValueTraits<T> >
@@ -190,17 +190,17 @@ private:
 };
 
 template<typename T, typename Traits>
-void dumpOperands(const Operands<T, Traits>& operands, FILE* out)
+void dumpOperands(const Operands<T, Traits>& operands, PrintStream& out)
 {
     for (size_t argument = 0; argument < operands.numberOfArguments(); ++argument) {
         if (argument)
-            fprintf(out, " ");
+            out.printf(" ");
         Traits::dump(operands.argument(argument), out);
     }
-    fprintf(out, " : ");
+    out.printf(" : ");
     for (size_t local = 0; local < operands.numberOfLocals(); ++local) {
         if (local)
-            fprintf(out, " ");
+            out.printf(" ");
         Traits::dump(operands.local(local), out);
     }
 }

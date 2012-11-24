@@ -26,6 +26,7 @@
 #include "config.h"
 #include "DataLog.h"
 #include <stdarg.h>
+#include <wtf/FilePrintStream.h>
 #include <wtf/Threading.h>
 
 #define DATA_LOG_TO_FILE 0
@@ -35,34 +36,37 @@
 
 namespace WTF {
 
-#if DATA_LOG_TO_FILE
-static FILE* file;
+#if USE(PTHREADS)
+static pthread_once_t initializeLogFileOnceKey = PTHREAD_ONCE_INIT;
+#endif
+
+static FilePrintStream* file;
 
 static void initializeLogFileOnce()
 {
+#if DATA_LOG_TO_FILE
 #ifdef DATA_LOG_FILENAME
     const char* filename = DATA_LOG_FILENAME;
 #else
     const char* filename = getenv("WTF_DATA_LOG_FILENAME");
 #endif
     if (filename) {
-        file = fopen(filename, "w");
-        if (!file)
+        FILE* rawFile = fopen(filename, "w");
+        if (rawFile)
+            file = new FilePrintStream(rawFile);
+        else
             fprintf(stderr, "Warning: Could not open log file %s for writing.\n", filename);
     }
+#endif // DATA_LOG_TO_FILE
     if (!file)
-        file = stderr;
+        file = new FilePrintStream(stderr, FilePrintStream::Borrow);
     
-    setvbuf(file, 0, _IONBF, 0); // Prefer unbuffered output, so that we get a full log upon crash or deadlock.
+    setvbuf(file->file(), 0, _IONBF, 0); // Prefer unbuffered output, so that we get a full log upon crash or deadlock.
 }
-
-#if OS(DARWIN)
-static pthread_once_t initializeLogFileOnceKey = PTHREAD_ONCE_INIT;
-#endif
 
 static void initializeLogFile()
 {
-#if OS(DARWIN)
+#if USE(PTHREADS)
     pthread_once(&initializeLogFileOnceKey, initializeLogFileOnce);
 #else
     if (!file)
@@ -70,21 +74,15 @@ static void initializeLogFile()
 #endif
 }
 
-FILE* dataFile()
+FilePrintStream& dataFile()
 {
     initializeLogFile();
-    return file;
+    return *file;
 }
-#else // DATA_LOG_TO_FILE
-FILE* dataFile()
-{
-    return stderr;
-}
-#endif // DATA_LOG_TO_FILE
 
 void dataLogFV(const char* format, va_list argList)
 {
-    vfprintf(dataFile(), format, argList);
+    dataFile().vprintf(format, argList);
 }
 
 void dataLogF(const char* format, ...)
@@ -97,7 +95,7 @@ void dataLogF(const char* format, ...)
 
 void dataLogFString(const char* str)
 {
-    fputs(str, dataFile());
+    dataFile().printf("%s", str);
 }
 
 } // namespace WTF

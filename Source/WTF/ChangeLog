@@ -1,3 +1,72 @@
+2012-11-21  Filip Pizlo  <fpizlo@apple.com>
+
+        Any function that can log things should be able to easily log them to a memory buffer as well
+        https://bugs.webkit.org/show_bug.cgi?id=103000
+
+        Reviewed by Sam Weinig.
+
+        We have a number of places where we pass around a FILE* as a target to which to print
+        some logging information. But the purpose of passing FILE* instead of always assuming
+        that we should dump to stderr is that it may be sometimes useful to send the logging
+        information elsewhere. Unfortunately, FILE* isn't quite powerful enough: it's combersome
+        to use it to send logging to a string, for example.
+        
+        We could get around this by using <iostream> and <sstream>, but so far this aspect of
+        C++ has not been part of the WebKit coding conventions. Personally I find <iostream>
+        awkward due to its abuse of operator overloading.
+        
+        So this patch introduces the PrintStream abstract class, which offers printf-like
+        functionality while completely abstracting the destination and mechanism of the printing
+        output. It would be trivial to implement a StringPrintStream, for example. This will feed
+        into work on https://bugs.webkit.org/show_bug.cgi?id=102999.
+        
+        This also sets us up for creating templatized print() and println() methods that will
+        allow us to say things like out.print("count = ", count, "\n"), but that is the topic
+        of https://bugs.webkit.org/show_bug.cgi?id=103009.
+        
+        This patch also changes dataLog() to use FilePrintStream internally, and WTF::dataFile()
+        now returns a FilePrintStream&. Any previous users of WTF::dataFile() have been changed
+        to expect a PrintStream&.
+
+        * GNUmakefile.list.am:
+        * WTF.pro:
+        * WTF.vcproj/WTF.vcproj:
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/DataLog.cpp:
+        (WTF):
+        (WTF::initializeLogFileOnce):
+        (WTF::initializeLogFile):
+        (WTF::dataFile):
+        (WTF::dataLogV):
+        (WTF::dataLogString):
+        * wtf/DataLog.h:
+        (WTF):
+        * wtf/FilePrintStream.cpp: Added.
+        (WTF):
+        (WTF::FilePrintStream::FilePrintStream):
+        (WTF::FilePrintStream::~FilePrintStream):
+        (WTF::FilePrintStream::vprintf):
+        (WTF::FilePrintStream::flush):
+        * wtf/FilePrintStream.h: Added.
+        (WTF):
+        (FilePrintStream):
+        (WTF::FilePrintStream::file):
+        * wtf/PrintStream.cpp: Added.
+        (WTF):
+        (WTF::PrintStream::PrintStream):
+        (WTF::PrintStream::~PrintStream):
+        (WTF::PrintStream::printf):
+        (WTF::PrintStream::print):
+        (WTF::PrintStream::println):
+        (WTF::PrintStream::flush):
+        (WTF::print):
+        * wtf/PrintStream.h: Added.
+        (WTF):
+        (PrintStream):
+        (WTF::print):
+        (WTF::println):
+
 2012-11-23  Robert Kroeger  <rjkroege@chromium.org>
 
         Remove unused ScrollByPixelVelocity

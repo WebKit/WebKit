@@ -23,21 +23,37 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
-#include "Disassembler.h"
+#ifndef FilePrintStream_h
+#define FilePrintStream_h
 
-#include "MacroAssemblerCodeRef.h"
-#include <wtf/DataLog.h>
+#include <stdio.h>
+#include <wtf/PrintStream.h>
 
-namespace JSC {
+namespace WTF {
 
-void disassemble(const MacroAssemblerCodePtr& codePtr, size_t size, const char* prefix, PrintStream& out)
-{
-    if (tryToDisassemble(codePtr, size, prefix, out))
-        return;
+class FilePrintStream : public PrintStream {
+public:
+    enum AdoptionMode {
+        Adopt,
+        Borrow
+    };
     
-    out.printf("%sdisassembly not available for range %p...%p\n", prefix, codePtr.executableAddress(), static_cast<char*>(codePtr.executableAddress()) + size);
-}
+    FilePrintStream(FILE*, AdoptionMode = Adopt);
+    virtual ~FilePrintStream();
+    
+    FILE* file() { return m_file; }
+    
+    void vprintf(const char* format, va_list) WTF_ATTRIBUTE_PRINTF(2, 0);
+    void flush();
 
-} // namespace JSC
+private:
+    FILE* m_file;
+    AdoptionMode m_adoptionMode;
+};
+
+} // namespace WTF
+
+using WTF::FilePrintStream;
+
+#endif // FilePrintStream_h
 

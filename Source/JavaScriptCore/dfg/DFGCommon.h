@@ -92,12 +92,12 @@ static const BlockIndex NoBlock = UINT_MAX;
 
 struct NodeIndexTraits {
     static NodeIndex defaultValue() { return NoNode; }
-    static void dump(NodeIndex value, FILE* out)
+    static void dump(NodeIndex value, PrintStream& out)
     {
         if (value == NoNode)
-            fprintf(out, "-");
+            out.printf("-");
         else
-            fprintf(out, "@%u", value);
+            out.printf("@%u", value);
     }
 };
 

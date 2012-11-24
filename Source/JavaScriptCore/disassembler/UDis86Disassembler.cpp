@@ -33,7 +33,7 @@
 
 namespace JSC {
 
-bool tryToDisassemble(const MacroAssemblerCodePtr& codePtr, size_t size, const char* prefix, FILE* out)
+bool tryToDisassemble(const MacroAssemblerCodePtr& codePtr, size_t size, const char* prefix, PrintStream& out)
 {
     ud_t disassembler;
     ud_init(&disassembler);
@@ -50,7 +50,7 @@ bool tryToDisassemble(const MacroAssemblerCodePtr& codePtr, size_t size, const c
     while (ud_disassemble(&disassembler)) {
         char pcString[20];
         snprintf(pcString, sizeof(pcString), "0x%lx", static_cast<unsigned long>(currentPC));
-        fprintf(out, "%s%16s: %s\n", prefix, pcString, ud_insn_asm(&disassembler));
+        out.printf("%s%16s: %s\n", prefix, pcString, ud_insn_asm(&disassembler));
         currentPC = disassembler.pc;
     }
     

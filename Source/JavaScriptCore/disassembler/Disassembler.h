@@ -26,18 +26,17 @@
 #ifndef Disassembler_h
 #define Disassembler_h
 
-#include <stdio.h>
 #include <wtf/Platform.h>
-#include <wtf/StdLibExtras.h>
+#include <wtf/PrintStream.h>
 
 namespace JSC {
 
 class MacroAssemblerCodePtr;
 
 #if ENABLE(DISASSEMBLER)
-bool tryToDisassemble(const MacroAssemblerCodePtr&, size_t, const char* prefix, FILE* out);
+bool tryToDisassemble(const MacroAssemblerCodePtr&, size_t, const char* prefix, PrintStream&);
 #else
-inline bool tryToDisassemble(const MacroAssemblerCodePtr&, size_t, const char*, FILE*)
+inline bool tryToDisassemble(const MacroAssemblerCodePtr&, size_t, const char*, PrintStream&)
 {
     return false;
 }
@@ -45,7 +44,7 @@ inline bool tryToDisassemble(const MacroAssemblerCodePtr&, size_t, const char*, 
 
 // Prints either the disassembly, or a line of text indicating that disassembly failed and
 // the range of machine code addresses.
-void disassemble(const MacroAssemblerCodePtr&, size_t, const char* prefix, FILE* out);
+void disassemble(const MacroAssemblerCodePtr&, size_t, const char* prefix, PrintStream& out);
 
 } // namespace JSC
 

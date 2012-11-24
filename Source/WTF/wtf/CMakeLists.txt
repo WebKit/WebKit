@@ -26,6 +26,7 @@ SET(WTF_HEADERS
     Encoder.h
     FastAllocBase.h
     FastMalloc.h
+    FilePrintStream.h
     FixedArray.h
     Forward.h
     GetPtr.h
@@ -86,6 +87,7 @@ SET(WTF_HEADERS
     ParallelJobsOpenMP.h
     Platform.h
     PossiblyNull.h
+    PrintStream.h
     RandomNumber.h
     RandomNumberSeed.h
     RedBlackTree.h
@@ -161,6 +163,7 @@ SET(WTF_SOURCES
     DecimalNumber.cpp
     DynamicAnnotations.cpp
     FastMalloc.cpp
+    FilePrintStream.cpp
     GregorianDateTime.cpp
     HashTable.cpp
     MD5.cpp
@@ -174,6 +177,7 @@ SET(WTF_SOURCES
     PageAllocationAligned.cpp
     PageBlock.cpp
     ParallelJobsGeneric.cpp
+    PrintStream.cpp
     RandomNumber.cpp
     RefCountedLeakCounter.cpp
     SHA1.cpp
