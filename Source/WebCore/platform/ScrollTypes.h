@@ -106,7 +106,6 @@ namespace WebCore {
         ScrollByPage,
         ScrollByDocument,
         ScrollByPixel,
-        ScrollByPixelVelocity,
         ScrollByPrecisePixel
     };
 

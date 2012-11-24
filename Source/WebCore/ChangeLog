@@ -1,3 +1,33 @@
+2012-11-23  Robert Kroeger  <rjkroege@chromium.org>
+
+        Remove unused ScrollByPixelVelocity
+        https://bugs.webkit.org/show_bug.cgi?id=102840
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=80311 wrongly introduced a new
+        kind of scroll: "ScrollByPixelVelocity". This code is not used on any platform
+        and will not be of use in the future so this patch removes it.
+
+        No new tests: code removal/cleanup.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::defaultWheelEventHandler):
+        (WebCore::EventHandler::handleGestureEvent):
+        * platform/PlatformWheelEvent.h:
+        * platform/ScrollAnimator.cpp:
+        (WebCore::ScrollAnimator::handleWheelEvent):
+        * platform/ScrollAnimatorNone.cpp:
+        (WebCore::ScrollAnimatorNone::ScrollAnimatorNone):
+        (WebCore::ScrollAnimatorNone::scroll):
+        (WebCore::ScrollAnimatorNone::cancelAnimations):
+        (WebCore::ScrollAnimatorNone::animationTimerFired):
+        * platform/ScrollAnimatorNone.h:
+        (ScrollAnimatorNone):
+        * platform/ScrollTypes.h:
+        * platform/ScrollableArea.cpp:
+        (WebCore::ScrollableArea::scroll):
+
 2012-11-23  Adenilson Cavalcanti  <cavalcantii@gmail.com>
 
         Removing unnecessary RenderBox friend access in RenderObject

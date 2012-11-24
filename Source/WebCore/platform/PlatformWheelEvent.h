@@ -58,7 +58,6 @@ namespace WebCore {
     enum PlatformWheelEventGranularity {
         ScrollByPageWheelEvent,
         ScrollByPixelWheelEvent,
-        ScrollByPixelVelocityWheelEvent
     };
 
 #if PLATFORM(MAC) || (PLATFORM(CHROMIUM) && OS(DARWIN))

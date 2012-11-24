@@ -146,30 +146,6 @@ TEST(ScrollAnimatorEnabled, Enabled)
     scrollAnimatorNone.reset();
 }
 
-TEST(ScrollAnimatorEnabled, flingScrollEncoding)
-{
-    MockScrollableArea scrollableArea(true);
-    MockScrollAnimatorNone scrollAnimatorNone(&scrollableArea);
-
-    scrollAnimatorNone.reset();
-
-    scrollAnimatorNone.scroll(HorizontalScrollbar, ScrollByPixelVelocity, 111, -42);
-    scrollAnimatorNone.scroll(VerticalScrollbar, ScrollByPixelVelocity, 222, 42);
-    EXPECT_EQ(-42, scrollAnimatorNone.m_fp.x());
-    EXPECT_EQ(42, scrollAnimatorNone.m_fp.y());
-    EXPECT_EQ(1, scrollAnimatorNone.m_count);
-    scrollAnimatorNone.reset();
-
-    scrollAnimatorNone.scroll(VerticalScrollbar, ScrollByPixelVelocity, 222, 42);
-    scrollAnimatorNone.scroll(HorizontalScrollbar, ScrollByPixelVelocity, 111, -42);
-    EXPECT_EQ(-42, scrollAnimatorNone.m_fp.x());
-    EXPECT_EQ(42, scrollAnimatorNone.m_fp.y());
-    EXPECT_EQ(1, scrollAnimatorNone.m_count);
-    scrollAnimatorNone.reset();
-}
-
-
-
 TEST(ScrollAnimatorEnabled, Disabled)
 {
     MockScrollableArea scrollableArea(false);

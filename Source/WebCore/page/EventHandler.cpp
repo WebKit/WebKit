@@ -2481,7 +2481,7 @@ void EventHandler::defaultWheelEventHandler(Node* startNode, WheelEvent* wheelEv
         return;
     
     Node* stopNode = m_previousWheelScrolledNode.get();
-    ScrollGranularity granularity = m_baseEventType == PlatformEvent::GestureScrollEnd ? ScrollByPixelVelocity : wheelGranularityToScrollGranularity(wheelEvent->granularity());
+    ScrollGranularity granularity = wheelGranularityToScrollGranularity(wheelEvent->granularity());
     
     // Break up into two scrolls if we need to.  Diagonal movement on 
     // a MacBook pro is an example of a 2-dimensional mouse wheel event (where both deltaX and deltaY can be set).
@@ -2588,8 +2588,6 @@ bool EventHandler::handleGestureEvent(const PlatformGestureEvent& gestureEvent)
     switch (gestureEvent.type()) {
     case PlatformEvent::GestureScrollBegin:
         return handleGestureScrollCore(gestureEvent, ScrollByPixelWheelEvent, false);
-    case PlatformEvent::GestureScrollEnd:
-        return handleGestureScrollCore(gestureEvent, ScrollByPixelVelocityWheelEvent, true);
     case PlatformEvent::GestureScrollUpdate:
         return handleGestureScrollUpdate(gestureEvent);
     case PlatformEvent::GestureTap:
@@ -2600,6 +2598,7 @@ bool EventHandler::handleGestureEvent(const PlatformGestureEvent& gestureEvent)
         return handleGestureLongPress(gestureEvent);
     case PlatformEvent::GestureTwoFingerTap:
         return handleGestureTwoFingerTap(gestureEvent);
+    case PlatformEvent::GestureScrollEnd:
     case PlatformEvent::GestureDoubleTap:
     case PlatformEvent::GesturePinchBegin:
     case PlatformEvent::GesturePinchEnd:

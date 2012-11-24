@@ -1,3 +1,17 @@
+2012-11-23  Robert Kroeger  <rjkroege@chromium.org>
+
+        Remove unused ScrollByPixelVelocity
+        https://bugs.webkit.org/show_bug.cgi?id=102840
+
+        Reviewed by Sam Weinig.
+
+        The GESTURE_ANIMATION feature turns on code in WebCore is unused.
+        Remove it.
+
+        No new tests: code removal/cleanup.
+
+        * wtf/Platform.h:
+
 2012-11-23  Laszlo Gombos  <l.gombos@samsung.com>
 
         [EFL] Define WTF_PLATFORM_EFL in Platform.h

@@ -44,12 +44,6 @@
 #include <wtf/CurrentTime.h>
 #include <wtf/PassOwnPtr.h>
 
-#if ENABLE(GESTURE_ANIMATION)
-#include "ActivePlatformGestureAnimation.h"
-#include "TouchFlingPlatformGestureCurve.h"
-#endif
-
-
 #if PLATFORM(CHROMIUM)
 #include "TraceEvent.h"
 #endif
@@ -392,29 +386,12 @@ ScrollAnimatorNone::ScrollAnimatorNone(ScrollableArea* scrollableArea)
 #else
     , m_animationActive(false)
 #endif
-    , m_firstVelocity(0)
-    , m_firstVelocitySet(false)
-    , m_firstVelocityIsVertical(false)
 {
 }
 
 ScrollAnimatorNone::~ScrollAnimatorNone()
 {
     stopAnimationTimerIfNeeded();
-}
-
-void ScrollAnimatorNone::fireUpAnAnimation(FloatPoint fp)
-{
-#if ENABLE(GESTURE_ANIMATION)
-    if (m_gestureAnimation)
-        m_gestureAnimation.clear();
-    m_gestureAnimation = ActivePlatformGestureAnimation::create(TouchFlingPlatformGestureCurve::createForTouchPad(fp), this);
-#endif
-#if USE(REQUEST_ANIMATION_FRAME_TIMER)
-    startNextTimer(0);
-#else
-    startNextTimer();
-#endif
 }
 
 ScrollAnimatorNone::Parameters ScrollAnimatorNone::parametersForScrollGranularity(ScrollGranularity granularity) const
@@ -472,21 +449,6 @@ bool ScrollAnimatorNone::scroll(ScrollbarOrientation orientation, ScrollGranular
         break;
     case ScrollByPrecisePixel:
         return ScrollAnimator::scroll(orientation, granularity, step, multiplier);
-    case ScrollByPixelVelocity:
-        // FIXME: Generalize the scroll interface to support a richer set of parameters.
-        if (m_firstVelocitySet) {
-            float x = m_firstVelocityIsVertical ? multiplier : m_firstVelocity;
-            float y = m_firstVelocityIsVertical ? m_firstVelocity : multiplier;
-            FloatPoint fp(x, y);
-            fireUpAnAnimation(fp);
-            m_firstVelocitySet = false;
-            m_firstVelocityIsVertical = false;
-        } else {
-            m_firstVelocitySet = true;
-            m_firstVelocityIsVertical = orientation == VerticalScrollbar;
-            m_firstVelocity = multiplier;
-        }
-        return true;
     }
 
     // If the individual input setting is disabled, bail.
@@ -525,9 +487,6 @@ void ScrollAnimatorNone::scrollToOffsetWithoutAnimation(const FloatPoint& offset
 void ScrollAnimatorNone::cancelAnimations()
 {
     m_animationActive = false;
-#if ENABLE(GESTURE_ANIMATION)
-    m_gestureAnimation.clear();
-#endif
 }
 
 void ScrollAnimatorNone::serviceScrollAnimations()
@@ -580,15 +539,6 @@ void ScrollAnimatorNone::animationTimerFired()
         continueAnimation = true;
     if (m_verticalData.m_startTime && m_verticalData.animateScroll(currentTime))
         continueAnimation = true;
-
-#if ENABLE(GESTURE_ANIMATION)
-    if (m_gestureAnimation) {
-        if (m_gestureAnimation->animate(currentTime))
-            continueAnimation = true;
-        else
-            m_gestureAnimation.clear();
-    }
-#endif
 
     if (continueAnimation)
 #if USE(REQUEST_ANIMATION_FRAME_TIMER)

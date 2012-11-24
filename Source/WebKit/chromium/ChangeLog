@@ -1,3 +1,14 @@
+2012-11-23  Robert Kroeger  <rjkroege@chromium.org>
+
+        Remove unused ScrollByPixelVelocity
+        https://bugs.webkit.org/show_bug.cgi?id=102840
+
+        Reviewed by Sam Weinig.
+
+        Removed test for deleted code.
+
+        * tests/ScrollAnimatorNoneTest.cpp:
+
 2012-11-23  Alexis Menard  <alexis@webkit.org>
 
         [CSS3 Backgrounds and Borders] Implement new CSS3 background-position parsing.

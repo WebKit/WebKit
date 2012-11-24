@@ -115,11 +115,9 @@ bool ScrollableArea::scroll(ScrollDirection direction, ScrollGranularity granula
     case ScrollByPrecisePixel:
         step = scrollbar->pixelStep();
         break;
-    case ScrollByPixelVelocity:
-        break;
     }
 
-    if (granularity != ScrollByPixelVelocity && (direction == ScrollUp || direction == ScrollLeft))
+    if (direction == ScrollUp || direction == ScrollLeft)
         multiplier = -multiplier;
 
     return scrollAnimator()->scroll(orientation, granularity, step, multiplier);
