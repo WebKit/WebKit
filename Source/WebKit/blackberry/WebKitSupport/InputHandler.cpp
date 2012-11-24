@@ -64,6 +64,7 @@
 #include "htmlediting.h"
 #include "visible_units.h"
 
+#include <BlackBerryPlatformIMF.h>
 #include <BlackBerryPlatformKeyboardEvent.h>
 #include <BlackBerryPlatformLog.h>
 #include <BlackBerryPlatformMisc.h>
@@ -77,7 +78,6 @@
 #define ENABLE_SPELLING_LOG 0
 
 static const unsigned MaxLearnTextDataSize = 500;
-static const unsigned MaxSpellCheckingStringLength = 250;
 
 using namespace BlackBerry::Platform;
 using namespace WebCore;
@@ -616,7 +616,7 @@ void InputHandler::requestCheckingOfString(PassRefPtr<WebCore::TextCheckingReque
         return;
     }
 
-    m_processingTransactionId = m_webPage->m_client->checkSpellingOfStringAsync(checkingString, paragraphLength);
+    m_processingTransactionId = m_webPage->m_client->checkSpellingOfStringAsync(checkingString, static_cast<unsigned>(paragraphLength));
     free(checkingString);
 
     // If the call to the input service did not go through, then cancel the request so we don't block endlessly.

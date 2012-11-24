@@ -1,3 +1,20 @@
+2012-11-23  Nima Ghanavatian  <nghanavatian@rim.com>
+
+        [BlackBerry] Define platform limitations in platform layer
+        https://bugs.webkit.org/show_bug.cgi?id=103160
+
+        Reviewed by Rob Buis.
+
+        Taking length as const unsigned in checkSpellingOfStringAsync.
+        This value is unchanging and should never be less than 0, even
+        in an error case.
+
+        Internally reviewed by Mike Fenton.
+
+        * Api/WebPageClient.h:
+        * WebKitSupport/InputHandler.cpp:
+        (BlackBerry::WebKit::InputHandler::requestCheckingOfString):
+
 2012-11-23  Jacky Jiang  <zhajiang@rim.com>
 
         [BlackBerry] Meta viewport can't be changed dynamically
