@@ -1,3 +1,16 @@
+2012-11-24  Genevieve Mak  <gmak@rim.com>
+
+        [BlackBerry] Text not selected when input field focused.
+        https://bugs.webkit.org/show_bug.cgi?id=103182
+
+        Reviewed by George Staikos.
+
+        Reviewed Internally by: Mike Fenton, Eli Fidler
+        PR #250163
+
+        * WebKitSupport/SelectionHandler.cpp:
+        (BlackBerry::WebKit::SelectionHandler::selectObject):
+
 2012-11-23  Nima Ghanavatian  <nghanavatian@rim.com>
 
         [BlackBerry] Define platform limitations in platform layer

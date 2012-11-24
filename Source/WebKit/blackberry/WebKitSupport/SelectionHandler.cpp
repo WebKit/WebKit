@@ -664,6 +664,10 @@ void SelectionHandler::selectObject(Node* node)
     if (!node)
         return;
 
+    // Clear input focus if we're not selecting text there.
+    if (node != m_webPage->m_inputHandler->currentFocusElement().get())
+        m_webPage->clearFocusNode();
+
     m_selectionActive = true;
 
     ASSERT(m_webPage && m_webPage->focusedOrMainFrame() && m_webPage->focusedOrMainFrame()->selection());
