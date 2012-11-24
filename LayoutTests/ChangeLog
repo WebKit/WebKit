@@ -1,3 +1,10 @@
+2012-11-24  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Unreviewed gardening. Too many tests come to crashe after build 7830 on
+        EFL Linux 64-bit Release bot.
+
+        * platform/efl-wk1/TestExpectations:
+
 2012-11-23  Robert Kroeger  <rjkroege@chromium.org>
 
         Unreviewed gardening: updated test expectations for failure in
