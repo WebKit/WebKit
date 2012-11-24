@@ -4242,3 +4242,5 @@ webkit.org/b/103148 [ Lion ] fast/text/text-letter-spacing.html [ ImageOnlyFailu
 webkit.org/b/103161 [ Linux Win ] inspector/console/command-line-api-inspect.html [ Pass Failure ]
 webkit.org/b/103161 [ Linux Win ] inspector/runtime/runtime-localStorage-getProperties.html [ Pass Failure ]
 webkit.org/b/103148 [ Linux Win Mac ] svg/batik/text/textPosition2.svg [ ImageOnlyFailure ]
+webkit.org/b/103181 [ Win7 ] http/tests/local/drag-over-remote-content.html [ Pass Crash Timeout ]
+webkit.org/b/103183 [ Win7 SnowLeopard ] media/video-seek-past-end-playing.html [ Pass Crash ]
