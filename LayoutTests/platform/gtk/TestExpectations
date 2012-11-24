@@ -1401,6 +1401,8 @@ webkit.org/b/61138 http/tests/w3c/webperf/submission/resource-timing [ Skip ]
 
 webkit.org/b/103109 fast/dom/shadow/host-wrapper-reclaimed.html [ Failure ]
 
+webkit.org/b/102557 fast/backgrounds/background-opaque-images-over-color.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing
 #////////////////////////////////////////////////////////////////////////////////////////

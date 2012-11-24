@@ -1697,3 +1697,5 @@ Bug(EFL) media/controls-right-click-on-timebar.html [ Failure ]
 
 # No spellcheck suggestions in context menu
 Bug(EFL) editing/spelling/context-menu-suggestions.html [ Failure ]
+
+webkit.org/b/102557 fast/backgrounds/background-opaque-images-over-color.html [ Failure ]
