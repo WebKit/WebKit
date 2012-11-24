@@ -164,6 +164,7 @@ Programs_DumpRenderTree_CFLAGS = \
 Programs_DumpRenderTree_LDADD = \
 	libjavascriptcoregtk-@WEBKITGTK_API_MAJOR_VERSION@.@WEBKITGTK_API_MINOR_VERSION@.la \
 	libwebkitgtk-@WEBKITGTK_API_MAJOR_VERSION@.@WEBKITGTK_API_MINOR_VERSION@.la \
+	libWebCorePlatform.la \
 	libWebCoreModules.la \
 	libWebCoreInternals.la \
 	$(GLOBALDEPS_LIBS) \
