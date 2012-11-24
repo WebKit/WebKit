@@ -1,3 +1,22 @@
+2012-11-23  Michael Saboff  <msaboff@apple.com>
+
+        listMarkerText() should create 8 bit strings when possible
+        https://bugs.webkit.org/show_bug.cgi?id=103011
+
+        Reviewed by Filip Pizlo.
+
+        Made processing of marker text items use 8 bit strings where possible in order to reduce 16 bit strings.
+
+        Changes covered by existing tests.
+
+        * rendering/RenderListMarker.cpp:
+        (WebCore::toRoman): Changed character constants and buffer to build string to LChar's
+        (WebCore::toAlphabeticOrNumeric): Made a template based on character type.
+        (WebCore::toSymbolic): Made a template based on character type.
+        (WebCore::toAlphabetic): Made a template based on character type.
+        (WebCore::toNumeric): Added character type template parameter.
+        (WebCore::listMarkerText): Changed character constants to LChar where possible.
+
 2012-11-23  Robert Kroeger  <rjkroege@chromium.org>
 
         Remove unused ScrollByPixelVelocity

@@ -55,12 +55,12 @@ static String toRoman(int number, bool upper)
     // Big enough to store largest roman number less than 3999 which
     // is 3888 (MMMDCCCLXXXVIII)
     const int lettersSize = 15;
-    UChar letters[lettersSize];
+    LChar letters[lettersSize];
 
     int length = 0;
-    const UChar ldigits[] = { 'i', 'v', 'x', 'l', 'c', 'd', 'm' };
-    const UChar udigits[] = { 'I', 'V', 'X', 'L', 'C', 'D', 'M' };
-    const UChar* digits = upper ? udigits : ldigits;
+    const LChar ldigits[] = { 'i', 'v', 'x', 'l', 'c', 'd', 'm' };
+    const LChar udigits[] = { 'I', 'V', 'X', 'L', 'C', 'D', 'M' };
+    const LChar* digits = upper ? udigits : ldigits;
     int d = 0;
     do {
         int num = number % 10;
@@ -81,13 +81,18 @@ static String toRoman(int number, bool upper)
     return String(&letters[lettersSize - length], length);
 }
 
-static inline String toAlphabeticOrNumeric(int number, const UChar* sequence, unsigned sequenceSize, SequenceType type)
+// The typedef is needed because taking sizeof(number) in the const expression below doesn't work with some compilers.
+// This is likely the case because of the template.
+typedef int numberType;
+
+template <typename CharacterType>
+static inline String toAlphabeticOrNumeric(numberType number, const CharacterType* sequence, unsigned sequenceSize, SequenceType type)
 {
     ASSERT(sequenceSize >= 2);
 
-    const int lettersSize = sizeof(number) * 8 + 1; // Binary is the worst case; requires one character per bit plus a minus sign.
+    const int lettersSize = sizeof(numberType) * 8 + 1; // Binary is the worst case; requires one character per bit plus a minus sign.
 
-    UChar letters[lettersSize];
+    CharacterType letters[lettersSize];
 
     bool isNegativeNumber = false;
     unsigned numberShadow = number;
@@ -117,7 +122,8 @@ static inline String toAlphabeticOrNumeric(int number, const UChar* sequence, un
     return String(&letters[lettersSize - length], length);
 }
 
-static String toSymbolic(int number, const UChar* symbols, unsigned symbolsSize)
+template <typename CharacterType>
+static String toSymbolic(int number, const CharacterType* symbols, unsigned symbolsSize)
 {
     ASSERT(number > 0);
     ASSERT(symbolsSize >= 1);
@@ -133,27 +139,32 @@ static String toSymbolic(int number, const UChar* symbols, unsigned symbolsSize)
     return letters.toString();
 }
 
-static String toAlphabetic(int number, const UChar* alphabet, unsigned alphabetSize)
+template <typename CharacterType>
+static String toAlphabetic(int number, const CharacterType* alphabet, unsigned alphabetSize)
 {
     return toAlphabeticOrNumeric(number, alphabet, alphabetSize, AlphabeticSequence);
 }
 
-static String toNumeric(int number, const UChar* numerals, unsigned numeralsSize)
+template <typename CharacterType>
+static String toNumeric(int number, const CharacterType* numerals, unsigned numeralsSize)
 {
     return toAlphabeticOrNumeric(number, numerals, numeralsSize, NumericSequence);
 }
 
-template <size_t size> static inline String toAlphabetic(int number, const UChar(&alphabet)[size])
+template <typename CharacterType, size_t size>
+static inline String toAlphabetic(int number, const CharacterType(&alphabet)[size])
 {
     return toAlphabetic(number, alphabet, size);
 }
 
-template <size_t size> static inline String toNumeric(int number, const UChar(&alphabet)[size])
+template <typename CharacterType, size_t size>
+static inline String toNumeric(int number, const CharacterType(&alphabet)[size])
 {
     return toNumeric(number, alphabet, size);
 }
 
-template <size_t size> static inline String toSymbolic(int number, const UChar(&alphabet)[size])
+template <typename CharacterType, size_t size>
+static inline String toSymbolic(int number, const CharacterType(&alphabet)[size])
 {    
     return toSymbolic(number, alphabet, size);
 }
@@ -600,8 +611,8 @@ String listMarkerText(EListStyleType type, int value)
             return "";
 
         case Asterisks: {
-            static const UChar asterisksSymbols[1] = {
-                0x002A
+            static const LChar asterisksSymbols[1] = {
+                0x2A
             };
             return toSymbolic(value, asterisksSymbols);
         }
@@ -638,7 +649,7 @@ String listMarkerText(EListStyleType type, int value)
             return toNumeric(value, arabicIndicNumerals);
         }
         case BinaryListStyle: {
-            static const UChar binaryNumerals[2] = {
+            static const LChar binaryNumerals[2] = {
                 '0', '1'
             };
             return toNumeric(value, binaryNumerals);
@@ -681,7 +692,7 @@ String listMarkerText(EListStyleType type, int value)
             return toNumeric(value, kannadaNumerals);
         }
         case LowerHexadecimal: {
-            static const UChar lowerHexadecimalNumerals[16] = {
+            static const LChar lowerHexadecimalNumerals[16] = {
                 '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'
             };
             return toNumeric(value, lowerHexadecimalNumerals);
@@ -711,7 +722,7 @@ String listMarkerText(EListStyleType type, int value)
             return toNumeric(value, myanmarNumerals);
         }
         case Octal: {
-            static const UChar octalNumerals[8] = {
+            static const LChar octalNumerals[8] = {
                 '0', '1', '2', '3', '4', '5', '6', '7'
             };
             return toNumeric(value, octalNumerals);
@@ -748,7 +759,7 @@ String listMarkerText(EListStyleType type, int value)
             return toNumeric(value, thaiNumerals);
         }
         case UpperHexadecimal: {
-            static const UChar upperHexadecimalNumerals[16] = {
+            static const LChar upperHexadecimalNumerals[16] = {
                 '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'
             };
             return toNumeric(value, upperHexadecimalNumerals);
@@ -756,7 +767,7 @@ String listMarkerText(EListStyleType type, int value)
 
         case LowerAlpha:
         case LowerLatin: {
-            static const UChar lowerLatinAlphabet[26] = {
+            static const LChar lowerLatinAlphabet[26] = {
                 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
                 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'
             };
@@ -764,7 +775,7 @@ String listMarkerText(EListStyleType type, int value)
         }
         case UpperAlpha:
         case UpperLatin: {
-            static const UChar upperLatinAlphabet[26] = {
+            static const LChar upperLatinAlphabet[26] = {
                 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
                 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'
             };
@@ -992,20 +1003,20 @@ String listMarkerText(EListStyleType type, int value)
             return toAlphabetic(value, upperGreekAlphabet);
         }
         case LowerNorwegian: {
-            static const UChar lowerNorwegianAlphabet[29] = {
-                0x0061, 0x0062, 0x0063, 0x0064, 0x0065, 0x0066, 0x0067, 0x0068, 0x0069,
-                0x006A, 0x006B, 0x006C, 0x006D, 0x006E, 0x006F, 0x0070, 0x0071, 0x0072,
-                0x0073, 0x0074, 0x0075, 0x0076, 0x0077, 0x0078, 0x0079, 0x007A, 0x00E6,
-                0x00F8, 0x00E5
+            static const LChar lowerNorwegianAlphabet[29] = {
+                0x61, 0x62, 0x63, 0x64, 0x65, 0x66, 0x67, 0x68, 0x69,
+                0x6A, 0x6B, 0x6C, 0x6D, 0x6E, 0x6F, 0x70, 0x71, 0x72,
+                0x73, 0x74, 0x75, 0x76, 0x77, 0x78, 0x79, 0x7A, 0xE6,
+                0xF8, 0xE5
             };
             return toAlphabetic(value, lowerNorwegianAlphabet);
         }
         case UpperNorwegian: {
-            static const UChar upperNorwegianAlphabet[29] = {
-                0x0041, 0x0042, 0x0043, 0x0044, 0x0045, 0x0046, 0x0047, 0x0048, 0x0049,
-                0x004A, 0x004B, 0x004C, 0x004D, 0x004E, 0x004F, 0x0050, 0x0051, 0x0052,
-                0x0053, 0x0054, 0x0055, 0x0056, 0x0057, 0x0058, 0x0059, 0x005A, 0x00C6,
-                0x00D8, 0x00C5
+            static const LChar upperNorwegianAlphabet[29] = {
+                0x41, 0x42, 0x43, 0x44, 0x45, 0x46, 0x47, 0x48, 0x49,
+                0x4A, 0x4B, 0x4C, 0x4D, 0x4E, 0x4F, 0x50, 0x51, 0x52,
+                0x53, 0x54, 0x55, 0x56, 0x57, 0x58, 0x59, 0x5A, 0xC6,
+                0xD8, 0xC5
             };
             return toAlphabetic(value, upperNorwegianAlphabet);
         }
