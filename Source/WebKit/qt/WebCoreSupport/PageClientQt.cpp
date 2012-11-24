@@ -28,7 +28,7 @@
 #include <QX11Info>
 #endif
 
-#if USE(TEXTURE_MAPPER_GL)
+#ifdef QT_OPENGL_LIB
 #include <QGLWidget>
 #endif
 
@@ -284,14 +284,9 @@ void PageClientQGraphicsWidget::setRootGraphicsLayer(GraphicsLayer* layer)
         TextureMapperLayerClient = adoptPtr(new TextureMapperLayerClientQt(page->mainFrame(), layer));
 #if USE(TEXTURE_MAPPER_GL)
         QGraphicsView* graphicsView = view->scene()->views()[0];
-        if (graphicsView && graphicsView->viewport()) {
-            QGLWidget* glWidget = qobject_cast<QGLWidget*>(graphicsView->viewport());
-            if (glWidget) {
-                // The GL context belonging to the QGLWidget viewport must be current when TextureMapper is being created.
-                glWidget->makeCurrent();
-                TextureMapperLayerClient->setTextureMapper(TextureMapper::create(TextureMapper::OpenGLMode));
-                return;
-            }
+        if (graphicsView && graphicsView->viewport() && graphicsView->viewport()->inherits("QGLWidget")) {
+            TextureMapperLayerClient->setTextureMapper(TextureMapper::create(TextureMapper::OpenGLMode));
+            return;
         }
 #endif
         TextureMapperLayerClient->setTextureMapper(TextureMapper::create());
