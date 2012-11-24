@@ -305,14 +305,14 @@ class Manager(object):
 
     def _prepare_lists(self):
         tests_to_skip = self._finder.skip_tests(self._paths, self._test_names, self._expectations, self._http_tests())
-        self._test_names = list(set(self._test_names) - tests_to_skip)
+        self._test_names = [test for test in self._test_names if test not in tests_to_skip]
 
         # Create a sorted list of test files so the subset chunk,
         # if used, contains alphabetically consecutive tests.
-        if self._options.randomize_order:
+        if self._options.order == 'natural':
+            self._test_names.sort(key=self._port.test_key)
+        elif self._options.order == 'random':
             random.shuffle(self._test_names)
-        else:
-            self._test_names.sort(key=self._runner.test_key)
 
         self._test_names, tests_in_other_chunks = self._finder.split_into_chunks(self._test_names)
         self._expectations.add_skipped_tests(tests_in_other_chunks)

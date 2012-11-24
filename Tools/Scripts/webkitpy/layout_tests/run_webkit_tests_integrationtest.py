@@ -389,9 +389,41 @@ class MainTest(unittest.TestCase, StreamTestingMixin):
         self.assertEmpty(out)
         self.assertContains(err, 'No tests to run.\n')
 
-    def test_randomize_order(self):
-        # FIXME: verify order was shuffled
-        self.assertTrue(passing_run(['--randomize-order']))
+    def test_natural_order(self):
+        tests_to_run = ['passes/audio.html', 'failures/expected/text.html', 'failures/expected/missing_text.html', 'passes/args.html']
+        tests_run = get_tests_run(['--order=natural'] + tests_to_run, tests_included=True, flatten_batches=True)
+        self.assertEqual(['failures/expected/missing_text.html', 'failures/expected/text.html', 'passes/args.html', 'passes/audio.html'], tests_run)
+
+    def test_natural_order_test_specified_multiple_times(self):
+        tests_to_run = ['passes/args.html', 'passes/audio.html', 'passes/audio.html', 'passes/args.html']
+        tests_run = get_tests_run(['--order=natural'] + tests_to_run, tests_included=True, flatten_batches=True)
+        self.assertEqual(['passes/args.html', 'passes/args.html', 'passes/audio.html', 'passes/audio.html'], tests_run)
+
+    def test_random_order(self):
+        tests_to_run = ['passes/audio.html', 'failures/expected/text.html', 'failures/expected/missing_text.html', 'passes/args.html']
+        tests_run = get_tests_run(['--order=random'] + tests_to_run, tests_included=True, flatten_batches=True)
+        self.assertEqual(sorted(tests_to_run), sorted(tests_run))
+
+    def test_random_order_test_specified_multiple_times(self):
+        tests_to_run = ['passes/args.html', 'passes/audio.html', 'passes/audio.html', 'passes/args.html']
+        tests_run = get_tests_run(['--order=random'] + tests_to_run, tests_included=True, flatten_batches=True)
+        self.assertEqual(tests_run.count('passes/audio.html'), 2)
+        self.assertEqual(tests_run.count('passes/args.html'), 2)
+
+    def test_no_order(self):
+        tests_to_run = ['passes/audio.html', 'failures/expected/text.html', 'failures/expected/missing_text.html', 'passes/args.html']
+        tests_run = get_tests_run(['--order=none'] + tests_to_run, tests_included=True, flatten_batches=True)
+        self.assertEqual(tests_to_run, tests_run)
+
+    def test_no_order_test_specified_multiple_times(self):
+        tests_to_run = ['passes/args.html', 'passes/audio.html', 'passes/audio.html', 'passes/args.html']
+        tests_run = get_tests_run(['--order=none'] + tests_to_run, tests_included=True, flatten_batches=True)
+        self.assertEqual(tests_to_run, tests_run)
+
+    def test_no_order_with_directory_entries_in_natural_order(self):
+        tests_to_run = ['http/tests/ssl', 'perf/foo', 'http/tests/passes']
+        tests_run = get_tests_run(['--order=none'] + tests_to_run, tests_included=True, flatten_batches=True)
+        self.assertEqual(tests_run, ['http/tests/ssl/text.html', 'perf/foo/test.html', 'http/tests/passes/image.html', 'http/tests/passes/text.html'])
 
     def test_gc_between_tests(self):
         self.assertTrue(passing_run(['--gc-between-tests']))

@@ -31,13 +31,15 @@
 import unittest
 
 from webkitpy.common.host_mock import MockHost
+from webkitpy.common.system.systemhost_mock import MockSystemHost
 from webkitpy.layout_tests import run_webkit_tests
+from webkitpy.layout_tests.controllers.layout_test_runner import LayoutTestRunner, Sharder, TestRunInterruptedException
 from webkitpy.layout_tests.models import test_expectations
 from webkitpy.layout_tests.models import test_failures
 from webkitpy.layout_tests.models.result_summary import ResultSummary
 from webkitpy.layout_tests.models.test_input import TestInput
 from webkitpy.layout_tests.models.test_results import TestResult
-from webkitpy.layout_tests.controllers.layout_test_runner import LayoutTestRunner, Sharder, TestRunInterruptedException
+from webkitpy.layout_tests.port.test import TestPort
 
 
 TestExpectations = test_expectations.TestExpectations
@@ -235,12 +237,8 @@ class SharderTests(unittest.TestCase):
         return TestInput(test_file, requires_lock=(test_file.startswith('http') or test_file.startswith('perf')))
 
     def get_shards(self, num_workers, fully_parallel, test_list=None, max_locked_shards=1):
-        def split(test_name):
-            idx = test_name.rfind('/')
-            if idx != -1:
-                return (test_name[0:idx], test_name[idx + 1:])
-
-        self.sharder = Sharder(split, '/', max_locked_shards)
+        port = TestPort(MockSystemHost())
+        self.sharder = Sharder(port.split_test, max_locked_shards)
         test_list = test_list or self.test_list
         return self.sharder.shard_tests([self.get_test_input(test) for test in test_list], num_workers, fully_parallel)
 
@@ -335,48 +333,3 @@ class SharderTests(unittest.TestCase):
                'http/tests/websocket/tests/websocket-protocol-ignored.html',
                'http/tests/xmlhttprequest/supported-xml-content-types.html',
                'perf/object-keys.html'])])
-
-
-class NaturalCompareTest(unittest.TestCase):
-    def assert_cmp(self, x, y, result):
-        self.assertEqual(cmp(Sharder.natural_sort_key(x), Sharder.natural_sort_key(y)), result)
-
-    def test_natural_compare(self):
-        self.assert_cmp('a', 'a', 0)
-        self.assert_cmp('ab', 'a', 1)
-        self.assert_cmp('a', 'ab', -1)
-        self.assert_cmp('', '', 0)
-        self.assert_cmp('', 'ab', -1)
-        self.assert_cmp('1', '2', -1)
-        self.assert_cmp('2', '1', 1)
-        self.assert_cmp('1', '10', -1)
-        self.assert_cmp('2', '10', -1)
-        self.assert_cmp('foo_1.html', 'foo_2.html', -1)
-        self.assert_cmp('foo_1.1.html', 'foo_2.html', -1)
-        self.assert_cmp('foo_1.html', 'foo_10.html', -1)
-        self.assert_cmp('foo_2.html', 'foo_10.html', -1)
-        self.assert_cmp('foo_23.html', 'foo_10.html', 1)
-        self.assert_cmp('foo_23.html', 'foo_100.html', -1)
-
-
-class KeyCompareTest(unittest.TestCase):
-    def setUp(self):
-        def split(test_name):
-            idx = test_name.rfind('/')
-            if idx != -1:
-                return (test_name[0:idx], test_name[idx + 1:])
-
-        self.sharder = Sharder(split, '/', 1)
-
-    def assert_cmp(self, x, y, result):
-        self.assertEqual(cmp(self.sharder.test_key(x), self.sharder.test_key(y)), result)
-
-    def test_test_key(self):
-        self.assert_cmp('/a', '/a', 0)
-        self.assert_cmp('/a', '/b', -1)
-        self.assert_cmp('/a2', '/a10', -1)
-        self.assert_cmp('/a2/foo', '/a10/foo', -1)
-        self.assert_cmp('/a/foo11', '/a/foo2', 1)
-        self.assert_cmp('/ab', '/a/a/b', -1)
-        self.assert_cmp('/a/a/b', '/ab', 1)
-        self.assert_cmp('/foo-bar/baz', '/foo/baz', -1)

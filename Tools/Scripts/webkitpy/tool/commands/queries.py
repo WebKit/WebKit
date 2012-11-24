@@ -476,7 +476,7 @@ class PrintExpectations(AbstractDeclarativeCommand):
                 print file
             return
 
-        tests = default_port.tests(args)
+        tests = set(default_port.tests(args))
         for port_name in port_names:
             model = self._model(options, port_name, tests)
             tests_to_print = self._filter_tests(options, model, tests)

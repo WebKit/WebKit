@@ -1,3 +1,90 @@
+2012-11-24  Zan Dobersek  <zandobersek@gmail.com>
+
+        Add the --order option to NRWT
+        https://bugs.webkit.org/show_bug.cgi?id=102229
+
+        Reviewed by Dirk Pranke.
+
+        The --order option controls in what order the gathered tests will be run.
+        There are 3 options:
+        - natural, the tests are sorted in natural order,
+        - random, the tests are sorted in random order,
+        - none, the tests are kept in the order in which they were specified through
+        arguments or the test list.
+
+        The natural option is the default one and maintains the current behavior.
+
+        The none option is primarily intended to be used with the --test-list option,
+        with the test list file expected to list specific test names.
+        When a directory is specified as one of the paths from under which tests should
+        be gathered and the none option is used, that path will expand to all the tests
+        under it, with these tests sorted in the natural order.
+
+        Using --order=random duplicated the behavior of the --randomize-order option, so
+        the latter is removed.
+
+        This patch also incorporates the change with which makes it is possible to specify
+        a test via arguments or the test list multiple tests and then have the test run
+        that many times.
+
+        * Scripts/webkitpy/common/find_files.py:
+        (find): Accept an optional sorting key that is used to sort files found in the directories
+        that the given paths specify.
+        (_normalized_find): Both paths that are then searched for the tests and the tests that
+        were found are now kept in lists. This makes it possible to run a test multiple times
+        by specifying it multiple times through arguments or the test list file.
+        (_normalized_find.sort_by_directory_key):
+        * Scripts/webkitpy/layout_tests/controllers/layout_test_finder.py:
+        (LayoutTestFinder.find_tests): Keep the paths where we should search for tests in a list.
+        (LayoutTestFinder.skip_tests): Subtracting from a set of paths is necessary.
+        * Scripts/webkitpy/layout_tests/controllers/layout_test_runner.py:
+        (LayoutTestRunner.__init__): The Sharder class no longer needs a test path separator.
+        (Sharder.__init__): Ditto.
+        (Sharder._resize_shards):
+        * Scripts/webkitpy/layout_tests/controllers/layout_test_runner_unittest.py:
+        (SharderTests.get_shards): Modify the Shader initializing as required.
+        (SharderTests.test_multiple_locked_shards): The natural sorting and test name key unit tests
+        are now moved to the base Port unit tests.
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        (Manager._prepare_lists): Keep the test names in a list. Order that list as specified by
+        the new --order option.
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        (Port.tests): This method should now return a list of all the tests found in the specified
+        paths.
+        (Port._real_tests): A list is required, so no conversion to a set is made.
+        (Port):
+        (Port.test_key): Place this method here for now, but it should really move into a separate
+        module.
+        (Port._natural_sort_key): Ditto.
+        (Port._natural_sort_key.tryint):
+        (Port._virtual_tests): A list is required, so the function now operates on that rather than
+        on a set.
+        * Scripts/webkitpy/layout_tests/port/base_unittest.py:
+        (PortTest.test_find_with_skipped_directories_2): Adjust the test case to check for an empty
+        list rather than an empty set.
+        (PortTest.test_dont_require_http_server):
+        (NaturalCompareTest): The natural sorting unit tests are placed here for now.
+        (NaturalCompareTest.assert_cmp):
+        (NaturalCompareTest.test_natural_compare):
+        (KeyCompareTest): The test name key unit tests are placed here for now.
+        (KeyCompareTest.assert_cmp):
+        (KeyCompareTest.test_test_key):
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        (parse_args): Remove the --randomize-order option, it's now possible to replicate its behavior
+        by using --order=random.
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py: Add unit tests covering
+        various aspects of this change.
+        (MainTest.test_natural_order):
+        (MainTest):
+        (MainTest.test_natural_order_test_specified_multiple_times):
+        (MainTest.test_random_order):
+        (MainTest.test_random_order_test_specified_multiple_times):
+        (MainTest.test_no_order):
+        (MainTest.test_no_order_test_specified_multiple_times):
+        (MainTest.test_no_order_with_directory_entries_in_natural_order):
+        * Scripts/webkitpy/tool/commands/queries.py:
+        (PrintExpectations.execute): Operate on a set of tests when printing out expectations.
+
 2012-11-24  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r135600.

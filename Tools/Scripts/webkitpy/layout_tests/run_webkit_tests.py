@@ -353,9 +353,11 @@ def parse_args(args=None):
             help="Run all tests, even those marked SKIP in the test list (same as --skipped=ignore)"),
         optparse.make_option("--time-out-ms",
             help="Set the timeout for each test"),
-        optparse.make_option("--randomize-order", action="store_true",
-            default=False, help=("Run tests in random order (useful "
-                                "for tracking down corruption)")),
+        optparse.make_option("--order", action="store", default="natural",
+            help=("determine the order in which the test cases will be run. "
+                  "'none' == use the order in which the tests were listed either in arguments or test list, "
+                  "'natural' == use the natural order (default), "
+                  "'random' == randomize the test order.")),
         optparse.make_option("--run-chunk",
             help=("Run a specified chunk (n:l), the nth of len l, "
                  "of the layout tests")),

@@ -47,7 +47,6 @@ class LayoutTestFinder(object):
         paths = self._strip_test_dir_prefixes(args)
         if options.test_list:
             paths += self._strip_test_dir_prefixes(self._read_test_names_from_file(options.test_list, self._port.TEST_PATH_SEPARATOR))
-        paths = set(paths)
         test_files = self._port.tests(paths)
         return (paths, test_files)
 
@@ -108,7 +107,7 @@ class LayoutTestFinder(object):
             tests_to_skip = set()
         elif self._options.skipped != 'always':
             # make sure we're explicitly running any tests passed on the command line; equivalent to 'default'.
-            tests_to_skip -= paths
+            tests_to_skip -= set(paths)
 
         # unless of course we don't want to run the HTTP tests :)
         if not self._options.http:

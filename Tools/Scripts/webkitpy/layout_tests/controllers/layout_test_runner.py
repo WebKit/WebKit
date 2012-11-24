@@ -68,7 +68,7 @@ class LayoutTestRunner(object):
         self._results_directory = results_directory
         self._expectations = None
         self._test_is_slow = test_is_slow_fn
-        self._sharder = Sharder(self._port.split_test, self._port.TEST_PATH_SEPARATOR, self._options.max_locked_shards)
+        self._sharder = Sharder(self._port.split_test, self._options.max_locked_shards)
 
         self._current_result_summary = None
         self._needs_http = None
@@ -79,9 +79,6 @@ class LayoutTestRunner(object):
         self._group_stats = {}
         self._worker_stats = {}
         self._filesystem = self._port.host.filesystem
-
-    def test_key(self, test_name):
-        return self._sharder.test_key(test_name)
 
     def run_tests(self, test_inputs, expectations, result_summary, num_workers, needs_http, needs_websockets, retrying):
         """Returns a tuple of (interrupted, keyboard_interrupted, thread_timings, test_timings, individual_test_timings):
@@ -474,9 +471,8 @@ class TestShard(object):
 
 
 class Sharder(object):
-    def __init__(self, test_split_fn, test_path_separator, max_locked_shards):
+    def __init__(self, test_split_fn, max_locked_shards):
         self._split = test_split_fn
-        self._sep = test_path_separator
         self._max_locked_shards = max_locked_shards
 
     def shard_tests(self, test_inputs, num_workers, fully_parallel):
@@ -603,29 +599,3 @@ class Sharder(object):
             some_shards, remaining_shards = split_at(remaining_shards, num_old_per_new)
             new_shards.append(TestShard('%s_%d' % (shard_name_prefix, len(new_shards) + 1), extract_and_flatten(some_shards)))
         return new_shards
-
-    def test_key(self, test_name):
-        """Turns a test name into a list with two sublists, the natural key of the
-        dirname, and the natural key of the basename.
-
-        This can be used when sorting paths so that files in a directory.
-        directory are kept together rather than being mixed in with files in
-        subdirectories."""
-        dirname, basename = self._split(test_name)
-        return (self.natural_sort_key(dirname + self._sep), self.natural_sort_key(basename))
-
-    @staticmethod
-    def natural_sort_key(string_to_split):
-        """ Turns a string into a list of string and number chunks, i.e. "z23a" -> ["z", 23, "a"]
-
-        This can be used to implement "natural sort" order. See:
-        http://www.codinghorror.com/blog/2007/12/sorting-for-humans-natural-sort-order.html
-        http://nedbatchelder.com/blog/200712.html#e20071211T054956
-        """
-        def tryint(val):
-            try:
-                return int(val)
-            except ValueError:
-                return val
-
-        return [tryint(chunk) for chunk in re.split('(\d+)', string_to_split)]
