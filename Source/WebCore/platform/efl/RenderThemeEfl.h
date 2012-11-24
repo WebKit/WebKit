@@ -35,6 +35,7 @@
 #endif
 #include "RenderTheme.h"
 
+#include <Eina.h>
 #include <cairo.h>
 #include <wtf/efl/RefPtrEfl.h>
 
@@ -263,7 +264,7 @@ private:
     void applyPartDescription(Evas_Object*, struct ThemePartDesc*);
 
     struct ThemePartCacheEntry {
-        static ThemePartCacheEntry* create(const String& themePath, FormType, const IntSize&);
+        static PassOwnPtr<RenderThemeEfl::ThemePartCacheEntry> create(const String& themePath, FormType, const IntSize&);
         void reuse(const String& themePath, FormType, const IntSize& = IntSize());
 
         ALWAYS_INLINE Ecore_Evas* canvas() { return m_canvas.get(); }
@@ -282,12 +283,13 @@ private:
 
     struct ThemePartDesc m_partDescs[FormTypeLast];
 
-    // this should be small and not so frequently used,
-    // so use a vector and do linear searches
-    Vector<ThemePartCacheEntry*> m_partCache;
+    // List of ThemePartCacheEntry* sorted so that the most recently
+    // used entries come first. We use a list for efficient moving
+    // of items within the container.
+    Eina_List* m_partCache;
 
     ThemePartCacheEntry* getThemePartFromCache(FormType, const IntSize&);
-    void flushThemePartCache();
+    void clearThemePartCache();
 };
 }
 

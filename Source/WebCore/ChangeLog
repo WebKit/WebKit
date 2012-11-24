@@ -1,3 +1,39 @@
+2012-11-24  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] Refactor RenderThemeEfl::getThemePartFromCache()
+        https://bugs.webkit.org/show_bug.cgi?id=103186
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Refactor getThemePartFromCache() so that a list is used
+        for the cache instead of a vector. The function moves
+        items to the head of the container which is much more
+        efficient with a list than a vector.
+
+        The list ordering is also slightly altered so that the
+        cached parts that were used last come first. Previously,
+        they were sorted by creation time which may cause an
+        item to be removed from the cache because it is older
+        even if is was used recently.
+
+        This patch also gets rid of some code duplication at the
+        end of the function.
+
+        No new tests, no behavior change.
+
+        * platform/efl/RenderThemeEfl.cpp:
+        (WebCore::RenderThemeEfl::ThemePartCacheEntry::create): Return
+        a smart pointer instead of a raw pointer.
+        (WebCore::RenderThemeEfl::getThemePartFromCache):
+        (WebCore::RenderThemeEfl::clearThemePartCache): Rename 
+        flushThemePartCache to clearThemePartCache for clarity.
+        (WebCore::RenderThemeEfl::loadTheme):
+        (WebCore::RenderThemeEfl::RenderThemeEfl):
+        (WebCore::RenderThemeEfl::~RenderThemeEfl):
+        * platform/efl/RenderThemeEfl.h:
+        (ThemePartCacheEntry):
+        (RenderThemeEfl):
+
 2012-11-24  Liam Quinn  <lquinn@rim.com>
 
         [BlackBerry] RTSP should use the same MediaDocument as HTTP videos.

@@ -173,21 +173,21 @@ static bool isFormElementTooLargeToDisplay(const IntSize& elementSize)
     return elementSize.width() > maxEdjeDimension || elementSize.height() > maxEdjeDimension;
 }
 
-RenderThemeEfl::ThemePartCacheEntry* RenderThemeEfl::ThemePartCacheEntry::create(const String& themePath, FormType type, const IntSize& size)
+PassOwnPtr<RenderThemeEfl::ThemePartCacheEntry> RenderThemeEfl::ThemePartCacheEntry::create(const String& themePath, FormType type, const IntSize& size)
 {
     ASSERT(!themePath.isEmpty());
 
     if (isFormElementTooLargeToDisplay(size) || size.isEmpty()) {
         EINA_LOG_ERR("Cannot render an element of size %dx%d.", size.width(), size.height());
-        return 0;
+        return nullptr;
     }
 
-    OwnPtr<ThemePartCacheEntry*> entry = adoptPtr(new ThemePartCacheEntry);
+    OwnPtr<ThemePartCacheEntry> entry = adoptPtr(new ThemePartCacheEntry);
 
     entry->m_canvas = adoptPtr(ecore_evas_buffer_new(size.width(), size.height()));
     if (!entry->canvas()) {
         EINA_LOG_ERR("ecore_evas_buffer_new(%d, %d) failed.", size.width(), size.height());
-        return 0;
+        return nullptr;
     }
 
     // By default EFL creates buffers without alpha.
@@ -197,11 +197,11 @@ RenderThemeEfl::ThemePartCacheEntry* RenderThemeEfl::ThemePartCacheEntry::create
     ASSERT(entry->edje());
 
     if (!setSourceGroupForEdjeObject(entry->edje(), themePath, toEdjeGroup(type)))
-        return 0;
+        return nullptr;
 
     entry->m_surface = createSurfaceForBackingStore(entry->canvas());
     if (!entry->surface())
-        return 0;
+        return nullptr;
 
     evas_object_resize(entry->edje(), size.width(), size.height());
     evas_object_show(entry->edje());
@@ -209,7 +209,7 @@ RenderThemeEfl::ThemePartCacheEntry* RenderThemeEfl::ThemePartCacheEntry::create
     entry->type = type;
     entry->size = size;
 
-    return entry.leakPtr();
+    return entry.release();
 }
 
 void RenderThemeEfl::ThemePartCacheEntry::reuse(const String& themePath, FormType newType, const IntSize& newSize)
@@ -240,58 +240,54 @@ void RenderThemeEfl::ThemePartCacheEntry::reuse(const String& themePath, FormTyp
 
 RenderThemeEfl::ThemePartCacheEntry* RenderThemeEfl::getThemePartFromCache(FormType type, const IntSize& size)
 {
-    Vector<ThemePartCacheEntry*>::iterator it, end;
-    size_t lastWithRequestedSize = notFound;
+    void* data;
+    Eina_List* node;
+    Eina_List* reusableNode = 0;
 
-    it = m_partCache.begin();
-    end = m_partCache.end();
-    for (size_t i = 0; it != end; i++, it++) {
-        ThemePartCacheEntry* entry = *it;
-        ASSERT(entry);
-        if (entry->size == size) {
-            if (entry->type == type)
-                return entry;
-            lastWithRequestedSize = i;
+    // Look for the item in the cache.
+    EINA_LIST_FOREACH(m_partCache, node, data) {
+        ThemePartCacheEntry* cachedEntry = static_cast<ThemePartCacheEntry*>(data);
+        if (cachedEntry->size == size) {
+            if (cachedEntry->type == type) {
+                // Found the right item, move it to the head of the list
+                // and return it.
+                m_partCache = eina_list_promote_list(m_partCache, node);
+                return cachedEntry;
+            }
+            // We reuse in priority the last item in the list that has
+            // the requested size.
+            reusableNode = node;
         }
     }
 
-    if (m_partCache.size() < RENDER_THEME_EFL_PART_CACHE_MAX) {
-        ThemePartCacheEntry* entry = ThemePartCacheEntry::create(themePath(), type, size);
-        if (entry) // Can be '0', if creation fails. Do not store it in this case.
-            m_partCache.prepend(entry);
+    if (eina_list_count(m_partCache) < RENDER_THEME_EFL_PART_CACHE_MAX) {
+        ThemePartCacheEntry* entry = ThemePartCacheEntry::create(themePath(), type, size).leakPtr();
+        if (entry)
+            m_partCache = eina_list_prepend(m_partCache, entry);
+
         return entry;
     }
 
-    // We have a full cache now!
-    EINA_LOG_INFO("RenderTheme cache is full, reusing.");
+    // The cache is full, reuse the last item we found that had the
+    // requested size to avoid resizing. If there was none, reuse
+    // the last item of the list.
+    if (!reusableNode)
+        reusableNode = eina_list_last(m_partCache);
 
-    if (lastWithRequestedSize != notFound && lastWithRequestedSize != 1) {
-        ThemePartCacheEntry* entry = m_partCache.at(lastWithRequestedSize);
-        ASSERT(entry);
-        entry->reuse(themePath(), type);
-        m_partCache.remove(lastWithRequestedSize);
-        m_partCache.prepend(entry);
-        return entry;
-    }
+    ThemePartCacheEntry* reusedEntry = static_cast<ThemePartCacheEntry*>(eina_list_data_get(reusableNode));
+    ASSERT(reusedEntry);
+    reusedEntry->reuse(themePath(), type, size);
+    m_partCache = eina_list_promote_list(m_partCache, reusableNode);
 
-    ThemePartCacheEntry* entry = m_partCache.last();
-    ASSERT(entry);
-    entry->reuse(themePath(), type, size);
-    m_partCache.removeLast();
-    m_partCache.prepend(entry);
-    return entry;
+    return reusedEntry;
 }
 
-void RenderThemeEfl::flushThemePartCache()
+void RenderThemeEfl::clearThemePartCache()
 {
-    Vector<ThemePartCacheEntry*>::iterator it, end;
+    void* data;
+    EINA_LIST_FREE(m_partCache, data)
+        delete static_cast<ThemePartCacheEntry*>(data);
 
-    it = m_partCache.begin();
-    end = m_partCache.end();
-    for (; it != end; it++)
-        delete (*it);
-
-    m_partCache.clear();
 }
 
 void RenderThemeEfl::applyEdjeStateFromForm(Evas_Object* object, ControlStates states)
@@ -494,9 +490,9 @@ bool RenderThemeEfl::loadTheme()
     if (!setSourceGroupForEdjeObject(o.get(), m_themePath, "webkit/base"))
         return false; // Keep current theme.
 
-    // Get rid of existing theme.
+    // Invalidate existing theme part cache.
     if (edje())
-        flushThemePartCache();
+        clearThemePartCache();
 
     // Set new loaded theme, and apply it.
     m_edje = o;
@@ -606,12 +602,13 @@ RenderThemeEfl::RenderThemeEfl(Page* page)
     , m_mediaPanelColor(220, 220, 195) // light tannish color.
     , m_mediaSliderColor(Color::white)
 #endif
+    , m_partCache(0)
 {
 }
 
 RenderThemeEfl::~RenderThemeEfl()
 {
-    flushThemePartCache();
+    clearThemePartCache();
 }
 
 static bool supportsFocus(ControlPart appearance)
