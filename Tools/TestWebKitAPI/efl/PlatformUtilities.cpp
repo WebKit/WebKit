@@ -42,7 +42,7 @@ void run(bool* done)
 
 void sleep(double seconds)
 {
-    usleep(seconds * 1000000);
+    sleep(seconds);
 }
 
 WKURLRef createURLForResource(const char* resource, const char* extension)

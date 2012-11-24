@@ -66,7 +66,6 @@ SET(test_webkit2_api_BINARIES
     ParentFrame
     PreventEmptyUserAgent
     PrivateBrowsingPushStateNoHistoryCallback
-    ResponsivenessTimerDoesntFireEarly
     WKConnection
     WKPreferences
     WKString
@@ -92,6 +91,7 @@ ADD_DEFINITIONS(-DTHEME_DIR="${THEME_BINARY_DIR}")
 #
 #   HitTestResultNodeHandle
 #   MouseMoveAfterCrash
+#   ResponsivenessTimerDoesntFireEarly
 #   SpacebarScrolling
 #
 # Flaky test, fails on Release but passes on Debug:
