@@ -28,7 +28,7 @@
 #include <QX11Info>
 #endif
 
-#ifdef QT_OPENGL_LIB
+#if USE(TEXTURE_MAPPER_GL)
 #include <QGLWidget>
 #endif
 
