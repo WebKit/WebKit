@@ -1,3 +1,16 @@
+2012-11-24  Liam Quinn  <lquinn@rim.com>
+
+        [BlackBerry] RTSP should use the same MediaDocument as HTTP videos.
+        https://bugs.webkit.org/show_bug.cgi?id=103185
+        RIM PR 250114
+
+        Reviewed by George Staikos.
+
+        Make our MediaPlayer implementation indicate that it supports RTSP. That way, DOMImplementation::createDocument will create the same MediaDocument as is used for HTTP videos.
+
+        * platform/graphics/blackberry/MediaPlayerPrivateBlackBerry.cpp:
+        (WebCore::MediaPlayerPrivate::supportsType):
+
 2012-11-24  Andreas Kling  <akling@apple.com>
 
         Put computed style 'font-family' values in the CSSValuePool.
