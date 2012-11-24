@@ -96,48 +96,56 @@ enum CallbackType {
 #endif
 };
 
-template<typename T>
-inline bool callbackArgumentsExpected()
-{
-    return true;
-}
-
-template<>
-inline bool callbackArgumentsExpected<void>()
-{
-    return false;
-}
-
 template <CallbackType>
-struct CallBackInfo {
-    typedef void* Type;
+struct CallBackInfo;
 
-    static inline const char* name()
-    {
-        ASSERT_NOT_REACHED();
-        return "";
-    }
-};
-
-template <CallbackType callbackType>
+template <CallbackType callbackType, typename ArgType = typename CallBackInfo<callbackType>::Type>
 class CallBack {
 public:
-    typedef typename CallBackInfo<callbackType>::Type ArgType;
-
     explicit CallBack(Evas_Object* view)
         : m_view(view)
     {
         ASSERT(m_view);
     }
 
-    void call(ArgType* argument = 0)
+    void call(ArgType* argument)
     {
-        if (argument && !callbackArgumentsExpected<ArgType>()) {
-            CRITICAL("should not pass arguments for this callback!");
-            ASSERT_NOT_REACHED();
-            return;
-        }
+        evas_object_smart_callback_call(m_view, CallBackInfo<callbackType>::name(), static_cast<void*>(argument));
+    }
 
+private:
+    Evas_Object* m_view;
+};
+
+template <CallbackType callbackType>
+class CallBack <callbackType, void> {
+public:
+    explicit CallBack(Evas_Object* view)
+        : m_view(view)
+    {
+        ASSERT(m_view);
+    }
+
+    void call()
+    {
+        evas_object_smart_callback_call(m_view, CallBackInfo<callbackType>::name(), 0);
+    }
+
+private:
+    Evas_Object* m_view;
+};
+
+template <CallbackType callbackType>
+class CallBack <callbackType, char> {
+public:
+    explicit CallBack(Evas_Object* view)
+        : m_view(view)
+    {
+        ASSERT(m_view);
+    }
+
+    void call(char* argument)
+    {
         evas_object_smart_callback_call(m_view, CallBackInfo<callbackType>::name(), static_cast<void*>(argument));
     }
 

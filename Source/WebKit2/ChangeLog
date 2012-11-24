@@ -1,3 +1,17 @@
+2012-11-24  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [EFL][WK2] Check errors in EwkView callbacks usage at compile time
+        https://bugs.webkit.org/show_bug.cgi?id=103177
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Errors in EwkView callbacks usage are now checked at compile time.
+
+        * UIProcess/API/efl/EwkViewCallbacks.h:
+        (CallBack):
+        (EwkViewCallbacks::CallBack::CallBack):
+        (EwkViewCallbacks::CallBack::call):
+
 2012-11-23  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r135575.
