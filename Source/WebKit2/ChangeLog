@@ -1,3 +1,15 @@
+2012-11-23  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r135575.
+        http://trac.webkit.org/changeset/135575
+        https://bugs.webkit.org/show_bug.cgi?id=103169
+
+        It made all tests assert (Requested by Ossy on #webkit).
+
+        * qt/MainQt.cpp:
+        (WebKit):
+        (main):
+
 2012-11-23  Alexis Menard  <alexis@webkit.org>
 
         [CSS3 Backgrounds and Borders] Implement new CSS3 background-position parsing.

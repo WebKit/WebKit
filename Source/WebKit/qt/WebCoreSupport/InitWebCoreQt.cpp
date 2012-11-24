@@ -62,6 +62,8 @@ Q_DECL_EXPORT void initializeWebKitQt()
         WebCore::RenderThemeQStyle::setStyleFactoryFunction(initCallback);
         WebCore::RenderThemeQt::setCustomTheme(WebCore::RenderThemeQStyle::create, new WebCore::ScrollbarThemeQStyle);
     }
+
+    WebCore::initializeWebCoreQt();
 }
 
 Q_DECL_EXPORT void setImagePlatformResource(const char* name, const QPixmap& pixmap)
