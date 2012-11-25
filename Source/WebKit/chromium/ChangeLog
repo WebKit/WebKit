@@ -1,3 +1,16 @@
+2012-11-24  Silvia Pfeiffer  <silviapf@chromium.org>
+
+        [chromium] Remove traces of MediaControlRootElement
+        https://bugs.webkit.org/show_bug.cgi?id=103174
+
+        Reviewed by Adam Barth.
+
+        Now that nothing is using MediaControlRootElement any more,
+        we can remove the FIXME and MediaControlRootElement enum left
+        over from bug 88871.
+
+        * public/WebContextMenuData.h:
+
 2012-11-23  Robert Kroeger  <rjkroege@chromium.org>
 
         Remove unused ScrollByPixelVelocity
