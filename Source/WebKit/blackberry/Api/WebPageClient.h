@@ -201,7 +201,6 @@ public:
 
     virtual BlackBerry::Platform::ViewportAccessor* userInterfaceViewportAccessor() const = 0;
 
-    virtual void resetBitmapZoomScale(double scale) = 0;
     virtual void animateBlockZoom(double finalScale, const Platform::FloatPoint& finalDocumentScrollPosition) = 0;
 
     virtual void setPreventsScreenIdleDimming(bool noDimming) = 0;

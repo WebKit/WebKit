@@ -1,3 +1,30 @@
+2012-11-25  Jacky Jiang  <zhajiang@rim.com>
+
+        [BlackBerry] Get rid of resetBitmapZoomScale()
+        https://bugs.webkit.org/show_bug.cgi?id=103200
+
+        Reviewed by Rob Buis.
+        Internally reviewed by Gen Mak.
+
+        PR: 235707
+        Right now, resetBitmapZoomScale() takes an unused paramter and
+        dispatches a message to end the bitmap zooming. However, the
+        interaction has its own state machine to start bitmap zooming when it
+        is active and end bitmap zooming when it is inactive. This is
+        expecially for pinch zoom and scroll. From WebKit side, block zoom
+        which will call zoomBlock when the bitmap zoom finished doesn't even
+        need to dispatch the useless ending message to ZoomHandler.
+        resetBitmapZoomScale() is basically a noop for block zoom. And likewise
+        that is useless for zoomToInitialScaleOnLoad(). It can also potentially
+        cause problem if it is used somewhere else in the future and
+        incidentally breaks the interaction's own state machine. So just remove
+        this completely.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::zoomToInitialScaleOnLoad):
+        (BlackBerry::WebKit::WebPagePrivate::zoomBlock):
+        * Api/WebPageClient.h:
+
 2012-11-24  Andy Chen  <andchen@rim.com>
 
         [BlackBerry] Find-on-page keeps stale pointer
