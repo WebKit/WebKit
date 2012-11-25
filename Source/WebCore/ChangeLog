@@ -1,3 +1,25 @@
+2012-11-24  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] Refactor RenderThemeEfl::paintThemePart()
+        https://bugs.webkit.org/show_bug.cgi?id=103192
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Refactor RenderThemeEfl::paintThemePart() so that:
+        - Some C'ism is removed
+        - RTL related code is moved to applyEdjeRTLState()
+        - evas_render() is called instead of evas_render_updates()
+          to avoid creating uselessly update rects.
+
+        No new tests, no behavior change for layout tests.
+
+        * platform/efl/RenderThemeEfl.cpp:
+        (WebCore::RenderThemeEfl::applyEdjeRTLState):
+        (WebCore):
+        (WebCore::RenderThemeEfl::paintThemePart):
+        * platform/efl/RenderThemeEfl.h:
+        (RenderThemeEfl):
+
 2012-11-24  Brent Fulgham  <bfulgham@webkit.org>
 
         [WinCairo] Avoid access violation when frame is NULL.

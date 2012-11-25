@@ -313,36 +313,17 @@ void RenderThemeEfl::applyEdjeStateFromForm(Evas_Object* object, ControlStates s
     }
 }
 
-bool RenderThemeEfl::paintThemePart(RenderObject* object, FormType type, const PaintInfo& info, const IntRect& rect)
+void RenderThemeEfl::applyEdjeRTLState(Evas_Object* edje, RenderObject* object, FormType type, const IntRect& rect)
 {
-    loadThemeIfNeeded();
-    _ASSERT_ON_RELEASE_RETURN_VAL(edje(), false, "Could not paint native HTML part due to missing theme.");
-
-    ThemePartCacheEntry* entry;
-    Eina_List* updates;
-    cairo_t* cairo;
-
-    entry = getThemePartFromCache(type, rect.size());
-    if (!entry)
-        return false;
-
-    applyEdjeStateFromForm(entry->edje(), controlStatesForRenderer(object));
-
-    cairo = info.context->platformContext()->cr();
-    ASSERT(cairo);
-
-    // Currently, only sliders needs this message; if other widget ever needs special
-    // treatment, move them to special functions.
     if (type == SliderVertical || type == SliderHorizontal) {
         if (!object->isSlider())
-            return true; // probably have -webkit-appearance: slider..
+            return; // probably have -webkit-appearance: slider..
 
         RenderSlider* renderSlider = toRenderSlider(object);
         HTMLInputElement* input = renderSlider->node()->toInputElement();
         double valueRange = input->maximum() - input->minimum();
 
-        OwnArrayPtr<char> buffer = adoptArrayPtr(new char[sizeof(Edje_Message_Float_Set) + sizeof(double)]);
-        Edje_Message_Float_Set* msg = new(buffer.get()) Edje_Message_Float_Set;
+        OwnPtr<Edje_Message_Float_Set> msg = adoptPtr(static_cast<Edje_Message_Float_Set*>(operator new (sizeof(Edje_Message_Float_Set) + sizeof(double))));
         msg->count = 2;
 
         // The first parameter of the message decides if the progress bar
@@ -355,7 +336,7 @@ bool RenderThemeEfl::paintThemePart(RenderObject* object, FormType type, const P
             msg->val[0] = 0;
 
         msg->val[1] = (input->valueAsNumber() - input->minimum()) / valueRange;
-        edje_object_message_send(entry->edje(), EDJE_MESSAGE_FLOAT_SET, 0, msg);
+        edje_object_message_send(edje, EDJE_MESSAGE_FLOAT_SET, 0, msg.get());
 #if ENABLE(PROGRESS_ELEMENT)
     } else if (type == ProgressBar) {
         RenderProgress* renderProgress = toRenderProgress(object);
@@ -363,8 +344,7 @@ bool RenderThemeEfl::paintThemePart(RenderObject* object, FormType type, const P
         int max = rect.width();
         double value = renderProgress->position();
 
-        OwnArrayPtr<char> buffer = adoptArrayPtr(new char[sizeof(Edje_Message_Float_Set) + sizeof(double)]);
-        Edje_Message_Float_Set* msg = new(buffer.get()) Edje_Message_Float_Set;
+        OwnPtr<Edje_Message_Float_Set> msg = adoptPtr(static_cast<Edje_Message_Float_Set*>(operator new (sizeof(Edje_Message_Float_Set) + sizeof(double))));
         msg->count = 2;
 
         if (object->style()->direction() == RTL)
@@ -372,14 +352,31 @@ bool RenderThemeEfl::paintThemePart(RenderObject* object, FormType type, const P
         else
             msg->val[0] = 0;
         msg->val[1] = value;
-        edje_object_message_send(entry->edje(), EDJE_MESSAGE_FLOAT_SET, 0, msg);
+        edje_object_message_send(edje, EDJE_MESSAGE_FLOAT_SET, 0, msg.get());
+#else
+        UNUSED_PARAM(rect);
 #endif
     }
+}
+
+bool RenderThemeEfl::paintThemePart(RenderObject* object, FormType type, const PaintInfo& info, const IntRect& rect)
+{
+    loadThemeIfNeeded();
+    _ASSERT_ON_RELEASE_RETURN_VAL(edje(), false, "Could not paint native HTML part due to missing theme.");
+
+    ThemePartCacheEntry* entry = getThemePartFromCache(type, rect.size());
+    if (!entry)
+        return false;
+
+    applyEdjeStateFromForm(entry->edje(), controlStatesForRenderer(object));
+    applyEdjeRTLState(entry->edje(), object, type, rect);
 
     edje_object_calc_force(entry->edje());
     edje_object_message_signal_process(entry->edje());
-    updates = evas_render_updates(ecore_evas_get(entry->canvas()));
-    evas_render_updates_free(updates);
+    evas_render(ecore_evas_get(entry->canvas()));
+
+    cairo_t* cairo = info.context->platformContext()->cr();
+    ASSERT(cairo);
 
     cairo_save(cairo);
     cairo_set_source_surface(cairo, entry->surface(), rect.x(), rect.y());

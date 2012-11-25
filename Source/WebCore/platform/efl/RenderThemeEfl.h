@@ -230,6 +230,7 @@ private:
     void applyPartDescriptionsFrom(const String& themePath);
 
     void applyEdjeStateFromForm(Evas_Object*, ControlStates);
+    void applyEdjeRTLState(Evas_Object*, RenderObject*, FormType, const IntRect&);
     bool paintThemePart(RenderObject*, FormType, const PaintInfo&, const IntRect&);
 
 #if ENABLE(VIDEO)
