@@ -3459,7 +3459,7 @@ void Document::setCSSTarget(Element* n)
     }
 }
 
-void Document::registerNodeListCache(DynamicNodeListCacheBase* list)
+void Document::registerNodeListCache(LiveNodeListBase* list)
 {
     if (list->hasIdNameCache())
         m_nodeListCounts[InvalidateOnIdNameAttrChange]++;
@@ -3468,7 +3468,7 @@ void Document::registerNodeListCache(DynamicNodeListCacheBase* list)
         m_listsInvalidatedAtDocument.add(list);
 }
 
-void Document::unregisterNodeListCache(DynamicNodeListCacheBase* list)
+void Document::unregisterNodeListCache(LiveNodeListBase* list)
 {
     if (list->hasIdNameCache())
         m_nodeListCounts[InvalidateOnIdNameAttrChange]--;
@@ -4334,7 +4334,7 @@ bool Document::hasSVGRootNode() const
 }
 #endif
 
-// FIXME: This caching mechanism should be merged that of DynamicNodeList in NodeRareData.
+// FIXME: This caching mechanism should be merged that of LiveNodeList in NodeRareData.
 PassRefPtr<HTMLCollection> Document::cachedCollection(CollectionType type)
 {
     ASSERT(static_cast<unsigned>(type) < NumUnnamedDocumentCachedTypes);
@@ -4425,7 +4425,7 @@ PassRefPtr<HTMLCollection> Document::documentNamedItems(const AtomicString& name
     return collection.release();
 }
 
-// FIXME: This caching mechanism should be merged that of DynamicNodeList in NodeRareData.
+// FIXME: This caching mechanism should be merged that of LiveNodeList in NodeRareData.
 void Document::removeWindowNamedItemCache(HTMLCollection* collection, const AtomicString& name)
 {
     ASSERT_UNUSED(collection, m_windowNamedItemCollections.get(name) == collection);

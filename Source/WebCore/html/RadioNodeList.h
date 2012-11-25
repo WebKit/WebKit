@@ -26,7 +26,7 @@
 #ifndef RadioNodeList_h
 #define RadioNodeList_h
 
-#include "DynamicNodeList.h"
+#include "LiveNodeList.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-class RadioNodeList : public DynamicSubtreeNodeList {
+class RadioNodeList : public LiveNodeList {
 public:
     static PassRefPtr<RadioNodeList> create(Node* rootNode, const AtomicString& name)
     {

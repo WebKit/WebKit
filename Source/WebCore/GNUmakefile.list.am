@@ -2772,8 +2772,6 @@ webcore_sources += \
 	Source/WebCore/dom/DOMStringMap.cpp \
 	Source/WebCore/dom/DOMStringMap.h \
 	Source/WebCore/dom/DOMTimeStamp.h \
-	Source/WebCore/dom/DynamicNodeList.cpp \
-	Source/WebCore/dom/DynamicNodeList.h \
 	Source/WebCore/dom/Element.cpp \
 	Source/WebCore/dom/Element.h \
 	Source/WebCore/dom/ElementAttributeData.cpp \
@@ -2825,6 +2823,8 @@ webcore_sources += \
 	Source/WebCore/dom/IdTargetObserver.h \
 	Source/WebCore/dom/IdTargetObserverRegistry.cpp \
 	Source/WebCore/dom/IdTargetObserverRegistry.h \
+	Source/WebCore/dom/LiveNodeList.cpp \
+	Source/WebCore/dom/LiveNodeList.h \
 	Source/WebCore/dom/HashChangeEvent.h \
 	Source/WebCore/dom/KeyboardEvent.cpp \
 	Source/WebCore/dom/KeyboardEvent.h \

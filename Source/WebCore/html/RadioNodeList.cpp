@@ -38,7 +38,7 @@ namespace WebCore {
 using namespace HTMLNames;
 
 RadioNodeList::RadioNodeList(Node* rootNode, const AtomicString& name)
-    : DynamicSubtreeNodeList(rootNode, RadioNodeListType, InvalidateForFormControls, rootNode->hasTagName(formTag) ? NodeListIsRootedAtDocument : NodeListIsRootedAtNode)
+    : LiveNodeList(rootNode, RadioNodeListType, InvalidateForFormControls, rootNode->hasTagName(formTag) ? NodeListIsRootedAtDocument : NodeListIsRootedAtNode)
     , m_name(name)
 {
 }

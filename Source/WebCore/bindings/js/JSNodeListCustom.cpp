@@ -26,8 +26,8 @@
 #include "config.h"
 #include "JSNodeList.h"
 
-#include "DynamicNodeList.h"
 #include "JSNode.h"
+#include "LiveNodeList.h"
 #include "Node.h"
 #include "NodeList.h"
 #include <wtf/text/AtomicString.h>
@@ -41,9 +41,9 @@ bool JSNodeListOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handl
     JSNodeList* jsNodeList = jsCast<JSNodeList*>(handle.get().asCell());
     if (!jsNodeList->hasCustomProperties())
         return false;
-    if (!jsNodeList->impl()->isDynamicNodeList())
+    if (!jsNodeList->impl()->isLiveNodeList())
         return false;
-    return visitor.containsOpaqueRoot(root(static_cast<DynamicNodeList*>(jsNodeList->impl())->ownerNode()));
+    return visitor.containsOpaqueRoot(root(static_cast<LiveNodeList*>(jsNodeList->impl())->ownerNode()));
 }
 
 bool JSNodeList::canGetItemsForName(ExecState*, NodeList* impl, PropertyName propertyName)

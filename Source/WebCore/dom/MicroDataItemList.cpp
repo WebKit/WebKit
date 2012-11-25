@@ -44,7 +44,7 @@ const String& MicroDataItemList::undefinedItemType()
 }
 
 MicroDataItemList::MicroDataItemList(PassRefPtr<Node> rootNode, const String& typeNames)
-    : DynamicSubtreeNodeList(rootNode, MicroDataItemListType, InvalidateOnItemAttrChange)
+    : LiveNodeList(rootNode, MicroDataItemListType, InvalidateOnItemAttrChange)
     , m_typeNames(typeNames, document()->inQuirksMode())
     , m_originalTypeNames(typeNames)
 {

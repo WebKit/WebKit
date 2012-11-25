@@ -46,7 +46,6 @@
 #include "DOMSettableTokenList.h"
 #include "Document.h"
 #include "DocumentType.h"
-#include "DynamicNodeList.h"
 #include "Element.h"
 #include "ElementRareData.h"
 #include "ElementShadow.h"
@@ -68,6 +67,7 @@
 #include "InspectorCounters.h"
 #include "KeyboardEvent.h"
 #include "LabelsNodeList.h"
+#include "LiveNodeList.h"
 #include "Logging.h"
 #include "MouseEvent.h"
 #include "MutationEvent.h"
@@ -971,7 +971,7 @@ unsigned Node::nodeIndex() const
 template<unsigned type>
 bool shouldInvalidateNodeListCachesForAttr(const unsigned nodeListCounts[], const QualifiedName& attrName)
 {
-    if (nodeListCounts[type] && DynamicNodeListCacheBase::shouldInvalidateTypeOnAttributeChange(static_cast<NodeListInvalidationType>(type), attrName))
+    if (nodeListCounts[type] && LiveNodeListBase::shouldInvalidateTypeOnAttributeChange(static_cast<NodeListInvalidationType>(type), attrName))
         return true;
     return shouldInvalidateNodeListCachesForAttr<type + 1>(nodeListCounts, attrName);
 }
@@ -997,8 +997,8 @@ bool Document::shouldInvalidateNodeListCaches(const QualifiedName* attrName) con
 
 void Document::invalidateNodeListCaches(const QualifiedName* attrName)
 {
-    HashSet<DynamicNodeListCacheBase*>::iterator end = m_listsInvalidatedAtDocument.end();
-    for (HashSet<DynamicNodeListCacheBase*>::iterator it = m_listsInvalidatedAtDocument.begin(); it != end; ++it)
+    HashSet<LiveNodeListBase*>::iterator end = m_listsInvalidatedAtDocument.end();
+    for (HashSet<LiveNodeListBase*>::iterator it = m_listsInvalidatedAtDocument.begin(); it != end; ++it)
         (*it)->invalidateCache(attrName);
 }
 

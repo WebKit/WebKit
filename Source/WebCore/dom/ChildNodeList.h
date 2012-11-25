@@ -24,12 +24,12 @@
 #ifndef ChildNodeList_h
 #define ChildNodeList_h
 
-#include "DynamicNodeList.h"
+#include "LiveNodeList.h"
 #include <wtf/PassRefPtr.h>
 
 namespace WebCore {
 
-    class ChildNodeList : public DynamicNodeList {
+    class ChildNodeList : public LiveNodeList {
     public:
         static PassRefPtr<ChildNodeList> create(PassRefPtr<Node> rootNode)
         {

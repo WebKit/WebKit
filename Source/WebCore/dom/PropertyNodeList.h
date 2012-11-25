@@ -32,7 +32,7 @@
 #define PropertyNodeList_h
 
 #if ENABLE(MICRODATA)
-#include "DynamicNodeList.h"
+#include "LiveNodeList.h"
 #include "MicroDataItemValue.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
@@ -42,7 +42,7 @@ namespace WebCore {
 
 typedef Vector<RefPtr<MicroDataItemValue> > PropertyValueArray;
 
-class PropertyNodeList : public DynamicSubtreeNodeList {
+class PropertyNodeList : public LiveNodeList {
 public:
     static PassRefPtr<PropertyNodeList> create(Node* rootNode, const String& name)
     {

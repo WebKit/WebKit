@@ -42,7 +42,7 @@ namespace WebCore {
         virtual Node* namedItem(const AtomicString&) const = 0;
 
         // Other methods (not part of DOM)
-        virtual bool isDynamicNodeList() const { return false; }
+        virtual bool isLiveNodeList() const { return false; }
     };
 
 } // namespace WebCore

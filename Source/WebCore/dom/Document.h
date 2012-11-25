@@ -80,7 +80,6 @@ class DocumentParser;
 class DocumentStyleSheetCollection;
 class DocumentType;
 class DocumentWeakReference;
-class DynamicNodeListCacheBase;
 class Element;
 class ElementAttributeData;
 class EntityReference;
@@ -106,6 +105,7 @@ class HitTestResult;
 class IntPoint;
 class LayoutPoint;
 class LayoutRect;
+class LiveNodeListBase;
 class DOMWrapperWorld;
 class JSNode;
 class Locale;
@@ -718,8 +718,8 @@ public:
     bool hasPendingForcedStyleRecalc() const;
     void styleRecalcTimerFired(Timer<Document>*);
 
-    void registerNodeListCache(DynamicNodeListCacheBase*);
-    void unregisterNodeListCache(DynamicNodeListCacheBase*);
+    void registerNodeListCache(LiveNodeListBase*);
+    void unregisterNodeListCache(LiveNodeListBase*);
     bool shouldInvalidateNodeListCaches(const QualifiedName* attrName = 0) const;
     void invalidateNodeListCaches(const QualifiedName* attrName);
 
@@ -1407,7 +1407,7 @@ private:
 
     InheritedBool m_designMode;
 
-    HashSet<DynamicNodeListCacheBase*> m_listsInvalidatedAtDocument;
+    HashSet<LiveNodeListBase*> m_listsInvalidatedAtDocument;
     unsigned m_nodeListCounts[numNodeListInvalidationTypes];
 
     HTMLCollection* m_collections[NumUnnamedDocumentCachedTypes];

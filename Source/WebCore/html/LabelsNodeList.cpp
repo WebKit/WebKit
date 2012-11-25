@@ -34,7 +34,7 @@ namespace WebCore {
 using namespace HTMLNames;
 
 LabelsNodeList::LabelsNodeList(Node* forNode)
-    : DynamicSubtreeNodeList(forNode, LabelsNodeListType, InvalidateOnForAttrChange, NodeListIsRootedAtDocument)
+    : LiveNodeList(forNode, LabelsNodeListType, InvalidateOnForAttrChange, NodeListIsRootedAtDocument)
 {
 }
 

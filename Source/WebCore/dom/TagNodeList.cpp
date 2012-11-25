@@ -31,7 +31,7 @@
 namespace WebCore {
 
 TagNodeList::TagNodeList(PassRefPtr<Node> rootNode, const AtomicString& namespaceURI, const AtomicString& localName)
-    : DynamicSubtreeNodeList(rootNode, TagNodeListType, DoNotInvalidateOnAttributeChanges)
+    : LiveNodeList(rootNode, TagNodeListType, DoNotInvalidateOnAttributeChanges)
     , m_namespaceURI(namespaceURI)
     , m_localName(localName)
 {

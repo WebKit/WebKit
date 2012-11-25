@@ -21,7 +21,7 @@
  */
 
 #include "config.h"
-#include "DynamicNodeList.h"
+#include "LiveNodeList.h"
 
 #include "Document.h"
 #include "Element.h"
@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-Node* DynamicNodeListCacheBase::rootNode() const
+Node* LiveNodeListBase::rootNode() const
 {
     if (isRootedAtDocument() && m_ownerNode->inDocument())
         return m_ownerNode->document();
@@ -52,7 +52,7 @@ Node* DynamicNodeListCacheBase::rootNode() const
     return m_ownerNode.get();
 }
 
-void DynamicNodeListCacheBase::invalidateCache() const
+void LiveNodeListBase::invalidateCache() const
 {
     m_cachedItem = 0;
     m_isLengthCacheValid = false;
@@ -74,7 +74,7 @@ void DynamicNodeListCacheBase::invalidateCache() const
 #endif
 }
 
-void DynamicNodeListCacheBase::invalidateIdNameCacheMaps() const
+void LiveNodeListBase::invalidateIdNameCacheMaps() const
 {
     ASSERT(hasIdNameCache());
     const HTMLCollection* cacheBase = static_cast<const HTMLCollection*>(this);
@@ -82,7 +82,7 @@ void DynamicNodeListCacheBase::invalidateIdNameCacheMaps() const
     cacheBase->m_nameCache.clear();
 }
 
-void DynamicNodeListCacheBase::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+void LiveNodeListBase::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::DOM);
     NodeList::reportMemoryUsage(memoryObjectInfo);
@@ -90,7 +90,7 @@ void DynamicNodeListCacheBase::reportMemoryUsage(MemoryObjectInfo* memoryObjectI
     info.addWeakPointer(m_cachedItem);
 }
 
-Node* DynamicNodeList::namedItem(const AtomicString& elementId) const
+Node* LiveNodeList::namedItem(const AtomicString& elementId) const
 {
     Node* rootNode = this->rootNode();
 

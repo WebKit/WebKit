@@ -54,7 +54,6 @@ class ClassNodeList;
 class ContainerNode;
 class DOMSettableTokenList;
 class Document;
-class DynamicSubtreeNodeList;
 class Element;
 class Event;
 class EventContext;

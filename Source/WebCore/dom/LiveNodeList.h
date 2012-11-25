@@ -21,8 +21,8 @@
  *
  */
 
-#ifndef DynamicNodeList_h
-#define DynamicNodeList_h
+#ifndef LiveNodeList_h
+#define LiveNodeList_h
 
 #include "CollectionType.h"
 #include "Document.h"
@@ -41,15 +41,14 @@ enum NodeListRootType {
     NodeListIsRootedAtDocumentIfOwnerHasItemrefAttr,
 };
 
-// FIXME: CacheBase is a bad postfix for this class that now inherits from NodeList. Rename it to DynamicNodeListBase.
-class DynamicNodeListCacheBase : public NodeList {
+class LiveNodeListBase : public NodeList {
 public:
     enum ItemAfterOverrideType {
         OverridesItemAfter,
         DoesNotOverrideItemAfter,
     };
 
-    DynamicNodeListCacheBase(Node* ownerNode, NodeListRootType rootType, NodeListInvalidationType invalidationType,
+    LiveNodeListBase(Node* ownerNode, NodeListRootType rootType, NodeListInvalidationType invalidationType,
         bool shouldOnlyIncludeDirectChildren, CollectionType collectionType, ItemAfterOverrideType itemAfterOverrideType)
         : m_ownerNode(ownerNode)
         , m_cachedItem(0)
@@ -153,7 +152,7 @@ private:
     mutable unsigned m_isItemRefElementsCacheValid : 1;
 };
 
-ALWAYS_INLINE bool DynamicNodeListCacheBase::shouldInvalidateTypeOnAttributeChange(NodeListInvalidationType type, const QualifiedName& attrName)
+ALWAYS_INLINE bool LiveNodeListBase::shouldInvalidateTypeOnAttributeChange(NodeListInvalidationType type, const QualifiedName& attrName)
 {
     switch (type) {
     case InvalidateOnClassAttrChange:
@@ -182,41 +181,29 @@ ALWAYS_INLINE bool DynamicNodeListCacheBase::shouldInvalidateTypeOnAttributeChan
     return false;
 }
 
-class DynamicNodeList : public DynamicNodeListCacheBase {
+class LiveNodeList : public LiveNodeListBase {
 public:
-    DynamicNodeList(PassRefPtr<Node> ownerNode, CollectionType collectionType, NodeListRootType rootType, NodeListInvalidationType invalidationType)
-        : DynamicNodeListCacheBase(ownerNode.get(), rootType, invalidationType, collectionType == ChildNodeListType,
+    LiveNodeList(PassRefPtr<Node> ownerNode, CollectionType collectionType, NodeListInvalidationType invalidationType, NodeListRootType rootType = NodeListIsRootedAtNode)
+        : LiveNodeListBase(ownerNode.get(), rootType, invalidationType, collectionType == ChildNodeListType,
         collectionType, DoesNotOverrideItemAfter)
-    { }
-    virtual ~DynamicNodeList() { }
+    {
+        if (collectionType != ChildNodeListType)
+            document()->registerNodeListCache(this);
+    }
 
-    // Other methods (not part of DOM)
+    virtual ~LiveNodeList()
+    {
+        if (type() != ChildNodeListType)
+            document()->unregisterNodeListCache(this);
+    }
+
     virtual Node* namedItem(const AtomicString&) const OVERRIDE;
     virtual bool nodeMatches(Element*) const = 0;
 
 private:
-    virtual bool isDynamicNodeList() const OVERRIDE { return true; }
-};
-
-class DynamicSubtreeNodeList : public DynamicNodeList {
-public:
-    virtual ~DynamicSubtreeNodeList()
-    {
-        document()->unregisterNodeListCache(this);
-    }
-
-protected:
-    DynamicSubtreeNodeList(PassRefPtr<Node> node, CollectionType type, NodeListInvalidationType invalidationType, NodeListRootType rootType = NodeListIsRootedAtNode)
-        : DynamicNodeList(node, type, rootType, invalidationType)
-    {
-        document()->registerNodeListCache(this);
-    }
-
-private:
-    Node* itemForwardsFromCurrent(Node* start, unsigned offset, int remainingOffset) const;
-    Node* itemBackwardsFromCurrent(Node* start, unsigned offset, int remainingOffset) const;
+    virtual bool isLiveNodeList() const OVERRIDE { return true; }
 };
 
 } // namespace WebCore
 
-#endif // DynamicNodeList_h
+#endif // LiveNodeList_h

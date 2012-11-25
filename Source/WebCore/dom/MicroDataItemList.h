@@ -28,13 +28,13 @@
 
 #if ENABLE(MICRODATA)
 
-#include "DynamicNodeList.h"
+#include "LiveNodeList.h"
 #include "Node.h"
 #include "SpaceSplitString.h"
 
 namespace WebCore {
 
-class MicroDataItemList : public DynamicSubtreeNodeList {
+class MicroDataItemList : public LiveNodeList {
 public:
     static PassRefPtr<MicroDataItemList> create(PassRefPtr<Node> rootNode, const String& typeNames)
     {

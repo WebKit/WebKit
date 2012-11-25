@@ -48,7 +48,7 @@ static JSValue getNamedItems(ExecState* exec, JSHTMLOptionsCollection* collectio
     if (namedItems.size() == 1)
         return toJS(exec, collection->globalObject(), namedItems[0].get());
 
-    // FIXME: HTML5 specifies that this should be a DynamicNodeList.
+    // FIXME: HTML5 specifies that this should be a LiveNodeList.
     return toJS(exec, collection->globalObject(), StaticNodeList::adopt(namedItems).get());
 }
 

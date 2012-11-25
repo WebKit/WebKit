@@ -1146,7 +1146,6 @@ SET(WebCore_SOURCES
     dom/DocumentOrderedMap.cpp
     dom/DocumentStyleSheetCollection.cpp
     dom/DocumentType.cpp
-    dom/DynamicNodeList.cpp
     dom/Element.cpp
     dom/ElementAttributeData.cpp
     dom/ElementRareData.cpp
@@ -1168,6 +1167,7 @@ SET(WebCore_SOURCES
     dom/IconURL.cpp
     dom/IdTargetObserver.cpp
     dom/IdTargetObserverRegistry.cpp
+    dom/LiveNodeList.cpp
     dom/KeyboardEvent.cpp
     dom/MessageChannel.cpp
     dom/MessageEvent.cpp

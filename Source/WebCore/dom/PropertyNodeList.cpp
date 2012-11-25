@@ -44,7 +44,7 @@ namespace WebCore {
 using namespace HTMLNames;
 
 PropertyNodeList::PropertyNodeList(Node* rootNode, const String& name)
-    : DynamicSubtreeNodeList(rootNode, PropertyNodeListType, InvalidateOnItemAttrChange, NodeListIsRootedAtDocumentIfOwnerHasItemrefAttr)
+    : LiveNodeList(rootNode, PropertyNodeListType, InvalidateOnItemAttrChange, NodeListIsRootedAtDocumentIfOwnerHasItemrefAttr)
     , m_name(name)
 {
 }

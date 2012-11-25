@@ -24,7 +24,7 @@
 #define HTMLCollection_h
 
 #include "CollectionType.h"
-#include "DynamicNodeList.h"
+#include "LiveNodeList.h"
 #include "ScriptWrappable.h"
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-class HTMLCollection : public DynamicNodeListCacheBase {
+class HTMLCollection : public LiveNodeListBase {
 public:
     static PassRefPtr<HTMLCollection> create(Node* base, CollectionType);
     virtual ~HTMLCollection();
@@ -79,7 +79,7 @@ protected:
 private:
     bool checkForNameMatch(Element*, bool checkName, const AtomicString& name) const;
 
-    virtual bool isDynamicNodeList() const OVERRIDE { ASSERT_NOT_REACHED(); return true; }
+    virtual bool isLiveNodeList() const OVERRIDE { ASSERT_NOT_REACHED(); return true; }
 
     static void append(NodeCacheMap&, const AtomicString&, Element*);
 
@@ -87,7 +87,7 @@ private:
     mutable NodeCacheMap m_nameCache;
     mutable unsigned m_cachedElementsArrayOffset;
 
-    friend class DynamicNodeListCacheBase;
+    friend class LiveNodeListBase;
 };
 
 } // namespace

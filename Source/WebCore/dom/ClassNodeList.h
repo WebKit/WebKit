@@ -30,13 +30,13 @@
 #ifndef ClassNodeList_h
 #define ClassNodeList_h
 
-#include "DynamicNodeList.h"
+#include "LiveNodeList.h"
 #include "Node.h"
 #include "SpaceSplitString.h"
 
 namespace WebCore {
 
-    class ClassNodeList : public DynamicSubtreeNodeList {
+    class ClassNodeList : public LiveNodeList {
     public:
         static PassRefPtr<ClassNodeList> create(PassRefPtr<Node> rootNode, const String& classNames)
         {

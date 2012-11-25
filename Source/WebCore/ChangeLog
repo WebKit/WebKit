@@ -1,3 +1,105 @@
+2012-11-25  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Rename DynamicNodeList to LiveNodeList
+        https://bugs.webkit.org/show_bug.cgi?id=103197
+
+        Reviewed by Ojan Vafai.
+
+        Rename DynamicNodeList to LiveNodeList to match the terminology used in DOM4 working draft:
+        http://www.w3.org/TR/2012/WD-dom-20120405/#concept-collection-live
+        "A collection (either NodeList or HTMLCollection) can be either live or static".
+
+        Also rename DynamicNodeListCacheBase to LiveNodeListBase, and merge DynamicSubtreeNodeList
+        into LiveNodeList (old DynamicNodeList) now that the only difference between those two classes
+        is the former calling registerNodeListCache and unregisterNodeListCache on Document.
+
+        This patch completes the series of simplification of NodeList/HTMLCollection classes.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSHTMLOptionsCollectionCustom.cpp:
+        (WebCore::getNamedItems):
+        * bindings/js/JSNodeListCustom.cpp:
+        (WebCore::JSNodeListOwner::isReachableFromOpaqueRoots):
+        * bindings/v8/custom/V8NodeListCustom.cpp:
+        (WebCore::V8NodeList::opaqueRootForGC):
+        * dom/ChildNodeList.cpp:
+        (WebCore::ChildNodeList::ChildNodeList):
+        (WebCore::ChildNodeList::nodeMatches):
+        * dom/ChildNodeList.h:
+        * dom/ClassNodeList.cpp:
+        (WebCore::ClassNodeList::ClassNodeList):
+        * dom/ClassNodeList.h:
+        * dom/DOMAllInOne.cpp:
+        * dom/Document.cpp:
+        (WebCore::Document::registerNodeListCache):
+        (WebCore::Document::unregisterNodeListCache):
+        (WebCore):
+        * dom/Document.h:
+        (WebCore):
+        (Document):
+        * dom/DynamicNodeList.cpp: Removed.
+        * dom/DynamicNodeList.h: Removed.
+        * dom/LiveNodeList.cpp: Copied from Source/WebCore/dom/DynamicNodeList.cpp.
+        (WebCore::LiveNodeListBase::rootNode):
+        (WebCore::LiveNodeListBase::invalidateCache):
+        (WebCore::LiveNodeListBase::invalidateIdNameCacheMaps):
+        (WebCore::LiveNodeListBase::reportMemoryUsage):
+        (WebCore::LiveNodeList::namedItem):
+        * dom/LiveNodeList.h: Copied from Source/WebCore/dom/DynamicNodeList.h.
+        (WebCore::LiveNodeListBase::LiveNodeListBase):
+        (WebCore::LiveNodeListBase::shouldInvalidateTypeOnAttributeChange):
+        (WebCore::LiveNodeList::LiveNodeList):
+        (WebCore::LiveNodeList::~LiveNodeList):
+        (LiveNodeList):
+        * dom/MicroDataItemList.cpp:
+        (WebCore::MicroDataItemList::MicroDataItemList):
+        * dom/MicroDataItemList.h:
+        * dom/NameNodeList.cpp:
+        (WebCore::NameNodeList::NameNodeList):
+        * dom/NameNodeList.h:
+        * dom/Node.cpp:
+        (WebCore::shouldInvalidateNodeListCachesForAttr):
+        (WebCore::Document::invalidateNodeListCaches):
+        * dom/Node.h:
+        (WebCore):
+        * dom/NodeList.h:
+        (WebCore::NodeList::isLiveNodeList):
+        * dom/NodeRareData.h:
+        (NodeListsNodeData):
+        (WebCore::NodeListsNodeData::removeCacheWithAtomicName):
+        (WebCore::NodeListsNodeData::removeCacheWithName):
+        (WebCore::NodeListsNodeData::removeCacheWithQualifiedName):
+        (WebCore::NodeListsNodeData::adoptTreeScope):
+        * dom/PropertyNodeList.cpp:
+        (WebCore::PropertyNodeList::PropertyNodeList):
+        * dom/PropertyNodeList.h:
+        * dom/TagNodeList.cpp:
+        (WebCore::TagNodeList::TagNodeList):
+        * dom/TagNodeList.h:
+        * html/HTMLCollection.cpp:
+        (WebCore::HTMLCollection::HTMLCollection):
+        (WebCore::LiveNodeListBase::iterateForNextNode):
+        (WebCore::LiveNodeListBase::itemBeforeOrAfter):
+        (WebCore::LiveNodeListBase::itemBefore):
+        (WebCore::LiveNodeListBase::itemAfter):
+        (WebCore::LiveNodeListBase::isLastItemCloserThanLastOrCachedItem):
+        (WebCore::LiveNodeListBase::isFirstItemCloserThanCachedItem):
+        (WebCore::LiveNodeListBase::setItemCache):
+        (WebCore::LiveNodeListBase::length):
+        (WebCore::LiveNodeListBase::item):
+        (WebCore::LiveNodeListBase::itemBeforeOrAfterCachedItem):
+        * html/HTMLCollection.h:
+        * html/LabelsNodeList.cpp:
+        (WebCore::LabelsNodeList::LabelsNodeList):
+        * html/LabelsNodeList.h:
+        * html/RadioNodeList.cpp:
+        (WebCore::RadioNodeList::RadioNodeList):
+        * html/RadioNodeList.h:
+
 2012-10-08  Robert Hogan  <robert@webkit.org>
 
         Changing position:relative to position:static results in mis-positioned div

@@ -384,7 +384,6 @@ SOURCES += \
     dom/DOMStringList.cpp \
     dom/DOMStringMap.cpp \
     dom/DatasetDOMStringMap.cpp \
-    dom/DynamicNodeList.cpp \
     dom/Element.cpp \
     dom/ElementAttributeData.cpp \
     dom/ElementRareData.cpp \
@@ -406,6 +405,7 @@ SOURCES += \
     dom/IconURL.cpp \
     dom/IdTargetObserver.cpp \
     dom/IdTargetObserverRegistry.cpp \
+    dom/LiveNodeList.cpp \
     dom/KeyboardEvent.cpp \
     dom/MessageChannel.cpp \
     dom/MessageEvent.cpp \
@@ -1562,7 +1562,6 @@ HEADERS += \
     dom/DOMStringMap.h \
     dom/DOMTimeStamp.h \
     dom/DatasetDOMStringMap.h \
-    dom/DynamicNodeList.h \
     dom/Element.h \
     dom/ElementShadow.h \
     dom/ElementAttributeData.h \
@@ -1581,6 +1580,7 @@ HEADERS += \
     dom/GestureEvent.h \
     dom/IdTargetObserver.h \
     dom/IdTargetObserverRegistry.h \
+    dom/LiveNodeList.h \
     dom/KeyboardEvent.h \
     dom/MessageChannel.h \
     dom/MessageEvent.h \

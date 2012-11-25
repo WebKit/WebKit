@@ -31,7 +31,7 @@
 #include "config.h"
 #include "V8NodeList.h" 
 
-#include "DynamicNodeList.h"
+#include "LiveNodeList.h"
 #include "NodeList.h"
 #include "V8Binding.h"
 #include "V8GCController.h"
@@ -64,9 +64,9 @@ void* V8NodeList::opaqueRootForGC(void* object, v8::Persistent<v8::Object> wrapp
 {
     ASSERT(V8NodeList::HasInstance(wrapper));
     NodeList* impl = static_cast<NodeList*>(object);
-    if (!impl->isDynamicNodeList())
+    if (!impl->isLiveNodeList())
         return object;
-    Node* owner = static_cast<DynamicNodeList*>(impl)->ownerNode();
+    Node* owner = static_cast<LiveNodeList*>(impl)->ownerNode();
     if (!owner)
         return object;
     return V8GCController::opaqueRootForGC(owner);
