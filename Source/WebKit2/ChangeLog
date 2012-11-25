@@ -1,5 +1,20 @@
 2012-11-24  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
+        [EFL][WK2] Stop the mess with DECLARE_EWK_VIEW_CALLBACK arg type definition
+        https://bugs.webkit.org/show_bug.cgi?id=103187
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Now the client should pass to DECLARE_EWK_VIEW_CALLBACK macro exacly the 
+        same arg type s/he wants to have in the Ewk_View callback.
+
+        * UIProcess/API/efl/EwkViewCallbacks.h:
+        (EvasObjectHolder):
+        (EwkViewCallbacks::EvasObjectHolder::EvasObjectHolder):
+        (EwkViewCallbacks):
+
+2012-11-24  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
         [EFL][WK2] Check errors in EwkView callbacks usage at compile time
         https://bugs.webkit.org/show_bug.cgi?id=103177
 
