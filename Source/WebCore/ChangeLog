@@ -1,3 +1,25 @@
+2012-10-08  Robert Hogan  <robert@webkit.org>
+
+        Changing position:relative to position:static results in mis-positioned div
+        https://bugs.webkit.org/show_bug.cgi?id=26397
+
+        Reviewed by Ojan Vafai.
+
+        When a block changes position from relative to static it is no longer the containing block for any
+        positioned objects it may have. If any of those positioned objects actually have a position specified
+        they are going to need a layout as their new containing block will likely have a different location they
+        need to offset from. Positioned objects without a specified position always get a layout anyway 
+        in layoutPositionedObjects() so no need to worry about them in this situation. 
+
+        Test: fast/block/abspos-child-container-changes-from-relative-to-static-expected.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::styleWillChange):
+        (WebCore::RenderBlock::layoutPositionedObjects):
+        (WebCore::RenderBlock::removePositionedObjects):
+        * rendering/RenderBlock.h:
+        (RenderBlock):
+
 2012-11-24  Antti Koivisto  <antti@apple.com>
 
         Make renderer construction less generic

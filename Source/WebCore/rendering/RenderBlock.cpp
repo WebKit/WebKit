@@ -298,7 +298,7 @@ void RenderBlock::styleWillChange(StyleDifference diff, const RenderStyle* newSt
         if (newStyle->position() == StaticPosition)
             // Clear our positioned objects list. Our absolutely positioned descendants will be
             // inserted into our containing block's positioned objects list during layout.
-            removePositionedObjects(0);
+            removePositionedObjects(0, NewContainingBlock);
         else if (oldStyle->position() == StaticPosition) {
             // Remove our absolutely positioned descendants from their current containing block.
             // They will be inserted into our positioned objects list during layout.
@@ -312,7 +312,7 @@ void RenderBlock::styleWillChange(StyleDifference diff, const RenderStyle* newSt
             }
             
             if (cb->isRenderBlock())
-                toRenderBlock(cb)->removePositionedObjects(this);
+                toRenderBlock(cb)->removePositionedObjects(this, NewContainingBlock);
         }
 
         if (containsFloats() && !isFloating() && !isOutOfFlowPositioned() && newStyle->hasOutOfFlowPosition())
@@ -3727,7 +3727,7 @@ void RenderBlock::removePositionedObject(RenderBox* o)
     removeFromTrackedRendererMaps(o, gPositionedDescendantsMap, gPositionedContainerMap);
 }
 
-void RenderBlock::removePositionedObjects(RenderBlock* o)
+void RenderBlock::removePositionedObjects(RenderBlock* o, ContainingBlockState containingBlockState)
 {
     TrackedRendererListHashSet* positionedDescendants = positionedObjects();
     if (!positionedDescendants)
@@ -3742,7 +3742,7 @@ void RenderBlock::removePositionedObjects(RenderBlock* o)
     for (TrackedRendererListHashSet::iterator it = positionedDescendants->begin(); it != end; ++it) {
         r = *it;
         if (!o || r->isDescendantOf(o)) {
-            if (o)
+            if (containingBlockState == NewContainingBlock)
                 r->setChildNeedsLayout(true, MarkOnlyThis);
             
             // It is parent blocks job to add positioned child to positioned objects list of its containing block

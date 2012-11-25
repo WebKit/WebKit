@@ -67,6 +67,7 @@ typedef WTF::HashMap<const RenderBox*, HashSet<RenderBlock*>*> TrackedContainerM
 typedef Vector<WordMeasurement, 64> WordMeasurements;
 
 enum CaretType { CursorCaret, DragCaret };
+enum ContainingBlockState { NewContainingBlock, SameContainingBlock };
 
 enum TextRunFlag {
     DefaultTextRunFlags = 0,
@@ -114,7 +115,7 @@ public:
 
     void insertPositionedObject(RenderBox*);
     static void removePositionedObject(RenderBox*);
-    void removePositionedObjects(RenderBlock*);
+    void removePositionedObjects(RenderBlock*, ContainingBlockState = SameContainingBlock);
 
     TrackedRendererListHashSet* positionedObjects() const;
     bool hasPositionedObjects() const
