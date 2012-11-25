@@ -216,9 +216,15 @@ void RenderThemeEfl::ThemePartCacheEntry::reuse(const String& themePath, FormTyp
 {
     ASSERT(!themePath.isEmpty());
 
-    if (!newSize.isEmpty()) {
-        cairo_surface_finish(surface());
+    if (type != newType) {
+        type = newType;
+        if (!setSourceGroupForEdjeObject(edje(), themePath, toEdjeGroup(newType))) {
+            type = FormTypeLast; // Invalidate.
+            return;
+        }
+    }
 
+    if (size != newSize) {
         size = newSize;
         ecore_evas_resize(canvas(), newSize.width(), newSize.height());
         evas_object_resize(edje(), newSize.width(), newSize.height());
@@ -229,13 +235,6 @@ void RenderThemeEfl::ThemePartCacheEntry::reuse(const String& themePath, FormTyp
             return;
         }
     }
-
-    if (!setSourceGroupForEdjeObject(edje(), themePath, toEdjeGroup(newType))) {
-        type = FormTypeLast; // Invalidate.
-        return;
-    }
-
-    type = newType;
 }
 
 RenderThemeEfl::ThemePartCacheEntry* RenderThemeEfl::getThemePartFromCache(FormType type, const IntSize& size)

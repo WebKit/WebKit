@@ -266,7 +266,7 @@ private:
 
     struct ThemePartCacheEntry {
         static PassOwnPtr<RenderThemeEfl::ThemePartCacheEntry> create(const String& themePath, FormType, const IntSize&);
-        void reuse(const String& themePath, FormType, const IntSize& = IntSize());
+        void reuse(const String& themePath, FormType, const IntSize&);
 
         ALWAYS_INLINE Ecore_Evas* canvas() { return m_canvas.get(); }
         ALWAYS_INLINE Evas_Object* edje() { return m_edje.get(); }

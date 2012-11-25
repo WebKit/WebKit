@@ -1,3 +1,28 @@
+2012-11-25  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL] Refactor RenderThemeEfl::ThemePartCacheEntry::reuse()
+        https://bugs.webkit.org/show_bug.cgi?id=103189
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Check if the entry size and type changed in
+        RenderThemeEfl::ThemePartCacheEntry::reuse() to avoid
+        useless processing if one of them did not change.
+
+        Remove useless call to cairo_surface_finish() since
+        we are using a smart pointer for the surface.
+
+        Resize the edge object *after* loading its content
+        from the theme file as it seems more logical this
+        way.
+
+        No new tests, no behavior change for layout tests.
+
+        * platform/efl/RenderThemeEfl.cpp:
+        (WebCore::RenderThemeEfl::ThemePartCacheEntry::reuse):
+        * platform/efl/RenderThemeEfl.h:
+        (ThemePartCacheEntry):
+
 2012-11-25  Ryosuke Niwa  <rniwa@webkit.org>
 
         Rename DynamicNodeList to LiveNodeList
