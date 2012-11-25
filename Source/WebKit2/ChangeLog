@@ -1,3 +1,32 @@
+2012-11-25  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [WK2] TiledBackingStore: page contents is scaled wrongly
+        https://bugs.webkit.org/show_bug.cgi?id=103090
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Before this change the page contents scaling in PageViewportController was
+        defined all the times by m_rawAttributes.initialScale. If initial scale had not
+        been specified in the viewport meta tag it was set to m_minimumScaleToFit inside
+        PageViewportController::didChangeViewportAttributes().
+
+        The problem was that m_minimumScaleToFit could have wrong value as contents size
+        might have not be updated by the time PageViewportController::didChangeViewportAttributes()
+        was invoked.
+
+        The solution is to use m_minimumScaleToFit for contents scaling if initial scale
+        is not specified in the viewport meta tag, as it is updated all the time. 
+        Also a flag m_initiallyFitToViewport is added to PageViewportController to detect
+        whether m_minimumScaleToFit should be used for scaling.
+
+        * UIProcess/PageViewportController.cpp:
+        (WebKit::PageViewportController::PageViewportController):
+        (WebKit::PageViewportController::didChangeContentsSize):
+        (WebKit::PageViewportController::pageTransitionViewportReady):
+        (WebKit::PageViewportController::didChangeViewportAttributes):
+        * UIProcess/PageViewportController.h:
+        (PageViewportController):
+
 2012-11-24  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [EFL][WK2] Stop the mess with DECLARE_EWK_VIEW_CALLBACK arg type definition

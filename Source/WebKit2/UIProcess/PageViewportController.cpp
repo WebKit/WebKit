@@ -44,6 +44,7 @@ PageViewportController::PageViewportController(WebKit::WebPageProxy* proxy, Page
     , m_client(client)
     , m_allowsUserScaling(false)
     , m_minimumScaleToFit(1)
+    , m_initiallyFitToViewport(true)
     , m_hasSuspendedContent(false)
     , m_hadUserInteraction(false)
     , m_effectiveScale(1)
@@ -109,7 +110,17 @@ void PageViewportController::didCommitLoad()
 void PageViewportController::didChangeContentsSize(const IntSize& newSize)
 {
     m_contentsSize = newSize;
-    if (updateMinimumScaleToFit())
+
+    bool minimumScaleUpdated = updateMinimumScaleToFit();
+
+    if (m_initiallyFitToViewport) {
+        // Restrict scale factors to m_minimumScaleToFit.
+        ASSERT(m_minimumScaleToFit > 0);
+        m_rawAttributes.initialScale = m_minimumScaleToFit;
+        WebCore::restrictScaleFactorToInitialScaleIfNotUserScalable(m_rawAttributes);
+    }
+
+    if (minimumScaleUpdated)
         m_client->didChangeViewportAttributes();
 }
 
@@ -149,8 +160,8 @@ void PageViewportController::pageTransitionViewportReady()
 {
     if (!m_rawAttributes.layoutSize.isEmpty()) {
         m_hadUserInteraction = false;
-        ASSERT(m_rawAttributes.initialScale > 0);
-        applyScaleAfterRenderingContents(innerBoundedViewportScale(toViewportScale(m_rawAttributes.initialScale)));
+        float initialScale = m_initiallyFitToViewport ? m_minimumScaleToFit : m_rawAttributes.initialScale;
+        applyScaleAfterRenderingContents(innerBoundedViewportScale(toViewportScale(initialScale)));
     }
 
     // At this point we should already have received the first viewport arguments and the requested scroll
@@ -218,18 +229,12 @@ void PageViewportController::didChangeViewportAttributes(const WebCore::Viewport
 
     m_rawAttributes = newAttributes;
     m_allowsUserScaling = !!m_rawAttributes.userScalable;
+    m_initiallyFitToViewport = (m_rawAttributes.initialScale < 0);
 
-    bool minimumScaleUpdated = updateMinimumScaleToFit();
+    if (!m_initiallyFitToViewport)
+        WebCore::restrictScaleFactorToInitialScaleIfNotUserScalable(m_rawAttributes);
 
-    ASSERT(m_minimumScaleToFit > 0);
-
-    // Set the initial scale if it was not specified in the viewport meta tag.
-    if (m_rawAttributes.initialScale < 0)
-        m_rawAttributes.initialScale = m_minimumScaleToFit;
-
-    WebCore::restrictScaleFactorToInitialScaleIfNotUserScalable(m_rawAttributes);
-
-    if (minimumScaleUpdated)
+    if (updateMinimumScaleToFit())
         m_client->didChangeViewportAttributes();
 }
 

@@ -94,6 +94,7 @@ private:
 
     bool m_allowsUserScaling;
     float m_minimumScaleToFit;
+    bool m_initiallyFitToViewport;
 
     bool m_hasSuspendedContent;
     bool m_hadUserInteraction;
