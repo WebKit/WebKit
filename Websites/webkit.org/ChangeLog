@@ -1,3 +1,10 @@
+2012-11-24  Daniel Bates  <dbates@webkit.org>
+
+        Substitute "use" for "user" in sentence about naming convention for
+        enum members so that it reads well.
+
+        * coding/coding-style.html:
+
 2012-11-20  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Add Samsung to security vendor member list
