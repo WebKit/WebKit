@@ -63,7 +63,7 @@ Node* StaticHashSetNodeList::item(unsigned index) const
     return 0;
 }
 
-Node* StaticHashSetNodeList::itemWithName(const AtomicString& elementId) const
+Node* StaticHashSetNodeList::namedItem(const AtomicString& elementId) const
 {
     ListHashSet<RefPtr<Node> >::const_iterator it = m_nodes.begin();
     ListHashSet<RefPtr<Node> >::const_iterator end = m_nodes.end();

@@ -39,7 +39,7 @@ ChildNodeList::~ChildNodeList()
 
 bool ChildNodeList::nodeMatches(Element* testNode) const
 {
-    // This function will be called only by DynamicNodeList::itemWithName,
+    // This function will be called only by DynamicNodeList::namedItem,
     // for an element that was located with getElementById.
     return testNode->parentNode() == rootNode();
 }

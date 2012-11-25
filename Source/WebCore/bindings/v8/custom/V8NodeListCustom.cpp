@@ -53,7 +53,7 @@ v8::Handle<v8::Value> V8NodeList::namedPropertyGetter(v8::Local<v8::String> name
     if (key == length)
         return v8Integer(list->length(), info.GetIsolate());
 
-    RefPtr<Node> result = list->itemWithName(key);
+    RefPtr<Node> result = list->namedItem(key);
     if (!result)
         return v8Undefined();
 

@@ -46,9 +46,9 @@ namespace WebCore {
             return adoptRef(new V8NamedNodesCollection(nodes));
         }
 
-        virtual unsigned length() const { return m_nodes.size(); }
-        virtual Node* item(unsigned) const;
-        virtual Node* itemWithName(const AtomicString&) const;
+        virtual unsigned length() const OVERRIDE { return m_nodes.size(); }
+        virtual Node* item(unsigned) const OVERRIDE;
+        virtual Node* namedItem(const AtomicString&) const OVERRIDE;
 
     private:
         explicit V8NamedNodesCollection(const Vector<RefPtr<Node> >& nodes)

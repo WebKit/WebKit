@@ -1,3 +1,66 @@
+2012-11-22  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION(r135493): HTMLCollection and DynamicNodeList have two vtable pointers
+        https://bugs.webkit.org/show_bug.cgi?id=103096
+
+        Reviewed by Sam Weinig.
+
+        Co-authored by Ilya Tikhonovsky.
+
+        Made DynamicNodeListCacheBase inherit from NodeList. While HTMLCollection doesn't inherit
+        from NodeList in IDL, it makes a lot of sense for the C++ implementation to do so via
+        DynamicNodeListCacheBase since HTMLCollection and live NodeList share a lot of code in
+        DynamicNodeListCacheBase.
+
+        This lets remove proxies for item() and length() in DynamicNodeList and HTMLCollection
+        and directly implement them in DynamicNodeListCacheBase which used to provide itemCommon()
+        and lengthCommon().
+
+        Also renamed NodeList::itemWithName() to NodeList::namedItem() to match HTMLCollection's
+        naming convention.
+
+        Finally, removed reportMemoryUsage in DynamicNodeList::reportMemoryUsage since DynamicNodeList
+        now uses single inheritance.
+
+        * bindings/js/JSNodeListCustom.cpp:
+        (WebCore::JSNodeList::canGetItemsForName): Calls namedItem, which has been renamed from
+        itemWithName.
+        (WebCore::JSNodeList::nameGetter): Ditto.
+        * bindings/v8/custom/V8NodeListCustom.cpp:
+        (WebCore::V8NodeList::namedPropertyGetter): Ditto.
+        * bindings/v8/custom/V8NamedNodesCollection.cpp:
+        (WebCore::V8NamedNodesCollection::namedItem): Renamed from itemWithName.
+        * bindings/v8/custom/V8NamedNodesCollection.h:
+        * dom/ChildNodeList.cpp:
+        (WebCore::ChildNodeList::nodeMatches): Updated comment.
+        * dom/DynamicNodeList.cpp:
+        (WebCore::DynamicNodeList::namedItem): Renamed from itemWithName.
+        * dom/DynamicNodeList.h:
+        (DynamicNodeListCacheBase): Inhertis from NodeList and renamed lengthCommon and itemCommon
+        to virtual length and item respectively.
+        (DynamicNodeList): Now inherits from just DynamicNodeListCacheBase instead of NodeList
+        and DynamicNodeListCacheBase since the former now inhertis from NodeList. Also removed
+        length() and item() since they're implemented in DynamicNodeListCacheBase now and renamed
+        itemWithName() to namedItem() to match HTMLCollection's naming convention.
+        * dom/NodeList.h:
+        (NodeList::namedItem): Renamed from itemWithName. Note that this member function is not
+        exposed via IDL. It's merely used in the binding code.
+        * dom/StaticHashSetNodeList.cpp:
+        (WebCore::StaticHashSetNodeList::namedItem): Ditto.
+        * dom/StaticHashSetNodeList.h:
+        (StaticHashSetNodeList::namedItem): Ditto.
+        * dom/StaticNodeList.cpp:
+        (WebCore::StaticNodeList::namedItem): Ditto.
+        * dom/StaticNodeList.h:
+        (StaticNodeList::namedItem): Ditto.
+        * html/HTMLCollection.cpp:
+        (WebCore::DynamicNodeListCacheBase::length): Renamed from lengthCommon.
+        (WebCore::DynamicNodeListCacheBase::item): Renamed from itemCommon.
+        * html/HTMLCollection.h:
+        (HTMLCollection): Inherits from DynamicNodeListCacheBase since DynamicNodeListCacheBase
+        is already RefCount'ed and NodeList, from which DynamicNodeListCacheBase inherits,
+        inherits from ScriptWrappable.
+
 2012-11-24  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] Refactor RenderThemeEfl::paintThemePart()

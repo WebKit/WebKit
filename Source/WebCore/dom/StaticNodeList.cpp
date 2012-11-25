@@ -45,7 +45,7 @@ Node* StaticNodeList::item(unsigned index) const
     return 0;
 }
 
-Node* StaticNodeList::itemWithName(const AtomicString& elementId) const
+Node* StaticNodeList::namedItem(const AtomicString& elementId) const
 {
     size_t length = m_nodes.size();
     for (size_t i = 0; i < length; ++i) {

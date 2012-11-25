@@ -33,14 +33,12 @@
 
 namespace WebCore {
 
-class HTMLCollection : public ScriptWrappable, public RefCounted<HTMLCollection>, public DynamicNodeListCacheBase {
+class HTMLCollection : public DynamicNodeListCacheBase {
 public:
     static PassRefPtr<HTMLCollection> create(Node* base, CollectionType);
     virtual ~HTMLCollection();
 
     // DOM API
-    unsigned length() const { return lengthCommon(); }
-    Node* item(unsigned offset) const { return itemCommon(offset); }
     virtual Node* namedItem(const AtomicString& name) const;
     PassRefPtr<NodeList> tags(const String&);
 
@@ -80,6 +78,8 @@ protected:
 
 private:
     bool checkForNameMatch(Element*, bool checkName, const AtomicString& name) const;
+
+    virtual bool isDynamicNodeList() const OVERRIDE { ASSERT_NOT_REACHED(); return true; }
 
     static void append(NodeCacheMap&, const AtomicString&, Element*);
 

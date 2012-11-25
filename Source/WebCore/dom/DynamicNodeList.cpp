@@ -85,34 +85,12 @@ void DynamicNodeListCacheBase::invalidateIdNameCacheMaps() const
 void DynamicNodeListCacheBase::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::DOM);
+    NodeList::reportMemoryUsage(memoryObjectInfo);
     info.addMember(m_ownerNode);
     info.addWeakPointer(m_cachedItem);
 }
 
-void DynamicNodeList::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
-{
-    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::DOM);
-    NodeList::reportMemoryUsage(memoryObjectInfo);
-    DynamicNodeListCacheBase::reportMemoryUsage(memoryObjectInfo);
-}
-
-void DynamicSubtreeNodeList::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
-{
-    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::DOM);
-    DynamicNodeList::reportMemoryUsage(memoryObjectInfo);
-}
-
-unsigned DynamicNodeList::length() const
-{
-    return lengthCommon();
-}
-
-Node* DynamicNodeList::item(unsigned offset) const
-{
-    return itemCommon(offset);
-}
-
-Node* DynamicNodeList::itemWithName(const AtomicString& elementId) const
+Node* DynamicNodeList::namedItem(const AtomicString& elementId) const
 {
     Node* rootNode = this->rootNode();
 

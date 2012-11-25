@@ -42,7 +42,7 @@ Node* V8NamedNodesCollection::item(unsigned index) const
     return 0;
 }
 
-Node* V8NamedNodesCollection::itemWithName(const AtomicString& id) const
+Node* V8NamedNodesCollection::namedItem(const AtomicString& id) const
 {
     for (unsigned i = 0; i < m_nodes.size(); ++i) {
         Node* node = m_nodes[i].get();

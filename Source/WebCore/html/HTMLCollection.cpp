@@ -369,18 +369,18 @@ ALWAYS_INLINE void DynamicNodeListCacheBase::setItemCache(Node* item, unsigned o
         ASSERT(!elementsArrayOffset);
 }
 
-unsigned DynamicNodeListCacheBase::lengthCommon() const
+unsigned DynamicNodeListCacheBase::length() const
 {
     if (isLengthCacheValid())
         return cachedLength();
 
-    itemCommon(UINT_MAX);
+    item(UINT_MAX);
     ASSERT(isLengthCacheValid());
     
     return cachedLength();
 }
 
-Node* DynamicNodeListCacheBase::itemCommon(unsigned offset) const
+Node* DynamicNodeListCacheBase::item(unsigned offset) const
 {
     if (isItemCacheValid() && cachedItemOffset() == offset)
         return cachedItem();
