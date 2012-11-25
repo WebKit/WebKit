@@ -1,3 +1,31 @@
+2012-11-24  Adam Barth  <abarth@webkit.org>
+
+        Chromium should use TCMalloc on Mac to go fast
+        https://bugs.webkit.org/show_bug.cgi?id=102866
+
+        Reviewed by Eric Seidel.
+
+        This patch enables TCMalloc for some WebKit objects. It improves
+        dom-modify on Mac by 5-10%.
+
+        On non-Mac platforms, Chromium already uses TCMalloc throughout the
+        project. Unfortunately, we haven't yet figured out how to turn TCMalloc
+        on globally on Mac because the approach we use for other platforms makes
+        some OS X APIs sad.
+
+        The next best thing would be to enable TCMalloc for WebKit by
+        overriding the global new and delete operator, as is done on apple-mac
+        and other platforms. Unfortunately, we cannot use that approach either
+        because the Chromium WebKit API is not memory tight.
+
+        Fortunately, WebKit has a mechanism for selectively enabling TCMalloc
+        for a selection of objects by overriding the new and delete operators
+        on those objects. This patch opts chromium-mac into that scheme by
+        setting the appropriate preprocessor macros.
+
+        * WTF.gyp/WTF.gyp:
+        * wtf/Platform.h:
+
 2012-11-21  Filip Pizlo  <fpizlo@apple.com>
 
         Any function that can log things should be able to easily log them to a memory buffer as well

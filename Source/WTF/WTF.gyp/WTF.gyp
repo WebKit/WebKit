@@ -65,9 +65,6 @@
 
           # Turns on #if PLATFORM(CHROMIUM)
           'BUILDING_CHROMIUM__=1',
-          # Controls wtf/FastMalloc
-          # FIXME: consider moving into config.h
-          'USE_SYSTEM_MALLOC=1',
         ],
         'conditions': [
           ['OS=="win"', {
@@ -83,7 +80,6 @@
           }],
           ['OS=="mac"', {
             'defines': [
-              # Use USE_NEW_THEME on Mac.
               'WTF_USE_NEW_THEME=1',
             ],
           }],
@@ -130,7 +126,6 @@
         ['exclude', '(Default|Gtk|Mac|None|Qt|Win|Wx|Efl)\\.(cpp|mm)$'],
         ['exclude', 'wtf/OSRandomSource\\.cpp$'],
         ['exclude', 'wtf/MainThread.cpp$'],
-        ['exclude', 'wtf/TC.*\\.(cpp|h)$'],
       ],
       'direct_dependent_settings': {
         'include_dirs': [
@@ -179,6 +174,12 @@
                 'msvs_disabled_warnings': [4291],
               },
             }],
+          ],
+        }],
+        ['OS!="mac"', {
+          'sources/': [
+            # mac is the only OS that uses WebKit's copy of TCMalloc.
+            ['exclude', 'wtf/TC.*\\.(cpp|h)$'],
           ],
         }],
       ],
