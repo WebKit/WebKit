@@ -1,3 +1,20 @@
+2012-11-24  Andy Chen  <andchen@rim.com>
+
+        [BlackBerry] Find-on-page keeps stale pointer
+        https://bugs.webkit.org/show_bug.cgi?id=103190
+
+        Reviewed by Rob Buis.
+
+        Find on page: pendingScopingEffort stores stale pointer when frames unload,
+        we need to cancel those scoping efforts.
+        PR 250807.
+
+        Internally reviewed by Yongxin Dai and Mike Fenton.
+
+        * WebKitSupport/InPageSearchManager.cpp:
+        (InPageSearchManager::DeferredScopeStringMatches):
+        (BlackBerry::WebKit::InPageSearchManager::frameUnloaded):
+
 2012-11-24  Genevieve Mak  <gmak@rim.com>
 
         [BlackBerry] Text not selected when input field focused.

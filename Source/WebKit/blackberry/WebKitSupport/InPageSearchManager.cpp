@@ -53,6 +53,7 @@ public:
     }
 
 private:
+    friend class InPageSearchManager;
     void doTimeout(Timer<DeferredScopeStringMatches>*)
     {
         m_searchManager->callScopeStringMatches(this, m_scopingFrame, m_searchText, m_reset, m_locateActiveMatchOnly);
@@ -247,6 +248,13 @@ void InPageSearchManager::setActiveMatchAndMarker(PassRefPtr<Range> range)
 
 void InPageSearchManager::frameUnloaded(const Frame* frame)
 {
+    for (size_t i = 0; i < m_deferredScopingWork.size(); i++) {
+        if (m_deferredScopingWork[i]->m_scopingFrame == frame) {
+            // Clear pending scoping efforts in case of dangling pointer.
+            cancelPendingScopingEffort();
+            break;
+        }
+    }
     if (!m_activeMatch) {
         if (m_webPage->mainFrame() == frame && m_activeSearchString.length())
             m_activeSearchString = String();
