@@ -1267,7 +1267,7 @@ void Node::attach()
 
     // FIXME: This is O(N^2) for the innerHTML case, where all children are replaced at once (and not attached).
     // If this node got a renderer it may be the previousRenderer() of sibling text nodes and thus affect the
-    // result of Text::rendererIsNeeded() for those nodes.
+    // result of Text::textRendererIsNeeded() for those nodes.
     if (renderer()) {
         for (Node* next = nextSibling(); next; next = next->nextSibling()) {
             if (next->renderer())
@@ -1275,7 +1275,7 @@ void Node::attach()
             if (!next->attached())
                 break;  // Assume this means none of the following siblings are attached.
             if (next->isTextNode())
-                next->createRendererIfNeeded();
+                toText(next)->createTextRendererIfNeeded();
         }
     }
 
@@ -1393,22 +1393,6 @@ Node *Node::nextLeafNode() const
 ContainerNode* Node::parentNodeForRenderingAndStyle()
 {
     return NodeRenderingContext(this).parentNodeForRenderingAndStyle();
-}
-
-void Node::createRendererIfNeeded()
-{
-    NodeRenderingContext(this).createRendererIfNeeded();
-}
-
-bool Node::rendererIsNeeded(const NodeRenderingContext& context)
-{
-    return (document()->documentElement() == this) || (context.style()->display() != NONE);
-}
-
-RenderObject* Node::createRenderer(RenderArena*, RenderStyle*)
-{
-    ASSERT_NOT_REACHED();
-    return 0;
 }
 
 RenderStyle* Node::virtualComputedStyle(PseudoId pseudoElementSpecifier)

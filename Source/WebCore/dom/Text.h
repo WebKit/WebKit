@@ -26,7 +26,9 @@
 #include "CharacterData.h"
 
 namespace WebCore {
-    
+
+class RenderText;
+
 class Text : public CharacterData {
 public:
     static const unsigned defaultLengthLimit = 1 << 16;
@@ -43,6 +45,10 @@ public:
     PassRefPtr<Text> replaceWholeText(const String&, ExceptionCode&);
     
     void recalcTextStyle(StyleChange);
+    void createTextRendererIfNeeded();
+    bool textRendererIsNeeded(const NodeRenderingContext&);
+    RenderText* createTextRenderer(RenderArena*, RenderStyle*);
+    void updateTextRenderer(unsigned offsetOfReplacedData, unsigned lengthOfReplacedData);
 
     virtual void attach();
     
@@ -58,8 +64,6 @@ private:
     virtual String nodeName() const;
     virtual NodeType nodeType() const;
     virtual PassRefPtr<Node> cloneNode(bool deep);
-    virtual bool rendererIsNeeded(const NodeRenderingContext&);
-    virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
     virtual bool childTypeAllowed(NodeType) const;
 
     virtual PassRefPtr<Text> virtualCreate(const String&);

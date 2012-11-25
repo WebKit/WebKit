@@ -1097,6 +1097,11 @@ const QualifiedName& Element::imageSourceAttributeName() const
     return srcAttr;
 }
 
+bool Element::rendererIsNeeded(const NodeRenderingContext& context)
+{
+    return (document()->documentElement() == this) || (context.style()->display() != NONE);
+}
+
 RenderObject* Element::createRenderer(RenderArena* arena, RenderStyle* style)
 {
     if (document()->documentElement() == this && style->display() == NONE) {
@@ -1184,12 +1189,18 @@ void Element::removedFrom(ContainerNode* insertionPoint)
     ContainerNode::removedFrom(insertionPoint);
 }
 
+void Element::createRendererIfNeeded()
+{
+    NodeRenderingContext(this).createRendererForElementIfNeeded();
+}
+
 void Element::attach()
 {
     suspendPostAttachCallbacks();
     WidgetHierarchyUpdatesSuspensionScope suspendWidgetHierarchyUpdates;
 
     createRendererIfNeeded();
+
     StyleResolverParentPusher parentPusher(this);
 
     if (parentElement() && parentElement()->isInCanvasSubtree())
@@ -2140,7 +2151,7 @@ bool Element::childShouldCreateRenderer(const NodeRenderingContext& childContext
     if (childContext.node()->isSVGElement())
         return childContext.node()->hasTagName(SVGNames::svgTag) || isSVGElement();
 
-    return Node::childShouldCreateRenderer(childContext);
+    return ContainerNode::childShouldCreateRenderer(childContext);
 }
 #endif
     
@@ -2529,7 +2540,6 @@ PassRefPtr<RenderStyle> Element::customStyleForRenderer()
     ASSERT(hasCustomCallbacks());
     return 0;
 }
-
 
 void Element::cloneAttributesFromElement(const Element& other)
 {

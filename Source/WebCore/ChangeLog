@@ -1,3 +1,75 @@
+2012-11-24  Antti Koivisto  <antti@apple.com>
+
+        Make renderer construction less generic
+        https://bugs.webkit.org/show_bug.cgi?id=103175
+
+        Reviewed by Ojan Vafai.
+
+        The renderer construction code currently operates on Nodes and is very generic. In reality
+        only Element and Text nodes can have renderers and the Text case is much simpler.
+
+        This patch separates the Text and Element renderer construction paths and makes it statically
+        known that other Node types can't have renderers. Less generic code is less branchy and enables
+        further optimizations.
+
+        * dom/CharacterData.cpp:
+        (WebCore::CharacterData::parserAppendData):
+        (WebCore::CharacterData::setDataAndUpdate):
+        (WebCore):
+        (WebCore::CharacterData::rendererIsNeeded):
+        (WebCore::CharacterData::createRenderer):
+        
+            Only Text subclass of CharacterData can have renderers.
+
+        * dom/CharacterData.h:
+        (CharacterData):
+        * dom/ContainerNode.h:
+        (WebCore::ContainerNode::childShouldCreateRenderer):
+        
+            Move childShouldCreateRenderer from Node to ContainerNode.
+
+        (ContainerNode):
+        * dom/Element.cpp:
+        (WebCore::Element::rendererIsNeeded):
+        (WebCore):
+        (WebCore::Element::attach):
+        (WebCore::Element::childShouldCreateRenderer):
+        * dom/Element.h:
+        
+            Move rendererIsNeeded and createRenderer from Node to Element.
+
+        (Element):
+        * dom/Node.cpp:
+        (WebCore::Node::attach):
+        (WebCore):
+        * dom/Node.h:
+        (Node):
+        * dom/NodeRenderingContext.cpp:
+        (WebCore::NodeRenderingContext::createRendererForElementIfNeeded):
+        (WebCore::NodeRenderingContext::createRendererForTextIfNeeded):
+        
+            Separate the Element and Text renderer creation paths. Both are less branchy.
+            The Text path is much simpler and avoids a bunch of virtual calls.
+
+        (WebCore):
+        * dom/NodeRenderingContext.h:
+        (NodeRenderingContext):
+        * dom/Text.cpp:
+        (WebCore::Text::textRendererIsNeeded):
+        (WebCore::Text::createTextRendererIfNeeded):
+        (WebCore):
+        (WebCore::Text::createTextRenderer):
+        (WebCore::Text::attach):
+        (WebCore::Text::updateTextRenderer):
+        * dom/Text.h:
+        
+                Add non-virtual Text specific functions.
+
+        (WebCore):
+        (Text):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::clone):
+
 2012-11-22  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION(r135493): HTMLCollection and DynamicNodeList have two vtable pointers

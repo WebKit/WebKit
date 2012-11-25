@@ -195,11 +195,15 @@ PassRefPtr<Node> Text::cloneNode(bool /*deep*/)
     return create(document(), data());
 }
 
-bool Text::rendererIsNeeded(const NodeRenderingContext& context)
+bool Text::textRendererIsNeeded(const NodeRenderingContext& context)
 {
     if (isEditingText())
         return true;
-    if (!CharacterData::rendererIsNeeded(context))
+
+    if (!length())
+        return false;
+
+    if (context.style()->display() == NONE)
         return false;
 
     bool onlyWS = containsOnlyWhitespace();
@@ -252,13 +256,17 @@ static bool isSVGText(Text* text)
 }
 #endif
 
-RenderObject* Text::createRenderer(RenderArena* arena, RenderStyle* style)
+void Text::createTextRendererIfNeeded()
+{
+    NodeRenderingContext(this).createRendererForTextIfNeeded();
+}
+
+RenderText* Text::createTextRenderer(RenderArena* arena, RenderStyle* style)
 {
 #if ENABLE(SVG)
     if (isSVGText(this) || isSVGShadowText(this))
         return new (arena) RenderSVGInlineText(this, dataImpl());
 #endif
-
     if (style->hasTextCombine())
         return new (arena) RenderCombineText(this, dataImpl());
 
@@ -267,14 +275,13 @@ RenderObject* Text::createRenderer(RenderArena* arena, RenderStyle* style)
 
 void Text::attach()
 {
-    createRendererIfNeeded();
+    createTextRendererIfNeeded();
     CharacterData::attach();
 }
 
 void Text::recalcTextStyle(StyleChange change)
 {
-    RenderObject* renderer = this->renderer();
-
+    RenderText* renderer = toRenderText(this->renderer());
     // The only time we have a renderer and our parent doesn't is if our parent
     // is a shadow root.
     if (change != NoChange && renderer) {
@@ -287,13 +294,24 @@ void Text::recalcTextStyle(StyleChange change)
     }
 
     if (needsStyleRecalc()) {
-        if (renderer) {
-            if (renderer->isText())
-                toRenderText(renderer)->setText(dataImpl());
-        } else
+        if (renderer)
+            renderer->setText(dataImpl());
+        else
             reattach();
     }
     clearNeedsStyleRecalc();
+}
+
+void Text::updateTextRenderer(unsigned offsetOfReplacedData, unsigned lengthOfReplacedData)
+{
+    if (!attached())
+        return;
+    RenderText* textRenderer = toRenderText(renderer());
+    if (!textRenderer || !textRendererIsNeeded(NodeRenderingContext(this, textRenderer->style()))) {
+        reattach();
+        return;
+    }
+    textRenderer->setTextWithOffset(dataImpl(), offsetOfReplacedData, lengthOfReplacedData);
 }
 
 bool Text::childTypeAllowed(NodeType) const

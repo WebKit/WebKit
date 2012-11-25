@@ -539,10 +539,6 @@ public:
 
     void reattach();
     void reattachIfAttached();
-    void createRendererIfNeeded();
-    virtual bool rendererIsNeeded(const NodeRenderingContext&);
-    virtual bool childShouldCreateRenderer(const NodeRenderingContext&) const { return true; }
-    virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
     ContainerNode* parentNodeForRenderingAndStyle();
     
     // Wrapper for nodes that don't have a renderer, but still cache the style (like HTMLOptionElement).

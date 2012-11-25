@@ -48,7 +48,8 @@ public:
     NodeRenderingContext(Node*, RenderStyle*);
     ~NodeRenderingContext();
 
-    void createRendererIfNeeded();
+    void createRendererForTextIfNeeded();
+    void createRendererForElementIfNeeded();
 
     Node* node() const;
     ContainerNode* parentNodeForRenderingAndStyle() const;

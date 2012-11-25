@@ -131,6 +131,8 @@ public:
 
     void disconnectDescendantFrames();
 
+    virtual bool childShouldCreateRenderer(const NodeRenderingContext&) const { return true; }
+
     // More efficient versions of these two functions for the case where we are starting with a ContainerNode.
     Node* traverseNextNode() const;
     Node* traverseNextNode(const Node* stayWithin) const;

@@ -38,9 +38,11 @@
 #include "RenderFullScreen.h"
 #include "RenderNamedFlowThread.h"
 #include "RenderObject.h"
+#include "RenderText.h"
 #include "RenderView.h"
 #include "ShadowRoot.h"
 #include "StyleInheritedData.h"
+#include "Text.h"
 
 #if ENABLE(SVG)
 #include "SVGNames.h"
@@ -146,11 +148,12 @@ bool NodeRenderingContext::shouldCreateRenderer() const
 
 void NodeRenderingContext::moveToFlowThreadIfNeeded()
 {
+    ASSERT(m_node->isElementNode());
     ASSERT(m_style);
     if (!m_node->document()->cssRegionsEnabled())
         return;
 
-    if (!m_node->isElementNode() || m_style->flowThread().isEmpty())
+    if (m_style->flowThread().isEmpty())
         return;
 
     // FIXME: Do not collect elements if they are in shadow tree.
@@ -201,21 +204,21 @@ static void adjustInsertionPointForTopLayerElement(Element* element, RenderObjec
 }
 #endif
 
-void NodeRenderingContext::createRendererIfNeeded()
+void NodeRenderingContext::createRendererForElementIfNeeded()
 {
     ASSERT(!m_node->renderer());
 
+    Element* element = toElement(m_node);
+
     if (!shouldCreateRenderer())
         return;
-    Element* element = m_node->isElementNode() ? toElement(m_node) : 0;
-    
-    m_style = element ? element->styleForRenderer() : parentRenderer()->style();
+    m_style = element->styleForRenderer();
     ASSERT(m_style);
 
     moveToFlowThreadIfNeeded();
 
-    if (!m_node->rendererIsNeeded(*this)) {
-        if (element && m_style->affectedByEmpty())
+    if (!element->rendererIsNeeded(*this)) {
+        if (m_style->affectedByEmpty())
             element->setStyleAffectedByEmpty();
         return;
     }
@@ -223,29 +226,58 @@ void NodeRenderingContext::createRendererIfNeeded()
     RenderObject* nextRenderer = this->nextRenderer();
 
 #if ENABLE(DIALOG_ELEMENT)
-    if (element && element->isInTopLayer())
+    if (element->isInTopLayer())
         adjustInsertionPointForTopLayerElement(element, parentRenderer, nextRenderer);
 #endif
 
-    Document* document = m_node->document();
-    RenderObject* newRenderer = m_node->createRenderer(document->renderArena(), m_style.get());
+    Document* document = element->document();
+    RenderObject* newRenderer = element->createRenderer(document->renderArena(), m_style.get());
     if (!newRenderer)
         return;
     if (!parentRenderer->isChildAllowed(newRenderer, m_style.get())) {
         newRenderer->destroy();
         return;
     }
-    m_node->setRenderer(newRenderer);
+    element->setRenderer(newRenderer);
     newRenderer->setAnimatableStyle(m_style.release()); // setAnimatableStyle() can depend on renderer() already being set.
 
 #if ENABLE(FULLSCREEN_API)
-    if (document->webkitIsFullScreen() && document->webkitCurrentFullScreenElement() == m_node) {
+    if (document->webkitIsFullScreen() && document->webkitCurrentFullScreenElement() == element) {
         newRenderer = RenderFullScreen::wrapRenderer(newRenderer, parentRenderer, document);
         if (!newRenderer)
             return;
     }
 #endif
     // Note: Adding newRenderer instead of renderer(). renderer() may be a child of newRenderer.
+    parentRenderer->addChild(newRenderer, nextRenderer);
+}
+
+void NodeRenderingContext::createRendererForTextIfNeeded()
+{
+    ASSERT(!m_node->renderer());
+
+    Text* textNode = toText(m_node);
+
+    if (!shouldCreateRenderer())
+        return;
+    RenderObject* parentRenderer = this->parentRenderer();
+    ASSERT(parentRenderer);
+    m_style = parentRenderer->style();
+
+    if (!textNode->textRendererIsNeeded(*this))
+        return;
+    Document* document = textNode->document();
+    RenderText* newRenderer = textNode->createTextRenderer(document->renderArena(), m_style.get());
+    if (!newRenderer)
+        return;
+    if (!parentRenderer->isChildAllowed(newRenderer, m_style.get())) {
+        newRenderer->destroy();
+        return;
+    }
+    RenderObject* nextRenderer = this->nextRenderer();
+    textNode->setRenderer(newRenderer);
+    // Parent takes care of the animations, no need to call setAnimatableStyle.
+    newRenderer->setStyle(m_style.release());
     parentRenderer->addChild(newRenderer, nextRenderer);
 }
 
