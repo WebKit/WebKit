@@ -44,7 +44,29 @@ class InsertionPoint;
 class Node;
 class ShadowRoot;
 
-typedef Vector<RefPtr<Node> > ContentDistribution;
+class ContentDistribution {
+public:
+    PassRefPtr<Node> first() const { return m_nodes.first(); }
+    PassRefPtr<Node> last() const { return m_nodes.last(); }
+    PassRefPtr<Node> at(size_t index) const { return m_nodes.at(index); }
+
+    size_t size() const { return m_nodes.size(); }
+    bool isEmpty() const { return m_nodes.isEmpty(); }
+
+    void append(PassRefPtr<Node>);
+    void clear() { m_nodes.clear(); m_indices.clear(); }
+
+    bool contains(const Node* node) const { return m_indices.contains(node); }
+    size_t find(const Node*) const;
+
+    void swap(ContentDistribution& other);
+
+    const Vector<RefPtr<Node> >& nodes() const { return m_nodes; }
+
+private:
+    Vector<RefPtr<Node> > m_nodes;
+    HashMap<const Node*, size_t> m_indices;
+};
 
 class ContentDistributor {
     WTF_MAKE_NONCOPYABLE(ContentDistributor);

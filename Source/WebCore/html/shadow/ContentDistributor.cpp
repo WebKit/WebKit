@@ -36,6 +36,28 @@
 
 namespace WebCore {
 
+void ContentDistribution::swap(ContentDistribution& other)
+{
+    m_nodes.swap(other.m_nodes);
+    m_indices.swap(other.m_indices);
+}
+
+void ContentDistribution::append(PassRefPtr<Node> node)
+{
+    size_t size = m_nodes.size();
+    m_indices.set(node.get(), size);
+    m_nodes.append(node);
+}
+
+size_t ContentDistribution::find(const Node* node) const
+{
+    HashMap<const Node*, size_t>::const_iterator it = m_indices.find(node);
+    if (it == m_indices.end())
+        return notFound;
+
+    return it.get()->value;
+}
+
 ContentDistributor::ContentDistributor()
     : m_validity(Undetermined)
 {
@@ -156,10 +178,10 @@ void ContentDistributor::distributeSelectionsTo(InsertionPoint* insertionPoint, 
         if (distributed[i])
             continue;
 
-        if (!query.matches(pool, i))
+        if (!query.matches(pool.nodes(), i))
             continue;
 
-        Node* child = pool[i].get();
+        Node* child = pool.at(i).get();
         distribution.append(child);
         m_nodeToInsertionPoint.add(child, insertionPoint);
         distributed[i] = true;
