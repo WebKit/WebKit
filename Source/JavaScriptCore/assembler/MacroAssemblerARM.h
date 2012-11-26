@@ -570,11 +570,7 @@ public:
 
     Jump branch32(RelationalCondition cond, RegisterID left, TrustedImm32 right, int useConstantPool = 0)
     {
-        ARMWord tmp = (static_cast<unsigned>(right.m_value) == 0x80000000) ? ARMAssembler::InvalidImmediate : m_assembler.getOp2(-right.m_value);
-        if (tmp != ARMAssembler::InvalidImmediate)
-            m_assembler.cmn(left, tmp);
-        else
-            m_assembler.cmp(left, m_assembler.getImm(right.m_value, ARMRegisters::S0));
+        internalCompare32(left, right);
         return Jump(m_assembler.jmp(ARMCondition(cond), useConstantPool));
     }
 
@@ -805,6 +801,14 @@ public:
         ASSERT((cond == Signed) || (cond == Zero) || (cond == NonZero));
         or32(src, dest);
         return Jump(m_assembler.jmp(ARMCondition(cond)));
+    }
+
+    PatchableJump patchableBranch32(RelationalCondition cond, RegisterID reg, TrustedImm32 imm)
+    {
+        internalCompare32(reg, imm);
+        Jump jump(m_assembler.loadBranchTarget(ARMRegisters::S1, ARMCondition(cond), true));
+        m_assembler.bx(ARMRegisters::S1, ARMCondition(cond));
+        return PatchableJump(jump);
     }
 
     void breakpoint()
@@ -1319,6 +1323,15 @@ protected:
 private:
     friend class LinkBuffer;
     friend class RepatchBuffer;
+
+    void internalCompare32(RegisterID left, TrustedImm32 right)
+    {
+        ARMWord tmp = (static_cast<unsigned>(right.m_value) == 0x80000000) ? ARMAssembler::InvalidImmediate : m_assembler.getOp2(-right.m_value);
+        if (tmp != ARMAssembler::InvalidImmediate)
+            m_assembler.cmn(left, tmp);
+        else
+            m_assembler.cmp(left, m_assembler.getImm(right.m_value, ARMRegisters::S0));
+    }
 
     static void linkCall(void* code, Call call, FunctionPtr function)
     {

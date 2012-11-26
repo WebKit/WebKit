@@ -266,12 +266,14 @@ public:
     {
         return PatchableJump(branchTest32(cond, reg, mask));
     }
-    
+#endif // !CPU(ARM_THUMB2)
+
+#if !CPU(ARM)
     PatchableJump patchableBranch32(RelationalCondition cond, RegisterID reg, TrustedImm32 imm)
     {
         return PatchableJump(branch32(cond, reg, imm));
     }
-#endif
+#endif // !(CPU(ARM)
 
     void jump(Label target)
     {
