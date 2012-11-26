@@ -2216,6 +2216,29 @@ void or32(TrustedImm32 imm, RegisterID src, RegisterID dest)
         return 0;
     }
 
+    static bool canJumpReplacePatchableBranchPtrWithPatch() { return false; }
+
+    static CodeLocationLabel startOfBranchPtrWithPatchOnRegister(CodeLocationDataLabelPtr label)
+    {
+        return label.labelAtOffset(0);
+    }
+
+    static void revertJumpReplacementToBranchPtrWithPatch(CodeLocationLabel instructionStart, RegisterID, void* initialValue)
+    {
+        SH4Assembler::revertJump(instructionStart.dataLocation(), reinterpret_cast<uintptr_t>(initialValue) & 0xffff);
+    }
+
+    static CodeLocationLabel startOfPatchableBranchPtrWithPatchOnAddress(CodeLocationDataLabelPtr)
+    {
+        UNREACHABLE_FOR_PLATFORM();
+        return CodeLocationLabel();
+    }
+
+    static void revertJumpReplacementToPatchableBranchPtrWithPatch(CodeLocationLabel instructionStart, Address, void* initialValue)
+    {
+        UNREACHABLE_FOR_PLATFORM();
+    }
+
 protected:
     SH4Assembler::Condition SH4Condition(RelationalCondition cond)
     {

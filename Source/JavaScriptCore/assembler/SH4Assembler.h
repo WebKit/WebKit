@@ -1462,6 +1462,20 @@ public:
 
     // Linking & patching
 
+    static void revertJump(void* instructionStart, SH4Word imm)
+    {
+        SH4Word *insn = reinterpret_cast<SH4Word*>(instructionStart);
+        SH4Word disp;
+
+        ASSERT((insn[0] & 0xf000) == MOVL_READ_OFFPC_OPCODE);
+
+        disp = insn[0] & 0x00ff;
+        insn += 2 + (disp << 1); // PC += 4 + (disp*4)
+        insn = (SH4Word *) ((unsigned) insn & (~3));
+        insn[0] = imm;
+        cacheFlush(insn, sizeof(SH4Word));
+    }
+
     void linkJump(AssemblerLabel from, AssemblerLabel to, JumpType type = JumpFar)
     {
         ASSERT(to.isSet());
@@ -1754,6 +1768,9 @@ public:
             break;
         case FCNVDS_DRM_FPUL_OPCODE:
             format = "    FCNVDS FR%d, FPUL\n";
+            break;
+        case FCNVSD_FPUL_DRN_OPCODE:
+            format = "    FCNVSD FPUL, FR%d\n";
             break;
         }
         if (format) {

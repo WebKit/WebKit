@@ -1,3 +1,23 @@
+2012-11-26  Julien BRIANCEAU   <jbrianceau@nds.com>
+
+        [sh4] JavaScriptCore JIT build is broken since r135330
+        Add missing implementation for sh4 arch.
+        https://bugs.webkit.org/show_bug.cgi?id=103145
+
+        Reviewed by Oliver Hunt.
+
+        * assembler/MacroAssemblerSH4.h:
+        (JSC::MacroAssemblerSH4::canJumpReplacePatchableBranchPtrWithPatch):
+        (MacroAssemblerSH4):
+        (JSC::MacroAssemblerSH4::startOfBranchPtrWithPatchOnRegister):
+        (JSC::MacroAssemblerSH4::revertJumpReplacementToBranchPtrWithPatch):
+        (JSC::MacroAssemblerSH4::startOfPatchableBranchPtrWithPatchOnAddress):
+        (JSC::MacroAssemblerSH4::revertJumpReplacementToPatchableBranchPtrWithPatch):
+        * assembler/SH4Assembler.h:
+        (JSC::SH4Assembler::revertJump):
+        (SH4Assembler):
+        (JSC::SH4Assembler::printInstr):
+
 2012-11-26  Yuqiang Xian  <yuqiang.xian@intel.com>
 
         Use load64 instead of loadPtr to load a JSValue on JSVALUE64 platforms
