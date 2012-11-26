@@ -1,3 +1,46 @@
+2012-11-26  Zeno Albisser  <zeno@webkit.org>
+
+        GraphicsSurface should only store its size in a single place.
+        https://bugs.webkit.org/show_bug.cgi?id=103143
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * platform/graphics/qt/GraphicsContext3DQt.cpp:
+        (WebCore::GraphicsContext3DPrivate::GraphicsContext3DPrivate):
+            Cosmetics only.
+        * platform/graphics/surfaces/GraphicsSurface.cpp:
+        (WebCore::GraphicsSurface::size):
+            Return the size as received from the platform abstraction.
+        (WebCore):
+        (WebCore::GraphicsSurface::GraphicsSurface):
+        * platform/graphics/surfaces/GraphicsSurface.h:
+        (GraphicsSurface):
+            Remove data member m_size.
+        * platform/graphics/surfaces/mac/GraphicsSurfaceMac.cpp:
+        (WebCore::GraphicsSurfacePrivate::GraphicsSurfacePrivate):
+            Always take the size of the GraphicsSurface as an argument.
+        (WebCore::GraphicsSurfacePrivate::size):
+        (GraphicsSurfacePrivate):
+        (WebCore::GraphicsSurface::platformPaintToTextureMapper):
+            Retrieve the size from GraphicsSurfacePrivate where necessary.
+        (WebCore::GraphicsSurface::platformSize):
+        (WebCore):
+        (WebCore::GraphicsSurface::platformImport):
+        * platform/graphics/surfaces/qt/GraphicsSurfaceGLX.cpp:
+        (WebCore::GraphicsSurfacePrivate::GraphicsSurfacePrivate):
+            Add a constructor that takes a window id as an argument
+            for the receiving side of the GraphcisSurface.
+            The GraphicsSurface can then determine its dimensions
+            from the provided XWindow.
+        (WebCore::GraphicsSurfacePrivate::createPixmap):
+        (WebCore::GraphicsSurfacePrivate::size):
+            Query the size of the GraphicsSurface backing from X.
+        (WebCore::GraphicsSurface::platformPaintToTextureMapper):
+            Retrieve the size from GraphicsSurfacePrivate where necessary.
+        (WebCore::GraphicsSurface::platformSize):
+        (WebCore):
+        (WebCore::GraphicsSurface::platformImport):
+
 2012-11-26  Thiago Santos  <thiago.sousa.santos@collabora.com>
 
         [GStreamer] Floating reference handling fix

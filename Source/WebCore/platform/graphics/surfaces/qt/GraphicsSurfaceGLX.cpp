@@ -199,6 +199,20 @@ struct GraphicsSurfacePrivate {
         m_glContext = glXCreateNewContext(m_display, m_fbConfig, GLX_RGBA_TYPE, shareContextObject, true);
     }
 
+    GraphicsSurfacePrivate(uint32_t winId)
+        : m_display(m_offScreenWindow.display())
+        , m_xPixmap(0)
+        , m_glxPixmap(0)
+        , m_surface(winId)
+        , m_glxSurface(0)
+        , m_glContext(0)
+        , m_detachedContext(0)
+        , m_detachedSurface(0)
+        , m_fbConfig(0)
+        , m_textureIsYInverted(false)
+        , m_hasAlpha(false)
+    { }
+
     ~GraphicsSurfacePrivate()
     {
         if (m_glxPixmap)
@@ -249,7 +263,6 @@ struct GraphicsSurfacePrivate {
 
         XRenderPictFormat* format = XRenderFindVisualFormat(m_display, attr.visual);
         m_hasAlpha = (format->type == PictTypeDirect && format->direct.alphaMask);
-        m_size = IntSize(attr.width, attr.height);
 
         int numberOfConfigs;
         GLXFBConfig* configs = glXChooseFBConfig(m_display, XDefaultScreen(m_display), glxSpec, &numberOfConfigs);
@@ -337,7 +350,15 @@ struct GraphicsSurfacePrivate {
 
     GLXPixmap glxPixmap() const { return m_glxPixmap; }
 
-    IntSize size() const { return m_size; }
+    IntSize size() const
+    {
+        if (m_size.isEmpty()) {
+            XWindowAttributes attr;
+            XGetWindowAttributes(m_display, m_surface, &attr);
+            const_cast<GraphicsSurfacePrivate*>(this)->m_size = IntSize(attr.width, attr.height);
+        }
+        return m_size;
+    }
 
 private:
     OffScreenRootWindow m_offScreenWindow;
@@ -408,10 +429,10 @@ void GraphicsSurface::platformPaintToTextureMapper(TextureMapper* textureMapper,
 {
     TextureMapperGL* texMapGL = static_cast<TextureMapperGL*>(textureMapper);
     TransformationMatrix adjustedTransform = transform;
-    adjustedTransform.multiply(TransformationMatrix::rectToRect(FloatRect(FloatPoint::zero(), m_size), targetRect));
+    adjustedTransform.multiply(TransformationMatrix::rectToRect(FloatRect(FloatPoint::zero(), m_private->size()), targetRect));
     TextureMapperGL::Flags flags = m_private->textureIsYInverted() ? TextureMapperGL::ShouldFlipTexture : 0;
     flags |= TextureMapperGL::SupportsBlending;
-    texMapGL->drawTexture(platformGetTextureID(), flags, m_size, targetRect, adjustedTransform, opacity, mask);
+    texMapGL->drawTexture(platformGetTextureID(), flags, m_private->size(), targetRect, adjustedTransform, opacity, mask);
 }
 
 uint32_t GraphicsSurface::platformFrontBuffer() const
@@ -423,6 +444,11 @@ uint32_t GraphicsSurface::platformSwapBuffers()
 {
     m_private->swapBuffers();
     return 0;
+}
+
+IntSize GraphicsSurface::platformSize() const
+{
+    return m_private->size();
 }
 
 PassRefPtr<GraphicsSurface> GraphicsSurface::platformCreate(const IntSize& size, Flags flags, const PlatformGraphicsContext3D shareContext)
@@ -453,15 +479,13 @@ PassRefPtr<GraphicsSurface> GraphicsSurface::platformImport(const IntSize& size,
         return PassRefPtr<GraphicsSurface>();
 
     RefPtr<GraphicsSurface> surface = adoptRef(new GraphicsSurface(size, flags));
+    surface->m_platformSurface = token.frontBufferHandle;
 
-    surface->m_private = new GraphicsSurfacePrivate();
+    surface->m_private = new GraphicsSurfacePrivate(surface->m_platformSurface);
     if (!resolveGLMethods(surface->m_private))
         return PassRefPtr<GraphicsSurface>();
 
-    surface->m_platformSurface = token.frontBufferHandle;
-
     surface->m_private->createPixmap(surface->m_platformSurface);
-    surface->m_size = surface->m_private->size();
 
     return surface;
 }

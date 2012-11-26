@@ -144,9 +144,8 @@ GraphicsContext3DPrivate::GraphicsContext3DPrivate(GraphicsContext3D* context, H
     m_surfaceFlags = GraphicsSurface::SupportsTextureTarget
                     | GraphicsSurface::SupportsSharing;
 
-    if (!surfaceSize.isEmpty()) {
+    if (!surfaceSize.isEmpty())
         m_graphicsSurface = GraphicsSurface::create(surfaceSize, m_surfaceFlags, m_platformContext);
-    }
 #endif
 }
 

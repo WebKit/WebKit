@@ -74,7 +74,7 @@ public:
 
     Flags flags() const { return m_flags; }
     PlatformGraphicsSurface platformSurface() const { return m_platformSurface; }
-    IntSize size() const { return m_size; }
+    IntSize size() const;
 
     static PassRefPtr<GraphicsSurface> create(const IntSize&, Flags, const PlatformGraphicsContext3D shareContext = 0);
     static PassRefPtr<GraphicsSurface> create(const IntSize&, Flags, const GraphicsSurfaceToken&);
@@ -103,6 +103,7 @@ protected:
     void platformPaintToTextureMapper(TextureMapper*, const FloatRect& targetRect, const TransformationMatrix&, float opacity, BitmapTexture* mask);
     uint32_t platformFrontBuffer() const;
     uint32_t platformSwapBuffers();
+    IntSize platformSize() const;
 
     PassOwnPtr<GraphicsContext> platformBeginPaint(const IntSize&, char* bits, int stride);
 
@@ -118,7 +119,6 @@ private:
 #endif
 
 private:
-    IntSize m_size;
     PlatformGraphicsSurface m_platformSurface;
     uint32_t m_texture;
     uint32_t m_fbo;

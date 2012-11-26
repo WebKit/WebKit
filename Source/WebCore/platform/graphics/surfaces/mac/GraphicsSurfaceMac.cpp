@@ -72,8 +72,9 @@ static uint32_t createTexture(IOSurfaceRef handle)
 
 struct GraphicsSurfacePrivate {
 public:
-    GraphicsSurfacePrivate(const GraphicsSurfaceToken& token)
+    GraphicsSurfacePrivate(const GraphicsSurfaceToken& token, const IntSize& size)
         : m_context(0)
+        , m_size(size)
         , m_token(token)
         , m_frontBufferTexture(0)
         , m_backBufferTexture(0)
@@ -86,6 +87,7 @@ public:
 
     GraphicsSurfacePrivate(const PlatformGraphicsContext3D shareContext, const IntSize& size, GraphicsSurface::Flags flags)
         : m_context(0)
+        , m_size(size)
         , m_frontBufferTexture(0)
         , m_backBufferTexture(0)
         , m_readFbo(0)
@@ -106,8 +108,8 @@ public:
 
         unsigned pixelFormat = 'BGRA';
         unsigned bytesPerElement = 4;
-        int width = size.width();
-        int height = size.height();
+        int width = m_size.width();
+        int height = m_size.height();
 
         unsigned long bytesPerRow = IOSurfaceAlignProperty(kIOSurfaceBytesPerRow, width * bytesPerElement);
         if (!bytesPerRow)
@@ -269,8 +271,14 @@ public:
         return m_backBuffer;
     }
 
+    IntSize size() const
+    {
+        return m_size;
+    }
+
 private:
     CGLContextObj m_context;
+    IntSize m_size;
     CGLContextObj m_detachedContext;
     PlatformGraphicsSurface m_frontBuffer;
     PlatformGraphicsSurface m_backBuffer;
@@ -322,8 +330,8 @@ void GraphicsSurface::platformCopyFromTexture(uint32_t texture, const IntRect& s
 void GraphicsSurface::platformPaintToTextureMapper(TextureMapper* textureMapper, const FloatRect& targetRect, const TransformationMatrix& transform, float opacity, BitmapTexture* mask)
 {
     TransformationMatrix adjustedTransform = transform;
-    adjustedTransform.multiply(TransformationMatrix::rectToRect(FloatRect(FloatPoint::zero(), m_size), targetRect));
-    static_cast<TextureMapperGL*>(textureMapper)->drawTextureRectangleARB(m_private->frontBufferTextureID(), 0, m_size, targetRect, adjustedTransform, opacity, mask);
+    adjustedTransform.multiply(TransformationMatrix::rectToRect(FloatRect(FloatPoint::zero(), m_private->size()), targetRect));
+    static_cast<TextureMapperGL*>(textureMapper)->drawTextureRectangleARB(m_private->frontBufferTextureID(), 0, m_private->size(), targetRect, adjustedTransform, opacity, mask);
 }
 
 uint32_t GraphicsSurface::platformFrontBuffer() const
@@ -334,6 +342,11 @@ uint32_t GraphicsSurface::platformFrontBuffer() const
 uint32_t GraphicsSurface::platformSwapBuffers()
 {
     return m_private->swapBuffers();
+}
+
+IntSize GraphicsSurface::platformSize() const
+{
+    return m_private->size();
 }
 
 PassRefPtr<GraphicsSurface> GraphicsSurface::platformCreate(const IntSize& size, Flags flags, const PlatformGraphicsContext3D shareContext)
@@ -362,7 +375,7 @@ PassRefPtr<GraphicsSurface> GraphicsSurface::platformImport(const IntSize& size,
         return PassRefPtr<GraphicsSurface>();
 
     RefPtr<GraphicsSurface> surface = adoptRef(new GraphicsSurface(size, flags));
-    surface->m_private = new GraphicsSurfacePrivate(token);
+    surface->m_private = new GraphicsSurfacePrivate(token, size);
 
     if (!surface->m_private->frontBuffer() || !surface->m_private->backBuffer())
         return PassRefPtr<GraphicsSurface>();

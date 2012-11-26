@@ -78,9 +78,13 @@ uint32_t GraphicsSurface::swapBuffers()
     return platformSwapBuffers();
 }
 
+IntSize GraphicsSurface::size() const
+{
+    return platformSize();
+}
+
 GraphicsSurface::GraphicsSurface(const IntSize& size, Flags flags)
     : m_flags(flags)
-    , m_size(size)
     , m_platformSurface(0)
     , m_texture(0)
     , m_fbo(0)
