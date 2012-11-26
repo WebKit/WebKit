@@ -139,13 +139,6 @@ static void notifyStatus(WebKitWebFrame* frame, WebKitLoadStatus loadStatus)
     }
 }
 
-static void loadDone(WebKitWebFrame* frame, bool didSucceed)
-{
-    // FIXME: load-done is deprecated. Please remove when signal's been removed.
-    g_signal_emit_by_name(frame, "load-done", didSucceed);
-    notifyStatus(frame, WEBKIT_LOAD_FINISHED);
-}
-
 WTF::PassRefPtr<WebCore::DocumentLoader> FrameLoaderClient::createDocumentLoader(const WebCore::ResourceRequest& request, const SubstituteData& substituteData)
 {
     RefPtr<WebKit::DocumentLoader> loader = WebKit::DocumentLoader::create(request, substituteData);
@@ -626,8 +619,7 @@ void FrameLoaderClient::dispatchDidFinishLoad()
         m_loadingErrorPage = false;
         return;
     }
-
-    loadDone(m_frame, true);
+    notifyStatus(m_frame, WEBKIT_LOAD_FINISHED);
 }
 
 void FrameLoaderClient::frameLoadCompleted()

@@ -1,3 +1,18 @@
+2012-11-25  Kaustubh Atrawalkar  <kaustubh@motorola.com>
+
+        Remove deprecated load-done signal
+        https://bugs.webkit.org/show_bug.cgi?id=72712
+
+        Reviewed by Brent Fulgham.
+
+        Remove deprecated load-done signal and migrate to load-status.
+
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        (WebKit):
+        (WebKit::FrameLoaderClient::dispatchDidFinishLoad):
+        * webkit/webkitwebframe.cpp:
+        (webkit_web_frame_class_init):
+
 2012-09-26  Gustavo Noronha Silva  <gns@gnome.org>
 
         [GTK] Split SVG from WebCore to work-around make limitation
