@@ -743,6 +743,9 @@ void InputHandler::requestSpellingCheckingOptions(imf_sp_text_t& spellCheckingOp
     if (m_webPage->focusedOrMainFrame()->selection()->selectionType() != VisibleSelection::CaretSelection)
         return;
 
+    if (!m_currentFocusElement || !m_currentFocusElement->document() || !m_currentFocusElement->document()->frame())
+        return;
+
     // imf_sp_text_t should be generated in pixel viewport coordinates.
     WebCore::IntRect caretRect = m_webPage->focusedOrMainFrame()->selection()->selection().visibleStart().absoluteCaretBounds();
     caretRect = m_webPage->focusedOrMainFrame()->view()->contentsToRootView(caretRect);
