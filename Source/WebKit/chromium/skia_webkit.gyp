@@ -39,6 +39,9 @@
         'defines': [
           # Place defines here that require significant WebKit rebaselining, or that
           # are otherwise best removed in WebKit and then rolled into Chromium.
+          
+          # extracted from SkUserConfig.h, in preparation for rebaselining.
+          'SK_DISABLE_DITHER_32BIT_GRADIENT',
         ],
       },
     },
