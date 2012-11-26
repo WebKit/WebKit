@@ -926,7 +926,7 @@
 #if !defined(ENABLE_LLINT) \
     && ENABLE(JIT) \
     && (OS(DARWIN) || OS(LINUX)) \
-    && (PLATFORM(MAC) || PLATFORM(IOS) || PLATFORM(GTK) || (PLATFORM(QT) && OS(LINUX))) \
+    && (PLATFORM(MAC) || PLATFORM(IOS) || PLATFORM(GTK) || PLATFORM(QT)) \
     && (CPU(X86) || CPU(X86_64) || CPU(ARM_THUMB2))
 #define ENABLE_LLINT 1
 #endif

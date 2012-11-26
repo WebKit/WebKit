@@ -77,7 +77,7 @@
 // FIXME: figure out how this works on all the platforms. I know that
 // on ELF, the preferred form is ".Lstuff" as opposed to "Lstuff".
 // Don't know about any of the others.
-#if PLATFORM(MAC)
+#if OS(DARWIN)
 #define LOCAL_LABEL_STRING(name) "L" #name
 #elif   OS(LINUX)               \
      || OS(FREEBSD)             \

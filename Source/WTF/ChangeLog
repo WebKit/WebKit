@@ -1,3 +1,15 @@
+2012-11-26  Zeno Albisser  <zeno@webkit.org>
+
+        [Qt] Fix the LLInt build on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=97587
+
+        Reviewed by Simon Hausmann.
+
+        * wtf/InlineASM.h:
+            Use OS(DARWIN) instead of PLATFORM(MAC),
+            in order to allow Qt to use the same code.
+        * wtf/Platform.h:
+
 2012-11-26  Patrick Gansterer  <paroga@webkit.org>
 
         Build fix for WinCE after r135640.
