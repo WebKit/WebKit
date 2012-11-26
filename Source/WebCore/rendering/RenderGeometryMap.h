@@ -29,6 +29,7 @@
 #include "FloatPoint.h"
 #include "FloatQuad.h"
 #include "IntSize.h"
+#include "RenderObject.h"
 #include "TransformationMatrix.h"
 #include <wtf/OwnPtr.h>
 
@@ -76,8 +77,21 @@ public:
     RenderGeometryMap();
     ~RenderGeometryMap();
 
-    FloatPoint absolutePoint(const FloatPoint&) const;
-    FloatRect absoluteRect(const FloatRect&) const;
+    FloatPoint absolutePoint(const FloatPoint& p) const
+    {
+        return mapToContainer(p, 0);
+    }
+
+    FloatRect absoluteRect(const FloatRect& rect) const
+    {
+        return mapToContainer(rect, 0).boundingBox();
+    }
+
+    // Map to a container. Will assert that the container has been pushed onto this map.
+    // A null container maps through the RenderView (including its scale transform, if any).
+    // If the container is the RenderView, the scroll offset is applied, but not the scale.
+    FloatPoint mapToContainer(const FloatPoint&, const RenderBoxModelObject*) const;
+    FloatQuad mapToContainer(const FloatRect&, const RenderBoxModelObject*) const;
     
     // Called by code walking the renderer or layer trees.
     void pushMappingsToAncestor(const RenderLayer*, const RenderLayer* ancestorLayer);
@@ -96,7 +110,7 @@ public:
     void pushView(const RenderView*, const IntSize& scrollOffset, const TransformationMatrix* = 0);
 
 private:
-    void mapToAbsolute(TransformState&) const;
+    void mapToContainer(TransformState&, const RenderBoxModelObject* container = 0) const;
 
     void stepInserted(const RenderGeometryMapStep&);
     void stepRemoved(const RenderGeometryMapStep&);

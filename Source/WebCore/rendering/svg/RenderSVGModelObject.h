@@ -53,7 +53,7 @@ public:
 
     virtual LayoutRect clippedOverflowRectForRepaint(RenderBoxModelObject* repaintContainer) const;
     virtual void computeFloatRectForRepaint(RenderBoxModelObject* repaintContainer, FloatRect&, bool fixed = false) const;
-    virtual LayoutRect outlineBoundsForRepaint(RenderBoxModelObject* repaintContainer, LayoutPoint*) const;
+    virtual LayoutRect outlineBoundsForRepaint(RenderBoxModelObject* repaintContainer, const RenderGeometryMap*) const;
 
     virtual void absoluteRects(Vector<IntRect>&, const LayoutPoint& accumulatedOffset) const;
     virtual void absoluteQuads(Vector<FloatQuad>&, bool* wasFixed) const;
