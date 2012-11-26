@@ -1,5 +1,18 @@
 2012-11-26  Justin Novosad  <junov@google.com>
 
+        New baselines for test fast/backgrounds/background-opaque-images-over-color.html
+        https://bugs.webkit.org/show_bug.cgi?id=102557
+
+        Unreviewed
+
+        * fast/backgrounds/background-opaque-images-over-color-expected.txt:
+        * platform/chromium-mac/fast/backgrounds/background-opaque-images-over-color-expected.png: Added.
+        * platform/chromium-win/fast/backgrounds/background-opaque-images-over-color-expected.png: Added.
+        * platform/chromium/TestExpectations:
+        * platform/mac/TestExpectations:
+
+2012-11-26  Justin Novosad  <junov@google.com>
+
         New baselines for test fast/backgrounds/gradient-background-leakage-2.html
         https://bugs.webkit.org/show_bug.cgi?id=103089
 

@@ -1266,9 +1266,6 @@ webkit.org/b/25817 svg/dom/SVGScriptElement/script-load-and-error-events.svg [ F
 
 webkit.org/b/60118 [ Mac ] svg/dom/SVGScriptElement/script-set-href.svg [ Failure Pass ]
 
-# New test in need of new baselines
-webkit.org/b/102557 fast/backgrounds/background-opaque-images-over-color.html [ Pass ImageOnlyFailure Failure Missing ]
-
 # Introduced due to BUGWK53512, fails under Skia right now
 webkit.org/b/65939 svg/custom/getBBox-path.svg [ Failure ]
 

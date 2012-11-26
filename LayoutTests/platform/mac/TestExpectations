@@ -468,9 +468,6 @@ media/track/track-cue-rendering-snap-to-lines-not-set.html
 media/track/track-cue-rendering-vertical.html
 media/track/track-webvtt-tc028-unsupported-markup.html
 
-# Test needs new baselines https://bugs.webkit.org/show_bug.cgi?id=102557
-fast/backgrounds/background-opaque-images-over-color.html
-
 # Tests for MediaSource API. Feature is not yet functional.
 # https://bugs.webkit.org/show_bug.cgi?id=64731
 http/tests/media/media-source/
