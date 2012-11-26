@@ -237,6 +237,8 @@ webkitgtk_gdom_built_sources += \
 	DerivedSources/webkit/WebKitDOMRangePrivate.h \
 	DerivedSources/webkit/WebKitDOMScreen.cpp \
 	DerivedSources/webkit/WebKitDOMScreenPrivate.h \
+	DerivedSources/webkit/WebKitDOMShadowRoot.cpp \
+	DerivedSources/webkit/WebKitDOMShadowRootPrivate.h \
 	DerivedSources/webkit/WebKitDOMStorage.cpp \
 	DerivedSources/webkit/WebKitDOMStorageInfo.cpp \
 	DerivedSources/webkit/WebKitDOMStorageInfoPrivate.h \

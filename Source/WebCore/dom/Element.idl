@@ -119,8 +119,10 @@
     readonly attribute Element nextElementSibling;
     readonly attribute unsigned long childElementCount;
 
-#if defined(ENABLE_SHADOW_DOM)
+    // ShadowAware API
+#if defined(ENABLE_SHADOW_DOM) && ENABLE_SHADOW_DOM
     [Reflect, V8EnabledAtRuntime=shadowDOM] attribute DOMString pseudo;
+    [V8EnabledAtRuntime=shadowDOM] ShadowRoot createShadowRoot() raises(DOMException);
 #endif
 
     // DOM 4

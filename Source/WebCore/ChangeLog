@@ -1,3 +1,25 @@
+2012-11-26  Hajime Morrita  <morrita@google.com>
+
+        [Shadow DOM] Implement Element::createShadowRoot()
+        https://bugs.webkit.org/show_bug.cgi?id=102911
+
+        Reviewed by Kentaro Hara.
+
+        Added an API implementation and exposed it.
+
+        This is basically an alias of the ShadowRoot constructor, which
+        will be removed as bug 102913.
+
+        Test: fast/dom/shadow/shadow-aware-create-shdow-root.html
+
+        * bindings/gobject/GNUmakefile.am:
+        * dom/Element.cpp:
+        (WebCore::Element::createShadowRoot):
+        (WebCore):
+        * dom/Element.h:
+        (Element):
+        * dom/Element.idl:
+
 2012-11-26  Jon Lee  <jonlee@apple.com>
 
         Extend EventDispatcher::dispatchSimulatedClick to allow sending a mouseover event
