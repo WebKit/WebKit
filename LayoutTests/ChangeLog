@@ -1,3 +1,15 @@
+2012-11-26  Eugene Klyuchnikov  <eustas@chromium.org>
+
+        Web Inspector: HeapProfiler: remove snapshotView reference from data-grids.
+        https://bugs.webkit.org/show_bug.cgi?id=103240
+
+        Reviewed by Yury Semikhatsky.
+
+        Directly access current view instead of getting if from the data grid.
+
+        * inspector/profiler/heap-snapshot-test.js:
+        (initialize_HeapSnapshotTest):
+
 2012-11-26  Jussi Kukkonen  <jussi.kukkonen@intel.com>
 
         [EFL] Gardening: update test expectations

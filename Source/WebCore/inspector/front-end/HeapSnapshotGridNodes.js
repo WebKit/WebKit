@@ -444,7 +444,6 @@ WebInspector.HeapSnapshotGenericObjectNode.prototype = {
             valueStyle += " detached-dom-tree-node";
         data["object"] = { valueStyle: valueStyle, value: value, nodeId: this.snapshotNodeId };
 
-        var view = this.dataGrid.snapshotView;
         data["distanceToWindow"] =  this._distanceToWindow;
         data["shallowSize"] = Number.withThousandsSeparator(this._shallowSize);
         data["retainedSize"] = Number.withThousandsSeparator(this._retainedSize);
@@ -827,7 +826,6 @@ WebInspector.HeapSnapshotConstructorNode.prototype = {
     get data()
     {
         var data = { object: this._name };
-        var view = this.dataGrid.snapshotView;
         data["count"] =  Number.withThousandsSeparator(this._count);
         data["distanceToWindow"] =  this._distanceToWindow;
         data["shallowSize"] = Number.withThousandsSeparator(this._shallowSize);

@@ -341,7 +341,7 @@ InspectorTest.clickRowAndGetRetainers = function(row, callback)
         }
     };
     this._currentGrid()._mouseDownInDataTable(event);
-    var rootNode = InspectorTest._currentGrid().snapshotView.retainmentDataGrid.rootNode();
+    var rootNode = InspectorTest._currentProfileView().retainmentDataGrid.rootNode();
     function populateComplete()
     {
         rootNode.removeEventListener("populate complete", populateComplete, this);
@@ -743,9 +743,14 @@ InspectorTest.viewColumns = function()
     return InspectorTest._currentGrid()._columnsArray;
 };
 
+InspectorTest._currentProfileView = function()
+{
+    return WebInspector.panels.profiles.visibleView;
+};
+
 InspectorTest._currentGrid = function()
 {
-    return WebInspector.panels.profiles.visibleView.dataGrid;
+    return this._currentProfileView().dataGrid;
 };
 
 InspectorTest._snapshotViewShown = function()

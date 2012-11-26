@@ -1,3 +1,18 @@
+2012-11-26  Eugene Klyuchnikov  <eustas@chromium.org>
+
+        Web Inspector: HeapProfiler: remove snapshotView reference from data-grids.
+        https://bugs.webkit.org/show_bug.cgi?id=103240
+
+        Reviewed by Yury Semikhatsky.
+
+        Cleanup: remove redundant dependency.
+
+        * inspector/front-end/HeapSnapshotDataGrids.js: Do not store view ref.
+        * inspector/front-end/HeapSnapshotGridNodes.js:
+        Removed unused assignments.
+        * inspector/front-end/HeapSnapshotView.js:
+        Do not pass self to data-grids.
+
 2012-11-26  Zeno Albisser  <zeno@webkit.org>
 
         GraphicsSurface should only store its size in a single place.

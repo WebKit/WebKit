@@ -153,7 +153,7 @@ WebInspector.HeapSnapshotView = function(parent, profile)
             this.baseSelectElement.selectedIndex = profileIndex - 1;
         else
             this.baseSelectElement.selectedIndex = profileIndex;
-        this.dataGrid.setDataSource(this, heapSnapshotProxy);
+        this.dataGrid.setDataSource(heapSnapshotProxy);
     }
 }
 
@@ -463,7 +463,7 @@ WebInspector.HeapSnapshotView.prototype = {
     _setRetainmentDataGridSource: function(nodeItem)
     {
         if (nodeItem && nodeItem.snapshotNodeIndex)
-            this.retainmentDataGrid.setDataSource(this, nodeItem.isDeletedNode ? nodeItem.dataGrid.baseSnapshot : nodeItem.dataGrid.snapshot, nodeItem.snapshotNodeIndex);
+            this.retainmentDataGrid.setDataSource(nodeItem.isDeletedNode ? nodeItem.dataGrid.baseSnapshot : nodeItem.dataGrid.snapshot, nodeItem.snapshotNodeIndex);
         else
             this.retainmentDataGrid.reset();
     },
@@ -509,7 +509,7 @@ WebInspector.HeapSnapshotView.prototype = {
     _updateDataSourceAndView: function()
     {
         var dataGrid = this.dataGrid;
-        if (dataGrid.snapshotView)
+        if (dataGrid.snapshot)
             return;
 
         this.profile.load(didLoadSnapshot.bind(this));
@@ -518,7 +518,7 @@ WebInspector.HeapSnapshotView.prototype = {
             if (this.dataGrid !== dataGrid)
                 return;
             if (dataGrid.snapshot !== snapshotProxy)
-                dataGrid.setDataSource(this, snapshotProxy);
+                dataGrid.setDataSource(snapshotProxy);
             if (dataGrid === this.diffDataGrid) {
                 if (!this._baseProfileUid)
                     this._baseProfileUid = this._profiles()[this.baseSelectElement.selectedIndex].uid;

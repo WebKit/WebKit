@@ -438,9 +438,8 @@ WebInspector.HeapSnapshotContainmentDataGrid = function(columns)
 }
 
 WebInspector.HeapSnapshotContainmentDataGrid.prototype = {
-    setDataSource: function(snapshotView, snapshot, nodeIndex)
+    setDataSource: function(snapshot, nodeIndex)
     {
-        this.snapshotView = snapshotView;
         this.snapshot = snapshot;
         var node = new WebInspector.HeapSnapshotNode(snapshot, nodeIndex || snapshot.rootNodeIndex);
         var fakeEdge = { node: node };
@@ -552,9 +551,8 @@ WebInspector.HeapSnapshotConstructorsDataGrid.prototype = {
         this.snapshot.nodeClassName(parseInt(id, 10), didGetClassName.bind(this));
     },
 
-    setDataSource: function(snapshotView, snapshot)
+    setDataSource: function(snapshot)
     {
-        this.snapshotView = snapshotView;
         this.snapshot = snapshot;
         if (this._profileIndex === -1)
             this._populateChildren();
@@ -645,9 +643,8 @@ WebInspector.HeapSnapshotDiffDataGrid.prototype = {
         }[sortColumn];
     },
 
-    setDataSource: function(snapshotView, snapshot)
+    setDataSource: function(snapshot)
     {
-        this.snapshotView = snapshotView;
         this.snapshot = snapshot;
     },
 
@@ -716,9 +713,8 @@ WebInspector.HeapSnapshotDominatorsDataGrid.prototype = {
         return 25;
     },
 
-    setDataSource: function(snapshotView, snapshot)
+    setDataSource: function(snapshot)
     {
-        this.snapshotView = snapshotView;
         this.snapshot = snapshot;
 
         var fakeNode = { nodeIndex: this.snapshot.rootNodeIndex };
