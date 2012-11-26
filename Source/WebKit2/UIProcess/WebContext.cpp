@@ -635,9 +635,11 @@ void WebContext::handleGetPlugins(uint64_t requestID, bool refresh)
 
     OwnPtr<Vector<PluginInfo> > pluginInfos = adoptPtr(new Vector<PluginInfo>);
 
-    Vector<PluginModuleInfo> plugins = m_pluginInfoStore.plugins();
-    for (size_t i = 0; i < plugins.size(); ++i)
-        pluginInfos->append(plugins[i].info);
+    {
+        Vector<PluginModuleInfo> plugins = m_pluginInfoStore.plugins();
+        for (size_t i = 0; i < plugins.size(); ++i)
+            pluginInfos->append(plugins[i].info);
+    }
 
     // NOTE: We have to pass the PluginInfo vector to the secondary thread via a pointer as otherwise
     //       we'd end up with a deref() race on all the WTF::Strings it contains.
