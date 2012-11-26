@@ -1,3 +1,11 @@
+2012-11-26  Robert Kroeger  <rjkroege@chromium.org>
+
+        Unreviewed gardening: added TestExpecations failures for 
+        media/remove-from-document.html
+        https://bugs.webkit.org/show_bug.cgi?id=103093
+
+        * platform/chromium/TestExpectations:
+
 2012-11-26  Justin Novosad  <junov@google.com>
 
         New baselines for test fast/backgrounds/background-opaque-images-over-color.html
