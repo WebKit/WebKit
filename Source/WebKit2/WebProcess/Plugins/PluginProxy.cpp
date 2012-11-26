@@ -665,6 +665,11 @@ void PluginProxy::update(const IntRect& paintedRect)
     controller()->invalidate(paintedRect);
 }
 
+IntPoint PluginProxy::convertToRootView(const IntPoint& point) const
+{
+    return m_pluginToRootViewTransform.mapPoint(point);
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(PLUGIN_PROCESS)

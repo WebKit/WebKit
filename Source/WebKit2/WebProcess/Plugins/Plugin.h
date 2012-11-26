@@ -250,6 +250,8 @@ public:
     virtual RetainPtr<PDFDocument> pdfDocumentForPrinting() const { return 0; }
 #endif
 
+    virtual WebCore::IntPoint convertToRootView(const WebCore::IntPoint& pointInLocalCoordinates) const;
+
 protected:
     Plugin();
 

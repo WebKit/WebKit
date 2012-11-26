@@ -72,7 +72,7 @@ void RenderSnapshottedPlugIn::updateSnapshot(PassRefPtr<Image> image)
 
 void RenderSnapshottedPlugIn::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
-    if (plugInImageElement()->displayState() < HTMLPlugInElement::Playing) {
+    if (plugInImageElement()->displayState() < HTMLPlugInElement::PlayingWithPendingMouseClick) {
         RenderReplaced::paint(paintInfo, paintOffset);
         return;
     }
@@ -82,7 +82,7 @@ void RenderSnapshottedPlugIn::paint(PaintInfo& paintInfo, const LayoutPoint& pai
 
 void RenderSnapshottedPlugIn::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
-    if (plugInImageElement()->displayState() < HTMLPlugInElement::Playing) {
+    if (plugInImageElement()->displayState() < HTMLPlugInElement::PlayingWithPendingMouseClick) {
         paintReplacedSnapshot(paintInfo, paintOffset);
         paintButton(paintInfo, paintOffset);
         return;
@@ -159,7 +159,7 @@ void RenderSnapshottedPlugIn::repaintButton()
 
 CursorDirective RenderSnapshottedPlugIn::getCursor(const LayoutPoint& point, Cursor& overrideCursor) const
 {
-    if (plugInImageElement()->displayState() < HTMLPlugInElement::Playing) {
+    if (plugInImageElement()->displayState() < HTMLPlugInElement::PlayingWithPendingMouseClick) {
         overrideCursor = handCursor();
         return SetCursor;
     }
@@ -174,7 +174,12 @@ void RenderSnapshottedPlugIn::handleEvent(Event* event)
     MouseEvent* mouseEvent = static_cast<MouseEvent*>(event);
 
     if (event->type() == eventNames().clickEvent && mouseEvent->button() == LeftButton) {
-        plugInImageElement()->setDisplayState(HTMLPlugInElement::Playing);
+        if (m_isMouseInButtonRect)
+            plugInImageElement()->setDisplayState(HTMLPlugInElement::Playing);
+        else {
+            plugInImageElement()->setDisplayState(HTMLPlugInElement::PlayingWithPendingMouseClick);
+            plugInImageElement()->setPendingClickEvent(mouseEvent);
+        }
         if (widget()) {
             if (Frame* frame = document()->frame())
                 frame->loader()->client()->recreatePlugin(widget());

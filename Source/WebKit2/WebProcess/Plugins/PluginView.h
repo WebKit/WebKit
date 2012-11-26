@@ -44,10 +44,13 @@
 namespace WebCore {
 class Frame;
 class HTMLPlugInElement;
+class MouseEvent;
 class RenderBoxModelObject;
 }
 
 namespace WebKit {
+
+class WebEvent;
 
 class PluginView : public WebCore::PluginViewBase, public PluginController, private WebCore::MediaCanStartListener, private WebFrame::LoadListener {
 public:
@@ -200,6 +203,8 @@ private:
     // WebFrame::LoadListener
     virtual void didFinishLoad(WebFrame*);
     virtual void didFailLoad(WebFrame*, bool wasCancelled);
+
+    PassOwnPtr<WebEvent> createWebEvent(WebCore::MouseEvent*) const;
 
     RefPtr<WebCore::HTMLPlugInElement> m_pluginElement;
     RefPtr<Plugin> m_plugin;

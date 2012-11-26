@@ -68,7 +68,8 @@ using namespace WebCore;
 
 namespace WebKit {
 
-static const double pluginSnapshotTimerDelay = 1;
+// This simulated mouse click delay in HTMLPlugInImageElement.cpp should generally be the same or shorter than this delay.
+static const double pluginSnapshotTimerDelay = 1.1;
 
 class PluginView::URLRequest : public RefCounted<URLRequest> {
 public:
@@ -554,13 +555,17 @@ void PluginView::didInitializePlugin()
     redeliverManualStream();
 
 #if PLATFORM(MAC)
-    if (m_pluginElement->displayState() < HTMLPlugInElement::Playing)
+    if (m_pluginElement->displayState() < HTMLPlugInElement::PlayingWithPendingMouseClick)
         m_pluginSnapshotTimer.restart();
-    else if (m_plugin->pluginLayer()) {
-        if (frame()) {
-            frame()->view()->enterCompositingMode();
-            m_pluginElement->setNeedsStyleRecalc(SyntheticStyleChange);
+    else {
+        if (m_plugin->pluginLayer()) {
+            if (frame()) {
+                frame()->view()->enterCompositingMode();
+                m_pluginElement->setNeedsStyleRecalc(SyntheticStyleChange);
+            }
         }
+        if (m_pluginElement->displayState() < HTMLPlugInElement::Playing)
+            m_pluginElement->dispatchPendingMouseClick();
     }
 
     setWindowIsVisible(m_webPage->windowIsVisible());
@@ -686,7 +691,7 @@ void PluginView::setFrameRect(const WebCore::IntRect& rect)
 
 void PluginView::paint(GraphicsContext* context, const IntRect& /*dirtyRect*/)
 {
-    if (!m_plugin || !m_isInitialized || m_pluginElement->displayState() < HTMLPlugInElement::Playing)
+    if (!m_plugin || !m_isInitialized || m_pluginElement->displayState() < HTMLPlugInElement::PlayingWithPendingMouseClick)
         return;
 
     if (context->paintingDisabled()) {
@@ -728,12 +733,62 @@ void PluginView::setParent(ScrollView* scrollView)
         initializePlugin();
 }
 
+PassOwnPtr<WebEvent> PluginView::createWebEvent(MouseEvent* event) const
+{
+    WebEvent::Type type = WebEvent::NoType;
+    unsigned clickCount = 1;
+    if (event->type() == eventNames().mousedownEvent)
+        type = WebEvent::MouseDown;
+    else if (event->type() == eventNames().mouseupEvent)
+        type = WebEvent::MouseUp;
+    else if (event->type() == eventNames().mouseoverEvent) {
+        type = WebEvent::MouseMove;
+        clickCount = 0;
+    } else if (event->type() == eventNames().clickEvent)
+        return nullptr;
+    else
+        ASSERT_NOT_REACHED();
+
+    WebMouseEvent::Button button = WebMouseEvent::NoButton;
+    switch (event->button()) {
+    case WebCore::LeftButton:
+        button = WebMouseEvent::LeftButton;
+        break;
+    case WebCore::MiddleButton:
+        button = WebMouseEvent::MiddleButton;
+        break;
+    case WebCore::RightButton:
+        button = WebMouseEvent::RightButton;
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+        break;
+    }
+
+    unsigned modifiers = 0;
+    if (event->shiftKey())
+        modifiers |= WebEvent::ShiftKey;
+    if (event->ctrlKey())
+        modifiers |= WebEvent::ControlKey;
+    if (event->altKey())
+        modifiers |= WebEvent::AltKey;
+    if (event->metaKey())
+        modifiers |= WebEvent::MetaKey;
+
+    return adoptPtr(new WebMouseEvent(type, button, m_plugin->convertToRootView(IntPoint(event->offsetX(), event->offsetY())), event->screenLocation(), 0, 0, 0, clickCount, static_cast<WebEvent::Modifiers>(modifiers), 0));
+}
+
 void PluginView::handleEvent(Event* event)
 {
     if (!m_isInitialized || !m_plugin)
         return;
 
     const WebEvent* currentEvent = WebPage::currentEvent();
+    OwnPtr<WebEvent> simulatedWebEvent;
+    if (event->isMouseEvent() && toMouseEvent(event)->isSimulated()) {
+        simulatedWebEvent = createWebEvent(toMouseEvent(event));
+        currentEvent = simulatedWebEvent.get();
+    }
     if (!currentEvent)
         return;
 
@@ -1079,7 +1134,7 @@ void PluginView::invalidateRect(const IntRect& dirtyRect)
         return;
 #endif
 
-    if (m_pluginElement->displayState() < HTMLPlugInElement::Playing)
+    if (m_pluginElement->displayState() < HTMLPlugInElement::PlayingWithPendingMouseClick)
         return;
 
     RenderBoxModelObject* renderer = toRenderBoxModelObject(m_pluginElement->renderer());
@@ -1237,7 +1292,7 @@ bool PluginView::isAcceleratedCompositingEnabled()
     if (!settings)
         return false;
 
-    if (m_pluginElement->displayState() < HTMLPlugInElement::Playing)
+    if (m_pluginElement->displayState() < HTMLPlugInElement::PlayingWithPendingMouseClick)
         return false;
     return settings->acceleratedCompositingEnabled();
 }

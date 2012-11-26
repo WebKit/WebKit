@@ -201,7 +201,7 @@ void HTMLPlugInElement::defaultEventHandler(Event* event)
             toRenderEmbeddedObject(r)->handleUnavailablePluginIndicatorEvent(event);
             return;
         }
-        if (r->isSnapshottedPlugIn() && displayState() < Playing) {
+        if (r->isSnapshottedPlugIn() && displayState() < PlayingWithPendingMouseClick) {
             toRenderSnapshottedPlugIn(r)->handleEvent(event);
             return;
         }

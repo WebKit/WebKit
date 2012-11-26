@@ -27,6 +27,7 @@
 #include "HTMLImageLoader.h"
 #include "HTMLNames.h"
 #include "Image.h"
+#include "MouseEvent.h"
 #include "NodeRenderStyle.h"
 #include "Page.h"
 #include "RenderEmbeddedObject.h"
@@ -38,6 +39,9 @@
 
 namespace WebCore {
 
+// This delay should not exceed the snapshot delay in PluginView.cpp
+static const double simulatedMouseClickTimerDelay = .75;
+
 HTMLPlugInImageElement::HTMLPlugInImageElement(const QualifiedName& tagName, Document* document, bool createdByParser, PreferPlugInsForImagesOption preferPlugInsForImagesOption)
     : HTMLPlugInElement(tagName, document)
     // m_needsWidgetUpdate(!createdByParser) allows HTMLObjectElement to delay
@@ -47,6 +51,7 @@ HTMLPlugInImageElement::HTMLPlugInImageElement(const QualifiedName& tagName, Doc
     , m_needsWidgetUpdate(!createdByParser)
     , m_shouldPreferPlugInsForImages(preferPlugInsForImagesOption == ShouldPreferPlugInsForImages)
     , m_needsDocumentActivationCallbacks(false)
+    , m_simulatedMouseClickTimer(this, &HTMLPlugInImageElement::simulatedMouseClickTimerFired, simulatedMouseClickTimerDelay)
 {
     setHasCustomCallbacks();
 
@@ -255,6 +260,28 @@ void HTMLPlugInImageElement::updateSnapshot(PassRefPtr<Image> image)
 
     toRenderSnapshottedPlugIn(renderer())->updateSnapshot(image);
     setDisplayState(DisplayingSnapshot);
+}
+
+void HTMLPlugInImageElement::setPendingClickEvent(PassRefPtr<MouseEvent> event)
+{
+    m_pendingClickEventFromSnapshot = event;
+}
+
+void HTMLPlugInImageElement::dispatchPendingMouseClick()
+{
+    ASSERT(!m_simulatedMouseClickTimer.isActive());
+    m_simulatedMouseClickTimer.restart();
+}
+
+void HTMLPlugInImageElement::simulatedMouseClickTimerFired(DeferrableOneShotTimer<HTMLPlugInImageElement>*)
+{
+    ASSERT(displayState() == PlayingWithPendingMouseClick);
+    ASSERT(m_pendingClickEventFromSnapshot);
+
+    dispatchSimulatedClick(m_pendingClickEventFromSnapshot.get(), SendMouseOverUpDownEvents, DoNotShowPressedLook);
+
+    setDisplayState(Playing);
+    m_pendingClickEventFromSnapshot = nullptr;
 }
 
 } // namespace WebCore

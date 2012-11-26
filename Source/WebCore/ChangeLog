@@ -1,3 +1,47 @@
+2012-11-26  Jon Lee  <jonlee@apple.com>
+
+        Pass clicks through to the restarted plugin
+        https://bugs.webkit.org/show_bug.cgi?id=102150
+        <rdar://problem/12695575>
+
+        Reviewed by Simon Fraser.
+
+        Add a new state to the machine for plugin snapshotting, called PlayingWithPendingMouseClick.
+        This represents the state where the plugin is playing, but before the pending mouse click
+        has been fired. Once the click is sent, the plugin state transitions to Playing. For
+        situations where the plugin just runs normally without a simulated click, the plugin state
+        jumps from DisplayingSnapshot straight to Playing, as before.
+
+        * html/HTMLPlugInElement.h: Add new display state to represent when the plugin is running,
+        but a pending mouse click is about to be sent to the plugin.
+        (WebCore::HTMLPlugInElement::dispatchPendingMouseClick): Called by the plugin when it is
+        ok for the element to send the pending mouse click.
+        * html/HTMLPlugInElement.cpp:
+        (WebCore::HTMLPlugInElement::defaultEventHandler): Update the handler to pass the event
+        to the renderer to handle if the state is before PlayingWithPendingMouseClick.
+
+        * html/HTMLPlugInImageElement.h:
+        * html/HTMLPlugInImageElement.cpp: Add a click timer to delay the mouse click so that the
+        plugin has some time to initialize.
+        (WebCore::HTMLPlugInImageElement::HTMLPlugInImageElement): Initialize the mouse timer.
+        (WebCore::HTMLPlugInImageElement::setPendingClickEvent): Keep track of the click event
+        the user made to restart the plugin.
+        (WebCore::HTMLPlugInImageElement::dispatchPendingMouseClick): Start the timer.
+        (WebCore::HTMLPlugInImageElement::simulatedMouseClickTimerFired): When the timer fires,
+        dispatch the simulated click, with mouse over, mouse down, and mouse up events. Transition
+        to the Playing state, and we no longer need the click event.
+
+        * rendering/RenderSnapshottedPlugIn.cpp: Change the threshold state to PlayingWithPendingMouseClick
+        instead of Playing, since that is the earliest state where the plugin is playing.
+        (WebCore::RenderSnapshottedPlugIn::paint):
+        (WebCore::RenderSnapshottedPlugIn::paintReplaced):
+        (WebCore::RenderSnapshottedPlugIn::getCursor):
+        (WebCore::RenderSnapshottedPlugIn::handleEvent): If the user clicked on the button, jump to
+        Playing, and don't send a simulated click. Otherwise, transition to PlayingWithPendingMouseClick,
+        and keep track of that mouse event.
+
+        * WebCore.exp.in: Export MouseRelatedEvent::offsetX() and offsetY().
+
 2012-11-26  Dan Carney  <dcarney@google.com>
 
         Refactor V8 bindings to allow content scripts to access subframes

@@ -1,3 +1,38 @@
+2012-11-26  Jon Lee  <jonlee@apple.com>
+
+        Pass clicks through to the restarted plugin
+        https://bugs.webkit.org/show_bug.cgi?id=102150
+        <rdar://problem/12695575>
+
+        Reviewed by Simon Fraser.
+
+        Expose convertToRootView() as a public function for all plugins. It converts the click point
+        from local plugin coordinates to root view coordinates. When the events are sent to the
+        plugin, the coordinate gets converted back to the local reference frame.
+        * WebProcess/Plugins/Plugin.cpp:
+        (WebKit::Plugin::convertToRootView): Default implementation should not be reached.
+        * WebProcess/Plugins/Plugin.h: Promote convertToRootView() from NetscapePlugin.h.
+        * WebProcess/Plugins/Netscape/NetscapePlugin.h: An implementation already existed. Make the
+        method virtual.
+        * WebProcess/Plugins/PluginProxy.h:
+        * WebProcess/Plugins/PluginProxy.cpp:
+        (WebKit::PluginProxy::convertToRootView): Apply the transform to the provided point to return
+        a point in root view coordinates.
+
+        Change the threshold state to PlayingWithPendingMouseClick instead of Playing, since that is
+        the earliest state where the plugin is playing.
+        * WebProcess/Plugins/PluginView.cpp: Give the snapshot a little more time to generate.
+        (WebKit::PluginView::didInitializePlugin): When the plugin has initialized, tell the plugin
+        element to dispatch the pending mouse click.
+        (WebKit::PluginView::paint):
+        (WebKit::PluginView::createWebEvent): Helper function to convert a WebCore mouse event to a
+        WebMouseEvent.
+        (WebKit::PluginView::handleEvent): If the event is simulated, there is no source event from
+        the UI process. So we fabricate one based on the simulated event.
+        (WebKit::PluginView::invalidateRect):
+        (WebKit::PluginView::isAcceleratedCompositingEnabled):
+        * WebProcess/Plugins/PluginView.h:
+
 2012-11-26  Kalev Lember  <kalevlember@gmail.com>
 
         [GTK] Explicitly link against librt

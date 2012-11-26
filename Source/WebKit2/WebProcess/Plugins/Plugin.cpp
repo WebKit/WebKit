@@ -105,4 +105,10 @@ void Plugin::updateControlTints(GraphicsContext*)
 {
 }
 
+IntPoint Plugin::convertToRootView(const IntPoint&) const
+{
+    ASSERT_NOT_REACHED();
+    return IntPoint();
+}
+
 } // namespace WebKit

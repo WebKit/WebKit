@@ -125,6 +125,8 @@ private:
     virtual WebCore::Scrollbar* horizontalScrollbar();
     virtual WebCore::Scrollbar* verticalScrollbar();
 
+    virtual WebCore::IntPoint convertToRootView(const WebCore::IntPoint&) const OVERRIDE;
+
     float contentsScaleFactor();
     bool needsBackingStore() const;
     bool updateBackingStore();
