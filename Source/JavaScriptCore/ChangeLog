@@ -1,3 +1,19 @@
+2012-11-26  Oliver Hunt  <oliver@apple.com>
+
+        Don't blind all the things.
+        https://bugs.webkit.org/show_bug.cgi?id=102572
+
+        Reviewed by Gavin Barraclough.
+
+        No longer blind all the constants in the instruction stream.  We use a
+        simple non-deterministic filter to avoid blinding everything.  Also modified
+        the basic integer blinding logic to avoid blinding small negative values.
+
+        * assembler/MacroAssembler.h:
+        (MacroAssembler):
+        (JSC::MacroAssembler::shouldConsiderBlinding):
+        (JSC::MacroAssembler::shouldBlind):
+
 2012-11-26  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         JSObject::copyButterfly doesn't handle undecided indexing types correctly
