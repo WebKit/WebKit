@@ -56,7 +56,6 @@
 #include "Language.h"
 #include "LocalizedStrings.h"
 #include "MouseEvent.h"
-#include "NumberInputType.h"
 #include "RenderTextControlSingleLine.h"
 #include "RenderTheme.h"
 #include "RuntimeEnabledFeatures.h"
@@ -545,35 +544,9 @@ void HTMLInputElement::updateType()
 
 void HTMLInputElement::subtreeHasChanged()
 {
-    ASSERT(isTextField());
-    ASSERT(renderer());
-
-    bool wasChanged = wasChangedSinceLastFormControlChangeEvent();
-    setChangedSinceLastFormControlChangeEvent(true);
-
-    // We don't need to call sanitizeUserInputValue() function here because
-    // HTMLInputElement::handleBeforeTextInsertedEvent() has already called
-    // sanitizeUserInputValue().
-    // sanitizeValue() is needed because IME input doesn't dispatch BeforeTextInsertedEvent.
-    setValueFromRenderer(sanitizeValue(convertFromVisibleValue(innerTextValue())));
-    updatePlaceholderVisibility(false);
-    // Recalc for :invalid and hasUnacceptableValue() change.
-    setNeedsStyleRecalc();
-
     m_inputType->subtreeHasChanged();
-
-    if (!wasChanged && focused()) {
-        if (Frame* frame = document()->frame())
-            frame->editor()->textFieldDidBeginEditing(this);
-    }
-
-    if (focused()) {
-        if (Frame* frame = document()->frame())
-            frame->editor()->textDidChangeInTextField(this);
-    }
     // When typing in an input field, childrenChanged is not called, so we need to force the directionality check.
-    if (isTextField())
-        calculateAndAdjustDirectionality();
+    calculateAndAdjustDirectionality();
 }
 
 const AtomicString& HTMLInputElement::formControlType() const
@@ -1402,11 +1375,6 @@ void HTMLInputElement::setCanReceiveDroppedFiles(bool canReceiveDroppedFiles)
 String HTMLInputElement::visibleValue() const
 {
     return m_inputType->visibleValue();
-}
-
-String HTMLInputElement::convertFromVisibleValue(const String& visibleValue) const
-{
-    return m_inputType->convertFromVisibleValue(visibleValue);
 }
 
 String HTMLInputElement::sanitizeValue(const String& proposedValue) const

@@ -175,7 +175,7 @@ bool SearchInputType::searchEventsShouldBeDispatched() const
     return element()->hasAttribute(incrementalAttr);
 }
 
-void SearchInputType::subtreeHasChanged()
+void SearchInputType::didSetValueByUserEdit(ValueChangeState state)
 {
     if (m_cancelButton)
         toRenderSearchField(element()->renderer())->updateCancelButtonVisibility();
@@ -183,6 +183,8 @@ void SearchInputType::subtreeHasChanged()
     // If the incremental attribute is set, then dispatch the search event
     if (searchEventsShouldBeDispatched())
         startSearchEventTimer();
+
+    TextFieldInputType::didSetValueByUserEdit(state);
 }
 
 } // namespace WebCore

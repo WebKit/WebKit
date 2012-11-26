@@ -68,6 +68,13 @@ protected:
     virtual void setValue(const String&, bool valueChanged, TextFieldEventBehavior) OVERRIDE;
     virtual void updateInnerTextValue() OVERRIDE;
 
+    virtual String convertFromVisibleValue(const String&) const;
+    enum ValueChangeState {
+        ValueChangeStateNone,
+        ValueChangeStateChanged
+    };
+    virtual void didSetValueByUserEdit(ValueChangeState);
+
 private:
     virtual bool isKeyboardFocusable(KeyboardEvent*) const OVERRIDE;
     virtual bool isMouseFocusable() const OVERRIDE;
@@ -84,6 +91,7 @@ private:
     virtual void updatePlaceholderText() OVERRIDE;
     virtual bool appendFormData(FormDataList&, bool multipart) const OVERRIDE;
     virtual void attach() OVERRIDE;
+    virtual void subtreeHasChanged() OVERRIDE;
 
     // SpinButtonElement::SpinButtonOwner functions.
     virtual void focusAndSelectSpinButtonOwner() OVERRIDE;

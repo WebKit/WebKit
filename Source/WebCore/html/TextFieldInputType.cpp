@@ -440,6 +440,41 @@ bool TextFieldInputType::appendFormData(FormDataList& list, bool multipart) cons
     return true;
 }
 
+String TextFieldInputType::convertFromVisibleValue(const String& visibleValue) const
+{
+    return visibleValue;
+}
+
+void TextFieldInputType::subtreeHasChanged()
+{
+    ASSERT(element()->renderer());
+
+    bool wasChanged = element()->wasChangedSinceLastFormControlChangeEvent();
+    element()->setChangedSinceLastFormControlChangeEvent(true);
+
+    // We don't need to call sanitizeUserInputValue() function here because
+    // HTMLInputElement::handleBeforeTextInsertedEvent() has already called
+    // sanitizeUserInputValue().
+    // sanitizeValue() is needed because IME input doesn't dispatch BeforeTextInsertedEvent.
+    element()->setValueFromRenderer(sanitizeValue(convertFromVisibleValue(element()->innerTextValue())));
+    element()->updatePlaceholderVisibility(false);
+    // Recalc for :invalid and hasUnacceptableValue() change.
+    element()->setNeedsStyleRecalc();
+
+    didSetValueByUserEdit(wasChanged ? ValueChangeStateChanged : ValueChangeStateNone);
+}
+
+void TextFieldInputType::didSetValueByUserEdit(ValueChangeState state)
+{
+    if (!element()->focused())
+        return;
+    if (Frame* frame = element()->document()->frame()) {
+        if (state == ValueChangeStateNone)
+            frame->editor()->textFieldDidBeginEditing(element());
+        frame->editor()->textDidChangeInTextField(element());
+    }
+}
+
 void TextFieldInputType::spinButtonStepDown()
 {
     stepUpFromRenderer(-1);

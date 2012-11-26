@@ -163,7 +163,6 @@ public:
 
     // The value which is drawn by a renderer.
     String visibleValue() const;
-    String convertFromVisibleValue(const String&) const;
 
     const String& suggestedValue() const;
     void setSuggestedValue(const String&);

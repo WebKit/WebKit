@@ -684,11 +684,6 @@ String InputType::visibleValue() const
     return element()->value();
 }
 
-String InputType::convertFromVisibleValue(const String& visibleValue) const
-{
-    return visibleValue;
-}
-
 String InputType::sanitizeValue(const String& proposedValue) const
 {
     return proposedValue;
@@ -888,6 +883,7 @@ void InputType::readonlyAttributeChanged()
 
 void InputType::subtreeHasChanged()
 {
+    ASSERT_NOT_REACHED();
 }
 
 #if ENABLE(TOUCH_EVENTS)

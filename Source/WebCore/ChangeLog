@@ -1,3 +1,51 @@
+2012-11-25  Kent Tamura  <tkent@chromium.org>
+
+        Refactoring: Move the content of HTMLInputElement::subtreeHasChanged to TextFieldInputType
+        https://bugs.webkit.org/show_bug.cgi?id=103195
+
+        Reviewed by Kentaro Hara.
+
+        HTMLInputElement::subtreeHasChanged is called only if the input is
+        a text field. The code should be moved to TextFieldInputType.
+
+        No new tests. This should not change any behavior.
+
+        * html/HTMLInputElement.cpp:
+        - Remove unnecessary NumberInputType.h inclusion.
+        - Remove convertFromVisibleValue. It was used only by subtreeHasChanged.
+        (WebCore::HTMLInputElement::subtreeHasChanged):
+        Move the code to TextFieldInputType::subtreeHasChanged except
+        calculateAndAdjustDirectionality, which is a protected member of
+        HTMLElement.
+        * html/HTMLInputElement.h:
+        (HTMLInputElement): Remove convertFromVisibleValue.
+
+        * html/InputType.cpp:
+        Move convertFromVisibleValue to TextFieldInputType.
+        (WebCore::InputType::subtreeHasChanged):
+        Add ASSERT_NOT_REACHED.
+        * html/InputType.h:
+        (InputType): Remove convertFromVisibleValue.
+
+        * html/TextFieldInputType.cpp:
+        (WebCore::TextFieldInputType::convertFromVisibleValue):
+        Moved from InputType.
+        (WebCore::TextFieldInputType::subtreeHasChanged):
+        Moved from HTMLInputElement. A latter part is moved to
+        didSetValueByUserEdit to be hooked by SearchInputType.
+        (WebCore::TextFieldInputType::didSetValueByUserEdit):
+        Moved from HTMLInputElement::subtreeHasChanged, and clean up the code.
+        * html/TextFieldInputType.h:
+        (TextFieldInputType):
+        - Move convertFromVisibleValue from InputType.
+        - Add didSetValueByUserEdit and subtreeHasChanged.
+
+        * html/SearchInputType.cpp:
+        (WebCore::SearchInputType::didSetValueByUserEdit):
+        Renamed from subtreeHasChanged, and calls TextFieldInputType::didSetValueByUserEdit.
+        * html/SearchInputType.h:
+        (SearchInputType): Rename subtreeHasChanged to didSetValueByUserEdit.
+
 2012-11-22  Kentaro Hara  <haraken@chromium.org>
 
         [V8] Move WorkerExecutionContextProxy::initializeIfNeeded() to V8Initializer
