@@ -418,7 +418,6 @@ void TextureMapperLayer::flushCompositingStateSelf(GraphicsLayerTextureMapper* g
     m_state.pos = graphicsLayer->position();
     m_state.anchorPoint = graphicsLayer->anchorPoint();
     m_state.size = graphicsLayer->size();
-    m_state.contentsRect = graphicsLayer->contentsRect();
     m_state.transform = graphicsLayer->transform();
     m_state.contentsRect = graphicsLayer->contentsRect();
     m_state.preserves3D = graphicsLayer->preserves3D();

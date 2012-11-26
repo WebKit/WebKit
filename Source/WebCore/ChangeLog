@@ -1,3 +1,17 @@
+2012-11-26  Jae Hyun Park  <jae.park@company100.net>
+
+        Remove redundant assignment in TextureMapperLayer::flushCompositingStateSelf
+        https://bugs.webkit.org/show_bug.cgi?id=103233
+
+        Reviewed by Noam Rosenthal.
+
+        This patch removes redundant assignment in TextureMapperLayer::flushCompositingStateSelf.
+
+        No new tests, because no change in bahavior.
+
+        * platform/graphics/texmap/TextureMapperLayer.cpp:
+        (WebCore::TextureMapperLayer::flushCompositingStateSelf):
+
 2012-11-26  Tamas Czene  <tczene@inf.u-szeged.hu>
 
         OpenCL version of SourceAlpha, SourceGraphics and FETurbulence filter effects 
