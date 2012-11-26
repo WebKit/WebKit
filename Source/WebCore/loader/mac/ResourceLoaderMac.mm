@@ -35,6 +35,7 @@
 
 #if USE(NETWORK_CFDATA_ARRAY_CALLBACK)
 #include "InspectorInstrumentation.h"
+#include "ResourceBuffer.h"
 #endif
 
 #if USE(CFNETWORK)

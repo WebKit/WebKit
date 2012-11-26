@@ -55,6 +55,9 @@ public:
     virtual bool isEmpty() const;
 
     void append(const char*, unsigned);
+#if USE(NETWORK_CFDATA_ARRAY_CALLBACK)
+    void append(CFDataRef);
+#endif
     void clear();
     
     unsigned getSomeData(const char*& data, unsigned position = 0) const;

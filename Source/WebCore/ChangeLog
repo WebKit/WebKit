@@ -1,3 +1,20 @@
+2012-11-26  Pratik Solanki  <psolanki@apple.com>
+
+        Add ResourceBuffer::append(CFDataRef) to get code to compile with USE(NETWORK_CFDATA_ARRAY_CALLBACK)
+        https://bugs.webkit.org/show_bug.cgi?id=102706
+
+        Reviewed by Brent Fulgham.
+
+        No new tests because the flag isn't enabled. Also the functionality should be covered by
+        existing tests.
+
+        * loader/ResourceBuffer.cpp:
+        (WebCore):
+        (WebCore::ResourceBuffer::append):
+        * loader/ResourceBuffer.h:
+        (ResourceBuffer):
+        * loader/mac/ResourceLoaderMac.mm:
+
 2012-11-26  Tony Chang  <tony@chromium.org>
 
         Move more functions from internals.settings to internals
