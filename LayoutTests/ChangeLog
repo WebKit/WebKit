@@ -1,3 +1,15 @@
+2012-11-26  Mike West  <mkwst@chromium.org>
+
+        Web Inspector: URLs containing '^' are improperly linked in console messages.
+        https://bugs.webkit.org/show_bug.cgi?id=103248
+
+        Reviewed by Yury Semikhatsky.
+
+        * http/tests/inspector/network/script-as-text-loading-with-caret-expected.txt: Added.
+        * http/tests/inspector/network/script-as-text-loading-with-caret.html: Added.
+        * platform/chromium/http/tests/inspector/network/script-as-text-loading-with-caret-expected.txt:
+            JSC vs V8. :(
+
 2012-11-26  Robert Kroeger  <rjkroege@chromium.org>
 
         Unreviewd Gardening: updated TestExpecations for additional failures in

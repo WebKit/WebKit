@@ -1,3 +1,18 @@
+2012-11-26  Mike West  <mkwst@chromium.org>
+
+        Web Inspector: URLs containing '^' are improperly linked in console messages.
+        https://bugs.webkit.org/show_bug.cgi?id=103248
+
+        Reviewed by Yury Semikhatsky.
+
+        This patch adds '^' to WebInspector's regex of acceptable characters for
+        URLs that it knows how to display.
+
+        Test: http/tests/inspector/network/script-as-text-loading-with-caret.html
+
+        * inspector/front-end/ResourceUtils.js:
+        (WebInspector.linkifyStringAsFragmentWithCustomLinkifier):
+
 2012-11-26  Yury Semikhatsky  <yurys@chromium.org>
 
         Unreviewed. Fix Qt minimal compilation after r135713.
