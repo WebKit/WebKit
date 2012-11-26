@@ -1,5 +1,12 @@
 2012-11-26  Roger Fong  <roger_fong@apple.com>
 
+        Unreviewed. Skip fast/dom/Window/open-window-min-size.html on Windows.
+        DRT doesn't support showModalDialog https://bugs.webkit.org/show_bug.cgi?id=53675.
+
+        * platform/win/TestExpectations:
+
+2012-11-26  Roger Fong  <roger_fong@apple.com>
+
         Unreviewed. ENABLE_ACCELERATED_OVERFLOW_SCROLLING not enabled on Windows.
         Add a feature flag and skip some failing tests.
         https://bugs.webkit.org/show_bug.cgi?id=103294
