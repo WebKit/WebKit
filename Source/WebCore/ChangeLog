@@ -1,3 +1,74 @@
+2012-11-26  Tamas Czene  <tczene@inf.u-szeged.hu>
+
+        OpenCL version of SourceAlpha, SourceGraphics and FETurbulence filter effects 
+        https://bugs.webkit.org/show_bug.cgi?id=99829
+
+        Reviewed by Zoltan Herczeg.
+
+        This patch contains the OpenCL implementation of SourceAlpha, SourceGraphic, FETurbulence and a simple OpenCL environment. 
+        At the moment only the Qt build system is supported 
+        ~3x speed-up (depending on hardware configuration)
+
+        * Target.pri:
+        * WebCore.pri:
+        * platform/graphics/filters/FETurbulence.h: Added platformApplyOpenCL() virtual function.
+        (FETurbulence):
+        * platform/graphics/filters/FilterEffect.cpp: Added platform specific apply.
+        (WebCore::FilterEffect::apply):
+        (WebCore):
+        (WebCore::FilterEffect::platformApplyOpenCL): A function to use software computing if a filter is not implemented on OpenCL. It will be deleted after all of the filters are implemented.
+        (WebCore::FilterEffect::clearResult):
+        (WebCore::FilterEffect::asImageBuffer):
+        (WebCore::FilterEffect::openCLImageToImageBuffer): Gets the result of the filter from the OpenCL device and converts it to ImageBuffer type.
+        (WebCore::FilterEffect::createOpenCLImageResult): Allocates memory on OpenCL device and if it gets an image as a parameter, it uploads the image to the OpenCL device.
+        (WebCore::FilterEffect::transformResultColorSpace): 
+        * platform/graphics/filters/FilterEffect.h:
+        (FilterEffect):
+        (WebCore::FilterEffect::openCLImage):
+        (WebCore::FilterEffect::setOpenCLImage):
+        (WebCore::FilterEffect::hasResult):
+        * platform/graphics/filters/SourceAlpha.h:
+        (SourceAlpha):
+        * platform/graphics/filters/SourceGraphic.h:
+        (SourceGraphic):
+        * platform/graphics/gpu/opencl/FilterContextOpenCL.cpp: Added.
+        (WebCore):
+        (WebCore::FilterContextOpenCL::context): Configures the OpenCL environment.
+        (WebCore::FilterContextOpenCL::createOpenCLImage): Allocates memory on OpenCL device.
+        (WebCore::FilterContextOpenCL::openCLTransformColorSpace): OpenCL implementation of transformColorSpace.
+        (WebCore::FilterContextOpenCL::compileProgram):
+        * platform/graphics/gpu/opencl/FilterContextOpenCL.h: Added.
+        (WebCore):
+        (FilterContextOpenCL):
+        (WebCore::FilterContextOpenCL::deviceId):
+        (WebCore::FilterContextOpenCL::deviceContext):
+        (WebCore::FilterContextOpenCL::commandQueue):
+        (RunKernel):
+        (WebCore::FilterContextOpenCL::RunKernel::RunKernel):
+        (WebCore::FilterContextOpenCL::RunKernel::addArgument):
+        (WebCore::FilterContextOpenCL::RunKernel::run):
+        (WebCore::FilterContextOpenCL::kernelByName): Returns the reference of a function in the OpenCL program.
+        * platform/graphics/gpu/opencl/OpenCLFESourceAlpha.cpp: Added.
+        (WebCore):
+        (WebCore::SourceAlpha::platformApplyOpenCL):
+        * platform/graphics/gpu/opencl/OpenCLFESourceGraphic.cpp: Added.
+        (WebCore):
+        (WebCore::SourceGraphic::platformApplyOpenCL):
+        * platform/graphics/gpu/opencl/OpenCLFETurbulence.cpp: Added.
+        (WebCore):
+        (WebCore::FilterContextOpenCL::compileFETurbulence):
+        (WebCore::FilterContextOpenCL::applyFETurbulence):
+        (WebCore::FETurbulence::platformApplyOpenCL):
+        * platform/graphics/gpu/opencl/OpenCLHandle.h: Added.
+        (WebCore):
+        (OpenCLHandle):
+        (WebCore::OpenCLHandle::OpenCLHandle):
+        (WebCore::OpenCLHandle::operator cl_mem):
+        (WebCore::OpenCLHandle::operator=):
+        (WebCore::OpenCLHandle::operator UnspecifiedBoolType):
+        (WebCore::OpenCLHandle::handleAddress):
+        (WebCore::OpenCLHandle::clear):
+
 2012-11-26  'Pavel Feldman'  <pfeldman@chromium.org>
 
         Not reviewed: follow up for r135720, fixing node highlight.

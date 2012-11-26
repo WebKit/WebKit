@@ -2,6 +2,7 @@
  * Copyright (C) 2008 Alex Mathews <possessedpenguinbob@gmail.com>
  * Copyright (C) 2009 Dirk Schulze <krit@webkit.org>
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
+ * Copyright (C) 2012 University of Szeged
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -123,12 +124,41 @@ void FilterEffect::apply()
     }
     
     // Add platform specific apply functions here and return earlier.
+#if ENABLE(OPENCL)
+    if (platformApplyOpenCL())
+        return;
+#endif
 #if USE(SKIA)
     if (platformApplySkia())
         return;
 #endif
     platformApplySoftware();
 }
+
+#if ENABLE(OPENCL)
+// This function will be changed to abstract virtual when all filters are landed.
+bool FilterEffect::platformApplyOpenCL()
+{
+    if (!FilterContextOpenCL::context())
+        return false;
+
+    unsigned size = m_inputEffects.size();
+    for (unsigned i = 0; i < size; ++i) {
+        FilterEffect* in = m_inputEffects.at(i).get();
+        // Software code path expects that at least one of the following fileds is valid.
+        if (!in->m_imageBufferResult && !in->m_unmultipliedImageResult && !in->m_premultipliedImageResult)
+            in->asImageBuffer();
+    }
+
+    platformApplySoftware();
+    ImageBuffer* sourceImage = asImageBuffer();
+    if (sourceImage) {
+        RefPtr<Uint8ClampedArray> sourceImageData = sourceImage->getUnmultipliedImageData(IntRect(IntPoint(), sourceImage->internalSize()));
+        createOpenCLImageResult(sourceImageData->data());
+    }
+    return true;
+}
+#endif
 
 void FilterEffect::forceValidPreMultipliedPixels()
 {
@@ -187,6 +217,10 @@ void FilterEffect::clearResult()
         m_unmultipliedImageResult.clear();
     if (m_premultipliedImageResult)
         m_premultipliedImageResult.clear();
+#if ENABLE(OPENCL)
+    if (m_openCLImageResult)
+        m_openCLImageResult.clear();
+#endif
 }
 
 ImageBuffer* FilterEffect::asImageBuffer()
@@ -195,6 +229,10 @@ ImageBuffer* FilterEffect::asImageBuffer()
         return 0;
     if (m_imageBufferResult)
         return m_imageBufferResult.get();
+#if ENABLE(OPENCL)
+    if (m_openCLImageResult)
+        return openCLImageToImageBuffer();
+#endif
     m_imageBufferResult = ImageBuffer::create(m_absolutePaintRect.size(), 1, m_resultColorSpace, m_filter->renderingMode());
     IntRect destinationRect(IntPoint(), m_absolutePaintRect.size());
     if (m_premultipliedImageResult)
@@ -203,6 +241,28 @@ ImageBuffer* FilterEffect::asImageBuffer()
         m_imageBufferResult->putByteArray(Unmultiplied, m_unmultipliedImageResult.get(), destinationRect.size(), destinationRect, IntPoint());
     return m_imageBufferResult.get();
 }
+
+#if ENABLE(OPENCL)
+ImageBuffer* FilterEffect::openCLImageToImageBuffer()
+{
+    FilterContextOpenCL* context = FilterContextOpenCL::context();
+    ASSERT(context);
+
+    size_t origin[3] = { 0, 0, 0 };
+    size_t region[3] = { m_absolutePaintRect.width(), m_absolutePaintRect.height(), 1 };
+
+    RefPtr<Uint8ClampedArray> destinationPixelArray = Uint8ClampedArray::create(m_absolutePaintRect.width() * m_absolutePaintRect.height() * 4);
+
+    clFinish(context->commandQueue());
+    clEnqueueReadImage(context->commandQueue(), m_openCLImageResult, CL_TRUE, origin, region, 0, 0, destinationPixelArray->data(), 0, 0, 0);
+
+    m_imageBufferResult = ImageBuffer::create(m_absolutePaintRect.size());
+    IntRect destinationRect(IntPoint(), m_absolutePaintRect.size());
+    m_imageBufferResult->putByteArray(Unmultiplied, destinationPixelArray.get(), destinationRect.size(), destinationRect, IntPoint());
+
+    return m_imageBufferResult.get();
+}
+#endif
 
 PassRefPtr<Uint8ClampedArray> FilterEffect::asUnmultipliedImage(const IntRect& rect)
 {
@@ -363,6 +423,22 @@ Uint8ClampedArray* FilterEffect::createPremultipliedImageResult()
     return m_premultipliedImageResult.get();
 }
 
+#if ENABLE(OPENCL)
+OpenCLHandle FilterEffect::createOpenCLImageResult(uint8_t* source)
+{
+    ASSERT(!hasResult());
+    cl_image_format clImageFormat;
+    clImageFormat.image_channel_order = CL_RGBA;
+    clImageFormat.image_channel_data_type = CL_UNORM_INT8;
+
+    FilterContextOpenCL* context = FilterContextOpenCL::context();
+    ASSERT(context);
+    m_openCLImageResult = clCreateImage2D(context->deviceContext(), CL_MEM_READ_WRITE | (source ? CL_MEM_COPY_HOST_PTR : 0),
+        &clImageFormat, m_absolutePaintRect.width(), m_absolutePaintRect.height(), 0, source, 0);
+    return m_openCLImageResult;
+}
+#endif
+
 void FilterEffect::transformResultColorSpace(ColorSpace dstColorSpace)
 {
 #if USE(CG)
@@ -374,12 +450,27 @@ void FilterEffect::transformResultColorSpace(ColorSpace dstColorSpace)
 
     // FIXME: We can avoid this potentially unnecessary ImageBuffer conversion by adding
     // color space transform support for the {pre,un}multiplied arrays.
+#if ENABLE(OPENCL)
+    if (openCLImage()) {
+        FilterContextOpenCL* context = FilterContextOpenCL::context();
+        ASSERT(context);
+        context->openCLTransformColorSpace(m_openCLImageResult, absolutePaintRect(), m_resultColorSpace, dstColorSpace);
+        if (m_imageBufferResult)
+            m_imageBufferResult.clear();
+        goto skipSoftwareCodePath;
+    }
+#endif
     if (!m_imageBufferResult) {
         asImageBuffer();
         ASSERT(m_imageBufferResult);
     }
 
     m_imageBufferResult->transformColorSpace(m_resultColorSpace, dstColorSpace);
+
+#if ENABLE(OPENCL)
+skipSoftwareCodePath:
+#endif
+
     m_resultColorSpace = dstColorSpace;
 
     if (m_unmultipliedImageResult)
