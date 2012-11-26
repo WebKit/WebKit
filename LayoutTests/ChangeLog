@@ -1,3 +1,26 @@
+2012-11-25  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium] Fix svn:mime-type for images
+
+        * platform/chromium-mac/platform/chromium/fast/forms/suggestion-picker/datetime-suggestion-picker-appearance-expected.png: Added property svn:mime-type.
+        * platform/chromium-mac/platform/chromium/fast/forms/suggestion-picker/datetime-suggestion-picker-appearance-rtl-expected.png: Added property svn:mime-type.
+        * platform/chromium-mac/platform/chromium/fast/forms/suggestion-picker/datetime-suggestion-picker-appearance-with-scroll-bar-expected.png: Added property svn:mime-type.
+        * platform/chromium-mac/platform/chromium/fast/forms/suggestion-picker/datetimelocal-suggestion-picker-appearance-expected.png: Added property svn:mime-type.
+        * platform/chromium-mac/platform/chromium/fast/forms/suggestion-picker/datetimelocal-suggestion-picker-appearance-rtl-expected.png: Added property svn:mime-type.
+        * platform/chromium-mac/platform/chromium/fast/forms/suggestion-picker/datetimelocal-suggestion-picker-appearance-with-scroll-bar-expected.png: Added property svn:mime-type.
+        * platform/chromium-win-xp/editing/selection/vertical-lr-ltr-extend-line-backward-br-expected.png: Modified property svn:mime-type.
+        * platform/chromium-win-xp/editing/selection/vertical-lr-ltr-extend-line-forward-br-expected.png: Modified property svn:mime-type.
+        * platform/chromium-win-xp/editing/selection/vertical-rl-ltr-extend-line-backward-br-expected.png: Modified property svn:mime-type.
+        * platform/chromium-win-xp/editing/selection/vertical-rl-ltr-extend-line-backward-p-expected.png: Modified property svn:mime-type.
+        * platform/chromium-win-xp/editing/selection/vertical-rl-ltr-extend-line-forward-br-expected.png: Modified property svn:mime-type.
+        * platform/chromium-win-xp/editing/selection/vertical-rl-ltr-extend-line-forward-p-expected.png: Modified property svn:mime-type.
+        * platform/chromium-win-xp/fast/text/drawBidiText-expected.png: Modified property svn:mime-type.
+        * platform/chromium-win-xp/fast/text/international/001-expected.png: Modified property svn:mime-type.
+        * platform/chromium-win-xp/fast/text/international/002-expected.png: Modified property svn:mime-type.
+        * platform/chromium-win-xp/fast/text/international/bidi-mirror-he-ar-expected.png: Modified property svn:mime-type.
+        * platform/chromium-win-xp/fast/text/international/wrap-CJK-001-expected.png: Modified property svn:mime-type.
+        * platform/chromium-win-xp/fast/text/justify-ideograph-leading-expansion-expected.png: Modified property svn:mime-type.
+
 2012-11-25  Kunihiko Sakamoto  <ksakamoto@chromium.org>
 
         [Chromium] Add tests for datetime/datetime-local suggestion picker
