@@ -353,6 +353,9 @@ webkit.org/b/96881 userscripts/user-script-plugin-document.html [ Failure ]
 # EFL WK1 does not support the spellchecker feature
 webkit.org/b/86633 editing/spelling [ Skip ]
 
+# DRT needs to support fixed layout.
+webkit.org/b/102517 css3/device-adapt/opera [ Skip ]
+
 # Needs custom policy delegate enhancement to log DOM node info - EFL port is missing DOM node abstraction
 webkit.org/b/87972 fast/loader/policy-delegate-action-hit-test-zoomed.html [ Failure ]
 webkit.org/b/87972 fast/encoding/mailto-always-utf-8.html [ Failure ]
@@ -365,30 +368,6 @@ webkit.org/b/98523 fast/images/repaint-subrect-grid.html [ Failure ]
 
 # DRT needs a setting for setShouldRespectImageOrientation
 webkit.org/b/101210 fast/images/exif-orientation.html [ Failure ]
-
-# DRT needs to support fixed layout.
-webkit.org/b/102517 css3/device-adapt/opera/cascading-001.xhtml [ Failure ]
-webkit.org/b/102517 css3/device-adapt/opera/cascading-002.xhtml [ Failure ]
-webkit.org/b/102517 css3/device-adapt/opera/cascading-003.xhtml [ Failure ]
-webkit.org/b/102517 css3/device-adapt/opera/cascading-004.xhtml [ Failure ]
-webkit.org/b/102517 css3/device-adapt/opera/constrain-001.xhtml [ Failure ]
-webkit.org/b/102517 css3/device-adapt/opera/constrain-004.xhtml [ Failure ]
-webkit.org/b/102517 css3/device-adapt/opera/constrain-005.xhtml [ Failure ]
-webkit.org/b/102517 css3/device-adapt/opera/constrain-006.xhtml [ Failure ]
-webkit.org/b/102517 css3/device-adapt/opera/constrain-007.xhtml [ Failure ]
-webkit.org/b/102517 css3/device-adapt/opera/constrain-008.xhtml [ Failure ]
-webkit.org/b/102517 css3/device-adapt/opera/constrain-009.xhtml [ Failure ]
-webkit.org/b/102517 css3/device-adapt/opera/constrain-010.xhtml [ Failure ]
-webkit.org/b/102517 css3/device-adapt/opera/constrain-011.xhtml [ Failure ]
-webkit.org/b/102517 css3/device-adapt/opera/constrain-013.xhtml [ Failure ]
-webkit.org/b/102517 css3/device-adapt/opera/constrain-014.xhtml [ Failure ]
-webkit.org/b/102517 css3/device-adapt/opera/constrain-015.xhtml [ Failure ]
-webkit.org/b/102517 css3/device-adapt/opera/constrain-016.xhtml [ Failure ]
-webkit.org/b/102517 css3/device-adapt/opera/constrain-017.xhtml [ Failure ]
-webkit.org/b/102517 css3/device-adapt/opera/constrain-020.xhtml [ Failure ]
-webkit.org/b/102517 css3/device-adapt/opera/syntax-001.xhtml [ Failure ]
-webkit.org/b/102517 css3/device-adapt/opera/syntax-002.xhtml [ Failure ]
-webkit.org/b/102517 css3/device-adapt/opera/syntax-003.xhtml [ Failure ]
 
 # ESC key does not cancel context menu in EFL port
 Bug(EFL) editing/selection/5354455-1.html [ Failure ]

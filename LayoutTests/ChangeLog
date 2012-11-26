@@ -1,5 +1,26 @@
 2012-11-26  Thiago Marcos P. Santos  <thiago.santos@intel.com>
 
+        Import more CSS Device Adaptation layout tests
+        https://bugs.webkit.org/show_bug.cgi?id=95967
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        And these are the remaining test from the Opera's CSS
+        Device Adaptation test suite.
+
+        * css3/device-adapt/opera/constrain-021-expected.txt: Added.
+        * css3/device-adapt/opera/constrain-021.xhtml: Added.
+        * css3/device-adapt/opera/constrain-022-expected.txt: Added.
+        * css3/device-adapt/opera/constrain-022.xhtml: Added.
+        * css3/device-adapt/opera/orientation-001-expected.txt: Added.
+        * css3/device-adapt/opera/orientation-001.xhtml: Added.
+        * css3/device-adapt/opera/orientation-002-expected.txt: Added.
+        * css3/device-adapt/opera/orientation-002.xhtml: Added.
+        * platform/efl-wk1/TestExpectations:
+        * platform/efl-wk2/TestExpectations:
+
+2012-11-26  Thiago Marcos P. Santos  <thiago.santos@intel.com>
+
         Viewport CSS rules should not clamp values like Viewport META
         https://bugs.webkit.org/show_bug.cgi?id=103068
 
