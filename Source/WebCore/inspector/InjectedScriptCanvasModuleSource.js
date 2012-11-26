@@ -1189,9 +1189,10 @@ WebGLTextureResource.prototype = {
     },
 
     /**
+     * Handles: texParameteri, texParameterf
      * @param {Call} call
      */
-    pushCall_texParameterf: function(call)
+    pushCall_texParameter: function(call)
     {
         var args = call.args();
         var pname = args[1];
@@ -1203,6 +1204,7 @@ WebGLTextureResource.prototype = {
     },
 
     /**
+     * Handles: copyTexImage2D, copyTexSubImage2D
      * copyTexImage2D and copyTexSubImage2D define a texture image with pixels from the current framebuffer.
      * @param {Call} call
      */
@@ -1222,9 +1224,6 @@ WebGLTextureResource.prototype = {
 
     __proto__: WebGLBoundResource.prototype
 }
-
-WebGLTextureResource.prototype.pushCall_texParameteri = WebGLTextureResource.prototype.pushCall_texParameterf;
-WebGLTextureResource.prototype.pushCall_copyTexSubImage2D = WebGLTextureResource.prototype.pushCall_copyTexImage2D;
 
 /**
  * @constructor
@@ -1456,6 +1455,8 @@ function WebGLRenderingContextResource(glContext, replayContextCallback)
     this._replayContextCallback = replayContextCallback;
     /** @type {Object.<number, boolean>} */
     this._customErrors = null;
+    /** @type {!Object.<string, boolean>} */
+    this._extensions = {};
 }
 
 /**
@@ -1633,6 +1634,14 @@ WebGLRenderingContextResource.prototype = {
     },
 
     /**
+     * @param {string} name
+     */
+    addExtension: function(name)
+    {
+        this._extensions[name] = true;
+    },
+
+    /**
      * @override
      * @param {Object} data
      * @param {Cache} cache
@@ -1641,6 +1650,7 @@ WebGLRenderingContextResource.prototype = {
     {
         var gl = this.wrappedObject();
         data.replayContextCallback = this._replayContextCallback;
+        data.extensions = TypeUtils.cloneObject(this._extensions);
 
         var originalErrors = this.getAllErrors();
 
@@ -1696,9 +1706,14 @@ WebGLRenderingContextResource.prototype = {
     {
         this._replayContextCallback = data.replayContextCallback;
         this._customErrors = null;
+        this._extensions = TypeUtils.cloneObject(data.extensions) || {};
 
         var gl = /** @type {!WebGLRenderingContext} */ (Resource.wrappedObject(this._replayContextCallback()));
         this.setWrappedObject(gl);
+
+        // Enable corresponding WebGL extensions.
+        for (var name in this._extensions)
+            gl.getExtension(name);
 
         var glState = data.glState;
         gl.bindFramebuffer(gl.FRAMEBUFFER, /** @type {WebGLFramebuffer} */ (ReplayableResource.replay(glState.FRAMEBUFFER_BINDING, cache)));
@@ -1853,45 +1868,54 @@ WebGLRenderingContextResource.prototype = {
 
             /**
              * @param {string} methodName
+             * @param {function(this:Resource, Call)=} pushCallFunc
              */
-            function customWrapFunction(methodName)
+            function stateModifyingWrapFunction(methodName, pushCallFunc)
             {
-                var customPushCall = "pushCall_" + methodName;
-                /**
-                 * @param {Object|number} target
-                 * @this Resource.WrapFunction
-                 */
-                wrapFunctions[methodName] = function(target)
-                {
-                    var resource = this._resource.currentBinding(target);
-                    if (!resource)
-                        return;
-                    if (resource[customPushCall])
-                        resource[customPushCall].call(resource, this.call());
-                    else
-                        resource.pushCall(this.call());
+                if (pushCallFunc) {
+                    /**
+                     * @param {Object|number} target
+                     * @this Resource.WrapFunction
+                     */
+                    wrapFunctions[methodName] = function(target)
+                    {
+                        var resource = this._resource.currentBinding(target);
+                        if (resource)
+                            pushCallFunc.call(resource, this.call());
+                    }
+                } else {
+                    /**
+                     * @param {Object|number} target
+                     * @this Resource.WrapFunction
+                     */
+                    wrapFunctions[methodName] = function(target)
+                    {
+                        var resource = this._resource.currentBinding(target);
+                        if (resource)
+                            resource.pushCall(this.call());
+                    }
                 }
             }
-            customWrapFunction("attachShader");
-            customWrapFunction("bindAttribLocation");
-            customWrapFunction("compileShader");
-            customWrapFunction("detachShader");
-            customWrapFunction("linkProgram");
-            customWrapFunction("shaderSource");
-            customWrapFunction("bufferData");
-            customWrapFunction("bufferSubData");
-            customWrapFunction("compressedTexImage2D");
-            customWrapFunction("compressedTexSubImage2D");
-            customWrapFunction("copyTexImage2D");
-            customWrapFunction("copyTexSubImage2D");
-            customWrapFunction("generateMipmap");
-            customWrapFunction("texImage2D");
-            customWrapFunction("texSubImage2D");
-            customWrapFunction("texParameterf");
-            customWrapFunction("texParameteri");
-            customWrapFunction("framebufferRenderbuffer");
-            customWrapFunction("framebufferTexture2D");
-            customWrapFunction("renderbufferStorage");
+            stateModifyingWrapFunction("attachShader");
+            stateModifyingWrapFunction("bindAttribLocation");
+            stateModifyingWrapFunction("compileShader");
+            stateModifyingWrapFunction("detachShader");
+            stateModifyingWrapFunction("linkProgram");
+            stateModifyingWrapFunction("shaderSource");
+            stateModifyingWrapFunction("bufferData");
+            stateModifyingWrapFunction("bufferSubData");
+            stateModifyingWrapFunction("compressedTexImage2D");
+            stateModifyingWrapFunction("compressedTexSubImage2D");
+            stateModifyingWrapFunction("copyTexImage2D", WebGLTextureResource.prototype.pushCall_copyTexImage2D);
+            stateModifyingWrapFunction("copyTexSubImage2D", WebGLTextureResource.prototype.pushCall_copyTexImage2D);
+            stateModifyingWrapFunction("generateMipmap");
+            stateModifyingWrapFunction("texImage2D");
+            stateModifyingWrapFunction("texSubImage2D");
+            stateModifyingWrapFunction("texParameterf", WebGLTextureResource.prototype.pushCall_texParameter);
+            stateModifyingWrapFunction("texParameteri", WebGLTextureResource.prototype.pushCall_texParameter);
+            stateModifyingWrapFunction("framebufferRenderbuffer");
+            stateModifyingWrapFunction("framebufferTexture2D");
+            stateModifyingWrapFunction("renderbufferStorage");
 
             /** @this Resource.WrapFunction */
             wrapFunctions["getError"] = function()
@@ -1905,6 +1929,15 @@ WebGLRenderingContextResource.prototype = {
                     if (error !== gl.NO_ERROR)
                         this.overrideResult(error);
                 }
+            }
+
+            /**
+             * @param {string} name
+             * @this Resource.WrapFunction
+             */
+            wrapFunctions["getExtension"] = function(name)
+            {
+                this._resource.addExtension(name);
             }
 
             WebGLRenderingContextResource._wrapFunctions = wrapFunctions;
@@ -2253,7 +2286,7 @@ CanvasRenderingContext2DResource.prototype = {
 
             /**
              * @param {string} methodName
-             * @param {Function=} func
+             * @param {function(this:Resource, Call)=} func
              */
             function stateModifyingWrapFunction(methodName, func)
             {
@@ -2273,9 +2306,9 @@ CanvasRenderingContext2DResource.prototype = {
             }
 
             for (var i = 0, methodName; methodName = CanvasRenderingContext2DResource.TransformationMatrixMethods[i]; ++i)
-                stateModifyingWrapFunction(methodName, methodName === "setTransform" ? this.pushCall_setTransform : null);
+                stateModifyingWrapFunction(methodName, methodName === "setTransform" ? this.pushCall_setTransform : undefined);
             for (var i = 0, methodName; methodName = CanvasRenderingContext2DResource.PathMethods[i]; ++i)
-                stateModifyingWrapFunction(methodName, methodName === "beginPath" ? this.pushCall_beginPath : null);
+                stateModifyingWrapFunction(methodName, methodName === "beginPath" ? this.pushCall_beginPath : undefined);
 
             stateModifyingWrapFunction("save", this.pushCall_save);
             stateModifyingWrapFunction("restore", this.pushCall_restore);
