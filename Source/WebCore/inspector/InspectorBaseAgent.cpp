@@ -57,6 +57,41 @@ void InspectorBaseAgentInterface::reportMemoryUsage(MemoryObjectInfo* memoryObje
     info.addWeakPointer(m_state);
 }
 
+void InspectorAgentRegistry::append(PassOwnPtr<InspectorBaseAgentInterface> agent)
+{
+    m_agents.append(agent);
+}
+
+void InspectorAgentRegistry::setFrontend(InspectorFrontend* frontend)
+{
+    for (size_t i = 0; i < m_agents.size(); i++)
+        m_agents[i]->setFrontend(frontend);
+}
+
+void InspectorAgentRegistry::clearFrontend()
+{
+    for (size_t i = 0; i < m_agents.size(); i++)
+        m_agents[i]->clearFrontend();
+}
+
+void InspectorAgentRegistry::restore()
+{
+    for (size_t i = 0; i < m_agents.size(); i++)
+        m_agents[i]->restore();
+}
+
+void InspectorAgentRegistry::registerInDispatcher(InspectorBackendDispatcher* dispatcher)
+{
+    for (size_t i = 0; i < m_agents.size(); i++)
+        m_agents[i]->registerInDispatcher(dispatcher);
+}
+
+void InspectorAgentRegistry::discardAgents()
+{
+    for (size_t i = 0; i < m_agents.size(); i++)
+        m_agents[i]->discardAgent();
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(INSPECTOR)

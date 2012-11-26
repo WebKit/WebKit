@@ -171,9 +171,7 @@ InspectorController::InspectorController(Page* page, InspectorClient* inspectorC
 
 InspectorController::~InspectorController()
 {
-    for (Agents::iterator it = m_agents.begin(); it != m_agents.end(); ++it)
-        (*it)->discardAgent();
-
+    m_agents.discardAgents();
     ASSERT(!m_inspectorClient);
 }
 
@@ -221,18 +219,14 @@ void InspectorController::connectFrontend(InspectorFrontendChannel* frontendChan
     // We can reconnect to existing front-end -> unmute state.
     m_state->unmute();
 
-    InspectorFrontend* frontend = m_inspectorFrontend.get();
-    for (Agents::iterator it = m_agents.begin(); it != m_agents.end(); ++it)
-        (*it)->setFrontend(frontend);
+    m_agents.setFrontend(m_inspectorFrontend.get());
 
     InspectorInstrumentation::frontendCreated();
 
     ASSERT(m_inspectorClient);
     m_inspectorBackendDispatcher = InspectorBackendDispatcher::create(frontendChannel);
 
-    InspectorBackendDispatcher* dispatcher = m_inspectorBackendDispatcher.get();
-    for (Agents::iterator it = m_agents.begin(); it != m_agents.end(); ++it)
-        (*it)->registerInDispatcher(dispatcher);
+    m_agents.registerInDispatcher(m_inspectorBackendDispatcher.get());
 }
 
 void InspectorController::disconnectFrontend()
@@ -246,8 +240,7 @@ void InspectorController::disconnectFrontend()
     // Pre-disconnect state will be used to restore inspector agents.
     m_state->mute();
 
-    for (Agents::iterator it = m_agents.begin(); it != m_agents.end(); ++it)
-        (*it)->clearFrontend();
+    m_agents.clearFrontend();
 
     m_inspectorFrontend.clear();
 
@@ -281,9 +274,7 @@ void InspectorController::reconnectFrontend(InspectorFrontendChannel* frontendCh
     ASSERT(!m_inspectorFrontend);
     connectFrontend(frontendChannel);
     m_state->loadFromCookie(inspectorStateCookie);
-
-    for (Agents::iterator it = m_agents.begin(); it != m_agents.end(); ++it)
-        (*it)->restore();
+    m_agents.restore();
 }
 
 void InspectorController::setProcessId(long processId)

@@ -65,6 +65,20 @@ private:
     String m_name;
 };
 
+class InspectorAgentRegistry {
+public:
+    void append(PassOwnPtr<InspectorBaseAgentInterface>);
+
+    void setFrontend(InspectorFrontend*);
+    void clearFrontend();
+    void restore();
+    void registerInDispatcher(InspectorBackendDispatcher*);
+    void discardAgents();
+
+private:
+    Vector<OwnPtr<InspectorBaseAgentInterface> > m_agents;
+};
+
 template<typename T>
 class InspectorBaseAgent : public InspectorBaseAgentInterface {
 public:
