@@ -723,9 +723,7 @@ InjectedScript.prototype = {
             var description = obj.nodeName.toLowerCase();
             switch (obj.nodeType) {
             case 1 /* Node.ELEMENT_NODE */:
-                description += obj.id ? "#" + obj.id : "";
-                var className = obj.className;
-                description += className ? "." + className : "";
+                description =  "<" + description + ">";
                 break;
             case 10 /*Node.DOCUMENT_TYPE_NODE */:
                 description = "<!DOCTYPE " + description + ">";
@@ -822,22 +820,22 @@ InjectedScript.RemoteObject.prototype = {
         this.preview.properties = [];
 
         var isArray = this.subtype === "array";
-        this._propertiesToDump = 5;
-        this._indexesToDump = 100;
+        var elementsToDump = isArray ? 100 : 5;
 
         for (var o = object; injectedScript._isDefined(o); o = o.__proto__)
-            this._generateProtoPreview(o);
+            this._generateProtoPreview(o, elementsToDump);
     },
 
     /**
      * @param {Object} object
+     * @param {number} elementsToDump
      */
-    _generateProtoPreview: function(object)
+    _generateProtoPreview: function(object, elementsToDump)
     {
         var propertyNames = Object.keys(/** @type {!Object} */(object));
         try {
             for (var i = 0; i < propertyNames.length; ++i) {
-                if (!this._propertiesToDump || !this._indexesToDump) {
+                if (this.preview.properties.length >= elementsToDump) {
                     this.preview.overflow = true;
                     this.preview.lossless = false;
                     break;
@@ -854,7 +852,7 @@ InjectedScript.RemoteObject.prototype = {
 
                 var value = descriptor.value;
                 if (value === null) {
-                    this._appendPropertyPreview({ name: name, type: "object", value: "null" });
+                    this.preview.properties.push({ name: name, type: "object", value: "null" });
                     continue;
                 }
     
@@ -869,7 +867,7 @@ InjectedScript.RemoteObject.prototype = {
                         }
                         value = "\"" + value.replace(/\n/g, "\u21B5") + "\"";
                     }
-                    this._appendPropertyPreview({ name: name, type: type, value: value + "" });
+                    this.preview.properties.push({ name: name, type: type, value: value + "" });
                     continue;
                 }
     
@@ -883,22 +881,10 @@ InjectedScript.RemoteObject.prototype = {
                 var property = { name: name, type: type, value: description };
                 if (subtype)
                     property.subtype = subtype;
-                this._appendPropertyPreview(property);
+                this.preview.properties.push(property);
             }
         } catch (e) {
         }
-    },
-
-    /**
-     * @param {Object} property
-     */
-    _appendPropertyPreview: function(property)
-    {
-        if (isNaN(property.name))
-            this._propertiesToDump--;
-        else
-            this._indexesToDump--;
-        this.preview.properties.push(property);
     },
 
     /**

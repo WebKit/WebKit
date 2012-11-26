@@ -1,7 +1,7 @@
 CONSOLE MESSAGE: line 15: [object NodeList]
 CONSOLE MESSAGE: line 19: [object HTMLCollection]
 CONSOLE MESSAGE: line 23: [object HTMLOptionsCollection]
-CONSOLE MESSAGE: line 27: [object HTMLAllCollection]
+CONSOLE MESSAGE: line 27: undefined
 CONSOLE MESSAGE: line 31: [object HTMLFormControlsCollection]
 CONSOLE MESSAGE: line 35: [object NodeList]
 CONSOLE MESSAGE: line 41: 1,2,
@@ -10,7 +10,7 @@ CONSOLE MESSAGE: line 51: [object Arguments]
 CONSOLE MESSAGE: line 15: [object NodeList]
 CONSOLE MESSAGE: line 19: [object HTMLCollection]
 CONSOLE MESSAGE: line 23: [object HTMLOptionsCollection]
-CONSOLE MESSAGE: line 27: [object HTMLAllCollection]
+CONSOLE MESSAGE: line 27: undefined
 CONSOLE MESSAGE: line 31: [object HTMLFormControlsCollection]
 CONSOLE MESSAGE: line 35: [object NodeList]
 CONSOLE MESSAGE: line 41: 1,2,
@@ -29,8 +29,8 @@ NonArrayWithLength console-format-collections.html:44
 Arguments[2] console-format-collections.html:51
 [<select>, item: function] console-format-collections.html:15
 [<script>, <script>, <script>, item: function, namedItem: function] console-format-collections.html:19
-[<option>, <option>, selectedIndex: 0, remove: function, namedItem: function, add: function, item: function, namedItem: function] console-format-collections.html:23
-[<html>, <head>, <script>, <script>, <script>, <body>, <p>, <div>, <form>, <select>, <option>, <option>, <input>, <input>, namedItem: function, tags: function, item: function] console-format-collections.html:27
+[<option>, <option>, selectedIndex: 0, namedItem: function, add: function, remove: function, item: function, namedItem: function] console-format-collections.html:23
+[<html>, <head>, <script>, <script>, <script>, <body>, <p>, <div>, <form>, <select>, <option>, <option>, <input>, <input>, item: function, namedItem: function, tags: function] console-format-collections.html:27
 [<select>, <input>, <input>, namedItem: function, item: function, namedItem: function] console-format-collections.html:31
 [<input>, <input>, item: function] console-format-collections.html:35
 [1, Array[2]] console-format-collections.html:41
