@@ -253,13 +253,6 @@ Node.prototype.enclosingNodeOrSelfWithClass = function(className)
     return null;
 }
 
-Node.prototype.enclosingNodeWithClass = function(className)
-{
-    if (!this.parentNode)
-        return null;
-    return this.parentNode.enclosingNodeOrSelfWithClass(className);
-}
-
 Element.prototype.query = function(query)
 {
     return this.ownerDocument.evaluate(query, this, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
@@ -542,12 +535,6 @@ Node.prototype.traversePreviousNode = function(stayWithin)
     if (node)
         return node;
     return this.parentNode;
-}
-
-HTMLTextAreaElement.prototype.moveCursorToEnd = function()
-{
-    var length = this.value.length;
-    this.setSelectionRange(length, length);
 }
 
 function isEnterKey(event) {
