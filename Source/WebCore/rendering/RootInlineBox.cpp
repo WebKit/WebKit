@@ -33,6 +33,7 @@
 #include "PaintInfo.h"
 #include "RenderArena.h"
 #include "RenderBlock.h"
+#include "RenderFlowThread.h"
 #include "RenderView.h"
 #include "VerticalPositionCache.h"
 #include <wtf/unicode/Unicode.h>
@@ -52,8 +53,6 @@ RootInlineBox::RootInlineBox(RenderBlock* block)
     , m_lineBottom(0)
     , m_lineTopWithLeading(0)
     , m_lineBottomWithLeading(0)
-    , m_paginationStrut(0)
-    , m_paginatedLineWidth(0)
 {
     setIsHorizontal(block->isHorizontalWritingMode());
 }
@@ -249,6 +248,30 @@ void RootInlineBox::childRemoved(InlineBox* box)
         prev->setLineBreakInfo(0, 0, BidiStatus());
         prev->markDirty();
     }
+}
+
+void RootInlineBox::setContainingRegion(RenderRegion* region)
+{
+    ASSERT(!isDirty());
+    ASSERT(block()->inRenderFlowThread());
+    LineFragmentationData* fragmentationData  = ensureLineFragmentationData();
+    fragmentationData->m_containingRegion = region;
+    fragmentationData->m_hasContainingRegion = !!region;
+}
+
+RootInlineBox::LineFragmentationData* RootInlineBox::LineFragmentationData::sanitize(const RenderBlock* block)
+{
+    ASSERT(block->inRenderFlowThread());
+    if (!m_containingRegion)
+        return this;
+
+    RenderFlowThread* flowThread = block->enclosingRenderFlowThread();
+    const RenderRegionList& regionList = flowThread->renderRegionList();
+    // For pointer types the hash function is |safeToCompareToEmptyOrDeleted|. There shouldn't be any problems if m_containingRegion was deleted.
+    if (!regionList.contains(m_containingRegion))
+        m_containingRegion = 0;
+
+    return this;
 }
 
 LayoutUnit RootInlineBox::alignBoxesInBlockDirection(LayoutUnit heightOfBlock, GlyphOverflowAndFallbackFontsMap& textBoxDataMap, VerticalPositionCache& verticalPositionCache)

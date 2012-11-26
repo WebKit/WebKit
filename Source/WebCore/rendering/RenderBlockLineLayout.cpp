@@ -1508,6 +1508,9 @@ void RenderBlock::layoutRunsAndFloatsInRange(LineLayoutState& layoutState, Inlin
 
                         setLogicalHeight(lineBox->lineBottomWithLeading());
                     }
+
+                    if (inRenderFlowThread())
+                        lineBox->setContainingRegion(regionAtBlockOffset(lineBox->lineTopWithLeading()));
                 }
             }
 
@@ -1562,6 +1565,8 @@ void RenderBlock::linkToEndLineIfNeeded(LineLayoutState& layoutState)
                     layoutState.updateRepaintRangeFromBox(line, delta);
                     line->adjustBlockDirectionPosition(delta);
                 }
+                if (inRenderFlowThread())
+                    line->setContainingRegion(regionAtBlockOffset(line->lineTopWithLeading()));
                 if (Vector<RenderBox*>* cleanLineFloats = line->floatsPtr()) {
                     Vector<RenderBox*>::iterator end = cleanLineFloats->end();
                     for (Vector<RenderBox*>::iterator f = cleanLineFloats->begin(); f != end; ++f) {
@@ -1599,6 +1604,8 @@ void RenderBlock::linkToEndLineIfNeeded(LineLayoutState& layoutState)
             LayoutRect logicalLayoutOverflow(0, blockLogicalHeight, 1, bottomLayoutOverflow - blockLogicalHeight);
             LayoutRect logicalVisualOverflow(0, blockLogicalHeight, 1, bottomVisualOverflow - blockLogicalHeight);
             trailingFloatsLineBox->setOverflowFromLogicalRects(logicalLayoutOverflow, logicalVisualOverflow, trailingFloatsLineBox->lineTop(), trailingFloatsLineBox->lineBottom());
+            if (inRenderFlowThread())
+                trailingFloatsLineBox->setContainingRegion(regionAtBlockOffset(trailingFloatsLineBox->lineTopWithLeading()));
         }
 
         const FloatingObjectSet& floatingObjectSet = m_floatingObjects->set();
@@ -1793,6 +1800,8 @@ RootInlineBox* RenderBlock::determineStartPosition(LineLayoutState& layoutState,
                     layoutState.updateRepaintRangeFromBox(curr, paginationDelta);
                     curr->adjustBlockDirectionPosition(paginationDelta);
                 }
+                if (inRenderFlowThread())
+                    curr->setContainingRegion(regionAtBlockOffset(curr->lineTopWithLeading()));
             }
 
             // If a new float has been inserted before this line or before its last known float, just do a full layout.

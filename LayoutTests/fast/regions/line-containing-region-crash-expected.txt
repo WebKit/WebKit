@@ -1,0 +1,8 @@
+Test for WebKit Bug 101332 Crash
+
+The test passes if it does not crash or assert.
+
+PASS
+
+Hello Crash!
+

@@ -1,3 +1,18 @@
+2012-11-26  Andrei Bucur  <abucur@adobe.com>
+
+        [CSS Regions] Add Region info for RootLineBoxes and pack the pagination data
+        https://bugs.webkit.org/show_bug.cgi?id=101332
+
+        Reviewed by David Hyatt.
+
+        The test checks if there is a crash when doing a line layout if:
+        - the flow has no region
+        - the flow has a region but the lines have no containing region
+        - the flow has no region but the lines have a containing region
+
+        * fast/regions/line-containing-region-crash-expected.txt: Added.
+        * fast/regions/line-containing-region-crash.html: Added.
+
 2012-11-26  Michelangelo De Simone  <michelangelo@webkit.org>
 
         [CSS Shaders] Add IDL file and bindings for mix function

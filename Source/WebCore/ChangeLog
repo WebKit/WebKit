@@ -1,3 +1,54 @@
+2012-11-26  Andrei Bucur  <abucur@adobe.com>
+
+        [CSS Regions] Add Region info for RootLineBoxes and pack the pagination data
+        https://bugs.webkit.org/show_bug.cgi?id=101332
+
+        Reviewed by David Hyatt.
+
+        Currently the pagination information for lines is spread between the RootInlineBox and InlineFlowBox classes, consuming memory even though
+        the boxes were not the result of an pagination layout. To overcome this, a new struct (LineFragmentationData) is created that wraps all the data,
+        including two new members, the containing Region for the line and a boolean that states if the line was laid out in a Region or not.
+        The flag is necessary because the sanitize function on LineFragmentationData resets the containing Region to 0 if the Region was removed from
+        chain (so a value of 0 for the containing Region means two things). The sanitize function should prevent access to an invalid address.
+        The containing Region is used to detect if a line changed the Region where it resides. This will be helpful especially when implementing region
+        styling for layout properties (e.g. the font-size property https://bugs.webkit.org/show_bug.cgi?id=95559 ).
+        A line can change the region when it is shifted inside the containing block or if the entire block moves. This means it's better to delegate
+        the task of updating the containing Region to the block.
+
+        Tests: fast/regions/line-containing-region-crash.html
+
+        * rendering/InlineFlowBox.cpp:
+        (SameSizeAsInlineFlowBox):
+        * rendering/InlineFlowBox.h:
+        (WebCore::InlineFlowBox::InlineFlowBox):
+        (InlineFlowBox):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::lineWidthForPaginatedLineChanged):
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::layoutRunsAndFloatsInRange):
+        (WebCore::RenderBlock::linkToEndLineIfNeeded):
+        (WebCore::RenderBlock::determineStartPosition):
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::RootInlineBox):
+        (WebCore::RootInlineBox::setContainingRegion):
+        (WebCore):
+        (WebCore::RootInlineBox::LineFragmentationData::sanitize): This is an O(1) function that checks if the containig Region is still valid pointer.
+        * rendering/RootInlineBox.h:
+        (WebCore):
+        (WebCore::RootInlineBox::paginationStrut):
+        (WebCore::RootInlineBox::setPaginationStrut):
+        (WebCore::RootInlineBox::isFirstAfterPageBreak):
+        (WebCore::RootInlineBox::setIsFirstAfterPageBreak):
+        (WebCore::RootInlineBox::paginatedLineWidth):
+        (WebCore::RootInlineBox::setPaginatedLineWidth):
+        (RootInlineBox):
+        (WebCore::RootInlineBox::containingRegion):
+        (WebCore::RootInlineBox::hasContainingRegion): Use this to determine if the line has a region or not.
+        (WebCore::RootInlineBox::ensureLineFragmentationData):
+        (LineFragmentationData):
+        (WebCore::RootInlineBox::LineFragmentationData::LineFragmentationData):
+
+
 2012-11-26  Michelangelo De Simone  <michelangelo@webkit.org>
 
         [CSS Shaders] Add IDL file and bindings for mix function

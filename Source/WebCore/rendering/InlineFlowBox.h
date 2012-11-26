@@ -52,7 +52,6 @@ public:
         , m_baselineType(AlphabeticBaseline)
         , m_hasAnnotationsBefore(false)
         , m_hasAnnotationsAfter(false)
-        , m_isFirstAfterPageBreak(false)
 #ifndef NDEBUG
         , m_hasBadChildList(false)
 #endif
@@ -325,7 +324,6 @@ protected:
     // If the line contains any ruby runs, then this will be true.
     unsigned m_hasAnnotationsBefore : 1;
     unsigned m_hasAnnotationsAfter : 1;
-    unsigned m_isFirstAfterPageBreak : 1;
 
     unsigned m_lineBreakBidiStatusEor : 5; // WTF::Unicode::Direction
     unsigned m_lineBreakBidiStatusLastStrong : 5; // WTF::Unicode::Direction
