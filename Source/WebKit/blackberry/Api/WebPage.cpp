@@ -372,7 +372,6 @@ WebPagePrivate::WebPagePrivate(WebPage* webPage, WebPageClient* client, const In
     , m_overflowExceedsContentsSize(false)
     , m_resetVirtualViewportOnCommitted(true)
     , m_shouldUseFixedDesktopMode(false)
-    , m_needTouchEvents(false)
     , m_preventIdleDimmingCount(0)
 #if ENABLE(TOUCH_EVENTS)
     , m_preventDefaultOnTouchStart(false)
@@ -4010,7 +4009,7 @@ bool WebPage::touchEvent(const Platform::TouchEvent& event)
 
     bool handled = false;
 
-    if (d->m_needTouchEvents && !event.m_type != Platform::TouchEvent::TouchInjected)
+    if (!event.m_type != Platform::TouchEvent::TouchInjected)
         handled = d->m_mainFrame->eventHandler()->handleTouchEvent(PlatformTouchEvent(&tEvent));
 
     if (d->m_preventDefaultOnTouchStart) {
@@ -5916,11 +5915,6 @@ void WebPage::setWebGLEnabled(bool enabled)
 bool WebPage::isWebGLEnabled() const
 {
     return d->m_page->settings()->webGLEnabled();
-}
-
-void WebPagePrivate::setNeedTouchEvents(bool value)
-{
-    m_needTouchEvents = value;
 }
 
 void WebPagePrivate::frameUnloaded(const Frame* frame)

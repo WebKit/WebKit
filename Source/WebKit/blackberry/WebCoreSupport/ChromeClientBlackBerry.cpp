@@ -656,7 +656,6 @@ PlatformPageClient ChromeClientBlackBerry::platformPageClient() const
 #if ENABLE(TOUCH_EVENTS)
 void ChromeClientBlackBerry::needTouchEvents(bool value)
 {
-    m_webPagePrivate->setNeedTouchEvents(value);
 }
 #endif
 

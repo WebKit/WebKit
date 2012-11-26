@@ -1,3 +1,25 @@
+2012-11-26  Genevieve Mak  <gmak@rim.com>
+
+        [BlackBerry] Form controls don't show pressed state.
+        https://bugs.webkit.org/show_bug.cgi?id=103292
+
+        Reviewed by Rob Buis.
+
+        Reviewed internally by Eli Fidler and Mike Lattanzio.
+        We weren't sending touch events to webpages unless they
+        had JS touch event listeners which form controls don't have.
+        Now send them always and do a little cleanup.
+        PR #249791
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::WebPagePrivate):
+        (BlackBerry::WebKit::WebPage::touchEvent):
+        * Api/WebPageClient.h:
+        * Api/WebPage_p.h:
+        (WebPagePrivate):
+        * WebCoreSupport/ChromeClientBlackBerry.cpp:
+        (WebCore::ChromeClientBlackBerry::needTouchEvents):
+
 2012-11-26  Nima Ghanavatian  <nghanavatian@rim.com>
 
         [BlackBerry] Null check calls associated with retrieving the caret rect.
