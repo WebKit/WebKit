@@ -1,3 +1,25 @@
+2012-11-26  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r134327
+
+    2012-11-12  Roger Fong  <roger_fong@apple.com>
+
+            Web Inspector: Fix docking behaviour on Windows.
+            https://bugs.webkit.org/show_bug.cgi?id=101978
+
+            Reviewed by Brian Weinstein.
+
+            There are a number of problems with docking behaviour on Windows.
+            For starters, it does not ever constrain the inspector's size properly while docked.
+            It also does not properly set the whether or not the inspector can be docked/undocked.
+            This patch fixes both issues.
+
+            * WebCoreSupport/WebInspectorClient.cpp:
+            (WebInspectorFrontendClient::frontendLoaded): 
+            (WebInspectorFrontendClient::attachWindow):
+            Call restoreAttachedWindowHeight so that when first loading or reattaching the inspector,
+            we resize the inspector window properly.
+
 2012-08-02  Lucas Forschler  <lforschler@apple.com>
 
     Merge 122676
