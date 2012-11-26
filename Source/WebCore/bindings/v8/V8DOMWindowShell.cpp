@@ -102,7 +102,7 @@ void V8DOMWindowShell::destroyIsolatedShell()
     v8::HandleScope handleScope;
     m_world->makeContextWeak(m_context.get());
     disposeContext();
-    destroyGlobal();
+    m_global.clear();
 }
 
 void V8DOMWindowShell::disposeContext()
@@ -123,13 +123,11 @@ void V8DOMWindowShell::disposeContext()
     V8GCForContextDispose::instance().notifyContextDisposed(isMainFrame);
 }
 
-void V8DOMWindowShell::destroyGlobal()
+void V8DOMWindowShell::clearForClose(bool destroyGlobal)
 {
-    m_global.clear();
-}
+    if (destroyGlobal)
+        m_global.clear();
 
-void V8DOMWindowShell::clearForClose()
-{
     if (m_context.isEmpty())
         return;
 

@@ -195,7 +195,7 @@ public:
 private:
     typedef HashMap<int, OwnPtr<V8DOMWindowShell> > IsolatedWorldMap;
 
-    void reset();
+    void clearForClose(bool destroyGlobal);
 
     Frame* m_frame;
     const String* m_sourceURL;

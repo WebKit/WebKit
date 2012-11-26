@@ -1,3 +1,28 @@
+2012-11-26  Dan Carney  <dcarney@google.com>
+
+        [V8] Give isolated shells a lifecycle like that of main shells
+        https://bugs.webkit.org/show_bug.cgi?id=96522
+
+        Reviewed by Adam Barth.
+
+        Refactored the isolated shells in ScriptController
+        to be cleaned up the same way the main shell is.
+
+        No new tests. No change in functionality.
+
+        * bindings/v8/ScriptController.cpp:
+        (WebCore::ScriptController::~ScriptController):
+        (WebCore::ScriptController::clearForOutOfMemory):
+        (WebCore::ScriptController::clearForClose):
+        (WebCore::ScriptController::clearWindowShell):
+        * bindings/v8/ScriptController.h:
+        (ScriptController):
+        * bindings/v8/V8DOMWindowShell.cpp:
+        (WebCore::V8DOMWindowShell::destroyIsolatedShell):
+        (WebCore::V8DOMWindowShell::clearForClose):
+        * bindings/v8/V8DOMWindowShell.h:
+        (V8DOMWindowShell):
+
 2012-11-25  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r135656.
