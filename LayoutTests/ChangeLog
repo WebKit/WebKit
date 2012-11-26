@@ -1,3 +1,15 @@
+2012-11-26  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        RenderBox::computePercentageLogicalHeight should use containingBlockLogicalWidthForContent
+        https://bugs.webkit.org/show_bug.cgi?id=103075
+
+        Reviewed by Ojan Vafai.
+
+        * fast/multicol/fixed-column-percent-logical-height-orthogonal-writing-mode-expected.txt: Added.
+        * fast/multicol/fixed-column-percent-logical-height-orthogonal-writing-mode.html: Added.
+        * fast/table/caption-orthogonal-writing-mode-sizing-expected.txt: Added.
+        * fast/table/caption-orthogonal-writing-mode-sizing.html: Added.
+
 2012-11-26  Abhishek Arya  <inferno@chromium.org>
 
         Crash in Frame::dispatchVisibilityStateChangeEvent.

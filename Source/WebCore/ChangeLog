@@ -1,3 +1,25 @@
+2012-11-26  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        RenderBox::computePercentageLogicalHeight should use containingBlockLogicalWidthForContent
+        https://bugs.webkit.org/show_bug.cgi?id=103075
+
+        Reviewed by Ojan Vafai.
+
+        Using the containing block's content logical block was working for most renderers but 2 renderers
+        were special and were broken in orthogonal writing modes:
+        - captions as they override containingBlockLogicalWidthForContent to return the table's logical width.
+        - multi-column renderers as they override availableLogicalWidth to constrain the child to the column logical width.
+
+        By switching to containingBlockLogicalWidthForContent, we got those 2 cases covered.
+
+        Tests: fast/multicol/fixed-column-percent-logical-height-orthogonal-writing-mode.html
+               fast/table/caption-orthogonal-writing-mode-sizing.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::computePercentageLogicalHeight):
+        Updated the function to track which renderer's containing block we use and call
+        containingBlockLogicalWidthForContent on it.
+
 2012-11-26  Abhishek Arya  <inferno@chromium.org>
 
         Crash in Frame::dispatchVisibilityStateChangeEvent.

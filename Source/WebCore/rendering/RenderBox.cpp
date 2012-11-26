@@ -2194,11 +2194,13 @@ LayoutUnit RenderBox::computePercentageLogicalHeight(const Length& height) const
     
     bool skippedAutoHeightContainingBlock = false;
     RenderBlock* cb = containingBlock();
+    const RenderBox* containingBlockChild = this;
     LayoutUnit rootMarginBorderPaddingHeight = 0;
     while (!cb->isRenderView() && skipContainingBlockForPercentHeightCalculation(cb)) {
         if (cb->isBody() || cb->isRoot())
             rootMarginBorderPaddingHeight += cb->marginBefore() + cb->marginAfter() + cb->borderAndPaddingLogicalHeight();
         skippedAutoHeightContainingBlock = true;
+        containingBlockChild = cb;
         cb = cb->containingBlock();
         cb->addPercentHeightDescendant(const_cast<RenderBox*>(this));
     }
@@ -2214,7 +2216,7 @@ LayoutUnit RenderBox::computePercentageLogicalHeight(const Length& height) const
     bool includeBorderPadding = isTable();
 
     if (isHorizontalWritingMode() != cb->isHorizontalWritingMode())
-        availableHeight = cb->contentLogicalWidth();
+        availableHeight = containingBlockChild->containingBlockLogicalWidthForContent();
     else if (cb->isTableCell()) {
         if (!skippedAutoHeightContainingBlock) {
             // Table cells violate what the CSS spec says to do with heights. Basically we
