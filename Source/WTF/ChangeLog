@@ -1,3 +1,9 @@
+2012-11-26  Patrick Gansterer  <paroga@webkit.org>
+
+        Build fix for WinCE after r135640.
+
+        * wtf/DataLog.cpp:
+
 2012-11-24  Adam Barth  <abarth@webkit.org>
 
         Chromium should use TCMalloc on Mac to go fast
