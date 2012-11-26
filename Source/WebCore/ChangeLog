@@ -1,3 +1,9 @@
+2012-11-26  Yury Semikhatsky  <yurys@chromium.org>
+
+        Unreviewed. Fix Qt minimal compilation after r135713.
+
+        * inspector/InspectorController.h: hid file content behind ENABLE(INSPECTOR)
+
 2012-11-26  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: object preview does not render node id, className; logs too many functions for jQuery.

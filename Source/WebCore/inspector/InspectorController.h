@@ -31,6 +31,8 @@
 #ifndef InspectorController_h
 #define InspectorController_h
 
+#if ENABLE(INSPECTOR)
+
 #include "InspectorBaseAgent.h"
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
@@ -146,5 +148,7 @@ private:
 };
 
 }
+
+#endif // ENABLE(INSPECTOR)
 
 #endif // !defined(InspectorController_h)
