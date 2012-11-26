@@ -648,9 +648,6 @@ Document::~Document()
 
     m_weakReference->clear();
 
-    if (m_mediaQueryMatcher)
-        m_mediaQueryMatcher->documentDestroyed();
-
     clearStyleResolver(); // We need to destory CSSFontSelector before destroying m_cachedResourceLoader.
 
     // It's possible for multiple Documents to end up referencing the same CachedResourceLoader (e.g., SVGImages
@@ -2142,6 +2139,9 @@ void Document::detach()
     // callers of Document::detach().
     m_frame = 0;
     m_renderArena.clear();
+
+    if (m_mediaQueryMatcher)
+        m_mediaQueryMatcher->documentDestroyed();
 }
 
 void Document::prepareForDestruction()

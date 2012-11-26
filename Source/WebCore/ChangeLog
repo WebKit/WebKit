@@ -1,3 +1,20 @@
+2012-11-26  Marja Hölttä  <marja@chromium.org>
+
+        Circular reference between Document and MediaQueryMatcher.
+        https://bugs.webkit.org/show_bug.cgi?id=103242
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        It's not enough to clean up listeners in MediaQueryMatcher in ~Document,
+        since MediaQueryListListener keeps the Document alive. This caused
+        www.crbug.com/113983.
+
+        No new tests: No visible change in behavior (except that it doesn't leak memory).
+
+        * dom/Document.cpp:
+        (WebCore::Document::~Document):
+        (WebCore::Document::detach):
+
 2012-11-26  Eugene Klyuchnikov  <eustas@chromium.org>
 
         Web Inspector: HeapProfiler: remove snapshotView reference from data-grids.
