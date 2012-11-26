@@ -81,8 +81,6 @@ namespace WebCore {
         bool initializeIfNeeded();
         void dispose();
 
-        static const int kWorkerMaxStackSize = 500 * 1024;
-
         WorkerContext* m_workerContext;
         ScopedPersistent<v8::Context> m_context;
         OwnPtr<V8PerContextData> m_perContextData;

@@ -31,6 +31,7 @@ namespace WebCore {
 class V8Initializer {
 public:
     static void initializeMainThreadIfNeeded();
+    static void initializeWorker();
 };
     
 } // namespace WebCore

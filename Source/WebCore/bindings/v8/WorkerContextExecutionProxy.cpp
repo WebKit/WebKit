@@ -46,6 +46,7 @@
 #include "V8DOMWindowShell.h"
 #include "V8DedicatedWorkerContext.h"
 #include "V8GCController.h"
+#include "V8Initializer.h"
 #include "V8ObjectConstructor.h"
 #include "V8PerContextData.h"
 #include "V8RecursionScope.h"
@@ -58,37 +59,11 @@
 
 namespace WebCore {
 
-static void reportFatalErrorInV8(const char* location, const char* message)
-{
-    // FIXME: We temporarily deal with V8 internal error situations such as out-of-memory by crashing the worker.
-    CRASH();
-}
-
-static void v8MessageHandler(v8::Handle<v8::Message> message, v8::Handle<v8::Value> data)
-{
-    static bool isReportingException = false;
-    // Exceptions that occur in error handler should be ignored since in that case
-    // WorkerContext::reportException will send the exception to the worker object.
-    if (isReportingException)
-        return;
-    isReportingException = true;
-
-    // During the frame teardown, there may not be a valid context.
-    if (ScriptExecutionContext* context = getScriptExecutionContext()) {
-        String errorMessage = toWebCoreString(message->Get());
-        int lineNumber = message->GetLineNumber();
-        String sourceURL = toWebCoreString(message->GetScriptResourceName());
-        context->reportException(errorMessage, lineNumber, sourceURL, 0);
-    }
-
-    isReportingException = false;
-}
-
 WorkerContextExecutionProxy::WorkerContextExecutionProxy(WorkerContext* workerContext)
     : m_workerContext(workerContext)
     , m_disableEvalPending(String())
 {
-    initIsolate();
+    V8Initializer::initializeWorker();
 }
 
 WorkerContextExecutionProxy::~WorkerContextExecutionProxy()
@@ -100,30 +75,6 @@ void WorkerContextExecutionProxy::dispose()
 {
     m_perContextData.clear();
     m_context.clear();
-}
-
-void WorkerContextExecutionProxy::initIsolate()
-{
-    // Setup the security handlers and message listener.
-    v8::V8::AddMessageListener(&v8MessageHandler);
-
-    // Tell V8 not to call the default OOM handler, binding code will handle it.
-    v8::V8::IgnoreOutOfMemoryException();
-    v8::V8::SetFatalErrorHandler(reportFatalErrorInV8);
-
-    v8::V8::AddGCPrologueCallback(&V8GCController::gcPrologue);
-    v8::V8::AddGCEpilogueCallback(&V8GCController::gcEpilogue);
-
-    // FIXME: Remove the following 2 lines when V8 default has changed.
-    const char es5ReadonlyFlag[] = "--es5_readonly";
-    v8::V8::SetFlagsFromString(es5ReadonlyFlag, sizeof(es5ReadonlyFlag));
-
-    v8::ResourceConstraints resource_constraints;
-    uint32_t here;
-    resource_constraints.set_stack_limit(&here - kWorkerMaxStackSize / sizeof(uint32_t*));
-    v8::SetResourceConstraints(&resource_constraints);
-
-    V8PerIsolateData::ensureInitialized(v8::Isolate::GetCurrent());
 }
 
 bool WorkerContextExecutionProxy::initializeIfNeeded()

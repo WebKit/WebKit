@@ -39,6 +39,7 @@
 #include "V8GCController.h"
 #include "V8History.h"
 #include "V8Location.h"
+#include "V8PerContextData.h"
 #include <v8.h>
 #include <wtf/RefPtr.h>
 #include <wtf/text/WTFString.h>
@@ -67,14 +68,14 @@ static Frame* findFrame(v8::Local<v8::Object> host, v8::Local<v8::Value> data)
     return 0;
 }
 
-static void reportFatalError(const char* location, const char* message)
+static void reportFatalErrorInMainThread(const char* location, const char* message)
 {
     int memoryUsageMB = MemoryUsageSupport::actualMemoryUsageMB();
     printf("V8 error: %s (%s).  Current memory usage: %d MB\n", message, location, memoryUsageMB);
     CRASH();
 }
 
-static void reportUncaughtException(v8::Handle<v8::Message> message, v8::Handle<v8::Value> data)
+static void messageHandlerInMainThread(v8::Handle<v8::Message> message, v8::Handle<v8::Value> data)
 {
     DOMWindow* firstWindow = firstDOMWindow(BindingState::instance());
     if (!firstWindow->isCurrentlyDisplayedInFrame())
@@ -94,7 +95,7 @@ static void reportUncaughtException(v8::Handle<v8::Message> message, v8::Handle<
     firstWindow->document()->reportException(errorMessage, message->GetLineNumber(), resource, callStack);
 }
 
-static void reportUnsafeJavaScriptAccess(v8::Local<v8::Object> host, v8::AccessType type, v8::Local<v8::Value> data)
+static void failedAccessCheckCallbackInMainThread(v8::Local<v8::Object> host, v8::AccessType type, v8::Local<v8::Value> data)
 {
     Frame* target = findFrame(host, data);
     if (!target)
@@ -113,11 +114,11 @@ void V8Initializer::initializeMainThreadIfNeeded()
     initialized = true;
 
     v8::V8::IgnoreOutOfMemoryException();
-    v8::V8::SetFatalErrorHandler(reportFatalError);
-    v8::V8::AddGCPrologueCallback(&V8GCController::gcPrologue);
-    v8::V8::AddGCEpilogueCallback(&V8GCController::gcEpilogue);
-    v8::V8::AddMessageListener(&reportUncaughtException);
-    v8::V8::SetFailedAccessCheckCallbackFunction(reportUnsafeJavaScriptAccess);
+    v8::V8::SetFatalErrorHandler(reportFatalErrorInMainThread);
+    v8::V8::AddGCPrologueCallback(V8GCController::gcPrologue);
+    v8::V8::AddGCEpilogueCallback(V8GCController::gcEpilogue);
+    v8::V8::AddMessageListener(messageHandlerInMainThread);
+    v8::V8::SetFailedAccessCheckCallbackFunction(failedAccessCheckCallbackInMainThread);
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     ScriptProfiler::initialize();
 #endif
@@ -126,6 +127,55 @@ void V8Initializer::initializeMainThreadIfNeeded()
     // FIXME: Remove the following 2 lines when V8 default has changed.
     const char es5ReadonlyFlag[] = "--es5_readonly";
     v8::V8::SetFlagsFromString(es5ReadonlyFlag, sizeof(es5ReadonlyFlag));
+}
+
+static void reportFatalErrorInWorker(const char* location, const char* message)
+{
+    // FIXME: We temporarily deal with V8 internal error situations such as out-of-memory by crashing the worker.
+    CRASH();
+}
+
+static void messageHandlerInWorker(v8::Handle<v8::Message> message, v8::Handle<v8::Value> data)
+{
+    static bool isReportingException = false;
+    // Exceptions that occur in error handler should be ignored since in that case
+    // WorkerContext::reportException will send the exception to the worker object.
+    if (isReportingException)
+        return;
+    isReportingException = true;
+
+    // During the frame teardown, there may not be a valid context.
+    if (ScriptExecutionContext* context = getScriptExecutionContext()) {
+        String errorMessage = toWebCoreString(message->Get());
+        int lineNumber = message->GetLineNumber();
+        String sourceURL = toWebCoreString(message->GetScriptResourceName());
+        context->reportException(errorMessage, lineNumber, sourceURL, 0);
+    }
+
+    isReportingException = false;
+}
+
+static const int kWorkerMaxStackSize = 500 * 1024;
+
+void V8Initializer::initializeWorker()
+{
+    v8::V8::AddMessageListener(messageHandlerInWorker);
+    v8::V8::IgnoreOutOfMemoryException();
+    v8::V8::SetFatalErrorHandler(reportFatalErrorInWorker);
+
+    v8::V8::AddGCPrologueCallback(V8GCController::gcPrologue);
+    v8::V8::AddGCEpilogueCallback(V8GCController::gcEpilogue);
+
+    // FIXME: Remove the following 2 lines when V8 default has changed.
+    const char es5ReadonlyFlag[] = "--es5_readonly";
+    v8::V8::SetFlagsFromString(es5ReadonlyFlag, sizeof(es5ReadonlyFlag));
+
+    v8::ResourceConstraints resourceConstraints;
+    uint32_t here;
+    resourceConstraints.set_stack_limit(&here - kWorkerMaxStackSize / sizeof(uint32_t*));
+    v8::SetResourceConstraints(&resourceConstraints);
+
+    V8PerIsolateData::ensureInitialized(v8::Isolate::GetCurrent());
 }
 
 } // namespace WebCore

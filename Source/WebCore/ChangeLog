@@ -1,3 +1,33 @@
+2012-11-22  Kentaro Hara  <haraken@chromium.org>
+
+        [V8] Move WorkerExecutionContextProxy::initializeIfNeeded() to V8Initializer
+        https://bugs.webkit.org/show_bug.cgi?id=103061
+
+        Reviewed by Adam Barth.
+
+        This is an incremental step to remove WorkerExecutionContextProxy.
+        This patch moves WorkerExecutionContextProxy::initializeIfNeeded() to V8Initializer.
+        This patch also renames methods so that the names become consistent
+        between the main thread and workers.
+
+        No tests. No change in behavior.
+
+        * bindings/v8/V8Initializer.cpp:
+        (WebCore::reportFatalErrorInMainThread):
+        (WebCore::messageHandlerInMainThread):
+        (WebCore::failedAccessCheckCallbackInMainThread):
+        (WebCore::V8Initializer::initializeMainThreadIfNeeded):
+        (WebCore::reportFatalErrorInWorker):
+        (WebCore):
+        (WebCore::messageHandlerInWorker):
+        (WebCore::V8Initializer::initializeWorkerIfNeeded):
+        * bindings/v8/V8Initializer.h:
+        (V8Initializer):
+        * bindings/v8/WorkerContextExecutionProxy.cpp:
+        (WebCore::WorkerContextExecutionProxy::WorkerContextExecutionProxy):
+        * bindings/v8/WorkerContextExecutionProxy.h:
+        (WorkerContextExecutionProxy):
+
 2012-11-25  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL] Refactor RenderThemeEfl::ThemePartCacheEntry::reuse()
