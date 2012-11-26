@@ -55,6 +55,7 @@
 #include "TextCheckerClient.h"
 #include "TextCheckingHelper.h"
 #include "TextIterator.h"
+#include "UserGestureIndicator.h"
 #include "htmlediting.h"
 #include "visible_units.h"
 #include <wtf/StdLibExtras.h>
@@ -540,6 +541,8 @@ bool AccessibilityObject::press() const
         return false;
     if (Frame* f = actionElem->document()->frame())
         f->loader()->resetMultipleFormSubmissionProtection();
+    
+    UserGestureIndicator gestureIndicator(DefinitelyProcessingUserGesture);
     actionElem->accessKeyAction(true);
     return true;
 }

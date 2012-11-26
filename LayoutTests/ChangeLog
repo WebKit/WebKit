@@ -1,3 +1,13 @@
+2012-11-25  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: file upload input cannot be activated with VoiceOver
+        https://bugs.webkit.org/show_bug.cgi?id=100343
+
+        Reviewed by Sam Weinig.
+
+        * accessibility/file-upload-button-with-axpress-expected.txt: Added.
+        * accessibility/file-upload-button-with-axpress.html: Added.
+
 2012-11-25  Kent Tamura  <tkent@chromium.org>
 
         [Chromium] Fix svn:mime-type for images

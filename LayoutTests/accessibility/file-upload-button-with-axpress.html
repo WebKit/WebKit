@@ -1,0 +1,32 @@
+<!DOCTYPE HTML>
+<html>
+<body>
+<script src="../fast/js/resources/js-test-pre.js"></script>
+
+<input id="filetype" type="file">
+
+<div id="description"></div>
+<div id="console"></div>
+
+<script>
+
+description("This tests that when AXPress is used DOMActivate will be handled by the input file type.")
+
+if (window.testRunner && window.accessibilityController) {
+    window.testRunner.waitUntilDone();
+    
+    var inputFile = document.getElementById("filetype");
+
+    inputFile.addEventListener("DOMActivate", function() { 
+        debug("DOMActivate was called"); 
+        window.testRunner.notifyDone(); 
+    });
+
+    accessibilityController.accessibleElementById("filetype").press();
+}
+
+</script>
+
+<script src="../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

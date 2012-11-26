@@ -1,3 +1,20 @@
+2012-11-25  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: file upload input cannot be activated with VoiceOver
+        https://bugs.webkit.org/show_bug.cgi?id=100343
+
+        Reviewed by Sam Weinig.
+
+        Simulated events were not allowed to be processed in the file input type in the DOMActivate handler.
+        This was a problem for accessibility clients which rely on simulated events.
+
+        The solution is to mark the UserGestureIndicator as definitely processing an event.
+
+        Test: accessibility/file-upload-button-with-axpress.html
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::press):
+
 2012-11-25  Nikita Vasilyev  <me@elv1s.ru>
 
         Web Inspector: dispatch an event upon heap snapshot filter change
