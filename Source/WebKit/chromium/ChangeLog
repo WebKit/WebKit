@@ -1,3 +1,17 @@
+2012-11-26  Scott Violet  <sky@chromium.org>
+
+        [chromium] Make use_default_render_theme compile the right set of files
+        https://bugs.webkit.org/show_bug.cgi?id=102952
+
+        Reviewed by Kent Tamura.
+
+        * WebKit.gyp: Adds WebRenderTheme.* and updates rules as to when to compile them.
+        * features.gypi: Removes use_default_render_theme default values as common.gypi sets them.
+        * public/default: Added.
+        * public/default/WebRenderTheme.h: Copy of linux/WebRenderTheme.h
+        * src/default: Added.
+        * src/default/WebRenderTheme.cpp: Copy of linux/WebRenderTheme.cpp
+
 2012-11-24  Silvia Pfeiffer  <silviapf@chromium.org>
 
         [chromium] Remove traces of MediaControlRootElement
