@@ -27,7 +27,6 @@
 
 #include <QApplication>
 #include <QLineEdit>
-#include <QMacStyle>
 #include <QPainter>
 #include <QPushButton>
 #include <QStyleFactory>
@@ -221,7 +220,7 @@ void QStyleFacadeImp::getButtonMetrics(QString *buttonFontFamily, int *buttonFon
     QFont defaultButtonFont = QApplication::font(&button);
     *buttonFontFamily = defaultButtonFont.family();
     *buttonFontPixelSize = 0;
-#ifdef Q_WS_MAC
+#ifdef Q_OS_MAC
     button.setAttribute(Qt::WA_MacSmallSize);
     QFontInfo fontInfo(defaultButtonFont);
     *buttonFontPixelSize = fontInfo.pixelSize();
@@ -275,11 +274,11 @@ void QStyleFacadeImp::paintComboBox(QPainter *painter, const QStyleFacadeOption 
 
     IntRect rect = opt.rect;
 
-#if defined(Q_WS_MAC) && !defined(QT_NO_STYLE_MAC)
+#if defined(Q_OS_MAC) && !defined(QT_NO_STYLE_MAC)
     // QMacStyle makes the combo boxes a little bit smaller to leave space for the focus rect.
     // Because of it, the combo button is drawn at a point to the left of where it was expect to be and may end up
     // overlapped with the text. This will force QMacStyle to draw the combo box with the expected width.
-    if (qobject_cast<QMacStyle*>(m_style))
+    if (m_style->inherits("QMacStyle"))
         rect.inflateX(3);
 #endif
 
@@ -359,11 +358,11 @@ void QStyleFacadeImp::paintInnerSpinButton(QPainter* painter, const QStyleFacade
     // Default to moving the buttons a little bit within the editor frame.
     int inflateX = -2;
     int inflateY = -2;
-#if defined(Q_WS_MAC) && !defined(QT_NO_STYLE_MAC)
+#if defined(Q_OS_MAC) && !defined(QT_NO_STYLE_MAC)
     // QMacStyle will position the aqua buttons flush to the right.
     // This will move them more within the control for better style, a la
     // Chromium look & feel.
-    if (qobject_cast<QMacStyle*>(m_style)) {
+    if (m_style->inherits("QMacStyle")) {
         inflateX = -4;
         // Render mini aqua spin buttons for QMacStyle to fit nicely into
         // the editor area, like Chromium.
@@ -451,10 +450,10 @@ void QStyleFacadeImp::paintScrollBar(QPainter *painter, const QStyleFacadeOption
 
     MappedStyleOption<QStyleOptionSlider> opt(widget, proxyOption);
 
-#ifdef Q_WS_MAC
+#ifdef Q_OS_MAC
     // FIXME: We also need to check the widget style but today ScrollbarTheme is not aware of the page so we
     // can't get the widget.
-    if (qobject_cast<QMacStyle*>(m_style))
+    if (m_style->inherits("QMacStyle"))
         m_style->drawComplexControl(QStyle::CC_ScrollBar, &opt, painter, widget);
     else
 #endif
