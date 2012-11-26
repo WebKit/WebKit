@@ -1747,6 +1747,10 @@ fast/writing-mode/vertical-subst-font-vert-no-dflt.html
 # https://bugs.webkit.org/show_bug.cgi?id=98751
 fast/xmlhttprequest/xmlhttprequest-nonexistent-file.html
 
+# [Qt] new fast/backgrounds/background-opaque-images-over-color.html fails since r135629
+# https://bugs.webkit.org/show_bug.cgi?id=103227
+fast/backgrounds/background-opaque-images-over-color.html
+
 # ============================================================================= #
 # failing security tests
 # ============================================================================= #
