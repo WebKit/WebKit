@@ -3190,7 +3190,7 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
             m_style->resetColumnRule();
         return;
     case CSSPropertyWebkitMarquee:
-        if (!m_parentNode || !value->isInheritedValue())
+        if (!isInherit)
             return;
         m_style->setMarqueeDirection(m_parentStyle->marqueeDirection());
         m_style->setMarqueeIncrement(m_parentStyle->marqueeIncrement());
