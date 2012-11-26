@@ -1,3 +1,11 @@
+2012-11-26  Robert Kroeger  <rjkroege@chromium.org>
+
+        Unreviewd Gardening: updated TestExpecations for additional failures in
+        media/video-preload.html
+        https://bugs.webkit.org/show_bug.cgi?id=103093
+
+        * platform/chromium/TestExpectations:
+
 2012-11-26  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: object preview does not render node id, className; logs too many functions for jQuery.
