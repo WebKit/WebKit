@@ -1,3 +1,9 @@
+2012-11-26  Alexander Pavlov  <apavlov@chromium.org>
+
+        [Chromium] Unreviewed, mark platform/chromium/fast/forms/calendar-picker/week-picker-key-operations.html as flaky (date-dependent).
+
+        * platform/chromium/TestExpectations:
+
 2012-11-26  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening.
