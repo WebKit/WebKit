@@ -1,3 +1,11 @@
+2012-11-26  Robert Kroeger  <rjkroege@chromium.org>
+
+        Unreviewed gardening: updated TextExpecations for failing
+        fast/dom/shadow/shadow-dom-event-dispatching.html
+        https://bugs.webkit.org/show_bug.cgi?id=103299
+
+        * platform/chromium/TestExpectations:
+
 2012-11-26  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed. Skip fast/dom/Window/open-window-min-size.html on Windows.
