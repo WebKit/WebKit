@@ -1,3 +1,15 @@
+2012-11-26  Jaehun Lim  <ljaehun.lim@samsung.com>
+
+        Text Autosizing: Add Text Autosizing APIs for WK2
+        https://bugs.webkit.org/show_bug.cgi?id=100633
+
+        Reviewed by Sam Weinig.
+
+        Add test cases for Text Autosizing in WKPreferences.
+
+        * TestWebKitAPI/Tests/WebKit2/WKPreferences.cpp:
+        (TestWebKitAPI::TEST):
+
 2012-11-26  Pierre Rossi  <pierre.rossi@gmail.com>
 
         [Qt] REGRESSION(r135575): It made all tests assert

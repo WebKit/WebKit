@@ -224,6 +224,10 @@ WK_EXPORT bool WKPreferencesGetPlugInSnapshottingEnabled(WKPreferencesRef prefer
 WK_EXPORT void WKPreferencesSetEncodingDetectorEnabled(WKPreferencesRef preferencesRef, bool enabled);
 WK_EXPORT bool WKPreferencesGetEncodingDetectorEnabled(WKPreferencesRef preferencesRef);
 
+// Defaults to false.
+WK_EXPORT void WKPreferencesSetTextAutosizingEnabled(WKPreferencesRef preferences, bool textAutosizingEnabled);
+WK_EXPORT bool WKPreferencesGetTextAutosizingEnabled(WKPreferencesRef preferences);
+
 #ifdef __cplusplus
 }
 #endif

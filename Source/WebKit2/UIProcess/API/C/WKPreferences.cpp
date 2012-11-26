@@ -953,3 +953,14 @@ bool WKPreferencesGetEncodingDetectorEnabled(WKPreferencesRef preferencesRef)
 {
     return toImpl(preferencesRef)->usesEncodingDetector();
 }
+
+void WKPreferencesSetTextAutosizingEnabled(WKPreferencesRef preferencesRef, bool textAutosizingEnabled)
+{
+    toImpl(preferencesRef)->setTextAutosizingEnabled(textAutosizingEnabled);
+}
+
+bool WKPreferencesGetTextAutosizingEnabled(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->textAutosizingEnabled();
+}
+

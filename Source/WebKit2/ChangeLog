@@ -1,3 +1,24 @@
+2012-11-26  Jaehun Lim  <ljaehun.lim@samsung.com>
+
+        Text Autosizing: Add Text Autosizing APIs for WK2
+        https://bugs.webkit.org/show_bug.cgi?id=100633
+
+        Reviewed by Sam Weinig.
+
+        Implement basic Text Autosizing APIs for WK2.
+        Text Autosizing is a useful feature for mobile browsers. It adjusts the font size
+        of text in wide columns, and makes text more legible.
+        This patch adds setting APIs for Text Autosizing in WK2.
+
+        * Shared/WebPreferencesStore.h:
+        (WebKit):
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetTextAutosizingEnabled):
+        (WKPreferencesGetTextAutosizingEnabled):
+        * UIProcess/API/C/WKPreferences.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+
 2012-11-26  Pierre Rossi  <pierre.rossi@gmail.com>
 
         [Qt] REGRESSION(r135575): It made all tests assert

@@ -2293,6 +2293,10 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
     settings->setPlugInSnapshottingEnabled(store.getBoolValueForKey(WebPreferencesKey::plugInSnapshottingEnabledKey()));
     settings->setUsesEncodingDetector(store.getBoolValueForKey(WebPreferencesKey::usesEncodingDetectorKey()));
 
+#if ENABLE(TEXT_AUTOSIZING)
+    settings->setTextAutosizingEnabled(store.getBoolValueForKey(WebPreferencesKey::textAutosizingEnabledKey()));
+#endif
+
     platformPreferencesDidChange(store);
 
     if (m_drawingArea)
