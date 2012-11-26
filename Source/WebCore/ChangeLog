@@ -1,3 +1,18 @@
+2012-11-24 Genevieve Mak <gmak@rim.com>
+
+        [BlackBerry] Stop sending touch events to plugins.
+        https://bugs.webkit.org/show_bug.cgi?id=103188
+
+        Reviewed by Rob Buis.
+
+        Reviewed internally by Jeff Rogers and Mike Lattanzio.
+        No tests required.
+        PR #248605
+
+        * plugins/blackberry/PluginViewBlackBerry.cpp:
+        (WebCore::PluginView::handleTouchEvent):
+        (WebCore::PluginView::handleMouseEvent):
+
 2012-11-26  Adenilson Cavalcanti  <cavalcantii@gmail.com>
 
         Removing unnecessary friend classes in RenderObject: LayoutRepainter, RenderSVGContainer
