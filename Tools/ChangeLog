@@ -1,3 +1,16 @@
+2012-11-26  Zan Dobersek  <zandobersek@gmail.com>
+
+        Coverage testing in webkitpy should omit some paths
+        https://bugs.webkit.org/show_bug.cgi?id=103267
+
+        Reviewed by Dirk Pranke.
+
+        Omit testing coverage of any file under /usr directory and any file
+        that is of third party origin and was autoinstalled.
+
+        * Scripts/webkitpy/test/main.py:
+        (Tester._run_tests):
+
 2012-11-26  Jaehun Lim  <ljaehun.lim@samsung.com>
 
         Text Autosizing: Add Text Autosizing APIs for WK2
