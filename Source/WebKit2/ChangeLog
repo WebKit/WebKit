@@ -1,3 +1,21 @@
+2012-11-26  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL][WK2] Add setting to enable / disable HTML5 local storage functionality
+        https://bugs.webkit.org/show_bug.cgi?id=103224
+
+        Reviewed by Laszlo Gombos.
+
+        Add API to ewk_settings to enable / disable the HTML5
+        local storage functionality. The functionality is
+        enabled by default.
+
+        * UIProcess/API/efl/ewk_settings.cpp:
+        (ewk_settings_local_storage_enabled_set):
+        (ewk_settings_local_storage_enabled_get):
+        * UIProcess/API/efl/ewk_settings.h:
+        * UIProcess/API/efl/tests/test_ewk2_settings.cpp:
+        (TEST_F): Add API test for ewk_settings_local_storage_enabled_get / set.
+
 2012-11-26  Rafael Brandao  <rafael.lobo@openbossa.org>
 
         [CoordinatedGraphics] Access to LayerTreeRenderer::m_renderQueue should be thread safe

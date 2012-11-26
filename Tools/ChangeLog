@@ -1,3 +1,18 @@
+2012-11-26  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL][WK2] Add setting to enable / disable HTML5 local storage functionality
+        https://bugs.webkit.org/show_bug.cgi?id=103224
+
+        Reviewed by Laszlo Gombos.
+
+        Add --local-storage command line argument to MiniBrowser to
+        explicitely disable HTML5 local storage functionality. This
+        is useful for testing purposes.
+
+        * MiniBrowser/efl/main.c:
+        (window_create):
+        (elm_main):
+
 2012-11-26  Zan Dobersek  <zandobersek@gmail.com>
 
         Remove use of deprecated logging from most of webkitpy.tool

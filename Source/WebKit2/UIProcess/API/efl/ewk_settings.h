@@ -391,6 +391,39 @@ EAPI Eina_Bool ewk_settings_scripts_can_open_windows_set(Ewk_Settings *settings,
  */
 EAPI Eina_Bool ewk_settings_scripts_can_open_windows_get(const Ewk_Settings *settings);
 
+/**
+ * Enables/disables the HTML5 local storage functionality.
+ *
+ * Local storage provides simple synchronous storage access.
+ * HTML5 local storage specification is available at
+ * http://dev.w3.org/html5/webstorage/.
+ *
+ * By default, the HTML5 local storage is enabled.
+ *
+ * @param settings settings object to set the HTML5 local storage state
+ * @param enable @c EINA_TRUE to enable HTML5 local storage,
+ *        @c EINA_FALSE to disable
+ *
+ * @return @c EINA_TRUE on success or @c EINA_FALSE on failure
+ */
+EAPI Eina_Bool ewk_settings_local_storage_enabled_set(Ewk_Settings *settings, Eina_Bool enable);
+
+/**
+ * Returns whether the HTML5 local storage functionality is enabled or not.
+ *
+ * Local storage provides simple synchronous storage access.
+ * HTML5 local storage specification is available at
+ * http://dev.w3.org/html5/webstorage/.
+ *
+ * By default, the HTML5 local storage is enabled.
+ *
+ * @param settings settings object to query whether HTML5 local storage is enabled
+ *
+ * @return @c EINA_TRUE if the HTML5 local storage is enabled
+ *         @c EINA_FALSE if disabled or on failure
+ */
+EAPI Eina_Bool ewk_settings_local_storage_enabled_get(const Ewk_Settings *settings);
+
 #ifdef __cplusplus
 }
 #endif
