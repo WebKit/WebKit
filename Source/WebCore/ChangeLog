@@ -1,5 +1,18 @@
 2012-11-25  Nikita Vasilyev  <me@elv1s.ru>
 
+        Web Inspector: use native Element.prototype.normalize instead of custom defined Element.prototype.pruneEmptyTextNodes
+        https://bugs.webkit.org/show_bug.cgi?id=103205
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/DOMExtension.js:
+        * inspector/front-end/TextPrompt.js:
+        (WebInspector.TextPrompt.prototype.clearAutoComplete):
+        (WebInspector.TextPrompt.prototype._completionsReady):
+        (WebInspector.TextPrompt.prototype.applySuggestion):
+
+2012-11-25  Nikita Vasilyev  <me@elv1s.ru>
+
         Web Inspector: remove unused DOM methods
         https://bugs.webkit.org/show_bug.cgi?id=103204
 

@@ -183,17 +183,6 @@ Element.prototype.positionAt = function(x, y)
         this.style.removeProperty("top");
 }
 
-Element.prototype.pruneEmptyTextNodes = function()
-{
-    var sibling = this.firstChild;
-    while (sibling) {
-        var nextSibling = sibling.nextSibling;
-        if (sibling.nodeType === Node.TEXT_NODE && sibling.nodeValue === "")
-            this.removeChild(sibling);
-        sibling = nextSibling;
-    }
-}
-
 Element.prototype.isScrolledToBottom = function()
 {
     // This code works only for 0-width border

@@ -327,7 +327,7 @@ WebInspector.TextPrompt.prototype = {
             return;
 
         this._userEnteredRange.deleteContents();
-        this._element.pruneEmptyTextNodes();
+        this._element.normalize();
 
         var userTextNode = document.createTextNode(this._userEnteredText);
         this._userEnteredRange.insertNode(userTextNode);
@@ -500,7 +500,7 @@ WebInspector.TextPrompt.prototype = {
         if (auto) {
             if (this.isCaretAtEndOfPrompt()) {
                 this._userEnteredRange.deleteContents();
-                this._element.pruneEmptyTextNodes();
+                this._element.normalize();
                 var finalSelectionRange = document.createRange();
                 var prefixText = completionText.substring(0, wordPrefixLength);
                 var suffixText = completionText.substring(wordPrefixLength);
@@ -549,7 +549,7 @@ WebInspector.TextPrompt.prototype = {
             wordPrefixLength = this._userEnteredText ? this._userEnteredText.length : 0;
 
         this._userEnteredRange.deleteContents();
-        this._element.pruneEmptyTextNodes();
+        this._element.normalize();
         var finalSelectionRange = document.createRange();
         var completionTextNode = document.createTextNode(completionText);
         this._userEnteredRange.insertNode(completionTextNode);
