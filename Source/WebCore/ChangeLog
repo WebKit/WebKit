@@ -1,3 +1,20 @@
+2012-11-26  Alex Christensen  <alex.christensen@flexsim.com>
+
+        clipboardwin compile error for win64
+        https://bugs.webkit.org/show_bug.cgi?id=94124
+
+        Reviewed by Brent Fulgham.
+
+        The clipboard utilities code uses std::min with one unsigned int parameter and one size_t parameter.
+        This causes a problem when compiling for 64-bit Windows because the two types are not the same size.
+        To resolve this issue, we specify the template type as the type the return value is being cast into
+
+        Fixed a few compile errors for Windows x64 by specifying template parameters.
+
+        * platform/win/ClipboardUtilitiesWin.cpp:
+        (WebCore::setFileDescriptorData): Specify the types for the std::min macro to avoid compiler errors
+        under 64-bit builds.
+
 2012-11-26  Arnaud Renevier  <a.renevier@sisa.samsung.com>
 
         [GTK] GtkSocket is leaked until webview is destroyed.
