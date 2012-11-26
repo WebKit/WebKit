@@ -1,3 +1,12 @@
+2012-11-26  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. Skipping some compositing/tiling tests on Windows because tiled backing is not supported.
+        Tests skipped:
+        compositing/tiling/rotated-tiled-preserve3d-clamped.html
+        compositing/tiling/rotated-tiled-clamped.html
+
+        * platform/win/TestExpectations:
+
 2012-11-26  Robert Kroeger  <rjkroege@chromium.org>
 
         Unreviewed gardening: css3/filters/custom/custom-filter-transforms-animation.html

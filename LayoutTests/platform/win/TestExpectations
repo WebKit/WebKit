@@ -2435,6 +2435,10 @@ fast/css3-text/css3-text-align-last/getComputedStyle/getComputedStyle-text-align
 fast/css3-text/css3-text-align-last/getComputedStyle/getComputedStyle-text-align-last.html
 fast/css3-text/css3-text-decoration/getComputedStyle/getComputedStyle-text-decoration-line.html
 
-#ACCELERATED_OVERFLOW_SCROLLING is disabled on Windows
+# ACCELERATED_OVERFLOW_SCROLLING is disabled on Windows
 compositing/overflow/scrolling-without-painting.html
 compositing/overflow/updating-scrolling-content.html
+
+# Skip some compositing/tiling tests after r133056
+compositing/tiling/rotated-tiled-preserve3d-clamped.html
+compositing/tiling/rotated-tiled-clamped.html
