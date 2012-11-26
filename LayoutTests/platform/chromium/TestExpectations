@@ -3868,7 +3868,7 @@ crbug.com/145590 [ Android ] http/tests/media/media-source/video-media-source-pl
 crbug.com/145590 [ Android ] http/tests/media/media-source/video-media-source-seek.html [ Failure ]
 crbug.com/145590 [ Android ] http/tests/media/media-source/video-media-source-sourcebufferlist-crash.html [ Timeout ]
 crbug.com/145590 [ Android ] http/tests/media/media-source/video-media-source-state-changes.html [ Failure ]
-crbug.com/145590 [ Android ] http/tests/media/pdf-served-as-pdf.html [ Failure ]
+crbug.com/145590 [ Android Mac Win Linux ] http/tests/media/pdf-served-as-pdf.html [ Failure Pass Crash Timeout ]
 crbug.com/145590 [ Android ] http/tests/media/text-served-as-text.html [ Failure ]
 crbug.com/145590 [ Android ] http/tests/media/video-error-abort.html [ Failure ]
 crbug.com/145590 [ Android ] http/tests/media/video-load-suspend.html [ Timeout ]
