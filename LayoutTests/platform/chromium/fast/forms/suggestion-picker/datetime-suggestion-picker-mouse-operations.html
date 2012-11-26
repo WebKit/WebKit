@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../../../fast/js/resources/js-test-pre.js"></script>
+<script src="../../../../../fast/forms/resources/common.js"></script>
+<script src="../../../../../fast/forms/resources/common-wheel-event.js"></script>
+<script src="../../../../../fast/forms/resources/picker-common.js"></script>
+<script src="resources/suggestion-picker-common.js"></script>
+</head>
+<body style="background-color: #bbbbbb;">
+<p id="description"></p>
+<div id="console"></div>
+<input type=datetime id=datetime value="2012-11-22T01:00Z" list=suggestions>
+<datalist id=suggestions>
+    <option label="Now">2012-11-22T01:01Z</option>
+    <option>2012-11-22T01:02Z</option>
+    <option>2012-11-22T01:03Z</option>
+    <option>2012-11-22T01:04Z</option>
+    <option>2012-11-22T01:05Z</option>
+    <option>2012-11-22T01:06Z</option>
+    <option>2012-11-22T01:07Z</option>
+    <option>2012-11-22T01:08Z</option>
+    <option>2012-11-22T01:09Z</option>
+    <option>2012-11-22T01:10Z</option>
+    <option>2012-11-22T01:11Z</option>
+    <option>2012-11-22T01:12Z</option>
+    <option>2012-11-22T01:13Z</option>
+    <option>2012-11-22T01:14Z</option>
+    <option>2012-11-22T01:15Z</option>
+    <option>2012-11-22T01:16Z</option>
+    <option>2012-11-22T01:17Z</option>
+    <option>2012-11-22T01:18Z</option>
+    <option>2012-11-22T01:19Z</option>
+    <option>2012-11-22T01:20Z</option>
+    <option>2012-11-22T01:21Z</option>
+</datalist>
+<script>
+debug('Check that page popup doesn\'t exist at first.');
+shouldBeNull('$("mock-page-popup")');
+
+window.onload = function() {
+    openPicker($('datetime'), test1);
+};
+
+
+function test1() {
+    debug('Check that page popup exists.');
+    shouldBeEqualToString('popupWindow.pagePopupController.toString()', '[object PagePopupController]');
+
+    debug('Check that hovering over an entry highlights it.');
+    hoverOverElement(popupWindow.document.querySelector('.suggestion-list-entry:nth-child(2)'));
+    shouldBeEqualToString('highlightedEntry()', '2012-11-22T01:02Z');
+
+    debug('Check that moving the mouse outside the popup de-highlights entries.');
+    hoverOverElement(document.getElementById('description'));
+    shouldBeNull('highlightedEntry()');
+
+    debug('Check that mouse click closes the popup and sets the value.');
+    clickElement(popupWindow.document.querySelector('.suggestion-list-entry:nth-child(3)'));
+    waitUntilClosing(test1AfterClosing);
+}
+
+function test1AfterClosing() {
+    shouldBeNull('document.getElementById("mock-page-popup")');
+    shouldBeEqualToString('document.getElementById("datetime").value', '2012-11-22T01:03Z');
+
+    openPicker($('datetime'), test2);
+}
+
+var scrollTopBeforeWheelEvent = 0;
+var scrollTopAfterWheelEvent = 0;
+
+function test2() {
+    var suggestionList = popupWindow.document.getElementsByClassName('suggestion-list')[0];
+
+    debug('Check that you can scroll using the mouse wheel.');
+
+    scrollTopBeforeWheelEvent = suggestionList.scrollTop;
+    dispatchWheelEvent(suggestionList, 0, -100);
+    scrollTopAfterWheelEvent = suggestionList.scrollTop;
+    shouldBeTrue('scrollTopBeforeWheelEvent < scrollTopAfterWheelEvent');
+
+    scrollTopBeforeWheelEvent = suggestionList.scrollTop;
+    dispatchWheelEvent(suggestionList, 0, 100);
+    scrollTopAfterWheelEvent = suggestionList.scrollTop;
+    shouldBeTrue('scrollTopBeforeWheelEvent > scrollTopAfterWheelEvent');
+
+    popupWindow.focus();
+    eventSender.keyDown('\x1B');
+    waitUntilClosing(test2AfterClosing);
+}
+
+function test2AfterClosing() {
+    shouldBeNull('$("mock-page-popup")');
+
+    openPicker($('datetime'), test3);
+}
+
+function test3() {
+    debug('Check that you can scroll using the scroll bar.');
+
+    var suggestionList = popupWindow.document.getElementsByClassName('suggestion-list')[0];
+    var suggestionListOffset = cumulativeOffset(suggestionList);
+    var scrollbarCenterX = suggestionListOffset[0] + suggestionList.offsetWidth - popupWindow.getScrollbarWidth() / 2;
+
+    scrollTopBeforeWheelEvent = suggestionList.scrollTop;
+    eventSender.mouseMoveTo(scrollbarCenterX, suggestionListOffset[1] + 20); // 20 is the height of the up arrow button plus a few pixels
+    eventSender.mouseDown();
+    eventSender.mouseMoveTo(scrollbarCenterX, suggestionListOffset[1] + suggestionList.offsetHeight);
+    eventSender.mouseUp();
+    scrollTopAfterWheelEvent = suggestionList.scrollTop;
+    shouldBeTrue('scrollTopBeforeWheelEvent < scrollTopAfterWheelEvent');
+
+    finishJSTest();
+}
+
+</script>
+<script src="../../../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

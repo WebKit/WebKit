@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../../../fast/js/resources/js-test-pre.js"></script>
+<script src="../../../../../fast/forms/resources/picker-common.js"></script>
+<script src="resources/suggestion-picker-common.js"></script>
+</head>
+<body style="background-color: #bbbbbb;">
+<p id="description"></p>
+<div id="console"></div>
+<input type=datetime id=datetime value="2012-11-22T00:00Z" step="3600" list=suggestions>
+<datalist id=suggestions>
+    <option>2012-11-22T01:00Z</option>
+    <option>2012-11-22T01:00:01Z</option>
+    <option>2012-11-22T01:00:01.001Z</option>
+    <option>2012-11-22T01:00:01.010Z</option>
+    <option>2012-11-22T01:01Z</option>
+    <option>2012-11-22T02:00Z</option>
+    <option>2012-11-22T02:01Z</option>
+</datalist>
+<script>
+description('Tests that step attribute filter out suggestions as expected.');
+
+debug('Check that page popup doesn\'t exist at first.');
+shouldBeNull('document.getElementById("mock-page-popup")');
+
+var datetimeElement = document.getElementById('datetime');
+
+window.onload = function() {
+    openPicker(datetimeElement, test1);
+};
+
+function test1() {
+    popupWindow.focus();
+
+    shouldBe('entryValues().length', '3');
+    shouldBeEqualToString('entryValues()[0]', '2012-11-22T01:00Z');
+    shouldBeEqualToString('entryValues()[1]', '2012-11-22T02:00Z');
+    shouldBeEqualToString('entryValues()[2]', '@openCalendarPicker');
+
+    eventSender.keyDown('\x1B'); // Close picker.
+    waitUntilClosing(test1AfterClosing);
+}
+
+function test1AfterClosing() {
+    datetimeElement.step = 60;
+    openPicker(datetimeElement, test2);
+}
+
+function test2() {
+    popupWindow.focus();
+
+    shouldBe('entryValues().length', '5');
+    shouldBeEqualToString('entryValues()[0]', '2012-11-22T01:00Z');
+    shouldBeEqualToString('entryValues()[1]', '2012-11-22T01:01Z');
+    shouldBeEqualToString('entryValues()[2]', '2012-11-22T02:00Z');
+    shouldBeEqualToString('entryValues()[3]', '2012-11-22T02:01Z');
+    shouldBeEqualToString('entryValues()[4]', '@openCalendarPicker');
+
+    eventSender.keyDown('\x1B'); // Close picker.
+    waitUntilClosing(test2AfterClosing);
+}
+
+function test2AfterClosing() {
+    datetimeElement.step = 1;
+    openPicker(datetimeElement, test3);
+}
+
+function test3() {
+    popupWindow.focus();
+
+    shouldBe('entryValues().length', '6');
+    shouldBeEqualToString('entryValues()[0]', '2012-11-22T01:00Z');
+    shouldBeEqualToString('entryValues()[1]', '2012-11-22T01:00:01Z');
+    shouldBeEqualToString('entryValues()[2]', '2012-11-22T01:01Z');
+    shouldBeEqualToString('entryValues()[3]', '2012-11-22T02:00Z');
+    shouldBeEqualToString('entryValues()[4]', '2012-11-22T02:01Z');
+    shouldBeEqualToString('entryValues()[5]', '@openCalendarPicker');
+
+    eventSender.keyDown('\x1B'); // Close picker.
+    waitUntilClosing(test3AfterClosing);
+}
+
+function test3AfterClosing() {
+    datetimeElement.step = 0.001;
+    openPicker(datetimeElement, test4);
+}
+
+function test4() {
+    popupWindow.focus();
+
+    shouldBe('entryValues().length', '8');
+    shouldBeEqualToString('entryValues()[0]', '2012-11-22T01:00Z');
+    shouldBeEqualToString('entryValues()[1]', '2012-11-22T01:00:01Z');
+    shouldBeEqualToString('entryValues()[2]', '2012-11-22T01:00:01.001Z');
+    shouldBeEqualToString('entryValues()[3]', '2012-11-22T01:00:01.010Z');
+    shouldBeEqualToString('entryValues()[4]', '2012-11-22T01:01Z');
+    shouldBeEqualToString('entryValues()[5]', '2012-11-22T02:00Z');
+    shouldBeEqualToString('entryValues()[6]', '2012-11-22T02:01Z');
+    shouldBeEqualToString('entryValues()[7]', '@openCalendarPicker');
+
+    finishJSTest();
+}
+
+</script>
+<script src="../../../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

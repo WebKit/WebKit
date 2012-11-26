@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+window.enablePixelTesting = true;
+</script>
+<script src="../../../../../fast/js/resources/js-test-pre.js"></script>
+<script src="../../../../../fast/forms/resources/picker-common.js"></script>
+<script src="resources/suggestion-picker-common.js"></script>
+</head>
+<body style="background-color: #eeffff;">
+<input type=datetime id=datetime value="10000-12-31T23:59Z" list="suggestions" style="width: 300px;" step="0.001">
+<datalist id=suggestions>
+    <option>2012-11-31T00:00Z</option> <!--invalid-->
+    <option>2012-11-31</option> <!--invalid-->
+    <option>foo</option> <!--invalid-->
+    <option label="Today">2012-11-22T12:00Z</option>
+    <option label="Tomorrow">2012-11-23T12:00Z</option>
+    <option>2012-11-22T01:23Z</option>
+    <option>2012-11-22T01:23:45Z</option>
+    <option>2012-11-22T01:23:45.678Z</option>
+    <option>2012-11-22T01:06Z</option>
+    <option>2012-11-22T01:07Z</option>
+    <option>2012-11-22T01:08Z</option>
+    <option>2012-11-22T01:09Z</option>
+    <option>2012-11-22T01:10Z</option>
+    <option>2012-11-22T01:11Z</option>
+    <option>2012-11-22T01:12Z</option>
+    <option>2012-11-22T01:13Z</option>
+    <option>2012-11-22T01:14Z</option>
+    <option>2012-11-22T01:15Z</option>
+    <option>2012-11-22T01:16Z</option>
+    <option>2012-11-22T01:17Z</option>
+    <option>2012-11-22T01:18Z</option>
+    <option>2012-11-22T01:19Z</option>
+</datalist>
+
+<p id="description" style="opacity: 0"></p>
+<div id="console" style="opacity: 0"></div>
+
+<script>
+openPicker(document.getElementById('datetime'), finishTest);
+
+function finishTest() {
+    popupWindow.focus();
+    eventSender.keyDown('downArrow');
+    finishJSTest();
+}
+</script>
+<script src="../../../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

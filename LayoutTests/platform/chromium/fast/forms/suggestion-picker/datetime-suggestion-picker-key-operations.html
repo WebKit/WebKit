@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../../../fast/js/resources/js-test-pre.js"></script>
+<script src="../../../../../fast/forms/resources/picker-common.js"></script>
+<script src="resources/suggestion-picker-common.js"></script>
+</head>
+<body style="background-color: #bbbbbb;">
+<p id="description"></p>
+<div id="console"></div>
+<input type=datetime id=datetime value="2012-11-22T01:00Z" list=suggestions>
+<datalist id=suggestions>
+    <option label="Now">2012-11-22T01:01Z</option>
+    <option>2012-11-22T01:02Z</option>
+    <option>2012-11-22T01:03Z</option>
+    <option>2012-11-22T01:04Z</option>
+    <option>2012-11-22T01:05Z</option>
+    <option>2012-11-22T01:06Z</option>
+    <option>2012-11-22T01:07Z</option>
+    <option>2012-11-22T01:08Z</option>
+    <option>2012-11-22T01:09Z</option>
+    <option>2012-11-22T01:10Z</option>
+    <option>2012-11-22T01:11Z</option>
+    <option>2012-11-22T01:12Z</option>
+    <option>2012-11-22T01:13Z</option>
+    <option>2012-11-22T01:14Z</option>
+    <option>2012-11-22T01:15Z</option>
+    <option>2012-11-22T01:16Z</option>
+    <option>2012-11-22T01:17Z</option>
+    <option>2012-11-22T01:18Z</option>
+    <option>2012-11-22T01:19Z</option>
+    <option>2012-11-22T01:20Z</option>
+    <option>2012-11-22T01:21Z</option>
+    <option>2012-11-22T01:22Z</option>
+    <option>2012-11-22T01:23Z</option>
+    <option>2012-11-22T01:24Z</option>
+    <option>2012-11-22T01:25Z</option>
+    <option>2012-11-22T01:26Z</option>
+    <option>2012-11-22T01:27Z</option>
+    <option>2012-11-22T01:28Z</option>
+    <option>2012-11-22T01:29Z</option>
+    <option>2012-11-22T01:30Z</option>
+    <option>2012-11-22T01:31Z</option>
+    <option>2012-11-22T01:32Z</option>
+    <option>2012-11-22T01:33Z</option>
+    <option>2012-11-22T01:34Z</option>
+    <option>2012-11-22T01:35Z</option>
+    <option>2012-11-22T01:36Z</option>
+    <option>2012-11-22T01:37Z</option>
+    <option>2012-11-22T01:38Z</option>
+    <option>2012-11-22T01:39Z</option>
+    <option>2012-11-22T01:40Z</option>
+    <option>2012-11-22T01:41Z</option>
+    <option>2012-11-22T01:42Z</option>
+    <option>2012-11-22T01:43Z</option>
+    <option>2012-11-22T01:44Z</option>
+    <option>2012-11-22T01:45Z</option>
+    <option>2012-11-22T01:46Z</option>
+    <option>2012-11-22T01:47Z</option>
+    <option>2012-11-22T01:48Z</option>
+    <option>2012-11-22T01:49Z</option>
+    <option>2012-11-22T01:50Z</option>
+    <option>2012-11-22T01:51Z</option>
+    <option>2012-11-22T01:52Z</option>
+    <option>2012-11-22T01:53Z</option>
+    <option>2012-11-22T01:54Z</option>
+    <option>2012-11-22T01:55Z</option>
+    <option>2012-11-22T01:56Z</option>
+    <option>2012-11-22T01:57Z</option>
+    <option>2012-11-22T01:58Z</option>
+    <option>2012-11-22T01:59Z</option>
+    <option>2012-11-22T02:00Z</option>
+    <option>2012-11-22T02:01Z</option>
+    <option>2012-11-22T02:02Z</option>
+    <option>2012-11-22T02:03Z</option>
+    <option>2012-11-22T02:04Z</option>
+    <option>2012-11-22T02:05Z</option>
+    <option>2012-11-22T02:06Z</option>
+    <option>2012-11-22T02:07Z</option>
+</datalist>
+<script>
+debug('Check that page popup doesn\'t exist at first.');
+shouldBeNull('document.getElementById("mock-page-popup")');
+
+openPicker(document.getElementById('datetime'), test1);
+shouldBeEqualToString('popupWindow.pagePopupController.toString()', '[object PagePopupController]');
+
+function test1() {
+    debug('Check that page popup exists.');
+    shouldBeEqualToString('popupWindow.pagePopupController.toString()', '[object PagePopupController]');
+    popupWindow.focus();
+
+    popupWindow.removeEventListener('resize', test1, false);
+
+    debug('Check that up/down arrow keys work.');
+    shouldBeNull('highlightedEntry()');
+    eventSender.keyDown('downArrow');
+    shouldBeEqualToString('highlightedEntry()', '2012-11-22T01:01Z');
+    eventSender.keyDown('downArrow');
+    shouldBeEqualToString('highlightedEntry()', '2012-11-22T01:02Z');
+    eventSender.keyDown('upArrow');
+    shouldBeEqualToString('highlightedEntry()', '2012-11-22T01:01Z');
+
+    debug('Check that up arrow key at top of list does nothing.');
+    eventSender.keyDown('upArrow');
+    shouldBeEqualToString('highlightedEntry()', '2012-11-22T01:01Z');
+    eventSender.keyDown('downArrow');
+    shouldBeEqualToString('highlightedEntry()', '2012-11-22T01:02Z');
+
+    debug('Check that page up/down arrow keys work.');
+    eventSender.keyDown('pageDown');
+    shouldBeEqualToString('highlightedEntry()', '2012-11-22T01:40Z');
+    eventSender.keyDown('pageDown');
+    shouldBeEqualToString('highlightedEntry()', '2012-11-22T02:00Z');
+    eventSender.keyDown('pageUp');
+    shouldBeEqualToString('highlightedEntry()', '2012-11-22T01:21Z');
+    eventSender.keyDown('pageDown');
+    shouldBeEqualToString('highlightedEntry()', '2012-11-22T02:00Z');
+    eventSender.keyDown('pageDown');
+    shouldBeEqualToString('highlightedEntry()', '@openCalendarPicker');
+
+    debug('Check that down arrow key at bottom of list does nothing.');
+    eventSender.keyDown('downArrow');
+    shouldBeEqualToString('highlightedEntry()', '@openCalendarPicker');
+    
+    debug('Check that enter key sets the highlighted value.');
+    eventSender.keyDown('upArrow');
+    shouldBeEqualToString('highlightedEntry()', '2012-11-22T02:07Z');
+    eventSender.keyDown('\n');
+    waitUntilClosing(test1AfterClosing);
+}
+
+function test1AfterClosing() {
+    shouldBeNull('document.getElementById("mock-page-popup")');
+    shouldBeEqualToString('document.getElementById("datetime").value', '2012-11-22T02:07Z');
+
+    debug('Reopen popup.');
+    openPicker(document.getElementById('datetime'));
+    popupWindow.addEventListener('resize', test2, false);
+}
+
+function test2() {
+    popupWindow.removeEventListener('resize', test2, false);
+
+    popupWindow.focus();
+
+    debug('Check that escape key closes the popup.');
+    eventSender.keyDown('\x1B');
+    waitUntilClosing(test2AfterClosing);
+}
+
+function test2AfterClosing() {
+    shouldBeNull('document.getElementById("mock-page-popup")');
+    shouldBeEqualToString('document.getElementById("datetime").value', '2012-11-22T02:07Z');
+
+    sendKey(document.getElementById('datetime'), 'F4');
+    if (document.getElementById('mock-page-popup'))
+        testPassed('F4 opened picker.');
+
+    finishJSTest();
+}
+
+</script>
+<script src="../../../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

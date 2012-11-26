@@ -1,0 +1,34 @@
+Check that page popup doesn't exist at first.
+PASS document.getElementById("mock-page-popup") is null
+PASS popupWindow.pagePopupController.toString() is "[object PagePopupController]"
+Check that page popup exists.
+PASS popupWindow.pagePopupController.toString() is "[object PagePopupController]"
+Check that up/down arrow keys work.
+PASS highlightedEntry() is null
+PASS highlightedEntry() is "2012-11-22T01:01Z"
+PASS highlightedEntry() is "2012-11-22T01:02Z"
+PASS highlightedEntry() is "2012-11-22T01:01Z"
+Check that up arrow key at top of list does nothing.
+PASS highlightedEntry() is "2012-11-22T01:01Z"
+PASS highlightedEntry() is "2012-11-22T01:02Z"
+Check that page up/down arrow keys work.
+PASS highlightedEntry() is "2012-11-22T01:40Z"
+PASS highlightedEntry() is "2012-11-22T02:00Z"
+PASS highlightedEntry() is "2012-11-22T01:21Z"
+PASS highlightedEntry() is "2012-11-22T02:00Z"
+PASS highlightedEntry() is "@openCalendarPicker"
+Check that down arrow key at bottom of list does nothing.
+PASS highlightedEntry() is "@openCalendarPicker"
+Check that enter key sets the highlighted value.
+PASS highlightedEntry() is "2012-11-22T02:07Z"
+PASS document.getElementById("mock-page-popup") is null
+PASS document.getElementById("datetime").value is "2012-11-22T02:07Z"
+Reopen popup.
+Check that escape key closes the popup.
+PASS document.getElementById("mock-page-popup") is null
+PASS document.getElementById("datetime").value is "2012-11-22T02:07Z"
+PASS F4 opened picker.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ 

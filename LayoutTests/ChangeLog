@@ -1,3 +1,54 @@
+2012-11-25  Kunihiko Sakamoto  <ksakamoto@chromium.org>
+
+        [Chromium] Add tests for datetime/datetime-local suggestion picker
+        https://bugs.webkit.org/show_bug.cgi?id=102888
+
+        Reviewed by Kent Tamura.
+
+        Adding tests for <input type=datetime> and <input type=datetime-local> with datalist.
+
+        * platform/chromium-mac/platform/chromium/fast/forms/suggestion-picker/datetime-suggestion-picker-appearance-expected.png: Added.
+        * platform/chromium-mac/platform/chromium/fast/forms/suggestion-picker/datetime-suggestion-picker-appearance-rtl-expected.png: Added.
+        * platform/chromium-mac/platform/chromium/fast/forms/suggestion-picker/datetime-suggestion-picker-appearance-with-scroll-bar-expected.png: Added.
+        * platform/chromium-mac/platform/chromium/fast/forms/suggestion-picker/datetimelocal-suggestion-picker-appearance-expected.png: Added.
+        * platform/chromium-mac/platform/chromium/fast/forms/suggestion-picker/datetimelocal-suggestion-picker-appearance-rtl-expected.png: Added.
+        * platform/chromium-mac/platform/chromium/fast/forms/suggestion-picker/datetimelocal-suggestion-picker-appearance-with-scroll-bar-expected.png: Added.
+        * platform/chromium-win/platform/chromium/fast/forms/suggestion-picker/datetime-suggestion-picker-key-operations-expected.txt: Added.
+        * platform/chromium-win/platform/chromium/fast/forms/suggestion-picker/datetimelocal-suggestion-picker-key-operations-expected.txt: Added.
+        * platform/chromium/TestExpectations:
+        * platform/chromium/fast/forms/suggestion-picker/datetime-suggestion-picker-appearance-expected.txt: Added.
+        * platform/chromium/fast/forms/suggestion-picker/datetime-suggestion-picker-appearance-rtl-expected.txt: Added.
+        * platform/chromium/fast/forms/suggestion-picker/datetime-suggestion-picker-appearance-rtl.html: Added.
+        * platform/chromium/fast/forms/suggestion-picker/datetime-suggestion-picker-appearance-with-scroll-bar-expected.txt: Added.
+        * platform/chromium/fast/forms/suggestion-picker/datetime-suggestion-picker-appearance-with-scroll-bar.html: Added.
+        * platform/chromium/fast/forms/suggestion-picker/datetime-suggestion-picker-appearance.html: Added.
+        * platform/chromium/fast/forms/suggestion-picker/datetime-suggestion-picker-key-operations-expected.txt: Added.
+        * platform/chromium/fast/forms/suggestion-picker/datetime-suggestion-picker-key-operations.html: Added.
+        * platform/chromium/fast/forms/suggestion-picker/datetime-suggestion-picker-min-max-attribute-expected.txt: Added.
+        * platform/chromium/fast/forms/suggestion-picker/datetime-suggestion-picker-min-max-attribute.html: Added.
+        * platform/chromium/fast/forms/suggestion-picker/datetime-suggestion-picker-mouse-operations-expected.txt: Added.
+        * platform/chromium/fast/forms/suggestion-picker/datetime-suggestion-picker-mouse-operations.html: Added.
+        * platform/chromium/fast/forms/suggestion-picker/datetime-suggestion-picker-reset-value-after-reload-expected.txt: Added.
+        * platform/chromium/fast/forms/suggestion-picker/datetime-suggestion-picker-reset-value-after-reload.html: Added.
+        * platform/chromium/fast/forms/suggestion-picker/datetime-suggestion-picker-step-attribute-expected.txt: Added.
+        * platform/chromium/fast/forms/suggestion-picker/datetime-suggestion-picker-step-attribute.html: Added.
+        * platform/chromium/fast/forms/suggestion-picker/datetimelocal-suggestion-picker-appearance-expected.txt: Added.
+        * platform/chromium/fast/forms/suggestion-picker/datetimelocal-suggestion-picker-appearance-rtl-expected.txt: Added.
+        * platform/chromium/fast/forms/suggestion-picker/datetimelocal-suggestion-picker-appearance-rtl.html: Added.
+        * platform/chromium/fast/forms/suggestion-picker/datetimelocal-suggestion-picker-appearance-with-scroll-bar-expected.txt: Added.
+        * platform/chromium/fast/forms/suggestion-picker/datetimelocal-suggestion-picker-appearance-with-scroll-bar.html: Added.
+        * platform/chromium/fast/forms/suggestion-picker/datetimelocal-suggestion-picker-appearance.html: Added.
+        * platform/chromium/fast/forms/suggestion-picker/datetimelocal-suggestion-picker-key-operations-expected.txt: Added.
+        * platform/chromium/fast/forms/suggestion-picker/datetimelocal-suggestion-picker-key-operations.html: Added.
+        * platform/chromium/fast/forms/suggestion-picker/datetimelocal-suggestion-picker-min-max-attribute-expected.txt: Added.
+        * platform/chromium/fast/forms/suggestion-picker/datetimelocal-suggestion-picker-min-max-attribute.html: Added.
+        * platform/chromium/fast/forms/suggestion-picker/datetimelocal-suggestion-picker-mouse-operations-expected.txt: Added.
+        * platform/chromium/fast/forms/suggestion-picker/datetimelocal-suggestion-picker-mouse-operations.html: Added.
+        * platform/chromium/fast/forms/suggestion-picker/datetimelocal-suggestion-picker-reset-value-after-reload-expected.txt: Added.
+        * platform/chromium/fast/forms/suggestion-picker/datetimelocal-suggestion-picker-reset-value-after-reload.html: Added.
+        * platform/chromium/fast/forms/suggestion-picker/datetimelocal-suggestion-picker-step-attribute-expected.txt: Added.
+        * platform/chromium/fast/forms/suggestion-picker/datetimelocal-suggestion-picker-step-attribute.html: Added.
+
 2012-10-08  Robert Hogan  <robert@webkit.org>
 
         Changing position:relative to position:static results in mis-positioned div
