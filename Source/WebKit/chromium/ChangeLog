@@ -1,3 +1,14 @@
+2012-11-26  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r135743.
+        http://trac.webkit.org/changeset/135743
+        https://bugs.webkit.org/show_bug.cgi?id=103280
+
+        Caused compile failure 'SK_DISABLE_DITHER_32BIT_GRADIENT'
+        macro redefined (Requested by rjkroege on #webkit).
+
+        * skia_webkit.gyp:
+
 2012-11-26  Mike Reed  <reed@google.com>
 
         add SK_DISABLE_DITHER_32BIT_GRADIENT define, in preparation for rebaselining
