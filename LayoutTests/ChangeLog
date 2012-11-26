@@ -1,3 +1,25 @@
+2012-11-26  Michelangelo De Simone  <michelangelo@webkit.org>
+
+        [CSS Shaders] Add IDL file and bindings for mix function
+        https://bugs.webkit.org/show_bug.cgi?id=93011
+
+        Reviewed by Dean Jackson.
+
+        Test for the Custom Filter mix() function JS bindings.
+
+        * css3/filters/custom/custom-filter-mix-bindings-expected.txt: Added.
+        * css3/filters/custom/custom-filter-mix-bindings.html: Added.
+        * css3/filters/script-tests/custom-filter-mix-bindings.js: Added.
+        (jsWrapperClass):
+        (shouldBeType):
+        * platform/chromium/css3/filters/custom/custom-filter-mix-bindings-expected.txt: Added.
+        * platform/efl/fast/js/global-constructors-expected.txt: Updated with the new WebKitCSSMixFunctionValueConstructor.
+        * platform/gtk/fast/js/global-constructors-expected.txt: Ditto.
+        * platform/mac/fast/js/global-constructors-expected.txt: Ditto.
+        * platform/qt-5.0/fast/js/global-constructors-expected.txt: Ditto.
+        * platform/qt/fast/js/global-constructors-expected.txt: Ditto.
+        * platform/win/fast/js/global-constructors-expected.txt: Ditto.
+
 2012-11-26  Julien Chaffraix  <jchaffraix@webkit.org>
 
         RenderBox::computePercentageLogicalHeight should use containingBlockLogicalWidthForContent

@@ -487,6 +487,9 @@
 #include "JSWebKitCSSKeyframesRule.cpp"
 #include "JSWebKitCSSTransformValue.cpp"
 #include "JSWebKitCSSMatrix.cpp"
+#if ENABLE(CSS_SHADERS)
+#include "JSWebKitCSSMixFunctionValue.cpp"
+#endif
 #include "JSWebKitCSSRegionRule.cpp"
 #include "JSWebKitNamedFlow.cpp"
 #include "JSWebKitPoint.cpp"

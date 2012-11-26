@@ -1,3 +1,32 @@
+2012-11-26  Michelangelo De Simone  <michelangelo@webkit.org>
+
+        [CSS Shaders] Add IDL file and bindings for mix function
+        https://bugs.webkit.org/show_bug.cgi?id=93011
+
+        Reviewed by Dean Jackson.
+
+        JavaScript bindings have been added for the Custom Filter mix()
+        function (WebKitCSSMixFunctionValue). As of now, this is only a
+        placeholder that extends CSSValueList without adding any new
+        property.
+
+        Test: css3/filters/custom/custom-filter-mix-bindings.html
+
+        * CMakeLists.txt: mix() IDL has been added to the Generator;
+        DerivedSources have been included.
+        * DerivedSources.cpp: Ditto.
+        * DerivedSources.make: Ditto.
+        * DerivedSources.pri: Ditto.
+        * GNUmakefile.list.am: Ditto.
+        * WebCore.gypi: Ditto.
+        * WebCore.vcproj/WebCore.vcproj: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * bindings/js/JSCSSValueCustom.cpp:
+        (WebCore::toJS): return a JSC DOM wrapper for WebKitCSSMixFunctionValue.
+        * bindings/v8/custom/V8CSSValueCustom.cpp:
+        (WebCore::V8CSSValue::dispatchWrapCustom): Ditto, for V8.
+        * css/WebKitCSSMixFunctionValue.idl: Added.
+
 2012-11-26  Simon Fraser  <simon.fraser@apple.com>
 
         Optimize layer updates after scrolling

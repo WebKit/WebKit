@@ -1,0 +1,15 @@
+Test mix() function JS bindings.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS cssRule.type is 1
+PASS declaration.length is 1
+PASS jsWrapperClass(mixFunction) is 'WebKitCSSMixFunctionValue'
+FAIL jsWrapperClass(mixFunction.__proto__) should be WebKitCSSMixFunctionValuePrototype. Was Object.
+FAIL jsWrapperClass(mixFunction.constructor) should be WebKitCSSMixFunctionValueConstructor. Was Function.
+PASS mixFunctionContent is "mix(url(color-offset.fs))"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -363,6 +363,8 @@
 		150B923915F08DC400E10986 /* WebKitCSSArrayFunctionValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 150B923715F08DC400E10986 /* WebKitCSSArrayFunctionValue.cpp */; };
 		150B923A15F08DC400E10986 /* WebKitCSSArrayFunctionValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 150B923815F08DC400E10986 /* WebKitCSSArrayFunctionValue.h */; };
 		15B3FC1915FB217800A81BCB /* CustomFilterArrayParameter.h in Headers */ = {isa = PBXBuildFile; fileRef = 15B3FC1715FB217800A81BCB /* CustomFilterArrayParameter.h */; };
+		15B8B7C81652C5220036EF55 /* JSWebKitCSSMixFunctionValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 15B8B7C61652C5220036EF55 /* JSWebKitCSSMixFunctionValue.cpp */; };
+		15B8B7C91652C5220036EF55 /* JSWebKitCSSMixFunctionValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 15B8B7C71652C5220036EF55 /* JSWebKitCSSMixFunctionValue.h */; };
 		15C7708D100D3C6B005BA267 /* ValidityState.h in Headers */ = {isa = PBXBuildFile; fileRef = 15C7708A100D3C6A005BA267 /* ValidityState.h */; };
 		15C7708E100D3C6B005BA267 /* ValidityState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 15C7708B100D3C6A005BA267 /* ValidityState.cpp */; };
 		15C77093100D3CA8005BA267 /* JSValidityState.h in Headers */ = {isa = PBXBuildFile; fileRef = 15C77091100D3CA8005BA267 /* JSValidityState.h */; };
@@ -7485,6 +7487,8 @@
 		150B923715F08DC400E10986 /* WebKitCSSArrayFunctionValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebKitCSSArrayFunctionValue.cpp; sourceTree = "<group>"; };
 		150B923815F08DC400E10986 /* WebKitCSSArrayFunctionValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKitCSSArrayFunctionValue.h; sourceTree = "<group>"; };
 		15B3FC1715FB217800A81BCB /* CustomFilterArrayParameter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CustomFilterArrayParameter.h; path = filters/CustomFilterArrayParameter.h; sourceTree = "<group>"; };
+		15B8B7C61652C5220036EF55 /* JSWebKitCSSMixFunctionValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebKitCSSMixFunctionValue.cpp; sourceTree = "<group>"; };
+		15B8B7C71652C5220036EF55 /* JSWebKitCSSMixFunctionValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebKitCSSMixFunctionValue.h; sourceTree = "<group>"; };
 		15C77089100D3C6A005BA267 /* ValidityState.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ValidityState.idl; sourceTree = "<group>"; };
 		15C7708A100D3C6A005BA267 /* ValidityState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ValidityState.h; sourceTree = "<group>"; };
 		15C7708B100D3C6A005BA267 /* ValidityState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ValidityState.cpp; sourceTree = "<group>"; };
@@ -19073,6 +19077,8 @@
 				316FE0700E6CCBEE00BF6088 /* JSWebKitCSSKeyframesRule.h */,
 				4983913D0F1E767500C23782 /* JSWebKitCSSMatrix.cpp */,
 				4983913E0F1E767500C23782 /* JSWebKitCSSMatrix.h */,
+				15B8B7C61652C5220036EF55 /* JSWebKitCSSMixFunctionValue.cpp */,
+				15B8B7C71652C5220036EF55 /* JSWebKitCSSMixFunctionValue.h */,
 				8ACC24CD148E24B200EFCC0D /* JSWebKitCSSRegionRule.cpp */,
 				8ACC24CE148E24B200EFCC0D /* JSWebKitCSSRegionRule.h */,
 				31611E580E1C4DE000F6A579 /* JSWebKitCSSTransformValue.cpp */,
@@ -25812,6 +25818,7 @@
 				447958041643B49A001E0A7F /* ParsedContentType.h in Headers */,
 				FB2C15C3165D649D0039C9F8 /* CachedSVGDocumentReference.h in Headers */,
 				31741AAD16636609008A5B7E /* SimulatedClickOptions.h in Headers */,
+				15B8B7C91652C5220036EF55 /* JSWebKitCSSMixFunctionValue.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -28911,6 +28918,7 @@
 				1E50084816516AD800B7E098 /* RenderThemeMacShared.mm in Sources */,
 				CD7E05221651C28200C1201F /* WebCoreAVFResourceLoader.mm in Sources */,
 				447958051643B4B2001E0A7F /* ParsedContentType.cpp in Sources */,
+				15B8B7C81652C5220036EF55 /* JSWebKitCSSMixFunctionValue.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

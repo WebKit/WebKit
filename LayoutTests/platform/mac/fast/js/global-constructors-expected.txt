@@ -320,6 +320,7 @@ PASS WebKitCSSFilterValue.toString() is '[object WebKitCSSFilterValueConstructor
 PASS WebKitCSSKeyframeRule.toString() is '[object WebKitCSSKeyframeRuleConstructor]'
 PASS WebKitCSSKeyframesRule.toString() is '[object WebKitCSSKeyframesRuleConstructor]'
 PASS WebKitCSSMatrix.toString() is '[object WebKitCSSMatrixConstructor]'
+PASS WebKitCSSMixFunctionValue.toString() is '[object WebKitCSSMixFunctionValueConstructor]'
 PASS WebKitCSSRegionRule.toString() is '[object WebKitCSSRegionRuleConstructor]'
 PASS WebKitCSSTransformValue.toString() is '[object WebKitCSSTransformValueConstructor]'
 PASS WebKitMutationObserver.toString() is '[object WebKitMutationObserverConstructor]'

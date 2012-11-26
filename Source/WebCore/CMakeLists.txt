@@ -332,6 +332,7 @@ SET(WebCore_IDL_FILES
     css/WebKitCSSKeyframeRule.idl
     css/WebKitCSSKeyframesRule.idl
     css/WebKitCSSMatrix.idl
+    css/WebKitCSSMixFunctionValue.idl
     css/WebKitCSSRegionRule.idl
     css/WebKitCSSTransformValue.idl
     css/WebKitCSSViewportRule.idl

@@ -39,6 +39,11 @@
 #include "WebKitCSSFilterValue.h"
 #endif
 
+#if ENABLE(CSS_SHADERS)
+#include "JSWebKitCSSMixFunctionValue.h"
+#include "WebKitCSSMixFunctionValue.h"
+#endif
+
 #if ENABLE(SVG)
 #include "JSSVGColor.h"
 #include "JSSVGPaint.h"
@@ -93,6 +98,10 @@ JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, CSSValue* value)
 #if ENABLE(CSS_FILTERS)
     else if (value->isWebKitCSSFilterValue())
         wrapper = CREATE_DOM_WRAPPER(exec, globalObject, WebKitCSSFilterValue, value);
+#endif
+#if ENABLE(CSS_SHADERS)
+    else if (value->isWebKitCSSMixFunctionValue())
+        wrapper = CREATE_DOM_WRAPPER(exec, globalObject, WebKitCSSMixFunctionValue, value);
 #endif
     else if (value->isValueList())
         wrapper = CREATE_DOM_WRAPPER(exec, globalObject, CSSValueList, value);

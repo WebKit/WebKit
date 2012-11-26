@@ -341,6 +341,10 @@
     attribute CSSValueListConstructor CSSValueList;
     attribute WebKitCSSTransformValueConstructor WebKitCSSTransformValue;
 
+#if defined(ENABLE_CSS_SHADERS) && ENABLE_CSS_SHADERS
+    attribute WebKitCSSMixFunctionValueConstructor WebKitCSSMixFunctionValue;
+#endif
+
 #if defined(ENABLE_CSS_FILTERS) && ENABLE_CSS_FILTERS
     attribute WebKitCSSFilterValueConstructor WebKitCSSFilterValue;
 #endif

@@ -211,6 +211,7 @@ IDL_BINDINGS += \
     $$PWD/css/WebKitCSSKeyframeRule.idl \
     $$PWD/css/WebKitCSSKeyframesRule.idl \
     $$PWD/css/WebKitCSSMatrix.idl \
+    $$PWD/css/WebKitCSSMixFunctionValue.idl \
     $$PWD/css/WebKitCSSRegionRule.idl \
     $$PWD/css/WebKitCSSTransformValue.idl \
     $$PWD/css/WebKitCSSViewportRule.idl \
