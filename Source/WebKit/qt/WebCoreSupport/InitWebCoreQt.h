@@ -48,7 +48,7 @@ Q_DECL_EXPORT void setImagePlatformResource(const char* /* name */, const QPixma
 
 namespace WebCore {
 
-void initializeWebCoreQt();
+Q_DECL_EXPORT void initializeWebCoreQt();
 
 }
 

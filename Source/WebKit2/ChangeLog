@@ -1,3 +1,20 @@
+2012-11-26  Pierre Rossi  <pierre.rossi@gmail.com>
+
+        [Qt] REGRESSION(r135575): It made all tests assert
+        https://bugs.webkit.org/show_bug.cgi?id=103169
+
+        Reviewed by Simon Hausmann.
+
+        This fixes another regression introduced in r135515:
+        initializeWebKitQt shouldn't implicitely call initializeWebCoreQt
+        since it can be called from WebKit2 to initialize QStyle for testing.
+        This would then lead to things such as PlatformStrategies being
+        initialized twice.
+
+        * qt/MainQt.cpp: No need to initialize anything if we're not using QStyle.
+        (WebKit):
+        (main):
+
 2012-11-26  Huang Dongsung  <luxtella@company100.net>
 
         REGRESSION(134142): ASSERT(!m_size.isZero()) hits in CoordinatedBackingStore::paintToTextureMapper().
