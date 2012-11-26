@@ -30,10 +30,22 @@ if (window.testRunner) {
   document.body.insertBefore(iframe, document.body.firstChild);
   document.body.insertBefore(document.createElement("br"), iframe.nextSibling);
   var iframeComplete = function(result) {
+
+    // Isolated world executing in frame should be able to to access parent content.
+    testRunner.evaluateScriptInIsolatedWorld(1,
+      "parent.document.body.appendChild(parent.document.createTextNode('Expecting true: ' + (parent.frames[0].document == this.document)));" +
+      "parent.document.body.appendChild(parent.document.createElement('br'));");
+
     document.body.appendChild(document.createTextNode('Expecting undefined,undefined: ' + result));
     document.body.appendChild(document.createElement('br'));
     reloadFrame();
   }
+
+  // Isolated world executing in window should be able to to access frame content.
+  testRunner.evaluateScriptInIsolatedWorld(1,
+    "document.body.appendChild(document.createTextNode('Expecting true: ' + !!frames[0].document));" +
+    "document.body.appendChild(document.createElement('br'));");
+
   iframe.src = "resources/iframe.html";
   
   // Also, navigating a single frame should not result in sharing variables.

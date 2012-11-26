@@ -436,15 +436,26 @@ void ScriptController::finishedWithEvent(Event* event)
 
 v8::Local<v8::Context> ScriptController::currentWorldContext()
 {
-    if (v8::Context::InContext()) {
-        v8::Handle<v8::Context> context = v8::Context::GetEntered();
-        if (DOMWrapperWorld::isolated(context)) {
-            if (m_frame == toFrameIfNotDetached(context))
-                return v8::Local<v8::Context>::New(context);
-            return v8::Local<v8::Context>();
-        }
-    }
-    return v8::Local<v8::Context>::New(windowShell(mainThreadNormalWorld())->context());
+    if (!v8::Context::InContext())
+        return v8::Local<v8::Context>::New(windowShell(mainThreadNormalWorld())->context());
+
+    v8::Handle<v8::Context> context = v8::Context::GetEntered();
+    DOMWrapperWorld* isolatedWorld = DOMWrapperWorld::isolated(context);
+    if (!isolatedWorld)
+        return v8::Local<v8::Context>::New(windowShell(mainThreadNormalWorld())->context());
+
+    Frame* frame = toFrameIfNotDetached(context);
+    if (!m_frame)
+        return v8::Local<v8::Context>();
+
+    if (m_frame == frame)
+        return v8::Local<v8::Context>::New(context);
+
+    // FIXME: Need to handle weak isolated worlds correctly.
+    if (isolatedWorld->createdFromUnitializedWorld())
+        return v8::Local<v8::Context>();
+
+    return v8::Local<v8::Context>::New(windowShell(isolatedWorld)->context());
 }
 
 v8::Local<v8::Context> ScriptController::mainWorldContext()

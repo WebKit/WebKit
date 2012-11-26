@@ -96,6 +96,8 @@ public:
 
     bool isMainWorld() const { return m_worldId == mainWorldId; }
     bool isIsolatedWorld() const { return isIsolatedWorldId(m_worldId); }
+    bool createdFromUnitializedWorld() const { return m_worldId < uninitializedWorldId; }
+
     int worldId() const { return m_worldId; }
     int extensionGroup() const { return m_extensionGroup; }
     DOMDataStore* isolatedWorldDOMDataStore() const

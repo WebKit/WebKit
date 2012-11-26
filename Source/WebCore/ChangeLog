@@ -1,3 +1,23 @@
+2012-11-26  Dan Carney  <dcarney@google.com>
+
+        Refactor V8 bindings to allow content scripts to access subframes
+        https://bugs.webkit.org/show_bug.cgi?id=93646
+
+        Reviewed by Adam Barth.
+
+        Isolated window shells are now initialized on the fly
+        as needed.
+
+        No new tests. Existing test modified.
+
+        * bindings/v8/DOMWrapperWorld.cpp:
+        (WebCore::DOMWrapperWorld::ensureIsolatedWorld):
+        * bindings/v8/DOMWrapperWorld.h:
+        (WebCore::DOMWrapperWorld::createdFromUnitializedWorld):
+        (DOMWrapperWorld):
+        * bindings/v8/ScriptController.cpp:
+        (WebCore::ScriptController::currentWorldContext):
+
 2012-11-26  Alex Christensen  <alex.christensen@flexsim.com>
 
         clipboardwin compile error for win64

@@ -137,6 +137,7 @@ static int temporaryWorldId = DOMWrapperWorld::uninitializedWorldId-1;
 PassRefPtr<DOMWrapperWorld> DOMWrapperWorld::ensureIsolatedWorld(int worldId, int extensionGroup)
 {
     ASSERT(worldId != mainWorldId);
+    ASSERT(worldId >= uninitializedWorldId);
 
     WorldMap& map = isolatedWorldMap();
     if (worldId == uninitializedWorldId)
