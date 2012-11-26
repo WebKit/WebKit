@@ -1,5 +1,13 @@
 2012-11-26  Oliver Hunt  <oliver@apple.com>
 
+        32-bit build fix.  Move the method decalration outside of the X86_64 only section.
+
+        * assembler/MacroAssembler.h:
+        (MacroAssembler):
+        (JSC::MacroAssembler::shouldConsiderBlinding):
+
+2012-11-26  Oliver Hunt  <oliver@apple.com>
+
         Don't blind all the things.
         https://bugs.webkit.org/show_bug.cgi?id=102572
 

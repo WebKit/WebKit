@@ -308,7 +308,12 @@ public:
         ASSERT(condition == Equal || condition == NotEqual);
         return condition;
     }
-    
+
+    static const unsigned BlindingModulus = 64;
+    bool shouldConsiderBlinding()
+    {
+        return !(random() & (BlindingModulus - 1));
+    }
 
     // Ptr methods
     // On 32-bit platforms (i.e. x86), these methods directly map onto their 32-bit equivalents.
@@ -839,11 +844,6 @@ public:
     using MacroAssemblerBase::and64;
     using MacroAssemblerBase::convertInt32ToDouble;
     using MacroAssemblerBase::store64;
-    static const unsigned BlindingModulus = 64;
-    bool shouldConsiderBlinding()
-    {
-        return !(random() & (BlindingModulus - 1));
-    }
     bool shouldBlindDouble(double value)
     {
         // Don't trust NaN or +/-Infinity
