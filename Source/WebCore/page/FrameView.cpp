@@ -1822,7 +1822,7 @@ void FrameView::repaintFixedElementsAfterScrolling()
     if (!m_nestedLayoutCount && hasViewportConstrainedObjects()) {
         if (RenderView* root = rootRenderer(this)) {
             root->updateWidgetPositions();
-            root->layer()->updateLayerPositionsAfterScroll();
+            root->layer()->updateLayerPositionsAfterDocumentScroll();
         }
     }
 }

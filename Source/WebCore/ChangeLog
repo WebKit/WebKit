@@ -1,3 +1,41 @@
+2012-11-26  Simon Fraser  <simon.fraser@apple.com>
+
+        Optimize layer updates after scrolling
+        https://bugs.webkit.org/show_bug.cgi?id=102635
+
+        Reviewed by Sam Weinig.
+
+        updateLayerPositionsAfterScroll() previously unconditionally cleared clip
+        rects, and recomputed repaint rects too often. Recomputing both of these
+        can be very expensive, as they involve tree walks up to the root.
+        
+        We can optimize layer updates after document scrolling by only clearing clip
+        rects, and recomputing repaint rects, if we encounter a fixed- or sticky-position
+        element. For overflow scroll, we have to clear clip rects and recompute repaint rects.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::repaintFixedElementsAfterScrolling): Call updateLayerPositionsAfterDocumentScroll().
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateLayerPositions): Call clearClipRects() because
+        updateLayerPosition() no longer does.
+        (WebCore::RenderLayer::updateLayerPositionsAfterDocumentScroll): Version of updateLayerPositionsAfterScroll()
+        that is for document scrolls. It has no need to push layers to the geometry map.
+        (WebCore::RenderLayer::updateLayerPositionsAfterOverflowScroll): Pushes layers to the geometry map,
+        and calls updateLayerPositionsAfterScroll() with the IsOverflowScroll flag.
+        (WebCore::RenderLayer::updateLayerPositionsAfterScroll): Set the HasChangedAncestor flag
+        if our location changed, and use that as a hint to clear cached rects. Be more conservative
+        than before about when to clear cached clip rects.
+        (WebCore::RenderLayer::updateLayerPosition):  Move responsibility for calling
+        clearClipRects() ouf of this function and into callers.
+        (The one caller outside RenderLayer will be removed via bug 102624).
+        Return a bool indicating whether our position changed.
+        (WebCore::RenderLayer::scrollTo): Call updateLayerPositionsAfterOverflowScroll().
+        (WebCore::RenderLayer::updateClipRects): Added some #ifdeffed out code that is useful
+        to verify that cached clips are correct; it's too slow to leave enabled in debug builds.
+        * rendering/RenderLayer.h:
+        (WebCore::RenderLayer::setLocation): Change to take a LayoutPoint, rather than separate
+        x and y.
+
 2012-11-26  Rafael Brandao  <rafael.lobo@openbossa.org>
 
         [Cairo] Surface should not be destroyed before its usage

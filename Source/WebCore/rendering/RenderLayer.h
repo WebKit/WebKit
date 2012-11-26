@@ -309,7 +309,7 @@ public:
     }
     
     const LayoutPoint& location() const { return m_topLeft; }
-    void setLocation(LayoutUnit x, LayoutUnit y) { m_topLeft = LayoutPoint(x, y); }
+    void setLocation(const LayoutPoint& p) { m_topLeft = p; }
 
     const IntSize& size() const { return m_layerSize; }
     void setSize(const IntSize& size) { m_layerSize = size; }
@@ -390,7 +390,8 @@ public:
 
     bool canRender3DTransforms() const;
 
-    void updateLayerPosition();
+    // Returns true if the position changed.
+    bool updateLayerPosition();
 
     enum UpdateLayerPositionsFlag {
         CheckForRepaint = 1,
@@ -402,7 +403,9 @@ public:
     static const UpdateLayerPositionsFlags defaultFlags = CheckForRepaint | IsCompositingUpdateRoot | UpdateCompositingLayers;
 
     void updateLayerPositionsAfterLayout(const RenderLayer* rootLayer, UpdateLayerPositionsFlags);
-    void updateLayerPositionsAfterScroll();
+
+    void updateLayerPositionsAfterOverflowScroll();
+    void updateLayerPositionsAfterDocumentScroll();
     
     bool isPaginated() const { return m_isPaginated; }
 
@@ -740,8 +743,10 @@ private:
 
     enum UpdateLayerPositionsAfterScrollFlag {
         NoFlag = 0,
-        HasSeenViewportConstrainedAncestor = 1 << 0,
-        HasSeenAncestorWithOverflowClip = 1 << 1
+        IsOverflowScroll = 1 << 0,
+        HasSeenViewportConstrainedAncestor = 1 << 1,
+        HasSeenAncestorWithOverflowClip = 1 << 2,
+        HasChangedAncestor = 1 << 3
     };
     typedef unsigned UpdateLayerPositionsAfterScrollFlags;
     void updateLayerPositionsAfterScroll(RenderGeometryMap*, UpdateLayerPositionsAfterScrollFlags = NoFlag);
