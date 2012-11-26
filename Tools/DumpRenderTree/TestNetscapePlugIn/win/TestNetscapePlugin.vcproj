@@ -434,6 +434,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\Tests\NPRuntimeCallsWithNullNPP.cpp"
+				>
+			</File>            
+			<File
 				RelativePath="..\Tests\NPRuntimeObjectFromDestroyedPlugin.cpp"
 				>
 			</File>

@@ -50,6 +50,7 @@
 		1AC77DCF120605B6005C19EF /* NPRuntimeRemoveProperty.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AC77DCE120605B6005C19EF /* NPRuntimeRemoveProperty.cpp */; };
 		1ACF898D132EF41C00E915D4 /* NPDeallocateCalledBeforeNPShutdown.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1ACF898B132EF41C00E915D4 /* NPDeallocateCalledBeforeNPShutdown.cpp */; };
 		1AD4CB2212A6D1350027A7AF /* GetUserAgentWithNullNPPFromNPPNew.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AD4CB2012A6D1350027A7AF /* GetUserAgentWithNullNPPFromNPPNew.cpp */; };
+		1AD8683F163B2FD000A28583 /* NPRuntimeCallsWithNullNPP.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AD8683D163B2FD000A28583 /* NPRuntimeCallsWithNullNPP.cpp */; };
 		1AD9D2FE12028409001A70D1 /* PluginScriptableNPObjectInvokeDefault.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AD9D2FD12028409001A70D1 /* PluginScriptableNPObjectInvokeDefault.cpp */; };
 		1AFF66BC137DEFD200791696 /* GetURLNotifyWithURLThatFailsToLoad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AFF66BB137DEA8300791696 /* GetURLNotifyWithURLThatFailsToLoad.cpp */; };
 		1C5C9B2E15F103AA0035558E /* LogNPPSetWindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 515C0CCF15EE785700F5A613 /* LogNPPSetWindow.cpp */; };
@@ -249,6 +250,7 @@
 		1AC77DCE120605B6005C19EF /* NPRuntimeRemoveProperty.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NPRuntimeRemoveProperty.cpp; sourceTree = "<group>"; };
 		1ACF898B132EF41C00E915D4 /* NPDeallocateCalledBeforeNPShutdown.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NPDeallocateCalledBeforeNPShutdown.cpp; sourceTree = "<group>"; };
 		1AD4CB2012A6D1350027A7AF /* GetUserAgentWithNullNPPFromNPPNew.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GetUserAgentWithNullNPPFromNPPNew.cpp; sourceTree = "<group>"; };
+		1AD8683D163B2FD000A28583 /* NPRuntimeCallsWithNullNPP.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NPRuntimeCallsWithNullNPP.cpp; sourceTree = "<group>"; };
 		1AD9D2FD12028409001A70D1 /* PluginScriptableNPObjectInvokeDefault.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PluginScriptableNPObjectInvokeDefault.cpp; sourceTree = "<group>"; };
 		1AFF66BB137DEA8300791696 /* GetURLNotifyWithURLThatFailsToLoad.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GetURLNotifyWithURLThatFailsToLoad.cpp; sourceTree = "<group>"; };
 		23BCB88F0EA57623003C6289 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = /System/Library/Frameworks/OpenGL.framework; sourceTree = "<absolute>"; };
@@ -487,6 +489,7 @@
 				BC0E24DF0E2D9451001B6BC2 /* AccessibilityUIElement.cpp */,
 				BC0E24DE0E2D9451001B6BC2 /* AccessibilityUIElement.h */,
 				BC0E26140E2DA4C6001B6BC2 /* AccessibilityUIElementMac.mm */,
+				BC0E26140E2DA4C6001B6BC3 /* AccessibilityCommonMac.mm */,
 				BCA18B360C9B021900114369 /* AppleScriptController.h */,
 				BCA18B370C9B021900114369 /* AppleScriptController.m */,
 				BCA18B6B0C9B08DB00114369 /* EventSendingController.h */,
@@ -547,6 +550,7 @@
 				1ACF898B132EF41C00E915D4 /* NPDeallocateCalledBeforeNPShutdown.cpp */,
 				5113DE6615F6CBE5005EC8B3 /* NPPNewFails.cpp */,
 				C031182A134E4A2B00919757 /* NPPSetWindowCalledDuringDestruction.cpp */,
+				1AD8683D163B2FD000A28583 /* NPRuntimeCallsWithNullNPP.cpp */,
 				1A24BAA8120734EE00FBB059 /* NPRuntimeObjectFromDestroyedPlugin.cpp */,
 				1AC77DCE120605B6005C19EF /* NPRuntimeRemoveProperty.cpp */,
 				C0EC3C9B12787F0500939164 /* NullNPPGetValuePointer.cpp */,
@@ -907,6 +911,7 @@
 				51CACBD815D96FD000EB53A2 /* EvaluateJSWithinNPP_New.cpp in Sources */, 
 				5113DE6715F6CBE5005EC8B3 /* NPPNewFails.cpp in Sources */,
 				1C5C9B2E15F103AA0035558E /* LogNPPSetWindow.cpp in Sources */,
+				1AD8683F163B2FD000A28583 /* NPRuntimeCallsWithNullNPP.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

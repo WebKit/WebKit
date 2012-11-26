@@ -49,12 +49,13 @@ namespace WebKit {
 class PluginDestructionProtector {
 public:
     explicit PluginDestructionProtector(NetscapePlugin* plugin)
-        : m_protector(static_cast<Plugin*>(plugin)->controller())
     {
+        if (plugin)
+            m_protector = adoptPtr(new PluginController::PluginDestructionProtector(static_cast<Plugin*>(plugin)->controller()));
     }
     
 private:
-    PluginController::PluginDestructionProtector m_protector;
+    OwnPtr<PluginController::PluginDestructionProtector> m_protector;
 };
 
 static bool startsWithBlankLine(const char* bytes, unsigned length)

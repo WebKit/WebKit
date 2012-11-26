@@ -218,6 +218,11 @@ bool PluginTest::NPN_RemoveProperty(NPObject* npObject, NPIdentifier propertyNam
     return browser->removeproperty(m_npp, npObject, propertyName);
 }
 
+void PluginTest::NPN_ReleaseVariantValue(NPVariant* variant)
+{
+    browser->releasevariantvalue(variant);
+}
+
 #ifdef XP_MACOSX
 bool PluginTest::NPN_ConvertPoint(double sourceX, double sourceY, NPCoordinateSpace sourceSpace, double *destX, double *destY, NPCoordinateSpace destSpace)
 {
@@ -250,6 +255,11 @@ void PluginTest::log(const char* format, ...)
     va_start(args, format);
     pluginLogWithArguments(m_npp, format, args);
     va_end(args);
+}
+
+NPNetscapeFuncs* PluginTest::netscapeFuncs()
+{
+    return browser;
 }
 
 void PluginTest::waitUntilDone()
