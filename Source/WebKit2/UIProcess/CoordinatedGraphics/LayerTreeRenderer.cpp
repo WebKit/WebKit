@@ -586,8 +586,6 @@ void LayerTreeRenderer::syncRemoteContent()
 
     for (size_t i = 0; i < renderQueue.size(); ++i)
         renderQueue[i]();
-
-    m_renderQueue.clear();
 }
 
 void LayerTreeRenderer::purgeGLResources()

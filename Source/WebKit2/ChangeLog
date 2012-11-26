@@ -1,3 +1,15 @@
+2012-11-26  Rafael Brandao  <rafael.lobo@openbossa.org>
+
+        [CoordinatedGraphics] Access to LayerTreeRenderer::m_renderQueue should be thread safe
+        https://bugs.webkit.org/show_bug.cgi?id=101341
+
+        Reviewed by Noam Rosenthal.
+
+        * UIProcess/CoordinatedGraphics/LayerTreeRenderer.cpp:
+        (WebKit::LayerTreeRenderer::syncRemoteContent): The previous swap already clears the
+        vector on m_renderQueue. It is also done in a thread-safe way, so clearing it afterward
+        can be harmful as we've already released the lock.
+
 2012-11-26  Jaehun Lim  <ljaehun.lim@samsung.com>
 
         Text Autosizing: Add Text Autosizing APIs for WK2
