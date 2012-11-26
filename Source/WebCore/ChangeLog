@@ -1,3 +1,19 @@
+2012-11-26  Viatcheslav Ostapenko  <v.ostapenko@samsung.com>
+
+        [EFL] Crashes in compositing layout tests with AC on.
+        https://bugs.webkit.org/show_bug.cgi?id=103144
+
+        Reviewed by Noam Rosenthal.
+
+        Application could leave texture packing parameters in non-zero state before
+        texture mapper drawing/texture uploading. To avoid crash texture upload should
+        specify packing parameters before each texture upload if packing is supported.
+
+        Covered by existing tests.
+
+        * platform/graphics/texmap/TextureMapperGL.cpp:
+        (WebCore::BitmapTextureGL::updateContentsNoSwizzle):
+
 2012-11-26  George Staikos  <staikos@webkit.org>
 
         [BlackBerry] Remove a lot of unnecessary and incorrect code causing crashes
