@@ -657,8 +657,13 @@ void Frame::dispatchVisibilityStateChangeEvent()
 {
     if (m_doc)
         m_doc->dispatchVisibilityStateChangeEvent();
+
+    Vector<RefPtr<Frame> > childFrames;
     for (Frame* child = tree()->firstChild(); child; child = child->tree()->nextSibling())
-        child->dispatchVisibilityStateChangeEvent();
+        childFrames.append(child);
+
+    for (size_t i = 0; i < childFrames.size(); ++i)
+        childFrames[i]->dispatchVisibilityStateChangeEvent();
 }
 #endif
 

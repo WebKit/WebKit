@@ -1,3 +1,18 @@
+2012-11-26  Abhishek Arya  <inferno@chromium.org>
+
+        Crash in Frame::dispatchVisibilityStateChangeEvent.
+        https://bugs.webkit.org/show_bug.cgi?id=102053
+
+        Reviewed by Adam Barth.
+
+        Child frame can go away inside webkitvisibilitychange
+        event handler. Store it in a ref counted vector.
+
+        Test: fast/frames/page-visibility-crash.html
+
+        * page/Frame.cpp:
+        (WebCore::Frame::dispatchVisibilityStateChangeEvent):
+
 2012-11-26  Hurnjoo Lee  <hurnjoo.lee@samsung.com>
 
         [Cairo] fillRectWithColor with Color::transparent doesn't perform anything

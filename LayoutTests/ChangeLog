@@ -1,3 +1,13 @@
+2012-11-26  Abhishek Arya  <inferno@chromium.org>
+
+        Crash in Frame::dispatchVisibilityStateChangeEvent.
+        https://bugs.webkit.org/show_bug.cgi?id=102053
+
+        Reviewed by Adam Barth.
+
+        * fast/frames/page-visibility-crash-expected.txt: Added.
+        * fast/frames/page-visibility-crash.html: Added.
+
 2012-11-26  Thiago Marcos P. Santos  <thiago.santos@intel.com>
 
         Import more CSS Device Adaptation layout tests
