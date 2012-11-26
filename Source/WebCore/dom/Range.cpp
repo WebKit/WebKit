@@ -1447,7 +1447,7 @@ void Range::surroundContents(PassRefPtr<Node> passNewParent, ExceptionCode& ec)
         return;
     }
     
-    if (m_start.container() == newParent || m_start.container()->isDescendantOf(newParent.get())) {
+    if (newParent->contains(m_start.container())) {
         ec = HIERARCHY_REQUEST_ERR;
         return;
     }

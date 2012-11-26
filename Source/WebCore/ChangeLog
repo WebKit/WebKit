@@ -1,3 +1,20 @@
+2012-11-26  Hajime Morrita  <morrita@google.com>
+
+        [Refactoring] Some Node::isDescendant calls can be replaced with Node::contains()
+        https://bugs.webkit.org/show_bug.cgi?id=103211
+
+        Reviewed by Daniel Bates.
+
+        A couple of call sites of isDescendant() does same as Node::contains().
+        This change replaces these locations with Node::contains().
+
+        No new tests, no behavior change.
+
+        * dom/Node.cpp:
+        (WebCore::checkAcceptChild):
+        * dom/Range.cpp:
+        (WebCore::Range::surroundContents):
+
 2012-11-26  Kunihiko Sakamoto  <ksakamoto@chromium.org>
 
         [Chromium] Enable input type datetime-local

@@ -1193,7 +1193,7 @@ static void checkAcceptChild(Node* newParent, Node* newChild, ExceptionCode& ec)
     // HIERARCHY_REQUEST_ERR: Raised if this node is of a type that does not allow children of the type of the
     // newChild node, or if the node to append is one of this node's ancestors.
 
-    if (newChild == newParent || newParent->isDescendantOf(newChild)) {
+    if (newChild->contains(newParent)) {
         ec = HIERARCHY_REQUEST_ERR;
         return;
     }
