@@ -1,3 +1,34 @@
+2012-11-26  Tony Chang  <tony@chromium.org>
+
+        Move more functions from internals.settings to internals
+        https://bugs.webkit.org/show_bug.cgi?id=102976
+
+        Reviewed by Adam Barth.
+
+        Move functions that don't have to do with Settings off of internals.settings.
+        setPagination and configurationForViewport were defined on internals, so we
+        can inline the functions (no test change).
+
+        setEnableMockPagePopup is moved to Internals.
+
+        No new tests, this is a refactor.
+
+        * testing/InternalSettings.cpp:
+        (WebCore::InternalSettings::reset): Move reset code into Internals.
+        * testing/InternalSettings.h:
+        (InternalSettings): Remove code for setPagination, configurationForViewport and setEnableMockPagePopup.
+        * testing/InternalSettings.idl: Remove setPagination and setEnableMockPagePopup.
+        * testing/Internals.cpp:
+        (WebCore): Use a static to keep track of the MockPagePopupDriver.
+        (WebCore::Internals::resetToConsistentState): Code from InternalSettings::reset
+        (WebCore::Internals::setEnableMockPagePopup): Code copied from InternalSettings.
+        (WebCore::Internals::pagePopupController): Code copied from InternalSettings.
+        (WebCore::Internals::setPagination): Code copied from InternalSettings.
+        (WebCore::Internals::configurationForViewport): Code copied from InternalSettings.
+        * testing/Internals.h:
+        (Internals): Add setEnableMockPagePopup.
+        * testing/Internals.idl: Add setEnableMockPagePopup.
+
 2012-11-26  Andrei Bucur  <abucur@adobe.com>
 
         [CSS Regions] Add Region info for RootLineBoxes and pack the pagination data

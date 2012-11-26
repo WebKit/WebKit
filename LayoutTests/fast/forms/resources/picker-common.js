@@ -1,6 +1,6 @@
 window.jsTestIsAsync = true;
 if (window.internals)
-    internals.settings.setEnableMockPagePopup(true);
+    internals.setEnableMockPagePopup(true);
 
 var popupWindow = null;
 

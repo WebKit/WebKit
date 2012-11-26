@@ -39,9 +39,7 @@ typedef int ExceptionCode;
 
 class Frame;
 class Document;
-class MockPagePopupDriver;
 class Page;
-class PagePopupController;
 class Settings;
 
 class InternalSettings : public RefCountedSupplement<Page, InternalSettings> {
@@ -100,9 +98,6 @@ public:
     static InternalSettings* from(Page*);
 
     virtual ~InternalSettings();
-#if ENABLE(PAGE_POPUP)
-    PagePopupController* pagePopupController();
-#endif
     void reset();
 
     void setForceCompositingMode(bool enabled, ExceptionCode&);
@@ -148,12 +143,8 @@ public:
     void setSyncXHRInDocumentsEnabled(bool, ExceptionCode&);
     void setWindowFocusRestricted(bool, ExceptionCode&);
     void setDialogElementEnabled(bool, ExceptionCode&);
-    void setPagination(const String& mode, int gap, ExceptionCode& ec) { setPagination(mode, gap, 0, ec); }
-    void setPagination(const String& mode, int gap, int pageLength, ExceptionCode&);
     void setShouldDisplayTrackKind(const String& kind, bool enabled, ExceptionCode&);
     bool shouldDisplayTrackKind(const String& kind, ExceptionCode&);
-    void setEnableMockPagePopup(bool, ExceptionCode&);
-    String configurationForViewport(float devicePixelRatio, int deviceWidth, int deviceHeight, int availableWidth, int availableHeight, ExceptionCode&);
     void setMemoryInfoEnabled(bool, ExceptionCode&);
     void setStorageBlockingPolicy(const String&, ExceptionCode&);
     void setLangAttributeAwareFormControlUIEnabled(bool);
@@ -168,9 +159,6 @@ private:
 
     Page* m_page;
     Backup m_backup;
-#if ENABLE(PAGE_POPUP)
-    OwnPtr<MockPagePopupDriver> m_pagePopupDriver;
-#endif
 };
 
 } // namespace WebCore

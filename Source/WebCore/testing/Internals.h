@@ -118,6 +118,7 @@ public:
 #endif
     PassRefPtr<DOMStringList> formControlStateOfPreviousHistoryItem(ExceptionCode&);
     void setFormControlStateOfPreviousHistoryItem(PassRefPtr<DOMStringList>, ExceptionCode&);
+    void setEnableMockPagePopup(bool, ExceptionCode&);
 #if ENABLE(PAGE_POPUP)
     PassRefPtr<PagePopupController> pagePopupController();
 #endif

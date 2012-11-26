@@ -70,8 +70,6 @@
     void setDialogElementEnabled(in boolean enabled) raises(DOMException);
     void setLangAttributeAwareFormControlUIEnabled(in boolean enabled);
 
-    void setPagination(in DOMString mode, in long gap, in [Optional] long pageLength) raises(DOMException);
-    void setEnableMockPagePopup(in boolean enabled) raises(DOMException);
     [Conditional=VIDEO_TRACK] void setShouldDisplayTrackKind(in DOMString kind, in boolean enabled) raises (DOMException);
     [Conditional=VIDEO_TRACK] boolean shouldDisplayTrackKind(in DOMString trackKind) raises (DOMException);
     void setMemoryInfoEnabled(in boolean enabled) raises(DOMException);
