@@ -329,6 +329,9 @@ void RenderLayer::updateLayerPositions(RenderGeometryMap* geometryMap, UpdateLay
                            // to our parent layer.
     if (geometryMap)
         geometryMap->pushMappingsToAncestor(this, parent());
+
+    // Clear our cached clip rect information.
+    clearClipRects();
     
     if (hasOverflowControls()) {
         LayoutPoint offsetFromRoot;
@@ -451,13 +454,24 @@ void RenderLayer::clearRepaintRects()
     m_outlineBox = IntRect();
 }
 
-void RenderLayer::updateLayerPositionsAfterScroll()
+void RenderLayer::updateLayerPositionsAfterDocumentScroll()
+{
+    ASSERT(this == renderer()->view()->layer());
+
+    RenderGeometryMap geometryMap;
+    updateLayerPositionsAfterScroll(&geometryMap);
+}
+
+void RenderLayer::updateLayerPositionsAfterOverflowScroll()
 {
     RenderGeometryMap geometryMap;
     RenderView* view = renderer()->view();
     if (this != view->layer())
         geometryMap.pushMappingsToAncestor(parent(), 0);
-    updateLayerPositionsAfterScroll(&geometryMap);
+
+    // FIXME: why is it OK to not check the ancestors of this layer in order to
+    // initialize the HasSeenViewportConstrainedAncestor and HasSeenAncestorWithOverflowClip flags?
+    updateLayerPositionsAfterScroll(&geometryMap, IsOverflowScroll);
 }
 
 void RenderLayer::updateLayerPositionsAfterScroll(RenderGeometryMap* geometryMap, UpdateLayerPositionsAfterScrollFlags flags)
@@ -472,25 +486,32 @@ void RenderLayer::updateLayerPositionsAfterScroll(RenderGeometryMap* geometryMap
     if (!m_hasVisibleDescendant && !m_hasVisibleContent)
         return;
 
-    updateLayerPosition();
+    bool positionChanged = updateLayerPosition();
+    if (positionChanged)
+        flags |= HasChangedAncestor;
 
     if (geometryMap)
         geometryMap->pushMappingsToAncestor(this, parent());
 
-    if ((flags & HasSeenViewportConstrainedAncestor) || renderer()->style()->position() == FixedPosition) {
-        // FIXME: Is it worth passing the offsetFromRoot around like in updateLayerPositions?
-        // FIXME: We could track the repaint container as we walk down the tree.
-        computeRepaintRects(renderer()->containerForRepaint(), geometryMap);
+    if (flags & HasChangedAncestor || flags & HasSeenViewportConstrainedAncestor || flags & IsOverflowScroll)
+        clearClipRects();
+
+    if (renderer()->style()->position() == FixedPosition)
         flags |= HasSeenViewportConstrainedAncestor;
-    } else if ((flags & HasSeenAncestorWithOverflowClip) && !m_canSkipRepaintRectsUpdateOnScroll) {
-        // If we have seen an overflow clip, we should update our repaint rects as clippedOverflowRectForRepaint
-        // intersects it with our ancestor overflow clip that may have moved.
-        computeRepaintRects(renderer()->containerForRepaint(), geometryMap);
-    }
 
     if (renderer()->hasOverflowClip())
         flags |= HasSeenAncestorWithOverflowClip;
 
+    if (flags & HasSeenViewportConstrainedAncestor
+        || (flags & IsOverflowScroll && flags & HasSeenAncestorWithOverflowClip && !m_canSkipRepaintRectsUpdateOnScroll)) {
+        // FIXME: We could track the repaint container as we walk down the tree.
+        computeRepaintRects(renderer()->containerForRepaint(), geometryMap);
+    } else {
+        // Check that our cached rects are correct.
+        ASSERT(m_repaintRect == renderer()->clippedOverflowRectForRepaint(renderer()->containerForRepaint()));
+        ASSERT(m_outlineBox == renderer()->outlineBoundsForRepaint(renderer()->containerForRepaint(), geometryMap));
+    }
+    
     for (RenderLayer* child = firstChild(); child; child = child->nextSibling())
         child->updateLayerPositionsAfterScroll(geometryMap, flags);
 
@@ -752,7 +773,7 @@ bool RenderLayer::update3DTransformedDescendantStatus()
     return has3DTransform();
 }
 
-void RenderLayer::updateLayerPosition()
+bool RenderLayer::updateLayerPosition()
 {
     LayoutPoint localPoint;
     LayoutSize inlineBoundingBoxOffset; // We don't put this into the RenderLayer x/y for inlines, so we need to subtract it out when done.
@@ -768,9 +789,6 @@ void RenderLayer::updateLayerPosition()
         localPoint += box->topLeftLocationOffset();
     }
 
-    // Clear our cached clip rect information.
-    clearClipRects();
- 
     if (!renderer()->isPositioned() && renderer()->parent()) {
         // We must adjust our position by walking up the render tree looking for the
         // nearest enclosing object with a layer.
@@ -813,9 +831,12 @@ void RenderLayer::updateLayerPosition()
         LayoutSize scrollOffset = parent()->scrolledContentOffset();
         localPoint -= scrollOffset;
     }
-        
+
+    bool positionOrOffsetChanged = false;
     if (renderer()->isRelPositioned()) {
-        m_relativeOffset = renderer()->relativePositionOffset();
+        LayoutSize newOffset = renderer()->relativePositionOffset();
+        positionOrOffsetChanged = newOffset != m_relativeOffset;
+        m_relativeOffset = newOffset;
         localPoint.move(m_relativeOffset);
     } else {
         m_relativeOffset = LayoutSize();
@@ -823,7 +844,10 @@ void RenderLayer::updateLayerPosition()
 
     // FIXME: We'd really like to just get rid of the concept of a layer rectangle and rely on the renderers.
     localPoint -= inlineBoundingBoxOffset;
-    setLocation(localPoint.x(), localPoint.y());
+    
+    positionOrOffsetChanged |= location() != localPoint;
+    setLocation(localPoint);
+    return positionOrOffsetChanged;
 }
 
 TransformationMatrix RenderLayer::perspectiveTransform() const
@@ -1565,25 +1589,26 @@ void RenderLayer::scrollTo(int x, int y)
         return;
     m_scrollOffset = newScrollOffset;
 
-    // Update the positions of our child layers (if needed as only fixed layers should be impacted by a scroll).
-    // We don't update compositing layers, because we need to do a deep update from the compositing ancestor.
-    updateLayerPositionsAfterScroll();
-
     RenderView* view = renderer()->view();
     
     // We should have a RenderView if we're trying to scroll.
     ASSERT(view);
-    if (view) {
+
+    // Update the positions of our child layers (if needed as only fixed layers should be impacted by a scroll).
+    // We don't update compositing layers, because we need to do a deep update from the compositing ancestor.
+    bool inLayout = view ? view->frameView()->isInLayout() : false;
+    if (!inLayout) {
+        // If we're in the middle of layout, we'll just update layers once layout has finished.
+        updateLayerPositionsAfterOverflowScroll();
+        if (view) {
+            // Update regions, scrolling may change the clip of a particular region.
 #if ENABLE(DASHBOARD_SUPPORT)
-        // Update dashboard regions, scrolling may change the clip of a
-        // particular region.
-        view->frameView()->updateDashboardRegions();
+            view->frameView()->updateDashboardRegions();
 #endif
-
-        view->updateWidgetPositions();
+            view->updateWidgetPositions();
+        }
+        updateCompositingLayersAfterScroll();
     }
-
-    updateCompositingLayersAfterScroll();
 
     RenderBoxModelObject* repaintContainer = renderer()->containerForRepaint();
     Frame* frame = renderer()->frame();
@@ -3829,6 +3854,15 @@ void RenderLayer::updateClipRects(const RenderLayer* rootLayer, RenderRegion* re
     if (m_clipRectsCache && m_clipRectsCache->m_clipRects[clipRectsType]) {
         ASSERT(rootLayer == m_clipRectsCache->m_clipRectsRoot[clipRectsType]);
         ASSERT(m_clipRectsCache->m_scrollbarRelevancy[clipRectsType] == relevancy);
+        
+#ifdef CHECK_CACHED_CLIP_RECTS
+        // This code is useful to check cached clip rects, but is too expensive to leave enabled in debug builds by default.
+        ClipRectsContext tempContext(clipRectsContext);
+        tempContext.clipRectsType = TemporaryClipRects;
+        ClipRects clipRects;
+        calculateClipRects(tempContext, clipRects);
+        ASSERT(clipRects == *m_clipRectsCache->m_clipRects[clipRectsType].get());
+#endif
         return; // We have the correct cached value.
     }
     
