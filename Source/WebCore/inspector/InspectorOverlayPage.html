@@ -83,11 +83,18 @@ body.platform-linux {
 }
 
 #tag-name {
+    /* Keep this in sync with view-source.css (.webkit-html-tag-name) */
     color: rgb(136, 18, 128);
 }
 
 #node-id {
+    /* Keep this in sync with view-source.css (.webkit-html-attribute-value) */
     color: rgb(26, 26, 166);
+}
+
+#class-name {
+    /* Keep this in sync with view-source.css (.webkit-html-attribute-name) */
+    color: rgb(153, 69, 0);
 }
 
 #right-gutter {
@@ -335,8 +342,11 @@ function _drawElementTitle(highlight)
         return;
 
     document.getElementById("tag-name").textContent = elementInfo.tagName;
-    document.getElementById("node-id").textContent = elementInfo.nodeId ? "#" + elementInfo.nodeId : "";
-    document.getElementById("class-name").textContent = elementInfo.className || "";
+    document.getElementById("node-id").textContent = elementInfo.idValue ? "#" + elementInfo.idValue : "";
+    var className = elementInfo.className;
+    if (className.length > 50)
+       className = className.substring(0, 50) + "\u2026";
+    document.getElementById("class-name").textContent = className;
     document.getElementById("node-width").textContent = elementInfo.nodeWidth;
     document.getElementById("node-height").textContent = elementInfo.nodeHeight;
     var elementTitle = document.getElementById("element-title");

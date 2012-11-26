@@ -1,3 +1,20 @@
+2012-11-26  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: object preview does not render node id, className; logs too many functions for jQuery.
+        https://bugs.webkit.org/show_bug.cgi?id=103222
+
+        Reviewed by Yury Semikhatsky.
+
+        - Added node class name and id into the preview
+        - Now keeps track of properties separately from array indexes.
+
+        * inspector/InjectedScriptSource.js:
+        (.):
+        * inspector/InspectorOverlayPage.html:
+        * inspector/front-end/ConsoleMessage.js:
+        (WebInspector.ConsoleMessageImpl.prototype._appendObjectPreview):
+        (WebInspector.ConsoleMessageImpl.prototype._appendPropertyPreview):
+
 2012-11-26  Andrey Adaikin  <aandrey@chromium.org>
 
         Web Inspector: [WebGL] Save WebGL extensions and restore on replay

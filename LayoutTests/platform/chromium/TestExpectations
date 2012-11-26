@@ -3679,7 +3679,7 @@ webkit.org/b/91255 [ Lion ] fast/multicol/table-vertical-align.html [ Failure ]
 webkit.org/b/91372 [ Win ] css2.1/20110323/vertical-align-boxes-001.htm [ ImageOnlyFailure ]
 
 # Fails on Win
-webkit.org/b/93624 [ Win Linux ] inspector/console/console-format-collections.html [ Failure Pass ]
+webkit.org/b/93624 [ Win ] inspector/console/console-format-collections.html [ Failure Pass ]
 
 # Started failing around r122770
 webkit.org/b/91445 [ Linux ] plugins/embed-attributes-style.html [ ImageOnlyFailure Pass ]
@@ -4247,8 +4247,6 @@ webkit.org/b/103152 [ Mac Win ] fast/forms/week-multiple-fields/week-multiple-fi
 webkit.org/b/103154 [ Win7 SnowLeopard Lion Linux Debug ] fast/frames/frame-unload-crash2.html [ Pass Timeout ]
 webkit.org/b/103148 [ Lion ] fast/text/large-text-composed-char.html [ ImageOnlyFailure ]
 webkit.org/b/103148 [ Lion ] fast/text/text-letter-spacing.html [ ImageOnlyFailure ]
-webkit.org/b/103161 [ Linux Win ] inspector/console/command-line-api-inspect.html [ Pass Failure ]
-webkit.org/b/103161 [ Linux Win ] inspector/runtime/runtime-localStorage-getProperties.html [ Pass Failure ]
 webkit.org/b/103148 [ Linux Win Mac ] svg/batik/text/textPosition2.svg [ ImageOnlyFailure ]
 webkit.org/b/103181 [ Win7 ] http/tests/local/drag-over-remote-content.html [ Pass Crash Timeout ]
 webkit.org/b/103183 [ Win7 SnowLeopard ] media/video-seek-past-end-playing.html [ Pass Crash ]

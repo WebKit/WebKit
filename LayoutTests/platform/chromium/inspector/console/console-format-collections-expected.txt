@@ -2,7 +2,7 @@ CONSOLE MESSAGE: line 15: [object NodeList]
 CONSOLE MESSAGE: line 19: [object HTMLCollection]
 CONSOLE MESSAGE: line 23: [object HTMLOptionsCollection]
 CONSOLE MESSAGE: line 27: undefined
-CONSOLE MESSAGE: line 31: [object HTMLCollection]
+CONSOLE MESSAGE: line 31: [object HTMLFormControlsCollection]
 CONSOLE MESSAGE: line 35: [object NodeList]
 CONSOLE MESSAGE: line 41: 1,2,
 CONSOLE MESSAGE: line 44: [object Object]
@@ -11,7 +11,7 @@ CONSOLE MESSAGE: line 15: [object NodeList]
 CONSOLE MESSAGE: line 19: [object HTMLCollection]
 CONSOLE MESSAGE: line 23: [object HTMLOptionsCollection]
 CONSOLE MESSAGE: line 27: undefined
-CONSOLE MESSAGE: line 31: [object HTMLCollection]
+CONSOLE MESSAGE: line 31: [object HTMLFormControlsCollection]
 CONSOLE MESSAGE: line 35: [object NodeList]
 CONSOLE MESSAGE: line 41: 1,2,
 CONSOLE MESSAGE: line 44: [object Object]
@@ -22,17 +22,17 @@ NodeList[1] console-format-collections.html:15
 HTMLCollection[3] console-format-collections.html:19
 HTMLOptionsCollection[2] console-format-collections.html:23
 HTMLAllCollection[14] console-format-collections.html:27
-HTMLCollection[3] console-format-collections.html:31
+HTMLFormControlsCollection[3] console-format-collections.html:31
 NodeList[2] console-format-collections.html:35
 Array[2] console-format-collections.html:41
 NonArrayWithLength console-format-collections.html:44
 Arguments[2] console-format-collections.html:51
-[<select>, item: function] console-format-collections.html:15
-[<script>, <script>, <script>, item: function, namedItem: function] console-format-collections.html:19
-[<option>, <option>, selectedIndex: 0, add: function, remove: function, item: function, namedItem: function] console-format-collections.html:23
-[<html>, <head>, <script>, <script>, <script>, <body>, <p>, <div>, <form>, <select>, <option>, <option>, <input>, <input>, item: function, namedItem: function, tags: function] console-format-collections.html:27
-[<select>, <input>, <input>, item: function, namedItem: function] console-format-collections.html:31
-[<input>, <input>, item: function] console-format-collections.html:35
+[select#sel, item: function] console-format-collections.html:15
+[script, script, script, item: function, namedItem: function] console-format-collections.html:19
+[option, option, selectedIndex: 0, namedItem: function, add: function, remove: function, item: function…] console-format-collections.html:23
+[html, head, script, script, script, body, p, div, form#f, select#sel, option, option, input, input, item: function, namedItem: function, tags: function] console-format-collections.html:27
+[select#sel, input, input, namedItem: function, item: function, namedItem: function] console-format-collections.html:31
+[input, input, item: function] console-format-collections.html:35
 [1, Array[2]] console-format-collections.html:41
 NonArrayWithLength {keys: Array[0]} console-format-collections.html:44
 [1, "2"] console-format-collections.html:51
