@@ -1,3 +1,11 @@
+2012-11-26  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening.
+
+        Adding timeout expectation for the new a11y test added in r135680.
+
+        * platform/gtk/TestExpectations:
+
 2012-11-25  Ryuan Choi <ryuan.choi@samsung.com>
 
         Unreviewed gardening.
