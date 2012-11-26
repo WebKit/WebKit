@@ -1,0 +1,27 @@
+<div contenteditable>
+    0123456789
+</div>
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    onload = function() {
+        var textarea = document.getElementById("textarea");
+        textarea.focus();
+        var hasBeenBlurred = false;
+        textarea.onblur = function() {
+            hasBeenBlurred = true;
+        }
+
+        document.execCommand("InsertText", false, "te");
+        document.execCommand("InsertText", false, "h");
+        document.execCommand("InsertText", false, " ");
+
+        document.execCommand("InsertText", false, "test result is");
+
+        var result = textarea.value === "the test result is" ? "PASS" : "FAIL";
+        document.getElementById("result").appendChild(document.createTextNode(result));
+    }
+</script>
+<textarea id="textarea"></textarea>
+<p id="result"></p>
