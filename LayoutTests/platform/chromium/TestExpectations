@@ -4249,3 +4249,4 @@ webkit.org/b/103183 [ Win7 SnowLeopard ] media/video-seek-past-end-playing.html 
 webkit.org/b/103093 [ Lion SnowLeopard ] media/remove-from-document.html [ Crash Pass ]
 webkit.org/b/103299 [ Linux Mac Win ] fast/dom/shadow/shadow-dom-event-dispatching.html [ Failure Pass ]
 webkit.org/b/103148 [ Linux Win ] fast/text/atsui-small-caps-punctuation-size.html [ ImageOnlyFailure Failure Pass ]
+webkit.org/b/103308 [ SnowLeopard Lion ] css3/filters/custom/custom-filter-transforms-animation.html [ Pass Timeout ]
