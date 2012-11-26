@@ -175,14 +175,20 @@ ViewportAttributes ViewportArguments::resolve(const FloatSize& initialViewportSi
             resultWidth = compareIgnoringAuto(resultWidth, deviceSize.width() / compareIgnoringAuto(resultZoom, resultMaxZoom, min), max);
             resultHeight = compareIgnoringAuto(resultHeight, deviceSize.height() / compareIgnoringAuto(resultZoom, resultMaxZoom, min), max);
         }
+
+        resultWidth = max<float>(1, resultWidth);
+        resultHeight = max<float>(1, resultHeight);
     }
 
-    // Clamp values to valid range.
-    resultWidth = clampLengthValue(resultWidth);
-    resultHeight = clampLengthValue(resultHeight);
-    resultZoom = clampScaleValue(resultZoom);
-    resultMinZoom = clampScaleValue(resultMinZoom);
-    resultMaxZoom = clampScaleValue(resultMaxZoom);
+    if (type != ViewportArguments::CSSDeviceAdaptation && type != ViewportArguments::Implicit) {
+        // Clamp values to a valid range, but not for @viewport since is
+        // not mandated by the specification.
+        resultWidth = clampLengthValue(resultWidth);
+        resultHeight = clampLengthValue(resultHeight);
+        resultZoom = clampScaleValue(resultZoom);
+        resultMinZoom = clampScaleValue(resultMinZoom);
+        resultMaxZoom = clampScaleValue(resultMaxZoom);
+    }
 
     ViewportAttributes result;
     result.orientation = orientation;
@@ -229,9 +235,12 @@ ViewportAttributes ViewportArguments::resolve(const FloatSize& initialViewportSi
     if (resultHeight == ViewportArguments::ValueAuto)
         resultHeight = resultWidth * (initialViewportSize.height() / initialViewportSize.width());
 
-    // Extend width and height to fill the visual viewport for the resolved initial-scale.
-    resultWidth = max<float>(resultWidth, initialViewportSize.width() / result.initialScale);
-    resultHeight = max<float>(resultHeight, initialViewportSize.height() / result.initialScale);
+    if (type == ViewportArguments::ViewportMeta) {
+        // Extend width and height to fill the visual viewport for the resolved initial-scale.
+        resultWidth = max<float>(resultWidth, initialViewportSize.width() / result.initialScale);
+        resultHeight = max<float>(resultHeight, initialViewportSize.height() / result.initialScale);
+    }
+
     result.layoutSize.setWidth(resultWidth);
     result.layoutSize.setHeight(resultHeight);
 

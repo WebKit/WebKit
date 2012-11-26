@@ -1,3 +1,21 @@
+2012-11-26  Thiago Marcos P. Santos  <thiago.santos@intel.com>
+
+        Viewport CSS rules should not clamp values like Viewport META
+        https://bugs.webkit.org/show_bug.cgi?id=103068
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Imported Opera tests that makes sure we are doing the clamping right.
+
+        * css3/device-adapt/opera/constrain-018-expected.txt: Added.
+        * css3/device-adapt/opera/constrain-018.xhtml: Added.
+        * css3/device-adapt/opera/constrain-019-expected.txt: Added.
+        * css3/device-adapt/opera/constrain-019.xhtml: Added.
+        * css3/device-adapt/opera/constrain-023-expected.txt: Added.
+        * css3/device-adapt/opera/constrain-023.xhtml: Added.
+        * css3/device-adapt/opera/constrain-024-expected.txt: Added.
+        * css3/device-adapt/opera/constrain-024.xhtml: Added.
+
 2012-11-26  Robert Kroeger  <rjkroege@chromium.org>
 
         Unreviewed gardening: added TestExpecations failures for 
