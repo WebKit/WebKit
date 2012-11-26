@@ -883,6 +883,13 @@ void PluginView::platformDestroy()
         XFreePixmap(GDK_DISPLAY_XDISPLAY(gdk_display_get_default()), m_drawable);
         m_drawable = 0;
     }
+
+    GtkWidget* widget = platformWidget();
+    if (widget) {
+        GtkWidget* parent = gtk_widget_get_parent(widget);
+        ASSERT(parent);
+        gtk_container_remove(GTK_CONTAINER(parent), widget);
+    }
 }
 
 } // namespace WebCore
