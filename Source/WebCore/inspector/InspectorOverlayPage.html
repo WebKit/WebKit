@@ -344,9 +344,9 @@ function _drawElementTitle(highlight)
     document.getElementById("tag-name").textContent = elementInfo.tagName;
     document.getElementById("node-id").textContent = elementInfo.idValue ? "#" + elementInfo.idValue : "";
     var className = elementInfo.className;
-    if (className.length > 50)
+    if (className && className.length > 50)
        className = className.substring(0, 50) + "\u2026";
-    document.getElementById("class-name").textContent = className;
+    document.getElementById("class-name").textContent = className || "";
     document.getElementById("node-width").textContent = elementInfo.nodeWidth;
     document.getElementById("node-height").textContent = elementInfo.nodeHeight;
     var elementTitle = document.getElementById("element-title");

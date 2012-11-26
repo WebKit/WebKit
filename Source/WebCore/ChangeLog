@@ -1,3 +1,9 @@
+2012-11-26  'Pavel Feldman'  <pfeldman@chromium.org>
+
+        Not reviewed: follow up for r135720, fixing node highlight.
+
+        * inspector/InspectorOverlayPage.html:
+
 2012-11-26  Viatcheslav Ostapenko  <v.ostapenko@samsung.com>
 
         [EFL] Crashes in compositing layout tests with AC on.
