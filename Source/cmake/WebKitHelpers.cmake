@@ -21,7 +21,7 @@ MACRO(WEBKIT_SET_EXTRA_COMPILER_FLAGS _target)
     # Disable some optimizations on buggy compiler versions
     # GCC 4.5.1 does not implement -ftree-sra correctly
     IF (${COMPILER_VERSION} STREQUAL "4.5.1")
-        SET(OLD_COMPILE_FLAGS "${OLD_COMPILE_FLAGS} -fno-tree-sra")
+        SET(OLD_COMPILE_FLAGS "-fno-tree-sra ${OLD_COMPILE_FLAGS}")
     ENDIF ()
 
     IF (NOT SHARED_CORE)
@@ -42,7 +42,7 @@ MACRO(WEBKIT_SET_EXTRA_COMPILER_FLAGS _target)
 
     # Enable errors on warning
     IF (OPTION_ENABLE_WERROR)
-        SET(OLD_COMPILE_FLAGS "${OLD_COMPILE_FLAGS} -Werror -Wno-error=unused-parameter")
+        SET(OLD_COMPILE_FLAGS "-Werror -Wno-error=unused-parameter ${OLD_COMPILE_FLAGS}")
     ENDIF ()
 
     # Disable C++0x compat warnings for GCC >= 4.6.0 until we build

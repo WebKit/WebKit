@@ -30,7 +30,7 @@ STRING(TOLOWER ${CMAKE_HOST_SYSTEM_PROCESSOR} LOWERCASE_CMAKE_HOST_SYSTEM_PROCES
 IF ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" AND "${LOWERCASE_CMAKE_HOST_SYSTEM_PROCESSOR}" MATCHES "(i[3-6]86|x86)" AND "${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
     # To avoid out of memory when building with debug option in 32bit system.
     # See https://bugs.webkit.org/show_bug.cgi?id=77327
-    SET(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -Wl,--no-keep-memory")
+    SET(CMAKE_SHARED_LINKER_FLAGS "-Wl,--no-keep-memory ${CMAKE_SHARED_LINKER_FLAGS}")
 ENDIF ()
 
 SET(LIB_SUFFIX "" CACHE STRING "Define suffix of directory name (32/64)")

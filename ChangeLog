@@ -1,3 +1,18 @@
+2012-11-26  Laszlo Gombos  <l.gombos@samsung.com>
+
+        [CMake] Allow user specified compiler flags to take precedence
+        https://bugs.webkit.org/show_bug.cgi?id=103101
+
+        Reviewed by Brent Fulgham.
+
+        Make sure that compiler and linker flags specified by the build system
+        are always prepended to the variables that can be specified by the
+        environment and the user as well. 
+
+        * Source/cmake/OptionsCommon.cmake:
+        * Source/cmake/OptionsWindows.cmake:
+        * Source/cmake/WebKitHelpers.cmake:
+
 2012-11-23  Alexis Menard  <alexis@webkit.org>
 
         [CSS3 Backgrounds and Borders] Implement new CSS3 background-position parsing.
