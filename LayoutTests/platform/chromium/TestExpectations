@@ -4252,6 +4252,3 @@ webkit.org/b/103161 [ Linux Win ] inspector/runtime/runtime-localStorage-getProp
 webkit.org/b/103148 [ Linux Win Mac ] svg/batik/text/textPosition2.svg [ ImageOnlyFailure ]
 webkit.org/b/103181 [ Win7 ] http/tests/local/drag-over-remote-content.html [ Pass Crash Timeout ]
 webkit.org/b/103183 [ Win7 SnowLeopard ] media/video-seek-past-end-playing.html [ Pass Crash ]
-
-# This test results are date-dependent, see bug.
-webkit.org/b/103225 platform/chromium/fast/forms/calendar-picker/week-picker-key-operations.html [ Pass Failure ]

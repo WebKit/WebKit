@@ -128,9 +128,8 @@ function test2AfterClosing() {
 function testToday() {
     eventSender.keyDown('t');
     var now = new Date();
-    var expectedMonth = new popupWindow.Month(now.getFullYear(), now.getMonth()).toString();
     var expectedWeek = popupWindow.Week.createFromToday().toString();
-    return selectedWeek() === expectedWeek && currentMonth() === expectedMonth;
+    return selectedWeek() === expectedWeek;
 }
 
 function focusedElement() {

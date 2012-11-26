@@ -1,3 +1,13 @@
+2012-11-26  Keishi Hattori  <keishi@webkit.org>
+
+        Layout Test platform/chromium/fast/forms/calendar-picker/week-picker-key-operations.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=103225
+
+        Unreviewed.
+
+        * platform/chromium/TestExpectations:
+        * platform/chromium/fast/forms/calendar-picker/week-picker-key-operations.html: Remove current month check because it was flaky.
+
 2012-11-26  János Badics  <jbadics@inf.u-szeged.hu>
 
         [Qt] Gardening after r135629. Skipped a newly added but failing test.
