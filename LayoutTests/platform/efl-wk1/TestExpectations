@@ -392,3 +392,7 @@ webkit.org/b/102517 css3/device-adapt/opera/syntax-003.xhtml [ Failure ]
 
 # ESC key does not cancel context menu in EFL port
 Bug(EFL) editing/selection/5354455-1.html [ Failure ]
+
+# Fails on efl wk1 bot, see also webkit.org/b/102190
+webkit.org/b/103043 fast/events/overflow-scroll-fake-mouse-move.html [ Failure ]
+webkit.org/b/103043 fast/events/frame-scroll-fake-mouse-move.html [ Failure ]

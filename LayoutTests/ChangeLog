@@ -1,3 +1,16 @@
+2012-11-26  Jussi Kukkonen  <jussi.kukkonen@intel.com>
+
+        [EFL] Gardening: update test expectations
+        https://bugs.webkit.org/show_bug.cgi?id=103119
+
+        Unreviewed gardening. timeline-timer-fired-from-eval-call-site-expected.html
+        is passing now, other changes are just marking tests as flaky based on
+        the flakiness dashboard.
+
+        * platform/efl-wk1/TestExpectations:
+        * platform/efl-wk2/TestExpectations:
+        * platform/efl/TestExpectations:
+
 2012-11-26  Keishi Hattori  <keishi@webkit.org>
 
         Layout Test platform/chromium/fast/forms/calendar-picker/week-picker-key-operations.html is failing

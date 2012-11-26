@@ -53,7 +53,6 @@ webkit.org/b/102200 fast/dom/HTMLAnchorElement/anchor-download.html [ Crash Fail
 webkit.org/b/102200 fast/dom/HTMLAnchorElement/anchor-nodownload-set.html [ Crash Failure ]
 
 webkit.org/b/102203 fast/events/attribute-listener-deletion-crash.html [ Crash ]
-webkit.org/b/102204 http/tests/security/frameNavigation/inactive-function-in-popup-navigate-child.html [ Crash ]
 
 # Hitting !decoder.destinationID() assertion.
 webkit.org/b/102651 [ Debug ] networkinformation/multiple-frames.html [ Crash ]
@@ -182,6 +181,22 @@ webkit.org/b/102370 fast/writing-mode/japanese-ruby-vertical-lr.html [ Failure P
 webkit.org/b/102370 fast/writing-mode/japanese-ruby-vertical-rl.html [ Failure Pass ]
 webkit.org/b/102370 fast/text/international/002.html [ Failure Pass ]
 
+# All debug bots timeout (crash) on this one
+webkit.org/b/56496 [ Debug ] fast/js/array-sort-modifying-tostring.html [ Crash Pass ]
+
+webkit.org/b/102204 http/tests/security/frameNavigation/inactive-function-in-popup-navigate-child.html [ Crash Pass ]
+
+# Flaky on Debug bot. See also webkit.org/b/102190
+webkit.org/b/103043 fast/events/overflow-scroll-fake-mouse-move.html [ Failure Pass ]
+webkit.org/b/103043 fast/events/frame-scroll-fake-mouse-move.html [ Failure Pass ]
+
+# Failures after r130363.
+webkit.org/b/98573 fast/forms/multiple-form-submission-protection-mouse.html [ Failure Pass ]
+
+webkit.org/b/103113 editing/deleting/delete-ligature-003.html [ Failure Pass ]
+
+webkit.org/b/103115 http/tests/loading/remove-child-triggers-parser.html [ Failure Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # FAILING TESTS
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -220,9 +235,6 @@ webkit.org/b/93982 storage/domstorage/storage-close-database-on-idle.html [ Fail
 
 # The following test makes the fast/parser/document-write-ignores-later-network-bytes.html test crash
 webkit.org/b/98345 fast/parser/document-open-in-unload.html [ Skip ]
-
-# Fails after r130363.
-webkit.org/b/98573 fast/forms/multiple-form-submission-protection-mouse.html [ Failure ]
 
 # Requires TestRunner displayInvalidatedRegion() support.
 webkit.org/b/98523 fast/images/repaint-subrect-grid.html [ Failure ]
@@ -286,7 +298,6 @@ webkit.org/b/86881 fast/events/context-nodrag.html [ Failure ]
 
 webkit.org/b/102201 fast/dom/Window/window-resize.html [ Failure ]
 webkit.org/b/102201 fast/dom/Window/open-window-min-size.html [ Failure ]
-webkit.org/b/102202 inspector/timeline/timeline-timer-fired-from-eval-call-site.html [ Failure ]
 
 webkit.org/b/102216 inspector-protocol/nmi-webaudio.html [ Failure ]
 webkit.org/b/102216 inspector-protocol/nmi-webaudio-leak-test.html [ Failure ]
