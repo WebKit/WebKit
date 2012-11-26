@@ -911,6 +911,7 @@
 		316FE1180E6E1DA700BF6088 /* ImplicitAnimation.h in Headers */ = {isa = PBXBuildFile; fileRef = 316FE10E0E6E1DA700BF6088 /* ImplicitAnimation.h */; };
 		316FE1190E6E1DA700BF6088 /* KeyframeAnimation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 316FE10F0E6E1DA700BF6088 /* KeyframeAnimation.cpp */; };
 		316FE11A0E6E1DA700BF6088 /* KeyframeAnimation.h in Headers */ = {isa = PBXBuildFile; fileRef = 316FE1100E6E1DA700BF6088 /* KeyframeAnimation.h */; };
+		31741AAD16636609008A5B7E /* SimulatedClickOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 31741AAB16635E45008A5B7E /* SimulatedClickOptions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		3194616213020B20004BB3F8 /* JSWebKitAnimation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3194616013020B20004BB3F8 /* JSWebKitAnimation.cpp */; };
 		3194616313020B20004BB3F8 /* JSWebKitAnimation.h in Headers */ = {isa = PBXBuildFile; fileRef = 3194616113020B20004BB3F8 /* JSWebKitAnimation.h */; };
 		3194616A13020B66004BB3F8 /* DOMWebKitAnimation.h in Headers */ = {isa = PBXBuildFile; fileRef = 3194616813020B66004BB3F8 /* DOMWebKitAnimation.h */; };
@@ -8082,6 +8083,7 @@
 		316FE10E0E6E1DA700BF6088 /* ImplicitAnimation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ImplicitAnimation.h; path = animation/ImplicitAnimation.h; sourceTree = "<group>"; };
 		316FE10F0E6E1DA700BF6088 /* KeyframeAnimation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = KeyframeAnimation.cpp; path = animation/KeyframeAnimation.cpp; sourceTree = "<group>"; };
 		316FE1100E6E1DA700BF6088 /* KeyframeAnimation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = KeyframeAnimation.h; path = animation/KeyframeAnimation.h; sourceTree = "<group>"; };
+		31741AAB16635E45008A5B7E /* SimulatedClickOptions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SimulatedClickOptions.h; sourceTree = "<group>"; };
 		3194616013020B20004BB3F8 /* JSWebKitAnimation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebKitAnimation.cpp; sourceTree = "<group>"; };
 		3194616113020B20004BB3F8 /* JSWebKitAnimation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebKitAnimation.h; sourceTree = "<group>"; };
 		3194616813020B66004BB3F8 /* DOMWebKitAnimation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMWebKitAnimation.h; sourceTree = "<group>"; };
@@ -22094,6 +22096,7 @@
 				A6D169611346B49B000EB770 /* ShadowRoot.cpp */,
 				A6D169631346B4C1000EB770 /* ShadowRoot.h */,
 				A7DB418114CE1F0A00A2E316 /* ShadowRoot.idl */,
+				31741AAB16635E45008A5B7E /* SimulatedClickOptions.h */,
 				D01A27AB10C9BFD800026A42 /* SpaceSplitString.cpp */,
 				D01A27AC10C9BFD800026A42 /* SpaceSplitString.h */,
 				CEA3949A11D45CDA003094CF /* StaticHashSetNodeList.cpp */,
@@ -25808,6 +25811,7 @@
 				53EF766B16530A61004CBE49 /* SettingsMacros.h in Headers */,
 				447958041643B49A001E0A7F /* ParsedContentType.h in Headers */,
 				FB2C15C3165D649D0039C9F8 /* CachedSVGDocumentReference.h in Headers */,
+				31741AAD16636609008A5B7E /* SimulatedClickOptions.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

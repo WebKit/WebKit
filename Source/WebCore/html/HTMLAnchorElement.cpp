@@ -241,8 +241,7 @@ void HTMLAnchorElement::parseAttribute(const QualifiedName& name, const AtomicSt
 
 void HTMLAnchorElement::accessKeyAction(bool sendMouseEvents)
 {
-    // send the mouse button events if the caller specified sendMouseEvents
-    dispatchSimulatedClick(0, sendMouseEvents);
+    dispatchSimulatedClick(0, sendMouseEvents ? SendMouseUpDownEvents : SendNoEvents);
 }
 
 bool HTMLAnchorElement::isURLAttribute(const Attribute& attribute) const

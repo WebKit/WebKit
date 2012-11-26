@@ -393,7 +393,7 @@ void HTMLSelectElement::optionElementChildrenChanged()
 void HTMLSelectElement::accessKeyAction(bool sendMouseEvents)
 {
     focus();
-    dispatchSimulatedClick(0, sendMouseEvents);
+    dispatchSimulatedClick(0, sendMouseEvents ? SendMouseUpDownEvents : SendNoEvents);
 }
 
 void HTMLSelectElement::setMultiple(bool multiple)

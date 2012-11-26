@@ -1,3 +1,51 @@
+2012-11-26  Jon Lee  <jonlee@apple.com>
+
+        Extend EventDispatcher::dispatchSimulatedClick to allow sending a mouseover event
+        https://bugs.webkit.org/show_bug.cgi?id=102610
+        <rdar://problem/12725663>
+
+        Reviewed by Darin Adler.
+
+        Update the dispatchSimulatedClick() to take option enums for dispatching events.
+
+        * dom/SimulatedClickOptions.h: Added. Define two options enums. One tracks which mouse
+        events to send. The other determines whether to force the element to repaint.
+
+        * dom/EventDispatcher.cpp:
+        (WebCore::EventDispatcher::dispatchSimulatedClick): Refactor to use the option enums.
+        * dom/EventDispatcher.h:
+        (EventDispatcher): Update function signature.
+
+        * dom/Node.cpp: Refactor parameters to use the options enums rather than booleans.
+        (WebCore::Node::dispatchSimulatedClick):
+        * dom/Node.h:
+
+        Refactor. Remove redundant comments.
+        * html/BaseCheckableInputType.cpp:
+        (WebCore::BaseCheckableInputType::accessKeyAction):
+        * html/BaseClickableWithKeyInputType.cpp:
+        (WebCore::BaseClickableWithKeyInputType::accessKeyAction):
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::accessKeyAction):
+        * html/HTMLButtonElement.cpp:
+        (WebCore::HTMLButtonElement::accessKeyAction):
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::click):
+        (WebCore::HTMLElement::accessKeyAction):
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::accessKeyAction):
+        * html/RadioInputType.cpp:
+        (WebCore::RadioInputType::handleKeydownEvent):
+        * html/RangeInputType.cpp:
+        (WebCore::RangeInputType::accessKeyAction):
+
+        Add SimulatedClickOptions.h.
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+
 2012-11-26  Shinya Kawanaka  <shinyak@chromium.org>
 
         [Shadow] Attaching children of a shadow host takes O(N^2) where N is the number of host children

@@ -54350,6 +54350,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\dom\SimulatedClickOptions.h"
+				>
+			</File>
+			<File
 				RelativePath="..\dom\SpaceSplitString.cpp"
 				>
 				<FileConfiguration

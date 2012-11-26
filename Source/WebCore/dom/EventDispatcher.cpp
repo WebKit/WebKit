@@ -208,7 +208,7 @@ void EventDispatcher::dispatchScopedEvent(Node* node, PassRefPtr<EventDispatchMe
     ScopedEventQueue::instance()->enqueueEventDispatchMediator(mediator);
 }
 
-void EventDispatcher::dispatchSimulatedClick(Node* node, Event* underlyingEvent, bool sendMouseEvents, bool showPressedLook)
+void EventDispatcher::dispatchSimulatedClick(Node* node, Event* underlyingEvent, SimulatedClickMouseEventOptions mouseEventOptions, SimulatedClickVisualOptions visualOptions)
 {
     if (node->disabled())
         return;
@@ -220,11 +220,13 @@ void EventDispatcher::dispatchSimulatedClick(Node* node, Event* underlyingEvent,
 
     gNodesDispatchingSimulatedClicks->add(node);
 
-    // send mousedown and mouseup before the click, if requested
-    if (sendMouseEvents)
+    if (mouseEventOptions == SendMouseOverUpDownEvents)
+        EventDispatcher(node).dispatchEvent(SimulatedMouseEvent::create(eventNames().mouseoverEvent, node->document()->defaultView(), underlyingEvent));
+
+    if (mouseEventOptions != SendNoEvents)
         EventDispatcher(node).dispatchEvent(SimulatedMouseEvent::create(eventNames().mousedownEvent, node->document()->defaultView(), underlyingEvent));
-    node->setActive(true, showPressedLook);
-    if (sendMouseEvents)
+    node->setActive(true, visualOptions == ShowPressedLook);
+    if (mouseEventOptions != SendNoEvents)
         EventDispatcher(node).dispatchEvent(SimulatedMouseEvent::create(eventNames().mouseupEvent, node->document()->defaultView(), underlyingEvent));
     node->setActive(false);
 

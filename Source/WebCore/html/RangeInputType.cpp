@@ -286,9 +286,7 @@ void RangeInputType::accessKeyAction(bool sendMouseEvents)
 {
     InputType::accessKeyAction(sendMouseEvents);
 
-    // Send mouse button events if the caller specified sendMouseEvents.
-    // FIXME: The comment above is no good. It says what we do, but not why.
-    element()->dispatchSimulatedClick(0, sendMouseEvents);
+    element()->dispatchSimulatedClick(0, sendMouseEvents ? SendMouseUpDownEvents : SendNoEvents);
 }
 
 void RangeInputType::minOrMaxAttributeChanged()

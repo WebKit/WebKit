@@ -1621,6 +1621,7 @@ HEADERS += \
     dom/ScriptExecutionContext.h \
     dom/SelectorQuery.h \
     dom/ShadowRoot.h \
+    dom/SimulatedClickOptions.h \
     dom/SpaceSplitString.h \
     dom/StaticNodeList.h \
     dom/StyledElement.h \

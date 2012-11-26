@@ -690,12 +690,12 @@ void HTMLElement::setSpellcheck(bool enable)
 
 void HTMLElement::click()
 {
-    dispatchSimulatedClick(0, false, false);
+    dispatchSimulatedClick(0, SendNoEvents, DoNotShowPressedLook);
 }
 
 void HTMLElement::accessKeyAction(bool sendMouseEvents)
 {
-    dispatchSimulatedClick(0, sendMouseEvents);
+    dispatchSimulatedClick(0, sendMouseEvents ? SendMouseUpDownEvents : SendNoEvents);
 }
 
 String HTMLElement::title() const

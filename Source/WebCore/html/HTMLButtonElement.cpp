@@ -192,8 +192,8 @@ bool HTMLButtonElement::appendFormData(FormDataList& formData, bool)
 void HTMLButtonElement::accessKeyAction(bool sendMouseEvents)
 {
     focus();
-    // Send the mouse button events if the caller specified sendMouseEvents
-    dispatchSimulatedClick(0, sendMouseEvents);
+
+    dispatchSimulatedClick(0, sendMouseEvents ? SendMouseUpDownEvents : SendNoEvents);
 }
 
 bool HTMLButtonElement::isURLAttribute(const Attribute& attribute) const

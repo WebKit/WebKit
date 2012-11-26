@@ -2924,6 +2924,7 @@ webcore_sources += \
 	Source/WebCore/dom/SelectorQuery.h \
 	Source/WebCore/dom/ShadowRoot.cpp \
 	Source/WebCore/dom/ShadowRoot.h \
+	Source/WebCore/dom/SimulatedClickOptions.h \
 	Source/WebCore/dom/SpaceSplitString.cpp \
 	Source/WebCore/dom/SpaceSplitString.h \
 	Source/WebCore/dom/StaticHashSetNodeList.cpp \

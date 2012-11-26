@@ -26,6 +26,7 @@
 #ifndef EventDispatcher_h
 #define EventDispatcher_h
 
+#include "SimulatedClickOptions.h"
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/Vector.h>
@@ -72,7 +73,7 @@ public:
     static bool dispatchEvent(Node*, PassRefPtr<EventDispatchMediator>);
     static void dispatchScopedEvent(Node*, PassRefPtr<EventDispatchMediator>);
 
-    static void dispatchSimulatedClick(Node*, Event* underlyingEvent, bool sendMouseEvents, bool showPressedLook);
+    static void dispatchSimulatedClick(Node*, Event* underlyingEvent, SimulatedClickMouseEventOptions, SimulatedClickVisualOptions);
 
     bool dispatchEvent(PassRefPtr<Event>);
     void adjustRelatedTarget(Event*, PassRefPtr<EventTarget> prpRelatedTarget);

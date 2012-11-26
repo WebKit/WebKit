@@ -75,9 +75,7 @@ void BaseClickableWithKeyInputType::handleKeyupEvent(InputType& inputType, Keybo
 // FIXME: Could share this with BaseCheckableInputType and RangeInputType if we had a common base class.
 void BaseClickableWithKeyInputType::accessKeyAction(HTMLInputElement* element, bool sendMouseEvents)
 {
-    // Send mouse button events if the caller specified sendMouseEvents.
-    // FIXME: The comment above is no good. It says what we do, but not why.
-    element->dispatchSimulatedClick(0, sendMouseEvents);
+    element->dispatchSimulatedClick(0, sendMouseEvents ? SendMouseUpDownEvents : SendNoEvents);
 }
 
 void BaseClickableWithKeyInputType::handleKeydownEvent(KeyboardEvent* event)

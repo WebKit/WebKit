@@ -32,6 +32,7 @@
 #include "MutationObserver.h"
 #include "RenderStyleConstants.h"
 #include "ScriptWrappable.h"
+#include "SimulatedClickOptions.h"
 #include "TreeShared.h"
 #include <wtf/Forward.h>
 #include <wtf/ListHashSet.h>
@@ -637,7 +638,7 @@ public:
 #if ENABLE(GESTURE_EVENTS)
     bool dispatchGestureEvent(const PlatformGestureEvent&);
 #endif
-    void dispatchSimulatedClick(Event* underlyingEvent, bool sendMouseEvents = false, bool showPressedLook = true);
+    void dispatchSimulatedClick(Event* underlyingEvent, SimulatedClickMouseEventOptions = SendNoEvents, SimulatedClickVisualOptions = ShowPressedLook);
     bool dispatchBeforeLoadEvent(const String& sourceURL);
 
     virtual void dispatchFocusEvent(PassRefPtr<Node> oldFocusedNode);
