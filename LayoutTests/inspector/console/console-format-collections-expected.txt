@@ -27,12 +27,12 @@ NodeList[2] console-format-collections.html:35
 Array[2] console-format-collections.html:41
 NonArrayWithLength console-format-collections.html:44
 Arguments[2] console-format-collections.html:51
-[<select>, item: function] console-format-collections.html:15
-[<script>, <script>, <script>, item: function, namedItem: function] console-format-collections.html:19
-[<option>, <option>, selectedIndex: 0, remove: function, namedItem: function, add: function, item: function, namedItem: function] console-format-collections.html:23
-[<html>, <head>, <script>, <script>, <script>, <body>, <p>, <div>, <form>, <select>, <option>, <option>, <input>, <input>, namedItem: function, tags: function, item: function] console-format-collections.html:27
-[<select>, <input>, <input>, namedItem: function, item: function, namedItem: function] console-format-collections.html:31
-[<input>, <input>, item: function] console-format-collections.html:35
+[select#sel, item: function] console-format-collections.html:15
+[script, script, script, item: function, namedItem: function] console-format-collections.html:19
+[option, option, selectedIndex: 0, remove: function, namedItem: function, add: function, item: function…] console-format-collections.html:23
+[html, head, script, script, script, body, p, div, form#f, select#sel, option, option, input, input, namedItem: function, tags: function, item: function] console-format-collections.html:27
+[select#sel, input, input, namedItem: function, item: function, namedItem: function] console-format-collections.html:31
+[input, input, item: function] console-format-collections.html:35
 [1, Array[2]] console-format-collections.html:41
 NonArrayWithLength {keys: Array[0]} console-format-collections.html:44
 [1, "2"] console-format-collections.html:51

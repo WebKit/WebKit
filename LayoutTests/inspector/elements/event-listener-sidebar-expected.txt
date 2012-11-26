@@ -21,7 +21,7 @@ Inspect Me
     isAttribute: false
     lineNumber: 15
     listenerBody: function (event) { console.log("click - button - capturing"); }
-    node: <button>
+    node: button#node
     sourceName: [clipped-for-test]/LayoutTests/inspector/elements/event-listener-sidebar.html
     type: click
     useCapture: true
@@ -29,7 +29,7 @@ Inspect Me
     isAttribute: false
     lineNumber: 12
     listenerBody: function clickHandler(event) { console.log("click - button - bubbling (registered before attribute)"); }
-    node: <button>
+    node: button#node
     sourceName: [clipped-for-test]/LayoutTests/inspector/elements/event-listener-sidebar.html
     type: click
     useCapture: false
@@ -37,7 +37,7 @@ Inspect Me
     isAttribute: true
     lineNumber: 16
     listenerBody: function (event) { console.log("click - button - attribute"); }
-    node: <button>
+    node: button#node
     sourceName: [clipped-for-test]/LayoutTests/inspector/elements/event-listener-sidebar.html
     type: click
     useCapture: false
@@ -45,7 +45,7 @@ Inspect Me
     isAttribute: false
     lineNumber: 17
     listenerBody: function (event) { console.log("click - button - bubbling (registered after attribute)"); }
-    node: <button>
+    node: button#node
     sourceName: [clipped-for-test]/LayoutTests/inspector/elements/event-listener-sidebar.html
     type: click
     useCapture: false
@@ -63,7 +63,7 @@ Inspect Me
     isAttribute: false
     lineNumber: 10
     listenerBody: function f() {}
-    node: <body>
+    node: body
     sourceName: [clipped-for-test]/LayoutTests/inspector/elements/event-listener-sidebar.html
     type: custom event
     useCapture: true
@@ -73,7 +73,7 @@ Inspect Me
     isAttribute: false
     lineNumber: 14
     listenerBody: function hoverHandler(event) { console.log("hover - button - bubbling"); }
-    node: <button>
+    node: button#node
     sourceName: [clipped-for-test]/LayoutTests/inspector/elements/event-listener-sidebar.html
     type: hover
     useCapture: false
@@ -107,7 +107,7 @@ Inspect Me
     isAttribute: false
     lineNumber: 10
     listenerBody: function f() {}
-    node: <body>
+    node: body
     sourceName: [clipped-for-test]/LayoutTests/inspector/elements/event-listener-sidebar.html
     type: custom event
     useCapture: true

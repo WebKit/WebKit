@@ -1,3 +1,22 @@
+2012-11-26  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: object preview does not render node id, className; logs too many functions for jQuery.
+        https://bugs.webkit.org/show_bug.cgi?id=103222
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/console/command-line-api-expected.txt:
+        * inspector/console/command-line-api-inspect-expected.txt:
+        * inspector/console/console-dir-expected.txt:
+        * inspector/console/console-format-collections-expected.txt:
+        * inspector/console/console-format-expected.txt:
+        * inspector/elements/event-listener-sidebar-expected.txt:
+        * inspector/elements/event-listeners-about-blank-expected.txt:
+        * platform/chromium-linux/inspector/console/console-format-collections-expected.txt: Removed.
+        * platform/chromium/inspector/console/command-line-api-inspect-expected.txt:
+        * platform/chromium/inspector/console/console-dir-expected.txt:
+        * platform/chromium/inspector/console/console-format-collections-expected.txt:
+
 2012-11-26  Florin Malita  <fmalita@chromium.org>
 
         RenderSVGResourceContainer does not clear cached data on removal

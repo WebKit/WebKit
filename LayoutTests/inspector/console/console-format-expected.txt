@@ -77,7 +77,7 @@ Error {} console-format.html:54
 globals[4]
 Error {}
 <p id="p">Tests that console logging dumps proper messages.</p> console-format.html:54
-[<p>] console-format.html:55
+[p#p] console-format.html:55
 globals[5]
 <p id="p">Tests that console logging dumps proper messages.</p>
 function () { return 1; } console-format.html:54
