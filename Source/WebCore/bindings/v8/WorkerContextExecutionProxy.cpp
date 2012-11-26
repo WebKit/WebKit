@@ -28,6 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// FIXME: This file is going to be removed in a follow-up patch.
 
 #include "config.h"
 
@@ -58,128 +59,6 @@
 #include <wtf/text/CString.h>
 
 namespace WebCore {
-
-WorkerContextExecutionProxy::WorkerContextExecutionProxy(WorkerContext* workerContext)
-    : m_workerContext(workerContext)
-    , m_disableEvalPending(String())
-{
-    V8Initializer::initializeWorker();
-}
-
-WorkerContextExecutionProxy::~WorkerContextExecutionProxy()
-{
-    dispose();
-}
-
-void WorkerContextExecutionProxy::dispose()
-{
-    m_perContextData.clear();
-    m_context.clear();
-}
-
-bool WorkerContextExecutionProxy::initializeIfNeeded()
-{
-    // Bail out if the context has already been initialized.
-    if (!m_context.isEmpty())
-        return true;
-
-    // Create a new environment
-    v8::Persistent<v8::ObjectTemplate> globalTemplate;
-    m_context.adopt(v8::Context::New(0, globalTemplate));
-    if (m_context.isEmpty())
-        return false;
-
-    // Starting from now, use local context only.
-    v8::Local<v8::Context> context = v8::Local<v8::Context>::New(m_context.get());
-
-    v8::Context::Scope scope(context);
-
-    m_perContextData = V8PerContextData::create(m_context.get());
-    if (!m_perContextData->init()) {
-        dispose();
-        return false;
-    }
-
-    // Set DebugId for the new context.
-    context->SetEmbedderData(0, v8::String::New("worker"));
-
-    // Create a new JS object and use it as the prototype for the shadow global object.
-    WrapperTypeInfo* contextType = &V8DedicatedWorkerContext::info;
-#if ENABLE(SHARED_WORKERS)
-    if (!m_workerContext->isDedicatedWorkerContext())
-        contextType = &V8SharedWorkerContext::info;
-#endif
-    v8::Handle<v8::Function> workerContextConstructor = m_perContextData->constructorForType(contextType);
-    v8::Local<v8::Object> jsWorkerContext = V8ObjectConstructor::newInstance(workerContextConstructor);
-    // Bail out if allocation failed.
-    if (jsWorkerContext.IsEmpty()) {
-        dispose();
-        return false;
-    }
-
-    // Wrap the object.
-    V8DOMWrapper::createDOMWrapper(PassRefPtr<WorkerContext>(m_workerContext), contextType, jsWorkerContext);
-
-    // Insert the object instance as the prototype of the shadow object.
-    v8::Handle<v8::Object> globalObject = v8::Handle<v8::Object>::Cast(m_context->Global()->GetPrototype());
-    globalObject->SetPrototype(jsWorkerContext);
-
-    return true;
-}
-
-ScriptValue WorkerContextExecutionProxy::evaluate(const String& script, const String& fileName, const TextPosition& scriptStartPosition, WorkerContextExecutionState* state)
-{
-    V8GCController::checkMemoryUsage();
-
-    v8::HandleScope hs;
-
-    if (!initializeIfNeeded())
-        return ScriptValue();
-
-    if (!m_disableEvalPending.isEmpty()) {
-        m_context->AllowCodeGenerationFromStrings(false);
-        m_context->SetErrorMessageForCodeGenerationFromStrings(v8String(m_disableEvalPending));
-        m_disableEvalPending = String();
-    }
-
-    v8::Context::Scope scope(m_context.get());
-
-    v8::TryCatch exceptionCatcher;
-
-    v8::Local<v8::String> scriptString = v8ExternalString(script);
-    v8::Handle<v8::Script> compiledScript = ScriptSourceCode::compileScript(scriptString, fileName, scriptStartPosition);
-    v8::Local<v8::Value> result = ScriptRunner::runCompiledScript(compiledScript, m_workerContext);
-
-    if (!exceptionCatcher.CanContinue()) {
-        m_workerContext->script()->forbidExecution();
-        return ScriptValue();
-    }
-
-    if (exceptionCatcher.HasCaught()) {
-        v8::Local<v8::Message> message = exceptionCatcher.Message();
-        state->hadException = true;
-        state->errorMessage = toWebCoreString(message->Get());
-        state->lineNumber = message->GetLineNumber();
-        state->sourceURL = toWebCoreString(message->GetScriptResourceName());
-        if (m_workerContext->sanitizeScriptError(state->errorMessage, state->lineNumber, state->sourceURL))
-            state->exception = throwError(v8GeneralError, state->errorMessage.utf8().data());
-        else
-            state->exception = ScriptValue(exceptionCatcher.Exception());
-
-        exceptionCatcher.Reset();
-    } else
-        state->hadException = false;
-
-    if (result.IsEmpty() || result->IsUndefined())
-        return ScriptValue();
-
-    return ScriptValue(result);
-}
-
-void WorkerContextExecutionProxy::setEvalAllowed(bool enable, const String& errorMessage)
-{
-    m_disableEvalPending = enable ? String() : errorMessage;
-}
 
 } // namespace WebCore
 

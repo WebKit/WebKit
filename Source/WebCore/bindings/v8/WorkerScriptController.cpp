@@ -36,8 +36,12 @@
 
 #include "DOMTimer.h"
 #include "ScriptCallStack.h"
+#include "ScriptRunner.h"
 #include "ScriptSourceCode.h"
 #include "ScriptValue.h"
+#include "V8DedicatedWorkerContext.h"
+#include "V8Initializer.h"
+#include "V8SharedWorkerContext.h"
 #include "V8WorkerContext.h"
 #include "WorkerContext.h"
 #include "WorkerContextExecutionProxy.h"
@@ -62,7 +66,8 @@ WorkerScriptController::WorkerScriptController(WorkerContext* workerContext)
     m_isolate->Enter();
     m_domDataStore = adoptPtr(new DOMDataStore(DOMDataStore::Worker));
     data->setDOMDataStore(m_domDataStore.get());
-    m_proxy = adoptPtr(new WorkerContextExecutionProxy(workerContext));
+
+    V8Initializer::initializeWorker();
 }
 
 WorkerScriptController::~WorkerScriptController()
@@ -74,10 +79,116 @@ WorkerScriptController::~WorkerScriptController()
     // See http://webkit.org/b/83104#c14 for why this is here.
     WebKit::Platform::current()->didStopWorkerRunLoop(WebKit::WebWorkerRunLoop(&m_workerContext->thread()->runLoop()));
 #endif
-    m_proxy.clear();
+    dispose();
     V8PerIsolateData::dispose(m_isolate);
     m_isolate->Exit();
     m_isolate->Dispose();
+}
+
+void WorkerScriptController::dispose()
+{
+    m_perContextData.clear();
+    m_context.clear();
+}
+
+bool WorkerScriptController::initializeIfNeeded()
+{
+    if (!m_context.isEmpty())
+        return true;
+
+    v8::Persistent<v8::ObjectTemplate> globalTemplate;
+    m_context.adopt(v8::Context::New(0, globalTemplate));
+    if (m_context.isEmpty())
+        return false;
+
+    // Starting from now, use local context only.
+    v8::Local<v8::Context> context = v8::Local<v8::Context>::New(m_context.get());
+
+    v8::Context::Scope scope(context);
+
+    m_perContextData = V8PerContextData::create(m_context.get());
+    if (!m_perContextData->init()) {
+        dispose();
+        return false;
+    }
+
+    // Set DebugId for the new context.
+    context->SetEmbedderData(0, v8::String::New("worker"));
+
+    // Create a new JS object and use it as the prototype for the shadow global object.
+    WrapperTypeInfo* contextType = &V8DedicatedWorkerContext::info;
+#if ENABLE(SHARED_WORKERS)
+    if (!m_workerContext->isDedicatedWorkerContext())
+        contextType = &V8SharedWorkerContext::info;
+#endif
+    v8::Handle<v8::Function> workerContextConstructor = m_perContextData->constructorForType(contextType);
+    v8::Local<v8::Object> jsWorkerContext = V8ObjectConstructor::newInstance(workerContextConstructor);
+    if (jsWorkerContext.IsEmpty()) {
+        dispose();
+        return false;
+    }
+
+    V8DOMWrapper::createDOMWrapper(PassRefPtr<WorkerContext>(m_workerContext), contextType, jsWorkerContext);
+
+    // Insert the object instance as the prototype of the shadow object.
+    v8::Handle<v8::Object> globalObject = v8::Handle<v8::Object>::Cast(m_context->Global()->GetPrototype());
+    globalObject->SetPrototype(jsWorkerContext);
+
+    return true;
+}
+
+ScriptValue WorkerScriptController::evaluate(const String& script, const String& fileName, const TextPosition& scriptStartPosition, WorkerContextExecutionState* state)
+{
+    V8GCController::checkMemoryUsage();
+
+    v8::HandleScope handleScope;
+
+    if (!initializeIfNeeded())
+        return ScriptValue();
+
+    if (!m_disableEvalPending.isEmpty()) {
+        m_context->AllowCodeGenerationFromStrings(false);
+        m_context->SetErrorMessageForCodeGenerationFromStrings(v8String(m_disableEvalPending));
+        m_disableEvalPending = String();
+    }
+
+    v8::Context::Scope scope(m_context.get());
+
+    v8::TryCatch block;
+
+    v8::Local<v8::String> scriptString = v8ExternalString(script);
+    v8::Handle<v8::Script> compiledScript = ScriptSourceCode::compileScript(scriptString, fileName, scriptStartPosition);
+    v8::Local<v8::Value> result = ScriptRunner::runCompiledScript(compiledScript, m_workerContext);
+
+    if (!block.CanContinue()) {
+        m_workerContext->script()->forbidExecution();
+        return ScriptValue();
+    }
+
+    if (block.HasCaught()) {
+        v8::Local<v8::Message> message = block.Message();
+        state->hadException = true;
+        state->errorMessage = toWebCoreString(message->Get());
+        state->lineNumber = message->GetLineNumber();
+        state->sourceURL = toWebCoreString(message->GetScriptResourceName());
+        if (m_workerContext->sanitizeScriptError(state->errorMessage, state->lineNumber, state->sourceURL))
+            state->exception = throwError(v8GeneralError, state->errorMessage.utf8().data());
+        else
+            state->exception = ScriptValue(block.Exception());
+
+        block.Reset();
+    } else
+        state->hadException = false;
+
+    if (result.IsEmpty() || result->IsUndefined())
+        return ScriptValue();
+
+    return ScriptValue(result);
+}
+
+void WorkerScriptController::setEvalAllowed(bool enable, const String& errorMessage)
+{
+    m_disableEvalPending = enable ? String() : errorMessage;
 }
 
 void WorkerScriptController::evaluate(const ScriptSourceCode& sourceCode)
@@ -91,7 +202,7 @@ void WorkerScriptController::evaluate(const ScriptSourceCode& sourceCode, Script
         return;
 
     WorkerContextExecutionState state;
-    m_proxy->evaluate(sourceCode.source(), sourceCode.url().string(), sourceCode.startPosition(), &state);
+    evaluate(sourceCode.source(), sourceCode.url().string(), sourceCode.startPosition(), &state);
     if (state.hadException) {
         if (exception)
             *exception = state.exception;
@@ -133,7 +244,7 @@ bool WorkerScriptController::isExecutionForbidden() const
 
 void WorkerScriptController::disableEval(const String& errorMessage)
 {
-    m_proxy->setEvalAllowed(false, errorMessage);
+    setEvalAllowed(false, errorMessage);
 }
 
 void WorkerScriptController::setException(const ScriptValue& exception)

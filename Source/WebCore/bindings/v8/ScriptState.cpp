@@ -39,7 +39,6 @@
 #include "V8HiddenPropertyName.h"
 #include "V8WorkerContext.h"
 #include "WorkerContext.h"
-#include "WorkerContextExecutionProxy.h"
 #include "WorkerScriptController.h"
 #include <v8.h>
 #include <wtf/Assertions.h>
@@ -142,13 +141,12 @@ ScriptState* scriptStateFromPage(DOMWrapperWorld*, Page* page)
 #if ENABLE(WORKERS)
 ScriptState* scriptStateFromWorkerContext(WorkerContext* workerContext)
 {
-    WorkerContextExecutionProxy* proxy = workerContext->script()->proxy();
-    if (!proxy)
+    WorkerScriptController* script = workerContext->script();
+    if (!script)
         return 0;
 
     v8::HandleScope handleScope;
-    v8::Local<v8::Context> context = proxy->context();
-    return ScriptState::forContext(context);
+    return ScriptState::forContext(script->context());
 }
 #endif
 

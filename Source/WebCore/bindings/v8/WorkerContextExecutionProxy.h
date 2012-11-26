@@ -28,6 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// FIXME: This file is going to be removed in a follow-up patch.
 
 #ifndef WorkerContextExecutionProxy_h
 #define WorkerContextExecutionProxy_h
@@ -41,51 +42,6 @@
 #include <wtf/Vector.h>
 
 namespace WebCore {
-
-    class Event;
-    class EventTarget;
-    class V8PerContextData;
-    class WorkerContext;
-    struct WrapperTypeInfo;
-
-    struct WorkerContextExecutionState {
-        WorkerContextExecutionState()
-            : hadException(false)
-            , lineNumber(0)
-        {
-        }
-
-        bool hadException;
-        ScriptValue exception;
-        String errorMessage;
-        int lineNumber;
-        String sourceURL;
-    };
-
-    class WorkerContextExecutionProxy {
-    public:
-        explicit WorkerContextExecutionProxy(WorkerContext*);
-        ~WorkerContextExecutionProxy();
-
-        // Alow use of eval() and is equivalents in scripts.
-        void setEvalAllowed(bool enable, const String& errorMessage);
-
-        // Evaluate a script file in the current execution environment.
-        ScriptValue evaluate(const String& script, const String& fileName, const TextPosition& scriptStartPosition, WorkerContextExecutionState*);
-
-        // Returns a local handle of the context.
-        v8::Local<v8::Context> context() { return v8::Local<v8::Context>::New(m_context.get()); }
-
-    private:
-        void initIsolate();
-        bool initializeIfNeeded();
-        void dispose();
-
-        WorkerContext* m_workerContext;
-        ScopedPersistent<v8::Context> m_context;
-        OwnPtr<V8PerContextData> m_perContextData;
-        String m_disableEvalPending;
-    };
 
 } // namespace WebCore
 

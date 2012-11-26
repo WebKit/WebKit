@@ -1,3 +1,50 @@
+2012-11-26  Kentaro Hara  <haraken@chromium.org>
+
+        [V8] Remove WorkerContextExecutionProxy
+        https://bugs.webkit.org/show_bug.cgi?id=103210
+
+        Reviewed by Adam Barth.
+
+        This patch moves all methods in WorkerContextExecutionProxy
+        to WorkerScriptController.
+
+        Due to the dependency between WorkerContextExecutionProxy's methods,
+        it is a bit difficult to split this patch into pieces.
+        This patch simply moves methods without changing their logic.
+        Also this patch doesn't remove empty WorkerContextExecutionProxy.{h,cpp}
+        to keep the diff sane. I will address these issues in a follow-up patch.
+
+        Tests: fast/worker/*
+
+        * bindings/v8/ScriptState.cpp:
+        (WebCore::scriptStateFromWorkerContext):
+        * bindings/v8/V8Binding.cpp:
+        (WebCore::toV8Context):
+        * bindings/v8/V8WorkerContextEventListener.cpp:
+        (WebCore::V8WorkerContextEventListener::handleEvent):
+        * bindings/v8/WorkerContextExecutionProxy.cpp:
+        * bindings/v8/WorkerContextExecutionProxy.h:
+        * bindings/v8/WorkerScriptController.cpp:
+        (WebCore::WorkerScriptController::WorkerScriptController):
+        (WebCore::WorkerScriptController::~WorkerScriptController):
+        (WebCore::WorkerScriptController::dispose):
+        (WebCore):
+        (WebCore::WorkerScriptController::initializeIfNeeded):
+        (WebCore::WorkerScriptController::evaluate):
+        (WebCore::WorkerScriptController::setEvalAllowed):
+        (WebCore::WorkerScriptController::disableEval):
+        * bindings/v8/WorkerScriptController.h:
+        (WebCore):
+        (WebCore::WorkerContextExecutionState::WorkerContextExecutionState):
+        (WorkerContextExecutionState):
+        (WorkerScriptController):
+        (WebCore::WorkerScriptController::context):
+        * bindings/v8/WorkerScriptDebugServer.cpp:
+        (WebCore::WorkerScriptDebugServer::addListener):
+        * bindings/v8/custom/V8WorkerContextCustom.cpp:
+        (WebCore::SetTimeoutOrInterval):
+        (WebCore::toV8):
+
 2012-11-26  Hajime Morrita  <morrita@google.com>
 
         [Refactoring] Some Node::isDescendant calls can be replaced with Node::contains()

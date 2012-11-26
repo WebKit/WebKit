@@ -47,7 +47,7 @@
 #include "V8XPathNSResolver.h"
 #include "WebCoreMemoryInstrumentation.h"
 #include "WorkerContext.h"
-#include "WorkerContextExecutionProxy.h"
+#include "WorkerScriptController.h"
 #include "WorldContextHandle.h"
 #include "XPathNSResolver.h"
 #include <wtf/MathExtras.h>
@@ -311,8 +311,8 @@ v8::Local<v8::Context> toV8Context(ScriptExecutionContext* context, const WorldC
             return worldContext.adjustedContext(frame->script());
 #if ENABLE(WORKERS)
     } else if (context->isWorkerContext()) {
-        if (WorkerContextExecutionProxy* proxy = static_cast<WorkerContext*>(context)->script()->proxy())
-            return proxy->context();
+        if (WorkerScriptController* script = static_cast<WorkerContext*>(context)->script())
+            return script->context();
 #endif
     }
     return v8::Local<v8::Context>();

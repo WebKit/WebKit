@@ -33,25 +33,38 @@
 
 #if ENABLE(WORKERS)
 
+#include "ScriptValue.h"
 #include "V8Binding.h"
-
 #include <v8.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/Threading.h>
+#include <wtf/text/TextPosition.h>
 
 namespace WebCore {
 
     class ScriptSourceCode;
     class ScriptValue;
     class WorkerContext;
-    class WorkerContextExecutionProxy;
+
+    struct WorkerContextExecutionState {
+        WorkerContextExecutionState()
+            : hadException(false)
+            , lineNumber(0)
+        {
+        }
+
+        bool hadException;
+        ScriptValue exception;
+        String errorMessage;
+        int lineNumber;
+        String sourceURL;
+    };
 
     class WorkerScriptController {
     public:
         WorkerScriptController(WorkerContext*);
         ~WorkerScriptController();
 
-        WorkerContextExecutionProxy* proxy() { return m_proxy.get(); }
         WorkerContext* workerContext() { return m_workerContext; }
 
         void evaluate(const ScriptSourceCode&);
@@ -74,13 +87,27 @@ namespace WebCore {
 
         void disableEval(const String&);
 
+        // Alow use of eval() and is equivalents in scripts.
+        void setEvalAllowed(bool enable, const String&);
+
         // Returns WorkerScriptController for the currently executing context. 0 will be returned if the current executing context is not the worker context.
         static WorkerScriptController* controllerForContext();
 
+        // Evaluate a script file in the current execution environment.
+        ScriptValue evaluate(const String& script, const String& fileName, const TextPosition& scriptStartPosition, WorkerContextExecutionState*);
+
+        // Returns a local handle of the context.
+        v8::Local<v8::Context> context() { return v8::Local<v8::Context>::New(m_context.get()); }
+
     private:
+        bool initializeIfNeeded();
+        void dispose();
+
         WorkerContext* m_workerContext;
-        OwnPtr<WorkerContextExecutionProxy> m_proxy;
         v8::Isolate* m_isolate;
+        ScopedPersistent<v8::Context> m_context;
+        OwnPtr<V8PerContextData> m_perContextData;
+        String m_disableEvalPending;
         OwnPtr<DOMDataStore> m_domDataStore;
         bool m_executionForbidden;
         bool m_executionScheduledToTerminate;
