@@ -1,3 +1,15 @@
+2012-11-26  Kalev Lember  <kalevlember@gmail.com>
+
+        [GTK] Explicitly link against librt
+        https://bugs.webkit.org/show_bug.cgi?id=103194
+
+        Reviewed by Martin Robinson.
+
+        Fixes broken build with undefined references to shm_open / shm_unlink
+        symbols. SharedMemoryUnix.cpp uses these so we need to link with -lrt.
+
+        * GNUmakefile.am:
+
 2012-11-26  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL][WK2] Add setting to enable / disable HTML5 local storage functionality

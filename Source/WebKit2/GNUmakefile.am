@@ -566,6 +566,7 @@ Programs_WebKitPluginProcess_LDADD += \
 	$(PANGO_LIBS) \
 	$(PNG_LIBS) \
 	$(SHLWAPI_LIBS) \
+	$(SHM_LIBS) \
 	$(SQLITE3_LIBS) \
 	$(UNICODE_LIBS) \
 	$(XRENDER_LIBS) \

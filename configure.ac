@@ -1118,6 +1118,13 @@ if test "$enable_webkit2" = "yes"; then
    if test "$have_gtk_unix_printing" = "yes"; then
        AC_DEFINE([HAVE_GTK_UNIX_PRINTING], [1], [Define if GTK+ UNIX Printing is available])
    fi
+
+   # On some Linux/Unix platforms, shm_* may only be available if linking
+   # against librt
+   if test "$os_win32" = "no"; then
+       AC_SEARCH_LIBS([shm_open], [rt], [SHM_LIBS="-lrt"])
+       AC_SUBST(SHM_LIBS)
+   fi
 fi
 
 # Plugin Process
