@@ -1,3 +1,18 @@
+2012-11-26  Kunihiko Sakamoto  <ksakamoto@chromium.org>
+
+        [Chromium] Enable input type datetime-local
+        https://bugs.webkit.org/show_bug.cgi?id=103213
+
+        Reviewed by Kent Tamura.
+
+        This patch enables <input type=datetime-local> for Chromium.
+
+        No new tests. Covered by existing tests.
+
+        * bindings/generic/RuntimeEnabledFeatures.cpp:
+        (WebCore): Changed RuntimeEnabledFeatures::isInputTypeDateTimeLocalEnabled to true
+        if INPUT_TYPE_DATETIMELOCAL is enabled.
+
 2012-11-26  Hajime Morrita  <morrita@google.com>
 
         [Shadow DOM] Implement Element::createShadowRoot()

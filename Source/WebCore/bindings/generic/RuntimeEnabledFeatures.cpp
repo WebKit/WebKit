@@ -205,11 +205,7 @@ bool RuntimeEnabledFeatures::isInputTypeDateTimeEnabled = true;
 #endif
 
 #if ENABLE(INPUT_TYPE_DATETIMELOCAL)
-#if PLATFORM(CHROMIUM) && !OS(ANDROID)
-bool RuntimeEnabledFeatures::isInputTypeDateTimeLocalEnabled = false;
-#else
 bool RuntimeEnabledFeatures::isInputTypeDateTimeLocalEnabled = true;
-#endif
 #endif
 
 #if ENABLE(INPUT_TYPE_MONTH)
