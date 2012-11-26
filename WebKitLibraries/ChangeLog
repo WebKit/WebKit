@@ -1,3 +1,15 @@
+2012-11-26  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. ENABLE_ACCELERATED_OVERFLOW_SCROLLING not enabled on Windows.
+        Add a feature flag and skip some failing tests.
+        https://bugs.webkit.org/show_bug.cgi?id=103294
+
+        Tests skipped:
+        compositing/overflow/scrolling-without-painting.html
+        compositing/overflow/updating-scrolling-content.html
+
+        * win/tools/vsprops/FeatureDefines.vsprops:
+
 2012-11-23  Alexis Menard  <alexis@webkit.org>
 
         [CSS3 Backgrounds and Borders] Implement new CSS3 background-position parsing.
