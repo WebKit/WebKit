@@ -1209,7 +1209,7 @@ static PassRefPtr<CSSPrimitiveValue> valueForFamily(const AtomicString& family)
 {
     if (int familyIdentifier = identifierForFamily(family))
         return cssValuePool().createIdentifierValue(familyIdentifier);
-    return cssValuePool().createFontFamilyValue(family.string());
+    return cssValuePool().createValue(family.string(), CSSPrimitiveValue::CSS_STRING);
 }
 
 static PassRefPtr<CSSValue> renderTextDecorationFlagsToCSSValue(int textDecoration)
