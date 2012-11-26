@@ -1,3 +1,15 @@
+2012-11-26  Rafael Brandao  <rafael.lobo@openbossa.org>
+
+        [Cairo] Surface should not be destroyed before its usage
+        https://bugs.webkit.org/show_bug.cgi?id=103273
+
+        Reviewed by Brent Fulgham.
+
+        * platform/graphics/texmap/TextureMapperGL.cpp:
+        (WebCore::TextureMapperGL::drawRepaintCounter): There's some calls to get
+        the bits and stride from surface right after its destructions. It should
+        be postponed to avoid annoying bugs.
+
 2012-11-26  Julien Chaffraix  <jchaffraix@webkit.org>
 
         RenderBox::computePercentageLogicalHeight should use containingBlockLogicalWidthForContent

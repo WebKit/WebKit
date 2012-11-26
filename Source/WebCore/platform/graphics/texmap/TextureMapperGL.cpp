@@ -360,7 +360,6 @@ void TextureMapperGL::drawRepaintCounter(int value, int pointSize, const FloatPo
 
     cairo_surface_t* surface = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, width, height);
     cairo_t* cr = cairo_create(surface);
-    cairo_surface_destroy(surface);
 
     cairo_set_source_rgb(cr, 0, 0, 1); // Since we won't swap R+B for speed, this will paint red.
     cairo_rectangle(cr, 0, 0, width, height);
@@ -382,6 +381,7 @@ void TextureMapperGL::drawRepaintCounter(int value, int pointSize, const FloatPo
     static_cast<BitmapTextureGL*>(texture.get())->updateContentsNoSwizzle(bits, sourceRect, IntPoint::zero(), stride);
     drawTexture(*texture, targetRect, modelViewMatrix, 1.0f, 0, AllEdges);
 
+    cairo_surface_destroy(surface);
     cairo_destroy(cr);
 
 #else
