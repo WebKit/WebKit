@@ -1,3 +1,20 @@
+2012-11-26  Zeno Albisser  <zeno@webkit.org>
+
+        [Qt][Win] buildfix after r135706.
+        https://bugs.webkit.org/show_bug.cgi?id=103249
+
+        The Windows implementation of GraphicsSurface cannot use
+        m_size anymore, as this member has been removed.
+        Further it needs to implement a platformSize() function.
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * platform/graphics/surfaces/win/GraphicsSurfaceWin.cpp:
+        (WebCore::GraphicsSurfacePrivate::size):
+        (WebCore::GraphicsSurface::platformPaintToTextureMapper):
+        (WebCore::GraphicsSurface::platformSize):
+        (WebCore):
+
 2012-11-26  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: unify agents handling in Page and Worker inspector controllers

@@ -246,6 +246,10 @@ public:
         m_eglFrontBufferSurface = 0;
     }
 
+    IntSize size() const
+    {
+        return m_size;
+    }
 
 protected:
     void initializeShaderProgram()
@@ -422,8 +426,8 @@ void GraphicsSurface::platformPaintToTextureMapper(TextureMapper* textureMapper,
     GLuint frontBufferTexture = platformGetTextureID();
 
     TransformationMatrix adjustedTransform = transform;
-    adjustedTransform.multiply(TransformationMatrix::rectToRect(FloatRect(FloatPoint::zero(), m_size), targetRect));
-    static_cast<TextureMapperGL*>(textureMapper)->drawTexture(frontBufferTexture, 0, m_size, targetRect, adjustedTransform, opacity, mask);
+    adjustedTransform.multiply(TransformationMatrix::rectToRect(FloatRect(FloatPoint::zero(), m_private->size()), targetRect));
+    static_cast<TextureMapperGL*>(textureMapper)->drawTexture(frontBufferTexture, 0, m_private->size(), targetRect, adjustedTransform, opacity, mask);
 }
 
 uint32_t GraphicsSurface::platformFrontBuffer() const
@@ -439,6 +443,11 @@ uint32_t GraphicsSurface::platformSwapBuffers()
 {
     m_private->swapBuffers();
     return platformFrontBuffer();
+}
+
+IntSize GraphicsSurface::platformSize() const
+{
+    return m_private->size();
 }
 
 PassRefPtr<GraphicsSurface> GraphicsSurface::platformCreate(const IntSize& size, Flags flags, const PlatformGraphicsContext3D shareContext)
