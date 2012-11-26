@@ -101,6 +101,7 @@ private:
     bool strokeContains(const FloatPoint&, bool requiresStroke = true);
 
     virtual FloatRect repaintRectInLocalCoordinates() const { return m_repaintBoundingBox; }
+    virtual FloatRect repaintRectInLocalCoordinatesExcludingSVGShadow() const OVERRIDE { return m_repaintBoundingBoxExcludingShadow; }
     virtual const AffineTransform& localToParentTransform() const { return m_localTransform; }
     virtual AffineTransform localTransform() const { return m_localTransform; }
 
@@ -138,6 +139,7 @@ private:
     FloatRect m_fillBoundingBox;
     FloatRect m_strokeAndMarkerBoundingBox;
     FloatRect m_repaintBoundingBox;
+    FloatRect m_repaintBoundingBoxExcludingShadow;
     AffineTransform m_localTransform;
     OwnPtr<Path> m_path;
     Vector<FloatPoint> m_zeroLengthLinecapLocations;

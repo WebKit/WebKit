@@ -67,12 +67,17 @@ public:
     static bool checkIntersection(RenderObject*, const FloatRect&);
     static bool checkEnclosure(RenderObject*, const FloatRect&);
 
+    virtual FloatRect repaintRectInLocalCoordinatesExcludingSVGShadow() const { return repaintRectInLocalCoordinates(); }
+    bool hasSVGShadow() const { return m_hasSVGShadow; }
+    void setHasSVGShadow(bool hasShadow) { m_hasSVGShadow = hasShadow; }
+
 protected:
     virtual void willBeDestroyed();
 
 private:
     // This method should never be called, SVG uses a different nodeAtPoint method
     bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const LayoutPoint& pointInContainer, const LayoutPoint& accumulatedOffset, HitTestAction);
+    bool m_hasSVGShadow;
 };
 
 }

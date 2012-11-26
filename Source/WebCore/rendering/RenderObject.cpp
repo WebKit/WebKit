@@ -321,6 +321,10 @@ void RenderObject::addChild(RenderObject* newChild, RenderObject* beforeChild)
     // and stop creating layers at all for these cases - they're not used anyways.
     if (newChild->hasLayer() && !layerCreationAllowedForSubtree())
         toRenderBoxModelObject(newChild)->layer()->removeOnlyThisLayer();
+
+#if ENABLE(SVG)
+    SVGRenderSupport::childAdded(this, newChild);
+#endif
 }
 
 void RenderObject::removeChild(RenderObject* oldChild)
@@ -1951,6 +1955,10 @@ void RenderObject::styleDidChange(StyleDifference diff, const RenderStyle* oldSt
 {
     if (s_affectsParentBlock)
         handleDynamicFloatPositionChange();
+
+#if ENABLE(SVG)
+    SVGRenderSupport::styleChanged(this);
+#endif
 
     if (!m_parent)
         return;

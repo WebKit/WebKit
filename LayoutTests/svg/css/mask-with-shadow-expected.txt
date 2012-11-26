@@ -1,8 +1,8 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 450x500
-  RenderSVGRoot {svg} at (5,5) size 210x210
-    RenderSVGContainer {g} at (5,5) size 210x210
+  RenderSVGRoot {svg} at (5,5) size 220x220
+    RenderSVGContainer {g} at (5,5) size 220x220
       RenderSVGHiddenContainer {defs} at (0,0) size 0x0
         RenderSVGResourceLinearGradient {linearGradient} [id="maskedGradient"] [gradientUnits=objectBoundingBox] [start=(0,0)] [end=(1,1)]
           RenderSVGGradientStop {stop} [offset=0.00] [color=#0000FF]
@@ -13,7 +13,7 @@ layer at (0,0) size 450x500
           RenderSVGEllipse {circle} at (5,115) size 110x110 [fill={[type=SOLID] [color=#FFFFFF]}] [cx=55.00] [cy=165.00] [r=50.00]
           RenderSVGEllipse {circle} at (115,5) size 110x110 [fill={[type=SOLID] [color=#FFFFFF]}] [cx=165.00] [cy=55.00] [r=50.00]
           RenderSVGEllipse {circle} at (115,115) size 110x110 [fill={[type=SOLID] [color=#FFFFFF]}] [cx=165.00] [cy=165.00] [r=50.00]
-      RenderSVGContainer {g} at (5,5) size 210x210
-        RenderSVGContainer {use} at (5,5) size 210x210
-          [masker="mask_1"] RenderSVGResourceMasker {mask} at (5,5) size 210x210
+      RenderSVGContainer {g} at (5,5) size 220x220
+        RenderSVGContainer {use} at (5,5) size 220x220
+          [masker="mask_1"] RenderSVGResourceMasker {mask} at (5,5) size 220x220
           RenderSVGRect {rect} at (0,0) size 300x300 [fill={[type=LINEAR-GRADIENT] [id="maskedGradient"]}] [x=0.00] [y=0.00] [width=300.00] [height=300.00]
