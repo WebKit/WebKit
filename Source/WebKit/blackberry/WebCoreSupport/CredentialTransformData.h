@@ -29,7 +29,7 @@ namespace WebCore {
 struct CredentialTransformData {
     // If the provided form is suitable for password completion, isValid() will
     // return true;
-    CredentialTransformData(HTMLFormElement*);
+    CredentialTransformData(HTMLFormElement*, bool isForSaving = false);
     CredentialTransformData(const KURL&, const ProtectionSpace&, const Credential&);
 
     // If creation failed, return false.
@@ -49,6 +49,7 @@ private:
     mutable Credential m_credential;
     HTMLInputElement* m_userNameElement;
     HTMLInputElement* m_passwordElement;
+    HTMLInputElement* m_oldPasswordElement;
     bool m_isValid;
 };
 

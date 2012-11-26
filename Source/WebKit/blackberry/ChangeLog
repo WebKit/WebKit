@@ -1,3 +1,26 @@
+2012-11-26  Jonathan Dong  <jonathan.dong@torchmobile.com.cn>
+
+        [BlackBerry] Should not autofill username and password when there're more than one password inputs on the same page
+        https://bugs.webkit.org/show_bug.cgi?id=103104
+
+        Reviewed by Rob Buis.
+
+        RIM PR: 245334
+        Added the oldPassword detection back into the password input
+        detection logic, which was removed for simplicity when imported
+        those pieces of codes from Chromium. And we won't do autofill
+        when there're more than one password field detected.
+
+        Internally reviewed by Rob Buis.
+
+        * WebCoreSupport/CredentialTransformData.cpp:
+        (WebCore::CredentialTransformData::CredentialTransformData):
+        (WebCore::CredentialTransformData::findPasswordFormFields):
+        * WebCoreSupport/CredentialTransformData.h:
+        (CredentialTransformData):
+        * WebCoreSupport/FrameLoaderClientBlackBerry.cpp:
+        (WebCore::FrameLoaderClientBlackBerry::dispatchWillSendSubmitEvent):
+
 2012-11-25  Jacky Jiang  <zhajiang@rim.com>
 
         [BlackBerry] Get rid of resetBitmapZoomScale()

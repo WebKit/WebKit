@@ -766,7 +766,7 @@ void FrameLoaderClientBlackBerry::dispatchWillSendSubmitEvent(PassRefPtr<FormSta
             m_webPagePrivate->m_autofillManager->saveTextFields(prpFormState->form());
 #if ENABLE(BLACKBERRY_CREDENTIAL_PERSIST)
         if (m_webPagePrivate->m_webSettings->isCredentialAutofillEnabled())
-            credentialManager().saveCredentialIfConfirmed(m_webPagePrivate, CredentialTransformData(prpFormState->form()));
+            credentialManager().saveCredentialIfConfirmed(m_webPagePrivate, CredentialTransformData(prpFormState->form(), true));
 #endif
     }
 }

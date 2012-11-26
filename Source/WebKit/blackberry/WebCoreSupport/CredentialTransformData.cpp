@@ -64,10 +64,10 @@ KURL stripURL(const KURL& url)
 
 // Helper method to determine which password is the main one, and which is
 // an old password (e.g on a "make new password" form), if any.
-bool locateSpecificPasswords(Vector<HTMLInputElement*>& passwords,
-                             HTMLInputElement** password)
+bool locateSpecificPasswords(Vector<HTMLInputElement*>& passwords, HTMLInputElement** password, HTMLInputElement** oldPassword)
 {
     ASSERT(password);
+    ASSERT(oldPassword);
 
     switch (passwords.size()) {
     case 1:
@@ -80,6 +80,7 @@ bool locateSpecificPasswords(Vector<HTMLInputElement*>& passwords,
             *password = passwords[0];
         else {
             // Assume first is old password, second is new (no choice but to guess).
+            *oldPassword = passwords[0];
             *password = passwords[1];
         }
         break;
@@ -90,9 +91,12 @@ bool locateSpecificPasswords(Vector<HTMLInputElement*>& passwords,
             *password = passwords[0];
         } else if (passwords[0]->value() == passwords[1]->value()) {
             // Two the same and one different -> old password is duplicated one.
+            *oldPassword = passwords[0];
             *password = passwords[2];
-        } else if (passwords[1]->value() == passwords[2]->value())
+        } else if (passwords[1]->value() == passwords[2]->value()) {
+            *oldPassword = passwords[0];
             *password = passwords[1];
+        }
         else {
             // Three different passwords, or first and last match with middle
             // different. No idea which is which, so no luck.
@@ -107,9 +111,10 @@ bool locateSpecificPasswords(Vector<HTMLInputElement*>& passwords,
 
 } // namespace
 
-CredentialTransformData::CredentialTransformData(HTMLFormElement* form)
+CredentialTransformData::CredentialTransformData(HTMLFormElement* form, bool isForSaving)
     : m_userNameElement(0)
     , m_passwordElement(0)
+    , m_oldPasswordElement(0)
     , m_isValid(false)
 {
     ASSERT(form);
@@ -128,6 +133,10 @@ CredentialTransformData::CredentialTransformData(HTMLFormElement* form)
     if (!findPasswordFormFields(form))
         return;
 
+    // Won't restore password if there're two password inputs on the page.
+    if (!isForSaving && m_oldPasswordElement)
+        return;
+
     m_url = stripURL(fullOrigin);
     m_action = stripURL(fullAction);
     m_protectionSpace = ProtectionSpace(m_url.host(), m_url.port(), ProtectionSpaceServerHTTP, "Form", ProtectionSpaceAuthenticationSchemeHTMLForm);
@@ -142,6 +151,7 @@ CredentialTransformData::CredentialTransformData(const KURL& url, const Protecti
     , m_credential(credential)
     , m_userNameElement(0)
     , m_passwordElement(0)
+    , m_oldPasswordElement(0)
     , m_isValid(true)
 {
 }
@@ -227,7 +237,7 @@ bool CredentialTransformData::findPasswordFormFields(HTMLFormElement* form)
     if (!m_userNameElement)
         return false;
 
-    if (!locateSpecificPasswords(passwords, &(m_passwordElement)))
+    if (!locateSpecificPasswords(passwords, &m_passwordElement, &m_oldPasswordElement))
         return false;
     return true;
 }
