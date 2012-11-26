@@ -1,3 +1,20 @@
+2012-11-26  Adenilson Cavalcanti  <cavalcantii@gmail.com>
+
+        Removing unnecessary friend classes in RenderObject: LayoutRepainter, RenderSVGContainer
+        https://bugs.webkit.org/show_bug.cgi?id=103164
+
+        Reviewed by Simon Fraser.
+
+        Removing some of classes marked as friend of RenderObject. This patch solves this issue
+        for 2 classes: RenderSVGContainer (that is derived from RenderObject) and LayoutRepainter
+        (that accesses one const member function in RenderObject that is now made public).
+
+        No new tests, no changes in functionality.
+
+        * rendering/RenderObject.h:
+        (RenderObject):
+        (WebCore::RenderObject::outlineBoundsForRepaint):
+
 2012-11-26  Jon Lee  <jonlee@apple.com>
 
         Pass clicks through to the restarted plugin
