@@ -1,5 +1,12 @@
 2012-11-26  Robert Kroeger  <rjkroege@chromium.org>
 
+        Unreviewed gardening: failure in fast/text/atsui-small-caps-punctuation-size.html
+        https://bugs.webkit.org/show_bug.cgi?id=103148
+
+        * platform/chromium/TestExpectations:
+
+2012-11-26  Robert Kroeger  <rjkroege@chromium.org>
+
         Unreviewed gardening: failure in http/tests/media/pdf-served-as-pdf.html
         https://bugs.webkit.org/show_bug.cgi?id=103093
 
