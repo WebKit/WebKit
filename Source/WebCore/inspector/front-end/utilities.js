@@ -428,12 +428,6 @@ function insertionIndexForObjectInListSortedByFunction(anObject, aList, aFunctio
     }
 }
 
-Array.convert = function(list)
-{
-    // Cast array-like object to an array.
-    return Array.prototype.slice.call(list);
-}
-
 /**
  * @param {string} format
  * @param {...*} var_arg

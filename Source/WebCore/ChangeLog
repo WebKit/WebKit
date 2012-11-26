@@ -1,3 +1,12 @@
+2012-11-25  Nikita Vasilyev  <me@elv1s.ru>
+
+        Web Inspector: Remove unused Array.convert method
+        https://bugs.webkit.org/show_bug.cgi?id=103202
+
+        Reviewed by Daniel Bates.
+
+        * inspector/front-end/utilities.js:
+
 2012-11-25  Chris Fleizach  <cfleizach@apple.com>
 
         AX: file upload input cannot be activated with VoiceOver
