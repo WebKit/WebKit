@@ -388,6 +388,11 @@ WebInspector.HeapSnapshotView.prototype = {
         var profileIndex = this.filterSelectElement.selectedIndex - 1;
         this.dataGrid.filterSelectIndexChanged(this._profiles(), profileIndex);
 
+        WebInspector.notifications.dispatchEventToListeners(WebInspector.UserMetrics.UserAction, {
+            action: WebInspector.UserMetrics.UserActionNames.HeapSnapshotFilterChanged,
+            label: this.filterSelectElement[this.filterSelectElement.selectedIndex].label
+        });
+
         if (!this.currentQuery || !this._searchFinishedCallback || !this._searchResults)
             return;
 

@@ -1,3 +1,16 @@
+2012-11-25  Nikita Vasilyev  <me@elv1s.ru>
+
+        Web Inspector: dispatch an event upon heap snapshot filter change
+        https://bugs.webkit.org/show_bug.cgi?id=103201
+
+        Reviewed by Pavel Feldman.
+
+        Dispatch heapSnapshotFilterChanged event so it can be received by third parties.
+
+        * inspector/front-end/HeapSnapshotView.js:
+        (WebInspector.HeapSnapshotView.prototype._changeFilter):
+        * inspector/front-end/UserMetrics.js:
+
 2012-11-25  Kent Tamura  <tkent@chromium.org>
 
         Refactoring: Move the content of HTMLInputElement::subtreeHasChanged to TextFieldInputType

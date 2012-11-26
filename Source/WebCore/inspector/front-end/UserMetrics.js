@@ -102,7 +102,7 @@ WebInspector.UserMetrics.UserActionNames = {
     NetworkSort: "networkSort",
     NetworkRequestSelected: "networkRequestSelected",
     NetworkRequestTabSelected: "networkRequestTabSelected",
-    ChoseHeapSnapshotBetween: "choseHeapSnapshotBetween"
+    HeapSnapshotFilterChanged: "heapSnapshotFilterChanged"
 };
 
 WebInspector.UserMetrics.prototype = {
