@@ -26,9 +26,12 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import logging
+
 from webkitpy.tool.comments import bug_comment_from_commit_text
 from webkitpy.tool.steps.abstractstep import AbstractStep
-from webkitpy.common.system.deprecated_logging import log
+
+_log = logging.getLogger(__name__)
 
 
 class ReopenBugAfterRollout(AbstractStep):
@@ -38,7 +41,7 @@ class ReopenBugAfterRollout(AbstractStep):
 
         bug_id = state["bug_id"]
         if not bug_id:
-            log(comment_text)
-            log("No bugs were updated.")
+            _log.info(comment_text)
+            _log.info("No bugs were updated.")
             return
         self._tool.bugs.reopen_bug(bug_id, comment_text)

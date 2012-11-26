@@ -26,9 +26,12 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import logging
+
 from webkitpy.common.config.committervalidator import CommitterValidator
-from webkitpy.common.system.deprecated_logging import log
 from webkitpy.tool.grammar import pluralize
+
+_log = logging.getLogger(__name__)
 
 
 class AbstractFeeder(object):
@@ -50,7 +53,7 @@ class CommitQueueFeeder(AbstractFeeder):
         # FIXME: This is the last use of update_work_items, the commit-queue
         # should move to feeding patches one at a time like the EWS does.
         self._tool.status_server.update_work_items(self.queue_name, item_ids)
-        log("Feeding %s items %s" % (self.queue_name, item_ids))
+        _log.info("Feeding %s items %s" % (self.queue_name, item_ids))
 
     def feed(self):
         patches = self._validate_patches()
@@ -89,7 +92,7 @@ class EWSFeeder(AbstractFeeder):
     def feed(self):
         ids_needing_review = set(self._tool.bugs.queries.fetch_attachment_ids_from_review_queue())
         new_ids = ids_needing_review.difference(self._ids_sent_to_server)
-        log("Feeding EWS (%s, %s new)" % (pluralize("r? patch", len(ids_needing_review)), len(new_ids)))
+        _log.info("Feeding EWS (%s, %s new)" % (pluralize("r? patch", len(ids_needing_review)), len(new_ids)))
         for attachment_id in new_ids:  # Order doesn't really matter for the EWS.
             self._tool.status_server.submit_to_ews(attachment_id)
             self._ids_sent_to_server.add(attachment_id)

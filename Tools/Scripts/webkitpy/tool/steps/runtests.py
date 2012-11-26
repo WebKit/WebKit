@@ -26,10 +26,13 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import logging
+
 from webkitpy.tool.steps.abstractstep import AbstractStep
 from webkitpy.tool.steps.options import Options
-from webkitpy.common.system.deprecated_logging import log
 from webkitpy.common.system.executive import ScriptError
+
+_log = logging.getLogger(__name__)
 
 class RunTests(AbstractStep):
     # FIXME: This knowledge really belongs in the commit-queue.
@@ -52,31 +55,31 @@ class RunTests(AbstractStep):
 
             python_unittests_command = self._tool.port().run_python_unittests_command()
             if python_unittests_command:
-                log("Running Python unit tests")
+                _log.info("Running Python unit tests")
                 self._tool.executive.run_and_throw_if_fail(python_unittests_command, cwd=self._tool.scm().checkout_root)
 
             perl_unittests_command = self._tool.port().run_perl_unittests_command()
             if perl_unittests_command:
-                log("Running Perl unit tests")
+                _log.info("Running Perl unit tests")
                 self._tool.executive.run_and_throw_if_fail(perl_unittests_command, cwd=self._tool.scm().checkout_root)
 
             javascriptcore_tests_command = self._tool.port().run_javascriptcore_tests_command()
             if javascriptcore_tests_command:
-                log("Running JavaScriptCore tests")
+                _log.info("Running JavaScriptCore tests")
                 self._tool.executive.run_and_throw_if_fail(javascriptcore_tests_command, quiet=True, cwd=self._tool.scm().checkout_root)
 
         webkit_unit_tests_command = self._tool.port().run_webkit_unit_tests_command()
         if webkit_unit_tests_command:
-            log("Running WebKit unit tests")
+            _log.info("Running WebKit unit tests")
             args = webkit_unit_tests_command
             if self._options.non_interactive:
                 args.append("--gtest_output=xml:%s/webkit_unit_tests_output.xml" % self._tool.port().results_directory)
             try:
                 self._tool.executive.run_and_throw_if_fail(args, cwd=self._tool.scm().checkout_root)
             except ScriptError, e:
-                log("Error running webkit_unit_tests: %s" % e.message_with_output())
+                _log.info("Error running webkit_unit_tests: %s" % e.message_with_output())
 
-        log("Running run-webkit-tests")
+        _log.info("Running run-webkit-tests")
         args = self._tool.port().run_webkit_tests_command()
         if self._options.non_interactive:
             args.extend([

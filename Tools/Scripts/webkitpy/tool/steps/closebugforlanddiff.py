@@ -26,10 +26,13 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import logging
+
 from webkitpy.tool.comments import bug_comment_from_commit_text
 from webkitpy.tool.steps.abstractstep import AbstractStep
 from webkitpy.tool.steps.options import Options
-from webkitpy.common.system.deprecated_logging import log
+
+_log = logging.getLogger(__name__)
 
 
 class CloseBugForLandDiff(AbstractStep):
@@ -46,7 +49,7 @@ class CloseBugForLandDiff(AbstractStep):
             bug_id = state.get("patch").bug_id()
 
         if bug_id:
-            log("Updating bug %s" % bug_id)
+            _log.info("Updating bug %s" % bug_id)
             if self._options.close_bug:
                 self._tool.bugs.close_bug_as_fixed(bug_id, comment_text)
             else:
@@ -54,5 +57,5 @@ class CloseBugForLandDiff(AbstractStep):
                 # to the bug, and if so obsolete it.
                 self._tool.bugs.post_comment_to_bug(bug_id, comment_text)
         else:
-            log(comment_text)
-            log("No bug id provided.")
+            _log.info(comment_text)
+            _log.info("No bug id provided.")

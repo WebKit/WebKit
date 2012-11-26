@@ -26,9 +26,13 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import logging
+import sys
+
 from webkitpy.tool.steps.abstractstep import AbstractStep
 from webkitpy.tool.steps.options import Options
-from webkitpy.common.system.deprecated_logging import error
+
+_log = logging.getLogger(__name__)
 
 
 class EnsureLocalCommitIfNeeded(AbstractStep):
@@ -40,4 +44,5 @@ class EnsureLocalCommitIfNeeded(AbstractStep):
 
     def run(self, state):
         if self._options.local_commit and not self._tool.scm().supports_local_commits():
-            error("--local-commit passed, but %s does not support local commits" % self._tool.scm().display_name())
+            _log.error("--local-commit passed, but %s does not support local commits" % self._tool.scm().display_name())
+            sys.exit(1)

@@ -32,7 +32,7 @@ from webkitpy.tool.mocktool import MockOptions, MockTool
 
 
 class CommandsTest(TestCase):
-    def assert_execute_outputs(self, command, args=[], expected_stdout="", expected_stderr="", expected_exception=None, options=MockOptions(), tool=MockTool()):
+    def assert_execute_outputs(self, command, args=[], expected_stdout="", expected_stderr="", expected_exception=None, expected_logs=None, options=MockOptions(), tool=MockTool()):
         options.blocks = None
         options.cc = 'MOCK cc'
         options.component = 'MOCK component'
@@ -45,4 +45,4 @@ class CommandsTest(TestCase):
         options.quiet = True
         options.reviewer = 'MOCK reviewer'
         command.bind_to_tool(tool)
-        OutputCapture().assert_outputs(self, command.execute, [options, args, tool], expected_stdout=expected_stdout, expected_stderr=expected_stderr, expected_exception=expected_exception)
+        OutputCapture().assert_outputs(self, command.execute, [options, args, tool], expected_stdout=expected_stdout, expected_stderr=expected_stderr, expected_exception=expected_exception, expected_logs=expected_logs)

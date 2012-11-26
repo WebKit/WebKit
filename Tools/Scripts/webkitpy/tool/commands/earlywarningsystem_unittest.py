@@ -58,12 +58,17 @@ class EarlyWarningSytemTest(QueuesTest):
         }
         expected_stderr = {
             "begin_work_queue": self._default_begin_work_queue_stderr(ews.name),
-            "handle_unexpected_error": "Mock error message\n",
             "next_work_item": "",
             "process_work_item": "MOCK: update_status: %(name)s Pass\nMOCK: release_work_item: %(name)s 10000\n" % string_replacemnts,
-            "handle_script_error": "ScriptError error message\n\nMOCK output\n",
         }
         return expected_stderr
+
+    def _default_expected_logs(self):
+        expected_logs = {
+            "handle_unexpected_error": "Mock error message\n",
+            "handle_script_error": "ScriptError error message\n\nMOCK output\n",
+        }
+        return expected_logs
 
     def _test_builder_ews(self, ews):
         ews.bind_to_tool(MockTool())
@@ -76,8 +81,8 @@ class EarlyWarningSytemTest(QueuesTest):
         ews.test_results = lambda: None
         ews.bind_to_tool(MockTool())
         expected_stderr = self._default_expected_stderr(ews)
-        expected_stderr["handle_script_error"] = "ScriptError error message\n\nMOCK output\n"
-        self.assert_queue_outputs(ews, expected_stderr=expected_stderr)
+        expected_logs = self._default_expected_logs()
+        self.assert_queue_outputs(ews, expected_stderr=expected_stderr, expected_logs=expected_logs)
 
     def test_builder_ewses(self):
         self._test_builder_ews(MacEWS())

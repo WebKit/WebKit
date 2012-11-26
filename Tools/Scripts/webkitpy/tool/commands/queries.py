@@ -29,6 +29,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import fnmatch
+import logging
 import re
 
 from datetime import datetime
@@ -45,9 +46,10 @@ from webkitpy.common.system.crashlogs import CrashLogs
 from webkitpy.common.system.user import User
 from webkitpy.tool.grammar import pluralize
 from webkitpy.tool.multicommandtool import AbstractDeclarativeCommand
-from webkitpy.common.system.deprecated_logging import log
 from webkitpy.layout_tests.models.test_expectations import TestExpectations
 from webkitpy.layout_tests.port import platform_options, configuration_options
+
+_log = logging.getLogger(__name__)
 
 
 class SuggestReviewers(AbstractDeclarativeCommand):
@@ -82,7 +84,7 @@ class PatchesInCommitQueue(AbstractDeclarativeCommand):
 
     def execute(self, options, args, tool):
         patches = tool.bugs.queries.fetch_patches_from_commit_queue()
-        log("Patches in commit queue:")
+        _log.info("Patches in commit queue:")
         for patch in patches:
             print patch.url()
 
@@ -99,13 +101,13 @@ class PatchesToCommitQueue(AbstractDeclarativeCommand):
     @staticmethod
     def _needs_commit_queue(patch):
         if patch.commit_queue() == "+": # If it's already cq+, ignore the patch.
-            log("%s already has cq=%s" % (patch.id(), patch.commit_queue()))
+            _log.info("%s already has cq=%s" % (patch.id(), patch.commit_queue()))
             return False
 
         # We only need to worry about patches from contributers who are not yet committers.
         committer_record = CommitterList().committer_by_email(patch.attacher_email())
         if committer_record:
-            log("%s committer = %s" % (patch.id(), committer_record))
+            _log.info("%s committer = %s" % (patch.id(), committer_record))
         return not committer_record
 
     def execute(self, options, args, tool):

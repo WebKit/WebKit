@@ -26,10 +26,14 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import logging
+import sys
+
 from webkitpy.common.checkout.changelog import ChangeLog
 from webkitpy.tool.steps.abstractstep import AbstractStep
 from webkitpy.tool.steps.options import Options
-from webkitpy.common.system.deprecated_logging import error, log
+
+_log = logging.getLogger(__name__)
 
 
 # FIXME: Some of this logic should probably be unified with CommitterValidator?
@@ -51,5 +55,6 @@ class ValidateReviewer(AbstractStep):
                 continue
             reviewer_text = changelog_entry.reviewer_text()
             if reviewer_text:
-                log("%s found in %s does not appear to be a valid reviewer according to committers.py." % (reviewer_text, changelog_path))
-            error('%s neither lists a valid reviewer nor contains the string "Unreviewed" or "Rubber stamp" (case insensitive).' % changelog_path)
+                _log.info("%s found in %s does not appear to be a valid reviewer according to committers.py." % (reviewer_text, changelog_path))
+            _log.error('%s neither lists a valid reviewer nor contains the string "Unreviewed" or "Rubber stamp" (case insensitive).' % changelog_path)
+            sys.exit(1)

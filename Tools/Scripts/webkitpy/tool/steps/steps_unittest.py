@@ -56,8 +56,8 @@ class StepsTest(unittest.TestCase):
         tool = MockTool()
         options = self._step_options()
         options.update = True
-        expected_stderr = "Updating working directory\n"
-        OutputCapture().assert_outputs(self, self._run_step, [steps.Update, tool, options], expected_stderr=expected_stderr)
+        expected_logs = "Updating working directory\n"
+        OutputCapture().assert_outputs(self, self._run_step, [steps.Update, tool, options], expected_logs=expected_logs)
 
     def test_prompt_for_bug_or_title_step(self):
         tool = MockTool()
@@ -104,13 +104,14 @@ class StepsTest(unittest.TestCase):
         tool = MockTool(log_executive=True)
         tool.port = lambda: mock_port
         step = steps.RunTests(tool, mock_options)
-        expected_stderr = """Running Python unit tests
-MOCK run_and_throw_if_fail: ['Tools/Scripts/test-webkitpy'], cwd=/mock-checkout
-Running Perl unit tests
+        expected_stderr = """MOCK run_and_throw_if_fail: ['Tools/Scripts/test-webkitpy'], cwd=/mock-checkout
 MOCK run_and_throw_if_fail: ['Tools/Scripts/test-webkitperl'], cwd=/mock-checkout
-Running JavaScriptCore tests
 MOCK run_and_throw_if_fail: ['Tools/Scripts/run-javascriptcore-tests'], cwd=/mock-checkout
-Running run-webkit-tests
 MOCK run_and_throw_if_fail: ['Tools/Scripts/run-webkit-tests', '--quiet'], cwd=/mock-checkout
 """
-        OutputCapture().assert_outputs(self, step.run, [{}], expected_stderr=expected_stderr)
+        expected_logs = """Running Python unit tests
+Running Perl unit tests
+Running JavaScriptCore tests
+Running run-webkit-tests
+"""
+        OutputCapture().assert_outputs(self, step.run, [{}], expected_stderr=expected_stderr, expected_logs=expected_logs)

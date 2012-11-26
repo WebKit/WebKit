@@ -1,5 +1,186 @@
 2012-11-26  Zan Dobersek  <zandobersek@gmail.com>
 
+        Remove use of deprecated logging from most of webkitpy.tool
+        https://bugs.webkit.org/show_bug.cgi?id=103180
+
+        Reviewed by Dirk Pranke.
+
+        Remove calls to log and error methods of the deprecated_logging module, replacing them
+        by using Python's Logger objects. This patch covers the switch in all of webkitpy.tool
+        except the QueueEngine.
+
+        Unit tests are adjusted for these changes, moving output from expected stderr to expected logs.
+
+        * Scripts/webkitpy/tool/bot/commitqueuetask_unittest.py:
+        (MockCommitQueue.run_command):
+        (MockCommitQueue.command_passed):
+        (MockCommitQueue.command_failed):
+        (MockCommitQueue.report_flaky_tests):
+        (MockCommitQueue.archive_last_test_results):
+        (CommitQueueTaskTest._run_through_task):
+        (CommitQueueTaskTest.test_success_case):
+        (test_fast_success_case):
+        (test_clean_failure):
+        (test_update_failure):
+        (test_apply_failure):
+        (test_validate_changelog_failure):
+        (test_build_failure):
+        (test_red_build_failure):
+        (test_flaky_test_failure):
+        (test_failed_archive):
+        (test_double_flaky_test_failure):
+        (test_test_failure):
+        (test_red_test_failure):
+        (test_very_red_tree_retry):
+        (test_red_tree_patch_rejection):
+        (test_land_failure):
+        * Scripts/webkitpy/tool/bot/feeders.py:
+        (CommitQueueFeeder._update_work_items):
+        (EWSFeeder.feed):
+        * Scripts/webkitpy/tool/bot/feeders_unittest.py:
+        * Scripts/webkitpy/tool/bot/layouttestresultsreader.py:
+        (LayoutTestResultsReader.archive):
+        * Scripts/webkitpy/tool/bot/layouttestresultsreader_unittest.py:
+        (test_archive_last_layout_test_results):
+        * Scripts/webkitpy/tool/bot/sheriff.py:
+        * Scripts/webkitpy/tool/commands/abstractsequencedcommand.py:
+        (AbstractSequencedCommand.execute):
+        * Scripts/webkitpy/tool/commands/commandtest.py:
+        (CommandsTest.assert_execute_outputs):
+        * Scripts/webkitpy/tool/commands/download.py:
+        (AbstractPatchProcessingCommand._process_patch.execute):
+        (ProcessBugsMixin._fetch_list_of_patches_to_process):
+        (ProcessURLsMixin._fetch_list_of_patches_to_process):
+        (AbstractRolloutPrepCommand._commit_info):
+        * Scripts/webkitpy/tool/commands/download_unittest.py:
+        (AbstractRolloutPrepCommandTest.test_commit_info):
+        (DownloadCommandsTest.test_build):
+        (DownloadCommandsTest.test_build_and_test):
+        (test_apply_attachment):
+        (test_apply_from_bug):
+        (test_apply_watch_list):
+        (test_land):
+        (test_land_red_builders):
+        (test_check_style):
+        (test_build_attachment):
+        (test_land_attachment):
+        (test_land_from_bug):
+        (test_land_from_url):
+        (test_prepare_rollout):
+        (test_create_rollout):
+        (test_create_rollout_resolved):
+        (test_rollout):
+        * Scripts/webkitpy/tool/commands/earlywarningsystem.py:
+        (AbstractEarlyWarningSystem.handle_script_error.does):
+        * Scripts/webkitpy/tool/commands/earlywarningsystem_unittest.py:
+        (EarlyWarningSytemTest._default_expected_stderr):
+        (EarlyWarningSytemTest._default_expected_logs):
+        (EarlyWarningSytemTest._test_testing_ews):
+        * Scripts/webkitpy/tool/commands/openbugs.py:
+        (OpenBugs.execute):
+        * Scripts/webkitpy/tool/commands/openbugs_unittest.py:
+        (OpenBugsTest.test_args_parsing):
+        * Scripts/webkitpy/tool/commands/perfalizer.py:
+        (Perfalizer.handle_unexpected_error):
+        * Scripts/webkitpy/tool/commands/queries.py:
+        (PatchesInCommitQueue.execute):
+        (PatchesToCommitQueue._needs_commit_queue):
+        * Scripts/webkitpy/tool/commands/queries_unittest.py:
+        (QueryCommandsTest.test_bugs_to_commit):
+        (QueryCommandsTest.test_patches_in_commit_queue):
+        (QueryCommandsTest.test_patches_to_commit_queue):
+        * Scripts/webkitpy/tool/commands/queues.py:
+        (AbstractQueue._cc_watchers):
+        (AbstractQueue.begin_work_queue):
+        (FeederQueue.handle_unexpected_error):
+        (CommitQueue.handle_script_error):
+        (AbstractReviewQueue.handle_unexpected_error):
+        (AbstractReviewQueue.handle_script_error):
+        * Scripts/webkitpy/tool/commands/queues_unittest.py:
+        (test_auto_retry):
+        * Scripts/webkitpy/tool/commands/queuestest.py:
+        (QueuesTest.assert_outputs):
+        (QueuesTest._default_begin_work_queue_stderr):
+        (QueuesTest):
+        (QueuesTest._default_begin_work_queue_logs):
+        (QueuesTest.assert_queue_outputs):
+        * Scripts/webkitpy/tool/commands/roll_unittest.py:
+        (RollCommandsTest.test_update_chromium_deps):
+        (test_update_chromium_deps_older_revision):
+        * Scripts/webkitpy/tool/commands/sheriffbot.py:
+        (SheriffBot.handle_unexpected_error):
+        * Scripts/webkitpy/tool/commands/stepsequence.py:
+        (StepSequence.run_and_handle_errors):
+        * Scripts/webkitpy/tool/commands/upload.py:
+        (AssignToCommitter._assign_bug_to_last_patch_attacher):
+        (AbstractPatchUploadingCommand._prepare_state):
+        (PostCommits.execute):
+        (MarkBugFixed._determine_bug_id_and_svn_revision):
+        (MarkBugFixed.execute):
+        (CreateBug.create_bug_from_commit):
+        (CreateBug.execute):
+        * Scripts/webkitpy/tool/commands/upload_unittest.py:
+        (test_obsolete_attachments):
+        (test_land_safely):
+        (test_mark_bug_fixed):
+        * Scripts/webkitpy/tool/multicommandtool.py:
+        (Command.check_arguments_and_execute):
+        (MultiCommandTool.main):
+        * Scripts/webkitpy/tool/multicommandtool_unittest.py:
+        (CommandTest.test_required_arguments):
+        * Scripts/webkitpy/tool/steps/addsvnmimetypeforpng.py:
+        (AddSvnMimetypeForPng.run):
+        * Scripts/webkitpy/tool/steps/applypatch.py:
+        (ApplyPatch.run):
+        * Scripts/webkitpy/tool/steps/build.py:
+        (Build.run):
+        * Scripts/webkitpy/tool/steps/checkstyle.py:
+        * Scripts/webkitpy/tool/steps/closebug.py:
+        (CloseBug.run):
+        * Scripts/webkitpy/tool/steps/closebugforlanddiff.py:
+        (CloseBugForLandDiff.run):
+        * Scripts/webkitpy/tool/steps/closebugforlanddiff_unittest.py:
+        (CloseBugForLandDiffTest.test_empty_state):
+        * Scripts/webkitpy/tool/steps/commit.py:
+        (Commit.run):
+        * Scripts/webkitpy/tool/steps/commit_unittest.py:
+        (CommitTest._test_check_test_expectations):
+        * Scripts/webkitpy/tool/steps/ensurelocalcommitifneeded.py:
+        (EnsureLocalCommitIfNeeded.run):
+        * Scripts/webkitpy/tool/steps/obsoletepatches.py:
+        (ObsoletePatches.run):
+        * Scripts/webkitpy/tool/steps/preparechangelog.py:
+        (PrepareChangeLog.run):
+        * Scripts/webkitpy/tool/steps/reopenbugafterrollout.py:
+        (ReopenBugAfterRollout.run):
+        * Scripts/webkitpy/tool/steps/runtests.py:
+        (RunTests.run):
+        * Scripts/webkitpy/tool/steps/runtests_unittest.py:
+        (RunTestsTest.test_webkit_run_unit_tests):
+        * Scripts/webkitpy/tool/steps/steps_unittest.py:
+        (StepsTest.test_update_step):
+        (StepsTest.test_runtests_args):
+        * Scripts/webkitpy/tool/steps/update.py:
+        (Update.run):
+        * Scripts/webkitpy/tool/steps/updatechangelogswithreview_unittest.py:
+        (UpdateChangeLogsWithReviewerTest.test_guess_reviewer_from_bug):
+        (UpdateChangeLogsWithReviewerTest.test_guess_reviewer_from_multipatch_bug):
+        * Scripts/webkitpy/tool/steps/updatechangelogswithreviewer.py:
+        (UpdateChangeLogsWithReviewer._guess_reviewer_from_bug):
+        (UpdateChangeLogsWithReviewer.run):
+        * Scripts/webkitpy/tool/steps/updatechromiumdeps.py:
+        (UpdateChromiumDEPS._validate_revisions):
+        (UpdateChromiumDEPS.run):
+        * Scripts/webkitpy/tool/steps/validatechangelogs.py:
+        (ValidateChangeLogs._check_changelog_diff):
+        (ValidateChangeLogs.run):
+        * Scripts/webkitpy/tool/steps/validatechangelogs_unittest.py:
+        (ValidateChangeLogsTest._assert_start_line_produces_output):
+        * Scripts/webkitpy/tool/steps/validatereviewer.py:
+        (ValidateReviewer.run):
+
+2012-11-26  Zan Dobersek  <zandobersek@gmail.com>
+
         Coverage testing in webkitpy should omit some paths
         https://bugs.webkit.org/show_bug.cgi?id=103267
 

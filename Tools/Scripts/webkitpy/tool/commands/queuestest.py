@@ -48,24 +48,33 @@ class QueuesTest(unittest.TestCase):
     # This is _patch1 in mocktool.py
     mock_work_item = MockTool().bugs.fetch_attachment(10000)
 
-    def assert_outputs(self, func, func_name, args, expected_stdout, expected_stderr, expected_exceptions):
+    def assert_outputs(self, func, func_name, args, expected_stdout, expected_stderr, expected_exceptions, expected_logs):
         exception = None
         if expected_exceptions and func_name in expected_exceptions:
             exception = expected_exceptions[func_name]
+
+        logs = None
+        if expected_logs and func_name in expected_logs:
+            logs = expected_logs[func_name]
 
         OutputCapture().assert_outputs(self,
                 func,
                 args=args,
                 expected_stdout=expected_stdout.get(func_name, ""),
                 expected_stderr=expected_stderr.get(func_name, ""),
-                expected_exception=exception)
+                expected_exception=exception,
+                expected_logs=logs)
 
     def _default_begin_work_queue_stderr(self, name):
+        string_replacements = {"name": name}
+        return "MOCK: update_status: %(name)s Starting Queue\n" % string_replacements
+
+    def _default_begin_work_queue_logs(self, name):
         checkout_dir = '/mock-checkout'
         string_replacements = {"name": name, 'checkout_dir': checkout_dir}
-        return "CAUTION: %(name)s will discard all local changes in \"%(checkout_dir)s\"\nRunning WebKit %(name)s.\nMOCK: update_status: %(name)s Starting Queue\n" % string_replacements
+        return "CAUTION: %(name)s will discard all local changes in \"%(checkout_dir)s\"\nRunning WebKit %(name)s.\n" % string_replacements
 
-    def assert_queue_outputs(self, queue, args=None, work_item=None, expected_stdout=None, expected_stderr=None, expected_exceptions=None, options=None, tool=None):
+    def assert_queue_outputs(self, queue, args=None, work_item=None, expected_stdout=None, expected_stderr=None, expected_exceptions=None, expected_logs=None, options=None, tool=None):
         if not tool:
             tool = MockTool()
             # This is a hack to make it easy for callers to not have to setup a custom MockFileSystem just to test the commit-queue
@@ -86,13 +95,13 @@ class QueuesTest(unittest.TestCase):
 
         queue.execute(options, args, tool, engine=MockQueueEngine)
 
-        self.assert_outputs(queue.queue_log_path, "queue_log_path", [], expected_stdout, expected_stderr, expected_exceptions)
-        self.assert_outputs(queue.work_item_log_path, "work_item_log_path", [work_item], expected_stdout, expected_stderr, expected_exceptions)
-        self.assert_outputs(queue.begin_work_queue, "begin_work_queue", [], expected_stdout, expected_stderr, expected_exceptions)
-        self.assert_outputs(queue.should_continue_work_queue, "should_continue_work_queue", [], expected_stdout, expected_stderr, expected_exceptions)
-        self.assert_outputs(queue.next_work_item, "next_work_item", [], expected_stdout, expected_stderr, expected_exceptions)
-        self.assert_outputs(queue.process_work_item, "process_work_item", [work_item], expected_stdout, expected_stderr, expected_exceptions)
-        self.assert_outputs(queue.handle_unexpected_error, "handle_unexpected_error", [work_item, "Mock error message"], expected_stdout, expected_stderr, expected_exceptions)
+        self.assert_outputs(queue.queue_log_path, "queue_log_path", [], expected_stdout, expected_stderr, expected_exceptions, expected_logs)
+        self.assert_outputs(queue.work_item_log_path, "work_item_log_path", [work_item], expected_stdout, expected_stderr, expected_exceptions, expected_logs)
+        self.assert_outputs(queue.begin_work_queue, "begin_work_queue", [], expected_stdout, expected_stderr, expected_exceptions, expected_logs)
+        self.assert_outputs(queue.should_continue_work_queue, "should_continue_work_queue", [], expected_stdout, expected_stderr, expected_exceptions, expected_logs)
+        self.assert_outputs(queue.next_work_item, "next_work_item", [], expected_stdout, expected_stderr, expected_exceptions, expected_logs)
+        self.assert_outputs(queue.process_work_item, "process_work_item", [work_item], expected_stdout, expected_stderr, expected_exceptions, expected_logs)
+        self.assert_outputs(queue.handle_unexpected_error, "handle_unexpected_error", [work_item, "Mock error message"], expected_stdout, expected_stderr, expected_exceptions, expected_logs)
         # Should we have a different function for testing StepSequenceErrorHandlers?
         if isinstance(queue, StepSequenceErrorHandler):
-            self.assert_outputs(queue.handle_script_error, "handle_script_error", [tool, {"patch": self.mock_work_item}, ScriptError(message="ScriptError error message", script_args="MockErrorCommand", output="MOCK output")], expected_stdout, expected_stderr, expected_exceptions)
+            self.assert_outputs(queue.handle_script_error, "handle_script_error", [tool, {"patch": self.mock_work_item}, ScriptError(message="ScriptError error message", script_args="MockErrorCommand", output="MOCK output")], expected_stdout, expected_stderr, expected_exceptions, expected_logs)

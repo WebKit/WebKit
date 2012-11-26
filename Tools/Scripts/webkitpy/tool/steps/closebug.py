@@ -26,9 +26,12 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import logging
+
 from webkitpy.tool.steps.abstractstep import AbstractStep
 from webkitpy.tool.steps.options import Options
-from webkitpy.common.system.deprecated_logging import log
+
+_log = logging.getLogger(__name__)
 
 
 class CloseBug(AbstractStep):
@@ -48,6 +51,6 @@ class CloseBug(AbstractStep):
         patches = self._tool.bugs.fetch_bug(state["patch"].bug_id()).patches()
         for patch in patches:
             if patch.review() == "?" or patch.review() == "+":
-                log("Not closing bug %s as attachment %s has review=%s.  Assuming there are more patches to land from this bug." % (patch.bug_id(), patch.id(), patch.review()))
+                _log.info("Not closing bug %s as attachment %s has review=%s.  Assuming there are more patches to land from this bug." % (patch.bug_id(), patch.id(), patch.review()))
                 return
         self._tool.bugs.close_bug_as_fixed(state["patch"].bug_id(), "All reviewed patches have been landed.  Closing bug.")

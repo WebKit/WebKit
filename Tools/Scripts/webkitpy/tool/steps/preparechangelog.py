@@ -26,11 +26,15 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import logging
+import sys
+
 from webkitpy.common.checkout.changelog import ChangeLog
 from webkitpy.common.system.executive import ScriptError
 from webkitpy.tool.steps.abstractstep import AbstractStep
 from webkitpy.tool.steps.options import Options
-from webkitpy.common.system.deprecated_logging import error
+
+_log = logging.getLogger(__name__)
 
 
 class PrepareChangeLog(AbstractStep):
@@ -73,5 +77,6 @@ class PrepareChangeLog(AbstractStep):
         try:
             self._tool.executive.run_and_throw_if_fail(args, self._options.quiet, cwd=self._tool.scm().checkout_root)
         except ScriptError, e:
-            error("Unable to prepare ChangeLogs.")
+            _log.error("Unable to prepare ChangeLogs.")
+            sys.exit(1)
         self.did_modify_checkout(state)

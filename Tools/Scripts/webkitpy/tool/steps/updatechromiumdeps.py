@@ -26,12 +26,15 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import logging
+import sys
 import urllib2
 
 from webkitpy.tool.steps.abstractstep import AbstractStep
 from webkitpy.tool.steps.options import Options
 from webkitpy.common.config import urls
-from webkitpy.common.system.deprecated_logging import log, error
+
+_log = logging.getLogger(__name__)
 
 
 class UpdateChromiumDEPS(AbstractStep):
@@ -49,16 +52,17 @@ class UpdateChromiumDEPS(AbstractStep):
         if new_chromium_revision < current_chromium_revision:
             message = "Current Chromium DEPS revision %s is newer than %s." % (current_chromium_revision, new_chromium_revision)
             if self._options.non_interactive:
-                error(message)  # Causes the process to terminate.
-            log(message)
+                _log.error(message)
+                sys.exit(1)
+            _log.info(message)
             new_chromium_revision = self._tool.user.prompt("Enter new chromium revision (enter nothing to cancel):\n")
             try:
                 new_chromium_revision = int(new_chromium_revision)
             except ValueError, TypeError:
                 new_chromium_revision = None
             if not new_chromium_revision:
-                error("Unable to update Chromium DEPS")
-
+                _log.error("Unable to update Chromium DEPS")
+                sys.exit(1)
 
     def run(self, state):
         # Note that state["chromium_revision"] must be defined, but can be None.
@@ -69,5 +73,5 @@ class UpdateChromiumDEPS(AbstractStep):
         deps = self._tool.checkout().chromium_deps()
         current_chromium_revision = deps.read_variable("chromium_rev")
         self._validate_revisions(current_chromium_revision, new_chromium_revision)
-        log("Updating Chromium DEPS to %s" % new_chromium_revision)
+        _log.info("Updating Chromium DEPS to %s" % new_chromium_revision)
         deps.write_variable("chromium_rev", new_chromium_revision)

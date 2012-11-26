@@ -26,12 +26,15 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import logging
+
 from webkitpy.tool import steps
 
 from webkitpy.common.checkout.scm import CheckoutNeedsUpdate
-from webkitpy.common.system.deprecated_logging import log
 from webkitpy.common.system.executive import ScriptError
 from webkitpy.tool.bot.queueengine import QueueEngine
+
+_log = logging.getLogger(__name__)
 
 
 class StepSequenceErrorHandler():
@@ -69,14 +72,14 @@ class StepSequence(object):
         try:
             self._run(tool, options, state)
         except CheckoutNeedsUpdate, e:
-            log("Commit failed because the checkout is out of date.  Please update and try again.")
+            _log.info("Commit failed because the checkout is out of date. Please update and try again.")
             if options.parent_command:
                 command = tool.command_by_name(options.parent_command)
                 command.handle_checkout_needs_update(tool, state, options, e)
             QueueEngine.exit_after_handled_error(e)
         except ScriptError, e:
             if not options.quiet:
-                log(e.message_with_output())
+                _log.error(e.message_with_output())
             if options.parent_command:
                 command = tool.command_by_name(options.parent_command)
                 command.handle_script_error(tool, state, e)

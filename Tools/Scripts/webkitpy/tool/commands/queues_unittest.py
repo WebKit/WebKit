@@ -141,13 +141,16 @@ MOCK setting flag 'commit-queue' to '-' on attachment '10001' with comment 'Reje
 
 - If you have committer rights please correct the error in Tools/Scripts/webkitpy/common/config/committers.py by adding yourself to the file (no review needed).  The commit-queue restarts itself every 2 hours.  After restart the commit-queue will correctly respect your committer rights.'
 MOCK: update_work_items: commit-queue [10005, 10000]
-Feeding commit-queue items [10005, 10000]
-Feeding EWS (1 r? patch, 1 new)
 MOCK: submit_to_ews: 10002
+""",
+        }
+        expected_logs = {
+            "process_work_item": """Feeding commit-queue items [10005, 10000]
+Feeding EWS (1 r? patch, 1 new)
 """,
             "handle_unexpected_error": "Mock error message\n",
         }
-        self.assert_queue_outputs(queue, tool=tool, expected_stderr=expected_stderr)
+        self.assert_queue_outputs(queue, tool=tool, expected_stderr=expected_stderr, expected_logs=expected_logs)
 
 
 class AbstractPatchQueueTest(CommandsTest):
@@ -249,9 +252,11 @@ MOCK: update_status: commit-queue Pass
 MOCK: release_work_item: commit-queue 10000
 """,
             "handle_unexpected_error": "MOCK setting flag 'commit-queue' to '-' on attachment '10000' with comment 'Rejecting attachment 10000 from commit-queue.' and additional comment 'Mock error message'\n",
+        }
+        expected_logs = {
             "handle_script_error": "ScriptError error message\n\nMOCK output\n",
         }
-        self.assert_queue_outputs(CommitQueue(), tool=tool, expected_stderr=expected_stderr)
+        self.assert_queue_outputs(CommitQueue(), tool=tool, expected_stderr=expected_stderr, expected_logs=expected_logs)
 
     def test_commit_queue_failure(self):
         expected_stderr = {
@@ -266,6 +271,8 @@ MOCK: update_status: commit-queue Fail
 MOCK: release_work_item: commit-queue 10000
 """,
             "handle_unexpected_error": "MOCK setting flag 'commit-queue' to '-' on attachment '10000' with comment 'Rejecting attachment 10000 from commit-queue.' and additional comment 'Mock error message'\n",
+        }
+        expected_logs = {
             "handle_script_error": "ScriptError error message\n\nMOCK output\n",
         }
         queue = CommitQueue()
@@ -278,7 +285,7 @@ MOCK: release_work_item: commit-queue 10000
             raise ScriptError('MOCK script error')
 
         queue.run_webkit_patch = mock_run_webkit_patch
-        self.assert_queue_outputs(queue, expected_stderr=expected_stderr)
+        self.assert_queue_outputs(queue, expected_stderr=expected_stderr, expected_logs=expected_logs)
 
     def test_commit_queue_failure_with_failing_tests(self):
         expected_stderr = {
@@ -295,6 +302,8 @@ MOCK: update_status: commit-queue Fail
 MOCK: release_work_item: commit-queue 10000
 """,
             "handle_unexpected_error": "MOCK setting flag 'commit-queue' to '-' on attachment '10000' with comment 'Rejecting attachment 10000 from commit-queue.' and additional comment 'Mock error message'\n",
+        }
+        expected_logs = {
             "handle_script_error": "ScriptError error message\n\nMOCK output\n",
         }
         queue = CommitQueue()
@@ -308,7 +317,7 @@ MOCK: release_work_item: commit-queue 10000
             raise ScriptError('MOCK script error')
 
         queue.run_webkit_patch = mock_run_webkit_patch
-        self.assert_queue_outputs(queue, expected_stderr=expected_stderr)
+        self.assert_queue_outputs(queue, expected_stderr=expected_stderr, expected_logs=expected_logs)
 
     def test_rollout(self):
         tool = MockTool(log_executive=True)
@@ -336,9 +345,11 @@ MOCK: update_status: commit-queue Pass
 MOCK: release_work_item: commit-queue 10000
 """ % {"port_name": CommitQueue.port_name},
             "handle_unexpected_error": "MOCK setting flag 'commit-queue' to '-' on attachment '10000' with comment 'Rejecting attachment 10000 from commit-queue.' and additional comment 'Mock error message'\n",
+        }
+        expected_logs = {
             "handle_script_error": "ScriptError error message\n\nMOCK output\n",
         }
-        self.assert_queue_outputs(CommitQueue(), tool=tool, expected_stderr=expected_stderr)
+        self.assert_queue_outputs(CommitQueue(), tool=tool, expected_stderr=expected_stderr, expected_logs=expected_logs)
 
     def test_rollout_lands(self):
         tool = MockTool(log_executive=True)
@@ -362,9 +373,11 @@ MOCK: update_status: commit-queue Pass
 MOCK: release_work_item: commit-queue 10005
 """ % {"port_name": CommitQueue.port_name},
             "handle_unexpected_error": "MOCK setting flag 'commit-queue' to '-' on attachment '10005' with comment 'Rejecting attachment 10005 from commit-queue.' and additional comment 'Mock error message'\n",
+        }
+        expected_logs = {
             "handle_script_error": "ScriptError error message\n\nMOCK output\n",
         }
-        self.assert_queue_outputs(CommitQueue(), tool=tool, work_item=rollout_patch, expected_stderr=expected_stderr)
+        self.assert_queue_outputs(CommitQueue(), tool=tool, work_item=rollout_patch, expected_stderr=expected_stderr, expected_logs=expected_logs)
 
     def test_auto_retry(self):
         queue = CommitQueue()
@@ -373,9 +386,10 @@ MOCK: release_work_item: commit-queue 10005
         tool = AlwaysCommitQueueTool()
         sequence = NeedsUpdateSequence(None)
 
-        expected_stderr = "Commit failed because the checkout is out of date.  Please update and try again.\nMOCK: update_status: commit-queue Tests passed, but commit failed (checkout out of date).  Updating, then landing without building or re-running tests.\n"
+        expected_stderr = "MOCK: update_status: commit-queue Tests passed, but commit failed (checkout out of date).  Updating, then landing without building or re-running tests.\n"
+        expected_logs = "Commit failed because the checkout is out of date. Please update and try again.\n"
         state = {'patch': None}
-        OutputCapture().assert_outputs(self, sequence.run_and_handle_errors, [tool, options, state], expected_exception=TryAgain, expected_stderr=expected_stderr)
+        OutputCapture().assert_outputs(self, sequence.run_and_handle_errors, [tool, options, state], expected_exception=TryAgain, expected_stderr=expected_stderr, expected_logs=expected_logs)
 
         self.assertEqual(options.update, True)
         self.assertEqual(options.build, False)
@@ -466,11 +480,13 @@ MOCK: update_status: style-queue Style checked
 MOCK: update_status: style-queue Pass
 MOCK: release_work_item: style-queue 10000
 """,
+        }
+        expected_logs = {
             "handle_unexpected_error": "Mock error message\n",
             "handle_script_error": "MOCK output\n",
         }
         tool = MockTool(log_executive=True, executive_throws_when_run=set(['check-style']))
-        self.assert_queue_outputs(StyleQueue(), expected_stderr=expected_stderr, tool=tool)
+        self.assert_queue_outputs(StyleQueue(), expected_stderr=expected_stderr, expected_logs=expected_logs, tool=tool)
 
     def test_style_queue_with_watch_list_exception(self):
         expected_stderr = {
@@ -489,8 +505,11 @@ MOCK: update_status: style-queue Style checked
 MOCK: update_status: style-queue Pass
 MOCK: release_work_item: style-queue 10000
 """,
+        }
+        expected_logs = {
+            "begin_work_queue": self._default_begin_work_queue_logs("style-queue"),
             "handle_unexpected_error": "Mock error message\n",
             "handle_script_error": "MOCK output\n",
         }
         tool = MockTool(log_executive=True, executive_throws_when_run=set(['apply-watchlist-local']))
-        self.assert_queue_outputs(StyleQueue(), expected_stderr=expected_stderr, tool=tool)
+        self.assert_queue_outputs(StyleQueue(), expected_stderr=expected_stderr, expected_logs=expected_logs, tool=tool)

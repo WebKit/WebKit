@@ -26,10 +26,14 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import logging
+import sys
+
 from webkitpy.tool.steps.abstractstep import AbstractStep
 from webkitpy.tool.steps.options import Options
 from webkitpy.common.checkout.diff_parser import DiffParser
-from webkitpy.common.system.deprecated_logging import error, log
+
+_log = logging.getLogger(__name__)
 
 
 # This is closely related to the ValidateReviewer step and the CommitterValidator class.
@@ -53,7 +57,7 @@ class ValidateChangeLogs(AbstractStep):
         if self._options.non_interactive:
             return False
 
-        log("The diff to %s looks wrong.  Are you sure your ChangeLog entry is at the top of the file?" % (diff_file.filename))
+        _log.info("The diff to %s looks wrong. Are you sure your ChangeLog entry is at the top of the file?" % (diff_file.filename))
         # FIXME: Do we need to make the file path absolute?
         self._tool.scm().diff_for_file(diff_file.filename)
         if self._tool.user.confirm("OK to continue?", default='n'):
@@ -73,4 +77,5 @@ class ValidateChangeLogs(AbstractStep):
             parsed_diff = DiffParser(diff.splitlines())
             for filename, diff_file in parsed_diff.files.items():
                 if not self._check_changelog_diff(diff_file):
-                    error("ChangeLog entry in %s is not at the top of the file." % diff_file.filename)
+                    _log.error("ChangeLog entry in %s is not at the top of the file." % diff_file.filename)
+                    sys.exit(1)

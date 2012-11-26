@@ -26,9 +26,13 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import logging
+
 from webkitpy.tool.steps.abstractstep import AbstractStep
 from webkitpy.tool.steps.options import Options
-from webkitpy.common.system.deprecated_logging import log
+
+_log = logging.getLogger(__name__)
+
 
 class ApplyPatch(AbstractStep):
     @classmethod
@@ -38,5 +42,5 @@ class ApplyPatch(AbstractStep):
         ]
 
     def run(self, state):
-        log("Processing patch %s from bug %s." % (state["patch"].id(), state["patch"].bug_id()))
+        _log.info("Processing patch %s from bug %s." % (state["patch"].id(), state["patch"].bug_id()))
         self._tool.checkout().apply_patch(state["patch"])

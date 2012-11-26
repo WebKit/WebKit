@@ -31,12 +31,14 @@
 # which are called with the following format:
 # tool-name [global options] command-name [command options]
 
+import logging
 import sys
 
 from optparse import OptionParser, IndentedHelpFormatter, SUPPRESS_USAGE, make_option
 
 from webkitpy.tool.grammar import pluralize
-from webkitpy.common.system.deprecated_logging import log
+
+_log = logging.getLogger(__name__)
 
 
 class TryAgain(Exception):
@@ -109,13 +111,13 @@ class Command(object):
 
     def check_arguments_and_execute(self, options, args, tool=None):
         if len(args) < len(self.required_arguments):
-            log("%s required, %s provided.  Provided: %s  Required: %s\nSee '%s help %s' for usage." % (
-                pluralize("argument", len(self.required_arguments)),
-                pluralize("argument", len(args)),
-                "'%s'" % " ".join(args),
-                " ".join(self.required_arguments),
-                tool.name(),
-                self.name))
+            _log.error("%s required, %s provided.  Provided: %s  Required: %s\nSee '%s help %s' for usage." % (
+                       pluralize("argument", len(self.required_arguments)),
+                       pluralize("argument", len(args)),
+                       "'%s'" % " ".join(args),
+                       " ".join(self.required_arguments),
+                       tool.name(),
+                       self.name))
             return 1
         return self.execute(options, args, tool) or 0
 
@@ -303,7 +305,7 @@ class MultiCommandTool(object):
 
         (should_execute, failure_reason) = self.should_execute_command(command)
         if not should_execute:
-            log(failure_reason)
+            _log.error(failure_reason)
             return 0 # FIXME: Should this really be 0?
 
         while True:

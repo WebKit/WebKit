@@ -26,12 +26,15 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from webkitpy.common.system.deprecated_logging import log
+import logging
+
 from webkitpy.tool.bot.sheriff import Sheriff
 from webkitpy.tool.bot.irc_command import commands as irc_commands
 from webkitpy.tool.bot.ircbot import IRCBot
 from webkitpy.tool.commands.queues import AbstractQueue
 from webkitpy.tool.commands.stepsequence import StepSequenceErrorHandler
+
+_log = logging.getLogger(__name__)
 
 
 class SheriffBot(AbstractQueue, StepSequenceErrorHandler):
@@ -63,7 +66,7 @@ class SheriffBot(AbstractQueue, StepSequenceErrorHandler):
         return True
 
     def handle_unexpected_error(self, failure_map, message):
-        log(message)
+        _log.error(message)
 
     # StepSequenceErrorHandler methods
 

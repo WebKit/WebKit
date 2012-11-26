@@ -26,10 +26,13 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import logging
+
 from webkitpy.tool.grammar import pluralize
 from webkitpy.tool.steps.abstractstep import AbstractStep
 from webkitpy.tool.steps.options import Options
-from webkitpy.common.system.deprecated_logging import log
+
+_log = logging.getLogger(__name__)
 
 
 class ObsoletePatches(AbstractStep):
@@ -46,6 +49,6 @@ class ObsoletePatches(AbstractStep):
         patches = self._tool.bugs.fetch_bug(bug_id).patches()
         if not patches:
             return
-        log("Obsoleting %s on bug %s" % (pluralize("old patch", len(patches)), bug_id))
+        _log.info("Obsoleting %s on bug %s" % (pluralize("old patch", len(patches)), bug_id))
         for patch in patches:
             self._tool.bugs.obsolete_attachment(patch.id())

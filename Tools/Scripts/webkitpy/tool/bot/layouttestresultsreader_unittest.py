@@ -91,8 +91,8 @@ class LayoutTestResultsReaderTest(unittest.TestCase):
         patch = tool.bugs.fetch_attachment(10001)
         tool.filesystem = MockFileSystem()
         # Should fail because the results_directory does not exist.
-        expected_stderr = "/mock-results does not exist, not archiving.\n"
-        archive = OutputCapture().assert_outputs(self, reader.archive, [patch], expected_stderr=expected_stderr)
+        expected_logs = "/mock-results does not exist, not archiving.\n"
+        archive = OutputCapture().assert_outputs(self, reader.archive, [patch], expected_logs=expected_logs)
         self.assertEqual(archive, None)
 
         results_directory = "/mock-results"

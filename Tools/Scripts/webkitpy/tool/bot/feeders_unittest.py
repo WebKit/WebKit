@@ -46,9 +46,9 @@ MOCK setting flag 'commit-queue' to '-' on attachment '10001' with comment 'Reje
 
 - If you have committer rights please correct the error in Tools/Scripts/webkitpy/common/config/committers.py by adding yourself to the file (no review needed).  The commit-queue restarts itself every 2 hours.  After restart the commit-queue will correctly respect your committer rights.'
 MOCK: update_work_items: commit-queue [10005, 10000]
-Feeding commit-queue items [10005, 10000]
 """
-        OutputCapture().assert_outputs(self, feeder.feed, expected_stderr=expected_stderr)
+        expected_logs = "Feeding commit-queue items [10005, 10000]\n"
+        OutputCapture().assert_outputs(self, feeder.feed, expected_stderr=expected_stderr, expected_logs=expected_logs)
 
     def _mock_attachment(self, is_rollout, attach_date):
         attachment = Mock()

@@ -21,11 +21,14 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import logging
+
 from webkitpy.tool.steps.abstractstep import AbstractStep
 from webkitpy.common import checksvnconfigfile
-from webkitpy.common.system.deprecated_logging import log
 from webkitpy.common.checkout.scm.detection import SCMDetector
 from webkitpy.common.system.systemhost import SystemHost
+
+_log = logging.getLogger(__name__)
 
 
 class AddSvnMimetypeForPng(AbstractStep):
@@ -47,19 +50,19 @@ class AddSvnMimetypeForPng(AbstractStep):
                 config_file_path = checksvnconfigfile.config_file_path(self._host, self._fs)
 
                 if file_missing:
-                    log("There is no SVN config file. The svn:mime-type of pngs won't set.")
+                    _log.info("There is no SVN config file. The svn:mime-type of pngs won't set.")
                     if not self._tool.user.confirm("Are you sure you want to continue?", default="n"):
                         self._exit(1)
                 elif autoprop_missing and png_missing:
-                    log(checksvnconfigfile.errorstr_autoprop(config_file_path) + checksvnconfigfile.errorstr_png(config_file_path))
+                    _log.info(checksvnconfigfile.errorstr_autoprop(config_file_path) + checksvnconfigfile.errorstr_png(config_file_path))
                     if not self._tool.user.confirm("Do you want to continue?", default="n"):
                         self._exit(1)
                 elif autoprop_missing:
-                    log(checksvnconfigfile.errorstr_autoprop(config_file_path))
+                    _log.info(checksvnconfigfile.errorstr_autoprop(config_file_path))
                     if not self._tool.user.confirm("Do you want to continue?", default="n"):
                         self._exit(1)
                 elif png_missing:
-                    log(checksvnconfigfile.errorstr_png(config_file_path))
+                    _log.info(checksvnconfigfile.errorstr_png(config_file_path))
                     if not self._tool.user.confirm("Do you want to continue?", default="n"):
                         self._exit(1)
 

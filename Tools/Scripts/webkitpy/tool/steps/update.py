@@ -26,9 +26,12 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import logging
+
 from webkitpy.tool.steps.abstractstep import AbstractStep
 from webkitpy.tool.steps.options import Options
-from webkitpy.common.system.deprecated_logging import log
+
+_log = logging.getLogger(__name__)
 
 
 class Update(AbstractStep):
@@ -43,7 +46,7 @@ class Update(AbstractStep):
     def run(self, state):
         if not self._options.update:
             return
-        log("Updating working directory")
+        _log.info("Updating working directory")
         self._tool.executive.run_and_throw_if_fail(self._update_command(), quiet=self._options.quiet, cwd=self._tool.scm().checkout_root)
 
     def _update_command(self):

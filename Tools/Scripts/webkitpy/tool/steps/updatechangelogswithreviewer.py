@@ -26,11 +26,15 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import logging
+
 from webkitpy.common.checkout.changelog import ChangeLog
 from webkitpy.tool.grammar import pluralize
 from webkitpy.tool.steps.abstractstep import AbstractStep
 from webkitpy.tool.steps.options import Options
-from webkitpy.common.system.deprecated_logging import log, error
+
+_log = logging.getLogger(__name__)
+
 
 class UpdateChangeLogsWithReviewer(AbstractStep):
     @classmethod
@@ -45,10 +49,10 @@ class UpdateChangeLogsWithReviewer(AbstractStep):
         # here as we don't currently have a way to invalidate a bug after making changes (like ObsoletePatches does).
         patches = self._tool.bugs.fetch_bug(bug_id).reviewed_patches()
         if not patches:
-            log("%s on bug %s, cannot infer reviewer." % ("No reviewed patches", bug_id))
+            _log.info("%s on bug %s, cannot infer reviewer." % ("No reviewed patches", bug_id))
             return None
         patch = patches[-1]
-        log("Guessing \"%s\" as reviewer from attachment %s on bug %s." % (patch.reviewer().full_name, patch.id(), bug_id))
+        _log.info("Guessing \"%s\" as reviewer from attachment %s on bug %s." % (patch.reviewer().full_name, patch.id(), bug_id))
         return patch.reviewer().full_name
 
     def run(self, state):
@@ -59,12 +63,12 @@ class UpdateChangeLogsWithReviewer(AbstractStep):
         reviewer = self._options.reviewer
         if not reviewer:
             if not bug_id:
-                log("No bug id provided and --reviewer= not provided.  Not updating ChangeLogs with reviewer.")
+                _log.info("No bug id provided and --reviewer= not provided.  Not updating ChangeLogs with reviewer.")
                 return
             reviewer = self._guess_reviewer_from_bug(bug_id)
 
         if not reviewer:
-            log("Failed to guess reviewer from bug %s and --reviewer= not provided.  Not updating ChangeLogs with reviewer." % bug_id)
+            _log.info("Failed to guess reviewer from bug %s and --reviewer= not provided.  Not updating ChangeLogs with reviewer." % bug_id)
             return
 
         # cached_lookup("changelogs") is always absolute paths.

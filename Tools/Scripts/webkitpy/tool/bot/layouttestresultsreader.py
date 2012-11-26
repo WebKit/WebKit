@@ -26,10 +26,13 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import logging
+
 from webkitpy.common.net.layouttestresults import LayoutTestResults
 from webkitpy.common.net.unittestresults import UnitTestResults
-from webkitpy.common.system.deprecated_logging import error, log
 from webkitpy.tool.steps.runtests import RunTests
+
+_log = logging.getLogger(__name__)
 
 
 class LayoutTestResultsReader(object):
@@ -92,7 +95,7 @@ class LayoutTestResultsReader(object):
         if not zip_path:
             return None
         if not self._tool.filesystem.isdir(results_directory):
-            log("%s does not exist, not archiving." % results_directory)
+            _log.info("%s does not exist, not archiving." % results_directory)
             return None
         archive = self._tool.workspace.create_zip(zip_path, results_directory)
         # Remove the results directory to prevent http logs, etc. from getting huge between runs.
