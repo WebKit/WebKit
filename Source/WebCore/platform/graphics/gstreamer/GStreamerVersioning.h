@@ -29,6 +29,7 @@ class IntSize;
 };
 
 void webkitGstObjectRefSink(GstObject*);
+GstPad* webkitGstGhostPadFromStaticTemplate(GstStaticPadTemplate*, const gchar* name, GstPad* target);
 GRefPtr<GstCaps> webkitGstGetPadCaps(GstPad*);
 bool getVideoSizeAndFormatFromCaps(GstCaps*, WebCore::IntSize&, GstVideoFormat&, int& pixelAspectRatioNumerator, int& pixelAspectRatioDenominator, int& stride);
 GstBuffer* createGstBuffer(GstBuffer*);

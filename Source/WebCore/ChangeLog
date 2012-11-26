@@ -1,3 +1,26 @@
+2012-11-26  Thiago Santos  <thiago.sousa.santos@collabora.com>
+
+        [GStreamer] Floating reference handling fix
+        https://bugs.webkit.org/show_bug.cgi?id=101349
+
+        Reviewed by Philippe Normand.
+
+        GStreamer 0.10 and 1.0 differ when creating GstGhostPad from pad
+        templates, the 1.0 doesn't take ownership on the passed
+        GstPadTemplate, while 0.10 does. So this patch adds a
+        GStreamerVersioning function to handle this different approach
+        transparently in Webkit gstreamer elements.
+
+        Existing media tests cover this change.
+
+        * platform/audio/gstreamer/WebKitWebAudioSourceGStreamer.cpp:
+        (webkit_web_audio_src_init):
+        * platform/graphics/gstreamer/GStreamerVersioning.cpp:
+        (webkitGstGhostPadFromStaticTemplate):
+        * platform/graphics/gstreamer/GStreamerVersioning.h:
+        * platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp:
+        (webkit_web_src_init):
+
 2012-11-26  Kentaro Hara  <haraken@chromium.org>
 
         [V8] Remove WorkerContextExecutionProxy

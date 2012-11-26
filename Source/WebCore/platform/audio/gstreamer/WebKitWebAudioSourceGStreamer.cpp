@@ -26,6 +26,7 @@
 #include "AudioIOCallback.h"
 #include <wtf/gobject/GOwnPtr.h>
 #include "GRefPtrGStreamer.h"
+#include "GStreamerVersioning.h"
 #include <gst/audio/multichannel.h>
 #include <gst/pbutils/pbutils.h>
 
@@ -178,8 +179,7 @@ static void webkit_web_audio_src_init(WebKitWebAudioSrc* src)
     src->priv = priv;
     new (priv) WebKitWebAudioSourcePrivate();
 
-    GRefPtr<GstPadTemplate> padTemplate = adoptGRef(gst_static_pad_template_get(&srcTemplate));
-    priv->sourcePad = gst_ghost_pad_new_no_target_from_template("src", padTemplate.get());
+    priv->sourcePad = webkitGstGhostPadFromStaticTemplate(&srcTemplate, "src", 0);
     gst_element_add_pad(GST_ELEMENT(src), priv->sourcePad);
 
     priv->provider = 0;

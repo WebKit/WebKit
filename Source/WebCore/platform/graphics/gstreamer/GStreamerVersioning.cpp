@@ -34,6 +34,23 @@ void webkitGstObjectRefSink(GstObject* gstObject)
 #endif
 }
 
+GstPad* webkitGstGhostPadFromStaticTemplate(GstStaticPadTemplate* staticPadTemplate, const gchar* name, GstPad* target)
+{
+    GstPad* pad;
+    GstPadTemplate* padTemplate = gst_static_pad_template_get(staticPadTemplate);
+
+    if (target)
+        pad = gst_ghost_pad_new_from_template(name, target, padTemplate);
+    else
+        pad = gst_ghost_pad_new_no_target_from_template(name, padTemplate);
+
+#ifdef GST_API_VERSION_1
+    gst_object_unref(padTemplate);
+#endif
+
+    return pad;
+}
+
 GRefPtr<GstCaps> webkitGstGetPadCaps(GstPad* pad)
 {
     if (!pad)
