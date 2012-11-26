@@ -1,3 +1,27 @@
+2012-11-26  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        HitTestResult should not be a HitTestLocation
+        https://bugs.webkit.org/show_bug.cgi?id=101590
+
+        Reviewed by Sam Weinig.
+
+        Change HitTestResult from being a HitTestLocation to having a HitTestLocation. 
+        A result of a test should not be a special case of the location of the test.
+
+        No change in functionality. No new tests.
+
+        * rendering/HitTestResult.cpp:
+        (WebCore::HitTestResult::HitTestResult):
+        (WebCore::HitTestResult::operator=):
+        (WebCore::HitTestResult::isSelected):
+        (WebCore::HitTestResult::spellingToolTip):
+        (WebCore::HitTestResult::replacedString):
+        * rendering/HitTestResult.h:
+        (WebCore::HitTestResult::isRectBasedTest):
+        (WebCore::HitTestResult::pointInInnerNodeFrame):
+        (WebCore::HitTestResult::hitTestLocation):
+        (HitTestResult):
+
 2012-11-26  Marja Hölttä  <marja@chromium.org>
 
         Circular reference between Document and MediaQueryMatcher.

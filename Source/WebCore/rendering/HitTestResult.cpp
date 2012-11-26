@@ -192,34 +192,34 @@ IntRect HitTestLocation::rectForPoint(const LayoutPoint& point, unsigned topPadd
     return IntRect(actualPoint, actualPadding);
 }
 
-HitTestResult::HitTestResult() : HitTestLocation()
-    , m_isOverWidget(false)
+HitTestResult::HitTestResult()
+    : m_isOverWidget(false)
 {
 }
 
 HitTestResult::HitTestResult(const LayoutPoint& point)
-    : HitTestLocation(point)
+    : m_hitTestLocation(point)
     , m_pointInMainFrame(point)
     , m_isOverWidget(false)
 {
 }
 
 HitTestResult::HitTestResult(const LayoutPoint& centerPoint, unsigned topPadding, unsigned rightPadding, unsigned bottomPadding, unsigned leftPadding)
-    : HitTestLocation(centerPoint, topPadding, rightPadding, bottomPadding, leftPadding)
+    : m_hitTestLocation(centerPoint, topPadding, rightPadding, bottomPadding, leftPadding)
     , m_pointInMainFrame(centerPoint)
     , m_isOverWidget(false)
 {
 }
 
 HitTestResult::HitTestResult(const HitTestLocation& other)
-    : HitTestLocation(other)
-    , m_pointInMainFrame(point())
+    : m_hitTestLocation(other)
+    , m_pointInMainFrame(m_hitTestLocation.point())
     , m_isOverWidget(false)
 {
 }
 
 HitTestResult::HitTestResult(const HitTestResult& other)
-    : HitTestLocation(other)
+    : m_hitTestLocation(other.m_hitTestLocation)
     , m_innerNode(other.innerNode())
     , m_innerNonSharedNode(other.innerNonSharedNode())
     , m_pointInMainFrame(other.m_pointInMainFrame)
@@ -238,7 +238,7 @@ HitTestResult::~HitTestResult()
 
 HitTestResult& HitTestResult::operator=(const HitTestResult& other)
 {
-    HitTestLocation::operator=(other);
+    m_hitTestLocation = other.m_hitTestLocation;
     m_innerNode = other.innerNode();
     m_innerNonSharedNode = other.innerNonSharedNode();
     m_pointInMainFrame = other.m_pointInMainFrame;
@@ -315,7 +315,7 @@ bool HitTestResult::isSelected() const
     if (!frame)
         return false;
 
-    return frame->selection()->contains(point());
+    return frame->selection()->contains(m_hitTestLocation.point());
 }
 
 String HitTestResult::spellingToolTip(TextDirection& dir) const
@@ -326,7 +326,7 @@ String HitTestResult::spellingToolTip(TextDirection& dir) const
     if (!m_innerNonSharedNode)
         return String();
     
-    DocumentMarker* marker = m_innerNonSharedNode->document()->markers()->markerContainingPoint(point(), DocumentMarker::Grammar);
+    DocumentMarker* marker = m_innerNonSharedNode->document()->markers()->markerContainingPoint(m_hitTestLocation.point(), DocumentMarker::Grammar);
     if (!marker)
         return String();
 
@@ -342,7 +342,7 @@ String HitTestResult::replacedString() const
     if (!m_innerNonSharedNode)
         return String();
     
-    DocumentMarker* marker = m_innerNonSharedNode->document()->markers()->markerContainingPoint(point(), DocumentMarker::Replacement);
+    DocumentMarker* marker = m_innerNonSharedNode->document()->markers()->markerContainingPoint(m_hitTestLocation.point(), DocumentMarker::Replacement);
     if (!marker)
         return String();
     

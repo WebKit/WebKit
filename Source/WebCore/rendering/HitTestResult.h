@@ -45,6 +45,7 @@ class Node;
 class RenderRegion;
 class Scrollbar;
 
+// FIXME: HitTestLocation should be moved to a separate file.
 class HitTestLocation {
 public:
 
@@ -100,8 +101,7 @@ private:
     bool m_isRectilinear;
 };
 
-// FIXME: HitTestResult should not be a HitTestLocation, but instead have a HitTestLocation. See https://bugs.webkit.org/show_bug.cgi?id=101590
-class HitTestResult : protected HitTestLocation {
+class HitTestResult {
 public:
     typedef ListHashSet<RefPtr<Node> > NodeSet;
 
@@ -121,7 +121,7 @@ public:
     bool isOverWidget() const { return m_isOverWidget; }
 
     // Forwarded from HitTestLocation
-    bool isRectBasedTest() const { return HitTestLocation::isRectBasedTest(); }
+    bool isRectBasedTest() const { return m_hitTestLocation.isRectBasedTest(); }
 
     // The hit-tested point in the coordinates of the main frame.
     const LayoutPoint& pointInMainFrame() const { return m_pointInMainFrame; }
@@ -129,7 +129,7 @@ public:
     void setPointInMainFrame(const LayoutPoint& p) { m_pointInMainFrame = p; }
 
     // The hit-tested point in the coordinates of the innerNode frame, the frame containing innerNode.
-    const LayoutPoint& pointInInnerNodeFrame() const { return HitTestLocation::point(); }
+    const LayoutPoint& pointInInnerNodeFrame() const { return m_hitTestLocation.point(); }
     IntPoint roundedPointInInnerNodeFrame() const { return roundedIntPoint(pointInInnerNodeFrame()); }
     Frame* innerNodeFrame() const;
 
@@ -139,7 +139,7 @@ public:
 
     void setToNonShadowAncestor();
 
-    const HitTestLocation& hitTestLocation() const { return *this; }
+    const HitTestLocation& hitTestLocation() const { return m_hitTestLocation; }
 
     void setInnerNode(Node*);
     void setInnerNonSharedNode(Node*);
@@ -198,6 +198,7 @@ private:
 #if ENABLE(VIDEO)
     HTMLMediaElement* mediaElement() const;
 #endif
+    HitTestLocation m_hitTestLocation;
 
     RefPtr<Node> m_innerNode;
     RefPtr<Node> m_innerNonSharedNode;
