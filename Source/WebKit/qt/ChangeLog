@@ -1,3 +1,18 @@
+2012-11-26  Zeno Albisser  <zeno@webkit.org>
+
+        [Qt] Make sure the QGLWidget context is current when creating the TextureMapper.
+        https://bugs.webkit.org/show_bug.cgi?id=103142
+
+        When creating the TextureMapperGL for WK1 we have to make sure
+        that the GL context provided by the QGLWidget is current.
+        Otherwise the GraphicsContext3DQt created by TextureMapperGL will pick up
+        the wrong pointer by calling QOpenGLContext::currentContext().
+
+        Reviewed by Simon Hausmann.
+
+        * WebCoreSupport/PageClientQt.cpp:
+        (WebCore::PageClientQGraphicsWidget::setRootGraphicsLayer):
+
 2012-11-26  Michael Brüning  <michael.bruning@digia.com>
 
         [Qt] QStyleFacadeImp build break with latest Qt 5
