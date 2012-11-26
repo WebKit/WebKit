@@ -1,3 +1,21 @@
+2012-11-26  Hurnjoo Lee  <hurnjoo.lee@samsung.com>
+
+        [Cairo] fillRectWithColor with Color::transparent doesn't perform anything
+        https://bugs.webkit.org/show_bug.cgi?id=101911
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        fillRectWithColor with Color::transparent doesn't perform anything
+        because fillRectWithColor does early-return if the alpha value of
+        color is zero. But we expect that fill the rect with transparent color
+        in case the cairo_operator is CAIRO_OPERATOR_SOURCE.
+
+        Covered by existing tests.
+
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::fillRectWithColor):Add condition to prevent early-return if
+        cairo_operator is not CAIRO_OPERATOR_OVER
+
 2012-11-26  Jae Hyun Park  <jae.park@company100.net>
 
         Remove redundant assignment in TextureMapperLayer::flushCompositingStateSelf
