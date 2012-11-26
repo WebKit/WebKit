@@ -1826,7 +1826,7 @@ RootInlineBox* RenderBlock::determineStartPosition(LineLayoutState& layoutState,
             // We have a dirty line.
             if (RootInlineBox* prevRootBox = curr->prevRootBox()) {
                 // We have a previous line.
-                if (!dirtiedByFloat && (!prevRootBox->endsWithBreak() || (prevRootBox->lineBreakObj()->isText() && prevRootBox->lineBreakPos() >= toRenderText(prevRootBox->lineBreakObj())->textLength())))
+                if (!dirtiedByFloat && (!prevRootBox->endsWithBreak() || !prevRootBox->lineBreakObj() || (prevRootBox->lineBreakObj()->isText() && prevRootBox->lineBreakPos() >= toRenderText(prevRootBox->lineBreakObj())->textLength())))
                     // The previous line didn't break cleanly or broke at a newline
                     // that has been deleted, so treat it as dirty too.
                     curr = prevRootBox;
