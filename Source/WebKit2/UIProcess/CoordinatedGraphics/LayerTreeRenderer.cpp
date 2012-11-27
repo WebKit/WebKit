@@ -93,8 +93,11 @@ PassOwnPtr<GraphicsLayer> LayerTreeRenderer::createLayer(WebLayerID)
 
 void LayerTreeRenderer::paintToCurrentGLContext(const TransformationMatrix& matrix, float opacity, const FloatRect& clipRect, TextureMapper::PaintFlags PaintFlags)
 {
-    if (!m_textureMapper)
+    if (!m_textureMapper) {
         m_textureMapper = TextureMapper::create(TextureMapper::OpenGLMode);
+        static_cast<TextureMapperGL*>(m_textureMapper.get())->setEnableEdgeDistanceAntialiasing(true);
+    }
+
     ASSERT(m_textureMapper->accelerationMode() == TextureMapper::OpenGLMode);
     syncRemoteContent();
 

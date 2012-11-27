@@ -1,3 +1,16 @@
+2012-11-27  Yael Aharon  <yael.aharon@intel.com>
+
+        [EFL] Graphics layer edges are sometimes very pixelated
+        https://bugs.webkit.org/show_bug.cgi?id=103302
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        The call setEnableEdgeDistanceAntialiasing(true) was lost in the refactoring of
+        http://trac.webkit.org/changeset/135401.
+
+        * UIProcess/CoordinatedGraphics/LayerTreeRenderer.cpp:
+        (WebKit::LayerTreeRenderer::paintToCurrentGLContext):
+
 2012-11-27  KwangYong Choi  <ky0.choi@samsung.com>
 
         [X11] Allow empty plugin name and description during scan plugin
