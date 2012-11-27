@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2010, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2010, 2011, 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -43,8 +43,7 @@ readonly attribute unsigned short networkState;
 attribute DOMString preload;
 
 readonly attribute TimeRanges buffered;
-void load() 
-    raises (DOMException);
+void load();
 #if defined(ENABLE_ENCRYPTED_MEDIA) && ENABLE_ENCRYPTED_MEDIA
 DOMString canPlayType(in [Optional=DefaultIsUndefined] DOMString type, in [Optional=DefaultIsUndefined, TreatNullAs=NullString, TreatUndefinedAs=NullString] DOMString keySystem);
 #else

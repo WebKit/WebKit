@@ -676,10 +676,8 @@ String HTMLMediaElement::canPlayType(const String& mimeType, const String& keySy
     return canPlay;
 }
 
-void HTMLMediaElement::load(ExceptionCode& ec)
+void HTMLMediaElement::load()
 {
-    UNUSED_PARAM(ec);
-
     RefPtr<HTMLMediaElement> protect(this); // loadInternal may result in a 'beforeload' event, which can make arbitrary DOM mutations.
     
     LOG(Media, "HTMLMediaElement::load()");
@@ -3815,8 +3813,7 @@ void HTMLMediaElement::resume()
         // m_error is only left at MEDIA_ERR_ABORTED when the document becomes inactive (it is set to
         //  MEDIA_ERR_ABORTED while the abortEvent is being sent, but cleared immediately afterwards).
         // This behavior is not specified but it seems like a sensible thing to do.
-        ExceptionCode ec;
-        load(ec);
+        load();
     }
 
     if (renderer())

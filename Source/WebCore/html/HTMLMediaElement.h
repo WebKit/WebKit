@@ -134,7 +134,7 @@ public:
     void setPreload(const String&);
 
     PassRefPtr<TimeRanges> buffered() const;
-    void load(ExceptionCode&);
+    void load();
     String canPlayType(const String& mimeType, const String& keySystem = String(), const KURL& = KURL()) const;
 
 // ready state

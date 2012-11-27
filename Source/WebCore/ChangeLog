@@ -1,3 +1,24 @@
+2012-11-27  Dean Jackson  <dino@apple.com>
+
+        No need for ExceptionCode in HTMLMediaElement::load
+        https://bugs.webkit.org/show_bug.cgi?id=103438
+
+        Reviewed by Eric Carlson.
+
+        After https://bugs.webkit.org/show_bug.cgi?id=103318, there is no
+        need for the ExceptionCode parameter in load(). The HTML5 spec says
+        that all errors in loading are communicated via state.
+        http://dev.w3.org/html5/spec/media-elements.html#dom-media-load
+
+        Of the 29 tests exercising load(), none of them were exercising
+        exceptions (obviously).
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::load):
+        (WebCore::HTMLMediaElement::resume):
+        * html/HTMLMediaElement.h:
+        * html/HTMLMediaElement.idl:
+
 2012-11-27  Robert Hogan  <robert@webkit.org>
 
         REGRESSION (r125578): word-wrapping in absolute position with nbsp, word-spacing and custom font
