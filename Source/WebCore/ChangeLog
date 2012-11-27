@@ -1,3 +1,31 @@
+2012-11-27  Kentaro Hara  <haraken@chromium.org>
+
+        [V8] Remove V8StringResource::m_string
+        https://bugs.webkit.org/show_bug.cgi?id=103367
+
+        Reviewed by Adam Barth.
+
+        This patch cleans up V8StringResource and removes V8StringResource::m_string.
+        This patch won't change performance. (This patch just adds one redundant IsString()
+        check and one IsInt32() check.) I confirmed no performance regression in micro benchmarks
+        (https://bugs.webkit.org/attachment.cgi?id=176178).
+
+        No tests. No change in behavior.
+
+        * bindings/v8/V8Binding.cpp:
+        (WebCore::v8NonStringValueToWebCoreString):
+        * bindings/v8/V8StringResource.cpp:
+        (WebCore::int32ToWebCoreStringFast):
+        (WebCore::String):
+        (WebCore::AtomicString):
+        (WebCore):
+        * bindings/v8/V8StringResource.h:
+        (WebCore::V8StringResource::V8StringResource):
+        (WebCore::V8StringResource::prepareBase):
+        (WebCore::V8StringResource::toString):
+        (V8StringResource):
+        (WebCore::::prepare):
+
 2012-11-27  Alec Flett  <alecflett@chromium.org>
 
         IndexedDB: stub out IDBDatabaseBackendInterface::createTransaction
