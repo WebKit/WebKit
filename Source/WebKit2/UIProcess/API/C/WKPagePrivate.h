@@ -93,7 +93,6 @@ WK_EXPORT WKImageRef WKPageCreateSnapshotOfVisibleContent(WKPageRef page);
 WK_EXPORT void WKPageSetShouldSendEventsSynchronously(WKPageRef page, bool sync);
 
 WK_EXPORT void WKPageSetMediaVolume(WKPageRef page, float volume);
-WK_EXPORT void WKPageSetMayStartMediaWhenInWindow(WKPageRef page, bool mayStartMedia);
 
 WK_EXPORT WKArrayRef WKPageCopyRelatedPages(WKPageRef page);
 

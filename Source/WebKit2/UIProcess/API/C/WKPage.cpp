@@ -764,8 +764,3 @@ WKArrayRef WKPageCopyRelatedPages(WKPageRef pageRef)
 {
     return toAPI(toImpl(pageRef)->relatedPages().leakRef());
 }
-
-void WKPageSetMayStartMediaWhenInWindow(WKPageRef pageRef, bool mayStartMedia)
-{
-    toImpl(pageRef)->setMayStartMediaWhenInWindow(mayStartMedia);
-}

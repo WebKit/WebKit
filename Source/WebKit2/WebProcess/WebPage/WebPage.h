@@ -525,7 +525,6 @@ public:
 #endif
 
     void setMediaVolume(float);
-    void setMayStartMediaWhenInWindow(bool);
 
     bool mainFrameHasCustomRepresentation() const;
 
@@ -852,7 +851,6 @@ private:
 #endif
     
     WebCore::RunLoop::Timer<WebPage> m_setCanStartMediaTimer;
-    bool m_mayStartMediaWhenInWindow;
 
     HashMap<uint64_t, RefPtr<WebUndoStep> > m_undoStepMap;
 

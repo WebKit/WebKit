@@ -85,7 +85,6 @@ struct WebPageCreationParameters {
     float deviceScaleFactor;
     
     float mediaVolume;
-    bool mayStartMediaWhenInWindow;
 
 #if PLATFORM(MAC)
     bool isSmartInsertDeleteEnabled;

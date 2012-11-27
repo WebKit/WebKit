@@ -226,7 +226,6 @@ messages -> WebPage {
 
     # Media
     SetMediaVolume(float volume)
-    SetMayStartMediaWhenInWindow(bool mayStartMedia)
 
     SetMemoryCacheMessagesEnabled(bool memoryCacheMessagesEnabled)
 
