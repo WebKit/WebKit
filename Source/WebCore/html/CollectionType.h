@@ -26,8 +26,7 @@
 namespace WebCore {
 
 enum CollectionType {
-    // unnamed collection types cached in the document
-
+    // Unnamed HTMLCollection types cached in the document.
     DocImages,    // all <img> elements in the document
     DocApplets,   // all <object> and <applet> elements
     DocEmbeds,    // all <embed> elements
@@ -35,16 +34,13 @@ enum CollectionType {
     DocLinks,     // all <a> _and_ <area> elements with a value for href
     DocAnchors,   // all <a> elements with a value for name
     DocScripts,   // all <script> elements
-
     DocAll,       // "all" elements (IE)
 
-    // named collection types cached in the document
-
+    // Named collection types cached in the document.
     WindowNamedItems,
     DocumentNamedItems,
 
-    // types not cached in the document; these are types that can't be used on a document
-
+    // Unnamed HTMLCollection types cached in elements.
     NodeChildren, // first-level children (IE)
     TableTBodies, // all <tbody> elements in this table
     TSectionRows, // all row elements in this table section
@@ -54,15 +50,12 @@ enum CollectionType {
     SelectedOptions,
     DataListOptions,
     MapAreas,
-
 #if ENABLE(MICRODATA)
     ItemProperties, // Microdata item properties in the document
 #endif
-
     FormControls,
 
-    // Live node lists.
-
+    // Live NodeList.
     ChildNodeListType,
     ClassNodeListType,
     NameNodeListType,
@@ -73,21 +66,7 @@ enum CollectionType {
     PropertyNodeListType,
 };
 
-static const CollectionType FirstUnnamedDocumentCachedType = DocImages;
-static const unsigned NumUnnamedDocumentCachedTypes = WindowNamedItems - DocImages;
-
-static const CollectionType FirstNodeCollectionType = NodeChildren;
 static const CollectionType FirstNodeListType = ChildNodeListType;
-
-inline bool isUnnamedDocumentCachedType(CollectionType type)
-{
-    return static_cast<unsigned>(type) < NumUnnamedDocumentCachedTypes;
-}
-
-inline bool isNodeCollectionType(CollectionType type)
-{
-    return type >= FirstNodeCollectionType;
-}
 
 inline bool isNodeList(CollectionType type)
 {

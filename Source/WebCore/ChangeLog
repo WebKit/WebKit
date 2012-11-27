@@ -1,3 +1,89 @@
+2012-11-27  Ryosuke Niwa  <rniwa@webkit.org>
+
+        HTMLCollection on Document should be stored on NodeListsNodeData like other HTMLCollections and LiveNodeLists
+        https://bugs.webkit.org/show_bug.cgi?id=103364
+
+        Reviewed by Anders Carlsson.
+
+        Replaced the HTMLCollection storage in Document by NodeListsNodeData used by other HTMLCollection's
+        and LiveNodeList's. Now NodeListsNodeData is the only storage for HTMLCollection and LiveNodeList.
+
+        * dom/Document.cpp:
+        (WebCore::Document::Document): Removed code for m_collection since it has been removed.
+        (WebCore::Document::~Document): Ditto.
+        (WebCore::Document::registerNodeList): Renamed. 
+        (WebCore::Document::unregisterNodeList): Ditto.
+        (WebCore::Document::ensureCachedCollection): Renamed from cachedCollection to match the convetion
+        used elsewhere. Also use NodeListNodeData::addCacheWithAtomicName now that m_collection is gone.
+        (WebCore::Document::images):
+        (WebCore::Document::applets):
+        (WebCore::Document::embeds):
+        (WebCore::Document::plugins):
+        (WebCore::Document::scripts):
+        (WebCore::Document::links):
+        (WebCore::Document::forms):
+        (WebCore::Document::anchors):
+        (WebCore::Document::all):
+        (WebCore::Document::windowNamedItems): Use addCacheWithAtomicName.
+        (WebCore::Document::documentNamedItems): Ditto.
+        (WebCore::Document::reportMemoryUsage): Removed code for m_collection since it has been removed.
+        * dom/Document.h:
+        (WebCore::Document): Removed m_collections, m_documentNamedItemCollections, and
+        m_windowNamedItemCollections.
+        * dom/Element.cpp:
+        (WebCore::Element::ensureCachedHTMLCollection): Merged ElementRareData::ensureCachedHTMLCollection.
+        (WebCore::Element::cachedHTMLCollection): Merged ElementRareData::cachedHTMLCollection.
+        * Source/WebCore/dom/ElementRareData.h: Removed ensureCachedHTMLCollection, cachedHTMLCollection,
+        and removeCachedHTMLCollection since they're no longer used.
+        * dom/LiveNodeList.h:
+        (WebCore::LiveNodeListBase::LiveNodeListBase): Call registerNodeList now that LiveNodeList
+        and HTMLCollection share the same storage in all nodes.
+        (WebCore::LiveNodeListBase::~LiveNodeListBase): Ditto about unregisterNodeList.
+        (WebCore::LiveNodeList): Removed the calls to registerNodeList and unregisterNodeList since they
+        are now called in the base class.
+        * dom/NameNodeList.h:
+        (WebCore::NameNodeList::create):
+        * dom/NodeRareData.h:
+        (WebCore::NodeListsNodeData::addCacheWithAtomicName): Pass in CollectionType as the second argument
+        to T::create. This is used in HTMLNameCollection::create. Sevearl LiveNodeList constructors and
+        create functions have been modified to support this.
+        (WebCore::NodeListsNodeData::adoptTreeScope):
+        (WebCore::NodeListsNodeData::namedNodeListKey): CollectionType is no longer restricted in its range.
+        * dom/TagNodeList.h:
+        (WebCore::TagNodeList::create):
+        (WebCore::HTMLTagNodeList::create):
+        * html/CollectionType.h: Deleted a bunch of unused inline functions and constants, and cleanup enum.
+        * html/HTMLCollection.cpp:
+        (WebCore::HTMLCollection::HTMLCollection): Removed the call to registerNodeListCache since it's called
+        in LiveNodeListBase now.
+        (WebCore::HTMLCollection::~HTMLCollection): Ditto. Also replaced calls to removeCachedHTMLCollection
+        of Element and Document by a call to NodeListsNodeData::removeCacheWithAtomicName.
+        * html/HTMLFormControlsCollection.cpp:
+        (WebCore::HTMLFormControlsCollection::HTMLFormControlsCollection):
+        (WebCore::HTMLFormControlsCollection::create):
+        * html/HTMLFormControlsCollection.h:
+        (HTMLFormControlsCollection):
+        * html/HTMLNameCollection.cpp:
+        (WebCore::HTMLNameCollection::HTMLNameCollection):
+        (WebCore::HTMLNameCollection::~HTMLNameCollection):
+        * html/HTMLNameCollection.h:
+        (WebCore::HTMLNameCollection::create):
+        (HTMLNameCollection):
+        * html/HTMLOptionsCollection.cpp:
+        (WebCore::HTMLOptionsCollection::HTMLOptionsCollection):
+        (WebCore::HTMLOptionsCollection::create):
+        * html/HTMLOptionsCollection.h:
+        (HTMLOptionsCollection):
+        * html/HTMLTableRowsCollection.cpp:
+        (WebCore::HTMLTableRowsCollection::HTMLTableRowsCollection):
+        (WebCore::HTMLTableRowsCollection::create):
+        * html/HTMLTableRowsCollection.h:
+        (HTMLTableRowsCollection):
+        * html/LabelsNodeList.h:
+        (WebCore::LabelsNodeList::create):
+        * html/RadioNodeList.h:
+        (WebCore::RadioNodeList::create):
+
 2012-11-27  Pravin D  <pravind.2k4@gmail.com>
 
         max-height property not respected in case of tables

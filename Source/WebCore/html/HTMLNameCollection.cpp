@@ -27,12 +27,13 @@
 #include "HTMLDocument.h"
 #include "HTMLNames.h"
 #include "HTMLObjectElement.h"
+#include "NodeRareData.h"
 
 namespace WebCore {
 
 using namespace HTMLNames;
 
-HTMLNameCollection::HTMLNameCollection(Document* document, CollectionType type, const AtomicString& name)
+HTMLNameCollection::HTMLNameCollection(Node* document, CollectionType type, const AtomicString& name)
     : HTMLCollection(document, type, OverridesItemAfter)
     , m_name(name)
 {
@@ -43,10 +44,8 @@ HTMLNameCollection::~HTMLNameCollection()
     ASSERT(base());
     ASSERT(base()->isDocumentNode());
     ASSERT(type() == WindowNamedItems || type() == DocumentNamedItems);
-    if (type() == WindowNamedItems)
-        static_cast<Document*>(base())->removeWindowNamedItemCache(this, m_name);
-    else
-        static_cast<Document*>(base())->removeDocumentNamedItemCache(this, m_name);
+
+    ownerNode()->nodeLists()->removeCacheWithAtomicName(this, type(), m_name);
 }
 
 Element* HTMLNameCollection::virtualItemAfter(unsigned& offsetInArray, Element* previous) const

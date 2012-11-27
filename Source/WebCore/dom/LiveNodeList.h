@@ -66,6 +66,15 @@ public:
         ASSERT(m_invalidationType == static_cast<unsigned>(invalidationType));
         ASSERT(m_collectionType == static_cast<unsigned>(collectionType));
         ASSERT(!m_overridesItemAfter || !isNodeList(collectionType));
+
+        if (collectionType != ChildNodeListType)
+            document()->registerNodeList(this);
+    }
+
+    virtual ~LiveNodeListBase()
+    {
+        if (type() != ChildNodeListType)
+            document()->unregisterNodeList(this);
     }
 
     virtual void reportMemoryUsage(MemoryObjectInfo*) const;
@@ -186,16 +195,7 @@ public:
     LiveNodeList(PassRefPtr<Node> ownerNode, CollectionType collectionType, NodeListInvalidationType invalidationType, NodeListRootType rootType = NodeListIsRootedAtNode)
         : LiveNodeListBase(ownerNode.get(), rootType, invalidationType, collectionType == ChildNodeListType,
         collectionType, DoesNotOverrideItemAfter)
-    {
-        if (collectionType != ChildNodeListType)
-            document()->registerNodeListCache(this);
-    }
-
-    virtual ~LiveNodeList()
-    {
-        if (type() != ChildNodeListType)
-            document()->unregisterNodeListCache(this);
-    }
+    { }
 
     virtual Node* namedItem(const AtomicString&) const OVERRIDE;
     virtual bool nodeMatches(Element*) const = 0;

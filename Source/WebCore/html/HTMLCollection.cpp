@@ -29,6 +29,7 @@
 #include "HTMLObjectElement.h"
 #include "HTMLOptionElement.h"
 #include "NodeList.h"
+#include "NodeRareData.h"
 
 #if ENABLE(MICRODATA)
 #include "HTMLPropertiesCollection.h"
@@ -179,7 +180,6 @@ HTMLCollection::HTMLCollection(Node* ownerNode, CollectionType type, ItemAfterOv
     : LiveNodeListBase(ownerNode, rootTypeFromCollectionType(type), invalidationTypeExcludingIdAndNameAttributes(type),
         WebCore::shouldOnlyIncludeDirectChildren(type), type, itemAfterOverrideType)
 {
-    document()->registerNodeListCache(this);
 }
 
 PassRefPtr<HTMLCollection> HTMLCollection::create(Node* base, CollectionType type)
@@ -189,16 +189,9 @@ PassRefPtr<HTMLCollection> HTMLCollection::create(Node* base, CollectionType typ
 
 HTMLCollection::~HTMLCollection()
 {
-    if (isUnnamedDocumentCachedType(type())) {
-        ASSERT(base()->isDocumentNode());
-        static_cast<Document*>(base())->removeCachedHTMLCollection(this, type());
-    } else if (isNodeCollectionType(type())) {
-        ASSERT(base()->isElementNode());
-        toElement(base())->removeCachedHTMLCollection(this, type());
-    } else // HTMLNameCollection removes cache by itself.
-        ASSERT(type() == WindowNamedItems || type() == DocumentNamedItems);
-
-    document()->unregisterNodeListCache(this);
+    // HTMLNameCollection removes cache by itself.
+    if (type() != WindowNamedItems && type() != DocumentNamedItems)
+        ownerNode()->nodeLists()->removeCacheWithAtomicName(this, type());
 }
 
 static inline bool isAcceptableElement(CollectionType type, Element* element)

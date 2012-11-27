@@ -24,17 +24,13 @@
 
 #include "ClassList.h"
 #include "DatasetDOMStringMap.h"
-#include "Element.h"
 #include "ElementShadow.h"
-#include "HTMLCollection.h"
 #include "NamedNodeMap.h"
 #include "NodeRareData.h"
 #include "StyleInheritedData.h"
 #include <wtf/OwnPtr.h>
 
 namespace WebCore {
-
-class HTMLCollection;
 
 class ElementRareData : public NodeRareData {
 public:
@@ -57,18 +53,6 @@ public:
     using NodeRareData::isInTopLayer;
     using NodeRareData::setIsInTopLayer;
 #endif
-
-    PassRefPtr<HTMLCollection> ensureCachedHTMLCollection(Element*, CollectionType);
-    HTMLCollection* cachedHTMLCollection(CollectionType type)
-    {
-        return nodeLists() ? nodeLists()->cacheWithAtomicName<HTMLCollection>(type) : 0;
-    }
-
-    void removeCachedHTMLCollection(HTMLCollection* collection, CollectionType type)
-    {
-        ASSERT(nodeLists());
-        nodeLists()->removeCacheWithAtomicName(collection, type);
-    }
 
     virtual void reportMemoryUsage(MemoryObjectInfo*) const OVERRIDE;
 

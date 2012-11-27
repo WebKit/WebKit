@@ -151,13 +151,13 @@ HTMLTableRowElement* HTMLTableRowsCollection::lastRow(HTMLTableElement* table)
 // Must call get() on the table in case that argument is compiled before dereferencing the
 // table to get at the collection cache. Order of argument evaluation is undefined and can
 // differ between compilers.
-HTMLTableRowsCollection::HTMLTableRowsCollection(Element* table)
+HTMLTableRowsCollection::HTMLTableRowsCollection(Node* table)
     : HTMLCollection(table, TableRows, OverridesItemAfter)
 {
     ASSERT(table->hasTagName(tableTag));
 }
 
-PassRefPtr<HTMLTableRowsCollection> HTMLTableRowsCollection::create(Element* table, CollectionType)
+PassRefPtr<HTMLTableRowsCollection> HTMLTableRowsCollection::create(Node* table, CollectionType)
 {
     return adoptRef(new HTMLTableRowsCollection(table));
 }

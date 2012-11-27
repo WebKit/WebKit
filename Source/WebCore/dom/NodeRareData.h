@@ -70,13 +70,13 @@ public:
         if (!result.isNewEntry)
             return static_cast<T*>(result.iterator->value);
 
-        RefPtr<T> list = T::create(node, name);
+        RefPtr<T> list = T::create(node, collectionType, name);
         result.iterator->value = list.get();
         return list.release();
     }
 
     template<typename T>
-    PassRefPtr<T> addCacheWithAtomicName(Element* node, CollectionType collectionType)
+    PassRefPtr<T> addCacheWithAtomicName(Node* node, CollectionType collectionType)
     {
         NodeListAtomicNameCacheMap::AddResult result = m_atomicNameCaches.add(namedNodeListKey(collectionType, starAtom), 0);
         if (!result.isNewEntry)
@@ -155,23 +155,23 @@ public:
             NodeListAtomicNameCacheMap::const_iterator atomicNameCacheEnd = m_atomicNameCaches.end();
             for (NodeListAtomicNameCacheMap::const_iterator it = m_atomicNameCaches.begin(); it != atomicNameCacheEnd; ++it) {
                 LiveNodeListBase* list = it->value;
-                oldDocument->unregisterNodeListCache(list);
-                newDocument->registerNodeListCache(list);
+                oldDocument->unregisterNodeList(list);
+                newDocument->registerNodeList(list);
             }
 
             NodeListNameCacheMap::const_iterator nameCacheEnd = m_nameCaches.end();
             for (NodeListNameCacheMap::const_iterator it = m_nameCaches.begin(); it != nameCacheEnd; ++it) {
                 LiveNodeListBase* list = it->value;
-                oldDocument->unregisterNodeListCache(list);
-                newDocument->registerNodeListCache(list);
+                oldDocument->unregisterNodeList(list);
+                newDocument->registerNodeList(list);
             }
 
             TagNodeListCacheNS::const_iterator tagEnd = m_tagNodeListCacheNS.end();
             for (TagNodeListCacheNS::const_iterator it = m_tagNodeListCacheNS.begin(); it != tagEnd; ++it) {
                 LiveNodeListBase* list = it->value;
                 ASSERT(!list->isRootedAtDocument());
-                oldDocument->unregisterNodeListCache(list);
-                newDocument->registerNodeListCache(list);
+                oldDocument->unregisterNodeList(list);
+                newDocument->registerNodeList(list);
             }
         }
     }
@@ -183,14 +183,12 @@ private:
 
     std::pair<unsigned char, AtomicString> namedNodeListKey(CollectionType type, const AtomicString& name)
     {
-        ASSERT(type >= FirstNodeCollectionType);
-        return std::pair<unsigned char, AtomicString>(type - FirstNodeCollectionType, name);
+        return std::pair<unsigned char, AtomicString>(type, name);
     }
 
     std::pair<unsigned char, String> namedNodeListKey(CollectionType type, const String& name)
     {
-        ASSERT(type >= FirstNodeCollectionType);
-        return std::pair<unsigned char, String>(type - FirstNodeCollectionType, name);
+        return std::pair<unsigned char, String>(type, name);
     }
 
     NodeListAtomicNameCacheMap m_atomicNameCaches;

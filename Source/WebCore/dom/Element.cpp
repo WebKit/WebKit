@@ -2431,41 +2431,30 @@ void Element::updateExtraNamedItemRegistration(const AtomicString& oldId, const 
 
 PassRefPtr<HTMLCollection> Element::ensureCachedHTMLCollection(CollectionType type)
 {
-    return ensureElementRareData()->ensureCachedHTMLCollection(this, type);
-}
-
-PassRefPtr<HTMLCollection> ElementRareData::ensureCachedHTMLCollection(Element* element, CollectionType type)
-{
     if (HTMLCollection* collection = cachedHTMLCollection(type))
         return collection;
 
     RefPtr<HTMLCollection> collection;
     if (type == TableRows) {
-        ASSERT(element->hasTagName(tableTag));
-        return ensureNodeLists()->addCacheWithAtomicName<HTMLTableRowsCollection>(element, type);
+        ASSERT(hasTagName(tableTag));
+        return ensureRareData()->ensureNodeLists()->addCacheWithAtomicName<HTMLTableRowsCollection>(this, type);
     } else if (type == SelectOptions) {
-        ASSERT(element->hasTagName(selectTag));
-        return ensureNodeLists()->addCacheWithAtomicName<HTMLOptionsCollection>(element, type);
+        ASSERT(hasTagName(selectTag));
+        return ensureRareData()->ensureNodeLists()->addCacheWithAtomicName<HTMLOptionsCollection>(this, type);
     } else if (type == FormControls) {
-        ASSERT(element->hasTagName(formTag) || element->hasTagName(fieldsetTag));
-        return ensureNodeLists()->addCacheWithAtomicName<HTMLFormControlsCollection>(element, type);
+        ASSERT(hasTagName(formTag) || hasTagName(fieldsetTag));
+        return ensureRareData()->ensureNodeLists()->addCacheWithAtomicName<HTMLFormControlsCollection>(this, type);
 #if ENABLE(MICRODATA)
     } else if (type == ItemProperties) {
-        return ensureNodeLists()->addCacheWithAtomicName<HTMLPropertiesCollection>(element, type);
+        return ensureRareData()->ensureNodeLists()->addCacheWithAtomicName<HTMLPropertiesCollection>(this, type);
 #endif
     }
-    return ensureNodeLists()->addCacheWithAtomicName<HTMLCollection>(element, type);
+    return ensureRareData()->ensureNodeLists()->addCacheWithAtomicName<HTMLCollection>(this, type);
 }
 
 HTMLCollection* Element::cachedHTMLCollection(CollectionType type)
 {
-    return hasRareData() ? elementRareData()->cachedHTMLCollection(type) : 0;
-}
-
-void Element::removeCachedHTMLCollection(HTMLCollection* collection, CollectionType type)
-{
-    ASSERT(hasRareData());
-    elementRareData()->removeCachedHTMLCollection(collection, type);
+    return hasRareData() && rareData()->nodeLists() ? rareData()->nodeLists()->cacheWithAtomicName<HTMLCollection>(type) : 0;
 }
 
 IntSize Element::savedLayerScrollOffset() const

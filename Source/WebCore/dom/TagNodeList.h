@@ -38,8 +38,9 @@ namespace WebCore {
             return adoptRef(new TagNodeList(rootNode, namespaceURI, localName));
         }
 
-        static PassRefPtr<TagNodeList> create(PassRefPtr<Node> rootNode, const AtomicString& localName)
+        static PassRefPtr<TagNodeList> create(PassRefPtr<Node> rootNode, CollectionType type, const AtomicString& localName)
         {
+            ASSERT_UNUSED(type, type == TagNodeListType);
             return adoptRef(new TagNodeList(rootNode, starAtom, localName));
         }
 
@@ -56,8 +57,9 @@ namespace WebCore {
 
     class HTMLTagNodeList : public TagNodeList {
     public:
-        static PassRefPtr<HTMLTagNodeList> create(PassRefPtr<Node> rootNode, const AtomicString& localName)
+        static PassRefPtr<HTMLTagNodeList> create(PassRefPtr<Node> rootNode, CollectionType type, const AtomicString& localName)
         {
+            ASSERT_UNUSED(type, type == TagNodeListType);
             return adoptRef(new HTMLTagNodeList(rootNode, localName));
         }
 
