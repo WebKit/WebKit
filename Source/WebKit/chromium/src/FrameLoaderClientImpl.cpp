@@ -1051,8 +1051,10 @@ void FrameLoaderClientImpl::dispatchUnableToImplementPolicy(const ResourceError&
 
 void FrameLoaderClientImpl::dispatchWillRequestResource(CachedResourceRequest* request)
 {
-    if (m_webFrame->client())
-        m_webFrame->client()->willRequestResource(m_webFrame, WebCachedURLRequest(request));
+    if (m_webFrame->client()) {
+        WebCachedURLRequest urlRequest(request);
+        m_webFrame->client()->willRequestResource(m_webFrame, urlRequest);
+    }
 }
 
 void FrameLoaderClientImpl::dispatchWillSendSubmitEvent(PassRefPtr<FormState> prpFormState)
