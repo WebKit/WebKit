@@ -4045,8 +4045,6 @@ webkit.org/b/89167 media/track/track-cue-rendering-vertical.html [ Failure ]
 #webkit.org/b/98766 [ Android ] media/track/track-cue-rendering-vertical.html [ Failure ]
 #webkit.org/b/98766 [ Android ] media/track/track-cue-rendering-horizontal.html [ Failure ]
 
-# Require rebaselining after webkig.org/b/88871
-webkit.org/b/88871 [ Linux Mac ] media/video-empty-source.html [ Failure ]
 
 webkit.org/b/98686 editing/pasteboard/data-transfer-items.html [ Failure ]
 
@@ -4264,6 +4262,9 @@ webkit.org/b/102993 [ Mac ] media/video-no-audio.html [ Failure ]
 webkit.org/b/102993 [ Mac ] media/video-playing-and-pause.html [ Failure ]
 webkit.org/b/102993 [ Mac ] media/video-zoom-controls.html [ Failure ]
 webkit.org/b/102993 [ Mac ] platform/chromium/virtual/gpu/fast/hidpi/video-controls-in-hidpi.html [ Failure ]
+
+# Require rebaselining after webkig.org/b/88871
+webkit.org/b/88871 webkit.org/b/102993 [ Linux Win Mac ] media/video-empty-source.html [ Failure ]
 
 # Fails until we enable the Resource Timing API.
 webkit.org/b/61138 http/tests/w3c/webperf/submission/resource-timing [ Skip ]
