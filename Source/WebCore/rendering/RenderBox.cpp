@@ -2961,8 +2961,14 @@ static void computeBlockStaticDistance(Length& logicalTop, Length& logicalBottom
 void RenderBox::computePositionedLogicalHeight(LogicalExtentComputedValues& computedValues) const
 {
     if (isReplaced()) {
-        computePositionedLogicalHeightReplaced(computedValues);
-        return;
+        // FIXME: For regions with height auto, we want to compute width using the normal block sizing code.
+        // For now, regions are replaced elements and this code can be removed once the RenderRegion
+        // will inherit from RenderBlock instead of RenderReplaced.
+        // (see https://bugs.webkit.org/show_bug.cgi?id=74132 )
+        if (!isRenderRegion() || (isRenderRegion() && shouldComputeSizeAsReplaced())) {
+            computePositionedLogicalHeightReplaced(computedValues);
+            return;
+        }
     }
 
     // The following is based off of the W3C Working Draft from April 11, 2006 of

@@ -1,3 +1,21 @@
+2012-11-27  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSS Regions] Absolutely positioned regions do not expand to fill their container
+        https://bugs.webkit.org/show_bug.cgi?id=102385
+
+        Reviewed by Julien Chaffraix.
+
+        In the case of an absolutely positioned region with height auto, height computation should follow
+        the path of block elements instead of replaced elements.
+
+        Tests: fast/regions/autosize-abspos-anchoredregion-vertlr.html
+               fast/regions/autosize-abspos-anchoredregion.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::computePositionedLogicalHeight): Skip replaced element height computation when a region has height auto.
+        * rendering/RenderRegion.h:
+        (WebCore::RenderRegion::shouldHaveAutoLogicalHeight): Make it private since it is not accessed from outside.
+
 2012-11-27  Alexander Pavlov  <apavlov@chromium.org>
 
         Incorrect value of CSSStyleDeclaration#length when a shorthand property is inherit or initial

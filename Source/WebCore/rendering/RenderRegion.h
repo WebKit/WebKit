@@ -114,12 +114,6 @@ public:
     // or columns added together.
     virtual LayoutUnit logicalHeightOfAllFlowThreadContent() const;
 
-    bool shouldHaveAutoLogicalHeight() const
-    {
-        bool hasSpecifiedEndpointsForHeight = style()->logicalTop().isSpecified() && style()->logicalBottom().isSpecified();
-        bool hasAnchoredEndpointsForHeight = isOutOfFlowPositioned() && hasSpecifiedEndpointsForHeight;
-        return style()->logicalHeight().isAuto() && !hasAnchoredEndpointsForHeight;
-    }
     bool hasAutoLogicalHeight() const { return m_hasAutoLogicalHeight; }
 
     bool needsOverrideLogicalContentHeightComputation() const;
@@ -152,8 +146,15 @@ private:
     // FIXME: these functions should be revisited once RenderRegion inherits from RenderBlock
     // instead of RenderReplaced (see https://bugs.webkit.org/show_bug.cgi?id=74132 )
     // When width is auto, use normal block/box sizing code except when inline.
-    virtual bool isInlineBlockOrInlineTable() const OVERRIDE { return isInline() && style()->logicalWidth().isAuto(); }
-    virtual bool shouldComputeSizeAsReplaced() const OVERRIDE { return !style()->logicalWidth().isAuto(); }
+    virtual bool isInlineBlockOrInlineTable() const OVERRIDE { return isInline() && !shouldComputeSizeAsReplaced(); }
+    virtual bool shouldComputeSizeAsReplaced() const OVERRIDE { return !style()->logicalWidth().isAuto() && !style()->logicalHeight().isAuto(); }
+
+    bool shouldHaveAutoLogicalHeight() const
+    {
+        bool hasSpecifiedEndpointsForHeight = style()->logicalTop().isSpecified() && style()->logicalBottom().isSpecified();
+        bool hasAnchoredEndpointsForHeight = isOutOfFlowPositioned() && hasSpecifiedEndpointsForHeight;
+        return style()->logicalHeight().isAuto() && !hasAnchoredEndpointsForHeight;
+    }
 
     virtual void insertedIntoTree() OVERRIDE;
     virtual void willBeRemovedFromTree() OVERRIDE;

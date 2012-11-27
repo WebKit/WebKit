@@ -1,3 +1,24 @@
+2012-11-27  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSS Regions] Absolutely positioned regions do not expand to fill their container
+        https://bugs.webkit.org/show_bug.cgi?id=102385
+
+        Reviewed by Julien Chaffraix.
+
+        Added new tests for the case of an absolutely positioned region inside a container. The region is anchored and it should expand to the container limits
+        in the anchored direction.
+        Also modified expectations for another test that has absolutely positioned auto-height regions, which now have height computed properly.
+
+        * fast/regions/autosize-abspos-anchoredregion-expected.txt: Added.
+        * fast/regions/autosize-abspos-anchoredregion-vertlr-expected.txt: Added.
+        * fast/regions/autosize-abspos-anchoredregion-vertlr.html: Added.
+        * fast/regions/autosize-abspos-anchoredregion.html: Added.
+        * platform/chromium/fast/regions/autoheight-regions-mark-expected.txt:
+        * platform/efl/fast/regions/autoheight-regions-mark-expected.txt:
+        * platform/gtk/fast/regions/autoheight-regions-mark-expected.txt:
+        * platform/mac/fast/regions/autoheight-regions-mark-expected.txt:
+        * platform/qt/fast/regions/autoheight-regions-mark-expected.txt:
+
 2012-11-27  János Badics  <jbadics@inf.u-szeged.hu>
 
         [Qt] Gardening after r135723, r135740 and r135789. Skipped 3 tests and added rebaseline to a test.
