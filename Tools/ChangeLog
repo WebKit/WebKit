@@ -1,3 +1,32 @@
+2012-11-26  Varun Jain  <varunjain@chromium.org>
+
+        LongPress and LongTap gestures should start drag/drop and open context menu respectively.
+        https://bugs.webkit.org/show_bug.cgi?id=101545
+
+        Reviewed by Antonio Gomes.
+
+        For LongPress, we simulate drag by sending a mouse down and mouse drag
+        events. If a drag is not started (because maybe there is no draggable
+        element), then we show context menu instead (which is the current
+        behavior for LongPress). For LongTap, we use the existing functions that
+        LongPress uses to summon the context menu. LongPress initiated drag and
+        drop can be enabled/disabled by the platform using the Setting
+        touchDragDropEnabled which is disabled by default.
+
+        * DumpRenderTree/chromium/TestRunner/src/EventSender.cpp:
+        (WebTestRunner):
+        (WebTestRunner::EventSender::EventSender):
+        (WebTestRunner::EventSender::gestureLongTap):
+        (WebTestRunner::EventSender::gestureEvent):
+        * DumpRenderTree/chromium/TestRunner/src/EventSender.h:
+        (EventSender):
+        * DumpRenderTree/chromium/TestRunner/src/TestRunner.cpp:
+        (WebTestRunner::TestRunner::TestRunner):
+        (WebTestRunner::TestRunner::setTouchDragDropEnabled):
+        (WebTestRunner):
+        * DumpRenderTree/chromium/TestRunner/src/TestRunner.h:
+        (TestRunner):
+
 2012-11-26  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL][WK2] Add setting to enable / disable HTML5 local storage functionality

@@ -346,6 +346,11 @@ void WebSettingsImpl::setTextDirectionSubmenuInclusionBehaviorNeverIncluded()
     m_settings->setTextDirectionSubmenuInclusionBehavior(WebCore::TextDirectionSubmenuNeverIncluded);
 }
 
+void WebSettingsImpl::setTouchDragDropEnabled(bool enabled)
+{
+    m_settings->setTouchDragDropEnabled(enabled);
+}
+
 void WebSettingsImpl::setOfflineWebApplicationCacheEnabled(bool enabled)
 {
     m_settings->setOfflineWebApplicationCacheEnabled(enabled);

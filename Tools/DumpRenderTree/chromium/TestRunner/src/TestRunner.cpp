@@ -98,6 +98,7 @@ TestRunner::TestRunner()
     bindMethod("setPageVisibility", &TestRunner::setPageVisibility);
     bindMethod("setTextDirection", &TestRunner::setTextDirection);
     bindMethod("textSurroundingNode", &TestRunner::textSurroundingNode);
+    bindMethod("setTouchDragDropEnabled", &TestRunner::setTouchDragDropEnabled);
 
     // Properties.
     bindProperty("workerThreadCount", &TestRunner::workerThreadCount);
@@ -662,6 +663,15 @@ void TestRunner::textSurroundingNode(const CppArgumentList& arguments, CppVarian
         return;
 
     result->set(surroundingText.textContent().utf8());
+}
+
+void TestRunner::setTouchDragDropEnabled(const CppArgumentList& arguments, CppVariant* result)
+{
+    result->setNull();
+    if (arguments.size() != 1 || !arguments[0].isBool())
+        return;
+
+    m_webView->settings()->setTouchDragDropEnabled(arguments[0].toBoolean());
 }
 
 void TestRunner::workerThreadCount(CppVariant* result)

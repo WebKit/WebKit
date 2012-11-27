@@ -296,6 +296,7 @@ EventSender::EventSender()
     bindMethod("gestureTapDown", &EventSender::gestureTapDown);
     bindMethod("gestureTapCancel", &EventSender::gestureTapCancel);
     bindMethod("gestureLongPress", &EventSender::gestureLongPress);
+    bindMethod("gestureLongTap", &EventSender::gestureLongTap);
     bindMethod("gestureTwoFingerTap", &EventSender::gestureTwoFingerTap);
     bindMethod("zoomPageIn", &EventSender::zoomPageIn);
     bindMethod("zoomPageOut", &EventSender::zoomPageOut);
@@ -1137,6 +1138,12 @@ void EventSender::gestureLongPress(const CppArgumentList& arguments, CppVariant*
     gestureEvent(WebInputEvent::GestureLongPress, arguments);
 }
 
+void EventSender::gestureLongTap(const CppArgumentList& arguments, CppVariant* result)
+{
+    result->setNull();
+    gestureEvent(WebInputEvent::GestureLongTap, arguments);
+}
+
 void EventSender::gestureTwoFingerTap(const CppArgumentList& arguments, CppVariant* result)
 {
     result->setNull();
@@ -1206,8 +1213,16 @@ void EventSender::gestureEvent(WebInputEvent::Type type, const CppArgumentList& 
         event.x = point.x;
         event.y = point.y;
         if (arguments.size() >= 4) {
-            event.data.tapDown.width = static_cast<float>(arguments[2].toDouble());
-            event.data.tapDown.height = static_cast<float>(arguments[3].toDouble());
+            event.data.longPress.width = static_cast<float>(arguments[2].toDouble());
+            event.data.longPress.height = static_cast<float>(arguments[3].toDouble());
+        }
+        break;
+    case WebInputEvent::GestureLongTap:
+        event.x = point.x;
+        event.y = point.y;
+        if (arguments.size() >= 4) {
+            event.data.longPress.width = static_cast<float>(arguments[2].toDouble());
+            event.data.longPress.height = static_cast<float>(arguments[3].toDouble());
         }
         break;
     case WebInputEvent::GestureTwoFingerTap:

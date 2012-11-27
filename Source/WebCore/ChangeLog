@@ -1,3 +1,36 @@
+2012-11-26  Varun Jain  <varunjain@chromium.org>
+
+        LongPress and LongTap gestures should start drag/drop and open context menu respectively.
+        https://bugs.webkit.org/show_bug.cgi?id=101545
+
+        Reviewed by Antonio Gomes.
+
+        For LongPress, we simulate drag by sending a mouse down and mouse drag
+        events. If a drag is not started (because maybe there is no draggable
+        element), then we show context menu instead (which is the current
+        behavior for LongPress). For LongTap, we use the existing functions that
+        LongPress uses to summon the context menu. LongPress initiated drag and
+        drop can be enabled/disabled by the platform using the Setting
+        touchDragDropEnabled which is disabled by default.
+
+        Tests: fast/events/touch/gesture/context-menu-on-long-tap.html
+               fast/events/touch/gesture/long-press-on-draggable-element-triggers-drag.html
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::EventHandler):
+        (WebCore::EventHandler::clear):
+        (WebCore::EventHandler::handleMouseDraggedEvent):
+        (WebCore::EventHandler::handleGestureEvent):
+        (WebCore::EventHandler::handleGestureLongPress):
+        (WebCore::EventHandler::handleGestureLongTap):
+        (WebCore):
+        (WebCore::EventHandler::handleGestureForTextSelectionOrContextMenu):
+        (WebCore::EventHandler::adjustGesturePosition):
+        (WebCore::EventHandler::handleDrag):
+        * page/EventHandler.h:
+        (EventHandler):
+        * page/Settings.in:
+
 2012-11-26  Andreas Kling  <akling@apple.com>
 
         RenderStyle: Move 'list-style-image' to rare inherited data.

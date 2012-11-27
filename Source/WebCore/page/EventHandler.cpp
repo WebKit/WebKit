@@ -348,6 +348,8 @@ EventHandler::EventHandler(Frame* frame)
 #endif
     , m_mouseMovedDurationRunningAverage(0)
     , m_baseEventType(PlatformEvent::NoType)
+    , m_didStartDrag(false)
+    , m_didLongPressInvokeContextMenu(false)
 {
 }
 
@@ -401,6 +403,8 @@ void EventHandler::clear()
 #endif
     m_mouseMovedDurationRunningAverage = 0;
     m_baseEventType = PlatformEvent::NoType;
+    m_didStartDrag = false;
+    m_didLongPressInvokeContextMenu = false;
 }
 
 void EventHandler::nodeWillBeRemoved(Node* nodeToBeRemoved)
@@ -711,7 +715,7 @@ static bool canAutoscroll(RenderObject* renderer)
 #if ENABLE(DRAG_SUPPORT)
 bool EventHandler::handleMouseDraggedEvent(const MouseEventWithHitTestResults& event)
 {
-    if (handleDrag(event))
+    if (handleDrag(event, ShouldCheckDragHysteresis))
         return true;
 
     if (!m_mousePressed)
@@ -2596,6 +2600,8 @@ bool EventHandler::handleGestureEvent(const PlatformGestureEvent& gestureEvent)
         return handleGestureTapDown();
     case PlatformEvent::GestureLongPress:
         return handleGestureLongPress(gestureEvent);
+    case PlatformEvent::GestureLongTap:
+        return handleGestureLongTap(gestureEvent);
     case PlatformEvent::GestureTwoFingerTap:
         return handleGestureTwoFingerTap(gestureEvent);
     case PlatformEvent::GestureScrollEnd:
@@ -2647,7 +2653,33 @@ bool EventHandler::handleGestureTap(const PlatformGestureEvent& gestureEvent)
 
 bool EventHandler::handleGestureLongPress(const PlatformGestureEvent& gestureEvent)
 {
+#if ENABLE(DRAG_SUPPORT)
+    if (m_frame->settings() && m_frame->settings()->touchDragDropEnabled()) {
+        IntPoint adjustedPoint = gestureEvent.position();
+#if ENABLE(TOUCH_ADJUSTMENT)
+        adjustGesturePosition(gestureEvent, adjustedPoint);
+#endif
+        PlatformMouseEvent mouseDownEvent(adjustedPoint, gestureEvent.globalPosition(), LeftButton, PlatformEvent::MousePressed, 0, false, false, false, false, WTF::currentTime());
+        handleMousePressEvent(mouseDownEvent);
+        PlatformMouseEvent mouseDragEvent(adjustedPoint, gestureEvent.globalPosition(), LeftButton, PlatformEvent::MouseMoved, 0, false, false, false, false, WTF::currentTime());
+        HitTestRequest request(HitTestRequest::ReadOnly);
+        MouseEventWithHitTestResults mev = prepareMouseEvent(request, mouseDragEvent);
+        m_didStartDrag = false;
+        handleDrag(mev, DontCheckDragHysteresis);
+        if (m_didStartDrag)
+            return true;
+    }
+#endif
     return handleGestureForTextSelectionOrContextMenu(gestureEvent);
+}
+
+bool EventHandler::handleGestureLongTap(const PlatformGestureEvent& gestureEvent)
+{
+#if ENABLE(CONTEXT_MENUS) && !OS(ANDROID)
+    if (!m_didLongPressInvokeContextMenu)
+        return sendContextMenuEventForGesture(gestureEvent);
+#endif
+    return false;
 }
 
 bool EventHandler::handleGestureForTextSelectionOrContextMenu(const PlatformGestureEvent& gestureEvent)
@@ -2663,6 +2695,7 @@ bool EventHandler::handleGestureForTextSelectionOrContextMenu(const PlatformGest
     }
 #endif
 #if ENABLE(CONTEXT_MENUS)
+    m_didLongPressInvokeContextMenu = (gestureEvent.type() == PlatformEvent::GestureLongPress);
     return sendContextMenuEventForGesture(gestureEvent);
 #else
     return false;
@@ -2760,6 +2793,7 @@ bool EventHandler::adjustGesturePosition(const PlatformGestureEvent& gestureEven
         bestClickableNodeForTouchPoint(gestureEvent.position(), IntSize(gestureEvent.area().width() / 2, gestureEvent.area().height() / 2), adjustedPoint, targetNode);
         break;
     case PlatformEvent::GestureLongPress:
+    case PlatformEvent::GestureLongTap:
     case PlatformEvent::GestureTwoFingerTap:
         bestContextMenuNodeForTouchPoint(gestureEvent.position(), IntSize(gestureEvent.area().width() / 2, gestureEvent.area().height() / 2), adjustedPoint, targetNode);
         break;
@@ -3330,7 +3364,7 @@ static bool ExactlyOneBitSet(DragSourceAction n)
     return n && !(n & (n - 1));
 }
 
-bool EventHandler::handleDrag(const MouseEventWithHitTestResults& event)
+bool EventHandler::handleDrag(const MouseEventWithHitTestResults& event, CheckDragHysteresis checkDragHysteresis)
 {
     if (event.event().button() != LeftButton || event.event().type() != PlatformEvent::MouseMoved) {
         // If we allowed the other side of the bridge to handle a drag
@@ -3409,7 +3443,7 @@ bool EventHandler::handleDrag(const MouseEventWithHitTestResults& event)
         view->setCursor(pointerCursor());
     }
 
-    if (!dragHysteresisExceeded(event.event().position())) 
+    if (checkDragHysteresis == ShouldCheckDragHysteresis && !dragHysteresisExceeded(event.event().position()))
         return true;
     
     // Once we're past the hysteresis point, we don't want to treat this gesture as a click
@@ -3460,11 +3494,11 @@ bool EventHandler::handleDrag(const MouseEventWithHitTestResults& event)
     if (m_mouseDownMayStartDrag) {
         Page* page = m_frame->page();
         DragController* dragController = page ? page->dragController() : 0;
-        bool startedDrag = dragController && dragController->startDrag(m_frame, dragState(), srcOp, event.event(), m_mouseDownPos);
+        m_didStartDrag = dragController && dragController->startDrag(m_frame, dragState(), srcOp, event.event(), m_mouseDownPos);
         // In WebKit2 we could reenter this code and start another drag.
         // On OS X this causes problems with the ownership of the pasteboard
         // and the promised types.
-        if (startedDrag) {
+        if (m_didStartDrag) {
             m_mouseDownMayStartDrag = false;
             return true;
         }

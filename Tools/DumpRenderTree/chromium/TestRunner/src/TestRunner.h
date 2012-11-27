@@ -147,6 +147,7 @@ private:
     // point coordinates relative to the node and the fourth the maximum text
     // length to retrieve.
     void textSurroundingNode(const CppArgumentList&, CppVariant*);
+    void setTouchDragDropEnabled(const CppArgumentList&, CppVariant*);
 
     ///////////////////////////////////////////////////////////////////////////
     // Properties

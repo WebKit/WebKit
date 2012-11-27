@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Touch Adjustment : Testing that a context menu will appear on a long press - bug 92914</title>
+    <title>Touch Adjustment : Testing that a drag/drop will start on a long press - bug 92914</title>
     <script src="../fast/js/resources/js-test-pre.js"></script>
     <script src="resources/touchadjustment.js"></script>
     <style>
@@ -31,7 +31,7 @@
         e[a] = document.getElementById(a);
     });
 
-    document.oncontextmenu = function() { debug("PASS"); }
+    document.ondragstart = function(e) { debug("PASS"); e.preventDefault();}
 
     function testLongPress(touchpoint)
     {
@@ -89,7 +89,8 @@
     function runTests()
     {
         if (window.testRunner && window.internals && internals.touchNodeAdjustedToBestClickableNode) {
-            description('Tests if a long press gesture on links will trigger a context menu when touch adjustment is used.');
+            testRunner.setTouchDragDropEnabled(true);
+            description('Tests if a long press gesture on links will trigger a drag/drop when touch adjustment is used.');
             testDirectTouches();
             testIndirectTouches();
             e.sandbox.style.display = 'none';

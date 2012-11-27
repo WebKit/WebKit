@@ -1,3 +1,25 @@
+2012-11-26  Varun Jain  <varunjain@chromium.org>
+
+        LongPress and LongTap gestures should start drag/drop and open context menu respectively.
+        https://bugs.webkit.org/show_bug.cgi?id=101545
+
+        Reviewed by Antonio Gomes.
+
+        For LongPress, we simulate drag by sending a mouse down and mouse drag
+        events. If a drag is not started (because maybe there is no draggable
+        element), then we show context menu instead (which is the current
+        behavior for LongPress). For LongTap, we use the existing functions that
+        LongPress uses to summon the context menu. LongPress initiated drag and
+        drop can be enabled/disabled by the platform using the Setting
+        touchDragDropEnabled which is disabled by default.
+
+        * public/WebSettings.h:
+        * src/WebSettingsImpl.cpp:
+        (WebKit::WebSettingsImpl::setTouchDragDropEnabled):
+        (WebKit):
+        * src/WebSettingsImpl.h:
+        (WebSettingsImpl):
+
 2012-11-26  Yusuf Ozuysal  <yusufo@google.com>
 
         Add hasTouchEventhandlersAt to WebView API

@@ -1,3 +1,25 @@
+2012-11-26  Varun Jain  <varunjain@chromium.org>
+
+        LongPress and LongTap gestures should start drag/drop and open context menu respectively.
+        https://bugs.webkit.org/show_bug.cgi?id=101545
+
+        Reviewed by Antonio Gomes.
+
+        For LongPress, we simulate drag by sending a mouse down and mouse drag
+        events. If a drag is not started (because maybe there is no draggable
+        element), then we show context menu instead (which is the current
+        behavior for LongPress). For LongTap, we use the existing functions that
+        LongPress uses to summon the context menu. LongPress initiated drag and
+        drop can be enabled/disabled by the platform using the Setting
+        touchDragDropEnabled which is disabled by default.
+
+        * fast/events/touch/gesture/context-menu-on-long-tap.html: Added.
+        * fast/events/touch/gesture/long-press-on-draggable-element-triggers-drag.html: Added.
+        * platform/chromium/fast/events/touch/gesture/context-menu-on-long-tap-expected.txt: Added.
+        * platform/chromium/fast/events/touch/gesture/long-press-on-draggable-element-triggers-drag-expected.txt: Added.
+        * touchadjustment/touch-links-longpress-expected.txt:
+        * touchadjustment/touch-links-longpress.html:
+
 2012-11-26  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed. Skipping some compositing/tiling tests on Windows because tiled backing is not supported.
