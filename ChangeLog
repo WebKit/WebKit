@@ -1,3 +1,20 @@
+2012-11-26  Halton Huo  <halton.huo@intel.com>
+
+        [EFL] CMake shows ENABLE_3D_RENDERING and ENABLE_WEBGL is still OFF when AC is enabled
+        https://bugs.webkit.org/show_bug.cgi?id=100829
+
+        Reviewed by Gyuyoung Kim.
+
+        In WebKitFeatures.cmake, only use ${_name} for condition to print
+        a option as ON will prevent the overridden ones in OptionsXXX.cmake,
+        should use ${_WEBKIT_AVAILABLE_OPTIONS_INITALVALUE_${_name}} instead.
+
+        * Source/cmake/OptionsEfl.cmake: Turn on ENABLE_3D_RENDERING and
+        ENABLE_WEBGL
+        * Source/cmake/WebKitFeatures.cmake: Use
+        ${_WEBKIT_AVAILABLE_OPTIONS_INITALVALUE_${_name}} to as value of 
+        a feature is enabled. Adjust options in lexicographical order.
+
 2012-11-26  Kalev Lember  <kalevlember@gmail.com>
 
         [GTK] Explicitly link against librt
