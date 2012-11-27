@@ -112,6 +112,8 @@ private:
 
     virtual bool shouldUseInputMethod();
     virtual void attach() OVERRIDE;
+    virtual bool shouldMatchReadOnlySelector() const OVERRIDE;
+    virtual bool shouldMatchReadWriteSelector() const OVERRIDE;
 
     bool valueMissing(const String& value) const { return isRequiredFormControl() && !disabled() && !readOnly() && value.isEmpty(); }
     bool tooLong(const String&, NeedsToCheckDirtyFlag) const;

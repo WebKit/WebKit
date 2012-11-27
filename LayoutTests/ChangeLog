@@ -1,3 +1,19 @@
+2012-11-26  Kent Tamura  <tkent@chromium.org>
+
+        :read-only selector should match to date/time input types
+        https://bugs.webkit.org/show_bug.cgi?id=103350
+
+        Reviewed by Kentaro Hara.
+
+        The text color becomes yellow as specified for :read-only in
+        *-appearance-pseudo-classes.html
+
+        * platform/chromium-mac/fast/forms/date/date-appearance-pseudo-classes-expected.png:
+        * platform/chromium-mac/fast/forms/month/month-appearance-pseudo-classes-expected.png:
+        * platform/chromium-mac/fast/forms/time/time-appearance-pseudo-classes-expected.png:
+        * platform/chromium-mac/fast/forms/week/week-appearance-pseudo-classes-expected.png:
+        * platform/chromium/TestExpectations:
+
 2012-11-26  Justin Novosad  <junov@google.com>
 
         [Qt] new fast/backgrounds/background-opaque-images-over-color.html fails since r135629

@@ -861,6 +861,11 @@ bool InputType::supportsPlaceholder() const
     return false;
 }
 
+bool InputType::supportsReadOnly() const
+{
+    return false;
+}
+
 void InputType::updateInnerTextValue()
 {
 }

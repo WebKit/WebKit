@@ -180,5 +180,10 @@ String BaseDateAndTimeInputType::sanitizeValue(const String& proposedValue) cons
     return typeMismatchFor(proposedValue) ? String() : proposedValue;
 }
 
+bool BaseDateAndTimeInputType::supportsReadOnly() const
+{
+    return true;
+}
+
 } // namespace WebCore
 #endif

@@ -529,6 +529,16 @@ void HTMLTextAreaElement::attach()
     fixPlaceholderRenderer(m_placeholder, innerTextElement());
 }
 
+bool HTMLTextAreaElement::shouldMatchReadOnlySelector() const
+{
+    return readOnly();
+}
+
+bool HTMLTextAreaElement::shouldMatchReadWriteSelector() const
+{
+    return !readOnly();
+}
+
 void HTMLTextAreaElement::updatePlaceholderText()
 {
     ExceptionCode ec = 0;

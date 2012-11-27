@@ -267,6 +267,7 @@ public:
     virtual bool isSteppable() const;
     virtual bool shouldRespectHeightAndWidthAttributes();
     virtual bool supportsPlaceholder() const;
+    virtual bool supportsReadOnly() const;
     virtual void updateInnerTextValue();
     virtual void updatePlaceholderText();
     virtual void multipleAttributeChanged();

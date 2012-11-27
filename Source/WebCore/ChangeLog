@@ -1,3 +1,56 @@
+2012-11-26  Kent Tamura  <tkent@chromium.org>
+
+        :read-only selector should match to date/time input types
+        https://bugs.webkit.org/show_bug.cgi?id=103350
+
+        Reviewed by Kentaro Hara.
+
+        We supported :read-only and :read-write only for text form controls;
+        i.e. <textarea> and text-field <input>. According to [1], we should
+        support them for date/time types. So, this patch removes
+        isTextFormControl check in SelectorChecker, and just relies on
+        shouldMatchRead{Only,Write}Selector virtual functions.
+
+        Tests: Update fast/forms/*/*-appearance-pseudo-classes.html.
+
+        [1] http://www.whatwg.org/specs/web-apps/current-work/multipage/the-input-element.html#input-type-attr-summary
+
+        * css/SelectorChecker.cpp:
+        (WebCore::SelectorChecker::checkOneSelector):
+        Remove isFormControlElement check and isTextFormControl check.
+
+        * html/HTMLFormControlElement.cpp:
+        Remove shouldMatchRead{Only,Write}Selector functions. We don't need
+        common implementations any more.
+        * html/HTMLFormControlElement.h: Ditto.
+
+        * html/HTMLTextAreaElement.h:
+        (HTMLTextAreaElement): Add shouldMatchRead{Only,Write}Selector overrides.
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::shouldMatchReadOnlySelector): Added.
+        (WebCore::HTMLTextAreaElement::shouldMatchReadWriteSelector): Added.
+
+        * html/HTMLInputElement.h:
+        (HTMLInputElement): Add shouldMatchRead{Only,Write}Selector overrides.
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::shouldMatchReadOnlySelector):
+        Added. This checks InputType::supportsReadOnly and readOnly.
+        (WebCore::HTMLInputElement::shouldMatchReadWriteSelector): Ditto.
+
+        * html/InputType.h:
+        (InputType): Add supportsReadOnly.
+        * html/InputType.cpp:
+        (WebCore::InputType::supportsReadOnly): Added. Returns false by default.
+
+        * html/BaseDateAndTimeInputType.h:
+        (BaseDateAndTimeInputType): Add supportsReadOnly.
+        * html/BaseDateAndTimeInputType.cpp:
+        (WebCore::BaseDateAndTimeInputType::supportsReadOnly): Added. Returns true.
+        * html/TextFieldInputType.h:
+        (TextFieldInputType): Add supportsReadOnly.
+        * html/TextFieldInputType.cpp:
+        (WebCore::TextFieldInputType::supportsReadOnly): Added. Returns true.
+
 2012-11-26  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r135822.

@@ -2868,6 +2868,10 @@ webkit.org/b/102888 platform/chromium/fast/forms/suggestion-picker/datetimelocal
 webkit.org/b/102888 platform/chromium/fast/forms/suggestion-picker/datetime-suggestion-picker-appearance.html [ Pass ImageOnlyFailure Missing ]
 webkit.org/b/102888 platform/chromium/fast/forms/suggestion-picker/datetime-suggestion-picker-appearance-rtl.html [ Pass ImageOnlyFailure Missing ]
 webkit.org/b/102888 platform/chromium/fast/forms/suggestion-picker/datetime-suggestion-picker-appearance-with-scroll-bar.html [ Pass ImageOnlyFailure Missing ]
+webkit.org/b/103350 fast/forms/date/date-appearance-pseudo-classes.html [ Pass ImageOnlyFailure ]
+webkit.org/b/103350 fast/forms/month/month-appearance-pseudo-classes.html [ Pass ImageOnlyFailure ]
+webkit.org/b/103350 fast/forms/time/time-appearance-pseudo-classes.html [ Pass ImageOnlyFailure ]
+webkit.org/b/103350 fast/forms/week/week-appearance-pseudo-classes.html [ Pass ImageOnlyFailure ]
 
 # New test added in r87324
 crbug.com/83994 [ Win ] platform/win/plugins/call-javascript-that-destroys-plugin.html [ Failure ]

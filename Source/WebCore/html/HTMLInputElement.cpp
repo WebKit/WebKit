@@ -1438,6 +1438,16 @@ bool HTMLInputElement::isRequiredFormControl() const
     return m_inputType->supportsRequired() && required();
 }
 
+bool HTMLInputElement::shouldMatchReadOnlySelector() const
+{
+    return m_inputType->supportsReadOnly() && readOnly();
+}
+
+bool HTMLInputElement::shouldMatchReadWriteSelector() const
+{
+    return m_inputType->supportsReadOnly() && !readOnly();
+}
+
 void HTMLInputElement::addSearchResult()
 {
     m_inputType->addSearchResult();

@@ -64,6 +64,7 @@ protected:
     virtual void destroyShadowSubtree() OVERRIDE;
     virtual void disabledAttributeChanged() OVERRIDE;
     virtual void readonlyAttributeChanged() OVERRIDE;
+    virtual bool supportsReadOnly() const OVERRIDE;
     virtual void handleBlurEvent() OVERRIDE;
     virtual void setValue(const String&, bool valueChanged, TextFieldEventBehavior) OVERRIDE;
     virtual void updateInnerTextValue() OVERRIDE;

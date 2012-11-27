@@ -1052,13 +1052,9 @@ bool SelectorChecker::checkOneSelector(const SelectorCheckingContext& context, c
                 return !element->isEnabledFormControl();
             break;
         case CSSSelector::PseudoReadOnly:
-            if (!element || !element->isFormControlElement())
-                return false;
-            return element->isTextFormControl() && element->shouldMatchReadOnlySelector();
+            return element && element->shouldMatchReadOnlySelector();
         case CSSSelector::PseudoReadWrite:
-            if (!element || !element->isFormControlElement())
-                return false;
-            return element->isTextFormControl() && element->shouldMatchReadWriteSelector();
+            return element && element->shouldMatchReadWriteSelector();
         case CSSSelector::PseudoOptional:
             return element && element->isOptionalFormControl();
         case CSSSelector::PseudoRequired:

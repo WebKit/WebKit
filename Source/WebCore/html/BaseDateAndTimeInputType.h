@@ -66,6 +66,7 @@ private:
     virtual String serializeWithMilliseconds(double) const;
     virtual String localizeValue(const String&) const OVERRIDE;
     virtual String convertFromVisibleValue(const String&) const OVERRIDE;
+    virtual bool supportsReadOnly() const OVERRIDE;
 };
 
 } // namespace WebCore

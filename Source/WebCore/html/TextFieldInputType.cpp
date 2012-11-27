@@ -329,6 +329,11 @@ void TextFieldInputType::readonlyAttributeChanged()
         m_innerSpinButton->releaseCapture();
 }
 
+bool TextFieldInputType::supportsReadOnly() const
+{
+    return true;
+}
+
 bool TextFieldInputType::shouldUseInputMethod() const
 {
     return true;
