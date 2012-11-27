@@ -499,6 +499,7 @@ void PNGImageDecoder::rowAvailable(unsigned char* rowBuffer, unsigned rowIndex, 
 #endif
 
     // Write the decoded row pixels to the frame buffer.
+    ImageFrame::PixelData* address = buffer.getAddr(0, y);
     int width = scaledSize().width();
     bool nonTrivialAlpha = false;
 
@@ -506,7 +507,7 @@ void PNGImageDecoder::rowAvailable(unsigned char* rowBuffer, unsigned rowIndex, 
     for (int x = 0; x < width; ++x) {
         png_bytep pixel = row + (m_scaled ? m_scaledColumns[x] : x) * colorChannels;
         unsigned alpha = hasAlpha ? pixel[3] : 255;
-        buffer.setRGBA(x, y, pixel[0], pixel[1], pixel[2], alpha);
+        buffer.setRGBA(address++, pixel[0], pixel[1], pixel[2], alpha);
         nonTrivialAlpha |= alpha < 255;
     }
 #else
@@ -514,7 +515,7 @@ void PNGImageDecoder::rowAvailable(unsigned char* rowBuffer, unsigned rowIndex, 
     png_bytep pixel = row;
     for (int x = 0; x < width; ++x, pixel += colorChannels) {
         unsigned alpha = hasAlpha ? pixel[3] : 255;
-        buffer.setRGBA(x, y, pixel[0], pixel[1], pixel[2], alpha);
+        buffer.setRGBA(address++, pixel[0], pixel[1], pixel[2], alpha);
         nonTrivialAlpha |= alpha < 255;
     }
 #endif

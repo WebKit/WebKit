@@ -1,3 +1,23 @@
+2012-11-26  Noel Gordon  <noel.gordon@gmail.com>
+
+        PNG decode performance: avoid using frame buffer.setRGBA(x,y)
+        https://bugs.webkit.org/show_bug.cgi?id=103216
+
+        Reviewed by Brent Fulgham.
+
+        Writing decoded row pixels to the frame buffer with buffer.setRGBA(x,y) is slow compared
+        to writing direct to the frame buffer address. Use buffer.getAddr() to obtain the output
+        pixel row address, write the decoded row pixels to that address.
+
+        No new tests. Covered by many existing tests.
+
+        * platform/image-decoders/ImageDecoder.h:
+        (WebCore::ImageFrame::setRGBA): Make routine setRGBA(PixelData* dest, ...) public. Test
+        m_premultiplyAlpha once to minimize code branching in this routine.
+        * platform/image-decoders/png/PNGImageDecoder.cpp:
+        (WebCore::PNGImageDecoder::rowAvailable): Write decoded row pixels to the frame buffer
+        using the pixel address form: buffer.setRGBA(address++, ...).
+
 2012-11-26  Alpha Lam  <hclam@chromium.org>
 
         [chromium] Implement full-featured image cache

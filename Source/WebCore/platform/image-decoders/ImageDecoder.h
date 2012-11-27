@@ -123,6 +123,7 @@ namespace WebCore {
         unsigned duration() const { return m_duration; }
         FrameDisposalMethod disposalMethod() const { return m_disposalMethod; }
         bool premultiplyAlpha() const { return m_premultiplyAlpha; }
+        void reportMemoryUsage(MemoryObjectInfo*) const;
 
         void setHasAlpha(bool alpha);
         void setColorProfile(const ColorProfile&);
@@ -146,8 +147,6 @@ namespace WebCore {
 #endif
         }
 
-        void reportMemoryUsage(MemoryObjectInfo*) const;
-
 #if PLATFORM(CHROMIUM)
         void setSkBitmap(const SkBitmap& bitmap)
         {
@@ -160,31 +159,31 @@ namespace WebCore {
         }
 #endif
 
+        inline void setRGBA(PixelData* dest, unsigned r, unsigned g, unsigned b, unsigned a)
+        {
+            if (m_premultiplyAlpha && a < 255) {
+                if (!a) {
+                    *dest = 0;
+                    return;
+                }
+
+                float alphaPercent = a / 255.0f;
+                r = static_cast<unsigned>(r * alphaPercent);
+                g = static_cast<unsigned>(g * alphaPercent);
+                b = static_cast<unsigned>(b * alphaPercent);
+            }
+#if USE(SKIA)
+            // Call the "NoCheck" version since we may deliberately pass non-premultiplied
+            // values, and we don't want an assert.
+            *dest = SkPackARGB32NoCheck(a, r, g, b);
+#else
+            *dest = (a << 24 | r << 16 | g << 8 | b);
+#endif
+        }
+
     private:
         int width() const;
         int height() const;
-
-        inline void setRGBA(PixelData* dest, unsigned r, unsigned g, unsigned b, unsigned a)
-        {
-            if (m_premultiplyAlpha && !a)
-                *dest = 0;
-            else {
-                if (m_premultiplyAlpha && a < 255) {
-                    float alphaPercent = a / 255.0f;
-                    r = static_cast<unsigned>(r * alphaPercent);
-                    g = static_cast<unsigned>(g * alphaPercent);
-                    b = static_cast<unsigned>(b * alphaPercent);
-                }
-#if USE(SKIA)
-                // we are sure to call the NoCheck version, since we may
-                // deliberately pass non-premultiplied values, and we don't want
-                // an assert.
-                *dest = SkPackARGB32NoCheck(a, r, g, b);
-#else
-                *dest = (a << 24 | r << 16 | g << 8 | b);
-#endif
-            }
-        }
 
 #if USE(SKIA)
         NativeImageSkia m_bitmap;
