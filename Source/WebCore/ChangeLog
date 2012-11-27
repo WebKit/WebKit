@@ -1,5 +1,13 @@
 2012-11-27  Tony Chang  <tony@chromium.org>
 
+        Unreviewed, win compile fix take 2.
+
+        Try again to force this file to recompile.
+
+        * rendering/RenderingAllInOne.cpp:
+
+2012-11-27  Tony Chang  <tony@chromium.org>
+
         Unreviewed, win compile fix.
 
         Touch RenderingAllInOne.cpp to force it to rebuild.
