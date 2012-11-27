@@ -1,3 +1,18 @@
+2012-11-27  Mike West  <mkwst@chromium.org>
+
+        Log to console when autofocus is blocked by sandbox attribute.
+        https://bugs.webkit.org/show_bug.cgi?id=103255
+
+        Reviewed by Ojan Vafai.
+
+        Adding a short log message when autofocus is blocked by a document's
+        sandbox flags, as it's currently a black box.
+
+        Test: fast/forms/autofocus-in-sandbox-without-allow-scripts.html
+
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::shouldAutofocus):
+
 2012-11-27  Dean Jackson  <dino@apple.com>
 
         Attempted build fix after http://trac.webkit.org/changeset/135888.

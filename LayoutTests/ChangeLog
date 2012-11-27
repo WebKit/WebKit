@@ -1,3 +1,13 @@
+2012-11-27  Mike West  <mkwst@chromium.org>
+
+        Log to console when autofocus is blocked by sandbox attribute.
+        https://bugs.webkit.org/show_bug.cgi?id=103255
+
+        Reviewed by Ojan Vafai.
+
+        * fast/forms/autofocus-in-sandbox-without-allow-scripts-expected.txt: Added.
+        * fast/forms/autofocus-in-sandbox-without-allow-scripts.html: Added.
+
 2012-11-27  Robert Kroeger  <rjkroege@chromium.org>
 
         Unreviewed gardening: ImageOnlyFailure in fast/canvas/font-update.html
