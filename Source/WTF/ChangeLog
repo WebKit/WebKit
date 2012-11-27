@@ -1,3 +1,24 @@
+2012-11-26  Adam Barth  <abarth@webkit.org>
+
+        [Chromium] fastMalloc has an extra branch on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=103027
+
+        Reviewed by Eric Seidel.
+
+        There's no need to override the new/delete operators on non-Mac
+        platform because:
+
+        1) We use the system malloc anyway.
+        2) We've modified the system malloc to crash in out-of-memory conditions.
+
+        This patch removes a branch (and a call) from malloc, which will
+        hopefully improve performance. I haven't measured the performance
+        characteristics of this patch, but I will look at the graphs closely
+        when landing.
+
+        * wtf/FastAllocBase.h:
+        * wtf/Platform.h:
+
 2012-11-26  Filip Pizlo  <fpizlo@apple.com>
 
         DataLog to a file should work if there are multiple processes using WTF
