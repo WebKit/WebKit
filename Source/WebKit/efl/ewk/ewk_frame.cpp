@@ -30,7 +30,6 @@
 #include "DocumentMarkerController.h"
 #include "EventHandler.h"
 #include "FocusController.h"
-#include "FrameLoadRequest.h"
 #include "FrameLoaderClientEfl.h"
 #include "FrameView.h"
 #include "HTMLCollection.h"
@@ -339,7 +338,7 @@ Eina_Bool ewk_frame_uri_set(Evas_Object* ewkFrame, const char* uri)
     WebCore::KURL kurl(WebCore::KURL(), WTF::String::fromUTF8(uri));
     WebCore::ResourceRequest req(kurl);
     WebCore::FrameLoader* loader = smartData->frame->loader();
-    loader->load(WebCore::FrameLoadRequest(smartData->frame, req));
+    loader->load(req, false);
     return true;
 }
 
@@ -417,7 +416,7 @@ static Eina_Bool _ewk_frame_contents_set_internal(Ewk_Frame_Smart_Data* smartDat
         baseKURL, unreachableKURL);
     WebCore::ResourceRequest request(baseKURL);
 
-    smartData->frame->loader()->load(WebCore::FrameLoadRequest(smartData->frame, request, substituteData));
+    smartData->frame->loader()->load(request, substituteData, false);
     return true;
 }
 

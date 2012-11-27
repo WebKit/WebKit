@@ -440,10 +440,7 @@ void PluginView::performRequest(PluginRequest* request)
             // PluginView, so we protect it. <rdar://problem/6991251>
             RefPtr<PluginView> protect(this);
 
-            FrameLoadRequest frameRequest(m_parentFrame.get(), request->frameLoadRequest().resourceRequest());
-            frameRequest.setFrameName(targetFrameName);
-            frameRequest.setShouldCheckNewWindowPolicy(true);
-            m_parentFrame->loader()->load(frameRequest);
+            m_parentFrame->loader()->load(request->frameLoadRequest().resourceRequest(), targetFrameName, false);
 
             // FIXME: <rdar://problem/4807469> This should be sent when the document has finished loading
             if (request->sendNotification()) {

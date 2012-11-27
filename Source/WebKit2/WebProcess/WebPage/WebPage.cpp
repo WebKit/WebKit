@@ -825,7 +825,7 @@ void WebPage::loadURLRequest(const ResourceRequest& request, const SandboxExtens
     SendStopResponsivenessTimer stopper(this);
 
     m_sandboxExtensionTracker.beginLoad(m_mainFrame.get(), sandboxExtensionHandle);
-    m_mainFrame->coreFrame()->loader()->load(FrameLoadRequest(m_mainFrame->coreFrame(), request));
+    m_mainFrame->coreFrame()->loader()->load(request, false);
 }
 
 void WebPage::loadData(PassRefPtr<SharedBuffer> sharedBuffer, const String& MIMEType, const String& encodingName, const KURL& baseURL, const KURL& unreachableURL)
@@ -834,7 +834,7 @@ void WebPage::loadData(PassRefPtr<SharedBuffer> sharedBuffer, const String& MIME
 
     ResourceRequest request(baseURL);
     SubstituteData substituteData(sharedBuffer, MIMEType, encodingName, unreachableURL);
-    m_mainFrame->coreFrame()->loader()->load(FrameLoadRequest(m_mainFrame->coreFrame(), request, substituteData));
+    m_mainFrame->coreFrame()->loader()->load(request, substituteData, false);
 }
 
 void WebPage::loadHTMLString(const String& htmlString, const String& baseURLString)
@@ -874,7 +874,8 @@ void WebPage::linkClicked(const String& url, const WebMouseEvent& event)
     if (event.type() != WebEvent::NoType)
         coreEvent = MouseEvent::create(eventNames().clickEvent, frame->document()->defaultView(), platform(event), 0, 0);
 
-    frame->loader()->loadFrameRequest(FrameLoadRequest(frame, ResourceRequest(url)), false, false, coreEvent.get(), 0, MaybeSendReferrer);
+    frame->loader()->loadFrameRequest(FrameLoadRequest(frame->document()->securityOrigin(), ResourceRequest(url)), 
+        false, false, coreEvent.get(), 0, MaybeSendReferrer);
 }
 
 void WebPage::stopLoadingFrame(uint64_t frameID)

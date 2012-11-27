@@ -30,7 +30,6 @@
 #include "Element.h"
 #include "FocusController.h"
 #include "Frame.h"
-#include "FrameLoadRequest.h"
 #include "FrameLoaderClientQt.h"
 #include "FrameSelection.h"
 #include "FrameTree.h"
@@ -829,7 +828,7 @@ void QWebFrame::setHtml(const QString &html, const QUrl &baseUrl)
     const QByteArray utf8 = html.toUtf8();
     WTF::RefPtr<WebCore::SharedBuffer> data = WebCore::SharedBuffer::create(utf8.constData(), utf8.length());
     WebCore::SubstituteData substituteData(data, WTF::String("text/html"), WTF::String("utf-8"), KURL());
-    d->frame->loader()->load(WebCore::FrameLoadRequest(d->frame, request, substituteData));
+    d->frame->loader()->load(request, substituteData, false);
 }
 
 /*!
@@ -859,7 +858,7 @@ void QWebFrame::setContent(const QByteArray &data, const QString &mimeType, cons
         encoding = extractCharsetFromMediaType(mimeType);
     }
     WebCore::SubstituteData substituteData(buffer, WTF::String(actualMimeType), encoding, KURL());
-    d->frame->loader()->load(WebCore::FrameLoadRequest(d->frame, request, substituteData));
+    d->frame->loader()->load(request, substituteData, false);
 }
 
 /*!

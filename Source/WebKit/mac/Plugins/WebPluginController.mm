@@ -50,7 +50,6 @@
 #import <Foundation/NSURLRequest.h>
 #import <WebCore/DocumentLoader.h>
 #import <WebCore/Frame.h>
-#import <WebCore/FrameLoadRequest.h>
 #import <WebCore/FrameLoader.h>
 #import <WebCore/HTMLMediaElement.h>
 #import <WebCore/HTMLNames.h>
@@ -402,10 +401,7 @@ static void cancelOutstandingCheck(const void *item, void *context)
             LOG_ERROR("could not load URL %@", [request URL]);
             return;
         }
-        FrameLoadRequest frameRequest(core(frame), request);
-        frameRequest.setFrameName(target);
-        frameRequest.setShouldCheckNewWindowPolicy(true);
-        core(frame)->loader()->load(frameRequest);
+        core(frame)->loader()->load(request, target, false);
     }
 }
 
