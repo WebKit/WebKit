@@ -1,3 +1,17 @@
+2012-11-27  Kyungjin Kim  <gen.kim@samsung.com>
+
+        [WK2] Expose Accelerated2dCanvas flag set and get in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=103008
+
+        Reviewed by Gyuyoung Kim.
+
+        Fix API names in WKPreferences from 2d to 2D.
+
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetAccelerated2DCanvasEnabled):
+        (WKPreferencesGetAccelerated2DCanvasEnabled):
+        * UIProcess/API/C/WKPreferencesPrivate.h:
+
 2012-11-27  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r135786.

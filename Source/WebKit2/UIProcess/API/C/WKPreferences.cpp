@@ -448,12 +448,12 @@ bool WKPreferencesGetWebGLEnabled(WKPreferencesRef preferencesRef)
     return toImpl(preferencesRef)->webGLEnabled();
 }
 
-void WKPreferencesSetAccelerated2dCanvasEnabled(WKPreferencesRef preferencesRef, bool flag)
+void WKPreferencesSetAccelerated2DCanvasEnabled(WKPreferencesRef preferencesRef, bool flag)
 {
     toImpl(preferencesRef)->setAccelerated2dCanvasEnabled(flag);
 }
 
-bool WKPreferencesGetAccelerated2dCanvasEnabled(WKPreferencesRef preferencesRef)
+bool WKPreferencesGetAccelerated2DCanvasEnabled(WKPreferencesRef preferencesRef)
 {
     return toImpl(preferencesRef)->accelerated2dCanvasEnabled();
 }
