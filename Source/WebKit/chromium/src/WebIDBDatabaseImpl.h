@@ -54,7 +54,6 @@ public:
 
     virtual WebIDBObjectStore* createObjectStore(long long, const WebString& name, const WebIDBKeyPath&, bool autoIncrement, const WebIDBTransaction&, WebExceptionCode&);
     virtual void deleteObjectStore(long long objectStoreId, const WebIDBTransaction&, WebExceptionCode&);
-    virtual void setVersion(const WebString& version, WebIDBCallbacks*, WebExceptionCode&);
     // FIXME: Remove this as part of https://bugs.webkit.org/show_bug.cgi?id=102733.
     virtual WebIDBTransaction* transaction(const WebVector<long long>& names, unsigned short mode);
     virtual WebIDBTransaction* createTransaction(long long id, const WebVector<long long>&, unsigned short mode);

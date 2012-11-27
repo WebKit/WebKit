@@ -46,7 +46,6 @@ public:
     virtual void onSuccess(WebIDBCursor*, const WebIDBKey&, const WebIDBKey& primaryKey, const WebSerializedScriptValue&);
     virtual void onSuccess(WebIDBDatabase*);
     virtual void onSuccess(const WebIDBKey&);
-    virtual void onSuccess(WebIDBTransaction*);
     virtual void onSuccess(const WebSerializedScriptValue&);
     virtual void onSuccess(const WebSerializedScriptValue&, const WebIDBKey&, const WebIDBKeyPath&);
     virtual void onSuccess(const WebIDBKey&, const WebIDBKey& primaryKey, const WebSerializedScriptValue&);

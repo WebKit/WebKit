@@ -13,6 +13,7 @@ function test()
     shouldBeUndefined("self.webkitIDBDatabaseError");
     shouldBeFalse("'IDBDatabaseException' in self");
     shouldBeFalse("'errorCode' in indexedDB.open(dbname)");
+    shouldBeFalse("'setVersion' in IDBDatabase.prototype");
 
     finishJSTest();
 }

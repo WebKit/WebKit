@@ -56,8 +56,6 @@ public:
     virtual void onSuccess(PassRefPtr<IDBCursorBackendInterface>, PassRefPtr<IDBKey>, PassRefPtr<IDBKey> primaryKey, PassRefPtr<SerializedScriptValue>) = 0;
     // From IDBObjectStore.add()/put(), IDBIndex.getKey()
     virtual void onSuccess(PassRefPtr<IDBKey>) = 0;
-    // From IDBDatabase.setVersion()
-    virtual void onSuccess(PassRefPtr<IDBTransactionBackendInterface>) = 0;
     // From IDBObjectStore/IDBIndex.get()/count(), and various methods that yield null/undefined.
     virtual void onSuccess(PassRefPtr<SerializedScriptValue>) = 0;
     // From IDBObjectStore/IDBIndex.get() (with key injection)
@@ -72,7 +70,7 @@ public:
     virtual void onSuccess(PassRefPtr<IDBKey>, PassRefPtr<IDBKey> primaryKey, PassRefPtr<SerializedScriptValue>) = 0;
     // From IDBCursor.advance()/continue()
     virtual void onSuccessWithPrefetch(const Vector<RefPtr<IDBKey> >& keys, const Vector<RefPtr<IDBKey> >& primaryKeys, const Vector<RefPtr<SerializedScriptValue> >& values) = 0;
-    // From IDBFactory.open()/deleteDatabase(), IDBDatabase.setVersion()
+    // From IDBFactory.open()/deleteDatabase()
     virtual void onBlocked() { ASSERT_NOT_REACHED(); }
     virtual void onBlocked(int64_t existingVersion) { ASSERT_NOT_REACHED(); }
     // From IDBFactory.open()

@@ -87,11 +87,6 @@ void IDBCallbacksProxy::onSuccess(PassRefPtr<IDBKey> idbKey)
     m_callbacks->onSuccess(WebIDBKey(idbKey));
 }
 
-void IDBCallbacksProxy::onSuccess(PassRefPtr<IDBTransactionBackendInterface> backend)
-{
-    m_callbacks->onSuccess(new WebIDBTransactionImpl(backend));
-}
-
 void IDBCallbacksProxy::onSuccess(PassRefPtr<DOMStringList> domStringList)
 {
     m_callbacks->onSuccess(WebDOMStringList(domStringList));

@@ -1,3 +1,23 @@
+2012-11-27  David Grogan  <dgrogan@chromium.org>
+
+        IndexedDB: Remove IDBDatabase.setVersion API
+        https://bugs.webkit.org/show_bug.cgi?id=94972
+
+        Reviewed by Tony Chang.
+
+        * src/IDBCallbacksProxy.cpp:
+        * src/IDBCallbacksProxy.h:
+        (IDBCallbacksProxy):
+        * src/IDBDatabaseBackendProxy.cpp:
+        * src/IDBDatabaseBackendProxy.h:
+        (IDBDatabaseBackendProxy):
+        * src/WebIDBCallbacksImpl.cpp:
+        * src/WebIDBCallbacksImpl.h:
+        (WebIDBCallbacksImpl):
+        * src/WebIDBDatabaseImpl.cpp:
+        * src/WebIDBDatabaseImpl.h:
+        (WebIDBDatabaseImpl):
+
 2012-11-27  Eberhard Graether  <egraether@google.com>
 
         Plumbing showPaintRects out of InspectorPageAgent to use a different drawing implementation if available.

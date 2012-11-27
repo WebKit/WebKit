@@ -94,7 +94,6 @@ TEST_F(IDBRequestTest, EventsAfterStopping)
     request->onSuccess(DOMStringList::create());
     request->onSuccess(PassRefPtr<IDBCursorBackendInterface>(), IDBKey::createInvalid(), IDBKey::createInvalid(), SerializedScriptValue::nullValue());
     request->onSuccess(IDBKey::createInvalid());
-    request->onSuccess(PassRefPtr<IDBTransactionBackendInterface>());
     request->onSuccess(SerializedScriptValue::nullValue());
     request->onSuccess(SerializedScriptValue::nullValue(), IDBKey::createInvalid(), IDBKeyPath());
     request->onSuccess(IDBKey::createInvalid(), IDBKey::createInvalid(), SerializedScriptValue::nullValue());

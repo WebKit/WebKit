@@ -42,8 +42,6 @@
         raises (DOMException);
     void deleteObjectStore(in DOMString name)
         raises (DOMException);
-    [CallWith=ScriptExecutionContext] IDBVersionChangeRequest setVersion(in DOMString version)
-        raises (DOMException);
     [CallWith=ScriptExecutionContext] IDBTransaction transaction(in DOMStringList storeNames, in [Optional=DefaultIsNullString] DOMString mode)
         raises (DOMException);
     [CallWith=ScriptExecutionContext] IDBTransaction transaction(in sequence<String> storeNames, in [Optional=DefaultIsNullString] DOMString mode)

@@ -75,11 +75,6 @@ void WebIDBDatabaseImpl::deleteObjectStore(long long objectStoreId, const WebIDB
     m_databaseBackend->deleteObjectStore(objectStoreId, transaction.getIDBTransactionBackendInterface(), ec);
 }
 
-void WebIDBDatabaseImpl::setVersion(const WebString& version, WebIDBCallbacks* callbacks, WebExceptionCode& ec)
-{
-    m_databaseBackend->setVersion(version, IDBCallbacksProxy::create(adoptPtr(callbacks)), m_databaseCallbacks, ec);
-}
-
 WebIDBTransaction* WebIDBDatabaseImpl::createTransaction(long long id, const WebVector<long long>& objectStoreIds, unsigned short mode)
 {
     Vector<int64_t> objectStoreIdList(objectStoreIds.size());

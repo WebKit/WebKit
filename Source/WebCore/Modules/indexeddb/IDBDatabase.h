@@ -68,7 +68,6 @@ public:
     PassRefPtr<IDBTransaction> transaction(ScriptExecutionContext*, const Vector<String>&, const String& mode, ExceptionCode&);
     PassRefPtr<IDBTransaction> transaction(ScriptExecutionContext*, const String&, const String& mode, ExceptionCode&);
     void deleteObjectStore(const String& name, ExceptionCode&);
-    PassRefPtr<IDBVersionChangeRequest> setVersion(ScriptExecutionContext*, const String& version, ExceptionCode&);
     void close();
 
     DEFINE_ATTRIBUTE_EVENT_LISTENER(abort);
@@ -129,8 +128,6 @@ private:
     Vector<RefPtr<Event> > m_enqueuedEvents;
 
     RefPtr<IDBDatabaseCallbacks> m_databaseCallbacks;
-
-    bool m_didSpamConsole;
 };
 
 } // namespace WebCore

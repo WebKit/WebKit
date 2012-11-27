@@ -1,3 +1,31 @@
+2012-11-27  David Grogan  <dgrogan@chromium.org>
+
+        IndexedDB: Remove IDBDatabase.setVersion API
+        https://bugs.webkit.org/show_bug.cgi?id=94972
+
+        Reviewed by Tony Chang.
+
+        This has been out of the spec for over a year. No other browser has
+        implemented it for close to a year.
+
+        Tests - removed.html
+
+        * Modules/indexeddb/IDBCallbacks.h:
+        (IDBCallbacks):
+        * Modules/indexeddb/IDBDatabase.cpp:
+        (WebCore::IDBDatabase::IDBDatabase):
+        * Modules/indexeddb/IDBDatabase.h:
+        (IDBDatabase):
+        * Modules/indexeddb/IDBDatabase.idl:
+        * Modules/indexeddb/IDBDatabaseBackendImpl.cpp:
+        (WebCore::IDBDatabaseBackendImpl::processPendingCalls):
+        * Modules/indexeddb/IDBDatabaseBackendImpl.h:
+        (IDBDatabaseBackendImpl):
+        * Modules/indexeddb/IDBDatabaseBackendInterface.h:
+        (IDBDatabaseBackendInterface):
+        * Modules/indexeddb/IDBRequest.cpp:
+        * Modules/indexeddb/IDBRequest.h:
+
 2012-11-27  Mike West  <mkwst@chromium.org>
 
         Log to console when autofocus is blocked by sandbox attribute.

@@ -86,11 +86,6 @@ void WebIDBCallbacksImpl::onSuccess(const WebIDBKey& key)
     m_callbacks->onSuccess(key);
 }
 
-void WebIDBCallbacksImpl::onSuccess(WebIDBTransaction* webKitInstance)
-{
-    m_callbacks->onSuccess(IDBTransactionBackendProxy::create(adoptPtr(webKitInstance)));
-}
-
 void WebIDBCallbacksImpl::onSuccess(const WebSerializedScriptValue& serializedScriptValue)
 {
     m_callbacks->onSuccess(serializedScriptValue);
