@@ -1290,12 +1290,15 @@ RenderLayerModelObject* RenderObject::containerForRepaint() const
 #endif
 
     // If we have a flow thread, then we need to do individual repaints within the RenderRegions instead.
-    // Return the flow thread as a repaint container in order to create a chokepoint that allows us to change
+    // Return the flow thread as a repaint container in order to create a checkpoint that allows us to change
     // repainting to do individual region repaints.
-    // FIXME: Composited layers inside a flow thread will bypass this mechanism and will malfunction. It's not
-    // clear how to address this problem for composited descendants of a RenderFlowThread.
-    if (!repaintContainer && inRenderFlowThread())
-        repaintContainer = enclosingRenderFlowThread();
+    if (inRenderFlowThread()) {
+        RenderFlowThread* parentRenderFlowThread = enclosingRenderFlowThread();
+        // If we have already found a repaint container then we will repaint into that container only if it is part of the same
+        // flow thread. Otherwise we will need to catch the repaint call and send it to the flow thread.
+        if (!(repaintContainer && repaintContainer->inRenderFlowThread() && repaintContainer->enclosingRenderFlowThread() == parentRenderFlowThread))
+            repaintContainer = parentRenderFlowThread;
+    }
     return repaintContainer;
 }
 

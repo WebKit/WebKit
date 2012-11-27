@@ -1,3 +1,22 @@
+2012-11-27  Alexandru Chiculita  <achicu@adobe.com>
+
+        [CSS Regions] Elements using transforms are not repainted correctly when rendered in a region
+        https://bugs.webkit.org/show_bug.cgi?id=102826
+
+        Reviewed by David Hyatt.
+
+        When the page is composited, all the elements will have a composited repaint container. In that case we will
+        never catch the repaints in the RenderFlowThread, but they will go directly to the RenderView. 
+        There's a single case when the parent composited layer of an element inside the RenderFlowThread will get 
+        its own repaints. That case only happens when the parent composited layer is also part of the same flow thread.
+        Right now compositing is disabled for elements inside the RenderFlowThread, so that case doesn't even happen yet.
+        That will be fixed in https://bugs.webkit.org/show_bug.cgi?id=84900.
+
+        Test: fast/repaint/region-painting-in-composited-view.html
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::containerForRepaint):
+
 2012-11-27  Tony Chang  <tony@chromium.org>
 
         Unreviewed, win compile fix take 2.

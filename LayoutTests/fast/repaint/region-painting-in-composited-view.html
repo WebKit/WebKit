@@ -1,0 +1,58 @@
+<!doctype html>
+<head>
+<title>Test for https://bugs.webkit.org/show_bug.cgi?id=102826</title>
+<script>
+    if (window.testRunner)
+        window.testRunner.overridePreference("WebKitCSSRegionsEnabled", "1");
+</script>
+<style type="text/css">
+#content {
+    -webkit-flow-into: flow1;
+}
+
+#target { 
+    background: red; 
+    width: 100px; 
+    height: 50px;
+}
+
+#region1, #region2 {
+    position: absolute;
+    top: 0px;
+    width: 100px;
+    height: 50px;
+    -webkit-flow-from: flow1;
+}
+
+#region1 {
+    /* Make sure that the content of the first region will display in a totally
+       different place than it would have been displayed if regions were not used. */
+    left: 120px;
+    /* Force the composited mode on the current page. */
+    -webkit-transform: translate3d(0,0,0);
+}
+
+#region2 {
+    left: 0px;
+    background-color: green;
+}
+
+</style>
+<script src="resources/repaint.js" type="text/javascript"></script>
+<script>
+function repaintTest()
+{
+    document.getElementById('target').style.backgroundColor = 'green';
+}
+</script>
+</head>
+<body onload="runRepaintTest();">
+    <!-- Testing that the repaint goes through the RenderRegions and not 
+    directly to the viewport. You should see two green rectangles. -->
+    <div id="content">
+        <div id="target"></div>
+    </div>
+    <div id="region1"></div>
+    <div id="region2"></div>
+</body>
+</html>
