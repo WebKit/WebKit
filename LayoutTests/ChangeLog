@@ -1,3 +1,19 @@
+2012-11-27  Justin Novosad  <junov@google.com>
+
+        Convert test fast/backgrounds/background-opaque-images-over-color.html to a ref test
+        https://bugs.webkit.org/show_bug.cgi?id=103275
+
+        Reviewed by Simon Fraser
+
+        Removing existing baselines, and adding an -expecte.html to make
+        fast/backgrounds/background-opaque-images-over-color.html a ref test
+
+        * fast/backgrounds/background-opaque-images-over-color-expected.html: Added.
+        * fast/backgrounds/background-opaque-images-over-color-expected.txt: Removed.
+        * fast/backgrounds/background-opaque-images-over-color.html:
+        * platform/chromium-mac/fast/backgrounds/background-opaque-images-over-color-expected.png: Removed.
+        * platform/chromium-win/fast/backgrounds/background-opaque-images-over-color-expected.png: Removed.
+
 2012-11-27  Jussi Kukkonen  <jussi.kukkonen@intel.com>
 
         [EFL] Mark tests flaky
