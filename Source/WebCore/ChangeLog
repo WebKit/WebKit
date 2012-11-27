@@ -1,3 +1,15 @@
+2012-11-27  Tim Horton  <timothy_horton@apple.com>
+
+        PDFPlugin: Scroll bars do not grow on hover
+        https://bugs.webkit.org/show_bug.cgi?id=103382
+        <rdar://problem/12555262>
+
+        Reviewed by Beth Dakin.
+
+        Export a few WebCore::Scrollbar methods to WebKit(2).
+
+        * WebCore.exp.in:
+
 2012-11-27  Tom Sepez  <tsepez@chromium.org>
 
         Regression(r129406): Fix the scope of the WidgetHierarchyUpdateSuspensionScope in Element::Attach().
