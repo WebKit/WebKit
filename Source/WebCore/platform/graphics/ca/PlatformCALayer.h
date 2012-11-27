@@ -80,7 +80,11 @@ public:
     
     PlatformLayer* platformLayer() const;
 
+#if PLATFORM(WIN)
+    bool usesTileCacheLayer() const { return false; }
+#elif
     bool usesTileCacheLayer() const { return m_layerType == LayerTypePageTileCacheLayer || m_layerType == LayerTypeTileCacheLayer; }
+#endif
 
     PlatformCALayer* rootLayer() const;
     
