@@ -26,9 +26,10 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import logging
 import xml.dom.minidom
 
-from webkitpy.common.system.deprecated_logging import log
+_log = logging.getLogger(__name__)
 
 
 class UnitTestResults(object):
@@ -46,5 +47,5 @@ class UnitTestResults(object):
                     failures.append("%s.%s" % (classname, testname))
             return failures
         except xml.parsers.expat.ExpatError, e:
-            log("XML error %s parsing unit test output" % str(e))
+            _log.error("XML error %s parsing unit test output" % str(e))
             return None

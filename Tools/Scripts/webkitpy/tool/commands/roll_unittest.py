@@ -34,14 +34,13 @@ from webkitpy.tool.mocktool import MockOptions, MockTool
 
 class RollCommandsTest(CommandsTest):
     def test_update_chromium_deps(self):
-        expected_stderr = """MOCK: MockDEPS.write_variable(chromium_rev, 6764)
+        expected_logs = """Updating Chromium DEPS to 6764
+MOCK: MockDEPS.write_variable(chromium_rev, 6764)
 MOCK: user.open_url: file://...
 Was that diff correct?
-"""
-        expected_logs = """Updating Chromium DEPS to 6764
 Committed r49824: <http://trac.webkit.org/changeset/49824>
 """
-        self.assert_execute_outputs(RollChromiumDEPS(), [6764], expected_stderr=expected_stderr, expected_logs=expected_logs)
+        self.assert_execute_outputs(RollChromiumDEPS(), [6764], expected_logs=expected_logs)
 
     def test_update_chromium_deps_older_revision(self):
         options = MockOptions(non_interactive=False)

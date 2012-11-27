@@ -43,7 +43,7 @@ class AbstractEarlyWarningSystemTest(QueuesTest):
         ews = TestEWS()
         ews.bind_to_tool(MockTool())
         ews._options = MockOptions(port=None, confirm=False)
-        OutputCapture().assert_outputs(self, ews.begin_work_queue, expected_stderr=self._default_begin_work_queue_stderr(ews.name))
+        OutputCapture().assert_outputs(self, ews.begin_work_queue, expected_logs=self._default_begin_work_queue_logs(ews.name))
         ews._expected_failures.unexpected_failures_observed = lambda results: set(["foo.html", "bar.html"])
         task = Mock()
         patch = ews._tool.bugs.fetch_attachment(10000)
@@ -51,20 +51,14 @@ class AbstractEarlyWarningSystemTest(QueuesTest):
 
 
 class EarlyWarningSytemTest(QueuesTest):
-    def _default_expected_stderr(self, ews):
+    def _default_expected_logs(self, ews):
         string_replacemnts = {
             "name": ews.name,
             "port": ews.port_name,
         }
-        expected_stderr = {
-            "begin_work_queue": self._default_begin_work_queue_stderr(ews.name),
-            "next_work_item": "",
-            "process_work_item": "MOCK: update_status: %(name)s Pass\nMOCK: release_work_item: %(name)s 10000\n" % string_replacemnts,
-        }
-        return expected_stderr
-
-    def _default_expected_logs(self):
         expected_logs = {
+            "begin_work_queue": self._default_begin_work_queue_logs(ews.name),
+            "process_work_item": "MOCK: update_status: %(name)s Pass\nMOCK: release_work_item: %(name)s 10000\n" % string_replacemnts,
             "handle_unexpected_error": "Mock error message\n",
             "handle_script_error": "ScriptError error message\n\nMOCK output\n",
         }
@@ -75,14 +69,13 @@ class EarlyWarningSytemTest(QueuesTest):
         options = Mock()
         options.port = None
         options.run_tests = ews._default_run_tests
-        self.assert_queue_outputs(ews, expected_stderr=self._default_expected_stderr(ews), options=options)
+        self.assert_queue_outputs(ews, expected_logs=self._default_expected_logs(ews), options=options)
 
     def _test_testing_ews(self, ews):
         ews.test_results = lambda: None
         ews.bind_to_tool(MockTool())
-        expected_stderr = self._default_expected_stderr(ews)
-        expected_logs = self._default_expected_logs()
-        self.assert_queue_outputs(ews, expected_stderr=expected_stderr, expected_logs=expected_logs)
+        expected_logs = self._default_expected_logs(ews)
+        self.assert_queue_outputs(ews, expected_logs=expected_logs)
 
     def test_builder_ewses(self):
         self._test_builder_ews(MacEWS())

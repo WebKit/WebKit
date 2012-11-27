@@ -26,10 +26,12 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from webkitpy.common.system.deprecated_logging import log
+import logging
+
+_log = logging.getLogger(__name__)
 
 
 class MockWatchList(object):
     def determine_cc_and_messages(self, diff):
-        log("MockWatchList: determine_cc_and_messages")
+        _log.info("MockWatchList: determine_cc_and_messages")
         return {'cc_list': ['abarth@webkit.org', 'eric@webkit.org', 'levin@chromium.org'], 'messages': ['Message1.', 'Message2.'], }

@@ -50,13 +50,16 @@ class CommitTest(unittest.TestCase):
         }
 
         tool.executive = MockExecutive(should_log=True, should_throw_when_run=False)
-        capture.assert_outputs(self, step.run, [state], expected_logs="Committed r49824: <http://trac.webkit.org/changeset/49824>\n")
+        expected_logs = "Committed r49824: <http://trac.webkit.org/changeset/49824>\n"
+        capture.assert_outputs(self, step.run, [state], expected_logs=expected_logs)
 
         state = {
             "changed_files": ["platform/chromium/" + filename],
         }
-        capture.assert_outputs(self, step.run, [state], expected_stderr="MOCK run_and_throw_if_fail: ['mock-check-webkit-style', '--diff-files', 'platform/chromium/"
-            + filename + "'], cwd=/mock-checkout\n", expected_logs="Committed r49824: <http://trac.webkit.org/changeset/49824>\n")
+        expected_logs = """MOCK run_and_throw_if_fail: ['mock-check-webkit-style', '--diff-files', 'platform/chromium/%s'], cwd=/mock-checkout
+Committed r49824: <http://trac.webkit.org/changeset/49824>
+""" % filename
+        capture.assert_outputs(self, step.run, [state], expected_logs=expected_logs)
 
         tool.executive = MockExecutive(should_log=True, should_throw_when_run=set(["platform/chromium/" + filename]))
         self.assertRaises(ScriptError, capture.assert_outputs, self, step.run, [state])

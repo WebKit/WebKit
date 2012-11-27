@@ -33,18 +33,23 @@ from webkitpy.tool.commands.applywatchlistlocal import ApplyWatchListLocal
 
 class ApplyWatchListLocalTest(CommandsTest):
     def test_args_parsing(self):
-        expected_stderr = 'MockWatchList: determine_cc_and_messages\n'
-        self.assert_execute_outputs(ApplyWatchListLocal(), [''], expected_stderr=expected_stderr)
+        expected_logs = """MockWatchList: determine_cc_and_messages
+No bug was updated because no id was given.
+Result of watchlist: cc "abarth@webkit.org, eric@webkit.org, levin@chromium.org" messages "Message1.
+
+Message2."
+"""
+        self.assert_execute_outputs(ApplyWatchListLocal(), [''], expected_logs=expected_logs)
 
     def test_args_parsing_with_bug(self):
-        expected_stderr = """MockWatchList: determine_cc_and_messages
+        expected_logs = """MockWatchList: determine_cc_and_messages
 MOCK bug comment: bug_id=50002, cc=set(['eric@webkit.org', 'levin@chromium.org', 'abarth@webkit.org'])
 --- Begin comment ---
 Message1.
 
 Message2.
 --- End comment ---\n\n"""
-        self.assert_execute_outputs(ApplyWatchListLocal(), ['50002'], expected_stderr=expected_stderr)
+        self.assert_execute_outputs(ApplyWatchListLocal(), ['50002'], expected_logs=expected_logs)
 
     def test_args_parsing_with_two_bugs(self):
         self._assertRaisesRegexp(Exception, 'Too many arguments given: 1234 5678', self.assert_execute_outputs, ApplyWatchListLocal(), ['1234', '5678'])

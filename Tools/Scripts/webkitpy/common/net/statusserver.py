@@ -29,7 +29,6 @@
 # This the client designed to talk to Tools/QueueStatusServer.
 
 from webkitpy.common.net.networktransaction import NetworkTransaction
-from webkitpy.common.system.deprecated_logging import log
 from webkitpy.thirdparty.BeautifulSoup import BeautifulSoup
 
 import logging
@@ -145,11 +144,11 @@ class StatusServer:
         return NetworkTransaction().run(lambda: self._post_work_items_to_server(queue_name, work_items))
 
     def update_status(self, queue_name, status, patch=None, results_file=None):
-        log(status)
+        _log.info(status)
         return NetworkTransaction().run(lambda: self._post_status_to_server(queue_name, status, patch, results_file))
 
     def update_svn_revision(self, svn_revision_number, broken_bot):
-        log("SVN revision: %s broke %s" % (svn_revision_number, broken_bot))
+        _log.info("SVN revision: %s broke %s" % (svn_revision_number, broken_bot))
         return NetworkTransaction().run(lambda: self._post_svn_revision_to_server(svn_revision_number, broken_bot))
 
     def _fetch_url(self, url):

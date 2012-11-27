@@ -30,9 +30,6 @@ import logging
 import time
 import urllib2
 
-from webkitpy.common.system.deprecated_logging import log
-
-
 _log = logging.getLogger(__name__)
 
 

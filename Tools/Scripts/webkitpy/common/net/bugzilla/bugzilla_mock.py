@@ -27,12 +27,13 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import datetime
+import logging
 
 from .bug import Bug
 from .attachment import Attachment
 from webkitpy.common.config.committers import CommitterList, Reviewer
 
-from webkitpy.common.system.deprecated_logging import log
+_log = logging.getLogger(__name__)
 
 
 def _id_to_object_dictionary(*objects):
@@ -328,15 +329,15 @@ class MockBugzilla(object):
                    blocked=None,
                    mark_for_review=False,
                    mark_for_commit_queue=False):
-        log("MOCK create_bug")
-        log("bug_title: %s" % bug_title)
-        log("bug_description: %s" % bug_description)
+        _log.info("MOCK create_bug")
+        _log.info("bug_title: %s" % bug_title)
+        _log.info("bug_description: %s" % bug_description)
         if component:
-            log("component: %s" % component)
+            _log.info("component: %s" % component)
         if cc:
-            log("cc: %s" % cc)
+            _log.info("cc: %s" % cc)
         if blocked:
-            log("blocked: %s" % blocked)
+            _log.info("blocked: %s" % blocked)
         return 60001
 
     def quips(self):
@@ -374,11 +375,11 @@ class MockBugzilla(object):
         return "%s/%s%s" % (self.bug_server_url, attachment_id, action_param)
 
     def reassign_bug(self, bug_id, assignee=None, comment_text=None):
-        log("MOCK reassign_bug: bug_id=%s, assignee=%s" % (bug_id, assignee))
+        _log.info("MOCK reassign_bug: bug_id=%s, assignee=%s" % (bug_id, assignee))
         if comment_text:
-            log("-- Begin comment --")
-            log(comment_text)
-            log("-- End comment --")
+            _log.info("-- Begin comment --")
+            _log.info(comment_text)
+            _log.info("-- End comment --")
 
     def set_flag_on_attachment(self,
                                attachment_id,
@@ -386,20 +387,20 @@ class MockBugzilla(object):
                                flag_value,
                                comment_text=None,
                                additional_comment_text=None):
-        log("MOCK setting flag '%s' to '%s' on attachment '%s' with comment '%s' and additional comment '%s'" % (
-            flag_name, flag_value, attachment_id, comment_text, additional_comment_text))
+        _log.info("MOCK setting flag '%s' to '%s' on attachment '%s' with comment '%s' and additional comment '%s'" % (
+                  flag_name, flag_value, attachment_id, comment_text, additional_comment_text))
 
     def post_comment_to_bug(self, bug_id, comment_text, cc=None):
-        log("MOCK bug comment: bug_id=%s, cc=%s\n--- Begin comment ---\n%s\n--- End comment ---\n" % (
-            bug_id, cc, comment_text))
+        _log.info("MOCK bug comment: bug_id=%s, cc=%s\n--- Begin comment ---\n%s\n--- End comment ---\n" % (
+                  bug_id, cc, comment_text))
 
     def add_attachment_to_bug(self, bug_id, file_or_string, description, filename=None, comment_text=None, mimetype=None):
-        log("MOCK add_attachment_to_bug: bug_id=%s, description=%s filename=%s mimetype=%s" %
-            (bug_id, description, filename, mimetype))
+        _log.info("MOCK add_attachment_to_bug: bug_id=%s, description=%s filename=%s mimetype=%s" %
+                  (bug_id, description, filename, mimetype))
         if comment_text:
-            log("-- Begin comment --")
-            log(comment_text)
-            log("-- End comment --")
+            _log.info("-- Begin comment --")
+            _log.info(comment_text)
+            _log.info("-- End comment --")
 
     def add_patch_to_bug(self,
                          bug_id,
@@ -409,12 +410,12 @@ class MockBugzilla(object):
                          mark_for_review=False,
                          mark_for_commit_queue=False,
                          mark_for_landing=False):
-        log("MOCK add_patch_to_bug: bug_id=%s, description=%s, mark_for_review=%s, mark_for_commit_queue=%s, mark_for_landing=%s" %
-            (bug_id, description, mark_for_review, mark_for_commit_queue, mark_for_landing))
+        _log.info("MOCK add_patch_to_bug: bug_id=%s, description=%s, mark_for_review=%s, mark_for_commit_queue=%s, mark_for_landing=%s" %
+                  (bug_id, description, mark_for_review, mark_for_commit_queue, mark_for_landing))
         if comment_text:
-            log("-- Begin comment --")
-            log(comment_text)
-            log("-- End comment --")
+            _log.info("-- Begin comment --")
+            _log.info(comment_text)
+            _log.info("-- End comment --")
 
     def add_cc_to_bug(self, bug_id, ccs):
         pass
@@ -423,7 +424,7 @@ class MockBugzilla(object):
         pass
 
     def reopen_bug(self, bug_id, message):
-        log("MOCK reopen_bug %s with comment '%s'" % (bug_id, message))
+        _log.info("MOCK reopen_bug %s with comment '%s'" % (bug_id, message))
 
     def close_bug_as_fixed(self, bug_id, message):
         pass

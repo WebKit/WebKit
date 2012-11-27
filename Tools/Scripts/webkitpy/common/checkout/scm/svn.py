@@ -35,11 +35,9 @@ import sys
 import tempfile
 
 from webkitpy.common.memoized import memoized
-from webkitpy.common.system.deprecated_logging import log
 from webkitpy.common.system.executive import Executive, ScriptError
 
 from .scm import AuthenticationError, SCM, commit_error_handler
-
 
 _log = logging.getLogger(__name__)
 
@@ -311,8 +309,8 @@ class SVN(SCM, SVNRepository):
     def apply_reverse_diff(self, revision):
         # '-c -revision' applies the inverse diff of 'revision'
         svn_merge_args = ['merge', '--non-interactive', '-c', '-%s' % revision, self._repository_url()]
-        log("WARNING: svn merge has been known to take more than 10 minutes to complete.  It is recommended you use git for rollouts.")
-        log("Running 'svn %s'" % " ".join(svn_merge_args))
+        _log.warning("svn merge has been known to take more than 10 minutes to complete.  It is recommended you use git for rollouts.")
+        _log.debug("Running 'svn %s'" % " ".join(svn_merge_args))
         # FIXME: Should this use cwd=self.checkout_root?
         self._run_svn(svn_merge_args)
 

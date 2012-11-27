@@ -28,8 +28,11 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import logging
+
 from webkitpy.common.memoized import memoized
-from webkitpy.common.system.deprecated_logging import log
+
+_log = logging.getLogger(__name__)
 
 
 class Attachment(object):
@@ -102,7 +105,7 @@ class Attachment(object):
                             "%s_by_email" % flag)(email)
         if committer:
             return committer
-        log("Warning, attachment %s on bug %s has invalid %s (%s)" % (
+        _log.warning("Warning, attachment %s on bug %s has invalid %s (%s)" % (
                  self._attachment_dictionary['id'],
                  self._attachment_dictionary['bug_id'], flag, email))
 

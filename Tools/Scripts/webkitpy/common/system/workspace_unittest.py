@@ -50,18 +50,23 @@ class WorkspaceTest(unittest.TestCase):
 
     def test_create_zip(self):
         workspace = Workspace(None, MockExecutive(should_log=True))
-        expected_stderr = "MOCK run_command: ['zip', '-9', '-r', '/zip/path', '.'], cwd=/source/path\n"
+        expected_logs = "MOCK run_command: ['zip', '-9', '-r', '/zip/path', '.'], cwd=/source/path\n"
         class MockZipFile(object):
             def __init__(self, path):
                 self.filename = path
-        archive = OutputCapture().assert_outputs(self, workspace.create_zip, ["/zip/path", "/source/path", MockZipFile], expected_stderr=expected_stderr)
+        archive = OutputCapture().assert_outputs(self, workspace.create_zip, ["/zip/path", "/source/path", MockZipFile], expected_logs=expected_logs)
         self.assertEqual(archive.filename, "/zip/path")
 
     def test_create_zip_exception(self):
         workspace = Workspace(None, MockExecutive(should_log=True, should_throw=True))
-        expected_stderr = "MOCK run_command: ['zip', '-9', '-r', '/zip/path', '.'], cwd=/source/path\n"
+        expected_logs = """MOCK run_command: ['zip', '-9', '-r', '/zip/path', '.'], cwd=/source/path
+Workspace.create_zip failed:
+MOCK ScriptError
+
+MOCK output of child process
+"""
         class MockZipFile(object):
             def __init__(self, path):
                 self.filename = path
-        archive = OutputCapture().assert_outputs(self, workspace.create_zip, ["/zip/path", "/source/path", MockZipFile], expected_stderr=expected_stderr)
+        archive = OutputCapture().assert_outputs(self, workspace.create_zip, ["/zip/path", "/source/path", MockZipFile], expected_logs=expected_logs)
         self.assertEqual(archive, None)

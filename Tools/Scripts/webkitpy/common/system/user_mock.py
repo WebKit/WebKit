@@ -26,7 +26,9 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from webkitpy.common.system.deprecated_logging import log
+import logging
+
+_log = logging.getLogger(__name__)
 
 
 class MockUser(object):
@@ -52,7 +54,7 @@ class MockUser(object):
         pass
 
     def confirm(self, message=None, default='y'):
-        log(message)
+        _log.info(message)
         return default == 'y'
 
     def can_open_url(self):
@@ -61,6 +63,6 @@ class MockUser(object):
     def open_url(self, url):
         self.opened_urls.append(url)
         if url.startswith("file://"):
-            log("MOCK: user.open_url: file://...")
+            _log.info("MOCK: user.open_url: file://...")
             return
-        log("MOCK: user.open_url: %s" % url)
+        _log.info("MOCK: user.open_url: %s" % url)

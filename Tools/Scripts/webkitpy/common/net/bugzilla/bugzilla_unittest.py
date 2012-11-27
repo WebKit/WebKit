@@ -250,8 +250,8 @@ Ignore this bug.  Just for testing failure modes of webkit-patch and the commit-
         bugzilla = Bugzilla()
         bugzilla.browser = MockBrowser()
         bugzilla.authenticate = lambda: None
-        expected_stderr = "Adding ['adam@example.com'] to the CC list for bug 42\n"
-        OutputCapture().assert_outputs(self, bugzilla.add_cc_to_bug, [42, ["adam@example.com"]], expected_stderr=expected_stderr)
+        expected_logs = "Adding ['adam@example.com'] to the CC list for bug 42\n"
+        OutputCapture().assert_outputs(self, bugzilla.add_cc_to_bug, [42, ["adam@example.com"]], expected_logs=expected_logs)
 
     def _mock_control_item(self, name):
         mock_item = Mock()
@@ -264,23 +264,23 @@ Ignore this bug.  Just for testing failure modes of webkit-patch and the commit-
         mock_control.value = [item_names[selected_index]] if item_names else None
         return lambda name, type: mock_control
 
-    def _assert_reopen(self, item_names=None, selected_index=None, extra_stderr=None):
+    def _assert_reopen(self, item_names=None, selected_index=None, extra_logs=None):
         bugzilla = Bugzilla()
         bugzilla.browser = MockBrowser()
         bugzilla.authenticate = lambda: None
 
         mock_find_control = self._mock_find_control(item_names, selected_index)
         bugzilla.browser.find_control = mock_find_control
-        expected_stderr = "Re-opening bug 42\n['comment']\n"
-        if extra_stderr:
-            expected_stderr += extra_stderr
-        OutputCapture().assert_outputs(self, bugzilla.reopen_bug, [42, ["comment"]], expected_stderr=expected_stderr)
+        expected_logs = "Re-opening bug 42\n['comment']\n"
+        if extra_logs:
+            expected_logs += extra_logs
+        OutputCapture().assert_outputs(self, bugzilla.reopen_bug, [42, ["comment"]], expected_logs=expected_logs)
 
     def test_reopen_bug(self):
         self._assert_reopen(item_names=["REOPENED", "RESOLVED", "CLOSED"], selected_index=1)
         self._assert_reopen(item_names=["UNCONFIRMED", "RESOLVED", "CLOSED"], selected_index=1)
-        extra_stderr = "Did not reopen bug 42, it appears to already be open with status ['NEW'].\n"
-        self._assert_reopen(item_names=["NEW", "RESOLVED"], selected_index=0, extra_stderr=extra_stderr)
+        extra_logs = "Did not reopen bug 42, it appears to already be open with status ['NEW'].\n"
+        self._assert_reopen(item_names=["NEW", "RESOLVED"], selected_index=0, extra_logs=extra_logs)
 
     def test_file_object_for_upload(self):
         bugzilla = Bugzilla()

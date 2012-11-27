@@ -39,5 +39,5 @@ class IRCProxyTest(unittest.TestCase):
             proxy.post("hello")
             proxy.disconnect()
 
-        expected_stderr = "Connecting to IRC\nDisconnecting from IRC...\n"
-        OutputCapture().assert_outputs(self, fun, expected_stderr=expected_stderr)
+        expected_logs = "Connecting to IRC\nDisconnecting from IRC...\n"
+        OutputCapture().assert_outputs(self, fun, expected_logs=expected_logs)

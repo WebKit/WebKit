@@ -26,15 +26,16 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-
 import json
+import logging
 
 from webkitpy.common.memoized import memoized
-from webkitpy.common.system.deprecated_logging import log
 # FIXME: common should never import from new-run-webkit-tests, one of these files needs to move.
 from webkitpy.layout_tests.layout_package import json_results_generator
 from webkitpy.layout_tests.models import test_expectations, test_results, test_failures
 from webkitpy.layout_tests.models.test_expectations import TestExpectations
+
+_log = logging.getLogger(__name__)
 
 
 # These are helper functions for navigating the results json structure.
@@ -83,7 +84,7 @@ class JSONTestResult(object):
     def _tokenize(self, results_string):
         tokens = map(TestExpectations.expectation_from_string, results_string.split(' '))
         if None in tokens:
-            log("Unrecognized result in %s" % results_string)
+            _log.warning("Unrecognized result in %s" % results_string)
         return set(tokens)
 
     @memoized
@@ -123,7 +124,7 @@ class JSONTestResult(object):
         elif actual == test_expectations.MISSING:
             return [test_failures.FailureMissingResult(), test_failures.FailureMissingImageHash(), test_failures.FailureMissingImage()]
         else:
-            log("Failed to handle: %s" % self._result_dict['actual'])
+            _log.warning("Failed to handle: %s" % self._result_dict['actual'])
             return []
 
     def _failures(self):

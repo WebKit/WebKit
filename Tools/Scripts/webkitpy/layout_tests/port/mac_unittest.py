@@ -139,8 +139,8 @@ java/
         port = self.make_port()
         # Delay setting a should_log executive to avoid logging from MacPort.__init__.
         port._executive = MockExecutive(should_log=True)
-        expected_stderr = "MOCK popen: ['Tools/Scripts/run-safari', '--release', '--no-saved-state', '-NSOpen', 'test.html'], cwd=/mock-checkout\n"
-        OutputCapture().assert_outputs(self, port.show_results_html_file, ["test.html"], expected_stderr=expected_stderr)
+        expected_logs = "MOCK popen: ['Tools/Scripts/run-safari', '--release', '--no-saved-state', '-NSOpen', 'test.html'], cwd=/mock-checkout\n"
+        OutputCapture().assert_outputs(self, port.show_results_html_file, ["test.html"], expected_logs=expected_logs)
 
     def test_operating_system(self):
         self.assertEqual('mac', self.make_port().operating_system())

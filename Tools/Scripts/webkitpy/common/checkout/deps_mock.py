@@ -26,8 +26,9 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import logging
 
-from webkitpy.common.system.deprecated_logging import log
+_log = logging.getLogger(__name__)
 
 
 class MockDEPS(object):
@@ -35,4 +36,4 @@ class MockDEPS(object):
         return 6564
 
     def write_variable(self, name, value):
-        log("MOCK: MockDEPS.write_variable(%s, %s)" % (name, value))
+        _log.info("MOCK: MockDEPS.write_variable(%s, %s)" % (name, value))

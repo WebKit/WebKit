@@ -86,8 +86,8 @@ class IRCCommandTest(unittest.TestCase):
         rollout = Rollout()
         tool = MockTool()
         tool.executive = MockExecutive(should_log=True)
-        expected_stderr = "MOCK run_and_throw_if_fail: ['mock-update-webkit'], cwd=/mock-checkout\n"
-        OutputCapture().assert_outputs(self, rollout._update_working_copy, [tool], expected_stderr=expected_stderr)
+        expected_logs = "MOCK run_and_throw_if_fail: ['mock-update-webkit'], cwd=/mock-checkout\n"
+        OutputCapture().assert_outputs(self, rollout._update_working_copy, [tool], expected_logs=expected_logs)
 
     def test_rollout(self):
         rollout = Rollout()

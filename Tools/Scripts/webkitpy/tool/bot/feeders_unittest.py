@@ -38,7 +38,7 @@ from webkitpy.tool.mocktool import MockTool
 class FeedersTest(unittest.TestCase):
     def test_commit_queue_feeder(self):
         feeder = CommitQueueFeeder(MockTool())
-        expected_stderr = u"""Warning, attachment 10001 on bug 50000 has invalid committer (non-committer@example.com)
+        expected_logs = """Warning, attachment 10001 on bug 50000 has invalid committer (non-committer@example.com)
 Warning, attachment 10001 on bug 50000 has invalid committer (non-committer@example.com)
 MOCK setting flag 'commit-queue' to '-' on attachment '10001' with comment 'Rejecting attachment 10001 from commit-queue.' and additional comment 'non-committer@example.com does not have committer permissions according to http://trac.webkit.org/browser/trunk/Tools/Scripts/webkitpy/common/config/committers.py.
 
@@ -46,9 +46,9 @@ MOCK setting flag 'commit-queue' to '-' on attachment '10001' with comment 'Reje
 
 - If you have committer rights please correct the error in Tools/Scripts/webkitpy/common/config/committers.py by adding yourself to the file (no review needed).  The commit-queue restarts itself every 2 hours.  After restart the commit-queue will correctly respect your committer rights.'
 MOCK: update_work_items: commit-queue [10005, 10000]
+Feeding commit-queue items [10005, 10000]
 """
-        expected_logs = "Feeding commit-queue items [10005, 10000]\n"
-        OutputCapture().assert_outputs(self, feeder.feed, expected_stderr=expected_stderr, expected_logs=expected_logs)
+        OutputCapture().assert_outputs(self, feeder.feed, expected_logs=expected_logs)
 
     def _mock_attachment(self, is_rollout, attach_date):
         attachment = Mock()

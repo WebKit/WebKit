@@ -32,13 +32,11 @@ import os
 import re
 
 from webkitpy.common.memoized import memoized
-from webkitpy.common.system.deprecated_logging import log
 from webkitpy.common.system.executive import Executive, ScriptError
 
 from .commitmessage import CommitMessage
 from .scm import AuthenticationError, SCM, commit_error_handler
 from .svn import SVN, SVNRepository
-
 
 _log = logging.getLogger(__name__)
 
@@ -96,7 +94,7 @@ class Git(SCM, SVNRepository):
             return
 
         webkit_dev_thread_url = "https://lists.webkit.org/pipermail/webkit-dev/2010-December/015287.html"
-        log("Warning: This machine is 64-bit, but the git binary (%s) does not support 64-bit.\nInstall a 64-bit git for better performance, see:\n%s\n" % (git_path, webkit_dev_thread_url))
+        _log.warning("This machine is 64-bit, but the git binary (%s) does not support 64-bit.\nInstall a 64-bit git for better performance, see:\n%s\n" % (git_path, webkit_dev_thread_url))
 
     def _run_git(self, command_args, **kwargs):
         full_command_args = [self.executable_name] + command_args
@@ -403,7 +401,7 @@ class Git(SCM, SVNRepository):
             self._run_git(['commit', '-m', message])
             output = self.push_local_commits_to_server(username=username, password=password)
         except Exception, e:
-            log("COMMIT FAILED: " + str(e))
+            _log.warning("COMMIT FAILED: " + str(e))
             output = "Commit failed."
             commit_succeeded = False
         finally:

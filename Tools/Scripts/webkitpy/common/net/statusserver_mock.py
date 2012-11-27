@@ -26,7 +26,9 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from webkitpy.common.system.deprecated_logging import log
+import logging
+
+_log = logging.getLogger(__name__)
 
 
 class MockStatusServer(object):
@@ -48,17 +50,17 @@ class MockStatusServer(object):
         return self._work_items.pop(0)
 
     def release_work_item(self, queue_name, patch):
-        log("MOCK: release_work_item: %s %s" % (queue_name, patch.id()))
+        _log.info("MOCK: release_work_item: %s %s" % (queue_name, patch.id()))
 
     def update_work_items(self, queue_name, work_items):
         self._work_items = work_items
-        log("MOCK: update_work_items: %s %s" % (queue_name, work_items))
+        _log.info("MOCK: update_work_items: %s %s" % (queue_name, work_items))
 
     def submit_to_ews(self, patch_id):
-        log("MOCK: submit_to_ews: %s" % (patch_id))
+        _log.info("MOCK: submit_to_ews: %s" % (patch_id))
 
     def update_status(self, queue_name, status, patch=None, results_file=None):
-        log("MOCK: update_status: %s %s" % (queue_name, status))
+        _log.info("MOCK: update_status: %s %s" % (queue_name, status))
         return 187
 
     def update_svn_revision(self, svn_revision, broken_bot):

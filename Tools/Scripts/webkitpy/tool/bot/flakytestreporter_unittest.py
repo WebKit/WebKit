@@ -70,7 +70,7 @@ class FlakyTestReporterTest(unittest.TestCase):
 
     def test_create_bug_for_flaky_test(self):
         reporter = FlakyTestReporter(MockTool(), 'dummy-queue')
-        expected_stderr = """MOCK create_bug
+        expected_logs = """MOCK create_bug
 bug_title: Flaky Test: foo/bar.html
 bug_description: This is an automatically generated bug from the dummy-queue.
 foo/bar.html has been flaky on the dummy-queue.
@@ -90,7 +90,7 @@ component: Tools / Tests
 cc: test@test.com
 blocked: 50856
 """
-        OutputCapture().assert_outputs(self, reporter._create_bug_for_flaky_test, ['foo/bar.html', ['test@test.com'], 'FLAKE_MESSAGE'], expected_stderr=expected_stderr)
+        OutputCapture().assert_outputs(self, reporter._create_bug_for_flaky_test, ['foo/bar.html', ['test@test.com'], 'FLAKE_MESSAGE'], expected_logs=expected_logs)
 
     def test_follow_duplicate_chain(self):
         tool = MockTool()
@@ -105,7 +105,8 @@ blocked: 50856
         reporter = FlakyTestReporter(tool, 'dummy-queue')
         reporter._lookup_bug_for_flaky_test = lambda bug_id: None
         patch = tool.bugs.fetch_attachment(10000)
-        expected_stderr = """MOCK create_bug
+        expected_logs = """Bug does not already exist for foo/bar.html, creating.
+MOCK create_bug
 bug_title: Flaky Test: foo/bar.html
 bug_description: This is an automatically generated bug from the dummy-queue.
 foo/bar.html has been flaky on the dummy-queue.
@@ -144,7 +145,7 @@ The dummy-queue is continuing to process your patch.
             def namelist(self):
                 return ['foo/bar-diffs.txt']
 
-        OutputCapture().assert_outputs(self, reporter.report_flaky_tests, [patch, test_results, MockZipFile()], expected_stderr=expected_stderr)
+        OutputCapture().assert_outputs(self, reporter.report_flaky_tests, [patch, test_results, MockZipFile()], expected_logs=expected_logs)
 
     def test_optional_author_string(self):
         reporter = FlakyTestReporter(MockTool(), 'dummy-queue')

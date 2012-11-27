@@ -29,6 +29,7 @@
 #
 # Python module for reading stored web credentials from the OS.
 
+import logging
 import os
 import platform
 import re
@@ -36,7 +37,6 @@ import re
 from webkitpy.common.checkout.scm import Git
 from webkitpy.common.system.executive import Executive, ScriptError
 from webkitpy.common.system.user import User
-from webkitpy.common.system.deprecated_logging import log
 
 try:
     # Use keyring, a cross platform keyring interface, as a fallback:
@@ -44,6 +44,8 @@ try:
     import keyring
 except ImportError:
     keyring = None
+
+_log = logging.getLogger(__name__)
 
 
 class Credentials(object):
@@ -98,15 +100,15 @@ class Credentials(object):
         if username:
             security_command += ["-a", username]
 
-        log("Reading Keychain for %s account and password.  "
-            "Click \"Allow\" to continue..." % self.host)
+        _log.info("Reading Keychain for %s account and password.  "
+                  "Click \"Allow\" to continue..." % self.host)
         try:
             return self.executive.run_command(security_command)
         except ScriptError:
             # Failed to either find a keychain entry or somekind of OS-related
             # error occured (for instance, couldn't find the /usr/sbin/security
             # command).
-            log("Could not find a keychain entry for %s." % self.host)
+            _log.error("Could not find a keychain entry for %s." % self.host)
             return None
 
     def _credentials_from_keychain(self, username=None):

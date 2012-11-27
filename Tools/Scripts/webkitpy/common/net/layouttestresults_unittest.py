@@ -122,8 +122,8 @@ class ORWTResultsHTMLParserTest(unittest.TestCase):
         self.assertEqual(type(sorted(failures)[0]), test_failures.FailureImageHashMismatch)
 
         row = BeautifulSoup("<tr><td><a>test.hml</a><a>foo</a></td></tr>")
-        expected_stderr = "Unhandled link text in results.html parsing: foo.  Please file a bug against webkitpy.\n"
-        OutputCapture().assert_outputs(self, ORWTResultsHTMLParser._failures_from_fail_row, [row], expected_stderr=expected_stderr)
+        expected_logs = "Unhandled link text in results.html parsing: foo.  Please file a bug against webkitpy.\n"
+        OutputCapture().assert_outputs(self, ORWTResultsHTMLParser._failures_from_fail_row, [row], expected_logs=expected_logs)
 
 
 class LayoutTestResultsTest(unittest.TestCase):

@@ -30,6 +30,7 @@
 #
 # WebKit's Python module for interacting with Bugzilla
 
+import logging
 import mimetypes
 import re
 import StringIO
@@ -41,12 +42,13 @@ from datetime import datetime # used in timestamp()
 from .attachment import Attachment
 from .bug import Bug
 
-from webkitpy.common.system.deprecated_logging import log
 from webkitpy.common.config import committers
 import webkitpy.common.config.urls as config_urls
 from webkitpy.common.net.credentials import Credentials
 from webkitpy.common.system.user import User
 from webkitpy.thirdparty.BeautifulSoup import BeautifulSoup, BeautifulStoneSoup, SoupStrainer
+
+_log = logging.getLogger(__name__)
 
 
 class EditUsersParser(object):
@@ -435,7 +437,7 @@ class Bugzilla(object):
 
     def _fetch_bug_page(self, bug_id):
         bug_url = self.bug_url_for_bug_id(bug_id, xml=True)
-        log("Fetching: %s" % bug_url)
+        _log.info("Fetching: %s" % bug_url)
         return self.browser.open(bug_url)
 
     def fetch_bug_dictionary(self, bug_id):
@@ -472,7 +474,7 @@ class Bugzilla(object):
         self.authenticate()
 
         attachment_url = self.attachment_url_for_id(attachment_id, 'edit')
-        log("Fetching: %s" % attachment_url)
+        _log.info("Fetching: %s" % attachment_url)
         page = self.browser.open(attachment_url)
         return self._parse_bug_id_from_attachment_page(page)
 
@@ -503,7 +505,7 @@ class Bugzilla(object):
             attempts += 1
             username, password = credentials.read_credentials()
 
-            log("Logging in as %s..." % username)
+            _log.info("Logging in as %s..." % username)
             self.browser.open(config_urls.bug_server_url +
                               "index.cgi?GoAheadAndLogIn=1")
             self.browser.select_form(name="login")
@@ -519,7 +521,7 @@ class Bugzilla(object):
                 errorMessage = "Bugzilla login failed: %s" % match.group(1)
                 # raise an exception only if this was the last attempt
                 if attempts < 5:
-                    log(errorMessage)
+                    _log.error(errorMessage)
                 else:
                     raise Exception(errorMessage)
             else:
@@ -532,10 +534,10 @@ class Bugzilla(object):
             user = self.committers.account_by_email(self.username)
             mark_for_commit_queue = True
             if not user:
-                log("Your Bugzilla login is not listed in committers.py. Uploading with cq? instead of cq+")
+                _log.warning("Your Bugzilla login is not listed in committers.py. Uploading with cq? instead of cq+")
                 mark_for_landing = False
             elif not user.can_commit:
-                log("You're not a committer yet or haven't updated committers.py yet. Uploading with cq? instead of cq+")
+                _log.warning("You're not a committer yet or haven't updated committers.py yet. Uploading with cq? instead of cq+")
                 mark_for_landing = False
 
         if mark_for_landing:
@@ -585,14 +587,14 @@ class Bugzilla(object):
 
     def add_attachment_to_bug(self, bug_id, file_or_string, description, filename=None, comment_text=None, mimetype=None):
         self.authenticate()
-        log('Adding attachment "%s" to %s' % (description, self.bug_url_for_bug_id(bug_id)))
+        _log.info('Adding attachment "%s" to %s' % (description, self.bug_url_for_bug_id(bug_id)))
         self.browser.open(self.add_attachment_url(bug_id))
         self.browser.select_form(name="entryform")
         file_object = self._file_object_for_upload(file_or_string)
         filename = filename or self._filename_for_upload(file_object, bug_id)
         self._fill_attachment_form(description, file_object, filename=filename, mimetype=mimetype)
         if comment_text:
-            log(comment_text)
+            _log.info(comment_text)
             self.browser['comment'] = comment_text
         self.browser.submit()
 
@@ -607,7 +609,7 @@ class Bugzilla(object):
                          mark_for_commit_queue=False,
                          mark_for_landing=False):
         self.authenticate()
-        log('Adding patch "%s" to %s' % (description, self.bug_url_for_bug_id(bug_id)))
+        _log.info('Adding patch "%s" to %s' % (description, self.bug_url_for_bug_id(bug_id)))
 
         self.browser.open(self.add_attachment_url(bug_id))
         self.browser.select_form(name="entryform")
@@ -621,7 +623,7 @@ class Bugzilla(object):
                                    is_patch=True,
                                    filename=filename)
         if comment_text:
-            log(comment_text)
+            _log.info(comment_text)
             self.browser['comment'] = comment_text
         self.browser.submit()
 
@@ -658,7 +660,7 @@ class Bugzilla(object):
                    mark_for_commit_queue=False):
         self.authenticate()
 
-        log('Creating bug with title "%s"' % bug_title)
+        _log.info('Creating bug with title "%s"' % bug_title)
         self.browser.open(config_urls.bug_server_url + "enter_bug.cgi?product=WebKit")
         self.browser.select_form(name="Create")
         component_items = self.browser.find_control('component').items
@@ -694,8 +696,8 @@ class Bugzilla(object):
         response = self.browser.submit()
 
         bug_id = self._check_create_bug_response(response.read())
-        log("Bug %s created." % bug_id)
-        log("%sshow_bug.cgi?id=%s" % (config_urls.bug_server_url, bug_id))
+        _log.info("Bug %s created." % bug_id)
+        _log.info("%sshow_bug.cgi?id=%s" % (config_urls.bug_server_url, bug_id))
         return bug_id
 
     def _find_select_element_for_flag(self, flag_name):
@@ -714,7 +716,7 @@ class Bugzilla(object):
         comment_text = "Clearing flags on attachment: %s" % attachment_id
         if additional_comment_text:
             comment_text += "\n\n%s" % additional_comment_text
-        log(comment_text)
+        _log.info(comment_text)
 
         self.browser.open(self.attachment_url_for_id(attachment_id, 'edit'))
         self.browser.select_form(nr=1)
@@ -737,7 +739,7 @@ class Bugzilla(object):
         # FIXME: additional_comment_text seems useless and should be merged into comment-text.
         if additional_comment_text:
             comment_text += "\n\n%s" % additional_comment_text
-        log(comment_text)
+        _log.info(comment_text)
 
         self.browser.open(self.attachment_url_for_id(attachment_id, 'edit'))
         self.browser.select_form(nr=1)
@@ -754,7 +756,7 @@ class Bugzilla(object):
     def obsolete_attachment(self, attachment_id, comment_text=None):
         self.authenticate()
 
-        log("Obsoleting attachment: %s" % attachment_id)
+        _log.info("Obsoleting attachment: %s" % attachment_id)
         self.browser.open(self.attachment_url_for_id(attachment_id, 'edit'))
         self.browser.select_form(nr=1)
         self.browser.find_control('isobsolete').items[0].selected = True
@@ -762,7 +764,7 @@ class Bugzilla(object):
         self._find_select_element_for_flag('review').value = ("X",)
         self._find_select_element_for_flag('commit-queue').value = ("X",)
         if comment_text:
-            log(comment_text)
+            _log.info(comment_text)
             # Bugzilla has two textareas named 'comment', one is somehow
             # hidden.  We want the first.
             self.browser.set_value(comment_text, name='comment', nr=0)
@@ -771,7 +773,7 @@ class Bugzilla(object):
     def add_cc_to_bug(self, bug_id, email_address_list):
         self.authenticate()
 
-        log("Adding %s to the CC list for bug %s" % (email_address_list, bug_id))
+        _log.info("Adding %s to the CC list for bug %s" % (email_address_list, bug_id))
         self.browser.open(self.bug_url_for_bug_id(bug_id))
         self.browser.select_form(name="changeform")
         self.browser["newcc"] = ", ".join(email_address_list)
@@ -780,7 +782,7 @@ class Bugzilla(object):
     def post_comment_to_bug(self, bug_id, comment_text, cc=None):
         self.authenticate()
 
-        log("Adding comment to bug %s" % bug_id)
+        _log.info("Adding comment to bug %s" % bug_id)
         self.browser.open(self.bug_url_for_bug_id(bug_id))
         self.browser.select_form(name="changeform")
         self.browser["comment"] = comment_text
@@ -791,7 +793,7 @@ class Bugzilla(object):
     def close_bug_as_fixed(self, bug_id, comment_text=None):
         self.authenticate()
 
-        log("Closing bug %s as fixed" % bug_id)
+        _log.info("Closing bug %s as fixed" % bug_id)
         self.browser.open(self.bug_url_for_bug_id(bug_id))
         self.browser.select_form(name="changeform")
         if comment_text:
@@ -809,12 +811,12 @@ class Bugzilla(object):
         if not assignee:
             assignee = self.username
 
-        log("Assigning bug %s to %s" % (bug_id, assignee))
+        _log.info("Assigning bug %s to %s" % (bug_id, assignee))
         self.browser.open(self.bug_url_for_bug_id(bug_id))
         self.browser.select_form(name="changeform")
 
         if not self._has_control(self.browser, "assigned_to"):
-            log("""Failed to assign bug to you (can't find assigned_to) control.
+            _log.warning("""Failed to assign bug to you (can't find assigned_to) control.
 Do you have EditBugs privileges at bugs.webkit.org?
 https://bugs.webkit.org/userprefs.cgi?tab=permissions
 
@@ -823,7 +825,7 @@ for someone to add EditBugs to your bugs.webkit.org account.""")
             return
 
         if comment_text:
-            log(comment_text)
+            _log.info(comment_text)
             self.browser["comment"] = comment_text
         self.browser["assigned_to"] = assignee
         self.browser.submit()
@@ -831,10 +833,10 @@ for someone to add EditBugs to your bugs.webkit.org account.""")
     def reopen_bug(self, bug_id, comment_text):
         self.authenticate()
 
-        log("Re-opening bug %s" % bug_id)
+        _log.info("Re-opening bug %s" % bug_id)
         # Bugzilla requires a comment when re-opening a bug, so we know it will
         # never be None.
-        log(comment_text)
+        _log.info(comment_text)
         self.browser.open(self.bug_url_for_bug_id(bug_id))
         self.browser.select_form(name="changeform")
         bug_status = self.browser.find_control("bug_status", type="select")
@@ -851,6 +853,6 @@ for someone to add EditBugs to your bugs.webkit.org account.""")
         else:
             # FIXME: This logic is slightly backwards.  We won't print this
             # message if the bug is already open with state "UNCONFIRMED".
-            log("Did not reopen bug %s, it appears to already be open with status %s." % (bug_id, bug_status.value))
+            _log.info("Did not reopen bug %s, it appears to already be open with status %s." % (bug_id, bug_status.value))
         self.browser['comment'] = comment_text
         self.browser.submit()

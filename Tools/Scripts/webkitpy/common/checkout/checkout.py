@@ -35,7 +35,6 @@ from webkitpy.common.checkout.scm import CommitMessage
 from webkitpy.common.checkout.deps import DEPS
 from webkitpy.common.memoized import memoized
 from webkitpy.common.system.executive import ScriptError
-from webkitpy.common.system.deprecated_logging import log
 
 
 # This class represents the WebKit-specific parts of the checkout (like ChangeLogs).

@@ -26,11 +26,13 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import logging
 import threading
 
 from webkitpy.common.net.irc.ircbot import IRCBot
 from webkitpy.common.thread.threadedmessagequeue import ThreadedMessageQueue
-from webkitpy.common.system.deprecated_logging import log
+
+_log = logging.getLogger(__name__)
 
 
 class _IRCThread(threading.Thread):
@@ -48,7 +50,7 @@ class _IRCThread(threading.Thread):
 
 class IRCProxy(object):
     def __init__(self, irc_delegate, irc_bot=IRCBot):
-        log("Connecting to IRC")
+        _log.info("Connecting to IRC")
         self._message_queue = ThreadedMessageQueue()
         self._child_thread = _IRCThread(self._message_queue, irc_delegate, irc_bot)
         self._child_thread.start()
@@ -57,6 +59,6 @@ class IRCProxy(object):
         self._message_queue.post(message)
 
     def disconnect(self):
-        log("Disconnecting from IRC...")
+        _log.info("Disconnecting from IRC...")
         self._message_queue.stop()
         self._child_thread.join()

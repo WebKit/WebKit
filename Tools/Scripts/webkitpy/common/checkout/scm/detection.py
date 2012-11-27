@@ -27,13 +27,15 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import logging
+
 from webkitpy.common.system.filesystem import FileSystem
 from webkitpy.common.system.executive import Executive
 
-from webkitpy.common.system.deprecated_logging import log
-
 from .svn import SVN
 from .git import Git
+
+_log = logging.getLogger(__name__)
 
 
 class SCMDetector(object):
@@ -55,7 +57,7 @@ class SCMDetector(object):
             script_directory = self._filesystem.dirname(self._filesystem.path_to_module(self.__module__))
             scm_system = self.detect_scm_system(script_directory, patch_directories)
             if scm_system:
-                log("The current directory (%s) is not a WebKit checkout, using %s" % (cwd, scm_system.checkout_root))
+                _log.info("The current directory (%s) is not a WebKit checkout, using %s" % (cwd, scm_system.checkout_root))
             else:
                 raise Exception("FATAL: Failed to determine the SCM system for either %s or %s" % (cwd, script_directory))
         return scm_system

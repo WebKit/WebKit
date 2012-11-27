@@ -123,18 +123,17 @@ Running run-webkit-tests
         self.assert_execute_outputs(ApplyFromBug(), [50000], options=options, expected_logs=expected_logs)
 
     def test_apply_watch_list(self):
-        expected_stderr = """MOCK run_and_throw_if_fail: ['mock-update-webkit'], cwd=/mock-checkout
-MockWatchList: determine_cc_and_messages
-"""
         expected_logs = """Processing 1 patch from 1 bug.
 Updating working directory
+MOCK run_and_throw_if_fail: ['mock-update-webkit'], cwd=/mock-checkout
 Processing patch 10000 from bug 50000.
+MockWatchList: determine_cc_and_messages
 No bug was updated because no id was given.
 Result of watchlist: cc "abarth@webkit.org, eric@webkit.org, levin@chromium.org" messages "Message1.
 
 Message2."
 """
-        self.assert_execute_outputs(ApplyWatchList(), [10000], options=self._default_options(), expected_stderr=expected_stderr, expected_logs=expected_logs, tool=MockTool(log_executive=True))
+        self.assert_execute_outputs(ApplyWatchList(), [10000], options=self._default_options(), expected_logs=expected_logs, tool=MockTool(log_executive=True))
 
     def test_land(self):
         expected_logs = """Building WebKit
@@ -155,30 +154,29 @@ Updating bug 50000
         self.assertEqual(mock_tool.checkout().modified_changelogs.call_count, 1)
 
     def test_land_cowboy(self):
-        expected_stderr = """MOCK run_and_throw_if_fail: ['mock-prepare-ChangeLog', '--email=MOCK email', '--merge-base=None', 'MockFile1'], cwd=/mock-checkout
+        expected_logs = """MOCK run_and_throw_if_fail: ['mock-prepare-ChangeLog', '--email=MOCK email', '--merge-base=None', 'MockFile1'], cwd=/mock-checkout
 MOCK run_and_throw_if_fail: ['mock-check-webkit-style', '--git-commit', 'MOCK git commit', '--diff-files', 'MockFile1', '--filter', '-changelog'], cwd=/mock-checkout
 MOCK run_command: ['ruby', '-I', '/mock-checkout/Websites/bugs.webkit.org/PrettyPatch', '/mock-checkout/Websites/bugs.webkit.org/PrettyPatch/prettify.rb'], cwd=None, input=Patch1
 MOCK: user.open_url: file://...
 Was that diff correct?
+Building WebKit
 MOCK run_and_throw_if_fail: ['mock-build-webkit'], cwd=/mock-checkout, env={'LC_ALL': 'C', 'MOCK_ENVIRON_COPY': '1'}
-MOCK run_and_throw_if_fail: ['mock-test-webkitpy'], cwd=/mock-checkout
-MOCK run_and_throw_if_fail: ['mock-test-webkitperl'], cwd=/mock-checkout
-MOCK run_and_throw_if_fail: ['mock-run-javacriptcore-tests'], cwd=/mock-checkout
-MOCK run_and_throw_if_fail: ['mock-run-webkit-unit-tests'], cwd=/mock-checkout
-MOCK run_and_throw_if_fail: ['mock-run-webkit-tests', '--quiet'], cwd=/mock-checkout
-"""
-        expected_logs = """Building WebKit
 Running Python unit tests
+MOCK run_and_throw_if_fail: ['mock-test-webkitpy'], cwd=/mock-checkout
 Running Perl unit tests
+MOCK run_and_throw_if_fail: ['mock-test-webkitperl'], cwd=/mock-checkout
 Running JavaScriptCore tests
+MOCK run_and_throw_if_fail: ['mock-run-javacriptcore-tests'], cwd=/mock-checkout
 Running WebKit unit tests
+MOCK run_and_throw_if_fail: ['mock-run-webkit-unit-tests'], cwd=/mock-checkout
 Running run-webkit-tests
+MOCK run_and_throw_if_fail: ['mock-run-webkit-tests', '--quiet'], cwd=/mock-checkout
 Committed r49824: <http://trac.webkit.org/changeset/49824>
 Committed r49824: <http://trac.webkit.org/changeset/49824>
 No bug id provided.
 """
         mock_tool = MockTool(log_executive=True)
-        self.assert_execute_outputs(LandCowboy(), [50000], options=self._default_options(), expected_stderr=expected_stderr, tool=mock_tool)
+        self.assert_execute_outputs(LandCowboy(), [50000], options=self._default_options(), expected_logs=expected_logs, tool=mock_tool)
 
     def test_land_red_builders(self):
         expected_logs = """Building WebKit
@@ -195,11 +193,13 @@ Updating bug 50000
         self.assert_execute_outputs(Land(), [50000], options=self._default_options(), expected_logs=expected_logs, tool=mock_tool)
 
     def test_check_style(self):
-        expected_stderr = """MOCK run_and_throw_if_fail: ['mock-update-webkit'], cwd=/mock-checkout
+        expected_logs = """Processing 1 patch from 1 bug.
+Updating working directory
+MOCK run_and_throw_if_fail: ['mock-update-webkit'], cwd=/mock-checkout
+Processing patch 10000 from bug 50000.
 MOCK run_and_throw_if_fail: ['mock-check-webkit-style', '--git-commit', 'MOCK git commit', '--diff-files', 'MockFile1'], cwd=/mock-checkout
 """
-        expected_logs = "Processing 1 patch from 1 bug.\nUpdating working directory\nProcessing patch 10000 from bug 50000.\n"
-        self.assert_execute_outputs(CheckStyle(), [10000], options=self._default_options(), expected_stderr=expected_stderr, expected_logs=expected_logs, tool=MockTool(log_executive=True))
+        self.assert_execute_outputs(CheckStyle(), [10000], options=self._default_options(), expected_logs=expected_logs, tool=MockTool(log_executive=True))
 
     def test_build_attachment(self):
         expected_logs = "Processing 1 patch from 1 bug.\nUpdating working directory\nProcessing patch 10000 from bug 50000.\nBuilding WebKit\n"
@@ -280,7 +280,9 @@ Not closing bug 50000 as attachment 10000 has review=+.  Assuming there are more
         self.assert_execute_outputs(PrepareRollout(), [852, "Reason"], options=self._default_options(), expected_logs=expected_logs)
 
     def test_create_rollout(self):
-        expected_stderr = """MOCK create_bug
+        expected_logs = """Preparing rollout for bug 50000.
+Updating working directory
+MOCK create_bug
 bug_title: REGRESSION(r852): Reason
 bug_description: http://trac.webkit.org/changeset/852 broke the build:
 Reason
@@ -298,12 +300,13 @@ If you would like to land the rollout faster, you can use the following command:
 where ATTACHMENT_ID is the ID of this attachment.
 -- End comment --
 """
-        expected_logs = "Preparing rollout for bug 50000.\nUpdating working directory\n"
-        self.assert_execute_outputs(CreateRollout(), [852, "Reason"], options=self._default_options(), expected_stderr=expected_stderr, expected_logs=expected_logs)
-        self.assert_execute_outputs(CreateRollout(), ["855 852 854", "Reason"], options=self._default_options(), expected_stderr=expected_stderr, expected_logs=expected_logs)
+        self.assert_execute_outputs(CreateRollout(), [852, "Reason"], options=self._default_options(), expected_logs=expected_logs)
+        self.assert_execute_outputs(CreateRollout(), ["855 852 854", "Reason"], options=self._default_options(), expected_logs=expected_logs)
 
     def test_create_rollout_resolved(self):
-        expected_stderr = """MOCK create_bug
+        expected_logs = """Preparing rollout for bug 50004.
+Updating working directory
+MOCK create_bug
 bug_title: REGRESSION(r3001): Reason
 bug_description: http://trac.webkit.org/changeset/3001 broke the build:
 Reason
@@ -322,22 +325,20 @@ If you would like to land the rollout faster, you can use the following command:
 where ATTACHMENT_ID is the ID of this attachment.
 -- End comment --
 """
-        expected_logs = "Preparing rollout for bug 50004.\nUpdating working directory\n"
-        self.assert_execute_outputs(CreateRollout(), [3001, "Reason"], options=self._default_options(), expected_stderr=expected_stderr, expected_logs=expected_logs)
+        self.assert_execute_outputs(CreateRollout(), [3001, "Reason"], options=self._default_options(), expected_logs=expected_logs)
 
     def test_rollout(self):
-        expected_stderr = """MOCK: user.open_url: file://...
+        expected_logs = """Preparing rollout for bug 50000.
+Updating working directory
+MOCK: user.open_url: file://...
 Was that diff correct?
+Building WebKit
+Committed r49824: <http://trac.webkit.org/changeset/49824>
 MOCK reopen_bug 50000 with comment 'Reverted r852 for reason:
 
 Reason
 
 Committed r49824: <http://trac.webkit.org/changeset/49824>'
 """
-        expected_logs = """Preparing rollout for bug 50000.
-Updating working directory
-Building WebKit
-Committed r49824: <http://trac.webkit.org/changeset/49824>
-"""
-        self.assert_execute_outputs(Rollout(), [852, "Reason"], options=self._default_options(), expected_stderr=expected_stderr, expected_logs=expected_logs)
+        self.assert_execute_outputs(Rollout(), [852, "Reason"], options=self._default_options(), expected_logs=expected_logs)
 

@@ -30,13 +30,15 @@
 
 import codecs
 import fileinput # inplace file editing for set_reviewer_in_changelog
+import logging
 import re
 import textwrap
 
 from webkitpy.common.config.committers import CommitterList
 from webkitpy.common.config.committers import Account
 import webkitpy.common.config.urls as config_urls
-from webkitpy.common.system.deprecated_logging import log
+
+_log = logging.getLogger(__name__)
 
 
 # FIXME: parse_bug_id_from_changelog should not be a free function.
@@ -162,7 +164,7 @@ class ChangeLogEntry(object):
     def _parse_entry(self):
         match = re.match(self.date_line_regexp, self._contents, re.MULTILINE)
         if not match:
-            log("WARNING: Creating invalid ChangeLogEntry:\n%s" % self._contents)
+            _log.warning("Creating invalid ChangeLogEntry:\n%s" % self._contents)
 
         # FIXME: group("name") does not seem to be Unicode?  Probably due to self._contents not being unicode.
         self._author_text = match.group("authors") if match else None

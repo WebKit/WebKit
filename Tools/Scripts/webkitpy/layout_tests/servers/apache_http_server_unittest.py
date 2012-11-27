@@ -63,8 +63,8 @@ class TestLayoutTestApacheHttpd(unittest.TestCase):
             server.start()
             server.stop()
         finally:
-            out, err, logs = oc.restore_output()
-        self.assertTrue("StartServers 4" in err)
-        self.assertTrue("MinSpareServers 4" in err)
-        self.assertTrue("MaxSpareServers 4" in err)
+            _, _, logs = oc.restore_output()
+        self.assertTrue("StartServers 4" in logs)
+        self.assertTrue("MinSpareServers 4" in logs)
+        self.assertTrue("MaxSpareServers 4" in logs)
         self.assertTrue(host.filesystem.exists("/mock/output_dir/httpd.conf"))

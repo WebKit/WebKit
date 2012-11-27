@@ -31,10 +31,12 @@
 
 import logging
 import re
+import sys
 
-from webkitpy.common.system.deprecated_logging import error, log
 from webkitpy.common.system.executive import Executive, ScriptError
 from webkitpy.common.system.filesystem import FileSystem
+
+_log = logging.getLogger(__name__)
 
 
 class CheckoutNeedsUpdate(ScriptError):
@@ -94,7 +96,7 @@ class SCM:
         if not force_clean:
             print self.run(self.status_command(), error_handler=Executive.ignore_error, cwd=self.checkout_root)
             raise ScriptError(message="Working directory has modifications, pass --force-clean or --no-clean to continue.")
-        log("Cleaning working directory")
+        _log.info("Cleaning working directory")
         self.clean_working_directory()
 
     def ensure_no_local_commits(self, force):
@@ -104,7 +106,8 @@ class SCM:
         if not len(commits):
             return
         if not force:
-            error("Working directory has local commits, pass --force-clean to continue.")
+            _log.error("Working directory has local commits, pass --force-clean to continue.")
+            sys.exit(1)
         self.discard_local_commits()
 
     def run_status_and_extract_filenames(self, status_command, status_regexp):
@@ -238,7 +241,8 @@ class SCM:
         SCM._subclass_must_implement()
 
     def commit_locally_with_message(self, message):
-        error("Your source control manager does not support local commits.")
+        _log.error("Your source control manager does not support local commits.")
+        sys.exit(1)
 
     def discard_local_commits(self):
         pass

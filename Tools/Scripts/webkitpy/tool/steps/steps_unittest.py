@@ -74,26 +74,26 @@ class StepsTest(unittest.TestCase):
         options.open_bug = True
         return options
 
-    def _assert_step_output_with_bug(self, step, bug_id, expected_stderr, options=None):
+    def _assert_step_output_with_bug(self, step, bug_id, expected_logs, options=None):
         state = {'bug_id': bug_id}
-        OutputCapture().assert_outputs(self, self._run_step, [step, MockTool(), options, state], expected_stderr=expected_stderr)
+        OutputCapture().assert_outputs(self, self._run_step, [step, MockTool(), options, state], expected_logs=expected_logs)
 
-    def _assert_post_diff_output_for_bug(self, step, bug_id, expected_stderr):
-        self._assert_step_output_with_bug(step, bug_id, expected_stderr, self._post_diff_options())
+    def _assert_post_diff_output_for_bug(self, step, bug_id, expected_logs):
+        self._assert_step_output_with_bug(step, bug_id, expected_logs, self._post_diff_options())
 
     def test_post_diff(self):
-        expected_stderr = "MOCK add_patch_to_bug: bug_id=78, description=Patch, mark_for_review=True, mark_for_commit_queue=False, mark_for_landing=False\nMOCK: user.open_url: http://example.com/78\n"
-        self._assert_post_diff_output_for_bug(steps.PostDiff, 78, expected_stderr)
+        expected_logs = "MOCK add_patch_to_bug: bug_id=78, description=Patch, mark_for_review=True, mark_for_commit_queue=False, mark_for_landing=False\nMOCK: user.open_url: http://example.com/78\n"
+        self._assert_post_diff_output_for_bug(steps.PostDiff, 78, expected_logs)
 
     def test_post_diff_for_commit(self):
-        expected_stderr = "MOCK add_patch_to_bug: bug_id=78, description=Patch for landing, mark_for_review=False, mark_for_commit_queue=False, mark_for_landing=True\n"
-        self._assert_post_diff_output_for_bug(steps.PostDiffForCommit, 78, expected_stderr)
+        expected_logs = "MOCK add_patch_to_bug: bug_id=78, description=Patch for landing, mark_for_review=False, mark_for_commit_queue=False, mark_for_landing=True\n"
+        self._assert_post_diff_output_for_bug(steps.PostDiffForCommit, 78, expected_logs)
 
     def test_ensure_bug_is_open_and_assigned(self):
-        expected_stderr = "MOCK reopen_bug 50004 with comment 'Reopening to attach new patch.'\n"
-        self._assert_step_output_with_bug(steps.EnsureBugIsOpenAndAssigned, 50004, expected_stderr)
-        expected_stderr = "MOCK reassign_bug: bug_id=50002, assignee=None\n"
-        self._assert_step_output_with_bug(steps.EnsureBugIsOpenAndAssigned, 50002, expected_stderr)
+        expected_logs = "MOCK reopen_bug 50004 with comment 'Reopening to attach new patch.'\n"
+        self._assert_step_output_with_bug(steps.EnsureBugIsOpenAndAssigned, 50004, expected_logs)
+        expected_logs = "MOCK reassign_bug: bug_id=50002, assignee=None\n"
+        self._assert_step_output_with_bug(steps.EnsureBugIsOpenAndAssigned, 50002, expected_logs)
 
     def test_runtests_args(self):
         mock_options = self._step_options()
@@ -104,14 +104,13 @@ class StepsTest(unittest.TestCase):
         tool = MockTool(log_executive=True)
         tool.port = lambda: mock_port
         step = steps.RunTests(tool, mock_options)
-        expected_stderr = """MOCK run_and_throw_if_fail: ['Tools/Scripts/test-webkitpy'], cwd=/mock-checkout
+        expected_logs = """Running Python unit tests
+MOCK run_and_throw_if_fail: ['Tools/Scripts/test-webkitpy'], cwd=/mock-checkout
+Running Perl unit tests
 MOCK run_and_throw_if_fail: ['Tools/Scripts/test-webkitperl'], cwd=/mock-checkout
+Running JavaScriptCore tests
 MOCK run_and_throw_if_fail: ['Tools/Scripts/run-javascriptcore-tests'], cwd=/mock-checkout
+Running run-webkit-tests
 MOCK run_and_throw_if_fail: ['Tools/Scripts/run-webkit-tests', '--quiet'], cwd=/mock-checkout
 """
-        expected_logs = """Running Python unit tests
-Running Perl unit tests
-Running JavaScriptCore tests
-Running run-webkit-tests
-"""
-        OutputCapture().assert_outputs(self, step.run, [{}], expected_stderr=expected_stderr, expected_logs=expected_logs)
+        OutputCapture().assert_outputs(self, step.run, [{}], expected_logs=expected_logs)

@@ -26,12 +26,14 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from webkitpy.common.system.deprecated_logging import log
+import logging
+
+_log = logging.getLogger(__name__)
 
 
 class MockIRC(object):
     def post(self, message):
-        log("MOCK: irc.post: %s" % message)
+        _log.info("MOCK: irc.post: %s" % message)
 
     def disconnect(self):
-        log("MOCK: irc.disconnect")
+        _log.info("MOCK: irc.disconnect")

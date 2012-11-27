@@ -64,9 +64,9 @@ class ChromiumWinTest(chromium_port_testcase.ChromiumPortTestCase):
     def test_setup_environ_for_server_register_cygwin(self):
         port = self.make_port(options=MockOptions(register_cygwin=True, results_directory='/'))
         port._executive = MockExecutive(should_log=True)
-        expected_stderr = "MOCK run_command: ['/mock-checkout/Source/WebKit/chromium/third_party/cygwin/setup_mount.bat'], cwd=None\n"
+        expected_logs = "MOCK run_command: ['/mock-checkout/Source/WebKit/chromium/third_party/cygwin/setup_mount.bat'], cwd=None\n"
         output = outputcapture.OutputCapture()
-        output.assert_outputs(self, port.setup_environ_for_server, expected_stderr=expected_stderr)
+        output.assert_outputs(self, port.setup_environ_for_server, expected_logs=expected_logs)
 
     def assert_name(self, port_name, os_version_string, expected):
         port = self.make_port(port_name=port_name, os_version=os_version_string)

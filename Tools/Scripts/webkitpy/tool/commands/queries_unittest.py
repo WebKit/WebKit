@@ -65,14 +65,13 @@ class MockPortFactory(object):
 
 class QueryCommandsTest(CommandsTest):
     def test_bugs_to_commit(self):
-        expected_stderr = "Warning, attachment 10001 on bug 50000 has invalid committer (non-committer@example.com)\n"
-        self.assert_execute_outputs(BugsToCommit(), None, "50000\n50003\n", expected_stderr=expected_stderr)
+        expected_logs = "Warning, attachment 10001 on bug 50000 has invalid committer (non-committer@example.com)\n"
+        self.assert_execute_outputs(BugsToCommit(), None, "50000\n50003\n", expected_logs=expected_logs)
 
     def test_patches_in_commit_queue(self):
         expected_stdout = "http://example.com/10000\nhttp://example.com/10002\n"
-        expected_stderr = "Warning, attachment 10001 on bug 50000 has invalid committer (non-committer@example.com)\n"
-        expected_logs = "Patches in commit queue:\n"
-        self.assert_execute_outputs(PatchesInCommitQueue(), None, expected_stdout, expected_stderr=expected_stderr, expected_logs=expected_logs)
+        expected_logs = "Warning, attachment 10001 on bug 50000 has invalid committer (non-committer@example.com)\nPatches in commit queue:\n"
+        self.assert_execute_outputs(PatchesInCommitQueue(), None, expected_stdout, expected_logs=expected_logs)
 
     def test_patches_to_commit_queue(self):
         expected_stdout = "http://example.com/10003&action=edit\n"
