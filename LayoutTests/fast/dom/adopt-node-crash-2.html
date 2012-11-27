@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<div>Tests for a crash due to adopting a DOM node during DOMFocusOut event. Test passes if it doesn't crash.</div>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+</script>
+<div id="div1"></div>
+<div id="div2">
+  <applet>
+    <iframe srcdoc="<iframe srcdoc=''>">
+    </iframe>
+  </applet>
+  <header id="header1">
+    <keygen autofocus>
+  </header>
+</div>
+<script>
+function doit()
+{
+    div2.addEventListener("DOMFocusOut", function () { document.implementation.createDocument("", "", null).adoptNode(div2); }, false);
+    div1.outerHTML = header1.outerHTML;
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+document.addEventListener("DOMContentLoaded", setTimeout("doit()", 1), false);
+</script>
+</html>

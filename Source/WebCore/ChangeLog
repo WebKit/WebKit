@@ -1,3 +1,18 @@
+2012-11-27  Tom Sepez  <tsepez@chromium.org>
+
+        Regression(r129406): Fix the scope of the WidgetHierarchyUpdateSuspensionScope in Element::Attach().
+        https://bugs.webkit.org/show_bug.cgi?id=100803
+
+        Reviewed by Abhishek Arya.
+
+        Ensures that the suspension scope has gone out of scope before calling into
+        resumePostAttachCallbacks().
+        
+        Test: fast/dom/adopt-node-crash-2.html
+
+        * dom/Element.cpp:
+        (WebCore::Element::attach):
+
 2012-11-27  Tony Chang  <tony@chromium.org>
 
         Remove hidden limiter div in the input slider shadow DOM

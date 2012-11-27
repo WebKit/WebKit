@@ -1198,34 +1198,34 @@ void Element::createRendererIfNeeded()
 void Element::attach()
 {
     suspendPostAttachCallbacks();
-    WidgetHierarchyUpdatesSuspensionScope suspendWidgetHierarchyUpdates;
+    {
+        WidgetHierarchyUpdatesSuspensionScope suspendWidgetHierarchyUpdates;
+        createRendererIfNeeded();
 
-    createRendererIfNeeded();
+        StyleResolverParentPusher parentPusher(this);
 
-    StyleResolverParentPusher parentPusher(this);
+        if (parentElement() && parentElement()->isInCanvasSubtree())
+            setIsInCanvasSubtree(true);
 
-    if (parentElement() && parentElement()->isInCanvasSubtree())
-        setIsInCanvasSubtree(true);
-
-    // When a shadow root exists, it does the work of attaching the children.
-    if (ElementShadow* shadow = this->shadow()) {
-        parentPusher.push();
-        shadow->attach();
-    } else {
-        if (firstChild())
+        // When a shadow root exists, it does the work of attaching the children.
+        if (ElementShadow* shadow = this->shadow()) {
             parentPusher.push();
-    }
-    ContainerNode::attach();
+            shadow->attach();
+        } else {
+            if (firstChild())
+                parentPusher.push();
+        }
+        ContainerNode::attach();
 
-    if (hasRareData()) {   
-        ElementRareData* data = elementRareData();
-        if (data->needsFocusAppearanceUpdateSoonAfterAttach()) {
-            if (isFocusable() && document()->focusedNode() == this)
-                document()->updateFocusAppearanceSoon(false /* don't restore selection */);
-            data->setNeedsFocusAppearanceUpdateSoonAfterAttach(false);
+        if (hasRareData()) {   
+            ElementRareData* data = elementRareData();
+            if (data->needsFocusAppearanceUpdateSoonAfterAttach()) {
+                if (isFocusable() && document()->focusedNode() == this)
+                    document()->updateFocusAppearanceSoon(false /* don't restore selection */);
+                data->setNeedsFocusAppearanceUpdateSoonAfterAttach(false);
+            }
         }
     }
-
     resumePostAttachCallbacks();
 }
 
