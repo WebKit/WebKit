@@ -107,7 +107,6 @@ void CoordinatedGraphicsLayer::didChangeGeometry()
 
 CoordinatedGraphicsLayer::CoordinatedGraphicsLayer(GraphicsLayerClient* client)
     : GraphicsLayer(client)
-    , m_maskTarget(0)
     , m_inUpdateMode(false)
     , m_shouldUpdateVisibleRect(true)
     , m_shouldSyncLayerState(true)
@@ -394,7 +393,6 @@ void CoordinatedGraphicsLayer::setMaskLayer(GraphicsLayer* layer)
     layer->setSize(size());
     layer->setContentsVisible(contentsAreVisible());
     CoordinatedGraphicsLayer* CoordinatedGraphicsLayer = toCoordinatedGraphicsLayer(layer);
-    CoordinatedGraphicsLayer->setMaskTarget(this);
     CoordinatedGraphicsLayer->didChangeLayerState();
     didChangeLayerState();
 

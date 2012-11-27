@@ -1,3 +1,18 @@
+2012-11-27  Huang Dongsung  <luxtella@company100.net>
+
+        Coordinated Graphics: Remove the maskTarget member of CoordinatedGraphicsLayer.
+        https://bugs.webkit.org/show_bug.cgi?id=103297
+
+        Reviewed by Noam Rosenthal.
+
+        Remove the maskTarget member of CoordinatedGraphicsLayer, which is not used.
+
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedGraphicsLayer.cpp:
+        (WebCore::CoordinatedGraphicsLayer::CoordinatedGraphicsLayer):
+        (WebCore::CoordinatedGraphicsLayer::setMaskLayer):
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedGraphicsLayer.h:
+        (CoordinatedGraphicsLayer):
+
 2012-11-26  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r135822.

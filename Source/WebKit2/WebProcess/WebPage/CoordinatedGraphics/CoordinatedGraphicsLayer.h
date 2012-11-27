@@ -165,7 +165,6 @@ public:
 
 private:
     bool fixedToViewport() const { return m_fixedToViewport; }
-    void setMaskTarget(GraphicsLayer* layer) { m_maskTarget = layer; }
 
     void didChangeLayerState();
     void didChangeAnimations();
@@ -207,7 +206,6 @@ private:
 
     WebKit::WebLayerID m_id;
     WebKit::WebLayerInfo m_layerInfo;
-    GraphicsLayer* m_maskTarget;
     GraphicsLayerTransform m_layerTransform;
     TransformationMatrix m_cachedInverseTransform;
     bool m_inUpdateMode : 1;
