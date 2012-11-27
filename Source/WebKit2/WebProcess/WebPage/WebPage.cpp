@@ -325,6 +325,7 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
 #endif
 
     m_page->setCanStartMedia(false);
+    m_mayStartMediaWhenInWindow = parameters.mayStartMediaWhenInWindow;
 
     m_pageGroup = WebProcess::shared().webPageGroup(parameters.pageGroupData);
     m_page->setGroupName(m_pageGroup->identifier());
@@ -1893,7 +1894,9 @@ void WebPage::setIsInWindow(bool isInWindow)
         // Defer the call to Page::setCanStartMedia() since it ends up sending a syncrhonous messages to the UI process
         // in order to get plug-in connections, and the UI process will be waiting for the Web process to update the backing
         // store after moving the view into a window, until it times out and paints white. See <rdar://problem/9242771>.
-        m_setCanStartMediaTimer.startOneShot(0);
+        if (m_mayStartMediaWhenInWindow)
+            m_setCanStartMediaTimer.startOneShot(0);
+
         m_page->didMoveOnscreen();
     }
 }
@@ -3316,6 +3319,16 @@ void WebPage::drawPagesForPrinting(uint64_t frameID, const PrintInfo& printInfo,
 void WebPage::setMediaVolume(float volume)
 {
     m_page->setMediaVolume(volume);
+}
+
+void WebPage::setMayStartMediaWhenInWindow(bool mayStartMedia)
+{
+    if (mayStartMedia == m_mayStartMediaWhenInWindow)
+        return;
+
+    m_mayStartMediaWhenInWindow = mayStartMedia;
+    if (m_mayStartMediaWhenInWindow && m_page->isOnscreen())
+        m_setCanStartMediaTimer.startOneShot(0);
 }
 
 void WebPage::runModal()

@@ -57,6 +57,7 @@ void WebPageCreationParameters::encode(CoreIPC::ArgumentEncoder& encoder) const
     encoder << canRunModal;
     encoder << deviceScaleFactor;
     encoder << mediaVolume;
+    encoder << mayStartMediaWhenInWindow;
 
 #if PLATFORM(MAC)
     encoder << isSmartInsertDeleteEnabled;
@@ -118,6 +119,8 @@ bool WebPageCreationParameters::decode(CoreIPC::ArgumentDecoder* decoder, WebPag
     if (!decoder->decode(parameters.deviceScaleFactor))
         return false;
     if (!decoder->decode(parameters.mediaVolume))
+        return false;
+    if (!decoder->decode(parameters.mayStartMediaWhenInWindow))
         return false;
 
 #if PLATFORM(MAC)

@@ -736,6 +736,7 @@ public:
     void printMainFrame();
     
     void setMediaVolume(float);
+    void setMayStartMediaWhenInWindow(bool);
 
     // WebPopupMenuProxy::Client
     virtual NativeWebMouseEvent* currentlyProcessedMouseDownEvent();
@@ -1238,6 +1239,7 @@ private:
     bool m_suppressVisibilityUpdates;
 
     float m_mediaVolume;
+    bool m_mayStartMediaWhenInWindow;
 
 #if PLATFORM(QT)
     WTF::HashSet<RefPtr<QtRefCountedNetworkRequestData> > m_applicationSchemeRequests;
