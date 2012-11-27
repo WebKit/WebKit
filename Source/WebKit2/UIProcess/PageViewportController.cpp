@@ -195,8 +195,6 @@ void PageViewportController::didChangeViewportSize(const FloatSize& newSize)
     // Let the WebProcess know about the new viewport size, so that
     // it can resize the content accordingly.
     m_webPageProxy->setViewportSize(roundedIntSize(newSize));
-
-    syncVisibleContents();
 }
 
 void PageViewportController::didChangeContentsVisibility(const FloatPoint& viewportPos, float viewportScale, const FloatPoint& trajectoryVector)
@@ -236,6 +234,8 @@ void PageViewportController::didChangeViewportAttributes(const WebCore::Viewport
 
     if (updateMinimumScaleToFit())
         m_client->didChangeViewportAttributes();
+
+    syncVisibleContents();
 }
 
 WebCore::FloatSize PageViewportController::viewportSizeInContentsCoordinates() const

@@ -1,3 +1,17 @@
+2012-11-27  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [EFL][Qt][WK2] Tiles not always painted
+        https://bugs.webkit.org/show_bug.cgi?id=103271
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        The problem turned up because visible content was synchromized before the new fixed
+        layout size had been applied in the web process.
+
+        * UIProcess/PageViewportController.cpp:
+        (WebKit::PageViewportController::didChangeViewportSize):
+        (WebKit::PageViewportController::didChangeViewportAttributes):
+
 2012-11-27  Yael Aharon  <yael.aharon@intel.com>
 
         [EFL] Graphics layer edges are sometimes very pixelated
