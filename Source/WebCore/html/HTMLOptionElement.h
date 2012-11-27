@@ -92,8 +92,6 @@ private:
 
     String collectOptionInnerText() const;
 
-    String m_value;
-    String m_label;
     bool m_disabled;
     bool m_isSelected;
     RefPtr<RenderStyle> m_style;

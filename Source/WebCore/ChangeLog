@@ -1,3 +1,16 @@
+2012-11-26  Andreas Kling  <akling@apple.com>
+
+        HTMLOptionElement: Remove two unused members.
+        <http://webkit.org/b/103337>
+
+        Reviewed by Kent Tamura.
+
+        Remove two unused members from HTMLOptionElement, m_value and m_label.
+        40kB progression on Membuster3.
+
+        * html/HTMLOptionElement.h:
+        (HTMLOptionElement):
+
 2012-11-26  Stephen White  <senorblanco@chromium.org>
 
         [Chromium] Shared graphics context should only pushGroupMarker() once
