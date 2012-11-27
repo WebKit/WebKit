@@ -1,3 +1,22 @@
+2012-11-27  Dan Carney  <dcarney@google.com>
+
+        [V8] add contextForWorld helper function to ScriptController
+        https://bugs.webkit.org/show_bug.cgi?id=103376
+
+        Reviewed by Kentaro Hara.
+
+        Reducing some commonly occuring code with an inline function.
+
+        No new tests. No change in functionality.
+
+        * bindings/v8/ScriptController.cpp:
+        (WebCore::ScriptController::contextForWorld):
+        (WebCore):
+        (WebCore::ScriptController::currentWorldContext):
+        (WebCore::ScriptController::mainWorldContext):
+        * bindings/v8/ScriptController.h:
+        (ScriptController):
+
 2012-11-26  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         [Qt] Implement the mimetype icon methods
