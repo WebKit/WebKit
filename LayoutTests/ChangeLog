@@ -1,3 +1,20 @@
+2012-11-27  Istiaque Ahmed  <lazyboy@chromium.org>
+
+        freeV8NPObject: Skip trying to remove object from per context data's ObjectMap if the object does not exist in the map.
+        https://bugs.webkit.org/show_bug.cgi?id=103356
+
+        Reviewed by Adam Barth.
+
+        Before introducing per context data, it used to be the case that we would ignore removing v8 object
+        from context data's map if we couldn't find it. With perContextData change, this turned into an ASSERT
+        instead and we had crash reports.
+        Related crbug.com/154462.
+
+        * platform/chromium/plugins/release-frame-content-window-expected.txt: Added.
+        * platform/chromium/plugins/release-frame-content-window.html: Added.
+        * platform/chromium/plugins/resources/empty.html: Added.
+        * platform/chromium/plugins/resources/empty2.html: Added.
+
 2012-11-27  Justin Novosad  <junov@google.com>
 
         Skipping fast/backgrounds/background-opaque-images-over-color.html on mac

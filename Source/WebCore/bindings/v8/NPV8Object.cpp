@@ -80,16 +80,17 @@ static void freeV8NPObject(NPObject* npObject)
         int v8ObjectHash = v8NpObject->v8Object->GetIdentityHash();
         ASSERT(v8ObjectHash);
         V8NPObjectMap::iterator iter = v8NPObjectMap->find(v8ObjectHash);
-        ASSERT(iter != v8NPObjectMap->end());
-        V8NPObjectVector& objects = iter->value;
-        for (size_t index = 0; index < objects.size(); ++index) {
-            if (objects.at(index) == v8NpObject) {
-                objects.remove(index);
-                break;
+        if (iter != v8NPObjectMap->end()) {
+            V8NPObjectVector& objects = iter->value;
+            for (size_t index = 0; index < objects.size(); ++index) {
+                if (objects.at(index) == v8NpObject) {
+                    objects.remove(index);
+                    break;
+                }
             }
+            if (objects.isEmpty())
+                v8NPObjectMap->remove(v8ObjectHash);
         }
-        if (objects.isEmpty())
-            v8NPObjectMap->remove(v8ObjectHash);
     }
     v8NpObject->v8Object.Dispose();
     v8NpObject->v8Object.Clear();
