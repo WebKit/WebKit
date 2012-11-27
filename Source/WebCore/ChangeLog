@@ -1,3 +1,115 @@
+2012-11-27  Alpha Lam  <hclam@chromium.org>
+
+        [chromium] Implement full-featured image cache
+        https://bugs.webkit.org/show_bug.cgi?id=99784
+
+        Reviewed by Stephen White.
+
+        Implement a thread-safe image cache to be used with deferred image
+        decoding. Image cache can now be accessed on any thread.
+
+        The patch implements the following logic:
+        1. Mutex to protect all cache operations.
+        2. Cache indexing using key (ImageFrameGenerator*, SkISize scaledSize)
+        3. Cache lookup.
+        4. Cache insertion.
+        5. Generation of cache entry by scaling full size image.
+        6. Generation of cache entries by decoding and scaling.
+
+        Classes involved:
+
+        ImageDecodingStore
+
+        Responsible for owning cache entries and indexing. Pruning and memory
+        management will be added later.
+
+        ImageFrameGenerator
+
+        Responsible for generating new cache enties and insert them into
+        ImageDecodingStore.
+
+        LazyDecodingPixelRef
+
+        Responsible for cache lookup and lazy generation of cache entries
+        using ImageFrameGenerator. There is a mutex to protect concurrent
+        lock operations.
+
+        These items are not implemented in this patch:
+        1. Cache pruning.
+        2. Setting cache memory limit.
+        3. Cache deletion.
+        4. Caching incomplete images and ImageDecoder.
+
+        Unit tests added in ImageFrameGeneratorTest.cpp.
+        Layout tests are under platform/chromium/virtual/fast/images.
+
+        * platform/graphics/chromium/DeferredImageDecoder.cpp:
+        (WebCore::DeferredImageDecoder::~DeferredImageDecoder):
+        (WebCore::DeferredImageDecoder::createResizedLazyDecodingBitmap):
+        (WebCore::DeferredImageDecoder::setEnabled):
+        (WebCore):
+        (WebCore::DeferredImageDecoder::frameBufferAtIndex):
+        (WebCore::DeferredImageDecoder::createLazyDecodingBitmap):
+        * platform/graphics/chromium/DeferredImageDecoder.h:
+        (DeferredImageDecoder):
+        * platform/graphics/chromium/ImageDecodingStore.cpp:
+        (WebCore::ImageDecodingStore::instance):
+        (WebCore::ImageDecodingStore::initializeOnce):
+        (WebCore::ImageDecodingStore::shutdown):
+        (WebCore::ImageDecodingStore::lockCompleteCache):
+        Lookup complete cache entry using hash key, increment use count.
+        (WebCore::ImageDecodingStore::lockIncompleteCache): TODO.
+        (WebCore::ImageDecodingStore::unlockCache):
+        Lookup cache entry using hash key, decrement use count.
+        (WebCore):
+        (WebCore::ImageDecodingStore::insertAndLockCache):
+        Insert new cache entry and increment use count.
+        (WebCore::ImageDecodingStore::prune): TODO.
+        * platform/graphics/chromium/ImageDecodingStore.h:
+        (WebCore):
+        (ImageDecodingStore):
+        (WebCore::ImageDecodingStore::CacheEntry::create):
+        (WebCore::ImageDecodingStore::CacheEntry::createAndUse):
+        (CacheEntry):
+        (WebCore::ImageDecodingStore::CacheEntry::CacheEntry):
+        (WebCore::ImageDecodingStore::CacheEntry::~CacheEntry):
+        * platform/graphics/chromium/ImageFrameGenerator.cpp:
+        (WebCore::ImageFrameGenerator::ImageFrameGenerator):
+        (WebCore::ImageFrameGenerator::setData):
+        (WebCore::ImageFrameGenerator::decodeAndScale):
+        Method for creating new cache entries. This is protected by a mutex
+        to prevent concurrent operations. Which means only one thread can
+        generate new cache entries for a set of encoded data.
+        (WebCore):
+        (WebCore::ImageFrameGenerator::tryToLockCache):
+        Tries to lookup a cache entry.
+        (WebCore::ImageFrameGenerator::tryToScale):
+        Tries to lookup a full size cache entry and generate a scaled version.
+        (WebCore::ImageFrameGenerator::tryToDecodeAndScale):
+        Tries to decode and scale.
+        * platform/graphics/chromium/ImageFrameGenerator.h:
+        (WebCore):
+        (ImageDecoderFactory):
+        (WebCore::ImageFrameGenerator::create):
+        (ImageFrameGenerator):
+        (WebCore::ImageFrameGenerator::setImageDecoderFactoryForTesting):
+        * platform/graphics/chromium/LazyDecodingPixelRef.cpp:
+        (WebCore::LazyDecodingPixelRef::LazyDecodingPixelRef):
+        (WebCore::LazyDecodingPixelRef::onLockPixels):
+        (WebCore::LazyDecodingPixelRef::onUnlockPixels):
+        * platform/graphics/chromium/LazyDecodingPixelRef.h:
+        (WebCore):
+        (LazyDecodingPixelRef):
+        * platform/graphics/chromium/ScaledImageFragment.cpp:
+        (WebCore::ScaledImageFragment::ScaledImageFragment):
+        * platform/graphics/chromium/ScaledImageFragment.h:
+        (WebCore):
+        (WebCore::ScaledImageFragment::create):
+        (ScaledImageFragment):
+        (WebCore::ScaledImageFragment::scaledSize):
+        * platform/graphics/chromium/SkSizeHash.h: Added.
+        (WTF):
+
 2012-11-27  Mike West  <mkwst@chromium.org>
 
         Expanding variable names in ConsoleMessage.

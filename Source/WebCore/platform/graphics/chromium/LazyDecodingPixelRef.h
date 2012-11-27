@@ -38,6 +38,7 @@
 namespace WebCore {
 
 class ImageFrameGenerator;
+class ScaledImageFragment;
 
 class LazyDecodingPixelRef : public SkPixelRef {
 public:
@@ -61,7 +62,7 @@ private:
     SkISize m_scaledSize;
     SkIRect m_scaledSubset;
 
-    SkBitmap m_lockedBitmap;
+    const ScaledImageFragment* m_lockedCachedImage;
     Mutex m_mutex;
 };
 

@@ -1,3 +1,57 @@
+2012-11-27  Alpha Lam  <hclam@chromium.org>
+
+        [chromium] Implement full-featured image cache
+        https://bugs.webkit.org/show_bug.cgi?id=99784
+
+        Reviewed by Stephen White.
+
+        Added ImageFrameGeneratorTest to test cache logic and generation
+        of new cache entries.
+
+        ImageFrameGeneratorTest.cacheHit
+        Test that a complete cached entry is reused.
+
+        ImageFrameGeneratorTest.cacheMissWithScale
+        Cache miss for a scaled image but cache hit on a full size image.
+        Scaled image is created from cached full size image.
+
+        ImageFrameGeneratorTest.cacheMissWithDecodeAndScale
+        Cache miss for both scaled image and full size image.
+
+        ImageFrameGeneratorTest.cacheMissWithIncompleteDecode
+        Test the logic for handling incomplete cache objects.
+
+        * WebKit.gypi:
+        * src/WebKit.cpp:
+        (WebKit::initializeWithoutV8):
+        * src/WebSettingsImpl.cpp:
+        (WebKit::WebSettingsImpl::setDeferredImageDecodingEnabled):
+        * tests/DeferredImageDecoderTest.cpp:
+        (WebCore::DeferredImageDecoderTest::SetUp):
+        (WebCore::DeferredImageDecoderTest::decoderBeingDestroyed):
+        (WebCore::DeferredImageDecoderTest::frameBufferRequested):
+        (DeferredImageDecoderTest):
+        (WebCore::DeferredImageDecoderTest::frameStatus):
+        * tests/ImageFrameGeneratorTest.cpp: Added.
+        (WebCore):
+        (WebCore::fullSize):
+        (WebCore::scaledSize):
+        (MockImageDecoderFactory):
+        (WebCore::MockImageDecoderFactory::create):
+        (WebCore::MockImageDecoderFactory::MockImageDecoderFactory):
+        (ImageFrameGeneratorTest):
+        (WebCore::ImageFrameGeneratorTest::SetUp):
+        (WebCore::ImageFrameGeneratorTest::TearDown):
+        (WebCore::ImageFrameGeneratorTest::decoderBeingDestroyed):
+        (WebCore::ImageFrameGeneratorTest::frameBufferRequested):
+        (WebCore::ImageFrameGeneratorTest::frameStatus):
+        (WebCore::ImageFrameGeneratorTest::createCompleteImage):
+        (WebCore::ImageFrameGeneratorTest::setFrameStatus):
+        (WebCore::TEST_F):
+        * tests/MockImageDecoder.h:
+        (MockImageDecoderClient):
+        (WebCore::MockImageDecoder::frameBufferAtIndex):
+
 2012-11-27  David Grogan  <dgrogan@chromium.org>
 
         IndexedDB: Remove IDBDatabase.setVersion API

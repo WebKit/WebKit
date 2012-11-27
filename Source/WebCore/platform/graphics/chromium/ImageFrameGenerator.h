@@ -38,26 +38,49 @@
 
 namespace WebCore {
 
+class ImageDecoder;
+class ScaledImageFragment;
 class SharedBuffer;
+
+class ImageDecoderFactory {
+public:
+    virtual ~ImageDecoderFactory() { }
+    virtual PassOwnPtr<ImageDecoder> create() = 0;
+};
 
 class ImageFrameGenerator : public ThreadSafeRefCounted<ImageFrameGenerator> {
 public:
-    static PassRefPtr<ImageFrameGenerator> create(PassRefPtr<SharedBuffer> data, bool allDataReceived)
+    static PassRefPtr<ImageFrameGenerator> create(const SkISize& fullSize, PassRefPtr<SharedBuffer> data, bool allDataReceived)
     {
-        return adoptRef(new ImageFrameGenerator(data, allDataReceived));
+        return adoptRef(new ImageFrameGenerator(fullSize, data, allDataReceived));
     }
 
-    ImageFrameGenerator(PassRefPtr<SharedBuffer>, bool allDataReceived);
+    ImageFrameGenerator(const SkISize& fullSize, PassRefPtr<SharedBuffer>, bool allDataReceived);
     ~ImageFrameGenerator();
 
-    SkBitmap decodeAndScale(const SkISize& scaledSize, const SkIRect& scaledSubset);
+    const ScaledImageFragment* decodeAndScale(const SkISize& scaledSize);
 
     void setData(PassRefPtr<SharedBuffer>, bool allDataReceived);
 
+    void setImageDecoderFactoryForTesting(PassOwnPtr<ImageDecoderFactory> factory) { m_imageDecoderFactory = factory; }
+
 private:
+    // These methods are called while m_decodeMutex is locked.
+    const ScaledImageFragment* tryToLockCache(const SkISize& scaledSize);
+    const ScaledImageFragment* tryToScale(const ScaledImageFragment* fullSizeImage, const SkISize& scaledSize);
+    const ScaledImageFragment* tryToDecodeAndScale(const SkISize& scaledSize);
+
+    SkISize m_fullSize;
     RefPtr<SharedBuffer> m_data;
     bool m_allDataReceived;
-    Mutex m_mutex;
+
+    OwnPtr<ImageDecoderFactory> m_imageDecoderFactory;
+
+    // Prevents multiple decode operations on the same data.
+    Mutex m_decodeMutex;
+
+    // Prevents concurrent access to m_data.
+    Mutex m_dataMutex;
 };
 
 } // namespace WebCore

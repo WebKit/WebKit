@@ -80,6 +80,7 @@
             'tests/IDBKeyPathTest.cpp',
             'tests/IDBLevelDBCodingTest.cpp',
             'tests/IDBRequestTest.cpp',
+            'tests/ImageFrameGeneratorTest.cpp',
             'tests/ImageLayerChromiumTest.cpp',
             'tests/MockImageDecoder.h',
             'tests/KeyboardTest.cpp',

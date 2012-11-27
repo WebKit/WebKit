@@ -133,6 +133,7 @@ void initializeWithoutV8(WebKitPlatformSupport* webKitPlatformSupport)
     ASSERT(!s_webKitPlatformSupport);
     s_webKitPlatformSupport = webKitPlatformSupport;
     Platform::initialize(s_webKitPlatformSupport);
+    WebCore::ImageDecodingStore::initializeOnce();
 
     WTF::initializeThreading();
     WTF::initializeMainThread();

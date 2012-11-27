@@ -73,7 +73,8 @@ class DeferredImageDecoderTest : public ::testing::Test, public MockImageDecoder
 public:
     virtual void SetUp()
     {
-        ImageDecodingStore::initializeOnMainThread();
+        ImageDecodingStore::initializeOnce();
+        DeferredImageDecoder::setEnabled(true);
         m_data = SharedBuffer::create(whitePNG, sizeof(whitePNG));
         m_actualDecoder = new MockImageDecoder(this);
         m_actualDecoder->setSize(1, 1);
@@ -90,8 +91,17 @@ public:
 
     virtual void decoderBeingDestroyed()
     {
-        m_frameBufferRequestCount = m_actualDecoder->frameBufferRequestCount();
         m_actualDecoder = 0;
+    }
+
+    virtual void frameBufferRequested()
+    {
+        ++m_frameBufferRequestCount;
+    }
+
+    virtual ImageFrame::FrameStatus frameStatus()
+    {
+        return ImageFrame::FrameComplete;
     }
 
 protected:
