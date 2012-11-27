@@ -1,5 +1,28 @@
 2012-11-27  Tim Horton  <timothy_horton@apple.com>
 
+        PDFPlugin: Page scale factor should affect subframe PDFs
+        https://bugs.webkit.org/show_bug.cgi?id=103291
+        <rdar://problem/12555249>
+
+        Reviewed by Darin Adler.
+
+        For subframe PDFs, hand PDFKit the pageScaleFactor for the parent page
+        so it can scale its drawing appropriately.
+
+        * WebProcess/Plugins/PDF/PDFPlugin.h: Add updatePageAndDeviceScaleFactors.
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::PDFPlugin::pdfDocumentDidLoad): Call updatePageAndDeviceScaleFactors
+        instead of manually updating PDFLayerController's device scale factor.
+        (WebKit::PDFPlugin::updatePageAndDeviceScaleFactors): Hand PDFLayerController
+        the "underlying" (non-zoom) content scale, which is the product of the
+        device scale and the page scale.
+        (WebKit::PDFPlugin::contentsScaleFactorChanged): Use updatePageAndDeviceScaleFactors.
+        (WebKit::PDFPlugin::geometryDidChange): Use updatePageAndDeviceScaleFactors to keep
+        PDFLayerController's notion of the page scale up to date when the plugin's
+        geometry changes.
+
+2012-11-27  Tim Horton  <timothy_horton@apple.com>
+
         PDFPlugin: Scroll bars do not grow on hover
         https://bugs.webkit.org/show_bug.cgi?id=103382
         <rdar://problem/12555262>

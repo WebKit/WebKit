@@ -303,7 +303,7 @@ void PDFPlugin::pdfDocumentDidLoad()
     [m_pdfLayerController.get() setFrameSize:size()];
     m_pdfLayerController.get().document = document.get();
 
-    [m_pdfLayerController.get() setDeviceScaleFactor:controller()->contentsScaleFactor()];
+    updatePageAndDeviceScaleFactors();
     
     if (handlesPageScaleFactor())
         pluginView()->setPageScaleFactor([m_pdfLayerController.get() contentScaleFactor], IntPoint());
@@ -316,9 +316,18 @@ void PDFPlugin::pdfDocumentDidLoad()
     runScriptsInPDFDocument();
 }
 
-void PDFPlugin::contentsScaleFactorChanged(float contentsScaleFactor)
+void PDFPlugin::updatePageAndDeviceScaleFactors()
 {
-    [m_pdfLayerController.get() setDeviceScaleFactor:contentsScaleFactor];
+    double newScaleFactor = controller()->contentsScaleFactor();
+    if (!handlesPageScaleFactor())
+        newScaleFactor *= webFrame()->page()->pageScaleFactor();
+
+    [m_pdfLayerController.get() setDeviceScaleFactor:newScaleFactor];
+}
+
+void PDFPlugin::contentsScaleFactorChanged(float)
+{
+    updatePageAndDeviceScaleFactors();
 }
 
 void PDFPlugin::calculateSizes()
@@ -435,7 +444,11 @@ void PDFPlugin::geometryDidChange(const IntSize& pluginSize, const IntRect&, con
         // FIXME: Instead of m_lastMousePositionInPluginCoordinates, we should use the zoom origin from PluginView::setPageScaleFactor.
         if (magnification)
             [m_pdfLayerController.get() magnifyWithMagnification:magnification atPoint:convertFromPluginToPDFView(m_lastMousePositionInPluginCoordinates) immediately:NO];
-    }
+    } else {
+        // If we don't handle page scale ourselves, we need to respect our parent page's
+        // scale, which may have changed.
+        updatePageAndDeviceScaleFactors();
+    } 
 
     calculateSizes();
     updateScrollbars();

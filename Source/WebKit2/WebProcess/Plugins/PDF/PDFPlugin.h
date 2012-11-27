@@ -102,6 +102,8 @@ private:
     
     bool supportsForms();
 
+    void updatePageAndDeviceScaleFactors();
+
     RetainPtr<CALayer> m_containerLayer;
     RetainPtr<CALayer> m_contentLayer;
     RetainPtr<CALayer> m_horizontalScrollbarLayer;
