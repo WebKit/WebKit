@@ -1,3 +1,17 @@
+2012-11-26  Kentaro Hara  <haraken@chromium.org>
+
+        [V8] Remove WorkerContextExecutionProxy.{h,cpp}
+        https://bugs.webkit.org/show_bug.cgi?id=103325
+
+        Reviewed by Adam Barth.
+
+        Now WorkerContextExecutionProxy.{h,cpp} are empty.
+
+        No tests. No change in behavior.
+
+        * src/WebKit.cpp:
+        * src/WebWorkerClientImpl.cpp:
+
 2012-11-26  James Robinson  <jamesr@chromium.org>
 
         [chromium] Remove deprecated and unused WebGraphicsContext3D compositor binding calls

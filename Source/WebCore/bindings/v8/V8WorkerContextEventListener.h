@@ -40,7 +40,6 @@
 namespace WebCore {
 
     class Event;
-    class WorkerContextExecutionProxy;
 
     class V8WorkerContextEventListener : public V8EventListener {
     public:

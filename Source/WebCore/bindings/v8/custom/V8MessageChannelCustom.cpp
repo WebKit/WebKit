@@ -38,7 +38,6 @@
 #include "V8MessagePort.h"
 #include "V8Utilities.h"
 #include "WorkerContext.h"
-#include "WorkerContextExecutionProxy.h"
 
 #include <wtf/RefPtr.h>
 

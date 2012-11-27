@@ -56,7 +56,6 @@
 #include "V8WorkerContextEventListener.h"
 #include "WebGLContextAttributes.h"
 #include "WebGLUniformLocation.h"
-#include "WorkerContextExecutionProxy.h"
 #include "WrapperTypeInfo.h"
 #include <algorithm>
 #include <utility>

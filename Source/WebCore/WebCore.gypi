@@ -2332,8 +2332,6 @@
             'bindings/v8/V8WorkerContextErrorHandler.h',
             'bindings/v8/V8WorkerContextEventListener.cpp',
             'bindings/v8/V8WorkerContextEventListener.h',
-            'bindings/v8/WorkerContextExecutionProxy.cpp',
-            'bindings/v8/WorkerContextExecutionProxy.h',
             'bindings/v8/WorkerScriptController.cpp',
             'bindings/v8/WorkerScriptController.h',
             'bindings/v8/WorkerScriptDebugServer.cpp',

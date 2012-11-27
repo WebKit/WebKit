@@ -42,7 +42,6 @@
 #include "V8Binding.h"
 #include "V8Utilities.h"
 #include "WorkerContext.h"
-#include "WorkerContextExecutionProxy.h"
 
 namespace WebCore {
 

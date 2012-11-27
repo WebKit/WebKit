@@ -35,7 +35,6 @@
 
 #include <wtf/ArrayBuffer.h>
 #include "DedicatedWorkerContext.h"
-#include "WorkerContextExecutionProxy.h"
 #include "V8Binding.h"
 #include "V8Utilities.h"
 #include "V8WorkerContextEventListener.h"

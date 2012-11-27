@@ -50,7 +50,6 @@
 #include "ScriptExecutionContext.h"
 #include "Worker.h"
 #include "WorkerContext.h"
-#include "WorkerContextExecutionProxy.h"
 #include "WorkerScriptController.h"
 #include "WorkerMessagingProxy.h"
 #include <wtf/Threading.h>

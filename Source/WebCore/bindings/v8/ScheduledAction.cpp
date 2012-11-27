@@ -45,7 +45,6 @@
 #include "V8GCController.h"
 #include "V8RecursionScope.h"
 #include "WorkerContext.h"
-#include "WorkerContextExecutionProxy.h"
 #include "WorkerThread.h"
 
 namespace WebCore {

@@ -44,7 +44,6 @@
 #include "V8SharedWorkerContext.h"
 #include "V8WorkerContext.h"
 #include "WorkerContext.h"
-#include "WorkerContextExecutionProxy.h"
 #include "WorkerObjectProxy.h"
 #include "WorkerThread.h"
 #include <v8.h>

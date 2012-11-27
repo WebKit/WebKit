@@ -68,7 +68,6 @@ LIST(APPEND WebCore_SOURCES
     bindings/v8/V8WindowErrorHandler.cpp
     bindings/v8/V8WorkerContextErrorHandler.cpp
     bindings/v8/V8WorkerContextEventListener.cpp
-    bindings/v8/WorkerContextExecutionProxy.cpp
     bindings/v8/WorkerScriptController.cpp
     bindings/v8/WorkerScriptDebugServer.cpp
     bindings/v8/WorldContextHandle.cpp

@@ -1,3 +1,30 @@
+2012-11-26  Kentaro Hara  <haraken@chromium.org>
+
+        [V8] Remove WorkerContextExecutionProxy.{h,cpp}
+        https://bugs.webkit.org/show_bug.cgi?id=103325
+
+        Reviewed by Adam Barth.
+
+        Now WorkerContextExecutionProxy.{h,cpp} are empty.
+
+        No tests. No change in behavior.
+
+        * UseV8.cmake:
+        * WebCore.gypi:
+        * bindings/v8/ScheduledAction.cpp:
+        * bindings/v8/V8AbstractEventListener.cpp:
+        * bindings/v8/V8DOMWrapper.cpp:
+        * bindings/v8/V8WorkerContextEventListener.h:
+        (WebCore):
+        * bindings/v8/WorkerContextExecutionProxy.cpp: Removed.
+        * bindings/v8/WorkerContextExecutionProxy.h: Removed.
+        * bindings/v8/WorkerScriptController.cpp:
+        * bindings/v8/custom/V8DedicatedWorkerContextCustom.cpp:
+        * bindings/v8/custom/V8MessageChannelCustom.cpp:
+        * bindings/v8/custom/V8MessagePortCustom.cpp:
+        * bindings/v8/custom/V8WorkerCustom.cpp:
+        * bindings/v8/custom/V8XMLHttpRequestCustom.cpp:
+
 2012-11-26  Michael Saboff  <msaboff@apple.com>
 
         Grapheme cluster functions can be simplified for 8 bit Strings
