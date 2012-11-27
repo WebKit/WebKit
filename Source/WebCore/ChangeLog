@@ -1,3 +1,10 @@
+2012-11-27  Dean Jackson  <dino@apple.com>
+
+        Attempted build fix after http://trac.webkit.org/changeset/135888.
+
+        * WebCore.exp.in:
+        * WebCore.order:
+
 2012-11-27  Ryosuke Niwa  <rniwa@webkit.org>
 
         Build fix after r135890. #else, not #elif.
