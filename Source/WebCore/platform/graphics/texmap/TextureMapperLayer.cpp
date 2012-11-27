@@ -484,13 +484,8 @@ void TextureMapperLayer::flushCompositingState(GraphicsLayerTextureMapper* graph
     if (graphicsLayer && !(options & ComputationsOnly))
         flushCompositingStateSelf(graphicsLayer, textureMapper);
 
-    if (graphicsLayer && m_state.maskLayer) {
+    if (graphicsLayer && m_state.maskLayer)
         m_state.maskLayer->flushCompositingState(toGraphicsLayerTextureMapper(graphicsLayer->maskLayer()), textureMapper);
-
-        // A mask layer has its parent's size by default, in case it's not set specifically.
-        if (m_state.maskLayer->m_size.isEmpty())
-            m_state.maskLayer->m_size = m_size;
-    }
 
     if (m_state.replicaLayer)
         m_state.replicaLayer->flushCompositingState(toGraphicsLayerTextureMapper(graphicsLayer->replicaLayer()), textureMapper);

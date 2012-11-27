@@ -191,6 +191,10 @@ void GraphicsLayerTextureMapper::setMaskLayer(GraphicsLayer* value)
         return;
     GraphicsLayer::setMaskLayer(value);
     notifyChange(TextureMapperLayer::MaskLayerChange);
+
+    if (!value)
+        return;
+    value->setSize(size());
 }
 
 
@@ -232,6 +236,8 @@ void GraphicsLayerTextureMapper::setSize(const FloatSize& value)
         return;
 
     GraphicsLayer::setSize(value);
+    if (maskLayer())
+        maskLayer()->setSize(value);
     notifyChange(TextureMapperLayer::SizeChange);
 }
 

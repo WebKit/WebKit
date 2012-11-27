@@ -1,3 +1,22 @@
+2012-11-26  Huang Dongsung  <luxtella@company100.net>
+
+        [TexMap] GraphicsLayerTextureMapper::setSize() sets the size of a mask layer.
+        https://bugs.webkit.org/show_bug.cgi?id=103297
+
+        Reviewed by Noam Rosenthal.
+
+        Currently, CoordinatedGraphicsLayer sets the size of a mask layer in setSize()
+        and setMaksLayer(). GraphicsLayerTextureMapper follows the behavior. If so we
+        don't have to check the size of the mask layer in TextureMapperLayer::flushCompositingState().
+
+        No new tests. Covered by existing tests.
+
+        * platform/graphics/texmap/GraphicsLayerTextureMapper.cpp:
+        (WebCore::GraphicsLayerTextureMapper::setMaskLayer):
+        (WebCore::GraphicsLayerTextureMapper::setSize):
+        * platform/graphics/texmap/TextureMapperLayer.cpp:
+        (WebCore::TextureMapperLayer::flushCompositingState):
+
 2012-11-26  Kentaro Hara  <haraken@chromium.org>
 
         [V8] Remove V8Parameter::object()
