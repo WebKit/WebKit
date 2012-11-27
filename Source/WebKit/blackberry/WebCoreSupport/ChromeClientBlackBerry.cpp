@@ -215,8 +215,17 @@ bool ChromeClientBlackBerry::shouldForceDocumentStyleSelectorUpdate()
     return !m_webPagePrivate->m_webSettings->isJavaScriptEnabled() && !m_webPagePrivate->m_inputHandler->processingChange();
 }
 
-Page* ChromeClientBlackBerry::createWindow(Frame*, const FrameLoadRequest& request, const WindowFeatures& features, const NavigationAction&)
+Page* ChromeClientBlackBerry::createWindow(Frame* frame, const FrameLoadRequest& request, const WindowFeatures& features, const NavigationAction&)
 {
+    // Bail out early when we aren't allowed to display the target origin, otherwise,
+    // it would be harmful and the window would be useless. This is the same check
+    // as the one in FrameLoader::loadFrameRequest().
+    const KURL& url = request.resourceRequest().url();
+    if (!request.requester()->canDisplay(url)) {
+        frame->loader()->reportLocalLoadFailed(frame, url.string());
+        return 0;
+    }
+
 #if !defined(PUBLIC_BUILD) || !PUBLIC_BUILD
     if (m_webPagePrivate->m_dumpRenderTree && !m_webPagePrivate->m_dumpRenderTree->allowsOpeningWindow())
         return 0;
@@ -248,7 +257,7 @@ Page* ChromeClientBlackBerry::createWindow(Frame*, const FrameLoadRequest& reque
     if (features.dialog)
         flags |= WebPageClient::FlagWindowIsDialog;
 
-    WebPage* webPage = m_webPagePrivate->m_client->createWindow(x, y, width, height, flags, request.resourceRequest().url().string(), request.frameName());
+    WebPage* webPage = m_webPagePrivate->m_client->createWindow(x, y, width, height, flags, url.string(), request.frameName());
     if (!webPage)
         return 0;
 
