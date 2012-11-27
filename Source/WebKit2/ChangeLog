@@ -1,3 +1,14 @@
+2012-11-27  Alexey Proskuryakov  <ap@apple.com>
+
+        [WK2] WebPageProxy::relatedPages() cannot assume that this page is known to process
+        https://bugs.webkit.org/show_bug.cgi?id=103433
+        <rdar://problem/12543513>
+
+        Reviewed by Jessie Berlin.
+
+        * UIProcess/WebPageProxy.cpp: (WebKit::WebPageProxy::relatedPages): Removed an incorrect
+        assertion, and modified code to not rely on its condition being true.
+
 2012-11-27  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [EFL][Qt][WK2] Tiles not always painted

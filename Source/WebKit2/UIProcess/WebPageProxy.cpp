@@ -296,11 +296,11 @@ bool WebPageProxy::isValid()
 
 PassRefPtr<ImmutableArray> WebPageProxy::relatedPages() const
 {
+    // pages() returns a list of pages in WebProcess, so this page may or may not be among them - a client can use a reference to WebPageProxy after the page has closed.
     Vector<WebPageProxy*> pages = m_process->pages();
-    ASSERT(pages.contains(this));
 
     Vector<RefPtr<APIObject> > result;
-    result.reserveCapacity(pages.size() - 1);
+    result.reserveCapacity(pages.size());
     for (size_t i = 0; i < pages.size(); ++i) {
         if (pages[i] != this)
             result.append(pages[i]);
