@@ -147,6 +147,13 @@ void SpeculativeJIT::speculationCheck(ExitKind kind, JSValueSource jsValueSource
     speculationCheck(kind, jsValueSource, nodeUse.index(), jumpToFail, recovery);
 }
 
+void SpeculativeJIT::speculationCheck(ExitKind kind, JSValueSource jsValueSource, NodeIndex nodeIndex, MacroAssembler::Jump jumpToFail, const SpeculationRecovery& recovery, SpeculationDirection direction)
+{
+    speculationCheck(kind, jsValueSource, nodeIndex, jumpToFail, recovery);
+    if (direction == ForwardSpeculation)
+        convertLastOSRExitToForward();
+}
+
 JumpReplacementWatchpoint* SpeculativeJIT::speculationWatchpoint(ExitKind kind, JSValueSource jsValueSource, NodeIndex nodeIndex)
 {
     if (!m_compileOkay)
@@ -170,10 +177,13 @@ JumpReplacementWatchpoint* SpeculativeJIT::speculationWatchpoint(ExitKind kind)
 void SpeculativeJIT::convertLastOSRExitToForward(const ValueRecovery& valueRecovery)
 {
     if (!valueRecovery) {
-        // Check that the preceding node was a SetLocal with the same code origin.
-        Node* setLocal = &at(m_jit.graph().m_blocks[m_block]->at(m_indexInBlock - 1));
-        ASSERT_UNUSED(setLocal, setLocal->op() == SetLocal);
-        ASSERT_UNUSED(setLocal, setLocal->codeOrigin == at(m_compileIndex).codeOrigin);
+        // Check that either the current node is a SetLocal, or the preceding node was a
+        // SetLocal with the same code origin.
+        if (at(m_compileIndex).op() != SetLocal) {
+            Node* setLocal = &at(m_jit.graph().m_blocks[m_block]->at(m_indexInBlock - 1));
+            ASSERT_UNUSED(setLocal, setLocal->op() == SetLocal);
+            ASSERT_UNUSED(setLocal, setLocal->codeOrigin == at(m_compileIndex).codeOrigin);
+        }
         
         // Find the next node.
         unsigned indexInBlock = m_indexInBlock + 1;
@@ -239,10 +249,10 @@ JumpReplacementWatchpoint* SpeculativeJIT::forwardSpeculationWatchpoint(ExitKind
     return result;
 }
 
-JumpReplacementWatchpoint* SpeculativeJIT::speculationWatchpointWithConditionalDirection(ExitKind kind, bool isForward)
+JumpReplacementWatchpoint* SpeculativeJIT::speculationWatchpoint(ExitKind kind, SpeculationDirection direction)
 {
     JumpReplacementWatchpoint* result = speculationWatchpoint(kind);
-    if (isForward)
+    if (direction == ForwardSpeculation)
         convertLastOSRExitToForward();
     return result;
 }
@@ -262,9 +272,9 @@ void SpeculativeJIT::forwardSpeculationCheck(ExitKind kind, JSValueSource jsValu
         forwardSpeculationCheck(kind, jsValueSource, nodeIndex, jumpVector[i], valueRecovery);
 }
 
-void SpeculativeJIT::speculationCheckWithConditionalDirection(ExitKind kind, JSValueSource jsValueSource, NodeIndex nodeIndex, MacroAssembler::Jump jumpToFail, bool isForward)
+void SpeculativeJIT::speculationCheck(ExitKind kind, JSValueSource jsValueSource, NodeIndex nodeIndex, MacroAssembler::Jump jumpToFail, SpeculationDirection direction)
 {
-    if (isForward)
+    if (direction == ForwardSpeculation)
         forwardSpeculationCheck(kind, jsValueSource, nodeIndex, jumpToFail);
     else
         speculationCheck(kind, jsValueSource, nodeIndex, jumpToFail);
@@ -288,7 +298,7 @@ void SpeculativeJIT::terminateSpeculativeExecution(ExitKind kind, JSValueRegs js
     terminateSpeculativeExecution(kind, jsValueRegs, nodeUse.index());
 }
 
-void SpeculativeJIT::terminateSpeculativeExecutionWithConditionalDirection(ExitKind kind, JSValueRegs jsValueRegs, NodeIndex nodeIndex, bool isForward)
+void SpeculativeJIT::terminateSpeculativeExecution(ExitKind kind, JSValueRegs jsValueRegs, NodeIndex nodeIndex, SpeculationDirection direction)
 {
     ASSERT(at(m_compileIndex).canExit() || m_isCheckingArgumentTypes);
 #if DFG_ENABLE(DEBUG_VERBOSE)
@@ -296,7 +306,7 @@ void SpeculativeJIT::terminateSpeculativeExecutionWithConditionalDirection(ExitK
 #endif
     if (!m_compileOkay)
         return;
-    speculationCheckWithConditionalDirection(kind, jsValueRegs, nodeIndex, m_jit.jump(), isForward);
+    speculationCheck(kind, jsValueRegs, nodeIndex, m_jit.jump(), direction);
     m_compileOkay = false;
 }
 
@@ -662,7 +672,7 @@ GPRReg SpeculativeJIT::fillStorage(NodeIndex nodeIndex)
         }
         
         // Must be a cell; fill it as a cell and then return the pointer.
-        return fillSpeculateCell(nodeIndex);
+        return fillSpeculateCell(nodeIndex, BackwardSpeculation);
     }
         
     case DataFormatStorage: {
@@ -672,7 +682,7 @@ GPRReg SpeculativeJIT::fillStorage(NodeIndex nodeIndex)
     }
         
     default:
-        return fillSpeculateCell(nodeIndex);
+        return fillSpeculateCell(nodeIndex, BackwardSpeculation);
     }
 }
 

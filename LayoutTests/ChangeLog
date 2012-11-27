@@ -1,3 +1,21 @@
+2012-11-26  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG SetLocal should use forwardSpeculationCheck instead of its own half-baked version of same
+        https://bugs.webkit.org/show_bug.cgi?id=103353
+
+        Reviewed by Oliver Hunt and Gavin Barraclough.
+
+        * fast/js/dfg-intrinsic-side-effect-assignment-osr-exit-expected.txt: Added.
+        * fast/js/dfg-intrinsic-side-effect-assignment-osr-exit.html: Added.
+        * fast/js/dfg-side-effect-assignment-osr-exit-expected.txt: Added.
+        * fast/js/dfg-side-effect-assignment-osr-exit.html: Added.
+        * fast/js/jsc-test-list:
+        * fast/js/script-tests/dfg-intrinsic-side-effect-assignment-osr-exit.js: Added.
+        (foo):
+        * fast/js/script-tests/dfg-side-effect-assignment-osr-exit.js: Added.
+        (foo):
+        (bar):
+
 2012-11-27  Alexandru Chiculita  <achicu@adobe.com>
 
         [CSS Regions] Elements using transforms are not repainted correctly when rendered in a region

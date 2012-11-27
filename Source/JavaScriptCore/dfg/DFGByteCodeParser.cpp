@@ -247,6 +247,17 @@ private:
         setDirect(m_inlineStackTop->remapOperand(operand), value, setMode);
     }
     
+    void setPair(int operand1, NodeIndex value1, int operand2, NodeIndex value2)
+    {
+        // First emit dead SetLocals for the benefit of OSR.
+        set(operand1, value1);
+        set(operand2, value2);
+        
+        // Now emit the real SetLocals.
+        set(operand1, value1);
+        set(operand2, value2);
+    }
+    
     NodeIndex injectLazyOperandSpeculation(NodeIndex nodeIndex)
     {
         Node& node = m_graph[nodeIndex];
@@ -2299,8 +2310,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             unsigned srcDst = currentInstruction[2].u.operand;
             ASSERT(result != srcDst); // Required for assumptions we make during OSR.
             NodeIndex op = get(srcDst);
-            set(result, op);
-            set(srcDst, makeSafe(addToGraph(ArithAdd, op, one())));
+            setPair(result, op, srcDst, makeSafe(addToGraph(ArithAdd, op, one())));
             NEXT_OPCODE(op_post_inc);
         }
 
@@ -2315,8 +2325,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             unsigned result = currentInstruction[1].u.operand;
             unsigned srcDst = currentInstruction[2].u.operand;
             NodeIndex op = get(srcDst);
-            set(result, op);
-            set(srcDst, makeSafe(addToGraph(ArithSub, op, one())));
+            setPair(result, op, srcDst, makeSafe(addToGraph(ArithSub, op, one())));
             NEXT_OPCODE(op_post_dec);
         }
 
@@ -3115,21 +3124,11 @@ bool ByteCodeParser::parseBlock(unsigned limit)
 
             NodeIndex base = 0;
             NodeIndex value = 0;
-            if (parseResolveOperations(prediction, identifier, operations, putToBaseOperation, &base, &value)) {
-                // First create OSR hints only.
-                set(baseDst, base);
-                set(valueDst, value);
-                
-                // If we try to hoist structure checks into here, then we're guaranteed that they will occur
-                // *after* we have already set up the values for OSR.
-                
-                // Then do the real SetLocals.
-                set(baseDst, base);
-                set(valueDst, value);
-            } else {
+            if (parseResolveOperations(prediction, identifier, operations, putToBaseOperation, &base, &value))
+                setPair(baseDst, base, valueDst, value);
+            else {
                 addToGraph(ForceOSRExit);
-                set(baseDst, addToGraph(GarbageValue));
-                set(valueDst, addToGraph(GarbageValue));
+                setPair(baseDst, addToGraph(GarbageValue), valueDst, addToGraph(GarbageValue));
             }
 
             NEXT_OPCODE(op_resolve_with_base);
@@ -3143,21 +3142,11 @@ bool ByteCodeParser::parseBlock(unsigned limit)
 
             NodeIndex base = 0;
             NodeIndex value = 0;
-            if (parseResolveOperations(prediction, identifier, operations, 0, &base, &value)) {
-                // First create OSR hints only.
-                set(baseDst, base);
-                set(valueDst, value);
-                
-                // If we try to hoist structure checks into here, then we're guaranteed that they will occur
-                // *after* we have already set up the values for OSR.
-                
-                // Then do the real SetLocals.
-                set(baseDst, base);
-                set(valueDst, value);
-            } else {
+            if (parseResolveOperations(prediction, identifier, operations, 0, &base, &value))
+                setPair(baseDst, base, valueDst, value);
+            else {
                 addToGraph(ForceOSRExit);
-                set(baseDst, addToGraph(GarbageValue));
-                set(valueDst, addToGraph(GarbageValue));
+                setPair(baseDst, addToGraph(GarbageValue), valueDst, addToGraph(GarbageValue));
             }
 
             NEXT_OPCODE(op_resolve_with_this);

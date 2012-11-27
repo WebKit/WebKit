@@ -138,6 +138,7 @@ fast/js/dfg-int32array
 fast/js/dfg-int8array
 fast/js/dfg-integer-optimization
 fast/js/dfg-intrinsic-osr-exit
+fast/js/dfg-intrinsic-side-effect-assignment-osr-exit
 fast/js/dfg-intrinsic-unused-this-method-check
 fast/js/dfg-intrinsic-unused-this
 fast/js/dfg-min-max
@@ -156,6 +157,7 @@ fast/js/dfg-proto-access-inline-osr-exit
 fast/js/dfg-put-by-id-prototype-check
 fast/js/dfg-putbyval-cfa-clobber
 fast/js/dfg-redundant-load-of-captured-variable-proven-constant
+fast/js/dfg-side-effect-assignment-osr-exit
 fast/js/dfg-string-stricteq
 fast/js/dfg-tear-off-arguments-not-activation
 fast/js/dfg-uint16array

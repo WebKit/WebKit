@@ -59,7 +59,7 @@ void Disassembler::dump(LinkBuffer& linkBuffer)
         m_graph.dumpBlockHeader(prefix, blockIndex, Graph::DumpLivePhisOnly);
         NodeIndex lastNodeIndexForDisassembly = block->at(0);
         for (size_t i = 0; i < block->size(); ++i) {
-            if (!m_graph[block->at(i)].willHaveCodeGenOrOSR())
+            if (!m_graph[block->at(i)].willHaveCodeGenOrOSR() && !Options::showAllDFGNodes())
                 continue;
             MacroAssembler::Label currentLabel;
             if (m_labelForNodeIndex[block->at(i)].isSet())

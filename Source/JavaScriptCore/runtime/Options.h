@@ -71,6 +71,7 @@ namespace JSC {
     /* showDisassembly implies showDFGDisassembly. */ \
     v(bool, showDisassembly, false) \
     v(bool, showDFGDisassembly, false) \
+    v(bool, showAllDFGNodes, false) \
     \
     v(unsigned, maximumOptimizationCandidateInstructionCount, 10000) \
     \
