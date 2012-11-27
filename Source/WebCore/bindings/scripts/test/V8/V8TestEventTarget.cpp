@@ -65,7 +65,8 @@ static v8::Handle<v8::Value> addEventListenerCallback(const v8::Arguments& args)
     INC_STATS("DOM.TestEventTarget.addEventListener()");
     RefPtr<EventListener> listener = V8DOMWrapper::getEventListener(args[1], false, ListenerFindOrCreate);
     if (listener) {
-        V8TestEventTarget::toNative(args.Holder())->addEventListener(toWebCoreAtomicString(args[0]), listener, args[2]->BooleanValue());
+        V8TRYCATCH_FOR_V8STRINGRESOURCE(V8StringResource<WithNullCheck>, stringResource, args[0]);
+        V8TestEventTarget::toNative(args.Holder())->addEventListener(stringResource, listener, args[2]->BooleanValue());
         createHiddenDependency(args.Holder(), args[1], V8TestEventTarget::eventListenerCacheIndex);
     }
     return v8Undefined();
@@ -76,7 +77,8 @@ static v8::Handle<v8::Value> removeEventListenerCallback(const v8::Arguments& ar
     INC_STATS("DOM.TestEventTarget.removeEventListener()");
     RefPtr<EventListener> listener = V8DOMWrapper::getEventListener(args[1], false, ListenerFindOnly);
     if (listener) {
-        V8TestEventTarget::toNative(args.Holder())->removeEventListener(toWebCoreAtomicString(args[0]), listener.get(), args[2]->BooleanValue());
+        V8TRYCATCH_FOR_V8STRINGRESOURCE(V8StringResource<WithNullCheck>, stringResource, args[0]);
+        V8TestEventTarget::toNative(args.Holder())->removeEventListener(stringResource, listener.get(), args[2]->BooleanValue());
         removeHiddenDependency(args.Holder(), args[1], V8TestEventTarget::eventListenerCacheIndex);
     }
     return v8Undefined();
