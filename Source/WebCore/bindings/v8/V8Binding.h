@@ -248,14 +248,14 @@ namespace WebCore {
         v8::Local<v8::Value> v8Value(v8::Local<v8::Value>::New(value));
         v8::Local<v8::Object> object = v8::Local<v8::Object>::Cast(v8Value);
 
-        EXCEPTION_BLOCK(v8::Local<v8::Value>, lengthValue, object->Get(v8::String::New("length")));
+        TRYCATCH(v8::Local<v8::Value>, lengthValue, object->Get(v8::String::New("length")));
 
         if (lengthValue->IsUndefined() || lengthValue->IsNull()) {
             throwTypeError();
             return v8Undefined();
         }
 
-        EXCEPTION_BLOCK(uint32_t, sequenceLength, lengthValue->Int32Value());
+        TRYCATCH(uint32_t, sequenceLength, lengthValue->Int32Value());
         length = sequenceLength;
 
         return v8Value;

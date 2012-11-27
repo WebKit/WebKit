@@ -218,7 +218,7 @@ v8::Handle<v8::Value> V8TestSerializedScriptValueInterface::constructorCallback(
         return args.Holder();
     if (args.Length() < 2)
         return throwNotEnoughArgumentsError(args.GetIsolate());
-    STRING_TO_V8PARAMETER_EXCEPTION_BLOCK(V8StringResource<>, hello, MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined));
+    TRYCATCH_FOR_V8STRINGRESOURCE(V8StringResource<>, hello, MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined));
     MessagePortArray messagePortArrayTransferList;
     ArrayBufferArray arrayBufferArrayTransferList;
     if (args.Length() > 2) {

@@ -71,7 +71,7 @@ static v8::Handle<v8::Value> supplementalStaticAttrAttrGetter(v8::Local<v8::Stri
 static void supplementalStaticAttrAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     INC_STATS("DOM.TestInterface.supplementalStaticAttr._set");
-    STRING_TO_V8PARAMETER_EXCEPTION_BLOCK_VOID(V8StringResource<>, v, value);
+    TRYCATCH_FOR_V8STRINGRESOURCE_VOID(V8StringResource<>, v, value);
     TestSupplemental::setSupplementalStaticAttr(v);
     return;
 }
@@ -106,7 +106,7 @@ static void supplementalStr2AttrSetter(v8::Local<v8::String> name, v8::Local<v8:
 {
     INC_STATS("DOM.TestInterface.supplementalStr2._set");
     TestInterface* imp = V8TestInterface::toNative(info.Holder());
-    STRING_TO_V8PARAMETER_EXCEPTION_BLOCK_VOID(V8StringResource<>, v, value);
+    TRYCATCH_FOR_V8STRINGRESOURCE_VOID(V8StringResource<>, v, value);
     TestSupplemental::setSupplementalStr2(imp, v);
     return;
 }
@@ -159,8 +159,8 @@ static v8::Handle<v8::Value> supplementalMethod2Callback(const v8::Arguments& ar
     TestInterface* imp = V8TestInterface::toNative(args.Holder());
     ExceptionCode ec = 0;
     {
-    STRING_TO_V8PARAMETER_EXCEPTION_BLOCK(V8StringResource<>, strArg, MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined));
-    EXCEPTION_BLOCK(TestObj*, objArg, V8TestObj::HasInstance(MAYBE_MISSING_PARAMETER(args, 1, DefaultIsUndefined)) ? V8TestObj::toNative(v8::Handle<v8::Object>::Cast(MAYBE_MISSING_PARAMETER(args, 1, DefaultIsUndefined))) : 0);
+    TRYCATCH_FOR_V8STRINGRESOURCE(V8StringResource<>, strArg, MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined));
+    TRYCATCH(TestObj*, objArg, V8TestObj::HasInstance(MAYBE_MISSING_PARAMETER(args, 1, DefaultIsUndefined)) ? V8TestObj::toNative(v8::Handle<v8::Object>::Cast(MAYBE_MISSING_PARAMETER(args, 1, DefaultIsUndefined))) : 0);
     ScriptExecutionContext* scriptContext = getScriptExecutionContext();
     RefPtr<TestObj> result = TestSupplemental::supplementalMethod2(scriptContext, imp, strArg, objArg, ec);
     if (UNLIKELY(ec))
@@ -252,8 +252,8 @@ v8::Handle<v8::Value> V8TestInterface::constructorCallback(const v8::Arguments& 
         return throwNotEnoughArgumentsError(args.GetIsolate());
 
     ExceptionCode ec = 0;
-    STRING_TO_V8PARAMETER_EXCEPTION_BLOCK(V8StringResource<>, str1, MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined));
-    STRING_TO_V8PARAMETER_EXCEPTION_BLOCK(V8StringResource<>, str2, MAYBE_MISSING_PARAMETER(args, 1, DefaultIsUndefined));
+    TRYCATCH_FOR_V8STRINGRESOURCE(V8StringResource<>, str1, MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined));
+    TRYCATCH_FOR_V8STRINGRESOURCE(V8StringResource<>, str2, MAYBE_MISSING_PARAMETER(args, 1, DefaultIsUndefined));
 
     ScriptExecutionContext* context = getScriptExecutionContext();
 

@@ -1,3 +1,139 @@
+2012-11-26  Kentaro Hara  <haraken@chromium.org>
+
+        [V8] Rename EXCEPTION_BLOCK() macros
+        https://bugs.webkit.org/show_bug.cgi?id=103352
+
+        Reviewed by Adam Barth.
+
+        Since V8Parameter was renamed to V8StringResource,
+        we rename macros that use V8Parameter.
+
+        EXCEPTION_BLOCK() => V8TRYCATCH()
+        STRING_TO_V8PARAMETER_EXCEPTION_BLOCK() => V8TRYCATCH_FOR_V8STRINGRESOURCE()
+        STRING_TO_V8PARAMETER_EXCEPTION_BLOCK_VOID() => V8TRYCATCH_FOR_V8STRINGRESOURCE_VOID()
+
+        No tests. No change in behavior.
+
+        * bindings/scripts/CodeGeneratorV8.pm:
+        (GenerateParametersCheck):
+        (GenerateEventConstructorCallback):
+        (ConvertToV8StringResource):
+        * bindings/scripts/test/V8/V8Float64Array.cpp:
+        (WebCore::Float64ArrayV8Internal::fooCallback):
+        * bindings/scripts/test/V8/V8TestActiveDOMObject.cpp:
+        (WebCore::TestActiveDOMObjectV8Internal::excitingFunctionCallback):
+        (WebCore::TestActiveDOMObjectV8Internal::postMessageCallback):
+        * bindings/scripts/test/V8/V8TestCustomNamedGetter.cpp:
+        (WebCore::TestCustomNamedGetterV8Internal::anotherFunctionCallback):
+        * bindings/scripts/test/V8/V8TestEventConstructor.cpp:
+        (WebCore::V8TestEventConstructor::constructorCallback):
+        * bindings/scripts/test/V8/V8TestEventTarget.cpp:
+        (WebCore::TestEventTargetV8Internal::itemCallback):
+        (WebCore::TestEventTargetV8Internal::dispatchEventCallback):
+        * bindings/scripts/test/V8/V8TestInterface.cpp:
+        (WebCore::TestInterfaceV8Internal::supplementalStaticAttrAttrSetter):
+        (WebCore::TestInterfaceV8Internal::supplementalStr2AttrSetter):
+        (WebCore::TestInterfaceV8Internal::supplementalMethod2Callback):
+        (WebCore::V8TestInterface::constructorCallback):
+        * bindings/scripts/test/V8/V8TestMediaQueryListListener.cpp:
+        (WebCore::TestMediaQueryListListenerV8Internal::methodCallback):
+        * bindings/scripts/test/V8/V8TestNamedConstructor.cpp:
+        (WebCore::V8TestNamedConstructorConstructorCallback):
+        * bindings/scripts/test/V8/V8TestObj.cpp:
+        (WebCore::TestObjV8Internal::staticStringAttrAttrSetter):
+        (WebCore::TestObjV8Internal::stringAttrAttrSetter):
+        (WebCore::TestObjV8Internal::reflectedStringAttrAttrSetter):
+        (WebCore::TestObjV8Internal::reflectedURLAttrAttrSetter):
+        (WebCore::TestObjV8Internal::reflectedCustomURLAttrAttrSetter):
+        (WebCore::TestObjV8Internal::stringAttrWithGetterExceptionAttrSetter):
+        (WebCore::TestObjV8Internal::stringAttrWithSetterExceptionAttrSetter):
+        (WebCore::TestObjV8Internal::voidMethodWithArgsCallback):
+        (WebCore::TestObjV8Internal::longMethodWithArgsCallback):
+        (WebCore::TestObjV8Internal::objMethodWithArgsCallback):
+        (WebCore::TestObjV8Internal::methodWithSequenceArgCallback):
+        (WebCore::TestObjV8Internal::methodReturningSequenceCallback):
+        (WebCore::TestObjV8Internal::methodThatRequiresAllArgsAndThrowsCallback):
+        (WebCore::TestObjV8Internal::idbKeyCallback):
+        (WebCore::TestObjV8Internal::optionsObjectCallback):
+        (WebCore::TestObjV8Internal::methodWithOptionalArgCallback):
+        (WebCore::TestObjV8Internal::methodWithNonOptionalArgAndOptionalArgCallback):
+        (WebCore::TestObjV8Internal::methodWithNonOptionalArgAndTwoOptionalArgsCallback):
+        (WebCore::TestObjV8Internal::methodWithOptionalStringCallback):
+        (WebCore::TestObjV8Internal::methodWithOptionalStringIsUndefinedCallback):
+        (WebCore::TestObjV8Internal::methodWithOptionalStringIsNullStringCallback):
+        (WebCore::TestObjV8Internal::methodWithNonCallbackArgAndCallbackArgCallback):
+        (WebCore::TestObjV8Internal::overloadedMethod1Callback):
+        (WebCore::TestObjV8Internal::overloadedMethod2Callback):
+        (WebCore::TestObjV8Internal::overloadedMethod3Callback):
+        (WebCore::TestObjV8Internal::overloadedMethod4Callback):
+        (WebCore::TestObjV8Internal::overloadedMethod6Callback):
+        (WebCore::TestObjV8Internal::overloadedMethod7Callback):
+        (WebCore::TestObjV8Internal::overloadedMethod8Callback):
+        (WebCore::TestObjV8Internal::overloadedMethod9Callback):
+        (WebCore::TestObjV8Internal::overloadedMethod10Callback):
+        (WebCore::TestObjV8Internal::overloadedMethod11Callback):
+        (WebCore::TestObjV8Internal::classMethodWithOptionalCallback):
+        (WebCore::TestObjV8Internal::overloadedMethod12Callback):
+        (WebCore::TestObjV8Internal::classMethodWithClampCallback):
+        (WebCore::TestObjV8Internal::enabledAtRuntimeMethod1Callback):
+        (WebCore::TestObjV8Internal::enabledAtRuntimeMethod2Callback):
+        (WebCore::TestObjV8Internal::enabledPerContextMethod1Callback):
+        (WebCore::TestObjV8Internal::enabledPerContextMethod2Callback):
+        (WebCore::TestObjV8Internal::stringArrayFunctionCallback):
+        (WebCore::TestObjV8Internal::convert1Callback):
+        (WebCore::TestObjV8Internal::convert2Callback):
+        (WebCore::TestObjV8Internal::convert4Callback):
+        (WebCore::TestObjV8Internal::convert5Callback):
+        (WebCore::TestObjV8Internal::strictFunctionCallback):
+        (WebCore::TestObjV8Internal::variadicStringMethodCallback):
+        (WebCore::TestObjV8Internal::variadicDoubleMethodCallback):
+        (WebCore::TestObjV8Internal::variadicNodeMethodCallback):
+        * bindings/scripts/test/V8/V8TestOverloadedConstructors.cpp:
+        (WebCore::V8TestOverloadedConstructors::constructor1Callback):
+        (WebCore::V8TestOverloadedConstructors::constructor2Callback):
+        (WebCore::V8TestOverloadedConstructors::constructor3Callback):
+        (WebCore::V8TestOverloadedConstructors::constructor4Callback):
+        * bindings/scripts/test/V8/V8TestSerializedScriptValueInterface.cpp:
+        (WebCore::V8TestSerializedScriptValueInterface::constructorCallback):
+        * bindings/v8/V8Binding.h:
+        (WebCore::toV8Sequence):
+        * bindings/v8/V8BindingMacros.h:
+        * bindings/v8/custom/V8BlobCustom.cpp:
+        (WebCore::V8Blob::constructorCallbackCustom):
+        * bindings/v8/custom/V8ConsoleCustom.cpp:
+        (WebCore::V8Console::profileCallback):
+        (WebCore::V8Console::profileEndCallback):
+        * bindings/v8/custom/V8DOMWindowCustom.cpp:
+        (WebCore::handlePostMessageCallback):
+        * bindings/v8/custom/V8DataViewCustom.cpp:
+        (WebCore::V8DataView::getInt8Callback):
+        (WebCore::V8DataView::getUint8Callback):
+        (WebCore::V8DataView::setInt8Callback):
+        (WebCore::V8DataView::setUint8Callback):
+        * bindings/v8/custom/V8DeviceMotionEventCustom.cpp:
+        (WebCore::V8DeviceMotionEvent::initDeviceMotionEventCallback):
+        * bindings/v8/custom/V8DeviceOrientationEventCustom.cpp:
+        (WebCore::V8DeviceOrientationEvent::initDeviceOrientationEventCallback):
+        * bindings/v8/custom/V8DocumentCustom.cpp:
+        (WebCore::V8Document::evaluateCallback):
+        * bindings/v8/custom/V8HTMLOptionsCollectionCustom.cpp:
+        (WebCore::V8HTMLOptionsCollection::addCallback):
+        * bindings/v8/custom/V8HistoryCustom.cpp:
+        (WebCore::V8History::pushStateCallback):
+        (WebCore::V8History::replaceStateCallback):
+        * bindings/v8/custom/V8IntentCustom.cpp:
+        (WebCore::V8Intent::constructorCallbackCustom):
+        * bindings/v8/custom/V8SQLTransactionCustom.cpp:
+        (WebCore::V8SQLTransaction::executeSqlCallback):
+        * bindings/v8/custom/V8SQLTransactionSyncCustom.cpp:
+        (WebCore::V8SQLTransactionSync::executeSqlCallback):
+        * bindings/v8/custom/V8SVGLengthCustom.cpp:
+        (WebCore::V8SVGLength::convertToSpecifiedUnitsCallback):
+        * bindings/v8/custom/V8WebGLRenderingContextCustom.cpp:
+        (WebCore::V8WebGLRenderingContext::getExtensionCallback):
+        * bindings/v8/custom/V8WorkerContextCustom.cpp:
+        (WebCore::V8WorkerContext::importScriptsCallback):
+
 2012-11-26  Andreas Kling  <akling@apple.com>
 
         Node: Move AreSVGAttributesValidFlag to ElementAttributeData.

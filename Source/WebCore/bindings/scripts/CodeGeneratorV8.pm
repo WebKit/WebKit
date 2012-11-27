@@ -1745,7 +1745,7 @@ sub GenerateParametersCheck
                 my $nativeValue = "${parameterName}NativeValue";
                 my $paramType = $parameter->type;
                 $parameterCheckString .= "    $paramType $parameterName = 0;\n";
-                $parameterCheckString .= "    EXCEPTION_BLOCK(double, $nativeValue, args[$paramIndex]->NumberValue());\n";
+                $parameterCheckString .= "    TRYCATCH(double, $nativeValue, args[$paramIndex]->NumberValue());\n";
                 $parameterCheckString .= "    if (!isnan($nativeValue))\n";
                 $parameterCheckString .= "        $parameterName = clampTo<$paramType>($nativeValue);\n";
         } elsif ($parameter->type eq "SerializedScriptValue") {
@@ -1807,7 +1807,7 @@ sub GenerateParametersCheck
                 $parameterCheckString .= "        $parameterName.append(V8${argType}::toNative(v8::Handle<v8::Object>::Cast(args[i])));\n";
                 $parameterCheckString .= "    }\n";
             } else {
-                $parameterCheckString .= "    EXCEPTION_BLOCK(Vector<$nativeElementType>, $parameterName, toNativeArguments<$nativeElementType>(args, $paramIndex));\n";
+                $parameterCheckString .= "    TRYCATCH(Vector<$nativeElementType>, $parameterName, toNativeArguments<$nativeElementType>(args, $paramIndex));\n";
             }
         } elsif ($nativeType =~ /^V8StringResource/) {
             my $value = JSValueToNative($parameter, "MAYBE_MISSING_PARAMETER(args, $paramIndex, $parameterDefaultPolicy)", "args.GetIsolate()");
@@ -1827,7 +1827,7 @@ sub GenerateParametersCheck
                     $parameterCheckString .= "        return throwTypeError(0, args.GetIsolate());\n";
                 }
             }
-            $parameterCheckString .= "    EXCEPTION_BLOCK($nativeType, $parameterName, " .
+            $parameterCheckString .= "    TRYCATCH($nativeType, $parameterName, " .
                  JSValueToNative($parameter, "MAYBE_MISSING_PARAMETER(args, $paramIndex, $parameterDefaultPolicy)", "args.GetIsolate()") . ");\n";
             if ($nativeType eq 'Dictionary') {
                $parameterCheckString .= "    if (!$parameterName.isUndefinedOrNull() && !$parameterName.isObject())\n";
@@ -2029,10 +2029,10 @@ END
     if (args.Length() < 1)
         return throwNotEnoughArgumentsError(args.GetIsolate());
 
-    STRING_TO_V8PARAMETER_EXCEPTION_BLOCK(V8StringResource<>, type, args[0]);
+    TRYCATCH_FOR_V8STRINGRESOURCE(V8StringResource<>, type, args[0]);
     ${interfaceName}Init eventInit;
     if (args.Length() >= 2) {
-        EXCEPTION_BLOCK(Dictionary, options, Dictionary(args[1], args.GetIsolate()));
+        TRYCATCH(Dictionary, options, Dictionary(args[1], args.GetIsolate()));
         if (!fill${interfaceName}Init(eventInit, options))
             return v8Undefined();
     }
@@ -4205,7 +4205,7 @@ sub ConvertToV8StringResource
 
     die "Wrong native type passed: $nativeType" unless $nativeType =~ /^V8StringResource/;
     if ($signature->type eq "DOMString") {
-        my $macro = "STRING_TO_V8PARAMETER_EXCEPTION_BLOCK";
+        my $macro = "TRYCATCH_FOR_V8STRINGRESOURCE";
         $macro .= "_$suffix" if $suffix;
         return "$macro($nativeType, $variableName, $value);"
     } else {

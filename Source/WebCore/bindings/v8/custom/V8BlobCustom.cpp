@@ -71,15 +71,15 @@ v8::Handle<v8::Value> V8Blob::constructorCallbackCustom(const v8::Arguments& arg
         if (!args[1]->IsObject())
             return throwTypeError("Second argument of the constructor is not of type Object", args.GetIsolate());
 
-        EXCEPTION_BLOCK(Dictionary, dictionary, Dictionary(args[1], args.GetIsolate()));
+        TRYCATCH(Dictionary, dictionary, Dictionary(args[1], args.GetIsolate()));
 
-        EXCEPTION_BLOCK(bool, containsEndings, dictionary.get("endings", endings));
+        TRYCATCH(bool, containsEndings, dictionary.get("endings", endings));
         if (containsEndings) {
             if (endings != "transparent" && endings != "native")
                 return throwTypeError("The endings property must be either \"transparent\" or \"native\"", args.GetIsolate());
         }
 
-        EXCEPTION_BLOCK(bool, containsType, dictionary.get("type", type));
+        TRYCATCH(bool, containsType, dictionary.get("type", type));
         UNUSED_PARAM(containsType);
         if (!type.containsOnlyASCII())
             return throwError(v8SyntaxError, "type must consist of ASCII characters", args.GetIsolate());
@@ -90,7 +90,7 @@ v8::Handle<v8::Value> V8Blob::constructorCallbackCustom(const v8::Arguments& arg
 
     BlobBuilder blobBuilder;
 
-    EXCEPTION_BLOCK(v8::Local<v8::Array>, blobParts, v8::Local<v8::Array>::Cast(firstArg));
+    TRYCATCH(v8::Local<v8::Array>, blobParts, v8::Local<v8::Array>::Cast(firstArg));
     uint32_t length = blobParts->Length();
 
     for (uint32_t i = 0; i < length; ++i) {
@@ -112,7 +112,7 @@ v8::Handle<v8::Value> V8Blob::constructorCallbackCustom(const v8::Arguments& arg
             ASSERT(blob);
             blobBuilder.append(blob);
         } else {
-            EXCEPTION_BLOCK(String, stringValue, toWebCoreString(item));
+            TRYCATCH(String, stringValue, toWebCoreString(item));
             blobBuilder.append(stringValue, endings);
         }
     }

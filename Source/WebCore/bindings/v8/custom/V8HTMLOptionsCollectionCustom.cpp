@@ -105,7 +105,7 @@ v8::Handle<v8::Value> V8HTMLOptionsCollection::addCallback(const v8::Arguments& 
         imp->add(option, ec);
     else {
         bool ok;
-        EXCEPTION_BLOCK(int, index, toInt32(args[1], ok));
+        TRYCATCH(int, index, toInt32(args[1], ok));
         if (!ok)
             ec = TYPE_MISMATCH_ERR;
         else

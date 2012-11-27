@@ -49,7 +49,7 @@ v8::Handle<v8::Value> V8TestOverloadedConstructors::constructor1Callback(const v
 {
     INC_STATS("DOM.TestOverloadedConstructors.Constructor1");
     
-    EXCEPTION_BLOCK(ArrayBuffer*, arrayBuffer, V8ArrayBuffer::HasInstance(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined)) ? V8ArrayBuffer::toNative(v8::Handle<v8::Object>::Cast(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined))) : 0);
+    TRYCATCH(ArrayBuffer*, arrayBuffer, V8ArrayBuffer::HasInstance(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined)) ? V8ArrayBuffer::toNative(v8::Handle<v8::Object>::Cast(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined))) : 0);
 
     RefPtr<TestOverloadedConstructors> impl = TestOverloadedConstructors::create(arrayBuffer);
     v8::Handle<v8::Object> wrapper = args.Holder();
@@ -62,7 +62,7 @@ v8::Handle<v8::Value> V8TestOverloadedConstructors::constructor2Callback(const v
 {
     INC_STATS("DOM.TestOverloadedConstructors.Constructor2");
     
-    EXCEPTION_BLOCK(ArrayBufferView*, arrayBufferView, V8ArrayBufferView::HasInstance(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined)) ? V8ArrayBufferView::toNative(v8::Handle<v8::Object>::Cast(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined))) : 0);
+    TRYCATCH(ArrayBufferView*, arrayBufferView, V8ArrayBufferView::HasInstance(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined)) ? V8ArrayBufferView::toNative(v8::Handle<v8::Object>::Cast(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined))) : 0);
 
     RefPtr<TestOverloadedConstructors> impl = TestOverloadedConstructors::create(arrayBufferView);
     v8::Handle<v8::Object> wrapper = args.Holder();
@@ -75,7 +75,7 @@ v8::Handle<v8::Value> V8TestOverloadedConstructors::constructor3Callback(const v
 {
     INC_STATS("DOM.TestOverloadedConstructors.Constructor3");
     
-    EXCEPTION_BLOCK(Blob*, blob, V8Blob::HasInstance(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined)) ? V8Blob::toNative(v8::Handle<v8::Object>::Cast(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined))) : 0);
+    TRYCATCH(Blob*, blob, V8Blob::HasInstance(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined)) ? V8Blob::toNative(v8::Handle<v8::Object>::Cast(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined))) : 0);
 
     RefPtr<TestOverloadedConstructors> impl = TestOverloadedConstructors::create(blob);
     v8::Handle<v8::Object> wrapper = args.Holder();
@@ -88,7 +88,7 @@ v8::Handle<v8::Value> V8TestOverloadedConstructors::constructor4Callback(const v
 {
     INC_STATS("DOM.TestOverloadedConstructors.Constructor4");
     
-    STRING_TO_V8PARAMETER_EXCEPTION_BLOCK(V8StringResource<>, string, MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined));
+    TRYCATCH_FOR_V8STRINGRESOURCE(V8StringResource<>, string, MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined));
 
     RefPtr<TestOverloadedConstructors> impl = TestOverloadedConstructors::create(string);
     v8::Handle<v8::Object> wrapper = args.Holder();

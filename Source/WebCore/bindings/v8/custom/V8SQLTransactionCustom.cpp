@@ -53,7 +53,7 @@ v8::Handle<v8::Value> V8SQLTransaction::executeSqlCallback(const v8::Arguments& 
     if (args.Length() == 0)
         return setDOMException(SYNTAX_ERR, args.GetIsolate());
 
-    STRING_TO_V8PARAMETER_EXCEPTION_BLOCK(V8StringResource<>, statement, args[0]);
+    TRYCATCH_FOR_V8STRINGRESOURCE(V8StringResource<>, statement, args[0]);
 
     Vector<SQLValue> sqlValues;
 
@@ -63,7 +63,7 @@ v8::Handle<v8::Value> V8SQLTransaction::executeSqlCallback(const v8::Arguments& 
 
         uint32_t sqlArgsLength = 0;
         v8::Local<v8::Object> sqlArgsObject = args[1]->ToObject();
-        EXCEPTION_BLOCK(v8::Local<v8::Value>, length, sqlArgsObject->Get(v8::String::New("length")));
+        TRYCATCH(v8::Local<v8::Value>, length, sqlArgsObject->Get(v8::String::New("length")));
 
         if (isUndefinedOrNull(length))
             sqlArgsLength = sqlArgsObject->GetPropertyNames()->Length();
@@ -72,15 +72,15 @@ v8::Handle<v8::Value> V8SQLTransaction::executeSqlCallback(const v8::Arguments& 
 
         for (unsigned int i = 0; i < sqlArgsLength; ++i) {
             v8::Handle<v8::Integer> key = v8Integer(i, args.GetIsolate());
-            EXCEPTION_BLOCK(v8::Local<v8::Value>, value, sqlArgsObject->Get(key));
+            TRYCATCH(v8::Local<v8::Value>, value, sqlArgsObject->Get(key));
 
             if (value.IsEmpty() || value->IsNull())
                 sqlValues.append(SQLValue());
             else if (value->IsNumber()) {
-                EXCEPTION_BLOCK(double, sqlValue, value->NumberValue());
+                TRYCATCH(double, sqlValue, value->NumberValue());
                 sqlValues.append(SQLValue(sqlValue));
             } else {
-                STRING_TO_V8PARAMETER_EXCEPTION_BLOCK(V8StringResource<>, sqlValue, value);
+                TRYCATCH_FOR_V8STRINGRESOURCE(V8StringResource<>, sqlValue, value);
                 sqlValues.append(SQLValue(sqlValue));
             }
         }

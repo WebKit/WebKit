@@ -308,7 +308,7 @@ v8::Handle<v8::Value> V8WebGLRenderingContext::getExtensionCallback(const v8::Ar
     WebGLRenderingContext* imp = V8WebGLRenderingContext::toNative(args.Holder());
     if (args.Length() < 1)
         return throwNotEnoughArgumentsError(args.GetIsolate());
-    STRING_TO_V8PARAMETER_EXCEPTION_BLOCK(V8StringResource<>, name, args[0]);
+    TRYCATCH_FOR_V8STRINGRESOURCE(V8StringResource<>, name, args[0]);
     WebGLExtension* extension = imp->getExtension(name);
     return toV8Object(extension, args.Holder(), args.GetIsolate());
 }
