@@ -1,3 +1,31 @@
+2012-11-26  Alexandre Elias  <aelias@chromium.org>
+
+        [chromium] Touchscreen fling handling
+        https://bugs.webkit.org/show_bug.cgi?id=103278
+
+        Reviewed by James Robinson.
+
+        The fling logic for touchpad can fall through to bad
+        performance in several ways. This patch introduces an alternate
+        path for touchscreen fling that simplifies it as follows:
+
+        - Stop generating wheel events, to prevent unnecessary scrollBegin hit
+        tests and to avoid falling back to slow path if a wheel handler is
+        registered.
+
+        - Drop the event on ScrollStatusIgnored. There's no real reason to
+        send the event to the WebKit thread here.
+
+        - Don't call transferActiveWheelFlingAnimation. This type of
+        transition shouldn't be needed with touchscreen flings.
+
+        * src/WebCompositorInputHandlerImpl.cpp:
+        (WebKit::WebCompositorInputHandlerImpl::handleGestureFling):
+        (WebKit::WebCompositorInputHandlerImpl::animate):
+        (WebKit::WebCompositorInputHandlerImpl::cancelCurrentFling):
+        (WebKit::WebCompositorInputHandlerImpl::scrollBy):
+        * src/WebCompositorInputHandlerImpl.h:
+
 2012-11-26  Kentaro Hara  <haraken@chromium.org>
 
         [V8] Remove WorkerContextExecutionProxy.{h,cpp}

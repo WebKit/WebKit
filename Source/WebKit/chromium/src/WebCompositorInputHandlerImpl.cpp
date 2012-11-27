@@ -118,7 +118,7 @@ WebCompositorInputHandlerImpl::EventDisposition WebCompositorInputHandlerImpl::h
         WebInputHandlerClient::ScrollStatus scrollStatus = m_inputHandlerClient->scrollBegin(WebPoint(wheelEvent.x, wheelEvent.y), WebInputHandlerClient::ScrollInputTypeWheel);
         switch (scrollStatus) {
         case WebInputHandlerClient::ScrollStatusStarted: {
-            TRACE_EVENT_INSTANT2("cc", "WebCompositorInputHandlerImpl::handleInput wheel scroll", "deltaX", -wheelEvent.deltaX, "deltaY", -wheelEvent.deltaY);
+            TRACE_EVENT_INSTANT2("webkit", "WebCompositorInputHandlerImpl::handleInput wheel scroll", "deltaX", -wheelEvent.deltaX, "deltaY", -wheelEvent.deltaY);
             bool didScroll = m_inputHandlerClient->scrollByIfPossible(WebPoint(wheelEvent.x, wheelEvent.y), IntSize(-wheelEvent.deltaX, -wheelEvent.deltaY));
             m_inputHandlerClient->scrollEnd();
             return didScroll ? DidHandle : DropEvent;
@@ -205,26 +205,30 @@ WebCompositorInputHandlerImpl::EventDisposition WebCompositorInputHandlerImpl::h
     WebInputHandlerClient::ScrollStatus scrollStatus = m_inputHandlerClient->scrollBegin(WebPoint(gestureEvent.x, gestureEvent.y), WebInputHandlerClient::ScrollInputTypeGesture);
     switch (scrollStatus) {
     case WebInputHandlerClient::ScrollStatusStarted: {
-        m_inputHandlerClient->scrollEnd();
-        m_wheelFlingCurve = adoptPtr(Platform::current()->createFlingAnimationCurve(gestureEvent.data.flingStart.sourceDevice, WebFloatPoint(gestureEvent.data.flingStart.velocityX, gestureEvent.data.flingStart.velocityY), WebSize()));
-        TRACE_EVENT_ASYNC_BEGIN0("cc", "WebCompositorInputHandlerImpl::handleGestureFling::started", this);
-        m_wheelFlingParameters.delta = WebFloatPoint(gestureEvent.data.flingStart.velocityX, gestureEvent.data.flingStart.velocityY);
-        m_wheelFlingParameters.point = WebPoint(gestureEvent.x, gestureEvent.y);
-        m_wheelFlingParameters.globalPoint = WebPoint(gestureEvent.globalX, gestureEvent.globalY);
-        m_wheelFlingParameters.modifiers = gestureEvent.modifiers;
-        m_wheelFlingParameters.sourceDevice = gestureEvent.data.flingStart.sourceDevice;
+        if (gestureEvent.data.flingStart.sourceDevice == WebGestureEvent::Touchpad)
+            m_inputHandlerClient->scrollEnd();
+        m_flingCurve = adoptPtr(Platform::current()->createFlingAnimationCurve(gestureEvent.data.flingStart.sourceDevice, WebFloatPoint(gestureEvent.data.flingStart.velocityX, gestureEvent.data.flingStart.velocityY), WebSize()));
+        TRACE_EVENT_ASYNC_BEGIN0("webkit", "WebCompositorInputHandlerImpl::handleGestureFling::started", this);
+        m_flingParameters.delta = WebFloatPoint(gestureEvent.data.flingStart.velocityX, gestureEvent.data.flingStart.velocityY);
+        m_flingParameters.point = WebPoint(gestureEvent.x, gestureEvent.y);
+        m_flingParameters.globalPoint = WebPoint(gestureEvent.globalX, gestureEvent.globalY);
+        m_flingParameters.modifiers = gestureEvent.modifiers;
+        m_flingParameters.sourceDevice = gestureEvent.data.flingStart.sourceDevice;
         m_inputHandlerClient->scheduleAnimation();
         return DidHandle;
     }
     case WebInputHandlerClient::ScrollStatusOnMainThread: {
-        TRACE_EVENT_INSTANT0("cc", "WebCompositorInputHandlerImpl::handleGestureFling::scrollOnMainThread");
+        TRACE_EVENT_INSTANT0("webkit", "WebCompositorInputHandlerImpl::handleGestureFling::scrollOnMainThread");
         return DidNotHandle;
     }
     case WebInputHandlerClient::ScrollStatusIgnored: {
-        TRACE_EVENT_INSTANT0("cc", "WebCompositorInputHandlerImpl::handleGestureFling::ignored");
-        // We still pass the curve to the main thread if there's nothing scrollable, in case something
-        // registers a handler before the curve is over.
-        return DidNotHandle;
+        TRACE_EVENT_INSTANT0("webkit", "WebCompositorInputHandlerImpl::handleGestureFling::ignored");
+        if (gestureEvent.data.flingStart.sourceDevice == WebGestureEvent::Touchpad) {
+            // We still pass the curve to the main thread if there's nothing scrollable, in case something
+            // registers a handler before the curve is over.
+            return DidNotHandle;
+        }
+        return DropEvent;
     }
     }
     return DidNotHandle;
@@ -234,7 +238,7 @@ void WebCompositorInputHandlerImpl::bindToClient(WebInputHandlerClient* client)
 {
     ASSERT(!m_inputHandlerClient);
 
-    TRACE_EVENT_INSTANT0("cc", "WebCompositorInputHandlerImpl::bindToClient");
+    TRACE_EVENT_INSTANT0("webkit", "WebCompositorInputHandlerImpl::bindToClient");
     if (!s_compositors)
         s_compositors = new HashSet<WebCompositorInputHandlerImpl*>;
     s_compositors->add(this);
@@ -244,33 +248,70 @@ void WebCompositorInputHandlerImpl::bindToClient(WebInputHandlerClient* client)
 
 void WebCompositorInputHandlerImpl::animate(double monotonicTime)
 {
-    if (!m_wheelFlingCurve)
+    if (!m_flingCurve)
         return;
 
-    if (!m_wheelFlingParameters.startTime) {
-        m_wheelFlingParameters.startTime = monotonicTime;
+    if (!m_flingParameters.startTime) {
+        m_flingParameters.startTime = monotonicTime;
         m_inputHandlerClient->scheduleAnimation();
         return;
     }
 
-    if (m_wheelFlingCurve->apply(monotonicTime - m_wheelFlingParameters.startTime, this))
+    if (m_flingCurve->apply(monotonicTime - m_flingParameters.startTime, this))
         m_inputHandlerClient->scheduleAnimation();
     else {
-        TRACE_EVENT_INSTANT0("cc", "WebCompositorInputHandlerImpl::animate::flingOver");
+        TRACE_EVENT_INSTANT0("webkit", "WebCompositorInputHandlerImpl::animate::flingOver");
         cancelCurrentFling();
     }
 }
 
 bool WebCompositorInputHandlerImpl::cancelCurrentFling()
 {
-    bool hadFlingAnimation = m_wheelFlingCurve;
-    if (hadFlingAnimation)
-        TRACE_EVENT_ASYNC_END0("cc", "WebCompositorInputHandlerImpl::handleGestureFling::started", this);
+    bool hadFlingAnimation = m_flingCurve;
+    if (hadFlingAnimation && m_flingParameters.sourceDevice == WebGestureEvent::Touchscreen) {
+        m_inputHandlerClient->scrollEnd();
+        TRACE_EVENT_ASYNC_END0("webkit", "WebCompositorInputHandlerImpl::handleGestureFling::started", this);
+    }
 
-    TRACE_EVENT_INSTANT1("cc", "WebCompositorInputHandlerImpl::cancelCurrentFling", "hadFlingAnimation", hadFlingAnimation);
-    m_wheelFlingCurve.clear();
-    m_wheelFlingParameters = WebActiveWheelFlingParameters();
+    TRACE_EVENT_INSTANT1("webkit", "WebCompositorInputHandlerImpl::cancelCurrentFling", "hadFlingAnimation", hadFlingAnimation);
+    m_flingCurve.clear();
+    m_flingParameters = WebActiveWheelFlingParameters();
     return hadFlingAnimation;
+}
+
+bool WebCompositorInputHandlerImpl::touchpadFlingScroll(const WebPoint& increment)
+{
+    WebMouseWheelEvent syntheticWheel;
+    syntheticWheel.type = WebInputEvent::MouseWheel;
+    syntheticWheel.deltaX = increment.x;
+    syntheticWheel.deltaY = increment.y;
+    syntheticWheel.hasPreciseScrollingDeltas = true;
+    syntheticWheel.x = m_flingParameters.point.x;
+    syntheticWheel.y = m_flingParameters.point.y;
+    syntheticWheel.globalX = m_flingParameters.globalPoint.x;
+    syntheticWheel.globalY = m_flingParameters.globalPoint.y;
+    syntheticWheel.modifiers = m_flingParameters.modifiers;
+
+    WebCompositorInputHandlerImpl::EventDisposition disposition = handleInputEventInternal(syntheticWheel);
+    switch (disposition) {
+    case DidHandle:
+        return true;
+    case DropEvent:
+        break;
+    case DidNotHandle:
+        TRACE_EVENT_INSTANT0("webkit", "WebCompositorInputHandlerImpl::scrollBy::AbortFling");
+        // If we got a DidNotHandle, that means we need to deliver wheels on the main thread.
+        // In this case we need to schedule a commit and transfer the fling curve over to the main
+        // thread and run the rest of the wheels from there.
+        // This can happen when flinging a page that contains a scrollable subarea that we can't
+        // scroll on the thread if the fling starts outside the subarea but then is flung "under" the
+        // pointer.
+        m_client->transferActiveWheelFlingAnimation(m_flingParameters);
+        cancelCurrentFling();
+        break;
+    }
+
+    return false;
 }
 
 void WebCompositorInputHandlerImpl::scrollBy(const WebPoint& increment)
@@ -278,36 +319,22 @@ void WebCompositorInputHandlerImpl::scrollBy(const WebPoint& increment)
     if (increment == WebPoint())
         return;
 
-    TRACE_EVENT2("cc", "WebCompositorInputHandlerImpl::scrollBy", "x", increment.x, "y", increment.y);
-    WebMouseWheelEvent syntheticWheel;
-    syntheticWheel.type = WebInputEvent::MouseWheel;
-    syntheticWheel.deltaX = increment.x;
-    syntheticWheel.deltaY = increment.y;
-    syntheticWheel.hasPreciseScrollingDeltas = true;
-    syntheticWheel.x = m_wheelFlingParameters.point.x;
-    syntheticWheel.y = m_wheelFlingParameters.point.y;
-    syntheticWheel.globalX = m_wheelFlingParameters.globalPoint.x;
-    syntheticWheel.globalY = m_wheelFlingParameters.globalPoint.y;
-    syntheticWheel.modifiers = m_wheelFlingParameters.modifiers;
+    TRACE_EVENT2("webkit", "WebCompositorInputHandlerImpl::scrollBy", "x", increment.x, "y", increment.y);
 
-    WebCompositorInputHandlerImpl::EventDisposition disposition = handleInputEventInternal(syntheticWheel);
-    switch (disposition) {
-    case DidHandle:
-        m_wheelFlingParameters.cumulativeScroll.width += increment.x;
-        m_wheelFlingParameters.cumulativeScroll.height += increment.y;
-    case DropEvent:
+    bool didScroll = false;
+
+    switch (m_flingParameters.sourceDevice) {
+    case WebGestureEvent::Touchpad:
+        didScroll = touchpadFlingScroll(increment);
         break;
-    case DidNotHandle:
-        TRACE_EVENT_INSTANT0("cc", "WebCompositorInputHandlerImpl::scrollBy::AbortFling");
-        // If we got a DidNotHandle, that means we need to deliver wheels on the main thread.
-        // In this case we need to schedule a commit and transfer the fling curve over to the main
-        // thread and run the rest of the wheels from there.
-        // This can happen when flinging a page that contains a scrollable subarea that we can't
-        // scroll on the thread if the fling starts outside the subarea but then is flung "under" the
-        // pointer.
-        m_client->transferActiveWheelFlingAnimation(m_wheelFlingParameters);
-        cancelCurrentFling();
+    case WebGestureEvent::Touchscreen:
+        didScroll = m_inputHandlerClient->scrollByIfPossible(m_flingParameters.point, IntSize(-increment.x, -increment.y));
         break;
+    }
+
+    if (didScroll) {
+        m_flingParameters.cumulativeScroll.width += increment.x;
+        m_flingParameters.cumulativeScroll.height += increment.y;
     }
 }
 
