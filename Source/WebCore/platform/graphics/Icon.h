@@ -32,7 +32,7 @@ OBJC_CLASS NSImage;
 #elif PLATFORM(WIN)
 typedef struct HICON__* HICON;
 #elif PLATFORM(QT)
-#include <QImage>
+#include <QIcon>
 #elif PLATFORM(GTK)
 typedef struct _GdkPixbuf GdkPixbuf;
 #elif PLATFORM(EFL)
@@ -70,7 +70,7 @@ private:
     HICON m_hIcon;
 #elif PLATFORM(QT)
     Icon();
-    QImage m_image;
+    QIcon m_icon;
 #elif PLATFORM(GTK)
     Icon();
     GdkPixbuf* m_icon;
