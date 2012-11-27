@@ -309,6 +309,9 @@ webkit.org/b/98740 plugins/npruntime/delete-plugin-within-setProperty.html [ Fai
 webkit.org/b/99561 http/tests/plugins/plugin-document-has-focus.html [ Failure ]
 webkit.org/b/99562 http/tests/plugins/post-url-file.html [ Failure ]
 
+# Asserting after r135816.
+webkit.org/b/103432 [ Debug ] http/tests/inspector/network/network-xhr-replay.html [ Crash ]
+
 # Comparison of two javascript objects in C++ is failing.
 webkit.org/b/98739 plugins/npruntime/embed-property-equality.html [ Failure ]
 

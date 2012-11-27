@@ -1678,6 +1678,9 @@ webkit.org/b/61138 http/tests/w3c/webperf/submission/resource-timing [ Skip ]
 
 webkit.org/b/103109 fast/dom/shadow/host-wrapper-reclaimed.html [ Failure ]
 
+# Test failing after r135765.
+Bug(EFL) http/tests/security/isolatedWorld/world-reuse.html [ Failure ]
+
 # Start of media player causes timeout.
 Bug(EFL) media/controls-right-click-on-timebar.html [ Failure ]
 
