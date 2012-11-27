@@ -1,3 +1,20 @@
+2012-11-26  Michael Saboff  <msaboff@apple.com>
+
+        Grapheme cluster functions can be simplified for 8 bit Strings
+        https://bugs.webkit.org/show_bug.cgi?id=102996
+
+        Reviewed by Alexey Proskuryakov.
+
+        For 8 bit strings, check for the uncommon CR-LF by looking for any CR.  If there aren't any CR characters,
+        the number of Extended Grapheme Clusters is equal to the string length.  If we need to handle Tailored
+        Graheme Clusters, then this will need to change.
+
+        No new tests. No change in functionality.
+
+        * platform/text/TextBreakIterator.cpp:
+        (WebCore::numGraphemeClusters):
+        (WebCore::numCharactersInGraphemeClusters):
+
 2012-11-26  Istiaque Ahmed  <lazyboy@chromium.org>
 
         Check for empty perContextData while creating NP V8 Object.
