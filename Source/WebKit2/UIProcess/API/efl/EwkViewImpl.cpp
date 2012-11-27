@@ -35,11 +35,13 @@
 #include "PagePolicyClientEfl.h"
 #include "PageUIClientEfl.h"
 #include "ResourceLoadClientEfl.h"
+#include "SnapshotImageGL.h"
 #include "WKDictionary.h"
 #include "WKGeometry.h"
 #include "WKNumber.h"
 #include "WKString.h"
 #include "WebContext.h"
+#include "WebImage.h"
 #include "WebPageGroup.h"
 #include "WebPageProxy.h"
 #include "WebPopupMenuProxyEfl.h"
@@ -62,6 +64,7 @@
 #include <Edje.h>
 #include <WebCore/CairoUtilitiesEfl.h>
 #include <WebCore/Cursor.h>
+#include <WebKit2/WKImageCairo.h>
 
 #if ENABLE(VIBRATION)
 #include "VibrationClientEfl.h"
@@ -1011,4 +1014,23 @@ void EwkViewImpl::onFaviconChanged(const char* pageURL, void* eventInfo)
         return;
 
     viewImpl->informIconChange();
+}
+
+WKImageRef EwkViewImpl::takeSnapshot()
+{
+    Ewk_View_Smart_Data* sd = smartData();
+#if USE(ACCELERATED_COMPOSITING)
+    if (!m_isHardwareAccelerated)
+#endif
+        return WKImageCreateFromCairoSurface(createSurfaceForImage(sd->image).get(), 0);
+
+#if USE(ACCELERATED_COMPOSITING)
+    Evas_Native_Surface* nativeSurface = evas_object_image_native_surface_get(sd->image);
+    unsigned char* buffer = getImageFromCurrentTexture(sd->view.w, sd->view.h, nativeSurface->data.opengl.texture_id);
+    RefPtr<cairo_surface_t> surface = adoptRef(cairo_image_surface_create_for_data(buffer, CAIRO_FORMAT_ARGB32, sd->view.w, sd->view.h, sd->view.w * 4));
+    WKImageRef image = WKImageCreateFromCairoSurface(surface.get(), 0);
+    delete[] buffer;
+
+    return image;
+#endif
 }

@@ -215,6 +215,8 @@ public:
     bool isHardwareAccelerated() const { return m_isHardwareAccelerated; }
     void setDrawsBackground(bool enable) { m_setDrawsBackground = enable; }
 
+    WKImageRef takeSnapshot();
+
 private:
     inline Ewk_View_Smart_Data* smartData() const;
     void displayTimerFired(WebCore::Timer<EwkViewImpl>*);

@@ -34,6 +34,8 @@ WK_EXPORT WKViewRef WKViewCreateWithFixedLayout(Evas* canvas, WKContextRef conte
 
 WK_EXPORT WKPageRef WKViewGetPage(WKViewRef view);
 
+WK_EXPORT WKImageRef WKViewGetSnapshot(WKViewRef viewRef);
+
 #ifdef __cplusplus
 }
 #endif

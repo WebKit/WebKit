@@ -51,7 +51,7 @@ private:
     void dumpPixelsAndCompareWithExpected(WKImageRef, WKArrayRef repaintRects);
     bool compareActualHashToExpectedAndDumpResults(const char[33]);
 
-#if PLATFORM(QT)
+#if PLATFORM(QT) || PLATFORM(EFL)
     static void forceRepaintDoneCallback(WKErrorRef, void* context);
     void forceRepaintDone();
 #endif

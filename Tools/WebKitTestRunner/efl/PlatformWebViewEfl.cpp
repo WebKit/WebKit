@@ -24,6 +24,9 @@
 #include "EWebKit2.h"
 #include "WebKit2/WKAPICast.h"
 #include <Ecore_Evas.h>
+#include <WebCore/RefPtrCairo.h>
+#include <WebKit2/WKImageCairo.h>
+#include <cairo.h>
 
 using namespace WebKit;
 
@@ -124,9 +127,15 @@ void PlatformWebView::makeWebViewFirstResponder()
 
 WKRetainPtr<WKImageRef> PlatformWebView::windowSnapshotImage()
 {
-    // FIXME: implement to capture pixels in the UI process,
-    // which may be necessary to capture things like 3D transforms.
-    return 0;
+    Ecore_Evas* ee = ecore_evas_ecore_evas_get(evas_object_evas_get(m_view));
+    ASSERT(ee);
+
+    int width;
+    int height;
+    ecore_evas_geometry_get(ee, 0, 0, &width, &height);
+    ASSERT(width > 0 && height > 0);
+
+    return adoptWK(WKViewGetSnapshot(toAPI(m_view)));
 }
 
 bool PlatformWebView::viewSupportsOptions(WKDictionaryRef options) const

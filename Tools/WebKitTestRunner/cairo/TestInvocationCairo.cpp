@@ -30,6 +30,8 @@
 #include "TestInvocation.h"
 
 #include "PixelDumpSupport.h"
+#include "PlatformWebView.h"
+#include "TestController.h"
 #include <WebKit2/WKImageCairo.h>
 #include <cairo/cairo.h>
 #include <cstdio>
@@ -61,7 +63,7 @@ void computeMD5HashStringForCairoSurface(cairo_surface_t* surface, char hashStri
         hash[8], hash[9], hash[10], hash[11], hash[12], hash[13], hash[14], hash[15]);
 }
 
-static cairo_status_t writeFunction(void* closure, const unsigned char* data, unsigned int length)
+static cairo_status_t writeFunction(void* closure, const unsigned char* data, unsigned length)
 {
     Vector<unsigned char>* in = reinterpret_cast<Vector<unsigned char>*>(closure);
     in->append(data, length);
@@ -104,9 +106,37 @@ static void paintRepaintRectOverlay(cairo_surface_t* surface, WKArrayRef repaint
     cairo_destroy(context);
 }
 
+#if PLATFORM(EFL)
+void TestInvocation::forceRepaintDoneCallback(WKErrorRef, void *context)
+{
+    static_cast<TestInvocation*>(context)->m_gotRepaint = true;
+    TestController::shared().notifyDone();
+}
+#endif
+
 void TestInvocation::dumpPixelsAndCompareWithExpected(WKImageRef wkImage, WKArrayRef repaintRects)
 {
+#if USE(ACCELERATED_COMPOSITING) && PLATFORM(EFL)
+    UNUSED_PARAM(wkImage);
+
+    cairo_surface_t* surface;
+
+    WKPageRef page = TestController::shared().mainWebView()->page();
+    WKPageForceRepaint(page, this, &forceRepaintDoneCallback);
+
+    TestController::shared().runUntil(m_gotRepaint, TestController::ShortTimeout);
+
+    if (!m_gotRepaint) {
+        m_error = true;
+        m_errorMessage = "Timed out waiting for repaint\n";
+        m_webProcessIsUnrensponsive = true;
+        return;
+    }
+
+    surface = WKImageCreateCairoSurface(TestController::shared().mainWebView()->windowSnapshotImage().get());
+#else
     cairo_surface_t* surface = WKImageCreateCairoSurface(wkImage);
+#endif
 
     if (repaintRects)
         paintRepaintRectOverlay(surface, repaintRects);

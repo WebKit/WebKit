@@ -1,3 +1,25 @@
+2012-11-27  Yael Aharon  <yael.aharon@intel.com>
+
+        [EFL][WK2] 3D pixel tests are failing
+        https://bugs.webkit.org/show_bug.cgi?id=102833
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Added an API for generating a snapshot, to be used from WebKitTestRunner.
+
+        * PlatformEfl.cmake:
+        * UIProcess/API/C/efl/WKView.cpp:
+        (WKViewGetSnapshot):
+        * UIProcess/API/C/efl/WKView.h:
+        * UIProcess/API/efl/EwkViewImpl.cpp:
+        (EwkViewImpl::onFaviconChanged):
+        (EwkViewImpl::takeSnapshot):
+        * UIProcess/API/efl/EwkViewImpl.h:
+        (EwkViewImpl):
+        * UIProcess/API/efl/SnapshotImageGL.cpp: Added.
+        (getImageFromCurrentTexture):
+        * UIProcess/API/efl/SnapshotImageGL.h: Added.
+
 2012-11-27  Tim Horton  <timothy_horton@apple.com>
 
         PDFPlugin: Page scale factor should affect subframe PDFs

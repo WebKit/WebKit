@@ -1,3 +1,24 @@
+2012-11-27  Yael Aharon  <yael.aharon@intel.com>
+
+        [EFL][WK2] 3D pixel tests are failing
+        https://bugs.webkit.org/show_bug.cgi?id=102833
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Generate a snapshot of the view in the UI process instead of the web process.
+        We have to use Texture Mapper in order to correctly paint 3D transforms etc.
+
+        * WebKitTestRunner/TestInvocation.h:
+        (TestInvocation):
+        * WebKitTestRunner/cairo/TestInvocationCairo.cpp:
+        (WTR::writeFunction):
+        (WTR::paintRepaintRectOverlay):
+        (WTR):
+        (WTR::TestInvocation::forceRepaintDoneCallback):
+        (WTR::TestInvocation::dumpPixelsAndCompareWithExpected):
+        * WebKitTestRunner/efl/PlatformWebViewEfl.cpp:
+        (WTR::PlatformWebView::windowSnapshotImage):
+
 2012-11-27  Adam Barth  <abarth@webkit.org>
 
         Make it possible to run performance tests on Chromium Android

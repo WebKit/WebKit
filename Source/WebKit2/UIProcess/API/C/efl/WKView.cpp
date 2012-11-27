@@ -42,3 +42,10 @@ WKPageRef WKViewGetPage(WKViewRef viewRef)
 
     return viewImpl->wkPage();
 }
+
+WKImageRef WKViewGetSnapshot(WKViewRef viewRef)
+{
+    EwkViewImpl* viewImpl = EwkViewImpl::fromEvasObject(toImpl(viewRef));
+
+    return viewImpl->takeSnapshot();
+}
