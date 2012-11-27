@@ -269,8 +269,6 @@ void CoordinatedGraphicsLayer::setContentsVisible(bool b)
     if (contentsAreVisible() == b)
         return;
     GraphicsLayer::setContentsVisible(b);
-    if (maskLayer())
-        maskLayer()->setContentsVisible(b);
 
     didChangeLayerState();
 }
@@ -392,7 +390,6 @@ void CoordinatedGraphicsLayer::setMaskLayer(GraphicsLayer* layer)
         return;
 
     layer->setSize(size());
-    layer->setContentsVisible(contentsAreVisible());
     CoordinatedGraphicsLayer* CoordinatedGraphicsLayer = toCoordinatedGraphicsLayer(layer);
     CoordinatedGraphicsLayer->setMaskTarget(this);
     CoordinatedGraphicsLayer->didChangeLayerState();
