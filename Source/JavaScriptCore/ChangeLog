@@ -1,5 +1,17 @@
 2012-11-26  Daniel Bates  <dbates@webkit.org>
 
+        Substitute "allSeparators8Bit" for "allSeperators8Bit" in JSC::jsSpliceSubstringsWithSeparators()
+        <https://bugs.webkit.org/show_bug.cgi?id=103303>
+
+        Reviewed by Simon Fraser.
+
+        Fix misspelled word, "Seperators" [sic], in a local variable name in JSC::jsSpliceSubstringsWithSeparators().
+
+        * runtime/StringPrototype.cpp:
+        (JSC::jsSpliceSubstringsWithSeparators):
+
+2012-11-26  Daniel Bates  <dbates@webkit.org>
+
         JavaScript fails to handle String.replace() with large replacement string
         https://bugs.webkit.org/show_bug.cgi?id=102956
         <rdar://problem/12738012>

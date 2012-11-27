@@ -339,13 +339,13 @@ static ALWAYS_INLINE JSValue jsSpliceSubstringsWithSeparators(ExecState* exec, J
     }
 
     Checked<int, RecordOverflow> totalLength = 0;
-    bool allSeperators8Bit = true;
+    bool allSeparators8Bit = true;
     for (int i = 0; i < rangeCount; i++)
         totalLength += substringRanges[i].length;
     for (int i = 0; i < separatorCount; i++) {
         totalLength += separators[i].length();
         if (separators[i].length() && !separators[i].is8Bit())
-            allSeperators8Bit = false;
+            allSeparators8Bit = false;
     }
     if (totalLength.hasOverflowed())
         return throwOutOfMemoryError(exec);
@@ -353,7 +353,7 @@ static ALWAYS_INLINE JSValue jsSpliceSubstringsWithSeparators(ExecState* exec, J
     if (!totalLength)
         return jsEmptyString(exec);
 
-    if (source.is8Bit() && allSeperators8Bit) {
+    if (source.is8Bit() && allSeparators8Bit) {
         LChar* buffer;
         const LChar* sourceData = source.characters8();
 
