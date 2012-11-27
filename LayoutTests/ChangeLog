@@ -1,3 +1,18 @@
+2012-11-26  Istiaque Ahmed  <lazyboy@chromium.org>
+
+        Check for empty perContextData while creating NP V8 Object.
+        https://bugs.webkit.org/show_bug.cgi?id=98448
+
+        Reviewed by Adam Barth.
+
+        Fixes crash in npCreateV8ScriptObject(), if NP Invoke is called from a document
+        that is no longer displayed in frame (isCurrentlyDisplayedInFrame() ==
+        false), we have empty perContextData and this results in invalid memory access.
+
+        * platform/chromium/plugins/empty-per-context-data-expected.txt: Added.
+        * platform/chromium/plugins/empty-per-context-data.html: Added.
+        * platform/chromium/plugins/resources/script-container.html: Added.
+
 2012-11-26  Daniel Bates  <dbates@webkit.org>
 
         JavaScript fails to handle String.replace() with large replacement string
