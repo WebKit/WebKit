@@ -2,6 +2,7 @@
 
 use CGI;
 use File::stat;
+use Time::HiRes;
 
 $query = new CGI;
 $name = $query->param('name');
@@ -21,7 +22,7 @@ while (($n = read FILE, $data, 1024) != 0) {
     $total += $n;
     if ($total > $stallAt) {
         if (defined $stallFor) {
-            sleep($stallFor)
+            Time::HiRes::sleep($stallFor)
         }
         last;
     }

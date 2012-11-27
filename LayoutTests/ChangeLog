@@ -1,3 +1,24 @@
+2012-11-27  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        Reduce XHR timeout tests execution time
+        https://bugs.webkit.org/show_bug.cgi?id=102184
+
+        Reviewed by Csaba Osztrogonác.
+
+        Reduce all timeouts by five.
+
+        * http/tests/resources/load-and-stall.cgi:
+        * http/tests/resources/load-and-stall.php:
+        * http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-runner.js:
+        * http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout.js:
+        (RequestTracker.prototype.startXHR):
+        (RequestTracker.prototype.handleEvent):
+        (AbortedRequest.prototype.getMessage):
+        (AbortedRequest.prototype.handleEvent):
+        (SyncRequestSettingTimeoutAfterOpen.startXHR):
+        (SyncRequestSettingTimeoutBeforeOpen.startXHR):
+        (TestCounter.testComplete):
+
 2012-11-27  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSS Regions] Absolutely positioned regions do not expand to fill their container

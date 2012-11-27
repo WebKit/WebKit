@@ -21,7 +21,7 @@ function groupFromLocation() {
 }
 
 // Setting up testharness.js
-setup({ explicit_done: true, timeout: 3 * 60 * 1000 });
+setup({ explicit_done: true, timeout: 30 * 1000 });
 
 // Abort test execution if an individual test case fails.
 add_result_callback(function (t) {

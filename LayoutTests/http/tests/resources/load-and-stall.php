@@ -27,7 +27,7 @@ if (isset($stallAt) && isset($stallFor)) {
         flush();
         ob_flush();
     }
-    sleep($stallFor);
+    usleep($stallFor * 1000000);
     echo(fread($file, filesize($name) - $stallAt));
 } else {
     echo(fread($file, filesize($name)));

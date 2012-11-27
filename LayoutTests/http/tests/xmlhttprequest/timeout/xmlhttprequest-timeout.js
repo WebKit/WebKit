@@ -11,10 +11,17 @@
    request handlers.
  */
 
+var TIME_NORMAL_LOAD = 1000;
+var TIME_LATE_TIMEOUT = 800;
+var TIME_XHR_LOAD = 600;
+var TIME_REGULAR_TIMEOUT = 400;
+var TIME_SYNC_TIMEOUT = 200;
+var TIME_DELAY = 200;
+
 /*
- * This should point to a resource that responds after a delay of 3 seconds.
+ * This should point to a resource that responds after a delay of TIME_XHR_LOAD milliseconds.
  */
-var STALLED_REQUEST_URL = "/resources/load-and-stall.cgi?name=../../../http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout.js&stallFor=3&stallAt=0&mimeType=text/plain";
+var STALLED_REQUEST_URL = "/resources/load-and-stall.cgi?name=../../../http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout.js&stallFor=" + TIME_XHR_LOAD/1000 + "&stallAt=0&mimeType=text/plain";
 
 var inWorker = false;
 try {
@@ -109,7 +116,7 @@ RequestTracker.prototype = {
     }
     catch (e) {
       // Synchronous case in workers.
-      ok(!this.async && this.timeLimit < 3000 && e.name == "TimeoutError", "Unexpected error: " + e);
+      ok(!this.async && this.timeLimit < TIME_XHR_LOAD && e.name == "TimeoutError", "Unexpected error: " + e);
       TestCounter.testComplete();
     }
   },
@@ -144,11 +151,11 @@ RequestTracker.prototype = {
     this.hasFired = true;
 
     var type = evt.type, expectedType;
-    // The XHR responds after 3000 milliseconds with a load event.
-    var timeLimit = this.mustReset && (this.resetAfter < Math.min(3000, this.timeLimit)) ?
+    // The XHR responds after TIME_XHR_LOAD milliseconds with a load event.
+    var timeLimit = this.mustReset && (this.resetAfter < Math.min(TIME_XHR_LOAD, this.timeLimit)) ?
                     this.resetTo :
                     this.timeLimit;
-    if ((timeLimit == 0) || (timeLimit >= 3000)) {
+    if ((timeLimit == 0) || (timeLimit >= TIME_XHR_LOAD)) {
       expectedType = "load";
     }
     else {
@@ -185,7 +192,7 @@ AbortedRequest.prototype = {
     req.onabort = handleEvent;
     req.ontimeout = handleEvent;
 
-    req.timeout = 2000;
+    req.timeout = TIME_REGULAR_TIMEOUT;
     var _this = this;
 
     function abortReq() {
@@ -201,7 +208,7 @@ AbortedRequest.prototype = {
           ok(false, "Unexpected error: " + e);
           TestCounter.testComplete();
         }
-      }, 5000);
+      }, TIME_NORMAL_LOAD);
     }
     else {
       // Abort events can only be triggered on sent requests.
@@ -230,7 +237,7 @@ AbortedRequest.prototype = {
    * @returns {String} The test description.
    */
   getMessage: function() {
-    return "time to abort is " + this.abortDelay + ", timeout set at 2000";
+    return "time to abort is " + this.abortDelay + ", timeout set at " + TIME_REGULAR_TIMEOUT;
   },
 
   /**
@@ -248,7 +255,7 @@ AbortedRequest.prototype = {
       return;
     }
 
-    var expectedEvent = (this.abortDelay >= 2000 && !this.hasFired) ? "timeout" : "abort";
+    var expectedEvent = (this.abortDelay >= TIME_REGULAR_TIMEOUT && !this.hasFired) ? "timeout" : "abort";
     this.hasFired = true;
     is(evt.type, expectedEvent, this.getMessage());
     TestCounter.testComplete();
@@ -261,7 +268,7 @@ var SyncRequestSettingTimeoutAfterOpen = {
     var req = new XMLHttpRequest();
     req.open("GET", STALLED_REQUEST_URL, false);
     try {
-      req.timeout = 1000;
+      req.timeout = TIME_SYNC_TIMEOUT;
     }
     catch (e) {
       pass = true;
@@ -275,7 +282,7 @@ var SyncRequestSettingTimeoutBeforeOpen = {
   startXHR: function() {
     var pass = false;
     var req = new XMLHttpRequest();
-    req.timeout = 1000;
+    req.timeout = TIME_SYNC_TIMEOUT;
     try {
       req.open("GET", STALLED_REQUEST_URL, false);
     }
@@ -290,39 +297,39 @@ var SyncRequestSettingTimeoutBeforeOpen = {
 var TestRequestGroups = {
   "simple" : [
     new RequestTracker(true, "no time out scheduled, load fires normally", 0),
-    new RequestTracker(true, "load fires normally", 5000),
-    new RequestTracker(true, "timeout hit before load", 2000)
+    new RequestTracker(true, "load fires normally", TIME_NORMAL_LOAD),
+    new RequestTracker(true, "timeout hit before load", TIME_REGULAR_TIMEOUT)
   ],
 
   "twice" : [
-     new RequestTracker(true, "load fires normally with no timeout set, twice", 0, 2000, 0),
-     new RequestTracker(true, "load fires normally with same timeout set twice", 5000, 2000, 5000),
-     new RequestTracker(true, "timeout fires normally with same timeout set twice", 2000, 1000, 2000)
+     new RequestTracker(true, "load fires normally with no timeout set, twice", 0, TIME_REGULAR_TIMEOUT, 0),
+     new RequestTracker(true, "load fires normally with same timeout set twice", TIME_NORMAL_LOAD, TIME_REGULAR_TIMEOUT, TIME_NORMAL_LOAD),
+     new RequestTracker(true, "timeout fires normally with same timeout set twice", TIME_REGULAR_TIMEOUT, TIME_DELAY, TIME_REGULAR_TIMEOUT)
   ],
 
   // FIXME: http://webkit.org/b/98156 - Late updates are not supported yet, these tests are not run.
   "overrides" : [
-    new RequestTracker(true, "timeout disabled after initially set", 5000, 2000, 0),
-    new RequestTracker(true, "timeout overrides load after a delay", 5000, 1000, 2000),
-    new RequestTracker(true, "timeout enabled after initially disabled", 0, 2000, 5000)
+    new RequestTracker(true, "timeout disabled after initially set", TIME_NORMAL_LOAD, TIME_REGULAR_TIMEOUT, 0),
+    new RequestTracker(true, "timeout overrides load after a delay", TIME_NORMAL_LOAD, TIME_DELAY, TIME_REGULAR_TIMEOUT),
+    new RequestTracker(true, "timeout enabled after initially disabled", 0, TIME_REGULAR_TIMEOUT, TIME_NORMAL_LOAD)
   ],
 
   "overridesexpires" : [
-    new RequestTracker(true, "timeout set to expiring value after load fires", 5000, 4000, 1000),
+    new RequestTracker(true, "timeout set to expiring value after load fires", TIME_NORMAL_LOAD, TIME_LATE_TIMEOUT, TIME_DELAY),
     // FIXME: http://webkit.org/b/98156 - Late updates are not supported yet, this test is not run.
-    // new RequestTracker(true, "timeout set to expired value before load fires", 5000, 2000, 1000),
-    new RequestTracker(true, "timeout set to non-expiring value after timeout fires", 1000, 2000, 5000)
+    // new RequestTracker(true, "timeout set to expired value before load fires", TIME_NORMAL_LOAD, TIME_REGULAR_TIMEOUT, TIME_DELAY),
+    new RequestTracker(true, "timeout set to non-expiring value after timeout fires", TIME_DELAY, TIME_REGULAR_TIMEOUT, TIME_NORMAL_LOAD)
   ],
 
   "aborted" : [
     new AbortedRequest(false),
     new AbortedRequest(true, -1),
-    new AbortedRequest(true, 5000)
+    new AbortedRequest(true, TIME_NORMAL_LOAD)
   ],
 
   "abortedonmain" : [
     new AbortedRequest(true, 0),
-    new AbortedRequest(true, 1000)
+    new AbortedRequest(true, TIME_DELAY)
   ],
 
   "synconmain" : [
@@ -332,8 +339,8 @@ var TestRequestGroups = {
 
   "synconworker" : [
     new RequestTracker(false, "no time out scheduled, load fires normally", 0),
-    new RequestTracker(false, "load fires normally", 5000),
-    new RequestTracker(false, "timeout hit before load", 2000)
+    new RequestTracker(false, "load fires normally", TIME_NORMAL_LOAD),
+    new RequestTracker(false, "timeout hit before load", TIME_REGULAR_TIMEOUT)
   ]
 };
 
@@ -345,7 +352,7 @@ var TestCounter = {
     // Allow for the possibility there are other events coming.
     self.setTimeout(function() {
       TestCounter.next();
-    }, 5000);
+    }, TIME_NORMAL_LOAD);
   },
 
   next: function() {
