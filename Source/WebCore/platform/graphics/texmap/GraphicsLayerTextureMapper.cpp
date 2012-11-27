@@ -195,6 +195,7 @@ void GraphicsLayerTextureMapper::setMaskLayer(GraphicsLayer* value)
     if (!value)
         return;
     value->setSize(size());
+    value->setContentsVisible(contentsAreVisible());
 }
 
 
@@ -300,6 +301,8 @@ void GraphicsLayerTextureMapper::setContentsVisible(bool value)
         return;
     notifyChange(TextureMapperLayer::ContentsVisibleChange);
     GraphicsLayer::setContentsVisible(value);
+    if (maskLayer())
+        maskLayer()->setContentsVisible(value);
 }
 
 /* \reimp (GraphicsLayer.h)
