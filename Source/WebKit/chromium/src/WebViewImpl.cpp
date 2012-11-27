@@ -4110,17 +4110,6 @@ private:
 
 } // namespace
 
-WebGraphicsContext3D* WebViewImpl::createContext3D()
-{
-    // Temporarily, if the output surface can't be created, create a WebGraphicsContext3D
-    // directly. This allows bootstrapping the output surface system while downstream
-    // users of the API still use the old approach.
-    WebKit::WebGraphicsContext3D::Attributes attributes;
-    attributes.antialias = false;
-    attributes.shareResources = true;
-    return m_client->createGraphicsContext3D(attributes);
-}
-
 WebCompositorOutputSurface* WebViewImpl::createOutputSurface()
 {
     return m_client->createOutputSurface();
@@ -4183,11 +4172,6 @@ void WebViewImpl::didCompleteSwapBuffers()
 {
     if (m_client)
         m_client->didCompleteSwapBuffers();
-}
-
-void WebViewImpl::didRebindGraphicsContext(bool success)
-{
-    didRecreateOutputSurface(success);
 }
 
 void WebViewImpl::didRecreateOutputSurface(bool success)

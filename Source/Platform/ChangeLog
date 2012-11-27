@@ -1,3 +1,15 @@
+2012-11-26  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Remove deprecated and unused WebGraphicsContext3D compositor binding calls
+        https://bugs.webkit.org/show_bug.cgi?id=103322
+
+        Reviewed by Adam Barth.
+
+        These have been uncalled for a while.
+
+        * chromium/public/WebLayerTreeViewClient.h:
+        (WebLayerTreeViewClient):
+
 2012-11-23  Sami Kyostila  <skyostil@chromium.org>
 
         [chromium] Remove WebScreenInfo.{horizontal,vertical}DPI

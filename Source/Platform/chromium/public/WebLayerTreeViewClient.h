@@ -28,7 +28,6 @@
 
 namespace WebKit {
 class WebCompositorOutputSurface;
-class WebGraphicsContext3D;
 class WebInputHandler;
 class WebThread;
 struct WebSize;
@@ -56,15 +55,6 @@ public:
     // for mobile-device pinch zooming). This is triggered by events sent to the
     // compositor thread through the WebCompositor interface.
     virtual void applyScrollAndScale(const WebSize& scrollDelta, float scaleFactor) = 0;
-
-    // DEPRECATED: Creates a 3D context suitable for the compositing. This may be called
-    // more than once if the context gets lost. This will be removed once
-    // downstream dependencies have been removed.
-    virtual WebGraphicsContext3D* createContext3D() { return 0; }
-
-    // DEPRECATED: Signals a successful rebinding of the 3D context (e.g. after a lost
-    // context event).
-    virtual void didRebindGraphicsContext(bool) { return; }
 
     // Creates the output surface. This may be called more than once
     // if the context gets lost.
