@@ -1,3 +1,18 @@
+2012-11-27  Eberhard Graether  <egraether@google.com>
+
+        [chromium] Add WebLayerTreeViewClient API to request font atlas
+        https://bugs.webkit.org/show_bug.cgi?id=102958
+
+        Reviewed by James Robinson.
+
+        This change makes the font atlas creation accessible to the WebLayerTreeView.
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::createFontAtlas):
+        (WebKit):
+        * src/WebViewImpl.h:
+        (WebViewImpl):
+
 2012-11-27  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: Simplify transaction timers and event tracking

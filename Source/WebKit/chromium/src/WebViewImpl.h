@@ -325,6 +325,7 @@ public:
     virtual void didCommitAndDrawFrame();
     virtual void didCompleteSwapBuffers();
     virtual void scheduleComposite();
+    virtual void createFontAtlas(SkBitmap&, WebRect[128], int&);
 
     // WebViewImpl
 

@@ -1,5 +1,19 @@
 2012-11-27  Eberhard Graether  <egraether@google.com>
 
+        [chromium] Add WebLayerTreeViewClient API to request font atlas
+        https://bugs.webkit.org/show_bug.cgi?id=102958
+
+        Reviewed by James Robinson.
+
+        This change makes the font atlas creation accessible to the WebLayerTreeView.
+
+        * chromium/public/WebLayerTreeViewClient.h:
+        (WebKit):
+        (WebLayerTreeViewClient):
+        (WebKit::WebLayerTreeViewClient::createFontAtlas):
+
+2012-11-27  Eberhard Graether  <egraether@google.com>
+
         Plumbing showPaintRects out of InspectorPageAgent to use a different drawing implementation if available.
         https://bugs.webkit.org/show_bug.cgi?id=102452
 

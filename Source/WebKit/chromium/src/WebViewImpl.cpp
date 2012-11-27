@@ -4212,6 +4212,12 @@ void WebViewImpl::scheduleComposite()
     m_client->scheduleComposite();
 }
 
+void WebViewImpl::createFontAtlas(SkBitmap& bitmap, WebRect asciiToRectTable[128], int& fontHeight)
+{
+    TRACE_EVENT0("webkit", "WebViewImpl::loadFontAtlas");
+    bitmap = WebCore::CompositorHUDFontAtlas::generateFontAtlas(asciiToRectTable, fontHeight);
+}
+
 void WebViewImpl::updateLayerTreeViewport()
 {
     if (!page() || !m_nonCompositedContentHost || !m_layerTreeView)
