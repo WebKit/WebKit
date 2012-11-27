@@ -1594,6 +1594,19 @@ private:
 
 #endif // ENABLE(NETSCAPE_PLUGIN_API)
 
+static bool isOracleJavaPlugIn(NSString *bundleIdentifier)
+{
+    return [bundleIdentifier isEqualToString:@"com.oracle.java.JavaAppletPlugin"];
+}
+
+static bool isPlugInInactive(NSString *bundleIdentifier)
+{
+    if (isOracleJavaPlugIn(bundleIdentifier) && !WKJLIsRuntimeAndWebComponentsInstalled())
+        return true;
+
+    return false;
+}
+
 PassRefPtr<Widget> WebFrameLoaderClient::createPlugin(const IntSize& size, HTMLPlugInElement* element, const KURL& url,
     const Vector<String>& paramNames, const Vector<String>& paramValues, const String& mimeType, bool loadManually)
 {
@@ -1665,7 +1678,15 @@ PassRefPtr<Widget> WebFrameLoaderClient::createPlugin(const IntSize& size, HTMLP
     NSView *view = nil;
 
     if (pluginPackage) {
-        if (!WKShouldBlockPlugin([pluginPackage bundleIdentifier], [pluginPackage bundleVersion])) {
+        if (WKShouldBlockPlugin([pluginPackage bundleIdentifier], [pluginPackage bundleVersion])) {
+            errorCode = WebKitErrorBlockedPlugInVersion;
+            if (element->renderer()->isEmbeddedObject())
+                toRenderEmbeddedObject(element->renderer())->setPluginUnavailabilityReason(RenderEmbeddedObject::InsecurePluginVersion);
+        } else if (isPlugInInactive([pluginPackage bundleIdentifier])) {
+            if (element->renderer()->isEmbeddedObject())
+                toRenderEmbeddedObject(element->renderer())->setPluginUnavailabilityReason(RenderEmbeddedObject::PluginInactive);
+            return 0;
+        } else {
             if ([pluginPackage isKindOfClass:[WebPluginPackage class]])
                 view = pluginView(m_webFrame.get(), (WebPluginPackage *)pluginPackage, attributeKeys, kit(paramValues), baseURL, kit(element), loadManually);
 
@@ -1685,10 +1706,6 @@ PassRefPtr<Widget> WebFrameLoaderClient::createPlugin(const IntSize& size, HTMLP
                 return adoptRef(new NetscapePluginWidget(pluginView));
             }
 #endif
-        } else {
-            errorCode = WebKitErrorBlockedPlugInVersion;
-            if (element->renderer()->isEmbeddedObject())
-                toRenderEmbeddedObject(element->renderer())->setPluginUnavailabilityReason(RenderEmbeddedObject::InsecurePluginVersion);
         }
     } else
         errorCode = WebKitErrorCannotFindPlugIn;
@@ -1762,7 +1779,15 @@ PassRefPtr<Widget> WebFrameLoaderClient::createJavaAppletWidget(const IntSize& s
     int errorCode = WebKitErrorJavaUnavailable;
 
     if (pluginPackage) {
-        if (!WKShouldBlockPlugin([pluginPackage bundleIdentifier], [pluginPackage bundleVersion])) {
+        if (WKShouldBlockPlugin([pluginPackage bundleIdentifier], [pluginPackage bundleVersion])) {
+            errorCode = WebKitErrorBlockedPlugInVersion;
+            if (element->renderer()->isEmbeddedObject())
+                toRenderEmbeddedObject(element->renderer())->setPluginUnavailabilityReason(RenderEmbeddedObject::InsecurePluginVersion);
+        } else if (isPlugInInactive([pluginPackage bundleIdentifier])) {
+            if (element->renderer()->isEmbeddedObject())
+                toRenderEmbeddedObject(element->renderer())->setPluginUnavailabilityReason(RenderEmbeddedObject::PluginInactive);
+            return 0;
+        } else {
             if ([pluginPackage isKindOfClass:[WebPluginPackage class]]) {
                 // For some reason, the Java plug-in requires that we pass the dimension of the plug-in as attributes.
                 NSMutableArray *names = kit(paramNames);
@@ -1796,10 +1821,6 @@ PassRefPtr<Widget> WebFrameLoaderClient::createJavaAppletWidget(const IntSize& s
                 ASSERT_NOT_REACHED();
             }
     #endif
-        } else {
-            errorCode = WebKitErrorBlockedPlugInVersion;
-            if (element->renderer()->isEmbeddedObject())
-                toRenderEmbeddedObject(element->renderer())->setPluginUnavailabilityReason(RenderEmbeddedObject::InsecurePluginVersion);
         }
     }
 

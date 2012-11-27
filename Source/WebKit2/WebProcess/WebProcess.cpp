@@ -753,12 +753,12 @@ WebPageGroupProxy* WebProcess::webPageGroup(const WebPageGroupData& pageGroupDat
 static bool canPluginHandleResponse(const ResourceResponse& response)
 {
     String pluginPath;
-    bool blocked;
+    uint32_t pluginLoadPolicy;
 
-    if (!WebProcess::shared().connection()->sendSync(Messages::WebContext::GetPluginPath(response.mimeType(), response.url().string()), Messages::WebContext::GetPluginPath::Reply(pluginPath, blocked), 0))
+    if (!WebProcess::shared().connection()->sendSync(Messages::WebContext::GetPluginPath(response.mimeType(), response.url().string()), Messages::WebContext::GetPluginPath::Reply(pluginPath, pluginLoadPolicy), 0))
         return false;
-
-    return !blocked && !pluginPath.isEmpty();
+    
+    return pluginLoadPolicy != PluginModuleBlocked && !pluginPath.isEmpty();
 }
 
 bool WebProcess::shouldUseCustomRepresentationForResponse(const ResourceResponse& response) const

@@ -54,9 +54,8 @@ public:
     // Returns the info for the plug-in with the given path.
     PluginModuleInfo infoForPluginWithPath(const String& pluginPath) const;
 
-    // Return whether this plug-in should be blocked from being instantiated.
-    // Note that the plug-in will still be seen by e.g. navigator.plugins
-    static bool shouldBlockPlugin(const PluginModuleInfo&);
+    static PluginModuleLoadPolicy policyForPlugin(const PluginModuleInfo&);
+    static bool reactivateInactivePlugin(const PluginModuleInfo&);
 
 private:
     PluginModuleInfo findPluginForMIMEType(const String& mimeType) const;

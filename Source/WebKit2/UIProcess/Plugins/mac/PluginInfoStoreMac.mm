@@ -34,6 +34,8 @@
 
 using namespace WebCore;
 
+static const char* const oracleJavaAppletPluginBundleIdentifier =  "com.oracle.java.JavaAppletPlugin";
+
 namespace WebKit {
 
 Vector<String> PluginInfoStore::pluginsDirectories()
@@ -103,6 +105,11 @@ static bool checkForPreferredPlugin(Vector<PluginModuleInfo>& alreadyLoadedPlugi
     return true;
 }
 
+static bool shouldBlockPlugin(const PluginModuleInfo& plugin)
+{
+    return PluginInfoStore::policyForPlugin(plugin) == PluginModuleBlocked;
+}
+
 bool PluginInfoStore::shouldUsePlugin(Vector<PluginModuleInfo>& alreadyLoadedPlugins, const PluginModuleInfo& plugin)
 {
     for (size_t i = 0; i < alreadyLoadedPlugins.size(); ++i) {
@@ -120,7 +127,7 @@ bool PluginInfoStore::shouldUsePlugin(Vector<PluginModuleInfo>& alreadyLoadedPlu
     }
 
     // Prefer the Oracle Java plug-in over the Apple java plug-in.
-    if (!checkForPreferredPlugin(alreadyLoadedPlugins, plugin, "com.apple.java.JavaAppletPlugin", "com.oracle.java.JavaAppletPlugin"))
+    if (!checkForPreferredPlugin(alreadyLoadedPlugins, plugin, "com.apple.java.JavaAppletPlugin",  oracleJavaAppletPluginBundleIdentifier))
         return false;
 
 #if MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
@@ -133,9 +140,27 @@ bool PluginInfoStore::shouldUsePlugin(Vector<PluginModuleInfo>& alreadyLoadedPlu
     return true;
 }
 
-bool PluginInfoStore::shouldBlockPlugin(const PluginModuleInfo& plugin)
+PluginModuleLoadPolicy PluginInfoStore::policyForPlugin(const PluginModuleInfo& plugin)
 {
-    return WKShouldBlockPlugin(plugin.bundleIdentifier, plugin.versionString);
+    if (WKShouldBlockPlugin(plugin.bundleIdentifier, plugin.versionString))
+        return PluginModuleBlocked;
+
+    if (plugin.bundleIdentifier == oracleJavaAppletPluginBundleIdentifier && !WKJLIsRuntimeAndWebComponentsInstalled())
+        return PluginModuleInactive;
+
+    return PluginModuleLoadNormally;
+}
+
+bool PluginInfoStore::reactivateInactivePlugin(const PluginModuleInfo& plugin)
+{
+#if MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
+    if (plugin.bundleIdentifier == oracleJavaAppletPluginBundleIdentifier) {
+        WKJLReportWebComponentsUsed();
+        return true;
+    }
+#endif
+
+    return false;
 }
 
 String PluginInfoStore::getMIMETypeForExtension(const String& extension)

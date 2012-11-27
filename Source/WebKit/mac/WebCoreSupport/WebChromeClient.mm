@@ -31,6 +31,7 @@
 
 #import "DOMElementInternal.h"
 #import "DOMNodeInternal.h"
+#import "WebBasePluginPackage.h"
 #import "WebDefaultUIDelegate.h"
 #import "WebDelegateImplementationCaching.h"
 #import "WebElementDictionary.h"
@@ -63,6 +64,7 @@
 #import <WebCore/FrameLoadRequest.h>
 #import <WebCore/FrameView.h>
 #import <WebCore/HTMLNames.h>
+#import <WebCore/HTMLPlugInImageElement.h>
 #import <WebCore/HitTestResult.h>
 #import <WebCore/Icon.h>
 #import <WebCore/IntPoint.h>
@@ -128,6 +130,7 @@ NSString *WebConsoleMessageDebugMessageLevel = @"DebugMessageLevel";
 @end
 
 using namespace WebCore;
+using namespace HTMLNames;
 
 WebChromeClient::WebChromeClient(WebView *webView) 
     : m_webView(webView)
@@ -592,6 +595,9 @@ void WebChromeClient::scrollRectIntoView(const IntRect& r) const
 
 bool WebChromeClient::shouldUnavailablePluginMessageBeButton(RenderEmbeddedObject::PluginUnavailabilityReason pluginUnavailabilityReason) const
 {
+    if (pluginUnavailabilityReason == RenderEmbeddedObject::PluginInactive)
+        return true;
+
     if (pluginUnavailabilityReason == RenderEmbeddedObject::PluginMissing)
         return [[m_webView UIDelegate] respondsToSelector:@selector(webView:didPressMissingPluginButton:)];
 
@@ -600,7 +606,30 @@ bool WebChromeClient::shouldUnavailablePluginMessageBeButton(RenderEmbeddedObjec
 
 void WebChromeClient::unavailablePluginButtonClicked(Element* element, RenderEmbeddedObject::PluginUnavailabilityReason pluginUnavailabilityReason) const
 {
-    ASSERT_UNUSED(pluginUnavailabilityReason, pluginUnavailabilityReason == RenderEmbeddedObject::PluginMissing);
+    ASSERT(element->hasTagName(objectTag) || element->hasTagName(embedTag) || element->hasTagName(appletTag));
+
+    if (pluginUnavailabilityReason == RenderEmbeddedObject::PluginInactive) {
+        HTMLPlugInImageElement* pluginElement = static_cast<HTMLPlugInImageElement*>(element);
+
+        WebBasePluginPackage *pluginPackage = nil;
+        if (!pluginElement->serviceType().isEmpty())
+            pluginPackage = [m_webView _pluginForMIMEType:pluginElement->serviceType()];
+
+        NSURL *url = pluginElement->document()->completeURL(pluginElement->url());
+        NSString *extension = [[url path] pathExtension];
+        if (!pluginPackage && [extension length])
+            pluginPackage = [m_webView _pluginForExtension:extension];
+
+        if (pluginPackage && [pluginPackage bundleIdentifier] == "com.oracle.java.JavaAppletPlugin") {
+            // Reactivate the plug-in and reload the page so the plug-in will be instantiated correctly.
+            WKJLReportWebComponentsUsed();
+            [m_webView reload:nil];
+        }
+
+        return;
+    }
+
+    ASSERT(pluginUnavailabilityReason == RenderEmbeddedObject::PluginMissing || pluginUnavailabilityReason == RenderEmbeddedObject::PluginInactive);
     CallUIDelegate(m_webView, @selector(webView:didPressMissingPluginButton:), kit(element));
 }
 

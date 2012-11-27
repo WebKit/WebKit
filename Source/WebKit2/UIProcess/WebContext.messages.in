@@ -33,7 +33,7 @@ messages -> WebContext {
     
     # Plugin messages.
     GetPlugins(uint64_t requestID, bool refresh) DispatchOnConnectionQueue
-    GetPluginPath(WTF::String mimeType, WTF::String urlString) -> (WTF::String pluginPath, bool blocked)
+    GetPluginPath(WTF::String mimeType, WTF::String urlString) -> (WTF::String pluginPath, uint32_t pluginLoadPolicy)
 
 #if !ENABLE(PLUGIN_PROCESS)
     void DidGetSitesWithPluginData(Vector<WTF::String> sites, uint64_t callbackID)

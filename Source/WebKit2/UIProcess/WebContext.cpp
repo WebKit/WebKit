@@ -651,21 +651,20 @@ void WebContext::getPlugins(CoreIPC::Connection*, uint64_t requestID, bool refre
     m_pluginWorkQueue.dispatch(bind(&WebContext::handleGetPlugins, this, requestID, refresh));
 }
 
-void WebContext::getPluginPath(const String& mimeType, const String& urlString, String& pluginPath, bool& blocked)
+void WebContext::getPluginPath(const String& mimeType, const String& urlString, String& pluginPath, uint32_t& pluginLoadPolicy)
 {
     MESSAGE_CHECK_URL(urlString);
 
     String newMimeType = mimeType.lower();
 
-    blocked = false;
+    pluginLoadPolicy = PluginModuleLoadNormally;
     PluginModuleInfo plugin = pluginInfoStore().findPlugin(newMimeType, KURL(KURL(), urlString));
     if (!plugin.path)
         return;
 
-    if (pluginInfoStore().shouldBlockPlugin(plugin)) {
-        blocked = true;
+    pluginLoadPolicy = PluginInfoStore::policyForPlugin(plugin);
+    if (pluginLoadPolicy != PluginModuleLoadNormally)
         return;
-    }
 
     pluginPath = plugin.path;
 }
