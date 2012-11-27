@@ -1,3 +1,30 @@
+2012-11-26  Andreas Kling  <akling@apple.com>
+
+        RenderStyle: Move 'list-style-image' to rare inherited data.
+        <http://webkit.org/b/103300>
+
+        Reviewed by Antti Koivisto.
+
+        list-style-image is not nearly common enough to merit a spot in StyleInheritedData.
+        Move it to StyleRareInheritedData.
+
+        134kB progression on Membuster3.
+
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::diff):
+        (WebCore::RenderStyle::listStyleImage):
+        (WebCore::RenderStyle::setListStyleImage):
+        * rendering/style/StyleInheritedData.cpp:
+        (WebCore::StyleInheritedData::StyleInheritedData):
+        (WebCore::StyleInheritedData::operator==):
+        * rendering/style/StyleInheritedData.h:
+        (StyleInheritedData):
+        * rendering/style/StyleRareInheritedData.h:
+        * rendering/style/StyleRareInheritedData.cpp:
+        (SameSizeAsStyleRareInheritedData):
+        (WebCore::StyleRareInheritedData::StyleRareInheritedData):
+        (WebCore::StyleRareInheritedData::operator==):
+
 2012-11-26  James Simonsen  <simonjam@chromium.org>
 
         Consolidate FrameLoader::load() into one function taking a FrameLoadRequest

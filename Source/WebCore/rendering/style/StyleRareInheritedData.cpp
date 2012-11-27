@@ -27,12 +27,14 @@
 #include "RenderStyle.h"
 #include "RenderStyleConstants.h"
 #include "ShadowData.h"
+#include "StyleImage.h"
 #include "WebCoreMemoryInstrumentation.h"
 #include <wtf/MemoryObjectInfo.h>
 
 namespace WebCore {
 
 struct SameSizeAsStyleRareInheritedData : public RefCounted<SameSizeAsStyleRareInheritedData> {
+    void* styleImage;
     Color firstColor;
     float firstFloat;
     Color colors[5];
@@ -62,7 +64,8 @@ struct SameSizeAsStyleRareInheritedData : public RefCounted<SameSizeAsStyleRareI
 COMPILE_ASSERT(sizeof(StyleRareInheritedData) == sizeof(SameSizeAsStyleRareInheritedData), StyleRareInheritedData_should_bit_pack);
 
 StyleRareInheritedData::StyleRareInheritedData()
-    : textStrokeWidth(RenderStyle::initialTextStrokeWidth())
+    : listStyleImage(RenderStyle::initialListStyleImage())
+    , textStrokeWidth(RenderStyle::initialTextStrokeWidth())
     , indent(RenderStyle::initialTextIndent())
     , m_effectiveZoom(RenderStyle::initialZoom())
     , widows(RenderStyle::initialWidows())
@@ -118,6 +121,7 @@ StyleRareInheritedData::StyleRareInheritedData()
 
 StyleRareInheritedData::StyleRareInheritedData(const StyleRareInheritedData& o)
     : RefCounted<StyleRareInheritedData>()
+    , listStyleImage(o.listStyleImage)
     , textStrokeColor(o.textStrokeColor)
     , textStrokeWidth(o.textStrokeWidth)
     , textFillColor(o.textFillColor)
@@ -260,7 +264,8 @@ bool StyleRareInheritedData::operator==(const StyleRareInheritedData& o) const
 #if ENABLE(CSS_VARIABLES)
         && m_variables == o.m_variables
 #endif
-        && m_lineAlign == o.m_lineAlign;
+        && m_lineAlign == o.m_lineAlign
+        && StyleImage::imagesEquivalent(listStyleImage.get(), o.listStyleImage.get());
 }
 
 bool StyleRareInheritedData::shadowDataEquivalent(const StyleRareInheritedData& o) const
