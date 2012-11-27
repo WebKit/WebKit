@@ -579,16 +579,15 @@
 #endif
 
 #if PLATFORM(CHROMIUM)
+#if OS(DARWIN)
 /* We can't override the global operator new and delete on OS(DARWIN) because
- * some object are allocated by WebKit and deallocated by the embedder. 
- *
- * On non-OS(DARWIN), the "system malloc" is actually TCMalloc anyway, so there's
- * no need to use WebKit's copy of TCMalloc. */
+ * some object are allocated by WebKit and deallocated by the embedder. */
 #define ENABLE_GLOBAL_FASTMALLOC_NEW 0
-#if !OS(DARWIN)
-#define ENABLE_PER_OBJECT_FASTMALLOC_NEW 0
+#else /* !OS(DARWIN) */
+/* On non-OS(DARWIN), the "system malloc" is actually TCMalloc anyway, so there's
+ * no need to use WebKit's copy of TCMalloc. */
 #define USE_SYSTEM_MALLOC 1
-#endif /* !OS(DARWIN) */
+#endif /* OS(DARWIN) */
 #endif /* PLATFORM(CHROMIUM) */
 
 #if PLATFORM(IOS)
@@ -822,10 +821,6 @@
 
 #if !defined(ENABLE_GLOBAL_FASTMALLOC_NEW)
 #define ENABLE_GLOBAL_FASTMALLOC_NEW 1
-#endif
-
-#if !defined(ENABLE_PER_OBJECT_FASTMALLOC_NEW)
-#define ENABLE_PER_OBJECT_FASTMALLOC_NEW 1
 #endif
 
 #if !defined(ENABLE_PARSED_STYLE_SHEET_CACHING)

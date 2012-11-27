@@ -93,8 +93,6 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/TypeTraits.h>
 
-#if ENABLE(PER_OBJECT_FASTMALLOC_NEW)
-
 #define WTF_MAKE_FAST_ALLOCATED \
 public: \
     void* operator new(size_t, void* p) { return p; } \
@@ -132,14 +130,6 @@ public: \
     } \
 private: \
 typedef int __thisIsHereToForceASemicolonAfterThisMacro
-
-#else // !ENABLE(PER_OBJECT_FASTMALLOC_NEW)
-
-#define WTF_MAKE_FAST_ALLOCATED \
-private: \
-typedef int __thisIsHereToForceASemicolonAfterThisMacro
-
-#endif
 
 namespace WTF {
 
