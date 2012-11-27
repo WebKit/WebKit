@@ -89,6 +89,8 @@ public:
 
     virtual LayoutRect localCaretRect(InlineBox*, int, LayoutUnit* extraWidthToEndOfLine) OVERRIDE;
 
+    bool hitTestCulledInline(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset);
+
 protected:
     virtual void willBeDestroyed();
 

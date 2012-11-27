@@ -1,3 +1,30 @@
+2012-09-17  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
+
+        Incorrect rect-based hit-test result when hit-test region includes culled inlines
+        https://bugs.webkit.org/show_bug.cgi?id=88376
+
+        Reviewed by Dave Hyatt.
+
+        Move the handling of culled inlines from HitTestResult::addNodeToRectBasedTestResult to 
+        InlineFlowBox::nodeAtPoint. This makes it possible to fix a number of bugs with how
+        culled inlines were handled. They are now checked after all their children, and may
+        terminate area-based hit-testing if they contain the whole area.
+
+        Tests: fast/dom/nodesFromRect/nodesFromRect-culled-inlines.html
+               fast/dom/nodesFromRect/nodesFromRect-culled-inline-with-linebreak.html
+
+        * rendering/HitTestResult.cpp:
+        (WebCore::HitTestLocation::HitTestLocation):
+        (WebCore::HitTestResult::addNodeToRectBasedTestResult):
+        * rendering/HitTestResult.h:
+        (HitTestLocation):
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::nodeAtPoint):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::hitTestCulledInline):
+        * rendering/RenderInline.h:
+        (RenderInline):
+
 2012-11-27  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         REGRESSION(134887) [Qt][EFL][WK2] Repaint counter not working

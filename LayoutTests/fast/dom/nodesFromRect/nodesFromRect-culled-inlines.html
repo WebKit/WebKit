@@ -1,48 +1,52 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Document::nodesFromRect test - bug 85849</title>
-  <script src="../../js/resources/js-test-pre.js"></script>
-  <script src="resources/nodesFromRect.js"></script>
-  <script type="application/javascript">
-    function runTest()
-    {
-      var e = {};
-
-      // Set up shortcut access to elements
-      e['html'] = document.getElementsByTagName("html")[0];
-      ['body', 'span', 'img'].forEach(function(a) {
-        e[a] = document.getElementById(a);
-      });
-
-      window.scrollTo(0, 0);
-
-      /* Point based test over the img only. */
-      check(20, 20, 0, 0, 0, 0, [e.img]);
-      /* Rect based test over the img only. */
-      check(20, 20, 5, 5, 5, 5, [e.img]);
-
-      /* Note that for the tests below, the img bounds are considered to be (99, 99). */
-      /* Point based test over the img and the span. */
-      check(0, 99, 0, 0, 0, 0, [e.img]);
-      /* Rect based test over the img and the span with the img fully covering the hit region. */
-      check(0, 98, 0, 1, 1, 0, [e.img]);
-      /* Rect based test over the img and the span with the img not fully covering the hit region. */
-      /* FIXME: This fails due to: https://bugs.webkit.org/show_bug.cgi?id=88376 */
-      check(0, 98, 0, 1, 2, 0, [e.img, e.span]);
-      /* Rect based test over the entire img. */
-      check(0, 0, 0, 99, 99, 0, [e.img]);
-    }
-  </script>
+    <title>Document::nodesFromRect : culled inlines - bug 88376</title>
+    <script src="../../js/resources/js-test-pre.js"></script>
+    <script src="resources/nodesFromRect.js"></script>
+    <style>
+        #sandbox { 
+            position: absolute;
+            left: 0px;
+            top: 0px;
+            width: 400px;
+            height: 200px;
+        }
+        #sandbox p { font: 16px Ahem; }
+    </style>
 </head>
-<body id="body" style="padding: 0; margin: 0;">
-  <span id="span" style="margin: 0; padding: 0; font-size:36px">
-    <img id="img" width="100" height="100" style="background-color: black; margin: 0; padding: 0;" />
-  </span>
+<body id="body">
+    <div id=sandbox>
+        <p><span id=culledinline><span id=wordinline1>word1</span>   <span id=wordinline2>word2</span></span>   <span id=wordinline3>word3</span></p>
+    </div>
 
-  <span id="console" style="position: absolute; top: 150px;"></span>
-  <script> runTest();</script>
-  <script src="../../js/resources/js-test-post.js"></script>
+    <p id="description"></p>
+    <span id="console"></span>
+    <script type="application/javascript">
+        function runTest()
+        {
+            description(document.title);
+            window.scrollTo(0, 0);
+            /* Rect based test over word1 only. */
+            checkRect(30, 19, 8, 8, "'word1'");
+            /* Rect based test over the word2 only. */
+            checkRect(126, 19, 8, 8, "'word2'");
+            /* Rect based test over the word3 only. */
+            checkRect(222, 19, 8, 8, "'word3'");
+            /* Rect based test between word1 and word2. */
+            checkRect(84, 19, 8, 8, "'   '");
+            /* Rect based test over and outside word1. */
+            checkRect(70, 19, 20, 8, "'   ', 'word1', SPAN#wordinline1, SPAN#culledinline");
+            /* Rect based test over word1 and word2. */
+            checkRect(70, 19, 40, 8, "'word2', SPAN#wordinline2, '   ', 'word1', SPAN#wordinline1, SPAN#culledinline");
+            /* Rect based test over word2 and word3. */
+            checkRect(170, 19, 40, 8, "'word3', SPAN#wordinline3, '   ', 'word2', SPAN#wordinline2, SPAN#culledinline, P");
+
+            document.getElementById('sandbox').style.display = 'none';
+        }
+        runTest();
+    </script>
+    <script src="../../js/resources/js-test-post.js"></script>
 </body>
 </html>
 

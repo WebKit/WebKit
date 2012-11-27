@@ -104,7 +104,7 @@ HitTestLocation::HitTestLocation(const HitTestLocation& other, const LayoutSize&
     , m_boundingBox(other.m_boundingBox)
     , m_transformedPoint(other.m_transformedPoint)
     , m_transformedRect(other.m_transformedRect)
-    , m_region(region)
+    , m_region(region ? region : other.m_region)
     , m_isRectBased(other.m_isRectBased)
     , m_isRectilinear(other.m_isRectilinear)
 {
@@ -700,21 +700,6 @@ bool HitTestResult::addNodeToRectBasedTestResult(Node* node, const HitTestReques
     mutableRectBasedTestResult().add(node);
 
     bool regionFilled = rect.contains(locationInContainer.boundingBox());
-    // FIXME: This code (incorrectly) attempts to correct for culled inline nodes. See https://bugs.webkit.org/show_bug.cgi?id=85849.
-    if (node->renderer()->isInline() && !regionFilled) {
-        for (RenderObject* curr = node->renderer()->parent(); curr; curr = curr->parent()) {
-            if (!curr->isRenderInline())
-                break;
-
-            // We need to make sure the nodes for culled inlines get included.
-            RenderInline* currInline = toRenderInline(curr);
-            if (currInline->alwaysCreateLineBoxes())
-                break;
-
-            if (currInline->visibleToHitTesting() && currInline->node())
-                mutableRectBasedTestResult().add(currInline->node()->shadowAncestorNode());
-        }
-    }
     return !regionFilled;
 }
 
@@ -735,21 +720,6 @@ bool HitTestResult::addNodeToRectBasedTestResult(Node* node, const HitTestReques
     mutableRectBasedTestResult().add(node);
 
     bool regionFilled = rect.contains(locationInContainer.boundingBox());
-    // FIXME: This code (incorrectly) attempts to correct for culled inline nodes. See https://bugs.webkit.org/show_bug.cgi?id=85849.
-    if (node->renderer()->isInline() && !regionFilled) {
-        for (RenderObject* curr = node->renderer()->parent(); curr; curr = curr->parent()) {
-            if (!curr->isRenderInline())
-                break;
-
-            // We need to make sure the nodes for culled inlines get included.
-            RenderInline* currInline = toRenderInline(curr);
-            if (currInline->alwaysCreateLineBoxes())
-                break;
-
-            if (currInline->visibleToHitTesting() && currInline->node())
-                mutableRectBasedTestResult().add(currInline->node()->shadowAncestorNode());
-        }
-    }
     return !regionFilled;
 }
 

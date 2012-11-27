@@ -67,6 +67,60 @@ function checkShadowContent(x, y, topPadding, rightPadding, bottomPadding, leftP
   testPassed("All correct nodes found for rect");
 }
 
+function checkRect(left, top, width, height, expectedNodeString, doc)
+{
+    if (!window.internals)
+        return;
+
+    if (height <=0 || width <= 0)
+        return;
+
+    if (!doc)
+        doc = document;
+
+    var topPadding = height / 2;
+    var leftPadding =  width / 2;
+    // FIXME: When nodesFromRect is changed to not add 1 to width and height, remove the correction here.
+    var bottomPadding = (height - 1) - topPadding;
+    var rightPadding = (width - 1) - leftPadding;
+
+    var nodeString = nodesFromRectAsString(doc, left + leftPadding, top + topPadding, topPadding, rightPadding, bottomPadding, leftPadding);
+
+    if (nodeString == expectedNodeString) {
+        testPassed("All correct nodes found for rect");
+    } else {
+        testFailed("NodesFromRect should be [" + expectedNodeString + "] was [" + nodeString + "]");
+    }
+}
+
+function nodesFromRectAsString(doc, x, y, topPadding, rightPadding, bottomPadding, leftPadding)
+{
+    var nodeString = "";
+    var nodes = internals.nodesFromRect(doc, x, y, topPadding, rightPadding, bottomPadding, leftPadding, true /* ignoreClipping */, false /* allow shadow content */);
+    if (!nodes)
+        return nodeString;
+
+    for (var i = 0; i < nodes.length; i++) {
+        if (nodes[i].nodeType == 1) {
+            nodeString += nodes[i].nodeName;
+            if (nodes[i].id)
+                nodeString += '#' + nodes[i].id;
+            else if (nodes[i].class) {
+                nodeString += '.' + nodes[i].class;
+            }
+        } else if (nodes[i].nodeType == 3) {
+            nodeString += "'" + nodes[i].data + "'";
+        } else {
+            continue;
+        }
+        if (i + 1 < nodes.length) {
+            nodeString += ", ";
+        }
+    }
+    return nodeString;
+}
+
+
 function getCenterFor(element)
 {
   var rect = element.getBoundingClientRect();

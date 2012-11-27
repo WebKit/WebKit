@@ -1,3 +1,24 @@
+2012-09-17  Allan Sandfeld Jensen  <allan.jensen@nokia.com>
+
+        Incorrect rect-based hit-test result when hit-test region includes culled inlines
+        https://bugs.webkit.org/show_bug.cgi?id=88376
+
+        Reviewed by Dave Hyatt.
+
+        Renames the existing nodesFromRect-culled-inlines.html test to nodesFromRect-inline-image.html,
+        because it did not test any culled inlines anymore, and replace it with two new tests that does
+        test culled inlines.
+
+        * fast/dom/nodesFromRect/nodesFromRect-culled-inline-with-linebreak-expected.txt: Copied from LayoutTests/fast/dom/nodesFromRect/nodesFromRect-culled-inlines-expected.txt.
+        * fast/dom/nodesFromRect/nodesFromRect-culled-inline-with-linebreak.html: Added.
+        * fast/dom/nodesFromRect/nodesFromRect-culled-inlines-expected.txt:
+        * fast/dom/nodesFromRect/nodesFromRect-culled-inlines.html:
+        * fast/dom/nodesFromRect/nodesFromRect-inline-image-expected.txt: Added.
+        * fast/dom/nodesFromRect/nodesFromRect-inline-image.html: Added.
+        * fast/dom/nodesFromRect/resources/nodesFromRect.js:
+        (checkRect):
+        (nodesFromRectAsString):
+
 2012-11-27  Kent Tamura  <tkent@chromium.org>
 
         Reduce the number of pixel tests for date/time input types
