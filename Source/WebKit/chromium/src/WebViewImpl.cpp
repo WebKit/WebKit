@@ -1274,6 +1274,11 @@ void WebViewImpl::hasTouchEventHandlers(bool hasTouchHandlers)
         m_client->hasTouchEventHandlers(hasTouchHandlers);
 }
 
+bool WebViewImpl::hasTouchEventHandlersAt(const WebPoint& point)
+{
+    return true;
+}
+
 #if !OS(DARWIN)
 // Mac has no way to open a context menu based on a keyboard event.
 bool WebViewImpl::sendContextMenuEvent(const WebKeyboardEvent& event)

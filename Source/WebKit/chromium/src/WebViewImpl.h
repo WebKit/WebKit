@@ -152,6 +152,7 @@ public:
     virtual void setNeedsRedraw();
     virtual bool isInputThrottled() const;
     virtual bool handleInputEvent(const WebInputEvent&);
+    virtual bool hasTouchEventHandlersAt(const WebPoint&);
     virtual void mouseCaptureLost();
     virtual void setFocus(bool enable);
     virtual bool setComposition(

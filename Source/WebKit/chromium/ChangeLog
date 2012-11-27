@@ -1,3 +1,25 @@
+2012-11-26  Yusuf Ozuysal  <yusufo@google.com>
+
+        Add hasTouchEventhandlersAt to WebView API
+        https://bugs.webkit.org/show_bug.cgi?id=102541
+
+        Reviewed by James Robinson.
+
+        Adds hasTouchEventHandlersAt to WebWidget API to check for touch event handlers at a
+        given point. This will be used to distinguish between events not processed by
+        touch event handlers and event not hitting any touch event handlers. Both are
+        returning the same ACK message currently. Default implementation returns true to
+        continue the same behavior as we currently have.
+
+        * public/WebWidget.h:
+        (WebWidget):
+        (WebKit::WebWidget::hasTouchEventHandlersAt):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::hasTouchEventHandlersAt):
+        (WebKit):
+        * src/WebViewImpl.h:
+        (WebViewImpl):
+
 2012-11-26  James Simonsen  <simonjam@chromium.org>
 
         Consolidate FrameLoader::load() into one function taking a FrameLoadRequest

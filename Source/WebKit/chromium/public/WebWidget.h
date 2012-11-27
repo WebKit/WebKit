@@ -157,6 +157,9 @@ public:
     // the event has been processed, false otherwise.
     virtual bool handleInputEvent(const WebInputEvent&) { return false; }
 
+    // Check whether the given point hits any registered touch event handlers.
+    virtual bool hasTouchEventHandlersAt(const WebPoint&) { return true; }
+
     // Called to inform the WebWidget that mouse capture was lost.
     virtual void mouseCaptureLost() { }
 
