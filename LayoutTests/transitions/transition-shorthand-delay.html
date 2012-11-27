@@ -28,9 +28,7 @@
        document.getElementById("target").className = "moved";
      }
 
-     // Pause API isn't happy pausing during delay yet.
-     // https://bugs.webkit.org/show_bug.cgi?id=59475
-     runTransitionTest(expectedValues, setupTest, dontUsePauseAPI);
+     runTransitionTest(expectedValues, setupTest, usePauseAPI);
    </script>
 </head>
 <body>

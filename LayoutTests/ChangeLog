@@ -1,3 +1,16 @@
+2012-11-27  Jussi Kukkonen  <jussi.kukkonen@intel.com>
+
+        Layout Test transitions/transition-shorthand-delay.html should usePauseAPI
+        https://bugs.webkit.org/show_bug.cgi?id=103402
+
+        Reviewed by Simon Fraser.
+
+        PauseAPI works when pausing during delay in transitions now, using it
+        should fix the flakiness.
+
+        * platform/efl/TestExpectations:
+        * transitions/transition-shorthand-delay.html:
+
 2012-11-27  Robert Hogan  <robert@webkit.org>
 
         REGRESSION (r125578): word-wrapping in absolute position with nbsp, word-spacing and custom font
