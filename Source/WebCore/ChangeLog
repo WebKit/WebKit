@@ -1,3 +1,24 @@
+2012-11-27  Víctor Manuel Jáquez Leal  <vjaquez@igalia.com>
+
+        [GStreamer] Verify if GStreamer was previously initialized
+        https://bugs.webkit.org/show_bug.cgi?id=103151
+
+        Reviewed by Philippe Normand.
+
+        This patch calls gst_is_initialized() before calling gst_init_check()
+        in order to verify if GStreamer has not been initialized before.
+
+        This is useful particularly for WebKit1 so the applications could
+        initialize GStreamer before.
+
+        As the API call was added in GStreamer v0.10.31, the patch fences the
+        call only in that version of GStreamer or above.
+
+        No new tests, existing media tests cover this change.
+
+        * platform/graphics/gstreamer/GStreamerUtilities.cpp:
+        (WebCore::initializeGStreamer):
+
 2012-11-27  Kentaro Hara  <haraken@chromium.org>
 
         [V8] Remove V8StringResource::m_string

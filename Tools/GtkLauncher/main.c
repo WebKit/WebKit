@@ -27,6 +27,7 @@
 
 #include "LauncherInspectorWindow.h"
 #include <errno.h>
+#include <gst/gst.h>
 #include <gtk/gtk.h>
 #include <stdlib.h>
 #include <string.h>
@@ -483,10 +484,12 @@ int main(int argc, char* argv[])
     };
 
     gtk_init(&argc, &argv);
+    gst_init(&argc, &argv);
 
     GOptionContext *context = g_option_context_new(0);
     g_option_context_add_main_entries(context, commandLineOptions, 0);
     g_option_context_add_group(context, gtk_get_option_group(TRUE));
+    g_option_context_add_group(context, gst_init_get_option_group());
 
     webkitSettings = webkit_web_settings_new();
     g_object_set(webkitSettings, "enable-developer-extras", TRUE, NULL);

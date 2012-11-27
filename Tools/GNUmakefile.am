@@ -22,7 +22,8 @@ Programs_GtkLauncher_CFLAGS = \
 	-fno-strict-aliasing \
 	$(global_cflags) \
 	$(GTK_CFLAGS) \
-	$(LIBSOUP_CFLAGS)
+	$(LIBSOUP_CFLAGS) \
+	$(GSTREAMER_CFLAGS)
 
 Programs_GtkLauncher_LDADD = \
 	libwebkitgtk-@WEBKITGTK_API_MAJOR_VERSION@.@WEBKITGTK_API_MINOR_VERSION@.la \
@@ -30,7 +31,8 @@ Programs_GtkLauncher_LDADD = \
 	$(GTK_LIBS) \
 	$(GLIB_LIBS) \
 	$(LIBSOUP_LIBS) \
-	$(WINMM_LIBS)
+	$(WINMM_LIBS) \
+	$(GSTREAMER_LIBS)
 
 Programs_GtkLauncher_LDFLAGS = \
 	-no-fast-install \
