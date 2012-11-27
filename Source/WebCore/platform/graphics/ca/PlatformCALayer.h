@@ -82,7 +82,7 @@ public:
 
 #if PLATFORM(WIN)
     bool usesTileCacheLayer() const { return false; }
-#elif
+#else
     bool usesTileCacheLayer() const { return m_layerType == LayerTypePageTileCacheLayer || m_layerType == LayerTypeTileCacheLayer; }
 #endif
 

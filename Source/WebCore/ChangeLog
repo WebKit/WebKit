@@ -1,5 +1,12 @@
 2012-11-27  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Build fix after r135890. #else, not #elif.
+
+        * platform/graphics/ca/PlatformCALayer.h:
+        (PlatformCALayer):
+
+2012-11-27  Ryosuke Niwa  <rniwa@webkit.org>
+
         HTMLCollection on Document should be stored on NodeListsNodeData like other HTMLCollections and LiveNodeLists
         https://bugs.webkit.org/show_bug.cgi?id=103364
 
