@@ -1,3 +1,9 @@
+2012-11-27  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed gardening, skip a new failing test to paint the bots green.
+
+        * platform/qt/TestExpectations:
+
 2012-11-27  Justin Novosad  <junov@google.com>
 
         Correcting baseline for fast/backgrounds/background-opaque-images-over-color.html
