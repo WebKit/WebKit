@@ -33,11 +33,22 @@ ScaledImageFragment::~ScaledImageFragment()
 {
 }
 
-ScaledImageFragment::ScaledImageFragment(const SkISize& scaledSize, const SkBitmap& bitmap, const bool isComplete)
-    : m_scaledSize(scaledSize)
+ScaledImageFragment::ScaledImageFragment(int imageId, const SkISize& scaledSize, const SkBitmap& bitmap, const bool isComplete)
+    : m_imageId(imageId)
+    , m_scaledSize(scaledSize)
     , m_bitmap(bitmap)
     , m_isComplete(isComplete)
 {
+}
+
+bool ScaledImageFragment::isEqual(int imageId, const SkISize& scaledSize) const
+{
+    return imageId == m_imageId && scaledSize == m_scaledSize;
+}
+
+bool ScaledImageFragment::isEqual(int imageId) const
+{
+    return imageId == m_imageId;
 }
 
 } // namespace WebCore

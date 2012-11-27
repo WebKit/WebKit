@@ -31,8 +31,8 @@
 #include "config.h"
 #include "WebSettingsImpl.h"
 
-#include "DeferredImageDecoder.h"
 #include "FontRenderingMode.h"
+#include "ImageDecodingStore.h"
 #include "Settings.h"
 #include <public/WebString.h>
 #include <public/WebURL.h>
@@ -505,7 +505,10 @@ void WebSettingsImpl::setDeferred2dCanvasEnabled(bool enabled)
 
 void WebSettingsImpl::setDeferredImageDecodingEnabled(bool enabled)
 {
-    DeferredImageDecoder::setEnabled(enabled);
+    if (!m_deferredImageDecodingEnabled && enabled)
+        ImageDecodingStore::initializeOnMainThread();
+    if (m_deferredImageDecodingEnabled && !enabled)
+        ImageDecodingStore::shutdown();
     m_deferredImageDecodingEnabled = enabled;
 }
 

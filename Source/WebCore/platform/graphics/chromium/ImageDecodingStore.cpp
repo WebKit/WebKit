@@ -26,22 +26,21 @@
 #include "config.h"
 #include "ImageDecodingStore.h"
 
-#include "ImageFrameGenerator.h"
 #include "ScaledImageFragment.h"
-#include "SharedBuffer.h"
+
+#include <wtf/MainThread.h>
 
 namespace WebCore {
 
 namespace {
 
-ImageDecodingStore* s_instance = 0;
+ImageDecodingStore* s_instanceOnMainThread = 0;
 
-static void setInstance(ImageDecodingStore* imageDecodingStore)
+static void setInstanceOnMainThread(ImageDecodingStore* imageDecodingStore)
 {
-    delete s_instance;
-    s_instance = imageDecodingStore;
+    delete s_instanceOnMainThread;
+    s_instanceOnMainThread = imageDecodingStore;
 }
-
 } // namespace
 
 ImageDecodingStore::ImageDecodingStore()
@@ -52,94 +51,46 @@ ImageDecodingStore::~ImageDecodingStore()
 {
 }
 
-ImageDecodingStore* ImageDecodingStore::instance()
+ImageDecodingStore* ImageDecodingStore::instanceOnMainThread()
 {
-    return s_instance;
+    ASSERT(isMainThread());
+    return s_instanceOnMainThread;
 }
 
-void ImageDecodingStore::initializeOnce()
+void ImageDecodingStore::initializeOnMainThread()
 {
-    setInstance(ImageDecodingStore::create().leakPtr());
+    ASSERT(isMainThread());
+    setInstanceOnMainThread(ImageDecodingStore::create().leakPtr());
 }
 
 void ImageDecodingStore::shutdown()
 {
-    setInstance(0);
+    ASSERT(isMainThread());
+    setInstanceOnMainThread(0);
 }
 
-const ScaledImageFragment* ImageDecodingStore::lockCompleteCache(const ImageFrameGenerator* generator, const SkISize& scaledSize)
+bool ImageDecodingStore::calledOnValidThread() const
 {
-    CacheEntry* cacheEntry = 0;
-    {
-        MutexLocker lock(m_mutex);
-        CacheMap::iterator iter = m_cacheMap.find(std::make_pair(generator, scaledSize));
-        if (iter == m_cacheMap.end())
-            return 0;
-        cacheEntry = iter->value;
-        if (!cacheEntry->cachedImage->isComplete())
-            return 0;
+    return this == instanceOnMainThread() && isMainThread();
+}
 
-        // Increment use count such that it doesn't get evicted.
-        ++cacheEntry->useCount;
+ScaledImageFragment* ImageDecodingStore::lookupFrameCache(int imageId, const SkISize& scaledSize) const
+{
+    for (size_t i = 0; i < m_frameCache.size(); ++i) {
+        if (m_frameCache[i]->isEqual(imageId, scaledSize))
+            return m_frameCache[i].get();
     }
-    cacheEntry->cachedImage->bitmap().lockPixels();
-    return cacheEntry->cachedImage.get();
-}
-
-const ScaledImageFragment* ImageDecodingStore::lockIncompleteCache(const ImageFrameGenerator* generator, const SkISize& scaledSize)
-{
-    // TODO: Implement.
     return 0;
 }
 
-void ImageDecodingStore::unlockCache(const ImageFrameGenerator* generator, const ScaledImageFragment* cachedImage)
+void ImageDecodingStore::deleteFrameCache(int imageId)
 {
-    cachedImage->bitmap().unlockPixels();
-    if (!cachedImage->isComplete()) {
-        // Delete the image if it is incomplete. It was never stored in cache.
-        delete cachedImage;
-        return;
+    for (size_t i = 0; i < m_frameCache.size(); ++i) {
+        if (m_frameCache[i]->isEqual(imageId)) {
+            m_frameCache.remove(i);
+            return;
+        }
     }
-
-    MutexLocker lock(m_mutex);
-    CacheMap::iterator iter = m_cacheMap.find(std::make_pair(generator, cachedImage->scaledSize()));
-    ASSERT(iter != m_cacheMap.end());
-
-    CacheEntry* cacheEntry = iter->value;
-    --cacheEntry->useCount;
-    ASSERT(cacheEntry->useCount >= 0);
-}
-
-const ScaledImageFragment* ImageDecodingStore::insertAndLockCache(const ImageFrameGenerator* generator, PassOwnPtr<ScaledImageFragment> image)
-{
-    // Prune old cache entries to give space for the new one.
-    prune();
-
-    // Lock the underlying SkBitmap to prevent it from being purged.
-    image->bitmap().lockPixels();
-
-    if (!image->isComplete()) {
-        // Incomplete image is not stored in the cache and deleted after use.
-        // See unlockCache().
-        // TODO: We should allow incomplete images to be stored together with
-        // the corresponding ImageDecoder.
-        return image.leakPtr();
-    }
-
-    ScaledImageFragment* cachedImage = image.get();
-    OwnPtr<CacheEntry> newCacheEntry = CacheEntry::createAndUse(image);
-
-    CacheIdentifier key = std::make_pair(generator, cachedImage->scaledSize());
-    MutexLocker lock(m_mutex);
-    ASSERT(!m_cacheMap.contains(key));
-    m_cacheMap.add(key, newCacheEntry.get());
-    m_cacheEntries.append(newCacheEntry.release());
-    return cachedImage;
-}
-
-void ImageDecodingStore::prune()
-{
-    // TODO: Implement.
 }
 
 } // namespace WebCore

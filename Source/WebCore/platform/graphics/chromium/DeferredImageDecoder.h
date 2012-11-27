@@ -47,8 +47,6 @@ public:
 
     static SkBitmap createResizedLazyDecodingBitmap(const SkBitmap&, const SkISize& scaledSize, const SkIRect& scaledSubset);
 
-    static void setEnabled(bool);
-
     String filenameExtension() const;
 
     ImageFrame* frameBufferAtIndex(size_t index);
@@ -81,8 +79,6 @@ private:
 
     ImageFrame m_lazyDecodedFrame;
     RefPtr<ImageFrameGenerator> m_frameGenerator;
-
-    static bool s_enabled;
 };
 
 } // namespace WebCore

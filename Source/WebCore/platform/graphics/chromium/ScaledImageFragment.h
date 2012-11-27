@@ -34,23 +34,29 @@
 
 namespace WebCore {
 
-// ScaledImageFragment is a scaled version of an image.
+// ScaledImageFragment is a scaled version of a image. It is identified
+// by two things:
+// 1. Image ID. The original image that this fragment comes from.
+// 2. Scaled image size.
 class ScaledImageFragment {
 public:
-    static PassOwnPtr<ScaledImageFragment> create(const SkISize& scaledSize, const SkBitmap& bitmap, bool isComplete)
+    static PassOwnPtr<ScaledImageFragment> create(int imageId, const SkISize& scaledSize, const SkBitmap& bitmap, bool isComplete)
     {
-        return adoptPtr(new ScaledImageFragment(scaledSize, bitmap, isComplete));
+        return adoptPtr(new ScaledImageFragment(imageId, scaledSize, bitmap, isComplete));
     }
 
-    ScaledImageFragment(const SkISize&, const SkBitmap&, bool isComplete);
+    ScaledImageFragment(int imageId, const SkISize&, const SkBitmap&, bool isComplete);
     ~ScaledImageFragment();
 
-    const SkISize& scaledSize() const { return m_scaledSize; }
     const SkBitmap& bitmap() const { return m_bitmap; }
     SkBitmap& bitmap() { return m_bitmap; }
+
+    bool isEqual(int imageId, const SkISize& scaledSize) const;
+    bool isEqual(int imageId) const;
     bool isComplete() const { return m_isComplete; }
 
 private:
+    int m_imageId;
     SkISize m_scaledSize;
     SkBitmap m_bitmap;
     bool m_isComplete;

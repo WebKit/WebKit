@@ -26,73 +26,40 @@
 #ifndef ImageDecodingStore_h
 #define ImageDecodingStore_h
 
-#include "ScaledImageFragment.h"
 #include "SkTypes.h"
 #include "SkSize.h"
-#include "SkSizeHash.h"
 
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
-#include <wtf/ThreadingPrimitives.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
 class ImageDecoder;
 class ImageFrameGenerator;
+class ScaledImageFragment;
 class SharedBuffer;
 
+// This class can only be instantiated on main thread. There will be an
+// instance on impl thread in the future but that part of implementation
+// is incomplete. See bug: https://bugs.webkit.org/show_bug.cgi?id=94240
+// for details.
 class ImageDecodingStore {
 public:
     static PassOwnPtr<ImageDecodingStore> create() { return adoptPtr(new ImageDecodingStore); }
     ~ImageDecodingStore();
 
-    static ImageDecodingStore* instance();
-    static void initializeOnce();
+    static ImageDecodingStore* instanceOnMainThread();
+    static void initializeOnMainThread();
     static void shutdown();
 
-    const ScaledImageFragment* lockCompleteCache(const ImageFrameGenerator*, const SkISize& scaledSize);
-    const ScaledImageFragment* lockIncompleteCache(const ImageFrameGenerator*, const SkISize& scaledSize);
-    void unlockCache(const ImageFrameGenerator*, const ScaledImageFragment*);
-    const ScaledImageFragment* insertAndLockCache(const ImageFrameGenerator*, PassOwnPtr<ScaledImageFragment>);
-
 private:
-    struct CacheEntry {
-        static PassOwnPtr<CacheEntry> create() { return adoptPtr(new CacheEntry()); }
-        static PassOwnPtr<CacheEntry> createAndUse(PassOwnPtr<ScaledImageFragment> image) { return adoptPtr(new CacheEntry(image, 1)); }
-
-        CacheEntry()
-            : useCount(0)
-        {
-        }
-
-        CacheEntry(PassOwnPtr<ScaledImageFragment> image, int count)
-            : cachedImage(image)
-            , useCount(count)
-        {
-        }
-
-        ~CacheEntry()
-        {
-            ASSERT(!useCount);
-        }
-
-        OwnPtr<ScaledImageFragment> cachedImage;
-        int useCount;
-    };
-
     ImageDecodingStore();
-    void prune();
+    bool calledOnValidThread() const;
+    ScaledImageFragment* lookupFrameCache(int imageId, const SkISize& scaledSize) const;
+    void deleteFrameCache(int imageId);
 
-    Vector<OwnPtr<CacheEntry> > m_cacheEntries;
-
-    typedef std::pair<const ImageFrameGenerator*, SkISize> CacheIdentifier;
-    typedef HashMap<CacheIdentifier, CacheEntry*> CacheMap;
-    CacheMap m_cacheMap;
-
-    // Protect concurrent access to all instances of CacheEntry stored in m_cacheEntries and
-    // m_cacheMap as well as the containers.
-    Mutex m_mutex;
+    Vector<OwnPtr<ScaledImageFragment> > m_frameCache;
 };
 
 } // namespace WebCore

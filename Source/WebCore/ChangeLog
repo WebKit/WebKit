@@ -1,3 +1,54 @@
+2012-11-26  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r135798.
+        http://trac.webkit.org/changeset/135798
+        https://bugs.webkit.org/show_bug.cgi?id=103354
+
+        Broke the chrome mac build (Requested by noel_ on #webkit).
+
+        * platform/graphics/chromium/DeferredImageDecoder.cpp:
+        (WebCore::DeferredImageDecoder::~DeferredImageDecoder):
+        (WebCore::DeferredImageDecoder::createResizedLazyDecodingBitmap):
+        (WebCore::DeferredImageDecoder::frameBufferAtIndex):
+        (WebCore::DeferredImageDecoder::createLazyDecodingBitmap):
+        * platform/graphics/chromium/DeferredImageDecoder.h:
+        (DeferredImageDecoder):
+        * platform/graphics/chromium/ImageDecodingStore.cpp:
+        (WebCore::ImageDecodingStore::instanceOnMainThread):
+        (WebCore::ImageDecodingStore::initializeOnMainThread):
+        (WebCore::ImageDecodingStore::shutdown):
+        (WebCore::ImageDecodingStore::calledOnValidThread):
+        (WebCore::ImageDecodingStore::lookupFrameCache):
+        (WebCore::ImageDecodingStore::deleteFrameCache):
+        * platform/graphics/chromium/ImageDecodingStore.h:
+        (WebCore):
+        (ImageDecodingStore):
+        * platform/graphics/chromium/ImageFrameGenerator.cpp:
+        (WebCore::ImageFrameGenerator::ImageFrameGenerator):
+        (WebCore::ImageFrameGenerator::~ImageFrameGenerator):
+        (WebCore::ImageFrameGenerator::setData):
+        (WebCore::ImageFrameGenerator::decodeAndScale):
+        * platform/graphics/chromium/ImageFrameGenerator.h:
+        (WebCore):
+        (WebCore::ImageFrameGenerator::create):
+        (ImageFrameGenerator):
+        * platform/graphics/chromium/LazyDecodingPixelRef.cpp:
+        (WebCore::LazyDecodingPixelRef::LazyDecodingPixelRef):
+        (WebCore::LazyDecodingPixelRef::onLockPixels):
+        (WebCore::LazyDecodingPixelRef::onUnlockPixels):
+        * platform/graphics/chromium/LazyDecodingPixelRef.h:
+        (WebCore):
+        (LazyDecodingPixelRef):
+        * platform/graphics/chromium/ScaledImageFragment.cpp:
+        (WebCore::ScaledImageFragment::ScaledImageFragment):
+        (WebCore::ScaledImageFragment::isEqual):
+        (WebCore):
+        * platform/graphics/chromium/ScaledImageFragment.h:
+        (WebCore):
+        (WebCore::ScaledImageFragment::create):
+        (ScaledImageFragment):
+        * platform/graphics/chromium/SkSizeHash.h: Removed.
+
 2012-11-26  Huang Dongsung  <luxtella@company100.net>
 
         [TexMap] GraphicsLayerTextureMapper::setSize() sets the size of a mask layer.

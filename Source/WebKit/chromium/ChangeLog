@@ -1,3 +1,24 @@
+2012-11-26  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r135798.
+        http://trac.webkit.org/changeset/135798
+        https://bugs.webkit.org/show_bug.cgi?id=103354
+
+        Broke the chrome mac build (Requested by noel_ on #webkit).
+
+        * WebKit.gypi:
+        * src/WebKit.cpp:
+        (WebKit::initializeWithoutV8):
+        * src/WebSettingsImpl.cpp:
+        (WebKit::WebSettingsImpl::setDeferredImageDecodingEnabled):
+        * tests/DeferredImageDecoderTest.cpp:
+        (WebCore::DeferredImageDecoderTest::SetUp):
+        (WebCore::DeferredImageDecoderTest::decoderBeingDestroyed):
+        * tests/ImageFrameGeneratorTest.cpp: Removed.
+        * tests/MockImageDecoder.h:
+        (MockImageDecoderClient):
+        (WebCore::MockImageDecoder::frameBufferAtIndex):
+
 2012-11-26  Alexandre Elias  <aelias@chromium.org>
 
         [chromium] Touchscreen fling handling
