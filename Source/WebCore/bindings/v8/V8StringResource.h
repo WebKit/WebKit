@@ -191,8 +191,6 @@ private:
         return true;
     }
 
-    v8::Local<v8::Value> object() { return m_v8Object; }
-
     void setString(const String& string)
     {
         m_string = string;
@@ -220,7 +218,7 @@ template<> inline bool V8StringResource<DefaultMode>::prepare()
 
 template<> inline bool V8StringResource<WithNullCheck>::prepare()
 {
-    if (object().IsEmpty() || object()->IsNull()) {
+    if (m_v8Object.IsEmpty() || m_v8Object->IsNull()) {
         setString(String());
         return true;
     }
@@ -229,7 +227,7 @@ template<> inline bool V8StringResource<WithNullCheck>::prepare()
 
 template<> inline bool V8StringResource<WithUndefinedOrNullCheck>::prepare()
 {
-    if (object().IsEmpty() || object()->IsNull() || object()->IsUndefined()) {
+    if (m_v8Object.IsEmpty() || m_v8Object->IsNull() || m_v8Object->IsUndefined()) {
         setString(String());
         return true;
     }

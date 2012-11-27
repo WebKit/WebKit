@@ -1,5 +1,19 @@
 2012-11-26  Kentaro Hara  <haraken@chromium.org>
 
+        [V8] Remove V8Parameter::object()
+        https://bugs.webkit.org/show_bug.cgi?id=103340
+
+        Reviewed by Adam Barth.
+
+        V8Parameter can use m_v8Object directly.
+
+        No tests. No change in behavior.
+
+        * bindings/v8/V8StringResource.h:
+        (WebCore::::prepare):
+
+2012-11-26  Kentaro Hara  <haraken@chromium.org>
+
         [V8] Rename V8Parameter to V8StringResource
         https://bugs.webkit.org/show_bug.cgi?id=103341
 
