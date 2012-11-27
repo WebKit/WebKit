@@ -327,7 +327,7 @@ class ReplayPerfTest(PageLoadingPerfTest):
 
         _log.info("Preparing replay for %s" % self.test_name())
 
-        driver = self._port.create_driver(worker_number=1, no_timeout=True)
+        driver = self._port.create_driver(worker_number=0, no_timeout=True)
         try:
             output = self.run_single(driver, self._archive_path, time_out_ms, record=True)
         finally:

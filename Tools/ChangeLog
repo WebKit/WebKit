@@ -1,3 +1,43 @@
+2012-11-27  Adam Barth  <abarth@webkit.org>
+
+        Make it possible to run performance tests on Chromium Android
+        https://bugs.webkit.org/show_bug.cgi?id=103268
+
+        Reviewed by Ryosuke Niwa.
+
+        Based on a patch by Peter Beverloo.
+
+        This patch (almost) makes it possible to run WebKit performance tests
+        on the Chromium port for Android. There are a few things I had to do
+        in order to make this happen:
+
+        1) The worker number when creating a driver for a port is zero-based
+           for layout tests and elsewhere. Android uses this to determine
+           which device it has to run on, so make it zero based for performance
+           tests as well.
+
+        2) Tests aren't available on the Android device, so we start an HTTP
+           server that serves the tests to the device or emulator.
+
+        The one shortcoming of this patch is that chromium-android produces
+        some stderr output that confuses run-perf-tests. I'll address that
+        issue in a subsequent CL. This patch also depends on
+        https://codereview.chromium.org/11416182 in order to work.
+
+        * Scripts/webkitpy/layout_tests/port/chromium_android.py:
+        (ChromiumAndroidPort.start_http_server):
+        (ChromiumAndroidDriver._command_from_driver_input):
+        * Scripts/webkitpy/performance_tests/perftest.py:
+        (ReplayPerfTest.prepare):
+        * Scripts/webkitpy/performance_tests/perftestsrunner.py:
+        (PerfTestsRunner.__init__):
+        (PerfTestsRunner._parse_args):
+        (PerfTestsRunner._start_servers):
+        (PerfTestsRunner):
+        (PerfTestsRunner._stop_servers):
+        (PerfTestsRunner.run):
+        (PerfTestsRunner._run_tests_set):
+
 2012-11-27  Zan Dobersek  <zandobersek@gmail.com>
 
         Remove use of deprecated logging from webkitpy.common and webkitpy.layout_tests

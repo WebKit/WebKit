@@ -68,6 +68,8 @@ class PerfTestsRunner(object):
         self._base_path = self._port.perf_tests_dir()
         self._results = {}
         self._timestamp = time.time()
+        self._needs_http = None
+        self._has_http_lock = False
 
     @staticmethod
     def _parse_args(args=None):
@@ -83,6 +85,8 @@ class PerfTestsRunner(object):
                 help="Specify port/platform being tested (i.e. chromium-mac)"),
             optparse.make_option("--chromium",
                 action="store_const", const='chromium', dest='platform', help='Alias for --platform=chromium'),
+            optparse.make_option("--chromium-android",
+                action="store_const", const='chromium-android', dest='platform', help='Alias for --platform=chromium-android'),
             optparse.make_option("--builder-name",
                 help=("The name of the builder shown on the waterfall running this script e.g. google-mac-2.")),
             optparse.make_option("--build-number",
@@ -151,8 +155,21 @@ class PerfTestsRunner(object):
 
         return tests
 
+    def _start_servers(self):
+        if self._needs_http:
+            self._port.acquire_http_lock()
+            self._port.start_http_server(number_of_servers=2)
+            self._has_http_lock = True
+
+    def _stop_servers(self):
+        if self._has_http_lock:
+            self._port.stop_http_server()
+            self._port.release_http_lock()
+
     def run(self):
-        if not self._port.check_build(needs_http=False):
+        self._needs_http = self._port.requires_http_server()
+
+        if not self._port.check_build(needs_http=self._needs_http):
             _log.error("Build not up to date for %s" % self._port._path_to_driver())
             return self.EXIT_CODE_BAD_BUILD
 
@@ -163,7 +180,13 @@ class PerfTestsRunner(object):
             if not test.prepare(self._options.time_out_ms):
                 return self.EXIT_CODE_BAD_PREPARATION
 
-        unexpected = self._run_tests_set(sorted(list(tests), key=lambda test: test.test_name()), self._port)
+        try:
+            self._start_servers()
+            unexpected = self._run_tests_set(sorted(list(tests), key=lambda test: test.test_name()), self._port)
+
+        finally:
+            self._stop_servers()
+
         if self._options.generate_results:
             exit_code = self._generate_and_show_results()
             if exit_code:
@@ -290,7 +313,7 @@ class PerfTestsRunner(object):
         driver = None
 
         for test in tests:
-            driver = port.create_driver(worker_number=1, no_timeout=True)
+            driver = port.create_driver(worker_number=0, no_timeout=True)
 
             if self._options.pause_before_testing:
                 driver.start()

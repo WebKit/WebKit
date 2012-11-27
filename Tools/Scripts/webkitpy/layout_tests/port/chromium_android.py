@@ -68,7 +68,9 @@ SCALING_GOVERNORS_PATTERN = "/sys/devices/system/cpu/cpu*/cpufreq/scaling_govern
 # All the test cases are still served to DumpRenderTree through file protocol,
 # but we use a file-to-http feature to bridge the file request to host's http
 # server to get the real test files and corresponding resources.
-TEST_PATH_PREFIX = '/all-tests'
+# See webkit/support/platform_support_android.cc for the other side of this bridge.
+PERF_TEST_PATH_PREFIX = '/all-perf-tests'
+LAYOUT_TEST_PATH_PREFIX = '/all-tests'
 
 # All ports the Android forwarder to forward.
 # 8000, 8080 and 8443 are for http/https tests.
@@ -129,7 +131,8 @@ DEVICE_FONTS_DIR = DEVICE_DRT_DIR + 'fonts/'
 # 1. as a virtual path in file urls that will be bridged to HTTP.
 # 2. pointing to some files that are pushed to the device for tests that
 # don't work on file-over-http (e.g. blob protocol tests).
-DEVICE_LAYOUT_TESTS_DIR = DEVICE_SOURCE_ROOT_DIR + 'third_party/WebKit/LayoutTests/'
+DEVICE_WEBKIT_BASE_DIR = DEVICE_SOURCE_ROOT_DIR + 'third_party/WebKit/'
+DEVICE_LAYOUT_TESTS_DIR = DEVICE_WEBKIT_BASE_DIR + 'LayoutTests/'
 
 # Test resources that need to be accessed as files directly.
 # Each item can be the relative path of a directory or a file.
@@ -242,7 +245,8 @@ class ChromiumAndroidPort(chromium.ChromiumPort):
     def start_http_server(self, additional_dirs=None, number_of_servers=0):
         if not additional_dirs:
             additional_dirs = {}
-        additional_dirs[TEST_PATH_PREFIX] = self.layout_tests_dir()
+        additional_dirs[PERF_TEST_PATH_PREFIX] = self.perf_tests_dir()
+        additional_dirs[LAYOUT_TEST_PATH_PREFIX] = self.layout_tests_dir()
         super(ChromiumAndroidPort, self).start_http_server(additional_dirs, number_of_servers)
 
     def create_driver(self, worker_number, no_timeout=False):
@@ -665,10 +669,10 @@ class ChromiumAndroidDriver(driver.Driver):
     def _command_from_driver_input(self, driver_input):
         command = super(ChromiumAndroidDriver, self)._command_from_driver_input(driver_input)
         if command.startswith('/'):
-            # Convert the host file path to a device file path. See comment of
-            # DEVICE_LAYOUT_TESTS_DIR for details.
+            fs = self._port._filesystem
             # FIXME: what happens if command lies outside of the layout_tests_dir on the host?
-            command = DEVICE_LAYOUT_TESTS_DIR + self._port.relative_test_filename(command)
+            relative_test_filename = fs.relpath(command, fs.dirname(self._port.layout_tests_dir()))
+            command = DEVICE_WEBKIT_BASE_DIR + relative_test_filename
         return command
 
     def _read_prompt(self, deadline):
