@@ -691,6 +691,7 @@ void BitmapTextureGL::didReset()
 
 void BitmapTextureGL::updateContentsNoSwizzle(const void* srcData, const IntRect& targetRect, const IntPoint& sourceOffset, int bytesPerLine, unsigned bytesPerPixel, Platform3DObject glFormat)
 {
+    m_context3D->bindTexture(GraphicsContext3D::TEXTURE_2D, m_id);
 #if !defined(TEXMAP_OPENGL_ES_2)
     if (driverSupportsSubImage()) { // For ES drivers that don't support sub-images.
         // Use the OpenGL sub-image extension, now that we know it's available.

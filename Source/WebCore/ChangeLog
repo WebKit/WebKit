@@ -1,3 +1,19 @@
+2012-11-27  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        REGRESSION(134887) [Qt][EFL][WK2] Repaint counter not working
+        https://bugs.webkit.org/show_bug.cgi?id=103261
+
+        Reviewed by Noam Rosenthal.
+
+        Fixed regression introduced in 134887, which introduced the
+        updateContentsNoSwizzle method and called it directly from
+        the repaint counter.
+
+        This method obviously needs to bind the texture.
+
+        * platform/graphics/texmap/TextureMapperGL.cpp:
+        (WebCore::BitmapTextureGL::updateContentsNoSwizzle):
+
 2012-11-27  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r135786.
