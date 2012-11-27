@@ -32,6 +32,8 @@ namespace WebCore {
 class MockImageDecoderClient {
 public:
     virtual void decoderBeingDestroyed() = 0;
+    virtual void frameBufferRequested() = 0;
+    virtual ImageFrame::FrameStatus frameStatus() = 0;
 };
 
 class MockImageDecoder : public ImageDecoder {
@@ -55,9 +57,11 @@ public:
     virtual ImageFrame* frameBufferAtIndex(size_t)
     {
         ++m_frameBufferRequestCount;
+        m_client->frameBufferRequested();
 
         m_frameBufferCache.resize(1);
         m_frameBufferCache[0].setSize(size().width(), size().height());
+        m_frameBufferCache[0].setStatus(m_client->frameStatus());
         return &m_frameBufferCache[0];
     }
 
