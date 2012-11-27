@@ -125,7 +125,6 @@
 #import <WebKitSystemInterface.h>
 #import <dlfcn.h>
 #import <limits>
-#import <objc/objc-runtime.h>
 #import <runtime/InitializeThreading.h>
 #import <wtf/MainThread.h>
 #import <wtf/ObjcRuntimeExtras.h>

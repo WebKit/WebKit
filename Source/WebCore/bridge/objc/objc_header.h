@@ -30,7 +30,7 @@
 
 #include <objc/objc.h>
 #include <objc/objc-class.h>
-#include <objc/objc-runtime.h>
+#include <objc/runtime.h>
 
 typedef Class ClassStructPtr;
 typedef id ObjectStructPtr;

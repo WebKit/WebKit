@@ -57,7 +57,7 @@
 #import <WebCore/ResourceRequest.h>
 #import <WebCore/ScriptController.h>
 #import <WebCore/WebCoreURLResponse.h>
-#import <objc/objc-runtime.h>
+#import <objc/runtime.h>
 #import <runtime/JSLock.h>
 #import <wtf/text/WTFString.h>
 

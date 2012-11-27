@@ -28,7 +28,6 @@
 #import "WebDeviceOrientationInternal.h"
 #import "WebDeviceOrientationProvider.h"
 #import "WebViewInternal.h"
-#import <objc/objc-runtime.h>
 #import <wtf/ObjcRuntimeExtras.h>
 
 using namespace WebCore;

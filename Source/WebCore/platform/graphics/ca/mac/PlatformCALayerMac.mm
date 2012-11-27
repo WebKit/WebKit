@@ -40,7 +40,7 @@
 #import "WebTiledLayer.h"
 #import "WebTileCacheLayer.h"
 #import <objc/objc-auto.h>
-#import <objc/objc-runtime.h>
+#import <objc/runtime.h>
 #import <QuartzCore/QuartzCore.h>
 #import <wtf/CurrentTime.h>
 #import <wtf/MathExtras.h>

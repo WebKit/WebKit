@@ -36,7 +36,7 @@
 #import "WebHTMLViewInternal.h"
 #import "WebKit.h"
 #import <WebKitSystemInterface.h>
-#import <objc/objc-runtime.h>
+#import <wtf/ObjcRuntimeExtras.h>
 
 @interface NSWindow (AppKitSecretsHIWebViewKnows)
 - (void)_removeWindowRef;
@@ -1166,8 +1166,7 @@ UpdateCommandStatus( HIWebView* inView, const HICommand* inCommand )
 						
                         // Can't use -performSelector:withObject: here because the method we're calling returns BOOL, while
                         // -performSelector:withObject:'s return value is assumed to be an id.
-                        BOOL (*validationFunction)(id, SEL, id) = (BOOL (*)(id, SEL, id))objc_msgSend;
-                        if (validationFunction(resp, @selector(validateUserInterfaceItem:), proxy))
+                        if (wtfObjcMsgSend<BOOL>(resp, @selector(validateUserInterfaceItem:), proxy))
 							EnableMenuItem( inCommand->menu.menuRef, inCommand->menu.menuItemIndex );
 						else
 							DisableMenuItem( inCommand->menu.menuRef, inCommand->menu.menuItemIndex );

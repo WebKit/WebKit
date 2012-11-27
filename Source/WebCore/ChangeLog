@@ -1,3 +1,24 @@
+2012-11-27  Pratik Solanki  <psolanki@apple.com>
+
+        objc/objc-runtime.h does not exist on all PLATFORM(MAC)
+        https://bugs.webkit.org/show_bug.cgi?id=101780
+
+        Reviewed by Brent Fulgham.
+
+        Clean up header includes so we don't include objc/objc-runtime.h.
+
+        No new tests because no functional changes.
+
+        * bridge/objc/objc_header.h:
+        * page/mac/EventHandlerMac.mm:
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        * platform/graphics/avfoundation/objc/WebCoreAVFResourceLoader.mm:
+        * platform/graphics/ca/mac/PlatformCALayerMac.mm:
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        * platform/graphics/mac/WebLayer.mm:
+        * platform/mac/WebCoreObjCExtras.mm:
+        * platform/mac/WebVideoFullscreenController.mm:
+
 2012-11-27  Eberhard Graether  <egraether@google.com>
 
         Plumbing showPaintRects out of InspectorPageAgent to use a different drawing implementation if available.

@@ -1,3 +1,17 @@
+2012-11-27  Pratik Solanki  <psolanki@apple.com>
+
+        objc/objc-runtime.h does not exist on all PLATFORM(MAC)
+        https://bugs.webkit.org/show_bug.cgi?id=101780
+
+        Reviewed by Brent Fulgham.
+
+        Clean up header includes so we don't include objc/objc-runtime.h.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        * DumpRenderTree/mac/ObjCPlugin.m:
+        * TestWebKitAPI/mac/InstanceMethodSwizzler.h:
+        * WebKitTestRunner/InjectedBundle/mac/ActivateFonts.mm:
+
 2012-11-27  Marja Hölttä  <marja@chromium.org>
 
         Add callbacks to the FrameLoaderClient when a resource is requested

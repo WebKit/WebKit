@@ -26,7 +26,7 @@
 #ifndef InstanceMethodSwizzler_h
 #define InstanceMethodSwizzler_h
 
-#include <objc/objc-runtime.h>
+#include <objc/runtime.h>
 #include <wtf/Noncopyable.h>
 
 namespace TestWebKitAPI {

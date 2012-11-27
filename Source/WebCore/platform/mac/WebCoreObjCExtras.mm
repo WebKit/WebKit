@@ -35,7 +35,6 @@
 #include "WebCoreObjCExtras.h"
 
 #include <objc/objc-auto.h>
-#include <objc/objc-runtime.h>
 #include <utility>
 #include <wtf/Assertions.h>
 #include <wtf/MainThread.h>

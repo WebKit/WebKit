@@ -25,6 +25,8 @@
 #ifndef WTF_ObjcRuntimeExtras_h
 #define WTF_ObjcRuntimeExtras_h
 
+#include <objc/message.h>
+
 template<typename RetType>
 RetType wtfObjcMsgSend(id target, SEL selector)
 {

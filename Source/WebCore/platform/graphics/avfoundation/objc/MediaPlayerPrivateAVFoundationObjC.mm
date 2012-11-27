@@ -43,7 +43,7 @@
 #import "UUID.h"
 #import "WebCoreAVFResourceLoader.h"
 #import "WebCoreSystemInterface.h"
-#import <objc/objc-runtime.h>
+#import <objc/runtime.h>
 #import <wtf/UnusedParam.h>
 #import <wtf/Uint8Array.h>
 #import <wtf/Uint16Array.h>

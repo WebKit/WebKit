@@ -87,7 +87,6 @@
 #import <WebKit/WebTypesInternal.h>
 #import <WebKit/WebViewPrivate.h>
 #import <getopt.h>
-#import <objc/objc-runtime.h>
 #import <wtf/Assertions.h>
 #import <wtf/FastMalloc.h>
 #import <wtf/RetainPtr.h>

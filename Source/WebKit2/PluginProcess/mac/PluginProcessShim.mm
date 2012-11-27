@@ -30,7 +30,7 @@
 #import <Carbon/Carbon.h>
 #import <WebKitSystemInterface.h>
 #import <stdio.h>
-#import <objc/objc-runtime.h>
+#import <objc/message.h>
 
 #define DYLD_INTERPOSE(_replacement,_replacee) \
     __attribute__((used)) static struct{ const void* replacement; const void* replacee; } _interpose_##_replacee \

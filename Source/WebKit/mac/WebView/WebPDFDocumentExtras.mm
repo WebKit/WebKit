@@ -29,7 +29,6 @@
 #import <wtf/Vector.h>
 #import <wtf/RetainPtr.h>
 #import <PDFKit/PDFDocument.h>
-#import <objc/objc-runtime.h>
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED == 1050
 @interface PDFDocument (Internal)

@@ -1,3 +1,27 @@
+2012-11-27  Pratik Solanki  <psolanki@apple.com>
+
+        objc/objc-runtime.h does not exist on all PLATFORM(MAC)
+        https://bugs.webkit.org/show_bug.cgi?id=101780
+
+        Reviewed by Brent Fulgham.
+
+        Clean up header includes so we don't include objc/objc-runtime.h.
+
+        * Carbon/HIWebView.mm:
+        (UpdateCommandStatus): Use wtfObjcMsgSend template instead of objc_msgSend.
+        * Plugins/WebNetscapePluginView.mm:
+        * Plugins/WebPluginContainerCheck.mm:
+        (-[WebPluginContainerCheck _continueWithPolicy:]): Use wtfObjcMsgSend template instead of objc_msgSend.
+        * Plugins/WebPluginController.mm:
+        * WebCoreSupport/WebCachedFramePlatformData.h:
+        * WebCoreSupport/WebDeviceOrientationClient.mm:
+        * WebView/WebDelegateImplementationCaching.mm:
+        * WebView/WebHTMLView.mm:
+        * WebView/WebPDFDocumentExtras.mm:
+        * WebView/WebPolicyDelegate.mm:
+        (-[WebPolicyDecisionListener _usePolicy:]): Use wtfObjcMsgSend template instead of objc_msgSend.
+        * WebView/WebView.mm:
+
 2012-11-27  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r135786.

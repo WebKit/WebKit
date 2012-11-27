@@ -38,7 +38,7 @@
 #import "SoftLinking.h"
 #import "UTIUtilities.h"
 #import <AVFoundation/AVAssetResourceLoader.h>
-#import <objc/objc-runtime.h>
+#import <objc/runtime.h>
 #import <wtf/text/CString.h>
 
 namespace WebCore {

@@ -36,7 +36,7 @@
 #import <WebCore/DisplaySleepDisabler.h>
 #import <WebCore/HTMLMediaElement.h>
 #import <WebCore/SoftLinking.h>
-#import <objc/objc-runtime.h>
+#import <objc/runtime.h>
 #import <wtf/UnusedParam.h>
 
 #if USE(GSTREAMER)

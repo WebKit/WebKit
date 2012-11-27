@@ -32,7 +32,6 @@
 #import "WebKitLogging.h"
 #import "WebView.h"
 #import "WebViewData.h"
-#import <objc/objc-runtime.h>
 #import <wtf/ObjcRuntimeExtras.h>
 
 @implementation WebView (WebDelegateImplementationCaching)

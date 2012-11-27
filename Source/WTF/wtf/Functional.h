@@ -33,7 +33,6 @@
 
 #if PLATFORM(MAC) && COMPILER_SUPPORTS(BLOCKS)
 #include <Block.h>
-#include <objc/objc-runtime.h>
 #include <wtf/ObjcRuntimeExtras.h>
 #endif
 
