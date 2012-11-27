@@ -90,6 +90,9 @@ protected:
         , m_arraySize(0)
         , m_presentationAttributeStyleIsDirty(false)
         , m_styleAttributeIsDirty(false)
+#if ENABLE(SVG)
+        , m_animatedSVGAttributesAreDirty(false)
+#endif
     { }
 
     ElementAttributeData(unsigned arraySize)
@@ -97,14 +100,20 @@ protected:
         , m_arraySize(arraySize)
         , m_presentationAttributeStyleIsDirty(false)
         , m_styleAttributeIsDirty(false)
+#if ENABLE(SVG)
+        , m_animatedSVGAttributesAreDirty(false)
+#endif
     { }
 
     ElementAttributeData(const ElementAttributeData&, bool isMutable);
 
     unsigned m_isMutable : 1;
-    unsigned m_arraySize : 29;
+    unsigned m_arraySize : 28;
     mutable unsigned m_presentationAttributeStyleIsDirty : 1;
     mutable unsigned m_styleAttributeIsDirty : 1;
+#if ENABLE(SVG)
+    mutable unsigned m_animatedSVGAttributesAreDirty : 1;
+#endif
 
     mutable RefPtr<StylePropertySet> m_inlineStyle;
     mutable SpaceSplitString m_classNames;
@@ -115,6 +124,9 @@ private:
     friend class StyledElement;
     friend class ImmutableElementAttributeData;
     friend class MutableElementAttributeData;
+#if ENABLE(SVG)
+    friend class SVGElement;
+#endif
 
     Attribute* getAttributeItem(const AtomicString& name, bool shouldIgnoreAttributeCase);
     const Attribute* getAttributeItem(const AtomicString& name, bool shouldIgnoreAttributeCase) const;

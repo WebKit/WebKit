@@ -1,3 +1,30 @@
+2012-11-26  Andreas Kling  <akling@apple.com>
+
+        Node: Move AreSVGAttributesValidFlag to ElementAttributeData.
+        <http://webkit.org/b/103349>
+
+        Reviewed by Anders Carlsson.
+
+        Moved AreSVGAttributesValidFlag to ElementAttributeData and change it to use "dirty" semantics.
+        This frees up a bit on Node, and we will always have ElementAttributeData if the animated
+        attributes are dirty anyway.
+
+        * dom/Element.cpp:
+        (WebCore::Element::getAttribute):
+        * dom/Element.h:
+        (WebCore::Element::updateInvalidAttributes):
+        * dom/ElementAttributeData.cpp:
+        (WebCore::ElementAttributeData::ElementAttributeData):
+        * dom/ElementAttributeData.h:
+        (WebCore::ElementAttributeData::ElementAttributeData):
+        (ElementAttributeData):
+        * dom/Node.h:
+        (Node):
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::updateAnimatedSVGAttribute):
+        * svg/SVGElement.h:
+        (WebCore::SVGElement::invalidateSVGAttributes):
+
 2012-11-26  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r135798.

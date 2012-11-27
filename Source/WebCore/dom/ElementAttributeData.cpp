@@ -86,6 +86,9 @@ ElementAttributeData::ElementAttributeData(const ElementAttributeData& other, bo
     , m_arraySize(isMutable ? 0 : other.length())
     , m_presentationAttributeStyleIsDirty(other.m_presentationAttributeStyleIsDirty)
     , m_styleAttributeIsDirty(other.m_styleAttributeIsDirty)
+#if ENABLE(SVG)
+    , m_animatedSVGAttributesAreDirty(other.m_animatedSVGAttributesAreDirty)
+#endif
     , m_classNames(other.m_classNames)
     , m_idForStyleResolution(other.m_idForStyleResolution)
 {

@@ -566,13 +566,13 @@ void SVGElement::clearHasPendingResourcesIfPossible()
 
 void SVGElement::updateAnimatedSVGAttribute(const QualifiedName& name) const
 {
-    if (areSVGAttributesValid())
+    if (!attributeData() || !attributeData()->m_animatedSVGAttributesAreDirty)
         return;
 
     SVGElement* nonConstThis = const_cast<SVGElement*>(this);
     if (name == anyQName()) {
         nonConstThis->localAttributeToPropertyMap().synchronizeProperties(nonConstThis);
-        setAreSVGAttributesValid();
+        attributeData()->m_animatedSVGAttributesAreDirty = false;
     } else
         nonConstThis->localAttributeToPropertyMap().synchronizeProperty(nonConstThis, name);
 }

@@ -98,7 +98,7 @@ class PropertyNodeList;
 
 typedef int ExceptionCode;
 
-const int nodeStyleChangeShift = 18;
+const int nodeStyleChangeShift = 17;
 
 // SyntheticStyleChange means that we need to go through the entire style change logic even though
 // no style property has actually changed. It is used to restructure the tree when, for instance,
@@ -705,32 +705,27 @@ private:
         // be stored in the same memory word as the Node bits above.
         IsParsingChildrenFinishedFlag = 1 << 15, // Element
 #if ENABLE(SVG)
-        AreSVGAttributesValidFlag = 1 << 16, // Element
-        HasSVGRareDataFlag = 1 << 17, // SVGElement
+        HasSVGRareDataFlag = 1 << 16, // SVGElement
 #endif
 
         StyleChangeMask = 1 << nodeStyleChangeShift | 1 << (nodeStyleChangeShift + 1),
 
-        SelfOrAncestorHasDirAutoFlag = 1 << 20,
+        SelfOrAncestorHasDirAutoFlag = 1 << 19,
 
-        HasNameOrIsEditingTextFlag = 1 << 21,
+        HasNameOrIsEditingTextFlag = 1 << 20,
 
-        InNamedFlowFlag = 1 << 22,
-        HasSyntheticAttrChildNodesFlag = 1 << 23,
-        HasCustomCallbacksFlag = 1 << 24,
-        HasScopedHTMLStyleChildFlag = 1 << 25,
-        HasEventTargetDataFlag = 1 << 26,
-        V8CollectableDuringMinorGCFlag = 1 << 27,
-        IsInsertionPointFlag = 1 << 28,
+        InNamedFlowFlag = 1 << 21,
+        HasSyntheticAttrChildNodesFlag = 1 << 22,
+        HasCustomCallbacksFlag = 1 << 23,
+        HasScopedHTMLStyleChildFlag = 1 << 24,
+        HasEventTargetDataFlag = 1 << 25,
+        V8CollectableDuringMinorGCFlag = 1 << 26,
+        IsInsertionPointFlag = 1 << 27,
 
-#if ENABLE(SVG)
-        DefaultNodeFlags = IsParsingChildrenFinishedFlag | AreSVGAttributesValidFlag,
-#else
-        DefaultNodeFlags = IsParsingChildrenFinishedFlag,
-#endif
+        DefaultNodeFlags = IsParsingChildrenFinishedFlag
     };
 
-    // 3 bits remaining
+    // 4 bits remaining
 
     bool getFlag(NodeFlags mask) const { return m_nodeFlags & mask; }
     void setFlag(bool f, NodeFlags mask) const { m_nodeFlags = (m_nodeFlags & ~mask) | (-(int32_t)f & mask); } 
@@ -839,9 +834,6 @@ protected:
     void clearIsParsingChildrenFinished() { clearFlag(IsParsingChildrenFinishedFlag); }
 
 #if ENABLE(SVG)
-    bool areSVGAttributesValid() const { return getFlag(AreSVGAttributesValidFlag); }
-    void setAreSVGAttributesValid() const { setFlag(AreSVGAttributesValidFlag); }
-    void clearAreSVGAttributesValid() { clearFlag(AreSVGAttributesValidFlag); }
     bool hasSVGRareData() const { return getFlag(HasSVGRareDataFlag); }
     void setHasSVGRareData() { setFlag(HasSVGRareDataFlag); }
     void clearHasSVGRareData() { clearFlag(HasSVGRareDataFlag); }

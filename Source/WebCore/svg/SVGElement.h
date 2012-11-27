@@ -84,7 +84,7 @@ public:
 
     virtual AffineTransform* supplementalTransform() { return 0; }
 
-    void invalidateSVGAttributes() { clearAreSVGAttributesValid(); }
+    void invalidateSVGAttributes() { ensureAttributeData()->m_animatedSVGAttributesAreDirty = true; }
 
     const HashSet<SVGElementInstance*>& instancesForElement() const;
 

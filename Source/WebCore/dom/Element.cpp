@@ -305,18 +305,19 @@ bool Element::hasAttribute(const QualifiedName& name) const
 
 const AtomicString& Element::getAttribute(const QualifiedName& name) const
 {
-    if (UNLIKELY(name == styleAttr) && attributeData() && attributeData()->m_styleAttributeIsDirty)
+    if (!attributeData())
+        return nullAtom;
+
+    if (UNLIKELY(name == styleAttr && attributeData()->m_styleAttributeIsDirty))
         updateStyleAttribute();
 
 #if ENABLE(SVG)
-    if (UNLIKELY(!areSVGAttributesValid()))
+    if (UNLIKELY(attributeData()->m_animatedSVGAttributesAreDirty))
         updateAnimatedSVGAttribute(name);
 #endif
 
-    if (attributeData()) {
-        if (const Attribute* attribute = getAttributeItem(name))
-            return attribute->value();
-    }
+    if (const Attribute* attribute = getAttributeItem(name))
+        return attribute->value();
     return nullAtom;
 }
 
@@ -660,24 +661,24 @@ static inline bool shouldIgnoreAttributeCase(const Element* e)
 
 const AtomicString& Element::getAttribute(const AtomicString& name) const
 {
+    if (!attributeData())
+        return nullAtom;
+
     bool ignoreCase = shouldIgnoreAttributeCase(this);
 
     // Update the 'style' attribute if it's invalid and being requested:
-    if (attributeData() && attributeData()->m_styleAttributeIsDirty && equalPossiblyIgnoringCase(name, styleAttr.localName(), ignoreCase))
+    if (attributeData()->m_styleAttributeIsDirty && equalPossiblyIgnoringCase(name, styleAttr.localName(), ignoreCase))
         updateStyleAttribute();
 
 #if ENABLE(SVG)
-    if (!areSVGAttributesValid()) {
+    if (attributeData()->m_animatedSVGAttributesAreDirty) {
         // We're not passing a namespace argument on purpose. SVGNames::*Attr are defined w/o namespaces as well.
         updateAnimatedSVGAttribute(QualifiedName(nullAtom, name, nullAtom));
     }
 #endif
 
-    if (attributeData()) {
-        if (const Attribute* attribute = attributeData()->getAttributeItem(name, ignoreCase))
-            return attribute->value();
-    }
-
+    if (const Attribute* attribute = attributeData()->getAttributeItem(name, ignoreCase))
+        return attribute->value();
     return nullAtom;
 }
 

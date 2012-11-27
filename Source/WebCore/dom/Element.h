@@ -743,11 +743,14 @@ inline Attribute* Element::getAttributeItem(const QualifiedName& name)
 
 inline void Element::updateInvalidAttributes() const
 {
-    if (attributeData() && attributeData()->m_styleAttributeIsDirty)
+    if (!attributeData())
+        return;
+
+    if (attributeData()->m_styleAttributeIsDirty)
         updateStyleAttribute();
 
 #if ENABLE(SVG)
-    if (!areSVGAttributesValid())
+    if (attributeData()->m_animatedSVGAttributesAreDirty)
         updateAnimatedSVGAttribute(anyQName());
 #endif
 }
