@@ -88,7 +88,7 @@ void LauncherApplication::applyDefaultSettings()
 }
 
 LauncherApplication::LauncherApplication(int& argc, char** argv)
-    : QApplication(argc, argv, QApplication::GuiServer)
+    : QApplication(argc, argv)
     , m_isRobotized(false)
     , m_robotTimeoutSeconds(0)
     , m_robotExtraTimeSeconds(0)

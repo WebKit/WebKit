@@ -1,3 +1,22 @@
+2012-11-27  Andras Becsi  <andras.becsi@digia.com>
+
+        [Qt] Fix the build with new Qt5 hash
+        https://bugs.webkit.org/show_bug.cgi?id=103406
+
+        Reviewed by Csaba Osztrogonác.
+
+        Remove references to deprecated QApplication::GuiServer which
+        has been removed, and use QStyleFactory::create instead of
+        instantiating a QWindowsStyle directly since it is about to
+        become an internal class.
+
+        * DumpRenderTree/qt/DumpRenderTreeMain.cpp:
+        (main):
+        * QtTestBrowser/qttestbrowser.cpp:
+        (LauncherApplication::LauncherApplication):
+        * WebKitTestRunner/InjectedBundle/qt/InjectedBundleQt.cpp:
+        (WTR::InjectedBundle::platformInitialize):
+
 2012-11-27  Sadrul Habib Chowdhury  <sadrul@chromium.org>
 
         [style] Add a style-check for enum-member names

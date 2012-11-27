@@ -28,7 +28,8 @@
 #include "InjectedBundle.h"
 #include <QApplication>
 #include <QByteArray>
-#include <QWindowsStyle>
+#include <QStyle>
+#include <QStyleFactory>
 #include <stdio.h>
 #include <stdlib.h>
 #include <wtf/AlwaysInline.h>
@@ -38,7 +39,7 @@ namespace WTR {
 
 void InjectedBundle::platformInitialize(WKTypeRef)
 {
-    QWindowsStyle* styleForTests = new QWindowsStyle;
+    QStyle* styleForTests = QStyleFactory::create(QLatin1String("windows"));
     QApplication::setStyle(styleForTests);
     // Force Qt to use the style's standard palette, instead of platform default palette. This is needed
     // because we are setting the style after QApplication is instantiated.
