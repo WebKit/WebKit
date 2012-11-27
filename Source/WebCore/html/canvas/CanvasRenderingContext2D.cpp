@@ -2070,8 +2070,11 @@ void CanvasRenderingContext2D::setFont(const String& newFont)
     if (parsedStyle->isEmpty())
         return;
 
-    RefPtr<CSSValue> fontValue = parsedStyle->getPropertyCSSValue(CSSPropertyFont);
-    if (fontValue && fontValue->isInheritedValue())
+    String fontValue = parsedStyle->getPropertyValue(CSSPropertyFont);
+
+    // According to http://lists.w3.org/Archives/Public/public-html/2009Jul/0947.html,
+    // the "inherit" and "initial" values must be ignored.
+    if (fontValue == "inherit" || fontValue == "initial")
         return;
 
     // The parse succeeded.

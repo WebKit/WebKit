@@ -1,3 +1,40 @@
+2012-11-27  Alexander Pavlov  <apavlov@chromium.org>
+
+        Incorrect value of CSSStyleDeclaration#length when a shorthand property is inherit or initial
+        https://bugs.webkit.org/show_bug.cgi?id=73002
+
+        Reviewed by Alexis Menard.
+
+        Before the patch, "inherit" and "initial" shorthands would get added to the StylePropertySet as-is, their longhands unspecified.
+        This patch tackles two aspects of the problem:
+        - When parsing "initial" and "inherit" shorthands, their longhands are added to the property set with the corresponding values.
+        - When querying "initial" and "inherit" shorthands, their values are reconstructed from the longhands as usual, but if all of the longhands
+          are found to have the same explicit "initial" or "inherit" value, the respective single value is returned as the shorthand value.
+
+        When reconstructing shorthands, a "common value" is tracked. If all longhands involved have the same explicit value, it becomes the
+        "common value", otherwise it is a String(). The "inherit" or "initial" common value ultimately becomes the shorthand value
+        (except for the "background-position" shorthand, which is a special case).
+
+        * css/CSSParser.cpp:
+        (WebCore::parseKeywordValue): Parse shorthands' "initial" and "inherit" values using the CSSParser.
+        (WebCore::CSSParser::addExpandedPropertyForValue): Add simple property or all sharthand's longhands with given value and priority.
+        (WebCore::CSSParser::parseValue): For "initial" and "inherit" shorthands, add their longhands with the respective value, not the shorthands proper.
+        * css/CSSParser.h: Add addExpandedPropertyForValue().
+        * css/StylePropertySet.cpp:
+        (WebCore::isInitialOrInherit): Check if the value is "initial" or "inherit".
+        (WebCore):
+        (WebCore::StylePropertySet::appendFontLonghandValueIfExplicit): Modified to track the common value for the "font" shorthand.
+        (WebCore::StylePropertySet::fontValue): Ditto.
+        (WebCore::StylePropertySet::get4Values): Return "inherit" or "initial" if all 4 values are explicitly "inherit" or "initial".
+        (WebCore::StylePropertySet::getLayeredShorthandValue): Use the common value approach for layered shorthands.
+        (WebCore::StylePropertySet::getShorthandValue): Ditto for ordinary shorthands.
+        (WebCore::StylePropertySet::borderPropertyValue): Ditto for the "border" shorthand.
+        * css/StylePropertySet.h: Modify the appendFontLonghandValueIfExplicit() signature.
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::setFont): Now that "inherit" and "initial" shorthands are represented by their longhands,
+        we need to check the string value of the "font" shorthand for being "inherit" or "initial" instead: getPropertyCSSValue() no longer works,
+        since the shorthand itself is no longer added to the StylePropertySet.
+
 2012-11-27  Kentaro Hara  <haraken@chromium.org>
 
         Unreviewed. Renamed TRYCATCH => V8TRYCATCH.

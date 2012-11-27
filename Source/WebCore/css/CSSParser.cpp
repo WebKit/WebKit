@@ -1086,8 +1086,16 @@ static bool parseKeywordValue(StylePropertySet* declaration, CSSPropertyID prope
 {
     ASSERT(!string.isEmpty());
 
-    if (!isKeywordPropertyID(propertyId))
-        return false;
+    if (!isKeywordPropertyID(propertyId)) {
+        // All properties accept the values of "initial" and "inherit".
+        String lowerCaseString = string.lower();
+        if (lowerCaseString != "initial" && lowerCaseString != "inherit")
+            return false;
+
+        // Parse initial/inherit shorthands using the CSSParser.
+        if (shorthandForProperty(propertyId).length())
+            return false;
+    }
 
     CSSParserString cssString;
     cssString.init(string);
@@ -1689,6 +1697,22 @@ inline PassRefPtr<CSSPrimitiveValue> CSSParser::parseValidPrimitive(int identifi
     return 0;
 }
 
+void CSSParser::addExpandedPropertyForValue(CSSPropertyID propId, PassRefPtr<CSSValue> prpValue, bool important)
+{
+    const StylePropertyShorthand& shorthand = shorthandForProperty(propId);
+    unsigned shorthandLength = shorthand.length();
+    if (!shorthandLength) {
+        addProperty(propId, prpValue, important);
+        return;
+    }
+
+    RefPtr<CSSValue> value = prpValue;
+    ShorthandScope scope(this, propId);
+    const CSSPropertyID* longhands = shorthand.properties();
+    for (unsigned i = 0; i < shorthandLength; ++i)
+        addProperty(longhands[i], value, important);
+}
+
 bool CSSParser::parseValue(CSSPropertyID propId, bool important)
 {
     if (!m_valueList)
@@ -1710,13 +1734,13 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
     if (id == CSSValueInherit) {
         if (num != 1)
             return false;
-        addProperty(propId, cssValuePool().createInheritedValue(), important);
+        addExpandedPropertyForValue(propId, cssValuePool().createInheritedValue(), important);
         return true;
     }
     else if (id == CSSValueInitial) {
         if (num != 1)
             return false;
-        addProperty(propId, cssValuePool().createExplicitInitialValue(), important);
+        addExpandedPropertyForValue(propId, cssValuePool().createExplicitInitialValue(), important);
         return true;
     }
 

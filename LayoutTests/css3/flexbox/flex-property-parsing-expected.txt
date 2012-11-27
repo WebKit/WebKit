@@ -107,7 +107,7 @@ PASS flexitem.style.webkitFlex is "0 0 auto"
 PASS getComputedStyle(flexitem).webkitFlex is "0 0 auto"
 PASS flexitem.style.webkitFlex is "initial"
 PASS getComputedStyle(flexitem).webkitFlex is "0 1 auto"
-FAIL flexitem.style.webkitFlex should be 0 0 auto. Was initial.
+PASS flexitem.style.webkitFlex is "0 0 auto"
 PASS getComputedStyle(flexitem).webkitFlex is "0 0 auto"
 PASS successfullyParsed is true
 
