@@ -1,5 +1,16 @@
 2012-11-27  Justin Novosad  <junov@google.com>
 
+        Correcting baseline for fast/backgrounds/background-opaque-images-over-color.html
+        https://bugs.webkit.org/show_bug.cgi?id=103275
+
+        Unreviewed
+
+        Fixing small error in ref test baseline.
+
+        * fast/backgrounds/background-opaque-images-over-color-expected.html:
+
+2012-11-27  Justin Novosad  <junov@google.com>
+
         Convert test fast/backgrounds/background-opaque-images-over-color.html to a ref test
         https://bugs.webkit.org/show_bug.cgi?id=103275
 
