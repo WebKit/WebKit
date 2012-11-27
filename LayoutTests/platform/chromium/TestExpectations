@@ -3707,6 +3707,9 @@ webkit.org/b/92570 [ Win Debug ] inspector/timeline/timeline-start-time.html [ F
 
 webkit.org/b/94242 [ Android Debug ] media/track/track-cues-sorted-before-dispatch.html [ Crash Pass Timeout ]
 
+# Chromium still has the CC toggle button, not the menu of tracks.
+webkit.org/b/101670 media/video-controls-captions-trackmenu.html [ Skip ]
+
 # Supposedly started failing between CR r140760 and CR r141216.  The failures
 # look like they involve antialiasing; the fact that the test clearly expects
 # these pixels not to be antialiased means these shouldn't just be rebaselined

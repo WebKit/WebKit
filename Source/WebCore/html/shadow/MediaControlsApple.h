@@ -58,6 +58,7 @@ public:
     virtual void updateCurrentTimeDisplay() OVERRIDE;
     virtual void updateStatusDisplay() OVERRIDE;
 
+    virtual void changedClosedCaptionsVisibility() OVERRIDE;
     void toggleClosedCaptionTrackList();
 
 private:

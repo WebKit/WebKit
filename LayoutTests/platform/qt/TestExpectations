@@ -2382,6 +2382,9 @@ webkit.org/b/102993 fast/multicol/client-rects.html [ Failure ]
 webkit.org/b/102993 fast/repaint/slider-thumb-drag-release.html [ Failure ]
 webkit.org/b/102993 fast/repaint/slider-thumb-float.html [ Failure ]
 
+# QT still has the CC toggle button, not the menu of tracks.
+webkit.org/b/101670 media/video-controls-captions-trackmenu.html [ Skip ]
+
 # New, but failing test
 webkit.org/b/101035 fast/images/exif-orientation-image-document.html
 

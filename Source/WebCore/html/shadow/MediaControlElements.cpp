@@ -36,6 +36,7 @@
 #include "CSSValueKeywords.h"
 #include "DOMTokenList.h"
 #include "EventNames.h"
+#include "EventTarget.h"
 #include "FloatConversion.h"
 #include "FloatPoint.h"
 #include "Frame.h"
@@ -63,6 +64,7 @@
 #include "StyleResolver.h"
 #include "Text.h"
 #if ENABLE(VIDEO_TRACK)
+#include "TextTrack.h"
 #include "TextTrackList.h"
 #endif
 
@@ -76,6 +78,11 @@ static const float cSkipRepeatDelay = 0.1f;
 static const float cSkipTime = 0.2f;
 static const float cScanRepeatDelay = 1.5f;
 static const float cScanMaximumRate = 8;
+
+#if ENABLE(VIDEO_TRACK)
+static const char* textTracksOffAttrValue = "-1"; // This must match HTMLMediaElement::textTracksOffIndex()
+static const int textTracksIndexNotFound = -2;
+#endif
 
 HTMLMediaElement* toParentMediaElement(Node* node)
 {
@@ -98,6 +105,26 @@ MediaControlElementType mediaControlElementType(Node* node)
         return static_cast<MediaControlInputElement*>(element)->displayType();
     return static_cast<MediaControlElement*>(element)->displayType();
 }
+
+#if ENABLE(VIDEO_TRACK)
+static const AtomicString& trackIndexAttributeName()
+{
+    DEFINE_STATIC_LOCAL(AtomicString, name, ("x-webkit-track-index", AtomicString::ConstructFromLiteral));
+    return name;
+}
+
+static int trackListIndexForElement(Element* element)
+{
+    const AtomicString trackIndexAttributeValue = element->getAttribute(trackIndexAttributeName());
+    if (trackIndexAttributeValue.isNull() || trackIndexAttributeValue.isEmpty())
+        return textTracksIndexNotFound;
+    bool ok;
+    int trackIndex = trackIndexAttributeValue.toInt(&ok);
+    if (!ok)
+        return textTracksIndexNotFound;
+    return trackIndex;
+}
+#endif
 
 // ----------------------------
 
@@ -901,18 +928,25 @@ PassRefPtr<MediaControlToggleClosedCaptionsButtonElement> MediaControlToggleClos
 
 void MediaControlToggleClosedCaptionsButtonElement::updateDisplayType()
 {
-    setDisplayType(mediaController()->closedCaptionsVisible() ? MediaHideClosedCaptionsButton : MediaShowClosedCaptionsButton);
+    bool captionsVisible = mediaController()->closedCaptionsVisible();
+    setDisplayType(captionsVisible ? MediaHideClosedCaptionsButton : MediaShowClosedCaptionsButton);
+    setChecked(captionsVisible);
 }
 
 void MediaControlToggleClosedCaptionsButtonElement::defaultEventHandler(Event* event)
 {
     if (event->type() == eventNames().clickEvent) {
-        // FIXME: This is now incorrectly doing two things at once: showing the list of captions and toggling display.
-        // https://bugs.webkit.org/show_bug.cgi?id=101670
+        // FIXME: It's not great that the shared code is dictating behavior of platform-specific
+        // UI. Not all ports may want the closed captions button to toggle a list of tracks, so
+        // we have to use #if.
+        // https://bugs.webkit.org/show_bug.cgi?id=101877
+#if !PLATFORM(MAC)
         mediaController()->setClosedCaptionsVisible(!mediaController()->closedCaptionsVisible());
         setChecked(mediaController()->closedCaptionsVisible());
-        m_controls->toggleClosedCaptionTrackList();
         updateDisplayType();
+#else
+        m_controls->toggleClosedCaptionTrackList();
+#endif
         event->setDefaultHandled();
     }
 
@@ -927,22 +961,52 @@ const AtomicString& MediaControlToggleClosedCaptionsButtonElement::shadowPseudoI
 
 // ----------------------------
 
-inline MediaControlClosedCaptionsTrackListElement::MediaControlClosedCaptionsTrackListElement(Document* document)
+inline MediaControlClosedCaptionsTrackListElement::MediaControlClosedCaptionsTrackListElement(Document* document, MediaControls* controls)
     : MediaControlElement(document)
+    , m_controls(controls)
 {
 }
 
-PassRefPtr<MediaControlClosedCaptionsTrackListElement> MediaControlClosedCaptionsTrackListElement::create(Document* document)
+PassRefPtr<MediaControlClosedCaptionsTrackListElement> MediaControlClosedCaptionsTrackListElement::create(Document* document, MediaControls* controls)
 {
-    RefPtr<MediaControlClosedCaptionsTrackListElement> element = adoptRef(new MediaControlClosedCaptionsTrackListElement(document));
+    ASSERT(controls);
+    RefPtr<MediaControlClosedCaptionsTrackListElement> element = adoptRef(new MediaControlClosedCaptionsTrackListElement(document, controls));
     return element.release();
 }
 
 void MediaControlClosedCaptionsTrackListElement::defaultEventHandler(Event* event)
 {
-    // FIXME: Hook this up to actual text tracks.
-    // https://bugs.webkit.org/show_bug.cgi?id=101670
-    UNUSED_PARAM(event);
+#if ENABLE(VIDEO_TRACK)
+    if (event->type() == eventNames().clickEvent) {
+        // FIXME: Add modifier key for exclusivity override.
+        // http://webkit.org/b/103361
+
+        Node* target = event->target()->toNode();
+        if (!target || !target->isElementNode())
+            return;
+
+        // When we created the elements in the track list, we gave them a custom
+        // attribute representing the index in the HTMLMediaElement's list of tracks.
+        // Check if the event target has such a custom element and, if so,
+        // tell the HTMLMediaElement to enable that track.
+
+        int trackIndex = trackListIndexForElement(toElement(target));
+        if (trackIndex == textTracksIndexNotFound)
+            return;
+        
+        HTMLMediaElement* mediaElement = toParentMediaElement(this);
+        if (!mediaElement)
+            return;
+
+        mediaElement->toggleTrackAtIndex(trackIndex);
+
+        // We've selected a track to display, so we can now close the menu.
+        m_controls->toggleClosedCaptionTrackList();
+        updateDisplay();
+    }
+
+    MediaControlElement::defaultEventHandler(event);
+#endif
 }
 
 const AtomicString& MediaControlClosedCaptionsTrackListElement::shadowPseudoId() const
@@ -954,8 +1018,50 @@ const AtomicString& MediaControlClosedCaptionsTrackListElement::shadowPseudoId()
 void MediaControlClosedCaptionsTrackListElement::updateDisplay()
 {
 #if ENABLE(VIDEO_TRACK)
+    DEFINE_STATIC_LOCAL(AtomicString, selectedClassValue, ("selected", AtomicString::ConstructFromLiteral));
+
+    if (!mediaController()->hasClosedCaptions())
+        return;
+
+    HTMLMediaElement* mediaElement = toParentMediaElement(this);
+    if (!mediaElement)
+        return;
+
+    TextTrackList* trackList = mediaElement->textTracks();
+
+    if (!trackList || !trackList->length())
+        return;
+
+    bool captionsVisible = mediaElement->closedCaptionsVisible();
+    for (unsigned i = 0, length = menuItems.size(); i < length; ++i) {
+        RefPtr<Element> trackItem = menuItems[i];
+        int trackIndex = trackListIndexForElement(trackItem.get());
+        if (trackIndex != textTracksIndexNotFound) {
+            if (trackIndex == HTMLMediaElement::textTracksOffIndex()) {
+                if (captionsVisible)
+                    trackItem->classList()->remove(selectedClassValue, ASSERT_NO_EXCEPTION);
+                else
+                    trackItem->classList()->add(selectedClassValue, ASSERT_NO_EXCEPTION);
+            } else {
+                TextTrack* track = trackList->item(trackIndex);
+                if (!track)
+                    continue;
+                if (track->mode() == TextTrack::showingKeyword())
+                    trackItem->classList()->add(selectedClassValue, ASSERT_NO_EXCEPTION);
+                else
+                    trackItem->classList()->remove(selectedClassValue, ASSERT_NO_EXCEPTION);
+            }
+        }
+    }
+#endif
+}
+
+void MediaControlClosedCaptionsTrackListElement::resetTrackListMenu()
+{
+#if ENABLE(VIDEO_TRACK)
     // Remove any existing content.
     removeChildren();
+    menuItems.clear();
 
     if (!mediaController()->hasClosedCaptions())
         return;
@@ -987,15 +1093,15 @@ void MediaControlClosedCaptionsTrackListElement::updateDisplay()
 
     trackItem = doc->createElement(liTag, ASSERT_NO_EXCEPTION);
     trackItem->appendChild(doc->createTextNode("Off"));
-    // FIXME: These lists are not yet live. Mark the Off entry as the selected one for now.
-    trackItem->setAttribute(classAttr, "selected");
+    trackItem->setAttribute(trackIndexAttributeName(), textTracksOffAttrValue, ASSERT_NO_EXCEPTION);
     captionsList->appendChild(trackItem);
+    menuItems.append(trackItem);
 
     trackItem = doc->createElement(liTag, ASSERT_NO_EXCEPTION);
     trackItem->appendChild(doc->createTextNode("Off"));
-    // FIXME: These lists are not yet live. Mark the Off entry as the selected one for now.
-    trackItem->setAttribute(classAttr, "selected");
+    trackItem->setAttribute(trackIndexAttributeName(), textTracksOffAttrValue, ASSERT_NO_EXCEPTION);
     subtitlesList->appendChild(trackItem);
+    menuItems.append(trackItem);
 
     bool hasCaptions = false;
     bool hasSubtitles = false;
@@ -1003,6 +1109,13 @@ void MediaControlClosedCaptionsTrackListElement::updateDisplay()
     for (unsigned i = 0, length = trackList->length(); i < length; ++i) {
         TextTrack* track = trackList->item(i);
         trackItem = doc->createElement(liTag, ASSERT_NO_EXCEPTION);
+
+        // Add a custom attribute to the <li> element which will allow
+        // us to easily associate the user tapping here with the
+        // track. Since this list is rebuilt if the tracks change, we
+        // should always be in sync.
+        trackItem->setAttribute(trackIndexAttributeName(), String::number(i), ASSERT_NO_EXCEPTION);
+
         AtomicString labelText = track->label();
         if (labelText.isNull() || labelText.isEmpty())
             labelText = displayNameForLanguageLocale(track->language());
@@ -1018,6 +1131,7 @@ void MediaControlClosedCaptionsTrackListElement::updateDisplay()
             subtitlesList->appendChild(trackItem);
         }
         trackItem->appendChild(doc->createTextNode(labelText));
+        menuItems.append(trackItem);
     }
 
     captionsSection->appendChild(captionsList);
@@ -1027,6 +1141,8 @@ void MediaControlClosedCaptionsTrackListElement::updateDisplay()
         appendChild(captionsSection);
     if (hasSubtitles)
         appendChild(subtitlesSection);
+
+    updateDisplay();
 #endif
 }
 

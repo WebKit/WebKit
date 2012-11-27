@@ -2998,6 +2998,22 @@ void HTMLMediaElement::configureTextTrackGroup(const TrackGroup& group) const
     }
 }
 
+void HTMLMediaElement::toggleTrackAtIndex(int index, bool exclusive)
+{
+    TextTrackList* trackList = textTracks();
+    if (!trackList || !trackList->length())
+        return;
+
+    for (int i = 0, length = trackList->length(); i < length; ++i) {
+        TextTrack* track = trackList->item(i);
+        track->setShowingByDefault(false);
+        if (i == index)
+            track->setMode(TextTrack::showingKeyword());
+        else if (exclusive || index == HTMLMediaElement::textTracksOffIndex())
+            track->setMode(TextTrack::disabledKeyword());
+    }
+}
+
 void HTMLMediaElement::configureTextTracks()
 {
     TrackGroup captionAndSubtitleTracks(TrackGroup::CaptionsAndSubtitles);

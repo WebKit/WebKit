@@ -1399,6 +1399,9 @@ webkit.org/b/102993 media/video-no-audio.html [ Failure ]
 webkit.org/b/102993 media/video-volume-slider.html [ Failure ]
 webkit.org/b/102993 media/video-zoom-controls.html [ Failure ]
 
+# GTK still has the CC toggle button, not the menu of tracks.
+webkit.org/b/101670 media/video-controls-captions-trackmenu.html [ Skip ]
+
 # Fix for https://bugs.webkit.org/show_bug.cgi?id=97192 introduces these regressions
 webkit.org/b/102776 webkit.org/b/102993 media/media-document-audio-repaint.html [ Failure ]
 webkit.org/b/102776 media/track/track-cue-container-rendering-position.html [ Failure ]

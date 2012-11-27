@@ -1,3 +1,41 @@
+2012-11-27  Dean Jackson  <dino@apple.com>
+
+        Make track list control active
+        https://bugs.webkit.org/show_bug.cgi?id=101670
+
+        Reviewed by Eric Carlson.
+
+        Hook up the event handler for the captions menu so that it enables or
+        disables tracks in the associated HTMLMediaElement.
+
+        Test: media/video-controls-captions-trackmenu.html
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::toggleTrackAtIndex): New method to toggle the state of a track, by index.
+        * html/HTMLMediaElement.h:
+        (HTMLMediaElement): Ditto.
+        (WebCore::HTMLMediaElement::textTracksOffIndex): Static method to return the "Off" value.
+        * html/shadow/MediaControlElements.cpp:
+        (WebCore::trackListIndexForElement): Helper function to take a track list <li> element and return the value of the custom attribute.
+        (WebCore::MediaControlToggleClosedCaptionsButtonElement::updateDisplayType): Toggle the state of the button based on captions visibility.
+        (WebCore::MediaControlToggleClosedCaptionsButtonElement::defaultEventHandler): On Mac platforms show the captions menu. On other platforms, toggle captions.
+        (WebCore::MediaControlClosedCaptionsTrackListElement::MediaControlClosedCaptionsTrackListElement): Now has a reference to the controls.
+        (WebCore::MediaControlClosedCaptionsTrackListElement::create):
+        (WebCore::MediaControlClosedCaptionsTrackListElement::defaultEventHandler): When the user clicks on a track list item, look
+        for the custom attribute that identifies the associated track, and then toggle that track.
+        (WebCore::MediaControlClosedCaptionsTrackListElement::updateDisplay): Set a class on the track list elements so they can be
+        styled by the injected CSS (with tick marks to represent visibility).
+        (WebCore::MediaControlClosedCaptionsTrackListElement::resetTrackListMenu): When building the list of track menu items, add
+        a custom HTML attribute to the element so that the corresponding track can be found in the event handler.
+        * html/shadow/MediaControlElements.h:
+        (MediaControlClosedCaptionsTrackListElement): Add a list of elements representing the track list.
+        * html/shadow/MediaControlsApple.cpp:
+        (WebCore::MediaControlsApple::createControls):
+        (WebCore::MediaControlsApple::changedClosedCaptionsVisibility): Make sure to update the track menu.
+        (WebCore::MediaControlsApple::reset):
+        * html/shadow/MediaControlsApple.h:
+        (MediaControlsApple):
+
 2012-11-27  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: Simplify transaction timers and event tracking

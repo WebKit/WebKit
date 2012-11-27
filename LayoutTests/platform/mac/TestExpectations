@@ -1214,6 +1214,9 @@ webkit.org/b/100142 css3/filters/effect-reference-hw.html [ Fail ]
 webkit.org/b/100142 css3/filters/effect-reference-ordering-hw.html [ Fail ]
 webkit.org/b/100142 css3/filters/effect-reference.html [ Fail ]
 
+# Mac doesn't have a toggle for CC any more, it's based on a menu of choices.
+webkit.org/b/101670 media/video-controls-captions.html [ Skip ]
+
 # Overflowing LayoutUnits cause RenderGeometryMap assertions
 webkit.org/b/67434 [ Debug ] fast/overflow/overflow-height-float-not-removed-crash.html [ Skip ]
 webkit.org/b/67434 [ Debug ] fast/overflow/overflow-height-float-not-removed-crash2.html [ Skip ]

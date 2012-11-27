@@ -1,3 +1,27 @@
+2012-11-27  Dean Jackson  <dino@apple.com>
+
+        Make track list control active
+        https://bugs.webkit.org/show_bug.cgi?id=101670
+
+        Reviewed by Eric Carlson.
+
+        New test that exercises the track list menu, and how it can be used
+        to enable specific tracks. Since this is only enabled for Mac, it is
+        skipped on all other platforms.
+
+        Meanwhile, the existing test for a on/off captions button now
+        does not work on Mac, so skip it there. I copied the functionality
+        into the new test so we still have coverage.
+
+        * media/video-controls-captions-trackmenu-expected.txt: Added.
+        * media/video-controls-captions-trackmenu.html: Added.
+        * platform/chromium/TestExpectations:
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/qt/TestExpectations:
+        * platform/win/TestExpectations:
+
 2012-11-27  Tony Chang  <tony@chromium.org>
 
         Unreviewed, updating TestExpectations after input slider change.

@@ -149,7 +149,7 @@ PassRefPtr<MediaControlsApple> MediaControlsApple::createControls(Document* docu
     if (document->page()->theme()->supportsClosedCaptioning()) {
         RefPtr<MediaControlClosedCaptionsContainerElement> closedCaptionsContainer = MediaControlClosedCaptionsContainerElement::create(document);
 
-        RefPtr<MediaControlClosedCaptionsTrackListElement> closedCaptionsTrackList = MediaControlClosedCaptionsTrackListElement::create(document);
+        RefPtr<MediaControlClosedCaptionsTrackListElement> closedCaptionsTrackList = MediaControlClosedCaptionsTrackListElement::create(document, controls.get());
         controls->m_closedCaptionsTrackList = closedCaptionsTrackList.get();
         closedCaptionsContainer->appendChild(closedCaptionsTrackList.release(), ec, true);
         if (ec)
@@ -289,6 +289,13 @@ void MediaControlsApple::makeTransparent()
         m_closedCaptionsContainer->hide();
 }
 
+void MediaControlsApple::changedClosedCaptionsVisibility()
+{
+    MediaControls::changedClosedCaptionsVisibility();
+    if (m_closedCaptionsTrackList)
+        m_closedCaptionsTrackList->updateDisplay();
+}
+
 void MediaControlsApple::reset()
 {
     Page* page = document()->page();
@@ -323,7 +330,7 @@ void MediaControlsApple::reset()
         if (m_mediaController->hasClosedCaptions()) {
             m_toggleClosedCaptionsButton->show();
             if (m_closedCaptionsTrackList)
-                m_closedCaptionsTrackList->updateDisplay();
+                m_closedCaptionsTrackList->resetTrackListMenu();
         } else
             m_toggleClosedCaptionsButton->hide();
     }

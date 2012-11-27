@@ -245,6 +245,9 @@ public:
     void configureTextTracks();
     void configureTextTrackGroup(const TrackGroup&) const;
 
+    void toggleTrackAtIndex(int index, bool exclusive = true);
+    static int textTracksOffIndex() { return -1; }
+
     bool userPrefersCaptions() const;
     bool userIsInterestedInThisTrackKind(String) const;
     bool textTracksAreReady() const;

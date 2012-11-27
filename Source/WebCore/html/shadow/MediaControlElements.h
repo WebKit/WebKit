@@ -415,18 +415,23 @@ private:
 
 class MediaControlClosedCaptionsTrackListElement : public MediaControlElement {
 public:
-    static PassRefPtr<MediaControlClosedCaptionsTrackListElement> create(Document*);
+    static PassRefPtr<MediaControlClosedCaptionsTrackListElement> create(Document*, MediaControls*);
 
     virtual void defaultEventHandler(Event*);
     virtual bool willRespondToMouseClickEvents() OVERRIDE { return true; }
 
     void updateDisplay();
+    void resetTrackListMenu();
 
 private:
-    MediaControlClosedCaptionsTrackListElement(Document*);
+    MediaControlClosedCaptionsTrackListElement(Document*, MediaControls*);
 
     virtual MediaControlElementType displayType() const { return MediaClosedCaptionsTrackList; }
     virtual const AtomicString& shadowPseudoId() const;
+
+    typedef Vector<RefPtr<Element> > TrackMenuItems;
+    TrackMenuItems menuItems;
+    MediaControls* m_controls;
 };
 
 // ----------------------------
