@@ -1601,7 +1601,7 @@ static bool isOracleJavaPlugIn(NSString *bundleIdentifier)
 
 static bool isPlugInInactive(NSString *bundleIdentifier)
 {
-    if (isOracleJavaPlugIn(bundleIdentifier) && !WKJLIsRuntimeAndWebComponentsInstalled())
+    if (isOracleJavaPlugIn(bundleIdentifier) && !WKIsJavaPlugInActive())
         return true;
 
     return false;
