@@ -1,5 +1,21 @@
 2012-11-26  Tim Horton  <timothy_horton@apple.com>
 
+        Ensure that plugins are initialized before using handleEditingCommand/isEditingCommandEnabled/shouldAllowScripting
+        https://bugs.webkit.org/show_bug.cgi?id=103288
+
+        Reviewed by Dan Bernstein.
+
+        Other PluginView methods that use m_plugin null-check m_plugin and check
+        that the plugin has finished initializing before using it. These three
+        should do the same thing.
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::handleEditingCommand):
+        (WebKit::PluginView::isEditingCommandEnabled):
+        (WebKit::PluginView::shouldAllowScripting):
+
+2012-11-26  Tim Horton  <timothy_horton@apple.com>
+
         PDFPlugin: Subframe PDF context menus are in the wrong place
         https://bugs.webkit.org/show_bug.cgi?id=103284
         <rdar://problem/12727972>

@@ -831,16 +831,25 @@ void PluginView::handleEvent(Event* event)
     
 bool PluginView::handleEditingCommand(const String& commandName, const String& argument)
 {
+    if (!m_isInitialized || !m_plugin)
+        return false;
+
     return m_plugin->handleEditingCommand(commandName, argument);
 }
     
 bool PluginView::isEditingCommandEnabled(const String& commandName)
 {
+    if (!m_isInitialized || !m_plugin)
+        return false;
+
     return m_plugin->isEditingCommandEnabled(commandName);
 }
 
 bool PluginView::shouldAllowScripting()
 {
+    if (!m_isInitialized || !m_plugin)
+        return false;
+
     return m_plugin->shouldAllowScripting();
 }
 
