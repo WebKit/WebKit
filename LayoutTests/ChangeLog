@@ -1,3 +1,17 @@
+2012-11-27  János Badics  <jbadics@inf.u-szeged.hu>
+
+        [Qt] Gardening after r135723, r135740 and r135789. Skipped 3 tests and added rebaseline to a test.
+
+        Reviewed by Csaba Osztrogonác.
+
+        r135723: Added Qt baseline to http/tests/inspector/network/script-as-text-loading-with-caret.html
+        r135740: Skipped fast/frames/page-visibility-crash.html because Page Visibility API is disabled.
+        r135789: Skipped fast/events/touch/gesture/long-press-on-draggable-element-triggers-drag.html because gestureLongTap is not supported on Qt, and
+                         fast/events/touch/gesture/context-menu-on-long-tap.html because Drag and Drop support is disabled on Qt.
+
+        * platform/qt/TestExpectations:
+        * platform/qt/http/tests/inspector/network/script-as-text-loading-with-caret-expected.txt: Added.
+
 2012-11-27  Alexander Pavlov  <apavlov@chromium.org>
 
         Incorrect value of CSSStyleDeclaration#length when a shorthand property is inherit or initial
