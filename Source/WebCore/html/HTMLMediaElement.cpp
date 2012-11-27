@@ -678,6 +678,8 @@ String HTMLMediaElement::canPlayType(const String& mimeType, const String& keySy
 
 void HTMLMediaElement::load(ExceptionCode& ec)
 {
+    UNUSED_PARAM(ec);
+
     RefPtr<HTMLMediaElement> protect(this); // loadInternal may result in a 'beforeload' event, which can make arbitrary DOM mutations.
     
     LOG(Media, "HTMLMediaElement::load()");

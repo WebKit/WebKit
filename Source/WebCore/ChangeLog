@@ -1,3 +1,10 @@
+2012-11-27  Dean Jackson  <dino@apple.com>
+
+        Unreviewed build fix for r135866.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::load):
+
 2012-11-27  Leo Yang  <leoyang@rim.com>
 
         [BlackBerry] Adapt to the change of BlackBerry::Platform::FilterStream::notifyHeadersReceived
