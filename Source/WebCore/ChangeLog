@@ -1,3 +1,32 @@
+2012-11-27  Pravin D  <pravind.2k4@gmail.com>
+
+        max-height property not respected in case of tables
+        https://bugs.webkit.org/show_bug.cgi?id=98633
+
+        Reviewed by Julien Chaffraix.
+
+        The max-height property determines the maximum computed height an element can have. In case of tables
+        the computed height was not being limited by the max-height property. The current patch fixes the same.
+
+        Test: fast/table/css-table-max-height.html
+
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::convertStyleLogicalHeightToComputedHeight):
+          Helper function to compute height from the given style height.
+          This function handles style height of type fixed, percent and viewport percent.
+          As height of type 'calculated' gets internally resolved to either fixed or percent
+          there is no special handling required for the same.
+
+        (WebCore):
+        (WebCore::RenderTable::layout):
+          Logic to compute the logical height of an element such that it does not exceed the max-height value given that
+          min-width < Content height < max-height, when min-height < max-height.
+          However max-height value is not respected if either min-height > max-height or Content height > max-height.
+
+        * rendering/RenderTable.h:
+        (RenderTable):
+          Function definition for the newly add function convertStyleLogicalHeightToComputedHeight().
+
 2012-11-27  Roger Fong  <roger_fong@apple.com>
 
         Windows specific implementation of usesTileCacheLayer needed after r133056.
