@@ -4250,3 +4250,5 @@ webkit.org/b/103093 [ Lion SnowLeopard ] media/remove-from-document.html [ Crash
 webkit.org/b/103299 [ Linux Mac Win ] fast/dom/shadow/shadow-dom-event-dispatching.html [ Failure Pass ]
 webkit.org/b/103148 [ Linux Win ] fast/text/atsui-small-caps-punctuation-size.html [ ImageOnlyFailure Failure Pass ]
 webkit.org/b/103308 [ SnowLeopard Lion ] css3/filters/custom/custom-filter-transforms-animation.html [ Pass Timeout ]
+
+webkit.org/b/103348 fast/js/string-replacement-outofmemory.html [ Crash ]
