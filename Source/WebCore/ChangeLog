@@ -1,3 +1,20 @@
+2012-11-27  Aaron Colwell  <acolwell@chromium.org>
+
+        Use-after-free in media player handling
+        https://bugs.webkit.org/show_bug.cgi?id=103426
+
+        Reviewed by Eric Carlson.
+
+        Fixed use-after-free bugs caused by the MediaSource not being closed before the HTMLMediaElement or the MediaPlayer
+        is destroyed. Closing the MediaSource causes it to clear its reference to the MediaPlayer which prevents
+        the use-after-free problems from happening.
+
+        Test: http/tests/media/media-source/video-media-source-closed-on-htmlmediaelement-destruction.html
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::~HTMLMediaElement):
+        (WebCore::HTMLMediaElement::clearMediaPlayer):
+
 2012-11-27  David Grogan  <dgrogan@chromium.org>
 
         IndexedDB: Remove IDBDatabase.setVersion API

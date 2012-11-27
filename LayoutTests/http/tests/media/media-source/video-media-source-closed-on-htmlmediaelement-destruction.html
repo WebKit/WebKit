@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+    <head>
+      <script src="/media-resources/video-test.js"></script>
+      <script src="media-source.js"></script>
+
+      <script>
+          var ms = new WebKitMediaSource();
+
+          function sourceOpened()
+          {
+              consoleWrite("sourceOpened called.");
+              var vid = document.getElementById('vid');
+              var buffer = ms.addSourceBuffer('video/webm; codecs="vorbis,vp8"');
+
+              MediaSourceTest.expectSourceState(ms, "open");
+
+              consoleWrite("Removing video element from DOM.");
+              vid.parentNode.removeChild(vid);
+              vid = null;
+
+              consoleWrite("Running the garbage collector.");
+              gc();
+
+              MediaSourceTest.expectSourceState(ms, "closed");
+
+              try {
+                  buffer.timestampOffset = 42;
+                  failTest("Expected an exception");
+              } catch (e) {
+                  consoleWrite("Setting timestampOffset failed as expected: " + e.name);
+              }
+          }
+
+          function sourceClosed()
+          {
+              consoleWrite("sourceClosed called.");
+              endTest();
+          }
+
+          function onLoad()
+          {
+              waitForEventAndFail('error');
+
+              ms.addEventListener('webkitsourceopen', sourceOpened);
+              ms.addEventListener('webkitsourceclose', sourceClosed);
+
+              document.getElementById('vid').src = window.URL.createObjectURL(ms);
+          }
+      </script>
+    </head>
+    <body onload="onLoad()">
+      <video id="vid"></video>
+      <p>Tests that the MediaSource is closed when the HTMLMediaElement is destroyed.</p>
+    </body>
+</html>

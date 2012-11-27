@@ -316,6 +316,10 @@ HTMLMediaElement::~HTMLMediaElement()
     if (m_mediaController)
         m_mediaController->removeMediaElement(this);
 
+#if ENABLE(MEDIA_SOURCE)
+    setSourceState(MediaSource::closedKeyword());
+#endif
+
     removeElementFromDocumentMap(this, document());
 }
 
@@ -3750,6 +3754,11 @@ void HTMLMediaElement::userCancelledLoad()
 void HTMLMediaElement::clearMediaPlayer(int flags)
 {
 #if !ENABLE(PLUGIN_PROXY_FOR_VIDEO)
+
+#if ENABLE(MEDIA_SOURCE)
+    setSourceState(MediaSource::closedKeyword());
+#endif
+
     m_player.clear();
 #endif
     stopPeriodicTimers();
