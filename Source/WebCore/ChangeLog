@@ -1,3 +1,20 @@
+2012-11-27  Robert Hogan  <robert@webkit.org>
+
+        REGRESSION (r125578): word-wrapping in absolute position with nbsp, word-spacing and custom font
+        https://bugs.webkit.org/show_bug.cgi?id=101443
+
+        Reviewed by David Hyatt.
+
+        Leading non-breaking space in a text run should always get word-spacing applied. When RenderText
+        calculates the preferred with of a run of text it breaks it up into word segments that contain
+        no breaking spaces and calculates the width of each. So when calculating the width of '&nbsp;b' 
+        it needs to add word-spacing to the leading non-breaking space as it does not get collapsed away.
+
+        Test: fast/text/word-space-nbsp.html
+
+        * platform/graphics/WidthIterator.cpp:
+        (WebCore::WidthIterator::advanceInternal):
+
 2012-11-27  Yong Li  <yoli@rim.com>
 
         [BlackBerry] EventLoop should end when WebKit thread is exiting
