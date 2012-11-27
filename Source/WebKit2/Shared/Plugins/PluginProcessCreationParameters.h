@@ -50,6 +50,8 @@ struct PluginProcessCreationParameters {
     String pluginPath;
     bool supportsAsynchronousPluginInitialization;
 
+    double terminationTimeout;
+
 #if PLATFORM(MAC)
     String parentProcessName;
     CoreIPC::MachPort acceleratedCompositingPort;

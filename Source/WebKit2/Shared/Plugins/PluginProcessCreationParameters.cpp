@@ -41,6 +41,7 @@ void PluginProcessCreationParameters::encode(CoreIPC::ArgumentEncoder* encoder) 
 {
     encoder->encode(pluginPath);
     encoder->encode(supportsAsynchronousPluginInitialization);
+    encoder->encode(terminationTimeout);
 
 #if PLATFORM(MAC)
     encoder->encode(parentProcessName);
@@ -54,7 +55,8 @@ bool PluginProcessCreationParameters::decode(CoreIPC::ArgumentDecoder* decoder, 
         return false;
     if (!decoder->decode(result.supportsAsynchronousPluginInitialization))
         return false;
-
+    if (!decoder->decode(result.terminationTimeout))
+        return false;
 #if PLATFORM(MAC)
     if (!decoder->decode(result.parentProcessName))
         return false;

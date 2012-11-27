@@ -63,6 +63,8 @@ protected:
     explicit ChildProcess(double terminationTimeout);
     ~ChildProcess();
 
+    void setTerminationTimeout(double seconds) { m_terminationTimeout = seconds; }
+
 private:
     void terminationTimerFired();
 
