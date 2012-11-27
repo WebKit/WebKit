@@ -28,6 +28,7 @@ void EventLoop::cycle()
 {
     ASSERT(BlackBerry::Platform::webKitThreadMessageClient());
     BlackBerry::Platform::webKitThreadMessageClient()->processNextMessage();
+    m_ended = !BlackBerry::Platform::webKitThreadMessageClient()->isRunning();
 }
 
 } // namespace WebCore
