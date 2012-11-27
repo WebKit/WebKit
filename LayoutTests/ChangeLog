@@ -1,3 +1,12 @@
+2012-11-26  Noel Gordon  <noel.gordon@gmail.com>
+
+        [chromium mac] Layout Test touchadjustment/touch-links-longpress.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=103363
+
+        Unreviewed test expectations update.
+
+        * platform/chromium/TestExpectations: Add failing expection for Mac.
+
 2012-11-26  Daniel Bates  <dbates@webkit.org>
 
         Update Chromium test expectation for test LayoutTests/fast/js/string-replacement-outofmemory.html

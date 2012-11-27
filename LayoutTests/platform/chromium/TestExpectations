@@ -4252,3 +4252,4 @@ webkit.org/b/103148 [ Linux Win ] fast/text/atsui-small-caps-punctuation-size.ht
 webkit.org/b/103308 [ SnowLeopard Lion ] css3/filters/custom/custom-filter-transforms-animation.html [ Pass Timeout ]
 
 webkit.org/b/103348 fast/js/string-replacement-outofmemory.html [ Crash ]
+webkit.org/b/103363 [ Mac ] touchadjustment/touch-links-longpress.html [ Failure ]
