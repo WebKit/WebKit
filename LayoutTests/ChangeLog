@@ -1,3 +1,11 @@
+2012-11-27  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Unreviewed Qt gardening.
+
+        * platform/qt/TestExpectations:
+        Skipped fast/table/css-table-max-height.html as it is showing a 12px difference.
+        The test is actually passing but the output wouldn't make it obvious that it is the case.
+
 2012-11-27  Tom Sepez  <tsepez@chromium.org>
 
         Regression(r129406): Fix the scope of the WidgetHierarchyUpdateSuspensionScope in Element::Attach().
