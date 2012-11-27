@@ -2438,3 +2438,7 @@ fast/css3-text/css3-text-decoration/getComputedStyle/getComputedStyle-text-decor
 # ACCELERATED_OVERFLOW_SCROLLING is disabled on Windows
 compositing/overflow/scrolling-without-painting.html
 compositing/overflow/updating-scrolling-content.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=103442
+media/video-size.html
+media/W3C/video/networkState/networkState_during_progress.html

@@ -1,3 +1,10 @@
+2012-11-27  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. Skip some flaky video tests on Windows.
+        https://bugs.webkit.org/show_bug.cgi?id=103442
+
+        * platform/win/TestExpectations:
+
 2012-11-27  Pravin D  <pravind.2k4@gmail.com>
 
         max-height property not respected in case of tables
