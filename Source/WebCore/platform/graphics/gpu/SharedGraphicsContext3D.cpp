@@ -42,11 +42,18 @@ public:
         if (m_context && (!m_context->makeContextCurrent() || (m_context->getExtensions()->getGraphicsResetStatusARB() != GraphicsContext3D::NO_ERROR)))
             m_context.clear();
 
-        if (!m_context)
+        bool wasCreated = false;
+
+        if (!m_context) {
             createContext();
+            wasCreated = true;
+        }
 
         if (m_context && !m_context->makeContextCurrent())
             m_context.clear();
+
+        if (m_context && wasCreated)
+            m_context->getExtensions()->pushGroupMarkerEXT("SharedGraphicsContext");
 
         return m_context;
     }

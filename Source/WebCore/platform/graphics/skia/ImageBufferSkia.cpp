@@ -79,7 +79,6 @@ static SkCanvas* createAcceleratedCanvas(const IntSize& size, ImageBufferData* d
     GrContext* gr = context3D->grContext();
     if (!gr)
         return 0;
-    context3D->getExtensions()->pushGroupMarkerEXT("AcceleratedCanvasContext");
     gr->resetContext();
     GrTextureDesc desc;
     desc.fFlags = kRenderTarget_GrTextureFlagBit;
