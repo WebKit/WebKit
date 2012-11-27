@@ -1,3 +1,10 @@
+2012-11-27  Tony Chang  <tony@chromium.org>
+
+        Unreviewed gardening, fixing lint errors in TestExpectations.
+
+        * platform/gtk/TestExpectations:
+        * platform/qt/TestExpectations:
+
 2012-11-27  Yael Aharon  <yael.aharon@intel.com>
 
         Unreviewed gardening. Remove from TestExpectations tests that are passing.
