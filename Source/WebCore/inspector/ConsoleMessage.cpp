@@ -47,25 +47,24 @@
 
 namespace WebCore {
 
-ConsoleMessage::ConsoleMessage(MessageSource s, MessageType t, MessageLevel l, const String& m, const String& u, unsigned li, unsigned long requestIdentifier)
-    : m_source(s)
-    , m_type(t)
-    , m_level(l)
-    , m_message(m)
-    , m_url(u)
-    , m_line(li)
+ConsoleMessage::ConsoleMessage(MessageSource source, MessageType type, MessageLevel level, const String& message, const String& url, unsigned line, unsigned long requestIdentifier)
+    : m_source(source)
+    , m_type(type)
+    , m_level(level)
+    , m_message(message)
+    , m_url(url)
+    , m_line(line)
     , m_repeatCount(1)
     , m_requestId(IdentifiersFactory::requestId(requestIdentifier))
 {
 }
 
-ConsoleMessage::ConsoleMessage(MessageSource s, MessageType t, MessageLevel l, const String& m, PassRefPtr<ScriptArguments> arguments, PassRefPtr<ScriptCallStack> callStack, unsigned long requestIdentifier)
-    : m_source(s)
-    , m_type(t)
-    , m_level(l)
-    , m_message(m)
+ConsoleMessage::ConsoleMessage(MessageSource source, MessageType type, MessageLevel level, const String& message, PassRefPtr<ScriptArguments> arguments, PassRefPtr<ScriptCallStack> callStack, unsigned long requestIdentifier)
+    : m_source(source)
+    , m_type(type)
+    , m_level(level)
+    , m_message(message)
     , m_arguments(arguments)
-    , m_url()
     , m_line(0)
     , m_repeatCount(1)
     , m_requestId(IdentifiersFactory::requestId(requestIdentifier))

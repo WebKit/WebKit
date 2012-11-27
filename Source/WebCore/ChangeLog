@@ -1,3 +1,18 @@
+2012-11-27  Mike West  <mkwst@chromium.org>
+
+        Expanding variable names in ConsoleMessage.
+        https://bugs.webkit.org/show_bug.cgi?id=103436
+
+        Reviewed by Adam Barth.
+
+        Variable names like 'm' should be replaced with full words, like
+        'myOhMyThisIsAnAwesomeVariable' (or something more descriptive).
+
+        * inspector/ConsoleMessage.cpp:
+        (WebCore::ConsoleMessage::ConsoleMessage):
+        * inspector/ConsoleMessage.h:
+        (ConsoleMessage):
+
 2012-11-27  Aaron Colwell  <acolwell@chromium.org>
 
         Use-after-free in media player handling
