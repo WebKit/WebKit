@@ -274,7 +274,7 @@
   </autotools>
 
   <autotools id="elementary"
-             autogenargs="--disable-web">
+             autogenargs="--disable-emap --disable-ethumb --disable-eweather --disable-web">
     <branch module="releases/elementary-1.7.1.tar.bz2" version="1.7.1"
             checkoutdir="elementary-1.7.1"
             repo="download.enlightenment.org"

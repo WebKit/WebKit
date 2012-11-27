@@ -1,3 +1,16 @@
+2012-11-26  Ryuan Choi  <ryuan.choi@gmail.com>
+
+        [EFL][jhbuild] Disable unnecessary options of elementary module
+        https://bugs.webkit.org/show_bug.cgi?id=103360
+
+        Reviewed by Gyuyoung Kim.
+
+        When jhbuild configures elementary, unnecessary options may be enabled by
+        user installed modules and it causes build break.
+
+        * efl/jhbuild.modules:
+        Added --disable-emap --disable-ethumb --disable-eweather to elementary.
+
 2012-11-26  Varun Jain  <varunjain@chromium.org>
 
         LongPress and LongTap gestures should start drag/drop and open context menu respectively.
