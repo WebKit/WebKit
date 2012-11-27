@@ -683,6 +683,10 @@ webkit.org/b/102257 fast/dom/Window/open-window-min-size.html [ Timeout ]
 
 webkit.org/b/102258 inspector-protocol/nmi-webaudio.html [ Timeout ]
 
+webkit.org/b/103371 plugins/geturl-replace-query.html [ Timeout ]
+webkit.org/b/103371 plugins/get-file-url.html [ Timeout ]
+webkit.org/b/103371 http/tests/plugins/post-url-file.html [ Timeout ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests timing out
 #////////////////////////////////////////////////////////////////////////////////////////
