@@ -4257,3 +4257,4 @@ webkit.org/b/103308 [ SnowLeopard Lion ] css3/filters/custom/custom-filter-trans
 
 webkit.org/b/103348 fast/js/string-replacement-outofmemory.html [ Crash ]
 webkit.org/b/103363 [ Mac ] touchadjustment/touch-links-longpress.html [ Failure ]
+webkit.org/b/103376 [ Mac Debug ] svg/animations/mpath-remove-from-dependents-on-delete-crash.html [ Pass Timeout ]

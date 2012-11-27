@@ -1,3 +1,9 @@
+2012-11-27  Alexander Pavlov  <apavlov@chromium.org>
+
+        [Chromium] Unreviewed, mark svg/animations/mpath-remove-from-dependents-on-delete-crash.html as flaky.
+
+        * platform/chromium/TestExpectations:
+
 2012-11-27  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening.
