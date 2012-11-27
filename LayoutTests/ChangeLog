@@ -1,3 +1,15 @@
+2012-11-27  Jussi Kukkonen  <jussi.kukkonen@intel.com>
+
+        [EFL] Mark tests flaky
+        https://bugs.webkit.org/show_bug.cgi?id=103403
+
+        Unreviewed expectations update for EFL: Mark tests flaky based on
+        flakiness dashboard and testing. Also rearrange efl/TestExpectations
+        so all media flakes are next to each other.
+
+        * platform/efl-wk2/TestExpectations:
+        * platform/efl/TestExpectations:
+
 2012-11-27  Andrei Bucur  <abucur@adobe.com>
 
         [CSS Regions] Crash when dispatching regionlayoutupdate

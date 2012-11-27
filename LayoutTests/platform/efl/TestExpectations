@@ -666,10 +666,8 @@ webkit.org/b/100519 fast/images/paletted-png-with-color-profile.html [ Skip ]
 
 webkit.org/b/85603 fast/forms/textarea-placeholder-set-attribute.html [ Failure ImageOnlyFailure Pass ]
 webkit.org/b/59801 fast/workers/storage/use-same-database-in-page-and-workers.html [ Failure Pass ]
-webkit.org/b/85180 media/audio-delete-while-step-button-clicked.html [ Failure Pass ]
 webkit.org/b/86073 ietestcenter/css3/flexbox/flexbox-layout-001.htm [ ImageOnlyFailure Pass ]
 webkit.org/b/86073 ietestcenter/css3/flexbox/flexbox-layout-003.htm [ ImageOnlyFailure Pass ]
-webkit.org/b/86074 media/svg-as-image-with-media-blocked.html [ Crash Pass ]
 webkit.org/b/86078 http/tests/misc/favicon-loads-with-icon-loading-override.html [ Failure Pass ]
 webkit.org/b/86079 http/tests/misc/link-rel-icon-beforeload.html [ Failure Pass ]
 webkit.org/b/86081 loader/navigation-while-deferring-loads.html [ Failure Pass ]
@@ -708,14 +706,24 @@ webkit.org/b/77631 fast/multicol/span/span-as-immediate-columns-child-removal.ht
 webkit.org/b/93213 fast/text/international/text-spliced-font.html [ Failure Pass ]
 webkit.org/b/93214 http/tests/loading/307-after-303-after-post.html [ Crash Failure Pass Timeout ]
 webkit.org/b/93212 http/tests/incremental/slow-utf8-text.pl [ Pass Timeout ]
+
+webkit.org/b/85180 media/audio-delete-while-step-button-clicked.html [ Failure Pass ]
+webkit.org/b/86074 media/svg-as-image-with-media-blocked.html [ Crash Pass ]
+webkit.org/b/83878 media/track/track-mode.html [ Failure Pass ]
 webkit.org/b/68878 media/video-playing-and-pause.html [ Failure Pass ]
 webkit.org/b/98621 media/video-controls-rendering.html [ Failure Pass ]
+webkit.org/b/96641 media/video-seek-past-end-playing.html [ Failure Pass ]
 
 webkit.org/b/100636 [ Debug ] jquery/traversing.html [ Failure Crash Pass ]
 
-webkit.org/b/96641 media/video-seek-past-end-playing.html [ Failure Pass ]
-
 webkit.org/b/102928 svg/foreignObject/viewport-foreignobject-crash.html [ Crash Failure Pass ]
+
+# Issue with timing for suspend/resumeAnimations()?
+webkit.org/b/49182 animations/stop-animation-on-suspend.html [ Failure Pass ]
+
+webkit.org/b/103383 fast/css/counters/element-removal-crash.xhtml [ Failure Pass ]
+
+webkit.org/b/103402 transitions/transition-shorthand-delay.html [ Failure Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # FAILING TESTS
@@ -1001,9 +1009,6 @@ webkit.org/b/84589 fast/events/show-modal-dialog-onblur-onfocus.html [ Failure ]
 webkit.org/b/84589 fast/harness/show-modal-dialog.html [ Failure ]
 webkit.org/b/84589 fast/events/scroll-event-during-modal-dialog.html [ Failure ]
 webkit.org/b/84589 http/tests/security/cross-frame-access-get.html [ Failure ]
-
-# Issue with timing for suspend/resumeAnimations()?
-webkit.org/b/84592 animations/stop-animation-on-suspend.html [ Failure ]
 
 # IndexedDB is not yet enabled.
 Bug(EFL) storage/indexeddb
