@@ -67,8 +67,7 @@ namespace WebCore {
 
         WorkerContext* workerContext() { return m_workerContext; }
 
-        void evaluate(const ScriptSourceCode&);
-        void evaluate(const ScriptSourceCode&, ScriptValue* exception);
+        void evaluate(const ScriptSourceCode&, ScriptValue* = 0);
 
         void setException(const ScriptValue&);
 
@@ -87,9 +86,6 @@ namespace WebCore {
 
         void disableEval(const String&);
 
-        // Alow use of eval() and is equivalents in scripts.
-        void setEvalAllowed(bool enable, const String&);
-
         // Returns WorkerScriptController for the currently executing context. 0 will be returned if the current executing context is not the worker context.
         static WorkerScriptController* controllerForContext();
 
@@ -100,8 +96,8 @@ namespace WebCore {
         v8::Local<v8::Context> context() { return v8::Local<v8::Context>::New(m_context.get()); }
 
     private:
-        bool initializeIfNeeded();
-        void dispose();
+        bool initializeContextIfNeeded();
+        void disposeContext();
 
         WorkerContext* m_workerContext;
         v8::Isolate* m_isolate;

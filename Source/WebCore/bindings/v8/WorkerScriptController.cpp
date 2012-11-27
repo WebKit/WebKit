@@ -79,19 +79,19 @@ WorkerScriptController::~WorkerScriptController()
     // See http://webkit.org/b/83104#c14 for why this is here.
     WebKit::Platform::current()->didStopWorkerRunLoop(WebKit::WebWorkerRunLoop(&m_workerContext->thread()->runLoop()));
 #endif
-    dispose();
+    disposeContext();
     V8PerIsolateData::dispose(m_isolate);
     m_isolate->Exit();
     m_isolate->Dispose();
 }
 
-void WorkerScriptController::dispose()
+void WorkerScriptController::disposeContext()
 {
     m_perContextData.clear();
     m_context.clear();
 }
 
-bool WorkerScriptController::initializeIfNeeded()
+bool WorkerScriptController::initializeContextIfNeeded()
 {
     if (!m_context.isEmpty())
         return true;
@@ -108,7 +108,7 @@ bool WorkerScriptController::initializeIfNeeded()
 
     m_perContextData = V8PerContextData::create(m_context.get());
     if (!m_perContextData->init()) {
-        dispose();
+        disposeContext();
         return false;
     }
 
@@ -124,7 +124,7 @@ bool WorkerScriptController::initializeIfNeeded()
     v8::Handle<v8::Function> workerContextConstructor = m_perContextData->constructorForType(contextType);
     v8::Local<v8::Object> jsWorkerContext = V8ObjectConstructor::newInstance(workerContextConstructor);
     if (jsWorkerContext.IsEmpty()) {
-        dispose();
+        disposeContext();
         return false;
     }
 
@@ -143,7 +143,7 @@ ScriptValue WorkerScriptController::evaluate(const String& script, const String&
 
     v8::HandleScope handleScope;
 
-    if (!initializeIfNeeded())
+    if (!initializeContextIfNeeded())
         return ScriptValue();
 
     if (!m_disableEvalPending.isEmpty()) {
@@ -184,16 +184,6 @@ ScriptValue WorkerScriptController::evaluate(const String& script, const String&
         return ScriptValue();
 
     return ScriptValue(result);
-}
-
-void WorkerScriptController::setEvalAllowed(bool enable, const String& errorMessage)
-{
-    m_disableEvalPending = enable ? String() : errorMessage;
-}
-
-void WorkerScriptController::evaluate(const ScriptSourceCode& sourceCode)
-{
-    evaluate(sourceCode, 0);
 }
 
 void WorkerScriptController::evaluate(const ScriptSourceCode& sourceCode, ScriptValue* exception)
@@ -244,7 +234,7 @@ bool WorkerScriptController::isExecutionForbidden() const
 
 void WorkerScriptController::disableEval(const String& errorMessage)
 {
-    setEvalAllowed(false, errorMessage);
+    m_disableEvalPending = errorMessage;
 }
 
 void WorkerScriptController::setException(const ScriptValue& exception)
