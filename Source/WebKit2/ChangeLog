@@ -1,3 +1,18 @@
+2012-11-27  KwangYong Choi  <ky0.choi@samsung.com>
+
+        [X11] Allow empty plugin name and description during scan plugin
+        https://bugs.webkit.org/show_bug.cgi?id=103234
+
+        Reviewed by Simon Hausmann.
+
+        Empty entries should be allowed when split the output string of scan plugin
+        because the plugin name and the description can be empty string.
+
+        * UIProcess/Plugins/qt/PluginProcessProxyQt.cpp:
+        (WebKit::PluginProcessProxy::scanPlugin):
+        * UIProcess/Plugins/unix/PluginProcessProxyUnix.cpp:
+        (WebKit::PluginProcessProxy::scanPlugin):
+
 2012-11-27  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r135819.

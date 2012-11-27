@@ -96,7 +96,7 @@ bool PluginProcessProxy::scanPlugin(const String& pluginPath, RawPluginMetaData&
     free(stdOut);
 
     Vector<String> lines;
-    stdOutString.split(UChar('\n'), lines);
+    stdOutString.split(UChar('\n'), true, lines);
 
     if (lines.size() < 3)
         return false;

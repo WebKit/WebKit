@@ -207,7 +207,7 @@ bool PluginProcessProxy::scanPlugin(const String& pluginPath, RawPluginMetaData&
 
         String output(reinterpret_cast<const UChar*>(outputBytes.constData()), outputBytes.size() / sizeof(UChar));
         Vector<String> lines;
-        output.split(UChar('\n'), lines);
+        output.split(UChar('\n'), true, lines);
         ASSERT(lines.size() == 3);
 
         result.name.swap(lines[0]);
