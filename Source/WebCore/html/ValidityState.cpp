@@ -76,6 +76,11 @@ bool ValidityState::stepMismatch() const
     return m_control->stepMismatch();
 }
 
+bool ValidityState::badInput() const
+{
+    return m_control->hasBadInput();
+}
+
 bool ValidityState::customError() const
 {
     return m_control->customError();

@@ -189,6 +189,11 @@ bool FormAssociatedElement::customError() const
     return element->willValidate() && !m_customValidationMessage.isEmpty();
 }
 
+bool FormAssociatedElement::hasBadInput() const
+{
+    return false;
+}
+
 bool FormAssociatedElement::patternMismatch() const
 {
     return false;
@@ -222,7 +227,7 @@ bool FormAssociatedElement::typeMismatch() const
 bool FormAssociatedElement::valid() const
 {
     bool someError = typeMismatch() || stepMismatch() || rangeUnderflow() || rangeOverflow()
-        || tooLong() || patternMismatch() || valueMissing() || customError();
+        || tooLong() || patternMismatch() || valueMissing() || hasBadInput() || customError();
     return !someError;
 }
 

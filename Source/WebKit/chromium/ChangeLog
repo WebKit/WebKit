@@ -1,3 +1,16 @@
+2012-11-25  Kent Tamura  <tkent@chromium.org>
+
+        Implement ValidityState::badInput
+        https://bugs.webkit.org/show_bug.cgi?id=102861
+
+        Reviewed by Hajime Morita.
+
+        * src/LocalizedStrings.cpp:
+        Add placeholder implementations for new localized string functions.
+        We'll update them in another patch.
+        (WebCore::validationMessageBadInputForNumberText):
+        (WebCore::validationMessageBadInputForDateTimeText):
+
 2012-11-26  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r135798.

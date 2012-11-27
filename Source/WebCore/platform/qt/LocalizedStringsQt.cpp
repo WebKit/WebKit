@@ -711,6 +711,12 @@ String validationMessageStepMismatchText(const String& base, const String& step)
     return String();
 }
 
+String validationMessageBadInputForNumberText()
+{
+    notImplemented();
+    return validationMessageTypeMismatchText();
+}
+
 String localizedString(const char* key)
 {
     return String::fromUTF8(key, strlen(key));

@@ -992,4 +992,10 @@ String validationMessageStepMismatchText(const String&, const String&)
     return WEB_UI_STRING("step mismatch", "Validation message for input form controls with value not respecting the step attribute");
 }
 
+String validationMessageBadInputForNumberText()
+{
+    notImplemented();
+    return validationMessageTypeMismatchText();
+}
+
 } // namespace WebCore

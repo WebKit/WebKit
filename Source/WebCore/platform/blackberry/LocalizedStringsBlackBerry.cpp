@@ -524,6 +524,12 @@ String validationMessageValueMissingForSelectText()
     return validationMessageValueMissingText();
 }
 
+String validationMessageBadInputForNumberText()
+{
+    notImplemented();
+    return validationMessageTypeMismatchText();
+}
+
 String localizedMediaControlElementString(const String&)
 {
     notImplemented();

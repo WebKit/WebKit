@@ -266,6 +266,11 @@ bool HTMLInputElement::valueMissing() const
     return willValidate() && m_inputType->valueMissing(value());
 }
 
+bool HTMLInputElement::hasBadInput() const
+{
+    return willValidate() && m_inputType->hasBadInput();
+}
+
 bool HTMLInputElement::patternMismatch() const
 {
     return willValidate() && m_inputType->patternMismatch(value());
@@ -1389,11 +1394,6 @@ String HTMLInputElement::localizeValue(const String& proposedValue) const
     if (proposedValue.isNull())
         return proposedValue;
     return m_inputType->localizeValue(proposedValue);
-}
-
-bool HTMLInputElement::hasUnacceptableValue() const
-{
-    return m_inputType->hasUnacceptableValue();
 }
 
 bool HTMLInputElement::isInRange() const

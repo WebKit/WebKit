@@ -41,6 +41,7 @@
 #include "HTMLInputElement.h"
 #include "HTMLOptionElement.h"
 #include "KeyboardEvent.h"
+#include "LocalizedStrings.h"
 #include "Page.h"
 #include "PickerIndicatorElement.h"
 #include "PlatformLocale.h"
@@ -168,6 +169,11 @@ BaseMultipleFieldsDateAndTimeInputType::~BaseMultipleFieldsDateAndTimeInputType(
         m_pickerIndicatorElement->removePickerIndicatorOwner();
 }
 
+String BaseMultipleFieldsDateAndTimeInputType::badInputText() const
+{
+    return validationMessageBadInputForDateTimeText();
+}
+
 void BaseMultipleFieldsDateAndTimeInputType::blur()
 {
     if (m_dateTimeEditElement)
@@ -273,6 +279,11 @@ void BaseMultipleFieldsDateAndTimeInputType::handleKeydownEvent(KeyboardEvent* e
         forwardEvent(event);
 }
 
+bool BaseMultipleFieldsDateAndTimeInputType::hasBadInput() const
+{
+    return element()->value().isEmpty() && m_dateTimeEditElement && m_dateTimeEditElement->anyEditableFieldsHaveValues();
+}
+
 bool BaseMultipleFieldsDateAndTimeInputType::isKeyboardFocusable(KeyboardEvent*) const
 {
     return false;
@@ -325,8 +336,10 @@ FormControlState BaseMultipleFieldsDateAndTimeInputType::saveFormControlState() 
 void BaseMultipleFieldsDateAndTimeInputType::setValue(const String& sanitizedValue, bool valueChanged, TextFieldEventBehavior eventBehavior)
 {
     InputType::setValue(sanitizedValue, valueChanged, eventBehavior);
-    if (valueChanged || (sanitizedValue.isEmpty() && m_dateTimeEditElement && m_dateTimeEditElement->anyEditableFieldsHaveValues()))
+    if (valueChanged || (sanitizedValue.isEmpty() && m_dateTimeEditElement && m_dateTimeEditElement->anyEditableFieldsHaveValues())) {
         updateInnerTextValue();
+        element()->setNeedsValidityCheck();
+    }
 }
 
 bool BaseMultipleFieldsDateAndTimeInputType::shouldUseInputMethod() const

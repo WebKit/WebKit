@@ -156,6 +156,7 @@ public:
     virtual bool typeMismatch() const;
     virtual bool supportsRequired() const;
     virtual bool valueMissing(const String&) const;
+    virtual bool hasBadInput() const;
     virtual bool patternMismatch(const String&) const;
     bool rangeUnderflow(const String&) const;
     bool rangeOverflow(const String&) const;
@@ -170,6 +171,7 @@ public:
     virtual StepRange createStepRange(AnyStepHandling) const;
     virtual void stepUp(int, ExceptionCode&);
     virtual void stepUpFromRenderer(int);
+    virtual String badInputText() const;
     virtual String typeMismatchText() const;
     virtual String valueMissingText() const;
     virtual bool canSetStringValue() const;
@@ -178,7 +180,6 @@ public:
     // Returing the null string means "use the default value."
     // This function must be called only by HTMLInputElement::sanitizeValue().
     virtual String sanitizeValue(const String&) const;
-    virtual bool hasUnacceptableValue();
 
     // Event handlers
 

@@ -39,6 +39,7 @@
 #include "HTMLParserIdioms.h"
 #include "InputTypeNames.h"
 #include "KeyboardEvent.h"
+#include "LocalizedStrings.h"
 #include "PlatformLocale.h"
 #include "RenderTextControl.h"
 #include <limits>
@@ -213,16 +214,6 @@ String NumberInputType::serialize(const Decimal& value) const
     return serializeForNumberType(value);
 }
 
-void NumberInputType::handleBlurEvent()
-{
-    // Reset the renderer value, which might be unmatched with the element value.
-    element()->setFormControlValueMatchesRenderer(false);
-
-    // We need to reset the renderer value explicitly because an unacceptable
-    // renderer value should be purged before style calculation.
-    updateInnerTextValue();
-}
-
 static bool isE(UChar ch)
 {
     return ch == 'e' || ch == 'E';
@@ -260,12 +251,15 @@ String NumberInputType::sanitizeValue(const String& proposedValue) const
     return isfinite(parseToDoubleForNumberType(proposedValue)) ? proposedValue : emptyString();
 }
 
-bool NumberInputType::hasUnacceptableValue()
+bool NumberInputType::hasBadInput() const
 {
-    if (!element()->renderer())
-        return false;
     String standardValue = convertFromVisibleValue(element()->innerTextValue());
     return !standardValue.isEmpty() && !isfinite(parseToDoubleForNumberType(standardValue));
+}
+
+String NumberInputType::badInputText() const
+{
+    return validationMessageBadInputForNumberText();
 }
 
 bool NumberInputType::shouldRespectSpeechAttribute()

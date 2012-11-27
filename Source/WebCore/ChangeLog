@@ -1,3 +1,114 @@
+2012-11-27  Kent Tamura  <tkent@chromium.org>
+
+        Implement ValidityState::badInput
+        https://bugs.webkit.org/show_bug.cgi?id=102861
+
+        Reviewed by Hajime Morita.
+
+        Add ValidityState::badInput, add hasBadInput, which always returns
+        false, to FormAssociatedElement, HTMLInputElement, and InputType.
+
+        For NumberInputType, we had hasUnacceptableValue, which was a hack to
+        make an input element match to :invalid if the element had non-number
+        strings. We don't need the hack any more because badInput affects :invalid
+        style. hasUnacceptableValue is re-used for hasBadInput implementation.
+        We cleared invalid numbers when elements lost focus to tell users that
+        the element had invalid numbers. We don't need this behavior because the
+        interactive validation tells it.
+
+        For date/time input types, we should make an input badInput when the
+        input has empty value but its sub-fields have values. It covers both of
+        partial input cases such as 12/--/2012 and invalid dates such as
+        02/31/2012.
+
+        For other types, ValidityState::badInput always returns false.
+
+        This patch doesn't contain tests for badInput validation messages. They
+        will be added later.
+
+        Tests: fast/forms/date-multiple-fields/date-multiple-fields-validity-badinput.html
+               fast/forms/datetime-multiple-fields/datetime-multiple-fields-validity-badinput.html
+               fast/forms/datetimelocal-multiple-fields/datetimelocal-multiple-fields-validity-badinput.html
+               fast/forms/month-multiple-fields/month-multiple-fields-validity-badinput.html
+               fast/forms/number/number-validity-badinput.html
+               fast/forms/time-multiple-fields/time-multiple-fields-validity-badinput.html
+               fast/forms/week-multiple-fields/week-multiple-fields-validity-badinput.html
+
+        * html/ValidityState.idl: Add badInput IDL attribute.
+        * html/ValidityState.h:
+        (ValidityState): Add badInput.
+        * html/ValidityState.cpp:
+        (WebCore::ValidityState::badInput):
+        Added. Calls FormAssociatedElement::hasBadInput.
+
+        * html/FormAssociatedElement.h:
+        (FormAssociatedElement): Add hasBadInput.
+        * html/FormAssociatedElement.cpp:
+        (WebCore::FormAssociatedElement::hasBadInput):
+        Added. It always returns false.
+        (WebCore::FormAssociatedElement::valid): Takes account of hasBadInput().
+
+        * html/HTMLInputElement.h:
+        (HTMLInputElement):
+        Remove hasUnacceptableValue, and add hasBadInput override.
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::hasBadInput):
+        Added. Delegate to InputType::hasBadInput.
+        (WebCore): Remove hasUnacceptableValue.
+
+        * html/InputType.h:
+        (InputType): Add hasBadInput and badInputText, and remove
+        hasUnacceptableValue.
+        * html/InputType.cpp:
+        (WebCore::InputType::hasBadInput): Added. Returns false.
+        (WebCore::InputType::badInputText):
+        Added. This function should not be called because hasBadInput always
+        returns false.
+        (WebCore::InputType::validationMessage):
+        Supports badInput. This returns badInputText if hasBadInput is true.
+
+        * html/NumberInputType.h:
+        (NumberInputType): Add hasBadInput and badInputTest. Remove
+        handleBlurEvent and hasUnacceptableValue.
+        * html/NumberInputType.cpp:
+        Remove handleBlurEvent, which cleared invalid number strings.
+        (WebCore::NumberInputType::hasBadInput):
+        Added. We don't need to check existence of a renderer. The standard form
+        validation feature doesn't care of it.
+        (WebCore::NumberInputType::badInputText): Returns
+        validationMessageBadInputForNumberText defined in LocalizedStrings.h.
+        * css/SelectorChecker.cpp:
+        (WebCore::SelectorChecker::checkOneSelector):
+        Remove a hack for hasUnacceptableValue. isValidFormControlElement takes
+        account of badInput.
+        * dom/Element.h: Remove hasUnacceptableValue.
+
+        * html/BaseMultipleFieldsDateAndTimeInputType.h:
+        (BaseMultipleFieldsDateAndTimeInputType): Add hasBadInput and badInputText.
+        * html/BaseMultipleFieldsDateAndTimeInputType.cpp:
+        (WebCore::BaseMultipleFieldsDateAndTimeInputType::badInputText):
+        Returns validationMessageBadInputForDateTimeText defined in LocalizedStrings.h.
+        (WebCore::BaseMultipleFieldsDateAndTimeInputType::hasBadInput):
+        Added.
+        (WebCore::BaseMultipleFieldsDateAndTimeInputType::setValue):
+        Add setNeedsValidityCheck call. It is needed because
+        updateInnerTextValue can modify subfields empty state.
+
+        * html/TextFieldInputType.cpp:
+        (WebCore::TextFieldInputType::subtreeHasChanged): Update a comment.
+        * platform/LocalizedStrings.h:
+        (WebCore): Add validationMessageBadInputForNumberText and
+        validationMessageBadInputForDateTimeText.
+        * platform/LocalizedStrings.cpp:
+        (WebCore::validationMessageBadInputForNumberText):
+        Added a placeholder implementation. This should be fixed later.
+        * platform/blackberry/LocalizedStringsBlackBerry.cpp:
+        (WebCore::validationMessageBadInputForNumberText): Ditto.
+        * platform/efl/LocalizedStringsEfl.cpp:
+        (WebCore::validationMessageBadInputForNumberText): Ditto.
+        * platform/qt/LocalizedStringsQt.cpp:
+        (WebCore::validationMessageBadInputForNumberText): Ditto.
+
 2012-11-27  Hajime Morrita  <morrita@google.com>
 
         [Refactoring] NodeFlags::IsShadowRootFlag should be Node::IsDocumentFragmentFlag

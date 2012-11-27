@@ -73,6 +73,7 @@ private:
     virtual bool setupDateTimeChooserParameters(DateTimeChooserParameters&) OVERRIDE FINAL;
 
     // InputType functions
+    virtual String badInputText() const OVERRIDE;
     virtual void blur() OVERRIDE FINAL;
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*) const OVERRIDE FINAL;
     virtual void createShadowSubtree() OVERRIDE FINAL;
@@ -81,6 +82,7 @@ private:
     virtual void focus(bool restorePreviousSelection) OVERRIDE FINAL;
     virtual void forwardEvent(Event*) OVERRIDE FINAL;
     virtual void handleKeydownEvent(KeyboardEvent*) OVERRIDE FINAL;
+    virtual bool hasBadInput() const OVERRIDE;
     virtual bool hasCustomFocusLogic() const OVERRIDE FINAL;
     virtual bool isKeyboardFocusable(KeyboardEvent*) const OVERRIDE FINAL;
     virtual bool isMouseFocusable() const OVERRIDE FINAL;

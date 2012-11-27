@@ -535,6 +535,12 @@ String validationMessageValueMissingForSelectText()
     return validationMessageValueMissingText();
 }
 
+String validationMessageBadInputForNumberText()
+{
+    notImplemented();
+    return validationMessageTypeMismatchText();
+}
+
 String missingPluginText()
 {
     return String::fromUTF8("missing plugin");

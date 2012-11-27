@@ -463,7 +463,7 @@ void TextFieldInputType::subtreeHasChanged()
     // sanitizeValue() is needed because IME input doesn't dispatch BeforeTextInsertedEvent.
     element()->setValueFromRenderer(sanitizeValue(convertFromVisibleValue(element()->innerTextValue())));
     element()->updatePlaceholderVisibility(false);
-    // Recalc for :invalid and hasUnacceptableValue() change.
+    // Recalc for :invalid change.
     element()->setNeedsStyleRecalc();
 
     didSetValueByUserEdit(wasChanged ? ValueChangeStateChanged : ValueChangeStateNone);

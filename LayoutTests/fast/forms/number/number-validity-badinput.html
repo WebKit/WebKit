@@ -16,7 +16,7 @@
 <input id=another>
 </div>
 <script>
-description('A number input fields with an unacceptable string should have :invalid style.');
+description('A number input fields with a bad input string should make validity.badInput true and have :invalid style.');
 
 function colorOf(el) {
     return document.defaultView.getComputedStyle(el, null).getPropertyValue('background-color');
@@ -27,31 +27,39 @@ var number = document.getElementById('number');
 number.focus();
 debug('Initial state. The elment has no value.');
 shouldBeTrue('colorOf(number) != invalidStyleColor');
+shouldBeFalse('number.validity.badInput');
 
-debug("Type '-'. The renderer value becomes unacceptable.");
+debug("Type '-'. The element becomes badInput.");
 document.execCommand('InsertText', false, '-');
 shouldBe('colorOf(number)', 'invalidStyleColor');
-shouldBeTrue('number.validity.valid');
+shouldBeFalse('number.validity.valid');
+shouldBeTrue('number.validity.badInput');
 shouldBeEqualToString('number.value', '');
 
-debug("Type '1' additionally. The renderer value becomes acceptable.");
+debug("Type '1' additionally. The element becomes valid.");
 document.execCommand('InsertText', false, '1');
 shouldBeTrue('colorOf(number) != invalidStyleColor');
+shouldBeFalse('number.validity.badInput');
 shouldBeEqualToString('number.value', '-1');
 
-debug("Type 'a' additionally. The renderer value becomes unacceptable again.");
+debug("Type 'a' additionally. The element becomes badInput again.");
 document.execCommand('InsertText', false, 'a');
 shouldBe('colorOf(number)', 'invalidStyleColor');
+shouldBeTrue('number.validity.badInput');
 shouldBeEqualToString('number.value', '');
 
-debug("The element losts focus. The unacceptable value should be purged and the style should be normal.");
+debug("The element losts focus. The element state should not be changed.");
 document.getElementById('another').focus();
-shouldBeTrue('colorOf(number) != invalidStyleColor');
-// Visiblue value is not '-1a'.
+shouldBe('colorOf(number)', 'invalidStyleColor');
+shouldBeTrue('number.validity.badInput');
+// Visible value is '-1a'.
 number.focus();
 document.execCommand('SelectAll');
-shouldBeEqualToString('document.getSelection().toString()', '');
+shouldBeEqualToString('document.getSelection().toString()', '-1a');
 shouldBeEqualToString('number.value', '');
+
+debug("The element losts a renderer. The element state should not be changed.");
+shouldBeTrue('number.style.display = "none"; number.validity.badInput');
 
 document.getElementById('parent').innerHTML = '';
 </script>

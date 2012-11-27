@@ -77,6 +77,7 @@ public:
 
     // Override functions for patterMismatch, rangeOverflow, rangerUnderflow,
     // stepMismatch, tooLong and valueMissing must call willValidate method.
+    virtual bool hasBadInput() const;
     virtual bool patternMismatch() const;
     virtual bool rangeOverflow() const;
     virtual bool rangeUnderflow() const;

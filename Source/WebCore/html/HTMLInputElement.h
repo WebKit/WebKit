@@ -55,6 +55,7 @@ public:
     virtual bool shouldAutocomplete() const;
 
     // For ValidityState
+    virtual bool hasBadInput() const OVERRIDE;
     virtual bool patternMismatch() const OVERRIDE;
     virtual bool rangeUnderflow() const OVERRIDE;
     virtual bool rangeOverflow() const;
@@ -356,8 +357,6 @@ private:
     virtual void postDispatchEventHandler(Event*, void* dataFromPreDispatch);
 
     virtual bool isURLAttribute(const Attribute&) const OVERRIDE;
-
-    virtual bool hasUnacceptableValue() const;
 
     virtual bool isInRange() const;
     virtual bool isOutOfRange() const;

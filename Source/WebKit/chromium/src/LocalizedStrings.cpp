@@ -504,4 +504,18 @@ String validationMessageStepMismatchText(const String& base, const String& step)
     return query(WebLocalizedString::ValidationStepMismatch, base, step);
 }
 
+String validationMessageBadInputForNumberText()
+{
+    notImplemented();
+    return String("Bad number");
+}
+
+#if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
+String validationMessageBadInputForDateTimeText()
+{
+    notImplemented();
+    return String("Bad date");
+}
+#endif
+
 } // namespace WebCore

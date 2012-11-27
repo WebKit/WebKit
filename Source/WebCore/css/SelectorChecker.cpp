@@ -1068,7 +1068,7 @@ bool SelectorChecker::checkOneSelector(const SelectorCheckingContext& context, c
             if (!element)
                 return false;
             element->document()->setContainsValidityStyleRules();
-            return (element->willValidate() && !element->isValidFormControlElement()) || element->hasUnacceptableValue();
+            return element->willValidate() && !element->isValidFormControlElement();
         case CSSSelector::PseudoChecked:
             {
                 if (!element)

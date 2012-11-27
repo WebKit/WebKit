@@ -53,12 +53,12 @@ private:
     virtual void handleKeydownEvent(KeyboardEvent*) OVERRIDE;
     virtual Decimal parseToNumber(const String&, const Decimal&) const OVERRIDE;
     virtual String serialize(const Decimal&) const OVERRIDE;
-    virtual void handleBlurEvent() OVERRIDE;
     virtual String localizeValue(const String&) const OVERRIDE;
     virtual String visibleValue() const OVERRIDE;
     virtual String convertFromVisibleValue(const String&) const OVERRIDE;
     virtual String sanitizeValue(const String&) const OVERRIDE;
-    virtual bool hasUnacceptableValue() OVERRIDE;
+    virtual bool hasBadInput() const OVERRIDE;
+    virtual String badInputText() const OVERRIDE;
     virtual bool shouldRespectSpeechAttribute() OVERRIDE;
     virtual bool supportsPlaceholder() const OVERRIDE;
     virtual bool isNumberField() const OVERRIDE;

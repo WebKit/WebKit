@@ -52,6 +52,7 @@ public:
     bool rangeUnderflow() const;
     bool rangeOverflow() const;
     bool stepMismatch() const;
+    bool badInput() const;
     bool customError() const;
     bool valid() const;
 
