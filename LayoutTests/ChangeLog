@@ -1,3 +1,18 @@
+2012-11-26  Daniel Bates  <dbates@webkit.org>
+
+        JavaScript fails to handle String.replace() with large replacement string
+        https://bugs.webkit.org/show_bug.cgi?id=102956
+        <rdar://problem/12738012>
+
+        Reviewed by Oliver Hunt.
+
+        Add test to ensure that we handle string replacement with a large replacement string.
+
+        * fast/js/script-tests/string-replacement-outofmemory.js: Added.
+        (createStringWithRepeatedChar):
+        * fast/js/string-replacement-outofmemory-expected.txt: Added.
+        * fast/js/string-replacement-outofmemory.html: Added.
+
 2012-11-26  Varun Jain  <varunjain@chromium.org>
 
         LongPress and LongTap gestures should start drag/drop and open context menu respectively.
