@@ -80,6 +80,18 @@ void WebIDBDatabaseImpl::setVersion(const WebString& version, WebIDBCallbacks* c
     m_databaseBackend->setVersion(version, IDBCallbacksProxy::create(adoptPtr(callbacks)), m_databaseCallbacks, ec);
 }
 
+WebIDBTransaction* WebIDBDatabaseImpl::createTransaction(long long id, const WebVector<long long>& objectStoreIds, unsigned short mode)
+{
+    Vector<int64_t> objectStoreIdList(objectStoreIds.size());
+    for (size_t i = 0; i < objectStoreIds.size(); ++i)
+        objectStoreIdList[i] = objectStoreIds[i];
+    RefPtr<IDBTransactionBackendInterface> transaction = m_databaseBackend->createTransaction(id, objectStoreIdList, mode);
+    if (!transaction)
+        return 0;
+    return new WebIDBTransactionImpl(transaction);
+}
+
+// FIXME: Remove this as part of https://bugs.webkit.org/show_bug.cgi?id=102733.
 WebIDBTransaction* WebIDBDatabaseImpl::transaction(const WebVector<long long>& objectStoreIds, unsigned short mode)
 {
     Vector<int64_t> objectStoreIdList(objectStoreIds.size());

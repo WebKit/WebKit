@@ -154,8 +154,9 @@ public:
     virtual void deleteObjectStore(const String& name, IDBTransactionBackendInterface*, ExceptionCode&) { }
     virtual void deleteObjectStore(int64_t, IDBTransactionBackendInterface*, ExceptionCode&) { }
     virtual void setVersion(const String& version, PassRefPtr<IDBCallbacks>, PassRefPtr<IDBDatabaseCallbacks>, ExceptionCode&) { }
-    virtual PassRefPtr<IDBTransactionBackendInterface> transaction(DOMStringList* storeNames, unsigned short mode, ExceptionCode&) { return 0; }
+    // FIXME: Remove this as part of https://bugs.webkit.org/show_bug.cgi?id=102733.
     virtual PassRefPtr<IDBTransactionBackendInterface> transaction(const Vector<int64_t>&, unsigned short mode) { return 0; }
+    virtual PassRefPtr<IDBTransactionBackendInterface> createTransaction(int64_t, const Vector<int64_t>&, unsigned short mode) { return 0; }
 
     virtual void close(PassRefPtr<IDBDatabaseCallbacks>)
     {
