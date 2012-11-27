@@ -39,7 +39,8 @@ public:
     enum PluginUnavailabilityReason {
         PluginMissing,
         PluginCrashed,
-        InsecurePluginVersion
+        InsecurePluginVersion,
+        PluginInactive,
     };
     void setPluginUnavailabilityReason(PluginUnavailabilityReason);
     bool showsUnavailablePluginIndicator() const;
