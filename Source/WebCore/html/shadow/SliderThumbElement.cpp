@@ -194,10 +194,11 @@ void RenderSliderContainer::layout()
 
     double percentageOffset = sliderPosition(input).toDouble();
     LayoutUnit availableExtent = isVertical ? track->contentHeight() : track->contentWidth();
+    availableExtent -= isVertical ? thumb->height() : thumb->width();
     LayoutUnit offset = percentageOffset * availableExtent;
     LayoutPoint thumbLocation = thumb->location();
     if (isVertical)
-        thumbLocation.setY(thumbLocation.y() + track->contentHeight() - offset);
+        thumbLocation.setY(thumbLocation.y() + track->contentHeight() - thumb->height() - offset);
     else if (style()->isLeftToRightDirection())
         thumbLocation.setX(thumbLocation.x() + offset);
     else
@@ -271,16 +272,13 @@ void SliderThumbElement::setPositionFromPoint(const LayoutPoint& point)
     IntRect trackBoundingBox = trackElement->renderer()->absoluteBoundingBoxRectIgnoringTransforms();
     IntRect inputBoundingBox = input->renderer()->absoluteBoundingBoxRectIgnoringTransforms();
     if (isVertical) {
-        trackSize = trackElement->renderBox()->contentHeight();
+        trackSize = trackElement->renderBox()->contentHeight() - renderBox()->height();
         position = offset.y() - renderBox()->height() / 2 - trackBoundingBox.y() + inputBoundingBox.y() - renderBox()->marginBottom();
         currentPosition = absoluteThumbOrigin.y() - absoluteSliderContentOrigin.y();
     } else {
-        trackSize = trackElement->renderBox()->contentWidth();
+        trackSize = trackElement->renderBox()->contentWidth() - renderBox()->width();
         position = offset.x() - renderBox()->width() / 2 - trackBoundingBox.x() + inputBoundingBox.x();
-        if (isLeftToRightDirection)
-            position -= renderBox()->marginLeft();
-        else
-            position += renderBox()->width() - renderBox()->marginRight();
+        position -= isLeftToRightDirection ? renderBox()->marginLeft() : renderBox()->marginRight();
         currentPosition = absoluteThumbOrigin.x() - absoluteSliderContentOrigin.x();
     }
     position = max<LayoutUnit>(0, min(position, trackSize));
@@ -434,58 +432,6 @@ const AtomicString& SliderThumbElement::shadowPseudoId() const
     default:
         return sliderThumbShadowPseudoId();
     }
-}
-
-// --------------------------------
-
-inline TrackLimiterElement::TrackLimiterElement(Document* document)
-    : HTMLDivElement(HTMLNames::divTag, document)
-{
-}
-
-PassRefPtr<TrackLimiterElement> TrackLimiterElement::create(Document* document)
-{
-    RefPtr<TrackLimiterElement> element = adoptRef(new TrackLimiterElement(document));
-
-    element->setInlineStyleProperty(CSSPropertyVisibility, CSSValueHidden);
-    element->setInlineStyleProperty(CSSPropertyPosition, CSSValueStatic);
-
-    return element.release();
-}
-
-RenderObject* TrackLimiterElement::createRenderer(RenderArena* arena, RenderStyle*)
-{
-    return new (arena) RenderSliderThumb(this);
-}
-
-const AtomicString& TrackLimiterElement::shadowPseudoId() const
-{
-    HTMLInputElement* input = shadowHost()->toInputElement();
-    if (!input)
-        return sliderThumbShadowPseudoId();
-
-    RenderStyle* sliderStyle = input->renderer()->style();
-    switch (sliderStyle->appearance()) {
-    case MediaSliderPart:
-    case MediaSliderThumbPart:
-    case MediaVolumeSliderPart:
-    case MediaVolumeSliderThumbPart:
-    case MediaFullScreenVolumeSliderPart:
-    case MediaFullScreenVolumeSliderThumbPart:
-        return mediaSliderThumbShadowPseudoId();
-    default:
-        return sliderThumbShadowPseudoId();
-    }
-}
-
-TrackLimiterElement* trackLimiterElementOf(Node* node)
-{
-    ASSERT(node);
-    ShadowRoot* shadow = node->toInputElement()->userAgentShadowRoot();
-    ASSERT(shadow);
-    Node* limiter = shadow->firstChild()->lastChild();
-    ASSERT(limiter);
-    return static_cast<TrackLimiterElement*>(limiter);
 }
 
 // --------------------------------

@@ -714,8 +714,8 @@ webkit.org/b/93212 http/tests/incremental/slow-utf8-text.pl [ Pass Timeout ]
 webkit.org/b/85180 media/audio-delete-while-step-button-clicked.html [ Failure Pass ]
 webkit.org/b/86074 media/svg-as-image-with-media-blocked.html [ Crash Pass ]
 webkit.org/b/83878 media/track/track-mode.html [ Failure Pass ]
-webkit.org/b/68878 media/video-playing-and-pause.html [ Failure Pass ]
-webkit.org/b/98621 media/video-controls-rendering.html [ Failure Pass ]
+webkit.org/b/68878 webkit.org/b/102993 media/video-playing-and-pause.html [ Failure Pass ]
+webkit.org/b/98621 webkit.org/b/102993 media/video-controls-rendering.html [ Failure Pass ]
 webkit.org/b/96641 media/video-seek-past-end-playing.html [ Failure Pass ]
 
 webkit.org/b/100636 [ Debug ] jquery/traversing.html [ Failure Crash Pass ]
@@ -1637,8 +1637,8 @@ Bug(EFL) transforms/3d/point-mapping/3d-point-mapping.html [ Missing ]
 Bug(EFL) transitions/negative-delay.html [ Failure Pass ]
 
 # Media paint regressions
-webkit.org/b/102068 media/audio-repaint.html [ ImageOnlyFailure ]
-webkit.org/b/102068 media/media-document-audio-repaint.html [ ImageOnlyFailure ]
+webkit.org/b/102068 webkit.org/b/102993 media/audio-repaint.html [ Failure ]
+webkit.org/b/102068 webkit.org/b/102993 media/media-document-audio-repaint.html [ Failure ]
 
 # It may even be the case that the tests themselves are wrong.
 webkit.org/b/100859 ietestcenter/css3/bordersbackgrounds/background-repeat-space-padding-box.htm [ ImageOnlyFailure Missing ]
@@ -1667,6 +1667,31 @@ webkit.org/b/102097 svg/as-image/animated-svg-repaints-completely-in-hidpi.html 
 webkit.org/b/102097 svg/as-image/image-respects-deviceScaleFactor.html [ Skip ]
 
 webkit.org/b/102100 svg/repaint/inner-svg-change-viewBox.svg [ ImageOnlyFailure ]
+
+# Needs rebaseline. A div should be removed, but the rendering should be the same.
+webkit.org/b/102993 fast/dom/HTMLInputElement/input-slider-update.html [ Failure ]
+webkit.org/b/102993 fast/dom/HTMLInputElement/input-slider-update-styled.html [ Failure ]
+webkit.org/b/102993 fast/forms/box-shadow-override.html [ Failure ]
+webkit.org/b/102993 fast/forms/input-appearance-height.html [ Failure ]
+webkit.org/b/102993 fast/forms/range/input-appearance-range.html [ Failure ]
+webkit.org/b/102993 fast/forms/range/range-thumb-height-percentage.html [ Failure ]
+webkit.org/b/102993 fast/forms/range/slider-padding.html [ Failure ]
+webkit.org/b/102993 fast/forms/range/slider-thumb-shared-style.html [ Failure ]
+webkit.org/b/102993 fast/forms/range/slider-thumb-stylability.html [ Failure ]
+webkit.org/b/102993 fast/multicol/client-rects.html [ Failure ]
+webkit.org/b/102993 fast/repaint/slider-thumb-drag-release.html [ Failure ]
+webkit.org/b/102993 fast/repaint/slider-thumb-float.html [ Failure ]
+webkit.org/b/102993 fast/layers/video-layer.html [ Failure ]
+webkit.org/b/102993 media/audio-controls-rendering.html [ Failure ]
+webkit.org/b/102993 media/controls-after-reload.html [ Failure ]
+webkit.org/b/102993 media/controls-strict.html [ Failure ]
+webkit.org/b/102993 media/controls-styling.html [ Failure ]
+webkit.org/b/102993 media/controls-styling-strict.html [ Failure ]
+webkit.org/b/102993 media/controls-without-preload.html [ Failure ]
+webkit.org/b/102993 media/media-controls-clone.html [ Failure ]
+webkit.org/b/102993 media/video-display-toggle.html [ Failure ]
+webkit.org/b/102993 media/video-no-audio.html [ Failure ]
+webkit.org/b/102993 media/video-zoom-controls.html [ Failure ]
 
 webkit.org/b/102190 compositing/overflow/updating-scrolling-content.html [ Failure ]
 

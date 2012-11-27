@@ -260,7 +260,6 @@ void RangeInputType::createShadowSubtree()
     track->appendChild(SliderThumbElement::create(document), ec);
     RefPtr<HTMLElement> container = SliderContainerElement::create(document);
     container->appendChild(track.release(), ec);
-    container->appendChild(TrackLimiterElement::create(document), ec);
     element()->userAgentShadowRoot()->appendChild(container.release(), ec);
 }
 

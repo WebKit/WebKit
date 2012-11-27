@@ -1,3 +1,42 @@
+2012-11-27  Tony Chang  <tony@chromium.org>
+
+        Remove hidden limiter div in the input slider shadow DOM
+        https://bugs.webkit.org/show_bug.cgi?id=102993
+
+        Reviewed by Ojan Vafai.
+
+        Pixel results should be the same, but the render tree for RenderSlider has one less div.
+
+        * platform/chromium-linux/fast/dom/HTMLInputElement/input-slider-update-expected.txt:
+        * platform/chromium-linux/fast/dom/HTMLInputElement/input-slider-update-styled-expected.txt:
+        * platform/chromium-linux/fast/forms/box-shadow-override-expected.txt:
+        * platform/chromium-linux/fast/forms/input-appearance-height-expected.txt:
+        * platform/chromium-linux/fast/forms/range/input-appearance-range-expected.txt:
+        * platform/chromium-linux/fast/forms/range/range-thumb-height-percentage-expected.txt:
+        * platform/chromium-linux/fast/forms/range/slider-padding-expected.txt:
+        * platform/chromium-linux/fast/forms/range/slider-thumb-shared-style-expected.txt:
+        * platform/chromium-linux/fast/forms/range/slider-thumb-stylability-expected.txt:
+        * platform/chromium-linux/fast/multicol/client-rects-expected.txt:
+        * platform/chromium-linux/fast/repaint/slider-thumb-drag-release-expected.txt:
+        * platform/chromium-linux/fast/repaint/slider-thumb-float-expected.txt:
+        * platform/chromium-win/fast/hidpi/video-controls-in-hidpi-expected.txt:
+        * platform/chromium-win/fast/layers/video-layer-expected.txt:
+        * platform/chromium-win/media/audio-controls-rendering-expected.txt:
+        * platform/chromium-win/media/audio-repaint-expected.txt:
+        * platform/chromium-win/media/controls-after-reload-expected.txt:
+        * platform/chromium-win/media/controls-strict-expected.txt:
+        * platform/chromium-win/media/controls-styling-expected.txt:
+        * platform/chromium-win/media/controls-styling-strict-expected.txt:
+        * platform/chromium-win/media/controls-without-preload-expected.txt:
+        * platform/chromium-win/media/media-controls-clone-expected.txt:
+        * platform/chromium-win/media/media-document-audio-repaint-expected.txt:
+        * platform/chromium-win/media/video-controls-rendering-expected.txt:
+        * platform/chromium-win/media/video-display-toggle-expected.txt:
+        * platform/chromium-win/media/video-no-audio-expected.txt:
+        * platform/chromium-win/media/video-playing-and-pause-expected.txt:
+        * platform/chromium-win/media/video-zoom-controls-expected.txt:
+        * platform/chromium-win/platform/chromium/virtual/gpu/fast/hidpi/video-controls-in-hidpi-expected.txt:
+
 2012-11-27  Robert Kroeger  <rjkroege@chromium.org>
 
         Unreviewed gardening: fast/frames/frame-name-reset.html crashing intermittently

@@ -185,6 +185,11 @@ input[type="range"]::-webkit-media-slider-container {
     background-color: transparent;
 }
 
+/* The negative right margin causes the track to overflow its container. */
+input[type="range"]::-webkit-media-slider-container > div {
+    margin-right: -14px;
+}
+
 input[type="range"]::-webkit-media-slider-thumb {
     margin-left: -7px;
     margin-right: -7px;

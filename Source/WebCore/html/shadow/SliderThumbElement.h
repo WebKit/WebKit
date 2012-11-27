@@ -115,22 +115,6 @@ private:
 
 // --------------------------------
 
-class TrackLimiterElement : public HTMLDivElement {
-public:
-    static PassRefPtr<TrackLimiterElement> create(Document*);
-
-private:
-    TrackLimiterElement(Document*);
-    virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
-    virtual const AtomicString& shadowPseudoId() const;
-};
-
-// This always return a valid pointer.
-// An assertion fails if the specified node is not a range input.
-TrackLimiterElement* trackLimiterElementOf(Node*);
-
-// --------------------------------
-
 class SliderContainerElement : public HTMLDivElement {
 public:
     static PassRefPtr<SliderContainerElement> create(Document*);

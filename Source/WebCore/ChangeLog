@@ -1,3 +1,36 @@
+2012-11-27  Tony Chang  <tony@chromium.org>
+
+        Remove hidden limiter div in the input slider shadow DOM
+        https://bugs.webkit.org/show_bug.cgi?id=102993
+
+        Reviewed by Ojan Vafai.
+
+        The shadow DOM for input sliders would have a hidden div (the TrackLimiterElement)
+        the size of the thumb which would limit the position of thumb since the width of
+        the thumb takes up space in the track. This patch simplifies the shadow DOM by
+        removing this hidden div and computing the position of the thumb taking the size of
+        the thumb into account.
+
+        No new tests, covered by existing tests in fast/forms.
+
+        * css/mediaControlsChromium.css:
+        (input[type="range"]::-webkit-media-slider-container > div): We were depending on the behavior of the limiter having negative margins, causing the slider div
+        to overflow. Moving the negative margin to the slider produces the same effect.
+        * css/mediaControlsChromiumAndroid.css:
+        (input[type="range"]::-webkit-media-slider-container > div): Ditto.
+        * html/RangeInputType.cpp:
+        (WebCore::RangeInputType::createShadowSubtree): Remove limiter div.
+        * html/shadow/SliderThumbElement.cpp:
+        (WebCore::RenderSliderContainer::layout): Adjust the available space for the thumb and correctly position in the vertical case.
+        (WebCore::SliderThumbElement::setPositionFromPoint): Adjust the usable track size and simplify RTL code (no need to account for the limiter).
+        (WebCore): Delete limiter code.
+        * html/shadow/SliderThumbElement.h:
+        (WebCore): Delete limiter code.
+        * rendering/RenderSlider.cpp:
+        (WebCore::RenderSlider::layout): Delete limiter code.
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::paintSliderTicks): Simplify code for painting tick marks.
+
 2012-11-27  Alpha Lam  <hclam@chromium.org>
 
         [chromium] Implement full-featured image cache
