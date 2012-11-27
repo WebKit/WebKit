@@ -44,7 +44,7 @@ inline void unconsumeCharacters(SegmentedString& source, const StringBuilder& co
         source.push(consumedCharacters[0]);
         source.push(consumedCharacters[1]);
     } else
-        source.prepend(SegmentedString(String(consumedCharacters.characters(), consumedCharacters.length())));
+        source.prepend(SegmentedString(consumedCharacters.toStringPreserveCapacity()));
 }
 
 template <typename ParserFunctions>

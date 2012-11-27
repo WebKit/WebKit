@@ -1,3 +1,19 @@
+2012-11-26  Michael Saboff  <msaboff@apple.com>
+
+        HTML/XML parser helper unconsumeCharacters() can push back 8 bit text as 16 bit text
+        https://bugs.webkit.org/show_bug.cgi?id=103317
+
+        Reviewed by Oliver Hunt.
+
+        Changed to use the String directly from the StringBuilder instead of creating our own.
+        Used toStringPreserveCapacity() in case the caller may want to add to the StringBuilder
+        even though current callers don't.
+
+        No new tests. No change in functionality.
+
+        * xml/parser/CharacterReferenceParserInlines.h:
+        (WebCore::unconsumeCharacters):
+
 2012-11-26  Noel Gordon  <noel.gordon@gmail.com>
 
         PNG decode performance: avoid using frame buffer.setRGBA(x,y)
