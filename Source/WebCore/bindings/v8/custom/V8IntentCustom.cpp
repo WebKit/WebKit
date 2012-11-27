@@ -60,8 +60,8 @@ v8::Handle<v8::Value> V8Intent::constructorCallbackCustom(const v8::Arguments& a
     }
 
     ExceptionCode ec = 0;
-    STRING_TO_V8PARAMETER_EXCEPTION_BLOCK(V8Parameter<>, action, MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined));
-    STRING_TO_V8PARAMETER_EXCEPTION_BLOCK(V8Parameter<>, type, MAYBE_MISSING_PARAMETER(args, 1, DefaultIsUndefined));
+    STRING_TO_V8PARAMETER_EXCEPTION_BLOCK(V8StringResource<>, action, MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined));
+    STRING_TO_V8PARAMETER_EXCEPTION_BLOCK(V8StringResource<>, type, MAYBE_MISSING_PARAMETER(args, 1, DefaultIsUndefined));
     MessagePortArray messagePortArrayTransferList;
     ArrayBufferArray arrayBufferArrayTransferList;
     if (args.Length() > 3) {

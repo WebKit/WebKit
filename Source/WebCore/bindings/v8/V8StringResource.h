@@ -144,18 +144,18 @@ template <typename StringType>
 StringType v8StringToWebCoreString(v8::Handle<v8::String>, ExternalMode);
 String int32ToWebCoreString(int value);
 
-// V8Parameter is an adapter class that converts V8 values to Strings
+// V8StringResource is an adapter class that converts V8 values to Strings
 // or AtomicStrings as appropriate, using multiple typecast operators.
-enum V8ParameterMode {
+enum V8StringResourceMode {
     DefaultMode,
     WithNullCheck,
     WithUndefinedOrNullCheck
 };
 
-template <V8ParameterMode Mode = DefaultMode>
-class V8Parameter {
+template <V8StringResourceMode Mode = DefaultMode>
+class V8StringResource {
 public:
-    V8Parameter(v8::Local<v8::Value> object)
+    V8StringResource(v8::Local<v8::Value> object)
         : m_v8Object(object)
         , m_mode(Externalize)
         , m_string()
@@ -213,12 +213,12 @@ private:
     String m_string;
 };
 
-template<> inline bool V8Parameter<DefaultMode>::prepare()
+template<> inline bool V8StringResource<DefaultMode>::prepare()
 {
     return prepareBase();
 }
 
-template<> inline bool V8Parameter<WithNullCheck>::prepare()
+template<> inline bool V8StringResource<WithNullCheck>::prepare()
 {
     if (object().IsEmpty() || object()->IsNull()) {
         setString(String());
@@ -227,7 +227,7 @@ template<> inline bool V8Parameter<WithNullCheck>::prepare()
     return prepareBase();
 }
 
-template<> inline bool V8Parameter<WithUndefinedOrNullCheck>::prepare()
+template<> inline bool V8StringResource<WithUndefinedOrNullCheck>::prepare()
 {
     if (object().IsEmpty() || object()->IsNull() || object()->IsUndefined()) {
         setString(String());

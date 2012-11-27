@@ -78,7 +78,7 @@ v8::Handle<v8::Value> V8DeviceOrientationEvent::absoluteAccessorGetter(v8::Local
 v8::Handle<v8::Value> V8DeviceOrientationEvent::initDeviceOrientationEventCallback(const v8::Arguments& args)
 {
     DeviceOrientationEvent* imp = V8DeviceOrientationEvent::toNative(args.Holder());
-    STRING_TO_V8PARAMETER_EXCEPTION_BLOCK(V8Parameter<>, type, args[0]);
+    STRING_TO_V8PARAMETER_EXCEPTION_BLOCK(V8StringResource<>, type, args[0]);
     bool bubbles = args[1]->BooleanValue();
     bool cancelable = args[2]->BooleanValue();
     // If alpha, beta, gamma or absolute are null or undefined, mark them as not provided.

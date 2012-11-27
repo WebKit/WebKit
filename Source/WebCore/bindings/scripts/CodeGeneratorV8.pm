@@ -1001,8 +1001,8 @@ END
     }
 
     if ($useExceptions) {
-        if ($nativeType =~ /^V8Parameter/) {
-            push(@implContentDecls, "    " . ConvertToV8Parameter($attribute->signature, $nativeType, "v", $getterString) . ";\n");
+        if ($nativeType =~ /^V8StringResource/) {
+            push(@implContentDecls, "    " . ConvertToV8StringResource($attribute->signature, $nativeType, "v", $getterString) . ";\n");
         } else {
             push(@implContentDecls, "    $nativeType v = $getterString;\n");
         }
@@ -1247,8 +1247,8 @@ END
         my $value = JSValueToNative($attribute->signature, "value", "info.GetIsolate()");
         my $arrayType = $codeGenerator->GetArrayType($nativeType);
 
-        if ($nativeType =~ /^V8Parameter/) {
-            push(@implContentDecls, "    " . ConvertToV8Parameter($attribute->signature, $nativeType, "v", $value, "VOID") . "\n");
+        if ($nativeType =~ /^V8StringResource/) {
+            push(@implContentDecls, "    " . ConvertToV8StringResource($attribute->signature, $nativeType, "v", $value, "VOID") . "\n");
         } elsif ($arrayType) {
             push(@implContentDecls, "    Vector<$arrayType> v = $value;\n");
         } else {
@@ -1809,9 +1809,9 @@ sub GenerateParametersCheck
             } else {
                 $parameterCheckString .= "    EXCEPTION_BLOCK(Vector<$nativeElementType>, $parameterName, toNativeArguments<$nativeElementType>(args, $paramIndex));\n";
             }
-        } elsif ($nativeType =~ /^V8Parameter/) {
+        } elsif ($nativeType =~ /^V8StringResource/) {
             my $value = JSValueToNative($parameter, "MAYBE_MISSING_PARAMETER(args, $paramIndex, $parameterDefaultPolicy)", "args.GetIsolate()");
-            $parameterCheckString .= "    " . ConvertToV8Parameter($parameter, $nativeType, $parameterName, $value) . "\n";
+            $parameterCheckString .= "    " . ConvertToV8StringResource($parameter, $nativeType, $parameterName, $value) . "\n";
         } else {
             # If the "StrictTypeChecking" extended attribute is present, and the argument's type is an
             # interface type, then if the incoming value does not implement that interface, a TypeError
@@ -2029,7 +2029,7 @@ END
     if (args.Length() < 1)
         return throwNotEnoughArgumentsError(args.GetIsolate());
 
-    STRING_TO_V8PARAMETER_EXCEPTION_BLOCK(V8Parameter<>, type, args[0]);
+    STRING_TO_V8PARAMETER_EXCEPTION_BLOCK(V8StringResource<>, type, args[0]);
     ${interfaceName}Init eventInit;
     if (args.Length() >= 2) {
         EXCEPTION_BLOCK(Dictionary, options, Dictionary(args[1], args.GetIsolate()));
@@ -3654,7 +3654,7 @@ sub GetNativeTypeFromSignature
 
     $type = GetNativeType($type, $parameterIndex >= 0 ? 1 : 0);
 
-    if ($parameterIndex >= 0 && $type eq "V8Parameter") {
+    if ($parameterIndex >= 0 && $type eq "V8StringResource") {
         # FIXME: This implements [TreatNullAs=NullString] and [TreatUndefinedAs=NullString],
         # but the Web IDL spec requires [TreatNullAs=EmptyString] and [TreatUndefinedAs=EmptyString].
         my $mode = "";
@@ -3710,7 +3710,7 @@ sub GetNativeType
         return $type;
     }
 
-    return "V8Parameter" if ($type eq "DOMString" or $type eq "DOMUserData") and $isParameter;
+    return "V8StringResource" if ($type eq "DOMString" or $type eq "DOMUserData") and $isParameter;
     return "int" if $type eq "int";
     return "int" if $type eq "short" or $type eq "unsigned short";
     return "unsigned" if $type eq "unsigned long";
@@ -4195,7 +4195,7 @@ sub WriteData
     @headerContent = ();
 }
 
-sub ConvertToV8Parameter
+sub ConvertToV8StringResource
 {
     my $signature = shift;
     my $nativeType = shift;
@@ -4203,7 +4203,7 @@ sub ConvertToV8Parameter
     my $value = shift;
     my $suffix = shift;
 
-    die "Wrong native type passed: $nativeType" unless $nativeType =~ /^V8Parameter/;
+    die "Wrong native type passed: $nativeType" unless $nativeType =~ /^V8StringResource/;
     if ($signature->type eq "DOMString") {
         my $macro = "STRING_TO_V8PARAMETER_EXCEPTION_BLOCK";
         $macro .= "_$suffix" if $suffix;
