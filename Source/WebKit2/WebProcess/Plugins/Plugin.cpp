@@ -27,6 +27,7 @@
 #include "Plugin.h"
 
 #include "WebCoreArgumentCoders.h"
+#include <WebCore/IntPoint.h>
 
 using namespace WebCore;
 
