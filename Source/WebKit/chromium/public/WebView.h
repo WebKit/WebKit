@@ -471,6 +471,7 @@ public:
 
     virtual bool isSelectionEditable() const = 0;
 
+    virtual void setShowPaintRects(bool) = 0;
     virtual void setShowFPSCounter(bool) = 0;
 
     // Benchmarking support -------------------------------------------------

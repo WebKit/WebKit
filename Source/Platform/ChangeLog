@@ -1,3 +1,18 @@
+2012-11-27  Eberhard Graether  <egraether@google.com>
+
+        Plumbing showPaintRects out of InspectorPageAgent to use a different drawing implementation if available.
+        https://bugs.webkit.org/show_bug.cgi?id=102452
+
+        Reviewed by Pavel Feldman.
+
+        This change makes the showPaintRects setting in the Web Inspector's settings notify InspectorClient
+        when changed. And the default paint rects drawing is not used if an alternative is available.
+        This allows Chromium to draw the paint rects in the compositor's HUDLayer.
+
+        * chromium/public/WebLayerTreeView.h:
+        (WebLayerTreeView):
+        (WebKit::WebLayerTreeView::setShowPaintRects):
+
 2012-11-27  Keishi Hattori  <keishi@webkit.org>
 
         Add WebLocalizedString for validation type badinput

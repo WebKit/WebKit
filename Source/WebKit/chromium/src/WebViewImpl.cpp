@@ -848,6 +848,15 @@ void WebViewImpl::setShowFPSCounter(bool show)
     settingsImpl()->setShowFPSCounter(show);
 }
 
+void WebViewImpl::setShowPaintRects(bool show)
+{
+    if (isAcceleratedCompositingActive()) {
+        TRACE_EVENT0("webkit", "WebViewImpl::setShowPaintRects");
+        m_layerTreeView->setShowPaintRects(show);
+    }
+    settingsImpl()->setShowPaintRects(show);
+}
+
 bool WebViewImpl::handleKeyEvent(const WebKeyboardEvent& event)
 {
     ASSERT((event.type == WebInputEvent::RawKeyDown)

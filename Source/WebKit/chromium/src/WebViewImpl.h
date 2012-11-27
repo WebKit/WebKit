@@ -309,6 +309,7 @@ public:
 #endif
     virtual void transferActiveWheelFlingAnimation(const WebActiveWheelFlingParameters&);
     virtual WebViewBenchmarkSupport* benchmarkSupport();
+    virtual void setShowPaintRects(bool);
     virtual void setShowFPSCounter(bool);
 
     // WebLayerTreeViewClient

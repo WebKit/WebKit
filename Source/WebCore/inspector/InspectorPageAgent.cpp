@@ -93,7 +93,7 @@ static const char pageAgentScreenHeightOverride[] = "pageAgentScreenHeightOverri
 static const char pageAgentFontScaleFactorOverride[] = "pageAgentFontScaleFactorOverride";
 static const char pageAgentFitWindow[] = "pageAgentFitWindow";
 static const char pageAgentShowFPSCounter[] = "pageAgentShowFPSCounter";
-static const char showPaintRects[] = "showPaintRects";
+static const char pageAgentShowPaintRects[] = "pageAgentShowPaintRects";
 #if ENABLE(TOUCH_EVENTS)
 static const char touchEventEmulationEnabled[] = "touchEventEmulationEnabled";
 #endif
@@ -359,6 +359,8 @@ void InspectorPageAgent::restore()
         enable(&error);
         bool scriptExecutionDisabled = m_state->getBoolean(PageAgentState::pageAgentScriptExecutionDisabled);
         setScriptExecutionDisabled(0, scriptExecutionDisabled);
+        bool showPaintRects = m_state->getBoolean(PageAgentState::pageAgentShowPaintRects);
+        setShowPaintRects(0, showPaintRects);
         bool showFPSCounter = m_state->getBoolean(PageAgentState::pageAgentShowFPSCounter);
         setShowFPSCounter(0, showFPSCounter);
 
@@ -393,6 +395,7 @@ void InspectorPageAgent::disable(ErrorString*)
     m_instrumentingAgents->setInspectorPageAgent(0);
 
     setScriptExecutionDisabled(0, false);
+    setShowPaintRects(0, false);
     setShowFPSCounter(0, false);
 
     // When disabling the agent, reset the override values.
@@ -725,9 +728,11 @@ void InspectorPageAgent::setDeviceMetricsOverride(ErrorString* errorString, int 
 
 void InspectorPageAgent::setShowPaintRects(ErrorString*, bool show)
 {
-    m_state->setBoolean(PageAgentState::showPaintRects, show);
-    if (!show)
-        m_page->mainFrame()->view()->invalidate();
+    m_state->setBoolean(PageAgentState::pageAgentShowPaintRects, show);
+    m_client->setShowPaintRects(show);
+
+    if (!show && mainFrame() && mainFrame()->view())
+        mainFrame()->view()->invalidate();
 }
 
 void InspectorPageAgent::canShowFPSCounter(ErrorString*, bool* outParam)
@@ -909,7 +914,7 @@ void InspectorPageAgent::applyScreenHeightOverride(long* height)
 
 void InspectorPageAgent::didPaint(GraphicsContext* context, const LayoutRect& rect)
 {
-    if (!m_enabled || !m_state->getBoolean(PageAgentState::showPaintRects))
+    if (!m_enabled || m_client->overridesShowPaintRects() || !m_state->getBoolean(PageAgentState::pageAgentShowPaintRects))
         return;
 
     static int colorSelector = 0;

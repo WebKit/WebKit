@@ -182,6 +182,9 @@ public:
     // Toggles the FPS counter in the HUD layer
     virtual void setShowFPSCounter(bool) { }
 
+    // Toggles the paint rects in the HUD layer
+    virtual void setShowPaintRects(bool) { }
+
     // Provides a font atlas to use for debug visualizations. The atlas must be a bitmap containing glyph data, a table of
     // ASCII character values to a subrectangle of the atlas representing the corresponding glyph, and the glyph height.
     virtual void setFontAtlas(WebRect asciiToRectTable[128], const SkBitmap&, int fontHeight) { }
