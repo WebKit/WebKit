@@ -124,7 +124,7 @@ static v8::Handle<v8::Value> staticStringAttrAttrGetter(v8::Local<v8::String> na
 static void staticStringAttrAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     INC_STATS("DOM.TestObj.staticStringAttr._set");
-    TRYCATCH_FOR_V8STRINGRESOURCE_VOID(V8StringResource<>, v, value);
+    V8TRYCATCH_FOR_V8STRINGRESOURCE_VOID(V8StringResource<>, v, value);
     TestObj::setStaticStringAttr(v);
     return;
 }
@@ -220,7 +220,7 @@ static void stringAttrAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value
 {
     INC_STATS("DOM.TestObj.stringAttr._set");
     TestObj* imp = V8TestObj::toNative(info.Holder());
-    TRYCATCH_FOR_V8STRINGRESOURCE_VOID(V8StringResource<>, v, value);
+    V8TRYCATCH_FOR_V8STRINGRESOURCE_VOID(V8StringResource<>, v, value);
     imp->setStringAttr(v);
     return;
 }
@@ -286,7 +286,7 @@ static void reflectedStringAttrAttrSetter(v8::Local<v8::String> name, v8::Local<
 {
     INC_STATS("DOM.TestObj.reflectedStringAttr._set");
     TestObj* imp = V8TestObj::toNative(info.Holder());
-    TRYCATCH_FOR_V8STRINGRESOURCE_VOID(V8StringResource<WithNullCheck>, v, value);
+    V8TRYCATCH_FOR_V8STRINGRESOURCE_VOID(V8StringResource<WithNullCheck>, v, value);
     imp->setAttribute(WebCore::HTMLNames::reflectedstringattrAttr, v);
     return;
 }
@@ -350,7 +350,7 @@ static void reflectedURLAttrAttrSetter(v8::Local<v8::String> name, v8::Local<v8:
 {
     INC_STATS("DOM.TestObj.reflectedURLAttr._set");
     TestObj* imp = V8TestObj::toNative(info.Holder());
-    TRYCATCH_FOR_V8STRINGRESOURCE_VOID(V8StringResource<WithNullCheck>, v, value);
+    V8TRYCATCH_FOR_V8STRINGRESOURCE_VOID(V8StringResource<WithNullCheck>, v, value);
     imp->setAttribute(WebCore::HTMLNames::reflectedurlattrAttr, v);
     return;
 }
@@ -366,7 +366,7 @@ static void reflectedStringAttrAttrSetter(v8::Local<v8::String> name, v8::Local<
 {
     INC_STATS("DOM.TestObj.reflectedStringAttr._set");
     TestObj* imp = V8TestObj::toNative(info.Holder());
-    TRYCATCH_FOR_V8STRINGRESOURCE_VOID(V8StringResource<WithNullCheck>, v, value);
+    V8TRYCATCH_FOR_V8STRINGRESOURCE_VOID(V8StringResource<WithNullCheck>, v, value);
     imp->setAttribute(WebCore::HTMLNames::customContentStringAttrAttr, v);
     return;
 }
@@ -414,7 +414,7 @@ static void reflectedCustomURLAttrAttrSetter(v8::Local<v8::String> name, v8::Loc
 {
     INC_STATS("DOM.TestObj.reflectedCustomURLAttr._set");
     TestObj* imp = V8TestObj::toNative(info.Holder());
-    TRYCATCH_FOR_V8STRINGRESOURCE_VOID(V8StringResource<WithNullCheck>, v, value);
+    V8TRYCATCH_FOR_V8STRINGRESOURCE_VOID(V8StringResource<WithNullCheck>, v, value);
     imp->setAttribute(WebCore::HTMLNames::customContentURLAttrAttr, v);
     return;
 }
@@ -489,7 +489,7 @@ static void stringAttrWithGetterExceptionAttrSetter(v8::Local<v8::String> name, 
 {
     INC_STATS("DOM.TestObj.stringAttrWithGetterException._set");
     TestObj* imp = V8TestObj::toNative(info.Holder());
-    TRYCATCH_FOR_V8STRINGRESOURCE_VOID(V8StringResource<>, v, value);
+    V8TRYCATCH_FOR_V8STRINGRESOURCE_VOID(V8StringResource<>, v, value);
     imp->setStringAttrWithGetterException(v);
     return;
 }
@@ -505,7 +505,7 @@ static void stringAttrWithSetterExceptionAttrSetter(v8::Local<v8::String> name, 
 {
     INC_STATS("DOM.TestObj.stringAttrWithSetterException._set");
     TestObj* imp = V8TestObj::toNative(info.Holder());
-    TRYCATCH_FOR_V8STRINGRESOURCE_VOID(V8StringResource<>, v, value);
+    V8TRYCATCH_FOR_V8STRINGRESOURCE_VOID(V8StringResource<>, v, value);
     ExceptionCode ec = 0;
     imp->setStringAttrWithSetterException(v, ec);
     if (UNLIKELY(ec))
@@ -1056,9 +1056,9 @@ static v8::Handle<v8::Value> voidMethodWithArgsCallback(const v8::Arguments& arg
     if (args.Length() < 3)
         return throwNotEnoughArgumentsError(args.GetIsolate());
     TestObj* imp = V8TestObj::toNative(args.Holder());
-    TRYCATCH(int, longArg, toInt32(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined)));
-    TRYCATCH_FOR_V8STRINGRESOURCE(V8StringResource<>, strArg, MAYBE_MISSING_PARAMETER(args, 1, DefaultIsUndefined));
-    TRYCATCH(TestObj*, objArg, V8TestObj::HasInstance(MAYBE_MISSING_PARAMETER(args, 2, DefaultIsUndefined)) ? V8TestObj::toNative(v8::Handle<v8::Object>::Cast(MAYBE_MISSING_PARAMETER(args, 2, DefaultIsUndefined))) : 0);
+    V8TRYCATCH(int, longArg, toInt32(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined)));
+    V8TRYCATCH_FOR_V8STRINGRESOURCE(V8StringResource<>, strArg, MAYBE_MISSING_PARAMETER(args, 1, DefaultIsUndefined));
+    V8TRYCATCH(TestObj*, objArg, V8TestObj::HasInstance(MAYBE_MISSING_PARAMETER(args, 2, DefaultIsUndefined)) ? V8TestObj::toNative(v8::Handle<v8::Object>::Cast(MAYBE_MISSING_PARAMETER(args, 2, DefaultIsUndefined))) : 0);
     imp->voidMethodWithArgs(longArg, strArg, objArg);
     return v8Undefined();
 }
@@ -1076,9 +1076,9 @@ static v8::Handle<v8::Value> longMethodWithArgsCallback(const v8::Arguments& arg
     if (args.Length() < 3)
         return throwNotEnoughArgumentsError(args.GetIsolate());
     TestObj* imp = V8TestObj::toNative(args.Holder());
-    TRYCATCH(int, longArg, toInt32(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined)));
-    TRYCATCH_FOR_V8STRINGRESOURCE(V8StringResource<>, strArg, MAYBE_MISSING_PARAMETER(args, 1, DefaultIsUndefined));
-    TRYCATCH(TestObj*, objArg, V8TestObj::HasInstance(MAYBE_MISSING_PARAMETER(args, 2, DefaultIsUndefined)) ? V8TestObj::toNative(v8::Handle<v8::Object>::Cast(MAYBE_MISSING_PARAMETER(args, 2, DefaultIsUndefined))) : 0);
+    V8TRYCATCH(int, longArg, toInt32(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined)));
+    V8TRYCATCH_FOR_V8STRINGRESOURCE(V8StringResource<>, strArg, MAYBE_MISSING_PARAMETER(args, 1, DefaultIsUndefined));
+    V8TRYCATCH(TestObj*, objArg, V8TestObj::HasInstance(MAYBE_MISSING_PARAMETER(args, 2, DefaultIsUndefined)) ? V8TestObj::toNative(v8::Handle<v8::Object>::Cast(MAYBE_MISSING_PARAMETER(args, 2, DefaultIsUndefined))) : 0);
     return v8Integer(imp->longMethodWithArgs(longArg, strArg, objArg), args.GetIsolate());
 }
 
@@ -1096,9 +1096,9 @@ static v8::Handle<v8::Value> objMethodWithArgsCallback(const v8::Arguments& args
     if (args.Length() < 3)
         return throwNotEnoughArgumentsError(args.GetIsolate());
     TestObj* imp = V8TestObj::toNative(args.Holder());
-    TRYCATCH(int, longArg, toInt32(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined)));
-    TRYCATCH_FOR_V8STRINGRESOURCE(V8StringResource<>, strArg, MAYBE_MISSING_PARAMETER(args, 1, DefaultIsUndefined));
-    TRYCATCH(TestObj*, objArg, V8TestObj::HasInstance(MAYBE_MISSING_PARAMETER(args, 2, DefaultIsUndefined)) ? V8TestObj::toNative(v8::Handle<v8::Object>::Cast(MAYBE_MISSING_PARAMETER(args, 2, DefaultIsUndefined))) : 0);
+    V8TRYCATCH(int, longArg, toInt32(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined)));
+    V8TRYCATCH_FOR_V8STRINGRESOURCE(V8StringResource<>, strArg, MAYBE_MISSING_PARAMETER(args, 1, DefaultIsUndefined));
+    V8TRYCATCH(TestObj*, objArg, V8TestObj::HasInstance(MAYBE_MISSING_PARAMETER(args, 2, DefaultIsUndefined)) ? V8TestObj::toNative(v8::Handle<v8::Object>::Cast(MAYBE_MISSING_PARAMETER(args, 2, DefaultIsUndefined))) : 0);
     return toV8(imp->objMethodWithArgs(longArg, strArg, objArg), args.Holder(), args.GetIsolate());
 }
 
@@ -1108,7 +1108,7 @@ static v8::Handle<v8::Value> methodWithSequenceArgCallback(const v8::Arguments& 
     if (args.Length() < 1)
         return throwNotEnoughArgumentsError(args.GetIsolate());
     TestObj* imp = V8TestObj::toNative(args.Holder());
-    TRYCATCH(Vector<ScriptProfile>, sequenceArg, toNativeArray<ScriptProfile>(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined)));
+    V8TRYCATCH(Vector<ScriptProfile>, sequenceArg, toNativeArray<ScriptProfile>(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined)));
     imp->methodWithSequenceArg(sequenceArg);
     return v8Undefined();
 }
@@ -1119,7 +1119,7 @@ static v8::Handle<v8::Value> methodReturningSequenceCallback(const v8::Arguments
     if (args.Length() < 1)
         return throwNotEnoughArgumentsError(args.GetIsolate());
     TestObj* imp = V8TestObj::toNative(args.Holder());
-    TRYCATCH(int, longArg, toInt32(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined)));
+    V8TRYCATCH(int, longArg, toInt32(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined)));
     return v8Array(imp->methodReturningSequence(longArg), args.GetIsolate());
 }
 
@@ -1131,8 +1131,8 @@ static v8::Handle<v8::Value> methodThatRequiresAllArgsAndThrowsCallback(const v8
     TestObj* imp = V8TestObj::toNative(args.Holder());
     ExceptionCode ec = 0;
     {
-    TRYCATCH_FOR_V8STRINGRESOURCE(V8StringResource<>, strArg, MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined));
-    TRYCATCH(TestObj*, objArg, V8TestObj::HasInstance(MAYBE_MISSING_PARAMETER(args, 1, DefaultIsUndefined)) ? V8TestObj::toNative(v8::Handle<v8::Object>::Cast(MAYBE_MISSING_PARAMETER(args, 1, DefaultIsUndefined))) : 0);
+    V8TRYCATCH_FOR_V8STRINGRESOURCE(V8StringResource<>, strArg, MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined));
+    V8TRYCATCH(TestObj*, objArg, V8TestObj::HasInstance(MAYBE_MISSING_PARAMETER(args, 1, DefaultIsUndefined)) ? V8TestObj::toNative(v8::Handle<v8::Object>::Cast(MAYBE_MISSING_PARAMETER(args, 1, DefaultIsUndefined))) : 0);
     RefPtr<TestObj> result = imp->methodThatRequiresAllArgsAndThrows(strArg, objArg, ec);
     if (UNLIKELY(ec))
         goto fail;
@@ -1162,7 +1162,7 @@ static v8::Handle<v8::Value> idbKeyCallback(const v8::Arguments& args)
     if (args.Length() < 1)
         return throwNotEnoughArgumentsError(args.GetIsolate());
     TestObj* imp = V8TestObj::toNative(args.Holder());
-    TRYCATCH(RefPtr<IDBKey>, key, createIDBKeyFromValue(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined)));
+    V8TRYCATCH(RefPtr<IDBKey>, key, createIDBKeyFromValue(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined)));
     imp->idbKey(key.get());
     return v8Undefined();
 }
@@ -1173,10 +1173,10 @@ static v8::Handle<v8::Value> optionsObjectCallback(const v8::Arguments& args)
     if (args.Length() < 1)
         return throwNotEnoughArgumentsError(args.GetIsolate());
     TestObj* imp = V8TestObj::toNative(args.Holder());
-    TRYCATCH(Dictionary, oo, Dictionary(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined), args.GetIsolate()));
+    V8TRYCATCH(Dictionary, oo, Dictionary(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined), args.GetIsolate()));
     if (!oo.isUndefinedOrNull() && !oo.isObject())
         return throwTypeError("Not an object.", args.GetIsolate());
-    TRYCATCH(Dictionary, ooo, Dictionary(MAYBE_MISSING_PARAMETER(args, 1, DefaultIsUndefined), args.GetIsolate()));
+    V8TRYCATCH(Dictionary, ooo, Dictionary(MAYBE_MISSING_PARAMETER(args, 1, DefaultIsUndefined), args.GetIsolate()));
     if (!ooo.isUndefinedOrNull() && !ooo.isObject())
         return throwTypeError("Not an object.", args.GetIsolate());
     imp->optionsObject(oo, ooo);
@@ -1389,7 +1389,7 @@ static v8::Handle<v8::Value> methodWithOptionalArgCallback(const v8::Arguments& 
         imp->methodWithOptionalArg();
         return v8Undefined();
     }
-    TRYCATCH(int, opt, toInt32(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined)));
+    V8TRYCATCH(int, opt, toInt32(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined)));
     imp->methodWithOptionalArg(opt);
     return v8Undefined();
 }
@@ -1400,12 +1400,12 @@ static v8::Handle<v8::Value> methodWithNonOptionalArgAndOptionalArgCallback(cons
     if (args.Length() < 1)
         return throwNotEnoughArgumentsError(args.GetIsolate());
     TestObj* imp = V8TestObj::toNative(args.Holder());
-    TRYCATCH(int, nonOpt, toInt32(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined)));
+    V8TRYCATCH(int, nonOpt, toInt32(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined)));
     if (args.Length() <= 1) {
         imp->methodWithNonOptionalArgAndOptionalArg(nonOpt);
         return v8Undefined();
     }
-    TRYCATCH(int, opt, toInt32(MAYBE_MISSING_PARAMETER(args, 1, DefaultIsUndefined)));
+    V8TRYCATCH(int, opt, toInt32(MAYBE_MISSING_PARAMETER(args, 1, DefaultIsUndefined)));
     imp->methodWithNonOptionalArgAndOptionalArg(nonOpt, opt);
     return v8Undefined();
 }
@@ -1416,17 +1416,17 @@ static v8::Handle<v8::Value> methodWithNonOptionalArgAndTwoOptionalArgsCallback(
     if (args.Length() < 1)
         return throwNotEnoughArgumentsError(args.GetIsolate());
     TestObj* imp = V8TestObj::toNative(args.Holder());
-    TRYCATCH(int, nonOpt, toInt32(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined)));
+    V8TRYCATCH(int, nonOpt, toInt32(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined)));
     if (args.Length() <= 1) {
         imp->methodWithNonOptionalArgAndTwoOptionalArgs(nonOpt);
         return v8Undefined();
     }
-    TRYCATCH(int, opt1, toInt32(MAYBE_MISSING_PARAMETER(args, 1, DefaultIsUndefined)));
+    V8TRYCATCH(int, opt1, toInt32(MAYBE_MISSING_PARAMETER(args, 1, DefaultIsUndefined)));
     if (args.Length() <= 2) {
         imp->methodWithNonOptionalArgAndTwoOptionalArgs(nonOpt, opt1);
         return v8Undefined();
     }
-    TRYCATCH(int, opt2, toInt32(MAYBE_MISSING_PARAMETER(args, 2, DefaultIsUndefined)));
+    V8TRYCATCH(int, opt2, toInt32(MAYBE_MISSING_PARAMETER(args, 2, DefaultIsUndefined)));
     imp->methodWithNonOptionalArgAndTwoOptionalArgs(nonOpt, opt1, opt2);
     return v8Undefined();
 }
@@ -1439,7 +1439,7 @@ static v8::Handle<v8::Value> methodWithOptionalStringCallback(const v8::Argument
         imp->methodWithOptionalString();
         return v8Undefined();
     }
-    TRYCATCH_FOR_V8STRINGRESOURCE(V8StringResource<>, str, MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined));
+    V8TRYCATCH_FOR_V8STRINGRESOURCE(V8StringResource<>, str, MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined));
     imp->methodWithOptionalString(str);
     return v8Undefined();
 }
@@ -1448,7 +1448,7 @@ static v8::Handle<v8::Value> methodWithOptionalStringIsUndefinedCallback(const v
 {
     INC_STATS("DOM.TestObj.methodWithOptionalStringIsUndefined");
     TestObj* imp = V8TestObj::toNative(args.Holder());
-    TRYCATCH_FOR_V8STRINGRESOURCE(V8StringResource<>, str, MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined));
+    V8TRYCATCH_FOR_V8STRINGRESOURCE(V8StringResource<>, str, MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined));
     imp->methodWithOptionalStringIsUndefined(str);
     return v8Undefined();
 }
@@ -1457,7 +1457,7 @@ static v8::Handle<v8::Value> methodWithOptionalStringIsNullStringCallback(const 
 {
     INC_STATS("DOM.TestObj.methodWithOptionalStringIsNullString");
     TestObj* imp = V8TestObj::toNative(args.Holder());
-    TRYCATCH_FOR_V8STRINGRESOURCE(V8StringResource<>, str, MAYBE_MISSING_PARAMETER(args, 0, DefaultIsNullString));
+    V8TRYCATCH_FOR_V8STRINGRESOURCE(V8StringResource<>, str, MAYBE_MISSING_PARAMETER(args, 0, DefaultIsNullString));
     imp->methodWithOptionalStringIsNullString(str);
     return v8Undefined();
 }
@@ -1481,7 +1481,7 @@ static v8::Handle<v8::Value> methodWithNonCallbackArgAndCallbackArgCallback(cons
     if (args.Length() < 2)
         return throwNotEnoughArgumentsError(args.GetIsolate());
     TestObj* imp = V8TestObj::toNative(args.Holder());
-    TRYCATCH(int, nonCallback, toInt32(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined)));
+    V8TRYCATCH(int, nonCallback, toInt32(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined)));
     if (args.Length() <= 1 || !args[1]->IsFunction())
         return throwTypeError(0, args.GetIsolate());
     RefPtr<TestCallback> callback = V8TestCallback::create(args[1], getScriptExecutionContext());
@@ -1544,8 +1544,8 @@ static v8::Handle<v8::Value> overloadedMethod1Callback(const v8::Arguments& args
     if (args.Length() < 2)
         return throwNotEnoughArgumentsError(args.GetIsolate());
     TestObj* imp = V8TestObj::toNative(args.Holder());
-    TRYCATCH(TestObj*, objArg, V8TestObj::HasInstance(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined)) ? V8TestObj::toNative(v8::Handle<v8::Object>::Cast(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined))) : 0);
-    TRYCATCH_FOR_V8STRINGRESOURCE(V8StringResource<>, strArg, MAYBE_MISSING_PARAMETER(args, 1, DefaultIsUndefined));
+    V8TRYCATCH(TestObj*, objArg, V8TestObj::HasInstance(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined)) ? V8TestObj::toNative(v8::Handle<v8::Object>::Cast(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined))) : 0);
+    V8TRYCATCH_FOR_V8STRINGRESOURCE(V8StringResource<>, strArg, MAYBE_MISSING_PARAMETER(args, 1, DefaultIsUndefined));
     imp->overloadedMethod(objArg, strArg);
     return v8Undefined();
 }
@@ -1556,12 +1556,12 @@ static v8::Handle<v8::Value> overloadedMethod2Callback(const v8::Arguments& args
     if (args.Length() < 1)
         return throwNotEnoughArgumentsError(args.GetIsolate());
     TestObj* imp = V8TestObj::toNative(args.Holder());
-    TRYCATCH(TestObj*, objArg, V8TestObj::HasInstance(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined)) ? V8TestObj::toNative(v8::Handle<v8::Object>::Cast(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined))) : 0);
+    V8TRYCATCH(TestObj*, objArg, V8TestObj::HasInstance(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined)) ? V8TestObj::toNative(v8::Handle<v8::Object>::Cast(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined))) : 0);
     if (args.Length() <= 1) {
         imp->overloadedMethod(objArg);
         return v8Undefined();
     }
-    TRYCATCH(int, longArg, toInt32(MAYBE_MISSING_PARAMETER(args, 1, DefaultIsUndefined)));
+    V8TRYCATCH(int, longArg, toInt32(MAYBE_MISSING_PARAMETER(args, 1, DefaultIsUndefined)));
     imp->overloadedMethod(objArg, longArg);
     return v8Undefined();
 }
@@ -1572,7 +1572,7 @@ static v8::Handle<v8::Value> overloadedMethod3Callback(const v8::Arguments& args
     if (args.Length() < 1)
         return throwNotEnoughArgumentsError(args.GetIsolate());
     TestObj* imp = V8TestObj::toNative(args.Holder());
-    TRYCATCH_FOR_V8STRINGRESOURCE(V8StringResource<>, strArg, MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined));
+    V8TRYCATCH_FOR_V8STRINGRESOURCE(V8StringResource<>, strArg, MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined));
     imp->overloadedMethod(strArg);
     return v8Undefined();
 }
@@ -1583,7 +1583,7 @@ static v8::Handle<v8::Value> overloadedMethod4Callback(const v8::Arguments& args
     if (args.Length() < 1)
         return throwNotEnoughArgumentsError(args.GetIsolate());
     TestObj* imp = V8TestObj::toNative(args.Holder());
-    TRYCATCH(int, longArg, toInt32(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined)));
+    V8TRYCATCH(int, longArg, toInt32(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined)));
     imp->overloadedMethod(longArg);
     return v8Undefined();
 }
@@ -1607,7 +1607,7 @@ static v8::Handle<v8::Value> overloadedMethod6Callback(const v8::Arguments& args
     if (args.Length() < 1)
         return throwNotEnoughArgumentsError(args.GetIsolate());
     TestObj* imp = V8TestObj::toNative(args.Holder());
-    TRYCATCH(RefPtr<DOMStringList>, listArg, toDOMStringList(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined)));
+    V8TRYCATCH(RefPtr<DOMStringList>, listArg, toDOMStringList(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined)));
     imp->overloadedMethod(listArg);
     return v8Undefined();
 }
@@ -1618,7 +1618,7 @@ static v8::Handle<v8::Value> overloadedMethod7Callback(const v8::Arguments& args
     if (args.Length() < 1)
         return throwNotEnoughArgumentsError(args.GetIsolate());
     TestObj* imp = V8TestObj::toNative(args.Holder());
-    TRYCATCH(RefPtr<DOMStringList>, arrayArg, toDOMStringList(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined)));
+    V8TRYCATCH(RefPtr<DOMStringList>, arrayArg, toDOMStringList(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined)));
     imp->overloadedMethod(arrayArg);
     return v8Undefined();
 }
@@ -1629,7 +1629,7 @@ static v8::Handle<v8::Value> overloadedMethod8Callback(const v8::Arguments& args
     if (args.Length() < 1)
         return throwNotEnoughArgumentsError(args.GetIsolate());
     TestObj* imp = V8TestObj::toNative(args.Holder());
-    TRYCATCH(TestObj*, objArg, V8TestObj::HasInstance(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined)) ? V8TestObj::toNative(v8::Handle<v8::Object>::Cast(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined))) : 0);
+    V8TRYCATCH(TestObj*, objArg, V8TestObj::HasInstance(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined)) ? V8TestObj::toNative(v8::Handle<v8::Object>::Cast(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined))) : 0);
     imp->overloadedMethod(objArg);
     return v8Undefined();
 }
@@ -1640,7 +1640,7 @@ static v8::Handle<v8::Value> overloadedMethod9Callback(const v8::Arguments& args
     if (args.Length() < 1)
         return throwNotEnoughArgumentsError(args.GetIsolate());
     TestObj* imp = V8TestObj::toNative(args.Holder());
-    TRYCATCH(RefPtr<DOMStringList>, arrayArg, toDOMStringList(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined)));
+    V8TRYCATCH(RefPtr<DOMStringList>, arrayArg, toDOMStringList(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined)));
     imp->overloadedMethod(arrayArg);
     return v8Undefined();
 }
@@ -1651,7 +1651,7 @@ static v8::Handle<v8::Value> overloadedMethod10Callback(const v8::Arguments& arg
     if (args.Length() < 1)
         return throwNotEnoughArgumentsError(args.GetIsolate());
     TestObj* imp = V8TestObj::toNative(args.Holder());
-    TRYCATCH(Vector<unsigned long>, arrayArg, toNativeArray<unsigned long>(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined)));
+    V8TRYCATCH(Vector<unsigned long>, arrayArg, toNativeArray<unsigned long>(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined)));
     imp->overloadedMethod(arrayArg);
     return v8Undefined();
 }
@@ -1662,7 +1662,7 @@ static v8::Handle<v8::Value> overloadedMethod11Callback(const v8::Arguments& arg
     if (args.Length() < 1)
         return throwNotEnoughArgumentsError(args.GetIsolate());
     TestObj* imp = V8TestObj::toNative(args.Holder());
-    TRYCATCH_FOR_V8STRINGRESOURCE(V8StringResource<>, strArg, MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined));
+    V8TRYCATCH_FOR_V8STRINGRESOURCE(V8StringResource<>, strArg, MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined));
     imp->overloadedMethod(strArg);
     return v8Undefined();
 }
@@ -1710,7 +1710,7 @@ static v8::Handle<v8::Value> classMethodWithOptionalCallback(const v8::Arguments
     if (args.Length() <= 0) {
         return v8Integer(TestObj::classMethodWithOptional(), args.GetIsolate());
     }
-    TRYCATCH(int, arg, toInt32(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined)));
+    V8TRYCATCH(int, arg, toInt32(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined)));
     return v8Integer(TestObj::classMethodWithOptional(arg), args.GetIsolate());
 }
 
@@ -1721,7 +1721,7 @@ static v8::Handle<v8::Value> overloadedMethod11Callback(const v8::Arguments& arg
     INC_STATS("DOM.TestObj.overloadedMethod11");
     if (args.Length() < 1)
         return throwNotEnoughArgumentsError(args.GetIsolate());
-    TRYCATCH(int, arg, toInt32(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined)));
+    V8TRYCATCH(int, arg, toInt32(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined)));
     TestObj::overloadedMethod1(arg);
     return v8Undefined();
 }
@@ -1735,7 +1735,7 @@ static v8::Handle<v8::Value> overloadedMethod12Callback(const v8::Arguments& arg
     INC_STATS("DOM.TestObj.overloadedMethod12");
     if (args.Length() < 1)
         return throwNotEnoughArgumentsError(args.GetIsolate());
-    TRYCATCH_FOR_V8STRINGRESOURCE(V8StringResource<>, type, MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined));
+    V8TRYCATCH_FOR_V8STRINGRESOURCE(V8StringResource<>, type, MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined));
     TestObj::overloadedMethod1(type);
     return v8Undefined();
 }
@@ -1765,11 +1765,11 @@ static v8::Handle<v8::Value> classMethodWithClampCallback(const v8::Arguments& a
         return throwNotEnoughArgumentsError(args.GetIsolate());
     TestObj* imp = V8TestObj::toNative(args.Holder());
     unsigned short objArgsShort = 0;
-    TRYCATCH(double, objArgsShortNativeValue, args[0]->NumberValue());
+    V8TRYCATCH(double, objArgsShortNativeValue, args[0]->NumberValue());
     if (!isnan(objArgsShortNativeValue))
         objArgsShort = clampTo<unsigned short>(objArgsShortNativeValue);
     unsigned long objArgsLong = 0;
-    TRYCATCH(double, objArgsLongNativeValue, args[1]->NumberValue());
+    V8TRYCATCH(double, objArgsLongNativeValue, args[1]->NumberValue());
     if (!isnan(objArgsLongNativeValue))
         objArgsLong = clampTo<unsigned long>(objArgsLongNativeValue);
     imp->classMethodWithClamp(objArgsShort, objArgsLong);
@@ -1782,7 +1782,7 @@ static v8::Handle<v8::Value> enabledAtRuntimeMethod1Callback(const v8::Arguments
     if (args.Length() < 1)
         return throwNotEnoughArgumentsError(args.GetIsolate());
     TestObj* imp = V8TestObj::toNative(args.Holder());
-    TRYCATCH(int, longArg, toInt32(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined)));
+    V8TRYCATCH(int, longArg, toInt32(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined)));
     imp->enabledAtRuntimeMethod1(longArg);
     return v8Undefined();
 }
@@ -1793,7 +1793,7 @@ static v8::Handle<v8::Value> enabledAtRuntimeMethod2Callback(const v8::Arguments
     if (args.Length() < 1)
         return throwNotEnoughArgumentsError(args.GetIsolate());
     TestObj* imp = V8TestObj::toNative(args.Holder());
-    TRYCATCH(int, longArg, toInt32(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined)));
+    V8TRYCATCH(int, longArg, toInt32(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined)));
     imp->enabledAtRuntimeMethod2(longArg);
     return v8Undefined();
 }
@@ -1804,7 +1804,7 @@ static v8::Handle<v8::Value> enabledPerContextMethod1Callback(const v8::Argument
     if (args.Length() < 1)
         return throwNotEnoughArgumentsError(args.GetIsolate());
     TestObj* imp = V8TestObj::toNative(args.Holder());
-    TRYCATCH(int, longArg, toInt32(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined)));
+    V8TRYCATCH(int, longArg, toInt32(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined)));
     imp->enabledPerContextMethod1(longArg);
     return v8Undefined();
 }
@@ -1815,7 +1815,7 @@ static v8::Handle<v8::Value> enabledPerContextMethod2Callback(const v8::Argument
     if (args.Length() < 1)
         return throwNotEnoughArgumentsError(args.GetIsolate());
     TestObj* imp = V8TestObj::toNative(args.Holder());
-    TRYCATCH(int, longArg, toInt32(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined)));
+    V8TRYCATCH(int, longArg, toInt32(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined)));
     imp->enabledPerContextMethod2(longArg);
     return v8Undefined();
 }
@@ -1828,7 +1828,7 @@ static v8::Handle<v8::Value> stringArrayFunctionCallback(const v8::Arguments& ar
     TestObj* imp = V8TestObj::toNative(args.Holder());
     ExceptionCode ec = 0;
     {
-    TRYCATCH(RefPtr<DOMStringList>, values, toDOMStringList(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined)));
+    V8TRYCATCH(RefPtr<DOMStringList>, values, toDOMStringList(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined)));
     RefPtr<DOMStringList> result = imp->stringArrayFunction(values, ec);
     if (UNLIKELY(ec))
         goto fail;
@@ -1861,7 +1861,7 @@ static v8::Handle<v8::Value> convert1Callback(const v8::Arguments& args)
     if (args.Length() < 1)
         return throwNotEnoughArgumentsError(args.GetIsolate());
     TestObj* imp = V8TestObj::toNative(args.Holder());
-    TRYCATCH(a*, value, V8a::HasInstance(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined)) ? V8a::toNative(v8::Handle<v8::Object>::Cast(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined))) : 0);
+    V8TRYCATCH(a*, value, V8a::HasInstance(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined)) ? V8a::toNative(v8::Handle<v8::Object>::Cast(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined))) : 0);
     imp->convert1(value);
     return v8Undefined();
 }
@@ -1872,7 +1872,7 @@ static v8::Handle<v8::Value> convert2Callback(const v8::Arguments& args)
     if (args.Length() < 1)
         return throwNotEnoughArgumentsError(args.GetIsolate());
     TestObj* imp = V8TestObj::toNative(args.Holder());
-    TRYCATCH(b*, value, V8b::HasInstance(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined)) ? V8b::toNative(v8::Handle<v8::Object>::Cast(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined))) : 0);
+    V8TRYCATCH(b*, value, V8b::HasInstance(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined)) ? V8b::toNative(v8::Handle<v8::Object>::Cast(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined))) : 0);
     imp->convert2(value);
     return v8Undefined();
 }
@@ -1883,7 +1883,7 @@ static v8::Handle<v8::Value> convert4Callback(const v8::Arguments& args)
     if (args.Length() < 1)
         return throwNotEnoughArgumentsError(args.GetIsolate());
     TestObj* imp = V8TestObj::toNative(args.Holder());
-    TRYCATCH(d*, value, V8d::HasInstance(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined)) ? V8d::toNative(v8::Handle<v8::Object>::Cast(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined))) : 0);
+    V8TRYCATCH(d*, value, V8d::HasInstance(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined)) ? V8d::toNative(v8::Handle<v8::Object>::Cast(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined))) : 0);
     imp->convert4(value);
     return v8Undefined();
 }
@@ -1894,7 +1894,7 @@ static v8::Handle<v8::Value> convert5Callback(const v8::Arguments& args)
     if (args.Length() < 1)
         return throwNotEnoughArgumentsError(args.GetIsolate());
     TestObj* imp = V8TestObj::toNative(args.Holder());
-    TRYCATCH(e*, value, V8e::HasInstance(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined)) ? V8e::toNative(v8::Handle<v8::Object>::Cast(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined))) : 0);
+    V8TRYCATCH(e*, value, V8e::HasInstance(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined)) ? V8e::toNative(v8::Handle<v8::Object>::Cast(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined))) : 0);
     imp->convert5(value);
     return v8Undefined();
 }
@@ -1929,9 +1929,9 @@ static v8::Handle<v8::Value> strictFunctionCallback(const v8::Arguments& args)
     TestObj* imp = V8TestObj::toNative(args.Holder());
     ExceptionCode ec = 0;
     {
-    TRYCATCH_FOR_V8STRINGRESOURCE(V8StringResource<>, str, MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined));
-    TRYCATCH(float, a, static_cast<float>(MAYBE_MISSING_PARAMETER(args, 1, DefaultIsUndefined)->NumberValue()));
-    TRYCATCH(int, b, toInt32(MAYBE_MISSING_PARAMETER(args, 2, DefaultIsUndefined)));
+    V8TRYCATCH_FOR_V8STRINGRESOURCE(V8StringResource<>, str, MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined));
+    V8TRYCATCH(float, a, static_cast<float>(MAYBE_MISSING_PARAMETER(args, 1, DefaultIsUndefined)->NumberValue()));
+    V8TRYCATCH(int, b, toInt32(MAYBE_MISSING_PARAMETER(args, 2, DefaultIsUndefined)));
     RefPtr<bool> result = imp->strictFunction(str, a, b, ec);
     if (UNLIKELY(ec))
         goto fail;
@@ -1947,8 +1947,8 @@ static v8::Handle<v8::Value> variadicStringMethodCallback(const v8::Arguments& a
     if (args.Length() < 1)
         return throwNotEnoughArgumentsError(args.GetIsolate());
     TestObj* imp = V8TestObj::toNative(args.Holder());
-    TRYCATCH_FOR_V8STRINGRESOURCE(V8StringResource<>, head, MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined));
-    TRYCATCH(Vector<String>, tail, toNativeArguments<String>(args, 1));
+    V8TRYCATCH_FOR_V8STRINGRESOURCE(V8StringResource<>, head, MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined));
+    V8TRYCATCH(Vector<String>, tail, toNativeArguments<String>(args, 1));
     imp->variadicStringMethod(head, tail);
     return v8Undefined();
 }
@@ -1959,8 +1959,8 @@ static v8::Handle<v8::Value> variadicDoubleMethodCallback(const v8::Arguments& a
     if (args.Length() < 1)
         return throwNotEnoughArgumentsError(args.GetIsolate());
     TestObj* imp = V8TestObj::toNative(args.Holder());
-    TRYCATCH(double, head, static_cast<double>(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined)->NumberValue()));
-    TRYCATCH(Vector<double>, tail, toNativeArguments<double>(args, 1));
+    V8TRYCATCH(double, head, static_cast<double>(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined)->NumberValue()));
+    V8TRYCATCH(Vector<double>, tail, toNativeArguments<double>(args, 1));
     imp->variadicDoubleMethod(head, tail);
     return v8Undefined();
 }
@@ -1971,7 +1971,7 @@ static v8::Handle<v8::Value> variadicNodeMethodCallback(const v8::Arguments& arg
     if (args.Length() < 1)
         return throwNotEnoughArgumentsError(args.GetIsolate());
     TestObj* imp = V8TestObj::toNative(args.Holder());
-    TRYCATCH(Node*, head, V8Node::HasInstance(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined)) ? V8Node::toNative(v8::Handle<v8::Object>::Cast(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined))) : 0);
+    V8TRYCATCH(Node*, head, V8Node::HasInstance(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined)) ? V8Node::toNative(v8::Handle<v8::Object>::Cast(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined))) : 0);
     Vector<RefPtr<Node> > tail;
     for (int i = 1; i < args.Length(); ++i) {
         if (!V8Node::HasInstance(args[i]))

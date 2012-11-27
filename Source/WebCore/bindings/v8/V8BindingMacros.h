@@ -44,7 +44,7 @@ enum ParameterDefaultPolicy {
     DefaultIsNullString
 };
 
-#define TRYCATCH(type, var, value) \
+#define V8TRYCATCH(type, var, value) \
     type var;                             \
     {                                     \
         v8::TryCatch block;               \
@@ -53,12 +53,12 @@ enum ParameterDefaultPolicy {
             return block.ReThrow();       \
     }
 
-#define TRYCATCH_FOR_V8STRINGRESOURCE(type, var, value) \
+#define V8TRYCATCH_FOR_V8STRINGRESOURCE(type, var, value) \
     type var(value);                                            \
     if (!var.prepare())                                         \
         return v8::Undefined();
 
-#define TRYCATCH_FOR_V8STRINGRESOURCE_VOID(type, var, value) \
+#define V8TRYCATCH_FOR_V8STRINGRESOURCE_VOID(type, var, value) \
     type var(value);                                                 \
     if (!var.prepare())                                              \
         return;

@@ -164,7 +164,7 @@ v8::Handle<v8::Value> V8DeviceMotionEvent::intervalAccessorGetter(v8::Local<v8::
 v8::Handle<v8::Value> V8DeviceMotionEvent::initDeviceMotionEventCallback(const v8::Arguments& args)
 {
     DeviceMotionEvent* imp = V8DeviceMotionEvent::toNative(args.Holder());
-    TRYCATCH_FOR_V8STRINGRESOURCE(V8StringResource<>, type, args[0]);
+    V8TRYCATCH_FOR_V8STRINGRESOURCE(V8StringResource<>, type, args[0]);
     bool bubbles = args[1]->BooleanValue();
     bool cancelable = args[2]->BooleanValue();
     RefPtr<DeviceMotionData::Acceleration> acceleration = readAccelerationArgument(args[3]);

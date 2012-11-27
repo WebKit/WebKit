@@ -98,7 +98,7 @@ v8::Handle<v8::Value> V8WorkerContext::importScriptsCallback(const v8::Arguments
 
     Vector<String> urls;
     for (int i = 0; i < args.Length(); i++) {
-        TRYCATCH(v8::Handle<v8::String>, scriptUrl, args[i]->ToString());
+        V8TRYCATCH(v8::Handle<v8::String>, scriptUrl, args[i]->ToString());
         if (scriptUrl.IsEmpty())
             return v8::Undefined();
         urls.append(toWebCoreString(scriptUrl));

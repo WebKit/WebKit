@@ -72,10 +72,10 @@ v8::Handle<v8::Value> V8TestEventConstructor::constructorCallback(const v8::Argu
     if (args.Length() < 1)
         return throwNotEnoughArgumentsError(args.GetIsolate());
 
-    TRYCATCH_FOR_V8STRINGRESOURCE(V8StringResource<>, type, args[0]);
+    V8TRYCATCH_FOR_V8STRINGRESOURCE(V8StringResource<>, type, args[0]);
     TestEventConstructorInit eventInit;
     if (args.Length() >= 2) {
-        TRYCATCH(Dictionary, options, Dictionary(args[1], args.GetIsolate()));
+        V8TRYCATCH(Dictionary, options, Dictionary(args[1], args.GetIsolate()));
         if (!fillTestEventConstructorInit(eventInit, options))
             return v8Undefined();
     }

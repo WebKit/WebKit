@@ -64,7 +64,7 @@ v8::Handle<v8::Value> V8Console::profileCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.Console.profile");
     Console* imp = V8Console::toNative(args.Holder());
-    TRYCATCH_FOR_V8STRINGRESOURCE(V8StringResource<WithUndefinedOrNullCheck>, title, args[0]);
+    V8TRYCATCH_FOR_V8STRINGRESOURCE(V8StringResource<WithUndefinedOrNullCheck>, title, args[0]);
     imp->profile(title, ScriptState::current());
     return v8Undefined();
 }
@@ -73,7 +73,7 @@ v8::Handle<v8::Value> V8Console::profileEndCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.Console.profileEnd");
     Console* imp = V8Console::toNative(args.Holder());
-    TRYCATCH_FOR_V8STRINGRESOURCE(V8StringResource<WithUndefinedOrNullCheck>, title, args[0]);
+    V8TRYCATCH_FOR_V8STRINGRESOURCE(V8StringResource<WithUndefinedOrNullCheck>, title, args[0]);
     imp->profileEnd(title, ScriptState::current());
     return v8Undefined();
 }

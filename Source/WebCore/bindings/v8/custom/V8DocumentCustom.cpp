@@ -84,7 +84,7 @@ v8::Handle<v8::Value> V8Document::evaluateCallback(const v8::Arguments& args)
     if (V8XPathResult::HasInstance(args[4]))
         inResult = V8XPathResult::toNative(v8::Handle<v8::Object>::Cast(args[4]));
 
-    TRYCATCH(RefPtr<XPathResult>, result, document->evaluate(expression, contextNode.get(), resolver.get(), type, inResult.get(), ec));
+    V8TRYCATCH(RefPtr<XPathResult>, result, document->evaluate(expression, contextNode.get(), resolver.get(), type, inResult.get(), ec));
     if (ec)
         return setDOMException(ec, args.GetIsolate());
 

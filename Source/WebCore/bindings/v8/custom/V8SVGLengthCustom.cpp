@@ -89,7 +89,7 @@ v8::Handle<v8::Value> V8SVGLength::convertToSpecifiedUnitsCallback(const v8::Arg
 
     SVGLength& imp = wrapper->propertyReference();
     ExceptionCode ec = 0;
-    TRYCATCH(int, unitType, toUInt32(args[0]));
+    V8TRYCATCH(int, unitType, toUInt32(args[0]));
     SVGLengthContext lengthContext(wrapper->contextElement());
     imp.convertToSpecifiedUnits(unitType, lengthContext, ec);
     if (UNLIKELY(ec))

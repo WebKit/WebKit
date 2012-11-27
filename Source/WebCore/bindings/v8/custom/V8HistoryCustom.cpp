@@ -65,8 +65,8 @@ v8::Handle<v8::Value> V8History::pushStateCallback(const v8::Arguments& args)
     if (didThrow)
         return v8::Undefined();
 
-    TRYCATCH_FOR_V8STRINGRESOURCE(V8StringResource<WithUndefinedOrNullCheck>, title, args[1]);
-    TRYCATCH_FOR_V8STRINGRESOURCE(V8StringResource<WithUndefinedOrNullCheck>, url, MAYBE_MISSING_PARAMETER(args, 2, DefaultIsNullString));
+    V8TRYCATCH_FOR_V8STRINGRESOURCE(V8StringResource<WithUndefinedOrNullCheck>, title, args[1]);
+    V8TRYCATCH_FOR_V8STRINGRESOURCE(V8StringResource<WithUndefinedOrNullCheck>, url, MAYBE_MISSING_PARAMETER(args, 2, DefaultIsNullString));
 
     ExceptionCode ec = 0;
     History* history = V8History::toNative(args.Holder());
@@ -82,8 +82,8 @@ v8::Handle<v8::Value> V8History::replaceStateCallback(const v8::Arguments& args)
     if (didThrow)
         return v8::Undefined();
 
-    TRYCATCH_FOR_V8STRINGRESOURCE(V8StringResource<WithUndefinedOrNullCheck>, title, args[1]);
-    TRYCATCH_FOR_V8STRINGRESOURCE(V8StringResource<WithUndefinedOrNullCheck>, url, MAYBE_MISSING_PARAMETER(args, 2, DefaultIsNullString));
+    V8TRYCATCH_FOR_V8STRINGRESOURCE(V8StringResource<WithUndefinedOrNullCheck>, title, args[1]);
+    V8TRYCATCH_FOR_V8STRINGRESOURCE(V8StringResource<WithUndefinedOrNullCheck>, url, MAYBE_MISSING_PARAMETER(args, 2, DefaultIsNullString));
 
     ExceptionCode ec = 0;
     History* history = V8History::toNative(args.Holder());

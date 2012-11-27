@@ -48,7 +48,7 @@ v8::Handle<v8::Value> V8Intent::constructorCallbackCustom(const v8::Arguments& a
     if (args.Length() == 1) {
         // Use the dictionary constructor. This block will return if the
         // argument isn't a valid Dictionary.
-        TRYCATCH(Dictionary, options, Dictionary(args[0], args.GetIsolate()));
+        V8TRYCATCH(Dictionary, options, Dictionary(args[0], args.GetIsolate()));
         ExceptionCode ec = 0;
         RefPtr<Intent> impl = Intent::create(ScriptState::current(), options, ec);
         if (ec)
@@ -60,8 +60,8 @@ v8::Handle<v8::Value> V8Intent::constructorCallbackCustom(const v8::Arguments& a
     }
 
     ExceptionCode ec = 0;
-    TRYCATCH_FOR_V8STRINGRESOURCE(V8StringResource<>, action, MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined));
-    TRYCATCH_FOR_V8STRINGRESOURCE(V8StringResource<>, type, MAYBE_MISSING_PARAMETER(args, 1, DefaultIsUndefined));
+    V8TRYCATCH_FOR_V8STRINGRESOURCE(V8StringResource<>, action, MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined));
+    V8TRYCATCH_FOR_V8STRINGRESOURCE(V8StringResource<>, type, MAYBE_MISSING_PARAMETER(args, 1, DefaultIsUndefined));
     MessagePortArray messagePortArrayTransferList;
     ArrayBufferArray arrayBufferArrayTransferList;
     if (args.Length() > 3) {

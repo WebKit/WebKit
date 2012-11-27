@@ -54,7 +54,7 @@ static v8::Handle<v8::Value> excitingFunctionCallback(const v8::Arguments& args)
     TestActiveDOMObject* imp = V8TestActiveDOMObject::toNative(args.Holder());
     if (!BindingSecurity::shouldAllowAccessToFrame(BindingState::instance(), imp->frame()))
         return v8Undefined();
-    TRYCATCH(Node*, nextChild, V8Node::HasInstance(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined)) ? V8Node::toNative(v8::Handle<v8::Object>::Cast(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined))) : 0);
+    V8TRYCATCH(Node*, nextChild, V8Node::HasInstance(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined)) ? V8Node::toNative(v8::Handle<v8::Object>::Cast(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined))) : 0);
     imp->excitingFunction(nextChild);
     return v8Undefined();
 }
@@ -65,7 +65,7 @@ static v8::Handle<v8::Value> postMessageCallback(const v8::Arguments& args)
     if (args.Length() < 1)
         return throwNotEnoughArgumentsError(args.GetIsolate());
     TestActiveDOMObject* imp = V8TestActiveDOMObject::toNative(args.Holder());
-    TRYCATCH_FOR_V8STRINGRESOURCE(V8StringResource<>, message, MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined));
+    V8TRYCATCH_FOR_V8STRINGRESOURCE(V8StringResource<>, message, MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined));
     imp->postMessage(message);
     return v8Undefined();
 }
