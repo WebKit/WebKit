@@ -5,3 +5,12 @@ step=60
 step=3600  
 step mismatched  
 RTL 
+Disabled, step=3600  
+Readonly, step=3600  
+text-align: 
+text-transform: 
+background, color: 
+font-size, font-weight: 
+font-size with fixed input width: 
+Fixed input height: 
+-webkit-appearance:none: 

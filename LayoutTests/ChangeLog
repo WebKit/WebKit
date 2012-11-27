@@ -1,5 +1,66 @@
 2012-11-27  Kent Tamura  <tkent@chromium.org>
 
+        Reduce the number of pixel tests for date/time input types
+        https://bugs.webkit.org/show_bug.cgi?id=103373
+
+        Reviewed by Kentaro Hara.
+
+        Merge fast/forms/<type>/<type>-appearance-style.html and
+        <type>-appearance-disabled-readonly.html into
+        <type>-appearance-basic.html, and add tests for font-weight, height, and
+        -webkit-appearance:none.
+
+        * fast/forms/date/date-appearance-basic-expected.txt:
+        * fast/forms/date/date-appearance-basic.html:
+        * fast/forms/date/date-appearance-style-expected.txt: Removed.
+        * fast/forms/date/date-appearance-style.html: Removed.
+        * fast/forms/month/month-appearance-basic-expected.txt:
+        * fast/forms/month/month-appearance-basic.html:
+        * fast/forms/month/month-appearance-style-expected.txt: Removed.
+        * fast/forms/month/month-appearance-style.html: Removed.
+        * fast/forms/time/time-appearance-basic-expected.txt:
+        * fast/forms/time/time-appearance-basic.html:
+        * fast/forms/time/time-appearance-disabled-readonly-expected.txt: Removed.
+        * fast/forms/time/time-appearance-disabled-readonly.html: Removed.
+        * fast/forms/time/time-appearance-style-expected.txt: Removed.
+        * fast/forms/time/time-appearance-style.html: Removed.
+        * fast/forms/week/week-appearance-basic-expected.txt:
+        * fast/forms/week/week-appearance-basic.html:
+        * fast/forms/week/week-appearance-style-expected.txt: Removed.
+        * fast/forms/week/week-appearance-style.html: Removed.
+        * platform/chromium-linux/fast/forms/date/date-appearance-style-expected.png: Removed.
+        * platform/chromium-linux/fast/forms/month/month-appearance-style-expected.png: Removed.
+        * platform/chromium-linux/fast/forms/time/time-appearance-disabled-readonly-expected.png: Removed.
+        * platform/chromium-linux/fast/forms/time/time-appearance-style-expected.png: Removed.
+        * platform/chromium-linux/fast/forms/week/week-appearance-style-expected.png: Removed.
+        * platform/chromium-mac-lion/fast/forms/date/date-appearance-style-expected.png: Removed.
+        * platform/chromium-mac-lion/fast/forms/month/month-appearance-style-expected.png: Removed.
+        * platform/chromium-mac-lion/fast/forms/time/time-appearance-disabled-readonly-expected.png: Removed.
+        * platform/chromium-mac-lion/fast/forms/time/time-appearance-style-expected.png: Removed.
+        * platform/chromium-mac-lion/fast/forms/week/week-appearance-style-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/fast/forms/date/date-appearance-style-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/fast/forms/month/month-appearance-style-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/fast/forms/time/time-appearance-disabled-readonly-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/fast/forms/time/time-appearance-style-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/fast/forms/week/week-appearance-style-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/date/date-appearance-basic-expected.png:
+        * platform/chromium-mac/fast/forms/date/date-appearance-style-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/month/month-appearance-basic-expected.png:
+        * platform/chromium-mac/fast/forms/month/month-appearance-style-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/time/time-appearance-basic-expected.png:
+        * platform/chromium-mac/fast/forms/time/time-appearance-disabled-readonly-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/time/time-appearance-style-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/week/week-appearance-basic-expected.png:
+        * platform/chromium-mac/fast/forms/week/week-appearance-style-expected.png: Removed.
+        * platform/chromium-win/fast/forms/date/date-appearance-style-expected.png: Removed.
+        * platform/chromium-win/fast/forms/month/month-appearance-style-expected.png: Removed.
+        * platform/chromium-win/fast/forms/time/time-appearance-disabled-readonly-expected.png: Removed.
+        * platform/chromium-win/fast/forms/time/time-appearance-style-expected.png: Removed.
+        * platform/chromium-win/fast/forms/week/week-appearance-style-expected.png: Removed.
+        * platform/chromium/TestExpectations:
+
+2012-11-27  Kent Tamura  <tkent@chromium.org>
+
         A followup of r135836
         https://bugs.webkit.org/show_bug.cgi?id=102861
 

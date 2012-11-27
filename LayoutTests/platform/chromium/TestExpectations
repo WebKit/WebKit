@@ -2872,6 +2872,11 @@ webkit.org/b/103350 fast/forms/date/date-appearance-pseudo-classes.html [ Pass I
 webkit.org/b/103350 fast/forms/month/month-appearance-pseudo-classes.html [ Pass ImageOnlyFailure ]
 webkit.org/b/103350 fast/forms/time/time-appearance-pseudo-classes.html [ Pass ImageOnlyFailure ]
 webkit.org/b/103350 fast/forms/week/week-appearance-pseudo-classes.html [ Pass ImageOnlyFailure ]
+webkit.org/b/103373 fast/forms/date/date-appearance-basic.html [ Pass ImageOnlyFailure ]
+webkit.org/b/103373 fast/forms/time/time-appearance-basic.html [ Pass ImageOnlyFailure ]
+webkit.org/b/103373 fast/forms/month/month-appearance-basic.html [ Pass ImageOnlyFailure ]
+webkit.org/b/103373 fast/forms/week/week-appearance-basic.html [ Pass ImageOnlyFailure ]
+
 
 # New test added in r87324
 crbug.com/83994 [ Win ] platform/win/plugins/call-javascript-that-destroys-plugin.html [ Failure ]
