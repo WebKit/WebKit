@@ -40,7 +40,7 @@ DocumentFragment::DocumentFragment(Document* document, ConstructionType construc
 
 PassRefPtr<DocumentFragment> DocumentFragment::create(Document* document)
 {
-    return adoptRef(new DocumentFragment(document));
+    return adoptRef(new DocumentFragment(document, Node::CreateDocumentFragment));
 }
 
 String DocumentFragment::nodeName() const

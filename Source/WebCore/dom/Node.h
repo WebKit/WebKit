@@ -233,8 +233,10 @@ public:
     virtual bool isCharacterDataNode() const { return false; }
     virtual bool isFrameOwnerElement() const { return false; }
     virtual bool isPluginElement() const { return false; }
+    virtual bool documentFragmentIsShadowRoot() const;
     bool isDocumentNode() const;
-    bool isShadowRoot() const { return getFlag(IsShadowRootFlag); }
+    bool isDocumentFragment() const { return getFlag(IsDocumentFragmentFlag); }
+    bool isShadowRoot() const { return isDocumentFragment() && documentFragmentIsShadowRoot(); }
     bool isInsertionPoint() const { return getFlag(IsInsertionPointFlag); }
     bool inNamedFlow() const { return getFlag(InNamedFlowFlag); }
     bool hasCustomCallbacks() const { return getFlag(HasCustomCallbacksFlag); }
@@ -699,7 +701,7 @@ private:
         IsHoveredFlag = 1 << 11,
         InActiveChainFlag = 1 << 12,
         HasRareDataFlag = 1 << 13,
-        IsShadowRootFlag = 1 << 14,
+        IsDocumentFragmentFlag = 1 << 14,
 
         // These bits are used by derived classes, pulled up here so they can
         // be stored in the same memory word as the Node bits above.
@@ -738,7 +740,8 @@ protected:
         CreateText = DefaultNodeFlags | IsTextFlag,
         CreateContainer = DefaultNodeFlags | IsContainerFlag, 
         CreateElement = CreateContainer | IsElementFlag, 
-        CreateShadowRoot = CreateContainer | IsShadowRootFlag,
+        CreateShadowRoot = CreateContainer | IsDocumentFragmentFlag,
+        CreateDocumentFragment = CreateContainer | IsDocumentFragmentFlag,
         CreateStyledElement = CreateElement | IsStyledElementFlag, 
         CreateHTMLElement = CreateStyledElement | IsHTMLFlag, 
         CreateFrameOwnerElement = CreateHTMLElement | HasCustomCallbacksFlag,
@@ -855,7 +858,7 @@ inline void addSubresourceURL(ListHashSet<KURL>& urls, const KURL& url)
 
 inline ContainerNode* Node::parentNode() const
 {
-    return getFlag(IsShadowRootFlag) ? 0 : parent();
+    return isShadowRoot() ? 0 : parent();
 }
 
 inline void Node::setParentOrHostNode(ContainerNode* parent)
@@ -870,7 +873,7 @@ inline ContainerNode* Node::parentOrHostNode() const
 
 inline ContainerNode* Node::parentNodeGuaranteedHostFree() const
 {
-    ASSERT(!getFlag(IsShadowRootFlag));
+    ASSERT(!isShadowRoot());
     return parentOrHostNode();
 }
 

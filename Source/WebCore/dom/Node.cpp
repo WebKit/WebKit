@@ -954,6 +954,12 @@ bool Node::isMouseFocusable() const
     return isFocusable();
 }
 
+bool Node::documentFragmentIsShadowRoot() const
+{
+    ASSERT_NOT_REACHED();
+    return false;
+}
+
 Node* Node::focusDelegate()
 {
     return this;
