@@ -1,3 +1,44 @@
+2012-11-27  Christophe Dumez  <christophe.dumez@intel.com>
+
+        Canvas does not draw any text if the font is not fully loaded yet
+        https://bugs.webkit.org/show_bug.cgi?id=103392
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Update CanvasRenderingContext2D::drawTextInternal() so that the
+        text is being drawn, even if custom fonts are still being loaded.
+        Without this, WebKit was not drawing any text on the canvas if
+        the needed font is custom and is not fully loaded yet. This seems
+        broken.
+
+        The new behavior is according to specification:
+        http://www.whatwg.org/specs/web-apps/current-work/multipage/the-canvas-element.html
+
+        The specification says: "If a font is used before it is fully
+        loaded, or if the font style source object does not have that
+        font in scope at the time the font is to be used, then it must be
+        treated as if it was an unknown font, falling back to another as
+        described by the relevant CSS specifications."
+
+        Test: http/tests/canvas/canvas-slow-font-loading.html
+
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::drawTextInternal):
+        * platform/graphics/Font.cpp:
+        (WebCore::Font::drawText): Add argument to specify the behavior
+        when custom fonts are not ready. By default, it will not draw
+        anything (same behavior as before). However, the Canvas code
+        can now request that a fallback font is used if the custom
+        font is not fully loaded yet.
+        * platform/graphics/Font.h: #undef Complex if defined to avoid
+        conflicting with Complex value in CodePath enum. X11/X.h is
+        defining Complex to 0.
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::drawBidiText):
+        * platform/graphics/GraphicsContext.h:
+        (WebCore):
+        (GraphicsContext):
+
 2012-11-27  Dean Jackson  <dino@apple.com>
 
         No need for ExceptionCode in HTMLMediaElement::load

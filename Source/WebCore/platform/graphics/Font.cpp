@@ -156,10 +156,12 @@ void Font::update(PassRefPtr<FontSelector> fontSelector) const
     m_typesettingFeatures = computeTypesettingFeatures();
 }
 
-void Font::drawText(GraphicsContext* context, const TextRun& run, const FloatPoint& point, int from, int to) const
+void Font::drawText(GraphicsContext* context, const TextRun& run, const FloatPoint& point, int from, int to, CustomFontNotReadyAction customFontNotReadyAction) const
 {
-    // Don't draw anything while we are using custom fonts that are in the process of loading.
-    if (loadingCustomFonts())
+    // Don't draw anything while we are using custom fonts that are in the process of loading,
+    // except if the 'force' argument is set to true (in which case it will use a fallback
+    // font).
+    if (loadingCustomFonts() && customFontNotReadyAction == DoNotPaintIfFontNotReady)
         return;
     
     to = (to == -1 ? run.length() : to);

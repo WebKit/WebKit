@@ -42,6 +42,12 @@ class QTextLayout;
 QT_END_NAMESPACE
 #endif
 
+// "X11/X.h" defines Complex to 0 and conflicts
+// with Complex value in CodePath enum.
+#ifdef Complex
+#undef Complex
+#endif
+
 namespace WebCore {
 
 class FloatPoint;
@@ -97,7 +103,8 @@ public:
 
     void update(PassRefPtr<FontSelector>) const;
 
-    void drawText(GraphicsContext*, const TextRun&, const FloatPoint&, int from = 0, int to = -1) const;
+    enum CustomFontNotReadyAction { DoNotPaintIfFontNotReady, UseFallbackIfFontNotReady };
+    void drawText(GraphicsContext*, const TextRun&, const FloatPoint&, int from = 0, int to = -1, CustomFontNotReadyAction = DoNotPaintIfFontNotReady) const;
     void drawEmphasisMarks(GraphicsContext*, const TextRun&, const AtomicString& mark, const FloatPoint&, int from = 0, int to = -1) const;
 
     float width(const TextRun&, HashSet<const SimpleFontData*>* fallbackFonts = 0, GlyphOverflow* = 0) const;

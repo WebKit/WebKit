@@ -1,3 +1,16 @@
+2012-11-27  Christophe Dumez  <christophe.dumez@intel.com>
+
+        Canvas does not draw any text if the font is not fully loaded yet
+        https://bugs.webkit.org/show_bug.cgi?id=103392
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add canvas test to check that text is drawn using a fallback font
+        if the primary font is not fully loaded yet.
+
+        * http/tests/canvas/canvas-slow-font-loading-expected.html: Added.
+        * http/tests/canvas/canvas-slow-font-loading.html: Added.
+
 2012-11-27  Yael Aharon  <yael.aharon@intel.com>
 
         Unreviewed gardening. fast/loader/submit-form-while-parsing-2.html is still flaky

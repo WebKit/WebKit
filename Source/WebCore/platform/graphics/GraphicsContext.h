@@ -30,6 +30,7 @@
 #include "ColorSpace.h"
 #include "DashArray.h"
 #include "FloatRect.h"
+#include "Font.h"
 #include "Gradient.h"
 #include "Image.h"
 #include "ImageOrientation.h"
@@ -114,7 +115,6 @@ namespace WebCore {
 
     class AffineTransform;
     class DrawingBuffer;
-    class Font;
     class Generator;
 #if !USE(SKIA)
     class GraphicsContextPlatformPrivate;
@@ -355,7 +355,7 @@ namespace WebCore {
 
         void drawText(const Font&, const TextRun&, const FloatPoint&, int from = 0, int to = -1);
         void drawEmphasisMarks(const Font&, const TextRun& , const AtomicString& mark, const FloatPoint&, int from = 0, int to = -1);
-        void drawBidiText(const Font&, const TextRun&, const FloatPoint&);
+        void drawBidiText(const Font&, const TextRun&, const FloatPoint&, Font::CustomFontNotReadyAction = Font::DoNotPaintIfFontNotReady);
         void drawHighlightForText(const Font&, const TextRun&, const FloatPoint&, int h, const Color& backgroundColor, ColorSpace, int from = 0, int to = -1);
 
         enum RoundingMode {
