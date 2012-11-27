@@ -1210,6 +1210,44 @@ class _FileState(object):
         return self.is_c() or self.is_objective_c()
 
 
+class _EnumState(object):
+    """Maintains whether currently in an enum declaration, and checks whether
+    enum declarations follow the style guide.
+    """
+
+    def __init__(self):
+        self.in_enum_decl = False
+
+    def process_clean_line(self, line):
+        # FIXME: The regular expressions for expr_all_uppercase and expr_enum_end only accept integers
+        # and identifiers for the value of the enumerator, but do not accept any other constant
+        # expressions. However, this is sufficient for now (11/27/2012).
+        expr_all_uppercase = r'\s*[A-Z0-9_]+\s*(?:=\s*[a-zA-Z0-9]+\s*)?,?\s*$'
+        expr_starts_lowercase = r'\s*[a-z]'
+        expr_enum_end = r'}\s*(?:[a-zA-Z0-9]+\s*(?:=\s*[a-zA-Z0-9]+)?)?\s*;\s*'
+        expr_enum_start = r'\s*enum(?:\s+[a-zA-Z0-9]+)?\s*\{?\s*'
+        if self.in_enum_decl:
+            if match(r'\s*' + expr_enum_end + r'$', line):
+                self.in_enum_decl = False
+            elif match(expr_all_uppercase, line):
+                return False
+            elif match(expr_starts_lowercase, line):
+                return False
+        else:
+            if match(expr_enum_start + r'$', line):
+                self.in_enum_decl = True
+            else:
+                matched = match(expr_enum_start + r'(?P<members>.*)' + expr_enum_end + r'$', line)
+                if matched:
+                    members = matched.group('members').split(',')
+                    for member in members:
+                        if match(expr_all_uppercase, member):
+                            return False
+                        if match(expr_starts_lowercase, member):
+                            return False
+                    return True
+        return True
+
 def check_for_non_standard_constructs(clean_lines, line_number,
                                       class_state, error):
     """Logs an error if we see certain non-ANSI constructs ignored by gcc-2.
@@ -2040,6 +2078,21 @@ def check_namespace_indentation(clean_lines, line_number, file_extension, file_s
             break;
 
 
+def check_enum_casing(clean_lines, line_number, enum_state, error):
+    """Looks for incorrectly named enum values.
+
+    Args:
+      clean_lines: A CleansedLines instance containing the file.
+      line_number: The number of the line to check.
+      enum_state: A _EnumState instance which maintains enum declaration state.
+      error: The function to call with any errors found.
+    """
+
+    line = clean_lines.elided[line_number]  # Get rid of comments and strings.
+    if not enum_state.process_clean_line(line):
+        error(line_number, 'readability/enum_casing', 4,
+              'enum members should use InterCaps with an initial capital letter.')
+
 def check_directive_indentation(clean_lines, line_number, file_state, error):
     """Looks for indentation of preprocessor directives.
 
@@ -2535,7 +2588,7 @@ def get_line_width(line):
     return len(line)
 
 
-def check_style(clean_lines, line_number, file_extension, class_state, file_state, error):
+def check_style(clean_lines, line_number, file_extension, class_state, file_state, enum_state, error):
     """Checks rules from the 'C++ style rules' section of cppguide.html.
 
     Most of these rules are hard to test (naming, comment style), but we
@@ -2550,6 +2603,7 @@ def check_style(clean_lines, line_number, file_extension, class_state, file_stat
                    the current stack of nested class declarations being parsed.
       file_state: A _FileState instance which maintains information about
                   the state of things in the file.
+      enum_state: A _EnumState instance which maintains the current enum state.
       error: The function to call with any errors found.
     """
 
@@ -2604,6 +2658,7 @@ def check_style(clean_lines, line_number, file_extension, class_state, file_stat
     check_for_comparisons_to_zero(clean_lines, line_number, error)
     check_for_null(clean_lines, line_number, file_state, error)
     check_indentation_amount(clean_lines, line_number, error)
+    check_enum_casing(clean_lines, line_number, enum_state, error)
 
 
 _RE_PATTERN_INCLUDE_NEW_STYLE = re.compile(r'#include +"[^/]+\.h"')
@@ -3478,7 +3533,7 @@ def check_for_include_what_you_use(filename, clean_lines, include_state, error):
 
 def process_line(filename, file_extension,
                  clean_lines, line, include_state, function_state,
-                 class_state, file_state, error):
+                 class_state, file_state, enum_state, error):
     """Processes a single line in the file.
 
     Args:
@@ -3493,6 +3548,8 @@ def process_line(filename, file_extension,
                    the current stack of nested class declarations being parsed.
       file_state: A _FileState instance which maintains information about
                   the state of things in the file.
+      enum_state: A _EnumState instance which maintains an enum declaration
+                  state.
       error: A callable to which errors are reported, which takes arguments:
              line number, error level, and message
 
@@ -3508,7 +3565,7 @@ def process_line(filename, file_extension,
     check_pass_ptr_usage(clean_lines, line, function_state, error)
     check_for_leaky_patterns(clean_lines, line, function_state, error)
     check_for_multiline_comments_and_strings(clean_lines, line, error)
-    check_style(clean_lines, line, file_extension, class_state, file_state, error)
+    check_style(clean_lines, line, file_extension, class_state, file_state, enum_state, error)
     check_language(filename, clean_lines, line, file_extension, include_state,
                    file_state, error)
     check_for_non_standard_constructs(clean_lines, line, class_state, error)
@@ -3541,9 +3598,11 @@ def _process_lines(filename, file_extension, lines, error, min_confidence):
     remove_multi_line_comments(lines, error)
     clean_lines = CleansedLines(lines)
     file_state = _FileState(clean_lines, file_extension)
+    enum_state = _EnumState()
     for line in xrange(clean_lines.num_lines()):
         process_line(filename, file_extension, clean_lines, line,
-                     include_state, function_state, class_state, file_state, error)
+                     include_state, function_state, class_state, file_state,
+                     enum_state, error)
     class_state.check_finished(error)
 
     check_for_include_what_you_use(filename, clean_lines, include_state, error)
@@ -3585,6 +3644,7 @@ class CppChecker(object):
         'readability/comparison_to_zero',
         'readability/constructors',
         'readability/control_flow',
+        'readability/enum_casing',
         'readability/fn_size',
         'readability/function',
         'readability/multiline_comment',

@@ -3258,6 +3258,43 @@ class NoNonVirtualDestructorsTest(CppStyleTestBase):
                 };''',
             'The class Foo probably needs a virtual destructor')
 
+    def test_enum_casing(self):
+        self.assert_multi_line_lint(
+            '''\
+                enum Foo {
+                    FOO_ONE = 1,
+                    FOO_TWO
+                };
+                enum { FOO_ONE };
+                enum {FooOne, fooTwo};
+                enum {
+                    FOO_ONE
+                };''',
+            ['enum members should use InterCaps with an initial capital letter.  [readability/enum_casing] [4]'] * 5)
+
+        self.assert_multi_line_lint(
+            '''\
+                enum Foo {
+                    fooOne = 1,
+                    FooTwo = 2
+                };''',
+            'enum members should use InterCaps with an initial capital letter.  [readability/enum_casing] [4]')
+
+        self.assert_multi_line_lint(
+            '''\
+                enum Foo {
+                    FooOne = 1,
+                    FooTwo
+                } fooVar = FooOne;
+                enum { FooOne, FooTwo };
+                enum { FooOne, FooTwo } fooVar = FooTwo;
+                enum { FooOne= FooTwo } foo;
+                enum Enum123 {
+                    FooOne,
+                    FooTwo = FooOne,
+                };''',
+            '')
+
     def test_destructor_non_virtual_when_virtual_needed(self):
         self.assert_multi_line_lint_re(
             '''\
@@ -3280,7 +3317,7 @@ class NoNonVirtualDestructorsTest(CppStyleTestBase):
             '''\
                 class Foo {
                     enum Goo {
-                        GOO
+                        Goo
                     };
                     virtual void foo();
                 };''',

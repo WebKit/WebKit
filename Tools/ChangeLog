@@ -1,3 +1,23 @@
+2012-11-27  Sadrul Habib Chowdhury  <sadrul@chromium.org>
+
+        [style] Add a style-check for enum-member names
+        https://bugs.webkit.org/show_bug.cgi?id=103157
+
+        Reviewed by Daniel Bates.
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (_EnumState):
+        (_EnumState.__init__):
+        (_EnumState.process_clean_line):
+        (check_enum_casing):
+        (check_style):
+        (process_line):
+        (_process_lines):
+        (CppChecker):
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py:
+        (NoNonVirtualDestructorsTest.test_enum_casing):
+        (NoNonVirtualDestructorsTest.test_internal_braces.Foo):
+
 2012-11-26  Ryuan Choi  <ryuan.choi@gmail.com>
 
         [EFL][jhbuild] Disable unnecessary options of elementary module
