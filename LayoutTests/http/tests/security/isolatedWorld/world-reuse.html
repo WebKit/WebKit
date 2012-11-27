@@ -33,7 +33,7 @@ if (window.testRunner) {
 
     // Isolated world executing in frame should be able to to access parent content.
     testRunner.evaluateScriptInIsolatedWorld(1,
-      "parent.document.body.appendChild(parent.document.createTextNode('Expecting true: ' + (parent.frames[0].document == this.document)));" +
+      "parent.document.body.appendChild(parent.document.createTextNode('Expecting true: ' + !!parent.frames[0].document.getElementById('output')));" +
       "parent.document.body.appendChild(parent.document.createElement('br'));");
 
     document.body.appendChild(document.createTextNode('Expecting undefined,undefined: ' + result));
