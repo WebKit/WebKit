@@ -1,3 +1,15 @@
+2012-11-27  David Grogan  <dgrogan@chromium.org>
+
+        IndexedDB: Make test resilient to different event ordering
+        https://bugs.webkit.org/show_bug.cgi?id=103344
+
+        Reviewed by Tony Chang.
+
+        This test was failing in multi-process chromium because the blocked
+        event can arrive before the versionchange event.
+
+        * storage/indexeddb/pending-version-change-on-exit.html:
+
 2012-11-27  Min Qin  <qinmin@chromium.org>
 
         Don't throw an exception if user gesture is required for load

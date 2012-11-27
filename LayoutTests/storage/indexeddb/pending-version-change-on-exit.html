@@ -12,6 +12,7 @@ if (self.location.search == "?second") {
   testPassed("Didn't crash!");
   finishJSTest();
 } else {
+  evalAndLog("workerGotBlocked = false");
   evalAndLog("gotVersionChangeEvent = false");
   indexedDBTest(prepareDatabase, startTheWorker);
 }
@@ -21,14 +22,11 @@ function prepareDatabase()
   debug("inside prepareDatabase");
   preamble();
   db = event.target.result;
-  db.onversionchange = function(e) {
-    evalAndLog("gotVersionChangeEvent = true");
-    debug("Got a version change event, e.oldVersion = " + e.oldVersion +
-          " e.newVersion = " + e.newVersion);
-  };
+  db.onversionchange = onVersionChange;
 }
 
-function startTheWorker() {
+function startTheWorker()
+{
   var worker = startWorker("resources/pending-version-change-on-exit.js?" + encodeURIComponent(dbname));
   realFinishJSTest = finishJSTest;
   worker.onerror = function(e) {
@@ -36,13 +34,23 @@ function startTheWorker() {
     realFinishJSTest();
   };
   finishJSTest = function() {
-    shouldBeTrue("gotVersionChangeEvent");
-    if (gotVersionChangeEvent)
-      self.location = self.location + "?second";
-    else
-      realFinishJSTest();
+    workerGotBlocked = true;
+    maybeReload();
   }
 }
+
+function onVersionChange(e)
+{
+  gotVersionChangeEvent = true;
+  maybeReload();
+};
+
+function maybeReload()
+{
+  if (gotVersionChangeEvent && workerGotBlocked)
+    self.location = self.location + "?second";
+};
+
 </script>
 <script src="../../fast/js/resources/js-test-post.js"></script>
 </body>
