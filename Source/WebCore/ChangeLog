@@ -1,3 +1,23 @@
+2012-11-27  Leo Yang  <leoyang@rim.com>
+
+        [BlackBerry] Adapt to the change of BlackBerry::Platform::FilterStream::notifyHeadersReceived
+        https://bugs.webkit.org/show_bug.cgi?id=103425
+
+        Reviewed by Yong Li.
+
+        A const has been added for HeaderList parameter of BlackBerry::Platform::FilterStream::notifyHeadersReceived.
+        The patch is adapting to this change.
+
+        No functionalities changed no new tests.
+
+        * platform/network/blackberry/NetworkJob.cpp:
+        (WebCore::NetworkJob::notifyHeadersReceived):
+        * platform/network/blackberry/NetworkJob.h:
+        (NetworkJob):
+        * platform/network/blackberry/rss/RSSFilterStream.cpp:
+        (WebCore::RSSFilterStream::notifyHeadersReceived):
+        * platform/network/blackberry/rss/RSSFilterStream.h:
+
 2012-11-27  Min Qin  <qinmin@chromium.org>
 
         Don't throw an exception if user gesture is required for load

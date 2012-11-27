@@ -215,7 +215,7 @@ void NetworkJob::handleNotifyStatusReceived(int status, const String& message)
         purgeCredentials();
 }
 
-void NetworkJob::notifyHeadersReceived(BlackBerry::Platform::NetworkRequest::HeaderList& headers)
+void NetworkJob::notifyHeadersReceived(const BlackBerry::Platform::NetworkRequest::HeaderList& headers)
 {
     BlackBerry::Platform::NetworkRequest::HeaderList::const_iterator endIt = headers.end();
     for (BlackBerry::Platform::NetworkRequest::HeaderList::const_iterator it = headers.begin(); it != endIt; ++it) {

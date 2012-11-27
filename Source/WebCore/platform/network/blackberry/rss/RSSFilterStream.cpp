@@ -449,7 +449,7 @@ void RSSFilterStream::notifyStatusReceived(int status, const char* message)
     FilterStream::notifyStatusReceived(status, message);
 }
 
-void RSSFilterStream::notifyHeadersReceived(NetworkRequest::HeaderList& headers)
+void RSSFilterStream::notifyHeadersReceived(const NetworkRequest::HeaderList& headers)
 {
     if (!isRSSContent(m_resourceType)) {
         NetworkRequest::HeaderList::const_iterator end = headers.end();

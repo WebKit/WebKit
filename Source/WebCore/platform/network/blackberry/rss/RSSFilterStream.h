@@ -39,7 +39,7 @@ public:
     RSSFilterStream();
 
     virtual void notifyStatusReceived(int status, const char* message);
-    virtual void notifyHeadersReceived(BlackBerry::Platform::NetworkRequest::HeaderList&);
+    virtual void notifyHeadersReceived(const BlackBerry::Platform::NetworkRequest::HeaderList&);
     virtual void notifyDataReceived(BlackBerry::Platform::NetworkBuffer*);
     virtual void notifyClose(int status);
 

@@ -71,7 +71,7 @@ public:
     void updateDeferLoadingCount(int delta);
     virtual void notifyStatusReceived(int status, const BlackBerry::Platform::String& message);
     void handleNotifyStatusReceived(int status, const String& message);
-    virtual void notifyHeadersReceived(BlackBerry::Platform::NetworkRequest::HeaderList& headers);
+    virtual void notifyHeadersReceived(const BlackBerry::Platform::NetworkRequest::HeaderList& headers);
     virtual void notifyMultipartHeaderReceived(const char* key, const char* value);
     virtual void notifyAuthReceived(BlackBerry::Platform::NetworkRequest::AuthType, const char* realm, bool success, bool requireCredentials);
     // notifyStringHeaderReceived exists only to resolve ambiguity between char* and String parameters
