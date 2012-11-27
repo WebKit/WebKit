@@ -1,3 +1,20 @@
+2012-11-27  Andrew Lo  <anlo@rim.com>
+
+        [BlackBerry] Remove unnecessary backing store suspension in InputHandler::ensureFocusTextElementVisible
+        https://bugs.webkit.org/show_bug.cgi?id=103441
+
+        Reviewed by Rob Buis.
+        Internally reviewed by Mike Fenton.
+
+        Remove unnecessary backing store suspension in
+        InputHandler::ensureFocusTextElementVisible.
+
+        Not necessary anymore since both zoom and scroll adjustments
+        happen in an animation.
+
+        * WebKitSupport/InputHandler.cpp:
+        (BlackBerry::WebKit::InputHandler::ensureFocusTextElementVisible):
+
 2012-11-27  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r135786.

@@ -1123,8 +1123,6 @@ void InputHandler::ensureFocusTextElementVisible(CaretScrollType scrollType)
 
     int fontHeight = selectionFocusRect.height();
 
-    m_webPage->suspendBackingStore();
-
     // If the text is too small, zoom in to make it a minimum size.
     // The minimum size being defined as 3 mm is a good value based on my observations.
     static const int s_minimumTextHeightInPixels = Graphics::Screen::primaryScreen()->heightInMMToPixels(3);
@@ -1224,7 +1222,6 @@ void InputHandler::ensureFocusTextElementVisible(CaretScrollType scrollType)
         m_webPage->m_userPerformedManualScroll = true;
         m_webPage->client()->animateBlockZoom(zoomScaleRequired, m_webPage->m_finalBlockPoint);
     }
-    m_webPage->resumeBackingStore();
 }
 
 void InputHandler::ensureFocusPluginElementVisible()
