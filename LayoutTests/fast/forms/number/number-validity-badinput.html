@@ -9,8 +9,6 @@
 </style>
 </head>
 <body>
-<p id="description"></p>
-<div id="console"></div>
 <div id=parent>
 <input type=number id=number>
 <input id=another>
@@ -26,7 +24,7 @@ var invalidStyleColor = 'rgb(255, 0, 0)';
 var number = document.getElementById('number');
 number.focus();
 debug('Initial state. The elment has no value.');
-shouldBeTrue('colorOf(number) != invalidStyleColor');
+shouldNotBe('colorOf(number)', 'invalidStyleColor');
 shouldBeFalse('number.validity.badInput');
 
 debug("Type '-'. The element becomes badInput.");
@@ -38,7 +36,7 @@ shouldBeEqualToString('number.value', '');
 
 debug("Type '1' additionally. The element becomes valid.");
 document.execCommand('InsertText', false, '1');
-shouldBeTrue('colorOf(number) != invalidStyleColor');
+shouldNotBe('colorOf(number)', 'invalidStyleColor');
 shouldBeFalse('number.validity.badInput');
 shouldBeEqualToString('number.value', '-1');
 

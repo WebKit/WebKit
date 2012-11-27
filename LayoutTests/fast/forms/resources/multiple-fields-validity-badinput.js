@@ -25,7 +25,7 @@ function testBadInput(type) {
     shouldBe('colorOf(input)', 'invalidStyleColor');
     shouldBeTrue('input.validity.badInput');
 
-    if (type == 'date' || type== 'datetime' || type == 'datetime-local') {
+    if (type === 'date' || type === 'datetime' || type === 'datetime-local') {
         debug('Set an invalid date, 2012-02-31.');
         if (type == 'date')
             input.value = '2012-02-01';
