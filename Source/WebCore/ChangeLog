@@ -1,3 +1,11 @@
+2012-11-27  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        Unreviewed cleanup.
+
+        Remove leftover file that was replaced by PlatformScreenQt.cpp 4 years ago.
+
+        * platform/qt/ScreenQt.cpp: Removed.
+
 2012-11-27  Istiaque Ahmed  <lazyboy@chromium.org>
 
         freeV8NPObject: Skip trying to remove object from per context data's ObjectMap if the object does not exist in the map.
