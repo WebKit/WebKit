@@ -1,3 +1,15 @@
+2012-11-27  Min Qin  <qinmin@chromium.org>
+
+        Don't throw an exception if user gesture is required for load
+        https://bugs.webkit.org/show_bug.cgi?id=103318
+
+        Reviewed by Eric Carlson.
+
+        Check that exception is not thrown and metadata is not loaded if media load requires user gesture.
+
+        * media/video-load-require-user-gesture-expected.txt:
+        * media/video-load-require-user-gesture.html:
+
 2012-11-27  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed gardening, skip a new failing test to paint the bots green.

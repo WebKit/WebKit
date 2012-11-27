@@ -1,3 +1,17 @@
+2012-11-27  Min Qin  <qinmin@chromium.org>
+
+        Don't throw an exception if user gesture is required for load
+        https://bugs.webkit.org/show_bug.cgi?id=103318
+
+        Reviewed by Eric Carlson.
+
+        There is no need to throw an exception if media load requires user gesture.
+        Since chrome does not render the poster and media control after an exception is thrown, throwing an exception may break a lot of sites on android.
+        Change a current test to match the new behavior: media/video-load-require-user-gesture.html
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::load):
+
 2012-11-27  Víctor Manuel Jáquez Leal  <vjaquez@igalia.com>
 
         [GStreamer] Verify if GStreamer was previously initialized

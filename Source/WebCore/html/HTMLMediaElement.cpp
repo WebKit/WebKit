@@ -682,10 +682,8 @@ void HTMLMediaElement::load(ExceptionCode& ec)
     
     LOG(Media, "HTMLMediaElement::load()");
     
-    if (userGestureRequiredForLoad() && !ScriptController::processingUserGesture()) {
-        ec = INVALID_STATE_ERR;
+    if (userGestureRequiredForLoad() && !ScriptController::processingUserGesture())
         return;
-    }
     
     m_loadInitiatedByUserGesture = ScriptController::processingUserGesture();
     if (m_loadInitiatedByUserGesture)
