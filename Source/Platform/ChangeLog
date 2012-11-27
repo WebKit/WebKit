@@ -1,3 +1,14 @@
+2012-11-27  Keishi Hattori  <keishi@webkit.org>
+
+        Add WebLocalizedString for validation type badinput
+        https://bugs.webkit.org/show_bug.cgi?id=103381
+
+        Reviewed by Kent Tamura.
+
+        Adding WebLocalizedString enums for validation type badinput text.
+
+        * chromium/public/WebLocalizedString.h:
+
 2012-11-26  James Robinson  <jamesr@chromium.org>
 
         [chromium] Remove deprecated and unused WebGraphicsContext3D compositor binding calls

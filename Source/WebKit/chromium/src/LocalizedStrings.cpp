@@ -506,15 +506,13 @@ String validationMessageStepMismatchText(const String& base, const String& step)
 
 String validationMessageBadInputForNumberText()
 {
-    notImplemented();
-    return String("Bad number");
+    return query(WebLocalizedString::ValidationBadInputForNumber);
 }
 
 #if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
 String validationMessageBadInputForDateTimeText()
 {
-    notImplemented();
-    return String("Bad date");
+    return query(WebLocalizedString::ValidationBadInputForDateTime);
 }
 #endif
 
