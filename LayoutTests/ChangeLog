@@ -1,3 +1,14 @@
+2012-11-26  Justin Novosad  <junov@google.com>
+
+        [Qt] new fast/backgrounds/background-opaque-images-over-color.html fails since r135629
+        https://bugs.webkit.org/show_bug.cgi?id=103227
+
+        Reviewed by Simon Hausmann.
+
+        Unskipping test now that baseline has been fixed.
+
+        * platform/qt/TestExpectations:
+
 2012-11-26  Noel Gordon  <noel.gordon@gmail.com>
 
         [chromium mac] Layout Test touchadjustment/touch-links-longpress.html is failing
