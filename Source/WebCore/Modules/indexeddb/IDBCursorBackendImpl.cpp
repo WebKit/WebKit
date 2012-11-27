@@ -173,14 +173,12 @@ void IDBCursorBackendImpl::prefetchContinueInternal(ScriptExecutionContext*, Pas
         return;
     }
 
-    cursor->m_transaction->addPendingEvents(foundKeys.size() - 1);
     callbacks->onSuccessWithPrefetch(foundKeys, foundPrimaryKeys, foundValues);
 }
 
 void IDBCursorBackendImpl::prefetchReset(int usedPrefetches, int unusedPrefetches)
 {
     IDB_TRACE("IDBCursorBackendImpl::prefetchReset");
-    m_transaction->addPendingEvents(-unusedPrefetches);
     m_cursor = m_savedCursor;
     m_savedCursor = 0;
 

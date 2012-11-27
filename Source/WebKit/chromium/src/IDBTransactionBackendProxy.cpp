@@ -72,11 +72,6 @@ void IDBTransactionBackendProxy::abort()
     m_webIDBTransaction->abort();
 }
 
-void IDBTransactionBackendProxy::didCompleteTaskEvents()
-{
-    m_webIDBTransaction->didCompleteTaskEvents();
-}
-
 void IDBTransactionBackendProxy::setCallbacks(IDBTransactionCallbacks* callbacks)
 {
     m_webIDBTransaction->setCallbacks(new WebIDBTransactionCallbacksImpl(callbacks));

@@ -65,11 +65,6 @@ void WebIDBTransactionImpl::abort()
     m_backend->abort();
 }
 
-void WebIDBTransactionImpl::didCompleteTaskEvents()
-{
-    m_backend->didCompleteTaskEvents();
-}
-
 void WebIDBTransactionImpl::setCallbacks(WebIDBTransactionCallbacks* callbacks)
 {
     RefPtr<IDBTransactionCallbacks> idbCallbacks = IDBTransactionCallbacksProxy::create(adoptPtr(callbacks));

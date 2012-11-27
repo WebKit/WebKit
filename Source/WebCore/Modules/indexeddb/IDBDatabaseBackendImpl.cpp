@@ -180,8 +180,6 @@ void IDBDatabaseBackendImpl::createObjectStoreInternal(ScriptExecutionContext*, 
         transaction->abort();
         return;
     }
-
-    transaction->didCompleteTaskEvents();
 }
 
 PassRefPtr<IDBObjectStoreBackendImpl> IDBDatabaseBackendImpl::objectStore(int64_t id)
@@ -210,7 +208,6 @@ void IDBDatabaseBackendImpl::deleteObjectStore(int64_t id, IDBTransactionBackend
 void IDBDatabaseBackendImpl::deleteObjectStoreInternal(ScriptExecutionContext*, PassRefPtr<IDBDatabaseBackendImpl> database, PassRefPtr<IDBObjectStoreBackendImpl> objectStore, PassRefPtr<IDBTransactionBackendImpl> transaction)
 {
     database->m_backingStore->deleteObjectStore(transaction->backingStoreTransaction(), database->id(), objectStore->id());
-    transaction->didCompleteTaskEvents();
 }
 
 void IDBDatabaseBackendImpl::setIntVersionInternal(ScriptExecutionContext*, PassRefPtr<IDBDatabaseBackendImpl> database, int64_t version, PassRefPtr<IDBCallbacks> prpCallbacks, PassRefPtr<IDBDatabaseCallbacks> databaseCallbacks, PassRefPtr<IDBTransactionBackendImpl> transaction)

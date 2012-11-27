@@ -53,7 +53,6 @@ public:
 
     // IDBTransactionBackendInterface
     virtual PassRefPtr<IDBObjectStoreBackendInterface> objectStore(int64_t, ExceptionCode&);
-    virtual void didCompleteTaskEvents();
     virtual void abort();
     virtual void setCallbacks(IDBTransactionCallbacks* callbacks) { m_callbacks = callbacks; }
 
@@ -64,7 +63,6 @@ public:
     bool scheduleTask(TaskType, PassOwnPtr<ScriptExecutionContext::Task>, PassOwnPtr<ScriptExecutionContext::Task> abortTask = nullptr);
     void registerOpenCursor(IDBCursorBackendImpl*);
     void unregisterOpenCursor(IDBCursorBackendImpl*);
-    void addPendingEvents(int);
     void addPreemptiveEvent() { m_pendingPreemptiveEvents++; }
     void didCompletePreemptiveEvent() { m_pendingPreemptiveEvents--; ASSERT(m_pendingPreemptiveEvents >= 0); }
     IDBBackingStore::Transaction* backingStoreTransaction() { return &m_transaction; }
@@ -87,7 +85,6 @@ private:
     bool hasPendingTasks() const;
 
     void taskTimerFired(Timer<IDBTransactionBackendImpl>*);
-    void taskEventTimerFired(Timer<IDBTransactionBackendImpl>*);
     void closeOpenCursors();
 
     const int64_t m_id;
@@ -95,6 +92,7 @@ private:
     const unsigned short m_mode;
 
     State m_state;
+    bool m_commitPending;
     RefPtr<IDBTransactionCallbacks> m_callbacks;
     RefPtr<IDBDatabaseBackendImpl> m_database;
 
@@ -107,9 +105,7 @@ private:
 
     // FIXME: delete the timer once we have threads instead.
     Timer<IDBTransactionBackendImpl> m_taskTimer;
-    Timer<IDBTransactionBackendImpl> m_taskEventTimer;
     int m_pendingPreemptiveEvents;
-    int m_pendingEvents;
 
     HashSet<IDBCursorBackendImpl*> m_openCursors;
 };

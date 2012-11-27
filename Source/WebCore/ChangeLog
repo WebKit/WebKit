@@ -1,3 +1,48 @@
+2012-11-27  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: Simplify transaction timers and event tracking
+        https://bugs.webkit.org/show_bug.cgi?id=102984
+
+        Reviewed by Tony Chang.
+
+        Now that the transaction "commit" decision is made on the front-end, the back end no-longer
+        needs to be aware of when individual IDBRequests have dispatched to script or track pending
+        events (except for preemptive ones like createIndex). This also lets two timers be collapsed
+        into one which significantly simplifies the code flow in IDBTransactionBackendImpl.
+
+        No new tests - just simplification. Exercised by storage/indexeddb/transaction-*.html etc.
+
+        * Modules/indexeddb/IDBCursorBackendImpl.cpp:
+        (WebCore::IDBCursorBackendImpl::prefetchContinueInternal): No more tracking.
+        (WebCore::IDBCursorBackendImpl::prefetchReset): No more tracking.
+        * Modules/indexeddb/IDBDatabaseBackendImpl.cpp:
+        (WebCore::IDBDatabaseBackendImpl::createObjectStoreInternal): No more tracking.
+        (WebCore::IDBDatabaseBackendImpl::deleteObjectStoreInternal): No more tracking.
+        * Modules/indexeddb/IDBObjectStoreBackendImpl.cpp:
+        (WebCore::IDBObjectStoreBackendImpl::setIndexesReadyInternal): No more tracking.
+        (WebCore::IDBObjectStoreBackendImpl::createIndexInternal): No more tracking.
+        (WebCore::IDBObjectStoreBackendImpl::deleteIndexInternal): No more tracking.
+        * Modules/indexeddb/IDBRequest.cpp:
+        (WebCore::IDBRequest::dispatchEvent): Order must be:
+        1. request is unregistered from transaction (so request list may be empty)
+        2. abort transaction if event being dispatched was an error
+        3. deactivate transaction (which may commit if #1 left it empty and #2 didn't abort)
+        * Modules/indexeddb/IDBTransactionBackendImpl.cpp:
+        (WebCore::IDBTransactionBackendImpl::IDBTransactionBackendImpl): Need to track if commit
+        was requested; previously the front end would have triggered an event timer which, on
+        completion, would be the signal that the front end was finished.
+        (WebCore::IDBTransactionBackendImpl::scheduleTask): Schedule a timer to service the new
+        task, if necessary.
+        (WebCore::IDBTransactionBackendImpl::abort):
+        (WebCore::IDBTransactionBackendImpl::hasPendingTasks):
+        (WebCore::IDBTransactionBackendImpl::commit):
+        (WebCore::IDBTransactionBackendImpl::taskTimerFired): Picks up "commit" responsibilities
+        from the now deleted taskEventTimerFired, if everything is truly complete done.
+        * Modules/indexeddb/IDBTransactionBackendImpl.h:
+        (IDBTransactionBackendImpl):
+        * Modules/indexeddb/IDBTransactionBackendInterface.h:
+        (WebCore::IDBTransactionBackendInterface::didCompleteTaskEvents): Removed from interface.
+
 2012-11-27  Kentaro Hara  <haraken@chromium.org>
 
         [V8] Replace toWebCoreString()/toWebCoreAtomicString() in CodeGeneratorV8.pm with V8StringResource

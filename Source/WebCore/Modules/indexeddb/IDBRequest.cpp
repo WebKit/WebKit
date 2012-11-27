@@ -78,9 +78,10 @@ IDBRequest::IDBRequest(ScriptExecutionContext* context, PassRefPtr<IDBAny> sourc
     , m_preventPropagation(false)
     , m_requestState(context)
 {
-    if (m_transaction) {
+    // Requests associated with IDBFactory (open/deleteDatabase/getDatabaseNames) are not
+    // associated with transactions.
+    if (m_transaction)
         m_transaction->registerRequest(this);
-    }
 }
 
 IDBRequest::~IDBRequest()
@@ -476,29 +477,28 @@ bool IDBRequest::dispatchEvent(PassRefPtr<Event> event)
 
     bool dontPreventDefault = IDBEventDispatcher::dispatch(event.get(), targets);
 
-    if (m_transaction && m_readyState == DONE)
-        m_transaction->unregisterRequest(this);
-
-    // If this was the last request in the transaction's list, it may commit here.
-    if (setTransactionActive)
-        m_transaction->setActive(false);
-
-    if (cursorToNotify)
-        cursorToNotify->postSuccessHandlerCallback();
-
-    if (m_readyState == DONE && (!cursorToNotify || m_cursorFinished) && event->type() != eventNames().upgradeneededEvent)
-        m_hasPendingActivity = false;
-
     if (m_transaction) {
+        if (m_readyState == DONE)
+            m_transaction->unregisterRequest(this);
+
+        // Possibly abort the transaction. This must occur after unregistering (so this request
+        // doesn't receive a second error) and before deactivating (which might trigger commit).
         if (event->type() == eventNames().errorEvent && dontPreventDefault && !m_requestAborted) {
             m_transaction->setError(m_error);
             ExceptionCode unused;
             m_transaction->abort(unused);
         }
 
-        if (event->type() != eventNames().blockedEvent)
-            m_transaction->backend()->didCompleteTaskEvents();
+        // If this was the last request in the transaction's list, it may commit here.
+        if (setTransactionActive)
+            m_transaction->setActive(false);
     }
+
+    if (cursorToNotify)
+        cursorToNotify->postSuccessHandlerCallback();
+
+    if (m_readyState == DONE && (!cursorToNotify || m_cursorFinished) && event->type() != eventNames().upgradeneededEvent)
+        m_hasPendingActivity = false;
 
     return dontPreventDefault;
 }

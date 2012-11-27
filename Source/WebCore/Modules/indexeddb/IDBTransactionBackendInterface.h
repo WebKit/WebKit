@@ -54,7 +54,6 @@ public:
     };
 
     virtual PassRefPtr<IDBObjectStoreBackendInterface> objectStore(int64_t, ExceptionCode&) = 0;
-    virtual void didCompleteTaskEvents() = 0;
     virtual void commit() = 0;
     virtual void abort() = 0;
     virtual void setCallbacks(IDBTransactionCallbacks*) = 0;

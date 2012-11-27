@@ -268,7 +268,6 @@ void IDBObjectStoreBackendImpl::setIndexesReadyInternal(ScriptExecutionContext*,
     OwnPtr<Vector<int64_t> > indexIds = popIndexIds;
     for (size_t i = 0; i < indexIds->size(); ++i)
         transaction->didCompletePreemptiveEvent();
-    transaction->didCompleteTaskEvents();
 }
 
 void IDBObjectStoreBackendImpl::putInternal(ScriptExecutionContext*, PassRefPtr<IDBObjectStoreBackendImpl> objectStore, PassRefPtr<SerializedScriptValue> prpValue, PassRefPtr<IDBKey> prpKey, PutMode putMode, PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<IDBTransactionBackendImpl> prpTransaction, PassOwnPtr<Vector<int64_t> > popIndexIds, PassOwnPtr<Vector<IndexKeys> > popIndexKeys)
@@ -407,8 +406,6 @@ void IDBObjectStoreBackendImpl::createIndexInternal(ScriptExecutionContext*, Pas
         transaction->abort();
         return;
     }
-
-    transaction->didCompleteTaskEvents();
 }
 
 PassRefPtr<IDBIndexBackendInterface> IDBObjectStoreBackendImpl::index(int64_t indexId)
@@ -439,7 +436,6 @@ void IDBObjectStoreBackendImpl::deleteIndex(int64_t indexId, IDBTransactionBacke
 void IDBObjectStoreBackendImpl::deleteIndexInternal(ScriptExecutionContext*, PassRefPtr<IDBObjectStoreBackendImpl> objectStore, PassRefPtr<IDBIndexBackendImpl> index, PassRefPtr<IDBTransactionBackendImpl> transaction)
 {
     objectStore->backingStore()->deleteIndex(transaction->backingStoreTransaction(), objectStore->databaseId(), objectStore->id(), index->id());
-    transaction->didCompleteTaskEvents();
 }
 
 void IDBObjectStoreBackendImpl::openCursor(PassRefPtr<IDBKeyRange> prpRange, IDBCursor::Direction direction, PassRefPtr<IDBCallbacks> prpCallbacks, IDBTransactionBackendInterface::TaskType taskType, IDBTransactionBackendInterface* transactionPtr, ExceptionCode&)
