@@ -363,6 +363,9 @@ fast/events/drag-customData.html
 # https://bugs.webkit.org/show_bug.cgi?id=55944
 fast/dom/Geolocation/page-reload-cancel-permission-requests.html
 
+# https://bugs.webkit.org/show_bug.cgi?id=103435
+fast/backgrounds/background-opaque-images-over-color.html
+
 # https://bugs.webkit.org/show_bug.cgi?id=56685
 webarchive/test-link-rel-icon.html
 

@@ -1,3 +1,12 @@
+2012-11-27  Justin Novosad  <junov@google.com>
+
+        Skipping fast/backgrounds/background-opaque-images-over-color.html on mac
+        https://bugs.webkit.org/show_bug.cgi?id=103435
+
+        Unreviewed
+
+        * platform/mac/TestExpectations:
+
 2012-11-27  Marja Hölttä  <marja@chromium.org>
 
         Add callbacks to the FrameLoaderClient when a resource is requested
