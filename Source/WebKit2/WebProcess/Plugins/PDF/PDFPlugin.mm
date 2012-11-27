@@ -578,7 +578,7 @@ bool PDFPlugin::handleContextMenuEvent(const WebMouseEvent& event)
     NSMenu *nsMenu = [m_pdfLayerController.get() menuForEvent:nsEventForWebMouseEvent(event)];
 
     FrameView* frameView = webFrame()->coreFrame()->view();
-    IntPoint point = frameView->contentsToScreen(IntRect(event.position(), IntSize())).location();
+    IntPoint point = frameView->contentsToScreen(IntRect(frameView->windowToContents(event.position()), IntSize())).location();
     if (nsMenu) {
         WKPopupContextMenu(nsMenu, point);
         return true;

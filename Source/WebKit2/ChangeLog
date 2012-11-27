@@ -1,5 +1,20 @@
 2012-11-26  Tim Horton  <timothy_horton@apple.com>
 
+        PDFPlugin: Subframe PDF context menus are in the wrong place
+        https://bugs.webkit.org/show_bug.cgi?id=103284
+        <rdar://problem/12727972>
+
+        Reviewed by Dan Bernstein.
+
+        Event position is in window coordinates, not content coordinates.
+        Since we have no windowToScreen(), use windowToContents and contentsToScreen
+        to get to screen coordinate space, which WKPopupContextMenu wants.
+
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::PDFPlugin::handleContextMenuEvent):
+
+2012-11-26  Tim Horton  <timothy_horton@apple.com>
+
         PDFPlugin: Ctrl-click opens a link in a PDF in addition to context menu
         https://bugs.webkit.org/show_bug.cgi?id=103282
         <rdar://problem/12710892>
