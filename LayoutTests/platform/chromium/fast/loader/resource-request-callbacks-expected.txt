@@ -1,0 +1,21 @@
+main frame - css requested 'gw432047.ttf'
+main frame - css requested 'greenbox-hotspot35-4.cur'
+main frame - element with id 'with-background' requested 'lenna.png'
+main frame - element with id 'img-normal' requested 'dice.png'
+main frame - element with id 'img-changing' requested 'dice.png'
+main frame - element with id 'img-not-there' requested 'not-existing.png'
+main frame - element with no id requested 'js-test-post.js'
+main frame - element with id 'img-changing' requested 'mu.png'
+main frame - element with id 'img-created' requested 'oval.png'
+main frame - element with id 'img-created-2' requested 'png_per_row_alpha.png'
+main frame - element with id 'script-created' requested 'empty-script.js'
+main frame - element with id 'with-background' requested 'palatted-color-png-gamma-one-color-profile.png'
+This test checks that the correct callbacks for resource requests are invoked. It passes if you see the callbacks for eight resources.
+
+    
+
+PASS 
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

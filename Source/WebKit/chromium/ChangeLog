@@ -1,3 +1,46 @@
+2012-11-27  Marja Hölttä  <marja@chromium.org>
+
+        Add callbacks to the FrameLoaderClient when a resource is requested
+        https://bugs.webkit.org/show_bug.cgi?id=92761
+
+        Reviewed by Adam Barth.
+
+        In Chromium, when an extension script cancels a network
+        request (which happens out of process), we'd like to
+        notify content scripts running on the current page about
+        which elements failed to load because the requests were
+        cancelled (as opposed to e.g. the network request just
+        didn't work). Since the resource request itself does not
+        carry any information what DOM element is was made for,
+        currently a content script has to search the DOM tree and
+        guess which requests will be cancelled by its counter
+        part. By adding these callbacks, the embedder can make
+        this connection explictly.
+
+        * WebKit.gyp:
+        * public/WebCachedURLRequest.h: Added.
+        (WebKit):
+        (WebCachedURLRequest):
+        (WebKit::WebCachedURLRequest::~WebCachedURLRequest):
+        * public/WebFrameClient.h:
+        (WebKit):
+        (WebFrameClient):
+        (WebKit::WebFrameClient::willRequestResource):
+        * src/FrameLoaderClientImpl.cpp:
+        (WebKit::FrameLoaderClientImpl::dispatchWillRequestResource):
+        (WebKit):
+        * src/FrameLoaderClientImpl.h:
+        (FrameLoaderClientImpl):
+        * src/WebCachedURLRequest.cpp: Added.
+        (WebKit):
+        (WebKit::WebCachedURLRequest::reset):
+        (WebKit::WebCachedURLRequest::urlRequest):
+        (WebKit::WebCachedURLRequest::charset):
+        (WebKit::WebCachedURLRequest::forPreload):
+        (WebKit::WebCachedURLRequest::initiatorName):
+        (WebKit::WebCachedURLRequest::initiatorElement):
+        (WebKit::WebCachedURLRequest::WebCachedURLRequest):
+
 2012-11-27  Keishi Hattori  <keishi@webkit.org>
 
         Add WebLocalizedString for validation type badinput

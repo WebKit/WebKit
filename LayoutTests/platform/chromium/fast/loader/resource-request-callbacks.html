@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../../fast/js/resources/js-test-pre.js"></script>
+<script>
+window.jsTestIsAsync = true;
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.dumpResourceRequestCallbacks();
+} else {
+    document.write("This test cannot run without a testRunner");
+}
+
+function requestMoreResources() {
+    document.getElementById("img-changing").src = "../../../../fast/images/resources/mu.png";
+
+    var createdImage = document.createElement("img");
+    createdImage.id = "img-created";
+    createdImage.src = "../../../../fast/images/resources/oval.png";
+    document.getElementById("images").appendChild(createdImage);
+
+    document.getElementById("with-background").style.backgroundImage = "url(../../../../fast/images/resources/palatted-color-png-gamma-one-color-profile.png)";
+
+    document.getElementById("more-images").innerHTML = "<img id='img-created-2' src='../../../../fast/images/resources/png_per_row_alpha.png'>";
+
+    var createdScript = document.createElement("script");
+    createdScript.id = "script-created";
+    createdScript.src = "../../../../fast/loader/resources/empty-script.js";
+    document.head.appendChild(createdScript);
+
+    setTimeout(finishTest, 0);
+}
+
+function finishTest() {
+    testPassed("");
+    finishJSTest();
+}
+</script>
+<style>
+#with-background
+{
+    background-image:url("../../../../fast/images/resources/lenna.png");
+}
+body
+{
+    cursor:url("../../../../fast/events/resources/greenbox-hotspot35-4.cur"), pointer;
+}
+@font-face
+{
+    font-family: custom_font;
+    src: url("../../../../fast/text/resources/gw432047.ttf");
+}
+p
+{
+    font-family: custom_font;
+}
+</style>
+</head>
+<body onload="setTimeout(requestMoreResources, 100);">
+<div id="with-background">
+<p>
+    This test checks that the correct callbacks for resource requests are
+    invoked. It passes if you see the callbacks for eight resources.
+</p>
+</div>
+<div id="images">
+<img id="img-normal" src="../../../../fast/images/resources/dice.png" />
+<img id="img-changing" src="../../../../fast/images/resources/dice.png" />
+<img id="img-fail" />
+<img id="img-not-there" src="not-existing.png" />
+</div>
+<div id="more-images">
+</div>
+<div id="console"></div>
+<script src="../../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

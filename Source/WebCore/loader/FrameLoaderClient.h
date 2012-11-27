@@ -63,6 +63,7 @@ namespace WebCore {
 
     class AuthenticationChallenge;
     class CachedFrame;
+    class CachedResourceRequest;
     class Color;
     class DOMWindowExtension;
     class DOMWrapperWorld;
@@ -178,6 +179,8 @@ namespace WebCore {
         virtual void cancelPolicyCheck() = 0;
 
         virtual void dispatchUnableToImplementPolicy(const ResourceError&) = 0;
+
+        virtual void dispatchWillRequestResource(CachedResourceRequest*) { }
 
         virtual void dispatchWillSendSubmitEvent(PassRefPtr<FormState>) = 0;
         virtual void dispatchWillSubmitForm(FramePolicyFunction, PassRefPtr<FormState>) = 0;

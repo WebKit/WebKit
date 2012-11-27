@@ -139,6 +139,7 @@ DRTTestRunner::DRTTestRunner(TestShell* shell)
     bindMethod("dumpProgressFinishedCallback", &DRTTestRunner::dumpProgressFinishedCallback);
     bindMethod("dumpUserGestureInFrameLoadCallbacks", &DRTTestRunner::dumpUserGestureInFrameLoadCallbacks);
     bindMethod("dumpResourceLoadCallbacks", &DRTTestRunner::dumpResourceLoadCallbacks);
+    bindMethod("dumpResourceRequestCallbacks", &DRTTestRunner::dumpResourceRequestCallbacks);
     bindMethod("dumpResourceResponseMIMETypes", &DRTTestRunner::dumpResourceResponseMIMETypes);
     bindMethod("dumpSelectionRect", &DRTTestRunner::dumpSelectionRect);
     bindMethod("dumpStatusCallbacks", &DRTTestRunner::dumpWindowStatusChanges);
@@ -319,6 +320,12 @@ void DRTTestRunner::dumpUserGestureInFrameLoadCallbacks(const CppArgumentList&, 
 void DRTTestRunner::dumpResourceLoadCallbacks(const CppArgumentList&, CppVariant* result)
 {
     m_dumpResourceLoadCallbacks = true;
+    result->setNull();
+}
+
+void DRTTestRunner::dumpResourceRequestCallbacks(const CppArgumentList&, CppVariant* result)
+{
+    m_dumpResourceRequestCallbacks = true;
     result->setNull();
 }
 
@@ -556,6 +563,7 @@ void DRTTestRunner::reset()
     m_dumpProgressFinishedCallback = false;
     m_dumpUserGestureInFrameLoadCallbacks = false;
     m_dumpResourceLoadCallbacks = false;
+    m_dumpResourceRequestCallbacks = false;
     m_dumpResourceResponseMIMETypes = false;
     m_dumpBackForwardList = false;
     m_dumpChildFrameScrollPositions = false;

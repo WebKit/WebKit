@@ -116,7 +116,12 @@ public:
     // line for each resource load callback. It takes no arguments, and ignores
     // any that may be present.
     void dumpResourceLoadCallbacks(const CppArgumentList&, CppVariant*);    
-    
+
+    // This function sets a flag that tells the test_shell to print a line of
+    // descriptive text for each element that requested a resource. It takes no
+    // arguments, and ignores any that may be present.
+    void dumpResourceRequestCallbacks(const CppArgumentList&, CppVariant*);
+
     // This function sets a flag that tells the test_shell to dump the MIME type
     // for each resource that was loaded. It takes no arguments, and ignores any
     // that may be present.
@@ -318,6 +323,8 @@ public:
     bool shouldDumpUserGestureInFrameLoadCallbacks() { return m_dumpUserGestureInFrameLoadCallbacks; }
     void setShouldDumpUserGestureInFrameLoadCallbacks(bool value) { m_dumpUserGestureInFrameLoadCallbacks = value; }
     bool shouldDumpResourceLoadCallbacks() {return m_dumpResourceLoadCallbacks; }
+    void setShouldDumpResourceRequestCallbacks(bool value) { m_dumpResourceRequestCallbacks = value; }
+    bool shouldDumpResourceRequestCallbacks() { return m_dumpResourceRequestCallbacks; }
     void setShouldDumpResourceResponseMIMETypes(bool value) { m_dumpResourceResponseMIMETypes = value; }
     bool shouldDumpResourceResponseMIMETypes() {return m_dumpResourceResponseMIMETypes; }
     bool shouldDumpStatusCallbacks() { return m_dumpWindowStatusChanges; }
@@ -451,7 +458,11 @@ private:
     // If true, the test_shell will output a descriptive line for each resource
     // load callback.
     bool m_dumpResourceLoadCallbacks;
-    
+
+    // If true, the test_shell will output a descriptive line for each resource
+    // request callback.
+    bool m_dumpResourceRequestCallbacks;
+
     // If true, the test_shell will output the MIME type for each resource that 
     // was loaded.
     bool m_dumpResourceResponseMIMETypes;

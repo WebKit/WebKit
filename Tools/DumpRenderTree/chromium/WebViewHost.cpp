@@ -39,6 +39,7 @@
 #include "TestNavigationController.h"
 #include "TestShell.h"
 #include "TestWebPlugin.h"
+#include "WebCachedURLRequest.h"
 #include "WebConsoleMessage.h"
 #include "WebContextMenuData.h"
 #include "WebDOMMessageEvent.h"
@@ -1137,6 +1138,23 @@ static bool isLocalhost(const string& host)
 static bool hostIsUsedBySomeTestsToGenerateError(const string& host)
 {
     return host == "255.255.255.255";
+}
+
+void WebViewHost::willRequestResource(WebKit::WebFrame* frame, const WebKit::WebCachedURLRequest& request)
+{
+    if (m_shell->shouldDumpResourceRequestCallbacks()) {
+        printFrameDescription(frame);
+        WebElement element = request.initiatorElement();
+        if (!element.isNull()) {
+            printf(" - element with ");
+            if (element.hasAttribute("id"))
+                printf("id '%s'", element.getAttribute("id").utf8().data());
+            else
+                printf("no id");
+        } else
+            printf(" - %s", request.initiatorName().utf8().data());
+        printf(" requested '%s'\n", URLDescription(request.urlRequest().url()).c_str());
+    }
 }
 
 void WebViewHost::willSendRequest(WebFrame* frame, unsigned identifier, WebURLRequest& request, const WebURLResponse& redirectResponse)

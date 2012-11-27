@@ -50,6 +50,7 @@ namespace WebKit {
 
 class WebApplicationCacheHost;
 class WebApplicationCacheHostClient;
+class WebCachedURLRequest;
 class WebCookieJar;
 class WebDataSource;
 class WebDOMEvent;
@@ -250,6 +251,9 @@ public:
      // Remove the association between an identifier assigned to a request if
      // the client keeps such an association.
      virtual void removeIdentifierForRequest(unsigned identifier) { }
+
+    // An element will request a resource.
+    virtual void willRequestResource(WebFrame*, const WebCachedURLRequest&) { }
 
     // A request is about to be sent out, and the client may modify it.  Request
     // is writable, and changes to the URL, for example, will change the request
