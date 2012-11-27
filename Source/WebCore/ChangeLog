@@ -1,3 +1,19 @@
+2012-11-27  Andrei Bucur  <abucur@adobe.com>
+
+        [CSS Regions] Crash when dispatching regionlayoutupdate
+        https://bugs.webkit.org/show_bug.cgi?id=102944
+
+        Reviewed by Andreas Kling.
+
+        The event dispatch function was incorrectly assuming the RenderNamedFlowThread is valid. Because the event is asynchronous it's
+        possible for the flow to be in the "NULL" state (the renderer is 0) while the regionlayoutupdate event is dispatched.
+
+        Test: fast/regions/webkit-named-flow-event-crash.html
+
+        * dom/WebKitNamedFlow.cpp:
+        (WebCore::WebKitNamedFlow::dispatchRegionLayoutUpdateEvent): Remove the ASSERT and don't dispatch the event if the flow is
+            in the "NULL" state.
+
 2012-11-27  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSS Regions] Absolutely positioned regions do not expand to fill their container

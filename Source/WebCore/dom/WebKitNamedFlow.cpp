@@ -196,9 +196,12 @@ EventTargetData* WebKitNamedFlow::ensureEventTargetData()
 void WebKitNamedFlow::dispatchRegionLayoutUpdateEvent()
 {
     ASSERT(!NoEventDispatchAssertion::isEventDispatchForbidden());
-    ASSERT(m_parentFlowThread);
 
-    RefPtr<Event> event = UIEvent::create(eventNames().webkitregionlayoutupdateEvent, false, false, m_parentFlowThread->document()->defaultView(), 0);
+    // If the flow is in the "NULL" state the event should not be dispatched any more.
+    if (flowState() == FlowStateNull)
+        return;
+
+    RefPtr<Event> event = UIEvent::create(eventNames().webkitregionlayoutupdateEvent, false, false, m_flowManager->document()->defaultView(), 0);
 
     dispatchEvent(event);
 }

@@ -1,3 +1,16 @@
+2012-11-27  Andrei Bucur  <abucur@adobe.com>
+
+        [CSS Regions] Crash when dispatching regionlayoutupdate
+        https://bugs.webkit.org/show_bug.cgi?id=102944
+
+        Reviewed by Andreas Kling.
+
+        The test modifies the layout, forces a regionlayoutupdate event to be scheduled and then removes the content and the regions.
+        The event is dispatched on a named flow in the "NULL" state. Without this patch a crash occurs.
+
+        * fast/regions/webkit-named-flow-event-crash-expected.txt: Added.
+        * fast/regions/webkit-named-flow-event-crash.html: Added.
+
 2012-11-27  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         Reduce XHR timeout tests execution time
