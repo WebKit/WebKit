@@ -33,6 +33,7 @@
 #include "DocumentFragment.h"
 #include "DocumentLoader.h"
 #include "DocumentLoaderGtk.h"
+#include "FrameLoadRequest.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClientGtk.h"
 #include "FrameSelection.h"
@@ -674,7 +675,7 @@ void webkit_web_frame_load_uri(WebKitWebFrame* frame, const gchar* uri)
     if (!coreFrame)
         return;
 
-    coreFrame->loader()->load(ResourceRequest(KURL(KURL(), String::fromUTF8(uri))), false);
+    coreFrame->loader()->load(FrameLoadRequest(coreFrame, ResourceRequest(KURL(KURL(), String::fromUTF8(uri)))));
 }
 
 static void webkit_web_frame_load_data(WebKitWebFrame* frame, const gchar* content, const gchar* mimeType, const gchar* encoding, const gchar* baseURL, const gchar* unreachableURL)
@@ -693,7 +694,7 @@ static void webkit_web_frame_load_data(WebKitWebFrame* frame, const gchar* conte
                                   KURL(KURL(), String::fromUTF8(unreachableURL)),
                                   KURL(KURL(), String::fromUTF8(unreachableURL)));
 
-    coreFrame->loader()->load(request, substituteData, false);
+    coreFrame->loader()->load(FrameLoadRequest(coreFrame, request, substituteData));
 }
 
 /**
@@ -762,7 +763,7 @@ void webkit_web_frame_load_request(WebKitWebFrame* frame, WebKitNetworkRequest* 
     if (!coreFrame)
         return;
 
-    coreFrame->loader()->load(core(request), false);
+    coreFrame->loader()->load(FrameLoadRequest(coreFrame->document()->securityOrigin(), core(request)));
 }
 
 /**

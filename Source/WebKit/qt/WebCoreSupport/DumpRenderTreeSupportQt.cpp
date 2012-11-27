@@ -40,6 +40,7 @@
 #include "Element.h"
 #include "FocusController.h"
 #include "Frame.h"
+#include "FrameLoadRequest.h"
 #include "FrameLoaderClientQt.h"
 #include "FrameView.h"
 #include "GCController.h"
@@ -926,7 +927,7 @@ void DumpRenderTreeSupportQt::setAlternateHtml(QWebFrameAdapter* adapter, const 
     const QByteArray utf8 = html.toUtf8();
     WTF::RefPtr<WebCore::SharedBuffer> data = WebCore::SharedBuffer::create(utf8.constData(), utf8.length());
     WebCore::SubstituteData substituteData(data, WTF::String("text/html"), WTF::String("utf-8"), failingUrl);
-    coreFrame->loader()->load(request, substituteData, false);
+    coreFrame->loader()->load(WebCore::FrameLoadRequest(coreFrame, request, substituteData));
 }
 
 void DumpRenderTreeSupportQt::confirmComposition(QWebPageAdapter *adapter, const char* text)
