@@ -98,7 +98,7 @@ class PropertyNodeList;
 
 typedef int ExceptionCode;
 
-const int nodeStyleChangeShift = 19;
+const int nodeStyleChangeShift = 18;
 
 // SyntheticStyleChange means that we need to go through the entire style change logic even though
 // no style property has actually changed. It is used to restructure the tree when, for instance,
@@ -706,23 +706,22 @@ private:
         IsParsingChildrenFinishedFlag = 1 << 15, // Element
 #if ENABLE(SVG)
         AreSVGAttributesValidFlag = 1 << 16, // Element
-        IsSynchronizingSVGAttributesFlag = 1 << 17, // SVGElement
-        HasSVGRareDataFlag = 1 << 18, // SVGElement
+        HasSVGRareDataFlag = 1 << 17, // SVGElement
 #endif
 
         StyleChangeMask = 1 << nodeStyleChangeShift | 1 << (nodeStyleChangeShift + 1),
 
-        SelfOrAncestorHasDirAutoFlag = 1 << 21,
+        SelfOrAncestorHasDirAutoFlag = 1 << 20,
 
-        HasNameOrIsEditingTextFlag = 1 << 22,
+        HasNameOrIsEditingTextFlag = 1 << 21,
 
-        InNamedFlowFlag = 1 << 23,
-        HasSyntheticAttrChildNodesFlag = 1 << 24,
-        HasCustomCallbacksFlag = 1 << 25,
-        HasScopedHTMLStyleChildFlag = 1 << 26,
-        HasEventTargetDataFlag = 1 << 27,
-        V8CollectableDuringMinorGCFlag = 1 << 28,
-        IsInsertionPointFlag = 1 << 29,
+        InNamedFlowFlag = 1 << 22,
+        HasSyntheticAttrChildNodesFlag = 1 << 23,
+        HasCustomCallbacksFlag = 1 << 24,
+        HasScopedHTMLStyleChildFlag = 1 << 25,
+        HasEventTargetDataFlag = 1 << 26,
+        V8CollectableDuringMinorGCFlag = 1 << 27,
+        IsInsertionPointFlag = 1 << 28,
 
 #if ENABLE(SVG)
         DefaultNodeFlags = IsParsingChildrenFinishedFlag | AreSVGAttributesValidFlag,
@@ -731,7 +730,7 @@ private:
 #endif
     };
 
-    // 2 bits remaining
+    // 3 bits remaining
 
     bool getFlag(NodeFlags mask) const { return m_nodeFlags & mask; }
     void setFlag(bool f, NodeFlags mask) const { m_nodeFlags = (m_nodeFlags & ~mask) | (-(int32_t)f & mask); } 
@@ -843,9 +842,6 @@ protected:
     bool areSVGAttributesValid() const { return getFlag(AreSVGAttributesValidFlag); }
     void setAreSVGAttributesValid() const { setFlag(AreSVGAttributesValidFlag); }
     void clearAreSVGAttributesValid() { clearFlag(AreSVGAttributesValidFlag); }
-    bool isSynchronizingSVGAttributes() const { return getFlag(IsSynchronizingSVGAttributesFlag); }
-    void setIsSynchronizingSVGAttributes() const { setFlag(IsSynchronizingSVGAttributesFlag); }
-    void clearIsSynchronizingSVGAttributes() const { clearFlag(IsSynchronizingSVGAttributesFlag); }
     bool hasSVGRareData() const { return getFlag(HasSVGRareDataFlag); }
     void setHasSVGRareData() { setFlag(HasSVGRareDataFlag); }
     void clearHasSVGRareData() { clearFlag(HasSVGRareDataFlag); }

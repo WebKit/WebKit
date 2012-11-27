@@ -1,3 +1,23 @@
+2012-11-26  Andreas Kling  <akling@apple.com>
+
+        Node: Remove IsSynchronizingSVGAttributesFlag.
+        <http://webkit.org/b/103328>
+
+        Reviewed by Antti Koivisto.
+
+        Animated SVG attributes used to be synchronized by using DOM API which could use unwanted re-entrancy
+        via callbacks below Element::attributeChanged(). The "is synchronizing SVG attributes" flag was used
+        to protect against such re-entrancy.
+
+        These days, lazy attributes are synchronized using Element::setSynchronizedLazyAttribute() to avoid
+        issues like this. The flag does nothing, so we can just remove it.
+
+        * dom/Node.h:
+        (WebCore):
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::attributeChanged):
+        (WebCore::SVGElement::updateAnimatedSVGAttribute):
+
 2012-11-26  Kentaro Hara  <haraken@chromium.org>
 
         [V8] Refactor WorkerScriptController
