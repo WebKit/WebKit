@@ -116,6 +116,8 @@ public:
     // FIXME: This variant of send is deprecated. All clients should move to an overload that take a message type.
     template<typename E, typename T> bool deprecatedSend(E messageID, uint64_t destinationID, const T& arguments);
 
+    static void setInvalidMessageCallback(void (*)(uint32_t));
+
 private:
     explicit WebProcessProxy(PassRefPtr<WebContext>);
 

@@ -374,9 +374,14 @@ void WebProcessProxy::didClose(CoreIPC::Connection*)
         pages[i]->processDidCrash();
 }
 
+void (*s_invalidMessageCallback)(uint32_t messageID);
+
 void WebProcessProxy::didReceiveInvalidMessage(CoreIPC::Connection*, CoreIPC::MessageID messageID)
 {
     WTFLogAlways("Received an invalid message from the web process with message ID %x\n", messageID.toInt());
+
+    if (s_invalidMessageCallback)
+        s_invalidMessageCallback(messageID.toInt());
 
     // Terminate the WebProcesses.
     terminate();
@@ -500,6 +505,11 @@ void WebProcessProxy::updateTextCheckerState()
         return;
 
     send(Messages::WebProcess::SetTextCheckerState(TextChecker::state()), 0);
+}
+
+void WebProcessProxy::setInvalidMessageCallback(void (*invalidMessageCallback)(uint32_t))
+{
+    s_invalidMessageCallback = invalidMessageCallback;
 }
 
 } // namespace WebKit

@@ -1,3 +1,18 @@
+2012-11-27  Anders Carlsson  <andersca@apple.com>
+
+        <rdar://problem/11755093>
+        Add API to set a global function callback for when invalid messages are received from the web process.
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetInvalidMessageFunction):
+        * UIProcess/API/C/WKPagePrivate.h:
+        * UIProcess/WebPageProxy.cpp:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::didReceiveInvalidMessage):
+        (WebKit::WebProcessProxy::setInvalidMessageCallback):
+        * UIProcess/WebProcessProxy.h:
+        (WebProcessProxy):
+
 2012-11-27  Lucas Forschler  <lforschler@apple.com>
 
         Merge r133702

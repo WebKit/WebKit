@@ -688,3 +688,8 @@ void WKPageSetMediaVolume(WKPageRef page, float volume)
 {
     toImpl(page)->setMediaVolume(volume);    
 }
+
+void WKPageSetInvalidMessageFunction(WKPageInvalidMessageFunction function)
+{
+    WebProcessProxy::setInvalidMessageCallback(function);
+}
