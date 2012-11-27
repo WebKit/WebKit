@@ -87,6 +87,7 @@ namespace WebKit {
     macro(CompositingRepaintCountersVisible, compositingRepaintCountersVisible, Bool, bool, false) \
     macro(CSSCustomFilterEnabled, cssCustomFilterEnabled, Bool, bool, true) \
     macro(WebGLEnabled, webGLEnabled, Bool, bool, false) \
+    macro(Accelerated2dCanvasEnabled, accelerated2dCanvasEnabled, Bool, bool, false) \
     macro(CSSRegionsEnabled, cssRegionsEnabled, Bool, bool, true) \
     macro(CSSGridLayoutEnabled, cssGridLayoutEnabled, Bool, bool, false) \
     macro(RegionBasedColumnsEnabled, regionBasedColumnsEnabled, Bool, bool, false) \

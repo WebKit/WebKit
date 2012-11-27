@@ -1,3 +1,21 @@
+2012-11-26  Kyungjin Kim  <gen.kim@samsung.com>
+
+        [WK2] Expose Accelerated2dCanvas flag set and get in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=103008
+
+        Reviewed by Gyuyoung Kim.
+
+        Add setting APIs for accelerated 2d canvas in WebKit2.
+
+        * Shared/WebPreferencesStore.h:
+        (WebKit):
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetAccelerated2dCanvasEnabled):
+        (WKPreferencesGetAccelerated2dCanvasEnabled):
+        * UIProcess/API/C/WKPreferencesPrivate.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+
 2012-11-26  Tim Horton  <timothy_horton@apple.com>
 
         Ensure that plugins are initialized before using handleEditingCommand/isEditingCommandEnabled/shouldAllowScripting

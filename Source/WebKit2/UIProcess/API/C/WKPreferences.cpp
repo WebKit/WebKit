@@ -448,6 +448,16 @@ bool WKPreferencesGetWebGLEnabled(WKPreferencesRef preferencesRef)
     return toImpl(preferencesRef)->webGLEnabled();
 }
 
+void WKPreferencesSetAccelerated2dCanvasEnabled(WKPreferencesRef preferencesRef, bool flag)
+{
+    toImpl(preferencesRef)->setAccelerated2dCanvasEnabled(flag);
+}
+
+bool WKPreferencesGetAccelerated2dCanvasEnabled(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->accelerated2dCanvasEnabled();
+}
+
 void WKPreferencesSetCSSRegionsEnabled(WKPreferencesRef preferencesRef, bool flag)
 {
     toImpl(preferencesRef)->setCSSRegionsEnabled(flag);
