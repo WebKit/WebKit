@@ -59,12 +59,15 @@ JSEventListener::~JSEventListener()
 
 JSObject* JSEventListener::initializeJSFunction(ScriptExecutionContext*) const
 {
-    ASSERT_NOT_REACHED();
     return 0;
 }
 
 void JSEventListener::visitJSFunction(SlotVisitor& visitor)
 {
+    // If m_wrapper is 0, then m_jsFunction is zombied, and should never be accessed.
+    if (!m_wrapper)
+        return;
+
     if (m_jsFunction)
         visitor.append(&m_jsFunction);
 }
@@ -166,8 +169,14 @@ bool JSEventListener::virtualisAttribute() const
 
 bool JSEventListener::operator==(const EventListener& listener)
 {
-    if (const JSEventListener* jsEventListener = JSEventListener::cast(&listener))
-        return m_jsFunction == jsEventListener->m_jsFunction && m_isAttribute == jsEventListener->m_isAttribute;
+    if (const JSEventListener* jsEventListener = JSEventListener::cast(&listener)) {
+        // If m_wrapper is 0, then m_jsFunction is zombied, and should never be
+        // accessed. m_jsFunction should effectively be 0 in that case.
+        JSC::JSObject* jsFunction = m_wrapper ? m_jsFunction.get() : 0;
+        JSC::JSObject* otherJSFunction = jsEventListener->m_wrapper ?
+            jsEventListener->m_jsFunction.get() : 0;
+        return jsFunction == otherJSFunction && m_isAttribute == jsEventListener->m_isAttribute;
+    }
     return false;
 }
 

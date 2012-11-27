@@ -85,11 +85,13 @@ namespace WebCore {
             m_jsFunction.setMayBeNull(*scriptExecutionContext->globalData(), m_wrapper.get(), function);
         }
 
+        // If m_wrapper is 0, then m_jsFunction is zombied, and should never be accessed.
+        if (!m_wrapper)
+            return 0;
+
         // Verify that we have a valid wrapper protecting our function from
         // garbage collection.
         ASSERT(m_wrapper || !m_jsFunction);
-        if (!m_wrapper)
-            return 0;
 
         // Try to verify that m_jsFunction wasn't recycled. (Not exact, since an
         // event listener can be almost anything, but this makes test-writing easier).
