@@ -2,6 +2,15 @@
 
         Unreviewed GTK gardening.
 
+        Cleaning up expectations, removing those that cover tests
+        that are now passing.
+
+        * platform/gtk/TestExpectations:
+
+2012-11-27  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening.
+
         Adding timeout expectations for three plugins tests timing out after r135786.
 
         * platform/gtk/TestExpectations:

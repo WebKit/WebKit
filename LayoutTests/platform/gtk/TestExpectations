@@ -451,19 +451,6 @@ webkit.org/b/99452 [ Debug ] platform/gtk/fonts/font-face-with-complex-text.html
 webkit.org/b/98722 [ Debug ] fast/dom/gc-acid3.html [ Crash Pass ]
 webkit.org/b/98722 [ Debug ] http/tests/misc/acid3.html [ Crash Failure ]
 
-webkit.org/b/100236 [ Debug ] http/tests/loading/basic-auth-resend-wrong-credentials.html [ Crash ]
-webkit.org/b/100236 [ Debug ] http/tests/loading/basic-credentials-sent-automatically.html [ Crash ]
-webkit.org/b/100236 [ Debug ] http/tests/xmlhttprequest/access-control-preflight-credential-async.html [ Crash ]
-webkit.org/b/100236 [ Debug ] http/tests/xmlhttprequest/basic-auth-nopassword.html [ Crash ]
-webkit.org/b/100236 [ Debug ] http/tests/xmlhttprequest/basic-auth-nouser.html [ Crash ]
-webkit.org/b/100236 [ Debug ] http/tests/xmlhttprequest/cross-origin-no-credential-prompt.html [ Crash ]
-webkit.org/b/100236 [ Debug ] http/tests/xmlhttprequest/failed-auth.html [ Crash ]
-webkit.org/b/100236 [ Debug ] http/tests/xmlhttprequest/remember-bad-password.html [ Crash ]
-webkit.org/b/100236 [ Debug ] http/tests/misc/401-alternative-content.php [ Crash ]
-webkit.org/b/100236 [ Debug ] http/tests/misc/authentication-redirect-1/authentication-sent-to-redirect-cross-origin.html [ Crash ]
-webkit.org/b/100236 [ Debug ] http/tests/misc/authentication-redirect-2/authentication-sent-to-redirect-same-origin.html [ Crash ]
-webkit.org/b/100236 [ Debug ] http/tests/misc/authentication-redirect-3/authentication-sent-to-redirect-same-origin-with-location-credentials.html [ Crash ]
-
 webkit.org/b/100688 fast/css-generated-content/first-letter-table-cell-format-block-crash.html [ Crash Pass ]
 webkit.org/b/100688 fast/text/text-fragment-first-letter-update-crash.html [ Crash Pass ]
 webkit.org/b/100688 fast/text/custom-font-data-crash2.html [ Crash Pass ]
@@ -672,12 +659,7 @@ webkit.org/b/73003 [ Release ] editing/spelling/spellcheck-async.html [ Timeout 
 webkit.org/b/73003 [ Release ] editing/spelling/spellcheck-paste.html [ Timeout ]
 webkit.org/b/50740 [ Release ] editing/spelling/spellcheck-queue.html [ Timeout ]
 
-webkit.org/b/101428 media/audio-concurrent-supported.html [ Timeout ]
-webkit.org/b/101428 media/media-continues-playing-after-replace-source.html [ Timeout ]
-
 Bug(GTK) media/progress-events-generated-correctly.html [ Timeout ]
-
-webkit.org/b/102183 fast/events/attribute-listener-deletion-crash.html [ Timeout ]
 
 webkit.org/b/102257 fast/dom/Window/open-window-min-size.html [ Timeout ]
 
@@ -863,15 +845,15 @@ webkit.org/b/53986 svg/text/caret-in-svg-text.xhtml [ Failure ]
 
 # No authentication challenge handling
 webkit.org/b/51104 http/tests/loading/authentication-after-redirect-stores-wrong-credentials/authentication-after-redirect-stores-wrong-credentials.html [ Skip ]
-webkit.org/b/51104 [ Release ] http/tests/loading/basic-auth-resend-wrong-credentials.html [ Failure ]
-webkit.org/b/51104 [ Release ] http/tests/loading/basic-credentials-sent-automatically.html [ Failure ]
-webkit.org/b/51104 [ Release ] http/tests/misc/authentication-redirect-1/authentication-sent-to-redirect-cross-origin.html [ Failure ]
-webkit.org/b/51104 [ Release ] http/tests/misc/authentication-redirect-2/authentication-sent-to-redirect-same-origin.html [ Failure ]
-webkit.org/b/51104 [ Release ] http/tests/misc/authentication-redirect-3/authentication-sent-to-redirect-same-origin-with-location-credentials.html [ Failure ]
+webkit.org/b/51104 http/tests/loading/basic-auth-resend-wrong-credentials.html [ Failure ]
+webkit.org/b/51104 http/tests/loading/basic-credentials-sent-automatically.html [ Failure ]
+webkit.org/b/51104 http/tests/misc/authentication-redirect-1/authentication-sent-to-redirect-cross-origin.html [ Failure ]
+webkit.org/b/51104 http/tests/misc/authentication-redirect-2/authentication-sent-to-redirect-same-origin.html [ Failure ]
+webkit.org/b/51104 http/tests/misc/authentication-redirect-3/authentication-sent-to-redirect-same-origin-with-location-credentials.html [ Failure ]
 webkit.org/b/51104 http/tests/security/401-logout/401-logout.php [ Skip ]
-webkit.org/b/51104 [ Release ] http/tests/xmlhttprequest/basic-auth-nouser.html [ Failure ]
-webkit.org/b/51104 [ Release ] http/tests/xmlhttprequest/basic-auth-nopassword.html [ Failure ]
-webkit.org/b/51104 [ Release ] http/tests/xmlhttprequest/remember-bad-password.html [ Failure ]
+webkit.org/b/51104 http/tests/xmlhttprequest/basic-auth-nouser.html [ Failure ]
+webkit.org/b/51104 http/tests/xmlhttprequest/basic-auth-nopassword.html [ Failure ]
+webkit.org/b/51104 http/tests/xmlhttprequest/remember-bad-password.html [ Failure ]
 
 # This port doesn't have a global history delegate yet
 Bug(GTK) http/tests/globalhistory [ Failure ]
@@ -1214,8 +1196,6 @@ webkit.org/b/84701 fast/block/line-layout/selection-highlight-overlap.html [ Ima
 webkit.org/b/84701 fast/css/sticky/inline-sticky-abspos-child.html [ ImageOnlyFailure ]
 webkit.org/b/84701 fast/css/sticky/inline-sticky.html [ ImageOnlyFailure ]
 
-webkit.org/b/85376 fullscreen/video-controls-drag.html [ Failure ]
-
 webkit.org/b/84759 ietestcenter/css3/multicolumn/column-containing-block-001.htm [ ImageOnlyFailure ]
 webkit.org/b/84760 ietestcenter/css3/multicolumn/column-containing-block-002.htm [ ImageOnlyFailure ]
 webkit.org/b/84761 ietestcenter/css3/multicolumn/column-filling-001.htm [ ImageOnlyFailure ]
@@ -1294,8 +1274,6 @@ webkit.org/b/89845 fast/forms/input-set-composition-scroll.html [ Failure ]
 webkit.org/b/90007 http/tests/security/mixedContent/insecure-audio-video-in-main-frame.html [ Failure ]
 
 webkit.org/b/74219 fast/regions/positioned-objects-block-static-spanning-regions-rtl.html [ ImageOnlyFailure ]
-
-webkit.org/b/88684 fast/text/descent-clip-in-scaled-page.html [ ImageOnlyFailure ]
 
 # This failure appears to be GTK-specific
 webkit.org/b/91319 css2.1/20110323/vertical-align-boxes-001.htm [ ImageOnlyFailure ]
@@ -1388,8 +1366,6 @@ webkit.org/b/99893 svg/animations/mozilla/animateMotion-mpath-targetChange-1.svg
 
 webkit.org/b/101539 editing/execCommand/switch-list-type-with-orphaned-li.html [ Failure ]
 
-webkit.org/b/102183 svg/custom/use-instanceRoot-event-listeners.xhtml [ Failure ]
-
 webkit.org/b/102349 fast/dom/shadow/pseudoclass-update-enabled-anchor.html [ ImageOnlyFailure ]
 webkit.org/b/102349 fast/dom/shadow/pseudoclass-update-enabled-area.html [ ImageOnlyFailure ]
 
@@ -1405,8 +1381,6 @@ webkit.org/b/102776 media/track/track-cue-rendering-vertical.html [ Failure ]
 webkit.org/b/61138 http/tests/w3c/webperf/submission/resource-timing [ Skip ]
 
 webkit.org/b/103109 fast/dom/shadow/host-wrapper-reclaimed.html [ Failure ]
-
-webkit.org/b/102557 fast/backgrounds/background-opaque-images-over-color.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing
