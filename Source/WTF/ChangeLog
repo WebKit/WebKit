@@ -1,3 +1,17 @@
+2012-11-26  Filip Pizlo  <fpizlo@apple.com>
+
+        DataLog to a file should work if there are multiple processes using WTF
+        https://bugs.webkit.org/show_bug.cgi?id=103323
+
+        Reviewed by Mark Hahnenberg.
+
+        Whereas before DataLog would open a file with the name you specified, now it'll open a file with the
+        name plus the PID appended to it. So if you are dealing with multiple processes running with DataLog
+        to a file enabled, you'll get multiple separate log files.
+
+        * wtf/DataLog.cpp:
+        (WTF::initializeLogFileOnce):
+
 2012-11-26  Zeno Albisser  <zeno@webkit.org>
 
         [Qt] Fix the LLInt build on Mac

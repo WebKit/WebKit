@@ -27,7 +27,12 @@
 #include "DataLog.h"
 #include <stdarg.h>
 #include <wtf/FilePrintStream.h>
+#include <wtf/WTFThreadData.h>
 #include <wtf/Threading.h>
+
+#if OS(UNIX)
+#include <unistd.h>
+#endif
 
 #if OS(WINCE)
 #ifndef _IONBF
@@ -37,8 +42,9 @@
 
 #define DATA_LOG_TO_FILE 0
 
-// Uncomment to force logging to the given file regardless of what the environment variable says.
-// #define DATA_LOG_FILENAME "/tmp/WTFLog.txt"
+// Uncomment to force logging to the given file regardless of what the environment variable says. Note that
+// we will append ".<pid>.txt" where <pid> is the PID.
+#define DATA_LOG_FILENAME "/tmp/WTFLog"
 
 namespace WTF {
 
@@ -56,12 +62,14 @@ static void initializeLogFileOnce()
 #else
     const char* filename = getenv("WTF_DATA_LOG_FILENAME");
 #endif
+    char actualFilename[1024];
+    snprintf(actualFilename, sizeof(actualFilename), "%s.%d.txt", filename, getpid());
     if (filename) {
-        FILE* rawFile = fopen(filename, "w");
+        FILE* rawFile = fopen(actualFilename, "w");
         if (rawFile)
             file = new FilePrintStream(rawFile);
         else
-            fprintf(stderr, "Warning: Could not open log file %s for writing.\n", filename);
+            fprintf(stderr, "Warning: Could not open log file %s for writing.\n", actualFilename);
     }
 #endif // DATA_LOG_TO_FILE
     if (!file)
