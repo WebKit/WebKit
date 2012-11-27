@@ -1,3 +1,11 @@
+2012-11-27  Filip Pizlo  <fpizlo@apple.com>
+
+        Fix indentation in JSValue.h
+
+        Rubber stamped by Mark Hahnenberg.
+
+        * runtime/JSValue.h:
+
 2012-11-26  Filip Pizlo  <fpizlo@apple.com>
 
         DFG SetLocal should use forwardSpeculationCheck instead of its own half-baked version of same
