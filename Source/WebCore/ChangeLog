@@ -1,3 +1,22 @@
+2012-11-28  Otto Derek Cheung  <otcheung@rim.com>
+
+        [BlackBerry] CookieJarBlackBerry will use document settings for cookiesEnabled
+        https://bugs.webkit.org/show_bug.cgi?id=103560
+
+        Reviewed by Rob Buis.
+
+        PR 253490
+
+        CookieJarBlackBerry will now use page settings to check whether
+        cookie is enabled.
+
+        Tested setting/reading cookies on different client cookie settings using
+        javascript and HTTP. Cookie behaviour is now back to spec.
+
+        * loader/blackberry/CookieJarBlackBerry.cpp:
+        (WebCore::cookies):
+        (WebCore::cookieRequestHeaderFieldValue):
+
 2012-11-28  Mark Pilgrim  <pilgrim@chromium.org>
 
         [Chromium][Win] Remove ensureFontLoaded from PlatformSupport

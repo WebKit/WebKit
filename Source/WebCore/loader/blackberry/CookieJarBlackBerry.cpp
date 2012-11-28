@@ -39,6 +39,9 @@ namespace WebCore {
 
 String cookies(Document const* document, KURL const& url)
 {
+    if (!document->settings()->cookieEnabled())
+        return String();
+
     // 'HttpOnly' cookies should no be accessible from scripts, so we filter them out here
     return cookieManager().getCookie(url, NoHttpOnlyCookie);
 }
@@ -75,12 +78,7 @@ void deleteCookie(const Document* document, const KURL& url, const String& cooki
 
 String cookieRequestHeaderFieldValue(const Document* document, const KURL &url)
 {
-    ASSERT(document);
-
-    if (!(document->frame() && document->frame()->loader() && document->frame()->loader()->client()))
-        return String();
-
-    if (!static_cast<FrameLoaderClientBlackBerry*>(document->frame()->loader()->client())->cookiesEnabled())
+    if (!document->settings()->cookieEnabled())
         return String();
 
     return cookieManager().getCookie(url, WithHttpOnlyCookies);

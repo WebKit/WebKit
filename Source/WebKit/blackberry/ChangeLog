@@ -1,3 +1,18 @@
+2012-11-28  Otto Derek Cheung  <otcheung@rim.com>
+
+        [BlackBerry] CookieJarBlackBerry will use document settings for cookiesEnabled
+        https://bugs.webkit.org/show_bug.cgi?id=103560
+
+        Reviewed by Rob Buis.
+
+        PR 253490
+
+        Syncing platform Websetting's cookieEnabled value with Page->setting's cookieEnabled
+        value.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::didChangeSettings):
+
 2012-11-27  James Simonsen  <simonjam@chromium.org>
 
         Consolidate FrameLoader::load() into one function taking a FrameLoadRequest
