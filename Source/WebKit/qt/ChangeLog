@@ -1,3 +1,26 @@
+2012-11-28  Huang Dongsung  <luxtella@company100.net>
+
+        [Texmap] REGRESSION(r135620) QtTestBrowser crashes on Google-gravity.
+        https://bugs.webkit.org/show_bug.cgi?id=103410
+
+        Reviewed by Noam Rosenthal.
+
+        TextureMapperLayerClientQt::setTextureMapper() must call
+        flushCompositingStateForThisLayerOnly() of the root layer.
+
+        Currently, PageClientQGraphicsWidget::setRootGraphicsLayer does not flush layer
+        states of the root layer after setting TextureMapper while
+        PageClientQWidget::setRootGraphicsLayer() flushes them of the root layer.  If
+        not flushing states, descendant layers can not reach the root layer. It means
+        descendant layers can not reach the TextureMapper that the root layer has.
+
+        This is already the behavior for PageClientQWidget, which should be the case
+        for PageClientQGraphicsWidget as well.
+
+        * WebCoreSupport/PageClientQt.cpp:
+        (WebCore::TextureMapperLayerClientQt::setTextureMapper):
+        (WebCore::PageClientQWidget::setRootGraphicsLayer):
+
 2012-11-27  James Simonsen  <simonjam@chromium.org>
 
         Consolidate FrameLoader::load() into one function taking a FrameLoadRequest

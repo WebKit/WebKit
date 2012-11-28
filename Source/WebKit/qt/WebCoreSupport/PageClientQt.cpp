@@ -100,6 +100,7 @@ void TextureMapperLayerClientQt::setTextureMapper(const PassOwnPtr<TextureMapper
 {
     m_frame->d->textureMapper = textureMapper;
     m_frame->d->rootTextureMapperLayer->setTextureMapper(m_frame->d->textureMapper.get());
+    syncRootLayer();
 }
 
 TextureMapperLayerClientQt::~TextureMapperLayerClientQt()
@@ -123,7 +124,6 @@ void PageClientQWidget::setRootGraphicsLayer(GraphicsLayer* layer)
     if (layer) {
         TextureMapperLayerClient = adoptPtr(new TextureMapperLayerClientQt(page->mainFrame(), layer));
         TextureMapperLayerClient->setTextureMapper(TextureMapper::create());
-        TextureMapperLayerClient->syncRootLayer();
         return;
     }
     TextureMapperLayerClient.clear();
