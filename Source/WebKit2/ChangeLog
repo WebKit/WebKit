@@ -1,3 +1,31 @@
+2012-11-27  Huang Dongsung  <luxtella@company100.net>
+
+        REGRESSION(r135620): ASSERT(m_state.drawsContent && m_state.contentsVisible && !m_size.isEmpty()) hits in TextureMapperLayer::paintSelf().
+        https://bugs.webkit.org/show_bug.cgi?id=103171
+
+        Reviewed by Noam Rosenthal.
+
+        Ensure that TextureMapperLayer has a backing store when the layer has
+        drawsContent and contentsVisible properties and the size of the layer is not
+        empty.
+
+        LayerTreeRenderer::setLayerState() must not set a backing store to
+        TextureMapperLayer because setLayerState() just changes states of
+        GraphicsLayerTextureMapper instead of TextureMapperLayer.
+
+        Now LayerTreeRenderer::flushLayerChanges() sets a backing store as well as layer
+        states to TextureMapperLayer.
+
+        * UIProcess/CoordinatedGraphics/LayerTreeRenderer.cpp:
+        (WebKit::LayerTreeRenderer::getBackingStore):
+        (WebKit::LayerTreeRenderer::prepareContentBackingStore):
+        (WebKit::LayerTreeRenderer::createBackingStoreIfNeeded):
+        (WebKit::LayerTreeRenderer::removeBackingStoreIfNeeded):
+        (WebKit::LayerTreeRenderer::commitPendingBackingStoreOperations):
+        (WebKit::LayerTreeRenderer::flushLayerChanges):
+        * UIProcess/CoordinatedGraphics/LayerTreeRenderer.h:
+        (WebCore):
+
 2012-11-27  Tim Horton  <timothy_horton@apple.com>
 
         PDFPlugin: Should not be able to edit read-only text annotations
