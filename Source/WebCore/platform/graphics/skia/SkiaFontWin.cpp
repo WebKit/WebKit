@@ -32,10 +32,10 @@
 #include "SkiaFontWin.h"
 
 #include "AffineTransform.h"
+#include "FontPlatformDataChromiumWin.h"
 #include "Gradient.h"
 #include "Pattern.h"
 #include "PlatformContextSkia.h"
-#include "PlatformSupport.h"
 #include "SimpleFontData.h"
 #include "SkCanvas.h"
 #include "SkDevice.h"
@@ -221,7 +221,7 @@ static void paintSkiaText(GraphicsContext* context, HFONT hfont,
     TextDrawingModeFlags textMode = platformContext->getTextDrawingMode();
     // Ensure font load for printing, because PDF device needs it.
     if (platformContext->isVector())
-        PlatformSupport::ensureFontLoaded(hfont);
+        FontPlatformData::ensureFontLoaded(hfont);
 
     // Filling (if necessary). This is the common case.
     SkPaint paint;

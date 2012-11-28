@@ -1,3 +1,17 @@
+2012-11-28  Mark Pilgrim  <pilgrim@chromium.org>
+
+        [Chromium][Win] Remove ensureFontLoaded from PlatformSupport
+        https://bugs.webkit.org/show_bug.cgi?id=97696
+
+        Reviewed by Adam Barth.
+
+        Move ensureFontLoaded() from PlatformSupport to
+        FontPlatformDataChromiumWin. Part of a refactoring series; see
+        tracking bug 82948.
+
+        * src/PlatformSupport.cpp:
+        (WebCore):
+
 2012-11-28  Eric Uhrhane  <ericu@chromium.org>
 
         [chromium] Add unit tests for ChromeClientImpl::getNavigationPolicy

@@ -34,13 +34,13 @@
 
 #include "FontCache.h"
 #include "HWndDC.h"
-#include "PlatformSupport.h"
 #include "SharedBuffer.h"
 #include "SkTypeface_win.h"
 #include "SkiaFontWin.h"
-
 #include <mlang.h>
 #include <objidl.h>
+#include <public/Platform.h>
+#include <public/win/WebSandboxSupport.h>
 #include <windows.h>
 #include <wtf/StdLibExtras.h>
 
@@ -175,7 +175,7 @@ SCRIPT_FONTPROPERTIES* FontPlatformData::scriptFontProperties() const
             HRESULT hr = ScriptGetFontProperties(dc, scriptCache(),
                                                  m_scriptFontProperties);
             if (S_OK != hr) {
-                if (PlatformSupport::ensureFontLoaded(hfont())) {
+                if (FontPlatformData::ensureFontLoaded(hfont())) {
                     // FIXME: Handle gracefully the error if this call also fails.
                     hr = ScriptGetFontProperties(dc, scriptCache(),
                                                  m_scriptFontProperties);
@@ -222,5 +222,13 @@ String FontPlatformData::description() const
     return String();
 }
 #endif
+
+bool FontPlatformData::ensureFontLoaded(HFONT font)
+{
+    WebKit::WebSandboxSupport* sandboxSupport = WebKit::Platform::current()->sandboxSupport();
+    // if there is no sandbox, then we can assume the font
+    // was able to be loaded successfully already
+    return sandboxSupport ? sandboxSupport->ensureFontLoaded(font) : true;
+}
 
 }

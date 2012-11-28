@@ -33,10 +33,10 @@
 #include "FontCache.h"
 
 #include "Font.h"
+#include "FontPlatformDataChromiumWin.h"
 #include "FontUtilsChromiumWin.h"
 #include "HWndDC.h"
 #include "LayoutTestSupport.h"
-#include "PlatformSupport.h"
 #include "SimpleFontData.h"
 #include <unicode/uniset.h>
 #include <wtf/HashMap.h>
@@ -283,7 +283,7 @@ static bool fontContainsCharacter(const FontPlatformData* fontData,
     HWndDC hdc(0);
     HGDIOBJ oldFont = static_cast<HFONT>(SelectObject(hdc, hfont));
     int count = GetFontUnicodeRanges(hdc, 0);
-    if (!count && PlatformSupport::ensureFontLoaded(hfont))
+    if (!count && FontPlatformData::ensureFontLoaded(hfont))
         count = GetFontUnicodeRanges(hdc, 0);
     if (!count) {
         LOG_ERROR("Unable to get the font unicode range after second attempt");

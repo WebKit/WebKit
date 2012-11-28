@@ -33,9 +33,9 @@
 #include <vector>
 
 #include "Font.h"
+#include "FontPlatformDataChromiumWin.h"
 #include "GlyphPageTreeNode.h"
 #include "HWndDC.h"
-#include "PlatformSupport.h"
 #include "SimpleFontData.h"
 #include "SystemInfo.h"
 #include "UniscribeHelperTextRun.h"
@@ -56,7 +56,7 @@ static bool getGlyphIndices(HFONT font, HDC dc, const UChar* characters, unsigne
 {
     if (GetGlyphIndices(dc, characters, charactersLength, glyphBuffer, flag) != GDI_ERROR)
         return true;
-    if (PlatformSupport::ensureFontLoaded(font)) {
+    if (FontPlatformData::ensureFontLoaded(font)) {
         if (GetGlyphIndices(dc, characters, charactersLength, glyphBuffer, flag) != GDI_ERROR)
             return true;
         // FIXME: Handle gracefully the error if this call also fails.
@@ -88,7 +88,7 @@ static bool fillBMPGlyphs(unsigned offset,
 
     TEXTMETRIC tm = {0};
     if (!GetTextMetrics(dc, &tm)) {
-        if (PlatformSupport::ensureFontLoaded(fontData->platformData().hfont())) {
+        if (FontPlatformData::ensureFontLoaded(fontData->platformData().hfont())) {
             if (!GetTextMetrics(dc, &tm)) {
                 // FIXME: Handle gracefully the error if this call also fails.
                 // See http://crbug.com/6401

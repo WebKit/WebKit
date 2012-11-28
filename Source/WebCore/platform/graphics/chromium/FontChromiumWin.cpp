@@ -33,9 +33,9 @@
 #include "Font.h"
 
 #include "FontFallbackList.h"
+#include "FontPlatformDataChromiumWin.h"
 #include "GlyphBuffer.h"
 #include "NotImplemented.h"
-#include "PlatformSupport.h"
 #include "PlatformContextSkia.h"
 #include "SimpleFontData.h"
 #include "SkiaFontWin.h"
@@ -527,7 +527,7 @@ static void drawGlyphsWin(GraphicsContext* graphicsContext,
             success = painter.drawGlyphs(curLen, &glyphs[0], &advances[0], horizontalOffset - point.x() - currentWidth);
             if (!success && !executions) {
                 // Ask the browser to load the font for us and retry.
-                PlatformSupport::ensureFontLoaded(font->platformData().hfont());
+                FontPlatformData::ensureFontLoaded(font->platformData().hfont());
                 continue;
             }
             break;

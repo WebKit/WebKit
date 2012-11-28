@@ -104,19 +104,6 @@ using namespace WebKit;
 
 namespace WebCore {
 
-// Font -----------------------------------------------------------------------
-
-#if OS(WINDOWS)
-bool PlatformSupport::ensureFontLoaded(HFONT font)
-{
-    WebSandboxSupport* ss = WebKit::Platform::current()->sandboxSupport();
-
-    // if there is no sandbox, then we can assume the font
-    // was able to be loaded successfully already
-    return ss ? ss->ensureFontLoaded(font) : true;
-}
-#endif
-
 // Indexed Database -----------------------------------------------------------
 
 PassRefPtr<IDBFactoryBackendInterface> PlatformSupport::idbFactory()

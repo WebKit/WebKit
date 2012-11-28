@@ -106,6 +106,8 @@ public:
     SCRIPT_FONTPROPERTIES* scriptFontProperties() const;
     SCRIPT_CACHE* scriptCache() const { return &m_scriptCache; }
 
+    static bool ensureFontLoaded(HFONT);
+
 private:
     // We refcount the internal HFONT so that FontPlatformData can be
     // efficiently copied. WebKit depends on being able to copy it, and we

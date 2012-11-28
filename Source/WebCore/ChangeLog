@@ -1,3 +1,39 @@
+2012-11-28  Mark Pilgrim  <pilgrim@chromium.org>
+
+        [Chromium][Win] Remove ensureFontLoaded from PlatformSupport
+        https://bugs.webkit.org/show_bug.cgi?id=97696
+
+        Reviewed by Adam Barth.
+
+        Move ensureFontLoaded() from PlatformSupport to
+        FontPlatformDataChromiumWin. Part of a refactoring series; see
+        tracking bug 82948.
+
+        * platform/chromium/PlatformSupport.h:
+        (PlatformSupport):
+        * platform/graphics/chromium/FontCacheChromiumWin.cpp:
+        (WebCore::fontContainsCharacter):
+        * platform/graphics/chromium/FontChromiumWin.cpp:
+        (WebCore::drawGlyphsWin):
+        * platform/graphics/chromium/FontPlatformDataChromiumWin.cpp:
+        (WebCore::FontPlatformData::scriptFontProperties):
+        (WebCore):
+        (WebCore::FontPlatformData::ensureFontLoaded):
+        * platform/graphics/chromium/FontPlatformDataChromiumWin.h:
+        (FontPlatformData):
+        * platform/graphics/chromium/GlyphPageTreeNodeChromiumWin.cpp:
+        (WebCore::getGlyphIndices):
+        (WebCore::fillBMPGlyphs):
+        * platform/graphics/chromium/SimpleFontDataChromiumWin.cpp:
+        (WebCore::SimpleFontData::platformInit):
+        (WebCore::SimpleFontData::determinePitch):
+        (WebCore::SimpleFontData::platformBoundsForGlyph):
+        (WebCore::SimpleFontData::platformWidthForGlyph):
+        * platform/graphics/chromium/UniscribeHelperTextRun.cpp:
+        (WebCore::UniscribeHelperTextRun::tryToPreloadFont):
+        * platform/graphics/skia/SkiaFontWin.cpp:
+        (WebCore::paintSkiaText):
+
 2012-11-28  peavo@outlook.com  <peavo@outlook.com>
 
         [WinCairo] Crash when requesting favicon.

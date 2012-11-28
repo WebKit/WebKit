@@ -49,10 +49,6 @@ typedef struct NPObject NPObject;
 typedef struct _NPP NPP_t;
 typedef NPP_t* NPP;
 
-#if OS(WINDOWS)
-typedef struct HFONT__* HFONT;
-#endif
-
 namespace WebCore {
 
 class Color;
@@ -77,11 +73,6 @@ struct FontRenderStyle;
 
 class PlatformSupport {
 public:
-    // Font ---------------------------------------------------------------
-#if OS(WINDOWS)
-    static bool ensureFontLoaded(HFONT);
-#endif
-
     // IndexedDB ----------------------------------------------------------
     static PassRefPtr<IDBFactoryBackendInterface> idbFactory();
 

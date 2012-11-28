@@ -36,14 +36,13 @@
 #include "Font.h"
 #include "FontCache.h"
 #include "FontDescription.h"
+#include "FontPlatformDataChromiumWin.h"
 #include "HWndDC.h"
-#include "PlatformSupport.h"
-#include <wtf/MathExtras.h>
-
+#include <mlang.h>
+#include <objidl.h>
 #include <unicode/uchar.h>
 #include <unicode/unorm.h>
-#include <objidl.h>
-#include <mlang.h>
+#include <wtf/MathExtras.h>
 
 namespace WebCore {
 
@@ -61,7 +60,7 @@ void SimpleFontData::platformInit()
 
     TEXTMETRIC textMetric = {0};
     if (!GetTextMetrics(dc, &textMetric)) {
-        if (PlatformSupport::ensureFontLoaded(m_platformData.hfont())) {
+        if (FontPlatformData::ensureFontLoaded(m_platformData.hfont())) {
             // Retry GetTextMetrics.
             // FIXME: Handle gracefully the error if this call also fails.
             // See http://crbug.com/6401.
@@ -136,7 +135,7 @@ void SimpleFontData::determinePitch()
     // is *not* fixed pitch.  Unbelievable but true.
     TEXTMETRIC textMetric = {0};
     if (!GetTextMetrics(dc, &textMetric)) {
-        if (PlatformSupport::ensureFontLoaded(m_platformData.hfont())) {
+        if (FontPlatformData::ensureFontLoaded(m_platformData.hfont())) {
             // Retry GetTextMetrics.
             // FIXME: Handle gracefully the error if this call also fails.
             // See http://crbug.com/6401.
@@ -159,7 +158,7 @@ FloatRect SimpleFontData::platformBoundsForGlyph(Glyph glyph) const
     GLYPHMETRICS gdiMetrics;
     static const MAT2 identity = { 0, 1,  0, 0,  0, 0,  0, 1 };
     if (GetGlyphOutline(hdc, glyph, GGO_METRICS | GGO_GLYPH_INDEX, &gdiMetrics, 0, 0, &identity) == -1) {
-        if (PlatformSupport::ensureFontLoaded(m_platformData.hfont())) {
+        if (FontPlatformData::ensureFontLoaded(m_platformData.hfont())) {
             // Retry GetTextMetrics.
             // FIXME: Handle gracefully the error if this call also fails.
             // See http://crbug.com/6401.
@@ -185,7 +184,7 @@ float SimpleFontData::platformWidthForGlyph(Glyph glyph) const
     int width = 0;
     if (!GetCharWidthI(dc, glyph, 1, 0, &width)) {
         // Ask the browser to preload the font and retry.
-        if (PlatformSupport::ensureFontLoaded(m_platformData.hfont())) {
+        if (FontPlatformData::ensureFontLoaded(m_platformData.hfont())) {
             // FIXME: Handle gracefully the error if this call also fails.
             // See http://crbug.com/6401.
             if (!GetCharWidthI(dc, glyph, 1, 0, &width))
