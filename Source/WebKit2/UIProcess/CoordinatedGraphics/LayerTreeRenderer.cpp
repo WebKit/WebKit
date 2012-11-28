@@ -672,6 +672,7 @@ void LayerTreeRenderer::purgeGLResources()
     m_layers.clear();
     m_fixedLayers.clear();
     m_textureMapper.clear();
+    m_pendingSyncBackingStores.clear();
     m_backingStoresWithPendingBuffers.clear();
 
     setActive(false);

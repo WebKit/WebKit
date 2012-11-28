@@ -1,5 +1,19 @@
 2012-11-28  Christophe Dumez  <christophe.dumez@intel.com>
 
+        Regression(r135962): m_pendingSyncBackingStores needs to be cleared in LayerTreeRenderer::purgeGLResources()
+        https://bugs.webkit.org/show_bug.cgi?id=103527
+
+        Reviewed by Jocelyn Turcotte.
+
+        Make sure m_pendingSyncBackingStores is cleared in
+        LayerTreeRenderer::purgeGLResources() to avoid trying to assign
+        backing store to layers after everything has been invalidated.
+
+        * UIProcess/CoordinatedGraphics/LayerTreeRenderer.cpp:
+        (WebKit::LayerTreeRenderer::purgeGLResources):
+
+2012-11-28  Christophe Dumez  <christophe.dumez@intel.com>
+
         Regression(r135962): ASSERTION FAILED: !m_pedningSyncBackingStores.contains(layer)
         https://bugs.webkit.org/show_bug.cgi?id=103498
 
