@@ -196,7 +196,7 @@ namespace WebCore {
 #if USE(SKIA)
             return m_bitmap.bitmap().height();
 #else
-            return m_size.width();
+            return m_size.height();
 #endif
         }
 

@@ -1,3 +1,11 @@
+2012-11-27  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed functionality fix, return the height in ImageFrame::height()
+        on non-Skia platforms.
+
+        * platform/image-decoders/ImageDecoder.h:
+        (WebCore::ImageFrame::height):
+
 2012-11-27  Viatcheslav Ostapenko  <v.ostapenko@samsung.com>
 
         Optimization in image decoding
