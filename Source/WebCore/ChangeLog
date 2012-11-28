@@ -1,3 +1,17 @@
+2012-11-27  Michael Pruett  <michael@68k.org>
+
+        Remove ASSERT_NOT_REACHED() from IDBCursorBackendImpl::postSuccessHandlerCallback()
+        https://bugs.webkit.org/show_bug.cgi?id=103461
+
+        Reviewed by Kentaro Hara.
+
+        The assertion is applicable only to the Chromium port.
+
+        Tests: storage/indexeddb/*
+
+        * Modules/indexeddb/IDBCursorBackendImpl.h:
+        (WebCore::IDBCursorBackendImpl::postSuccessHandlerCallback):
+
 2012-11-27  Shinya Kawanaka  <shinyak@chromium.org>
 
         [Refactoring] HasSelectorForClassStyleFunctor in Element.cpp seems verbose

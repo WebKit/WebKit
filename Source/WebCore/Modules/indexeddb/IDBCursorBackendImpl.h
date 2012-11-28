@@ -63,7 +63,7 @@ public:
     virtual void deleteFunction(PassRefPtr<IDBCallbacks>, ExceptionCode&);
     virtual void prefetchContinue(int numberToFetch, PassRefPtr<IDBCallbacks>, ExceptionCode&);
     virtual void prefetchReset(int usedPrefetches, int unusedPrefetches);
-    virtual void postSuccessHandlerCallback() { ASSERT_NOT_REACHED(); }
+    virtual void postSuccessHandlerCallback() { }
 
     PassRefPtr<IDBKey> key() const { return m_cursor->key(); }
     PassRefPtr<IDBKey> primaryKey() const { return m_cursor->primaryKey(); }
