@@ -1158,17 +1158,17 @@ struct Node {
         return nodeCanSpeculateInteger(arithNodeFlags());
     }
     
-    void dumpChildren(FILE* out)
+    void dumpChildren(PrintStream& out)
     {
         if (!child1())
             return;
-        fprintf(out, "@%u", child1().index());
+        out.printf("@%u", child1().index());
         if (!child2())
             return;
-        fprintf(out, ", @%u", child2().index());
+        out.printf(", @%u", child2().index());
         if (!child3())
             return;
-        fprintf(out, ", @%u", child3().index());
+        out.printf(", @%u", child3().index());
     }
     
     // Used to look up exception handling information (currently implemented as a bytecode index).

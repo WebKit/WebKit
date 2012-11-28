@@ -3653,7 +3653,7 @@ void ByteCodeParser::parseCodeBlock()
             codeBlock->needsFullScopeChain()?"true":"false",
             codeBlock->ownerExecutable()->needsActivation()?"true":"false",
             codeBlock->ownerExecutable()->isStrictMode()?"true":"false");
-    codeBlock->baselineVersion()->dump(m_exec);
+    codeBlock->baselineVersion()->dump();
 #endif
     
     for (unsigned jumpTargetIndex = 0; jumpTargetIndex <= codeBlock->numberOfJumpTargets(); ++jumpTargetIndex) {

@@ -274,70 +274,70 @@ public:
         return JSValue::decode(m_source.constant);
     }
     
-    void dump(FILE* out) const
+    void dump(PrintStream& out) const
     {
         switch (technique()) {
         case AlreadyInJSStack:
-            fprintf(out, "-");
+            out.printf("-");
             break;
         case AlreadyInJSStackAsUnboxedInt32:
-            fprintf(out, "(int32)");
+            out.printf("(int32)");
             break;
         case AlreadyInJSStackAsUnboxedCell:
-            fprintf(out, "(cell)");
+            out.printf("(cell)");
             break;
         case AlreadyInJSStackAsUnboxedBoolean:
-            fprintf(out, "(bool)");
+            out.printf("(bool)");
             break;
         case AlreadyInJSStackAsUnboxedDouble:
-            fprintf(out, "(double)");
+            out.printf("(double)");
             break;
         case InGPR:
-            fprintf(out, "%%r%d", gpr());
+            out.printf("%%r%d", gpr());
             break;
         case UnboxedInt32InGPR:
-            fprintf(out, "int32(%%r%d)", gpr());
+            out.printf("int32(%%r%d)", gpr());
             break;
         case UnboxedBooleanInGPR:
-            fprintf(out, "bool(%%r%d)", gpr());
+            out.printf("bool(%%r%d)", gpr());
             break;
         case UInt32InGPR:
-            fprintf(out, "uint32(%%r%d)", gpr());
+            out.printf("uint32(%%r%d)", gpr());
             break;
         case InFPR:
-            fprintf(out, "%%fr%d", fpr());
+            out.printf("%%fr%d", fpr());
             break;
 #if USE(JSVALUE32_64)
         case InPair:
-            fprintf(out, "pair(%%r%d, %%r%d)", tagGPR(), payloadGPR());
+            out.printf("pair(%%r%d, %%r%d)", tagGPR(), payloadGPR());
             break;
 #endif
         case DisplacedInJSStack:
-            fprintf(out, "*%d", virtualRegister());
+            out.printf("*%d", virtualRegister());
             break;
         case Int32DisplacedInJSStack:
-            fprintf(out, "*int32(%d)", virtualRegister());
+            out.printf("*int32(%d)", virtualRegister());
             break;
         case DoubleDisplacedInJSStack:
-            fprintf(out, "*double(%d)", virtualRegister());
+            out.printf("*double(%d)", virtualRegister());
             break;
         case CellDisplacedInJSStack:
-            fprintf(out, "*cell(%d)", virtualRegister());
+            out.printf("*cell(%d)", virtualRegister());
             break;
         case BooleanDisplacedInJSStack:
-            fprintf(out, "*bool(%d)", virtualRegister());
+            out.printf("*bool(%d)", virtualRegister());
             break;
         case ArgumentsThatWereNotCreated:
-            fprintf(out, "arguments");
+            out.printf("arguments");
             break;
         case Constant:
-            fprintf(out, "[%s]", constant().description());
+            out.printf("[%s]", constant().description());
             break;
         case DontKnow:
-            fprintf(out, "!");
+            out.printf("!");
             break;
         default:
-            fprintf(out, "?%d", technique());
+            out.printf("?%d", technique());
             break;
         }
     }

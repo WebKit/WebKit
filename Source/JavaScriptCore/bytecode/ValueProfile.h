@@ -38,6 +38,7 @@
 #include "SpeculatedType.h"
 #include "Structure.h"
 #include "WriteBarrier.h"
+#include <wtf/PrintStream.h>
 
 namespace JSC {
 
@@ -109,27 +110,27 @@ struct ValueProfileBase {
         return false;
     }
     
-    void dump(FILE* out)
+    void dump(PrintStream& out)
     {
-        fprintf(out,
-                "samples = %u, prediction = %s",
-                totalNumberOfSamples(),
-                speculationToString(m_prediction));
-        fprintf(out, ", value = ");
+        out.printf(
+            "samples = %u, prediction = %s",
+            totalNumberOfSamples(),
+            speculationToString(m_prediction));
+        out.printf(", value = ");
         if (m_singletonValueIsTop)
-            fprintf(out, "TOP");
+            out.printf("TOP");
         else
-            fprintf(out, "%s", m_singletonValue.description());
+            out.printf("%s", m_singletonValue.description());
         bool first = true;
         for (unsigned i = 0; i < totalNumberOfBuckets; ++i) {
             JSValue value = JSValue::decode(m_buckets[i]);
             if (!!value) {
                 if (first) {
-                    fprintf(out, ": ");
+                    out.printf(": ");
                     first = false;
                 } else
-                    fprintf(out, ", ");
-                fprintf(out, "%s", value.description());
+                    out.printf(", ");
+                out.printf("%s", value.description());
             }
         }
     }

@@ -1,5 +1,20 @@
 2012-11-27  Filip Pizlo  <fpizlo@apple.com>
 
+        Convert some remaining uses of FILE* to PrintStream&.
+
+        Rubber stamped by Mark Hahnenberg.
+
+        * bytecode/ValueProfile.h:
+        (JSC::ValueProfileBase::dump):
+        * bytecode/ValueRecovery.h:
+        (JSC::ValueRecovery::dump):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseCodeBlock):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::dumpChildren):
+
+2012-11-27  Filip Pizlo  <fpizlo@apple.com>
+
         Fix indentation in JSValue.h
 
         Rubber stamped by Mark Hahnenberg.

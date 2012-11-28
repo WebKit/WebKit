@@ -1,3 +1,14 @@
+2012-11-27  Filip Pizlo  <fpizlo@apple.com>
+
+        Convert some remaining uses of FILE* to PrintStream&.
+
+        Rubber stamped by Mark Hahnenberg.
+
+        * wtf/BitVector.cpp:
+        (WTF::BitVector::dump):
+        * wtf/BitVector.h:
+        (BitVector):
+
 2012-11-27  Pratik Solanki  <psolanki@apple.com>
 
         objc/objc-runtime.h does not exist on all PLATFORM(MAC)
