@@ -27646,6 +27646,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\loader\FrameLoadRequest.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\loader\FrameLoadRequest.h"
 				>
 			</File>

@@ -1,3 +1,15 @@
+2012-11-27  James Simonsen  <simonjam@chromium.org>
+
+        Consolidate FrameLoader::load() into one function taking a FrameLoadRequest
+        https://bugs.webkit.org/show_bug.cgi?id=102151
+
+        Reviewed by Adam Barth.
+
+        * Plugins/WebPluginController.mm:
+        * WebView/WebFrame.mm:
+        (-[WebFrame loadRequest:]):
+        (-[WebFrame _loadData:MIMEType:textEncodingName:baseURL:unreachableURL:]):
+
 2012-11-27  Pratik Solanki  <psolanki@apple.com>
 
         objc/objc-runtime.h does not exist on all PLATFORM(MAC)

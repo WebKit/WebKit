@@ -1633,6 +1633,7 @@ SET(WebCore_SOURCES
     loader/FTPDirectoryParser.cpp
     loader/FormState.cpp
     loader/FormSubmission.cpp
+    loader/FrameLoadRequest.cpp
     loader/FrameLoader.cpp
     loader/FrameLoaderStateMachine.cpp
     loader/HistoryController.cpp

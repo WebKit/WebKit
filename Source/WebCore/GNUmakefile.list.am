@@ -3874,13 +3874,14 @@ webcore_sources += \
 	Source/WebCore/loader/FormState.h \
 	Source/WebCore/loader/FormSubmission.cpp \
 	Source/WebCore/loader/FormSubmission.h \
+	Source/WebCore/loader/FrameLoadRequest.cpp \
+	Source/WebCore/loader/FrameLoadRequest.h \
 	Source/WebCore/loader/FrameLoaderClient.h \
 	Source/WebCore/loader/FrameLoader.cpp \
 	Source/WebCore/loader/FrameLoader.h \
 	Source/WebCore/loader/FrameLoaderStateMachine.cpp \
 	Source/WebCore/loader/FrameLoaderStateMachine.h \
 	Source/WebCore/loader/FrameLoaderTypes.h \
-	Source/WebCore/loader/FrameLoadRequest.h \
 	Source/WebCore/loader/FrameNetworkingContext.h \
 	Source/WebCore/loader/FTPDirectoryParser.cpp \
 	Source/WebCore/loader/FTPDirectoryParser.h \

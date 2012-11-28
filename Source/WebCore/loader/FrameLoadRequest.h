@@ -28,19 +28,25 @@
 
 #include "ResourceRequest.h"
 #include "SecurityOrigin.h"
+#include "SubstituteData.h"
 
 namespace WebCore {
+class Frame;
 
 struct FrameLoadRequest {
 public:
     explicit FrameLoadRequest(SecurityOrigin* requester)
         : m_requester(requester)
+        , m_lockHistory(false)
+        , m_shouldCheckNewWindowPolicy(false)
     {
     }
 
     FrameLoadRequest(SecurityOrigin* requester, const ResourceRequest& resourceRequest)
         : m_requester(requester)
         , m_resourceRequest(resourceRequest)
+        , m_lockHistory(false)
+        , m_shouldCheckNewWindowPolicy(false)
     {
     }
 
@@ -48,8 +54,12 @@ public:
         : m_requester(requester)
         , m_resourceRequest(resourceRequest)
         , m_frameName(frameName)
+        , m_lockHistory(false)
+        , m_shouldCheckNewWindowPolicy(false)
     {
     }
+
+    FrameLoadRequest(Frame*, const ResourceRequest&, const SubstituteData& = SubstituteData());
 
     bool isEmpty() const { return m_resourceRequest.isEmpty(); }
 
@@ -61,10 +71,23 @@ public:
     const String& frameName() const { return m_frameName; }
     void setFrameName(const String& frameName) { m_frameName = frameName; }
 
+    void setLockHistory(bool lockHistory) { m_lockHistory = lockHistory; }
+    bool lockHistory() const { return m_lockHistory; }
+
+    void setShouldCheckNewWindowPolicy(bool checkPolicy) { m_shouldCheckNewWindowPolicy = checkPolicy; }
+    bool shouldCheckNewWindowPolicy() const { return m_shouldCheckNewWindowPolicy; }
+
+    const SubstituteData& substituteData() const { return m_substituteData; }
+    void setSubstituteData(const SubstituteData& data) { m_substituteData = data; }
+    bool hasSubstituteData() { return m_substituteData.isValid(); }
+
 private:
     RefPtr<SecurityOrigin> m_requester;
     ResourceRequest m_resourceRequest;
     String m_frameName;
+    bool m_lockHistory;
+    bool m_shouldCheckNewWindowPolicy;
+    SubstituteData m_substituteData;
 };
 
 }

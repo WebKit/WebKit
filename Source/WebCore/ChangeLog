@@ -1,3 +1,35 @@
+2012-11-27  James Simonsen  <simonjam@chromium.org>
+
+        Consolidate FrameLoader::load() into one function taking a FrameLoadRequest
+        https://bugs.webkit.org/show_bug.cgi?id=102151
+
+        Reviewed by Adam Barth.
+
+        There's a FIXME that we have too many FrameLoader::load*() functions. This patch consolidates 3 into 1.
+        There are still a few more load functions that will be consolidated later. Using FrameLoadRequest as
+        the interface into FrameLoader will also provide a place to pass in the initiator. Finally, this matches
+        the refactoring done with CachedResourceRequest and CachedResourceLoader.
+
+        No new tests. No change in functionality.
+
+        * WebCore.exp.in:
+        * loader/FrameLoadRequest.h:
+        (WebCore::FrameLoadRequest::FrameLoadRequest):
+        (WebCore::FrameLoadRequest::setLockHistory): These are former arguments to load().
+        (WebCore::FrameLoadRequest::lockHistory): Ditto.
+        (FrameLoadRequest):
+        (WebCore::FrameLoadRequest::setShouldCheckNewWindowPolicy): Ditto.
+        (WebCore::FrameLoadRequest::shouldCheckNewWindowPolicy): Ditto.
+        (WebCore::FrameLoadRequest::substituteData): Ditto.
+        (WebCore::FrameLoadRequest::setSubstituteData): Ditto.
+        (WebCore::FrameLoadRequest::hasSubstituteData): Ditto.
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::load): No change in behavior, just merged it all into one function.
+        * loader/FrameLoader.h:
+        (FrameLoader):
+        * page/DragController.cpp:
+        (WebCore::DragController::performDrag):
+
 2012-11-27  Jer Noble  <jer.noble@apple.com>
 
         Unreviewed build fix; NSSize is not a CGSize in 32-bit.

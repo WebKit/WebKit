@@ -37,6 +37,7 @@
 #include "CSSPropertyNames.h"
 #include "DocumentLoader.h"
 #include "FormState.h"
+#include "FrameLoadRequest.h"
 #include "FrameNetworkingContextQt.h"
 #include "FrameTree.h"
 #include "FrameView.h"
@@ -1153,7 +1154,7 @@ bool FrameLoaderClientQt::callErrorPageExtension(const WebCore::ResourceError& e
     WebCore::ResourceRequest request(baseUrl);
     WTF::RefPtr<WebCore::SharedBuffer> buffer = WebCore::SharedBuffer::create(output.content.constData(), output.content.length());
     WebCore::SubstituteData substituteData(buffer, output.contentType, output.encoding, failingUrl);
-    m_frame->loader()->load(request, substituteData, false);
+    m_frame->loader()->load(WebCore::FrameLoadRequest(m_frame, request, substituteData));
     return true;
 }
 

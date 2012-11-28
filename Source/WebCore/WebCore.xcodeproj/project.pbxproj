@@ -2997,6 +2997,7 @@
 		86243D0111BC31F700CC006A /* JSArrayBufferViewHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = 86243D0011BC31F700CC006A /* JSArrayBufferViewHelper.h */; };
 		86512EDE154A2AEF00A90426 /* PerformanceResourceTiming.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 86512EDB154A2AEE00A90426 /* PerformanceResourceTiming.cpp */; };
 		86512EDF154A2AEF00A90426 /* PerformanceResourceTiming.h in Headers */ = {isa = PBXBuildFile; fileRef = 86512EDC154A2AEF00A90426 /* PerformanceResourceTiming.h */; };
+		86BA766E166427A8005BE5D1 /* FrameLoadRequest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 86BA766D166427A8005BE5D1 /* FrameLoadRequest.cpp */; };
 		86BE340015058CB200CE0FD8 /* PerformanceEntry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 86BE33FA15058CB200CE0FD8 /* PerformanceEntry.cpp */; };
 		86BE340115058CB200CE0FD8 /* PerformanceEntry.h in Headers */ = {isa = PBXBuildFile; fileRef = 86BE33FB15058CB200CE0FD8 /* PerformanceEntry.h */; };
 		86BE340315058CB200CE0FD8 /* PerformanceEntryList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 86BE33FD15058CB200CE0FD8 /* PerformanceEntryList.cpp */; };
@@ -10244,6 +10245,7 @@
 		86512EDB154A2AEE00A90426 /* PerformanceResourceTiming.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PerformanceResourceTiming.cpp; sourceTree = "<group>"; };
 		86512EDC154A2AEF00A90426 /* PerformanceResourceTiming.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PerformanceResourceTiming.h; sourceTree = "<group>"; };
 		86512EDD154A2AEF00A90426 /* PerformanceResourceTiming.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = PerformanceResourceTiming.idl; sourceTree = "<group>"; };
+		86BA766D166427A8005BE5D1 /* FrameLoadRequest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FrameLoadRequest.cpp; sourceTree = "<group>"; };
 		86BE33FA15058CB200CE0FD8 /* PerformanceEntry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PerformanceEntry.cpp; sourceTree = "<group>"; };
 		86BE33FB15058CB200CE0FD8 /* PerformanceEntry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PerformanceEntry.h; sourceTree = "<group>"; };
 		86BE33FC15058CB200CE0FD8 /* PerformanceEntry.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = PerformanceEntry.idl; sourceTree = "<group>"; };
@@ -20842,6 +20844,7 @@
 				D000EBA011BDAFD400C47726 /* FrameLoaderStateMachine.cpp */,
 				D000EBA111BDAFD400C47726 /* FrameLoaderStateMachine.h */,
 				93B77A370ADD792500EA4B81 /* FrameLoaderTypes.h */,
+				86BA766D166427A8005BE5D1 /* FrameLoadRequest.cpp */,
 				658436850AE01B7400E53753 /* FrameLoadRequest.h */,
 				628D214D12131EF40055DCFC /* FrameNetworkingContext.h */,
 				51C81B870C4422F70019ECE3 /* FTPDirectoryParser.cpp */,
@@ -28935,6 +28938,7 @@
 				CD7E05221651C28200C1201F /* WebCoreAVFResourceLoader.mm in Sources */,
 				447958051643B4B2001E0A7F /* ParsedContentType.cpp in Sources */,
 				15B8B7C81652C5220036EF55 /* JSWebKitCSSMixFunctionValue.cpp in Sources */,
+				86BA766E166427A8005BE5D1 /* FrameLoadRequest.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

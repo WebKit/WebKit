@@ -22,6 +22,7 @@
 #include "QWebFrameAdapter.h"
 
 #include "Frame.h"
+#include "FrameLoadRequest.h"
 #include "FrameLoaderClientQt.h"
 #include "QWebPageAdapter.h"
 #if ENABLE(GESTURE_EVENTS)
@@ -132,7 +133,7 @@ void QWebFrameAdapter::load(const QNetworkRequest& req, QNetworkAccessManager::O
     if (!body.isEmpty())
         request.setHTTPBody(WebCore::FormData::create(body.constData(), body.size()));
 
-    frame->loader()->load(request, false);
+    frame->loader()->load(WebCore::FrameLoadRequest(frame, request));
 
     if (frame->tree()->parent())
         pageAdapter->insideOpenCall = false;
