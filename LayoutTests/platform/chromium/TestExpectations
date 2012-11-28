@@ -4302,3 +4302,4 @@ webkit.org/b/103446 [ SnowLeopard Lion ] http/tests/canvas/canvas-slow-font-load
 webkit.org/b/103447 [ MountainLion ] fast/canvas/font-update.html [ ImageOnlyFailure ]
 webkit.org/b/103449 [ MountainLion Win  ] platform/chromium/virtual/gpu/fast/canvas/font-update.html [ ImageOnlyFailure Pass ]
 webkit.org/b/103451 [ Release Mac Win  ] fast/frames/frame-name-reset.html [ Crash Pass ]
+webkit.org/b/103183 [ Linux Debug ] media/video-currentTime-set.html [ Crash ]
