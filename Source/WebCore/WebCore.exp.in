@@ -1598,6 +1598,7 @@ _wkSignalCFReadStreamHasBytes
 .objc_class_name_DOMStyleSheet
 .objc_class_name_DOMStyleSheetList
 .objc_class_name_DOMTreeWalker
+.objc_class_name_WebCoreFullScreenPlaceholderView
 .objc_class_name_WebCoreFullScreenWarningView
 .objc_class_name_WebCoreFullScreenWindow
 .objc_class_name_WebHTMLConverter

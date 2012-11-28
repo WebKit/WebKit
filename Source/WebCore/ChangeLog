@@ -1,3 +1,31 @@
+2012-11-14  Jer Noble  <jer.noble@apple.com>
+
+        Add a new shared class WebCoreFullScreenPlaceholderView, for use in WebKit and WebKit2.
+        https://bugs.webkit.org/show_bug.cgi?id=102300
+
+        Reviewed by Anders Carlsson.
+
+        Add a new shared class WebCoreFullScreenPlaceholderView, which presents the contents of the 
+        WebView prior to full screen with a message informing the user how to exit from full screen mode.
+
+        * platform/mac/WebCoreFullScreenPlaceholderView.mm:
+        (-[WebCoreFullScreenPlaceholderView initWithFrame:]): Create the warning view and set up the placeholder layer.
+        (-[WebCoreFullScreenPlaceholderView setContents:]): Pass along to content view layer.
+        (-[WebCoreFullScreenPlaceholderView contents]): Ditto.
+        (-[WebCoreFullScreenPlaceholderView setExitWarningVisible:]): Show or hide the exit warning.
+        (-[WebCoreFullScreenPlaceholderView mouseDown:]): Call the target with action.
+
+         Add a localized string entry for the "click to exit" text:
+         * English.lproj/Localizable.strings:
+        * platform/LocalizedStrings.cpp:
+        (WebCore::clickToExitFullScreenText):
+        * platform/LocalizedStrings.h:
+        * English.lproj/Localizable.strings:
+
+        Add the new files to the project and exports list:
+        * WebCore.exp.in:
+        * WebCore.xcodeproj/project.pbxproj:
+
 2012-11-27  Andreas Kling  <akling@apple.com>
 
         Shrink ShadowRoot and TreeScope.

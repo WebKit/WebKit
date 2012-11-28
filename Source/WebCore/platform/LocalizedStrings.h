@@ -260,6 +260,8 @@ namespace WebCore {
     String unacceptableTLSCertificate();
 #endif
 
+    String clickToExitFullScreenText();
+
 #if !PLATFORM(CHROMIUM)
 #define WEB_UI_STRING(string, description) WebCore::localizedString(string)
 #define WEB_UI_STRING_KEY(string, key, description) WebCore::localizedString(key)

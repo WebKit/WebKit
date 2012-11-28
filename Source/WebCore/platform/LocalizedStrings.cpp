@@ -998,4 +998,9 @@ String validationMessageBadInputForNumberText()
     return validationMessageTypeMismatchText();
 }
 
+String clickToExitFullScreenText()
+{
+    return WEB_UI_STRING("Click to exit full screen mode", "Message to display in browser window when in webkit full screen mode.");
+}
+
 } // namespace WebCore
