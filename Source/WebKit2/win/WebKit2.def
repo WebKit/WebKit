@@ -329,4 +329,34 @@ EXPORTS
         ?layerTreeAsText@Frame@WebCore@@QBE?AVString@WTF@@I@Z
         ?trackedRepaintRectsAsText@Frame@WebCore@@QBE?AVString@WTF@@XZ
         ?setTracksRepaints@FrameView@WebCore@@QAEX_N@Z
-
+        ??1BitmapImage@WebCore@@UAE@XZ
+        ??0BitmapImage@WebCore@@IAE@PAVImageObserver@1@@Z
+        ?isBitmapImage@BitmapImage@WebCore@@UBE_NXZ
+        ?currentFrameHasAlpha@BitmapImage@WebCore@@UAE_NXZ
+        ?hasSingleSecurityOrigin@BitmapImage@WebCore@@UBE_NXZ
+        ?computeIntrinsicDimensions@Image@WebCore@@UAEXAAULength@2@0AAVFloatSize@2@@Z
+        ?size@BitmapImage@WebCore@@UBE?AVIntSize@2@XZ
+        ?getHotSpot@BitmapImage@WebCore@@UBE_NAAVIntPoint@2@@Z
+        ?dataChanged@BitmapImage@WebCore@@UAE_N_N@Z
+        ?filenameExtension@BitmapImage@WebCore@@UBE?AVString@WTF@@XZ
+        ?destroyDecodedData@BitmapImage@WebCore@@MAEX_N@Z
+        ?decodedSize@BitmapImage@WebCore@@UBEIXZ
+        ?startAnimation@BitmapImage@WebCore@@MAEX_N@Z
+        ?stopAnimation@BitmapImage@WebCore@@UAEXXZ
+        ?resetAnimation@BitmapImage@WebCore@@UAEXXZ
+        ?nativeImageForCurrentFrame@BitmapImage@WebCore@@UAEPAUCGImage@@XZ
+        ?getHBITMAP@BitmapImage@WebCore@@UAE_NPAUHBITMAP__@@@Z
+        ?getHBITMAPOfSize@BitmapImage@WebCore@@UAE_NPAUHBITMAP__@@PAUtagSIZE@@@Z
+        ?drawPattern@Image@WebCore@@UAEXPAVGraphicsContext@2@ABVFloatRect@2@ABVAffineTransform@2@ABVFloatPoint@2@W4ColorSpace@2@W4CompositeOperator@2@1@Z
+        ?reportMemoryUsage@BitmapImage@WebCore@@UBEXPAVMemoryObjectInfo@WTF@@@Z
+        ?drawFrameMatchingSourceSize@BitmapImage@WebCore@@MAEXPAVGraphicsContext@2@ABVFloatRect@2@ABVIntSize@2@W4ColorSpace@2@W4CompositeOperator@2@@Z
+        ?draw@Image@WebCore@@MAEXPAVGraphicsContext@2@ABVFloatRect@2@1W4ColorSpace@2@W4CompositeOperator@2@W4RespectImageOrientationEnum@2@@Z
+        ?draw@BitmapImage@WebCore@@MAEXPAVGraphicsContext@2@ABVFloatRect@2@1W4ColorSpace@2@W4CompositeOperator@2@@Z
+        ?mayFillWithSolidColor@BitmapImage@WebCore@@MAE_NXZ
+        ?solidColor@BitmapImage@WebCore@@MBE?AVColor@2@XZ
+        ?draw@BitmapImage@WebCore@@MAEXPAVGraphicsContext@2@ABVFloatRect@2@1W4ColorSpace@2@W4CompositeOperator@2@W4RespectImageOrientationEnum@2@@Z
+        ?frameCount@BitmapImage@WebCore@@MAEIXZ
+        ?getCGImageRef@BitmapImage@WebCore@@UAEPAUCGImage@@XZ
+        ?getFirstCGImageRefOfSize@BitmapImage@WebCore@@UAEPAUCGImage@@ABVIntSize@2@@Z
+        ?getCGImageArray@BitmapImage@WebCore@@UAE?AV?$RetainPtr@PBU__CFArray@@@WTF@@XZ
+        ?notSolidColor@BitmapImage@WebCore@@UAE_NXZ

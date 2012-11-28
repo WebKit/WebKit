@@ -1,3 +1,18 @@
+2012-11-28  peavo@outlook.com  <peavo@outlook.com>
+
+        [WinCairo] Crash when requesting favicon.
+        https://bugs.webkit.org/show_bug.cgi?id=102689
+
+        Reviewed by Brent Fulgham.
+
+        * TestWebKitAPI/Tests/WebCore/win: Added.
+        * TestWebKitAPI/Tests/WebCore/win/BitmapImage.cpp: Added.
+        (TestWebKitAPI::BitmapImageTest::BitmapImageTest): Allocate frame in constructor.
+        (TestWebKitAPI::BitmapImageTest::frameCount): Override frameCount() method.
+        (TestWebKitAPI::TEST): Added new test.
+        * TestWebKitAPI/config.h: Make sure defines are correct for WinCairo.
+       * TestWebKitAPI/win/TestWebKitAPI.vcproj: Added new test.
+
 2012-11-28  Eric Seidel  <eric@webkit.org>
 
         run-perf-tests should have a --profile option for easy profiling

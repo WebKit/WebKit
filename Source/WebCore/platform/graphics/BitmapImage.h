@@ -218,7 +218,7 @@ protected:
 #endif
 
     size_t currentFrame() const { return m_currentFrame; }
-    size_t frameCount();
+    virtual size_t frameCount();
     NativeImagePtr frameAtIndex(size_t);
     bool frameIsCompleteAtIndex(size_t);
     float frameDurationAtIndex(size_t);

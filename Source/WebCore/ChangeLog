@@ -1,3 +1,15 @@
+2012-11-28  peavo@outlook.com  <peavo@outlook.com>
+
+        [WinCairo] Crash when requesting favicon.
+        https://bugs.webkit.org/show_bug.cgi?id=102689
+
+        Reviewed by Brent Fulgham.
+
+        * platform/graphics/BitmapImage.h: Made frameCount() method virtual, subclasses made for testing can then override it.
+        * platform/graphics/win/ImageCairoWin.cpp:
+        (WebCore::BitmapImage::getHBITMAPOfSize): Added NULL pointer check.
+        (WebCore::BitmapImage::drawFrameMatchingSourceSize): Added NULL pointer check.
+
 2012-11-28  Tony Chang  <tony@chromium.org>
 
         Move internals.settings.setPageScaleFactor to internals.setPageScaleFactor

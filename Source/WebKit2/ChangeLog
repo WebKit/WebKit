@@ -1,3 +1,13 @@
+2012-11-28  peavo@outlook.com  <peavo@outlook.com>
+
+        [WinCairo] Crash when requesting favicon.
+        https://bugs.webkit.org/show_bug.cgi?id=102689
+
+        Reviewed by Brent Fulgham.
+
+        * win/WebKit2CFLite.def: Link fixes.
+        * win/WebKit2.def: Link fixes.
+
 2012-11-28  Christophe Dumez  <christophe.dumez@intel.com>
 
         Regression(r135962): m_pendingSyncBackingStores needs to be cleared in LayerTreeRenderer::purgeGLResources()

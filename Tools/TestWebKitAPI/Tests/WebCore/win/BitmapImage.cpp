@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012 peavo@outlook.com All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,66 +24,36 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if defined(HAVE_CONFIG_H) && HAVE_CONFIG_H
-#ifdef BUILDING_WITH_CMAKE
-#include "cmakeconfig.h"
-#endif
-#endif
+#include "config.h"
+#include <WebCore/BitmapImage.h>
 
-#include <wtf/Platform.h>
-#include <wtf/ExportMacros.h>
-#if USE(JSC)
-#include <runtime/JSExportMacros.h>
-#endif
+using namespace WebCore;
 
-#if defined(__APPLE__) && __APPLE__
+namespace TestWebKitAPI {
 
-#ifdef __OBJC__
-#import <Cocoa/Cocoa.h>
-#endif
+// Test that there is no crash when BitmapImage::getHBITMAPOfSize() is called
+// for an image with empty frames (BitmapImage::frameAtIndex(i) return null), WebKit Bug 102689.
 
-#elif defined(WIN32) || defined(_WIN32)
+class BitmapImageTest : public WebCore::BitmapImage {
+public:
+    BitmapImageTest()
+    {
+        m_frames.grow(1);
+    }
 
-#ifndef NOMINMAX
-#define NOMINMAX
-#endif
+    virtual size_t frameCount()
+    {
+        return 1;
+    }
+};
 
-#if PLATFORM(WIN_CAIRO)
-#undef WTF_USE_CG
-#define WTF_USE_CAIRO 1
-#define WTF_USE_CURL 1
-#ifndef _WINSOCKAPI_
-#define _WINSOCKAPI_ // Prevent inclusion of winsock.h in windows.h
-#endif
-#elif !OS(WINCE)
-#define WTF_USE_CG 1
-#undef WTF_USE_CAIRO
-#undef WTF_USE_CURL
-#endif
+TEST(WebCore, BitmapImageEmptyFrameTest)
+{
+    SIZE sz = {16, 16};
+    BitmapImageTest bitmapImageTest;
+    int bits[256];
+    HBITMAP hBitmap = CreateBitmap(16, 16, 1, 32, bits);
+    bitmapImageTest.getHBITMAPOfSize(hBitmap, &sz);
+}
 
-#endif
-
-#include <stdint.h>
-
-#if !PLATFORM(CHROMIUM) || (PLATFORM(GTK) && defined(BUILDING_WEBKIT2__))
-#include <WebKit2/WebKit2_C.h>
-#endif
-
-#ifdef __clang__
-// Work around the less strict coding standards of the gtest framework.
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunused-variable"
-#endif
-
-#ifdef __cplusplus
-#include <gtest/gtest.h>
-#endif
-
-#ifdef __clang__
-// Finish working around the less strict coding standards of the gtest framework.
-#pragma clang diagnostic pop
-#endif
-
-#if PLATFORM(MAC) && defined(__OBJC__)
-#import <WebKit/WebKit.h>
-#endif
+} // namespace TestWebKitAPI

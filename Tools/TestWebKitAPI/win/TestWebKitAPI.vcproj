@@ -421,6 +421,18 @@
 			Name="Tests"
 			>
 			<Filter
+				Name="WebCore"
+				>
+				<Filter
+					Name="win"
+					>
+					<File
+						RelativePath="..\Tests\WebCore\win\BitmapImage.cpp"
+						>
+					</File>
+				</Filter>
+			</Filter>
+			<Filter
 				Name="WebKit2"
 				>
 				<File

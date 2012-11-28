@@ -62,7 +62,7 @@ bool BitmapImage::getHBITMAPOfSize(HBITMAP bmp, LPSIZE size)
     GetObject(bmp, sizeof(BITMAP), &bmpInfo);
 
     // If this is a 32bpp bitmap, which it always should be, we'll clear it so alpha-wise it will be visible
-    if (bmpInfo.bmBitsPixel == 32) {
+    if (bmpInfo.bmBitsPixel == 32 && bmpInfo.bmBits) {
         int bufferSize = bmpInfo.bmWidthBytes * bmpInfo.bmHeight;
         memset(bmpInfo.bmBits, 255, bufferSize);
     }
@@ -95,7 +95,10 @@ void BitmapImage::drawFrameMatchingSourceSize(GraphicsContext* ctxt, const Float
 {
     size_t frames = frameCount();
     for (size_t i = 0; i < frames; ++i) {
-        cairo_surface_t* image = frameAtIndex(i)->surface();
+        NativeImageCairo* nativeImage = frameAtIndex(i);
+        if (!nativeImage)
+            continue;
+        cairo_surface_t* image = nativeImage->surface();
         if (!image)
             continue;
 
