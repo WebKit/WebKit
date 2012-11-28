@@ -53,7 +53,6 @@ public:
     virtual void onSuccess(WebIDBCursor*, const WebIDBKey& key, const WebIDBKey& primaryKey, const WebSerializedScriptValue&) { WEBKIT_ASSERT_NOT_REACHED(); }
     virtual void onSuccess(WebIDBDatabase*) { WEBKIT_ASSERT_NOT_REACHED(); }
     virtual void onSuccess(const WebIDBKey&) { WEBKIT_ASSERT_NOT_REACHED(); }
-    virtual void onSuccess(WebIDBTransaction*) { WEBKIT_ASSERT_NOT_REACHED(); }
     virtual void onSuccess(const WebSerializedScriptValue&) { WEBKIT_ASSERT_NOT_REACHED(); }
     virtual void onSuccess(const WebSerializedScriptValue&, const WebIDBKey&, const WebIDBKeyPath&) { WEBKIT_ASSERT_NOT_REACHED(); }
     virtual void onSuccess(long long) { WEBKIT_ASSERT_NOT_REACHED(); }

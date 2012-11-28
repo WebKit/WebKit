@@ -56,7 +56,6 @@ public:
         return 0;
     }
     virtual void deleteObjectStore(long long objectStoreId, const WebIDBTransaction& transaction, WebExceptionCode& ec) { WEBKIT_ASSERT_NOT_REACHED(); }
-    virtual void setVersion(const WebString& version, WebIDBCallbacks* callbacks, WebExceptionCode&) { WEBKIT_ASSERT_NOT_REACHED(); }
     // FIXME: Remove this as part of https://bugs.webkit.org/show_bug.cgi?id=102733.
     // Transfers ownership of the WebIDBTransaction to the caller.
     virtual WebIDBTransaction* transaction(const WebVector<long long>&, unsigned short mode)
