@@ -280,7 +280,7 @@ rect: style.getPropertyValue(-webkit-column-rule-style) : none
 rect: style.getPropertyCSSValue(-webkit-column-rule-style) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-column-rule-width) : 0px
 rect: style.getPropertyCSSValue(-webkit-column-rule-width) : [object CSSPrimitiveValue]
-rect: style.getPropertyValue(-webkit-column-span) : 1
+rect: style.getPropertyValue(-webkit-column-span) : none
 rect: style.getPropertyCSSValue(-webkit-column-span) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-column-width) : auto
 rect: style.getPropertyCSSValue(-webkit-column-width) : [object CSSPrimitiveValue]
@@ -782,7 +782,7 @@ g: style.getPropertyValue(-webkit-column-rule-style) : none
 g: style.getPropertyCSSValue(-webkit-column-rule-style) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-column-rule-width) : 0px
 g: style.getPropertyCSSValue(-webkit-column-rule-width) : [object CSSPrimitiveValue]
-g: style.getPropertyValue(-webkit-column-span) : 1
+g: style.getPropertyValue(-webkit-column-span) : none
 g: style.getPropertyCSSValue(-webkit-column-span) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-column-width) : auto
 g: style.getPropertyCSSValue(-webkit-column-width) : [object CSSPrimitiveValue]

@@ -141,7 +141,7 @@ zoom: 1;
 -webkit-column-rule-color: rgb(0, 0, 0);
 -webkit-column-rule-style: none;
 -webkit-column-rule-width: 0px;
--webkit-column-span: 1;
+-webkit-column-span: none;
 -webkit-column-width: auto;
 -webkit-align-content: stretch;
 -webkit-align-items: stretch;

@@ -1,3 +1,18 @@
+2012-11-28  Christophe Dumez  <christophe.dumez@intel.com>
+
+        CSS3 Multicolumn: column-span should accept value 'none' (instead of '1')
+        https://bugs.webkit.org/show_bug.cgi?id=101462
+
+        Reviewed by David Hyatt.
+
+        Update expected results for several test cases now that the
+        default value for column-span property was renamed from 1
+        to none.
+
+        * fast/css/getComputedStyle/computed-style-expected.txt:
+        * fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * svg/css/getComputedStyle-basic-expected.txt:
+
 2012-11-28  Stephen Chenney  <schenney@chromium.org>
 
         Chromium TestExpectations minor changes.
