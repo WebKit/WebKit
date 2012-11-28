@@ -102,6 +102,7 @@ void RunLoop::wakeUpEvent(void* data, void*, unsigned int)
 
 void RunLoop::wakeUp()
 {
+    MutexLocker locker(m_pipeLock);
     ecore_pipe_write(m_pipe.get(), wakupEcorePipeMessage, ecorePipeMessageSize);
 }
 

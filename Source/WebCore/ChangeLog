@@ -1,3 +1,21 @@
+2012-11-28  Byungwoo Lee  <bw80.lee@samsung.com>
+
+        [EFL] Use mutex locker in wakeUp() to ensure thread-safety.
+        https://bugs.webkit.org/show_bug.cgi?id=101132
+
+        Reviewed by Gyuyoung Kim.
+
+        Add mutex locker for the ecore pipe to ensure thread-safety of
+        RunLoop::wakeUp().
+
+        RunLoop::wakeUp() can be called by multiple thread. It uses
+        ecore_pipe_write() function but the function is not thread-safe.
+
+        * platform/RunLoop.h:
+        (RunLoop):
+        * platform/efl/RunLoopEfl.cpp:
+        (WebCore::RunLoop::wakeUp):
+
 2012-11-28  Ryuan Choi  <ryuan.choi@gmail.com>
 
         [EFL] Refactor theme to choose whether to support foreground color of selection
