@@ -1,3 +1,9 @@
+2012-11-27  Jer Noble  <jer.noble@apple.com>
+
+        Unreviewed build fix; NSSize is not a CGSize in 32-bit.
+
+        * platform/mac/WebCoreFullScreenWarningView.mm:
+
 2012-11-27  Dean Jackson  <dino@apple.com>
 
         Attempted build fix for my last commit. The private member variable
