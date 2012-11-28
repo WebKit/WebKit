@@ -226,16 +226,6 @@ void ImageFrame::setStatus(FrameStatus status)
     m_status = status;
 }
 
-int ImageFrame::width() const
-{
-    return m_size.width();
-}
-
-int ImageFrame::height() const
-{
-    return m_size.height();
-}
-
 void ImageFrame::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, PlatformMemoryTypes::Image);

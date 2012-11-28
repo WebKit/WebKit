@@ -182,8 +182,23 @@ namespace WebCore {
         }
 
     private:
-        int width() const;
-        int height() const;
+        int width() const
+        {
+#if USE(SKIA)
+            return m_bitmap.bitmap().width();
+#else
+            return m_size.width();
+#endif
+        }
+
+        int height() const
+        {
+#if USE(SKIA)
+            return m_bitmap.bitmap().height();
+#else
+            return m_size.width();
+#endif
+        }
 
 #if USE(SKIA)
         NativeImageSkia m_bitmap;

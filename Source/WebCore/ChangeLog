@@ -1,3 +1,23 @@
+2012-11-27  Noel Gordon  <noel.gordon@gmail.com>
+
+        Inline ImageFrame width() and height()
+        https://bugs.webkit.org/show_bug.cgi?id=103401
+
+        Reviewed by Brent Fulgham.
+
+        Inline ImageFrame width() and height() to improve the performance of ImageFrame
+        function getAddr(x,y) per https://bugs.webkit.org/show_bug.cgi?id=88424#c38
+
+        No new tests. Covered by many existing tests.
+
+        * platform/image-decoders/ImageDecoder.cpp: Remove width() and height() routines
+        since they now inlined in the ImageFrame class definition in ImageDecoder.h.
+        * platform/image-decoders/ImageDecoder.h: Add inline definitions of width() and
+        height() for all ports.
+        * platform/image-decoders/skia/ImageDecoderSkia.cpp:
+        (WebCore::ImageFrame::width): Remove.
+        (WebCore::ImageFrame::height): Remove.
+
 2012-11-27  Michael Pruett  <michael@68k.org>
 
         Remove ASSERT_NOT_REACHED() from IDBCursorBackendImpl::postSuccessHandlerCallback()
