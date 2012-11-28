@@ -203,6 +203,7 @@ public:
         : m_treeScope(0)
         , m_childNodeList(0)
         , m_tabIndex(0)
+        , m_childIndex(0)
         , m_tabIndexWasSetExplicitly(false)
         , m_isFocused(false)
         , m_needsFocusAppearanceUpdateSoonAfterAttach(false)
@@ -214,6 +215,14 @@ public:
 #if ENABLE(DIALOG_ELEMENT)
         , m_isInTopLayer(false)
 #endif
+        , m_childrenAffectedByHover(false)
+        , m_childrenAffectedByActive(false)
+        , m_childrenAffectedByDrag(false)
+        , m_childrenAffectedByFirstChildRules(false)
+        , m_childrenAffectedByLastChildRules(false)
+        , m_childrenAffectedByDirectAdjacentRules(false)
+        , m_childrenAffectedByForwardPositionalRules(false)
+        , m_childrenAffectedByBackwardPositionalRules(false)
     {
     }
 
@@ -336,12 +345,32 @@ protected:
     bool isInTopLayer() const { return m_isInTopLayer; }
     void setIsInTopLayer(bool value) { m_isInTopLayer = value; }
 #endif
+    bool childrenAffectedByHover() const { return m_childrenAffectedByHover; }
+    void setChildrenAffectedByHover(bool value) { m_childrenAffectedByHover = value; }
+    bool childrenAffectedByActive() const { return m_childrenAffectedByActive; }
+    void setChildrenAffectedByActive(bool value) { m_childrenAffectedByActive = value; }
+    bool childrenAffectedByDrag() const { return m_childrenAffectedByDrag; }
+    void setChildrenAffectedByDrag(bool value) { m_childrenAffectedByDrag = value; }
+
+    bool childrenAffectedByFirstChildRules() const { return m_childrenAffectedByFirstChildRules; }
+    void setChildrenAffectedByFirstChildRules(bool value) { m_childrenAffectedByFirstChildRules = value; }
+    bool childrenAffectedByLastChildRules() const { return m_childrenAffectedByLastChildRules; }
+    void setChildrenAffectedByLastChildRules(bool value) { m_childrenAffectedByLastChildRules = value; }
+    bool childrenAffectedByDirectAdjacentRules() const { return m_childrenAffectedByDirectAdjacentRules; }
+    void setChildrenAffectedByDirectAdjacentRules(bool value) { m_childrenAffectedByDirectAdjacentRules = value; }
+    bool childrenAffectedByForwardPositionalRules() const { return m_childrenAffectedByForwardPositionalRules; }
+    void setChildrenAffectedByForwardPositionalRules(bool value) { m_childrenAffectedByForwardPositionalRules = value; }
+    bool childrenAffectedByBackwardPositionalRules() const { return m_childrenAffectedByBackwardPositionalRules; }
+    void setChildrenAffectedByBackwardPositionalRules(bool value) { m_childrenAffectedByBackwardPositionalRules = value; }
+    unsigned childIndex() const { return m_childIndex; }
+    void setChildIndex(unsigned index) { m_childIndex = index; }
 
 private:
     TreeScope* m_treeScope;
     OwnPtr<NodeListsNodeData> m_nodeLists;
     ChildNodeList* m_childNodeList;
     short m_tabIndex;
+    unsigned short m_childIndex;
     bool m_tabIndexWasSetExplicitly : 1;
     bool m_isFocused : 1;
     bool m_needsFocusAppearanceUpdateSoonAfterAttach : 1;
@@ -353,6 +382,17 @@ private:
 #if ENABLE(DIALOG_ELEMENT)
     bool m_isInTopLayer : 1;
 #endif
+    bool m_childrenAffectedByHover : 1;
+    bool m_childrenAffectedByActive : 1;
+    bool m_childrenAffectedByDrag : 1;
+    // Bits for dynamic child matching.
+    // We optimize for :first-child and :last-child. The other positional child selectors like nth-child or
+    // *-child-of-type, we will just give up and re-evaluate whenever children change at all.
+    bool m_childrenAffectedByFirstChildRules : 1;
+    bool m_childrenAffectedByLastChildRules : 1;
+    bool m_childrenAffectedByDirectAdjacentRules : 1;
+    bool m_childrenAffectedByForwardPositionalRules : 1;
+    bool m_childrenAffectedByBackwardPositionalRules : 1;
 
 #if ENABLE(MUTATION_OBSERVERS)
     OwnPtr<Vector<OwnPtr<MutationObserverRegistration> > > m_mutationObserverRegistry;

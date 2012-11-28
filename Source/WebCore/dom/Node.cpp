@@ -345,12 +345,6 @@ Node::StyleChange Node::diff(const RenderStyle* s1, const RenderStyle* s2, Docum
     else if (s1->hasExplicitlyInheritedProperties() || s2->hasExplicitlyInheritedProperties())
         ch = Inherit;
 
-    // For nth-child and other positional rules, treat styles as different if they have
-    // changed positionally in the DOM. This way subsequent sibling resolutions won't be confused
-    // by the wrong child index and evaluate to incorrect results.
-    if (ch == NoChange && s1->childIndex() != s2->childIndex())
-        ch = NoInherit;
-
     // If the pseudoStyles have changed, we want any StyleChange that is not NoChange
     // because setStyle will do the right thing with anything else.
     if (ch == NoChange && s1->hasAnyPublicPseudoStyles()) {

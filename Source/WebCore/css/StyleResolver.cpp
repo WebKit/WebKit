@@ -716,7 +716,7 @@ void StyleResolver::sortAndTransferMatchedRules(MatchResult& result)
     bool swapVisitedUnvisited = InspectorInstrumentation::forcePseudoState(m_element, CSSSelector::PseudoVisited);
     for (unsigned i = 0; i < m_matchedRules.size(); i++) {
         if (m_style && m_matchedRules[i]->containsUncommonAttributeSelector())
-            m_style->setAffectedByUncommonAttributeSelectors();
+            m_style->setUnique();
         unsigned linkMatchType = m_matchedRules[i]->linkMatchType();
         if (swapVisitedUnvisited && linkMatchType && linkMatchType != SelectorChecker::MatchAll)
             linkMatchType = (linkMatchType == SelectorChecker::MatchVisited) ? SelectorChecker::MatchLink : SelectorChecker::MatchVisited;
@@ -1176,8 +1176,6 @@ bool StyleResolver::canShareStyleWithElement(StyledElement* element) const
 #endif
     if (element->isLink() != m_element->isLink())
         return false;
-    if (style->affectedByUncommonAttributeSelectors())
-        return false;
     if (element->hovered() != m_element->hovered())
         return false;
     if (element->active() != m_element->active())
@@ -1249,12 +1247,14 @@ inline StyledElement* StyleResolver::findSiblingForStyleSharing(Node* node, unsi
     return static_cast<StyledElement*>(node);
 }
 
-static inline bool parentStylePreventsSharing(const RenderStyle* parentStyle)
+static inline bool parentElementPreventsSharing(const Element* parentElement)
 {
-    return parentStyle->childrenAffectedByPositionalRules()
-        || parentStyle->childrenAffectedByFirstChildRules()
-        || parentStyle->childrenAffectedByLastChildRules() 
-        || parentStyle->childrenAffectedByDirectAdjacentRules();
+    if (!parentElement)
+        return false;
+    return parentElement->childrenAffectedByPositionalRules()
+        || parentElement->childrenAffectedByFirstChildRules()
+        || parentElement->childrenAffectedByLastChildRules()
+        || parentElement->childrenAffectedByDirectAdjacentRules();
 }
 
 RenderStyle* StyleResolver::locateSharedStyle()
@@ -1271,7 +1271,7 @@ RenderStyle* StyleResolver::locateSharedStyle()
     // Ids stop style sharing if they show up in the stylesheets.
     if (m_styledElement->hasID() && m_features.idsInRules.contains(m_styledElement->idForStyleResolution().impl()))
         return 0;
-    if (parentStylePreventsSharing(m_parentStyle))
+    if (parentElementPreventsSharing(m_element->parentElement()))
         return 0;
     if (m_styledElement->hasScopedHTMLStyleChild())
         return 0;
@@ -1306,7 +1306,7 @@ RenderStyle* StyleResolver::locateSharedStyle()
     if (styleSharingCandidateMatchesHostRules())
         return 0;
     // Tracking child index requires unique style for each node. This may get set by the sibling rule match above.
-    if (parentStylePreventsSharing(m_parentStyle))
+    if (parentElementPreventsSharing(m_element->parentElement()))
         return 0;
     return shareElement->renderStyle();
 }

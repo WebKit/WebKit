@@ -887,10 +887,10 @@ void ContainerNode::setActive(bool down, bool pause)
     // note that we need to recalc the style
     // FIXME: Move to Element
     if (renderer()) {
-        bool reactsToPress = renderer()->style()->affectedByActiveRules();
+        bool reactsToPress = renderStyle()->affectedByActive() || (isElementNode() && toElement(this)->childrenAffectedByActive());
         if (reactsToPress)
             setNeedsStyleRecalc();
-        if (renderer() && renderer()->style()->hasAppearance()) {
+        if (renderStyle()->hasAppearance()) {
             if (renderer()->theme()->stateChanged(renderer(), PressedState))
                 reactsToPress = true;
         }
@@ -908,9 +908,9 @@ void ContainerNode::setActive(bool down, bool pause)
             // Do an immediate repaint.
             if (renderer())
                 renderer()->repaint(true);
-            
+
             // FIXME: Find a substitute for usleep for Win32.
-            // Better yet, come up with a way of doing this that doesn't use this sort of thing at all.            
+            // Better yet, come up with a way of doing this that doesn't use this sort of thing at all.
 #ifdef HAVE_FUNC_USLEEP
             // Now pause for a small amount of time (1/10th of a second from before we repainted in the pressed state)
             double remainingTime = 0.1 - (currentTime() - startTime);
@@ -930,7 +930,7 @@ void ContainerNode::setHovered(bool over)
     // note that we need to recalc the style
     // FIXME: Move to Element
     if (renderer()) {
-        if (renderer()->style()->affectedByHoverRules())
+        if (renderStyle()->affectedByHover() || (isElementNode() && toElement(this)->childrenAffectedByHover()))
             setNeedsStyleRecalc();
         if (renderer() && renderer()->style()->hasAppearance())
             renderer()->theme()->stateChanged(renderer(), HoverState);

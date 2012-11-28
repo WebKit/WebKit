@@ -217,11 +217,9 @@ void NodeRenderingContext::createRendererForElementIfNeeded()
 
     moveToFlowThreadIfNeeded();
 
-    if (!element->rendererIsNeeded(*this)) {
-        if (m_style->affectedByEmpty())
-            element->setStyleAffectedByEmpty();
+    if (!element->rendererIsNeeded(*this))
         return;
-    }
+
     RenderObject* parentRenderer = this->parentRenderer();
     RenderObject* nextRenderer = this->nextRenderer();
 

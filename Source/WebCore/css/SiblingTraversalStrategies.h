@@ -80,8 +80,7 @@ inline int DOMSiblingTraversalStrategy::countElementsBefore(Element* element) co
 {
     int count = 0;
     for (const Element* sibling = element->previousElementSibling(); sibling; sibling = sibling->previousElementSibling()) {
-        RenderStyle* s = sibling->renderStyle();
-        unsigned index = s ? s->childIndex() : 0;
+        unsigned index = sibling->childIndex();
         if (index) {
             count += index;
             break;

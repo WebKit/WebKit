@@ -1,3 +1,105 @@
+2012-11-28  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        Move childrenAffectedBy bits from RenderStyle to Element
+        https://bugs.webkit.org/show_bug.cgi?id=101448
+        https://bugs.webkit.org/show_bug.cgi?id=98021
+
+        Reviewed by Antti Koivisto.
+
+        Moves facts observed about restyling dependencies out of RenderStyle and
+        into RareData for Node and Element. This also enables further cleanup
+        in related code that tried to deal with problems caused with the placement
+        of the data.
+
+        Test: fast/css/nth-child-not-in-rightmost.html
+
+        * css/SelectorChecker.cpp:
+        (WebCore::SelectorChecker::checkSelector):
+        (WebCore::SelectorChecker::checkOneSelector):
+        * css/SiblingTraversalStrategies.h:
+        (WebCore::DOMSiblingTraversalStrategy::countElementsBefore):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::sortAndTransferMatchedRules):
+        (WebCore::StyleResolver::canShareStyleWithElement):
+        (WebCore::parentElementPreventsSharing):
+        (WebCore::StyleResolver::locateSharedStyle):
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::setActive):
+        (WebCore::ContainerNode::setHovered):
+        * dom/Element.cpp:
+        (WebCore::Element::detach):
+        (WebCore::Element::recalcStyle):
+        (WebCore::checkForEmptyStyleChange):
+        (WebCore::checkForSiblingStyleChanges):
+        (WebCore::Element::setChildrenAffectedByHover):
+        (WebCore::Element::setChildrenAffectedByActive):
+        (WebCore::Element::setChildrenAffectedByDrag):
+        (WebCore::Element::setChildrenAffectedByFirstChildRules):
+        (WebCore::Element::setChildrenAffectedByLastChildRules):
+        (WebCore::Element::setChildrenAffectedByDirectAdjacentRules):
+        (WebCore::Element::setChildrenAffectedByForwardPositionalRules):
+        (WebCore::Element::setChildrenAffectedByBackwardPositionalRules):
+        (WebCore::Element::setChildIndex):
+        (WebCore::Element::rareDataStyleAffectedByEmpty):
+        (WebCore::Element::rareDataChildrenAffectedByHover):
+        (WebCore::Element::rareDataChildrenAffectedByActive):
+        (WebCore::Element::rareDataChildrenAffectedByDrag):
+        (WebCore::Element::rareDataChildrenAffectedByFirstChildRules):
+        (WebCore::Element::rareDataChildrenAffectedByLastChildRules):
+        (WebCore::Element::rareDataChildrenAffectedByDirectAdjacentRules):
+        (WebCore::Element::rareDataChildrenAffectedByForwardPositionalRules):
+        (WebCore::Element::rareDataChildrenAffectedByBackwardPositionalRules):
+        (WebCore::Element::rareDataChildIndex):
+        * dom/Element.h:
+        (Element):
+        (WebCore::Element::styleAffectedByEmpty):
+        (WebCore::Element::childrenAffectedByHover):
+        (WebCore::Element::childrenAffectedByActive):
+        (WebCore::Element::childrenAffectedByDrag):
+        (WebCore::Element::childrenAffectedByPositionalRules):
+        (WebCore::Element::childrenAffectedByFirstChildRules):
+        (WebCore::Element::childrenAffectedByLastChildRules):
+        (WebCore::Element::childrenAffectedByDirectAdjacentRules):
+        (WebCore::Element::childrenAffectedByForwardPositionalRules):
+        (WebCore::Element::childrenAffectedByBackwardPositionalRules):
+        (WebCore::Element::childIndex):
+        * dom/ElementRareData.h:
+        (ElementRareData):
+        (WebCore::ElementRareData::resetComputedStyle):
+        (WebCore::ElementRareData::resetDynamicRestyleObservations):
+        * dom/Node.cpp:
+        (WebCore::Node::diff):
+        * dom/NodeRareData.h:
+        (WebCore::NodeRareData::NodeRareData):
+        (WebCore::NodeRareData::childrenAffectedByHover):
+        (WebCore::NodeRareData::setChildrenAffectedByHover):
+        (WebCore::NodeRareData::childrenAffectedByActive):
+        (WebCore::NodeRareData::setChildrenAffectedByActive):
+        (WebCore::NodeRareData::childrenAffectedByDrag):
+        (WebCore::NodeRareData::setChildrenAffectedByDrag):
+        (NodeRareData):
+        (WebCore::NodeRareData::childrenAffectedByFirstChildRules):
+        (WebCore::NodeRareData::setChildrenAffectedByFirstChildRules):
+        (WebCore::NodeRareData::childrenAffectedByLastChildRules):
+        (WebCore::NodeRareData::setChildrenAffectedByLastChildRules):
+        (WebCore::NodeRareData::childrenAffectedByDirectAdjacentRules):
+        (WebCore::NodeRareData::setChildrenAffectedByDirectAdjacentRules):
+        (WebCore::NodeRareData::childrenAffectedByForwardPositionalRules):
+        (WebCore::NodeRareData::setChildrenAffectedByForwardPositionalRules):
+        (WebCore::NodeRareData::childrenAffectedByBackwardPositionalRules):
+        (WebCore::NodeRareData::setChildrenAffectedByBackwardPositionalRules):
+        (WebCore::NodeRareData::childIndex):
+        (WebCore::NodeRareData::setChildIndex):
+        * dom/NodeRenderingContext.cpp:
+        (WebCore::NodeRenderingContext::createRendererForElementIfNeeded):
+        * page/TouchAdjustment.cpp:
+        (WebCore::TouchAdjustment::nodeRespondsToTapGesture):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::updateDragState):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::copyNonInheritedFrom):
+        * rendering/style/RenderStyle.h:
+
 2012-11-28  Zeno Albisser  <zeno@webkit.org>
 
         GraphicsSurface: Implement usage of GraphicsSurface for WebGL in WK1.

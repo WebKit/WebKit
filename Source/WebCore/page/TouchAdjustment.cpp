@@ -75,9 +75,14 @@ bool nodeRespondsToTapGesture(Node* node)
         return true;
     if (node->willRespondToMouseClickEvents() || node->willRespondToMouseMoveEvents())
         return true;
-    if (node->renderStyle()) {
-        // Accept nodes that has a CSS effect when touched.
-        if (node->renderStyle()->affectedByActiveRules() || node->renderStyle()->affectedByHoverRules())
+    // Accept nodes that has a CSS effect when touched.
+    if (node->isElementNode()) {
+        Element* element = toElement(node);
+        if (element->childrenAffectedByActive() || element->childrenAffectedByHover())
+            return true;
+    }
+    if (RenderStyle* renderStyle = node->renderStyle()) {
+        if (renderStyle->affectedByActive() || renderStyle->affectedByHover())
             return true;
     }
     return false;

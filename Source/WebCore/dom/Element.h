@@ -286,8 +286,29 @@ public:
 
     RenderStyle* computedStyle(PseudoId = NOPSEUDO);
 
+    // Methods for indicating the style is affected by dynamic updates (e.g., children changing, our position changing in our sibling list, etc.)
+    bool styleAffectedByEmpty() const { return hasRareData() && rareDataStyleAffectedByEmpty(); }
+    bool childrenAffectedByHover() const { return hasRareData() && rareDataChildrenAffectedByHover(); }
+    bool childrenAffectedByActive() const { return hasRareData() && rareDataChildrenAffectedByActive(); }
+    bool childrenAffectedByDrag() const { return hasRareData() && rareDataChildrenAffectedByDrag(); }
+    bool childrenAffectedByPositionalRules() const { return hasRareData() && (rareDataChildrenAffectedByForwardPositionalRules() || rareDataChildrenAffectedByBackwardPositionalRules()); }
+    bool childrenAffectedByFirstChildRules() const { return hasRareData() && rareDataChildrenAffectedByFirstChildRules(); }
+    bool childrenAffectedByLastChildRules() const { return hasRareData() && rareDataChildrenAffectedByLastChildRules(); }
+    bool childrenAffectedByDirectAdjacentRules() const { return hasRareData() && rareDataChildrenAffectedByDirectAdjacentRules(); }
+    bool childrenAffectedByForwardPositionalRules() const { return hasRareData() && rareDataChildrenAffectedByForwardPositionalRules(); }
+    bool childrenAffectedByBackwardPositionalRules() const { return hasRareData() && rareDataChildrenAffectedByBackwardPositionalRules(); }
+    unsigned childIndex() const { return hasRareData() ? rareDataChildIndex() : 0; }
+
     void setStyleAffectedByEmpty();
-    bool styleAffectedByEmpty() const;
+    void setChildrenAffectedByHover(bool);
+    void setChildrenAffectedByActive(bool);
+    void setChildrenAffectedByDrag(bool);
+    void setChildrenAffectedByFirstChildRules();
+    void setChildrenAffectedByLastChildRules();
+    void setChildrenAffectedByDirectAdjacentRules();
+    void setChildrenAffectedByForwardPositionalRules();
+    void setChildrenAffectedByBackwardPositionalRules();
+    void setChildIndex(unsigned);
 
     void setIsInCanvasSubtree(bool);
     bool isInCanvasSubtree() const;
@@ -520,6 +541,16 @@ private:
 
     QualifiedName m_tagName;
     virtual OwnPtr<NodeRareData> createRareData();
+    bool rareDataStyleAffectedByEmpty() const;
+    bool rareDataChildrenAffectedByHover() const;
+    bool rareDataChildrenAffectedByActive() const;
+    bool rareDataChildrenAffectedByDrag() const;
+    bool rareDataChildrenAffectedByFirstChildRules() const;
+    bool rareDataChildrenAffectedByLastChildRules() const;
+    bool rareDataChildrenAffectedByDirectAdjacentRules() const;
+    bool rareDataChildrenAffectedByForwardPositionalRules() const;
+    bool rareDataChildrenAffectedByBackwardPositionalRules() const;
+    unsigned rareDataChildIndex() const;
 
     SpellcheckAttributeState spellcheckAttributeState() const;
 

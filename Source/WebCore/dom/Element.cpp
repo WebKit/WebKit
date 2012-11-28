@@ -1198,6 +1198,7 @@ void Element::detach()
         ElementRareData* data = elementRareData();
         data->setIsInCanvasSubtree(false);
         data->resetComputedStyle();
+        data->resetDynamicRestyleObservations();
     }
 
     if (ElementShadow* shadow = this->shadow()) {
@@ -1265,15 +1266,12 @@ void Element::recalcStyle(StyleChange change)
     // Ref currentStyle in case it would otherwise be deleted when setting the new style in the renderer.
     RefPtr<RenderStyle> currentStyle(renderStyle());
     bool hasParentStyle = parentNodeForRenderingAndStyle() ? static_cast<bool>(parentNodeForRenderingAndStyle()->renderStyle()) : false;
-    bool hasDirectAdjacentRules = currentStyle && currentStyle->childrenAffectedByDirectAdjacentRules();
-    bool hasIndirectAdjacentRules = currentStyle && currentStyle->childrenAffectedByForwardPositionalRules();
+    bool hasDirectAdjacentRules = childrenAffectedByDirectAdjacentRules();
+    bool hasIndirectAdjacentRules = childrenAffectedByForwardPositionalRules();
 
     if ((change > NoChange || needsStyleRecalc())) {
-        if (hasRareData()) {
-            ElementRareData* data = elementRareData();
-            data->resetComputedStyle();
-            data->setStyleAffectedByEmpty(false);
-        }
+        if (hasRareData())
+            elementRareData()->resetComputedStyle();
     }
     if (hasParentStyle && (change >= Inherit || needsStyleRecalc())) {
         RefPtr<RenderStyle> newStyle = styleForRenderer();
@@ -1288,27 +1286,6 @@ void Element::recalcStyle(StyleChange change)
             if (hasCustomCallbacks())
                 didRecalcStyle(change);
             return;
-        }
-
-        if (currentStyle) {
-            // Preserve "affected by" bits that were propagated to us from descendants in the case where we didn't do a full
-            // style change (e.g., only inline style changed).
-            if (currentStyle->affectedByHoverRules())
-                newStyle->setAffectedByHoverRules(true);
-            if (currentStyle->affectedByActiveRules())
-                newStyle->setAffectedByActiveRules(true);
-            if (currentStyle->affectedByDragRules())
-                newStyle->setAffectedByDragRules(true);
-            if (currentStyle->childrenAffectedByForwardPositionalRules())
-                newStyle->setChildrenAffectedByForwardPositionalRules();
-            if (currentStyle->childrenAffectedByBackwardPositionalRules())
-                newStyle->setChildrenAffectedByBackwardPositionalRules();
-            if (currentStyle->childrenAffectedByFirstChildRules())
-                newStyle->setChildrenAffectedByFirstChildRules();
-            if (currentStyle->childrenAffectedByLastChildRules())
-                newStyle->setChildrenAffectedByLastChildRules();
-            if (currentStyle->childrenAffectedByDirectAdjacentRules())
-                newStyle->setChildrenAffectedByDirectAdjacentRules();
         }
 
         if (RenderObject* renderer = this->renderer()) {
@@ -1438,7 +1415,7 @@ static void checkForEmptyStyleChange(Element* element, RenderStyle* style)
     if (!style && !element->styleAffectedByEmpty())
         return;
 
-    if (!style || (style->affectedByEmpty() && (!style->emptyState() || element->hasChildNodes())))
+    if (!style || (element->styleAffectedByEmpty() && (!style->emptyState() || element->hasChildNodes())))
         element->setNeedsStyleRecalc();
 }
 
@@ -1448,13 +1425,13 @@ static void checkForSiblingStyleChanges(Element* e, RenderStyle* style, bool fin
     // :empty selector.
     checkForEmptyStyleChange(e, style);
     
-    if (!style || (e->needsStyleRecalc() && style->childrenAffectedByPositionalRules()))
+    if (!style || (e->needsStyleRecalc() && e->childrenAffectedByPositionalRules()))
         return;
 
     // :first-child.  In the parser callback case, we don't have to check anything, since we were right the first time.
     // In the DOM case, we only need to do something if |afterChange| is not 0.
     // |afterChange| is 0 in the parser case, so it works out that we'll skip this block.
-    if (style->childrenAffectedByFirstChildRules() && afterChange) {
+    if (e->childrenAffectedByFirstChildRules() && afterChange) {
         // Find our new first child.
         Node* newFirstChild = 0;
         for (newFirstChild = e->firstChild(); newFirstChild && !newFirstChild->isElementNode(); newFirstChild = newFirstChild->nextSibling()) {};
@@ -1477,7 +1454,7 @@ static void checkForSiblingStyleChanges(Element* e, RenderStyle* style, bool fin
 
     // :last-child.  In the parser callback case, we don't have to check anything, since we were right the first time.
     // In the DOM case, we only need to do something if |afterChange| is not 0.
-    if (style->childrenAffectedByLastChildRules() && beforeChange) {
+    if (e->childrenAffectedByLastChildRules() && beforeChange) {
         // Find our new last child.
         Node* newLastChild = 0;
         for (newLastChild = e->lastChild(); newLastChild && !newLastChild->isElementNode(); newLastChild = newLastChild->previousSibling()) {};
@@ -1500,7 +1477,7 @@ static void checkForSiblingStyleChanges(Element* e, RenderStyle* style, bool fin
 
     // The + selector.  We need to invalidate the first element following the insertion point.  It is the only possible element
     // that could be affected by this DOM change.
-    if (style->childrenAffectedByDirectAdjacentRules() && afterChange) {
+    if (e->childrenAffectedByDirectAdjacentRules() && afterChange) {
         Node* firstElementAfterInsertion = 0;
         for (firstElementAfterInsertion = afterChange;
              firstElementAfterInsertion && !firstElementAfterInsertion->isElementNode();
@@ -1516,8 +1493,8 @@ static void checkForSiblingStyleChanges(Element* e, RenderStyle* style, bool fin
     // |afterChange| is 0 in the parser callback case, so we won't do any work for the forward case if we don't have to.
     // For performance reasons we just mark the parent node as changed, since we don't want to make childrenChanged O(n^2) by crawling all our kids
     // here.  recalcStyle will then force a walk of the children when it sees that this has happened.
-    if ((style->childrenAffectedByForwardPositionalRules() && afterChange) ||
-        (style->childrenAffectedByBackwardPositionalRules() && beforeChange))
+    if ((e->childrenAffectedByForwardPositionalRules() && afterChange)
+        || (e->childrenAffectedByBackwardPositionalRules() && beforeChange))
         e->setNeedsStyleRecalc();
 }
 
@@ -1924,9 +1901,115 @@ void Element::setStyleAffectedByEmpty()
     ensureElementRareData()->setStyleAffectedByEmpty(true);
 }
 
-bool Element::styleAffectedByEmpty() const
+void Element::setChildrenAffectedByHover(bool value)
 {
-    return hasRareData() && elementRareData()->styleAffectedByEmpty();
+    if (value || hasRareData())
+        ensureElementRareData()->setChildrenAffectedByHover(value);
+}
+
+void Element::setChildrenAffectedByActive(bool value)
+{
+    if (value || hasRareData())
+        ensureElementRareData()->setChildrenAffectedByActive(value);
+}
+
+void Element::setChildrenAffectedByDrag(bool value)
+{
+    if (value || hasRareData())
+        ensureElementRareData()->setChildrenAffectedByDrag(value);
+}
+
+void Element::setChildrenAffectedByFirstChildRules()
+{
+    ensureElementRareData()->setChildrenAffectedByFirstChildRules(true);
+}
+
+void Element::setChildrenAffectedByLastChildRules()
+{
+    ensureElementRareData()->setChildrenAffectedByLastChildRules(true);
+}
+
+void Element::setChildrenAffectedByDirectAdjacentRules()
+{
+    ensureElementRareData()->setChildrenAffectedByDirectAdjacentRules(true);
+}
+
+void Element::setChildrenAffectedByForwardPositionalRules()
+{
+    ensureElementRareData()->setChildrenAffectedByForwardPositionalRules(true);
+}
+
+void Element::setChildrenAffectedByBackwardPositionalRules()
+{
+    ensureElementRareData()->setChildrenAffectedByBackwardPositionalRules(true);
+}
+
+void Element::setChildIndex(unsigned index)
+{
+    ElementRareData* rareData = ensureElementRareData();
+    if (RenderStyle* style = renderStyle())
+        style->setUnique();
+    rareData->setChildIndex(index);
+}
+
+bool Element::rareDataStyleAffectedByEmpty() const
+{
+    ASSERT(hasRareData());
+    return elementRareData()->styleAffectedByEmpty();
+}
+
+bool Element::rareDataChildrenAffectedByHover() const
+{
+    ASSERT(hasRareData());
+    return elementRareData()->childrenAffectedByHover();
+}
+
+bool Element::rareDataChildrenAffectedByActive() const
+{
+    ASSERT(hasRareData());
+    return elementRareData()->childrenAffectedByActive();
+}
+
+bool Element::rareDataChildrenAffectedByDrag() const
+{
+    ASSERT(hasRareData());
+    return elementRareData()->childrenAffectedByDrag();
+}
+
+bool Element::rareDataChildrenAffectedByFirstChildRules() const
+{
+    ASSERT(hasRareData());
+    return elementRareData()->childrenAffectedByFirstChildRules();
+}
+
+bool Element::rareDataChildrenAffectedByLastChildRules() const
+{
+    ASSERT(hasRareData());
+    return elementRareData()->childrenAffectedByLastChildRules();
+}
+
+bool Element::rareDataChildrenAffectedByDirectAdjacentRules() const
+{
+    ASSERT(hasRareData());
+    return elementRareData()->childrenAffectedByDirectAdjacentRules();
+}
+
+bool Element::rareDataChildrenAffectedByForwardPositionalRules() const
+{
+    ASSERT(hasRareData());
+    return elementRareData()->childrenAffectedByForwardPositionalRules();
+}
+
+bool Element::rareDataChildrenAffectedByBackwardPositionalRules() const
+{
+    ASSERT(hasRareData());
+    return elementRareData()->childrenAffectedByBackwardPositionalRules();
+}
+
+unsigned Element::rareDataChildIndex() const
+{
+    ASSERT(hasRareData());
+    return elementRareData()->childIndex();
 }
 
 void Element::setIsInCanvasSubtree(bool isInCanvasSubtree)
