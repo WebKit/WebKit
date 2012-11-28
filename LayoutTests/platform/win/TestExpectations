@@ -2440,3 +2440,4 @@ compositing/overflow/updating-scrolling-content.html
 # https://bugs.webkit.org/show_bug.cgi?id=103442
 media/video-size.html
 media/W3C/video/networkState/networkState_during_progress.html
+media/W3C/video/readyState/readyState_during_loadedmetadata.html

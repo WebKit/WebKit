@@ -1,3 +1,10 @@
+2012-11-28  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. Skip flaky video test media/W3C/video/readyState/readyState_during_loadedmetadata.html.
+        https://bugs.webkit.org/show_bug.cgi?id=103442
+
+        * platform/win/TestExpectations:
+
 2012-11-28  Anton Vayvod  <avayvod@chromium.org>
 
         Text Autosizing: Clusters should use width of LCA of their text nodes
