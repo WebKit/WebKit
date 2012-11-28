@@ -1,3 +1,30 @@
+2012-11-28  Ryuan Choi  <ryuan.choi@gmail.com>
+
+        [EFL] Refactor theme to choose whether to support foreground color of selection
+        https://bugs.webkit.org/show_bug.cgi?id=102037
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        If foreground selection color is supported, selected text is painted to
+        SelectionForegroundColor instead of text color. If not, text can be painted
+        to text color.
+
+        However, EFL port does not have a way to disable support of foreground
+        selection color. So this patch refactors color classes of theme from
+        active and inactive to foreground and background in order to disable support
+        of foreground selection color when foreground color class is not specified.
+
+        * platform/efl/RenderThemeEfl.cpp:
+        (WebCore::fillColorsFromEdjeClass):
+        Returned false without error message when colorClass is not specified.
+        (WebCore::RenderThemeEfl::setColorFromThemeClass):
+        (WebCore::RenderThemeEfl::loadTheme):
+        (WebCore::RenderThemeEfl::RenderThemeEfl):
+        (WebCore::RenderThemeEfl::supportsSelectionForegroundColors):
+        (WebCore):
+        * platform/efl/RenderThemeEfl.h:
+        (RenderThemeEfl):
+
 2012-11-28  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         Move childrenAffectedBy bits from RenderStyle to Element

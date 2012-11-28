@@ -1,3 +1,13 @@
+2012-11-28  Ryuan Choi  <ryuan.choi@gmail.com>
+
+        [EFL] Refactor theme to choose whether to support foreground color of selection
+        https://bugs.webkit.org/show_bug.cgi?id=102037
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * DefaultTheme/default.edc:
+        Refactored color classes from active/inactive to foreground/background.
+
 2012-11-27  James Simonsen  <simonjam@chromium.org>
 
         Consolidate FrameLoader::load() into one function taking a FrameLoadRequest

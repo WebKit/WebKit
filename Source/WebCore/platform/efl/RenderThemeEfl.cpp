@@ -406,14 +406,14 @@ static void applyColorCallback(void* data, Evas_Object*, const char* /* signal *
     that->platformColorsDidChange(); // Triggers relayout.
 }
 
-static void fillColorsFromEdjeClass(Evas_Object* o, const char* colorClass, Color* color1, Color* color2 = 0, Color* color3 = 0)
+static bool fillColorsFromEdjeClass(Evas_Object* o, const char* colorClass, Color* color1, Color* color2 = 0, Color* color3 = 0)
 {
     int r1, g1, b1, a1;
     int r2, g2, b2, a2;
     int r3, g3, b3, a3;
 
-    bool ok = edje_object_color_class_get(o, colorClass, &r1, &g1, &b1, &a1, &r2, &g2, &b2, &a2, &r3, &g3, &b3, &a3);
-    _ASSERT_ON_RELEASE_RETURN(ok, "Could not get color class '%s'\n", colorClass);
+    if (!edje_object_color_class_get(o, colorClass, &r1, &g1, &b1, &a1, &r2, &g2, &b2, &a2, &r3, &g3, &b3, &a3))
+        return false;
 
     if (color1)
         color1->setRGB(makeRGBA(r1, g1, b1, a1));
@@ -421,18 +421,22 @@ static void fillColorsFromEdjeClass(Evas_Object* o, const char* colorClass, Colo
         color2->setRGB(makeRGBA(r2, g2, b2, a2));
     if (color3)
         color3->setRGB(makeRGBA(r3, g3, b3, a3));
+
+    return true;
 }
 
 void RenderThemeEfl::setColorFromThemeClass(const char* colorClass)
 {
     ASSERT(edje());
 
-    if (!strcmp("webkit/selection/active", colorClass))
-        fillColorsFromEdjeClass(edje(), colorClass, &m_activeSelectionForegroundColor, &m_activeSelectionBackgroundColor);
-    else if (!strcmp("webkit/selection/inactive", colorClass))
-        fillColorsFromEdjeClass(edje(), colorClass, &m_inactiveSelectionForegroundColor, &m_inactiveSelectionBackgroundColor);
+    if (!strcmp("webkit/selection/foreground", colorClass))
+        m_supportsSelectionForegroundColor = fillColorsFromEdjeClass(edje(), colorClass, &m_activeSelectionForegroundColor, &m_inactiveSelectionForegroundColor);
+    else if (!strcmp("webkit/selection/background", colorClass))
+        fillColorsFromEdjeClass(edje(), colorClass, &m_activeSelectionBackgroundColor, &m_inactiveSelectionBackgroundColor);
     else if (!strcmp("webkit/focus_ring", colorClass)) {
-        fillColorsFromEdjeClass(edje(), colorClass, &m_focusRingColor);
+        if (!fillColorsFromEdjeClass(edje(), colorClass, &m_focusRingColor))
+            return;
+
         // platformFocusRingColor() is only used for the default theme (without page)
         // The following is ugly, but no other way to do it unless we change it to use page themes as much as possible.
         RenderTheme::setCustomFocusRingColor(m_focusRingColor);
@@ -493,14 +497,14 @@ bool RenderThemeEfl::loadTheme()
     // Set new loaded theme, and apply it.
     m_edje = o;
 
-    edje_object_signal_callback_add(edje(), "color_class,set", "webkit/selection/active", applyColorCallback, this);
-    edje_object_signal_callback_add(edje(), "color_class,set", "webkit/selection/inactive", applyColorCallback, this);
+    edje_object_signal_callback_add(edje(), "color_class,set", "webkit/selection/foreground", applyColorCallback, this);
+    edje_object_signal_callback_add(edje(), "color_class,set", "webkit/selection/background", applyColorCallback, this);
     edje_object_signal_callback_add(edje(), "color_class,set", "webkit/focus_ring", applyColorCallback, this);
 
     applyPartDescriptionsFrom(m_themePath);
 
-    setColorFromThemeClass("webkit/selection/active");
-    setColorFromThemeClass("webkit/selection/inactive");
+    setColorFromThemeClass("webkit/selection/foreground");
+    setColorFromThemeClass("webkit/selection/background");
     setColorFromThemeClass("webkit/focus_ring");
 
     platformColorsDidChange(); // Schedules a relayout, do last.
@@ -598,6 +602,7 @@ RenderThemeEfl::RenderThemeEfl(Page* page)
     , m_mediaPanelColor(220, 220, 195) // light tannish color.
     , m_mediaSliderColor(Color::white)
 #endif
+    , m_supportsSelectionForegroundColor(false)
     , m_partCache(0)
 {
 }
@@ -676,6 +681,12 @@ Color RenderThemeEfl::platformFocusRingColor() const
 {
     loadThemeIfNeeded();
     return m_focusRingColor;
+}
+
+bool RenderThemeEfl::supportsSelectionForegroundColors() const
+{
+    loadThemeIfNeeded();
+    return m_supportsSelectionForegroundColor;
 }
 
 bool RenderThemeEfl::paintSliderTrack(RenderObject* object, const PaintInfo& info, const IntRect& rect)

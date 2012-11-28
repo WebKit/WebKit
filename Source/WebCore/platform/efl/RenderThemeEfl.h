@@ -96,6 +96,9 @@ public:
     // A general method asking if any control tinting is supported at all.
     virtual bool supportsControlTints() const { return true; }
 
+    // A general method asking if foreground colors of selection are supported.
+    virtual bool supportsSelectionForegroundColors() const;
+
     // A method to obtain the baseline position for a "leaf" control. This will only be used if a baseline
     // position cannot be determined by examining child content. Checkboxes and radio buttons are examples of
     // controls that need to do this.
@@ -254,6 +257,8 @@ private:
     // Order so that the canvas gets destroyed at last.
     OwnPtr<Ecore_Evas> m_canvas;
     RefPtr<Evas_Object> m_edje;
+
+    bool m_supportsSelectionForegroundColor;
 
     struct ThemePartDesc {
         FormType type;
