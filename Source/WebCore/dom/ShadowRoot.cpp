@@ -60,14 +60,14 @@ ShadowRoot::ShadowRoot(Document* document)
     , TreeScope(this)
     , m_prev(0)
     , m_next(0)
-    , m_applyAuthorStyles(false)
-    , m_resetStyleInheritance(false)
-    , m_registeredWithParentShadowRoot(false)
     , m_insertionPointAssignedTo(0)
     , m_numberOfShadowElementChildren(0)
     , m_numberOfContentElementChildren(0)
     , m_numberOfElementShadowChildren(0)
     , m_numberOfStyles(0)
+    , m_applyAuthorStyles(false)
+    , m_resetStyleInheritance(false)
+    , m_registeredWithParentShadowRoot(false)
 {
     ASSERT(document);
     

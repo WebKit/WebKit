@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011 Google Inc. All Rights Reserved.
+ * Copyright (C) 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -56,7 +57,6 @@ using namespace HTMLNames;
 TreeScope::TreeScope(ContainerNode* rootNode)
     : m_rootNode(rootNode)
     , m_parentTreeScope(0)
-    , m_shouldCacheLabelsByForAttribute(false)
     , m_idTargetObserverRegistry(IdTargetObserverRegistry::create())
 {
     ASSERT(rootNode);
@@ -91,18 +91,24 @@ Element* TreeScope::getElementById(const AtomicString& elementId) const
 {
     if (elementId.isEmpty())
         return 0;
-    return m_elementsById.getElementById(elementId.impl(), this);
+    if (!m_elementsById)
+        return 0;
+    return m_elementsById->getElementById(elementId.impl(), this);
 }
 
 void TreeScope::addElementById(const AtomicString& elementId, Element* element)
 {
-    m_elementsById.add(elementId.impl(), element);
+    if (!m_elementsById)
+        m_elementsById = adoptPtr(new DocumentOrderedMap);
+    m_elementsById->add(elementId.impl(), element);
     m_idTargetObserverRegistry->notifyObservers(elementId);
 }
 
 void TreeScope::removeElementById(const AtomicString& elementId, Element* element)
 {
-    m_elementsById.remove(elementId.impl(), element);
+    if (!m_elementsById)
+        return;
+    m_elementsById->remove(elementId.impl(), element);
     m_idTargetObserverRegistry->notifyObservers(elementId);
 }
 
@@ -125,42 +131,54 @@ void TreeScope::addImageMap(HTMLMapElement* imageMap)
     AtomicStringImpl* name = imageMap->getName().impl();
     if (!name)
         return;
-    m_imageMapsByName.add(name, imageMap);
+    if (!m_imageMapsByName)
+        m_imageMapsByName = adoptPtr(new DocumentOrderedMap);
+    m_imageMapsByName->add(name, imageMap);
 }
 
 void TreeScope::removeImageMap(HTMLMapElement* imageMap)
 {
+    if (!m_imageMapsByName)
+        return;
     AtomicStringImpl* name = imageMap->getName().impl();
     if (!name)
         return;
-    m_imageMapsByName.remove(name, imageMap);
+    m_imageMapsByName->remove(name, imageMap);
 }
 
 HTMLMapElement* TreeScope::getImageMap(const String& url) const
 {
     if (url.isNull())
         return 0;
+    if (!m_imageMapsByName)
+        return 0;
     size_t hashPos = url.find('#');
     String name = (hashPos == notFound ? url : url.substring(hashPos + 1)).impl();
     if (rootNode()->document()->isHTMLDocument())
-        return static_cast<HTMLMapElement*>(m_imageMapsByName.getElementByLowercasedMapName(AtomicString(name.lower()).impl(), this));
-    return static_cast<HTMLMapElement*>(m_imageMapsByName.getElementByMapName(AtomicString(name).impl(), this));
+        return static_cast<HTMLMapElement*>(m_imageMapsByName->getElementByLowercasedMapName(AtomicString(name.lower()).impl(), this));
+    return static_cast<HTMLMapElement*>(m_imageMapsByName->getElementByMapName(AtomicString(name).impl(), this));
 }
 
 void TreeScope::addLabel(const AtomicString& forAttributeValue, HTMLLabelElement* element)
 {
-    m_labelsByForAttribute.add(forAttributeValue.impl(), element);
+    ASSERT(m_labelsByForAttribute);
+    m_labelsByForAttribute->add(forAttributeValue.impl(), element);
 }
 
 void TreeScope::removeLabel(const AtomicString& forAttributeValue, HTMLLabelElement* element)
 {
-    m_labelsByForAttribute.remove(forAttributeValue.impl(), element);
+    ASSERT(m_labelsByForAttribute);
+    m_labelsByForAttribute->remove(forAttributeValue.impl(), element);
 }
 
 HTMLLabelElement* TreeScope::labelElementForId(const AtomicString& forAttributeValue)
 {
-    if (!m_shouldCacheLabelsByForAttribute) {
-        m_shouldCacheLabelsByForAttribute = true;
+    if (forAttributeValue.isEmpty())
+        return 0;
+
+    if (!m_labelsByForAttribute) {
+        // Populate the map on first access.
+        m_labelsByForAttribute = adoptPtr(new DocumentOrderedMap);
         for (Node* node = rootNode(); node; node = node->traverseNextNode()) {
             if (node->hasTagName(labelTag)) {
                 HTMLLabelElement* label = static_cast<HTMLLabelElement*>(node);
@@ -171,10 +189,7 @@ HTMLLabelElement* TreeScope::labelElementForId(const AtomicString& forAttributeV
         }
     }
 
-    if (forAttributeValue.isEmpty())
-        return 0;
-
-    return static_cast<HTMLLabelElement*>(m_labelsByForAttribute.getElementByLabelForAttribute(forAttributeValue.impl(), this));
+    return static_cast<HTMLLabelElement*>(m_labelsByForAttribute->getElementByLabelForAttribute(forAttributeValue.impl(), this));
 }
 
 DOMSelection* TreeScope::getSelection() const

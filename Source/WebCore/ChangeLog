@@ -1,3 +1,40 @@
+2012-11-27  Andreas Kling  <akling@apple.com>
+
+        Shrink ShadowRoot and TreeScope.
+        <http://webkit.org/b/103459>
+
+        Reviewed by Antti Koivisto.
+
+        We're creating ~1500 ShadowRoots on Apple's PLT3 content (from <input> and <textarea> elements)
+        and a lot of this is wasted space.
+
+        Shrink ShadowRoot and TreeScope a bit by making TreeScope's DocumentOrderedMaps heap-allocated
+        and packing the counters on ShadowRoot harder together with the bits.
+
+        202kB progression on Membuster3.
+
+        * dom/ShadowRoot.cpp:
+        (WebCore::ShadowRoot::ShadowRoot):
+        * dom/ShadowRoot.h:
+        (WebCore::ShadowRoot::countElementShadow):
+        (ShadowRoot):
+        * dom/TreeScope.cpp:
+        (WebCore::TreeScope::TreeScope):
+        (WebCore::TreeScope::getElementById):
+        (WebCore::TreeScope::addElementById):
+        (WebCore::TreeScope::removeElementById):
+        (WebCore::TreeScope::addImageMap):
+        (WebCore::TreeScope::removeImageMap):
+        (WebCore::TreeScope::getImageMap):
+        (WebCore::TreeScope::addLabel):
+        (WebCore::TreeScope::removeLabel):
+        (WebCore::TreeScope::labelElementForId):
+        * dom/TreeScope.h:
+        (WebCore::TreeScope::shouldCacheLabelsByForAttribute):
+        (TreeScope):
+        (WebCore::TreeScope::hasElementWithId):
+        (WebCore::TreeScope::containsMultipleElementsWithId):
+
 2012-11-14  Jer Noble  <jer.noble@apple.com>
 
         Add a new shared class WebCoreFullScreenWarningView which presents a styled warning message.

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011 Google Inc. All Rights Reserved.
+ * Copyright (C) 2012 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -64,7 +65,7 @@ public:
     HTMLMapElement* getImageMap(const String& url) const;
 
     // For accessibility.
-    bool shouldCacheLabelsByForAttribute() const { return m_shouldCacheLabelsByForAttribute; }
+    bool shouldCacheLabelsByForAttribute() const { return m_labelsByForAttribute; }
     void addLabel(const AtomicString& forAttributeValue, HTMLLabelElement*);
     void removeLabel(const AtomicString& forAttributeValue, HTMLLabelElement*);
     HTMLLabelElement* labelElementForId(const AtomicString& forAttributeValue);
@@ -100,11 +101,9 @@ private:
     ContainerNode* m_rootNode;
     TreeScope* m_parentTreeScope;
 
-    DocumentOrderedMap m_elementsById;
-    DocumentOrderedMap m_imageMapsByName;
-
-    DocumentOrderedMap m_labelsByForAttribute;
-    bool m_shouldCacheLabelsByForAttribute;
+    OwnPtr<DocumentOrderedMap> m_elementsById;
+    OwnPtr<DocumentOrderedMap> m_imageMapsByName;
+    OwnPtr<DocumentOrderedMap> m_labelsByForAttribute;
 
     OwnPtr<IdTargetObserverRegistry> m_idTargetObserverRegistry;
 
@@ -114,12 +113,12 @@ private:
 inline bool TreeScope::hasElementWithId(AtomicStringImpl* id) const
 {
     ASSERT(id);
-    return m_elementsById.contains(id);
+    return m_elementsById && m_elementsById->contains(id);
 }
 
 inline bool TreeScope::containsMultipleElementsWithId(const AtomicString& id) const
 {
-    return m_elementsById.containsMultiple(id.impl());
+    return m_elementsById && m_elementsById->containsMultiple(id.impl());
 }
 
 TreeScope* commonTreeScope(Node*, Node*);

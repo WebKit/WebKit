@@ -101,7 +101,7 @@ public:
     void registerElementShadow() { ++m_numberOfElementShadowChildren; }
     void unregisterElementShadow() { ASSERT(hasElementShadow()); --m_numberOfElementShadowChildren; }
     bool hasElementShadow() const { return m_numberOfElementShadowChildren > 0; }
-    size_t countElementShadow() const { return m_numberOfElementShadowChildren; }
+    unsigned countElementShadow() const { return m_numberOfElementShadowChildren; }
 
     virtual void registerScopedHTMLStyleChild() OVERRIDE;
     virtual void unregisterScopedHTMLStyleChild() OVERRIDE;
@@ -125,15 +125,15 @@ private:
 
     ShadowRoot* m_prev;
     ShadowRoot* m_next;
-    bool m_applyAuthorStyles : 1;
-    bool m_resetStyleInheritance : 1;
-    bool m_isAuthorShadowRoot : 1;
-    bool m_registeredWithParentShadowRoot : 1;
     InsertionPoint* m_insertionPointAssignedTo;
-    size_t m_numberOfShadowElementChildren;
-    size_t m_numberOfContentElementChildren;
-    size_t m_numberOfElementShadowChildren;
-    size_t m_numberOfStyles;
+    unsigned m_numberOfShadowElementChildren;
+    unsigned m_numberOfContentElementChildren;
+    unsigned m_numberOfElementShadowChildren;
+    unsigned m_numberOfStyles : 28;
+    unsigned m_applyAuthorStyles : 1;
+    unsigned m_resetStyleInheritance : 1;
+    unsigned m_isAuthorShadowRoot : 1;
+    unsigned m_registeredWithParentShadowRoot : 1;
 };
 
 inline Element* ShadowRoot::host() const
