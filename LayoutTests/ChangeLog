@@ -1,3 +1,33 @@
+2012-11-27  Kunihiko Sakamoto  <ksakamoto@chromium.org>
+
+        Add behavior tests for input[type=datetime-local] with multiple fields
+        https://bugs.webkit.org/show_bug.cgi?id=103386
+
+        Reviewed by Kent Tamura.
+
+        * fast/forms/datetimelocal-multiple-fields/datetimelocal-multiple-fields-ax-aria-attributes-expected.txt: Added.
+        * fast/forms/datetimelocal-multiple-fields/datetimelocal-multiple-fields-ax-aria-attributes.html: Added.
+        * fast/forms/datetimelocal-multiple-fields/datetimelocal-multiple-fields-ax-value-changed-notification-expected.txt: Added.
+        * fast/forms/datetimelocal-multiple-fields/datetimelocal-multiple-fields-ax-value-changed-notification.html: Added.
+        * fast/forms/datetimelocal-multiple-fields/datetimelocal-multiple-fields-blur-and-focus-events-expected.txt: Added.
+        * fast/forms/datetimelocal-multiple-fields/datetimelocal-multiple-fields-blur-and-focus-events.html: Added.
+        * fast/forms/datetimelocal-multiple-fields/datetimelocal-multiple-fields-change-layout-by-value-expected.txt: Added.
+        * fast/forms/datetimelocal-multiple-fields/datetimelocal-multiple-fields-change-layout-by-value.html: Added.
+        * fast/forms/datetimelocal-multiple-fields/datetimelocal-multiple-fields-keyboard-events-expected.txt: Added.
+        * fast/forms/datetimelocal-multiple-fields/datetimelocal-multiple-fields-keyboard-events.html: Added.
+        * fast/forms/datetimelocal-multiple-fields/datetimelocal-multiple-fields-mouse-events-expected.txt: Added.
+        * fast/forms/datetimelocal-multiple-fields/datetimelocal-multiple-fields-mouse-events.html: Added.
+        * fast/forms/datetimelocal-multiple-fields/datetimelocal-multiple-fields-preserve-value-after-history-back-expected.txt: Added.
+        * fast/forms/datetimelocal-multiple-fields/datetimelocal-multiple-fields-preserve-value-after-history-back.html: Added.
+        * fast/forms/datetimelocal-multiple-fields/datetimelocal-multiple-fields-reset-value-after-reloads-expected.txt: Added.
+        * fast/forms/datetimelocal-multiple-fields/datetimelocal-multiple-fields-reset-value-after-reloads.html: Added.
+        * fast/forms/datetimelocal-multiple-fields/datetimelocal-multiple-fields-spinbutton-change-and-input-events-expected.txt: Added.
+        * fast/forms/datetimelocal-multiple-fields/datetimelocal-multiple-fields-spinbutton-change-and-input-events.html: Added.
+        * fast/forms/datetimelocal-multiple-fields/datetimelocal-multiple-fields-wheel-event-expected.txt: Added.
+        * fast/forms/datetimelocal-multiple-fields/datetimelocal-multiple-fields-wheel-event.html: Added.
+        * fast/forms/resources/multiple-fields-blur-and-focus-events.js:
+        (startTestFor): Support datetime and datetime-local.
+
 2012-11-27  Robert Kroeger  <rjkroege@chromium.org>
 
         Unreviewed gardening:

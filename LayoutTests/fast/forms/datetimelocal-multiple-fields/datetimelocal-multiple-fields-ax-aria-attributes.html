@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<input id="test" type="datetime-local" value="2012-10-09T12:34:56.789">
+<script>
+description('This test checks aria-help attribute of fields in multiple fields datetime-local input UI.');
+
+function focusedFieldValueDescription()
+{
+    var element = accessibilityController.focusedElement;
+    return element.helpText + ', ' +  element.valueDescription + ', ' + element.minValue + ', ' + element.maxValue;
+}
+
+var testInput = document.getElementById('test');
+
+if (!window.accessibilityController || !window.eventSender)
+    debug('Please run inside DRT or WTR.');
+else {
+    debug('Non-empty value');
+    testInput.focus();
+    shouldBeEqualToString('focusedFieldValueDescription()', 'AXHelp: Month, AXValueDescription: 10, 1, 12');
+    eventSender.keyDown('\t');
+    shouldBeEqualToString('focusedFieldValueDescription()', 'AXHelp: Day, AXValueDescription: 09, 1, 31');
+    eventSender.keyDown('\t');
+    shouldBeEqualToString('focusedFieldValueDescription()', 'AXHelp: Year, AXValueDescription: 2012, 1, 275760');
+    eventSender.keyDown('\t');
+    shouldBeEqualToString('focusedFieldValueDescription()', 'AXHelp: Hours, AXValueDescription: 12, 1, 12');
+    eventSender.keyDown('\t');
+    shouldBeEqualToString('focusedFieldValueDescription()', 'AXHelp: Minutes, AXValueDescription: 34, 0, 59');
+    eventSender.keyDown('\t');
+    shouldBeEqualToString('focusedFieldValueDescription()', 'AXHelp: Seconds, AXValueDescription: 56, 0, 59');
+    eventSender.keyDown('\t');
+    shouldBeEqualToString('focusedFieldValueDescription()', 'AXHelp: Milliseconds, AXValueDescription: 789, 0, 999');
+    eventSender.keyDown('\t');
+    shouldBeEqualToString('focusedFieldValueDescription()', 'AXHelp: AM/PM, AXValueDescription: PM, 1, 2');
+
+    debug('Empty value');
+    eventSender.keyDown('\b');
+    shouldBeEqualToString('focusedFieldValueDescription()', 'AXHelp: AM/PM, AXValueDescription: blank, 1, 2');
+    eventSender.keyDown('\t', ['shiftKey']);
+    eventSender.keyDown('\b');
+    shouldBeEqualToString('focusedFieldValueDescription()', 'AXHelp: Milliseconds, AXValueDescription: blank, 0, 999');
+    eventSender.keyDown('\t', ['shiftKey']);
+    eventSender.keyDown('\b');
+    shouldBeEqualToString('focusedFieldValueDescription()', 'AXHelp: Seconds, AXValueDescription: blank, 0, 59');
+    eventSender.keyDown('\t', ['shiftKey']);
+    eventSender.keyDown('\b');
+    shouldBeEqualToString('focusedFieldValueDescription()', 'AXHelp: Minutes, AXValueDescription: blank, 0, 59');
+    eventSender.keyDown('\t', ['shiftKey']);
+    eventSender.keyDown('\b');
+    shouldBeEqualToString('focusedFieldValueDescription()', 'AXHelp: Hours, AXValueDescription: blank, 1, 12');
+    eventSender.keyDown('\t', ['shiftKey']);
+    eventSender.keyDown('\b');
+    shouldBeEqualToString('focusedFieldValueDescription()', 'AXHelp: Year, AXValueDescription: blank, 1, 275760');
+    eventSender.keyDown('\t', ['shiftKey']);
+    eventSender.keyDown('\b');
+    shouldBeEqualToString('focusedFieldValueDescription()', 'AXHelp: Day, AXValueDescription: blank, 1, 31');
+    eventSender.keyDown('\t', ['shiftKey']);
+    eventSender.keyDown('\b');
+    shouldBeEqualToString('focusedFieldValueDescription()', 'AXHelp: Month, AXValueDescription: blank, 1, 12');
+
+    debug('');
+    testInput.parentNode.removeChild(testInput);
+}
+</script>
+<script src="../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

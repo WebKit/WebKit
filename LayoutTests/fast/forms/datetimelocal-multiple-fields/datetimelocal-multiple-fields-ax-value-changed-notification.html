@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<input id="test" type="datetime-local" value="2012-10-09T12:34:56">
+<script>
+description('This test checks value changed accessibility notifications.');
+
+var testInput = document.getElementById('test');
+
+if (!window.accessibilityController || !window.eventSender)
+    debug('Please run inside DRT or WRT.');
+else {
+    accessibilityController.addNotificationListener(function (element, notification) {
+        if (notification == 'FocusedUIElementChanged' || notification == 'ValueChanged') {
+            debug(notification + ' ' + element.helpText + '=' + element.valueDescription);
+        }
+    });
+
+    testInput.focus();
+    eventSender.keyDown('\t');
+    eventSender.keyDown('4');
+    eventSender.keyDown('upArrow');
+    eventSender.keyDown('\t');
+    eventSender.keyDown('2');
+    eventSender.keyDown('downArrow');
+
+    window.jsTestIsAsync = true;
+
+    window.setTimeout(function() {
+        debug('');
+        testInput.parentNode.removeChild(testInput);
+        finishJSTest();
+    }, 1);
+}
+</script>
+<script src="../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>
