@@ -741,4 +741,10 @@ String localizedString(const char* key)
     return String::fromUTF8(key, strlen(key));
 }
 
+String validationMessageBadInputForNumberText()
+{
+    notImplemented();
+    return validationMessageTypeMismatchText();
+}
+
 }
