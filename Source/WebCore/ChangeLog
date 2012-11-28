@@ -1,5 +1,22 @@
 2012-11-28  Alexandru Chiculita  <achicu@adobe.com>
 
+        [CSS Regions] Auto-height regions will not calculate the height correctly when the content changes dynamically
+        https://bugs.webkit.org/show_bug.cgi?id=102954
+
+        Reviewed by David Hyatt.
+
+        Whenever the flow changes, we need to reset the region computed auto-heights.
+        However, when we reset the region heights to "auto" or "un-computed", we also need to make
+        sure that all the region breaks are counted again, so that we split regions correctly during the new layout.
+        I've reused the m_regionsInvalidated property to force the flow do a complete layout.
+
+        Test: fast/regions/autoheight-dynamic-update.html
+
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::resetRegionsOverrideLogicalContentHeight):
+
+2012-11-28  Alexandru Chiculita  <achicu@adobe.com>
+
         [CSS Regions] InRenderFlowThread returns false in the first setStyle
         https://bugs.webkit.org/show_bug.cgi?id=102839
 
