@@ -80,4 +80,12 @@ WKPageRef PlatformWebView::page() const
     return WKViewGetPage(toAPI(m_view));
 }
 
+void PlatformWebView::simulateSpacebarKeyPress()
+{
+    Evas* evas = ecore_evas_get(m_window);
+    evas_object_focus_set(m_view, true);
+    evas_event_feed_key_down(evas, "space", "space", " ", 0, 0, 0);
+    evas_event_feed_key_up(evas, "space", "space", " ", 0, 1, 0);
+}
+
 } // namespace TestWebKitAPI
