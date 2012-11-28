@@ -105,7 +105,7 @@ TestInvocation::TestInvocation(const std::string& pathOrURL)
     , m_gotFinalMessage(false)
     , m_gotRepaint(false)
     , m_error(false)
-    , m_webProcessIsUnrensponsive(false)
+    , m_webProcessIsUnresponsive(false)
 {
 }
 
@@ -213,7 +213,7 @@ void TestInvocation::invoke()
     TestController::shared().runUntil(m_gotInitialResponse, TestController::ShortTimeout);
     if (!m_gotInitialResponse) {
         m_errorMessage = "Timed out waiting for initial response from web process\n";
-        m_webProcessIsUnrensponsive = true;
+        m_webProcessIsUnresponsive = true;
         goto end;
     }
     if (m_error)
@@ -229,7 +229,7 @@ void TestInvocation::invoke()
     TestController::shared().runUntil(m_gotFinalMessage, TestController::shared().useWaitToDumpWatchdogTimer() ? TestController::LongTimeout : TestController::NoTimeout);
     if (!m_gotFinalMessage) {
         m_errorMessage = "Timed out waiting for final message from web process\n";
-        m_webProcessIsUnrensponsive = true;
+        m_webProcessIsUnresponsive = true;
         goto end;
     }
     if (m_error)
@@ -243,7 +243,7 @@ end:
         WKInspectorClose(WKPageGetInspector(TestController::shared().mainWebView()->page()));
 #endif // ENABLE(INSPECTOR)
 
-    if (m_webProcessIsUnrensponsive)
+    if (m_webProcessIsUnresponsive)
         dumpWebProcessUnresponsiveness();
     else if (!TestController::shared().resetStateToConsistentValues()) {
         m_errorMessage = "Timed out loading about:blank before the next test";

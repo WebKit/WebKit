@@ -129,7 +129,7 @@ void TestInvocation::dumpPixelsAndCompareWithExpected(WKImageRef wkImage, WKArra
     if (!m_gotRepaint) {
         m_error = true;
         m_errorMessage = "Timed out waiting for repaint\n";
-        m_webProcessIsUnrensponsive = true;
+        m_webProcessIsUnresponsive = true;
         return;
     }
 

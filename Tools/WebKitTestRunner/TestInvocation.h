@@ -53,7 +53,6 @@ private:
 
 #if PLATFORM(QT) || PLATFORM(EFL)
     static void forceRepaintDoneCallback(WKErrorRef, void* context);
-    void forceRepaintDone();
 #endif
     
     WKRetainPtr<WKURLRef> m_url;
@@ -72,7 +71,7 @@ private:
     WKRetainPtr<WKImageRef> m_pixelResult;
     WKRetainPtr<WKArrayRef> m_repaintRects;
     std::string m_errorMessage;
-    bool m_webProcessIsUnrensponsive;
+    bool m_webProcessIsUnresponsive;
 
 };
 
