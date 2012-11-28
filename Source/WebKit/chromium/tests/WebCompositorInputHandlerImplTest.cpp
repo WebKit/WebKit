@@ -259,6 +259,75 @@ TEST_F(WebCompositorInputHandlerImplTest, gesturePinch)
     m_inputHandler->handleInputEvent(gesture);
 }
 
+TEST_F(WebCompositorInputHandlerImplTest, gesturePinchAfterScrollOnMainThread)
+{
+    // Scrolls will start by being sent to the main thread.
+    m_expectedDisposition = DidNotHandle;
+    VERIFY_AND_RESET_MOCKS();
+
+    EXPECT_CALL(m_mockInputHandlerClient, scrollBegin(::testing::_, ::testing::_))
+        .WillOnce(testing::Return(WebInputHandlerClient::ScrollStatusOnMainThread));
+
+    gesture.type = WebInputEvent::GestureScrollBegin;
+    m_inputHandler->handleInputEvent(gesture);
+
+    VERIFY_AND_RESET_MOCKS();
+
+    gesture.type = WebInputEvent::GestureScrollUpdate;
+    gesture.data.scrollUpdate.deltaY = 40;
+    m_inputHandler->handleInputEvent(gesture);
+
+    // However, after the pinch gesture starts, they should go to the impl
+    // thread.
+    m_expectedDisposition = DidHandle;
+    VERIFY_AND_RESET_MOCKS();
+
+    gesture.type = WebInputEvent::GesturePinchBegin;
+    EXPECT_CALL(m_mockInputHandlerClient, pinchGestureBegin());
+    m_inputHandler->handleInputEvent(gesture);
+
+    VERIFY_AND_RESET_MOCKS();
+
+    gesture.type = WebInputEvent::GesturePinchUpdate;
+    gesture.data.pinchUpdate.scale = 1.5;
+    gesture.x = 7;
+    gesture.y = 13;
+    EXPECT_CALL(m_mockInputHandlerClient, pinchGestureUpdate(1.5, WebPoint(7, 13)));
+    m_inputHandler->handleInputEvent(gesture);
+
+    VERIFY_AND_RESET_MOCKS();
+
+    gesture.type = WebInputEvent::GestureScrollUpdate;
+    gesture.data.scrollUpdate.deltaY = -40; // -Y means scroll down - i.e. in the +Y direction.
+    EXPECT_CALL(m_mockInputHandlerClient, scrollByIfPossible(testing::_, testing::Field(&WebSize::height, testing::Gt(0))))
+        .WillOnce(testing::Return(true));
+    m_inputHandler->handleInputEvent(gesture);
+
+    VERIFY_AND_RESET_MOCKS();
+
+    gesture.type = WebInputEvent::GesturePinchUpdate;
+    gesture.data.pinchUpdate.scale = 0.5;
+    gesture.x = 9;
+    gesture.y = 6;
+    EXPECT_CALL(m_mockInputHandlerClient, pinchGestureUpdate(.5, WebPoint(9, 6)));
+    m_inputHandler->handleInputEvent(gesture);
+
+    VERIFY_AND_RESET_MOCKS();
+
+    gesture.type = WebInputEvent::GesturePinchEnd;
+    EXPECT_CALL(m_mockInputHandlerClient, pinchGestureEnd());
+    m_inputHandler->handleInputEvent(gesture);
+
+    // After the pinch gesture ends, they should go to back to the main
+    // thread.
+    m_expectedDisposition = DidNotHandle;
+    VERIFY_AND_RESET_MOCKS();
+
+    gesture.type = WebInputEvent::GestureScrollEnd;
+    gesture.data.scrollUpdate.deltaY = 0;
+    m_inputHandler->handleInputEvent(gesture);
+}
+
 TEST_F(WebCompositorInputHandlerImplTest, gestureFlingStartedTouchpad)
 {
     // We shouldn't send any events to the widget for this gesture.

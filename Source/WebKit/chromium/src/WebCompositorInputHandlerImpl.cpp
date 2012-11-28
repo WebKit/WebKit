@@ -69,7 +69,8 @@ WebCompositorInputHandlerImpl::WebCompositorInputHandlerImpl()
     , m_expectScrollUpdateEnd(false)
     , m_expectPinchUpdateEnd(false)
 #endif
-    , m_gestureScrollStarted(false)
+    , m_gestureScrollOnImplThread(false)
+    , m_gesturePinchOnImplThread(false)
 {
 }
 
@@ -131,7 +132,7 @@ WebCompositorInputHandlerImpl::EventDisposition WebCompositorInputHandlerImpl::h
             return DidNotHandle;
         }
     } else if (event.type == WebInputEvent::GestureScrollBegin) {
-        ASSERT(!m_gestureScrollStarted);
+        ASSERT(!m_gestureScrollOnImplThread);
         ASSERT(!m_expectScrollUpdateEnd);
 #ifndef NDEBUG
         m_expectScrollUpdateEnd = true;
@@ -140,7 +141,7 @@ WebCompositorInputHandlerImpl::EventDisposition WebCompositorInputHandlerImpl::h
         WebInputHandlerClient::ScrollStatus scrollStatus = m_inputHandlerClient->scrollBegin(WebPoint(gestureEvent.x, gestureEvent.y), WebInputHandlerClient::ScrollInputTypeGesture);
         switch (scrollStatus) {
         case WebInputHandlerClient::ScrollStatusStarted:
-            m_gestureScrollStarted = true;
+            m_gestureScrollOnImplThread = true;
             return DidHandle;
         case WebInputHandlerClient::ScrollStatusOnMainThread:
             return DidNotHandle;
@@ -150,7 +151,7 @@ WebCompositorInputHandlerImpl::EventDisposition WebCompositorInputHandlerImpl::h
     } else if (event.type == WebInputEvent::GestureScrollUpdate) {
         ASSERT(m_expectScrollUpdateEnd);
 
-        if (!m_gestureScrollStarted)
+        if (!m_gestureScrollOnImplThread && !m_gesturePinchOnImplThread)
             return DidNotHandle;
 
         const WebGestureEvent& gestureEvent = *static_cast<const WebGestureEvent*>(&event);
@@ -162,11 +163,11 @@ WebCompositorInputHandlerImpl::EventDisposition WebCompositorInputHandlerImpl::h
 #ifndef NDEBUG
         m_expectScrollUpdateEnd = false;
 #endif
-        if (!m_gestureScrollStarted)
+        if (!m_gestureScrollOnImplThread)
             return DidNotHandle;
 
         m_inputHandlerClient->scrollEnd();
-        m_gestureScrollStarted = false;
+        m_gestureScrollOnImplThread = false;
         return DidHandle;
     } else if (event.type == WebInputEvent::GesturePinchBegin) {
         ASSERT(!m_expectPinchUpdateEnd);
@@ -174,12 +175,14 @@ WebCompositorInputHandlerImpl::EventDisposition WebCompositorInputHandlerImpl::h
         m_expectPinchUpdateEnd = true;
 #endif
         m_inputHandlerClient->pinchGestureBegin();
+        m_gesturePinchOnImplThread = true;
         return DidHandle;
     } else if (event.type == WebInputEvent::GesturePinchEnd) {
         ASSERT(m_expectPinchUpdateEnd);
 #ifndef NDEBUG
         m_expectPinchUpdateEnd = false;
 #endif
+        m_gesturePinchOnImplThread = false;
         m_inputHandlerClient->pinchGestureEnd();
         return DidHandle;
     } else if (event.type == WebInputEvent::GesturePinchUpdate) {

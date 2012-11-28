@@ -96,7 +96,8 @@ private:
     bool m_expectScrollUpdateEnd;
     bool m_expectPinchUpdateEnd;
 #endif
-    bool m_gestureScrollStarted;
+    bool m_gestureScrollOnImplThread;
+    bool m_gesturePinchOnImplThread;
 
     static int s_nextAvailableIdentifier;
     static HashSet<WebCompositorInputHandlerImpl*>* s_compositors;
