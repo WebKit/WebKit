@@ -47,6 +47,8 @@
 #include "ScriptCallStack.h"
 #include "ScriptExecutionContext.h"
 #include <limits>
+#include <wtf/Atomics.h>
+#include <wtf/Threading.h>
 
 namespace WebCore {
 
@@ -72,6 +74,14 @@ IDBDatabase::IDBDatabase(ScriptExecutionContext* context, PassRefPtr<IDBDatabase
 IDBDatabase::~IDBDatabase()
 {
     close();
+}
+
+int64_t IDBDatabase::nextTransactionId()
+{
+    // Only keep a 32-bit counter to allow ports to use the other 32
+    // bits of the id.
+    AtomicallyInitializedStatic(int, currentTransactionId = 0);
+    return atomicIncrement(&currentTransactionId);
 }
 
 void IDBDatabase::transactionCreated(IDBTransaction* transaction)
@@ -230,12 +240,14 @@ PassRefPtr<IDBTransaction> IDBDatabase::transaction(ScriptExecutionContext* cont
     // can be queued against the transaction at any point. They will start executing as soon as the
     // appropriate locks have been acquired.
     // Also note that each backend object corresponds to exactly one IDBTransaction object.
-    RefPtr<IDBTransactionBackendInterface> transactionBackend = m_backend->transaction(objectStoreIds, mode);
+    int64_t transactionId = nextTransactionId();
+    RefPtr<IDBTransactionBackendInterface> transactionBackend = m_backend->createTransaction(transactionId, objectStoreIds, mode);
     if (!transactionBackend) {
         ASSERT(ec);
         return 0;
     }
-    RefPtr<IDBTransaction> transaction = IDBTransaction::create(context, transactionBackend, scope, mode, this);
+
+    RefPtr<IDBTransaction> transaction = IDBTransaction::create(context, transactionId, transactionBackend, scope, mode, this);
     transactionBackend->setCallbacks(transaction.get());
     return transaction.release();
 }

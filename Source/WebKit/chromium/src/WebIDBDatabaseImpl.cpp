@@ -86,7 +86,6 @@ WebIDBTransaction* WebIDBDatabaseImpl::createTransaction(long long id, const Web
     return new WebIDBTransactionImpl(transaction);
 }
 
-// FIXME: Remove this as part of https://bugs.webkit.org/show_bug.cgi?id=102733.
 WebIDBTransaction* WebIDBDatabaseImpl::transaction(const WebVector<long long>& objectStoreIds, unsigned short mode)
 {
     Vector<int64_t> objectStoreIdList(objectStoreIds.size());

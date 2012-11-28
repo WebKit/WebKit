@@ -56,8 +56,8 @@ public:
         VERSION_CHANGE = 2
     };
 
-    static PassRefPtr<IDBTransaction> create(ScriptExecutionContext*, PassRefPtr<IDBTransactionBackendInterface>, const Vector<String>& objectStoreNames, Mode, IDBDatabase*);
-    static PassRefPtr<IDBTransaction> create(ScriptExecutionContext*, PassRefPtr<IDBTransactionBackendInterface>, const Vector<String>& objectStoreNames, Mode, IDBDatabase*, IDBOpenDBRequest*);
+    static PassRefPtr<IDBTransaction> create(ScriptExecutionContext*, int64_t, PassRefPtr<IDBTransactionBackendInterface>, const Vector<String>& objectStoreNames, Mode, IDBDatabase*);
+    static PassRefPtr<IDBTransaction> create(ScriptExecutionContext*, int64_t, PassRefPtr<IDBTransactionBackendInterface>, const Vector<String>& objectStoreNames, Mode, IDBDatabase*, IDBOpenDBRequest*);
     virtual ~IDBTransaction();
 
     static const AtomicString& modeReadOnly();
@@ -70,6 +70,7 @@ public:
     static const AtomicString& modeToString(Mode, ExceptionCode&);
 
     IDBTransactionBackendInterface* backend() const;
+    int64_t id() const { return m_id; }
     bool isActive() const { return m_state == Active; }
     bool isFinished() const { return m_state == Finished; }
     bool isReadOnly() const { return m_mode == READ_ONLY; }
@@ -122,7 +123,7 @@ public:
     using RefCounted<IDBTransactionCallbacks>::deref;
 
 private:
-    IDBTransaction(ScriptExecutionContext*, PassRefPtr<IDBTransactionBackendInterface>, const Vector<String>&, Mode, IDBDatabase*, IDBOpenDBRequest*);
+    IDBTransaction(ScriptExecutionContext*, int64_t, PassRefPtr<IDBTransactionBackendInterface>, const Vector<String>&, Mode, IDBDatabase*, IDBOpenDBRequest*);
 
     void enqueueEvent(PassRefPtr<Event>);
     void closeOpenCursors();
@@ -143,7 +144,9 @@ private:
         Finished, // No more events will fire and no new requests may be filed.
     };
 
+    // FIXME: Remove references to the backend when the backend is fully flattened: https://bugs.webkit.org/show_bug.cgi?id=99774
     RefPtr<IDBTransactionBackendInterface> m_backend;
+    int64_t m_id;
     RefPtr<IDBDatabase> m_database;
     const Vector<String> m_objectStoreNames;
     IDBOpenDBRequest* m_openDBRequest;

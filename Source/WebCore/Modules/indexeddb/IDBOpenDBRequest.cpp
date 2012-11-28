@@ -89,7 +89,8 @@ void IDBOpenDBRequest::onUpgradeNeeded(int64_t oldVersion, PassRefPtr<IDBTransac
     m_databaseCallbacks->connect(idbDatabase.get());
     m_databaseCallbacks = 0;
 
-    RefPtr<IDBTransaction> frontend = IDBTransaction::create(scriptExecutionContext(), transactionBackend, Vector<String>(), IDBTransaction::VERSION_CHANGE, idbDatabase.get(), this);
+    int64_t transactionId = IDBDatabase::nextTransactionId();
+    RefPtr<IDBTransaction> frontend = IDBTransaction::create(scriptExecutionContext(), transactionId, transactionBackend, Vector<String>(), IDBTransaction::VERSION_CHANGE, idbDatabase.get(), this);
     transactionBackend->setCallbacks(frontend.get());
     m_transaction = frontend;
     m_result = IDBAny::create(idbDatabase.release());
