@@ -1,3 +1,16 @@
+2012-11-28  Denis Nomiyama  <d.nomiyama@samsung.com>
+
+        Removed extra definition of GLXContext.
+        https://bugs.webkit.org/show_bug.cgi?id=103500
+
+        Reviewed by Martin Robinson.
+
+        A minor cleanup to remove a spare definition of GLXContext in GLContextGLX.h.
+
+        No new tests. This doesn't change any behavior.
+
+        * platform/graphics/glx/GLContextGLX.h:
+
 2012-11-28  Sadrul Habib Chowdhury  <sadrul@chromium.org>
 
         Fix gesture scrolling when the target-element of scroll-begin is removed

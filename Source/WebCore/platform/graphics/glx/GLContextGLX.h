@@ -25,7 +25,6 @@
 #include "GLContext.h"
 
 typedef struct __GLXcontextRec* GLXContext;
-typedef struct __GLXcontextRec *GLXContext;
 typedef unsigned long GLXPbuffer;
 typedef unsigned long GLXPixmap;
 typedef unsigned char GLubyte;
