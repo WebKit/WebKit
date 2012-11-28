@@ -1,3 +1,20 @@
+2012-11-28  Abhishek Arya  <inferno@chromium.org>
+
+        Heap-use-after-free in WebCore::EventHandler::handleMousePressEvent
+        https://bugs.webkit.org/show_bug.cgi?id=101098
+
+        Reviewed by Adam Barth.
+
+        |subframe| can be blown away inside passMousePressEventToSubframe
+        call. Use RefPtr to protect it in handleMousePressEvent function.
+        We use similar approach in handleMouseMoveEvent function.
+
+        No new tests. Test is extremely time dependent and needs to trigger
+        interaction gesture. Reproduced on ClusterFuzz.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleMousePressEvent):
+
 2012-11-28  Tom Sepez  <tsepez@chromium.org>
 
         XSSAuditor bypass with script src=data: URL ending in <!--
