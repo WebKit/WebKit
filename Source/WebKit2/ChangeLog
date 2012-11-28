@@ -1,5 +1,11 @@
 2012-11-28  Lucas Forschler  <lforschler@apple.com>
 
+        Windows build fix.
+        
+        * win/WebKit2.def:
+
+2012-11-28  Lucas Forschler  <lforschler@apple.com>
+
         Merge r119546
 
     2012-06-04  Stephanie Lewis  <slewis@apple.com>
