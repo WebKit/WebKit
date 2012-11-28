@@ -1,3 +1,30 @@
+2012-11-28  Tony Chang  <tony@chromium.org>
+
+        Unreviewed, land updated Mac results after track limiter removal.
+
+        * fast/dom/HTMLInputElement/input-slider-update-expected.txt:
+        * fast/dom/HTMLInputElement/input-slider-update-styled-expected.txt:
+        * fast/forms/range/input-appearance-range-expected.txt:
+        * fast/forms/range/slider-padding-expected.txt:
+        * fast/forms/range/slider-thumb-stylability-expected.txt:
+        * fast/multicol/client-rects-expected.txt:
+        * fast/repaint/slider-thumb-drag-release-expected.txt:
+        * fast/repaint/slider-thumb-float-expected.txt:
+        * platform/mac/TestExpectations:
+        * platform/mac/fast/forms/box-shadow-override-expected.txt:
+        * platform/mac/fast/forms/input-appearance-height-expected.txt:
+        * platform/mac/fast/forms/range/range-thumb-height-percentage-expected.txt:
+        * platform/mac/fast/forms/range/slider-thumb-shared-style-expected.txt:
+        * platform/mac/media/audio-controls-rendering-expected.txt:
+        * platform/mac/media/controls-after-reload-expected.txt:
+        * platform/mac/media/controls-strict-expected.txt:
+        * platform/mac/media/controls-styling-strict-expected.txt:
+        * platform/mac/media/controls-without-preload-expected.txt:
+        * platform/mac/media/video-controls-rendering-expected.txt:
+        * platform/mac/media/video-display-toggle-expected.txt:
+        * platform/mac/media/video-no-audio-expected.txt:
+        * platform/mac/media/video-playing-and-pause-expected.txt:
+
 2012-11-28  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/12645085> REGRESSION (r130851): With kerning enabled, a white-space: pre-wrap inline starting with tab+space has the wrong width

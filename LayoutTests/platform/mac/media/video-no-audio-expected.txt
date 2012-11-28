@@ -19,9 +19,8 @@ layer at (8,305) size 352x25
     RenderDeprecatedFlexibleBox {DIV} at (49,5) size 273x15
       RenderSlider {INPUT} at (45,2) size 183x13
         RenderFlexibleBox {DIV} at (0,0) size 183x13
-          RenderBlock {DIV} at (0,2) size 173x9
+          RenderBlock {DIV} at (0,2) size 183x9
             RenderBlock {DIV} at (0,0) size 10x8
-          RenderBlock {DIV} at (173,0) size 10x8
     RenderButton {INPUT} at (329,4) size 16x17
     RenderBlock {DIV} at (322,12) size 0x1
 layer at (57,312) size 45x11

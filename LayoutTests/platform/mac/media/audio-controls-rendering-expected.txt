@@ -23,9 +23,8 @@ layer at (8,42) size 200x25
     RenderDeprecatedFlexibleBox {DIV} at (49,5) size 126x15
       RenderSlider {INPUT} at (0,2) size 126x13
         RenderFlexibleBox {DIV} at (0,0) size 126x13
-          RenderBlock {DIV} at (0,2) size 116x9
+          RenderBlock {DIV} at (0,2) size 126x9
             RenderBlock {DIV} at (0,0) size 10x8
-          RenderBlock {DIV} at (116,0) size 10x8
     RenderBlock {DIV} at (175,6) size 25x13
 layer at (185,49) size 14x12
   RenderButton zI: 1 {INPUT} at (2,0) size 14x12
@@ -38,9 +37,8 @@ layer at (8,85) size 320x25
     RenderDeprecatedFlexibleBox {DIV} at (49,5) size 246x15
       RenderSlider {INPUT} at (45,2) size 156x13
         RenderFlexibleBox {DIV} at (0,0) size 156x13
-          RenderBlock {DIV} at (0,2) size 146x9
+          RenderBlock {DIV} at (0,2) size 156x9
             RenderBlock {DIV} at (0,0) size 10x8
-          RenderBlock {DIV} at (146,0) size 10x8
     RenderBlock {DIV} at (295,6) size 25x13
 layer at (57,92) size 45x11
   RenderDeprecatedFlexibleBox {DIV} at (0,2) size 45x11 [color=#FFFFFF]
@@ -65,9 +63,8 @@ layer at (8,203) size 320x25
     RenderDeprecatedFlexibleBox {DIV} at (49,5) size 246x15
       RenderSlider {INPUT} at (45,2) size 156x13
         RenderFlexibleBox {DIV} at (0,0) size 156x13
-          RenderBlock {DIV} at (0,2) size 146x9
+          RenderBlock {DIV} at (0,2) size 156x9
             RenderBlock {DIV} at (0,0) size 10x8
-          RenderBlock {DIV} at (146,0) size 10x8
     RenderBlock {DIV} at (295,6) size 25x13
 layer at (57,210) size 45x11
   RenderDeprecatedFlexibleBox {DIV} at (0,2) size 45x11 [color=#FFFFFF]
