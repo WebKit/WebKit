@@ -30,6 +30,7 @@
 
 #import "ArgumentCoders.h"
 #import "DataReference.h"
+#import "PDFAnnotationTextWidgetDetails.h"
 #import "PDFKitImports.h"
 #import "PDFLayerControllerDetails.h"
 #import "PDFPluginAnnotation.h"
@@ -729,6 +730,11 @@ void PDFPlugin::setActiveAnnotation(PDFAnnotation *annotation)
         m_activeAnnotation->commit();
 
     if (annotation) {
+        if ([annotation isKindOfClass:pdfAnnotationTextWidgetClass()] && static_cast<PDFAnnotationTextWidget *>(annotation).isReadOnly) {
+            m_activeAnnotation = 0;
+            return;
+        }
+
         m_activeAnnotation = PDFPluginAnnotation::create(annotation, m_pdfLayerController.get(), this);
         m_activeAnnotation->attach(m_annotationContainer.get());
     } else

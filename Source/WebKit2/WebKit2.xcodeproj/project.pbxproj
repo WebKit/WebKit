@@ -1591,6 +1591,7 @@
 		33D3A3C61339617900709BE4 /* WebMediaCacheManagerProxyMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebMediaCacheManagerProxyMessageReceiver.cpp; sourceTree = "<group>"; };
 		33D3A3C71339617900709BE4 /* WebMediaCacheManagerProxyMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebMediaCacheManagerProxyMessages.h; sourceTree = "<group>"; };
 		33F9D5B81312F1EE000D683F /* WebResourceCacheManagerCFNet.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; name = WebResourceCacheManagerCFNet.cpp; path = ResourceCache/cf/WebResourceCacheManagerCFNet.cpp; sourceTree = "<group>"; };
+		3574B37F1665932C00859BB7 /* PDFAnnotationTextWidgetDetails.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = PDFAnnotationTextWidgetDetails.h; path = PDF/PDFAnnotationTextWidgetDetails.h; sourceTree = "<group>"; };
 		3760881C150413E900FC82C7 /* WebRenderObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebRenderObject.cpp; sourceTree = "<group>"; };
 		3760881D150413E900FC82C7 /* WebRenderObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebRenderObject.h; sourceTree = "<group>"; };
 		37608820150414F700FC82C7 /* WKRenderObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKRenderObject.cpp; sourceTree = "<group>"; };
@@ -4433,6 +4434,7 @@
 				2D870D0E1622B7F9000A3F20 /* PDFPlugin.mm */,
 				E199875C142BFC9700BB2DE7 /* SimplePDFPlugin.mm */,
 				E199875A142BF9B800BB2DE7 /* SimplePDFPlugin.h */,
+				3574B37F1665932C00859BB7 /* PDFAnnotationTextWidgetDetails.h */,
 			);
 			name = PDF;
 			sourceTree = "<group>";

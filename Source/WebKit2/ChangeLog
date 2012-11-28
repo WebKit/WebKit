@@ -1,3 +1,19 @@
+2012-11-27  Tim Horton  <timothy_horton@apple.com>
+
+        PDFPlugin: Should not be able to edit read-only text annotations
+        https://bugs.webkit.org/show_bug.cgi?id=103387
+        <rdar://problem/12752313>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Don't allow read-only annotations to become active.
+
+        * WebKit2.xcodeproj/project.pbxproj: Add PDFAnnotationTextWidgetDetails.h.
+        * WebProcess/Plugins/PDF/PDFAnnotationTextWidgetDetails.h: Added.
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::PDFPlugin::setActiveAnnotation): Bail if the annotation is read-only.
+        * WebProcess/Plugins/PDF/PDFPluginTextAnnotation.mm: Move PDFAnnotationTextWidget details category to PDFAnnotationTextWidgetDetails.h
+
 2012-11-27  Huang Dongsung  <luxtella@company100.net>
 
         Coordinated Graphics: Refactor code managing a backing store in LayerTreeRenderer.
