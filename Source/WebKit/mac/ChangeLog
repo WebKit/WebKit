@@ -1,3 +1,16 @@
+2012-11-28  Beth Dakin  <bdakin@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=102970
+        [WK1] REGRESSION (r129545): Main frame doesn't rubberband unless 
+        WebFrameLoadDelegate implements -webView:didFirstLayoutInFrame:
+
+        Reviewed by Sam Weinig.
+
+        We should always register for DidFirstLayout in WK1 since we do work 
+        at that time besides just calling the delegate function.
+        * WebView/WebView.mm:
+        (-[WebView _cacheFrameLoadDelegateImplementations]):
+
 2012-11-27  Michael Saboff  <msaboff@apple.com>
 
         TextIterator unnecessarily converts 8 bit strings to 16 bits
