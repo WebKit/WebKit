@@ -1,3 +1,15 @@
+2012-11-27  Tony Chang  <tony@chromium.org>
+
+        Fix garden-o-matic for non-chromium ports
+        https://bugs.webkit.org/show_bug.cgi?id=103458
+
+        Reviewed by Adam Barth.
+
+        I was getting a 403 error when trying to select any non-chromium port.
+
+        * Scripts/webkitpy/tool/servers/reflectionhandler.py:
+        (ReflectionHandler._handle_request): Use the path without query params.
+
 2012-11-27  Yael Aharon  <yael.aharon@intel.com>
 
         [EFL][WK2] 3D pixel tests are failing

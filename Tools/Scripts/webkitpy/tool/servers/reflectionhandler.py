@@ -78,7 +78,7 @@ class ReflectionHandler(BaseHTTPServer.BaseHTTPRequestHandler):
             self.query = {}
         function_or_file_name = path[1:] or "index.html"
 
-        _, extension = os.path.splitext(self.path)
+        _, extension = os.path.splitext(function_or_file_name)
         if extension in self.STATIC_FILE_EXTENSIONS:
             self._serve_static_file(function_or_file_name)
             return
