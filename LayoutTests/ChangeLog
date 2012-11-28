@@ -1,3 +1,11 @@
+2012-11-27  Robert Kroeger  <rjkroege@chromium.org>
+
+        Unreviewed gardening:
+        Layout Test http/tests/navigation/slowmetaredirect-basic.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=103471
+
+        * platform/chromium/TestExpectations:
+
 2012-11-27  Tony Chang  <tony@chromium.org>
 
         Unreviewed, land updated Gtk results after track limiter removal.
