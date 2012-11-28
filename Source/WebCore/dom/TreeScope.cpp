@@ -52,6 +52,13 @@
 
 namespace WebCore {
 
+class SameSizeAsTreeScope {
+    virtual ~SameSizeAsTreeScope();
+    void* pointers[7];
+};
+
+COMPILE_ASSERT(sizeof(TreeScope) == sizeof(SameSizeAsTreeScope), treescope_should_stay_small);
+
 using namespace HTMLNames;
 
 TreeScope::TreeScope(ContainerNode* rootNode)

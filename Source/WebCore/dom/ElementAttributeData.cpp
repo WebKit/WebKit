@@ -36,7 +36,7 @@ struct SameSizeAsElementAttributeData : public RefCounted<SameSizeAsElementAttri
     void* refPtrs[3];
 };
 
-COMPILE_ASSERT(sizeof(ElementAttributeData) == sizeof(ElementAttributeData), element_attribute_data_should_stay_small);
+COMPILE_ASSERT(sizeof(ElementAttributeData) == sizeof(SameSizeAsElementAttributeData), element_attribute_data_should_stay_small);
 
 static size_t sizeForImmutableElementAttributeDataWithAttributeCount(unsigned count)
 {

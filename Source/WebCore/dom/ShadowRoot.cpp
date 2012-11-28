@@ -55,6 +55,13 @@
 
 namespace WebCore {
 
+class SameSizeAsShadowRoot : public DocumentFragment, public TreeScope, public DoublyLinkedListNode<ShadowRoot> {
+    void* pointers[3];
+    unsigned countersAndFlags[4];
+};
+
+COMPILE_ASSERT(sizeof(ShadowRoot) == sizeof(SameSizeAsShadowRoot), shadowroot_should_stay_small);
+
 ShadowRoot::ShadowRoot(Document* document)
     : DocumentFragment(document, CreateShadowRoot)
     , TreeScope(this)

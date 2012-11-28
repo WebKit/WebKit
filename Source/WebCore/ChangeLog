@@ -1,3 +1,15 @@
+2012-11-27  Andreas Kling  <akling@apple.com>
+
+        Compile time size assertions for TreeScope, ShadowRoot and ElementAttributeData.
+
+        Rubber-stamped by Anders Carlsson.
+
+        * dom/ShadowRoot.cpp:
+        (SameSizeAsShadowRoot):
+        * dom/TreeScope.cpp:
+        (SameSizeAsTreeScope):
+        * dom/ElementAttributeData.cpp: Derp.
+
 2012-11-27  James Simonsen  <simonjam@chromium.org>
 
         Consolidate FrameLoader::load() into one function taking a FrameLoadRequest
