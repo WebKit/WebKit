@@ -118,12 +118,24 @@ static void printEventDetails(const WebKit::WebInputEvent& event)
     }
 }
 
+static WebKit::WebPluginContainer::TouchEventRequestType parseTouchEventRequestType(const WebString& string)
+{
+    DEFINE_STATIC_LOCAL(const WebString, kPrimitiveRaw, (WebString::fromUTF8("raw")));
+    DEFINE_STATIC_LOCAL(const WebString, kPrimitiveSynthetic, (WebString::fromUTF8("synthetic")));
+
+    if (string == kPrimitiveRaw)
+        return WebKit::WebPluginContainer::TouchEventRequestTypeRaw;
+    if (string == kPrimitiveSynthetic)
+        return WebKit::WebPluginContainer::TouchEventRequestTypeSynthesizedMouse;
+    return WebKit::WebPluginContainer::TouchEventRequestTypeNone;
+}
+
 TestWebPlugin::TestWebPlugin(WebKit::WebFrame* frame,
                              const WebKit::WebPluginParams& params)
     : m_frame(frame)
     , m_container(0)
     , m_context(0)
-    , m_acceptsTouchEvent(false)
+    , m_touchEventRequest(WebKit::WebPluginContainer::TouchEventRequestTypeNone)
     , m_printEventDetails(false)
     , m_canProcessDrag(false)
 {
@@ -150,7 +162,7 @@ TestWebPlugin::TestWebPlugin(WebKit::WebFrame* frame,
         else if (attributeName == kAttributeOpacity)
             m_scene.opacity = parseOpacity(attributeValue);
         else if (attributeName == kAttributeAcceptsTouch)
-            m_acceptsTouchEvent = parseBoolean(attributeValue);
+            m_touchEventRequest = parseTouchEventRequestType(attributeValue);
         else if (attributeName == kAttributePrintEventDetails)
             m_printEventDetails = parseBoolean(attributeValue);
         else if (attributeName == kAttributeCanProcessDrag)
@@ -183,7 +195,7 @@ bool TestWebPlugin::initialize(WebPluginContainer* container)
 
     m_container = container;
     m_container->setBackingTextureId(m_colorTexture);
-    m_container->setIsAcceptingTouchEvents(m_acceptsTouchEvent);
+    m_container->requestTouchEventType(m_touchEventRequest);
     m_container->setWantsWheelEvents(true);
     return true;
 }

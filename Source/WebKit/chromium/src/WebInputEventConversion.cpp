@@ -407,7 +407,7 @@ static IntPoint convertLocationForRenderObject(const LayoutPoint& location, cons
     return roundedIntPoint(renderObject.absoluteToLocal(location, UseTransforms | SnapOffsetForTransforms));
 }
 
-static void updateWebMouseEventFromWebCoreMouseEvent(const MouseEvent& event, const Widget& widget, const WebCore::RenderObject& renderObject, WebMouseEvent& webEvent)
+static void updateWebMouseEventFromWebCoreMouseEvent(const MouseRelatedEvent& event, const Widget& widget, const WebCore::RenderObject& renderObject, WebMouseEvent& webEvent)
 {
     webEvent.timeStampSeconds = event.timeStamp() / millisPerSecond;
     webEvent.modifiers = getWebInputModifiers(event);
@@ -471,6 +471,37 @@ WebMouseEventBuilder::WebMouseEventBuilder(const Widget* widget, const WebCore::
     movementY = event.webkitMovementY();
 #endif
     clickCount = event.detail();
+}
+
+WebMouseEventBuilder::WebMouseEventBuilder(const Widget* widget, const WebCore::RenderObject* renderObject, const TouchEvent& event)
+{
+    if (event.touches()->length() != 1) {
+        if (event.touches()->length() || event.type() != eventNames().touchendEvent || event.changedTouches()->length() != 1)
+            return;
+    }
+
+    const Touch* touch = event.touches()->length() == 1 ? event.touches()->item(0) : event.changedTouches()->item(0);
+    if (touch->identifier())
+        return;
+
+    if (event.type() == eventNames().touchstartEvent)
+        type = MouseDown;
+    else if (event.type() == eventNames().touchmoveEvent)
+        type = MouseMove;
+    else if (event.type() == eventNames().touchendEvent)
+        type = MouseUp;
+    else
+        return;
+
+    updateWebMouseEventFromWebCoreMouseEvent(event, *widget, *renderObject, *this);
+
+    button = WebMouseEvent::ButtonLeft;
+    modifiers |= WebInputEvent::LeftButtonDown;
+    clickCount = (type == MouseDown || type == MouseUp);
+
+    IntPoint localPoint = convertLocationForRenderObject(LayoutPoint(touch->pageX(), touch->pageY()), *renderObject);
+    x = localPoint.x();
+    y = localPoint.y();
 }
 
 WebMouseWheelEventBuilder::WebMouseWheelEventBuilder(const Widget* widget, const WebCore::RenderObject* renderObject, const WheelEvent& event)

@@ -523,10 +523,15 @@ bool WebPluginContainerImpl::isRectTopmost(const WebRect& rect)
 
 void WebPluginContainerImpl::setIsAcceptingTouchEvents(bool acceptingTouchEvents)
 {
-    if (m_isAcceptingTouchEvents == acceptingTouchEvents)
+    requestTouchEventType(acceptingTouchEvents ? TouchEventRequestTypeRaw : TouchEventRequestTypeNone);
+}
+
+void WebPluginContainerImpl::requestTouchEventType(TouchEventRequestType requestType)
+{
+    if (m_touchEventRequestType == requestType)
         return;
-    m_isAcceptingTouchEvents = acceptingTouchEvents;
-    if (m_isAcceptingTouchEvents)
+    m_touchEventRequestType = requestType;
+    if (m_touchEventRequestType != TouchEventRequestTypeNone)
         m_element->document()->didAddTouchEventHandler();
     else
         m_element->document()->didRemoveTouchEventHandler();
@@ -667,7 +672,7 @@ WebPluginContainerImpl::WebPluginContainerImpl(WebCore::HTMLPlugInElement* eleme
     , m_textureId(0)
     , m_ioSurfaceId(0)
 #endif
-    , m_isAcceptingTouchEvents(false)
+    , m_touchEventRequestType(TouchEventRequestTypeNone)
     , m_wantsWheelEvents(false)
 {
 }
@@ -681,7 +686,7 @@ WebPluginContainerImpl::~WebPluginContainerImpl()
         GraphicsLayerChromium::unregisterContentsLayer(m_ioSurfaceLayer->layer());
 #endif
 
-    if (m_isAcceptingTouchEvents)
+    if (m_touchEventRequestType != TouchEventRequestTypeNone)
         m_element->document()->didRemoveTouchEventHandler();
 
     for (size_t i = 0; i < m_pluginLoadObservers.size(); ++i)
@@ -819,15 +824,23 @@ void WebPluginContainerImpl::handleKeyboardEvent(KeyboardEvent* event)
 
 void WebPluginContainerImpl::handleTouchEvent(TouchEvent* event)
 {
-    if (!m_isAcceptingTouchEvents)
+    switch (m_touchEventRequestType) {
+    case TouchEventRequestTypeNone:
         return;
-    WebTouchEventBuilder webEvent(this, m_element->renderer(), *event);
-    if (webEvent.type == WebInputEvent::Undefined)
+    case TouchEventRequestTypeRaw: {
+        WebTouchEventBuilder webEvent(this, m_element->renderer(), *event);
+        if (webEvent.type == WebInputEvent::Undefined)
+            return;
+        WebCursorInfo cursorInfo;
+        if (m_webPlugin->handleInputEvent(webEvent, cursorInfo))
+            event->setDefaultHandled();
+        // FIXME: Can a plugin change the cursor from a touch-event callback?
         return;
-    WebCursorInfo cursorInfo;
-    if (m_webPlugin->handleInputEvent(webEvent, cursorInfo))
-        event->setDefaultHandled();
-    // FIXME: Can a plugin change the cursor from a touch-event callback?
+    }
+    case TouchEventRequestTypeSynthesizedMouse:
+        synthesizeMouseEventIfPossible(event);
+        return;
+    }
 }
 
 void WebPluginContainerImpl::handleGestureEvent(GestureEvent* event)
@@ -839,6 +852,17 @@ void WebPluginContainerImpl::handleGestureEvent(GestureEvent* event)
     if (m_webPlugin->handleInputEvent(webEvent, cursorInfo))
         event->setDefaultHandled();
     // FIXME: Can a plugin change the cursor from a touch-event callback?
+}
+
+void WebPluginContainerImpl::synthesizeMouseEventIfPossible(TouchEvent* event)
+{
+    WebMouseEventBuilder webEvent(this, m_element->renderer(), *event);
+    if (webEvent.type == WebInputEvent::Undefined)
+        return;
+
+    WebCursorInfo cursorInfo;
+    if (m_webPlugin->handleInputEvent(webEvent, cursorInfo))
+        event->setDefaultHandled();
 }
 
 void WebPluginContainerImpl::calculateGeometry(const IntRect& frameRect,

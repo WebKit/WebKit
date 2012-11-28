@@ -114,6 +114,7 @@ public:
     virtual void setOpaque(bool);
     virtual bool isRectTopmost(const WebRect&);
     virtual void setIsAcceptingTouchEvents(bool);
+    virtual void requestTouchEventType(TouchEventRequestType);
     virtual void setWantsWheelEvents(bool);
     virtual WebPoint windowToLocalPoint(const WebPoint&);
 
@@ -175,6 +176,8 @@ private:
     void handleTouchEvent(WebCore::TouchEvent*);
     void handleGestureEvent(WebCore::GestureEvent*);
 
+    void synthesizeMouseEventIfPossible(WebCore::TouchEvent*);
+
     void calculateGeometry(const WebCore::IntRect& frameRect,
                            WebCore::IntRect& windowRect,
                            WebCore::IntRect& clipRect,
@@ -201,7 +204,7 @@ private:
     // scrollbars.
     OwnPtr<ScrollbarGroup> m_scrollbarGroup;
 
-    bool m_isAcceptingTouchEvents;
+    TouchEventRequestType m_touchEventRequestType;
     bool m_wantsWheelEvents;
 };
 

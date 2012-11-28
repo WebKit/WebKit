@@ -105,6 +105,7 @@ public:
 class WebMouseEventBuilder : public WebMouseEvent {
 public:
     WebMouseEventBuilder(const WebCore::Widget*, const WebCore::RenderObject*, const WebCore::MouseEvent&);
+    WebMouseEventBuilder(const WebCore::Widget*, const WebCore::RenderObject*, const WebCore::TouchEvent&);
 };
 
 // Converts a WebCore::WheelEvent to a corresponding WebMouseWheelEvent.

@@ -27,6 +27,7 @@
 #define TestWebPlugin_h
 
 #include "WebPlugin.h"
+#include "WebPluginContainer.h"
 #include "platform/WebRect.h"
 
 namespace WebKit {
@@ -131,7 +132,7 @@ private:
     unsigned m_framebuffer;
     Scene m_scene;
 
-    bool m_acceptsTouchEvent;
+    WebKit::WebPluginContainer::TouchEventRequestType m_touchEventRequest;
     bool m_printEventDetails;
     bool m_canProcessDrag;
 };
