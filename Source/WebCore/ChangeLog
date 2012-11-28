@@ -1,3 +1,24 @@
+2012-11-28  Zeno Albisser  <zeno@webkit.org>
+
+        [Qt][Win] Enable usage of QTWEBKIT_PLUGIN_PATH.
+        https://bugs.webkit.org/show_bug.cgi?id=103529
+
+        This patch enables the same behavior for Windows
+        as it is currently implemented for all other operating
+        systems supported by Qt.
+        Directories listed in the environment variable
+        QTWEBKIT_PLUGIN_PATH are being searched for additional
+        plugins.
+        The only difference is that directories on Windows
+        need to be separated by a semicolon instead of a colon.
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * plugins/win/PluginDatabaseWin.cpp:
+        (WebCore):
+        (WebCore::addQtWebKitPluginPath):
+        (WebCore::PluginDatabase::defaultPluginDirectories):
+
 2012-11-28  Adam Barth  <abarth@webkit.org>
 
         [v8] 4% regression in dom_traverse tests
