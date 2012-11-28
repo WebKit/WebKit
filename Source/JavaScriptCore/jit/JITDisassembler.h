@@ -57,10 +57,11 @@ public:
     void setEndOfCode(MacroAssembler::Label label) { m_endOfCode = label; }
     
     void dump(LinkBuffer&);
+    void dump(PrintStream&, LinkBuffer&);
 
 private:
-    void dumpForInstructions(LinkBuffer&, const char* prefix, Vector<MacroAssembler::Label>& labels, MacroAssembler::Label endLabel);
-    void dumpDisassembly(LinkBuffer&, MacroAssembler::Label from, MacroAssembler::Label to);
+    void dumpForInstructions(PrintStream&, LinkBuffer&, const char* prefix, Vector<MacroAssembler::Label>& labels, MacroAssembler::Label endLabel);
+    void dumpDisassembly(PrintStream&, LinkBuffer&, MacroAssembler::Label from, MacroAssembler::Label to);
     
     CodeBlock* m_codeBlock;
     MacroAssembler::Label m_startOfCode;

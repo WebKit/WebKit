@@ -95,13 +95,13 @@ const char* Graph::nameOfVariableAccessData(VariableAccessData* variableAccessDa
     return buf;
 }
 
-static void printWhiteSpace(unsigned amount)
+static void printWhiteSpace(PrintStream& out, unsigned amount)
 {
     while (amount-- > 0)
-        dataLogF(" ");
+        out.print(" ");
 }
 
-void Graph::dumpCodeOrigin(const char* prefix, NodeIndex prevNodeIndex, NodeIndex nodeIndex)
+void Graph::dumpCodeOrigin(PrintStream& out, const char* prefix, NodeIndex prevNodeIndex, NodeIndex nodeIndex)
 {
     if (prevNodeIndex == NoNode)
         return;
@@ -124,16 +124,16 @@ void Graph::dumpCodeOrigin(const char* prefix, NodeIndex prevNodeIndex, NodeInde
     
     // Print the pops.
     for (unsigned i = previousInlineStack.size(); i-- > indexOfDivergence;) {
-        dataLogF("%s", prefix);
-        printWhiteSpace(i * 2);
-        dataLogF("<-- %p\n", previousInlineStack[i].inlineCallFrame->executable.get());
+        out.print(prefix);
+        printWhiteSpace(out, i * 2);
+        out.print("<-- ", RawPointer(previousInlineStack[i].inlineCallFrame->executable.get()), "\n");
     }
     
     // Print the pushes.
     for (unsigned i = indexOfDivergence; i < currentInlineStack.size(); ++i) {
-        dataLogF("%s", prefix);
-        printWhiteSpace(i * 2);
-        dataLogF("--> %p\n", currentInlineStack[i].inlineCallFrame->executable.get());
+        out.print(prefix);
+        printWhiteSpace(out, i * 2);
+        out.print("--> ", RawPointer(currentInlineStack[i].inlineCallFrame->executable.get()), "\n");
     }
 }
 
@@ -142,12 +142,21 @@ int Graph::amountOfNodeWhiteSpace(Node& node)
     return (node.codeOrigin.inlineDepth() - 1) * 2;
 }
 
-void Graph::printNodeWhiteSpace(Node& node)
+void Graph::printNodeWhiteSpace(PrintStream& out, Node& node)
 {
-    printWhiteSpace(amountOfNodeWhiteSpace(node));
+    printWhiteSpace(out, amountOfNodeWhiteSpace(node));
 }
 
-void Graph::dump(const char* prefix, NodeIndex nodeIndex)
+void Graph::dump(PrintStream& out, Edge edge)
+{
+    out.print(
+        useKindToString(edge.useKind()),
+        "@", edge.index(),
+        speculationToAbbreviatedString(
+            at(edge).prediction()));
+}
+
+void Graph::dump(PrintStream& out, const char* prefix, NodeIndex nodeIndex)
 {
     Node& node = at(nodeIndex);
     NodeType op = node.op();
@@ -157,9 +166,9 @@ void Graph::dump(const char* prefix, NodeIndex nodeIndex)
     bool mustGenerate = node.mustGenerate();
     if (mustGenerate)
         --refCount;
-    
-    dataLogF("%s", prefix);
-    printNodeWhiteSpace(node);
+
+    out.print(prefix);
+    printNodeWhiteSpace(out, node);
 
     // Example/explanation of dataflow dump output
     //
@@ -178,95 +187,84 @@ void Graph::dump(const char* prefix, NodeIndex nodeIndex)
     //         $#   - the index in the CodeBlock of a constant { for numeric constants the value is displayed | for integers, in both decimal and hex }.
     //         id#  - the index in the CodeBlock of an identifier { if codeBlock is passed to dump(), the string representation is displayed }.
     //         var# - the index of a var on the global object, used by GetGlobalVar/PutGlobalVar operations.
-    dataLogF("% 4d:%s<%c%u:", (int)nodeIndex, skipped ? "  skipped  " : "           ", mustGenerate ? '!' : ' ', refCount);
+    out.printf("% 4d:%s<%c%u:", (int)nodeIndex, skipped ? "  skipped  " : "           ", mustGenerate ? '!' : ' ', refCount);
     if (node.hasResult() && !skipped && node.hasVirtualRegister())
-        dataLogF("%u", node.virtualRegister());
+        out.print(node.virtualRegister());
     else
-        dataLogF("-");
-    dataLogF(">\t%s(", opName(op));
+        out.print("-");
+    out.print(">\t", opName(op), "(");
     bool hasPrinted = false;
     if (node.flags() & NodeHasVarArgs) {
         for (unsigned childIdx = node.firstChild(); childIdx < node.firstChild() + node.numChildren(); childIdx++) {
             if (hasPrinted)
-                dataLogF(", ");
+                out.print(", ");
             else
                 hasPrinted = true;
             if (!m_varArgChildren[childIdx])
                 continue;
-            dataLogF("%s@%u%s",
-                    useKindToString(m_varArgChildren[childIdx].useKind()),
-                    m_varArgChildren[childIdx].index(),
-                    speculationToAbbreviatedString(
-                        at(m_varArgChildren[childIdx]).prediction()));
+            dump(out, m_varArgChildren[childIdx]);
         }
     } else {
         if (!!node.child1()) {
-            dataLogF("%s@%u%s",
-                    useKindToString(node.child1().useKind()),
-                    node.child1().index(),
-                    speculationToAbbreviatedString(at(node.child1()).prediction()));
+            dump(out, node.child1());
+            hasPrinted = true;
         }
         if (!!node.child2()) {
-            dataLogF(", %s@%u%s",
-                    useKindToString(node.child2().useKind()),
-                    node.child2().index(),
-                    speculationToAbbreviatedString(at(node.child2()).prediction()));
+            out.print(", "); // Whether or not there is a first child, we print a comma to ensure that we see a blank entry if there wasn't one.
+            dump(out, node.child2());
+            hasPrinted = true;
         }
         if (!!node.child3()) {
-            dataLogF(", %s@%u%s",
-                    useKindToString(node.child3().useKind()),
-                    node.child3().index(),
-                    speculationToAbbreviatedString(at(node.child3()).prediction()));
+            if (!node.child1() && !node.child2())
+                out.print(", "); // If the third child is the first non-empty one then make sure we have two blanks preceding it.
+            out.print(", ");
+            dump(out, node.child3());
+            hasPrinted = true;
         }
-        hasPrinted = !!node.child1();
     }
 
     if (strlen(nodeFlagsAsString(node.flags()))) {
-        dataLogF("%s%s", hasPrinted ? ", " : "", nodeFlagsAsString(node.flags()));
+        out.print(hasPrinted ? ", " : "", nodeFlagsAsString(node.flags()));
         hasPrinted = true;
     }
     if (node.hasArrayMode()) {
-        dataLogF("%s%s", hasPrinted ? ", " : "", node.arrayMode().toString());
+        out.print(hasPrinted ? ", " : "", node.arrayMode().toString());
         hasPrinted = true;
     }
     if (node.hasVarNumber()) {
-        dataLogF("%svar%u", hasPrinted ? ", " : "", node.varNumber());
+        out.print(hasPrinted ? ", " : "", "var", node.varNumber());
         hasPrinted = true;
     }
     if (node.hasRegisterPointer()) {
-        dataLogF(
-            "%sglobal%u(%p)", hasPrinted ? ", " : "",
-            globalObjectFor(node.codeOrigin)->findRegisterIndex(node.registerPointer()),
-            node.registerPointer());
+        out.print(hasPrinted ? ", " : "", "global", globalObjectFor(node.codeOrigin)->findRegisterIndex(node.registerPointer()), "(", RawPointer(node.registerPointer()), ")");
         hasPrinted = true;
     }
     if (node.hasIdentifier()) {
-        dataLogF("%sid%u{%s}", hasPrinted ? ", " : "", node.identifierNumber(), m_codeBlock->identifier(node.identifierNumber()).string().utf8().data());
+        out.print(hasPrinted ? ", " : "", "id", node.identifierNumber(), "{", m_codeBlock->identifier(node.identifierNumber()).string(), "}");
         hasPrinted = true;
     }
     if (node.hasStructureSet()) {
         for (size_t i = 0; i < node.structureSet().size(); ++i) {
-            dataLogF("%sstruct(%p: %s)", hasPrinted ? ", " : "", node.structureSet()[i], indexingTypeToString(node.structureSet()[i]->indexingType()));
+            out.print(hasPrinted ? ", " : "", "struct(", RawPointer(node.structureSet()[i]), ": ", indexingTypeToString(node.structureSet()[i]->indexingType()), ")");
             hasPrinted = true;
         }
     }
     if (node.hasStructure()) {
-        dataLogF("%sstruct(%p: %s)", hasPrinted ? ", " : "", node.structure(), indexingTypeToString(node.structure()->indexingType()));
+        out.print(hasPrinted ? ", " : "", "struct(", RawPointer(node.structure()), ": ", indexingTypeToString(node.structure()->indexingType()), ")");
         hasPrinted = true;
     }
     if (node.hasStructureTransitionData()) {
-        dataLogF("%sstruct(%p -> %p)", hasPrinted ? ", " : "", node.structureTransitionData().previousStructure, node.structureTransitionData().newStructure);
+        out.print(hasPrinted ? ", " : "", "struct(", RawPointer(node.structureTransitionData().previousStructure), " -> ", RawPointer(node.structureTransitionData().newStructure), ")");
         hasPrinted = true;
     }
     if (node.hasFunction()) {
-        dataLogF("%s%p", hasPrinted ? ", " : "", node.function());
+        out.print(hasPrinted ? ", " : "", RawPointer(node.function()));
         hasPrinted = true;
     }
     if (node.hasStorageAccessData()) {
         StorageAccessData& storageAccessData = m_storageAccessData[node.storageAccessDataIndex()];
-        dataLogF("%sid%u{%s}", hasPrinted ? ", " : "", storageAccessData.identifierNumber, m_codeBlock->identifier(storageAccessData.identifierNumber).string().utf8().data());
-        
-        dataLogF(", %lu", static_cast<unsigned long>(storageAccessData.offset));
+        out.print(hasPrinted ? ", " : "", "id", storageAccessData.identifierNumber, "{", m_codeBlock->identifier(storageAccessData.identifierNumber).string(), "}");
+        out.print(", ", storageAccessData.offset);
         hasPrinted = true;
     }
     ASSERT(node.hasVariableAccessData() == node.hasLocal());
@@ -274,138 +272,139 @@ void Graph::dump(const char* prefix, NodeIndex nodeIndex)
         VariableAccessData* variableAccessData = node.variableAccessData();
         int operand = variableAccessData->operand();
         if (operandIsArgument(operand))
-            dataLogF("%sarg%u(%s)", hasPrinted ? ", " : "", operandToArgument(operand), nameOfVariableAccessData(variableAccessData));
+            out.print(hasPrinted ? ", " : "", "arg", operandToArgument(operand), "(", nameOfVariableAccessData(variableAccessData), ")");
         else
-            dataLogF("%sr%u(%s)", hasPrinted ? ", " : "", operand, nameOfVariableAccessData(variableAccessData));
+            out.print(hasPrinted ? ", " : "", "r", operand, "(", nameOfVariableAccessData(variableAccessData), ")");
         hasPrinted = true;
     }
     if (node.hasConstantBuffer()) {
         if (hasPrinted)
-            dataLogF(", ");
-        dataLogF("%u:[", node.startConstant());
+            out.print(", ");
+        out.print(node.startConstant(), ":[");
         for (unsigned i = 0; i < node.numConstants(); ++i) {
             if (i)
-                dataLogF(", ");
-            dataLogF("%s", m_codeBlock->constantBuffer(node.startConstant())[i].description());
+                out.print(", ");
+            out.print(m_codeBlock->constantBuffer(node.startConstant())[i].description());
         }
-        dataLogF("]");
+        out.print("]");
         hasPrinted = true;
     }
     if (node.hasIndexingType()) {
         if (hasPrinted)
-            dataLogF(", ");
-        dataLogF("%s", indexingTypeToString(node.indexingType()));
+            out.print(", ");
+        out.print(indexingTypeToString(node.indexingType()));
     }
     if (op == JSConstant) {
-        dataLogF("%s$%u", hasPrinted ? ", " : "", node.constantNumber());
+        out.print(hasPrinted ? ", " : "", "$", node.constantNumber());
         JSValue value = valueOfJSConstant(nodeIndex);
-        dataLogF(" = %s", value.description());
+        out.print(" = ", value.description());
         hasPrinted = true;
     }
     if (op == WeakJSConstant) {
-        dataLogF("%s%p", hasPrinted ? ", " : "", node.weakConstant());
+        out.print(hasPrinted ? ", " : "", RawPointer(node.weakConstant()));
         hasPrinted = true;
     }
     if  (node.isBranch() || node.isJump()) {
-        dataLogF("%sT:#%u", hasPrinted ? ", " : "", node.takenBlockIndex());
+        out.print(hasPrinted ? ", " : "", "T:#", node.takenBlockIndex());
         hasPrinted = true;
     }
     if  (node.isBranch()) {
-        dataLogF("%sF:#%u", hasPrinted ? ", " : "", node.notTakenBlockIndex());
+        out.print(hasPrinted ? ", " : "", "F:#", node.notTakenBlockIndex());
         hasPrinted = true;
     }
-    dataLogF("%sbc#%u", hasPrinted ? ", " : "", node.codeOrigin.bytecodeIndex);
+    out.print(hasPrinted ? ", " : "", "bc#", node.codeOrigin.bytecodeIndex);
     hasPrinted = true;
+    
     (void)hasPrinted;
     
-    dataLogF(")");
+    out.print(")");
 
     if (!skipped) {
         if (node.hasVariableAccessData())
-            dataLogF("  predicting %s%s", speculationToString(node.variableAccessData()->prediction()), node.variableAccessData()->shouldUseDoubleFormat() ? ", forcing double" : "");
+            out.print("  predicting ", speculationToString(node.variableAccessData()->prediction()), node.variableAccessData()->shouldUseDoubleFormat() ? ", forcing double" : "");
         else if (node.hasHeapPrediction())
-            dataLogF("  predicting %s", speculationToString(node.getHeapPrediction()));
+            out.print("  predicting ", speculationToString(node.getHeapPrediction()));
     }
     
-    dataLogF("\n");
+    out.print("\n");
 }
 
-void Graph::dumpBlockHeader(const char* prefix, BlockIndex blockIndex, PhiNodeDumpMode phiNodeDumpMode)
+void Graph::dumpBlockHeader(PrintStream& out, const char* prefix, BlockIndex blockIndex, PhiNodeDumpMode phiNodeDumpMode)
 {
     BasicBlock* block = m_blocks[blockIndex].get();
 
-    dataLogF("%sBlock #%u (bc#%u): %s%s\n", prefix, (int)blockIndex, block->bytecodeBegin, block->isReachable ? "" : " (skipped)", block->isOSRTarget ? " (OSR target)" : "");
-    dataLogF("%s  Predecessors:", prefix);
+    out.print(prefix, "Block #", blockIndex, " (bc#", block->bytecodeBegin, "): ", block->isReachable ? "" : "(skipped)", block->isOSRTarget ? " (OSR target)" : "", "\n");
+    out.print(prefix, "  Predecessors:");
     for (size_t i = 0; i < block->m_predecessors.size(); ++i)
-        dataLogF(" #%u", block->m_predecessors[i]);
-    dataLogF("\n");
+        out.print(" #", block->m_predecessors[i]);
+    out.print("\n");
     if (m_dominators.isValid()) {
-        dataLogF("%s  Dominated by:", prefix);
+        out.print(prefix, "  Dominated by:");
         for (size_t i = 0; i < m_blocks.size(); ++i) {
             if (!m_dominators.dominates(i, blockIndex))
                 continue;
-            dataLogF(" #%lu", static_cast<unsigned long>(i));
+            out.print(" #", i);
         }
-        dataLogF("\n");
-        dataLogF("%s  Dominates:", prefix);
+        out.print("\n");
+        out.print(prefix, "  Dominates:");
         for (size_t i = 0; i < m_blocks.size(); ++i) {
             if (!m_dominators.dominates(blockIndex, i))
                 continue;
-            dataLogF(" #%lu", static_cast<unsigned long>(i));
+            out.print(" #", i);
         }
-        dataLogF("\n");
+        out.print("\n");
     }
-    dataLogF("%s  Phi Nodes:", prefix);
+    out.print(prefix, "  Phi Nodes:");
     for (size_t i = 0; i < block->phis.size(); ++i) {
         NodeIndex phiNodeIndex = block->phis[i];
         Node& phiNode = at(phiNodeIndex);
         if (!phiNode.shouldGenerate() && phiNodeDumpMode == DumpLivePhisOnly)
             continue;
-        dataLogF(" @%u->(", phiNodeIndex);
+        out.print(" @", phiNodeIndex, "->(");
         if (phiNode.child1()) {
-            dataLogF("@%u", phiNode.child1().index());
+            out.print("@", phiNode.child1().index());
             if (phiNode.child2()) {
-                dataLogF(", @%u", phiNode.child2().index());
+                out.print(", @", phiNode.child2().index());
                 if (phiNode.child3())
-                    dataLogF(", @%u", phiNode.child3().index());
+                    out.print(", @", phiNode.child3().index());
             }
         }
-        dataLogF(")%s", i + 1 < block->phis.size() ? "," : "");
+        out.print(")", i + 1 < block->phis.size() ? "," : "");
     }
-    dataLogF("\n");
+    out.print("\n");
 }
 
-void Graph::dump()
+void Graph::dump(PrintStream& out)
 {
     NodeIndex lastNodeIndex = NoNode;
     for (size_t b = 0; b < m_blocks.size(); ++b) {
         BasicBlock* block = m_blocks[b].get();
         if (!block)
             continue;
-        dumpBlockHeader("", b, DumpAllPhis);
-        dataLogF("  vars before: ");
+        dumpBlockHeader(out, "", b, DumpAllPhis);
+        out.print("  vars before: ");
         if (block->cfaHasVisited)
-            dumpOperands(block->valuesAtHead, WTF::dataFile());
+            dumpOperands(block->valuesAtHead, out);
         else
-            dataLogF("<empty>");
-        dataLogF("\n");
-        dataLogF("  var links: ");
-        dumpOperands(block->variablesAtHead, WTF::dataFile());
-        dataLogF("\n");
+            out.print("<empty>");
+        out.print("\n");
+        out.print("  var links: ");
+        dumpOperands(block->variablesAtHead, out);
+        out.print("\n");
         for (size_t i = 0; i < block->size(); ++i) {
-            dumpCodeOrigin("", lastNodeIndex, block->at(i));
-            dump("", block->at(i));
+            dumpCodeOrigin(out, "", lastNodeIndex, block->at(i));
+            dump(out, "", block->at(i));
             lastNodeIndex = block->at(i);
         }
-        dataLogF("  vars after: ");
+        out.print("  vars after: ");
         if (block->cfaHasVisited)
-            dumpOperands(block->valuesAtTail, WTF::dataFile());
+            dumpOperands(block->valuesAtTail, out);
         else
-            dataLogF("<empty>");
-        dataLogF("\n");
-        dataLogF("  var links: ");
-        dumpOperands(block->variablesAtTail, WTF::dataFile());
-        dataLogF("\n");
+            out.print("<empty>");
+        out.print("\n");
+        out.print("  var links: ");
+        dumpOperands(block->variablesAtTail, out);
+        out.print("\n");
     }
 }
 

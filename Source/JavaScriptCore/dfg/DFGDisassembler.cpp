@@ -39,12 +39,12 @@ Disassembler::Disassembler(Graph& graph)
     m_labelForNodeIndex.resize(graph.size());
 }
 
-void Disassembler::dump(LinkBuffer& linkBuffer)
+void Disassembler::dump(PrintStream& out, LinkBuffer& linkBuffer)
 {
     m_graph.m_dominators.computeIfNecessary(m_graph);
     
-    dataLogF("Generated JIT code for DFG CodeBlock %p, instruction count = %u:\n", m_graph.m_codeBlock, m_graph.m_codeBlock->instructionCount());
-    dataLogF("    Code at [%p, %p):\n", linkBuffer.debugAddress(), static_cast<char*>(linkBuffer.debugAddress()) + linkBuffer.debugSize());
+    out.print("Generated JIT code for DFG CodeBlock ", RawPointer(m_graph.m_codeBlock), ", instruction count = ", m_graph.m_codeBlock->instructionCount(), ":\n");
+    out.print("    Code at [", RawPointer(linkBuffer.debugAddress()), ", ", RawPointer(static_cast<char*>(linkBuffer.debugAddress()) + linkBuffer.debugSize()), "):\n");
     
     const char* prefix = "    ";
     const char* disassemblyPrefix = "        ";
@@ -55,8 +55,8 @@ void Disassembler::dump(LinkBuffer& linkBuffer)
         BasicBlock* block = m_graph.m_blocks[blockIndex].get();
         if (!block)
             continue;
-        dumpDisassembly(disassemblyPrefix, linkBuffer, previousLabel, m_labelForBlockIndex[blockIndex], lastNodeIndex);
-        m_graph.dumpBlockHeader(prefix, blockIndex, Graph::DumpLivePhisOnly);
+        dumpDisassembly(out, disassemblyPrefix, linkBuffer, previousLabel, m_labelForBlockIndex[blockIndex], lastNodeIndex);
+        m_graph.dumpBlockHeader(out, prefix, blockIndex, Graph::DumpLivePhisOnly);
         NodeIndex lastNodeIndexForDisassembly = block->at(0);
         for (size_t i = 0; i < block->size(); ++i) {
             if (!m_graph[block->at(i)].willHaveCodeGenOrOSR() && !Options::showAllDFGNodes())
@@ -74,19 +74,24 @@ void Disassembler::dump(LinkBuffer& linkBuffer)
                 else
                     currentLabel = m_endOfMainPath;
             }
-            dumpDisassembly(disassemblyPrefix, linkBuffer, previousLabel, currentLabel, lastNodeIndexForDisassembly);
-            m_graph.dumpCodeOrigin(prefix, lastNodeIndex, block->at(i));
-            m_graph.dump(prefix, block->at(i));
+            dumpDisassembly(out, disassemblyPrefix, linkBuffer, previousLabel, currentLabel, lastNodeIndexForDisassembly);
+            m_graph.dumpCodeOrigin(out, prefix, lastNodeIndex, block->at(i));
+            m_graph.dump(out, prefix, block->at(i));
             lastNodeIndex = block->at(i);
             lastNodeIndexForDisassembly = block->at(i);
         }
     }
-    dumpDisassembly(disassemblyPrefix, linkBuffer, previousLabel, m_endOfMainPath, lastNodeIndex);
-    dataLogF("%s(End Of Main Path)\n", prefix);
-    dumpDisassembly(disassemblyPrefix, linkBuffer, previousLabel, m_endOfCode, NoNode);
+    dumpDisassembly(out, disassemblyPrefix, linkBuffer, previousLabel, m_endOfMainPath, lastNodeIndex);
+    out.print(prefix, "(End Of Main Path)\n");
+    dumpDisassembly(out, disassemblyPrefix, linkBuffer, previousLabel, m_endOfCode, NoNode);
 }
 
-void Disassembler::dumpDisassembly(const char* prefix, LinkBuffer& linkBuffer, MacroAssembler::Label& previousLabel, MacroAssembler::Label currentLabel, NodeIndex context)
+void Disassembler::dump(LinkBuffer& linkBuffer)
+{
+    dump(WTF::dataFile(), linkBuffer);
+}
+
+void Disassembler::dumpDisassembly(PrintStream& out, const char* prefix, LinkBuffer& linkBuffer, MacroAssembler::Label& previousLabel, MacroAssembler::Label currentLabel, NodeIndex context)
 {
     size_t prefixLength = strlen(prefix);
     int amountOfNodeWhiteSpace;
@@ -104,7 +109,7 @@ void Disassembler::dumpDisassembly(const char* prefix, LinkBuffer& linkBuffer, M
     CodeLocationLabel end = linkBuffer.locationOf(currentLabel);
     previousLabel = currentLabel;
     ASSERT(bitwise_cast<uintptr_t>(end.executableAddress()) >= bitwise_cast<uintptr_t>(start.executableAddress()));
-    disassemble(start, bitwise_cast<uintptr_t>(end.executableAddress()) - bitwise_cast<uintptr_t>(start.executableAddress()), prefixBuffer.get(), WTF::dataFile());
+    disassemble(start, bitwise_cast<uintptr_t>(end.executableAddress()) - bitwise_cast<uintptr_t>(start.executableAddress()), prefixBuffer.get(), out);
 }
 
 } } // namespace JSC::DFG

@@ -44,11 +44,11 @@ JITDisassembler::~JITDisassembler()
 {
 }
 
-void JITDisassembler::dump(LinkBuffer& linkBuffer)
+void JITDisassembler::dump(PrintStream& out, LinkBuffer& linkBuffer)
 {
-    dataLogF("Baseline JIT code for CodeBlock %p, instruction count = %u:\n", m_codeBlock, m_codeBlock->instructionCount());
-    dataLogF("    Code at [%p, %p):\n", linkBuffer.debugAddress(), static_cast<char*>(linkBuffer.debugAddress()) + linkBuffer.debugSize());
-    dumpDisassembly(linkBuffer, m_startOfCode, m_labelForBytecodeIndexInMainPath[0]);
+    out.print("Baseline JIT code for CodeBlock ", RawPointer(m_codeBlock), ", instruction count = ", m_codeBlock->instructionCount(), "\n");
+    out.print("   Code at [", RawPointer(linkBuffer.debugAddress()), ", ", RawPointer(static_cast<char*>(linkBuffer.debugAddress()) + linkBuffer.debugSize()), "):\n");
+    dumpDisassembly(out, linkBuffer, m_startOfCode, m_labelForBytecodeIndexInMainPath[0]);
     
     MacroAssembler::Label firstSlowLabel;
     for (unsigned i = 0; i < m_labelForBytecodeIndexInSlowPath.size(); ++i) {
@@ -57,30 +57,35 @@ void JITDisassembler::dump(LinkBuffer& linkBuffer)
             break;
         }
     }
-    dumpForInstructions(linkBuffer, "    ", m_labelForBytecodeIndexInMainPath, firstSlowLabel.isSet() ? firstSlowLabel : m_endOfSlowPath);
-    dataLogF("    (End Of Main Path)\n");
-    dumpForInstructions(linkBuffer, "    (S) ", m_labelForBytecodeIndexInSlowPath, m_endOfSlowPath);
-    dataLogF("    (End Of Slow Path)\n");
+    dumpForInstructions(out, linkBuffer, "    ", m_labelForBytecodeIndexInMainPath, firstSlowLabel.isSet() ? firstSlowLabel : m_endOfSlowPath);
+    out.print("    (End Of Main Path)\n");
+    dumpForInstructions(out, linkBuffer, "    (S) ", m_labelForBytecodeIndexInSlowPath, m_endOfSlowPath);
+    out.print("    (End Of Slow Path)\n");
 
-    dumpDisassembly(linkBuffer, m_endOfSlowPath, m_endOfCode);
+    dumpDisassembly(out, linkBuffer, m_endOfSlowPath, m_endOfCode);
 }
 
-void JITDisassembler::dumpForInstructions(LinkBuffer& linkBuffer, const char* prefix, Vector<MacroAssembler::Label>& labels, MacroAssembler::Label endLabel)
+void JITDisassembler::dump(LinkBuffer& linkBuffer)
+{
+    dump(WTF::dataFile(), linkBuffer);
+}
+
+void JITDisassembler::dumpForInstructions(PrintStream& out, LinkBuffer& linkBuffer, const char* prefix, Vector<MacroAssembler::Label>& labels, MacroAssembler::Label endLabel)
 {
     for (unsigned i = 0 ; i < labels.size();) {
         if (!labels[i].isSet()) {
             i++;
             continue;
         }
-        dataLogF("%s", prefix);
+        out.print(prefix);
         m_codeBlock->dump(i);
         for (unsigned nextIndex = i + 1; ; nextIndex++) {
             if (nextIndex >= labels.size()) {
-                dumpDisassembly(linkBuffer, labels[i], endLabel);
+                dumpDisassembly(out, linkBuffer, labels[i], endLabel);
                 return;
             }
             if (labels[nextIndex].isSet()) {
-                dumpDisassembly(linkBuffer, labels[i], labels[nextIndex]);
+                dumpDisassembly(out, linkBuffer, labels[i], labels[nextIndex]);
                 i = nextIndex;
                 break;
             }
@@ -88,11 +93,11 @@ void JITDisassembler::dumpForInstructions(LinkBuffer& linkBuffer, const char* pr
     }
 }
 
-void JITDisassembler::dumpDisassembly(LinkBuffer& linkBuffer, MacroAssembler::Label from, MacroAssembler::Label to)
+void JITDisassembler::dumpDisassembly(PrintStream& out, LinkBuffer& linkBuffer, MacroAssembler::Label from, MacroAssembler::Label to)
 {
     CodeLocationLabel fromLocation = linkBuffer.locationOf(from);
     CodeLocationLabel toLocation = linkBuffer.locationOf(to);
-    disassemble(fromLocation, bitwise_cast<uintptr_t>(toLocation.executableAddress()) - bitwise_cast<uintptr_t>(fromLocation.executableAddress()), "        ", WTF::dataFile());
+    disassemble(fromLocation, bitwise_cast<uintptr_t>(toLocation.executableAddress()) - bitwise_cast<uintptr_t>(fromLocation.executableAddress()), "        ", out);
 }
 
 } // namespace JSC

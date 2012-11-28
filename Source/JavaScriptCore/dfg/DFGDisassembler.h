@@ -62,10 +62,11 @@ public:
         m_endOfCode = label;
     }
     
+    void dump(PrintStream&, LinkBuffer&);
     void dump(LinkBuffer&);
     
 private:
-    void dumpDisassembly(const char* prefix, LinkBuffer&, MacroAssembler::Label& previousLabel, MacroAssembler::Label currentLabel, NodeIndex context);
+    void dumpDisassembly(PrintStream&, const char* prefix, LinkBuffer&, MacroAssembler::Label& previousLabel, MacroAssembler::Label currentLabel, NodeIndex context);
     
     Graph& m_graph;
     MacroAssembler::Label m_startOfCode;
