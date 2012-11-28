@@ -1,0 +1,49 @@
+<!doctype html>
+<html>
+    <head>
+        <title>Test for https://bugs.webkit.org/show_bug.cgi?id=102957</title>
+        <style>
+        .content {
+            -webkit-flow-into: flow;
+            font-size: 50px;
+            color: green;
+            font-family: Ahem;
+        }
+
+        .content ul {
+            margin: 0px;
+        }
+
+        #target {
+            color: red;
+        }
+
+        #target.list-marker {
+            color: green;
+            list-style-type: none;
+        }
+
+        .region {
+            -webkit-flow-from: flow;
+            height: 50px;
+        }
+        </style>
+        <script>
+            function removeFirstLetter() {
+                document.body.offsetTop; // force layout
+                document.getElementById("target").classList.add("list-marker");
+            }
+        </script>
+    </head>
+    <body onload="removeFirstLetter()">
+        <p>Test case for <a href="https://bugs.webkit.org/show_bug.cgi?id=102957">102957</a>.</p>
+        <p>Testing that the removal of the list-marker render object will not crash the flow thread logic.</p>
+        <p>You should see a green rectangle. There should be no red.</p>
+        <div class="content">
+            <ul>
+                <li id="target">aaaa</li>
+            </ul>
+        </div>
+        <div class="region"></div>
+    </body>
+</html>

@@ -985,6 +985,9 @@ protected:
     virtual void willBeRemovedFromTree();
 
 private:
+    void removeFromRenderFlowThread();
+    void removeFromRenderFlowThreadRecursive(RenderFlowThread*);
+
     RenderStyle* cachedFirstLineStyle() const;
     StyleDifference adjustStyleDifference(StyleDifference, unsigned contextSensitiveProperties) const;
 

@@ -1,5 +1,40 @@
 2012-11-28  Alexandru Chiculita  <achicu@adobe.com>
 
+        [CSS Regions] Crash when using hover and first-letter inside a flow-thread
+        https://bugs.webkit.org/show_bug.cgi?id=102957
+
+        Reviewed by David Hyatt.
+
+        Some RenderObjects use a different path when they are destroyed. That's because they are dynamically
+        added just before layout happens and their parent is usually not their actual owner. In those cases the parent
+        will remove the object from the tree, but it's actually the owner that will destroy the object and all its
+        children.
+
+        RenderFlowThread maintains a RenderBoxRegionInfo object for each RenderObject that is rendered inside the
+        flow-thread. When the RenderObject is removed from the RenderFlowThread, the associated RenderBoxRegionInfo object
+        also needs to be removed.
+
+        In these special cases (list-marker, first-letter), the object itself was removed from the RenderFlowThread,
+        but its children were still left in the flow-thread. When the these special objects were later destroyed, 
+        they will remove their own children. Removing their children means it will try to remove them from the
+        associated RenderFlowThread. However, in this cases there would be no link back to the parent flow-thread,
+        as the tree is now detached from the enclosing RenderFlowThread.
+
+        Added code that recursively removes the whole children tree from the RenderFlowThread when the root is removed.
+
+        Tests: fast/regions/firstletter-inside-flowthread.html
+               fast/regions/listmarker-inside-flowthread.html
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::willBeRemovedFromTree):
+        (WebCore::RenderObject::removeFromRenderFlowThread):
+        (WebCore):
+        (WebCore::RenderObject::removeFromRenderFlowThreadRecursive):
+        * rendering/RenderObject.h:
+        (RenderObject):
+
+2012-11-28  Alexandru Chiculita  <achicu@adobe.com>
+
         [CSS Regions] Auto-height regions will not calculate the height correctly when the content changes dynamically
         https://bugs.webkit.org/show_bug.cgi?id=102954
 

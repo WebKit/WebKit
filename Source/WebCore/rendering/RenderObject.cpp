@@ -2447,10 +2447,8 @@ void RenderObject::willBeRemovedFromTree()
     if (isOutOfFlowPositioned() && parent()->childrenInline())
         parent()->dirtyLinesFromChangedChild(this);
 
-    if (inRenderFlowThread()) {
-        ASSERT(enclosingRenderFlowThread());
-        enclosingRenderFlowThread()->removeFlowChildInfo(this);
-    }
+    if (inRenderFlowThread())
+        removeFromRenderFlowThread();
 
     if (RenderNamedFlowThread* containerFlowThread = parent()->enclosingRenderNamedFlowThread())
         containerFlowThread->removeFlowChild(this);
@@ -2459,6 +2457,27 @@ void RenderObject::willBeRemovedFromTree()
     // Update cached boundaries in SVG renderers, if a child is removed.
     parent()->setNeedsBoundariesUpdate();
 #endif
+}
+
+void RenderObject::removeFromRenderFlowThread()
+{
+    RenderFlowThread* renderFlowThread = enclosingRenderFlowThread();
+    ASSERT(renderFlowThread);
+    // Sometimes we remove the element from the flow, but it's not destroyed at that time. 
+    // It's only until later when we actually destroy it and remove all the children from it. 
+    // Currently, that happens for firstLetter elements and list markers.
+    // Pass in the flow thread so that we don't have to look it up for all the children.
+    removeFromRenderFlowThreadRecursive(renderFlowThread);
+}
+
+void RenderObject::removeFromRenderFlowThreadRecursive(RenderFlowThread* renderFlowThread)
+{
+    if (const RenderObjectChildList* children = virtualChildren()) {
+        for (RenderObject* child = children->firstChild(); child; child = child->nextSibling())
+            child->removeFromRenderFlowThreadRecursive(renderFlowThread);
+    }
+    renderFlowThread->removeFlowChildInfo(this);
+    setInRenderFlowThread(false);
 }
 
 void RenderObject::destroyAndCleanupAnonymousWrappers()
