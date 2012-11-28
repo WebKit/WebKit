@@ -1,0 +1,58 @@
+Test that percentage sized grid items inside percentage sized grid tracks get properly sized.
+
+FAIL:
+Expected 160 for width, but got 0. 
+Expected 90 for height, but got 0. 
+Expected 80 for width, but got 0. 
+Expected 105 for height, but got 0. 
+Expected 240 for width, but got 0. 
+Expected 210 for height, but got 0. 
+
+<div class="grid" data-expected-width="400" data-expected-height="300">
+    <div id="a" data-expected-width="160" data-expected-height="15"></div>
+    <div id="b" data-expected-width="15" data-expected-height="90"></div>
+    <div id="c" data-expected-width="80" data-expected-height="105"></div>
+    <div id="d" data-expected-width="240" data-expected-height="210"></div>
+</div>
+FAIL:
+Expected 160 for width, but got 0. 
+Expected 90 for height, but got 0. 
+Expected 80 for width, but got 0. 
+Expected 105 for height, but got 0. 
+Expected 240 for width, but got 0. 
+Expected 210 for height, but got 0. 
+
+<div class="grid" style="-webkit-writing-mode: horizontal-bt" data-expected-width="400" data-expected-height="300">
+    <div id="a" data-expected-width="160" data-expected-height="15"></div>
+    <div id="b" data-expected-width="15" data-expected-height="90"></div>
+    <div id="c" data-expected-width="80" data-expected-height="105"></div>
+    <div id="d" data-expected-width="240" data-expected-height="210"></div>
+</div>
+FAIL:
+Expected 120 for width, but got 0. 
+Expected 180 for height, but got 0. 
+Expected 140 for width, but got 0. 
+Expected 60 for height, but got 0. 
+Expected 280 for width, but got 0. 
+Expected 180 for height, but got 0. 
+
+<div class="grid" style="-webkit-writing-mode: vertical-rl;" data-expected-width="400" data-expected-height="300">
+    <div id="a" data-expected-width="120" data-expected-height="15"></div>
+    <div id="b" data-expected-width="15" data-expected-height="180"></div>
+    <div id="c" data-expected-width="140" data-expected-height="60"></div>
+    <div id="d" data-expected-width="280" data-expected-height="180"></div>
+</div>
+FAIL:
+Expected 120 for width, but got 0. 
+Expected 180 for height, but got 0. 
+Expected 140 for width, but got 0. 
+Expected 60 for height, but got 0. 
+Expected 280 for width, but got 0. 
+Expected 180 for height, but got 0. 
+
+<div class="grid" style="-webkit-writing-mode: vertical-lr;" data-expected-width="400" data-expected-height="300">
+    <div id="a" data-expected-width="120" data-expected-height="15"></div>
+    <div id="b" data-expected-width="15" data-expected-height="180"></div>
+    <div id="c" data-expected-width="140" data-expected-height="60"></div>
+    <div id="d" data-expected-width="280" data-expected-height="180"></div>
+</div>

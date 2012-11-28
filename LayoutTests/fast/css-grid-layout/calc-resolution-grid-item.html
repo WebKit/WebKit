@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<script>
+if (window.testRunner)
+    testRunner.overridePreference("WebKitCSSGridLayoutEnabled", 1);
+</script>
+<style>
+.grid {
+    display: -webkit-grid;
+    background-color: grey;
+    -webkit-grid-columns: 100px 300px;
+    -webkit-grid-rows: 50px 150px;
+    height: 200px;
+    width: 400px;
+}
+
+#a {
+    background-color: blue;
+    -webkit-grid-column: 1;
+    -webkit-grid-row: 1;
+}
+
+#b {
+    background-color: lime;
+    -webkit-grid-column: 2;
+    -webkit-grid-row: 1;
+}
+
+#c {
+    background-color: purple;
+    -webkit-grid-column: 1;
+    -webkit-grid-row: 2;
+}
+
+#d {
+    background-color: orange;
+    -webkit-grid-column: 2;
+    -webkit-grid-row: 2;
+}
+
+.calcWidth {
+    width: -webkit-calc(80% + 20%);
+    height: 15px;
+}
+
+.calcHeight {
+    width: 15px;
+    height: -webkit-calc(80% + 20px);
+}
+
+.calcHeightAndWidth {
+    width: -webkit-calc(80% + 20px);
+    height: -webkit-calc(70% + 30%);
+}
+
+.verticalRL {
+    -webkit-writing-mode: vertical-rl;
+}
+</style>
+<script src="../../resources/check-layout.js"></script>
+<body onload="checkLayout('.grid')">
+
+<p>Test that resolving calc lengths on grid items works properly on a fixed grid with different writing modes.</p>
+
+<div class="grid">
+    <div id="a" class="calcWidth" data-expected-width="100" data-expected-height="15"></div>
+    <div id="b" class="calcHeight" data-expected-width="15" data-expected-height="60"></div>
+    <div id="c" class="calcHeightAndWidth" data-expected-width="100" data-expected-height="150"></div>
+    <div id="d" class="calcHeightAndWidth" data-expected-width="260" data-expected-height="150"></div>
+</div>
+
+<div class="grid verticalRL">
+    <div id="a" class="calcWidth" data-expected-width="50" data-expected-height="15"></div>
+    <div id="b" class="calcHeight" data-expected-width="15" data-expected-height="260"></div>
+    <div id="c" class="calcHeightAndWidth" data-expected-width="140" data-expected-height="100"></div>
+    <div id="d" class="calcHeightAndWidth" data-expected-width="140" data-expected-height="300"></div>
+</div>
+
+<div class="grid">
+    <div id="a" class="calcWidth verticalRL" data-expected-width="100" data-expected-height="15"></div>
+    <div id="b" class="calcHeight verticalRL" data-expected-width="15" data-expected-height="60"></div>
+    <div id="c" class="calcHeightAndWidth verticalRL" data-expected-width="100" data-expected-height="150"></div>
+    <div id="d" class="calcHeightAndWidth verticalRL" data-expected-width="260" data-expected-height="150"></div>
+</div>
+
+<div class="grid">
+    <div id="a" class="calcWidth verticalRL" data-expected-width="100" data-expected-height="15"></div>
+    <div id="b" class="calcHeight" data-expected-width="15" data-expected-height="60"></div>
+    <div id="c" class="calcHeightAndWidth verticalRL" data-expected-width="100" data-expected-height="150"></div>
+    <div id="d" class="calcHeightAndWidth" data-expected-width="260" data-expected-height="150"></div>
+</div>
+</body>
+</html>

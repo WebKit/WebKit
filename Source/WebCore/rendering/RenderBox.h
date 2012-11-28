@@ -305,6 +305,14 @@ public:
     void clearOverrideLogicalContentHeight();
     void clearOverrideLogicalContentWidth();
 
+    LayoutUnit overrideContainingBlockContentLogicalWidth() const;
+    LayoutUnit overrideContainingBlockContentLogicalHeight() const;
+    bool hasOverrideContainingBlockLogicalWidth() const;
+    bool hasOverrideContainingBlockLogicalHeight() const;
+    void setOverrideContainingBlockContentLogicalWidth(LayoutUnit);
+    void setOverrideContainingBlockContentLogicalHeight(LayoutUnit);
+    void clearContainingBlockOverrideSize();
+
     virtual LayoutSize offsetFromContainer(RenderObject*, const LayoutPoint&, bool* offsetDependsOnPoint = 0) const;
     
     LayoutUnit adjustBorderBoxLogicalWidthForBoxSizing(LayoutUnit width) const;
@@ -368,6 +376,8 @@ public:
     virtual void repaintDuringLayoutIfMoved(const LayoutRect&);
 
     virtual LayoutUnit containingBlockLogicalWidthForContent() const;
+    LayoutUnit containingBlockLogicalHeightForContent() const;
+
     LayoutUnit containingBlockLogicalWidthForContentInRegion(RenderRegion*, LayoutUnit offsetFromLogicalTopOfFirstPage) const;
     LayoutUnit containingBlockAvailableLineWidthInRegion(RenderRegion*, LayoutUnit offsetFromLogicalTopOfFirstPage) const;
     LayoutUnit perpendicularContainingBlockLogicalHeight() const;

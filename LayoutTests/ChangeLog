@@ -1,3 +1,25 @@
+2012-11-27  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Support proper <percent> / calc() resolution for grid items
+        https://bugs.webkit.org/show_bug.cgi?id=102968
+
+        Reviewed by Ojan Vafai.
+
+        * fast/css-grid-layout/calc-resolution-grid-item-expected.txt: Added.
+        * fast/css-grid-layout/calc-resolution-grid-item.html: Added.
+        * fast/css-grid-layout/percent-resolution-grid-item-expected.txt: Added.
+        * fast/css-grid-layout/percent-resolution-grid-item.html: Added.
+        Test that checks that our override containing block's logical width / height logic
+        works as expected.
+
+        * fast/css-grid-layout/percent-grid-item-in-percent-grid-track-expected.txt: Added.
+        * fast/css-grid-layout/percent-grid-item-in-percent-grid-track.html: Added.
+        * fast/css-grid-layout/percent-grid-item-in-percent-grid-track-in-percent-grid.html: Added.
+        * fast/css-grid-layout/percent-grid-item-in-percent-grid-track-in-percent-grid-expected.txt: Added.
+        Those test cases covers the cases of percentage sized grid items with percentage sized grid tracks
+        inside a fixed or percentage sized grid element. They don't pass yet as we don't support percentage
+        sized grid tracks (see bug 103335).
+
 2012-11-27  Yael Aharon  <yael.aharon@intel.com>
 
         Unreviewed gardening. Add more tests that started failing after http://trac.webkit.org/changeset/135935

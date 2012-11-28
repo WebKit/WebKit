@@ -1,3 +1,55 @@
+2012-11-27  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Support proper <percent> / calc() resolution for grid items
+        https://bugs.webkit.org/show_bug.cgi?id=102968
+
+        Reviewed by Ojan Vafai.
+
+        This change introduces a mechanism similar to logical height / width override
+        but for containing block. This is required as we don't have a renderer for the
+        grid area but any <percent> or calc() size should be resolved against the grid
+        area size (which is sized after the grid tracks).
+
+        Tests: fast/css-grid-layout/calc-resolution-grid-item.html
+               fast/css-grid-layout/percent-resolution-grid-item.html
+               fast/css-grid-layout/percent-grid-item-in-percent-grid-track.html
+               fast/css-grid-layout/percent-grid-item-in-percent-grid-track-in-percent-grid.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::willBeDestroyed):
+        Remove any containing block size override.
+
+        (WebCore::RenderBox::overrideContainingBlockContentLogicalWidth):
+        (WebCore::RenderBox::overrideContainingBlockContentLogicalHeight):
+        (WebCore::RenderBox::hasOverrideContainingBlockLogicalWidth):
+        (WebCore::RenderBox::hasOverrideContainingBlockLogicalHeight):
+        (WebCore::RenderBox::setOverrideContainingBlockContentLogicalWidth):
+        (WebCore::RenderBox::setOverrideContainingBlockContentLogicalHeight):
+        (WebCore::RenderBox::clearContainingBlockOverrideSize):
+        Containing block override size functions.
+
+        (WebCore::RenderBox::containingBlockLogicalWidthForContent):
+        Updated the function to check for any override logical width.
+
+        (WebCore::RenderBox::containingBlockLogicalHeightForContent):
+        New function, similar to RenderBox::containingBlockLogicalWidthForContent.
+
+        (WebCore::RenderBox::perpendicularContainingBlockLogicalHeight):
+        (WebCore::RenderBox::computePercentageLogicalHeight):
+        Updated these function to return overrideContainingBlockContentLogicalHeight as needed.
+
+        (WebCore::RenderBox::computeReplacedLogicalHeightUsing):
+        (WebCore::RenderBox::availableLogicalHeightUsing):
+        Updated these functions to use the new containingBlockLogicalHeightForContent instead
+        of availableLogicalHeight.
+
+        * rendering/RenderBox.h:
+        Added the previous new functions.
+
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::layoutGridItems):
+        Updated to override the containing block size so that we properly size our grid items.
+
 2012-11-27  Kent Tamura  <tkent@chromium.org>
 
         Fix build errors by r135955.

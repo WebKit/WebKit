@@ -68,6 +68,10 @@ typedef WTF::HashMap<const RenderBox*, LayoutUnit> OverrideSizeMap;
 static OverrideSizeMap* gOverrideHeightMap = 0;
 static OverrideSizeMap* gOverrideWidthMap = 0;
 
+// Used by grid elements to properly size their grid items.
+static OverrideSizeMap* gOverrideContainingBlockLogicalHeightMap = 0;
+static OverrideSizeMap* gOverrideContainingBlockLogicalWidthMap = 0;
+
 bool RenderBox::s_hadOverflowClip = false;
 
 RenderBox::RenderBox(Node* node)
@@ -133,6 +137,7 @@ void RenderBox::clearRenderBoxRegionInfo()
 void RenderBox::willBeDestroyed()
 {
     clearOverrideSize();
+    clearContainingBlockOverrideSize();
 
     RenderBlock::removePercentHeightDescendantIfNeeded(this);
 
@@ -738,6 +743,50 @@ LayoutUnit RenderBox::overrideLogicalContentHeight() const
     return gOverrideHeightMap->get(this);
 }
 
+LayoutUnit RenderBox::overrideContainingBlockContentLogicalWidth() const
+{
+    ASSERT(hasOverrideContainingBlockLogicalWidth());
+    return gOverrideContainingBlockLogicalWidthMap->get(this);
+}
+
+LayoutUnit RenderBox::overrideContainingBlockContentLogicalHeight() const
+{
+    ASSERT(hasOverrideContainingBlockLogicalHeight());
+    return gOverrideContainingBlockLogicalHeightMap->get(this);
+}
+
+bool RenderBox::hasOverrideContainingBlockLogicalWidth() const
+{
+    return gOverrideContainingBlockLogicalWidthMap && gOverrideContainingBlockLogicalWidthMap->contains(this);
+}
+
+bool RenderBox::hasOverrideContainingBlockLogicalHeight() const
+{
+    return gOverrideContainingBlockLogicalHeightMap && gOverrideContainingBlockLogicalHeightMap->contains(this);
+}
+
+void RenderBox::setOverrideContainingBlockContentLogicalWidth(LayoutUnit logicalWidth)
+{
+    if (!gOverrideContainingBlockLogicalWidthMap)
+        gOverrideContainingBlockLogicalWidthMap = new OverrideSizeMap;
+    gOverrideContainingBlockLogicalWidthMap->set(this, logicalWidth);
+}
+
+void RenderBox::setOverrideContainingBlockContentLogicalHeight(LayoutUnit logicalHeight)
+{
+    if (!gOverrideContainingBlockLogicalHeightMap)
+        gOverrideContainingBlockLogicalHeightMap = new OverrideSizeMap;
+    gOverrideContainingBlockLogicalHeightMap->set(this, logicalHeight);
+}
+
+void RenderBox::clearContainingBlockOverrideSize()
+{
+    if (gOverrideContainingBlockLogicalWidthMap)
+        gOverrideContainingBlockLogicalWidthMap->remove(this);
+    if (gOverrideContainingBlockLogicalHeightMap)
+        gOverrideContainingBlockLogicalHeightMap->remove(this);
+}
+
 LayoutUnit RenderBox::adjustBorderBoxLogicalWidthForBoxSizing(LayoutUnit width) const
 {
     LayoutUnit bordersPlusPadding = borderAndPaddingLogicalWidth();
@@ -1251,8 +1300,20 @@ LayoutUnit RenderBox::shrinkLogicalWidthToAvoidFloats(LayoutUnit childMarginStar
 
 LayoutUnit RenderBox::containingBlockLogicalWidthForContent() const
 {
+    if (hasOverrideContainingBlockLogicalWidth())
+        return overrideContainingBlockContentLogicalWidth();
+
     RenderBlock* cb = containingBlock();
     return cb->availableLogicalWidth();
+}
+
+LayoutUnit RenderBox::containingBlockLogicalHeightForContent() const
+{
+    if (hasOverrideContainingBlockLogicalHeight())
+        return overrideContainingBlockContentLogicalHeight();
+
+    RenderBlock* cb = containingBlock();
+    return cb->availableLogicalHeight();
 }
 
 LayoutUnit RenderBox::containingBlockLogicalWidthForContentInRegion(RenderRegion* region, LayoutUnit offsetFromLogicalTopOfFirstPage) const
@@ -1262,6 +1323,8 @@ LayoutUnit RenderBox::containingBlockLogicalWidthForContentInRegion(RenderRegion
 
     RenderBlock* cb = containingBlock();
     RenderRegion* containingBlockRegion = cb->clampToStartAndEndRegions(region);
+    // FIXME: It's unclear if a region's content should use the containing block's override logical width.
+    // If it should, the following line should call containingBlockLogicalWidthForContent.
     LayoutUnit result = cb->availableLogicalWidth();
     RenderBoxRegionInfo* boxInfo = cb->renderBoxRegionInfo(containingBlockRegion, offsetFromLogicalTopOfFirstPage - logicalTop());
     if (!boxInfo)
@@ -1285,6 +1348,9 @@ LayoutUnit RenderBox::containingBlockAvailableLineWidthInRegion(RenderRegion* re
 
 LayoutUnit RenderBox::perpendicularContainingBlockLogicalHeight() const
 {
+    if (hasOverrideContainingBlockLogicalHeight())
+        return overrideContainingBlockContentLogicalHeight();
+
     RenderBlock* cb = containingBlock();
     if (cb->hasOverrideHeight())
         return cb->overrideLogicalContentHeight();
@@ -2217,6 +2283,8 @@ LayoutUnit RenderBox::computePercentageLogicalHeight(const Length& height) const
 
     if (isHorizontalWritingMode() != cb->isHorizontalWritingMode())
         availableHeight = containingBlockChild->containingBlockLogicalWidthForContent();
+    else if (hasOverrideContainingBlockLogicalHeight())
+        availableHeight = overrideContainingBlockContentLogicalHeight();
     else if (cb->isTableCell()) {
         if (!skippedAutoHeightContainingBlock) {
             // Table cells violate what the CSS spec says to do with heights. Basically we
@@ -2363,7 +2431,7 @@ LayoutUnit RenderBox::computeReplacedLogicalHeightUsing(SizeType sizeType, Lengt
             if (isOutOfFlowPositioned())
                 availableHeight = containingBlockLogicalHeightForPositioned(toRenderBoxModelObject(cb));
             else {
-                availableHeight =  toRenderBox(cb)->availableLogicalHeight();
+                availableHeight = containingBlockLogicalHeightForContent();
                 // It is necessary to use the border-box to match WinIE's broken
                 // box model.  This is essential for sizing inside
                 // table cells using percentage heights.
@@ -2431,7 +2499,7 @@ LayoutUnit RenderBox::availableLogicalHeightUsing(const Length& h) const
     }
 
     // FIXME: This is wrong if the containingBlock has a perpendicular writing mode.
-    return containingBlock()->availableLogicalHeight();
+    return containingBlockLogicalHeightForContent();
 }
 
 void RenderBox::computeBlockDirectionMargins(const RenderBlock* containingBlock, LayoutUnit& marginBefore, LayoutUnit& marginAfter) const

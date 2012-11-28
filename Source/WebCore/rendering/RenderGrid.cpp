@@ -161,6 +161,15 @@ void RenderGrid::layoutGridItems()
 
     for (RenderBox* child = firstChildBox(); child; child = child->nextSiblingBox()) {
         LayoutPoint childPosition = findChildLogicalPosition(child, columnTracks, rowTracks);
+
+        size_t columnTrack = resolveGridPosition(child->style()->gridItemColumn());
+        size_t rowTrack = resolveGridPosition(child->style()->gridItemRow());
+
+        // Because the grid area cannot be styled, we don't need to adjust
+        // the grid breadth to account for 'box-sizing'.
+        child->setOverrideContainingBlockContentLogicalWidth(columnTracks[columnTrack].m_usedBreadth);
+        child->setOverrideContainingBlockContentLogicalHeight(rowTracks[rowTrack].m_usedBreadth);
+
         // FIXME: Grid items should stretch to fill their cells. Once we
         // implement grid-{column,row}-align, we can also shrink to fit. For
         // now, just size as if we were a regular child.
