@@ -183,11 +183,12 @@ class PerfTest(object):
             _log.error("The test didn't report all statistics.")
             return None
 
-        for result_name in ordered_results_keys:
-            if result_name == test_name:
-                self.output_statistics(result_name, results[result_name], description_string)
-            else:
-                self.output_statistics(result_name, results[result_name])
+        if not self._port.get_option('profile'):
+            for result_name in ordered_results_keys:
+                if result_name == test_name:
+                    self.output_statistics(result_name, results[result_name], description_string)
+                else:
+                    self.output_statistics(result_name, results[result_name])
         return results
 
     def output_statistics(self, test_name, results, description_string=None):

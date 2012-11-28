@@ -63,7 +63,7 @@ class MainTest(unittest.TestCase):
         output_capture = OutputCapture()
         output_capture.capture_output()
         try:
-            test = PerfTest(None, 'some-test', '/path/some-dir/some-test')
+            test = PerfTest(MockPort(), 'some-test', '/path/some-dir/some-test')
             self.assertEqual(test.parse_output(output),
                 {'some-test': {'avg': 1100.0, 'median': 1101.0, 'min': 1080.0, 'max': 1120.0, 'stdev': 11.0, 'unit': 'ms',
                     'values': [i for i in range(1, 20)]}})
@@ -91,7 +91,7 @@ class MainTest(unittest.TestCase):
         output_capture = OutputCapture()
         output_capture.capture_output()
         try:
-            test = PerfTest(None, 'some-test', '/path/some-dir/some-test')
+            test = PerfTest(MockPort(), 'some-test', '/path/some-dir/some-test')
             self.assertEqual(test.parse_output(output), None)
         finally:
             actual_stdout, actual_stderr, actual_logs = output_capture.restore_output()

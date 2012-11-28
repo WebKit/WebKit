@@ -36,6 +36,7 @@ import time
 import os
 
 from webkitpy.common.system import path
+from webkitpy.common.system.profiler import ProfilerFactory
 
 
 _log = logging.getLogger(__name__)
@@ -140,6 +141,10 @@ class Driver(object):
         self._server_process = None
 
         self._measurements = {}
+        if self._port.get_option("profile"):
+            self._profiler = ProfilerFactory.create_profiler(self._port.host, self._port._path_to_driver(), self._port.results_directory())
+        else:
+            self._profiler = None
 
     def __del__(self):
         self.stop()
@@ -282,15 +287,21 @@ class Driver(object):
         environment['LOCAL_RESOURCE_ROOT'] = self._port.layout_tests_dir()
         if 'WEBKITOUTPUTDIR' in os.environ:
             environment['WEBKITOUTPUTDIR'] = os.environ['WEBKITOUTPUTDIR']
+        if self._profiler:
+            environment = self._profiler.adjusted_environment(environment)
         self._crashed_process_name = None
         self._crashed_pid = None
         self._server_process = self._port._server_process_constructor(self._port, server_name, self.cmd_line(pixel_tests, per_test_args), environment)
         self._server_process.start()
+        if self._profiler:
+            self._profiler.attach_to_pid(self._server_process.pid())
 
     def stop(self):
         if self._server_process:
             self._server_process.stop(self._port.driver_stop_timeout())
             self._server_process = None
+            if self._profiler:
+                self._profiler.profile_after_exit()
 
         if self._driver_tempdir:
             self._port._filesystem.rmtree(str(self._driver_tempdir))

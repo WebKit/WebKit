@@ -1,3 +1,54 @@
+2012-11-28  Eric Seidel  <eric@webkit.org>
+
+        run-perf-tests should have a --profile option for easy profiling
+        https://bugs.webkit.org/show_bug.cgi?id=99517
+
+        Reviewed by Adam Barth.
+
+        This is a very basic implementation which works on Mac and Linux
+        and makes it trivial for anyone to profile a PerformanceTest.
+
+        Currently it's not "hard" to profile a PerformanceTest
+        but lowering the barriers to entry here allows all of us to focus
+        less on the tools and more on the code.
+
+        This also paves the way for adding easy mobile-profiling (e.g. chromium-android)
+        which is actually "hard", and this option will make much easier.
+
+        * Scripts/webkitpy/common/system/profiler.py: Added.
+        (ProfilerFactory):
+        (ProfilerFactory.create_profiler):
+        (Profiler):
+        (Profiler.__init__):
+        (Profiler.adjusted_environment):
+        (Profiler.attach_to_pid):
+        (Profiler.did_stop):
+        (SingleFileOutputProfiler):
+        (SingleFileOutputProfiler.__init__):
+        (GooglePProf):
+        (GooglePProf.__init__):
+        (GooglePProf.adjusted_environment):
+        (GooglePProf.did_stop):
+        (Instruments):
+        (Instruments.__init__):
+        (Instruments.attach_to_pid):
+        * Scripts/webkitpy/common/system/profiler_unittest.py: Added.
+        (ProfilerFactoryTest):
+        (ProfilerFactoryTest.test_basic):
+        * Scripts/webkitpy/layout_tests/port/driver.py:
+        (Driver.__init__):
+        (Driver._start):
+        (Driver.stop):
+        (Driver.cmd_line):
+        * Scripts/webkitpy/performance_tests/perftest.py:
+        (PerfTest.parse_output):
+        * Scripts/webkitpy/performance_tests/perftest_unittest.py:
+        (MainTest.test_parse_output):
+        (MainTest.test_parse_output_with_failing_line):
+        * Scripts/webkitpy/performance_tests/perftestsrunner.py:
+        (PerfTestsRunner._parse_args):
+        (PerfTestsRunner.run):
+
 2012-11-28  Zan Dobersek  <zandobersek@gmail.com>
 
         Remove deprecated logging usage from QueueEngine

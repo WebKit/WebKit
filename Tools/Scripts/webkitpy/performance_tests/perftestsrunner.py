@@ -121,6 +121,8 @@ class PerfTestsRunner(object):
                 help="Run replay tests."),
             optparse.make_option("--force", dest="skipped", action="store_true", default=False,
                 help="Run all tests, including the ones in the Skipped list."),
+            optparse.make_option("--profile", action="store_true",
+                help="Output per-test profile information."),
             ]
         return optparse.OptionParser(option_list=(perf_option_list)).parse_args(args)
 
@@ -187,7 +189,7 @@ class PerfTestsRunner(object):
         finally:
             self._stop_servers()
 
-        if self._options.generate_results:
+        if self._options.generate_results and not self._options.profile:
             exit_code = self._generate_and_show_results()
             if exit_code:
                 return exit_code
