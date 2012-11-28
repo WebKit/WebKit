@@ -1,3 +1,14 @@
+2012-11-28  Jaehun Lim  <ljaehun.lim@samsung.com>
+
+        [EFL][WK1] Gardening AC testcases in efl-wk1
+        https://bugs.webkit.org/show_bug.cgi?id=103488
+
+        Unreviewed, EFL gardening.
+
+        efl-wk1 doesn't fully support AC.
+
+        * platform/efl-wk1/TestExpectations:
+
 2012-11-27  Mike West  <mkwst@chromium.org>
 
         Improve WebSocketChannel connection failure console messages.
