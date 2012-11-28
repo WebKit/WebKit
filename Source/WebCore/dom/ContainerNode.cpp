@@ -38,6 +38,7 @@
 #include "LoaderStrategy.h"
 #include "MemoryCache.h"
 #include "MutationEvent.h"
+#include "NodeRenderStyle.h"
 #include "ResourceLoadScheduler.h"
 #include "Page.h"
 #include "PlatformStrategies.h"
