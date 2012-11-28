@@ -35,8 +35,9 @@ namespace JSC {
 class SourceProviderCacheItem {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    SourceProviderCacheItem(int closeBraceLine, int closeBracePos)
-        : closeBraceLine(closeBraceLine) 
+    SourceProviderCacheItem(unsigned functionStart, unsigned closeBraceLine, unsigned closeBracePos)
+        : functionStart(functionStart)
+        , closeBraceLine(closeBraceLine)
         , closeBracePos(closeBracePos)
     {
     }
@@ -59,12 +60,16 @@ public:
         token.m_location.line = closeBraceLine;
         return token;
     }
+
+    unsigned functionStart : 31;
+    bool needsFullActivation : 1;
     
-    int closeBraceLine;
-    int closeBracePos;
-    bool usesEval;
-    bool strictMode;
-    bool needsFullActivation;
+    unsigned closeBraceLine : 31;
+    bool usesEval : 1;
+
+    unsigned closeBracePos : 31;
+    bool strictMode : 1;
+
     Vector<RefPtr<StringImpl> > usedVariables;
     Vector<RefPtr<StringImpl> > writtenVariables;
 };

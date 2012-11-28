@@ -1,3 +1,21 @@
+2012-11-28  Oliver Hunt  <oliver@apple.com>
+
+        Make source cache include more information about the function extent.
+        https://bugs.webkit.org/show_bug.cgi?id=103552
+
+        Reviewed by Gavin Barraclough.
+
+        Add a bit more information to the source cache.
+
+        * parser/Parser.cpp:
+        (JSC::::parseFunctionInfo):
+           Store the function start offset
+        * parser/SourceProviderCacheItem.h:
+        (JSC::SourceProviderCacheItem::SourceProviderCacheItem):
+        (SourceProviderCacheItem):
+           Add additional field for the start of the real function string, and re-arrange
+           fields to avoid growing the struct.
+
 2012-11-27  Filip Pizlo  <fpizlo@apple.com>
 
         Convert some remaining uses of FILE* to PrintStream&.

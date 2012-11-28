@@ -812,6 +812,7 @@ template <FunctionRequirements requirements, bool nameIsInContainingScope, class
 {
     AutoPopScopeRef functionScope(this, pushScope());
     functionScope->setIsFunction();
+    int functionStart = m_token.m_location.startOffset;
     if (match(IDENT)) {
         name = m_token.m_data.ident;
         next();
@@ -865,7 +866,7 @@ template <FunctionRequirements requirements, bool nameIsInContainingScope, class
     OwnPtr<SourceProviderCacheItem> newInfo;
     int functionLength = closeBracePos - openBracePos;
     if (TreeBuilder::CanUseFunctionCache && m_functionCache && functionLength > minimumFunctionLengthToCache) {
-        newInfo = adoptPtr(new SourceProviderCacheItem(m_token.m_location.line, closeBracePos));
+        newInfo = adoptPtr(new SourceProviderCacheItem(functionStart, m_token.m_location.line, closeBracePos));
         functionScope->saveFunctionInfo(newInfo.get());
     }
     
