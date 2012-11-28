@@ -4189,7 +4189,7 @@ webkit.org/b/101408 platform/chromium/fast/forms/calendar-picker/calendar-picker
 
 webkit.org/b/101539 [ Linux Win ] editing/execCommand/switch-list-type-with-orphaned-li.html [ Failure ]
 
-webkit.org/b/101618 [ Win ] http/tests/inspector/indexeddb/database-data.html [ Crash ]
+webkit.org/b/101618 [ Win Linux ] http/tests/inspector/indexeddb/database-data.html [ Pass Crash ]
 
 webkit.org/b/90022 fast/canvas/canvas-resize-reset-pixelRatio.html [ WontFix ]
 webkit.org/b/90022 platform/chromium/virtual/gpu/fast/canvas/canvas-resize-reset-pixelRatio.html [ WontFix ]
