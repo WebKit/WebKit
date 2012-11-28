@@ -1,3 +1,14 @@
+2012-11-28  Nima Ghanavatian  <nghanavatian@rim.com>
+
+        Adding Nima Ghanavatian to committers.py
+        https://bugs.webkit.org/show_bug.cgi?id=103533
+
+        Reviewed by Rob Buis.
+
+        Adding myself to committers.py as a Committer.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2012-11-28  peavo@outlook.com  <peavo@outlook.com>
 
         [WinCairo] Crash when requesting favicon.
