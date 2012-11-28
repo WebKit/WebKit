@@ -1,3 +1,9 @@
+2012-11-26  Andrey Adaikin  <aandrey@chromium.org>
+
+        Unreviewed. Adding myself to committers.py.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2012-11-28  Tommy Widenflycht  <tommyw@google.com>
 
         Add basic implementation for MediaStreamAudioDestinationNode

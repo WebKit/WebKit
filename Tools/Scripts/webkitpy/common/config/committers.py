@@ -201,6 +201,7 @@ committers_unable_to_review = [
     Committer("Andrei Popescu", "andreip@google.com", "andreip"),
     Committer("Andrew Wellington", ["andrew@webkit.org", "proton@wiretapped.net"], "proton"),
     Committer("Andrew Scherkus", "scherkus@chromium.org", "scherkus"),
+    Committer("Andrey Adaykin", "aandrey@chromium.org", "aandrey"),
     Committer("Andrey Kosyakov", "caseq@chromium.org", "caseq"),
     Committer("Andras Becsi", ["abecsi@webkit.org", "andras.becsi@digia.com"], "bbandix"),
     Committer("Andy Wingo", "wingo@igalia.com", "wingo"),
