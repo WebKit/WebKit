@@ -1,3 +1,25 @@
+2012-11-28  Filip Pizlo  <fpizlo@apple.com>
+
+        It should be possible to say dataLog("count = ", count, "\n") instead of dataLogF("count = %d\n", count)
+        https://bugs.webkit.org/show_bug.cgi?id=103009
+
+        Reviewed by Michael Saboff.
+
+        Instead of converting all of JSC to use the new dataLog()/print() methods, I just changed
+        one place: dumping of abstract values. This is mainly just to ensure that the code I
+        added to WTF is actually doing things.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dump):
+        * dfg/DFGAbstractValue.h:
+        (JSC::DFG::AbstractValue::dump):
+        (WTF):
+        (WTF::printInternal):
+        * dfg/DFGStructureAbstractValue.h:
+        (JSC::DFG::StructureAbstractValue::dump):
+        (WTF):
+        (WTF::printInternal):
+
 2012-11-28  Oliver Hunt  <oliver@apple.com>
 
         Make source cache include more information about the function extent.

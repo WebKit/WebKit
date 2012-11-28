@@ -47,5 +47,73 @@ void PrintStream::flush()
 {
 }
 
+void printInternal(PrintStream& out, const char* string)
+{
+    out.printf("%s", string);
+}
+
+void printInternal(PrintStream& out, const CString& string)
+{
+    out.print(string.data());
+}
+
+void printInternal(PrintStream& out, const String& string)
+{
+    out.print(string.utf8());
+}
+
+void printInternal(PrintStream& out, bool value)
+{
+    if (value)
+        out.print("true");
+    else
+        out.print("false");
+}
+
+void printInternal(PrintStream& out, int value)
+{
+    out.printf("%d", value);
+}
+
+void printInternal(PrintStream& out, unsigned value)
+{
+    out.printf("%u", value);
+}
+
+void printInternal(PrintStream& out, long value)
+{
+    out.printf("%ld", value);
+}
+
+void printInternal(PrintStream& out, unsigned long value)
+{
+    out.printf("%lu", value);
+}
+
+void printInternal(PrintStream& out, long long value)
+{
+    out.printf("%lld", value);
+}
+
+void printInternal(PrintStream& out, unsigned long long value)
+{
+    out.printf("%llu", value);
+}
+
+void printInternal(PrintStream& out, float value)
+{
+    out.print(static_cast<double>(value));
+}
+
+void printInternal(PrintStream& out, double value)
+{
+    out.printf("%lf", value);
+}
+
+void printInternal(PrintStream& out, RawPointer value)
+{
+    out.printf("%p", value.value());
+}
+
 } // namespace WTF
 

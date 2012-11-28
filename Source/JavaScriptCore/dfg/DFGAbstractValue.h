@@ -373,13 +373,12 @@ struct AbstractValue {
     
     void dump(PrintStream& out) const
     {
-        out.printf("(%s, %s, ", speculationToString(m_type), arrayModesToString(m_arrayModes));
-        m_currentKnownStructure.dump(out);
-        out.printf(", ");
-        m_futurePossibleStructure.dump(out);
+        out.print(
+            "(", speculationToString(m_type), ", ", arrayModesToString(m_arrayModes), ", ",
+            m_currentKnownStructure, ", ", m_futurePossibleStructure);
         if (!!m_value)
-            out.printf(", %s", m_value.description());
-        out.printf(")");
+            out.print(", ", m_value.description());
+        out.print(")");
     }
     
     // A great way to think about the difference between m_currentKnownStructure and
@@ -532,6 +531,15 @@ private:
 };
 
 } } // namespace JSC::DFG
+
+namespace WTF {
+
+inline void printInternal(PrintStream& out, const JSC::DFG::AbstractValue& value)
+{
+    value.dump(out);
+}
+
+} // namespace WTF
 
 #endif // ENABLE(DFG_JIT)
 

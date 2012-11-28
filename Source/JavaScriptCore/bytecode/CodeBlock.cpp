@@ -497,7 +497,7 @@ void CodeBlock::dump()
         static_cast<unsigned long>(instructions().size() * sizeof(Instruction)),
         this, codeTypeToString(codeType()), m_numParameters, m_numCalleeRegisters,
         m_numVars);
-    if (symbolTable()->captureCount())
+    if (symbolTable() && symbolTable()->captureCount())
         dataLogF("; %d captured var(s)", symbolTable()->captureCount());
     if (usesArguments()) {
         dataLogF(

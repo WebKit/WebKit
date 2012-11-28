@@ -131,6 +131,7 @@ HEADERS += \
     PrintStream.h \
     RandomNumber.h \
     RandomNumberSeed.h \
+    RawPointer.h \
     RedBlackTree.h \
     RefCounted.h \
     RefCountedLeakCounter.h \

@@ -1125,6 +1125,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\wtf\RawPointer.h"
+			>
+		</File>
+		<File
 			RelativePath="..\wtf\RedBlackTree.h"
 			>
 		</File>

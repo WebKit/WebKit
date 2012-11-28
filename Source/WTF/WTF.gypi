@@ -85,6 +85,7 @@
             'wtf/PossiblyNull.h',
             'wtf/PrintStream.h',
             'wtf/RandomNumber.h',
+            'wtf/RawPointer.h',
             'wtf/RefCounted.h',
             'wtf/RefCountedLeakCounter.h',
             'wtf/RefPtr.h',
