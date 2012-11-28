@@ -213,7 +213,7 @@ void GraphicsContext3DPrivate::paintToTextureMapper(TextureMapper* textureMapper
     blitMultisampleFramebufferAndRestoreContext();
 
     if (textureMapper->accelerationMode() == TextureMapper::OpenGLMode) {
-
+#if USE(GRAPHICS_SURFACE)
         // CGL only provides us the context, but not the view the context is currently bound to.
         // To make sure the context is bound the the right surface we have to do a makeCurrent through QOpenGL again.
         // FIXME: Remove this code as soon as GraphicsSurfaceMac makes use of NSOpenGL.
@@ -230,6 +230,7 @@ void GraphicsContext3DPrivate::paintToTextureMapper(TextureMapper* textureMapper
 
         TextureMapperGL* texmapGL = static_cast<TextureMapperGL*>(textureMapper);
         m_graphicsSurface->paintToTextureMapper(texmapGL, targetRect, matrix, opacity, mask);
+#endif
         return;
     }
 
