@@ -1,3 +1,10 @@
+2012-11-27  Noel Gordon  <noel.gordon@gmail.com>
+
+        Unreviewed gardening: http/tests/inspector/network/network-xhr-replay.html times-out on win release
+        https://bugs.webkit.org/show_bug.cgi?id=96953
+
+        * platform/chromium/TestExpectations:
+
 2012-11-27  Kent Tamura  <tkent@chromium.org>
 
         [Chromium] Update test results for recent forms changes
