@@ -33,6 +33,7 @@
 
 #include "MockWebMediaStreamCenter.h"
 
+#include <public/WebAudioDestinationConsumer.h>
 #include <public/WebMediaStreamCenterClient.h>
 #include <public/WebMediaStreamComponent.h>
 #include <public/WebMediaStreamDescriptor.h>
@@ -85,8 +86,25 @@ void MockWebMediaStreamCenter::didStopLocalMediaStream(const WebMediaStreamDescr
         videoComponents[i].source().setReadyState(WebMediaStreamSource::ReadyStateEnded);
 }
 
-void MockWebMediaStreamCenter::didCreateMediaStream(WebMediaStreamDescriptor&)
+class MockWebAudioDestinationConsumer : public WebAudioDestinationConsumer {
+public:
+    virtual ~MockWebAudioDestinationConsumer() { }
+    virtual void consumeAudio(const WebVector<const float*>&, size_t number_of_frames) OVERRIDE { }
+};
+
+void MockWebMediaStreamCenter::didCreateMediaStream(WebMediaStreamDescriptor& stream)
 {
+    WebVector<WebMediaStreamComponent> audioComponents;
+    stream.audioSources(audioComponents);
+    for (size_t i = 0; i < audioComponents.size(); ++i) {
+        WebMediaStreamSource source = audioComponents[i].source();
+        if (source.requiresAudioConsumer()) {
+            MockWebAudioDestinationConsumer* consumer = new MockWebAudioDestinationConsumer();
+            source.addAudioConsumer(consumer);
+            source.removeAudioConsumer(consumer);
+            delete consumer;
+        }
+    }
 }
 
 #endif // ENABLE(MEDIA_STREAM)

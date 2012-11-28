@@ -34,6 +34,7 @@
 
 #if ENABLE(MEDIA_STREAM)
 
+#include "AudioDestinationConsumer.h"
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
@@ -64,7 +65,7 @@ public:
         ReadyStateEnded = 2
     };
 
-    static PassRefPtr<MediaStreamSource> create(const String& id, Type, const String& name, ReadyState = ReadyStateLive);
+    static PassRefPtr<MediaStreamSource> create(const String& id, Type, const String& name, ReadyState = ReadyStateLive, bool requiresConsumer = false);
 
     const String& id() const { return m_id; }
     Type type() const { return m_type; }
@@ -79,14 +80,24 @@ public:
     PassRefPtr<ExtraData> extraData() const { return m_extraData; }
     void setExtraData(PassRefPtr<ExtraData> extraData) { m_extraData = extraData; }
 
+    void consumeAudio(AudioBus*, size_t numberOfFrames);
+
+    bool requiresAudioConsumer() const { return m_requiresConsumer; }
+    void addAudioConsumer(PassRefPtr<AudioDestinationConsumer>);
+    bool removeAudioConsumer(AudioDestinationConsumer*);
+    const Vector<RefPtr<AudioDestinationConsumer> >& audioConsumers() { return m_audioConsumers; }
+
 private:
-    MediaStreamSource(const String& id, Type, const String& name, ReadyState);
+    MediaStreamSource(const String& id, Type, const String& name, ReadyState, bool requiresConsumer);
 
     String m_id;
     Type m_type;
     String m_name;
     ReadyState m_readyState;
+    bool m_requiresConsumer;
     Vector<Observer*> m_observers;
+    Mutex m_audioConsumersLock;
+    Vector<RefPtr<AudioDestinationConsumer> > m_audioConsumers;
     RefPtr<ExtraData> m_extraData;
 };
 

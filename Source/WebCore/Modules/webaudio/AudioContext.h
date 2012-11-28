@@ -49,6 +49,7 @@ class AudioBuffer;
 class AudioBufferCallback;
 class AudioBufferSourceNode;
 class MediaElementAudioSourceNode;
+class MediaStreamAudioDestinationNode;
 class MediaStreamAudioSourceNode;
 class HTMLMediaElement;
 class ChannelMergerNode;
@@ -118,6 +119,7 @@ public:
 #endif
 #if ENABLE(MEDIA_STREAM)
     PassRefPtr<MediaStreamAudioSourceNode> createMediaStreamSource(MediaStream*, ExceptionCode&);
+    PassRefPtr<MediaStreamAudioDestinationNode> createMediaStreamDestination();
 #endif
     PassRefPtr<GainNode> createGain();
     PassRefPtr<BiquadFilterNode> createBiquadFilter();

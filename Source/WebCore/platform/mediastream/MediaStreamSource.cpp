@@ -33,19 +33,21 @@
 #if ENABLE(MEDIA_STREAM)
 
 #include "MediaStreamSource.h"
+#include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 
-PassRefPtr<MediaStreamSource> MediaStreamSource::create(const String& id, Type type, const String& name, ReadyState readyState)
+PassRefPtr<MediaStreamSource> MediaStreamSource::create(const String& id, Type type, const String& name, ReadyState readyState, bool requiresConsumer)
 {
-    return adoptRef(new MediaStreamSource(id, type, name, readyState));
+    return adoptRef(new MediaStreamSource(id, type, name, readyState, requiresConsumer));
 }
 
-MediaStreamSource::MediaStreamSource(const String& id, Type type, const String& name, ReadyState readyState)
+MediaStreamSource::MediaStreamSource(const String& id, Type type, const String& name, ReadyState readyState, bool requiresConsumer)
     : m_id(id)
     , m_type(type)
     , m_name(name)
     , m_readyState(readyState)
+    , m_requiresConsumer(requiresConsumer)
 {
 }
 
@@ -69,6 +71,33 @@ void MediaStreamSource::removeObserver(MediaStreamSource::Observer* observer)
     size_t pos = m_observers.find(observer);
     if (pos != notFound)
         m_observers.remove(pos);
+}
+
+void MediaStreamSource::addAudioConsumer(PassRefPtr<AudioDestinationConsumer> consumer)
+{
+    ASSERT(m_requiresConsumer);
+    MutexLocker locker(m_audioConsumersLock);
+    m_audioConsumers.append(consumer);
+}
+
+bool MediaStreamSource::removeAudioConsumer(AudioDestinationConsumer* consumer)
+{
+    ASSERT(m_requiresConsumer);
+    MutexLocker locker(m_audioConsumersLock);
+    size_t pos = m_audioConsumers.find(consumer);
+    if (pos != notFound) {
+        m_audioConsumers.remove(pos);
+        return true;
+    }
+    return false;
+}
+
+void MediaStreamSource::consumeAudio(AudioBus* bus, size_t numberOfFrames)
+{
+    ASSERT(m_requiresConsumer);
+    MutexLocker locker(m_audioConsumersLock);
+    for (Vector<RefPtr<AudioDestinationConsumer> >::iterator it = m_audioConsumers.begin(); it != m_audioConsumers.end(); ++it)
+        (*it)->consumeAudio(bus, numberOfFrames);
 }
 
 } // namespace WebCore

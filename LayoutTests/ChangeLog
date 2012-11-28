@@ -1,3 +1,13 @@
+2012-11-28  Tommy Widenflycht  <tommyw@google.com>
+
+        Add basic implementation for MediaStreamAudioDestinationNode
+        https://bugs.webkit.org/show_bug.cgi?id=101815
+
+        Reviewed by Chris Rogers.
+
+        * webaudio/mediastreamaudiodestinationnode-expected.txt: Added.
+        * webaudio/mediastreamaudiodestinationnode.html: Added.
+
 2012-11-28  Jaehun Lim  <ljaehun.lim@samsung.com>
 
         [EFL][WK1] Gardening AC testcases in efl-wk1

@@ -34,8 +34,11 @@
 
 #include <public/WebMediaStreamSource.h>
 
+#include "AudioBus.h"
 #include "MediaStreamSource.h"
+#include <public/WebAudioDestinationConsumer.h>
 #include <public/WebString.h>
+#include <wtf/MainThread.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/Vector.h>
 
@@ -121,6 +124,7 @@ private:
 
 WebMediaStreamSource::ExtraData* WebMediaStreamSource::extraData() const
 {
+    ASSERT(!m_private.isNull());
     RefPtr<MediaStreamSource::ExtraData> data = m_private->extraData();
     if (!data)
         return 0;
@@ -129,7 +133,70 @@ WebMediaStreamSource::ExtraData* WebMediaStreamSource::extraData() const
 
 void WebMediaStreamSource::setExtraData(ExtraData* extraData)
 {
+    ASSERT(!m_private.isNull());
     m_private->setExtraData(adoptRef(new ExtraDataContainer(extraData)));
+}
+
+bool WebMediaStreamSource::requiresAudioConsumer() const
+{
+    ASSERT(!m_private.isNull());
+    return m_private->requiresAudioConsumer();
+}
+
+class ConsumerWrapper : public WebCore::AudioDestinationConsumer {
+public:
+    static PassRefPtr<ConsumerWrapper> create(WebAudioDestinationConsumer* consumer)
+    {
+        return adoptRef(new ConsumerWrapper(consumer));
+    }
+
+    virtual void consumeAudio(AudioBus*, size_t numberOfFrames) OVERRIDE;
+
+    WebAudioDestinationConsumer* consumer() { return m_consumer; }
+
+private:
+    explicit ConsumerWrapper(WebAudioDestinationConsumer* consumer) : m_consumer(consumer) { }
+
+    // m_consumer is not owned by this class.
+    WebAudioDestinationConsumer* m_consumer;
+};
+
+void ConsumerWrapper::consumeAudio(AudioBus* bus, size_t numberOfFrames)
+{
+    if (!bus)
+        return;
+
+    // Wrap AudioBus.
+    size_t numberOfChannels = bus->numberOfChannels();
+    WebKit::WebVector<const float*> busVector(numberOfChannels);
+    for (size_t i = 0; i < numberOfChannels; ++i)
+        busVector[i] = bus->channel(i)->data();
+
+    m_consumer->consumeAudio(busVector, numberOfFrames);
+}
+
+void WebMediaStreamSource::addAudioConsumer(WebAudioDestinationConsumer* consumer)
+{
+    ASSERT(isMainThread());
+    ASSERT(!m_private.isNull() && consumer);
+
+    m_private->addAudioConsumer(ConsumerWrapper::create(consumer));
+}
+
+bool WebMediaStreamSource::removeAudioConsumer(WebAudioDestinationConsumer* consumer)
+{
+    ASSERT(isMainThread());
+    ASSERT(!m_private.isNull() && consumer);
+
+    const Vector<RefPtr<AudioDestinationConsumer> >& consumers = m_private->audioConsumers();
+    for (Vector<RefPtr<AudioDestinationConsumer> >::const_iterator it = consumers.begin(); it != consumers.end(); ++it) {
+        ConsumerWrapper* wrapper = static_cast<ConsumerWrapper*>((*it).get());
+        if (wrapper->consumer() == consumer) {
+            m_private->removeAudioConsumer(wrapper);
+            return true;
+        }
+    }
+    return false;
 }
 
 } // namespace WebKit

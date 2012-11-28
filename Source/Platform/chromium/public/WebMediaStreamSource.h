@@ -34,13 +34,14 @@
 #include "WebCommon.h"
 #include "WebNonCopyable.h"
 #include "WebPrivatePtr.h"
+#include "WebVector.h"
 
 namespace WebCore {
 class MediaStreamSource;
 }
 
 namespace WebKit {
-
+class WebAudioDestinationConsumer;
 class WebString;
 
 class WebMediaStreamSource {
@@ -90,6 +91,13 @@ public:
     // extra data pointer to be deleted.
     WEBKIT_EXPORT ExtraData* extraData() const;
     WEBKIT_EXPORT void setExtraData(ExtraData*);
+
+    // Only used if if this is a WebAudio source.
+    // The WebAudioDestinationConsumer is not owned, and has to be disposed of separately
+    // after calling removeAudioConsumer.
+    WEBKIT_EXPORT bool requiresAudioConsumer() const;
+    WEBKIT_EXPORT void addAudioConsumer(WebAudioDestinationConsumer*);
+    WEBKIT_EXPORT bool removeAudioConsumer(WebAudioDestinationConsumer*);
 
 #if WEBKIT_IMPLEMENTATION
     WebMediaStreamSource(const WTF::PassRefPtr<WebCore::MediaStreamSource>&);

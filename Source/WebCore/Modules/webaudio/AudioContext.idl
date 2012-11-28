@@ -66,6 +66,7 @@
 #if defined(ENABLE_MEDIA_STREAM) && ENABLE_MEDIA_STREAM
     MediaStreamAudioSourceNode createMediaStreamSource(in MediaStream mediaStream)
         raises(DOMException);
+    MediaStreamAudioDestinationNode createMediaStreamDestination();
 #endif
 
     // Processing nodes

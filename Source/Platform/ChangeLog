@@ -1,3 +1,20 @@
+2012-11-28  Tommy Widenflycht  <tommyw@google.com>
+
+        Add basic implementation for MediaStreamAudioDestinationNode
+        https://bugs.webkit.org/show_bug.cgi?id=101815
+
+        Reviewed by Chris Rogers.
+
+        Adds the consumer interface and related functionality to WebMediaStreamSource.
+
+        * chromium/public/WebAudioDestinationConsumer.h: Added.
+        (WebKit):
+        (WebAudioDestinationConsumer):
+        (WebKit::WebAudioDestinationConsumer::~WebAudioDestinationConsumer):
+        * chromium/public/WebMediaStreamSource.h:
+        (WebKit):
+        (WebMediaStreamSource):
+
 2012-11-27  Eberhard Graether  <egraether@google.com>
 
         [chromium] Add WebLayerTreeViewClient API to request font atlas

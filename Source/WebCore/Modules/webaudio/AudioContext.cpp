@@ -63,6 +63,7 @@
 
 #if ENABLE(MEDIA_STREAM)
 #include "MediaStream.h"
+#include "MediaStreamAudioDestinationNode.h"
 #include "MediaStreamAudioSourceNode.h"
 #endif
 
@@ -430,6 +431,14 @@ PassRefPtr<MediaStreamAudioSourceNode> AudioContext::createMediaStreamSource(Med
     refNode(node.get()); // context keeps reference until node is disconnected
     return node;
 }
+
+PassRefPtr<MediaStreamAudioDestinationNode> AudioContext::createMediaStreamDestination()
+{
+    // FIXME: Add support for an optional argument which specifies the number of channels.
+    // FIXME: The default should probably be stereo instead of mono.
+    return MediaStreamAudioDestinationNode::create(this, 1);
+}
+
 #endif
 
 PassRefPtr<ScriptProcessorNode> AudioContext::createScriptProcessor(size_t bufferSize, ExceptionCode& ec)
