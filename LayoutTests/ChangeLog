@@ -1,3 +1,67 @@
+2012-11-28  Tony Chang  <tony@chromium.org>
+
+        Unreviewed, land updated Chromium results after track limiter removal.
+
+        * fast/forms/range/range-thumb-height-percentage-expected.txt:
+        * platform/chromium-mac-lion/media/video-empty-source-expected.png:
+        * platform/chromium-mac-snowleopard/fast/dom/HTMLInputElement/input-slider-update-styled-expected.txt: Removed.
+        * platform/chromium-mac-snowleopard/fast/forms/range/slider-thumb-stylability-expected.txt: Removed.
+        * platform/chromium-mac-snowleopard/fast/repaint/slider-thumb-float-expected.txt: Removed.
+        * platform/chromium-mac-snowleopard/media/video-empty-source-expected.png:
+        * platform/chromium-mac/fast/dom/HTMLInputElement/input-slider-update-expected.txt: Added.
+        * platform/chromium-mac/fast/forms/box-shadow-override-expected.txt:
+        * platform/chromium-mac/fast/forms/input-appearance-height-expected.txt:
+        * platform/chromium-mac/fast/forms/range/input-appearance-range-expected.txt: Added.
+        * platform/chromium-mac/fast/forms/range/range-thumb-height-percentage-expected.txt: Renamed from LayoutTests/platform/chromium/fast/forms/range/range-thumb-height-percentage-expected.txt.
+        * platform/chromium-mac/fast/forms/range/slider-padding-expected.txt: Added.
+        * platform/chromium-mac/fast/forms/range/slider-thumb-shared-style-expected.txt:
+        * platform/chromium-mac/fast/forms/range/slider-thumb-stylability-expected.txt:
+        * platform/chromium-mac/fast/hidpi/video-controls-in-hidpi-expected.txt:
+        * platform/chromium-mac/fast/layers/video-layer-expected.txt:
+        * platform/chromium-mac/fast/repaint/slider-thumb-drag-release-expected.txt: Added.
+        * platform/chromium-mac/fast/repaint/slider-thumb-float-expected.txt: Removed.
+        * platform/chromium-mac/media/audio-controls-rendering-expected.txt:
+        * platform/chromium-mac/media/audio-repaint-expected.txt:
+        * platform/chromium-mac/media/controls-after-reload-expected.txt:
+        * platform/chromium-mac/media/controls-strict-expected.txt:
+        * platform/chromium-mac/media/controls-styling-expected.txt:
+        * platform/chromium-mac/media/controls-styling-strict-expected.txt:
+        * platform/chromium-mac/media/controls-without-preload-expected.txt:
+        * platform/chromium-mac/media/media-controls-clone-expected.txt:
+        * platform/chromium-mac/media/media-document-audio-repaint-expected.txt:
+        * platform/chromium-mac/media/video-controls-rendering-expected.txt:
+        * platform/chromium-mac/media/video-display-toggle-expected.txt:
+        * platform/chromium-mac/media/video-empty-source-expected.png:
+        * platform/chromium-mac/media/video-empty-source-expected.txt:
+        * platform/chromium-mac/media/video-no-audio-expected.txt:
+        * platform/chromium-mac/media/video-playing-and-pause-expected.txt:
+        * platform/chromium-mac/media/video-zoom-controls-expected.txt:
+        * platform/chromium-mac/platform/chromium/virtual/gpu/fast/hidpi/video-controls-in-hidpi-expected.txt:
+        * platform/chromium-win-xp/fast/dom/HTMLInputElement/input-slider-update-styled-expected.txt: Removed.
+        * platform/chromium-win-xp/fast/forms/range/slider-thumb-stylability-expected.txt: Removed.
+        * platform/chromium-win-xp/fast/repaint/slider-thumb-float-expected.txt: Removed.
+        * platform/chromium-win/fast/dom/HTMLInputElement/input-slider-update-expected.txt:
+        * platform/chromium-win/fast/dom/HTMLInputElement/input-slider-update-styled-expected.txt:
+        * platform/chromium-win/fast/forms/box-shadow-override-expected.txt:
+        * platform/chromium-win/fast/forms/input-appearance-height-expected.txt:
+        * platform/chromium-win/fast/forms/range/input-appearance-range-expected.txt:
+        * platform/chromium-win/fast/forms/range/range-thumb-height-percentage-expected.txt:
+        * platform/chromium-win/fast/forms/range/slider-padding-expected.txt:
+        * platform/chromium-win/fast/forms/range/slider-thumb-shared-style-expected.txt:
+        * platform/chromium-win/fast/forms/range/slider-thumb-stylability-expected.txt:
+        * platform/chromium-win/fast/multicol/client-rects-expected.txt:
+        * platform/chromium-win/fast/repaint/slider-thumb-drag-release-expected.txt:
+        * platform/chromium-win/fast/repaint/slider-thumb-float-expected.txt:
+        * platform/chromium-win/media/video-empty-source-expected.txt:
+        * platform/chromium/TestExpectations:
+        * platform/chromium/fast/dom/HTMLInputElement/input-slider-update-styled-expected.txt: Renamed from LayoutTests/platform/chromium-mac/fast/dom/HTMLInputElement/input-slider-update-styled-expected.txt.
+        * platform/chromium/fast/forms/range/slider-thumb-shared-style-expected.txt: Removed.
+        * platform/chromium/fast/multicol/client-rects-expected.txt: Added.
+        * platform/chromium/fast/repaint/slider-thumb-float-expected.txt: Renamed from LayoutTests/platform/mac/fast/repaint/slider-thumb-float-expected.txt.
+        * platform/mac/fast/dom/HTMLInputElement/input-slider-update-styled-expected.txt: Removed.
+        * platform/mac/fast/forms/range/slider-thumb-stylability-expected.txt: Removed.
+        * platform/win-future/fast/forms/range/range-thumb-height-percentage-expected.txt: Copied from LayoutTests/fast/forms/range/range-thumb-height-percentage-expected.txt.
+
 2012-11-28  Antoine Quint  <graouts@apple.com>
 
         Calling .removeCue() for a cue that was never added should raise a NOT_FOUND_ERR

@@ -39,9 +39,8 @@ layer at (0,0) size 800x600
           text run at (45,9) width 4: " "
         RenderSlider {INPUT} at (51,3) size 129x21 [color=#C4C4C4] [bgcolor=#FFFFFF]
           RenderFlexibleBox {DIV} at (0,0) size 129x21
-            RenderBlock {DIV} at (0,0) size 118x21
+            RenderBlock {DIV} at (0,0) size 129x21
               RenderBlock {DIV} at (59,0) size 11x21
-            RenderBlock {DIV} at (118,0) size 11x21
         RenderText {#text} at (182,9) size 4x19
           text run at (182,9) width 4: " "
         RenderFileUploadControl {INPUT} at (188,8) size 238x22 "No file chosen"
