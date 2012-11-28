@@ -138,7 +138,7 @@ static const int glxAttributes[] = {
 
 struct GraphicsSurfacePrivate {
     GraphicsSurfacePrivate(const PlatformGraphicsContext3D shareContext = 0)
-        : m_display(0)
+        : m_display(m_offScreenWindow.display())
         , m_xPixmap(0)
         , m_glxPixmap(0)
         , m_surface(0)
@@ -149,9 +149,9 @@ struct GraphicsSurfacePrivate {
         , m_fbConfig(0)
         , m_textureIsYInverted(false)
         , m_hasAlpha(false)
+        , m_isReceiver(false)
     {
         GLXContext shareContextObject = 0;
-        m_display = m_offScreenWindow.display();
 
 #if PLATFORM(QT)
         if (shareContext) {
@@ -211,6 +211,7 @@ struct GraphicsSurfacePrivate {
         , m_fbConfig(0)
         , m_textureIsYInverted(false)
         , m_hasAlpha(false)
+        , m_isReceiver(true)
     { }
 
     ~GraphicsSurfacePrivate()
@@ -299,10 +300,9 @@ struct GraphicsSurfacePrivate {
 
     void swapBuffers()
     {
-        // If there is a xpixmap, we are on the reading side and do not want to swap any buffers.
         // The buffers are being switched on the writing side, the reading side just reads
         // whatever texture the XWindow contains.
-        if (m_xPixmap)
+        if (m_isReceiver)
             return;
 
         GLXContext glContext = glXGetCurrentContext();
@@ -343,12 +343,19 @@ struct GraphicsSurfacePrivate {
         pGlDeleteFramebuffers(1, &originFBO);
 
         glPopAttrib();
+
+        swapBuffers();
         doneCurrent();
     }
 
     Display* display() const { return m_display; }
 
-    GLXPixmap glxPixmap() const { return m_glxPixmap; }
+    GLXPixmap glxPixmap() const
+    {
+        if (!m_glxPixmap && m_surface)
+            const_cast<GraphicsSurfacePrivate*>(this)->createPixmap(m_surface);
+        return m_glxPixmap;
+    }
 
     IntSize size() const
     {
@@ -374,6 +381,7 @@ private:
     GLXFBConfig m_fbConfig;
     bool m_textureIsYInverted;
     bool m_hasAlpha;
+    bool m_isReceiver;
 };
 
 static bool resolveGLMethods(GraphicsSurfacePrivate*)
@@ -484,8 +492,6 @@ PassRefPtr<GraphicsSurface> GraphicsSurface::platformImport(const IntSize& size,
     surface->m_private = new GraphicsSurfacePrivate(surface->m_platformSurface);
     if (!resolveGLMethods(surface->m_private))
         return PassRefPtr<GraphicsSurface>();
-
-    surface->m_private->createPixmap(surface->m_platformSurface);
 
     return surface;
 }

@@ -1,3 +1,59 @@
+2012-11-28  Zeno Albisser  <zeno@webkit.org>
+
+        GraphicsSurface: Implement usage of GraphicsSurface for WebGL in WK1.
+        https://bugs.webkit.org/show_bug.cgi?id=103497
+
+        Using GraphicsSurface for WebGL in WK1 allows us to share
+        the code with the WK2 implementation.
+
+        Reviewed by Simon Hausmann.
+
+        * platform/graphics/qt/GraphicsContext3DQt.cpp:
+        (WebCore::GraphicsContext3DPrivate::GraphicsContext3DPrivate):
+            Remove obsolete code.
+        (WebCore::GraphicsContext3DPrivate::paintToTextureMapper):
+            After blitting the multisample framebuffer,
+            we can copy the contents onto the GraphicsSurface.
+            Right after that we can use the GraphicsSurface
+            as a texture origin to paint to the TextureMapper.
+            Flags related to flipping and blending are being resolved
+            by GraphicsSurface, and do not need to be handled here anymore.
+        (WebCore::GraphicsContext3DPrivate::copyToGraphicsSurface):
+            Remove a redundant makeCurrentIfNeeded call.
+            The original context is being restored by
+            blitMultisampleFramebufferAndRestoreContext anyway.
+            Instead of explicitly calling swapBuffers here,
+            we call swapBuffers on the GraphicsSurface implicitly
+            after in GraphicsSurfacePrivate::copyFromTexture().
+        * platform/graphics/surfaces/mac/GraphicsSurfaceMac.cpp:
+            Add members to hold the reading end texture IDs.
+            The texture on the reading side are in a different
+            context than the texture on the writing side.
+            By using GraphicsSurface in WK1 we have to distinguish
+            between these textures, as a single instance serves
+            for reading and writing.
+        (WebCore::GraphicsSurfacePrivate::GraphicsSurfacePrivate):
+        (WebCore::GraphicsSurfacePrivate::~GraphicsSurfacePrivate):
+        (WebCore::GraphicsSurfacePrivate::swapBuffers):
+        (WebCore::GraphicsSurfacePrivate::copyFromTexture):
+            Add an implicit call to swapBuffers().
+        (WebCore::GraphicsSurfacePrivate::frontBufferTextureID):
+        (GraphicsSurfacePrivate):
+        * platform/graphics/surfaces/qt/GraphicsSurfaceGLX.cpp:
+        (WebCore::GraphicsSurfacePrivate::GraphicsSurfacePrivate):
+            Add a flag to distinguish between sending and receiving/reading
+            side of the surface. This flag is being initialized in the constructor
+            which is the only place where we know if an instance will be used for
+            writing or reading.
+            The purpose of this flag is to avoid erroneously swapping the buffers
+            on the reading side. We can no longer rely on m_xPixmap for this purpose.
+        (WebCore::GraphicsSurfacePrivate::swapBuffers):
+        (WebCore::GraphicsSurfacePrivate::copyFromTexture):
+        (WebCore::GraphicsSurfacePrivate::glxPixmap):
+            Lazily create the GLX pixmap on demand.
+        (GraphicsSurfacePrivate):
+        (WebCore::GraphicsSurface::platformImport):
+
 2012-11-28  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed. Fix extra spaces in SimpleFontData::initGDIFont().

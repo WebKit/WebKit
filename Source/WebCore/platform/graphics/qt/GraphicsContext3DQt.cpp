@@ -108,17 +108,6 @@ GraphicsContext3DPrivate::GraphicsContext3DPrivate(GraphicsContext3D* context, H
     , m_platformContext(0)
     , m_surfaceOwner(0)
 {
-    if (m_hostWindow && m_hostWindow->platformPageClient()) {
-        // This is the WebKit1 code path.
-        QWebPageClient* webPageClient = m_hostWindow->platformPageClient();
-        webPageClient->createPlatformGraphicsContext3D(&m_platformContext, &m_surface, &m_surfaceOwner);
-        if (!m_surface)
-            return;
-
-        makeCurrentIfNeeded();
-        return;
-    }
-
     if (renderStyle == GraphicsContext3D::RenderToCurrentGLContext) {
         m_platformContext = QOpenGLContext::currentContext();
         m_surface = m_platformContext->surface();
@@ -224,10 +213,10 @@ void GraphicsContext3DPrivate::paintToTextureMapper(TextureMapper* textureMapper
     blitMultisampleFramebufferAndRestoreContext();
 
     if (textureMapper->accelerationMode() == TextureMapper::OpenGLMode) {
+        m_graphicsSurface->copyFromTexture(m_context->m_texture, IntRect(0, 0, m_context->m_currentWidth, m_context->m_currentHeight));
+
         TextureMapperGL* texmapGL = static_cast<TextureMapperGL*>(textureMapper);
-        TextureMapperGL::Flags flags = TextureMapperGL::ShouldFlipTexture | (m_context->m_attrs.alpha ? TextureMapperGL::SupportsBlending : 0);
-        IntSize textureSize(m_context->m_currentWidth, m_context->m_currentHeight);
-        texmapGL->drawTexture(m_context->m_texture, flags, textureSize, targetRect, matrix, opacity, mask);
+        m_graphicsSurface->paintToTextureMapper(texmapGL, targetRect, matrix, opacity, mask);
         return;
     }
 
@@ -288,10 +277,8 @@ uint32_t GraphicsContext3DPrivate::copyToGraphicsSurface()
         return 0;
 
     blitMultisampleFramebufferAndRestoreContext();
-    makeCurrentIfNeeded();
     m_graphicsSurface->copyFromTexture(m_context->m_texture, IntRect(0, 0, m_context->m_currentWidth, m_context->m_currentHeight));
-    uint32_t frontBuffer = m_graphicsSurface->swapBuffers();
-    return frontBuffer;
+    return m_graphicsSurface->frontBuffer();
 }
 
 GraphicsSurfaceToken GraphicsContext3DPrivate::graphicsSurfaceToken() const

@@ -77,7 +77,9 @@ public:
         , m_size(size)
         , m_token(token)
         , m_frontBufferTexture(0)
+        , m_frontBufferReadTexture(0)
         , m_backBufferTexture(0)
+        , m_backBufferReadTexture(0)
         , m_readFbo(0)
         , m_drawFbo(0)
     {
@@ -89,7 +91,9 @@ public:
         : m_context(0)
         , m_size(size)
         , m_frontBufferTexture(0)
+        , m_frontBufferReadTexture(0)
         , m_backBufferTexture(0)
+        , m_backBufferReadTexture(0)
         , m_readFbo(0)
         , m_drawFbo(0)
     {
@@ -152,8 +156,14 @@ public:
         if (m_frontBufferTexture)
             glDeleteTextures(1, &m_frontBufferTexture);
 
+        if (m_frontBufferReadTexture)
+            glDeleteTextures(1, &m_frontBufferReadTexture);
+
         if (m_backBufferTexture)
             glDeleteTextures(1, &m_backBufferTexture);
+
+        if (m_backBufferReadTexture)
+            glDeleteTextures(1, &m_backBufferReadTexture);
 
         if (m_frontBuffer)
             CFRelease(IOSurfaceRef(m_frontBuffer));
@@ -181,6 +191,7 @@ public:
     {
         std::swap(m_frontBuffer, m_backBuffer);
         std::swap(m_frontBufferTexture, m_backBufferTexture);
+        std::swap(m_frontBufferReadTexture, m_backBufferReadTexture);
 
         return IOSurfaceGetID(m_frontBuffer);
     }
@@ -237,6 +248,7 @@ public:
         // Flushing the gl command buffer is necessary to ensure the texture has correctly been bound to the IOSurface.
         glFlush();
 
+        swapBuffers();
         doneCurrent();
     }
 
@@ -247,10 +259,10 @@ public:
 
     uint32_t frontBufferTextureID()
     {
-        if (!m_frontBufferTexture)
-            m_frontBufferTexture = createTexture(m_frontBuffer);
+        if (!m_frontBufferReadTexture)
+            m_frontBufferReadTexture = createTexture(m_frontBuffer);
 
-        return m_frontBufferTexture;
+        return m_frontBufferReadTexture;
     }
 
     uint32_t backBufferTextureID()
@@ -283,7 +295,9 @@ private:
     PlatformGraphicsSurface m_frontBuffer;
     PlatformGraphicsSurface m_backBuffer;
     uint32_t m_frontBufferTexture;
+    uint32_t m_frontBufferReadTexture;
     uint32_t m_backBufferTexture;
+    uint32_t m_backBufferReadTexture;
     uint32_t m_readFbo;
     uint32_t m_drawFbo;
     GraphicsSurfaceToken m_token;
