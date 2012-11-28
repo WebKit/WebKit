@@ -1,3 +1,18 @@
+2012-11-28  Eric Uhrhane  <ericu@chromium.org>
+
+        [chromium] Add unit tests for ChromeClientImpl::getNavigationPolicy
+        https://bugs.webkit.org/show_bug.cgi?id=102424
+
+        Reviewed by Adam Barth.
+
+        This tests a bunch of basic scenarios regarding what will produce a
+        popup, a new foreground/background tab, or a new window.
+
+        * WebKit.gypi: Added test file.
+        * src/WebViewImpl.h:
+        (WebViewImpl): Added friend declaration for setCurrentInputEventForTest.
+        * tests/ChromeClientImplTest.cpp: Added.
+
 2012-11-28  Alexandre Elias  <aelias@chromium.org>
 
         [chromium] Handle pinch correctly in slow-scrolling area

@@ -611,6 +611,7 @@ private:
 
     friend class WebView;  // So WebView::Create can call our constructor
     friend class WTF::RefCounted<WebViewImpl>;
+    friend void setCurrentInputEventForTest(const WebInputEvent*);
 
     enum DragAction {
       DragEnter,

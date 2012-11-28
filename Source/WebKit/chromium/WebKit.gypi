@@ -57,6 +57,7 @@
             'tests/AssociatedURLLoaderTest.cpp',
             'tests/Canvas2DLayerBridgeTest.cpp',
             'tests/Canvas2DLayerManagerTest.cpp',
+            'tests/ChromeClientImplTest.cpp',
             'tests/ClipboardChromiumTest.cpp',
             'tests/CompositorFakeWebGraphicsContext3D.h',
             'tests/DateTimeFormatTest.cpp',
