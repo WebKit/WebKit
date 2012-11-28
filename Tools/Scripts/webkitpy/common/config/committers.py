@@ -396,6 +396,7 @@ committers_unable_to_review = [
     Committer("Takashi Sakamoto", "tasak@google.com", "tasak"),
     Committer("Takashi Toyoshima", "toyoshim@chromium.org", "toyoshim"),
     Committer("Terry Anderson", "tdanderson@chromium.org", "tdanderson"),
+    Committer("Thiago Marcos P. Santos", ["thiago.santos@intel.com", "tmpsantos@gmail.com"], "tmpsantos"),
     Committer("Thomas Sepez", "tsepez@chromium.org", "tsepez"),
     Committer("Tom Hudson", ["tomhudson@google.com", "tomhudson@chromium.org"], "tomhudson"),
     Committer("Tom Zakrajsek", "tomz@codeaurora.org", "tomz"),
