@@ -1,3 +1,31 @@
+2012-11-28  Abhishek Arya  <inferno@chromium.org>
+
+        Heap-use-after-free in WebCore::RenderLayerModelObject::hasSelfPaintingL
+ayer
+        https://bugs.webkit.org/show_bug.cgi?id=101970
+
+        Reviewed by David Hyatt.
+
+        RenderInline::splitFlow and RenderBlock::splitFlow re-use |pre|
+        block in some cases. In those cases, |pre| might hold floating objects
+        and those floating descendants might get moved to |post| block. If
+        the |pre| block does not get a layout later, then the floating
+        descendant will never get removed since it is now part of |post|
+        ancestor chain. We don't want failing-to-layout bugs turned into
+        security bugs and hence clear floating objects list since we expect
+        it to be rebuilt in subsequent layout.
+
+        Test: fast/block/float/float-not-removed-from-pre-block.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::splitFlow): Call removeFloatingObjects on |pre| block.
+        (WebCore::RenderBlock::removeFloatingObjects): Clear all floating objects from our list.
+        (WebCore):
+        * rendering/RenderBlock.h: 
+        (RenderBlock):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::splitFlow): Call removeFloatingObjects on |pre| block.
+
 2012-11-28  Mark Pilgrim  <pilgrim@chromium.org>
 
         [Chromium] Remove pluginsScriptableObject from PlatformSupport
