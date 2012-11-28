@@ -1,5 +1,11 @@
 2012-11-28  Thiago Marcos P. Santos  <thiago.santos@intel.com>
 
+        Unreviewed. Use my personal email as bugzilla email.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
+2012-11-28  Thiago Marcos P. Santos  <thiago.santos@intel.com>
+
         Unreviewed. Adding myself to committers.py.
 
         * Scripts/webkitpy/common/config/committers.py:
