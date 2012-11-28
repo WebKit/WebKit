@@ -122,14 +122,6 @@ bool PlatformSupport::plugins(bool refresh, Vector<PluginInfo>* results)
     return true;  // FIXME: There is no need for this function to return a value.
 }
 
-NPObject* PlatformSupport::pluginScriptableObject(Widget* widget)
-{
-    if (!widget || !widget->isPluginContainer())
-        return 0;
-
-    return static_cast<WebPluginContainerImpl*>(widget)->scriptableObject();
-}
-
 // Theming --------------------------------------------------------------------
 
 #if OS(WINDOWS) && !ENABLE(DEFAULT_RENDER_THEME)

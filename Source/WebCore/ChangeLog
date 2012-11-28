@@ -1,3 +1,20 @@
+2012-11-28  Mark Pilgrim  <pilgrim@chromium.org>
+
+        [Chromium] Remove pluginsScriptableObject from PlatformSupport
+        https://bugs.webkit.org/show_bug.cgi?id=103542
+
+        Reviewed by Adam Barth.
+
+        Part of a refactoring series. See tracking bug 82948.
+
+        * bindings/v8/ScriptController.cpp:
+        (WebCore::ScriptController::createScriptInstanceForWidget):
+        * platform/chromium/PlatformSupport.h:
+        (PlatformSupport):
+        * plugins/PluginViewBase.h:
+        (PluginViewBase):
+        (WebCore::PluginViewBase::scriptableObject):
+
 2012-11-28  Otto Derek Cheung  <otcheung@rim.com>
 
         [BlackBerry] CookieJarBlackBerry will use document settings for cookiesEnabled

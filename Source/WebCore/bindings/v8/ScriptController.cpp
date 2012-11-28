@@ -47,9 +47,7 @@
 #include "NPV8Object.h"
 #include "Node.h"
 #include "NotImplemented.h"
-#include "npruntime_impl.h"
-#include "npruntime_priv.h"
-#include "PlatformSupport.h"
+#include "PluginViewBase.h"
 #include "ScriptCallStack.h"
 #include "ScriptCallStackFactory.h"
 #include "ScriptRunner.h"
@@ -67,6 +65,8 @@
 #include "V8NPObject.h"
 #include "V8RecursionScope.h"
 #include "Widget.h"
+#include "npruntime_impl.h"
+#include "npruntime_priv.h"
 #include <wtf/CurrentTime.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/StringExtras.h>
@@ -521,10 +521,10 @@ PassScriptInstance ScriptController::createScriptInstanceForWidget(Widget* widge
 {
     ASSERT(widget);
 
-    if (widget->isFrameView())
+    if (!widget->isPluginViewBase())
         return 0;
 
-    NPObject* npObject = PlatformSupport::pluginScriptableObject(widget);
+    NPObject* npObject = static_cast<PluginViewBase*>(widget)->scriptableObject();
 
     if (!npObject)
         return 0;

@@ -150,7 +150,7 @@ public:
     void didFinishLoading();
     void didFailLoading(const WebCore::ResourceError&);
 
-    NPObject* scriptableObject();
+    virtual NPObject* scriptableObject() OVERRIDE;
 
     void willDestroyPluginLoadObserver(WebPluginLoadObserver*);
 

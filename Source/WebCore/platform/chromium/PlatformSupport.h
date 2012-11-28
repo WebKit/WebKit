@@ -78,7 +78,6 @@ public:
 
     // Plugin -------------------------------------------------------------
     static bool plugins(bool refresh, Vector<PluginInfo>*);
-    static NPObject* pluginScriptableObject(Widget*);
 
     // Theming ------------------------------------------------------------
 #if OS(WINDOWS) && !ENABLE(DEFAULT_RENDER_THEME)
