@@ -107,8 +107,8 @@ void SimpleFontData::initGDIFont()
      float xHeight = ascent * 0.56f; // Best guess for xHeight if no x glyph is present.
 
      GLYPHMETRICS gm;
-     MAT2 mat = { 1, 0, 0, 1 };
-     DWORD len = GetGlyphOutline(hdc, 'x', GGO_METRICS, &gm, 0, 0, &mat);
+     static const MAT2 identity = { 0, 1,  0, 0,  0, 0,  0, 1 };
+     DWORD len = GetGlyphOutline(hdc, 'x', GGO_METRICS, &gm, 0, 0, &identity);
      if (len != GDI_ERROR && gm.gmptGlyphOrigin.y > 0)
          xHeight = gm.gmptGlyphOrigin.y;
 
