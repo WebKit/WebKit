@@ -203,11 +203,6 @@ public:
     void setScrollPosition(WebCore::IntPoint position) { m_scrollPosition = position; }
     const WebCore::IntPoint scrollPosition() const { return m_scrollPosition; }
 #endif
-#if USE(ACCELERATED_COMPOSITING)
-    Evas_GL* evasGL() { return m_evasGL.get(); }
-    Evas_GL_Context* evasGLContext() { return m_evasGLContext ? m_evasGLContext->context() : 0; }
-    Evas_GL_Surface* evasGLSurface() { return m_evasGLSurface ? m_evasGLSurface->surface() : 0; }
-#endif
 
     // FIXME: needs refactoring (split callback invoke)
     void informURLChange();
@@ -218,6 +213,11 @@ public:
     WKImageRef takeSnapshot();
 
 private:
+#if USE(ACCELERATED_COMPOSITING)
+    Evas_GL_Context* evasGLContext() { return m_evasGLContext ? m_evasGLContext->context() : 0; }
+    Evas_GL_Surface* evasGLSurface() { return m_evasGLSurface ? m_evasGLSurface->surface() : 0; }
+#endif
+
     inline Ewk_View_Smart_Data* smartData() const;
     void displayTimerFired(WebCore::Timer<EwkViewImpl>*);
 

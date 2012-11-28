@@ -1,3 +1,21 @@
+2012-11-28  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [EFL][WK2][AC] No need to export GL properties from EwkViewImpl class
+        https://bugs.webkit.org/show_bug.cgi?id=103505
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        No need to export GL data members from EwkViewImpl class, 
+        those are internal implementation objects not used by anyone outside the class.
+
+        * UIProcess/API/efl/EwkViewImpl.cpp:
+        (EwkViewImpl::displayTimerFired):
+        (EwkViewImpl::createGLSurface):
+        * UIProcess/API/efl/EwkViewImpl.h:
+        (EwkViewImpl):
+        (EwkViewImpl::evasGLContext):
+        (EwkViewImpl::evasGLSurface):
+
 2012-11-28  Joone Hur  <joone.hur@intel.com>
 
         [EFL][WK2][AC] Clear the viewport with white color

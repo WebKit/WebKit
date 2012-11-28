@@ -361,7 +361,7 @@ void EwkViewImpl::displayTimerFired(Timer<EwkViewImpl>*)
 #if USE(COORDINATED_GRAPHICS)
     Ewk_View_Smart_Data* sd = smartData();
 
-    evas_gl_make_current(evasGL(), evasGLSurface(), evasGLContext());
+    evas_gl_make_current(m_evasGL.get(), evasGLSurface(), evasGLContext());
 
     // We are supposed to clip to the actual viewport, nothing less.
     IntRect viewport(sd->view.x, sd->view.y, sd->view.w, sd->view.h);
@@ -635,7 +635,7 @@ bool EwkViewImpl::createGLSurface(const IntSize& viewSize)
     }
 
     if (!m_evasGLContext) {
-        m_evasGLContext = EvasGLContext::create(evasGL());
+        m_evasGLContext = EvasGLContext::create(m_evasGL.get());
         if (!m_evasGLContext) {
             WARN("Failed to create GLContext.");
             return false;
@@ -653,17 +653,17 @@ bool EwkViewImpl::createGLSurface(const IntSize& viewSize)
     };
 
     // Replaces if non-null, and frees existing surface after (OwnPtr).
-    m_evasGLSurface = EvasGLSurface::create(evasGL(), &evasGLConfig, viewSize);
+    m_evasGLSurface = EvasGLSurface::create(m_evasGL.get(), &evasGLConfig, viewSize);
     if (!m_evasGLSurface)
         return false;
 
     Evas_Native_Surface nativeSurface;
-    evas_gl_native_surface_get(evasGL(), evasGLSurface(), &nativeSurface);
+    evas_gl_native_surface_get(m_evasGL.get(), evasGLSurface(), &nativeSurface);
     evas_object_image_native_surface_set(sd->image, &nativeSurface);
 
-    evas_gl_make_current(evasGL(), evasGLSurface(), evasGLContext());
+    evas_gl_make_current(m_evasGL.get(), evasGLSurface(), evasGLContext());
 
-    Evas_GL_API* gl = evas_gl_api_get(evasGL());
+    Evas_GL_API* gl = evas_gl_api_get(m_evasGL.get());
     gl->glViewport(0, 0, viewSize.width() + sd->view.x, viewSize.height() + sd->view.y);
     gl->glClearColor(1.0, 1.0, 1.0, 0);
     gl->glClear(GL_COLOR_BUFFER_BIT);
