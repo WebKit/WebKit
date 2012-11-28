@@ -1,3 +1,9 @@
+2012-11-27  Christophe Dumez  <christophe.dumez@intel.com>
+
+        Unreviewed. Adding myself to committers.py.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2012-11-27  Vivek Galatage  <vivek.vg@samsung.com>
 
         Unreviewd. Adding myself to committers list.
