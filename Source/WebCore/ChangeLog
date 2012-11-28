@@ -1,3 +1,14 @@
+2012-11-27  Dean Jackson  <dino@apple.com>
+
+        Attempted build fix for my last commit. The private member variable
+        is only used on MAC (at the moment) so guard it with #if PLATFORM.
+        I did this rather than having another constructor, because I expect
+        other platforms will follow the MAC code soon.
+
+        * html/shadow/MediaControlElements.cpp:
+        (WebCore::MediaControlToggleClosedCaptionsButtonElement::MediaControlToggleClosedCaptionsButtonElement):
+        * html/shadow/MediaControlElements.h:
+
 2012-11-14  Jer Noble  <jer.noble@apple.com>
 
         Add a new shared class WebCoreFullScreenPlaceholderView, for use in WebKit and WebKit2.

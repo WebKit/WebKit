@@ -911,8 +911,13 @@ const AtomicString& MediaControlClosedCaptionsContainerElement::shadowPseudoId()
 
 inline MediaControlToggleClosedCaptionsButtonElement::MediaControlToggleClosedCaptionsButtonElement(Document* document, MediaControls* controls)
     : MediaControlInputElement(document, MediaShowClosedCaptionsButton)
+#if PLATFORM(MAC)
     , m_controls(controls)
+#endif
 {
+#if !PLATFORM(MAC)
+    UNUSED_PARAM(controls);
+#endif
 }
 
 PassRefPtr<MediaControlToggleClosedCaptionsButtonElement> MediaControlToggleClosedCaptionsButtonElement::create(Document* document, MediaControls* controls)

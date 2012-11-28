@@ -393,7 +393,9 @@ private:
     MediaControlToggleClosedCaptionsButtonElement(Document*, MediaControls*);
     virtual const AtomicString& shadowPseudoId() const;
 
+#if PLATFORM(MAC)
     MediaControls* m_controls;
+#endif
 };
 
 // ----------------------------
