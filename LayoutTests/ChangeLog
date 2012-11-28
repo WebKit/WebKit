@@ -1,3 +1,16 @@
+2012-11-28  Antoine Quint  <graouts@apple.com>
+
+        Calling .removeCue() for a cue that was never added should raise a NOT_FOUND_ERR
+        https://bugs.webkit.org/show_bug.cgi?id=103412
+
+        Reviewed by Eric Carlson.
+
+        Updating the .removeCue() test checking on the exception to be NOT_FOUND_ERR instead
+        of INVALID_STATE_ERR.
+
+        * media/track/track-add-remove-cue-expected.txt:
+        * media/track/track-add-remove-cue.html:
+
 2012-11-28  Stephen Chenney  <schenney@chromium.org>
 
         Layout Test svg/animations/mpath-remove-from-dependents-on-delete-crash.html is flaky

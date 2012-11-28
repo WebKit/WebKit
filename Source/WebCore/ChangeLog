@@ -1,3 +1,17 @@
+2012-11-28  Antoine Quint  <graouts@apple.com>
+
+        Calling .removeCue() for a cue that was never added should raise a NOT_FOUND_ERR
+        https://bugs.webkit.org/show_bug.cgi?id=103412
+
+        Reviewed by Eric Carlson.
+
+        Updating the .removeCue() implementation to match the latest spec. This means we now
+        raise a NOT_FOUND_ERR exception when trying to remove a cue that wasn't present in the
+        cue list instead of a INVALID_STATE_ERR exception like the spec used to mandate.
+
+        * html/track/TextTrack.cpp:
+        (WebCore::TextTrack::removeCue):
+
 2012-11-28  Zeno Albisser  <zeno@webkit.org>
 
         [Qt][Win] Enable usage of QTWEBKIT_PLUGIN_PATH.

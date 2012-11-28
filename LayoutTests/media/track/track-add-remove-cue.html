@@ -85,7 +85,7 @@
                 testExpected("cues[2].startTime", 121);
 
                 consoleWrite("<br>*** Try to remove the cue again.");
-                testException("testTrack.track.removeCue(textCue)", "DOMException.INVALID_STATE_ERR");
+                testException("testTrack.track.removeCue(textCue)", "DOMException.NOT_FOUND_ERR");
 
                 consoleWrite("<br>*** Add a cue before all the existing cues.");
                 run("testTrack.track.addCue(new TextTrackCue(0, 31, 'I am first'))");
