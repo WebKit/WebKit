@@ -97,7 +97,6 @@
             'tests/PODRedBlackTreeTest.cpp',
             'tests/PaintAggregatorTest.cpp',
             'tests/PlatformContextSkiaTest.cpp',
-            'tests/PlatformGestureCurveTest.cpp',
             'tests/PopupContainerTest.cpp',
             'tests/RegionTest.cpp',
             'tests/RenderTableCellTest.cpp',

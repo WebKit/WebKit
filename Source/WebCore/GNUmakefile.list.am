@@ -5231,10 +5231,6 @@ webcore_platform_sources += \
 	Source/WebCore/platform/audio/VectorMath.h \
 	Source/WebCore/platform/audio/ZeroPole.cpp \
 	Source/WebCore/platform/audio/ZeroPole.h \
-	Source/WebCore/platform/ActivePlatformGestureAnimation.cpp \
-	Source/WebCore/platform/ActivePlatformGestureAnimation.h \
-	Source/WebCore/platform/PlatformGestureCurve.h \
-	Source/WebCore/platform/PlatformGestureCurveTarget.h \
 	Source/WebCore/platform/Arena.cpp \
 	Source/WebCore/platform/Arena.h \
 	Source/WebCore/platform/AsyncFileSystem.cpp \
@@ -5762,8 +5758,6 @@ webcore_platform_sources += \
 	Source/WebCore/platform/PlatformEvent.cpp \
 	Source/WebCore/platform/PlatformEvent.h \
 	Source/WebCore/platform/PlatformExportMacros.h \
-	Source/WebCore/platform/PlatformGestureCurve.h \
-	Source/WebCore/platform/PlatformGestureEvent.h \
 	Source/WebCore/platform/PlatformKeyboardEvent.h \
 	Source/WebCore/platform/PlatformMemoryInstrumentation.cpp \
 	Source/WebCore/platform/PlatformMemoryInstrumentation.h \
@@ -5894,8 +5888,6 @@ webcore_platform_sources += \
 	Source/WebCore/platform/text/UnicodeRange.cpp \
 	Source/WebCore/platform/text/UnicodeRange.h \
 	Source/WebCore/platform/text/WritingMode.h \
-	Source/WebCore/platform/TouchFlingPlatformGestureCurve.cpp \
-	Source/WebCore/platform/TouchFlingPlatformGestureCurve.h \
 	Source/WebCore/platform/ThemeTypes.h \
 	Source/WebCore/platform/ThreadCheck.h \
 	Source/WebCore/platform/ThreadGlobalData.cpp \

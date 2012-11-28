@@ -1,3 +1,33 @@
+2012-11-28  Robert Kroeger  <rjkroege@chromium.org>
+
+        remove unused PlatformGestureCurve code
+        https://bugs.webkit.org/show_bug.cgi?id=103296
+
+        Reviewed by Adam Barth.
+
+        Previous CLs have made the Chromium embedder provide gesture fling
+        curve implementation to WebKit. Consequently no platform uses the
+        gestural fling code currently found in WebKit. This CL removes this code.
+
+        Code removal only: covered by existing tests.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * WebCore.gypi:
+        * platform/ActivePlatformGestureAnimation.cpp: Removed.
+        * platform/ActivePlatformGestureAnimation.h: Removed.
+        * platform/PlatformGestureCurve.h: Removed.
+        * platform/PlatformGestureCurveTarget.h: Removed.
+        * platform/ScrollAnimatorNone.cpp: References to removed code removed.
+        * platform/ScrollAnimatorNone.h:
+        * platform/TouchFlingPlatformGestureCurve.cpp: Removed.
+        * platform/TouchFlingPlatformGestureCurve.h: Removed.
+        * platform/WheelFlingPlatformGestureCurve.cpp: Removed.
+        * platform/WheelFlingPlatformGestureCurve.h: Removed.
+        * platform/chromium/support/PlatformGestureCurveFactory.cpp: Removed.
+        * platform/chromium/support/PlatformGestureCurveFactory.h: Removed.
+        * platform/chromium/support/WebFlingAnimatorToGestureCurveAdapter.h: Removed.
+
 2012-11-28  Abhishek Arya  <inferno@chromium.org>
 
         Heap-use-after-free in WebCore::EventHandler::handleMousePressEvent

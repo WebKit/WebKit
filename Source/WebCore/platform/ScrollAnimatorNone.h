@@ -96,9 +96,6 @@ public:
         double m_maximumCoastTime;
     };
 
-    // PlatformGestureCurveTarget implementation.
-    virtual void scrollBy(const IntPoint&);
-
 protected:
     virtual void animationWillStart() { }
     virtual void animationDidFinish() { }

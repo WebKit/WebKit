@@ -590,12 +590,6 @@ void ScrollAnimatorNone::stopAnimationTimerIfNeeded()
 #endif
 }
 
-void ScrollAnimatorNone::scrollBy(const IntPoint& location)
-{
-    m_currentPosX += location.x();
-    m_currentPosY += location.y();
-}
-
 } // namespace WebCore
 
 #endif // ENABLE(SMOOTH_SCROLLING)
