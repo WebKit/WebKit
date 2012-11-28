@@ -1,3 +1,22 @@
+2012-11-27  Mike West  <mkwst@chromium.org>
+
+        Improve WebSocketChannel connection failure console messages.
+        https://bugs.webkit.org/show_bug.cgi?id=103448
+
+        Reviewed by Adam Barth.
+
+        When a WebSocket connection fails, the current implementation of
+        WebSocketChannel::fail binds the generated console message to the
+        document's URL, but doesn't give much indication as to the connection
+        itself. This patch adjusts the console message to explicitly show the
+        URL of the failed connection to give developers a better chance of
+        debugging and resolving errors.
+
+        * Modules/websockets/WebSocketChannel.cpp:
+        (WebCore::WebSocketChannel::fail):
+            Drop the URL parameter from addConsoleMessage, in favour of adding
+            the WebSocketHandshake's URL to the message text.
+
 2012-11-27  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed functionality fix, return the height in ImageFrame::height()

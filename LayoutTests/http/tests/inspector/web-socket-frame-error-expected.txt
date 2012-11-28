@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: Unexpected response code: 404
+CONSOLE MESSAGE: WebSocket connection to 'ws://localhost:8000/websocket/tests/hybi/does_not_exist' failed: Unexpected response code: 404
 Closed.
 Tests that WebSocketFrames errors are visible to Web Inspector.
 
