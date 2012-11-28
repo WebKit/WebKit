@@ -70,6 +70,7 @@ class PerfTest(object):
 
     def run(self, driver, time_out_ms):
         output = self.run_single(driver, self.path_or_url(), time_out_ms)
+        self._filter_stderr(output)
         if self.run_failed(output):
             return None
         return self.parse_output(output)
@@ -92,6 +93,27 @@ class PerfTest(object):
 
         return True
 
+    def _should_ignore_line(self, regexps, line):
+        if not line:
+            return True
+        for regexp in regexps:
+            if regexp.search(line):
+                return True
+        return False
+
+    _lines_to_ignore_in_stderr = [
+        re.compile(r'^Unknown option:'),
+        re.compile(r'^\[WARNING:proxy_service.cc')]
+
+    def _should_ignore_line_in_stderr(self, line):
+        return self._should_ignore_line(self._lines_to_ignore_in_stderr, line)
+
+    def _filter_stderr(self, output):
+        if not output.error:
+            return
+        filtered_error = '\n'.join([line for line in re.split('\n', output.error) if not self._should_ignore_line_in_stderr(line)])
+        output.error = filtered_error if filtered_error else None
+
     _lines_to_ignore_in_parser_result = [
         re.compile(r'^Running \d+ times$'),
         re.compile(r'^Ignoring warm-up '),
@@ -105,12 +127,7 @@ class PerfTest(object):
         re.compile(re.escape("""Blocked access to external URL http://www.whatwg.org/specs/web-apps/current-work/"""))]
 
     def _should_ignore_line_in_parser_test_result(self, line):
-        if not line:
-            return True
-        for regex in self._lines_to_ignore_in_parser_result:
-            if regex.search(line):
-                return True
-        return False
+        return self._should_ignore_line(self._lines_to_ignore_in_parser_result, line)
 
     _description_regex = re.compile(r'^Description: (?P<description>.*)$', re.IGNORECASE)
     _result_classes = ['Time', 'JS Heap', 'Malloc']

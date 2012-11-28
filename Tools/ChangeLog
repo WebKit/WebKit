@@ -1,3 +1,23 @@
+2012-11-27  Adam Barth  <abarth@webkit.org>
+
+        run-perf-tests fails on Android because of stderr output
+        https://bugs.webkit.org/show_bug.cgi?id=103462
+
+        Reviewed by Ryosuke Niwa.
+
+        The chromium-android port produces some stderr output that causes
+        run-perf-tests to get sad and not record the results of the performance
+        test. This patch teaches run-perf-test to ignore this output much in
+        the same way that it currently ignores some stdout messages.
+
+        * Scripts/webkitpy/performance_tests/perftest.py:
+        (PerfTest.run):
+        (PerfTest._should_ignore_line):
+        (PerfTest):
+        (PerfTest._should_ignore_line_in_stderr):
+        (PerfTest._filter_stderr):
+        (PerfTest._should_ignore_line_in_parser_test_result):
+
 2012-11-27  Tony Chang  <tony@chromium.org>
 
         Fix garden-o-matic for non-chromium ports
