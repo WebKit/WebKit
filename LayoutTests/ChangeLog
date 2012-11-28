@@ -1,3 +1,13 @@
+2012-11-28  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/12645085> REGRESSION (r130851): With kerning enabled, a white-space: pre-wrap inline starting with tab+space has the wrong width
+        https://bugs.webkit.org/show_bug.cgi?id=103541
+
+        Reviewed by Anders Carlsson.
+
+        * fast/text/tab-with-kerning-expected.html: Added.
+        * fast/text/tab-with-kerning.html: Added.
+
 2012-11-28  Nate Chapin  <japhet@chromium.org>
 
         Move empty loading to DocumentLoader, simplify FrameLoader::init()

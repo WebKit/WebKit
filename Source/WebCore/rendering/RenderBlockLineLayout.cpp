@@ -2636,7 +2636,7 @@ InlineIterator RenderBlock::LineBreaker::nextLineBreak(InlineBidiResolver& resol
                     wordMeasurement.startOffset = lastSpace;
                     
                     float additionalTmpW;
-                    if (wordTrailingSpaceWidth && currentCharacterIsSpace)
+                    if (wordTrailingSpaceWidth && c == ' ')
                         additionalTmpW = textWidth(t, lastSpace, current.m_pos + 1 - lastSpace, f, width.currentWidth(), isFixedPitch, collapseWhiteSpace, &wordMeasurement.fallbackFonts, textLayout) - wordTrailingSpaceWidth;
                     else
                         additionalTmpW = textWidth(t, lastSpace, current.m_pos - lastSpace, f, width.currentWidth(), isFixedPitch, collapseWhiteSpace, &wordMeasurement.fallbackFonts, textLayout);

@@ -1,3 +1,20 @@
+2012-11-28  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/12645085> REGRESSION (r130851): With kerning enabled, a white-space: pre-wrap inline starting with tab+space has the wrong width
+        https://bugs.webkit.org/show_bug.cgi?id=103541
+
+        Reviewed by Anders Carlsson.
+
+        Test: fast/text/tab-with-kerning.html
+
+        When kerning is enabled, words are measured with their trailing space, then the width of a
+        space is subtracted. The logic to do this was incorrectly being invoked even when the
+        trailing whitespace character was a tab or a newline.
+
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::LineBreaker::nextLineBreak): Changed to check only for the space
+        character, not other space-like characters.
+
 2012-11-28  Nate Chapin  <japhet@chromium.org>
 
         Move empty loading to DocumentLoader, simplify FrameLoader::init()
