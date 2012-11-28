@@ -52,7 +52,7 @@
 
 namespace WebCore {
 
-class SameSizeAsTreeScope {
+struct SameSizeAsTreeScope {
     virtual ~SameSizeAsTreeScope();
     void* pointers[7];
 };

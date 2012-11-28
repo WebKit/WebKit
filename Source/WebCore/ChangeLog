@@ -1,3 +1,10 @@
+2012-11-27  Kent Tamura  <tkent@chromium.org>
+
+        Fix build errors by r135955.
+
+        * dom/ShadowRoot.cpp: Use struct instead of class.
+        * dom/TreeScope.cpp: Ditto.
+
 2012-11-27  Eugene Klyuchnikov  <eustas@chromium.com>
 
         Web Inspector: [Timeline] "Show CPU activity on the ruler" settings checkbox does not take effect until Inspector restart

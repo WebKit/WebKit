@@ -55,7 +55,7 @@
 
 namespace WebCore {
 
-class SameSizeAsShadowRoot : public DocumentFragment, public TreeScope, public DoublyLinkedListNode<ShadowRoot> {
+struct SameSizeAsShadowRoot : public DocumentFragment, public TreeScope, public DoublyLinkedListNode<ShadowRoot> {
     void* pointers[3];
     unsigned countersAndFlags[4];
 };
