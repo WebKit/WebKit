@@ -1,3 +1,15 @@
+2012-11-27  Michael Saboff  <msaboff@apple.com>
+
+        TextIterator unnecessarily converts 8 bit strings to 16 bits
+        https://bugs.webkit.org/show_bug.cgi?id=103295
+
+        Reviewed by Brent Fulgham.
+
+        Updated _stringForRange to use plainText() instead of removed plainTextToMallocAllocatedBuffer().
+
+        * WebView/WebFrame.mm:
+        (-[WebFrame _stringForRange:]):
+
 2012-11-27  James Simonsen  <simonjam@chromium.org>
 
         Consolidate FrameLoader::load() into one function taking a FrameLoadRequest

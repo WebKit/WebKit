@@ -498,15 +498,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
 
 - (NSString *)_stringForRange:(DOMRange *)range
 {
-    // This will give a system malloc'd buffer that can be turned directly into an NSString
-    unsigned length;
-    UChar* buf = plainTextToMallocAllocatedBuffer(core(range), length, true);
-    
-    if (!buf)
-        return [NSString string];
-
-    // Transfer buffer ownership to NSString
-    return [[[NSString alloc] initWithCharactersNoCopy:buf length:length freeWhenDone:YES] autorelease];
+    return plainText(core(range), TextIteratorDefaultBehavior, true);
 }
 
 - (BOOL)_shouldFlattenCompositingLayers:(CGContextRef)context

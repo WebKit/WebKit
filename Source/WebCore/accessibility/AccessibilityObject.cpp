@@ -840,7 +840,7 @@ String AccessibilityObject::stringForVisiblePositionRange(const VisiblePositionR
             if (!listMarkerText.isEmpty())
                 builder.append(listMarkerText);
 
-            builder.append(it.characters(), it.length());
+            it.appendTextToStringBuilder(builder);
         } else {
             // locate the node and starting offset for this replaced range
             int exception = 0;

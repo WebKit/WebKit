@@ -60,8 +60,7 @@ inline bool isCollapsibleWhitespace(UChar c)
     }
 }
 
-String plainText(const Range*, TextIteratorBehavior defaultBehavior = TextIteratorDefaultBehavior);
-UChar* plainTextToMallocAllocatedBuffer(const Range*, unsigned& bufferLength, bool isDisplayString, TextIteratorBehavior = TextIteratorDefaultBehavior);
+String plainText(const Range*, TextIteratorBehavior defaultBehavior = TextIteratorDefaultBehavior, bool isDisplayString = false);
 PassRefPtr<Range> findPlainText(const Range*, const String&, FindOptions);
 
 class BitStack {
@@ -94,7 +93,9 @@ public:
     void advance();
     
     int length() const { return m_textLength; }
-    const UChar* characters() const { return m_textCharacters; }
+    const UChar* characters() const { return m_textCharacters ? m_textCharacters : m_text.characters() + startOffset(); }
+    UChar characterAt(unsigned index) const;
+    void appendTextToStringBuilder(StringBuilder&) const;
     
     PassRefPtr<Range> range() const;
     Node* node() const;
@@ -105,6 +106,8 @@ public:
     static PassRefPtr<Range> subrange(Range* entireRange, int characterOffset, int characterCount);
     
 private:
+    int startOffset() const { return m_positionStartOffset; }
+    const String& string() const { return m_text; }
     void exitNode();
     bool shouldRepresentNodeOffsetZero();
     bool shouldEmitSpaceBeforeAndAfterNode(Node*);
@@ -139,7 +142,7 @@ private:
     mutable Node* m_positionOffsetBaseNode;
     mutable int m_positionStartOffset;
     mutable int m_positionEndOffset;
-    const UChar* m_textCharacters;
+    const UChar* m_textCharacters; // If null, then use m_text for character data.
     int m_textLength;
     // Hold string m_textCharacters points to so we ensure it won't be deleted.
     String m_text;

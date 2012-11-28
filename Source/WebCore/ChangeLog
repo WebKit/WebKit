@@ -1,3 +1,33 @@
+2012-11-27  Michael Saboff  <msaboff@apple.com>
+
+        TextIterator unnecessarily converts 8 bit strings to 16 bits
+        https://bugs.webkit.org/show_bug.cgi?id=103295
+
+        Reviewed by Brent Fulgham.
+
+        Changed TextIterator to use the contained string instead of calling characters() on that string.
+        Other sources of text, like emitCharacter() still use the contained UChar* buffer.
+        Added appendTextToStringBuilder() to append the text contents of the current iterator to a string builder
+        irrespective of the source of the text.
+
+        No new tests as functionality covered by existing tests.
+
+        * WebCore.exp.in: Updated plainText export and eliminated plainTextToMallocAllocatedBuffer export
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::stringForVisiblePositionRange): Updated to use TextIterator::appendTextToStringBuilder()
+        * editing/TextIterator.cpp:
+        (WebCore::TextIterator::characterAt): New function to return the indexed character of the current TextIterator
+        (WebCore::TextIterator::appendTextToStringBuilder): Added method to append whatever the current text to a StringBuilder
+        (WebCore::TextIterator::emitText): Eliminated accessing the character data via characters().
+        (WebCore::TextIterator::rangeFromLocationAndLength): Changed to use characterAt().
+        (WebCore::plainText): Combined with plainTextToMallocAllocatedBuffer().
+        * editing/TextIterator.h:
+        (WebCore::TextIterator::startOffset): New getter.
+        (WebCore::TextIterator::string): New getter.
+        (WebCore::TextIterator::characters): Updated to use correct test source.
+        * page/ContextMenuController.cpp:
+        (WebCore::selectionContainsPossibleWord): Changed to use characterAt().
+
 2012-11-27  Noel Gordon  <noel.gordon@gmail.com>
 
         Inline ImageFrame width() and height()

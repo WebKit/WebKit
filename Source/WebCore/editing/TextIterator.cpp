@@ -462,6 +462,26 @@ void TextIterator::advance()
     }
 }
 
+UChar TextIterator::characterAt(unsigned index) const
+{
+    ASSERT(index < static_cast<unsigned>(length()));
+    if (!(index < static_cast<unsigned>(length())))
+        return 0;
+
+    if (!m_textCharacters)
+        return string()[startOffset() + index];
+
+    return m_textCharacters[index];
+}
+
+void TextIterator::appendTextToStringBuilder(StringBuilder& builder) const
+{
+    if (!m_textCharacters)
+        builder.append(string(), startOffset(), length());
+    else
+        builder.append(characters(), length());
+}
+
 bool TextIterator::handleTextNode()
 {
     if (m_fullyClippedStack.top() && !m_ignoresStyleVisibility)
@@ -1007,7 +1027,7 @@ void TextIterator::emitText(Node* textNode, RenderObject* renderObject, int text
 {
     RenderText* renderer = toRenderText(renderObject);
     m_text = m_emitsOriginalText ? renderer->originalText() : (m_emitsTextWithoutTranscoding ? renderer->textWithoutTranscoding() : renderer->text());
-    ASSERT(m_text.characters());
+    ASSERT(!m_text.isEmpty());
     ASSERT(0 <= textStartOffset && textStartOffset < static_cast<int>(m_text.length()));
     ASSERT(0 <= textEndOffset && textEndOffset <= static_cast<int>(m_text.length()));
     ASSERT(textStartOffset <= textEndOffset);
@@ -1016,7 +1036,7 @@ void TextIterator::emitText(Node* textNode, RenderObject* renderObject, int text
     m_positionOffsetBaseNode = 0;
     m_positionStartOffset = textStartOffset;
     m_positionEndOffset = textEndOffset;
-    m_textCharacters = m_text.characters() + textStartOffset;
+    m_textCharacters = 0;
     m_textLength = textEndOffset - textStartOffset;
     m_lastCharacter = m_text[textEndOffset - 1];
 
@@ -2439,7 +2459,7 @@ PassRefPtr<Range> TextIterator::rangeFromLocationAndLength(ContainerNode* scope,
         if (foundEnd) {
             // FIXME: This is a workaround for the fact that the end of a run is often at the wrong
             // position for emitted '\n's.
-            if (len == 1 && it.characters()[0] == '\n') {
+            if (len == 1 && it.characterAt(0) == '\n') {
                 scope->document()->updateLayoutIgnorePendingStylesheets();
                 it.advance();
                 if (!it.atEnd()) {
@@ -2531,79 +2551,35 @@ bool TextIterator::getLocationAndLengthFromRange(Element* scope, const Range* ra
 }
 
 // --------
-    
-UChar* plainTextToMallocAllocatedBuffer(const Range* r, unsigned& bufferLength, bool isDisplayString, TextIteratorBehavior defaultBehavior)
-{
-    UChar* result = 0;
 
+String plainText(const Range* r, TextIteratorBehavior defaultBehavior, bool isDisplayString)
+{
     // The initial buffer size can be critical for performance: https://bugs.webkit.org/show_bug.cgi?id=81192
     static const unsigned cMaxSegmentSize = 1 << 15;
-    bufferLength = 0;
-    typedef pair<UChar*, unsigned> TextSegment;
-    OwnPtr<Vector<TextSegment> > textSegments;
-    Vector<UChar> textBuffer;
-    textBuffer.reserveInitialCapacity(cMaxSegmentSize);
+
+    unsigned bufferLength = 0;
+    StringBuilder builder;
+    builder.reserveCapacity(cMaxSegmentSize);
     TextIteratorBehavior behavior = defaultBehavior;
     if (!isDisplayString)
         behavior = static_cast<TextIteratorBehavior>(behavior | TextIteratorEmitsTextsWithoutTranscoding);
     
     for (TextIterator it(r, behavior); !it.atEnd(); it.advance()) {
-        if (textBuffer.size() && textBuffer.size() + it.length() > cMaxSegmentSize) {
-            UChar* newSegmentBuffer = static_cast<UChar*>(malloc(textBuffer.size() * sizeof(UChar)));
-            if (!newSegmentBuffer)
-                goto exit;
-            memcpy(newSegmentBuffer, textBuffer.data(), textBuffer.size() * sizeof(UChar));
-            if (!textSegments)
-                textSegments = adoptPtr(new Vector<TextSegment>);
-            textSegments->append(make_pair(newSegmentBuffer, (unsigned)textBuffer.size()));
-            textBuffer.clear();
-        }
-        textBuffer.append(it.characters(), it.length());
+        if (builder.capacity() < builder.length() + it.length())
+            builder.reserveCapacity(builder.capacity() + cMaxSegmentSize);
+
+        it.appendTextToStringBuilder(builder);
         bufferLength += it.length();
     }
 
     if (!bufferLength)
-        return 0;
+        return emptyString();
 
-    // Since we know the size now, we can make a single buffer out of the pieces with one big alloc
-    result = static_cast<UChar*>(malloc(bufferLength * sizeof(UChar)));
-    if (!result)
-        goto exit;
+    String result = builder.toString();
 
-    {
-        UChar* resultPos = result;
-        if (textSegments) {
-            unsigned size = textSegments->size();
-            for (unsigned i = 0; i < size; ++i) {
-                const TextSegment& segment = textSegments->at(i);
-                memcpy(resultPos, segment.first, segment.second * sizeof(UChar));
-                resultPos += segment.second;
-            }
-        }
-        memcpy(resultPos, textBuffer.data(), textBuffer.size() * sizeof(UChar));
-    }
-
-exit:
-    if (textSegments) {
-        unsigned size = textSegments->size();
-        for (unsigned i = 0; i < size; ++i)
-            free(textSegments->at(i).first);
-    }
-    
     if (isDisplayString && r->ownerDocument())
-        r->ownerDocument()->displayBufferModifiedByEncoding(result, bufferLength);
+        r->ownerDocument()->displayStringModifiedByEncoding(result);
 
-    return result;
-}
-
-String plainText(const Range* r, TextIteratorBehavior defaultBehavior)
-{
-    unsigned length;
-    UChar* buf = plainTextToMallocAllocatedBuffer(r, length, false, defaultBehavior);
-    if (!buf)
-        return "";
-    String result(buf, length);
-    free(buf);
     return result;
 }
 
