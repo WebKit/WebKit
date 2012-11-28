@@ -1,3 +1,19 @@
+2012-11-27  Viatcheslav Ostapenko  <v.ostapenko@samsung.com>
+
+        Optimization in image decoding
+        https://bugs.webkit.org/show_bug.cgi?id=88424
+
+        Reviewed by Brent Fulgham.
+
+        Optimization in image decoding.
+        Reduce branching and multiplications in GIF image decoding loops and functions.
+        Rebase and update of original patch by Misha Tyutyunik <michael.tyuytunik@nokia.com>
+
+        Covered by existing tests.
+
+        * platform/image-decoders/gif/GIFImageDecoder.cpp:
+        (WebCore::GIFImageDecoder::haveDecodedRow):
+
 2012-11-27  Michael Saboff  <msaboff@apple.com>
 
         TextIterator unnecessarily converts 8 bit strings to 16 bits
@@ -8610,7 +8626,7 @@
         Unreviewed. Fix Chromium Win compilation after r135255.
         https://bugs.webkit.org/show_bug.cgi?id=97803
 
-        * WebCore.gypi: removed reference to platform/wince/DragDataWince.cpp which
+        * WebCore.gypi: removed reference to platform/wince/DragDataWince.cpp which
         was deleted in the aforementioned change.
 
 2012-11-19  Kentaro Hara  <haraken@chromium.org>
