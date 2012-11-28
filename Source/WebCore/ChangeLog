@@ -1,3 +1,22 @@
+2012-11-28  Alexandru Chiculita  <achicu@adobe.com>
+
+        [CSS Regions] InRenderFlowThread returns false in the first setStyle
+        https://bugs.webkit.org/show_bug.cgi?id=102839
+
+        Reviewed by Dave Hyatt.
+
+        Some render objects use the "inRenderFlowThread" during the first styleWillChange/styleDidChange.
+        The first call to these methods comes from NodeRendererFactory::createRenderer. That happens before the RenderObject is 
+        attached to the parent renderer, meaning that inRenderFlowThread is false. That means a RenderLayerBacking will be 
+        created for renderers inside the RenderFlowThread, but composited layers inside the RenderFlowThread are not supported yet.
+        https://bugs.webkit.org/show_bug.cgi?id=84900
+
+        Test: fast/repaint/region-painting-composited-element.html
+
+        * dom/NodeRenderingContext.cpp:
+        (WebCore::NodeRendererFactory::createRenderer):
+        Added code to propagate the inRenderFlowThread flag from the parent node before the style is set for the first time.
+
 2012-11-28  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/12645085> REGRESSION (r130851): With kerning enabled, a white-space: pre-wrap inline starting with tab+space has the wrong width

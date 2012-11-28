@@ -1,3 +1,15 @@
+2012-11-28  Alexandru Chiculita  <achicu@adobe.com>
+
+        [CSS Regions] InRenderFlowThread returns false in the first setStyle
+        https://bugs.webkit.org/show_bug.cgi?id=102839
+
+        Reviewed by Dave Hyatt.
+
+        Added test to check that the composited elements added to a RenderFlowThread are painted correctly.
+
+        * fast/repaint/region-painting-composited-element-expected.html: Added.
+        * fast/repaint/region-painting-composited-element.html: Added.
+
 2012-11-28  Tony Chang  <tony@chromium.org>
 
         Unreviewed, land updated Mac results after track limiter removal.

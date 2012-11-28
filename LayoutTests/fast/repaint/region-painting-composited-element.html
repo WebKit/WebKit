@@ -1,0 +1,48 @@
+<!doctype html>
+<head>
+<title>Test for https://bugs.webkit.org/show_bug.cgi?id=102826</title>
+<script>
+    if (window.testRunner)
+        window.testRunner.overridePreference("WebKitCSSRegionsEnabled", "1");
+</script>
+<style type="text/css">
+#content {
+    -webkit-flow-into: flow1;
+}
+
+#target { 
+    background-color: green; 
+    width: 100px; 
+    height: 50px;
+    /* Force a composited layer. */
+    -webkit-transform: translate3d(0,0,0);
+}
+
+#region1, #region2 {
+    width: 100px;
+    height: 50px;
+    -webkit-flow-from: flow1;
+}
+
+#region1 {
+    /* Make sure that the content of the first region will display in a totally
+       different place than it would have been displayed if regions were not used. */
+    background-color: red;
+}
+
+#region2 {
+    background-color: green;
+}
+
+</style>
+</head>
+<body>
+    <!-- Testing that the RenderObject is marked as part of the RenderFlowThread before it applies the first style.
+        The test should paint two green rectangles. There should be no red. -->
+    <div id="content">
+        <div id="target"></div>
+    </div>
+    <div id="region1"></div><br />
+    <div id="region2"></div>
+</body>
+</html>
