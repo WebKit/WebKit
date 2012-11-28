@@ -166,7 +166,7 @@ private:
     Vector<RefPtr<CoordinatedBackingStore> > m_releasedImageBackings;
 
     typedef HashMap<WebCore::TextureMapperLayer*, RefPtr<CoordinatedBackingStore> > BackingStoreMap;
-    BackingStoreMap m_pedningSyncBackingStores;
+    BackingStoreMap m_pendingSyncBackingStores;
 
     HashSet<RefPtr<CoordinatedBackingStore> > m_backingStoresWithPendingBuffers;
 

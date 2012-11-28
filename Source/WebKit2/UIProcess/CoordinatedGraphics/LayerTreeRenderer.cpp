@@ -418,8 +418,8 @@ CoordinatedBackingStore* LayerTreeRenderer::getBackingStore(GraphicsLayer* graph
     ASSERT(layer);
     CoordinatedBackingStore* backingStore = static_cast<CoordinatedBackingStore*>(layer->backingStore().get());
 
-    BackingStoreMap::iterator it = m_pedningSyncBackingStores.find(layer);
-    if (it != m_pedningSyncBackingStores.end())
+    BackingStoreMap::iterator it = m_pendingSyncBackingStores.find(layer);
+    if (it != m_pendingSyncBackingStores.end())
         backingStore = it->value.get();
     return backingStore;
 }
@@ -438,24 +438,47 @@ void LayerTreeRenderer::createBackingStoreIfNeeded(GraphicsLayer* graphicsLayer)
 {
     TextureMapperLayer* layer = toTextureMapperLayer(graphicsLayer);
     ASSERT(layer);
-    if (layer->backingStore())
+
+    // Make sure the layer does not already have a backing store (committed or pending).
+    BackingStoreMap::iterator it = m_pendingSyncBackingStores.find(layer);
+    if (it != m_pendingSyncBackingStores.end()) {
+        if (!it->value) {
+            // There is a pending removal, cancel it.
+            m_pendingSyncBackingStores.remove(it);
+        }
+        // There is already a pending addition.
         return;
+    }
+    if (layer->backingStore())
+        return; // The layer already has a backing store (and no pending removal).
 
     RefPtr<CoordinatedBackingStore> backingStore(CoordinatedBackingStore::create());
     backingStore->setSize(graphicsLayer->size());
-    ASSERT(!m_pedningSyncBackingStores.contains(layer));
-    m_pedningSyncBackingStores.add(layer, backingStore);
+    ASSERT(!m_pendingSyncBackingStores.contains(layer));
+    m_pendingSyncBackingStores.add(layer, backingStore);
 }
 
 void LayerTreeRenderer::removeBackingStoreIfNeeded(GraphicsLayer* graphicsLayer)
 {
     TextureMapperLayer* layer = toTextureMapperLayer(graphicsLayer);
     ASSERT(layer);
-    if (!layer->backingStore())
-        return;
 
-    ASSERT(!m_pedningSyncBackingStores.contains(layer));
-    m_pedningSyncBackingStores.add(layer, 0);
+    // Check if the layout already has a backing store (committed or pending).
+    BackingStoreMap::iterator it = m_pendingSyncBackingStores.find(layer);
+    if (it != m_pendingSyncBackingStores.end()) {
+        if (it->value) {
+            // There is a pending addition, cancel it.
+            m_pendingSyncBackingStores.remove(it);
+        }
+        // There is already a pending removal.
+        return;
+    }
+
+    if (!layer->backingStore())
+        return; // The layer has no backing store (and no pending addition).
+
+    ASSERT(!m_pendingSyncBackingStores.contains(layer));
+    m_pendingSyncBackingStores.add(layer, 0);
 }
 
 void LayerTreeRenderer::resetBackingStoreSizeToLayerSize(GraphicsLayer* graphicsLayer)
@@ -567,12 +590,12 @@ void LayerTreeRenderer::commitPendingBackingStoreOperations()
     m_backingStoresWithPendingBuffers.clear();
 
     {
-        BackingStoreMap::iterator end = m_pedningSyncBackingStores.end();
-        BackingStoreMap::iterator it = m_pedningSyncBackingStores.begin();
+        BackingStoreMap::iterator end = m_pendingSyncBackingStores.end();
+        BackingStoreMap::iterator it = m_pendingSyncBackingStores.begin();
         for (;it != end; ++it)
             it->key->setBackingStore(it->value);
 
-        m_pedningSyncBackingStores.clear();
+        m_pendingSyncBackingStores.clear();
     }
 }
 

@@ -1,3 +1,32 @@
+2012-11-28  Christophe Dumez  <christophe.dumez@intel.com>
+
+        Regression(r135962): ASSERTION FAILED: !m_pedningSyncBackingStores.contains(layer)
+        https://bugs.webkit.org/show_bug.cgi?id=103498
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        We hit the !m_pedningSyncBackingStores.contains(layer) assertion
+        in LayerTreeRenderer when 2 asynchronous backing store operations
+        are pending. The current code checks if the layer already has a
+        backing store in its guard but this is insufficient as it is not
+        checking the m_pendingSyncBackingStores hash for pending backing
+        store changes.
+
+        In this patch, we improve the guards in createBackingStoreIfNeeded()
+        and removeBackingStoreIfNeeded() to check not only if the layer has
+        already a backing store but also check m_pendingSyncBackingStores
+        for pending changes. This is safer and it allows for optimizations
+        in the cases where we have both a removal and a creation pending.
+        In those cases, we can simply cancel the pending operation instead
+        of queueing a new one.
+
+        * UIProcess/CoordinatedGraphics/LayerTreeRenderer.cpp:
+        (WebKit::LayerTreeRenderer::getBackingStore):
+        (WebKit::LayerTreeRenderer::createBackingStoreIfNeeded):
+        (WebKit::LayerTreeRenderer::removeBackingStoreIfNeeded):
+        (WebKit::LayerTreeRenderer::commitPendingBackingStoreOperations):
+        * UIProcess/CoordinatedGraphics/LayerTreeRenderer.h:
+
 2012-11-28  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         [EFL][WK2] MiniBrowser rendering should not get blurry when scrolled down with different scale values
