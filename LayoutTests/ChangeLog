@@ -1,3 +1,33 @@
+2012-11-27  Tony Chang  <tony@chromium.org>
+
+        Unreviewed, land updated EFL results after track limiter removal.
+
+        * platform/efl/TestExpectations:
+        * platform/efl/fast/dom/HTMLInputElement/input-slider-update-expected.txt:
+        * platform/efl/fast/dom/HTMLInputElement/input-slider-update-styled-expected.txt: Added.
+        * platform/efl/fast/forms/box-shadow-override-expected.txt:
+        * platform/efl/fast/forms/input-appearance-height-expected.txt:
+        * platform/efl/fast/forms/range/input-appearance-range-expected.txt:
+        * platform/efl/fast/forms/range/range-thumb-height-percentage-expected.txt: Added.
+        * platform/efl/fast/forms/range/slider-padding-expected.txt:
+        * platform/efl/fast/forms/range/slider-thumb-shared-style-expected.txt:
+        * platform/efl/fast/forms/range/slider-thumb-stylability-expected.txt: Added.
+        * platform/efl/fast/layers/video-layer-expected.txt:
+        * platform/efl/fast/multicol/client-rects-expected.txt:
+        * platform/efl/fast/repaint/slider-thumb-drag-release-expected.txt:
+        * platform/efl/fast/repaint/slider-thumb-float-expected.txt: Added.
+        * platform/efl/media/audio-controls-rendering-expected.txt:
+        * platform/efl/media/controls-strict-expected.txt:
+        * platform/efl/media/controls-styling-strict-expected.txt:
+        * platform/efl/media/controls-without-preload-expected.txt:
+        * platform/efl/media/media-controls-clone-expected.txt:
+        * platform/efl/media/track/track-cue-rendering-horizontal-expected.txt:
+        * platform/efl/media/track/track-cue-rendering-vertical-expected.txt:
+        * platform/efl/media/video-display-toggle-expected.txt:
+        * platform/efl/media/video-empty-source-expected.txt:
+        * platform/efl/media/video-no-audio-expected.txt:
+        * platform/efl/media/video-zoom-controls-expected.txt:
+
 2012-11-27  Dean Jackson  <dino@apple.com>
 
         Make track list control active

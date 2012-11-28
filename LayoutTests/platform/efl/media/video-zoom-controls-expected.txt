@@ -21,9 +21,8 @@ layer at (57,235) size 240x30
             text run at (21,17) width 36: "00:06"
       RenderSlider {INPUT} at (0,0) size 90x30
         RenderFlexibleBox {DIV} at (3,0) size 84x30
-          RenderBlock {DIV} at (0,9) size 72x12
+          RenderBlock {DIV} at (0,9) size 84x12
             RenderBlock {DIV} at (0,0) size 12x12
-          RenderBlock {DIV} at (72,0) size 12x12
     RenderButton {INPUT} at (120,0) size 30x30
     RenderButton {INPUT} at (150,0) size 30x30
     RenderButton {INPUT} at (180,0) size 30x30
@@ -45,9 +44,8 @@ layer at (57,460) size 240x30
             text run at (21,17) width 36: "00:06"
       RenderSlider {INPUT} at (0,0) size 90x30
         RenderFlexibleBox {DIV} at (3,0) size 84x30
-          RenderBlock {DIV} at (0,9) size 72x12
+          RenderBlock {DIV} at (0,9) size 84x12
             RenderBlock {DIV} at (0,0) size 12x12
-          RenderBlock {DIV} at (72,0) size 12x12
     RenderButton {INPUT} at (120,0) size 30x30
     RenderButton {INPUT} at (150,0) size 30x30
     RenderButton {INPUT} at (180,0) size 30x30

@@ -21,13 +21,11 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (0,68) size 784x30
         RenderSlider {INPUT} at (2,2) size 129x11 [color=#909090] [bgcolor=#FFFFFF]
           RenderFlexibleBox {DIV} at (0,0) size 129x11
-            RenderBlock {DIV} at (0,0) size 100x11
+            RenderBlock {DIV} at (0,0) size 129x11
               RenderBlock {DIV} at (0,0) size 29x11
-            RenderBlock {DIV} at (100,0) size 29x11
         RenderBR {BR} at (133,13) size 0x0
         RenderSlider {INPUT} at (2,17) size 129x11 [color=#909090] [bgcolor=#FFFFFF]
           RenderFlexibleBox {DIV} at (0,0) size 129x11
-            RenderBlock {DIV} at (0,0) size 100x11
+            RenderBlock {DIV} at (0,0) size 129x11
               RenderBlock {DIV} at (100,0) size 29x11
-            RenderBlock {DIV} at (100,0) size 29x11
         RenderText {#text} at (0,0) size 0x0
