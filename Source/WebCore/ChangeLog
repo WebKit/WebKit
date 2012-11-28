@@ -1,3 +1,21 @@
+2012-11-27  Shinya Kawanaka  <shinyak@chromium.org>
+
+        [Refactoring] HasSelectorForClassStyleFunctor in Element.cpp seems verbose
+        https://bugs.webkit.org/show_bug.cgi?id=103474
+
+        Reviewed by Hajime Morita.
+
+        The code introduced in r135174 looks verbose. We would like to make it simpler.
+        We have removed several inline functions and unnecessary structs.
+
+        No new tests, simple refactoring.
+
+        * dom/Element.cpp:
+        (WebCore):
+        (WebCore::checkSelectorForClassChange):
+        (WebCore::Element::classAttributeChanged):
+        (WebCore::Element::shouldInvalidateDistributionWhenAttributeChanged):
+
 2012-11-27  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Support proper <percent> / calc() resolution for grid items
