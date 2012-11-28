@@ -1,3 +1,31 @@
+2012-10-22  Jer Noble  <jer.noble@apple.com>
+
+        [WK2] [Mac] WebKit Full Screen API should use NSWindow full screen API.
+        https://bugs.webkit.org/show_bug.cgi?id=100025
+
+        Reviewed by Dan Bernstein.
+
+        Use the NSWindow full screen API when taking the WebView full screen. To facility the case where the browser window is already
+        in full screen mode, no longer hide the browser window when entering full screen. Instead, provide a placeholder view with 
+        instructions to click the placeholder to exit full screen.
+
+        * UIProcess/mac/WKFullScreenWindowController.h:
+        * UIProcess/mac/WKFullScreenWindowController.mm:
+        (-[WKFullScreenWindowController init]): Set self as the window's delegate; enable window's full screen action.
+        (-[WKFullScreenWindowController dealloc]): Clear our window's delegate.
+        (-[WKFullScreenWindowController applicationDidChangeScreenParameters:]): Remove reference to _updateWindowAndDockForFullScreen.
+        (-[WKFullScreenWindowController enterFullScreen:]):  Ditto. Create a WKFullScreenPlaceholderView instead of generic NSImageView.
+        (-[WKFullScreenWindowController beganEnterFullScreenWithInitialFrame:finalFrame:]): Ditto. Call NSWindow enterFullScreen: API.
+        (-[WKFullScreenWindowController finishedEnterFullScreenAnimation:]): Show the warning view.
+        (-[WKFullScreenWindowController exitFullScreen]): Hide the warning view.
+        (-[WKFullScreenWindowController beganExitFullScreenWithInitialFrame:finalFrame:]): Add special case where we are exiting
+            from full screen mode when the full screen window is not on screen.
+        (-[WKFullScreenWindowController finishedExitFullScreenAnimation:]): Remove reference to _updateMenuAndDockForFullScreen.
+        (-[WKFullScreenWindowController customWindowsToEnterFullScreenForWindow:]): Added. Return the background window and the full screen window.
+        (-[WKFullScreenWindowController customWindowsToExitFullScreenForWindow:]): Ditto.
+        (-[WKFullScreenWindowController window:startCustomAnimationToEnterFullScreenWithDuration:]): Added. Call through to _startEnterFullScreenAnimationWithDuration:
+        (-[WKFullScreenWindowController window:startCustomAnimationToExitFullScreenWithDuration:]): Added. Call through to _startExitFullScreenAnimationWithDuration:
+
 2012-11-27  Yael Aharon  <yael.aharon@intel.com>
 
         [EFL][WK2] 3D pixel tests are failing

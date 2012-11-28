@@ -39,6 +39,8 @@
 #import <WebCore/DisplaySleepDisabler.h>
 #import <WebCore/FloatRect.h>
 #import <WebCore/IntRect.h>
+#import <WebCore/LocalizedStrings.h>
+#import <WebCore/WebCoreFullScreenPlaceholderView.h>
 #import <WebCore/WebCoreFullScreenWindow.h>
 #import <WebCore/WebWindowAnimation.h>
 #import <WebKit/WebNSWindowExtras.h>
@@ -53,8 +55,12 @@ static RetainPtr<NSWindow> createBackgroundFullscreenWindow(NSRect frame);
 static const CFTimeInterval defaultAnimationDuration = 0.5;
 static const NSTimeInterval DefaultWatchdogTimerInterval = 1;
 
+@interface NSWindow (WebNSWindowDetails)
+- (void)exitFullScreenMode:(id)sender;
+- (void)enterFullScreenMode:(id)sender;
+@end
+
 @interface WKFullScreenWindowController(Private)<NSAnimationDelegate>
-- (void)_updateMenuAndDockForFullScreen;
 - (void)_replaceView:(NSView*)view with:(NSView*)otherView;
 - (WebPageProxy*)_page;
 - (WebFullScreenManagerProxy*)_manager;
@@ -87,11 +93,12 @@ static NSRect convertRectToScreen(NSWindow *window, NSRect rect)
 #pragma mark Initialization
 - (id)init
 {
-    NSWindow *window = [[WebCoreFullScreenWindow alloc] initWithContentRect:NSZeroRect styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:NO];
-    self = [super initWithWindow:window];
-    [window release];
+    RetainPtr<NSWindow> window = adoptNS([[WebCoreFullScreenWindow alloc] initWithContentRect:NSZeroRect styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:NO]);
+    self = [super initWithWindow:window.get()];
     if (!self)
         return nil;
+    [window.get() setDelegate:self];
+    [window.get() setCollectionBehavior:([window collectionBehavior] | NSWindowCollectionBehaviorFullScreenPrimary)];
     [self windowDidLoad];
     
     return self;
@@ -100,6 +107,7 @@ static NSRect convertRectToScreen(NSWindow *window, NSRect rect)
 - (void)dealloc
 {
     [self setWebView:nil];
+    [[self window] setDelegate:nil];
     
     [NSObject cancelPreviousPerformRequestsWithTarget:self];
     
@@ -174,7 +182,6 @@ static NSRect convertRectToScreen(NSWindow *window, NSRect rect)
     // the Dock's size or location, or they may have changed the fullScreen screen's dimensions. 
     // Update our presentation parameters, and ensure that the full screen window occupies the 
     // entire screen:
-    [self _updateMenuAndDockForFullScreen];
     NSWindow* window = [self window];
     NSRect screenFrame = [[window screen] frame];
     [window setFrame:screenFrame display:YES];
@@ -212,8 +219,6 @@ static RetainPtr<CGImageRef> createImageWithCopiedData(CGImageRef sourceImage)
         return;
     _isFullScreen = YES;
 
-    [self _updateMenuAndDockForFullScreen];   
-
     if (!screen)
         screen = [NSScreen mainScreen];
     NSRect screenFrame = [screen frame];
@@ -246,11 +251,11 @@ static RetainPtr<CGImageRef> createImageWithCopiedData(CGImageRef sourceImage)
 
     // Swap the webView placeholder into place.
     if (!_webViewPlaceholder) {
-        _webViewPlaceholder.adoptNS([[NSImageView alloc] init]);
-        [_webViewPlaceholder.get() setLayer:[CALayer layer]];
-        [_webViewPlaceholder.get() setWantsLayer:YES];
+        _webViewPlaceholder.adoptNS([[WebCoreFullScreenPlaceholderView alloc] initWithFrame:[_webView frame]]);
+        [_webViewPlaceholder.get() setTarget:self];
+        [_webViewPlaceholder.get() setAction:@selector(cancelOperation:)];
     }
-    [[_webViewPlaceholder.get() layer] setContents:(id)webViewContents.get()];
+    [_webViewPlaceholder.get() setContents:(id)webViewContents.get()];
     [self _replaceView:_webView with:_webViewPlaceholder.get()];
     
     // Then insert the WebView into the full screen window
@@ -273,9 +278,10 @@ static RetainPtr<CGImageRef> createImageWithCopiedData(CGImageRef sourceImage)
     _initialFrame = initialFrame;
     _finalFrame = finalFrame;
 
-    [self _updateMenuAndDockForFullScreen];   
+    if (!_backgroundWindow)
+        _backgroundWindow = createBackgroundFullscreenWindow(NSZeroRect);
 
-    [self _startEnterFullScreenAnimationWithDuration:defaultAnimationDuration];
+    [[self window] enterFullScreenMode:self];
 }
 
 - (void)finishedEnterFullScreenAnimation:(bool)completed
@@ -294,24 +300,14 @@ static RetainPtr<CGImageRef> createImageWithCopiedData(CGImageRef sourceImage)
         windowBounds.origin = NSZeroPoint;
         WKWindowSetClipRect([self window], windowBounds);
 
-        NSWindow *webWindow = [_webViewPlaceholder.get() window];
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
-        // In Lion, NSWindow will animate into and out of orderOut operations. Suppress that
-        // behavior here, making sure to reset the animation behavior afterward.
-        NSWindowAnimationBehavior animationBehavior = [webWindow animationBehavior];
-        [webWindow setAnimationBehavior:NSWindowAnimationBehaviorNone];
-#endif
-        [webWindow orderOut:self];
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
-        [webWindow setAnimationBehavior:animationBehavior];
-#endif
-
         [_fadeAnimation.get() stopAnimation];
         [_fadeAnimation.get() setWindow:nil];
         _fadeAnimation = nullptr;
         
         [_backgroundWindow.get() orderOut:self];
         [_backgroundWindow.get() setFrame:NSZeroRect display:YES];
+
+        [_webViewPlaceholder.get() setExitWarningVisible:YES];
         NSEnableScreenUpdates();
     } else
         [_scaleAnimation.get() stopAnimation];
@@ -328,7 +324,9 @@ static RetainPtr<CGImageRef> createImageWithCopiedData(CGImageRef sourceImage)
         return;
     _isFullScreen = NO;
 
-    // Screen updates to be re-enabled in _startExitFullScreenAnimationWithDuration:
+    [_webViewPlaceholder.get() setExitWarningVisible:NO];
+
+    // Screen updates to be re-enabled in _startExitFullScreenAnimationWithDuration: or beganExitFullScreenWithInitialFrame:finalFrame:
     NSDisableScreenUpdates();
     [[self window] setAutodisplay:NO];
 
@@ -349,30 +347,18 @@ static RetainPtr<CGImageRef> createImageWithCopiedData(CGImageRef sourceImage)
     if (_isEnteringFullScreen)
         [self finishedEnterFullScreenAnimation:NO];
 
-    [self _updateMenuAndDockForFullScreen];
-    
-    NSWindow* webWindow = [_webViewPlaceholder.get() window];
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
-    // In Lion, NSWindow will animate into and out of orderOut operations. Suppress that
-    // behavior here, making sure to reset the animation behavior afterward.
-    NSWindowAnimationBehavior animationBehavior = [webWindow animationBehavior];
-    [webWindow setAnimationBehavior:NSWindowAnimationBehaviorNone];
-#endif
-    // If the user has moved the fullScreen window into a new space, temporarily change
-    // the collectionBehavior of the webView's window so that it is pulled into the active space:
-    if (!([webWindow respondsToSelector:@selector(isOnActiveSpace)] ? [webWindow isOnActiveSpace] : YES)) {
-        NSWindowCollectionBehavior behavior = [webWindow collectionBehavior];
-        [webWindow setCollectionBehavior:NSWindowCollectionBehaviorCanJoinAllSpaces];
-        [webWindow orderWindow:NSWindowBelow relativeTo:[[self window] windowNumber]];
-        [webWindow setCollectionBehavior:behavior];
-    } else
-        [webWindow orderWindow:NSWindowBelow relativeTo:[[self window] windowNumber]];
-    
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
-    [webWindow setAnimationBehavior:animationBehavior];
-#endif
+    if (![[self window] isOnActiveSpace]) {
+        // If the full screen window is not in the active space, the NSWindow full screen animation delegate methods
+        // will never be called. So call finishedExitFullScreenAnimation explicitly.
+        [self finishedExitFullScreenAnimation:YES];
 
-    [self _startExitFullScreenAnimationWithDuration:defaultAnimationDuration];
+        // Because we are breaking the normal animation pattern, re-enable screen updates
+        // as exitFullScreen has disabled them, but _startExitFullScreenAnimationWithDuration:
+        // will never be called.
+        NSEnableScreenUpdates();
+    }
+
+    [[self window] exitFullScreenMode:self];
 }
 
 static void completeFinishExitFullScreenAnimationAfterRepaint(WKErrorRef, void*);
@@ -382,8 +368,6 @@ static void completeFinishExitFullScreenAnimationAfterRepaint(WKErrorRef, void*)
     if (!_isExitingFullScreen)
         return;
     _isExitingFullScreen = NO;
-
-    [self _updateMenuAndDockForFullScreen];
 
     // Screen updates to be re-enabled in completeFinishExitFullScreenAnimationAfterRepaint.
     NSDisableScreenUpdates();
@@ -444,45 +428,50 @@ static void completeFinishExitFullScreenAnimationAfterRepaint(WKErrorRef, void* 
 }
 
 #pragma mark -
-#pragma mark NSAnimation delegate
+#pragma mark Custom NSWindow Full Screen Animation
 
-- (void)animationDidEnd:(NSAnimation*)animation
+- (NSArray *)customWindowsToEnterFullScreenForWindow:(NSWindow *)window
 {
-    if (_isFullScreen)
-        [self finishedEnterFullScreenAnimation:YES];
-    else
-        [self finishedExitFullScreenAnimation:YES];
+    return [NSArray arrayWithObjects:[self window], _backgroundWindow.get(), nil];
+}
+
+- (NSArray *)customWindowsToExitFullScreenForWindow:(NSWindow *)window
+{
+    return [NSArray arrayWithObjects:[self window], _backgroundWindow.get(), nil];
+}
+
+- (void)window:(NSWindow *)window startCustomAnimationToEnterFullScreenWithDuration:(NSTimeInterval)duration
+{
+    [self _startEnterFullScreenAnimationWithDuration:duration];
+}
+
+- (void)window:(NSWindow *)window startCustomAnimationToExitFullScreenWithDuration:(NSTimeInterval)duration
+{
+    [self _startExitFullScreenAnimationWithDuration:duration];
+}
+
+- (void)windowDidFailToEnterFullScreen:(NSWindow *)window
+{
+    [self finishedEnterFullScreenAnimation:NO];
+}
+
+- (void)windowDidEnterFullScreen:(NSNotification*)notification
+{
+    [self finishedEnterFullScreenAnimation:YES];
+}
+
+- (void)windowDidFailToExitFullScreen:(NSWindow *)window
+{
+    [self finishedExitFullScreenAnimation:NO];
+}
+
+- (void)windowDidExitFullScreen:(NSNotification*)notification
+{
+    [self finishedExitFullScreenAnimation:YES];
 }
 
 #pragma mark -
 #pragma mark Internal Interface
-
-- (void)_updateMenuAndDockForFullScreen
-{
-    // NSApplicationPresentationOptions is available on > 10.6 only:
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1060
-    NSApplicationPresentationOptions options = NSApplicationPresentationDefault;
-    NSScreen* fullScreenScreen = [[self window] screen];
-    
-    if (_isFullScreen) {
-        // Auto-hide the menu bar if the fullScreenScreen contains the menu bar:
-        // NOTE: if the fullScreenScreen contains the menu bar but not the dock, we must still 
-        // auto-hide the dock, or an exception will be thrown.
-        if ([[NSScreen screens] objectAtIndex:0] == fullScreenScreen)
-            options |= (NSApplicationPresentationAutoHideMenuBar | NSApplicationPresentationAutoHideDock);
-        // Check if the current screen contains the dock by comparing the screen's frame to its
-        // visibleFrame; if a dock is present, the visibleFrame will differ. If the current screen
-        // contains the dock, hide it.
-        else if (!NSEqualRects([fullScreenScreen frame], [fullScreenScreen visibleFrame]))
-            options |= NSApplicationPresentationAutoHideDock;
-    }
-    
-    if ([NSApp respondsToSelector:@selector(setPresentationOptions:)])
-        [NSApp setPresentationOptions:options];
-    else
-#endif
-        SetSystemUIMode(_isFullScreen ? kUIModeAllHidden : kUIModeNormal, 0);
-}
 
 - (WebPageProxy*)_page
 {
@@ -543,7 +532,6 @@ static NSRect windowFrameFromApparentFrames(NSRect screenFrame, NSRect initialFr
     _scaleAnimation.adoptNS([[WebWindowScaleAnimation alloc] initWithHintedDuration:duration window:[self window] initalFrame:initialWindowFrame finalFrame:screenFrame]);
     
     [_scaleAnimation.get() setAnimationBlockingMode:NSAnimationNonblocking];
-    [_scaleAnimation.get() setDelegate:self];
     [_scaleAnimation.get() setCurrentProgress:0];
     [_scaleAnimation.get() startAnimation];
 
@@ -596,7 +584,6 @@ static NSRect windowFrameFromApparentFrames(NSRect screenFrame, NSRect initialFr
     _scaleAnimation.adoptNS([[WebWindowScaleAnimation alloc] initWithHintedDuration:duration window:[self window] initalFrame:currentFrame finalFrame:initialWindowFrame]);
 
     [_scaleAnimation.get() setAnimationBlockingMode:NSAnimationNonblocking];
-    [_scaleAnimation.get() setDelegate:self];
     [_scaleAnimation.get() setCurrentProgress:0];
     [_scaleAnimation.get() startAnimation];
 
