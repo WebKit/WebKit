@@ -1,3 +1,15 @@
+2012-11-28  Jussi Kukkonen  <jussi.kukkonen@intel.com>
+
+        [EFL][WK2] add flaky results after r135935
+        https://bugs.webkit.org/show_bug.cgi?id=103514
+
+        Unreviewed gardening: add flaky results after r135935 enabled
+        loads of reftests. Also move the existing flaky results from efl
+        to efl-wk2 since this does not concern WK1.
+
+        * platform/efl-wk2/TestExpectations:
+        * platform/efl/TestExpectations:
+
 2012-11-28  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         Move childrenAffectedBy bits from RenderStyle to Element
