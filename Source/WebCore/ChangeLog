@@ -1,3 +1,17 @@
+2012-11-28  Adam Barth  <abarth@webkit.org>
+
+        [v8] 4% regression in dom_traverse tests
+        https://bugs.webkit.org/show_bug.cgi?id=102858
+
+        Unreviewed.
+
+        This patch is a manual rollout of
+        http://trac.webkit.org/changeset/134729. We can't do a mechanical
+        rollout because V8DOMWrapper::getCachedWrapper no longer exists.
+
+        * bindings/scripts/CodeGeneratorV8.pm:
+        (GenerateHeader):
+
 2012-11-28  Denis Nomiyama  <d.nomiyama@samsung.com>
 
         Removed extra definition of GLXContext.
