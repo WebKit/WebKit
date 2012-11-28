@@ -44,6 +44,8 @@
 
 // Uncomment to force logging to the given file regardless of what the environment variable says. Note that
 // we will append ".<pid>.txt" where <pid> is the PID.
+
+// This path won't work on Windows, make sure to change to something like C:\\Users\\<more path>\\log.txt.
 #define DATA_LOG_FILENAME "/tmp/WTFLog"
 
 namespace WTF {
@@ -63,7 +65,13 @@ static void initializeLogFileOnce()
     const char* filename = getenv("WTF_DATA_LOG_FILENAME");
 #endif
     char actualFilename[1024];
+
+#if PLATFORM(WIN)
+    _snprintf(actualFilename, sizeof(actualFilename), "%s.%d.txt", filename, GetCurrentProcessId());
+#else
     snprintf(actualFilename, sizeof(actualFilename), "%s.%d.txt", filename, getpid());
+#endif
+
     if (filename) {
         FILE* rawFile = fopen(actualFilename, "w");
         if (rawFile)
