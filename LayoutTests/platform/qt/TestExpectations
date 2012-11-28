@@ -2371,17 +2371,6 @@ webkit.org/b/101539 editing/execCommand/switch-list-type-with-orphaned-li.html [
 webkit.org/b/100846 inspector-protocol/debugger-pause-dedicated-worker.html [ Skip ]
 webkit.org/b/100846 inspector-protocol/debugger-terminate-dedicated-worker-while-paused.html [ Skip ]
 
-# Needs rebaseline. A div should be removed, but the rendering should be the same.
-webkit.org/b/102993 fast/dom/HTMLInputElement/input-slider-update.html [ Failure ]
-webkit.org/b/102993 fast/dom/HTMLInputElement/input-slider-update-styled.html [ Failure ]
-webkit.org/b/102993 fast/forms/box-shadow-override.html [ Failure ]
-webkit.org/b/102993 fast/forms/range/input-appearance-range.html [ Failure ]
-webkit.org/b/102993 fast/forms/range/range-thumb-height-percentage.html [ Failure ]
-webkit.org/b/102993 fast/forms/range/slider-padding.html [ Failure ]
-webkit.org/b/102993 fast/multicol/client-rects.html [ Failure ]
-webkit.org/b/102993 fast/repaint/slider-thumb-drag-release.html [ Failure ]
-webkit.org/b/102993 fast/repaint/slider-thumb-float.html [ Failure ]
-
 # QT still has the CC toggle button, not the menu of tracks.
 webkit.org/b/101670 media/video-controls-captions-trackmenu.html [ Skip ]
 

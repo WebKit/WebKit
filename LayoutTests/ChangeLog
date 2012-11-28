@@ -1,5 +1,27 @@
 2012-11-27  Tony Chang  <tony@chromium.org>
 
+        Unreviewed, land updated Qt results after track limiter removal.
+
+        * fast/forms/range/slider-padding-expected.txt: Renamed from LayoutTests/platform/chromium/fast/forms/range/slider-padding-expected.txt.
+        * fast/multicol/client-rects-expected.txt: Renamed from LayoutTests/platform/chromium-mac/fast/multicol/client-rects-expected.txt.
+        * fast/repaint/slider-thumb-drag-release-expected.txt: Renamed from LayoutTests/platform/chromium/fast/repaint/slider-thumb-drag-release-expected.txt.
+        * platform/gtk/fast/forms/range/range-thumb-height-percentage-expected.txt: Removed.
+        * platform/mac/fast/forms/range/slider-padding-expected.txt: Removed.
+        * platform/mac/fast/multicol/client-rects-expected.txt: Removed.
+        * platform/mac/fast/repaint/slider-thumb-drag-release-expected.txt: Removed.
+        * platform/qt/TestExpectations:
+        * platform/qt/fast/dom/HTMLInputElement/input-slider-update-expected.txt:
+        * platform/qt/fast/dom/HTMLInputElement/input-slider-update-styled-expected.txt:
+        * platform/qt/fast/forms/box-shadow-override-expected.txt:
+        * platform/qt/fast/forms/range/input-appearance-range-expected.txt:
+        * platform/qt/fast/forms/range/range-thumb-height-percentage-expected.txt:
+        * platform/qt/fast/forms/range/slider-padding-expected.txt:
+        * platform/qt/fast/multicol/client-rects-expected.txt:
+        * platform/qt/fast/repaint/slider-thumb-drag-release-expected.txt:
+        * platform/qt/fast/repaint/slider-thumb-float-expected.txt:
+
+2012-11-27  Tony Chang  <tony@chromium.org>
+
         Unreviewed, land updated EFL results after track limiter removal.
 
         * platform/efl/TestExpectations:
