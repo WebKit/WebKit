@@ -308,8 +308,10 @@ WebInspector.GenericSettingsTab = function()
     if (WebInspector.experimentsSettings.nativeMemorySnapshots.isEnabled())
         p.appendChild(this._createCheckboxSetting(WebInspector.UIString("Show uninstrumented native memory"), WebInspector.settings.showNativeSnapshotUninstrumentedSize));
 
-    p = this._appendSection(WebInspector.UIString("Timeline"));
-    p.appendChild(this._createCheckboxSetting(WebInspector.UIString("Show CPU activity on the ruler"), WebInspector.settings.showCpuOnTimelineRuler));
+    if (Capabilities.timelineCanMonitorMainThread) {
+        p = this._appendSection(WebInspector.UIString("Timeline"));
+        p.appendChild(this._createCheckboxSetting(WebInspector.UIString("Show CPU activity on the ruler"), WebInspector.settings.showCpuOnTimelineRuler));
+    }
 
     p = this._appendSection(WebInspector.UIString("Console"));
     p.appendChild(this._createCheckboxSetting(WebInspector.UIString("Log XMLHttpRequests"), WebInspector.settings.monitoringXHREnabled));

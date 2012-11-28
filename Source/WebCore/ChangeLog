@@ -1,3 +1,18 @@
+2012-11-27  Eugene Klyuchnikov  <eustas@chromium.com>
+
+        Web Inspector: [Timeline] "Show CPU activity on the ruler" settings checkbox does not take effect until Inspector restart
+        https://bugs.webkit.org/show_bug.cgi?id=102210
+
+        Reviewed by Pavel Feldman.
+
+        The checkbox changes should take effect in the real time.
+
+        * inspector/front-end/SettingsScreen.js:
+        (WebInspector.GenericSettingsTab):
+        Do not show checkpox if browser is not capable.
+        * inspector/front-end/TimelinePanel.js:
+        Added setting change listener.
+
 2012-11-27  Andreas Kling  <akling@apple.com>
 
         Compile time size assertions for TreeScope, ShadowRoot and ElementAttributeData.
