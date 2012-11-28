@@ -1369,36 +1369,6 @@ webkit.org/b/102349 fast/dom/shadow/pseudoclass-update-enabled-area.html [ Image
 
 webkit.org/b/102586 media/video-src-blob.html [ Failure ]
 
-# Needs rebaseline. A div should be removed, but the rendering should be the same.
-webkit.org/b/102993 fast/dom/HTMLInputElement/input-slider-update.html [ Failure ]
-webkit.org/b/102993 fast/dom/HTMLInputElement/input-slider-update-styled.html [ Failure ]
-webkit.org/b/102993 fast/forms/box-shadow-override.html [ Failure ]
-webkit.org/b/102993 fast/forms/input-appearance-height.html [ Failure ]
-webkit.org/b/102993 fast/forms/range/input-appearance-range.html [ Failure ]
-webkit.org/b/102993 fast/forms/range/range-thumb-height-percentage.html [ Failure ]
-webkit.org/b/102993 fast/forms/range/slider-padding.html [ Failure ]
-webkit.org/b/102993 fast/forms/range/slider-thumb-shared-style.html [ Failure ]
-webkit.org/b/102993 fast/forms/range/slider-thumb-stylability.html [ Failure ]
-webkit.org/b/102993 fast/multicol/client-rects.html [ Failure ]
-webkit.org/b/102993 fast/repaint/slider-thumb-drag-release.html [ Failure ]
-webkit.org/b/102993 fast/repaint/slider-thumb-float.html [ Failure ]
-webkit.org/b/102993 fast/hidpi/video-controls-in-hidpi.html [ Failure ]
-webkit.org/b/102993 fast/layers/video-layer.html [ Failure ]
-webkit.org/b/102993 media/audio-controls-rendering.html [ Failure ]
-webkit.org/b/102993 media/audio-repaint.html [ Failure ]
-webkit.org/b/102993 media/controls-after-reload.html [ Failure ]
-webkit.org/b/102993 media/controls-strict.html [ Failure ]
-webkit.org/b/102993 media/controls-styling.html [ Failure ]
-webkit.org/b/102993 media/controls-styling-strict.html [ Failure ]
-webkit.org/b/102993 media/controls-without-preload.html [ Failure ]
-webkit.org/b/102993 media/media-controls-clone.html [ Failure ]
-webkit.org/b/102993 media/video-controls-rendering.html [ Failure ]
-webkit.org/b/102993 media/video-display-toggle.html [ Failure ]
-webkit.org/b/102993 media/video-empty-source.html [ Failure ]
-webkit.org/b/102993 media/video-no-audio.html [ Failure ]
-webkit.org/b/102993 media/video-volume-slider.html [ Failure ]
-webkit.org/b/102993 media/video-zoom-controls.html [ Failure ]
-
 # GTK still has the CC toggle button, not the menu of tracks.
 webkit.org/b/101670 media/video-controls-captions-trackmenu.html [ Skip ]
 

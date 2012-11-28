@@ -1,3 +1,41 @@
+2012-11-27  Tony Chang  <tony@chromium.org>
+
+        Unreviewed, land updated Gtk results after track limiter removal.
+
+        * fast/dom/HTMLInputElement/input-slider-update-expected.txt: Renamed from LayoutTests/platform/chromium/fast/dom/HTMLInputElement/input-slider-update-expected.txt.
+        * fast/forms/range/input-appearance-range-expected.txt: Renamed from LayoutTests/platform/chromium-mac/fast/forms/range/input-appearance-range-expected.txt.
+        * platform/gtk/TestExpectations:
+        * platform/gtk/fast/dom/HTMLInputElement/input-slider-update-expected.txt:
+        * platform/gtk/fast/dom/HTMLInputElement/input-slider-update-styled-expected.txt:
+        * platform/gtk/fast/forms/box-shadow-override-expected.txt:
+        * platform/gtk/fast/forms/input-appearance-height-expected.txt:
+        * platform/gtk/fast/forms/range/input-appearance-range-expected.txt:
+        * platform/gtk/fast/forms/range/range-thumb-height-percentage-expected.txt: Added.
+        * platform/gtk/fast/forms/range/slider-padding-expected.txt:
+        * platform/gtk/fast/forms/range/slider-thumb-shared-style-expected.txt:
+        * platform/gtk/fast/forms/range/slider-thumb-stylability-expected.txt:
+        * platform/gtk/fast/hidpi/video-controls-in-hidpi-expected.txt:
+        * platform/gtk/fast/layers/video-layer-expected.txt:
+        * platform/gtk/fast/multicol/client-rects-expected.txt:
+        * platform/gtk/fast/repaint/slider-thumb-drag-release-expected.txt:
+        * platform/gtk/fast/repaint/slider-thumb-float-expected.txt:
+        * platform/gtk/media/audio-controls-rendering-expected.txt:
+        * platform/gtk/media/audio-repaint-expected.txt:
+        * platform/gtk/media/controls-after-reload-expected.txt:
+        * platform/gtk/media/controls-strict-expected.txt:
+        * platform/gtk/media/controls-styling-expected.txt:
+        * platform/gtk/media/controls-styling-strict-expected.txt:
+        * platform/gtk/media/controls-without-preload-expected.txt:
+        * platform/gtk/media/media-controls-clone-expected.txt:
+        * platform/gtk/media/video-controls-rendering-expected.txt:
+        * platform/gtk/media/video-display-toggle-expected.txt:
+        * platform/gtk/media/video-empty-source-expected.txt:
+        * platform/gtk/media/video-no-audio-expected.txt:
+        * platform/gtk/media/video-volume-slider-expected.txt:
+        * platform/gtk/media/video-zoom-controls-expected.txt:
+        * platform/mac/fast/dom/HTMLInputElement/input-slider-update-expected.txt: Removed.
+        * platform/mac/fast/forms/range/input-appearance-range-expected.txt: Removed.
+
 2012-11-27  Kunihiko Sakamoto  <ksakamoto@chromium.org>
 
         Add behavior tests for input[type=datetime-local] with multiple fields

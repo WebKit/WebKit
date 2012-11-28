@@ -23,9 +23,8 @@ layer at (8,42) size 352x288 scrollHeight 298
               text run at (0,0) width 55: "00:00 / 00:09"
       RenderSlider {INPUT} at (66,0) size 185x20
         RenderFlexibleBox {DIV} at (2,0) size 181x20
-          RenderBlock {DIV} at (0,4) size 169x12
+          RenderBlock {DIV} at (0,4) size 181x12
             RenderBlock {DIV} at (0,0) size 12x12
-          RenderBlock {DIV} at (169,0) size 12x12
     RenderButton {INPUT} at (272,268) size 20x20
     RenderButton {INPUT} at (292,268) size 20x20
     RenderButton {INPUT} at (312,268) size 20x20

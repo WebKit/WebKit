@@ -24,7 +24,6 @@ layer at (57,85) size 240x180 scrollHeight 194
         RenderFlexibleBox {DIV} at (3,0) size 0x30
           RenderBlock {DIV} at (0,9) size 0x12
             RenderBlock {DIV} at (0,0) size 12x12
-          RenderBlock {DIV} at (0,0) size 12x12
     RenderButton {INPUT} at (120,150) size 30x30
     RenderButton {INPUT} at (150,150) size 30x30
     RenderButton {INPUT} at (180,150) size 30x30
@@ -49,7 +48,6 @@ layer at (57,310) size 240x180 scrollHeight 194
         RenderFlexibleBox {DIV} at (3,0) size 0x30
           RenderBlock {DIV} at (0,9) size 0x12
             RenderBlock {DIV} at (0,0) size 12x12
-          RenderBlock {DIV} at (0,0) size 12x12
     RenderButton {INPUT} at (120,150) size 30x30
     RenderButton {INPUT} at (150,150) size 30x30
     RenderButton {INPUT} at (180,150) size 30x30
