@@ -1,3 +1,20 @@
+2012-11-14  Jer Noble  <jer.noble@apple.com>
+
+        Add a new shared class WebCoreFullScreenWarningView which presents a styled warning message.
+        https://bugs.webkit.org/show_bug.cgi?id=102299
+
+        Reviewed by Alexey Proskuryakov.
+
+        Add a shared implementation of a warning view for use in WebKit and WebKit2.
+
+        * platform/mac/WebCoreFullScreenWarningView.h: Added.
+        * platform/mac/WebCoreFullScreenWarningView.mm: Added.
+        (-[WebCoreFullScreenWarningView initWithTitle:]): Create the view.
+
+        Add the new files to the project and exports list:
+        * WebCore.exp.in:
+        * WebCore.xcodeproj/project.pbxproj:
+
 2012-11-27  Dean Jackson  <dino@apple.com>
 
         Make track list control active
