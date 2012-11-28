@@ -80,32 +80,32 @@ void SimpleFontData::initGDIFont()
         return;
     }
 
-     HWndDC hdc(0);
-     HGDIOBJ oldFont = SelectObject(hdc, m_platformData.hfont());
-     OUTLINETEXTMETRIC metrics;
-     GetOutlineTextMetrics(hdc, sizeof(metrics), &metrics);
-     TEXTMETRIC& textMetrics = metrics.otmTextMetrics;
-     float ascent = textMetrics.tmAscent;
-     float descent = textMetrics.tmDescent;
-     float lineGap = textMetrics.tmExternalLeading;
-     m_fontMetrics.setAscent(ascent);
-     m_fontMetrics.setDescent(descent);
-     m_fontMetrics.setLineGap(lineGap);
-     m_fontMetrics.setLineSpacing(lroundf(ascent) + lroundf(descent) + lroundf(lineGap));
-     m_avgCharWidth = textMetrics.tmAveCharWidth;
-     m_maxCharWidth = textMetrics.tmMaxCharWidth;
-     float xHeight = ascent * 0.56f; // Best guess for xHeight if no x glyph is present.
+    HWndDC hdc(0);
+    HGDIOBJ oldFont = SelectObject(hdc, m_platformData.hfont());
+    OUTLINETEXTMETRIC metrics;
+    GetOutlineTextMetrics(hdc, sizeof(metrics), &metrics);
+    TEXTMETRIC& textMetrics = metrics.otmTextMetrics;
+    float ascent = textMetrics.tmAscent;
+    float descent = textMetrics.tmDescent;
+    float lineGap = textMetrics.tmExternalLeading;
+    m_fontMetrics.setAscent(ascent);
+    m_fontMetrics.setDescent(descent);
+    m_fontMetrics.setLineGap(lineGap);
+    m_fontMetrics.setLineSpacing(lroundf(ascent) + lroundf(descent) + lroundf(lineGap));
+    m_avgCharWidth = textMetrics.tmAveCharWidth;
+    m_maxCharWidth = textMetrics.tmMaxCharWidth;
+    float xHeight = ascent * 0.56f; // Best guess for xHeight if no x glyph is present.
 #if !OS(WINCE)
-     GLYPHMETRICS gm;
-     static const MAT2 identity = { 0, 1,  0, 0,  0, 0,  0, 1 };
-     DWORD len = GetGlyphOutline(hdc, 'x', GGO_METRICS, &gm, 0, 0, &identity);
-     if (len != GDI_ERROR && gm.gmptGlyphOrigin.y > 0)
-         xHeight = gm.gmptGlyphOrigin.y;
+    GLYPHMETRICS gm;
+    static const MAT2 identity = { 0, 1,  0, 0,  0, 0,  0, 1 };
+    DWORD len = GetGlyphOutline(hdc, 'x', GGO_METRICS, &gm, 0, 0, &identity);
+    if (len != GDI_ERROR && gm.gmptGlyphOrigin.y > 0)
+        xHeight = gm.gmptGlyphOrigin.y;
 #endif
-     m_fontMetrics.setXHeight(xHeight);
-     m_fontMetrics.setUnitsPerEm(metrics.otmEMSquare);
+    m_fontMetrics.setXHeight(xHeight);
+    m_fontMetrics.setUnitsPerEm(metrics.otmEMSquare);
 
-     SelectObject(hdc, oldFont);
+    SelectObject(hdc, oldFont);
 }
 
 void SimpleFontData::platformCharWidthInit()

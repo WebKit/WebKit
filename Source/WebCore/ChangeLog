@@ -1,3 +1,10 @@
+2012-11-28  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. Fix extra spaces in SimpleFontData::initGDIFont().
+
+        * platform/graphics/win/SimpleFontDataWin.cpp:
+        (WebCore::SimpleFontData::initGDIFont):
+
 2012-11-28  Dan Carney  <dcarney@google.com>
 
         [V8] Crash wrapping media element when MediaPlayer isn't available
