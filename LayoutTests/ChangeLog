@@ -1,5 +1,13 @@
 2012-11-27  Robert Kroeger  <rjkroege@chromium.org>
 
+        Unreviewed gardening: crashing on XP
+        fast/frames/sandboxed-iframe-navigation-parent.html
+        https://bugs.webkit.org/show_bug.cgi?id=103472
+
+        * platform/chromium/TestExpectations:
+
+2012-11-27  Robert Kroeger  <rjkroege@chromium.org>
+
         Unreviewed gardening:
         Layout Test http/tests/navigation/slowmetaredirect-basic.html is failing
         https://bugs.webkit.org/show_bug.cgi?id=103471
