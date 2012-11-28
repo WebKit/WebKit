@@ -1,3 +1,24 @@
+2012-11-28  Sadrul Habib Chowdhury  <sadrul@chromium.org>
+
+        Fix gesture scrolling when the target-element of scroll-begin is removed
+        https://bugs.webkit.org/show_bug.cgi?id=103355
+
+        Reviewed by Antonio Gomes.
+
+        When a touch-scroll starts, the node under the touch-point gets latched, and
+        subsequent scroll-update events are dispatched to that node. But if the node is
+        removed while the gesture event is in progress (e.g. in a dynamically updated
+        list), then the scrolling stops, although there are enough elements to still
+        enable scrolling. So instead of latching on to the node immediately under the
+        touch point, latch on to the scrollable node under the touch point.
+
+        Test: fast/events/touch/gesture/touch-gesture-scroll-remove-node.html
+
+        * page/EventHandler.cpp:
+        (WebCore::getClosestScrollableNodeInDocumentIfPossible):
+        (WebCore):
+        (WebCore::EventHandler::handleWheelEvent):
+
 2012-11-28  Anton Obzhirov  <a.obzhirov@samsung.com>
 
         Fix .libs/libwebkitgtk-3.0.so: undefined reference to `WebCore::validationMessageBadInputForNumberText().

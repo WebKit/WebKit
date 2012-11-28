@@ -1,3 +1,17 @@
+2012-11-28  Sadrul Habib Chowdhury  <sadrul@chromium.org>
+
+        Fix gesture scrolling when the target-element of scroll-begin is removed
+        https://bugs.webkit.org/show_bug.cgi?id=103355
+
+        Reviewed by Antonio Gomes.
+
+        Added a test that starts a touch-scroll, removes the initial element under the
+        touch-point, and scrolls some more, to test that the scrolling happens correctly
+        after the element is removed.
+
+        * fast/events/touch/gesture/touch-gesture-scroll-remove-node-expected.txt: Added.
+        * fast/events/touch/gesture/touch-gesture-scroll-remove-node.html: Added.
+
 2012-11-28  Jussi Kukkonen  <jussi.kukkonen@intel.com>
 
         [EFL][WK2] add flaky results after r135935
