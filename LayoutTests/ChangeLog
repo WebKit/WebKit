@@ -1,3 +1,9 @@
+2012-11-28  Andrew Scherkus  <scherkus@chromium.org>
+
+        [Chromium] Unreviewed. Fixing lint errors introduced in r136030.
+
+        * platform/chromium/TestExpectations:
+
 2012-11-28  Alexandru Chiculita  <achicu@adobe.com>
 
         [CSS Regions] InRenderFlowThread returns false in the first setStyle

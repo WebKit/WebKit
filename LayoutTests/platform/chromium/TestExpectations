@@ -4257,4 +4257,4 @@ webkit.org/b/103471 [ Win Mac Linux ] http/tests/navigation/slowmetaredirect-bas
 webkit.org/b/103472 [ Mac Win Debug ] fast/frames/sandboxed-iframe-navigation-parent.html [ Pass Slow Crash ]
 
 # Rebaseline after https://codereview.chromium.org/11421080/ lands.
-Bug(scherkus) http/tests/media/video-buffered-range-contains-currentTime.html [ ImageOnlyFailure ]
+Bug(scherkus) [ Win Mac Linux ] http/tests/media/video-buffered-range-contains-currentTime.html [ ImageOnlyFailure ]
