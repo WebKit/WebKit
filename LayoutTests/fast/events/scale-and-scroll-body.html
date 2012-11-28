@@ -12,10 +12,10 @@
       function scrollViaJavascript() {
           var scaleFactor = 2.0;
           if (window.internals) {
-             window.internals.settings.setPageScaleFactor(scaleFactor, 0, 0);
+             window.internals.setPageScaleFactor(scaleFactor, 0, 0);
           }
 
-          // The page scale, as set by window.internals.settings.setPageScaleFactor should not be apparent
+          // The page scale, as set by window.internals.setPageScaleFactor should not be apparent
           // to javascript. So, we expect scrolling to (100,100) to be page coordinates, rather
           // than device pixels.
           document.body.scrollLeft = 100;
@@ -31,7 +31,7 @@
           if (window.internals) {
               // Test that the scroll offset changes even if scaleFactor remains
               // the same.
-              window.internals.settings.setPageScaleFactor(1, 30, 30);
+              window.internals.setPageScaleFactor(1, 30, 30);
               shouldBe("window.document.body.scrollTop", "30");
               shouldBe("window.document.body.scrollLeft", "30");
           }

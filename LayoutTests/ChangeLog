@@ -1,3 +1,56 @@
+2012-11-28  Tony Chang  <tony@chromium.org>
+
+        Move internals.settings.setPageScaleFactor to internals.setPageScaleFactor
+        https://bugs.webkit.org/show_bug.cgi?id=103559
+
+        Reviewed by Jochen Eisinger.
+
+        This method doesn't alter the Settings object, so move it to internals.
+        Update the tests to call the right version.
+
+        * compositing/geometry/fixed-position-composited-page-scale-down.html:
+        * compositing/geometry/fixed-position-composited-page-scale-scroll.html:
+        * compositing/geometry/fixed-position-composited-page-scale.html:
+        * compositing/geometry/fixed-position-iframe-composited-page-scale-down.html:
+        * compositing/geometry/fixed-position-iframe-composited-page-scale.html:
+        * compositing/geometry/fixed-position-transform-composited-page-scale-down.html:
+        * compositing/geometry/fixed-position-transform-composited-page-scale.html:
+        * compositing/overflow/overflow-scaled-descendant-overlapping.html:
+        * compositing/repaint/page-scale-repaint.html:
+        * compositing/scaling/tiled-layer-recursion.html:
+        * fast/dom/Element/scale-page-bounding-client-rect-in-frame.html:
+        * fast/dom/Element/scale-page-bounding-client-rect.html:
+        * fast/dom/Element/scale-page-client-rects-in-frame.html:
+        * fast/dom/Element/scale-page-client-rects.html:
+        * fast/dom/Range/scale-page-bounding-client-rect.html:
+        * fast/dom/Range/scale-page-client-rects.html:
+        * fast/dom/elementFromPoint-scaled-scrolled.html:
+        * fast/dom/iframe-inner-size-scaling.html:
+        * fast/dom/window-inner-size-scaling.html:
+        * fast/dom/window-scroll-scaling.html:
+        * fast/events/scale-and-scroll-body.html:
+        * fast/events/scale-and-scroll-iframe-body.html:
+        * fast/events/scale-and-scroll-iframe-window.html:
+        * fast/events/scale-and-scroll-window.html:
+        * fast/events/script-tests/page-scaled-mouse-click-iframe.js:
+        (iframeLoaded):
+        * fast/events/script-tests/page-scaled-mouse-click.js:
+        * fast/events/scroll-in-scaled-page-with-overflow-hidden.html:
+        * fast/events/touch/page-scaled-touch-gesture-click.html:
+        * fast/events/touch/touch-scaled-scrolled.html:
+        * fast/frames/frame-set-rotation-hit.html:
+        * fast/frames/frame-set-scaling-hit.html:
+        * fast/frames/iframe-double-scale-contents.html:
+        * fast/repaint/background-scaling.html:
+        * fast/repaint/scale-page-shrink.html:
+        * fast/text/descent-clip-in-scaled-page-expected.html:
+        * fast/text/descent-clip-in-scaled-page.html:
+        * fast/transforms/selection-bounds-in-transformed-view.html:
+        * inspector/elements/highlight-node-scaled.html:
+        * platform/chromium-linux/compositing/gestures/gesture-tapHighlight-simple-scaled-document.html:
+        * svg/as-image/image-respects-pageScaleFactor-change.html:
+        * svg/as-image/image-respects-pageScaleFactor.html:
+
 2012-11-28  Christophe Dumez  <christophe.dumez@intel.com>
 
         CSS3 Multicolumn: column-span should accept value 'none' (instead of '1')

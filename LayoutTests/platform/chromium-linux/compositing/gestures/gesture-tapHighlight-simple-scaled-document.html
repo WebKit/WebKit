@@ -13,7 +13,7 @@ This test is successful if "Target Link" above is covered in a transparent green
 <script>
 function runTest() {
     if (window.internals) {
-        window.internals.settings.setPageScaleFactor(2, 0, 0);
+        window.internals.setPageScaleFactor(2, 0, 0);
     }
 
     var clientRect = document.getElementById('targetLink').getBoundingClientRect();

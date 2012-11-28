@@ -253,12 +253,6 @@ bool InternalSettings::unifiedTextCheckingEnabled(ExceptionCode& ec)
     return settings()->unifiedTextCheckerEnabled();
 }
 
-void InternalSettings::setPageScaleFactor(float scaleFactor, int x, int y, ExceptionCode& ec)
-{
-    InternalSettingsGuardForPage();
-    page()->setPageScaleFactor(scaleFactor, IntPoint(x, y));
-}
-
 void InternalSettings::setShadowDOMEnabled(bool enabled, ExceptionCode& ec)
 {
 #if ENABLE(SHADOW_DOM)

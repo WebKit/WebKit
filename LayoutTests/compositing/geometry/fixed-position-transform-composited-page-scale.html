@@ -18,7 +18,7 @@
   function scale() {
     if (window.internals) {
       window.internals.settings.setEnableCompositingForFixedPosition(true);
-      window.internals.settings.setPageScaleFactor(2, 0, 0);
+      window.internals.setPageScaleFactor(2, 0, 0);
     }
     if (window.testRunner)
       testRunner.dumpAsText(true);

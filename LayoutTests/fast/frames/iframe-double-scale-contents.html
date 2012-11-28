@@ -23,7 +23,7 @@
       function scalePage(scaleFactor) {
           var scaleOffset = 0;
           if (window.internals) {
-            window.internals.settings.setPageScaleFactor(scaleFactor, scaleOffset, scaleOffset);
+            window.internals.setPageScaleFactor(scaleFactor, scaleOffset, scaleOffset);
           }
       }
 

@@ -1,3 +1,23 @@
+2012-11-28  Tony Chang  <tony@chromium.org>
+
+        Move internals.settings.setPageScaleFactor to internals.setPageScaleFactor
+        https://bugs.webkit.org/show_bug.cgi?id=103559
+
+        Reviewed by Jochen Eisinger.
+
+        This method doesn't alter the Settings object, so move it to internals.
+
+        No new tests, this is a refactor.
+
+        * testing/InternalSettings.cpp: Remove.
+        * testing/InternalSettings.h: Remove.
+        * testing/InternalSettings.idl: Remove.
+        * testing/Internals.cpp:
+        (WebCore::Internals::resetToConsistentState): Add reset code.
+        (WebCore::Internals::setPageScaleFactor): Add method.
+        * testing/Internals.h: Add method.
+        * testing/Internals.idl: Add method.
+
 2012-11-28  Alexandru Chiculita  <achicu@adobe.com>
 
         [CSS Regions] Elements using transforms are not repainted correctly when rendered in a region

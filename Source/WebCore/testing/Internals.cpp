@@ -220,6 +220,7 @@ void Internals::resetToConsistentState(Page* page)
 {
     ASSERT(page);
 
+    page->setPageScaleFactor(1, IntPoint(0, 0));
     page->setPagination(Pagination());
     TextRun::setAllowsRoundingHacks(false);
     WebCore::overrideUserPreferredLanguages(Vector<String>());
@@ -1536,6 +1537,17 @@ String Internals::pageSizeAndMarginsInPixels(int pageNumber, int width, int heig
     }
 
     return PrintContext::pageSizeAndMarginsInPixels(frame(), pageNumber, width, height, marginTop, marginRight, marginBottom, marginLeft);
+}
+
+void Internals::setPageScaleFactor(float scaleFactor, int x, int y, ExceptionCode& ec)
+{
+    Document* document = contextDocument();
+    if (!document || !document->page()) {
+        ec = INVALID_ACCESS_ERR;
+        return;
+    }
+    Page* page = document->page();
+    page->setPageScaleFactor(scaleFactor, IntPoint(x, y));
 }
 
 #if ENABLE(FULLSCREEN_API)

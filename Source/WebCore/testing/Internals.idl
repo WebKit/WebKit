@@ -196,6 +196,7 @@
     DOMString pageProperty(in DOMString propertyName, in long pageNumber) raises (DOMException);
     DOMString pageSizeAndMarginsInPixels(in long pageIndex, in long width, in long height, in long marginTop, in long marginRight, in long marginBottom, in long marginLeft) raises (DOMException);
 
+    void setPageScaleFactor(in float scaleFactor, in long x, in long y) raises(DOMException);
 
 #if defined(ENABLE_FULLSCREEN_API) && ENABLE_FULLSCREEN_API
     void webkitWillEnterFullScreenForElement(in Document document, in Element element);

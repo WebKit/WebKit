@@ -37,7 +37,6 @@
     void setFixedElementsLayoutRelativeToFrame(in boolean enabled) raises(DOMException);
     void setUnifiedTextCheckingEnabled(in boolean enabled) raises (DOMException);
     boolean unifiedTextCheckingEnabled() raises (DOMException);
-    void setPageScaleFactor(in float scaleFactor, in long x, in long y) raises(DOMException);
     void setTouchEventEmulationEnabled(in boolean enabled) raises(DOMException);
     void setDeviceSupportsTouch(in boolean enabled) raises(DOMException);
     void setDeviceSupportsMouse(in boolean enabled) raises(DOMException);
