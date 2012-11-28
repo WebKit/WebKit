@@ -2860,23 +2860,6 @@ webkit.org/b/96720 fast/forms/time-multiple-fields/time-multiple-fields-preserve
 webkit.org/b/96720 fast/forms/date-multiple-fields/date-multiple-fields-preserve-value-after-history-back.html [ Pass Timeout ]
 webkit.org/b/98906 platform/chromium/fast/forms/suggestion-picker/date-suggestion-picker-mouse-operations.html [ Pass Failure ]
 
-# Needs rebaseline
-webkit.org/b/102888 platform/chromium/fast/forms/suggestion-picker/datetimelocal-suggestion-picker-appearance.html [ Pass ImageOnlyFailure Missing ]
-webkit.org/b/102888 platform/chromium/fast/forms/suggestion-picker/datetimelocal-suggestion-picker-appearance-rtl.html [ Pass ImageOnlyFailure Missing ]
-webkit.org/b/102888 platform/chromium/fast/forms/suggestion-picker/datetimelocal-suggestion-picker-appearance-with-scroll-bar.html [ Pass ImageOnlyFailure Missing ]
-webkit.org/b/102888 platform/chromium/fast/forms/suggestion-picker/datetime-suggestion-picker-appearance.html [ Pass ImageOnlyFailure Missing ]
-webkit.org/b/102888 platform/chromium/fast/forms/suggestion-picker/datetime-suggestion-picker-appearance-rtl.html [ Pass ImageOnlyFailure Missing ]
-webkit.org/b/102888 platform/chromium/fast/forms/suggestion-picker/datetime-suggestion-picker-appearance-with-scroll-bar.html [ Pass ImageOnlyFailure Missing ]
-webkit.org/b/103350 fast/forms/date/date-appearance-pseudo-classes.html [ Pass ImageOnlyFailure ]
-webkit.org/b/103350 fast/forms/month/month-appearance-pseudo-classes.html [ Pass ImageOnlyFailure ]
-webkit.org/b/103350 fast/forms/time/time-appearance-pseudo-classes.html [ Pass ImageOnlyFailure ]
-webkit.org/b/103350 fast/forms/week/week-appearance-pseudo-classes.html [ Pass ImageOnlyFailure ]
-webkit.org/b/103373 fast/forms/date/date-appearance-basic.html [ Pass ImageOnlyFailure ]
-webkit.org/b/103373 fast/forms/time/time-appearance-basic.html [ Pass ImageOnlyFailure ]
-webkit.org/b/103373 fast/forms/month/month-appearance-basic.html [ Pass ImageOnlyFailure ]
-webkit.org/b/103373 fast/forms/week/week-appearance-basic.html [ Pass ImageOnlyFailure ]
-
-
 # New test added in r87324
 crbug.com/83994 [ Win ] platform/win/plugins/call-javascript-that-destroys-plugin.html [ Failure ]
 

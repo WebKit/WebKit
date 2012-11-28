@@ -1,3 +1,72 @@
+2012-11-27  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium] Update test results for recent forms changes
+
+        * platform/chromium-linux/fast/forms/date/date-appearance-basic-expected.png:
+        * platform/chromium-linux/fast/forms/date/date-appearance-pseudo-classes-expected.png:
+        * platform/chromium-linux/fast/forms/month/month-appearance-basic-expected.png:
+        * platform/chromium-linux/fast/forms/month/month-appearance-pseudo-classes-expected.png:
+        * platform/chromium-linux/fast/forms/time/time-appearance-basic-expected.png:
+        * platform/chromium-linux/fast/forms/time/time-appearance-pseudo-classes-expected.png:
+        * platform/chromium-linux/fast/forms/week/week-appearance-basic-expected.png:
+        * platform/chromium-linux/fast/forms/week/week-appearance-pseudo-classes-expected.png:
+        * platform/chromium-linux/platform/chromium/fast/forms/suggestion-picker/datetime-suggestion-picker-appearance-expected.png: Added.
+        * platform/chromium-linux/platform/chromium/fast/forms/suggestion-picker/datetime-suggestion-picker-appearance-rtl-expected.png: Added.
+        * platform/chromium-linux/platform/chromium/fast/forms/suggestion-picker/datetime-suggestion-picker-appearance-with-scroll-bar-expected.png: Added.
+        * platform/chromium-linux/platform/chromium/fast/forms/suggestion-picker/datetimelocal-suggestion-picker-appearance-expected.png: Added.
+        * platform/chromium-linux/platform/chromium/fast/forms/suggestion-picker/datetimelocal-suggestion-picker-appearance-rtl-expected.png: Added.
+        * platform/chromium-linux/platform/chromium/fast/forms/suggestion-picker/datetimelocal-suggestion-picker-appearance-with-scroll-bar-expected.png: Added.
+        * platform/chromium-mac-lion/fast/forms/date/date-appearance-basic-expected.png:
+        * platform/chromium-mac-lion/fast/forms/date/date-appearance-pseudo-classes-expected.png:
+        * platform/chromium-mac-lion/fast/forms/month/month-appearance-basic-expected.png:
+        * platform/chromium-mac-lion/fast/forms/month/month-appearance-pseudo-classes-expected.png:
+        * platform/chromium-mac-lion/fast/forms/time/time-appearance-basic-expected.png:
+        * platform/chromium-mac-lion/fast/forms/time/time-appearance-pseudo-classes-expected.png:
+        * platform/chromium-mac-lion/fast/forms/week/week-appearance-basic-expected.png:
+        * platform/chromium-mac-lion/fast/forms/week/week-appearance-pseudo-classes-expected.png:
+        * platform/chromium-mac-lion/platform/chromium/fast/forms/suggestion-picker/datetime-suggestion-picker-appearance-expected.png: Added.
+        * platform/chromium-mac-lion/platform/chromium/fast/forms/suggestion-picker/datetime-suggestion-picker-appearance-rtl-expected.png: Added.
+        * platform/chromium-mac-lion/platform/chromium/fast/forms/suggestion-picker/datetime-suggestion-picker-appearance-with-scroll-bar-expected.png: Added.
+        * platform/chromium-mac-lion/platform/chromium/fast/forms/suggestion-picker/datetimelocal-suggestion-picker-appearance-expected.png: Added.
+        * platform/chromium-mac-lion/platform/chromium/fast/forms/suggestion-picker/datetimelocal-suggestion-picker-appearance-rtl-expected.png: Added.
+        * platform/chromium-mac-lion/platform/chromium/fast/forms/suggestion-picker/datetimelocal-suggestion-picker-appearance-with-scroll-bar-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/forms/date/date-appearance-basic-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/date/date-appearance-pseudo-classes-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/month/month-appearance-basic-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/month/month-appearance-pseudo-classes-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/time/time-appearance-basic-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/time/time-appearance-pseudo-classes-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/week/week-appearance-basic-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/week/week-appearance-pseudo-classes-expected.png:
+        * platform/chromium-mac-snowleopard/platform/chromium/fast/forms/suggestion-picker/datetime-suggestion-picker-appearance-expected.png: Added.
+        * platform/chromium-mac-snowleopard/platform/chromium/fast/forms/suggestion-picker/datetime-suggestion-picker-appearance-rtl-expected.png: Added.
+        * platform/chromium-mac-snowleopard/platform/chromium/fast/forms/suggestion-picker/datetime-suggestion-picker-appearance-with-scroll-bar-expected.png: Added.
+        * platform/chromium-mac-snowleopard/platform/chromium/fast/forms/suggestion-picker/datetimelocal-suggestion-picker-appearance-expected.png: Added.
+        * platform/chromium-mac-snowleopard/platform/chromium/fast/forms/suggestion-picker/datetimelocal-suggestion-picker-appearance-rtl-expected.png: Added.
+        * platform/chromium-mac-snowleopard/platform/chromium/fast/forms/suggestion-picker/datetimelocal-suggestion-picker-appearance-with-scroll-bar-expected.png: Added.
+        * platform/chromium-mac/platform/chromium/fast/forms/suggestion-picker/datetime-suggestion-picker-appearance-expected.png:
+        * platform/chromium-mac/platform/chromium/fast/forms/suggestion-picker/datetime-suggestion-picker-appearance-rtl-expected.png:
+        * platform/chromium-mac/platform/chromium/fast/forms/suggestion-picker/datetime-suggestion-picker-appearance-with-scroll-bar-expected.png:
+        * platform/chromium-mac/platform/chromium/fast/forms/suggestion-picker/datetimelocal-suggestion-picker-appearance-expected.png:
+        * platform/chromium-mac/platform/chromium/fast/forms/suggestion-picker/datetimelocal-suggestion-picker-appearance-rtl-expected.png:
+        * platform/chromium-mac/platform/chromium/fast/forms/suggestion-picker/datetimelocal-suggestion-picker-appearance-with-scroll-bar-expected.png:
+        * platform/chromium-win-xp/fast/forms/datetimelocal-multiple-fields/datetimelocal-multiple-fields-keyboard-events-expected.txt: Added.
+        * platform/chromium-win/fast/forms/date/date-appearance-basic-expected.png:
+        * platform/chromium-win/fast/forms/date/date-appearance-pseudo-classes-expected.png:
+        * platform/chromium-win/fast/forms/month/month-appearance-basic-expected.png:
+        * platform/chromium-win/fast/forms/month/month-appearance-pseudo-classes-expected.png:
+        * platform/chromium-win/fast/forms/time/time-appearance-basic-expected.png:
+        * platform/chromium-win/fast/forms/time/time-appearance-pseudo-classes-expected.png:
+        * platform/chromium-win/fast/forms/week/week-appearance-basic-expected.png:
+        * platform/chromium-win/fast/forms/week/week-appearance-pseudo-classes-expected.png:
+        * platform/chromium-win/platform/chromium/fast/forms/suggestion-picker/datetime-suggestion-picker-appearance-expected.png: Added.
+        * platform/chromium-win/platform/chromium/fast/forms/suggestion-picker/datetime-suggestion-picker-appearance-rtl-expected.png: Added.
+        * platform/chromium-win/platform/chromium/fast/forms/suggestion-picker/datetime-suggestion-picker-appearance-with-scroll-bar-expected.png: Added.
+        * platform/chromium-win/platform/chromium/fast/forms/suggestion-picker/datetimelocal-suggestion-picker-appearance-expected.png: Added.
+        * platform/chromium-win/platform/chromium/fast/forms/suggestion-picker/datetimelocal-suggestion-picker-appearance-rtl-expected.png: Added.
+        * platform/chromium-win/platform/chromium/fast/forms/suggestion-picker/datetimelocal-suggestion-picker-appearance-with-scroll-bar-expected.png: Added.
+        * platform/chromium/TestExpectations:
+
 2012-11-27  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Support proper <percent> / calc() resolution for grid items
