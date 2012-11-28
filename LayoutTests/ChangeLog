@@ -1,3 +1,9 @@
+2012-11-28  Andrew Scherkus  <scherkus@chromium.org>
+
+        [Chromium] Unreviewed. Mark http/tests/media/video-buffered-range-contains-currentTime.html as requiring an image rebaseline.
+
+        * platform/chromium/TestExpectations:
+
 2012-11-28  Tony Chang  <tony@chromium.org>
 
         Unreviewed, land updated Chromium results after track limiter removal.
