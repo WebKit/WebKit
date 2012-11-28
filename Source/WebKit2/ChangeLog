@@ -1,3 +1,15 @@
+2012-11-28  Joone Hur  <joone.hur@intel.com>
+
+        [EFL][WK2][AC] Clear the viewport with white color
+        https://bugs.webkit.org/show_bug.cgi?id=103495
+
+        When initializing a GL surface, we should clear the buffer with white color.
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * UIProcess/API/efl/EwkViewImpl.cpp:
+        (EwkViewImpl::createGLSurface):
+
 2012-11-27  Jinwoo Song  <jinwoo7.song@samsung.com>
 
         [EFL][WK2] Duplicated WebPageGroup initialization

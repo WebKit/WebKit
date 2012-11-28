@@ -665,6 +665,8 @@ bool EwkViewImpl::createGLSurface(const IntSize& viewSize)
 
     Evas_GL_API* gl = evas_gl_api_get(evasGL());
     gl->glViewport(0, 0, viewSize.width() + sd->view.x, viewSize.height() + sd->view.y);
+    gl->glClearColor(1.0, 1.0, 1.0, 0);
+    gl->glClear(GL_COLOR_BUFFER_BIT);
 
     return true;
 }
