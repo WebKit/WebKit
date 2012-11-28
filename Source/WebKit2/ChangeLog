@@ -1,3 +1,43 @@
+2012-11-28  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        [EFL][WK2] MiniBrowser rendering should not get blurry when scrolled down with different scale values
+        https://bugs.webkit.org/show_bug.cgi?id=103079
+
+        Reviewed by Simon Hausmann.
+
+        The problem was caused because we moved the page inside our viewport
+        in non-discrete units.
+
+        Now instead of changing the content visible in our viewport by
+        applying scale, and then transforming the CSS offset, we now first
+        discretely position the page in UI coordinates.
+
+        This patch also removes some dead code.
+
+        * UIProcess/API/efl/EwkViewImpl.cpp:
+        (EwkViewImpl::transformFromScene):
+        (EwkViewImpl::displayTimerFired):
+
+           Transform according to the page position.
+
+        * UIProcess/API/efl/EwkViewImpl.h:
+        (EwkViewImpl::setPagePosition): Now stores a float.
+        (EwkViewImpl::discretePagePosition): Returns the discrete page position.
+        (EwkViewImpl):
+        * UIProcess/efl/PageClientLegacyImpl.cpp:
+        (WebKit::PageClientLegacyImpl::updateViewportSize):
+        (WebKit::PageClientLegacyImpl::pageDidRequestScroll):
+        * UIProcess/efl/PageViewportControllerClientEfl.cpp:
+        (WebKit::PageViewportControllerClientEfl::PageViewportControllerClientEfl):
+        (WebKit::PageViewportControllerClientEfl::setViewportPosition): Convert to page position.
+        (WebKit::PageViewportControllerClientEfl::setContentsScale):
+        (WebKit::PageViewportControllerClientEfl::didResumeContent):
+        * UIProcess/efl/PageViewportControllerClientEfl.h:
+        (WebKit::PageViewportControllerClientEfl::scaleFactor): Use the value
+        from the view directly.
+        (WebKit::PageViewportControllerClientEfl::contentPosition):
+        (PageViewportControllerClientEfl):
+
 2012-11-28  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [EFL][WK2][AC] No need to export GL properties from EwkViewImpl class

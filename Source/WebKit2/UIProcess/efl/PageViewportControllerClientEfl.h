@@ -28,11 +28,10 @@
 
 #if USE(TILED_BACKING_STORE)
 
+#include "EwkViewImpl.h"
 #include "PageClientBase.h"
 #include "PageViewportControllerClient.h"
 #include <wtf/PassOwnPtr.h>
-
-class EwkViewImpl;
 
 namespace WebKit {
 
@@ -46,11 +45,10 @@ public:
 
     DrawingAreaProxy* drawingArea() const;
     WebCore::IntSize viewSize() { return m_viewportSize; }
-    float scaleFactor() const { return m_scaleFactor; }
-    WebCore::IntPoint scrollPosition() { return m_scrollPosition; }
+    float scaleFactor() const { return m_viewImpl->scaleFactor(); }
+    WebCore::IntPoint contentPosition() const { return m_contentPosition; }
 
     void updateViewportSize(const WebCore::IntSize& viewportSize);
-    void setVisibleContentsRect(const WebCore::IntPoint&, float, const WebCore::FloatPoint&);
     void setRendererActive(bool);
 
     virtual void setViewportPosition(const WebCore::FloatPoint& contentsPoint);
@@ -68,8 +66,7 @@ private:
 
     EwkViewImpl* m_viewImpl;
     WebCore::IntSize m_viewportSize;
-    WebCore::IntPoint m_scrollPosition;
-    float m_scaleFactor;
+    WebCore::IntPoint m_contentPosition;
     PageViewportController* m_controller;
 };
 

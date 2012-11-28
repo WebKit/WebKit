@@ -49,7 +49,7 @@ void PageClientLegacyImpl::didCommitLoad()
 void PageClientLegacyImpl::updateViewportSize(const WebCore::IntSize& size)
 {
 #if USE(TILED_BACKING_STORE)
-    m_viewImpl->page()->drawingArea()->setVisibleContentsRect(IntRect(m_viewImpl->scrollPosition(), size), m_viewImpl->scaleFactor(), FloatPoint());
+    m_viewImpl->page()->drawingArea()->setVisibleContentsRect(IntRect(m_viewImpl->discretePagePosition(), size), m_viewImpl->scaleFactor(), FloatPoint());
 #else
     UNUSED_PARAM(size);
 #endif
@@ -86,7 +86,7 @@ void PageClientLegacyImpl::didChangeContentsSize(const WebCore::IntSize& size)
 #if USE(TILED_BACKING_STORE)
 void PageClientLegacyImpl::pageDidRequestScroll(const IntPoint& position)
 {
-    m_viewImpl->setScrollPosition(position);
+    m_viewImpl->setPagePosition(FloatPoint(position));
     m_viewImpl->update();
 }
 
