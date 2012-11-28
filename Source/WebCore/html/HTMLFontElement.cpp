@@ -51,13 +51,14 @@ PassRefPtr<HTMLFontElement> HTMLFontElement::create(const QualifiedName& tagName
 }
 
 // http://www.whatwg.org/specs/web-apps/current-work/multipage/rendering.html#fonts-and-colors
-static bool parseFontSize(const String& input, int& size)
+template <typename CharacterType>
+static bool parseFontSize(const CharacterType* characters, unsigned length, int& size)
 {
 
     // Step 1
     // Step 2
-    const UChar* position = input.characters();
-    const UChar* end = position + input.length();
+    const CharacterType* position = characters;
+    const CharacterType* end = characters + length;
 
     // Step 3
     while (position < end) {
@@ -106,7 +107,12 @@ static bool parseFontSize(const String& input, int& size)
         return false;
 
     // Step 8
-    int value = charactersToIntStrict(digits.characters(), digits.length());
+    int value;
+
+    if (digits.is8Bit())
+        value = charactersToIntStrict(digits.characters8(), digits.length());
+    else
+        value = charactersToIntStrict(digits.characters16(), digits.length());
 
     // Step 9
     if (mode == RelativePlus)
@@ -124,6 +130,17 @@ static bool parseFontSize(const String& input, int& size)
 
     size = value;
     return true;
+}
+
+static bool parseFontSize(const String& input, int& size)
+{
+    if (input.isEmpty())
+        return false;
+
+    if (input.is8Bit())
+        return parseFontSize(input.characters8(), input.length(), size);
+
+    return parseFontSize(input.characters16(), input.length(), size);
 }
 
 bool HTMLFontElement::cssValueFromFontSizeNumber(const String& s, int& size)

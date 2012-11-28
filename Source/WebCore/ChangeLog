@@ -1,3 +1,18 @@
+2012-11-28  Michael Saboff  <msaboff@apple.com>
+
+        HTMLFontElement font size parsing should directly handle 8 bit strings
+        https://bugs.webkit.org/show_bug.cgi?id=103315
+
+        Reviewed by Oliver Hunt.
+
+        Split parseFontSize() into a templated function based on character type and a wrapper that determines
+        a string's bitness before calling the template.
+
+        No new tests. No change in functionality.
+
+        * html/HTMLFontElement.cpp:
+        (WebCore::parseFontSize):
+
 2012-11-28  Robert Kroeger  <rjkroege@chromium.org>
 
         remove unused PlatformGestureCurve code
