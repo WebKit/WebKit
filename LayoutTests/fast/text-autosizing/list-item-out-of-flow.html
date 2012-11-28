@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<meta name="viewport" content="width=800">
+<style>
+html { font-size: 16px; }
+body { width: 800px; margin: 0; overflow-y: hidden; }
+</style>
+
+<script>
+if (window.internals) {
+    window.internals.settings.setTextAutosizingEnabled(true);
+    window.internals.settings.setTextAutosizingWindowSizeOverride(320, 480);
+} else if (window.console && console.warn) {
+    console.warn("This test depends on the Text Autosizing setting being true, so run it in DumpRenderTree, or manually enable Text Autosizing, and either use a mobile device with 320px device-width (like Nexus S or iPhone), or define HACK_FORCE_TEXT_AUTOSIZING_ON_DESKTOP.");
+}
+</script>
+
+</head>
+<body>
+
+<ul style="width: 400px">
+	<li style="width: 600px">
+		This element is only autosized to 20px computed font size (16 * 400/320), since we don't want list items to be autosized differently from each other, and the width of UL tag is used for autosizing.<br>
+		Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+	</li>
+	<li style="position: absolute; width: 800px">
+		This list element becomes a separate autosizing cluster since it's positioned out of the list flow. Hence its computed font size is 40px (16 * 400 / 320).<br>
+		Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+	</li>
+	<li>
+		This element is autosized to computed font size of 20px similarly to the first list item.<br>
+		Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+	</li>
+</ul>	
+</body>
+</head>

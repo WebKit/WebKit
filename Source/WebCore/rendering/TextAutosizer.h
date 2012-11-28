@@ -55,6 +55,11 @@ public:
     static float computeAutosizedFontSize(float specifiedSize, float multiplier);
 
 private:
+    enum TraversalDirection {
+        FirstToLast,
+        LastToFirst
+    };
+
     explicit TextAutosizer(Document*);
 
     void processCluster(RenderBlock* cluster, RenderBlock* container, RenderObject* subtreeRoot, const TextAutosizingWindowInfo&);
@@ -70,6 +75,14 @@ private:
 
     // Use to traverse the tree of descendants, excluding descendants of containers (but returning the containers themselves).
     static RenderObject* nextInPreOrderSkippingDescendantsOfContainers(const RenderObject* current, const RenderObject* stayWithin);
+
+    // Finds the lowest common ancestor of the first and the last descendant
+    // text node (excluding those belonging to other autosizing clusters).
+    static const RenderBlock* findDeepestBlockContainingAllText(const RenderBlock* cluster);
+
+    // Depending on the traversal direction specified, finds the first or the last leaf text node child that doesn't
+    // belong to any cluster.
+    static const RenderObject* findFirstTextLeafNotInCluster(const RenderObject*, size_t& depth, TraversalDirection);
 
     Document* m_document;
 };

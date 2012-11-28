@@ -33,6 +33,8 @@
 #include "Settings.h"
 #include "StyleInheritedData.h"
 
+#include <algorithm>
+
 namespace WebCore {
 
 struct TextAutosizingWindowInfo {
@@ -94,11 +96,12 @@ void TextAutosizer::processCluster(RenderBlock* cluster, RenderBlock* container,
 {
     ASSERT(isAutosizingCluster(cluster));
 
-    // FIXME: Many pages set a max-width on their content. So especially for the RenderView,
-    // instead of just taking the width of |cluster| we should find the lowest common ancestor of
-    // the first and last descendant text node of the cluster (i.e. the deepest wrapper block that
-    // contains all the text), and use its width instead.
-    RenderBlock* lowestCommonAncestor = cluster;
+    // Many pages set a max-width on their content. So especially for the
+    // RenderView, instead of just taking the width of |cluster| we find
+    // the lowest common ancestor of the first and last descendant text node of
+    // the cluster (i.e. the deepest wrapper block that contains all the text),
+    // and use its width instead.
+    const RenderBlock* lowestCommonAncestor = findDeepestBlockContainingAllText(cluster);
     float commonAncestorWidth = lowestCommonAncestor->contentLogicalWidth();
 
     float multiplier = 1;
@@ -201,8 +204,11 @@ bool TextAutosizer::isAutosizingContainer(const RenderObject* renderer)
     // "Autosizing containers" are the smallest unit for which we can
     // enable/disable Text Autosizing.
     // - Must not be inline, as different multipliers on one line looks terrible.
-    // - Must not be list items, as items in the same list should look consistent.
-    return renderer->isRenderBlock() && !renderer->isInline() && !renderer->isListItem();
+    // - Must not be list items, as items in the same list should look consistent (*).
+    // * except for those list items positioned out of the list's flow.
+    return renderer->isRenderBlock()
+        && !renderer->isInline()
+        && (!renderer->isListItem() || renderer->isOutOfFlowPositioned());
 }
 
 bool TextAutosizer::isAutosizingCluster(const RenderBlock* renderer)
@@ -293,6 +299,70 @@ RenderObject* TextAutosizer::nextInPreOrderSkippingDescendantsOfContainers(const
         for (RenderObject* sibling = ancestor->nextSibling(); sibling; sibling = sibling->nextSibling())
             return sibling;
     }
+
+    return 0;
+}
+
+const RenderBlock* TextAutosizer::findDeepestBlockContainingAllText(const RenderBlock* cluster)
+{
+    ASSERT(isAutosizingCluster(cluster));
+
+    size_t firstDepth = 0;
+    const RenderObject* firstTextLeaf = findFirstTextLeafNotInCluster(cluster, firstDepth, FirstToLast);
+    if (!firstTextLeaf)
+        return cluster;
+
+    size_t lastDepth = 0;
+    const RenderObject* lastTextLeaf = findFirstTextLeafNotInCluster(cluster, lastDepth, LastToFirst);
+    ASSERT(lastTextLeaf);
+
+    // Equalize the depths if necessary. Only one of the while loops below will get executed.
+    const RenderObject* firstNode = firstTextLeaf;
+    const RenderObject* lastNode = lastTextLeaf;
+    while (firstDepth > lastDepth) {
+        firstNode = firstNode->parent();
+        --firstDepth;
+    }
+    while (lastDepth > firstDepth) {
+        lastNode = lastNode->parent();
+        --lastDepth;
+    }
+
+    // Go up from both nodes until the parent is the same. Both pointers will point to the LCA then.
+    while (firstNode != lastNode) {
+        firstNode = firstNode->parent();
+        lastNode = lastNode->parent();
+    }
+
+    if (firstNode->isRenderBlock())
+        return toRenderBlock(firstNode);
+
+    // containingBlock() should never leave the cluster, since it only skips ancestors when finding the
+    // container of position:absolute/fixed blocks, and those cannot exist between a cluster and its text
+    // nodes lowest common ancestor as isAutosizingCluster would have made them into their own independent
+    // cluster.
+    RenderBlock* containingBlock = firstNode->containingBlock();
+    ASSERT(containingBlock->isDescendantOf(cluster));
+
+    return containingBlock;
+}
+
+const RenderObject* TextAutosizer::findFirstTextLeafNotInCluster(const RenderObject* parent, size_t& depth, TraversalDirection direction)
+{
+    if (parent->isEmpty())
+        return parent->isText() ? parent : 0;
+
+    ++depth;
+    const RenderObject* child = (direction == FirstToLast) ? parent->firstChild() : parent->lastChild();
+    while (child) {
+        if (!isAutosizingContainer(child) || !isAutosizingCluster(toRenderBlock(child))) {
+            const RenderObject* leaf = findFirstTextLeafNotInCluster(child, depth, direction);
+            if (leaf)
+                return leaf;
+        }
+        child = (direction == FirstToLast) ? child->nextSibling() : child->previousSibling();
+    }
+    --depth;
 
     return 0;
 }

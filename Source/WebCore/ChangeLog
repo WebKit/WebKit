@@ -1,3 +1,29 @@
+2012-11-28  Anton Vayvod  <avayvod@chromium.org>
+
+        Text Autosizing: Clusters should use width of LCA of their text nodes
+        https://bugs.webkit.org/show_bug.cgi?id=102562
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Many pages set a max-width on their content. So especially for the
+        RenderView, instead of just taking the width of |cluster| we find
+        the lowest common ancestor of the first and last descendant text node of
+        the cluster (i.e. the deepest wrapper block that contains all the text),
+        and use its width instead.
+
+        Tests: fast/text-autosizing/cluster-with-narrow-lca-and-cluster.html
+               fast/text-autosizing/cluster-with-narrow-lca.html
+               fast/text-autosizing/cluster-with-wide-lca.html
+               fast/text-autosizing/list-item-out-of-flow.html
+               fast/text-autosizing/wide-in-narrow-overflow-scroll.html
+
+        * rendering/TextAutosizer.cpp:
+        (WebCore::TextAutosizer::processCluster): use text nodes LCA instead of cluster for width calculation
+        (WebCore::TextAutosizer::isAutosizingContainer): list items that are out of parent list element's flow are valid containers (that therefore become clusters in isAutosizingCluster)
+        (WebCore::TextAutosizer::findDeepestBlockContainingAllText): searches for LCA of text nodes ignoring descendant clusters
+        (WebCore::TextAutosizer::findFirstTextLeafNotInCluster): searches for the first or the last (depending on specified direction) text leaf node in-order ignoring any descendant clusters
+        * rendering/TextAutosizer.h: new private methods declarations and an enum for tree traversal direction.
+
 2012-11-28  Sadrul Habib Chowdhury  <sadrul@chromium.org>
 
         cleanup: Change some code to be cleaner, more readable and style conforming
