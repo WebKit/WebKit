@@ -49,6 +49,7 @@
 #include "MainResourceLoader.h"
 #include "Page.h"
 #include "ResourceBuffer.h"
+#include "SchemeRegistry.h"
 #include "Settings.h"
 #include "TextResourceDecoder.h"
 #include "WebCoreMemoryInstrumentation.h"
@@ -97,6 +98,7 @@ DocumentLoader::DocumentLoader(const ResourceRequest& req, const SubstituteData&
     , m_isStopping(false)
     , m_gotFirstByte(false)
     , m_isClientRedirect(false)
+    , m_loadingEmptyDocument(false)
     , m_wasOnloadHandled(false)
     , m_stopRecordingResponses(false)
     , m_substituteResourceDeliveryTimer(this, &DocumentLoader::substituteResourceDeliveryTimerFired)
@@ -114,7 +116,7 @@ FrameLoader* DocumentLoader::frameLoader() const
 
 DocumentLoader::~DocumentLoader()
 {
-    ASSERT(!m_frame || frameLoader()->activeDocumentLoader() != this || !frameLoader()->isLoading());
+    ASSERT(!m_frame || frameLoader()->activeDocumentLoader() != this || !isLoading());
     if (m_iconLoadDecisionCallback)
         m_iconLoadDecisionCallback->invalidate();
     if (m_iconDataCallback)
@@ -285,7 +287,7 @@ void DocumentLoader::commitIfReady()
 void DocumentLoader::finishedLoading()
 {
     commitIfReady();
-    if (!frameLoader() || frameLoader()->stateMachine()->creatingInitialEmptyDocument())
+    if (!frameLoader())
         return;
 
     if (!maybeCreateArchive()) {
@@ -300,7 +302,8 @@ void DocumentLoader::finishedLoading()
     if (!m_mainDocumentError.isNull())
         return;
     clearMainResourceLoader();
-    frameLoader()->checkLoadComplete();
+    if (!frameLoader()->stateMachine()->creatingInitialEmptyDocument())
+        frameLoader()->checkLoadComplete();
 }
 
 void DocumentLoader::commitLoad(const char* data, int length)
@@ -327,6 +330,9 @@ void DocumentLoader::commitData(const char* bytes, size_t length)
         m_gotFirstByte = true;
         m_writer.begin(documentURL(), false);
         m_writer.setDocumentWasLoadedAsPartOfNavigation();
+
+        if (frameLoader()->stateMachine()->creatingInitialEmptyDocument())
+            return;
         
 #if ENABLE(MHTML)
         // The origin is the MHTML file, we need to set the base URL to the document encoded in the MHTML so
@@ -449,6 +455,7 @@ void DocumentLoader::clearMainResourceLoader()
         m_mainResourceData = m_mainResourceLoader->resourceData();
         m_mainResourceLoader = 0;
     }
+    m_loadingEmptyDocument = false;
 
     if (this == frameLoader()->activeDocumentLoader())
         checkLoadComplete();
@@ -463,7 +470,7 @@ bool DocumentLoader::isLoadingInAPISense() const
             return true;
     
         Document* doc = m_frame->document();
-        if ((m_mainResourceLoader || !m_frame->document()->loadEventFinished()) && isLoading())
+        if ((isLoadingMainResource() || !m_frame->document()->loadEventFinished()) && isLoading())
             return true;
         if (m_cachedResourceLoader->requestCount())
             return true;
@@ -769,8 +776,6 @@ KURL DocumentLoader::documentURL() const
         url = requestURL();
     if (url.isEmpty())
         url = responseURL();
-    if (url.isEmpty())
-        url = blankURL();
     return url;
 }
 
@@ -830,7 +835,7 @@ void DocumentLoader::removePlugInStreamLoader(ResourceLoader* loader)
 
 bool DocumentLoader::isLoadingMainResource() const
 {
-    return !!m_mainResourceLoader;
+    return !!m_mainResourceLoader || m_loadingEmptyDocument;
 }
 
 bool DocumentLoader::isLoadingMultipartContent() const
@@ -843,17 +848,41 @@ bool DocumentLoader::isMultipartReplacingLoad() const
     return isLoadingMultipartContent() && frameLoader()->isReplacing();
 }
 
+bool DocumentLoader::maybeLoadEmpty()
+{
+    bool shouldLoadEmpty = !m_substituteData.isValid() && (m_request.url().isEmpty() || SchemeRegistry::shouldLoadURLSchemeAsEmptyDocument(m_request.url().protocol()));
+    if (!shouldLoadEmpty && !frameLoader()->client()->representationExistsForURLScheme(m_request.url().protocol()))
+        return false;
+
+    m_loadingEmptyDocument = true;
+    if (m_request.url().isEmpty() && !frameLoader()->stateMachine()->creatingInitialEmptyDocument())
+        m_request.setURL(blankURL());
+    String mimeType = shouldLoadEmpty ? "text/html" : frameLoader()->client()->generatedMIMETypeForURLScheme(m_request.url().protocol());
+    setResponse(ResourceResponse(m_request.url(), mimeType, 0, String(), String()));
+    finishedLoading();
+    return true;
+}
+
 void DocumentLoader::startLoadingMainResource()
 {
     m_mainDocumentError = ResourceError();
     timing()->markNavigationStart();
     ASSERT(!m_mainResourceLoader);
+
+    if (maybeLoadEmpty())
+        return;
+
     m_mainResourceLoader = MainResourceLoader::create(m_frame);
 
     // FIXME: Is there any way the extra fields could have not been added by now?
     // If not, it would be great to remove this line of code.
     frameLoader()->addExtraFieldsToMainResourceRequest(m_request);
     m_mainResourceLoader->load(m_request, m_substituteData);
+
+    if (m_request.isNull()) {
+        m_mainResourceLoader = 0;
+        maybeLoadEmpty();
+    }
 }
 
 void DocumentLoader::cancelMainResourceLoad(const ResourceError& error)

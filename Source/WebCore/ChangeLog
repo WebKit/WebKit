@@ -1,3 +1,46 @@
+2012-11-28  Nate Chapin  <japhet@chromium.org>
+
+        Move empty loading to DocumentLoader, simplify FrameLoader::init()
+        https://bugs.webkit.org/show_bug.cgi?id=101512
+
+        Reviewed by Adam Barth.
+
+        No new tests, though several outputs changed because we no longer send resource
+            load callbacks for empty loads.
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::DocumentLoader):
+        (WebCore::DocumentLoader::~DocumentLoader):
+        (WebCore::DocumentLoader::finishedLoading):
+        (WebCore::DocumentLoader::commitData):
+        (WebCore::DocumentLoader::clearMainResourceLoader):
+        (WebCore::DocumentLoader::isLoadingInAPISense):
+        (WebCore::DocumentLoader::documentURL):
+        (WebCore::DocumentLoader::isLoadingMainResource):
+        (WebCore::DocumentLoader::maybeLoadEmpty):
+        (WebCore):
+        (WebCore::DocumentLoader::startLoadingMainResource): Handle empty main resource
+             loads directly here.
+        * loader/DocumentLoader.h:
+        (WebCore::DocumentLoader::serverRedirectSourceForHistory):
+        (DocumentLoader):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::FrameLoader): Initialize some variables whose values
+            were previously being reset in init(). Given that the FrameLoader is in
+            an inconsistent state before init() is called anyway, there doesn't seem
+            to be a disadvantage to just initializing them to their post-init() values.
+        (WebCore::FrameLoader::init): Just call startLoadingMainResource(), instead of
+            doing a bunch of direct calls to functions FrameLoader shouldn't know about.
+        * loader/FrameLoaderStateMachine.cpp:
+        (WebCore::FrameLoaderStateMachine::FrameLoaderStateMachine):
+        * loader/FrameLoaderStateMachine.h:
+        * loader/MainResourceLoader.cpp: Throughout, remove the concept of an empty load.
+        (WebCore::MainResourceLoader::loadNow): This only returned true when an empty
+            load got deferred, which won't happen now. Return void and always treat
+            as returning false.
+        * loader/MainResourceLoader.h:
+        (MainResourceLoader):
+
 2012-11-28  Antoine Quint  <graouts@apple.com>
 
         Calling .removeCue() for a cue that was never added should raise a NOT_FOUND_ERR

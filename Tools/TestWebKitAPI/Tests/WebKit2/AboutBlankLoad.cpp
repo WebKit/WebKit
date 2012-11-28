@@ -31,11 +31,10 @@ namespace TestWebKitAPI {
     
 static bool done;
 
-static void decidePolicyForResponse(WKPageRef, WKFrameRef, WKURLResponseRef response, WKURLRequestRef, WKFramePolicyListenerRef listener, WKTypeRef, const void*)
+static void didFinishLoadForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef userData, const void* clientInfo)
 {
-    EXPECT_WK_STREQ("text/html", Util::MIMETypeForWKURLResponse(response));
-
-    WKFramePolicyListenerUse(listener);
+    WKRetainPtr<WKStringRef> mimeType = adoptWK(WKFrameCopyMIMEType(frame));
+    EXPECT_WK_STREQ("text/html", mimeType);
     done = true;
 }
 
@@ -44,11 +43,10 @@ TEST(WebKit2, AboutBlankLoad)
     WKRetainPtr<WKContextRef> context = adoptWK(WKContextCreate());
     PlatformWebView webView(context.get());
 
-    WKPagePolicyClient policyClient;
-    memset(&policyClient, 0, sizeof(policyClient));
-
-    policyClient.decidePolicyForResponse = decidePolicyForResponse;
-    WKPageSetPagePolicyClient(webView.page(), &policyClient);
+    WKPageLoaderClient loaderClient;
+    memset(&loaderClient, 0 , sizeof(loaderClient));
+    loaderClient.didFinishLoadForFrame = didFinishLoadForFrame;
+    WKPageSetPageLoaderClient(webView.page(), &loaderClient);
 
     WKPageLoadURL(webView.page(), adoptWK(WKURLCreateWithUTF8CString("about:blank")).get());
 

@@ -185,7 +185,7 @@ namespace WebCore {
         String clientRedirectDestinationForHistory() const { return urlForHistory(); }
         void setClientRedirectSourceForHistory(const String& clientRedirectSourceForHistory) { m_clientRedirectSourceForHistory = clientRedirectSourceForHistory; }
         
-        String serverRedirectSourceForHistory() const { return urlForHistory() == url() ? String() : urlForHistory().string(); } // null if no server redirect occurred.
+        String serverRedirectSourceForHistory() const { return (urlForHistory() == url() || url() == blankURL()) ? String() : urlForHistory().string(); } // null if no server redirect occurred.
         String serverRedirectDestinationForHistory() const { return url(); }
 
         bool didCreateGlobalHistoryEntry() const { return m_didCreateGlobalHistoryEntry; }
@@ -265,6 +265,8 @@ namespace WebCore {
         void clearArchiveResources();
 #endif
 
+        bool maybeLoadEmpty();
+
         bool isMultipartReplacingLoad() const;
 
         void deliverSubstituteResourcesAfterDelay();
@@ -307,6 +309,7 @@ namespace WebCore {
         bool m_isStopping;
         bool m_gotFirstByte;
         bool m_isClientRedirect;
+        bool m_loadingEmptyDocument;
 
         // FIXME: Document::m_processingLoadEvent and DocumentLoader::m_wasOnloadHandled are roughly the same
         // and should be merged.

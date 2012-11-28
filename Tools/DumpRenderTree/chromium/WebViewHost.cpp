@@ -1623,7 +1623,8 @@ void WebViewHost::updateForCommittedLoad(WebFrame* frame, bool isNewNavigation)
 {
     // Code duplicated from RenderView::DidCommitLoadForFrame.
     TestShellExtraData* extraData = static_cast<TestShellExtraData*>(frame->dataSource()->extraData());
-    bool nonBlankPageAfterReset = m_pageId == -1 && strcmp(frame->dataSource()->request().url().spec().data(), "about:blank");
+    const WebURL& url = frame->dataSource()->request().url();
+    bool nonBlankPageAfterReset = m_pageId == -1 && !url.isEmpty() && strcmp(url.spec().data(), "about:blank");
 
     if (isNewNavigation || nonBlankPageAfterReset) {
         // New navigation.

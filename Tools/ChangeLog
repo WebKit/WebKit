@@ -1,3 +1,19 @@
+2012-11-28  Nate Chapin  <japhet@chromium.org>
+
+        Move empty loading to DocumentLoader, simplify FrameLoader::init()
+        https://bugs.webkit.org/show_bug.cgi?id=101512
+
+        Reviewed by Adam Barth.
+
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::updateForCommittedLoad): This function doesn't play nicely with empty urls and incorrectly
+            interprets them as a non-empty load. This change is required for
+             http/tests/navigation/new-window-redirect-history.html to continue to pass in chromium.
+        * TestWebKitAPI/Tests/WebKit2/AboutBlankLoad.cpp: This test relies on a callback that no longer
+             is sent for about:blank loads.  Hook into didFinishLoadForFrame() instead.
+        (TestWebKitAPI::didFinishLoadForFrame):
+        (TestWebKitAPI::TEST):
+
 2012-11-28  Sadrul Habib Chowdhury  <sadrul@chromium.org>
 
         [chromium] Allow plugins to opt-in to receive synthetic mouse events out of touch events.

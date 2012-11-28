@@ -44,7 +44,6 @@ public:
     // alternate between CommittedFirstRealLoad and FirstLayoutDone.
     // Otherwise, the states only go down the list.
     enum State {
-        Uninitialized,
         CreatingInitialEmptyDocument,
         DisplayingInitialEmptyDocument,
         DisplayingInitialEmptyDocumentPostCommit,
