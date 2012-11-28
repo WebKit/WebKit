@@ -3,6 +3,24 @@
         GraphicsSurface: Implement usage of GraphicsSurface for WebGL in WK1.
         https://bugs.webkit.org/show_bug.cgi?id=103497
 
+        This is a temporary workaround for an issue with GraphicsSurfaceMac.
+        GraphicsSurfaceMac is currently implemented using CGL only.
+        CGL does not allow us to properly restore the NSView a context was made current with.
+        Therefore we have to go through QOpenGLContext to ensure the context
+        is being restored correctly.
+        As soon as we are updating GraphicsSurfaceMac to use NSOpenGL,
+        we should revert this patch.
+
+        Reviewed by Simon Hausmann.
+
+        * platform/graphics/qt/GraphicsContext3DQt.cpp:
+        (WebCore::GraphicsContext3DPrivate::paintToTextureMapper):
+
+2012-11-28  Zeno Albisser  <zeno@webkit.org>
+
+        GraphicsSurface: Implement usage of GraphicsSurface for WebGL in WK1.
+        https://bugs.webkit.org/show_bug.cgi?id=103497
+
         Using GraphicsSurface for WebGL in WK1 allows us to share
         the code with the WK2 implementation.
 
