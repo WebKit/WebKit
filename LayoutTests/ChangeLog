@@ -1,3 +1,17 @@
+2012-11-27  Dana Jansens  <danakj@chromium.org>
+
+        Rebaseline and remove expectations for deferred virtual test suite
+        https://bugs.webkit.org/show_bug.cgi?id=102294
+
+        Unreviewed gardening.
+
+        These three tests are failing on mac, but other platforms are fine.
+        Rebaseline windows, and mark as failing only for Mac.
+
+        * platform/chromium-win/platform/chromium/virtual/deferred/fast/images/exif-orientation-css-expected.png:
+        * platform/chromium-win/platform/chromium/virtual/deferred/fast/images/exif-orientation-expected.png:
+        * platform/chromium/TestExpectations:
+
 2012-11-27  Robert Kroeger  <rjkroege@chromium.org>
 
         Unreviewed gardening: crashing on XP
