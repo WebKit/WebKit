@@ -1,3 +1,11 @@
+2012-11-27  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium] Test expectation update
+        https://bugs.webkit.org/show_bug.cgi?id=96720
+
+        * platform/chromium/TestExpectations:
+        datetimelocal-multiple-fields-preserve-value-after-history-back.html is flaky.
+
 2012-11-27  Noel Gordon  <noel.gordon@gmail.com>
 
         Unreviewed gardening: http/tests/inspector/network/network-xhr-replay.html times-out on win release
