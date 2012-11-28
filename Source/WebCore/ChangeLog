@@ -1,3 +1,20 @@
+2012-11-28  Tom Sepez  <tsepez@chromium.org>
+
+        XSSAuditor bypass with script src=data: URL ending in <!--
+        https://bugs.webkit.org/show_bug.cgi?id=103548
+
+        Reviewed by Adam Barth.
+
+        This fixes an additional case where characters from the page itself are
+        included with the snippet to match against the reflected vector, and the
+        JS remains legitimate because of a <!--- comment. Truncate the snippet at
+        such a comment.
+        
+        Test: http/tests/security/xssAuditor/script-tag-with-source-data-url3.html
+
+        * html/parser/XSSAuditor.cpp:
+        (WebCore::XSSAuditor::decodedSnippetForAttribute):
+
 2012-11-28  Abhishek Arya  <inferno@chromium.org>
 
         Heap-use-after-free in WebCore::RenderLayerModelObject::hasSelfPaintingL

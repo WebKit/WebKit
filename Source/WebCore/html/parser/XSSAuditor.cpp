@@ -542,13 +542,16 @@ String XSSAuditor::decodedSnippetForAttribute(const HTMLToken& token, const HTML
         // In HTTP URLs, characters following the first ?, #, or third slash may come from 
         // the page itself and can be merely ignored by an attacker's server when a remote
         // script or script-like resource is requested. In DATA URLS, the payload starts at
-        // the first comma, and the the first /* or // may introduce a comment. Characters
+        // the first comma, and the the first /*, //, or <!-- may introduce a comment. Characters
         // following this may come from the page itself and may be ignored when the script is
         // executed. For simplicity, we don't differentiate based on URL scheme, and stop at
-        // the first # or ?, the third slash, or the first slash once a comma is seen.
+        // the first # or ?, the third slash, or the first slash or < once a comma is seen.
         for (size_t currentLength = 0; currentLength < decodedSnippet.length(); ++currentLength) {
             UChar currentChar = decodedSnippet[currentLength];
-            if (currentChar == '?' || currentChar == '#' || ((currentChar == '/' || currentChar == '\\') && (commaSeen || ++slashCount > 2))) {
+            if (currentChar == '?'
+                || currentChar == '#'
+                || ((currentChar == '/' || currentChar == '\\') && (commaSeen || ++slashCount > 2))
+                || (currentChar == '<' && commaSeen)) {
                 decodedSnippet.truncate(currentLength);
                 break;
             }
