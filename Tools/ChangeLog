@@ -1,3 +1,16 @@
+2012-11-27  Tony Chang  <tony@chromium.org>
+
+        Bring back partytime!
+        https://bugs.webkit.org/show_bug.cgi?id=103466
+
+        Reviewed by Adam Barth.
+
+        "code 404, message Unknown function images/partytime_gif" since we didn't
+        allow .gif or .png files to be served.
+
+        * Scripts/webkitpy/tool/servers/gardeningserver.py:
+        (GardeningHTTPRequestHandler):
+
 2012-11-27  Adam Barth  <abarth@webkit.org>
 
         run-perf-tests fails on Android because of stderr output
