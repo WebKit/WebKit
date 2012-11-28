@@ -1,3 +1,18 @@
+2012-11-28  Roger Fong  <roger_fong@apple.com>
+
+        Initialize identity matrix in SimpleFontData::initGDIFont() properly.
+        https://bugs.webkit.org/show_bug.cgi?id=103499
+        <rdar://problem/12400700>
+
+        Reviewed by Timothy Horton.
+
+        We are incorrectly initializing the matrix passed into GetGlyphOutline.
+        This patch fixes MAT2 initialization to match the way we initialize the 
+        identity matrix in SimpleFontData::boundsForGDIGlyph and SimpleFontData::widthForGDIGlyph.
+
+        * platform/graphics/win/SimpleFontDataWin.cpp:
+        (WebCore::SimpleFontData::initGDIFont):
+
 2012-11-28  Huang Dongsung  <luxtella@company100.net>
 
         [Texmap] REGRESSION(r135620) QtTestBrowser crashes on Google-gravity.
