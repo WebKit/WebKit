@@ -66,6 +66,11 @@ static FloatPoint boundedScrollPosition(const FloatPoint& scrollPosition, const 
     return FloatPoint(scrollPositionX, scrollPositionY);
 }
 
+static bool layerShouldHaveBackingStore(GraphicsLayer* layer)
+{
+    return layer->drawsContent() && layer->contentsAreVisible() && !layer->size().isEmpty();
+}
+
 LayerTreeRenderer::LayerTreeRenderer(LayerTreeCoordinatorProxy* layerTreeCoordinatorProxy)
     : m_layerTreeCoordinatorProxy(layerTreeCoordinatorProxy)
     , m_isActive(false)
@@ -354,6 +359,7 @@ void LayerTreeRenderer::setLayerState(WebLayerID id, const WebLayerInfo& layerIn
         m_fixedLayers.remove(id);
 
     assignImageBackingToLayer(layer, layerInfo.imageID);
+    prepareContentBackingStore(layer);
 
     // Never make the root layer clip.
     layer->setMasksToBounds(layerInfo.isRootLayer ? false : layerInfo.masksToBounds);
@@ -406,34 +412,45 @@ void LayerTreeRenderer::setRootLayerID(WebLayerID layerID)
     m_rootLayer->addChild(layer);
 }
 
-PassRefPtr<CoordinatedBackingStore> LayerTreeRenderer::getBackingStore(GraphicsLayer* graphicsLayer)
+CoordinatedBackingStore* LayerTreeRenderer::getBackingStore(GraphicsLayer* graphicsLayer)
 {
     TextureMapperLayer* layer = toTextureMapperLayer(graphicsLayer);
     ASSERT(layer);
-    RefPtr<CoordinatedBackingStore> backingStore = static_cast<CoordinatedBackingStore*>(layer->backingStore().get());
-    if (!backingStore) {
-        backingStore = CoordinatedBackingStore::create();
-        layer->setBackingStore(backingStore);
-    }
-    ASSERT(backingStore);
-    return backingStore;
+    return static_cast<CoordinatedBackingStore*>(layer->backingStore().get());
 }
 
-void LayerTreeRenderer::removeBackingStoreIfNeeded(GraphicsLayer* graphicsLayer)
+void LayerTreeRenderer::prepareContentBackingStore(GraphicsLayer* graphicsLayer)
+{
+    if (!layerShouldHaveBackingStore(graphicsLayer)) {
+        removeBackingStore(graphicsLayer);
+        return;
+    }
+
+    createBackingStoreIfNeeded(graphicsLayer);
+}
+
+void LayerTreeRenderer::createBackingStoreIfNeeded(GraphicsLayer* graphicsLayer)
 {
     TextureMapperLayer* layer = toTextureMapperLayer(graphicsLayer);
     ASSERT(layer);
-    RefPtr<CoordinatedBackingStore> backingStore = static_cast<CoordinatedBackingStore*>(layer->backingStore().get());
-    ASSERT(backingStore);
-    if (backingStore->isEmpty())
-        layer->setBackingStore(0);
+    if (layer->backingStore())
+        return;
+
+    RefPtr<CoordinatedBackingStore> backingStore(CoordinatedBackingStore::create());
+    backingStore->setSize(graphicsLayer->size());
+    layer->setBackingStore(backingStore);
+}
+
+void LayerTreeRenderer::removeBackingStore(GraphicsLayer* graphicsLayer)
+{
+    TextureMapperLayer* layer = toTextureMapperLayer(graphicsLayer);
+    ASSERT(layer);
+    layer->setBackingStore(0);
 }
 
 void LayerTreeRenderer::resetBackingStoreSizeToLayerSize(GraphicsLayer* graphicsLayer)
 {
-    TextureMapperLayer* layer = toTextureMapperLayer(graphicsLayer);
-    ASSERT(layer);
-    RefPtr<CoordinatedBackingStore> backingStore = static_cast<CoordinatedBackingStore*>(layer->backingStore().get());
+    CoordinatedBackingStore* backingStore = getBackingStore(graphicsLayer);
     ASSERT(backingStore);
     backingStore->setSize(graphicsLayer->size());
 }
@@ -442,7 +459,8 @@ void LayerTreeRenderer::createTile(WebLayerID layerID, int tileID, float scale)
 {
     GraphicsLayer* layer = layerByID(layerID);
     ASSERT(layer);
-    RefPtr<CoordinatedBackingStore> backingStore = getBackingStore(layer);
+    CoordinatedBackingStore* backingStore = getBackingStore(layer);
+    ASSERT(backingStore);
     backingStore->createTile(tileID, scale);
     resetBackingStoreSizeToLayerSize(layer);
 }
@@ -451,11 +469,13 @@ void LayerTreeRenderer::removeTile(WebLayerID layerID, int tileID)
 {
     GraphicsLayer* layer = layerByID(layerID);
     ASSERT(layer);
-    RefPtr<CoordinatedBackingStore> backingStore = getBackingStore(layer);
+    CoordinatedBackingStore* backingStore = getBackingStore(layer);
+    if (!backingStore)
+        return;
+
     backingStore->removeTile(tileID);
     resetBackingStoreSizeToLayerSize(layer);
     m_backingStoresWithPendingBuffers.add(backingStore);
-    removeBackingStoreIfNeeded(layer);
 }
 
 void LayerTreeRenderer::updateTile(WebLayerID layerID, int tileID, const TileUpdate& update)
@@ -463,6 +483,7 @@ void LayerTreeRenderer::updateTile(WebLayerID layerID, int tileID, const TileUpd
     GraphicsLayer* layer = layerByID(layerID);
     ASSERT(layer);
     RefPtr<CoordinatedBackingStore> backingStore = getBackingStore(layer);
+    ASSERT(backingStore);
     backingStore->updateTile(tileID, update.sourceRect, update.tileRect, update.surface, update.offset);
     resetBackingStoreSizeToLayerSize(layer);
     m_backingStoresWithPendingBuffers.add(backingStore);

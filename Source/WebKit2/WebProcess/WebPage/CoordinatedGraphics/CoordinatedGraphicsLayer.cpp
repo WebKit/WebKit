@@ -654,8 +654,6 @@ void CoordinatedGraphicsLayer::adjustContentsScale()
 
     // No reason to save the previous backing store for non-visible areas.
     m_previousBackingStore->removeAllNonVisibleTiles();
-
-    createBackingStore();
 }
 
 void CoordinatedGraphicsLayer::createBackingStore()

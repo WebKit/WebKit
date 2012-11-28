@@ -145,8 +145,10 @@ private:
     void ensureLayer(WebLayerID);
     void commitTileOperations();
 
-    PassRefPtr<CoordinatedBackingStore> getBackingStore(WebCore::GraphicsLayer*);
-    void removeBackingStoreIfNeeded(WebCore::GraphicsLayer*);
+    CoordinatedBackingStore* getBackingStore(WebCore::GraphicsLayer*);
+    void prepareContentBackingStore(WebCore::GraphicsLayer*);
+    void createBackingStoreIfNeeded(WebCore::GraphicsLayer*);
+    void removeBackingStore(WebCore::GraphicsLayer*);
     void resetBackingStoreSizeToLayerSize(WebCore::GraphicsLayer*);
 
     typedef HashMap<WebLayerID, WebCore::GraphicsLayer*> LayerMap;

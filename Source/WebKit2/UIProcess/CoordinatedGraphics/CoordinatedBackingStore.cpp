@@ -92,11 +92,6 @@ void CoordinatedBackingStore::updateTile(int id, const IntRect& sourceRect, cons
     it->value.setBackBuffer(tileRect, sourceRect, backBuffer, offset);
 }
 
-bool CoordinatedBackingStore::isEmpty() const
-{
-    return m_tiles.size() == m_tilesToRemove.size();
-}
-
 PassRefPtr<BitmapTexture> CoordinatedBackingStore::texture() const
 {
     HashMap<int, CoordinatedBackingStoreTile>::const_iterator end = m_tiles.end();
