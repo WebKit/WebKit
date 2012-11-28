@@ -279,18 +279,16 @@ static inline bool scrollNode(float delta, ScrollGranularity granularity, Scroll
     return enclosingBox->scroll(delta < 0 ? negativeDirection : positiveDirection, granularity, absDelta, stopNode);
 }
 
-static Node* getClosestScrollableNodeInDocumentIfPossible(Node* node)
+static Node* closestScrollableNodeInDocumentIfPossible(Node* node)
 {
-    Node* firstNode = node;
-    while (node) {
-        if (node->isDocumentNode())
-            return firstNode;
-        RenderObject* renderer = node->renderer();
+    for (Node* scrollableNode = node; scrollableNode; scrollableNode = scrollableNode->parentNode()) {
+        if (scrollableNode->isDocumentNode())
+            break;
+        RenderObject* renderer = scrollableNode->renderer();
         if (renderer && renderer->isBox() && toRenderBox(renderer)->canBeScrolledAndHasScrollableArea())
-            return node;
-        node = node->parentNode();
+            return scrollableNode;
     }
-    return firstNode;
+    return node;
 }
 
 #if ENABLE(GESTURE_EVENTS)
@@ -2447,7 +2445,7 @@ bool EventHandler::handleWheelEvent(const PlatformWheelEvent& e)
 
     if (useLatchedWheelEventNode) {
         if (!m_latchedWheelEventNode) {
-            m_latchedWheelEventNode = getClosestScrollableNodeInDocumentIfPossible(result.innerNode());
+            m_latchedWheelEventNode = closestScrollableNodeInDocumentIfPossible(result.innerNode());
             m_widgetIsLatched = result.isOverWidget();
         }
 

@@ -1,3 +1,17 @@
+2012-11-28  Sadrul Habib Chowdhury  <sadrul@chromium.org>
+
+        cleanup: Change some code to be cleaner, more readable and style conforming
+        https://bugs.webkit.org/show_bug.cgi?id=103543
+
+        Reviewed by Antonio Gomes.
+
+        Use more appropriate function name and more meaningful variable names to make the code cleaner.
+        This is covered by existing tests. This does not make any behavioural changes, so no new tests.
+
+        * page/EventHandler.cpp:
+        (WebCore::closestScrollableNodeInDocumentIfPossible):
+        (WebCore::EventHandler::handleWheelEvent):
+
 2012-11-28  Alexandru Chiculita  <achicu@adobe.com>
 
         [CSS Regions] Crash when using hover and first-letter inside a flow-thread
