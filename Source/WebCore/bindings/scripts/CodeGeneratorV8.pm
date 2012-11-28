@@ -478,10 +478,17 @@ END
     if ($interfaceName eq "HTMLElement") {
         push(@headerContent, <<END);
     friend v8::Handle<v8::Object> createV8HTMLWrapper(HTMLElement*, v8::Handle<v8::Object> creationContext, v8::Isolate*);
+    friend v8::Handle<v8::Object> createV8HTMLDirectWrapper(HTMLElement*, v8::Handle<v8::Object> creationContext, v8::Isolate*);
 END
     } elsif ($interfaceName eq "SVGElement") {
         push(@headerContent, <<END);
     friend v8::Handle<v8::Object> createV8SVGWrapper(SVGElement*, v8::Handle<v8::Object> creationContext, v8::Isolate*);
+    friend v8::Handle<v8::Object> createV8SVGDirectWrapper(SVGElement*, v8::Handle<v8::Object> creationContext, v8::Isolate*);
+    friend v8::Handle<v8::Object> createV8SVGFallbackWrapper(SVGElement*, v8::Handle<v8::Object> creationContext, v8::Isolate*);
+END
+    } elsif ($interfaceName eq "HTMLUnknownElement") {
+        push(@headerContent, <<END);
+    friend v8::Handle<v8::Object> createV8HTMLFallbackWrapper(HTMLUnknownElement*, v8::Handle<v8::Object> creationContext, v8::Isolate*);
 END
     } elsif ($interfaceName eq "Element") {
         push(@headerContent, <<END);

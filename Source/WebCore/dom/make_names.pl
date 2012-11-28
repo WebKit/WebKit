@@ -1070,7 +1070,7 @@ static v8::Handle<v8::Object> create${JSInterfaceName}Wrapper($parameters{namesp
 {
     Settings* settings = element->document()->settings();
     if (!MediaPlayer::isAvailable() || (settings && !settings->isMediaEnabled()))
-        return wrap(element, creationContext, isolate);
+        return createV8$parameters{namespace}DirectWrapper(element, creationContext, isolate);
     return wrap(static_cast<${JSInterfaceName}*>(element), creationContext, isolate);
 }
 
@@ -1082,7 +1082,7 @@ END
 static v8::Handle<v8::Object> create${JSInterfaceName}Wrapper($parameters{namespace}Element* element, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate)
 {
     if (!ContextFeatures::${contextConditional}Enabled(element->document()))
-        return wrap(to$parameters{fallbackInterfaceName}(element), creationContext, isolate);
+        return createV8$parameters{namespace}FallbackWrapper(to$parameters{fallbackInterfaceName}(element), creationContext, isolate);
     return wrap(static_cast<${JSInterfaceName}*>(element), creationContext, isolate);
 }
 END
@@ -1093,7 +1093,7 @@ END
 static v8::Handle<v8::Object> create${JSInterfaceName}Wrapper($parameters{namespace}Element* element, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate)
 {
     if (!RuntimeEnabledFeatures::${runtimeConditional}Enabled())
-        return wrap(to$parameters{fallbackInterfaceName}(element), creationContext, isolate);
+        return createV8$parameters{namespace}FallbackWrapper(to$parameters{fallbackInterfaceName}(element), creationContext, isolate);
     return wrap(static_cast<${JSInterfaceName}*>(element), creationContext, isolate);
 }
 END
@@ -1331,6 +1331,8 @@ END
 ;
     } elsif ($wrapperFactoryType eq "V8") {
         print F <<END
+#include <V8$parameters{namespace}Element.h>
+#include <V8$parameters{fallbackInterfaceName}.h>
 #include <v8.h>
 
 namespace WebCore {
@@ -1338,6 +1340,14 @@ namespace WebCore {
     class $parameters{namespace}Element;
 
     v8::Handle<v8::Object> createV8$parameters{namespace}Wrapper($parameters{namespace}Element*, v8::Handle<v8::Object> creationContext, v8::Isolate*);
+    inline v8::Handle<v8::Object> createV8$parameters{namespace}DirectWrapper($parameters{namespace}Element* element, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate)
+    {
+        return V8$parameters{namespace}Element::createWrapper(element, creationContext, isolate);
+    }
+    inline v8::Handle<v8::Object> createV8$parameters{namespace}FallbackWrapper($parameters{fallbackInterfaceName}* element, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate)
+    {
+        return V8$parameters{fallbackInterfaceName}::createWrapper(element, creationContext, isolate);
+    }
 }
 END
 ;
