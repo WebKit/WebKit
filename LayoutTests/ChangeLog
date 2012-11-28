@@ -1,3 +1,43 @@
+2012-11-28  Kent Tamura  <tkent@chromium.org>
+
+        Merge tests for date pseudo classes into one
+        https://bugs.webkit.org/show_bug.cgi?id=103489
+
+        Reviewed by Kentaro Hara.
+
+        date-appearance-pseudo-classes.html doesn't need to be a pixel
+        test because "how css properties are applied" is tested in
+        date-appearance-basic.html. Checking querySelectorAll result is
+        enough to check pseudo classes support, and we can convert the
+        test to a dumpAsText test.
+
+        Also, we should remove type=date dependencies in
+        fast/css/pseudo-*.html because some platforms don't enable
+        INPUT_TYPE_DATE and we had better put such tests into one place,
+        fast/forms/date/.
+
+        * fast/css/pseudo-in-range-expected.txt:
+        * fast/css/pseudo-in-range-invalid-value-expected.txt:
+        * fast/css/pseudo-out-of-range-expected.txt:
+        * fast/css/script-tests/pseudo-in-range-invalid-value.js:
+        * fast/css/script-tests/pseudo-in-range.js:
+        * fast/css/script-tests/pseudo-out-of-range.js:
+        * fast/forms/date/date-appearance-pseudo-classes-expected.txt: Removed.
+        * fast/forms/date/date-appearance-pseudo-classes.html: Removed.
+        * fast/forms/date/date-pseudo-classes-expected.txt: Added.
+        * fast/forms/date/date-pseudo-classes.html: Added.
+        * fast/forms/resources/common-pseudo-classes.js: Added.
+        * platform/chromium-linux/fast/forms/date/date-appearance-pseudo-classes-expected.png: Removed.
+        * platform/chromium-mac-lion/fast/forms/date/date-appearance-pseudo-classes-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/fast/forms/date/date-appearance-pseudo-classes-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/date/date-appearance-pseudo-classes-expected.png: Removed.
+        * platform/chromium-win/fast/forms/date/date-appearance-pseudo-classes-expected.png: Removed.
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/qt/TestExpectations:
+        * platform/win/TestExpectations:
+
 2012-11-28  Tommy Widenflycht  <tommyw@google.com>
 
         Add basic implementation for MediaStreamAudioDestinationNode

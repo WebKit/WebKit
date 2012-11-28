@@ -1183,11 +1183,6 @@ webkit.org/b/65536 fast/css/text-rendering.html [ Missing Failure ]
 
 webkit.org/b/49142 fast/css/style-scoped [ Skip ]
 
-# ENABLE(INPUT_TYPE_*) are not enabled.
-webkit.org/b/29359 fast/css/pseudo-in-range.html [ Failure ]
-webkit.org/b/29359 fast/css/pseudo-out-of-range.html [ Failure ]
-webkit.org/b/29359 fast/css/pseudo-in-range-invalid-value.html [ Failure ]
-
 # These tests require TOUCH_ADJUSTMENT flag to be enabled
 webkit.org/b/78801 touchadjustment
 

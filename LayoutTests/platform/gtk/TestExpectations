@@ -185,9 +185,6 @@ webkit.org/b/98934 fast/forms/datalist [ Skip ]
 webkit.org/b/98935 fast/forms/color [ Skip ]
 
 # ENABLE_INPUT_TYPE_* are not enabled.
-webkit.org/b/98936 fast/css/pseudo-in-range.html [ Failure ]
-webkit.org/b/98936 fast/css/pseudo-out-of-range.html [ Failure ]
-webkit.org/b/98936 fast/css/pseudo-in-range-invalid-value.html [ Failure ]
 webkit.org/b/98936 fast/forms/date [ Skip ]
 webkit.org/b/98936 fast/forms/date-multiple-fields [ Skip ]
 webkit.org/b/98936 fast/forms/datetime [ Skip ]
