@@ -1,3 +1,25 @@
+2012-11-28  Zan Dobersek  <zandobersek@gmail.com>
+
+        Remove deprecated logging usage from QueueEngine
+        https://bugs.webkit.org/show_bug.cgi?id=103532
+
+        Reviewed by Dirk Pranke.
+
+        Replace usage of deprecated logging in webkitpy.tool.bot.queueengine with
+        logging through the Logger object. The unit test is modified to reflect
+        these changes.
+
+        After these changes the deprecated logging (i.e. logging to stderr) is not
+        used anymore through webkitpy and can be removed.
+
+        * Scripts/webkitpy/tool/bot/queueengine.py:
+        (QueueEngine.exit_after_handled_error):
+        (QueueEngine.run):
+        (QueueEngine._stopping):
+        (QueueEngine._sleep):
+        * Scripts/webkitpy/tool/bot/queueengine_unittest.py:
+        (QueueEngineTest._run_engine):
+
 2012-11-28  Nate Chapin  <japhet@chromium.org>
 
         Move empty loading to DocumentLoader, simplify FrameLoader::init()

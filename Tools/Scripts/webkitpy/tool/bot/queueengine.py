@@ -27,13 +27,16 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import logging
 import sys
 import traceback
 
 from datetime import datetime, timedelta
 
 from webkitpy.common.system.executive import ScriptError
-from webkitpy.common.system.deprecated_logging import log, OutputTee
+from webkitpy.common.system.deprecated_logging import OutputTee
+
+_log = logging.getLogger(__name__)
 
 
 # FIXME: This will be caught by "except Exception:" blocks, we should consider
@@ -80,7 +83,7 @@ class QueueEngine:
     # Child processes exit with a special code to the parent queue process can detect the error was handled.
     @classmethod
     def exit_after_handled_error(cls, error):
-        log(error)
+        _log.error(error)
         sys.exit(cls.handled_error_code)
 
     def run(self):
@@ -100,7 +103,7 @@ class QueueEngine:
                 self._open_work_log(work_item)
                 try:
                     if not self._delegate.process_work_item(work_item):
-                        log("Unable to process work item.")
+                        _log.warning("Unable to process work item.")
                         continue
                 except ScriptError, e:
                     # Use a special exit code to indicate that the error was already
@@ -123,7 +126,7 @@ class QueueEngine:
         return 0
 
     def _stopping(self, message):
-        log("\n%s" % message)
+        _log.info("\n%s" % message)
         self._delegate.stop_work_queue(message)
         # Be careful to shut down our OutputTee or the unit tests will be unhappy.
         self._ensure_work_log_closed()
@@ -154,6 +157,6 @@ class QueueEngine:
         return "%s Sleeping until %s (%s)." % (message, wake_time.strftime(self.log_date_format), self.sleep_duration_text)
 
     def _sleep(self, message):
-        log(self._sleep_message(message))
+        _log.info(self._sleep_message(message))
         self._wakeup_event.wait(self.seconds_to_sleep)
         self._wakeup_event.clear()
