@@ -1,3 +1,18 @@
+2012-11-29  Eric Seidel  <eric@webkit.org>
+
+        run-perf-tests --chromium-android fails due to Skia INFO logging
+        https://bugs.webkit.org/show_bug.cgi?id=103585
+
+        Reviewed by Adam Barth.
+
+        Ignore all INFO logging from Chromium code.
+        Also added some basic testing of the ignored-stderr lines code.
+
+        * Scripts/webkitpy/performance_tests/perftest.py:
+        (PerfTest):
+        * Scripts/webkitpy/performance_tests/perftest_unittest.py:
+        (MainTest.test_ignored_stderr_lines):
+
 2012-11-29  Sudarsana Nagineni  <sudarsana.nagineni@intel.com>
 
         [EFL][WK2] Add support for PlatformWebView::simulateMouseMove() in TestWebKitAPI

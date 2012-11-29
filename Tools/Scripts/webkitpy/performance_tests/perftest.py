@@ -103,7 +103,9 @@ class PerfTest(object):
 
     _lines_to_ignore_in_stderr = [
         re.compile(r'^Unknown option:'),
-        re.compile(r'^\[WARNING:proxy_service.cc')]
+        re.compile(r'^\[WARNING:proxy_service.cc'),
+        re.compile(r'^\[INFO:'),
+    ]
 
     def _should_ignore_line_in_stderr(self, line):
         return self._should_ignore_line(self._lines_to_ignore_in_stderr, line)

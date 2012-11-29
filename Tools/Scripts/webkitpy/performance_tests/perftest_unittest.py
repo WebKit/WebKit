@@ -99,6 +99,24 @@ class MainTest(unittest.TestCase):
         self.assertEqual(actual_stderr, '')
         self.assertEqual(actual_logs, 'some-unrecognizable-line\n')
 
+    def test_ignored_stderr_lines(self):
+        test = PerfTest(MockPort(), 'some-test', '/path/some-dir/some-test')
+        ignored_lines = [
+            "Unknown option: --foo-bar",
+            "[WARNING:proxy_service.cc] bad moon a-rising",
+            "[INFO:SkFontHost_android.cpp(1158)] Use Test Config File Main /data/local/tmp/drt/android_main_fonts.xml, Fallback /data/local/tmp/drt/android_fallback_fonts.xml, Font Dir /data/local/tmp/drt/fonts/",
+        ]
+        for line in ignored_lines:
+            self.assertTrue(test._should_ignore_line_in_stderr(line))
+
+        non_ignored_lines = [
+            "Should not be ignored",
+            "[WARNING:chrome.cc] Something went wrong",
+            "[ERROR:main.cc] The sky has fallen",
+        ]
+        for line in non_ignored_lines:
+            self.assertFalse(test._should_ignore_line_in_stderr(line))
+
 
 class TestPageLoadingPerfTest(unittest.TestCase):
     class MockDriver(object):
