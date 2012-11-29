@@ -20,6 +20,15 @@ textarea {
     font-family: monospace;
 }
 
+/* If the select do not have multiple nor size larger than 1 attribute, which are menulist appearance, we wanna change text color when it is actived. */
+input[type="button"]:active, input[type="submit"]:active, input[type="reset"]:active, input[type="file"]:active::-webkit-file-upload-button, button:active, select:not([multiple]):not([size]):active, select[size="0"]:active, select[size="1"]:active {
+    color: #fafafa;
+}
+
+input[type="button"]:active:disabled, input[type="submit"]:active:disabled, input[type="reset"]:active:disabled, input[type="file"]:active:disabled::-webkit-file-upload-button, button:active:disabled, select:not([multiple]):not([size]):active:disabled, select[size="0"]:active:disabled, select[size="1"]:active:disabled {
+    color: GrayText;
+}
+
 select {
     border-radius: 0;
 }

@@ -123,7 +123,6 @@ const RGBA32 dragRollDark = 0xff69a8ff;
 
 const RGBA32 blackPen = Color::black;
 const RGBA32 focusRingPen = 0xffa3c8fe;
-const RGBA32 activeTextColor = 0xfffafafa;
 
 float RenderThemeBlackBerry::defaultFontSize = 16;
 
@@ -617,7 +616,6 @@ bool RenderThemeBlackBerry::paintButton(RenderObject* object, const PaintInfo& i
         drawNineSlice(context, rect, ctm.xScale(), disabled.get(), largeSlice);
     } else if (isPressed(object)) {
         drawNineSlice(context, rect, ctm.xScale(), pressed.get(), largeSlice);
-        object->style()->setTextFillColor(activeTextColor);
     } else
         drawNineSlice(context, rect, ctm.xScale(), inactive.get(), largeSlice);
 
@@ -664,10 +662,9 @@ bool RenderThemeBlackBerry::paintMenuList(RenderObject* object, const PaintInfo&
         drawNineSlice(context, rect, ctm.xScale(), inactive.get(), largeSlice);
         drawNineSlice(context, rect, ctm.xScale(), disabled.get(), largeSlice);
         drawControl(context, tmpRect, arrowUp.get()); // FIXME: should have a disabled image.
-    } else if (isFocused(object)) {
+    } else if (isPressed(object)) {
         drawNineSlice(context, rect, ctm.xScale(), pressed.get(), largeSlice);
         drawControl(context, tmpRect, arrowUpPressed.get());
-        object->style()->setTextFillColor(activeTextColor);
     } else {
         drawNineSlice(context, rect, ctm.xScale(), inactive.get(), largeSlice);
         drawControl(context, tmpRect, arrowUp.get());
