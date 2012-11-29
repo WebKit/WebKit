@@ -48,7 +48,8 @@ namespace WebCore {
         PluginQuirkRequiresGtkToolKit = 1 << 12,
         PluginQuirkRequiresDefaultScreenDepth = 1 << 13,
         PluginQuirkDontCallSetWindowMoreThanOnce = 1 << 14,
-        PluginQuirkIgnoreRightClickInWindowlessMode = 1 << 15
+        PluginQuirkIgnoreRightClickInWindowlessMode = 1 << 15,
+        PluginQuirkWantsChromeUserAgent = 1 << 16
     };
 
     class PluginQuirkSet {

@@ -98,6 +98,7 @@ namespace WebCore {
     class PluginStream;
     class ResourceError;
     class ResourceResponse;
+    class WheelEvent;
 
     enum PluginStatus {
         PluginStatusCanNotFindPlugin,
@@ -229,6 +230,10 @@ namespace WebCore {
         const String& mimeType() const { return m_mimeType; }
         const KURL& url() const { return m_url; }
 
+#if defined(XP_MACOSX) && ENABLE(NETSCAPE_PLUGIN_API)
+        bool popUpContextMenu(NPMenu*);
+#endif
+
 #if OS(WINDOWS) && ENABLE(NETSCAPE_PLUGIN_API)
         static LRESULT CALLBACK PluginViewWndProc(HWND, UINT, WPARAM, LPARAM);
         LRESULT wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
@@ -322,6 +327,17 @@ namespace WebCore {
 #if ENABLE(NETSCAPE_PLUGIN_API)
         bool dispatchNPEvent(NPEvent&);
 #endif // ENABLE(NETSCAPE_PLUGIN_API)
+#endif
+#if defined(XP_MACOSX) && ENABLE(NETSCAPE_PLUGIN_API)
+        int16_t dispatchNPCocoaEvent(NPCocoaEvent&);
+        bool m_updatedCocoaTextInputRequested;
+        bool m_keyDownSent;
+        bool m_usePixmap;
+        uint16_t m_disregardKeyUpCounter;
+#endif
+
+#if defined(XP_MACOSX)
+        void handleWheelEvent(WheelEvent*);
 #endif
         void updatePluginWidget();
         void paintMissingPluginIcon(GraphicsContext*, const IntRect&);

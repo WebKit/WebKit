@@ -57,8 +57,7 @@ void PluginPackage::determineQuirks(const String& mimeType)
     }
 
     if (mimeType == "application/x-shockwave-flash") {
-        // The flash plugin only requests windowless plugins if we return a mozilla user agent
-        m_quirks.add(PluginQuirkWantsMozillaUserAgent);
+        m_quirks.add(PluginQuirkWantsChromeUserAgent);
         m_quirks.add(PluginQuirkThrottleInvalidate);
         m_quirks.add(PluginQuirkThrottleWMUserPlusOneMessages);
         m_quirks.add(PluginQuirkFlashURLNotifyBug);
@@ -196,6 +195,7 @@ bool PluginPackage::fetchInfo()
 
             String description = (CFStringRef)CFDictionaryGetValue(extensionsDict.get(), CFSTR("WebPluginTypeDescription"));
             m_mimeToDescriptions.set(mimeType, description);
+            determineQuirks(mimeType);
         }
 
         m_name = (CFStringRef)CFBundleGetValueForInfoDictionaryKey(m_module, CFSTR("WebPluginName"));

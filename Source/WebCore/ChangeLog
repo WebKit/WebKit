@@ -1,3 +1,37 @@
+2012-11-29  Andy Shaw  <andy.shaw@digia.com>
+
+        [Qt] Implement support for Cocoa based NPAPI plugins on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=72358
+
+        Reviewed by Simon Hausmann.
+
+        With later versions of Flash they are only Cocoa based which meant that it was not possible to use Flash in a QtWebKit browser.
+        This makes it possible to also use 64bit based plugins too.  
+
+        * plugins/PluginPackage.cpp:
+        (WebCore::PluginPackage::initializeBrowserFuncs):
+        (WebCore):
+        * plugins/PluginQuirkSet.h:
+        * plugins/PluginView.cpp:
+        (WebCore::PluginView::handleEvent):
+        (WebCore::PluginView::PluginView):
+        (WebCore):
+        (WebCore::PluginView::userAgent):
+        * plugins/PluginView.h:
+        (WebCore):
+        (PluginView):
+        * plugins/mac/PluginPackageMac.cpp:
+        (WebCore::PluginPackage::determineQuirks):
+        (WebCore::PluginPackage::fetchInfo):
+        * plugins/mac/PluginViewMac.mm:
+        (WebCore):
+        (WebCore::initializeNPCocoaEvent):
+        (WebCore::getModifiers):
+        (WebCore::PluginView::platformStart):
+        * plugins/npapi.cpp:
+        (NPN_PopUpContextMenu):
+        * plugins/npapi.h:
+
 2012-11-29  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r136111.

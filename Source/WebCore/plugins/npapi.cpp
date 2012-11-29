@@ -199,3 +199,14 @@ NPError NPN_GetAuthenticationInfo(NPP instance, const char* protocol, const char
 {
     return pluginViewForInstance(instance)->getAuthenticationInfo(protocol, host, port, scheme, realm, username, ulen, password, plen);
 }
+
+NPError NPN_PopUpContextMenu(NPP instance, NPMenu* menu)
+{
+#if PLATFORM(QT) && defined(XP_MACOSX)
+    PluginView* plugin = pluginViewForInstance(instance);
+    plugin->popUpContextMenu(menu);
+    return NPERR_NO_ERROR;
+#else
+    return NPERR_NO_ERROR;
+#endif // PLATFORM(QT) && defined(XP_MACOSX)
+}

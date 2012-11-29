@@ -62,6 +62,7 @@
 #include "ScriptValue.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
+#include "WheelEvent.h"
 #include "npruntime_impl.h"
 #include <wtf/ASCIICType.h>
 #include <wtf/text/WTFString.h>
@@ -169,6 +170,10 @@ void PluginView::handleEvent(Event* event)
         handleMouseEvent(static_cast<MouseEvent*>(event));
     else if (event->isKeyboardEvent())
         handleKeyboardEvent(static_cast<KeyboardEvent*>(event));
+#if defined(XP_MACOSX)
+    else if (event->type() == eventNames().mousewheelEvent)
+        handleWheelEvent(static_cast<WheelEvent*>(event));
+#endif
     else if (event->type() == eventNames().contextmenuEvent)
         event->setDefaultHandled(); // We don't know if the plug-in has handled mousedown event by displaying a context menu, so we never want WebKit to show a default one.
 #if defined(XP_UNIX) && ENABLE(NETSCAPE_PLUGIN_API)
@@ -832,6 +837,9 @@ PluginView::PluginView(Frame* parentFrame, const IntSize& size, PluginPackage* p
     , m_instance(0)
 #if defined(XP_MACOSX)
     , m_isWindowed(false)
+    , m_updatedCocoaTextInputRequested(false)
+    , m_keyDownSent(false)
+    , m_disregardKeyUpCounter(0)
 #else
     , m_isWindowed(true)
 #endif
@@ -1255,11 +1263,27 @@ static const char* MozillaUserAgent = "Mozilla/5.0 ("
 #endif
         " en-US; rv:1.8.1) Gecko/20061010 Firefox/2.0";
 
+static const char* const ChromeUserAgent = "Mozilla/5.0 ("
+#if defined(XP_MACOSX)
+    "Macintosh; U; Intel Mac OS X;"
+#elif defined(XP_WIN)
+    "Windows; U; Windows NT 5.1;"
+#elif defined(XP_UNIX)
+    // The Gtk port uses X11 plugins in Mac.
+#if OS(DARWIN) && PLATFORM(GTK)
+    "X11; U; Intel Mac OS X;"
+#else
+    "X11; U; Linux i686;"
+#endif
+#endif
+    " AppleWebKit/534.34 (KHTML, like Gecko) Chrome/19.0.1055.1 Safari/534.34";
+
 const char* PluginView::userAgent()
 {
     if (m_plugin->quirks().contains(PluginQuirkWantsMozillaUserAgent))
         return MozillaUserAgent;
-
+    else if (m_plugin->quirks().contains(PluginQuirkWantsChromeUserAgent))
+        return ChromeUserAgent;
     if (m_userAgent.isNull())
         m_userAgent = m_parentFrame->loader()->userAgent(m_url).utf8();
 
