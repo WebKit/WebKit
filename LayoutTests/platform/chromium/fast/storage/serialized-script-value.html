@@ -12,7 +12,7 @@ function expectBufferValue(expectedValues, buffer) {
     if (success) {
         for (var i = 0; i < expectedValues.length; i++) {
             if (expectedValues[i] != bufferView[i]) {
-                testFailed("ArrayBufferViews differ at index " + i + ". Should be " + expectedValues[i] + ". Was " + view[i]);
+                testFailed("ArrayBufferViews differ at index " + i + ". Should be " + expectedValues[i] + ". Was " + bufferView[i]);
                 success = false;
                 break;
             }

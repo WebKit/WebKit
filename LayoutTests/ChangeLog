@@ -1,3 +1,12 @@
+2012-11-28  Noel Gordon  <noel.gordon@gmail.com>
+
+        Unreviewed test fix: chromium/fast/storage/serialized-script-value.html
+
+        This test produces an undefined error if the test fails.
+
+        * platform/chromium/fast/storage/serialized-script-value.html: Use bufferView
+        instead of view (view is not defined).
+
 2012-11-28  Joshua Bell  <jsbell@chromium.org>
 
         [Chromium] IndexedDB: Assert/crash in indexing layout tests in content_shell
