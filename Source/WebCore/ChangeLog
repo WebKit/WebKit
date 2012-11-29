@@ -1,3 +1,11 @@
+2012-11-29  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Unreviewed build fix.
+
+        * WebCore.gypi:
+        The new file is GridTrackSize.h not GridTrackSizes.h. For some reason, the
+        EWS didn't complain.
+
 2012-11-29  John Knottenbelt  <jknotten@chromium.org>
 
         Use GeolocationController's last geoposition as cached position.
