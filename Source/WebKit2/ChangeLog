@@ -1,3 +1,16 @@
+2012-11-28  Sergio Villar Senin  <svillar@igalia.com>
+
+        [WK2][Qt] Add drag&drop support to Flickable webView
+        https://bugs.webkit.org/show_bug.cgi?id=100778
+
+        Reviewed by Jocelyn Turcotte.
+
+        Enable the ItemAcceptsDrops flag in the flickable WebView. This
+        will allow the WebView to receive drag&drop events.
+
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewPrivate::initialize):
+
 2012-11-28  Shinya Kawanaka  <shinyak@chromium.org>
 
         [Shadow] Move Distribution stuffs from ShadowRoot
