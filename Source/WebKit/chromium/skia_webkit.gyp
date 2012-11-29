@@ -39,6 +39,10 @@
         'defines': [
           # Place defines here that require significant WebKit rebaselining, or that
           # are otherwise best removed in WebKit and then rolled into Chromium.
+          # Defines should be in single quotes and a comma must appear after every one.
+          'SK_DISABLE_DITHER_32BIT_GRADIENT',
+
+          'SK_DISABLE_DASHING_OPTIMIZATION',
         ],
       },
     },

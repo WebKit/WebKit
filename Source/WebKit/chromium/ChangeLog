@@ -1,3 +1,11 @@
+2012-11-29  Stephen Chenney  <schenney@chromium.org>
+
+        [Chromium] Add code supppression flags for skia
+
+        Unreviewed addition of Skia build flags to allow for their removal from Chromium's skia.gyp.
+
+        * skia_webkit.gyp: Added defines for SK_DISABLE_DITHER_32BIT_GRADIENT and SK_DISABLE_DASHING_OPTIMIZATION
+
 2012-11-29  Florin Malita  <fmalita@chromium.org>
 
         [Skia] Add missing OpaqueRegionSkia notifier calls
