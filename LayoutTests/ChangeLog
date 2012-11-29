@@ -1,3 +1,12 @@
+2012-11-29  Mike West  <mkwst@chromium.org>
+
+        Typo in 'autofocus' sandboxing error message.
+        https://bugs.webkit.org/show_bug.cgi?id=103616
+
+        Reviewed by Jochen Eisinger.
+
+        * fast/frames/sandboxed-iframe-autofocus-denied-expected.txt:
+
 2012-11-29  Hajime Morrita  <morrita@google.com>
 
         HTMLMediaElement's .textTracks property does not reflect <track> element
