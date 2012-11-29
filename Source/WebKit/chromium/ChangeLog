@@ -1,3 +1,16 @@
+2012-11-29  Florin Malita  <fmalita@chromium.org>
+
+        [Skia] Add missing OpaqueRegionSkia notifier calls
+        https://bugs.webkit.org/show_bug.cgi?id=102824
+
+        Reviewed by Stephen White.
+
+        Add opaque region tracking unit tests for the new PlatformContextSkia draw methods.
+
+        * tests/PlatformContextSkiaTest.cpp:
+        (WebCore::TEST):
+        (WebCore):
+
 2012-11-29  Miguel Garcia  <miguelg@chromium.org>
 
         Fix typo in description of openDateTimeChooser documentation

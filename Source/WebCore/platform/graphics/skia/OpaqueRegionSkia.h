@@ -57,15 +57,16 @@ public:
 
     void setImageMask(const SkRect& imageOpaqueRect);
 
-    void didDrawRect(const PlatformContextSkia*, const SkRect&, const SkPaint&, const SkBitmap* sourceBitmap);
-    void didDrawPath(const PlatformContextSkia*, const SkPath&, const SkPaint&);
-    void didDrawPoints(const PlatformContextSkia*, SkCanvas::PointMode, int numPoints, const SkPoint[], const SkPaint&);
-    void didDrawBounded(const PlatformContextSkia*, const SkRect&, const SkPaint&);
-
     enum DrawType {
         FillOnly,
         FillOrStroke
     };
+
+    void didDrawRect(const PlatformContextSkia*, const SkRect&, const SkPaint&, const SkBitmap* sourceBitmap);
+    void didDrawPath(const PlatformContextSkia*, const SkPath&, const SkPaint&);
+    void didDrawPoints(const PlatformContextSkia*, SkCanvas::PointMode, int numPoints, const SkPoint[], const SkPaint&);
+    void didDrawBounded(const PlatformContextSkia*, const SkRect&, const SkPaint&);
+    void didDrawUnbounded(const PlatformContextSkia*, const SkPaint&, DrawType);
 
     struct CanvasLayerState {
         CanvasLayerState()
@@ -85,7 +86,6 @@ public:
 
 private:
     void didDraw(const PlatformContextSkia*, const SkRect&, const SkPaint&, const SkBitmap* sourceBitmap, bool fillsBounds, DrawType);
-    void didDrawUnbounded(const PlatformContextSkia*, const SkPaint&, DrawType);
     void applyOpaqueRegionFromLayer(const PlatformContextSkia*, const SkRect& layerOpaqueRect, const SkPaint&);
     void markRectAsOpaque(const SkRect&);
     void markRectAsNonOpaque(const SkRect&);

@@ -1,3 +1,26 @@
+2012-11-29  Florin Malita  <fmalita@chromium.org>
+
+        [Skia] Add missing OpaqueRegionSkia notifier calls
+        https://bugs.webkit.org/show_bug.cgi?id=102824
+
+        Reviewed by Stephen White.
+
+        http://trac.webkit.org/changeset/135390 exposed some canvas draw clients which are not
+        updating the opaque region tracker. This patch adds the required notifier calls.
+
+        No new tests: platform unit tests added.
+
+        * platform/graphics/skia/OpaqueRegionSkia.h:
+        (OpaqueRegionSkia):
+        * platform/graphics/skia/PlatformContextSkia.h:
+        (WebCore::PlatformContextSkia::writePixels):
+        (WebCore::PlatformContextSkia::drawBitmap):
+        (WebCore::PlatformContextSkia::drawBitmapRect):
+        (WebCore::PlatformContextSkia::drawIRect):
+        (WebCore::PlatformContextSkia::drawPosText):
+        (WebCore::PlatformContextSkia::drawPosTextH):
+        (WebCore::PlatformContextSkia::drawTextOnPath):
+
 2012-11-29  Andy Shaw  <andy.shaw@digia.com>
 
         [Qt] Implement support for Cocoa based NPAPI plugins on Mac

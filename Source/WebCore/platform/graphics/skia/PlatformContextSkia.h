@@ -302,6 +302,14 @@ inline void PlatformContextSkia::writePixels(const SkBitmap& bitmap, int x, int 
     SkCanvas::Config8888 config8888)
 {
     m_canvas->writePixels(bitmap, x, y, config8888);
+
+    if (m_trackOpaqueRegion) {
+        SkRect rect = SkRect::MakeXYWH(x, y, bitmap.width(), bitmap.height());
+        SkPaint paint;
+
+        paint.setXfermodeMode(SkXfermode::kSrc_Mode);
+        m_opaqueRegion.didDrawRect(this, rect, paint, &bitmap);
+    }
 }
 
 inline bool PlatformContextSkia::isDrawingToLayer() const
@@ -363,12 +371,20 @@ inline void PlatformContextSkia::drawBitmap(const SkBitmap& bitmap, SkScalar lef
     const SkPaint* paint)
 {
     m_canvas->drawBitmap(bitmap, left, top, paint);
+
+    if (m_trackOpaqueRegion) {
+        SkRect rect = SkRect::MakeXYWH(left, top, bitmap.width(), bitmap.height());
+        m_opaqueRegion.didDrawRect(this, rect, *paint, &bitmap);
+    }
 }
 
 inline void PlatformContextSkia::drawBitmapRect(const SkBitmap& bitmap, const SkIRect* isrc,
     const SkRect& dst, const SkPaint* paint)
 {
     m_canvas->drawBitmapRect(bitmap, isrc, dst, paint);
+
+    if (m_trackOpaqueRegion)
+        m_opaqueRegion.didDrawRect(this, dst, *paint, &bitmap);
 }
 
 inline void PlatformContextSkia::drawOval(const SkRect& oval, const SkPaint& paint)
@@ -407,24 +423,41 @@ inline void PlatformContextSkia::drawRect(const SkRect& rect, const SkPaint& pai
 inline void PlatformContextSkia::drawIRect(const SkIRect& rect, const SkPaint& paint)
 {
     m_canvas->drawIRect(rect, paint);
+
+    if (m_trackOpaqueRegion) {
+        SkRect r = SkRect::MakeFromIRect(rect);
+        m_opaqueRegion.didDrawRect(this, r, paint, 0);
+    }
 }
 
 inline void PlatformContextSkia::drawPosText(const void* text, size_t byteLength,
     const SkPoint pos[], const SkPaint& paint)
 {
     m_canvas->drawPosText(text, byteLength, pos, paint);
+
+    // FIXME: compute bounds for positioned text.
+    if (m_trackOpaqueRegion)
+        m_opaqueRegion.didDrawUnbounded(this, paint, OpaqueRegionSkia::FillOrStroke);
 }
 
 inline void PlatformContextSkia::drawPosTextH(const void* text, size_t byteLength,
     const SkScalar xpos[], SkScalar constY, const SkPaint& paint)
 {
     m_canvas->drawPosTextH(text, byteLength, xpos, constY, paint);
+
+    // FIXME: compute bounds for positioned text.
+    if (m_trackOpaqueRegion)
+        m_opaqueRegion.didDrawUnbounded(this, paint, OpaqueRegionSkia::FillOrStroke);
 }
 
 inline void PlatformContextSkia::drawTextOnPath(const void* text, size_t byteLength,
     const SkPath& path, const SkMatrix* matrix, const SkPaint& paint)
 {
     m_canvas->drawTextOnPath(text, byteLength, path, matrix, paint);
+
+    // FIXME: compute bounds for positioned text.
+    if (m_trackOpaqueRegion)
+        m_opaqueRegion.didDrawUnbounded(this, paint, OpaqueRegionSkia::FillOrStroke);
 }
 
 }
