@@ -1,3 +1,50 @@
+2012-11-29  Stephen Chenney  <schenney@chromium.org>
+
+        [Chromium] Expectations update
+
+        Unreviewed expectation.
+
+        These expectations seem to have been rebaselined in error or missed
+        being rebaselined during the great Skia rebaseline of Thanksgiving
+        Day. This fixes some failing expectations and removes some incorrect
+        expectations that crept in.
+
+        * fast/repaint/bugzilla-6278-expected.png: Added.
+        * fast/repaint/invisible-objects-expected.png: Added.
+        * platform/chromium-mac-lion/fast/repaint/box-shadow-h-expected.png:
+        * platform/chromium-mac-lion/fast/repaint/box-shadow-v-expected.png:
+        * platform/chromium-mac-lion/fast/repaint/bugzilla-6278-expected.png: Added.
+        * platform/chromium-mac-lion/fast/repaint/invisible-objects-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/fast/repaint/box-shadow-h-expected.png:
+        * platform/chromium-mac-snowleopard/fast/repaint/box-shadow-v-expected.png:
+        * platform/chromium-mac-snowleopard/fast/repaint/bugzilla-6278-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/text/line-initial-and-final-swashes-expected.png: Removed.
+        * platform/chromium-mac/fast/repaint/box-shadow-h-expected.png:
+        * platform/chromium-mac/fast/repaint/box-shadow-v-expected.png:
+        * platform/chromium-mac/fast/repaint/bugzilla-6278-expected.png: Added.
+        * platform/chromium-mac/fast/repaint/iframe-scroll-repaint-expected.png: Added.
+        * platform/chromium-win-xp/fast/repaint/box-shadow-h-expected.png:
+        * platform/chromium-win-xp/fast/repaint/box-shadow-v-expected.png:
+        * platform/chromium-win/fast/repaint/body-background-image-expected.png:
+        * platform/chromium-win/fast/repaint/box-shadow-h-expected.png:
+        * platform/chromium-win/fast/repaint/box-shadow-v-expected.png:
+        * platform/chromium-win/fast/repaint/invisible-objects-expected.png: Added.
+        * platform/chromium-win/fast/text/font-initial-expected.png:
+        * platform/chromium-win/fast/text/line-initial-and-final-swashes-expected.png: Removed.
+        * platform/chromium-win/fast/text/line-initial-and-final-swashes-expected.txt: Removed.
+        * platform/chromium/TestExpectations:
+        * platform/chromium/fast/js/date-toisostring-expected.txt: Removed.
+        * platform/chromium/fast/js/toString-and-valueOf-override-expected.txt: Removed.
+        * platform/chromium/fast/repaint/bugzilla-6278-expected.png: Removed.
+        * platform/chromium/fast/repaint/iframe-scroll-repaint-expected.png: Removed.
+        * platform/chromium/fast/repaint/invisible-objects-expected.png: Removed.
+        * platform/chromium/svg/custom/getBBox-path-expected.txt: Removed.
+        * platform/chromium/svg/custom/global-constructors-expected.txt: Removed.
+        * platform/efl/fast/repaint/bugzilla-6278-expected.png: Removed.
+        * platform/efl/fast/repaint/invisible-objects-expected.png: Removed.
+        * platform/gtk/fast/repaint/bugzilla-6278-expected.png: Removed.
+        * platform/gtk/fast/repaint/invisible-objects-expected.png: Removed.
+
 2012-11-28  Daniel Bates  <dbates@webkit.org>
 
         [Chromium] LayoutTests/fast/js/string-replacement-outofmemory.html crashes
