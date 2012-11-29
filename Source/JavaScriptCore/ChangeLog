@@ -1,3 +1,14 @@
+2012-11-29  Michael Saboff  <msaboff@apple.com>
+
+        Speculative Windows build fix after r136086.
+
+        Unreviewed build fix.
+
+        Suspect that ?setDumpsGeneratedCode@BytecodeGenerator@JSC@@SAX_N@Z needs to be removed from Windows
+        export list since the symbol was removed in r136086.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+
 2012-11-28  Filip Pizlo  <fpizlo@apple.com>
 
         SpeculatedType dumping should not use the static char buffer[thingy] idiom

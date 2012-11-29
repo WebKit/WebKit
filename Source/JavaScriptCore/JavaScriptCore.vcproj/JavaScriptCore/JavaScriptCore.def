@@ -340,7 +340,6 @@ EXPORTS
     ?retrieveLastCaller@Interpreter@JSC@@QBEXPAVExecState@2@AAH1AAVString@WTF@@AAVJSValue@2@@Z
     ?setConfigurable@PropertyDescriptor@JSC@@QAEX_N@Z
     ?setDescriptor@PropertyDescriptor@JSC@@QAEXVJSValue@2@I@Z
-    ?setDumpsGeneratedCode@BytecodeGenerator@JSC@@SAX_N@Z
     ?setEnumerable@PropertyDescriptor@JSC@@QAEX_N@Z
     ?setGarbageCollectionTimerEnabled@Heap@JSC@@QAEX_N@Z
     ?setGetter@PropertyDescriptor@JSC@@QAEXVJSValue@2@@Z
