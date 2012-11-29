@@ -155,7 +155,7 @@ test("StatusArea", 3, function() {
     equal(statusArea.outerHTML,
         '<div class="status processing" style="visibility: visible; ">' +
             '<ul class="actions"><li><button class="action">Close</button></li></ul>' +
-            '<div class="process-text">Processing...</div>' +
+            '<progress class="process-text">Processing...</progress>' +
             '<div id="status-content-1" class="status-content">' +
                 '<div class="message">First Message</div>' +
                 '<div class="message">Second Message</div>' +
@@ -169,7 +169,7 @@ test("StatusArea", 3, function() {
     equal(statusArea.outerHTML,
         '<div class="status processing" style="visibility: visible; ">' +
             '<ul class="actions"><li><button class="action">Close</button></li></ul>' +
-            '<div class="process-text">Processing...</div>' +
+            '<progress class="process-text">Processing...</progress>' +
             '<div id="status-content-1" class="status-content">' +
                 '<div class="message">First Message</div>' +
                 '<div class="message">Second Message</div>' +
@@ -185,7 +185,7 @@ test("StatusArea", 3, function() {
     equal(statusArea.outerHTML,
         '<div class="status" style="visibility: visible; ">' +
             '<ul class="actions"><li><button class="action">Close</button></li></ul>' +
-            '<div class="process-text">Processing...</div>' +
+            '<progress class="process-text">Processing...</progress>' +
             '<div id="status-content-1" class="status-content">' +
                 '<div class="message">First Message</div>' +
                 '<div class="message">Second Message</div>' +

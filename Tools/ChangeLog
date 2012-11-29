@@ -1,3 +1,16 @@
+2012-11-28  Kent Tamura  <tkent@chromium.org>
+
+        garden-o-matic: Use indeterminate <progress> in the status area
+        https://bugs.webkit.org/show_bug.cgi?id=103494
+
+        Reviewed by Adam Barth.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui.js:
+        Wrap the "Processing..." message with an indeterminate progress bar.
+        We keep the message as a fallback content.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui_unittests.js:
+        Follow the above change.
+
 2012-11-28  Nima Ghanavatian  <nghanavatian@rim.com>
 
         Adding Nima Ghanavatian to committers.py
