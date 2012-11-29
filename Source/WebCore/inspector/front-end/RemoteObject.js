@@ -288,6 +288,16 @@ WebInspector.RemoteObject.prototype = {
             callback(0);
     },
 
+    highlightAsDOMNode: function()
+    {
+        WebInspector.domAgent.highlightDOMNode(undefined, undefined, this._objectId);
+    },
+
+    hideDOMNodeHighlight: function()
+    {
+        WebInspector.domAgent.hideDOMNodeHighlight();
+    },
+
     /**
      * @param {function(this:Object)} functionDeclaration
      * @param {Array.<RuntimeAgent.CallArgument>=} args

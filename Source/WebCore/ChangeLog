@@ -1,3 +1,37 @@
+2012-11-29  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: Console: hovering node wrappers in object tree should highlight them on the page
+        https://bugs.webkit.org/show_bug.cgi?id=101150
+
+        Reviewed by Vsevolod Vlasov.
+
+        - Introduced a way to highlight nodes by object id in addition to node id.
+        - Decorated nodes in the object tree outline and added on-hover highlighting.
+
+        * inspector/Inspector.json:
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::highlightNode):
+        * inspector/InspectorDOMAgent.h:
+        (InspectorDOMAgent):
+        * inspector/front-end/ConsoleMessage.js:
+        (WebInspector.ConsoleMessageImpl.prototype._appendPropertyPreview):
+        * inspector/front-end/DOMAgent.js:
+        (WebInspector.DOMAgent.prototype.highlightDOMNode):
+        * inspector/front-end/DOMPresentationUtils.js:
+        (WebInspector.DOMPresentationUtils.createSpansForNodeTitle):
+        * inspector/front-end/ObjectPropertiesSection.js:
+        (WebInspector.ObjectPropertyTreeElement.prototype.update):
+        (WebInspector.ObjectPropertyTreeElement.prototype._mouseMove):
+        (WebInspector.ObjectPropertyTreeElement.prototype._mouseOut):
+        * inspector/front-end/RemoteObject.js:
+        (WebInspector.RemoteObject.prototype.highlightAsDOMNode):
+        (WebInspector.RemoteObject.prototype.hideDOMNodeHighlight):
+        * inspector/front-end/TestController.js:
+        * inspector/front-end/externs.js:
+        * inspector/front-end/inspector.css:
+        (.console-formatted-node:hover):
+        * inspector/front-end/utilities.js:
+
 2012-11-29  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/12771885> Support ruby-position: {before, after}

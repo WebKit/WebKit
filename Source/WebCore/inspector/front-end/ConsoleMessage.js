@@ -351,12 +351,7 @@ WebInspector.ConsoleMessageImpl.prototype = {
 
         if (property.type === "object" && property.subtype === "node") {
             span.addStyleClass("console-formatted-preview-node");
-            var match = property.value.match(/([^#.]+)(#[^.]+)?(\..*)?/);
-            span.createChild("span", "webkit-html-tag-name").textContent = match[1];
-            if (match[2])
-                span.createChild("span", "webkit-html-attribute-value").textContent = match[2];
-            if (match[3])
-                span.createChild("span", "webkit-html-attribute-name").textContent = match[3];
+            WebInspector.DOMPresentationUtils.createSpansForNodeTitle(span, property.value);
             return;
         }
 

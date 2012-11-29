@@ -234,7 +234,7 @@ WebInspector.ObjectPropertyTreeElement.prototype = {
         } else if (this.property.value.type === "function" && typeof description === "string") {
             this.valueElement.textContent = /.*/.exec(description)[0].replace(/ +$/g, "");
             this.valueElement._originalTextContent = description;
-        } else
+        } else if (this.property.value.type !== "object" || this.property.value.subtype !== "node") 
             this.valueElement.textContent = description;
 
         if (this.property.wasThrown)
@@ -245,7 +245,12 @@ WebInspector.ObjectPropertyTreeElement.prototype = {
             this.valueElement.addStyleClass("console-formatted-" + this.property.value.type);
 
         this.valueElement.addEventListener("contextmenu", this._contextMenuFired.bind(this, this.property.value), false);
-        this.valueElement.title = description || "";
+        if (this.property.value.type === "object" && this.property.value.subtype === "node") {
+            WebInspector.DOMPresentationUtils.createSpansForNodeTitle(this.valueElement, this.property.value.description);
+            this.valueElement.addEventListener("mousemove", this._mouseMove.bind(this, this.property.value), false);
+            this.valueElement.addEventListener("mouseout", this._mouseOut.bind(this, this.property.value), false);
+        } else
+            this.valueElement.title = description || "";
 
         this.listItemElement.removeChildren();
 
@@ -268,6 +273,16 @@ WebInspector.ObjectPropertyTreeElement.prototype = {
      */
     populateContextMenu: function(contextMenu)
     {
+    },
+
+    _mouseMove: function(event)
+    {
+        this.property.value.highlightAsDOMNode();
+    },
+
+    _mouseOut: function(event)
+    {
+        this.property.value.hideDOMNodeHighlight();
     },
 
     updateSiblings: function()

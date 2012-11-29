@@ -1141,6 +1141,10 @@ ol.watch-expressions > li.hovered {
     color: black;
 }
 
+.console-formatted-node:hover {
+    background-color: rgba(56, 121, 217, 0.1);
+}
+
 .console-formatted-object .section, .console-formatted-node .section, .console-formatted-array .section {
     position: static;
 }

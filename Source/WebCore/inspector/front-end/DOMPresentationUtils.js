@@ -76,6 +76,20 @@ WebInspector.DOMPresentationUtils.decorateNodeLabel = function(node, parentEleme
     parentElement.title = title;
 }
 
+/**
+ * @param {Element} container
+ * @param {string} nodeTitle
+ */
+WebInspector.DOMPresentationUtils.createSpansForNodeTitle = function(container, nodeTitle)
+{
+    var match = nodeTitle.match(/([^#.]+)(#[^.]+)?(\..*)?/);
+    container.createChild("span", "webkit-html-tag-name").textContent = match[1];
+    if (match[2])
+        container.createChild("span", "webkit-html-attribute-value").textContent = match[2];
+    if (match[3])
+        container.createChild("span", "webkit-html-attribute-name").textContent = match[3];
+}
+
 WebInspector.DOMPresentationUtils.linkifyNodeReference = function(node)
 {
     var link = document.createElement("span");

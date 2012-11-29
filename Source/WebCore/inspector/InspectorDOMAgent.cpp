@@ -1066,12 +1066,19 @@ void InspectorDOMAgent::highlightRect(ErrorString*, int x, int y, int width, int
     m_overlay->highlightRect(adoptPtr(new IntRect(x, y, width, height)), *highlightConfig);
 }
 
-void InspectorDOMAgent::highlightNode(
-    ErrorString* errorString,
-    int nodeId,
-    const RefPtr<InspectorObject>& highlightInspectorObject)
+void InspectorDOMAgent::highlightNode(ErrorString* errorString, const int* nodeId, const String* objectId, const RefPtr<InspectorObject>& highlightInspectorObject)
 {
-    Node* node = nodeForId(nodeId);
+    Node* node = 0;
+    if (nodeId) {
+        node = assertNode(errorString, *nodeId);
+    } else if (objectId) {
+        InjectedScript injectedScript = m_injectedScriptManager->injectedScriptForObjectId(*objectId);
+        node = injectedScript.nodeForObjectId(*objectId);
+        if (!node)
+            *errorString = "Node for given objectId not found";
+    } else
+        *errorString = "Either nodeId or objectId must be specified";
+
     if (!node)
         return;
 

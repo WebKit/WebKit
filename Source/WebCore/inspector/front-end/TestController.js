@@ -45,7 +45,7 @@ WebInspector.TestController.prototype = {
 
 WebInspector.evaluateForTestInFrontend = function(callId, script)
 {
-    WebInspector.isUnderTest = true;
+    window.isUnderTest = true;
     function invokeMethod()
     {
         try {
