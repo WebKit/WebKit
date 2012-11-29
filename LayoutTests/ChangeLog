@@ -1,3 +1,14 @@
+2012-11-29  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/12771885> Support ruby-position: {before, after}
+        https://bugs.webkit.org/show_bug.cgi?id=103569
+
+        Reviewed by Anders Carlsson.
+
+        * fast/ruby/position-after.html: Added.
+        * platform/mac/fast/ruby/position-after-expected.png: Added.
+        * platform/mac/fast/ruby/position-after-expected.txt: Added.
+
 2012-11-29  Mike West  <mkwst@chromium.org>
 
         Typo in 'autofocus' sandboxing error message.

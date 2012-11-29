@@ -835,7 +835,9 @@ public:
     const AtomicString& textEmphasisCustomMark() const { return rareInheritedData->textEmphasisCustomMark; }
     TextEmphasisPosition textEmphasisPosition() const { return static_cast<TextEmphasisPosition>(rareInheritedData->textEmphasisPosition); }
     const AtomicString& textEmphasisMarkString() const;
-    
+
+    RubyPosition rubyPosition() const { return static_cast<RubyPosition>(rareInheritedData->m_rubyPosition); }
+
     // Return true if any transform related property (currently transform, transformStyle3D or perspective) 
     // indicates that we are transforming
     bool hasTransformRelatedProperty() const { return hasTransform() || preserves3D() || hasPerspective(); }
@@ -1300,6 +1302,8 @@ public:
     void setTextEmphasisCustomMark(const AtomicString& mark) { SET_VAR(rareInheritedData, textEmphasisCustomMark, mark); }
     void setTextEmphasisPosition(TextEmphasisPosition position) { SET_VAR(rareInheritedData, textEmphasisPosition, position); }
 
+    void setRubyPosition(RubyPosition position) { SET_VAR(rareInheritedData, m_rubyPosition, position); }
+
 #if ENABLE(CSS_FILTERS)
     void setFilter(const FilterOperations& ops) { SET_VAR(rareNonInheritedData.access()->m_filter, m_operations, ops); }
 #endif
@@ -1616,6 +1620,7 @@ public:
     static TextEmphasisMark initialTextEmphasisMark() { return TextEmphasisMarkNone; }
     static const AtomicString& initialTextEmphasisCustomMark() { return nullAtom; }
     static TextEmphasisPosition initialTextEmphasisPosition() { return TextEmphasisPositionOver; }
+    static RubyPosition initialRubyPosition() { return RubyPositionBefore; }
     static LineBoxContain initialLineBoxContain() { return LineBoxContainBlock | LineBoxContainInline | LineBoxContainReplaced; }
     static ImageOrientationEnum initialImageOrientation() { return OriginTopLeft; }
     static EImageRendering initialImageRendering() { return ImageRenderingAuto; }

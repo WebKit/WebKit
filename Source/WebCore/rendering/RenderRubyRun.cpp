@@ -246,7 +246,7 @@ void RenderRubyRun::layout()
         lastLineRubyTextBottom = rootBox->logicalBottomLayoutOverflow();
     }
 
-    if (!style()->isFlippedLinesWritingMode()) {
+    if (style()->isFlippedLinesWritingMode() == (style()->rubyPosition() == RubyPositionAfter)) {
         LayoutUnit firstLineTop = 0;
         if (RenderRubyBase* rb = rubyBase()) {
             RootInlineBox* rootBox = rb->firstRootBox();

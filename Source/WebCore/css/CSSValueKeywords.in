@@ -871,6 +871,10 @@ vertical-rl
 vertical-lr
 horizontal-bt
 
+// -webkit-ruby-position
+after
+before
+
 // -webkit-text-emphasis-position
 over
 under

@@ -102,6 +102,7 @@ StyleRareInheritedData::StyleRareInheritedData()
 #if ENABLE(CSS3_TEXT)
     , m_textAlignLast(RenderStyle::initialTextAlignLast())
 #endif // CSS3_TEXT
+    , m_rubyPosition(RenderStyle::initialRubyPosition())
     , hyphenationLimitBefore(-1)
     , hyphenationLimitAfter(-1)
     , hyphenationLimitLines(-1)
@@ -168,6 +169,7 @@ StyleRareInheritedData::StyleRareInheritedData(const StyleRareInheritedData& o)
 #if ENABLE(CSS3_TEXT)
     , m_textAlignLast(o.m_textAlignLast)
 #endif // CSS3_TEXT
+    , m_rubyPosition(o.m_rubyPosition)
     , hyphenationString(o.hyphenationString)
     , hyphenationLimitBefore(o.hyphenationLimitBefore)
     , hyphenationLimitAfter(o.hyphenationLimitAfter)
@@ -260,6 +262,7 @@ bool StyleRareInheritedData::operator==(const StyleRareInheritedData& o) const
 #if ENABLE(CSS3_TEXT)
         && m_textAlignLast == o.m_textAlignLast
 #endif // CSS3_TEXT
+        && m_rubyPosition == o.m_rubyPosition
         && m_lineSnap == o.m_lineSnap
 #if ENABLE(CSS_VARIABLES)
         && m_variables == o.m_variables
