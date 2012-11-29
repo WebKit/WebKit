@@ -604,7 +604,7 @@ RenderFlowThread* RenderObject::enclosingRenderFlowThread() const
     return 0;
 }
 
-RenderNamedFlowThread* RenderObject::enclosingRenderNamedFlowThread() const
+RenderNamedFlowThread* RenderObject::renderNamedFlowThreadWrapper() const
 {
     RenderObject* object = const_cast<RenderObject*>(this);
     while (object && object->isAnonymousBlock() && !object->isRenderNamedFlowThread())
@@ -2422,7 +2422,7 @@ void RenderObject::insertedIntoTree()
     if (!isFloating() && parent()->childrenInline())
         parent()->dirtyLinesFromChangedChild(this);
 
-    if (RenderNamedFlowThread* containerFlowThread = parent()->enclosingRenderNamedFlowThread())
+    if (RenderNamedFlowThread* containerFlowThread = parent()->renderNamedFlowThreadWrapper())
         containerFlowThread->addFlowChild(this);
 }
 
@@ -2450,7 +2450,7 @@ void RenderObject::willBeRemovedFromTree()
     if (inRenderFlowThread())
         removeFromRenderFlowThread();
 
-    if (RenderNamedFlowThread* containerFlowThread = parent()->enclosingRenderNamedFlowThread())
+    if (RenderNamedFlowThread* containerFlowThread = parent()->renderNamedFlowThreadWrapper())
         containerFlowThread->removeFlowChild(this);
 
 #if ENABLE(SVG)

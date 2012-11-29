@@ -1,0 +1,46 @@
+<!doctype html>
+<html>
+    <head>
+        <style>
+            .region {
+                height: 180px;
+                width: 80px;
+                border: 2px solid black;
+            }
+
+            .content {
+                height: 60px;
+                width: 40px;
+            }
+
+            #red {
+                background-color: red;
+            }
+
+            #green {
+                background-color: green;
+                display: inline-block;
+            }
+
+            #yellow {
+                background-color: yellow;
+                display: inline-block;
+            }
+
+            #blue {
+                background-color: blue;
+            }
+        </style>
+    </head>
+    <body onload="shuffle()">
+        <p>Test for <a href="https://bugs.webkit.org/show_bug.cgi?id=103501">Fix content node renderers ordering inside the named flow thread</a>.</p>
+        <p>The test adds four colored content nodes (mix of inline and block) to a flow and then modifies the flow-into properties to force renderers to shuffle.</p>
+        <p>On success, you should see the blocks ordered: red (top), green, yellow (middle), blue (bottom).</p>
+
+        <div class="region">
+            <div id="red" class="content">1</div>
+            <div id="green"class="content">2</div><div id="yellow"class="content">3</div>
+            <div id="blue" class="content">4</div>
+        </div>
+    </body>
+</html>

@@ -1,0 +1,44 @@
+<!doctype html>
+<html>
+    <head>
+        <style>
+            .region {
+                height: 60px;
+                width: 120px;
+                border: 2px solid black;
+            }
+
+            .float {
+                float: left;
+                height: 60px;
+                width: 40px;
+            }
+
+            #red {
+                background-color: red;
+            }
+
+            #green {
+                background-color: green;
+            }
+
+            #blue {
+                background-color: blue;
+            }
+
+            div.content:hover p:first-letter {
+                font-size: 30px;
+            }
+        </style>
+    </head>
+    <body>
+        <p>Test for <a href="https://bugs.webkit.org/show_bug.cgi?id=103501">Fix content node renderers ordering inside the named flow thread</a>.</p>
+        <p>The test adds three colored content nodes (blocks) to a flow and then modifies the flow-into properties to force renderers to shuffle.</p>
+        <p>On success, you should see the blocks ordered: red, green, blue.</p>
+        <div class="region">
+            <div id="red" class="float">1</div>
+            <div id="green"class="float">2</div>
+            <div id="blue" class="float">3</div>
+        </div>
+    </body>
+</html>

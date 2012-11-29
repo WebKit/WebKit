@@ -113,15 +113,20 @@ RenderObject* RenderNamedFlowThread::previousRendererForNode(Node* node) const
     return 0;
 }
 
-void RenderNamedFlowThread::addFlowChild(RenderObject* newChild, RenderObject* beforeChild)
+void RenderNamedFlowThread::addFlowChild(RenderObject* newChild)
 {
     // The child list is used to sort the flow thread's children render objects 
     // based on their corresponding nodes DOM order. The list is needed to avoid searching the whole DOM.
 
+    Node* childNode = newChild->node();
+
     // Do not add anonymous objects.
-    if (!newChild->node())
+    if (!childNode)
         return;
 
+    ASSERT(childNode->isElementNode());
+
+    RenderObject* beforeChild = nextRendererForNode(childNode);
     if (beforeChild)
         m_flowThreadChildList.insertBefore(beforeChild, newChild);
     else

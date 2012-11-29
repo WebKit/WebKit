@@ -1,3 +1,35 @@
+2012-11-29  Andrei Bucur  <abucur@adobe.com>
+
+        [CSS Regions] Fix content node renderers ordering inside the named flow thread
+        https://bugs.webkit.org/show_bug.cgi?id=103501
+
+        Reviewed by David Hyatt.
+
+        This patch fixes two issues with how content nodes renderers are added to a named flow thread.
+        The first issue was about determining the insertion position of a renderer inside the children list of a named flow thread. Before this patch, the
+        insertion point was based on both the DOM ordering of the elements and insertion order of previous renderers.
+        The patch fixes this and makes the renderer position just a function of the DOM ordering of elements.
+        The second issue appeared when next/previousRenderer methods were skipping nodes because they had the flow-into property as a side effect
+        of copying the style of the parent element (e.g. Text nodes). The patch ensures the skipped nodes are also elements.
+
+        Tests: fast/regions/named-flow-content-order-1.html
+               fast/regions/named-flow-content-order-2.html
+               fast/regions/named-flow-content-order-3.html
+
+        * dom/NodeRenderingContext.cpp:
+        (WebCore::NodeRenderingContext::nextRenderer): Skip only elements.
+        (WebCore::NodeRenderingContext::previousRenderer): Skip only elements.
+        * rendering/RenderNamedFlowThread.cpp:
+        (WebCore::RenderNamedFlowThread::addFlowChild): Insert the renderer in the list based on the DOM position of the owner element.
+        * rendering/RenderNamedFlowThread.h:
+        (RenderNamedFlowThread):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::renderNamedFlowThreadWrapper): Rename to eliminate the confusion with enclosingRenderFlowThread.
+        (WebCore::RenderObject::insertedIntoTree):
+        (WebCore::RenderObject::willBeRemovedFromTree):
+        * rendering/RenderObject.h:
+        (RenderObject):
+
 2012-11-28  Mike West  <mkwst@chromium.org>
 
         Add a test to ensure that 'seamless' iframes do not inherit contenteditable.

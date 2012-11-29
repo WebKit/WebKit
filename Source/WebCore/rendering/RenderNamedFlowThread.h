@@ -55,7 +55,7 @@ public:
     RenderObject* nextRendererForNode(Node*) const;
     RenderObject* previousRendererForNode(Node*) const;
 
-    void addFlowChild(RenderObject* newChild, RenderObject* beforeChild = 0);
+    void addFlowChild(RenderObject* newChild);
     void removeFlowChild(RenderObject*);
     bool hasChildren() const { return !m_flowThreadChildList.isEmpty(); }
 #ifndef NDEBUG

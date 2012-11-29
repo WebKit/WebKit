@@ -1,0 +1,43 @@
+<!doctype html>
+<html>
+    <head>
+        <style>
+            .content { -webkit-flow-into: content-flow; }
+
+            .region {
+                -webkit-flow-from: content-flow;
+                height: 300px;
+                width: 500px;
+                border: 1px solid black;
+            }
+
+            p, div, body {
+                margin: 0px;
+                font-size: 20px;
+            }
+
+            p {
+                display: inline;
+            }
+        </style>
+    </head>
+    <body>
+        <p>Test for <a href="https://bugs.webkit.org/show_bug.cgi?id=103501">Fix content node renderers ordering inside the named flow thread</a>.</p>
+        <p>The test verifies the order of elements preserves when the text nodes have flow-into set because of style cloning.</p>
+        <p>On success, you should see the first inline, the paragraph and the second inline.</p>
+        <div class="content">
+            First inline.
+            <p id="para">A paragraph that can be block or inline.</p>
+            Second inline.
+        </div>
+        <div class="region"></div>
+
+        <script>
+            document.body.offsetTop;
+            var para = document.getElementById("para");
+            para.style.display = "block";
+            document.body.offsetTop;
+            para.style.display = "inline";
+        </script>
+    </body>
+</html>

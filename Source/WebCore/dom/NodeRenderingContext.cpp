@@ -86,8 +86,8 @@ RenderObject* NodeRenderingContext::nextRenderer() const
     ComposedShadowTreeWalker walker(m_node);
     for (walker.nextSibling(); walker.get(); walker.nextSibling()) {
         if (RenderObject* renderer = walker.get()->renderer()) {
-            // Do not return elements that are attached to a different flow-thread.
-            if (renderer->style() && !renderer->style()->flowThread().isEmpty())
+            // Renderers for elements attached to a flow thread should be skipped because they are parented differently.
+            if (renderer->node()->isElementNode() && renderer->style() && !renderer->style()->flowThread().isEmpty())
                 continue;
             return renderer;
         }
@@ -110,8 +110,8 @@ RenderObject* NodeRenderingContext::previousRenderer() const
     ComposedShadowTreeWalker walker(m_node);
     for (walker.previousSibling(); walker.get(); walker.previousSibling()) {
         if (RenderObject* renderer = walker.get()->renderer()) {
-            // Do not return elements that are attached to a different flow-thread.
-            if (renderer->style() && !renderer->style()->flowThread().isEmpty())
+            // Renderers for elements attached to a flow thread should be skipped because they are parented differently.
+            if (renderer->node()->isElementNode() && renderer->style() && !renderer->style()->flowThread().isEmpty())
                 continue;
             return renderer;
         }

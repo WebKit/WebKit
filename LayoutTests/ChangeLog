@@ -1,3 +1,20 @@
+2012-11-29  Andrei Bucur  <abucur@adobe.com>
+
+        [CSS Regions] Fix content node renderers ordering inside the named flow thread
+        https://bugs.webkit.org/show_bug.cgi?id=103501
+
+        Reviewed by David Hyatt.
+
+        The first two ref tests cover the issue with incorrectly computing the insertion position for a content node renderer.
+        The third ref test covers the issue with nextRenderer and previousRenderer skipping valid nodes.
+
+        * fast/regions/named-flow-content-order-1-expected.html: Added.
+        * fast/regions/named-flow-content-order-1.html: Added.
+        * fast/regions/named-flow-content-order-2-expected.html: Added.
+        * fast/regions/named-flow-content-order-2.html: Added.
+        * fast/regions/named-flow-content-order-3-expected.html: Added.
+        * fast/regions/named-flow-content-order-3.html: Added.
+
 2012-11-28  Mike West  <mkwst@chromium.org>
 
         Add a test to ensure that 'seamless' iframes do not inherit contenteditable.
