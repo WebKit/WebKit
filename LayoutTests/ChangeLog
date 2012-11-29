@@ -1,3 +1,9 @@
+2012-11-29  Zhenyao Mo  <zmo@google.com>
+
+        Unreviewed, WebKit gardening.
+
+        * platform/chromium/TestExpectations:
+
 2012-11-29  John Knottenbelt  <jknotten@chromium.org>
 
         Use GeolocationController's last geoposition as cached position.
