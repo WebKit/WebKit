@@ -45,11 +45,10 @@ function testCompareDocumentPosition()
     shouldBe('b2.compareDocumentPosition(b1)', 'Node.DOCUMENT_POSITION_CONTAINS | Node.DOCUMENT_POSITION_PRECEDING');
     shouldBe('b2.compareDocumentPosition(b3)', 'Node.DOCUMENT_POSITION_FOLLOWING');
 
-    // We do not test FOLLOWING OR PRECEDING flag until we have a stable implementation which decides the total order between nodes in different shadow trees.
-    shouldBe('a1.compareDocumentPosition(b1) & (Node.DOCUMENT_POSITION_DISCONNECTED | Node.DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC)',
-             'Node.DOCUMENT_POSITION_DISCONNECTED | Node.DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC');
-    shouldBe('b1.compareDocumentPosition(c1) & (Node.DOCUMENT_POSITION_DISCONNECTED | Node.DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC)',
-             'Node.DOCUMENT_POSITION_DISCONNECTED | Node.DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC');
+    // The current implementation does not return FOLLOWING OR PRECEDING flag.
+    // We need a stable implementation which decides the total order between nodes in different shadow trees.
+    shouldBe('a1.compareDocumentPosition(b1)', 'Node.DOCUMENT_POSITION_DISCONNECTED | Node.DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC');
+    shouldBe('b1.compareDocumentPosition(c1)', 'Node.DOCUMENT_POSITION_DISCONNECTED | Node.DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC');
 }
 
 testCompareDocumentPosition();
