@@ -2081,14 +2081,6 @@ crbug.com/2844 http/tests/appcache/top-frame-2.html
 # This test fails because there is no setAppCacheMaximumSize API yet.
 crbug.com/2844 http/tests/appcache/max-size.html
 
-# To be rebaselined after skia.gyp undefines SK_DISABLE_EXTRACTSUBSET_OPAQUE_FIX
-crbug.com/156097  fast/backgrounds/repeat/negative-offset-repeat-transformed.html [ ImageOnlyFailure ] 
-crbug.com/156097  fast/borders/border-image-rotate-transform.html [ ImageOnlyFailure ] 
-crbug.com/156097  svg/custom/clip-mask-negative-scale.svg [ ImageOnlyFailure ] 
-crbug.com/156097  svg/custom/focus-ring.svg [ ImageOnlyFailure ] 
-crbug.com/156097  svg/transforms/animated-path-inside-transformed-html.xhtml [ ImageOnlyFailure ] 
-crbug.com/156097 [ Mac ] fast/forms/select-style.html [ ImageOnlyFailure ]
-
 # Flakiness documented around Webkit Roll 51681:51711
 crbug.com/2844 http/tests/appcache/404-manifest.html [ Skip ]
 crbug.com/2844 http/tests/appcache/404-resource.html [ Skip ]
@@ -2939,7 +2931,7 @@ webkit.org/b/93546 platform/chromium/virtual/softwarecompositing/plugins/no-back
 webkit.org/b/74694 http/tests/cache/history-only-cached-subresource-loads.html [ Missing Pass ]
 webkit.org/b/74694 http/tests/cache/history-only-cached-subresource-loads-max-age-https.html [ Missing Pass ]
 
-webkit.org/b/67915 [ Android Linux Win ] fast/borders/borderRadiusDashed06.html [ ImageOnlyFailure ]
+webkit.org/b/67915 [ Android Linux ] fast/borders/borderRadiusDashed06.html [ ImageOnlyFailure ]
 
 webkit.org/b/95365 fast/loader/reload-zero-byte-plugin.html
 

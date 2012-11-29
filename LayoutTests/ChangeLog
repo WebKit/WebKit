@@ -1,5 +1,42 @@
 2012-11-29  Stephen Chenney  <schenney@chromium.org>
 
+        [Chromium] Rebaseline after SK_DISABLE_EXTRACTSUBSET_OPAQUE_FIX was removed
+
+        Unreviewed test expectations update.
+
+        * platform/chromium-linux-x86/fast/backgrounds/repeat/negative-offset-repeat-transformed-expected.png: Removed.
+        * platform/chromium-linux-x86/svg/custom/clip-mask-negative-scale-expected.png: Removed.
+        * platform/chromium-linux/svg/transforms/text-with-mask-with-svg-transform-expected.png:
+        * platform/chromium-mac-lion/fast/backgrounds/repeat/negative-offset-repeat-transformed-expected.png: Added.
+        * platform/chromium-mac-lion/fast/borders/border-image-rotate-transform-expected.png: Added.
+        * platform/chromium-mac-lion/fast/forms/select-style-expected.png: Added.
+        * platform/chromium-mac-lion/svg/custom/clip-mask-negative-scale-expected.png: Added.
+        * platform/chromium-mac-lion/svg/custom/focus-ring-expected.png: Added.
+        * platform/chromium-mac-lion/svg/transforms/animated-path-inside-transformed-html-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/backgrounds/repeat/negative-offset-repeat-transformed-expected.png:
+        * platform/chromium-mac-snowleopard/fast/borders/border-image-rotate-transform-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/select-style-expected.png:
+        * platform/chromium-mac-snowleopard/svg/custom/clip-mask-negative-scale-expected.png:
+        * platform/chromium-mac-snowleopard/svg/custom/focus-ring-expected.png:
+        * platform/chromium-mac-snowleopard/svg/transforms/animated-path-inside-transformed-html-expected.png:
+        * platform/chromium-mac/fast/backgrounds/repeat/negative-offset-repeat-transformed-expected.png:
+        * platform/chromium-mac/fast/borders/border-image-rotate-transform-expected.png:
+        * platform/chromium-mac/fast/borders/border-image-side-reduction-expected.png:
+        * platform/chromium-mac/fast/forms/select-style-expected.png:
+        * platform/chromium-mac/svg/custom/clip-mask-negative-scale-expected.png:
+        * platform/chromium-mac/svg/custom/focus-ring-expected.png:
+        * platform/chromium-mac/svg/transforms/animated-path-inside-transformed-html-expected.png:
+        * platform/chromium-win-xp/svg/custom/clip-mask-negative-scale-expected.png: Removed.
+        * platform/chromium-win/fast/backgrounds/repeat/negative-offset-repeat-transformed-expected.png:
+        * platform/chromium-win/fast/borders/border-image-rotate-transform-expected.png:
+        * platform/chromium-win/fast/borders/borderRadiusDashed06-expected.png:
+        * platform/chromium-win/svg/custom/clip-mask-negative-scale-expected.png:
+        * platform/chromium-win/svg/custom/focus-ring-expected.png:
+        * platform/chromium-win/svg/transforms/animated-path-inside-transformed-html-expected.png:
+        * platform/chromium/TestExpectations:
+
+2012-11-29  Stephen Chenney  <schenney@chromium.org>
+
         [Chromium] Expectations update
 
         Unreviewed expectation.
