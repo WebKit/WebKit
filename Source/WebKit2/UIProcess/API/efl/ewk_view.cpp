@@ -508,7 +508,8 @@ static inline Evas_Object* createEwkView(Evas* canvas, Evas_Smart* smart, PassRe
     }
 
     ASSERT(!smartData->priv);
-    smartData->priv = new EwkViewImpl(ewkView, context, toImpl(pageGroupRef), behavior);
+    RefPtr<WebPageGroup> pageGroup = pageGroupRef ? toImpl(pageGroupRef) : WebPageGroup::create();
+    smartData->priv = new EwkViewImpl(ewkView, context, pageGroup, behavior);
     return ewkView;
 }
 

@@ -1,3 +1,15 @@
+2012-11-28  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r135973.
+        http://trac.webkit.org/changeset/135973
+        https://bugs.webkit.org/show_bug.cgi?id=103604
+
+        It made API test crash on EFL bots (Requested by gyuyoung on
+        #webkit).
+
+        * UIProcess/API/efl/ewk_view.cpp:
+        (createEwkView):
+
 2012-11-28  Michael Pruett  <michael@68k.org>
 
         IndexedDB: Remove duplicate toWireString() and createFromWire() methods in JSC SerializedScriptValue
