@@ -68,6 +68,33 @@ private:
     HashMap<const Node*, size_t> m_indices;
 };
 
+class ShadowRootContentDistributionData {
+public:
+    ShadowRootContentDistributionData();
+
+    InsertionPoint* insertionPointAssignedTo() const { return m_insertionPointAssignedTo; }
+    void setInsertionPointAssignedTo(InsertionPoint* insertionPoint) { m_insertionPointAssignedTo = insertionPoint; }
+
+    void incrementNumberOfShadowElementChildren() { ++m_numberOfShadowElementChildren; }
+    void decrementNumberOfShadowElementChildren() { ASSERT(m_numberOfShadowElementChildren > 0); --m_numberOfShadowElementChildren; }
+    bool hasShadowElementChildren() const { return m_numberOfShadowElementChildren > 0; }
+
+    void incrementNumberOfContentElementChildren() { ++m_numberOfContentElementChildren; }
+    void decrementNumberOfContentElementChildren() { ASSERT(m_numberOfContentElementChildren > 0); --m_numberOfContentElementChildren; }
+    bool hasContentElementChildren() const { return m_numberOfContentElementChildren > 0; }
+
+    void incrementNumberOfElementShadowChildren() { ++m_numberOfElementShadowChildren; }
+    void decrementNumberOfElementShadowChildren() { ASSERT(m_numberOfElementShadowChildren > 0); --m_numberOfElementShadowChildren; }
+    unsigned numberOfElementShadowChildren() const { return m_numberOfElementShadowChildren; }
+    bool hasElementShadowChildren() const { return m_numberOfElementShadowChildren > 0; }
+
+private:
+    InsertionPoint* m_insertionPointAssignedTo;
+    unsigned m_numberOfShadowElementChildren;
+    unsigned m_numberOfContentElementChildren;
+    unsigned m_numberOfElementShadowChildren;
+};
+
 class ContentDistributor {
     WTF_MAKE_NONCOPYABLE(ContentDistributor);
 public:

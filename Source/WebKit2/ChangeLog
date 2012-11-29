@@ -1,3 +1,13 @@
+2012-11-28  Shinya Kawanaka  <shinyak@chromium.org>
+
+        [Shadow] Move Distribution stuffs from ShadowRoot
+        https://bugs.webkit.org/show_bug.cgi?id=103481
+
+        Reviewed by Hajime Morita.
+
+        * win/WebKit2.def:
+        * win/WebKit2CFLite.def:
+
 2012-11-28  Tim Horton  <timothy_horton@apple.com>
 
         [mac] Dictionary lookup bubble loses intrarange formatting

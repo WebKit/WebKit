@@ -193,6 +193,9 @@ EXPORTS
         ?getHighlight@InspectorController@WebCore@@QBEXPAUHighlight@2@@Z
         ?getLocationAndLengthFromRange@TextIterator@WebCore@@SA_NPAVElement@2@PBVRange@2@AAI2@Z
         ?getReferencedFilePaths@FormController@WebCore@@SA?AV?$Vector@VString@WTF@@$0A@@WTF@@ABV34@@Z
+        ?countElementShadow@ShadowRoot@WebCore@@QBEIXZ
+        ?hasShadowInsertionPoint@ShadowRoot@WebCore@@QBE_NXZ
+        ?hasContentElement@ShadowRoot@WebCore@@QBE_NXZ
         ?inputTag@HTMLNames@WebCore@@3VQualifiedName@2@B
         ?instrumentingAgentsForPage@InspectorInstrumentation@WebCore@@CAPAVInstrumentingAgents@2@PAVPage@2@@Z
         ?isActiveInsertionPoint@WebCore@@YA_NPBVNode@1@@Z

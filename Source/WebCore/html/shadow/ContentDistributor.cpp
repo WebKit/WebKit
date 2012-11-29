@@ -58,6 +58,15 @@ size_t ContentDistribution::find(const Node* node) const
     return it.get()->value;
 }
 
+ShadowRootContentDistributionData::ShadowRootContentDistributionData()
+    : m_insertionPointAssignedTo(0)
+    , m_numberOfShadowElementChildren(0)
+    , m_numberOfContentElementChildren(0)
+    , m_numberOfElementShadowChildren(0)
+{
+}
+
+
 ContentDistributor::ContentDistributor()
     : m_validity(Undetermined)
 {

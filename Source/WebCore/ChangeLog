@@ -1,3 +1,61 @@
+2012-11-28  Shinya Kawanaka  <shinyak@chromium.org>
+
+        [Shadow] Move Distribution requirements from ShadowRoot
+        https://bugs.webkit.org/show_bug.cgi?id=103481
+
+        Reviewed by Hajime Morita.
+
+        We would like to shrink the ShadowRoot memory size in this patch. ShadowRoot had several distribution related members,
+        however they were used only if ShadowRoot has <content>, <shadow>, or nested ShadowRoot.
+        Since <input> or <textarea> do not have such requirements, the members consume a few amount of memory.
+
+        We remove them from ShadowRoot and introduce some RareData-like data structure for ShadowRoot.
+        This will reduce memory footprint in most cases.
+
+        No new tests, refactoring.
+
+        * WebCore.exp.in:
+        * dom/ShadowRoot.cpp:
+        (SameSizeAsShadowRoot): Reduced 3 * sizeof(unsigned) bytes from ShadowRoot.
+        (WebCore::ShadowRoot::ShadowRoot): DistributionData is created only when necessary. <input> or <textarea> won't
+        create such data.
+        (WebCore::ShadowRoot::assignedTo):
+        (WebCore):
+        (WebCore::ShadowRoot::setAssignedTo):
+        (WebCore::ShadowRoot::ensureDistributionData):
+        (WebCore::ShadowRoot::registerShadowElement):
+        (WebCore::ShadowRoot::unregisterShadowElement):
+        (WebCore::ShadowRoot::hasShadowInsertionPoint):
+        (WebCore::ShadowRoot::registerContentElement):
+        (WebCore::ShadowRoot::unregisterContentElement):
+        (WebCore::ShadowRoot::hasContentElement):
+        (WebCore::ShadowRoot::registerElementShadow):
+        (WebCore::ShadowRoot::unregisterElementShadow):
+        (WebCore::ShadowRoot::hasElementShadow):
+        (WebCore::ShadowRoot::countElementShadow):
+        (WebCore::ShadowRoot::reportMemoryUsage):
+        * dom/ShadowRoot.h:
+        (WebCore):
+        (ShadowRoot):
+        (WebCore::ShadowRoot::distributionData):
+        * html/shadow/ContentDistributor.cpp:
+        (WebCore::ShadowRootContentDistributionData::ShadowRootContentDistributionData):
+        (WebCore):
+        * html/shadow/ContentDistributor.h:
+        (ShadowRootContentDistributionData): Distribution related fields in ShadowRoot are moved to here.
+        (WebCore::ShadowRootContentDistributionData::insertionPointAssignedTo):
+        (WebCore::ShadowRootContentDistributionData::setInsertionPointAssignedTo):
+        (WebCore::ShadowRootContentDistributionData::incrementNumberOfShadowElementChildren):
+        (WebCore::ShadowRootContentDistributionData::decrementNumberOfShadowElementChildren):
+        (WebCore::ShadowRootContentDistributionData::numberOfShadowElementChildren):
+        (WebCore::ShadowRootContentDistributionData::incrementNumberOfContentElementChildren):
+        (WebCore::ShadowRootContentDistributionData::decrementNumberOfContentElementChildren):
+        (WebCore::ShadowRootContentDistributionData::numberOfContentElementChildren):
+        (WebCore::ShadowRootContentDistributionData::incrementNumberOfElementShadowChildren):
+        (WebCore::ShadowRootContentDistributionData::decrementNumberOfElementShadowChildren):
+        (WebCore::ShadowRootContentDistributionData::numberOfElementShadowChildren):
+        (WebCore):
+
 2012-11-23  Dirk Schulze  <krit@webkit.org>
 
         Remove -webkit-mask-attachment
