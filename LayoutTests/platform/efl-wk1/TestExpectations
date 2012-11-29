@@ -54,10 +54,6 @@ http/tests/xmlhttprequest/basic-auth-nouser.html
 http/tests/xmlhttprequest/failed-auth.html
 http/tests/xmlhttprequest/remember-bad-password.html
 
-# The EFL port has no support for accessibility features in efl-wk1
-Bug(EFL) accessibility [ Skip ]
-webkit.org/b/98895 perf/accessibility-title-ui-element.html [ Skip ]
-
 # efl-wk1 has no support accelerated compositing
 webkit.org/b/103488 compositing/absolute-inside-out-of-view-fixed.html [ Failure ]
 webkit.org/b/103488 compositing/animation/animation-compositing.html [ Failure ]
