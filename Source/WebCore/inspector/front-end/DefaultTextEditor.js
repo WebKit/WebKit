@@ -2415,13 +2415,28 @@ WebInspector.TextEditorMainPanel.prototype = {
         // Remove damaged chunks from DOM and from textChunks model.
         var lastUndamagedChunk = firstDamagedChunkNumber > 0 ? this._textChunks[firstDamagedChunkNumber - 1] : null;
         var firstUndamagedChunk = lastDamagedChunkNumber + 1 < this._textChunks.length ? this._textChunks[lastDamagedChunkNumber + 1] : null;
+
         var removeDOMFromNode = lastUndamagedChunk ? lastUndamagedChunk.lastElement().nextSibling : this._container.firstChild;
         var removeDOMToNode = firstUndamagedChunk ? firstUndamagedChunk.firstElement() : null;
-        for (var node = removeDOMFromNode; node && node !== removeDOMToNode; ) {
-            var nodeToRemove = node;
-            node = node.nextSibling;
-            nodeToRemove.remove();
+
+        // Fast case - patch single expanded chunk that did not grow / shrink during edit.
+        if (!linesDiff && firstDamagedChunk === lastDamagedChunk && firstDamagedChunk._expandedLineRows) {
+            var lastUndamagedLineRow = lastDamagedChunk.expandedLineRow(oldRange.startLine - 1);
+            var firstUndamagedLineRow = firstDamagedChunk.expandedLineRow(oldRange.endLine + 1);
+            var localRemoveDOMFromNode = lastUndamagedLineRow ? lastUndamagedLineRow.nextSibling : removeDOMFromNode;
+            var localRemoveDOMToNode = firstUndamagedLineRow || removeDOMToNode;
+            removeSubsequentNodes(localRemoveDOMFromNode, localRemoveDOMToNode);
+            for (var i = newRange.startLine; i < newRange.endLine + 1; ++i) {
+                var row = firstDamagedChunk._createRow(i);
+                firstDamagedChunk._expandedLineRows[i - firstDamagedChunk.startLine] = row;
+                this._container.insertBefore(row, localRemoveDOMToNode);
+            }
+            firstDamagedChunk.updateCollapsedLineRow();
+            this._assertDOMMatchesTextModel();
+            return;
         }
+
+        removeSubsequentNodes(removeDOMFromNode, removeDOMToNode);
         this._textChunks.splice(firstDamagedChunkNumber, lastDamagedChunkNumber - firstDamagedChunkNumber + 1);
 
         // Compute damaged chunks span

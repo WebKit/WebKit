@@ -1,5 +1,19 @@
 2012-11-29  Pavel Feldman  <pfeldman@chromium.org>
 
+        Web Inspector: introduce fast case for within-chunk edit
+        https://bugs.webkit.org/show_bug.cgi?id=103545
+
+        Reviewed by Vsevolod Vlasov.
+
+        Special-casing edits within the chunk for faster operation.
+
+        * inspector/front-end/DOMExtension.js:
+        (removeSubsequentNodes):
+        * inspector/front-end/DefaultTextEditor.js:
+        (WebInspector.TextEditorMainPanel.prototype._updateChunksForRanges):
+
+2012-11-29  Pavel Feldman  <pfeldman@chromium.org>
+
         Web Inspector: Console: hovering node wrappers in object tree should highlight them on the page
         https://bugs.webkit.org/show_bug.cgi?id=101150
 

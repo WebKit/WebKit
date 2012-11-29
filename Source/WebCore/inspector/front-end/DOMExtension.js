@@ -195,6 +195,18 @@ Element.prototype.remove = function()
         this.parentElement.removeChild(this);
 }
 
+/**
+ * @param {Node} fromNode
+ * @param {Node} toNode
+ */
+function removeSubsequentNodes(fromNode, toNode)
+{
+    for (var node = fromNode; node && node !== toNode; ) {
+        var nodeToRemove = node;
+        node = node.nextSibling;
+        nodeToRemove.remove();
+    }
+}
 
 /**
  * @constructor
