@@ -1,3 +1,21 @@
+2012-11-29  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        Possible to resize out of bounds 
+        https://bugs.webkit.org/show_bug.cgi?id=103521
+
+        Reviewed by Jocelyn Turcotte.
+
+        Enforce the viewportBounds after resize, and ensure a user fitted page remains
+        fit on viewport resize, but not on content growth.
+
+        * UIProcess/API/qt/tests/qmltests/WebView/tst_resize.qml: Added.
+        * UIProcess/PageViewportController.cpp:
+        (WebKit::PageViewportController::didChangeContentsSize):
+        (WebKit::PageViewportController::didChangeViewportAttributes):
+        (WebKit::PageViewportController::updateMinimumScaleToFit):
+        * UIProcess/PageViewportController.h:
+        (PageViewportController):
+
 2012-11-29  Michael Brüning  <michael.bruning@digia.com>
 
         [Qt][WK2] Commit the preedit string in the input method when focus is about to be moved.

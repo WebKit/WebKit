@@ -84,7 +84,7 @@ private:
     void syncVisibleContents(const WebCore::FloatPoint &trajectoryVector = WebCore::FloatPoint::zero());
     void applyScaleAfterRenderingContents(float scale);
     void applyPositionAfterRenderingContents(const WebCore::FloatPoint& pos);
-    bool updateMinimumScaleToFit();
+    bool updateMinimumScaleToFit(bool userInitiatedUpdate);
     WebCore::FloatSize viewportSizeInContentsCoordinates() const;
 
     WebPageProxy* const m_webPageProxy;
