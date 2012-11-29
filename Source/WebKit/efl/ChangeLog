@@ -1,3 +1,19 @@
+2012-11-29  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL] Broken rendering occurs when scrolling in ewk_view_single.
+        https://bugs.webkit.org/show_bug.cgi?id=77325
+
+        Reviewed by Gyuyoung Kim.
+
+        After r104687, broken rendering occurs when scrolling contents.
+        It's because scrollWidth can be smaller than width of image buffer.
+
+        This patch fixes it and renames parameter to avoid confusion.
+
+        * ewk/ewk_view_single.cpp:
+        (_ewk_view_screen_move):
+        (_ewk_view_single_scroll_process_single):
+
 2012-11-28  Ryuan Choi  <ryuan.choi@gmail.com>
 
         [EFL] Generate big_button_theme.edj
