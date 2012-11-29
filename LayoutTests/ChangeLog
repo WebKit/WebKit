@@ -1,5 +1,37 @@
 2012-11-29  Stephen Chenney  <schenney@chromium.org>
 
+        [Chromium] Skia rebaseline after we made kSrc_Mode go faster
+
+        Unreviewed expectations update.
+
+        Some of these are still crashing on Debug.
+
+        * platform/chromium-mac-lion/svg/W3C-SVG-1.1/filters-color-01-b-expected.png:
+        * platform/chromium-mac-lion/svg/carto.net/colourpicker-expected.png:
+        * platform/chromium-mac-lion/svg/custom/invalid-uri-stroke-expected.png:
+        * platform/chromium-mac-lion/svg/wicd/test-scalable-background-image1-expected.png:
+        * platform/chromium-mac-lion/svg/zoom/page/zoom-mask-with-percentages-expected.png:
+        * platform/chromium-mac-snowleopard/svg/carto.net/colourpicker-expected.png:
+        * platform/chromium-mac-snowleopard/svg/custom/invalid-uri-stroke-expected.png:
+        * platform/chromium-mac-snowleopard/svg/wicd/test-scalable-background-image1-expected.png:
+        * platform/chromium-mac-snowleopard/svg/zoom/page/zoom-mask-with-percentages-expected.png:
+        * platform/chromium-mac/svg/W3C-SVG-1.1/filters-color-01-b-expected.png:
+        * platform/chromium-mac/svg/carto.net/colourpicker-expected.png:
+        * platform/chromium-mac/svg/custom/gradient-stop-corner-cases-expected.png:
+        * platform/chromium-mac/svg/custom/invalid-uri-stroke-expected.png:
+        * platform/chromium-mac/svg/wicd/test-scalable-background-image1-expected.png:
+        * platform/chromium-mac/svg/zoom/page/zoom-mask-with-percentages-expected.png:
+        * platform/chromium-win-xp/svg/carto.net: Added.
+        * platform/chromium-win-xp/svg/carto.net/colourpicker-expected.png: Added.
+        * platform/chromium-win-xp/svg/zoom/page/zoom-mask-with-percentages-expected.png:
+        * platform/chromium-win/svg/W3C-SVG-1.1/filters-color-01-b-expected.png:
+        * platform/chromium-win/svg/custom/invalid-uri-stroke-expected.png:
+        * platform/chromium-win/svg/wicd/test-scalable-background-image1-expected.png:
+        * platform/chromium-win/svg/zoom/page/zoom-mask-with-percentages-expected.png:
+        * platform/chromium/TestExpectations:
+
+2012-11-29  Stephen Chenney  <schenney@chromium.org>
+
         [Chromium] Rebaseline after removed double drawing of clipped hairlines at edges
 
         Unreviewed expectations update

@@ -4196,10 +4196,8 @@ webkit.org/b/85522 http/tests/security/sandboxed-iframe-form-top.html [ Skip ]
 webkit.org/b/102542 [ Win7 ] platform/chromium/virtual/softwarecompositing/checkerboard.html [ Image ]
 webkit.org/b/102542 [ Linux Mac Win ] compositing/checkerboard.html [ Image ]
 
-webkit.org/b/102724 crbug.com/9797 crbug.com/161762 [ Debug ] svg/carto.net/colourpicker.svg [ Crash ]
-webkit.org/b/102724 crbug.com/9797 crbug.com/161762 [ Release ] svg/carto.net/colourpicker.svg [ ImageOnlyFailure ]
-webkit.org/b/102724 crbug.com/161762 [ Debug ] svg/custom/gradient-stop-corner-cases.svg [ Crash ]
-webkit.org/b/102724 crbug.com/161762 [ Release ] svg/custom/gradient-stop-corner-cases.svg [ ImageOnlyFailure ]
+webkit.org/b/102724 [ Debug ] svg/carto.net/colourpicker.svg [ Crash ]
+webkit.org/b/102724 [ Debug ] svg/custom/gradient-stop-corner-cases.svg [ Crash ]
 
 # Fails until we enable the Resource Timing API.
 webkit.org/b/61138 http/tests/w3c/webperf/submission/resource-timing [ Skip ]
