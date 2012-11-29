@@ -67,6 +67,7 @@ public:
 
     void clickedLink(NSURL *);
     void saveToPDF();
+    void writeItemsToPasteboard(NSArray *items, NSArray *types);
 
 private:
     explicit PDFPlugin(WebFrame*);

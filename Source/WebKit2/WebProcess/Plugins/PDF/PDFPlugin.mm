@@ -36,10 +36,12 @@
 #import "PDFPluginAnnotation.h"
 #import "PluginView.h"
 #import "ShareableBitmap.h"
+#import "WebContextMessages.h"
 #import "WebEvent.h"
 #import "WebEventConversion.h"
 #import "WebPage.h"
 #import "WebPageProxyMessages.h"
+#import "WebProcess.h"
 #import <PDFKit/PDFKit.h>
 #import <QuartzCore/QuartzCore.h>
 #import <WebCore/ArchiveResource.h>
@@ -154,15 +156,7 @@ static const char* annotationStyle =
 
 - (void)writeItemsToPasteboard:(NSArray *)items withTypes:(NSArray *)types
 {
-    // FIXME: Handle types other than plain text.
-
-    for (NSUInteger i = 0, count = items.count; i < count; ++i) {
-        NSString *type = [types objectAtIndex:i];
-        if ([type isEqualToString:NSStringPboardType] || [type isEqualToString:NSPasteboardTypeString]) {
-            RetainPtr<NSString> plainTextString(AdoptNS, [[NSString alloc] initWithData:[items objectAtIndex:i] encoding:NSUTF8StringEncoding]);
-            Pasteboard::generalPasteboard()->writePlainText(plainTextString.get(), Pasteboard::CannotSmartReplace);
-        }
-    }
+    _pdfPlugin->writeItemsToPasteboard(items, types);
 }
 
 - (void)showDefinitionForAttributedString:(NSAttributedString *)string atPoint:(CGPoint)point
@@ -763,6 +757,38 @@ void PDFPlugin::saveToPDF()
     CoreIPC::DataReference dataReference(CFDataGetBytePtr(cfData.get()), CFDataGetLength(cfData.get()));
 
     webFrame()->page()->send(Messages::WebPageProxy::SavePDFToFileInDownloadsFolder(suggestedFilename(), webFrame()->url(), dataReference));
+}
+
+void PDFPlugin::writeItemsToPasteboard(NSArray *items, NSArray *types)
+{
+    Vector<String> pasteboardTypes;
+
+    for (NSString *type in types)
+        pasteboardTypes.append(type);
+
+    WebProcess::shared().connection()->send(Messages::WebContext::SetPasteboardTypes(NSGeneralPboard, pasteboardTypes), 0);
+
+    for (NSUInteger i = 0, count = items.count; i < count; ++i) {
+        NSString *type = [types objectAtIndex:i];
+        NSData *data = [items objectAtIndex:i];
+
+        if ([type isEqualToString:NSStringPboardType] || [type isEqualToString:NSPasteboardTypeString]) {
+            RetainPtr<NSString> plainTextString(AdoptNS, [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
+            WebProcess::shared().connection()->send(Messages::WebContext::SetPasteboardStringForType(NSGeneralPboard, type, plainTextString.get()), 0);
+        } else {
+            RefPtr<SharedBuffer> buffer = SharedBuffer::wrapNSData(data);
+
+            if (!buffer)
+                continue;
+
+            SharedMemory::Handle handle;
+            RefPtr<SharedMemory> sharedMemory = SharedMemory::create(buffer->size());
+            memcpy(sharedMemory->data(), buffer->data(), buffer->size());
+            sharedMemory->createHandle(handle, SharedMemory::ReadOnly);
+            WebProcess::shared().connection()->send(Messages::WebContext::SetPasteboardBufferForType(NSGeneralPboard, type, handle, buffer->size()), 0);
+        }
+    }
+
 }
 
 } // namespace WebKit
