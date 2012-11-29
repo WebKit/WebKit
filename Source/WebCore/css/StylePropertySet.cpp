@@ -378,7 +378,7 @@ String StylePropertySet::getLayeredShorthandValue(const StylePropertyShorthand& 
         bool useRepeatXShorthand = false;
         bool useRepeatYShorthand = false;
         bool useSingleWordShorthand = false;
-        bool foundBackgroundPositionYCSSProperty = false;
+        bool foundPositionYCSSProperty = false;
         for (unsigned j = 0; j < size; j++) {
             RefPtr<CSSValue> value;
             if (values[j]) {
@@ -399,10 +399,12 @@ String StylePropertySet::getLayeredShorthandValue(const StylePropertyShorthand& 
             // We need to report background-repeat as it was written in the CSS. If the property is implicit,
             // then it was written with only one value. Here we figure out which value that was so we can
             // report back correctly.
-            if (shorthand.properties()[j] == CSSPropertyBackgroundRepeatX && isPropertyImplicit(shorthand.properties()[j])) {
+            if ((shorthand.properties()[j] == CSSPropertyBackgroundRepeatX && isPropertyImplicit(shorthand.properties()[j]))
+                || (shorthand.properties()[j] == CSSPropertyWebkitMaskRepeatX && isPropertyImplicit(shorthand.properties()[j]))) {
 
                 // BUG 49055: make sure the value was not reset in the layer check just above.
-                if (j < size - 1 && shorthand.properties()[j + 1] == CSSPropertyBackgroundRepeatY && value) {
+                if ((j < size - 1 && shorthand.properties()[j + 1] == CSSPropertyBackgroundRepeatY && value)
+                    || (j < size - 1 && shorthand.properties()[j + 1] == CSSPropertyWebkitMaskRepeatY && value)) {
                     RefPtr<CSSValue> yValue;
                     RefPtr<CSSValue> nextValue = values[j + 1];
                     if (nextValue->isValueList())
@@ -431,9 +433,11 @@ String StylePropertySet::getLayeredShorthandValue(const StylePropertyShorthand& 
             if (value && !value->isImplicitInitialValue()) {
                 if (!layerResult.isEmpty())
                     layerResult.append(' ');
-                if (foundBackgroundPositionYCSSProperty && shorthand.properties()[j] == CSSPropertyBackgroundSize) 
+                if (foundPositionYCSSProperty
+                    && (shorthand.properties()[j] == CSSPropertyBackgroundSize || shorthand.properties()[j] == CSSPropertyWebkitMaskSize))
                     layerResult.appendLiteral("/ ");
-                if (!foundBackgroundPositionYCSSProperty && shorthand.properties()[j] == CSSPropertyBackgroundSize) 
+                if (!foundPositionYCSSProperty
+                    && (shorthand.properties()[j] == CSSPropertyBackgroundSize || shorthand.properties()[j] == CSSPropertyWebkitMaskSize))
                     continue;
 
                 if (useRepeatXShorthand) {
@@ -449,8 +453,9 @@ String StylePropertySet::getLayeredShorthandValue(const StylePropertyShorthand& 
                     layerResult.append(valueText);
                 }
 
-                if (shorthand.properties()[j] == CSSPropertyBackgroundPositionY) {
-                    foundBackgroundPositionYCSSProperty = true;
+                if (shorthand.properties()[j] == CSSPropertyBackgroundPositionY
+                    || shorthand.properties()[j] == CSSPropertyWebkitMaskPositionY) {
+                    foundPositionYCSSProperty = true;
 
                     // background-position is a special case: if only the first offset is specified,
                     // the second one defaults to "center", not the same value.

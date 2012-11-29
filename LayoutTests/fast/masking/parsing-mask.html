@@ -68,17 +68,17 @@ testInner("-webkit-mask", "center left", "0% 50%");
 testInner("-webkit-mask", "top center", "50% 0%");
 
 // test mask-repeat
-testInner("-webkit-mask", "repeat-x", "repeat no-repeat");
-testInner("-webkit-mask", "repeat-y", "no-repeat repeat");
-testInner("-webkit-mask", "repeat", "repeat repeat");
-testInner("-webkit-mask", "space", "space space");
-testInner("-webkit-mask", "no-repeat", "no-repeat no-repeat");
+testInner("-webkit-mask", "repeat-x", "repeat-x");
+testInner("-webkit-mask", "repeat-y", "repeat-y");
+testInner("-webkit-mask", "repeat", "repeat");
+testInner("-webkit-mask", "space", "space");
+testInner("-webkit-mask", "no-repeat", "no-repeat");
 testInner("-webkit-mask", "repeat space", "repeat space");
 testInner("-webkit-mask", "repeat round", "repeat round");
 testInner("-webkit-mask", "repeat no-repeat", "repeat no-repeat");
-testInner("-webkit-mask", "repeat space, repeat-x", "repeat space, repeat no-repeat");
-testInner("-webkit-mask", "repeat none", "none repeat repeat");
-testInner("-webkit-mask", "none repeat", "none repeat repeat");
+testInner("-webkit-mask", "repeat space, repeat-x", "repeat space, repeat-x");
+testInner("-webkit-mask", "repeat none", "none repeat");
+testInner("-webkit-mask", "none repeat", "none repeat");
 
 // test mask-origin / mask-clip
 testInner("-webkit-mask", "padding-box", "padding-box padding-box");
@@ -92,14 +92,22 @@ testInner("-webkit-mask", "padding-box border-box", "padding-box border-box");
 testInner("-webkit-mask", "padding-box border-box none", "none padding-box border-box");
 testInner("-webkit-mask", "none padding-box border-box", "none padding-box border-box");
 
-// FIXME: mask-size not part of the shorthand yet.
-// https://bugs.webkit.org/show_bug.cgi?id=103020
+// test mask-size
+testInner("-webkit-mask", "none left top / auto", "none 0% 0% / auto");
+testInner("-webkit-mask", "none left top / auto auto", "none 0% 0% / auto");
+testInner("-webkit-mask", "none left top / 100%", "none 0% 0% / 100%");
+testInner("-webkit-mask", "none left top / 0%", "none 0% 0% / 0%");
+testInner("-webkit-mask", "none left top / auto 0%", "none 0% 0% / auto 0%");
+testInner("-webkit-mask", "none left top / cover", "none 0% 0% / cover");
+testInner("-webkit-mask", "none left top / contain", "none 0% 0% / contain");
 
 // combinations
 testInner("-webkit-mask", "none padding-box content-box", "none padding-box content-box");
 testInner("-webkit-mask", "none padding-box", "none padding-box padding-box");
 testInner("-webkit-mask", "none top", "none 50% 0%");
 testInner("-webkit-mask", "none border-box left top", "none 0% 0% border-box border-box");
+testInner("-webkit-mask", "none border-box content-box left top repeat-x", "none 0% 0% repeat-x border-box content-box");
+testInner("-webkit-mask", "none border-box content-box left top / auto repeat-x", "none 0% 0% / auto repeat-x border-box content-box");
 
 
 // FIXME: Computed style not yet implemented.
@@ -118,6 +126,10 @@ negativeTest("-webkit-mask", "repeat-x repeat-x");
 negativeTest("-webkit-mask", "space repeat-y");
 negativeTest("-webkit-mask", "repeat space space");
 negativeTest("-webkit-mask", "padding-box border-box content-box");
+negativeTest("-webkit-mask", "none / auto");
+negativeTest("-webkit-mask", "none repeat-x / auto");
+negativeTest("-webkit-mask", "none border-box / auto");
+negativeTest("-webkit-mask", "none top left / cover 100%");
 
 // FIXME: Add negative tests for mask-attachment, which should not be supported.
 // https://bugs.webkit.org/show_bug.cgi?id=67137

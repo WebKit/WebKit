@@ -2623,9 +2623,9 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
     }
     case CSSPropertyWebkitMask: {
         const CSSPropertyID properties[] = { CSSPropertyWebkitMaskImage, CSSPropertyWebkitMaskRepeat,
-                                   CSSPropertyWebkitMaskAttachment, CSSPropertyWebkitMaskPosition,
-                                   CSSPropertyWebkitMaskOrigin, CSSPropertyWebkitMaskClip };
-        return parseFillShorthand(propId, properties, 6, important);
+            CSSPropertyWebkitMaskAttachment, CSSPropertyWebkitMaskPosition,
+            CSSPropertyWebkitMaskOrigin, CSSPropertyWebkitMaskClip, CSSPropertyWebkitMaskSize };
+        return parseFillShorthand(propId, properties, WTF_ARRAY_LENGTH(properties), important);
     }
     case CSSPropertyBorder:
         // [ 'border-width' || 'border-style' || <color> ] | inherit
@@ -2972,7 +2972,7 @@ bool CSSParser::parseFillShorthand(CSSPropertyID propId, const CSSPropertyID* pr
     RefPtr<CSSValue> repeatYValue;
     bool foundClip = false;
     int i;
-    bool foundBackgroundPositionCSSProperty = false;
+    bool foundPositionCSSProperty = false;
 
     while (m_valueList->current()) {
         CSSParserValue* val = m_valueList->current();
@@ -3002,19 +3002,19 @@ bool CSSParser::parseFillShorthand(CSSPropertyID propId, const CSSPropertyID* pr
                 break;
         }
 
-        bool backgroundSizeCSSPropertyExpected = false;
-        if ((val->unit == CSSParserValue::Operator && val->iValue == '/') && foundBackgroundPositionCSSProperty) {
-            backgroundSizeCSSPropertyExpected = true;
+        bool sizeCSSPropertyExpected = false;
+        if ((val->unit == CSSParserValue::Operator && val->iValue == '/') && foundPositionCSSProperty) {
+            sizeCSSPropertyExpected = true;
             m_valueList->next();
         }
 
-        foundBackgroundPositionCSSProperty = false;
+        foundPositionCSSProperty = false;
         bool found = false;
         for (i = 0; !found && i < numProperties; ++i) {
 
-            if (backgroundSizeCSSPropertyExpected && properties[i] != CSSPropertyBackgroundSize)
+            if (sizeCSSPropertyExpected && (properties[i] != CSSPropertyBackgroundSize && properties[i] != CSSPropertyWebkitMaskSize))
                 continue;
-            if (!backgroundSizeCSSPropertyExpected && properties[i] == CSSPropertyBackgroundSize)
+            if (!sizeCSSPropertyExpected && (properties[i] == CSSPropertyBackgroundSize || properties[i] == CSSPropertyWebkitMaskSize))
                 continue;
 
             if (!parsedProperty[i]) {
@@ -3041,8 +3041,8 @@ bool CSSParser::parseFillShorthand(CSSPropertyID propId, const CSSPropertyID* pr
                         addFillValue(clipValue, val1.release());
                         foundClip = true;
                     }
-                    if (properties[i] == CSSPropertyBackgroundPosition)
-                        foundBackgroundPositionCSSProperty =  true;
+                    if (properties[i] == CSSPropertyBackgroundPosition || properties[i] == CSSPropertyWebkitMaskPosition)
+                        foundPositionCSSProperty = true;
                 }
             }
         }
@@ -3062,7 +3062,7 @@ bool CSSParser::parseFillShorthand(CSSPropertyID propId, const CSSPropertyID* pr
                 addFillValue(positionYValue, cssValuePool().createImplicitInitialValue());
             if (properties[i] == CSSPropertyBackgroundRepeat || properties[i] == CSSPropertyWebkitMaskRepeat)
                 addFillValue(repeatYValue, cssValuePool().createImplicitInitialValue());
-            if ((properties[i] == CSSPropertyBackgroundOrigin || properties[i] == CSSPropertyWebkitMaskOrigin)) {
+            if (properties[i] == CSSPropertyBackgroundOrigin || properties[i] == CSSPropertyWebkitMaskOrigin) {
                 // If background-origin wasn't present, then reset background-clip also.
                 addFillValue(clipValue, cssValuePool().createImplicitInitialValue());
             }

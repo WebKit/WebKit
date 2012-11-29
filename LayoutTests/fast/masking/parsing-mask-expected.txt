@@ -24,17 +24,17 @@ PASS innerStyle("-webkit-mask", "center 50%") is "50% 50%"
 PASS innerStyle("-webkit-mask", "50px 50%") is "50px 50%"
 PASS innerStyle("-webkit-mask", "center left") is "0% 50%"
 PASS innerStyle("-webkit-mask", "top center") is "50% 0%"
-PASS innerStyle("-webkit-mask", "repeat-x") is "repeat no-repeat"
-PASS innerStyle("-webkit-mask", "repeat-y") is "no-repeat repeat"
-PASS innerStyle("-webkit-mask", "repeat") is "repeat repeat"
-PASS innerStyle("-webkit-mask", "space") is "space space"
-PASS innerStyle("-webkit-mask", "no-repeat") is "no-repeat no-repeat"
+PASS innerStyle("-webkit-mask", "repeat-x") is "repeat-x"
+PASS innerStyle("-webkit-mask", "repeat-y") is "repeat-y"
+PASS innerStyle("-webkit-mask", "repeat") is "repeat"
+PASS innerStyle("-webkit-mask", "space") is "space"
+PASS innerStyle("-webkit-mask", "no-repeat") is "no-repeat"
 PASS innerStyle("-webkit-mask", "repeat space") is "repeat space"
 PASS innerStyle("-webkit-mask", "repeat round") is "repeat round"
 PASS innerStyle("-webkit-mask", "repeat no-repeat") is "repeat no-repeat"
-PASS innerStyle("-webkit-mask", "repeat space, repeat-x") is "repeat space, repeat no-repeat"
-PASS innerStyle("-webkit-mask", "repeat none") is "none repeat repeat"
-PASS innerStyle("-webkit-mask", "none repeat") is "none repeat repeat"
+PASS innerStyle("-webkit-mask", "repeat space, repeat-x") is "repeat space, repeat-x"
+PASS innerStyle("-webkit-mask", "repeat none") is "none repeat"
+PASS innerStyle("-webkit-mask", "none repeat") is "none repeat"
 PASS innerStyle("-webkit-mask", "padding-box") is "padding-box padding-box"
 PASS innerStyle("-webkit-mask", "border-box") is "border-box border-box"
 PASS innerStyle("-webkit-mask", "content-box") is "content-box content-box"
@@ -45,10 +45,19 @@ PASS innerStyle("-webkit-mask", "content-box content-box") is "content-box conte
 PASS innerStyle("-webkit-mask", "padding-box border-box") is "padding-box border-box"
 PASS innerStyle("-webkit-mask", "padding-box border-box none") is "none padding-box border-box"
 PASS innerStyle("-webkit-mask", "none padding-box border-box") is "none padding-box border-box"
+PASS innerStyle("-webkit-mask", "none left top / auto") is "none 0% 0% / auto"
+PASS innerStyle("-webkit-mask", "none left top / auto auto") is "none 0% 0% / auto"
+PASS innerStyle("-webkit-mask", "none left top / 100%") is "none 0% 0% / 100%"
+PASS innerStyle("-webkit-mask", "none left top / 0%") is "none 0% 0% / 0%"
+PASS innerStyle("-webkit-mask", "none left top / auto 0%") is "none 0% 0% / auto 0%"
+PASS innerStyle("-webkit-mask", "none left top / cover") is "none 0% 0% / cover"
+PASS innerStyle("-webkit-mask", "none left top / contain") is "none 0% 0% / contain"
 PASS innerStyle("-webkit-mask", "none padding-box content-box") is "none padding-box content-box"
 PASS innerStyle("-webkit-mask", "none padding-box") is "none padding-box padding-box"
 PASS innerStyle("-webkit-mask", "none top") is "none 50% 0%"
 PASS innerStyle("-webkit-mask", "none border-box left top") is "none 0% 0% border-box border-box"
+PASS innerStyle("-webkit-mask", "none border-box content-box left top repeat-x") is "none 0% 0% repeat-x border-box content-box"
+PASS innerStyle("-webkit-mask", "none border-box content-box left top / auto repeat-x") is "none 0% 0% / auto repeat-x border-box content-box"
 PASS innerStyle("-webkit-mask", "top none left") is null
 PASS innerStyle("-webkit-mask", "right none bottom") is null
 PASS innerStyle("-webkit-mask", "right right") is null
@@ -60,6 +69,10 @@ PASS innerStyle("-webkit-mask", "repeat-x repeat-x") is null
 PASS innerStyle("-webkit-mask", "space repeat-y") is null
 PASS innerStyle("-webkit-mask", "repeat space space") is null
 PASS innerStyle("-webkit-mask", "padding-box border-box content-box") is null
+PASS innerStyle("-webkit-mask", "none / auto") is null
+PASS innerStyle("-webkit-mask", "none repeat-x / auto") is null
+PASS innerStyle("-webkit-mask", "none border-box / auto") is null
+PASS innerStyle("-webkit-mask", "none top left / cover 100%") is null
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -1,3 +1,33 @@
+2012-11-23  Dirk Schulze  <krit@webkit.org>
+
+        CSS parser does not support -webkit-mask-size for -webkit-mask shorthand
+        https://bugs.webkit.org/show_bug.cgi?id=103020
+
+        Reviewed by David Hyatt.
+
+        Harmonize the syntax of '-webkit-mask' property with 'background' according to the
+        CSS Masking specification[1]. This should make it easier to maintain both shorthand
+        properties in the long term.
+        It is very unlikely that a lot of content (if any) is affected by this change. The
+        computed style still is not implemented and this change should rather make it easier
+        for developers.
+
+        With the harmonization, the '-webkit-mask-size' property is part of the shorthand as
+        well now.
+
+        parsing-mask.html covers all the changes. Added new tests for the changed syntax and
+        '-webkit-mask-size'
+
+        [1] http://dvcs.w3.org/hg/FXTF/raw-file/tip/masking/index.html#mask-property
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        (WebCore::CSSParser::parseFillShorthand):
+        * css/StylePropertySet.cpp:
+        (WebCore::StylePropertySet::getLayeredShorthandValue):
+        * css/StylePropertyShorthand.cpp:
+        (WebCore::webkitMaskShorthand):
+
 2012-11-28  Alec Flett  <alecflett@chromium.org>
 
         IndexedDB: Change frontend to call IDBDatabaseBackendInterface::createTransaction()

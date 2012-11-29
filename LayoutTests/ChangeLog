@@ -1,3 +1,15 @@
+2012-11-23  Dirk Schulze  <krit@webkit.org>
+
+        CSS parser does not support -webkit-mask-size for -webkit-mask shorthand
+        https://bugs.webkit.org/show_bug.cgi?id=103020
+
+        Reviewed by David Hyatt.
+
+        Added new subtests to exisiting test for the changed syntax of '-webkit-mask' shorthand property.
+
+        * fast/masking/parsing-mask-expected.txt:
+        * fast/masking/parsing-mask.html:
+
 2012-11-28  Tom Sepez  <tsepez@chromium.org>
 
         XSSAuditor bypass with script src=data: URL ending in <!--
