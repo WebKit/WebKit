@@ -1,3 +1,28 @@
+2012-11-29  Simon Fraser  <simon.fraser@apple.com>
+
+        Avoid painting lots of small rects in WebLayer painting
+        https://bugs.webkit.org/show_bug.cgi?id=103673
+
+        Reviewed by Tim Horton.
+
+        r109186 added code in drawLayerContents() to enumerate over the rects in
+        the CALayer's dirty region, and paint them individually. This was done
+        to help performance on the IE Maze Solver test.
+        
+        On large, complex pages like Facebook, the overhead of traversing the
+        RenderLayer tree for painting is such that it's better to paint a single,
+        or fewer rects rather than lots of little ones.
+        
+        So adopt a heuristic similar to that in DrawingArea, where if the
+        combined area of the small rects is 75% or more of the combined rect,
+        just paint the combined rect. Also paint the combined rect if there
+        are more than 5 individual rects.
+        
+        I verified that this preserves the optimization for IE Maze Solver.
+
+        * platform/graphics/mac/WebLayer.mm:
+        (drawLayerContents):
+
 2012-11-29  Eugene Klyuchnikov  <eustas@chromium.org>
 
         Web Inspector: Web Inspector: Make main-thread monitoring go through InspectorController.
