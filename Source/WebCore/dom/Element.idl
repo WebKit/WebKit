@@ -122,7 +122,7 @@
     // ShadowAware API
 #if defined(ENABLE_SHADOW_DOM) && ENABLE_SHADOW_DOM
     [Reflect, V8EnabledAtRuntime=shadowDOM] attribute DOMString pseudo;
-    [V8EnabledAtRuntime=shadowDOM] ShadowRoot createShadowRoot() raises(DOMException);
+    [V8EnabledAtRuntime=shadowDOM, ImplementedAs=createShadowRoot] ShadowRoot webkitCreateShadowRoot() raises(DOMException);
 #endif
 
     // DOM 4

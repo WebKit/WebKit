@@ -1,3 +1,12 @@
+2012-11-28  Hajime Morrita  <morrita@google.com>
+
+        [Shadow DOM] Element.createShadowRoot() should be prefixed.
+        https://bugs.webkit.org/show_bug.cgi?id=103595
+
+        Reviewed by Kentaro Hara.
+
+        * fast/dom/shadow/shadow-aware-create-shadow-root.html:
+
 2012-11-28  Hayato Ito <hayato@chromium.org>
 
         Test the return value from Node::compareDocumentPositionMake more strictly.
