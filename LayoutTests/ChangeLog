@@ -1,3 +1,12 @@
+2012-11-29  Jussi Kukkonen  <jussi.kukkonen@intel.com>
+
+        [EFL][WK2] flaky reftests after r135935
+        https://bugs.webkit.org/show_bug.cgi?id=103618
+
+        Unreviewed gardening, mark more reftests flaky after r135935.
+
+        * platform/efl-wk2/TestExpectations:
+
 2012-11-29  Nandor Huszka  <hnandor@inf.u-szeged.hu>
 
         [Qt] Unreviewed gardening.
