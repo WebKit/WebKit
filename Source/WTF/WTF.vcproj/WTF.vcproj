@@ -1213,6 +1213,14 @@
 			>
 		</File>
 		<File
+			RelativePath="..\wtf\StringPrintStream.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\wtf\StringPrintStream.h"
+			>
+		</File>
+		<File
 			RelativePath="..\wtf\TCPackedCache.h"
 			>
 		</File>

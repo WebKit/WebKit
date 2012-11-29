@@ -320,15 +320,6 @@ private:
 
 } } // namespace JSC::DFG
 
-namespace WTF {
-
-inline void printInternal(PrintStream& out, const JSC::DFG::StructureAbstractValue& value)
-{
-    value.dump(out);
-}
-
-} // namespace WTF
-
 #endif // ENABLE(DFG_JIT)
 
 #endif // DFGStructureAbstractValue_h

@@ -112,10 +112,7 @@ struct ValueProfileBase {
     
     void dump(PrintStream& out)
     {
-        out.printf(
-            "samples = %u, prediction = %s",
-            totalNumberOfSamples(),
-            speculationToString(m_prediction));
+        out.print("samples = ", totalNumberOfSamples(), " prediction = ", SpeculationDump(m_prediction));
         out.printf(", value = ");
         if (m_singletonValueIsTop)
             out.printf("TOP");

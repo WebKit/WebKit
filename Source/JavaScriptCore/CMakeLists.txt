@@ -100,6 +100,7 @@ SET(JavaScriptCore_SOURCES
     dfg/DFGStructureCheckHoistingPhase.cpp
     dfg/DFGThunks.cpp
     dfg/DFGValueSource.cpp
+    dfg/DFGVariableAccessDataDump.cpp
     dfg/DFGVariableEvent.cpp
     dfg/DFGVariableEventStream.cpp
     dfg/DFGValidate.cpp

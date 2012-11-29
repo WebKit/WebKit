@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,28 +23,45 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef VirtualRegister_h
-#define VirtualRegister_h
+#ifndef StringPrintStream_h
+#define StringPrintStream_h
 
-#include <wtf/Platform.h>
 #include <wtf/PrintStream.h>
-
-namespace JSC {
-
-// Type for a virtual register number (spill location).
-// Using an enum to make this type-checked at compile time, to avert programmer errors.
-enum VirtualRegister { InvalidVirtualRegister = -1 };
-COMPILE_ASSERT(sizeof(VirtualRegister) == sizeof(int), VirtualRegister_is_32bit);
-
-} // namespace JSC
+#include <wtf/text/CString.h>
 
 namespace WTF {
 
-inline void printInternal(PrintStream& out, JSC::VirtualRegister value)
+class StringPrintStream : public PrintStream {
+public:
+    StringPrintStream();
+    ~StringPrintStream();
+    
+    virtual void vprintf(const char* format, va_list) WTF_ATTRIBUTE_PRINTF(2, 0);
+    
+    CString toCString();
+    
+private:
+    void increaseSize(size_t);
+    
+    char* m_buffer;
+    size_t m_next;
+    size_t m_size;
+    char m_inlineBuffer[128];
+};
+
+// Stringify any type T that has a WTF::printInternal(PrintStream&, const T&)
+template<typename T>
+CString toCString(const T& value)
 {
-    out.print(static_cast<int>(value));
+    StringPrintStream stream;
+    stream.print(value);
+    return stream.toCString();
 }
 
 } // namespace WTF
 
-#endif // VirtualRegister_h
+using WTF::StringPrintStream;
+using WTF::toCString;
+
+#endif // StringPrintStream_h
+

@@ -159,6 +159,8 @@ wtf_sources += \
     Source/WTF/wtf/StdLibExtras.h \
     Source/WTF/wtf/StreamBuffer.h \
     Source/WTF/wtf/StringExtras.h \
+    Source/WTF/wtf/StringPrintStream.cpp \
+    Source/WTF/wtf/StringPrintStream.h \
     Source/WTF/wtf/StringHasher.h \
     Source/WTF/wtf/TCPackedCache.h \
     Source/WTF/wtf/TCPageMap.h \

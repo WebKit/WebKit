@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,28 +23,52 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef VirtualRegister_h
-#define VirtualRegister_h
+#include "config.h"
+#include "DFGVariableAccessDataDump.h"
 
-#include <wtf/Platform.h>
-#include <wtf/PrintStream.h>
+#if ENABLE(DFG_JIT)
 
-namespace JSC {
+#include "DFGGraph.h"
+#include "DFGVariableAccessData.h"
 
-// Type for a virtual register number (spill location).
-// Using an enum to make this type-checked at compile time, to avert programmer errors.
-enum VirtualRegister { InvalidVirtualRegister = -1 };
-COMPILE_ASSERT(sizeof(VirtualRegister) == sizeof(int), VirtualRegister_is_32bit);
+namespace JSC { namespace DFG {
 
-} // namespace JSC
-
-namespace WTF {
-
-inline void printInternal(PrintStream& out, JSC::VirtualRegister value)
+VariableAccessDataDump::VariableAccessDataDump(Graph& graph, VariableAccessData* data)
+    : m_graph(graph)
+    , m_data(data)
 {
-    out.print(static_cast<int>(value));
 }
 
-} // namespace WTF
+void VariableAccessDataDump::dump(PrintStream& out) const
+{
+    unsigned index = std::numeric_limits<unsigned>::max();
+    for (unsigned i = 0; i < m_graph.m_variableAccessData.size(); ++i) {
+        if (&m_graph.m_variableAccessData[i] == m_data) {
+            index = i;
+            break;
+        }
+    }
+    
+    ASSERT(index != std::numeric_limits<unsigned>::max());
+    
+    if (!index) {
+        out.print("a");
+        return;
+    }
 
-#endif // VirtualRegister_h
+    while (index) {
+        out.print(CharacterDump('A' + (index % 26)));
+        index /= 26;
+    }
+    
+    if (m_data->isCaptured())
+        out.print("*");
+
+    out.print(AbbreviatedSpeculationDump(m_data->prediction()));
+}
+
+} } // namespace JSC::DFG
+
+#endif // ENABLE(DFG_JIT)
+
+

@@ -250,6 +250,8 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/dfg/DFGValidate.cpp \
 	Source/JavaScriptCore/dfg/DFGValidate.h \
 	Source/JavaScriptCore/dfg/DFGVariableAccessData.h \
+	Source/JavaScriptCore/dfg/DFGVariableAccessDataDump.cpp \
+	Source/JavaScriptCore/dfg/DFGVariableAccessDataDump.h \
 	Source/JavaScriptCore/dfg/DFGVirtualRegisterAllocationPhase.cpp \
 	Source/JavaScriptCore/dfg/DFGVirtualRegisterAllocationPhase.h \
 	Source/JavaScriptCore/disassembler/Disassembler.cpp \

@@ -289,8 +289,11 @@ inline bool isEmptySpeculation(SpeculatedType value)
     return value == SpecEmpty;
 }
 
-const char* speculationToString(SpeculatedType value);
-const char* speculationToAbbreviatedString(SpeculatedType value);
+void dumpSpeculation(PrintStream&, SpeculatedType);
+void dumpSpeculationAbbreviated(PrintStream&, SpeculatedType);
+
+MAKE_PRINT_ADAPTOR(SpeculationDump, SpeculatedType, dumpSpeculation);
+MAKE_PRINT_ADAPTOR(AbbreviatedSpeculationDump, SpeculatedType, dumpSpeculationAbbreviated);
 
 // Merge two predictions. Note that currently this just does left | right. It may
 // seem tempting to do so directly, but you would be doing so at your own peril,

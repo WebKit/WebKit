@@ -160,6 +160,9 @@ public:
 void printInternal(PrintStream&, const char*);
 void printInternal(PrintStream&, const CString&);
 void printInternal(PrintStream&, const String&);
+inline void printInternal(PrintStream& out, char* value) { printInternal(out, static_cast<const char*>(value)); }
+inline void printInternal(PrintStream& out, CString& value) { printInternal(out, static_cast<const CString&>(value)); }
+inline void printInternal(PrintStream& out, String& value) { printInternal(out, static_cast<const String&>(value)); }
 void printInternal(PrintStream&, bool);
 void printInternal(PrintStream&, int);
 void printInternal(PrintStream&, unsigned);
@@ -171,8 +174,51 @@ void printInternal(PrintStream&, float);
 void printInternal(PrintStream&, double);
 void printInternal(PrintStream&, RawPointer);
 
+template<typename T>
+void printInternal(PrintStream& out, const T& value)
+{
+    value.dump(out);
+}
+
+#define MAKE_PRINT_ADAPTOR(Name, Type, function) \
+    class Name {                                 \
+    public:                                      \
+        Name(const Type& value)                  \
+            : m_value(value)                     \
+        {                                        \
+        }                                        \
+        void dump(PrintStream& out) const        \
+        {                                        \
+            function(out, m_value);              \
+        }                                        \
+    private:                                     \
+        Type m_value;                            \
+    }
+
+#define MAKE_PRINT_METHOD_ADAPTOR(Name, Type, method) \
+    class Name {                                 \
+    public:                                      \
+        Name(const Type& value)                  \
+            : m_value(value)                     \
+        {                                        \
+        }                                        \
+        void dump(PrintStream& out) const        \
+        {                                        \
+            m_value.method(out);                 \
+        }                                        \
+    private:                                     \
+        Type m_value;                            \
+    }
+
+// Use an adaptor-based dumper for characters to avoid situations where
+// you've "compressed" an integer to a character and it ends up printing
+// as ASCII when you wanted it to print as a number.
+void dumpCharacter(PrintStream&, char);
+MAKE_PRINT_ADAPTOR(CharacterDump, char, dumpCharacter);
+
 } // namespace WTF
 
+using WTF::CharacterDump;
 using WTF::PrintStream;
 
 #endif // PrintStream_h

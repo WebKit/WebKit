@@ -115,5 +115,10 @@ void printInternal(PrintStream& out, RawPointer value)
     out.printf("%p", value.value());
 }
 
+void dumpCharacter(PrintStream& out, char value)
+{
+    out.printf("%c", value);
+}
+
 } // namespace WTF
 

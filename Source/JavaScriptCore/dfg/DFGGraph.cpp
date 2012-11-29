@@ -27,7 +27,7 @@
 #include "DFGGraph.h"
 
 #include "CodeBlock.h"
-#include <wtf/BoundsCheckedPointer.h>
+#include "DFGVariableAccessDataDump.h"
 
 #if ENABLE(DFG_JIT)
 
@@ -55,44 +55,6 @@ Graph::Graph(JSGlobalData& globalData, CodeBlock* codeBlock, unsigned osrEntryBy
 const char *Graph::opName(NodeType op)
 {
     return dfgOpNames[op];
-}
-
-const char* Graph::nameOfVariableAccessData(VariableAccessData* variableAccessData)
-{
-    // Variables are already numbered. For readability of IR dumps, this returns
-    // an alphabetic name for the variable access data, so that you don't have to
-    // reason about two numbers (variable number and live range number), but instead
-    // a number and a letter.
-    
-    unsigned index = std::numeric_limits<unsigned>::max();
-    for (unsigned i = 0; i < m_variableAccessData.size(); ++i) {
-        if (&m_variableAccessData[i] == variableAccessData) {
-            index = i;
-            break;
-        }
-    }
-    
-    ASSERT(index != std::numeric_limits<unsigned>::max());
-    
-    if (!index)
-        return "A";
-
-    static char buf[100];
-    BoundsCheckedPointer<char> ptr(buf, sizeof(buf));
-    
-    while (index) {
-        *ptr++ = 'A' + (index % 26);
-        index /= 26;
-    }
-    
-    if (variableAccessData->isCaptured())
-        *ptr++ = '*';
-    
-    ptr.strcat(speculationToAbbreviatedString(variableAccessData->prediction()));
-    
-    *ptr++ = 0;
-    
-    return buf;
 }
 
 static void printWhiteSpace(PrintStream& out, unsigned amount)
@@ -152,8 +114,7 @@ void Graph::dump(PrintStream& out, Edge edge)
     out.print(
         useKindToString(edge.useKind()),
         "@", edge.index(),
-        speculationToAbbreviatedString(
-            at(edge).prediction()));
+        AbbreviatedSpeculationDump(at(edge).prediction()));
 }
 
 void Graph::dump(PrintStream& out, const char* prefix, NodeIndex nodeIndex)
@@ -264,7 +225,7 @@ void Graph::dump(PrintStream& out, const char* prefix, NodeIndex nodeIndex)
     if (node.hasStorageAccessData()) {
         StorageAccessData& storageAccessData = m_storageAccessData[node.storageAccessDataIndex()];
         out.print(hasPrinted ? ", " : "", "id", storageAccessData.identifierNumber, "{", m_codeBlock->identifier(storageAccessData.identifierNumber).string(), "}");
-        out.print(", ", storageAccessData.offset);
+        out.print(", ", static_cast<ptrdiff_t>(storageAccessData.offset));
         hasPrinted = true;
     }
     ASSERT(node.hasVariableAccessData() == node.hasLocal());
@@ -272,9 +233,9 @@ void Graph::dump(PrintStream& out, const char* prefix, NodeIndex nodeIndex)
         VariableAccessData* variableAccessData = node.variableAccessData();
         int operand = variableAccessData->operand();
         if (operandIsArgument(operand))
-            out.print(hasPrinted ? ", " : "", "arg", operandToArgument(operand), "(", nameOfVariableAccessData(variableAccessData), ")");
+            out.print(hasPrinted ? ", " : "", "arg", operandToArgument(operand), "(", VariableAccessDataDump(*this, variableAccessData), ")");
         else
-            out.print(hasPrinted ? ", " : "", "r", operand, "(", nameOfVariableAccessData(variableAccessData), ")");
+            out.print(hasPrinted ? ", " : "", "r", operand, "(", VariableAccessDataDump(*this, variableAccessData), ")");
         hasPrinted = true;
     }
     if (node.hasConstantBuffer()) {
@@ -321,9 +282,9 @@ void Graph::dump(PrintStream& out, const char* prefix, NodeIndex nodeIndex)
 
     if (!skipped) {
         if (node.hasVariableAccessData())
-            out.print("  predicting ", speculationToString(node.variableAccessData()->prediction()), node.variableAccessData()->shouldUseDoubleFormat() ? ", forcing double" : "");
+            out.print("  predicting ", SpeculationDump(node.variableAccessData()->prediction()), node.variableAccessData()->shouldUseDoubleFormat() ? ", forcing double" : "");
         else if (node.hasHeapPrediction())
-            out.print("  predicting ", speculationToString(node.getHeapPrediction()));
+            out.print("  predicting ", SpeculationDump(node.getHeapPrediction()));
     }
     
     out.print("\n");
@@ -459,7 +420,9 @@ void Graph::predictArgumentTypes()
         at(m_arguments[arg]).variableAccessData()->predict(profile->computeUpdatedPrediction());
         
 #if DFG_ENABLE(DEBUG_VERBOSE)
-        dataLogF("Argument [%zu] prediction: %s\n", arg, speculationToString(at(m_arguments[arg]).variableAccessData()->prediction()));
+        dataLog(
+            "Argument [", arg, "] prediction: ",
+            SpeculationDump(at(m_arguments[arg]).variableAccessData()->prediction()), "\n");
 #endif
     }
 }

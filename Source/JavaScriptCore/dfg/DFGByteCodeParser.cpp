@@ -267,8 +267,7 @@ private:
             m_inlineStackTop->m_lazyOperands.prediction(
                 LazyOperandValueProfileKey(m_currentIndex, node.local()));
 #if DFG_ENABLE(DEBUG_VERBOSE)
-        dataLogF("Lazy operand [@%u, bc#%u, r%d] prediction: %s\n",
-                nodeIndex, m_currentIndex, node.local(), speculationToString(prediction));
+        dataLog("Lazy operand [@", nodeIndex, ", bc#", m_currentIndex, ", r", node.local(), "] prediction: ", SpeculationDump(prediction), "\n");
 #endif
         node.variableAccessData()->predict(prediction);
         return nodeIndex;
@@ -887,7 +886,7 @@ private:
         
         SpeculatedType prediction = m_inlineStackTop->m_profiledBlock->valueProfilePredictionForBytecodeOffset(bytecodeIndex);
 #if DFG_ENABLE(DEBUG_VERBOSE)
-        dataLogF("Dynamic [@%u, bc#%u] prediction: %s\n", nodeIndex, bytecodeIndex, speculationToString(prediction));
+        dataLog("Dynamic [@", nodeIndex, ", bc#", bytecodeIndex, "] prediction: ", SpeculationDump(prediction), "\n");
 #endif
         
         return prediction;

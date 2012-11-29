@@ -1,3 +1,47 @@
+2012-11-28  Filip Pizlo  <fpizlo@apple.com>
+
+        SpeculatedType dumping should not use the static char buffer[thingy] idiom
+        https://bugs.webkit.org/show_bug.cgi?id=103584
+
+        Reviewed by Michael Saboff.
+
+        Changed SpeculatedType to be "dumpable" by saying things like:
+        
+        dataLog("thingy = ", SpeculationDump(thingy))
+        
+        Removed the old stringification functions, and changed all code that referred to them
+        to use the new dataLog()/print() style.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Target.pri:
+        * bytecode/SpeculatedType.cpp:
+        (JSC::dumpSpeculation):
+        (JSC::speculationToAbbreviatedString):
+        (JSC::dumpSpeculationAbbreviated):
+        * bytecode/SpeculatedType.h:
+        * bytecode/ValueProfile.h:
+        (JSC::ValueProfileBase::dump):
+        * bytecode/VirtualRegister.h:
+        (WTF::printInternal):
+        * dfg/DFGAbstractValue.h:
+        (JSC::DFG::AbstractValue::dump):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::injectLazyOperandSpeculation):
+        (JSC::DFG::ByteCodeParser::getPredictionWithoutOSRExit):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::dump):
+        (JSC::DFG::Graph::predictArgumentTypes):
+        * dfg/DFGGraph.h:
+        (Graph):
+        * dfg/DFGStructureAbstractValue.h:
+        * dfg/DFGVariableAccessDataDump.cpp: Added.
+        (JSC::DFG::VariableAccessDataDump::VariableAccessDataDump):
+        (JSC::DFG::VariableAccessDataDump::dump):
+        * dfg/DFGVariableAccessDataDump.h: Added.
+        (VariableAccessDataDump):
+
 2012-11-28  Michael Saboff  <msaboff@apple.com>
 
         Change Bytecompiler s_dumpsGeneratedCode to an Options value

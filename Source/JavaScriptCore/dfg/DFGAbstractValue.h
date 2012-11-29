@@ -374,7 +374,7 @@ struct AbstractValue {
     void dump(PrintStream& out) const
     {
         out.print(
-            "(", speculationToString(m_type), ", ", arrayModesToString(m_arrayModes), ", ",
+            "(", SpeculationDump(m_type), ", ", arrayModesToString(m_arrayModes), ", ",
             m_currentKnownStructure, ", ", m_futurePossibleStructure);
         if (!!m_value)
             out.print(", ", m_value.description());
@@ -531,15 +531,6 @@ private:
 };
 
 } } // namespace JSC::DFG
-
-namespace WTF {
-
-inline void printInternal(PrintStream& out, const JSC::DFG::AbstractValue& value)
-{
-    value.dump(out);
-}
-
-} // namespace WTF
 
 #endif // ENABLE(DFG_JIT)
 

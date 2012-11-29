@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,28 +23,34 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef VirtualRegister_h
-#define VirtualRegister_h
+#ifndef DFGVariableAccessDataDump_h
+#define DFGVariableAccessDataDump_h
 
 #include <wtf/Platform.h>
+
+#if ENABLE(DFG_JIT)
+
 #include <wtf/PrintStream.h>
 
-namespace JSC {
+namespace JSC { namespace DFG {
 
-// Type for a virtual register number (spill location).
-// Using an enum to make this type-checked at compile time, to avert programmer errors.
-enum VirtualRegister { InvalidVirtualRegister = -1 };
-COMPILE_ASSERT(sizeof(VirtualRegister) == sizeof(int), VirtualRegister_is_32bit);
+class Graph;
+class VariableAccessData;
 
-} // namespace JSC
+class VariableAccessDataDump {
+public:
+    VariableAccessDataDump(Graph&, VariableAccessData*);
+    
+    void dump(PrintStream&) const;
 
-namespace WTF {
+private:
+    Graph& m_graph;
+    VariableAccessData* m_data;
+};
 
-inline void printInternal(PrintStream& out, JSC::VirtualRegister value)
-{
-    out.print(static_cast<int>(value));
-}
+} } // namespace JSC::DFG
 
-} // namespace WTF
+#endif // ENABLE(DFG_JIT)
 
-#endif // VirtualRegister_h
+#endif // DFGVariableAccessDataDump_h
+

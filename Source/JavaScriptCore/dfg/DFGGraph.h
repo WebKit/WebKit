@@ -327,9 +327,6 @@ public:
 
     static const char *opName(NodeType);
     
-    // This is O(n), and should only be used for verbose dumps.
-    const char* nameOfVariableAccessData(VariableAccessData*);
-
     void predictArgumentTypes();
     
     StructureSet* addStructureSet(const StructureSet& structureSet)

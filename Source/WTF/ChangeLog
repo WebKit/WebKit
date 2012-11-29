@@ -1,3 +1,32 @@
+2012-11-28  Filip Pizlo  <fpizlo@apple.com>
+
+        SpeculatedType dumping should not use the static char buffer[thingy] idiom
+        https://bugs.webkit.org/show_bug.cgi?id=103584
+
+        Reviewed by Michael Saboff.
+
+        Added a StringPrintStream, and made it easy to create dumpers for typedefs to primitives.
+
+        * GNUmakefile.list.am:
+        * WTF.gypi:
+        * WTF.pro:
+        * WTF.vcproj/WTF.vcproj:
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/PrintStream.cpp:
+        (WTF::dumpCharacter):
+        * wtf/PrintStream.h:
+        (WTF::printInternal):
+        * wtf/StringPrintStream.cpp: Added.
+        (WTF::StringPrintStream::StringPrintStream):
+        (WTF::StringPrintStream::~StringPrintStream):
+        (WTF::StringPrintStream::vprintf):
+        (WTF::StringPrintStream::toCString):
+        (WTF::StringPrintStream::increaseSize):
+        * wtf/StringPrintStream.h: Added.
+        (StringPrintStream):
+        (WTF::toCString):
+
 2012-11-28  Michael Saboff  <msaboff@apple.com>
 
         Update String Stats for recent dataLog changes and add summary
