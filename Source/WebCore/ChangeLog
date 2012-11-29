@@ -1,3 +1,52 @@
+2012-11-29  Keishi Hattori  <keishi@webkit.org>
+
+        Better type ahead for DateTimeSymbolicFieldElement
+        https://bugs.webkit.org/show_bug.cgi?id=103031
+
+        Reviewed by Kent Tamura.
+
+        This cuts out the type ahead code that will be used by HTMLSelectElement
+        and DateTimeSymbolicFieldElement into a TypeAhead class. This will
+        improve DateTimeSymbolicFieldElement type ahead which was first
+        character match only, by adding cycling, prefix match and index number
+        match.
+
+        Added tests to month-multiple-fields-keyboard-events.html.
+
+        * GNUmakefile.list.am: Added TypeAhead.{h,cpp}
+        * Target.pri: Ditto.
+        * WebCore.gypi: Ditto.
+        * WebCore.vcproj/WebCore.vcproj: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * CMakeLists.txt: Ditto.
+        * html/HTMLSelectElement.cpp:
+        (WebCore):
+        (WebCore::HTMLSelectElement::HTMLSelectElement):
+        (WebCore::HTMLSelectElement::indexOfSelectedOption): Returns index of current selection.
+        (WebCore::HTMLSelectElement::optionCount): Returns total number of options.
+        (WebCore::HTMLSelectElement::optionAtIndex): Returns option at index.
+        (WebCore::HTMLSelectElement::typeAheadFind): Use TypeAhead.
+        * html/HTMLSelectElement.h:
+        (HTMLSelectElement):
+        * html/TypeAhead.cpp: Added.
+        (WebCore):
+        (WebCore::TypeAhead::TypeAhead):
+        (WebCore::stripLeadingWhiteSpace): Moved from HTMLSelectElement.cpp.
+        (WebCore::TypeAhead::handleEvent): Returns index for match.
+        * html/TypeAhead.h: Added.
+        (WebCore):
+        (TypeAheadDataSource): Provide the data about the options that TypeAhead should match against.
+        (TypeAhead):
+        * html/shadow/DateTimeSymbolicFieldElement.cpp:
+        (WebCore::DateTimeSymbolicFieldElement::DateTimeSymbolicFieldElement):
+        (WebCore::DateTimeSymbolicFieldElement::handleKeyboardEvent):
+        (WebCore::DateTimeSymbolicFieldElement::indexOfSelectedOption):
+        (WebCore):
+        (WebCore::DateTimeSymbolicFieldElement::optionCount):
+        (WebCore::DateTimeSymbolicFieldElement::optionAtIndex):
+        * html/shadow/DateTimeSymbolicFieldElement.h:
+        (DateTimeSymbolicFieldElement):
+
 2012-11-29  Andrei Bucur  <abucur@adobe.com>
 
         [CSS Regions] Fix content node renderers ordering inside the named flow thread

@@ -29,13 +29,14 @@
 #include "Event.h"
 #include "HTMLFormControlElementWithState.h"
 #include "HTMLOptionsCollection.h"
+#include "TypeAhead.h"
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
 class HTMLOptionElement;
 
-class HTMLSelectElement : public HTMLFormControlElementWithState {
+class HTMLSelectElement : public HTMLFormControlElementWithState, public TypeAheadDataSource {
 public:
     static PassRefPtr<HTMLSelectElement> create(const QualifiedName&, Document*, HTMLFormElement*);
 
@@ -103,7 +104,7 @@ public:
     
     // For use in the implementation of HTMLOptionElement.
     void optionSelectionStateChanged(HTMLOptionElement*, bool optionIsSelected);
-    
+
 protected:
     HTMLSelectElement(const QualifiedName&, Document*, HTMLFormElement*);
 
@@ -181,17 +182,20 @@ private:
     virtual void childrenChanged(bool changedByParser = false, Node* beforeChange = 0, Node* afterChange = 0, int childCountDelta = 0);
     virtual bool areAuthorShadowsAllowed() const OVERRIDE { return false; }
 
+    // TypeAheadDataSource functions.
+    virtual int indexOfSelectedOption() const OVERRIDE;
+    virtual int optionCount() const OVERRIDE;
+    virtual String optionAtIndex(int index) const OVERRIDE;
+
     // m_listItems contains HTMLOptionElement, HTMLOptGroupElement, and HTMLHRElement objects.
     mutable Vector<HTMLElement*> m_listItems;
     Vector<bool> m_lastOnChangeSelection;
     Vector<bool> m_cachedStateForActiveSelection;
-    DOMTimeStamp m_lastCharTime;
-    String m_typedString;
+    TypeAhead m_typeAhead;
     int m_size;
     int m_lastOnChangeIndex;
     int m_activeSelectionAnchorIndex;
     int m_activeSelectionEndIndex;
-    UChar m_repeatingChar;
     bool m_isProcessingUserDrivenChange;
     bool m_multiple;
     bool m_activeSelectionState;

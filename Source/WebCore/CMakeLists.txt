@@ -1467,6 +1467,7 @@ SET(WebCore_SOURCES
     html/TextInputType.cpp
     html/TimeInputType.cpp
     html/TimeRanges.cpp
+    html/TypeAhead.cpp
     html/URLInputType.cpp
     html/ValidationMessage.cpp
     html/ValidityState.cpp

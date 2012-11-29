@@ -1,3 +1,13 @@
+2012-11-29  Keishi Hattori  <keishi@webkit.org>
+
+        Better type ahead for DateTimeSymbolicFieldElement
+        https://bugs.webkit.org/show_bug.cgi?id=103031
+
+        Reviewed by Kent Tamura.
+
+        * fast/forms/month-multiple-fields/month-multiple-fields-keyboard-events-expected.txt:
+        * fast/forms/month-multiple-fields/month-multiple-fields-keyboard-events.html: Added tests for typeahead.
+
 2012-11-29  Kent Tamura  <tkent@chromium.org>
 
         Convert *-appearance-pseudo-classes.html to dumpAsText tests
