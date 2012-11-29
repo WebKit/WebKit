@@ -30,6 +30,10 @@
 #include "WebPageGroupData.h"
 #include "WebPageProxy.h"
 
+#if PLATFORM(MAC)
+#include "ObjCObjectGraphCoders.h"
+#endif
+
 namespace WebKit {
 
 // Adds
@@ -68,6 +72,13 @@ public:
             encoder << pageGroup->data();
             break;
         }
+#if PLATFORM(MAC)
+        case APIObject::TypeObjCObjectGraph: {
+            ObjCObjectGraph* objectGraph = static_cast<ObjCObjectGraph*>(m_root);
+            encoder << WebContextObjCObjectGraphEncoder(objectGraph);
+            break;
+        }
+#endif
         default:
             ASSERT_NOT_REACHED();
             break;
@@ -127,6 +138,16 @@ public:
             coder.m_root = WebPageGroup::get(pageGroupID);
             break;
         }
+#if PLATFORM(MAC)
+        case APIObject::TypeObjCObjectGraph: {
+            RefPtr<ObjCObjectGraph> objectGraph;
+            WebContextObjCObjectGraphDecoder objectGraphDecoder(objectGraph, coder.m_process);
+            if (!decoder->decode(objectGraphDecoder))
+                return false;
+            coder.m_root = objectGraph.get();
+            break;
+        }
+#endif
         default:
             return false;
         }

@@ -123,6 +123,12 @@ static WKWebProcessPlugInController *sharedInstance;
     return self;
 }
 
+- (WKWebProcessPlugInBrowserContextController *)_browserContextControllerForBundlePageRef:(WKBundlePageRef)pageRef
+{
+    ASSERT(_bundlePageWrapperCache.contains(pageRef));
+    return _bundlePageWrapperCache.get(pageRef).get();
+}
+
 @end
 
 @implementation WKWebProcessPlugInController

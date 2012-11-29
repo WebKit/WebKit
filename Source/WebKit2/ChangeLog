@@ -1,3 +1,92 @@
+2012-11-28  Sam Weinig  <sam@webkit.org>
+
+        Add an objc object graph wrapper and coder for WKConnection message bodies
+        https://bugs.webkit.org/show_bug.cgi?id=103589
+
+        Reviewed by Anders Carlsson.
+
+        Adds a new type of UserMessageCoder for objc object graphs that allows encoding/decoding
+        WKBrowsingContextController across the wire.
+
+        * Shared/APIClient.h:
+        (APIClient):
+        (WebKit::APIClient::client):
+        Add accessor for the ClientInterface.
+
+        * Shared/APIObject.h:
+        Add new TypeObjCObjectGraph type.
+
+        * Shared/mac/ObjCObjectGraph.h: Added.
+        (ObjCObjectGraph):
+        (WebKit::ObjCObjectGraph::create):
+        (WebKit::ObjCObjectGraph::root):
+        (WebKit::ObjCObjectGraph::ObjCObjectGraph):
+        (WebKit::ObjCObjectGraph::type):
+        * Shared/mac/ObjCObjectGraph.mm: Added.
+        Wraps 
+
+        * Shared/mac/ObjCObjectGraphCoders.h: Added.
+        (WebContextObjCObjectGraphEncoder):
+        (WebContextObjCObjectGraphDecoder):
+        (InjectedBundleObjCObjectGraphEncoder):
+        (InjectedBundleObjCObjectGraphDecoder):
+        * Shared/mac/ObjCObjectGraphCoders.mm: Added.
+        (WebKit::typeFromObject):
+        (ObjCObjectGraphEncoder):
+        (WebKit::ObjCObjectGraphEncoder::baseEncode):
+        (WebKit::ObjCObjectGraphEncoder::ObjCObjectGraphEncoder):
+        (ObjCObjectGraphDecoder):
+        (WebKit::ObjCObjectGraphDecoder::baseDecode):
+        (WebKit::ObjCObjectGraphDecoder::ObjCObjectGraphDecoder):
+        (WebContextObjCObjectGraphEncoderImpl):
+        (WebKit::WebContextObjCObjectGraphEncoderImpl::WebContextObjCObjectGraphEncoderImpl):
+        (WebKit::WebContextObjCObjectGraphEncoderImpl::encode):
+        (WebContextObjCObjectGraphDecoderImpl):
+        (WebKit::WebContextObjCObjectGraphDecoderImpl::WebContextObjCObjectGraphDecoderImpl):
+        (WebKit::WebContextObjCObjectGraphDecoderImpl::decode):
+        (InjectedBundleObjCObjectGraphEncoderImpl):
+        (WebKit::InjectedBundleObjCObjectGraphEncoderImpl::InjectedBundleObjCObjectGraphEncoderImpl):
+        (WebKit::InjectedBundleObjCObjectGraphEncoderImpl::encode):
+        (InjectedBundleObjCObjectGraphDecoderImpl):
+        (WebKit::InjectedBundleObjCObjectGraphDecoderImpl::InjectedBundleObjCObjectGraphDecoderImpl):
+        (WebKit::InjectedBundleObjCObjectGraphDecoderImpl::decode):
+        (WebKit::WebContextObjCObjectGraphEncoder::WebContextObjCObjectGraphEncoder):
+        (WebKit::WebContextObjCObjectGraphEncoder::encode):
+        (WebKit::WebContextObjCObjectGraphDecoder::WebContextObjCObjectGraphDecoder):
+        (WebKit::WebContextObjCObjectGraphDecoder::decode):
+        (WebKit::InjectedBundleObjCObjectGraphEncoder::InjectedBundleObjCObjectGraphEncoder):
+        (WebKit::InjectedBundleObjCObjectGraphEncoder::encode):
+        (WebKit::InjectedBundleObjCObjectGraphDecoder::InjectedBundleObjCObjectGraphDecoder):
+        (WebKit::InjectedBundleObjCObjectGraphDecoder::decode):
+        Added.
+
+        * UIProcess/API/mac/WKBrowsingContextController.mm:
+        (+[WKBrowsingContextController _browsingContextControllerForPageRef:]):
+        * UIProcess/API/mac/WKBrowsingContextControllerInternal.h:
+        Expose the accessor to get the WKPageRef from a WKBrowsingContextController and add a 
+        new method to get a WKBrowsingContextController from a WKPageRef.
+
+        * UIProcess/API/mac/WKConnection.mm:
+        (-[WKConnection sendMessageWithName:body:]):
+        (didReceiveMessage):
+        Switch WKConnection to use ObjCObjectGraph to encode the messageBody.
+
+        * UIProcess/WebContextUserMessageCoders.h:
+        (WebKit::WebContextUserMessageEncoder::encode):
+        (WebKit::WebContextUserMessageDecoder::decode):
+        * WebProcess/InjectedBundle/InjectedBundleUserMessageCoders.h:
+        (WebKit::InjectedBundleUserMessageEncoder::encode):
+        (WebKit::InjectedBundleUserMessageDecoder::decode):
+        Proxy to ObjCObjectGraph coders when user message encoding/decoding ObjCObjectGraph APIObjects.
+
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugIn.mm:
+        (-[WKWebProcessPlugInController _browserContextControllerForBundlePageRef:]):
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugInInternal.h:
+        Add method to get WKWebProcessPlugInController from the WKBundlePageRef.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        Add new files.
+
 2012-11-28  Sergio Villar Senin  <svillar@igalia.com>
 
         [WK2][Qt] Add drag&drop support to Flickable webView

@@ -27,9 +27,7 @@
 #import "WKConnection.h"
 #import "WKConnectionInternal.h"
 
-#import "ArgumentCodersMac.h"
-#import "ArgumentDecoder.h"
-#import "ArgumentEncoder.h"
+#import "ObjCObjectGraph.h"
 #import "WKConnectionRef.h"
 #import "WKData.h"
 #import "WKRetainPtr.h"
@@ -64,13 +62,10 @@ using namespace WebKit;
 
 - (void)sendMessageWithName:(NSString *)messageName body:(id)messageBody
 {
-    OwnPtr<CoreIPC::ArgumentEncoder> messageData = CoreIPC::ArgumentEncoder::create();
-    encode(*messageData, messageBody);
-
     WKRetainPtr<WKStringRef> wkMessageName = adoptWK(WKStringCreateWithCFString((CFStringRef)messageName));
-    WKRetainPtr<WKDataRef> wkMessageBody = adoptWK(WKDataCreate(messageData->buffer(), messageData->bufferSize()));
+    RefPtr<ObjCObjectGraph> wkMessageBody = ObjCObjectGraph::create(messageBody);
 
-    WKConnectionPostMessage(_data->_connectionRef.get(), wkMessageName.get(), wkMessageBody.get());
+    WKConnectionPostMessage(_data->_connectionRef.get(), wkMessageName.get(), (WKTypeRef)wkMessageBody.get());
 }
 
 #pragma mark Delegates
@@ -93,17 +88,10 @@ static void didReceiveMessage(WKConnectionRef, WKStringRef messageName, WKTypeRe
 {
     WKConnection *connection = (WKConnection *)clientInfo;
     if ([connection.delegate respondsToSelector:@selector(connection:didReceiveMessageWithName:body:)]) {
-        RetainPtr<CFStringRef> cfMessageName = adoptCF(WKStringCopyCFString(kCFAllocatorDefault, messageName));
+        RetainPtr<NSString> nsMessageName = adoptNS((NSString *)WKStringCopyCFString(kCFAllocatorDefault, messageName));
+        RetainPtr<id> nsMessageBody = ((ObjCObjectGraph*)messageBody)->rootObject();
 
-        WKDataRef messageData = (WKDataRef)messageBody;
-        OwnPtr<CoreIPC::ArgumentDecoder> decoder = CoreIPC::ArgumentDecoder::create(WKDataGetBytes(messageData), WKDataGetSize(messageData));
-
-        RetainPtr<id> messageDictionary;
-        // FIXME: Don't just silently drop decoding failures on the ground.
-        if (!decode(decoder.get(), messageDictionary))
-            return;
-
-        [connection.delegate connection:connection didReceiveMessageWithName:(NSString *)cfMessageName.get() body:messageDictionary.get()];
+        [connection.delegate connection:connection didReceiveMessageWithName:nsMessageName.get() body:nsMessageBody.get()];
     }
 }
 

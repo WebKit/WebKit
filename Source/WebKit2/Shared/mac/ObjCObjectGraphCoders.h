@@ -23,17 +23,58 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if defined(__LP64__) && defined(__clang__)
+#ifndef ObjCObjectGraphCoders_h
+#define ObjCObjectGraphCoders_h
 
-#import "WKWebProcessPlugIn.h"
+#include "ArgumentDecoder.h"
+#include "ArgumentEncoder.h"
+#include "ObjCObjectGraph.h"
+#include <wtf/RefPtr.h>
 
-@interface WKWebProcessPlugInController (Internal)
+namespace WebKit {
 
-+ (WKWebProcessPlugInController *)_shared;
-- (id)_initWithPrincipalClassInstance:(id<WKWebProcessPlugIn>)principalClassInstance bundleRef:(WKBundleRef)bundleRef;
+class WebProcess;
+class WebProcessProxy;
 
-- (WKWebProcessPlugInBrowserContextController *)_browserContextControllerForBundlePageRef:(WKBundlePageRef)pageRef;
+class WebContextObjCObjectGraphEncoder {
+public:
+    explicit WebContextObjCObjectGraphEncoder(ObjCObjectGraph*);
+    void encode(CoreIPC::ArgumentEncoder&) const;
 
-@end
+private:
+    ObjCObjectGraph* m_objectGraph;
+};
 
-#endif // defined(__LP64__) && defined(__clang__)
+class WebContextObjCObjectGraphDecoder {
+public:
+    explicit WebContextObjCObjectGraphDecoder(RefPtr<ObjCObjectGraph>&, WebProcessProxy*);
+    static bool decode(CoreIPC::ArgumentDecoder*, WebContextObjCObjectGraphDecoder&);
+
+private:
+    RefPtr<ObjCObjectGraph>& m_objectGraph;
+    WebProcessProxy* m_process;
+};
+
+
+class InjectedBundleObjCObjectGraphEncoder {
+public:
+    explicit InjectedBundleObjCObjectGraphEncoder(ObjCObjectGraph*);
+    void encode(CoreIPC::ArgumentEncoder&) const;
+
+private:
+    ObjCObjectGraph* m_objectGraph;
+};
+
+class InjectedBundleObjCObjectGraphDecoder {
+public:
+    explicit InjectedBundleObjCObjectGraphDecoder(RefPtr<ObjCObjectGraph>&, WebProcess*);
+    static bool decode(CoreIPC::ArgumentDecoder*, InjectedBundleObjCObjectGraphDecoder&);
+
+private:
+    RefPtr<ObjCObjectGraph>& m_objectGraph;
+    WebProcess* m_process;
+};
+
+} // namespace WebKit
+
+#endif // ObjCObjectGraphCoders_h

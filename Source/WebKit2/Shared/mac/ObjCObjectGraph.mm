@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,41 +23,5 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef APIClient_h
-#define APIClient_h
-
-#include "APIClientTraits.h"
-
-namespace WebKit {
-
-template<typename ClientInterface, int currentVersion> class APIClient {
-public:
-    APIClient()
-    {
-        initialize(0);
-    }
-    
-    void initialize(const ClientInterface* client)
-    {
-        COMPILE_ASSERT(sizeof(APIClientTraits<ClientInterface>::interfaceSizesByVersion) / sizeof(size_t) == currentVersion + 1, size_of_some_interfaces_are_unknown);
-
-        if (client && client->version == currentVersion) {
-            m_client = *client;
-            return;
-        }
-
-        memset(&m_client, 0, sizeof(m_client));
-
-        if (client && client->version < currentVersion)
-            memcpy(&m_client, client, APIClientTraits<ClientInterface>::interfaceSizesByVersion[client->version]);
-    }
-
-    const ClientInterface& client() const { return m_client; }
-
-protected:
-    ClientInterface m_client;
-};
-
-} // namespace WebKit
-
-#endif // APIClient_h
+#include "config.h"
+#include "ObjCObjectGraph.h"

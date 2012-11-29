@@ -37,6 +37,7 @@
 #import "WKURLRequest.h"
 #import "WKURLRequestNS.h"
 #import "WebContext.h"
+#import "WebPageProxy.h"
 #import <wtf/RetainPtr.h>
 
 #import "WKBrowsingContextLoadDelegate.h"
@@ -53,7 +54,6 @@ static inline NSURL *autoreleased(WKURLRef url)
     return [(NSURL *)WKURLCopyCFURL(kCFAllocatorDefault, wkURL.get()) autorelease];
 }
 
-
 @interface WKBrowsingContextControllerData : NSObject {
 @public
     // Underlying WKPageRef.
@@ -65,13 +65,6 @@ static inline NSURL *autoreleased(WKURLRef url)
 @end
 
 @implementation WKBrowsingContextControllerData
-@end
-
-
-@interface WKBrowsingContextController ()
-
-@property(readonly) WKPageRef _pageRef;
-
 @end
 
 
@@ -416,6 +409,11 @@ static void setUpPageLoaderClient(WKBrowsingContextController *browsingContext, 
     setUpPageLoaderClient(self, pageRef);
 
     return self;
+}
+
++ (WKBrowsingContextController *)_browsingContextControllerForPageRef:(WKPageRef)pageRef
+{
+    return (WKBrowsingContextController *)WebKit::toImpl(pageRef)->loaderClient().client().clientInfo;
 }
 
 + (NSMutableSet *)customSchemes

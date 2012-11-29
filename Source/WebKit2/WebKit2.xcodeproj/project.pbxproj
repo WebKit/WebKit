@@ -811,6 +811,10 @@
 		BC8699B7116AADAA002A925B /* WKViewInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = BC8699B4116AADAA002A925B /* WKViewInternal.h */; };
 		BC8780FC1161C2B800CC2768 /* PlatformProcessIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = BC8780FB1161C2B800CC2768 /* PlatformProcessIdentifier.h */; };
 		BC8A501511765F5600757573 /* WKRetainPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = BC8A501411765F5600757573 /* WKRetainPtr.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BC8ACA1316670D89004C1941 /* ObjCObjectGraph.h in Headers */ = {isa = PBXBuildFile; fileRef = BC8ACA0F16670D7A004C1941 /* ObjCObjectGraph.h */; };
+		BC8ACA1416670D89004C1941 /* ObjCObjectGraph.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC8ACA1016670D7B004C1941 /* ObjCObjectGraph.mm */; };
+		BC8ACA1516670D89004C1941 /* ObjCObjectGraphCoders.h in Headers */ = {isa = PBXBuildFile; fileRef = BC8ACA1116670D7E004C1941 /* ObjCObjectGraphCoders.h */; };
+		BC8ACA1616670D89004C1941 /* ObjCObjectGraphCoders.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC8ACA1216670D83004C1941 /* ObjCObjectGraphCoders.mm */; };
 		BC8F2F2A16273A2C005FACB5 /* WKWebProcessPlugInBrowserContextController.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC8F2F2816273A2B005FACB5 /* WKWebProcessPlugInBrowserContextController.mm */; };
 		BC8F2F2B16273A2C005FACB5 /* WKWebProcessPlugInBrowserContextController.h in Headers */ = {isa = PBXBuildFile; fileRef = BC8F2F2916273A2C005FACB5 /* WKWebProcessPlugInBrowserContextController.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		BC8F2F2E16273ACC005FACB5 /* WKWebProcessPlugInBrowserContextControllerInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = BC8F2F2D16273ACB005FACB5 /* WKWebProcessPlugInBrowserContextControllerInternal.h */; };
@@ -2075,6 +2079,10 @@
 		BC87DFA91018101400564216 /* libicucore.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libicucore.dylib; path = /usr/lib/libicucore.dylib; sourceTree = "<absolute>"; };
 		BC8A501011765AF700757573 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = WebProcess/Info.plist; sourceTree = "<group>"; };
 		BC8A501411765F5600757573 /* WKRetainPtr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKRetainPtr.h; sourceTree = "<group>"; };
+		BC8ACA0F16670D7A004C1941 /* ObjCObjectGraph.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObjCObjectGraph.h; sourceTree = "<group>"; };
+		BC8ACA1016670D7B004C1941 /* ObjCObjectGraph.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ObjCObjectGraph.mm; sourceTree = "<group>"; };
+		BC8ACA1116670D7E004C1941 /* ObjCObjectGraphCoders.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObjCObjectGraphCoders.h; sourceTree = "<group>"; };
+		BC8ACA1216670D83004C1941 /* ObjCObjectGraphCoders.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ObjCObjectGraphCoders.mm; sourceTree = "<group>"; };
 		BC8F2F2816273A2B005FACB5 /* WKWebProcessPlugInBrowserContextController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebProcessPlugInBrowserContextController.mm; sourceTree = "<group>"; };
 		BC8F2F2916273A2C005FACB5 /* WKWebProcessPlugInBrowserContextController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKWebProcessPlugInBrowserContextController.h; sourceTree = "<group>"; };
 		BC8F2F2D16273ACB005FACB5 /* WKWebProcessPlugInBrowserContextControllerInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKWebProcessPlugInBrowserContextControllerInternal.h; sourceTree = "<group>"; };
@@ -3775,6 +3783,10 @@
 		BC111B5A112F628200337BAB /* mac */ = {
 			isa = PBXGroup;
 			children = (
+				BC8ACA0F16670D7A004C1941 /* ObjCObjectGraph.h */,
+				BC8ACA1016670D7B004C1941 /* ObjCObjectGraph.mm */,
+				BC8ACA1116670D7E004C1941 /* ObjCObjectGraphCoders.h */,
+				BC8ACA1216670D83004C1941 /* ObjCObjectGraphCoders.mm */,
 				E179FD9B134D38060015B883 /* ArgumentCodersMac.h */,
 				E179FD9E134D38250015B883 /* ArgumentCodersMac.mm */,
 				E1A31731134CEA6C007C9A4F /* AttributedString.h */,
@@ -3789,10 +3801,10 @@
 				C02BFF1D1251502E009CCBEA /* NativeWebKeyboardEventMac.mm */,
 				31EA25D0134F78B2005B1452 /* NativeWebMouseEventMac.mm */,
 				DF58C6351371ACA000F9A37C /* NativeWebWheelEventMac.mm */,
-				E19582D2153CBFD700B60875 /* PDFKitImports.h */,
-				E19582D4153CC05300B60875 /* PDFKitImports.mm */,
 				C574A57F12E66681002DFE98 /* PasteboardTypes.h */,
 				C574A58012E66681002DFE98 /* PasteboardTypes.mm */,
+				E19582D2153CBFD700B60875 /* PDFKitImports.h */,
+				E19582D4153CC05300B60875 /* PDFKitImports.mm */,
 				BCF505E51243047B005955AE /* PlatformCertificateInfo.h */,
 				BCF505E61243047B005955AE /* PlatformCertificateInfo.mm */,
 				E1CC1B8F12D7EADF00625838 /* PrintInfoMac.mm */,
@@ -5002,6 +5014,8 @@
 				2984F589164BA095004BC0C6 /* CustomProtocolManagerMessages.h in Headers */,
 				51F060E01654317F00F3281B /* WebResourceLoaderMessages.h in Headers */,
 				5175944B1657080400DD771D /* NetworkResourceLoaderMessages.h in Headers */,
+				BC8ACA1316670D89004C1941 /* ObjCObjectGraph.h in Headers */,
+				BC8ACA1516670D89004C1941 /* ObjCObjectGraphCoders.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5956,6 +5970,8 @@
 				2984F588164BA095004BC0C6 /* CustomProtocolManagerMessageReceiver.cpp in Sources */,
 				51F060E11654318500F3281B /* WebResourceLoaderMessageReceiver.cpp in Sources */,
 				5175944A1657080400DD771D /* NetworkResourceLoaderMessageReceiver.cpp in Sources */,
+				BC8ACA1416670D89004C1941 /* ObjCObjectGraph.mm in Sources */,
+				BC8ACA1616670D89004C1941 /* ObjCObjectGraphCoders.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -130,6 +130,7 @@ public:
 
         // Platform specific
         TypeEditCommandProxy,
+        TypeObjCObjectGraph,
         TypeView,
 #if USE(SOUP)
         TypeSoupRequestManager,

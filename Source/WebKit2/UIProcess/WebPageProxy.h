@@ -755,6 +755,8 @@ public:
     void endColorChooser();
 #endif
 
+    const WebLoaderClient& loaderClient() { return m_loaderClient; }
+
 private:
     WebPageProxy(PageClient*, PassRefPtr<WebProcessProxy>, WebPageGroup*, uint64_t pageID);
 

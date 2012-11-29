@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,41 +23,36 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef APIClient_h
-#define APIClient_h
+#ifndef ObjCObjectGraph_h
+#define ObjCObjectGraph_h
 
-#include "APIClientTraits.h"
+#include "APIObject.h"
+#include <wtf/RetainPtr.h>
 
 namespace WebKit {
 
-template<typename ClientInterface, int currentVersion> class APIClient {
+class ObjCObjectGraph : public APIObject {
 public:
-    APIClient()
+    static const Type APIType = TypeObjCObjectGraph;
+
+    static PassRefPtr<ObjCObjectGraph> create(id rootObject)
     {
-        initialize(0);
-    }
-    
-    void initialize(const ClientInterface* client)
-    {
-        COMPILE_ASSERT(sizeof(APIClientTraits<ClientInterface>::interfaceSizesByVersion) / sizeof(size_t) == currentVersion + 1, size_of_some_interfaces_are_unknown);
-
-        if (client && client->version == currentVersion) {
-            m_client = *client;
-            return;
-        }
-
-        memset(&m_client, 0, sizeof(m_client));
-
-        if (client && client->version < currentVersion)
-            memcpy(&m_client, client, APIClientTraits<ClientInterface>::interfaceSizesByVersion[client->version]);
+        return adoptRef(new ObjCObjectGraph(rootObject));
     }
 
-    const ClientInterface& client() const { return m_client; }
+    id rootObject() const { return m_rootObject.get(); }
 
-protected:
-    ClientInterface m_client;
+private:
+    explicit ObjCObjectGraph(id rootObject)
+        : m_rootObject(rootObject)
+    {
+    }
+
+    virtual Type type() const { return APIType; }
+
+    RetainPtr<id> m_rootObject;
 };
 
 } // namespace WebKit
 
-#endif // APIClient_h
+#endif // ObjCObjectGraph_h
