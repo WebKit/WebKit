@@ -384,7 +384,7 @@ private:
     bool m_isReceiver;
 };
 
-static bool resolveGLMethods(GraphicsSurfacePrivate*)
+static bool resolveGLMethods()
 {
     static bool resolved = false;
     if (resolved)
@@ -470,7 +470,7 @@ PassRefPtr<GraphicsSurface> GraphicsSurface::platformCreate(const IntSize& size,
     RefPtr<GraphicsSurface> surface = adoptRef(new GraphicsSurface(size, flags));
 
     surface->m_private = new GraphicsSurfacePrivate(shareContext);
-    if (!resolveGLMethods(surface->m_private))
+    if (!resolveGLMethods())
         return PassRefPtr<GraphicsSurface>();
 
     surface->m_platformSurface = surface->m_private->createSurface(size);
@@ -490,7 +490,7 @@ PassRefPtr<GraphicsSurface> GraphicsSurface::platformImport(const IntSize& size,
     surface->m_platformSurface = token.frontBufferHandle;
 
     surface->m_private = new GraphicsSurfacePrivate(surface->m_platformSurface);
-    if (!resolveGLMethods(surface->m_private))
+    if (!resolveGLMethods())
         return PassRefPtr<GraphicsSurface>();
 
     return surface;
