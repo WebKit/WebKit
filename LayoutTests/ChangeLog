@@ -1,3 +1,12 @@
+2012-11-29  Alexander Pavlov  <apavlov@chromium.org>
+
+        [Chromium] Unreviewed, mark fast/regions tests failing after r136045 as failing, since they are actually reftests.
+
+        * platform/chromium-mac/fast/regions/autoheight-dynamic-update-expected.png: Removed.
+        * platform/chromium-mac/fast/regions/firstletter-inside-flowthread-expected.png: Removed.
+        * platform/chromium-mac/fast/regions/listmarker-inside-flowthread-expected.png: Removed.
+        * platform/chromium/TestExpectations:
+
 2012-11-29  Andrei Bucur  <abucur@adobe.com>
 
         [CSS Regions] Fix content node renderers ordering inside the named flow thread
