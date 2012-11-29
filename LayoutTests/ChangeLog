@@ -1,5 +1,38 @@
 2012-11-29  Stephen Chenney  <schenney@chromium.org>
 
+        [Chromium] Rebaseline after removed double drawing of clipped hairlines at edges
+
+        Unreviewed expectations update
+
+        * platform/chromium-linux-x86/svg/hixie/perf/003-expected.png: Removed.
+        * platform/chromium-mac-lion/fast/repaint/list-marker-expected.png: Added.
+        * platform/chromium-mac-lion/svg/hixie/perf/001-expected.png: Added.
+        * platform/chromium-mac-lion/svg/hixie/perf/002-expected.png: Added.
+        * platform/chromium-mac-lion/svg/hixie/perf/003-expected.png:
+        * platform/chromium-mac-lion/svg/transforms/text-with-pattern-inside-transformed-html-expected.png:
+        * platform/chromium-mac-lion/svg/zoom/page/zoom-img-preserveAspectRatio-support-1-expected.png:
+        * platform/chromium-mac-snowleopard/fast/repaint/list-marker-expected.png:
+        * platform/chromium-mac-snowleopard/svg/hixie/perf/001-expected.png:
+        * platform/chromium-mac-snowleopard/svg/hixie/perf/002-expected.png:
+        * platform/chromium-mac-snowleopard/svg/transforms/text-with-pattern-inside-transformed-html-expected.png:
+        * platform/chromium-mac-snowleopard/svg/zoom/page/zoom-img-preserveAspectRatio-support-1-expected.png:
+        * platform/chromium-mac/fast/repaint/list-marker-expected.png:
+        * platform/chromium-mac/svg/hixie/perf/001-expected.png:
+        * platform/chromium-mac/svg/hixie/perf/002-expected.png:
+        * platform/chromium-mac/svg/hixie/perf/003-expected.png:
+        * platform/chromium-mac/svg/transforms/text-with-pattern-inside-transformed-html-expected.png:
+        * platform/chromium-mac/svg/zoom/page/zoom-img-preserveAspectRatio-support-1-expected.png:
+        * platform/chromium-win/fast/repaint/list-marker-expected.png:
+        * platform/chromium-win/svg/hixie/perf/001-expected.png:
+        * platform/chromium-win/svg/hixie/perf/002-expected.png:
+        * platform/chromium-win/svg/transforms/text-with-pattern-inside-transformed-html-expected.png:
+        * platform/chromium-win/svg/zoom/page/zoom-img-preserveAspectRatio-support-1-expected.png:
+        * platform/gtk/svg/transforms/text-with-pattern-inside-transformed-html-expected.png: Removed.
+        * platform/mac/svg/transforms/text-with-pattern-inside-transformed-html-expected.png: Removed.
+        * svg/transforms/text-with-pattern-inside-transformed-html-expected.png: Added.
+
+2012-11-29  Stephen Chenney  <schenney@chromium.org>
+
         [Chromium] Rebaseline after SK_DISABLE_EXTRACTSUBSET_OPAQUE_FIX was removed
 
         Unreviewed test expectations update.
