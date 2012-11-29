@@ -1,5 +1,17 @@
 2012-11-29  Stephen Chenney  <schenney@chromium.org>
 
+        Unreviewed Chromium expectations cleanup
+
+        * platform/chromium-mac-snowleopard/fast/css/font-weight-1-expected.png: Removed. Should not have been added ever.
+        * platform/chromium-mac-snowleopard/fast/css/font-weight-1-expected.txt: Removed. Should not have been added ever.
+        * platform/chromium-mac/fast/css/font-weight-1-expected.png: Removed. Should not have been added ever.
+        * platform/chromium-mac/fast/css/font-weight-1-expected.txt: Removed. Should not have been added ever.
+        * platform/chromium-win/fast/css/font-weight-1-expected.png: Removed. Should not have been added ever.
+        * platform/chromium/TestExpectations: Removed tests now passing
+        * platform/chromium/fast/css/font-weight-1-expected.png: Copied from LayoutTests/platform/chromium-win/fast/css/font-weight-1-expected.png.
+
+2012-11-29  Stephen Chenney  <schenney@chromium.org>
+
         Layout Test svg/animations/mpath-remove-from-dependents-on-delete-crash.html is flaky
         https://bugs.webkit.org/show_bug.cgi?id=103375
 

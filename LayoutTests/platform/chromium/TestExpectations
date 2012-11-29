@@ -3693,17 +3693,6 @@ webkit.org/b/94242 [ Android Debug ] media/track/track-cues-sorted-before-dispat
 # Chromium still has the CC toggle button, not the menu of tracks.
 webkit.org/b/101670 media/video-controls-captions-trackmenu.html [ Skip ]
 
-# Supposedly started failing between CR r140760 and CR r141216.  The failures
-# look like they involve antialiasing; the fact that the test clearly expects
-# these pixels not to be antialiased means these shouldn't just be rebaselined
-# blindly.
-crbug.com/131189 canvas/philip/tests/2d.line.width.basic.html [ Failure ]
-crbug.com/131189 canvas/philip/tests/2d.line.width.transformed.html [ Failure ]
-crbug.com/131189 canvas/philip/tests/2d.transformation.setTransform.skewed.html [ Failure ]
-crbug.com/131189 canvas/philip/tests/2d.transformation.transform.skewed.html [ Failure ]
-crbug.com/131189 platform/chromium/virtual/gpu/canvas/philip/tests/2d.transformation.setTransform.skewed.html [ Failure ]
-crbug.com/131189 platform/chromium/virtual/gpu/canvas/philip/tests/2d.transformation.transform.skewed.html [ Failure ]
-
 webkit.org/b/92835 [ Android Mac Win Debug ] svg/as-background-image/svg-as-background-5.html [ Pass Slow ]
 
 webkit.org/b/92850 [ Android Linux Debug ] http/tests/websocket/tests/hybi/workers/close-code-and-reason.html [ Crash Pass ]
