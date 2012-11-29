@@ -1,3 +1,20 @@
+2012-11-28  Kenichi Ishibashi  <bashi@chromium.org>
+
+        StyleResolver should not set NaN to font size
+        https://bugs.webkit.org/show_bug.cgi?id=99506
+
+        Reviewed by Abhishek Arya.
+
+        fixedScaleFactor could be NaN since settings->defaultFixedFontSize()
+        and settings->defaultFontSize() are zero in some case. This turns
+        out setting NaN to font size. Add a zero checks so that
+        fixedScaleFactor won't be NaN.
+
+        Test: fast/css/font-size-nan.html
+
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::checkForGenericFamilyChange):
+
 2012-11-28  Tim Horton  <timothy_horton@apple.com>
 
         [mac] WebHTMLConverter should maintain font size even when there is no related NSFont
