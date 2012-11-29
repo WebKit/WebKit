@@ -1,3 +1,21 @@
+2012-11-29  Eugene Klyuchnikov  <eustas@chromium.org>
+
+        Web Inspector: Web Inspector: Make main-thread monitoring go through InspectorController.
+        https://bugs.webkit.org/show_bug.cgi?id=103550
+
+        Reviewed by Pavel Feldman.
+
+        InspectorInstrumentation was a wrong path.
+
+        * inspector/InspectorClient.h: Remove start/stop methods.
+        * inspector/InspectorController.cpp:
+        Dispatch main thread activity notifications. 
+        * inspector/InspectorController.h: Ditto.
+        * inspector/InspectorInstrumentation.cpp: Remove dispatching.
+        * inspector/InspectorInstrumentation.h: Ditto.
+        * inspector/InspectorTimelineAgent.cpp:
+        Do not subscribe for notifications explicitly.
+
 2012-11-29  Adam Barth  <abarth@webkit.org>
 
         [V8] DOM callbacks shouldn't reimplement ScopedPersistent they should use it
