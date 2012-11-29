@@ -1,3 +1,17 @@
+2012-11-28  Yael Aharon  <yael.aharon@intel.com>
+
+        [EFL][WK2] input-with-validation-without-shadow.html makes following tests crash after r135935
+        https://bugs.webkit.org/show_bug.cgi?id=103508
+
+        Reviewed by Kent Tamura.
+
+        Do not submit the form in the ref test, as it is also not submitted by the
+        original test. This also fixes the timeout in EFL's tests.
+        Remove the test from TestEexpectations as the test is passing now.
+
+        * fast/dom/shadow/input-with-validation-without-shadow-expected.html:
+        * platform/efl-wk2/TestExpectations:
+
 2012-11-28  Hayato Ito  <hayato@chromium.org>
 
         Node::compareDocumentPosition returns wrong value for a node in the different shadow tree.
