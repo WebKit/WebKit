@@ -1,3 +1,9 @@
+2012-11-29  Alexander Pavlov  <apavlov@chromium.org>
+
+        [Chromium] Unreviewed, update Mac expectation after r136128.
+
+        * platform/chromium/TestExpectations:
+
 2012-11-29  Stephen Chenney  <schenney@chromium.org>
 
         Unreviewed Chromium expectations cleanup
