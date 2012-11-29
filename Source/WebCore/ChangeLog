@@ -1,3 +1,17 @@
+2012-11-28  Hayato Ito  <hayato@chromium.org>
+
+        Node::compareDocumentPosition returns wrong value for a node in the different shadow tree.
+        https://bugs.webkit.org/show_bug.cgi?id=103502
+
+        Reviewed by Dimitri Glazkov.
+
+        Make Node::compareDocumentPosition() return the correct value when two nodes are in the different shadow trees.
+
+        Test: fast/dom/shadow/compare-document-position.html
+
+        * dom/Node.cpp:
+        (WebCore::Node::compareDocumentPosition):
+
 2012-11-28  Joshua Bell  <jsbell@chromium.org>
 
         [Chromium] IndexedDB: Assert/crash in indexing layout tests in content_shell

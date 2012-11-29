@@ -1,3 +1,13 @@
+2012-11-28  Hayato Ito  <hayato@chromium.org>
+
+        Node::compareDocumentPosition returns wrong value for a node in the different shadow tree.
+        https://bugs.webkit.org/show_bug.cgi?id=103502
+
+        Reviewed by Dimitri Glazkov.
+
+        * fast/dom/shadow/compare-document-position-expected.txt: Added.
+        * fast/dom/shadow/compare-document-position.html: Added.
+
 2012-11-28  Noel Gordon  <noel.gordon@gmail.com>
 
         Unreviewed test fix: chromium/fast/storage/serialized-script-value.html
