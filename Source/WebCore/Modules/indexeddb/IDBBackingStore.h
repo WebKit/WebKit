@@ -42,6 +42,7 @@ class LevelDBTransaction;
 class IDBFactoryBackendImpl;
 class IDBKey;
 class IDBKeyRange;
+class SecurityOrigin;
 
 class IDBBackingStore : public RefCounted<IDBBackingStore> {
 public:

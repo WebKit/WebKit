@@ -1,3 +1,18 @@
+2012-11-28  Michael Pruett  <michael@68k.org>
+
+        IndexedDB: Add forward declaration of SecurityOrigin to IDBBackingStore.h
+        https://bugs.webkit.org/show_bug.cgi?id=103578
+
+        Reviewed by Kentaro Hara.
+
+        Add forward declaration of SecurityOrigin to IDBBackingStore.h
+        in order to enable compilation of IndexedDB for JSC.
+
+        Tests: storage/indexeddb/*
+
+        * Modules/indexeddb/IDBBackingStore.h:
+        (WebCore):
+
 2012-11-28  Hajime Morrita  <morrita@google.com>
 
         checkAcceptChild() needs fewer virtual calls
