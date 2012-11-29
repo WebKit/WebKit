@@ -1,3 +1,15 @@
+2012-11-29  Andrei Bucur  <abucur@adobe.com>
+
+        Fix the build after r136095
+        https://bugs.webkit.org/show_bug.cgi?id=103629
+
+        Unreviewed.
+
+        Add a static_cast to fix the build.
+
+        * Shared/mac/ObjCObjectGraphCoders.mm:
+        (WebKit::ObjCObjectGraphEncoder::baseEncode):
+
 2012-11-29  Christophe Dumez  <christophe.dumez@intel.com>
 
         [CoordinatedGraphics] Have LayerTreeRenderer::ensureLayer() return the layer

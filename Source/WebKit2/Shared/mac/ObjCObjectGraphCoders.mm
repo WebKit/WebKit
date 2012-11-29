@@ -94,7 +94,7 @@ public:
 
         type = typeFromObject(m_root);
         if (type == UnknownType) {
-            [NSException raise:NSInvalidArgumentException format:@"Can not encode objects of class type '%@'", NSStringFromClass([m_root class])];
+            [NSException raise:NSInvalidArgumentException format:@"Can not encode objects of class type '%@'", static_cast<NSString *>(NSStringFromClass([m_root class]))];
         }
 
         encoder << static_cast<uint32_t>(type);
