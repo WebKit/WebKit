@@ -1,3 +1,9 @@
+2012-11-29  Patrick Gansterer  <paroga@webkit.org>
+
+        Build fix for WinCE after r136096.
+
+        * wtf/StringPrintStream.cpp: Added missing include file.
+
 2012-11-28  Filip Pizlo  <fpizlo@apple.com>
 
         SpeculatedType dumping should not use the static char buffer[thingy] idiom
