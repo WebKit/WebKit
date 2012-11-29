@@ -36,17 +36,17 @@ class ProfilerFactory(object):
     @classmethod
     def create_profiler(cls, host, executable_path, output_dir, identifier=None):
         if host.platform.is_mac():
-            return Instruments(host.workspace, host.executive, executable_path, output_dir, identifier)
-        return GooglePProf(host.workspace, host.executive, executable_path, output_dir, identifier)
+            return Instruments(host, executable_path, output_dir, identifier)
+        return GooglePProf(host, executable_path, output_dir, identifier)
 
 
 class Profiler(object):
-    def __init__(self, workspace, executive, executable_path, output_dir, identifier=None):
-        self._workspace = workspace
-        self._executive = executive
+    def __init__(self, host, executable_path, output_dir, identifier=None):
+        self._host = host
         self._executable_path = executable_path
         self._output_dir = output_dir
         self._identifier = "test"
+        self._host.filesystem.maybe_make_directory(self._output_dir)
 
     def adjusted_environment(self, env):
         return env
@@ -59,14 +59,14 @@ class Profiler(object):
 
 
 class SingleFileOutputProfiler(Profiler):
-    def __init__(self, workspace, executive, executable_path, output_dir, output_suffix, identifier=None):
-        super(SingleFileOutputProfiler, self).__init__(workspace, executive, executable_path, output_dir, identifier)
-        self._output_path = self._workspace.find_unused_filename(self._output_dir, self._identifier, output_suffix)
+    def __init__(self, host, executable_path, output_dir, output_suffix, identifier=None):
+        super(SingleFileOutputProfiler, self).__init__(host, executable_path, output_dir, identifier)
+        self._output_path = self._host.workspace.find_unused_filename(self._output_dir, self._identifier, output_suffix)
 
 
 class GooglePProf(SingleFileOutputProfiler):
-    def __init__(self, workspace, executive, executable_path, output_dir, identifier=None):
-        super(GooglePProf, self).__init__(workspace, executive, executable_path, output_dir, "pprof", identifier)
+    def __init__(self, host, executable_path, output_dir, identifier=None):
+        super(GooglePProf, self).__init__(host, executable_path, output_dir, "pprof", identifier)
 
     def adjusted_environment(self, env):
         env['CPUPROFILE'] = self._output_path
@@ -81,14 +81,14 @@ class GooglePProf(SingleFileOutputProfiler):
         # google-pprof installed as "pprof" on their machines for them.
         # FIXME: Similarly we should find the right perl!
         pprof_args = ['/usr/bin/perl', '/usr/bin/google-pprof', '--text', self._executable_path, self._output_path]
-        profile_text = self._executive.run_command(pprof_args)
+        profile_text = self._host.executive.run_command(pprof_args)
         print self._first_ten_lines_of_profile(profile_text)
 
 
 # FIXME: iprofile is a newer commandline interface to replace /usr/bin/instruments.
 class Instruments(SingleFileOutputProfiler):
-    def __init__(self, workspace, executive, executable_path, output_dir, identifier=None):
-        super(Instruments, self).__init__(workspace, executive, executable_path, output_dir, "trace", identifier)
+    def __init__(self, host, executable_path, output_dir, identifier=None):
+        super(Instruments, self).__init__(host, executable_path, output_dir, "trace", identifier)
 
     # FIXME: We may need a way to find this tracetemplate on the disk
     _time_profile = "/Applications/Xcode.app/Contents/Applications/Instruments.app/Contents/Resources/templates/Time Profiler.tracetemplate"
@@ -96,4 +96,4 @@ class Instruments(SingleFileOutputProfiler):
     def attach_to_pid(self, pid):
         cmd = ["instruments", "-t", self._time_profile, "-D", self._output_path, "-p", pid]
         cmd = map(unicode, cmd)
-        self._executive.popen(cmd)
+        self._host.executive.popen(cmd)

@@ -36,7 +36,9 @@ from .profiler import ProfilerFactory, Instruments, GooglePProf
 class ProfilerFactoryTest(unittest.TestCase):
     def test_basic(self):
         host = MockSystemHost()
+        self.assertFalse(host.filesystem.exists("/tmp/output"))
         profiler = ProfilerFactory.create_profiler(host, '/bin/executable', '/tmp/output')
+        self.assertTrue(host.filesystem.exists("/tmp/output"))
         self.assertEquals(profiler._output_path, "/tmp/output/test.trace")
 
         host.platform.os_name = 'linux'
@@ -81,5 +83,5 @@ Total: 3770 samples
       28   0.7%  11.6%       28   0.7% WebCore::QualifiedName::localName (inline)
 """
         host = MockSystemHost()
-        profiler = GooglePProf(host.workspace, host.executive, '/bin/executable', '/tmp/output')
+        profiler = GooglePProf(host, '/bin/executable', '/tmp/output')
         self.assertEquals(profiler._first_ten_lines_of_profile(pprof_output), expected_first_ten_lines)

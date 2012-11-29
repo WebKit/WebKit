@@ -1,3 +1,30 @@
+2012-11-29  Eric Seidel  <eric@webkit.org>
+
+        run-perf-tests does not work when the layout test directory does not exist
+        https://bugs.webkit.org/show_bug.cgi?id=103572
+
+        Reviewed by Ryosuke Niwa.
+
+        Make sure that Profiler() calls maybe_make_directory for the output_dir
+        before ever using it.  It's a little awkward to create the directory
+        from the constructor, but its simplest that way as the various subclasses
+        all use the directory at different times.
+
+        Since this required having a filesystem in Profiler (and I didn't want
+        to grab inside Workspace to get one), I just made Profiler expect a
+        SystemHost instead of a separate filesystem, executive and workspace.
+
+        * Scripts/webkitpy/common/system/profiler.py:
+        (ProfilerFactory.create_profiler):
+        (Profiler.__init__):
+        (SingleFileOutputProfiler.__init__):
+        (GooglePProf.__init__):
+        (GooglePProf.profile_after_exit):
+        (Instruments.__init__):
+        (Instruments.attach_to_pid):
+        * Scripts/webkitpy/common/system/profiler_unittest.py:
+        (ProfilerFactoryTest.test_basic):
+
 2012-11-28  Vivek Galatage  <vivek.vg@samsung.com>
 
         Adding secondary email id
