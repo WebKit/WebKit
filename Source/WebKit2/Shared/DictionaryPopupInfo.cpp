@@ -37,7 +37,6 @@ namespace WebKit {
 void DictionaryPopupInfo::encode(CoreIPC::ArgumentEncoder& encoder) const
 {
     encoder << origin;
-    encoder << fontInfo;
     encoder.encodeEnum(type);
 
 #if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
@@ -51,8 +50,6 @@ void DictionaryPopupInfo::encode(CoreIPC::ArgumentEncoder& encoder) const
 bool DictionaryPopupInfo::decode(CoreIPC::ArgumentDecoder* decoder, DictionaryPopupInfo& result)
 {
     if (!decoder->decode(result.origin))
-        return false;
-    if (!decoder->decode(result.fontInfo))
         return false;
     if (!decoder->decodeEnum(result.type))
         return false;

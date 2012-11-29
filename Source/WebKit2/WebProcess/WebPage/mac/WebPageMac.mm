@@ -545,39 +545,48 @@ void WebPage::performDictionaryLookupForSelection(DictionaryPopupInfo::Type type
 
 void WebPage::performDictionaryLookupForRange(DictionaryPopupInfo::Type type, Frame* frame, Range* range, NSDictionary *options)
 {
-    String rangeText = range->text();
-    if (rangeText.stripWhiteSpace().isEmpty())
+    if (range->text().stripWhiteSpace().isEmpty())
         return;
     
     RenderObject* renderer = range->startContainer()->renderer();
     RenderStyle* style = renderer->style();
-    NSFont *font = style->font().primaryFont()->getNSFont();
-    
-    // We won't be able to get an NSFont in the case that a Web Font is being used, so use
-    // the default system font at the same size instead.
-    if (!font)
-        font = [NSFont systemFontOfSize:style->font().primaryFont()->platformData().size()];
-
-    CFDictionaryRef fontDescriptorAttributes = (CFDictionaryRef)[[font fontDescriptor] fontAttributes];
-    if (!fontDescriptorAttributes)
-        return;
 
     Vector<FloatQuad> quads;
     range->textQuads(quads);
     if (quads.isEmpty())
         return;
-    
+
     IntRect rangeRect = frame->view()->contentsToWindow(quads[0].enclosingBoundingBox());
     
     DictionaryPopupInfo dictionaryPopupInfo;
     dictionaryPopupInfo.type = type;
     dictionaryPopupInfo.origin = FloatPoint(rangeRect.x(), rangeRect.y() + (style->fontMetrics().ascent() * pageScaleFactor()));
-    dictionaryPopupInfo.fontInfo.fontAttributeDictionary = fontDescriptorAttributes;
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
     dictionaryPopupInfo.options = (CFDictionaryRef)options;
 #endif
 
-    send(Messages::WebPageProxy::DidPerformDictionaryLookup(rangeText, dictionaryPopupInfo));
+    NSAttributedString *nsAttributedString = [WebHTMLConverter editingAttributedStringFromRange:range];
+
+    RetainPtr<NSMutableAttributedString> scaledNSAttributedString(AdoptNS, [[NSMutableAttributedString alloc] initWithString:[nsAttributedString string]]);
+
+    NSFontManager *fontManager = [NSFontManager sharedFontManager];
+
+    [nsAttributedString enumerateAttributesInRange:NSMakeRange(0, [nsAttributedString length]) options:0 usingBlock:^(NSDictionary *attributes, NSRange range, BOOL *stop) {
+        RetainPtr<NSMutableDictionary> scaledAttributes(AdoptNS, [attributes mutableCopy]);
+
+        NSFont *font = [scaledAttributes objectForKey:NSFontAttributeName];
+        if (font) {
+            font = [fontManager convertFont:font toSize:[font pointSize] * pageScaleFactor()];
+            [scaledAttributes setObject:font forKey:NSFontAttributeName];
+        }
+
+        [scaledNSAttributedString.get() addAttributes:scaledAttributes.get() range:range];
+    }];
+
+    AttributedString attributedString;
+    attributedString.string = scaledNSAttributedString;
+
+    send(Messages::WebPageProxy::DidPerformDictionaryLookup(attributedString, dictionaryPopupInfo));
 }
 
 bool WebPage::performNonEditingBehaviorForSelector(const String& selector)

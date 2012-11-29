@@ -29,6 +29,7 @@
 #if USE(DICTATION_ALTERNATIVES)
 #import <AppKit/NSTextAlternatives.h>
 #endif
+#import "AttributedString.h"
 #import "ColorSpaceData.h"
 #import "DataReference.h"
 #import "DictionaryPopupInfo.h"
@@ -471,14 +472,9 @@ void PageClientImpl::flashBackingStoreUpdates(const Vector<IntRect>&)
     notImplemented();
 }
 
-void PageClientImpl::didPerformDictionaryLookup(const String& text, double scaleFactor, const DictionaryPopupInfo& dictionaryPopupInfo)
+void PageClientImpl::didPerformDictionaryLookup(const AttributedString& text, const DictionaryPopupInfo& dictionaryPopupInfo)
 {
-    NSFontDescriptor *fontDescriptor = [NSFontDescriptor fontDescriptorWithFontAttributes:(NSDictionary *)dictionaryPopupInfo.fontInfo.fontAttributeDictionary.get()];
-    NSFont *font = [NSFont fontWithDescriptor:fontDescriptor size:((scaleFactor != 1) ? [fontDescriptor pointSize] * scaleFactor : 0)];
-
-    RetainPtr<NSMutableAttributedString> attributedString(AdoptNS, [[NSMutableAttributedString alloc] initWithString:nsStringFromWebCoreString(text)]);
-    [attributedString.get() addAttribute:NSFontAttributeName value:font range:NSMakeRange(0, [attributedString.get() length])];
-
+    RetainPtr<NSAttributedString> attributedString = text.string;
     NSPoint textBaselineOrigin = dictionaryPopupInfo.origin;
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070

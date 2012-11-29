@@ -1,3 +1,37 @@
+2012-11-28  Tim Horton  <timothy_horton@apple.com>
+
+        [mac] Dictionary lookup bubble loses intrarange formatting
+        https://bugs.webkit.org/show_bug.cgi?id=103496
+        <rdar://problem/12762172>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Pass an NSAttributedString (made via WebHTMLConverter on the WebProcess side) through
+        when showing dictionary popups, so that we preserve more formatting in the yellow dictionary
+        highlight. Also, remove the fontInfo member from DictionaryPopupInfo, since we don't need it anymore.
+
+        * Shared/DictionaryPopupInfo.cpp:
+        (WebKit::DictionaryPopupInfo::encode): Don't encode the now-removed fontInfo member.
+        (WebKit::DictionaryPopupInfo::decode): Don't decode the now-removed fontInfo member.
+        * Shared/DictionaryPopupInfo.h: Remove the fontInfo member.
+        * UIProcess/API/mac/PageClientImpl.h:
+        (PageClientImpl): didPerformDictionaryLookup should take an AttributedString instead of a plain String, and
+        no longer needs to take the page scale factor.
+        * UIProcess/API/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::didPerformDictionaryLookup): Use the AttributedString we're handed from the WebProcess
+        instead of constructing one ourselves; this way, we have all the attributes instead of just a single font.
+        * UIProcess/PageClient.h:
+        (PageClient): didPerformDictionaryLookup should take an AttributedString instead of a plain String.
+        * UIProcess/WebPageProxy.h:
+        (WebPageProxy): didPerformDictionaryLookup should take an AttributedString instead of a plain String.
+        * UIProcess/WebPageProxy.messages.in: DidPerformDictionaryLookup should take an AttributedString instead of a plain String.
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::didPerformDictionaryLookup): didPerformDictionaryLookup should take an AttributedString instead of a plain String.
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::performDictionaryLookupForRange): performDictionaryLookupForRange should hand WebPageProxy an AttributedString
+        constructed via WebHTMLConverter instead of a plain text string paired with a single font descriptor.
+        Also, scale the size of every font attribute by the current pageScaleFactor.
+
 2012-11-28  peavo@outlook.com  <peavo@outlook.com>
 
         [WinCairo] Crash when requesting favicon.

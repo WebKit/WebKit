@@ -949,7 +949,7 @@ private:
     void searchWithSpotlight(const String&);
 
     // Dictionary.
-    void didPerformDictionaryLookup(const String&, const DictionaryPopupInfo&);
+    void didPerformDictionaryLookup(const AttributedString&, const DictionaryPopupInfo&);
 #endif
 
     // Spelling and grammar.
