@@ -173,7 +173,6 @@ private:
         No
     } m_allowGeolocation;
 
-    RefPtr<Geoposition> m_cachedPosition;
     GeoNotifierSet m_requestsAwaitingCachedPosition;
 };
     

@@ -373,7 +373,7 @@ void Geolocation::makeCachedPositionCallbacks()
     GeoNotifierSet::const_iterator end = m_requestsAwaitingCachedPosition.end();
     for (GeoNotifierSet::const_iterator iter = m_requestsAwaitingCachedPosition.begin(); iter != end; ++iter) {
         GeoNotifier* notifier = iter->get();
-        notifier->runSuccessCallback(m_cachedPosition.get());
+        notifier->runSuccessCallback(lastPosition());
 
         // If this is a one-shot request, stop it. Otherwise, if the watch still
         // exists, start the service to get updates.
@@ -404,14 +404,15 @@ void Geolocation::requestTimedOut(GeoNotifier* notifier)
 
 bool Geolocation::haveSuitableCachedPosition(PositionOptions* options)
 {
-    if (!m_cachedPosition)
+    Geoposition* cachedPosition = lastPosition();
+    if (!cachedPosition)
         return false;
     if (!options->hasMaximumAge())
         return true;
     if (!options->maximumAge())
         return false;
     DOMTimeStamp currentTimeMillis = convertSecondsToDOMTimeStamp(currentTime());
-    return m_cachedPosition->timestamp() > currentTimeMillis - options->maximumAge();
+    return cachedPosition->timestamp() > currentTimeMillis - options->maximumAge();
 }
 
 void Geolocation::clearWatch(int watchID)
@@ -623,8 +624,6 @@ void Geolocation::makeSuccessCallbacks()
 void Geolocation::positionChanged()
 {
     ASSERT(isAllowed());
-
-    m_cachedPosition = lastPosition();
 
     // Stop all currently running timers.
     stopTimers();

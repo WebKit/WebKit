@@ -1,3 +1,31 @@
+2012-11-29  John Knottenbelt  <jknotten@chromium.org>
+
+        Use GeolocationController's last geoposition as cached position.
+        https://bugs.webkit.org/show_bug.cgi?id=103540
+
+        Reviewed by Benjamin Poulain.
+
+        The page's GeolocationController mediates access to the
+        GeolocationClient for multiple frames' Geolocation instances. This
+        patch changes the position cache to be on the GeolocationController
+        rather than on the Geolocation instance.
+
+        This fixes a bug where if one frame has has received a fresh
+        position, then a request for a cached position from a second frame
+        does not succeed because the Geolocation instance in the second
+        frame's position cache hasn't received the position update that
+        went to the first frame.
+
+        Test: fast/dom/Geolocation/cached-position-iframe.html
+
+        * Modules/geolocation/Geolocation.cpp:
+        (WebCore::Geolocation::makeCachedPositionCallbacks):
+        (WebCore::Geolocation::haveSuitableCachedPosition):
+        (WebCore::Geolocation::positionChanged):
+        * Modules/geolocation/Geolocation.h:
+        * Modules/geolocation/GeolocationController.h:
+        (GeolocationController):
+
 2012-11-29  Alexei Filippov  <alph@chromium.org>
 
         Web Inspector: Allow sorting in NMI snapshot grid view

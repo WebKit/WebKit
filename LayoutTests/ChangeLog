@@ -1,3 +1,27 @@
+2012-11-29  John Knottenbelt  <jknotten@chromium.org>
+
+        Use GeolocationController's last geoposition as cached position.
+        https://bugs.webkit.org/show_bug.cgi?id=103540
+
+        Reviewed by Benjamin Poulain.
+
+        The page's GeolocationController mediates access to the
+        GeolocationClient for multiple frames' Geolocation instances. This
+        patch changes the position cache to be on the GeolocationController
+        rather than on the Geolocation instance.
+
+        This fixes a bug where if one frame has has received a fresh
+        position, then a request for a cached position from a second frame
+        does not succeed because the Geolocation instance in the second
+        frame's position cache hasn't received the position update that
+        went to the first frame.
+
+        * fast/dom/Geolocation/cached-position-iframe-expected.txt: Added.
+        * fast/dom/Geolocation/cached-position-iframe.html: Added.
+        * fast/dom/Geolocation/resources/cached-position-iframe-inner.html: Added.
+        * fast/dom/Geolocation/script-tests/cached-position-iframe.js: Added.
+        (window.onmessage):
+
 2012-11-29  Zhenyao Mo  <zmo@google.com>
 
         Unreviewed, WebKit gardening.
