@@ -1,3 +1,11 @@
+012-11-28  Alexander Pavlov  <apavlov@chromium.org>
+
+        [Chromium] Unreviewed, rebaseline CSS regions test expectations for Mac 10.8 after r136045.
+
+        * platform/chromium-mac/fast/regions/autoheight-dynamic-update-expected.png: Added.
+        * platform/chromium-mac/fast/regions/firstletter-inside-flowthread-expected.png: Added.
+        * platform/chromium-mac/fast/regions/listmarker-inside-flowthread-expected.png: Added.
+
 2012-11-28  Hajime Morrita  <morrita@google.com>
 
         [Shadow DOM] Element.createShadowRoot() should be prefixed.
