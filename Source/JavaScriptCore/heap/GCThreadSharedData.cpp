@@ -59,7 +59,6 @@ GCThreadSharedData::GCThreadSharedData(JSGlobalData* globalData)
     , m_sharedMarkStack(globalData->heap.blockAllocator())
     , m_numberOfActiveParallelMarkers(0)
     , m_parallelMarkersShouldExit(false)
-    , m_blocksToCopy(globalData->heap.m_blockSnapshot)
     , m_copyIndex(0)
     , m_numberOfActiveGCThreads(0)
     , m_gcThreadsShouldWait(false)
@@ -166,7 +165,7 @@ void GCThreadSharedData::didStartCopying()
 {
     {
         SpinLockHolder locker(&m_copyLock);
-        m_blocksToCopy = m_globalData->heap.m_blockSnapshot;
+        WTF::copyToVector(m_copiedSpace->m_blockSet, m_blocksToCopy);
         m_copyIndex = 0;
     }
 

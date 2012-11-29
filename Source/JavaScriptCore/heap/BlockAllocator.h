@@ -37,6 +37,7 @@ namespace JSC {
 
 class BlockAllocator;
 class CopiedBlock;
+class CopyWorkListSegment;
 class MarkStackSegment;
 class MarkedBlock;
 class Region;
@@ -188,6 +189,7 @@ private:
     RegionSet m_markedRegionSet;
     // WeakBlocks and MarkStackSegments use the same RegionSet since they're the same size.
     RegionSet m_weakAndMarkStackRegionSet;
+    RegionSet m_workListRegionSet;
 
     DoublyLinkedList<Region> m_emptyRegions;
     size_t m_numberOfEmptyRegions;
@@ -327,6 +329,12 @@ inline BlockAllocator::RegionSet& BlockAllocator::regionSetFor<MarkStackSegment>
 }
 
 template <>
+inline BlockAllocator::RegionSet& BlockAllocator::regionSetFor<CopyWorkListSegment>()
+{
+    return m_workListRegionSet;
+}
+
+template <>
 inline BlockAllocator::RegionSet& BlockAllocator::regionSetFor<HeapBlock<CopiedBlock> >()
 {
     return m_copiedRegionSet;
@@ -348,6 +356,12 @@ template <>
 inline BlockAllocator::RegionSet& BlockAllocator::regionSetFor<HeapBlock<MarkStackSegment> >()
 {
     return m_weakAndMarkStackRegionSet;
+}
+
+template <>
+inline BlockAllocator::RegionSet& BlockAllocator::regionSetFor<HeapBlock<CopyWorkListSegment> >()
+{
+    return m_workListRegionSet;
 }
 
 template <typename T>

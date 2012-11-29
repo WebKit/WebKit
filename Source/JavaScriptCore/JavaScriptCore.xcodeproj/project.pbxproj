@@ -721,6 +721,7 @@
 		C21122E215DD9AB300790E3A /* GCThreadSharedData.h in Headers */ = {isa = PBXBuildFile; fileRef = C21122DF15DD9AB300790E3A /* GCThreadSharedData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C21122E315DD9AB300790E3A /* MarkStackInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = C21122E015DD9AB300790E3A /* MarkStackInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C2160FE715F7E95E00942DFC /* SlotVisitorInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FCB408515C0A3C30048932B /* SlotVisitorInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		C218D1401655CFD50062BB81 /* CopyWorkList.h in Headers */ = {isa = PBXBuildFile; fileRef = C218D13F1655CFD50062BB81 /* CopyWorkList.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C2239D1716262BDD005AC5FD /* CopyVisitor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C2239D1216262BDD005AC5FD /* CopyVisitor.cpp */; };
 		C2239D1816262BDD005AC5FD /* CopyVisitor.h in Headers */ = {isa = PBXBuildFile; fileRef = C2239D1316262BDD005AC5FD /* CopyVisitor.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C2239D1916262BDD005AC5FD /* CopyVisitorInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = C2239D1416262BDD005AC5FD /* CopyVisitorInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -744,6 +745,7 @@
 		C2E526BE1590EF000054E48D /* HeapTimer.h in Headers */ = {isa = PBXBuildFile; fileRef = C2E526BC1590EF000054E48D /* HeapTimer.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C2EAA3FA149A835E00FCE112 /* CopiedSpace.h in Headers */ = {isa = PBXBuildFile; fileRef = C2EAA3F8149A830800FCE112 /* CopiedSpace.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C2EAD2FC14F0249800A4B159 /* CopiedAllocator.h in Headers */ = {isa = PBXBuildFile; fileRef = C2EAD2FB14F0249800A4B159 /* CopiedAllocator.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		C2FC9BD316644DFB00810D33 /* CopiedBlockInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = C2FC9BD216644DFB00810D33 /* CopiedBlockInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DDF7ABD411F60ED200108E36 /* GCActivityCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = DDF7ABD211F60ED200108E36 /* GCActivityCallback.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E124A8F70E555775003091F1 /* OpaqueJSString.h in Headers */ = {isa = PBXBuildFile; fileRef = E124A8F50E555775003091F1 /* OpaqueJSString.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E124A8F80E555775003091F1 /* OpaqueJSString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E124A8F60E555775003091F1 /* OpaqueJSString.cpp */; };
@@ -1518,6 +1520,7 @@
 		C21122DE15DD9AB300790E3A /* GCThreadSharedData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GCThreadSharedData.cpp; sourceTree = "<group>"; };
 		C21122DF15DD9AB300790E3A /* GCThreadSharedData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCThreadSharedData.h; sourceTree = "<group>"; };
 		C21122E015DD9AB300790E3A /* MarkStackInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MarkStackInlines.h; sourceTree = "<group>"; };
+		C218D13F1655CFD50062BB81 /* CopyWorkList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CopyWorkList.h; sourceTree = "<group>"; };
 		C2239D1216262BDD005AC5FD /* CopyVisitor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CopyVisitor.cpp; sourceTree = "<group>"; };
 		C2239D1316262BDD005AC5FD /* CopyVisitor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CopyVisitor.h; sourceTree = "<group>"; };
 		C2239D1416262BDD005AC5FD /* CopyVisitorInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CopyVisitorInlines.h; sourceTree = "<group>"; };
@@ -1540,6 +1543,7 @@
 		C2E526BC1590EF000054E48D /* HeapTimer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HeapTimer.h; sourceTree = "<group>"; };
 		C2EAA3F8149A830800FCE112 /* CopiedSpace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CopiedSpace.h; sourceTree = "<group>"; };
 		C2EAD2FB14F0249800A4B159 /* CopiedAllocator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CopiedAllocator.h; sourceTree = "<group>"; };
+		C2FC9BD216644DFB00810D33 /* CopiedBlockInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CopiedBlockInlines.h; sourceTree = "<group>"; };
 		D21202280AD4310C00ED79B6 /* DateConversion.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = DateConversion.cpp; sourceTree = "<group>"; };
 		D21202290AD4310C00ED79B6 /* DateConversion.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DateConversion.h; sourceTree = "<group>"; };
 		DDF7ABD211F60ED200108E36 /* GCActivityCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCActivityCallback.h; sourceTree = "<group>"; };
@@ -1936,6 +1940,8 @@
 				14150132154BB13F005D8C98 /* WeakSetInlines.h */,
 				0FC8150814043BCA00CFA603 /* WriteBarrierSupport.cpp */,
 				0FC8150914043BD200CFA603 /* WriteBarrierSupport.h */,
+				C218D13F1655CFD50062BB81 /* CopyWorkList.h */,
+				C2FC9BD216644DFB00810D33 /* CopiedBlockInlines.h */,
 			);
 			path = heap;
 			sourceTree = "<group>";
@@ -2638,6 +2644,8 @@
 				86ADD1450FDDEA980006EEC2 /* ARMv7Assembler.h in Headers */,
 				C2EAD2FC14F0249800A4B159 /* CopiedAllocator.h in Headers */,
 				C2B916C214DA014E00CBAC86 /* MarkedAllocator.h in Headers */,
+				C218D1401655CFD50062BB81 /* CopyWorkList.h in Headers */,
+				C2FC9BD316644DFB00810D33 /* CopiedBlockInlines.h in Headers */,
 				FE4A332015BD2E07006F54F3 /* VMInspector.h in Headers */,
 				C2239D1816262BDD005AC5FD /* CopyVisitor.h in Headers */,
 				C2239D1916262BDD005AC5FD /* CopyVisitorInlines.h in Headers */,

@@ -27,11 +27,14 @@
 #define CopiedBlock_h
 
 #include "BlockAllocator.h"
+#include "CopyWorkList.h"
 #include "HeapBlock.h"
 #include "JSValue.h"
 #include "JSValueInlines.h"
 #include "Options.h"
 #include <wtf/Atomics.h>
+#include <wtf/OwnPtr.h>
+#include <wtf/PassOwnPtr.h>
 
 namespace JSC {
 
@@ -44,12 +47,13 @@ public:
     static CopiedBlock* create(DeadBlock*);
     static CopiedBlock* createNoZeroFill(DeadBlock*);
 
+    void pin();
     bool isPinned();
 
     unsigned liveBytes();
-    void reportLiveBytes(unsigned);
+    void reportLiveBytes(JSCell*, unsigned);
     void didSurviveGC();
-    bool didEvacuateBytes(unsigned);
+    void didEvacuateBytes(unsigned);
     bool shouldEvacuate();
     bool canBeRecycled();
 
@@ -74,9 +78,17 @@ public:
 
     static const size_t blockSize = 32 * KB;
 
+    bool hasWorkList();
+    CopyWorkList& workList();
+
 private:
     CopiedBlock(Region*);
     void zeroFillWilderness(); // Can be called at any time to zero-fill to the end of the block.
+
+#if ENABLE(PARALLEL_GC)
+    SpinLock m_workListLock;
+#endif
+    OwnPtr<CopyWorkList> m_workList;
 
     size_t m_remaining;
     uintptr_t m_isPinned;
@@ -114,45 +126,24 @@ inline CopiedBlock::CopiedBlock(Region* region)
     , m_isPinned(false)
     , m_liveBytes(0)
 {
-    ASSERT(is8ByteAligned(reinterpret_cast<void*>(m_remaining)));
-}
-
-inline void CopiedBlock::reportLiveBytes(unsigned bytes)
-{
 #if ENABLE(PARALLEL_GC)
-    unsigned oldValue = 0;
-    unsigned newValue = 0;
-    do {
-        oldValue = m_liveBytes;
-        newValue = oldValue + bytes;
-    } while (!WTF::weakCompareAndSwap(&m_liveBytes, oldValue, newValue));
-#else
-    m_liveBytes += bytes;
+    m_workListLock.Init();
 #endif
+    ASSERT(is8ByteAligned(reinterpret_cast<void*>(m_remaining)));
 }
 
 inline void CopiedBlock::didSurviveGC()
 {
     m_liveBytes = 0;
     m_isPinned = false;
+    if (m_workList)
+        m_workList.clear();
 }
 
-inline bool CopiedBlock::didEvacuateBytes(unsigned bytes)
+inline void CopiedBlock::didEvacuateBytes(unsigned bytes)
 {
     ASSERT(m_liveBytes >= bytes);
-#if ENABLE(PARALLEL_GC)
-    unsigned oldValue = 0;
-    unsigned newValue = 0;
-    do {
-        oldValue = m_liveBytes;
-        newValue = oldValue - bytes;
-    } while (!WTF::weakCompareAndSwap(&m_liveBytes, oldValue, newValue));
-    ASSERT(m_liveBytes < oldValue);
-    return !newValue;
-#else
     m_liveBytes -= bytes;
-    return !m_liveBytes;
-#endif
 }
 
 inline bool CopiedBlock::canBeRecycled()
@@ -163,6 +154,13 @@ inline bool CopiedBlock::canBeRecycled()
 inline bool CopiedBlock::shouldEvacuate()
 {
     return static_cast<double>(m_liveBytes) / static_cast<double>(payloadCapacity()) <= Options::minCopiedBlockUtilization();
+}
+
+inline void CopiedBlock::pin()
+{
+    m_isPinned = true;
+    if (m_workList)
+        m_workList.clear();
 }
 
 inline bool CopiedBlock::isPinned()
@@ -228,6 +226,16 @@ inline size_t CopiedBlock::size()
 inline size_t CopiedBlock::capacity()
 {
     return region()->blockSize();
+}
+
+inline bool CopiedBlock::hasWorkList()
+{
+    return !!m_workList;
+}
+
+inline CopyWorkList& CopiedBlock::workList()
+{
+    return *m_workList;
 }
 
 } // namespace JSC

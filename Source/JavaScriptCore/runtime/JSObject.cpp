@@ -184,7 +184,7 @@ ALWAYS_INLINE void JSObject::visitButterfly(SlotVisitor& visitor, Butterfly* but
 
     // Mark the properties.
     visitor.appendValues(butterfly->propertyStorage() - storageSize, storageSize);
-    visitor.copyLater(butterfly->base(preCapacity, propertyCapacity), capacityInBytes);
+    visitor.copyLater(this, butterfly->base(preCapacity, propertyCapacity), capacityInBytes);
     
     // Mark the array if appropriate.
     switch (structure->indexingType()) {

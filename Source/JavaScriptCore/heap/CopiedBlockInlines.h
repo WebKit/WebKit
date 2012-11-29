@@ -23,43 +23,32 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "CopyVisitor.h"
+#ifndef CopiedBlockInlines_h
+#define CopiedBlockInlines_h
 
-#include "CopyVisitorInlines.h"
-#include "CopyWorkList.h"
-#include "GCThreadSharedData.h"
-#include "JSCell.h"
-#include "JSObject.h"
-#include <wtf/Threading.h>
+#include "CopiedBlock.h"
+#include "Heap.h"
 
 namespace JSC {
-
-CopyVisitor::CopyVisitor(GCThreadSharedData& shared)
-    : m_shared(shared)
+    
+inline void CopiedBlock::reportLiveBytes(JSCell* owner, unsigned bytes)
 {
-}
+#if ENABLE(PARALLEL_GC)
+    SpinLockHolder locker(&m_workListLock);
+#endif
+    m_liveBytes += bytes;
 
-void CopyVisitor::copyFromShared()
-{
-    size_t next, end;
-    m_shared.getNextBlocksToCopy(next, end);
-    while (next < end) {
-        for (; next < end; ++next) {
-            CopiedBlock* block = m_shared.m_blocksToCopy[next];
-            if (!block->hasWorkList())
-                continue;
-
-            CopyWorkList& workList = block->workList();
-            for (CopyWorkList::iterator it = workList.begin(); it != workList.end(); ++it)
-                visitCell(*it);
-
-            ASSERT(!block->liveBytes());
-            m_shared.m_copiedSpace->recycleEvacuatedBlock(block);
-        }
-        m_shared.getNextBlocksToCopy(next, end);
+    if (!shouldEvacuate()) {
+        pin();
+        return;
     }
-    ASSERT(next == end);
+
+    if (!m_workList)
+        m_workList = adoptPtr(new CopyWorkList(Heap::heap(owner)->blockAllocator()));
+
+    m_workList->append(owner);
 }
 
 } // namespace JSC
+
+#endif // CopiedBlockInlines_h

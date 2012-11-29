@@ -1,3 +1,84 @@
+2012-11-28  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Copying phase should use work lists
+        https://bugs.webkit.org/show_bug.cgi?id=101390
+
+        Reviewed by Filip Pizlo.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * heap/BlockAllocator.cpp:
+        (JSC::BlockAllocator::BlockAllocator):
+        * heap/BlockAllocator.h: New RegionSet for CopyWorkListSegments.
+        (BlockAllocator):
+        (JSC::CopyWorkListSegment):
+        * heap/CopiedBlock.h: Added a per-block CopyWorkList to keep track of the JSCells that need to be revisited during the copying
+        phase to copy their backing stores.
+        (CopiedBlock):
+        (JSC::CopiedBlock::CopiedBlock): 
+        (JSC::CopiedBlock::didSurviveGC):
+        (JSC::CopiedBlock::didEvacuateBytes): There is now a one-to-one relationship between GCThreads and the CopiedBlocks they're 
+        responsible for evacuating, we no longer need any of that fancy compare and swap stuff. 
+        (JSC::CopiedBlock::pin):
+        (JSC::CopiedBlock::hasWorkList): 
+        (JSC::CopiedBlock::workList):
+        * heap/CopiedBlockInlines.h: Added.
+        (JSC::CopiedBlock::reportLiveBytes): Since we now have to grab a SpinLock to perform operations on the CopyWorkList during marking,
+        we don't need to do any of that fancy compare and swap stuff we were doing for tracking live bytes.
+        * heap/CopiedSpace.h:
+        (CopiedSpace):
+        * heap/CopiedSpaceInlines.h:
+        (JSC::CopiedSpace::pin):
+        * heap/CopyVisitor.cpp:
+        (JSC::CopyVisitor::copyFromShared): We now iterate over a range of CopiedBlocks rather than MarkedBlocks and revisit the cells in those
+        blocks' CopyWorkLists.
+        * heap/CopyVisitor.h:
+        (CopyVisitor):
+        * heap/CopyVisitorInlines.h:
+        (JSC::CopyVisitor::visitCell): The function responsible for calling the correct copyBackingStore() function for each JSCell from 
+        a CopiedBlock's CopyWorkList.
+        (JSC::CopyVisitor::didCopy): We no longer need to check if the block is empty here because we know exactly when we're done 
+        evacuating a CopiedBlock, which is when we've gone through all of the CopiedBlock's CopyWorkList.
+        * heap/CopyWorkList.h: Added.
+        (CopyWorkListSegment): Individual chunk of a CopyWorkList that is allocated from the BlockAllocator.
+        (JSC::CopyWorkListSegment::create):
+        (JSC::CopyWorkListSegment::size):
+        (JSC::CopyWorkListSegment::isFull):
+        (JSC::CopyWorkListSegment::get):
+        (JSC::CopyWorkListSegment::append):
+        (JSC::CopyWorkListSegment::CopyWorkListSegment):
+        (JSC::CopyWorkListSegment::data):
+        (JSC::CopyWorkListSegment::endOfBlock):
+        (CopyWorkListIterator): Responsible for giving CopyVisitors a contiguous notion of access across the separate CopyWorkListSegments
+        that make up each CopyWorkList.
+        (JSC::CopyWorkListIterator::get):
+        (JSC::CopyWorkListIterator::operator*):
+        (JSC::CopyWorkListIterator::operator->):
+        (JSC::CopyWorkListIterator::operator++):
+        (JSC::CopyWorkListIterator::operator==):
+        (JSC::CopyWorkListIterator::operator!=):
+        (JSC::CopyWorkListIterator::CopyWorkListIterator):
+        (CopyWorkList): Data structure that keeps track of the JSCells that need copying in a particular CopiedBlock.
+        (JSC::CopyWorkList::CopyWorkList):
+        (JSC::CopyWorkList::~CopyWorkList):
+        (JSC::CopyWorkList::append):
+        (JSC::CopyWorkList::begin):
+        (JSC::CopyWorkList::end):
+        * heap/GCThreadSharedData.cpp:
+        (JSC::GCThreadSharedData::GCThreadSharedData): We no longer use the m_blockSnapshot from the Heap during the copying phase.
+        (JSC::GCThreadSharedData::didStartCopying): We now copy the set of all blocks in the CopiedSpace to a separate vector for 
+        iterating over during the copying phase since the set stored in the CopiedSpace will change as blocks are evacuated and 
+        recycled throughout the copying phase.
+        * heap/GCThreadSharedData.h:
+        (GCThreadSharedData): 
+        * heap/Heap.h:
+        (Heap):
+        * heap/SlotVisitor.h: We now need to know the object who is being marked that has a backing store so that we can store it 
+        in a CopyWorkList to revisit later during the copying phase.
+        * heap/SlotVisitorInlines.h:
+        (JSC::SlotVisitor::copyLater):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::visitButterfly):
+
 2012-11-28  Filip Pizlo  <fpizlo@apple.com>
 
         Disassembly methods should be able to disassemble to any PrintStream& rather than always using WTF::dataFile()

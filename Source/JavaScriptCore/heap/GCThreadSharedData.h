@@ -94,7 +94,7 @@ private:
     HashSet<void*> m_opaqueRoots;
 
     SpinLock m_copyLock;
-    Vector<MarkedBlock*>& m_blocksToCopy;
+    Vector<CopiedBlock*> m_blocksToCopy;
     size_t m_copyIndex;
     static const size_t s_blockFragmentLength = 32;
 

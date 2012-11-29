@@ -31,6 +31,7 @@
 namespace JSC {
 
 class GCThreadSharedData;
+class JSCell;
 
 class CopyVisitor {
 public:
@@ -50,6 +51,7 @@ public:
 
 private:
     void* allocateNewSpaceSlow(size_t);
+    void visitCell(JSCell*);
 
     GCThreadSharedData& m_shared;
     CopiedAllocator m_copiedAllocator;

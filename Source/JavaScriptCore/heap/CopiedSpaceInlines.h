@@ -54,7 +54,7 @@ inline bool CopiedSpace::contains(void* ptr, CopiedBlock*& result)
 
 inline void CopiedSpace::pin(CopiedBlock* block)
 {
-    block->m_isPinned = true;
+    block->pin();
 }
 
 inline void CopiedSpace::pinIfNecessary(void* opaquePointer)

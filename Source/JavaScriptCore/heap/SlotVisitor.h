@@ -82,7 +82,7 @@ public:
     void harvestWeakReferences();
     void finalizeUnconditionalFinalizers();
 
-    void copyLater(void*, size_t);
+    void copyLater(JSCell*, void*, size_t);
     
 #if ENABLE(SIMPLE_HEAP_PROFILING)
     VTableSpectrum m_visitedTypeCounts;

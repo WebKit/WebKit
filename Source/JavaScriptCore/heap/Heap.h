@@ -179,6 +179,7 @@ namespace JSC {
 
     private:
         friend class CodeBlock;
+        friend class CopiedBlock;
         friend class GCAwareJITStubRoutine;
         friend class JITStubRoutine;
         friend class LLIntOffsetsExtractor;
