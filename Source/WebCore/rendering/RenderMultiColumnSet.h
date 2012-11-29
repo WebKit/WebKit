@@ -61,6 +61,29 @@ public:
         m_computedColumnHeight = height;
     }
 
+    void updateMinimumColumnHeight(LayoutUnit height) { m_minimumColumnHeight = std::max(height, m_minimumColumnHeight); }
+    LayoutUnit minimumColumnHeight() const { return m_minimumColumnHeight; }
+
+    unsigned forcedBreaksCount() const { return m_forcedBreaksCount; }
+    LayoutUnit forcedBreakOffset() const { return m_forcedBreakOffset; }
+    LayoutUnit maximumDistanceBetweenForcedBreaks() const { return m_maximumDistanceBetweenForcedBreaks; }
+    void clearForcedBreaks()
+    { 
+        m_forcedBreaksCount = 0;
+        m_maximumDistanceBetweenForcedBreaks = 0;
+        m_forcedBreakOffset = 0;
+    }
+    void addForcedBreak(LayoutUnit offsetFromFirstPage)
+    { 
+        ASSERT(!computedColumnHeight());
+        LayoutUnit distanceFromLastBreak = offsetFromFirstPage - m_forcedBreakOffset;
+        if (!distanceFromLastBreak)
+            return;
+        m_forcedBreaksCount++;
+        m_maximumDistanceBetweenForcedBreaks = std::max(m_maximumDistanceBetweenForcedBreaks, distanceFromLastBreak);
+        m_forcedBreakOffset = offsetFromFirstPage;
+    }
+
 private:
     virtual void updateLogicalWidth() OVERRIDE;
     virtual void updateLogicalHeight() OVERRIDE;
@@ -96,6 +119,12 @@ private:
     unsigned m_computedColumnCount;
     LayoutUnit m_computedColumnWidth;
     LayoutUnit m_computedColumnHeight;
+    
+    // The following variables are used when balancing the column set.
+    LayoutUnit m_minimumColumnHeight;
+    unsigned m_forcedBreaksCount; // FIXME: We will ultimately need to cache more information to balance around forced breaks properly.
+    LayoutUnit m_maximumDistanceBetweenForcedBreaks;
+    LayoutUnit m_forcedBreakOffset;
 };
 
 } // namespace WebCore

@@ -1,3 +1,22 @@
+2012-11-29  David Hyatt  <hyatt@apple.com>
+
+        [New Multicolumn] Add minimum column height tracking and forced break tracking to column sets.
+        https://bugs.webkit.org/show_bug.cgi?id=103657
+
+        Reviewed by Simon Fraser.
+
+        * rendering/RenderMultiColumnSet.cpp:
+        (WebCore::RenderMultiColumnSet::RenderMultiColumnSet):
+        * rendering/RenderMultiColumnSet.h:
+        (WebCore::RenderMultiColumnSet::updateMinimumColumnHeight):
+        (WebCore::RenderMultiColumnSet::minimumColumnHeight):
+        (RenderMultiColumnSet):
+        (WebCore::RenderMultiColumnSet::forcedBreaksCount):
+        (WebCore::RenderMultiColumnSet::forcedBreakOffset):
+        (WebCore::RenderMultiColumnSet::maximumDistanceBetweenForcedBreaks):
+        (WebCore::RenderMultiColumnSet::clearForcedBreaks):
+        (WebCore::RenderMultiColumnSet::addForcedBreak):
+
 2012-11-29  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: introduce fast case for within-chunk edit
