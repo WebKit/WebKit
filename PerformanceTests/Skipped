@@ -60,3 +60,5 @@ inspector
 # Bug 100262 - REGRESSION(r131982): this test is crashing
 SVG/SvgNestedUse.html
 
+# Bug 102646 - ShadowDOM is not enabled in some ports.
+ShadowDOM

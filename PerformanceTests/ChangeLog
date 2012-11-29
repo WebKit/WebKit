@@ -1,3 +1,17 @@
+2012-11-29  Shinya Kawanaka  <shinyak@chromium.org>
+
+        [Shadow] Performance tests of distribution for changing select attribute
+        https://bugs.webkit.org/show_bug.cgi?id=103611
+
+        Reviewed by Hajime Morita.
+
+        We would like to measure ShadowDOM performance and compare it to the similar functional HTML without using ShadowDOM.
+        In this patch, we add a case when select attribute of HTMLContentElement is changed.
+
+        * ShadowDOM/ChangingSelect.html: Added.
+        * ShadowDOM/ChangingSelectWithoutShadow.html: Added.
+        * Skipped:
+
 2012-11-19  Shinya Kawanaka  <shinyak@chromium.org>
 
         Changing id, className, or attribute should invalidate distribution
