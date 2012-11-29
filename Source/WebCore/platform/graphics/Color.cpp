@@ -419,7 +419,7 @@ Color colorFromPremultipliedARGB(unsigned pixelColor)
     Color color;
 
     if (unsigned alpha = (pixelColor & 0xFF000000) >> 24) {
-        color = Color::createUnCheked(
+        color = Color::createUnchecked(
                         ((pixelColor & 0x00FF0000) >> 16) * 255 / alpha,
                         ((pixelColor & 0x0000FF00) >> 8) * 255 / alpha,
                          (pixelColor & 0x000000FF) * 255 / alpha,

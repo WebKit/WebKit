@@ -1,3 +1,19 @@
+2012-11-29  Helder Correia  <helder.correia@nokia.com>
+
+        Typo in Color creation function name
+        https://bugs.webkit.org/show_bug.cgi?id=103464
+
+        Reviewed by Alexey Proskuryakov.
+
+        Renaming createUnCheked() as createUnchecked().
+
+        No new tests.
+
+        * platform/graphics/Color.cpp:
+        (WebCore::colorFromPremultipliedARGB):
+        * platform/graphics/Color.h:
+        (WebCore::Color::createUnchecked):
+
 2012-11-29  Otto Derek Cheung  <otcheung@rim.com>
 
         [BlackBerry] Cookies in private mode should not have access to public cookies
