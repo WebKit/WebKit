@@ -1,3 +1,9 @@
+2012-11-29  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed.  Rolled DEPS.
+
+        * DEPS:
+
 2012-11-29  Eugene Klyuchnikov  <eustas@chromium.org>
 
         Web Inspector: Make main-thread monitoring go through InspectorController.
