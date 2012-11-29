@@ -1,3 +1,47 @@
+2012-11-29  Beth Dakin  <bdakin@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=103577
+        TiledDrawingArea should recycle tiles
+        -and corresponding-
+        <rdar://problem/12714586>
+
+        Reviewed by Simon Fraser.
+
+        New class LayerPool will keep a list of layers to reuse so that 
+        we can avoid creating and destroying so many layer.
+
+        When removing layers, add them to the LayerPool
+        * platform/graphics/ca/mac/TileCache.mm:
+        (WebCore::TileCache::revalidateTiles):
+
+        Before creating a new layer, try to get one of the appropriate size 
+        from the LayerPool.
+        (WebCore::TileCache::createTileLayer):
+
+        New class.
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/ca/mac/LayerPool.h: Added.
+        (WebCore):
+        (LayerPool):
+        (WebCore::LayerPool::capacity):
+        (WebCore::LayerPool::canReuseLayerWithSize):
+        * platform/graphics/ca/mac/LayerPool.mm: Added.
+        (WebCore):
+        (WebCore::LayerPool:: LayerPool):
+        (WebCore::LayerPool::sharedPool):
+        (WebCore::LayerPool::bytesBackingLayerWithPixelSize):
+        (WebCore::LayerPool::listOfLayersWithSize):
+        (WebCore::LayerPool::addLayer):
+        (WebCore::LayerPool::takeLayerWithSize):
+        (WebCore::LayerPool::decayedCapacity):
+        (WebCore::LayerPool::schedulePrune):
+        (WebCore::LayerPool::prune):
+        (WebCore::LayerPool::drain):
+
+        If we're under memory pressure, drain the LayerPool
+        * platform/mac/MemoryPressureHandlerMac.mm:
+        (WebCore::MemoryPressureHandler::releaseMemory):
+
 2012-11-29  Julien Chaffraix  <jchaffraix@webkit.org>
 
         [CSS Grid Layout] track sizing functions should have their own type

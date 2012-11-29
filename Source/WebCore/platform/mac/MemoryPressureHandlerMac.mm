@@ -30,6 +30,7 @@
 #import <WebCore/FontCache.h>
 #import <WebCore/MemoryCache.h>
 #import <WebCore/PageCache.h>
+#import <WebCore/LayerPool.h>
 #import <wtf/CurrentTime.h>
 #import <wtf/FastMalloc.h>
 
@@ -147,6 +148,8 @@ void MemoryPressureHandler::releaseMemory(bool critical)
     fontCache()->purgeInactiveFontData();
 
     memoryCache()->pruneToPercentage(critical ? 0 : 0.5f);
+
+    LayerPool::sharedPool()->drain();
 
     gcController().discardAllCompiledCode();
 
