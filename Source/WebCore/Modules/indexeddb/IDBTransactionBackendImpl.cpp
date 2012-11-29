@@ -190,6 +190,11 @@ void IDBTransactionBackendImpl::commit()
 {
     IDB_TRACE("IDBTransactionBackendImpl::commit");
 
+    // In multiprocess ports, front-end may have requested a commit but an abort has already
+    // been initiated asynchronously by the back-end.
+    if (m_state == Finished)
+        return;
+
     ASSERT(m_state == Unused || m_state == Running);
     m_commitPending = true;
 

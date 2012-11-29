@@ -1,3 +1,23 @@
+2012-11-28  Joshua Bell  <jsbell@chromium.org>
+
+        [Chromium] IndexedDB: Assert/crash in indexing layout tests in content_shell
+        https://bugs.webkit.org/show_bug.cgi?id=103562
+
+        Reviewed by Tony Chang.
+
+        In multi-process ports, an commit request or setIndexesReady request may arrive from the
+        front-end after the back-end has already aborted. Don't freak out if those occur.
+
+        Tests: storage/indexeddb/index-population.html
+               storage/indexeddb/lazy-index-population.html
+               storage/indexeddb/transaction-error.html
+
+        * Modules/indexeddb/IDBObjectStoreBackendImpl.cpp:
+        (WebCore::IDBObjectStoreBackendImpl::setIndexKeys): Ensure transaction hasn't finished before continuing.
+        (WebCore::IDBObjectStoreBackendImpl::setIndexesReady): Ditto.
+        * Modules/indexeddb/IDBTransactionBackendImpl.cpp:
+        (WebCore::IDBTransactionBackendImpl::commit): Ignore a commit request if already aborted.
+
 2012-11-28  Shinya Kawanaka  <shinyak@chromium.org>
 
         [Shadow] Move Distribution requirements from ShadowRoot

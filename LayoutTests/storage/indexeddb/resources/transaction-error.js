@@ -96,7 +96,7 @@ function testErrorFromCommit()
     trans.oncomplete = function() {
         db.close();
         evalAndLog("request = indexedDB.open(dbname, 2)");
-        request.onerror = unexpectedSuccessCallback;
+        request.onsuccess = unexpectedSuccessCallback;
         request.onblocked = unexpectedBlockedCallback;
         request.onupgradeneeded = function() {
             evalAndLog("trans = request.transaction");

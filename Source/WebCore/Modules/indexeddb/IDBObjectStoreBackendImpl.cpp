@@ -226,6 +226,8 @@ void IDBObjectStoreBackendImpl::setIndexKeys(PassRefPtr<IDBKey> prpPrimaryKey, c
     IDB_TRACE("IDBObjectStoreBackendImpl::setIndexKeys");
     RefPtr<IDBKey> primaryKey = prpPrimaryKey;
     RefPtr<IDBTransactionBackendImpl> transaction = IDBTransactionBackendImpl::from(transactionPtr);
+    if (transaction->isFinished())
+        return;
 
     // FIXME: This method could be asynchronous, but we need to evaluate if it's worth the extra complexity.
     IDBBackingStore::RecordIdentifier recordIdentifier;
@@ -255,6 +257,8 @@ void IDBObjectStoreBackendImpl::setIndexesReady(const Vector<int64_t>& indexIds,
 
     OwnPtr<Vector<int64_t> > newIndexIds = adoptPtr(new Vector<int64_t>(indexIds));
     RefPtr<IDBTransactionBackendImpl> transaction = IDBTransactionBackendImpl::from(transactionInterface);
+    if (transaction->isFinished())
+        return;
 
     if (!transaction->scheduleTask(
             IDBTransactionBackendInterface::PreemptiveTask,

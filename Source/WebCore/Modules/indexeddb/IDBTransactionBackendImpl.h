@@ -59,6 +59,7 @@ public:
     void abort(PassRefPtr<IDBDatabaseError>);
     void run();
     unsigned short mode() const { return m_mode; }
+    bool isFinished() const { return m_state == Finished; }
     bool scheduleTask(PassOwnPtr<ScriptExecutionContext::Task> task, PassOwnPtr<ScriptExecutionContext::Task> abortTask = nullptr) { return scheduleTask(NormalTask, task, abortTask); }
     bool scheduleTask(TaskType, PassOwnPtr<ScriptExecutionContext::Task>, PassOwnPtr<ScriptExecutionContext::Task> abortTask = nullptr);
     void registerOpenCursor(IDBCursorBackendImpl*);

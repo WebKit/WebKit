@@ -1,3 +1,15 @@
+2012-11-28  Joshua Bell  <jsbell@chromium.org>
+
+        [Chromium] IndexedDB: Assert/crash in indexing layout tests in content_shell
+        https://bugs.webkit.org/show_bug.cgi?id=103562
+
+        Reviewed by Tony Chang.
+
+        Fix an expectation glitch that may arise in multi-process ports (an error on
+        the open request may arrive before logging has stopped; safe to ignore it).
+
+        * storage/indexeddb/resources/transaction-error.js:
+
 2012-11-23  Dirk Schulze  <krit@webkit.org>
 
         Remove -webkit-mask-attachment
