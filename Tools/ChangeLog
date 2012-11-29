@@ -1,3 +1,12 @@
+2012-11-29  Brent Fulgham  <bfulgham@webkit.org>
+
+        [Windows, WinCairo] Unreviewed build correction. Hide the
+        unexported 'notSolidColor' symbol when testing against
+        the BitmapImage class to avoid having to deal with a
+        debug-only symbol in the Windows export definition file.
+
+        * TestWebKitAPI/Tests/WebCore/win/BitmapImage.cpp: 
+
 2012-11-29  Peter Beverloo  <peter@chromium.org>
 
         run-perf-tests --chromium-android should not require adb in my path

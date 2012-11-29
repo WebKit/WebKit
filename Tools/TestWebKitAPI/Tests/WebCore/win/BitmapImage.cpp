@@ -25,6 +25,8 @@
  */
 
 #include "config.h"
+
+#define ASSERT_DISABLED
 #include <WebCore/BitmapImage.h>
 
 using namespace WebCore;
