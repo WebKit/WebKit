@@ -54,12 +54,19 @@ static Ecore_Evas* initEcoreEvas()
     return ecoreEvas;
 }
 
+static void onWebProcessCrashed(void*, Evas_Object*, void* eventInfo)
+{
+    bool* handled = static_cast<bool*>(eventInfo);
+    *handled = true;
+}
+
 PlatformWebView::PlatformWebView(WKContextRef contextRef, WKPageGroupRef pageGroupRef)
 {
     m_window = initEcoreEvas();
     Evas* evas = ecore_evas_get(m_window);
     m_view = toImpl(WKViewCreate(evas, contextRef, pageGroupRef));
     ewk_view_theme_set(m_view, THEME_DIR"/default.edj");
+    evas_object_smart_callback_add(m_view, "webprocess,crashed", onWebProcessCrashed, 0);
     resizeTo(600, 800);
 }
 
@@ -86,6 +93,13 @@ void PlatformWebView::simulateSpacebarKeyPress()
     evas_object_focus_set(m_view, true);
     evas_event_feed_key_down(evas, "space", "space", " ", 0, 0, 0);
     evas_event_feed_key_up(evas, "space", "space", " ", 0, 1, 0);
+}
+
+void PlatformWebView::simulateMouseMove(unsigned x, unsigned y)
+{
+    Evas* evas = ecore_evas_get(m_window);
+    evas_object_show(m_view);
+    evas_event_feed_mouse_move(evas, x, y, 0, 0);
 }
 
 } // namespace TestWebKitAPI

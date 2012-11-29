@@ -1,3 +1,23 @@
+2012-11-29  Sudarsana Nagineni  <sudarsana.nagineni@intel.com>
+
+        [EFL][WK2] Add support for PlatformWebView::simulateMouseMove() in TestWebKitAPI
+        https://bugs.webkit.org/show_bug.cgi?id=103252
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add support for PlatformWebView::simulateMouseMove() and enable
+        WebKit2 API test MouseMoveAfterCrash.
+
+        * TestWebKitAPI/PlatformEfl.cmake: Enable MouseMoveAfterCrash API
+        test.
+        * TestWebKitAPI/efl/PlatformWebView.cpp:
+        (TestWebKitAPI::onWebProcessCrashed): Handle 'webprocess,crashed' signal
+        to prevent loading an error page since the test case is reloading actual
+        page after web process has terminated and recovered.
+        (TestWebKitAPI):
+        (TestWebKitAPI::PlatformWebView::PlatformWebView):
+        (TestWebKitAPI::PlatformWebView::simulateMouseMove): Implemented.
+
 2012-11-29  Andras Becsi  <andras.becsi@digia.com>
 
         [Qt] Fix installation of QtWebProcess binary

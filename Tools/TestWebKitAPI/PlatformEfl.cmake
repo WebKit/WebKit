@@ -59,6 +59,7 @@ SET(test_webkit2_api_BINARIES
     InjectedBundleInitializationUserDataCallbackWins
     LoadAlternateHTMLStringWithNonDirectoryURL
     LoadCanceledNoServerRedirectCallback
+    MouseMoveAfterCrash
     NewFirstVisuallyNonEmptyLayout
     NewFirstVisuallyNonEmptyLayoutFails
     PageLoadBasic
@@ -90,7 +91,6 @@ ADD_DEFINITIONS(-DTHEME_DIR="${THEME_BINARY_DIR}")
 # Tests disabled because of missing features on the test harness:
 #
 #   HitTestResultNodeHandle
-#   MouseMoveAfterCrash
 #   ResponsivenessTimerDoesntFireEarly
 #   SpacebarScrolling
 #
