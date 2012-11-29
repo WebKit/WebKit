@@ -91,7 +91,7 @@ void BitmapImage::drawFrameMatchingSourceSize(GraphicsContext* ctxt, const Float
     size_t frames = frameCount();
     for (size_t i = 0; i < frames; ++i) {
         CGImageRef image = frameAtIndex(i);
-        if (CGImageGetHeight(image) == static_cast<size_t>(srcSize.height()) && CGImageGetWidth(image) == static_cast<size_t>(srcSize.width())) {
+        if (image && CGImageGetHeight(image) == static_cast<size_t>(srcSize.height()) && CGImageGetWidth(image) == static_cast<size_t>(srcSize.width())) {
             size_t currentFrame = m_currentFrame;
             m_currentFrame = i;
             draw(ctxt, dstRect, FloatRect(0.0f, 0.0f, srcSize.width(), srcSize.height()), styleColorSpace, compositeOp);

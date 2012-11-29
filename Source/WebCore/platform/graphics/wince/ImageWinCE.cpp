@@ -118,16 +118,17 @@ void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& dstRect, const Fl
     else {
         IntRect intSrcRect(srcRectIn);
         RefPtr<SharedBitmap> bmp = frameAtIndex(m_currentFrame);
+        if (bmp) {
+            if (bmp->width() != m_source.size().width()) {
+                double scaleFactor = static_cast<double>(bmp->width()) / m_source.size().width();
 
-        if (bmp->width() != m_source.size().width()) {
-            double scaleFactor = static_cast<double>(bmp->width()) / m_source.size().width();
-
-            intSrcRect.setX(stableRound(srcRectIn.x() * scaleFactor));
-            intSrcRect.setWidth(stableRound(srcRectIn.width() * scaleFactor));
-            intSrcRect.setY(stableRound(srcRectIn.y() * scaleFactor));
-            intSrcRect.setHeight(stableRound(srcRectIn.height() * scaleFactor));
+                intSrcRect.setX(stableRound(srcRectIn.x() * scaleFactor));
+                intSrcRect.setWidth(stableRound(srcRectIn.width() * scaleFactor));
+                intSrcRect.setY(stableRound(srcRectIn.y() * scaleFactor));
+                intSrcRect.setHeight(stableRound(srcRectIn.height() * scaleFactor));
+            }
+            bmp->draw(ctxt, enclosingIntRect(dstRect), intSrcRect, styleColorSpace, compositeOp);
         }
-        bmp->draw(ctxt, enclosingIntRect(dstRect), intSrcRect, styleColorSpace, compositeOp);
     }
 
     startAnimation();

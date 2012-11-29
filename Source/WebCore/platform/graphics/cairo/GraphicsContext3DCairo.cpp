@@ -179,7 +179,8 @@ bool GraphicsContext3D::getImageData(Image* image, unsigned int format, unsigned
         OwnPtr<NativeImageCairo> nativeImage = adoptPtr(decoder.createFrameAtIndex(0));
         imageSurface = nativeImage->surface();
     } else {
-        imageSurface = image->nativeImageForCurrentFrame()->surface();
+        NativeImageCairo* nativeImage = image->nativeImageForCurrentFrame();
+        imageSurface = (nativeImage) ? nativeImage->surface() : 0;
         if (!premultiplyAlpha)
             alphaOp = AlphaDoUnmultiply;
     }

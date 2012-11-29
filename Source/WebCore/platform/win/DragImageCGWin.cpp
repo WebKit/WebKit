@@ -148,8 +148,10 @@ DragImageRef createDragImageFromImage(Image* img, RespectImageOrientationEnum)
     CGContextScaleCTM(drawContext, 1, -1);
     CGContextSetFillColor(drawContext, white);
     CGContextFillRect(drawContext, rect);
-    CGContextSetBlendMode(drawContext, kCGBlendModeNormal);
-    CGContextDrawImage(drawContext, rect, srcImage);
+    if (srcImage) {
+        CGContextSetBlendMode(drawContext, kCGBlendModeNormal);
+        CGContextDrawImage(drawContext, rect, srcImage);
+    }
     CGContextRelease(drawContext);
 
 exit:

@@ -1,3 +1,19 @@
+2012-11-29  Brent Fulgham  <bfulgham@gmail.com>
+
+        Be consistent in handling of frameAtIndex (and related) returns.
+        https://bugs.webkit.org/show_bug.cgi?id=103207
+
+        Reviewed by David Hyatt.
+
+        Under various conditions, frameAtIndex (and therefore,
+        nativeImageForCurrentFrame) returns null. A series of bugs over
+        the years has ensured null returns are handled in some cases,
+        but there are a handful of remaining cases where this is still a
+        problem. 
+
+        No new tests, as these low-level functions are covered by
+        numerous existing test cases.
+
 2012-11-29  David Hyatt  <hyatt@apple.com>
 
         [New Multicolumn] Add minimum column height tracking and forced break tracking to column sets.

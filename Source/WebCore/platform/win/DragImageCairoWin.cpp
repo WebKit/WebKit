@@ -173,11 +173,14 @@ DragImageRef createDragImageFromImage(Image* img, RespectImageOrientationEnum)
     cairo_set_source_rgb(cr, 1.0, 0.0, 1.0);
     cairo_fill_preserve(cr);
 
-    cairo_surface_t* srcImage = img->nativeImageForCurrentFrame()->surface();
+    NativeImageCairo* srcNativeImage = img->nativeImageForCurrentFrame();
+    cairo_surface_t* srcImage = (srcNativeImage) ? srcNativeImage->surface() : 0;
 
-    // Draw the image.
-    cairo_set_source_surface(cr, srcImage, 0.0, 0.0);
-    cairo_paint(cr);
+    if (srcImage) {
+        // Draw the image.
+        cairo_set_source_surface(cr, srcImage, 0.0, 0.0);
+        cairo_paint(cr);
+    }
 
     deallocContext(drawContext);
 

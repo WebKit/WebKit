@@ -98,6 +98,8 @@ bool FELighting::platformApplySkia()
 
     RefPtr<Image> image = in->asImageBuffer()->copyImage(DontCopyBackingStore);
     NativeImageSkia* nativeImage = image->nativeImageForCurrentFrame();
+    if (!nativeImage)
+        return false;
 
     GraphicsContext* dstContext = resultImage->context();
 

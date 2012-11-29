@@ -43,7 +43,9 @@ bool FEComponentTransfer::platformApplySkia()
         return false;
 
     RefPtr<Image> image = in->asImageBuffer()->copyImage(DontCopyBackingStore);
-    SkBitmap bitmap = image->nativeImageForCurrentFrame()->bitmap();
+    NativeImageSkia* nativeImage = image->nativeImageForCurrentFrame();
+    if (!nativeImage)
+        return false;
 
     unsigned char rValues[256], gValues[256], bValues[256], aValues[256];
     getValues(rValues, gValues, bValues, aValues);
@@ -51,7 +53,7 @@ bool FEComponentTransfer::platformApplySkia()
     SkPaint paint;
     paint.setColorFilter(SkTableColorFilter::CreateARGB(aValues, rValues, gValues, bValues))->unref();
     paint.setXfermodeMode(SkXfermode::kSrc_Mode);
-    resultImage->context()->platformContext()->drawBitmap(bitmap, 0, 0, &paint);
+    resultImage->context()->platformContext()->drawBitmap(nativeImage->bitmap(), 0, 0, &paint);
 
     return true;
 }
