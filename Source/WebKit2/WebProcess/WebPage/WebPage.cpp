@@ -1506,20 +1506,18 @@ void WebPage::mouseEvent(const WebMouseEvent& mouseEvent)
         return;
     }
 #endif
-    
     bool handled = false;
-    
     if (m_pageOverlay) {
         // Let the page overlay handle the event.
         handled = m_pageOverlay->mouseEvent(mouseEvent);
     }
 
-    if (!handled) {
+    if (!handled && canHandleUserEvents()) {
         CurrentEvent currentEvent(mouseEvent);
 
         // We need to do a full, normal hit test during this mouse event if the page is active or if a mouse
-        // button is currently pressed. It is possible that neither of those things will be true since on 
-        // Lion when legacy scrollbars are enabled, WebKit receives mouse events all the time. If it is one 
+        // button is currently pressed. It is possible that neither of those things will be true since on
+        // Lion when legacy scrollbars are enabled, WebKit receives mouse events all the time. If it is one
         // of those cases where the page is not active and the mouse is not pressed, then we can fire a more
         // efficient scrollbars-only version of the event.
         bool onlyUpdateScrollbars = !(m_page->focusController()->isActive() || (mouseEvent.button() != WebMouseEvent::NoButton));
@@ -1558,9 +1556,13 @@ static bool handleWheelEvent(const WebWheelEvent& wheelEvent, Page* page)
 
 void WebPage::wheelEvent(const WebWheelEvent& wheelEvent)
 {
-    CurrentEvent currentEvent(wheelEvent);
+    bool handled = false;
 
-    bool handled = handleWheelEvent(wheelEvent, m_page.get());
+    if (canHandleUserEvents()) {
+        CurrentEvent currentEvent(wheelEvent);
+
+        handled = handleWheelEvent(wheelEvent, m_page.get());
+    }
     send(Messages::WebPageProxy::DidReceiveEvent(static_cast<uint32_t>(wheelEvent.type()), handled));
 }
 
@@ -1583,13 +1585,16 @@ static bool handleKeyEvent(const WebKeyboardEvent& keyboardEvent, Page* page)
 
 void WebPage::keyEvent(const WebKeyboardEvent& keyboardEvent)
 {
-    CurrentEvent currentEvent(keyboardEvent);
+    bool handled = false;
 
-    bool handled = handleKeyEvent(keyboardEvent, m_page.get());
-    // FIXME: Platform default behaviors should be performed during normal DOM event dispatch (in most cases, in default keydown event handler).
-    if (!handled)
-        handled = performDefaultBehaviorForKeyEvent(keyboardEvent);
+    if (canHandleUserEvents()) {
+        CurrentEvent currentEvent(keyboardEvent);
 
+        handled = handleKeyEvent(keyboardEvent, m_page.get());
+        // FIXME: Platform default behaviors should be performed during normal DOM event dispatch (in most cases, in default keydown event handler).
+        if (!handled)
+            handled = performDefaultBehaviorForKeyEvent(keyboardEvent);
+    }
     send(Messages::WebPageProxy::DidReceiveEvent(static_cast<uint32_t>(keyboardEvent.type()), handled));
 }
 
@@ -1615,9 +1620,13 @@ static bool handleGestureEvent(const WebGestureEvent& gestureEvent, Page* page)
 
 void WebPage::gestureEvent(const WebGestureEvent& gestureEvent)
 {
-    CurrentEvent currentEvent(gestureEvent);
+    bool handled = false;
 
-    bool handled = handleGestureEvent(gestureEvent, m_page.get());
+    if (canHandleUserEvents()) {
+        CurrentEvent currentEvent(gestureEvent);
+
+        handled = handleGestureEvent(gestureEvent, m_page.get());
+    }
     send(Messages::WebPageProxy::DidReceiveEvent(static_cast<uint32_t>(gestureEvent.type()), handled));
 }
 #endif
@@ -1733,10 +1742,13 @@ static bool handleTouchEvent(const WebTouchEvent& touchEvent, Page* page)
 
 void WebPage::touchEvent(const WebTouchEvent& touchEvent)
 {
-    CurrentEvent currentEvent(touchEvent);
+    bool handled = false;
 
-    bool handled = handleTouchEvent(touchEvent, m_page.get());
+    if (canHandleUserEvents()) {
+        CurrentEvent currentEvent(touchEvent);
 
+        handled = handleTouchEvent(touchEvent, m_page.get());
+    }
     send(Messages::WebPageProxy::DidReceiveEvent(static_cast<uint32_t>(touchEvent.type()), handled));
 }
 
@@ -1881,6 +1893,15 @@ void WebPage::setCanStartMediaTimerFired()
 {
     if (m_page)
         m_page->setCanStartMedia(true);
+}
+
+inline bool WebPage::canHandleUserEvents() const
+{
+#if USE(TILED_BACKING_STORE)
+    // Should apply only if the area was frozen by didStartPageTransition().
+    return !m_drawingArea->layerTreeStateIsFrozen();
+#endif
+    return true;
 }
 
 void WebPage::setIsInWindow(bool isInWindow)

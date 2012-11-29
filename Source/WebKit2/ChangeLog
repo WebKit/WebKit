@@ -1,3 +1,24 @@
+2012-11-29  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [WK2] TiledBackingStore: User events are sent to web page before it is shown
+        https://bugs.webkit.org/show_bug.cgi?id=101753
+
+        Reviewed by Jocelyn Turcotte.
+
+        User events are suppressed on WEB process side while drawing area is frozen.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::mouseEvent):
+        (WebKit::WebPage::wheelEvent):
+        (WebKit::WebPage::keyEvent):
+        (WebKit::WebPage::gestureEvent):
+        (WebKit::WebPage::touchEvent):
+        (WebKit::WebPage::sendIfEventCannotBeHandled):
+        (WebKit):
+        (WebKit::WebPage::didCompletePageTransition):
+        * WebProcess/WebPage/WebPage.h:
+        (WebPage):
+
 2012-11-29  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         Possible to resize out of bounds 
