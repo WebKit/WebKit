@@ -266,9 +266,7 @@ void LayerTreeRenderer::destroyCanvas(WebLayerID id)
 
 void LayerTreeRenderer::setLayerChildren(WebLayerID id, const Vector<WebLayerID>& childIDs)
 {
-    ensureLayer(id);
-    LayerMap::iterator it = m_layers.find(id);
-    GraphicsLayer* layer = it->value;
+    GraphicsLayer* layer = ensureLayer(id);
     Vector<GraphicsLayer*> children;
 
     for (size_t i = 0; i < childIDs.size(); ++i) {
@@ -286,11 +284,8 @@ void LayerTreeRenderer::setLayerChildren(WebLayerID id, const Vector<WebLayerID>
 #if ENABLE(CSS_FILTERS)
 void LayerTreeRenderer::setLayerFilters(WebLayerID id, const FilterOperations& filters)
 {
-    ensureLayer(id);
-    LayerMap::iterator it = m_layers.find(id);
-    ASSERT(it != m_layers.end());
+    GraphicsLayer* layer = ensureLayer(id);
 
-    GraphicsLayer* layer = it->value;
 #if ENABLE(CSS_SHADERS)
     injectCachedCustomFilterPrograms(filters);
 #endif
@@ -332,11 +327,7 @@ void LayerTreeRenderer::removeCustomFilterProgram(int id)
 
 void LayerTreeRenderer::setLayerState(WebLayerID id, const WebLayerInfo& layerInfo)
 {
-    ensureLayer(id);
-    LayerMap::iterator it = m_layers.find(id);
-    ASSERT(it != m_layers.end());
-
-    GraphicsLayer* layer = it->value;
+    GraphicsLayer* layer = ensureLayer(id);
 
     layer->setReplicatedByLayer(layerByID(layerInfo.replica));
     layer->setMaskLayer(layerByID(layerInfo.mask));
@@ -385,12 +376,18 @@ void LayerTreeRenderer::deleteLayer(WebLayerID layerID)
 }
 
 
-void LayerTreeRenderer::ensureLayer(WebLayerID id)
+WebCore::GraphicsLayer* LayerTreeRenderer::ensureLayer(WebLayerID id)
 {
+    LayerMap::iterator it = m_layers.find(id);
+    if (it != m_layers.end())
+        return it->value;
+
     // We have to leak the new layer's pointer and manage it ourselves,
     // because OwnPtr is not copyable.
-    if (m_layers.find(id) == m_layers.end())
-        m_layers.add(id, createLayer(id).leakPtr());
+    WebCore::GraphicsLayer* layer = createLayer(id).leakPtr();
+    m_layers.add(id, layer);
+
+    return layer;
 }
 
 void LayerTreeRenderer::setRootLayerID(WebLayerID layerID)

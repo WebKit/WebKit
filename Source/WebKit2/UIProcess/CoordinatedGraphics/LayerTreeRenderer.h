@@ -142,7 +142,7 @@ private:
     void assignImageBackingToLayer(WebCore::GraphicsLayer*, CoordinatedImageBackingID);
     void removeReleasedImageBackingsIfNeeded();
     void ensureRootLayer();
-    void ensureLayer(WebLayerID);
+    WebCore::GraphicsLayer* ensureLayer(WebLayerID);
     void commitPendingBackingStoreOperations();
 
     CoordinatedBackingStore* getBackingStore(WebCore::GraphicsLayer*);

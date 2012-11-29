@@ -1,3 +1,22 @@
+2012-11-29  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [CoordinatedGraphics] Have LayerTreeRenderer::ensureLayer() return the layer
+        https://bugs.webkit.org/show_bug.cgi?id=103645
+
+        Reviewed by Noam Rosenthal.
+
+        The current LayerTreeRenderer code keep calling ensureLayer() and then
+        LayerMap::find() to retrieve the layer. Since ensureLayer() already has
+        a pointer to the layer, we can simply have the function return it.
+        This is slightly more efficient and it makes the code a bit simpler.
+
+        * UIProcess/CoordinatedGraphics/LayerTreeRenderer.cpp:
+        (WebKit::LayerTreeRenderer::setLayerChildren):
+        (WebKit::LayerTreeRenderer::setLayerFilters):
+        (WebKit::LayerTreeRenderer::setLayerState):
+        (WebKit::LayerTreeRenderer::ensureLayer):
+        * UIProcess/CoordinatedGraphics/LayerTreeRenderer.h:
+
 2012-11-29  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [WK2] TiledBackingStore: User events are sent to web page before it is shown
