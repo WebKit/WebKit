@@ -4246,7 +4246,6 @@ webkit.org/b/103308 [ SnowLeopard Lion ] css3/filters/custom/custom-filter-trans
 
 webkit.org/b/103348 fast/js/string-replacement-outofmemory.html [ Crash ]
 webkit.org/b/103363 [ Mac ] touchadjustment/touch-links-longpress.html [ Failure ]
-webkit.org/b/103376 [ Mac Debug ] svg/animations/mpath-remove-from-dependents-on-delete-crash.html [ Pass Timeout ]
 webkit.org/b/103183 [ Win7 SnowLeopard Lion ] media/video-duration-known-after-eos.html [ Pass Crash ]
 webkit.org/b/103446 [ Mac ] http/tests/canvas/canvas-slow-font-loading.html [ ImageOnlyFailure ]
 webkit.org/b/103447 [ MountainLion ] fast/canvas/font-update.html [ ImageOnlyFailure ]

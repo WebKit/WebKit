@@ -1,3 +1,14 @@
+2012-11-29  Stephen Chenney  <schenney@chromium.org>
+
+        Layout Test svg/animations/mpath-remove-from-dependents-on-delete-crash.html is flaky
+        https://bugs.webkit.org/show_bug.cgi?id=103375
+
+        Unreviewed expectations update.
+
+        The test is no longer flakey after yeterdays test modification.
+
+        * platform/chromium/TestExpectations:
+
 2012-11-29  KwangYong Choi  <ky0.choi@samsung.com>
 
         [EFL] Remove duplicated entries from efl-wk1/TestExpectations
