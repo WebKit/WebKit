@@ -1,5 +1,15 @@
 2012-11-28  Mike West  <mkwst@chromium.org>
 
+        Add a test to ensure that 'seamless' iframes do not inherit contenteditable.
+        https://bugs.webkit.org/show_bug.cgi?id=95890
+
+        Reviewed by Ojan Vafai.
+
+        * fast/frames/seamless/seamless-contenteditable-not-inherited-expected.txt: Added.
+        * fast/frames/seamless/seamless-contenteditable-not-inherited.html: Added.
+
+2012-11-28  Mike West  <mkwst@chromium.org>
+
         Web Inspector: Console message's anchor element should be trimmed for readability.
         https://bugs.webkit.org/show_bug.cgi?id=100095
 

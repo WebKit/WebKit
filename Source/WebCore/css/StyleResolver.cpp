@@ -1398,7 +1398,7 @@ PassRefPtr<RenderStyle> StyleResolver::styleForDocument(Document* document, CSSF
         documentStyle->setPageScaleTransform(frame ? frame->frameScaleFactor() : 1);
         documentStyle->setLocale(document->contentLanguage());
     }
-    // FIXME: This overrides any -webkit-user-modify inherited from the parent iframe.
+    // This overrides any -webkit-user-modify inherited from the parent iframe.
     documentStyle->setUserModify(document->inDesignMode() ? READ_WRITE : READ_ONLY);
 
     Element* docElement = document->documentElement();

@@ -1,5 +1,27 @@
 2012-11-28  Mike West  <mkwst@chromium.org>
 
+        Add a test to ensure that 'seamless' iframes do not inherit contenteditable.
+        https://bugs.webkit.org/show_bug.cgi?id=95890
+
+        Reviewed by Ojan Vafai.
+
+        We don't currently support inheriting contenteditable into a seamless
+        frame. http://html5.org/tools/web-apps-tracker?from=7318&to=7319
+        brought the spec in line with WebKit's behavior (ha!). This patch
+        defends the behavior by adding a test, and removes a FIXME comment
+        now that the question is settled.
+
+        It also exposes a brand new bug: https://bugs.webkit.org/show_bug.cgi?id=103539
+        How exciting.
+
+        Test: fast/frames/seamless/seamless-contenteditable-not-inherited.html
+
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::styleForDocument):
+            No functional change, just dropping a FIXME comment.
+
+2012-11-28  Mike West  <mkwst@chromium.org>
+
         Web Inspector: Console message's anchor element should be trimmed for readability.
         https://bugs.webkit.org/show_bug.cgi?id=100095
 
