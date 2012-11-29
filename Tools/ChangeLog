@@ -1,5 +1,12 @@
 2012-11-29  Brent Fulgham  <bfulgham@webkit.org>
 
+        [Windows, WinCairo] Unreviewed build correction. Correct debug
+        build case on build machine.
+
+        * TestWebKitAPI/Tests/WebCore/win/BitmapImage.cpp:
+
+2012-11-29  Brent Fulgham  <bfulgham@webkit.org>
+
         [Windows, WinCairo] Unreviewed build correction. Hide the
         unexported 'notSolidColor' symbol when testing against
         the BitmapImage class to avoid having to deal with a
