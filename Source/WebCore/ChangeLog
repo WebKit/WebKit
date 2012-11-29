@@ -1,3 +1,10 @@
+2012-11-28  Kentaro Hara  <haraken@chromium.org>
+
+        Unreviewed. Rebaselined run-bindings-tests.
+
+        * bindings/scripts/test/V8/V8TestNode.h:
+        (WebCore::toV8Fast):
+
 2012-11-28  Shinya Kawanaka  <shinyak@chromium.org>
 
         [Shadow] ShadowRoot should cache InsertionPointList.
