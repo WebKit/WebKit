@@ -4262,5 +4262,3 @@ Bug(scherkus) [ Win Mac Linux ] http/tests/media/video-buffered-range-contains-c
 webkit.org/b/103609 [ MountainLion ] fast/regions/autoheight-dynamic-update.html [ ImageOnlyFailure ]
 webkit.org/b/103609 [ MountainLion ] fast/regions/firstletter-inside-flowthread.html [ ImageOnlyFailure ]
 webkit.org/b/103609 [ MountainLion ] fast/regions/listmarker-inside-flowthread.html [ ImageOnlyFailure ]
-
-webkit.org/b/103619 [ XP ] http/tests/inspector/network/script-as-text-loading-long-url.html [ Failure ]

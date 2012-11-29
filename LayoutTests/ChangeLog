@@ -1,3 +1,17 @@
+2012-11-29  Mike West  <mkwst@chromium.org>
+
+        Layout Test http/tests/inspector/network/script-as-text-loading-long-url.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=103619
+
+        Reviewed by Alexander Pavlov.
+
+        Windows doesn't like loooong filenames.
+
+        * http/tests/inspector/network/resources/script-as-text-with-a-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-long-url.php: Renamed from LayoutTests/http/tests/inspector/network/resources/script-as-text-with-a-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-long-url.php.
+        * http/tests/inspector/network/script-as-text-loading-long-url.html:
+        * platform/chromium/TestExpectations:
+            Unskipping the test on XP.
+
 2012-11-29  Jussi Kukkonen  <jussi.kukkonen@intel.com>
 
         [EFL][WK2] flaky reftests after r135935
