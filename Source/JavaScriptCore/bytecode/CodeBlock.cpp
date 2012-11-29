@@ -1891,7 +1891,7 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
     }
     m_instructions = WTF::RefCountedArray<Instruction>(instructions);
 
-    if (BytecodeGenerator::dumpsGeneratedCode())
+    if (Options::dumpGeneratedBytecodes())
         dump();
     m_globalData->finishedCompiling(this);
 }

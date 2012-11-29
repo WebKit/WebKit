@@ -540,7 +540,7 @@ static bool runWithScripts(GlobalObject* globalObject, const Vector<Script>& scr
     Vector<char> scriptBuffer;
 
     if (dump)
-        BytecodeGenerator::setDumpsGeneratedCode(true);
+        JSC::Options::dumpGeneratedBytecodes() = true;
 
     JSGlobalData& globalData = globalObject->globalData();
 

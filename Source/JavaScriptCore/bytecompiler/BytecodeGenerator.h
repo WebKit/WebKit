@@ -209,9 +209,6 @@ namespace JSC {
         typedef DeclarationStacks::VarStack VarStack;
         typedef DeclarationStacks::FunctionStack FunctionStack;
 
-        JS_EXPORT_PRIVATE static void setDumpsGeneratedCode(bool dumpsGeneratedCode);
-        static bool dumpsGeneratedCode();
-
         BytecodeGenerator(JSGlobalData&, ProgramNode*, UnlinkedProgramCodeBlock*, DebuggerMode, ProfilerMode);
         BytecodeGenerator(JSGlobalData&, FunctionBodyNode*, UnlinkedFunctionCodeBlock*, DebuggerMode, ProfilerMode);
         BytecodeGenerator(JSGlobalData&, EvalNode*, UnlinkedEvalCodeBlock*, DebuggerMode, ProfilerMode);

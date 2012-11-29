@@ -38,6 +38,7 @@
 #include "JSFunction.h"
 #include "JSNameScope.h"
 #include "LowLevelInterpreter.h"
+#include "Options.h"
 #include "StrongInlines.h"
 #include <wtf/text/WTFString.h>
 
@@ -145,18 +146,6 @@ void ResolveResult::checkValidity()
     }
 }
 #endif
-
-static bool s_dumpsGeneratedCode = false;
-
-void BytecodeGenerator::setDumpsGeneratedCode(bool dumpsGeneratedCode)
-{
-    s_dumpsGeneratedCode = dumpsGeneratedCode;
-}
-
-bool BytecodeGenerator::dumpsGeneratedCode()
-{
-    return s_dumpsGeneratedCode;
-}
 
 ParserError BytecodeGenerator::generate()
 {
