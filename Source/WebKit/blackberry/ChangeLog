@@ -1,3 +1,20 @@
+2012-11-29  Andrew Lo  <anlo@rim.com>
+
+        [BlackBerry] Do not adjust scroll position on viewport resizes that are not orientation change related
+        https://bugs.webkit.org/show_bug.cgi?id=103659
+
+        Reviewed by Rob Buis.
+        Internally reviewed by Gen Mak.
+
+        Internal PR253893.
+        Only adjust scroll position during an orientation change
+        when setting viewport size.
+        We don't want the scroll position jumping around when opening
+        & closing the VKB.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::setViewportSize):
+
 2012-11-28  Otto Derek Cheung  <otcheung@rim.com>
 
         [BlackBerry] CookieJarBlackBerry will use document settings for cookiesEnabled
