@@ -1,3 +1,50 @@
+2012-11-29  Kent Tamura  <tkent@chromium.org>
+
+        Convert *-appearance-pseudo-classes.html to dumpAsText tests
+        https://bugs.webkit.org/show_bug.cgi?id=103602
+
+        Reviewed by Kentaro Hara.
+
+        fast/forms/*/*-appearance-pseudo-classes.html doesn't need to be a pixel
+        test because "how css properties are applied" is tested in
+        fast/forms/*/*-appearance-basic.html. Checking querySelectorAll result
+        is enough to check pseudo classes support, and we can convert the test
+        to a dumpAsText test. We imporve test coverage in the new dumpAsText tests.
+
+        Also, this patch adds missing datetimelocal-pseudo-classes.html.
+
+        * fast/forms/date/date-pseudo-classes-expected.txt:
+        * fast/forms/date/date-pseudo-classes.html: Add :in-range -> :out-of-range cases.
+        * fast/forms/datetimelocal/datetimelocal-pseudo-classes-expected.txt: Added.
+        * fast/forms/datetimelocal/datetimelocal-pseudo-classes.html: Added.
+        * fast/forms/month/month-appearance-pseudo-classes-expected.txt: Removed.
+        * fast/forms/month/month-appearance-pseudo-classes.html: Removed.
+        * fast/forms/month/month-pseudo-classes-expected.txt: Added.
+        * fast/forms/month/month-pseudo-classes.html: Added.
+        * fast/forms/time/time-appearance-pseudo-classes-expected.txt: Removed.
+        * fast/forms/time/time-appearance-pseudo-classes.html: Removed.
+        * fast/forms/time/time-pseudo-classes-expected.txt: Added.
+        * fast/forms/time/time-pseudo-classes.html: Added.
+        * fast/forms/week/week-appearance-pseudo-classes-expected.txt: Removed.
+        * fast/forms/week/week-appearance-pseudo-classes.html: Removed.
+        * fast/forms/week/week-pseudo-classes-expected.txt: Added.
+        * fast/forms/week/week-pseudo-classes.html: Added.
+        * platform/chromium-linux/fast/forms/month/month-appearance-pseudo-classes-expected.png: Removed.
+        * platform/chromium-linux/fast/forms/time/time-appearance-pseudo-classes-expected.png: Removed.
+        * platform/chromium-linux/fast/forms/week/week-appearance-pseudo-classes-expected.png: Removed.
+        * platform/chromium-mac-lion/fast/forms/month/month-appearance-pseudo-classes-expected.png: Removed.
+        * platform/chromium-mac-lion/fast/forms/time/time-appearance-pseudo-classes-expected.png: Removed.
+        * platform/chromium-mac-lion/fast/forms/week/week-appearance-pseudo-classes-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/fast/forms/month/month-appearance-pseudo-classes-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/fast/forms/time/time-appearance-pseudo-classes-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/fast/forms/week/week-appearance-pseudo-classes-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/month/month-appearance-pseudo-classes-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/time/time-appearance-pseudo-classes-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/week/week-appearance-pseudo-classes-expected.png: Removed.
+        * platform/chromium-win/fast/forms/month/month-appearance-pseudo-classes-expected.png: Removed.
+        * platform/chromium-win/fast/forms/time/time-appearance-pseudo-classes-expected.png: Removed.
+        * platform/chromium-win/fast/forms/week/week-appearance-pseudo-classes-expected.png: Removed.
+
 2012-11-29  Alexander Pavlov  <apavlov@chromium.org>
 
         [Chromium] Unreviewed, mark fast/regions tests failing after r136045 as failing, since they are actually reftests.

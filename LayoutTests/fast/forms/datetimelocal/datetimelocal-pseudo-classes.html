@@ -4,14 +4,14 @@
 <script src="../resources/common-pseudo-classes.js"></script>
 
 <div id="container">
-<input type="date" value="1234-12-11" id="enabled">
-<input type="date" value="12340-10-01" id="disabled" disabled>
-<input type="date" value="123456-12-11" min="123456-12-10" step="2" id="invalid">
-<input type="date" value="123456-12-11" min="123456-12-01" max="123456-12-31" id="inrange">
-<input type="date" value="ABC" min="123456-12-01" max="123456-12-31" id="badvalue">
-<input type="date" value="0710-03-10" min="1000-01-01" max="1999-12-31" id="outofrange">
-<input type="date" value="1999-12-31" readonly id="readonly">
-<input type="date" value="1999-12-31" required id="required">
+<input type="datetime-local" value="1234-12-11T12:34" id="enabled">
+<input type="datetime-local" value="12340-10-01T12:34" id="disabled" disabled>
+<input type="datetime-local" value="123456-12-11T12:34" min="123456-12-11T00:00" step="1800" id="invalid">
+<input type="datetime-local" value="123456-12-11T12:34" min="123456-12-01T00:00" max="123456-12-31T00:00" id="inrange">
+<input type="datetime-local" value="ABC" min="123456-12-01T00:00" max="123456-12-31T00:00" id="badvalue">
+<input type="datetime-local" value="0710-03-10T00:00" min="1000-01-01T00:00" max="1999-12-31T23:59" id="outofrange">
+<input type="datetime-local" value="1999-12-31T12:34" readonly id="readonly">
+<input type="datetime-local" value="1999-12-31T12:34" required id="required">
 </div>
 
 <script>
@@ -29,11 +29,11 @@ shouldBeTrue('matchedNodesContainId(container, ":out-of-range", "outofrange")');
 shouldBeTrue('matchedNodesContainId(container, ":read-only", "readonly")');
 shouldBeTrue('matchedNodesContainId(container, ":required", "required")');
 // Make the id=outofrange element in-range state.
-document.getElementById('outofrange').value = '1500-01-01';
+document.getElementById('outofrange').value = '1500-01-01T00:00';
 shouldBeFalse('matchedNodesContainId(container, ":out-of-range", "outofrange")');
 shouldBeTrue('matchedNodesContainId(container, ":in-range", "outofrange")');
 // Make the id=inrange element out-of-range state.
-document.getElementById('inrange').value = '1500-01-01';
+document.getElementById('inrange').value = '1500-01-01T00:00';
 shouldBeFalse('matchedNodesContainId(container, ":in-range", "inrange")');
 shouldBeTrue('matchedNodesContainId(container, ":out-of-range", "inrange")');
 container.remove();
