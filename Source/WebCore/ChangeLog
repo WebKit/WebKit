@@ -1,3 +1,40 @@
+2012-11-29  Hajime Morrita  <morrita@google.com>
+
+        HTMLMediaElement's .textTracks property does not reflect <track> element
+        https://bugs.webkit.org/show_bug.cgi?id=103420
+
+        Reviewed by Eric Carlson.
+
+        There were some assumptions that <track> elements are valid only
+        if the parent <media> is in document. This change relaxes this
+        assumption so that <track> is valid when it has <media> as a
+        parent regardless whether the <media> is in the document or not.
+
+        HTMLMediaElement::didAddTrack and didRemoveTrack are now called
+        when the <track> is inserted to or removed from the parent <media>
+        element.
+
+        Test: media/track/track-node-add-remove.html
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::didRemoveTrack):
+        Renamed from willRemoveTrack() to reflect the timing. This was once called from
+        Node::willRemove(), which was removed a while ago.
+        * html/HTMLMediaElement.h:
+        (HTMLMediaElement):
+        * html/HTMLTrackElement.cpp:
+        (WebCore::HTMLTrackElement::insertedInto):
+        The old code notified parent <media> only if the subtree became a part of the document.
+        Now it notifies the <media> when this <track> becomes a child of that <media>.
+
+        (WebCore::HTMLTrackElement::removedFrom):
+        The old code notifies the parent <media> every time as long as the parent is available.
+        Now it notifies the <media> only if this <track> is removed from the parent <media>.
+        This matches how corresponding notification is done in insertedInto().
+
+        * html/track/LoadableTextTrack.cpp:
+        (WebCore::LoadableTextTrack::trackElementIndex):
+
 2012-11-29  Florin Malita  <fmalita@chromium.org>
 
         [Skia] Add missing OpaqueRegionSkia notifier calls

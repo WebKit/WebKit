@@ -1,3 +1,13 @@
+2012-11-29  Hajime Morrita  <morrita@google.com>
+
+        HTMLMediaElement's .textTracks property does not reflect <track> element
+        https://bugs.webkit.org/show_bug.cgi?id=103420
+        
+        Reviewed by Eric Carlson.
+
+        * media/track/track-node-add-remove-expected.txt: Added.
+        * media/track/track-node-add-remove.html: Added.
+
 2012-11-29  Alexander Pavlov  <apavlov@chromium.org>
 
         [Chromium] Unreviewed, update Mac expectation after r136128.

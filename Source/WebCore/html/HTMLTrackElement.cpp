@@ -75,22 +75,16 @@ PassRefPtr<HTMLTrackElement> HTMLTrackElement::create(const QualifiedName& tagNa
 Node::InsertionNotificationRequest HTMLTrackElement::insertedInto(ContainerNode* insertionPoint)
 {
     HTMLElement::insertedInto(insertionPoint);
-    if (insertionPoint->inDocument()) {
-        if (HTMLMediaElement* parent = mediaElement())
-            parent->didAddTrack(this);
-    }
-
+    HTMLMediaElement* parent = mediaElement();
+    if (insertionPoint == parent)
+        parent->didAddTrack(this);
     return InsertionDone;
 }
 
 void HTMLTrackElement::removedFrom(ContainerNode* insertionPoint)
 {
-    HTMLMediaElement* parent = mediaElement();
-    if (!parent && WebCore::isMediaElement(insertionPoint))
-        parent = toMediaElement(insertionPoint);
-    if (parent)
-        parent->willRemoveTrack(this);
-
+    if (!parentNode() && WebCore::isMediaElement(insertionPoint))
+        toMediaElement(insertionPoint)->didRemoveTrack(this);
     HTMLElement::removedFrom(insertionPoint);
 }
 
