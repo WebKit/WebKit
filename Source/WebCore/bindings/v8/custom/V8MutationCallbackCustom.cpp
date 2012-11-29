@@ -83,7 +83,7 @@ bool V8MutationCallback::handleEvent(MutationRecordArray* mutations, MutationObs
     };
 
     bool callbackReturnValue = false;
-    return !invokeCallback(m_callback, v8::Handle<v8::Object>::Cast(observerHandle), 2, argv, callbackReturnValue, scriptExecutionContext());
+    return !invokeCallback(m_callback.get(), v8::Handle<v8::Object>::Cast(observerHandle), 2, argv, callbackReturnValue, scriptExecutionContext());
 }
 
 } // namespace WebCore

@@ -3263,6 +3263,7 @@ sub GenerateCallbackHeader
     my @unsortedIncludes = ();
     push(@unsortedIncludes, "#include \"ActiveDOMCallback.h\"");
     push(@unsortedIncludes, "#include \"$interfaceName.h\"");
+    push(@unsortedIncludes, "#include \"ScopedPersistent.h\"");
     push(@unsortedIncludes, "#include \"WorldContextHandle.h\"");
     push(@unsortedIncludes, "#include <v8.h>");
     push(@unsortedIncludes, "#include <wtf/Forward.h>");
@@ -3315,12 +3316,10 @@ private:
     static void weakCallback(v8::Persistent<v8::Value> wrapper, void* parameter)
     {
         ${v8InterfaceName}* object = static_cast<${v8InterfaceName}*>(parameter);
-        object->m_callback.Dispose();
-        object->m_callback.Clear();
+        object->m_callback.clear();
     }
 
-    // FIXME: m_callback should be a ScopedPersistent.
-    v8::Persistent<v8::Object> m_callback;
+    ScopedPersistent<v8::Object> m_callback;
     WorldContextHandle m_worldContext;
 };
 
@@ -3352,19 +3351,17 @@ sub GenerateCallbackImplementation
     push(@implContent, <<END);
 ${v8InterfaceName}::${v8InterfaceName}(v8::Handle<v8::Object> callback, ScriptExecutionContext* context, v8::Handle<v8::Object> owner)
     : ActiveDOMCallback(context)
-    , m_callback(v8::Persistent<v8::Object>::New(callback))
+    , m_callback(callback)
     , m_worldContext(UseCurrentWorld)
 {
-    if (!owner.IsEmpty()) {
-        owner->SetHiddenValue(V8HiddenPropertyName::callback(), callback);
-        m_callback.MakeWeak(this, &${v8InterfaceName}::weakCallback);
-    }
+    if (owner.IsEmpty())
+        return;
+    owner->SetHiddenValue(V8HiddenPropertyName::callback(), callback);
+    m_callback.get().MakeWeak(this, &${v8InterfaceName}::weakCallback);
 }
 
 ${v8InterfaceName}::~${v8InterfaceName}()
 {
-    if (!m_callback.IsEmpty())
-        m_callback.Dispose();
 }
 
 END
@@ -3434,11 +3431,11 @@ END
                 foreach my $param (@params) {
                     next if $param->type ne $thisType;
                     my $paramName = $param->name;
-                    push(@implContent, "    return !invokeCallback(m_callback, v8::Handle<v8::Object>::Cast(${paramName}Handle), " . scalar(@params) . ", argv, callbackReturnValue, scriptExecutionContext());\n");
+                    push(@implContent, "    return !invokeCallback(m_callback.get(), v8::Handle<v8::Object>::Cast(${paramName}Handle), " . scalar(@params) . ", argv, callbackReturnValue, scriptExecutionContext());\n");
                     last;
                 }
             } else {
-                push(@implContent, "    return !invokeCallback(m_callback, " . scalar(@params) . ", argv, callbackReturnValue, scriptExecutionContext());\n");
+                push(@implContent, "    return !invokeCallback(m_callback.get(), " . scalar(@params) . ", argv, callbackReturnValue, scriptExecutionContext());\n");
             }
             push(@implContent, "}\n");
         }

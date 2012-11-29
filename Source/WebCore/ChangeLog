@@ -1,3 +1,21 @@
+2012-11-29  Adam Barth  <abarth@webkit.org>
+
+        [V8] DOM callbacks shouldn't reimplement ScopedPersistent they should use it
+        https://bugs.webkit.org/show_bug.cgi?id=103662
+
+        Reviewed by Eric Seidel.
+
+        This patch replaces yet another instance of the ScopedPersistent
+        pattern with ScopedPersistent.
+
+        * bindings/scripts/CodeGeneratorV8.pm:
+        (GenerateCallbackHeader):
+        (GenerateCallbackImplementation):
+        * bindings/v8/custom/V8CustomSQLStatementErrorCallback.cpp:
+        (WebCore::V8SQLStatementErrorCallback::handleEvent):
+        * bindings/v8/custom/V8MutationCallbackCustom.cpp:
+        (WebCore::V8MutationCallback::handleEvent):
+
 2012-11-29  Min Qin  <qinmin@chromium.org>
 
         Make LazyDecodingPixelRef inherit from skia::LazyPixelRef so that cc thread can access it

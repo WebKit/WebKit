@@ -24,6 +24,7 @@
 #define V8TestCallback_h
 
 #include "ActiveDOMCallback.h"
+#include "ScopedPersistent.h"
 #include "TestCallback.h"
 #include "WorldContextHandle.h"
 #include <v8.h>
@@ -60,12 +61,10 @@ private:
     static void weakCallback(v8::Persistent<v8::Value> wrapper, void* parameter)
     {
         V8TestCallback* object = static_cast<V8TestCallback*>(parameter);
-        object->m_callback.Dispose();
-        object->m_callback.Clear();
+        object->m_callback.clear();
     }
 
-    // FIXME: m_callback should be a ScopedPersistent.
-    v8::Persistent<v8::Object> m_callback;
+    ScopedPersistent<v8::Object> m_callback;
     WorldContextHandle m_worldContext;
 };
 
