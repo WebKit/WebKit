@@ -71,6 +71,7 @@ public:
 #endif // USE(ACCELERATED_COMPOSITING)
 
     virtual void updateTextInputState();
+    virtual void handleWillSetInputMethodState();
 #if ENABLE(GESTURE_EVENTS)
     virtual void doneWithGestureEvent(const WebKit::WebGestureEvent& event, bool wasEventHandled);
 #endif

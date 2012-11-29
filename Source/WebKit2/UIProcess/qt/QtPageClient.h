@@ -103,6 +103,7 @@ public:
     virtual void pageTransitionViewportReady();
     virtual void didFindZoomableArea(const WebCore::IntPoint&, const WebCore::IntRect&);
     virtual void updateTextInputState();
+    virtual void handleWillSetInputMethodState();
     virtual void doneWithGestureEvent(const WebGestureEvent&, bool wasEventHandled);
 #if ENABLE(TOUCH_EVENTS)
     virtual void doneWithTouchEvent(const NativeWebTouchEvent&, bool wasEventHandled);

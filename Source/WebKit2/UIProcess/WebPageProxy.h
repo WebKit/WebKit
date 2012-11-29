@@ -895,6 +895,9 @@ private:
 #endif
 
     void editorStateChanged(const EditorState&);
+#if PLATFORM(QT)
+    void willSetInputMethodState();
+#endif
 
     // Back/Forward list management
     void backForwardAddItem(uint64_t itemID);

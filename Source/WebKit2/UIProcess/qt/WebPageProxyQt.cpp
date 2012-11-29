@@ -171,4 +171,9 @@ void WebPageProxy::closePopupMenu()
     process()->send(Messages::WebPage::HidePopupMenu(), m_pageID);
 }
 
+void WebPageProxy::willSetInputMethodState()
+{
+    m_pageClient->handleWillSetInputMethodState();
+}
+
 } // namespace WebKit

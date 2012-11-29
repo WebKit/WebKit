@@ -1,3 +1,45 @@
+2012-11-29  Michael Brüning  <michael.bruning@digia.com>
+
+        [Qt][WK2] Commit the preedit string in the input method when focus is about to be moved.
+        https://bugs.webkit.org/show_bug.cgi?id=97774
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Implements the handler for willSetInputMethodState in WebKit2 in Qt.
+        This is needed to tell the input method instance in Qt to commit its
+        preedit content when the focus has moved to another node to prevent a
+        bug where the old preedit string was kept as the preedit string and
+        the editor moved focus back to the old node when continuing to enter
+        text via the input method.
+
+        This behavior is analog to the behavior of the QtQuick text input
+        elements.
+
+        * UIProcess/API/qt/raw/qrawwebview.cpp:
+        (QRawWebViewPrivate::handleWillSetInputMethodState):
+        * UIProcess/API/qt/raw/qrawwebview_p_p.h:
+        (QRawWebViewPrivate):
+        * UIProcess/PageClient.h:
+        (PageClient):
+        * UIProcess/WebPageProxy.h:
+        (WebPageProxy):
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/qt/QtPageClient.cpp:
+        (WebKit::QtPageClient::handleWillSetInputMethodState):
+        (WebKit):
+        * UIProcess/qt/QtPageClient.h:
+        (QtPageClient):
+        * UIProcess/qt/QtWebPageEventHandler.cpp:
+        (WebKit::QtWebPageEventHandler::handleWillSetInputMethodState):
+        (WebKit):
+        * UIProcess/qt/QtWebPageEventHandler.h:
+        (QtWebPageEventHandler):
+        * UIProcess/qt/WebPageProxyQt.cpp:
+        (WebKit::WebPageProxy::willSetInputMethodState):
+        (WebKit):
+        * WebProcess/WebCoreSupport/WebEditorClient.cpp:
+        (WebKit::WebEditorClient::willSetInputMethodState):
+
 2012-11-28  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
 
         [Qt] The WebView should be flickable only using touch events

@@ -256,6 +256,12 @@ void QtPageClient::updateTextInputState()
     m_eventHandler->updateTextInputState();
 }
 
+void QtPageClient::handleWillSetInputMethodState()
+{
+    ASSERT(m_eventHandler);
+    m_eventHandler->handleWillSetInputMethodState();
+}
+
 #if ENABLE(GESTURE_EVENTS)
 void QtPageClient::doneWithGestureEvent(const WebGestureEvent& event, bool wasEventHandled)
 {

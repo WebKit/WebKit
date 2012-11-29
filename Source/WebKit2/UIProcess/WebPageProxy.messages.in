@@ -205,7 +205,9 @@ messages -> WebPageProxy {
 #if PLATFORM(WIN)
     DidChangeCompositionSelection(bool hasChanged)
 #endif
-
+#if PLATFORM(QT)
+    WillSetInputMethodState()
+#endif
     # Find messages
     DidCountStringMatches(WTF::String string, uint32_t matchCount)
     SetFindIndicator(WebCore::FloatRect selectionRect, Vector<WebCore::FloatRect> textRects, float contentImageScaleFactor, WebKit::ShareableBitmap::Handle contentImageHandle, bool fadeOut, bool animate)

@@ -469,7 +469,11 @@ void WebEditorClient::getGuessesForWord(const String& word, const String& contex
 
 void WebEditorClient::willSetInputMethodState()
 {
+#if PLATFORM(QT)
+    m_page->send(Messages::WebPageProxy::WillSetInputMethodState());
+#else
     notImplemented();
+#endif
 }
 
 void WebEditorClient::setInputMethodState(bool)

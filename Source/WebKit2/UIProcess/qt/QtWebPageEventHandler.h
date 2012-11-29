@@ -89,6 +89,7 @@ public:
     void doneWithTouchEvent(const NativeWebTouchEvent&, bool wasEventHandled);
 #endif
     void handleInputEvent(const QInputEvent*);
+    void handleWillSetInputMethodState();
     void resetGestureRecognizers();
 
     PageViewportControllerClientQt* viewportController() { return m_viewportController; }
