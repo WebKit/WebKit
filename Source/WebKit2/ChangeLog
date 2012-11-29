@@ -1,3 +1,19 @@
+2012-11-28  Ryuan Choi  <ryuan.choi@gmail.com>
+
+        [EFL] Generate big_button_theme.edj
+        https://bugs.webkit.org/show_bug.cgi?id=103511
+
+        Reviewed by Gyuyoung Kim.
+
+        * UIProcess/API/efl/tests/UnitTestUtils/EWK2UnitTestEnvironment.cpp:
+        (EWK2UnitTest::EWK2UnitTestEnvironment::pathForTheme):
+        (EWK2UnitTest):
+        * UIProcess/API/efl/tests/UnitTestUtils/EWK2UnitTestEnvironment.h:
+        (EWK2UnitTestEnvironment):
+        * UIProcess/API/efl/tests/resources/big_button_theme.edj: Removed.
+        * UIProcess/API/efl/tests/test_ewk2_view.cpp: Modified to use generated big_button_theme.edj
+        (TEST_F):
+
 2012-11-28  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r135973.

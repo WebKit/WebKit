@@ -113,7 +113,11 @@
                }
                rel2 {
                   relative: 1.0 1.0;
+#ifdef BIG_BUTTON_THEME_FOR_TESTING
+                  offset: -285 -11;
+#else
                   offset: -16 -11;
+#endif
                }
             }
          }

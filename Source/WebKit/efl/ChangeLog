@@ -1,5 +1,20 @@
 2012-11-28  Ryuan Choi  <ryuan.choi@gmail.com>
 
+        [EFL] Generate big_button_theme.edj
+        https://bugs.webkit.org/show_bug.cgi?id=103511
+
+        Reviewed by Gyuyoung Kim.
+
+        big_button_theme.edj, binary file which is used for test, should be generated.
+
+        * DefaultTheme/CMakeLists.txt:
+        Introduced macro and new target to share files of default theme instead
+        of adding many files for big_button_theme.
+        * DefaultTheme/widget/button/button.edc:
+        Implemented for big_button_theme.
+
+2012-11-28  Ryuan Choi  <ryuan.choi@gmail.com>
+
         [EFL] Refactor theme to choose whether to support foreground color of selection
         https://bugs.webkit.org/show_bug.cgi?id=102037
 

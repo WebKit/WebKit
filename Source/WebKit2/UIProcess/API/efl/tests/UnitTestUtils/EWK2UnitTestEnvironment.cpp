@@ -60,4 +60,12 @@ CString EWK2UnitTestEnvironment::pathForResource(const char* resource)
     return builder.toString().utf8();
 }
 
+CString EWK2UnitTestEnvironment::pathForTheme(const char* theme)
+{
+    StringBuilder builder;
+    builder.appendLiteral(TEST_THEME_DIR "/");
+    builder.append(theme);
+    return builder.toString().utf8();
+}
+
 } // namespace EWK2UnitTest
