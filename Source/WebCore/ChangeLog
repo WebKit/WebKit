@@ -1,3 +1,47 @@
+2012-11-28  Hajime Morrita  <morrita@google.com>
+
+        checkAcceptChild() needs fewer virtual calls
+        https://bugs.webkit.org/show_bug.cgi?id=103372
+
+        Reviewed by Ojan Vafai.
+
+        This change reorganizes checkAcceptChild family for speed.
+
+        - Made Node::checkAddChild and Node::checkReplaceChild() static inline functions
+          in ContainerNode.cpp. checkAcceptChild() was also moved to the same file. This allows us
+          more aggressive inlining.
+
+        - Added a fast path in checkAcceptChild(), where we can assume that the parent is element
+          and the new child is element or text. Under this assumption, we need no extra type checks
+          and just needs a cycle prevention through Node::contains(). This is faster than current generic version.
+
+        - Moved extra checks from checkAddChild() and checkReplaceChild() to
+          checkAcceptChild(). This allows the fast path skips even these extra checks.
+
+        - Node::canReplaceChild() is devirtualized. Since the only override is on
+          Document, we can check isDocumentNode() to call it directly.
+
+        - The default implemenation of Node::canReplaceChild() just calls isChildTypeAllowed().
+          That is what an extra check for checkAddChild() did. So we can share these code path in checkAcceptChild().
+
+        This gains 2-3% win on Dromaeo dom-modify.html.
+
+        No new tests, covered by existing tests.
+
+        * dom/ContainerNode.cpp:
+        (WebCore::isChildTypeAllowed): Moved from Node.cpp
+        (WebCore::checkAcceptChild): Moved from Node.cpp, Added a fast path.
+        (WebCore::checkAddChild): Moved from Node.cpp
+        (WebCore::checkReplaceChild): Moved from Node.cpp
+        (WebCore::ContainerNode::insertBefore): Followed the signature change.
+        (WebCore::ContainerNode::replaceChild): Followed the signature change, moved null check from checkReplaceChild to here.
+        (WebCore::ContainerNode::appendChild): Followed the signature change.
+        * dom/Document.h:
+        (Document):
+        * dom/Node.cpp:
+        * dom/Node.h:
+        (WebCore::Node::isDocumentTypeNode): Added for better readability of call sites.
+
 2012-11-28  Kenichi Ishibashi  <bashi@chromium.org>
 
         StyleResolver should not set NaN to font size

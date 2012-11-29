@@ -456,6 +456,7 @@ public:
     }
 
     bool isReadOnlyNode() const { return nodeType() == ENTITY_REFERENCE_NODE; }
+    bool isDocumentTypeNode() const { return nodeType() == DOCUMENT_TYPE_NODE; }
     virtual bool childTypeAllowed(NodeType) const { return false; }
     unsigned childNodeCount() const;
     Node* childNode(unsigned index) const;
@@ -489,13 +490,6 @@ public:
     bool contains(const Node*) const;
     bool containsIncludingShadowDOM(Node*);
 
-    // This method is used to do strict error-checking when adding children via
-    // the public DOM API (e.g., appendChild()).
-    void checkAddChild(Node* newChild, ExceptionCode&); // Error-checking when adding via the DOM API
-
-    void checkReplaceChild(Node* newChild, Node* oldChild, ExceptionCode&);
-    virtual bool canReplaceChild(Node* newChild, Node* oldChild);
-    
     // Used to determine whether range offsets use characters or node indices.
     virtual bool offsetInCharacters() const;
     // Number of DOM 16-bit units contained in node. Note that rendered text length can be different - e.g. because of
