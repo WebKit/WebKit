@@ -49,7 +49,7 @@ WebInspector.LinkifierFormatter.prototype = {
  */
 WebInspector.Linkifier = function(formatter)
 {
-    this._formatter = formatter || new WebInspector.Linkifier.DefaultFormatter();
+    this._formatter = formatter || new WebInspector.Linkifier.DefaultFormatter(WebInspector.Linkifier.MaxLengthForDisplayedURLs);
     this._liveLocations = [];
 }
 
@@ -174,3 +174,10 @@ WebInspector.Linkifier.DefaultCSSFormatter.prototype = {
     },
     __proto__: WebInspector.Linkifier.DefaultFormatter.prototype
 }
+
+/**
+ * The maximum number of characters to display in a URL.
+ * @const
+ * @type {number}
+ */
+WebInspector.Linkifier.MaxLengthForDisplayedURLs = 150;

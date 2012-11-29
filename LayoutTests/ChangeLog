@@ -1,3 +1,16 @@
+2012-11-28  Mike West  <mkwst@chromium.org>
+
+        Web Inspector: Console message's anchor element should be trimmed for readability.
+        https://bugs.webkit.org/show_bug.cgi?id=100095
+
+        Reviewed by Pavel Feldman.
+
+        * http/tests/inspector/network/resources/script-as-text-with-a-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-long-url.php: Added.
+        * http/tests/inspector/network/script-as-text-loading-long-url-expected.txt: Added.
+        * http/tests/inspector/network/script-as-text-loading-long-url.html: Added.
+        * platform/chromium/http/tests/inspector/network/script-as-text-loading-long-url-expected.txt: Added.
+            JSC vs V8.
+
 012-11-28  Alexander Pavlov  <apavlov@chromium.org>
 
         [Chromium] Unreviewed, rebaseline CSS regions test expectations for Mac 10.8 after r136045.

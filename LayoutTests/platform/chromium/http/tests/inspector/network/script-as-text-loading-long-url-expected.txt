@@ -1,0 +1,5 @@
+Tests that long URLs are correctly trimmed in anchor links.
+
+Bug 100095
+Resource interpreted as Script but transferred with MIME type text/plain: "http://127.0.0.1:8000/inspector/network/resources/script-as-text-with-a-ver…y-very-very-very-very-very-very-very-very-very-very-very-very-long-url.php". script-as-text-loading-long-url.html:10
+
