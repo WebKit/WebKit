@@ -690,7 +690,6 @@ SOURCES += \
     html/TextFieldInputType.cpp \
     html/TextInputType.cpp \
     html/TimeInputType.cpp \
-    html/TypeAhead.cpp \
     html/URLInputType.cpp \
     html/ValidationMessage.cpp \
     html/ValidityState.cpp \
@@ -1845,7 +1844,6 @@ HEADERS += \
     html/StepRange.h \
     html/TextDocument.h \
     html/TimeRanges.h \
-    html/TypeAhead.h \
     html/ValidityState.h \
     html/parser/CSSPreloadScanner.h \
     html/parser/HTMLConstructionSite.h \

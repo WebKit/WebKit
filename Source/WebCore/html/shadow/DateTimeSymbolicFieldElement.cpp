@@ -55,7 +55,6 @@ DateTimeSymbolicFieldElement::DateTimeSymbolicFieldElement(Document* document, F
     , m_symbols(symbols)
     , m_visibleEmptyValue(makeVisibleEmptyValue(symbols))
     , m_selectedIndex(-1)
-    , m_typeAhead(this)
 {
     ASSERT(!symbols.isEmpty());
     setHasCustomCallbacks();
@@ -83,11 +82,12 @@ void DateTimeSymbolicFieldElement::handleKeyboardEvent(KeyboardEvent* keyboardEv
         return;
 
     keyboardEvent->setDefaultHandled();
-
-    int index = m_typeAhead.handleEvent(keyboardEvent, TypeAhead::MatchPrefix | TypeAhead::CycleFirstChar | TypeAhead::MatchIndex);
-    if (index < 0)
-        return;
-    setValueAsInteger(index, DispatchEvent);
+    for (unsigned index = 0; index < m_symbols.size(); ++index) {
+        if (!m_symbols[index].isEmpty() && WTF::Unicode::toLower(m_symbols[index][0]) == charCode) {
+            setValueAsInteger(index, DispatchEvent);
+            return;
+        }
+    }
 }
 
 bool DateTimeSymbolicFieldElement::hasValue() const
@@ -148,21 +148,6 @@ String DateTimeSymbolicFieldElement::visibleEmptyValue() const
 String DateTimeSymbolicFieldElement::visibleValue() const
 {
     return hasValue() ? m_symbols[m_selectedIndex] : visibleEmptyValue();
-}
-
-int DateTimeSymbolicFieldElement::indexOfSelectedOption() const
-{
-    return m_selectedIndex;
-}
-
-int DateTimeSymbolicFieldElement::optionCount() const
-{
-    return m_symbols.size();
-}
-
-String DateTimeSymbolicFieldElement::optionAtIndex(int index) const
-{
-    return m_symbols[index];
 }
 
 } // namespace WebCore

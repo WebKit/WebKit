@@ -28,13 +28,12 @@
 
 #if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
 #include "DateTimeFieldElement.h"
-#include "TypeAhead.h"
 
 namespace WebCore {
 
 // DateTimeSymbolicFieldElement represents non-numeric field of data time
 // format, such as: AM/PM, and month.
-class DateTimeSymbolicFieldElement : public DateTimeFieldElement, public TypeAheadDataSource {
+class DateTimeSymbolicFieldElement : public DateTimeFieldElement {
     WTF_MAKE_NONCOPYABLE(DateTimeSymbolicFieldElement);
 
 protected:
@@ -60,18 +59,12 @@ private:
     virtual String value() const OVERRIDE FINAL;
     virtual String visibleValue() const OVERRIDE FINAL;
 
-    // TypeAheadDataSource functions.
-    virtual int indexOfSelectedOption() const OVERRIDE;
-    virtual int optionCount() const OVERRIDE;
-    virtual String optionAtIndex(int index) const OVERRIDE;
-
     const Vector<String> m_symbols;
 
     // We use AtomicString to share visible empty value among multiple
     // DateTimeEditElements in the page.
     const AtomicString m_visibleEmptyValue;
     int m_selectedIndex;
-    TypeAhead m_typeAhead;
 };
 
 } // namespace WebCore

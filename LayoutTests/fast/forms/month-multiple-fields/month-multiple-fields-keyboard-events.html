@@ -171,40 +171,6 @@ keyDown('rightArrow');
 keyDown('2');
 shouldBeEqualToString('input.value', '0002-12');
 
-beginTest('Typeahead cycle first character', '2012-09');
-keyDown('j'); //          -> [Jan] 2012
-shouldBeEqualToString('input.value', '2012-01');
-keyDown('j'); //          -> [Jun] 2012
-shouldBeEqualToString('input.value', '2012-06');
-keyDown('j'); //          -> [Jul] 2012
-shouldBeEqualToString('input.value', '2012-07');
-keyDown('j'); //          -> [Jan] 2012
-shouldBeEqualToString('input.value', '2012-01');
-keyDown('x'); //          -> [Jan] 2012
-shouldBeEqualToString('input.value', '2012-01');
-
-beginTest('Typeahead prefix match', '2012-09');
-keyDown('m'); //          -> [Mar] 2012
-shouldBeEqualToString('input.value', '2012-03');
-keyDown('a'); //          -> [Mar] 2012
-shouldBeEqualToString('input.value', '2012-03');
-keyDown('y'); //          -> [May] 2012
-shouldBeEqualToString('input.value', '2012-05');
-keyDown('x'); //          -> [May] 2012
-shouldBeEqualToString('input.value', '2012-05');
-
-beginTest('Typeahead index match', '2012-09');
-keyDown('1'); //          -> [Jan] 2012
-shouldBeEqualToString('input.value', '2012-01');
-keyDown('2'); //          -> [Dec] 2012
-shouldBeEqualToString('input.value', '2012-12');
-keyDown('x'); //          -> [Dec] 2012
-shouldBeEqualToString('input.value', '2012-12');
-
-beginTest('Typeahead should search from current selection', '2012-01');
-keyDown('j'); //          -> [Jun] 2012
-shouldBeEqualToString('input.value', '2012-06');
-
 // The tests in the following block fail on platforms without the
 // lang-attribute-aware-form-control-UI feature.
 input.setAttribute("lang", "he-il");

@@ -63989,14 +63989,6 @@
 				RelativePath="..\html\TimeRanges.h"
 				>
 			</File>
-  		<File
-  			RelativePath="..\html\TypeAhead.cpp"
-  			>
-  		</File>
-  		<File
-  			RelativePath="..\html\TypeAhead.h"
-  			>
-  		</File>
 			<File
 				RelativePath="..\html\URLInputType.cpp"
 				>

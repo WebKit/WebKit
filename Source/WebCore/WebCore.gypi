@@ -4265,8 +4265,6 @@
             'html/ValidityState.h',
             'html/WeekInputType.cpp',
             'html/WeekInputType.h',
-            'html/TypeAhead.cpp',
-            'html/TypeAhead.h',
             'html/canvas/CanvasContextAttributes.cpp',
             'html/canvas/CanvasContextAttributes.h',
             'html/canvas/CanvasGradient.cpp',
