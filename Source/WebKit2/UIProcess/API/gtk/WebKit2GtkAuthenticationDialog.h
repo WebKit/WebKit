@@ -17,22 +17,32 @@
  * Boston, MA 02110-1301, USA.
  */
 
+#ifndef WebKit2GtkAuthenticationDialog_h
+#define WebKit2GtkAuthenticationDialog_h
+
 #include "AuthenticationChallengeProxy.h"
 #include "WKRetainPtr.h"
+#include "WebKitWebViewBase.h"
 #include <WebCore/Credential.h>
 #include <WebCore/GtkAuthenticationDialog.h>
+#include <wtf/gobject/GRefPtr.h>
 
 namespace WebKit {
 
 class WebKit2GtkAuthenticationDialog : public WebCore::GtkAuthenticationDialog {
 public:
     WebKit2GtkAuthenticationDialog(AuthenticationChallengeProxy*);
+    virtual ~WebKit2GtkAuthenticationDialog() { }
+    GtkWidget* widget() { return m_dialog; }
 
 protected:
     virtual void authenticate(const WebCore::Credential&);
 
 private:
     RefPtr<AuthenticationChallengeProxy> m_authenticationChallenge;
+    GRefPtr<GtkStyleContext> m_styleContext;
 };
 
 } // namespace WebKit
+
+#endif // WebKit2GtkAuthenticationDialog_h

@@ -1261,6 +1261,7 @@ static void webkitWebViewEmitLoadChanged(WebKitWebView* webView, WebKitLoadEvent
     if (loadEvent == WEBKIT_LOAD_STARTED) {
         webkitWebViewSetIsLoading(webView, true);
         webkitWebViewWatchForChangesInFavicon(webView);
+        webkitWebViewBaseCancelAuthenticationDialog(WEBKIT_WEB_VIEW_BASE(webView));
     } else if (loadEvent == WEBKIT_LOAD_FINISHED) {
         webkitWebViewSetIsLoading(webView, false);
         webView->priv->waitingForMainResource = false;
@@ -1607,6 +1608,13 @@ void webkitWebViewPopulateContextMenu(WebKitWebView* webView, ImmutableArray* pr
 void webkitWebViewSubmitFormRequest(WebKitWebView* webView, WebKitFormSubmissionRequest* request)
 {
     g_signal_emit(webView, signals[SUBMIT_FORM], 0, request);
+}
+
+void webkitWebViewHandleAuthenticationChallenge(WebKitWebView* webView, AuthenticationChallengeProxy* authenticationChallenge)
+{
+    WebKit2GtkAuthenticationDialog* dialog = new WebKit2GtkAuthenticationDialog(authenticationChallenge);
+    webkitWebViewBaseAddAuthenticationDialog(WEBKIT_WEB_VIEW_BASE(webView), dialog);
+    dialog->show();
 }
 
 /**

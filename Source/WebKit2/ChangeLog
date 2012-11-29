@@ -1,3 +1,63 @@
+2012-11-29  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] [WebKit2] Embed the HTTP authentication dialog into the WebView
+        https://bugs.webkit.org/show_bug.cgi?id=103277
+
+        Reviewed by Carlos Garcia Campos.
+
+        Embed the WebKit2 HTTP authentication dialog into the WebView. Add the dialog as a child
+        of the WebKitWebViewBase container (like the web inspector).
+
+        We do not yet properly handle pages that require authentication for more than one resource.
+        As that is an uncommon situation, it will be handled in another patch.
+
+        * UIProcess/API/gtk/WebKit2GtkAuthenticationDialog.cpp:
+        (WebKit::drawSignal): We have to override the draw signal of the dialog to draw
+        a GtkWindow background on the widget. This is required because the widget doesn't
+        have a real GtkWindow to draw its background.
+        (WebKit::loadChangedSignal): When a new load starts in the WebView destroy the dialog. This
+        is so that the dialog doesn't stick around when the user chooses to navigate away from the
+        page requiring authentication.
+        (WebKit::WebKit2GtkAuthenticationDialog::WebKit2GtkAuthenticationDialog): Create an eventbox
+        and frame to hold the dialog contents. Also append the 'background' widget class to the
+        event box, so that it can draw a GtkWindow background in the draw signal handler.
+        (WebKit::WebKit2GtkAuthenticationDialog::~WebKit2GtkAuthenticationDialog): Disconnect the
+        load status changed signal handler.
+        (WebKit::WebKit2GtkAuthenticationDialog::show): When it's time to show the dialog, add it to
+        WebKitWebViewBase.
+        * UIProcess/API/gtk/WebKit2GtkAuthenticationDialog.h: Add some new methods for handling the
+        embedded dialog.
+        * UIProcess/API/gtk/WebKitLoaderClient.cpp:
+        (didReceiveAuthenticationChallengeInFrame): Collapse the creation of the dialog into one line.
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (_WebKitWebViewBasePrivate): Add the dialog as a property of the private structure.
+        (webkitWebViewChildIsInternalWidget): Added this helper used for determining when a child widget
+        is "internal" (ie the web inspector or the authentication dialog).
+        (webkitWebViewBaseContainerAdd): Only add non-internal widgets to the children map.
+        (webkitWebViewBaseAddAuthenticationDialog): Added.
+        (webkitWebViewBaseAddWebInspector): Added this more-foolproof method of adding a web inspector
+        to the WebView. This also aligns it with the way the authentication dialog is added.
+        (webkitWebViewBaseContainerRemove): When removing the authentication dialog, zero out the
+        field in the private structure.
+        (webkitWebViewBaseContainerForall): Add support for the authentication dialog here too.
+        (webkitWebViewBaseChildMoveResize): Don't pass on move_resize events to internal children.
+        (webkit_web_view_base_init): Zero out the authentication dialog member on init.
+        (webkitWebViewBaseDraw): If the authentication dialog is active, draw a shadow over web content.
+        (resizeWebKitWebViewBaseFromAllocation): Make the authentication dialog centered in the view.
+        (webkitWebViewBaseKeyPressEvent): Pass on key events to the authentication dialog if active.
+        (webkitWebViewBaseButtonPressEvent): If the authentication dialog is active don't pass button events
+        to web content.
+        (webkitWebViewBaseButtonReleaseEvent):  Ditto.
+        (webkitWebViewBaseScrollEvent): Ditto.
+        (webkitWebViewBaseMotionNotifyEvent): Ditto.
+        (webkitWebViewBaseFocus): Pass on focus events to the authentication dialog so that tabbing between
+        elements in the dialog works correctly.
+        (webkit_web_view_base_class_init): Hook up the focus event.
+        * UIProcess/API/gtk/WebKitWebViewBasePrivate.h: Add new methods for adding the authentication dialog
+        and the web inspector.
+        * UIProcess/gtk/WebInspectorProxyGtk.cpp:
+        (WebKit::WebInspectorProxy::createInspectorWindow): Use the new method for adding the web inspector.
+
 2012-11-29  Andrei Bucur  <abucur@adobe.com>
 
         Fix the build after r136095

@@ -28,34 +28,16 @@
 
 namespace WebCore {
 
-#ifdef GTK_API_VERSION_2
-static GtkWidget* addEntryToTable(GtkTable* table, int row, const char* labelText)
-#else
-static GtkWidget* addEntryToGrid(GtkGrid* grid, int row, const char* labelText)
-#endif
-{
-    GtkWidget* label = gtk_label_new(labelText);
-    gtk_misc_set_alignment(GTK_MISC(label), 0.0, 0.5);
+static const int gLayoutColumnSpacing = 12;
+static const int gLayoutRowSpacing = 6;
+static const int gButtonSpacing = 5;
 
-    GtkWidget* entry = gtk_entry_new();
-    gtk_entry_set_activates_default(GTK_ENTRY(entry), TRUE);
-
-#ifdef GTK_API_VERSION_2
-    gtk_table_attach(table, label, 0, 1, row, row + 1, GTK_FILL, static_cast<GtkAttachOptions>(GTK_EXPAND | GTK_FILL), 0, 0);
-    gtk_table_attach_defaults(table, entry, 1, 2, row, row + 1);
-#else
-    gtk_grid_attach(grid, label, 0, row, 1, 1);
-    gtk_widget_set_hexpand(label, TRUE);
-
-    gtk_grid_attach(grid, entry, 1, row, 1, 1);
-    gtk_widget_set_hexpand(entry, TRUE);
-    gtk_widget_set_vexpand(entry, TRUE);
-#endif
-
-    return entry;
-}
-
-GtkAuthenticationDialog::~GtkAuthenticationDialog()
+GtkAuthenticationDialog::GtkAuthenticationDialog(const AuthenticationChallenge& challenge)
+    : m_dialog(0)
+    , m_loginEntry(0)
+    , m_passwordEntry(0)
+    , m_rememberCheckButton(0)
+    , m_challenge(challenge)
 {
 }
 
@@ -66,135 +48,183 @@ GtkAuthenticationDialog::GtkAuthenticationDialog(GtkWindow* parentWindow, const 
     , m_rememberCheckButton(0)
     , m_challenge(challenge)
 {
-    GtkDialog* dialog = GTK_DIALOG(m_dialog);
-    gtk_dialog_add_buttons(dialog, GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OK, GTK_RESPONSE_OK, NULL);
-
-    // Set the dialog up with HIG properties.
-    gtk_container_set_border_width(GTK_CONTAINER(dialog), 5);
-    gtk_box_set_spacing(GTK_BOX(gtk_dialog_get_content_area(dialog)), 2); /* 2 * 5 + 2 = 12 */
-    gtk_container_set_border_width(GTK_CONTAINER(gtk_dialog_get_action_area(dialog)), 5);
-    gtk_box_set_spacing(GTK_BOX(gtk_dialog_get_action_area(dialog)), 6);
+    GtkWidget* contentArea = gtk_dialog_get_content_area(GTK_DIALOG(m_dialog));
+    gtk_container_set_border_width(GTK_CONTAINER(GTK_DIALOG(m_dialog)), 5);
+    gtk_box_set_spacing(GTK_BOX(contentArea), 2); /* 2 * 5 + 2 = 12 */
 
     GtkWindow* window = GTK_WINDOW(m_dialog);
     gtk_window_set_resizable(window, FALSE);
     gtk_window_set_title(window, "");
     gtk_window_set_icon_name(window, GTK_STOCK_DIALOG_AUTHENTICATION);
 
-    gtk_dialog_set_default_response(dialog, GTK_RESPONSE_OK);
-
     if (parentWindow)
         gtk_window_set_transient_for(window, parentWindow);
 
-    // Build contents.
-#ifdef GTK_API_VERSION_2
-    GtkWidget* hBox = gtk_hbox_new(FALSE, 12);
-#else
-    GtkWidget* hBox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 12);
-#endif
-    gtk_container_set_border_width(GTK_CONTAINER(hBox), 5);
-    gtk_box_pack_start(GTK_BOX(gtk_dialog_get_content_area(dialog)), hBox, TRUE, TRUE, 0);
-
-    GtkWidget* icon = gtk_image_new_from_stock(GTK_STOCK_DIALOG_AUTHENTICATION, GTK_ICON_SIZE_DIALOG);
-    gtk_misc_set_alignment(GTK_MISC(icon), 0.5, 0.0);
-    gtk_box_pack_start(GTK_BOX(hBox), icon, FALSE, FALSE, 0);
+    createContentsInContainer(contentArea);
+}
 
 #ifdef GTK_API_VERSION_2
-    GtkWidget* mainVBox = gtk_vbox_new(FALSE, 18);
-#else
-    GtkWidget* mainVBox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 18);
-#endif
-    gtk_box_pack_start(GTK_BOX(hBox), mainVBox, TRUE, TRUE, 0);
+static void packTwoColumnLayoutInBox(GtkWidget* box, ...)
+{
+    va_list argumentList;
+    va_start(argumentList, box);
 
-    GOwnPtr<char> description(g_strdup_printf(_("A username and password are being requested by the site %s"),
-        m_challenge.protectionSpace().host().utf8().data()));
-    GtkWidget* descriptionLabel = gtk_label_new(description.get());
-    gtk_misc_set_alignment(GTK_MISC(descriptionLabel), 0.0, 0.5);
-    gtk_label_set_line_wrap(GTK_LABEL(descriptionLabel), TRUE);
-    gtk_box_pack_start(GTK_BOX(mainVBox), GTK_WIDGET(descriptionLabel), FALSE, FALSE, 0);
+    GtkWidget* table = gtk_table_new(1, 2, FALSE);
+    gtk_table_set_col_spacings(GTK_TABLE(table), gLayoutColumnSpacing);
+    gtk_table_set_row_spacings(GTK_TABLE(table), gLayoutRowSpacing);
 
-#ifdef GTK_API_VERSION_2
-    GtkWidget* vBox = gtk_vbox_new(FALSE, 6);
-#else
-    GtkWidget* vBox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 6);
-#endif
-    gtk_box_pack_start(GTK_BOX(mainVBox), vBox, FALSE, FALSE, 0);
+    GtkWidget* firstColumnWidget = va_arg(argumentList, GtkWidget*);
+    int rowNumber = 0;
+    while (firstColumnWidget) {
+        if (rowNumber)
+            gtk_table_resize(GTK_TABLE(table), rowNumber + 1, 2);
 
-    // The table that holds the entries.
-    GtkWidget* entryContainer = gtk_alignment_new(0.0, 0.0, 1.0, 1.0);
-    gtk_alignment_set_padding(GTK_ALIGNMENT(entryContainer), 0, 0, 0, 0);
-    gtk_box_pack_start(GTK_BOX(vBox), entryContainer, FALSE, FALSE, 0);
+        GtkWidget* secondColumnWidget = va_arg(argumentList, GtkWidget*);
+        GtkAttachOptions attachOptions = static_cast<GtkAttachOptions>(GTK_EXPAND | GTK_FILL);
+        gtk_table_attach(GTK_TABLE(table), firstColumnWidget,
+            0, secondColumnWidget ? 1 : 2,
+            rowNumber, rowNumber + 1,
+            attachOptions, attachOptions,
+            0, 0);
 
-    // Checking that realm is not an empty string.
-    String realm = m_challenge.protectionSpace().realm();
-    bool hasRealm = !realm.isEmpty();
+        if (secondColumnWidget)
+            gtk_table_attach_defaults(GTK_TABLE(table), secondColumnWidget, 1, 2, rowNumber, rowNumber + 1);
 
-#ifdef GTK_API_VERSION_2
-    GtkWidget* table = gtk_table_new(hasRealm ? 3 : 2, 2, FALSE);
-    gtk_table_set_col_spacings(GTK_TABLE(table), 12);
-    gtk_table_set_row_spacings(GTK_TABLE(table), 6);
-    gtk_container_add(GTK_CONTAINER(entryContainer), table);
-#else
-    GtkWidget* grid = gtk_grid_new();
-    gtk_grid_set_column_spacing(GTK_GRID(grid), 12);
-    gtk_grid_set_row_spacing(GTK_GRID(grid), 6);
-    gtk_container_add(GTK_CONTAINER(entryContainer), grid);
-#endif
-
-    if (hasRealm) {
-        GtkWidget* serverMessageDescriptionLabel = gtk_label_new(_("Server message:"));
-        gtk_misc_set_alignment(GTK_MISC(serverMessageDescriptionLabel), 0.0, 0.5);
-        gtk_label_set_line_wrap(GTK_LABEL(serverMessageDescriptionLabel), TRUE);
-#ifdef GTK_API_VERSION_2
-        gtk_table_attach_defaults(GTK_TABLE(table), serverMessageDescriptionLabel, 0, 1, 0, 1);
-#else
-        gtk_grid_attach(GTK_GRID(grid), serverMessageDescriptionLabel, 0, 0, 1, 1);
-        gtk_widget_set_hexpand(serverMessageDescriptionLabel, TRUE);
-        gtk_widget_set_vexpand(serverMessageDescriptionLabel, TRUE);
-#endif
-        GtkWidget* serverMessageLabel = gtk_label_new(realm.utf8().data());
-        gtk_misc_set_alignment(GTK_MISC(serverMessageLabel), 0.0, 0.5);
-        gtk_label_set_line_wrap(GTK_LABEL(serverMessageLabel), TRUE);
-#ifdef GTK_API_VERSION_2
-        gtk_table_attach_defaults(GTK_TABLE(table), serverMessageLabel, 1, 2, 0, 1);
-#else
-        gtk_grid_attach(GTK_GRID(grid), serverMessageLabel, 1, 0, 1, 1);
-        gtk_widget_set_hexpand(serverMessageLabel, TRUE);
-        gtk_widget_set_vexpand(serverMessageLabel, TRUE);
-#endif
+        firstColumnWidget = va_arg(argumentList, GtkWidget*);
+        rowNumber++;
     }
 
-#ifdef GTK_API_VERSION_2
-    m_loginEntry = addEntryToTable(GTK_TABLE(table), hasRealm ? 1 : 0, _("Username:"));
-    m_passwordEntry = addEntryToTable(GTK_TABLE(table), hasRealm ? 2 : 1, _("Password:"));
+    va_end(argumentList);
+
+    gtk_box_pack_start(GTK_BOX(box), table, FALSE, FALSE, 0);
+}
 #else
-    m_loginEntry = addEntryToGrid(GTK_GRID(grid), hasRealm ? 1 : 0, _("Username:"));
-    m_passwordEntry = addEntryToGrid(GTK_GRID(grid), hasRealm ? 2 : 1, _("Password:"));
+static void packTwoColumnLayoutInBox(GtkWidget* box, ...)
+{
+    va_list argumentList;
+    va_start(argumentList, box);
+
+    GtkWidget* grid = gtk_grid_new();
+    gtk_grid_set_column_spacing(GTK_GRID(grid), gLayoutRowSpacing);
+    gtk_grid_set_row_spacing(GTK_GRID(grid), gLayoutRowSpacing);
+    gtk_grid_set_column_homogeneous(GTK_GRID(grid), TRUE);
+
+    GtkWidget* firstColumnWidget = va_arg(argumentList, GtkWidget*);
+    int rowNumber = 0;
+    while (firstColumnWidget) {
+        GtkWidget* secondColumnWidget = va_arg(argumentList, GtkWidget*);
+        int firstWidgetWidth = secondColumnWidget ? 1 : 2;
+
+        gtk_grid_attach(GTK_GRID(grid), firstColumnWidget, 0, rowNumber, firstWidgetWidth, 1);
+        gtk_widget_set_hexpand(firstColumnWidget, TRUE);
+        gtk_widget_set_vexpand(firstColumnWidget, TRUE);
+
+        if (secondColumnWidget) {
+            gtk_grid_attach(GTK_GRID(grid), secondColumnWidget, 1, rowNumber, 1, 1);
+            gtk_widget_set_hexpand(secondColumnWidget, TRUE);
+            gtk_widget_set_vexpand(secondColumnWidget, TRUE);
+        }
+
+        firstColumnWidget = va_arg(argumentList, GtkWidget*);
+        rowNumber++;
+    }
+
+    va_end(argumentList);
+
+    gtk_box_pack_start(GTK_BOX(box), grid, FALSE, FALSE, 0);
+}
 #endif
 
-    gtk_entry_set_visibility(GTK_ENTRY(m_passwordEntry), FALSE);
+static GtkWidget* createDialogLabel(const char* labelString, int horizontalPadding = 0)
+{
+    GtkWidget* label = gtk_label_new(labelString);
+    gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
+    if (horizontalPadding)
+        gtk_misc_set_padding(GTK_MISC(label), 0, horizontalPadding);
+    return label;
+}
 
+static GtkWidget* createDialogEntry(GtkWidget** member)
+{
+    *member = gtk_entry_new();
+    gtk_entry_set_activates_default(GTK_ENTRY(*member), TRUE);
+    return *member;
+}
+
+void GtkAuthenticationDialog::createContentsInContainer(GtkWidget* container)
+{
 #ifdef GTK_API_VERSION_2
-    GtkWidget* rememberBox = gtk_vbox_new(FALSE, 6);
+    GtkWidget* hBox = gtk_hbox_new(FALSE, gLayoutColumnSpacing);
 #else
-    GtkWidget* rememberBox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 6);
+    GtkWidget* hBox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, gLayoutColumnSpacing);
 #endif
-    gtk_box_pack_start(GTK_BOX(vBox), rememberBox, FALSE, FALSE, 0);
+    gtk_container_set_border_width(GTK_CONTAINER(hBox), gButtonSpacing);
+    gtk_container_add(GTK_CONTAINER(container), hBox);
+
+    GtkWidget* icon = gtk_image_new_from_stock(GTK_STOCK_DIALOG_AUTHENTICATION, GTK_ICON_SIZE_DIALOG);
+    gtk_misc_set_alignment(GTK_MISC(icon), 0.5, 0);
+    gtk_box_pack_start(GTK_BOX(hBox), icon, FALSE, FALSE, 0);
+
+    GOwnPtr<char> prompt(g_strdup_printf(
+        _("The site %s:%i requests a username and password"),
+        m_challenge.protectionSpace().host().utf8().data(),
+        m_challenge.protectionSpace().port()));
 
     m_rememberCheckButton = gtk_check_button_new_with_mnemonic(_("_Remember password"));
     gtk_label_set_line_wrap(GTK_LABEL(gtk_bin_get_child(GTK_BIN(m_rememberCheckButton))), TRUE);
-    gtk_box_pack_start(GTK_BOX(rememberBox), m_rememberCheckButton, FALSE, FALSE, 0);
-}
 
-void GtkAuthenticationDialog::show()
-{
+
+    // We are adding the button box here manually instead of using the ready-made GtkDialog buttons.
+    // This is so that we can share the code with implementations that do not use GtkDialog.
+#ifdef GTK_API_VERSION_2
+    GtkWidget* buttonBox = gtk_hbutton_box_new();
+#else
+    GtkWidget* buttonBox = gtk_button_box_new(GTK_ORIENTATION_HORIZONTAL);
+#endif
+    gtk_box_set_spacing(GTK_BOX(buttonBox), gButtonSpacing);
+    gtk_button_box_set_layout(GTK_BUTTON_BOX(buttonBox), GTK_BUTTONBOX_END);
+
+    m_okayButton = gtk_button_new_from_stock(GTK_STOCK_OK);
+    m_cancelButton = gtk_button_new_from_stock(GTK_STOCK_CANCEL);
+    gtk_box_pack_start(GTK_BOX(buttonBox), m_cancelButton, FALSE, TRUE, 0);
+    gtk_box_pack_start(GTK_BOX(buttonBox), m_okayButton, FALSE, TRUE, 0);
+    g_signal_connect(m_okayButton, "clicked", G_CALLBACK(buttonClickedCallback), this);
+    g_signal_connect(m_cancelButton, "clicked", G_CALLBACK(buttonClickedCallback), this);
+
+    String realm = m_challenge.protectionSpace().realm();
+    if (!realm.isEmpty()) {
+        packTwoColumnLayoutInBox(hBox,
+            createDialogLabel(prompt.get(), gLayoutRowSpacing), NULL,
+            createDialogLabel(_("Server message:")), createDialogLabel(realm.utf8().data()),
+            createDialogLabel(_("Username:")), createDialogEntry(&m_loginEntry),
+            createDialogLabel(_("Password:")), createDialogEntry(&m_passwordEntry),
+            m_rememberCheckButton, NULL,
+            buttonBox, NULL, NULL);
+
+    } else {
+        packTwoColumnLayoutInBox(hBox,
+            createDialogLabel(prompt.get(), gLayoutRowSpacing), NULL,
+            createDialogLabel(_("Username:")), createDialogEntry(&m_loginEntry),
+            createDialogLabel(_("Password:")), createDialogEntry(&m_passwordEntry),
+            m_rememberCheckButton, NULL, NULL,
+            buttonBox, NULL, NULL);
+    }
+
+    gtk_entry_set_visibility(GTK_ENTRY(m_passwordEntry), FALSE);
     const Credential& credentialFromPersistentStorage = m_challenge.proposedCredential();
     if (!credentialFromPersistentStorage.isEmpty()) {
         gtk_entry_set_text(GTK_ENTRY(m_loginEntry), credentialFromPersistentStorage.user().utf8().data());
         gtk_entry_set_text(GTK_ENTRY(m_passwordEntry), credentialFromPersistentStorage.password().utf8().data());
         gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(m_rememberCheckButton), TRUE);
     }
+}
 
-    g_signal_connect(m_dialog, "response", G_CALLBACK(authenticationDialogResponseCallback), this);
+void GtkAuthenticationDialog::show()
+{
+    gtk_widget_set_can_default(m_okayButton, TRUE);
+    gtk_widget_grab_default(m_okayButton);
+    gtk_widget_grab_focus(m_loginEntry);
+
     gtk_widget_show_all(m_dialog);
 }
 
@@ -212,10 +242,10 @@ void GtkAuthenticationDialog::authenticate(const Credential& credential)
         m_challenge.authenticationClient()->receivedCredential(m_challenge, credential);
 }
 
-void GtkAuthenticationDialog::authenticationDialogResponseCallback(GtkWidget*, gint responseID, GtkAuthenticationDialog* dialog)
+void GtkAuthenticationDialog::buttonClickedCallback(GtkWidget* button, GtkAuthenticationDialog* dialog)
 {
     Credential credential;
-    if (responseID == GTK_RESPONSE_OK) {
+    if (button == dialog->m_okayButton) {
         const char *username = gtk_entry_get_text(GTK_ENTRY(dialog->m_loginEntry));
         const char *password = gtk_entry_get_text(GTK_ENTRY(dialog->m_passwordEntry));
         CredentialPersistence persistence = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(dialog->m_rememberCheckButton)) ?

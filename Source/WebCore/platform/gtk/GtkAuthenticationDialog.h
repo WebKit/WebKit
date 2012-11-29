@@ -34,20 +34,24 @@ class GtkAuthenticationDialog {
     WTF_MAKE_FAST_ALLOCATED;
 
 public:
+    GtkAuthenticationDialog(const AuthenticationChallenge&);
     GtkAuthenticationDialog(GtkWindow*, const AuthenticationChallenge&);
-    virtual ~GtkAuthenticationDialog();
+    virtual ~GtkAuthenticationDialog() { }
     void show();
+    void destroy();
 
 protected:
+    void createContentsInContainer(GtkWidget* container);
     virtual void authenticate(const Credential&);
     GtkWidget* m_dialog;
     GtkWidget* m_loginEntry;
     GtkWidget* m_passwordEntry;
     GtkWidget* m_rememberCheckButton;
+    GtkWidget* m_okayButton;
+    GtkWidget* m_cancelButton;
 
 private:
-    void destroy();
-    static void authenticationDialogResponseCallback(GtkWidget*, gint responseID, GtkAuthenticationDialog*);
+    static void buttonClickedCallback(GtkWidget*, GtkAuthenticationDialog*);
     AuthenticationChallenge m_challenge;
 };
 

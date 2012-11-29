@@ -1,3 +1,37 @@
+2012-11-29  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] [WebKit2] Embed the HTTP authentication dialog into the WebView
+        https://bugs.webkit.org/show_bug.cgi?id=103277
+
+        Reviewed by Carlos Garcia Campos.
+
+        Refactor the WebCore authentication dialog so that it can be reused for the WebKit2
+        embedded authentication dialog. The main purpose of this refactor is so that the
+        dialog does not rely on GtkDialog to add the action buttons to the dialog itself.
+        This also simplifies the structure of the dialog, using the GtkTable or GtkGrid to
+        contain more of the widget elements, greatly simplifying this code. We also expose
+        a new constructor that does not create the parent GtkDialog -- so that WebKit2
+        can embed the dialog directly into the WebView.
+
+        No new tests. This shouldn't change behavior, only slightly the look of the authentication
+        dialog.
+
+        * platform/gtk/GtkAuthenticationDialog.cpp:
+        (WebCore::GtkAuthenticationDialog::GtkAuthenticationDialog): Added this new constructor
+        which does not add the dialog contents to a GtkDialog.
+        (WebCore::packTwoColumnLayoutInBox): Added this generic method for creating a two column
+        layout in the style the dialog box needs (for both GTK+ 2.x and GTK+ 3.x).
+        (WebCore::createDialogLabel): Added this helper.
+        (WebCore::createDialogEntry): ditto.
+        (WebCore::GtkAuthenticationDialog::createContentsInContainer): Added this method which
+        can be used by subclasses to add the guts of the dialog to the parent container.
+        (WebCore::GtkAuthenticationDialog::show): Added some focus/default handling code that
+        GtkDialog was calling before.
+        (WebCore::GtkAuthenticationDialog::buttonClickedCallback): Added a button clicked handler.
+        Before GtkDialog handled this.
+        * platform/gtk/GtkAuthenticationDialog.h: Updated methods to reflect new functionality.
+        (WebCore::GtkAuthenticationDialog::~GtkAuthenticationDialog): Inline the default constructor.
+
 2012-11-29  Beth Dakin  <bdakin@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=103577

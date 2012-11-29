@@ -29,6 +29,7 @@
 #define WebKitWebViewBasePrivate_h
 
 #include "WebContextMenuProxyGtk.h"
+#include "WebKit2GtkAuthenticationDialog.h"
 #include "WebKitPrivate.h"
 #include "WebKitWebViewBase.h"
 #include "WebPageProxy.h"
@@ -63,5 +64,9 @@ bool webkitWebViewBaseIsInWindow(WebKitWebViewBase*);
 typedef void (*WebKitWebViewBaseDownloadRequestHandler) (WebKitWebViewBase*, WebKit::DownloadProxy*);
 void webkitWebViewBaseSetDownloadRequestHandler(WebKitWebViewBase*, WebKitWebViewBaseDownloadRequestHandler);
 void webkitWebViewBaseHandleDownloadRequest(WebKitWebViewBase*, WebKit::DownloadProxy*);
+
+void webkitWebViewBaseAddAuthenticationDialog(WebKitWebViewBase*, WebKit::WebKit2GtkAuthenticationDialog*);
+void webkitWebViewBaseCancelAuthenticationDialog(WebKitWebViewBase*);
+void webkitWebViewBaseAddWebInspector(WebKitWebViewBase*, GtkWidget* inspector);
 
 #endif // WebKitWebViewBasePrivate_h

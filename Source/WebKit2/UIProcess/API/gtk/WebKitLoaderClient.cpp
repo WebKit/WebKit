@@ -118,8 +118,7 @@ static void didChangeBackForwardList(WKPageRef page, WKBackForwardListItemRef ad
 
 static void didReceiveAuthenticationChallengeInFrame(WKPageRef page, WKFrameRef frame, WKAuthenticationChallengeRef authenticationChallenge, const void *clientInfo)
 {
-    WebKit2GtkAuthenticationDialog* dialog = new WebKit2GtkAuthenticationDialog(toImpl(authenticationChallenge));
-    dialog->show();
+    webkitWebViewHandleAuthenticationChallenge(WEBKIT_WEB_VIEW(clientInfo), toImpl(authenticationChallenge));
 }
 
 void attachLoaderClientToView(WebKitWebView* webView)

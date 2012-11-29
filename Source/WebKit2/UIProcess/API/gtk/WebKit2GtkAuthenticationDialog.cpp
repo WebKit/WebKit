@@ -23,15 +23,40 @@
 #include "AuthenticationChallengeProxy.h"
 #include "AuthenticationDecisionListener.h"
 #include "WebCredential.h"
+#include "WebKitWebViewBasePrivate.h"
+#include "WebKitWebViewPrivate.h"
+#include <gtk/gtk.h>
 
 namespace WebKit {
 
-WebKit2GtkAuthenticationDialog::WebKit2GtkAuthenticationDialog(AuthenticationChallengeProxy* authenticationChallenge)
-    : GtkAuthenticationDialog(0, authenticationChallenge->core())
-    , m_authenticationChallenge(authenticationChallenge)
+// This is necessary because GtkEventBox does not draw a background by default,
+// but we want it to have a normal GtkWindow background.
+static gboolean drawSignal(GtkWidget* widget, cairo_t* cr, GtkStyleContext* styleContext)
 {
-    // We aren't passing a toplevel to the GtkAuthenticationDialog constructor,
-    // because eventually this widget will be embedded into the WebView itself.
+    gtk_render_background(styleContext, cr, 0, 0,
+        gtk_widget_get_allocated_width(widget), gtk_widget_get_allocated_height(widget));
+    return FALSE;
+}
+
+WebKit2GtkAuthenticationDialog::WebKit2GtkAuthenticationDialog(AuthenticationChallengeProxy* authenticationChallenge)
+    : GtkAuthenticationDialog(authenticationChallenge->core())
+    , m_authenticationChallenge(authenticationChallenge)
+    , m_styleContext(adoptGRef(gtk_style_context_new()))
+{
+    m_dialog = gtk_event_box_new();
+
+    GtkWidget* frame = gtk_frame_new(0);
+    gtk_frame_set_shadow_type(GTK_FRAME(frame), GTK_SHADOW_IN);
+    gtk_container_add(GTK_CONTAINER(m_dialog), frame);
+    createContentsInContainer(frame);
+
+    gtk_style_context_add_class(m_styleContext.get(), GTK_STYLE_CLASS_BACKGROUND);
+    GtkWidgetPath* path = gtk_widget_path_new();
+    gtk_widget_path_append_type(path, GTK_TYPE_WINDOW);
+    gtk_style_context_set_path(m_styleContext.get(), path);
+    gtk_widget_path_free(path);
+
+    g_signal_connect(m_dialog, "draw", G_CALLBACK(drawSignal), m_styleContext.get());
 }
 
 void WebKit2GtkAuthenticationDialog::authenticate(const WebCore::Credential& credential)
