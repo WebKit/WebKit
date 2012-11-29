@@ -52,7 +52,7 @@ void GeolocationClientBlackBerry::geolocationDestroyed()
 void GeolocationClientBlackBerry::startUpdating()
 {
     if (!m_isActive)
-        BlackBerry::Platform::GeolocationHandler::instance()->addListener(this, false);
+        BlackBerry::Platform::GeolocationHandler::instance()->addListener(this);
     m_isActive = true;
 }
 
@@ -129,7 +129,9 @@ void GeolocationClientBlackBerry::onPermission(bool isAllowed)
 
 void GeolocationClientBlackBerry::setEnableHighAccuracy(bool newAccuracy)
 {
-    // FIXME: we have to implement high accuracy on our side too
-    m_accuracy = newAccuracy;
+    if (m_accuracy != newAccuracy) {
+        m_accuracy = newAccuracy;
+        BlackBerry::Platform::GeolocationHandler::instance()->switchAccuracy(this);
+    }
 }
 

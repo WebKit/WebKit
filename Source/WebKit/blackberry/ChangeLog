@@ -1,3 +1,21 @@
+2012-11-29  Otto Derek Cheung  <otcheung@rim.com>
+
+        [BlackBerry] Modifying GeoClientBlackBerry to switch between high and low accuracy
+        https://bugs.webkit.org/show_bug.cgi?id=103666
+
+        Reviewed by Yong Li.
+
+        Internally reviewed by Yong Li.
+
+        PR 243420
+
+        Updating GeolocationClientBlackBerry to switch accuracy when GeolocationController
+        calls setEnableHighAccuracy.
+
+        * WebCoreSupport/GeolocationClientBlackBerry.cpp:
+        (GeolocationClientBlackBerry::startUpdating):
+        (GeolocationClientBlackBerry::setEnableHighAccuracy):
+
 2012-11-29  Andrew Lo  <anlo@rim.com>
 
         [BlackBerry] Do not adjust scroll position on viewport resizes that are not orientation change related
