@@ -223,7 +223,6 @@ public:
     virtual void updateViewportSize();
 
     virtual void pageDidRequestScroll(const QPoint& pos);
-    virtual void handleMouseEvent(QMouseEvent*);
 
 private:
     QScopedPointer<WebKit::PageViewportController> m_pageViewportController;

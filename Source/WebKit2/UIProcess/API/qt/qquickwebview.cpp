@@ -890,15 +890,6 @@ void QQuickWebViewFlickablePrivate::pageDidRequestScroll(const QPoint& pos)
         m_pageViewportController->pageDidRequestScroll(pos);
 }
 
-void QQuickWebViewFlickablePrivate::handleMouseEvent(QMouseEvent* event)
-{
-    if (!pageView->eventHandler())
-        return;
-
-    // FIXME: Update the axis locker for mouse events as well.
-    pageView->eventHandler()->handleInputEvent(event);
-}
-
 QQuickWebViewExperimental::QQuickWebViewExperimental(QQuickWebView *webView, QQuickWebViewPrivate* webViewPrivate)
     : QObject(webView)
     , q_ptr(webView)

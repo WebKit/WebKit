@@ -1,3 +1,24 @@
+2012-11-28  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
+
+        [Qt] The WebView should be flickable only using touch events
+        https://bugs.webkit.org/show_bug.cgi?id=100964
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Let a user interacting with the WebView using a mouse the same way that a
+        desktop browser would.
+        This allows normal behaviors like text selecting, hover events, mouse cursors
+        as well as avoid touch highlighting and touch adjustment.
+
+        To do so we let all mouse events to be handled by the page directly instead
+        of sending them to QtWebPageEventHandler. Since unhandled mouse events aren't
+        pushed back to the PageClient like touch events does, this have the intended
+        behavior of not letting mouse events affect QQuickFlickable.
+
+        * UIProcess/API/qt/qquickwebview.cpp:
+        * UIProcess/API/qt/qquickwebview_p_p.h:
+        (QQuickWebViewFlickablePrivate):
+
 2012-11-29  Andras Becsi  <andras.becsi@digia.com>
 
         [Qt] Fix installation of QtWebProcess binary
