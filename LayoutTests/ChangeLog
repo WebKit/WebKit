@@ -1,3 +1,19 @@
+2012-11-23  Dirk Schulze  <krit@webkit.org>
+
+        Remove -webkit-mask-attachment
+        https://bugs.webkit.org/show_bug.cgi?id=67137
+
+        Reviewed by David Hyatt.
+
+        Added negative tests for '-webkit-mask' shorthand property attachment keywords.
+
+        * fast/css/getComputedStyle/computed-style-expected.txt: 
+        * fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * fast/css/remove-shorthand.html: Corrected syntax for -webkit-mask test.
+        * fast/masking/parsing-mask-expected.txt:
+        * fast/masking/parsing-mask.html: Added negative tests for attachment property keywords.
+        * svg/css/getComputedStyle-basic-expected.txt:
+
 2012-11-28  Kenichi Ishibashi  <bashi@chromium.org>
 
         StyleResolver should not set NaN to font size

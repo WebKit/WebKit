@@ -130,10 +130,12 @@ negativeTest("-webkit-mask", "none / auto");
 negativeTest("-webkit-mask", "none repeat-x / auto");
 negativeTest("-webkit-mask", "none border-box / auto");
 negativeTest("-webkit-mask", "none top left / cover 100%");
-
-// FIXME: Add negative tests for mask-attachment, which should not be supported.
-// https://bugs.webkit.org/show_bug.cgi?id=67137
-
+negativeTest("-webkit-mask", "scroll");
+negativeTest("-webkit-mask", "fixed");
+negativeTest("-webkit-mask", "local");
+negativeTest("-webkit-mask", "space scroll");
+negativeTest("-webkit-mask", "none scroll");
+negativeTest("-webkit-mask", "none top left / auto repeat-x scroll border-box border-box");
 
 </script>
 <script src="../js/resources/js-test-post.js"></script>

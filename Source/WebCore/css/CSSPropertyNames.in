@@ -318,7 +318,6 @@ z-index
 -webkit-marquee-speed
 -webkit-marquee-style
 -webkit-mask
--webkit-mask-attachment
 -webkit-mask-box-image
 -webkit-mask-box-image-outset
 -webkit-mask-box-image-repeat

@@ -73,6 +73,12 @@ PASS innerStyle("-webkit-mask", "none / auto") is null
 PASS innerStyle("-webkit-mask", "none repeat-x / auto") is null
 PASS innerStyle("-webkit-mask", "none border-box / auto") is null
 PASS innerStyle("-webkit-mask", "none top left / cover 100%") is null
+PASS innerStyle("-webkit-mask", "scroll") is null
+PASS innerStyle("-webkit-mask", "fixed") is null
+PASS innerStyle("-webkit-mask", "local") is null
+PASS innerStyle("-webkit-mask", "space scroll") is null
+PASS innerStyle("-webkit-mask", "none scroll") is null
+PASS innerStyle("-webkit-mask", "none top left / auto repeat-x scroll border-box border-box") is null
 PASS successfullyParsed is true
 
 TEST COMPLETE

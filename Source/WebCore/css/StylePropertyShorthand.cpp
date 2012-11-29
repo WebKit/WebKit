@@ -375,7 +375,6 @@ const StylePropertyShorthand& webkitMaskShorthand()
         CSSPropertyWebkitMaskSize,
         CSSPropertyWebkitMaskRepeatX,
         CSSPropertyWebkitMaskRepeatY,
-        CSSPropertyWebkitMaskAttachment,
         CSSPropertyWebkitMaskOrigin,
         CSSPropertyWebkitMaskClip
     };

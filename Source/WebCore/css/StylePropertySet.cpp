@@ -862,7 +862,6 @@ String StylePropertySet::asText() const
         case CSSPropertyWebkitMaskRepeatY:
         case CSSPropertyWebkitMaskImage:
         case CSSPropertyWebkitMaskRepeat:
-        case CSSPropertyWebkitMaskAttachment:
         case CSSPropertyWebkitMaskPosition:
         case CSSPropertyWebkitMaskClip:
         case CSSPropertyWebkitMaskOrigin:

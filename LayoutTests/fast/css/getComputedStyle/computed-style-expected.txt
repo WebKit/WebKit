@@ -173,7 +173,6 @@ zoom: 1;
 -webkit-marquee-increment: 6px;
 -webkit-marquee-repetition: infinite;
 -webkit-marquee-style: scroll;
--webkit-mask-attachment: scroll;
 -webkit-mask-box-image: none;
 -webkit-mask-box-image-outset: 0px;
 -webkit-mask-box-image-repeat: stretch;

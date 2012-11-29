@@ -1,3 +1,35 @@
+2012-11-23  Dirk Schulze  <krit@webkit.org>
+
+        Remove -webkit-mask-attachment
+        https://bugs.webkit.org/show_bug.cgi?id=67137
+
+        Reviewed by David Hyatt.
+
+        Remove CSS property '-webkit-attachment'. The CSS WG agreed that this should not be
+        part of the CSS Masking specification. WebKit never implemented the behavior of
+        attached masks either. The property was just exposed in CSSOM.
+
+        Test: Added negative tests to fast/masking/parsing-mask.html.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore):
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        (WebCore::CSSParser::parseFillProperty):
+        * css/CSSProperty.cpp:
+        (WebCore::CSSProperty::isInheritedProperty):
+        * css/CSSPropertyNames.in:
+        * css/StyleBuilder.cpp:
+        (WebCore::StyleBuilder::StyleBuilder):
+        * css/StylePropertySet.cpp:
+        (WebCore::StylePropertySet::asText):
+        * css/StylePropertyShorthand.cpp:
+        (WebCore::webkitMaskShorthand):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::applyProperty):
+        * rendering/style/RenderStyle.h:
+
 2012-11-28  Michael Pruett  <michael@68k.org>
 
         IndexedDB: Add forward declaration of SecurityOrigin to IDBBackingStore.h

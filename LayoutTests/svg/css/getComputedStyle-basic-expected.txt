@@ -344,8 +344,6 @@ rect: style.getPropertyValue(-webkit-marquee-repetition) : infinite
 rect: style.getPropertyCSSValue(-webkit-marquee-repetition) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-marquee-style) : scroll
 rect: style.getPropertyCSSValue(-webkit-marquee-style) : [object CSSPrimitiveValue]
-rect: style.getPropertyValue(-webkit-mask-attachment) : scroll
-rect: style.getPropertyCSSValue(-webkit-mask-attachment) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-mask-box-image) : none
 rect: style.getPropertyCSSValue(-webkit-mask-box-image) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-mask-box-image-outset) : 0px
@@ -846,8 +844,6 @@ g: style.getPropertyValue(-webkit-marquee-repetition) : infinite
 g: style.getPropertyCSSValue(-webkit-marquee-repetition) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-marquee-style) : scroll
 g: style.getPropertyCSSValue(-webkit-marquee-style) : [object CSSPrimitiveValue]
-g: style.getPropertyValue(-webkit-mask-attachment) : scroll
-g: style.getPropertyCSSValue(-webkit-mask-attachment) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-mask-box-image) : none
 g: style.getPropertyCSSValue(-webkit-mask-box-image) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-mask-box-image-outset) : 0px
