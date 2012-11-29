@@ -1,3 +1,13 @@
+2012-11-29  Nandor Huszka  <hnandor@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardening.
+        Rebase 3 tests. Skip one test because it needs Qt implementation.
+
+        * platform/qt/TestExpectations:
+        * platform/qt/http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-expected.txt:
+        * platform/qt/http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-in-body-expected.txt:
+        * platform/qt/http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-parent-same-origin-deny-expected.txt:
+
 2012-11-29  Jussi Kukkonen  <jussi.kukkonen@intel.com>
 
         [EFL] remove failure expectations from passing tests
