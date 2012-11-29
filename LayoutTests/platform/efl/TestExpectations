@@ -1597,7 +1597,6 @@ Bug(EFL) editing/selection/caret-ltr-2.html [ Failure Pass ]
 Bug(EFL) editing/selection/caret-rtl-2.html [ Failure Pass ]
 Bug(EFL) fast/block/basic/020.html [ Failure ]
 Bug(EFL) fast/css/hover-update.html [ Failure Pass ]
-Bug(EFL) fast/css/text-overflow-input.html [ Missing ]
 Bug(EFL) fast/dynamic/012.html [ Failure ]
 Bug(EFL) fast/dynamic/layer-hit-test-crash.html [ Failure ]
 Bug(EFL) fast/forms/basic-textareas-quirks.html [ Missing ]
@@ -1678,9 +1677,6 @@ webkit.org/b/101670 media/video-controls-captions-trackmenu.html [ Skip ]
 webkit.org/b/61138 http/tests/w3c/webperf/submission/resource-timing [ Skip ]
 
 webkit.org/b/103109 fast/dom/shadow/host-wrapper-reclaimed.html [ Failure ]
-
-# Test failing after r135765.
-Bug(EFL) http/tests/security/isolatedWorld/world-reuse.html [ Failure ]
 
 # Start of media player causes timeout.
 Bug(EFL) media/controls-right-click-on-timebar.html [ Failure ]
