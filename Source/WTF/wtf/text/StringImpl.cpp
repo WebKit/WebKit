@@ -33,6 +33,7 @@
 #include <wtf/unicode/CharacterNames.h>
 
 #ifdef STRING_STATS
+#include <unistd.h>
 #include <wtf/DataLog.h>
 #endif
 
@@ -80,23 +81,27 @@ void StringStats::removeString(StringImpl* string)
 
 void StringStats::printStats()
 {
-    dataLog("String stats for process id %d:\n", getpid());
+    dataLogF("String stats for process id %d:\n", getpid());
 
     unsigned long long totalNumberCharacters = m_total8BitData + m_total16BitData;
     double percent8Bit = m_totalNumberStrings ? ((double)m_number8BitStrings * 100) / (double)m_totalNumberStrings : 0.0;
     double average8bitLength = m_number8BitStrings ? (double)m_total8BitData / (double)m_number8BitStrings : 0.0;
-    dataLog("%8u (%5.2f%%) 8 bit        %12llu chars  %12llu bytes  avg length %6.1f\n", m_number8BitStrings, percent8Bit, m_total8BitData, m_total8BitData, average8bitLength);
+    dataLogF("%8u (%5.2f%%) 8 bit        %12llu chars  %12llu bytes  avg length %6.1f\n", m_number8BitStrings, percent8Bit, m_total8BitData, m_total8BitData, average8bitLength);
 
     double percent16Bit = m_totalNumberStrings ? ((double)m_number16BitStrings * 100) / (double)m_totalNumberStrings : 0.0;
     double average16bitLength = m_number16BitStrings ? (double)m_total16BitData / (double)m_number16BitStrings : 0.0;
-    dataLog("%8u (%5.2f%%) 16 bit       %12llu chars  %12llu bytes  avg length %6.1f\n", m_number16BitStrings, percent16Bit, m_total16BitData, m_total16BitData * 2, average16bitLength);
+    dataLogF("%8u (%5.2f%%) 16 bit       %12llu chars  %12llu bytes  avg length %6.1f\n", m_number16BitStrings, percent16Bit, m_total16BitData, m_total16BitData * 2, average16bitLength);
 
     double percentUpconverted = m_totalNumberStrings ? ((double)m_numberUpconvertedStrings * 100) / (double)m_number8BitStrings : 0.0;
     double averageUpconvertedLength = m_numberUpconvertedStrings ? (double)m_totalUpconvertedData / (double)m_numberUpconvertedStrings : 0.0;
-    dataLog("%8u (%5.2f%%) upconverted  %12llu chars  %12llu bytes  avg length %6.1f\n", m_numberUpconvertedStrings, percentUpconverted, m_totalUpconvertedData, m_totalUpconvertedData * 2, averageUpconvertedLength);
+    dataLogF("%8u (%5.2f%%) upconverted  %12llu chars  %12llu bytes  avg length %6.1f\n", m_numberUpconvertedStrings, percentUpconverted, m_totalUpconvertedData, m_totalUpconvertedData * 2, averageUpconvertedLength);
 
     double averageLength = m_totalNumberStrings ? (double)totalNumberCharacters / (double)m_totalNumberStrings : 0.0;
-    dataLog("%8u Total                 %12llu chars  %12llu bytes  avg length %6.1f\n", m_totalNumberStrings, totalNumberCharacters, m_total8BitData + (m_total16BitData + m_totalUpconvertedData) * 2, averageLength);
+    unsigned long long totalDataBytes = m_total8BitData + (m_total16BitData + m_totalUpconvertedData) * 2;
+    dataLogF("%8u Total                 %12llu chars  %12llu bytes  avg length %6.1f\n", m_totalNumberStrings, totalNumberCharacters, totalDataBytes, averageLength);
+    unsigned long long totalSavedBytes = m_total8BitData - m_totalUpconvertedData;
+    double percentSavings = totalSavedBytes ? ((double)totalSavedBytes * 100) / (double)(totalDataBytes + totalSavedBytes) : 0.0;
+    dataLogF("         Total savings %12llu bytes (%5.2f%%)\n", totalSavedBytes, percentSavings);
 }
 #endif
 
