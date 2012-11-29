@@ -1,3 +1,11 @@
+2012-11-29  Mike West  <mkwst@chromium.org>
+
+        [Chromium] Unreviewed gardening.
+
+        * platform/chromium/TestExpectations:
+            Skipping 'http/tests/inspector/network/script-as-text-loading-long-url.html'
+            on WinXP.
+
 2012-11-29  Keishi Hattori  <keishi@webkit.org>
 
         Better type ahead for DateTimeSymbolicFieldElement
