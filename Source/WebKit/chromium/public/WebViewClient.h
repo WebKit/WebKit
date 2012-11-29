@@ -225,7 +225,7 @@ public:
                                 WebFileChooserCompletion*) { return false; }
 
     // Ask users to choose date/time for the specified parameters. When a user
-    // chooses a value, an implemenattion of this function should call
+    // chooses a value, an implementation of this function should call
     // WebDateTimeChooserCompletion::didChooseValue or didCancelChooser. If the
     // implementation opened date/time chooser UI successfully, it should return
     // true. This function is used only if ExternalDateTimeChooser is used.

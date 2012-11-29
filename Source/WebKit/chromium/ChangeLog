@@ -1,3 +1,14 @@
+2012-11-29  Miguel Garcia  <miguelg@chromium.org>
+
+        Fix typo in description of openDateTimeChooser documentation
+        https://bugs.webkit.org/show_bug.cgi?id=103622
+
+        Reviewed by Kent Tamura.
+
+
+        * public/WebViewClient.h:
+        (WebViewClient):
+
 2012-11-28  Robert Kroeger  <rjkroege@chromium.org>
 
         remove unused PlatformGestureCurve code
