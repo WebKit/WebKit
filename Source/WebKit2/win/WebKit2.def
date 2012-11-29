@@ -364,4 +364,3 @@ EXPORTS
         ?getCGImageRef@BitmapImage@WebCore@@UAEPAUCGImage@@XZ
         ?getFirstCGImageRefOfSize@BitmapImage@WebCore@@UAEPAUCGImage@@ABVIntSize@2@@Z
         ?getCGImageArray@BitmapImage@WebCore@@UAE?AV?$RetainPtr@PBU__CFArray@@@WTF@@XZ
-        ?notSolidColor@BitmapImage@WebCore@@UAE_NXZ

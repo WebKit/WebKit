@@ -1,3 +1,12 @@
+2012-11-29  Brent Fulgham  <bfulgham@webkit.org>
+
+        [Windows, WinCairo] Unreviewed build fix.  Build was failing
+        because the export definition file included a debug-only
+        symbol.  It's not needed and shouldn't be included for export.
+
+        * win/WebKit2.def: Don't require notSolidColor to be exported.
+        * win/WebKit2CFLite.def: Ditto.
+
 2012-11-29  Tim Horton  <timothy_horton@apple.com>
 
         PDFPlugin: Only plain text can be copied out of PDFs

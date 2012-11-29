@@ -353,4 +353,3 @@ EXPORTS
         ?frameAtIndex@BitmapImage@WebCore@@IAEPAVNativeImageCairo@2@I@Z
         ?draw@BitmapImage@WebCore@@MAEXPAVGraphicsContext@2@ABVFloatRect@2@1W4ColorSpace@2@W4CompositeOperator@2@W4RespectImageOrientationEnum@2@@Z
         ?frameCount@BitmapImage@WebCore@@MAEIXZ
-        ?notSolidColor@BitmapImage@WebCore@@UAE_NXZ
