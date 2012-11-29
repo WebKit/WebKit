@@ -1667,6 +1667,7 @@ static NSInteger _colCompare(id block1, id block2, void *)
 // This function uses TextIterator, which makes offsets in its result compatible with HTML editing.
 + (NSAttributedString *)editingAttributedStringFromRange:(Range*)range
 {
+    NSFontManager *fontManager = [NSFontManager sharedFontManager];
     NSMutableAttributedString *string = [[NSMutableAttributedString alloc] init];
     NSUInteger stringLength = 0;
     RetainPtr<NSMutableDictionary> attrs(AdoptNS, [[NSMutableDictionary alloc] init]);
@@ -1702,6 +1703,8 @@ static NSInteger _colCompare(id block1, id block2, void *)
             [attrs.get() setObject:[NSNumber numberWithInteger:NSUnderlineStyleSingle] forKey:NSUnderlineStyleAttributeName];
         if (NSFont *font = style->font().primaryFont()->getNSFont())
             [attrs.get() setObject:font forKey:NSFontAttributeName];
+        else
+            [attrs.get() setObject:[fontManager convertFont:WebDefaultFont() toSize:style->font().primaryFont()->platformData().size()] forKey:NSFontAttributeName];
         if (style->visitedDependentColor(CSSPropertyColor).alpha())
             [attrs.get() setObject:nsColor(style->visitedDependentColor(CSSPropertyColor)) forKey:NSForegroundColorAttributeName];
         else

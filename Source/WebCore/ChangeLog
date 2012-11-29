@@ -1,3 +1,16 @@
+2012-11-28  Tim Horton  <timothy_horton@apple.com>
+
+        [mac] WebHTMLConverter should maintain font size even when there is no related NSFont
+        https://bugs.webkit.org/show_bug.cgi?id=103568
+
+        Reviewed by Alexey Proskuryakov.
+
+        WebHTMLConverter should use the default font at the correct size when it
+        encounters a font that cannot be backed by an NSFont (e.g. a WebFont).
+
+        * platform/mac/HTMLConverter.mm:
+        (+[WebHTMLConverter editingAttributedStringFromRange:]):
+
 2012-11-23  Dirk Schulze  <krit@webkit.org>
 
         CSS parser does not support -webkit-mask-size for -webkit-mask shorthand
