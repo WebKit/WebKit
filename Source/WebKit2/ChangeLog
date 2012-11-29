@@ -1,3 +1,25 @@
+2012-11-29  Andras Becsi  <andras.becsi@digia.com>
+
+        [Qt] Fix installation of QtWebProcess binary
+        https://bugs.webkit.org/show_bug.cgi?id=101735
+
+        Reviewed by Simon Hausmann.
+
+        If available use QLibraryInfo::LibraryExecutablesPath to find
+        the web process and the plugin process and deploy both helper
+        processes to QT_INSTALL_LIBEXECS.
+
+        The effective fallback used to find the helper processes becomes:
+            1. Application directory
+            2. Qt library executables directory (QLibraryInfo::LibraryExecutablesPath)
+            3. Qt binaries directory (QLibraryInfo::BinariesPath)
+            4. No absolute path used
+
+        * PluginProcess.pro:
+        * Shared/qt/ProcessExecutablePathQt.cpp:
+        (WebKit::executablePath):
+        * WebProcess.pro:
+
 2012-11-28  Ryuan Choi  <ryuan.choi@gmail.com>
 
         [EFL] Generate big_button_theme.edj

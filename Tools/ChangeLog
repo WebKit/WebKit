@@ -1,3 +1,20 @@
+2012-11-29  Andras Becsi  <andras.becsi@digia.com>
+
+        [Qt] Fix installation of QtWebProcess binary
+        https://bugs.webkit.org/show_bug.cgi?id=101735
+
+        Reviewed by Simon Hausmann.
+
+        Add config test to detect the availability of support
+        for "program executables" in Qt (libexec).
+
+        This test can be removed after the Qt5 release.
+
+        * Tools.pro:
+        * qmake/mkspecs/features/features.prf:
+        * qmake/config.tests/libexecdir/libexecdir.cpp:
+        * qmake/config.tests/libexecdir/libexecdir.pro:
+
 2012-11-29  Eric Seidel  <eric@webkit.org>
 
         run-perf-tests does not work when the layout test directory does not exist

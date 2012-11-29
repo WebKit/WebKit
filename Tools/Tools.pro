@@ -34,6 +34,7 @@ OTHER_FILES = \
     qmake/config.tests/README \
     qmake/config.tests/fontconfig/* \
     qmake/config.tests/gccdepends/* \
+    qmake/config.tests/libexecdir/* \
     qmake/mkspecs/modules/* \
     qmake/mkspecs/features/*.prf \
     qmake/mkspecs/features/*.pri \
