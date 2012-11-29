@@ -1,3 +1,9 @@
+2012-11-29  Zhenyao Mo  <zmo@google.com>
+
+        Unreviewed, WebKit gardening.
+
+        * platform/chromium/TestExpectations:
+
 2012-11-29  Stephen Chenney  <schenney@chromium.org>
 
         [Chromium] Skia rebaseline after we made kSrc_Mode go faster

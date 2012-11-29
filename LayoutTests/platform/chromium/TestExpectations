@@ -2536,7 +2536,7 @@ crbug.com/8729 [ Android Linux Mac ] http/tests/multipart/invalid-image-data.htm
 crbug.com/10370 [ Android Linux Win ] fast/css/font-weight-1.html [ Failure ]
 # Registering the fonts for this test causes other processes (Adium, Firefox)
 # to spin and become unresponsive or crash.
-webkit.org/b/50709 [ Mac ] fast/css/font-weight-1.html [ Failure ]
+webkit.org/b/50709 [ Lion MountainLion ] fast/css/font-weight-1.html [ ImageOnlyFailure ]
 
 #///////////////////////////////////////////////////////////////////////////
 # End DRT failures
