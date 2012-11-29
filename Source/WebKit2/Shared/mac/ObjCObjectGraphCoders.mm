@@ -52,7 +52,9 @@ enum WebKitNSType {
     NSNumberType,
     NSDateType,
     NSDataType,
+#if defined(__LP64__) && defined(__clang__)
     WKBrowsingContextControllerType,
+#endif
     UnknownType,
 };
 
@@ -72,8 +74,10 @@ static WebKitNSType typeFromObject(id object)
         return NSDateType;
     if ([object isKindOfClass:[NSData class]])
         return NSDataType;
+#if defined(__LP64__) && defined(__clang__)
     if ([object isKindOfClass:[WKBrowsingContextController class]])
         return WKBrowsingContextControllerType;
+#endif
 
     return UnknownType;
 }
@@ -270,12 +274,14 @@ public:
             return;
 
         switch (type) {
+#if defined(__LP64__) && defined(__clang__)
         case WKBrowsingContextControllerType: {
             WKBrowsingContextController *browsingContextController = static_cast<WKBrowsingContextController *>(m_root);
 
             encoder << toImpl(browsingContextController._pageRef)->pageID();
             break;
         }
+#endif
         default:
             ASSERT_NOT_REACHED();
             break;
@@ -315,6 +321,7 @@ public:
         }
 
         switch (type) {
+#if defined(__LP64__) && defined(__clang__)
         case WKBrowsingContextControllerType: {
             uint64_t pageID;
             if (!decoder->decode(pageID))
@@ -327,6 +334,7 @@ public:
                 coder.m_root = [WKBrowsingContextController _browsingContextControllerForPageRef:toAPI(webPage)];
             break;
         }
+#endif
         default:
             return false;
         }
@@ -357,12 +365,15 @@ public:
             return;
 
         switch (type) {
+#if defined(__LP64__) && defined(__clang__)
         case WKBrowsingContextControllerType: {
+
             WKWebProcessPlugInBrowserContextController *browserContextController = static_cast<WKWebProcessPlugInBrowserContextController *>(m_root);
 
             encoder << toImpl(browserContextController._bundlePageRef)->pageID();
             break;
         }
+#endif
         default:
             ASSERT_NOT_REACHED();
             break;
@@ -401,6 +412,7 @@ public:
         }
 
         switch (type) {
+#if defined(__LP64__) && defined(__clang__)
         case WKBrowsingContextControllerType: {
             uint64_t pageID;
             if (!decoder->decode(pageID))
@@ -413,6 +425,7 @@ public:
                 coder.m_root = [[WKWebProcessPlugInController _shared] _browserContextControllerForBundlePageRef:toAPI(webPage)];
             break;
         }
+#endif
         default:
             return false;
         }
