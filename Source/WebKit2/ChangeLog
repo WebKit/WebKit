@@ -1,3 +1,15 @@
+2012-11-29  Anders Carlsson  <andersca@apple.com>
+
+        CoreIPC::Connection should retain its xpc_connection_t
+        https://bugs.webkit.org/show_bug.cgi?id=103671
+        <rdar://problem/12717331>
+
+        Reviewed by Beth Dakin.
+
+        * Platform/CoreIPC/mac/ConnectionMac.cpp:
+        (CoreIPC::Connection::platformInitialize):
+        Retain the xpc_connection_t object here to balance the xpc_object_release in platformInvalidate.
+
 2012-11-29  Brent Fulgham  <bfulgham@webkit.org>
 
         [Windows, WinCairo] Unreviewed build fix.  Build was failing
