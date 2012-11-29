@@ -1,3 +1,22 @@
+2012-11-29  Otto Derek Cheung  <otcheung@rim.com>
+
+        [BlackBerry] Cookies in private mode should not have access to public cookies
+        https://bugs.webkit.org/show_bug.cgi?id=103649
+
+        Reviewed by Rob Buis.
+
+        PR 253983
+
+        When CookieManager switches back from public to private mode,
+        we will clear the cookie tree so the browser won't have access
+        to the public cookies.
+
+        Tested using browser.swlab.rim.net cookie tests and the steps in
+        the PR.
+
+        * platform/blackberry/CookieManager.cpp:
+        (WebCore::CookieManager::setPrivateMode):
+
 2012-11-29  Brent Fulgham  <bfulgham@gmail.com>
 
         Be consistent in handling of frameAtIndex (and related) returns.

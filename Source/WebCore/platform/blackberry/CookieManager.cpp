@@ -502,16 +502,18 @@ void CookieManager::getBackingStoreCookies()
     }
 }
 
-void CookieManager::setPrivateMode(bool mode)
+void CookieManager::setPrivateMode(bool privateMode)
 {
-    if (m_privateMode == mode)
+    if (m_privateMode == privateMode)
         return;
 
-    m_privateMode = mode;
-    if (!mode) {
-        removeAllCookies(DoNotRemoveFromBackingStore);
+    m_privateMode = privateMode;
+
+    removeAllCookies(DoNotRemoveFromBackingStore);
+
+    // If we are switching back to public mode, reload the database to memory.
+    if (!m_privateMode)
         getBackingStoreCookies();
-    }
 }
 
 CookieMap* CookieManager::findOrCreateCookieMap(CookieMap* protocolMap, const ParsedCookie& candidateCookie)
