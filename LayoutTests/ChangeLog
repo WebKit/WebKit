@@ -1,3 +1,15 @@
+2012-11-28  Daniel Bates  <dbates@webkit.org>
+
+        [Chromium] LayoutTests/fast/js/string-replacement-outofmemory.html crashes
+        https://bugs.webkit.org/show_bug.cgi?id=103348
+
+        Reviewed by Abhishek Arya.
+
+        Add a comment to explain that the crash is expected and is performed in an
+        orderly fashion.
+
+        * platform/chromium/TestExpectations:
+
 2012-11-29  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/12771885> Support ruby-position: {before, after}

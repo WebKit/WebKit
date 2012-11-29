@@ -267,6 +267,9 @@ fast/harness/sample-fail-mismatch-reftest.html [ WontFix ]
 # See http://code.google.com/p/v8/issues/detail?id=287
 fast/js/regexp-overflow-too-big.html [ WontFix ]
 
+# We expect V8 to crash in an orderly fashion instead of throwing a JavaScript out-of-memory error.
+webkit.org/b/103348 fast/js/string-replacement-outofmemory.html [ Crash ]
+
 # XHTML tests. These tests are all checked in with expectations that represent
 # JS errors. We skip them because they don't actually test what they set out to.
 # See http://crbug.com/24185 for some history.
@@ -4233,7 +4236,6 @@ webkit.org/b/103299 [ Linux Mac Win ] fast/dom/shadow/shadow-dom-event-dispatchi
 webkit.org/b/103148 [ Linux Win ] fast/text/atsui-small-caps-punctuation-size.html [ ImageOnlyFailure Failure Pass ]
 webkit.org/b/103308 [ SnowLeopard Lion ] css3/filters/custom/custom-filter-transforms-animation.html [ Pass Timeout ]
 
-webkit.org/b/103348 fast/js/string-replacement-outofmemory.html [ Crash ]
 webkit.org/b/103363 [ Mac ] touchadjustment/touch-links-longpress.html [ Failure ]
 webkit.org/b/103183 [ Win7 SnowLeopard Lion ] media/video-duration-known-after-eos.html [ Pass Crash ]
 webkit.org/b/103446 [ Mac ] http/tests/canvas/canvas-slow-font-loading.html [ ImageOnlyFailure ]
