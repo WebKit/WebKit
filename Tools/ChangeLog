@@ -1,3 +1,12 @@
+2012-11-28  Vivek Galatage  <vivek.vg@samsung.com>
+
+        Adding secondary email id
+        https://bugs.webkit.org/show_bug.cgi?id=103594
+
+        Unreviewed. Adding secondary email.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2012-11-28  Kent Tamura  <tkent@chromium.org>
 
         garden-o-matic: Use indeterminate <progress> in the status area
