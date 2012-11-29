@@ -312,6 +312,14 @@ void ShadowRoot::childrenChanged(bool changedByParser, Node* beforeChange, Node*
     owner()->invalidateDistribution();
 }
 
+const Vector<InsertionPoint*>& ShadowRoot::insertionPointList()
+{
+    typedef Vector<InsertionPoint*> InsertionPointVector;
+    DEFINE_STATIC_LOCAL(InsertionPointVector, emptyVector, ());
+
+    return distributionData() ? distributionData()->ensureInsertionPointList(this) : emptyVector;
+}
+
 void ShadowRoot::registerScopedHTMLStyleChild()
 {
     ++m_numberOfStyles;

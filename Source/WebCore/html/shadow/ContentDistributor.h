@@ -75,12 +75,12 @@ public:
     InsertionPoint* insertionPointAssignedTo() const { return m_insertionPointAssignedTo; }
     void setInsertionPointAssignedTo(InsertionPoint* insertionPoint) { m_insertionPointAssignedTo = insertionPoint; }
 
-    void incrementNumberOfShadowElementChildren() { ++m_numberOfShadowElementChildren; }
-    void decrementNumberOfShadowElementChildren() { ASSERT(m_numberOfShadowElementChildren > 0); --m_numberOfShadowElementChildren; }
+    void incrementNumberOfShadowElementChildren() { ++m_numberOfShadowElementChildren; invalidateInsertionPointList(); }
+    void decrementNumberOfShadowElementChildren() { ASSERT(m_numberOfShadowElementChildren > 0); --m_numberOfShadowElementChildren; invalidateInsertionPointList(); }
     bool hasShadowElementChildren() const { return m_numberOfShadowElementChildren > 0; }
 
-    void incrementNumberOfContentElementChildren() { ++m_numberOfContentElementChildren; }
-    void decrementNumberOfContentElementChildren() { ASSERT(m_numberOfContentElementChildren > 0); --m_numberOfContentElementChildren; }
+    void incrementNumberOfContentElementChildren() { ++m_numberOfContentElementChildren; invalidateInsertionPointList(); }
+    void decrementNumberOfContentElementChildren() { ASSERT(m_numberOfContentElementChildren > 0); --m_numberOfContentElementChildren; invalidateInsertionPointList(); }
     bool hasContentElementChildren() const { return m_numberOfContentElementChildren > 0; }
 
     void incrementNumberOfElementShadowChildren() { ++m_numberOfElementShadowChildren; }
@@ -88,11 +88,16 @@ public:
     unsigned numberOfElementShadowChildren() const { return m_numberOfElementShadowChildren; }
     bool hasElementShadowChildren() const { return m_numberOfElementShadowChildren > 0; }
 
+    void invalidateInsertionPointList();
+    const Vector<InsertionPoint*>& ensureInsertionPointList(ShadowRoot*);
+
 private:
     InsertionPoint* m_insertionPointAssignedTo;
     unsigned m_numberOfShadowElementChildren;
     unsigned m_numberOfContentElementChildren;
     unsigned m_numberOfElementShadowChildren;
+    bool m_insertionPointListIsValid;
+    Vector<InsertionPoint*> m_insertionPointList;
 };
 
 class ContentDistributor {

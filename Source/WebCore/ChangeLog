@@ -1,3 +1,35 @@
+2012-11-28  Shinya Kawanaka  <shinyak@chromium.org>
+
+        [Shadow] ShadowRoot should cache InsertionPointList.
+        https://bugs.webkit.org/show_bug.cgi?id=103212
+
+        Reviewed by Hajime Morita.
+
+        When distributing or invalidating distribution, we used to traverse all descendent nodes in Shadow DOM.
+        If ShadowRoot has a InsertionPoint list, we can just traverse the list.
+
+        No new tests, should be covered by existing tests.
+
+        * dom/ShadowRoot.cpp:
+        (WebCore::ShadowRoot::insertionPointList):
+        (WebCore):
+        * dom/ShadowRoot.h:
+        (ShadowRoot):
+        * html/shadow/ContentDistributor.cpp:
+        (WebCore::ShadowRootContentDistributionData::ShadowRootContentDistributionData):
+        (WebCore::ShadowRootContentDistributionData::invalidateInsertionPointList):
+        (WebCore):
+        (WebCore::ShadowRootContentDistributionData::ensureInsertionPointList): Creates InsertionPoint list
+        if it's not created and return it.
+        (WebCore::ContentDistributor::distribute): Traverse InsertionPointList instead of all descendent nodes in Shadow DOM.
+        (WebCore::ContentDistributor::invalidate): ditto.
+        * html/shadow/ContentDistributor.h:
+        (WebCore::ShadowRootContentDistributionData::incrementNumberOfShadowElementChildren): Invalidate InsertionPointList cache.
+        (WebCore::ShadowRootContentDistributionData::decrementNumberOfShadowElementChildren): ditto.
+        (WebCore::ShadowRootContentDistributionData::incrementNumberOfContentElementChildren): ditto.
+        (WebCore::ShadowRootContentDistributionData::decrementNumberOfContentElementChildren): ditto.
+        (ShadowRootContentDistributionData):
+
 2012-11-28  Michael Pruett  <michael@68k.org>
 
         IndexedDB: Remove duplicate toWireString() and createFromWire() methods in JSC SerializedScriptValue

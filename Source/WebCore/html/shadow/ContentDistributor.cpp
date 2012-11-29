@@ -63,9 +63,34 @@ ShadowRootContentDistributionData::ShadowRootContentDistributionData()
     , m_numberOfShadowElementChildren(0)
     , m_numberOfContentElementChildren(0)
     , m_numberOfElementShadowChildren(0)
+    , m_insertionPointListIsValid(false)
 {
 }
 
+void ShadowRootContentDistributionData::invalidateInsertionPointList()
+{
+    m_insertionPointListIsValid = false;
+    m_insertionPointList.clear();
+}
+
+const Vector<InsertionPoint*>& ShadowRootContentDistributionData::ensureInsertionPointList(ShadowRoot* shadowRoot)
+{
+    if (m_insertionPointListIsValid)
+        return m_insertionPointList;
+
+    m_insertionPointListIsValid = true;
+    ASSERT(m_insertionPointList.isEmpty());
+
+    if (!shadowRoot->hasInsertionPoint())
+        return m_insertionPointList;
+
+    for (Node* node = shadowRoot; node; node = node->traverseNextNode(shadowRoot)) {
+        if (node->isInsertionPoint())
+            m_insertionPointList.append(toInsertionPoint(node));
+    }
+
+    return m_insertionPointList;
+}
 
 ContentDistributor::ContentDistributor()
     : m_validity(Undetermined)
@@ -116,17 +141,18 @@ void ContentDistributor::distribute(Element* host)
     for (ShadowRoot* root = host->youngestShadowRoot(); root; root = root->olderShadowRoot()) {
         HTMLShadowElement* firstActiveShadowInsertionPoint = 0;
 
-        for (Node* node = root; node; node = node->traverseNextNode(root)) {
-            if (!isActiveInsertionPoint(node))
+        const Vector<InsertionPoint*>& insertionPoints = root->insertionPointList();
+        for (size_t i = 0; i < insertionPoints.size(); ++i) {
+            InsertionPoint* point = insertionPoints[i];
+            if (!point->isActive())
                 continue;
-            InsertionPoint* point = toInsertionPoint(node);
 
-            if (isHTMLShadowElement(node)) {
+            if (isHTMLShadowElement(point)) {
                 if (!firstActiveShadowInsertionPoint)
-                    firstActiveShadowInsertionPoint = toHTMLShadowElement(node);
+                    firstActiveShadowInsertionPoint = toHTMLShadowElement(point);
             } else {
                 distributeSelectionsTo(point, pool, distributed);
-                if (ElementShadow* shadow = node->parentNode()->isElementNode() ? toElement(node->parentNode())->shadow() : 0)
+                if (ElementShadow* shadow = point->parentNode()->isElementNode() ? toElement(point->parentNode())->shadow() : 0)
                     shadow->invalidateDistribution();
             }
         }
@@ -157,13 +183,10 @@ bool ContentDistributor::invalidate(Element* host)
 
     for (ShadowRoot* root = host->youngestShadowRoot(); root; root = root->olderShadowRoot()) {
         root->setAssignedTo(0);
-
-        for (Node* node = root; node; node = node->traverseNextNode(root)) {
-            if (!node->isInsertionPoint())
-                continue;
+        const Vector<InsertionPoint*>& insertionPoints = root->insertionPointList();
+        for (size_t i = 0; i < insertionPoints.size(); ++i) {
             needsReattach = needsReattach || true;
-            InsertionPoint* point = toInsertionPoint(node);
-            point->clearDistribution();
+            insertionPoints[i]->clearDistribution();
         }
     }
 
