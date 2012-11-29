@@ -1,3 +1,36 @@
+2012-11-29  Peter Beverloo  <peter@chromium.org>
+
+        run-perf-tests --chromium-android should not require adb in my path
+        https://bugs.webkit.org/show_bug.cgi?id=103581
+
+        Reviewed by Eric Seidel.
+
+        Remove the need to have "adb" available in the path for Layout and Performance
+        tests. We'll determine the versions of the "adb" version in path (if any) and
+        the one provided in the Chromium Android checkout. Unless the "adb" available
+        in the path is newer, the provided version will be used.
+
+        Some other minor nits addressed:
+        - The path_to_forwarder/path_to_md5sum should not be in the "private overrides"
+          section, as they're not overriding anything and are used by the driver.
+        - Make _restart_adb_as_root slightly more robust by waiting for the device
+          to come back online regardless of the output.
+
+        * Scripts/webkitpy/layout_tests/port/chromium_android.py:
+        (ChromiumAndroidPort.__init__):
+        (ChromiumAndroidPort.check_build):
+        (ChromiumAndroidPort.path_to_adb):
+        (ChromiumAndroidPort):
+        (ChromiumAndroidPort.path_to_forwarder):
+        (ChromiumAndroidPort.path_to_md5sum):
+        (ChromiumAndroidPort._path_to_helper):
+        (ChromiumAndroidPort._determine_adb_version):
+        (ChromiumAndroidPort._get_devices):
+        (ChromiumAndroidDriver.__init__):
+        (ChromiumAndroidDriver._setup_md5sum_and_push_data_if_needed):
+        (ChromiumAndroidDriver._push_executable):
+        (ChromiumAndroidDriver._restart_adb_as_root):
+
 2012-11-29  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] [WebKit2] Embed the HTTP authentication dialog into the WebView
