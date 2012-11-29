@@ -231,6 +231,7 @@ localizedStrings["Inspected worker terminated"] = "Inspected worker terminated";
 localizedStrings["Inspected worker has terminated. Once it restarts we will attach to it automatically."] = "Inspected worker has terminated. Once it restarts we will attach to it automatically.";
 localizedStrings["Install Timer"] = "Install Timer";
 localizedStrings["Invalid property value."] = "Invalid property value.";
+localizedStrings["KB"] = "KB";
 localizedStrings["Key"] = "Key";
 localizedStrings["Shortcuts"] = "Shortcuts";
 localizedStrings["Layout"] = "Layout";

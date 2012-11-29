@@ -1,3 +1,20 @@
+2012-11-29  Alexei Filippov  <alph@chromium.org>
+
+        Web Inspector: Allow sorting in NMI snapshot grid view
+        https://bugs.webkit.org/show_bug.cgi?id=102955
+
+        Reviewed by Yury Semikhatsky.
+
+        * English.lproj/localizedStrings.js:
+        * inspector/front-end/NativeMemorySnapshotView.js:
+        (WebInspector.NativeSnapshotDataGrid.prototype.sortingChanged):
+        (WebInspector.NativeSnapshotDataGrid.prototype._sortingFunction):
+        (WebInspector.NativeSnapshotNode):
+        (WebInspector.NativeSnapshotNode.prototype._storeState):
+        (WebInspector.NativeSnapshotNode.prototype._restoreState):
+        (WebInspector.NativeSnapshotNode.prototype.uid):
+        (WebInspector.NativeSnapshotNode.prototype._createSizeCell):
+
 2012-11-29  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] [WebKit2] Embed the HTTP authentication dialog into the WebView

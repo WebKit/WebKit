@@ -55,22 +55,49 @@ WebInspector.NativeMemorySnapshotView.prototype = {
 WebInspector.NativeSnapshotDataGrid = function(profile)
 {
     var columns = {
-        object: { title: WebInspector.UIString("Object"), width: "200px", disclosure: true, sortable: false },
-        size: { title: WebInspector.UIString("Size"), sortable: false },
+        name: { title: WebInspector.UIString("Object"), width: "200px", disclosure: true, sortable: true },
+        size: { title: WebInspector.UIString("Size"), sortable: true, sort: "descending" },
     };
     WebInspector.DataGrid.call(this, columns);
-    var totalNode = new WebInspector.NativeSnapshotNode(profile, profile);
+    this._totalNode = new WebInspector.NativeSnapshotNode(profile, profile);
     if (WebInspector.settings.showNativeSnapshotUninstrumentedSize.get()) {
         this.setRootNode(new WebInspector.DataGridNode(null, true));
-        this.rootNode().appendChild(totalNode)
-        totalNode.expand();
+        this.rootNode().appendChild(this._totalNode)
+        this._totalNode.expand();
     } else {
-        this.setRootNode(totalNode);
-        totalNode._populate();
+        this.setRootNode(this._totalNode);
+        this._totalNode._populate();
     }
+    this.addEventListener("sorting changed", this.sortingChanged.bind(this), this);
 }
 
 WebInspector.NativeSnapshotDataGrid.prototype = {
+    sortingChanged: function()
+    {
+        var expandedNodes = {};
+        this._totalNode._storeState(expandedNodes);
+        this._totalNode.removeChildren();
+        this._totalNode._populate();
+        this._totalNode._shouldRefreshChildren = true;
+        this._totalNode._restoreState(expandedNodes);
+    },
+
+    /**
+     * @param {MemoryAgent.MemoryBlock} nodeA
+     * @param {MemoryAgent.MemoryBlock} nodeB
+     */
+    _sortingFunction: function(nodeA, nodeB)
+    {
+        var sortColumnIdentifier = this.sortColumnIdentifier;
+        var sortAscending = this.sortOrder === "ascending";
+        var field1 = nodeA[sortColumnIdentifier];
+        var field2 = nodeB[sortColumnIdentifier];
+        var result = field1 < field2 ? -1 : (field1 > field2 ? 1 : 0);
+        if (!sortAscending)
+            result = -result;
+        return result;
+    },
+
     __proto__: WebInspector.DataGrid.prototype
 }
 
@@ -85,7 +112,7 @@ WebInspector.NativeSnapshotNode = function(nodeData, profile)
     this._nodeData = nodeData;
     this._profile = profile;
     var viewProperties = WebInspector.MemoryBlockViewProperties._forMemoryBlock(nodeData);
-    var data = { object: viewProperties._description, size: this._nodeData.size };
+    var data = { name: viewProperties._description, size: this._nodeData.size };
     var hasChildren = !!nodeData.children && nodeData.children.length !== 0;
     WebInspector.DataGridNode.call(this, data, hasChildren);
     this.addEventListener("populate", this._populate, this);
@@ -106,6 +133,40 @@ WebInspector.NativeSnapshotNode.prototype = {
     },
 
     /**
+     * @param {Object} expandedNodes
+     */
+    _storeState: function(expandedNodes)
+    {
+        if (!this.expanded)
+            return;
+        expandedNodes[this.uid()] = true;
+        for (var i in this.children)
+            this.children[i]._storeState(expandedNodes);
+    },
+
+    /**
+     * @param {Object} expandedNodes
+     */
+    _restoreState: function(expandedNodes)
+    {
+        if (!expandedNodes[this.uid()])
+            return;
+        this.expand();
+        for (var i in this.children)
+            this.children[i]._restoreState(expandedNodes);
+    },
+
+    /**
+     * @return {string}
+     */
+    uid: function()
+    {
+        if (!this._uid)
+            this._uid = (!this.parent || !this.parent.uid ? "" : this.parent.uid() || "") + "/" + this._nodeData.name;
+        return this._uid;
+    },
+
+    /**
      * @param {string} columnIdentifier
      * @return {Element}
      */
@@ -121,7 +182,7 @@ WebInspector.NativeSnapshotNode.prototype = {
             node = node.parent;
         }
 
-        var sizeKiB = this._nodeData.size / 1024;
+        var sizeKB = this._nodeData.size / 1024;
         var totalSize = this._profile.size;
         var percentage = this._nodeData.size / totalSize  * 100;
 
@@ -129,7 +190,7 @@ WebInspector.NativeSnapshotNode.prototype = {
         cell.className = columnIdentifier + "-column";
 
         var textDiv = document.createElement("div");
-        textDiv.textContent = Number.withThousandsSeparator(sizeKiB.toFixed(0)) + "\u2009" + WebInspector.UIString("KiB");
+        textDiv.textContent = Number.withThousandsSeparator(sizeKB.toFixed(0)) + "\u2009" + WebInspector.UIString("KB");
         textDiv.className = "size-text";
         cell.appendChild(textDiv);
 
@@ -157,11 +218,7 @@ WebInspector.NativeSnapshotNode.prototype = {
 
     _populate: function() {
         this.removeEventListener("populate", this._populate, this);
-        function comparator(a, b) {
-            return b.size - a.size;
-        }
-        if (this._nodeData !== this._profile)
-            this._nodeData.children.sort(comparator);
+        this._nodeData.children.sort(this.dataGrid._sortingFunction.bind(this.dataGrid));
         for (var node in this._nodeData.children) {
             var nodeData = this._nodeData.children[node];
             if (WebInspector.settings.showNativeSnapshotUninstrumentedSize.get() || nodeData.name !== "Other")
