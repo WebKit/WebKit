@@ -983,27 +983,24 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::valueForFilter(const RenderObj
 }
 #endif
 
-static PassRefPtr<CSSValue> valueForGridTrackBreadth(const Length& trackLength, const RenderStyle* style)
+static PassRefPtr<CSSValue> valueForGridTrackBreadth(const GridTrackSize& trackSize, const RenderStyle* style)
 {
-    if (trackLength.isPercent())
-        return cssValuePool().createValue(trackLength);
-    if (trackLength.isAuto())
+    if (trackSize.length().isPercent())
+        return cssValuePool().createValue(trackSize.length());
+    if (trackSize.length().isAuto())
         return cssValuePool().createIdentifierValue(CSSValueAuto);
-    return zoomAdjustedPixelValue(trackLength.value(), style);
+    return zoomAdjustedPixelValue(trackSize.length().value(), style);
 }
 
-static PassRefPtr<CSSValue> valueForGridTrackList(const Vector<Length>& trackLengths, const RenderStyle* style)
+static PassRefPtr<CSSValue> valueForGridTrackList(const Vector<GridTrackSize>& trackSizes, const RenderStyle* style)
 {
-    // We should have at least an element!
-    ASSERT(trackLengths.size());
-
     // Handle the 'none' case here.
-    if (trackLengths.size() == 1 && trackLengths[0].isUndefined())
+    if (!trackSizes.size())
         return cssValuePool().createIdentifierValue(CSSValueNone);
 
     RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
-    for (size_t i = 0; i < trackLengths.size(); ++i)
-        list->append(valueForGridTrackBreadth(trackLengths[i], style));
+    for (size_t i = 0; i < trackSizes.size(); ++i)
+        list->append(valueForGridTrackBreadth(trackSizes[i], style));
     return list.release();
 }
 

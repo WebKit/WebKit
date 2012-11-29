@@ -1,3 +1,55 @@
+2012-11-29  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        [CSS Grid Layout] track sizing functions should have their own type
+        https://bugs.webkit.org/show_bug.cgi?id=103343
+
+        Reviewed by Tony Chang.
+
+        The current code uses a Length to represent the track sizing function. This is
+        fine as we only parse <length> | <percentage> but in order to support minmax
+        sizing, we have to store 2 Lengths. We could go with a pair but that would make
+        the code not very readable so this change introduces GridTrackSize.
+
+        Refactoring, covered by existing tests.
+
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        Added GridTrackSize.h to all our build systems.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::valueForGridTrackBreadth):
+        (WebCore::valueForGridTrackList):
+        * css/StyleResolver.cpp:
+        (WebCore::createGridTrackBreadth):
+        (WebCore::createGridTrackList):
+        (WebCore::StyleResolver::applyProperty):
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::computePreferredLogicalWidths):
+        (WebCore::RenderGrid::computedUsedBreadthOfGridTracks):
+        * rendering/style/RenderStyle.h:
+        Updated the above call sites to use GridTrackSize. While
+        touching them, changed the code to use an empty Vector to represent
+        'none' instead of Length(Undefined).
+
+        * rendering/style/StyleGridData.h:
+        Updated #include, removed a comment as it would have gone stale after
+        adding more grammar support and added a FIXME to rename some variables.
+
+        * rendering/RenderGrid.cpp:
+        (WebCore::RenderGrid::layoutGridItems):
+        Implemented a work-around to avoid crashing due to implicit columns / rows.
+
+        * rendering/style/GridTrackSize.h: Added.
+        (WebCore::GridTrackSize::GridTrackSize):
+        (WebCore::GridTrackSize::length):
+        (WebCore::GridTrackSize::setLength):
+        (WebCore::GridTrackSize::type):
+        (WebCore::GridTrackSize::operator==):
+        New class, it now only wraps a single Length.
+
 2012-11-29  Helder Correia  <helder.correia@nokia.com>
 
         Typo in Color creation function name

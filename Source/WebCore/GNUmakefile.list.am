@@ -4504,6 +4504,7 @@ webcore_sources += \
 	Source/WebCore/rendering/style/StyleVariableData.h \
 	Source/WebCore/rendering/style/StyleVisualData.cpp \
 	Source/WebCore/rendering/style/StyleVisualData.h \
+	Source/WebCore/rendering/style/GridTrackSize.h \
 	Source/WebCore/rendering/TableLayout.h \
 	Source/WebCore/rendering/TrailingFloatsRootInlineBox.h \
 	Source/WebCore/storage/StorageTask.cpp \

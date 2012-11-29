@@ -3821,6 +3821,7 @@
 		A120ACA413F998CA00FE4AC7 /* LayoutRepainter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A120ACA113F9984600FE4AC7 /* LayoutRepainter.cpp */; };
 		A12538D413F9B60A00024754 /* LayoutRepainter.h in Headers */ = {isa = PBXBuildFile; fileRef = A120ACA013F9983700FE4AC7 /* LayoutRepainter.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A12705C31656BD6500C2E27C /* GridPosition.h in Headers */ = {isa = PBXBuildFile; fileRef = A12705C21656BD6500C2E27C /* GridPosition.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A12A1050166444FD008FA311 /* GridTrackSize.h in Headers */ = {isa = PBXBuildFile; fileRef = A12A104E166444DC008FA311 /* GridTrackSize.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A136A00C1134DBD200CC8D50 /* XMLHttpRequestProgressEventThrottle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A136A00A1134DBD200CC8D50 /* XMLHttpRequestProgressEventThrottle.cpp */; };
 		A136A00D1134DBD200CC8D50 /* XMLHttpRequestProgressEventThrottle.h in Headers */ = {isa = PBXBuildFile; fileRef = A136A00B1134DBD200CC8D50 /* XMLHttpRequestProgressEventThrottle.h */; };
 		A17C81220F2A5CF7005DAAEB /* HTMLElementFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A17C81200F2A5CF7005DAAEB /* HTMLElementFactory.cpp */; };
@@ -11136,6 +11137,7 @@
 		A120ACA013F9983700FE4AC7 /* LayoutRepainter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LayoutRepainter.h; sourceTree = "<group>"; };
 		A120ACA113F9984600FE4AC7 /* LayoutRepainter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LayoutRepainter.cpp; sourceTree = "<group>"; };
 		A12705C21656BD6500C2E27C /* GridPosition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GridPosition.h; path = style/GridPosition.h; sourceTree = "<group>"; };
+		A12A104E166444DC008FA311 /* GridTrackSize.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GridTrackSize.h; path = style/GridTrackSize.h; sourceTree = "<group>"; };
 		A136A00A1134DBD200CC8D50 /* XMLHttpRequestProgressEventThrottle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XMLHttpRequestProgressEventThrottle.cpp; sourceTree = "<group>"; };
 		A136A00B1134DBD200CC8D50 /* XMLHttpRequestProgressEventThrottle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XMLHttpRequestProgressEventThrottle.h; sourceTree = "<group>"; };
 		A17C81200F2A5CF7005DAAEB /* HTMLElementFactory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLElementFactory.cpp; sourceTree = "<group>"; };
@@ -20742,6 +20744,7 @@
 				BC2274750E8366E200E7F975 /* SVGRenderStyle.h */,
 				BC2274760E8366E200E7F975 /* SVGRenderStyleDefs.cpp */,
 				BC2274770E8366E200E7F975 /* SVGRenderStyleDefs.h */,
+				A12A104E166444DC008FA311 /* GridTrackSize.h */,
 			);
 			name = style;
 			sourceTree = "<group>";
@@ -25604,6 +25607,7 @@
 				E44613B00CD6331000FADA75 /* TimeRanges.h in Headers */,
 				49E912AE0EFAC906009D0CAF /* TimingFunction.h in Headers */,
 				070334D71459FFD5008D8D45 /* TrackBase.h in Headers */,
+				A12A1050166444FD008FA311 /* GridTrackSize.h in Headers */,
 				49E911C40EF86D47009D0CAF /* TransformationMatrix.h in Headers */,
 				49E911CE0EF86D47009D0CAF /* TransformOperation.h in Headers */,
 				49E911D00EF86D47009D0CAF /* TransformOperations.h in Headers */,

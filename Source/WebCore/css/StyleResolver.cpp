@@ -2659,7 +2659,7 @@ bool StyleResolver::useSVGZoomRules()
     return m_element && m_element->isSVGElement();
 }
 
-static bool createGridTrackBreadth(CSSPrimitiveValue* primitiveValue, StyleResolver* selector, Length& length)
+static bool createGridTrackBreadth(CSSPrimitiveValue* primitiveValue, StyleResolver* selector, GridTrackSize& trackSize)
 {
     Length workingLength = primitiveValue->convertToLength<FixedIntegerConversion | PercentConversion | ViewportPercentageConversion | AutoConversion>(selector->style(), selector->rootElementStyle(), selector->style()->effectiveZoom());
     if (workingLength.isUndefined())
@@ -2668,20 +2668,16 @@ static bool createGridTrackBreadth(CSSPrimitiveValue* primitiveValue, StyleResol
     if (primitiveValue->isLength())
         workingLength.setQuirk(primitiveValue->isQuirkValue());
 
-    length = workingLength;
+    trackSize.setLength(workingLength);
     return true;
 }
 
-static bool createGridTrackList(CSSValue* value, Vector<Length>& lengths, StyleResolver* selector)
+static bool createGridTrackList(CSSValue* value, Vector<GridTrackSize>& trackSizes, StyleResolver* selector)
 {
     // Handle 'none'.
     if (value->isPrimitiveValue()) {
         CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
-        if (primitiveValue->getIdent() == CSSValueNone) {
-            lengths.append(Length(Undefined));
-            return true;
-        }
-        return false;
+        return primitiveValue->getIdent() == CSSValueNone;
     }
 
     if (value->isValueList()) {
@@ -2690,11 +2686,11 @@ static bool createGridTrackList(CSSValue* value, Vector<Length>& lengths, StyleR
             if (!currValue->isPrimitiveValue())
                 return false;
 
-            Length length;
-            if (!createGridTrackBreadth(static_cast<CSSPrimitiveValue*>(currValue), selector, length))
+            GridTrackSize trackSize;
+            if (!createGridTrackBreadth(static_cast<CSSPrimitiveValue*>(currValue), selector, trackSize))
                 return false;
 
-            lengths.append(length);
+            trackSizes.append(trackSize);
         }
         return true;
     }
@@ -3544,17 +3540,17 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
     }
 #endif
     case CSSPropertyWebkitGridColumns: {
-        Vector<Length> lengths;
-        if (!createGridTrackList(value, lengths, this))
+        Vector<GridTrackSize> trackSizes;
+        if (!createGridTrackList(value, trackSizes, this))
             return;
-        m_style->setGridColumns(lengths);
+        m_style->setGridColumns(trackSizes);
         return;
     }
     case CSSPropertyWebkitGridRows: {
-        Vector<Length> lengths;
-        if (!createGridTrackList(value, lengths, this))
+        Vector<GridTrackSize> trackSizes;
+        if (!createGridTrackList(value, trackSizes, this))
             return;
-        m_style->setGridRows(lengths);
+        m_style->setGridRows(trackSizes);
         return;
     }
 

@@ -628,6 +628,7 @@
             'rendering/style/StyleTransformData.h',
             'rendering/style/StyleVariableData.h',
             'rendering/style/StyleVisualData.h',
+            'rendering/style/GridTrackSizes.h',
             'rendering/svg/SVGResourcesCache.h',
             'workers/SharedWorkerStrategy.h',
             'workers/WorkerRunLoop.h',

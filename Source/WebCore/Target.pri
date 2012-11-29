@@ -2476,6 +2476,7 @@ HEADERS += \
     rendering/style/StyleTransformData.h \
     rendering/style/StyleVariableData.h \
     rendering/style/StyleVisualData.h \
+    rendering/style/GridTrackSize.h \
     rendering/style/SVGRenderStyleDefs.h \
     rendering/style/SVGRenderStyle.h \
     rendering/svg/RenderSVGBlock.h \

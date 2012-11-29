@@ -116,10 +116,10 @@ void RenderGrid::computePreferredLogicalWidths()
 
     // FIXME: We don't take our own logical width into account.
 
-    const Vector<Length>& trackStyles = style()->gridColumns();
+    const Vector<GridTrackSize>& trackStyles = style()->gridColumns();
 
     for (size_t i = 0; i < trackStyles.size(); ++i) {
-        Length trackLength = trackStyles[i];
+        Length trackLength = trackStyles[i].length();
         if (!trackLength.isFixed()) {
             notImplemented();
             continue;
@@ -138,11 +138,11 @@ void RenderGrid::computePreferredLogicalWidths()
 
 void RenderGrid::computedUsedBreadthOfGridTracks(TrackSizingDirection direction, Vector<GridTrack>& tracks)
 {
-    const Vector<Length>& trackStyles = (direction == ForColumns) ? style()->gridColumns() : style()->gridRows();
+    const Vector<GridTrackSize>& trackStyles = (direction == ForColumns) ? style()->gridColumns() : style()->gridRows();
     for (size_t i = 0; i < trackStyles.size(); ++i) {
         GridTrack track;
-        if (trackStyles[i].isFixed())
-            track.m_usedBreadth = trackStyles[i].getFloatValue();
+        if (trackStyles[i].length().isFixed())
+            track.m_usedBreadth = trackStyles[i].length().getFloatValue();
         else
             notImplemented();
 
@@ -165,10 +165,13 @@ void RenderGrid::layoutGridItems()
         size_t columnTrack = resolveGridPosition(child->style()->gridItemColumn());
         size_t rowTrack = resolveGridPosition(child->style()->gridItemRow());
 
-        // Because the grid area cannot be styled, we don't need to adjust
-        // the grid breadth to account for 'box-sizing'.
-        child->setOverrideContainingBlockContentLogicalWidth(columnTracks[columnTrack].m_usedBreadth);
-        child->setOverrideContainingBlockContentLogicalHeight(rowTracks[rowTrack].m_usedBreadth);
+        // FIXME: Properly support implicit rows and columns (bug 103573).
+        if (columnTrack < columnTracks.size() && rowTrack < rowTracks.size()) {
+            // Because the grid area cannot be styled, we don't need to adjust
+            // the grid breadth to account for 'box-sizing'.
+            child->setOverrideContainingBlockContentLogicalWidth(columnTracks[columnTrack].m_usedBreadth);
+            child->setOverrideContainingBlockContentLogicalHeight(rowTracks[rowTrack].m_usedBreadth);
+        }
 
         // FIXME: Grid items should stretch to fill their cells. Once we
         // implement grid-{column,row}-align, we can also shrink to fit. For

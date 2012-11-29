@@ -26,7 +26,7 @@
 #ifndef StyleGridData_h
 #define StyleGridData_h
 
-#include "Length.h"
+#include "GridTrackSize.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
@@ -48,10 +48,9 @@ public:
         return !(*this == o);
     }
 
-    // FIXME: For the moment, we only support a subset of the grammar which correspond to:
-    // 'auto' | <length> | <percentage> | 'none'
-    Vector<Length> m_gridColumns;
-    Vector<Length> m_gridRows;
+    // FIXME: Update the naming of the following variables.
+    Vector<GridTrackSize> m_gridColumns;
+    Vector<GridTrackSize> m_gridRows;
 
 private:
     StyleGridData();
