@@ -1,3 +1,26 @@
+2012-11-28  Michael Pruett  <michael@68k.org>
+
+        IndexedDB: Remove duplicate toWireString() and createFromWire() methods in JSC SerializedScriptValue
+        https://bugs.webkit.org/show_bug.cgi?id=103554
+
+        Reviewed by Kentaro Hara.
+
+        In r135022, duplicate createFromWire() and toWireString() methods
+        were added to the JSC version of SerializedScriptValue. In
+        order to allow the JSC SerializedScriptValue to compile when
+        ENABLE(INDEXED_DATABASE) is turned on, these new methods have
+        been removed and the old methods have been moved outside the
+        ENABLE(INDEXED_DATABASE) guard.
+
+        No new tests. No change in functionality.
+
+        * WebCore.exp.in:
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::SerializedScriptValue::toWireString):
+        (WebCore):
+        (WebCore::SerializedScriptValue::createFromWire):
+        * bindings/js/SerializedScriptValue.h:
+
 2012-11-28  Hajime Morrita  <morrita@google.com>
 
         [Shadow DOM] Element.createShadowRoot() should be prefixed.

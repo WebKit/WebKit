@@ -1,3 +1,19 @@
+2012-11-28  Michael Pruett  <michael@68k.org>
+
+        IndexedDB: Remove duplicate toWireString() and createFromWire() methods in JSC SerializedScriptValue
+        https://bugs.webkit.org/show_bug.cgi?id=103554
+
+        Reviewed by Kentaro Hara.
+
+        In r135022, duplicate createFromWire() and toWireString() methods
+        were added to the JSC version of SerializedScriptValue. In
+        order to allow the JSC SerializedScriptValue to compile when
+        ENABLE(INDEXED_DATABASE) is turned on, these new methods have
+        been removed and the old methods have been moved outside the
+        ENABLE(INDEXED_DATABASE) guard.
+
+        * Source/autotools/symbols.filter:
+
 2012-11-28  Shinya Kawanaka  <shinyak@chromium.org>
 
         [Shadow] Move Distribution stuffs from ShadowRoot
