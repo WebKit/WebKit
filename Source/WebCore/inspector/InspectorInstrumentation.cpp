@@ -607,6 +607,18 @@ void InspectorInstrumentation::didProcessRuleImpl(const InspectorInstrumentation
         cssAgent->didProcessRule();
 }
 
+void InspectorInstrumentation::willProcessTaskImpl(InstrumentingAgents* instrumentingAgents)
+{
+    if (InspectorTimelineAgent* timelineAgent = instrumentingAgents->inspectorTimelineAgent())
+        timelineAgent->willProcessTask();
+}
+
+void InspectorInstrumentation::didProcessTaskImpl(InstrumentingAgents* instrumentingAgents)
+{
+    if (InspectorTimelineAgent* timelineAgent = instrumentingAgents->inspectorTimelineAgent())
+        timelineAgent->didProcessTask();
+}
+
 void InspectorInstrumentation::applyUserAgentOverrideImpl(InstrumentingAgents* instrumentingAgents, String* userAgent)
 {
     if (InspectorResourceAgent* resourceAgent = instrumentingAgents->inspectorResourceAgent())

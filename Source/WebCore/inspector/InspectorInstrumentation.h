@@ -154,6 +154,8 @@ public:
     static void didMatchRule(const InspectorInstrumentationCookie&, bool matched);
     static InspectorInstrumentationCookie willProcessRule(Document*, const StyleRule*);
     static void didProcessRule(const InspectorInstrumentationCookie&);
+    static void willProcessTask(Page*);
+    static void didProcessTask(Page*);
 
     static void applyUserAgentOverride(Frame*, String*);
     static void applyScreenWidthOverride(Frame*, long*);
@@ -346,6 +348,8 @@ private:
     static void didMatchRuleImpl(const InspectorInstrumentationCookie&, bool matched);
     static InspectorInstrumentationCookie willProcessRuleImpl(InstrumentingAgents*, const StyleRule*);
     static void didProcessRuleImpl(const InspectorInstrumentationCookie&);
+    static void willProcessTaskImpl(InstrumentingAgents*);
+    static void didProcessTaskImpl(InstrumentingAgents*);
 
     static void applyUserAgentOverrideImpl(InstrumentingAgents*, String*);
     static void applyScreenWidthOverrideImpl(InstrumentingAgents*, long*);
@@ -1025,6 +1029,24 @@ inline void InspectorInstrumentation::didProcessRule(const InspectorInstrumentat
     FAST_RETURN_IF_NO_FRONTENDS(void());
     if (cookie.first)
         didProcessRuleImpl(cookie);
+#endif
+}
+
+inline void InspectorInstrumentation::willProcessTask(Page* page)
+{
+#if ENABLE(INSPECTOR)
+    FAST_RETURN_IF_NO_FRONTENDS(void());
+    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForPage(page))
+        willProcessTaskImpl(instrumentingAgents);
+#endif
+}
+
+inline void InspectorInstrumentation::didProcessTask(Page* page)
+{
+#if ENABLE(INSPECTOR)
+    FAST_RETURN_IF_NO_FRONTENDS(void());
+    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForPage(page))
+        didProcessTaskImpl(instrumentingAgents);
 #endif
 }
 

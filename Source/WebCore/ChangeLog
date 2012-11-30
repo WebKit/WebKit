@@ -1,3 +1,31 @@
+2012-11-29  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r136171.
+        http://trac.webkit.org/changeset/136171
+        https://bugs.webkit.org/show_bug.cgi?id=103695
+
+        Likely caused ReOpenedWithID and ReOpenedWithURL to fail in
+        linux/chromeos (Requested by zhenyao on #webkit).
+
+        * inspector/InspectorClient.h:
+        (WebCore::InspectorClient::startMainThreadMonitoring):
+        (WebCore::InspectorClient::stopMainThreadMonitoring):
+        * inspector/InspectorController.cpp:
+        * inspector/InspectorController.h:
+        (InspectorController):
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore):
+        (WebCore::InspectorInstrumentation::willProcessTaskImpl):
+        (WebCore::InspectorInstrumentation::didProcessTaskImpl):
+        * inspector/InspectorInstrumentation.h:
+        (InspectorInstrumentation):
+        (WebCore::InspectorInstrumentation::willProcessTask):
+        (WebCore):
+        (WebCore::InspectorInstrumentation::didProcessTask):
+        * inspector/InspectorTimelineAgent.cpp:
+        (WebCore::InspectorTimelineAgent::start):
+        (WebCore::InspectorTimelineAgent::stop):
+
 2012-11-29  Viatcheslav Ostapenko  <v.ostapenko@samsung.com>
 
         Optimization in image decoding.

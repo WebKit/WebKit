@@ -399,18 +399,6 @@ void InspectorController::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) 
     info.addMember(m_agents);
 }
 
-void InspectorController::willProcessTask()
-{
-    if (InspectorTimelineAgent* timelineAgent = m_instrumentingAgents->inspectorTimelineAgent())
-        timelineAgent->willProcessTask();
-}
-
-void InspectorController::didProcessTask()
-{
-    if (InspectorTimelineAgent* timelineAgent = m_instrumentingAgents->inspectorTimelineAgent())
-        timelineAgent->didProcessTask();
-}
-
 } // namespace WebCore
 
 #endif // ENABLE(INSPECTOR)
