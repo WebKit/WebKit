@@ -1,3 +1,29 @@
+2012-11-30  Justin Novosad  <junov@google.com>
+
+        [Chromium] Animation updates fail when using a canvas as a CSS backround-image style with -webkit-canvas
+        https://bugs.webkit.org/show_bug.cgi?id=103643
+
+        Reviewed by Stephen White.
+
+        CanvasRenderingContext2D::didDraw was not propagating the change
+        notification to observers in the accelerated compositing case.
+        Problem fixed by adding observer notifications.
+
+        New manual test: animated-canvas-as-background.html
+
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::didDraw):
+        The observer notification was factored out into a separate method
+        so that it can be invoked directly for accelerated compositing.
+        (WebCore):
+        (WebCore::HTMLCanvasElement::notifyObserversCanvasChanged):
+        * html/HTMLCanvasElement.h:
+        (HTMLCanvasElement):
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::didDraw):
+        Added observer notification call to trigger repainting of elements that
+        use this canvas for their style.
+
 2012-11-30  James Simonsen  <simonjam@chromium.org>
 
         Report CSS as initiator instead of elements, except body

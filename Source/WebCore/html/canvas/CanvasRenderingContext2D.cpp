@@ -1814,6 +1814,7 @@ void CanvasRenderingContext2D::didDraw(const FloatRect& r, unsigned options)
         if (renderBox && renderBox->hasAcceleratedCompositing()) {
             renderBox->contentChanged(CanvasPixelsChanged);
             canvas()->clearCopiedImage();
+            canvas()->notifyObserversCanvasChanged(r);
             return;
         }
     }

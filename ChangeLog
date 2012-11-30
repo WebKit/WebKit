@@ -1,3 +1,16 @@
+2012-11-30  Justin Novosad  <junov@google.com>
+
+        [Chromium] Animation updates fail when using a canvas as a CSS backround-image style with -webkit-canvas
+        https://bugs.webkit.org/show_bug.cgi?id=103643
+
+        Reviewed by Stephen White.
+
+        New test to verify that elements using a canvas as a style image
+        source are redrawn when the canvas is animated.  Added as a manual test
+        because the bug was not reproducible in DumpRenderTree.
+
+        * ManualTests/animated-canvas-as-background.html: Added.
+
 2012-11-30  Pierre Rossi  <pierre.rossi@gmail.com>
 
         [Qt] Unreviewed build break

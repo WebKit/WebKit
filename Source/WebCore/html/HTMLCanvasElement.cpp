@@ -229,6 +229,11 @@ void HTMLCanvasElement::didDraw(const FloatRect& rect)
         ro->repaintRectangle(enclosingIntRect(m_dirtyRect));
     }
 
+    notifyObserversCanvasChanged(rect);
+}
+
+void HTMLCanvasElement::notifyObserversCanvasChanged(const FloatRect& rect)
+{
     HashSet<CanvasObserver*>::iterator end = m_observers.end();
     for (HashSet<CanvasObserver*>::iterator it = m_observers.begin(); it != end; ++it)
         (*it)->canvasChanged(this, rect);

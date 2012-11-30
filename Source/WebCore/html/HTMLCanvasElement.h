@@ -99,6 +99,7 @@ public:
 
     // Used for rendering
     void didDraw(const FloatRect&);
+    void notifyObserversCanvasChanged(const FloatRect&);
 
     void paint(GraphicsContext*, const LayoutRect&, bool useLowQualityScale = false);
 
