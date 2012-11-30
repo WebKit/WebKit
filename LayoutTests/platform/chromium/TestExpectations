@@ -2982,8 +2982,9 @@ crbug.com/33287 fast/canvas/set-colors.html [ Failure ]
 
 webkit.org/b/69060 [ Android Linux Win ] fast/repaint/selection-clear.html [ Failure ]
 
-webkit.org/b/69103 [ Android Linux XP ] fast/text/line-initial-and-final-swashes.html [ Failure ]
+webkit.org/b/69103 [ Android Linux ] fast/text/line-initial-and-final-swashes.html [ Failure ]
 webkit.org/b/69103 [ Mac ] fast/text/line-initial-and-final-swashes.html [ ImageOnlyFailure ]
+webkit.org/b/103722 [ XP ] fast/text/line-initial-and-final-swashes.html [ Missing ]
 
 webkit.org/b/69136 [ Mac ] fast/frames/frame-set-rotation-hit.html [ ImageOnlyFailure ]
 webkit.org/b/69136 [ Mac ] fast/frames/frame-set-scaling-hit.html [ ImageOnlyFailure ]
