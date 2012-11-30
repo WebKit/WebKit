@@ -1,3 +1,16 @@
+2012-11-29  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] [WebKit2] WebKitWebViewBase creates a GL context for the redirected XComposite window crashing WebKit in Xvfb
+        https://bugs.webkit.org/show_bug.cgi?id=103476
+
+        Reviewed by Alejandro G. Castro.
+
+        Create the RedirectedXCompositeWindow with an argument specifying that it
+        should never have a GLContext backing it.
+
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (_WebKitWebViewBasePrivate::_WebKitWebViewBasePrivate):
+
 2012-11-29  Rafael Weinstein  <rafaelw@chromium.org>
 
         [HTMLTemplateElement] Add feature flag

@@ -83,7 +83,7 @@ struct _WebKitWebViewBasePrivate {
     _WebKitWebViewBasePrivate()
         : imContext(adoptGRef(gtk_im_multicontext_new()))
 #if USE(TEXTURE_MAPPER_GL)
-        , redirectedWindow(RedirectedXCompositeWindow::create(IntSize(1, 1)))
+        , redirectedWindow(RedirectedXCompositeWindow::create(IntSize(1, 1), RedirectedXCompositeWindow::DoNotCreateGLContext))
 #endif
     {
     }

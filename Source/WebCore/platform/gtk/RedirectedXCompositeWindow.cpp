@@ -92,16 +92,17 @@ static bool supportsXDamageAndXComposite()
     return true;
 }
 
-PassOwnPtr<RedirectedXCompositeWindow> RedirectedXCompositeWindow::create(const IntSize& size)
+PassOwnPtr<RedirectedXCompositeWindow> RedirectedXCompositeWindow::create(const IntSize& size, GLContextNeeded needsContext)
 {
-    return supportsXDamageAndXComposite() ? adoptPtr(new RedirectedXCompositeWindow(size)) : nullptr;
+    return supportsXDamageAndXComposite() ? adoptPtr(new RedirectedXCompositeWindow(size, needsContext)) : nullptr;
 }
 
-RedirectedXCompositeWindow::RedirectedXCompositeWindow(const IntSize& size)
+RedirectedXCompositeWindow::RedirectedXCompositeWindow(const IntSize& size, GLContextNeeded needsContext)
     : m_size(size)
     , m_window(0)
     , m_parentWindow(0)
     , m_pixmap(0)
+    , m_needsContext(needsContext)
     , m_surface(0)
     , m_needsNewPixmapAfterResize(false)
     , m_damage(0)
@@ -176,12 +177,14 @@ void RedirectedXCompositeWindow::resize(const IntSize& size)
     XResizeWindow(display, m_window, size.width(), size.height());
 
     XFlush(display);
-    context()->waitNative();
 
-    // This swap is based on code in Chromium. It tries to work-around a bug in the Intel drivers
-    // where a swap is necessary to ensure the front and back buffers are properly resized.
-    if (context() == GLContext::getCurrent())
-        context()->swapBuffers();
+    if (m_needsContext == CreateGLContext) {
+        context()->waitNative();
+        // This swap is based on code in Chromium. It tries to work-around a bug in the Intel drivers
+        // where a swap is necessary to ensure the front and back buffers are properly resized.
+        if (context() == GLContext::getCurrent())
+            context()->swapBuffers();
+    }
 
     m_size = size;
     m_needsNewPixmapAfterResize = true;
@@ -189,6 +192,8 @@ void RedirectedXCompositeWindow::resize(const IntSize& size)
 
 GLContext* RedirectedXCompositeWindow::context()
 {
+    ASSERT(m_needsContext);
+
     if (m_context)
         return m_context.get();
 
