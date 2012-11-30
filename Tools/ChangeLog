@@ -1,5 +1,21 @@
 2012-11-29  Dirk Pranke  <dpranke@chromium.org>
 
+        Ignore errors when removing directories on win32 during autoinstall
+        https://bugs.webkit.org/show_bug.cgi?id=103699
+
+        Unreviewed, build fix.
+
+        I think this will work on win32; if not, I'll have to actually
+        reproduce this :). The problem is that the logilab files
+        appear to contain a write-protected file, and deleting those
+        is problematic on windows.
+
+        * Scripts/webkitpy/common/system/autoinstall.py:
+        (AutoInstaller._install):
+        (AutoInstaller.install):
+
+2012-11-29  Dirk Pranke  <dpranke@chromium.org>
+
         webkitpy: autoinstaller is failing on windows
         https://bugs.webkit.org/show_bug.cgi?id=103699
 

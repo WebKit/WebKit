@@ -337,7 +337,7 @@ class AutoInstaller(object):
 
         if os.path.exists(target_path):
             if os.path.isdir(target_path):
-                shutil.rmtree(target_path)
+                shutil.rmtree(target_path, ignore_errors=True)
             else:
                 os.remove(target_path)
 
@@ -408,7 +408,7 @@ class AutoInstaller(object):
                        % (target_name, target_path, err))
             raise Exception(message)
         finally:
-            shutil.rmtree(scratch_dir)
+            shutil.rmtree(scratch_dir, ignore_errors=True)
         _log.debug('Auto-installed %s to:' % url)
         _log.debug('    "%s"' % target_path)
         return True
