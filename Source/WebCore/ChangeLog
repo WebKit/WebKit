@@ -1,3 +1,27 @@
+2012-11-29  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        RenderBlock minor clean-up: replace raw pointers with OwnPtrs.
+        https://bugs.webkit.org/show_bug.cgi?id=103690
+
+        Reviewed by Eric Seidel.
+
+        raw pointers were replaced with OwnPtrs.
+        Probably we also gain a small performance improvements because
+        I replaced get && remove pair with take.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore):
+        (WebCore::removeBlockFromDescendantAndContainerMaps):
+        (WebCore::RenderBlock::~RenderBlock):
+        (WebCore::RenderBlock::addOverflowFromFloats):
+        (WebCore::RenderBlock::addContinuationWithOutline):
+        (WebCore::RenderBlock::paintContinuationOutlines):
+        (WebCore::RenderBlock::insertIntoTrackedRendererMaps):
+        (WebCore::RenderBlock::removeFromTrackedRendererMaps):
+        (WebCore::RenderBlock::setDesiredColumnCountAndWidth):
+        * rendering/RenderBlock.h:
+        (WebCore):
+
 2012-11-30  Jun Jiang  <jun.a.jiang@intel.com>
 
         WebGL: Add a class to abstract the status of the Image in texImage2D() and texSubImage2D()

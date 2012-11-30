@@ -97,7 +97,7 @@ struct SameSizeAsMarginInfo {
     LayoutUnit margins[2];
 };
 
-typedef WTF::HashMap<const RenderBox*, ColumnInfo*> ColumnInfoMap;
+typedef WTF::HashMap<const RenderBox*, OwnPtr<ColumnInfo> > ColumnInfoMap;
 static ColumnInfoMap* gColumnInfoMap = 0;
 
 static TrackedDescendantsMap* gPositionedDescendantsMap = 0;
@@ -106,7 +106,7 @@ static TrackedDescendantsMap* gPercentHeightDescendantsMap = 0;
 static TrackedContainerMap* gPositionedContainerMap = 0;
 static TrackedContainerMap* gPercentHeightContainerMap = 0;
     
-typedef WTF::HashMap<RenderBlock*, ListHashSet<RenderInline*>*> ContinuationOutlineTableMap;
+typedef WTF::HashMap<RenderBlock*, OwnPtr<ListHashSet<RenderInline*> > > ContinuationOutlineTableMap;
 
 typedef WTF::HashSet<RenderBlock*> DelayedUpdateScrollInfoSet;
 static int gDelayUpdateScrollInfo = 0;
@@ -200,21 +200,19 @@ RenderBlock::RenderBlock(Node* node)
 
 static void removeBlockFromDescendantAndContainerMaps(RenderBlock* block, TrackedDescendantsMap*& descendantMap, TrackedContainerMap*& containerMap)
 {
-    if (TrackedRendererListHashSet* descendantSet = descendantMap->take(block)) {
+    if (OwnPtr<TrackedRendererListHashSet> descendantSet = descendantMap->take(block)) {
         TrackedRendererListHashSet::iterator end = descendantSet->end();
         for (TrackedRendererListHashSet::iterator descendant = descendantSet->begin(); descendant != end; ++descendant) {
-            HashSet<RenderBlock*>* containerSet = containerMap->get(*descendant);
-            ASSERT(containerSet);
-            if (!containerSet)
+            TrackedContainerMap::iterator it = containerMap->find(*descendant);
+            ASSERT(it != containerMap->end());
+            if (it == containerMap->end())
                 continue;
+            HashSet<RenderBlock*>* containerSet = it->value.get();
             ASSERT(containerSet->contains(block));
             containerSet->remove(block);
-            if (containerSet->isEmpty()) {
-                containerMap->remove(*descendant);
-                delete containerSet;
-            }
+            if (containerSet->isEmpty())
+                containerMap->remove(it);
         }
-        delete descendantSet;
     }
 }
 
@@ -224,7 +222,7 @@ RenderBlock::~RenderBlock()
         deleteAllValues(m_floatingObjects->set());
     
     if (hasColumns())
-        delete gColumnInfoMap->take(this);
+        gColumnInfoMap->take(this);
 
     if (gPercentHeightDescendantsMap)
         removeBlockFromDescendantAndContainerMaps(this, gPercentHeightDescendantsMap, gPercentHeightContainerMap);
@@ -1731,7 +1729,6 @@ void RenderBlock::addOverflowFromFloats()
         if (r->isDescendant())
             addOverflowFromChild(r->m_renderer, IntSize(xPositionForFloatIncludingMargin(r), yPositionForFloatIncludingMargin(r)));
     }
-    return;
 }
 
 void RenderBlock::addOverflowFromPositionedObjects()
@@ -3183,7 +3180,7 @@ void RenderBlock::addContinuationWithOutline(RenderInline* flow)
     ListHashSet<RenderInline*>* continuations = table->get(this);
     if (!continuations) {
         continuations = new ListHashSet<RenderInline*>;
-        table->set(this, continuations);
+        table->set(this, adoptPtr(continuations));
     }
     
     continuations->add(flow);
@@ -3208,7 +3205,7 @@ void RenderBlock::paintContinuationOutlines(PaintInfo& info, const LayoutPoint& 
     if (table->isEmpty())
         return;
         
-    ListHashSet<RenderInline*>* continuations = table->get(this);
+    OwnPtr<ListHashSet<RenderInline*> > continuations = table->take(this);
     if (!continuations)
         return;
 
@@ -3224,10 +3221,6 @@ void RenderBlock::paintContinuationOutlines(PaintInfo& info, const LayoutPoint& 
         ASSERT(block);   
         flow->paintOutline(info.context, accumulatedPaintOffset);
     }
-    
-    // Delete
-    delete continuations;
-    table->remove(this);
 }
 
 bool RenderBlock::shouldPaintSelectionGaps() const
@@ -3655,7 +3648,7 @@ void RenderBlock::insertIntoTrackedRendererMaps(RenderBox* descendant, TrackedDe
     TrackedRendererListHashSet* descendantSet = descendantsMap->get(this);
     if (!descendantSet) {
         descendantSet = new TrackedRendererListHashSet;
-        descendantsMap->set(this, descendantSet);
+        descendantsMap->set(this, adoptPtr(descendantSet));
     }
     bool added = descendantSet->add(descendant).isNewEntry;
     if (!added) {
@@ -3667,7 +3660,7 @@ void RenderBlock::insertIntoTrackedRendererMaps(RenderBox* descendant, TrackedDe
     HashSet<RenderBlock*>* containerSet = containerMap->get(descendant);
     if (!containerSet) {
         containerSet = new HashSet<RenderBlock*>;
-        containerMap->set(descendant, containerSet);
+        containerMap->set(descendant, adoptPtr(containerSet));
     }
     ASSERT(!containerSet->contains(this));
     containerSet->add(this);
@@ -3678,7 +3671,7 @@ void RenderBlock::removeFromTrackedRendererMaps(RenderBox* descendant, TrackedDe
     if (!descendantsMap)
         return;
     
-    HashSet<RenderBlock*>* containerSet = containerMap->take(descendant);
+    OwnPtr<HashSet<RenderBlock*> > containerSet = containerMap->take(descendant);
     if (!containerSet)
         return;
     
@@ -3691,19 +3684,16 @@ void RenderBlock::removeFromTrackedRendererMaps(RenderBox* descendant, TrackedDe
         // their ancestor chain before being moved. See webkit bug 93766.
         // ASSERT(descendant->isDescendantOf(container));
 
-        TrackedRendererListHashSet* descendantSet = descendantsMap->get(container);
-        ASSERT(descendantSet);
-        if (!descendantSet)
+        TrackedDescendantsMap::iterator descendantsMapIterator = descendantsMap->find(container);
+        ASSERT(descendantsMapIterator != descendantsMap->end());
+        if (descendantsMapIterator == descendantsMap->end())
             continue;
+        TrackedRendererListHashSet* descendantSet = descendantsMapIterator->value.get();
         ASSERT(descendantSet->contains(descendant));
         descendantSet->remove(descendant);
-        if (descendantSet->isEmpty()) {
-            descendantsMap->remove(container);
-            delete descendantSet;
-        }
+        if (descendantSet->isEmpty())
+            descendantsMap->remove(descendantsMapIterator);
     }
-    
-    delete containerSet;
 }
 
 TrackedRendererListHashSet* RenderBlock::positionedObjects() const
@@ -5221,7 +5211,7 @@ void RenderBlock::setDesiredColumnCountAndWidth(int count, LayoutUnit width)
     bool destroyColumns = !requiresColumns(count);
     if (destroyColumns) {
         if (hasColumns()) {
-            delete gColumnInfoMap->take(this);
+            gColumnInfoMap->take(this);
             setHasColumns(false);
         }
     } else {
@@ -5232,7 +5222,7 @@ void RenderBlock::setDesiredColumnCountAndWidth(int count, LayoutUnit width)
             if (!gColumnInfoMap)
                 gColumnInfoMap = new ColumnInfoMap;
             info = new ColumnInfo;
-            gColumnInfoMap->add(this, info);
+            gColumnInfoMap->add(this, adoptPtr(info));
             setHasColumns(true);
         }
         info->setDesiredColumnCount(count);
