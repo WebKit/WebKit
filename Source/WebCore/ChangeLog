@@ -1,3 +1,21 @@
+2012-11-30  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix potential crash when canceling animations on renderers with no node
+        https://bugs.webkit.org/show_bug.cgi?id=103784
+
+        Reviewed by Dan Bernstein.
+
+        We could crash when tearing down RenderScrollbars because we hit
+        AnimationController::cancelAnimations() for a renderer with no node.
+        The assertion already check for a null node, but the line after
+        does not, so fix that.
+
+        I tried to make a test with animations/transitions on a custom scrollbar, but was not able
+        to get it to crash.
+
+        * page/animation/AnimationController.cpp:
+        (WebCore::AnimationController::cancelAnimations):
+
 2012-11-30  Tim Horton  <timothy_horton@apple.com>
 
         PluginDocument fires didFinishDocumentLoadForFrame upon receiving initial bytes instead of when load completes

@@ -510,7 +510,8 @@ void AnimationController::cancelAnimations(RenderObject* renderer)
     if (m_data->clear(renderer)) {
         Node* node = renderer->node();
         ASSERT(!node || (node->document() && !node->document()->inPageCache()));
-        node->setNeedsStyleRecalc(SyntheticStyleChange);
+        if (node)
+            node->setNeedsStyleRecalc(SyntheticStyleChange);
     }
 }
 
