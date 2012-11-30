@@ -406,9 +406,9 @@ void WebProcessProxy::getPluginPath(const String& mimeType, const String& urlStr
 
 #if ENABLE(PLUGIN_PROCESS)
 
-void WebProcessProxy::getPluginProcessConnection(const String& pluginPath, PassRefPtr<Messages::WebProcessProxy::GetPluginProcessConnection::DelayedReply> reply)
+void WebProcessProxy::getPluginProcessConnection(const String& pluginPath, uint32_t processType, PassRefPtr<Messages::WebProcessProxy::GetPluginProcessConnection::DelayedReply> reply)
 {
-    PluginProcessManager::shared().getPluginProcessConnection(m_context->pluginInfoStore(), pluginPath, reply);
+    PluginProcessManager::shared().getPluginProcessConnection(m_context->pluginInfoStore(), pluginPath, static_cast<PluginProcess::Type>(processType), reply);
 }
 
 #elif ENABLE(NETSCAPE_PLUGIN_API)

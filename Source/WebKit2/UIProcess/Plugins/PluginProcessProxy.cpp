@@ -50,12 +50,12 @@ namespace WebKit {
 static const double minimumLifetime = 30 * 60;
 static const double shutdownTimeout = 10 * 60;
 
-PassRefPtr<PluginProcessProxy> PluginProcessProxy::create(PluginProcessManager* PluginProcessManager, const PluginModuleInfo& pluginInfo)
+PassRefPtr<PluginProcessProxy> PluginProcessProxy::create(PluginProcessManager* PluginProcessManager, const PluginModuleInfo& pluginInfo, PluginProcess::Type processType)
 {
-    return adoptRef(new PluginProcessProxy(PluginProcessManager, pluginInfo));
+    return adoptRef(new PluginProcessProxy(PluginProcessManager, pluginInfo, processType));
 }
 
-PluginProcessProxy::PluginProcessProxy(PluginProcessManager* PluginProcessManager, const PluginModuleInfo& pluginInfo)
+PluginProcessProxy::PluginProcessProxy(PluginProcessManager* PluginProcessManager, const PluginModuleInfo& pluginInfo, PluginProcess::Type processType)
     : m_pluginProcessManager(PluginProcessManager)
     , m_pluginInfo(pluginInfo)
     , m_numPendingConnectionRequests(0)
@@ -64,6 +64,7 @@ PluginProcessProxy::PluginProcessProxy(PluginProcessManager* PluginProcessManage
     , m_fullscreenWindowIsShowing(false)
     , m_preFullscreenAppPresentationOptions(0)
 #endif
+    , m_processType(processType)
 {
     ProcessLauncher::LaunchOptions launchOptions;
     launchOptions.processType = ProcessLauncher::PluginProcess;
@@ -173,7 +174,7 @@ void PluginProcessProxy::didClose(CoreIPC::Connection*)
 
     const Vector<WebContext*>& contexts = WebContext::allContexts();
     for (size_t i = 0; i < contexts.size(); ++i)
-        contexts[i]->sendToAllProcesses(Messages::WebProcess::PluginProcessCrashed(m_pluginInfo.path));
+        contexts[i]->sendToAllProcesses(Messages::WebProcess::PluginProcessCrashed(m_pluginInfo.path, m_processType));
 
     // This will cause us to be deleted.
     pluginProcessCrashedOrFailedToLaunch();
@@ -204,6 +205,7 @@ void PluginProcessProxy::didFinishLaunching(ProcessLauncher*, CoreIPC::Connectio
     PluginProcessCreationParameters parameters;
 
     parameters.pluginPath = m_pluginInfo.path;
+    parameters.processType = m_processType;
 
     parameters.minimumLifetime = minimumLifetime;
     parameters.terminationTimeout = shutdownTimeout;

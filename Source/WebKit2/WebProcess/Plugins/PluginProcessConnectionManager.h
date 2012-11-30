@@ -28,6 +28,7 @@
 
 #if ENABLE(PLUGIN_PROCESS)
 
+#include "PluginProcess.h"
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
@@ -51,17 +52,17 @@ public:
     PluginProcessConnectionManager();
     ~PluginProcessConnectionManager();
 
-    PluginProcessConnection* getPluginProcessConnection(const String& pluginPath);
+    PluginProcessConnection* getPluginProcessConnection(const String& pluginPath, PluginProcess::Type);
     void removePluginProcessConnection(PluginProcessConnection*);
 
     // Called on the web process connection work queue.
-    void pluginProcessCrashed(const String& pluginPath);
+    void pluginProcessCrashed(const String& pluginPath, PluginProcess::Type);
 
 private:
     Vector<RefPtr<PluginProcessConnection> > m_pluginProcessConnections;
 
     Mutex m_pathsAndConnectionsMutex;
-    HashMap<String, RefPtr<CoreIPC::Connection> > m_pathsAndConnections;
+    HashMap<std::pair<String, PluginProcess::Type>, RefPtr<CoreIPC::Connection> > m_pathsAndConnections;
 };
 
 }

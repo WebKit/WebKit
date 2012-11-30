@@ -1079,9 +1079,9 @@ void WebProcess::networkProcessCrashed(CoreIPC::Connection*)
 #endif
 
 #if ENABLE(PLUGIN_PROCESS)
-void WebProcess::pluginProcessCrashed(CoreIPC::Connection*, const String& pluginPath)
+void WebProcess::pluginProcessCrashed(CoreIPC::Connection*, const String& pluginPath, uint32_t processType)
 {
-    m_pluginProcessConnectionManager.pluginProcessCrashed(pluginPath);
+    m_pluginProcessConnectionManager.pluginProcessCrashed(pluginPath, static_cast<PluginProcess::Type>(processType));
 }
 #endif
 

@@ -29,6 +29,7 @@
 #if ENABLE(PLUGIN_PROCESS)
 
 #include "PluginModuleInfo.h"
+#include "PluginProcess.h"
 #include "WebProcessProxyMessages.h"
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
@@ -50,7 +51,7 @@ class PluginProcessManager {
 public:
     static PluginProcessManager& shared();
 
-    void getPluginProcessConnection(const PluginInfoStore&, const String& pluginPath, PassRefPtr<Messages::WebProcessProxy::GetPluginProcessConnection::DelayedReply>);
+    void getPluginProcessConnection(const PluginInfoStore&, const String& pluginPath, PluginProcess::Type, PassRefPtr<Messages::WebProcessProxy::GetPluginProcessConnection::DelayedReply>);
     void removePluginProcessProxy(PluginProcessProxy*);
 
     void getSitesWithData(const PluginModuleInfo&, WebPluginSiteDataManager*, uint64_t callbackID);
@@ -63,8 +64,8 @@ public:
 private:
     PluginProcessManager();
 
-    PluginProcessProxy* getOrCreatePluginProcess(const PluginModuleInfo&);
-    PluginProcessProxy* pluginProcessWithPath(const String& pluginPath);
+    PluginProcessProxy* getOrCreatePluginProcess(const PluginModuleInfo&, PluginProcess::Type);
+    PluginProcessProxy* pluginProcessWithPath(const String& pluginPath, PluginProcess::Type);
 
     Vector<RefPtr<PluginProcessProxy> > m_pluginProcesses;
 };

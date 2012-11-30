@@ -45,12 +45,12 @@ PluginProcessManager::PluginProcessManager()
 {
 }
 
-void PluginProcessManager::getPluginProcessConnection(const PluginInfoStore& pluginInfoStore, const String& pluginPath, PassRefPtr<Messages::WebProcessProxy::GetPluginProcessConnection::DelayedReply> reply)
+void PluginProcessManager::getPluginProcessConnection(const PluginInfoStore& pluginInfoStore, const String& pluginPath, PluginProcess::Type processType, PassRefPtr<Messages::WebProcessProxy::GetPluginProcessConnection::DelayedReply> reply)
 {
     ASSERT(!pluginPath.isNull());
 
     PluginModuleInfo plugin = pluginInfoStore.infoForPluginWithPath(pluginPath);
-    PluginProcessProxy* pluginProcess = getOrCreatePluginProcess(plugin);
+    PluginProcessProxy* pluginProcess = getOrCreatePluginProcess(plugin, processType);
     pluginProcess->getPluginProcessConnection(reply);
 }
 
@@ -64,32 +64,33 @@ void PluginProcessManager::removePluginProcessProxy(PluginProcessProxy* pluginPr
 
 void PluginProcessManager::getSitesWithData(const PluginModuleInfo& plugin, WebPluginSiteDataManager* webPluginSiteDataManager, uint64_t callbackID)
 {
-    PluginProcessProxy* pluginProcess = getOrCreatePluginProcess(plugin);
+    PluginProcessProxy* pluginProcess = getOrCreatePluginProcess(plugin, PluginProcess::TypeRegularProcess);
     pluginProcess->getSitesWithData(webPluginSiteDataManager, callbackID);
 }
 
 void PluginProcessManager::clearSiteData(const PluginModuleInfo& plugin, WebPluginSiteDataManager* webPluginSiteDataManager, const Vector<String>& sites, uint64_t flags, uint64_t maxAgeInSeconds, uint64_t callbackID)
 {
-    PluginProcessProxy* pluginProcess = getOrCreatePluginProcess(plugin);
+    PluginProcessProxy* pluginProcess = getOrCreatePluginProcess(plugin, PluginProcess::TypeRegularProcess);
     pluginProcess->clearSiteData(webPluginSiteDataManager, sites, flags, maxAgeInSeconds, callbackID);
 }
 
-PluginProcessProxy* PluginProcessManager::pluginProcessWithPath(const String& pluginPath)
+PluginProcessProxy* PluginProcessManager::pluginProcessWithPath(const String& pluginPath, PluginProcess::Type processType)
 {
     for (size_t i = 0; i < m_pluginProcesses.size(); ++i) {
-        if (m_pluginProcesses[i]->pluginInfo().path == pluginPath)
-            return m_pluginProcesses[i].get();
+        RefPtr<PluginProcessProxy>& pluginProcessProxy = m_pluginProcesses[i];
+        if (pluginProcessProxy->pluginInfo().path == pluginPath && pluginProcessProxy->processType() == processType)
+            return pluginProcessProxy.get();
     }
 
     return 0;
 }
 
-PluginProcessProxy* PluginProcessManager::getOrCreatePluginProcess(const PluginModuleInfo& plugin)
+PluginProcessProxy* PluginProcessManager::getOrCreatePluginProcess(const PluginModuleInfo& plugin, PluginProcess::Type processType)
 {
-    if (PluginProcessProxy* pluginProcess = pluginProcessWithPath(plugin.path))
+    if (PluginProcessProxy* pluginProcess = pluginProcessWithPath(plugin.path, processType))
         return pluginProcess;
 
-    RefPtr<PluginProcessProxy> pluginProcess = PluginProcessProxy::create(this, plugin);
+    RefPtr<PluginProcessProxy> pluginProcess = PluginProcessProxy::create(this, plugin, processType);
     PluginProcessProxy* pluginProcessPtr = pluginProcess.get();
 
     m_pluginProcesses.append(pluginProcess.release());

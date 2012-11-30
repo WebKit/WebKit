@@ -39,7 +39,7 @@ messages -> WebProcessProxy {
     GetPluginPath(WTF::String mimeType, WTF::String urlString) -> (WTF::String pluginPath, uint32_t pluginLoadPolicy)
 #endif // ENABLE(NETSCAPE_PLUGIN_API)
 #if ENABLE(PLUGIN_PROCESS)
-    GetPluginProcessConnection(WTF::String pluginPath) -> (CoreIPC::Attachment connectionHandle, bool supportsAsynchronousInitialization) Delayed
+    GetPluginProcessConnection(WTF::String pluginPath, uint32_t processType) -> (CoreIPC::Attachment connectionHandle, bool supportsAsynchronousInitialization) Delayed
 #endif
 #if ENABLE(NETSCAPE_PLUGIN_API) && !ENABLE(PLUGIN_PROCESS)
     void DidGetSitesWithPluginData(Vector<WTF::String> sites, uint64_t callbackID)

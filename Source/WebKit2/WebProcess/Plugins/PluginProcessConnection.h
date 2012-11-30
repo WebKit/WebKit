@@ -30,6 +30,7 @@
 
 #include "Connection.h"
 #include "Plugin.h"
+#include "PluginProcess.h"
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
 
@@ -43,9 +44,9 @@ class PluginProxy;
     
 class PluginProcessConnection : public RefCounted<PluginProcessConnection>, CoreIPC::Connection::Client {
 public:
-    static PassRefPtr<PluginProcessConnection> create(PluginProcessConnectionManager* pluginProcessConnectionManager, const String& pluginPath, CoreIPC::Connection::Identifier connectionIdentifier, bool supportsAsynchronousPluginInitialization)
+    static PassRefPtr<PluginProcessConnection> create(PluginProcessConnectionManager* pluginProcessConnectionManager, const String& pluginPath, PluginProcess::Type processType, CoreIPC::Connection::Identifier connectionIdentifier, bool supportsAsynchronousPluginInitialization)
     {
-        return adoptRef(new PluginProcessConnection(pluginProcessConnectionManager, pluginPath, connectionIdentifier, supportsAsynchronousPluginInitialization));
+        return adoptRef(new PluginProcessConnection(pluginProcessConnectionManager, pluginPath, processType, connectionIdentifier, supportsAsynchronousPluginInitialization));
     }
     ~PluginProcessConnection();
 
@@ -60,8 +61,10 @@ public:
 
     bool supportsAsynchronousPluginInitialization() const { return m_supportsAsynchronousPluginInitialization; }
 
+    PluginProcess::Type processType() const { return m_processType; }
+
 private:
-    PluginProcessConnection(PluginProcessConnectionManager*, const String& pluginPath, CoreIPC::Connection::Identifier connectionIdentifier, bool supportsAsynchronousInitialization);
+    PluginProcessConnection(PluginProcessConnectionManager*, const String& pluginPath, PluginProcess::Type, CoreIPC::Connection::Identifier connectionIdentifier, bool supportsAsynchronousInitialization);
 
     // CoreIPC::Connection::Client
     virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&) OVERRIDE;
@@ -85,6 +88,8 @@ private:
     RefPtr<NPRemoteObjectMap> m_npRemoteObjectMap;
     
     bool m_supportsAsynchronousPluginInitialization;
+
+    PluginProcess::Type m_processType;
 };
 
 } // namespace WebKit

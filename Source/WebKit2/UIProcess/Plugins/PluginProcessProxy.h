@@ -30,6 +30,7 @@
 
 #include "Connection.h"
 #include "PluginModuleInfo.h"
+#include "PluginProcess.h"
 #include "ProcessLauncher.h"
 #include "WebProcessProxyMessages.h"
 #include <wtf/Deque.h>
@@ -62,7 +63,7 @@ struct RawPluginMetaData {
 
 class PluginProcessProxy : public RefCounted<PluginProcessProxy>, CoreIPC::Connection::Client, ProcessLauncher::Client {
 public:
-    static PassRefPtr<PluginProcessProxy> create(PluginProcessManager*, const PluginModuleInfo&);
+    static PassRefPtr<PluginProcessProxy> create(PluginProcessManager*, const PluginModuleInfo&, PluginProcess::Type);
     ~PluginProcessProxy();
 
     const PluginModuleInfo& pluginInfo() const { return m_pluginInfo; }
@@ -82,6 +83,8 @@ public:
 
     bool isValid() const { return m_connection; }
 
+    PluginProcess::Type processType() const { return m_processType; }
+
 #if PLATFORM(MAC)
     void setApplicationIsOccluded(bool);
 
@@ -97,7 +100,7 @@ public:
 #endif
 
 private:
-    PluginProcessProxy(PluginProcessManager*, const PluginModuleInfo&);
+    PluginProcessProxy(PluginProcessManager*, const PluginModuleInfo&, PluginProcess::Type);
 
     void pluginProcessCrashedOrFailedToLaunch();
 
@@ -171,6 +174,8 @@ private:
     bool m_fullscreenWindowIsShowing;
     unsigned m_preFullscreenAppPresentationOptions;
 #endif
+
+    PluginProcess::Type m_processType;
 };
 
 } // namespace WebKit

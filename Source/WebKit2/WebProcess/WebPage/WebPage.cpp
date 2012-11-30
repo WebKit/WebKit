@@ -535,7 +535,8 @@ PassRefPtr<Plugin> WebPage::createPlugin(WebFrame* frame, HTMLPlugInElement* plu
     }
 
 #if ENABLE(PLUGIN_PROCESS)
-    return PluginProxy::create(pluginPath);
+    PluginProcess::Type processType = (pluginElement->displayState() == HTMLPlugInElement::WaitingForSnapshot ? PluginProcess::TypeSnapshotProcess : PluginProcess::TypeRegularProcess);
+    return PluginProxy::create(pluginPath, processType);
 #else
     NetscapePlugin::setSetExceptionFunction(NPRuntimeObjectMap::setGlobalException);
     return NetscapePlugin::create(NetscapePluginModule::getOrCreate(pluginPath));

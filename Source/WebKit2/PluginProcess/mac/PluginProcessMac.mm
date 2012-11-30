@@ -33,6 +33,7 @@
 #import "PluginProcessShim.h"
 #import "PluginProcessProxyMessages.h"
 #import "PluginProcessCreationParameters.h"
+#import <CoreAudio/AudioHardware.h>
 #import <WebCore/LocalizedStrings.h>
 #import <WebKitSystemInterface.h>
 #import <dlfcn.h>
@@ -304,6 +305,14 @@ static void initializeSandbox(const String& pluginPath, const String& sandboxPro
 }
 #endif
 
+static void muteAudio(void)
+{
+    AudioObjectPropertyAddress propertyAddress = { kAudioHardwarePropertyProcessIsAudible, kAudioObjectPropertyScopeGlobal, kAudioObjectPropertyElementMaster };
+    UInt32 propertyData = 0;
+    OSStatus result = AudioObjectSetPropertyData(kAudioObjectSystemObject, &propertyAddress, 0, 0, sizeof(UInt32), &propertyData);
+    ASSERT_UNUSED(result, result == noErr);
+}
+
 void PluginProcess::platformInitialize(const PluginProcessCreationParameters& parameters)
 {
     m_compositingRenderServerPort = parameters.acceleratedCompositingPort.port();
@@ -319,6 +328,9 @@ void PluginProcess::platformInitialize(const PluginProcessCreationParameters& pa
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
     initializeSandbox(m_pluginPath, parameters.sandboxProfileDirectoryPath);
 #endif
+
+    if (parameters.processType == TypeSnapshotProcess)
+        muteAudio();
 }
 
 } // namespace WebKit

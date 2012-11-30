@@ -41,10 +41,11 @@ using namespace WebCore;
 
 namespace WebKit {
 
-PluginProcessConnection::PluginProcessConnection(PluginProcessConnectionManager* pluginProcessConnectionManager, const String& pluginPath, CoreIPC::Connection::Identifier connectionIdentifier, bool supportsAsynchronousPluginInitialization)
+PluginProcessConnection::PluginProcessConnection(PluginProcessConnectionManager* pluginProcessConnectionManager, const String& pluginPath, PluginProcess::Type processType, CoreIPC::Connection::Identifier connectionIdentifier, bool supportsAsynchronousPluginInitialization)
     : m_pluginProcessConnectionManager(pluginProcessConnectionManager)
     , m_pluginPath(pluginPath)
     , m_supportsAsynchronousPluginInitialization(supportsAsynchronousPluginInitialization)
+    , m_processType(processType)
 {
     m_connection = CoreIPC::Connection::createClientConnection(connectionIdentifier, this, WebProcess::shared().runLoop());
 

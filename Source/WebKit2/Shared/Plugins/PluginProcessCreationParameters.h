@@ -28,6 +28,7 @@
 
 #if ENABLE(PLUGIN_PROCESS)
 
+#include "PluginProcess.h"
 #include <wtf/text/WTFString.h>
 
 #if PLATFORM(MAC)
@@ -48,6 +49,7 @@ struct PluginProcessCreationParameters {
     static bool decode(CoreIPC::ArgumentDecoder*, PluginProcessCreationParameters&);
 
     String pluginPath;
+    PluginProcess::Type processType;
     bool supportsAsynchronousPluginInitialization;
 
     double minimumLifetime;

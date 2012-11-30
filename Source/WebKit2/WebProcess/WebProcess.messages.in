@@ -69,7 +69,7 @@ messages -> WebProcess {
 #endif
 
 #if ENABLE(PLUGIN_PROCESS)
-    PluginProcessCrashed(String pluginProcess) DispatchOnConnectionQueue
+    PluginProcessCrashed(String pluginProcess, uint32_t processType) DispatchOnConnectionQueue
 #endif
 
     void StartMemorySampler(WebKit::SandboxExtension::Handle sampleLogFileHandle, WTF::String sampleLogFilePath, double interval);

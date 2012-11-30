@@ -40,6 +40,7 @@ PluginProcessCreationParameters::PluginProcessCreationParameters()
 void PluginProcessCreationParameters::encode(CoreIPC::ArgumentEncoder& encoder) const
 {
     encoder << pluginPath;
+    encoder.encodeEnum(processType);
     encoder << supportsAsynchronousPluginInitialization;
     encoder << minimumLifetime;
     encoder << terminationTimeout;
@@ -54,6 +55,8 @@ void PluginProcessCreationParameters::encode(CoreIPC::ArgumentEncoder& encoder) 
 bool PluginProcessCreationParameters::decode(CoreIPC::ArgumentDecoder* decoder, PluginProcessCreationParameters& result)
 {
     if (!decoder->decode(result.pluginPath))
+        return false;
+    if (!decoder->decodeEnum(result.processType))
         return false;
     if (!decoder->decode(result.supportsAsynchronousPluginInitialization))
         return false;

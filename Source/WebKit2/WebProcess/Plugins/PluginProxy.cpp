@@ -55,12 +55,12 @@ static uint64_t generatePluginInstanceID()
     return ++uniquePluginInstanceID;
 }
 
-PassRefPtr<PluginProxy> PluginProxy::create(const String& pluginPath)
+PassRefPtr<PluginProxy> PluginProxy::create(const String& pluginPath, PluginProcess::Type processType)
 {
-    return adoptRef(new PluginProxy(pluginPath));
+    return adoptRef(new PluginProxy(pluginPath, processType));
 }
 
-PluginProxy::PluginProxy(const String& pluginPath)
+PluginProxy::PluginProxy(const String& pluginPath, PluginProcess::Type processType)
     : m_pluginPath(pluginPath)
     , m_pluginInstanceID(generatePluginInstanceID())
     , m_pluginBackingStoreContainsValidData(false)
@@ -69,6 +69,7 @@ PluginProxy::PluginProxy(const String& pluginPath)
     , m_wantsWheelEvents(false)
     , m_remoteLayerClientID(0)
     , m_waitingOnAsynchronousInitialization(false)
+    , m_processType(processType)
 {
 }
 
@@ -84,7 +85,7 @@ void PluginProxy::pluginProcessCrashed()
 bool PluginProxy::initialize(const Parameters& parameters)
 {
     ASSERT(!m_connection);
-    m_connection = WebProcess::shared().pluginProcessConnectionManager().getPluginProcessConnection(m_pluginPath);
+    m_connection = WebProcess::shared().pluginProcessConnectionManager().getPluginProcessConnection(m_pluginPath, m_processType);
     
     if (!m_connection)
         return false;

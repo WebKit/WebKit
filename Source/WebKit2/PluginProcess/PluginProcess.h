@@ -45,6 +45,13 @@ struct PluginProcessCreationParameters;
 class PluginProcess : ChildProcess {
     WTF_MAKE_NONCOPYABLE(PluginProcess);
 public:
+
+    enum Type {
+        // Start with value one since default HashTraits<> disallows zero as key.
+        TypeRegularProcess = 1,
+        TypeSnapshotProcess
+    };
+
     static PluginProcess& shared();
 
     void initialize(CoreIPC::Connection::Identifier, WebCore::RunLoop*);
@@ -114,6 +121,13 @@ private:
 };
 
 } // namespace WebKit
+
+namespace WTF {
+
+template<> struct DefaultHash<WebKit::PluginProcess::Type> { typedef DefaultHash<uint32_t>::Hash Hash; };
+template<> struct IsInteger<WebKit::PluginProcess::Type> { static const bool value = true; };
+
+} // namespace WTF
 
 #endif // ENABLE(PLUGIN_PROCESS)
 

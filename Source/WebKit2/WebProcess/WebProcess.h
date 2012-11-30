@@ -254,7 +254,7 @@ private:
     void networkProcessCrashed(CoreIPC::Connection*);
 #endif
 #if ENABLE(PLUGIN_PROCESS)
-    void pluginProcessCrashed(CoreIPC::Connection*, const String& pluginPath);
+    void pluginProcessCrashed(CoreIPC::Connection*, const String& pluginPath, uint32_t processType);
 #endif
 
     void startMemorySampler(const SandboxExtension::Handle&, const String&, const double);
