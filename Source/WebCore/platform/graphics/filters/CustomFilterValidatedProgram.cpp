@@ -273,7 +273,7 @@ void CustomFilterValidatedProgram::rewriteMixFragmentShader()
         {
             css_main();
             mediump vec4 originalColor = texture2D(css_u_texture, css_v_texCoord);
-            mediump vec4 multipliedColor = css_ColorMatrix * originalColor;
+            mediump vec4 multipliedColor = clamp(css_ColorMatrix * originalColor, 0.0, 1.0);
             mediump vec3 blendedColor = css_BlendColor(multipliedColor.rgb, css_MixColor.rgb);
             gl_FragColor = css_Composite(multipliedColor.rgb, multipliedColor.a, blendedColor.rgb, css_MixColor.a);
         }

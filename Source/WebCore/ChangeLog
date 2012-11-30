@@ -1,3 +1,23 @@
+2012-11-30  Michelangelo De Simone  <michelangelo@webkit.org>
+
+        [CSS Shaders] Clamp input colors before blending
+        https://bugs.webkit.org/show_bug.cgi?id=98962
+
+        Reviewed by Dean Jackson.
+
+        The result of css_ColorMatrix multiplication is now clamped in [0.0, 1.0]
+        before the blending step.
+
+        Relevant spec section is:
+        http://dvcs.w3.org/hg/FXTF/raw-file/tip/filters/index.html#shader-processing-model
+
+        Tests: css3/filters/custom/custom-filter-color-clamping-negative.html
+               css3/filters/custom/custom-filter-color-clamping.html
+
+        * platform/graphics/filters/CustomFilterValidatedProgram.cpp:
+        (WebCore::CustomFilterValidatedProgram::rewriteMixFragmentShader): Added clamping
+        code.
+
 2012-11-30  Abhishek Arya  <inferno@chromium.org>
 
         Crash due to intruding float not removed after writing mode changed.

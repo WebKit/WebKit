@@ -1,3 +1,19 @@
+2012-11-30  Michelangelo De Simone  <michelangelo@webkit.org>
+
+        [CSS Shaders] Clamp input colors before blending
+        https://bugs.webkit.org/show_bug.cgi?id=98962
+
+        Reviewed by Dean Jackson.
+
+        Test to check the correct clamping of color values.
+
+        * css3/filters/custom/custom-filter-color-clamping-expected.html: Added.
+        * css3/filters/custom/custom-filter-color-clamping-negative-expected.html: Added.
+        * css3/filters/custom/custom-filter-color-clamping-negative.html: Added.
+        * css3/filters/custom/custom-filter-color-clamping.html: Added.
+        * css3/filters/resources/custom-filter-color-clamping-negative.fs: Added.
+        * css3/filters/resources/custom-filter-color-clamping.fs: Added.
+
 2012-11-30  Abhishek Arya  <inferno@chromium.org>
 
         Crash due to intruding float not removed after writing mode changed.
