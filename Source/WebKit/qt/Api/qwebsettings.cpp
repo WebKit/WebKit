@@ -534,7 +534,7 @@ QWebSettings::QWebSettings()
     d->attributes.insert(QWebSettings::LocalContentCanAccessRemoteUrls, false);
     d->attributes.insert(QWebSettings::LocalContentCanAccessFileUrls, true);
     d->attributes.insert(QWebSettings::AcceleratedCompositingEnabled, true);
-    d->attributes.insert(QWebSettings::WebGLEnabled, false);
+    d->attributes.insert(QWebSettings::WebGLEnabled, true);
     d->attributes.insert(QWebSettings::CSSRegionsEnabled, true);
     d->attributes.insert(QWebSettings::CSSGridLayoutEnabled, false);
     d->attributes.insert(QWebSettings::HyperlinkAuditingEnabled, false);

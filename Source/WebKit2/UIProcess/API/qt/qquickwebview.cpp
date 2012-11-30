@@ -319,6 +319,7 @@ void QQuickWebViewPrivate::initialize(WKContextRef contextRef, WKPageGroupRef pa
     webPageProxy->pageGroup()->preferences()->setAcceleratedCompositingEnabled(true);
     webPageProxy->pageGroup()->preferences()->setForceCompositingMode(true);
     webPageProxy->pageGroup()->preferences()->setFrameFlatteningEnabled(true);
+    webPageProxy->pageGroup()->preferences()->setWebGLEnabled(true);
 
     pageClient.initialize(q_ptr, pageViewPrivate->eventHandler.data(), &undoController);
     webPageProxy->initializeWebPage();
