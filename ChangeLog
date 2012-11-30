@@ -1,3 +1,15 @@
+2012-11-30  Tor Arne Vestbø  <tor.arne.vestbo@digia.com>
+
+        [Qt] Build as a regular Qt module when production_build is enabled
+
+        Instead of always setting CONFIG+=force_independent. This means the
+        libs, headers, and documentation will end up in qtbase for developer
+        builds of Qt, instead of always in the QtWebKit build directory.
+
+        Reviewed by Simon Hausmann.
+
+        * Source/api.pri:
+
 2012-11-29  Rafael Weinstein  <rafaelw@chromium.org>
 
         [HTMLTemplateElement] Add feature flag

@@ -53,7 +53,7 @@ load(webkit_modules)
 # For WebKit we don't want that behavior for the libraries, as we want
 # them to be self-contained in the WebKit build dir.
 #
-CONFIG += force_independent
+!production_build: CONFIG += force_independent
 
 BASE_TARGET = $$TARGET
 
@@ -63,7 +63,7 @@ load(qt_module)
 macx:!debug_and_release:debug: TARGET = $$BASE_TARGET
 
 # Make sure the install_name of the QtWebKit library point to webkit
-macx {
+force_independent:macx {
     # We do our own absolute path so that we can trick qmake into
     # using the webkit build path instead of the Qt install path.
     CONFIG -= absolute_library_soname
