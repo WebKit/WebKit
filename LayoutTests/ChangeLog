@@ -1,3 +1,16 @@
+2012-11-30  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r136142.
+        http://trac.webkit.org/changeset/136142
+        https://bugs.webkit.org/show_bug.cgi?id=103768
+
+        break a bunch of interactive_ui_tests in chromium win
+        (Requested by zhenyao_home on #webkit).
+
+        * fast/ruby/position-after.html: Removed.
+        * platform/mac/fast/ruby/position-after-expected.png: Removed.
+        * platform/mac/fast/ruby/position-after-expected.txt: Removed.
+
 2012-11-30  Stephen Chenney  <schenney@chromium.org>
 
         [Chromium] Rebaselining tests affected by recent Skia changes

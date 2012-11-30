@@ -3801,7 +3801,6 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
     case CSSPropertyWebkitRegionOverflow:
 #endif
     case CSSPropertyWebkitRtlOrdering:
-    case CSSPropertyWebkitRubyPosition:
     case CSSPropertyWebkitTextCombine:
 #if ENABLE(CSS3_TEXT)
     case CSSPropertyWebkitTextDecorationLine:

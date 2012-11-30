@@ -1,3 +1,43 @@
+2012-11-30  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r136142.
+        http://trac.webkit.org/changeset/136142
+        https://bugs.webkit.org/show_bug.cgi?id=103768
+
+        break a bunch of interactive_ui_tests in chromium win
+        (Requested by zhenyao_home on #webkit).
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * css/CSSParser.cpp:
+        (WebCore::isValidKeywordPropertyAndValue):
+        (WebCore::isKeywordPropertyID):
+        (WebCore::CSSParser::parseValue):
+        * css/CSSPrimitiveValueMappings.h:
+        * css/CSSProperty.cpp:
+        (WebCore::CSSProperty::isInheritedProperty):
+        * css/CSSPropertyNames.in:
+        * css/CSSValueKeywords.in:
+        * css/StyleBuilder.cpp:
+        (WebCore::StyleBuilder::StyleBuilder):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::applyProperty):
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::placeBoxesInBlockDirection):
+        (WebCore::InlineFlowBox::computeOverAnnotationAdjustment):
+        (WebCore::InlineFlowBox::computeUnderAnnotationAdjustment):
+        * rendering/RenderRubyRun.cpp:
+        (WebCore::RenderRubyRun::layout):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::diff):
+        * rendering/style/RenderStyle.h:
+        * rendering/style/RenderStyleConstants.h:
+        * rendering/style/StyleRareInheritedData.cpp:
+        (WebCore::StyleRareInheritedData::StyleRareInheritedData):
+        (WebCore::StyleRareInheritedData::operator==):
+        * rendering/style/StyleRareInheritedData.h:
+        (StyleRareInheritedData):
+
 2012-11-30  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: Replace use of ScriptExecutionContext::Task (Part 1)

@@ -670,7 +670,7 @@ void InlineFlowBox::placeBoxesInBlockDirection(LayoutUnit top, LayoutUnit maxHei
                 // Treat the leading on the first and last lines of ruby runs as not being part of the overall lineTop/lineBottom.
                 // Really this is a workaround hack for the fact that ruby should have been done as line layout and not done using
                 // inline-block.
-                if (renderer()->style()->isFlippedLinesWritingMode() == (curr->renderer()->style()->rubyPosition() == RubyPositionAfter))
+                if (!renderer()->style()->isFlippedLinesWritingMode())
                     hasAnnotationsBefore = true;
                 else
                     hasAnnotationsAfter = true;
@@ -1461,7 +1461,7 @@ LayoutUnit InlineFlowBox::computeOverAnnotationAdjustment(LayoutUnit allowedPosi
         if (curr->isInlineFlowBox())
             result = max(result, toInlineFlowBox(curr)->computeOverAnnotationAdjustment(allowedPosition));
         
-        if (curr->renderer()->isReplaced() && curr->renderer()->isRubyRun() && curr->renderer()->style()->rubyPosition() == RubyPositionBefore) {
+        if (curr->renderer()->isReplaced() && curr->renderer()->isRubyRun()) {
             RenderRubyRun* rubyRun = toRenderRubyRun(curr->renderer());
             RenderRubyText* rubyText = rubyRun->rubyText();
             if (!rubyText)
@@ -1508,27 +1508,6 @@ LayoutUnit InlineFlowBox::computeUnderAnnotationAdjustment(LayoutUnit allowedPos
 
         if (curr->isInlineFlowBox())
             result = max(result, toInlineFlowBox(curr)->computeUnderAnnotationAdjustment(allowedPosition));
-
-        if (curr->renderer()->isReplaced() && curr->renderer()->isRubyRun() && curr->renderer()->style()->rubyPosition() == RubyPositionAfter) {
-            RenderRubyRun* rubyRun = toRenderRubyRun(curr->renderer());
-            RenderRubyText* rubyText = rubyRun->rubyText();
-            if (!rubyText)
-                continue;
-
-            if (rubyRun->style()->isFlippedLinesWritingMode()) {
-                LayoutUnit topOfFirstRubyTextLine = rubyText->logicalTop() + (rubyText->firstRootBox() ? rubyText->firstRootBox()->lineTop() : LayoutUnit());
-                if (topOfFirstRubyTextLine >= 0)
-                    continue;
-                topOfFirstRubyTextLine += curr->logicalTop();
-                result = max(result, allowedPosition - topOfFirstRubyTextLine);
-            } else {
-                LayoutUnit bottomOfLastRubyTextLine = rubyText->logicalTop() + (rubyText->lastRootBox() ? rubyText->lastRootBox()->lineBottom() : rubyText->logicalHeight());
-                if (bottomOfLastRubyTextLine <= curr->logicalHeight())
-                    continue;
-                bottomOfLastRubyTextLine += curr->logicalTop();
-                result = max(result, bottomOfLastRubyTextLine - allowedPosition);
-            }
-        }
 
         if (curr->isInlineTextBox()) {
             RenderStyle* style = curr->renderer()->style(isFirstLineStyle());

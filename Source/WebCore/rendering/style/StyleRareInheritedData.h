@@ -116,7 +116,6 @@ public:
 #if ENABLE(CSS3_TEXT)
     unsigned m_textAlignLast : 3; // ETextAlignLast
 #endif // CSS3_TEXT
-    unsigned m_rubyPosition : 1; // RubyPosition
 
     AtomicString hyphenationString;
     short hyphenationLimitBefore;
