@@ -1,3 +1,15 @@
+2012-11-29  Rafael Weinstein  <rafaelw@chromium.org>
+
+        [HTMLTemplateElement] Add feature flag
+        https://bugs.webkit.org/show_bug.cgi?id=103694
+
+        Reviewed by Adam Barth.
+
+        This flag will guard the implementation of the HTMLTemplateElement.
+        http://dvcs.w3.org/hg/webcomponents/raw-file/tip/spec/templates/index.html
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2012-11-29  Alexey Proskuryakov  <ap@apple.com>
 
         [WK2] Forward cookie jar calls to NetworkProcess

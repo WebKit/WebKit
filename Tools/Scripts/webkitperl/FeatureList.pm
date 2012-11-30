@@ -126,6 +126,7 @@ my (
     $svgFontsSupport,
     $svgSupport,
     $systemMallocSupport,
+    $templateTagSupport,
     $textAutosizingSupport,
     $tiledBackingStoreSupport,
     $touchEventsSupport,
@@ -392,6 +393,9 @@ my @features = (
 
     { option => "system-malloc", desc => "Toggle system allocator instead of TCmalloc",
       define => "USE_SYSTEM_MALLOC", default => isWinCE(), value => \$systemMallocSupport },
+
+    { option => "template-tag", desc => "Toggle Templates Tag support",
+      define => "ENABLE_TEMPLATE_ELEMENT", default => !isAppleWinWebKit(), value => \$templateTagSupport },
 
     { option => "text-autosizing", desc => "Toggle Text Autosizing support",
       define => "ENABLE_TEXT_AUTOSIZING", default => 0, value => \$textAutosizingSupport },
