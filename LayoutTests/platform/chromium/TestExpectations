@@ -4246,8 +4246,8 @@ webkit.org/b/103609 [ MountainLion ] fast/regions/firstletter-inside-flowthread.
 webkit.org/b/103609 [ MountainLion ] fast/regions/listmarker-inside-flowthread.html [ ImageOnlyFailure ]
 
 # Some compositing tests doesn't work on multiple platforms.
-webkit.org/b/103721 compositing/geometry/vertical-scroll-composited.html [ ImageOnlyFailure ]
-webkit.org/b/103721 compositing/reflections/load-video-in-reflection.html [ ImageOnlyFailure ]
-webkit.org/b/103721 compositing/reflections/nested-reflection-anchor-point.html [ ImageOnlyFailure ]
-webkit.org/b/103721 compositing/reflections/nested-reflection-animated.html [ ImageOnlyFailure ]
-webkit.org/b/103721 platform/chromium/compositing/huge-layer-rotated.html [ ImageOnlyFailure ]
+webkit.org/b/103721 [ Mac Win Linux ] compositing/geometry/vertical-scroll-composited.html [ ImageOnlyFailure ]
+webkit.org/b/103721 [ Mac Win Linux ] compositing/reflections/load-video-in-reflection.html [ ImageOnlyFailure ]
+webkit.org/b/103721 [ Mac Win Linux ] compositing/reflections/nested-reflection-anchor-point.html [ ImageOnlyFailure ]
+webkit.org/b/103721 [ Mac Win Linux ] compositing/reflections/nested-reflection-animated.html [ ImageOnlyFailure ]
+webkit.org/b/103721 [ Mac Win Linux ] platform/chromium/compositing/huge-layer-rotated.html [ ImageOnlyFailure ]

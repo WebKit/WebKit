@@ -1,3 +1,11 @@
+2012-11-30  Stephen Chenney  <schenney@chromium.org>
+
+        [Chromium] Fixing TestExpectations
+
+        Unreviewed fix to pass lint
+
+        * platform/chromium/TestExpectations:
+
 2012-11-30  Sudarsana Nagineni  <sudarsana.nagineni@intel.com>
 
         [EFL] Skip failing test editing/selection/caret-alignment-for-vertical-text.html
