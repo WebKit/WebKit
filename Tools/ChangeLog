@@ -1,5 +1,18 @@
 2012-11-29  Dirk Pranke  <dpranke@chromium.org>
 
+        webkitpy: autoinstaller is failing on windows
+        https://bugs.webkit.org/show_bug.cgi?id=103699
+
+        Unreviewed, build fix.
+
+        We're attempting to create directories with forward slashes in them;
+        this is a no-no on windows.
+
+        * Scripts/webkitpy/common/system/autoinstall.py:
+        (AutoInstaller._create_scratch_directory_inner):
+
+2012-11-29  Dirk Pranke  <dpranke@chromium.org>
+
         Fix python unit tests after r136158 (android port tests failing)
         https://bugs.webkit.org/show_bug.cgi?id=103581
 

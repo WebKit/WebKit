@@ -146,7 +146,7 @@ class AutoInstaller(object):
         # The tempfile.mkdtemp() method function requires that the
         # directory corresponding to the "dir" parameter already exist
         # if it is not None.
-        scratch_dir = tempfile.mkdtemp(prefix=prefix, dir=self._temp_dir)
+        scratch_dir = tempfile.mkdtemp(prefix=prefix.replace('/', '.'), dir=self._temp_dir)
         return scratch_dir
 
     def _create_scratch_directory(self, target_name):
