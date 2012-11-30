@@ -1,3 +1,23 @@
+2012-11-30  Florin Malita  <fmalita@chromium.org>
+
+        SVG pattern data deleted while in use
+        https://bugs.webkit.org/show_bug.cgi?id=103415
+
+        Reviewed by Dirk Schulze.
+
+        Various calls in RenderSVGResourcePattern::applyResource() can trigger invalidations,
+        which may end up deleting our current pattern data (via removeAllClientsFromCache).
+        To avoid this, we should add the pattern data to the cache only after it is fully built.
+        For clarity, the patch also refactors the pattern setup code into a separate method.
+
+        Test: svg/custom/large-image-pattern-crash.html
+
+        * rendering/svg/RenderSVGResourcePattern.cpp:
+        (WebCore::RenderSVGResourcePattern::buildPattern):
+        (WebCore::RenderSVGResourcePattern::applyResource):
+        * rendering/svg/RenderSVGResourcePattern.h:
+        (RenderSVGResourcePattern):
+
 2012-11-30  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: It's Sass, not SASS

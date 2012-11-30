@@ -1,3 +1,13 @@
+2012-11-30  Florin Malita  <fmalita@chromium.org>
+
+        SVG pattern data deleted while in use
+        https://bugs.webkit.org/show_bug.cgi?id=103415
+
+        Reviewed by Dirk Schulze.
+
+        * svg/custom/large-image-pattern-crash-expected.txt: Added.
+        * svg/custom/large-image-pattern-crash.html: Added.
+
 2012-11-30  Stephen Chenney  <schenney@chromium.org>
 
         [Chromium] Fixing TestExpectations
