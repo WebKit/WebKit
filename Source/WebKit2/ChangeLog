@@ -1,3 +1,33 @@
+2012-11-30  Brent Fulgham  <bfulgham@webkit.org>
+
+        [Windows, WinCairo] Generate library export symbol file.
+        https://bugs.webkit.org/show_bug.cgi?id=103687
+
+        Reviewed by Tim Horton.
+
+        Generate the export definition file based on the compile options
+        and port settings. Get rid of the old hand-written file, and use
+        a revised master input file that allows using conditional
+        settings to generate the output, much like the Mac and other
+        ports do.
+
+        * win/WebKit2.def: Removed.
+        * win/WebKit2.def.in: Added.
+        * win/WebKit2Apple.vsprops:
+        * win/WebKit2CFLite.def: Removed.
+        * win/WebKit2CFLite.vsprops:
+        * win/WebKit2Common.vsprops:
+        * win/WebKit2ExportGenerator.vcproj: Added.
+        * win/WebKit2ExportGeneratorCommon.vsprops: Added.
+        * win/WebKit2ExportGeneratorDebug.vsprops: Added.
+        * win/WebKit2ExportGeneratorDebugAll.vsprops: Added.
+        * win/WebKit2ExportGeneratorDebugCairoCFLite.vsprops: Added.
+        * win/WebKit2ExportGeneratorPostBuild.cmd: Added.
+        * win/WebKit2ExportGeneratorPreBuild.cmd: Added.
+        * win/WebKit2ExportGeneratorProduction.vsprops: Added.
+        * win/WebKit2ExportGeneratorRelease.vsprops: Added.
+        * win/WebKit2ExportGeneratorReleaseCairoCFLite.vsprops: Added.
+
 2012-11-30  Tim Horton  <timothy_horton@apple.com>
 
         (Simple)PDFPlugin: Support conversion of PostScript documents

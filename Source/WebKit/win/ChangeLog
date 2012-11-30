@@ -1,3 +1,15 @@
+2012-11-30  Brent Fulgham  <bfulgham@webkit.org>
+
+        [Windows, WinCairo] Generate library export definition file.
+        https://bugs.webkit.org/show_bug.cgi?id=103687
+
+        Reviewed by Tim Horton.
+
+        Update project solutions to use the new generated *.def files.
+
+        * WebKit.vcproj/WebKit.sln: Update for new project and file
+        locations.
+
 2012-11-30  Mihai Maerean  <mmaerean@adobe.com>
 
         [CSSRegions] when WebKit uses V8, there should be a single variable to store if the CSS Regions feature is enabled

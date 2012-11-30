@@ -10,14 +10,23 @@ EXPORTS
         progIDForClass
         WebLocalizedStringUTF8
         WebLocalizedLPCTSTRUTF8
+#if USE(CG)
+        WebDrawText
+        FontMetrics
+        TextFloatWidth
+        CenterTruncateStringToWidth
+        RightTruncateStringToWidth
+        WebKitSetShouldUseFontSmoothing
+        WebKitShouldUseFontSmoothing
+#endif
         WebKitCreateInstance
-		
+
         ; These functions are deprecated
         WebLocalizedString
         WebLocalizedLPCTSTR
         SetWebLocalizedStringMainBundle
 
-		; Deprecated re-exports from JavaScriptCore
+        ; Deprecated re-exports from JavaScriptCore
         JSCheckScriptSyntax
         JSClassCreate
         JSClassRelease
@@ -118,7 +127,6 @@ EXPORTS
         ?detachThread@WTF@@YAXI@Z
         ?didBeginFrameImpl@InspectorInstrumentation@WebCore@@CAXPAVInstrumentingAgents@2@@Z
         ?didCancelFrameImpl@InspectorInstrumentation@WebCore@@CAXPAVInstrumentingAgents@2@@Z
-        ?getDistributedNodes@InsertionPoint@WebCore@@QBE?AV?$PassRefPtr@VNodeList@WebCore@@@WTF@@XZ
         ?initializeMainThread@WTF@@YAXXZ
         ?initializeThreading@WTF@@YAXXZ
         ?instrumentationForPage@WebCore@@YAPAVInstrumentingAgents@1@PAVPage@1@@Z
@@ -136,6 +144,7 @@ EXPORTS
         ?waitForThreadCompletion@WTF@@YAHI@Z
         ?waitForThreadCompletion@WTF@@YAHIPAPAX@Z
         ?createThread@WTF@@YAIP6APAXPAX@Z0@Z
+
         ; Re-exports from WebCore for test harnesses
         ??0NodeRenderingContext@WebCore@@QAE@PAVNode@1@@Z
         ??1NodeRenderingContext@WebCore@@QAE@XZ
@@ -152,7 +161,6 @@ EXPORTS
         ??0String@WTF@@QAE@PB_W@Z
         ??0String@WTF@@QAE@PB_WI@Z
         ??0String@WTF@@QAE@VASCIILiteral@1@@Z
-        ?fromUTF8@String@WTF@@SA?AV12@PBE@Z
         ??1SerializedScriptValue@WebCore@@QAE@XZ
         ?absoluteBoundingBoxRect@RenderObject@WebCore@@QBE?AVIntRect@2@_N@Z
         ?absoluteBoundingBoxRectIgnoringTransforms@RenderObject@WebCore@@QBE?AVIntRect@2@XZ
@@ -179,6 +187,7 @@ EXPORTS
         ?find@StringImpl@WTF@@QAEIPAV12@I@Z
         ?find@StringImpl@WTF@@QAEIPAV12@@Z
         ?absoluteCaretBounds@FrameSelection@WebCore@@QAE?AVIntRect@2@XZ
+        ?fromUTF8@String@WTF@@SA?AV12@PBE@Z
         ?fromUTF8WithLatin1Fallback@String@WTF@@SA?AV12@PBEI@Z
         ?garbageCollectDocumentResources@CachedResourceLoader@WebCore@@QAEXXZ
         ?getCachedDOMStructure@WebCore@@YAPAVStructure@JSC@@PAVJSDOMGlobalObject@1@PBUClassInfo@3@@Z
@@ -238,7 +247,6 @@ EXPORTS
         ?setPageScaleFactor@Page@WebCore@@QAEXMABVIntPoint@2@@Z
         ?setPagination@Page@WebCore@@QAEXABUPagination@2@@Z
         ?setPictographFontFamily@Settings@WebCore@@QAEXABVAtomicString@WTF@@W4UScriptCode@@@Z
-        ?setPseudo@Element@WebCore@@QAEXABVAtomicString@WTF@@@Z
         ?setResourcesDataSizeLimitsFromInternals@InspectorController@WebCore@@QAEXHH@Z
         ?setSansSerifFontFamily@Settings@WebCore@@QAEXABVAtomicString@WTF@@W4UScriptCode@@@Z
         ?setScrollbarsSuppressed@ScrollView@WebCore@@QAEX_N0@Z
@@ -249,6 +257,7 @@ EXPORTS
         ?setStorageBlockingPolicy@Settings@WebCore@@QAEXW4StorageBlockingPolicy@SecurityOrigin@2@@Z
         ?setSuggestedValue@HTMLInputElement@WebCore@@QAEXABVString@WTF@@@Z
         ?setEditingValue@HTMLInputElement@WebCore@@QAEXABVString@WTF@@@Z
+        ?setPseudo@Element@WebCore@@QAEXABVAtomicString@WTF@@@Z
         ?setResolutionOverride@Settings@WebCore@@QAEXABVIntSize@2@@Z
         ?setMediaTypeOverride@Settings@WebCore@@QAEXABVString@WTF@@@Z
         ?settings@Document@WebCore@@QBEPAVSettings@2@XZ
@@ -263,8 +272,6 @@ EXPORTS
         ?toDocument@WebCore@@YAPAVDocument@1@VJSValue@JSC@@@Z
         ?toArrayBuffer@WebCore@@YAPAVArrayBuffer@WTF@@VJSValue@JSC@@@Z
         ?toDOMStringList@WebCore@@YA?AV?$PassRefPtr@VDOMStringList@WebCore@@@WTF@@PAVExecState@JSC@@VJSValue@5@@Z
-        ?toArrayBuffer@WebCore@@YAPAVArrayBuffer@WTF@@VJSValue@JSC@@@Z
-        ?toDocument@WebCore@@YAPAVDocument@1@VJSValue@JSC@@@Z
         ?toElement@WebCore@@YAPAVElement@1@VJSValue@JSC@@@Z
         ?toJS@WebCore@@YA?AVJSValue@JSC@@PAVExecState@3@PAVJSDOMGlobalObject@1@PAVArrayBuffer@WTF@@@Z
         ?toJS@WebCore@@YA?AVJSValue@JSC@@PAVExecState@3@PAVJSDOMGlobalObject@1@PAVClientRect@1@@Z
@@ -285,6 +292,12 @@ EXPORTS
         ??0ContextDestructionObserver@WebCore@@QAE@PAVScriptExecutionContext@1@@Z
         ?nodesFromRect@Document@WebCore@@QBE?AV?$PassRefPtr@VNodeList@WebCore@@@WTF@@HHIIII_N0@Z
         ?selectionStartHasMarkerFor@Editor@WebCore@@QBE_NW4MarkerType@DocumentMarker@2@HH@Z
+#if USE(CG)
+        ?webkitWillEnterFullScreenForElement@Document@WebCore@@QAEXPAVElement@2@@Z
+        ?webkitDidEnterFullScreenForElement@Document@WebCore@@QAEXPAVElement@2@@Z
+        ?webkitWillExitFullScreenForElement@Document@WebCore@@QAEXPAVElement@2@@Z
+        ?webkitDidExitFullScreenForElement@Document@WebCore@@QAEXPAVElement@2@@Z
+#endif
         ?restrictScaleFactorToInitialScaleIfNotUserScalable@WebCore@@YAXAAUViewportAttributes@1@@Z
         ?restrictMinimumScaleFactorToViewportSize@WebCore@@YAXAAUViewportAttributes@1@VIntSize@1@M@Z
         ?computeViewportAttributes@WebCore@@YA?AUViewportAttributes@1@UViewportArguments@1@HHHMVIntSize@1@@Z
@@ -330,6 +343,9 @@ EXPORTS
         ?isBitmapImage@BitmapImage@WebCore@@UBE_NXZ
         ?currentFrameHasAlpha@BitmapImage@WebCore@@UAE_NXZ
         ?hasSingleSecurityOrigin@BitmapImage@WebCore@@UBE_NXZ
+#if !ASSERT_DISABLED
+        ?notSolidColor@BitmapImage@WebCore@@UAE_NXZ 
+#endif
         ?computeIntrinsicDimensions@Image@WebCore@@UAEXAAULength@2@0AAVFloatSize@2@@Z
         ?size@BitmapImage@WebCore@@UBE?AVIntSize@2@XZ
         ?getHotSpot@BitmapImage@WebCore@@UBE_NAAVIntPoint@2@@Z
@@ -340,7 +356,15 @@ EXPORTS
         ?startAnimation@BitmapImage@WebCore@@MAEX_N@Z
         ?stopAnimation@BitmapImage@WebCore@@UAEXXZ
         ?resetAnimation@BitmapImage@WebCore@@UAEXXZ
+#if USE(CG)
+        ?nativeImageForCurrentFrame@BitmapImage@WebCore@@UAEPAUCGImage@@XZ
+        ?getCGImageRef@BitmapImage@WebCore@@UAEPAUCGImage@@XZ
+        ?getFirstCGImageRefOfSize@BitmapImage@WebCore@@UAEPAUCGImage@@ABVIntSize@2@@Z
+        ?getCGImageArray@BitmapImage@WebCore@@UAE?AV?$RetainPtr@PBU__CFArray@@@WTF@@XZ
+#elif USE(CAIRO)
         ?nativeImageForCurrentFrame@BitmapImage@WebCore@@UAEPAVNativeImageCairo@2@XZ
+        ?frameAtIndex@BitmapImage@WebCore@@IAEPAVNativeImageCairo@2@I@Z
+#endif
         ?getHBITMAP@BitmapImage@WebCore@@UAE_NPAUHBITMAP__@@@Z
         ?getHBITMAPOfSize@BitmapImage@WebCore@@UAE_NPAUHBITMAP__@@PAUtagSIZE@@@Z
         ?drawPattern@Image@WebCore@@UAEXPAVGraphicsContext@2@ABVFloatRect@2@ABVAffineTransform@2@ABVFloatPoint@2@W4ColorSpace@2@W4CompositeOperator@2@1@Z
@@ -350,6 +374,5 @@ EXPORTS
         ?draw@BitmapImage@WebCore@@MAEXPAVGraphicsContext@2@ABVFloatRect@2@1W4ColorSpace@2@W4CompositeOperator@2@@Z
         ?mayFillWithSolidColor@BitmapImage@WebCore@@MAE_NXZ
         ?solidColor@BitmapImage@WebCore@@MBE?AVColor@2@XZ
-        ?frameAtIndex@BitmapImage@WebCore@@IAEPAVNativeImageCairo@2@I@Z
         ?draw@BitmapImage@WebCore@@MAEXPAVGraphicsContext@2@ABVFloatRect@2@1W4ColorSpace@2@W4CompositeOperator@2@W4RespectImageOrientationEnum@2@@Z
         ?frameCount@BitmapImage@WebCore@@MAEIXZ

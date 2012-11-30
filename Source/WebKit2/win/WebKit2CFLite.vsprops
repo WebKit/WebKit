@@ -7,7 +7,6 @@
 	<Tool
 		Name="VCLinkerTool"
 		AdditionalDependencies="CFLite$(LibraryConfigSuffix).lib"
-		ModuleDefinitionFile="WebKit2CFLite.def"
 		AdditionalLibraryDirectories=""
 	/>
 </VisualStudioPropertySheet>

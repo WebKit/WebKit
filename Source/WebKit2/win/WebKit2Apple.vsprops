@@ -11,7 +11,6 @@
 	<Tool
 		Name="VCLinkerTool"
 		AdditionalDependencies="CFNetwork$(LibraryConfigSuffix).lib CoreFoundation$(LibraryConfigSuffix).lib CoreGraphics$(LibraryConfigSuffix).lib QTMovieWin$(WebKitConfigSuffix).lib WebKitSystemInterface$(WebKitConfigSuffix).lib"
-		ModuleDefinitionFile="WebKit2.def"
 		DelayLoadDLLs="QTMovieWin$(WebKitConfigSuffix).dll"
 	/>
 </VisualStudioPropertySheet>
