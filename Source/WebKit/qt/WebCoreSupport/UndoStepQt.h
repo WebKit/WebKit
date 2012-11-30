@@ -20,11 +20,10 @@
 #ifndef UndoStepQt_h
 #define UndoStepQt_h
 
+#include <PlatformExportMacros.h>
 #include <UndoStep.h>
-
 #include <qstring.h>
 #include <qwebkitglobal.h>
-#include <wtf/ExportMacros.h>
 #include <wtf/RefPtr.h>
 
 class WEBKIT_EXPORTDATA UndoStepQt  {

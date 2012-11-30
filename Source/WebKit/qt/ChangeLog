@@ -1,3 +1,13 @@
+2012-11-30  Simon Hausmann  <simon.hausmann@digia.com>
+
+        Unreviewed prospective MIPS build fix:
+
+        Explicitly include PlatformExportMacros for the correct export macro to be find.
+        Not really MIPS specific but rather to a minimal build configuration with less implicit
+        includes.
+
+        * WebCoreSupport/UndoStepQt.h:
+
 2012-11-30  Pierre Rossi  <pierre.rossi@gmail.com>
 
         [Qt] Unreviewed build un-break
