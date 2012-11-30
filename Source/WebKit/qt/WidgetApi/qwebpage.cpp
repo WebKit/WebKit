@@ -200,6 +200,7 @@ QWebPagePrivate::QWebPagePrivate(QWebPage *qq)
     , inspectorIsInternalOnly(false)
     , m_lastDropAction(Qt::IgnoreAction)
 {
+    >>>>> DELIBERATELY BREAKING THE BUILD TO TRIP A CLEAN BUILD ON THE SZEGED "Qt Linux Release" BOT <<<<<<
     WebKit::initializeWebKitWidgets();
     memset(actions, 0, sizeof(actions));
 

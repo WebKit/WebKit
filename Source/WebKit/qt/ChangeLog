@@ -1,3 +1,14 @@
+2012-11-30  Pierre Rossi  <pierre.rossi@gmail.com>
+
+        [Qt] Unreviewed build break
+
+        Rubber-stamped by Simon Hausmann.
+
+        Poor man's way to trigger a clean build on a bot.
+
+        * WidgetApi/qwebpage.cpp:
+        (QWebPagePrivate::QWebPagePrivate):
+
 2012-11-30  Simon Hausmann  <simon.hausmann@digia.com>
 
         [Qt] Fix QML import installation with newer Qt
