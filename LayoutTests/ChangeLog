@@ -1,3 +1,160 @@
+2012-11-30  Stephen Chenney  <schenney@chromium.org>
+
+        [Chromium] Rebaselining tests affected by recent Skia changes
+
+        Unreviewed test expectations updates.
+
+        Due to the Win7 builders being so far behind, some Win7 expectations may be wrong.
+        Also fixes https://bugs.webkit.org/show_bug.cgi?id=103722
+
+        * platform/chromium-linux-x86/svg/transforms: Added.
+        * platform/chromium-linux-x86/svg/transforms/text-with-mask-with-svg-transform-expected.png: Added.
+        * platform/chromium-linux/fast/canvas/canvas-incremental-repaint-expected.png:
+        * platform/chromium-linux/fast/text/line-initial-and-final-swashes-expected.png: Removed.
+        * platform/chromium-linux/svg/transforms/text-with-pattern-with-svg-transform-expected.png:
+        * platform/chromium-mac-lion/compositing/shadows/shadow-drawing-expected.png:
+        * platform/chromium-mac-lion/fast/box-shadow/basic-shadows-expected.png:
+        * platform/chromium-mac-lion/fast/box-shadow/box-shadow-transformed-expected.png:
+        * platform/chromium-mac-lion/fast/box-shadow/inset-expected.png:
+        * platform/chromium-mac-lion/fast/canvas/canvas-incremental-repaint-expected.png:
+        * platform/chromium-mac-lion/fast/repaint/shadow-multiple-horizontal-expected.png:
+        * platform/chromium-mac-lion/fast/repaint/shadow-multiple-strict-horizontal-expected.png:
+        * platform/chromium-mac-lion/fast/repaint/shadow-multiple-strict-vertical-expected.png:
+        * platform/chromium-mac-lion/fast/repaint/shadow-multiple-vertical-expected.png:
+        * platform/chromium-mac-lion/fast/transforms/shadows-expected.png:
+        * platform/chromium-mac-lion/fast/transforms/transformed-focused-text-input-expected.png:
+        * platform/chromium-mac-lion/platform/chromium/fast/forms/calendar-picker/calendar-picker-appearance-expected.png:
+        * platform/chromium-mac-lion/platform/chromium/fast/forms/calendar-picker/calendar-picker-appearance-ru-expected.png:
+        * platform/chromium-mac-lion/platform/chromium/fast/forms/calendar-picker/calendar-picker-appearance-step-expected.png:
+        * platform/chromium-mac-lion/platform/chromium/fast/forms/calendar-picker/month-picker-appearance-expected.png:
+        * platform/chromium-mac-lion/platform/chromium/fast/forms/calendar-picker/month-picker-appearance-step-expected.png:
+        * platform/chromium-mac-lion/platform/chromium/fast/forms/calendar-picker/week-picker-appearance-expected.png:
+        * platform/chromium-mac-lion/platform/chromium/fast/forms/calendar-picker/week-picker-appearance-step-expected.png:
+        * platform/chromium-mac-lion/platform/chromium/fast/forms/color/color-suggestion-picker-appearance-expected.png:
+        * platform/chromium-mac-lion/platform/chromium/fast/forms/color/color-suggestion-picker-one-row-appearance-expected.png:
+        * platform/chromium-mac-lion/platform/chromium/fast/forms/color/color-suggestion-picker-two-row-appearance-expected.png:
+        * platform/chromium-mac-lion/platform/chromium/fast/forms/color/color-suggestion-picker-with-scrollbar-appearance-expected.png:
+        * platform/chromium-mac-lion/platform/chromium/virtual/softwarecompositing/shadows/shadow-drawing-expected.png:
+        * platform/chromium-mac-lion/svg/W3C-SVG-1.1/animate-elem-81-t-expected.png:
+        * platform/chromium-mac-lion/svg/W3C-SVG-1.1/animate-elem-82-t-expected.png:
+        * platform/chromium-mac-lion/svg/W3C-SVG-1.1/painting-stroke-02-t-expected.png:
+        * platform/chromium-mac-lion/svg/css/group-with-shadow-expected.png:
+        * platform/chromium-mac-lion/svg/custom/linking-a-03-b-transform-expected.png:
+        * platform/chromium-mac-lion/svg/custom/linking-a-03-b-viewBox-transform-expected.png:
+        * platform/chromium-mac-lion/svg/custom/pattern-rotate-expected.png:
+        * platform/chromium-mac-lion/svg/custom/stroke-width-large-expected.png:
+        * platform/chromium-mac-lion/svg/custom/use-transform-expected.png:
+        * platform/chromium-mac-lion/svg/transforms/text-with-pattern-with-svg-transform-expected.png:
+        * platform/chromium-mac-snowleopard/compositing/shadows/shadow-drawing-expected.png:
+        * platform/chromium-mac-snowleopard/fast/box-shadow/basic-shadows-expected.png:
+        * platform/chromium-mac-snowleopard/fast/box-shadow/box-shadow-transformed-expected.png:
+        * platform/chromium-mac-snowleopard/fast/repaint/shadow-multiple-horizontal-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/fast/repaint/shadow-multiple-strict-horizontal-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/fast/repaint/shadow-multiple-strict-vertical-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/fast/repaint/shadow-multiple-vertical-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/fast/transforms/transformed-focused-text-input-expected.png:
+        * platform/chromium-mac-snowleopard/platform/chromium/fast/forms/calendar-picker/calendar-picker-appearance-expected.png:
+        * platform/chromium-mac-snowleopard/platform/chromium/fast/forms/calendar-picker/calendar-picker-appearance-ru-expected.png:
+        * platform/chromium-mac-snowleopard/platform/chromium/fast/forms/calendar-picker/calendar-picker-appearance-step-expected.png:
+        * platform/chromium-mac-snowleopard/platform/chromium/fast/forms/calendar-picker/month-picker-appearance-expected.png:
+        * platform/chromium-mac-snowleopard/platform/chromium/fast/forms/calendar-picker/month-picker-appearance-step-expected.png:
+        * platform/chromium-mac-snowleopard/platform/chromium/fast/forms/calendar-picker/week-picker-appearance-expected.png:
+        * platform/chromium-mac-snowleopard/platform/chromium/fast/forms/calendar-picker/week-picker-appearance-step-expected.png:
+        * platform/chromium-mac-snowleopard/platform/chromium/fast/forms/color/color-suggestion-picker-appearance-expected.png:
+        * platform/chromium-mac-snowleopard/platform/chromium/fast/forms/color/color-suggestion-picker-one-row-appearance-expected.png:
+        * platform/chromium-mac-snowleopard/platform/chromium/fast/forms/color/color-suggestion-picker-two-row-appearance-expected.png:
+        * platform/chromium-mac-snowleopard/platform/chromium/fast/forms/color/color-suggestion-picker-with-scrollbar-appearance-expected.png:
+        * platform/chromium-mac-snowleopard/platform/chromium/virtual/softwarecompositing/shadows/shadow-drawing-expected.png:
+        * platform/chromium-mac-snowleopard/svg/W3C-SVG-1.1/animate-elem-81-t-expected.png:
+        * platform/chromium-mac-snowleopard/svg/W3C-SVG-1.1/animate-elem-82-t-expected.png:
+        * platform/chromium-mac-snowleopard/svg/custom/pattern-rotate-expected.png:
+        * platform/chromium-mac-snowleopard/svg/custom/stroke-width-large-expected.png:
+        * platform/chromium-mac/compositing/shadows/shadow-drawing-expected.png:
+        * platform/chromium-mac/fast/box-shadow/basic-shadows-expected.png:
+        * platform/chromium-mac/fast/box-shadow/box-shadow-clipped-slices-expected.png:
+        * platform/chromium-mac/fast/box-shadow/box-shadow-radius-expected.png:
+        * platform/chromium-mac/fast/box-shadow/box-shadow-transformed-expected.png:
+        * platform/chromium-mac/fast/box-shadow/inset-box-shadow-radius-expected.png:
+        * platform/chromium-mac/fast/box-shadow/inset-box-shadows-expected.png:
+        * platform/chromium-mac/fast/box-shadow/inset-expected.png:
+        * platform/chromium-mac/fast/box-shadow/scaled-box-shadow-expected.png:
+        * platform/chromium-mac/fast/box-shadow/single-pixel-shadow-expected.png:
+        * platform/chromium-mac/fast/canvas/canvas-incremental-repaint-expected.png:
+        * platform/chromium-mac/fast/repaint/shadow-multiple-horizontal-expected.png:
+        * platform/chromium-mac/fast/repaint/shadow-multiple-strict-horizontal-expected.png:
+        * platform/chromium-mac/fast/repaint/shadow-multiple-strict-vertical-expected.png:
+        * platform/chromium-mac/fast/repaint/shadow-multiple-vertical-expected.png:
+        * platform/chromium-mac/fast/repaint/transform-replaced-shadows-expected.png:
+        * platform/chromium-mac/fast/transforms/shadows-expected.png:
+        * platform/chromium-mac/fast/transforms/transformed-focused-text-input-expected.png:
+        * platform/chromium-mac/platform/chromium/fast/forms/calendar-picker/calendar-picker-appearance-expected.png:
+        * platform/chromium-mac/platform/chromium/fast/forms/calendar-picker/calendar-picker-appearance-ru-expected.png:
+        * platform/chromium-mac/platform/chromium/fast/forms/calendar-picker/calendar-picker-appearance-step-expected.png:
+        * platform/chromium-mac/platform/chromium/fast/forms/calendar-picker/month-picker-appearance-expected.png:
+        * platform/chromium-mac/platform/chromium/fast/forms/calendar-picker/month-picker-appearance-step-expected.png:
+        * platform/chromium-mac/platform/chromium/fast/forms/calendar-picker/week-picker-appearance-expected.png:
+        * platform/chromium-mac/platform/chromium/fast/forms/calendar-picker/week-picker-appearance-step-expected.png:
+        * platform/chromium-mac/platform/chromium/fast/forms/color/color-suggestion-picker-appearance-expected.png:
+        * platform/chromium-mac/platform/chromium/fast/forms/color/color-suggestion-picker-one-row-appearance-expected.png:
+        * platform/chromium-mac/platform/chromium/fast/forms/color/color-suggestion-picker-two-row-appearance-expected.png:
+        * platform/chromium-mac/platform/chromium/fast/forms/color/color-suggestion-picker-with-scrollbar-appearance-expected.png:
+        * platform/chromium-mac/platform/chromium/virtual/softwarecompositing/shadows/shadow-drawing-expected.png:
+        * platform/chromium-mac/svg/W3C-SVG-1.1/animate-elem-81-t-expected.png:
+        * platform/chromium-mac/svg/W3C-SVG-1.1/animate-elem-82-t-expected.png:
+        * platform/chromium-mac/svg/W3C-SVG-1.1/painting-stroke-02-t-expected.png:
+        * platform/chromium-mac/svg/css/group-with-shadow-expected.png:
+        * platform/chromium-mac/svg/custom/linking-a-03-b-transform-expected.png:
+        * platform/chromium-mac/svg/custom/linking-a-03-b-viewBox-transform-expected.png:
+        * platform/chromium-mac/svg/custom/pattern-rotate-expected.png:
+        * platform/chromium-mac/svg/custom/stroke-width-large-expected.png:
+        * platform/chromium-mac/svg/custom/use-transform-expected.png:
+        * platform/chromium-mac/svg/filters/shadow-on-rect-with-filter-expected.png:
+        * platform/chromium-mac/svg/transforms/text-with-pattern-with-svg-transform-expected.png:
+        * platform/chromium-win-xp/compositing/shadows/shadow-drawing-expected.png:
+        * platform/chromium-win-xp/fast/repaint/shadow-multiple-horizontal-expected.png: Removed.
+        * platform/chromium-win-xp/fast/repaint/shadow-multiple-strict-horizontal-expected.png: Removed.
+        * platform/chromium-win-xp/fast/repaint/shadow-multiple-strict-vertical-expected.png: Removed.
+        * platform/chromium-win-xp/platform/chromium/fast/forms/calendar-picker/calendar-picker-appearance-ru-expected.png:
+        * platform/chromium-win-xp/platform/chromium/fast/forms/color: Removed.
+        * platform/chromium-win-xp/platform/chromium/virtual/softwarecompositing/shadows/shadow-drawing-expected.png:
+        * platform/chromium-win-xp/svg/css/group-with-shadow-expected.png:
+        * platform/chromium-win/compositing/shadows/shadow-drawing-expected.png:
+        * platform/chromium-win/fast/box-shadow/basic-shadows-expected.png:
+        * platform/chromium-win/fast/box-shadow/box-shadow-clipped-slices-expected.png:
+        * platform/chromium-win/fast/box-shadow/box-shadow-transformed-expected.png:
+        * platform/chromium-win/fast/box-shadow/inset-box-shadows-expected.png:
+        * platform/chromium-win/fast/box-shadow/inset-expected.png:
+        * platform/chromium-win/fast/canvas/canvas-incremental-repaint-expected.png:
+        * platform/chromium-win/fast/repaint/shadow-multiple-horizontal-expected.png:
+        * platform/chromium-win/fast/repaint/shadow-multiple-strict-horizontal-expected.png:
+        * platform/chromium-win/fast/repaint/shadow-multiple-strict-vertical-expected.png:
+        * platform/chromium-win/fast/repaint/shadow-multiple-vertical-expected.png:
+        * platform/chromium-win/fast/text/line-initial-and-final-swashes-expected.png: Copied from LayoutTests/platform/chromium-linux/fast/text/line-initial-and-final-swashes-expected.png.
+        * platform/chromium-win/fast/transforms/shadows-expected.png:
+        * platform/chromium-win/platform/chromium/fast/forms/calendar-picker/calendar-picker-appearance-expected.png:
+        * platform/chromium-win/platform/chromium/fast/forms/calendar-picker/calendar-picker-appearance-ru-expected.png:
+        * platform/chromium-win/platform/chromium/fast/forms/calendar-picker/calendar-picker-appearance-step-expected.png:
+        * platform/chromium-win/platform/chromium/fast/forms/calendar-picker/month-picker-appearance-expected.png:
+        * platform/chromium-win/platform/chromium/fast/forms/calendar-picker/month-picker-appearance-step-expected.png:
+        * platform/chromium-win/platform/chromium/fast/forms/calendar-picker/week-picker-appearance-expected.png:
+        * platform/chromium-win/platform/chromium/fast/forms/calendar-picker/week-picker-appearance-step-expected.png:
+        * platform/chromium-win/platform/chromium/fast/forms/color/color-suggestion-picker-appearance-expected.png:
+        * platform/chromium-win/platform/chromium/fast/forms/color/color-suggestion-picker-one-row-appearance-expected.png:
+        * platform/chromium-win/platform/chromium/fast/forms/color/color-suggestion-picker-two-row-appearance-expected.png:
+        * platform/chromium-win/platform/chromium/fast/forms/color/color-suggestion-picker-with-scrollbar-appearance-expected.png:
+        * platform/chromium-win/platform/chromium/virtual/softwarecompositing/shadows/shadow-drawing-expected.png: Added.
+        * platform/chromium-win/svg/W3C-SVG-1.1/animate-elem-81-t-expected.png:
+        * platform/chromium-win/svg/W3C-SVG-1.1/animate-elem-82-t-expected.png:
+        * platform/chromium-win/svg/W3C-SVG-1.1/painting-stroke-02-t-expected.png:
+        * platform/chromium-win/svg/css/group-with-shadow-expected.png:
+        * platform/chromium-win/svg/custom/linking-a-03-b-transform-expected.png:
+        * platform/chromium-win/svg/custom/linking-a-03-b-viewBox-transform-expected.png:
+        * platform/chromium-win/svg/custom/pattern-rotate-expected.png:
+        * platform/chromium-win/svg/custom/stroke-width-large-expected.png:
+        * platform/chromium-win/svg/custom/use-transform-expected.png:
+        * platform/chromium-win/svg/transforms/text-with-pattern-with-svg-transform-expected.png:
+        * platform/chromium/TestExpectations:
+
 2012-11-30  James Simonsen  <simonjam@chromium.org>
 
         Report CSS as initiator instead of elements, except body
