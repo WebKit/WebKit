@@ -58,6 +58,7 @@ struct ViewportArguments;
 #if ENABLE(VIDEO)
 class FullScreenVideoQt;
 #endif
+class TextureMapperLayerClientQt;
 
 class ChromeClientQt : public ChromeClient {
 public:
@@ -222,6 +223,10 @@ public:
     static bool dumpVisitedLinksCallbacks;
 
     mutable QtPlatformPlugin m_platformPlugin;
+
+#if USE(ACCELERATED_COMPOSITING)
+    OwnPtr<TextureMapperLayerClientQt> m_textureMapperLayerClient;
+#endif
 };
 }
 

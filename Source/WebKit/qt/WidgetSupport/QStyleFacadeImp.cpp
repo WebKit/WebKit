@@ -32,6 +32,7 @@
 #include <QStyleFactory>
 #include <QStyleOption>
 
+#include <QWebPageAdapter.h>
 #include <QWebPageClient.h>
 
 using namespace WebCore;
@@ -135,7 +136,7 @@ static QStyleFacade::SubControl convertToQStyleFacadeSubControl(QStyle::SubContr
 #undef CONVERT_SUBCONTROL
 }
 
-QStyleFacadeImp::QStyleFacadeImp(Page* page)
+QStyleFacadeImp::QStyleFacadeImp(QWebPageAdapter* page)
     : m_page(page)
     , m_style(0)
 {
@@ -272,23 +273,24 @@ void QStyleFacadeImp::paintComboBox(QPainter *painter, const QStyleFacadeOption 
 
     MappedStyleOption<QStyleOptionComboBox> opt(widget, proxyOption);
 
-    IntRect rect = opt.rect;
+    QRect rect = opt.rect;
 
 #if defined(Q_OS_MAC) && !defined(QT_NO_STYLE_MAC)
     // QMacStyle makes the combo boxes a little bit smaller to leave space for the focus rect.
     // Because of it, the combo button is drawn at a point to the left of where it was expect to be and may end up
     // overlapped with the text. This will force QMacStyle to draw the combo box with the expected width.
-    if (m_style->inherits("QMacStyle"))
-        rect.inflateX(3);
+    if (m_style->inherits("QMacStyle")) {
+        rect.setX(rect.x() - 3);
+        rect.setWidth(rect.width() + 2 * 3);
+    }
 #endif
 
-    const QPoint topLeft = rect.location();
-    painter->translate(topLeft);
+    painter->translate(rect.topLeft());
     opt.rect.moveTo(QPoint(0, 0));
     opt.rect.setSize(rect.size());
 
     style()->drawComplexControl(QStyle::CC_ComboBox, &opt, painter, widget);
-    painter->translate(-topLeft);
+    painter->translate(-rect.topLeft());
 }
 
 void QStyleFacadeImp::paintComboBoxArrow(QPainter *painter, const QStyleFacadeOption &proxyOption)
@@ -354,7 +356,7 @@ void QStyleFacadeImp::paintInnerSpinButton(QPainter* painter, const QStyleFacade
         }
     }
 
-    IntRect buttonRect = option.rect;
+    QRect buttonRect = option.rect;
     // Default to moving the buttons a little bit within the editor frame.
     int inflateX = -2;
     int inflateY = -2;
@@ -370,8 +372,10 @@ void QStyleFacadeImp::paintInnerSpinButton(QPainter* painter, const QStyleFacade
     }
 #endif
 
-    buttonRect.inflateX(inflateX);
-    buttonRect.inflateY(inflateY);
+    buttonRect.setX(buttonRect.x() - inflateX);
+    buttonRect.setWidth(buttonRect.width() + 2 * inflateX);
+    buttonRect.setY(buttonRect.y() - inflateY);
+    buttonRect.setHeight(buttonRect.height() + 2 * inflateY);
     option.rect = buttonRect;
 
     style()->drawComplexControl(QStyle::CC_SpinBox, &option, painter, widget);
@@ -484,7 +488,10 @@ QStyle* QStyleFacadeImp::style() const
     if (m_style)
         return m_style;
 
-    m_style = QStyleFacade::styleForPage(m_page);
+    if (m_page) {
+        if (QWebPageClient* pageClient = m_page->client.data())
+            m_style = pageClient->style();
+    }
 
     if (!m_style)
         m_style = QApplication::style();

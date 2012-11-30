@@ -23,32 +23,25 @@
 
 #if !defined(QT_NO_GRAPHICSVIEW)
 
+#include "PageClientQt.h"
 #include "qwebframe.h"
 #include "qwebframe_p.h"
 #include "qwebpage.h"
 #include "qwebpage_p.h"
-#include "Page.h"
-#include "PageClientQt.h"
-#include "Frame.h"
-#include "FrameView.h"
-#include "GraphicsContext.h"
-#include "IntRect.h"
-#include "TiledBackingStore.h"
 #include <qapplication.h>
 #include <qgraphicsscene.h>
 #include <qgraphicssceneevent.h>
 #include <qgraphicsview.h>
+#include <qmetaobject.h>
+#include <qpixmapcache.h>
 #include <qscrollbar.h>
+#include <qsharedpointer.h>
 #include <qstyleoption.h>
-#include <QtCore/qmetaobject.h>
-#include <QtCore/qsharedpointer.h>
-#include <QtCore/qtimer.h>
-#include <QtGui/qpixmapcache.h>
+#include <qtimer.h>
 
 #if defined(Q_WS_X11)
 #include <QX11Info>
 #endif
-#include <Settings.h>
 
 using namespace WebCore;
 
@@ -58,11 +51,10 @@ public:
         : q(parent)
         , page(0)
         , resizesToContents(false)
-        , renderHints(QPainter::TextAntialiasing | QPainter::SmoothPixmapTransform) {}
+        , renderHints(QPainter::TextAntialiasing | QPainter::SmoothPixmapTransform)
+    { }
 
     virtual ~QGraphicsWebViewPrivate();
-
-    void syncLayers();
 
     void updateResizesToContentsForPage();
 
@@ -97,13 +89,6 @@ QGraphicsWebViewPrivate::~QGraphicsWebViewPrivate()
     detachCurrentPage();
 }
 
-void QGraphicsWebViewPrivate::syncLayers()
-{
-#if USE(ACCELERATED_COMPOSITING)
-    pageClient()->syncLayers();
-#endif
-}
-
 void QGraphicsWebViewPrivate::_q_doLoadFinished(bool success)
 {
     // If the page had no title, still make sure it gets the signal
@@ -132,10 +117,10 @@ void QGraphicsWebViewPrivate::updateResizesToContentsForPage()
             q, SLOT(_q_contentsSizeChanged(const QSize&)), Qt::UniqueConnection);
     } else {
         QObject::disconnect(page->mainFrame(), SIGNAL(contentsSizeChanged(QSize)),
-                         q, SLOT(_q_contentsSizeChanged(const QSize&)));
+            q, SLOT(_q_contentsSizeChanged(const QSize&)));
     }
-    page->d->page->mainFrame()->view()->setPaintsEntireContents(resizesToContents);
-    page->d->page->mainFrame()->view()->setDelegatesScrolling(resizesToContents);
+    page->d->mainFrameAdapter()->setPaintsEntireContents(resizesToContents);
+    page->d->mainFrameAdapter()->setDelegatesScrolling(resizesToContents);
 }
 
 void QGraphicsWebViewPrivate::_q_contentsSizeChanged(const QSize& size)
@@ -150,7 +135,7 @@ void QGraphicsWebViewPrivate::_q_scaleChanged()
 #if USE(TILED_BACKING_STORE)
     if (!page)
         return;
-    pageClient()->updateTiledBackingStoreScale();
+    page->d->mainFrameAdapter()->setTiledBackingStoreContentsScale(q->scale());
 #endif
 }
 
@@ -286,12 +271,8 @@ void QGraphicsWebView::paint(QPainter* painter, const QStyleOptionGraphicsItem* 
     QPainter::RenderHints oldHints = painter->renderHints();
     painter->setRenderHints(oldHints | d->renderHints);
 #if USE(TILED_BACKING_STORE)
-    if (WebCore::TiledBackingStore* backingStore = QWebFramePrivate::core(page()->mainFrame())->tiledBackingStore()) {
-        // FIXME: We should set the backing store viewport earlier than in paint
-        backingStore->coverWithTilesIfNeeded();
-        // QWebFrame::render is a public API, bypass it for tiled rendering so behavior does not need to change.
-        WebCore::GraphicsContext context(painter);
-        page()->mainFrame()->d->renderFromTiledBackingStore(&context, option->exposedRect.toAlignedRect());
+    // QWebFrame::render is a public API, bypass it for tiled rendering so behavior does not need to change.
+    if (page()->mainFrame()->d->renderFromTiledBackingStore(painter, option->exposedRect.toAlignedRect())) {
         painter->setRenderHints(oldHints);
         return;
     }
@@ -307,10 +288,9 @@ bool QGraphicsWebView::sceneEvent(QEvent* event)
     // Re-implemented in order to allows fixing event-related bugs in patch releases.
 
     if (d->page && (event->type() == QEvent::TouchBegin
-                || event->type() == QEvent::TouchEnd
-                || event->type() == QEvent::TouchUpdate
-                || event->type() == QEvent::TouchCancel
-       )) {
+        || event->type() == QEvent::TouchEnd
+        || event->type() == QEvent::TouchUpdate
+        || event->type() == QEvent::TouchCancel)) {
         d->page->event(event);
 
         // Always return true so that we'll receive also TouchUpdate and TouchEnd events
@@ -334,10 +314,10 @@ QVariant QGraphicsWebView::itemChange(GraphicsItemChange change, const QVariant&
     case ItemCursorChange:
         return value;
     case ItemCursorHasChanged: {
-            QEvent event(QEvent::CursorChange);
-            QApplication::sendEvent(this, &event);
-            return value;
-        }
+        QEvent event(QEvent::CursorChange);
+        QApplication::sendEvent(this, &event);
+        return value;
+    }
     default:
         break;
     }
@@ -515,26 +495,26 @@ void QGraphicsWebView::setPage(QWebPage* page)
     QWebFrame* mainFrame = d->page->mainFrame();
 
     connect(mainFrame, SIGNAL(titleChanged(QString)),
-            this, SIGNAL(titleChanged(QString)));
+        this, SIGNAL(titleChanged(QString)));
     connect(mainFrame, SIGNAL(iconChanged()),
-            this, SIGNAL(iconChanged()));
+        this, SIGNAL(iconChanged()));
     connect(mainFrame, SIGNAL(urlChanged(QUrl)),
-            this, SIGNAL(urlChanged(QUrl)));
+        this, SIGNAL(urlChanged(QUrl)));
     connect(d->page, SIGNAL(loadStarted()),
-            this, SIGNAL(loadStarted()));
+        this, SIGNAL(loadStarted()));
     connect(d->page, SIGNAL(loadProgress(int)),
-            this, SIGNAL(loadProgress(int)));
+        this, SIGNAL(loadProgress(int)));
     connect(d->page, SIGNAL(loadFinished(bool)),
-            this, SLOT(_q_doLoadFinished(bool)));
+        this, SLOT(_q_doLoadFinished(bool)));
     connect(d->page, SIGNAL(statusBarMessage(QString)),
-            this, SIGNAL(statusBarMessage(QString)));
+        this, SIGNAL(statusBarMessage(QString)));
     connect(d->page, SIGNAL(linkClicked(QUrl)),
-            this, SIGNAL(linkClicked(QUrl)));
+        this, SIGNAL(linkClicked(QUrl)));
     connect(d->page, SIGNAL(destroyed()),
-            this, SLOT(_q_pageDestroyed()));
+        this, SLOT(_q_pageDestroyed()));
 #if !defined(QT_NO_IM) && (defined(Q_WS_X11) || defined(Q_WS_QWS))
     connect(d->page, SIGNAL(microFocusChanged()),
-            this, SLOT(updateMicroFocus()));
+        this, SLOT(updateMicroFocus()));
 #endif
 }
 
@@ -716,9 +696,7 @@ void QGraphicsWebView::load(const QUrl& url)
     \sa url(), urlChanged()
 */
 
-void QGraphicsWebView::load(const QNetworkRequest& request,
-                    QNetworkAccessManager::Operation operation,
-                    const QByteArray& body)
+void QGraphicsWebView::load(const QNetworkRequest& request, QNetworkAccessManager::Operation operation, const QByteArray& body)
 {
     page()->mainFrame()->load(request, operation, body);
 }
@@ -904,10 +882,7 @@ bool QGraphicsWebView::resizesToContents() const
 bool QGraphicsWebView::isTiledBackingStoreFrozen() const
 {
 #if USE(TILED_BACKING_STORE)
-    WebCore::TiledBackingStore* backingStore = QWebFramePrivate::core(page()->mainFrame())->tiledBackingStore();
-    if (!backingStore)
-        return false;
-    return backingStore->contentsFrozen();
+    return page()->d->mainFrameAdapter()->tiledBackingStoreFrozen();
 #else
     return false;
 #endif
@@ -916,10 +891,7 @@ bool QGraphicsWebView::isTiledBackingStoreFrozen() const
 void QGraphicsWebView::setTiledBackingStoreFrozen(bool frozen)
 {
 #if USE(TILED_BACKING_STORE)
-    WebCore::TiledBackingStore* backingStore = QWebFramePrivate::core(page()->mainFrame())->tiledBackingStore();
-    if (!backingStore)
-        return;
-    backingStore->setContentsFrozen(frozen);
+    page()->d->mainFrameAdapter()->setTiledBackingStoreFrozen(frozen);
 #else
     UNUSED_PARAM(frozen);
 #endif
@@ -931,9 +903,7 @@ void QGraphicsWebView::hoverMoveEvent(QGraphicsSceneHoverEvent* ev)
 {
     if (d->page) {
         const bool accepted = ev->isAccepted();
-        QMouseEvent me = QMouseEvent(QEvent::MouseMove,
-                ev->pos().toPoint(), Qt::NoButton,
-                Qt::NoButton, Qt::NoModifier);
+        QMouseEvent me = QMouseEvent(QEvent::MouseMove, ev->pos().toPoint(), Qt::NoButton, Qt::NoButton, Qt::NoModifier);
         d->page->event(&me);
         ev->setAccepted(accepted);
     }

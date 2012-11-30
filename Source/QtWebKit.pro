@@ -10,6 +10,11 @@ CONFIG += ordered
 api.file = api.pri
 SUBDIRS += api
 
+build?(webkit1) {
+    webkitwidgets.file = widgetsapi.pri
+    SUBDIRS += webkitwidgets
+}
+
 build?(webkit2) {
     webprocess.file = WebKit2/WebProcess.pro
     SUBDIRS += webprocess

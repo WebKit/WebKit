@@ -36,11 +36,13 @@ namespace WebCore {
 class Page;
 class QStyleFacade;
 }
-typedef WebCore::QStyleFacade* (*QtStyleFactoryFunction)(WebCore::Page*);
+class QWebPageAdapter;
+
+typedef WebCore::QStyleFacade* (*QtStyleFacadeFactoryFunction)(QWebPageAdapter*);
 
 namespace WebKit {
 
-void setWebKitWidgetsInitCallback(QtStyleFactoryFunction);
+Q_DECL_EXPORT void setWebKitWidgetsInitCallback(QtStyleFacadeFactoryFunction);
 Q_DECL_EXPORT void initializeWebKitQt();
 Q_DECL_EXPORT void setImagePlatformResource(const char* /* name */, const QPixmap&);
 

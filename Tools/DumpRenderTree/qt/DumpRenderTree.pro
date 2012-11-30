@@ -16,6 +16,7 @@ INCLUDEPATH += \
     $$PWD/.. \
     $${ROOT_WEBKIT_DIR}/Source/WebCore/platform/qt \
     $${ROOT_WEBKIT_DIR}/Source/WebKit/qt/WebCoreSupport \
+    $${ROOT_WEBKIT_DIR}/Source/WebKit/qt/WidgetSupport \
     $${ROOT_WEBKIT_DIR}/Source/WTF
 
 QT = core gui network testlib webkitwidgets widgets

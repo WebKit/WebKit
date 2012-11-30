@@ -1,3 +1,21 @@
+2012-11-30  Simon Hausmann  <simon.hausmann@digia.com>, Pierre Rossi  <pierre.rossi@digia.com>
+
+        [Qt] Separate Qt WebKit into Qt WebKit and Qt WebKit Widgets
+        https://bugs.webkit.org/show_bug.cgi?id=99314
+
+        Reviewed by Tor Arne Vestbø.
+
+        This big change separates QtWebKit into QtWebKit and QtWebKitWidgets as
+        shared libraries.
+
+        It's a big refactoring that mostly involves moving WebCore dependent
+        code into QtWebKit and accessing it through exported QWebFrameAdapter
+        and QWebPageAdapter classes.
+
+
+        * wtf/text/WTFString.h:
+        (String): Export the QString conversions also as WTF_STRING_API.
+
 2012-11-29  Filip Pizlo  <fpizlo@apple.com>
 
         It should be easy to find code blocks in debug dumps

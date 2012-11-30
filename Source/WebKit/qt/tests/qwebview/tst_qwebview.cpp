@@ -27,7 +27,6 @@
 #include <qwebpage.h>
 #include <qnetworkrequest.h>
 #include <qdiriterator.h>
-#include <qwebkitversion.h>
 #include <qwebelement.h>
 #include <qwebframe.h>
 

@@ -20,14 +20,14 @@
 #ifndef QGraphicsWebView_h
 #define QGraphicsWebView_h
 
-#include "qwebkitglobal.h"
-#include "qwebpage.h"
+#include <QtWebKit/qwebkitglobal.h>
+#include <QtWebKitWidgets/qwebpage.h>
 #include <QtCore/qurl.h>
-#include <QtWidgets/qgraphicswidget.h>
 #include <QtGui/qevent.h>
 #include <QtGui/qicon.h>
 #include <QtGui/qpainter.h>
 #include <QtNetwork/qnetworkaccessmanager.h>
+#include <QtWidgets/qgraphicswidget.h>
 
 #if !defined(QT_NO_GRAPHICSVIEW)
 
@@ -152,9 +152,6 @@ protected:
 private:
     Q_PRIVATE_SLOT(d, void _q_doLoadFinished(bool success))
     Q_PRIVATE_SLOT(d, void _q_pageDestroyed())
-    // we don't want to change the moc based on USE() macro, so this function is here
-    // but will be empty if ACCLERATED_COMPOSITING is disabled
-    Q_PRIVATE_SLOT(d, void syncLayers())
     Q_PRIVATE_SLOT(d, void _q_contentsSizeChanged(const QSize&))
     Q_PRIVATE_SLOT(d, void _q_scaleChanged())
 

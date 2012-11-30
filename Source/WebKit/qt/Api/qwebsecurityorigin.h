@@ -59,7 +59,7 @@ public:
     QWebSecurityOrigin &operator=(const QWebSecurityOrigin& other);
 private:
     friend class QWebDatabase;
-    friend class QWebFrame;
+    friend class QWebFrameAdapter;
     friend class WebCore::ChromeClientQt;
     QWebSecurityOrigin(QWebSecurityOriginPrivate* priv);
 

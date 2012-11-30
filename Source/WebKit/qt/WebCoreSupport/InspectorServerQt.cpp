@@ -363,3 +363,5 @@ void InspectorServerRequestHandlerQt::webSocketReadyRead()
 }
 
 }
+
+#include "moc_InspectorServerQt.cpp"

@@ -1048,3 +1048,11 @@ void DumpRenderTreeSupportQt::getTrackedRepaintRects(QWebFrameAdapter* adapter, 
     for (size_t i = 0; i < rects.size(); ++i)
         result.append(rects[i]);
 }
+
+QString DumpRenderTreeSupportQt::frameRenderTreeDump(QWebFrameAdapter* adapter)
+{
+    if (adapter->frame->view() && adapter->frame->view()->layoutPending())
+        adapter->frame->view()->layout();
+
+    return externalRepresentation(adapter->frame);
+}

@@ -21,8 +21,8 @@
 #ifndef QWEBPAGE_H
 #define QWEBPAGE_H
 
-#include "qwebsettings.h"
-#include "qwebkitglobal.h"
+#include <QtWebKit/qwebkitglobal.h>
+#include <QtWebKit/qwebsettings.h>
 
 #include <QtCore/qobject.h>
 #include <QtCore/qurl.h>
@@ -59,10 +59,7 @@ namespace WebCore {
     class InspectorClientQt;
     class InspectorServerRequestHandlerQt;
     class InspectorFrontendClientQt;
-    class NotificationPresenterClientQt;
-    class GeolocationPermissionClientQt;
     class ResourceHandle;
-    class HitTestResult;
     class QNetworkReplyHandler;
 
     struct FrameLoadRequest;
@@ -441,8 +438,6 @@ private:
     friend class WebCore::InspectorClientQt;
     friend class WebCore::InspectorServerRequestHandlerQt;
     friend class WebCore::InspectorFrontendClientQt;
-    friend class WebCore::NotificationPresenterClientQt;
-    friend class WebCore::GeolocationPermissionClientQt;
     friend class WebCore::ResourceHandle;
     friend class WebCore::QNetworkReplyHandler;
     friend class DumpRenderTreeSupportQt;

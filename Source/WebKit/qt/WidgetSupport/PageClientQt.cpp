@@ -32,39 +32,6 @@
 #include <QGLWidget>
 #endif
 
-#if USE(3D_GRAPHICS)
-#include <QWindow>
-
-static void createPlatformGraphicsContext3DFromWidget(QWidget* widget, PlatformGraphicsContext3D* context, PlatformGraphicsSurface3D* surface, QObject** surfaceOwner)
-{
-#ifdef QT_OPENGL_LIB
-    *context = 0;
-    *surface = 0;
-    if (surfaceOwner)
-        *surfaceOwner = 0;
-    QAbstractScrollArea* scrollArea = qobject_cast<QAbstractScrollArea*>(widget);
-    if (!scrollArea)
-        return;
-
-    QGLWidget* glViewport = qobject_cast<QGLWidget*>(scrollArea->viewport());
-    if (!glViewport)
-        return;
-    QGLWidget* glWidget = new QGLWidget(0, glViewport);
-    if (glWidget->isValid()) {
-        // Geometry can be set to zero because m_glWidget is used only for its QGLContext.
-        glWidget->setGeometry(0, 0, 0, 0);
-        if (surfaceOwner)
-            *surfaceOwner = glWidget;
-        *surface = glWidget->windowHandle();
-        *context = glWidget->context()->contextHandle();
-    } else {
-        delete glWidget;
-        glWidget = 0;
-    }
-#endif
-}
-#endif
-
 #if USE(ACCELERATED_COMPOSITING)
 #include "TextureMapper.h"
 #include "texmap/TextureMapperLayer.h"
@@ -84,71 +51,6 @@ QWindow* QWebPageClient::ownerWindow() const
 
 namespace WebCore {
 
-#if USE(ACCELERATED_COMPOSITING)
-TextureMapperLayerClientQt::TextureMapperLayerClientQt(QWebFrame* frame, GraphicsLayer* layer)
-    : m_frame(frame)
-    , m_rootGraphicsLayer(GraphicsLayer::create(0))
-{
-    m_frame->d->rootTextureMapperLayer = rootLayer();
-    m_rootGraphicsLayer->addChild(layer);
-    m_rootGraphicsLayer->setDrawsContent(false);
-    m_rootGraphicsLayer->setMasksToBounds(false);
-    m_rootGraphicsLayer->setSize(IntSize(1, 1));
-}
-
-void TextureMapperLayerClientQt::setTextureMapper(const PassOwnPtr<TextureMapper>& textureMapper)
-{
-    m_frame->d->textureMapper = textureMapper;
-    m_frame->d->rootTextureMapperLayer->setTextureMapper(m_frame->d->textureMapper.get());
-    syncRootLayer();
-}
-
-TextureMapperLayerClientQt::~TextureMapperLayerClientQt()
-{
-    m_frame->d->rootTextureMapperLayer = 0;
-}
-
-void TextureMapperLayerClientQt::syncRootLayer()
-{
-    m_rootGraphicsLayer->flushCompositingStateForThisLayerOnly();
-}
-
-TextureMapperLayer* TextureMapperLayerClientQt::rootLayer()
-{
-    return toTextureMapperLayer(m_rootGraphicsLayer.get());
-}
-
-
-void PageClientQWidget::setRootGraphicsLayer(GraphicsLayer* layer)
-{
-    if (layer) {
-        TextureMapperLayerClient = adoptPtr(new TextureMapperLayerClientQt(page->mainFrame(), layer));
-        TextureMapperLayerClient->setTextureMapper(TextureMapper::create());
-        return;
-    }
-    TextureMapperLayerClient.clear();
-}
-
-void PageClientQWidget::markForSync(bool scheduleSync)
-{
-    if (syncTimer.isActive())
-        return;
-    syncTimer.startOneShot(0);
-}
-
-void PageClientQWidget::syncLayers(Timer<PageClientQWidget>*)
-{
-    if (TextureMapperLayerClient)
-        TextureMapperLayerClient->syncRootLayer();
-    QWebFramePrivate::core(page->mainFrame())->view()->flushCompositingStateIncludingSubframes();
-    if (!TextureMapperLayerClient)
-        return;
-    if (TextureMapperLayerClient->rootLayer()->descendantsOrSelfHaveRunningAnimations() && !syncTimer.isActive())
-        syncTimer.startOneShot(1.0 / 60.0);
-    update(view->rect());
-}
-#endif
-
 void PageClientQWidget::scroll(int dx, int dy, const QRect& rectToScroll)
 {
     view->scroll(qreal(dx), qreal(dy), rectToScroll);
@@ -157,6 +59,11 @@ void PageClientQWidget::scroll(int dx, int dy, const QRect& rectToScroll)
 void PageClientQWidget::update(const QRect & dirtyRect)
 {
     view->update(dirtyRect);
+}
+
+void PageClientQWidget::repaintViewport()
+{
+    update(view->rect());
 }
 
 void PageClientQWidget::setInputMethodEnabled(bool enable)
@@ -236,13 +143,6 @@ void PageClientQWidget::setWidgetVisible(Widget* widget, bool visible)
     qtWidget->setVisible(visible);
 }
 
-#if USE(3D_GRAPHICS)
-void PageClientQWidget::createPlatformGraphicsContext3D(PlatformGraphicsContext3D* context, PlatformGraphicsSurface3D* surface, QObject** surfaceOwner)
-{
-    createPlatformGraphicsContext3DFromWidget(view, context, surface, surfaceOwner);
-}
-#endif
-
 #if !defined(QT_NO_GRAPHICSVIEW)
 PageClientQGraphicsWidget::~PageClientQGraphicsWidget()
 {
@@ -262,62 +162,26 @@ void PageClientQGraphicsWidget::update(const QRect& dirtyRect)
         overlay->update(QRectF(dirtyRect));
 }
 
-#if USE(ACCELERATED_COMPOSITING)
-void PageClientQGraphicsWidget::syncLayers()
+void PageClientQGraphicsWidget::repaintViewport()
 {
-    if (TextureMapperLayerClient)
-        TextureMapperLayerClient->syncRootLayer();
-
-    QWebFramePrivate::core(page->mainFrame())->view()->flushCompositingStateIncludingSubframes();
-
-    if (!TextureMapperLayerClient)
-        return;
-
-    if (TextureMapperLayerClient->rootLayer()->descendantsOrSelfHaveRunningAnimations() && !syncTimer.isActive())
-        syncTimer.startOneShot(1.0 / 60.0);
     update(view->boundingRect().toAlignedRect());
 }
 
-void PageClientQGraphicsWidget::setRootGraphicsLayer(GraphicsLayer* layer)
+bool PageClientQGraphicsWidget::makeOpenGLContextCurrentIfAvailable()
 {
-    if (layer) {
-        TextureMapperLayerClient = adoptPtr(new TextureMapperLayerClientQt(page->mainFrame(), layer));
-#if USE(TEXTURE_MAPPER_GL) && defined(QT_OPENGL_LIB)
-        QGraphicsView* graphicsView = view->scene()->views()[0];
-        if (graphicsView && graphicsView->viewport()) {
-            QGLWidget* glWidget = qobject_cast<QGLWidget*>(graphicsView->viewport());
-            if (glWidget) {
-                // The GL context belonging to the QGLWidget viewport must be current when TextureMapper is being created.
-                glWidget->makeCurrent();
-                TextureMapperLayerClient->setTextureMapper(TextureMapper::create(TextureMapper::OpenGLMode));
-                return;
-            }
+#if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER_GL) && defined(QT_OPENGL_LIB)
+    QGraphicsView* graphicsView = view->scene()->views()[0];
+    if (graphicsView && graphicsView->viewport()) {
+        QGLWidget* glWidget = qobject_cast<QGLWidget*>(graphicsView->viewport());
+        if (glWidget) {
+            // The GL context belonging to the QGLWidget viewport must be current when TextureMapper is being created.
+            glWidget->makeCurrent();
+            return true;
         }
-#endif
-        TextureMapperLayerClient->setTextureMapper(TextureMapper::create());
-        return;
     }
-    TextureMapperLayerClient.clear();
-}
-
-void PageClientQGraphicsWidget::markForSync(bool scheduleSync)
-{
-    if (syncTimer.isActive())
-        return;
-    syncTimer.startOneShot(0);
-}
-
 #endif
-
-#if USE(TILED_BACKING_STORE)
-void PageClientQGraphicsWidget::updateTiledBackingStoreScale()
-{
-    WebCore::TiledBackingStore* backingStore = QWebFramePrivate::core(page->mainFrame())->tiledBackingStore();
-    if (!backingStore)
-        return;
-    backingStore->setContentsScale(view->scale());
+    return false;
 }
-#endif
 
 void PageClientQGraphicsWidget::setInputMethodEnabled(bool enable)
 {
@@ -429,11 +293,5 @@ QRectF PageClientQGraphicsWidget::windowRect() const
 }
 #endif // QT_NO_GRAPHICSVIEW
 
-#if USE(3D_GRAPHICS)
-void PageClientQGraphicsWidget::createPlatformGraphicsContext3D(PlatformGraphicsContext3D* context, PlatformGraphicsSurface3D* surface, QObject** surfaceOwner)
-{
-    createPlatformGraphicsContext3DFromWidget(qobject_cast<QWidget*>(ownerWidget()), context, surface, surfaceOwner);
-}
-#endif
-
 } // namespace WebCore
+

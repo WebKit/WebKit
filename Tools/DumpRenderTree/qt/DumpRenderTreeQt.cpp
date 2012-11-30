@@ -915,7 +915,7 @@ void DumpRenderTree::dump()
     if (m_controller->shouldDumpAsText())
         resultString = dumpFramesAsText(mainFrame);
     else {
-        resultString = mainFrame->renderTreeDump();
+        resultString = DumpRenderTreeSupportQt::frameRenderTreeDump(mainFrame->handle());
         resultString += dumpFrameScrollPosition(mainFrame);
     }
     if (!resultString.isEmpty()) {

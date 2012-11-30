@@ -227,7 +227,7 @@ class GlobalVariablesTest(unittest.TestCase):
                       "readability/naming")
 
         # Test if Qt exceptions are indeed working
-        assertCheck("Source/WebKit/qt/Api/qwebpage.cpp",
+        assertCheck("Source/WebKit/qt/WidgetApi/qwebpage.cpp",
                     "readability/braces")
         assertCheck("Source/WebKit/qt/tests/qwebelement/tst_qwebelement.cpp",
                     "readability/braces")
@@ -235,7 +235,7 @@ class GlobalVariablesTest(unittest.TestCase):
                     "readability/braces")
         assertCheck("Source/WebKit/qt/examples/platformplugin/WebPlugin.cpp",
                     "readability/braces")
-        assertNoCheck("Source/WebKit/qt/Api/qwebpage.cpp",
+        assertNoCheck("Source/WebKit/qt/WidgetApi/qwebpage.cpp",
                       "readability/naming")
         assertNoCheck("Source/WebKit/qt/tests/qwebelement/tst_qwebelement.cpp",
                       "readability/naming")

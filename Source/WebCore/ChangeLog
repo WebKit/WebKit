@@ -1,3 +1,25 @@
+2012-11-30  Simon Hausmann  <simon.hausmann@digia.com>, Pierre Rossi  <pierre.rossi@digia.com>
+
+        [Qt] Separate Qt WebKit into Qt WebKit and Qt WebKit Widgets
+        https://bugs.webkit.org/show_bug.cgi?id=99314
+
+        Reviewed by Tor Arne Vestbø.
+
+        This big change separates QtWebKit into QtWebKit and QtWebKitWidgets as
+        shared libraries.
+
+        It's a big refactoring that mostly involves moving WebCore dependent
+        code into QtWebKit and accessing it through exported QWebFrameAdapter
+        and QWebPageAdapter classes.
+
+        * Target.pri:
+        * platform/qt/QStyleFacade.h: Get rid of styleForPage function, not needed
+        anymore.
+        * platform/qt/QWebPageClient.h:
+        (QWebPageClient): Remove a whole lot of cruft in favour of a simple GL enabling
+        callback to select the GL texture mapper.
+        (QWebPageClient::makeOpenGLContextCurrentIfAvailable):
+
 2012-11-30  Simon Hausmann  <simon.hausmann@digia.com>
 
         Unreviewed, rolling out r136227.

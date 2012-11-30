@@ -18,7 +18,8 @@
 */
 
 #include "config.h"
-#include <qwebkitversion.h>
+#include "qwebkitglobal.h"
+
 #include <WebKitVersion.h>
 
 /*!

@@ -20,8 +20,6 @@
 #include "config.h"
 #include "qwebinspector.h"
 
-#include "Element.h"
-#include "InspectorController.h"
 #include "qwebelement.h"
 #include "qwebinspector_p.h"
 #include "qwebpage_p.h"
@@ -161,7 +159,7 @@ void QWebInspector::showEvent(QShowEvent* event)
 #if ENABLE(INSPECTOR)
     // Allows QWebInspector::show() to init the inspector.
     if (d->page)
-        d->page->d->inspectorController()->show();
+        d->page->d->didShowInspector();
 #endif
 }
 
@@ -170,7 +168,7 @@ void QWebInspector::hideEvent(QHideEvent* event)
 {
 #if ENABLE(INSPECTOR)
     if (d->page)
-        d->page->d->inspectorController()->close();
+        d->page->d->didCloseInspector();
 #endif
 }
 
@@ -179,7 +177,7 @@ void QWebInspector::closeEvent(QCloseEvent* event)
 {
 #if ENABLE(INSPECTOR)
     if (d->page)
-        d->page->d->inspectorController()->close();
+        d->page->d->didCloseInspector();
 #endif
 }
 

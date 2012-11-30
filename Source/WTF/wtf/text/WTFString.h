@@ -416,9 +416,9 @@ public:
 #endif
 
 #if PLATFORM(QT)
-    String(const QString&);
-    String(const QStringRef&);
-    operator QString() const;
+    WTF_EXPORT_STRING_API String(const QString&);
+    WTF_EXPORT_STRING_API String(const QStringRef&);
+    WTF_EXPORT_STRING_API operator QString() const;
 #endif
 
 #if PLATFORM(WX)

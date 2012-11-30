@@ -26,7 +26,7 @@
 #include <QtCore/qvariant.h>
 #include <QtGui/qicon.h>
 #include <QtNetwork/qnetworkaccessmanager.h>
-#include "qwebkitglobal.h"
+#include <QtWebKit/qwebkitglobal.h>
 
 QT_BEGIN_NAMESPACE
 class QRect;
@@ -138,7 +138,6 @@ public:
     void addToJavaScriptWindowObject(const QString &name, QObject *object, ValueOwnership ownership = QtOwnership);
     QString toHtml() const;
     QString toPlainText() const;
-    QString renderTreeDump() const;
 
     QString title() const;
     void setUrl(const QUrl &url);
@@ -175,10 +174,10 @@ public:
 
         AllLayers = 0xff
     };
+    Q_DECLARE_FLAGS(RenderLayers, RenderLayer)
 
-    void render(QPainter*);
-    void render(QPainter*, const QRegion& clip);
-    void render(QPainter*, RenderLayer layer, const QRegion& clip = QRegion());
+    void render(QPainter*, const QRegion& clip = QRegion());
+    void render(QPainter*, RenderLayers layer, const QRegion& clip = QRegion());
 
     void setTextSizeMultiplier(qreal factor);
     qreal textSizeMultiplier() const;
@@ -241,5 +240,7 @@ private:
     QWebFramePrivate *d;
     Q_PRIVATE_SLOT(d, void _q_orientationChanged())
 };
+
+Q_DECLARE_OPERATORS_FOR_FLAGS(QWebFrame::RenderLayers)
 
 #endif

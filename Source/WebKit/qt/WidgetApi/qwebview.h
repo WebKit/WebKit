@@ -21,13 +21,13 @@
 #ifndef QWEBVIEW_H
 #define QWEBVIEW_H
 
-#include "qwebkitglobal.h"
-#include "qwebpage.h"
-#include <QtWidgets/qwidget.h>
+#include <QtWebKit/qwebkitglobal.h>
+#include <QtWebKitWidgets/qwebpage.h>
+#include <QtCore/qurl.h>
 #include <QtGui/qicon.h>
 #include <QtGui/qpainter.h>
-#include <QtCore/qurl.h>
 #include <QtNetwork/qnetworkaccessmanager.h>
+#include <QtWidgets/qwidget.h>
 
 QT_BEGIN_NAMESPACE
 class QNetworkRequest;

@@ -58,17 +58,10 @@ public:
 
     virtual void scroll(int dx, int dy, const QRect&) = 0;
     virtual void update(const QRect&) = 0;
+    virtual void repaintViewport() = 0;
     virtual void setInputMethodEnabled(bool enable) = 0;
     virtual bool inputMethodEnabled() const = 0;
-#if USE(ACCELERATED_COMPOSITING)
-    virtual void setRootGraphicsLayer(WebCore::GraphicsLayer* layer) { }
-
-    // this gets called when the compositor wants us to sync the layers
-    // if scheduleSync is true, we schedule a sync ourselves. otherwise,
-    // we wait for the next update and sync the layers then.
-    virtual void markForSync(bool scheduleSync = false) {}
-    virtual bool allowsAcceleratedCompositing() const { return false; }
-#endif
+    virtual bool makeOpenGLContextCurrentIfAvailable() { return false; }
 
     virtual void setInputMethodHints(Qt::InputMethodHints hint) = 0;
 
@@ -106,11 +99,6 @@ public:
 
     virtual void setWidgetVisible(WebCore::Widget*, bool visible) = 0;
 
-#if USE(3D_GRAPHICS)
-    virtual void createPlatformGraphicsContext3D(PlatformGraphicsContext3D*,
-                                                 PlatformGraphicsSurface3D*,
-                                                 QObject** = 0) = 0;
-#endif
     virtual QWindow* ownerWindow() const;
 
 protected:

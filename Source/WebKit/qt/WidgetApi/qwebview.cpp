@@ -22,21 +22,19 @@
 #include "config.h"
 #include "qwebview.h"
 
-#include "Page.h"
 #include "QWebPageClient.h"
-#include "Settings.h"
 #include "qwebframe.h"
 #include "qwebpage_p.h"
-#include "qbitmap.h"
-#include "qevent.h"
-#include "qpainter.h"
-#if HAVE(QTPRINTSUPPORT)
-#include "qprinter.h"
-#endif
-#include "qdir.h"
-#include "qfile.h"
 #ifndef QT_NO_ACCESSIBILITY
 #include "qwebviewaccessible_p.h"
+#endif
+#include <qbitmap.h>
+#include <qdir.h>
+#include <qevent.h>
+#include <qfile.h>
+#include <qpainter.h>
+#if HAVE(QTPRINTSUPPORT)
+#include <qprinter.h>
 #endif
 
 class QWebViewPrivate {
@@ -265,29 +263,29 @@ void QWebView::setPage(QWebPage* page)
         // #### connect signals
         QWebFrame *mainFrame = d->page->mainFrame();
         connect(mainFrame, SIGNAL(titleChanged(QString)),
-                this, SIGNAL(titleChanged(QString)));
+            this, SIGNAL(titleChanged(QString)));
         connect(mainFrame, SIGNAL(iconChanged()),
-                this, SIGNAL(iconChanged()));
+            this, SIGNAL(iconChanged()));
         connect(mainFrame, SIGNAL(urlChanged(QUrl)),
-                this, SIGNAL(urlChanged(QUrl)));
+            this, SIGNAL(urlChanged(QUrl)));
 
         connect(d->page, SIGNAL(loadStarted()),
-                this, SIGNAL(loadStarted()));
+            this, SIGNAL(loadStarted()));
         connect(d->page, SIGNAL(loadProgress(int)),
-                this, SIGNAL(loadProgress(int)));
+            this, SIGNAL(loadProgress(int)));
         connect(d->page, SIGNAL(loadFinished(bool)),
-                this, SIGNAL(loadFinished(bool)));
+            this, SIGNAL(loadFinished(bool)));
         connect(d->page, SIGNAL(statusBarMessage(QString)),
-                this, SIGNAL(statusBarMessage(QString)));
+            this, SIGNAL(statusBarMessage(QString)));
         connect(d->page, SIGNAL(linkClicked(QUrl)),
-                this, SIGNAL(linkClicked(QUrl)));
+            this, SIGNAL(linkClicked(QUrl)));
         connect(d->page, SIGNAL(selectionChanged()),
-                this, SIGNAL(selectionChanged()));
+            this, SIGNAL(selectionChanged()));
 
         connect(d->page, SIGNAL(microFocusChanged()),
-                this, SLOT(updateMicroFocus()));
+            this, SLOT(updateMicroFocus()));
         connect(d->page, SIGNAL(destroyed()),
-                this, SLOT(_q_pageDestroyed()));
+            this, SLOT(_q_pageDestroyed()));
     }
     setAttribute(Qt::WA_OpaquePaintEvent, d->page);
     update();
@@ -317,9 +315,7 @@ void QWebView::load(const QUrl &url)
     \sa url(), urlChanged()
 */
 
-void QWebView::load(const QNetworkRequest &request,
-                    QNetworkAccessManager::Operation operation,
-                    const QByteArray &body)
+void QWebView::load(const QNetworkRequest &request, QNetworkAccessManager::Operation operation, const QByteArray &body)
 {
     page()->mainFrame()->load(request, operation, body);
 }
@@ -723,10 +719,9 @@ bool QWebView::event(QEvent *e)
                 d->page->d->client->resetCursor();
 #endif
         } else if (e->type() == QEvent::TouchBegin 
-                   || e->type() == QEvent::TouchEnd 
-                   || e->type() == QEvent::TouchUpdate
-                   || e->type() == QEvent::TouchCancel
-                  ) {
+            || e->type() == QEvent::TouchEnd
+            || e->type() == QEvent::TouchUpdate
+            || e->type() == QEvent::TouchCancel) {
             d->page->event(e);
 
             // Always return true so that we'll receive also TouchUpdate and TouchEnd events
@@ -1032,7 +1027,7 @@ QVariant QWebView::inputMethodQuery(Qt::InputMethodQuery property) const
 void QWebView::inputMethodEvent(QInputMethodEvent *e)
 {
     if (d->page)
-       d->page->event(e);
+        d->page->event(e);
 }
 
 /*!\reimp

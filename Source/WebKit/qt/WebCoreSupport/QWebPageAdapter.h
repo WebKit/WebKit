@@ -22,29 +22,39 @@
 
 #include "QWebPageClient.h"
 #include "ViewportArguments.h"
+#include "qwebhistory.h"
 
+#include <qbasictimer.h>
+#include <qevent.h>
 #include <qnetworkrequest.h>
 #include <qrect.h>
 #include <qscopedpointer.h>
 #include <qsharedpointer.h>
 #include <qstring.h>
 #include <qurl.h>
+#include <wtf/ExportMacros.h>
 
 QT_BEGIN_NAMESPACE
+class QBitArray;
 class QKeyEvent;
+class QMimeData;
+class QMouseEvent;
 class QNetworkAccessManager;
+class QWheelEvent;
+class QInputMethodEvent;
 QT_END_NAMESPACE
 
 namespace WebCore {
-class Page;
 class ChromeClientQt;
 class GeolocationClientQt;
+class Page;
 class UndoStep;
 }
 
 class QtPluginWidgetAdapter;
 class QWebFrameAdapter;
 class QWebHistoryItem;
+class QWebHitTestResultPrivate;
 class QWebPageClient;
 class QWebPluginFactory;
 class QWebSecurityOrigin;
@@ -53,13 +63,75 @@ class QWebSettings;
 class QWebFullScreenVideoHandler;
 class UndoStepQt;
 
-
-class QWebPageAdapter {
+class WEBKIT_EXPORTDATA QWebPageAdapter {
 public:
+
+#define FOR_EACH_MAPPED_MENU_ACTION(F, SEPARATOR) \
+    F(OpenLink, WebCore::ContextMenuItemTagOpenLink) SEPARATOR \
+    F(OpenLinkInNewWindow, WebCore::ContextMenuItemTagOpenLinkInNewWindow) SEPARATOR \
+    F(OpenLinkInThisWindow, WebCore::ContextMenuItemTagOpenLinkInThisWindow) SEPARATOR \
+    F(DownloadLinkToDisk, WebCore::ContextMenuItemTagDownloadLinkToDisk) SEPARATOR \
+    F(CopyLinkToClipboard, WebCore::ContextMenuItemTagCopyLinkToClipboard) SEPARATOR \
+    F(OpenImageInNewWindow, WebCore::ContextMenuItemTagOpenImageInNewWindow) SEPARATOR \
+    F(DownloadImageToDisk, WebCore::ContextMenuItemTagDownloadImageToDisk) SEPARATOR \
+    F(CopyImageToClipboard, WebCore::ContextMenuItemTagCopyImageToClipboard) SEPARATOR \
+    F(CopyImageUrlToClipboard, WebCore::ContextMenuItemTagCopyImageUrlToClipboard) SEPARATOR \
+    F(OpenFrameInNewWindow, WebCore::ContextMenuItemTagOpenFrameInNewWindow) SEPARATOR \
+    F(Copy, WebCore::ContextMenuItemTagCopy) SEPARATOR \
+    F(Back, WebCore::ContextMenuItemTagGoBack) SEPARATOR \
+    F(Forward, WebCore::ContextMenuItemTagGoForward) SEPARATOR \
+    F(Stop, WebCore::ContextMenuItemTagStop) SEPARATOR \
+    F(Reload, WebCore::ContextMenuItemTagReload) SEPARATOR \
+    F(Cut, WebCore::ContextMenuItemTagCut) SEPARATOR \
+    F(Paste, WebCore::ContextMenuItemTagPaste) SEPARATOR \
+    F(SetTextDirectionDefault, WebCore::ContextMenuItemTagDefaultDirection) SEPARATOR \
+    F(SetTextDirectionLeftToRight, WebCore::ContextMenuItemTagLeftToRight) SEPARATOR \
+    F(SetTextDirectionRightToLeft, WebCore::ContextMenuItemTagRightToLeft) SEPARATOR \
+    F(ToggleBold, WebCore::ContextMenuItemTagBold) SEPARATOR \
+    F(ToggleItalic, WebCore::ContextMenuItemTagItalic) SEPARATOR \
+    F(ToggleUnderline, WebCore::ContextMenuItemTagUnderline) SEPARATOR \
+    F(SelectAll, WebCore::ContextMenuItemTagSelectAll)
+#define COMMA_SEPARATOR ,
+#define SEMICOLON_SEPARATOR ;
+#define DEFINE_ACTION(Name, Value) \
+    Name
+
+    enum MenuAction {
+        NoAction = - 1,
+        FOR_EACH_MAPPED_MENU_ACTION(DEFINE_ACTION, COMMA_SEPARATOR)
+#if ENABLE(INSPECTOR)
+        , InspectElement
+#endif
+        , ActionCount
+    };
+
+    // Duplicated from qwebpage.h
+    enum FindFlag {
+        FindBackward = 1,
+        FindCaseSensitively = 2,
+        FindWrapsAroundDocument = 4,
+        HighlightAllOccurrences = 8
+    };
+
+    // valid values matching those from ScrollTypes.h
+    enum ScrollDirection {
+        InvalidScrollDirection = -1,
+        ScrollUp,
+        ScrollDown,
+        ScrollLeft,
+        ScrollRight
+    };
+    // same here
+    enum ScrollGranularity {
+        InvalidScrollGranularity = -1,
+        ScrollByLine,
+        ScrollByPage,
+        ScrollByDocument
+    };
+
     QWebPageAdapter();
     virtual ~QWebPageAdapter();
 
-    void init(WebCore::Page*);
     // Called manually from ~QWebPage destructor to ensure that
     // the QWebPageAdapter and the QWebPagePrivate are intact when
     // various destruction callbacks from WebCore::Page::~Page() hit us.
@@ -140,14 +212,134 @@ public:
     virtual bool errorPageExtension(ErrorPageOption*, ErrorPageReturn*) = 0;
     virtual QtPluginWidgetAdapter* createPlugin(const QString&, const QUrl&, const QStringList&, const QStringList&) = 0;
     virtual QtPluginWidgetAdapter* adapterForWidget(QObject*) const = 0;
-
+    virtual bool requestSoftwareInputPanel() const = 0;
+    struct MenuItemDescription {
+        MenuItemDescription()
+            : type(NoType)
+            , action(NoAction)
+            , traits(None)
+        { }
+        enum Type {
+            NoType,
+            Action,
+            Separator,
+            SubMenu
+        } type;
+        MenuAction action;
+        enum Trait {
+            None = 0,
+            Enabled = 1,
+            Checkable = 2,
+            Checked = 4
+        };
+        Q_DECLARE_FLAGS(Traits, Trait);
+        Traits traits;
+        QList<MenuItemDescription> subMenu;
+        QString subMenuTitle;
+    };
+    virtual void createAndSetCurrentContextMenu(const QList<MenuItemDescription>&, QBitArray*) = 0;
+    virtual bool handleScrollbarContextMenuEvent(QContextMenuEvent*, bool, ScrollDirection*, ScrollGranularity*) = 0;
 
     static QWebPageAdapter* kit(WebCore::Page*);
-    WebCore::ViewportArguments viewportArguments();
+    WebCore::ViewportArguments viewportArguments() const;
     void registerUndoStep(WTF::PassRefPtr<WebCore::UndoStep>);
 
     void setNetworkAccessManager(QNetworkAccessManager*);
     QNetworkAccessManager* networkAccessManager();
+
+    bool hasSelection() const;
+    QString selectedText() const;
+    QString selectedHtml() const;
+
+    bool isContentEditable() const;
+    void setContentEditable(bool);
+
+    bool findText(const QString& subString, FindFlag options);
+
+    class TouchAdjuster {
+    public:
+        TouchAdjuster(unsigned topPadding, unsigned rightPadding, unsigned bottomPadding, unsigned leftPadding);
+
+        WebCore::IntPoint findCandidatePointForTouch(const WebCore::IntPoint&, WebCore::Document*) const;
+
+    private:
+        unsigned m_topPadding;
+        unsigned m_rightPadding;
+        unsigned m_bottomPadding;
+        unsigned m_leftPadding;
+    };
+
+    void adjustPointForClicking(QMouseEvent*);
+
+    void mouseMoveEvent(QMouseEvent*);
+    void mousePressEvent(QMouseEvent*);
+    void mouseDoubleClickEvent(QMouseEvent*);
+    void mouseTripleClickEvent(QMouseEvent*);
+    void mouseReleaseEvent(QMouseEvent*);
+    void handleSoftwareInputPanel(Qt::MouseButton, const QPoint&);
+#ifndef QT_NO_WHEELEVENT
+    void wheelEvent(QWheelEvent*, int wheelScrollLines);
+#endif
+#ifndef QT_NO_DRAGANDDROP
+    Qt::DropAction dragEntered(const QMimeData*, const QPoint&, Qt::DropActions);
+    void dragLeaveEvent();
+    Qt::DropAction dragUpdated(const QMimeData*, const QPoint&, Qt::DropActions);
+    bool performDrag(const QMimeData*, const QPoint&, Qt::DropActions);
+#endif
+    void inputMethodEvent(QInputMethodEvent*);
+    QVariant inputMethodQuery(Qt::InputMethodQuery property) const;
+    void dynamicPropertyChangeEvent(QObject*, QDynamicPropertyChangeEvent*);
+    bool handleKeyEvent(QKeyEvent*);
+    bool handleScrolling(QKeyEvent*);
+    void focusInEvent(QFocusEvent*);
+    void focusOutEvent(QFocusEvent*);
+    bool handleShortcutOverrideEvent(QKeyEvent*);
+    // Returns whether the default action was cancelled in the JS event handler
+    bool touchEvent(QTouchEvent*);
+    bool swallowContextMenuEvent(QContextMenuEvent *, QWebFrameAdapter*);
+
+    QWebHitTestResultPrivate* updatePositionDependentMenuActions(const QPoint&, QBitArray*);
+    void updateActionInternal(MenuAction, const char* commandName, bool* enabled, bool* checked);
+    void triggerAction(MenuAction, QWebHitTestResultPrivate*, const char* commandName, bool endToEndReload);
+    QString contextMenuItemTagForAction(MenuAction, bool* checkable) const;
+
+    QStringList supportedContentTypes() const;
+#if ENABLE(GEOLOCATION)
+    void setGeolocationEnabledForFrame(QWebFrameAdapter*, bool);
+#endif
+#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
+    void allowNotificationsForFrame(QWebFrameAdapter*);
+    void addNotificationPresenterClient();
+#ifndef QT_NO_SYSTEMTRAYICON
+    bool hasSystemTrayIcon() const;
+    void setSystemTrayIcon(QObject*);
+#endif // QT_NO_SYSTEMTRAYICON
+#endif // ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
+
+    // Called from QWebPage as private slots.
+    void _q_cleanupLeakMessages();
+    void _q_onLoadProgressChanged(int);
+
+    bool supportsContentType(const QString& mimeType) const;
+
+    void didShowInspector();
+    void didCloseInspector();
+
+    static QString defaultUserAgentString();
+    static bool treatSchemeAsLocal(const QString&);
+
+    QObject* currentFrame() const;
+    bool hasFocusedNode() const;
+    struct ViewportAttributes {
+        qreal initialScaleFactor;
+        qreal minimumScaleFactor;
+        qreal maximumScaleFactor;
+        qreal devicePixelRatio;
+        bool isUserScalable;
+        QSizeF size;
+    };
+
+    ViewportAttributes viewportAttributesForSize(const QSize& availableSize, const QSize& deviceSize) const;
 
     QWebSettings *settings;
 
@@ -158,6 +350,13 @@ public:
 
     bool forwardUnsupportedContent;
     bool insideOpenCall;
+    QPoint tripleClick;
+    QBasicTimer tripleClickTimer;
+
+    bool clickCausedFocus;
+    quint64 m_totalBytes;
+    quint64 m_bytesReceived;
+    QWebHistory history;
 
 private:
     QNetworkAccessManager *networkManager;

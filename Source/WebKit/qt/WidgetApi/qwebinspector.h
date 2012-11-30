@@ -20,10 +20,10 @@
 #ifndef QWEBINSPECTOR_H
 #define QWEBINSPECTOR_H
 
-#include "qwebkitglobal.h"
-#include "qwebpage.h"
+#include <QtWebKit/qwebkitglobal.h>
+#include <QtWebKitWidgets/qwebpage.h>
 
-#include "qwebview.h"
+#include <QtWebKitWidgets/qwebview.h>
 
 class QWebInspectorPrivate;
 

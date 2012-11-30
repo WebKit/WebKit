@@ -25,6 +25,7 @@
 #include "GraphicsContext.h"
 #include "IntRect.h"
 #include "QWebPageClient.h"
+#include "TextureMapperLayerClientQt.h"
 #include "TiledBackingStore.h"
 #include "qgraphicswebview.h"
 #include "qwebframe.h"
@@ -38,33 +39,16 @@
 #include <qmetaobject.h>
 #include <qscrollbar.h>
 #include <qstyleoption.h>
+#include <qtimer.h>
 #include <qwidget.h>
 
 namespace WebCore {
-
-#if USE(ACCELERATED_COMPOSITING)
-class TextureMapperLayerClientQt {
-public:
-    TextureMapperLayerClientQt(QWebFrame*, GraphicsLayer*);
-    virtual ~TextureMapperLayerClientQt();
-    void setTextureMapper(const PassOwnPtr<TextureMapper>&);
-    void syncRootLayer();
-    TextureMapperLayer* rootLayer();
-
-private:
-    QWebFrame* m_frame;
-    OwnPtr<GraphicsLayer> m_rootGraphicsLayer;
-};
-#endif
 
 class PageClientQWidget : public QWebPageClient {
 public:
     PageClientQWidget(QWidget* newView, QWebPage* newPage)
         : view(newView)
         , page(newPage)
-#if USE(ACCELERATED_COMPOSITING)
-        , syncTimer(this, &PageClientQWidget::syncLayers)
-#endif
     {
         Q_ASSERT(view);
     }
@@ -74,6 +58,7 @@ public:
 
     virtual void scroll(int dx, int dy, const QRect&);
     virtual void update(const QRect& dirtyRect);
+    virtual void repaintViewport();
     virtual void setInputMethodEnabled(bool);
     virtual bool inputMethodEnabled() const;
     virtual void setInputMethodHints(Qt::InputMethodHints);
@@ -98,29 +83,8 @@ public:
 
     virtual void setWidgetVisible(Widget*, bool visible);
 
-#if USE(3D_GRAPHICS)
-    virtual void createPlatformGraphicsContext3D(PlatformGraphicsContext3D*, PlatformGraphicsSurface3D*, QObject**);
-#endif
-
     QWidget* view;
     QWebPage* page;
-
-#if USE(ACCELERATED_COMPOSITING)
-    virtual void setRootGraphicsLayer(GraphicsLayer*);
-    virtual void markForSync(bool scheduleSync);
-    void syncLayers(Timer<PageClientQWidget>*);
-#endif
-
-#if USE(ACCELERATED_COMPOSITING)
-    virtual bool allowsAcceleratedCompositing() const { return true; }
-#else
-    virtual bool allowsAcceleratedCompositing() const { return false; }
-#endif
-
-#if USE(ACCELERATED_COMPOSITING)
-    Timer<PageClientQWidget> syncTimer;
-    OwnPtr<TextureMapperLayerClientQt> TextureMapperLayerClient;
-#endif
 };
 
 #if !defined(QT_NO_GRAPHICSVIEW)
@@ -164,9 +128,6 @@ public:
         : view(newView)
         , page(newPage)
         , viewResizesToContents(false)
-#if USE(ACCELERATED_COMPOSITING)
-        , syncTimer(this, &PageClientQGraphicsWidget::syncLayersTimeout)
-#endif
         , overlay(0)
     {
         Q_ASSERT(view);
@@ -183,6 +144,7 @@ public:
 
     virtual void scroll(int dx, int dy, const QRect&);
     virtual void update(const QRect& dirtyRect);
+    virtual void repaintViewport();
     virtual void setInputMethodEnabled(bool);
     virtual bool inputMethodEnabled() const;
     virtual void setInputMethodHints(Qt::InputMethodHints);
@@ -205,24 +167,11 @@ public:
 
     virtual void setWidgetVisible(Widget*, bool);
 
-#if USE(3D_GRAPHICS)
-    virtual void createPlatformGraphicsContext3D(PlatformGraphicsContext3D*, PlatformGraphicsSurface3D*, QObject**);
-#endif
-
 #if USE(TILED_BACKING_STORE)
-    void updateTiledBackingStoreScale();
     virtual QRectF graphicsItemVisibleRect() const;
 #endif
 
-#if USE(ACCELERATED_COMPOSITING)
-    virtual void setRootGraphicsLayer(GraphicsLayer*);
-    virtual void markForSync(bool scheduleSync);
-    void syncLayers();
-    void syncLayersTimeout(Timer<PageClientQGraphicsWidget>*) { syncLayers(); }
-
-    // QGraphicsWebView can render composited layers
-    virtual bool allowsAcceleratedCompositing() const { return true; }
-#endif
+    virtual bool makeOpenGLContextCurrentIfAvailable();
 
     virtual QRectF windowRect() const;
 
@@ -230,11 +179,6 @@ public:
     QWebPage* page;
     bool viewResizesToContents;
 
-#if USE(ACCELERATED_COMPOSITING)
-    OwnPtr<TextureMapperLayerClientQt> TextureMapperLayerClient;
-    // we have to flush quite often, so we use a meta-method instead of QTimer::singleShot for putting the event in the queue
-    Timer<PageClientQGraphicsWidget> syncTimer;
-#endif
     // the overlay gets instantiated when the root layer is attached, and get deleted when it's detached
     QGraphicsItemOverlay* overlay;
 

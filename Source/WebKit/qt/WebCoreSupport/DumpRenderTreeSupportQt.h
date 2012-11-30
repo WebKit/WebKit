@@ -213,6 +213,8 @@ public:
     static void setTrackRepaintRects(QWebFrameAdapter*, bool enable);
     static bool trackRepaintRects(QWebFrameAdapter*);
     static void getTrackedRepaintRects(QWebFrameAdapter*, QVector<QRect>& result);
+
+    static QString frameRenderTreeDump(QWebFrameAdapter*);
 };
 
 #endif

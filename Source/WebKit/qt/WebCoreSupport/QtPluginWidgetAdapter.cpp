@@ -17,25 +17,10 @@
  * Boston, MA 02110-1301, USA.
  *
  */
-#ifndef QtPluginWidgetAdapter_h
-#define QtPluginWidgetAdapter_h
 
-#include <PlatformExportMacros.h>
-#include <QObject>
-#include <QRect>
-#include <QString>
-#include <qwebkitglobal.h>
+#include "config.h"
+#include "QtPluginWidgetAdapter.h"
 
-class WEBKIT_EXPORTDATA QtPluginWidgetAdapter : public QObject {
-    Q_OBJECT
-public:
-    QtPluginWidgetAdapter();
-    virtual void update(const QRect&) = 0;
-    virtual void setGeometryAndClip(const QRect&, const QRect&, bool isVisible = false) = 0;
-    virtual void setVisible(bool) = 0;
-    virtual void setStyleSheet(const QString&) = 0;
-    virtual void setWidgetParent(QObject*) = 0;
-    virtual QObject* handle() const = 0;
-};
-
-#endif // QtPluginWidgetAdapter_h
+QtPluginWidgetAdapter::QtPluginWidgetAdapter()
+{
+}

@@ -149,7 +149,8 @@ _PATH_RULES_SPECIFIER = [
 
     ([# The Qt APIs use Qt declaration style, it puts the * to
       # the variable name, not to the class.
-      "Source/WebKit/qt/Api/"],
+      "Source/WebKit/qt/Api/",
+      "Source/WebKit/qt/WidgetApi/"],
      ["-readability/naming",
       "-whitespace/declaration"]),
 

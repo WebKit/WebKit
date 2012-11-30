@@ -32,10 +32,6 @@ build?(webkit1) {
     webkit1.file = Source/WebKit/WebKit1.pro
     webkit1.makefile = Makefile.WebKit1
     SUBDIRS += webkit1
-
-    webkitwidgets.file = Source/WebKit/WebKitWidgets.pro
-    webkitwidgets.makefile = Makefile.WebKitWidgets
-    SUBDIRS += webkitwidgets
 }
 
 build?(webkit2) {

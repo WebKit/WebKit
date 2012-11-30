@@ -35,18 +35,16 @@ class QPainter;
 class QObject;
 QT_END_NAMESPACE
 
-namespace WebCore {
-class Page;
-}
+class QWebPageAdapter;
 
 namespace WebKit {
 
 class QStyleFacadeImp : public WebCore::QStyleFacade {
 public:
-    QStyleFacadeImp(WebCore::Page* = 0);
+    QStyleFacadeImp(QWebPageAdapter* = 0);
     virtual ~QStyleFacadeImp();
 
-    static WebCore::QStyleFacade* create(WebCore::Page* page)
+    static WebCore::QStyleFacade* create(QWebPageAdapter* page)
     { return new QStyleFacadeImp(page); }
 
     virtual QRect buttonSubElementRect(ButtonSubElement, State, const QRect& originalRect) const;
@@ -87,7 +85,7 @@ public:
 private:
     QStyle* style() const;
 
-    WebCore::Page* m_page;
+    QWebPageAdapter* m_page;
     mutable QPointer<QStyle> m_style;
     QStyle* m_fallbackStyle;
     bool m_ownFallbackStyle;

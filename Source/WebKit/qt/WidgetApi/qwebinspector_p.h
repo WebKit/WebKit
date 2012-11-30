@@ -17,8 +17,8 @@
     Boston, MA 02110-1301, USA.
 */
 
-#ifndef QWEBINSPECTOR_P_H
-#define QWEBINSPECTOR_P_H
+#ifndef qwebinspector_p_h
+#define qwebinspector_p_h
 
 QT_BEGIN_NAMESPACE
 class QSize;
@@ -33,10 +33,10 @@ public:
     : q(qq)
     , page(0)
     , frontend(0)
-    {}
+    { }
 
     void setFrontend(QObject* newFrontend);
-    void adjustFrontendSize(const QSize& size);
+    void adjustFrontendSize(const QSize&);
 
     QWebInspector* q;
     QWebPage* page;

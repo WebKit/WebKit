@@ -30,7 +30,7 @@ DESTDIR = $${ROOT_BUILD_DIR}/bin
 
 have?(FONTCONFIG): PKGCONFIG += fontconfig
 
-QT += network gui-private quick quick-private webkitwidgets webkitwidgets-private
+QT += network gui-private quick quick-private webkit webkit-private
 macx: QT += xml
 
 RESOURCES += MiniBrowser.qrc

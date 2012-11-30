@@ -1,8 +1,5 @@
 /*
- * This file is part of the theme implementation for form controls in WebCore.
- *
  * Copyright (C) 2012 Digia Plc and/or its subsidiary(-ies).
- * Copyright (C) 2011-2012 Nokia Corporation and/or its subsidiary(-ies).
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -20,27 +17,32 @@
  * Boston, MA 02110-1301, USA.
  *
  */
+#ifndef QtPrintContext_h
+#define QtPrintContext_h
 
-#include "config.h"
-#include "QStyleFacade.h"
-
-#include "QWebPageClient.h"
-#include <Chrome.h>
-#include <ChromeClient.h>
-#include <Page.h>
+#include <QPainter>
+#include <QRect>
+#include <qwebkitglobal.h>
+#include <wtf/ExportMacros.h>
 
 namespace WebCore {
-
-QStyle* QStyleFacade::styleForPage(Page* page)
-{
-    if (!page)
-        return 0;
-    QWebPageClient* pageClient = page->chrome()->client()->platformPageClient();
-
-    if (!pageClient)
-        return 0;
-
-    return pageClient->style();
+class PrintContext;
+class GraphicsContext;
 }
 
-}
+class QWebFrameAdapter;
+
+class WEBKIT_EXPORTDATA QtPrintContext {
+public:
+    QtPrintContext(QPainter*, const QRect& pageRect, QWebFrameAdapter*);
+    ~QtPrintContext();
+
+    int pageCount() const;
+    void spoolPage(int pageNumber, float width);
+
+private:
+    WebCore::GraphicsContext* m_graphicsContext;
+    WebCore::PrintContext* m_printContext;
+};
+
+#endif

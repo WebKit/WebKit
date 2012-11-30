@@ -155,8 +155,6 @@ public:
     virtual QObject* widgetForPainter(QPainter*) = 0;
 
     virtual bool isValid() const = 0;
-
-    static QStyle* styleForPage(Page*);
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(QStyleFacade::State)

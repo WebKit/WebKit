@@ -7,7 +7,7 @@
 
 # Reorder libraries so that the link and include order is correct,
 # and make sure the case matches the original case.
-libraries = WebKitWidgets WebKit1 WebKit2 WebCore ANGLE JavaScriptCore WTF
+libraries = WebKit1 WebKit2 WebCore ANGLE JavaScriptCore WTF
 for(library, libraries) {
     contains(WEBKIT, $$lower($$library)) {
         WEBKIT -= $$lower($$library)
@@ -34,10 +34,8 @@ for(library, WEBKIT) {
 
     # Anything not linking dynamically to QtWebKit should make sure to have its export
     # macros synchronized with the code that it will be linked with statically.
-    !contains(QT, webkitwidgets): DEFINES += STATICALLY_LINKED_WITH_$$library
+    !contains(QT, webkit): DEFINES += STATICALLY_LINKED_WITH_$$library
 }
-
-!isEmpty(MODULE): CONFIG += creating_module
 
 creating_module {
     # Sanitize PKGCONFIG as we don't want any of these libraries

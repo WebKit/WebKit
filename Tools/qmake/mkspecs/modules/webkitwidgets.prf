@@ -1,9 +1,0 @@
-# -------------------------------------------------------------------
-# Module file for WebKitWidget, used by targets that depend on WebKitWidget
-#
-# See 'Tools/qmake/README' for an overview of the build system
-# -------------------------------------------------------------------
-
-WEBKIT.webkitwidgets.root_source_dir = $${ROOT_WEBKIT_DIR}/Source/WebKit
-
-include($${WEBKIT.webkitwidgets.root_source_dir}/WebKitWidgets.pri)
