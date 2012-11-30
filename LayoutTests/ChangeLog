@@ -1,3 +1,12 @@
+2012-11-30  Nandor Huszka  <hnandor@inf.u-szeged.hu>
+
+        [Qt] Unreviewed gardening.
+
+        Add expected results for a new test.
+
+        * platform/qt/fast/ruby/position-after-expected.png: Added.
+        * platform/qt/fast/ruby/position-after-expected.txt: Added.
+
 2012-11-30  Kent Tamura  <tkent@chromium.org>
 
         [Chromium] Layout Test fast/forms/*-multiple-fields/*-multiple-fields-preserve-value-after-history-back.html is failing
