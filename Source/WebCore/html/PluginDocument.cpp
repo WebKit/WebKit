@@ -133,8 +133,6 @@ void PluginDocumentParser::appendBytes(DocumentWriter*, const char*, size_t)
             frame->loader()->activeDocumentLoader()->mainResourceLoader()->setShouldBufferData(DoNotBufferData);
         }
     }
-
-    finish();
 }
 
 PluginDocument::PluginDocument(Frame* frame, const KURL& url)

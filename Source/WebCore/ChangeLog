@@ -1,3 +1,24 @@
+2012-11-30  Tim Horton  <timothy_horton@apple.com>
+
+        PluginDocument fires didFinishDocumentLoadForFrame upon receiving initial bytes instead of when load completes
+        https://bugs.webkit.org/show_bug.cgi?id=103702
+        <rdar://problem/12762534>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Remove the call to finish() from PluginDocumentParser::appendBytes().
+
+        This was introduced in http://trac.webkit.org/changeset/14838, when finish() wouldn't get
+        called for PluginDocuments any other way. In the time since, DocumentWriter::end() was made
+        to call finish() anyway, at the correct time (the call from appendBytes makes a PluginDocument
+        appear to be finished loading after the first bytes are received).
+
+        No new tests, because there doesn't seem to be any state in a PluginDocument that can be accessed
+        from JavaScript to determine whether or not it has finished loading.
+
+        * html/PluginDocument.cpp:
+        (WebCore::PluginDocumentParser::appendBytes):
+
 2012-11-29  Ilya Tikhonovsky  <loislo@chromium.org>
 
         RenderBlock minor clean-up: replace raw pointers with OwnPtrs.
