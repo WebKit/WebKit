@@ -1,5 +1,19 @@
 2012-11-30  Pierre Rossi  <pierre.rossi@gmail.com>
 
+        [Qt] Introduce setTextSizeMultiplier in the page adapter as well.
+
+        Rubber-stamped by Simon Hausmann.
+
+        As it turns out it the bots didn't like the previous attempt.
+
+        * WebCoreSupport/QWebFrameAdapter.cpp:
+        (QWebFrameAdapter::setTextSizeMultiplier):
+        * WebCoreSupport/QWebFrameAdapter.h:
+        * WidgetApi/qwebframe.cpp:
+        (QWebFrame::setTextSizeMultiplier):
+
+2012-11-30  Pierre Rossi  <pierre.rossi@gmail.com>
+
         [Qt] Unreviewed build fix.
 
         In the same vein as r136245. Include PlatformExportMacros proper.

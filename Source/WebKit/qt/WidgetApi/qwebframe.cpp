@@ -29,7 +29,6 @@
 #include "qwebscriptworld.h"
 #include "qwebscriptworld_p.h"
 #include "qwebsecurityorigin.h"
-#include "qwebsettings.h"
 #include <QMultiMap>
 #include <qdebug.h>
 #include <qevent.h>
@@ -672,8 +671,7 @@ void QWebFrame::render(QPainter* painter, const QRegion& clip)
 */
 void QWebFrame::setTextSizeMultiplier(qreal factor)
 {
-    page()->settings()->setAttribute(QWebSettings::ZoomTextOnly, true);
-    d->setZoomFactor(factor);
+    d->setTextSizeMultiplier(factor);
 }
 
 /*!

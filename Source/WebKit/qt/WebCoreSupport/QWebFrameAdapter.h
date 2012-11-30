@@ -205,6 +205,7 @@ public:
     QSize contentsSize() const;
 
     void setZoomFactor(qreal);
+    void setTextSizeMultiplier(qreal);
     qreal zoomFactor() const;
 
     void updateBackgroundRecursively(const QColor&);
