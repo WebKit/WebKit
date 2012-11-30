@@ -521,11 +521,6 @@ bool WebPluginContainerImpl::isRectTopmost(const WebRect& rect)
     return (nodes.first().get() == m_element);
 }
 
-void WebPluginContainerImpl::setIsAcceptingTouchEvents(bool acceptingTouchEvents)
-{
-    requestTouchEventType(acceptingTouchEvents ? TouchEventRequestTypeRaw : TouchEventRequestTypeNone);
-}
-
 void WebPluginContainerImpl::requestTouchEventType(TouchEventRequestType requestType)
 {
     if (m_touchEventRequestType == requestType)
