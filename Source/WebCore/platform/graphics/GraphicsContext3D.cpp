@@ -168,30 +168,57 @@ GC3Denum GraphicsContext3D::computeImageSizeInBytes(GC3Denum format, GC3Denum ty
     return GraphicsContext3D::NO_ERROR;
 }
 
-bool GraphicsContext3D::extractImageData(Image* image,
-                                         GC3Denum format,
-                                         GC3Denum type,
-                                         bool flipY,
-                                         bool premultiplyAlpha,
-                                         bool ignoreGammaAndColorProfile,
-                                         Vector<uint8_t>& data)
+GraphicsContext3D::ImageExtractor::ImageExtractor(Image* image, bool premultiplyAlpha, bool ignoreGammaAndColorProfile)
 {
-    if (!image)
+    m_image = image;
+    m_extractSucceeded = extractImage(premultiplyAlpha, ignoreGammaAndColorProfile);
+}
+
+bool GraphicsContext3D::packImageData(
+    Image* image,
+    const void* pixels,
+    GC3Denum format,
+    GC3Denum type,
+    bool flipY,
+    AlphaOp alphaOp,
+    SourceDataFormat sourceFormat, 
+    unsigned width,
+    unsigned height,
+    unsigned sourceUnpackAlignment,
+    Vector<uint8_t>& data)
+{
+    if (!pixels)
         return false;
-    if (!getImageData(image, format, type, premultiplyAlpha, ignoreGammaAndColorProfile, data))
+
+    unsigned packedSize;
+    // Output data is tightly packed (alignment == 1).
+    if (computeImageSizeInBytes(format, type, width, height, 1, &packedSize, 0) != GraphicsContext3D::NO_ERROR)
+        return false;
+    data.resize(packedSize);
+
+    if (!packPixels(reinterpret_cast<const uint8_t*>(pixels),
+        sourceFormat,
+        width,
+        height,
+        sourceUnpackAlignment,
+        format,
+        type,
+        alphaOp,
+        data.data()))
         return false;
     if (flipY) {
-        unsigned int componentsPerPixel, bytesPerComponent;
+        unsigned componentsPerPixel, bytesPerComponent;
         if (!computeFormatAndTypeParameters(format, type,
-                                            &componentsPerPixel,
-                                            &bytesPerComponent))
+            &componentsPerPixel,
+            &bytesPerComponent))
             return false;
         // The image data is tightly packed, and we upload it as such.
-        unsigned int unpackAlignment = 1;
-        flipVertically(data.data(), image->width(), image->height(),
-                       componentsPerPixel * bytesPerComponent,
-                       unpackAlignment);
+        unsigned unpackAlignment = 1;
+        flipVertically(data.data(), width, height,
+            componentsPerPixel * bytesPerComponent,
+            unpackAlignment);
     }
+
     if (ImageObserver *observer = image->imageObserver())
         observer->didDraw(image);
     return true;

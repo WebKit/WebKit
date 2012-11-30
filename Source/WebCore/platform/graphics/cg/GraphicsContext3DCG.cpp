@@ -89,41 +89,38 @@ static GraphicsContext3D::SourceDataFormat getSourceDataFormat(unsigned int comp
     return formatTable[formatBase][(is16BitFormat ? 2 : 0) + (bigEndian ? 1 : 0)];
 }
 
-bool GraphicsContext3D::getImageData(Image* image,
-                                     GC3Denum format,
-                                     GC3Denum type,
-                                     bool premultiplyAlpha,
-                                     bool ignoreGammaAndColorProfile,
-                                     Vector<uint8_t>& outputVector)
+GraphicsContext3D::ImageExtractor::~ImageExtractor()
 {
-    if (!image)
+}
+
+bool GraphicsContext3D::ImageExtractor::extractImage(bool premultiplyAlpha, bool ignoreGammaAndColorProfile)
+{
+    if (!m_image)
         return false;
-    CGImageRef cgImage;
-    RetainPtr<CGImageRef> decodedImage;
-    bool hasAlpha = image->isBitmapImage() ? image->currentFrameHasAlpha() : true;
-    if ((ignoreGammaAndColorProfile || (hasAlpha && !premultiplyAlpha)) && image->data()) {
+    bool hasAlpha = m_image->isBitmapImage() ? m_image->currentFrameHasAlpha() : true;
+    if ((ignoreGammaAndColorProfile || (hasAlpha && !premultiplyAlpha)) && m_image->data()) {
         ImageSource decoder(ImageSource::AlphaNotPremultiplied,
                             ignoreGammaAndColorProfile ? ImageSource::GammaAndColorProfileIgnored : ImageSource::GammaAndColorProfileApplied);
-        decoder.setData(image->data(), true);
+        decoder.setData(m_image->data(), true);
         if (!decoder.frameCount())
             return false;
-        decodedImage.adoptCF(decoder.createFrameAtIndex(0));
-        cgImage = decodedImage.get();
+        m_decodedImage.adoptCF(decoder.createFrameAtIndex(0));
+        m_cgImage = m_decodedImage.get();
     } else
-        cgImage = image->nativeImageForCurrentFrame();
-    if (!cgImage)
+        m_cgImage = m_image->nativeImageForCurrentFrame();
+    if (!m_cgImage)
         return false;
 
-    size_t width = CGImageGetWidth(cgImage);
-    size_t height = CGImageGetHeight(cgImage);
-    if (!width || !height)
+    m_imageWidth = CGImageGetWidth(m_cgImage);
+    m_imageHeight = CGImageGetHeight(m_cgImage);
+    if (!m_imageWidth || !m_imageHeight)
         return false;
 
     // See whether the image is using an indexed color space, and if
     // so, re-render it into an RGB color space. The image re-packing
     // code requires color data, not color table indices, for the
     // image data.
-    CGColorSpaceRef colorSpace = CGImageGetColorSpace(cgImage);
+    CGColorSpaceRef colorSpace = CGImageGetColorSpace(m_cgImage);
     CGColorSpaceModel model = CGColorSpaceGetModel(colorSpace);
     if (model == kCGColorSpaceModelIndexed) {
         RetainPtr<CGContextRef> bitmapContext;
@@ -131,7 +128,7 @@ bool GraphicsContext3D::getImageData(Image* image,
         // the color table, which would allow us to avoid premultiplying the
         // alpha channel. Creation of a bitmap context with an alpha channel
         // doesn't seem to work unless it's premultiplied.
-        bitmapContext.adoptCF(CGBitmapContextCreate(0, width, height, 8, width * 4,
+        bitmapContext.adoptCF(CGBitmapContextCreate(0, m_imageWidth, m_imageHeight, 8, m_imageWidth * 4,
                                                     deviceRGBColorSpaceRef(),
                                                     kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Host));
         if (!bitmapContext)
@@ -139,22 +136,22 @@ bool GraphicsContext3D::getImageData(Image* image,
 
         CGContextSetBlendMode(bitmapContext.get(), kCGBlendModeCopy);
         CGContextSetInterpolationQuality(bitmapContext.get(), kCGInterpolationNone);
-        CGContextDrawImage(bitmapContext.get(), CGRectMake(0, 0, width, height), cgImage);
+        CGContextDrawImage(bitmapContext.get(), CGRectMake(0, 0, m_imageWidth, m_imageHeight), m_cgImage);
 
         // Now discard the original CG image and replace it with a copy from the bitmap context.
-        decodedImage.adoptCF(CGBitmapContextCreateImage(bitmapContext.get()));
-        cgImage = decodedImage.get();
+        m_decodedImage.adoptCF(CGBitmapContextCreateImage(bitmapContext.get()));
+        m_cgImage = m_decodedImage.get();
     }
 
-    size_t bitsPerComponent = CGImageGetBitsPerComponent(cgImage);
-    size_t bitsPerPixel = CGImageGetBitsPerPixel(cgImage);
+    size_t bitsPerComponent = CGImageGetBitsPerComponent(m_cgImage);
+    size_t bitsPerPixel = CGImageGetBitsPerPixel(m_cgImage);
     if (bitsPerComponent != 8 && bitsPerComponent != 16)
         return false;
     if (bitsPerPixel % bitsPerComponent)
         return false;
     size_t componentsPerPixel = bitsPerPixel / bitsPerComponent;
 
-    CGBitmapInfo bitInfo = CGImageGetBitmapInfo(cgImage);
+    CGBitmapInfo bitInfo = CGImageGetBitmapInfo(m_cgImage);
     bool bigEndianSource = false;
     // These could technically be combined into one large switch
     // statement, but we prefer not to so that we fail fast if we
@@ -194,18 +191,18 @@ bool GraphicsContext3D::getImageData(Image* image,
         }
     }
 
-    AlphaOp neededAlphaOp = AlphaDoNothing;
+    m_alphaOp = AlphaDoNothing;
     AlphaFormat alphaFormat = AlphaFormatNone;
-    switch (CGImageGetAlphaInfo(cgImage)) {
+    switch (CGImageGetAlphaInfo(m_cgImage)) {
     case kCGImageAlphaPremultipliedFirst:
         if (!premultiplyAlpha)
-            neededAlphaOp = AlphaDoUnmultiply;
+            m_alphaOp = AlphaDoUnmultiply;
         alphaFormat = AlphaFormatFirst;
         break;
     case kCGImageAlphaFirst:
         // This path is only accessible for MacOS earlier than 10.6.4.
         if (premultiplyAlpha)
-            neededAlphaOp = AlphaDoPremultiply;
+            m_alphaOp = AlphaDoPremultiply;
         alphaFormat = AlphaFormatFirst;
         break;
     case kCGImageAlphaNoneSkipFirst:
@@ -214,12 +211,12 @@ bool GraphicsContext3D::getImageData(Image* image,
         break;
     case kCGImageAlphaPremultipliedLast:
         if (!premultiplyAlpha)
-            neededAlphaOp = AlphaDoUnmultiply;
+            m_alphaOp = AlphaDoUnmultiply;
         alphaFormat = AlphaFormatLast;
         break;
     case kCGImageAlphaLast:
         if (premultiplyAlpha)
-            neededAlphaOp = AlphaDoPremultiply;
+            m_alphaOp = AlphaDoPremultiply;
         alphaFormat = AlphaFormatLast;
         break;
     case kCGImageAlphaNoneSkipLast:
@@ -231,33 +228,29 @@ bool GraphicsContext3D::getImageData(Image* image,
     default:
         return false;
     }
-    SourceDataFormat srcDataFormat = getSourceDataFormat(componentsPerPixel, alphaFormat, bitsPerComponent == 16, bigEndianSource);
-    if (srcDataFormat == SourceFormatNumFormats)
+
+    m_imageSourceFormat = getSourceDataFormat(componentsPerPixel, alphaFormat, bitsPerComponent == 16, bigEndianSource);
+    if (m_imageSourceFormat == SourceFormatNumFormats)
         return false;
 
-    RetainPtr<CFDataRef> pixelData;
-    pixelData.adoptCF(CGDataProviderCopyData(CGImageGetDataProvider(cgImage)));
-    if (!pixelData)
+    m_pixelData.adoptCF(CGDataProviderCopyData(CGImageGetDataProvider(m_cgImage)));
+    if (!m_pixelData)
         return false;
-    const UInt8* rgba = CFDataGetBytePtr(pixelData.get());
 
-    unsigned int packedSize;
-    // Output data is tightly packed (alignment == 1).
-    if (computeImageSizeInBytes(format, type, width, height, 1, &packedSize, 0) != GraphicsContext3D::NO_ERROR)
-        return false;
-    outputVector.resize(packedSize);
+    m_imagePixelData = reinterpret_cast<const void*>(CFDataGetBytePtr(m_pixelData.get()));
 
     unsigned int srcUnpackAlignment = 0;
-    size_t bytesPerRow = CGImageGetBytesPerRow(cgImage);
-    unsigned int padding = bytesPerRow - bitsPerPixel / 8 * width;
+    size_t bytesPerRow = CGImageGetBytesPerRow(m_cgImage);
+    unsigned padding = bytesPerRow - bitsPerPixel / 8 * m_imageWidth;
     if (padding) {
         srcUnpackAlignment = padding + 1;
         while (bytesPerRow % srcUnpackAlignment)
             ++srcUnpackAlignment;
     }
-    bool rt = packPixels(rgba, srcDataFormat, width, height, srcUnpackAlignment,
-                         format, type, neededAlphaOp, outputVector.data());
-    return rt;
+
+    m_imageSourceUnpackAlignment = srcUnpackAlignment;
+
+    return true;
 }
 
 void GraphicsContext3D::paintToCanvas(const unsigned char* imagePixels, int imageWidth, int imageHeight, int canvasWidth, int canvasHeight, CGContextRef context)

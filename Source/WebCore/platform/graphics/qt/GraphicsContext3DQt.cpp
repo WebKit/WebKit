@@ -486,57 +486,56 @@ void GraphicsContext3D::createGraphicsSurfaces(const IntSize& size)
 }
 #endif
 
-bool GraphicsContext3D::getImageData(Image* image,
-                                     GC3Denum format,
-                                     GC3Denum type,
-                                     bool premultiplyAlpha,
-                                     bool ignoreGammaAndColorProfile,
-                                     Vector<uint8_t>& outputVector)
+GraphicsContext3D::ImageExtractor::~ImageExtractor()
+{
+}
+
+bool GraphicsContext3D::ImageExtractor::extractImage(bool premultiplyAlpha, bool ignoreGammaAndColorProfile)
 {
     UNUSED_PARAM(ignoreGammaAndColorProfile);
-    if (!image)
+    if (!m_image)
         return false;
 
-    QImage qtImage;
     // Is image already loaded? If not, load it.
-    if (image->data())
-        qtImage = QImage::fromData(reinterpret_cast<const uchar*>(image->data()->data()), image->data()->size());
+    if (m_image->data())
+        m_qtImage = QImage::fromData(reinterpret_cast<const uchar*>(m_image->data()->data()), m_image->data()->size());
     else {
-        QPixmap* nativePixmap = image->nativeImageForCurrentFrame();
+        QPixmap* nativePixmap = m_image->nativeImageForCurrentFrame();
         if (!nativePixmap)
             return false;
 
         // With QPA, we can avoid a deep copy.
-        qtImage = *nativePixmap->handle()->buffer();
+        m_qtImage = *nativePixmap->handle()->buffer();
     }
 
-    AlphaOp alphaOp = AlphaDoNothing;
-    switch (qtImage.format()) {
+    m_alphaOp = AlphaDoNothing;
+    switch (m_qtImage.format()) {
     case QImage::Format_RGB32:
         // For opaque images, we should not premultiply or unmultiply alpha.
         break;
     case QImage::Format_ARGB32:
         if (premultiplyAlpha)
-            alphaOp = AlphaDoPremultiply;
+            m_alphaOp = AlphaDoPremultiply;
         break;
     case QImage::Format_ARGB32_Premultiplied:
         if (!premultiplyAlpha)
-            alphaOp = AlphaDoUnmultiply;
+            m_alphaOp = AlphaDoUnmultiply;
         break;
     default:
         // The image has a format that is not supported in packPixels. We have to convert it here.
-        qtImage = qtImage.convertToFormat(premultiplyAlpha ? QImage::Format_ARGB32_Premultiplied : QImage::Format_ARGB32);
+        m_qtImage = m_qtImage.convertToFormat(premultiplyAlpha ? QImage::Format_ARGB32_Premultiplied : QImage::Format_ARGB32);
         break;
     }
 
-    unsigned int packedSize;
-    // Output data is tightly packed (alignment == 1).
-    if (computeImageSizeInBytes(format, type, image->width(), image->height(), 1, &packedSize, 0) != GraphicsContext3D::NO_ERROR)
+    m_imageWidth = m_image->width();
+    m_imageHeight = m_image->height();
+    if (!m_imageWidth || !m_imageHeight)
         return false;
+    m_imagePixelData = m_qtImage.constBits();
+    m_imageSourceFormat = SourceFormatBGRA8;
+    m_imageSourceUnpackAlignment = 0;
 
-    outputVector.resize(packedSize);
-
-    return packPixels(qtImage.constBits(), SourceFormatBGRA8, image->width(), image->height(), 0, format, type, alphaOp, outputVector.data());
+    return true;
 }
 
 void GraphicsContext3D::setContextLostCallback(PassOwnPtr<ContextLostCallback>)

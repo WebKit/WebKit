@@ -163,57 +163,61 @@ GraphicsContext3D::~GraphicsContext3D()
     ::glDeleteFramebuffers(1, &m_fbo);
 }
 
-bool GraphicsContext3D::getImageData(Image* image, unsigned int format, unsigned int type, bool premultiplyAlpha, bool ignoreGammaAndColorProfile, Vector<uint8_t>& outputVector)
+GraphicsContext3D::ImageExtractor::~ImageExtractor()
 {
-    if (!image)
+    if (m_decoder)
+        delete m_decoder;
+}
+
+bool GraphicsContext3D::ImageExtractor::extractImage(bool premultiplyAlpha, bool ignoreGammaAndColorProfile)
+{
+    if (!m_image)
         return false;
     // We need this to stay in scope because the native image is just a shallow copy of the data.
-    ImageSource decoder(premultiplyAlpha ? ImageSource::AlphaPremultiplied : ImageSource::AlphaNotPremultiplied,
-                        ignoreGammaAndColorProfile ? ImageSource::GammaAndColorProfileIgnored : ImageSource::GammaAndColorProfileApplied);
-    AlphaOp alphaOp = AlphaDoNothing;
-    RefPtr<cairo_surface_t> imageSurface;
-    if (image->data()) {
-        decoder.setData(image->data(), true);
+    m_decoder = new ImageSource(premultiplyAlpha ? ImageSource::AlphaPremultiplied : ImageSource::AlphaNotPremultiplied, ignoreGammaAndColorProfile ? ImageSource::GammaAndColorProfileIgnored : ImageSource::GammaAndColorProfileApplied);
+    if (!m_decoder)
+        return false;
+    ImageSource& decoder = *m_decoder;
+
+    m_alphaOp = AlphaDoNothing;
+    if (m_image->data()) {
+        decoder.setData(m_image->data(), true);
         if (!decoder.frameCount() || !decoder.frameIsCompleteAtIndex(0))
             return false;
         OwnPtr<NativeImageCairo> nativeImage = adoptPtr(decoder.createFrameAtIndex(0));
-        imageSurface = nativeImage->surface();
+        m_imageSurface = nativeImage->surface();
     } else {
-        NativeImageCairo* nativeImage = image->nativeImageForCurrentFrame();
-        imageSurface = (nativeImage) ? nativeImage->surface() : 0;
+        NativeImageCairo* nativeImage = m_image->nativeImageForCurrentFrame();
+        m_imageSurface = (nativeImage) ? nativeImage->surface() : 0;
         if (!premultiplyAlpha)
-            alphaOp = AlphaDoUnmultiply;
+            m_alphaOp = AlphaDoUnmultiply;
     }
 
-    if (!imageSurface)
+    if (!m_imageSurface)
         return false;
 
-    int width = cairo_image_surface_get_width(imageSurface.get());
-    int height = cairo_image_surface_get_height(imageSurface.get());
-    if (!width || !height)
+    m_imageWidth = cairo_image_surface_get_width(m_imageSurface.get());
+    m_imageHeight = cairo_image_surface_get_height(m_imageSurface.get());
+    if (!m_imageWidth || !m_imageHeight)
         return false;
 
-    if (cairo_image_surface_get_format(imageSurface.get()) != CAIRO_FORMAT_ARGB32)
+    if (cairo_image_surface_get_format(m_imageSurface.get()) != CAIRO_FORMAT_ARGB32)
         return false;
 
     unsigned int srcUnpackAlignment = 1;
-    size_t bytesPerRow = cairo_image_surface_get_stride(imageSurface.get());
+    size_t bytesPerRow = cairo_image_surface_get_stride(m_imageSurface.get());
     size_t bitsPerPixel = 32;
-    unsigned int padding = bytesPerRow - bitsPerPixel / 8 * width;
+    unsigned padding = bytesPerRow - bitsPerPixel / 8 * m_imageWidth;
     if (padding) {
         srcUnpackAlignment = padding + 1;
         while (bytesPerRow % srcUnpackAlignment)
             ++srcUnpackAlignment;
     }
 
-    unsigned int packedSize;
-    // Output data is tightly packed (alignment == 1).
-    if (computeImageSizeInBytes(format, type, width, height, 1, &packedSize, 0) != GraphicsContext3D::NO_ERROR)
-        return false;
-    outputVector.resize(packedSize);
-
-    return packPixels(cairo_image_surface_get_data(imageSurface.get()), SourceFormatBGRA8,
-                      width, height, srcUnpackAlignment, format, type, alphaOp, outputVector.data());
+    m_imagePixelData = cairo_image_surface_get_data(m_imageSurface.get());
+    m_imageSourceFormat = SourceFormatBGRA8;
+    m_imageSourceUnpackAlignment = srcUnpackAlignment;
+    return true;
 }
 
 void GraphicsContext3D::paintToCanvas(const unsigned char* imagePixels, int imageWidth, int imageHeight, int canvasWidth, int canvasHeight, PlatformContextCairo* context)

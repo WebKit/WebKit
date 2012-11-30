@@ -3619,10 +3619,17 @@ void WebGLRenderingContext::texImage2DImpl(GC3Denum target, GC3Dint level, GC3De
     if (!validateSettableTexFormat("texImage2D", internalformat))
         return;
     Vector<uint8_t> data;
-    if (!m_context->extractImageData(image, format, type, flipY, premultiplyAlpha, m_unpackColorspaceConversion == GraphicsContext3D::NONE, data)) {
+    GraphicsContext3D::ImageExtractor imageExtractor(image, premultiplyAlpha, m_unpackColorspaceConversion == GraphicsContext3D::NONE);
+    if (!imageExtractor.extractSucceeded()) {
         synthesizeGLError(GraphicsContext3D::INVALID_VALUE, "texImage2D", "bad image data");
         return;
     }
+
+    if (!m_context->packImageData(image, imageExtractor.imagePixelData(), format, type, flipY, imageExtractor.imageAlphaOp(), imageExtractor.imageSourceFormat(), imageExtractor.imageWidth(), imageExtractor.imageHeight(), imageExtractor.imageSourceUnpackAlignment(), data)) {
+        synthesizeGLError(GraphicsContext3D::INVALID_VALUE, "texImage2D", "packImageData error");
+        return;
+    }
+
     if (m_unpackAlignment != 1)
         m_context->pixelStorei(GraphicsContext3D::UNPACK_ALIGNMENT, 1);
     texImage2DBase(target, level, internalformat, image->width(), image->height(), 0,
@@ -3855,10 +3862,17 @@ void WebGLRenderingContext::texSubImage2DImpl(GC3Denum target, GC3Dint level, GC
     if (isContextLost())
         return;
     Vector<uint8_t> data;
-    if (!m_context->extractImageData(image, format, type, flipY, premultiplyAlpha, m_unpackColorspaceConversion == GraphicsContext3D::NONE, data)) {
+    GraphicsContext3D::ImageExtractor imageExtractor(image, premultiplyAlpha, m_unpackColorspaceConversion == GraphicsContext3D::NONE);  
+    if (!imageExtractor.extractSucceeded()) {
         synthesizeGLError(GraphicsContext3D::INVALID_VALUE, "texSubImage2D", "bad image");
         return;
     }
+
+    if (!m_context->packImageData(image, imageExtractor.imagePixelData(), format, type, flipY, imageExtractor.imageAlphaOp(), imageExtractor.imageSourceFormat(), imageExtractor.imageWidth(), imageExtractor.imageHeight(), imageExtractor.imageSourceUnpackAlignment(), data)) {
+        synthesizeGLError(GraphicsContext3D::INVALID_VALUE, "texImage2D", "packImageData error");
+        return;
+    }
+
     if (m_unpackAlignment != 1)
         m_context->pixelStorei(GraphicsContext3D::UNPACK_ALIGNMENT, 1);
     texSubImage2DBase(target, level, xoffset, yoffset, image->width(), image->height(),

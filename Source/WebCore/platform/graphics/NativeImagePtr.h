@@ -34,6 +34,7 @@ class wxGraphicsBitmap;
 #elif USE(CG)
 typedef struct CGImage* CGImageRef;
 #elif PLATFORM(QT)
+#include "NativeImageQt.h"
 #include <qglobal.h>
 QT_BEGIN_NAMESPACE
 class QPixmap;
@@ -41,6 +42,7 @@ QT_END_NAMESPACE
 #elif USE(CAIRO)
 #include "NativeImageCairo.h"
 #elif USE(SKIA)
+#include "NativeImageSkia.h"
 namespace WebCore {
 class NativeImageSkia;
 }

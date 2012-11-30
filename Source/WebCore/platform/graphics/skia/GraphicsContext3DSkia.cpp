@@ -42,58 +42,56 @@
 
 namespace WebCore {
 
-bool GraphicsContext3D::getImageData(Image* image,
-                                     GC3Denum format,
-                                     GC3Denum type,
-                                     bool premultiplyAlpha,
-                                     bool ignoreGammaAndColorProfile,
-                                     Vector<uint8_t>& outputVector)
+GraphicsContext3D::ImageExtractor::~ImageExtractor()
 {
-    if (!image)
+    if (m_skiaImage)
+        m_skiaImage->bitmap().unlockPixels();
+}
+
+bool GraphicsContext3D::ImageExtractor::extractImage(bool premultiplyAlpha, bool ignoreGammaAndColorProfile)
+{
+    if (!m_image)
         return false;
-    OwnPtr<NativeImageSkia> pixels;
-    NativeImageSkia* skiaImage = image->nativeImageForCurrentFrame();
-    AlphaOp neededAlphaOp = AlphaDoNothing;
-    bool hasAlpha = skiaImage ? !skiaImage->bitmap().isOpaque() : true;
-    if ((!skiaImage || ignoreGammaAndColorProfile || (hasAlpha && !premultiplyAlpha)) && image->data()) {
+    m_skiaImage = m_image->nativeImageForCurrentFrame();
+    m_alphaOp = AlphaDoNothing;
+    bool hasAlpha = m_skiaImage ? !m_skiaImage->bitmap().isOpaque() : true;
+    if ((!m_skiaImage || ignoreGammaAndColorProfile || (hasAlpha && !premultiplyAlpha)) && m_image->data()) {
         // Attempt to get raw unpremultiplied image data.
         OwnPtr<ImageDecoder> decoder(adoptPtr(ImageDecoder::create(
-            *(image->data()), ImageSource::AlphaNotPremultiplied,
+            *(m_image->data()), ImageSource::AlphaNotPremultiplied,
             ignoreGammaAndColorProfile ? ImageSource::GammaAndColorProfileIgnored : ImageSource::GammaAndColorProfileApplied)));
         if (!decoder)
             return false;
-        decoder->setData(image->data(), true);
+        decoder->setData(m_image->data(), true);
         if (!decoder->frameCount())
             return false;
         ImageFrame* frame = decoder->frameBufferAtIndex(0);
         if (!frame || frame->status() != ImageFrame::FrameComplete)
             return false;
         hasAlpha = frame->hasAlpha();
-        pixels = adoptPtr(frame->asNewNativeImage());
-        if (!pixels.get() || !pixels->isDataComplete() || !pixels->bitmap().width() || !pixels->bitmap().height())
+        m_nativeImage = adoptPtr(frame->asNewNativeImage());
+        if (!m_nativeImage.get() || !m_nativeImage->isDataComplete() || !m_nativeImage->bitmap().width() || !m_nativeImage->bitmap().height())
             return false;
-        SkBitmap::Config skiaConfig = pixels->bitmap().config();
+        SkBitmap::Config skiaConfig = m_nativeImage->bitmap().config();
         if (skiaConfig != SkBitmap::kARGB_8888_Config)
             return false;
-        skiaImage = pixels.get();
+        m_skiaImage = m_nativeImage.get();
         if (hasAlpha && premultiplyAlpha)
-            neededAlphaOp = AlphaDoPremultiply;
+            m_alphaOp = AlphaDoPremultiply;
     } else if (!premultiplyAlpha && hasAlpha)
-        neededAlphaOp = AlphaDoUnmultiply;
-    if (!skiaImage)
+        m_alphaOp = AlphaDoUnmultiply;
+    if (!m_skiaImage)
         return false;
-    const SkBitmap& skiaImageRef = skiaImage->bitmap();
-    SkAutoLockPixels lock(skiaImageRef);
-    ASSERT(skiaImageRef.rowBytes() == skiaImageRef.width() * 4);
-    unsigned int packedSize;
-    // Output data is tightly packed (alignment == 1).
-    if (computeImageSizeInBytes(format, type, skiaImageRef.width(), skiaImageRef.height(), 1, &packedSize, 0) != GraphicsContext3D::NO_ERROR)
+
+    m_imageSourceFormat = SK_B32_SHIFT ? SourceFormatRGBA8 : SourceFormatBGRA8;
+    m_imageWidth = m_skiaImage->bitmap().width();
+    m_imageHeight = m_skiaImage->bitmap().height();
+    if (!m_imageWidth || !m_imageHeight)
         return false;
-    outputVector.resize(packedSize);
-    return packPixels(reinterpret_cast<const uint8_t*>(skiaImageRef.getPixels()),
-                      SK_B32_SHIFT ? SourceFormatRGBA8 : SourceFormatBGRA8,
-                      skiaImageRef.width(), skiaImageRef.height(), 0,
-                      format, type, neededAlphaOp, outputVector.data());
+    m_imageSourceUnpackAlignment = 0;
+    m_skiaImage->bitmap().lockPixels();
+    m_imagePixelData = m_skiaImage->bitmap().getPixels();
+    return true;
 }
 
 } // namespace WebCore

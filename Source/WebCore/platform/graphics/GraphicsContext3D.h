@@ -26,6 +26,7 @@
 #ifndef GraphicsContext3D_h
 #define GraphicsContext3D_h
 
+#include "Image.h"
 #include "IntRect.h"
 #include "GraphicsTypes3D.h"
 #include "PlatformLayer.h"
@@ -101,6 +102,7 @@ class Extensions3DQt;
 class HostWindow;
 class Image;
 class ImageBuffer;
+class ImageSource;
 class ImageData;
 class IntRect;
 class IntSize;
@@ -564,18 +566,6 @@ public:
                                      unsigned int* imageSizeInBytes,
                                      unsigned int* paddingInBytes);
 
-    // Extracts the contents of the given Image into the passed Vector,
-    // packing the pixel data according to the given format and type,
-    // and obeying the flipY, premultiplyAlpha, and ignoreGammaAndColorProfile
-    // flags. Returns true upon success.
-    static bool extractImageData(Image*,
-                          GC3Denum format,
-                          GC3Denum type,
-                          bool flipY,
-                          bool premultiplyAlpha,
-                          bool ignoreGammaAndColorProfile,
-                          Vector<uint8_t>& data);
-
     // Extracts the contents of the given ImageData into the passed Vector,
     // packing the pixel data according to the given format and type,
     // and obeying the flipY and premultiplyAlpha flags. Returns true
@@ -874,35 +864,6 @@ public:
 
     static unsigned getChannelBitsByFormat(GC3Denum);
 
-  private:
-    GraphicsContext3D(Attributes, HostWindow*, RenderStyle = RenderOffscreen);
-
-    // Each platform must provide an implementation of this method.
-    //
-    // Gets the data for the given Image into outputVector in the
-    // format specified by the (OpenGL-style) format and type
-    // arguments. Despite the fact that the outputVector contains
-    // uint8_t, if the format and type specify packed pixels, then
-    // it will essentially contain uint16_t after the extraction
-    // process.
-    //
-    // If premultiplyAlpha is true, the alpha channel, if any,
-    // will be multiplied into the color channels during the
-    // extraction process. This premultiplication occurs before
-    // any packing of pixel data.
-    //
-    // If ignoreGammaAndColorProfile is true, gamma correction and ICC
-    // profile won't be applied.
-    //
-    // No vertical flip of the image data is performed by this
-    // method.
-    static bool getImageData(Image*,
-                      GC3Denum format,
-                      GC3Denum type,
-                      bool premultiplyAlpha,
-                      bool ignoreGammaAndColorProfile,
-                      Vector<uint8_t>& outputVector);
-
     // Possible alpha operations that may need to occur during
     // pixel packing. FIXME: kAlphaDoUnmultiply is lossy and must
     // be removed.
@@ -911,6 +872,59 @@ public:
         AlphaDoPremultiply = 1,
         AlphaDoUnmultiply = 2
     };
+
+    // Packs the contents of the given Image which is passed in |pixels| into the passed Vector
+    // according to the given format and type, and obeying the flipY and premultiplyAlpha flags.
+    // Returns true upon success.
+    static bool packImageData(Image*, const void* pixels, GC3Denum format, GC3Denum type, bool flipY, AlphaOp, SourceDataFormat sourceFormat, unsigned width, unsigned height, unsigned sourceUnpackAlignment, Vector<uint8_t>& data);
+
+    class ImageExtractor {
+    public:
+        ImageExtractor(Image*, bool premultiplyAlpha, bool ignoreGammaAndColorProfile);
+
+        // Each platform must provide an implementation of this method to deallocate or release resources
+        // associated with the image if needed.
+        ~ImageExtractor();
+
+        bool extractSucceeded() { return m_extractSucceeded; }
+        const void* imagePixelData() { return m_imagePixelData; }
+        unsigned imageWidth() { return m_imageWidth; }
+        unsigned imageHeight() { return m_imageHeight; }
+        SourceDataFormat imageSourceFormat() { return m_imageSourceFormat; }
+        AlphaOp imageAlphaOp() { return m_alphaOp; }
+        unsigned imageSourceUnpackAlignment() { return m_imageSourceUnpackAlignment; } 
+    private:
+        // Each platform must provide an implementation of this method.
+        // Extracts the image and keeps track of its status, such as width, height, Source Alignment, format and AlphaOp etc
+        // needs to lock the resources or relevant data if needed
+        // Return true upon success
+        bool extractImage(bool premultiplyAlpha, bool ignoreGammaAndColorProfile);
+
+#if USE(SKIA)
+        OwnPtr<NativeImageSkia> m_nativeImage;
+        NativeImageSkia* m_skiaImage;
+#elif USE(CAIRO)
+        ImageSource* m_decoder;
+        RefPtr<cairo_surface_t> m_imageSurface;
+#elif USE(CG)
+        CGImageRef m_cgImage;
+        RetainPtr<CGImageRef> m_decodedImage;
+        RetainPtr<CFDataRef> m_pixelData;
+#elif PLATFORM(QT)
+        QImage m_qtImage;
+#endif
+        Image* m_image;
+        bool m_extractSucceeded;
+        const void* m_imagePixelData;
+        unsigned m_imageWidth;
+        unsigned m_imageHeight;
+        SourceDataFormat m_imageSourceFormat;
+        AlphaOp m_alphaOp;
+        unsigned m_imageSourceUnpackAlignment;
+    };
+
+private:
+    GraphicsContext3D(Attributes, HostWindow*, RenderStyle = RenderOffscreen);
 
     // Helper for getImageData which implements packing of pixel
     // data into the specified OpenGL destination format and type.
