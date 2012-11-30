@@ -1,3 +1,16 @@
+2012-11-30  Halton Huo  <halton.huo@intel.com>
+
+        [EFL] libwebcore_efl.a fail to link when enable webgl
+        https://bugs.webkit.org/show_bug.cgi?id=103610
+
+        Reviewed by Gyuyoung Kim.
+
+        libwebcore_efl.a should link to X11, Xcomposite and Xrender libraries when ENABLE_WEBGL is ON
+
+        No new tests, no behavior change for layout tests.
+
+        * PlatformEfl.cmake: Append ${X11_X11_LIB}, ${X11_Xcomposite_LIB} and ${X11_Xrender_LIB} to WebCore_LIBRARIES
+
 2012-11-30  Tim Horton  <timothy_horton@apple.com>
 
         Unreviewed, fix the PDFPlugin build after http://trac.webkit.org/changeset/136205.

@@ -297,6 +297,11 @@ IF (WTF_USE_3D_GRAPHICS)
     platform/graphics/texmap/TextureMapperGL.cpp
     platform/graphics/texmap/TextureMapperShaderManager.cpp
   )
+  LIST(APPEND WebCore_LIBRARIES
+    ${X11_X11_LIB}
+    ${X11_Xcomposite_LIB}
+    ${X11_Xrender_LIB}
+  )
 ENDIF ()
 
 ADD_DEFINITIONS(-DDATA_DIR="${CMAKE_INSTALL_PREFIX}/${DATA_INSTALL_DIR}")
