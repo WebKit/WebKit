@@ -5835,7 +5835,7 @@
 		C348612315FDE21E007A1CC9 /* InputTypeNames.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C348612115FDE21E007A1CC9 /* InputTypeNames.cpp */; };
 		C348612415FDE21E007A1CC9 /* InputTypeNames.h in Headers */ = {isa = PBXBuildFile; fileRef = C348612215FDE21E007A1CC9 /* InputTypeNames.h */; };
 		C375D7FD16639519006184AB /* TypeAhead.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C375D7FB16639519006184AB /* TypeAhead.cpp */; };
-		C375D7FE16639519006184AB /* TypeAhead.h in Headers */ = {isa = PBXBuildFile; fileRef = C375D7FC16639519006184AB /* TypeAhead.h */; };
+		C375D7FE16639519006184AB /* TypeAhead.h in Headers */ = {isa = PBXBuildFile; fileRef = C375D7FC16639519006184AB /* TypeAhead.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C37CDEBD149EF2030042090D /* ColorChooserClient.h in Headers */ = {isa = PBXBuildFile; fileRef = C37CDEBC149EF2030042090D /* ColorChooserClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C3CF17A415B0063F00276D39 /* IdTargetObserver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C3CF17A015B0063F00276D39 /* IdTargetObserver.cpp */; };
 		C3CF17A515B0063F00276D39 /* IdTargetObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = C3CF17A115B0063F00276D39 /* IdTargetObserver.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -22521,6 +22521,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C375D7FE16639519006184AB /* TypeAhead.h in Headers */,
 				FD1AF1501656F15100C6D4F7 /* ExclusionShapeValue.h in Headers */,
 				BC7FA6210D1F0CBD00DB22A9 /* LiveNodeList.h in Headers */,
 				A81369DA097374F600D74463 /* HTMLOptionsCollection.h in Headers */,
@@ -25853,7 +25854,6 @@
 				31741AAD16636609008A5B7E /* SimulatedClickOptions.h in Headers */,
 				15B8B7C91652C5220036EF55 /* JSWebKitCSSMixFunctionValue.h in Headers */,
 				93F72AF31666EDFC002A02BD /* LayerPool.h in Headers */,
-				C375D7FE16639519006184AB /* TypeAhead.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

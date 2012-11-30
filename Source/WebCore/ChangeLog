@@ -1,3 +1,9 @@
+2012-11-30  Tim Horton  <timothy_horton@apple.com>
+
+        Unreviewed, fix the PDFPlugin build after http://trac.webkit.org/changeset/136205.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
 2012-11-30  Mihai Maerean  <mmaerean@adobe.com>
 
         [CSSRegions] when WebKit uses V8, there should be a single variable to store if the CSS Regions feature is enabled
