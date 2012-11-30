@@ -79,10 +79,10 @@ PassRefPtr<RenderStyle> DateTimeNumericFieldElement::customStyleForRenderer()
     FontCachePurgePreventer fontCachePurgePreventer;
     RefPtr<RenderStyle> originalStyle = document()->styleResolver()->styleForElement(this);
     RefPtr<RenderStyle> style = RenderStyle::clone(originalStyle.get());
-    float maxiumWidth = style->font().width(m_placeholder);
-    maxiumWidth = std::max(maxiumWidth, style->font().width(formatValue(maximum())));
-    maxiumWidth = std::max(maxiumWidth, style->font().width(value()));
-    style->setMinWidth(Length(maxiumWidth, Fixed));
+    float maximumWidth = style->font().width(m_placeholder);
+    maximumWidth = std::max(maximumWidth, style->font().width(formatValue(maximum())));
+    maximumWidth = std::max(maximumWidth, style->font().width(value()));
+    style->setMinWidth(Length(maximumWidth, Fixed));
     return style.release();
 }
 

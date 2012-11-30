@@ -66,10 +66,10 @@ PassRefPtr<RenderStyle> DateTimeSymbolicFieldElement::customStyleForRenderer()
     FontCachePurgePreventer fontCachePurgePreventer;
     RefPtr<RenderStyle> originalStyle = document()->styleResolver()->styleForElement(this);
     RefPtr<RenderStyle> style = RenderStyle::clone(originalStyle.get());
-    float maxiumWidth = style->font().width(visibleEmptyValue());
+    float maximumWidth = style->font().width(visibleEmptyValue());
     for (unsigned index = 0; index < m_symbols.size(); ++index)
-        maxiumWidth = std::max(maxiumWidth, style->font().width(m_symbols[index]));
-    style->setMinWidth(Length(maxiumWidth, Fixed));
+        maximumWidth = std::max(maximumWidth, style->font().width(m_symbols[index]));
+    style->setMinWidth(Length(maximumWidth, Fixed));
     return style.release();
 }
 
