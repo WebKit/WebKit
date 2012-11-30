@@ -73,6 +73,8 @@ public:
     void didEndSpeech();
     void didEndSound();
     void didEndAudio();
+    void didReceiveResults(const Vector<RefPtr<SpeechRecognitionResult> >& newFinalResults, const Vector<RefPtr<SpeechRecognitionResult> >& currentInterimResults);
+    // FIXME: Remove this once we start using didReceiveResults.
     void didReceiveResult(PassRefPtr<SpeechRecognitionResult>, unsigned long resultIndex, PassRefPtr<SpeechRecognitionResultList> resultHistory);
     void didReceiveNoMatch(PassRefPtr<SpeechRecognitionResult>);
     void didReceiveError(PassRefPtr<SpeechRecognitionError>);
@@ -124,6 +126,7 @@ private:
     SpeechRecognitionController* m_controller;
     bool m_stoppedByActiveDOMObject;
     bool m_started;
+    Vector<RefPtr<SpeechRecognitionResult> > m_finalResults;
 };
 
 } // namespace WebCore

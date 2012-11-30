@@ -29,6 +29,10 @@
 
 #include "SpeechRecognitionEvent.h"
 
+#include "Document.h"
+#include "Element.h"
+#include "Text.h"
+
 namespace WebCore {
 
 SpeechRecognitionEventInit::SpeechRecognitionEventInit()
@@ -51,6 +55,11 @@ PassRefPtr<SpeechRecognitionEvent> SpeechRecognitionEvent::createResult(PassRefP
     return adoptRef(new SpeechRecognitionEvent(eventNames().resultEvent, result, resultIndex, resultHistory));
 }
 
+PassRefPtr<SpeechRecognitionEvent> SpeechRecognitionEvent::createResult(unsigned long resultIndex, const Vector<RefPtr<SpeechRecognitionResult> >& results)
+{
+    return adoptRef(new SpeechRecognitionEvent(eventNames().resultEvent, resultIndex, results));
+}
+
 PassRefPtr<SpeechRecognitionEvent> SpeechRecognitionEvent::createNoMatch(PassRefPtr<SpeechRecognitionResult> result)
 {
     return adoptRef(new SpeechRecognitionEvent(eventNames().nomatchEvent, result, 0, 0));
@@ -68,18 +77,78 @@ SpeechRecognitionEvent::SpeechRecognitionEvent()
 
 SpeechRecognitionEvent::SpeechRecognitionEvent(const AtomicString& eventName, const SpeechRecognitionEventInit& initializer)
     : Event(eventName, initializer)
-    , m_result(initializer.result)
     , m_resultIndex(initializer.resultIndex)
+    , m_result(initializer.result)
     , m_resultHistory(initializer.resultHistory)
 {
 }
 
 SpeechRecognitionEvent::SpeechRecognitionEvent(const AtomicString& eventName, PassRefPtr<SpeechRecognitionResult> result, short resultIndex, PassRefPtr<SpeechRecognitionResultList> resultHistory)
     : Event(eventName, /*canBubble=*/false, /*cancelable=*/false)
-    , m_result(result)
     , m_resultIndex(resultIndex)
+    , m_result(result)
     , m_resultHistory(resultHistory)
 {
+}
+
+SpeechRecognitionEvent::SpeechRecognitionEvent(const AtomicString& eventName, unsigned long resultIndex, const Vector<RefPtr<SpeechRecognitionResult> >& results)
+    : Event(eventName, /*canBubble=*/false, /*cancelable=*/false)
+    , m_resultIndex(resultIndex)
+    , m_results(SpeechRecognitionResultList::create(results))
+{
+}
+
+SpeechRecognitionEvent::~SpeechRecognitionEvent()
+{
+}
+
+static QualifiedName emmaQualifiedName(const char* localName)
+{
+    const char emmaNamespaceUrl[] = "http://www.w3.org/2003/04/emma";
+    return QualifiedName("emma", localName, emmaNamespaceUrl);
+}
+
+Document* SpeechRecognitionEvent::emma()
+{
+    if (m_emma)
+        return m_emma.get();
+
+    RefPtr<Document> document = Document::create(0, KURL());
+
+    for (size_t i = 0; i < m_results->length(); ++i) {
+        RefPtr<SpeechRecognitionResult> result = m_results->item(0);
+
+        RefPtr<Element> emmaElement = document->createElement(emmaQualifiedName("emma"), false);
+        ExceptionCode ec = 0;
+        emmaElement->setAttribute("version", "1.0", ec);
+        ASSERT(!ec);
+        if (ec)
+            return 0;
+
+        RefPtr<Element> oneOf = document->createElement(emmaQualifiedName("one-of"), false);
+        oneOf->setAttribute(emmaQualifiedName("medium"), "acoustic");
+        oneOf->setAttribute(emmaQualifiedName("mode"), "voice");
+        oneOf->setIdAttribute("one-of");
+
+        for (size_t i = 0; i < result->length(); ++i) {
+            const RefPtr<SpeechRecognitionAlternative>& alternative = result->item(i);
+
+            RefPtr<Element> interpretation = document->createElement(emmaQualifiedName("interpretation"), false);
+            interpretation->setIdAttribute(String::number(i + 1));
+            interpretation->setAttribute(emmaQualifiedName("confidence"), String::number(alternative->confidence()));
+
+            RefPtr<Element> literal = document->createElement(emmaQualifiedName("literal"), false);
+            literal->appendChild(document->createTextNode(alternative->transcript()));
+            interpretation->appendChild(literal.release());
+            oneOf->appendChild(interpretation.release());
+        }
+
+        emmaElement->appendChild(oneOf.release());
+        document->appendChild(emmaElement.release());
+    }
+
+    m_emma = document;
+    return m_emma.get();
 }
 
 } // namespace WebCore

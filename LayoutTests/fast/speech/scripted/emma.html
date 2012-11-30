@@ -27,9 +27,9 @@ function emmaTest() {
 
     r.onresult = function() {
         debug('onresult');
-        shouldBe('event.result.emma.childNodes.length', '1');
-        shouldBeEqualToString('event.result.emma.firstChild.nodeName', 'emma:emma');
-        evalAndLog('window.emma = event.result.emma.firstChild');
+        shouldBe('event.emma.childNodes.length', '1');
+        shouldBeEqualToString('event.emma.firstChild.nodeName', 'emma:emma');
+        evalAndLog('window.emma = event.emma.firstChild');
         shouldBeEqualToString('emma.getAttribute("version")', '1.0');
 
         shouldBe('emma.childNodes.length', '1');
@@ -58,9 +58,9 @@ function emmaTest() {
         evalAndLog('window.oneof = null');
         evalAndLog('window.interpretation = null');
         evalAndLog('window.literal = null');
-        evalAndLog('event.result.emma.customProperty = 42');
+        evalAndLog('event.emma.customProperty = 42');
         evalAndLog('gc()');
-        shouldBe('event.result.emma.customProperty', '42');
+        shouldBe('event.emma.customProperty', '42');
     }
 
     r.onend = function() {

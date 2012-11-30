@@ -1,3 +1,14 @@
+2012-11-29  Tommy Widenflycht  <tommyw@google.com>
+
+        Speech Recognition API: Update SpeechRecognitionEvent to match the specification
+        https://bugs.webkit.org/show_bug.cgi?id=103407
+
+        Reviewed by Adam Barth.
+
+        Changing the mock to use the new results delivery API.
+
+        * DumpRenderTree/chromium/MockWebSpeechRecognizer.cpp:
+
 2012-11-30  Simon Hausmann  <simon.hausmann@digia.com>, Pierre Rossi  <pierre.rossi@digia.com>
 
         [Qt] Separate Qt WebKit into Qt WebKit and Qt WebKit Widgets
