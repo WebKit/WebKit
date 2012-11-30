@@ -3625,6 +3625,8 @@ webcore_sources += \
 	Source/WebCore/html/track/WebVTTToken.h \
 	Source/WebCore/html/track/WebVTTTokenizer.h \
 	Source/WebCore/html/track/WebVTTTokenizer.cpp \
+	Source/WebCore/html/TypeAhead.cpp \
+	Source/WebCore/html/TypeAhead.h \
 	Source/WebCore/html/URLInputType.cpp \
 	Source/WebCore/html/URLInputType.h \
 	Source/WebCore/html/ValidationMessage.cpp \
