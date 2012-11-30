@@ -1,3 +1,18 @@
+2012-11-30  Pierre Rossi  <pierre.rossi@gmail.com>
+
+        [Qt] Fix zoomIn/zoomOut related regression.
+
+        Reviewed by Simon Hausmann.
+
+        Following r136235, fix a case of refactoring gone wrong.
+        Implementing setTextSizeMultiplier in terms of
+        setZoomFactor, and not the other way around.
+
+        * WebCoreSupport/QWebFrameAdapter.cpp:
+        (QWebFrameAdapter::setZoomFactor):
+        * WidgetApi/qwebframe.cpp:
+        (QWebFrame::setTextSizeMultiplier):
+
 2012-11-30  Simon Hausmann  <simon.hausmann@digia.com>, Pierre Rossi  <pierre.rossi@digia.com>
 
         [Qt] Separate Qt WebKit into Qt WebKit and Qt WebKit Widgets

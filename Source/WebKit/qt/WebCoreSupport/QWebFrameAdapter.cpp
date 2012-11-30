@@ -322,8 +322,10 @@ QSize QWebFrameAdapter::contentsSize() const
 
 void QWebFrameAdapter::setZoomFactor(qreal factor)
 {
-    pageAdapter->settings->setAttribute(QWebSettings::ZoomTextOnly, true);
-    frame->setPageAndTextZoomFactors(1, factor);
+    if (pageAdapter->settings->testAttribute(QWebSettings::ZoomTextOnly))
+        frame->setTextZoomFactor(factor);
+    else
+        frame->setPageZoomFactor(factor);
 }
 
 qreal QWebFrameAdapter::zoomFactor() const
