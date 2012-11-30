@@ -1,3 +1,15 @@
+2012-11-30  Arpita Bahuguna  <arpitabahuguna@gmail.com>
+
+        Caret is painted horizontally in vertical writing mode when there are no visible text
+        https://bugs.webkit.org/show_bug.cgi?id=102359
+
+        Reviewed by Ryosuke Niwa.
+
+        * editing/selection/caret-alignment-for-vertical-text-expected.txt: Added.
+        * editing/selection/caret-alignment-for-vertical-text.html: Added.
+        Test to verify that the orientation of the caret on an empty vertical text
+        line or container is same as that for a non-empty container.
+
 2012-11-30  Nandor Huszka  <hnandor@inf.u-szeged.hu>
 
         [Qt] Unreviewed gardening.

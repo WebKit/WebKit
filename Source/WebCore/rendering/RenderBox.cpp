@@ -3624,6 +3624,10 @@ LayoutRect RenderBox::localCaretRect(InlineBox* box, int caretOffset, LayoutUnit
 
     // Move to local coords
     rect.moveBy(-location());
+
+    if (!isHorizontalWritingMode())
+        return rect.transposedRect();
+
     return rect;
 }
 

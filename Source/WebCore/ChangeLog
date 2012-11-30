@@ -1,3 +1,26 @@
+2012-11-30  Arpita Bahuguna  <arpitabahuguna@gmail.com>
+
+        Caret is painted horizontally in vertical writing mode when there are no visible text
+        https://bugs.webkit.org/show_bug.cgi?id=102359
+
+        Reviewed by Ryosuke Niwa.
+
+        In the vertical writing mode the caret rect on an empty editable box or
+        an empty line is rendered as per the horizontal writing mode.
+
+        This changes though when any text is added; the caret is then displayed
+        in accordance with the vertical writing mode.
+
+        Test: editing/selection/caret-alignment-for-vertical-text.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::localCaretRect):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::localCaretRectForEmptyElement):
+        The caret rect should be transposed for the vertical writing mode. Its
+        width and height values need to be interchanged for it to be oriented
+        as per the vertical text.
+
 2012-11-30  Sankeerth V S  <sankeerth.vs@samsung.com>
 
         Web Inspector: [Timeline] JS error when clicking in Memory Statistics view
