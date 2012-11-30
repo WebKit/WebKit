@@ -1,3 +1,9 @@
+2012-11-30  Stephen White  <senorblanco@chromium.org>
+
+        Unreviewed.  Rolled DEPS.
+
+        * DEPS:
+
 2012-11-29  Tommy Widenflycht  <tommyw@google.com>
 
         Speech Recognition API: Update SpeechRecognitionEvent to match the specification
