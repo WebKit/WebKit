@@ -85,17 +85,36 @@ void drawLayerContents(CGContextRef context, CALayer *layer, WebCore::PlatformCA
     ThemeMac::setFocusRingClipRect(transform.mapRect(clipBounds));
 
 #if !defined(BUILDING_ON_SNOW_LEOPARD)
-    __block GraphicsContext* ctx = &graphicsContext;
+    const float wastedSpaceThreshold = 0.75f;
+    const unsigned maxRectsToPaint = 5;
 
-    wkCALayerEnumerateRectsBeingDrawnWithBlock(layer, context, ^(CGRect rect){
-        FloatRect rectBeingDrawn(rect);
-        rectBeingDrawn.intersect(clipBounds);
-        
-        GraphicsContextStateSaver stateSaver(*ctx);
-        ctx->clip(rectBeingDrawn);
-        
-        layerContents->platformCALayerPaintContents(*ctx, enclosingIntRect(rectBeingDrawn));
+    double clipArea = clipBounds.width() * clipBounds.height();
+    __block double totalRectArea = 0;
+    __block unsigned rectCount = 0;
+    __block Vector<FloatRect, maxRectsToPaint> dirtyRects;
+    
+    wkCALayerEnumerateRectsBeingDrawnWithBlock(layer, context, ^(CGRect rect) {
+        if (++rectCount > maxRectsToPaint)
+            return;
+
+        totalRectArea += rect.size.width * rect.size.height;
+        dirtyRects.append(rect);
     });
+
+    if (rectCount < maxRectsToPaint && totalRectArea < clipArea * wastedSpaceThreshold) {
+        for (unsigned i = 0; i < rectCount; ++i) {
+            const FloatRect& currentRect = dirtyRects[i];
+            
+            GraphicsContextStateSaver stateSaver(graphicsContext);
+            graphicsContext.clip(currentRect);
+            
+            layerContents->platformCALayerPaintContents(graphicsContext, enclosingIntRect(currentRect));
+        }
+    } else {
+        // CGContextGetClipBoundingBox() gives us the bounds of the dirty region, so clipBounds
+        // encompasses all the dirty rects.
+        layerContents->platformCALayerPaintContents(graphicsContext, enclosingIntRect(clipBounds));
+    }
 
 #else
     IntRect clip(enclosingIntRect(clipBounds));
