@@ -1,5 +1,14 @@
 2012-11-30  Pierre Rossi  <pierre.rossi@gmail.com>
 
+        [Qt] Unreviewed build un-break
+
+        Revert r136243 and hope it served its purpose.
+
+        * WidgetApi/qwebpage.cpp:
+        (QWebPagePrivate::QWebPagePrivate):
+
+2012-11-30  Pierre Rossi  <pierre.rossi@gmail.com>
+
         [Qt] Unreviewed build break
 
         Rubber-stamped by Simon Hausmann.
