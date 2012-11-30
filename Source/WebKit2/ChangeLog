@@ -1,3 +1,21 @@
+2012-11-30  Tim Horton  <timothy_horton@apple.com>
+
+        PDFPlugin: "Show Definition" context menu item should be implemented
+        https://bugs.webkit.org/show_bug.cgi?id=103389
+        <rdar://problem/12710751>
+
+        Reviewed by Dan Bernstein.
+
+        Call existing dictionary popup code when the context menu "Show Definition" item is selected.
+
+        * WebProcess/Plugins/PDF/PDFPlugin.h:
+        (PDFPlugin): Add showDefinitionForAttributedString and convertFromPDFViewToRootView.
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (-[WKPDFLayerControllerDelegate showDefinitionForAttributedString:atPoint:]): Forward this call to PDFPlugin.
+        (WebKit::PDFPlugin::showDefinitionForAttributedString): Create a DictionaryPopupInfo with the necessary information.
+        Ask WebPageProxy to show the dictionary popup.
+        (WebKit::PDFPlugin::convertFromPDFViewToRootView): Convert a point from PDFLayerController space to the root view space.
+
 2012-11-30  Simon Hausmann  <simon.hausmann@digia.com>
 
         Unreviewed trivial Qt build fix:

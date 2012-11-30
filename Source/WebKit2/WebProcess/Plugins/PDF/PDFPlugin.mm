@@ -29,7 +29,9 @@
 #import "PDFPlugin.h"
 
 #import "ArgumentCoders.h"
+#import "AttributedString.h"
 #import "DataReference.h"
+#import "DictionaryPopupInfo.h"
 #import "PDFAnnotationTextWidgetDetails.h"
 #import "PDFKitImports.h"
 #import "PDFLayerControllerDetails.h"
@@ -161,7 +163,7 @@ static const char* annotationStyle =
 
 - (void)showDefinitionForAttributedString:(NSAttributedString *)string atPoint:(CGPoint)point
 {
-    // FIXME: Implement.
+    _pdfPlugin->showDefinitionForAttributedString(string, point);
 }
 
 - (void)performWebSearch:(NSString *)string
@@ -795,6 +797,24 @@ void PDFPlugin::writeItemsToPasteboard(NSArray *items, NSArray *types)
         }
     }
 
+}
+
+IntPoint PDFPlugin::convertFromPDFViewToRootView(const IntPoint& point) const
+{
+    IntPoint pointInPluginCoordinates(point.x(), size().height() - point.y());
+    return m_rootViewToPluginTransform.inverse().mapPoint(pointInPluginCoordinates);
+}
+
+void PDFPlugin::showDefinitionForAttributedString(NSAttributedString *string, CGPoint point)
+{
+    DictionaryPopupInfo dictionaryPopupInfo;
+    dictionaryPopupInfo.type = DictionaryPopupInfo::ContextMenu;
+    dictionaryPopupInfo.origin = convertFromPDFViewToRootView(IntPoint(point));
+
+    AttributedString attributedString;
+    attributedString.string = string;
+
+    webFrame()->page()->send(Messages::WebPageProxy::DidPerformDictionaryLookup(attributedString, dictionaryPopupInfo));
 }
 
 } // namespace WebKit
