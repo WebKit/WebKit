@@ -71,14 +71,14 @@ StyleImage* CSSImageValue::cachedOrPendingImage()
     return m_image.get();
 }
 
-StyleCachedImage* CSSImageValue::cachedImage(CachedResourceLoader* loader, Element* initiatorElement)
+StyleCachedImage* CSSImageValue::cachedImage(CachedResourceLoader* loader)
 {
     if (isCursorImageValue())
         return static_cast<CSSCursorImageValue*>(this)->cachedImage(loader);
-    return cachedImage(loader, m_url, initiatorElement);
+    return cachedImage(loader, m_url);
 }
 
-StyleCachedImage* CSSImageValue::cachedImage(CachedResourceLoader* loader, const String& url, Element* initiatorElement)
+StyleCachedImage* CSSImageValue::cachedImage(CachedResourceLoader* loader, const String& url)
 {
     ASSERT(loader);
 
@@ -86,10 +86,10 @@ StyleCachedImage* CSSImageValue::cachedImage(CachedResourceLoader* loader, const
         m_accessedImage = true;
 
         CachedResourceRequest request(ResourceRequest(loader->document()->completeURL(url)));
-        if (initiatorElement)
-            request.setInitiator(initiatorElement);
-        else
+        if (m_initiatorName.isEmpty())
             request.setInitiator(cachedResourceRequestInitiators().css);
+        else
+            request.setInitiator(m_initiatorName);
         if (CachedResourceHandle<CachedImage> cachedImage = loader->requestImage(request))
             m_image = StyleCachedImage::create(cachedImage.get());
     }

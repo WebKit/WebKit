@@ -1,3 +1,12 @@
+2012-11-30  James Simonsen  <simonjam@chromium.org>
+
+        Report CSS as initiator instead of elements, except body
+        https://bugs.webkit.org/show_bug.cgi?id=103546
+
+        Reviewed by Tony Gentilcore.
+
+        * platform/chromium/fast/loader/resource-request-callbacks-expected.txt: Rebaseline to match new behavior.
+
 2012-11-30  Michelangelo De Simone  <michelangelo@webkit.org>
 
         [CSS Shaders] Clamp input colors before blending

@@ -72,8 +72,11 @@ void HTMLBodyElement::collectStyleForPresentationAttribute(const Attribute& attr
 {
     if (attribute.name() == backgroundAttr) {
         String url = stripLeadingAndTrailingHTMLSpaces(attribute.value());
-        if (!url.isEmpty())
-            style->setProperty(CSSProperty(CSSPropertyBackgroundImage, CSSImageValue::create(document()->completeURL(url).string())));
+        if (!url.isEmpty()) {
+            RefPtr<CSSImageValue> imageValue = CSSImageValue::create(document()->completeURL(url).string());
+            imageValue->setInitiator(localName());
+            style->setProperty(CSSProperty(CSSPropertyBackgroundImage, imageValue));
+        }
     } else if (attribute.name() == marginwidthAttr || attribute.name() == leftmarginAttr) {
         addHTMLLengthToStyle(style, CSSPropertyMarginRight, attribute.value());
         addHTMLLengthToStyle(style, CSSPropertyMarginLeft, attribute.value());
