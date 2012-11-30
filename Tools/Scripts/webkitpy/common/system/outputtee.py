@@ -1,10 +1,10 @@
 # Copyright (c) 2009, Google Inc. All rights reserved.
 # Copyright (c) 2009 Apple Inc. All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
 # met:
-# 
+#
 #     * Redistributions of source code must retain the above copyright
 # notice, this list of conditions and the following disclaimer.
 #     * Redistributions in binary form must reproduce the above
@@ -14,7 +14,7 @@
 #     * Neither the name of Google Inc. nor the names of its
 # contributors may be used to endorse or promote products derived from
 # this software without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
 # "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
 # LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -26,26 +26,14 @@
 # THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-#
-# WebKit's Python module for logging
-# This module is now deprecated in favor of python's built-in logging.py.
 
 import codecs
 import os
 import sys
 
 
-def log(string):
-    print >> sys.stderr, string
-
-
-def error(string):
-    log("ERROR: %s" % string)
-    sys.exit(1)
-
-
 # Simple class to split output between multiple destinations
-class tee:
+class Tee:
     def __init__(self, *files):
         self.files = files
 
@@ -84,8 +72,8 @@ class OutputTee:
             self._original_stdout = sys.stdout
             self._original_stderr = sys.stderr
         if files and len(files):
-            sys.stdout = tee(self._original_stdout, *files)
-            sys.stderr = tee(self._original_stderr, *files)
+            sys.stdout = Tee(self._original_stdout, *files)
+            sys.stderr = Tee(self._original_stderr, *files)
         else:
             sys.stdout = self._original_stdout
             sys.stderr = self._original_stderr

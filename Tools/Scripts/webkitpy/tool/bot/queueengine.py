@@ -34,7 +34,7 @@ import traceback
 from datetime import datetime, timedelta
 
 from webkitpy.common.system.executive import ScriptError
-from webkitpy.common.system.deprecated_logging import OutputTee
+from webkitpy.common.system.outputtee import OutputTee
 
 _log = logging.getLogger(__name__)
 

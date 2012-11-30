@@ -130,8 +130,6 @@
     <Compile Include="common\system\autoinstall.py" />
     <Compile Include="common\system\crashlogs.py" />
     <Compile Include="common\system\crashlogs_unittest.py" />
-    <Compile Include="common\system\deprecated_logging.py" />
-    <Compile Include="common\system\deprecated_logging_unittest.py" />
     <Compile Include="common\system\environment.py" />
     <Compile Include="common\system\environment_unittest.py" />
     <Compile Include="common\system\executive.py" />

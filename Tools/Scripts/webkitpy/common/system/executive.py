@@ -37,7 +37,7 @@ import subprocess
 import sys
 import time
 
-from webkitpy.common.system.deprecated_logging import tee
+from webkitpy.common.system.outputtee import Tee
 from webkitpy.common.system.filesystem import FileSystem
 
 
@@ -135,7 +135,7 @@ class Executive(object):
         if quiet:
             dev_null = open(os.devnull, "w")  # FIXME: Does this need an encoding?
             tee_stdout = dev_null
-        child_stdout = tee(child_out_file, tee_stdout)
+        child_stdout = Tee(child_out_file, tee_stdout)
         exit_code = self._run_command_with_teed_output(args, child_stdout, **kwargs)
         if quiet:
             dev_null.close()

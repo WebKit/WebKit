@@ -1,3 +1,37 @@
+2012-11-30  Zan Dobersek  <zandobersek@gmail.com>
+
+        Finally remove webkitpy.common.system.deprecated_logging
+        https://bugs.webkit.org/show_bug.cgi?id=103624
+
+        Reviewed by Adam Barth.
+
+        Remove the deprecated logging module and its unit tests now that such logging is not
+        used anymore in webkitpy.
+
+        The tee and OutputTee classes are moved into a new module, webkitpy.common.system.outputtee.
+        The tee class is renamed to Tee to conform with the usual guidelines.
+
+        Only unit test for the Tee class is currently provided as the OutputTee is not currently
+        using the webkitpy Filesystem abstraction that would make its functionality testable.
+
+        * Scripts/webkitpy/common/system/executive.py: tee (now Tee) is now in a new module.
+        (Executive.run_and_throw_if_fail):
+        * Scripts/webkitpy/common/system/outputtee.py: Renamed from Tools/Scripts/webkitpy/common/system/deprecated_logging.py.
+        (Tee):
+        (Tee.__init__):
+        (Tee.write):
+        (OutputTee):
+        (OutputTee.__init__):
+        (OutputTee.add_log):
+        (OutputTee.remove_log):
+        (OutputTee._open_log_file):
+        (OutputTee._tee_outputs_to_files):
+        * Scripts/webkitpy/common/system/outputtee_unittest.py: Renamed from Tools/Scripts/webkitpy/common/system/deprecated_logging_unittest.py.
+        (SimpleTeeTest):
+        (SimpleTeeTest.test_simple_tee):
+        * Scripts/webkitpy/tool/bot/queueengine.py: OutputTee is now in a new module.
+        * Scripts/webkitpy/webkitpy.pyproj: Remove the deprecated_logging module and related unit test file.
+
 2012-11-30  Sudarsana Nagineni  <sudarsana.nagineni@intel.com>
 
         [EFL][WK2] Add support for PlatformWebView::simulateRightClick() in TestWebKitAPI
