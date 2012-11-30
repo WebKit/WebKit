@@ -772,6 +772,12 @@ void PDFPlugin::writeItemsToPasteboard(NSArray *items, NSArray *types)
         NSString *type = [types objectAtIndex:i];
         NSData *data = [items objectAtIndex:i];
 
+        // We don't expect the data for any items to be empty, but aren't completely sure.
+        // Avoid crashing in the SharedMemory constructor in release builds if we're wrong.
+        ASSERT(data.length);
+        if (!data.length)
+            continue;
+
         if ([type isEqualToString:NSStringPboardType] || [type isEqualToString:NSPasteboardTypeString]) {
             RetainPtr<NSString> plainTextString(AdoptNS, [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
             WebProcess::shared().connection()->send(Messages::WebContext::SetPasteboardStringForType(NSGeneralPboard, type, plainTextString.get()), 0);
