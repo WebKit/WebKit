@@ -66,6 +66,7 @@ UnlinkedFunctionExecutable::UnlinkedFunctionExecutable(JSGlobalData* globalData,
     , m_parameters(node->parameters())
     , m_firstLineOffset(node->firstLine() - source.firstLine())
     , m_lineCount(node->lastLine() - node->firstLine())
+    , m_functionStartOffset(node->functionStart() - source.startOffset())
     , m_startOffset(node->source().startOffset() - source.startOffset())
     , m_sourceLength(node->source().length())
     , m_features(node->features())

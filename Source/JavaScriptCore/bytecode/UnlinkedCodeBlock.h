@@ -98,6 +98,7 @@ public:
 
     unsigned firstLineOffset() const { return m_firstLineOffset; }
     unsigned lineCount() const { return m_lineCount; }
+    unsigned functionStartOffset() const { return m_functionStartOffset; }
     unsigned startOffset() const { return m_startOffset; }
     unsigned sourceLength() { return m_sourceLength; }
 
@@ -153,6 +154,7 @@ private:
     RefPtr<FunctionParameters> m_parameters;
     unsigned m_firstLineOffset;
     unsigned m_lineCount;
+    unsigned m_functionStartOffset;
     unsigned m_startOffset;
     unsigned m_sourceLength;
 

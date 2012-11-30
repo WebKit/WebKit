@@ -126,13 +126,29 @@ UnlinkedFunctionCodeBlock* CodeCache::generateFunctionCodeBlock(JSGlobalData& gl
     body->destroyData();
     if (error.m_type != ParserError::ErrorNone)
         return 0;
-    m_cachedFunctionCode.add(result, Strong<UnlinkedFunctionCodeBlock>(globalData, result));
+    m_recentlyUsedFunctionCode.add(result, Strong<UnlinkedFunctionCodeBlock>(globalData, result));
     return result;
 }
 
 UnlinkedFunctionCodeBlock* CodeCache::getFunctionCodeBlock(JSGlobalData& globalData, UnlinkedFunctionExecutable* executable, const SourceCode& source, CodeSpecializationKind kind, DebuggerMode debuggerMode, ProfilerMode profilerMode, ParserError& error)
 {
-    return generateFunctionCodeBlock(globalData, executable, source, kind, debuggerMode, profilerMode, error);
+    if (debuggerMode == DebuggerOn || profilerMode == ProfilerOn)
+        return generateFunctionCodeBlock(globalData, executable, source, kind, debuggerMode, profilerMode, error);
+
+    SourceCode functionSource(source.provider(), executable->functionStartOffset(), source.endOffset(), source.firstLine());
+    CodeBlockKey key = makeCodeBlockKey(functionSource, kind == CodeForCall ? FunctionCallType : FunctionConstructType, executable->isInStrictContext() ? JSParseStrict : JSParseNormal);
+    if (const Strong<UnlinkedFunctionCodeBlock>* cacheEntry = m_cachedFunctionExecutables.find(key)) {
+        if (cacheEntry) {
+            UnlinkedFunctionCodeBlock* unlinkedCode = cacheEntry->get();
+            unsigned firstLine = source.firstLine() + unlinkedCode->firstLine();
+            executable->recordParse(unlinkedCode->codeFeatures(), unlinkedCode->hasCapturedVariables(), firstLine, firstLine + unlinkedCode->lineCount());
+            m_recentlyUsedFunctionCode.add(unlinkedCode, *cacheEntry);
+            return unlinkedCode;
+        }
+    }
+    UnlinkedFunctionCodeBlock* result = generateFunctionCodeBlock(globalData, executable, source, kind, debuggerMode, profilerMode, error);
+    m_cachedFunctionExecutables.add(key, Strong<UnlinkedFunctionCodeBlock>(globalData, result));
+    return result;
 }
 
 CodeCache::GlobalFunctionKey CodeCache::makeGlobalFunctionKey(const SourceCode& source, const String& name)
@@ -173,7 +189,7 @@ UnlinkedFunctionExecutable* CodeCache::getFunctionExecutableFromGlobalCode(JSGlo
 
 void CodeCache::usedFunctionCode(JSGlobalData& globalData, UnlinkedFunctionCodeBlock* codeBlock)
 {
-    m_cachedFunctionCode.add(codeBlock, Strong<UnlinkedFunctionCodeBlock>(globalData, codeBlock));
+    m_recentlyUsedFunctionCode.add(codeBlock, Strong<UnlinkedFunctionCodeBlock>(globalData, codeBlock));
 }
 
 }

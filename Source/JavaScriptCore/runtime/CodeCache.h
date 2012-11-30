@@ -40,6 +40,7 @@
 namespace JSC {
 
 class EvalExecutable;
+class FunctionBodyNode;
 class Identifier;
 class ProgramExecutable;
 class UnlinkedCodeBlock;
@@ -98,7 +99,7 @@ public:
     void usedFunctionCode(JSGlobalData&, UnlinkedFunctionCodeBlock*);
     ~CodeCache();
 
-    enum CodeType { EvalType, ProgramType, FunctionType };
+    enum CodeType { EvalType, ProgramType, FunctionCallType, FunctionConstructType };
     typedef std::pair<String, unsigned> CodeBlockKey;
     typedef std::pair<String, String> GlobalFunctionKey;
 
@@ -118,8 +119,9 @@ private:
     };
 
     CacheMap<CodeBlockKey, Strong<UnlinkedCodeBlock>, kMaxCodeBlockEntries> m_cachedCodeBlocks;
-    CacheMap<GlobalFunctionKey, Strong<UnlinkedFunctionExecutable>, kMaxGlobalFunctionEntries> m_cachedGlobalFunctions;
-    CacheMap<UnlinkedFunctionCodeBlock*, Strong<UnlinkedFunctionCodeBlock>, kMaxFunctionCodeBlocks> m_cachedFunctionCode;
+    CacheMap<CodeBlockKey, Strong<UnlinkedFunctionCodeBlock>, kMaxFunctionCodeBlocks> m_cachedFunctionExecutables;
+    CacheMap<GlobalFunctionKey, Strong<UnlinkedFunctionExecutable>, kMaxFunctionCodeBlocks> m_cachedGlobalFunctions;
+    CacheMap<UnlinkedFunctionCodeBlock*, Strong<UnlinkedFunctionCodeBlock>, kMaxFunctionCodeBlocks> m_recentlyUsedFunctionCode;
 };
 
 }

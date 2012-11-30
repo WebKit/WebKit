@@ -1,3 +1,41 @@
+2012-11-30  Oliver Hunt  <oliver@apple.com>
+
+        Add direct string->function code cache
+        https://bugs.webkit.org/show_bug.cgi?id=103764
+
+        Reviewed by Michael Saboff.
+
+        A fairly logically simple patch.  We now track the start of the
+        unique portion of a functions body, and use that as our key for
+        unlinked function code.  This allows us to cache identical code
+        in different contexts, leading to a small but consistent improvement
+        on the benchmarks we track.
+
+        * bytecode/UnlinkedCodeBlock.cpp:
+        (JSC::UnlinkedFunctionExecutable::UnlinkedFunctionExecutable):
+        * bytecode/UnlinkedCodeBlock.h:
+        (JSC::UnlinkedFunctionExecutable::functionStartOffset):
+        (UnlinkedFunctionExecutable):
+        * parser/ASTBuilder.h:
+        (ASTBuilder):
+        (JSC::ASTBuilder::setFunctionStart):
+        * parser/Nodes.cpp:
+        * parser/Nodes.h:
+        (JSC::FunctionBodyNode::setFunctionStart):
+        (JSC::FunctionBodyNode::functionStart):
+        (FunctionBodyNode):
+        * parser/Parser.cpp:
+        (JSC::::parseFunctionInfo):
+        * parser/Parser.h:
+        (JSC::Parser::findCachedFunctionInfo):
+        * parser/SyntaxChecker.h:
+        (JSC::SyntaxChecker::setFunctionStart):
+        * runtime/CodeCache.cpp:
+        (JSC::CodeCache::generateFunctionCodeBlock):
+        (JSC::CodeCache::getFunctionCodeBlock):
+        (JSC::CodeCache::usedFunctionCode):
+        * runtime/CodeCache.h:
+
 2012-11-30  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         Crash in conversion of empty OpaqueJSString to Identifier 

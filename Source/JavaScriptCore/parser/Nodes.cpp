@@ -41,6 +41,7 @@
 #include "PropertyNameArray.h"
 #include "RegExpObject.h"
 #include "SamplingTool.h"
+#include "SourceProviderCacheItem.h"
 #include <wtf/Assertions.h>
 #include <wtf/RefCountedLeakCounter.h>
 #include <wtf/Threading.h>
