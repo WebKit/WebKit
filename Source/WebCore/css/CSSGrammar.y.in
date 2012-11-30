@@ -713,11 +713,11 @@ supports_declaration_condition:
         CSSParser* p = static_cast<CSSParser*>(parser);
         if ($3 && $6) {
             p->m_valueList = p->sinkFloatingValueList($6);
-            int oldParsedProperties = p->m_parsedProperties->size();
+            int oldParsedProperties = p->m_parsedProperties.size();
             $$ = p->parseValue(static_cast<CSSPropertyID>($3), $7);
             // We just need to know if the declaration is supported as it is written. Rollback any additions.
             if ($$)
-                p->rollbackLastProperties(p->m_parsedProperties->size() - oldParsedProperties);
+                p->rollbackLastProperties(p->m_parsedProperties.size() - oldParsedProperties);
             p->m_valueList = nullptr;
         }
         p->markPropertyEnd($7, false);

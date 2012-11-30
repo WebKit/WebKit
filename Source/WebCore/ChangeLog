@@ -1,3 +1,16 @@
+2012-11-29  Pablo Flouret  <pablof@motorola.com>
+
+        REGRESSION(r134693): Compilation error on @supports grammar code
+        https://bugs.webkit.org/show_bug.cgi?id=103678
+
+        Reviewed by Tony Chang.
+
+        Coming from https://bugs.webkit.org/show_bug.cgi?id=102295
+
+        No new tests, compile fix.
+
+        * css/CSSGrammar.y.in:
+
 2012-11-29  Simon Fraser  <simon.fraser@apple.com>
 
         Avoid painting lots of small rects in WebLayer painting
