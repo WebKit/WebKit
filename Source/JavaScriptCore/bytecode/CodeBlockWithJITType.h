@@ -23,23 +23,34 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef CodeType_h
-#define CodeType_h
+#ifndef CodeBlockWithJITType_h
+#define CodeBlockWithJITType_h
 
-#include <wtf/Platform.h>
+#include "CodeBlock.h"
 
 namespace JSC {
 
-enum CodeType { GlobalCode, EvalCode, FunctionCode };
+// We sometimes what to print the CodeBlock's ID before setting its JITCode. At that
+// point the CodeBlock will claim a bogus JITType. This helper class lets us do that.
+
+class CodeBlockWithJITType {
+public:
+    CodeBlockWithJITType(CodeBlock* codeBlock, JITCode::JITType jitType)
+        : m_codeBlock(codeBlock)
+        , m_jitType(jitType)
+    {
+    }
+    
+    void dump(PrintStream& out) const
+    {
+        m_codeBlock->dumpAssumingJITType(out, m_jitType);
+    }
+private:
+    CodeBlock* m_codeBlock;
+    JITCode::JITType m_jitType;
+};
 
 } // namespace JSC
 
-namespace WTF {
-
-class PrintStream;
-void printInternal(PrintStream&, JSC::CodeType);
-
-} // namespace WTF
-
-#endif // CodeType_h
+#endif // CodeBlockWithJITType_h
 

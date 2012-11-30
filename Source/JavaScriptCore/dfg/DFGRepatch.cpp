@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,6 +37,7 @@
 #include "Operations.h"
 #include "PolymorphicPutByIdList.h"
 #include "RepatchBuffer.h"
+#include <wtf/StringPrintStream.h>
 
 namespace JSC { namespace DFG {
 
@@ -235,8 +236,8 @@ static void generateProtoChainAccessStub(ExecState* exec, StructureStubInfo& stu
     
     stubRoutine = FINALIZE_CODE_FOR_DFG_STUB(
         patchBuffer,
-        ("DFG prototype chain access stub for CodeBlock %p, return point %p",
-         exec->codeBlock(), successLabel.executableAddress()));
+        ("DFG prototype chain access stub for %s, return point %p",
+            toCString(*exec->codeBlock()).data(), successLabel.executableAddress()));
 }
 
 static bool tryCacheGetByID(ExecState* exec, JSValue baseValue, const Identifier& propertyName, const PropertySlot& slot, StructureStubInfo& stubInfo)
@@ -296,9 +297,9 @@ static bool tryCacheGetByID(ExecState* exec, JSValue baseValue, const Identifier
         
         stubInfo.stubRoutine = FINALIZE_CODE_FOR_DFG_STUB(
             patchBuffer,
-            ("DFG GetById array length stub for CodeBlock %p, return point %p",
-             exec->codeBlock(), stubInfo.callReturnLocation.labelAtOffset(
-                 stubInfo.patch.dfg.deltaCallToDone).executableAddress()));
+            ("DFG GetById array length stub for %s, return point %p",
+                toCString(*exec->codeBlock()).data(), stubInfo.callReturnLocation.labelAtOffset(
+                    stubInfo.patch.dfg.deltaCallToDone).executableAddress()));
         
         RepatchBuffer repatchBuffer(codeBlock);
         replaceWithJump(repatchBuffer, stubInfo, stubInfo.stubRoutine->code().code());
@@ -525,9 +526,9 @@ static bool tryBuildGetByIDList(ExecState* exec, JSValue baseValue, const Identi
             createJITStubRoutine(
                 FINALIZE_DFG_CODE(
                     patchBuffer,
-                    ("DFG GetById polymorphic list access for CodeBlock %p, return point %p",
-                     exec->codeBlock(), stubInfo.callReturnLocation.labelAtOffset(
-                         stubInfo.patch.dfg.deltaCallToDone).executableAddress())),
+                    ("DFG GetById polymorphic list access for %s, return point %p",
+                        toCString(*exec->codeBlock()).data(), stubInfo.callReturnLocation.labelAtOffset(
+                            stubInfo.patch.dfg.deltaCallToDone).executableAddress())),
                 *globalData,
                 codeBlock->ownerExecutable(),
                 slot.cachedPropertyType() == PropertySlot::Getter
@@ -737,9 +738,9 @@ static void emitPutReplaceStub(
             
     stubRoutine = FINALIZE_CODE_FOR_DFG_STUB(
         patchBuffer,
-        ("DFG PutById replace stub for CodeBlock %p, return point %p",
-         exec->codeBlock(), stubInfo.callReturnLocation.labelAtOffset(
-             stubInfo.patch.dfg.deltaCallToDone).executableAddress()));
+        ("DFG PutById replace stub for %s, return point %p",
+            toCString(*exec->codeBlock()).data(), stubInfo.callReturnLocation.labelAtOffset(
+                stubInfo.patch.dfg.deltaCallToDone).executableAddress()));
 }
 
 static void emitPutTransitionStub(
@@ -937,11 +938,11 @@ static void emitPutTransitionStub(
         createJITStubRoutine(
             FINALIZE_DFG_CODE(
                 patchBuffer,
-                ("DFG PutById %stransition stub (%p -> %p) for CodeBlock %p, return point %p",
-                 structure->outOfLineCapacity() != oldStructure->outOfLineCapacity() ? "reallocating " : "",
-                 oldStructure, structure,
-                 exec->codeBlock(), stubInfo.callReturnLocation.labelAtOffset(
-                     stubInfo.patch.dfg.deltaCallToDone).executableAddress())),
+                ("DFG PutById %stransition stub (%p -> %p) for %s, return point %p",
+                    structure->outOfLineCapacity() != oldStructure->outOfLineCapacity() ? "reallocating " : "",
+                    oldStructure, structure,
+                    toCString(*exec->codeBlock()).data(), stubInfo.callReturnLocation.labelAtOffset(
+                        stubInfo.patch.dfg.deltaCallToDone).executableAddress())),
             *globalData,
             exec->codeBlock()->ownerExecutable(),
             structure->outOfLineCapacity() != oldStructure->outOfLineCapacity(),
@@ -1230,9 +1231,9 @@ void dfgLinkClosureCall(ExecState* exec, CallLinkInfo& callLinkInfo, CodeBlock* 
     RefPtr<ClosureCallStubRoutine> stubRoutine = adoptRef(new ClosureCallStubRoutine(
         FINALIZE_DFG_CODE(
             patchBuffer,
-            ("DFG closure call stub for CodeBlock %p, return point %p, target %p (CodeBlock %p)",
-                callerCodeBlock, callLinkInfo.callReturnLocation.labelAtOffset(0).executableAddress(),
-                codePtr.executableAddress(), calleeCodeBlock)),
+            ("DFG closure call stub for %s, return point %p, target %p (%s)",
+                toCString(*callerCodeBlock).data(), callLinkInfo.callReturnLocation.labelAtOffset(0).executableAddress(),
+                codePtr.executableAddress(), toCString(*calleeCodeBlock).data())),
         *globalData, callerCodeBlock->ownerExecutable(), structure, executable, callLinkInfo.codeOrigin));
     
     RepatchBuffer repatchBuffer(callerCodeBlock);

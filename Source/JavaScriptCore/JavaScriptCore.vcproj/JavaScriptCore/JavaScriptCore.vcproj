@@ -646,6 +646,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\runtime\CodeSpecializationKind.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\runtime\CodeSpecializationKind.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\runtime\CommonIdentifiers.cpp"
 				>
 			</File>
@@ -1630,11 +1638,31 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\bytecode\CodeBlockHash.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\bytecode\CodeBlockHash.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\bytecode\CodeBlockWithJITType.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\bytecode\CodeOrigin.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\bytecode\CodeOrigin.h"
 				>
 			</File>
 			<File
 				RelativePath="..\..\bytecode\CodeType.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\bytecode\CodeType.cpp"
 				>
 			</File>
 			<File
@@ -1979,6 +2007,10 @@
 			</File>
 			<File
 				RelativePath="..\..\jit\JITCall32_64.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\jit\JITCode.cpp"
 				>
 			</File>
 			<File

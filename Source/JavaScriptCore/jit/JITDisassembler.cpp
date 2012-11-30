@@ -29,6 +29,7 @@
 #if ENABLE(JIT)
 
 #include "CodeBlock.h"
+#include "CodeBlockWithJITType.h"
 #include "JIT.h"
 
 namespace JSC {
@@ -46,7 +47,7 @@ JITDisassembler::~JITDisassembler()
 
 void JITDisassembler::dump(PrintStream& out, LinkBuffer& linkBuffer)
 {
-    out.print("Baseline JIT code for CodeBlock ", RawPointer(m_codeBlock), ", instruction count = ", m_codeBlock->instructionCount(), "\n");
+    out.print("Baseline JIT code for ", CodeBlockWithJITType(m_codeBlock, JITCode::BaselineJIT), ", instruction count = ", m_codeBlock->instructionCount(), "\n");
     out.print("   Code at [", RawPointer(linkBuffer.debugAddress()), ", ", RawPointer(static_cast<char*>(linkBuffer.debugAddress()) + linkBuffer.debugSize()), "):\n");
     dumpDisassembly(out, linkBuffer, m_startOfCode, m_labelForBytecodeIndexInMainPath[0]);
     
@@ -78,7 +79,7 @@ void JITDisassembler::dumpForInstructions(PrintStream& out, LinkBuffer& linkBuff
             continue;
         }
         out.print(prefix);
-        m_codeBlock->dump(i);
+        m_codeBlock->dumpBytecode(i);
         for (unsigned nextIndex = i + 1; ; nextIndex++) {
             if (nextIndex >= labels.size()) {
                 dumpDisassembly(out, linkBuffer, labels[i], endLabel);

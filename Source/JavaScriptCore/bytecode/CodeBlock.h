@@ -35,6 +35,7 @@
 #include "BytecodeConventions.h"
 #include "CallLinkInfo.h"
 #include "CallReturnOffsetToBytecodeOffset.h"
+#include "CodeBlockHash.h"
 #include "CodeOrigin.h"
 #include "CodeType.h"
 #include "Comment.h"
@@ -128,6 +129,10 @@ namespace JSC {
     public:
         JS_EXPORT_PRIVATE virtual ~CodeBlock();
         
+        CodeBlockHash hash() const;
+        void dumpAssumingJITType(PrintStream&, JITCode::JITType) const;
+        void dump(PrintStream&) const;
+        
         int numParameters() const { return m_numParameters; }
         void setNumParameters(int newValue);
         
@@ -138,11 +143,9 @@ namespace JSC {
         PassOwnPtr<CodeBlock> releaseAlternative() { return m_alternative.release(); }
         void setAlternative(PassOwnPtr<CodeBlock> alternative) { m_alternative = alternative; }
         
-        CodeSpecializationKind specializationKind()
+        CodeSpecializationKind specializationKind() const
         {
-            if (m_isConstructor)
-                return CodeForConstruct;
-            return CodeForCall;
+            return specializationFromIsConstruct(m_isConstructor);
         }
         
 #if ENABLE(JIT)
@@ -163,8 +166,8 @@ namespace JSC {
 
         static void dumpStatistics();
 
-        void dump();
-        void dump(unsigned bytecodeOffset);
+        void dumpBytecode();
+        void dumpBytecode(unsigned bytecodeOffset);
         void printStructures(const Instruction*);
         void printStructure(const char* name, const Instruction*, int operand);
 
@@ -472,7 +475,7 @@ namespace JSC {
         }
         JITCode& getJITCode() { return m_jitCode; }
         MacroAssemblerCodePtr getJITCodeWithArityCheck() { return m_jitCodeWithArityCheck; }
-        JITCode::JITType getJITType() { return m_jitCode.jitType(); }
+        JITCode::JITType getJITType() const { return m_jitCode.jitType(); }
         ExecutableMemoryHandle* executableMemory() { return getJITCode().getExecutableMemory(); }
         virtual JSObject* compileOptimized(ExecState*, JSScope*, unsigned bytecodeIndex) = 0;
         virtual void jettison() = 0;
@@ -1212,7 +1215,7 @@ namespace JSC {
                 m_constantRegisters[i].set(*m_globalData, ownerExecutable(), constants[i].get());
         }
 
-        void dump(ExecState*, const Instruction* begin, const Instruction*&);
+        void dumpBytecode(ExecState*, const Instruction* begin, const Instruction*&);
 
         CString registerName(ExecState*, int r) const;
         void printUnaryOp(ExecState*, int location, const Instruction*&, const char* op);

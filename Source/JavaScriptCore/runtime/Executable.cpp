@@ -665,4 +665,26 @@ String FunctionExecutable::paramString() const
     return m_unlinkedExecutable->paramString();
 }
 
+CodeBlockHash ExecutableBase::hashFor(CodeSpecializationKind kind) const
+{
+    if (this->classInfo() == &NativeExecutable::s_info)
+        return jsCast<const NativeExecutable*>(this)->hashFor(kind);
+    
+    return jsCast<const ScriptExecutable*>(this)->hashFor(kind);
+}
+
+CodeBlockHash NativeExecutable::hashFor(CodeSpecializationKind kind) const
+{
+    if (kind == CodeForCall)
+        return CodeBlockHash(static_cast<unsigned>(bitwise_cast<size_t>(m_function)));
+    
+    ASSERT(kind == CodeForConstruct);
+    return CodeBlockHash(static_cast<unsigned>(bitwise_cast<size_t>(m_constructor)));
+}
+
+CodeBlockHash ScriptExecutable::hashFor(CodeSpecializationKind kind) const
+{
+    return CodeBlockHash(source(), kind);
+}
+
 }

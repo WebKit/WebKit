@@ -40,10 +40,15 @@ public:
     {
     }
     
-    void* value() const { return m_value; }
+    explicit RawPointer(const void* value)
+        : m_value(value)
+    {
+    }
+    
+    const void* value() const { return m_value; }
     
 private:
-    void* m_value;
+    const void* m_value;
 };
 
 } // namespace WTF

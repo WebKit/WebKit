@@ -380,7 +380,7 @@ void Interpreter::dumpCallFrame(CallFrame*)
 
 void Interpreter::dumpCallFrame(CallFrame* callFrame)
 {
-    callFrame->codeBlock()->dump();
+    callFrame->codeBlock()->dumpBytecode();
     dumpRegisters(callFrame);
 }
 

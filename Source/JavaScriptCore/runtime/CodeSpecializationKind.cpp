@@ -23,23 +23,25 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef CodeType_h
-#define CodeType_h
+#include "config.h"
+#include "CodeSpecializationKind.h"
 
-#include <wtf/Platform.h>
-
-namespace JSC {
-
-enum CodeType { GlobalCode, EvalCode, FunctionCode };
-
-} // namespace JSC
+#include <wtf/PrintStream.h>
 
 namespace WTF {
 
-class PrintStream;
-void printInternal(PrintStream&, JSC::CodeType);
+void printInternal(PrintStream& out, JSC::CodeSpecializationKind kind)
+{
+    if (kind == JSC::CodeForCall) {
+        out.print("Call");
+        return;
+    }
+    
+    ASSERT(kind == JSC::CodeForConstruct);
+    out.print("Construct");
+}
 
 } // namespace WTF
 
-#endif // CodeType_h
+
 

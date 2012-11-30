@@ -23,23 +23,30 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef CodeType_h
-#define CodeType_h
+#include "config.h"
+#include "CodeType.h"
 
-#include <wtf/Platform.h>
-
-namespace JSC {
-
-enum CodeType { GlobalCode, EvalCode, FunctionCode };
-
-} // namespace JSC
+#include <wtf/PrintStream.h>
 
 namespace WTF {
 
-class PrintStream;
-void printInternal(PrintStream&, JSC::CodeType);
+void printInternal(PrintStream& out, JSC::CodeType codeType)
+{
+    switch (codeType) {
+    case JSC::GlobalCode:
+        out.print("Global");
+        return;
+    case JSC::EvalCode:
+        out.print("Eval");
+        return;
+    case JSC::FunctionCode:
+        out.print("Function");
+        return;
+    default:
+        CRASH();
+        return;
+    }
+}
 
 } // namespace WTF
-
-#endif // CodeType_h
 

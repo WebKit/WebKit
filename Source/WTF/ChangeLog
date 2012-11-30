@@ -1,3 +1,26 @@
+2012-11-29  Filip Pizlo  <fpizlo@apple.com>
+
+        It should be easy to find code blocks in debug dumps
+        https://bugs.webkit.org/show_bug.cgi?id=103623
+
+        Reviewed by Geoffrey Garen.
+
+        Changed RawPointer to accept both const void* and void*, and use the former internally.
+        
+        Cleaned up SHA1 so that the functionality already used internally for self-testing is
+        available via the API. This includes addBytes(CString) and computing hex digests.
+
+        * wtf/RawPointer.h:
+        (WTF::RawPointer::RawPointer):
+        (RawPointer):
+        (WTF::RawPointer::value):
+        * wtf/SHA1.cpp:
+        (WTF::expectSHA1):
+        (WTF::SHA1::hexDigest):
+        (WTF::SHA1::computeHexDigest):
+        * wtf/SHA1.h:
+        (WTF::SHA1::addBytes):
+
 2012-11-29  Patrick Gansterer  <paroga@webkit.org>
 
         Build fix for WinCE after r136096.

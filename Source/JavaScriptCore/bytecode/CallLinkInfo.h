@@ -28,6 +28,7 @@
 
 #include "ClosureCallStubRoutine.h"
 #include "CodeLocation.h"
+#include "CodeSpecializationKind.h"
 #include "JITWriteBarrier.h"
 #include "JSFunction.h"
 #include "Opcode.h"
@@ -64,6 +65,11 @@ struct CallLinkInfo : public BasicRawSentinelNode<CallLinkInfo> {
     {
         if (isOnList())
             remove();
+    }
+    
+    CodeSpecializationKind specializationKind() const
+    {
+        return specializationFromIsConstruct(callType == Construct);
     }
 
     CodeLocationNearCall callReturnLocation;

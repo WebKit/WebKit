@@ -88,14 +88,14 @@ void Graph::dumpCodeOrigin(PrintStream& out, const char* prefix, NodeIndex prevN
     for (unsigned i = previousInlineStack.size(); i-- > indexOfDivergence;) {
         out.print(prefix);
         printWhiteSpace(out, i * 2);
-        out.print("<-- ", RawPointer(previousInlineStack[i].inlineCallFrame->executable.get()), "\n");
+        out.print("<-- #", previousInlineStack[i].inlineCallFrame->hash(), "\n");
     }
     
     // Print the pushes.
     for (unsigned i = indexOfDivergence; i < currentInlineStack.size(); ++i) {
         out.print(prefix);
         printWhiteSpace(out, i * 2);
-        out.print("--> ", RawPointer(currentInlineStack[i].inlineCallFrame->executable.get()), "\n");
+        out.print("--> #", currentInlineStack[i].inlineCallFrame->hash(), "\n");
     }
 }
 

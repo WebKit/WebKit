@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,23 +23,36 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef CodeType_h
-#define CodeType_h
+#include "config.h"
+#include "JITCode.h"
 
-#include <wtf/Platform.h>
-
-namespace JSC {
-
-enum CodeType { GlobalCode, EvalCode, FunctionCode };
-
-} // namespace JSC
+#include <wtf/PrintStream.h>
 
 namespace WTF {
 
-class PrintStream;
-void printInternal(PrintStream&, JSC::CodeType);
+void printInternal(PrintStream& out, JSC::JITCode::JITType type)
+{
+    switch (type) {
+    case JSC::JITCode::None:
+        out.print("None");
+        return;
+    case JSC::JITCode::HostCallThunk:
+        out.print("Host");
+        return;
+    case JSC::JITCode::InterpreterThunk:
+        out.print("LLInt");
+        return;
+    case JSC::JITCode::BaselineJIT:
+        out.print("Baseline");
+        return;
+    case JSC::JITCode::DFGJIT:
+        out.print("DFG");
+        return;
+    default:
+        CRASH();
+        return;
+    }
+}
 
 } // namespace WTF
-
-#endif // CodeType_h
 

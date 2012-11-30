@@ -160,11 +160,9 @@ void ExecutionCounter::reset()
     m_activeThreshold = 0;
 }
 
-const char* ExecutionCounter::status() const
+void ExecutionCounter::dump(PrintStream& out) const
 {
-    static char result[80];
-    snprintf(result, sizeof(result), "%lf/%lf, %d", count(), static_cast<double>(m_activeThreshold), m_counter);
-    return result;
+    out.printf("%lf/%lf, %d", count(), static_cast<double>(m_activeThreshold), m_counter);
 }
 
 } // namespace JSC

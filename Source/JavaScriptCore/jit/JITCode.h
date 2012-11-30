@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -157,7 +157,7 @@ namespace JSC {
             return m_ref.executableMemory();
         }
         
-        JITType jitType()
+        JITType jitType() const
         {
             return m_jitType;
         }
@@ -187,6 +187,13 @@ namespace JSC {
 #endif // ENABLE(JIT) || ENABLE(LLINT)
     };
 
-};
+} // namespace JSC
+
+namespace WTF {
+
+class PrintStream;
+void printInternal(PrintStream&, JSC::JITCode::JITType);
+
+} // namespace WTF
 
 #endif

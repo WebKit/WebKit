@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,6 +26,8 @@
 #ifndef CodeOrigin_h
 #define CodeOrigin_h
 
+#include "CodeBlockHash.h"
+#include "CodeSpecializationKind.h"
 #include "ValueRecovery.h"
 #include "WriteBarrier.h"
 #include <wtf/BitVector.h>
@@ -98,6 +100,10 @@ struct InlineCallFrame {
     BitVector capturedVars; // Indexed by the machine call frame's variable numbering.
     unsigned stackOffset : 31;
     bool isCall : 1;
+    
+    CodeSpecializationKind specializationKind() const { return specializationFromIsCall(isCall); }
+    
+    CodeBlockHash hash() const;
 };
 
 struct CodeOriginAtCallReturnOffset {
@@ -105,36 +111,12 @@ struct CodeOriginAtCallReturnOffset {
     unsigned callReturnOffset;
 };
 
-inline unsigned CodeOrigin::inlineDepthForCallFrame(InlineCallFrame* inlineCallFrame)
-{
-    unsigned result = 1;
-    for (InlineCallFrame* current = inlineCallFrame; current; current = current->caller.inlineCallFrame)
-        result++;
-    return result;
-}
-
-inline unsigned CodeOrigin::inlineDepth() const
-{
-    return inlineDepthForCallFrame(inlineCallFrame);
-}
-    
 inline bool CodeOrigin::operator==(const CodeOrigin& other) const
 {
     return bytecodeIndex == other.bytecodeIndex
         && inlineCallFrame == other.inlineCallFrame;
 }
     
-// Get the inline stack. This is slow, and is intended for debugging only.
-inline Vector<CodeOrigin> CodeOrigin::inlineStack() const
-{
-    Vector<CodeOrigin> result(inlineDepth());
-    result.last() = *this;
-    unsigned index = result.size() - 2;
-    for (InlineCallFrame* current = inlineCallFrame; current; current = current->caller.inlineCallFrame)
-        result[index--] = current->caller;
-    return result;
-}
-
 inline unsigned getCallReturnOffsetForCodeOrigin(CodeOriginAtCallReturnOffset* data)
 {
     return data->callReturnOffset;

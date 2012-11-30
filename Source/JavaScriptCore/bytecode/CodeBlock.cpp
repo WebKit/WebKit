@@ -62,6 +62,24 @@ namespace JSC {
 using namespace DFG;
 #endif
 
+CodeBlockHash CodeBlock::hash() const
+{
+    return CodeBlockHash(ownerExecutable()->source(), specializationKind());
+}
+
+void CodeBlock::dumpAssumingJITType(PrintStream& out, JITCode::JITType jitType) const
+{
+    out.print("#", hash(), ":[", RawPointer(this), ", ", jitType, codeType());
+    if (codeType() == FunctionCode)
+        out.print(specializationKind());
+    out.print("]");
+}
+
+void CodeBlock::dump(PrintStream& out) const
+{
+    dumpAssumingJITType(out, getJITType());
+}
+
 static String escapeQuotes(const String& str)
 {
     String result = str;
@@ -480,7 +498,7 @@ void CodeBlock::printStructures(const Instruction* vPC)
     ASSERT(vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_generic) || vPC[0].u.opcode == interpreter->getOpcode(op_put_by_id_generic) || vPC[0].u.opcode == interpreter->getOpcode(op_call) || vPC[0].u.opcode == interpreter->getOpcode(op_call_eval) || vPC[0].u.opcode == interpreter->getOpcode(op_construct));
 }
 
-void CodeBlock::dump()
+void CodeBlock::dumpBytecode()
 {
     // We only use the ExecState* for things that don't actually lead to JS execution,
     // like converting a JSString to a String. Hence the globalExec is appropriate.
@@ -491,12 +509,12 @@ void CodeBlock::dump()
     for (size_t i = 0; i < instructions().size(); i += opcodeLengths[exec->interpreter()->getOpcodeID(instructions()[i].u.opcode)])
         ++instructionCount;
 
+    dataLog(*this);
     dataLogF(
-        "%lu m_instructions; %lu bytes at %p (%s); %d parameter(s); %d callee register(s); %d variable(s)",
+        ": %lu m_instructions; %lu bytes; %d parameter(s); %d callee register(s); %d variable(s)",
         static_cast<unsigned long>(instructions().size()),
         static_cast<unsigned long>(instructions().size() * sizeof(Instruction)),
-        this, codeTypeToString(codeType()), m_numParameters, m_numCalleeRegisters,
-        m_numVars);
+        m_numParameters, m_numCalleeRegisters, m_numVars);
     if (symbolTable() && symbolTable()->captureCount())
         dataLogF("; %d captured var(s)", symbolTable()->captureCount());
     if (usesArguments()) {
@@ -512,7 +530,7 @@ void CodeBlock::dump()
     const Instruction* begin = instructions().begin();
     const Instruction* end = instructions().end();
     for (const Instruction* it = begin; it != end; ++it)
-        dump(exec, begin, it);
+        dumpBytecode(exec, begin, it);
 
     if (!m_identifiers.isEmpty()) {
         dataLogF("\nIdentifiers:\n");
@@ -607,7 +625,7 @@ void CodeBlock::dump()
     dataLogF("\n");
 }
 
-void CodeBlock::dump(ExecState* exec, const Instruction* begin, const Instruction*& it)
+void CodeBlock::dumpBytecode(ExecState* exec, const Instruction* begin, const Instruction*& it)
 {
     int location = it - begin;
     switch (exec->interpreter()->getOpcodeID(it->u.opcode)) {
@@ -1458,11 +1476,11 @@ void CodeBlock::dump(ExecState* exec, const Instruction* begin, const Instructio
     }
 }
 
-void CodeBlock::dump(unsigned bytecodeOffset)
+void CodeBlock::dumpBytecode(unsigned bytecodeOffset)
 {
     ExecState* exec = m_globalObject->globalExec();
     const Instruction* it = instructions().begin() + bytecodeOffset;
-    dump(exec, instructions().begin(), it);
+    dumpBytecode(exec, instructions().begin(), it);
 }
 
 #if DUMP_CODE_BLOCK_STATISTICS
@@ -1892,7 +1910,7 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
     m_instructions = WTF::RefCountedArray<Instruction>(instructions);
 
     if (Options::dumpGeneratedBytecodes())
-        dump();
+        dumpBytecode();
     m_globalData->finishedCompiling(this);
 }
 
@@ -2186,7 +2204,7 @@ void CodeBlock::finalizeUnconditionally()
         for (unsigned i = 0; i < m_llintCallLinkInfos.size(); ++i) {
             if (m_llintCallLinkInfos[i].isLinked() && !Heap::isMarked(m_llintCallLinkInfos[i].callee.get())) {
                 if (verboseUnlinking)
-                    dataLogF("Clearing LLInt call from %p.\n", this);
+                    dataLog("Clearing LLInt call from ", *this, "\n");
                 m_llintCallLinkInfos[i].unlink();
             }
             if (!!m_llintCallLinkInfos[i].lastSeenCallee && !Heap::isMarked(m_llintCallLinkInfos[i].lastSeenCallee.get()))
@@ -2199,14 +2217,14 @@ void CodeBlock::finalizeUnconditionally()
     // Check if we're not live. If we are, then jettison.
     if (!(shouldImmediatelyAssumeLivenessDuringScan() || m_dfgData->livenessHasBeenProved)) {
         if (verboseUnlinking)
-            dataLogF("Code block %p (executable %p) has dead weak references, jettisoning during GC.\n", this, ownerExecutable());
+            dataLog(*this, " has dead weak references, jettisoning during GC.\n");
 
         // Make sure that the baseline JIT knows that it should re-warm-up before
         // optimizing.
         alternative()->optimizeAfterWarmUp();
         
         if (DFG::shouldShowDisassembly()) {
-            dataLogF("DFG CodeBlock %p will be jettisoned because of the following dead references:\n", this);
+            dataLog(*this, "will be jettisoned because of the following dead references:\n");
             for (unsigned i = 0; i < m_dfgData->transitions.size(); ++i) {
                 WeakReferenceTransition& transition = m_dfgData->transitions[i];
                 JSCell* origin = transition.m_codeOrigin.get();
@@ -2234,7 +2252,7 @@ void CodeBlock::finalizeUnconditionally()
     for (size_t size = m_putToBaseOperations.size(), i = 0; i < size; ++i) {
         if (m_putToBaseOperations[i].m_structure && !Heap::isMarked(m_putToBaseOperations[i].m_structure.get())) {
             if (verboseUnlinking)
-                dataLogF("Clearing putToBase info in %p.\n", this);
+                dataLog("Clearing putToBase info in ", *this, "\n");
             m_putToBaseOperations[i].m_structure.clear();
         }
     }
@@ -2248,7 +2266,7 @@ void CodeBlock::finalizeUnconditionally()
         m_resolveOperations[i].last().m_structure.clear();
         if (m_resolveOperations[i].last().m_structure && !Heap::isMarked(m_resolveOperations[i].last().m_structure.get())) {
             if (verboseUnlinking)
-                dataLogF("Clearing resolve info in %p.\n", this);
+                dataLog("Clearing resolve info in ", *this, "\n");
             m_resolveOperations[i].last().m_structure.clear();
         }
     }
@@ -2262,13 +2280,23 @@ void CodeBlock::finalizeUnconditionally()
                 if (ClosureCallStubRoutine* stub = callLinkInfo(i).stub.get()) {
                     if (!Heap::isMarked(stub->structure())
                         || !Heap::isMarked(stub->executable())) {
-                        if (verboseUnlinking)
-                            dataLogF("Clearing closure call from %p to %p, stub routine %p.\n", this, stub->executable(), stub);
+                        if (verboseUnlinking) {
+                            dataLog(
+                                "Clearing closure call from ", *this, " to ",
+                                stub->executable()->hashFor(callLinkInfo(i).specializationKind()),
+                                ", stub routine ", RawPointer(stub), ".\n");
+                        }
                         callLinkInfo(i).unlink(*m_globalData, repatchBuffer);
                     }
                 } else if (!Heap::isMarked(callLinkInfo(i).callee.get())) {
-                    if (verboseUnlinking)
-                        dataLogF("Clearing call from %p to %p.\n", this, callLinkInfo(i).callee.get());
+                    if (verboseUnlinking) {
+                        dataLog(
+                            "Clearing call from ", *this, " to ",
+                            RawPointer(callLinkInfo(i).callee.get()), " (",
+                            callLinkInfo(i).callee.get()->executable()->hashFor(
+                                callLinkInfo(i).specializationKind()),
+                            ").\n");
+                    }
                     callLinkInfo(i).unlink(*m_globalData, repatchBuffer);
                 }
             }
@@ -2303,7 +2331,7 @@ void CodeBlock::resetStubInternal(RepatchBuffer& repatchBuffer, StructureStubInf
     AccessType accessType = static_cast<AccessType>(stubInfo.accessType);
     
     if (verboseUnlinking)
-        dataLogF("Clearing structure cache (kind %d) in %p.\n", stubInfo.accessType, this);
+        dataLog("Clearing structure cache (kind ", static_cast<int>(stubInfo.accessType), ") in ", *this, ".\n");
     
     if (isGetByIdAccess(accessType)) {
         if (getJITCode().jitType() == JITCode::DFGJIT)
@@ -2769,7 +2797,7 @@ void CodeBlock::reoptimize()
     ASSERT(replacement()->alternative() == this);
     replacement()->tallyFrequentExitSites();
     if (DFG::shouldShowDisassembly())
-        dataLogF("DFG CodeBlock %p will be jettisoned due to reoptimization of %p.\n", replacement(), this);
+        dataLog(*replacement(), " will be jettisoned due to reoptimization of ", *this, ".\n");
     replacement()->jettison();
     countReoptimization();
     optimizeAfterWarmUp();
@@ -2836,7 +2864,7 @@ void ProgramCodeBlock::jettison()
     ASSERT(JITCode::isOptimizingJIT(getJITType()));
     ASSERT(this == replacement());
     if (DFG::shouldShowDisassembly())
-        dataLogF("Jettisoning DFG CodeBlock %p.\n", this);
+        dataLog("Jettisoning ", *this, ".\n");
     static_cast<ProgramExecutable*>(ownerExecutable())->jettisonOptimizedCode(*globalData());
 }
 
@@ -2845,7 +2873,7 @@ void EvalCodeBlock::jettison()
     ASSERT(JITCode::isOptimizingJIT(getJITType()));
     ASSERT(this == replacement());
     if (DFG::shouldShowDisassembly())
-        dataLogF("Jettisoning DFG CodeBlock %p.\n", this);
+        dataLog("Jettisoning ", *this, ".\n");
     static_cast<EvalExecutable*>(ownerExecutable())->jettisonOptimizedCode(*globalData());
 }
 
@@ -2854,7 +2882,7 @@ void FunctionCodeBlock::jettison()
     ASSERT(JITCode::isOptimizingJIT(getJITType()));
     ASSERT(this == replacement());
     if (DFG::shouldShowDisassembly())
-        dataLogF("Jettisoning DFG CodeBlock %p.\n", this);
+        dataLog("Jettisoning ", *this, ".\n");
     static_cast<FunctionExecutable*>(ownerExecutable())->jettisonOptimizedCodeFor(*globalData(), m_isConstructor ? CodeForConstruct : CodeForCall);
 }
 
@@ -2948,7 +2976,7 @@ void CodeBlock::updateAllPredictions(OperationInProgress operation)
 bool CodeBlock::shouldOptimizeNow()
 {
 #if ENABLE(JIT_VERBOSE_OSR)
-    dataLogF("Considering optimizing %p...\n", this);
+    dataLog("Considering optimizing ", *this, "...\n");
 #endif
 
 #if ENABLE(VERBOSE_VALUE_PROFILE)
@@ -2996,7 +3024,7 @@ void CodeBlock::tallyFrequentExitSites()
             continue;
         
 #if DFG_ENABLE(DEBUG_VERBOSE)
-        dataLogF("OSR exit #%u (bc#%u, @%u, %s) for code block %p occurred frequently; counting as frequent exit site.\n", i, exit.m_codeOrigin.bytecodeIndex, exit.m_nodeIndex, DFG::exitKindToString(exit.m_kind), this);
+        dataLog("OSR exit #", i, " (bc#", exit.m_codeOrigin.bytecodeIndex, ", @", exit.m_nodeIndex, ", ", DFG::exitKindToString(exit.m_kind), ") for ", *this, " occurred frequently: counting as frequent exit site.\n");
 #endif
     }
 }
@@ -3005,7 +3033,7 @@ void CodeBlock::tallyFrequentExitSites()
 #if ENABLE(VERBOSE_VALUE_PROFILE)
 void CodeBlock::dumpValueProfiles()
 {
-    dataLogF("ValueProfile for %p:\n", this);
+    dataLog("ValueProfile for ", *this, ":\n");
     for (unsigned i = 0; i < totalNumberOfValueProfiles(); ++i) {
         ValueProfile* profile = getFromAllValueProfiles(i);
         if (profile->m_bytecodeOffset < 0) {
@@ -3020,12 +3048,12 @@ void CodeBlock::dumpValueProfiles()
         profile->dump(WTF::dataFile());
         dataLogF("\n");
     }
-    dataLogF("RareCaseProfile for %p:\n", this);
+    dataLog("RareCaseProfile for ", *this, ":\n");
     for (unsigned i = 0; i < numberOfRareCaseProfiles(); ++i) {
         RareCaseProfile* profile = rareCaseProfile(i);
         dataLogF("   bc = %d: %u\n", profile->m_bytecodeOffset, profile->m_counter);
     }
-    dataLogF("SpecialFastCaseProfile for %p:\n", this);
+    dataLog("SpecialFastCaseProfile for ", *this, ":\n");
     for (unsigned i = 0; i < numberOfSpecialFastCaseProfiles(); ++i) {
         RareCaseProfile* profile = specialFastCaseProfile(i);
         dataLogF("   bc = %d: %u\n", profile->m_bytecodeOffset, profile->m_counter);

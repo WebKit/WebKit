@@ -1808,12 +1808,16 @@ DEFINE_STUB_FUNCTION(void, optimize)
     unsigned bytecodeIndex = stackFrame.args[0].int32();
 
 #if ENABLE(JIT_VERBOSE_OSR)
-    dataLogF("%p: Entered optimize with bytecodeIndex = %u, executeCounter = %s, reoptimizationRetryCounter = %u, optimizationDelayCounter = %u, exitCounter = ", codeBlock, bytecodeIndex, codeBlock->jitExecuteCounter().status(), codeBlock->reoptimizationRetryCounter(), codeBlock->optimizationDelayCounter());
+    dataLog(
+        *codeBlock, ": Entered optimize with bytecodeIndex = ", bytecodeIndex,
+        ", executeCounter = ", codeBlock->jitExecuteCounter(),
+        ", optimizationDelayCounter = ", codeBlock->reoptimizationRetryCounter(),
+        ", exitCounter = ");
     if (codeBlock->hasOptimizedReplacement())
-        dataLogF("%u", codeBlock->replacement()->osrExitCounter());
+        dataLog(codeBlock->replacement()->osrExitCounter());
     else
-        dataLogF("N/A");
-    dataLogF("\n");
+        dataLog("N/A");
+    dataLog("\n");
 #endif
 
     if (!codeBlock->checkIfOptimizationThresholdReached()) {
@@ -1823,7 +1827,7 @@ DEFINE_STUB_FUNCTION(void, optimize)
 
     if (codeBlock->hasOptimizedReplacement()) {
 #if ENABLE(JIT_VERBOSE_OSR)
-        dataLogF("Considering OSR into %p(%p).\n", codeBlock, codeBlock->replacement());
+        dataLogF("Considering OSR ", *codeBlock, " -> ", *codeBlock->replacement(), ".\n");
 #endif
         // If we have an optimized replacement, then it must be the case that we entered
         // cti_optimize from a loop. That's because is there's an optimized replacement,
@@ -1840,7 +1844,7 @@ DEFINE_STUB_FUNCTION(void, optimize)
         // additional checking anyway, to reduce the amount of recompilation thrashing.
         if (codeBlock->replacement()->shouldReoptimizeFromLoopNow()) {
 #if ENABLE(JIT_VERBOSE_OSR)
-            dataLogF("Triggering reoptimization of %p(%p) (in loop).\n", codeBlock, codeBlock->replacement());
+            dataLogF("Triggering reoptimization of ", *codeBlock, "(", *codeBlock->replacement(), ") (in loop).\n");
 #endif
             codeBlock->reoptimize();
             return;
@@ -1848,7 +1852,7 @@ DEFINE_STUB_FUNCTION(void, optimize)
     } else {
         if (!codeBlock->shouldOptimizeNow()) {
 #if ENABLE(JIT_VERBOSE_OSR)
-            dataLogF("Delaying optimization for %p (in loop) because of insufficient profiling.\n", codeBlock);
+            dataLogF("Delaying optimization for ", *codeBlock, " (in loop) because of insufficient profiling.\n");
 #endif
             return;
         }
@@ -1864,7 +1868,7 @@ DEFINE_STUB_FUNCTION(void, optimize)
         
         if (codeBlock->replacement() == codeBlock) {
 #if ENABLE(JIT_VERBOSE_OSR)
-            dataLogF("Optimizing %p failed.\n", codeBlock);
+            dataLogF("Optimizing ", *codeBlock, " failed.\n");
 #endif
             
             ASSERT(codeBlock->getJITType() == JITCode::BaselineJIT);
@@ -1878,12 +1882,12 @@ DEFINE_STUB_FUNCTION(void, optimize)
     
     if (void* address = DFG::prepareOSREntry(callFrame, optimizedCodeBlock, bytecodeIndex)) {
         if (Options::showDFGDisassembly()) {
-            dataLogF(
-                "Performing OSR from code block %p to code block %p, address %p to %p.\n",
-                codeBlock, optimizedCodeBlock, (STUB_RETURN_ADDRESS).value(), address);
+            dataLog(
+                "Performing OSR ", *codeBlock, " -> ", *optimizedCodeBlock, ", address ",
+                RawPointer((STUB_RETURN_ADDRESS).value()), " -> ", RawPointer(address), ".\n");
         }
 #if ENABLE(JIT_VERBOSE_OSR)
-        dataLogF("Optimizing %p succeeded, performing OSR after a delay of %u.\n", codeBlock, codeBlock->optimizationDelayCounter());
+        dataLogF("Optimizing ", *codeBlock, " succeeded, performing OSR after a delay of ", codeBlock->optimizationDelayCounter(), ".\n");
 #endif
 
         codeBlock->optimizeSoon();
@@ -1892,7 +1896,7 @@ DEFINE_STUB_FUNCTION(void, optimize)
     }
     
 #if ENABLE(JIT_VERBOSE_OSR)
-    dataLogF("Optimizing %p succeeded, OSR failed, after a delay of %u.\n", codeBlock, codeBlock->optimizationDelayCounter());
+    dataLogF("Optimizing ", *codeBlock, " succeeded, OSR failed, after a delay of ", codeBlock->optimizationDelayCounter(), ".\n");
 #endif
 
     // Count the OSR failure as a speculation failure. If this happens a lot, then
@@ -1900,7 +1904,7 @@ DEFINE_STUB_FUNCTION(void, optimize)
     optimizedCodeBlock->countOSRExit();
     
 #if ENABLE(JIT_VERBOSE_OSR)
-    dataLogF("Encountered OSR failure into %p(%p).\n", codeBlock, codeBlock->replacement());
+    dataLogF("Encountered OSR failure ", *codeBlock, " -> ", *codeBlock->replacement(), ".\n");
 #endif
 
     // We are a lot more conservative about triggering reoptimization after OSR failure than
@@ -1913,7 +1917,7 @@ DEFINE_STUB_FUNCTION(void, optimize)
     // reoptimization trigger.
     if (optimizedCodeBlock->shouldReoptimizeNow()) {
 #if ENABLE(JIT_VERBOSE_OSR)
-        dataLogF("Triggering reoptimization of %p(%p) (after OSR fail).\n", codeBlock, codeBlock->replacement());
+        dataLogF("Triggering reoptimization of ", *codeBlock, " -> ", *codeBlock->replacement(), " (after OSR fail).\n");
 #endif
         codeBlock->reoptimize();
         return;

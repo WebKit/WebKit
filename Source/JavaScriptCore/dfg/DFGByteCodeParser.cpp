@@ -3645,21 +3645,23 @@ void ByteCodeParser::parseCodeBlock()
     CodeBlock* codeBlock = m_inlineStackTop->m_codeBlock;
     
 #if DFG_ENABLE(DEBUG_VERBOSE)
-    dataLogF("Parsing code block %p. codeType = %s, captureCount = %u, needsFullScopeChain = %s, needsActivation = %s, isStrictMode = %s\n",
-            codeBlock,
-            codeTypeToString(codeBlock->codeType()),
-            codeBlock->symbolTable() ? codeBlock->symbolTable()->captureCount() : 0,
-            codeBlock->needsFullScopeChain()?"true":"false",
-            codeBlock->ownerExecutable()->needsActivation()?"true":"false",
-            codeBlock->ownerExecutable()->isStrictMode()?"true":"false");
-    codeBlock->baselineVersion()->dump();
+    dataLog(
+        "Parsing ", *codeBlock,
+        ": captureCount = ", codeBlock->symbolTable() ? codeBlock->symbolTable()->captureCount() : 0,
+        ", needsFullScopeChain = ", codeBlock->needsFullScopeChain(),
+        ", needsActivation = ", codeBlock->ownerExecutable()->needsActivation(),
+        ", isStrictMode = ", codeBlock->ownerExecutable()->isStrictMode(), "\n");
+    codeBlock->baselineVersion()->dumpBytecode();
 #endif
     
     for (unsigned jumpTargetIndex = 0; jumpTargetIndex <= codeBlock->numberOfJumpTargets(); ++jumpTargetIndex) {
         // The maximum bytecode offset to go into the current basicblock is either the next jump target, or the end of the instructions.
         unsigned limit = jumpTargetIndex < codeBlock->numberOfJumpTargets() ? codeBlock->jumpTarget(jumpTargetIndex) : codeBlock->instructions().size();
 #if DFG_ENABLE(DEBUG_VERBOSE)
-        dataLogF("Parsing bytecode with limit %p bc#%u at inline depth %u.\n", m_inlineStackTop->executable(), limit, CodeOrigin::inlineDepthForCallFrame(m_inlineStackTop->m_inlineCallFrame));
+        dataLog(
+            "Parsing bytecode with limit ", m_inlineStackTop->m_inlineCallFrame->hash(),
+            " bc#", limit, " at inline depth ",
+            CodeOrigin::inlineDepthForCallFrame(m_inlineStackTop->m_inlineCallFrame), ".\n");
 #endif
         ASSERT(m_currentIndex < limit);
 

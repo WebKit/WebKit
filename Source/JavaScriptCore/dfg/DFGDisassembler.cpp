@@ -28,6 +28,7 @@
 
 #if ENABLE(DFG_JIT)
 
+#include "CodeBlockWithJITType.h"
 #include "DFGGraph.h"
 
 namespace JSC { namespace DFG {
@@ -43,7 +44,7 @@ void Disassembler::dump(PrintStream& out, LinkBuffer& linkBuffer)
 {
     m_graph.m_dominators.computeIfNecessary(m_graph);
     
-    out.print("Generated JIT code for DFG CodeBlock ", RawPointer(m_graph.m_codeBlock), ", instruction count = ", m_graph.m_codeBlock->instructionCount(), ":\n");
+    out.print("Generated JIT code for ", CodeBlockWithJITType(m_graph.m_codeBlock, JITCode::DFGJIT), ", instruction count = ", m_graph.m_codeBlock->instructionCount(), ":\n");
     out.print("    Code at [", RawPointer(linkBuffer.debugAddress()), ", ", RawPointer(static_cast<char*>(linkBuffer.debugAddress()) + linkBuffer.debugSize()), "):\n");
     
     const char* prefix = "    ";

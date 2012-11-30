@@ -42,6 +42,7 @@
 #include "RepatchBuffer.h"
 #include "ResultType.h"
 #include "SamplingTool.h"
+#include <wtf/StringPrintStream.h>
 
 #ifndef NDEBUG
 #include <stdio.h>
@@ -746,8 +747,8 @@ void JIT::privateCompilePutByIdTransition(StructureStubInfo* stubInfo, Structure
     stubInfo->stubRoutine = createJITStubRoutine(
         FINALIZE_CODE(
             patchBuffer,
-            ("Baseline put_by_id transition for CodeBlock %p, return point %p",
-             m_codeBlock, returnAddress.value())),
+            ("Baseline put_by_id transition for %s, return point %p",
+                toCString(*m_codeBlock).data(), returnAddress.value())),
         *m_globalData,
         m_codeBlock->ownerExecutable(),
         willNeedStorageRealloc,
@@ -815,9 +816,10 @@ void JIT::privateCompilePatchGetArrayLength(ReturnAddressPtr returnAddress)
     // Track the stub we have created so that it will be deleted later.
     stubInfo->stubRoutine = FINALIZE_CODE_FOR_STUB(
         patchBuffer,
-        ("Basline JIT get_by_id array length stub for CodeBlock %p, return point %p",
-         m_codeBlock, stubInfo->hotPathBegin.labelAtOffset(
-             stubInfo->patch.baseline.u.get.putResult).executableAddress()));
+        ("Basline JIT get_by_id array length stub for %s, return point %p",
+            toCString(*m_codeBlock).data(),
+            stubInfo->hotPathBegin.labelAtOffset(
+                stubInfo->patch.baseline.u.get.putResult).executableAddress()));
 
     // Finally patch the jump to slow case back in the hot path to jump here instead.
     CodeLocationJump jumpLocation = stubInfo->hotPathBegin.jumpAtOffset(stubInfo->patch.baseline.u.get.structureCheck);
@@ -883,9 +885,9 @@ void JIT::privateCompileGetByIdProto(StructureStubInfo* stubInfo, Structure* str
     stubInfo->stubRoutine = createJITStubRoutine(
         FINALIZE_CODE(
             patchBuffer,
-            ("Baseline JIT get_by_id proto stub for CodeBlock %p, return point %p",
-             m_codeBlock, stubInfo->hotPathBegin.labelAtOffset(
-                 stubInfo->patch.baseline.u.get.putResult).executableAddress())),
+            ("Baseline JIT get_by_id proto stub for %s, return point %p",
+                toCString(*m_codeBlock).data(), stubInfo->hotPathBegin.labelAtOffset(
+                    stubInfo->patch.baseline.u.get.putResult).executableAddress())),
         *m_globalData,
         m_codeBlock->ownerExecutable(),
         needsStubLink);
@@ -948,9 +950,9 @@ void JIT::privateCompileGetByIdSelfList(StructureStubInfo* stubInfo, Polymorphic
     RefPtr<JITStubRoutine> stubCode = createJITStubRoutine(
         FINALIZE_CODE(
             patchBuffer,
-            ("Baseline JIT get_by_id list stub for CodeBlock %p, return point %p",
-             m_codeBlock, stubInfo->hotPathBegin.labelAtOffset(
-                 stubInfo->patch.baseline.u.get.putResult).executableAddress())),
+            ("Baseline JIT get_by_id list stub for %s, return point %p",
+                toCString(*m_codeBlock).data(), stubInfo->hotPathBegin.labelAtOffset(
+                    stubInfo->patch.baseline.u.get.putResult).executableAddress())),
         *m_globalData,
         m_codeBlock->ownerExecutable(),
         needsStubLink);
@@ -1022,9 +1024,9 @@ void JIT::privateCompileGetByIdProtoList(StructureStubInfo* stubInfo, Polymorphi
     RefPtr<JITStubRoutine> stubCode = createJITStubRoutine(
         FINALIZE_CODE(
             patchBuffer,
-            ("Baseline JIT get_by_id proto list stub for CodeBlock %p, return point %p",
-             m_codeBlock, stubInfo->hotPathBegin.labelAtOffset(
-                 stubInfo->patch.baseline.u.get.putResult).executableAddress())),
+            ("Baseline JIT get_by_id proto list stub for %s, return point %p",
+                toCString(*m_codeBlock).data(), stubInfo->hotPathBegin.labelAtOffset(
+                    stubInfo->patch.baseline.u.get.putResult).executableAddress())),
         *m_globalData,
         m_codeBlock->ownerExecutable(),
         needsStubLink);
@@ -1099,9 +1101,9 @@ void JIT::privateCompileGetByIdChainList(StructureStubInfo* stubInfo, Polymorphi
     RefPtr<JITStubRoutine> stubRoutine = createJITStubRoutine(
         FINALIZE_CODE(
             patchBuffer,
-            ("Baseline JIT get_by_id chain list stub for CodeBlock %p, return point %p",
-             m_codeBlock, stubInfo->hotPathBegin.labelAtOffset(
-                 stubInfo->patch.baseline.u.get.putResult).executableAddress())),
+            ("Baseline JIT get_by_id chain list stub for %s, return point %p",
+                toCString(*m_codeBlock).data(), stubInfo->hotPathBegin.labelAtOffset(
+                    stubInfo->patch.baseline.u.get.putResult).executableAddress())),
         *m_globalData,
         m_codeBlock->ownerExecutable(),
         needsStubLink);
@@ -1174,9 +1176,9 @@ void JIT::privateCompileGetByIdChain(StructureStubInfo* stubInfo, Structure* str
     RefPtr<JITStubRoutine> stubRoutine = createJITStubRoutine(
         FINALIZE_CODE(
             patchBuffer,
-            ("Baseline JIT get_by_id chain stub for CodeBlock %p, return point %p",
-             m_codeBlock, stubInfo->hotPathBegin.labelAtOffset(
-                 stubInfo->patch.baseline.u.get.putResult).executableAddress())),
+            ("Baseline JIT get_by_id chain stub for %s, return point %p",
+                toCString(*m_codeBlock).data(), stubInfo->hotPathBegin.labelAtOffset(
+                    stubInfo->patch.baseline.u.get.putResult).executableAddress())),
         *m_globalData,
         m_codeBlock->ownerExecutable(),
         needsStubLink);
@@ -1428,7 +1430,7 @@ void JIT::privateCompileGetByVal(ByValInfo* byValInfo, ReturnAddressPtr returnAd
     
     byValInfo->stubRoutine = FINALIZE_CODE_FOR_STUB(
         patchBuffer,
-        ("Baseline get_by_val stub for CodeBlock %p, return point %p", m_codeBlock, returnAddress.value()));
+        ("Baseline get_by_val stub for %s, return point %p", toCString(*m_codeBlock).data(), returnAddress.value()));
     
     RepatchBuffer repatchBuffer(m_codeBlock);
     repatchBuffer.relink(byValInfo->badTypeJump, CodeLocationLabel(byValInfo->stubRoutine->code().code()));
@@ -1498,7 +1500,7 @@ void JIT::privateCompilePutByVal(ByValInfo* byValInfo, ReturnAddressPtr returnAd
     
     byValInfo->stubRoutine = FINALIZE_CODE_FOR_STUB(
         patchBuffer,
-        ("Baseline put_by_val stub for CodeBlock %p, return point %p", m_codeBlock, returnAddress.value()));
+        ("Baseline put_by_val stub for %s, return point %p", toCString(*m_codeBlock).data(), returnAddress.value()));
     
     RepatchBuffer repatchBuffer(m_codeBlock);
     repatchBuffer.relink(byValInfo->badTypeJump, CodeLocationLabel(byValInfo->stubRoutine->code().code()));

@@ -1,3 +1,176 @@
+2012-11-29  Filip Pizlo  <fpizlo@apple.com>
+
+        It should be easy to find code blocks in debug dumps
+        https://bugs.webkit.org/show_bug.cgi?id=103623
+
+        Reviewed by Goeffrey Garen.
+
+        This gives CodeBlock a relatively strong, but also relatively compact, hash. We compute
+        it lazily so that it only impacts run-time when debug support is enabled. We stringify
+        it smartly so that it's short and easy to type. We base it on the source code so that
+        the optimization level is irrelevant. And, we use SHA1 since it's already in our code
+        base. Now, when a piece of code wants to print some debugging to say that it's operating
+        on some code block, it can use this CodeBlockHash instead of memory addresses.
+
+        This also takes CodeBlock debugging into the new world of print() and dataLog(). In
+        particular, CodeBlock::dump() corresponds to the thing you want printed if you do:
+
+        dataLog("I heart ", *myCodeBlock);
+
+        Probably, you want to just print some identifying information at this point rather than
+        the full bytecode dump. So, the existing CodeBlock::dump() has been renamed to
+        CodeBlock::dumpBytecode(), and CodeBlock::dump() now prints the CodeBlockHash plus just
+        a few little tidbits.
+        
+        Here's an example of CodeBlock::dump() output:
+        
+        EkILzr:[0x103883a00, BaselineFunctionCall]
+        
+        EkILzr is the CodeBlockHash. 0x103883a00 is the CodeBlock's address in memory. The other
+        part is self-explanatory.
+
+        Finally, this new notion of CodeBlockHash is available for other purposes like bisecting
+        breakage. As such CodeBlockHash has all of the comparison operator overloads. When
+        bisecting in DFGDriver.cpp, you can now say things like:
+        
+        if (codeBlock->hash() < CodeBlockHash("CAAAAA"))
+            return false;
+        
+        And yes, CAAAAA is near the median hash, and the largest one is smaller than E99999. Such
+        is life when you use base 62 to encode a 32-bit number.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Target.pri:
+        * bytecode/CallLinkInfo.h:
+        (CallLinkInfo):
+        (JSC::CallLinkInfo::specializationKind):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::hash):
+        (JSC):
+        (JSC::CodeBlock::dumpAssumingJITType):
+        (JSC::CodeBlock::dump):
+        (JSC::CodeBlock::dumpBytecode):
+        (JSC::CodeBlock::CodeBlock):
+        (JSC::CodeBlock::finalizeUnconditionally):
+        (JSC::CodeBlock::resetStubInternal):
+        (JSC::CodeBlock::reoptimize):
+        (JSC::ProgramCodeBlock::jettison):
+        (JSC::EvalCodeBlock::jettison):
+        (JSC::FunctionCodeBlock::jettison):
+        (JSC::CodeBlock::shouldOptimizeNow):
+        (JSC::CodeBlock::tallyFrequentExitSites):
+        (JSC::CodeBlock::dumpValueProfiles):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::specializationKind):
+        (CodeBlock):
+        (JSC::CodeBlock::getJITType):
+        * bytecode/CodeBlockHash.cpp: Added.
+        (JSC):
+        (JSC::CodeBlockHash::CodeBlockHash):
+        (JSC::CodeBlockHash::dump):
+        * bytecode/CodeBlockHash.h: Added.
+        (JSC):
+        (CodeBlockHash):
+        (JSC::CodeBlockHash::CodeBlockHash):
+        (JSC::CodeBlockHash::hash):
+        (JSC::CodeBlockHash::operator==):
+        (JSC::CodeBlockHash::operator!=):
+        (JSC::CodeBlockHash::operator<):
+        (JSC::CodeBlockHash::operator>):
+        (JSC::CodeBlockHash::operator<=):
+        (JSC::CodeBlockHash::operator>=):
+        * bytecode/CodeBlockWithJITType.h: Added.
+        (JSC):
+        (CodeBlockWithJITType):
+        (JSC::CodeBlockWithJITType::CodeBlockWithJITType):
+        (JSC::CodeBlockWithJITType::dump):
+        * bytecode/CodeOrigin.cpp: Added.
+        (JSC):
+        (JSC::CodeOrigin::inlineDepthForCallFrame):
+        (JSC::CodeOrigin::inlineDepth):
+        (JSC::CodeOrigin::inlineStack):
+        (JSC::InlineCallFrame::hash):
+        * bytecode/CodeOrigin.h:
+        (InlineCallFrame):
+        (JSC::InlineCallFrame::specializationKind):
+        (JSC):
+        * bytecode/CodeType.cpp: Added.
+        (WTF):
+        (WTF::printInternal):
+        * bytecode/CodeType.h:
+        (WTF):
+        * bytecode/ExecutionCounter.cpp:
+        (JSC::ExecutionCounter::dump):
+        * bytecode/ExecutionCounter.h:
+        (ExecutionCounter):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseCodeBlock):
+        * dfg/DFGDisassembler.cpp:
+        (JSC::DFG::Disassembler::dump):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::dumpCodeOrigin):
+        * dfg/DFGOSRExitCompiler.cpp:
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGRepatch.cpp:
+        (JSC::DFG::generateProtoChainAccessStub):
+        (JSC::DFG::tryCacheGetByID):
+        (JSC::DFG::tryBuildGetByIDList):
+        (JSC::DFG::emitPutReplaceStub):
+        (JSC::DFG::emitPutTransitionStub):
+        (JSC::DFG::dfgLinkClosureCall):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::dumpCallFrame):
+        * jit/JITCode.cpp: Added.
+        (WTF):
+        (WTF::printInternal):
+        * jit/JITCode.h:
+        (JSC::JITCode::jitType):
+        (WTF):
+        * jit/JITDisassembler.cpp:
+        (JSC::JITDisassembler::dump):
+        (JSC::JITDisassembler::dumpForInstructions):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::privateCompilePutByIdTransition):
+        (JSC::JIT::privateCompilePatchGetArrayLength):
+        (JSC::JIT::privateCompileGetByIdProto):
+        (JSC::JIT::privateCompileGetByIdSelfList):
+        (JSC::JIT::privateCompileGetByIdProtoList):
+        (JSC::JIT::privateCompileGetByIdChainList):
+        (JSC::JIT::privateCompileGetByIdChain):
+        (JSC::JIT::privateCompileGetByVal):
+        (JSC::JIT::privateCompilePutByVal):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::privateCompilePutByIdTransition):
+        (JSC::JIT::privateCompilePatchGetArrayLength):
+        (JSC::JIT::privateCompileGetByIdProto):
+        (JSC::JIT::privateCompileGetByIdSelfList):
+        (JSC::JIT::privateCompileGetByIdProtoList):
+        (JSC::JIT::privateCompileGetByIdChainList):
+        (JSC::JIT::privateCompileGetByIdChain):
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        * runtime/CodeSpecializationKind.cpp: Added.
+        (WTF):
+        (WTF::printInternal):
+        * runtime/CodeSpecializationKind.h:
+        (JSC::specializationFromIsCall):
+        (JSC):
+        (JSC::specializationFromIsConstruct):
+        (WTF):
+        * runtime/Executable.cpp:
+        (JSC::ExecutableBase::hashFor):
+        (JSC):
+        (JSC::NativeExecutable::hashFor):
+        (JSC::ScriptExecutable::hashFor):
+        * runtime/Executable.h:
+        (ExecutableBase):
+        (NativeExecutable):
+        (ScriptExecutable):
+        (JSC::ScriptExecutable::source):
+
 2012-11-29  Michael Saboff  <msaboff@apple.com>
 
         Speculative Windows build fix after r136086.

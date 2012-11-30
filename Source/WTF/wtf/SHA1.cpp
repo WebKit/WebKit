@@ -36,10 +36,9 @@
 #include "SHA1.h"
 
 #include "Assertions.h"
-#ifndef NDEBUG
+
 #include "StringExtras.h"
 #include "text/CString.h"
-#endif
 
 namespace WTF {
 
@@ -52,15 +51,8 @@ static void expectSHA1(CString input, int repeat, CString expected)
 {
     SHA1 sha1;
     for (int i = 0; i < repeat; ++i)
-        sha1.addBytes(reinterpret_cast<const uint8_t*>(input.data()), input.length());
-    Vector<uint8_t, 20> digest;
-    sha1.computeHash(digest);
-    char* buffer = 0;
-    CString actual = CString::newUninitialized(40, buffer);
-    for (size_t i = 0; i < 20; ++i) {
-        snprintf(buffer, 3, "%02X", digest.at(i));
-        buffer += 2;
-    }
+        sha1.addBytes(input);
+    CString actual = sha1.computeHexDigest();
     ASSERT_WITH_MESSAGE(actual == expected, "input: %s, repeat: %d, actual: %s, expected: %s", input.data(), repeat, actual.data(), expected.data());
 }
 
@@ -142,6 +134,25 @@ void SHA1::computeHash(Vector<uint8_t, 20>& digest)
     }
 
     reset();
+}
+
+CString SHA1::hexDigest(const Vector<uint8_t, 20>& digest)
+{
+    char* start = 0;
+    CString result = CString::newUninitialized(40, start);
+    char* buffer = start;
+    for (size_t i = 0; i < 20; ++i) {
+        snprintf(buffer, 3, "%02X", digest.at(i));
+        buffer += 2;
+    }
+    return result;
+}
+
+CString SHA1::computeHexDigest()
+{
+    Vector<uint8_t, 20> digest;
+    computeHash(digest);
+    return hexDigest(digest);
 }
 
 void SHA1::finalize()

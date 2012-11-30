@@ -23,23 +23,40 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef CodeType_h
-#define CodeType_h
+#include "config.h"
+#include "CodeOrigin.h"
 
-#include <wtf/Platform.h>
+#include "Executable.h"
 
 namespace JSC {
 
-enum CodeType { GlobalCode, EvalCode, FunctionCode };
+unsigned CodeOrigin::inlineDepthForCallFrame(InlineCallFrame* inlineCallFrame)
+{
+    unsigned result = 1;
+    for (InlineCallFrame* current = inlineCallFrame; current; current = current->caller.inlineCallFrame)
+        result++;
+    return result;
+}
+
+unsigned CodeOrigin::inlineDepth() const
+{
+    return inlineDepthForCallFrame(inlineCallFrame);
+}
+    
+Vector<CodeOrigin> CodeOrigin::inlineStack() const
+{
+    Vector<CodeOrigin> result(inlineDepth());
+    result.last() = *this;
+    unsigned index = result.size() - 2;
+    for (InlineCallFrame* current = inlineCallFrame; current; current = current->caller.inlineCallFrame)
+        result[index--] = current->caller;
+    return result;
+}
+
+CodeBlockHash InlineCallFrame::hash() const
+{
+    return executable->hashFor(specializationKind());
+}
 
 } // namespace JSC
-
-namespace WTF {
-
-class PrintStream;
-void printInternal(PrintStream&, JSC::CodeType);
-
-} // namespace WTF
-
-#endif // CodeType_h
 

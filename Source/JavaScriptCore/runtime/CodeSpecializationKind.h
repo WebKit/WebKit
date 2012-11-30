@@ -30,7 +30,24 @@ namespace JSC {
 
 enum CodeSpecializationKind { CodeForCall, CodeForConstruct };
 
+inline CodeSpecializationKind specializationFromIsCall(bool isCall)
+{
+    return isCall ? CodeForCall : CodeForConstruct;
+}
+
+inline CodeSpecializationKind specializationFromIsConstruct(bool isConstruct)
+{
+    return isConstruct ? CodeForConstruct : CodeForCall;
+}
+
 } // namespace JSC
+
+namespace WTF {
+
+class PrintStream;
+void printInternal(PrintStream&, JSC::CodeSpecializationKind);
+
+} // namespace WTF
 
 #endif // CodeSpecializationKind_h
 

@@ -94,9 +94,14 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/bytecode/CallLinkStatus.cpp \
 	Source/JavaScriptCore/bytecode/CallLinkStatus.h \
 	Source/JavaScriptCore/bytecode/CallReturnOffsetToBytecodeOffset.h \
+	Source/JavaScriptCore/bytecode/CodeType.cpp \
 	Source/JavaScriptCore/bytecode/CodeType.h \
 	Source/JavaScriptCore/bytecode/CodeBlock.cpp \
 	Source/JavaScriptCore/bytecode/CodeBlock.h \
+	Source/JavaScriptCore/bytecode/CodeBlockHash.cpp \
+	Source/JavaScriptCore/bytecode/CodeBlockHash.h \
+	Source/JavaScriptCore/bytecode/CodeBlockWithJITType.h \
+	Source/JavaScriptCore/bytecode/CodeOrigin.cpp \
 	Source/JavaScriptCore/bytecode/CodeOrigin.h \
 	Source/JavaScriptCore/bytecode/Comment.h \
 	Source/JavaScriptCore/bytecode/DataFormat.h \
@@ -399,6 +404,7 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/jit/JITArithmetic.cpp \
 	Source/JavaScriptCore/jit/JITCall32_64.cpp \
 	Source/JavaScriptCore/jit/JITCall.cpp \
+	Source/JavaScriptCore/jit/JITCode.cpp \
 	Source/JavaScriptCore/jit/JITCode.h \
 	Source/JavaScriptCore/jit/JITCompilationEffort.h \
 	Source/JavaScriptCore/jit/JITDisassembler.cpp \
@@ -499,6 +505,7 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/runtime/ClassInfo.h \
 	Source/JavaScriptCore/runtime/CodeCache.cpp \
 	Source/JavaScriptCore/runtime/CodeCache.h \
+	Source/JavaScriptCore/runtime/CodeSpecializationKind.cpp \
 	Source/JavaScriptCore/runtime/CodeSpecializationKind.h \
 	Source/JavaScriptCore/runtime/CommonIdentifiers.cpp \
 	Source/JavaScriptCore/runtime/CommonIdentifiers.h \

@@ -32,6 +32,7 @@
 #define WTF_SHA1_h
 
 #include <wtf/Vector.h>
+#include <wtf/text/CString.h>
 
 namespace WTF {
 
@@ -43,11 +44,27 @@ public:
     {
         addBytes(input.data(), input.size());
     }
+    void addBytes(const CString& input)
+    {
+        const char* string = input.data();
+        // Make sure that the creator of the CString didn't make the mistake
+        // of forcing length() to be the size of the buffer used to create the
+        // string, prior to inserting the null terminator earlier in the
+        // sequence.
+        ASSERT(input.length() == strlen(string));
+        addBytes(reinterpret_cast<const uint8_t*>(string), input.length());
+    }
     WTF_EXPORT_PRIVATE void addBytes(const uint8_t* input, size_t length);
 
     // computeHash has a side effect of resetting the state of the object.
     WTF_EXPORT_PRIVATE void computeHash(Vector<uint8_t, 20>&);
-
+    
+    // Get a hex hash from the digest. Pass a limit less than 40 if you want a shorter digest.
+    WTF_EXPORT_PRIVATE static CString hexDigest(const Vector<uint8_t, 20>&);
+    
+    // Compute the hex digest directly. Pass a limit less than 40 if you want a shorter digest.
+    WTF_EXPORT_PRIVATE CString computeHexDigest();
+    
 private:
     void finalize();
     void processBlock();

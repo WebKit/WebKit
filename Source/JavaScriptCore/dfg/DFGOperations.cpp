@@ -1522,22 +1522,24 @@ void DFG_OPERATION debugOperationPrintSpeculationFailure(ExecState* exec, void* 
     SpeculationFailureDebugInfo* debugInfo = static_cast<SpeculationFailureDebugInfo*>(debugInfoRaw);
     CodeBlock* codeBlock = debugInfo->codeBlock;
     CodeBlock* alternative = codeBlock->alternative();
-    dataLogF("Speculation failure in %p at @%u with executeCounter = %s, "
-            "reoptimizationRetryCounter = %u, optimizationDelayCounter = %u, "
-            "osrExitCounter = %u\n",
-            codeBlock,
-            debugInfo->nodeIndex,
-            alternative ? alternative->jitExecuteCounter().status() : 0,
-            alternative ? alternative->reoptimizationRetryCounter() : 0,
-            alternative ? alternative->optimizationDelayCounter() : 0,
-            codeBlock->osrExitCounter());
+    dataLog(
+        "Speculation failure in ", *codeBlock, " at @", debugInfo->nodeIndex,
+        " with ");
+    if (alternative) {
+        dataLog(
+            "executeCounter = ", alternative->jitExecuteCounter(),
+            ", reoptimizationRetryCounter = ", alternative->reoptimizationRetryCounter(),
+            ", optimizationDelayCounter = ", alternative->optimizationDelayCounter());
+    } else
+        dataLog("no alternative code block (i.e. we've been jettisoned)");
+    dataLog(", osrExitCounter = ", codeBlock->osrExitCounter(), "\n");
 }
 #endif
 
 extern "C" void DFG_OPERATION triggerReoptimizationNow(CodeBlock* codeBlock)
 {
 #if ENABLE(JIT_VERBOSE_OSR)
-    dataLogF("%p: Entered reoptimize\n", codeBlock);
+    dataLog(*codeBlock, ": Entered reoptimize\n");
 #endif
     // We must be called with the baseline code block.
     ASSERT(JITCode::isBaselineCode(codeBlock->getJITType()));
