@@ -247,7 +247,7 @@ root_project_file {
     # qmake_all and generate all the derived sources, just to
     # build documentation.
     previous_subdir =
-    doc_targets = docs install_docs uninstall_docs
+    doc_targets = docs install_docs uninstall_docs prepare_docs generate_docs
     for(subdir, SUBDIRS) {
         equals(subdir, QtWebKit) {
             for(doc_target, doc_targets) {

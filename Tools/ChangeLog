@@ -1,3 +1,13 @@
+2012-11-30  Tor Arne Vestbø  <tor.arne.vestbo@digia.com>
+
+        [Qt] Add support for prepare_docs and generate_docs
+
+        Follow-up to changes in Qt in how documentation is built.
+
+        Reviewed by Simon Hausmann.
+
+        * qmake/mkspecs/features/default_post.prf:
+
 2012-11-30  Zan Dobersek  <zandobersek@gmail.com>
 
         Finally remove webkitpy.common.system.deprecated_logging
