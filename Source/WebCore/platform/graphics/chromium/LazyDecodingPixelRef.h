@@ -26,24 +26,21 @@
 #ifndef LazyDecodingPixelRef_h
 #define LazyDecodingPixelRef_h
 
+#include "SkTypes.h"
 #include "SkFlattenableBuffers.h"
 #include "SkPixelRef.h"
 #include "SkRect.h"
 #include "SkSize.h"
-#include "SkTypes.h"
-#include "skia/ext/lazy_pixel_ref.h"
 
 #include <wtf/RefPtr.h>
 #include <wtf/ThreadingPrimitives.h>
-
-using skia::LazyPixelRef;
 
 namespace WebCore {
 
 class ImageFrameGenerator;
 class ScaledImageFragment;
 
-class LazyDecodingPixelRef : public LazyPixelRef {
+class LazyDecodingPixelRef : public SkPixelRef {
 public:
     LazyDecodingPixelRef(PassRefPtr<ImageFrameGenerator>, const SkISize& scaledSize, const SkIRect& scaledSubset);
     virtual ~LazyDecodingPixelRef();
@@ -53,9 +50,6 @@ public:
     PassRefPtr<ImageFrameGenerator> frameGenerator() const { return m_frameGenerator; }
     bool isScaled(const SkISize& fullSize) const;
     bool isClipped() const;
-
-    virtual bool PrepareToDecode(const LazyPixelRef::PrepareParams&);
-    virtual void Decode();
 
 protected:
     // SkPixelRef implementation.

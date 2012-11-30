@@ -1,3 +1,16 @@
+2012-11-29  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r136167.
+        http://trac.webkit.org/changeset/136167
+        https://bugs.webkit.org/show_bug.cgi?id=103701
+
+        Win debug build failure (Requested by zhenyao on #webkit).
+
+        * platform/graphics/chromium/LazyDecodingPixelRef.cpp:
+        (WebCore::LazyDecodingPixelRef::LazyDecodingPixelRef):
+        * platform/graphics/chromium/LazyDecodingPixelRef.h:
+        (LazyDecodingPixelRef):
+
 2012-11-29  David Grogan  <dgrogan@chromium.org>
 
         IndexedDB: Propagate more leveldb errors to script
