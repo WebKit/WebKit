@@ -43,6 +43,7 @@
           'SK_DISABLE_DITHER_32BIT_GRADIENT',
 
           'SK_DISABLE_DASHING_OPTIMIZATION',
+          'SK_DISABLE_SEPARABLE_MASK_BLUR',
         ],
       },
     },
