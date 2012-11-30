@@ -1,3 +1,15 @@
+2012-11-30  Tor Arne Vestbø  <tor.arne.vestbo@digia.com>
+
+        [Qt] Place the LLIntOffsetsExtractor binaries in debug/release subdirs on Mac
+
+        Otherwise we'll end up using the same LLIntAssembly.h for both build
+        configs of JavaScriptCore -- one of them which will be for the wrong
+        config.
+
+        Reviewed by Simon Hausmann.
+
+        * LLIntOffsetsExtractor.pro:
+
 2012-11-30  Julien BRIANCEAU   <jbrianceau@nds.com>
 
         [sh4] Fix compilation warnings in JavaScriptCore JIT for sh4 arch
