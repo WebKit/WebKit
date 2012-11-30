@@ -150,7 +150,9 @@ namespace JSC { namespace DFG {
     macro(GetByOffset, NodeResultJS) \
     macro(PutByOffset, NodeMustGenerate) \
     macro(GetArrayLength, NodeResultInt32) \
-    macro(GetScope, NodeResultJS) \
+    macro(GetMyScope, NodeResultJS) \
+    macro(SkipTopScope, NodeResultJS) \
+    macro(SkipScope, NodeResultJS) \
     macro(GetScopeRegisters, NodeResultStorage) \
     macro(GetScopedVar, NodeResultJS) \
     macro(PutScopedVar, NodeMustGenerate) \

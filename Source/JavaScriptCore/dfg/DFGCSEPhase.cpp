@@ -213,7 +213,7 @@ private:
         return NoNode;
     }
     
-    NodeIndex scopedVarLoadElimination(unsigned scopeChainDepth, unsigned varNumber)
+    NodeIndex scopedVarLoadElimination(NodeIndex registers, unsigned varNumber)
     {
         for (unsigned i = m_indexInBlock; i--;) {
             NodeIndex index = m_currentBlock->at(i);
@@ -222,15 +222,12 @@ private:
                 continue;
             switch (node.op()) {
             case GetScopedVar: {
-                Node& getScopeRegisters = m_graph[node.child1()];
-                Node& getScope = m_graph[getScopeRegisters.child1()];
-                if (getScope.scopeChainDepth() == scopeChainDepth && node.varNumber() == varNumber)
+                if (node.child1() == registers && node.varNumber() == varNumber)
                     return index;
                 break;
             } 
             case PutScopedVar: {
-                Node& getScope = m_graph[node.child1()];
-                if (getScope.scopeChainDepth() == scopeChainDepth && node.varNumber() == varNumber)
+                if (node.child2() == registers && node.varNumber() == varNumber)
                     return node.child3().index();
                 break;
             }
@@ -296,7 +293,7 @@ private:
         return NoNode;
     }
     
-    NodeIndex scopedVarStoreElimination(unsigned scopeChainDepth, unsigned varNumber)
+    NodeIndex scopedVarStoreElimination(NodeIndex scope, NodeIndex registers, unsigned varNumber)
     {
         for (unsigned i = m_indexInBlock; i--;) {
             NodeIndex index = m_currentBlock->at(i);
@@ -305,16 +302,14 @@ private:
                 continue;
             switch (node.op()) {
             case PutScopedVar: {
-                Node& getScope = m_graph[node.child1()];
-                if (getScope.scopeChainDepth() == scopeChainDepth && node.varNumber() == varNumber)
+                if (node.child1() == scope && node.child2() == registers && node.varNumber() == varNumber)
                     return index;
                 break;
             }
                 
             case GetScopedVar: {
-                Node& getScopeRegisters = m_graph[node.child1()];
-                Node& getScope = m_graph[getScopeRegisters.child1()];
-                if (getScope.scopeChainDepth() == scopeChainDepth && node.varNumber() == varNumber)
+                // Let's be conservative.
+                if (node.varNumber() == varNumber)
                     return NoNode;
                 break;
             }
@@ -779,30 +774,22 @@ private:
         return NoNode;
     }
     
-    NodeIndex getScopeLoadElimination(unsigned depth)
+    NodeIndex getMyScopeLoadElimination()
     {
-        for (unsigned i = endIndexForPureCSE(); i--;) {
+        for (unsigned i = m_indexInBlock; i--;) {
             NodeIndex index = m_currentBlock->at(i);
             Node& node = m_graph[index];
             if (!node.shouldGenerate())
                 continue;
-            if (node.op() == GetScope
-                && node.scopeChainDepth() == depth)
+            switch (node.op()) {
+            case CreateActivation:
+                // This may cause us to return a different scope.
+                return NoNode;
+            case GetMyScope:
                 return index;
-        }
-        return NoNode;
-    }
-
-    NodeIndex getScopeRegistersLoadElimination(unsigned depth)
-    {
-        for (unsigned i = endIndexForPureCSE(); i--;) {
-            NodeIndex index = m_currentBlock->at(i);
-            Node& node = m_graph[index];
-            if (!node.shouldGenerate())
-                continue;
-            if (node.op() == GetScopeRegisters
-                && m_graph[node.scope()].scopeChainDepth() == depth)
-                return index;
+            default:
+                break;
+            }
         }
         return NoNode;
     }
@@ -890,7 +877,8 @@ private:
                 return result;
             }
                 
-            case GetScope:
+            case GetMyScope:
+            case SkipTopScope:
             case GetScopeRegisters:
                 if (m_graph.uncheckedActivationRegisterFor(node.codeOrigin) == local)
                     result.mayBeAccessed = true;
@@ -1076,6 +1064,9 @@ private:
         case IsFunction:
         case DoubleAsInt32:
         case LogicalNot:
+        case SkipTopScope:
+        case SkipScope:
+        case GetScopeRegisters:
             setReplacement(pureCSE(node));
             break;
             
@@ -1189,14 +1180,10 @@ private:
             setReplacement(getArrayLengthElimination(node.child1().index()));
             break;
 
-        case GetScope:
-            setReplacement(getScopeLoadElimination(node.scopeChainDepth()));
+        case GetMyScope:
+            setReplacement(getMyScopeLoadElimination());
             break;
-
-        case GetScopeRegisters:
-            setReplacement(getScopeRegistersLoadElimination(m_graph[node.scope()].scopeChainDepth()));
-            break;
-
+            
         // Handle nodes that are conditionally pure: these are pure, and can
         // be CSE'd, so long as the prediction is the one we want.
         case ValueAdd:
@@ -1220,9 +1207,7 @@ private:
             break;
 
         case GetScopedVar: {
-            Node& getScopeRegisters = m_graph[node.child1()];
-            Node& getScope = m_graph[getScopeRegisters.child1()];
-            setReplacement(scopedVarLoadElimination(getScope.scopeChainDepth(), node.varNumber()));
+            setReplacement(scopedVarLoadElimination(node.child1().index(), node.varNumber()));
             break;
         }
 
@@ -1241,8 +1226,7 @@ private:
         case PutScopedVar: {
             if (m_graph.m_fixpointState == FixpointNotConverged)
                 break;
-            Node& getScope = m_graph[node.child1()];
-            eliminate(scopedVarStoreElimination(getScope.scopeChainDepth(), node.varNumber()));
+            eliminate(scopedVarStoreElimination(node.child1().index(), node.child2().index(), node.varNumber()));
             break;
         }
 

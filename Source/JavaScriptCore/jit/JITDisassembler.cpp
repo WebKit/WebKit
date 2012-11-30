@@ -47,7 +47,7 @@ JITDisassembler::~JITDisassembler()
 
 void JITDisassembler::dump(PrintStream& out, LinkBuffer& linkBuffer)
 {
-    out.print("Baseline JIT code for ", CodeBlockWithJITType(m_codeBlock, JITCode::BaselineJIT), ", instruction count = ", m_codeBlock->instructionCount(), "\n");
+    out.print("Generated Baseline JIT code for ", CodeBlockWithJITType(m_codeBlock, JITCode::BaselineJIT), ", instruction count = ", m_codeBlock->instructionCount(), "\n");
     out.print("   Code at [", RawPointer(linkBuffer.debugAddress()), ", ", RawPointer(static_cast<char*>(linkBuffer.debugAddress()) + linkBuffer.debugSize()), "):\n");
     dumpDisassembly(out, linkBuffer, m_startOfCode, m_labelForBytecodeIndexInMainPath[0]);
     

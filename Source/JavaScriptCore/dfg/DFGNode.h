@@ -523,23 +523,6 @@ struct Node {
         return bitwise_cast<WriteBarrier<Unknown>*>(m_opInfo);
     }
 
-    bool hasScopeChainDepth()
-    {
-        return op() == GetScope;
-    }
-    
-    unsigned scopeChainDepth()
-    {
-        ASSERT(hasScopeChainDepth());
-        return m_opInfo;
-    }
-
-    Edge scope()
-    {
-        ASSERT(op() == GetScopeRegisters);
-        return child1();
-    }
-
     bool hasResult()
     {
         return m_flags & NodeResultMask;

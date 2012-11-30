@@ -1,3 +1,83 @@
+2012-11-30  Filip Pizlo  <fpizlo@apple.com>
+
+        Rationalize and clean up DFG handling of scoped accesses
+        https://bugs.webkit.org/show_bug.cgi?id=103715
+
+        Reviewed by Oliver Hunt.
+
+        Previously, we had a GetScope node that specified the depth to which you wanted
+        to travel to get a JSScope, and the backend implementation of the node would
+        perform all of the necessary footwork, including potentially skipping the top
+        scope if necessary, and doing however many loads were needed. But there were
+        strange things. First, if you had accesses at different scope depths, then the
+        loads to get to the common depth could not be CSE'd - CSE would match only
+        GetScope's that had identical depth. Second, GetScope would be emitted even if
+        we already had the scope, for example in put_to_base. And finally, even though
+        the ResolveOperations could tell us whether or not we had to skip the top scope,
+        the backend would recompute this information itself, often pessimistically.
+        
+        This eliminates GetScope and replaces it with the following:
+        
+        GetMyScope: just get the JSScope from the call frame header. This will forever
+        mean getting the JSScope associated with the machine call frame; it will not
+        mean getting the scope of an inlined function. Or at least that's the intent.
+        
+        SkipTopScope: check if there is an activation, and if so, skip a scope. This
+        takes a scope as a child and returns a scope.
+        
+        SkipScope: skip one scope level.
+        
+        The bytecode parser now emits the right combination of the above, and
+        potentially emits multiple SkipScope's, based on the ResolveOperations.
+        
+        This change also includes some fixups to debug logging. We now always print
+        the ExecutableBase* in addition to the CodeBlock* in the CodeBlock's dump,
+        and we are now more verbose when dumping CodeOrigins and InlineCallFrames.
+        
+        This is performance-neutral. It's just meant to be a clean-up.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpAssumingJITType):
+        * bytecode/CodeOrigin.cpp:
+        (JSC::CodeOrigin::inlineStack):
+        (JSC::CodeOrigin::dump):
+        (JSC):
+        (JSC::InlineCallFrame::dump):
+        * bytecode/CodeOrigin.h:
+        (CodeOrigin):
+        (InlineCallFrame):
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::execute):
+        * dfg/DFGByteCodeParser.cpp:
+        (ByteCodeParser):
+        (JSC::DFG::ByteCodeParser::getScope):
+        (DFG):
+        (JSC::DFG::ByteCodeParser::parseResolveOperations):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCSEPhase.cpp:
+        (JSC::DFG::CSEPhase::scopedVarLoadElimination):
+        (JSC::DFG::CSEPhase::scopedVarStoreElimination):
+        (JSC::DFG::CSEPhase::getMyScopeLoadElimination):
+        (JSC::DFG::CSEPhase::setLocalStoreElimination):
+        (JSC::DFG::CSEPhase::performNodeCSE):
+        * dfg/DFGDisassembler.cpp:
+        (JSC::DFG::Disassembler::dump):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::dumpCodeOrigin):
+        (JSC::DFG::Graph::dumpBlockHeader):
+        * dfg/DFGNode.h:
+        (Node):
+        * dfg/DFGNodeType.h:
+        (DFG):
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * jit/JITDisassembler.cpp:
+        (JSC::JITDisassembler::dump):
+
 2012-11-30  Oliver Hunt  <oliver@apple.com>
 
         Add direct string->function code cache

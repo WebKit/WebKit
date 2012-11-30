@@ -69,7 +69,7 @@ CodeBlockHash CodeBlock::hash() const
 
 void CodeBlock::dumpAssumingJITType(PrintStream& out, JITCode::JITType jitType) const
 {
-    out.print("#", hash(), ":[", RawPointer(this), ", ", jitType, codeType());
+    out.print("#", hash(), ":[", RawPointer(this), "->", RawPointer(ownerExecutable()), ", ", jitType, codeType());
     if (codeType() == FunctionCode)
         out.print(specializationKind());
     out.print("]");

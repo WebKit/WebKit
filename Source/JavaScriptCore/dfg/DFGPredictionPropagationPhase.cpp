@@ -594,7 +594,9 @@ private:
             break;
         }
             
-        case GetScope: {
+        case GetMyScope:
+        case SkipTopScope:
+        case SkipScope: {
             changed |= setPrediction(SpecCellOther);
             break;
         }

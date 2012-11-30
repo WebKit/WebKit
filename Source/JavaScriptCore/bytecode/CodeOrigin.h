@@ -31,6 +31,7 @@
 #include "ValueRecovery.h"
 #include "WriteBarrier.h"
 #include <wtf/BitVector.h>
+#include <wtf/PrintStream.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
 
@@ -90,6 +91,8 @@ struct CodeOrigin {
     
     // Get the inline stack. This is slow, and is intended for debugging only.
     Vector<CodeOrigin> inlineStack() const;
+    
+    void dump(PrintStream&) const;
 };
 
 struct InlineCallFrame {
@@ -104,6 +107,8 @@ struct InlineCallFrame {
     CodeSpecializationKind specializationKind() const { return specializationFromIsCall(isCall); }
     
     CodeBlockHash hash() const;
+    
+    void dump(PrintStream&) const;
 };
 
 struct CodeOriginAtCallReturnOffset {

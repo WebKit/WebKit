@@ -88,14 +88,14 @@ void Graph::dumpCodeOrigin(PrintStream& out, const char* prefix, NodeIndex prevN
     for (unsigned i = previousInlineStack.size(); i-- > indexOfDivergence;) {
         out.print(prefix);
         printWhiteSpace(out, i * 2);
-        out.print("<-- #", previousInlineStack[i].inlineCallFrame->hash(), "\n");
+        out.print("<-- ", *previousInlineStack[i].inlineCallFrame, "\n");
     }
     
     // Print the pushes.
     for (unsigned i = indexOfDivergence; i < currentInlineStack.size(); ++i) {
         out.print(prefix);
         printWhiteSpace(out, i * 2);
-        out.print("--> #", currentInlineStack[i].inlineCallFrame->hash(), "\n");
+        out.print("--> ", *currentInlineStack[i].inlineCallFrame, "\n");
     }
 }
 
@@ -294,7 +294,7 @@ void Graph::dumpBlockHeader(PrintStream& out, const char* prefix, BlockIndex blo
 {
     BasicBlock* block = m_blocks[blockIndex].get();
 
-    out.print(prefix, "Block #", blockIndex, " (bc#", block->bytecodeBegin, "): ", block->isReachable ? "" : "(skipped)", block->isOSRTarget ? " (OSR target)" : "", "\n");
+    out.print(prefix, "Block #", blockIndex, " (", at(block->at(0)).codeOrigin, "): ", block->isReachable ? "" : "(skipped)", block->isOSRTarget ? " (OSR target)" : "", "\n");
     out.print(prefix, "  Predecessors:");
     for (size_t i = 0; i < block->m_predecessors.size(); ++i)
         out.print(" #", block->m_predecessors[i]);

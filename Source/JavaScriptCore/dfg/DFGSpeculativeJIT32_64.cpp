@@ -3967,32 +3967,44 @@ void SpeculativeJIT::compile(Node& node)
 
     case GetCallee: {
         GPRTemporary result(this);
-        m_jit.loadPtr(JITCompiler::addressFor(static_cast<VirtualRegister>(JSStack::Callee)), result.gpr());
+        m_jit.loadPtr(JITCompiler::payloadFor(static_cast<VirtualRegister>(JSStack::Callee)), result.gpr());
         cellResult(result.gpr(), m_compileIndex);
         break;
     }
-
-    case GetScope: {
+        
+    case GetMyScope: {
         GPRTemporary result(this);
         GPRReg resultGPR = result.gpr();
 
-        m_jit.loadPtr(JITCompiler::addressFor(static_cast<VirtualRegister>(JSStack::ScopeChain)), resultGPR);
-        bool checkTopLevel = m_jit.codeBlock()->codeType() == FunctionCode && m_jit.codeBlock()->needsFullScopeChain();
-        int skip = node.scopeChainDepth();
-        ASSERT(skip || !checkTopLevel);
-        if (checkTopLevel && skip--) {
-            JITCompiler::Jump activationNotCreated;
-            if (checkTopLevel)
-                activationNotCreated = m_jit.branchTestPtr(JITCompiler::Zero, JITCompiler::addressFor(static_cast<VirtualRegister>(m_jit.codeBlock()->activationRegister())));
-            m_jit.loadPtr(JITCompiler::Address(resultGPR, JSScope::offsetOfNext()), resultGPR);
-            activationNotCreated.link(&m_jit);
-        }
-        while (skip--)
-            m_jit.loadPtr(JITCompiler::Address(resultGPR, JSScope::offsetOfNext()), resultGPR);
-        
+        m_jit.loadPtr(JITCompiler::payloadFor(static_cast<VirtualRegister>(JSStack::ScopeChain)), resultGPR);
         cellResult(resultGPR, m_compileIndex);
         break;
     }
+        
+    case SkipTopScope: {
+        SpeculateCellOperand scope(this, node.child1());
+        GPRTemporary result(this, scope);
+        GPRReg resultGPR = result.gpr();
+        m_jit.move(scope.gpr(), resultGPR);
+        JITCompiler::Jump activationNotCreated =
+            m_jit.branchTestPtr(
+                JITCompiler::Zero,
+                JITCompiler::payloadFor(
+                    static_cast<VirtualRegister>(m_jit.codeBlock()->activationRegister())));
+        m_jit.loadPtr(JITCompiler::Address(resultGPR, JSScope::offsetOfNext()), resultGPR);
+        activationNotCreated.link(&m_jit);
+        cellResult(resultGPR, m_compileIndex);
+        break;
+    }
+        
+    case SkipScope: {
+        SpeculateCellOperand scope(this, node.child1());
+        GPRTemporary result(this, scope);
+        m_jit.loadPtr(JITCompiler::Address(scope.gpr(), JSScope::offsetOfNext()), result.gpr());
+        cellResult(result.gpr(), m_compileIndex);
+        break;
+    }
+        
     case GetScopeRegisters: {
         SpeculateCellOperand scope(this, node.child1());
         GPRTemporary result(this);

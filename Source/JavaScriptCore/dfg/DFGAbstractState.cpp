@@ -1383,7 +1383,9 @@ bool AbstractState::execute(unsigned indexInBlock)
         forNode(nodeIndex).set(SpecFunction);
         break;
             
-    case GetScope:
+    case GetMyScope:
+    case SkipTopScope:
+    case SkipScope:
         node.setCanExit(false);
         forNode(nodeIndex).set(SpecCellOther);
         break;
