@@ -1,3 +1,11 @@
+2012-11-30  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed trivial fix.
+
+        Add empty.cpp back, it was removed accidentally by r129092.
+
+        * qmake/config.tests/gccdepends/empty.cpp: Added.
+
 2012-11-30  Tor Arne Vestbø  <tor.arne.vestbo@digia.com>
 
         [Qt] Add support for prepare_docs and generate_docs
