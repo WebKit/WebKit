@@ -5,8 +5,8 @@ project     = qtwebkit
 description = "Qt WebKit API Documentation"
 version     = 5.0.0
 
-headerdirs = WebKit/qt/Api WebKit2/UIProcess/API/qt
-sourcedirs = WebKit/qt/Api WebKit/qt/docs Source/JavaScriptCore/qt/api WebKit2/UIProcess/API/qt
+headerdirs = WebKit/qt/Api WebKit/qt/WidgetApi WebKit2/UIProcess/API/qt
+sourcedirs = WebKit/qt/Api WebKit/qt/WidgetApi WebKit/qt/docs Source/JavaScriptCore/qt/api WebKit2/UIProcess/API/qt
 exampledirs = WebKit/qt/docs
 imagedirs = WebKit/qt/docs
 
