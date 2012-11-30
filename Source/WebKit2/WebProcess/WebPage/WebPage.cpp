@@ -1027,8 +1027,21 @@ void WebPage::sendViewportAttributesChanged()
     ViewportAttributes attr = computeViewportAttributes(m_page->viewportArguments(), minimumLayoutFallbackWidth, deviceWidth, deviceHeight, m_page->deviceScaleFactor(), m_viewportSize);
     attr.initialScale = m_page->viewportArguments().zoom; // Resets auto (-1) if no value was set by user.
 
+    // Keep the current position, update size only.
+    // For the new loads position is already reset to (0,0).
+    FrameView* view = m_page->mainFrame()->view();
+    IntPoint contentFixedOrigin = view->fixedVisibleContentRect().location();
+
+    // Put the width and height to the viewport width and height. In css units however.
+    // FIXME: This should be in scaled units but this currently affects viewport attributes calculation.
+    IntSize contentFixedSize = m_viewportSize;
+    contentFixedSize.scale(1 / m_page->deviceScaleFactor());
+
+    setFixedVisibleContentRect(IntRect(contentFixedOrigin, contentFixedSize));
+
     // This also takes care of the relayout.
-    setFixedLayoutSize(IntSize(static_cast<int>(attr.layoutSize.width()), static_cast<int>(attr.layoutSize.height())));
+    setFixedLayoutSize(roundedIntSize(attr.layoutSize));
+
     send(Messages::WebPageProxy::DidChangeViewportProperties(attr));
 }
 

@@ -269,10 +269,6 @@ webkit.org/b/103127 css3/device-adapt/opera/constrain-022.xhtml [ Failure ]
 # Page client doesn't react to orientation changes from CSS Viewport rules.
 webkit.org/b/103130 css3/device-adapt/opera/orientation-001.xhtml [ Failure ]
 
-# Issue with viewport width and relative units.
-webkit.org/b/102922 css3/device-adapt/opera/constrain-006.xhtml [ Failure ]
-webkit.org/b/102922 css3/device-adapt/opera/constrain-007.xhtml [ Failure ]
-
 # Text input controller needs selectedRange implementation
 webkit.org/b/99438 editing/selection/mixed-editability-10.html [ Failure ]
 

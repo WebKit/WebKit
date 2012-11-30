@@ -1,3 +1,19 @@
+2012-11-30  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [WK2] TiledBackingStore: Frame view re-layouts with wrong Fixed Visible Content Rect.
+        https://bugs.webkit.org/show_bug.cgi?id=103428
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Set now appropriate fixed visible content rect before layout when viewport
+        attributes change.
+
+        * UIProcess/PageViewportController.cpp:
+        (WebKit::PageViewportController::syncVisibleContents):
+        (WebKit::PageViewportController::didChangeViewportAttributes):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::sendViewportAttributesChanged):
+
 2012-11-30  Sudarsana Nagineni  <sudarsana.nagineni@intel.com>
 
         [EFL] Gardening after r136031 and r136142

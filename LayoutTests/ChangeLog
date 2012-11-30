@@ -1,3 +1,14 @@
+2012-11-30  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [WK2] TiledBackingStore: Frame view re-layouts with wrong Fixed Visible Content Rect.
+        https://bugs.webkit.org/show_bug.cgi?id=103428
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Unskipped corresponding test cases for EFL WK2.
+
+        * platform/efl-wk2/TestExpectations:
+
 2012-11-30  Sudarsana Nagineni  <sudarsana.nagineni@intel.com>
 
         [EFL] Gardening after r136031 and r136142

@@ -209,7 +209,7 @@ void PageViewportController::didChangeContentsVisibility(const FloatPoint& viewp
 
 void PageViewportController::syncVisibleContents(const FloatPoint& trajectoryVector)
 {
-    DrawingAreaProxy* const drawingArea = m_webPageProxy->drawingArea();
+    DrawingAreaProxy* drawingArea = m_webPageProxy->drawingArea();
     if (!drawingArea || m_viewportSize.isEmpty() || m_contentsSize.isEmpty())
         return;
 
@@ -234,8 +234,6 @@ void PageViewportController::didChangeViewportAttributes(const WebCore::Viewport
 
     if (updateMinimumScaleToFit(true))
         m_client->didChangeViewportAttributes();
-
-    syncVisibleContents();
 }
 
 WebCore::FloatSize PageViewportController::viewportSizeInContentsCoordinates() const
