@@ -102,4 +102,13 @@ void PlatformWebView::simulateMouseMove(unsigned x, unsigned y)
     evas_event_feed_mouse_move(evas, x, y, 0, 0);
 }
 
+void PlatformWebView::simulateRightClick(unsigned x, unsigned y)
+{
+    Evas* evas = ecore_evas_get(m_window);
+    evas_object_show(m_view);
+    evas_event_feed_mouse_move(evas, x, y, 0, 0);
+    evas_event_feed_mouse_down(evas, 3, EVAS_BUTTON_NONE, 0, 0);
+    evas_event_feed_mouse_up(evas, 3, EVAS_BUTTON_NONE, 0, 0);
+}
+
 } // namespace TestWebKitAPI

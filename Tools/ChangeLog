@@ -1,3 +1,18 @@
+2012-11-30  Sudarsana Nagineni  <sudarsana.nagineni@intel.com>
+
+        [EFL][WK2] Add support for PlatformWebView::simulateRightClick() in TestWebKitAPI
+        https://bugs.webkit.org/show_bug.cgi?id=103634
+
+        Reviewed by Gyuyoung Kim.
+
+        Add support for PlatformWebView::simulateRightClick() and enable
+        WebKit2 API test HitTestResultNodeHandle.
+
+        * TestWebKitAPI/PlatformEfl.cmake:
+        * TestWebKitAPI/efl/PlatformWebView.cpp:
+        (TestWebKitAPI::PlatformWebView::simulateRightClick):
+        (TestWebKitAPI):
+
 2012-11-30  Mihai Maerean  <mmaerean@adobe.com>
 
         [CSSRegions] when WebKit uses V8, there should be a single variable to store if the CSS Regions feature is enabled

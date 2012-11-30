@@ -55,6 +55,7 @@ SET(test_webkit2_api_BINARIES
     FrameMIMETypeHTML
     FrameMIMETypePNG
     GetInjectedBundleInitializationUserDataCallback
+    HitTestResultNodeHandle
     InjectedBundleBasic
     InjectedBundleInitializationUserDataCallbackWins
     LoadAlternateHTMLStringWithNonDirectoryURL
@@ -90,7 +91,6 @@ ADD_DEFINITIONS(-DTHEME_DIR="${THEME_BINARY_DIR}")
 
 # Tests disabled because of missing features on the test harness:
 #
-#   HitTestResultNodeHandle
 #   ResponsivenessTimerDoesntFireEarly
 #   SpacebarScrolling
 #
