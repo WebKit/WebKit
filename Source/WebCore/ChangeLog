@@ -1,5 +1,31 @@
 2012-11-30  Simon Fraser  <simon.fraser@apple.com>
 
+        Make RenderLayer::updateLayerPosition() private
+        https://bugs.webkit.org/show_bug.cgi?id=102624
+
+        Reviewed by Ryosuke Niwa.
+
+        Made updateLayerPosition() private. The only external caller was
+        MouseRelatedEvent::computeRelativePosition(), which has no business updating
+        layer positions. In fact it had positively dangerous behavior; doing just
+        a style update without layout, and then calling absoluteToLocal() and walking
+        layers. Fixed by having it call updateLayoutIgnorePendingStylesheets().
+        
+        This revealed a bug where event.offsetX/offsetY could be wrong in some cases.
+        fast/events/stopPropagation-submit.html does a simulated click (which has
+        client coordinates at 0,0), so the image submit coordinates were incorrectly
+        0,0. Now that we do layout before computing them, they are correctly reported
+        as being relative to the element.
+
+        * dom/MouseRelatedEvent.cpp:
+        (WebCore::MouseRelatedEvent::computeRelativePosition):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateLayerPositionsAfterScroll):
+        * rendering/RenderLayer.h:
+        (RenderLayer):
+
+2012-11-30  Simon Fraser  <simon.fraser@apple.com>
+
         Late-loading stylesheets can cause composited layers to be blank
         https://bugs.webkit.org/show_bug.cgi?id=103773
 

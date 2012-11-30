@@ -161,7 +161,7 @@ void MouseRelatedEvent::computeRelativePosition()
     m_offsetLocation = m_pageLocation;
 
     // Must have an updated render tree for this math to work correctly.
-    targetNode->document()->updateStyleIfNeeded();
+    targetNode->document()->updateLayoutIgnorePendingStylesheets();
 
     // Adjust offsetLocation to be relative to the target's position.
     if (RenderObject* r = targetNode->renderer()) {
@@ -173,17 +173,15 @@ void MouseRelatedEvent::computeRelativePosition()
     }
 
     // Adjust layerLocation to be relative to the layer.
-    // FIXME: We're pretty sure this is the wrong definition of "layer."
-    // Our RenderLayer is a more modern concept, and layerX/Y is some
-    // other notion about groups of elements (left over from the Netscape 4 days?);
-    // we should test and fix this.
+    // FIXME: event.layerX and event.layerY are poorly defined,
+    // and probably don't always correspond to RenderLayer offsets.
+    // https://bugs.webkit.org/show_bug.cgi?id=21868
     Node* n = targetNode;
     while (n && !n->renderer())
         n = n->parentNode();
 
     RenderLayer* layer;
     if (n && (layer = n->renderer()->enclosingLayer())) {
-        layer->updateLayerPosition();
         for (; layer; layer = layer->parent()) {
             m_layerLocation -= toLayoutSize(layer->location());
         }

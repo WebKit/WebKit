@@ -390,9 +390,6 @@ public:
 
     bool canRender3DTransforms() const;
 
-    // Returns true if the position changed.
-    bool updateLayerPosition();
-
     enum UpdateLayerPositionsFlag {
         CheckForRepaint = 1,
         IsCompositingUpdateRoot = 1 << 1,
@@ -738,6 +735,9 @@ private:
 
     void updateScrollbarsAfterStyleChange(const RenderStyle* oldStyle);
     void updateScrollbarsAfterLayout();
+
+    // Returns true if the position changed.
+    bool updateLayerPosition();
 
     void updateLayerPositions(RenderGeometryMap* = 0, UpdateLayerPositionsFlags = defaultFlags);
 
