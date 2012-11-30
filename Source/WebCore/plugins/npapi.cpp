@@ -207,6 +207,8 @@ NPError NPN_PopUpContextMenu(NPP instance, NPMenu* menu)
     plugin->popUpContextMenu(menu);
     return NPERR_NO_ERROR;
 #else
+    UNUSED_PARAM(instance);
+    UNUSED_PARAM(menu);
     return NPERR_NO_ERROR;
 #endif // PLATFORM(QT) && defined(XP_MACOSX)
 }

@@ -1,3 +1,16 @@
+2012-11-29  KyungTae Kim  <ktf.kim@samsung.com>
+
+        Unused parameters on plugins/npapi.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=103676
+
+        Reviewed by Kentaro Hara.
+
+        Because 'instance' and 'menu' are not used when !PLATFORM(QT) || !defined(XP_MACOSX),
+        use UNUSED_PARAM macro to fix build warning -Wunused-parameter
+
+        * plugins/npapi.cpp:
+        (NPN_PopUpContextMenu):
+
 2012-11-29  Pablo Flouret  <pablof@motorola.com>
 
         REGRESSION(r134693): Compilation error on @supports grammar code
