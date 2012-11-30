@@ -38,7 +38,7 @@ static const int gHideMouseCursorDelay = 3000;
 FullScreenVideoWindow::FullScreenVideoWindow()
     : m_mediaElement(0)
 {
-    setModality(Qt::ApplicationModal);
+    setWindowModality(Qt::ApplicationModal);
 
 #ifndef QT_NO_CURSOR
     m_cursorTimer.setSingleShot(true);
@@ -115,7 +115,7 @@ PlatformVideoWindow::PlatformVideoWindow()
 {
     QWindow* win = new FullScreenVideoWindow();
     m_window = win;
-    win->setFlags(win->flags() | Qt::FramelessWindowHint);
+    win->setWindowFlags(win->windowFlags() | Qt::FramelessWindowHint);
     // FIXME: Port to Qt 5.
     win->showFullScreen();
     m_videoWindowId = win->winId();
