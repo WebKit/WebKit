@@ -2855,6 +2855,7 @@ webkit.org/b/61169 [ Android Linux Win ] css3/images/optimize-contrast-image.htm
 webkit.org/b/96720 fast/forms/time-multiple-fields/time-multiple-fields-preserve-value-after-history-back.html [ Pass Timeout ]
 webkit.org/b/96720 fast/forms/date-multiple-fields/date-multiple-fields-preserve-value-after-history-back.html [ Pass Timeout ]
 webkit.org/b/96720 fast/forms/datetimelocal-multiple-fields/datetimelocal-multiple-fields-preserve-value-after-history-back.html [ Pass Timeout ]
+webkit.org/b/96720 fast/forms/week-multiple-fields/week-multiple-fields-preserve-value-after-history-back.html [ Pass Timeout ]
 webkit.org/b/98906 platform/chromium/fast/forms/suggestion-picker/date-suggestion-picker-mouse-operations.html [ Pass Failure ]
 
 # New test added in r87324
@@ -4214,7 +4215,6 @@ webkit.org/b/103148 [ Win Mac ] fast/frames/iframe-scaling-with-scroll.html [ Pa
 webkit.org/b/103148 [ Lion ] fast/frames/iframe-scrolling-attribute.html [ Pass ImageOnlyFailure ]
 webkit.org/b/103148 [ Lion ] fast/table/border-collapsing/004-vertical.html [ Pass ImageOnlyFailure ]
 webkit.org/b/103149 [ Lion SnowLeopard Win7 Debug ] fast/events/stopPropagation-submit.html [ Pass Failure ]
-webkit.org/b/103152 [ Mac Win ] fast/forms/week-multiple-fields/week-multiple-fields-preserve-value-after-history-back.html [ Pass Timeout ]
 webkit.org/b/103154 [ Win7 SnowLeopard Lion Linux Debug ] fast/frames/frame-unload-crash2.html [ Pass Timeout ]
 webkit.org/b/103148 [ Lion ] fast/text/large-text-composed-char.html [ Pass ImageOnlyFailure ]
 webkit.org/b/103148 [ Lion ] fast/text/text-letter-spacing.html [ Pass ImageOnlyFailure ]

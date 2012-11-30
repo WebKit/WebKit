@@ -7,13 +7,12 @@
 <div id=container>
 <input type=time id=test1><br>
 <input type=time id=test2 step=1><br>
-<iframe id=iframe></iframe>
 </div>
+<iframe id="iframe"></iframe>
 <script>
 description('Checks input value is preserved after backward and forward');
-if (!window.eventSender) {
+if (!window.eventSender)
     debug('Please run within DumpRenderTree');
-}
 window.jsTestIsAsync = true;
 
 var iframe = document.getElementById('iframe');
@@ -70,77 +69,79 @@ function runTestCases() {
     debug('');
 }
 
-switch (pageName) {
-case '?page0':
-    iframe.src = location + '?page1';
-    break;
-case '?page1':
-    switch (parent.state) {
-    case 'direct': {
-        testInput1.value = '01:01';
-        testInput2.focus();
-        keyDown('upArrow');
-        keyDown('\t');
-        keyDown('\t');
-        keyDown('\t');
-        keyDown('upArrow');
-        var nextUri = location.toString().replace('?page1', '?page2');
-        setTimeout(function () { window.location.href = nextUri; }, 0);
+window.onload = function() {
+    switch (pageName) {
+    case '?page0':
+        iframe.src = location + '?page1';
         break;
-    }
-    case 'backTo1':
-        parent.testCases.push(
-            {
-                'description' : 'Went back to a page. Checking a form control which had a full value',
-                'actual' : testInput1.value,
-                'expected' : '01:01' },
-            {
-                'description' : 'Went back to a page. Checking a form control which had a partial value',
-                'actual' : fieldsText(testInput2),
-                'expected' : '01:--:-- AM'
-            });
-        forward('forwardTo2');
+    case '?page1':
+        switch (parent.state) {
+        case 'direct': {
+            testInput1.value = '01:01';
+            testInput2.focus();
+            keyDown('upArrow');
+            keyDown('\t');
+            keyDown('\t');
+            keyDown('\t');
+            keyDown('upArrow');
+            var nextUri = location.toString().replace('?page1', '?page2');
+            setTimeout(function () { window.location.href = nextUri; }, 0);
+            break;
+        }
+        case 'backTo1':
+            parent.testCases.push(
+                {
+                    'description' : 'Went back to a page. Checking a form control which had a full value',
+                    'actual' : testInput1.value,
+                    'expected' : '01:01' },
+                {
+                    'description' : 'Went back to a page. Checking a form control which had a partial value',
+                    'actual' : fieldsText(testInput2),
+                    'expected' : '01:--:-- AM'
+                });
+            forward('forwardTo2');
+            break;
+        case 'backTo1Second':
+            parent.finishTest();
+            break;
+        default:
+            failed('Unsupported state(' + parent.state + ')');
+            break;
+        }
         break;
-    case 'backTo1Second':
-        parent.finishTest();
+    case '?page2':
+        switch (parent.state) {
+        case 'direct':
+            testInput1.value = '02:02';
+            testInput2.focus();
+            keyDown('\t');
+            keyDown('downArrow');
+            back('backTo1');
+            break;
+        case 'forwardTo2':
+            parent.testCases.push(
+                {
+                    'description' : 'Went forward to a page. Checking a form control which had a full value',
+                    'actual' : testInput1.value,
+                    'expected' : '02:02'
+                },
+                {
+                    'description' : 'Went forward to a page. Checking a form control which had a partial value',
+                    'actual' : fieldsText(testInput2),
+                    'expected' : '--:59:-- --'
+                });
+            back('backTo1Second');
+            break;
+        default:
+            failed('Unsupported state(' + parent.state + ')');
+            break;
+        }
         break;
     default:
-        failed('Unsupported state(' + parent.state + ')');
+        failed('Unsupported page(' + pageName + ')');
         break;
     }
-    break;
-case '?page2':
-    switch (parent.state) {
-    case 'direct':
-        testInput1.value = '02:02';
-        testInput2.focus();
-        keyDown('\t');
-        keyDown('downArrow');
-        back('backTo1');
-        break;
-    case 'forwardTo2':
-        parent.testCases.push(
-            {
-                'description' : 'Went forward to a page. Checking a form control which had a full value',
-                'actual' : testInput1.value,
-                'expected' : '02:02'
-            },
-            {
-                'description' : 'Went forward to a page. Checking a form control which had a partial value',
-                'actual' : fieldsText(testInput2),
-                'expected' : '--:59:-- --'
-            });
-        back('backTo1Second');
-        break;
-    default:
-        failed('Unsupported state(' + parent.state + ')');
-        break;
-    }
-    break;
-default:
-    failed('Unsupported page(' + pageName + ')');
-    break;
-}
+};
 </script>
 <script src="../../../fast/js/resources/js-test-post.js"></script>
 </body>

@@ -1,3 +1,27 @@
+2012-11-30  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium] Layout Test fast/forms/*-multiple-fields/*-multiple-fields-preserve-value-after-history-back.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=96720
+
+        Reviewed by Kentaro Hara.
+
+        We should start tests after js-test-post.js loading to avoid missing
+        testRunner.waitUntilDone calls.
+
+        * fast/forms/date-multiple-fields/date-multiple-fields-preserve-value-after-history-back.html:
+        Make the outer switch a function to be called window.onload, and stop to
+        remove the iframe because the script in the iframe calls notifyDone.
+        * fast/forms/datetimelocal-multiple-fields/datetimelocal-multiple-fields-preserve-value-after-history-back.html:
+        Ditto.
+        * fast/forms/time-multiple-fields/time-multiple-fields-preserve-value-after-history-back.html:
+        Ditto.
+        * fast/forms/week-multiple-fields/week-multiple-fields-preserve-value-after-history-back.html:
+        Ditto.
+        * platform/chromium/TestExpectations:
+        Move the line for
+        week-multiple-fields-preserve-value-after-history-back.html near to
+        others. We don't remove these expectations yet just in case.
+
 2012-11-30  Alexander Pavlov  <apavlov@chromium.org>
 
         [Chromium] Unreviewed, fast/text/line-initial-and-final-swashes.html missing expectations on XP after r136153.
