@@ -50,8 +50,11 @@ String OpaqueJSString::string() const
 
 Identifier OpaqueJSString::identifier(JSGlobalData* globalData) const
 {
-    if (!this || !m_string.length())
-        return Identifier(globalData, static_cast<const char*>(0));
+    if (!this || m_string.isNull())
+        return Identifier();
+
+    if (m_string.isEmpty())
+        return Identifier(Identifier::EmptyIdentifier);
 
     if (m_string.is8Bit())
         return Identifier(globalData, m_string.characters8(), m_string.length());

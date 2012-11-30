@@ -1,3 +1,17 @@
+2012-11-30  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        Crash in conversion of empty OpaqueJSString to Identifier 
+        https://bugs.webkit.org/show_bug.cgi?id=101867
+
+        Reviewed by Michael Saboff.
+
+        The constructor call used for both null and empty OpaqueJSStrings results
+        in an assertion voilation and crash. This patch instead uses the Identifier
+        constructors which are specifically for null and empty Identifier.
+
+        * API/OpaqueJSString.cpp:
+        (OpaqueJSString::identifier):
+
 2012-11-30  Tor Arne Vestbø  <tor.arne.vestbo@digia.com>
 
         [Qt] Place the LLIntOffsetsExtractor binaries in debug/release subdirs on Mac
