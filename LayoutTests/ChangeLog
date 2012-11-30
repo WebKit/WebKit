@@ -1,3 +1,13 @@
+2012-11-30  Abhishek Arya  <inferno@chromium.org>
+
+        Crash due to intruding float not removed after writing mode changed.
+        https://bugs.webkit.org/show_bug.cgi?id=100149
+
+        Reviewed by Levi Weintraub.
+
+        * fast/block/float/intruding-float-not-removed-writing-mode-expected.txt: Added.
+        * fast/block/float/intruding-float-not-removed-writing-mode.xhtml: Added.
+
 2012-11-30  Florin Malita  <fmalita@chromium.org>
 
         SVG pattern data deleted while in use

@@ -263,6 +263,7 @@ void RenderBox::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle
         if (viewStyle->writingMode() != newStyle->writingMode() && (isRootRenderer || !document()->writingModeSetOnDocumentElement())) {
             viewStyle->setWritingMode(newStyle->writingMode());
             viewRenderer->setHorizontalWritingMode(newStyle->isHorizontalWritingMode());
+            viewRenderer->markAllDescendantsWithFloatsForLayout();
             if (isBodyRenderer) {
                 document()->documentElement()->renderer()->style()->setWritingMode(newStyle->writingMode());
                 document()->documentElement()->renderer()->setHorizontalWritingMode(newStyle->isHorizontalWritingMode());
