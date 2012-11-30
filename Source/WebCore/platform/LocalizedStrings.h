@@ -219,6 +219,7 @@ namespace WebCore {
 #if PLATFORM(MAC)
     String builtInPDFPluginName();
     String pdfDocumentTypeDescription();
+    String postScriptDocumentTypeDescription();
     String keygenMenuItem512();
     String keygenMenuItem1024();
     String keygenMenuItem2048();

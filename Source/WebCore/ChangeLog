@@ -1,3 +1,21 @@
+2012-11-30  Tim Horton  <timothy_horton@apple.com>
+
+        (Simple)PDFPlugin: Support conversion of PostScript documents
+        https://bugs.webkit.org/show_bug.cgi?id=103289
+        <rdar://problem/10235708>
+
+        Reviewed by Dan Bernstein.
+
+        SimplePDFPlugin (and PDFPlugin) should support converting PostScript files
+        to PDF before handing them off to their respective backends.
+
+        * English.lproj/Localizable.strings:
+        * WebCore.exp.in:
+        * platform/LocalizedStrings.cpp:
+        (WebCore::postScriptDocumentTypeDescription):
+        * platform/LocalizedStrings.h:
+        Add and export postScriptDocumentTypeDescription, for PostScript files.
+
 2012-11-30  Justin Novosad  <junov@google.com>
 
         [Chromium] Animation updates fail when using a canvas as a CSS backround-image style with -webkit-canvas

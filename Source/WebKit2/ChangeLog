@@ -1,5 +1,30 @@
 2012-11-30  Tim Horton  <timothy_horton@apple.com>
 
+        (Simple)PDFPlugin: Support conversion of PostScript documents
+        https://bugs.webkit.org/show_bug.cgi?id=103289
+        <rdar://problem/10235708>
+
+        Reviewed by Dan Bernstein.
+
+        SimplePDFPlugin (and PDFPlugin) should support converting PostScript files
+        to PDF before handing them off to their respective backends.
+
+        As PDFPlugin inherits from SimplePDFPlugin, it gets the new functionality automatically.
+
+        * WebProcess/Plugins/PDF/SimplePDFPlugin.h: Add convertPostScriptDataIfNeeded(), and m_isPostScript.
+        * WebProcess/Plugins/PDF/SimplePDFPlugin.mm:
+        (WebKit::SimplePDFPlugin::pluginInfo): SimplePDFPlugin should claim to support PDF and PostScript.
+        (WebKit::convertPostScriptDataSourceToPDF): PS->PDF conversion code, copied from PDFViewController (which I intend to remove).
+        (WebKit::SimplePDFPlugin::convertPostScriptDataIfNeeded): Check if the loaded data represents a PS file; if so, convert it.
+        (WebKit::SimplePDFPlugin::streamDidReceiveResponse): Check if the loaded data is of MIME type application/postscript, and store that in m_isPostScript.
+        (WebKit::SimplePDFPlugin::streamDidFinishLoading): Call convertPostScriptDataIfNeeded when we finish loading.
+        (WebKit::SimplePDFPlugin::manualStreamDidReceiveResponse): Ditto from streamDidReceiveResponse.
+        (WebKit::SimplePDFPlugin::manualStreamDidFinishLoading): Ditto from streamDidFinishLoading.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::createPlugin): Use (Simple)PDFPlugin for PostScript files too.
+
+2012-11-30  Tim Horton  <timothy_horton@apple.com>
+
         PDFPlugin: "Show Definition" context menu item should be implemented
         https://bugs.webkit.org/show_bug.cgi?id=103389
         <rdar://problem/12710751>

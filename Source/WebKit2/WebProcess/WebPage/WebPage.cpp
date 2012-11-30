@@ -521,8 +521,9 @@ PassRefPtr<Plugin> WebPage::createPlugin(WebFrame* frame, HTMLPlugInElement* plu
 
     if (pluginPath.isNull()) {
 #if PLATFORM(MAC)
-        if (parameters.mimeType == "application/pdf"
-            || (parameters.mimeType.isEmpty() && parameters.url.path().lower().endsWith(".pdf"))) {
+        String path = parameters.url.path();
+        if ((parameters.mimeType == "application/pdf" || parameters.mimeType == "application/postscript")
+            || (parameters.mimeType.isEmpty() && (path.endsWith(".pdf", false) || path.endsWith(".ps", false)))) {
 #if ENABLE(PDFKIT_PLUGIN)
             if (pdfPluginEnabled())
                 return PDFPlugin::create(frame);

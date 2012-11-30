@@ -721,13 +721,19 @@ String allFilesText()
 String builtInPDFPluginName()
 {
     // Also exposed to DOM.
-    return WEB_UI_STRING("WebKit built-in PDF", "Pseudo plug-in name, visible in Installed Plug-ins page in Safari.");
+    return WEB_UI_STRING("WebKit built-in PDF", "Pseudo plug-in name, visible in the Installed Plug-ins page in Safari.");
 }
 
 String pdfDocumentTypeDescription()
 {
     // Also exposed to DOM.
-    return WEB_UI_STRING("Portable Document Format", "Description of the (only) type supported by PDF pseudo plug-in. Visible in Installed Plug-ins page in Safari.");
+    return WEB_UI_STRING("Portable Document Format", "Description of the primary type supported by the PDF pseudo plug-in. Visible in the Installed Plug-ins page in Safari.");
+}
+
+String postScriptDocumentTypeDescription()
+{
+    // Also exposed to DOM.
+    return WEB_UI_STRING("PostScript", "Description of the PostScript type supported by the PDF pseudo plug-in. Visible in the Installed Plug-ins page in Safari.");
 }
 
 String keygenMenuItem512()
