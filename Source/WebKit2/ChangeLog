@@ -1,3 +1,11 @@
+2012-11-30  Simon Hausmann  <simon.hausmann@digia.com>
+
+        Unreviewed trivial Qt build fix:
+
+        Always link against WebProcess against QT += webkit and use webkitwidgets only if available.
+
+        * WebProcess.pro:
+
 2012-11-30  Simon Hausmann  <simon.hausmann@digia.com>, Pierre Rossi  <pierre.rossi@digia.com>
 
         [Qt] Separate Qt WebKit into Qt WebKit and Qt WebKit Widgets

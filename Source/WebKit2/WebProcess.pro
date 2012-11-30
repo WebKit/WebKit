@@ -11,10 +11,10 @@ DESTDIR = $${ROOT_BUILD_DIR}/bin
 
 SOURCES += qt/MainQt.cpp
 
-QT += network webkitwidgets
+QT += network webkit
 macx: QT += xml
 
-haveQtModule(widgets): QT += widgets
+haveQtModule(widgets): QT += widgets webkitwidgets
 
 build?(webkit1): DEFINES += HAVE_WEBKIT1
 
