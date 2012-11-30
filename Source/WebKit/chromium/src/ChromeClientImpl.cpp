@@ -825,6 +825,12 @@ void ChromeClientImpl::setCursorHiddenUntilMouseMoves(bool)
 
 void ChromeClientImpl::setCursor(const WebCursorInfo& cursor)
 {
+#if OS(DARWIN)
+    // On Mac the mousemove event propagates to both the popup and main window.
+    // If a popup is open we don't want the main window to change the cursor.
+    if (m_webView->hasOpenedPopup())
+        return;
+#endif
     if (m_webView->client())
         m_webView->client()->didChangeCursor(cursor);
 }

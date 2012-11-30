@@ -42,6 +42,7 @@
 #include "PagePopupClient.h"
 #include "PageWidgetDelegate.h"
 #include "Settings.h"
+#include "WebCursorInfo.h"
 #include "WebInputEventConversion.h"
 #include "WebPagePopup.h"
 #include "WebSettingsImpl.h"
@@ -129,6 +130,12 @@ private:
     virtual PlatformPageClient platformPageClient() const OVERRIDE
     {
         return PlatformPageClient(this);
+    }
+
+    virtual void setCursor(const WebCore::Cursor& cursor) OVERRIDE
+    {
+        if (m_popup->m_webView->client())
+            m_popup->m_webView->client()->didChangeCursor(WebCursorInfo(cursor));
     }
 
     // PageClientChromium methods:

@@ -1,3 +1,18 @@
+2012-11-30  Keishi Hattori  <keishi@webkit.org>
+
+        [Chromium] Page popup doesn't change mouse cursor
+        https://bugs.webkit.org/show_bug.cgi?id=97454
+
+        Reviewed by Kent Tamura.
+
+        The mouse cursor should change based on the page popup content and not the main window content.
+        On Mac the mousemove event propagates to both the page popup and main window causing the cursor to flicker.
+        The change to ChromeClientImpl stops that.
+
+        * src/ChromeClientImpl.cpp:
+        (WebKit::ChromeClientImpl::setCursor): On Mac, don't update the mouse cursor if a popup is open.
+        * src/WebPagePopupImpl.cpp: Implement setCursor so the mouse cursor gets set based on the page popup content.
+
 2012-11-30  Mihai Maerean  <mmaerean@adobe.com>
 
         [CSSRegions] when WebKit uses V8, there should be a single variable to store if the CSS Regions feature is enabled
