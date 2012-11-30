@@ -71,6 +71,14 @@ public:
     static bool cssExclusionsEnabled() { return false; }
 #endif
 
+#if ENABLE(CSS_REGIONS)
+    static void setCSSRegionsEnabled(bool isEnabled) { isCSSRegionsEnabled = isEnabled; }
+    static bool cssRegionsEnabled() { return isCSSRegionsEnabled; }
+#else
+    static void setCSSRegionsEnabled(bool) { }
+    static bool cssRegionsEnabled() { return false; }
+#endif
+
 #if ENABLE(FULLSCREEN_API)
     // Mozilla version
     static bool webkitFullScreenAPIEnabled() { return isFullScreenAPIEnabled; }
@@ -274,6 +282,7 @@ private:
     static bool isDeviceOrientationEnabled;
     static bool isSpeechInputEnabled;
     static bool isCSSExclusionsEnabled;
+    static bool isCSSRegionsEnabled;
     WEBCORE_TESTING static bool isLangAttributeAwareFormControlUIEnabled;
 #if ENABLE(SCRIPTED_SPEECH)
     static bool isScriptedSpeechEnabled;

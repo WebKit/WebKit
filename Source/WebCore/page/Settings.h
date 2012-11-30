@@ -224,14 +224,6 @@ namespace WebCore {
         bool cssStickyPositionEnabled() const { return false; }
 #endif
 
-#if ENABLE(CSS_REGIONS)
-        void setCSSRegionsEnabled(bool enabled) { m_cssRegionsEnabled = enabled; }
-        bool cssRegionsEnabled() const { return m_cssRegionsEnabled; }
-#else
-        void setCSSRegionsEnabled(bool) { }
-        bool cssRegionsEnabled() const { return false; }
-#endif
-
 #if ENABLE(CSS_VARIABLES)
         void setCSSVariablesEnabled(bool enabled) { m_cssVariablesEnabled = enabled; }
         bool cssVariablesEnabled() const { return m_cssVariablesEnabled; }
@@ -349,9 +341,6 @@ namespace WebCore {
         bool m_isCSSCustomFilterEnabled : 1;
 #if ENABLE(CSS_STICKY_POSITION)
         bool m_cssStickyPositionEnabled : 1;
-#endif        
-#if ENABLE(CSS_REGIONS)
-        bool m_cssRegionsEnabled : 1;
 #endif
 #if ENABLE(CSS_VARIABLES)
         bool m_cssVariablesEnabled : 1;

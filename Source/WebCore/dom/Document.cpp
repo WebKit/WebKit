@@ -1124,7 +1124,7 @@ bool Document::cssStickyPositionEnabled() const
 
 bool Document::cssRegionsEnabled() const
 {
-    return settings() && settings()->cssRegionsEnabled(); 
+    return RuntimeEnabledFeatures::cssRegionsEnabled(); 
 }
 
 bool Document::cssGridLayoutEnabled() const

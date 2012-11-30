@@ -57,6 +57,7 @@
 #include "RefPtrCairo.h"
 #include "RenderThemeEfl.h"
 #include "ResourceHandle.h"
+#include "RuntimeEnabledFeatures.h"
 #include "Settings.h"
 #include "TiledBackingStore.h"
 #include "c_instance.h"
@@ -821,7 +822,7 @@ static Ewk_View_Private_Data* _ewk_view_priv_new(Ewk_View_Smart_Data* smartData)
     priv->pageSettings->setSansSerifFontFamily("sans");
     priv->pageSettings->setStandardFontFamily("sans");
     priv->pageSettings->setHyperlinkAuditingEnabled(false);
-    priv->pageSettings->setCSSRegionsEnabled(true);
+    WebCore::RuntimeEnabledFeatures::setCSSRegionsEnabled(true);
     priv->pageSettings->setScriptEnabled(true);
     priv->pageSettings->setPluginsEnabled(true);
     priv->pageSettings->setLocalStorageEnabled(true);

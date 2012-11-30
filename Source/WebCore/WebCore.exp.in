@@ -2695,3 +2695,7 @@ _wkCaptionAppearanceGetRelativeCharacterSize
 _wkCaptionAppearanceGetTextEdgeStyle
 _wkCaptionAppearanceGetSettingsChangedNotification
 #endif
+
+#if ENABLE(CSS_REGIONS)
+__ZN7WebCore22RuntimeEnabledFeatures19isCSSRegionsEnabledE
+#endif

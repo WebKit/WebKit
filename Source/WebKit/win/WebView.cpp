@@ -129,6 +129,7 @@
 #include <WebCore/ResourceHandle.h>
 #include <WebCore/ResourceHandleClient.h>
 #include <WebCore/ResourceRequest.h>
+#include <WebCore/RuntimeEnabledFeatures.h>
 #include <WebCore/SchemeRegistry.h>
 #include <WebCore/ScriptValue.h>
 #include <WebCore/Scrollbar.h>
@@ -4671,7 +4672,7 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
     hr = preferences->isCSSRegionsEnabled(&enabled);
     if (FAILED(hr))
         return hr;
-    settings->setCSSRegionsEnabled(!!enabled);
+    RuntimeEnabledFeatures::setCSSRegionsEnabled(!!enabled);
 
     hr = preferences->privateBrowsingEnabled(&enabled);
     if (FAILED(hr))

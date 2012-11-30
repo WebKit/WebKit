@@ -30,6 +30,7 @@
 
 #include "config.h"
 #include "WebPreferences.h"
+#include "WebRuntimeFeatures.h"
 
 #include "WebView.h"
 
@@ -200,7 +201,7 @@ void WebPreferences::applyTo(WebView* webView)
     settings->setDefaultTextEncodingName(defaultTextEncodingName);
     settings->setDeveloperExtrasEnabled(developerExtrasEnabled);
     settings->setExperimentalWebGLEnabled(experimentalWebGLEnabled);
-    settings->setExperimentalCSSRegionsEnabled(experimentalCSSRegionsEnabled);
+    WebRuntimeFeatures::enableCSSRegions(experimentalCSSRegionsEnabled);
     settings->setExperimentalCSSGridLayoutEnabled(experimentalCSSGridLayoutEnabled);
     settings->setExperimentalCSSCustomFilterEnabled(cssCustomFilterEnabled);
     settings->setJavaEnabled(javaEnabled);

@@ -163,6 +163,7 @@
 #import <WebCore/ResourceRequest.h>
 #import <WebCore/RunLoop.h>
 #import <WebCore/RuntimeApplicationChecks.h>
+#import <WebCore/RuntimeEnabledFeatures.h>
 #import <WebCore/SchemeRegistry.h>
 #import <WebCore/ScriptController.h>
 #import <WebCore/ScriptValue.h>
@@ -1538,7 +1539,7 @@ static bool needsSelfRetainWhileLoadingQuirk()
 #if ENABLE(CSS_SHADERS)
     settings->setCSSCustomFilterEnabled([preferences cssCustomFilterEnabled]);
 #endif
-    settings->setCSSRegionsEnabled([preferences cssRegionsEnabled]);
+    RuntimeEnabledFeatures::setCSSRegionsEnabled([preferences cssRegionsEnabled]);
     settings->setCSSGridLayoutEnabled([preferences cssGridLayoutEnabled]);
 #if ENABLE(FULLSCREEN_API)
     settings->setFullScreenEnabled([preferences fullScreenEnabled]);

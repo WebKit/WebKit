@@ -41,6 +41,7 @@
 #include "Page.h"
 #include "PageCache.h"
 #include "PluginDatabase.h"
+#include "RuntimeEnabledFeatures.h"
 #include "Settings.h"
 #include <QDir>
 #include <QFileInfo>
@@ -167,7 +168,7 @@ void QWebSettingsPrivate::apply()
 
         value = attributes.value(QWebSettings::CSSRegionsEnabled,
                                  global->attributes.value(QWebSettings::CSSRegionsEnabled));
-        settings->setCSSRegionsEnabled(value);
+        WebCore::RuntimeEnabledFeatures::setCSSRegionsEnabled(value);
         value = attributes.value(QWebSettings::CSSGridLayoutEnabled,
                                  global->attributes.value(QWebSettings::CSSGridLayoutEnabled));
         settings->setCSSGridLayoutEnabled(value);

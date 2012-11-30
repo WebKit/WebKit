@@ -1,3 +1,23 @@
+2012-11-30  Mihai Maerean  <mmaerean@adobe.com>
+
+        [CSSRegions] when WebKit uses V8, there should be a single variable to store if the CSS Regions feature is enabled
+        https://bugs.webkit.org/show_bug.cgi?id=101192
+
+        Reviewed by Hajime Morita.
+
+        Removed the CSS Regions flag in Settings and switched to using the new flag I have added in RuntimeEnabledFeatures.
+
+        Tests: No new tests because there is no functional change.
+
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::overrideBoolPreferenceForTestRunner):
+        (WebKit::InjectedBundle::setCSSRegionsEnabled):
+        (WebKit):
+        * WebProcess/InjectedBundle/InjectedBundle.h:
+        (InjectedBundle):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+
 2012-11-29  Tim Horton  <timothy_horton@apple.com>
 
         PDFPlugin: Only plain text can be copied out of PDFs

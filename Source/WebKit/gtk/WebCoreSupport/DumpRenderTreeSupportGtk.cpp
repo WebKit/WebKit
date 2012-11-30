@@ -690,7 +690,7 @@ void DumpRenderTreeSupportGtk::setCSSGridLayoutEnabled(WebKitWebView* webView, b
 
 void DumpRenderTreeSupportGtk::setCSSRegionsEnabled(WebKitWebView* webView, bool enabled)
 {
-    core(webView)->settings()->setCSSRegionsEnabled(enabled);
+    RuntimeEnabledFeatures::setCSSRegionsEnabled(enabled);
 }
 
 void DumpRenderTreeSupportGtk::setCSSCustomFilterEnabled(WebKitWebView* webView, bool enabled)

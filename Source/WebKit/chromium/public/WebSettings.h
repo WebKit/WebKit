@@ -101,7 +101,6 @@ public:
     virtual void setExperimentalCSSCustomFilterEnabled(bool) = 0;
     virtual void setExperimentalCSSGridLayoutEnabled(bool) = 0;
     virtual void setCSSStickyPositionEnabled(bool) = 0;
-    virtual void setExperimentalCSSRegionsEnabled(bool) = 0;
     virtual void setExperimentalCSSVariablesEnabled(bool) = 0;
     virtual void setExperimentalWebGLEnabled(bool) = 0;
     virtual void setFantasyFontFamily(const WebString&, UScriptCode = USCRIPT_COMMON) = 0;
@@ -173,6 +172,9 @@ public:
 
     // DEPRECATED (renamed. remove this after all call sites changed to the new name)
     void setApplyDefaultDeviceScaleFactorInCompositor(bool enabled) { setApplyDeviceScaleFactorInCompositor(enabled); }
+
+    // DEPRECATED
+    void setExperimentalCSSRegionsEnabled(bool) { }
 
 protected:
     ~WebSettings() { }

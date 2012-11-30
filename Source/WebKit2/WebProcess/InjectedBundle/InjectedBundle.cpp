@@ -71,7 +71,7 @@
 #include <wtf/OwnArrayPtr.h>
 #include <wtf/PassOwnArrayPtr.h>
 
-#if ENABLE(SHADOW_DOM)
+#if ENABLE(SHADOW_DOM) || ENABLE(CSS_REGIONS)
 #include <WebCore/RuntimeEnabledFeatures.h>
 #endif
 
@@ -182,11 +182,15 @@ void InjectedBundle::overrideBoolPreferenceForTestRunner(WebPageGroupProxy* page
         }
     }
 
+#if ENABLE(CSS_REGIONS)
+    if (preference == "WebKitCSSRegionsEnabled")
+        RuntimeEnabledFeatures::setCSSRegionsEnabled(enabled);
+#endif
+
     // Map the names used in LayoutTests with the names used in WebCore::Settings and WebPreferencesStore.
 #define FOR_EACH_OVERRIDE_BOOL_PREFERENCE(macro) \
     macro(WebKitAcceleratedCompositingEnabled, AcceleratedCompositingEnabled, acceleratedCompositingEnabled) \
     macro(WebKitCSSCustomFilterEnabled, CSSCustomFilterEnabled, cssCustomFilterEnabled) \
-    macro(WebKitCSSRegionsEnabled, CSSRegionsEnabled, cssRegionsEnabled) \
     macro(WebKitCSSGridLayoutEnabled, CSSGridLayoutEnabled, cssGridLayoutEnabled) \
     macro(WebKitJavaEnabled, JavaEnabled, javaEnabled) \
     macro(WebKitJavaScriptEnabled, ScriptEnabled, javaScriptEnabled) \
@@ -641,6 +645,15 @@ void InjectedBundle::setShadowDOMEnabled(bool enabled)
 {
 #if ENABLE(SHADOW_DOM)
     RuntimeEnabledFeatures::setShadowDOMEnabled(enabled);
+#else
+    UNUSED_PARAM(enabled);
+#endif
+}
+
+void InjectedBundle::setCSSRegionsEnabled(bool enabled)
+{
+#if ENABLE(CSS_REGIONS)
+    RuntimeEnabledFeatures::setCSSRegionsEnabled(enabled);
 #else
     UNUSED_PARAM(enabled);
 #endif

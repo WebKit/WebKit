@@ -621,6 +621,16 @@ bool WebRuntimeFeatures::isCSSExclusionsEnabled()
     return RuntimeEnabledFeatures::cssExclusionsEnabled();
 }
 
+void WebRuntimeFeatures::enableCSSRegions(bool enable)
+{
+    RuntimeEnabledFeatures::setCSSRegionsEnabled(enable);
+}
+
+bool WebRuntimeFeatures::isCSSRegionsEnabled()
+{
+    return RuntimeEnabledFeatures::cssRegionsEnabled();
+}
+
 void WebRuntimeFeatures::enableRequestAutocomplete(bool enable)
 {
 #if ENABLE(REQUEST_AUTOCOMPLETE)

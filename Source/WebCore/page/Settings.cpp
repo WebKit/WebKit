@@ -164,9 +164,6 @@ Settings::Settings(Page* page)
 #if ENABLE(CSS_STICKY_POSITION)
     , m_cssStickyPositionEnabled(true)
 #endif
-#if ENABLE(CSS_REGIONS)
-    , m_cssRegionsEnabled(false)
-#endif
 #if ENABLE(CSS_VARIABLES)
     , m_cssVariablesEnabled(false)
 #endif

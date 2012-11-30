@@ -53,6 +53,7 @@
 #include <PrintContext.h>
 #include <RenderTreeAsText.h>
 #include <ResourceLoadScheduler.h>
+#include <RuntimeEnabledFeatures.h>
 #include <SchemeRegistry.h>
 #include <ScriptValue.h>
 #include <Settings.h>
@@ -367,7 +368,7 @@ void DumpRenderTreeSupportEfl::setCSSRegionsEnabled(const Evas_Object* ewkView, 
 {
     DRT_SUPPRT_PAGE_GET_OR_RETURN(ewkView, page);
 
-    page->settings()->setCSSRegionsEnabled(enabled);
+    WebCore::RuntimeEnabledFeatures::setCSSRegionsEnabled(enabled);
 }
 
 bool DumpRenderTreeSupportEfl::isCommandEnabled(const Evas_Object* ewkView, const char* name)

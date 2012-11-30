@@ -157,6 +157,9 @@ public:
     WEBKIT_EXPORT static void enableRequestAutocomplete(bool);
     WEBKIT_EXPORT static bool isRequestAutocompleteEnabled();
 
+    WEBKIT_EXPORT static void enableCSSRegions(bool);
+    WEBKIT_EXPORT static bool isCSSRegionsEnabled();
+
 private:
     WebRuntimeFeatures();
 };
