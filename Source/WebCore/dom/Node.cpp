@@ -1157,8 +1157,8 @@ bool Node::isDescendantOf(const Node *other) const
     // Return true if other is an ancestor of this, otherwise false
     if (!other || !other->hasChildNodes() || inDocument() != other->inDocument())
         return false;
-    if (other == other->document())
-        return document() == other && this != document() && inDocument();
+    if (other->isDocumentNode())
+        return document() == other && !isDocumentNode() && inDocument();
     for (const ContainerNode* n = parentNode(); n; n = n->parentNode()) {
         if (n == other)
             return true;
