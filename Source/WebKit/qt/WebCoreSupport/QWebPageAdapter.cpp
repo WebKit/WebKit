@@ -1134,13 +1134,13 @@ void QWebPageAdapter::triggerAction(QWebPageAdapter::MenuAction action, QWebHitT
     case SetTextDirectionRightToLeft:
         editor->setBaseWritingDirection(RightToLeftWritingDirection);
         break;
-    case InspectElement: {
 #if ENABLE(INSPECTOR)
+    case InspectElement: {
         ASSERT(hitTestResult != &hitTest);
         page->inspectorController()->inspect(hitTestResult->innerNonSharedNode);
-#endif
         break;
     }
+#endif
     default:
         if (commandName)
             editor->command(commandName).execute();
@@ -1213,8 +1213,10 @@ QString QWebPageAdapter::contextMenuItemTagForAction(QWebPageAdapter::MenuAction
         *checkable = true;
         return contextMenuItemTagUnderline();
 
+#if ENABLE(INSPECTOR)
     case InspectElement:
         return contextMenuItemTagInspectElement();
+#endif
     default:
         ASSERT_NOT_REACHED();
         return QString();

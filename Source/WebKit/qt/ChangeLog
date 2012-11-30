@@ -1,3 +1,11 @@
+2012-11-30  Simon Hausmann  <simon.hausmann@digia.com>
+
+        Prospective build fix for --minimal build.
+
+        * WebCoreSupport/QWebPageAdapter.cpp:
+        (QWebPageAdapter::triggerAction):
+        (QWebPageAdapter::contextMenuItemTagForAction):
+
 2012-11-30  Pierre Rossi  <pierre.rossi@gmail.com>
 
         [Qt] Fix zoomIn/zoomOut related regression.
