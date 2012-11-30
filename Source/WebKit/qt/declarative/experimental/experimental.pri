@@ -37,11 +37,16 @@ DEFINES += HAVE_WEBKIT2
 
 WEBKIT += wtf javascriptcore webkit2
 
-target.path = $$[QT_INSTALL_IMPORTS]/$${TARGET.module_name}
+# The fallback to QT_INSTALL_IMPORTS can be removed once we
+# depend on Qt 5 RC1.
+importPath = $$[QT_INSTALL_QML]
+isEmpty(importPath): importPath = $$[QT_INSTALL_IMPORTS]
+
+target.path = $${importPath}/$${TARGET.module_name}
 
 
 qmldir.files += $$PWD/qmldir
-qmldir.path +=  $$[QT_INSTALL_IMPORTS]/$${TARGET.module_name}
+qmldir.path +=  $${importPath}/$${TARGET.module_name}
 
 INSTALLS += target qmldir
 

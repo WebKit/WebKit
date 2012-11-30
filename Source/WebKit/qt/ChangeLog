@@ -1,5 +1,17 @@
 2012-11-30  Simon Hausmann  <simon.hausmann@digia.com>
 
+        [Qt] Fix QML import installation with newer Qt
+
+        Reviewed by Tor Arne Vestbø.
+
+        The import path has been separated between QML1 and QML2. Use
+        QT_INSTALL_QML if it's available.
+
+        * declarative/experimental/experimental.pri:
+        * declarative/public.pri:
+
+2012-11-30  Simon Hausmann  <simon.hausmann@digia.com>
+
         Prospective build fix for --minimal build.
 
         * WebCoreSupport/QWebPageAdapter.cpp:
