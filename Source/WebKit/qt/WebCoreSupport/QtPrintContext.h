@@ -20,10 +20,10 @@
 #ifndef QtPrintContext_h
 #define QtPrintContext_h
 
+#include <PlatformExportMacros.h>
 #include <QPainter>
 #include <QRect>
 #include <qwebkitglobal.h>
-#include <wtf/ExportMacros.h>
 
 namespace WebCore {
 class PrintContext;
