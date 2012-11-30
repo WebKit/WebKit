@@ -50,10 +50,12 @@ class MockRunCommand(object):
         self._mock_ls_tombstones = ''
 
     def mock_run_command_fn(self, args):
-        if args[0] != 'adb':
+        if not args[0].endswith('adb'):
             return ''
         if args[1] == 'devices':
             return self._mock_devices_output
+        if args[1] == 'version':
+            return 'version 1.0'
 
         assert len(args) > 3
         assert args[1] == '-s'

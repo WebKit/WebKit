@@ -1,3 +1,17 @@
+2012-11-29  Dirk Pranke  <dpranke@chromium.org>
+
+        Fix python unit tests after r136158 (android port tests failing)
+        https://bugs.webkit.org/show_bug.cgi?id=103581
+
+        Unreviewed, build fix.
+
+        The unit tests apparently weren't ran for this patch; we failed
+        to update the mock executive calls out to adb to determine various
+        aspects of the environment, and were failing to create drivers.
+
+        * Scripts/webkitpy/layout_tests/port/chromium_android_unittest.py:
+        (MockRunCommand.mock_run_command_fn):
+
 2012-11-29  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r136175 and r136177.
