@@ -1,3 +1,15 @@
+2012-11-29  Viatcheslav Ostapenko  <v.ostapenko@samsung.com>
+
+        Fix typo in commit 136189
+        https://bugs.webkit.org/show_bug.cgi?id=103706
+
+        Reviewed by Kentaro Hara.
+
+        Because of typo in commit 136189 blue color value was set twice for every pixel.
+
+        * platform/image-decoders/jpeg/JPEGImageDecoder.cpp:
+        (WebCore::setPixel):
+
 2012-11-29  Elliott Sprehn  <esprehn@chromium.org>
 
         Node::isDescendantOf contains logic that duplicates isDocumentNode

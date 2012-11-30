@@ -654,7 +654,7 @@ void setPixel(ImageFrame& buffer, ImageFrame::PixelData* currentAddress, JSAMPAR
     switch (static_cast<J_COLOR_SPACE>(colorSpace)) {
 #if defined(TURBO_JPEG_RGB_SWIZZLE)
     case JCS_EXT_BGRA:
-        buffer.setRGBA(currentAddress, jsample[2], jsample[1], jsample[1], 0xFF);
+        buffer.setRGBA(currentAddress, jsample[2], jsample[1], jsample[0], 0xFF);
         break;
     case JCS_EXT_RGBA: // Fallback to JSC_RGB case here.
 #endif
