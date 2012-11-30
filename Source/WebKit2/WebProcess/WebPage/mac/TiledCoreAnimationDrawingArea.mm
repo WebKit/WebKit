@@ -33,6 +33,7 @@
 #import "EventDispatcher.h"
 #import "LayerHostingContext.h"
 #import "LayerTreeContext.h"
+#import "WebFrame.h"
 #import "WebPage.h"
 #import "WebPageCreationParameters.h"
 #import "WebPageProxyMessages.h"
@@ -69,6 +70,7 @@ TiledCoreAnimationDrawingArea::TiledCoreAnimationDrawingArea(WebPage* webPage, c
     , m_layerTreeStateIsFrozen(false)
     , m_layerFlushScheduler(this)
     , m_isPaintingSuspended(!parameters.isVisible)
+    , m_minimumLayoutWidth(0)
 {
     Page* page = m_webPage->corePage();
 
@@ -229,6 +231,21 @@ void TiledCoreAnimationDrawingArea::updatePreferences(const WebPreferencesStore&
     ScrollingThread::dispatch(bind(&ScrollingTree::setDebugRootLayer, m_webPage->corePage()->scrollingCoordinator()->scrollingTree(), m_debugInfoLayer));
 }
 
+void TiledCoreAnimationDrawingArea::mainFrameContentSizeChanged(const IntSize& contentSize)
+{
+    if (!m_minimumLayoutWidth)
+        return;
+
+    if (m_inUpdateGeometry)
+        return;
+
+    if (m_lastSentIntrinsicContentSize == contentSize)
+        return;
+
+    m_lastSentIntrinsicContentSize = contentSize;
+    m_webPage->send(Messages::DrawingAreaProxy::IntrinsicContentSizeDidChange(contentSize));
+}
+
 void TiledCoreAnimationDrawingArea::dispatchAfterEnsuringUpdatedScrollPosition(const Function<void ()>& functionRef)
 {
     m_webPage->ref();
@@ -330,9 +347,24 @@ void TiledCoreAnimationDrawingArea::resumePainting()
         m_webPage->corePage()->resumeScriptedAnimations();
 }
 
-void TiledCoreAnimationDrawingArea::updateGeometry(const IntSize& viewSize)
+void TiledCoreAnimationDrawingArea::updateGeometry(const IntSize& viewSize, double minimumLayoutWidth)
 {
-    m_webPage->setSize(viewSize);
+    m_inUpdateGeometry = true;
+
+    m_minimumLayoutWidth = minimumLayoutWidth;
+
+    IntSize size = viewSize;
+    IntSize contentSize = IntSize(-1, -1);
+
+    if (m_minimumLayoutWidth > 0) {
+        m_webPage->setSize(IntSize(m_minimumLayoutWidth, 0));
+        m_webPage->layoutIfNeeded();
+
+        contentSize = m_webPage->mainWebFrame()->contentBounds().size();
+        size = contentSize;
+    }
+
+    m_webPage->setSize(size);
     m_webPage->layoutIfNeeded();
 
     if (m_pageOverlayLayer)
@@ -351,7 +383,10 @@ void TiledCoreAnimationDrawingArea::updateGeometry(const IntSize& viewSize)
     [CATransaction flush];
     [CATransaction synchronize];
 
-    m_webPage->send(Messages::DrawingAreaProxy::DidUpdateGeometry());
+    m_lastSentIntrinsicContentSize = contentSize;
+    m_webPage->send(Messages::DrawingAreaProxy::DidUpdateGeometry(contentSize));
+
+    m_inUpdateGeometry = false;
 }
 
 void TiledCoreAnimationDrawingArea::setDeviceScaleFactor(float deviceScaleFactor)

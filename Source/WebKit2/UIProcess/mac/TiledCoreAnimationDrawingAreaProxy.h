@@ -48,13 +48,15 @@ private:
     virtual void sizeDidChange() OVERRIDE;
     virtual void waitForPossibleGeometryUpdate() OVERRIDE;
     virtual void colorSpaceDidChange() OVERRIDE;
+    virtual void minimumLayoutWidthDidChange() OVERRIDE;
 
     virtual void enterAcceleratedCompositingMode(uint64_t backingStoreStateID, const LayerTreeContext&) OVERRIDE;
     virtual void exitAcceleratedCompositingMode(uint64_t backingStoreStateID, const UpdateInfo&) OVERRIDE;
     virtual void updateAcceleratedCompositingMode(uint64_t backingStoreStateID, const LayerTreeContext&) OVERRIDE;
 
     // Message handlers.
-    virtual void didUpdateGeometry() OVERRIDE;
+    virtual void didUpdateGeometry(const WebCore::IntSize& newIntrinsicContentSize) OVERRIDE;
+    virtual void intrinsicContentSizeDidChange(const WebCore::IntSize& newIntrinsicContentSize) OVERRIDE;
 
     void sendUpdateGeometry();
 
@@ -63,6 +65,9 @@ private:
 
     // The last size we sent to the web process.
     WebCore::IntSize m_lastSentSize;
+
+    // The last minimum layout width we sent to the web process.
+    double m_lastSentMinimumLayoutWidth;
 };
 
 } // namespace WebKit

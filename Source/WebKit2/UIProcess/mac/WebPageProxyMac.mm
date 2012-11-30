@@ -474,6 +474,11 @@ WKView* WebPageProxy::wkView() const
     return m_pageClient->wkView();
 }
 
+void WebPageProxy::intrinsicContentSizeDidChange(const IntSize& intrinsicContentSize)
+{
+    m_pageClient->intrinsicContentSizeDidChange(intrinsicContentSize);
+}
+
 void WebPageProxy::setAcceleratedCompositingRootLayer(const GraphicsLayer* rootLayer)
 {
     m_pageClient->setAcceleratedCompositingRootLayer(rootLayer->platformLayer());

@@ -139,6 +139,7 @@ private:
     virtual void recommendedScrollbarStyleDidChange(int32_t newStyle);
 
     virtual WKView* wkView() const { return m_wkView; }
+    virtual void intrinsicContentSizeDidChange(const WebCore::IntSize& intrinsicContentSize) OVERRIDE;
 
 #if USE(DICTATION_ALTERNATIVES)
     virtual uint64_t addDictationAlternatives(const RetainPtr<NSTextAlternatives>&);

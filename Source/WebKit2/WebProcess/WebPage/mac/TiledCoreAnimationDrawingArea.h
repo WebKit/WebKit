@@ -65,6 +65,7 @@ private:
     virtual void didUninstallPageOverlay() OVERRIDE;
     virtual void setPageOverlayNeedsDisplay(const WebCore::IntRect&) OVERRIDE;
     virtual void updatePreferences(const WebPreferencesStore&) OVERRIDE;
+    virtual void mainFrameContentSizeChanged(const WebCore::IntSize&) OVERRIDE;
 
     virtual void dispatchAfterEnsuringUpdatedScrollPosition(const Function<void ()>&) OVERRIDE;
 
@@ -80,7 +81,7 @@ private:
     // Message handlers.
     virtual void suspendPainting() OVERRIDE;
     virtual void resumePainting() OVERRIDE;
-    virtual void updateGeometry(const WebCore::IntSize& viewSize) OVERRIDE;
+    virtual void updateGeometry(const WebCore::IntSize& viewSize, double minimumLayoutWidth) OVERRIDE;
     virtual void setDeviceScaleFactor(float) OVERRIDE;
     virtual void setLayerHostingMode(uint32_t) OVERRIDE;
     virtual void setColorSpace(const ColorSpaceData&) OVERRIDE;
@@ -105,6 +106,10 @@ private:
     OwnPtr<WebCore::GraphicsLayer> m_pageOverlayLayer;
 
     bool m_isPaintingSuspended;
+
+    double m_minimumLayoutWidth;
+    WebCore::IntSize m_lastSentIntrinsicContentSize;
+    bool m_inUpdateGeometry;
 };
 
 } // namespace WebKit

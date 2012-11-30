@@ -225,6 +225,7 @@ public:
 
 #if USE(APPKIT)
     virtual WKView* wkView() const = 0;
+    virtual void intrinsicContentSizeDidChange(const WebCore::IntSize& intrinsicContentSize) = 0;
 #if USE(DICTATION_ALTERNATIVES)
     virtual uint64_t addDictationAlternatives(const RetainPtr<NSTextAlternatives>&) = 0;
     virtual void removeDictationAlternatives(uint64_t dictationContext) = 0;

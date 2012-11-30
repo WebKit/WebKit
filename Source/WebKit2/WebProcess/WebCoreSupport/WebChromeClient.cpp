@@ -432,7 +432,7 @@ PlatformPageClient WebChromeClient::platformPageClient() const
     return 0;
 }
 
-void WebChromeClient::contentsSizeChanged(Frame* frame, const IntSize& /*size*/) const
+void WebChromeClient::contentsSizeChanged(Frame* frame, const IntSize& size) const
 {
     if (!m_page->corePage()->settings()->frameFlatteningEnabled()) {
         WebFrame* largestFrame = findLargestFrameInFrameSet(m_page);
@@ -455,6 +455,8 @@ void WebChromeClient::contentsSizeChanged(Frame* frame, const IntSize& /*size*/)
     m_page->send(Messages::WebPageProxy::DidChangeContentsSize(m_page->size()));
 
 #endif
+
+    m_page->drawingArea()->mainFrameContentSizeChanged(size);
 
     FrameView* frameView = frame->view();
     if (frameView && !frameView->delegatesScrolling())  {

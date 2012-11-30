@@ -215,6 +215,8 @@ struct WKViewInterpretKeyEventsParameters {
     RefPtr<WebCore::Image> _promisedImage;
     String _promisedFilename;
     String _promisedURL;
+
+    NSSize _intrinsicContentSize;
 }
 
 @end
@@ -354,6 +356,11 @@ struct WKViewInterpretKeyEventsParameters {
 - (BOOL)isFlipped
 {
     return YES;
+}
+
+- (NSSize)intrinsicContentSize
+{
+    return _data->_intrinsicContentSize;
 }
 
 - (void)setFrameSize:(NSSize)size
@@ -2925,6 +2932,12 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
     return ![sink.get() didReceiveUnhandledCommand];
 }
 
+- (void)_setIntrinsicContentSize:(NSSize)intrinsicContentSize
+{
+    _data->_intrinsicContentSize = intrinsicContentSize;
+    [self invalidateIntrinsicContentSize];
+}
+
 - (void)_cacheWindowBottomCornerRect
 {
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
@@ -3020,6 +3033,8 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 #endif
     _data->_mouseDownEvent = nil;
     _data->_ignoringMouseDraggedEvents = NO;
+
+    _data->_intrinsicContentSize = NSMakeSize(NSViewNoInstrinsicMetric, NSViewNoInstrinsicMetric);
 
     [self _registerDraggedTypes];
 
@@ -3124,6 +3139,16 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
     WKHideWordDefinitionWindow();
 #endif
+}
+
+- (CGFloat)minimumLayoutWidth
+{
+    return _data->_page->minimumLayoutWidth();
+}
+
+- (void)setMinimumLayoutWidth:(CGFloat)minimumLayoutWidth
+{
+    _data->_page->setMinimumLayoutWidth(minimumLayoutWidth);
 }
 
 @end

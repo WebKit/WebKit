@@ -233,6 +233,7 @@ WebPageProxy::WebPageProxy(PageClient* pageClient, PassRefPtr<WebProcessProxy> p
     , m_renderTreeSize(0)
     , m_shouldSendEventsSynchronously(false)
     , m_suppressVisibilityUpdates(false)
+    , m_minimumLayoutWidth(0)
     , m_mediaVolume(1)
     , m_mayStartMediaWhenInWindow(true)
 #if ENABLE(PAGE_VISIBILITY_API)
@@ -4127,6 +4128,20 @@ void WebPageProxy::savePDFToFileInDownloadsFolder(const String& suggestedFilenam
 void WebPageProxy::linkClicked(const String& url, const WebMouseEvent& event)
 {
     m_process->send(Messages::WebPage::LinkClicked(url, event), m_pageID, 0);
+}
+
+void WebPageProxy::setMinimumLayoutWidth(double minimumLayoutWidth)
+{
+    if (m_minimumLayoutWidth == minimumLayoutWidth)
+        return;
+
+    m_minimumLayoutWidth = minimumLayoutWidth;
+    m_drawingArea->minimumLayoutWidthDidChange();
+
+#if PLATFORM(MAC)
+    if (m_minimumLayoutWidth <= 0)
+        intrinsicContentSizeDidChange(IntSize(-1, -1));
+#endif
 }
 
 #if PLATFORM(MAC)

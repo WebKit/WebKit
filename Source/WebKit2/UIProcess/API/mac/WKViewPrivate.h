@@ -50,4 +50,6 @@
 - (void)performDictionaryLookupAtCurrentMouseLocation;
 + (void)hideWordDefinitionWindow;
 
+@property (readwrite) CGFloat minimumLayoutWidth;
+
 @end

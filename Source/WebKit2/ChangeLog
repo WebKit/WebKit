@@ -1,5 +1,99 @@
 2012-11-29  Anders Carlsson  <andersca@apple.com>
 
+        Add a minimumLayoutWidth WKView property
+        https://bugs.webkit.org/show_bug.cgi?id=103660
+        <rdar://problem/11791729>
+
+        Reviewed by Beth Dakin.
+
+        When minimumLayoutWidth is set to a positive value, the WKView will update its intrinsic content size given the layout width.
+
+        * UIProcess/API/mac/PageClientImpl.h:
+        * UIProcess/API/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::intrinsicContentSizeDidChange):
+        Call the WKView.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView intrinsicContentSize]):
+        Override the intrinsicContentSize getter.
+
+        (-[WKView _setIntrinsicContentSize:]):
+        Update the intrinsic content size and mark it as invalid.
+
+        (-[WKView initWithFrame:contextRef:pageGroupRef:relatedToPage:]):
+        By default, the WKView should have no intrinsic size.
+
+        (-[WKView minimumLayoutWidth]):
+        (-[WKView setMinimumLayoutWidth:]):
+        Call through to the WebPageProxy object.
+
+        * UIProcess/API/mac/WKViewPrivate.h:
+        Add the SPI here.
+
+        * UIProcess/DrawingAreaProxy.h:
+        (WebKit::DrawingAreaProxy::minimumLayoutWidthDidChange):
+        (WebKit::DrawingAreaProxy::didUpdateGeometry):
+        (WebKit::DrawingAreaProxy::intrinsicContentSizeDidChange):
+        Add empty stubs.
+
+        * UIProcess/DrawingAreaProxy.messages.in:
+        Update the DidUpdateGeometry signature and add IntrinsicContentSizeDidChange.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+        Initialize the minimum layout width.
+
+        (WebKit::WebPageProxy::setMinimumLayoutWidth):
+        Update the minimum layout width and call the drawing area proxy.
+
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::minimumLayoutWidth):
+        Add getter.
+
+        * UIProcess/mac/TiledCoreAnimationDrawingAreaProxy.h:
+        (TiledCoreAnimationDrawingAreaProxy):
+        * UIProcess/mac/TiledCoreAnimationDrawingAreaProxy.mm:
+        (WebKit::TiledCoreAnimationDrawingAreaProxy::minimumLayoutWidthDidChange):
+        Update the geometry if needed.
+
+        (WebKit::TiledCoreAnimationDrawingAreaProxy::didUpdateGeometry):
+        Update the intrinsic content size.
+
+        (WebKit::TiledCoreAnimationDrawingAreaProxy::intrinsicContentSizeDidChange):
+        Call through to WebPageProxy::intrinsicContentSizeDidChange.
+
+        (WebKit::TiledCoreAnimationDrawingAreaProxy::sendUpdateGeometry):
+        Pass along the minimum layout width.
+
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::intrinsicContentSizeDidChange):
+        Call through to the page client.
+
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::contentsSizeChanged):
+        Call DrawingArea::mainFrameContentSizeChanged.
+
+        * WebProcess/WebPage/DrawingArea.h:
+        (WebKit::DrawingArea::mainFrameContentSizeChanged):
+        Add empty stub.
+
+        (WebKit::DrawingArea::updateGeometry):
+        Update signature.
+
+        * WebProcess/WebPage/DrawingArea.messages.in:
+        Add minimumLayoutWidth to UpdateGeometry.
+
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.h:
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::mainFrameContentSizeChanged):
+        If the content size change is not coming from updateGeometry, send an InstrinsicContentSizeDidChange message.
+
+        (WebKit::TiledCoreAnimationDrawingArea::updateGeometry):
+        If m_minimumLayoutWidth is positive, do an initial layout pass to figure out the height of the page and then do another
+        layout with the viewport set to that height.
+
+2012-11-29  Anders Carlsson  <andersca@apple.com>
+
         CoreIPC::Connection should retain its xpc_connection_t
         https://bugs.webkit.org/show_bug.cgi?id=103671
         <rdar://problem/12717331>
