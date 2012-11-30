@@ -1,3 +1,42 @@
+2012-11-30  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        [CSS Grid Layout] Align the grid track code with the specification's production rules
+        https://bugs.webkit.org/show_bug.cgi?id=103703
+
+        Reviewed by Alexis Menard.
+
+        In order to support more of the syntax and make the code more readable, this change
+        splits following the grammar's production rules (see
+        http://dev.w3.org/csswg/css3-grid-layout/#grid-definition-columns-and-grid-definit).
+
+        Refactoring covered by existing tests.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::valueForGridTrackMinMax):
+        (WebCore::valueForGridTrackGroup):
+        (WebCore::valueForGridTrackList):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseGridTrackList):
+        (WebCore::CSSParser::parseGridTrackGroup):
+        (WebCore::CSSParser::parseGridTrackMinMax):
+        * css/CSSParser.h:
+        * css/StyleResolver.cpp:
+        (WebCore::createGridTrackMinMax):
+        (WebCore::createGridTrackGroup):
+        (WebCore::createGridTrackList):
+        Mechanical split of the parsing, resolving and computed style code into
+        <track-list>, <track-group>, <track-minmax> and <track-breadth> parts.
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseGridBreadth):
+        Changed this function to just parse a single value (without any extra logic).
+
+        * css/StyleResolver.cpp:
+        (WebCore::createGridTrackBreadth):
+        Changed this function to take a Length as it is used to parse a <track-breadth>.
+        The goal is for it to be the low-level function createGridTrackMinmax will call on
+        each function parameter.
+
 2012-11-30  Simon Fraser  <simon.fraser@apple.com>
 
         Fix potential crash when canceling animations on renderers with no node

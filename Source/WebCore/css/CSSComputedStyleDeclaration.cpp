@@ -992,16 +992,26 @@ static PassRefPtr<CSSValue> valueForGridTrackBreadth(const GridTrackSize& trackS
     return zoomAdjustedPixelValue(trackSize.length().value(), style);
 }
 
+static PassRefPtr<CSSValue> valueForGridTrackMinMax(const GridTrackSize& trackSize, const RenderStyle* style)
+{
+    return valueForGridTrackBreadth(trackSize, style);
+}
+
+static PassRefPtr<CSSValue> valueForGridTrackGroup(const Vector<GridTrackSize>& trackSizes, const RenderStyle* style)
+{
+    RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
+    for (size_t i = 0; i < trackSizes.size(); ++i)
+        list->append(valueForGridTrackMinMax(trackSizes[i], style));
+    return list.release();
+}
+
 static PassRefPtr<CSSValue> valueForGridTrackList(const Vector<GridTrackSize>& trackSizes, const RenderStyle* style)
 {
     // Handle the 'none' case here.
     if (!trackSizes.size())
         return cssValuePool().createIdentifierValue(CSSValueNone);
 
-    RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
-    for (size_t i = 0; i < trackSizes.size(); ++i)
-        list->append(valueForGridTrackBreadth(trackSizes[i], style));
-    return list.release();
+    return valueForGridTrackGroup(trackSizes, style);
 }
 
 static PassRefPtr<CSSValue> valueForGridPosition(const GridPosition& position)

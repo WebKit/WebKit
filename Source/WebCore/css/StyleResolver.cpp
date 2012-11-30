@@ -2659,16 +2659,44 @@ bool StyleResolver::useSVGZoomRules()
     return m_element && m_element->isSVGElement();
 }
 
-static bool createGridTrackBreadth(CSSPrimitiveValue* primitiveValue, StyleResolver* selector, GridTrackSize& trackSize)
+static bool createGridTrackBreadth(CSSPrimitiveValue* primitiveValue, StyleResolver* selector, Length& workingLength)
 {
-    Length workingLength = primitiveValue->convertToLength<FixedIntegerConversion | PercentConversion | ViewportPercentageConversion | AutoConversion>(selector->style(), selector->rootElementStyle(), selector->style()->effectiveZoom());
+    workingLength = primitiveValue->convertToLength<FixedIntegerConversion | PercentConversion | ViewportPercentageConversion | AutoConversion>(selector->style(), selector->rootElementStyle(), selector->style()->effectiveZoom());
     if (workingLength.isUndefined())
         return false;
 
     if (primitiveValue->isLength())
         workingLength.setQuirk(primitiveValue->isQuirkValue());
 
+    return true;
+}
+
+static bool createGridTrackMinMax(CSSPrimitiveValue* primitiveValue, StyleResolver* selector, GridTrackSize& trackSize)
+{
+    Length workingLength;
+    if (!createGridTrackBreadth(primitiveValue, selector, workingLength))
+        return false;
+
     trackSize.setLength(workingLength);
+    return true;
+}
+
+static bool createGridTrackGroup(CSSValue* value, StyleResolver* selector, Vector<GridTrackSize>& trackSizes)
+{
+    if (!value->isValueList())
+        return false;
+
+    for (CSSValueListIterator i = value; i.hasMore(); i.advance()) {
+        CSSValue* currValue = i.value();
+        if (!currValue->isPrimitiveValue())
+            return false;
+
+        GridTrackSize trackSize;
+        if (!createGridTrackMinMax(static_cast<CSSPrimitiveValue*>(currValue), selector, trackSize))
+            return false;
+
+        trackSizes.append(trackSize);
+    }
     return true;
 }
 
@@ -2680,22 +2708,7 @@ static bool createGridTrackList(CSSValue* value, Vector<GridTrackSize>& trackSiz
         return primitiveValue->getIdent() == CSSValueNone;
     }
 
-    if (value->isValueList()) {
-        for (CSSValueListIterator i = value; i.hasMore(); i.advance()) {
-            CSSValue* currValue = i.value();
-            if (!currValue->isPrimitiveValue())
-                return false;
-
-            GridTrackSize trackSize;
-            if (!createGridTrackBreadth(static_cast<CSSPrimitiveValue*>(currValue), selector, trackSize))
-                return false;
-
-            trackSizes.append(trackSize);
-        }
-        return true;
-    }
-
-    return false;
+    return createGridTrackGroup(value, selector, trackSizes);
 }
 
 

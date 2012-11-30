@@ -152,6 +152,9 @@ public:
 
     bool cssGridLayoutEnabled() const;
     bool parseGridTrackList(CSSPropertyID, bool important);
+    bool parseGridTrackGroup(CSSValueList*);
+    bool parseGridTrackMinMax(CSSValueList*);
+    PassRefPtr<CSSPrimitiveValue> parseGridBreadth(CSSParserValue*);
 
     bool parseDashboardRegions(CSSPropertyID, bool important);
 

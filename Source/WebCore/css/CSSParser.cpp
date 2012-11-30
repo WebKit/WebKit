@@ -4512,19 +4512,45 @@ bool CSSParser::parseGridTrackList(CSSPropertyID propId, bool important)
     }
 
     RefPtr<CSSValueList> values = CSSValueList::createSpaceSeparated();
-    while (value) {
-        bool valid = validUnit(value, FLength | FPercent) || value->id == CSSValueAuto;
-        if (!valid)
+    while (m_valueList->current()) {
+        if (!parseGridTrackGroup(values.get()))
             return false;
 
-        RefPtr<CSSPrimitiveValue> primitiveValue = value->id == CSSValueAuto ? cssValuePool().createIdentifierValue(CSSValueAuto) : createPrimitiveNumericValue(value);
-        values->append(primitiveValue.release());
-        value = m_valueList->next();
+        m_valueList->next();
     }
     addProperty(propId, values.release(), important);
     return true;
 }
 
+bool CSSParser::parseGridTrackGroup(CSSValueList* values)
+{
+    return parseGridTrackMinMax(values);
+}
+
+bool CSSParser::parseGridTrackMinMax(CSSValueList* values)
+{
+    CSSParserValue* currentValue = m_valueList->current();
+    if (currentValue->id == CSSValueAuto) {
+        RefPtr<CSSPrimitiveValue> autoValue = cssValuePool().createIdentifierValue(CSSValueAuto);
+        values->append(autoValue.release());
+        return true;
+    }
+
+    if (PassRefPtr<CSSPrimitiveValue> trackBreadth = parseGridBreadth(currentValue)) {
+        values->append(trackBreadth);
+        return true;
+    }
+
+    return false;
+}
+
+PassRefPtr<CSSPrimitiveValue> CSSParser::parseGridBreadth(CSSParserValue* currentValue)
+{
+    if (!validUnit(currentValue, FLength | FPercent))
+        return 0;
+
+    return createPrimitiveNumericValue(currentValue);
+}
 
 #if ENABLE(DASHBOARD_SUPPORT)
 
