@@ -1,5 +1,11 @@
 2012-11-30  Simon Fraser  <simon.fraser@apple.com>
 
+        Use the correct path to a test in TestExpectations.
+
+        * platform/chromium/TestExpectations:
+
+2012-11-30  Simon Fraser  <simon.fraser@apple.com>
+
         Make RenderLayer::updateLayerPosition() private
         https://bugs.webkit.org/show_bug.cgi?id=102624
 

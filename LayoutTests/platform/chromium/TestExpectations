@@ -4212,7 +4212,7 @@ webkit.org/b/103609 [ MountainLion ] fast/regions/firstletter-inside-flowthread.
 webkit.org/b/103609 [ MountainLion ] fast/regions/listmarker-inside-flowthread.html [ ImageOnlyFailure ]
 
 # Rebaseline after https://bugs.webkit.org/show_bug.cgi?id=102624
-webkit.org/b/102624 fast/events/stopPropagation-submit-expected.txt [ Text ]
+webkit.org/b/102624 fast/events/stopPropagation-submit.html [ Text ]
 
 # Some compositing tests doesn't work on multiple platforms.
 webkit.org/b/103721 [ Mac Win Linux ] compositing/geometry/vertical-scroll-composited.html [ ImageOnlyFailure ]
