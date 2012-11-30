@@ -164,6 +164,7 @@ def struct_or_class(namespace, type):
         'WebCore::Animation',
         'WebCore::EditorCommandsForKeyEvent',
         'WebCore::CompositionUnderline',
+        'WebCore::Cookie',
         'WebCore::DragSession',
         'WebCore::FloatPoint3D',
         'WebCore::FileChooserSettings',

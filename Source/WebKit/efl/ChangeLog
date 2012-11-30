@@ -1,3 +1,21 @@
+2012-11-29  Alexey Proskuryakov  <ap@apple.com>
+
+        [WK2] Forward cookie jar calls to NetworkProcess
+        https://bugs.webkit.org/show_bug.cgi?id=103457
+
+        Reviewed by Darin Adler.
+
+        * WebCoreSupport/PlatformStrategiesEfl.cpp:
+        (PlatformStrategiesEfl::cookiesForDOM):
+        (PlatformStrategiesEfl::setCookiesFromDOM):
+        (PlatformStrategiesEfl::cookiesEnabled):
+        (PlatformStrategiesEfl::cookieRequestHeaderFieldValue):
+        (PlatformStrategiesEfl::getRawCookies):
+        (PlatformStrategiesEfl::deleteCookie):
+        (PlatformStrategiesEfl::getHostnamesWithCookies):
+        (PlatformStrategiesEfl::deleteCookiesForHostname):
+        (PlatformStrategiesEfl::deleteAllCookies):
+
 2012-11-29  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL] Broken rendering occurs when scrolling in ewk_view_single.

@@ -29,6 +29,7 @@
 #include "IntSize.h"
 #include "Page.h"
 #include "PageGroup.h"
+#include "PlatformCookieJar.h"
 #include "PluginDatabase.h"
 
 using namespace WebCore;
@@ -75,6 +76,51 @@ VisitedLinkStrategy* PlatformStrategiesWinCE::createVisitedLinkStrategy()
 
 void PlatformStrategiesWinCE::notifyCookiesChanged()
 {
+}
+
+String PlatformStrategiesWinCE::cookiesForDOM(NetworkingContext* context, const KURL& firstParty, const KURL& url)
+{
+    return WebCore::cookiesForDOM(context, firstParty, url);
+}
+
+void PlatformStrategiesWinCE::setCookiesFromDOM(NetworkingContext* context, const KURL& firstParty, const KURL& url, const String& cookieString)
+{
+    WebCore::setCookiesFromDOM(context, firstParty, url, cookieString);
+}
+
+bool PlatformStrategiesWinCE::cookiesEnabled(NetworkingContext* context, const KURL& firstParty, const KURL& url)
+{
+    return WebCore::cookiesEnabled(context, firstParty, url);
+}
+
+String PlatformStrategiesWinCE::cookieRequestHeaderFieldValue(NetworkingContext* context, const KURL& firstParty, const KURL& url)
+{
+    return WebCore::cookieRequestHeaderFieldValue(context, firstParty, url);
+}
+
+bool PlatformStrategiesWinCE::getRawCookies(NetworkingContext* context, const KURL& firstParty, const KURL& url, Vector<Cookie>& rawCookies)
+{
+    return WebCore::getRawCookies(context, firstParty, url, rawCookies);
+}
+
+void PlatformStrategiesWinCE::deleteCookie(NetworkingContext* context, const KURL& url, const String& cookieName)
+{
+    WebCore::deleteCookie(context, url, cookieName);
+}
+
+void PlatformStrategiesWinCE::getHostnamesWithCookies(NetworkingContext* context, HashSet<String>& hostnames)
+{
+    WebCore::getHostnamesWithCookies(context, hostnames);
+}
+
+void PlatformStrategiesWinCE::deleteCookiesForHostname(NetworkingContext* context, const String& hostname)
+{
+    WebCore::deleteCookiesForHostname(context, hostname);
+}
+
+void PlatformStrategiesWinCE::deleteAllCookies(NetworkingContext* context)
+{
+    WebCore::deleteAllCookies(context);
 }
 
 void PlatformStrategiesWinCE::refreshPlugins()

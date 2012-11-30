@@ -1,3 +1,21 @@
+2012-11-29  Alexey Proskuryakov  <ap@apple.com>
+
+        [WK2] Forward cookie jar calls to NetworkProcess
+        https://bugs.webkit.org/show_bug.cgi?id=103457
+
+        Reviewed by Darin Adler.
+
+        * WebCoreSupport/PlatformStrategiesWinCE.cpp:
+        (PlatformStrategiesWinCE::cookiesForDOM):
+        (PlatformStrategiesWinCE::setCookiesFromDOM):
+        (PlatformStrategiesWinCE::cookiesEnabled):
+        (PlatformStrategiesWinCE::cookieRequestHeaderFieldValue):
+        (PlatformStrategiesWinCE::getRawCookies):
+        (PlatformStrategiesWinCE::deleteCookie):
+        (PlatformStrategiesWinCE::getHostnamesWithCookies):
+        (PlatformStrategiesWinCE::deleteCookiesForHostname):
+        (PlatformStrategiesWinCE::deleteAllCookies):
+
 2012-11-27  James Simonsen  <simonjam@chromium.org>
 
         Consolidate FrameLoader::load() into one function taking a FrameLoadRequest

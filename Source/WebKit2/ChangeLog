@@ -1,3 +1,47 @@
+2012-11-29  Alexey Proskuryakov  <ap@apple.com>
+
+        [WK2] Forward cookie jar calls to NetworkProcess
+        https://bugs.webkit.org/show_bug.cgi?id=103457
+
+        Reviewed by Darin Adler.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.messages.in:
+        Added messages to maniputate CookieJar in network process.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp: Removed unnecessary WebCore:: prefixes,
+        this file has a using direcive.
+        (WebKit::NetworkConnectionToWebProcess::cookiesForDOM):
+        (WebKit::NetworkConnectionToWebProcess::setCookiesFromDOM):
+        (WebKit::NetworkConnectionToWebProcess::cookiesEnabled):
+        (WebKit::NetworkConnectionToWebProcess::cookieRequestHeaderFieldValue):
+        (WebKit::NetworkConnectionToWebProcess::getRawCookies):
+        (WebKit::NetworkConnectionToWebProcess::deleteCookie):
+        (WebKit::NetworkConnectionToWebProcess::getHostnamesWithCookies):
+        (WebKit::NetworkConnectionToWebProcess::deleteCookiesForHostname):
+        (WebKit::NetworkConnectionToWebProcess::deleteAllCookies):
+        Added implementations that use PlatformCookieJar in the network process.
+
+        * Scripts/webkit2/messages.py: (struct_or_class):
+        * Shared/WebCoreArgumentCoders.h:
+        * Shared/WebCoreArgumentCoders.cpp:
+        (CoreIPC::::encode):
+        (CoreIPC::::decode):
+        Added support for Cookie.
+        
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.h:
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+        (WebKit::WebPlatformStrategies::cookiesForDOM):
+        (WebKit::WebPlatformStrategies::setCookiesFromDOM):
+        (WebKit::WebPlatformStrategies::cookiesEnabled):
+        (WebKit::WebPlatformStrategies::cookieRequestHeaderFieldValue):
+        (WebKit::WebPlatformStrategies::getRawCookies):
+        (WebKit::WebPlatformStrategies::deleteCookie):
+        (WebKit::WebPlatformStrategies::getHostnamesWithCookies):
+        (WebKit::WebPlatformStrategies::deleteCookiesForHostname):
+        (WebKit::WebPlatformStrategies::deleteAllCookies):
+        When using the network process, forward cookie calls to it.
+
 2012-11-29  Kiran Muppala  <cmuppala@apple.com>
 
         Instantiate snapshot plugins in a PluginProcess with muted audio

@@ -29,6 +29,7 @@
 #include "NotImplemented.h"
 #include "Page.h"
 #include "PageGroup.h"
+#include "PlatformCookieJar.h"
 #include "PluginDatabase.h"
 #include "PluginPackage.h"
 
@@ -78,6 +79,51 @@ VisitedLinkStrategy* PlatformStrategiesEfl::createVisitedLinkStrategy()
 // CookiesStrategy
 void PlatformStrategiesEfl::notifyCookiesChanged()
 {
+}
+
+String PlatformStrategiesEfl::cookiesForDOM(NetworkingContext* context, const KURL& firstParty, const KURL& url)
+{
+    return WebCore::cookiesForDOM(context, firstParty, url);
+}
+
+void PlatformStrategiesEfl::setCookiesFromDOM(NetworkingContext* context, const KURL& firstParty, const KURL& url, const String& cookieString)
+{
+    WebCore::setCookiesFromDOM(context, firstParty, url, cookieString);
+}
+
+bool PlatformStrategiesEfl::cookiesEnabled(NetworkingContext* context, const KURL& firstParty, const KURL& url)
+{
+    return WebCore::cookiesEnabled(context, firstParty, url);
+}
+
+String PlatformStrategiesEfl::cookieRequestHeaderFieldValue(NetworkingContext* context, const KURL& firstParty, const KURL& url)
+{
+    return WebCore::cookieRequestHeaderFieldValue(context, firstParty, url);
+}
+
+bool PlatformStrategiesEfl::getRawCookies(NetworkingContext* context, const KURL& firstParty, const KURL& url, Vector<Cookie>& rawCookies)
+{
+    return WebCore::getRawCookies(context, firstParty, url, rawCookies);
+}
+
+void PlatformStrategiesEfl::deleteCookie(NetworkingContext* context, const KURL& url, const String& cookieName)
+{
+    WebCore::deleteCookie(context, url, cookieName);
+}
+
+void PlatformStrategiesEfl::getHostnamesWithCookies(NetworkingContext* context, HashSet<String>& hostnames)
+{
+    WebCore::getHostnamesWithCookies(context, hostnames);
+}
+
+void PlatformStrategiesEfl::deleteCookiesForHostname(NetworkingContext* context, const String& hostname)
+{
+    WebCore::deleteCookiesForHostname(context, hostname);
+}
+
+void PlatformStrategiesEfl::deleteAllCookies(NetworkingContext* context)
+{
+    WebCore::deleteAllCookies(context);
 }
 
 void PlatformStrategiesEfl::refreshPlugins()

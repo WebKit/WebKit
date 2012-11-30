@@ -28,13 +28,20 @@
 
 #if USE(PLATFORM_STRATEGIES)
 
+#include <wtf/HashSet.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
 
 #if PLATFORM(MAC) || USE(CFNETWORK)
 typedef struct OpaqueCFHTTPCookieStorage*  CFHTTPCookieStorageRef;
 #endif
 
 namespace WebCore {
+
+class KURL;
+class NetworkingContext;
+struct Cookie;
 
 class CookiesStrategy {
 public:
@@ -43,6 +50,16 @@ public:
 #if PLATFORM(MAC) || USE(CFNETWORK)
     virtual RetainPtr<CFHTTPCookieStorageRef> defaultCookieStorage() = 0;
 #endif
+
+    virtual String cookiesForDOM(NetworkingContext*, const KURL& firstParty, const KURL&) = 0;
+    virtual void setCookiesFromDOM(NetworkingContext*, const KURL& firstParty, const KURL&, const String& cookieString) = 0;
+    virtual bool cookiesEnabled(NetworkingContext*, const KURL& firstParty, const KURL&) = 0;
+    virtual String cookieRequestHeaderFieldValue(NetworkingContext*, const KURL& firstParty, const KURL&) = 0;
+    virtual bool getRawCookies(NetworkingContext*, const KURL& firstParty, const KURL&, Vector<Cookie>&) = 0;
+    virtual void deleteCookie(NetworkingContext*, const KURL&, const String& cookieName) = 0;
+    virtual void getHostnamesWithCookies(NetworkingContext*, HashSet<String>& hostnames) = 0;
+    virtual void deleteCookiesForHostname(NetworkingContext*, const String& hostname) = 0;
+    virtual void deleteAllCookies(NetworkingContext*) = 0;
 
 protected:
     virtual ~CookiesStrategy() { }

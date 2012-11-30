@@ -82,7 +82,16 @@ private:
     void suspendPendingRequests();
     void resumePendingRequests();
     void setSerialLoadingEnabled(bool);
-    
+    void cookiesForDOM(const WebCore::KURL& firstParty, const WebCore::KURL&, String& result);
+    void setCookiesFromDOM(const WebCore::KURL& firstParty, const WebCore::KURL&, const String&);
+    void cookiesEnabled(const WebCore::KURL& firstParty, const WebCore::KURL&, bool& result);
+    void cookieRequestHeaderFieldValue(const WebCore::KURL& firstParty, const WebCore::KURL&, String& result);
+    void getRawCookies(const WebCore::KURL& firstParty, const WebCore::KURL&, Vector<WebCore::Cookie>&);
+    void deleteCookie(const WebCore::KURL&, const String& cookieName);
+    void getHostnamesWithCookies(Vector<String>& hostnames);
+    void deleteCookiesForHostname(const String& hostname);
+    void deleteAllCookies();
+
     RefPtr<CoreIPC::Connection> m_connection;
     
     HashSet<NetworkConnectionToWebProcessObserver*> m_observers;

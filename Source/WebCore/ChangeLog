@@ -1,3 +1,31 @@
+2012-11-29  Alexey Proskuryakov  <ap@apple.com>
+
+        [WK2] Forward cookie jar calls to NetworkProcess
+        https://bugs.webkit.org/show_bug.cgi?id=103457
+
+        Reviewed by Darin Adler.
+
+        * WebCore.exp.in:
+        * WebCore.xcodeproj/project.pbxproj:
+        PlatformCookieJar.h functions are now used in WebKit2.
+
+        * loader/CookieJar.cpp:
+        (WebCore::cookies):
+        (WebCore::setCookies):
+        (WebCore::cookiesEnabled):
+        (WebCore::cookieRequestHeaderFieldValue):
+        (WebCore::getRawCookies):
+        (WebCore::deleteCookie):
+        (WebCore::getHostnamesWithCookies):
+        (WebCore::deleteCookiesForHostname):
+        (WebCore::deleteAllCookies):
+        Use a strategy instead of going to PlatformCookieJar directly.
+
+        * platform/Cookie.h: (Cookie): Added a default constructor, so that Cookie could be
+        sent over IPC.
+
+        * platform/CookiesStrategy.h: Added functions for cookie jar.
+
 2012-11-29  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r136167.

@@ -22,6 +22,7 @@
 #include "NotImplemented.h"
 #include "Page.h"
 #include "PageGroup.h"
+#include "PlatformCookieJar.h"
 #include "PluginDatabase.h"
 #include "PluginPackage.h"
 
@@ -72,6 +73,51 @@ VisitedLinkStrategy* PlatformStrategiesGtk::createVisitedLinkStrategy()
 // CookiesStrategy
 void PlatformStrategiesGtk::notifyCookiesChanged()
 {
+}
+
+String PlatformStrategiesGtk::cookiesForDOM(NetworkingContext* context, const KURL& firstParty, const KURL& url)
+{
+    return WebCore::cookiesForDOM(context, firstParty, url);
+}
+
+void PlatformStrategiesGtk::setCookiesFromDOM(NetworkingContext* context, const KURL& firstParty, const KURL& url, const String& cookieString)
+{
+    WebCore::setCookiesFromDOM(context, firstParty, url, cookieString);
+}
+
+bool PlatformStrategiesGtk::cookiesEnabled(NetworkingContext* context, const KURL& firstParty, const KURL& url)
+{
+    return WebCore::cookiesEnabled(context, firstParty, url);
+}
+
+String PlatformStrategiesGtk::cookieRequestHeaderFieldValue(NetworkingContext* context, const KURL& firstParty, const KURL& url)
+{
+    return WebCore::cookieRequestHeaderFieldValue(context, firstParty, url);
+}
+
+bool PlatformStrategiesGtk::getRawCookies(NetworkingContext* context, const KURL& firstParty, const KURL& url, Vector<Cookie>& rawCookies)
+{
+    return WebCore::getRawCookies(context, firstParty, url, rawCookies);
+}
+
+void PlatformStrategiesGtk::deleteCookie(NetworkingContext* context, const KURL& url, const String& cookieName)
+{
+    WebCore::deleteCookie(context, url, cookieName);
+}
+
+void PlatformStrategiesGtk::getHostnamesWithCookies(NetworkingContext* context, HashSet<String>& hostnames)
+{
+    WebCore::getHostnamesWithCookies(context, hostnames);
+}
+
+void PlatformStrategiesGtk::deleteCookiesForHostname(NetworkingContext* context, const String& hostname)
+{
+    WebCore::deleteCookiesForHostname(context, hostname);
+}
+
+void PlatformStrategiesGtk::deleteAllCookies(NetworkingContext* context)
+{
+    WebCore::deleteAllCookies(context);
 }
 
 // PluginStrategy

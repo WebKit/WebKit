@@ -52,6 +52,7 @@ namespace WebCore {
     class UserStyleSheet;
     class UserScript;
     struct CompositionUnderline;
+    struct Cookie;
     struct DictationAlternative;
     struct DragSession;
     struct FileChooserSettings;
@@ -205,6 +206,11 @@ template<> struct ArgumentCoder<WebCore::KeypressCommand> {
 template<> struct ArgumentCoder<WebCore::CompositionUnderline> {
     static void encode(ArgumentEncoder&, const WebCore::CompositionUnderline&);
     static bool decode(ArgumentDecoder*, WebCore::CompositionUnderline&);
+};
+
+template<> struct ArgumentCoder<WebCore::Cookie> {
+    static void encode(ArgumentEncoder&, const WebCore::Cookie&);
+    static bool decode(ArgumentDecoder*, WebCore::Cookie&);
 };
 
 template<> struct ArgumentCoder<WebCore::DatabaseDetails> {

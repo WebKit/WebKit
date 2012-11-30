@@ -35,6 +35,8 @@ namespace WebCore {
     // to the Web Inspector.
 
     struct Cookie {
+        Cookie() { }
+
         Cookie(const String& name, const String& value, const String& domain,
                 const String& path, double expires, bool httpOnly, bool secure,
                 bool session)

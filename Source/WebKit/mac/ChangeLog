@@ -1,3 +1,26 @@
+2012-11-29  Alexey Proskuryakov  <ap@apple.com>
+
+        [WK2] Forward cookie jar calls to NetworkProcess
+        https://bugs.webkit.org/show_bug.cgi?id=103457
+
+        Reviewed by Darin Adler.
+
+        * WebCoreSupport/WebPlatformStrategies.h:
+        (WebPlatformStrategies):
+        * WebCoreSupport/WebPlatformStrategies.mm:
+        (WebPlatformStrategies::cookiesForDOM):
+        (WebPlatformStrategies::setCookiesFromDOM):
+        (WebPlatformStrategies::cookiesEnabled):
+        (WebPlatformStrategies::cookieRequestHeaderFieldValue):
+        (WebPlatformStrategies::getRawCookies):
+        (WebPlatformStrategies::deleteCookie):
+        (WebPlatformStrategies::getHostnamesWithCookies):
+        (WebPlatformStrategies::deleteCookiesForHostname):
+        (WebPlatformStrategies::deleteAllCookies):
+        (WebPlatformStrategies::getPluginInfo):
+        (WebPlatformStrategies::bufferForType):
+        WebKit1 strategy just uses PlatformCookieJar.
+
 2012-11-28  Beth Dakin  <bdakin@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=102970

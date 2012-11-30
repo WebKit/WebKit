@@ -30,6 +30,11 @@
 #include "Frame.h"
 #include "PlatformCookieJar.h"
 
+#if USE(PLATFORM_STRATEGIES)
+#include "CookiesStrategy.h"
+#include "PlatformStrategies.h"
+#endif
+
 #if PLATFORM(BLACKBERRY)
 #error Blackberry currently uses a fork of this file because of layering violations
 #endif
@@ -51,47 +56,83 @@ static NetworkingContext* networkingContext(const Document* document)
 
 String cookies(const Document* document, const KURL& url)
 {
+#if USE(PLATFORM_STRATEGIES)
+    return platformStrategies()->cookiesStrategy()->cookiesForDOM(networkingContext(document), document->firstPartyForCookies(), url);
+#else
     return cookiesForDOM(networkingContext(document), document->firstPartyForCookies(), url);
+#endif
 }
 
 void setCookies(Document* document, const KURL& url, const String& cookieString)
 {
+#if USE(PLATFORM_STRATEGIES)
+    platformStrategies()->cookiesStrategy()->setCookiesFromDOM(networkingContext(document), document->firstPartyForCookies(), url, cookieString);
+#else
     setCookiesFromDOM(networkingContext(document), document->firstPartyForCookies(), url, cookieString);
+#endif
 }
 
 bool cookiesEnabled(const Document* document)
 {
+#if USE(PLATFORM_STRATEGIES)
+    return platformStrategies()->cookiesStrategy()->cookiesEnabled(networkingContext(document), document->firstPartyForCookies(), document->cookieURL());
+#else
     return cookiesEnabled(networkingContext(document), document->firstPartyForCookies(), document->cookieURL());
+#endif
 }
 
 String cookieRequestHeaderFieldValue(const Document* document, const KURL& url)
 {
+#if USE(PLATFORM_STRATEGIES)
+    return platformStrategies()->cookiesStrategy()->cookieRequestHeaderFieldValue(networkingContext(document), document->firstPartyForCookies(), url);
+#else
     return cookieRequestHeaderFieldValue(networkingContext(document), document->firstPartyForCookies(), url);
+#endif
 }
 
 bool getRawCookies(const Document* document, const KURL& url, Vector<Cookie>& cookies)
 {
+#if USE(PLATFORM_STRATEGIES)
+    return platformStrategies()->cookiesStrategy()->getRawCookies(networkingContext(document), document->firstPartyForCookies(), url, cookies);
+#else
     return getRawCookies(networkingContext(document), document->firstPartyForCookies(), url, cookies);
+#endif
 }
 
 void deleteCookie(const Document* document, const KURL& url, const String& cookieName)
 {
+#if USE(PLATFORM_STRATEGIES)
+    platformStrategies()->cookiesStrategy()->deleteCookie(networkingContext(document), url, cookieName);
+#else
     deleteCookie(networkingContext(document), url, cookieName);
+#endif
 }
 
 void getHostnamesWithCookies(HashSet<String>& hostnames)
 {
+#if USE(PLATFORM_STRATEGIES)
+    platformStrategies()->cookiesStrategy()->getHostnamesWithCookies(0, hostnames);
+#else
     getHostnamesWithCookies(0, hostnames);
+#endif
 }
 
 void deleteCookiesForHostname(const String& hostname)
 {
+#if USE(PLATFORM_STRATEGIES)
+    platformStrategies()->cookiesStrategy()->deleteCookiesForHostname(0, hostname);
+#else
     deleteCookiesForHostname(0, hostname);
+#endif
 }
 
 void deleteAllCookies()
 {
+#if USE(PLATFORM_STRATEGIES)
+    platformStrategies()->cookiesStrategy()->deleteAllCookies(0);
+#else
     deleteAllCookies(0);
+#endif
 }
 
 }

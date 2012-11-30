@@ -28,6 +28,7 @@
 
 #include "ShareableBitmap.h"
 #include <WebCore/AuthenticationChallenge.h>
+#include <WebCore/Cookie.h>
 #include <WebCore/Credential.h>
 #include <WebCore/Cursor.h>
 #include <WebCore/DatabaseDetails.h>
@@ -685,6 +686,42 @@ bool ArgumentCoder<CompositionUnderline>::decode(ArgumentDecoder* decoder, Compo
 
     return true;
 }
+
+
+void ArgumentCoder<Cookie>::encode(ArgumentEncoder& encoder, const Cookie& cookie)
+{
+    encoder << cookie.name;
+    encoder << cookie.value;
+    encoder << cookie.domain;
+    encoder << cookie.path;
+    encoder << cookie.expires;
+    encoder << cookie.httpOnly;
+    encoder << cookie.secure;
+    encoder << cookie.session;
+}
+
+bool ArgumentCoder<Cookie>::decode(ArgumentDecoder* decoder, Cookie& cookie)
+{
+    if (!decoder->decode(cookie.name))
+        return false;
+    if (!decoder->decode(cookie.value))
+        return false;
+    if (!decoder->decode(cookie.domain))
+        return false;
+    if (!decoder->decode(cookie.path))
+        return false;
+    if (!decoder->decode(cookie.expires))
+        return false;
+    if (!decoder->decode(cookie.httpOnly))
+        return false;
+    if (!decoder->decode(cookie.secure))
+        return false;
+    if (!decoder->decode(cookie.session))
+        return false;
+
+    return true;
+}
+
 
 #if ENABLE(SQL_DATABASE)
 void ArgumentCoder<DatabaseDetails>::encode(ArgumentEncoder& encoder, const DatabaseDetails& details)

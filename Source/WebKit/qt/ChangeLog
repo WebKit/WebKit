@@ -1,3 +1,21 @@
+2012-11-29  Alexey Proskuryakov  <ap@apple.com>
+
+        [WK2] Forward cookie jar calls to NetworkProcess
+        https://bugs.webkit.org/show_bug.cgi?id=103457
+
+        Reviewed by Darin Adler.
+
+        * WebCoreSupport/PlatformStrategiesQt.cpp:
+        (PlatformStrategiesQt::cookiesForDOM):
+        (PlatformStrategiesQt::setCookiesFromDOM):
+        (PlatformStrategiesQt::cookiesEnabled):
+        (PlatformStrategiesQt::cookieRequestHeaderFieldValue):
+        (PlatformStrategiesQt::getRawCookies):
+        (PlatformStrategiesQt::deleteCookie):
+        (PlatformStrategiesQt::getHostnamesWithCookies):
+        (PlatformStrategiesQt::deleteCookiesForHostname):
+        (PlatformStrategiesQt::deleteAllCookies):
+
 2012-11-28  Huang Dongsung  <luxtella@company100.net>
 
         [Texmap] REGRESSION(r135620) QtTestBrowser crashes on Google-gravity.

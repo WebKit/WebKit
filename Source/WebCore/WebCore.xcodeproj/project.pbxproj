@@ -6078,7 +6078,7 @@
 		E139866315478474001E3F65 /* StyleResolver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E139866115478474001E3F65 /* StyleResolver.cpp */; };
 		E139866415478474001E3F65 /* StyleResolver.h in Headers */ = {isa = PBXBuildFile; fileRef = E139866215478474001E3F65 /* StyleResolver.h */; };
 		E13F01F11270E19000DFBA71 /* CookieStorageMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = E13F01F01270E19000DFBA71 /* CookieStorageMac.mm */; };
-		E1424C8A164B3B4E00F32D40 /* PlatformCookieJar.h in Headers */ = {isa = PBXBuildFile; fileRef = E1424C89164B3B4E00F32D40 /* PlatformCookieJar.h */; };
+		E1424C8A164B3B4E00F32D40 /* PlatformCookieJar.h in Headers */ = {isa = PBXBuildFile; fileRef = E1424C89164B3B4E00F32D40 /* PlatformCookieJar.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E1424C90164B460B00F32D40 /* CookieJarMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = E1424C8F164B460B00F32D40 /* CookieJarMac.mm */; };
 		E1424C93164B52C800F32D40 /* CookieJar.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1424C91164B52C800F32D40 /* CookieJar.cpp */; };
 		E1424C94164B52C800F32D40 /* CookieJar.h in Headers */ = {isa = PBXBuildFile; fileRef = E1424C92164B52C800F32D40 /* CookieJar.h */; settings = {ATTRIBUTES = (Private, ); }; };
