@@ -33,6 +33,7 @@
 #include "NetworkStateNotifier.h"
 #include "PageCache.h"
 #include "PageGroup.h"
+#include "Settings.h"
 #include "TextureCacheCompositingThread.h"
 #include "bindings/js/GCController.h"
 #include "runtime/JSLock.h"
@@ -65,12 +66,15 @@ void globalInitialize()
     initializeLoggingChannelsIfNecessary();
 #endif // !LOG_DISABLED
 
-    // Initialize threading/
+    // Initialize threading.
     JSC::initializeThreading();
 
     // Normally this is called from initializeThreading, but we're using ThreadingNone
     // we're grabbing callOnMainThread without using the rest of the threading support.
     WTF::initializeMainThread();
+
+    // Set the minimal timer interval to 4 milliseconds.
+    WebCore::Settings::setDefaultMinDOMTimerInterval(0.004);
 
     // Track visited links.
     PageGroup::setShouldTrackVisitedLinks(true);

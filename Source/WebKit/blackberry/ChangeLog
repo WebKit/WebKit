@@ -1,3 +1,15 @@
+2012-11-28  Cosmin Truta  <ctruta@rim.com>
+
+        [BlackBerry] Set the minimal DOM timer interval to 4 milliseconds
+        https://bugs.webkit.org/show_bug.cgi?id=103534
+
+        Reviewed by Yong Li.
+
+        We align this behavior with other platforms.
+
+        * Api/BlackBerryGlobal.cpp:
+        (BlackBerry::WebKit::globalInitialize):
+
 2012-11-29  Jacky Jiang  <zhajiang@rim.com>
 
         [BlackBerry] window.open can load url twice which can cause security and timing issues
