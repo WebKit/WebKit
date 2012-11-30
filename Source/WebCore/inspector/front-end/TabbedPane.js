@@ -598,6 +598,8 @@ WebInspector.TabbedPaneTab.prototype = {
 
     set title(title)
     {
+        if (title === this._title)
+            return;
         this._title = title;
         if (this._titleElement)
             this._titleElement.textContent = title;

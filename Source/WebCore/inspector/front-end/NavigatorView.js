@@ -479,6 +479,8 @@ WebInspector.BaseNavigatorTreeElement.prototype = {
 
     set titleText(titleText)
     {
+        if (this._titleText === titleText)
+            return;
         this._titleText = titleText || "";
         if (this.titleElement)
             this.titleElement.textContent = this._titleText;
