@@ -84,14 +84,14 @@ private:
     size_t connectionCount();
     void processPendingCalls();
 
-    static void createObjectStoreInternal(ScriptExecutionContext*, PassRefPtr<IDBDatabaseBackendImpl>, PassRefPtr<IDBObjectStoreBackendImpl>, PassRefPtr<IDBTransactionBackendImpl>);
-    static void deleteObjectStoreInternal(ScriptExecutionContext*, PassRefPtr<IDBDatabaseBackendImpl>, PassRefPtr<IDBObjectStoreBackendImpl>, PassRefPtr<IDBTransactionBackendImpl>);
-    static void setIntVersionInternal(ScriptExecutionContext*, PassRefPtr<IDBDatabaseBackendImpl>, int64_t version, PassRefPtr<IDBCallbacks>, PassRefPtr<IDBDatabaseCallbacks>, PassRefPtr<IDBTransactionBackendImpl>);
+    class CreateObjectStoreOperation;
+    class DeleteObjectStoreOperation;
+    class VersionChangeOperation;
 
-    // These are used as setVersion transaction abort tasks.
-    static void removeObjectStoreFromMap(ScriptExecutionContext*, PassRefPtr<IDBDatabaseBackendImpl>, PassRefPtr<IDBObjectStoreBackendImpl>);
-    static void addObjectStoreToMap(ScriptExecutionContext*, PassRefPtr<IDBDatabaseBackendImpl>, PassRefPtr<IDBObjectStoreBackendImpl>);
-    static void resetVersion(ScriptExecutionContext*, PassRefPtr<IDBDatabaseBackendImpl>, const String& version, int64_t intVersion);
+    // When a "versionchange" transaction aborts, these restore the back-end object hierarchy.
+    class CreateObjectStoreAbortOperation;
+    class DeleteObjectStoreAbortOperation;
+    class VersionChangeAbortOperation;
 
     RefPtr<IDBBackingStore> m_backingStore;
     IDBDatabaseMetadata m_metadata;

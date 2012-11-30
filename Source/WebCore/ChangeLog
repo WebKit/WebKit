@@ -1,3 +1,131 @@
+2012-11-30  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: Replace use of ScriptExecutionContext::Task (Part 1)
+        https://bugs.webkit.org/show_bug.cgi?id=101483
+
+        Reviewed by Tony Chang.
+
+        The IDB back end (which runs on a single thread) makes use of ScriptExecutionContext's
+        Task and facilities for cross-task posting with callbacks, and requires decorating various
+        IDB classes with "ThreadSafe" when they are not. Move towards encapsulating the tasks
+        in "Operation" classes which are IDB-operation specific.
+
+        Part 1 (this patch) retains the use of ScriptExecutionContext::Task but wraps the creation
+        and the callback function in an Operation class which will be fleshed out in later patches.
+        As an aside, a little bit of RefPtr churn is eliminated, and IDB_TRACE sprinkled in.
+
+        No new tests - just a refactor.
+
+        * Modules/indexeddb/IDBCursorBackendImpl.cpp:
+        (IDBCursorBackendImpl::CursorIterationOperation):
+        (WebCore::IDBCursorBackendImpl::CursorIterationOperation::create):
+        (WebCore):
+        (IDBCursorBackendImpl::CursorAdvanceOperation):
+        (WebCore::IDBCursorBackendImpl::CursorAdvanceOperation::create):
+        (IDBCursorBackendImpl::CursorPrefetchIterationOperation):
+        (WebCore::IDBCursorBackendImpl::CursorPrefetchIterationOperation::create):
+        (WebCore::IDBCursorBackendImpl::continueFunction):
+        (WebCore::IDBCursorBackendImpl::advance):
+        (WebCore::IDBCursorBackendImpl::CursorAdvanceOperation::perform):
+        (WebCore::IDBCursorBackendImpl::CursorIterationOperation::perform):
+        (WebCore::IDBCursorBackendImpl::prefetchContinue):
+        (WebCore::IDBCursorBackendImpl::CursorPrefetchIterationOperation::perform):
+        * Modules/indexeddb/IDBCursorBackendImpl.h:
+        (IDBCursorBackendImpl):
+        * Modules/indexeddb/IDBDatabaseBackendImpl.cpp:
+        (IDBDatabaseBackendImpl::CreateObjectStoreOperation):
+        (WebCore::IDBDatabaseBackendImpl::CreateObjectStoreOperation::create):
+        (WebCore):
+        (IDBDatabaseBackendImpl::DeleteObjectStoreOperation):
+        (WebCore::IDBDatabaseBackendImpl::DeleteObjectStoreOperation::create):
+        (IDBDatabaseBackendImpl::VersionChangeOperation):
+        (WebCore::IDBDatabaseBackendImpl::VersionChangeOperation::create):
+        (IDBDatabaseBackendImpl::CreateObjectStoreAbortOperation):
+        (WebCore::IDBDatabaseBackendImpl::CreateObjectStoreAbortOperation::create):
+        (IDBDatabaseBackendImpl::DeleteObjectStoreAbortOperation):
+        (WebCore::IDBDatabaseBackendImpl::DeleteObjectStoreAbortOperation::create):
+        (IDBDatabaseBackendImpl::VersionChangeAbortOperation):
+        (WebCore::IDBDatabaseBackendImpl::VersionChangeAbortOperation::create):
+        (WebCore::IDBDatabaseBackendImpl::createObjectStore):
+        (WebCore::IDBDatabaseBackendImpl::CreateObjectStoreOperation::perform):
+        (WebCore::IDBDatabaseBackendImpl::deleteObjectStore):
+        (WebCore::IDBDatabaseBackendImpl::DeleteObjectStoreOperation::perform):
+        (WebCore::IDBDatabaseBackendImpl::VersionChangeOperation::perform):
+        (WebCore::IDBDatabaseBackendImpl::runIntVersionChangeTransaction):
+        (WebCore::IDBDatabaseBackendImpl::CreateObjectStoreAbortOperation::perform):
+        (WebCore::IDBDatabaseBackendImpl::DeleteObjectStoreAbortOperation::perform):
+        (WebCore::IDBDatabaseBackendImpl::VersionChangeAbortOperation::perform):
+        * Modules/indexeddb/IDBDatabaseBackendImpl.h:
+        (IDBDatabaseBackendImpl):
+        * Modules/indexeddb/IDBIndexBackendImpl.cpp:
+        (IDBIndexBackendImpl::OpenIndexCursorOperation):
+        (WebCore::IDBIndexBackendImpl::OpenIndexCursorOperation::create):
+        (WebCore):
+        (IDBIndexBackendImpl::IndexCountOperation):
+        (WebCore::IDBIndexBackendImpl::IndexCountOperation::create):
+        (IDBIndexBackendImpl::IndexReferencedValueRetrievalOperation):
+        (WebCore::IDBIndexBackendImpl::IndexReferencedValueRetrievalOperation::create):
+        (IDBIndexBackendImpl::IndexValueRetrievalOperation):
+        (WebCore::IDBIndexBackendImpl::IndexValueRetrievalOperation::create):
+        (WebCore::IDBIndexBackendImpl::OpenIndexCursorOperation::perform):
+        (WebCore::IDBIndexBackendImpl::openCursor):
+        (WebCore::IDBIndexBackendImpl::openKeyCursor):
+        (WebCore::IDBIndexBackendImpl::IndexCountOperation::perform):
+        (WebCore::IDBIndexBackendImpl::count):
+        (WebCore::IDBIndexBackendImpl::IndexReferencedValueRetrievalOperation::perform):
+        (WebCore::IDBIndexBackendImpl::IndexValueRetrievalOperation::perform):
+        (WebCore::IDBIndexBackendImpl::get):
+        (WebCore::IDBIndexBackendImpl::getKey):
+        * Modules/indexeddb/IDBIndexBackendImpl.h:
+        (WebCore::IDBIndexBackendImpl::metadata):
+        (IDBIndexBackendImpl):
+        * Modules/indexeddb/IDBObjectStoreBackendImpl.cpp:
+        (IDBObjectStoreBackendImpl::ObjectStoreRetrievalOperation):
+        (WebCore::IDBObjectStoreBackendImpl::ObjectStoreRetrievalOperation::create):
+        (WebCore):
+        (IDBObjectStoreBackendImpl::ObjectStoreStorageOperation):
+        (WebCore::IDBObjectStoreBackendImpl::ObjectStoreStorageOperation::create):
+        (IDBObjectStoreBackendImpl::ObjectStoreIndexesReadyOperation):
+        (WebCore::IDBObjectStoreBackendImpl::ObjectStoreIndexesReadyOperation::create):
+        (IDBObjectStoreBackendImpl::ObjectStoreDeletionOperation):
+        (WebCore::IDBObjectStoreBackendImpl::ObjectStoreDeletionOperation::create):
+        (IDBObjectStoreBackendImpl::ObjectStoreClearOperation):
+        (WebCore::IDBObjectStoreBackendImpl::ObjectStoreClearOperation::create):
+        (IDBObjectStoreBackendImpl::CreateIndexOperation):
+        (WebCore::IDBObjectStoreBackendImpl::CreateIndexOperation::create):
+        (IDBObjectStoreBackendImpl::DeleteIndexOperation):
+        (WebCore::IDBObjectStoreBackendImpl::DeleteIndexOperation::create):
+        (IDBObjectStoreBackendImpl::OpenObjectStoreCursorOperation):
+        (WebCore::IDBObjectStoreBackendImpl::OpenObjectStoreCursorOperation::create):
+        (IDBObjectStoreBackendImpl::ObjectStoreCountOperation):
+        (WebCore::IDBObjectStoreBackendImpl::ObjectStoreCountOperation::create):
+        (IDBObjectStoreBackendImpl::CreateIndexAbortOperation):
+        (WebCore::IDBObjectStoreBackendImpl::CreateIndexAbortOperation::create):
+        (IDBObjectStoreBackendImpl::DeleteIndexAbortOperation):
+        (WebCore::IDBObjectStoreBackendImpl::DeleteIndexAbortOperation::create):
+        (WebCore::IDBObjectStoreBackendImpl::get):
+        (WebCore::IDBObjectStoreBackendImpl::ObjectStoreRetrievalOperation::perform):
+        (WebCore::IDBObjectStoreBackendImpl::put):
+        (WebCore::IDBObjectStoreBackendImpl::setIndexesReady):
+        (WebCore::IDBObjectStoreBackendImpl::ObjectStoreIndexesReadyOperation::perform):
+        (WebCore::IDBObjectStoreBackendImpl::ObjectStoreStorageOperation::perform):
+        (WebCore::IDBObjectStoreBackendImpl::deleteFunction):
+        (WebCore::IDBObjectStoreBackendImpl::ObjectStoreDeletionOperation::perform):
+        (WebCore::IDBObjectStoreBackendImpl::clear):
+        (WebCore::IDBObjectStoreBackendImpl::ObjectStoreClearOperation::perform):
+        (WebCore::IDBObjectStoreBackendImpl::createIndex):
+        (WebCore::IDBObjectStoreBackendImpl::CreateIndexOperation::perform):
+        (WebCore::IDBObjectStoreBackendImpl::deleteIndex):
+        (WebCore::IDBObjectStoreBackendImpl::DeleteIndexOperation::perform):
+        (WebCore::IDBObjectStoreBackendImpl::openCursor):
+        (WebCore::IDBObjectStoreBackendImpl::OpenObjectStoreCursorOperation::perform):
+        (WebCore::IDBObjectStoreBackendImpl::count):
+        (WebCore::IDBObjectStoreBackendImpl::ObjectStoreCountOperation::perform):
+        (WebCore::IDBObjectStoreBackendImpl::CreateIndexAbortOperation::perform):
+        (WebCore::IDBObjectStoreBackendImpl::DeleteIndexAbortOperation::perform):
+        * Modules/indexeddb/IDBObjectStoreBackendImpl.h:
+        (IDBObjectStoreBackendImpl):
+
 2012-11-30  Tim Horton  <timothy_horton@apple.com>
 
         (Simple)PDFPlugin: Support conversion of PostScript documents

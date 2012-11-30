@@ -62,7 +62,7 @@ public:
     virtual void get(PassRefPtr<IDBKeyRange>, PassRefPtr<IDBCallbacks>, IDBTransactionBackendInterface*, ExceptionCode&);
     virtual void getKey(PassRefPtr<IDBKeyRange>, PassRefPtr<IDBCallbacks>, IDBTransactionBackendInterface*, ExceptionCode&);
 
-    IDBIndexMetadata metadata() const;
+    IDBIndexMetadata metadata() const { return m_metadata; }
     const String& name() { return m_metadata.name; }
     const IDBKeyPath& keyPath() { return m_metadata.keyPath; }
     const bool& unique() { return m_metadata.unique; }
@@ -71,10 +71,10 @@ public:
 private:
     IDBIndexBackendImpl(const IDBDatabaseBackendImpl*, IDBObjectStoreBackendImpl*, const IDBIndexMetadata&);
 
-    static void openCursorInternal(ScriptExecutionContext*, PassRefPtr<IDBIndexBackendImpl>, PassRefPtr<IDBKeyRange>, unsigned short direction, IDBCursorBackendInterface::CursorType, PassRefPtr<IDBCallbacks>, PassRefPtr<IDBTransactionBackendImpl>);
-    static void countInternal(ScriptExecutionContext*, PassRefPtr<IDBIndexBackendImpl>, PassRefPtr<IDBKeyRange>, PassRefPtr<IDBCallbacks>, PassRefPtr<IDBTransactionBackendImpl>);
-    static void getInternal(ScriptExecutionContext*, PassRefPtr<IDBIndexBackendImpl>, PassRefPtr<IDBKeyRange>, PassRefPtr<IDBCallbacks>, PassRefPtr<IDBTransactionBackendImpl>);
-    static void getKeyInternal(ScriptExecutionContext*, PassRefPtr<IDBIndexBackendImpl>, PassRefPtr<IDBKeyRange>, PassRefPtr<IDBCallbacks>, PassRefPtr<IDBTransactionBackendImpl>);
+    class OpenIndexCursorOperation;
+    class IndexCountOperation;
+    class IndexReferencedValueRetrievalOperation;
+    class IndexValueRetrievalOperation;
 
     static const int64_t InvalidId = 0;
 

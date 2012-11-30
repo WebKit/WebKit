@@ -33,10 +33,72 @@
 #include "IDBDatabaseException.h"
 #include "IDBFactoryBackendImpl.h"
 #include "IDBObjectStoreBackendImpl.h"
+#include "IDBTracing.h"
 #include "IDBTransactionBackendImpl.h"
 #include "IDBTransactionCoordinator.h"
 
 namespace WebCore {
+
+class IDBDatabaseBackendImpl::CreateObjectStoreOperation {
+public:
+    static PassOwnPtr<ScriptExecutionContext::Task> create(PassRefPtr<IDBDatabaseBackendImpl> database, PassRefPtr<IDBObjectStoreBackendImpl> objectStore, PassRefPtr<IDBTransactionBackendImpl> transaction)
+    {
+        return createCallbackTask(&CreateObjectStoreOperation::perform, database, objectStore, transaction);
+    }
+private:
+    static void perform(ScriptExecutionContext*, PassRefPtr<IDBDatabaseBackendImpl>, PassRefPtr<IDBObjectStoreBackendImpl>, PassRefPtr<IDBTransactionBackendImpl>);
+};
+
+class IDBDatabaseBackendImpl::DeleteObjectStoreOperation {
+public:
+    static PassOwnPtr<ScriptExecutionContext::Task> create(PassRefPtr<IDBDatabaseBackendImpl> database, PassRefPtr<IDBObjectStoreBackendImpl> objectStore, PassRefPtr<IDBTransactionBackendImpl> transaction)
+    {
+        return createCallbackTask(&DeleteObjectStoreOperation::perform, database, objectStore, transaction);
+    }
+private:
+    static void perform(ScriptExecutionContext*, PassRefPtr<IDBDatabaseBackendImpl>, PassRefPtr<IDBObjectStoreBackendImpl>, PassRefPtr<IDBTransactionBackendImpl>);
+};
+
+class IDBDatabaseBackendImpl::VersionChangeOperation {
+public:
+    static PassOwnPtr<ScriptExecutionContext::Task> create(PassRefPtr<IDBDatabaseBackendImpl> database, int64_t version, PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<IDBDatabaseCallbacks> databaseCallbacks, PassRefPtr<IDBTransactionBackendImpl> transaction)
+    {
+        return createCallbackTask(&VersionChangeOperation::perform, database, version, callbacks, databaseCallbacks, transaction);
+    }
+private:
+    static void perform(ScriptExecutionContext*, PassRefPtr<IDBDatabaseBackendImpl>, int64_t version, PassRefPtr<IDBCallbacks>, PassRefPtr<IDBDatabaseCallbacks>, PassRefPtr<IDBTransactionBackendImpl>);
+};
+
+class IDBDatabaseBackendImpl::CreateObjectStoreAbortOperation {
+public:
+    static PassOwnPtr<ScriptExecutionContext::Task> create(PassRefPtr<IDBDatabaseBackendImpl> database, PassRefPtr<IDBObjectStoreBackendImpl> objectStore)
+    {
+        return createCallbackTask(&CreateObjectStoreAbortOperation::perform, database, objectStore);
+    }
+private:
+    static void perform(ScriptExecutionContext*, PassRefPtr<IDBDatabaseBackendImpl>, PassRefPtr<IDBObjectStoreBackendImpl>);
+};
+
+class IDBDatabaseBackendImpl::DeleteObjectStoreAbortOperation {
+public:
+    static PassOwnPtr<ScriptExecutionContext::Task> create(PassRefPtr<IDBDatabaseBackendImpl> database, PassRefPtr<IDBObjectStoreBackendImpl> objectStore)
+    {
+        return createCallbackTask(&DeleteObjectStoreAbortOperation::perform, database, objectStore);
+    }
+private:
+    static void perform(ScriptExecutionContext*, PassRefPtr<IDBDatabaseBackendImpl>, PassRefPtr<IDBObjectStoreBackendImpl>);
+};
+
+class IDBDatabaseBackendImpl::VersionChangeAbortOperation {
+public:
+    static PassOwnPtr<ScriptExecutionContext::Task> create(PassRefPtr<IDBDatabaseBackendImpl> database, const String& previousVersion, int64_t previousIntVersion)
+    {
+        return createCallbackTask(&VersionChangeAbortOperation::perform, database, previousVersion, previousIntVersion);
+    }
+private:
+    static void perform(ScriptExecutionContext*, PassRefPtr<IDBDatabaseBackendImpl>, const String& previousVersion, int64_t previousIntVersion);
+};
+
 
 class IDBDatabaseBackendImpl::PendingOpenCall {
 public:
@@ -162,10 +224,7 @@ PassRefPtr<IDBObjectStoreBackendInterface> IDBDatabaseBackendImpl::createObjectS
     ASSERT(id > m_metadata.maxObjectStoreId);
     m_metadata.maxObjectStoreId = id;
 
-    RefPtr<IDBDatabaseBackendImpl> database = this;
-    if (!transaction->scheduleTask(
-            createCallbackTask(&IDBDatabaseBackendImpl::createObjectStoreInternal, database, objectStore, transaction),
-            createCallbackTask(&IDBDatabaseBackendImpl::removeObjectStoreFromMap, database, objectStore))) {
+    if (!transaction->scheduleTask(CreateObjectStoreOperation::create(this, objectStore, transaction), CreateObjectStoreAbortOperation::create(this, objectStore))) {
         ec = IDBDatabaseException::TRANSACTION_INACTIVE_ERR;
         return 0;
     }
@@ -174,8 +233,9 @@ PassRefPtr<IDBObjectStoreBackendInterface> IDBDatabaseBackendImpl::createObjectS
     return objectStore.release();
 }
 
-void IDBDatabaseBackendImpl::createObjectStoreInternal(ScriptExecutionContext*, PassRefPtr<IDBDatabaseBackendImpl> database, PassRefPtr<IDBObjectStoreBackendImpl> objectStore, PassRefPtr<IDBTransactionBackendImpl> transaction)
+void IDBDatabaseBackendImpl::CreateObjectStoreOperation::perform(ScriptExecutionContext*, PassRefPtr<IDBDatabaseBackendImpl> database, PassRefPtr<IDBObjectStoreBackendImpl> objectStore, PassRefPtr<IDBTransactionBackendImpl> transaction)
 {
+    IDB_TRACE("CreateObjectStoreOperation");
     if (!database->m_backingStore->createObjectStore(transaction->backingStoreTransaction(), database->id(), objectStore->id(), objectStore->name(), objectStore->keyPath(), objectStore->autoIncrement())) {
         transaction->abort();
         return;
@@ -191,27 +251,26 @@ void IDBDatabaseBackendImpl::deleteObjectStore(int64_t id, IDBTransactionBackend
 {
     ASSERT(m_objectStores.contains(id));
 
-    RefPtr<IDBDatabaseBackendImpl> database = this;
     RefPtr<IDBObjectStoreBackendImpl> objectStore = m_objectStores.get(id);
     RefPtr<IDBTransactionBackendImpl> transaction = IDBTransactionBackendImpl::from(transactionPtr);
     ASSERT(transaction->mode() == IDBTransaction::VERSION_CHANGE);
 
-    if (!transaction->scheduleTask(
-            createCallbackTask(&IDBDatabaseBackendImpl::deleteObjectStoreInternal, database, objectStore, transaction),
-            createCallbackTask(&IDBDatabaseBackendImpl::addObjectStoreToMap, database, objectStore))) {
+    if (!transaction->scheduleTask(DeleteObjectStoreOperation::create(this, objectStore, transaction), DeleteObjectStoreAbortOperation::create(this, objectStore))) {
         ec = IDBDatabaseException::TRANSACTION_INACTIVE_ERR;
         return;
     }
     m_objectStores.remove(id);
 }
 
-void IDBDatabaseBackendImpl::deleteObjectStoreInternal(ScriptExecutionContext*, PassRefPtr<IDBDatabaseBackendImpl> database, PassRefPtr<IDBObjectStoreBackendImpl> objectStore, PassRefPtr<IDBTransactionBackendImpl> transaction)
+void IDBDatabaseBackendImpl::DeleteObjectStoreOperation::perform(ScriptExecutionContext*, PassRefPtr<IDBDatabaseBackendImpl> database, PassRefPtr<IDBObjectStoreBackendImpl> objectStore, PassRefPtr<IDBTransactionBackendImpl> transaction)
 {
+    IDB_TRACE("DeleteObjectStoreOperation");
     database->m_backingStore->deleteObjectStore(transaction->backingStoreTransaction(), database->id(), objectStore->id());
 }
 
-void IDBDatabaseBackendImpl::setIntVersionInternal(ScriptExecutionContext*, PassRefPtr<IDBDatabaseBackendImpl> database, int64_t version, PassRefPtr<IDBCallbacks> prpCallbacks, PassRefPtr<IDBDatabaseCallbacks> databaseCallbacks, PassRefPtr<IDBTransactionBackendImpl> transaction)
+void IDBDatabaseBackendImpl::VersionChangeOperation::perform(ScriptExecutionContext*, PassRefPtr<IDBDatabaseBackendImpl> database, int64_t version, PassRefPtr<IDBCallbacks> prpCallbacks, PassRefPtr<IDBDatabaseCallbacks> databaseCallbacks, PassRefPtr<IDBTransactionBackendImpl> transaction)
 {
+    IDB_TRACE("VersionChangeOperation");
     RefPtr<IDBCallbacks> callbacks(prpCallbacks);
     int64_t databaseId = database->id();
     int64_t oldVersion = database->m_metadata.intVersion;
@@ -385,10 +444,7 @@ void IDBDatabaseBackendImpl::runIntVersionChangeTransaction(int64_t requestedVer
     RefPtr<IDBTransactionBackendInterface> transactionInterface = transaction(objectStoreIds, IDBTransaction::VERSION_CHANGE);
     RefPtr<IDBTransactionBackendImpl> transaction = IDBTransactionBackendImpl::from(transactionInterface.get());
 
-    RefPtr<IDBDatabaseBackendImpl> database = this;
-    OwnPtr<ScriptExecutionContext::Task> intVersionTask = createCallbackTask(&IDBDatabaseBackendImpl::setIntVersionInternal, database, requestedVersion, callbacks, databaseCallbacks, transaction);
-    OwnPtr<ScriptExecutionContext::Task> resetVersionOnAbortTask = createCallbackTask(&IDBDatabaseBackendImpl::resetVersion, database, m_metadata.version, m_metadata.intVersion);
-    if (!transaction->scheduleTask(intVersionTask.release(), resetVersionOnAbortTask.release())) {
+    if (!transaction->scheduleTask(VersionChangeOperation::create(this, requestedVersion, callbacks, databaseCallbacks, transaction), VersionChangeAbortOperation::create(this, m_metadata.version, m_metadata.intVersion))) {
         ASSERT_NOT_REACHED();
     }
     ASSERT(!m_pendingSecondHalfOpenWithVersion);
@@ -508,21 +564,20 @@ void IDBDatabaseBackendImpl::loadObjectStores()
         m_objectStores.set(objectStores[i].id, IDBObjectStoreBackendImpl::create(this, objectStores[i]));
 }
 
-void IDBDatabaseBackendImpl::removeObjectStoreFromMap(ScriptExecutionContext*, PassRefPtr<IDBDatabaseBackendImpl> database, PassRefPtr<IDBObjectStoreBackendImpl> prpObjectStore)
+void IDBDatabaseBackendImpl::CreateObjectStoreAbortOperation::perform(ScriptExecutionContext*, PassRefPtr<IDBDatabaseBackendImpl> database, PassRefPtr<IDBObjectStoreBackendImpl> objectStore)
 {
-    RefPtr<IDBObjectStoreBackendImpl> objectStore = prpObjectStore;
     ASSERT(database->m_objectStores.contains(objectStore->id()));
     database->m_objectStores.remove(objectStore->id());
 }
 
-void IDBDatabaseBackendImpl::addObjectStoreToMap(ScriptExecutionContext*, PassRefPtr<IDBDatabaseBackendImpl> database, PassRefPtr<IDBObjectStoreBackendImpl> objectStore)
+void IDBDatabaseBackendImpl::DeleteObjectStoreAbortOperation::perform(ScriptExecutionContext*, PassRefPtr<IDBDatabaseBackendImpl> database, PassRefPtr<IDBObjectStoreBackendImpl> prpObjectStore)
 {
-    RefPtr<IDBObjectStoreBackendImpl> objectStorePtr = objectStore;
-    ASSERT(!database->m_objectStores.contains(objectStorePtr->id()));
-    database->m_objectStores.set(objectStorePtr->id(), objectStorePtr);
+    RefPtr<IDBObjectStoreBackendImpl> objectStore = prpObjectStore;
+    ASSERT(!database->m_objectStores.contains(objectStore->id()));
+    database->m_objectStores.set(objectStore->id(), objectStore);
 }
 
-void IDBDatabaseBackendImpl::resetVersion(ScriptExecutionContext*, PassRefPtr<IDBDatabaseBackendImpl> database, const String& previousVersion, int64_t previousIntVersion)
+void IDBDatabaseBackendImpl::VersionChangeAbortOperation::perform(ScriptExecutionContext*, PassRefPtr<IDBDatabaseBackendImpl> database, const String& previousVersion, int64_t previousIntVersion)
 {
     database->m_metadata.version = previousVersion;
     database->m_metadata.intVersion = previousIntVersion;
