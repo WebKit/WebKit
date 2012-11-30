@@ -1,3 +1,17 @@
+2012-11-30  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: It's Sass, not SASS
+        https://bugs.webkit.org/show_bug.cgi?id=103626
+
+        Reviewed by Yury Semikhatsky.
+
+        Change "SASS" to "Sass" in UI strings.
+
+        * English.lproj/localizedStrings.js:
+        * inspector/front-end/Settings.js:
+        (WebInspector.ExperimentsSettings):
+        * inspector/front-end/SettingsScreen.js:
+
 2012-11-29  Tommy Widenflycht  <tommyw@google.com>
 
         Speech Recognition API: Update SpeechRecognitionEvent/Result to match the specification

@@ -373,7 +373,7 @@ WebInspector.GenericSettingsTab.prototype = {
         checkboxElement.type = "checkbox";
         checkboxElement.checked = WebInspector.settings.cssReloadEnabled.get();
         checkboxElement.addEventListener("click", checkboxClicked, false);
-        labelElement.appendChild(document.createTextNode(WebInspector.UIString("Auto-reload CSS upon SASS save")));
+        labelElement.appendChild(document.createTextNode(WebInspector.UIString("Auto-reload CSS upon Sass save")));
 
         var fieldsetElement = fragment.createChild("fieldset");
         fieldsetElement.disabled = !checkboxElement.checked;
