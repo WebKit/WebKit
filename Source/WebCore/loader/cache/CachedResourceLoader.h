@@ -144,8 +144,8 @@ private:
 
     CachedResourceHandle<CachedResource> requestResource(CachedResource::Type, CachedResourceRequest&);
     CachedResourceHandle<CachedResource> revalidateResource(CachedResource*);
-    CachedResourceHandle<CachedResource> loadResource(CachedResource::Type, ResourceRequest&, const String& charset);
-    void requestPreload(CachedResource::Type, ResourceRequest&, const String& charset);
+    CachedResourceHandle<CachedResource> loadResource(CachedResource::Type, CachedResourceRequest&, const String& charset);
+    void requestPreload(CachedResource::Type, CachedResourceRequest&, const String& charset);
 
     enum RevalidationPolicy { Use, Revalidate, Reload, Load };
     RevalidationPolicy determineRevalidationPolicy(CachedResource::Type, ResourceRequest&, bool forPreload, CachedResource* existingResource, CachedResourceRequest::DeferOption) const;
@@ -169,7 +169,7 @@ private:
     OwnPtr<ListHashSet<CachedResource*> > m_preloads;
     struct PendingPreload {
         CachedResource::Type m_type;
-        ResourceRequest m_request;
+        CachedResourceRequest m_request;
         String m_charset;
     };
     Deque<PendingPreload> m_pendingPreloads;

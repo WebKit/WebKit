@@ -1,3 +1,25 @@
+2012-11-30  James Simonsen  <simonjam@chromium.org>
+
+        Remember the CachedResourceRequest for preloads
+        https://bugs.webkit.org/show_bug.cgi?id=102995
+
+        Reviewed by Tony Gentilcore.
+
+        Without this, the initiator is lost.
+
+        Tests: http/tests/w3c/webperf/submission/resource-timing
+
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::requestResource):
+        (WebCore::CachedResourceLoader::loadResource):
+        (WebCore::CachedResourceLoader::preload):
+        (WebCore::CachedResourceLoader::checkForPendingPreloads):
+        (WebCore::CachedResourceLoader::requestPreload):
+        (WebCore::CachedResourceLoader::isPreloaded):
+        * loader/cache/CachedResourceLoader.h:
+        (CachedResourceLoader):
+        (PendingPreload):
+
 2012-11-30  Michelangelo De Simone  <michelangelo@webkit.org>
 
         [CSS Shaders] Clamp input colors before blending
