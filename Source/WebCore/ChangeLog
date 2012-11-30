@@ -1,3 +1,18 @@
+2012-11-30  Sankeerth V S  <sankeerth.vs@samsung.com>
+
+        Web Inspector: [Timeline] JS error when clicking in Memory Statistics view
+        https://bugs.webkit.org/show_bug.cgi?id=103486
+
+        Reviewed by Alexander Pavlov.
+
+        The counter value can be null/undefined. Hence a check is needed
+        before we access the "time" property on this counter object.
+
+        No new tests required as UI related change.
+
+        * inspector/front-end/MemoryStatistics.js:
+        (WebInspector.MemoryStatistics.prototype._onClick):
+
 2012-11-30  Kent Tamura  <tkent@chromium.org>
 
         Fix typos in DateTimeNumericFieldElement.cpp and DateTimeSymbolicFieldElement.cpp

@@ -314,10 +314,11 @@ WebInspector.MemoryStatistics.prototype = {
 
     _onClick: function(event)
     {
-        var x = event.x - event.target.offsetParent.offsetLeft
+        var x = event.x - event.target.offsetParent.offsetLeft;
         var i = this._recordIndexAt(x);
         var counter = this._counters[i];
-        this._timelinePanel.revealRecordAt(counter.time / 1000);
+        if (counter)
+            this._timelinePanel.revealRecordAt(counter.time / 1000);
     },
 
     _onMouseOut: function(event)
