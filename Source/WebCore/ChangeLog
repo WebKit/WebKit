@@ -1,3 +1,13 @@
+2012-11-30  Samuel Rødal  <samuel.rodal@digia.com>
+
+        [Qt] Fixed use of to-be-removed compatibility functions in QWindow.
+
+        Reviewed by Simon Hausmann.
+
+        * platform/graphics/gstreamer/PlatformVideoWindowQt.cpp:
+        (FullScreenVideoWindow::FullScreenVideoWindow):
+        (PlatformVideoWindow::PlatformVideoWindow):
+
 2012-11-30  Arpita Bahuguna  <arpitabahuguna@gmail.com>
 
         Caret is painted horizontally in vertical writing mode when there are no visible text
