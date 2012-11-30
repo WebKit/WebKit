@@ -1,3 +1,9 @@
+2012-11-30  Zhenyao Mo  <zmo@google.com>
+
+        Unreviewed, webkit gardening, fix webkit lint.
+
+        * platform/chromium/TestExpectations:
+
 2012-11-30  Simon Fraser  <simon.fraser@apple.com>
 
         Use the correct path to a test in TestExpectations.
