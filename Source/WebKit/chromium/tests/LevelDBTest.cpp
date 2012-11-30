@@ -79,8 +79,10 @@ TEST(LevelDBDatabaseTest, CorruptionTest)
 
     leveldb = LevelDBDatabase::open(path, &comparator);
     EXPECT_TRUE(leveldb);
-    success = leveldb->get(key, gotValue);
+    bool found = false;
+    success = leveldb->safeGet(key, gotValue, found);
     EXPECT_TRUE(success);
+    EXPECT_TRUE(found);
     EXPECT_EQ(putValue, gotValue);
     leveldb.release();
     EXPECT_FALSE(leveldb);
@@ -98,8 +100,9 @@ TEST(LevelDBDatabaseTest, CorruptionTest)
 
     leveldb = LevelDBDatabase::open(path, &comparator);
     EXPECT_TRUE(leveldb);
-    success = leveldb->get(key, gotValue);
-    EXPECT_FALSE(success);
+    success = leveldb->safeGet(key, gotValue, found);
+    EXPECT_TRUE(success);
+    EXPECT_FALSE(found);
 }
 
 TEST(LevelDBDatabaseTest, Transaction)
@@ -129,8 +132,10 @@ TEST(LevelDBDatabaseTest, Transaction)
     EXPECT_TRUE(success);
     EXPECT_EQ(comparator.compare(gotValue, oldValue), 0);
 
-    success = leveldb->get(key, gotValue);
+    bool found = false;
+    success = leveldb->safeGet(key, gotValue, found);
     EXPECT_TRUE(success);
+    EXPECT_TRUE(found);
     EXPECT_EQ(comparator.compare(gotValue, newValue), 0);
 
     const Vector<char> addedKey = encodeString("added key");
@@ -138,8 +143,9 @@ TEST(LevelDBDatabaseTest, Transaction)
     success = leveldb->put(addedKey, addedValue);
     EXPECT_TRUE(success);
 
-    success = leveldb->get(addedKey, gotValue);
+    success = leveldb->safeGet(addedKey, gotValue, found);
     EXPECT_TRUE(success);
+    EXPECT_TRUE(found);
     EXPECT_EQ(comparator.compare(gotValue, addedValue), 0);
 
     success = transaction->get(addedKey, gotValue);

@@ -96,7 +96,7 @@ private:
 
     void loadIndexes();
     PassRefPtr<IDBKey> generateKey(PassRefPtr<IDBTransactionBackendImpl>);
-    void updateKeyGenerator(PassRefPtr<IDBTransactionBackendImpl>, const IDBKey*, bool checkCurrent);
+    bool updateKeyGenerator(PassRefPtr<IDBTransactionBackendImpl>, const IDBKey*, bool checkCurrent);
 
     static void getInternal(ScriptExecutionContext*, PassRefPtr<IDBObjectStoreBackendImpl>, PassRefPtr<IDBKeyRange>, PassRefPtr<IDBCallbacks>, PassRefPtr<IDBTransactionBackendImpl>);
     static void putInternal(ScriptExecutionContext*, PassRefPtr<IDBObjectStoreBackendImpl>, PassRefPtr<SerializedScriptValue>, PassRefPtr<IDBKey>, PutMode, PassRefPtr<IDBCallbacks>, PassRefPtr<IDBTransactionBackendImpl>, PassOwnPtr<Vector<int64_t> > popIndexNames, PassOwnPtr<Vector<IndexKeys> >);

@@ -1,3 +1,47 @@
+2012-11-29  David Grogan  <dgrogan@chromium.org>
+
+        IndexedDB: Propagate more leveldb errors to script
+        https://bugs.webkit.org/show_bug.cgi?id=103580
+
+        Reviewed by Tony Chang.
+
+        LevelDBDatabase used a single return value to indicate both I/O problems
+        and a missing key. Now an out variable is used to indicate if the
+        requested key was found. The return value is used to report corruption
+        or disk error.
+
+        This is a small step toward propagating low level errors everywhere
+        possible. So far only one scenario will newly cause script to receive
+        an error: when leveldb has trouble looking for existing keys during an
+        objectstore->add.
+
+        * Modules/indexeddb/IDBBackingStore.cpp:
+        (WebCore::getInt):
+        (WebCore::getVarInt):
+        (WebCore::getString):
+        (WebCore::IDBBackingStore::getKeyGeneratorCurrentNumber):
+        (WebCore::IDBBackingStore::maybeUpdateKeyGeneratorCurrentNumber):
+        (WebCore::IDBBackingStore::keyExistsInObjectStore):
+        * Modules/indexeddb/IDBBackingStore.h:
+        (IDBBackingStore):
+        * Modules/indexeddb/IDBObjectStoreBackendImpl.cpp:
+        (WebCore::IDBObjectStoreBackendImpl::setIndexKeys):
+        (WebCore::IDBObjectStoreBackendImpl::putInternal):
+        (WebCore::IDBObjectStoreBackendImpl::generateKey):
+        (WebCore::IDBObjectStoreBackendImpl::updateKeyGenerator):
+        * Modules/indexeddb/IDBObjectStoreBackendImpl.h:
+        (IDBObjectStoreBackendImpl):
+        * platform/leveldb/LevelDBDatabase.cpp:
+        (WebCore::LevelDBDatabase::safeGet):
+        * platform/leveldb/LevelDBDatabase.h:
+        (LevelDBDatabase):
+        * platform/leveldb/LevelDBTransaction.cpp:
+        (WebCore::LevelDBTransaction::safeGet):
+        (WebCore):
+        (WebCore::LevelDBTransaction::get):
+        * platform/leveldb/LevelDBTransaction.h:
+        (LevelDBTransaction):
+
 2012-11-29  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r136171.

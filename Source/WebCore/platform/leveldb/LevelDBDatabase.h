@@ -69,7 +69,7 @@ public:
 
     bool put(const LevelDBSlice& key, const Vector<char>& value);
     bool remove(const LevelDBSlice& key);
-    bool get(const LevelDBSlice& key, Vector<char>& value, const LevelDBSnapshot* = 0);
+    bool safeGet(const LevelDBSlice& key, Vector<char>& value, bool& found, const LevelDBSnapshot* = 0);
     bool write(LevelDBWriteBatch&);
     PassOwnPtr<LevelDBIterator> createIterator(const LevelDBSnapshot* = 0);
     const LevelDBComparator* comparator() const;

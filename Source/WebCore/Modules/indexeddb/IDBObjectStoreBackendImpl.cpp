@@ -231,7 +231,14 @@ void IDBObjectStoreBackendImpl::setIndexKeys(PassRefPtr<IDBKey> prpPrimaryKey, c
 
     // FIXME: This method could be asynchronous, but we need to evaluate if it's worth the extra complexity.
     IDBBackingStore::RecordIdentifier recordIdentifier;
-    if (!backingStore()->keyExistsInObjectStore(transaction->backingStoreTransaction(), databaseId(), id(), *primaryKey, &recordIdentifier)) {
+    bool found = false;
+    bool ok = backingStore()->keyExistsInObjectStore(transaction->backingStoreTransaction(), databaseId(), id(), *primaryKey, &recordIdentifier, found);
+    if (!ok) {
+        LOG_ERROR("keyExistsInObjectStore reported an error");
+        transaction->abort(IDBDatabaseError::create(IDBDatabaseException::UNKNOWN_ERR, "Internal error setting index keys."));
+        return;
+    }
+    if (!found) {
         transaction->abort();
         return;
     }
@@ -300,9 +307,17 @@ void IDBObjectStoreBackendImpl::putInternal(ScriptExecutionContext*, PassRefPtr<
     ASSERT(key && key->isValid());
 
     IDBBackingStore::RecordIdentifier recordIdentifier;
-    if (putMode == AddOnly && objectStore->backingStore()->keyExistsInObjectStore(transaction->backingStoreTransaction(), objectStore->databaseId(), objectStore->id(), *key, &recordIdentifier)) {
-        callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::CONSTRAINT_ERR, "Key already exists in the object store."));
-        return;
+    if (putMode == AddOnly) {
+        bool found = false;
+        bool ok = objectStore->backingStore()->keyExistsInObjectStore(transaction->backingStoreTransaction(), objectStore->databaseId(), objectStore->id(), *key, &recordIdentifier, found);
+        if (!ok) {
+            callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UNKNOWN_ERR, "Internal error checking key existence."));
+            return;
+        }
+        if (found) {
+            callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::CONSTRAINT_ERR, "Key already exists in the object store."));
+            return;
+        }
     }
 
     Vector<OwnPtr<IndexWriter> > indexWriters;
@@ -321,8 +336,13 @@ void IDBObjectStoreBackendImpl::putInternal(ScriptExecutionContext*, PassRefPtr<
         indexWriter->writeIndexKeys(recordIdentifier, *objectStore->backingStore(), transaction->backingStoreTransaction(), objectStore->databaseId(), objectStore->m_metadata.id);
     }
 
-    if (autoIncrement && putMode != CursorUpdate && key->type() == IDBKey::NumberType)
-        objectStore->updateKeyGenerator(transaction, key.get(), !keyWasGenerated);
+    if (autoIncrement && putMode != CursorUpdate && key->type() == IDBKey::NumberType) {
+        bool ok = objectStore->updateKeyGenerator(transaction, key.get(), !keyWasGenerated);
+        if (!ok) {
+            callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UNKNOWN_ERR, "Internal error updating key generator."));
+            return;
+        }
+    }
 
     callbacks->onSuccess(key.release());
 }
@@ -525,17 +545,22 @@ void IDBObjectStoreBackendImpl::addIndexToMap(ScriptExecutionContext*, PassRefPt
 PassRefPtr<IDBKey> IDBObjectStoreBackendImpl::generateKey(PassRefPtr<IDBTransactionBackendImpl> transaction)
 {
     const int64_t maxGeneratorValue = 9007199254740992LL; // Maximum integer storable as ECMAScript number.
-    int64_t currentNumber = backingStore()->getKeyGeneratorCurrentNumber(transaction->backingStoreTransaction(), databaseId(), id());
+    int64_t currentNumber;
+    bool ok = backingStore()->getKeyGeneratorCurrentNumber(transaction->backingStoreTransaction(), databaseId(), id(), currentNumber);
+    if (!ok) {
+        LOG_ERROR("Failed to getKeyGeneratorCurrentNumber");
+        return IDBKey::createInvalid();
+    }
     if (currentNumber < 0 || currentNumber > maxGeneratorValue)
         return IDBKey::createInvalid();
 
     return IDBKey::createNumber(currentNumber);
 }
 
-void IDBObjectStoreBackendImpl::updateKeyGenerator(PassRefPtr<IDBTransactionBackendImpl> transaction, const IDBKey* key, bool checkCurrent)
+bool IDBObjectStoreBackendImpl::updateKeyGenerator(PassRefPtr<IDBTransactionBackendImpl> transaction, const IDBKey* key, bool checkCurrent)
 {
     ASSERT(key && key->type() == IDBKey::NumberType);
-    backingStore()->maybeUpdateKeyGeneratorCurrentNumber(transaction->backingStoreTransaction(), databaseId(), id(), static_cast<int64_t>(floor(key->number())) + 1, checkCurrent);
+    return backingStore()->maybeUpdateKeyGeneratorCurrentNumber(transaction->backingStoreTransaction(), databaseId(), id(), static_cast<int64_t>(floor(key->number())) + 1, checkCurrent);
 }
 
 } // namespace WebCore

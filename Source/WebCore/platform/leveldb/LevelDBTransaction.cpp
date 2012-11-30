@@ -107,20 +107,38 @@ void LevelDBTransaction::remove(const LevelDBSlice& key)
     set(key, Vector<char>(), true);
 }
 
-bool LevelDBTransaction::get(const LevelDBSlice& key, Vector<char>& value)
+bool LevelDBTransaction::safeGet(const LevelDBSlice& key, Vector<char>& value, bool& found)
 {
+    found = false;
     ASSERT(!m_finished);
     AVLTreeNode* node = m_tree.search(key);
 
     if (node) {
         if (node->deleted)
-            return false;
+            return true;
 
         value = node->value;
+        found = true;
         return true;
     }
 
-    return m_db->get(key, value, &m_snapshot);
+    bool ok = m_db->safeGet(key, value, found, &m_snapshot);
+    if (!ok) {
+        ASSERT(!found);
+        return false;
+    }
+    return true;
+}
+
+bool LevelDBTransaction::get(const LevelDBSlice& key, Vector<char>& value)
+{
+    bool found = false;
+    bool ok = safeGet(key, value, found);
+    if (!ok) {
+        ASSERT(!found);
+        ASSERT_NOT_REACHED();
+    }
+    return ok && found;
 }
 
 bool LevelDBTransaction::commit()

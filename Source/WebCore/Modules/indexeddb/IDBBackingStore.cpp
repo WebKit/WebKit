@@ -91,7 +91,11 @@ template <typename DBOrTransaction>
 static bool getInt(DBOrTransaction* db, const LevelDBSlice& key, int64_t& foundInt)
 {
     Vector<char> result;
-    if (!db->get(key, result))
+    bool found = false;
+    bool ok = db->safeGet(key, result, found);
+    // FIXME: Notify the caller if !ok.
+    ASSERT_UNUSED(ok, ok);
+    if (!found)
         return false;
 
     foundInt = decodeInt(result.begin(), result.end());
@@ -108,7 +112,11 @@ template <typename DBOrTransaction>
 static bool getVarInt(DBOrTransaction* db, const LevelDBSlice& key, int64_t& foundInt)
 {
     Vector<char> result;
-    if (!db->get(key, result))
+    bool found = false;
+    bool ok = db->safeGet(key, result, found);
+    // FIXME: Notify the caller if !ok.
+    ASSERT_UNUSED(ok, ok);
+    if (!found)
         return false;
 
     return decodeVarInt(result.begin(), result.end(), foundInt) == result.end();
@@ -123,7 +131,11 @@ template <typename DBOrTransaction>
 static bool getString(DBOrTransaction* db, const LevelDBSlice& key, String& foundString)
 {
     Vector<char> result;
-    if (!db->get(key, result))
+    bool found = false;
+    bool ok = db->safeGet(key, result, found);
+    // FIXME: Notify the caller if !ok.
+    ASSERT_UNUSED(ok, ok);
+    if (!found)
         return false;
 
     foundString = decodeString(result.begin(), result.end());
@@ -699,16 +711,22 @@ void IDBBackingStore::deleteRecord(IDBBackingStore::Transaction* transaction, in
 }
 
 
-int64_t IDBBackingStore::getKeyGeneratorCurrentNumber(IDBBackingStore::Transaction* transaction, int64_t databaseId, int64_t objectStoreId)
+bool IDBBackingStore::getKeyGeneratorCurrentNumber(IDBBackingStore::Transaction* transaction, int64_t databaseId, int64_t objectStoreId, int64_t& keyGeneratorCurrentNumber)
 {
     LevelDBTransaction* levelDBTransaction = IDBBackingStore::Transaction::levelDBTransactionFrom(transaction);
 
     const Vector<char> keyGeneratorCurrentNumberKey = ObjectStoreMetaDataKey::encode(databaseId, objectStoreId, ObjectStoreMetaDataKey::KeyGeneratorCurrentNumber);
 
-    int64_t keyGeneratorCurrentNumber = -1;
+    keyGeneratorCurrentNumber = -1;
     Vector<char> data;
 
-    if (levelDBTransaction->get(keyGeneratorCurrentNumberKey, data))
+    bool found = false;
+    bool ok = levelDBTransaction->safeGet(keyGeneratorCurrentNumberKey, data, found);
+    if (!ok) {
+        InternalError(IDBLevelDBBackingStoreReadError);
+        return false;
+    }
+    if (found)
         keyGeneratorCurrentNumber = decodeInt(data.begin(), data.end());
     else {
         // Previously, the key generator state was not stored explicitly but derived from the
@@ -741,29 +759,39 @@ int64_t IDBBackingStore::getKeyGeneratorCurrentNumber(IDBBackingStore::Transacti
     return keyGeneratorCurrentNumber;
 }
 
-void IDBBackingStore::maybeUpdateKeyGeneratorCurrentNumber(IDBBackingStore::Transaction* transaction, int64_t databaseId, int64_t objectStoreId, int64_t newNumber, bool checkCurrent)
+bool IDBBackingStore::maybeUpdateKeyGeneratorCurrentNumber(IDBBackingStore::Transaction* transaction, int64_t databaseId, int64_t objectStoreId, int64_t newNumber, bool checkCurrent)
 {
     LevelDBTransaction* levelDBTransaction = IDBBackingStore::Transaction::levelDBTransactionFrom(transaction);
 
     if (checkCurrent) {
-        int64_t currentNumber = getKeyGeneratorCurrentNumber(transaction, databaseId, objectStoreId);
+        int64_t currentNumber;
+        bool ok = getKeyGeneratorCurrentNumber(transaction, databaseId, objectStoreId, currentNumber);
+        if (!ok)
+            return false;
         if (newNumber <= currentNumber)
-            return;
+            return true;
     }
 
     const Vector<char> keyGeneratorCurrentNumberKey = ObjectStoreMetaDataKey::encode(databaseId, objectStoreId, ObjectStoreMetaDataKey::KeyGeneratorCurrentNumber);
     putInt(levelDBTransaction, keyGeneratorCurrentNumberKey, newNumber);
+    return true;
 }
 
-bool IDBBackingStore::keyExistsInObjectStore(IDBBackingStore::Transaction* transaction, int64_t databaseId, int64_t objectStoreId, const IDBKey& key, RecordIdentifier* foundRecordIdentifier)
+bool IDBBackingStore::keyExistsInObjectStore(IDBBackingStore::Transaction* transaction, int64_t databaseId, int64_t objectStoreId, const IDBKey& key, RecordIdentifier* foundRecordIdentifier, bool& found)
 {
     IDB_TRACE("IDBBackingStore::keyExistsInObjectStore");
+    found = false;
     LevelDBTransaction* levelDBTransaction = IDBBackingStore::Transaction::levelDBTransactionFrom(transaction);
     const Vector<char> leveldbKey = ObjectStoreDataKey::encode(databaseId, objectStoreId, key);
     Vector<char> data;
 
-    if (!levelDBTransaction->get(leveldbKey, data))
+    bool ok = levelDBTransaction->safeGet(leveldbKey, data, found);
+    if (!ok) {
+        InternalError(IDBLevelDBBackingStoreReadError);
         return false;
+    }
+    if (!found)
+        return true;
 
     int64_t version;
     if (!decodeVarInt(data.begin(), data.end(), version))

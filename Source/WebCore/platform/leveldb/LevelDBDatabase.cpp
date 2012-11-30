@@ -198,8 +198,9 @@ bool LevelDBDatabase::remove(const LevelDBSlice& key)
     return false;
 }
 
-bool LevelDBDatabase::get(const LevelDBSlice& key, Vector<char>& value, const LevelDBSnapshot* snapshot)
+bool LevelDBDatabase::safeGet(const LevelDBSlice& key, Vector<char>& value, bool& found, const LevelDBSnapshot* snapshot)
 {
+    found = false;
     std::string result;
     leveldb::ReadOptions readOptions;
     readOptions.verify_checksums = true; // FIXME: Disable this if the performance impact is too great.
@@ -207,11 +208,12 @@ bool LevelDBDatabase::get(const LevelDBSlice& key, Vector<char>& value, const Le
 
     const leveldb::Status s = m_db->Get(readOptions, makeSlice(key), &result);
     if (s.ok()) {
+        found = true;
         value = makeVector(result);
         return true;
     }
     if (s.IsNotFound())
-        return false;
+        return true;
     LOG_ERROR("LevelDB get failed: %s", s.ToString().c_str());
     return false;
 }
