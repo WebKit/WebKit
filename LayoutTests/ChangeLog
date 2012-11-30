@@ -1,3 +1,9 @@
+2012-11-30  Takashi Sakamoto  <tasak@google.com>
+
+        Unreviewed, WebKit gardening.
+
+        * platform/chromium/TestExpectations:
+
 2012-11-30  Keishi Hattori  <keishi@webkit.org>
 
         Layout Test fast/forms/month-multiple-fields/month-multiple-fields-preserve-value-after-history-back.html is failing

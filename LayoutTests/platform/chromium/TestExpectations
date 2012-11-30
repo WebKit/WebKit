@@ -4243,3 +4243,10 @@ Bug(scherkus) [ Win Mac Linux ] http/tests/media/video-buffered-range-contains-c
 webkit.org/b/103609 [ MountainLion ] fast/regions/autoheight-dynamic-update.html [ ImageOnlyFailure ]
 webkit.org/b/103609 [ MountainLion ] fast/regions/firstletter-inside-flowthread.html [ ImageOnlyFailure ]
 webkit.org/b/103609 [ MountainLion ] fast/regions/listmarker-inside-flowthread.html [ ImageOnlyFailure ]
+
+# Some compositing tests doesn't work on multiple platforms.
+webkit.org/b/103721 compositing/geometry/vertical-scroll-composited.html [ ImageOnlyFailure ]
+webkit.org/b/103721 compositing/reflections/load-video-in-reflection.html [ ImageOnlyFailure ]
+webkit.org/b/103721 compositing/reflections/nested-reflection-anchor-point.html [ ImageOnlyFailure ]
+webkit.org/b/103721 compositing/reflections/nested-reflection-animated.html [ ImageOnlyFailure ]
+webkit.org/b/103721 platform/chromium/compositing/huge-layer-rotated.html [ ImageOnlyFailure ]
