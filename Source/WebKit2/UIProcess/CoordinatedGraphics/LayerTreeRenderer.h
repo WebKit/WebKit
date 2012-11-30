@@ -151,7 +151,6 @@ private:
     void removeBackingStoreIfNeeded(WebCore::GraphicsLayer*);
     void resetBackingStoreSizeToLayerSize(WebCore::GraphicsLayer*);
 
-    typedef HashMap<WebLayerID, WebCore::GraphicsLayer*> LayerMap;
     WebCore::FloatSize m_contentsSize;
     WebCore::FloatRect m_visibleContentsRect;
 
@@ -181,8 +180,10 @@ private:
 
     OwnPtr<WebCore::GraphicsLayer> m_rootLayer;
 
+    typedef HashMap<WebLayerID, OwnPtr<WebCore::GraphicsLayer> > LayerMap;
     LayerMap m_layers;
-    LayerMap m_fixedLayers;
+    typedef HashMap<WebLayerID, WebCore::GraphicsLayer*> LayerRawPtrMap;
+    LayerRawPtrMap m_fixedLayers;
     WebLayerID m_rootLayerID;
     WebCore::IntPoint m_renderedContentsScrollPosition;
     WebCore::IntPoint m_pendingRenderedContentsScrollPosition;

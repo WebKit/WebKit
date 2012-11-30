@@ -216,8 +216,8 @@ void LayerTreeRenderer::adjustPositionForFixedLayers()
     FloatPoint renderedScrollPosition = boundedScrollPosition(m_renderedContentsScrollPosition, m_visibleContentsRect, m_contentsSize);
     FloatSize delta = scrollPosition - renderedScrollPosition;
 
-    LayerMap::iterator end = m_fixedLayers.end();
-    for (LayerMap::iterator it = m_fixedLayers.begin(); it != end; ++it)
+    LayerRawPtrMap::iterator end = m_fixedLayers.end();
+    for (LayerRawPtrMap::iterator it = m_fixedLayers.begin(); it != end; ++it)
         toTextureMapperLayer(it->value)->setScrollPositionDeltaIfNeeded(delta);
 }
 
@@ -273,8 +273,9 @@ void LayerTreeRenderer::setLayerChildren(WebLayerID id, const Vector<WebLayerID>
         WebLayerID childID = childIDs[i];
         GraphicsLayer* child = layerByID(childID);
         if (!child) {
-            child = createLayer(childID).leakPtr();
-            m_layers.add(childID, child);
+            OwnPtr<GraphicsLayer*> newChild = createLayer(childID);
+            child = newChild.get();
+            m_layers.add(childID, newChild.release());
         }
         children.append(child);
     }
@@ -362,17 +363,15 @@ void LayerTreeRenderer::setLayerState(WebLayerID id, const WebLayerInfo& layerIn
 
 void LayerTreeRenderer::deleteLayer(WebLayerID layerID)
 {
-    GraphicsLayer* layer = layerByID(layerID);
+    OwnPtr<GraphicsLayer> layer = m_layers.take(layerID);
     if (!layer)
         return;
 
     layer->removeFromParent();
-    m_layers.remove(layerID);
     m_fixedLayers.remove(layerID);
 #if USE(GRAPHICS_SURFACE)
     m_surfaceBackingStores.remove(layerID);
 #endif
-    delete layer;
 }
 
 
@@ -380,12 +379,11 @@ WebCore::GraphicsLayer* LayerTreeRenderer::ensureLayer(WebLayerID id)
 {
     LayerMap::iterator it = m_layers.find(id);
     if (it != m_layers.end())
-        return it->value;
+        return it->value.get();
 
-    // We have to leak the new layer's pointer and manage it ourselves,
-    // because OwnPtr is not copyable.
-    WebCore::GraphicsLayer* layer = createLayer(id).leakPtr();
-    m_layers.add(id, layer);
+    OwnPtr<WebCore::GraphicsLayer> newLayer = createLayer(id);
+    WebCore::GraphicsLayer* layer = newLayer.get();
+    m_layers.add(id, newLayer.release());
 
     return layer;
 }

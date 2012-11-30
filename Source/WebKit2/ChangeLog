@@ -1,3 +1,22 @@
+2012-11-29  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [CoordinatedGraphics] Use OwnPtr for LayerMap's layers in LayerTreeRenderer
+        https://bugs.webkit.org/show_bug.cgi?id=103650
+
+        Reviewed by Noam Rosenthal.
+
+        We currently store raw pointers to WebCore::GraphicsLayer in the LayerMap
+        meaning that we need to delete them manually. This patch leverages smart
+        pointers and stores layers as OwnPtr in the LayerMap so that the layers
+        are owned by the HashMap and we don't have to handle memory manually.
+
+        * UIProcess/CoordinatedGraphics/LayerTreeRenderer.cpp:
+        (WebKit::LayerTreeRenderer::adjustPositionForFixedLayers):
+        (WebKit::LayerTreeRenderer::setLayerChildren):
+        (WebKit::LayerTreeRenderer::deleteLayer):
+        (WebKit::LayerTreeRenderer::ensureLayer):
+        * UIProcess/CoordinatedGraphics/LayerTreeRenderer.h:
+
 2012-11-29  Anders Carlsson  <andersca@apple.com>
 
         Add a minimumLayoutWidth WKView property
