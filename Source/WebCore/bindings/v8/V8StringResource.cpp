@@ -190,8 +190,6 @@ String int32ToWebCoreStringFast(int value)
 
     // Most numbers used are <= 100. Even if they aren't used there's very little cost in using the space.
     const int kLowNumbers = 100;
-
-    // FIXME: Store lowNumbers in V8PerIsolateData so that workers can also use them.
     DEFINE_STATIC_LOCAL(Vector<AtomicString>, lowNumbers, (kLowNumbers + 1));
     String webCoreString;
     if (0 <= value && value <= kLowNumbers) {
@@ -206,17 +204,12 @@ String int32ToWebCoreStringFast(int value)
     return webCoreString;
 }
 
-template<> String int32ToWebCoreString<String>(int value)
+String int32ToWebCoreString(int value)
 {
     // If we are on the main thread (this should always true for non-workers), call the faster one.
     if (isMainThread())
         return int32ToWebCoreStringFast(value);
     return String::number(value);
-}
-
-template<> AtomicString int32ToWebCoreString<AtomicString>(int value)
-{
-    return AtomicString(int32ToWebCoreString<String>(value));
 }
 
 } // namespace WebCore

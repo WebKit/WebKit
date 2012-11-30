@@ -142,8 +142,7 @@ enum ExternalMode {
 
 template <typename StringType>
 StringType v8StringToWebCoreString(v8::Handle<v8::String>, ExternalMode);
-template <typename StringType>
-StringType int32ToWebCoreString(int value);
+String int32ToWebCoreString(int value);
 
 // V8StringResource is an adapter class that converts V8 values to Strings
 // or AtomicStrings as appropriate, using multiple typecast operators.
@@ -159,6 +158,7 @@ public:
     V8StringResource(v8::Local<v8::Value> object)
         : m_v8Object(object)
         , m_mode(Externalize)
+        , m_string()
     {
     }
 
@@ -169,9 +169,16 @@ public:
 private:
     bool prepareBase()
     {
-        ASSERT(!m_v8Object.IsEmpty());
-        if (LIKELY(m_v8Object->IsString() || m_v8Object->IsInt32()))
+        if (m_v8Object.IsEmpty())
             return true;
+
+        if (LIKELY(m_v8Object->IsString()))
+            return true;
+
+        if (LIKELY(m_v8Object->IsInt32())) {
+            setString(int32ToWebCoreString(m_v8Object->Int32Value()));
+            return true;
+        }
 
         m_mode = DoNotExternalize;
         v8::TryCatch block;
@@ -184,32 +191,35 @@ private:
         return true;
     }
 
+    void setString(const String& string)
+    {
+        m_string = string;
+        m_v8Object.Clear(); // To signal that String is ready.
+    }
+
     template <class StringType>
     StringType toString()
     {
-        if (m_v8Object.IsEmpty())
-            return StringType();
-        if (m_v8Object->IsInt32())
-            return int32ToWebCoreString<StringType>(m_v8Object->Int32Value());
-        ASSERT(m_v8Object->IsString());
-        return v8StringToWebCoreString<StringType>(m_v8Object.As<v8::String>(), m_mode);
+        if (LIKELY(!m_v8Object.IsEmpty()))
+            return v8StringToWebCoreString<StringType>(m_v8Object.As<v8::String>(), m_mode);
+
+        return StringType(m_string);
     }
 
     v8::Local<v8::Value> m_v8Object;
     ExternalMode m_mode;
+    String m_string;
 };
 
 template<> inline bool V8StringResource<DefaultMode>::prepare()
 {
-    if (m_v8Object.IsEmpty())
-        return true;
     return prepareBase();
 }
 
 template<> inline bool V8StringResource<WithNullCheck>::prepare()
 {
     if (m_v8Object.IsEmpty() || m_v8Object->IsNull()) {
-        m_v8Object.Clear();
+        setString(String());
         return true;
     }
     return prepareBase();
@@ -218,7 +228,7 @@ template<> inline bool V8StringResource<WithNullCheck>::prepare()
 template<> inline bool V8StringResource<WithUndefinedOrNullCheck>::prepare()
 {
     if (m_v8Object.IsEmpty() || m_v8Object->IsNull() || m_v8Object->IsUndefined()) {
-        m_v8Object.Clear();
+        setString(String());
         return true;
     }
     return prepareBase();

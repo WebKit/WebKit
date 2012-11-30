@@ -100,7 +100,7 @@ static String v8NonStringValueToWebCoreString(v8::Handle<v8::Value> object)
 {
     ASSERT(!object->IsString());
     if (object->IsInt32())
-        return int32ToWebCoreString<String>(object->Int32Value());
+        return int32ToWebCoreString(object->Int32Value());
 
     v8::TryCatch block;
     v8::Handle<v8::String> v8String = object->ToString();
