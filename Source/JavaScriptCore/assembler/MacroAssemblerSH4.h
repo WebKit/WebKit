@@ -1793,7 +1793,7 @@ void or32(TrustedImm32 imm, RegisterID src, RegisterID dest)
 
         m_assembler.testlRegReg(reg, mask);
 
-        if (cond == NotEqual)
+        if (cond == NonZero) // NotEqual
             return branchFalse();
         return branchTrue();
     }
@@ -1807,7 +1807,7 @@ void or32(TrustedImm32 imm, RegisterID src, RegisterID dest)
         else
             testlImm(mask.m_value, reg);
 
-        if (cond == NotEqual)
+        if (cond == NonZero) // NotEqual
             return branchFalse();
         return branchTrue();
     }
@@ -1821,7 +1821,7 @@ void or32(TrustedImm32 imm, RegisterID src, RegisterID dest)
         else
             testImm(mask.m_value, address.offset, address.base);
 
-        if (cond == NotEqual)
+        if (cond == NonZero) // NotEqual
             return branchFalse();
         return branchTrue();
     }
@@ -1842,7 +1842,7 @@ void or32(TrustedImm32 imm, RegisterID src, RegisterID dest)
 
         releaseScratch(scr);
 
-        if (cond == NotEqual)
+        if (cond == NonZero) // NotEqual
             return branchFalse();
         return branchTrue();
     }
@@ -1895,7 +1895,7 @@ void or32(TrustedImm32 imm, RegisterID src, RegisterID dest)
         m_assembler.addlRegReg(src, dest);
         compare32(0, dest, Equal);
 
-        if (cond == NotEqual)
+        if (cond == NonZero) // NotEqual
             return branchFalse();
         return branchTrue();
     }
@@ -1930,7 +1930,7 @@ void or32(TrustedImm32 imm, RegisterID src, RegisterID dest)
 
         compare32(0, dest, Equal);
 
-        if (cond == NotEqual)
+        if (cond == NonZero) // NotEqual
             return branchFalse();
         return branchTrue();
     }
@@ -1964,7 +1964,7 @@ void or32(TrustedImm32 imm, RegisterID src, RegisterID dest)
 
         compare32(0, dest, static_cast<RelationalCondition>(cond));
 
-        if (cond == NotEqual)
+        if (cond == NonZero) // NotEqual
             return branchFalse();
         return branchTrue();
     }
@@ -1999,7 +1999,7 @@ void or32(TrustedImm32 imm, RegisterID src, RegisterID dest)
         sub32(src, dest);
         compare32(0, dest, static_cast<RelationalCondition>(cond));
 
-        if (cond == NotEqual)
+        if (cond == NonZero) // NotEqual
             return branchFalse();
         return branchTrue();
     }
@@ -2040,7 +2040,7 @@ void or32(TrustedImm32 imm, RegisterID src, RegisterID dest)
         or32(src, dest);
         compare32(0, dest, static_cast<RelationalCondition>(cond));
 
-        if (cond == NotEqual)
+        if (cond == NonZero) // NotEqual
             return branchFalse();
         return branchTrue();
     }

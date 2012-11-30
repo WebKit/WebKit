@@ -1,3 +1,17 @@
+2012-11-30  Julien BRIANCEAU   <jbrianceau@nds.com>
+
+        [sh4] Fix compilation warnings in JavaScriptCore JIT for sh4 arch
+        https://bugs.webkit.org/show_bug.cgi?id=103378
+
+        Reviewed by Filip Pizlo.
+
+        * assembler/MacroAssemblerSH4.h:
+        (JSC::MacroAssemblerSH4::branchTest32):
+        (JSC::MacroAssemblerSH4::branchAdd32):
+        (JSC::MacroAssemblerSH4::branchMul32):
+        (JSC::MacroAssemblerSH4::branchSub32):
+        (JSC::MacroAssemblerSH4::branchOr32):
+
 2012-11-29  Rafael Weinstein  <rafaelw@chromium.org>
 
         [HTMLTemplateElement] Add feature flag
