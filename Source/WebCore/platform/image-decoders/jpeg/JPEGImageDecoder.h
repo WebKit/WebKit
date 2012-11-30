@@ -62,6 +62,12 @@ namespace WebCore {
         // data coming, sets the "decode failure" flag.
         void decode(bool onlySize);
 
+        template <int colorSpace>
+        bool outputScanlines(ImageFrame& buffer);
+
+        template <int colorSpace, bool isScaled>
+        bool outputScanlines(ImageFrame& buffer);
+
         OwnPtr<JPEGImageReader> m_reader;
     };
 

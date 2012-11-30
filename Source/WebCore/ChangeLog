@@ -1,3 +1,29 @@
+2012-11-29  Viatcheslav Ostapenko  <v.ostapenko@samsung.com>
+
+        Optimization in image decoding.
+        https://bugs.webkit.org/show_bug.cgi?id=88424
+
+        Reviewed by Brent Fulgham.
+
+        Reduce branching and multiplications in JPEG image decoding loops and functions.
+        Code is moved to the template functions with scale and color space template parameters
+        because they were reason of branches inside loops. With templated funtions compiler
+        will generate separate instance of function for every set of parameters removing
+        unreachable code in every condition where constant value is used.
+
+        Rebase and update of original patch by Misha Tyutyunik <michael.tyuytunik@nokia.com> .
+
+        Thanks to Noel Gordon for his help in cleaning up remaining issues.
+
+        Covered by existing tests.
+
+        * platform/image-decoders/jpeg/JPEGImageDecoder.cpp:
+        (WebCore):
+        (WebCore::setPixel):
+        (WebCore::JPEGImageDecoder::outputScanlines):
+        * platform/image-decoders/jpeg/JPEGImageDecoder.h:
+        (JPEGImageDecoder):
+
 2012-11-29  Kentaro Hara  <haraken@chromium.org>
 
         Unreviewed, rolling out r135862.
