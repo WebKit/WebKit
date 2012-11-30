@@ -1,3 +1,44 @@
+2012-11-30  Simon Fraser  <simon.fraser@apple.com>
+
+        Late-loading stylesheets can cause composited layers to be blank
+        https://bugs.webkit.org/show_bug.cgi?id=103773
+
+        Reviewed by Tim Horton.
+
+        Early painting can be short-circuited in RenderBlock::paintContents() if we know a stylesheet
+        is pending, which is done to avoid a flash of unstyled content (FOUC). When the stylesheet
+        finally loaded, Document::styleResolverChanged() would try to repaint everything by calling
+        repaint() on the RenderView(). In a composited world, however, this repaint() doesn't repaint
+        composited layers.
+        
+        This was particularly prevalent on this specific URL because it failed to load
+        a CSS file from typekit.com, so Document::styleResolverChanged()
+        just did the repaint and returned (rather than doing a recalc style as would
+        happen for correctly loaded stylesheets).
+        
+        Fix by making a way to repaint all compositing layers, and calling it
+        from Document::styleResolverChanged().
+
+        No tests because this is timing-dependant.
+
+        * dom/Document.cpp:
+        (WebCore::Document::styleResolverChanged): Call repaintViewAndCompositedLayers().
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::paintContents): Fix the comment.
+        * rendering/RenderLayerCompositor.cpp: Convert repaintCompositedLayersAbsoluteRect()
+        and associated recursiveRepaintLayerRect() to allow the rect to be null, which indicates
+        that we should just repaint the entire layer, and improve their names.
+        (WebCore::RenderLayerCompositor::repaintCompositedLayers):
+        (WebCore::RenderLayerCompositor::recursiveRepaintLayer):
+        * rendering/RenderLayerCompositor.h:
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::repaintRectangleInViewAndCompositedLayers): repaintCompositedLayersAbsoluteRect()
+        was renamed to repaintCompositedLayers().
+        (WebCore::RenderView::repaintViewAndCompositedLayers):
+        * rendering/RenderView.h:
+        (RenderView): repaintViewRectangle() and repaintRectangleInViewAndCompositedLayers() should not
+        be virtual. Add repaintViewAndCompositedLayers().
+
 2012-11-30  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r136142.
