@@ -387,8 +387,7 @@ static void _ewk_view_smart_calculate(Evas_Object* ewkView)
             impl->page()->drawingArea()->setSize(IntSize(width, height), IntSize());
 
 #if USE(ACCELERATED_COMPOSITING)
-        if (width && height)
-            impl->createGLSurface(IntSize(width, height));
+        impl->setNeedsSurfaceResize();
 #endif
 #if USE(TILED_BACKING_STORE)
         impl->pageClient()->updateViewportSize(IntSize(width, height));

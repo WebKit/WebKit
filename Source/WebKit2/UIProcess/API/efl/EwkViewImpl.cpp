@@ -114,6 +114,9 @@ const Evas_Object* EwkViewImpl::viewFromPageViewMap(const WKPageRef page)
 EwkViewImpl::EwkViewImpl(Evas_Object* view, PassRefPtr<EwkContext> context, PassRefPtr<WebPageGroup> pageGroup, ViewBehavior behavior)
     : m_view(view)
     , m_context(context)
+#if USE(ACCELERATED_COMPOSITING)
+    , m_pendingSurfaceResize(false)
+#endif
     , m_pageClient(behavior == DefaultBehavior ? PageClientDefaultImpl::create(this) : PageClientLegacyImpl::create(this))
     , m_pageProxy(m_context->webContext()->createWebPage(m_pageClient.get(), pageGroup.get()))
     , m_pageLoadClient(PageLoadClientEfl::create(this))
@@ -361,7 +364,12 @@ void EwkViewImpl::displayTimerFired(Timer<EwkViewImpl>*)
 #if USE(COORDINATED_GRAPHICS)
     Ewk_View_Smart_Data* sd = smartData();
 
-    evas_gl_make_current(m_evasGL.get(), evasGLSurface(), evasGLContext());
+    if (m_pendingSurfaceResize) {
+        // Create a GL surface here so that Evas has no chance of painting to an empty GL surface.
+        createGLSurface(IntSize(sd->view.w, sd->view.h));
+        m_pendingSurfaceResize = false;
+    } else
+        evas_gl_make_current(m_evasGL.get(), evasGLSurface(), evasGLContext());
 
     // We are supposed to clip to the actual viewport, nothing less.
     IntRect viewport(sd->view.x, sd->view.y, sd->view.w, sd->view.h);

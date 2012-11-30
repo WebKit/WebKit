@@ -161,6 +161,7 @@ public:
     bool createGLSurface(const WebCore::IntSize& viewSize);
     bool enterAcceleratedCompositingMode();
     bool exitAcceleratedCompositingMode();
+    void setNeedsSurfaceResize() { m_pendingSurfaceResize = true; }
 #endif
 
 #if ENABLE(INPUT_TYPE_COLOR)
@@ -246,6 +247,7 @@ private:
     OwnPtr<Evas_GL> m_evasGL;
     OwnPtr<WebKit::EvasGLContext> m_evasGLContext;
     OwnPtr<WebKit::EvasGLSurface> m_evasGLSurface;
+    bool m_pendingSurfaceResize;
 #endif
     OwnPtr<WebKit::PageClientBase> m_pageClient;
     RefPtr<WebKit::WebPageProxy> m_pageProxy;

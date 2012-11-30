@@ -1,3 +1,24 @@
+2012-11-30  Joone Hur  <joone.hur@intel.com>
+
+        [EFL]Drawing artifacts while resizing the view
+        https://bugs.webkit.org/show_bug.cgi?id=101288
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        An Evas GL surface is recreated when the window is resized, but the update of the surface is 
+        asynchronously done, which gives Evas a chance of painting the empty surface on the screen.
+        As a result, the flickering problem happens while resizing the view.
+        So this patch allows to create an Evas GL surface synchronously with the update of the surface.
+
+        * UIProcess/API/efl/EwkViewImpl.cpp:
+        (EwkViewImpl::EwkViewImpl): Set m_pendingSurfaceResize to false.
+        (EwkViewImpl::displayTimerFired): Create an Evas GL surface.
+        * UIProcess/API/efl/EwkViewImpl.h:
+        (EwkViewImpl::setNeedsSurfaceResize): Added.
+        (EwkViewImpl):
+        * UIProcess/API/efl/ewk_view.cpp:
+        (_ewk_view_smart_calculate): Set m_pendingSurfaceResize to true.
+
 2012-11-30  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [WK2] TiledBackingStore: Frame view re-layouts with wrong Fixed Visible Content Rect.
