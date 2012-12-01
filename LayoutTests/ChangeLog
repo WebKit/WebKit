@@ -1,3 +1,13 @@
+2012-12-01  Mike West  <mkwst@chromium.org>
+
+        [gtk] Unreviewed gardening. Skipping CSP 1.1 tests.
+
+        The CSP 1.1 tests are failing under GTK after r136305 made the CSP_NEXT
+        flag runtime enabled. Will fix in webkit.org/b/103810, skipping for now.
+
+        * platform/gtk/TestExpectations:
+            Skipping CSP 1.1 tests.
+
 2012-11-30  Ryosuke Niwa  <rniwa@webkit.org>
 
         Shorten a file name as the test renamed in r136122 is still hosing Chromium Win perf. bot.
