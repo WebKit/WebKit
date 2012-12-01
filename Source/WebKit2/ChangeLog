@@ -1,3 +1,11 @@
+2012-11-30  Pierre Rossi  <pierre.rossi@gmail.com>
+
+        [Qt] Unreviewed speculative Mac build fix after r136232
+
+        cleanup an oversight from r136235
+
+        * PluginProcess.pro: s/webkit/webkitwidgets/
+
 2012-11-30  Brent Fulgham  <bfulgham@webkit.org>
 
         [Windows, WinCairo] Generate library export symbol file.
