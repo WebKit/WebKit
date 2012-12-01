@@ -1,3 +1,30 @@
+2012-11-30  Jer Noble  <jer.noble@apple.com>
+
+        Add support for the 'unpause()' method on MediaController.
+        https://bugs.webkit.org/show_bug.cgi?id=103751
+
+        Reviewed by Eric Carlson.
+
+        The MediaController spec has been updated to add an unpause() method
+        which is functionally identical to the old play() method, and changes
+        the semantics of play() to call play() on the underlying slaved media
+        elements. The spec also added a playbackState() method, returning a
+        string representing the last calculated playback state.
+
+        Test: media/media-controller-unpause.html
+
+        * html/MediaController.cpp:
+        (MediaController::unpause): Renamed from play().
+        (MediaController::play): Added. Same as unpause(), but also call
+            play() on slaved media elements.
+        (playbackStateWaiting): Static string accessor.
+        (playbackStatePlaying): Ditto.
+        (playbackStateEnded): Ditto.
+        (MediaController::playbackState): Added. Returns string value of
+            m_playbackState.
+        * html/MediaController.h:
+        * html/MediaController.idl:
+
 2012-11-30  Julien Chaffraix  <jchaffraix@webkit.org>
 
         [CSS Grid Layout] Align the grid track code with the specification's production rules

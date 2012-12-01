@@ -8,7 +8,8 @@
         var controller;
         var video2;
 
-        function start() {
+        function start()
+        {
             var videos = document.getElementsByTagName('video');
             video = videos[0];
             video2 = videos[1];
@@ -18,27 +19,35 @@
             video.src = src;
             video2.src = src;
         }
-        
-        function canplaythrough() {
+
+        function canplaythrough()
+        {
             consoleWrite("EVENT(canplaythrough)");
             controller.removeEventListener('canplaythrough', canplaythrough, true);
+            controller.addEventListener('pause', pause, true);
+            run('controller.pause()');
+        }
+
+        function pause() {
+            consoleWrite("EVENT(pause)");
+            controller.removeEventListener('pause', pause, true);
+            controller.addEventListener('play', play, true);
+            run('controller.unpause()');
+        }
+
+        function play()
+        {
+            consoleWrite('EVENT(play)');
+            controller.removeEventListener('play', play, true);
+            testExpected('controller.playbackState', 'waiting');
             controller.addEventListener('playing', playing, true);
             run('controller.play()');
         }
-        
-        function playing() { 
+
+        function playing()
+        {
             consoleWrite("EVENT(playing)");
             controller.removeEventListener('playing', playing, true);
-            testExpected('controller.paused', false);
-            controller.addEventListener('ended', ended, true);
-            run('controller.currentTime = 5');
-            testExpected('video.currentTime', 5);
-            testExpected('video2.currentTime', 5);
-        }
-
-        function ended() { 
-            consoleWrite("EVENT(ended)");
-            controller.removeEventListener('ended', ended, true);
             endTest();
         }
         </script>

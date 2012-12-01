@@ -178,9 +178,9 @@ void MediaController::setCurrentTime(float time, ExceptionCode& code)
     scheduleTimeupdateEvent();
 }
 
-void MediaController::play()
+void MediaController::unpause()
 {
-    // When the play() method is invoked, if the MediaController is a paused media controller,
+    // When the unpause() method is invoked, if the MediaController is a paused media controller,
     if (!m_paused)
         return;
 
@@ -190,6 +190,17 @@ void MediaController::play()
     scheduleEvent(eventNames().playEvent);
     // and then report the controller state of the MediaController.
     reportControllerState();
+}
+
+void MediaController::play()
+{
+    // When the play() method is invoked, the user agent must invoke the play method of each
+    // slaved media element in turn,
+    for (size_t index = 0; index < m_mediaElements.size(); ++index)
+        m_mediaElements[index]->play();
+
+    // and then invoke the unpause method of the MediaController.
+    unpause();
 }
 
 void MediaController::pause()
@@ -277,6 +288,36 @@ void MediaController::setMuted(bool flag)
 
     for (size_t index = 0; index < m_mediaElements.size(); ++index)
         m_mediaElements[index]->updateVolume();
+}
+
+static const AtomicString& playbackStateWaiting()
+{
+    DEFINE_STATIC_LOCAL(AtomicString, waiting, ("waiting", AtomicString::ConstructFromLiteral));
+    return waiting;
+}
+
+static const AtomicString& playbackStatePlaying()
+{
+    DEFINE_STATIC_LOCAL(AtomicString, playing, ("playing", AtomicString::ConstructFromLiteral));
+    return playing;
+}
+
+static const AtomicString& playbackStateEnded()
+{
+    DEFINE_STATIC_LOCAL(AtomicString, ended, ("ended", AtomicString::ConstructFromLiteral));
+    return ended;
+}
+
+const AtomicString& MediaController::playbackState() const
+{
+    switch (m_playbackState) {
+    case WAITING:
+        return playbackStateWaiting();
+    case PLAYING:
+        return playbackStatePlaying();
+    case ENDED:
+        return playbackStateEnded();
+    }
 }
 
 void MediaController::reportControllerState()

@@ -67,6 +67,7 @@ public:
     virtual bool paused() const { return m_paused; }
     virtual void play();
     virtual void pause();
+    void unpause();
     
     virtual float defaultPlaybackRate() const { return m_defaultPlaybackRate; }
     virtual void setDefaultPlaybackRate(float);
@@ -83,7 +84,7 @@ public:
     virtual ReadyState readyState() const { return m_readyState; }
 
     enum PlaybackState { WAITING, PLAYING, ENDED };
-    virtual PlaybackState playbackState() const { return m_playbackState; }
+    const AtomicString& playbackState() const;
 
     virtual bool supportsFullscreen() const { return false; }
     virtual bool isFullscreen() const { return false; }

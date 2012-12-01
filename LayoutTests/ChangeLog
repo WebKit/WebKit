@@ -1,3 +1,17 @@
+2012-11-30  Jer Noble  <jer.noble@apple.com>
+
+        Add support for the 'unpause()' method on MediaController.
+        https://bugs.webkit.org/show_bug.cgi?id=103751
+
+        Reviewed by Eric Carlson.
+
+        Add new test for unpause() and playbackState() methods.
+
+        * media/media-controller-unpause.html:
+        * media/media-controller-unpause-expected.txt:
+        * media/media-controller-playback.html:
+        * media/media-controller-playback-expected.txt:
+
 2012-11-30  Zhenyao Mo  <zmo@google.com>
 
         Unreviewed, webkit gardening, fix webkit lint.

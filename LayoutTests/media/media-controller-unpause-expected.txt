@@ -1,0 +1,12 @@
+ 
+RUN(controller = video.controller)
+EVENT(canplaythrough)
+RUN(controller.pause())
+EVENT(pause)
+RUN(controller.unpause())
+EVENT(play)
+EXPECTED (controller.playbackState == 'waiting') OK
+RUN(controller.play())
+EVENT(playing)
+END OF TEST
+

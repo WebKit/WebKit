@@ -1,8 +1,6 @@
  
 RUN(controller = video.controller)
 EVENT(canplaythrough)
-RUN(video.play())
-RUN(video2.play())
 RUN(controller.play())
 EVENT(playing)
 EXPECTED (controller.paused == 'false') OK
