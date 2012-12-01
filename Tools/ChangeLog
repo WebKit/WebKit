@@ -1,3 +1,10 @@
+2012-11-30  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. Temporary change to DRT for debugging purposes.
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (dump):
+
 2012-11-29  Tommy Widenflycht  <tommyw@google.com>
 
         Speech Recognition API: Update SpeechRecognitionEvent to match the specification
