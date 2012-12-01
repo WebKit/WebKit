@@ -611,6 +611,24 @@ bool WebRuntimeFeatures::isDialogElementEnabled()
 #endif
 }
 
+void WebRuntimeFeatures::enableExperimentalContentSecurityPolicyFeatures(bool enable)
+{
+#if ENABLE(CSP_NEXT)
+    RuntimeEnabledFeatures::setExperimentalContentSecurityPolicyFeaturesEnabled(enable);
+#else
+    UNUSED_PARAM(enable);
+#endif
+}
+
+bool WebRuntimeFeatures::isExperimentalContentSecurityPolicyFeaturesEnabled()
+{
+#if ENABLE(CSP_NEXT)
+    return RuntimeEnabledFeatures::experimentalContentSecurityPolicyFeaturesEnabled();
+#else
+    return false;
+#endif
+}
+
 void WebRuntimeFeatures::enableCSSExclusions(bool enable)
 {
     RuntimeEnabledFeatures::setCSSExclusionsEnabled(enable);

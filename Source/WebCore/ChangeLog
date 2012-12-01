@@ -1,3 +1,34 @@
+2012-11-30  Mike West  <mkwst@chromium.org>
+
+        CSP 1.1: Make the CSP_NEXT flag runtime enabled.
+        https://bugs.webkit.org/show_bug.cgi?id=103652
+
+        Reviewed by Adam Barth.
+
+        Content Security Policy 1.1 continues to live behind the CSP_NEXT flag,
+        this patch adds another layer on top of that in order to enable runtime
+        decisions about whether it should be active.
+
+        * bindings/generic/RuntimeEnabledFeatures.cpp:
+        (WebCore):
+        * bindings/generic/RuntimeEnabledFeatures.h:
+        (RuntimeEnabledFeatures):
+        (WebCore::RuntimeEnabledFeatures::experimentalContentSecurityPolicyFeaturesEnabled):
+        (WebCore::RuntimeEnabledFeatures::setExperimentalContentSecurityPolicyFeaturesEnabled):
+            Adds methods in order to correctly handle enabling and disabling
+            CSP 1.1 features.
+        * dom/Document.idl:
+            Gate the 'document.securityPolicy' object on the runtime flag.
+        * page/ContentSecurityPolicy.cpp:
+        (WebCore::CSPDirectiveList::addDirective):
+            Check that experimental features are runtime enabled before
+            processing 1.1 directives.
+        (WebCore::ContentSecurityPolicy::experimentalFeaturesEnabled):
+        (WebCore):
+        * page/ContentSecurityPolicy.h:
+            Adds a new method which checks against the runtime flag to determine
+            whether CSP 1.1 features are enabled.
+
 2012-11-30  Simon Fraser  <simon.fraser@apple.com>
 
         Avoid calling into NSUserDefaults every time we start a scroll

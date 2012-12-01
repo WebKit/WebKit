@@ -120,6 +120,8 @@ public:
     void enforceSandboxFlags(SandboxFlags) const;
     String evalDisabledErrorMessage() const;
 
+    bool experimentalFeaturesEnabled() const;
+
 private:
     explicit ContentSecurityPolicy(ScriptExecutionContext*);
 

@@ -160,6 +160,8 @@ public:
     WEBKIT_EXPORT static void enableCSSRegions(bool);
     WEBKIT_EXPORT static bool isCSSRegionsEnabled();
 
+    WEBKIT_EXPORT static void enableExperimentalContentSecurityPolicyFeatures(bool);
+    WEBKIT_EXPORT static bool isExperimentalContentSecurityPolicyFeaturesEnabled();
 private:
     WebRuntimeFeatures();
 };

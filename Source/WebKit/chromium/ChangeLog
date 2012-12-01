@@ -1,3 +1,23 @@
+2012-11-30  Mike West  <mkwst@chromium.org>
+
+        CSP 1.1: Make the CSP_NEXT flag runtime enabled.
+        https://bugs.webkit.org/show_bug.cgi?id=103652
+
+        Reviewed by Adam Barth.
+
+        The CSP_NEXT flag continues to be enabled on the Chromium port, but this
+        patch now locks the features away behind the securityPolicy runtime
+        flag.
+
+        * public/WebRuntimeFeatures.h:
+        (WebRuntimeFeatures):
+        * src/WebRuntimeFeatures.cpp:
+        (WebKit::WebRuntimeFeatures::enableExperimentalContentSecurityPolicyFeatures):
+        (WebKit):
+        (WebKit::WebRuntimeFeatures::isExperimentalContentSecurityPolicyFeaturesEnabled):
+            Adds the feature to WebRuntimeFeatures so it can be toggled from
+            inside Chromium.
+
 2012-11-30  Stephen White  <senorblanco@chromium.org>
 
         [Chromium] Suppress the new separable mask blurs in skia until the tests can be rebaselined.

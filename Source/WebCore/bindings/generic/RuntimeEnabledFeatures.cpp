@@ -229,4 +229,8 @@ bool RuntimeEnabledFeatures::isDialogElementEnabled = false;
 bool RuntimeEnabledFeatures::isRequestAutocompleteEnabled = false;
 #endif
 
+#if ENABLE(CSP_NEXT)
+bool RuntimeEnabledFeatures::areExperimentalContentSecurityPolicyFeaturesEnabled = false;
+#endif
+
 } // namespace WebCore

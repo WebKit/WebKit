@@ -37,6 +37,7 @@
 #include "InspectorValues.h"
 #include "KURL.h"
 #include "PingLoader.h"
+#include "RuntimeEnabledFeatures.h"
 #include "SchemeRegistry.h"
 #include "ScriptCallStack.h"
 #include "ScriptCallStackFactory.h"
@@ -1313,7 +1314,7 @@ void CSPDirectiveList::addDirective(const String& name, const String& value)
     else if (equalIgnoringCase(name, reportURI))
         parseReportURI(name, value);
 #if ENABLE(CSP_NEXT)
-    else if (m_experimental) {
+    else if (m_experimental && m_policy->experimentalFeaturesEnabled()) {
         if (equalIgnoringCase(name, formAction))
             setCSPDirective<SourceListDirective>(name, value, m_formAction);
         else if (equalIgnoringCase(name, pluginTypes))
@@ -1708,6 +1709,15 @@ void ContentSecurityPolicy::logToConsole(const String& message, const String& co
 void ContentSecurityPolicy::reportBlockedScriptExecutionToInspector(const String& directiveText) const
 {
     InspectorInstrumentation::scriptExecutionBlockedByCSP(m_scriptExecutionContext, directiveText);
+}
+
+bool ContentSecurityPolicy::experimentalFeaturesEnabled() const
+{
+#if ENABLE(CSP_NEXT)
+    return RuntimeEnabledFeatures::experimentalContentSecurityPolicyFeaturesEnabled();
+#else
+    return false;
+#endif
 }
 
 }
