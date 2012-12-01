@@ -1,3 +1,14 @@
+2012-11-30  Beth Dakin  <bdakin@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=103790
+        The LayerPool m_pruneTimer should have a longer delay
+
+        Reviewed by Simon Fraser.
+
+        A 1 second delay is more appropriate here.
+        * platform/graphics/ca/mac/LayerPool.mm:
+        (WebCore::LayerPool::schedulePrune):
+
 2012-11-30  Jer Noble  <jer.noble@apple.com>
 
         Unreviewed Windows build fix.

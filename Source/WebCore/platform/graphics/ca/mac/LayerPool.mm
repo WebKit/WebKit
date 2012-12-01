@@ -104,7 +104,7 @@ void LayerPool::schedulePrune()
 {
     if (m_pruneTimer.isActive())
         return;
-    m_pruneTimer.startOneShot(0);
+    m_pruneTimer.startOneShot(1);
 }
 
 void LayerPool::pruneTimerFired(Timer<LayerPool>*)
