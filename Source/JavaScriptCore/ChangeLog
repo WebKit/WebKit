@@ -1,3 +1,20 @@
+2012-11-30  Oliver Hunt  <oliver@apple.com>
+
+        Optimise more cases of op_typeof
+        https://bugs.webkit.org/show_bug.cgi?id=103783
+
+        Reviewed by Mark Hahnenberg.
+
+        Increase our coverage of typeof based typechecks by
+        making sure that the codegenerators always uses
+        consistent operand ordering when feeding typeof operations
+        into equality operations.
+
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::BinaryOpNode::emitBytecode):
+        (JSC::EqualNode::emitBytecode):
+        (JSC::StrictEqualNode::emitBytecode):
+
 2012-11-30  Filip Pizlo  <fpizlo@apple.com>
 
         Rationalize and clean up DFG handling of scoped accesses
