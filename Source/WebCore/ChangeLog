@@ -1,5 +1,14 @@
 2012-11-30  Jer Noble  <jer.noble@apple.com>
 
+        Unreviewed Windows build fix.
+
+        Add a default: entry to an case statement to fix a build error when compiled in VS2005.
+
+        * html/MediaController.cpp:
+        (MediaController::playbackState):
+
+2012-11-30  Jer Noble  <jer.noble@apple.com>
+
         Add support for the 'unpause()' method on MediaController.
         https://bugs.webkit.org/show_bug.cgi?id=103751
 

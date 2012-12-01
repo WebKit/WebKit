@@ -317,6 +317,9 @@ const AtomicString& MediaController::playbackState() const
         return playbackStatePlaying();
     case ENDED:
         return playbackStateEnded();
+    default:
+        ASSERT_NOT_REACHED();
+        return nullAtom;
     }
 }
 
