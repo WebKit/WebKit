@@ -1,3 +1,16 @@
+2012-11-30  Anders Carlsson  <andersca@apple.com>
+
+        Always listen for the DidFirstLayout layout milestone
+        https://bugs.webkit.org/show_bug.cgi?id=103795
+        <rdar://problem/12790268>
+
+        Reviewed by Dan Bernstein.
+
+        The DidFirstLayout layout milestone is used to determine when to unfreeze the layer tree, so we always want to listen for it.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+
 2012-11-30  Pierre Rossi  <pierre.rossi@gmail.com>
 
         [Qt] Unreviewed speculative Mac build fix after r136232
