@@ -1,3 +1,11 @@
+2012-11-30  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Shorten a file name as the test renamed in r136122 is still hosing Chromium Win perf. bot.
+
+        * http/tests/inspector/network/resources/script-as-text-with-a-very-very-very-very-very-very-very-very-very-very-very-very-very-very-long-url.php: Renamed.
+        * http/tests/inspector/network/resources/script-as-text-with-a-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-very-long-url.php: Removed.
+        * http/tests/inspector/network/script-as-text-loading-long-url.html:
+
 2012-11-30  Sujin Park  <sujjin.park@gmail.com>
 
         [EFL][WK1] Gardening test cases which are not crashed after r135662
