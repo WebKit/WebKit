@@ -1,5 +1,12 @@
 2012-11-30  Roger Fong  <roger_fong@apple.com>
 
+        Unreviewed. Removed temporary debugging change from DRT (r136300).
+
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (dump):
+
+2012-11-30  Roger Fong  <roger_fong@apple.com>
+
         Unreviewed. Temporary change to DRT for debugging purposes.
 
         * DumpRenderTree/win/DumpRenderTree.cpp:

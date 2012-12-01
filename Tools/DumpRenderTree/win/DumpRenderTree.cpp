@@ -771,8 +771,6 @@ void dump()
 
 fail:
     SysFreeString(resultString);
-    printf("Fail Test\n");   // terminate the (possibly empty) pixels block
-    fflush(stdout);
     // This will exit from our message loop.
     PostQuitMessage(0);
     done = true;
