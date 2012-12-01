@@ -1,3 +1,12 @@
+2012-11-30  Sujin Park  <sujjin.park@gmail.com>
+
+        [EFL][WK1] Gardening test cases which are not crashed after r135662
+        https://bugs.webkit.org/show_bug.cgi?id=103803
+
+        Unreviewed, EFL gardening.
+
+        * platform/efl-wk1/TestExpectations:
+
 2012-11-30  Jer Noble  <jer.noble@apple.com>
 
         Add support for the 'unpause()' method on MediaController.
