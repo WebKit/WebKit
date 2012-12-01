@@ -1,5 +1,17 @@
 2012-12-01  Mike West  <mkwst@chromium.org>
 
+        [chromium] Unreviewed gardening. Skipping crashing tests.
+
+        The DEPS roll containing r170422 is causing three crashes cross-platform
+        in the Chromium port. Skipping them here, filed crbug.com/163785 to fix.
+
+        * platform/chromium/TestExpectations:
+            Marked media/encrypted-media/encrypted-media-events.html,
+            media/encrypted-media/encrypted-media-not-loaded.html, and
+            media/encrypted-media/encrypted-media-syntax.html as crashing.
+
+2012-12-01  Mike West  <mkwst@chromium.org>
+
         [chromium] Unreviewed gardening. Skipping calendar-picker-datetime-with-step.html.
 
         It looks like platform/chromium/fast/forms/calendar-picker/calendar-picker-datetime-with-step.html
