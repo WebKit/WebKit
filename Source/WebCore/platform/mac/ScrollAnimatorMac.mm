@@ -635,11 +635,14 @@ ScrollAnimatorMac::~ScrollAnimatorMac()
 
 static bool scrollAnimationEnabledForSystem()
 {
+    NSString* scrollAnimationDefaultsKey = 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED <= 1070 || PLATFORM(CHROMIUM)
-    return [[NSUserDefaults standardUserDefaults] boolForKey:@"AppleScrollAnimationEnabled"];
+        @"AppleScrollAnimationEnabled";
 #else
-    return [[NSUserDefaults standardUserDefaults] boolForKey:@"NSScrollAnimationEnabled"];
+        @"NSScrollAnimationEnabled";
 #endif
+    static bool enabled = [[NSUserDefaults standardUserDefaults] boolForKey:scrollAnimationDefaultsKey];
+    return enabled;
 }
 
 #if ENABLE(RUBBER_BANDING)

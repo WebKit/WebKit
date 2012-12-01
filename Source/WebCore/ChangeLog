@@ -1,3 +1,16 @@
+2012-11-30  Simon Fraser  <simon.fraser@apple.com>
+
+        Avoid calling into NSUserDefaults every time we start a scroll
+        https://bugs.webkit.org/show_bug.cgi?id=103804
+
+        Reviewed by Dan Bernstein.
+
+        Cache the NSScrollAnimationEnabled preference to avoid
+        hitting NSUserDefaults every time we start scrolling.
+
+        * platform/mac/ScrollAnimatorMac.mm:
+        (WebCore::scrollAnimationEnabledForSystem):
+
 2012-11-30  Beth Dakin  <bdakin@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=103790
