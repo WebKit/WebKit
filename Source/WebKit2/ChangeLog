@@ -1,3 +1,17 @@
+2012-10-31  Jesse van den Kieboom  <jessevdk@gnome.org>
+
+        Enable webkit2 introspection
+        https://bugs.webkit.org/show_bug.cgi?id=94313
+
+        Reviewed by Martin Robinson.
+
+        This patch enables generation of introspection information for webkit2
+        in the same was as it is done for webkit. The resulting gir and
+        typelib file are named WebKit2-3.0.{gir,typelib}.
+
+        * GNUmakefile.am:
+        * UIProcess/API/gtk/WebKitBackForwardList.cpp:
+
 2012-09-26  Gustavo Noronha Silva  <gns@gnome.org>
 
         [GTK] Split SVG from WebCore to work-around make limitation
