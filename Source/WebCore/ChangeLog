@@ -1,3 +1,23 @@
+2012-12-02  Otto Derek Cheung  <otcheung@rim.com>
+
+        [BlackBerry] Adding checks for null when checking cookie status in CookieJarBlackBerry
+        https://bugs.webkit.org/show_bug.cgi?id=103748
+
+        Reviewed by Rob Buis.
+
+        Updating CookieJarBlackBerry::cookieEnabled and have other methods in the class call that
+        method. Also, adding null checks for document->settings().
+
+        No change in behaviour.
+
+        * loader/blackberry/CookieJarBlackBerry.cpp:
+        (WebCore::cookies):
+        (WebCore::setCookies):
+        (WebCore::cookiesEnabled):
+        (WebCore::getRawCookies):
+        (WebCore::deleteCookie):
+        (WebCore::cookieRequestHeaderFieldValue):
+
 2012-12-02  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r136236.
