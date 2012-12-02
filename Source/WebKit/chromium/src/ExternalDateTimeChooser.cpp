@@ -29,9 +29,11 @@
 
 #include "ChromeClientImpl.h"
 #include "DateTimeChooserClient.h"
+#include "InputTypeNames.h"
 #include "WebDateTimeChooserCompletion.h"
 #include "WebDateTimeChooserParams.h"
 #include "WebViewClient.h"
+#include <wtf/text/AtomicString.h>
 
 using namespace WebCore;
 
@@ -79,13 +81,31 @@ PassRefPtr<ExternalDateTimeChooser> ExternalDateTimeChooser::create(ChromeClient
     return chooser.release();
 }
 
+
+static WebDateTimeInputType toWebDateTimeInputType(const AtomicString& source)
+{
+    if (source == InputTypeNames::date())
+        return WebDateTimeInputTypeDate;
+    if (source == InputTypeNames::datetime())
+        return WebDateTimeInputTypeDateTime;
+    if (source == InputTypeNames::datetimelocal())
+        return WebDateTimeInputTypeDateTimeLocal;
+    if (source == InputTypeNames::month())
+        return WebDateTimeInputTypeMonth;
+    if (source == InputTypeNames::time())
+        return WebDateTimeInputTypeTime;
+    if (source == InputTypeNames::week())
+        return WebDateTimeInputTypeWeek;
+    return WebDateTimeInputTypeNone;
+}
+
 bool ExternalDateTimeChooser::openDateTimeChooser(ChromeClientImpl* chromeClient, WebViewClient* webViewClient, const DateTimeChooserParameters& parameters)
 {
     if (!webViewClient)
         return false;
 
     WebDateTimeChooserParams webParams;
-    webParams.type = parameters.type;
+    webParams.type = toWebDateTimeInputType(parameters.type);
     webParams.anchorRectInScreen = chromeClient->rootViewToScreen(parameters.anchorRectInRootView);
     webParams.currentValue = parameters.currentValue;
     webParams.suggestionValues = parameters.suggestionValues;

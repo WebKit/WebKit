@@ -52,7 +52,7 @@ private:
     ExternalDateTimeChooser(WebCore::DateTimeChooserClient*);
     bool openDateTimeChooser(ChromeClientImpl*, WebViewClient*, const WebCore::DateTimeChooserParameters&);
 
-    // DateTimeChooer function:
+    // DateTimeChooser function:
     virtual void endChooser() OVERRIDE;
 
     WebCore::DateTimeChooserClient* m_client;

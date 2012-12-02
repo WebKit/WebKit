@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -27,40 +27,19 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
-#ifndef WebTextInputType_h
-#define WebTextInputType_h
+#ifndef WebDateTimeInputType_h
+#define WebDateTimeInputType_h
 
 namespace WebKit {
 
-enum WebTextInputType {
-    // Input caret is not in an editable node, no input method shall be used.
-    WebTextInputTypeNone,
-
-    // Input caret is in a normal editable node, any input method can be used.
-    WebTextInputTypeText,
-
-    // Input caret is in a specific input field, and input method may be used
-    // only if it's suitable for the specific input field.
-    WebTextInputTypePassword,
-    WebTextInputTypeSearch,
-    WebTextInputTypeEmail,
-    WebTextInputTypeNumber,
-    WebTextInputTypeTelephone,
-    WebTextInputTypeURL,
-
-    // FIXME: Remove these types once Date like types are not
-    // seen as Text. For now they also exist in WebTextInputType
-    WebTextInputTypeDate,
-    WebTextInputTypeDateTime,
-    WebTextInputTypeDateTimeLocal,
-    WebTextInputTypeMonth,
-    WebTextInputTypeTime,
-    WebTextInputTypeWeek,
-    WebTextInputTypeTextArea,
-
-    // Input caret is in a contenteditable node (not an INPUT field).
-    WebTextInputTypeContentEditable,
+enum WebDateTimeInputType {
+    WebDateTimeInputTypeNone,
+    WebDateTimeInputTypeDate,
+    WebDateTimeInputTypeDateTime,
+    WebDateTimeInputTypeDateTimeLocal,
+    WebDateTimeInputTypeMonth,
+    WebDateTimeInputTypeTime,
+    WebDateTimeInputTypeWeek,
 };
 
 } // namespace WebKit

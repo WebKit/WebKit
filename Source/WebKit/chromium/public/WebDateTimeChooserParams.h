@@ -26,6 +26,8 @@
 #ifndef WebDateTimeChooserParams_h
 #define WebDateTimeChooserParams_h
 
+#include "WebDateTimeInputType.h"
+
 #include "platform/WebRect.h"
 #include "platform/WebString.h"
 #include "platform/WebVector.h"
@@ -35,9 +37,8 @@ namespace WebKit {
 // This class conveys various information to make date/time chooser UI.
 // See WebViewClient::openDateTimeChooser.
 struct WebDateTimeChooserParams {
-    // Input type string. This is one of "date", "datetime", "datetime-local",
-    // "month", "time", and "week".
-    WebString type;
+    // The type of chooser to show.
+    WebDateTimeInputType type;
     // Bounding rectangle of the requester element.
     WebRect anchorRectInScreen;
     // The current value of the requester element.

@@ -131,6 +131,7 @@
                 'public/WebDataSource.h',
                 'public/WebDatabase.h',
                 'public/WebDatabaseObserver.h',
+                'public/WebDateTimeInputType.h',
                 'public/WebDateTimeChooserCompletion.h',
                 'public/WebDateTimeChooserParams.h',
                 'public/WebDeliveredIntentClient.h',
