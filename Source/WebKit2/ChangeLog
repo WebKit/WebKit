@@ -1,3 +1,19 @@
+2012-12-01  Tim Horton  <timothy_horton@apple.com>
+
+        [wk2] Use spoolRect instead of snapshots for print preview
+        https://bugs.webkit.org/show_bug.cgi?id=103798
+        <rdar://problem/12686749>
+
+        Reviewed by Sam Weinig.
+
+        Revert to using spoolRect instead of snapshotting for printing; this was a bogus
+        change I made in http://trac.webkit.org/changeset/133935 which was irrelevant to
+        the core of that change, and incorrectly disregards the Frame parameter passed to
+        beginPrinting, instead using the WebPage's current Frame.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::drawRectToImage):
+
 2012-11-30  Anders Carlsson  <andersca@apple.com>
 
         Always listen for the DidFirstLayout layout milestone

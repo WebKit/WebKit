@@ -3264,20 +3264,23 @@ void WebPage::drawRectToImage(uint64_t frameID, const PrintInfo& printInfo, cons
 #else
         ASSERT(coreFrame->document()->printing());
 #endif
+
+        RefPtr<ShareableBitmap> bitmap = ShareableBitmap::createShareable(rect.size(), ShareableBitmap::SupportsAlpha);
+        OwnPtr<GraphicsContext> graphicsContext = bitmap->createGraphicsContext();
+
 #if PLATFORM(MAC)
         if (RetainPtr<PDFDocument> pdfDocument = pdfDocumentForPrintingFrame(coreFrame)) {
             ASSERT(!m_printContext);
-            RefPtr<ShareableBitmap> bitmap = ShareableBitmap::createShareable(rect.size(), ShareableBitmap::SupportsAlpha);
-            OwnPtr<GraphicsContext> graphicsContext = bitmap->createGraphicsContext();
             graphicsContext->scale(FloatSize(1, -1));
             graphicsContext->translate(0, -rect.height());
             drawPDFDocument(graphicsContext->platformContext(), pdfDocument.get(), printInfo, rect);
-            image = WebImage::create(bitmap.release());
         } else
 #endif
         {
-            image = scaledSnapshotWithOptions(rect, 1, SnapshotOptionsShareable | SnapshotOptionsExcludeSelectionHighlighting);
+            m_printContext->spoolRect(*graphicsContext, rect);
         }
+
+        image = WebImage::create(bitmap.release());
     }
 #endif
 
