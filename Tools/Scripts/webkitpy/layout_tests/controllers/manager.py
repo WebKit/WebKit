@@ -283,7 +283,6 @@ class Manager(object):
 
         self._paths = set()
         self._test_names = None
-        self._retrying = False
         self._results_directory = self._port.results_directory()
         self._finder = LayoutTestFinder(self._port, self._options)
         self._runner = LayoutTestRunner(self._options, self._port, self._printer, self._results_directory, self._expectations, self._test_is_slow)
@@ -405,22 +404,21 @@ class Manager(object):
         start_time = time.time()
 
         interrupted, keyboard_interrupted, thread_timings, test_timings, individual_test_timings = \
-            self._run_tests(self._test_names, result_summary, int(self._options.child_processes))
+            self._run_tests(self._test_names, result_summary, int(self._options.child_processes), retrying=False)
 
         # We exclude the crashes from the list of results to retry, because
         # we want to treat even a potentially flaky crash as an error.
 
-        failures = self._get_failures(result_summary, include_crashes=self._port.should_retry_crashes(), include_missing=False)
-        retry_summary = result_summary
-        while (len(failures) and self._options.retry_failures and not self._retrying and not interrupted and not keyboard_interrupted):
+        failures = self._failed_test_names(result_summary, include_crashes=self._port.should_retry_crashes(), include_missing=False)
+        if self._options.retry_failures and failures and not interrupted and not keyboard_interrupted:
             _log.info('')
             _log.info("Retrying %d unexpected failure(s) ..." % len(failures))
             _log.info('')
-            self._retrying = True
-            retry_summary = ResultSummary(self._expectations, failures.keys(), 1, set())
-            # Note that we intentionally ignore the return value here.
-            self._run_tests(failures.keys(), retry_summary, 1)
-            failures = self._get_failures(retry_summary, include_crashes=True, include_missing=True)
+            # Note that we don't care about the values returned from the retry pass.
+            retry_summary = ResultSummary(self._expectations, failures, 1, set())
+            _ = self._run_tests(failures, retry_summary, 1, retrying=True)
+        else:
+            retry_summary = result_summary
 
         end_time = time.time()
 
@@ -448,17 +446,18 @@ class Manager(object):
 
         # Write the summary to disk (results.html) and display it if requested.
         if not self._options.dry_run:
-            self._copy_results_html_file()
-            if self._options.show_results:
-                self._show_results_html_file(result_summary)
+            results_path = self._filesystem.join(self._results_directory, "results.html")
+            self._copy_results_html_file(results_path)
+            if self._options.show_results and result_summary.unexpected_results or (self._options.full_results_html and result_summary.total_failures):
+                self._port.show_results_html_file(results_path)
 
         return self._port.exit_code_from_summarized_results(unexpected_results)
 
-    def _run_tests(self, tests, result_summary, num_workers):
+    def _run_tests(self, tests, result_summary, num_workers, retrying):
         test_inputs = [self._test_input_for_file(test) for test in tests]
         needs_http = self._port.requires_http_server() or any(self._is_http_test(test) for test in tests)
         needs_websockets = any(self._is_websocket_test(test) for test in tests)
-        return self._runner.run_tests(test_inputs, self._expectations, result_summary, num_workers, needs_http, needs_websockets, self._retrying)
+        return self._runner.run_tests(test_inputs, self._expectations, result_summary, num_workers, needs_http, needs_websockets, retrying)
 
     def _clean_up_run(self):
         """Restores the system after we're done running tests."""
@@ -506,27 +505,16 @@ class Manager(object):
             if self._filesystem.isdir(self._filesystem.join(layout_tests_dir, dirname)):
                 self._filesystem.rmtree(self._filesystem.join(self._results_directory, dirname))
 
-    def _get_failures(self, result_summary, include_crashes, include_missing):
-        """Filters a dict of results and returns only the failures.
-
-        Args:
-          result_summary: the results of the test run
-          include_crashes: whether crashes are included in the output.
-            We use False when finding the list of failures to retry
-            to see if the results were flaky. Although the crashes may also be
-            flaky, we treat them as if they aren't so that they're not ignored.
-        Returns:
-          a dict of files -> results
-        """
-        failed_results = {}
+    def _failed_test_names(self, result_summary, include_crashes, include_missing):
+        failed_test_names = []
         for test, result in result_summary.unexpected_results.iteritems():
             if (result.type == test_expectations.PASS or
                 (result.type == test_expectations.CRASH and not include_crashes) or
                 (result.type == test_expectations.MISSING and not include_missing)):
                 continue
-            failed_results[test] = result.type
+            failed_test_names.append(test)
 
-        return failed_results
+        return failed_test_names
 
     def _upload_json_files(self, summarized_results, result_summary, individual_test_timings):
         """Writes the results of the test run as JSON files into the results
@@ -571,23 +559,10 @@ class Manager(object):
         self._filesystem.remove(times_json_path)
         self._filesystem.remove(incremental_results_path)
 
-    def _copy_results_html_file(self):
+    def _copy_results_html_file(self, destination_path):
         base_dir = self._port.path_from_webkit_base('LayoutTests', 'fast', 'harness')
         results_file = self._filesystem.join(base_dir, 'results.html')
-        # FIXME: What should we do if this doesn't exist (e.g., in unit tests)?
+        # Note that the results.html template file won't exist when we're using a MockFileSystem during unit tests,
+        # so make sure it exists before we try to copy it.
         if self._filesystem.exists(results_file):
-            self._filesystem.copyfile(results_file, self._filesystem.join(self._results_directory, "results.html"))
-
-    def _show_results_html_file(self, result_summary):
-        """Shows the results.html page."""
-        if self._options.full_results_html:
-            test_files = result_summary.failures.keys()
-        else:
-            unexpected_failures = self._get_failures(result_summary, include_crashes=True, include_missing=True)
-            test_files = unexpected_failures.keys()
-
-        if not len(test_files):
-            return
-
-        results_filename = self._filesystem.join(self._results_directory, "results.html")
-        self._port.show_results_html_file(results_filename)
+            self._filesystem.copyfile(results_file, destination_path)
