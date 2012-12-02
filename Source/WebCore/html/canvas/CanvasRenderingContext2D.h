@@ -251,6 +251,7 @@ private:
         RGBA32 m_shadowColor;
         float m_globalAlpha;
         CompositeOperator m_globalComposite;
+        BlendMode m_globalBlend;
         AffineTransform m_transform;
         bool m_invertibleCTM;
         Vector<float> m_lineDash;

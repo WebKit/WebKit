@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<title>Canvas test: 2d.composite.globalAlpha.range</title>
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+<link rel="stylesheet" href="../tests.css">
+<body>
+<p id="passtext">Pass</p>
+<p id="failtext">Fail</p>
+<p class="output">These images should be identical:</p>
+<canvas id="c" class="output" width="100" height="50"><p class="fallback">FAIL (fallback content)</p></canvas>
+
+<ul id="d"></ul>
+<script>
+    description('Test canvas globalCompositeOperator');
+    var compModes = [ "clear", "copy", "source-over", "destination-over", "source-in", "destination-in", "source-out", "destination-out", "source-atop", "destination-atop", "xor", "lighter", "multiply", "screen", "overlay", "darken", "lighten", "color-dodge", "color-burn", "hard-light", "soft-light", "difference", "exclusion", "hue", "saturation", "color", "luminosity"];
+    ctx = document.getElementById("c").getContext("2d");
+    for (var i = 0; i < compModes.length; i++) {
+	ctx.globalCompositeOperation = compModes[i];
+        shouldBeEqualToString("ctx.globalCompositeOperation", compModes[i]);
+    }
+</script>
+<script src="../../../fast/js/resources/js-test-post.js"></script>

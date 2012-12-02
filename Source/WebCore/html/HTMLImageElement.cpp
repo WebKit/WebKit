@@ -176,7 +176,9 @@ void HTMLImageElement::parseAttribute(const QualifiedName& name, const AtomicStr
     else if (name == onbeforeloadAttr)
         setAttributeEventListener(eventNames().beforeloadEvent, createAttributeEventListener(this, name, value));
     else if (name == compositeAttr) {
-        if (!parseCompositeOperator(value, m_compositeOperator))
+        // FIXME: images don't support blend modes in their compositing attribute.
+        BlendMode blendOp = BlendModeNormal;
+        if (!parseCompositeAndBlendOperator(value, m_compositeOperator, blendOp))
             m_compositeOperator = CompositeSourceOver;
     } else
         HTMLElement::parseAttribute(name, value);

@@ -182,6 +182,7 @@ CanvasRenderingContext2D::State::State()
     , m_shadowColor(Color::transparent)
     , m_globalAlpha(1)
     , m_globalComposite(CompositeSourceOver)
+    , m_globalBlend(BlendModeNormal)
     , m_invertibleCTM(true)
     , m_lineDashOffset(0)
     , m_imageSmoothingEnabled(true)
@@ -207,6 +208,7 @@ CanvasRenderingContext2D::State::State(const State& other)
     , m_shadowColor(other.m_shadowColor)
     , m_globalAlpha(other.m_globalAlpha)
     , m_globalComposite(other.m_globalComposite)
+    , m_globalBlend(other.m_globalBlend)
     , m_transform(other.m_transform)
     , m_invertibleCTM(other.m_invertibleCTM)
     , m_lineDashOffset(other.m_lineDashOffset)
@@ -242,6 +244,7 @@ CanvasRenderingContext2D::State& CanvasRenderingContext2D::State::operator=(cons
     m_shadowColor = other.m_shadowColor;
     m_globalAlpha = other.m_globalAlpha;
     m_globalComposite = other.m_globalComposite;
+    m_globalBlend = other.m_globalBlend;
     m_transform = other.m_transform;
     m_invertibleCTM = other.m_invertibleCTM;
     m_imageSmoothingEnabled = other.m_imageSmoothingEnabled;
@@ -605,18 +608,20 @@ void CanvasRenderingContext2D::setGlobalAlpha(float alpha)
 
 String CanvasRenderingContext2D::globalCompositeOperation() const
 {
-    return compositeOperatorName(state().m_globalComposite);
+    return compositeOperatorName(state().m_globalComposite, state().m_globalBlend);
 }
 
 void CanvasRenderingContext2D::setGlobalCompositeOperation(const String& operation)
 {
-    CompositeOperator op;
-    if (!parseCompositeOperator(operation, op))
+    CompositeOperator op = CompositeSourceOver;
+    BlendMode blendOp = BlendModeNormal;
+    if (!parseCompositeAndBlendOperator(operation, op, blendOp))
         return;
-    if (state().m_globalComposite == op)
+    if ((state().m_globalComposite == op) && (state().m_globalBlend == blendOp))
         return;
     realizeSaves();
     modifiableState().m_globalComposite = op;
+    modifiableState().m_globalBlend = blendOp;
     GraphicsContext* c = drawingContext();
     if (!c)
         return;
@@ -1553,7 +1558,8 @@ void CanvasRenderingContext2D::drawImageFromRect(HTMLImageElement* image,
     const String& compositeOperation)
 {
     CompositeOperator op;
-    if (!parseCompositeOperator(compositeOperation, op))
+    BlendMode blendOp = BlendModeNormal;
+    if (!parseCompositeAndBlendOperator(compositeOperation, op, blendOp) || blendOp != BlendModeNormal)
         op = CompositeSourceOver;
 
     ExceptionCode ec;

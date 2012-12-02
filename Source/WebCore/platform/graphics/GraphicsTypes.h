@@ -82,8 +82,8 @@ namespace WebCore {
     
     enum TextAlign { StartTextAlign, EndTextAlign, LeftTextAlign, CenterTextAlign, RightTextAlign };
 
-    String compositeOperatorName(CompositeOperator);
-    bool parseCompositeOperator(const String&, CompositeOperator&);
+    String compositeOperatorName(CompositeOperator, BlendMode);
+    bool parseCompositeAndBlendOperator(const String&, CompositeOperator&, BlendMode&);
 
     String lineCapName(LineCap);
     bool parseLineCap(const String&, LineCap&);
