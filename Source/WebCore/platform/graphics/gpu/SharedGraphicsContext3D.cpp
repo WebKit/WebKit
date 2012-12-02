@@ -70,7 +70,6 @@ public:
         attributes.stencil = true;
         attributes.antialias = false;
         attributes.shareResources = true;
-        attributes.preferDiscreteGPU = true;
         m_context = GraphicsContext3D::create(attributes, 0);
         return m_context;
     }
