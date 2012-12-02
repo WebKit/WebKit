@@ -47,6 +47,7 @@ static int window_height = 600;
 /* Default value of device_pixel_ratio is '0' so that we don't set custom device
  * scale factor unless it's required by the User. */
 static double device_pixel_ratio = 0;
+static Eina_Bool legacy_behavior_enabled = EINA_FALSE;
 
 static Ewk_View_Smart_Class *miniBrowserViewSmartClass()
 {
@@ -87,6 +88,8 @@ static const Ecore_Getopt options = {
             ('e', "engine", "ecore-evas engine to use."),
         ECORE_GETOPT_STORE_STR
             ('s', "window-size", "window size in following format (width)x(height)."),
+        ECORE_GETOPT_STORE_DEF_BOOL
+            ('b', "legacy", "Legacy mode", EINA_FALSE),
         ECORE_GETOPT_STORE_DOUBLE
             ('r', "device-pixel-ratio", "Ratio between the CSS units and device pixels."),
         ECORE_GETOPT_CALLBACK_NOARGS
@@ -1056,8 +1059,13 @@ static Browser_Window *window_create(const char *url, int width, int height)
     ewkViewClass->window_close = on_window_close;
 
     Evas *evas = evas_object_evas_get(window->elm_window);
-    Evas_Smart *smart = evas_smart_class_new(&ewkViewClass->sc);
-    window->ewk_view = ewk_view_smart_add(evas, smart, ewk_context_default_get());
+    if (legacy_behavior_enabled) {
+        // Use raw WK2 api to create a view using legacy mode.
+        window->ewk_view = (Evas_Object*)WKViewCreate(evas, 0, 0);
+    } else {
+        Evas_Smart *smart = evas_smart_class_new(&ewkViewClass->sc);
+        window->ewk_view = ewk_view_smart_add(evas, smart, ewk_context_default_get());
+    }
     ewk_view_theme_set(window->ewk_view, THEME_DIR "/default.edj");
     if (device_pixel_ratio)
         ewk_view_device_pixel_ratio_set(window->ewk_view, (float)device_pixel_ratio);
@@ -1140,6 +1148,7 @@ elm_main(int argc, char *argv[])
     Ecore_Getopt_Value values[] = {
         ECORE_GETOPT_VALUE_STR(evas_engine_name),
         ECORE_GETOPT_VALUE_STR(window_size_string),
+        ECORE_GETOPT_VALUE_STR(legacy_behavior_enabled),
         ECORE_GETOPT_VALUE_DOUBLE(device_pixel_ratio),
         ECORE_GETOPT_VALUE_BOOL(quitOption),
         ECORE_GETOPT_VALUE_BOOL(encoding_detector_enabled),

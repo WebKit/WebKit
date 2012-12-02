@@ -1,3 +1,17 @@
+2012-12-02  Yael Aharon  <yael.aharon@intel.com>
+
+        [EFL][WK2] MiniBrowser should have a legacy mode
+        https://bugs.webkit.org/show_bug.cgi?id=103679
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        We need a way to create a web view in legacy mode, while still using the default context.
+        WKViewCreate creates a legacy view, so change it to create a default context if a context
+        was not passed.
+
+        * UIProcess/API/efl/ewk_view.cpp:
+        (ewk_view_base_add):
+
 2012-12-01  Tim Horton  <timothy_horton@apple.com>
 
         PDFPlugin: Support PDF form editing in <iframe>s
