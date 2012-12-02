@@ -1,0 +1,65 @@
+<!doctype html>
+<html>
+    <head>
+        <script src="../../fast/js/resources/js-test-pre.js"></script>
+        <script src="resources/helper.js"></script>
+        <style>
+            .notVisible { visibility: hidden; }
+            .flow { -webkit-flow-into: flow; }
+            #article { width: 50px; height: 50px; background-color: green; }
+            #region { -webkit-flow-from: flow; }
+        </style>
+    </head>
+    <body>
+        <div id="eventCount"></div>
+        <div id="article"></div>
+        <div id="region"></div>
+        <script>
+            description("Test for WebKitBug 102101 [CSS Regions] regionlayoutupdate event fires continuously");
+
+            if (window.testRunner) {
+                window.testRunner.dumpAsText();
+                window.testRunner.waitUntilDone();
+            }
+
+            window.jsTestIsAsync = true;
+
+            var eventDispatchCount = 0;
+            var timeoutID;
+
+            function flowThreadUpdated(event) {
+                if (++eventDispatchCount > 1) {
+                    endTest();
+                    return;
+                }
+
+                // Updating the content of eventCount element should not trigger a layout
+                // on the auto-height region.
+                document.getElementById("eventCount").textContent = eventDispatchCount;
+            }
+
+            function startTest() {
+                getFlowByName("flow").addEventListener("webkitregionlayoutupdate", flowThreadUpdated);
+                document.getElementById("article").className = "flow";
+                timeoutID = window.setTimeout(endTest, 500);
+            }
+
+            function endTest() {
+                window.clearTimeout(timeoutID);
+                getFlowByName("flow").removeEventListener("webkitregionlayoutupdate", flowThreadUpdated);
+
+                document.getElementById("eventCount").className = "notVisible";
+                document.getElementById("region").className = "notVisible";
+
+                if (eventDispatchCount > 1)
+                    debug("FAIL The regionlayoutupdate event fired twice instead of once.")
+                else
+                    debug("PASS The regionlayoutupdate fired only once.");
+                finishJSTest();
+            }
+
+            window.addEventListener("load", startTest);
+</script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

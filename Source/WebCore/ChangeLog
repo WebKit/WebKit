@@ -1,3 +1,29 @@
+2012-12-02  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSS Regions] regionlayoutupdate event fires continuously
+        https://bugs.webkit.org/show_bug.cgi?id=102101
+
+        Reviewed by David Hyatt.
+
+        According to the CSSRegions spec, http://dev.w3.org/csswg/css3-regions/#region-flow-layout-events, the regionlayoutupdate event
+        should be dispatched when there is a possible layout change in the region chain.
+        In the current implementation, regionlayoutupdate is dispatched when:
+        1. a region from region chain changed its regionOverset value
+        2. a region from region chain has regionOverset = fit| overset
+
+        In the case of a named flow having an auto-height region with regionOverset = fit, the second step of layout was done
+        also when there was not required, therefore the regionlayoutuodate was unnecessary triggered.
+
+        We should proceed with the 2-pass layout only if the flow-thread having auto-height regions in region chain needs layout.
+
+        Test: fast/regions/autoheight-regionlayoutupdate-multipletimes.html
+
+        * rendering/FlowThreadController.cpp:
+        (WebCore::FlowThreadController::hasRenderNamedFlowThreadsNeedingLayout):
+        * rendering/FlowThreadController.h:
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::layout):
+
 2012-12-02  Rik Cabanier  <cabanier@adobe.com>
 
         Extend JavaScript support for blending in canvas

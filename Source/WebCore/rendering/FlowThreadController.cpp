@@ -176,6 +176,15 @@ bool FlowThreadController::isAutoLogicalHeightRegionsFlagConsistent() const
 }
 #endif
 
+bool FlowThreadController::hasRenderNamedFlowThreadsNeedingLayout() const
+{
+    ASSERT(m_view->normalLayoutPhase());
+    for (RenderNamedFlowThreadList::iterator iter = m_renderNamedFlowThreadList->begin(); iter != m_renderNamedFlowThreadList->end(); ++iter)
+        if ((*iter)->needsLayout())
+            return true;
+    return false;
+}
+
 void FlowThreadController::resetRegionsOverrideLogicalContentHeight()
 {
     ASSERT(m_view->normalLayoutPhase());

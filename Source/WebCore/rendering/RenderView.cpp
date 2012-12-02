@@ -190,7 +190,9 @@ void RenderView::layout()
     m_layoutState = &state;
 
     m_layoutPhase = RenderViewNormalLayout;
-    bool needsTwoPassLayoutForAutoLogicalHeightRegions = hasRenderNamedFlowThreads() && flowThreadController()->hasAutoLogicalHeightRegions();
+    bool needsTwoPassLayoutForAutoLogicalHeightRegions = hasRenderNamedFlowThreads()
+        && flowThreadController()->hasAutoLogicalHeightRegions()
+        && flowThreadController()->hasRenderNamedFlowThreadsNeedingLayout();
 
     if (needsTwoPassLayoutForAutoLogicalHeightRegions)
         flowThreadController()->resetRegionsOverrideLogicalContentHeight();

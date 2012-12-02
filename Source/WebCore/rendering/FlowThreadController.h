@@ -71,6 +71,8 @@ public:
     void incrementAutoLogicalHeightRegions() { ++m_autoLogicalHeightRegionsCount; }
     void decrementAutoLogicalHeightRegions() { ASSERT(m_autoLogicalHeightRegionsCount > 0); --m_autoLogicalHeightRegionsCount; }
 
+    bool hasRenderNamedFlowThreadsNeedingLayout() const;
+
 #ifndef NDEBUG
     bool isAutoLogicalHeightRegionsFlagConsistent() const;
 #endif

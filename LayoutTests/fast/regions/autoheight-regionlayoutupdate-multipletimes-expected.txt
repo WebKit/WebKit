@@ -1,0 +1,10 @@
+Test for WebKitBug 102101 [CSS Regions] regionlayoutupdate event fires continuously
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS The regionlayoutupdate fired only once.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

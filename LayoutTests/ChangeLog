@@ -1,3 +1,15 @@
+2012-12-02  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSS Regions] regionlayoutupdate event fires continuously
+        https://bugs.webkit.org/show_bug.cgi?id=102101
+
+        Reviewed by David Hyatt.
+
+        Add a test to make sure that for a flow thread with auto-height region, the regionlayoutupdate event is not unnecessary triggered.
+
+        * fast/regions/autoheight-regionlayoutupdate-multipletimes-expected.txt: Added.
+        * fast/regions/autoheight-regionlayoutupdate-multipletimes.html: Added.
+
 2012-12-02  Mike West  <mkwst@chromium.org>
 
         [gtk] Enable the CSP_NEXT runtime flag.
