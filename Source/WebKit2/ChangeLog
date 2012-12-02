@@ -1,3 +1,20 @@
+2012-12-02  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [CoordinatedGraphics] LayerTreeRenderer::removeImageBacking() calls HashMap::find() twice
+        https://bugs.webkit.org/show_bug.cgi?id=103815
+
+        Reviewed by Noam Rosenthal.
+
+        Call HashMap::take() in LayerTreeRenderer::removeImageBacking()
+        to avoid calling HashMap::find() twice. find() was called once
+        explicitly to get an iterator and a second time to remove the
+        value from the value from the HashMap. We could have used
+        remove(iterator) instead of remove(key) but using take() results
+        in simpler code.
+
+        * UIProcess/CoordinatedGraphics/LayerTreeRenderer.cpp:
+        (WebKit::LayerTreeRenderer::removeImageBacking):
+
 2012-12-02  Huang Dongsung  <luxtella@company100.net>
 
         Coordinated Graphics: Images disappear randomly
