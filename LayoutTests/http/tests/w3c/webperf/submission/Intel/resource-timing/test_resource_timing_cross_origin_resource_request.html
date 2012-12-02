@@ -1,0 +1,57 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <title>resource timing information for cross-origin resource request</title>
+        <link rel="author" title="Intel" href="http://www.intel.com/" />
+        <link rel="help" href="http://www.w3.org/TR/resource-timing/#performanceresourcetiming"/>
+        <script src="/w3c/resources/testharness.js"></script>
+        <script src="/w3c/resources/testharnessreport.js"></script>
+        <script src="/w3c/webperf/resources/webperftestharness.js"></script>
+        <script src="/w3c/webperf/resources/webperftestharnessextension.js"></script>
+
+        <script>
+           
+            setup({explicit_done: true});
+
+            var pageOrigin = "127.0.0.1:8000";
+            var crossOrigin = "localhost:8000";
+
+            function onload_test()
+            {
+                var context = new PerformanceContext(performance);                
+                var entry = context.getEntriesByName(document.getElementById("frameContext").src, "resource")[0];
+
+                test_equals(entry.redirectStart, 0, "redirectStart should be 0 in cross-origin request!");
+                test_equals(entry.redirectEnd, 0, "redirectEnd should be 0 in cross-origin request!");
+                test_equals(entry.domainLookupStart, 0, "domainLookupStart should be 0 in cross-origin request!");
+                test_equals(entry.domainLookupEnd, 0, "domainLookupEnd should be 0 in cross-origin request!");
+                test_equals(entry.connectStart, 0, "connectStart should be 0 in cross-origin request!");
+                test_equals(entry.connectEnd, 0, "connectEnd should be 0 in cross-origin request!");
+                test_equals(entry.requestStart, 0, "requestStart should be 0 in cross-origin request!");
+                test_equals(entry.responseStart, 0, "responseStart should be 0 in cross-origin request!");
+                test_equals(entry.secureConnectionStart, 0, "secureConnectionStart should be 0 in cross-origin request!");
+                test_greater_than(entry.fetchStart, 0, "fetchStart should be greater than 0 in cross-origin request!");
+                test_greater_than(entry.responseEnd, 0, "responseEnd should be greater than 0 in cross-origin request!");
+                done();
+            }
+
+        </script>
+
+    </head>
+    <body>
+        <h1>Description</h1>
+        <p>This test validates the values in resource timing for a cross-origin resource request.</p>
+
+        <br />
+        <iframe id="frameContext" src="" style="width: 250px; height: 250px;"></iframe>
+        <script>
+            test_equals(document.location.host, pageOrigin, 'Starting document.location.hostname is correct (' + pageOrigin + ')');
+            var destUrl = 'http://' + crossOrigin + '/w3c/webperf/resources/blank_page_green.htm';
+
+            var frameContext = document.getElementById("frameContext");
+            frameContext.onload = onload_test;
+            frameContext.src = destUrl;
+        </script>
+    </body>
+</html>

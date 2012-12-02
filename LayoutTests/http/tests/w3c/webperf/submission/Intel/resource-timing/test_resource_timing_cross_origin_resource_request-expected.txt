@@ -1,0 +1,20 @@
+Description
+
+This test validates the values in resource timing for a cross-origin resource request.
+
+
+
+
+PASS Starting document.location.hostname is correct (127.0.0.1:8000) 
+PASS redirectStart should be 0 in cross-origin request! 
+PASS redirectEnd should be 0 in cross-origin request! 
+PASS domainLookupStart should be 0 in cross-origin request! 
+PASS domainLookupEnd should be 0 in cross-origin request! 
+PASS connectStart should be 0 in cross-origin request! 
+PASS connectEnd should be 0 in cross-origin request! 
+PASS requestStart should be 0 in cross-origin request! 
+PASS responseStart should be 0 in cross-origin request! 
+PASS secureConnectionStart should be 0 in cross-origin request! 
+PASS fetchStart should be greater than 0 in cross-origin request! 
+PASS responseEnd should be greater than 0 in cross-origin request! 
+

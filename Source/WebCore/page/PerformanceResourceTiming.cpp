@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2012 Google Inc. All rights reserved.
+ * Copyright (C) 2012 Intel Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -44,10 +45,31 @@
 
 namespace WebCore {
 
-double monotonicTimeToDocumentMilliseconds(Document* document, double seconds)
+static double monotonicTimeToDocumentMilliseconds(Document* document, double seconds)
 {
     ASSERT(seconds >= 0.0);
     return document->loader()->timing()->monotonicTimeToZeroBasedDocumentTime(seconds) * 1000.0;
+}
+
+static bool passesTimingAllowCheck(const ResourceResponse& response, Document* requestingDocument)
+{
+    AtomicallyInitializedStatic(AtomicString&, timingAllowOrigin = *new AtomicString("timing-allow-origin"));
+
+    const String& timingAllowOriginString = response.httpHeaderField(timingAllowOrigin);
+    if (timingAllowOriginString.isEmpty() || equalIgnoringCase(timingAllowOriginString, "null"))
+        return false;
+
+    if (timingAllowOriginString == "*")
+        return true;
+
+    const String& securityOrigin = requestingDocument->securityOrigin()->toString();
+    Vector<String> timingAllowOrigins;
+    timingAllowOriginString.split(" ", timingAllowOrigins);
+    for (size_t i = 0; i < timingAllowOrigins.size(); ++i)
+        if (timingAllowOrigins[i] == securityOrigin)
+            return true;
+
+    return false;
 }
 
 PerformanceResourceTiming::PerformanceResourceTiming(const AtomicString& initiatorType, const ResourceRequest& request, const ResourceResponse& response, double initiationTime, double finishTime, Document* requestingDocument)
@@ -55,6 +77,7 @@ PerformanceResourceTiming::PerformanceResourceTiming(const AtomicString& initiat
     , m_initiatorType(initiatorType)
     , m_timing(response.resourceLoadTiming())
     , m_finishTime(finishTime)
+    , m_shouldReportDetails(passesTimingAllowCheck(response, requestingDocument))
     , m_requestingDocument(requestingDocument)
 {
 }
@@ -73,11 +96,15 @@ AtomicString PerformanceResourceTiming::initiatorType() const
 double PerformanceResourceTiming::redirectStart() const
 {
     // FIXME: Need to track and report redirects for resources.
+    if (!m_shouldReportDetails)
+        return 0.0;
     return 0;
 }
 
 double PerformanceResourceTiming::redirectEnd() const
 {
+    if (!m_shouldReportDetails)
+        return 0.0;
     return 0;
 }
 
@@ -89,6 +116,9 @@ double PerformanceResourceTiming::fetchStart() const
 
 double PerformanceResourceTiming::domainLookupStart() const
 {
+    if (!m_shouldReportDetails)
+        return 0.0;
+
     if (!m_timing || m_timing->dnsStart < 0)
         return fetchStart();
 
@@ -97,6 +127,9 @@ double PerformanceResourceTiming::domainLookupStart() const
 
 double PerformanceResourceTiming::domainLookupEnd() const
 {
+    if (!m_shouldReportDetails)
+        return 0.0;
+
     if (!m_timing || m_timing->dnsEnd < 0)
         return domainLookupStart();
 
@@ -105,6 +138,9 @@ double PerformanceResourceTiming::domainLookupEnd() const
 
 double PerformanceResourceTiming::connectStart() const
 {
+    if (!m_shouldReportDetails)
+        return 0.0;
+
     if (!m_timing || m_timing->connectStart < 0) // Connection was reused.
         return domainLookupEnd();
 
@@ -118,6 +154,9 @@ double PerformanceResourceTiming::connectStart() const
 
 double PerformanceResourceTiming::connectEnd() const
 {
+    if (!m_shouldReportDetails)
+        return 0.0;
+
     if (!m_timing || m_timing->connectEnd < 0) // Connection was reused.
         return connectStart();
 
@@ -126,6 +165,9 @@ double PerformanceResourceTiming::connectEnd() const
 
 double PerformanceResourceTiming::secureConnectionStart() const
 {
+    if (!m_shouldReportDetails)
+        return 0.0;
+
     if (!m_timing || m_timing->sslStart < 0) // Secure connection not negotiated.
         return 0.0;
 
@@ -134,13 +176,20 @@ double PerformanceResourceTiming::secureConnectionStart() const
 
 double PerformanceResourceTiming::requestStart() const
 {
+    if (!m_shouldReportDetails)
+        return 0.0;
+
     if (!m_timing)
         return connectEnd();
+
     return resourceTimeToDocumentMilliseconds(m_timing->sendStart);
 }
 
 double PerformanceResourceTiming::responseStart() const
 {
+    if (!m_shouldReportDetails)
+        return 0.0;
+
     if (!m_timing)
         return requestStart();
     // FIXME: This number isn't exactly correct. See the notes in PerformanceTiming::responseStart().
@@ -149,8 +198,12 @@ double PerformanceResourceTiming::responseStart() const
 
 double PerformanceResourceTiming::responseEnd() const
 {
+    if (!m_shouldReportDetails)
+        return 0.0;
+
     if (!m_timing)
         return responseStart();
+
     return monotonicTimeToDocumentMilliseconds(m_requestingDocument.get(), m_finishTime);
 }
 
