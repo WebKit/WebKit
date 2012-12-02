@@ -36,7 +36,7 @@ class ProfilerFactory(object):
     @classmethod
     def create_profiler(cls, host, executable_path, output_dir, identifier=None):
         if host.platform.is_mac():
-            return Instruments(host, executable_path, output_dir, identifier)
+            return IProfiler(host, executable_path, output_dir, identifier)
         return GooglePProf(host, executable_path, output_dir, identifier)
 
 
@@ -85,15 +85,22 @@ class GooglePProf(SingleFileOutputProfiler):
         print self._first_ten_lines_of_profile(profile_text)
 
 
-# FIXME: iprofile is a newer commandline interface to replace /usr/bin/instruments.
-class Instruments(SingleFileOutputProfiler):
+class IProfiler(SingleFileOutputProfiler):
     def __init__(self, host, executable_path, output_dir, identifier=None):
-        super(Instruments, self).__init__(host, executable_path, output_dir, "trace", identifier)
-
-    # FIXME: We may need a way to find this tracetemplate on the disk
-    _time_profile = "/Applications/Xcode.app/Contents/Applications/Instruments.app/Contents/Resources/templates/Time Profiler.tracetemplate"
+        super(IProfiler, self).__init__(host, executable_path, output_dir, "dtps", identifier)
+        self._profiler_process = None
 
     def attach_to_pid(self, pid):
-        cmd = ["instruments", "-t", self._time_profile, "-D", self._output_path, "-p", pid]
+        # FIXME: iprofiler requires us to pass the directory separately
+        # from the basename of the file, with no control over the extension.
+        fs = self._host.filesystem
+        cmd = ["iprofiler", "-timeprofiler", "-a", pid,
+                "-d", fs.dirname(self._output_path), "-o", fs.splitext(fs.basename(self._output_path))[0]]
         cmd = map(unicode, cmd)
-        self._host.executive.popen(cmd)
+        # FIXME: Consider capturing instead of letting instruments spam to stderr directly.
+        self._profiler_process = self._host.executive.popen(cmd)
+
+    def profile_after_exit(self):
+        # It seems like a nicer user experiance to wait on the profiler to exit to prevent
+        # it from spewing to stderr at odd times.
+        self._profiler_process.wait()

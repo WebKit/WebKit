@@ -1,3 +1,35 @@
+2012-12-02  Eric Seidel  <eric@webkit.org>
+
+        run-perf-tests --profile should use iprofiler instead of instruments on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=103765
+
+        Reviewed by Ryosuke Niwa.
+
+        Stephanie pointed out that iprofiler is the newer command-line interface
+        to replace /usr/bin/instruments in Instruments 4 (which according to the
+        interblags is supported on everything since 10.6.6), so I've moved --profile
+        to use iprofiler on Mac.
+
+        I also made the IProfiler class wait for iprofiler to complete so that
+        iprofiler won't continue running after run-perf-tests is complete (and
+        spam over the top of your shell output).
+
+        There are a couple of "got-chas" to this approach:
+        1.  iprofiler will ask for your password the first time you run it, which may
+            cause your first test to fail.  /usr/bin/instruments doesn't seem to do that.
+        2.  iprofiler has nice (but kinda awkward for our purposes) support for separate
+            directory and basename arguments, making IProfiler a somewhat awkward
+            baseclass of SingleFileOutputProfiler
+
+        I suspect we'll iterate from here.  It does seem slightly faster than
+        /usr/bin/instruments was.
+
+        * Scripts/webkitpy/common/system/profiler.py:
+        (ProfilerFactory.create_profiler):
+        (IProfiler):
+        (IProfiler.__init__):
+        (IProfiler.attach_to_pid):
+
 2012-12-02  Yongjun Zhang  <yongjun_zhang@apple.com>
 
         Need a method to close all idle localstorage databases immediately.
