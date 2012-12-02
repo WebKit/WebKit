@@ -1148,7 +1148,7 @@ elm_main(int argc, char *argv[])
     Ecore_Getopt_Value values[] = {
         ECORE_GETOPT_VALUE_STR(evas_engine_name),
         ECORE_GETOPT_VALUE_STR(window_size_string),
-        ECORE_GETOPT_VALUE_STR(legacy_behavior_enabled),
+        ECORE_GETOPT_VALUE_BOOL(legacy_behavior_enabled),
         ECORE_GETOPT_VALUE_DOUBLE(device_pixel_ratio),
         ECORE_GETOPT_VALUE_BOOL(quitOption),
         ECORE_GETOPT_VALUE_BOOL(encoding_detector_enabled),
