@@ -196,14 +196,6 @@ function handleValidHashParameterWrapper(key, value)
         g_crossDashboardState[key] = value == 'true';
         return true;
 
-    case 'buildDir':
-        if (value === 'Debug' || value == 'Release') {
-            g_crossDashboardState['testType'] = 'layout-tests';
-            g_crossDashboardState[key] = value;
-            return true;
-        } else
-            return false;
-
     default:
         return handleValidHashParameter(key, value);
     }
@@ -213,7 +205,6 @@ var g_defaultCrossDashboardStateValues = {
     group: '@ToT - chromium.org',
     showAllRuns: false,
     testType: 'layout-tests',
-    buildDir: '',
     useTestData: false,
 }
 
@@ -433,14 +424,7 @@ function isTipOfTreeWebKitBuilder()
 var g_defaultBuilderName, g_builders;
 function initBuilders()
 {
-    if (g_crossDashboardState.buildDir) {
-        // If buildDir is set, point to the results.json in the local tree. Useful for debugging changes to the python JSON generator.
-        g_defaultBuilderName = 'DUMMY_BUILDER_NAME';
-        g_builders = {'DUMMY_BUILDER_NAME': ''};
-        var loc = document.location.toString();
-        var offset = loc.indexOf('webkit/');
-    } else
-        currentBuilderGroup().setup();
+    currentBuilderGroup().setup();
 }
 
 var g_resultsByBuilder = {};
