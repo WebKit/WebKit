@@ -268,10 +268,6 @@ bool LayerTreeCoordinator::flushPendingLayerChanges()
     if (m_waitingForUIProcess)
         return false;
 
-    for (size_t i = 0; i < m_detachedLayers.size(); ++i)
-        m_webPage->send(Messages::LayerTreeCoordinatorProxy::DeleteCompositingLayer(m_detachedLayers[i]));
-    m_detachedLayers.clear();
-
     bool didSync = m_webPage->corePage()->mainFrame()->view()->flushCompositingStateIncludingSubframes();
     m_nonCompositedContentLayer->flushCompositingStateForThisLayerOnly();
     if (m_pageOverlayLayer)
@@ -285,6 +281,10 @@ bool LayerTreeCoordinator::flushPendingLayerChanges()
         m_webPage->send(Messages::LayerTreeCoordinatorProxy::SetRootCompositingLayer(toCoordinatedGraphicsLayer(m_rootLayer.get())->id()));
         m_shouldSyncRootLayer = false;
     }
+
+    for (size_t i = 0; i < m_detachedLayers.size(); ++i)
+        m_webPage->send(Messages::LayerTreeCoordinatorProxy::DeleteCompositingLayer(m_detachedLayers[i]));
+    m_detachedLayers.clear();
 
     if (m_shouldSyncFrame) {
         didSync = true;
