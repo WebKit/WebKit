@@ -118,15 +118,17 @@ EXPORTS
         ?addTextMatchMarker@DocumentMarkerController@WebCore@@QAEXPBVRange@2@_N@Z
         ?broadcast@ThreadCondition@WTF@@QAEXXZ
         ?callOnMainThread@WTF@@YAXP6AXPAX@Z0@Z
+#if ENABLE(INSPECTOR)
         ?consoleMessageArgumentCounts@InspectorConsoleAgent@WebCore@@QAE?AV?$Vector@I$0A@@WTF@@XZ
         ?counterValue@InspectorCounters@WebCore@@SAHW4CounterType@12@@Z
+        ?didBeginFrameImpl@InspectorInstrumentation@WebCore@@CAXPAVInstrumentingAgents@2@@Z
+        ?didCancelFrameImpl@InspectorInstrumentation@WebCore@@CAXPAVInstrumentingAgents@2@@Z
+#endif
         ?counterValueForElement@WebCore@@YA?AVString@WTF@@PAVElement@1@@Z
         ?createThread@WTF@@YAIP6APAXPAX@Z0PBD@Z
         ?createThread@WTF@@YAIP6AXPAX@Z0PBD@Z
         ?currentThread@WTF@@YAIXZ
         ?detachThread@WTF@@YAXI@Z
-        ?didBeginFrameImpl@InspectorInstrumentation@WebCore@@CAXPAVInstrumentingAgents@2@@Z
-        ?didCancelFrameImpl@InspectorInstrumentation@WebCore@@CAXPAVInstrumentingAgents@2@@Z
         ?initializeMainThread@WTF@@YAXXZ
         ?initializeThreading@WTF@@YAXXZ
         ?instrumentationForPage@WebCore@@YAPAVInstrumentingAgents@1@PAVPage@1@@Z
@@ -193,14 +195,35 @@ EXPORTS
         ?getCachedDOMStructure@WebCore@@YAPAVStructure@JSC@@PAVJSDOMGlobalObject@1@PBUClassInfo@3@@Z
         ?getData16SlowCase@StringImpl@WTF@@ABEPB_WXZ
         ?getElementById@TreeScope@WebCore@@QBEPAVElement@2@ABVAtomicString@WTF@@@Z
-        ?getHighlight@InspectorController@WebCore@@QBEXPAUHighlight@2@@Z
         ?getLocationAndLengthFromRange@TextIterator@WebCore@@SA_NPAVElement@2@PBVRange@2@AAI2@Z
         ?getReferencedFilePaths@FormController@WebCore@@SA?AV?$Vector@VString@WTF@@$0A@@WTF@@ABV34@@Z
         ?countElementShadow@ShadowRoot@WebCore@@QBEIXZ
         ?hasShadowInsertionPoint@ShadowRoot@WebCore@@QBE_NXZ
         ?hasContentElement@ShadowRoot@WebCore@@QBE_NXZ
         ?inputTag@HTMLNames@WebCore@@3VQualifiedName@2@B
+#if ENABLE(INSPECTOR)
+        ?getHighlight@InspectorController@WebCore@@QBEXPAUHighlight@2@@Z
         ?instrumentingAgentsForPage@InspectorInstrumentation@WebCore@@CAPAVInstrumentingAgents@2@PAVPage@2@@Z
+        ?s_frontendCounter@InspectorInstrumentation@WebCore@@0HA
+        ??0InspectorFrontendClientLocal@WebCore@@QAE@PAVInspectorController@1@PAVPage@1@V?$PassOwnPtr@VSettings@InspectorFrontendClientLocal@WebCore@@@WTF@@@Z
+        ??1InspectorFrontendClientLocal@WebCore@@UAE@XZ
+        ?changeAttachedWindowHeight@InspectorFrontendClientLocal@WebCore@@UAEXI@Z
+        ?connectFrontend@InspectorController@WebCore@@QAEXPAVInspectorFrontendChannel@2@@Z
+        ?doDispatchMessageOnFrontendPage@InspectorClient@WebCore@@SA_NPAVPage@2@ABVString@WTF@@@Z
+        ?frontendLoaded@InspectorFrontendClientLocal@WebCore@@UAEXXZ
+        ?getProperty@Settings@InspectorFrontendClientLocal@WebCore@@UAE?AVString@WTF@@ABV45@@Z
+        ?moveWindowBy@InspectorFrontendClientLocal@WebCore@@UAEXMM@Z
+        ?openInNewTab@InspectorFrontendClientLocal@WebCore@@UAEXABVString@WTF@@@Z
+        ?requestSetDockSide@InspectorFrontendClientLocal@WebCore@@UAEXW4DockSide@InspectorFrontendClient@2@@Z
+        ?sendMessageToBackend@InspectorFrontendClientLocal@WebCore@@UAEXABVString@WTF@@@Z
+        ?setInspectorFrontendClient@InspectorController@WebCore@@QAEXV?$PassOwnPtr@VInspectorFrontendClient@WebCore@@@WTF@@@Z
+        ?setProperty@Settings@InspectorFrontendClientLocal@WebCore@@UAEXABVString@WTF@@0@Z
+        ?windowObjectCleared@InspectorFrontendClientLocal@WebCore@@UAEXXZ
+        ?setResourcesDataSizeLimitsFromInternals@InspectorController@WebCore@@QAEXHH@Z
+        ?profilerEnabled@InspectorController@WebCore@@QAE_NXZ
+        ?setProfilerEnabled@InspectorController@WebCore@@QAEX_N@Z
+        ?disconnectFrontend@InspectorController@WebCore@@QAEXXZ
+#endif
         ?isActiveInsertionPoint@WebCore@@YA_NPBVNode@1@@Z
         ?isCSSExclusionsEnabled@RuntimeEnabledFeatures@WebCore@@0_NA
         ?isPreloaded@CachedResourceLoader@WebCore@@QBE_NABVString@WTF@@@Z
@@ -227,7 +250,6 @@ EXPORTS
         ?remove@String@WTF@@QAEXIH@Z
         ?removedLastRef@Node@WebCore@@AAEXXZ
         ?reverseFind@StringImpl@WTF@@QAEI_WI@Z
-        ?s_frontendCounter@InspectorInstrumentation@WebCore@@0HA
         ?saveDocumentAndScrollState@HistoryController@WebCore@@QAEXXZ
         ?scriptExecutionContext@JSDOMGlobalObject@WebCore@@QBEPAVScriptExecutionContext@2@XZ
         ?scriptNameToCode@WebCore@@YA?AW4UScriptCode@@ABVString@WTF@@@Z
@@ -247,7 +269,6 @@ EXPORTS
         ?setPageScaleFactor@Page@WebCore@@QAEXMABVIntPoint@2@@Z
         ?setPagination@Page@WebCore@@QAEXABUPagination@2@@Z
         ?setPictographFontFamily@Settings@WebCore@@QAEXABVAtomicString@WTF@@W4UScriptCode@@@Z
-        ?setResourcesDataSizeLimitsFromInternals@InspectorController@WebCore@@QAEXHH@Z
         ?setSansSerifFontFamily@Settings@WebCore@@QAEXABVAtomicString@WTF@@W4UScriptCode@@@Z
         ?setScrollbarsSuppressed@ScrollView@WebCore@@QAEX_N0@Z
         ?setDelegatesScrolling@ScrollView@WebCore@@QAEX_N@Z
@@ -292,7 +313,7 @@ EXPORTS
         ??0ContextDestructionObserver@WebCore@@QAE@PAVScriptExecutionContext@1@@Z
         ?nodesFromRect@Document@WebCore@@QBE?AV?$PassRefPtr@VNodeList@WebCore@@@WTF@@HHIIII_N0@Z
         ?selectionStartHasMarkerFor@Editor@WebCore@@QBE_NW4MarkerType@DocumentMarker@2@HH@Z
-#if USE(CG)
+#if ENABLE(FULLSCREEN_API)
         ?webkitWillEnterFullScreenForElement@Document@WebCore@@QAEXPAVElement@2@@Z
         ?webkitDidEnterFullScreenForElement@Document@WebCore@@QAEXPAVElement@2@@Z
         ?webkitWillExitFullScreenForElement@Document@WebCore@@QAEXPAVElement@2@@Z
@@ -307,8 +328,6 @@ EXPORTS
         ?suspendAnimations@AnimationController@WebCore@@QAEXXZ
         ?resumeAnimations@AnimationController@WebCore@@QAEXXZ
         ?setAllowsRoundingHacks@TextRun@WebCore@@SAX_N@Z
-        ?profilerEnabled@InspectorController@WebCore@@QAE_NXZ
-        ?setProfilerEnabled@InspectorController@WebCore@@QAEX_N@Z
         ?jsStringWithCacheSlowCase@WebCore@@YA?AVJSValue@JSC@@PAVExecState@3@AAV?$HashMap@PAVStringImpl@WTF@@V?$Weak@VJSString@JSC@@@JSC@@U?$PtrHash@PAVStringImpl@WTF@@@2@U?$HashTraits@PAVStringImpl@WTF@@@2@U?$HashTraits@V?$Weak@VJSString@JSC@@@JSC@@@2@@WTF@@PAVStringImpl@6@@Z
         ?registerURLSchemeAsBypassingContentSecurityPolicy@SchemeRegistry@WebCore@@SAXABVString@WTF@@@Z
         ?removeURLSchemeRegisteredAsBypassingContentSecurityPolicy@SchemeRegistry@WebCore@@SAXABVString@WTF@@@Z
@@ -316,25 +335,10 @@ EXPORTS
         ?numberOfPages@PrintContext@WebCore@@SAHPAVFrame@2@ABVFloatSize@2@@Z
         ?pageProperty@PrintContext@WebCore@@SA?AVString@WTF@@PAVFrame@2@PBDH@Z
         ?pageSizeAndMarginsInPixels@PrintContext@WebCore@@SA?AVString@WTF@@PAVFrame@2@HHHHHHH@Z
-        ??0InspectorFrontendClientLocal@WebCore@@QAE@PAVInspectorController@1@PAVPage@1@V?$PassOwnPtr@VSettings@InspectorFrontendClientLocal@WebCore@@@WTF@@@Z
-        ??1InspectorFrontendClientLocal@WebCore@@UAE@XZ
-        ?changeAttachedWindowHeight@InspectorFrontendClientLocal@WebCore@@UAEXI@Z
         ?close@DOMWindow@WebCore@@QAEXPAVScriptExecutionContext@2@@Z
-        ?connectFrontend@InspectorController@WebCore@@QAEXPAVInspectorFrontendChannel@2@@Z
-        ?disconnectFrontend@InspectorController@WebCore@@QAEXXZ
         ?document@DOMWindow@WebCore@@QBEPAVDocument@2@XZ
-        ?doDispatchMessageOnFrontendPage@InspectorClient@WebCore@@SA_NPAVPage@2@ABVString@WTF@@@Z
-        ?frontendLoaded@InspectorFrontendClientLocal@WebCore@@UAEXXZ
-        ?getProperty@Settings@InspectorFrontendClientLocal@WebCore@@UAE?AVString@WTF@@ABV45@@Z
-        ?moveWindowBy@InspectorFrontendClientLocal@WebCore@@UAEXMM@Z
         ?open@DOMWindow@WebCore@@QAE?AV?$PassRefPtr@VDOMWindow@WebCore@@@WTF@@ABVString@4@ABVAtomicString@4@0PAV12@2@Z
-        ?openInNewTab@InspectorFrontendClientLocal@WebCore@@UAEXABVString@WTF@@@Z
-        ?requestSetDockSide@InspectorFrontendClientLocal@WebCore@@UAEXW4DockSide@InspectorFrontendClient@2@@Z
-        ?sendMessageToBackend@InspectorFrontendClientLocal@WebCore@@UAEXABVString@WTF@@@Z
-        ?setInspectorFrontendClient@InspectorController@WebCore@@QAEXV?$PassOwnPtr@VInspectorFrontendClient@WebCore@@@WTF@@@Z
-        ?setProperty@Settings@InspectorFrontendClientLocal@WebCore@@UAEXABVString@WTF@@0@Z
         ?toJS@WebCore@@YA?AVJSValue@JSC@@PAVExecState@3@PAVJSDOMGlobalObject@1@PAVDOMWindow@1@@Z
-        ?windowObjectCleared@InspectorFrontendClientLocal@WebCore@@UAEXXZ
         ?layerTreeAsText@Frame@WebCore@@QBE?AVString@WTF@@I@Z
         ?trackedRepaintRectsAsText@Frame@WebCore@@QBE?AVString@WTF@@XZ
         ?setTracksRepaints@FrameView@WebCore@@QAEX_N@Z
