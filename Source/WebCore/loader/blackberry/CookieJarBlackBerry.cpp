@@ -52,9 +52,9 @@ void setCookies(Document* document, KURL const& url, String const& value)
         cookieManager().setCookies(url, value, NoHttpOnlyCookie);
 }
 
-bool cookiesEnabled(Document const* document)
+bool cookiesEnabled(const Document* document)
 {
-    return !(document && document->settings() && document->settings()->cookieEnabled());
+    return document && document->settings() && document->settings()->cookieEnabled();
 }
 
 bool getRawCookies(const Document* document, const KURL& url, Vector<Cookie>& rawCookies)

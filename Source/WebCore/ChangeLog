@@ -1,3 +1,15 @@
+2012-12-02  Otto Derek Cheung  <otcheung@rim.com>
+
+        [BlackBerry] Adding checks for null when checking cookie status in CookieJarBlackBerry
+        https://bugs.webkit.org/show_bug.cgi?id=103748
+
+        Reviewed by Rob Buis.
+
+        The logic is flipped in the previous patch.
+
+        * loader/blackberry/CookieJarBlackBerry.cpp:
+        (WebCore::cookiesEnabled):
+
 2012-12-02  Robert Hogan  <robert@webkit.org>
 
         Bad rendering of web page because of image's height is set to 100%
