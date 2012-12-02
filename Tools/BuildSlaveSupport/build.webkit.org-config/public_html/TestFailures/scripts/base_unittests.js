@@ -466,4 +466,9 @@ test("getURLParameter", 1, function() {
     ok(!base.getURLParameter('non-existant'));
 });
 
+test("parseJSONP", 2, function() {
+    deepEqual(base.parseJSONP(""), {});
+    deepEqual(base.parseJSONP('p({"key": "value"})'), {"key": "value"});
+});
+
 })();

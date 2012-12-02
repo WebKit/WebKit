@@ -178,6 +178,8 @@ base.parseJSONP = function(jsonp)
 {
     var startIndex = jsonp.indexOf('(') + 1;
     var endIndex = jsonp.lastIndexOf(')');
+    if (startIndex == 0 || endIndex == -1)
+        return {};
     return JSON.parse(jsonp.substr(startIndex, endIndex - startIndex));
 };
 
