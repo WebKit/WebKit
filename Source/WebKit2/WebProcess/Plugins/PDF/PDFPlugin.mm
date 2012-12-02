@@ -65,6 +65,7 @@
 #import <WebCore/Page.h>
 #import <WebCore/Pasteboard.h>
 #import <WebCore/PluginData.h>
+#import <WebCore/PluginDocument.h>
 #import <WebCore/RenderBoxModelObject.h>
 #import <WebCore/ScrollAnimator.h>
 #import <WebCore/ScrollbarTheme.h>
@@ -701,9 +702,20 @@ void PDFPlugin::invalidateScrollCornerRect(const IntRect& rect)
     [m_scrollCornerLayer.get() setNeedsDisplay];
 }
 
+bool PDFPlugin::isFullFramePlugin()
+{
+    // <object> or <embed> plugins will appear to be in their parent frame, so we have to
+    // check whether our frame's widget is exactly our PluginView.
+    Document* document = webFrame()->coreFrame()->document();
+    if (document->isPluginDocument())
+        return (static_cast<PluginDocument*>(document)->pluginWidget() == pluginView());
+
+    return false;
+}
+
 bool PDFPlugin::handlesPageScaleFactor()
 {
-    return webFrame()->isMainFrame();
+    return webFrame()->isMainFrame() && isFullFramePlugin();
 }
 
 void PDFPlugin::clickedLink(NSURL *url)
@@ -740,7 +752,7 @@ void PDFPlugin::setActiveAnnotation(PDFAnnotation *annotation)
 bool PDFPlugin::supportsForms()
 {
     // FIXME: Should we support forms for inline PDFs? Since we touch the document, this might be difficult.
-    return webFrame()->isMainFrame();
+    return webFrame()->isMainFrame() && isFullFramePlugin();
 }
 
 void PDFPlugin::notifyContentScaleFactorChanged(CGFloat scaleFactor)

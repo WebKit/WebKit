@@ -103,6 +103,7 @@ private:
     WebCore::IntPoint convertFromRootViewToPlugin(const WebCore::IntPoint&) const;
     
     bool supportsForms();
+    bool isFullFramePlugin();
 
     void updatePageAndDeviceScaleFactors();
 
