@@ -92,10 +92,7 @@ void TouchEventHandler::handleTouchPoint(Platform::TouchPoint& point)
         {
             doFatFingers(point);
 
-            // FIXME Draw tap highlight as soon as possible if we can
             Element* elementUnderFatFinger = m_lastFatFingersResult.nodeAsElementIfApplicable();
-            if (elementUnderFatFinger)
-                drawTapHighlight();
 
             // Check for text selection
             if (m_lastFatFingersResult.isTextInput()) {

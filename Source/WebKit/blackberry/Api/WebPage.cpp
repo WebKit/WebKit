@@ -4010,8 +4010,15 @@ bool WebPage::touchEvent(const Platform::TouchEvent& event)
     else if (tEvent.m_type == Platform::TouchEvent::TouchStart || tEvent.m_type == Platform::TouchEvent::TouchCancel)
         d->m_pluginMayOpenNewTab = false;
 
-    if (tEvent.m_type == Platform::TouchEvent::TouchStart)
+    if (tEvent.m_type == Platform::TouchEvent::TouchStart) {
         d->clearCachedHitTestResult();
+        d->m_touchEventHandler->doFatFingers(tEvent.m_points[0]);
+
+        // Draw tap highlight as soon as possible if we can
+        Element* elementUnderFatFinger = d->m_touchEventHandler->lastFatFingersResult().nodeAsElementIfApplicable();
+        if (elementUnderFatFinger)
+            d->m_touchEventHandler->drawTapHighlight();
+    }
 
     bool handled = false;
 

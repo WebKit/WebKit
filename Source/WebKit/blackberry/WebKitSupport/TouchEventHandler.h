@@ -44,9 +44,10 @@ public:
 
     void playSoundIfAnchorIsTarget() const;
 
+    void drawTapHighlight();
+
 private:
     void handleFatFingerPressed();
-    void drawTapHighlight();
 
 private:
     WebPagePrivate* m_webPage;
