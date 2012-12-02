@@ -36,7 +36,6 @@
 
 namespace WebCore {
 
-class Document;
 class SpeechRecognitionError;
 class SpeechRecognitionResult;
 class SpeechRecognitionResultList;
@@ -44,32 +43,21 @@ class SpeechRecognitionResultList;
 struct SpeechRecognitionEventInit : public EventInit {
     SpeechRecognitionEventInit();
 
-    // DEPRECATED
     RefPtr<SpeechRecognitionResult> result;
-    RefPtr<SpeechRecognitionResultList> resultHistory;
-
     short resultIndex;
-    RefPtr<SpeechRecognitionResultList> results;
+    RefPtr<SpeechRecognitionResultList> resultHistory;
 };
 
 class SpeechRecognitionEvent : public Event {
 public:
     static PassRefPtr<SpeechRecognitionEvent> create();
     static PassRefPtr<SpeechRecognitionEvent> create(const AtomicString&, const SpeechRecognitionEventInit&);
-    virtual ~SpeechRecognitionEvent();
 
-    // DEPRECATED
     static PassRefPtr<SpeechRecognitionEvent> createResult(PassRefPtr<SpeechRecognitionResult>, short resultIndex, PassRefPtr<SpeechRecognitionResultList> resultHistory);
-
-    static PassRefPtr<SpeechRecognitionEvent> createResult(unsigned long resultIndex, const Vector<RefPtr<SpeechRecognitionResult> >& results);
     static PassRefPtr<SpeechRecognitionEvent> createNoMatch(PassRefPtr<SpeechRecognitionResult>);
 
-    unsigned long resultIndex() const { return m_resultIndex; }
-    SpeechRecognitionResultList* results() const { return m_results.get(); }
-    Document* emma();
-
-    // DEPRECATED
     SpeechRecognitionResult* result() const { return m_result.get(); }
+    short resultIndex() const { return m_resultIndex; } // FIXME: Spec says this should be short, but other indices are unsigned ints.
     SpeechRecognitionResultList* resultHistory() const { return m_resultHistory.get(); }
 
     // Event
@@ -78,16 +66,11 @@ public:
 private:
     SpeechRecognitionEvent();
     SpeechRecognitionEvent(const AtomicString&, const SpeechRecognitionEventInit&);
-    SpeechRecognitionEvent(const AtomicString& eventName, PassRefPtr<SpeechRecognitionResult>, short resultIndex, PassRefPtr<SpeechRecognitionResultList> resultHistory); // FIXME: Remove.
-    SpeechRecognitionEvent(const AtomicString& eventName, unsigned long resultIndex, const Vector<RefPtr<SpeechRecognitionResult> >& results);
+    SpeechRecognitionEvent(const AtomicString& eventName, PassRefPtr<SpeechRecognitionResult>, short resultIndex, PassRefPtr<SpeechRecognitionResultList> resultHistory);
     explicit SpeechRecognitionEvent(PassRefPtr<SpeechRecognitionError>);
 
-    unsigned long m_resultIndex;
-    RefPtr<SpeechRecognitionResultList> m_results;
-    RefPtr<Document> m_emma;
-
-    // DEPRECATED
     RefPtr<SpeechRecognitionResult> m_result;
+    short m_resultIndex;
     RefPtr<SpeechRecognitionResultList> m_resultHistory;
 };
 

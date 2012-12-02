@@ -1,3 +1,17 @@
+2012-12-02  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r136236.
+        http://trac.webkit.org/changeset/136236
+        https://bugs.webkit.org/show_bug.cgi?id=103833
+
+        [chromium] Flakey crashes in SpeechRecognitionEvent::emma
+        during GC. (Requested by mkwst on #webkit).
+
+        * fast/speech/scripted/emma-expected.txt:
+        * fast/speech/scripted/emma.html:
+        * fast/speech/scripted/speechrecognition-basics-expected.txt:
+        * fast/speech/scripted/speechrecognition-basics.html:
+
 2012-12-01  Mike West  <mkwst@chromium.org>
 
         [chromium] Unreviewed gardening. Skipping crashing tests.

@@ -1,3 +1,37 @@
+2012-12-02  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r136236.
+        http://trac.webkit.org/changeset/136236
+        https://bugs.webkit.org/show_bug.cgi?id=103833
+
+        [chromium] Flakey crashes in SpeechRecognitionEvent::emma
+        during GC. (Requested by mkwst on #webkit).
+
+        * Modules/speech/SpeechRecognition.cpp:
+        (WebCore::SpeechRecognition::start):
+        * Modules/speech/SpeechRecognition.h:
+        (SpeechRecognition):
+        * Modules/speech/SpeechRecognitionEvent.cpp:
+        (WebCore::SpeechRecognitionEvent::SpeechRecognitionEvent):
+        * Modules/speech/SpeechRecognitionEvent.h:
+        (SpeechRecognitionEventInit):
+        (SpeechRecognitionEvent):
+        (WebCore::SpeechRecognitionEvent::resultIndex):
+        * Modules/speech/SpeechRecognitionEvent.idl:
+        * Modules/speech/SpeechRecognitionResult.cpp:
+        (WebCore::emmaQualifiedName):
+        (WebCore):
+        (WebCore::SpeechRecognitionResult::emma):
+        * Modules/speech/SpeechRecognitionResult.h:
+        (WebCore):
+        (WebCore::SpeechRecognitionResult::final):
+        (SpeechRecognitionResult):
+        * Modules/speech/SpeechRecognitionResult.idl:
+        * WebCore.gypi:
+        * bindings/v8/custom/V8SpeechRecognitionResultCustom.cpp: Renamed from Source/WebCore/bindings/v8/custom/V8SpeechRecognitionEventCustom.cpp.
+        (WebCore):
+        (WebCore::V8SpeechRecognitionResult::opaqueRootForGC):
+
 2012-12-01  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r136015.

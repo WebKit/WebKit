@@ -113,21 +113,6 @@ void SpeechRecognitionClientProxy::didReceiveResult(const WebSpeechRecognitionHa
 
 }
 
-void SpeechRecognitionClientProxy::didReceiveResults(const WebSpeechRecognitionHandle& handle, const WebVector<WebSpeechRecognitionResult>& newFinalResults, const WebVector<WebSpeechRecognitionResult>& currentInterimResults)
-{
-    RefPtr<SpeechRecognition> recognition = PassRefPtr<SpeechRecognition>(handle);
-
-    Vector<RefPtr<SpeechRecognitionResult> > finalResultsVector(newFinalResults.size());
-    for (size_t i = 0; i < newFinalResults.size(); ++i)
-        finalResultsVector[i] = static_cast<PassRefPtr<SpeechRecognitionResult> >(newFinalResults[i]);
-
-    Vector<RefPtr<SpeechRecognitionResult> > interimResultsVector(currentInterimResults.size());
-    for (size_t i = 0; i < currentInterimResults.size(); ++i)
-        interimResultsVector[i] = static_cast<PassRefPtr<SpeechRecognitionResult> >(currentInterimResults[i]);
-
-    recognition->didReceiveResults(finalResultsVector, interimResultsVector);
-}
-
 void SpeechRecognitionClientProxy::didReceiveNoMatch(const WebSpeechRecognitionHandle& handle, const WebSpeechRecognitionResult& result)
 {
     RefPtr<SpeechRecognition> recognition = PassRefPtr<SpeechRecognition>(handle);

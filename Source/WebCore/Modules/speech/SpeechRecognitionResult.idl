@@ -25,9 +25,12 @@
 
 [
     Conditional=SCRIPTED_SPEECH,
-    IndexedGetter
+    CustomIsReachable,
+    IndexedGetter,
+    V8DependentLifetime
 ] interface SpeechRecognitionResult {
     readonly attribute unsigned long length;
     SpeechRecognitionAlternative item(in [IsIndex] unsigned long index);
-    readonly attribute boolean isFinal;
+    readonly attribute boolean final;
+    readonly attribute Document emma;
 };

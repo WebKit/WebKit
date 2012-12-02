@@ -25,15 +25,9 @@
 
 [
     Conditional=SCRIPTED_SPEECH,
-    ConstructorTemplate=Event,
-    CustomIsReachable,
-    V8DependentLifetime
+    ConstructorTemplate=Event
 ] interface SpeechRecognitionEvent : Event {
-    // DEPRECATED
     [InitializedByEventConstructor] readonly attribute SpeechRecognitionResult result;
-    [InitializedByEventConstructor] readonly attribute SpeechRecognitionResultList resultHistory;
-
     [InitializedByEventConstructor] readonly attribute short resultIndex;
-    [InitializedByEventConstructor] readonly attribute SpeechRecognitionResultList results;
-    readonly attribute Document emma;
+    [InitializedByEventConstructor] readonly attribute SpeechRecognitionResultList resultHistory;
 };

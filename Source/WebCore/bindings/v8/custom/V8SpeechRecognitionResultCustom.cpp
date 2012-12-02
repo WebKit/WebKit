@@ -27,18 +27,18 @@
 
 #if ENABLE(SCRIPTED_SPEECH)
 
-#include "V8SpeechRecognitionEvent.h"
+#include "V8SpeechRecognitionResult.h"
 
-#include "SpeechRecognitionEvent.h"
+#include "SpeechRecognitionResult.h"
 #include "V8Binding.h"
 #include "V8GCController.h"
 
 namespace WebCore {
 
-void* V8SpeechRecognitionEvent::opaqueRootForGC(void* object, v8::Persistent<v8::Object> wrapper)
+void* V8SpeechRecognitionResult::opaqueRootForGC(void* object, v8::Persistent<v8::Object> wrapper)
 {
-    ASSERT(V8SpeechRecognitionEvent::HasInstance(wrapper));
-    SpeechRecognitionEvent* impl = static_cast<SpeechRecognitionEvent*>(object);
+    ASSERT(V8SpeechRecognitionResult::HasInstance(wrapper));
+    SpeechRecognitionResult* impl = static_cast<SpeechRecognitionResult*>(object);
     return V8GCController::opaqueRootForGC(impl->emma());
 }
 

@@ -10,9 +10,9 @@ onaudiostart
 onsoundstart
 onspeechstart
 onresult
-PASS event.emma.childNodes.length is 1
-PASS event.emma.firstChild.nodeName is "emma:emma"
-window.emma = event.emma.firstChild
+PASS event.result.emma.childNodes.length is 1
+PASS event.result.emma.firstChild.nodeName is "emma:emma"
+window.emma = event.result.emma.firstChild
 PASS emma.getAttribute("version") is "1.0"
 PASS emma.childNodes.length is 1
 PASS emma.firstChild.nodeName is "emma:one-of"
@@ -38,9 +38,9 @@ window.emma = null
 window.oneof = null
 window.interpretation = null
 window.literal = null
-event.emma.customProperty = 42
+event.result.emma.customProperty = 42
 gc()
-PASS event.emma.customProperty is 42
+PASS event.result.emma.customProperty is 42
 onspeechend
 onsoundend
 onaudioend
