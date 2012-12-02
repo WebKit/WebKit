@@ -54,7 +54,7 @@ class XvfbDriver(Driver):
         for i in range(99):
             if i not in reserved_screens:
                 _guard_lock_file = self._port.host.filesystem.join('/tmp', 'WebKitXvfb.lock.%i' % i)
-                self._guard_lock = FileLock(_guard_lock_file)
+                self._guard_lock = self._port.host.make_file_lock(_guard_lock_file)
                 if self._guard_lock.acquire_lock():
                     return i
 

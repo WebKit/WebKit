@@ -30,7 +30,7 @@ class MockFileLock(object):
         pass
 
     def acquire_lock(self):
-        pass
+        return True
 
     def release_lock(self):
-        pass
+        return True
