@@ -528,14 +528,6 @@ class Manager(object):
 
         return failed_results
 
-    def _char_for_result(self, result):
-        result = result.lower()
-        if result in TestExpectations.EXPECTATIONS:
-            result_enum_value = TestExpectations.EXPECTATIONS[result]
-        else:
-            result_enum_value = TestExpectations.MODIFIERS[result]
-        return json_layout_results_generator.JSONLayoutResultsGenerator.FAILURE_TO_CHAR[result_enum_value]
-
     def _upload_json_files(self, summarized_results, result_summary, individual_test_timings):
         """Writes the results of the test run as JSON files into the results
         dir and upload the files to the appengine server.
@@ -578,14 +570,6 @@ class Manager(object):
         # The tools use the version we uploaded to the results server anyway.
         self._filesystem.remove(times_json_path)
         self._filesystem.remove(incremental_results_path)
-
-    def _num_digits(self, num):
-        """Returns the number of digits needed to represent the length of a
-        sequence."""
-        ndigits = 1
-        if len(num):
-            ndigits = int(math.log10(len(num))) + 1
-        return ndigits
 
     def _copy_results_html_file(self):
         base_dir = self._port.path_from_webkit_base('LayoutTests', 'fast', 'harness')
