@@ -1,3 +1,21 @@
+2012-12-02  Sadrul Habib Chowdhury  <sadrul@chromium.org>
+
+        [chromium] Correct the location of synthetic mouse events when page is zoomed
+        https://bugs.webkit.org/show_bug.cgi?id=103823
+
+        Reviewed by Adam Barth.
+
+        The event-location conversion function expects absolute locations. Change the
+        function name to reflect that, and use the absolute location of the touch-points
+        when converting from touch events.
+
+        * src/WebInputEventConversion.cpp:
+        (WebKit::convertAbsoluteLocationForRenderObject):
+        (WebKit::updateWebMouseEventFromWebCoreMouseEvent):
+        (WebKit::WebMouseEventBuilder::WebMouseEventBuilder):
+        (WebKit::addTouchPoints):
+        (WebKit::WebGestureEventBuilder::WebGestureEventBuilder):
+
 2012-12-02  Miguel Garcia  <miguelg@chromium.org>
 
         [Chromium] Create an enum for the kind of date input and use that on WebDateTimeChooserParams instead of a bare WebString

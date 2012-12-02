@@ -1,3 +1,13 @@
+2012-12-02  Sadrul Habib Chowdhury  <sadrul@chromium.org>
+
+        [chromium] Correct the location of synthetic mouse events when page is zoomed
+        https://bugs.webkit.org/show_bug.cgi?id=103823
+
+        Reviewed by Adam Barth.
+
+        * platform/chromium/plugins/touch-events-synthesized-expected.txt:
+        * platform/chromium/plugins/touch-events-synthesized.html:
+
 2012-12-02  Robert Hogan  <robert@webkit.org>
 
         Bad rendering of web page because of image's height is set to 100%

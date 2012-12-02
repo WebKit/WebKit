@@ -402,7 +402,7 @@ static int getWebInputModifiers(const UIEventWithKeyState& event)
     return modifiers;
 }
 
-static IntPoint convertLocationForRenderObject(const LayoutPoint& location, const WebCore::RenderObject& renderObject)
+static IntPoint convertAbsoluteLocationForRenderObject(const LayoutPoint& location, const WebCore::RenderObject& renderObject)
 {
     return roundedIntPoint(renderObject.absoluteToLocal(location, UseTransforms | SnapOffsetForTransforms));
 }
@@ -418,7 +418,7 @@ static void updateWebMouseEventFromWebCoreMouseEvent(const MouseRelatedEvent& ev
     webEvent.globalY = event.screenY();
     webEvent.windowX = windowPoint.x();
     webEvent.windowY = windowPoint.y();
-    IntPoint localPoint = convertLocationForRenderObject(event.absoluteLocation(), renderObject);
+    IntPoint localPoint = convertAbsoluteLocationForRenderObject(event.absoluteLocation(), renderObject);
     webEvent.x = localPoint.x();
     webEvent.y = localPoint.y();
 }
@@ -499,7 +499,7 @@ WebMouseEventBuilder::WebMouseEventBuilder(const Widget* widget, const WebCore::
     modifiers |= WebInputEvent::LeftButtonDown;
     clickCount = (type == MouseDown || type == MouseUp);
 
-    IntPoint localPoint = convertLocationForRenderObject(LayoutPoint(touch->pageX(), touch->pageY()), *renderObject);
+    IntPoint localPoint = convertAbsoluteLocationForRenderObject(touch->absoluteLocation(), *renderObject);
     x = localPoint.x();
     y = localPoint.y();
 }
@@ -564,7 +564,7 @@ static void addTouchPoints(const AtomicString& touchType, TouchList* touches, We
         WebTouchPoint point;
         point.id = touch->identifier();
         point.screenPosition = WebPoint(touch->screenX(), touch->screenY());
-        point.position = convertLocationForRenderObject(LayoutPoint(IntPoint(touch->pageX(), touch->pageY())), *renderObject);
+        point.position = convertAbsoluteLocationForRenderObject(touch->absoluteLocation(), *renderObject);
         point.radiusX = touch->webkitRadiusX();
         point.radiusY = touch->webkitRadiusY();
         point.rotationAngle = touch->webkitRotationAngle();
@@ -624,7 +624,7 @@ WebGestureEventBuilder::WebGestureEventBuilder(const Widget* widget, const WebCo
 
     globalX = event.screenX();
     globalY = event.screenY();
-    IntPoint localPoint = convertLocationForRenderObject(event.absoluteLocation(), *renderObject);
+    IntPoint localPoint = convertAbsoluteLocationForRenderObject(event.absoluteLocation(), *renderObject);
     x = localPoint.x();
     y = localPoint.y();
 }

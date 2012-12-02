@@ -32,6 +32,22 @@
         eventSender.touchMove();
         eventSender.releaseTouchPoint(0);
         eventSender.touchEnd();
+
+        eventSender.zoomPageIn();
+        eventSender.addTouchPoint(positionX, positionY);
+        eventSender.touchStart();
+        eventSender.updateTouchPoint(0, positionX + 10, positionY + 5);
+        eventSender.touchMove();
+        eventSender.releaseTouchPoint(0);
+        eventSender.touchEnd();
+
+        eventSender.zoomPageOut();
+        eventSender.addTouchPoint(positionX, positionY);
+        eventSender.touchStart();
+        eventSender.updateTouchPoint(0, positionX + 10, positionY + 5);
+        eventSender.touchMove();
+        eventSender.releaseTouchPoint(0);
+        eventSender.touchEnd();
     }
 
 </script>
