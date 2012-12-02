@@ -2504,7 +2504,7 @@ crbug.com/8729 [ Android Linux Mac ] http/tests/multipart/invalid-image-data.htm
 crbug.com/10370 [ Android Linux Win ] fast/css/font-weight-1.html [ Failure ]
 # Registering the fonts for this test causes other processes (Adium, Firefox)
 # to spin and become unresponsive or crash.
-webkit.org/b/50709 [ Lion MountainLion ] fast/css/font-weight-1.html [ ImageOnlyFailure ]
+webkit.org/b/50709 [ Mac ] fast/css/font-weight-1.html [ ImageOnlyFailure ]
 
 #///////////////////////////////////////////////////////////////////////////
 # End DRT failures
@@ -4224,3 +4224,5 @@ webkit.org/b/103817 [ Mac Win Linux ] platform/chromium/fast/forms/calendar-pick
 crbug.com/163785 [ Mac Win Linux ] media/encrypted-media/encrypted-media-events.html [ Crash ]
 crbug.com/163785 [ Mac Win Linux ] media/encrypted-media/encrypted-media-not-loaded.html [ Crash ]
 crbug.com/163785 [ Mac Win Linux ] media/encrypted-media/encrypted-media-syntax.html [ Crash ]
+
+webkit.org/b/103834 [ Mac ] fast/forms/month-multiple-fields/month-multiple-fields-keyboard-events.html [ Failure ]
