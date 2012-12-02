@@ -700,6 +700,13 @@ void DumpRenderTreeSupportGtk::setCSSCustomFilterEnabled(WebKitWebView* webView,
 #endif
 }
 
+void DumpRenderTreeSupportGtk::setExperimentalContentSecurityPolicyFeaturesEnabled(bool enabled)
+{
+#if ENABLE(CSP_NEXT)
+    RuntimeEnabledFeatures::setExperimentalContentSecurityPolicyFeaturesEnabled(enabled);
+#endif
+}
+
 void DumpRenderTreeSupportGtk::setShadowDOMEnabled(bool enabled)
 {
 #if ENABLE(SHADOW_DOM)
