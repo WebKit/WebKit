@@ -60,7 +60,7 @@ struct SameSizeAsWebMouseWheelEvent : public SameSizeAsWebMouseEvent {
 };
 
 struct SameSizeAsWebGestureEvent : public SameSizeAsWebInputEvent {
-    int gestureData[8];
+    int gestureData[9];
 };
 
 struct SameSizeAsWebTouchEvent : public SameSizeAsWebInputEvent {

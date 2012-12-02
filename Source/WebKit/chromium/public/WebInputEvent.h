@@ -379,6 +379,7 @@ public:
     int y;
     int globalX;
     int globalY;
+    SourceDevice sourceDevice;
 
     union {
         struct {
@@ -412,6 +413,7 @@ public:
         struct {
             float velocityX;
             float velocityY;
+            // FIXME: Remove this when Chromium uses the top-level field.
             SourceDevice sourceDevice;
         } flingStart;
 
