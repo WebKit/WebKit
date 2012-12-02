@@ -751,8 +751,8 @@ void PDFPlugin::setActiveAnnotation(PDFAnnotation *annotation)
 
 bool PDFPlugin::supportsForms()
 {
-    // FIXME: Should we support forms for inline PDFs? Since we touch the document, this might be difficult.
-    return webFrame()->isMainFrame() && isFullFramePlugin();
+    // FIXME: We support forms for full-main-frame and <iframe> PDFs, but not <embed> or <object>, because those cases do not have their own Document into which to inject form elements.
+    return isFullFramePlugin();
 }
 
 void PDFPlugin::notifyContentScaleFactorChanged(CGFloat scaleFactor)
