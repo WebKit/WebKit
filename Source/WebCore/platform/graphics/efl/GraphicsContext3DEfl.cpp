@@ -245,7 +245,7 @@ GraphicsContext3D::ImageExtractor::~ImageExtractor()
 {
 }
 
-bool GraphicsContext3D::ImageExtractor::extractImage(bool premultiplyAlpha, bool ignoreGammaAndColorProfile)
+bool GraphicsContext3D::ImageExtractor::extractImage(bool /*premultiplyAlpha*/, bool /*ignoreGammaAndColorProfile*/)
 {
     notImplemented();
     return false;
