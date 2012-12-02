@@ -199,8 +199,8 @@ private:
 class NodeRareData : public NodeRareDataBase {
     WTF_MAKE_NONCOPYABLE(NodeRareData); WTF_MAKE_FAST_ALLOCATED;
 public:    
-    NodeRareData()
-        : m_treeScope(0)
+    NodeRareData(Document* document)
+        : NodeRareDataBase(document)
         , m_childNodeList(0)
         , m_tabIndex(0)
         , m_childIndex(0)
@@ -230,9 +230,6 @@ public:
     {
     }
 
-    TreeScope* treeScope() const { return m_treeScope; }
-    void setTreeScope(TreeScope* treeScope) { m_treeScope = treeScope; }
-    
     void clearNodeLists() { m_nodeLists.clear(); }
     void setNodeLists(PassOwnPtr<NodeListsNodeData> lists) { m_nodeLists = lists; }
     NodeListsNodeData* nodeLists() const { return m_nodeLists.get(); }
@@ -366,7 +363,6 @@ protected:
     void setChildIndex(unsigned index) { m_childIndex = index; }
 
 private:
-    TreeScope* m_treeScope;
     OwnPtr<NodeListsNodeData> m_nodeLists;
     ChildNodeList* m_childNodeList;
     short m_tabIndex;

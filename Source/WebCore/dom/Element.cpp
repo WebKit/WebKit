@@ -209,7 +209,7 @@ inline ElementRareData* Element::ensureElementRareData()
     
 OwnPtr<NodeRareData> Element::createRareData()
 {
-    return adoptPtr(new ElementRareData);
+    return adoptPtr(new ElementRareData(documentInternal()));
 }
 
 DEFINE_VIRTUAL_ATTRIBUTE_EVENT_LISTENER(Element, blur);

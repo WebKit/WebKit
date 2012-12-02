@@ -49,7 +49,7 @@ void NodeListsNodeData::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) co
 void NodeRareData::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::DOM);
-    info.addMember(m_treeScope);
+    info.addMember(treeScope());
     info.addMember(m_nodeLists);
     info.addMember(m_childNodeList);
 

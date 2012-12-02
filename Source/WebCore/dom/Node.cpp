@@ -439,30 +439,12 @@ void Node::setDocument(Document* document)
     m_document = document;
 }
 
-NodeRareData* Node::setTreeScope(TreeScope* scope)
+void Node::setTreeScope(TreeScope* scope)
 {
-    if (!scope) {
-        if (hasRareData()) {
-            NodeRareData* data = rareData();
-            data->setTreeScope(0);
-            return data;
-        }
+    if (!hasRareData() && scope->rootNode()->isDocumentNode())
+        return;
 
-        return 0;
-    }
-
-    NodeRareData* data = ensureRareData();
-    data->setTreeScope(scope);
-    return data;
-}
-
-TreeScope* Node::treeScope() const
-{
-    // FIXME: Using m_document directly is not good -> see comment with document() in the header file.
-    if (!hasRareData())
-        return m_document;
-    TreeScope* scope = rareData()->treeScope();
-    return scope ? scope : m_document;
+    ensureRareData()->setTreeScope(scope);
 }
 
 NodeRareData* Node::rareData() const
@@ -486,7 +468,7 @@ NodeRareData* Node::ensureRareData()
 
 OwnPtr<NodeRareData> Node::createRareData()
 {
-    return adoptPtr(new NodeRareData);
+    return adoptPtr(new NodeRareData(documentInternal()));
 }
 
 void Node::clearRareData()

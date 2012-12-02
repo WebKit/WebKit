@@ -114,11 +114,19 @@ class NodeRareDataBase {
 public:
     RenderObject* renderer() const { return m_renderer; }
     void setRenderer(RenderObject* renderer) { m_renderer = renderer; }
+
+    TreeScope* treeScope() const { return m_treeScope; }
+    void setTreeScope(TreeScope* scope) { m_treeScope = scope; }
+
     virtual ~NodeRareDataBase() { }
 protected:
-    NodeRareDataBase() { }
+    NodeRareDataBase(TreeScope* scope)
+        : m_treeScope(scope)
+    {
+    }
 private:
     RenderObject* m_renderer;
+    TreeScope* m_treeScope;
 };
 
 class Node : public EventTarget, public ScriptWrappable, public TreeShared<Node, ContainerNode> {
@@ -770,8 +778,7 @@ private:
     void removedLastRef();
 
     // These API should be only used for a tree scope migration.
-    // setTreeScope() returns NodeRareData to save extra nodeRareData() invocations on the caller site.
-    NodeRareData* setTreeScope(TreeScope*);
+    void setTreeScope(TreeScope*);
     void setDocument(Document*);
 
     enum EditableLevel { Editable, RichlyEditable };

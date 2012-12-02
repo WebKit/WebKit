@@ -1,3 +1,46 @@
+2012-12-02  Elliott Sprehn  <esprehn@gmail.com>
+
+        Simplify treeScope and setTreeScope
+        https://bugs.webkit.org/show_bug.cgi?id=103708
+
+        Reviewed by Hajime Morita.
+
+        By making the default treeScope in NodeRareData the document and then
+        moving the m_treeScope field to NodeRareDataBase we can make treeScope
+        inline and make setTreeScope much simpler.
+
+        There's also no reason to save calls to rareData() now that the map has
+        been eliminated by r133372 so we can eliminate the return value from
+        setTreeScope.
+
+        No new tests, just refactoring.
+
+        * WebCore.exp.in:
+        * dom/Document.h:
+        (WebCore::Node::treeScope):
+        (WebCore):
+        * dom/Element.cpp:
+        (WebCore::Element::createRareData):
+        * dom/ElementRareData.h:
+        (ElementRareData):
+        (WebCore::ElementRareData::ElementRareData):
+        * dom/Node.cpp:
+        (WebCore::Node::setTreeScope):
+        (WebCore::Node::createRareData):
+        * dom/Node.h:
+        (NodeRareDataBase):
+        (WebCore::NodeRareDataBase::treeScope):
+        (WebCore::NodeRareDataBase::setTreeScope):
+        (WebCore::NodeRareDataBase::NodeRareDataBase):
+        (Node):
+        * dom/NodeRareData.cpp:
+        (WebCore::NodeRareData::reportMemoryUsage):
+        * dom/NodeRareData.h:
+        (WebCore::NodeRareData::NodeRareData):
+        (NodeRareData):
+        * dom/TreeScopeAdopter.cpp:
+        (WebCore::TreeScopeAdopter::moveTreeToNewScope):
+
 2012-12-02  Justin Novosad  <junov@google.com>
 
         Fix occlusion culling logic to handle css background layer clipping

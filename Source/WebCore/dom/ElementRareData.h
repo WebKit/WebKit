@@ -34,7 +34,7 @@ namespace WebCore {
 
 class ElementRareData : public NodeRareData {
 public:
-    ElementRareData();
+    ElementRareData(Document*);
     virtual ~ElementRareData();
 
     void resetComputedStyle();
@@ -91,8 +91,9 @@ inline IntSize defaultMinimumSizeForResizing()
     return IntSize(LayoutUnit::max(), LayoutUnit::max());
 }
 
-inline ElementRareData::ElementRareData()
-    : m_minimumSizeForResizing(defaultMinimumSizeForResizing())
+inline ElementRareData::ElementRareData(Document* document)
+    : NodeRareData(document)
+    , m_minimumSizeForResizing(defaultMinimumSizeForResizing())
 {
 }
 
