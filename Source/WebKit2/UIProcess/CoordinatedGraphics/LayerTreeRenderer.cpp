@@ -368,6 +368,7 @@ void LayerTreeRenderer::deleteLayer(WebLayerID layerID)
         return;
 
     layer->removeFromParent();
+    m_pendingSyncBackingStores.remove(toTextureMapperLayer(layer.get()));
     m_fixedLayers.remove(layerID);
 #if USE(GRAPHICS_SURFACE)
     m_surfaceBackingStores.remove(layerID);

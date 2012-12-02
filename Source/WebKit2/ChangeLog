@@ -1,3 +1,15 @@
+2012-12-02  No'am Rosenthal  <noam@webkit.org>
+
+        [CoordinatedGraphics] Crash in TextureMapperLayer::setBackingStore()
+        https://bugs.webkit.org/show_bug.cgi?id=103714
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Remove a layer from the m_pendingSyncBackingStores map when it is deleted.
+
+        * UIProcess/CoordinatedGraphics/LayerTreeRenderer.cpp:
+        (WebKit::LayerTreeRenderer::deleteLayer):
+
 2012-12-02  Yael Aharon  <yael.aharon@intel.com>
 
         [EFL][WK2] MiniBrowser should have a legacy mode
