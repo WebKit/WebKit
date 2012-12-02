@@ -804,6 +804,7 @@ fast/forms/get-forms-to-about-blank.html [ WontFix ]
 # implement because we can't emulate the caching behaviors it expects.
 fast/dom/HTMLScriptElement/nested-execution.html [ WontFix ]
 storage/domstorage/storage-close-database-on-idle.html [ WontFix ]
+storage/domstorage/localstorage/close-idle-localstorage-databases-immediately.html [ WontFix ]
 
 # Deletion UI is a Mail-ism. We don't need to worry about this.
 editing/deleting/deletionUI-single-instance.html [ WontFix ]

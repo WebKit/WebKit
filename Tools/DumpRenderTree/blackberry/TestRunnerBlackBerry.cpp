@@ -856,3 +856,8 @@ void TestRunner::setStorageDatabaseIdleInterval(double)
     // FIXME: Implement this.
     notImplemented();
 }
+
+void TestRunner::closeIdleLocalStorageDatabases()
+{
+    notImplemented();
+}

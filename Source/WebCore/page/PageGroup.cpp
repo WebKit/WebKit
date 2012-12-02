@@ -144,9 +144,21 @@ void PageGroup::clearLocalStorageForOrigin(SecurityOrigin* origin)
     for (PageGroupMap::iterator it = pageGroups->begin(); it != end; ++it) {
         if (it->value->hasLocalStorage())
             it->value->localStorage()->clearOriginForDeletion(origin);
-    }    
+    }
 }
-    
+
+void PageGroup::closeIdleLocalStorageDatabases()
+{
+    if (!pageGroups)
+        return;
+
+    PageGroupMap::iterator end = pageGroups->end();
+    for (PageGroupMap::iterator it = pageGroups->begin(); it != end; ++it) {
+        if (it->value->hasLocalStorage())
+            it->value->localStorage()->closeIdleLocalStorageDatabases();
+    }
+}
+
 void PageGroup::syncLocalStorage()
 {
     if (!pageGroups)

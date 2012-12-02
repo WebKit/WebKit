@@ -213,6 +213,11 @@ void TestRunner::setStorageDatabaseIdleInterval(double interval)
     [WebStorageManager setStorageDatabaseIdleInterval:interval];
 }
 
+void TestRunner::closeIdleLocalStorageDatabases()
+{
+    [WebStorageManager closeIdleLocalStorageDatabases];
+}
+
 JSValueRef TestRunner::originsWithLocalStorage(JSContextRef context)
 {
     return originsArrayToJS(context, [[WebStorageManager sharedWebStorageManager] origins]);

@@ -60,6 +60,7 @@ namespace WebCore {
 
         virtual void incrementAccessCount() { }
         virtual void decrementAccessCount() { }
+        virtual void closeDatabaseIfIdle() { }
     };
 
 } // namespace WebCore

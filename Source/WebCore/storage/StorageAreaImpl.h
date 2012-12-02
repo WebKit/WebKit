@@ -58,6 +58,7 @@ namespace WebCore {
 
         virtual void incrementAccessCount();
         virtual void decrementAccessCount();
+        virtual void closeDatabaseIfIdle();
 
         PassRefPtr<StorageAreaImpl> copy();
         void close();

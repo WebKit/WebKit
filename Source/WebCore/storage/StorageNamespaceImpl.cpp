@@ -165,4 +165,12 @@ void StorageNamespaceImpl::sync()
         it->value->sync();
 }
 
+void StorageNamespaceImpl::closeIdleLocalStorageDatabases()
+{
+    ASSERT(isMainThread());
+    StorageAreaMap::iterator end = m_storageAreaMap.end();
+    for (StorageAreaMap::iterator it = m_storageAreaMap.begin(); it != end; ++it)
+        it->value->closeDatabaseIfIdle();
+}
+
 } // namespace WebCore

@@ -1,0 +1,65 @@
+<html>
+<head>
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function loadNextPage()
+{
+    location.href = "../../resources/storage-close-idle-localstorage-databases-immediately.html";
+}
+
+function runTest()
+{
+    if (window.testRunner) {
+        testRunner.setCacheModel(0); // WebCacheModelDocumentViewer.
+    }
+
+    // Test to make sure the storage values don't change after the database is closed.
+    if ("localStorage" in window) {
+        var loadCount = window.sessionStorage['testPageLoadCount'];
+        if (loadCount !== undefined)
+            loadCount++;
+        else
+            loadCount = 1;
+
+        window.sessionStorage['testPageLoadCount'] = loadCount;
+
+        if (loadCount == 1) {
+            window.localStorage.clear();
+            window.localStorage['foo'] = 'FOO';
+            window.localStorage['bar'] = 'BAR';
+
+            setTimeout("loadNextPage()", 0);
+        } else {
+            // Test if we still have the right values.
+            if (window.localStorage['foo'] === 'FOO')
+                testPassed("foo");
+            else
+                testFailed("foo");
+
+            if (window.localStorage['bar'] === 'BAR')
+                testPassed("bar");
+            else
+                testFailed("bar");
+
+            window.sessionStorage.removeItem('testPageLoadCount');
+
+            if (window.testRunner) {
+                window.testRunner.notifyDone();
+            }
+        }
+    }
+}
+
+</script>
+</head>
+<body onload="runTest();">
+<p id="description"></p>
+<div id="console"></div>
+</body>
+</html>
+

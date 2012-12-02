@@ -49,6 +49,7 @@ public:
     virtual void clearOriginForDeletion(SecurityOrigin*) = 0;
     virtual void clearAllOriginsForDeletion() = 0;
     virtual void sync() = 0;
+    virtual void closeIdleLocalStorageDatabases()  { }
 };
 
 } // namespace WebCore

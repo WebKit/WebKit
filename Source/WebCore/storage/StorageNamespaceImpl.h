@@ -54,7 +54,8 @@ namespace WebCore {
         virtual void clearOriginForDeletion(SecurityOrigin*);
         virtual void clearAllOriginsForDeletion();
         virtual void sync();
-        
+        virtual void closeIdleLocalStorageDatabases();
+
     private:
         StorageNamespaceImpl(StorageType, const String& path, unsigned quota);
 

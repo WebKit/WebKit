@@ -362,6 +362,7 @@ public:
     bool hasCustomFullScreenBehavior() const { return m_customFullScreenBehavior; }
 
     void setStorageDatabaseIdleInterval(double);
+    void closeIdleLocalStorageDatabases();
 
     bool hasPendingWebNotificationClick() const { return m_hasPendingWebNotificationClick; }
 

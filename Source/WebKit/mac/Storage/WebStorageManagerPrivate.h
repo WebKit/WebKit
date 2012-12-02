@@ -44,5 +44,6 @@ extern NSString * const WebStorageDidModifyOriginNotification;
 
 + (NSString *)_storageDirectoryPath;
 + (void)setStorageDatabaseIdleInterval:(double)interval;
++ (void)closeIdleLocalStorageDatabases;
 @end
 

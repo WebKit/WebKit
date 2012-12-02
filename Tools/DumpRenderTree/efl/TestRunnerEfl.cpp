@@ -924,3 +924,8 @@ void TestRunner::setStorageDatabaseIdleInterval(double)
 {
     notImplemented();
 }
+
+void TestRunner::closeIdleLocalStorageDatabases()
+{
+    notImplemented();
+}

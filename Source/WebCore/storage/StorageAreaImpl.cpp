@@ -349,4 +349,14 @@ void StorageAreaImpl::closeDatabaseTimerFired(Timer<StorageAreaImpl> *)
         m_storageAreaSync->scheduleCloseDatabase();
 }
 
+void StorageAreaImpl::closeDatabaseIfIdle()
+{
+    if (m_closeDatabaseTimer.isActive()) {
+        ASSERT(!m_accessCount);
+        m_closeDatabaseTimer.stop();
+
+        closeDatabaseTimerFired(&m_closeDatabaseTimer);
+    }
+}
+
 }

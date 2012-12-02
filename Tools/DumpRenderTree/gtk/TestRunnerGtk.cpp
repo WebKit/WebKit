@@ -997,3 +997,7 @@ void TestRunner::setStorageDatabaseIdleInterval(double)
 {
     // FIXME: Implement this.
 }
+
+void TestRunner::closeIdleLocalStorageDatabases()
+{
+}
