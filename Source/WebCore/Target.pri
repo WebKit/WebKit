@@ -375,6 +375,7 @@ SOURCES += \
     dom/DocumentMarker.cpp \
     dom/DocumentOrderedMap.cpp \
     dom/DocumentParser.cpp \
+    dom/DocumentSharedObjectPool.cpp \
     dom/DocumentStyleSheetCollection.cpp \
     dom/DocumentType.cpp \
     dom/DOMCoreException.cpp \
@@ -1556,6 +1557,7 @@ HEADERS += \
     dom/DocumentMarker.h \
     dom/DocumentMarkerController.h \
     dom/DocumentOrderedMap.h \
+    dom/DocumentSharedObjectPool.h \
     dom/DocumentStyleSheetCollection.h \
     dom/DocumentType.h \
     dom/DOMError.h \

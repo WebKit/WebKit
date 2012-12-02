@@ -66,6 +66,7 @@
 #include "DocumentMarkerController.cpp"
 #include "DocumentOrderedMap.cpp"
 #include "DocumentParser.cpp"
+#include "DocumentSharedObjectPool.cpp"
 #include "DocumentType.cpp"
 #include "Element.cpp"
 #include "ElementAttributeData.cpp"

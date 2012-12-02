@@ -50674,6 +50674,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\dom\DocumentSharedObjectPool.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\dom\DocumentSharedObjectPool.h"
+				>
+			</File>
+			<File
 				RelativePath="..\dom\DocumentStyleSheetCollection.cpp"
 				>
 			</File>

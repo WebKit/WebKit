@@ -1,3 +1,60 @@
+2012-12-02  Andreas Kling  <akling@apple.com>
+
+        Keep ElementAttributeData sharing cache open for a while after document parsing finishes.
+        <http://webkit.org/b/103720>
+
+        Reviewed by Antti Koivisto.
+
+        Allow web pages that generate content dynamically to benefit more from the ElementAttributeData sharing
+        cache by keeping it open for 10 seconds after document parsing finishes. This enables elements constructed
+        from HTML fragments to share attribute data with other identical elements.
+
+        Elements created via Document.createElement are still unsupported since we don't know the list of attributes
+        at the time of construction.
+
+        401kB progression on Membuster3.
+
+        Document now holds on to a DocumentSharedObjectPool, accessible via Document::sharedObjectPool().
+        It is non-null during parsing and for some time afterwards, and can be used to implement additional
+        caches that are not worth holding on to permanently.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCore.vcproj/WebCore.vcproj:
+
+            Add new class DocumentSharedObjectPool.
+
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        (WebCore::Document::setParsing):
+        (WebCore::Document::finishedParsing):
+        (WebCore::Document::sharedObjectPoolClearTimerFired):
+        * dom/Document.h:
+        (WebCore::Document::sharedObjectPool):
+
+            Create DocumentSharedObjectPool when parsing starts, kill it on a 10s timer after parsing finishes.
+
+        * dom/DocumentSharedObjectPool.cpp: Added.
+        (ImmutableElementAttributeDataCacheKey):
+        (WebCore::ImmutableElementAttributeDataCacheKey::ImmutableElementAttributeDataCacheKey):
+        (WebCore::ImmutableElementAttributeDataCacheKey::operator!=):
+        (WebCore::ImmutableElementAttributeDataCacheKey::hash):
+        (ImmutableElementAttributeDataCacheEntry):
+        (WebCore::ImmutableElementAttributeDataCacheEntry::ImmutableElementAttributeDataCacheEntry):
+        (WebCore::DocumentSharedObjectPool::cachedImmutableElementAttributeData):
+        (WebCore::DocumentSharedObjectPool::DocumentSharedObjectPool):
+        (WebCore::DocumentSharedObjectPool::~DocumentSharedObjectPool):
+        * dom/DocumentSharedObjectPool.h: Added.
+        (DocumentSharedObjectPool):
+        (WebCore::DocumentSharedObjectPool::create):
+        * dom/Element.cpp:
+        (WebCore::Element::parserSetAttributes):
+
+            Moved the ElementAttributeData cache to DocumentSharedObjectPool.
+
 2012-12-02  John Bauman  <jbauman@chromium.org>
 
         [chromium] Let Pepper Flash use integrated GPU

@@ -2757,6 +2757,8 @@ webcore_sources += \
 	Source/WebCore/dom/DocumentOrderedMap.h \
 	Source/WebCore/dom/DocumentParser.cpp \
 	Source/WebCore/dom/DocumentParser.h \
+	Source/WebCore/dom/DocumentSharedObjectPool.cpp \
+	Source/WebCore/dom/DocumentSharedObjectPool.h \
     Source/WebCore/dom/DocumentStyleSheetCollection.cpp \
     Source/WebCore/dom/DocumentStyleSheetCollection.h \
 	Source/WebCore/dom/DocumentTiming.h \

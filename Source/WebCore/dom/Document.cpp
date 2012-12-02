@@ -55,6 +55,7 @@
 #include "DocumentFragment.h"
 #include "DocumentLoader.h"
 #include "DocumentMarkerController.h"
+#include "DocumentSharedObjectPool.h"
 #include "DocumentStyleSheetCollection.h"
 #include "DocumentType.h"
 #include "Editor.h"
@@ -500,6 +501,7 @@ Document::Document(Frame* frame, const KURL& url, bool isXHTML, bool isHTML)
     , m_scheduledTasksAreSuspended(false)
     , m_visualUpdatesAllowed(true)
     , m_visualUpdatesSuppressionTimer(this, &Document::visualUpdatesSuppressionTimerFired)
+    , m_sharedObjectPoolClearTimer(this, &Document::sharedObjectPoolClearTimerFired)
 #ifndef NDEBUG
     , m_didDispatchViewportPropertiesChanged(false)
 #endif
@@ -2491,6 +2493,10 @@ void Document::implicitClose()
 void Document::setParsing(bool b)
 {
     m_bParsing = b;
+
+    if (m_bParsing && !m_sharedObjectPool)
+        m_sharedObjectPool = DocumentSharedObjectPool::create();
+
     if (!m_bParsing && view())
         view()->scheduleRelayout();
 
@@ -4415,9 +4421,17 @@ void Document::finishedParsing()
         InspectorInstrumentation::domContentLoadedEventFired(f.get());
     }
 
-    // The ElementAttributeData sharing cache is only used during parsing since
-    // that's when the majority of immutable attribute data will be created.
-    m_immutableAttributeDataCache.clear();
+    // Schedule dropping of the DocumentSharedObjectPool. We keep it alive for a while after parsing finishes
+    // so that dynamically inserted content can also benefit from sharing optimizations.
+    // Note that we don't refresh the timer on pool access since that could lead to huge caches being kept
+    // alive indefinitely by something innocuous like JS setting .innerHTML repeatedly on a timer.
+    static const int timeToKeepSharedObjectPoolAliveAfterParsingFinishedInSeconds = 10;
+    m_sharedObjectPoolClearTimer.startOneShot(timeToKeepSharedObjectPoolAliveAfterParsingFinishedInSeconds);
+}
+
+void Document::sharedObjectPoolClearTimerFired(Timer<Document>*)
+{
+    m_sharedObjectPool.clear();
 }
 
 PassRefPtr<XPathExpression> Document::createExpression(const String& expression,
@@ -5858,65 +5872,6 @@ void Document::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     info.addMember(m_prerenderer);
 #endif
     info.addMember(m_listsInvalidatedAtDocument);
-}
-
-class ImmutableAttributeDataCacheKey {
-public:
-    ImmutableAttributeDataCacheKey(const Attribute* attributes, unsigned attributeCount)
-        : m_attributes(attributes)
-        , m_attributeCount(attributeCount)
-    { }
-
-    bool operator!=(const ImmutableAttributeDataCacheKey& other) const
-    {
-        if (m_attributeCount != other.m_attributeCount)
-            return true;
-        return memcmp(m_attributes, other.m_attributes, sizeof(Attribute) * m_attributeCount);
-    }
-
-    unsigned hash() const
-    {
-        return StringHasher::hashMemory(m_attributes, m_attributeCount * sizeof(Attribute));
-    }
-
-private:
-    const Attribute* m_attributes;
-    unsigned m_attributeCount;
-};
-
-struct ImmutableAttributeDataCacheEntry {
-    ImmutableAttributeDataCacheEntry(const ImmutableAttributeDataCacheKey& k, PassRefPtr<ElementAttributeData> v)
-        : key(k)
-        , value(v)
-    { }
-
-    ImmutableAttributeDataCacheKey key;
-    RefPtr<ElementAttributeData> value;
-};
-
-PassRefPtr<ElementAttributeData> Document::cachedImmutableAttributeData(const Vector<Attribute>& attributes)
-{
-    ASSERT(!attributes.isEmpty());
-
-    ImmutableAttributeDataCacheKey cacheKey(attributes.data(), attributes.size());
-    unsigned cacheHash = cacheKey.hash();
-
-    ImmutableAttributeDataCache::iterator cacheIterator = m_immutableAttributeDataCache.add(cacheHash, nullptr).iterator;
-    if (cacheIterator->value && cacheIterator->value->key != cacheKey)
-        cacheHash = 0;
-
-    RefPtr<ElementAttributeData> attributeData;
-    if (cacheHash && cacheIterator->value)
-        attributeData = cacheIterator->value->value;
-    else
-        attributeData = ElementAttributeData::createImmutable(attributes);
-
-    if (!cacheHash || cacheIterator->value)
-        return attributeData.release();
-
-    cacheIterator->value = adoptPtr(new ImmutableAttributeDataCacheEntry(ImmutableAttributeDataCacheKey(attributeData->immutableAttributeArray(), attributeData->length()), attributeData));
-
-    return attributeData.release();
 }
 
 bool Document::haveStylesheetsLoaded() const

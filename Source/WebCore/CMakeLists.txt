@@ -1145,6 +1145,7 @@ SET(WebCore_SOURCES
     dom/DocumentFragment.cpp
     dom/DocumentParser.cpp
     dom/DocumentOrderedMap.cpp
+    dom/DocumentSharedObjectPool.cpp
     dom/DocumentStyleSheetCollection.cpp
     dom/DocumentType.cpp
     dom/Element.cpp

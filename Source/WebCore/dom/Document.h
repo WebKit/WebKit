@@ -77,11 +77,11 @@ class DocumentFragment;
 class DocumentLoader;
 class DocumentMarkerController;
 class DocumentParser;
+class DocumentSharedObjectPool;
 class DocumentStyleSheetCollection;
 class DocumentType;
 class DocumentWeakReference;
 class Element;
-class ElementAttributeData;
 class EntityReference;
 class Event;
 class EventListener;
@@ -205,9 +205,6 @@ enum NodeListInvalidationType {
     InvalidateOnAnyAttrChange,
 };
 const int numNodeListInvalidationTypes = InvalidateOnAnyAttrChange + 1;
-
-struct ImmutableAttributeDataCacheEntry;
-typedef HashMap<unsigned, OwnPtr<ImmutableAttributeDataCacheEntry>, AlreadyHashed> ImmutableAttributeDataCache;
 
 class Document : public ContainerNode, public TreeScope, public ScriptExecutionContext {
 public:
@@ -1153,7 +1150,7 @@ public:
 
     virtual void reportMemoryUsage(MemoryObjectInfo*) const OVERRIDE;
 
-    PassRefPtr<ElementAttributeData> cachedImmutableAttributeData(const Vector<Attribute>&);
+    DocumentSharedObjectPool* sharedObjectPool() { return m_sharedObjectPool.get(); }
 
     void didRemoveAllPendingStylesheet();
     void setNeedsNotifyRemoveAllPendingStylesheet() { m_needsNotifyRemoveAllPendingStylesheet = true; }
@@ -1515,7 +1512,10 @@ private:
     RefPtr<DOMSecurityPolicy> m_domSecurityPolicy;
 #endif
 
-    ImmutableAttributeDataCache m_immutableAttributeDataCache;
+    void sharedObjectPoolClearTimerFired(Timer<Document>*);
+    Timer<Document> m_sharedObjectPoolClearTimer;
+
+    OwnPtr<DocumentSharedObjectPool> m_sharedObjectPool;
 
 #ifndef NDEBUG
     bool m_didDispatchViewportPropertiesChanged;
