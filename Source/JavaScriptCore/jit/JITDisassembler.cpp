@@ -79,7 +79,7 @@ void JITDisassembler::dumpForInstructions(PrintStream& out, LinkBuffer& linkBuff
             continue;
         }
         out.print(prefix);
-        m_codeBlock->dumpBytecode(i);
+        m_codeBlock->dumpBytecode(out, i);
         for (unsigned nextIndex = i + 1; ; nextIndex++) {
             if (nextIndex >= labels.size()) {
                 dumpDisassembly(out, linkBuffer, labels[i], endLabel);

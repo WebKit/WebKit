@@ -79,7 +79,7 @@
 
 // Set ENABLE_BYTECODE_COMMENTS to 1 to enable recording bytecode generator
 // comments for the bytecodes that it generates. This will allow
-// CodeBlock::dump() to provide some contextual info about the bytecodes.
+// CodeBlock::dumpBytecode() to provide some contextual info about the bytecodes.
 //
 // The way this comment system works is as follows:
 // 1. The BytecodeGenerator calls prependComment() with a constant comment
@@ -89,7 +89,7 @@
 //    prepended comment will be recorded with the PC of the opcode being
 //    emitted. This comment is being recorded in the CodeBlock's
 //    m_bytecodeComments.
-// 3. When CodeBlock::dump() is called, it will pair up the comments with
+// 3. When CodeBlock::dumpBytecode() is called, it will pair up the comments with
 //    their corresponding bytecodes based on the bytecode and comment's
 //    PC. If a matching pair is found, the comment will be printed after
 //    the bytecode. If not, no comment is printed.
@@ -166,10 +166,10 @@ namespace JSC {
 
         static void dumpStatistics();
 
-        void dumpBytecode();
-        void dumpBytecode(unsigned bytecodeOffset);
-        void printStructures(const Instruction*);
-        void printStructure(const char* name, const Instruction*, int operand);
+        void dumpBytecode(PrintStream& = WTF::dataFile());
+        void dumpBytecode(PrintStream&, unsigned bytecodeOffset);
+        void printStructures(PrintStream&, const Instruction*);
+        void printStructure(PrintStream&, const char* name, const Instruction*, int operand);
 
         bool isStrictMode() const { return m_isStrictMode; }
 
@@ -189,10 +189,10 @@ namespace JSC {
             return index >= m_numVars;
         }
 
-        void dumpBytecodeCommentAndNewLine(int location);
+        void dumpBytecodeCommentAndNewLine(PrintStream&, int location);
 #if ENABLE(BYTECODE_COMMENTS)
-        const char* commentForBytecodeOffset(unsigned bytecodeOffset);
-        void dumpBytecodeComments();
+        const char* commentForBytecodeOffset(PrintStream&, unsigned bytecodeOffset);
+        void dumpBytecodeComments(PrintStream&);
 #endif
 
         HandlerInfo* handlerForBytecodeOffset(unsigned bytecodeOffset);
@@ -1215,17 +1215,17 @@ namespace JSC {
                 m_constantRegisters[i].set(*m_globalData, ownerExecutable(), constants[i].get());
         }
 
-        void dumpBytecode(ExecState*, const Instruction* begin, const Instruction*&);
+        void dumpBytecode(PrintStream&, ExecState*, const Instruction* begin, const Instruction*&);
 
         CString registerName(ExecState*, int r) const;
-        void printUnaryOp(ExecState*, int location, const Instruction*&, const char* op);
-        void printBinaryOp(ExecState*, int location, const Instruction*&, const char* op);
-        void printConditionalJump(ExecState*, const Instruction*, const Instruction*&, int location, const char* op);
-        void printGetByIdOp(ExecState*, int location, const Instruction*&);
-        void printGetByIdCacheStatus(ExecState*, int location);
+        void printUnaryOp(PrintStream&, ExecState*, int location, const Instruction*&, const char* op);
+        void printBinaryOp(PrintStream&, ExecState*, int location, const Instruction*&, const char* op);
+        void printConditionalJump(PrintStream&, ExecState*, const Instruction*, const Instruction*&, int location, const char* op);
+        void printGetByIdOp(PrintStream&, ExecState*, int location, const Instruction*&);
+        void printGetByIdCacheStatus(PrintStream&, ExecState*, int location);
         enum CacheDumpMode { DumpCaches, DontDumpCaches };
-        void printCallOp(ExecState*, int location, const Instruction*&, const char* op, CacheDumpMode);
-        void printPutByIdOp(ExecState*, int location, const Instruction*&, const char* op);
+        void printCallOp(PrintStream&, ExecState*, int location, const Instruction*&, const char* op, CacheDumpMode);
+        void printPutByIdOp(PrintStream&, ExecState*, int location, const Instruction*&, const char* op);
         void visitStructures(SlotVisitor&, Instruction* vPC);
         
 #if ENABLE(DFG_JIT)
