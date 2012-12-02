@@ -30,7 +30,7 @@ import unittest
 
 from webkitpy.common.system.systemhost_mock import MockSystemHost
 
-from .profiler import ProfilerFactory, Instruments, GooglePProf
+from .profiler import ProfilerFactory, GooglePProf
 
 
 class ProfilerFactoryTest(unittest.TestCase):
@@ -39,7 +39,7 @@ class ProfilerFactoryTest(unittest.TestCase):
         self.assertFalse(host.filesystem.exists("/tmp/output"))
         profiler = ProfilerFactory.create_profiler(host, '/bin/executable', '/tmp/output')
         self.assertTrue(host.filesystem.exists("/tmp/output"))
-        self.assertEquals(profiler._output_path, "/tmp/output/test.trace")
+        self.assertEquals(profiler._output_path, "/tmp/output/test.dtps")
 
         host.platform.os_name = 'linux'
         profiler = ProfilerFactory.create_profiler(host, '/bin/executable', '/tmp/output')
