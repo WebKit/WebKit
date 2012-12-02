@@ -1,3 +1,34 @@
+2012-12-02  Elliott Sprehn  <esprehn@gmail.com>
+
+        documentElement should not always get a renderer
+        https://bugs.webkit.org/show_bug.cgi?id=103475
+
+        Reviewed by Ojan Vafai.
+
+        Only SVG documents need a renderer on the documentElement when it's
+        display: none. This behavior is wrong, but there's assumptions in
+        FrameView and SVGImage that depend on a RenderSVGRoot existing for all
+        loaded SVG document and images.
+
+        The current code has logic that makes it appear as if we always create
+        a renderer for the documentElement even when it's display: none, but
+        because HTMLElement::createRenderer doesn't call super we end up with
+        HTMLElement::rendererIsNeeded returning true for display: none, but
+        HTMLElement::createRenderer returning null.
+
+        Instead of this generic documentElement logic only special case SVG
+        until someone can fix Bug 103493 so we don't need it.
+
+        Test: fast/css/display-none-documentElement.html
+
+        * dom/Element.cpp:
+        (WebCore::Element::rendererIsNeeded):
+        (WebCore::Element::createRenderer):
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::rendererIsNeeded):
+        * svg/SVGSVGElement.h:
+        (SVGSVGElement):
+
 2012-12-02  Pan Deng  <pan.deng@intel.com>
 
         [Resource Timing] implementation of cross origin resouce timing restrictions.

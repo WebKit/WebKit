@@ -1054,18 +1054,11 @@ const QualifiedName& Element::imageSourceAttributeName() const
 
 bool Element::rendererIsNeeded(const NodeRenderingContext& context)
 {
-    return (document()->documentElement() == this) || (context.style()->display() != NONE);
+    return context.style()->display() != NONE;
 }
 
-RenderObject* Element::createRenderer(RenderArena* arena, RenderStyle* style)
+RenderObject* Element::createRenderer(RenderArena*, RenderStyle* style)
 {
-    if (document()->documentElement() == this && style->display() == NONE) {
-        // Ignore display: none on root elements.  Force a display of block in that case.
-        RenderBlock* result = new (arena) RenderBlock(this);
-        if (result)
-            result->setAnimatableStyle(style);
-        return result;
-    }
     return RenderObject::createObject(this, style);
 }
 

@@ -1,3 +1,15 @@
+2012-12-02  Elliott Sprehn  <esprehn@gmail.com>
+
+        documentElement should not always get a renderer
+        https://bugs.webkit.org/show_bug.cgi?id=103475
+
+        Reviewed by Ojan Vafai.
+
+        Test that using display: none on the documentElement hides the document.
+
+        * fast/css/display-none-documentElement-expected.html: Added.
+        * fast/css/display-none-documentElement.html: Added.
+
 2012-12-02  Pan Deng  <pan.deng@intel.com>
 
         [Resource Timing]Test cases of cross origin resource timing.
