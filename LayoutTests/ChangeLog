@@ -1,3 +1,15 @@
+2012-12-02  Robert Hogan  <robert@webkit.org>
+
+        Bad rendering of web page because of image's height is set to 100%
+        https://bugs.webkit.org/show_bug.cgi?id=28035
+
+        Reviewed by Eric Seidel.
+
+        * fast/css/computed-image-width-with-percent-height-expected.html: Added.
+        * fast/css/computed-image-width-with-percent-height-quirksmode-expected.html: Added.
+        * fast/css/computed-image-width-with-percent-height-quirksmode.html: Added.
+        * fast/css/computed-image-width-with-percent-height.html: Added.
+
 2012-12-02  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSS Regions] regionlayoutupdate event fires continuously
