@@ -1,3 +1,25 @@
+2012-12-02  Tony Chang  <tony@chromium.org>
+
+        Avoid a second layout of flex items in layoutAndPlaceChildren()
+        https://bugs.webkit.org/show_bug.cgi?id=102352
+
+        Reviewed by Ojan Vafai.
+
+        Avoid doing a second layout if we're going to get the same size as before.
+        This prevents us from doing an exponential number of layouts in some
+        common cases.
+
+        Test: css3/flexbox/stretch-after-sibling-size-change.html
+
+        * html/shadow/SliderThumbElement.cpp:
+        (WebCore::RenderSliderContainer::layout): Force a layout of the track, which positions the thumb.
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::needToStretchChild): Determine if a child is going to stretch.
+        (WebCore::RenderFlexibleBox::resetAutoMarginsAndLogicalTopInCrossAxis): Makes sure we're in a consistent state before
+        we apply auto margins.
+        (WebCore::RenderFlexibleBox::layoutAndPlaceChildren):
+        * rendering/RenderFlexibleBox.h: Add needToStretchChild.
+
 2012-12-02  Yongjun Zhang  <yongjun_zhang@apple.com>
 
         Need a method to close all idle localstorage databases immediately.

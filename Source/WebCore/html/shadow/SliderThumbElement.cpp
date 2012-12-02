@@ -178,10 +178,13 @@ void RenderSliderContainer::layout()
     }
 
     RenderBox* thumb = 0;
+    RenderBox* track = 0;
     if (input->sliderThumbElement() && input->sliderThumbElement()->renderer()) {
         thumb = toRenderBox(input->sliderThumbElement()->renderer());
-        // Reset the thumb location before layout.
-        thumb->setLocation(LayoutPoint());
+        track = toRenderBox(thumb->parent());
+        // Force a layout to reset the position of the thumb so the code below doesn't move the thumb to the wrong place.
+        // FIXME: Make a custom Render class for the track and move the thumb positioning code there.
+        track->setChildNeedsLayout(true, MarkOnlyThis);
     }
 
     RenderFlexibleBox::layout();
@@ -190,7 +193,6 @@ void RenderSliderContainer::layout()
     // These should always exist, unless someone mutates the shadow DOM (e.g., in the inspector).
     if (!thumb)
         return;
-    RenderBox* track = toRenderBox(thumb->parent());
 
     double percentageOffset = sliderPosition(input).toDouble();
     LayoutUnit availableExtent = isVertical ? track->contentHeight() : track->contentWidth();

@@ -134,6 +134,8 @@ private:
     bool resolveFlexibleLengths(FlexSign, const OrderedFlexItemList&, LayoutUnit& availableFreeSpace, double& totalFlexGrow, double& totalWeightedFlexShrink, InflexibleFlexItemSize&, WTF::Vector<LayoutUnit>& childSizes);
     void freezeViolations(const WTF::Vector<Violation>&, LayoutUnit& availableFreeSpace, double& totalFlexGrow, double& totalWeightedFlexShrink, InflexibleFlexItemSize&);
 
+    void resetAutoMarginsAndLogicalTopInCrossAxis(RenderBox*);
+    bool needToStretchChild(RenderBox*);
     void setLogicalOverrideSize(RenderBox* child, LayoutUnit childPreferredSize);
     void prepareChildForPositionedLayout(RenderBox* child, LayoutUnit mainAxisOffset, LayoutUnit crossAxisOffset, PositionedLayoutMode);
     size_t numberOfInFlowPositionedChildren(const OrderedFlexItemList&) const;
