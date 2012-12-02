@@ -146,6 +146,7 @@ public:
 
     bool hasOpaqueImage(const RenderObject*) const;
     bool hasRepeatXY() const;
+    bool clipOccludesNextLayers(bool firstLayer) const;
 
     EFillLayerType type() const { return static_cast<EFillLayerType>(m_type); }
 
@@ -167,6 +168,8 @@ public:
 
 private:
     friend class RenderStyle;
+
+    void computeClipMax() const;
 
     FillLayer() { }
 
@@ -198,6 +201,8 @@ private:
     unsigned m_compositeSet : 1;
     
     unsigned m_type : 1; // EFillLayerType
+
+    mutable unsigned m_clipMax : 2; // EFillBox, maximum m_clip value from this to bottom layer
 };
 
 } // namespace WebCore

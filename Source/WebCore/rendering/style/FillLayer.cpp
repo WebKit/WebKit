@@ -258,6 +258,33 @@ void FillLayer::cullEmptyLayers()
     }
 }
 
+static EFillBox clipMax(EFillBox clipA, EFillBox clipB)
+{
+    if (clipA == BorderFillBox || clipB == BorderFillBox)
+        return BorderFillBox;
+    if (clipA == PaddingFillBox || clipB == PaddingFillBox)
+        return PaddingFillBox;
+    if (clipA == ContentFillBox || clipB == ContentFillBox)
+        return ContentFillBox;
+    return TextFillBox;
+}
+
+void FillLayer::computeClipMax() const
+{
+    if (m_next) {
+        m_next->computeClipMax();
+        m_clipMax = clipMax(clip(), m_next->clip());
+    } else
+        m_clipMax = m_clip;
+}
+
+bool FillLayer::clipOccludesNextLayers(bool firstLayer) const
+{
+    if (firstLayer)
+        computeClipMax();
+    return m_clip == m_clipMax;
+}
+
 bool FillLayer::containsImage(StyleImage* s) const
 {
     if (!s)

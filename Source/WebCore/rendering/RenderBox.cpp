@@ -1048,18 +1048,25 @@ LayoutRect RenderBox::maskClipRect()
 void RenderBox::paintFillLayers(const PaintInfo& paintInfo, const Color& c, const FillLayer* fillLayer, const LayoutRect& rect,
     BackgroundBleedAvoidance bleedAvoidance, CompositeOperator op, RenderObject* backgroundObject)
 {
-    if (!fillLayer)
-        return;
+    Vector<const FillLayer*, 8> layers;
+    const FillLayer* curLayer = fillLayer;
+    while (curLayer) {
+        layers.append(curLayer);
+        // Stop traversal when an opaque layer is encountered.
+        // FIXME : It would be possible for the following occlusion culling test to be more aggressive 
+        // on layers with no repeat by testing whether the image covers the layout rect.
+        // Testing that here would imply duplicating a lot of calculations that are currently done in
+        // RenderBoxModelOBject::paintFillLayerExtended. A more efficient solution might be to move
+        // the layer recursion into paintFillLayerExtended, or to compute the layer geometry here
+        // and pass it down.
+        if (curLayer->hasOpaqueImage(this) && curLayer->clipOccludesNextLayers(curLayer == fillLayer) && curLayer->image()->canRender(this, style()->effectiveZoom()) && curLayer->hasRepeatXY())
+            break;
+        curLayer = curLayer->next();
+    }
 
-    // FIXME : It would be possible for the following occlusion culling test to be more aggressive 
-    // on layers with no repeat by testing whether the image covers the layout rect.
-    // Testing that here would imply duplicating a lot of calculations that are currently done in
-    // RenderBoxModelOBject::paintFillLayerExtended. A more efficient solution might be to move
-    // the layer recursion into paintFillLayerExtended, or to compute the layer geometry here
-    // and pass it down.
-    if (fillLayer->next() && (!fillLayer->hasOpaqueImage(this) || !fillLayer->image()->canRender(this, style()->effectiveZoom()) || !fillLayer->hasRepeatXY()))
-        paintFillLayers(paintInfo, c, fillLayer->next(), rect, bleedAvoidance, op, backgroundObject);
-    paintFillLayer(paintInfo, c, fillLayer, rect, bleedAvoidance, op, backgroundObject);
+    Vector<const FillLayer*>::const_reverse_iterator topLayer = layers.rend();
+    for (Vector<const FillLayer*>::const_reverse_iterator it = layers.rbegin(); it != topLayer; ++it)
+        paintFillLayer(paintInfo, c, *it, rect, bleedAvoidance, op, backgroundObject);
 }
 
 void RenderBox::paintFillLayer(const PaintInfo& paintInfo, const Color& c, const FillLayer* fillLayer, const LayoutRect& rect,
