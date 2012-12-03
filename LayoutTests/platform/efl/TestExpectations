@@ -394,6 +394,7 @@ webkit.org/b/94110 fast/css3-text/css3-text-decoration/text-decoration-style.htm
 
 # CSS3 Background is not yet enabled (needs ENABLE_CSS3_BACKGROUND).
 webkit.org/b/37514 fast/backgrounds/background-position-parsing-2.html [ Text ]
+webkit.org/b/37514 fast/backgrounds/background-position-rendering.html [ Image ]
 
 # Perf tests are really slow in debug builds and there are few benefits in running them.
 [ Debug ] perf [ WontFix ]

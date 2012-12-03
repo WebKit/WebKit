@@ -1002,6 +1002,7 @@ webkit.org/b/76173 fast/css3-text/css3-text-align-last
 
 # CSS3 Background is not yet enabled (needs ENABLE_CSS3_BACKGROUND).
 webkit.org/b/37514 fast/backgrounds/background-position-parsing-2.html [ Text ]
+webkit.org/b/37514 fast/backgrounds/background-position-rendering.html [ Image ]
 
 # Our slow tests, in alphabetical order.
 webkit.org/b/57672 http/tests/local/fileapi/send-sliced-dragged-file.html [ Failure Pass ]

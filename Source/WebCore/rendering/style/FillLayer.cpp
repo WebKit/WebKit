@@ -34,7 +34,11 @@ struct SameSizeAsFillLayer {
 
     LengthSize m_sizeLength;
 
-    unsigned m_bitfields;
+    unsigned m_bitfields: 32;
+
+#if ENABLE(CSS3_BACKGROUND)
+    unsigned m_bitfields2: 1;
+#endif
 };
 
 COMPILE_ASSERT(sizeof(FillLayer) == sizeof(SameSizeAsFillLayer), FillLayer_should_stay_small);
@@ -60,6 +64,11 @@ FillLayer::FillLayer(EFillLayerType type)
     , m_repeatYSet(false)
     , m_xPosSet(false)
     , m_yPosSet(false)
+#if ENABLE(CSS3_BACKGROUND)
+    , m_backgroundOriginSet(false)
+    , m_backgroundXOrigin(LeftEdge)
+    , m_backgroundYOrigin(TopEdge)
+#endif
     , m_compositeSet(type == MaskFillLayer)
     , m_type(type)
 {
@@ -86,6 +95,11 @@ FillLayer::FillLayer(const FillLayer& o)
     , m_repeatYSet(o.m_repeatYSet)
     , m_xPosSet(o.m_xPosSet)
     , m_yPosSet(o.m_yPosSet)
+#if ENABLE(CSS3_BACKGROUND)
+    , m_backgroundOriginSet(o.m_backgroundOriginSet)
+    , m_backgroundXOrigin(o.m_backgroundXOrigin)
+    , m_backgroundYOrigin(o.m_backgroundYOrigin)
+#endif
     , m_compositeSet(o.m_compositeSet)
     , m_type(o.m_type)
 {
@@ -106,6 +120,11 @@ FillLayer& FillLayer::operator=(const FillLayer& o)
     m_image = o.m_image;
     m_xPosition = o.m_xPosition;
     m_yPosition = o.m_yPosition;
+#if ENABLE(CSS3_BACKGROUND)
+    m_backgroundXOrigin = o.m_backgroundXOrigin;
+    m_backgroundYOrigin = o.m_backgroundYOrigin;
+    m_backgroundOriginSet = o.m_backgroundOriginSet;
+#endif
     m_sizeLength = o.m_sizeLength;
     m_attachment = o.m_attachment;
     m_clip = o.m_clip;
@@ -134,11 +153,14 @@ bool FillLayer::operator==(const FillLayer& o) const
 {
     // We do not check the "isSet" booleans for each property, since those are only used during initial construction
     // to propagate patterns into layers.  All layer comparisons happen after values have all been filled in anyway.
-    return StyleImage::imagesEquivalent(m_image.get(), o.m_image.get()) && m_xPosition == o.m_xPosition && m_yPosition == o.m_yPosition &&
-           m_attachment == o.m_attachment && m_clip == o.m_clip && 
-           m_composite == o.m_composite && m_origin == o.m_origin && m_repeatX == o.m_repeatX &&
-           m_repeatY == o.m_repeatY && m_sizeType == o.m_sizeType && m_sizeLength == o.m_sizeLength && 
-           m_type == o.m_type && ((m_next && o.m_next) ? *m_next == *o.m_next : m_next == o.m_next);
+    return StyleImage::imagesEquivalent(m_image.get(), o.m_image.get()) && m_xPosition == o.m_xPosition && m_yPosition == o.m_yPosition
+#if ENABLE(CSS3_BACKGROUND)
+            && m_backgroundXOrigin == o.m_backgroundXOrigin && m_backgroundYOrigin == o.m_backgroundYOrigin
+#endif
+            && m_attachment == o.m_attachment && m_clip == o.m_clip
+            && m_composite == o.m_composite && m_origin == o.m_origin && m_repeatX == o.m_repeatX
+            && m_repeatY == o.m_repeatY && m_sizeType == o.m_sizeType && m_sizeLength == o.m_sizeLength
+            && m_type == o.m_type && ((m_next && o.m_next) ? *m_next == *o.m_next : m_next == o.m_next);
 }
 
 void FillLayer::fillUnsetProperties()
@@ -149,6 +171,12 @@ void FillLayer::fillUnsetProperties()
         // We need to fill in the remaining values with the pattern specified.
         for (FillLayer* pattern = this; curr; curr = curr->next()) {
             curr->m_xPosition = pattern->m_xPosition;
+#if ENABLE(CSS3_BACKGROUND)
+            if (pattern->isBackgroundOriginSet()) {
+                curr->m_backgroundXOrigin = pattern->m_backgroundXOrigin;
+                curr->m_backgroundYOrigin = pattern->m_backgroundYOrigin;
+            }
+#endif
             pattern = pattern->next();
             if (pattern == curr || !pattern)
                 pattern = this;
@@ -160,12 +188,18 @@ void FillLayer::fillUnsetProperties()
         // We need to fill in the remaining values with the pattern specified.
         for (FillLayer* pattern = this; curr; curr = curr->next()) {
             curr->m_yPosition = pattern->m_yPosition;
+#if ENABLE(CSS3_BACKGROUND)
+            if (pattern->isBackgroundOriginSet()) {
+                curr->m_backgroundXOrigin = pattern->m_backgroundXOrigin;
+                curr->m_backgroundYOrigin = pattern->m_backgroundYOrigin;
+            }
+#endif
             pattern = pattern->next();
             if (pattern == curr || !pattern)
                 pattern = this;
         }
     }
-    
+
     for (curr = this; curr && curr->isAttachmentSet(); curr = curr->next()) { }
     if (curr && curr != this) {
         // We need to fill in the remaining values with the pattern specified.

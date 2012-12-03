@@ -335,6 +335,7 @@ webkit.org/b/76173 fast/css3-text/css3-text-align-last
 
 # CSS3 Background is not yet enabled (needs ENABLE_CSS3_BACKGROUND).
 webkit.org/b/37514 fast/backgrounds/background-position-parsing-2.html [ Text ]
+webkit.org/b/37514 fast/backgrounds/background-position-rendering.html [ Image ]
 
 # Web Inspector: Implement support for InspectorClient::overrideDeviceMetrics() in platforms other than Chromium
 # https://bugs.webkit.org/show_bug.cgi?id=82886

@@ -20,6 +20,9 @@ style.backgroundImage = "url(resources/diamond.png)";
 style.backgroundRepeat = "no-repeat";
 
 debug("background-position with one value");
+// Initial test.
+shouldBe("computedStyle.backgroundPosition", "'0% 0%'");
+
 style.backgroundPosition = "70%";
 // Second value is assuming to be 'center'
 shouldBe("style.backgroundPosition", "'70% 50%'");
@@ -208,192 +211,196 @@ debug("background-position with CSS3 four values");
 style.backgroundImage = "url(resources/diamond.png)";
 style.backgroundPosition = "left 10px top 15px";
 shouldBe("style.backgroundPosition", "'left 10px top 15px'");
-//shouldBe("computedStyle.backgroundPosition", "'left 10px top 15px'");
+shouldBe("computedStyle.backgroundPosition", "'left 10px top 15px'");
 
 style.backgroundPosition = "left 10% top 30%";
 shouldBe("style.backgroundPosition", "'left 10% top 30%'");
-//shouldBe("computedStyle.backgroundPosition", "'left 10% top 30%'");
+shouldBe("computedStyle.backgroundPosition", "'left 10% top 30%'");
 
 style.backgroundPosition = "top 10% left 30%";
 shouldBe("style.backgroundPosition", "'left 30% top 10%'");
-//shouldBe("computedStyle.backgroundPosition", "'left 30% top 10%'");
+shouldBe("computedStyle.backgroundPosition", "'left 30% top 10%'");
 
 style.backgroundPosition = "right top 15px";
 shouldBe("style.backgroundPosition", "'right 0% top 15px'");
-//shouldBe("computedStyle.backgroundPosition", "'right 0% top 15px'");
+shouldBe("computedStyle.backgroundPosition", "'right 0% top 15px'");
 
 style.backgroundPosition = "left 10px center";
 shouldBe("style.backgroundPosition", "'left 10px top 50%'");
-//shouldBe("computedStyle.backgroundPosition", "'left 10px top 50%'");
+shouldBe("computedStyle.backgroundPosition", "'left 10px top 50%'");
 
 style.backgroundPosition = "center top 20px";
 shouldBe("style.backgroundPosition", "'left 50% top 20px'");
-//shouldBe("computedStyle.backgroundPosition", "'left 50% top 20px'");
+shouldBe("computedStyle.backgroundPosition", "'left 50% top 20px'");
 
 style.backgroundPosition = "top 20px center";
 shouldBe("style.backgroundPosition", "'left 50% top 20px'");
-//shouldBe("computedStyle.backgroundPosition", "'left 50% top 20px'");
+shouldBe("computedStyle.backgroundPosition", "'left 50% top 20px'");
 
 style.backgroundPosition = "center left 30px";
 shouldBe("style.backgroundPosition", "'left 30px top 50%'");
-//shouldBe("computedStyle.backgroundPosition", "'left 30px top 50%'");
+shouldBe("computedStyle.backgroundPosition", "'left 30px top 50%'");
+
+style.backgroundPosition = "";
+shouldBe("style.backgroundPosition", "''");
+shouldBe("computedStyle.backgroundPosition", "'0% 0%'");
 
 style.backgroundPosition = "left 20% top";
 shouldBe("style.backgroundPosition", "'left 20% top 0%'");
-//shouldBe("computedStyle.backgroundPosition", "'left 20% top 0%'");
+shouldBe("computedStyle.backgroundPosition", "'left 20% top 0%'");
 
 debug("background-position with CSS3 invalid four values, no change expected");
 style.backgroundPosition = "left center top";
 shouldBe("style.backgroundPosition", "'left 20% top 0%'");
-//shouldBe("computedStyle.backgroundPosition", "'left 20% top 0%'");
+shouldBe("computedStyle.backgroundPosition", "'left 20% top 0%'");
 
 style.backgroundPosition = "0px right top";
 shouldBe("style.backgroundPosition", "'left 20% top 0%'");
-//shouldBe("computedStyle.backgroundPosition", "'left 20% top 0%'");
+shouldBe("computedStyle.backgroundPosition", "'left 20% top 0%'");
 
 style.backgroundPosition = "left center top center";
 shouldBe("style.backgroundPosition", "'left 20% top 0%'");
-//shouldBe("computedStyle.backgroundPosition", "'left 20% top 0%'");
+shouldBe("computedStyle.backgroundPosition", "'left 20% top 0%'");
 
 style.backgroundPosition = "left center top 20%";
 shouldBe("style.backgroundPosition", "'left 20% top 0%'");
-//shouldBe("computedStyle.backgroundPosition", "'left 20% top 0%'");
+shouldBe("computedStyle.backgroundPosition", "'left 20% top 0%'");
 
 style.backgroundPosition = "center bottom top 20%";
 shouldBe("style.backgroundPosition", "'left 20% top 0%'");
-//shouldBe("computedStyle.backgroundPosition", "'left 20% top 0%'");
+shouldBe("computedStyle.backgroundPosition", "'left 20% top 0%'");
 
 style.backgroundPosition = "right bottom top";
 shouldBe("style.backgroundPosition", "'left 20% top 0%'");
-//shouldBe("computedStyle.backgroundPosition", "'left 20% top 0%'");
+shouldBe("computedStyle.backgroundPosition", "'left 20% top 0%'");
 
 style.backgroundPosition = "right bottom solid";
 shouldBe("style.backgroundPosition", "'left 20% top 0%'");
-//shouldBe("computedStyle.backgroundPosition", "'left 20% top 0%'");
+shouldBe("computedStyle.backgroundPosition", "'left 20% top 0%'");
 
 style.backgroundPosition = "20px bottom top";
 shouldBe("style.backgroundPosition", "'left 20% top 0%'");
-//shouldBe("computedStyle.backgroundPosition", "'left 20% top 0%'");
+shouldBe("computedStyle.backgroundPosition", "'left 20% top 0%'");
 
 style.backgroundPosition = "20px bottom hidden";
 shouldBe("style.backgroundPosition", "'left 20% top 0%'");
-//shouldBe("computedStyle.backgroundPosition", "'left 20% top 0%'");
+shouldBe("computedStyle.backgroundPosition", "'left 20% top 0%'");
 
 style.backgroundPosition = "solid dotted bottom top";
 shouldBe("style.backgroundPosition", "'left 20% top 0%'");
-//shouldBe("computedStyle.backgroundPosition", "'left 20% top 0%'");
+shouldBe("computedStyle.backgroundPosition", "'left 20% top 0%'");
 
 style.backgroundPosition = "top top top top";
 shouldBe("style.backgroundPosition", "'left 20% top 0%'");
-//shouldBe("computedStyle.backgroundPosition", "'left 20% top 0%'");
+shouldBe("computedStyle.backgroundPosition", "'left 20% top 0%'");
 
 style.backgroundPosition = "left 0px right 20%";
 shouldBe("style.backgroundPosition", "'left 20% top 0%'");
-//shouldBe("computedStyle.backgroundPosition", "'left 20% top 0%'");
+shouldBe("computedStyle.backgroundPosition", "'left 20% top 0%'");
 
 style.backgroundPosition = "left 30% top 20% center";
 shouldBe("style.backgroundPosition", "'left 20% top 0%'");
-//shouldBe("computedStyle.backgroundPosition", "'left 20% top 0%'");
+shouldBe("computedStyle.backgroundPosition", "'left 20% top 0%'");
 
 style.backgroundPosition = "20px 30% bottom";
 shouldBe("style.backgroundPosition", "'left 20% top 0%'");
-//shouldBe("computedStyle.backgroundPosition", "'left 20% top 0%'");
+shouldBe("computedStyle.backgroundPosition", "'left 20% top 0%'");
 
 style.backgroundPosition = "top 0px bottom";
 shouldBe("style.backgroundPosition", "'left 20% top 0%'");
-//shouldBe("computedStyle.backgroundPosition", "'left 20% top 0%'");
+shouldBe("computedStyle.backgroundPosition", "'left 20% top 0%'");
 
 style.backgroundPosition = "left 0px right";
 shouldBe("style.backgroundPosition", "'left 20% top 0%'");
-//shouldBe("computedStyle.backgroundPosition", "'left 20% top 0%'");
+shouldBe("computedStyle.backgroundPosition", "'left 20% top 0%'");
 
 style.backgroundPosition = "top 0px bottom 30px top";
 shouldBe("style.backgroundPosition", "'left 20% top 0%'");
-//shouldBe("computedStyle.backgroundPosition", "'left 20% top 0%'");
+shouldBe("computedStyle.backgroundPosition", "'left 20% top 0%'");
 
 style.backgroundPosition = "left 10px center 15px";
 shouldBe("style.backgroundPosition", "'left 20% top 0%'");
-//shouldBe("computedStyle.backgroundPosition", "'left 20% top 0%'");
+shouldBe("computedStyle.backgroundPosition", "'left 20% top 0%'");
 
 style.backgroundPosition = "left 10px top center";
 shouldBe("style.backgroundPosition", "'left 20% top 0%'");
-//shouldBe("computedStyle.backgroundPosition", "'left 20% top 0%'");
+shouldBe("computedStyle.backgroundPosition", "'left 20% top 0%'");
 
 style.backgroundPosition = "center right top 20px";
 shouldBe("style.backgroundPosition", "'left 20% top 0%'");
-//shouldBe("computedStyle.backgroundPosition", "'left 20% top 0%'");
+shouldBe("computedStyle.backgroundPosition", "'left 20% top 0%'");
 
 style.backgroundPosition = "center 10px center 10px";
 shouldBe("style.backgroundPosition", "'left 20% top 0%'");
-//shouldBe("computedStyle.backgroundPosition", "'left 20% top 0%'");
+shouldBe("computedStyle.backgroundPosition", "'left 20% top 0%'");
 
 style.backgroundPosition = "top center center";
 shouldBe("style.backgroundPosition", "'left 20% top 0%'");
-//shouldBe("computedStyle.backgroundPosition", "'left 20% top 0%'");
+shouldBe("computedStyle.backgroundPosition", "'left 20% top 0%'");
 
 style.backgroundPosition = "center 10px center";
 shouldBe("style.backgroundPosition", "'left 20% top 0%'");
-//shouldBe("computedStyle.backgroundPosition", "'left 20% top 0%'");
+shouldBe("computedStyle.backgroundPosition", "'left 20% top 0%'");
 
 style.backgroundPosition = "center center 10px";
 shouldBe("style.backgroundPosition", "'left 20% top 0%'");
-//shouldBe("computedStyle.backgroundPosition", "'left 20% top 0%'");
+shouldBe("computedStyle.backgroundPosition", "'left 20% top 0%'");
 
 style.backgroundPosition = "center 0px left 20%";
 shouldBe("style.backgroundPosition", "'left 20% top 0%'");
-//shouldBe("computedStyle.backgroundPosition", "'left 20% top 0%'");
+shouldBe("computedStyle.backgroundPosition", "'left 20% top 0%'");
 
 style.backgroundPosition = "left center top";
 shouldBe("style.backgroundPosition", "'left 20% top 0%'");
-//shouldBe("computedStyle.backgroundPosition", "'left 20% top 0%'");
+shouldBe("computedStyle.backgroundPosition", "'left 20% top 0%'");
 
 style.backgroundPosition = "center center center";
 shouldBe("style.backgroundPosition", "'left 20% top 0%'");
-//shouldBe("computedStyle.backgroundPosition", "'left 20% top 0%'");
+shouldBe("computedStyle.backgroundPosition", "'left 20% top 0%'");
 
 style.backgroundPosition = "top left 50% 50%";
 shouldBe("style.backgroundPosition", "'left 20% top 0%'");
-//shouldBe("computedStyle.backgroundPosition", "'left 20% top 0%'");
+shouldBe("computedStyle.backgroundPosition", "'left 20% top 0%'");
 
 style.backgroundPosition = "center center center center";
 shouldBe("style.backgroundPosition", "'left 20% top 0%'");
-//shouldBe("computedStyle.backgroundPosition", "'left 20% top 0%'");
+shouldBe("computedStyle.backgroundPosition", "'left 20% top 0%'");
 
 debug("background-position with CSS3 four values and comma");
 style.backgroundImage = "url(resources/diamond.png), url(resources/ring.png)";
 
 style.backgroundPosition = "center, left bottom 20px";
 shouldBe("style.backgroundPosition", "'50% 50%, left 0% bottom 20px'");
-//shouldBe("style.backgroundPosition", "'50% 50%, left 0% bottom 20px'");
+shouldBe("computedStyle.backgroundPosition", "'50% 50%, left 0% bottom 20px'");
 
 style.backgroundPosition = "right 20px bottom 20px, center left";
 shouldBe("style.backgroundPosition", "'right 20px bottom 20px, 0% 50%'");
-//shouldBe("style.backgroundPosition", "'right 20px bottom 20px, 0% 50%'");
+shouldBe("computedStyle.backgroundPosition", "'right 20px bottom 20px, 0% 50%'");
 
 style.backgroundPosition = "left 10px top 15px, right 20% bottom 20px";
 shouldBe("style.backgroundPosition", "'left 10px top 15px, right 20% bottom 20px'");
-//shouldBe("computedStyle.backgroundPosition", "'left 10px top 15px, right 20% bottom 20px'");
+shouldBe("computedStyle.backgroundPosition", "'left 10px top 15px, right 20% bottom 20px'");
 
 style.backgroundPosition = "left 10% top, top 0px right";
 shouldBe("style.backgroundPosition", "'left 10% top 0%, right 0% top 0px'");
-//shouldBe("computedStyle.backgroundPosition", "'left 10% top 0%, right 0% top 0px'");
+shouldBe("computedStyle.backgroundPosition", "'left 10% top 0%, right 0% top 0px'");
 
 style.backgroundPosition = "right top 15px, bottom right 20px";
 shouldBe("style.backgroundPosition", "'right 0% top 15px, right 20px bottom 0%'");
-//shouldBe("computedStyle.backgroundPosition", "'right 0% top 15px, right 20px bottom 0%'");
+shouldBe("computedStyle.backgroundPosition", "'right 0% top 15px, right 20px bottom 0%'");
 
 debug("background-position with invalid CSS3 four values and comma, no change expected");
 style.backgroundPosition = "right top 15px, left right 20px";
 shouldBe("style.backgroundPosition", "'right 0% top 15px, right 20px bottom 0%'");
-//shouldBe("computedStyle.backgroundPosition", "'right 0% top 15px, right 20px bottom 0%'");
+shouldBe("computedStyle.backgroundPosition", "'right 0% top 15px, right 20px bottom 0%'");
 
 style.backgroundPosition = "right left 15px, left bottom 20px";
 shouldBe("style.backgroundPosition", "'right 0% top 15px, right 20px bottom 0%'");
-//shouldBe("computedStyle.backgroundPosition", "'right 0% top 15px, right 20px bottom 0%'");
+shouldBe("computedStyle.backgroundPosition", "'right 0% top 15px, right 20px bottom 0%'");
 
 style.backgroundPosition = "solid, left bottom 20px";
 shouldBe("style.backgroundPosition", "'right 0% top 15px, right 20px bottom 0%'");
-//shouldBe("computedStyle.backgroundPosition", "'right 0% top 15px, right 20px bottom 0%'");*/
+shouldBe("computedStyle.backgroundPosition", "'right 0% top 15px, right 20px bottom 0%'");
 
 document.body.removeChild(testContainer);
 </script>
