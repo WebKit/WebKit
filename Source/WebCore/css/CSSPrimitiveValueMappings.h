@@ -785,7 +785,6 @@ template<> inline CSSPrimitiveValue::operator EBoxDecorationBreak() const
 }
 #endif
 
-#if ENABLE(CSS3_BACKGROUND)
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(BackgroundEdgeOrigin e)
     : CSSValue(PrimitiveClass)
 {
@@ -822,7 +821,6 @@ template<> inline CSSPrimitiveValue::operator BackgroundEdgeOrigin() const
     ASSERT_NOT_REACHED();
     return TopEdge;
 }
-#endif
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EBoxSizing e)
     : CSSValue(PrimitiveClass)
