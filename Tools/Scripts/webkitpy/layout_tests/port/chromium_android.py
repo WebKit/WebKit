@@ -32,7 +32,6 @@ import logging
 import os
 import re
 import subprocess
-import sys
 import threading
 import time
 
@@ -276,8 +275,7 @@ class ChromiumAndroidPort(chromium.ChromiumPort):
         if not path_version:
             ChromiumAndroidPort._adb_path = provided_adb_path
         elif provided_version > path_version:
-            # FIXME: The Printer isn't initialized when this is called, so using _log would just show an unitialized logger error.
-            print >> sys.stderr, 'The "adb" version in your path is older than the one checked in, consider updating your local Android SDK. Using the checked in one.'
+            _log.warning('The "adb" version in your path is older than the one checked in, consider updating your local Android SDK. Using the checked in one.')
             ChromiumAndroidPort._adb_path = provided_adb_path
         else:
             ChromiumAndroidPort._adb_path = 'adb'

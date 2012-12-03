@@ -152,20 +152,20 @@ java/
 
         bytes_for_drt = 200 * 1024 * 1024
         port.host.platform.total_bytes_memory = lambda: bytes_for_drt
-        expected_stderr = "This machine could support 2 child processes, but only has enough memory for 1.\n"
-        child_processes = OutputCapture().assert_outputs(self, port.default_child_processes, (), expected_stderr=expected_stderr)
+        expected_logs = "This machine could support 2 child processes, but only has enough memory for 1.\n"
+        child_processes = OutputCapture().assert_outputs(self, port.default_child_processes, (), expected_logs=expected_logs)
         self.assertEqual(child_processes, 1)
 
         # Make sure that we always use one process, even if we don't have the memory for it.
         port.host.platform.total_bytes_memory = lambda: bytes_for_drt - 1
-        expected_stderr = "This machine could support 2 child processes, but only has enough memory for 1.\n"
-        child_processes = OutputCapture().assert_outputs(self, port.default_child_processes, (), expected_stderr=expected_stderr)
+        expected_logs = "This machine could support 2 child processes, but only has enough memory for 1.\n"
+        child_processes = OutputCapture().assert_outputs(self, port.default_child_processes, (), expected_logs=expected_logs)
         self.assertEqual(child_processes, 1)
 
         # SnowLeopard has a CFNetwork bug which causes crashes if we execute more than one copy of DRT at once.
         port = self.make_port(port_name='mac-snowleopard')
-        expected_stderr = "Cannot run tests in parallel on Snow Leopard due to rdar://problem/10621525.\n"
-        child_processes = OutputCapture().assert_outputs(self, port.default_child_processes, (), expected_stderr=expected_stderr)
+        expected_logs = "Cannot run tests in parallel on Snow Leopard due to rdar://problem/10621525.\n"
+        child_processes = OutputCapture().assert_outputs(self, port.default_child_processes, (), expected_logs=expected_logs)
         self.assertEqual(child_processes, 1)
 
     def test_get_crash_log(self):

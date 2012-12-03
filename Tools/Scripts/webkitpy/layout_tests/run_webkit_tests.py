@@ -29,7 +29,6 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import errno
 import logging
 import optparse
 import os
@@ -38,7 +37,6 @@ import sys
 import traceback
 
 from webkitpy.common.host import Host
-from webkitpy.common.system import stack_utils
 from webkitpy.layout_tests.controllers.manager import Manager
 from webkitpy.layout_tests.models import test_expectations
 from webkitpy.layout_tests.port import configuration_options, platform_options
@@ -91,18 +89,13 @@ def lint(port, options):
 
 def run(port, options, args, regular_output=sys.stderr, buildbot_output=sys.stdout):
     try:
-        warnings = _set_up_derived_options(port, options)
-
         printer = printing.Printer(port, options, regular_output, buildbot_output, logger=logging.getLogger())
 
-        for warning in warnings:
-            _log.warning(warning)
+        _set_up_derived_options(port, options)
 
         if options.lint_test_files:
             return lint(port, options)
 
-        # We wrap any parts of the run that are slow or likely to raise exceptions
-        # in a try/finally to ensure that we clean up the logging configuration.
         manager = Manager(port, options, printer)
         printer.print_config(port.results_directory())
 
@@ -114,9 +107,6 @@ def run(port, options, args, regular_output=sys.stderr, buildbot_output=sys.stdo
 
 def _set_up_derived_options(port, options):
     """Sets the options values that depend on other options values."""
-    # We return a list of warnings to print after the printer is initialized.
-    warnings = []
-
     if not options.child_processes:
         options.child_processes = os.environ.get("WEBKIT_TEST_CHILD_PROCESSES",
                                                  str(port.default_child_processes()))
@@ -142,11 +132,11 @@ def _set_up_derived_options(port, options):
         options.additional_platform_directory = additional_platform_directories
 
     if not options.http and options.skipped in ('ignore', 'only'):
-        warnings.append("--force/--skipped=%s overrides --no-http." % (options.skipped))
+        _log.warning("--force/--skipped=%s overrides --no-http." % (options.skipped))
         options.http = True
 
     if options.ignore_metrics and (options.new_baseline or options.reset_results):
-        warnings.append("--ignore-metrics has no effect with --new-baselines or with --reset-results")
+        _log.warning("--ignore-metrics has no effect with --new-baselines or with --reset-results")
 
     if options.new_baseline:
         options.reset_results = True
@@ -162,7 +152,7 @@ def _set_up_derived_options(port, options):
             # to Port.
             filesystem = port.host.filesystem
             if not filesystem.isdir(filesystem.join(port.layout_tests_dir(), directory)):
-                warnings.append("'%s' was passed to --pixel-test-directories, which doesn't seem to be a directory" % str(directory))
+                _log.warning("'%s' was passed to --pixel-test-directories, which doesn't seem to be a directory" % str(directory))
             else:
                 varified_dirs.add(directory)
 
@@ -171,10 +161,8 @@ def _set_up_derived_options(port, options):
     if options.run_singly:
         options.verbose = True
 
-    return warnings
 
-
-def _compat_shim_callback(option, opt_str, value, parser):
+def _compat_shim_callback(option, opt_str, value, parser):  # ignore unused variable warning - pylint: disable-msg=W0613
     print "Ignoring unsupported option: %s" % opt_str
 
 

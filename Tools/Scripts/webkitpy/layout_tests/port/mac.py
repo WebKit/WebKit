@@ -29,9 +29,6 @@
 
 import logging
 import os
-import re
-import subprocess
-import sys
 import time
 
 from webkitpy.common.system.crashlogs import CrashLogs
@@ -107,10 +104,8 @@ class MacPort(ApplePort):
         return self._version == "lion"
 
     def default_child_processes(self):
-        # FIXME: The Printer isn't initialized when this is called, so using _log would just show an unitialized logger error.
-
         if self._version == "snowleopard":
-            print >> sys.stderr, "Cannot run tests in parallel on Snow Leopard due to rdar://problem/10621525."
+            _log.warning("Cannot run tests in parallel on Snow Leopard due to rdar://problem/10621525.")
             return 1
 
         default_count = super(MacPort, self).default_child_processes()
@@ -127,7 +122,7 @@ class MacPort(ApplePort):
         overhead = 2048 * 1024 * 1024  # Assume we need 2GB free for the O/S
         supportable_instances = max((total_memory - overhead) / bytes_per_drt, 1)  # Always use one process, even if we don't have space for it.
         if supportable_instances < default_count:
-            print >> sys.stderr, "This machine could support %s child processes, but only has enough memory for %s." % (default_count, supportable_instances)
+            _log.warning("This machine could support %s child processes, but only has enough memory for %s." % (default_count, supportable_instances))
         return min(supportable_instances, default_count)
 
     def _build_java_test_support(self):
@@ -242,8 +237,8 @@ class MacPort(ApplePort):
                 "-file",
                 hang_report,
             ])
-        except ScriptError, e:
-            _log.warning('Unable to sample process.')
+        except ScriptError as e:
+            _log.warning('Unable to sample process:' + str(e))
 
     def _path_to_helper(self):
         binary_name = 'LayoutTestHelper'
@@ -253,9 +248,8 @@ class MacPort(ApplePort):
         helper_path = self._path_to_helper()
         if helper_path:
             _log.debug("Starting layout helper %s" % helper_path)
-            # Note: Not thread safe: http://bugs.python.org/issue2320
             self._helper = self._executive.popen([helper_path],
-                stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=None)
+                stdin=self._executive.PIPE, stdout=self._executive.PIPE, stderr=None)
             is_ready = self._helper.stdout.readline()
             if not is_ready.startswith('ready'):
                 _log.error("LayoutTestHelper failed to be ready")
@@ -269,12 +263,11 @@ class MacPort(ApplePort):
                 self._helper.wait()
             except IOError, e:
                 _log.debug("IOError raised while stopping helper: %s" % str(e))
-                pass
             self._helper = None
 
     def nm_command(self):
         try:
             return self._executive.run_command(['xcrun', '-find', 'nm']).rstrip()
-        except ScriptError, e:
+        except ScriptError:
             _log.warn("xcrun failed; falling back to 'nm'.")
             return 'nm'
