@@ -49,24 +49,23 @@ static int window_height = 600;
 static double device_pixel_ratio = 0;
 static Eina_Bool legacy_behavior_enabled = EINA_FALSE;
 
-#define DEFAULT_ZOOM_LEVEL 5 // Set default zoom level to 100% (index 5 on zoomLevels).
+#define DEFAULT_ZOOM_LEVEL 5 // Set default zoom level to 1.0 (index 5 on zoomLevels).
 // The zoom values are chosen to be like in Mozilla Firefox 3.
-const static int zoomLevels[] = {30, 50, 67, 80, 90, 100, 110, 120, 133, 150, 170, 200, 240, 300};
+const static float zoomLevels[] = {0.3, 0.5, 0.67, 0.8, 0.9, 1.0, 1.1, 1.2, 1.33, 1.5, 1.7, 2.0, 2.4, 3.0};
 
 static Eina_Bool
 zoom_level_set(Evas_Object *webview, int level)
 {
-    if (level < 0  || level >= sizeof(zoomLevels) / sizeof(int))
+    if (level < 0  || level >= sizeof(zoomLevels) / sizeof(float))
         return EINA_FALSE;
 
-    float factor = ((float) zoomLevels[level]) / 100.0;
     Evas_Coord ox, oy, mx, my, cx, cy;
     evas_pointer_canvas_xy_get(evas_object_evas_get(webview), &mx, &my); // Get current mouse position on window.
     evas_object_geometry_get(webview, &ox, &oy, NULL, NULL); // Get webview's position on window.
     cx = mx - ox; // current x position = mouse x position - webview x position
     cy = my - oy; // current y position = mouse y position - webview y position
 
-    Eina_Bool result = ewk_view_scale_set(webview, factor, cx, cy);
+    Eina_Bool result = ewk_view_scale_set(webview, zoomLevels[level], cx, cy);
     return result;
 }
 
@@ -237,15 +236,15 @@ on_key_down(void *user_data, Evas *e, Evas_Object *ewk_view, void *event_info)
     } else if (ctrlPressed && (!strcmp(ev->key, "minus") || !strcmp(ev->key, "KP_Subtract"))) {
         if (zoom_level_set(ewk_view, window->current_zoom_level - 1))
             window->current_zoom_level--;
-        info("Zoom out (Ctrl + '-') was pressed, zoom level became %d%\n", zoomLevels[window->current_zoom_level]);
+        info("Zoom out (Ctrl + '-') was pressed, zoom level became %.2f\n", zoomLevels[window->current_zoom_level]);
     } else if (ctrlPressed && (!strcmp(ev->key, "equal") || !strcmp(ev->key, "KP_Add"))) {
         if (zoom_level_set(ewk_view, window->current_zoom_level + 1))
             window->current_zoom_level++;
-        info("Zoom in (Ctrl + '+') was pressed, zoom level became %d%\n", zoomLevels[window->current_zoom_level]);
+        info("Zoom in (Ctrl + '+') was pressed, zoom level became %.2f\n", zoomLevels[window->current_zoom_level]);
     } else if (ctrlPressed && !strcmp(ev->key, "0")) {
         if (zoom_level_set(ewk_view, DEFAULT_ZOOM_LEVEL))
             window->current_zoom_level = DEFAULT_ZOOM_LEVEL;
-        info("Zoom to default (Ctrl + '0') was pressed, zoom level became %d%\n", zoomLevels[window->current_zoom_level]);
+        info("Zoom to default (Ctrl + '0') was pressed, zoom level became %.2f\n", zoomLevels[window->current_zoom_level]);
     }
 }
 
