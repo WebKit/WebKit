@@ -1,3 +1,22 @@
+2012-12-02  Noel Gordon  <noel.gordon@gmail.com>
+
+        ImageOrientation::transformFromDefault() case labels should be in numerical order
+        https://bugs.webkit.org/show_bug.cgi?id=101596
+
+        Reviewed by Simon Fraser.
+
+        Place the orientation case labels in numerical order to better match the EXIF2.2 spec
+        definitions of orientation values and their ImageOrientation.h enumeration.
+
+        No change in behavior. Covered by existing tests:
+           fast/images/exif-orientation-css.html
+           fast/images/exif-orientation-image-document.html
+           fast/images/exif-orientation.html
+
+        * platform/graphics/ImageOrientation.cpp:
+        (WebCore::ImageOrientation::transformFromDefault): Numerically order the orientation 
+        case statement labels.
+
 2012-12-02  Mary Wu  <mary.wu@torchmobile.com.cn>
 
         should sniff it if mimetype don't contain a slash.
