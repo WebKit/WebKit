@@ -1,0 +1,19 @@
+Tests that <style scoped> is correctly applied after DOM operations, i.e. insertBefore, appendChild, and removeChild.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Insert a new scoped style before an existing scoped style.
+PASS window.getComputedStyle(target).backgroundColor is "rgb(255, 0, 0)"
+Move an inserted scoped style after an existing scoped style.
+PASS window.getComputedStyle(target).backgroundColor is "rgb(0, 0, 255)"
+Move an inserted scoped style into grandparent of an existing scoped style.
+PASS window.getComputedStyle(target).backgroundColor is "rgb(255, 0, 0)"
+Remove an inserted scoped style.
+PASS window.getComputedStyle(target).backgroundColor is "rgb(255, 0, 0)"
+Remove an existing scoped style.
+PASS window.getComputedStyle(target).backgroundColor is "rgb(0, 128, 0)"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Hello, World!

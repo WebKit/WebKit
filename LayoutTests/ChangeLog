@@ -1,3 +1,16 @@
+2012-12-03  Takashi Sakamoto  <tasak@google.com>
+
+        [style scoped]: style scoped needs more tests.
+        https://bugs.webkit.org/show_bug.cgi?id=99821
+
+        Reviewed by Dimitri Glazkov.
+
+        Test cases in this patch validate dynamically creating, moving and
+        removing a scoped style works well.
+
+        * fast/css/style-scoped/style-scoped-with-dom-operation-expected.txt: Added.
+        * fast/css/style-scoped/style-scoped-with-dom-operation.html: Added.
+
 2012-12-03  Anton Vayvod  <avayvod@chromium.org>
 
         Text Autosizing: don't autosize horizontal menu items implemented via floating list items

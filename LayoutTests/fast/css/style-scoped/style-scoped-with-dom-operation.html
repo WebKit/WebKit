@@ -1,0 +1,53 @@
+<!doctype html>
+<html>
+<head>
+<style>
+span {
+    background-color: green;     
+}
+</style>
+<script src="../../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+  <div>
+    <div>
+      <style id="existingStyle" scoped>
+	.target { background-color: red; }
+      </style>
+      <span id="target" class="target">Hello, World!</span>
+    </div>
+  </div>
+</body>
+<script>
+description("Tests that &lt;style scoped&gt; is correctly applied after DOM operations, i.e. insertBefore, appendChild, and removeChild.");
+
+var target = document.getElementById('target');
+
+var existingStyle = document.getElementById('existingStyle');
+var newStyle = document.createElement('style');
+
+newStyle.setAttribute('scoped', 'scoped');
+newStyle.innerHTML = ".target { background-color: blue; }";
+
+debug("Insert a new scoped style before an existing scoped style.");
+existingStyle.parentNode.insertBefore(newStyle, existingStyle);
+shouldBe("window.getComputedStyle(target).backgroundColor", '"rgb(255, 0, 0)"');
+
+debug("Move an inserted scoped style after an existing scoped style.");
+existingStyle.parentNode.appendChild(newStyle);
+shouldBe("window.getComputedStyle(target).backgroundColor", '"rgb(0, 0, 255)"');
+
+debug("Move an inserted scoped style into grandparent of an existing scoped style.");
+document.body.children[0].appendChild(newStyle);
+shouldBe("window.getComputedStyle(target).backgroundColor", '"rgb(255, 0, 0)"');
+
+debug("Remove an inserted scoped style.");
+newStyle.parentNode.removeChild(newStyle);
+shouldBe("window.getComputedStyle(target).backgroundColor", '"rgb(255, 0, 0)"');
+
+debug("Remove an existing scoped style.");
+existingStyle.parentNode.removeChild(existingStyle);
+shouldBe("window.getComputedStyle(target).backgroundColor", '"rgb(0, 128, 0)"');
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</html>
