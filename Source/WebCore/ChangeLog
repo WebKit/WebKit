@@ -1,3 +1,42 @@
+2012-12-03  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: [Styles] Retain selector case as written in the source code
+        https://bugs.webkit.org/show_bug.cgi?id=103118
+
+        Reviewed by Antti Koivisto.
+
+        This change:
+        - adds parsing of selector group components in the CSSParser;
+        - builds the SelectorList.selectors based on the source code whenever possible.
+          Strips [multiline] comments and whitespace;
+        - adds the MultilineMode to RegularExpression.
+
+        Test: inspector/styles/selector-list.html
+
+        * WebCore.exp.in: Update the exported symbol.
+        * css/CSSGrammar.y.in: Add invocations for CSSParser::markSelector[Start|End]() as required.
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::markSelectorStart): Gets invoked to mark a selector group item start offset.
+        (WebCore::CSSParser::markSelectorEnd): Ditto for the end offset.
+        * css/CSSParser.h: Add new methods and a SourceRange tracking field.
+        * css/CSSPropertySourceData.h: Add SelectorRangeList to the CSSRuleSourceData.
+        * inspector/InspectorStyleSheet.cpp:
+        (WebCore::selectorsFromSource): Builds the SelectorList based on the underlying source data.
+        Strips comments and whitespace from selectors.
+        (WebCore::InspectorStyleSheet::buildObjectForSelectorList):
+        Builds SelectorList based on the availability of the source code.
+        * inspector/front-end/StylesSidebarPane.js:
+        (WebInspector.StylePropertiesSection.prototype._markSelectorMatches):
+        Update selectors in all cases to make use of the source-based information whenever possible.
+        * platform/text/RegularExpression.cpp:
+        Add the MultilineMode parameter into the constructor/factory method and ultimately pass it into YarrPattern.
+        (WebCore::RegularExpression::Private::create): See above.
+        (WebCore::RegularExpression::Private::Private): See above.
+        (WebCore::RegularExpression::Private::compile): See above.
+        (WebCore::RegularExpression::RegularExpression): See above.
+        * platform/text/RegularExpression.h:
+        Add enum MultilineMode, modify constructor and factory method signatures accordingly.
+
 2012-12-02  Noel Gordon  <noel.gordon@gmail.com>
 
         ImageOrientation::transformFromDefault() case labels should be in numerical order

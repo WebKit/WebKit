@@ -1,0 +1,51 @@
+<html>
+<head>
+<style>
+#inspected{
+}
+
+#InSpEcTeD {
+}
+
+/* */#inspected/* */ {
+}
+
+/* 
+ */ FOO/*Single-line 1*/ bAr,/* Single-line 2*/#inspected/*
+    Multiline comment
+*/ ,MOO>BAR, /*1*/htML /*2
+*/div/*3*/,/**/Foo~/**C*/Moo,/**/MOO /* Comment
+ */ 
+{
+  color: green;
+}
+
+</style>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="../../http/tests/inspector/elements-test.js"></script>
+<script>
+
+function test()
+{
+    WebInspector.showPanel("elements");
+    InspectorTest.selectNodeAndWaitForStyles("inspected", step1);
+
+    function step1()
+    {
+        InspectorTest.dumpSelectedElementStyles(true);
+        InspectorTest.completeTest();
+    }
+}
+
+</script>
+</head>
+
+<body onload="runTest()">
+<p>
+Tests representation of selector lists in the protocol. <a href="https://bugs.webkit.org/show_bug.cgi?id=103118">Bug 103118</a>.
+</p>
+
+<div id="inspected">Text</div>
+
+</body>
+</html>

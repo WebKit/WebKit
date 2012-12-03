@@ -13,7 +13,7 @@ foo, [$#inspected$], bar  { (inspector-stylesheet:1)
 color: maroon;
 
 [expanded] 
-div  { (user agent stylesheet)
+[$div$]  { (user agent stylesheet)
 display: block;
 
 

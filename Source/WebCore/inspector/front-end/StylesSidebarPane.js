@@ -1090,7 +1090,7 @@ WebInspector.StylePropertiesSection.prototype = {
 
         var selectors = rule.selectors;
         var matchingSelectors = rule.matchingSelectors;
-        if (selectors.length < 2 || !matchingSelectors)
+        if (!matchingSelectors)
             return;
 
         var fragment = document.createDocumentFragment();

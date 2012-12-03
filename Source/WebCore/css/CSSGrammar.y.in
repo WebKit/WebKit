@@ -1020,6 +1020,7 @@ maybe_space_before_declaration:
 before_selector_list:
     /* empty */ {
         parser->markRuleHeaderStart(CSSRuleSourceData::STYLE_RULE);
+        parser->markSelectorStart();
     }
   ;
 
@@ -1029,11 +1030,22 @@ at_rule_header_end:
     }
   ;
 
+at_selector_end:
+    /* empty */ {
+        parser->markSelectorEnd();
+    }
+  ;
+
 ruleset:
-    before_selector_list selector_list at_rule_header_end '{' at_rule_body_start maybe_space_before_declaration declaration_list closing_brace {
+    before_selector_list selector_list at_selector_end at_rule_header_end '{' at_rule_body_start maybe_space_before_declaration declaration_list closing_brace {
         $$ = parser->createStyleRule($2);
     }
   ;
+
+before_selector_group_item:
+    /* empty */ {
+        parser->markSelectorStart();
+    }
 
 selector_list:
     selector %prec UNIMPORTANT_TOK {
@@ -1044,10 +1056,10 @@ selector_list:
             parser->updateLastSelectorLineAndPosition();
         }
     }
-    | selector_list ',' maybe_space selector %prec UNIMPORTANT_TOK {
-        if ($1 && $4) {
+    | selector_list at_selector_end ',' maybe_space before_selector_group_item selector %prec UNIMPORTANT_TOK {
+        if ($1 && $6) {
             $$ = $1;
-            $$->append(parser->sinkFloatingSelector($4));
+            $$->append(parser->sinkFloatingSelector($6));
             parser->updateLastSelectorLineAndPosition();
         } else
             $$ = 0;
