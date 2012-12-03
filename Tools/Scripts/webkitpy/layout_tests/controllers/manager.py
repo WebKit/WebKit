@@ -46,7 +46,7 @@ import time
 
 from webkitpy.common import message_pool
 from webkitpy.layout_tests.controllers.layout_test_finder import LayoutTestFinder
-from webkitpy.layout_tests.controllers.layout_test_runner import LayoutTestRunner, TestRunInterruptedException, WorkerException
+from webkitpy.layout_tests.controllers.layout_test_runner import LayoutTestRunner
 from webkitpy.layout_tests.controllers.test_result_writer import TestResultWriter
 from webkitpy.layout_tests.layout_package import json_layout_results_generator
 from webkitpy.layout_tests.layout_package import json_results_generator
@@ -107,7 +107,7 @@ def use_trac_links_in_results_html(port_obj):
 # or split off from Manager onto another helper class, but should not be a free function.
 # Most likely this should be made into its own class, and this super-long function
 # split into many helper functions.
-def summarize_results(port_obj, expectations, result_summary, retry_summary, test_timings, only_unexpected, interrupted):
+def summarize_results(port_obj, expectations, result_summary, retry_summary, test_timings, only_unexpected):
     """Summarize failing results as a dict.
 
     FIXME: split this data structure into a separate class?
@@ -230,7 +230,7 @@ def summarize_results(port_obj, expectations, result_summary, retry_summary, tes
     results['num_missing'] = num_missing
     results['num_regressions'] = num_regressions
     results['uses_expectations_file'] = port_obj.uses_test_expectations_file()
-    results['interrupted'] = interrupted  # Does results.html have enough information to compute this itself? (by checking total number of results vs. total number of tests?)
+    results['interrupted'] = result_summary.interrupted  # Does results.html have enough information to compute this itself? (by checking total number of results vs. total number of tests?)
     results['layout_tests_dir'] = port_obj.layout_tests_dir()
     results['has_wdiff'] = port_obj.wdiff_available()
     results['has_pretty_patch'] = port_obj.pretty_patch_available()
@@ -402,46 +402,47 @@ class Manager(object):
             return -1
 
         start_time = time.time()
+        retry_summary = result_summary
 
-        interrupted, keyboard_interrupted, thread_timings, test_timings, individual_test_timings = \
-            self._run_tests(self._test_names, result_summary, int(self._options.child_processes), retrying=False)
+        # FIXME: move these fields into result_summary so we don't have to pass them around.
+        thread_timings = test_timings = {}
+        individual_test_timings = []
+        try:
+            thread_timings, test_timings, individual_test_timings = \
+                self._run_tests(self._test_names, result_summary, int(self._options.child_processes), retrying=False)
 
-        # We exclude the crashes from the list of results to retry, because
-        # we want to treat even a potentially flaky crash as an error.
+            # We exclude the crashes from the list of results to retry, because
+            # we want to treat even a potentially flaky crash as an error.
 
-        failures = self._failed_test_names(result_summary, include_crashes=self._port.should_retry_crashes(), include_missing=False)
-        if self._options.retry_failures and failures and not interrupted and not keyboard_interrupted:
-            _log.info('')
-            _log.info("Retrying %d unexpected failure(s) ..." % len(failures))
-            _log.info('')
-            # Note that we don't care about the values returned from the retry pass.
-            retry_summary = ResultSummary(self._expectations, failures, 1, set())
-            _ = self._run_tests(failures, retry_summary, 1, retrying=True)
-        else:
-            retry_summary = result_summary
+            failures = self._failed_test_names(result_summary, include_crashes=self._port.should_retry_crashes(), include_missing=False)
+            if self._options.retry_failures and failures and not result_summary.interrupted:
+                _log.info('')
+                _log.info("Retrying %d unexpected failure(s) ..." % len(failures))
+                _log.info('')
+                # Note that we don't care about the values returned from the retry pass.
+                retry_summary = ResultSummary(self._expectations, failures, 1, set())
+                _ = self._run_tests(failures, retry_summary, 1, retrying=True)
+        finally:
+            # If we are ctrl-c'ed; we still want to try and print the results we got, and clean up,
+            # but we don't want to upload anything.
+            end_time = time.time()
 
-        end_time = time.time()
+            # Some crash logs can take a long time to be written out so look
+            # for new logs after the test run finishes.
+            self._look_for_new_crash_logs(result_summary, start_time)
+            self._look_for_new_crash_logs(retry_summary, start_time)
+            self._clean_up_run()
 
-        # Some crash logs can take a long time to be written out so look
-        # for new logs after the test run finishes.
-        self._look_for_new_crash_logs(result_summary, start_time)
-        self._look_for_new_crash_logs(retry_summary, start_time)
-        self._clean_up_run()
+            unexpected_results = summarize_results(self._port, self._expectations, result_summary, retry_summary, individual_test_timings, only_unexpected=True)
 
-        unexpected_results = summarize_results(self._port, self._expectations, result_summary, retry_summary, individual_test_timings, only_unexpected=True, interrupted=interrupted)
-
-        self._printer.print_results(end_time - start_time, thread_timings, test_timings, individual_test_timings, result_summary, unexpected_results)
-
-        # Re-raise a KeyboardInterrupt if necessary so the caller can handle it.
-        if keyboard_interrupted:
-            raise KeyboardInterrupt
+            self._printer.print_results(end_time - start_time, thread_timings, test_timings, individual_test_timings, result_summary, unexpected_results)
 
         # FIXME: remove record_results. It's just used for testing. There's no need
         # for it to be a commandline argument.
-        if (self._options.record_results and not self._options.dry_run and not keyboard_interrupted):
+        if self._options.record_results and not self._options.dry_run:
             self._port.print_leaks_summary()
             # Write the same data to log files and upload generated JSON files to appengine server.
-            summarized_results = summarize_results(self._port, self._expectations, result_summary, retry_summary, individual_test_timings, only_unexpected=False, interrupted=interrupted)
+            summarized_results = summarize_results(self._port, self._expectations, result_summary, retry_summary, individual_test_timings, only_unexpected=False)
             self._upload_json_files(summarized_results, result_summary, individual_test_timings)
 
         # Write the summary to disk (results.html) and display it if requested.

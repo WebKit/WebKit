@@ -52,7 +52,6 @@ from webkitpy.common.host_mock import MockHost
 
 from webkitpy.layout_tests import port
 from webkitpy.layout_tests import run_webkit_tests
-from webkitpy.layout_tests.controllers.manager import WorkerException
 from webkitpy.layout_tests.port import Port
 from webkitpy.layout_tests.port.test import TestPort, TestDriver
 from webkitpy.test.skip import skip_if
@@ -342,13 +341,13 @@ class MainTest(unittest.TestCase, StreamTestingMixin):
         # is actually useful in testing.
         #
         # Exceptions raised in a separate process are re-packaged into
-        # WorkerExceptions, which have a string capture of the stack which can
+        # WorkerExceptions (a subclass of BaseException), which have a string capture of the stack which can
         # be printed, but don't display properly in the unit test exception handlers.
-        self.assertRaises(ValueError, logging_run,
+        self.assertRaises(BaseException, logging_run,
             ['failures/expected/exception.html', '--child-processes', '1'], tests_included=True)
 
         if self.should_test_processes:
-            self.assertRaises(WorkerException, logging_run,
+            self.assertRaises(BaseException, logging_run,
                 ['--child-processes', '2', '--force', 'failures/expected/exception.html', 'passes/text.html'], tests_included=True, shared_port=False)
 
     def test_full_results_html(self):
@@ -499,7 +498,6 @@ class MainTest(unittest.TestCase, StreamTestingMixin):
         # This raises an exception because we run
         # failures/expected/exception.html, which is normally SKIPped.
 
-        # See also the comments in test_exception_raised() about ValueError vs. WorkerException.
         self.assertRaises(ValueError, logging_run, ['--force'])
 
     def test_run_part(self):

@@ -184,7 +184,7 @@ class _MessagePool(object):
             pass
 
 
-class WorkerException(Exception):
+class WorkerException(BaseException):
     """Raised when we receive an unexpected/unknown exception from a worker."""
     pass
 

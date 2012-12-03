@@ -39,7 +39,7 @@ import traceback
 
 from webkitpy.common.host import Host
 from webkitpy.common.system import stack_utils
-from webkitpy.layout_tests.controllers.manager import Manager, WorkerException, TestRunInterruptedException
+from webkitpy.layout_tests.controllers.manager import Manager
 from webkitpy.layout_tests.models import test_expectations
 from webkitpy.layout_tests.port import configuration_options, platform_options
 from webkitpy.layout_tests.views import printing
@@ -103,24 +103,14 @@ def run(port, options, args, regular_output=sys.stderr, buildbot_output=sys.stdo
 
         # We wrap any parts of the run that are slow or likely to raise exceptions
         # in a try/finally to ensure that we clean up the logging configuration.
-        unexpected_result_count = -1
-
         manager = Manager(port, options, printer)
         printer.print_config(port.results_directory())
 
         unexpected_result_count = manager.run(args)
         _log.debug("Testing completed, Exit status: %d" % unexpected_result_count)
-    except Exception:
-        exception_type, exception_value, exception_traceback = sys.exc_info()
-        if exception_type not in (KeyboardInterrupt, TestRunInterruptedException, WorkerException):
-            print >> sys.stderr, '\n%s raised: %s' % (exception_type.__name__, exception_value)
-            stack_utils.log_traceback(_log.error, exception_traceback)
-        raise
+        return unexpected_result_count
     finally:
         printer.cleanup()
-
-    return unexpected_result_count
-
 
 def _set_up_derived_options(port, options):
     """Sets the options values that depend on other options values."""
@@ -426,36 +416,36 @@ def parse_args(args=None):
 
 
 def main(argv=None):
+    options, args = parse_args(argv)
+    if options.platform and 'test' in options.platform:
+        # It's a bit lame to import mocks into real code, but this allows the user
+        # to run tests against the test platform interactively, which is useful for
+        # debugging test failures.
+        from webkitpy.common.host_mock import MockHost
+        host = MockHost()
+    else:
+        host = Host()
+
     try:
-        options, args = parse_args(argv)
-        if options.platform and 'test' in options.platform:
-            # It's a bit lame to import mocks into real code, but this allows the user
-            # to run tests against the test platform interactively, which is useful for
-            # debugging test failures.
-            from webkitpy.common.host_mock import MockHost
-            host = MockHost()
-        else:
-            host = Host()
         port = host.port_factory.get(options.platform, options)
     except NotImplementedError, e:
         # FIXME: is this the best way to handle unsupported port names?
         print >> sys.stderr, str(e)
         return EXCEPTIONAL_EXIT_STATUS
+
+    logging.getLogger().setLevel(logging.DEBUG if options.debug_rwt_logging else logging.INFO)
+    try:
+        return run(port, options, args)
     except Exception, e:
         print >> sys.stderr, '\n%s raised: %s' % (e.__class__.__name__, str(e))
         traceback.print_exc(file=sys.stderr)
         raise
 
-    logging.getLogger().setLevel(logging.DEBUG if options.debug_rwt_logging else logging.INFO)
-    return run(port, options, args)
-
 
 if '__main__' == __name__:
     try:
-        return_code = main()
-    except BaseException, e:
-        if e.__class__ in (KeyboardInterrupt, TestRunInterruptedException):
-            sys.exit(INTERRUPTED_EXIT_STATUS)
+        sys.exit(main())
+    except KeyboardInterrupt:
+        sys.exit(INTERRUPTED_EXIT_STATUS)
+    except:
         sys.exit(EXCEPTIONAL_EXIT_STATUS)
-
-    sys.exit(return_code)

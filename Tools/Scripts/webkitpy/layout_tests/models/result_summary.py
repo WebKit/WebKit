@@ -56,6 +56,7 @@ class ResultSummary(object):
         for timeline in TestExpectations.TIMELINES.values():
             self.tests_by_timeline[timeline] = expectations.get_tests_with_timeline(timeline)
         self.slow_tests = set()
+        self.interrupted = False
 
     def add(self, test_result, expected, test_is_slow):
         self.total_tests_by_expectation[test_result.type] += 1

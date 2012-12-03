@@ -81,16 +81,13 @@ class LayoutTestRunner(object):
         self._filesystem = self._port.host.filesystem
 
     def run_tests(self, test_inputs, expectations, result_summary, num_workers, needs_http, needs_websockets, retrying):
-        """Returns a tuple of (interrupted, keyboard_interrupted, thread_timings, test_timings, individual_test_timings):
-            interrupted is whether the run was interrupted
-            keyboard_interrupted is whether the interruption was because someone typed Ctrl^C
+        """Returns a tuple of (thread_timings, test_timings, individual_test_timings):
             thread_timings is a list of dicts with the total runtime
                 of each thread with 'name', 'num_tests', 'total_time' properties
             test_timings is a list of timings for each sharded subdirectory
                 of the form [time, directory_name, num_tests]
             individual_test_timings is a list of run times for each test
                 in the form {filename:filename, test_run_time:test_run_time}
-            result_summary: summary object to populate with the results
         """
         self._current_result_summary = result_summary
         self._expectations = expectations
@@ -106,9 +103,6 @@ class LayoutTestRunner(object):
         self._worker_stats = {}
         self._has_http_lock = False
         self._remaining_locked_shards = []
-
-        keyboard_interrupted = False
-        interrupted = False
 
         self._printer.write_update('Sharding tests ...')
         locked_shards, unlocked_shards = self._sharder.shard_tests(test_inputs, int(self._options.child_processes), self._options.fully_parallel)
@@ -130,28 +124,28 @@ class LayoutTestRunner(object):
         self._printer.print_workers_and_shards(num_workers, len(all_shards), len(locked_shards))
 
         if self._options.dry_run:
-            return (keyboard_interrupted, interrupted, self._worker_stats.values(), self._group_stats, self._all_results)
+            return (self._worker_stats.values(), self._group_stats, self._all_results)
 
         self._printer.write_update('Starting %s ...' % grammar.pluralize('worker', num_workers))
 
         try:
             with message_pool.get(self, self._worker_factory, num_workers, self._port.worker_startup_delay_secs(), self._port.host) as pool:
                 pool.run(('test_list', shard.name, shard.test_inputs) for shard in all_shards)
+        except TestRunInterruptedException, e:
+            _log.warning(e.reason)
+            result_summary.interrupted = True
         except KeyboardInterrupt:
             self._printer.flush()
             self._printer.writeln('Interrupted, exiting ...')
-            keyboard_interrupted = True
-        except TestRunInterruptedException, e:
-            _log.warning(e.reason)
-            interrupted = True
+            raise
         except Exception, e:
             _log.debug('%s("%s") raised, exiting' % (e.__class__.__name__, str(e)))
             raise
         finally:
             self.stop_servers_with_lock()
 
-        # FIXME: should this be a class instead of a tuple?
-        return (interrupted, keyboard_interrupted, self._worker_stats.values(), self._group_stats, self._all_results)
+        # FIXME: Move these stats into ResultSummary and return that.
+        return (self._worker_stats.values(), self._group_stats, self._all_results)
 
     def _worker_factory(self, worker_connection):
         results_directory = self._results_directory

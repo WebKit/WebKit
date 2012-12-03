@@ -1,3 +1,46 @@
+2012-12-03  Dirk Pranke  <dpranke@chromium.org>
+
+        nrwt: clean up exception propagation / handling for interrupts and early exits
+        https://bugs.webkit.org/show_bug.cgi?id=103830
+
+        Reviewed by Ojan Vafai.
+
+        The code for propagating early exits out of the test run was
+        convoluted and hard to follow. By adjusting the WorkerException to
+        derive from BaseException rather than Exception (which is a fair
+        way of representing an error that was really unexpected/unrecoverable
+        anyway) and pushing the TestRunInterruptedException into the
+        ResultSummary (which is also fair since it was more of a result
+        than an exception) this allows us to consolidate and clean up
+        a bunch of the try/catch logic and pass fewer state flags around.
+
+        There are no real functional changes to this patch; there's an
+        API change in that we stop exporting TestRunInterruptedException
+        and WorkerException out of the Manager, and the existence of the
+        MessagePool is now completely hidden.
+
+        * Scripts/webkitpy/common/message_pool.py:
+        (WorkerException):
+        * Scripts/webkitpy/layout_tests/controllers/layout_test_runner.py:
+        (LayoutTestRunner.run_tests):
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        (summarize_results):
+        (Manager.run):
+        * Scripts/webkitpy/layout_tests/controllers/manager_unittest.py:
+        (ResultSummaryTest.summarized_results):
+        * Scripts/webkitpy/layout_tests/models/result_summary.py:
+        (ResultSummary.__init__):
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        (run):
+        (main):
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+        (MainTest.test_exception_raised.of):
+        (MainTest.test_exception_raised):
+        (MainTest.test_run_force):
+        * Scripts/webkitpy/layout_tests/views/printing_unittest.py:
+        (Testprinter.test_print_unexpected_results.get_unexpected_results):
+        (Testprinter):
+
 2012-12-03  Julien BRIANCEAU   <jbrianceau@nds.com>
 
         Add Qt/SH4 build slave to build.webkit.org
