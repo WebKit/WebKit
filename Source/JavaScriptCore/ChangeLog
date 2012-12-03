@@ -1,3 +1,14 @@
+2012-12-03  Alexis Menard  <alexis@webkit.org>
+
+        [Mac] Enable CSS3 background-position offset by default.
+        https://bugs.webkit.org/show_bug.cgi?id=103905
+
+        Reviewed by Simon Fraser.
+
+        Turn the flag on by default.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2012-12-02  Filip Pizlo  <fpizlo@apple.com>
 
         DFG should trigger rage conversion from double to contiguous if it sees a GetByVal on Double being used in an integer context

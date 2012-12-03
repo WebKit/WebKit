@@ -1,3 +1,15 @@
+2012-12-03  Alexis Menard  <alexis@webkit.org>
+
+        [Mac] Enable CSS3 background-position offset by default.
+        https://bugs.webkit.org/show_bug.cgi?id=103905
+
+        Reviewed by Simon Fraser.
+
+        Enable by default the new CSS3 background position offsets therefore we
+        can unskip the tests.
+
+        * platform/mac/TestExpectations:
+
 2012-12-03  Takashi Sakamoto  <tasak@google.com>
 
         [style scoped]: style scoped needs more tests.
