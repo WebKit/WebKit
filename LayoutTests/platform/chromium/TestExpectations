@@ -4178,7 +4178,6 @@ webkit.org/b/103093 [ Mac Win ] media/video-preload.html [ Crash Pass ]
 webkit.org/b/103148 [ Win Mac ] fast/frames/iframe-scaling-with-scroll.html [ Pass ImageOnlyFailure ]
 webkit.org/b/103148 [ Lion ] fast/frames/iframe-scrolling-attribute.html [ Pass ImageOnlyFailure ]
 webkit.org/b/103148 [ Lion ] fast/table/border-collapsing/004-vertical.html [ Pass ImageOnlyFailure ]
-webkit.org/b/103149 [ Lion SnowLeopard Win7 Debug ] fast/events/stopPropagation-submit.html [ Pass Failure ]
 webkit.org/b/103154 [ Win7 SnowLeopard Lion Linux Debug ] fast/frames/frame-unload-crash2.html [ Pass Timeout ]
 webkit.org/b/103148 [ Lion ] fast/text/large-text-composed-char.html [ Pass ImageOnlyFailure ]
 webkit.org/b/103148 [ Lion ] fast/text/text-letter-spacing.html [ Pass ImageOnlyFailure ]
@@ -4210,7 +4209,8 @@ webkit.org/b/103609 [ MountainLion ] fast/regions/firstletter-inside-flowthread.
 webkit.org/b/103609 [ MountainLion ] fast/regions/listmarker-inside-flowthread.html [ ImageOnlyFailure ]
 
 # Rebaseline after https://bugs.webkit.org/show_bug.cgi?id=102624
-webkit.org/b/102624 fast/events/stopPropagation-submit.html [ Text ]
+webkit.org/b/102624 [ Linux Win ] fast/events/stopPropagation-submit.html [ Text ]
+webkit.org/b/103149 [ Mac ] fast/events/stopPropagation-submit.html [ Pass Failure ]
 
 # Some compositing tests doesn't work on multiple platforms.
 webkit.org/b/103721 [ Mac Win Linux ] compositing/geometry/vertical-scroll-composited.html [ ImageOnlyFailure ]
