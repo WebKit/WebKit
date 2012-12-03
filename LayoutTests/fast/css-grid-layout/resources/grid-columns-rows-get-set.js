@@ -1,9 +1,9 @@
 description('Test that setting and getting grid-columns and grid-rows works as expected');
 
-debug("Test getting |display| set through CSS");
-var gridElement = document.getElementById("gridElement");
-shouldBe("getComputedStyle(gridElement, '').getPropertyValue('-webkit-grid-columns')", "'none'");
-shouldBe("getComputedStyle(gridElement, '').getPropertyValue('-webkit-grid-rows')", "'none'");
+debug("Test getting -webkit-grid-columns and -webkit-grid-rows set through CSS");
+var gridWithNoneElement = document.getElementById("gridWithNoneElement");
+shouldBe("getComputedStyle(gridWithNoneElement, '').getPropertyValue('-webkit-grid-columns')", "'none'");
+shouldBe("getComputedStyle(gridWithNoneElement, '').getPropertyValue('-webkit-grid-rows')", "'none'");
 
 var gridWithFixedElement = document.getElementById("gridWithFixedElement");
 shouldBe("getComputedStyle(gridWithFixedElement, '').getPropertyValue('-webkit-grid-columns')", "'10px'");
@@ -20,6 +20,19 @@ shouldBe("getComputedStyle(gridWithAutoElement, '').getPropertyValue('-webkit-gr
 var gridWithEMElement = document.getElementById("gridWithEMElement");
 shouldBe("getComputedStyle(gridWithEMElement, '').getPropertyValue('-webkit-grid-columns')", "'100px'");
 shouldBe("getComputedStyle(gridWithEMElement, '').getPropertyValue('-webkit-grid-rows')", "'150px'");
+
+var gridWithViewPortPercentageElement = document.getElementById("gridWithViewPortPercentageElement");
+shouldBe("getComputedStyle(gridWithViewPortPercentageElement, '').getPropertyValue('-webkit-grid-columns')", "'64px'");
+shouldBe("getComputedStyle(gridWithViewPortPercentageElement, '').getPropertyValue('-webkit-grid-rows')", "'60px'");
+
+debug("Test getting wrong values for -webkit-grid-columns and -webkit-grid-rows through CSS (they should resolve to the default: 'none'.");
+var gridWithFitContentElement = document.getElementById("gridWithFitContentElement");
+shouldBe("getComputedStyle(gridWithFitContentElement, '').getPropertyValue('-webkit-grid-columns')", "'none'");
+shouldBe("getComputedStyle(gridWithFitContentElement, '').getPropertyValue('-webkit-grid-rows')", "'none'");
+
+var gridWithFitAvailableElement = document.getElementById("gridWithFitAvailableElement");
+shouldBe("getComputedStyle(gridWithFitAvailableElement, '').getPropertyValue('-webkit-grid-columns')", "'none'");
+shouldBe("getComputedStyle(gridWithFitAvailableElement, '').getPropertyValue('-webkit-grid-rows')", "'none'");
 
 debug("");
 debug("Test the initial value");
@@ -48,6 +61,13 @@ element.style.webkitGridColumns = "auto";
 element.style.webkitGridRows = "auto";
 shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-columns')", "'auto'");
 shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-rows')", "'auto'");
+
+element = document.createElement("div");
+document.body.appendChild(element);
+element.style.webkitGridColumns = "10vw";
+element.style.webkitGridRows = "25vh";
+shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-columns')", "'80px'");
+shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-rows')", "'150px'");
 
 debug("");
 debug("Test setting grid-columns and grid-rows back to 'none' through JS");

@@ -44,6 +44,16 @@ if (window.testRunner)
     -webkit-grid-rows: 12em 18px auto;
     font: 10px Ahem;
 }
+.gridWithPercentAndViewportPercent {
+    display: -webkit-grid;
+    -webkit-grid-columns: 50% 15vw;
+    -webkit-grid-rows: 35% 28vh;
+}
+.gridWithFitContentAndFitAvailable {
+    display: -webkit-grid;
+    -webkit-grid-columns: -webkit-content-available;
+    -webkit-grid-rows: -webkit-fitcontent -webkit-fit-available;
+}
 </style>
 <script src="../js/resources/js-test-pre.js"></script>
 </head>
@@ -55,6 +65,8 @@ if (window.testRunner)
 <div class="gridWithNoneAndAuto" id="gridWithNoneAndAuto"></div>
 <div class="gridWithNoneAndFixed" id="gridWithNoneAndFixed"></div>
 <div class="gridWithThreeItems" id="gridWithThreeItems"></div>
+<div class="gridWithPercentAndViewportPercent" id="gridWithPercentAndViewportPercent"></div>
+<div class="gridWithFitContentAndFitAvailable" id="gridWithFitContentAndFitAvailable"></div>
 <script src="resources/grid-columns-rows-get-set-multiple.js"></script>
 <script src="../js/resources/js-test-post.js"></script>
 </body>

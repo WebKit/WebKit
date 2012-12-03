@@ -999,35 +999,35 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::valueForFilter(const RenderObj
 }
 #endif
 
-static PassRefPtr<CSSValue> valueForGridTrackBreadth(const GridTrackSize& trackSize, const RenderStyle* style)
+static PassRefPtr<CSSValue> valueForGridTrackBreadth(const GridTrackSize& trackSize, const RenderStyle* style, RenderView *renderView)
 {
-    if (trackSize.length().isPercent())
-        return cssValuePool().createValue(trackSize.length());
     if (trackSize.length().isAuto())
         return cssValuePool().createIdentifierValue(CSSValueAuto);
-    return zoomAdjustedPixelValue(trackSize.length().value(), style);
+    if (trackSize.length().isViewportPercentage())
+        return zoomAdjustedPixelValue(valueForLength(trackSize.length(), 0, renderView), style);
+    return zoomAdjustedPixelValueForLength(trackSize.length(), style);
 }
 
-static PassRefPtr<CSSValue> valueForGridTrackMinMax(const GridTrackSize& trackSize, const RenderStyle* style)
+static PassRefPtr<CSSValue> valueForGridTrackMinMax(const GridTrackSize& trackSize, const RenderStyle* style, RenderView* renderView)
 {
-    return valueForGridTrackBreadth(trackSize, style);
+    return valueForGridTrackBreadth(trackSize, style, renderView);
 }
 
-static PassRefPtr<CSSValue> valueForGridTrackGroup(const Vector<GridTrackSize>& trackSizes, const RenderStyle* style)
+static PassRefPtr<CSSValue> valueForGridTrackGroup(const Vector<GridTrackSize>& trackSizes, const RenderStyle* style, RenderView* renderView)
 {
     RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
     for (size_t i = 0; i < trackSizes.size(); ++i)
-        list->append(valueForGridTrackMinMax(trackSizes[i], style));
+        list->append(valueForGridTrackMinMax(trackSizes[i], style, renderView));
     return list.release();
 }
 
-static PassRefPtr<CSSValue> valueForGridTrackList(const Vector<GridTrackSize>& trackSizes, const RenderStyle* style)
+static PassRefPtr<CSSValue> valueForGridTrackList(const Vector<GridTrackSize>& trackSizes, const RenderStyle* style, RenderView *renderView)
 {
     // Handle the 'none' case here.
     if (!trackSizes.size())
         return cssValuePool().createIdentifierValue(CSSValueNone);
 
-    return valueForGridTrackGroup(trackSizes, style);
+    return valueForGridTrackGroup(trackSizes, style, renderView);
 }
 
 static PassRefPtr<CSSValue> valueForGridPosition(const GridPosition& position)
@@ -1840,10 +1840,10 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(CSSPropert
             return list.release();
         }
         case CSSPropertyWebkitGridColumns: {
-            return valueForGridTrackList(style->gridColumns(), style.get());
+            return valueForGridTrackList(style->gridColumns(), style.get(), m_node->document()->renderView());
         }
         case CSSPropertyWebkitGridRows: {
-            return valueForGridTrackList(style->gridRows(), style.get());
+            return valueForGridTrackList(style->gridRows(), style.get(), m_node->document()->renderView());
         }
 
         case CSSPropertyWebkitGridColumn:

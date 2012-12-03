@@ -21,6 +21,14 @@ var gridWithThreeItems = document.getElementById("gridWithThreeItems");
 shouldBe("getComputedStyle(gridWithThreeItems, '').getPropertyValue('-webkit-grid-columns')", "'15px auto 100px'");
 shouldBe("getComputedStyle(gridWithThreeItems, '').getPropertyValue('-webkit-grid-rows')", "'120px 18px auto'");
 
+var gridWithPercentAndViewportPercent = document.getElementById("gridWithPercentAndViewportPercent");
+shouldBe("getComputedStyle(gridWithPercentAndViewportPercent, '').getPropertyValue('-webkit-grid-columns')", "'50% 120px'");
+shouldBe("getComputedStyle(gridWithPercentAndViewportPercent, '').getPropertyValue('-webkit-grid-rows')", "'35% 168px'");
+
+var gridWithFitContentAndFitAvailable = document.getElementById("gridWithFitContentAndFitAvailable");
+shouldBe("getComputedStyle(gridWithFitContentAndFitAvailable, '').getPropertyValue('-webkit-grid-columns')", "'none'");
+shouldBe("getComputedStyle(gridWithFitContentAndFitAvailable, '').getPropertyValue('-webkit-grid-rows')", "'none'");
+
 debug("");
 debug("Test the initial value");
 var element = document.createElement("div");
@@ -101,5 +109,19 @@ element = document.createElement("div");
 document.body.appendChild(element);
 element.style.webkitGridColumns = "auto none 16em";
 element.style.webkitGridRows = "auto 18em none";
+shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-columns')", "'none'");
+shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-rows')", "'none'");
+
+element = document.createElement("div");
+document.body.appendChild(element);
+element.style.webkitGridColumns = "50% 12vw";
+element.style.webkitGridRows = "5% 85vh";
+shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-columns')", "'50% 96px'");
+shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-rows')", "'5% 510px'");
+
+element = document.createElement("div");
+document.body.appendChild(element);
+element.style.webkitGridColumns = "-webkit-fit-content -webkit-fit-content";
+element.style.webkitGridRows = "-webkit-fit-available -webkit-fit-available";
 shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-columns')", "'none'");
 shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-rows')", "'none'");

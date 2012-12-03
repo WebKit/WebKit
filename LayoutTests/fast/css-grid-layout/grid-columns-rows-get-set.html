@@ -8,39 +8,52 @@ if (window.testRunner)
 <style>
 .grid {
     display: -webkit-grid;
+}
+.gridWithNone {
     -webkit-grid-columns: none;
     -webkit-grid-rows: none;
 }
 .gridWithFixed {
-    display: -webkit-grid;
     -webkit-grid-columns: 10px;
     -webkit-grid-rows: 15px;
 }
 .gridWithPercent {
-    display: -webkit-grid;
     -webkit-grid-columns: 53%;
     -webkit-grid-rows: 27%;
 }
 .gridWithAuto {
-    display: -webkit-grid;
     -webkit-grid-columns: auto;
     -webkit-grid-rows: auto;
 }
 .gridWithEM {
-    display: -webkit-grid;
     -webkit-grid-columns: 10em;
     -webkit-grid-rows: 15em;
     font: 10px Ahem;
+}
+.gridWithViewPortPercentage {
+    -webkit-grid-columns: 8vw;
+    -webkit-grid-rows: 10vh;
+}
+.gridWithFitContent {
+    -webkit-grid-columns: -webkit-fit-content;
+    -webkit-grid-rows: -webkit-fit-content;
+}
+.gridWithFitAvailable {
+    -webkit-grid-columns: -webkit-fit-available;
+    -webkit-grid-rows: -webkit-fit-available;
 }
 </style>
 <script src="../js/resources/js-test-pre.js"></script>
 </head>
 <body>
-<div class="grid" id="gridElement"></div>
-<div class="gridWithFixed" id="gridWithFixedElement"></div>
-<div class="gridWithPercent" id="gridWithPercentElement"></div>
-<div class="gridWithAuto" id="gridWithAutoElement"></div>
-<div class="gridWithEM" id="gridWithEMElement"></div>
+<div class="grid gridWithNone" id="gridWithNoneElement"></div>
+<div class="grid gridWithFixed" id="gridWithFixedElement"></div>
+<div class="grid gridWithPercent" id="gridWithPercentElement"></div>
+<div class="grid gridWithAuto" id="gridWithAutoElement"></div>
+<div class="grid gridWithEM" id="gridWithEMElement"></div>
+<div class="grid gridWithViewPortPercentage" id="gridWithViewPortPercentageElement"></div>
+<div class="grid gridWithFitContent" id="gridWithFitContentElement"></div>
+<div class="grid gridWithFitAvailable" id="gridWithFitAvailableElement"></div>
 <script src="resources/grid-columns-rows-get-set.js"></script>
 <script src="../js/resources/js-test-post.js"></script>
 </body>

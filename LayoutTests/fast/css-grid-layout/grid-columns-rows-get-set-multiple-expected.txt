@@ -14,6 +14,10 @@ PASS getComputedStyle(gridWithEMElement, '').getPropertyValue('-webkit-grid-colu
 PASS getComputedStyle(gridWithEMElement, '').getPropertyValue('-webkit-grid-rows') is '150px 170px'
 PASS getComputedStyle(gridWithThreeItems, '').getPropertyValue('-webkit-grid-columns') is '15px auto 100px'
 PASS getComputedStyle(gridWithThreeItems, '').getPropertyValue('-webkit-grid-rows') is '120px 18px auto'
+PASS getComputedStyle(gridWithPercentAndViewportPercent, '').getPropertyValue('-webkit-grid-columns') is '50% 120px'
+PASS getComputedStyle(gridWithPercentAndViewportPercent, '').getPropertyValue('-webkit-grid-rows') is '35% 168px'
+PASS getComputedStyle(gridWithFitContentAndFitAvailable, '').getPropertyValue('-webkit-grid-columns') is 'none'
+PASS getComputedStyle(gridWithFitContentAndFitAvailable, '').getPropertyValue('-webkit-grid-rows') is 'none'
 
 Test the initial value
 PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-columns') is 'none'
@@ -44,6 +48,10 @@ PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-columns') is '
 PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-rows') is 'none'
 PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-columns') is 'none'
 PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-rows') is 'none'
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-columns') is 'none'
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-rows') is 'none'
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-columns') is '50% 96px'
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-rows') is '5% 510px'
 PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-columns') is 'none'
 PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-rows') is 'none'
 PASS successfullyParsed is true
