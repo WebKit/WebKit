@@ -1,3 +1,12 @@
+2012-12-02  Christophe Dumez  <christophe.dumez@intel.com>
+
+        Unreviewed, WebKit2 gardening.
+
+        Skip storage/domstorage/localstorage/close-idle-localstorage-databases-immediately.html
+        on WebKit2 since testRunner.closeIdleLocalStorageDatabases() is not implemented yet.
+
+        * platform/wk2/TestExpectations:
+
 2012-12-02  Kangil Han  <kangil.han@samsung.com>
 
         [EFL] Unskip fast/js/array-sort-modifying-tostring.html in release mode

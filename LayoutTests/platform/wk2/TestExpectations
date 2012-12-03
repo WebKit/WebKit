@@ -452,6 +452,10 @@ fast/text-autosizing
 inspector/geolocation-error.html
 inspector/geolocation-success.html
 
+# WebKitTestRunner needs to implement testRunner.closeIdleLocalStorageDatabases().
+# https://bugs.webkit.org/show_bug.cgi?id=103861
+storage/domstorage/localstorage/close-idle-localstorage-databases-immediately.html
+
 ### END OF (1) Classified failures with bug reports
 ########################################
 
