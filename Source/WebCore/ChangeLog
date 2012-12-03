@@ -1,3 +1,21 @@
+2012-12-03  Philip Rogers  <pdr@google.com>
+
+        Invalidate SVG width on width attribute changes.
+        https://bugs.webkit.org/show_bug.cgi?id=103304
+
+        Reviewed by Dirk Schulze.
+
+        An inline SVG element's replaced width can depend on both attributes and style properties.
+        After r105513, we invalidated this width on style changes but not attribute changes. With
+        this patch we invalidate the replaced width on width attribute changes too. Note that height
+        is handled differently for replaced elements so only the width attribute needs this handling
+        (the added test covers this too).
+
+        Test: svg/custom/root-size-attribute-changes.html
+
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::svgAttributeChanged):
+
 2012-12-03  Alec Flett  <alecflett@chromium.org>
 
         IndexedDB: remove IDBDatabaseBackendInterface::transaction()
