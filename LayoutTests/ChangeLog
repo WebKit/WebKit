@@ -1,3 +1,15 @@
+2012-12-03  Alexis Menard  <alexis@webkit.org>
+
+        [EFL] Enable CSS3 background-position offsets by default.
+        https://bugs.webkit.org/show_bug.cgi?id=103879
+
+        Reviewed by Laszlo Gombos.
+
+        Enable by default the new CSS3 background position offsets therefore we
+        can unskip the tests.
+
+        * platform/efl/TestExpectations:
+
 2012-12-03  Stephen White  <senorblanco@chromium.org>
 
         [chromium]  Unreviewed gardening.
