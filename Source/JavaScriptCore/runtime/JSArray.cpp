@@ -1308,6 +1308,7 @@ bool JSArray::shiftCount(ExecState*, unsigned count)
     ArrayStorage* storage = m_storage;
     
     unsigned oldLength = storage->m_length;
+    ASSERT(count <= oldLength);
     
     // If the array contains holes or is otherwise in an abnormal state,
     // use the generic algorithm in ArrayPrototype.
