@@ -63,8 +63,6 @@ private:
 
     Document* m_document;
     RefPtr<StylePropertySet> m_propertySet;
-
-    FloatSize m_initialViewportSize;
 };
 
 } // namespace WebCore

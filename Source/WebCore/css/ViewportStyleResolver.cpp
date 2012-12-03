@@ -46,9 +46,6 @@ ViewportStyleResolver::ViewportStyleResolver(Document* document)
     : m_document(document)
 {
     ASSERT(m_document);
-
-    m_initialViewportSize.setWidth(m_document->viewportSize().width());
-    m_initialViewportSize.setHeight(m_document->viewportSize().height());
 }
 
 void ViewportStyleResolver::addViewportRule(StyleRuleViewport* viewportRule)
@@ -125,10 +122,12 @@ float ViewportStyleResolver::getViewportArgumentValue(CSSPropertyID id) const
         switch (id) {
         case CSSPropertyMaxHeight:
         case CSSPropertyMinHeight:
-            return percentValue * m_initialViewportSize.height();
+            ASSERT(m_document->initialViewportSize().height() > 0);
+            return percentValue * m_document->initialViewportSize().height();
         case CSSPropertyMaxWidth:
         case CSSPropertyMinWidth:
-            return percentValue * m_initialViewportSize.width();
+            ASSERT(m_document->initialViewportSize().width() > 0);
+            return percentValue * m_document->initialViewportSize().width();
         case CSSPropertyMaxZoom:
         case CSSPropertyMinZoom:
         case CSSPropertyZoom:

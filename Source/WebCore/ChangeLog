@@ -1,3 +1,36 @@
+2012-12-03  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        CSS Device Adaptation: window.innerWidth returns wrong value if CSS viewport descriptors are applied
+        https://bugs.webkit.org/show_bug.cgi?id=103737
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        ViewportStyleResolver used frame view visibleContentRect size as initial viewport size.
+        This however caused a problem when page enabled/disabled CSS stylesheets, having viewport
+        descriptors. Viewport descriptors from new stylesheet were applied to the visibleContentRect
+        affected already by the viewport descriptors from the previous stylesheet.
+
+        New 'initialViewportSize' property (http://dev.w3.org/csswg/css-device-adapt/#initial-viewport)
+        was added to frame view so that viewport descriptors can always be applied to the reliable
+        viewport size.
+
+        Test: css3/device-adapt/viewport-width-check-window-innerwidth-correct.html
+
+        * css/ViewportStyleResolver.cpp:
+        (WebCore::ViewportStyleResolver::ViewportStyleResolver):
+        (WebCore::ViewportStyleResolver::getViewportArgumentValue):
+        * css/ViewportStyleResolver.h:
+        (ViewportStyleResolver):
+        * dom/Document.cpp:
+        (WebCore):
+        (WebCore::Document::initialViewportSize):
+        * dom/Document.h:
+        (Document):
+        * page/FrameView.h:
+        (FrameView):
+        (WebCore::FrameView::initialViewportSize):
+        (WebCore::FrameView::setInitialViewportSize):
+
 2012-12-03  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: [Styles] Retain selector case as written in the source code

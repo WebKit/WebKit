@@ -5657,6 +5657,15 @@ IntSize Document::viewportSize() const
     return view()->visibleContentRect(/* includeScrollbars */ true).size();
 }
 
+#if ENABLE(CSS_DEVICE_ADAPTATION)
+IntSize Document::initialViewportSize() const
+{
+    if (!view())
+        return IntSize();
+    return view()->initialViewportSize();
+}
+#endif
+
 Node* eventTargetNodeForDocument(Document* doc)
 {
     if (!doc)

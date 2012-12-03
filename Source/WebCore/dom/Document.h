@@ -1134,6 +1134,10 @@ public:
 
     IntSize viewportSize() const;
 
+#if ENABLE(CSS_DEVICE_ADAPTATION)
+    IntSize initialViewportSize() const;
+#endif
+
 #if ENABLE(LINK_PRERENDER)
     Prerenderer* prerenderer() { return m_prerenderer.get(); }
 #endif

@@ -1,3 +1,25 @@
+2012-12-03  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        CSS Device Adaptation: window.innerWidth returns wrong value if CSS viewport descriptors are applied
+        https://bugs.webkit.org/show_bug.cgi?id=103737
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        ViewportStyleResolver used frame view visibleContentRect size as initial viewport size.
+        This however caused a problem when page enabled/disabled CSS stylesheets, having viewport
+        descriptors. Viewport descriptors from new stylesheet were applied to the visibleContentRect
+        affected already by the viewport descriptors from the previous stylesheet.
+
+        New 'initialViewportSize' property (http://dev.w3.org/csswg/css-device-adapt/#initial-viewport)
+        was added to frame view so that viewport descriptors can always be applied to the reliable
+        viewport size.
+
+        Both newly added 'initialViewportSize' property and 'fixedVisibleContentRect' property
+        are assigned appropriately now in WebPage::sendViewportAttributesChanged().
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::sendViewportAttributesChanged):
+
 2012-12-02  Huang Dongsung  <luxtella@company100.net>
 
         Coordinated Graphics: Reorder messages to LayerTreeCoordinatorProxy
