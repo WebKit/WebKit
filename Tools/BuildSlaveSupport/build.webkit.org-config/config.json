@@ -72,7 +72,9 @@
                     { "name": "efl-linux-slave-3", "platform": "efl" },
                     { "name": "efl-linux-slave-4", "platform": "efl" },
 
-                    { "name": "mips-1", "platform": "qt-mipsel"}
+                    { "name": "mips-1", "platform": "qt-mipsel"},
+
+                    { "name": "sh4-linux-1", "platform": "qt-sh4"}
                   ],
 
     "builders":   [ { "name": "Apple Lion (Leaks)", "type": "BuildAndTestLeaks", "builddir": "lion-leaks",
@@ -224,6 +226,11 @@
                       "slavenames": ["mips-1"]
                     },
                     {
+                      "name": "Qt Linux SH4 Release", "type": "Build", "builddir": "qt-linux-sh4-release",
+                      "platform": "qt-sh4", "configuration": "release", "architectures": ["sh4"],
+                      "slavenames": ["sh4-linux-1"]
+                    },
+                    {
                       "name": "Qt Windows 32-bit Release", "type": "Build", "builddir": "qt-windows-32bit-release",
                       "SVNMirror": "svn://webkit.inf.u-szeged.hu/webkit/",
                       "platform": "qt-win", "configuration": "release", "architectures": ["i386"],
@@ -334,6 +341,7 @@
                       "builderNames": ["GTK Linux 32-bit Release", "GTK Linux 64-bit Release", "GTK Linux 64-bit Debug",
                                        "Qt Linux Release", "Qt Linux Release minimal", "Qt Linux 64-bit Release (Perf)",
                                        "Qt Linux 64-bit Release (WebKit2 Perf)", "Qt Linux ARMv7 Release", "Qt Linux MIPS32R2 LE Release",
+                                       "Qt Linux SH4 Release",
                                        "Qt Windows 32-bit Release", "Qt Windows 32-bit Debug", "Qt Mountain Lion Release",
                                        "Chromium Win Release", "Chromium Mac Release", "Chromium Linux Release",
                                        "Chromium Android Release",
