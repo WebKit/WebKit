@@ -2414,13 +2414,17 @@ TraceLogPlayer.prototype = {
             this._resetCallback();
     },
 
+    /**
+     * @return {Call}
+     */
     step: function()
     {
-        this.stepTo(this._nextReplayStep);
+        return this.stepTo(this._nextReplayStep);
     },
 
     /**
      * @param {number} stepNum
+     * @return {Call}
      */
     stepTo: function(stepNum)
     {
@@ -2429,14 +2433,19 @@ TraceLogPlayer.prototype = {
         if (this._nextReplayStep > stepNum)
             this.reset();
         // FIXME: Replay all the cached resources first to warm-up.
+        var lastCall = null;
         var replayableCalls = this._traceLog.replayableCalls();
         while (this._nextReplayStep <= stepNum)
-            replayableCalls[this._nextReplayStep++].replay(this._replayWorldCache);
+            lastCall = replayableCalls[this._nextReplayStep++].replay(this._replayWorldCache);
+        return lastCall;
     },
 
+    /**
+     * @return {Call}
+     */
     replay: function()
     {
-        this.stepTo(this._traceLog.size() - 1);
+        return this.stepTo(this._traceLog.size() - 1);
     }
 }
 
@@ -2704,13 +2713,19 @@ InjectedScript.prototype = {
             this._replayContexts = [];
             this._traceLogPlayer = new TraceLogPlayer(traceLog, this._onTraceLogPlayerReset.bind(this));
         }
-        this._traceLogPlayer.stepTo(stepNo);
+        var lastCall = this._traceLogPlayer.stepTo(stepNo);
         if (!this._replayContexts.length) {
             console.error("ASSERT_NOT_REACHED: replayTraceLog failed to create a replay canvas?!");
             return "";
         }
-        // Return current screenshot.
         // FIXME: Support replaying several canvases simultaneously.
+        var lastCallResourceContext = Resource.wrappedObject(lastCall.resource());
+        for (var i = 0, n = this._replayContexts.length; i < n; ++i) {
+            var context = this._replayContexts[i].context;
+            if (lastCallResourceContext === context)
+                return context.canvas.toDataURL();
+        }
+        console.assert("ASSERT_NOT_REACHED: replayTraceLog failed to match the replaying canvas?!");
         return this._replayContexts[0].context.canvas.toDataURL();
     },
 
