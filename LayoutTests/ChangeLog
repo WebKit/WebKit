@@ -1,3 +1,17 @@
+2012-12-03  Stephen Chenney  <schenney@chromium.org>
+
+        [Chromium] Expectations fix up
+
+        Unreviewed expectations.
+
+        Two tests appear to have been out-of-date when they were last rebaselined.
+
+        * platform/chromium-linux/platform/chromium/virtual/softwarecompositing/shadows: Added.
+        * platform/chromium-linux/platform/chromium/virtual/softwarecompositing/shadows/shadow-drawing-expected.png: Added.
+        * platform/chromium-win-xp/svg/carto.net: Removed.
+        * platform/chromium-win-xp/svg/carto.net/colourpicker-expected.png: Removed.
+        * platform/chromium-win/svg/carto.net/colourpicker-expected.png:
+
 2012-12-03  Balazs Kelemen  <kbalazs@webkit.org>
 
         svg/custom/baseval-animval-equality.svg should use dumpAsText
