@@ -52,15 +52,16 @@ namespace JSC { namespace DFG {
 #define NodeMayOverflow           0x100
 #define NodeMayNegZero            0x200
                                 
-#define NodeBackPropMask         0x3C00
-#define NodeUseBottom             0x000
+#define NodeBackPropMask         0x7C00
+#define NodeUseBottom            0x0000
 #define NodeUsedAsNumber          0x400 // The result of this computation may be used in a context that observes fractional results.
 #define NodeNeedsNegZero          0x800 // The result of this computation may be used in a context that observes -0.
 #define NodeUsedAsOther          0x1000 // The result of this computation may be used in a context that distinguishes between NaN and other things (like undefined).
 #define NodeUsedAsValue          (NodeUsedAsNumber | NodeNeedsNegZero | NodeUsedAsOther)
 #define NodeUsedAsInt            0x2000 // The result of this computation is known to be used in a context that prefers, but does not require, integer values.
+#define NodeUsedAsIntLocally     0x4000 // Same as NodeUsedAsInt, but within the same basic block.
 
-#define NodeDoesNotExit          0x4000 // This flag is negated to make it natural for the default to be that a node does exit.
+#define NodeDoesNotExit          0x8000 // This flag is negated to make it natural for the default to be that a node does exit.
 
 typedef uint16_t NodeFlags;
 

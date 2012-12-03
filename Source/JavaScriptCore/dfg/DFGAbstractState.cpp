@@ -1562,7 +1562,8 @@ bool AbstractState::execute(unsigned indexInBlock)
             node.setCanExit(false);
             break;
         }
-        ASSERT(node.arrayMode().conversion() == Array::Convert);
+        ASSERT(node.arrayMode().conversion() == Array::Convert
+            || node.arrayMode().conversion() == Array::RageConvert);
         node.setCanExit(true);
         forNode(node.child1()).filter(SpecCell);
         if (node.child2())

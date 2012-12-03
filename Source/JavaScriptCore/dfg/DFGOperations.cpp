@@ -1444,6 +1444,14 @@ char* DFG_OPERATION operationEnsureContiguous(ExecState* exec, JSObject* object)
     return reinterpret_cast<char*>(object->ensureContiguous(globalData));
 }
 
+char* DFG_OPERATION operationRageEnsureContiguous(ExecState* exec, JSObject* object)
+{
+    JSGlobalData& globalData = exec->globalData();
+    NativeCallFrameTracer tracer(&globalData, exec);
+    
+    return reinterpret_cast<char*>(object->rageEnsureContiguous(globalData));
+}
+
 char* DFG_OPERATION operationEnsureArrayStorage(ExecState* exec, JSObject* object)
 {
     JSGlobalData& globalData = exec->globalData();

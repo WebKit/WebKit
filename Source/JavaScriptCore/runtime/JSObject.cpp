@@ -804,7 +804,8 @@ ArrayStorage* JSObject::convertInt32ToArrayStorage(JSGlobalData& globalData)
     return convertInt32ToArrayStorage(globalData, structure()->suggestedArrayStorageTransition());
 }
 
-WriteBarrier<Unknown>* JSObject::convertDoubleToContiguous(JSGlobalData& globalData)
+template<JSObject::DoubleToContiguousMode mode>
+WriteBarrier<Unknown>* JSObject::genericConvertDoubleToContiguous(JSGlobalData& globalData)
 {
     ASSERT(hasDouble(structure()->indexingType()));
     
@@ -816,11 +817,31 @@ WriteBarrier<Unknown>* JSObject::convertDoubleToContiguous(JSGlobalData& globalD
             currentAsValue->clear();
             continue;
         }
-        currentAsValue->setWithoutWriteBarrier(JSValue(JSValue::EncodeAsDouble, value));
+        JSValue v;
+        switch (mode) {
+        case EncodeValueAsDouble:
+            v = JSValue(JSValue::EncodeAsDouble, value);
+            break;
+        case RageConvertDoubleToValue:
+            v = jsNumber(value);
+            break;
+        }
+        ASSERT(v.isNumber());
+        currentAsValue->setWithoutWriteBarrier(v);
     }
     
     setStructure(globalData, Structure::nonPropertyTransition(globalData, structure(), AllocateContiguous));
     return m_butterfly->contiguous();
+}
+
+WriteBarrier<Unknown>* JSObject::convertDoubleToContiguous(JSGlobalData& globalData)
+{
+    return genericConvertDoubleToContiguous<EncodeValueAsDouble>(globalData);
+}
+
+WriteBarrier<Unknown>* JSObject::rageConvertDoubleToContiguous(JSGlobalData& globalData)
+{
+    return genericConvertDoubleToContiguous<RageConvertDoubleToValue>(globalData);
 }
 
 ArrayStorage* JSObject::convertDoubleToArrayStorage(JSGlobalData& globalData, NonPropertyTransition transition, unsigned neededLength)
@@ -974,7 +995,7 @@ double* JSObject::ensureDoubleSlow(JSGlobalData& globalData)
     }
 }
 
-WriteBarrier<Unknown>* JSObject::ensureContiguousSlow(JSGlobalData& globalData)
+WriteBarrier<Unknown>* JSObject::ensureContiguousSlow(JSGlobalData& globalData, DoubleToContiguousMode mode)
 {
     switch (structure()->indexingType()) {
     case ALL_BLANK_INDEXING_TYPES:
@@ -989,6 +1010,8 @@ WriteBarrier<Unknown>* JSObject::ensureContiguousSlow(JSGlobalData& globalData)
         return convertInt32ToContiguous(globalData);
         
     case ALL_DOUBLE_INDEXING_TYPES:
+        if (mode == RageConvertDoubleToValue)
+            return rageConvertDoubleToContiguous(globalData);
         return convertDoubleToContiguous(globalData);
         
     case ALL_ARRAY_STORAGE_INDEXING_TYPES:
@@ -998,6 +1021,16 @@ WriteBarrier<Unknown>* JSObject::ensureContiguousSlow(JSGlobalData& globalData)
         CRASH();
         return 0;
     }
+}
+
+WriteBarrier<Unknown>* JSObject::ensureContiguousSlow(JSGlobalData& globalData)
+{
+    return ensureContiguousSlow(globalData, EncodeValueAsDouble);
+}
+
+WriteBarrier<Unknown>* JSObject::rageEnsureContiguousSlow(JSGlobalData& globalData)
+{
+    return ensureContiguousSlow(globalData, RageConvertDoubleToValue);
 }
 
 ArrayStorage* JSObject::ensureArrayStorageSlow(JSGlobalData& globalData)

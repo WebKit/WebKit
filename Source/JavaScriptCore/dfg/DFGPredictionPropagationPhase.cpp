@@ -204,7 +204,7 @@ private:
             if (prediction)
                 changed |= mergePrediction(prediction);
             
-            changed |= variableAccessData->mergeFlags(flags);
+            changed |= variableAccessData->mergeFlags(flags & ~NodeUsedAsIntLocally);
             break;
         }
             
@@ -229,7 +229,7 @@ private:
         case BitLShift:
         case BitURShift: {
             changed |= setPrediction(SpecInt32);
-            flags |= NodeUsedAsInt;
+            flags |= NodeUsedAsInt | NodeUsedAsIntLocally;
             flags &= ~(NodeUsedAsNumber | NodeNeedsNegZero | NodeUsedAsOther);
             changed |= m_graph[node.child1()].mergeFlags(flags);
             changed |= m_graph[node.child2()].mergeFlags(flags);
@@ -238,7 +238,7 @@ private:
             
         case ValueToInt32: {
             changed |= setPrediction(SpecInt32);
-            flags |= NodeUsedAsInt;
+            flags |= NodeUsedAsInt | NodeUsedAsIntLocally;
             flags &= ~(NodeUsedAsNumber | NodeNeedsNegZero | NodeUsedAsOther);
             changed |= m_graph[node.child1()].mergeFlags(flags);
             break;
@@ -267,7 +267,7 @@ private:
         case StringCharCodeAt: {
             changed |= mergePrediction(SpecInt32);
             changed |= m_graph[node.child1()].mergeFlags(NodeUsedAsValue);
-            changed |= m_graph[node.child2()].mergeFlags(NodeUsedAsNumber | NodeUsedAsOther | NodeUsedAsInt);
+            changed |= m_graph[node.child2()].mergeFlags(NodeUsedAsNumber | NodeUsedAsOther | NodeUsedAsInt | NodeUsedAsIntLocally);
             break;
         }
 
@@ -517,13 +517,13 @@ private:
                 changed |= mergePrediction(node.getHeapPrediction());
 
             changed |= m_graph[node.child1()].mergeFlags(NodeUsedAsValue);
-            changed |= m_graph[node.child2()].mergeFlags(NodeUsedAsNumber | NodeUsedAsOther | NodeUsedAsInt);
+            changed |= m_graph[node.child2()].mergeFlags(NodeUsedAsNumber | NodeUsedAsOther | NodeUsedAsInt | NodeUsedAsIntLocally);
             break;
         }
             
         case GetMyArgumentByValSafe: {
             changed |= mergePrediction(node.getHeapPrediction());
-            changed |= m_graph[node.child1()].mergeFlags(NodeUsedAsNumber | NodeUsedAsOther | NodeUsedAsInt);
+            changed |= m_graph[node.child1()].mergeFlags(NodeUsedAsNumber | NodeUsedAsOther | NodeUsedAsInt | NodeUsedAsIntLocally);
             break;
         }
             
@@ -626,7 +626,7 @@ private:
             
         case NewArrayWithSize: {
             changed |= setPrediction(SpecArray);
-            changed |= m_graph[node.child1()].mergeFlags(NodeUsedAsValue | NodeUsedAsInt);
+            changed |= m_graph[node.child1()].mergeFlags(NodeUsedAsValue | NodeUsedAsInt | NodeUsedAsIntLocally);
             break;
         }
             
@@ -643,7 +643,7 @@ private:
         case StringCharAt: {
             changed |= setPrediction(SpecString);
             changed |= m_graph[node.child1()].mergeFlags(NodeUsedAsValue);
-            changed |= m_graph[node.child2()].mergeFlags(NodeUsedAsNumber | NodeUsedAsOther | NodeUsedAsInt);
+            changed |= m_graph[node.child2()].mergeFlags(NodeUsedAsNumber | NodeUsedAsOther | NodeUsedAsInt | NodeUsedAsIntLocally);
             break;
         }
             
@@ -718,7 +718,7 @@ private:
         
         case PutByVal:
             changed |= m_graph[m_graph.varArgChild(node, 0)].mergeFlags(NodeUsedAsValue);
-            changed |= m_graph[m_graph.varArgChild(node, 1)].mergeFlags(NodeUsedAsNumber | NodeUsedAsOther | NodeUsedAsInt);
+            changed |= m_graph[m_graph.varArgChild(node, 1)].mergeFlags(NodeUsedAsNumber | NodeUsedAsOther | NodeUsedAsInt | NodeUsedAsIntLocally);
             changed |= m_graph[m_graph.varArgChild(node, 2)].mergeFlags(NodeUsedAsValue);
             break;
 

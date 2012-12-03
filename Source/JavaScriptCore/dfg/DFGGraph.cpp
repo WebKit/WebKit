@@ -189,7 +189,7 @@ void Graph::dump(PrintStream& out, const char* prefix, NodeIndex nodeIndex)
         hasPrinted = true;
     }
     if (node.hasArrayMode()) {
-        out.print(hasPrinted ? ", " : "", node.arrayMode().toString());
+        out.print(hasPrinted ? ", " : "", node.arrayMode());
         hasPrinted = true;
     }
     if (node.hasVarNumber()) {

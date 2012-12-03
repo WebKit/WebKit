@@ -122,7 +122,7 @@ ArrayMode ArrayMode::fromObserved(ArrayProfile* profile, Array::Action action, b
     }
 }
 
-ArrayMode ArrayMode::refine(SpeculatedType base, SpeculatedType index, SpeculatedType value) const
+ArrayMode ArrayMode::refine(SpeculatedType base, SpeculatedType index, SpeculatedType value, NodeFlags flags) const
 {
     if (!base || !index) {
         // It can be that we had a legitimate arrayMode but no incoming predictions. That'll
@@ -156,9 +156,16 @@ ArrayMode ArrayMode::refine(SpeculatedType base, SpeculatedType index, Speculate
         return withTypeAndConversion(Array::Contiguous, Array::Convert);
         
     case Array::Double:
+        if (flags & NodeUsedAsIntLocally)
+            return withTypeAndConversion(Array::Contiguous, Array::RageConvert);
         if (!value || isNumberSpeculation(value))
             return *this;
         return withTypeAndConversion(Array::Contiguous, Array::Convert);
+        
+    case Array::Contiguous:
+        if (doesConversion() && (flags & NodeUsedAsIntLocally))
+            return withConversion(Array::RageConvert);
+        return *this;
         
     case Array::SelectUsingPredictions:
         if (isStringSpeculation(base))
@@ -429,19 +436,43 @@ const char* arrayConversionToString(Array::Conversion conversion)
         return "AsIs";
     case Array::Convert:
         return "Convert";
+    case Array::RageConvert:
+        return "RageConvert";
     default:
         return "Unknown!";
     }
 }
 
-const char* ArrayMode::toString() const
+void ArrayMode::dump(PrintStream& out) const
 {
-    static char buffer[256];
-    snprintf(buffer, sizeof(buffer), "%s%s%s%s", arrayTypeToString(type()), arrayClassToString(arrayClass()), arraySpeculationToString(speculation()), arrayConversionToString(conversion()));
-    return buffer;
+    out.print(type(), arrayClass(), speculation(), conversion());
 }
 
 } } // namespace JSC::DFG
+
+namespace WTF {
+
+void printInternal(PrintStream& out, JSC::DFG::Array::Type type)
+{
+    out.print(JSC::DFG::arrayTypeToString(type));
+}
+
+void printInternal(PrintStream& out, JSC::DFG::Array::Class arrayClass)
+{
+    out.print(JSC::DFG::arrayClassToString(arrayClass));
+}
+
+void printInternal(PrintStream& out, JSC::DFG::Array::Speculation speculation)
+{
+    out.print(JSC::DFG::arraySpeculationToString(speculation));
+}
+
+void printInternal(PrintStream& out, JSC::DFG::Array::Conversion conversion)
+{
+    out.print(JSC::DFG::arrayConversionToString(conversion));
+}
+
+} // namespace WTF
 
 #endif // ENABLE(DFG_JIT)
 

@@ -54,6 +54,7 @@ private:
         if (!block)
             return;
         ASSERT(block->isReachable);
+        m_block = block;
         for (m_indexInBlock = 0; m_indexInBlock < block->size(); ++m_indexInBlock) {
             m_compileIndex = block->at(m_indexInBlock);
             fixupNode(m_graph[m_compileIndex]);
@@ -131,7 +132,8 @@ private:
             node.setArrayMode(
                 node.arrayMode().refine(
                     m_graph[node.child1()].prediction(),
-                    m_graph[node.child2()].prediction()));
+                    m_graph[node.child2()].prediction(),
+                    SpecNone, node.flags()));
             
             blessArrayOperation(node.child1(), node.child2(), 2);
             
@@ -442,6 +444,16 @@ private:
                 m_graph.ref(index);
             
             if (structure) {
+                if (m_indexInBlock > 0) {
+                    // If the previous node was a CheckStructure inserted because of stuff
+                    // that the array profile told us, then remove it.
+                    Node& previousNode = m_graph[m_block->at(m_indexInBlock - 1)];
+                    if (previousNode.op() == CheckStructure
+                        && previousNode.child1() == array
+                        && previousNode.codeOrigin == codeOrigin)
+                        previousNode.setOpAndDefaultFlags(Phantom);
+                }
+                
                 Node arrayify(ArrayifyToStructure, codeOrigin, OpInfo(structure), OpInfo(arrayMode.asWord()), array, index);
                 arrayify.ref();
                 NodeIndex arrayifyIndex = m_graph.size();
@@ -564,7 +576,8 @@ private:
         int32ToDouble.predict(SpecDouble);
         int32ToDouble.ref();
     }
-    
+
+    BasicBlock* m_block;
     unsigned m_indexInBlock;
     NodeIndex m_compileIndex;
     InsertionSet<NodeIndex> m_insertionSet;

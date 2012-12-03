@@ -205,6 +205,7 @@ char* DFG_OPERATION operationReallocateButterflyToGrowPropertyStorage(ExecState*
 char* DFG_OPERATION operationEnsureInt32(ExecState*, JSObject*);
 char* DFG_OPERATION operationEnsureDouble(ExecState*, JSObject*);
 char* DFG_OPERATION operationEnsureContiguous(ExecState*, JSObject*);
+char* DFG_OPERATION operationRageEnsureContiguous(ExecState*, JSObject*);
 char* DFG_OPERATION operationEnsureArrayStorage(ExecState*, JSObject*);
 
 // This method is used to lookup an exception hander, keyed by faultLocation, which is

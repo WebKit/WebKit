@@ -106,6 +106,24 @@ public:
                     // Don't count these uses.
                     break;
                     
+                case ArrayifyToStructure:
+                case Arrayify:
+                    if (node.arrayMode().conversion() == Array::RageConvert) {
+                        // Rage conversion changes structures. We should avoid tying to do
+                        // any kind of hoisting when rage conversion is in play.
+                        Node& child = m_graph[node.child1()];
+                        if (child.op() != GetLocal)
+                            break;
+                        VariableAccessData* variable = child.variableAccessData();
+                        variable->vote(VoteOther);
+                        if (variable->isCaptured() || variable->structureCheckHoistingFailed())
+                            break;
+                        if (!isCellSpeculation(variable->prediction()))
+                            break;
+                        noticeStructureCheck(variable, 0);
+                    }
+                    break;
+                    
                 case SetLocal: {
                     // Find all uses of the source of the SetLocal. If any of them are a
                     // kind of CheckStructure, then we should notice them to ensure that

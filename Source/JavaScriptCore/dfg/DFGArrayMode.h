@@ -31,6 +31,7 @@
 #if ENABLE(DFG_JIT)
 
 #include "ArrayProfile.h"
+#include "DFGNodeFlags.h"
 #include "SpeculatedType.h"
 
 namespace JSC {
@@ -93,7 +94,8 @@ enum Speculation {
 };
 enum Conversion {
     AsIs,
-    Convert
+    Convert,
+    RageConvert
 };
 } // namespace Array
 
@@ -183,16 +185,21 @@ public:
         return ArrayMode(type, arrayClass(), speculation(), conversion());
     }
     
+    ArrayMode withConversion(Array::Conversion conversion) const
+    {
+        return ArrayMode(type(), arrayClass(), speculation(), conversion);
+    }
+    
     ArrayMode withTypeAndConversion(Array::Type type, Array::Conversion conversion) const
     {
         return ArrayMode(type, arrayClass(), speculation(), conversion);
     }
     
-    ArrayMode refine(SpeculatedType base, SpeculatedType index, SpeculatedType value = SpecNone) const;
+    ArrayMode refine(SpeculatedType base, SpeculatedType index, SpeculatedType value = SpecNone, NodeFlags = 0) const;
     
     bool alreadyChecked(Graph&, Node&, AbstractValue&) const;
     
-    const char* toString() const;
+    void dump(PrintStream&) const;
     
     bool usesButterfly() const
     {
@@ -353,7 +360,7 @@ public:
     
     bool doesConversion() const
     {
-        return conversion() == Array::Convert;
+        return conversion() != Array::AsIs;
     }
     
     ArrayModes arrayModesThatPassFiltering() const
@@ -434,6 +441,16 @@ static inline bool lengthNeedsStorage(const ArrayMode& arrayMode)
 }
 
 } } // namespace JSC::DFG
+
+namespace WTF {
+
+class PrintStream;
+void printInternal(PrintStream&, JSC::DFG::Array::Type);
+void printInternal(PrintStream&, JSC::DFG::Array::Class);
+void printInternal(PrintStream&, JSC::DFG::Array::Speculation);
+void printInternal(PrintStream&, JSC::DFG::Array::Conversion);
+
+} // namespace WTF
 
 #endif // ENABLE(DFG_JIT)
 

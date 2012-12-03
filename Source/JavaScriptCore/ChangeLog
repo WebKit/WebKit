@@ -1,5 +1,61 @@
 2012-12-02  Filip Pizlo  <fpizlo@apple.com>
 
+        DFG should trigger rage conversion from double to contiguous if it sees a GetByVal on Double being used in an integer context
+        https://bugs.webkit.org/show_bug.cgi?id=103858
+
+        Reviewed by Gavin Barraclough.
+
+        A rage conversion from double to contiguous is one where you try to convert each
+        double to an int32.
+
+        This is probably not the last we'll hear of rage conversion from double to contiguous.
+        It may be better to do this right during parsing, which will result in fewer cases of
+        Arrayification. But even so, this looks like a straight win already - 1% speed-up on
+        Kraken, no major regression anywhere else.
+
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::execute):
+        * dfg/DFGArrayMode.cpp:
+        (JSC::DFG::ArrayMode::refine):
+        (JSC::DFG::arrayConversionToString):
+        (JSC::DFG::ArrayMode::dump):
+        (WTF):
+        (WTF::printInternal):
+        * dfg/DFGArrayMode.h:
+        (JSC::DFG::ArrayMode::withConversion):
+        (ArrayMode):
+        (JSC::DFG::ArrayMode::doesConversion):
+        (WTF):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupBlock):
+        (JSC::DFG::FixupPhase::fixupNode):
+        (JSC::DFG::FixupPhase::checkArray):
+        (FixupPhase):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::dump):
+        * dfg/DFGNodeFlags.h:
+        (DFG):
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::arrayify):
+        * dfg/DFGStructureCheckHoistingPhase.cpp:
+        (JSC::DFG::StructureCheckHoistingPhase::run):
+        * runtime/JSObject.cpp:
+        (JSC):
+        (JSC::JSObject::genericConvertDoubleToContiguous):
+        (JSC::JSObject::convertDoubleToContiguous):
+        (JSC::JSObject::rageConvertDoubleToContiguous):
+        (JSC::JSObject::ensureContiguousSlow):
+        (JSC::JSObject::rageEnsureContiguousSlow):
+        * runtime/JSObject.h:
+        (JSObject):
+        (JSC::JSObject::rageEnsureContiguous):
+
+2012-12-02  Filip Pizlo  <fpizlo@apple.com>
+
         DFG CSE should not keep alive things that aren't relevant to OSR
         https://bugs.webkit.org/show_bug.cgi?id=103849
 

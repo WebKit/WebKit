@@ -598,7 +598,10 @@ void SpeculativeJIT::arrayify(Node& node, GPRReg baseReg, GPRReg propertyReg)
         callOperation(operationEnsureDouble, tempGPR, baseReg);
         break;
     case Array::Contiguous:
-        callOperation(operationEnsureContiguous, tempGPR, baseReg);
+        if (node.arrayMode().conversion() == Array::RageConvert)
+            callOperation(operationRageEnsureContiguous, tempGPR, baseReg);
+        else
+            callOperation(operationEnsureContiguous, tempGPR, baseReg);
         break;
     case Array::ArrayStorage:
     case Array::SlowPutArrayStorage:

@@ -679,6 +679,17 @@ public:
         return ensureContiguousSlow(globalData);
     }
         
+    // Same as ensureContiguous(), except that if the indexed storage is in
+    // double mode, then it does a rage conversion to contiguous: it
+    // attempts to convert each double to an int32.
+    WriteBarrier<Unknown>* rageEnsureContiguous(JSGlobalData& globalData)
+    {
+        if (LIKELY(hasContiguous(structure()->indexingType())))
+            return m_butterfly->contiguous();
+            
+        return rageEnsureContiguousSlow(globalData);
+    }
+        
     // Ensure that the object is in a mode where it has array storage. Use
     // this if you're about to perform actions that would have required the
     // object to be converted to have array storage, if it didn't have it
@@ -775,8 +786,9 @@ protected:
     ArrayStorage* convertInt32ToArrayStorage(JSGlobalData&, NonPropertyTransition, unsigned neededLength);
     ArrayStorage* convertInt32ToArrayStorage(JSGlobalData&, NonPropertyTransition);
     ArrayStorage* convertInt32ToArrayStorage(JSGlobalData&);
-        
+    
     WriteBarrier<Unknown>* convertDoubleToContiguous(JSGlobalData&);
+    WriteBarrier<Unknown>* rageConvertDoubleToContiguous(JSGlobalData&);
     ArrayStorage* convertDoubleToArrayStorage(JSGlobalData&, NonPropertyTransition, unsigned neededLength);
     ArrayStorage* convertDoubleToArrayStorage(JSGlobalData&, NonPropertyTransition);
     ArrayStorage* convertDoubleToArrayStorage(JSGlobalData&);
@@ -965,8 +977,14 @@ private:
     WriteBarrier<Unknown>* ensureInt32Slow(JSGlobalData&);
     double* ensureDoubleSlow(JSGlobalData&);
     WriteBarrier<Unknown>* ensureContiguousSlow(JSGlobalData&);
+    WriteBarrier<Unknown>* rageEnsureContiguousSlow(JSGlobalData&);
     ArrayStorage* ensureArrayStorageSlow(JSGlobalData&);
-        
+    
+    enum DoubleToContiguousMode { EncodeValueAsDouble, RageConvertDoubleToValue };
+    template<DoubleToContiguousMode mode>
+    WriteBarrier<Unknown>* genericConvertDoubleToContiguous(JSGlobalData&);
+    WriteBarrier<Unknown>* ensureContiguousSlow(JSGlobalData&, DoubleToContiguousMode);
+    
 protected:
     Butterfly* m_butterfly;
 };
