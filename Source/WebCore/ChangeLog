@@ -1,3 +1,22 @@
+2012-12-03  Anton Vayvod  <avayvod@chromium.org>
+
+        Text Autosizing: don't autosize horizontal menu items implemented via floating list items
+        https://bugs.webkit.org/show_bug.cgi?id=103840
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Floating list items are often used to implement horizontal menus. Currently, text autosizing 
+        disregards such elements as autosizing containers. List items are often then autosized as part
+        of a bigger cluster (usually the whole page) and look too big.
+        This change turns floating list items into autosizing clusters so they are autosized separately
+        resulting in no font size multiplication for menu items implemented in this manner.
+
+        Test: fast/text-autosizing/cluster-list-item.html
+
+        * rendering/TextAutosizer.cpp:
+        (WebCore::TextAutosizer::isAutosizingContainer): Returns true for floating list items; split the
+        condition logically.
+
 2012-12-03  Viatcheslav Ostapenko  <v.ostapenko@samsung.com>
 
         Optimization in image decoding

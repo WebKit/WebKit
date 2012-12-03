@@ -205,10 +205,13 @@ bool TextAutosizer::isAutosizingContainer(const RenderObject* renderer)
     // enable/disable Text Autosizing.
     // - Must not be inline, as different multipliers on one line looks terrible.
     // - Must not be list items, as items in the same list should look consistent (*).
-    // * except for those list items positioned out of the list's flow.
-    return renderer->isRenderBlock()
-        && !renderer->isInline()
-        && (!renderer->isListItem() || renderer->isOutOfFlowPositioned());
+    // - Must not be normal list items, as items in the same list should look
+    //   consistent, unless they are floating or position:absolute/fixed.
+    if (!renderer->isRenderBlock() || renderer->isInline())
+        return false;
+    if (renderer->isListItem())
+        return renderer->isFloating() || renderer->isOutOfFlowPositioned();
+    return true;
 }
 
 bool TextAutosizer::isAutosizingCluster(const RenderBlock* renderer)
