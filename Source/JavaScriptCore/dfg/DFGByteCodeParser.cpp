@@ -3669,7 +3669,7 @@ void ByteCodeParser::parseCodeBlock()
         unsigned limit = jumpTargetIndex < codeBlock->numberOfJumpTargets() ? codeBlock->jumpTarget(jumpTargetIndex) : codeBlock->instructions().size();
 #if DFG_ENABLE(DEBUG_VERBOSE)
         dataLog(
-            "Parsing bytecode with limit ", m_inlineStackTop->m_inlineCallFrame->hash(),
+            "Parsing bytecode with limit ", pointerDump(m_inlineStackTop->m_inlineCallFrame),
             " bc#", limit, " at inline depth ",
             CodeOrigin::inlineDepthForCallFrame(m_inlineStackTop->m_inlineCallFrame), ".\n");
 #endif

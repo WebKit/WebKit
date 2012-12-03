@@ -784,7 +784,7 @@ private:
         }
 
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-        dataLogF("%s\n", speculationToString(m_graph[m_compileIndex].prediction()));
+        dataLog(SpeculationDump(m_graph[m_compileIndex].prediction()), "\n");
 #endif
         
         m_changed |= changed;

@@ -321,7 +321,7 @@ void Graph::dumpBlockHeader(PrintStream& out, const char* prefix, BlockIndex blo
         Node& phiNode = at(phiNodeIndex);
         if (!phiNode.shouldGenerate() && phiNodeDumpMode == DumpLivePhisOnly)
             continue;
-        out.print(" @", phiNodeIndex, "->(");
+        out.print(" @", phiNodeIndex, "<", phiNode.refCount(), ">->(");
         if (phiNode.child1()) {
             out.print("@", phiNode.child1().index());
             if (phiNode.child2()) {

@@ -34,6 +34,7 @@
 #include "DFGInsertionSet.h"
 #include "DFGPhase.h"
 #include "DFGValidate.h"
+#include "DFGVariableAccessDataDump.h"
 #include <wtf/HashSet.h>
 #include <wtf/HashMap.h>
 
@@ -364,7 +365,7 @@ public:
             VariableAccessData* variableAccessData = &m_graph.m_variableAccessData[i];
             if (!variableAccessData->isRoot())
                 continue;
-            dataLogF("   r%d(%s): ", variableAccessData->local(), m_graph.nameOfVariableAccessData(variableAccessData));
+            dataLog("   r", variableAccessData->local(), "(", VariableAccessDataDump(m_graph, variableAccessData), "): ");
             if (variableAccessData->isCaptured())
                 dataLogF("Captured");
             else {

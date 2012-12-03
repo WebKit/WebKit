@@ -155,6 +155,57 @@ public:
         print(value9);
         print(value10);
     }
+    
+    template<typename T1, typename T2, typename T3, typename T4, typename T5, typename T6, typename T7, typename T8, typename T9, typename T10, typename T11>
+    void print(const T1& value1, const T2& value2, const T3& value3, const T4& value4, const T5& value5, const T6& value6, const T7& value7, const T8& value8, const T9& value9, const T10& value10, const T11& value11)
+    {
+        print(value1);
+        print(value2);
+        print(value3);
+        print(value4);
+        print(value5);
+        print(value6);
+        print(value7);
+        print(value8);
+        print(value9);
+        print(value10);
+        print(value11);
+    }
+    
+    template<typename T1, typename T2, typename T3, typename T4, typename T5, typename T6, typename T7, typename T8, typename T9, typename T10, typename T11, typename T12>
+    void print(const T1& value1, const T2& value2, const T3& value3, const T4& value4, const T5& value5, const T6& value6, const T7& value7, const T8& value8, const T9& value9, const T10& value10, const T11& value11, const T12& value12)
+    {
+        print(value1);
+        print(value2);
+        print(value3);
+        print(value4);
+        print(value5);
+        print(value6);
+        print(value7);
+        print(value8);
+        print(value9);
+        print(value10);
+        print(value11);
+        print(value12);
+    }
+    
+    template<typename T1, typename T2, typename T3, typename T4, typename T5, typename T6, typename T7, typename T8, typename T9, typename T10, typename T11, typename T12, typename T13>
+    void print(const T1& value1, const T2& value2, const T3& value3, const T4& value4, const T5& value5, const T6& value6, const T7& value7, const T8& value8, const T9& value9, const T10& value10, const T11& value11, const T12& value12, const T13& value13)
+    {
+        print(value1);
+        print(value2);
+        print(value3);
+        print(value4);
+        print(value5);
+        print(value6);
+        print(value7);
+        print(value8);
+        print(value9);
+        print(value10);
+        print(value11);
+        print(value12);
+        print(value13);
+    }
 };
 
 void printInternal(PrintStream&, const char*);
@@ -216,10 +267,34 @@ void printInternal(PrintStream& out, const T& value)
 void dumpCharacter(PrintStream&, char);
 MAKE_PRINT_ADAPTOR(CharacterDump, char, dumpCharacter);
 
+template<typename T>
+class PointerDump {
+public:
+    PointerDump(const T* ptr)
+        : m_ptr(ptr)
+    {
+    }
+    
+    void dump(PrintStream& out) const
+    {
+        if (m_ptr)
+            printInternal(out, *m_ptr);
+        else
+            out.print("(null)");
+    }
+private:
+    const T* m_ptr;
+};
+
+template<typename T>
+PointerDump<T> pointerDump(const T* ptr) { return PointerDump<T>(ptr); }
+
 } // namespace WTF
 
 using WTF::CharacterDump;
+using WTF::PointerDump;
 using WTF::PrintStream;
+using WTF::pointerDump;
 
 #endif // PrintStream_h
 
