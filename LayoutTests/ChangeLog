@@ -1,3 +1,29 @@
+2012-12-03  Tony Chang  <tony@chromium.org>
+
+        [mathml] Improve performance of nested sup or sub elements
+        https://bugs.webkit.org/show_bug.cgi?id=103665
+
+        Reviewed by Darin Adler.
+
+        Update Chromium Linux baselines and mark tests as failing on other platforms.
+        The mathml.css change causes these pixel results changes. This doesn't change
+        the pixel results, it is only a change to the render tree. The render boxes
+        should more tightly wrap the superscripts and subscripts but be positioned
+        in the same place.
+
+        * mathml/presentation/sup-nested-expected.txt: Added.
+        * mathml/presentation/sup-nested.html: Added.
+        * platform/chromium/TestExpectations:
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/chromium-linux/mathml/presentation/roots-expected.txt:
+        * platform/chromium-linux/mathml/presentation/row-alignment-expected.txt:
+        * platform/chromium-linux/mathml/presentation/sub-expected.txt:
+        * platform/chromium-linux/mathml/presentation/subsup-expected.txt:
+        * platform/chromium-linux/mathml/presentation/sup-expected.txt:
+        * platform/chromium-linux/mathml/presentation/tables-expected.txt:
+
 2012-12-03  Alexis Menard  <alexis@webkit.org>
 
         [GTK] Enable CSS3 background-background position offset by default.

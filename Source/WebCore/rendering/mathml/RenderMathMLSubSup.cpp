@@ -113,37 +113,45 @@ RenderMathMLOperator* RenderMathMLSubSup::unembellishedOperator()
 void RenderMathMLSubSup::layout()
 {
     RenderMathMLBlock::layout();
-    
+
     RenderMathMLBlock* baseWrapper = toRenderMathMLBlock(firstChild());
     if (!baseWrapper || !m_scripts)
         return;
     RenderBox* base = baseWrapper->firstChildBox();
     if (!base)
         return;
-    
+
     // Our layout rules include: Don't let the superscript go below the "axis" (half x-height above the
     // baseline), or the subscript above the axis. Also, don't let the superscript's top edge be
     // below the base's top edge, or the subscript's bottom edge above the base's bottom edge.
     //
     // FIXME: Check any subscriptshift or superscriptshift attributes, and maybe use more sophisticated
     // heuristics from TeX or elsewhere. See https://bugs.webkit.org/show_bug.cgi?id=79274#c5.
-    
+
     LayoutUnit baseHeight = base->logicalHeight();
     LayoutUnit baseBaseline = base->firstLineBoxBaseline();
     if (baseBaseline == -1)
         baseBaseline = baseHeight;
     LayoutUnit axis = style()->fontMetrics().xHeight() / 2;
     int fontSize = style()->fontSize();
-    
+
+    ASSERT(baseWrapper->style()->hasOneRef());
+    bool needsSecondLayout = false;
+
     if (RenderBox* superscript = m_kind == Sub ? 0 : m_scripts->lastChildBox()) {
         LayoutUnit superscriptHeight = superscript->logicalHeight();
         LayoutUnit superscriptBaseline = superscript->firstLineBoxBaseline();
         if (superscriptBaseline == -1)
             superscriptBaseline = superscriptHeight;
         LayoutUnit minBaseline = max<LayoutUnit>(fontSize / 3 + 1 + superscriptBaseline, superscriptHeight + axis);
-        baseWrapper->style()->setPaddingTop(Length(max<LayoutUnit>(minBaseline - baseBaseline, 0), Fixed));
+
+        Length newPadding = Length(max<LayoutUnit>(minBaseline - baseBaseline, 0), Fixed);
+        if (newPadding != baseWrapper->style()->paddingTop()) {
+            baseWrapper->style()->setPaddingTop(newPadding);
+            needsSecondLayout = true;
+        }
     }
-    
+
     if (RenderBox* subscript = m_kind == Super ? 0 : m_scripts->firstChildBox()) {
         LayoutUnit subscriptHeight = subscript->logicalHeight();
         LayoutUnit subscriptBaseline = subscript->firstLineBoxBaseline();
@@ -152,12 +160,20 @@ void RenderMathMLSubSup::layout()
         LayoutUnit baseExtendUnderBaseline = baseHeight - baseBaseline;
         LayoutUnit subscriptUnderItsBaseline = subscriptHeight - subscriptBaseline;
         LayoutUnit minExtendUnderBaseline = max<LayoutUnit>(fontSize / 5 + 1 + subscriptUnderItsBaseline, subscriptHeight - axis);
-        baseWrapper->style()->setPaddingBottom(Length(max<LayoutUnit>(minExtendUnderBaseline - baseExtendUnderBaseline, 0), Fixed));
+
+        Length newPadding = Length(max<LayoutUnit>(minExtendUnderBaseline - baseExtendUnderBaseline, 0), Fixed);
+        if (newPadding != baseWrapper->style()->paddingBottom()) {
+            baseWrapper->style()->setPaddingBottom(newPadding);
+            needsSecondLayout = true;
+        }
     }
-    
-    setChildNeedsLayout(true, MarkOnlyThis);
-    baseWrapper->setNeedsLayout(true, MarkOnlyThis);
-    
+
+    if (!needsSecondLayout)
+        return;
+
+    setNeedsLayout(true, MarkOnlyThis);
+    baseWrapper->setChildNeedsLayout(true, MarkOnlyThis);
+
     RenderMathMLBlock::layout();
 }
 

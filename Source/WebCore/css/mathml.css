@@ -35,6 +35,14 @@ mo, mrow, mfenced, mfrac, msub, msup, msubsup, munder, mover, munderover, msqrt,
     display: -webkit-inline-flex !important;
 }
 
+msup {
+    -webkit-align-items: flex-start;
+}
+
+msub {
+    -webkit-align-items: flex-end;
+}
+
 math, mrow, mfenced, msqrt, mroot {
     -webkit-align-items: baseline;
 }

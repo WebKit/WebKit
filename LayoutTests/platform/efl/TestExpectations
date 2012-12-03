@@ -1645,6 +1645,14 @@ webkit.org/b/101439 media/progress-events-generated-correctly.html [ Failure ]
 
 webkit.org/b/101456 fast/repaint/block-selection-gap-in-table-cell.html [ ImageOnlyFailure ]
 
+# Needs rebaseline.
+webkit.org/b/103665 mathml/presentation/roots.xhtml [ Failure ]
+webkit.org/b/103665 mathml/presentation/row-alignment.xhtml [ Failure ]
+webkit.org/b/103665 mathml/presentation/sub.xhtml  [ Failure ]
+webkit.org/b/103665 mathml/presentation/subsup.xhtml  [ Failure ]
+webkit.org/b/103665 mathml/presentation/sup.xhtml [ Failure ]
+webkit.org/b/103665 mathml/presentation/tables.xhtml [ Failure ]
+
 # Identical failures on GTK, EFL and Qt.
 webkit.org/b/101539 editing/execCommand/switch-list-type-with-orphaned-li.html [ Failure ]
 
