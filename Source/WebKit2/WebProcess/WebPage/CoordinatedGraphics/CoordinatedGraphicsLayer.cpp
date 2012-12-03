@@ -486,7 +486,7 @@ void CoordinatedGraphicsLayer::syncImageBacking()
     m_shouldSyncImageBacking = false;
 
     if (m_compositedNativeImagePtr) {
-        ASSERT(!m_mainBackingStore);
+        ASSERT(!shouldHaveBackingStore());
         ASSERT(m_compositedImage);
 
         bool imageInstanceReplaced = m_coordinatedImageBacking && (m_coordinatedImageBacking->id() != CoordinatedImageBacking::getCoordinatedImageBackingID(m_compositedImage.get()));
@@ -640,7 +640,7 @@ float CoordinatedGraphicsLayer::effectiveContentsScale()
 
 void CoordinatedGraphicsLayer::adjustContentsScale()
 {
-    if (!drawsContent() || !contentsAreVisible() || m_size.isEmpty())
+    if (!shouldHaveBackingStore())
         return;
 
     if (!m_mainBackingStore || m_mainBackingStore->contentsScale() == effectiveContentsScale())
@@ -747,7 +747,7 @@ void CoordinatedGraphicsLayer::removeTile(int tileID)
 
 void CoordinatedGraphicsLayer::updateContentBuffers()
 {
-    if (!drawsContent() || !contentsAreVisible() || m_size.isEmpty()) {
+    if (!shouldHaveBackingStore()) {
         m_mainBackingStore.clear();
         m_previousBackingStore.clear();
         return;
@@ -838,6 +838,11 @@ static PassOwnPtr<GraphicsLayer> createCoordinatedGraphicsLayer(GraphicsLayerCli
 void CoordinatedGraphicsLayer::initFactory()
 {
     GraphicsLayer::setGraphicsLayerFactory(createCoordinatedGraphicsLayer);
+}
+
+bool CoordinatedGraphicsLayer::shouldHaveBackingStore() const
+{
+    return drawsContent() && contentsAreVisible() && !m_size.isEmpty();
 }
 
 bool CoordinatedGraphicsLayer::selfOrAncestorHasActiveTransformAnimation() const

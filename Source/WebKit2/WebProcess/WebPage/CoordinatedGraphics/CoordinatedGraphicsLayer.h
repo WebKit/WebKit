@@ -195,6 +195,7 @@ private:
     void destroyCanvasIfNeeded();
     void createCanvasIfNeeded();
 
+    bool shouldHaveBackingStore() const;
     bool selfOrAncestorHasActiveTransformAnimation() const;
     bool selfOrAncestorHaveNonAffineTransforms();
     void adjustContentsScale();
