@@ -1,3 +1,15 @@
+2012-12-03  Zeno Albisser  <zeno@webkit.org>
+
+        [Qt][Mac] QtWebKitWidgets has wrong install_name.
+
+        This part got lost during the library split.
+        It was done for QtWebKit before, but it also
+        needs to be applied to QtWebKitWidgets.
+
+        Reviewed by Tor Arne Vestbø.
+
+        * Source/widgetsapi.pri:
+
 2012-11-30  Justin Novosad  <junov@google.com>
 
         [Chromium] Animation updates fail when using a canvas as a CSS backround-image style with -webkit-canvas
