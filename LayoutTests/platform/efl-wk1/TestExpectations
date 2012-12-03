@@ -191,6 +191,9 @@ webkit.org/b/99183 svg/dynamic-updates/SVGFETurbulenceElement-dom-baseFrequency-
 webkit.org/b/99183 svg/dynamic-updates/SVGFETurbulenceElement-dom-stitchTiles-attr.html [ ImageOnlyFailure ]
 webkit.org/b/99183 svg/dynamic-updates/SVGFETurbulenceElement-svgdom-stitchTiles-prop.html [ ImageOnlyFailure ]
  
+# The EFL port has no support for accessibility features in wk1
+Bug(EFL) accessibility [ Skip ]
+
 # Frame flattening does not work properly for EFL port
 Bug(EFL) fast/frames/flattening/frameset-flattening-advanced.html [ Failure ]
 Bug(EFL) fast/frames/flattening/frameset-flattening-grid.html [ Failure ]

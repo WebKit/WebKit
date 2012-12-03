@@ -614,8 +614,6 @@ webkit.org/b/90928 fast/dom/Orientation [ Skip ]
 # EFL port does not implement DeviceMotion
 webkit.org/b/95300 fast/dom/DeviceMotion [ Skip ]
 
-# The EFL port has no support for accessibility features
-Bug(EFL) accessibility [ Skip ]
 webkit.org/b/98895 perf/accessibility-title-ui-element.html [ Skip ]
 
 # Taken from Chromium, this test verifies that a mismatch reftest will fail if both results are the
