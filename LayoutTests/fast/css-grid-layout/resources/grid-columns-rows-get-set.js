@@ -25,7 +25,7 @@ var gridWithViewPortPercentageElement = document.getElementById("gridWithViewPor
 shouldBe("getComputedStyle(gridWithViewPortPercentageElement, '').getPropertyValue('-webkit-grid-columns')", "'64px'");
 shouldBe("getComputedStyle(gridWithViewPortPercentageElement, '').getPropertyValue('-webkit-grid-rows')", "'60px'");
 
-debug("Test getting wrong values for -webkit-grid-columns and -webkit-grid-rows through CSS (they should resolve to the default: 'none'.");
+debug("Test getting wrong values for -webkit-grid-columns and -webkit-grid-rows through CSS (they should resolve to the default: 'none')");
 var gridWithFitContentElement = document.getElementById("gridWithFitContentElement");
 shouldBe("getComputedStyle(gridWithFitContentElement, '').getPropertyValue('-webkit-grid-columns')", "'none'");
 shouldBe("getComputedStyle(gridWithFitContentElement, '').getPropertyValue('-webkit-grid-rows')", "'none'");
@@ -42,7 +42,7 @@ shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-columns')
 shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-rows')", "'none'");
 
 debug("");
-debug("Test getting and setting display through JS");
+debug("Test getting and setting -webkit-grid-columns and -webkit-grid-rows through JS");
 element.style.webkitGridColumns = "18px";
 element.style.webkitGridRows = "66px";
 shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-columns')", "'18px'");

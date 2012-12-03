@@ -3,7 +3,7 @@ Test that setting and getting grid-columns and grid-rows works as expected
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-Test getting |display| set through CSS
+Test getting -webkit-grid-columns and -webkit-grid-rows set through CSS
 PASS getComputedStyle(gridWithNoneElement, '').getPropertyValue('-webkit-grid-columns') is 'none'
 PASS getComputedStyle(gridWithNoneElement, '').getPropertyValue('-webkit-grid-rows') is 'none'
 PASS getComputedStyle(gridWithFixedElement, '').getPropertyValue('-webkit-grid-columns') is '10px'
@@ -16,6 +16,7 @@ PASS getComputedStyle(gridWithEMElement, '').getPropertyValue('-webkit-grid-colu
 PASS getComputedStyle(gridWithEMElement, '').getPropertyValue('-webkit-grid-rows') is '150px'
 PASS getComputedStyle(gridWithViewPortPercentageElement, '').getPropertyValue('-webkit-grid-columns') is '64px'
 PASS getComputedStyle(gridWithViewPortPercentageElement, '').getPropertyValue('-webkit-grid-rows') is '60px'
+Test getting wrong values for -webkit-grid-columns and -webkit-grid-rows through CSS (they should resolve to the default: 'none')
 PASS getComputedStyle(gridWithFitContentElement, '').getPropertyValue('-webkit-grid-columns') is 'none'
 PASS getComputedStyle(gridWithFitContentElement, '').getPropertyValue('-webkit-grid-rows') is 'none'
 PASS getComputedStyle(gridWithFitAvailableElement, '').getPropertyValue('-webkit-grid-columns') is 'none'
@@ -25,7 +26,7 @@ Test the initial value
 PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-columns') is 'none'
 PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-rows') is 'none'
 
-Test getting and setting display through JS
+Test getting and setting -webkit-grid-columns and -webkit-grid-rows through JS
 PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-columns') is '18px'
 PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-rows') is '66px'
 PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-columns') is '55%'
