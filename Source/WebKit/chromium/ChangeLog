@@ -1,3 +1,19 @@
+2012-12-03  Sami Kyostila  <skyostil@chromium.org>
+
+        [chromium] Mark last input event for current vsync interval
+        https://bugs.webkit.org/show_bug.cgi?id=103647
+
+        Reviewed by James Robinson.
+
+        On Android all input events are triggered at the start of a vsync to maximize
+        the amount of time an application has for painting. Add a field to
+        WebInputEvent to indicate when the input event is the final one for the
+        current vsync interval. This information will be used for more efficient
+        render scheduling.
+
+        * public/WebInputEvent.h:
+        (WebKit::WebInputEvent::WebInputEvent):
+
 2012-12-02  Sadrul Habib Chowdhury  <sadrul@chromium.org>
 
         [chromium] Correct the location of synthetic mouse events when page is zoomed
