@@ -2211,6 +2211,7 @@ HEADERS += \
     platform/image-decoders/ico/ICOImageDecoder.h \
     platform/image-decoders/gif/GIFImageDecoder.h \
     platform/image-decoders/gif/GIFImageReader.h \
+    platform/image-decoders/jpeg/JPEGImageDecoder.h \
     platform/image-decoders/png/PNGImageDecoder.h \
     platform/KillRing.h \
     platform/KURL.h \
@@ -4047,7 +4048,6 @@ use?(LIBPNG) {
 }
 
 use?(LIBJPEG) {
-    HEADERS += platform/image-decoders/jpeg/JPEGImageDecoder.h
     SOURCES += platform/image-decoders/jpeg/JPEGImageDecoder.cpp
 }
 
