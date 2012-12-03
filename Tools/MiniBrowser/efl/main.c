@@ -49,6 +49,27 @@ static int window_height = 600;
 static double device_pixel_ratio = 0;
 static Eina_Bool legacy_behavior_enabled = EINA_FALSE;
 
+#define DEFAULT_ZOOM_LEVEL 5 // Set default zoom level to 100% (index 5 on zoomLevels).
+// The zoom values are chosen to be like in Mozilla Firefox 3.
+const static int zoomLevels[] = {30, 50, 67, 80, 90, 100, 110, 120, 133, 150, 170, 200, 240, 300};
+
+static Eina_Bool
+zoom_level_set(Evas_Object *webview, int level)
+{
+    if (level < 0  || level >= sizeof(zoomLevels) / sizeof(int))
+        return EINA_FALSE;
+
+    float factor = ((float) zoomLevels[level]) / 100.0;
+    Evas_Coord ox, oy, mx, my, cx, cy;
+    evas_pointer_canvas_xy_get(evas_object_evas_get(webview), &mx, &my); // Get current mouse position on window.
+    evas_object_geometry_get(webview, &ox, &oy, NULL, NULL); // Get webview's position on window.
+    cx = mx - ox; // current x position = mouse x position - webview x position
+    cy = my - oy; // current y position = mouse y position - webview y position
+
+    Eina_Bool result = ewk_view_scale_set(webview, factor, cx, cy);
+    return result;
+}
+
 static Ewk_View_Smart_Class *miniBrowserViewSmartClass()
 {
     static Ewk_View_Smart_Class ewkViewClass = EWK_VIEW_SMART_CLASS_INIT_NAME_VERSION("MiniBrowser_View");
@@ -61,6 +82,7 @@ typedef struct _Browser_Window {
     Evas_Object *url_bar;
     Evas_Object *back_button;
     Evas_Object *forward_button;
+    int current_zoom_level; 
 } Browser_Window;
 
 typedef struct _File_Selector_Data {
@@ -212,6 +234,18 @@ on_key_down(void *user_data, Evas *e, Evas_Object *ewk_view, void *event_info)
     } else if (!strcmp(ev->key, "Escape")) {
         if (elm_win_fullscreen_get(window->elm_window))
             ewk_view_fullscreen_exit(ewk_view);
+    } else if (ctrlPressed && (!strcmp(ev->key, "minus") || !strcmp(ev->key, "KP_Subtract"))) {
+        if (zoom_level_set(ewk_view, window->current_zoom_level - 1))
+            window->current_zoom_level--;
+        info("Zoom out (Ctrl + '-') was pressed, zoom level became %d%\n", zoomLevels[window->current_zoom_level]);
+    } else if (ctrlPressed && (!strcmp(ev->key, "equal") || !strcmp(ev->key, "KP_Add"))) {
+        if (zoom_level_set(ewk_view, window->current_zoom_level + 1))
+            window->current_zoom_level++;
+        info("Zoom in (Ctrl + '+') was pressed, zoom level became %d%\n", zoomLevels[window->current_zoom_level]);
+    } else if (ctrlPressed && !strcmp(ev->key, "0")) {
+        if (zoom_level_set(ewk_view, DEFAULT_ZOOM_LEVEL))
+            window->current_zoom_level = DEFAULT_ZOOM_LEVEL;
+        info("Zoom to default (Ctrl + '0') was pressed, zoom level became %d%\n", zoomLevels[window->current_zoom_level]);
     }
 }
 
@@ -1069,6 +1103,9 @@ static Browser_Window *window_create(const char *url, int width, int height)
     ewk_view_theme_set(window->ewk_view, THEME_DIR "/default.edj");
     if (device_pixel_ratio)
         ewk_view_device_pixel_ratio_set(window->ewk_view, (float)device_pixel_ratio);
+
+    /* Set the zoom level to default */
+    window->current_zoom_level = DEFAULT_ZOOM_LEVEL;
 
     Ewk_Settings *settings = ewk_view_settings_get(window->ewk_view);
     ewk_settings_file_access_from_file_urls_allowed_set(settings, EINA_TRUE);

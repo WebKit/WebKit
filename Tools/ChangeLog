@@ -1,5 +1,19 @@
 2012-12-02  KyungTae Kim  <ktf.kim@samsung.com>
 
+        [EFL][WK2] Add support for a zoom level setting to MiniBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=99285
+
+        Reviewed by Gyuyoung Kim.
+
+         Add support for a zoom level setting to MiniBrowser.
+         Shortcuts for setting operations are same as common browsers:
+         Ctrl + '+' to zoom in, Ctrl + '-' to zoom out and Ctrl + '0' to zoom to default.
+
+        * MiniBrowser/efl/main.c:
+        (on_key_down):
+
+2012-12-02  KyungTae Kim  <ktf.kim@samsung.com>
+
         [EFL][WK2] ECORE_GETOPT_VALUE_BOOL need to be used for Eina_Bool
         https://bugs.webkit.org/show_bug.cgi?id=103835
 
