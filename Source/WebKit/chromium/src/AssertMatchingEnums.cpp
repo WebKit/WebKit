@@ -541,13 +541,12 @@ COMPILE_ASSERT_MATCHING_ENUM(WebTextCheckingTypeShowCorrectionPanel, TextCheckin
 
 #if ENABLE(QUOTA)
 COMPILE_ASSERT_MATCHING_ENUM(WebStorageQuotaErrorNotSupported, NOT_SUPPORTED_ERR);
+COMPILE_ASSERT_MATCHING_ENUM(WebStorageQuotaErrorInvalidModification, INVALID_MODIFICATION_ERR);
+COMPILE_ASSERT_MATCHING_ENUM(WebStorageQuotaErrorInvalidAccess, INVALID_ACCESS_ERR);
 COMPILE_ASSERT_MATCHING_ENUM(WebStorageQuotaErrorAbort, ABORT_ERR);
 
 COMPILE_ASSERT_MATCHING_ENUM(WebStorageQuotaTypeTemporary, StorageInfo::TEMPORARY);
 COMPILE_ASSERT_MATCHING_ENUM(WebStorageQuotaTypePersistent, StorageInfo::PERSISTENT);
-
-COMPILE_ASSERT_MATCHING_ENUM(WebStorageQuotaErrorNotSupported, NOT_SUPPORTED_ERR);
-COMPILE_ASSERT_MATCHING_ENUM(WebStorageQuotaErrorAbort, ABORT_ERR);
 #endif
 
 COMPILE_ASSERT_MATCHING_ENUM(WebPageVisibilityStateVisible, PageVisibilityStateVisible);
