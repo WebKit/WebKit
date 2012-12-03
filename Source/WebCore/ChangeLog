@@ -1,3 +1,21 @@
+2012-12-03  Eugene Klyuchnikov  <eustas@chromium.org>
+
+        Web Inspector: Make main-thread monitoring go through InspectorController
+        https://bugs.webkit.org/show_bug.cgi?id=103550
+
+        Reviewed by Pavel Feldman.
+
+        InspectorInstrumentation was a wrong path.
+
+        * inspector/InspectorClient.h: Remove start/stop methods.
+        * inspector/InspectorController.cpp:
+        Dispatch main thread activity notifications.
+        * inspector/InspectorController.h: Ditto.
+        * inspector/InspectorInstrumentation.cpp: Remove dispatchng.
+        * inspector/InspectorInstrumentation.h: Ditto.
+        * inspector/InspectorTimelineAgent.cpp:
+        Do not subscribe for notifications explicitly.
+
 2012-12-03  Philip Rogers  <pdr@google.com>
 
         Invalidate SVG width on width attribute changes.

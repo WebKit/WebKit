@@ -1,3 +1,26 @@
+2012-12-03  Eugene Klyuchnikov  <eustas@chromium.org>
+
+        Web Inspector: Make main-thread monitoring go through InspectorController
+        https://bugs.webkit.org/show_bug.cgi?id=103550
+
+        Reviewed by Pavel Feldman.
+
+        InspectorInstrumentation was a wrong path.
+
+        * src/InspectorClientImpl.cpp: Remove TaskObserver implementation, and
+        listen/unlisten methods.
+        * src/InspectorClientImpl.h: Ditto.
+        * src/WebDevToolsAgentImpl.cpp:
+        (WebKit::WebDevToolsAgentImpl::~WebDevToolsAgentImpl):
+        Unsubscribe for main thread activity events.
+        (WebKit::WebDevToolsAgentImpl::detach): Ditto.
+        (WebKit::WebDevToolsAgentImpl::attach):
+        Subscribe for main thread activity events.
+        (WebKit::WebDevToolsAgentImpl::willProcessTask): Implement TasObserver
+        interface. Froward to InspectorController.
+        (WebKit::WebDevToolsAgentImpl::didProcessTask): Ditto.
+        * src/WebDevToolsAgentImpl.h: Implement TasObserver interface.
+
 2012-12-03  Alec Flett  <alecflett@chromium.org>
 
         IndexedDB: remove IDBDatabaseBackendInterface::transaction()

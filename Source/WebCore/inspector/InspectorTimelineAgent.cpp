@@ -168,9 +168,6 @@ void InspectorTimelineAgent::start(ErrorString*, const int* maxCallStackDepth)
     m_state->setLong(TimelineAgentState::timelineMaxCallStackDepth, m_maxCallStackDepth);
     m_timestampOffset = currentTime() - monotonicallyIncreasingTime();
 
-    if (m_client)
-        m_client->startMainThreadMonitoring();
-
     m_instrumentingAgents->setInspectorTimelineAgent(this);
     ScriptGCEvent::addEventListener(this);
     m_state->setBoolean(TimelineAgentState::timelineAgentEnabled, true);
@@ -180,9 +177,6 @@ void InspectorTimelineAgent::stop(ErrorString*)
 {
     if (!m_state->getBoolean(TimelineAgentState::timelineAgentEnabled))
         return;
-
-    if (m_client)
-        m_client->stopMainThreadMonitoring();
 
     m_instrumentingAgents->setInspectorTimelineAgent(0);
     ScriptGCEvent::removeEventListener(this);

@@ -119,6 +119,9 @@ public:
 
     void reportMemoryUsage(MemoryObjectInfo*) const;
 
+    void willProcessTask();
+    void didProcessTask();
+
 private:
     InspectorController(Page*, InspectorClient*);
 

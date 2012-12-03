@@ -56,6 +56,7 @@
 #include "WebFrameImpl.h"
 #include "WebViewClient.h"
 #include "WebViewImpl.h"
+#include <public/Platform.h>
 #include <public/WebRect.h>
 #include <public/WebString.h>
 #include <public/WebURL.h>
@@ -372,6 +373,8 @@ WebDevToolsAgentImpl::WebDevToolsAgentImpl(
 WebDevToolsAgentImpl::~WebDevToolsAgentImpl()
 {
     ClientMessageLoopAdapter::inspectedViewClosed(m_webViewImpl);
+    if (m_attached)
+        WebKit::Platform::current()->currentThread()->removeTaskObserver(this);
 }
 
 void WebDevToolsAgentImpl::attach()
@@ -382,6 +385,7 @@ void WebDevToolsAgentImpl::attach()
     ClientMessageLoopAdapter::ensureClientMessageLoopCreated(m_client);
     inspectorController()->connectFrontend(this);
     inspectorController()->webViewResized(m_webViewImpl->size());
+    WebKit::Platform::current()->currentThread()->addTaskObserver(this);
     m_attached = true;
 }
 
@@ -397,6 +401,8 @@ void WebDevToolsAgentImpl::reattach(const WebString& savedState)
 
 void WebDevToolsAgentImpl::detach()
 {
+    WebKit::Platform::current()->currentThread()->removeTaskObserver(this);
+
     // Prevent controller from sending messages to the frontend.
     InspectorController* ic = inspectorController();
     ic->disconnectFrontend();
@@ -654,6 +660,18 @@ void WebDevToolsAgentImpl::evaluateInWebInspector(long callId, const WebString& 
 {
     InspectorController* ic = inspectorController();
     ic->evaluateForTestInFrontend(callId, script);
+}
+
+void WebDevToolsAgentImpl::willProcessTask()
+{
+    if (InspectorController* ic = inspectorController())
+        ic->willProcessTask();
+}
+
+void WebDevToolsAgentImpl::didProcessTask()
+{
+    if (InspectorController* ic = inspectorController())
+        ic->didProcessTask();
 }
 
 WebString WebDevToolsAgent::inspectorProtocolVersion()
