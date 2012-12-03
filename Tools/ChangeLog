@@ -1,3 +1,9 @@
+2012-12-03  Sudarsana Nagineni  <sudarsana.nagineni@intel.com>
+
+        Unreviewed. Adding myself to committers.py.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2012-12-03  Laszlo Gombos  <l.gombos@samsung.com>
 
         [CMake] Enable building WebKit2-only build for the EFL port
