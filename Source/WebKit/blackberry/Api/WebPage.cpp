@@ -1080,7 +1080,7 @@ void WebPagePrivate::setLoadState(LoadState state)
 
             m_previousContentsSize = IntSize();
             m_backingStore->d->resetRenderQueue();
-            m_backingStore->d->resetTiles(true /* resetBackground */);
+            m_backingStore->d->resetTiles();
             m_backingStore->d->setScrollingOrZooming(false, false /* shouldBlit */);
             m_shouldZoomToInitialScaleAfterLoadFinished = false;
             m_userPerformedManualZoom = false;
@@ -3523,7 +3523,7 @@ void WebPagePrivate::resumeBackingStore()
             setCompositorDrawsRootLayer(!m_backingStore->d->isActive());
 
         m_backingStore->d->orientationChanged(); // Updates tile geometry and creates visible tile buffer.
-        m_backingStore->d->resetTiles(true /* resetBackground */);
+        m_backingStore->d->resetTiles();
         m_backingStore->d->updateTiles(false /* updateVisible */, false /* immediate */);
 
         // This value may have changed, so we need to update it.
@@ -3799,7 +3799,7 @@ void WebPagePrivate::setViewportSize(const IntSize& transformedActualVisibleSize
             ensureContentVisible(!newVisibleRectContainsOldVisibleRect);
 
         if (needsLayout) {
-            m_backingStore->d->resetTiles(true);
+            m_backingStore->d->resetTiles();
             m_backingStore->d->updateTiles(false /* updateVisible */, false /* immediate */);
         }
 

@@ -75,7 +75,6 @@ namespace WebKit {
 
 class BackingStore;
 class BackingStoreClient;
-class BackingStoreTile;
 class DumpRenderTreeClient;
 class InPageSearchManager;
 class InputHandler;

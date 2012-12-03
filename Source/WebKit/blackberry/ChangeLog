@@ -1,3 +1,112 @@
+2012-12-03  Jakob Petsovits  <jpetsovits@rim.com>
+
+        [BlackBerry] Refactor the backingstore to swap full geometries.
+        https://bugs.webkit.org/show_bug.cgi?id=103924
+        RIM PR 253496
+
+        Reviewed by Yong Li.
+        Internally reviewed by Adam Treat and Arvid Nilsson.
+
+        The backingstore had a working split between front and
+        back state, but it was multilayered and hard to grasp.
+        This commit cleanly divides the responsibilities of
+        BackingStoreGeometry and TileBuffer, with the latter
+        now being able to function on its own without the help
+        of its geometry. The BackingStoreTile class was an
+        unnecessary middleman and can be removed wholesale.
+
+        A BackingStoreGeometry can now function with null tiles
+        being assigned to its indices, which enables us to reclaim
+        tile buffers outside of the visible contents area as back
+        buffers. This reduces the need to swap and block when the
+        backingstore size exceeds the contents size, and also lets
+        us use more tiles for initial rendering after a call to
+        resetTiles() which is now implemented as swapping in a
+        geometry with only null buffers.
+
+        setBackingStoreRect() was the only function that had to
+        get a change of behavior. Because we're now constructing
+        new BackingStoreGeometry objects every time the front
+        geometry is being exchanged for a new one, it is only
+        safe to call other functions reliant on the new geometry
+        after it has been finalized and put in place. Therefore,
+        updateTilesForScrollOrNotRenderedRegion() takes on the
+        render queue maintenance tasks that setBackingStoreRect()
+        had performed previously. It was already doing something
+        very similar so only few changes to the function were
+        necessary.
+
+        This commit will make subsequent changes to the
+        backingstore geometry and tile logic a lot easier.
+
+        * Api/BackingStore.cpp:
+        (BlackBerry::WebKit::BackingStoreGeometry::isTileCorrespondingToBuffer):
+        (WebKit):
+        (BlackBerry::WebKit::BackingStorePrivate::BackingStorePrivate):
+        (BlackBerry::WebKit::BackingStorePrivate::~BackingStorePrivate):
+        (BlackBerry::WebKit::BackingStorePrivate::setBackingStoreRect):
+        (BlackBerry::WebKit::BackingStorePrivate::updateTilesAfterBackingStoreRectChange):
+        (BlackBerry::WebKit::BackingStorePrivate::clearAndUpdateTileOfNotRenderedRegion):
+        (BlackBerry::WebKit::BackingStorePrivate::clearRenderedRegion):
+        (BlackBerry::WebKit::BackingStorePrivate::isCurrentVisibleJob):
+        (BlackBerry::WebKit::BackingStorePrivate::render):
+        (BlackBerry::WebKit::BackingStorePrivate::copyPreviousContentsToTileBuffer):
+        (BlackBerry::WebKit::BackingStorePrivate::blitVisibleContents):
+        (BlackBerry::WebKit::BackingStorePrivate::compositeContents):
+        (BlackBerry::WebKit::BackingStorePrivate::blitTileRect):
+        (BlackBerry::WebKit::BackingStorePrivate::tileVisibleContentsRect):
+        (BlackBerry::WebKit::BackingStorePrivate::resetTiles):
+        (BlackBerry::WebKit::BackingStorePrivate::updateTiles):
+        (BlackBerry::WebKit::BackingStorePrivate::updateTilesForScrollOrNotRenderedRegion):
+        (BlackBerry::WebKit::BackingStorePrivate::mapFromTilesToTransformedContents):
+        (BlackBerry::WebKit::BackingStorePrivate::mapFromTransformedContentsToTiles):
+        (BlackBerry::WebKit::BackingStorePrivate::transformChanged):
+        (BlackBerry::WebKit::BackingStorePrivate::createSurfaces):
+        (BlackBerry::WebKit::BackingStoreGeometry::originOfTile):
+        (BlackBerry::WebKit::BackingStorePrivate::adoptAsFrontState):
+        * Api/BackingStore_p.h:
+        (WebKit):
+        (BackingStoreGeometry):
+        (BlackBerry::WebKit::BackingStoreGeometry::tileBufferAt):
+        (BackingStorePrivate):
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::setLoadState):
+        (BlackBerry::WebKit::WebPagePrivate::resumeBackingStore):
+        (BlackBerry::WebKit::WebPagePrivate::setViewportSize):
+        * Api/WebPage_p.h:
+        (WebKit):
+        * WebKitSupport/BackingStoreTile.cpp:
+        (BlackBerry::WebKit::TileBuffer::TileBuffer):
+        (BlackBerry::WebKit::TileBuffer::~TileBuffer):
+        (BlackBerry::WebKit::TileBuffer::isRendered):
+        (BlackBerry::WebKit::TileBuffer::nativeBuffer):
+        (BlackBerry::WebKit::TileBuffer::wasNativeBufferCreated):
+        (BlackBerry::WebKit::TileBuffer::paintBackground):
+        * WebKitSupport/BackingStoreTile.h:
+        (BlackBerry::WebKit::TileBuffer::lastRenderOrigin):
+        (BlackBerry::WebKit::TileBuffer::setLastRenderOrigin):
+        (BlackBerry::WebKit::TileBuffer::lastRenderScale):
+        (BlackBerry::WebKit::TileBuffer::setLastRenderScale):
+        (TileBuffer):
+        (BlackBerry::WebKit::TileBuffer::backgroundPainted):
+        * WebKitSupport/SurfacePool.cpp:
+        (BlackBerry::WebKit::SurfacePool::SurfacePool):
+        (BlackBerry::WebKit::SurfacePool::size):
+        (WebKit):
+        (BlackBerry::WebKit::SurfacePool::initialize):
+        (BlackBerry::WebKit::SurfacePool::initializeVisibleTileBuffer):
+        (BlackBerry::WebKit::SurfacePool::hasBackBuffer):
+        (BlackBerry::WebKit::SurfacePool::takeBackBuffer):
+        (BlackBerry::WebKit::SurfacePool::addBackBuffer):
+        (BlackBerry::WebKit::SurfacePool::createBuffers):
+        (BlackBerry::WebKit::SurfacePool::releaseBuffers):
+        (BlackBerry::WebKit::SurfacePool::notifyBuffersComposited):
+        * WebKitSupport/SurfacePool.h:
+        (BlackBerry::WebKit::SurfacePool::isActive):
+        (BlackBerry::WebKit::SurfacePool::isEmpty):
+        (SurfacePool):
+        (BlackBerry::WebKit::SurfacePool::visibleTileBuffer):
+
 2012-12-03  Cosmin Truta  <ctruta@rim.com>
 
         [BlackBerry] Enable HIDDEN_PAGE_DOM_TIMER_THROTTLING

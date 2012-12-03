@@ -74,6 +74,11 @@ class TileBuffer {
         Platform::IntSize size() const;
         Platform::IntRect rect() const;
 
+        Platform::IntPoint lastRenderOrigin() const { return m_lastRenderOrigin; }
+        void setLastRenderOrigin(const Platform::IntPoint& origin) { m_lastRenderOrigin = origin; }
+        double lastRenderScale() const { return m_lastRenderScale; }
+        void setLastRenderScale(double scale) { m_lastRenderScale = scale; }
+
         bool isRendered(double scale) const;
         bool isRendered(const Platform::IntRectRegion& contents, double scale) const;
         void clearRenderedRegion();
@@ -82,67 +87,23 @@ class TileBuffer {
         Platform::IntRectRegion renderedRegion() const;
         Platform::IntRectRegion notRenderedRegion() const;
 
-        double scale() { return m_scale; }
-        void setScale(double scale) { m_scale = scale; };
-
         Platform::Graphics::Buffer* nativeBuffer() const;
         bool wasNativeBufferCreated() const;
+
+        bool backgroundPainted() const { return m_backgroundPainted; }
+        void paintBackground();
 
         Fence* fence() const { return m_fence.get(); }
         void setFence(PassRefPtr<Fence> fence) { m_fence = fence; }
 
     private:
+        Platform::IntPoint m_lastRenderOrigin;
         Platform::IntSize m_size;
         Platform::IntRectRegion m_renderedRegion;
         RefPtr<Fence> m_fence;
-        mutable Platform::Graphics::Buffer* m_buffer;
-        double m_scale;
-};
-
-
-class BackingStoreTile {
-public:
-    enum BufferingMode { SingleBuffered, DoubleBuffered };
-
-    static BackingStoreTile* create(const Platform::IntSize& size, BufferingMode mode)
-    {
-        return new BackingStoreTile(size, mode);
-    }
-
-    ~BackingStoreTile();
-
-    Platform::IntSize size() const;
-    Platform::IntRect rect() const;
-
-    TileBuffer* frontBuffer() const;
-    TileBuffer* backBuffer() const;
-    bool isDoubleBuffered() const { return m_bufferingMode == DoubleBuffered; }
-
-    void reset();
-    bool backgroundPainted() const { return m_backgroundPainted; }
-    void paintBackground();
-
-    bool isCommitted() const { return m_committed; }
-    void setCommitted(bool committed) { m_committed = committed; }
-
-    void clearShift() { m_horizontalShift = 0; m_verticalShift = 0; }
-    int horizontalShift() const { return m_horizontalShift; }
-    void setHorizontalShift(int shift) { m_horizontalShift = shift; }
-    int verticalShift() const { return m_verticalShift; }
-    void setVerticalShift(int shift) { m_verticalShift = shift; }
-
-    void swapBuffers();
-
-private:
-    BackingStoreTile(const Platform::IntSize&, BufferingMode);
-
-    mutable TileBuffer* m_frontBuffer;
-    BufferingMode m_bufferingMode;
-    bool m_checkered;
-    bool m_committed;
-    bool m_backgroundPainted;
-    int m_horizontalShift;
-    int m_verticalShift;
+        mutable Platform::Graphics::Buffer* m_nativeBuffer;
+        double m_lastRenderScale;
+        bool m_backgroundPainted;
 };
 
 } // namespace WebKit
