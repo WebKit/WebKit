@@ -86,7 +86,8 @@ webkit.org/b/24182 [ Debug ] fast/dom/css-delete-doc.html [ Pass Slow ]
 webkit.org/b/100272 [ Debug ] fast/media/w3c/test_media_queries.html [ Pass Slow ]
 webkit.org/b/70878 [ Linux Debug ] http/tests/xmlhttprequest/xmlhttprequest-test-send-flag.html [ Pass Slow ]
 webkit.org/b/102179 [ Win Debug ] platform/chromium/virtual/gpu/fast/hidpi/image-set-without-specified-width.html [ Pass Slow ]
-webkit.org/b/102463 [ Win Debug ] fast/forms/validation-message-appearance.html [ Pass ImageOnlyFailure ]
+# senorblanco:  Remove this after rebaselining for webkit.org/b/103906.
+# webkit.org/b/102463 [ Win Debug ] fast/forms/validation-message-appearance.html [ Pass ImageOnlyFailure ]
 webkit.org/b/102464 [ Debug ] fast/images/webgl-teximage2d.html [ Pass Timeout ]
 webkit.org/b/102464 [ Debug ] platform/chromium/virtual/deferred/fast/images/webgl-teximage2d.html [ Pass Timeout ]
 
@@ -1626,7 +1627,8 @@ webkit.org/b/98647 [ Android ] compositing/culling/filter-occlusion-blur-large.h
 webkit.org/b/98647 [ Android ] compositing/culling/filter-occlusion-blur.html [ ImageOnlyFailure ]
 webkit.org/b/98647 [ Android ] compositing/direct-image-compositing.html [ ImageOnlyFailure ]
 webkit.org/b/98647 [ Android ] compositing/generated-content.html [ ImageOnlyFailure ]
-webkit.org/b/98647 [ Android ] compositing/geometry/clipping-foreground.html [ ImageOnlyFailure ]
+# senorblanco:  Remove this after rebaselining for webkit.org/b/103906.
+# webkit.org/b/98647 [ Android ] compositing/geometry/clipping-foreground.html [ ImageOnlyFailure ]
 webkit.org/b/98647 [ Android ] compositing/geometry/composited-html-size.html [ ImageOnlyFailure ]
 webkit.org/b/98647 [ Android ] compositing/geometry/fixed-in-composited.html [ ImageOnlyFailure ]
 webkit.org/b/98647 [ Android ] compositing/geometry/fixed-position.html [ ImageOnlyFailure ]
@@ -1696,11 +1698,13 @@ webkit.org/b/98762 [ Android ] platform/chromium/compositing/lost-compositor-con
 webkit.org/b/98762 [ Android ] fast/layers/no-clipping-overflow-hidden-added-after-transition.html [ ImageOnlyFailure ]
 webkit.org/b/98762 [ Android ] compositing/absolute-position-changed-with-composited-parent-layer.html [ ImageOnlyFailure ]
 webkit.org/b/98762 [ Android ] compositing/animation/state-at-end-event-transform-layer.html [ ImageOnlyFailure ]
-webkit.org/b/98762 [ Android ] compositing/culling/scrolled-within-boxshadow.html [ ImageOnlyFailure ]
+# senorblanco:  Remove this after rebaselining for webkit.org/b/103906.
+# webkit.org/b/98762 [ Android ] compositing/culling/scrolled-within-boxshadow.html [ ImageOnlyFailure ]
 webkit.org/b/98762 [ Android ] compositing/geometry/abs-position-inside-opacity.html [ ImageOnlyFailure ]
 webkit.org/b/98762 [ Android ] compositing/geometry/partial-layout-update.html [ ImageOnlyFailure ]
 webkit.org/b/98762 [ Android ] compositing/geometry/root-layer-update.html [ ImageOnlyFailure ]
-webkit.org/b/98762 [ Android ] compositing/iframes/composited-iframe-alignment.html [ ImageOnlyFailure ]
+# senorblanco:  Remove this after rebaselining for webkit.org/b/103906.
+# webkit.org/b/98762 [ Android ] compositing/iframes/composited-iframe-alignment.html [ ImageOnlyFailure ]
 webkit.org/b/98762 [ Android ] compositing/overflow/ancestor-overflow.html [ ImageOnlyFailure ]
 webkit.org/b/98762 [ Android ] compositing/overflow/overflow-positioning.html [ ImageOnlyFailure ]
 webkit.org/b/98762 [ Android ] compositing/overflow/scrollbar-painting.html [ ImageOnlyFailure ]
@@ -1717,7 +1721,8 @@ webkit.org/b/98763 [ Android ] compositing/geometry/tall-page-composited.html [ 
 webkit.org/b/98763 [ Android ] compositing/geometry/vertical-scroll-composited.html [ ImageOnlyFailure ]
 webkit.org/b/98763 [ Android ] compositing/layer-creation/fixed-position-and-transform.html [ ImageOnlyFailure ]
 webkit.org/b/98763 [ Android ] compositing/layer-creation/fixed-position-under-transform.html [ ImageOnlyFailure ]
-webkit.org/b/98763 [ Android ] compositing/masks/masked-ancestor.html [ ImageOnlyFailure ]
+# senorblanco:  Remove this after rebaselining for webkit.org/b/103906.
+# webkit.org/b/98763 [ Android ] compositing/masks/masked-ancestor.html [ ImageOnlyFailure ]
 webkit.org/b/98763 [ Android ] compositing/masks/multiple-masks.html [ ImageOnlyFailure ]
 webkit.org/b/98763 [ Android ] compositing/masks/simple-composited-mask.html [ ImageOnlyFailure ]
 webkit.org/b/98763 [ Android ] compositing/overflow/fixed-position-ancestor-clip.html [ ImageOnlyFailure ]
@@ -2043,9 +2048,11 @@ crbug.com/28005 [ Android XP ] fast/css/color-correction-on-backgrounds.html [ F
 crbug.com/28005 [ Android Win ] fast/css/color-correction-on-text.html [ Failure ]
 crbug.com/28005 [ Android Linux Win ] fast/css/color-correction.html [ Failure ]
 crbug.com/28005 [ Android Linux XP ] fast/css/color-correction-on-box-shadow.html [ Failure ]
-crbug.com/28005 [ Mac ] fast/css/color-correction-on-box-shadow.html [ ImageOnlyFailure ]
+# senorblanco:  Remove this after rebaselining for webkit.org/b/103906.
+# crbug.com/28005 [ Mac ] fast/css/color-correction-on-box-shadow.html [ ImageOnlyFailure ]
 crbug.com/28005 [ Android Linux Win ] fast/css/color-correction-on-text-shadow.html [ Failure ]
-crbug.com/28005 [ Mac ] fast/css/color-correction-on-text-shadow.html [ ImageOnlyFailure ]
+# senorblanco:  Remove this after rebaselining for webkit.org/b/103906.
+# crbug.com/28005 [ Mac ] fast/css/color-correction-on-text-shadow.html [ ImageOnlyFailure ]
 crbug.com/28005 [ Android Win ] fast/css/color-correction-on-background-image.html [ Failure ]
 crbug.com/28005 [ Android XP ] fast/css/color-correction-untagged-images.html [ Failure ]
 
