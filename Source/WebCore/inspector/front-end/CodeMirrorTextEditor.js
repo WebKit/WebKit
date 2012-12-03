@@ -57,6 +57,7 @@ WebInspector.CodeMirrorTextEditor = function(url, delegate)
 
     this._codeMirror.on("change", this._change.bind(this));
     this._codeMirror.on("gutterClick", this._gutterClick.bind(this));
+    this.element.addEventListener("contextmenu", this._contextMenu.bind(this));
 
     this._lastRange = this.range();
 
@@ -124,6 +125,17 @@ WebInspector.CodeMirrorTextEditor.prototype = {
     _gutterClick: function(instance, lineNumber, gutter, event)
     {
         this.dispatchEventToListeners(WebInspector.TextEditor.Events.GutterClick, { lineNumber: lineNumber, event: event });
+    },
+
+    _contextMenu: function(event)
+    {
+        var contextMenu = new WebInspector.ContextMenu(event);
+        var target = event.target.enclosingNodeOrSelfWithClass("CodeMirror-gutter-elt");
+        if (target)
+            this._delegate.populateLineGutterContextMenu(contextMenu, parseInt(target.textContent, 10) - 1);
+        else
+            this._delegate.populateTextAreaContextMenu(contextMenu, null);
+        contextMenu.show();
     },
 
     /**
