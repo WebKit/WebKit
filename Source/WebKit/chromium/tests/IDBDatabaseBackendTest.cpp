@@ -152,8 +152,6 @@ public:
     virtual PassRefPtr<IDBObjectStoreBackendInterface> createObjectStore(int64_t, const String& name, const IDBKeyPath&, bool autoIncrement, IDBTransactionBackendInterface*, ExceptionCode&) { return 0; }
     virtual void deleteObjectStore(const String& name, IDBTransactionBackendInterface*, ExceptionCode&) { }
     virtual void deleteObjectStore(int64_t, IDBTransactionBackendInterface*, ExceptionCode&) { }
-    // FIXME: Remove this as part of https://bugs.webkit.org/show_bug.cgi?id=102733.
-    virtual PassRefPtr<IDBTransactionBackendInterface> transaction(const Vector<int64_t>&, unsigned short mode) { return 0; }
     virtual PassRefPtr<IDBTransactionBackendInterface> createTransaction(int64_t, const Vector<int64_t>&, unsigned short mode) { return 0; }
 
     virtual void close(PassRefPtr<IDBDatabaseCallbacks>)

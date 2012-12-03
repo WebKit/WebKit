@@ -1,3 +1,22 @@
+2012-12-03  Alec Flett  <alecflett@chromium.org>
+
+        IndexedDB: remove IDBDatabaseBackendInterface::transaction()
+        https://bugs.webkit.org/show_bug.cgi?id=102733
+
+        Reviewed by Darin Fisher.
+
+        Part 3 of a refactor - just remove the proxy code for the now
+        defunct transaction method.
+
+        * public/WebIDBDatabase.h:
+        * src/IDBDatabaseBackendProxy.cpp:
+        * src/IDBDatabaseBackendProxy.h:
+        (IDBDatabaseBackendProxy):
+        * src/WebIDBDatabaseImpl.cpp:
+        * src/WebIDBDatabaseImpl.h:
+        (WebIDBDatabaseImpl):
+        * tests/IDBDatabaseBackendTest.cpp:
+
 2012-12-03  Sami Kyostila  <skyostil@chromium.org>
 
         [chromium] Tell WebInputHandlerClient when end of input is reached for current vsync period

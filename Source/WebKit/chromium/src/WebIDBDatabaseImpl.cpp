@@ -86,17 +86,6 @@ WebIDBTransaction* WebIDBDatabaseImpl::createTransaction(long long id, const Web
     return new WebIDBTransactionImpl(transaction);
 }
 
-WebIDBTransaction* WebIDBDatabaseImpl::transaction(const WebVector<long long>& objectStoreIds, unsigned short mode)
-{
-    Vector<int64_t> objectStoreIdList(objectStoreIds.size());
-    for (size_t i = 0; i < objectStoreIds.size(); ++i)
-        objectStoreIdList[i] = objectStoreIds[i];
-    RefPtr<IDBTransactionBackendInterface> transaction = m_databaseBackend->transaction(objectStoreIdList, mode);
-    if (!transaction)
-        return 0;
-    return new WebIDBTransactionImpl(transaction);
-}
-
 void WebIDBDatabaseImpl::close()
 {
     // Use the callbacks passed in to the constructor so that the backend in

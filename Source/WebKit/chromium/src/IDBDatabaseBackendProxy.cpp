@@ -85,16 +85,6 @@ void IDBDatabaseBackendProxy::deleteObjectStore(int64_t objectStoreId, IDBTransa
     m_webIDBDatabase->deleteObjectStore(objectStoreId, *transactionProxy->getWebIDBTransaction(), ec);
 }
 
-// FIXME: Remove this as part of https://bugs.webkit.org/show_bug.cgi?id=102733.
-PassRefPtr<IDBTransactionBackendInterface> IDBDatabaseBackendProxy::transaction(const Vector<int64_t>& objectStoreIds, unsigned short mode)
-{
-    OwnPtr<WebIDBTransaction> transaction = adoptPtr(m_webIDBDatabase->transaction(objectStoreIds, mode));
-    if (!transaction)
-        return 0;
-
-    return IDBTransactionBackendProxy::create(transaction.release());
-}
-
 PassRefPtr<IDBTransactionBackendInterface> IDBDatabaseBackendProxy::createTransaction(int64_t id, const Vector<int64_t>& objectStoreIds, unsigned short mode)
 {
     OwnPtr<WebIDBTransaction> transaction = adoptPtr(m_webIDBDatabase->createTransaction(id, objectStoreIds, mode));

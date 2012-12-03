@@ -380,12 +380,6 @@ void IDBDatabaseBackendImpl::processPendingCalls()
     }
 }
 
-// FIXME: Remove this as part of https://bugs.webkit.org/show_bug.cgi?id=102733.
-PassRefPtr<IDBTransactionBackendInterface> IDBDatabaseBackendImpl::transaction(const Vector<int64_t>& objectStoreIds, unsigned short mode)
-{
-    return createTransaction(0, objectStoreIds, mode);
-}
-
 PassRefPtr<IDBTransactionBackendInterface> IDBDatabaseBackendImpl::createTransaction(int64_t transactionId, const Vector<int64_t>& objectStoreIds, unsigned short mode)
 {
     RefPtr<IDBTransactionBackendImpl> transaction = IDBTransactionBackendImpl::create(transactionId, objectStoreIds, mode, this);
@@ -441,7 +435,8 @@ void IDBDatabaseBackendImpl::runIntVersionChangeTransaction(int64_t requestedVer
     }
 
     Vector<int64_t> objectStoreIds;
-    RefPtr<IDBTransactionBackendInterface> transactionInterface = transaction(objectStoreIds, IDBTransaction::VERSION_CHANGE);
+    // FIXME: The transactionId needs to be piped in through IDBDatabaseBackendInterface::open().
+    RefPtr<IDBTransactionBackendInterface> transactionInterface = createTransaction(0, objectStoreIds, IDBTransaction::VERSION_CHANGE);
     RefPtr<IDBTransactionBackendImpl> transaction = IDBTransactionBackendImpl::from(transactionInterface.get());
 
     if (!transaction->scheduleTask(VersionChangeOperation::create(this, requestedVersion, callbacks, databaseCallbacks, transaction), VersionChangeAbortOperation::create(this, m_metadata.version, m_metadata.intVersion))) {
