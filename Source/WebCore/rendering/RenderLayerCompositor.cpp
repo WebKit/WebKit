@@ -678,7 +678,7 @@ IntRect RenderLayerCompositor::calculateCompositedBounds(const RenderLayer* laye
 {
     if (!canBeComposited(layer))
         return IntRect();
-    return layer->calculateLayerBounds(ancestorLayer, 0, RenderLayer::DefaultCalculateLayerBoundsFlags | RenderLayer::ExcludeHiddenDescendants);
+    return layer->calculateLayerBounds(ancestorLayer, 0, RenderLayer::DefaultCalculateLayerBoundsFlags | RenderLayer::ExcludeHiddenDescendants | RenderLayer::DontConstrainForMask);
 }
 
 void RenderLayerCompositor::layerWasAdded(RenderLayer* /*parent*/, RenderLayer* /*child*/)

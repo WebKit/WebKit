@@ -4456,7 +4456,7 @@ bool RenderLayer::intersectsDamageRect(const LayoutRect& layerBounds, const Layo
     return boundingBox(rootLayer, offsetFromRoot).intersects(damageRect);
 }
 
-LayoutRect RenderLayer::localBoundingBox() const
+LayoutRect RenderLayer::localBoundingBox(CalculateLayerBoundsFlags flags) const
 {
     // There are three special cases we need to consider.
     // (1) Inline Flows.  For inline flows we will create a bounding box that fully encompasses all of the lines occupied by the
@@ -4484,7 +4484,7 @@ LayoutRect RenderLayer::localBoundingBox() const
     } else {
         RenderBox* box = renderBox();
         ASSERT(box);
-        if (box->hasMask()) {
+        if (!(flags & DontConstrainForMask) && box->hasMask()) {
             result = box->maskClipRect();
             box->flipForWritingMode(result); // The mask clip rect is in physical coordinates, so we have to flip, since localBoundingBox is not.
         } else {
@@ -4543,7 +4543,7 @@ IntRect RenderLayer::calculateLayerBounds(const RenderLayer* ancestorLayer, cons
         return renderer->view()->unscaledDocumentRect();
     }
 
-    LayoutRect boundingBoxRect = localBoundingBox();
+    LayoutRect boundingBoxRect = localBoundingBox(flags);
 
     if (renderer->isBox())
         toRenderBox(renderer)->flipForWritingMode(boundingBoxRect);

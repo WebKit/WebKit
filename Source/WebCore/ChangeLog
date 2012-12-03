@@ -1,3 +1,28 @@
+2012-12-03  Simon Fraser  <simon.fraser@apple.com>
+
+        When animating mask-postion on a composited layer, element renders incorrectly
+        https://bugs.webkit.org/show_bug.cgi?id=103700
+
+        Reviewed by Tim Horton.
+
+        When a composited layer has a mask, we clipped the layer bounds to the
+        size of the mask. This caused problems when animating the mask origin,
+        which is considered a 'repaint' style change and so should not require
+        layout or compositing geometry changes.
+        
+        Fix by ignoring the mask when computing the bounds of the compositing
+        layer.
+
+        Test: compositing/masks/mask-layer-size.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::localBoundingBox):
+        (WebCore::RenderLayer::calculateLayerBounds):
+        * rendering/RenderLayer.h:
+        (RenderLayer):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::calculateCompositedBounds):
+
 2012-12-03  Xan Lopez  <xan@igalia.com>
 
         [CSS Grid Layout] Support <percentage> and viewport-relative breadth sizes

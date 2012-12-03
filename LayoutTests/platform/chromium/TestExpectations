@@ -4276,6 +4276,10 @@ webkit.org/b/103609 [ MountainLion ] fast/regions/listmarker-inside-flowthread.h
 webkit.org/b/102624 [ Linux Win ] fast/events/stopPropagation-submit.html [ Text ]
 webkit.org/b/103149 [ Mac ] fast/events/stopPropagation-submit.html [ Pass Failure ]
 
+# Needs rebaseline after https://bugs.webkit.org/show_bug.cgi?id=103700
+webkit.org/b/103700 compositing/masks/simple-composited-mask.html [ ImageOnlyFailure ]
+webkit.org/b/103700 compositing/masks/masked-ancestor.html [ ImageOnlyFailure ]
+
 # Some compositing tests doesn't work on multiple platforms.
 webkit.org/b/103721 [ Mac Win Linux ] compositing/geometry/vertical-scroll-composited.html [ ImageOnlyFailure ]
 webkit.org/b/103721 [ Mac Win Linux ] compositing/reflections/load-video-in-reflection.html [ ImageOnlyFailure ]
