@@ -315,7 +315,7 @@ void SubresourceLoader::releaseResources()
     ASSERT(!reachedTerminalState());
     if (m_state != Uninitialized) {
         m_requestCountTracker.clear();
-        m_documentLoader->cachedResourceLoader()->loadDone();
+        m_documentLoader->cachedResourceLoader()->loadDone(m_resource);
         if (reachedTerminalState())
             return;
         m_resource->stopLoading();

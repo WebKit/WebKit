@@ -67,6 +67,10 @@
 #include "CachedShader.h"
 #endif
 
+#if ENABLE(RESOURCE_TIMING)
+#include "Performance.h"
+#endif
+
 #define PRELOAD_DEBUG 0
 
 namespace WebCore {
@@ -449,7 +453,7 @@ CachedResourceHandle<CachedResource> CachedResourceLoader::requestResource(Cache
         resource = loadResource(type, request, request.charset());
         break;
     case Revalidate:
-        resource = revalidateResource(resource.get());
+        resource = revalidateResource(request, resource.get());
         break;
     case Use:
         memoryCache()->resourceAccessed(resource.get());
@@ -480,7 +484,7 @@ CachedResourceHandle<CachedResource> CachedResourceLoader::requestResource(Cache
     return resource;
 }
 
-CachedResourceHandle<CachedResource> CachedResourceLoader::revalidateResource(CachedResource* resource)
+CachedResourceHandle<CachedResource> CachedResourceLoader::revalidateResource(const CachedResourceRequest& request, CachedResource* resource)
 {
     ASSERT(resource);
     ASSERT(resource->inCache());
@@ -497,6 +501,12 @@ CachedResourceHandle<CachedResource> CachedResourceLoader::revalidateResource(Ca
     
     memoryCache()->remove(resource);
     memoryCache()->add(newResource.get());
+#if ENABLE(RESOURCE_TIMING)
+    InitiatorInfo info = { request.initiatorName(), monotonicallyIncreasingTime() };
+    m_initiatorMap.add(newResource.get(), info);
+#else
+    UNUSED_PARAM(request);
+#endif
     return newResource;
 }
 
@@ -510,6 +520,10 @@ CachedResourceHandle<CachedResource> CachedResourceLoader::loadResource(CachedRe
 
     if (!memoryCache()->add(resource.get()))
         resource->setOwningCachedResourceLoader(this);
+#if ENABLE(RESOURCE_TIMING)
+    InitiatorInfo info = { request.initiatorName(), monotonicallyIncreasingTime() };
+    m_initiatorMap.add(resource.get(), info);
+#endif
     return resource;
 }
 
@@ -691,10 +705,25 @@ void CachedResourceLoader::removeCachedResource(CachedResource* resource) const
     m_documentResources.remove(resource->url());
 }
 
-void CachedResourceLoader::loadDone()
+void CachedResourceLoader::loadDone(CachedResource* resource)
 {
     RefPtr<DocumentLoader> protectDocumentLoader(m_documentLoader);
     RefPtr<Document> protectDocument(m_document);
+
+#if ENABLE(RESOURCE_TIMING)
+    if (resource) {
+        HashMap<CachedResource*, InitiatorInfo>::iterator initiatorIt = m_initiatorMap.find(resource);
+        if (initiatorIt != m_initiatorMap.end()) {
+            ASSERT(document());
+            const InitiatorInfo& info = initiatorIt->value;
+            document()->domWindow()->performance()->addResourceTiming(info.name, document(), resource->resourceRequest(), resource->response(), info.startTime, resource->loadFinishTime());
+            m_initiatorMap.remove(initiatorIt);
+        }
+    }
+#else
+    UNUSED_PARAM(resource);
+#endif // ENABLE(RESOURCE_TIMING)
+
     if (frame())
         frame()->loader()->loadDone();
     performPostLoadActions();
