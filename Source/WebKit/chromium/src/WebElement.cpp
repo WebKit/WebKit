@@ -80,6 +80,11 @@ bool WebElement::hasAttribute(const WebString& attrName) const
     return constUnwrap<Element>()->hasAttribute(attrName);
 }
 
+void WebElement::removeAttribute(const WebString& attrName)
+{
+    unwrap<Element>()->removeAttribute(attrName);
+}
+
 WebString WebElement::getAttribute(const WebString& attrName) const
 {
     return constUnwrap<Element>()->getAttribute(attrName);

@@ -61,6 +61,7 @@ struct WebRect;
         // namespace. Tag name matching is case-insensitive.
         WEBKIT_EXPORT bool hasHTMLTagName(const WebString&) const;
         WEBKIT_EXPORT bool hasAttribute(const WebString&) const;
+        WEBKIT_EXPORT void removeAttribute(const WebString&);
         WEBKIT_EXPORT WebString getAttribute(const WebString&) const;
         WEBKIT_EXPORT bool setAttribute(const WebString& name, const WebString& value);
         WEBKIT_EXPORT WebString innerText();
