@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<div>
+  <div id="child"></div>
+  <div id="newparent"></div>
+</div>
+<script>
+description("Ensures that appendChild() throws an exception if mutation even handler does something wrong");
+
+var listener = function() {
+    document.removeEventListener("DOMNodeRemoved", listener, false);
+    child.appendChild(newparent);
+};
+document.addEventListener("DOMNodeRemoved", listener, false);
+shouldThrow("newparent.appendChild(child);",  "'Error: HierarchyRequestError: DOM Exception 3'");
+</script>
+<script src="../js/resources/js-test-post.js"></script>
+</body>
+</html>

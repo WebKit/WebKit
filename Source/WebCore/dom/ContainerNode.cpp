@@ -177,6 +177,19 @@ static inline ExceptionCode checkAcceptChild(ContainerNode* newParent, Node* new
     return 0;
 }
 
+static inline bool checkAcceptChildGuaranteedNodeTypes(ContainerNode* newParent, Node* newChild, ExceptionCode& ec)
+{
+    ASSERT(!newParent->isReadOnlyNode());
+    ASSERT(!newParent->isDocumentTypeNode());
+    ASSERT(isChildTypeAllowed(newParent, newChild));
+    if (newChild->contains(newParent)) {
+        ec = HIERARCHY_REQUEST_ERR;
+        return false;
+    }
+
+    return true;
+}
+
 static inline bool checkAddChild(ContainerNode* newParent, Node* newChild, ExceptionCode& ec)
 {
     if (ExceptionCode code = checkAcceptChild(newParent, newChild, 0)) {
@@ -232,6 +245,10 @@ bool ContainerNode::insertBefore(PassRefPtr<Node> newChild, Node* refChild, Exce
         return false;
     if (targets.isEmpty())
         return true;
+
+    // We need this extra check because collectChildrenAndRemoveFromOldParent() can fire mutation events.
+    if (!checkAcceptChildGuaranteedNodeTypes(this, newChild.get(), ec))
+        return false;
 
     InspectorInstrumentation::willInsertDOMNode(document(), this);
 
@@ -638,6 +655,10 @@ bool ContainerNode::appendChild(PassRefPtr<Node> newChild, ExceptionCode& ec, bo
 
     if (targets.isEmpty())
         return true;
+
+    // We need this extra check because collectChildrenAndRemoveFromOldParent() can fire mutation events.
+    if (!checkAcceptChildGuaranteedNodeTypes(this, newChild.get(), ec))
+        return false;
 
     InspectorInstrumentation::willInsertDOMNode(document(), this);
 

@@ -1,0 +1,10 @@
+Ensures that appendChild() throws an exception if mutation even handler does something wrong
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS newparent.appendChild(child); threw exception Error: HierarchyRequestError: DOM Exception 3.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
