@@ -1,3 +1,43 @@
+2012-12-03  Florin Malita  <fmalita@chromium.org>
+
+        [Skia] Deferred SkCanvas save()
+        https://bugs.webkit.org/show_bug.cgi?id=102272
+
+        Reviewed by Stephen White.
+
+        Implement a lazy save() strategy: instead of delegating to the canvas upfront, defer and
+        only commit when a clip/matrix mutation is observed.
+
+        The patch yields a 1-20% SkCanvas save/restore reduction for heavy pages, with much larger
+        gains observed for deeply nested SVG content.
+
+        No new tests: no behaviour changes, coverage provided by existing tests.
+
+        * platform/graphics/skia/GraphicsContextSkia.cpp:
+        (WebCore::GraphicsContext::canvasClip):
+        * platform/graphics/skia/PlatformContextSkia.cpp:
+        (WebCore):
+        (WebCore::PlatformContextSkia::DeferredSaveState::DeferredSaveState):
+        (PlatformContextSkia::DeferredSaveState):
+        (WebCore::PlatformContextSkia::PlatformContextSkia):
+        (WebCore::PlatformContextSkia::save):
+        (WebCore::PlatformContextSkia::saveLayer):
+        (WebCore::PlatformContextSkia::beginLayerClippedToImage):
+        (WebCore::PlatformContextSkia::restore):
+        (WebCore::PlatformContextSkia::applyClipFromImage):
+        * platform/graphics/skia/PlatformContextSkia.h:
+        (PlatformContextSkia):
+        (WebCore::PlatformContextSkia::realizeSave):
+        (WebCore):
+        (WebCore::PlatformContextSkia::canvas):
+        (WebCore::PlatformContextSkia::clipPath):
+        (WebCore::PlatformContextSkia::clipRect):
+        (WebCore::PlatformContextSkia::setMatrix):
+        (WebCore::PlatformContextSkia::concat):
+        (WebCore::PlatformContextSkia::rotate):
+        (WebCore::PlatformContextSkia::scale):
+        (WebCore::PlatformContextSkia::translate):
+
 2012-12-03  Simon Fraser  <simon.fraser@apple.com>
 
         When animating mask-postion on a composited layer, element renders incorrectly

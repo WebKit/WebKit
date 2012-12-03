@@ -93,8 +93,7 @@ public:
     void save();
     void restore();
 
-    void saveLayer(const SkRect* bounds, const SkPaint*);
-    void saveLayer(const SkRect* bounds, const SkPaint*, SkCanvas::SaveFlags);
+    void saveLayer(const SkRect* bounds, const SkPaint*, SkCanvas::SaveFlags = SkCanvas::kARGB_ClipLayer_SaveFlag);
     void restoreLayer();
 
     // Begins a layer that is clipped to the image |imageBuffer| at the location
@@ -141,8 +140,6 @@ public:
     int getNormalizedAlpha() const;
     SkXfermode::Mode getXfermodeMode() const;
 
-    void canvasClipPath(const SkPath&);
-
     // Returns the fill color. The returned color has it's alpha adjusted
     // by the current alpha.
     SkColor effectiveFillColor() const;
@@ -152,7 +149,10 @@ public:
     SkColor effectiveStrokeColor() const;
 
     // Returns the canvas used for painting, NOT guaranteed to be non-null.
-    SkCanvas* canvas() { return m_canvas; }
+    // Accessing the backing canvas this way flushes all queued save ops,
+    // so it should be avoided. Use the corresponding PlatformContextSkia
+    // draw/matrix/clip methods instead.
+    SkCanvas* canvas();
     const SkCanvas* canvas() const { return m_canvas; }
 
     InterpolationQuality interpolationQuality() const;
@@ -259,8 +259,12 @@ private:
     // common code between setupPaintFor[Filling,Stroking]
     void setupShader(SkPaint*, Gradient*, Pattern*, SkColor) const;
 
+    void realizeSave(SkCanvas::SaveFlags);
+
     // Defines drawing style.
     struct State;
+
+    struct DeferredSaveState;
 
     // NULL indicates painting is disabled. Never delete this object.
     SkCanvas* m_canvas;
@@ -272,6 +276,13 @@ private:
     // Pointer to the current drawing state. This is a cached value of
     // mStateStack.back().
     State* m_state;
+
+    WTF::Vector<DeferredSaveState> m_saveStateStack;
+
+    // Currently pending save flags.
+    // FIXME: While defined as a bitmask of SkCanvas::SaveFlags, this is mostly used as a bool.
+    //        It will come in handy when adding granular save() support (clip vs. matrix vs. paint).
+    unsigned m_deferredSaveFlags;
 
     // Tracks the region painted opaque via the GraphicsContext.
     OpaqueRegionSkia m_opaqueRegion;
@@ -286,6 +297,22 @@ private:
     SkScalar m_hintingScaleFactor;
 #endif
 };
+
+inline void PlatformContextSkia::realizeSave(SkCanvas::SaveFlags flags)
+{
+    if (m_deferredSaveFlags & flags) {
+        m_canvas->save((SkCanvas::SaveFlags)m_deferredSaveFlags);
+        m_deferredSaveFlags = 0;
+    }
+}
+
+inline SkCanvas* PlatformContextSkia::canvas()
+{
+    // Flush any pending saves.
+    realizeSave(SkCanvas::kMatrixClip_SaveFlag);
+
+    return m_canvas;
+}
 
 inline const SkBitmap& PlatformContextSkia::layerBitmap(AccessMode access) const
 {
@@ -324,11 +351,15 @@ inline bool PlatformContextSkia::isVector() const
 
 inline bool PlatformContextSkia::clipPath(const SkPath& path, AntiAliasingMode aa, SkRegion::Op op)
 {
+    realizeSave(SkCanvas::kClip_SaveFlag);
+
     return m_canvas->clipPath(path, op, aa == AntiAliased);
 }
 
 inline bool PlatformContextSkia::clipRect(const SkRect& rect, AntiAliasingMode aa, SkRegion::Op op)
 {
+    realizeSave(SkCanvas::kClip_SaveFlag);
+
     return m_canvas->clipRect(rect, op, aa == AntiAliased);
 }
 
@@ -339,6 +370,8 @@ inline bool PlatformContextSkia::getClipBounds(SkRect* bounds) const
 
 inline void PlatformContextSkia::setMatrix(const SkMatrix& matrix)
 {
+    realizeSave(SkCanvas::kMatrix_SaveFlag);
+
     m_canvas->setMatrix(matrix);
 }
 
@@ -349,21 +382,29 @@ inline const SkMatrix& PlatformContextSkia::getTotalMatrix() const
 
 inline bool PlatformContextSkia::concat(const SkMatrix& matrix)
 {
+    realizeSave(SkCanvas::kMatrix_SaveFlag);
+
     return m_canvas->concat(matrix);
 }
 
 inline bool PlatformContextSkia::rotate(SkScalar degrees)
 {
+    realizeSave(SkCanvas::kMatrix_SaveFlag);
+
     return m_canvas->rotate(degrees);
 }
 
 inline bool PlatformContextSkia::scale(SkScalar sx, SkScalar sy)
 {
+    realizeSave(SkCanvas::kMatrix_SaveFlag);
+
     return m_canvas->scale(sx, sy);
 }
 
 inline bool PlatformContextSkia::translate(SkScalar dx, SkScalar dy)
 {
+    realizeSave(SkCanvas::kMatrix_SaveFlag);
+
     return m_canvas->translate(dx, dy);
 }
 

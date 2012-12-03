@@ -58,6 +58,13 @@
 
 namespace WebCore {
 
+struct PlatformContextSkia::DeferredSaveState {
+    DeferredSaveState(unsigned mask, int count) : m_flags(mask), m_restoreCount(count) { }
+
+    unsigned m_flags;
+    int m_restoreCount;
+};
+
 // State -----------------------------------------------------------------------
 
 // Encapsulates the additional painting state information we store for each
@@ -183,6 +190,7 @@ SkColor PlatformContextSkia::State::applyAlpha(SkColor c) const
 // Danger: canvas can be NULL.
 PlatformContextSkia::PlatformContextSkia(SkCanvas* canvas)
     : m_canvas(canvas)
+    , m_deferredSaveFlags(0)
     , m_trackOpaqueRegion(false)
     , m_printing(false)
     , m_accelerated(false)
@@ -228,21 +236,14 @@ void PlatformContextSkia::save()
     // don't attempt to clip multiple times.
     m_state->m_imageBufferClip.reset();
 
-    // Save our native canvas.
-    m_canvas->save();
-}
-
-void PlatformContextSkia::saveLayer(const SkRect* bounds, const SkPaint* paint)
-{
-    m_canvas->saveLayer(bounds, paint);
-    if (bounds)
-        m_canvas->clipRect(*bounds);
-    if (m_trackOpaqueRegion)
-        m_opaqueRegion.pushCanvasLayer(paint);
+    m_saveStateStack.append(DeferredSaveState(m_deferredSaveFlags, m_canvas->getSaveCount()));
+    m_deferredSaveFlags |= SkCanvas::kMatrixClip_SaveFlag;
 }
 
 void PlatformContextSkia::saveLayer(const SkRect* bounds, const SkPaint* paint, SkCanvas::SaveFlags saveFlags)
 {
+    realizeSave(SkCanvas::kMatrixClip_SaveFlag);
+
     m_canvas->saveLayer(bounds, paint, saveFlags);
     if (bounds)
         m_canvas->clipRect(*bounds);
@@ -264,7 +265,7 @@ void PlatformContextSkia::beginLayerClippedToImage(const FloatRect& rect,
                       SkFloatToScalar(rect.maxX()), SkFloatToScalar(rect.maxY()) };
 
     if (imageBuffer->internalSize().isEmpty()) {
-        m_canvas->clipRect(bounds);
+        clipRect(bounds);
         return;
     }
 
@@ -307,8 +308,10 @@ void PlatformContextSkia::restore()
     m_stateStack.removeLast();
     m_state = &m_stateStack.last();
 
-    // Restore our native canvas.
-    m_canvas->restore();
+    DeferredSaveState savedState = m_saveStateStack.last();
+    m_saveStateStack.removeLast();
+    m_deferredSaveFlags = savedState.m_flags;
+    m_canvas->restoreToCount(savedState.m_restoreCount);
 }
 
 void PlatformContextSkia::drawRect(SkRect rect)
@@ -548,11 +551,6 @@ SkColor PlatformContextSkia::effectiveStrokeColor() const
     return m_state->applyAlpha(m_state->m_strokeColor);
 }
 
-void PlatformContextSkia::canvasClipPath(const SkPath& path)
-{
-    m_canvas->clipPath(path);
-}
-
 InterpolationQuality PlatformContextSkia::interpolationQuality() const
 {
     return m_state->m_interpolationQuality;
@@ -596,6 +594,7 @@ void PlatformContextSkia::applyClipFromImage(const SkRect& rect, const SkBitmap&
     // only look at the alpha when compositing. I'm not 100% sure this is what WebKit expects for image clipping.
     SkPaint paint;
     paint.setXfermodeMode(SkXfermode::kDstIn_Mode);
+    realizeSave(SkCanvas::kMatrixClip_SaveFlag);
     m_canvas->save(SkCanvas::kMatrix_SaveFlag);
     m_canvas->resetMatrix();
     m_canvas->drawBitmapRect(imageBuffer, 0, rect, &paint);

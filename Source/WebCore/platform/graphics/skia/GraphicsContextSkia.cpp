@@ -334,7 +334,7 @@ void GraphicsContext::canvasClip(const Path& path)
     if (paintingDisabled())
         return;
 
-    platformContext()->canvasClipPath(path.isNull() ? SkPath() : *path.platformPath());
+    platformContext()->clipPath(path.isNull() ? SkPath() : *path.platformPath());
 }
 
 void GraphicsContext::clipOut(const IntRect& rect)
