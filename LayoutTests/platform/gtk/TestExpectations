@@ -388,7 +388,7 @@ webkit.org/b/99063 fast/text-autosizing
 webkit.org/b/99062 fast/dom/HTMLDialogElement [ Skip ]
 
 # Proximity Events is not supported.
-webkit.org/b/99060 fast/dom/Proximity
+webkit.org/b/99060 proximity
 webkit.org/b/99060 fast/events/constructors/device-proximity-event-constructor.html
 
 # HIDDEN_PAGE_DOM_TIMER_THROTTLING is not enabled

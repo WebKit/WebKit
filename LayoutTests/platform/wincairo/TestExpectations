@@ -2795,8 +2795,8 @@ editing/pasteboard/paste-global-selection.html
 editing/selection/select-from-textfield-outwards.html
 editing/spelling/grammar-edit-word.html
 fast/dom/constructed-objects-prototypes.html
-fast/dom/Proximity/check-event-deviceproximity.html
-fast/dom/Proximity/create-event-deviceproximity.html
+proximity/check-event-deviceproximity.html
+proximity/create-event-deviceproximity.html
 fast/events/constructors/device-proximity-event-constructor.html
 fast/forms/state-restore-broken-state.html
 fast/html/progress-user-modify.html

@@ -451,7 +451,7 @@ http/tests/security/video-cross-origin-readback.html
 http/tests/security/contentSecurityPolicy/1.1
 
 # Proximity Events is now supported.
-fast/dom/Proximity
+proximity
 fast/events/constructors/device-proximity-event-constructor.html
 
 # Missing support in DRT for Geolocation's Coordinate attributes.

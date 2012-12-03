@@ -22,8 +22,6 @@
 
 #if ENABLE(PROXIMITY_EVENTS)
 
-#include <limits>
-
 namespace WebCore {
 
 DeviceProximityEvent::DeviceProximityEvent()

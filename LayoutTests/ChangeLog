@@ -1,3 +1,24 @@
+2012-12-03  Kihong Kwon  <kihong.kwon@samsung.com>
+
+        Remove useless included header and change position of Proximity Events test cases
+        https://bugs.webkit.org/show_bug.cgi?id=103871
+
+        Reviewed by Antonio Gomes.
+
+        Change the path of Proximity Events test cases from LayoutTests/fast/dom/Proximity to LayoutTests/proximity.
+
+        * platform/chromium/TestExpectations:
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/qt/TestExpectations:
+        * platform/win/TestExpectations:
+        * platform/wincairo/TestExpectations:
+        * proximity/check-event-deviceproximity-expected.txt: Renamed from LayoutTests/fast/dom/Proximity/check-event-deviceproximity-expected.txt.
+        * proximity/check-event-deviceproximity.html: Renamed from LayoutTests/fast/dom/Proximity/check-event-deviceproximity.html.
+        * proximity/create-event-deviceproximity-expected.txt: Renamed from LayoutTests/fast/dom/Proximity/create-event-deviceproximity-expected.txt.
+        * proximity/create-event-deviceproximity.html: Renamed from LayoutTests/fast/dom/Proximity/create-event-deviceproximity.html.
+
 2012-12-03  János Badics  <jbadics@inf.u-szeged.hu>
 
         [Qt] Gardening after r136280, r136323, r136164 and r136031.

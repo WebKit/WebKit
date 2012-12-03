@@ -1,3 +1,16 @@
+2012-12-03  Kihong Kwon  <kihong.kwon@samsung.com>
+
+        Remove useless included header and change position of Proximity Events test cases
+        https://bugs.webkit.org/show_bug.cgi?id=103871
+
+        Reviewed by Antonio Gomes.
+
+        Remove useless included header from DeviceProximityEvent.cpp.
+
+        No new tests, It is just code refactoring.
+
+        * Modules/proximity/DeviceProximityEvent.cpp:
+
 2012-12-03  Jussi Kukkonen  <jussi.kukkonen@intel.com>
 
         [GStreamer] initial volume events on media elements should happen earlier

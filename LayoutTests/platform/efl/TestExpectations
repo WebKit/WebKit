@@ -1378,7 +1378,7 @@ webkit.org/b/91210 http/tests/w3c/webperf/approved/navigation-timing/html/test_t
 webkit.org/b/92352 css3/flexbox/flex-rounding.html [ Failure ]
 
 # Proximity Events is not supported.
-webkit.org/b/92942 fast/dom/Proximity
+webkit.org/b/92942 proximity
 webkit.org/b/92942 fast/events/constructors/device-proximity-event-constructor.html
 
 # Tests are outdated: spaces are not supposed to be collapsed anymore
