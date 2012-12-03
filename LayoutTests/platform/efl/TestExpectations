@@ -726,6 +726,8 @@ webkit.org/b/49182 animations/stop-animation-on-suspend.html [ Failure Pass ]
 
 webkit.org/b/103383 fast/css/counters/element-removal-crash.xhtml [ Failure Pass ]
 
+webkit.org/b/103880 fast/writing-mode/vertical-font-vmtx-units-per-em.html [ Failure Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # FAILING TESTS
 #////////////////////////////////////////////////////////////////////////////////////////

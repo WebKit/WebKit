@@ -202,6 +202,13 @@ webkit.org/b/103399 [ Debug ] fast/forms/basic-buttons.html [ Failure Pass ]
 webkit.org/b/103400 [ Debug ] compositing/overflow/content-gains-scrollbars.html [ Crash Pass ]
 webkit.org/b/103400 [ Debug ] compositing/overflow/content-loses-scrollbars.html [ Crash Pass ]
 
+# Easily reproducable flakiness on EFL WK2 only
+webkit.org/b/103882 css3/device-adapt/viewport-width-not-affecting-next-page.html [ Failure Pass ]
+
+webkit.org/b/103883 css3/selectors3/html/css3-modsel-1.html [ Failure Pass ]
+webkit.org/b/103883 css3/selectors3/xml/css3-modsel-1.xml [ Failure Pass ]
+webkit.org/b/103883 css3/selectors3/xhtml/css3-modsel-1.xml [ Failure Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # FAILING TESTS
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -771,7 +778,6 @@ webkit.org/b/103468 fast/css/heightless-list-item.html [ ImageOnlyFailure Pass ]
 webkit.org/b/103468 fast/text/international/lang-sensitive-fonts-xml.xhtml [ ImageOnlyFailure Pass ]
 webkit.org/b/103468 ietestcenter/css3/namespaces/prefix-007.xml [ ImageOnlyFailure Pass ]
 webkit.org/b/103468 css3/viewport-percentage-lengths/viewport-percentage-vertical-align.html [ ImageOnlyFailure Pass ]
-webkit.org/b/103468 fast/writing-mode/vertical-font-vmtx-units-per-em.html [ ImageOnlyFailure Pass ]
 webkit.org/b/103468 fast/css/font-face-unexpected-end.html [ ImageOnlyFailure Pass ]
 webkit.org/b/103468 fast/writing-mode/logical-height-after-clear.html [ ImageOnlyFailure Pass ]
 webkit.org/b/103468 fast/backgrounds/size/backgroundSize-in-background-shorthand.html [ ImageOnlyFailure Pass ]
