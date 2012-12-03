@@ -945,7 +945,7 @@ webkit2_sources += \
 	Source/WebKit2/UIProcess/InspectorServer/WebSocketServerConnection.cpp \
 	Source/WebKit2/UIProcess/InspectorServer/WebSocketServerConnection.h \
 	Source/WebKit2/UIProcess/InspectorServer/gtk/WebInspectorServerGtk.cpp \
-	Source/WebKit2/UIProcess/InspectorServer/gtk/WebSocketServerGtk.cpp \
+	Source/WebKit2/UIProcess/InspectorServer/soup/WebSocketServerSoup.cpp \
 	Source/WebKit2/UIProcess/WebVibrationProvider.cpp \
 	Source/WebKit2/UIProcess/WebVibrationProvider.h \
 	Source/WebKit2/UIProcess/WebVibrationProxy.cpp \

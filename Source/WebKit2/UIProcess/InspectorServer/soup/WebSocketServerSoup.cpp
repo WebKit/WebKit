@@ -52,7 +52,7 @@ static gboolean connectionCallback(GSocketService* service, GSocketConnection* c
     server->didAcceptConnection(webSocketConnection.release());
 
     return TRUE;
-} 
+}
 
 void WebSocketServer::platformInitialize()
 {
