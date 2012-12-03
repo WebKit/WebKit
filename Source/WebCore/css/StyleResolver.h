@@ -426,7 +426,7 @@ public:
 private:
     static RenderStyle* s_styleNotYetAvailable;
 
-    void collectRulesFromUserStyleSheets(const Vector<RefPtr<CSSStyleSheet> >&);
+    void collectRulesFromUserStyleSheets(const Vector<RefPtr<CSSStyleSheet> >&, RuleSet& userStyle);
 
     void cacheBorderAndBackground();
 

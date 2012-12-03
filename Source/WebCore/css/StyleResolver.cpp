@@ -297,8 +297,17 @@ StyleResolver::StyleResolver(Document* document, bool matchAuthorAndUserStyles)
             loadFullDefaultStyle();
     }
 
+    // construct document root element default style. this is needed
+    // to evaluate media queries that contain relative constraints, like "screen and (max-width: 10em)"
+    // This is here instead of constructor, because when constructor is run,
+    // document doesn't have documentElement
+    // NOTE: this assumes that element that gets passed to styleForElement -call
+    // is always from the document that owns the style selector
     FrameView* view = document->view();
-    m_medium = adoptPtr(new MediaQueryEvaluator(view ? view->mediaType() : "all"));
+    if (view)
+        m_medium = adoptPtr(new MediaQueryEvaluator(view->mediaType()));
+    else
+        m_medium = adoptPtr(new MediaQueryEvaluator("all"));
 
     if (root)
         m_rootDefaultStyle = styleForElement(root, 0, DisallowStyleSharing, MatchOnlyUserAgentRules);
@@ -307,6 +316,15 @@ StyleResolver::StyleResolver(Document* document, bool matchAuthorAndUserStyles)
         m_medium = adoptPtr(new MediaQueryEvaluator(view->mediaType(), view->frame(), m_rootDefaultStyle.get()));
 
     resetAuthorStyle();
+
+    DocumentStyleSheetCollection* styleSheetCollection = document->styleSheetCollection();
+    OwnPtr<RuleSet> tempUserStyle = RuleSet::create();
+    if (CSSStyleSheet* pageUserSheet = styleSheetCollection->pageUserSheet())
+        tempUserStyle->addRulesFromSheet(pageUserSheet->contents(), *m_medium, this);
+    collectRulesFromUserStyleSheets(styleSheetCollection->injectedUserStyleSheets(), *tempUserStyle);
+    collectRulesFromUserStyleSheets(styleSheetCollection->documentUserStyleSheets(), *tempUserStyle);
+    if (tempUserStyle->m_ruleCount > 0 || tempUserStyle->m_pageRules.size() > 0)
+        m_userStyle = tempUserStyle.release();
 
 #if ENABLE(SVG_FONTS)
     if (document->svgExtensions()) {
@@ -317,20 +335,15 @@ StyleResolver::StyleResolver(Document* document, bool matchAuthorAndUserStyles)
     }
 #endif
 
-    DocumentStyleSheetCollection* styleSheetCollection = document->styleSheetCollection();
-    collectRulesFromUserStyleSheets(styleSheetCollection->activeUserStyleSheets());
     appendAuthorStyleSheets(0, styleSheetCollection->activeAuthorStyleSheets());
 }
 
-void StyleResolver::collectRulesFromUserStyleSheets(const Vector<RefPtr<CSSStyleSheet> >& userSheets)
+void StyleResolver::collectRulesFromUserStyleSheets(const Vector<RefPtr<CSSStyleSheet> >& userSheets, RuleSet& userStyle)
 {
-    OwnPtr<RuleSet> userStyleRuleSet = RuleSet::create();
     for (unsigned i = 0; i < userSheets.size(); ++i) {
         ASSERT(userSheets[i]->contents()->isUserStyleSheet());
-        userStyleRuleSet->addRulesFromSheet(userSheets[i]->contents(), *m_medium, this);
+        userStyle.addRulesFromSheet(userSheets[i]->contents(), *m_medium, this);
     }
-    if (userStyleRuleSet->m_ruleCount > 0 || userStyleRuleSet->m_pageRules.size() > 0)
-        m_userStyle = userStyleRuleSet.release();
 }
 
 static PassOwnPtr<RuleSet> makeRuleSet(const Vector<RuleFeature>& rules)
@@ -2564,7 +2577,9 @@ static void collectCSSOMWrappers(HashMap<StyleRule*, RefPtr<CSSStyleRule> >& wra
 static void collectCSSOMWrappers(HashMap<StyleRule*, RefPtr<CSSStyleRule> >& wrapperMap, DocumentStyleSheetCollection* styleSheetCollection)
 {
     collectCSSOMWrappers(wrapperMap, styleSheetCollection->activeAuthorStyleSheets());
-    collectCSSOMWrappers(wrapperMap, styleSheetCollection->activeUserStyleSheets());
+    collectCSSOMWrappers(wrapperMap, styleSheetCollection->pageUserSheet());
+    collectCSSOMWrappers(wrapperMap, styleSheetCollection->injectedUserStyleSheets());
+    collectCSSOMWrappers(wrapperMap, styleSheetCollection->documentUserStyleSheets());
 }
 
 CSSStyleRule* StyleResolver::ensureFullCSSOMWrapperForInspector(StyleRule* rule)

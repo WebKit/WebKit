@@ -1,3 +1,34 @@
+2012-12-03  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r135271.
+        http://trac.webkit.org/changeset/135271
+        https://bugs.webkit.org/show_bug.cgi?id=103940
+
+        Some user stylesheet API clients broken (Requested by anttik
+        on #webkit).
+
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::StyleResolver):
+        (WebCore::StyleResolver::collectRulesFromUserStyleSheets):
+        (WebCore::collectCSSOMWrappers):
+        * css/StyleResolver.h:
+        (StyleResolver):
+        * dom/Document.cpp:
+        (WebCore::Document::setCompatibilityMode):
+        * dom/DocumentStyleSheetCollection.cpp:
+        (WebCore::DocumentStyleSheetCollection::~DocumentStyleSheetCollection):
+        (WebCore::DocumentStyleSheetCollection::pageUserSheet):
+        (WebCore::DocumentStyleSheetCollection::clearPageUserSheet):
+        (WebCore::DocumentStyleSheetCollection::updatePageUserSheet):
+        (WebCore::collectActiveCSSStyleSheetsFromSeamlessParents):
+        (WebCore::DocumentStyleSheetCollection::updateActiveStyleSheets):
+        (WebCore::DocumentStyleSheetCollection::reportMemoryUsage):
+        * dom/DocumentStyleSheetCollection.h:
+        (DocumentStyleSheetCollection):
+        (WebCore::DocumentStyleSheetCollection::documentUserStyleSheets):
+        * page/Page.cpp:
+        (WebCore::Page::userStyleSheetLocationChanged):
+
 2012-11-30  Andrey Kosyakov  <caseq@chromium.org>
 
         Web Inspector: make it possible to fliter out messages from console.{time,timeEnd}()

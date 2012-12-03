@@ -53,13 +53,17 @@ public:
     const Vector<RefPtr<StyleSheet> >& styleSheetsForStyleSheetList() const { return m_styleSheetsForStyleSheetList; }
 
     const Vector<RefPtr<CSSStyleSheet> >& activeAuthorStyleSheets() const { return m_activeAuthorStyleSheets; }
-    const Vector<RefPtr<CSSStyleSheet> >& activeUserStyleSheets() const { return m_activeUserStyleSheets; }
+
+    CSSStyleSheet* pageUserSheet();
+    const Vector<RefPtr<CSSStyleSheet> >& documentUserStyleSheets() const { return m_userStyleSheets; }
+    const Vector<RefPtr<CSSStyleSheet> >& injectedUserStyleSheets() const;
+    const Vector<RefPtr<CSSStyleSheet> >& injectedAuthorStyleSheets() const;
 
     void addStyleSheetCandidateNode(Node*, bool createdByParser);
     void removeStyleSheetCandidateNode(Node*);
 
-    void clearPageUserStyleSheet();
-    void updatePageUserStyleSheet();
+    void clearPageUserSheet();
+    void updatePageUserSheet();
     void invalidateInjectedStyleSheetCache();
     void updateInjectedStyleSheetCache() const;
 
@@ -109,18 +113,11 @@ private:
         Additive
     };
     void analyzeStyleSheetChange(UpdateFlag, const Vector<RefPtr<CSSStyleSheet> >& newStylesheets, StyleResolverUpdateType&, bool& requiresFullStyleRecalc);
-    void updateStyleResolver(StyleResolverUpdateType, const Vector<RefPtr<CSSStyleSheet> >& activeAuthorStyleSheets);
-
-    CSSStyleSheet* pageUserStyleSheet();
-    const Vector<RefPtr<CSSStyleSheet> >& documentUserStyleSheets() const { return m_userStyleSheets; }
-    const Vector<RefPtr<CSSStyleSheet> >& injectedUserStyleSheets() const;
-    const Vector<RefPtr<CSSStyleSheet> >& injectedAuthorStyleSheets() const;
 
     Document* m_document;
 
     Vector<RefPtr<StyleSheet> > m_styleSheetsForStyleSheetList;
     Vector<RefPtr<CSSStyleSheet> > m_activeAuthorStyleSheets;
-    Vector<RefPtr<CSSStyleSheet> > m_activeUserStyleSheets;
 
     // Track the number of currently loading top-level stylesheets needed for rendering.
     // Sheets loaded using the @import directive are not included in this count.
@@ -128,7 +125,7 @@ private:
     // elements and when it is safe to execute scripts.
     int m_pendingStylesheets;
 
-    RefPtr<CSSStyleSheet> m_pageUserStyleSheet;
+    RefPtr<CSSStyleSheet> m_pageUserSheet;
 
     mutable Vector<RefPtr<CSSStyleSheet> > m_injectedUserStyleSheets;
     mutable Vector<RefPtr<CSSStyleSheet> > m_injectedAuthorStyleSheets;
