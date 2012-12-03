@@ -1,3 +1,23 @@
+2012-12-02  Mary Wu  <mary.wu@torchmobile.com.cn>
+
+        should sniff it if mimetype don't contain a slash.
+        https://bugs.webkit.org/show_bug.cgi?id=102778
+
+        Reviewed by George Staikos.
+
+        Based on http://mimesniff.spec.whatwg.org/, a valid media type
+        is the string represented by concatenating type, the string "/",
+        and subtype. So if the mimetype don't contain slash, we should
+        possible get sniffed type from the content like Firefox/chrome/safari.
+
+        RIM Bug# 219590, internally reviewed by Liam Quinn.
+
+        No new tests, the patch only impact qt/blackberry porting to be consistent
+        with chrome, other portings have their own behavior.
+
+        * platform/network/MIMESniffing.cpp:
+        (std::isUnknownType):
+
 2012-12-02  Otto Derek Cheung  <otcheung@rim.com>
 
         [BlackBerry] Adding checks for null when checking cookie status in CookieJarBlackBerry

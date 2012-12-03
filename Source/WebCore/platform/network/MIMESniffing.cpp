@@ -65,7 +65,13 @@ const size_t unknownTypesSize = sizeof(unknownTypes) / sizeof(unknownTypes[0]);
 
 static inline bool isUnknownType(const char* type)
 {
-    return isTextInList(type, unknownTypesSize, unknownTypes);
+    if (isTextInList(type, unknownTypesSize, unknownTypes))
+        return true;
+    if (!strchr(type, '/')) {
+        // Firefox/Chrome rejects a mime type if it does not contain a slash.
+        return true;
+    }
+    return false;
 }
 
 const char* xmlTypes[] = {
