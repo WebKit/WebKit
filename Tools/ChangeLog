@@ -1,3 +1,15 @@
+2012-12-03  Alexis Menard  <alexis@webkit.org>
+
+        Enable CSS3 background-position offset by default
+        https://bugs.webkit.org/show_bug.cgi?id=103917
+
+        Reviewed by Benjamin Poulain.
+
+        Even though each port may enable or not the feature we still need
+        to pass it at configure time otherwise it will be disabled.
+
+        * Scripts/webkitperl/FeatureList.pm:
+
 2012-12-03  Sudarsana Nagineni  <sudarsana.nagineni@intel.com>
 
         Unreviewed. Adding myself to committers.py.
