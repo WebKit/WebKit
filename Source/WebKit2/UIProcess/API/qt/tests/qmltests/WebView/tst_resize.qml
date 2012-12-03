@@ -52,7 +52,7 @@ Item {
         function init() {
             resultSpy.clear()
             scaleSpy.clear()
-            viewportSpy.clear()
+            sizeSpy.clear()
         }
 
         function run(signalSpy, script) {
