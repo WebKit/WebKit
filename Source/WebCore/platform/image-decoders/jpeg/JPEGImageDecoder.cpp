@@ -740,9 +740,8 @@ bool JPEGImageDecoder::outputScanlines()
 
     jpeg_decompress_struct* info = m_reader->info();
 
-#if !ENABLE(IMAGE_DECODER_DOWN_SAMPLING) && defined(TURBO_JPEG_RGB_SWIZZLE)
-    if (turboSwizzled(info->out_color_space)) {
-        ASSERT(!m_scaled);
+#if defined(TURBO_JPEG_RGB_SWIZZLE)
+    if (!m_scaled && turboSwizzled(info->out_color_space)) {
         while (info->output_scanline < info->output_height) {
             unsigned char* row = reinterpret_cast<unsigned char*>(buffer.getAddr(0, info->output_scanline));
             if (jpeg_read_scanlines(info, &row, 1) != 1)
