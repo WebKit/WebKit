@@ -213,6 +213,19 @@ bool Dictionary::get(const String& key, unsigned& value) const
     return true;
 }
 
+bool Dictionary::get(const String& key, unsigned long& value) const
+{
+    v8::Local<v8::Value> v8Value;
+    if (!getKey(key, v8Value))
+        return false;
+
+    v8::Local<v8::Integer> v8Integer = v8Value->ToInteger();
+    if (v8Integer.IsEmpty())
+        return false;
+    value = static_cast<unsigned long>(v8Integer->Value());
+    return true;
+}
+
 bool Dictionary::get(const String& key, unsigned long long& value) const
 {
     v8::Local<v8::Value> v8Value;

@@ -17,9 +17,11 @@ onspeechstart
 PASS count is 3
 onresult
 PASS count is 4
-PASS event.result.length is 1
-PASS event.result.item(0).transcript is "hello, world"
-PASS event.result.item(0).confidence is within 0.001 of 0.42
+PASS event.results.length is 1
+PASS event.results[0].length is 1
+PASS event.results[0].isFinal is true
+PASS event.results[0].item(0).transcript is "hello, world"
+PASS event.results[0].item(0).confidence is within 0.001 of 0.42
 onspeechend
 PASS count is 5
 onsoundend
@@ -40,7 +42,7 @@ onspeechstart
 PASS count is 3
 onnomatch
 PASS count is 4
-PASS event.result is null
+PASS event.results is null
 onspeechend
 PASS count is 5
 onsoundend

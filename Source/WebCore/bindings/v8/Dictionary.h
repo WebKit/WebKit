@@ -68,6 +68,7 @@ public:
     bool get(const String&, short&) const;
     bool get(const String&, unsigned short&) const;
     bool get(const String&, unsigned&) const;
+    bool get(const String&, unsigned long&) const;
     bool get(const String&, unsigned long long&) const;
     bool get(const String&, RefPtr<DOMWindow>&) const;
     bool get(const String&, RefPtr<Storage>&) const;

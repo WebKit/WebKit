@@ -34,8 +34,6 @@
 
 namespace WebCore {
 
-class Document;
-
 class SpeechRecognitionResult : public RefCounted<SpeechRecognitionResult> {
 public:
     ~SpeechRecognitionResult();
@@ -43,15 +41,13 @@ public:
 
     unsigned long length() { return m_alternatives.size(); }
     SpeechRecognitionAlternative* item(unsigned long index);
-    bool final() { return m_final; }
-    Document* emma();
+    bool isFinal() { return m_final; }
 
 private:
     SpeechRecognitionResult(const Vector<RefPtr<SpeechRecognitionAlternative> >&, bool final);
 
     Vector<RefPtr<SpeechRecognitionAlternative> > m_alternatives;
     bool m_final;
-    RefPtr<Document> m_emma;
 };
 
 } // namespace WebCore

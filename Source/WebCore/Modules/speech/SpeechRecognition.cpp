@@ -54,6 +54,7 @@ void SpeechRecognition::start(ExceptionCode& ec)
     }
 
     setPendingActivity(this);
+    m_finalResults.clear();
     m_controller->start(this, m_grammars.get(), m_lang, m_continuous, m_interimResults, m_maxAlternatives);
     m_started = true;
 }
@@ -103,6 +104,20 @@ void SpeechRecognition::didEndAudio()
 void SpeechRecognition::didReceiveResult(PassRefPtr<SpeechRecognitionResult> result, unsigned long resultIndex, PassRefPtr<SpeechRecognitionResultList> resultHistory)
 {
     dispatchEvent(SpeechRecognitionEvent::createResult(result, resultIndex, resultHistory));
+}
+
+void SpeechRecognition::didReceiveResults(const Vector<RefPtr<SpeechRecognitionResult> >& newFinalResults, const Vector<RefPtr<SpeechRecognitionResult> >& currentInterimResults)
+{
+    unsigned long resultIndex = m_finalResults.size();
+
+    for (size_t i = 0; i < newFinalResults.size(); ++i)
+        m_finalResults.append(newFinalResults[i]);
+
+    Vector<RefPtr<SpeechRecognitionResult> > results = m_finalResults;
+    for (size_t i = 0; i < currentInterimResults.size(); ++i)
+        results.append(currentInterimResults[i]);
+
+    dispatchEvent(SpeechRecognitionEvent::createResult(resultIndex, results));
 }
 
 void SpeechRecognition::didReceiveNoMatch(PassRefPtr<SpeechRecognitionResult> result)

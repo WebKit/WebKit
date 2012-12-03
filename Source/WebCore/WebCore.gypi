@@ -2431,7 +2431,6 @@
             'bindings/v8/custom/V8SVGPathSegCustom.cpp',
             'bindings/v8/custom/V8ScriptProfileCustom.cpp',
             'bindings/v8/custom/V8ScriptProfileNodeCustom.cpp',
-            'bindings/v8/custom/V8SpeechRecognitionResultCustom.cpp',
             'bindings/v8/custom/V8StorageCustom.cpp',
             'bindings/v8/custom/V8StyleSheetCustom.cpp',
             'bindings/v8/custom/V8StyleSheetListCustom.cpp',

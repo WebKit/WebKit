@@ -68,7 +68,16 @@ public:
     virtual void didEndAudio(const WebSpeechRecognitionHandle&) = 0;
 
     // To be called when the speech recognizer returns a result.
+    // FIXME: Remove this when we have moved over to only use the function below.
     virtual void didReceiveResult(const WebSpeechRecognitionHandle&, const WebSpeechRecognitionResult&, unsigned long resultIndex, const WebVector<WebSpeechRecognitionResult>& resultHistory) = 0;
+
+    // To be called when the speech recognizer provides new results.
+    // - newFinalResults contains zero or more final results that are new since
+    // the last time the function was called.
+    // - currentInterimResults contains zero or more inteirm results that
+    // replace the interim results that were reported the last time this
+    // function was called.
+    virtual void didReceiveResults(const WebSpeechRecognitionHandle&, const WebVector<WebSpeechRecognitionResult>& newFinalResults, const WebVector<WebSpeechRecognitionResult>& currentInterimResults) = 0;
 
     // To be called when the speech recognizer returns a final result with no
     // recognizion hypothesis.

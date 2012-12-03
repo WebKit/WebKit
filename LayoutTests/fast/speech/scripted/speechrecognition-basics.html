@@ -29,9 +29,11 @@ function oneMatchTest() {
         debug('onresult');
         shouldBe('count', '4');
         ++count;
-        shouldBe('event.result.length', '1');
-        shouldBeEqualToString('event.result.item(0).transcript', 'hello, world');
-        shouldBeCloseTo('event.result.item(0).confidence', 0.42, 1e-3);
+        shouldBe('event.results.length', '1');
+        shouldBe('event.results[0].length', '1');
+        shouldBe('event.results[0].isFinal', 'true');
+        shouldBeEqualToString('event.results[0].item(0).transcript', 'hello, world');
+        shouldBeCloseTo('event.results[0].item(0).confidence', 0.42, 1e-3);
     }
 
     r.onspeechend =     function() { debug('onspeechend');   shouldBe('count', '5'); ++count; }
@@ -65,7 +67,7 @@ function noMatchTest() {
         debug('onnomatch');
         shouldBe('count', '4');
         ++count;
-        shouldBe('event.result', 'null');
+        shouldBe('event.results', 'null');
     }
 
     r.onspeechend =     function() { debug('onspeechend');   shouldBe('count', '5'); ++count; }

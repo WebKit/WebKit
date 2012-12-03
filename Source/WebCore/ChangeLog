@@ -1,3 +1,57 @@
+2012-12-03  Tommy Widenflycht  <tommyw@google.com>
+
+        Speech Recognition API: Update SpeechRecognitionEvent to match the specification
+        https://bugs.webkit.org/show_bug.cgi?id=103407
+
+        Reviewed by Kentaro Hara.
+
+        Specification for the Speech Recognition API:
+        http://dvcs.w3.org/hg/speech-api/raw-file/tip/speechapi.html
+
+        This patch does the following:
+        o Adds results, and removing result, on SpeechRecognitionEvent
+        o Renaming SpeechRecognitionResult::final to isFinal
+        o Removing emma from SpeechRecognitionResult
+
+        The emma attribute is supposed to move from SpeechRecognitionResult to the SpeechRecognitionEvent,
+        but that caused GC issues for unrelated code so it will be added later when properly fixed.
+
+        Existing tests updated to test the new API.
+
+        * Modules/speech/SpeechRecognition.cpp:
+        (WebCore::SpeechRecognition::start):
+        (WebCore::SpeechRecognition::didReceiveResults):
+        (WebCore):
+        * Modules/speech/SpeechRecognition.h:
+        (SpeechRecognition):
+        * Modules/speech/SpeechRecognitionEvent.cpp:
+        (WebCore::SpeechRecognitionEvent::createResult):
+        (WebCore):
+        (WebCore::SpeechRecognitionEvent::SpeechRecognitionEvent):
+        (WebCore::SpeechRecognitionEvent::~SpeechRecognitionEvent):
+        * Modules/speech/SpeechRecognitionEvent.h:
+        (SpeechRecognitionEventInit):
+        (SpeechRecognitionEvent):
+        (WebCore::SpeechRecognitionEvent::resultIndex):
+        (WebCore::SpeechRecognitionEvent::results):
+        * Modules/speech/SpeechRecognitionEvent.idl:
+        * Modules/speech/SpeechRecognitionResult.cpp:
+        * Modules/speech/SpeechRecognitionResult.h:
+        (WebCore::SpeechRecognitionResult::isFinal):
+        (SpeechRecognitionResult):
+        * Modules/speech/SpeechRecognitionResult.idl:
+        * WebCore.gypi:
+        * bindings/js/JSDictionary.cpp:
+        (WebCore::JSDictionary::convertValue):
+        (WebCore):
+        * bindings/js/JSDictionary.h:
+        * bindings/v8/Dictionary.cpp:
+        (WebCore::Dictionary::get):
+        (WebCore):
+        * bindings/v8/Dictionary.h:
+        (Dictionary):
+        * bindings/v8/custom/V8SpeechRecognitionResultCustom.cpp: Removed.
+
 2012-12-03  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r136377.

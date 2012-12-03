@@ -69,10 +69,11 @@ public:
         WebVector<float> confidences(static_cast<size_t>(1));
         transcripts[0] = m_transcript;
         confidences[0] = m_confidence;
-        WebSpeechRecognitionResult res;
-        res.assign(transcripts, confidences, true);
+        WebVector<WebSpeechRecognitionResult> finalResults(static_cast<size_t>(1));
+        WebVector<WebSpeechRecognitionResult> interimResults;
+        finalResults[0].assign(transcripts, confidences, true);
 
-        m_recognizer->client()->didReceiveResult(m_recognizer->handle(), res, 0, WebVector<WebSpeechRecognitionResult>());
+        m_recognizer->client()->didReceiveResults(m_recognizer->handle(), finalResults, interimResults);
     }
 
 private:
