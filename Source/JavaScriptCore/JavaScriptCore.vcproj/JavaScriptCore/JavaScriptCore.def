@@ -436,4 +436,5 @@ EXPORTS
     WTFReportAssertionFailureWithMessage
     WTFReportBacktrace
     WTFReportError
+    WTFReportFatalError
     WTFSetCrashHook

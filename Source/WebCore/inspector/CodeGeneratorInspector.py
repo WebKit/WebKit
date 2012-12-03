@@ -1338,7 +1338,9 @@ class TypeBindings:
                                         validator_writer.newline("    }\n")
 
                                     if closed_field_set:
-                                        validator_writer.newline("    ASSERT(foundPropertiesCount == object->size());\n")
+                                        validator_writer.newline("    if (foundPropertiesCount != object->size()) {\n")
+                                        validator_writer.newline("      FATAL(\"Unexpected properties in object: %s\\n\", object->toJSONString().ascii().data());\n")
+                                        validator_writer.newline("    }\n")
                                     validator_writer.newline("}\n")
 
                                     if domain_guard:
@@ -2564,6 +2566,7 @@ ${typeBuilders}
 #if ENABLE(INSPECTOR)
 
 #include "InspectorTypeBuilder.h"
+#include <wtf/text/CString.h>
 
 namespace WebCore {
 

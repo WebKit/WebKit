@@ -1,3 +1,14 @@
+2012-12-03  Peter Rybin  <prybin@chromium.org>
+
+        Web Inspector: make ASSERTION FAILED: foundPropertiesCount == object->size() more useful
+        https://bugs.webkit.org/show_bug.cgi?id=103254
+
+        Reviewed by Pavel Feldman.
+
+        Missing symbol WTFReportFatalError is added to the linker list.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+
 2012-12-03  Alexis Menard  <alexis@webkit.org>
 
         [Mac] Enable CSS3 background-position offset by default.
