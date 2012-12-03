@@ -812,8 +812,8 @@ AC_MSG_RESULT([$enable_coverage])
 AC_MSG_CHECKING([whether to enable CSS3 background support])
 AC_ARG_ENABLE(css3_background,
               AC_HELP_STRING([--enable-css3-background],
-                             [enable CSS3 background support [default=no]]),
-              [],[enable_css3_background="no"])
+                             [enable CSS3 background support [default=yes]]),
+              [],[enable_css3_background="yes"])
 AC_MSG_RESULT([$enable_css3_background])
 
 # check whether to enable CSS conditional rules support
