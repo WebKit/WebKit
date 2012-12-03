@@ -51,6 +51,8 @@ public:
 
     void didReceiveURIRequest(const String& uriString, WebPageProxy*, uint64_t requestID);
 
+    const Vector<String>& registeredURISchemes() const { return m_registeredURISchemes; }
+
 private:
     WebSoupRequestManagerProxy(WebContext*);
 
@@ -63,6 +65,8 @@ private:
     WebContext* m_webContext;
     WebSoupRequestManagerClient m_client;
     bool m_loadFailed;
+
+    Vector<String> m_registeredURISchemes;
 };
 
 } // namespace WebKit

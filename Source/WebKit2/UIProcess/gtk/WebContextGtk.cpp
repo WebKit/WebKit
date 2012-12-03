@@ -30,6 +30,8 @@
 
 #include "Logging.h"
 #include "WebInspectorServer.h"
+#include "WebProcessCreationParameters.h"
+#include "WebSoupRequestManagerProxy.h"
 #include <WebCore/FileSystem.h>
 #include <WebCore/NotImplemented.h>
 #include <wtf/gobject/GOwnPtr.h>
@@ -80,9 +82,11 @@ WTF::String WebContext::applicationCacheDirectory()
     return WebCore::filenameToString(cacheDirectory.get());
 }
 
-void WebContext::platformInitializeWebProcess(WebProcessCreationParameters&)
+void WebContext::platformInitializeWebProcess(WebProcessCreationParameters& parameters)
 {
     initInspectorServer();
+
+    parameters.urlSchemesRegistered = m_soupRequestManagerProxy->registeredURISchemes();
 }
 
 void WebContext::platformInvalidateContext()

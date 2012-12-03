@@ -25,6 +25,8 @@
 
 #include "config.h"
 #include "WebContext.h"
+#include "WebProcessCreationParameters.h"
+#include "WebSoupRequestManagerProxy.h"
 
 #include <Efreet.h>
 #include <WebCore/ApplicationCacheStorage.h>
@@ -38,9 +40,9 @@ String WebContext::applicationCacheDirectory()
     return String::fromUTF8(efreet_cache_home_get()) + "/WebKitEfl/Applications";
 }
 
-void WebContext::platformInitializeWebProcess(WebProcessCreationParameters&)
+void WebContext::platformInitializeWebProcess(WebProcessCreationParameters& parameters)
 {
-    notImplemented();
+    parameters.urlSchemesRegistered = m_soupRequestManagerProxy->registeredURISchemes();
 }
 
 void WebContext::platformInvalidateContext()

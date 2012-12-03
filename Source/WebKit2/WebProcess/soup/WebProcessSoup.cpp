@@ -166,6 +166,9 @@ void WebProcess::platformInitializeWebProcess(const WebProcessCreationParameters
     if (!parameters.languages.isEmpty())
         setSoupSessionAcceptLanguage(parameters.languages);
 
+    for (size_t i = 0; i < parameters.urlSchemesRegistered.size(); i++)
+        m_soupRequestManager.registerURIScheme(parameters.urlSchemesRegistered[i]);
+
     WebCore::addLanguageChangeObserver(this, languageChanged);
 }
 

@@ -1,3 +1,38 @@
+2012-12-03  Joaquim Rocha  <jrocha@igalia.com>
+
+        [GTK] Custom URI schemes stop working on Epiphany using WebKit2 after killing the web process
+        https://bugs.webkit.org/show_bug.cgi?id=103729
+
+        Reviewed by Carlos Garcia Campos.
+
+        When a URI scheme is registered and the WebProcess is killed,
+        those schemes would not work anymore after the process is relaunched.
+
+        This was observed in Epiphany and possibly affects any port that
+        uses libsoup.
+
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode): Encode the registered URI schemes.
+        (WebKit::WebProcessCreationParameters::decode): Decode the registered URI schemes.
+        * Shared/WebProcessCreationParameters.h: Add the urlSchemesRegistered Vector to hold the registered URI schemes.
+        (WebProcessCreationParameters):
+        * UIProcess/efl/WebContextEfl.cpp:
+        (WebKit::WebContext::platformInitializeWebProcess): Assign the parameters.urlSchemesRegistered from the URI schemes
+        registered in the WebSoupRequestManagerProxy and removed the notImplemented() call.
+        * UIProcess/gtk/WebContextGtk.cpp:
+        (WebKit::WebContext::platformInitializeWebProcess): Assign the parameters.urlSchemesRegistered from the URI schemes
+        registered in the WebSoupRequestManagerProxy.
+        * UIProcess/soup/WebSoupRequestManagerProxy.cpp:
+        (WebKit::WebSoupRequestManagerProxy::registerURIScheme): Add the given scheme to the m_registeredURISchemes Vector.
+        * UIProcess/soup/WebSoupRequestManagerProxy.h:
+        (WebKit::WebSoupRequestManagerProxy::registeredURISchemes): Return the m_registeredURISchemes.
+        (WebSoupRequestManagerProxy): Define the m_registeredURISchemes to hold the schemes that are registered.
+        * WebProcess/soup/WebProcessSoup.cpp:
+        (WebKit::WebProcess::platformInitializeWebProcess): Call m_soupRequestManager.registerURIScheme for each URI scheme
+        found in the parameters.
+        * WebProcess/soup/WebSoupRequestManager.h: Make registerURIScheme public.
+        (WebSoupRequestManager):
+
 2012-12-03  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         CSS Device Adaptation: window.innerWidth returns wrong value if CSS viewport descriptors are applied

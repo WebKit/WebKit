@@ -61,6 +61,9 @@ void WebSoupRequestManagerProxy::registerURIScheme(const String& scheme)
 {
     ASSERT(m_webContext);
     m_webContext->sendToAllProcessesRelaunchingThemIfNecessary(Messages::WebSoupRequestManager::RegisterURIScheme(scheme));
+
+    ASSERT(!m_registeredURISchemes.contains(scheme));
+    m_registeredURISchemes.append(scheme);
 }
 
 void WebSoupRequestManagerProxy::didHandleURIRequest(const WebData* requestData, uint64_t contentLength, const String& mimeType, uint64_t requestID)

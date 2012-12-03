@@ -75,6 +75,9 @@ struct WebProcessCreationParameters {
 #if ENABLE(CUSTOM_PROTOCOLS)
     Vector<String> urlSchemesRegisteredForCustomProtocols;
 #endif
+#if USE(SOUP)
+    Vector<String> urlSchemesRegistered;
+#endif
 
     CacheModel cacheModel;
     bool shouldTrackVisitedLinks;
