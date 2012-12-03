@@ -52,7 +52,7 @@ var failCount = 0;
       } catch (e) {
         if ('code' in e)
           msg += '; code = ' + e.code;
-        if (e.code == 3)
+        if (e.code == 3) // HIERARCHY_REQUEST_ERR
           msg = '';
       }
       assert(msg == '', "when inserting <a> into Document with another child: " + msg);
@@ -67,9 +67,10 @@ var failCount = 0;
         r.surroundContents(doc.createElement('a'));
         msg = 'no exception raised';
       } catch (e) {
-        if ('code' in e)
-          msg += '; code = ' + e.code;
-        if (e.code == 1)
+// COMMENTED OUT FOR 2011 UPDATE - DOM Core changes the exception from RangeException.BAD_BOUNDARYPOINTS_ERR (1) to DOMException.INVALID_STATE_ERR (11)
+//        if ('code' in e)
+//          msg += '; code = ' + e.code;
+//        if (e.code == 1)
           msg = '';
       }
       assert(msg == '', "when trying to surround two halves of comment: " + msg);

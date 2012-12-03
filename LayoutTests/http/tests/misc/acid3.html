@@ -598,13 +598,17 @@
         r.setEndBefore(doc);
         msg = "no exception thrown for setEndBefore() the document itself";
       } catch (e) {
-        if (e.BAD_BOUNDARYPOINTS_ERR != 1)
-          msg = 'not a RangeException';
-        else if (e.INVALID_NODE_TYPE_ERR != 2)
-          msg = 'RangeException has no INVALID_NODE_TYPE_ERR';
-        else if ("INVALID_ACCESS_ERR" in e)
-          msg = 'RangeException has DOMException constants';
-        else if (e.code != e.INVALID_NODE_TYPE_ERR)
+// COMMENTED OUT FOR 2011 UPDATE - we may want to merge RangeException and DOMException
+//        if (e.BAD_BOUNDARYPOINTS_ERR != 1)
+//          msg = 'not a RangeException';
+//        else
+//        if (e.INVALID_NODE_TYPE_ERR != 2)
+//          msg = 'RangeException has no INVALID_NODE_TYPE_ERR';
+//        else
+//        if ("INVALID_ACCESS_ERR" in e)
+//          msg = 'RangeException has DOMException constants';
+//        else
+        if (e.code != e.INVALID_NODE_TYPE_ERR)
           msg = 'wrong exception raised from setEndBefore()';
       }
       assert(msg == "", msg);
@@ -680,22 +684,23 @@
     },
     function () {
       // test 10: Ranges and Attribute Nodes
-      var e = document.getElementById('result');
-      if (!e.getAttributeNode)
-        return 1; // support for attribute nodes is optional in Acid3, because attribute nodes might be removed from DOM Core in the future.
-      // however, if they're supported, they'd better work:
-      var a = e.getAttributeNode('id');
-      var r = document.createRange();
-      r.selectNodeContents(a);
-      assertEquals(r.toString(), "result", "toString() didn't work for attribute node");
-      var t = a.firstChild;
-      var f = r.extractContents();
-      assertEquals(f.childNodes.length, 1, "extracted contents were the wrong length");
-      assertEquals(f.childNodes[0], t, "extracted contents were the wrong node");
-      assertEquals(t.textContent, 'result', "extracted contents didn't match old attribute value");
-      assertEquals(r.toString(), '', "extracting contents didn't empty attribute value; instead equals '" + r.toString() + "'");
-      assertEquals(e.getAttribute('id'), '', "extracting contents didn't change 'id' attribute to empty string");
-      e.id = 'result';
+// COMMENTED OUT FOR 2011 UPDATE - turns out instead of dropping Attr entirely, as Acid3 originally expected, the API is just being refactored
+//      var e = document.getElementById('result');
+//      if (!e.getAttributeNode)
+//        return 1; // support for attribute nodes is optional in Acid3, because attribute nodes might be removed from DOM Core in the future.
+//      // however, if they're supported, they'd better work:
+//      var a = e.getAttributeNode('id');
+//      var r = document.createRange();
+//      r.selectNodeContents(a);
+//      assertEquals(r.toString(), "result", "toString() didn't work for attribute node");
+//      var t = a.firstChild;
+//      var f = r.extractContents();
+//      assertEquals(f.childNodes.length, 1, "extracted contents were the wrong length");
+//      assertEquals(f.childNodes[0], t, "extracted contents were the wrong node");
+//      assertEquals(t.textContent, 'result', "extracted contents didn't match old attribute value");
+//      assertEquals(r.toString(), '', "extracting contents didn't empty attribute value; instead equals '" + r.toString() + "'");
+//      assertEquals(e.getAttribute('id'), '', "extracting contents didn't change 'id' attribute to empty string");
+//      e.id = 'result';
       return 1;
     },
     function () {
@@ -713,7 +718,7 @@
       } catch (e) {
         if ('code' in e)
           msg += '; code = ' + e.code;
-        if (e.code == 3)
+        if (e.code == 3) // HIERARCHY_REQUEST_ERR
           msg = '';
       }
       assert(msg == '', "when inserting <a> into Document with another child: " + msg);
@@ -728,9 +733,10 @@
         r.surroundContents(doc.createElement('a'));
         msg = 'no exception raised';
       } catch (e) {
-        if ('code' in e)
-          msg += '; code = ' + e.code;
-        if (e.code == 1)
+// COMMENTED OUT FOR 2011 UPDATE - DOM Core changes the exception from RangeException.BAD_BOUNDARYPOINTS_ERR (1) to DOMException.INVALID_STATE_ERR (11)
+//        if ('code' in e)
+//          msg += '; code = ' + e.code;
+//        if (e.code == 1)
           msg = '';
       }
       assert(msg == '', "when trying to surround two halves of comment: " + msg);
@@ -864,8 +870,9 @@
       // test 18: nodeType (this test also relies on accurate parsing of the document)
       assertEquals(document.nodeType, 9, "document nodeType wrong");
       assertEquals(document.documentElement.nodeType, 1, "element nodeType wrong");
-      if (document.createAttribute) // support for attribute nodes is optional in Acid3, because attribute nodes might be removed from DOM Core in the future.
-        assertEquals(document.createAttribute('test').nodeType, 2, "attribute nodeType wrong"); // however, if they're supported, they'd better work
+// COMMENTED OUT FOR 2011 UPDATE - turns out instead of dropping Attr entirely, as Acid3 originally expected, the API is just being refactored
+//      if (document.createAttribute) // support for attribute nodes is optional in Acid3, because attribute nodes might be removed from DOM Core in the future.
+//        assertEquals(document.createAttribute('test').nodeType, 2, "attribute nodeType wrong"); // however, if they're supported, they'd better work
       assertEquals(document.getElementById('score').firstChild.nodeType, 3, "text node nodeType wrong");
       assertEquals(document.firstChild.nodeType, 10, "DOCTYPE nodeType wrong");
       return 2;
@@ -1410,8 +1417,15 @@
         p.lastChild.data = " ";
         expect(p, 0, "adding text to a text node didn't make the element non-:empty");
         assertEquals(p.childNodes.length, 3, "text nodes may have merged");
-        p.childNodes[1].replaceWholeText("");
-        assertEquals(p.childNodes.length, 1, "replaceWholeText('') didn't remove text nodes");
+// COMMENTED OUT FOR 2011 UPDATE - replaceWholeText() might go away entirely
+//        p.childNodes[1].replaceWholeText("");
+//        assertEquals(p.childNodes.length, 1, "replaceWholeText('') didn't remove text nodes");
+// REPLACEMENT:
+        assertEquals(p.childNodes[1].nodeType, 3, "missing text node before first removal");
+        p.removeChild(p.childNodes[1]);
+        assertEquals(p.childNodes[1].nodeType, 3, "missing text node before second removal");
+        p.removeChild(p.childNodes[1]);
+// END REPLACEMENT TEST
         expect(p, empty, "element with a comment node only didn't match :empty");
         p.appendChild(doc.createElementNS("http://example.com/", "test"));
         expect(p, 0, "adding an element in a namespace didn't make the element non-:empty");
@@ -2190,22 +2204,23 @@
       // test 60: className vs "class" vs attribute nodes
       var span = document.getElementsByTagName('span')[0];
       span.setAttribute('class', 'kittens');
-      if (!span.getAttributeNode)
-        return 4; // support for attribute nodes is optional in Acid3, because attribute nodes might be removed from DOM Core in the future.
-      var attr = span.getAttributeNode('class');
-      // however, if they're supported, they'd better work:
-      assert(attr.specified, "attribute not specified");
-      assertEquals(attr.value, 'kittens', "attribute value wrong");
-      assertEquals(attr.name, 'class', "attribute name wrong");
-      attr.value = 'ocelots';
-      assertEquals(attr.value, 'ocelots', "attribute value wrong");
-      assertEquals(span.className, 'ocelots', "setting attribute value failed to be reflected in className");
+// COMMENTED OUT FOR 2011 UPDATE - turns out instead of dropping Attr entirely, as Acid3 originally expected, the API is just being refactored
+//      if (!span.getAttributeNode)
+//        return 4; // support for attribute nodes is optional in Acid3, because attribute nodes might be removed from DOM Core in the future.
+//      var attr = span.getAttributeNode('class');
+//      // however, if they're supported, they'd better work:
+//      assert(attr.specified, "attribute not specified");
+//      assertEquals(attr.value, 'kittens', "attribute value wrong");
+//      assertEquals(attr.name, 'class', "attribute name wrong");
+//      attr.value = 'ocelots';
+//      assertEquals(attr.value, 'ocelots', "attribute value wrong");
+//      assertEquals(span.className, 'ocelots', "setting attribute value failed to be reflected in className");
       span.className = 'cats';
-      assertEquals(attr.ownerElement.getAttribute('class'), 'cats', "setting attribute value failed to be reflected in getAttribute()");
-      span.removeAttributeNode(attr);
-      assert(attr.specified, "attribute not specified after removal");
-      assert(!attr.ownerElement, "attribute still owned after removal");
-      assert(!span.className, "element had class after removal");
+//      assertEquals(attr.ownerElement.getAttribute('class'), 'cats', "setting attribute value failed to be reflected in getAttribute()");
+//      span.removeAttributeNode(attr);
+//      assert(attr.specified, "attribute not specified after removal");
+//      assert(!attr.ownerElement, "attribute still owned after removal");
+//      assert(!span.className, "element had class after removal");
       return 4;
     },
     function () {
@@ -2308,6 +2323,7 @@
     // bucket 5: Tests from the Acid3 Competition
     function () {
       // test 65: bring in a couple of SVG files and some HTML files dynamically - preparation for later tests in this bucket
+      // NOTE FROM 2011 UPDATE: The svg.xml file still contains the SVG font, but it is no longer used
       kungFuDeathGrip = document.createElement('p');
       kungFuDeathGrip.className = 'removed';
       var iframe, object;
@@ -2586,35 +2602,37 @@
       return 5;
     },
     function () {
-      // test 75: SMIL in SVG, from Erik Dahlstrom
-      //
-      // The test begins by creating a few elements, among those is a
-      // <set> element.  This element is prevented from running by
-      // setting begin="indefinite", which means that the animation
-      // doesn't start until the 'beginElement' DOM method is called
-      // on the <set> element. The animation is a simple animation
-      // that sets the value of the width attribute to 0. The duration
-      // of the animation is 'indefinite' which means that the value
-      // will stay 0 indefinitely. The target of the animation is the
-      // 'width' attribute of the <rect> element that is the parent of
-      // the <set> element. When 'width' is 0 the rect is not rendered
-      // according to the spec[7].
-      //
-      // Some properties of the SVGAnimatedLength[2] and SVGLength[8]
-      // are also inspected. Before the animation starts both baseVal
-      // and animVal contain the same values[2]. Then the animation is
-      // started by calling the beginElement method[9]. To make sure
-      // that time passes between the triggering of the animation and
-      // the time that the values are read out (in test #66), the
-      // current time is set to 1000 seconds using the setCurrentTime
-      // method[10].
-      // 
-      // [2] http://www.w3.org/TR/SVG11/types.html#InterfaceSVGAnimatedLength
-      // [7] http://www.w3.org/TR/SVG11/shapes.html#RectElement
-      // [8] http://www.w3.org/TR/SVG11/types.html#InterfaceSVGLength
-      // [9] http://www.w3.org/TR/SVG11/animate.html#DOMInterfaces
-      // [10] http://www.w3.org/TR/SVG11/struct.html#InterfaceSVGSVGElement
-
+// PARTS COMMENTED OUT FOR 2011 UPDATE - SVG Fonts, SVG SMIL animation, and XLink have met with some implementor malaise even amongst those that shipped them
+// This affects tests 75 to 79
+//      // test 75: SMIL in SVG, from Erik Dahlstrom
+//      //
+//      // The test begins by creating a few elements, among those is a
+//      // <set> element.  This element is prevented from running by
+//      // setting begin="indefinite", which means that the animation
+//      // doesn't start until the 'beginElement' DOM method is called
+//      // on the <set> element. The animation is a simple animation
+//      // that sets the value of the width attribute to 0. The duration
+//      // of the animation is 'indefinite' which means that the value
+//      // will stay 0 indefinitely. The target of the animation is the
+//      // 'width' attribute of the <rect> element that is the parent of
+//      // the <set> element. When 'width' is 0 the rect is not rendered
+//      // according to the spec[7].
+//      //
+//      // Some properties of the SVGAnimatedLength[2] and SVGLength[8]
+//      // are also inspected. Before the animation starts both baseVal
+//      // and animVal contain the same values[2]. Then the animation is
+//      // started by calling the beginElement method[9]. To make sure
+//      // that time passes between the triggering of the animation and
+//      // the time that the values are read out (in test #66), the
+//      // current time is set to 1000 seconds using the setCurrentTime
+//      // method[10].
+//      // 
+//      // [2] http://www.w3.org/TR/SVG11/types.html#InterfaceSVGAnimatedLength
+//      // [7] http://www.w3.org/TR/SVG11/shapes.html#RectElement
+//      // [8] http://www.w3.org/TR/SVG11/types.html#InterfaceSVGLength
+//      // [9] http://www.w3.org/TR/SVG11/animate.html#DOMInterfaces
+//      // [10] http://www.w3.org/TR/SVG11/struct.html#InterfaceSVGSVGElement
+//
       var svgns = "http://www.w3.org/2000/svg";
       var svgdoc = kungFuDeathGrip.firstChild.contentDocument;
       assert(svgdoc, "contentDocument failed on <iframe> for svg document.");
@@ -2624,77 +2642,77 @@
       rect.setAttribute("width", "100");
       rect.setAttribute("height", "100");
       rect.setAttribute("id", "rect");
-      var anim = svgdoc.createElementNS(svgns, "set");
-      anim.setAttribute("begin", "indefinite");
-      anim.setAttribute("to", "0");
-      anim.setAttribute("attributeName", "width");
-      anim.setAttribute("dur", "indefinite");
-      anim.setAttribute("fill", "freeze");
-      rect.appendChild(anim);
+//      var anim = svgdoc.createElementNS(svgns, "set");
+//      anim.setAttribute("begin", "indefinite");
+//      anim.setAttribute("to", "0");
+//      anim.setAttribute("attributeName", "width");
+//      anim.setAttribute("dur", "indefinite");
+//      anim.setAttribute("fill", "freeze");
+//      rect.appendChild(anim);
       svg.appendChild(rect);
       assert(rect.width, "SVG DOM interface SVGRectElement not supported.");
-      assert(rect.width.baseVal, "SVG DOM base type SVGAnimatedLength not supported.");
-      assert(rect.width.animVal, "SVG DOM base type SVGAnimatedLength not supported.");
-      assertEquals(SVGLength.SVG_LENGTHTYPE_NUMBER, 1, "Incorrect SVGLength.SVG_LENGTHTYPE_NUMBER constant value.");
-      assertEquals(rect.width.baseVal.unitType, SVGLength.SVG_LENGTHTYPE_NUMBER, "Incorrect unitType on width attribute.");
+//      assert(rect.width.baseVal, "SVG DOM base type SVGAnimatedLength not supported.");
+//      assert(rect.width.animVal, "SVG DOM base type SVGAnimatedLength not supported.");
+//      assertEquals(SVGLength.SVG_LENGTHTYPE_NUMBER, 1, "Incorrect SVGLength.SVG_LENGTHTYPE_NUMBER constant value.");
+//      assertEquals(rect.width.baseVal.unitType, SVGLength.SVG_LENGTHTYPE_NUMBER, "Incorrect unitType on width attribute.");
       assertEquals(rect.getAttribute("width"), "100", "Incorrect value from getAttribute.");
-      assertEquals(rect.width.baseVal.valueInSpecifiedUnits, 100, "Incorrect valueInSpecifiedUnits value.");
-      assertEquals(rect.width.baseVal.value, 100, "Incorrect baseVal value before animation.");
-      assertEquals(rect.width.animVal.value, 100, "Incorrect animVal value before animation.");
-      anim.beginElement();
-      assertEquals(rect.width.baseVal.value, 100, "Incorrect baseVal value after starting animation.");
-      svg.setCurrentTime(1000); // setting 1 second to make sure that time != 0s when we check the animVal value
-      // the animation is then tested in the next test
+//      assertEquals(rect.width.baseVal.valueInSpecifiedUnits, 100, "Incorrect valueInSpecifiedUnits value.");
+//      assertEquals(rect.width.baseVal.value, 100, "Incorrect baseVal value before animation.");
+//      assertEquals(rect.width.animVal.value, 100, "Incorrect animVal value before animation.");
+//      anim.beginElement();
+//      assertEquals(rect.width.baseVal.value, 100, "Incorrect baseVal value after starting animation.");
+//      svg.setCurrentTime(1000); // setting 1 second to make sure that time != 0s when we check the animVal value
+//      // the animation is then tested in the next test
       return 5;
     },
     function () {
-      // test 76: SMIL in SVG, part 2, from Erik Dahlstrom
-      //
-      // About animVal[2]: "If the given attribute or property is
-      // being animated, contains the current animated value of the
-      // attribute or property, and both the object itself and its
-      // contents are readonly. If the given attribute or property is
-      // not currently being animated, contains the same value as
-      // 'baseVal'."
-      //
-      // Since the duration of the animation is indefinite the value
-      // is still being animated at the time it's queried. Now since
-      // the 'width' attribute was animated from its original value of
-      // "100" to the new value of "0" the animVal property must
-      // contain the value 0.
-      // 
-      // [2] http://www.w3.org/TR/SVG11/types.html#InterfaceSVGAnimatedLength
-
+//      // test 76: SMIL in SVG, part 2, from Erik Dahlstrom
+//      //
+//      // About animVal[2]: "If the given attribute or property is
+//      // being animated, contains the current animated value of the
+//      // attribute or property, and both the object itself and its
+//      // contents are readonly. If the given attribute or property is
+//      // not currently being animated, contains the same value as
+//      // 'baseVal'."
+//      //
+//      // Since the duration of the animation is indefinite the value
+//      // is still being animated at the time it's queried. Now since
+//      // the 'width' attribute was animated from its original value of
+//      // "100" to the new value of "0" the animVal property must
+//      // contain the value 0.
+//      // 
+//      // [2] http://www.w3.org/TR/SVG11/types.html#InterfaceSVGAnimatedLength
+//
       var svgdoc = kungFuDeathGrip.firstChild.contentDocument;
       assert(svgdoc, "contentDocument failed on <object> for svg document.");
       var rect = svgdoc.getElementById("rect");
       assert(rect, "Failed to find <rect> element in svg document.");
-      assertEquals(rect.width.animVal.value, 0, "Incorrect animVal value after svg animation.");
+//      assertEquals(rect.width.animVal.value, 0, "Incorrect animVal value after svg animation.");
       return 5;
     },
     function () {
-      // test 77: external SVG fonts, from Erik Dahlstrom
-      //
-      // SVGFonts are described here[3], and the relevant DOM methods
-      // used in the test are defined here[4].
-      //
-      // Note that in order to be more predictable the svg should be
-      // visible, so that clause "For non-rendering environments, the
-      // user agent shall make reasonable assumptions about glyph
-      // metrics." doesn't influence the results. We use 'opacity:0'
-      // to hide the SVG, but arguably it's still a "rendering
-      // environment".
-      //
-      // The font-size 4000 was chosen because that matches the
-      // unitsPerEm value in the svgfont, which makes it easy to check
-      // the glyph advances since they will then be exactly what was
-      // specified in the svgfont.
-      //
-      // [3] http://www.w3.org/TR/SVG11/fonts.html
-      // [4] http://www.w3.org/TR/SVG11/text.html#InterfaceSVGTextContentElement
-
+//      // test 77: external SVG fonts, from Erik Dahlstrom
+//      //
+//      // SVGFonts are described here[3], and the relevant DOM methods
+//      // used in the test are defined here[4].
+//      //
+//      // Note that in order to be more predictable the svg should be
+//      // visible, so that clause "For non-rendering environments, the
+//      // user agent shall make reasonable assumptions about glyph
+//      // metrics." doesn't influence the results. We use 'opacity:0'
+//      // to hide the SVG, but arguably it's still a "rendering
+//      // environment".
+//      //
+//      // The font-size 4000 was chosen because that matches the
+//      // unitsPerEm value in the svgfont, which makes it easy to check
+//      // the glyph advances since they will then be exactly what was
+//      // specified in the svgfont.
+//      //
+//      // [3] http://www.w3.org/TR/SVG11/fonts.html
+//      // [4] http://www.w3.org/TR/SVG11/text.html#InterfaceSVGTextContentElement
+//
       var svgns = "http://www.w3.org/2000/svg";
-      var xlinkns = "http://www.w3.org/1999/xlink";
+//      var xlinkns = "http://www.w3.org/1999/xlink";
       var svgdoc = kungFuDeathGrip.firstChild.contentDocument;
       assert(svgdoc, "contentDocument failed on <object> for svg document.");
       var svg = svgdoc.documentElement;
@@ -2709,408 +2727,408 @@
       // which makes it easy to check the glyph advances since they will then be exactly what was specified in the svgfont.
       assert(text.getNumberOfChars, "SVGTextContentElement.getNumberOfChars() not supported.");
       assertEquals(text.getNumberOfChars(), 3, "getNumberOfChars returned incorrect string length.");
-      assertEquals(text.getComputedTextLength(), 4711+42+23, "getComputedTextLength failed.");
-      assertEquals(text.getSubStringLength(0,1), 42, "getSubStringLength #1 failed.");
-      assertEquals(text.getSubStringLength(0,2), 42+23, "getSubStringLength #2 failed.");
-      assertEquals(text.getSubStringLength(1,1), 23, "getSubStringLength #3 failed.");
-      assertEquals(text.getSubStringLength(1,0), 0, "getSubStringLength #4 failed.");
-/* COMMENTED OUT BECAUSE SVGWG KEEPS CHANGING THIS
- *     var code = -1000;
- *     try {
- *       var sl = text.getSubStringLength(1,3);
- *     } catch(e) {
- *       code = e.code;
- *     }
- *     assertEquals(code, DOMException.INDEX_SIZE_ERR, "getSubStringLength #1 didn't throw exception.");
- *     code = -1000;
- *     try {
- *       var sl = text.getSubStringLength(0,4);
- *     } catch(e) {
- *       code = e.code;
- *     }
- *     assertEquals(code, DOMException.INDEX_SIZE_ERR, "getSubStringLength #2 didn't throw exception.");
- *     code = -1000;
- *     try {
- *       var sl = text.getSubStringLength(3,0);
- *     } catch(e) {
- *       code = e.code;
- *     }
- *     assertEquals(code, DOMException.INDEX_SIZE_ERR, "getSubStringLength #3 didn't throw exception.");
- */
-      code = -1000;
-      try {
-        var sl = text.getSubStringLength(-17,20);
-      } catch(e) {
-        code = 0; // negative values might throw native exception since the api accepts only unsigned values
-      }
-      assert(code == 0, "getSubStringLength #4 didn't throw exception.");
-      assertEquals(text.getStartPositionOfChar(0).x, 0, "getStartPositionOfChar(0).x returned invalid value.");
-      assertEquals(text.getStartPositionOfChar(1).x, 42, "getStartPositionOfChar(1).x returned invalid value.");
-      assertEquals(text.getStartPositionOfChar(2).x, 42+23, "getStartPositionOfChar(2).x returned invalid value.");
-      assertEquals(text.getStartPositionOfChar(0).y, 4000, "getStartPositionOfChar(0).y returned invalid value.");
-      code = -1000;
-      try {
-        var val = text.getStartPositionOfChar(-1);
-      } catch(e) {
-        code = 0; // negative values might throw native exception since the api accepts only unsigned values
-      }
-      assert(code == 0, "getStartPositionOfChar #1 exception failed.");
-      code = -1000;
-      try {
-        var val = text.getStartPositionOfChar(4);
-      } catch(e) {
-        code = e.code;
-      }
-      assertEquals(code, DOMException.INDEX_SIZE_ERR, "getStartPositionOfChar #2 exception failed.");
-      assertEquals(text.getEndPositionOfChar(0).x, 42, "getEndPositionOfChar(0).x returned invalid value.");
-      assertEquals(text.getEndPositionOfChar(1).x, 42+23, "getEndPositionOfChar(1).x returned invalid value.");
-      assertEquals(text.getEndPositionOfChar(2).x, 42+23+4711, "getEndPositionOfChar(2).x returned invalid value.");
-      code = -1000;
-      try {
-        var val = text.getEndPositionOfChar(-17);
-      } catch(e) {
-        code = 0; // negative values might throw native exception since the api accepts only unsigned values
-      }
-      assert(code == 0, "getEndPositionOfChar #1 exception failed.");
-      code = -1000;
-      try {
-        var val = text.getEndPositionOfChar(4);
-      } catch(e) {
-        code = e.code;
-      }
-      assertEquals(code, DOMException.INDEX_SIZE_ERR, "getEndPositionOfChar #2 exception failed.");
+//      assertEquals(text.getComputedTextLength(), 4711+42+23, "getComputedTextLength failed.");
+//      assertEquals(text.getSubStringLength(0,1), 42, "getSubStringLength #1 failed.");
+//      assertEquals(text.getSubStringLength(0,2), 42+23, "getSubStringLength #2 failed.");
+//      assertEquals(text.getSubStringLength(1,1), 23, "getSubStringLength #3 failed.");
+//      assertEquals(text.getSubStringLength(1,0), 0, "getSubStringLength #4 failed.");
+///* COMMENTED OUT BECAUSE SVGWG KEEPS CHANGING THIS
+// *     var code = -1000;
+// *     try {
+// *       var sl = text.getSubStringLength(1,3);
+// *     } catch(e) {
+// *       code = e.code;
+// *     }
+// *     assertEquals(code, DOMException.INDEX_SIZE_ERR, "getSubStringLength #1 didn't throw exception.");
+// *     code = -1000;
+// *     try {
+// *       var sl = text.getSubStringLength(0,4);
+// *     } catch(e) {
+// *       code = e.code;
+// *     }
+// *     assertEquals(code, DOMException.INDEX_SIZE_ERR, "getSubStringLength #2 didn't throw exception.");
+// *     code = -1000;
+// *     try {
+// *       var sl = text.getSubStringLength(3,0);
+// *     } catch(e) {
+// *       code = e.code;
+// *     }
+// *     assertEquals(code, DOMException.INDEX_SIZE_ERR, "getSubStringLength #3 didn't throw exception.");
+// */
+//      code = -1000;
+//      try {
+//        var sl = text.getSubStringLength(-17,20);
+//      } catch(e) {
+//        code = 0; // negative values might throw native exception since the api accepts only unsigned values
+//      }
+//      assert(code == 0, "getSubStringLength #4 didn't throw exception.");
+//      assertEquals(text.getStartPositionOfChar(0).x, 0, "getStartPositionOfChar(0).x returned invalid value.");
+//      assertEquals(text.getStartPositionOfChar(1).x, 42, "getStartPositionOfChar(1).x returned invalid value.");
+//      assertEquals(text.getStartPositionOfChar(2).x, 42+23, "getStartPositionOfChar(2).x returned invalid value.");
+//      assertEquals(text.getStartPositionOfChar(0).y, 4000, "getStartPositionOfChar(0).y returned invalid value.");
+//      code = -1000;
+//      try {
+//        var val = text.getStartPositionOfChar(-1);
+//      } catch(e) {
+//        code = 0; // negative values might throw native exception since the api accepts only unsigned values
+//      }
+//      assert(code == 0, "getStartPositionOfChar #1 exception failed.");
+//      code = -1000;
+//      try {
+//        var val = text.getStartPositionOfChar(4);
+//      } catch(e) {
+//        code = e.code;
+//      }
+//      assertEquals(code, DOMException.INDEX_SIZE_ERR, "getStartPositionOfChar #2 exception failed.");
+//      assertEquals(text.getEndPositionOfChar(0).x, 42, "getEndPositionOfChar(0).x returned invalid value.");
+//      assertEquals(text.getEndPositionOfChar(1).x, 42+23, "getEndPositionOfChar(1).x returned invalid value.");
+//      assertEquals(text.getEndPositionOfChar(2).x, 42+23+4711, "getEndPositionOfChar(2).x returned invalid value.");
+//      code = -1000;
+//      try {
+//        var val = text.getEndPositionOfChar(-17);
+//      } catch(e) {
+//        code = 0; // negative values might throw native exception since the api accepts only unsigned values
+//      }
+//      assert(code == 0, "getEndPositionOfChar #1 exception failed.");
+//      code = -1000;
+//      try {
+//        var val = text.getEndPositionOfChar(4);
+//      } catch(e) {
+//        code = e.code;
+//      }
+//      assertEquals(code, DOMException.INDEX_SIZE_ERR, "getEndPositionOfChar #2 exception failed.");
       return 5;
     },
     function () {
-      // test 78: SVG textPath and getRotationOfChar(), from Erik Dahlstrom
-      //
-      // The getRotationOfChar[4] method fetches the midpoint rotation
-      // of a glyph defined by a character (in this testcase there is
-      // a simple 1:1 correspondence between the two). The path is
-      // defined in the resources/acid3/svg.xml file, and consists of first a line
-      // going down, then followed by a line that has a 45 degree
-      // slope and then followed by a horizontal line. The length of
-      // each path segment have been paired with the advance of each
-      // glyph, so that each glyph will be on each of the three
-      // different path segments (see text on a path layout rules[5]).
-      // Thus the rotation of the first glyph is 90 degrees, the
-      // second 45 degrees and the third 0 degrees.
-      //
-      // [4] http://www.w3.org/TR/SVG11/text.html#InterfaceSVGTextContentElement
-      // [5] http://www.w3.org/TR/SVG11/text.html#TextpathLayoutRules
-
+//      // test 78: SVG textPath and getRotationOfChar(), from Erik Dahlstrom
+//      //
+//      // The getRotationOfChar[4] method fetches the midpoint rotation
+//      // of a glyph defined by a character (in this testcase there is
+//      // a simple 1:1 correspondence between the two). The path is
+//      // defined in the resources/acid3/svg.xml file, and consists of first a line
+//      // going down, then followed by a line that has a 45 degree
+//      // slope and then followed by a horizontal line. The length of
+//      // each path segment have been paired with the advance of each
+//      // glyph, so that each glyph will be on each of the three
+//      // different path segments (see text on a path layout rules[5]).
+//      // Thus the rotation of the first glyph is 90 degrees, the
+//      // second 45 degrees and the third 0 degrees.
+//      //
+//      // [4] http://www.w3.org/TR/SVG11/text.html#InterfaceSVGTextContentElement
+//      // [5] http://www.w3.org/TR/SVG11/text.html#TextpathLayoutRules
+//
       var svgns = "http://www.w3.org/2000/svg";
-      var xlinkns = "http://www.w3.org/1999/xlink";
+//      var xlinkns = "http://www.w3.org/1999/xlink";
       var svgdoc = kungFuDeathGrip.firstChild.contentDocument;
       assert(svgdoc, "contentDocument failed on <object> for svg document.");
       var svg = svgdoc.documentElement;
-      var text = svgdoc.createElementNS(svgns, "text");
-      text.setAttribute("font-size", "4000");
-      text.setAttribute("font-family", "ACID3svgfont");
-      var textpath = svgdoc.createElementNS(svgns, "textPath");
-      textpath.setAttributeNS(xlinkns, "xlink:href", "#path");
-      var textContent = svgdoc.createTextNode("abc");
-      textpath.appendChild(textContent);
-      text.appendChild(textpath);
-      svg.appendChild(text);
-      assertEquals(text.getRotationOfChar(0), 90, "getRotationOfChar(0) failed.");
-      assertEquals(text.getRotationOfChar(1), 45, "getRotationOfChar(1) failed.");
-      assertEquals(text.getRotationOfChar(2), 0, "getRotationOfChar(2) failed.");
-      var code = -1000;
-      try {
-        var val = text.getRotationOfChar(-1)
-      } catch(e) {
-        code = e.code;
-      }
-      assertEquals(code, DOMException.INDEX_SIZE_ERR, "getRotationOfChar #1 exception failed.");
-      code = -1000;
-      try {
-        var val = text.getRotationOfChar(4)
-      } catch(e) {
-        code = e.code;
-      }
-      assertEquals(code, DOMException.INDEX_SIZE_ERR, "getRotationOfChar #2 exception failed.");
+//      var text = svgdoc.createElementNS(svgns, "text");
+//      text.setAttribute("font-size", "4000");
+//      text.setAttribute("font-family", "ACID3svgfont");
+//      var textpath = svgdoc.createElementNS(svgns, "textPath");
+//      textpath.setAttributeNS(xlinkns, "xlink:href", "#path");
+//      var textContent = svgdoc.createTextNode("abc");
+//      textpath.appendChild(textContent);
+//      text.appendChild(textpath);
+//      svg.appendChild(text);
+//      assertEquals(text.getRotationOfChar(0), 90, "getRotationOfChar(0) failed.");
+//      assertEquals(text.getRotationOfChar(1), 45, "getRotationOfChar(1) failed.");
+//      assertEquals(text.getRotationOfChar(2), 0, "getRotationOfChar(2) failed.");
+//      var code = -1000;
+//      try {
+//        var val = text.getRotationOfChar(-1)
+//      } catch(e) {
+//        code = e.code;
+//      }
+//      assertEquals(code, DOMException.INDEX_SIZE_ERR, "getRotationOfChar #1 exception failed.");
+//      code = -1000;
+//      try {
+//        var val = text.getRotationOfChar(4)
+//      } catch(e) {
+//        code = e.code;
+//      }
+//      assertEquals(code, DOMException.INDEX_SIZE_ERR, "getRotationOfChar #2 exception failed.");
       return 5;
     },
     function () {
-      // test 79: a giant test for <svg:font>, from Cameron McCormack
-      // This tests various features of SVG fonts from SVG 1.1.  It consists of
-      // a <text> element with 33 characters, styled using an SVG font that has
-      // different advance values for each glyph.  The script uses
-      // SVGTextElementContent.getStartPositionOfChar() to determine where the
-      // glyph corresponding to each character was placed, and thus to work out
-      // whether the SVG font was used correctly.
-      //
-      // The font uses 100 units per em, and the text is set in 100px.  Since
-      // font-size gives the size of the em box
-      // (http://www.w3.org/TR/SVG11/text.html#DOMInterfaces), the scale of the
-      // coordinate system for the glyphs is the same as the SVG document.
-      //
-      // The expectedAdvances array holds the expected advance value for each
-      // character, and expectedKerning holds the (negative) kerning for each
-      // character.  getPositionOfChar() returns the actual x coordinate for the
-      // glyph, corresponding to the given character, and if multiple characters
-      // correspond to the same glyph, the same position value is returned for
-      // each of those characters.
-      //
-      // Here are the reasonings for the advance/kerning values.  Note that for
-      // a given character at index i, the expected position is
-      // sum(expectedAdvances[0:i-1] + expectedKerning[0:i-1]).
-      //
-      // char     advance  kerning  reasoning
-      // -------  -------  -------  --------------------------------------------------
-      // A        10000    0        Normal character mapping to a single glyph.
-      // B        0        0        First character of a two character glyph, so the
-      //                            current position isn't advanced until the second
-      //                            character.
-      // C        200      0        Second character of a two character glyph, so now
-      //                            the position is advanced.
-      // B        300      0        Although there is a glyph for "BC" in the font,
-      //                            it appears after the glyph for "B", so the single
-      //                            character glyph for "B" should be chosen instead.
-      // D        1100     0        Normal character mapping to a single glyph.
-      // A        10000    200      Kerning of -200 is specified in the font between
-      //                            the "A" and "EE" glyphs.
-      // E        0        0        The first character of a two character glyph "EE".
-      // E        1300     0        The second character of a two character glyph.
-      // U        0        0        This is a glyph for the six characters "U+0046",
-      //                            which happen to look like a valid unicode range.
-      //                            This tests that the <glyph unicode=""> in the
-      //                            font matches exact strings rather than a range,
-      //                            as used in the kerning elements.
-      // +        0        0        Second character of six character glyph.
-      // 0        0        0        Third character of six character glyph.
-      // 0        0        0        Fourth character of six character glyph.
-      // 4        0        0        Fifth character of six character glyph.
-      // 6        1700     0        Sixth character of six character glyph.
-      // U        0        0        The same six character glyph that looks like a
-      //                            Unicode range.  One of the kerning elements has
-      //                            u1="U+0046" u2="U+0046", which shouldn't match
-      //                            this, because those attributes are interpreted
-      //                            as Unicode ranges if they are, and normal
-      //                            strings otherwise.  Thus there should be no
-      //                            kerning between these two glyphs.
-      // G        2300     200      Kerning is between this character and the next
-      //                            "G", since there is an <hkern> element that
-      //                            uses a Unicode range on its u1="" attribute
-      //                            and a glyph name on its g2="" attribute which
-      //                            both match "G".
-      // G        2300     0        Normal character with kerning before it.
-      // H        3100     0        A glyph with graphical content describing the
-      //                            glyph, rather than a d="" attribute.
-      // I        4300     0        Glyphs are checked in document order for one
-      //                            that matches, but the first glyph with
-      //                            unicode="I" also has lang="zh", which disqualifies
-      //                            it.  Thus the second glyph with unicode="I"
-      //                            is chosen.
-      // I        4100     0        Since this I has xml:lang="zh" on it in the text,
-      //                            the first glyph with lang="zh" matches.
-      // J        4700     -4700    A normal glyph with kerning between the "J" and the
-      //                            next glyph "A" equal to the advance of the "J"
-      //                            glyph, so the position should stay the same.
-      // A        10000    0        Normal glyph with kerning before it.
-      // K        5900     0        The first glyph with unicode="K" does not match,
-      //                            since it has orientation="v", so the second
-      //                            glyph with unicode="K" is chosen.
-      // <spc>    6100     0        The space character should select the glyph with
-      //                            unicode=" ", despite it having a misleading
-      //                            glyph-name="L".
-      // L        6700     0        The "L" character should select the glyph with
-      //                            unicode=" ", despite it having a misleading
-      //                            glyph-name="spacev".
-      // A        2900     0        An <altGlyph> element is used to select the
-      //                            glyph for U+10085 instead of the one for "A".
-      // U+10085  2900     0        Tests glyph selection with a non-plane-0
-      //                            character.
-      // A        10000    0        A final normal character.
-      //
-      // In addition, the script tests the value returned by
-      // SVGTextContentElement.getNumberOfChars(), which in this case should be 34.
-      // If it returned 33, then it incorrectly counted Unicode characters instead
-      // of UTF-16 codepoints (probably).
-      //
-      // See http://www.w3.org/TR/SVG11/fonts.html for a description of the glyph
-      // matching rules, and http://www.w3.org/TR/SVG11/text.html#DOMInterfaces
-      // for a description of getStartPositionOfChar() and getNumberOfChars().
-      //
-      // Note also that the test uses DOMImplementation.createDocument() to create
-      // the SVG document.  This seems to cause browsers trouble for the SVG DOM
-      // interfaces, since the document isn't being "rendered" as it might be
-      // if it were in an <iframe>.  Changing the test to use an <iframe> will
-      // at least let you see the main part of the test running.
-
+//      // test 79: a giant test for <svg:font>, from Cameron McCormack
+//      // This tests various features of SVG fonts from SVG 1.1.  It consists of
+//      // a <text> element with 33 characters, styled using an SVG font that has
+//      // different advance values for each glyph.  The script uses
+//      // SVGTextElementContent.getStartPositionOfChar() to determine where the
+//      // glyph corresponding to each character was placed, and thus to work out
+//      // whether the SVG font was used correctly.
+//      //
+//      // The font uses 100 units per em, and the text is set in 100px.  Since
+//      // font-size gives the size of the em box
+//      // (http://www.w3.org/TR/SVG11/text.html#DOMInterfaces), the scale of the
+//      // coordinate system for the glyphs is the same as the SVG document.
+//      //
+//      // The expectedAdvances array holds the expected advance value for each
+//      // character, and expectedKerning holds the (negative) kerning for each
+//      // character.  getPositionOfChar() returns the actual x coordinate for the
+//      // glyph, corresponding to the given character, and if multiple characters
+//      // correspond to the same glyph, the same position value is returned for
+//      // each of those characters.
+//      //
+//      // Here are the reasonings for the advance/kerning values.  Note that for
+//      // a given character at index i, the expected position is
+//      // sum(expectedAdvances[0:i-1] + expectedKerning[0:i-1]).
+//      //
+//      // char     advance  kerning  reasoning
+//      // -------  -------  -------  --------------------------------------------------
+//      // A        10000    0        Normal character mapping to a single glyph.
+//      // B        0        0        First character of a two character glyph, so the
+//      //                            current position isn't advanced until the second
+//      //                            character.
+//      // C        200      0        Second character of a two character glyph, so now
+//      //                            the position is advanced.
+//      // B        300      0        Although there is a glyph for "BC" in the font,
+//      //                            it appears after the glyph for "B", so the single
+//      //                            character glyph for "B" should be chosen instead.
+//      // D        1100     0        Normal character mapping to a single glyph.
+//      // A        10000    200      Kerning of -200 is specified in the font between
+//      //                            the "A" and "EE" glyphs.
+//      // E        0        0        The first character of a two character glyph "EE".
+//      // E        1300     0        The second character of a two character glyph.
+//      // U        0        0        This is a glyph for the six characters "U+0046",
+//      //                            which happen to look like a valid unicode range.
+//      //                            This tests that the <glyph unicode=""> in the
+//      //                            font matches exact strings rather than a range,
+//      //                            as used in the kerning elements.
+//      // +        0        0        Second character of six character glyph.
+//      // 0        0        0        Third character of six character glyph.
+//      // 0        0        0        Fourth character of six character glyph.
+//      // 4        0        0        Fifth character of six character glyph.
+//      // 6        1700     0        Sixth character of six character glyph.
+//      // U        0        0        The same six character glyph that looks like a
+//      //                            Unicode range.  One of the kerning elements has
+//      //                            u1="U+0046" u2="U+0046", which shouldn't match
+//      //                            this, because those attributes are interpreted
+//      //                            as Unicode ranges if they are, and normal
+//      //                            strings otherwise.  Thus there should be no
+//      //                            kerning between these two glyphs.
+//      // G        2300     200      Kerning is between this character and the next
+//      //                            "G", since there is an <hkern> element that
+//      //                            uses a Unicode range on its u1="" attribute
+//      //                            and a glyph name on its g2="" attribute which
+//      //                            both match "G".
+//      // G        2300     0        Normal character with kerning before it.
+//      // H        3100     0        A glyph with graphical content describing the
+//      //                            glyph, rather than a d="" attribute.
+//      // I        4300     0        Glyphs are checked in document order for one
+//      //                            that matches, but the first glyph with
+//      //                            unicode="I" also has lang="zh", which disqualifies
+//      //                            it.  Thus the second glyph with unicode="I"
+//      //                            is chosen.
+//      // I        4100     0        Since this I has xml:lang="zh" on it in the text,
+//      //                            the first glyph with lang="zh" matches.
+//      // J        4700     -4700    A normal glyph with kerning between the "J" and the
+//      //                            next glyph "A" equal to the advance of the "J"
+//      //                            glyph, so the position should stay the same.
+//      // A        10000    0        Normal glyph with kerning before it.
+//      // K        5900     0        The first glyph with unicode="K" does not match,
+//      //                            since it has orientation="v", so the second
+//      //                            glyph with unicode="K" is chosen.
+//      // <spc>    6100     0        The space character should select the glyph with
+//      //                            unicode=" ", despite it having a misleading
+//      //                            glyph-name="L".
+//      // L        6700     0        The "L" character should select the glyph with
+//      //                            unicode=" ", despite it having a misleading
+//      //                            glyph-name="spacev".
+//      // A        2900     0        An <altGlyph> element is used to select the
+//      //                            glyph for U+10085 instead of the one for "A".
+//      // U+10085  2900     0        Tests glyph selection with a non-plane-0
+//      //                            character.
+//      // A        10000    0        A final normal character.
+//      //
+//      // In addition, the script tests the value returned by
+//      // SVGTextContentElement.getNumberOfChars(), which in this case should be 34.
+//      // If it returned 33, then it incorrectly counted Unicode characters instead
+//      // of UTF-16 codepoints (probably).
+//      //
+//      // See http://www.w3.org/TR/SVG11/fonts.html for a description of the glyph
+//      // matching rules, and http://www.w3.org/TR/SVG11/text.html#DOMInterfaces
+//      // for a description of getStartPositionOfChar() and getNumberOfChars().
+//      //
+//      // Note also that the test uses DOMImplementation.createDocument() to create
+//      // the SVG document.  This seems to cause browsers trouble for the SVG DOM
+//      // interfaces, since the document isn't being "rendered" as it might be
+//      // if it were in an <iframe>.  Changing the test to use an <iframe> will
+//      // at least let you see the main part of the test running.
+//
       var NS = { 
         svg: 'http://www.w3.org/2000/svg',
         xml: 'http://www.w3.org/XML/1998/namespace',
-        xlink: 'http://www.w3.org/1999/xlink'
+//        xlink: 'http://www.w3.org/1999/xlink'
       };
 
       var doc = kungFuDeathGrip.childNodes[1].contentDocument;
       while (doc.hasChildNodes())
         doc.removeChild(doc.firstChild);
       doc.appendChild(doc.createElementNS(NS.svg, "svg:svg"));
-
-      var e = function (n, as, cs) {
-        var elt = doc.createElementNS(NS.svg, n);
-        if (as) {
-          for (var an in as) {
-            var idx = an.indexOf(':');
-            var ns = null;
-            if (idx != -1)
-              ns = NS[an.substring(0, idx)];
-            elt.setAttributeNS(ns, an, as[an]);
-          }
-        }
-        if (cs) {
-          for (var i in cs) {
-            var c = cs[i];
-            elt.appendChild(typeof c == 'string' ? doc.createTextNode(c) : c);
-          }
-        }
-        return elt;
-      }
-
-      doc.documentElement.appendChild(e('font', { 'horiz-adv-x': '10000'}, [e('font-face', { 'font-family': 'HCl', 'units-per-em': '100', 'ascent': '1000', 'descent': '500'}), e('missing-glyph', null, [e('path', { 'd': 'M100,0 h800 v-100 h-800 z'})]), e('glyph', { 'unicode': 'A', 'd': 'M100,0 h100 v-100 h-100 z'}), e('glyph', { 'unicode': 'BC', 'd': 'M100,0 h100 v-100 h-100 z', 'horiz-adv-x': '200'}), e('glyph', { 'unicode': 'B', 'd': 'M100,0 h100 v-100 h-100 z', 'horiz-adv-x': '300'}), e('glyph', { 'unicode': 'C', 'd': 'M100,0 h100 v-100 h-100 z', 'horiz-adv-x': '500'}), e('glyph', { 'unicode': 'BD', 'd': 'M100,0 h100 v-100 h-100 z', 'horiz-adv-x': '700'}), e('glyph', { 'unicode': 'D', 'd': 'M100,0 h100 v-100 h-100 z', 'horiz-adv-x': '1100'}), e('glyph', { 'unicode': 'EE', 'd': 'M100,0 h100 v-100 h-100 z', 'horiz-adv-x': '1300',  'glyph-name': 'grapefruit'}), e('glyph', { 'unicode': 'U+0046', 'd': 'M100,0 h100 v-100 h-100 z', 'horiz-adv-x': '1700'}), e('glyph', { 'unicode': 'F', 'd': 'M100,0 h100 v-100 h-100 z', 'horiz-adv-x': '1900'}), e('glyph', { 'unicode': 'G', 'd': 'M100,0 h100 v-100 h-100 z', 'horiz-adv-x': '2300', 'glyph-name': 'gee'}), e('glyph', { 'unicode': '\uD800\uDC85', 'd': 'M100,0 h100 v-100 h-100 z', 'horiz-adv-x': '2900', 'id': 'astral'}), e('glyph', { 'unicode': 'H', 'horiz-adv-x': '3100'}, [e('path', { 'd': 'M100,0 h100 v-100 h-100 z'})]), e('glyph', { 'unicode': 'I', 'd': 'M100,0 h100 v-100 h-100 z', 'horiz-adv-x': '4100', 'lang': 'zh'}), e('glyph', { 'unicode': 'I', 'd': 'M100,0 h100 v-100 h-100 z', 'horiz-adv-x': '4300'}), e('glyph', { 'unicode': 'J', 'd': 'M100,0 h100 v-100 h-100 z', 'horiz-adv-x': '4700'}), e('glyph', { 'unicode': 'K', 'd': 'M100,0 h100 v-100 h-100 z', 'horiz-adv-x': '5300', 'orientation': 'v'}), e('glyph', { 'unicode': 'K', 'd': 'M100,0 h100 v-100 h-100 z', 'horiz-adv-x': '5900'}), e('glyph', { 'unicode': ' ', 'd': 'M100,0 h100 v-100 h-100 z', 'horiz-adv-x': '6100', 'glyph-name': 'L'}), e('glyph', { 'unicode': 'L', 'd': 'M100,0 h100 v-100 h-100 z', 'horiz-adv-x': '6700', 'glyph-name': 'space'}), e('hkern', { 'u1': 'A', 'u2': 'EE', 'k': '1000'}), e('hkern', { 'u1': 'A', 'g2': 'grapefruit', 'k': '-200'}), e('hkern', { 'u1': 'U+0046', 'u2': 'U+0046', 'k': '-200'}), e('hkern', { 'u1': 'U+0047-0047', 'g2': 'gee', 'k': '-200'}), e('hkern', { 'u1': 'J', 'u2': 'A', 'k': '4700'})]));
-      doc.documentElement.appendChild(e('text', { 'y': '100', 'font-family': 'HCl', 'font-size': '100px', 'letter-spacing': '0px', 'word-spacing': '0px'}, ['ABCBDAEEU+0046U+0046GGHI', e('tspan', { 'xml:lang': 'zh'}, ['I']), 'JAK L', e('altGlyph', { 'xlink:href': '#astral'}, ['A']), '\uD800\uDC85A']));
-
-      var t = doc.documentElement.lastChild;
-
-      var characterDescriptions = [
-        "a normal character",
-        "the first character of a two-character glyph",
-        "the second character of a two-character glyph",
-        "a normal character, which shouldn't be the first character of a two-character glyph",
-        "a normal character, which shouldn't be the second character of a two-character glyph",
-        "a normal character, which has some kerning after it",
-        "the first character of a two-character glyph, which has some kerning before it",
-        "the second character of a two-character glyph, which has some kerning before it",
-        "the first character of a six-character glyph, which happens to look like a Unicode range, where the range-specified glyph has kerning after it, but this glyph does not",
-        "the second character of a six-character glyph, which happens to look like a Unicode range, where the range-specified glyph has kerning after it, but this glyph does not",
-        "the third character of a six-character glyph, which happens to look like a Unicode range, where the range-specified glyph has kerning after it, but this glyph does not",
-        "the fourth character of a six-character glyph, which happens to look like a Unicode range, where the range-specified glyph has kerning after it, but this glyph does not",
-        "the fifth character of a six-character glyph, which happens to look like a Unicode range, where the range-specified glyph has kerning after it, but this glyph does not",
-        "the sixth character of a six-character glyph, which happens to look like a Unicode range, where the range-specified glyph has kerning after it, but this glyph does not",
-        "the first character of a six-character glyph, which happens to look like a Unicode range, where the range-specified glyph has kerning before it, but this glyph does not",
-        "the second character of a six-character glyph, which happens to look like a Unicode range, where the range-specified glyph has kerning before it, but this glyph does not",
-        "the third character of a six-character glyph, which happens to look like a Unicode range, where the range-specified glyph has kerning before it, but this glyph does not",
-        "the fourth character of a six-character glyph, which happens to look like a Unicode range, where the range-specified glyph has kerning before it, but this glyph does not",
-        "the fifth character of a six-character glyph, which happens to look like a Unicode range, where the range-specified glyph has kerning before it, but this glyph does not",
-        "the sixth character of a six-character glyph, which happens to look like a Unicode range, where the range-specified glyph has kerning before it, but this glyph does not",
-        "a normal character, which has some kerning after it that is specified by glyph name",
-        "a normal character, which has some kerning before it that is specified by glyph name",
-        "a normal character, whose glyph is given by child graphical content of the <glyph> element",
-        "a normal character, whose glyph should not match the one with a lang=\"\" attribute on it",
-        "a normal character, whose glyph should match the one with a lang=\"\" attribute on it",
-        "a normal character, which has some kerning after it that is equal to the advance of the character",
-        "a normal character, which has some kerning before it that is equal to the advance of the previous character",
-        "a normal character, whose glyph should not match the one with an orientation=\"v\" attribute on it",
-        "a space character, which has a misleading glyph-name=\"\" attribute",
-        "a normal character, which has a misleading glyph-name=\"\" attribute",
-        "a normal character, whose glyph is chosen to be another by using <altGlyph>",
-        "a character not in Plane 0 (high surrogate pair)",
-        "a character not in Plane 0 (low surrogate pair)",
-        "a normal character",
-      ];
-
-      var expectedAdvances = [
-        10000,       // A
-        0,           // BC [0]
-        200,         // BC [1]
-        300,         // B
-        1100,        // D
-        10000,       // A
-        0,           // EE [0]
-        1300,        // EE [1]
-        0,           // U+0046 [0]
-        0,           // U+0046 [1]
-        0,           // U+0046 [2]
-        0,           // U+0046 [3]
-        0,           // U+0046 [4]
-        1700,        // U+0046 [5]
-        0,           // U+0046 [0]
-        0,           // U+0046 [1]
-        0,           // U+0046 [2]
-        0,           // U+0046 [3]
-        0,           // U+0046 [4]
-        1700,        // U+0046 [5]
-        2300,        // G
-        2300,        // G
-        3100,        // H
-        4300,        // I
-        4100,        // I (zh)
-        4700,        // J
-        10000,       // A
-        5900,        // K
-        6100,        // <space>
-        6700,        // L
-        2900,        // A (using &#x10085; altGlyph)
-        0,           // &#x10085; high surrogate pair
-        2900,        // &#x10085; low surrogate pair
-        10000,       // A
-      ];
-
-      var expectedKerning = [
-        0,           // A
-        0,           // BC [0]
-        0,           // BC [1]
-        0,           // B
-        0,           // D
-        200,         // A
-        0,           // EE [0]
-        0,           // EE [1]
-        0,           // U+0046 [0]
-        0,           // U+0046 [1]
-        0,           // U+0046 [2]
-        0,           // U+0046 [3]
-        0,           // U+0046 [4]
-        0,           // U+0046 [5]
-        0,           // U+0046 [0]
-        0,           // U+0046 [1]
-        0,           // U+0046 [2]
-        0,           // U+0046 [3]
-        0,           // U+0046 [4]
-        0,           // U+0046 [5]
-        200,         // G
-        0,           // G
-        0,           // H
-        0,           // I
-        0,           // I (zh)
-        -4700,       // J
-        0,           // A
-        0,           // K
-        0,           // <space>
-        0,           // L
-        0,           // A (using &#x10085; altGlyph)
-        0,           // &#x10085; high surrogate pair
-        0,           // &#x10085; low surrogate pair
-        0,           // A
-      ];
-
-      assertEquals(t.getNumberOfChars(), expectedAdvances.length, 'SVGSVGTextElement.getNumberOfChars() incorrect');
-
-      var expectedPositions = [0];
-      for (var i = 0; i < expectedAdvances.length; i++)
-        expectedPositions.push(expectedPositions[i] + expectedAdvances[i] + expectedKerning[i]);
-
-      var actualPositions = [];
-      for (var i = 0; i < t.getNumberOfChars(); i++)
-        actualPositions.push(t.getStartPositionOfChar(i).x);
-      actualPositions.push(t.getEndPositionOfChar(t.getNumberOfChars() - 1).x);
-
-      for (var i = 0; i < expectedPositions.length; i++) {
-        if (expectedPositions[i] != actualPositions[i]) {
-          var s = "character position " + i + ", which is ";
-          if (i == 0) {
-            s += "before " + characterDescriptions[0];
-          } else if (i == expectedPositions.length - 1) {
-            s += "after " + characterDescriptions[characterDescriptions.length - 1];
-          } else {
-            s += "between " + characterDescriptions[i - 1] + " and " + characterDescriptions[i];
-          }
-          s += ", is " + actualPositions[i] + " but should be " + expectedPositions[i] + ".";
-          fail(s);
-        }
-      }
+//
+//      var e = function (n, as, cs) {
+//        var elt = doc.createElementNS(NS.svg, n);
+//        if (as) {
+//          for (var an in as) {
+//            var idx = an.indexOf(':');
+//            var ns = null;
+//            if (idx != -1)
+//              ns = NS[an.substring(0, idx)];
+//            elt.setAttributeNS(ns, an, as[an]);
+//          }
+//        }
+//        if (cs) {
+//          for (var i in cs) {
+//            var c = cs[i];
+//            elt.appendChild(typeof c == 'string' ? doc.createTextNode(c) : c);
+//          }
+//        }
+//        return elt;
+//      }
+//
+//      doc.documentElement.appendChild(e('font', { 'horiz-adv-x': '10000'}, [e('font-face', { 'font-family': 'HCl', 'units-per-em': '100', 'ascent': '1000', 'descent': '500'}), e('missing-glyph', null, [e('path', { 'd': 'M100,0 h800 v-100 h-800 z'})]), e('glyph', { 'unicode': 'A', 'd': 'M100,0 h100 v-100 h-100 z'}), e('glyph', { 'unicode': 'BC', 'd': 'M100,0 h100 v-100 h-100 z', 'horiz-adv-x': '200'}), e('glyph', { 'unicode': 'B', 'd': 'M100,0 h100 v-100 h-100 z', 'horiz-adv-x': '300'}), e('glyph', { 'unicode': 'C', 'd': 'M100,0 h100 v-100 h-100 z', 'horiz-adv-x': '500'}), e('glyph', { 'unicode': 'BD', 'd': 'M100,0 h100 v-100 h-100 z', 'horiz-adv-x': '700'}), e('glyph', { 'unicode': 'D', 'd': 'M100,0 h100 v-100 h-100 z', 'horiz-adv-x': '1100'}), e('glyph', { 'unicode': 'EE', 'd': 'M100,0 h100 v-100 h-100 z', 'horiz-adv-x': '1300',  'glyph-name': 'grapefruit'}), e('glyph', { 'unicode': 'U+0046', 'd': 'M100,0 h100 v-100 h-100 z', 'horiz-adv-x': '1700'}), e('glyph', { 'unicode': 'F', 'd': 'M100,0 h100 v-100 h-100 z', 'horiz-adv-x': '1900'}), e('glyph', { 'unicode': 'G', 'd': 'M100,0 h100 v-100 h-100 z', 'horiz-adv-x': '2300', 'glyph-name': 'gee'}), e('glyph', { 'unicode': '\uD800\uDC85', 'd': 'M100,0 h100 v-100 h-100 z', 'horiz-adv-x': '2900', 'id': 'astral'}), e('glyph', { 'unicode': 'H', 'horiz-adv-x': '3100'}, [e('path', { 'd': 'M100,0 h100 v-100 h-100 z'})]), e('glyph', { 'unicode': 'I', 'd': 'M100,0 h100 v-100 h-100 z', 'horiz-adv-x': '4100', 'lang': 'zh'}), e('glyph', { 'unicode': 'I', 'd': 'M100,0 h100 v-100 h-100 z', 'horiz-adv-x': '4300'}), e('glyph', { 'unicode': 'J', 'd': 'M100,0 h100 v-100 h-100 z', 'horiz-adv-x': '4700'}), e('glyph', { 'unicode': 'K', 'd': 'M100,0 h100 v-100 h-100 z', 'horiz-adv-x': '5300', 'orientation': 'v'}), e('glyph', { 'unicode': 'K', 'd': 'M100,0 h100 v-100 h-100 z', 'horiz-adv-x': '5900'}), e('glyph', { 'unicode': ' ', 'd': 'M100,0 h100 v-100 h-100 z', 'horiz-adv-x': '6100', 'glyph-name': 'L'}), e('glyph', { 'unicode': 'L', 'd': 'M100,0 h100 v-100 h-100 z', 'horiz-adv-x': '6700', 'glyph-name': 'space'}), e('hkern', { 'u1': 'A', 'u2': 'EE', 'k': '1000'}), e('hkern', { 'u1': 'A', 'g2': 'grapefruit', 'k': '-200'}), e('hkern', { 'u1': 'U+0046', 'u2': 'U+0046', 'k': '-200'}), e('hkern', { 'u1': 'U+0047-0047', 'g2': 'gee', 'k': '-200'}), e('hkern', { 'u1': 'J', 'u2': 'A', 'k': '4700'})]));
+//      doc.documentElement.appendChild(e('text', { 'y': '100', 'font-family': 'HCl', 'font-size': '100px', 'letter-spacing': '0px', 'word-spacing': '0px'}, ['ABCBDAEEU+0046U+0046GGHI', e('tspan', { 'xml:lang': 'zh'}, ['I']), 'JAK L', e('altGlyph', { 'xlink:href': '#astral'}, ['A']), '\uD800\uDC85A']));
+//
+//      var t = doc.documentElement.lastChild;
+//
+//      var characterDescriptions = [
+//        "a normal character",
+//        "the first character of a two-character glyph",
+//        "the second character of a two-character glyph",
+//        "a normal character, which shouldn't be the first character of a two-character glyph",
+//        "a normal character, which shouldn't be the second character of a two-character glyph",
+//        "a normal character, which has some kerning after it",
+//        "the first character of a two-character glyph, which has some kerning before it",
+//        "the second character of a two-character glyph, which has some kerning before it",
+//        "the first character of a six-character glyph, which happens to look like a Unicode range, where the range-specified glyph has kerning after it, but this glyph does not",
+//        "the second character of a six-character glyph, which happens to look like a Unicode range, where the range-specified glyph has kerning after it, but this glyph does not",
+//        "the third character of a six-character glyph, which happens to look like a Unicode range, where the range-specified glyph has kerning after it, but this glyph does not",
+//        "the fourth character of a six-character glyph, which happens to look like a Unicode range, where the range-specified glyph has kerning after it, but this glyph does not",
+//        "the fifth character of a six-character glyph, which happens to look like a Unicode range, where the range-specified glyph has kerning after it, but this glyph does not",
+//        "the sixth character of a six-character glyph, which happens to look like a Unicode range, where the range-specified glyph has kerning after it, but this glyph does not",
+//        "the first character of a six-character glyph, which happens to look like a Unicode range, where the range-specified glyph has kerning before it, but this glyph does not",
+//        "the second character of a six-character glyph, which happens to look like a Unicode range, where the range-specified glyph has kerning before it, but this glyph does not",
+//        "the third character of a six-character glyph, which happens to look like a Unicode range, where the range-specified glyph has kerning before it, but this glyph does not",
+//        "the fourth character of a six-character glyph, which happens to look like a Unicode range, where the range-specified glyph has kerning before it, but this glyph does not",
+//        "the fifth character of a six-character glyph, which happens to look like a Unicode range, where the range-specified glyph has kerning before it, but this glyph does not",
+//        "the sixth character of a six-character glyph, which happens to look like a Unicode range, where the range-specified glyph has kerning before it, but this glyph does not",
+//        "a normal character, which has some kerning after it that is specified by glyph name",
+//        "a normal character, which has some kerning before it that is specified by glyph name",
+//        "a normal character, whose glyph is given by child graphical content of the <glyph> element",
+//        "a normal character, whose glyph should not match the one with a lang=\"\" attribute on it",
+//        "a normal character, whose glyph should match the one with a lang=\"\" attribute on it",
+//        "a normal character, which has some kerning after it that is equal to the advance of the character",
+//        "a normal character, which has some kerning before it that is equal to the advance of the previous character",
+//        "a normal character, whose glyph should not match the one with an orientation=\"v\" attribute on it",
+//        "a space character, which has a misleading glyph-name=\"\" attribute",
+//        "a normal character, which has a misleading glyph-name=\"\" attribute",
+//        "a normal character, whose glyph is chosen to be another by using <altGlyph>",
+//        "a character not in Plane 0 (high surrogate pair)",
+//        "a character not in Plane 0 (low surrogate pair)",
+//        "a normal character",
+//      ];
+//
+//      var expectedAdvances = [
+//        10000,       // A
+//        0,           // BC [0]
+//        200,         // BC [1]
+//        300,         // B
+//        1100,        // D
+//        10000,       // A
+//        0,           // EE [0]
+//        1300,        // EE [1]
+//        0,           // U+0046 [0]
+//        0,           // U+0046 [1]
+//        0,           // U+0046 [2]
+//        0,           // U+0046 [3]
+//        0,           // U+0046 [4]
+//        1700,        // U+0046 [5]
+//        0,           // U+0046 [0]
+//        0,           // U+0046 [1]
+//        0,           // U+0046 [2]
+//        0,           // U+0046 [3]
+//        0,           // U+0046 [4]
+//        1700,        // U+0046 [5]
+//        2300,        // G
+//        2300,        // G
+//        3100,        // H
+//        4300,        // I
+//        4100,        // I (zh)
+//        4700,        // J
+//        10000,       // A
+//        5900,        // K
+//        6100,        // <space>
+//        6700,        // L
+//        2900,        // A (using &#x10085; altGlyph)
+//        0,           // &#x10085; high surrogate pair
+//        2900,        // &#x10085; low surrogate pair
+//        10000,       // A
+//      ];
+//
+//      var expectedKerning = [
+//        0,           // A
+//        0,           // BC [0]
+//        0,           // BC [1]
+//        0,           // B
+//        0,           // D
+//        200,         // A
+//        0,           // EE [0]
+//        0,           // EE [1]
+//        0,           // U+0046 [0]
+//        0,           // U+0046 [1]
+//        0,           // U+0046 [2]
+//        0,           // U+0046 [3]
+//        0,           // U+0046 [4]
+//        0,           // U+0046 [5]
+//        0,           // U+0046 [0]
+//        0,           // U+0046 [1]
+//        0,           // U+0046 [2]
+//        0,           // U+0046 [3]
+//        0,           // U+0046 [4]
+//        0,           // U+0046 [5]
+//        200,         // G
+//        0,           // G
+//        0,           // H
+//        0,           // I
+//        0,           // I (zh)
+//        -4700,       // J
+//        0,           // A
+//        0,           // K
+//        0,           // <space>
+//        0,           // L
+//        0,           // A (using &#x10085; altGlyph)
+//        0,           // &#x10085; high surrogate pair
+//        0,           // &#x10085; low surrogate pair
+//        0,           // A
+//      ];
+//
+//      assertEquals(t.getNumberOfChars(), expectedAdvances.length, 'SVGSVGTextElement.getNumberOfChars() incorrect');
+//
+//      var expectedPositions = [0];
+//      for (var i = 0; i < expectedAdvances.length; i++)
+//        expectedPositions.push(expectedPositions[i] + expectedAdvances[i] + expectedKerning[i]);
+//
+//      var actualPositions = [];
+//      for (var i = 0; i < t.getNumberOfChars(); i++)
+//        actualPositions.push(t.getStartPositionOfChar(i).x);
+//      actualPositions.push(t.getEndPositionOfChar(t.getNumberOfChars() - 1).x);
+//
+//      for (var i = 0; i < expectedPositions.length; i++) {
+//        if (expectedPositions[i] != actualPositions[i]) {
+//          var s = "character position " + i + ", which is ";
+//          if (i == 0) {
+//            s += "before " + characterDescriptions[0];
+//          } else if (i == expectedPositions.length - 1) {
+//            s += "after " + characterDescriptions[characterDescriptions.length - 1];
+//          } else {
+//            s += "between " + characterDescriptions[i - 1] + " and " + characterDescriptions[i];
+//          }
+//          s += ", is " + actualPositions[i] + " but should be " + expectedPositions[i] + ".";
+//          fail(s);
+//        }
+//      }
       return 5;
     },
     function () {
@@ -3373,7 +3391,8 @@
       // test 98: XHTML and the DOM
       // (special test)
       var doctype = document.implementation.createDocumentType("html", "-//W3C//DTD XHTML 1.0 Strict//EN", "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd");
-      assertEquals(doctype.ownerDocument, null, "doctype's ownerDocument was wrong after creation");
+// COMMENTED OUT FOR 2011 UPDATE - doctypes are moving towards having an owner, like other nodes
+//      assertEquals(doctype.ownerDocument, null, "doctype's ownerDocument was wrong after creation");
       var doc = document.implementation.createDocument("http://www.w3.org/1999/xhtml", "html", doctype);
       doc.documentElement.appendChild(doc.createElementNS("http://www.w3.org/1999/xhtml", "head"));
       doc.documentElement.appendChild(doc.createElementNS("http://www.w3.org/1999/xhtml", "body"));
