@@ -121,6 +121,7 @@ public:
 
     void reportMemoryUsage(MemoryObjectInfo*) const;
 
+    void freePage();
 private:
     InspectorOverlay(Page*, InspectorClient*);
 

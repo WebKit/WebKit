@@ -244,6 +244,8 @@ void InspectorController::disconnectFrontend()
 
     m_inspectorFrontend.clear();
 
+    // relese overlay page resources
+    m_overlay->freePage();
     InspectorInstrumentation::frontendDeleted();
 }
 

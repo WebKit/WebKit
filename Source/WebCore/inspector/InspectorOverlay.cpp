@@ -515,6 +515,11 @@ void InspectorOverlay::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) con
     info.addMember(m_size);
 }
 
+void InspectorOverlay::freePage()
+{
+    m_overlayPage.clear();
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(INSPECTOR)
