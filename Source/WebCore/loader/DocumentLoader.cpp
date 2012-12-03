@@ -872,7 +872,7 @@ void DocumentLoader::startLoadingMainResource()
     if (maybeLoadEmpty())
         return;
 
-    m_mainResourceLoader = MainResourceLoader::create(m_frame);
+    m_mainResourceLoader = MainResourceLoader::create(this);
 
     // FIXME: Is there any way the extra fields could have not been added by now?
     // If not, it would be great to remove this line of code.
