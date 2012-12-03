@@ -48,7 +48,8 @@ enum MessageType {
     StartGroupCollapsedMessageType,
     EndGroupMessageType,
     ClearMessageType,
-    AssertMessageType
+    AssertMessageType,
+    TimingMessageType
 };
 
 enum MessageLevel {

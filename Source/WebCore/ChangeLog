@@ -1,3 +1,29 @@
+2012-11-30  Andrey Kosyakov  <caseq@chromium.org>
+
+        Web Inspector: make it possible to fliter out messages from console.{time,timeEnd}()
+        https://bugs.webkit.org/show_bug.cgi?id=103781
+
+        Reviewed by Yury Semikhatsky.
+
+        - make console messages produced by console.timeEnd() TimingMessageType & DebugMessageLevel;
+        - add console filter for Debug messages;
+
+        * inspector/ConsoleMessage.cpp:
+        (WebCore::messageTypeValue):
+        * inspector/Inspector.json:
+        * inspector/InspectorConsoleAgent.cpp:
+        (WebCore::InspectorConsoleAgent::stopTiming):
+        * inspector/front-end/ConsoleMessage.js:
+        (WebInspector.ConsoleMessageImpl.prototype.toMessageElement):
+        * inspector/front-end/ConsoleView.js:
+        (WebInspector.ConsoleView.prototype.):
+        (WebInspector.ConsoleView.prototype.filter):
+        * inspector/front-end/inspector.css:
+        (.console-warning-level, .console-error-level, .console-log-level, .console-debug-level):
+        (.filter-all .console-debug-level, .filter-debug .console-debug-level):
+        (.filter-all .console-debug-level.repeated-message, .filter-debug .console-debug-level.repeated-message):
+        * page/ConsoleTypes.h:
+
 2012-12-03  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r136444.

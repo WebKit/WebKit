@@ -98,6 +98,7 @@ WebInspector.ConsoleView = function(hideContextSelector)
     this.errorElement = createFilterElement.call(this, "errors", WebInspector.UIString("Errors"));
     this.warningElement = createFilterElement.call(this, "warnings", WebInspector.UIString("Warnings"));
     this.logElement = createFilterElement.call(this, "logs", WebInspector.UIString("Logs"));
+    this.debugElement = createFilterElement.call(this, "debug", WebInspector.UIString("Debug"));
 
     this.filter(this.allElement, false);
     this._registerShortcuts();
@@ -266,11 +267,9 @@ WebInspector.ConsoleView.prototype = {
             this.errorElement.removeStyleClass("selected");
             this.warningElement.removeStyleClass("selected");
             this.logElement.removeStyleClass("selected");
+            this.debugElement.removeStyleClass("selected");
 
-            this.messagesElement.removeStyleClass("filter-all");
-            this.messagesElement.removeStyleClass("filter-errors");
-            this.messagesElement.removeStyleClass("filter-warnings");
-            this.messagesElement.removeStyleClass("filter-logs");
+            this.messagesElement.classList.remove("filter-all", "filter-errors", "filter-warnings", "filter-logs", "filter-debug");
         }
 
         var targetFilterClass = "filter-" + target.category;
