@@ -1601,7 +1601,6 @@ Bug(EFL) fast/forms/basic-textareas-quirks.html [ Missing ]
 Bug(EFL) fast/forms/input-disabled-color.html [ Missing ]
 Bug(EFL) fast/forms/input-readonly-dimmed.html [ Missing ]
 Bug(EFL) fast/forms/input-text-scroll-left-on-blur.html [ Missing ]
-Bug(EFL) fast/js/array-sort-modifying-tostring.html [ Crash ]
 Bug(EFL) fast/layers/layer-visibility-sublayer.html [ Failure ]
 Bug(EFL) fast/layers/layer-visibility.html [ Failure ]
 Bug(EFL) fast/media/mq-transform-02.html [ Failure ]
@@ -1681,3 +1680,6 @@ Bug(EFL) editing/spelling/context-menu-suggestions.html [ Failure ]
 
 # Newly added test in r136225 fails on GTK bot too.
 webkit.org/b/103740 editing/selection/caret-alignment-for-vertical-text.html [ Failure ]
+
+# All debug bots timeout (crash) on this one
+webkit.org/b/56496 [ Debug ] fast/js/array-sort-modifying-tostring.html [ Crash Pass ]

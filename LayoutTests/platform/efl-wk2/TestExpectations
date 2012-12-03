@@ -179,9 +179,6 @@ webkit.org/b/102370 fast/writing-mode/japanese-ruby-vertical-lr.html [ Failure P
 webkit.org/b/102370 fast/writing-mode/japanese-ruby-vertical-rl.html [ Failure Pass ]
 webkit.org/b/102370 fast/text/international/002.html [ Failure Pass ]
 
-# All debug bots timeout (crash) on this one
-webkit.org/b/56496 [ Debug ] fast/js/array-sort-modifying-tostring.html [ Crash Pass ]
-
 webkit.org/b/102204 http/tests/security/frameNavigation/inactive-function-in-popup-navigate-child.html [ Crash Pass ]
 
 # Flaky on Debug bot. See also webkit.org/b/102190
