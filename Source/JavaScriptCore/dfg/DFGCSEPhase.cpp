@@ -30,6 +30,7 @@
 
 #include "DFGGraph.h"
 #include "DFGPhase.h"
+#include <wtf/FastBitVector.h>
 
 namespace JSC { namespace DFG {
 
@@ -43,13 +44,17 @@ public:
         
         for (unsigned i = 0; i < m_graph.size(); ++i)
             m_replacements[i] = NoNode;
+        
+        m_relevantToOSR.resize(m_graph.size());
     }
     
     bool run()
     {
         m_changed = false;
+        
         for (unsigned block = 0; block < m_graph.m_blocks.size(); ++block)
             performBlockCSE(m_graph.m_blocks[block].get());
+        
         return m_changed;
     }
     
@@ -942,7 +947,26 @@ private:
         ASSERT(m_replacements[child.index()] == NoNode);
         
         if (addRef)
-            m_graph[child].ref();
+            m_graph.ref(child);
+    }
+    
+    void eliminateIrrelevantPhantomChildren(Node& node)
+    {
+        ASSERT(node.op() == Phantom);
+        for (unsigned i = 0; i < AdjacencyList::Size; ++i) {
+            Edge edge = node.children.child(i);
+            if (!edge)
+                continue;
+            if (m_relevantToOSR.get(edge.index()))
+                continue;
+            
+#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
+            dataLog("   Eliminating edge @", m_compileIndex, " -> @", edge.index());
+#endif
+            m_graph.deref(edge);
+            node.children.removeEdgeFromBag(i--);
+            m_changed = true;
+        }
     }
     
     enum PredictionHandlingMode { RequireSamePrediction, AllowPredictionMismatch };
@@ -964,6 +988,7 @@ private:
         Node& node = m_graph[m_compileIndex];
         node.setOpAndDefaultFlags(Phantom);
         node.setRefCount(1);
+        eliminateIrrelevantPhantomChildren(node);
         
         // At this point we will eliminate all references to this node.
         m_replacements[m_compileIndex] = replacement;
@@ -983,6 +1008,7 @@ private:
         ASSERT(node.refCount() == 1);
         ASSERT(node.mustGenerate());
         node.setOpAndDefaultFlags(Phantom);
+        eliminateIrrelevantPhantomChildren(node);
         
         m_changed = true;
     }
@@ -996,6 +1022,8 @@ private:
             return;
         ASSERT(node.mustGenerate());
         node.setOpAndDefaultFlags(phantomType);
+        if (phantomType == Phantom)
+            eliminateIrrelevantPhantomChildren(node);
         
         m_changed = true;
     }
@@ -1012,6 +1040,9 @@ private:
             performSubstitution(node.children.child2(), shouldGenerate);
             performSubstitution(node.children.child3(), shouldGenerate);
         }
+        
+        if (node.op() == SetLocal)
+            m_relevantToOSR.set(node.child1().index());
         
         if (!shouldGenerate)
             return;
@@ -1294,6 +1325,12 @@ private:
             eliminate(putByOffsetStoreElimination(m_graph.m_storageAccessData[node.storageAccessDataIndex()].identifierNumber, node.child1().index()));
             break;
             
+        case Phantom:
+            // FIXME: we ought to remove Phantom's that have no children.
+            
+            eliminateIrrelevantPhantomChildren(node);
+            break;
+            
         default:
             // do nothing.
             break;
@@ -1315,6 +1352,23 @@ private:
         m_currentBlock = block;
         for (unsigned i = 0; i < LastNodeType; ++i)
             m_lastSeen[i] = UINT_MAX;
+        
+        // Make all of my Phi nodes relevant to OSR.
+        for (unsigned i = 0; i < block->phis.size(); ++i)
+            m_relevantToOSR.set(block->phis[i]);
+        
+        // Make all of my SetLocal nodes relevant to OSR.
+        for (unsigned i = 0; i < block->size(); ++i) {
+            NodeIndex nodeIndex = block->at(i);
+            Node& node = m_graph[nodeIndex];
+            switch (node.op()) {
+            case SetLocal:
+                m_relevantToOSR.set(nodeIndex);
+                break;
+            default:
+                break;
+            }
+        }
 
         for (m_indexInBlock = 0; m_indexInBlock < block->size(); ++m_indexInBlock) {
             m_compileIndex = block->at(m_indexInBlock);
@@ -1327,6 +1381,7 @@ private:
     unsigned m_indexInBlock;
     Vector<NodeIndex, 16> m_replacements;
     FixedArray<unsigned, LastNodeType> m_lastSeen;
+    FastBitVector m_relevantToOSR;
     bool m_changed; // Only tracks changes that have a substantive effect on other optimizations.
 };
 
