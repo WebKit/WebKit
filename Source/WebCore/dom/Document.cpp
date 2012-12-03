@@ -4556,17 +4556,6 @@ void Document::initSecurityContext()
     setSecurityOrigin(isSandboxed(SandboxOrigin) ? SecurityOrigin::createUnique() : SecurityOrigin::create(m_url));
     setContentSecurityPolicy(ContentSecurityPolicy::create(this));
 
-    if (SecurityPolicy::allowSubstituteDataAccessToLocal()) {
-        // If this document was loaded with substituteData, then the document can
-        // load local resources.  See https://bugs.webkit.org/show_bug.cgi?id=16756
-        // and https://bugs.webkit.org/show_bug.cgi?id=19760 for further
-        // discussion.
-        
-        DocumentLoader* documentLoader = loader();
-        if (documentLoader && documentLoader->substituteData().isValid())
-            securityOrigin()->grantLoadLocalResources();
-    }
-
     if (Settings* settings = this->settings()) {
         if (!settings->webSecurityEnabled()) {
             // Web security is turned off. We should let this document access every other document. This is used primary by testing
