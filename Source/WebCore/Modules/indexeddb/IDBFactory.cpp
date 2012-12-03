@@ -157,7 +157,7 @@ short IDBFactory::cmp(PassRefPtr<IDBKey> first, PassRefPtr<IDBKey> second, Excep
     ASSERT(second);
 
     if (!first->isValid() || !second->isValid()) {
-        ec = IDBDatabaseException::DATA_ERR;
+        ec = IDBDatabaseException::DataError;
         return 0;
     }
 

@@ -67,7 +67,7 @@ IDBTransactionBackendImpl::~IDBTransactionBackendImpl()
 PassRefPtr<IDBObjectStoreBackendInterface> IDBTransactionBackendImpl::objectStore(int64_t id, ExceptionCode& ec)
 {
     if (m_state == Finished) {
-        ec = IDBDatabaseException::IDB_INVALID_STATE_ERR;
+        ec = IDBDatabaseException::InvalidStateError;
         return 0;
     }
 
@@ -99,7 +99,7 @@ bool IDBTransactionBackendImpl::scheduleTask(TaskType type, PassOwnPtr<ScriptExe
 
 void IDBTransactionBackendImpl::abort()
 {
-    abort(IDBDatabaseError::create(IDBDatabaseException::UNKNOWN_ERR, "Internal error."));
+    abort(IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Internal error."));
 }
 
 void IDBTransactionBackendImpl::abort(PassRefPtr<IDBDatabaseError> error)
@@ -229,7 +229,7 @@ void IDBTransactionBackendImpl::commit()
         m_callbacks->onComplete();
         m_database->transactionFinishedAndCompleteFired(this);
     } else {
-        m_callbacks->onAbort(IDBDatabaseError::create(IDBDatabaseException::UNKNOWN_ERR, "Internal error."));
+        m_callbacks->onAbort(IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Internal error."));
         m_database->transactionFinishedAndAbortFired(this);
     }
 

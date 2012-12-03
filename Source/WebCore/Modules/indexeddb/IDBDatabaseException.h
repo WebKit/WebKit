@@ -43,30 +43,25 @@ public:
     static const int IDBDatabaseExceptionMax = 1299;
 
     enum IDBDatabaseExceptionCode {
-        NO_ERR = IDBDatabaseExceptionOffset,
-        UNKNOWN_ERR,
-        LEGACY_NON_TRANSIENT_ERR, // FIXME: Placeholder, not in spec.
-        LEGACY_NOT_FOUND_ERR, // FIXME: Placeholder.
-        CONSTRAINT_ERR,
-        DATA_ERR,
-        LEGACY_NOT_ALLOWED_ERR, // FIXME: Placeholder, not in spec.
-        TRANSACTION_INACTIVE_ERR,
-        LEGACY_ABORT_ERR, // FIXME: Placeholder.
-        READ_ONLY_ERR,
-        LEGACY_TIMEOUT_ERR, // FIXME: Placeholder.
-        LEGACY_QUOTA_ERR, // FIXME: Placeholder.
-        VER_ERR,
+        NoError = IDBDatabaseExceptionOffset,
 
-        IDB_NOT_FOUND_ERR,
-        IDB_INVALID_STATE_ERR,
-        IDB_INVALID_ACCESS_ERR,
-        IDB_ABORT_ERR,
-        IDB_TIMEOUT_ERR,
-        IDB_QUOTA_EXCEEDED_ERR,
-        IDB_SYNTAX_ERR,
-        IDB_DATA_CLONE_ERR,
-        LEGACY_IDB_TYPE_ERR, // FIXME: Placeholder.
-        LEGACY_IDB_NOT_SUPPORTED_ERR, // FIXME: Placeholder.
+        // IndexedDB uses the following new DOMException types with their various messages:
+        UnknownError,
+        ConstraintError,
+        DataError,
+        TransactionInactiveError,
+        ReadOnlyError,
+        VersionError,
+
+        // IndexedDB reuses the following existing DOMException types, but with IDB-specific error messages.
+        NotFoundError,
+        InvalidStateError,
+        InvalidAccessError,
+        AbortError,
+        TimeoutError,
+        QuotaExceededError,
+        SyntaxError,
+        DataCloneError,
     };
 
     static int ErrorCodeToExceptionCode(int errorCode)

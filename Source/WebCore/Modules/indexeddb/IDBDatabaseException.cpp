@@ -41,17 +41,11 @@ static const struct IDBDatabaseExceptionNameDescription {
 } idbDatabaseExceptions[] = {
     // These are IDB-specific errors from the spec.
     { "UnknownError", "An unknown error occurred within Indexed Database.", 0 },
-    { "NonTransientError", "NonTransientError", 0 }, // FIXME: No longer in the spec
-    { 0, 0, 0 }, // FIXME: Previous/legacy value NOT_FOUND_ERR.
     { "ConstraintError", "A mutation operation in the transaction failed because a constraint was not satisfied.", 0 },
     { "DataError", "The data provided does not meet requirements.", 0 },
-    { "NotAllowedError", "This function is not allowed to be called in such a context.", 0}, // FIXME: no longer in the spec
     { "TransactionInactiveError", "A request was placed against a transaction which is either currently not active, or which is finished.", 0 },
-    { 0, 0, 0 }, // FIXME: Previous/legacy value was ABORT_ERR.
     { "ReadOnlyError", "A write operation was attempted in a read-only transaction.", 0 },
-    { 0, 0, 0 }, // FIXME: Previous/legacy value was TIMEOUT_ERR.
-    { 0, 0, 0 }, // FIXME: Previous/legacy value was QUOTA_ERR.
-    { "VersionError", "An attempt was made to open a database using a lower version than the existing version.", 0 }, // FIXME: This isn't used yet
+    { "VersionError", "An attempt was made to open a database using a lower version than the existing version.", 0 },
 
     // These are IDB-specific descriptions of generic DOM Exceptions when they are thrown from IDB APIs
     { "NotFoundError", "An operation failed because the requested database object could not be found.", NOT_FOUND_ERR },
@@ -59,11 +53,9 @@ static const struct IDBDatabaseExceptionNameDescription {
     { "InvalidAccessError", "An invalid operation was performed on an object.", INVALID_ACCESS_ERR },
     { "AbortError", "The transaction was aborted, so the request cannot be fulfilled.", ABORT_ERR },
     { "TimeoutError", "A lock for the transaction could not be obtained in a reasonable time.", TIMEOUT_ERR }, // FIXME: This isn't used yet.
-    { "QuotaExceededError", "The operation failed because there was not enough remaining storage space, or the storage quota was reached and the user declined to give more space to the database.", QUOTA_EXCEEDED_ERR }, // FIXME: This isn't used yet
+    { "QuotaExceededError", "The operation failed because there was not enough remaining storage space, or the storage quota was reached and the user declined to give more space to the database.", QUOTA_EXCEEDED_ERR },
     { "SyntaxError", "The keypath argument contains an invalid key path.", SYNTAX_ERR },
     { "DataCloneError", "The data being stored could not be cloned by the internal structured cloning algorithm.", DATA_CLONE_ERR },
-    { 0, 0, 0 }, // FIXME: Previous/legacy value was IDB_TYPE_ERR.
-    { 0, 0, 0 }, // FIXME: Previous/legacy value was IDB_NOT_SUPPORTED_ERR.
 };
 
 static const IDBDatabaseExceptionNameDescription* getErrorEntry(ExceptionCode ec)
@@ -72,7 +64,7 @@ static const IDBDatabaseExceptionNameDescription* getErrorEntry(ExceptionCode ec
         return 0;
 
     size_t tableSize = WTF_ARRAY_LENGTH(idbDatabaseExceptions);
-    size_t tableIndex = ec - IDBDatabaseException::UNKNOWN_ERR;
+    size_t tableIndex = ec - IDBDatabaseException::UnknownError;
 
     return tableIndex < tableSize ? &idbDatabaseExceptions[tableIndex] : 0;
 }

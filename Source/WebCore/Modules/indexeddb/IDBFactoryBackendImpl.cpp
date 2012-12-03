@@ -83,7 +83,7 @@ void IDBFactoryBackendImpl::getDatabaseNames(PassRefPtr<IDBCallbacks> callbacks,
 {
     RefPtr<IDBBackingStore> backingStore = openBackingStore(securityOrigin, dataDirectory);
     if (!backingStore) {
-        callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UNKNOWN_ERR, "Internal error."));
+        callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Internal error."));
         return;
     }
 
@@ -111,7 +111,7 @@ void IDBFactoryBackendImpl::deleteDatabase(const String& name, PassRefPtr<IDBCal
     // FIXME: Everything from now on should be done on another thread.
     RefPtr<IDBBackingStore> backingStore = openBackingStore(securityOrigin, dataDirectory);
     if (!backingStore) {
-        callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UNKNOWN_ERR, "Internal error."));
+        callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Internal error."));
         return;
     }
 
@@ -121,7 +121,7 @@ void IDBFactoryBackendImpl::deleteDatabase(const String& name, PassRefPtr<IDBCal
         databaseBackend->deleteDatabase(callbacks);
         m_databaseBackendMap.remove(uniqueIdentifier);
     } else
-        callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UNKNOWN_ERR, "Internal error."));
+        callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Internal error."));
 }
 
 PassRefPtr<IDBBackingStore> IDBFactoryBackendImpl::openBackingStore(PassRefPtr<SecurityOrigin> securityOrigin, const String& dataDirectory)
@@ -152,7 +152,7 @@ void IDBFactoryBackendImpl::open(const String& name, int64_t version, PassRefPtr
     if (it == m_databaseBackendMap.end()) {
         RefPtr<IDBBackingStore> backingStore = openBackingStore(securityOrigin, dataDirectory);
         if (!backingStore) {
-            callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UNKNOWN_ERR, "Internal error."));
+            callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Internal error."));
             return;
         }
 
@@ -160,7 +160,7 @@ void IDBFactoryBackendImpl::open(const String& name, int64_t version, PassRefPtr
         if (databaseBackend)
             m_databaseBackendMap.set(uniqueIdentifier, databaseBackend.get());
         else {
-            callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UNKNOWN_ERR, "Internal error."));
+            callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Internal error."));
             return;
         }
     } else

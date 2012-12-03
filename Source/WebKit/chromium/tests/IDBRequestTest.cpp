@@ -90,7 +90,7 @@ TEST_F(IDBRequestTest, EventsAfterStopping)
     request->stop();
 
     // Ensure none of the following raise assertions in stopped state:
-    request->onError(IDBDatabaseError::create(IDBDatabaseException::IDB_ABORT_ERR, "Description goes here."));
+    request->onError(IDBDatabaseError::create(IDBDatabaseException::AbortError, "Description goes here."));
     request->onSuccess(DOMStringList::create());
     request->onSuccess(PassRefPtr<IDBCursorBackendInterface>(), IDBKey::createInvalid(), IDBKey::createInvalid(), SerializedScriptValue::nullValue());
     request->onSuccess(IDBKey::createInvalid());
@@ -113,7 +113,7 @@ TEST_F(IDBRequestTest, AbortErrorAfterAbort)
 
     // Now simulate the back end having fired an abort error at the request to clear up any intermediaries.
     // Ensure an assertion is not raised.
-    request->onError(IDBDatabaseError::create(IDBDatabaseException::IDB_ABORT_ERR, "Description goes here."));
+    request->onError(IDBDatabaseError::create(IDBDatabaseException::AbortError, "Description goes here."));
 }
 
 } // namespace

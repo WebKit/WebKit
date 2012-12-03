@@ -225,7 +225,7 @@ PassRefPtr<IDBObjectStoreBackendInterface> IDBDatabaseBackendImpl::createObjectS
     m_metadata.maxObjectStoreId = id;
 
     if (!transaction->scheduleTask(CreateObjectStoreOperation::create(this, objectStore, transaction), CreateObjectStoreAbortOperation::create(this, objectStore))) {
-        ec = IDBDatabaseException::TRANSACTION_INACTIVE_ERR;
+        ec = IDBDatabaseException::TransactionInactiveError;
         return 0;
     }
 
@@ -256,7 +256,7 @@ void IDBDatabaseBackendImpl::deleteObjectStore(int64_t id, IDBTransactionBackend
     ASSERT(transaction->mode() == IDBTransaction::VERSION_CHANGE);
 
     if (!transaction->scheduleTask(DeleteObjectStoreOperation::create(this, objectStore, transaction), DeleteObjectStoreAbortOperation::create(this, objectStore))) {
-        ec = IDBDatabaseException::TRANSACTION_INACTIVE_ERR;
+        ec = IDBDatabaseException::TransactionInactiveError;
         return;
     }
     m_objectStores.remove(id);
@@ -277,7 +277,7 @@ void IDBDatabaseBackendImpl::VersionChangeOperation::perform(ScriptExecutionCont
     ASSERT(version > oldVersion);
     database->m_metadata.intVersion = version;
     if (!database->m_backingStore->updateIDBDatabaseIntVersion(transaction->backingStoreTransaction(), databaseId, database->m_metadata.intVersion)) {
-        RefPtr<IDBDatabaseError> error = IDBDatabaseError::create(IDBDatabaseException::UNKNOWN_ERR, "Error writing data to stable storage.");
+        RefPtr<IDBDatabaseError> error = IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Error writing data to stable storage.");
         callbacks->onError(error);
         transaction->abort(error);
         return;
@@ -315,7 +315,7 @@ void IDBDatabaseBackendImpl::transactionFinishedAndAbortFired(PassRefPtr<IDBTran
         // half" open call waiting for us in processPendingCalls.
         // FIXME: When we no longer support setVersion, assert such a thing.
         if (m_pendingSecondHalfOpenWithVersion) {
-            m_pendingSecondHalfOpenWithVersion->callbacks()->onError(IDBDatabaseError::create(IDBDatabaseException::IDB_ABORT_ERR, "Version change transaction was aborted in upgradeneeded event handler."));
+            m_pendingSecondHalfOpenWithVersion->callbacks()->onError(IDBDatabaseError::create(IDBDatabaseException::AbortError, "Version change transaction was aborted in upgradeneeded event handler."));
             m_pendingSecondHalfOpenWithVersion.release();
         }
         processPendingCalls();
@@ -401,7 +401,7 @@ void IDBDatabaseBackendImpl::openConnection(PassRefPtr<IDBCallbacks> callbacks, 
         return;
     }
     if (m_metadata.id == InvalidId && !openInternal()) {
-        callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UNKNOWN_ERR, "Internal error."));
+        callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Internal error."));
         return;
     }
     if (m_metadata.version == NoStringVersion && m_metadata.intVersion == IDBDatabaseMetadata::NoIntVersion) {
@@ -463,7 +463,7 @@ void IDBDatabaseBackendImpl::openConnectionWithVersion(PassRefPtr<IDBCallbacks> 
         if (openInternal())
             ASSERT(m_metadata.intVersion == IDBDatabaseMetadata::NoIntVersion);
         else {
-            callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UNKNOWN_ERR, "Internal error."));
+            callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Internal error."));
             return;
         }
     }
@@ -472,7 +472,7 @@ void IDBDatabaseBackendImpl::openConnectionWithVersion(PassRefPtr<IDBCallbacks> 
         return;
     }
     if (version < m_metadata.intVersion) {
-        callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::VER_ERR, String::format("The requested version (%lld) is less than the existing version (%lld).", static_cast<long long>(version), static_cast<long long>(m_metadata.intVersion))));
+        callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::VersionError, String::format("The requested version (%lld) is less than the existing version (%lld).", static_cast<long long>(version), static_cast<long long>(m_metadata.intVersion))));
         return;
     }
     ASSERT(version == m_metadata.intVersion);
@@ -501,7 +501,7 @@ void IDBDatabaseBackendImpl::deleteDatabase(PassRefPtr<IDBCallbacks> prpCallback
     }
     ASSERT(m_backingStore);
     if (!m_backingStore->deleteDatabase(m_metadata.name)) {
-        callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UNKNOWN_ERR, "Internal error."));
+        callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Internal error."));
         return;
     }
     m_metadata.version = NoStringVersion;
@@ -518,7 +518,7 @@ void IDBDatabaseBackendImpl::close(PassRefPtr<IDBDatabaseCallbacks> prpCallbacks
 
     m_databaseCallbacksSet.remove(callbacks);
     if (m_pendingSecondHalfOpenWithVersion && m_pendingSecondHalfOpenWithVersion->databaseCallbacks() == callbacks) {
-        m_pendingSecondHalfOpenWithVersion->callbacks()->onError(IDBDatabaseError::create(IDBDatabaseException::IDB_ABORT_ERR, "The connection was closed."));
+        m_pendingSecondHalfOpenWithVersion->callbacks()->onError(IDBDatabaseError::create(IDBDatabaseException::AbortError, "The connection was closed."));
         m_pendingSecondHalfOpenWithVersion.release();
     }
 

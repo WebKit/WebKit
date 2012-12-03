@@ -178,7 +178,7 @@ bool IDBFactoryBackendProxy::allowIndexedDB(ScriptExecutionContext* context, con
     }
 
     if (!allowed)
-        callbacks->onError(WebIDBDatabaseError(IDBDatabaseException::UNKNOWN_ERR, "The user denied permission to access the database."));
+        callbacks->onError(WebIDBDatabaseError(IDBDatabaseException::UnknownError, "The user denied permission to access the database."));
 
     return allowed;
 }

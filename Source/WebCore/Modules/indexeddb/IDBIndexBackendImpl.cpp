@@ -130,7 +130,7 @@ void IDBIndexBackendImpl::openCursor(PassRefPtr<IDBKeyRange> keyRange, unsigned 
     RefPtr<IDBCallbacks> callbacks = prpCallbacks;
     RefPtr<IDBTransactionBackendImpl> transaction = IDBTransactionBackendImpl::from(transactionPtr);
     if (!transaction->scheduleTask(OpenIndexCursorOperation::create(this, keyRange, direction, IDBCursorBackendInterface::IndexCursor, callbacks, transaction)))
-        callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::IDB_ABORT_ERR));
+        callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::AbortError));
 }
 
 void IDBIndexBackendImpl::openKeyCursor(PassRefPtr<IDBKeyRange> keyRange, unsigned short direction, PassRefPtr<IDBCallbacks> prpCallbacks, IDBTransactionBackendInterface* transactionPtr, ExceptionCode&)
@@ -139,7 +139,7 @@ void IDBIndexBackendImpl::openKeyCursor(PassRefPtr<IDBKeyRange> keyRange, unsign
     RefPtr<IDBCallbacks> callbacks = prpCallbacks;
     RefPtr<IDBTransactionBackendImpl> transaction = IDBTransactionBackendImpl::from(transactionPtr);
     if (!transaction->scheduleTask(OpenIndexCursorOperation::create(this, keyRange, direction, IDBCursorBackendInterface::IndexKeyCursor, callbacks, transaction)))
-        callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::IDB_ABORT_ERR));
+        callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::AbortError));
 }
 
 void IDBIndexBackendImpl::IndexCountOperation::perform(ScriptExecutionContext*, PassRefPtr<IDBIndexBackendImpl> index, PassRefPtr<IDBKeyRange> range, PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<IDBTransactionBackendImpl> transaction)
@@ -166,7 +166,7 @@ void IDBIndexBackendImpl::count(PassRefPtr<IDBKeyRange> range, PassRefPtr<IDBCal
     RefPtr<IDBCallbacks> callbacks = prpCallbacks;
     RefPtr<IDBTransactionBackendImpl> transaction = IDBTransactionBackendImpl::from(transactionPtr);
     if (!transaction->scheduleTask(IndexCountOperation::create(this, range, callbacks, transaction)))
-        callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::IDB_ABORT_ERR));
+        callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::AbortError));
 }
 
 void IDBIndexBackendImpl::IndexReferencedValueRetrievalOperation::perform(ScriptExecutionContext*, PassRefPtr<IDBIndexBackendImpl> index, PassRefPtr<IDBKeyRange> keyRange, PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<IDBTransactionBackendImpl> transaction)
@@ -230,7 +230,7 @@ void IDBIndexBackendImpl::get(PassRefPtr<IDBKeyRange> keyRange, PassRefPtr<IDBCa
     RefPtr<IDBCallbacks> callbacks = prpCallbacks;
     RefPtr<IDBTransactionBackendImpl> transaction = IDBTransactionBackendImpl::from(transactionPtr);
     if (!transaction->scheduleTask(IndexReferencedValueRetrievalOperation::create(this, keyRange, callbacks, transaction)))
-        callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::IDB_ABORT_ERR));
+        callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::AbortError));
 }
 
 void IDBIndexBackendImpl::getKey(PassRefPtr<IDBKeyRange> keyRange, PassRefPtr<IDBCallbacks> prpCallbacks, IDBTransactionBackendInterface* transactionPtr, ExceptionCode&)
@@ -239,7 +239,7 @@ void IDBIndexBackendImpl::getKey(PassRefPtr<IDBKeyRange> keyRange, PassRefPtr<ID
     RefPtr<IDBCallbacks> callbacks = prpCallbacks;
     RefPtr<IDBTransactionBackendImpl> transaction = IDBTransactionBackendImpl::from(transactionPtr);
     if (!transaction->scheduleTask(IndexValueRetrievalOperation::create(this, keyRange, callbacks, transaction)))
-        callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::IDB_ABORT_ERR));
+        callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::AbortError));
 }
 
 } // namespace WebCore

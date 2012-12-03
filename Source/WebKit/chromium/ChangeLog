@@ -1,3 +1,18 @@
+2012-12-03  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: Rename exception enum members from UGLY_ERR to PrettyError
+        https://bugs.webkit.org/show_bug.cgi?id=103759
+
+        Reviewed by Darin Fisher.
+
+        Update IDBDatabaseException enum names/values to match WebCore.
+
+        * public/WebIDBDatabaseException.h:
+        * src/AssertMatchingEnums.cpp:
+        * src/IDBFactoryBackendProxy.cpp:
+        (WebKit::IDBFactoryBackendProxy::allowIndexedDB):
+        * tests/IDBRequestTest.cpp:
+
 2012-12-03  Tommy Widenflycht  <tommyw@google.com>
 
         Speech Recognition API: Update SpeechRecognitionEvent to match the specification

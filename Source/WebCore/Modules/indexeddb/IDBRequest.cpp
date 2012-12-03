@@ -92,7 +92,7 @@ IDBRequest::~IDBRequest()
 PassRefPtr<IDBAny> IDBRequest::result(ExceptionCode& ec) const
 {
     if (m_readyState != DONE) {
-        ec = IDBDatabaseException::IDB_INVALID_STATE_ERR;
+        ec = IDBDatabaseException::InvalidStateError;
         return 0;
     }
     return m_result;
@@ -101,7 +101,7 @@ PassRefPtr<IDBAny> IDBRequest::result(ExceptionCode& ec) const
 PassRefPtr<DOMError> IDBRequest::error(ExceptionCode& ec) const
 {
     if (m_readyState != DONE) {
-        ec = IDBDatabaseException::IDB_INVALID_STATE_ERR;
+        ec = IDBDatabaseException::InvalidStateError;
         return 0;
     }
     return m_error;
@@ -110,7 +110,7 @@ PassRefPtr<DOMError> IDBRequest::error(ExceptionCode& ec) const
 unsigned short IDBRequest::errorCode(ExceptionCode& ec) const
 {
     if (m_readyState != DONE) {
-        ec = IDBDatabaseException::IDB_INVALID_STATE_ERR;
+        ec = IDBDatabaseException::InvalidStateError;
         return 0;
     }
     return m_errorCode;
@@ -119,7 +119,7 @@ unsigned short IDBRequest::errorCode(ExceptionCode& ec) const
 String IDBRequest::webkitErrorMessage(ExceptionCode& ec) const
 {
     if (m_readyState != DONE) {
-        ec = IDBDatabaseException::IDB_INVALID_STATE_ERR;
+        ec = IDBDatabaseException::InvalidStateError;
         return String();
     }
     return m_errorMessage;
@@ -178,7 +178,7 @@ void IDBRequest::abort()
     m_error.clear();
     m_errorMessage = String();
     m_result.clear();
-    onError(IDBDatabaseError::create(IDBDatabaseException::IDB_ABORT_ERR));
+    onError(IDBDatabaseError::create(IDBDatabaseException::AbortError));
     m_requestAborted = true;
 }
 
@@ -470,7 +470,7 @@ bool IDBRequest::dispatchEvent(PassRefPtr<Event> event)
 
     // FIXME: When we allow custom event dispatching, this will probably need to change.
     ASSERT_WITH_MESSAGE(event->type() == eventNames().successEvent || event->type() == eventNames().errorEvent || event->type() == eventNames().blockedEvent || event->type() == eventNames().upgradeneededEvent, "event type was %s", event->type().string().utf8().data());
-    const bool setTransactionActive = m_transaction && (event->type() == eventNames().successEvent || event->type() == eventNames().upgradeneededEvent || (event->type() == eventNames().errorEvent && m_errorCode != IDBDatabaseException::IDB_ABORT_ERR));
+    const bool setTransactionActive = m_transaction && (event->type() == eventNames().successEvent || event->type() == eventNames().upgradeneededEvent || (event->type() == eventNames().errorEvent && m_errorCode != IDBDatabaseException::AbortError));
 
     if (setTransactionActive)
         m_transaction->setActive(true);
@@ -506,7 +506,7 @@ bool IDBRequest::dispatchEvent(PassRefPtr<Event> event)
 void IDBRequest::uncaughtExceptionInEventHandler()
 {
     if (m_transaction && !m_requestAborted) {
-        m_transaction->setError(DOMError::create(IDBDatabaseException::getErrorName(IDBDatabaseException::IDB_ABORT_ERR)));
+        m_transaction->setError(DOMError::create(IDBDatabaseException::getErrorName(IDBDatabaseException::AbortError)));
         ExceptionCode unused;
         m_transaction->abort(unused);
     }

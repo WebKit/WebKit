@@ -181,7 +181,7 @@ void IDBObjectStoreBackendImpl::get(PassRefPtr<IDBKeyRange> keyRange, PassRefPtr
     RefPtr<IDBCallbacks> callbacks = prpCallbacks;
     RefPtr<IDBTransactionBackendImpl> transaction = IDBTransactionBackendImpl::from(transactionPtr);
     if (!transaction->scheduleTask(ObjectStoreRetrievalOperation::create(this, keyRange, callbacks, transaction)))
-        callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::IDB_ABORT_ERR));
+        callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::AbortError));
 }
 
 void IDBObjectStoreBackendImpl::ObjectStoreRetrievalOperation::perform(ScriptExecutionContext*, PassRefPtr<IDBObjectStoreBackendImpl> objectStore, PassRefPtr<IDBKeyRange> keyRange, PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<IDBTransactionBackendImpl> transaction)
@@ -227,7 +227,7 @@ void IDBObjectStoreBackendImpl::put(PassRefPtr<SerializedScriptValue> value, Pas
     ASSERT(autoIncrement() || key.get());
 
     if (!transaction->scheduleTask(ObjectStoreStorageOperation::create(this, value, key, putMode, callbacks, transaction, newIndexIds.release(), newIndexKeys.release())))
-        callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::IDB_ABORT_ERR));
+        callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::AbortError));
 }
 
 namespace {
@@ -339,7 +339,7 @@ void IDBObjectStoreBackendImpl::setIndexKeys(PassRefPtr<IDBKey> prpPrimaryKey, c
     bool ok = backingStore()->keyExistsInObjectStore(transaction->backingStoreTransaction(), databaseId(), id(), *primaryKey, &recordIdentifier, found);
     if (!ok) {
         LOG_ERROR("keyExistsInObjectStore reported an error");
-        transaction->abort(IDBDatabaseError::create(IDBDatabaseException::UNKNOWN_ERR, "Internal error setting index keys."));
+        transaction->abort(IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Internal error setting index keys."));
         return;
     }
     if (!found) {
@@ -351,7 +351,7 @@ void IDBObjectStoreBackendImpl::setIndexKeys(PassRefPtr<IDBKey> prpPrimaryKey, c
     String errorMessage;
     if (!makeIndexWriters(transaction, this, primaryKey, false, indexIds, indexKeys, &indexWriters, &errorMessage)) {
         // FIXME: Need to deal with errorMessage here. makeIndexWriters only fails on uniqueness constraint errors.
-        transaction->abort(IDBDatabaseError::create(IDBDatabaseException::CONSTRAINT_ERR, "Duplicate index keys exist in the object store."));
+        transaction->abort(IDBDatabaseError::create(IDBDatabaseException::ConstraintError, "Duplicate index keys exist in the object store."));
         return;
     }
 
@@ -399,7 +399,7 @@ void IDBObjectStoreBackendImpl::ObjectStoreStorageOperation::perform(ScriptExecu
         RefPtr<IDBKey> autoIncKey = objectStore->generateKey(transaction);
         keyWasGenerated = true;
         if (!autoIncKey->isValid()) {
-            callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::CONSTRAINT_ERR, "Maximum key generator value reached."));
+            callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::ConstraintError, "Maximum key generator value reached."));
             return;
         }
         key = autoIncKey;
@@ -412,11 +412,11 @@ void IDBObjectStoreBackendImpl::ObjectStoreStorageOperation::perform(ScriptExecu
         bool found = false;
         bool ok = objectStore->backingStore()->keyExistsInObjectStore(transaction->backingStoreTransaction(), objectStore->databaseId(), objectStore->id(), *key, &recordIdentifier, found);
         if (!ok) {
-            callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UNKNOWN_ERR, "Internal error checking key existence."));
+            callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Internal error checking key existence."));
             return;
         }
         if (found) {
-            callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::CONSTRAINT_ERR, "Key already exists in the object store."));
+            callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::ConstraintError, "Key already exists in the object store."));
             return;
         }
     }
@@ -424,7 +424,7 @@ void IDBObjectStoreBackendImpl::ObjectStoreStorageOperation::perform(ScriptExecu
     Vector<OwnPtr<IndexWriter> > indexWriters;
     String errorMessage;
     if (!makeIndexWriters(transaction, objectStore.get(), key, keyWasGenerated, *indexIds, *indexKeys, &indexWriters, &errorMessage)) {
-        callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::CONSTRAINT_ERR, errorMessage));
+        callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::ConstraintError, errorMessage));
         return;
     }
 
@@ -440,7 +440,7 @@ void IDBObjectStoreBackendImpl::ObjectStoreStorageOperation::perform(ScriptExecu
     if (autoIncrement && putMode != CursorUpdate && key->type() == IDBKey::NumberType) {
         bool ok = objectStore->updateKeyGenerator(transaction, key.get(), !keyWasGenerated);
         if (!ok) {
-            callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UNKNOWN_ERR, "Internal error updating key generator."));
+            callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Internal error updating key generator."));
             return;
         }
     }
@@ -457,7 +457,7 @@ void IDBObjectStoreBackendImpl::deleteFunction(PassRefPtr<IDBKeyRange> keyRange,
     RefPtr<IDBCallbacks> callbacks = prpCallbacks;
 
     if (!transaction->scheduleTask(ObjectStoreDeletionOperation::create(this, keyRange, callbacks, transaction)))
-        callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::IDB_ABORT_ERR));
+        callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::AbortError));
 }
 
 void IDBObjectStoreBackendImpl::ObjectStoreDeletionOperation::perform(ScriptExecutionContext*, PassRefPtr<IDBObjectStoreBackendImpl> objectStore, PassRefPtr<IDBKeyRange> keyRange, PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<IDBTransactionBackendImpl> transaction)
@@ -485,7 +485,7 @@ void IDBObjectStoreBackendImpl::clear(PassRefPtr<IDBCallbacks> prpCallbacks, IDB
     RefPtr<IDBCallbacks> callbacks = prpCallbacks;
 
     if (!transaction->scheduleTask(ObjectStoreClearOperation::create(this, callbacks, transaction)))
-        callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::IDB_ABORT_ERR));
+        callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::AbortError));
 }
 
 void IDBObjectStoreBackendImpl::ObjectStoreClearOperation::perform(ScriptExecutionContext*, PassRefPtr<IDBObjectStoreBackendImpl> objectStore, PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<IDBTransactionBackendImpl> transaction)
@@ -508,7 +508,7 @@ PassRefPtr<IDBIndexBackendInterface> IDBObjectStoreBackendImpl::createIndex(int6
     m_metadata.maxIndexId = id;
 
     if (!transaction->scheduleTask(CreateIndexOperation::create(this, index, transaction), CreateIndexAbortOperation::create(this, index))) {
-        ec = IDBDatabaseException::TRANSACTION_INACTIVE_ERR;
+        ec = IDBDatabaseException::TransactionInactiveError;
         return 0;
     }
 
@@ -541,7 +541,7 @@ void IDBObjectStoreBackendImpl::deleteIndex(int64_t indexId, IDBTransactionBacke
     ASSERT(transaction->mode() == IDBTransaction::VERSION_CHANGE);
 
     if (!transaction->scheduleTask(DeleteIndexOperation::create(this, index, transaction), DeleteIndexAbortOperation::create(this, index))) {
-        ec = IDBDatabaseException::TRANSACTION_INACTIVE_ERR;
+        ec = IDBDatabaseException::TransactionInactiveError;
         return;
     }
     m_indexes.remove(indexId);
@@ -559,7 +559,7 @@ void IDBObjectStoreBackendImpl::openCursor(PassRefPtr<IDBKeyRange> range, IDBCur
     RefPtr<IDBCallbacks> callbacks = prpCallbacks;
     RefPtr<IDBTransactionBackendImpl> transaction = IDBTransactionBackendImpl::from(transactionPtr);
     if (!transaction->scheduleTask(OpenObjectStoreCursorOperation::create(this, range, direction, callbacks, taskType, transaction))) {
-        callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::IDB_ABORT_ERR));
+        callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::AbortError));
     }
 }
 
@@ -589,7 +589,7 @@ void IDBObjectStoreBackendImpl::count(PassRefPtr<IDBKeyRange> range, PassRefPtr<
     RefPtr<IDBCallbacks> callbacks = prpCallbacks;
     RefPtr<IDBTransactionBackendImpl> transaction = IDBTransactionBackendImpl::from(transactionPtr);
     if (!transaction->scheduleTask(ObjectStoreCountOperation::create(this, range, callbacks, transaction)))
-        callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::IDB_ABORT_ERR));
+        callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::AbortError));
 }
 
 void IDBObjectStoreBackendImpl::ObjectStoreCountOperation::perform(ScriptExecutionContext*, PassRefPtr<IDBObjectStoreBackendImpl> objectStore, PassRefPtr<IDBKeyRange> range, PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<IDBTransactionBackendImpl> transaction)
