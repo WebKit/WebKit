@@ -1,3 +1,17 @@
+2012-12-03  Laszlo Gombos  <l.gombos@samsung.com>
+
+        [CMake] Enable building WebKit2-only build for the EFL port
+        https://bugs.webkit.org/show_bug.cgi?id=103820
+
+        Reviewed by Gyuyoung Kim.
+
+        Set ENABLE_WEBKIT2 to OFF if build-webkit was run with --no-webkit2.
+        Never set ENABLE_WEBKIT in build-webkit. This will simplyfy invoking
+        cmake directly. Initialize $cmakeArgs to avoid potential
+        warnings when running the script.
+
+        * Scripts/build-webkit:
+
 2012-12-03  Tommy Widenflycht  <tommyw@google.com>
 
         Speech Recognition API: Update SpeechRecognitionEvent to match the specification

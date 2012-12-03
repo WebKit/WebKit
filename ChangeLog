@@ -1,3 +1,19 @@
+2012-12-03  Laszlo Gombos  <l.gombos@samsung.com>
+
+        [CMake] Enable building WebKit2-only build for the EFL port
+        https://bugs.webkit.org/show_bug.cgi?id=103820
+
+        Reviewed by Gyuyoung Kim.
+
+        To create a WebKit2-only build for EFL use the following command:
+        build-webkit --efl --cmakeargs="-DENABLE_WEBKIT=OFF".
+
+        * CMakeLists.txt: Turn on WebKit1 support if it is not explicitly set (enabled or disabled) for
+        all CMake based ports.
+
+        * Source/cmake/OptionsEfl.cmake: Enable WebKit2 
+        for the EFL port if it is not explicitly set (enabled or disabled).
+
 2012-12-03  Zeno Albisser  <zeno@webkit.org>
 
         [Qt][Mac] QtWebKitWidgets has wrong install_name.

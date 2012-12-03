@@ -13,7 +13,7 @@ ENDIF ()
 # -----------------------------------------------------------------------------
 SET(ENABLE_WEBCORE ON)
 
-IF (NOT ENABLE_WEBKIT AND NOT ENABLE_WEBKIT2)
+IF (NOT DEFINED ENABLE_WEBKIT)
     SET(ENABLE_WEBKIT ON)
 ENDIF ()
 
