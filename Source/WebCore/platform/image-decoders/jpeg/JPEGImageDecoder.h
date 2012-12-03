@@ -28,7 +28,21 @@
 #define JPEGImageDecoder_h
 
 #include "ImageDecoder.h"
+#include <stdio.h> // Needed by jpeglib.h for FILE.
 #include <wtf/OwnPtr.h>
+
+#if OS(WINCE)
+// Remove warning: 'FAR' macro redefinition
+#undef FAR
+
+// jmorecfg.h in libjpeg checks for XMD_H with the comment: "X11/xmd.h correctly defines INT32"
+// fix INT32 redefinition error by pretending we are X11/xmd.h
+#define XMD_H
+#endif
+
+extern "C" {
+#include "jpeglib.h"
+}
 
 namespace WebCore {
 
@@ -62,10 +76,10 @@ namespace WebCore {
         // data coming, sets the "decode failure" flag.
         void decode(bool onlySize);
 
-        template <int colorSpace>
+        template <J_COLOR_SPACE colorSpace>
         bool outputScanlines(ImageFrame& buffer);
 
-        template <int colorSpace, bool isScaled>
+        template <J_COLOR_SPACE colorSpace, bool isScaled>
         bool outputScanlines(ImageFrame& buffer);
 
         OwnPtr<JPEGImageReader> m_reader;
