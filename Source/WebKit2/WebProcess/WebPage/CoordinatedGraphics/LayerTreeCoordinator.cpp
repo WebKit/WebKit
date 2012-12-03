@@ -268,12 +268,12 @@ bool LayerTreeCoordinator::flushPendingLayerChanges()
     if (m_waitingForUIProcess)
         return false;
 
-    bool didSync = m_webPage->corePage()->mainFrame()->view()->flushCompositingStateIncludingSubframes();
+    m_rootLayer->flushCompositingStateForThisLayerOnly();
     m_nonCompositedContentLayer->flushCompositingStateForThisLayerOnly();
     if (m_pageOverlayLayer)
         m_pageOverlayLayer->flushCompositingStateForThisLayerOnly();
 
-    m_rootLayer->flushCompositingStateForThisLayerOnly();
+    bool didSync = m_webPage->corePage()->mainFrame()->view()->flushCompositingStateIncludingSubframes();
 
     flushPendingImageBackingChanges();
 
