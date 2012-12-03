@@ -1,3 +1,14 @@
+2012-12-03  Pierre Rossi  <pierre.rossi@digia.com>
+
+        [Qt] Unreviewed speculative Windows buildfix.
+
+        Somehow it seems messing around with the export macros made some old issues resurface. 
+
+        * Api/qwebsettings.cpp:
+        (qt_networkAccessAllowed):
+        * Api/qwebsettings.h:
+        * Api/qwebkitglobal.h: fix an obvious blunder from r136394.
+
 2012-12-03  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
 
         Document::initSecurityContext() fails to call securityOrigin().grantLoadLocalResources()

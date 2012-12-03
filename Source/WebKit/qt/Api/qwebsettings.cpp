@@ -55,7 +55,7 @@
 
 
 
-void QWEBKIT_EXPORT qt_networkAccessAllowed(bool isAllowed)
+QWEBKIT_EXPORT void qt_networkAccessAllowed(bool isAllowed)
 {
 #ifndef QT_NO_BEARERMANAGEMENT
     WebCore::networkStateNotifier().setNetworkAccessAllowed(isAllowed);

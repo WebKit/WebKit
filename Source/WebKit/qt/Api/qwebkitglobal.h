@@ -38,7 +38,7 @@
 #      define QWEBKITWIDGETS_EXPORT Q_DECL_IMPORT
 #  endif
 #else
-#  define QWEBKIT_EXPORT
+#  define QWEBKITWIDGETS_EXPORT
 #  define QWEBKIT_EXPORT
 #endif
 

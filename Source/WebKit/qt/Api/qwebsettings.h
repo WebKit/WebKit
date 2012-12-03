@@ -38,6 +38,8 @@ QT_BEGIN_NAMESPACE
 class QUrl;
 QT_END_NAMESPACE
 
+QWEBKIT_EXPORT void qt_networkAccessAllowed(bool isAllowed);
+
 class QWEBKIT_EXPORT QWebSettings {
 public:
     enum FontFamily {
