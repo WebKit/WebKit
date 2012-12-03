@@ -18,11 +18,11 @@ XHR finished loading: "http://127.0.0.1:8000/inspector/resources/xhr-does-not-ex
 sending a POST request to resources/post-target.cgi console-xhr-logging.html:10
 XHR finished loading: "http://127.0.0.1:8000/inspector/resources/post-target.cgi". [native code]:1
 sending a GET request to http://localhost:8000/inspector/resources/xhr-exists.html console-xhr-logging.html:10
-XMLHttpRequest cannot load http://localhost:8000/inspector/resources/xhr-exists.html. Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin. [native code]:1
+XMLHttpRequest cannot load http://localhost:8000/inspector/resources/xhr-exists.html. Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
 sending a GET request to resources/xhr-exists.html console-xhr-logging.html:10
 sending a GET request to resources/xhr-does-not-exist.html console-xhr-logging.html:10
 GET http://127.0.0.1:8000/inspector/resources/xhr-does-not-exist.html 404 (Not Found) [native code]:1
 sending a POST request to resources/post-target.cgi console-xhr-logging.html:10
 sending a GET request to http://localhost:8000/inspector/resources/xhr-exists.html console-xhr-logging.html:10
-XMLHttpRequest cannot load http://localhost:8000/inspector/resources/xhr-exists.html. Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin. [native code]:1
+XMLHttpRequest cannot load http://localhost:8000/inspector/resources/xhr-exists.html. Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
 

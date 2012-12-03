@@ -31,7 +31,6 @@
 
 #include "Chrome.h"
 #include "ChromeClient.h"
-#include "Document.h"
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameTree.h"
@@ -46,7 +45,6 @@
 #include "ScriptProfile.h"
 #include "ScriptProfiler.h"
 #include "ScriptValue.h"
-#include "ScriptableDocumentParser.h"
 #include <stdio.h>
 #include <wtf/UnusedParam.h>
 #include <wtf/text/CString.h>
@@ -133,20 +131,6 @@ static void printMessageSourceAndLevelPrefix(MessageSource source, MessageLevel 
     }
 
     printf("%s %s:", sourceString, levelString);
-}
-
-void Console::addMessage(MessageSource source, MessageType type, MessageLevel level, const String& message, unsigned long requestIdentifier, Document* document)
-{
-    String url;
-    if (document)
-        url = document->url().string();
-    unsigned line = 0;
-    if (document && document->parsing() && !document->isInDocumentWrite() && document->scriptableDocumentParser()) {
-        ScriptableDocumentParser* parser = document->scriptableDocumentParser();
-        if (!parser->isWaitingForScripts() && !parser->isExecutingScript())
-            line = parser->lineNumber().oneBasedInt();
-    }
-    addMessage(source, type, level, message, url, line, 0, requestIdentifier);
 }
 
 void Console::addMessage(MessageSource source, MessageType type, MessageLevel level, const String& message, PassRefPtr<ScriptCallStack> callStack)

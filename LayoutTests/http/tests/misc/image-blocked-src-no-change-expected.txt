@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 27: Not allowed to load local resource: compass.jpg
+CONSOLE MESSAGE: Not allowed to load local resource: compass.jpg
 CONSOLE MESSAGE: Not allowed to load local resource: compass.jpg
 Test case for bug 17897 : Not Rendering Images Imported from XHTML Document
 

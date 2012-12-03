@@ -43,23 +43,9 @@
 #include "ScriptArguments.h"
 #include "ScriptCallFrame.h"
 #include "ScriptCallStack.h"
-#include "ScriptCallStackFactory.h"
 #include "ScriptValue.h"
 
 namespace WebCore {
-
-ConsoleMessage::ConsoleMessage(MessageSource source, MessageType type, MessageLevel level, const String& message, unsigned long requestIdentifier)
-    : m_source(source)
-    , m_type(type)
-    , m_level(level)
-    , m_message(message)
-    , m_url()
-    , m_line(0)
-    , m_repeatCount(1)
-    , m_requestId(IdentifiersFactory::requestId(requestIdentifier))
-{
-    autogenerateMetadata();
-}
 
 ConsoleMessage::ConsoleMessage(MessageSource source, MessageType type, MessageLevel level, const String& message, const String& url, unsigned line, unsigned long requestIdentifier)
     : m_source(source)
@@ -71,15 +57,14 @@ ConsoleMessage::ConsoleMessage(MessageSource source, MessageType type, MessageLe
     , m_repeatCount(1)
     , m_requestId(IdentifiersFactory::requestId(requestIdentifier))
 {
-    autogenerateMetadata();
 }
 
-ConsoleMessage::ConsoleMessage(MessageSource source, MessageType type, MessageLevel level, const String& message, PassRefPtr<ScriptCallStack> callStack, unsigned long requestIdentifier)
+ConsoleMessage::ConsoleMessage(MessageSource source, MessageType type, MessageLevel level, const String& message, PassRefPtr<ScriptArguments> arguments, PassRefPtr<ScriptCallStack> callStack, unsigned long requestIdentifier)
     : m_source(source)
     , m_type(type)
     , m_level(level)
     , m_message(message)
-    , m_arguments(0)
+    , m_arguments(arguments)
     , m_line(0)
     , m_repeatCount(1)
     , m_requestId(IdentifiersFactory::requestId(requestIdentifier))
@@ -92,39 +77,8 @@ ConsoleMessage::ConsoleMessage(MessageSource source, MessageType type, MessageLe
     m_callStack = callStack;
 }
 
-ConsoleMessage::ConsoleMessage(MessageSource source, MessageType type, MessageLevel level, const String& message, PassRefPtr<ScriptArguments> arguments, ScriptState* state, unsigned long requestIdentifier)
-    : m_source(source)
-    , m_type(type)
-    , m_level(level)
-    , m_message(message)
-    , m_arguments(arguments)
-    , m_url()
-    , m_line(0)
-    , m_repeatCount(1)
-    , m_requestId(IdentifiersFactory::requestId(requestIdentifier))
-{
-    autogenerateMetadata(state);
-}
-
 ConsoleMessage::~ConsoleMessage()
 {
-}
-
-void ConsoleMessage::autogenerateMetadata(ScriptState* state)
-{
-    if (m_type == EndGroupMessageType)
-        return;
-
-    m_callStack = state ? createScriptCallStackForConsole(state) : createScriptCallStack(ScriptCallStack::maxCallStackSizeToCapture, true);
-
-    if (m_callStack && m_callStack->size()) {
-        const ScriptCallFrame& frame = m_callStack->at(0);
-        m_url = frame.sourceURL();
-        m_line = frame.lineNumber();
-        return;
-    }
-
-    m_callStack.clear();
 }
 
 // Keep in sync with inspector/front-end/ConsoleView.js
