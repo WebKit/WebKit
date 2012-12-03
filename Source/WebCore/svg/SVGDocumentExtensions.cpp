@@ -185,19 +185,10 @@ void SVGDocumentExtensions::removeAllAnimationElementsFromTarget(SVGElement* tar
         (*vectorIt)->resetTargetElement();
 }
 
-// FIXME: Callers should probably use ScriptController::eventHandlerLineNumber()
-static int parserLineNumber(Document* document)
-{
-    ScriptableDocumentParser* parser = document->scriptableDocumentParser();
-    if (!parser)
-        return 1;
-    return parser->lineNumber().oneBasedInt();
-}
-
 static void reportMessage(Document* document, MessageLevel level, const String& message)
 {
     if (document->frame())
-        document->domWindow()->console()->addMessage(JSMessageSource, LogMessageType, level, message, document->documentURI(), parserLineNumber(document));
+        document->addConsoleMessage(JSMessageSource, LogMessageType, level, message);
 }
 
 void SVGDocumentExtensions::reportWarning(const String& message)

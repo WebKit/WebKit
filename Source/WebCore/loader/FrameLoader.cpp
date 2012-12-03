@@ -2907,7 +2907,7 @@ bool FrameLoader::shouldInterruptLoadForXFrameOptions(const String& content, con
             return true;
     } else {
         String message = "Invalid 'X-Frame-Options' header encountered when loading '" + url.string() + "': '" + content + "' is not a recognized directive. The header will be ignored.";
-        m_frame->document()->addConsoleMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, message, url.string(), 0, 0, requestIdentifier);
+        m_frame->document()->addConsoleMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, message, requestIdentifier);
     }
 
     return false;

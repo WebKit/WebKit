@@ -160,6 +160,7 @@ namespace WebCore {
         virtual KURL virtualCompleteURL(const String&) const;
 
         virtual void addMessage(MessageSource, MessageType, MessageLevel, const String& message, const String& sourceURL, unsigned lineNumber, PassRefPtr<ScriptCallStack>, unsigned long requestIdentifier = 0);
+        virtual void addConsoleMessage(MessageSource, MessageType, MessageLevel, const String& message, unsigned long requestIdentifier = 0);
 
         virtual EventTarget* errorEventTarget();
 

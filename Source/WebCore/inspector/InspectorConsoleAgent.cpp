@@ -94,7 +94,7 @@ void InspectorConsoleAgent::enable(ErrorString*)
     m_state->setBoolean(ConsoleAgentState::consoleMessagesEnabled, true);
 
     if (m_expiredConsoleMessageCount) {
-        ConsoleMessage expiredMessage(OtherMessageSource, LogMessageType, WarningMessageLevel, String::format("%d console messages are not shown.", m_expiredConsoleMessageCount), "", 0, 0);
+        ConsoleMessage expiredMessage(OtherMessageSource, LogMessageType, WarningMessageLevel, String::format("%d console messages are not shown.", m_expiredConsoleMessageCount));
         expiredMessage.addToFrontend(m_frontend, m_injectedScriptManager, false);
     }
 
@@ -162,7 +162,7 @@ void InspectorConsoleAgent::addMessageToConsole(MessageSource source, MessageTyp
         clearMessages(&error);
     }
 
-    addConsoleMessage(adoptPtr(new ConsoleMessage(source, type, level, message, 0, callStack, requestIdentifier)));
+    addConsoleMessage(adoptPtr(new ConsoleMessage(source, type, level, message, callStack, requestIdentifier)));
 }
 
 void InspectorConsoleAgent::addMessageToConsole(MessageSource source, MessageType type, MessageLevel level, const String& message, ScriptState* state, PassRefPtr<ScriptArguments> arguments, unsigned long requestIdentifier)
@@ -175,8 +175,7 @@ void InspectorConsoleAgent::addMessageToConsole(MessageSource source, MessageTyp
         clearMessages(&error);
     }
 
-    RefPtr<ScriptCallStack> callStack(createScriptCallStackForConsole(state));
-    addConsoleMessage(adoptPtr(new ConsoleMessage(source, type, level, message, arguments, callStack.release(), requestIdentifier)));
+    addConsoleMessage(adoptPtr(new ConsoleMessage(source, type, level, message, arguments, state, requestIdentifier)));
 }
 
 void InspectorConsoleAgent::addMessageToConsole(MessageSource source, MessageType type, MessageLevel level, const String& message, const String& scriptId, unsigned lineNumber, unsigned long requestIdentifier)
@@ -252,7 +251,7 @@ void InspectorConsoleAgent::count(ScriptState* state, PassRefPtr<ScriptArguments
     m_counts.add(identifier, count);
 
     String message = title + ": " + String::number(count);
-    addMessageToConsole(JSMessageSource, LogMessageType, LogMessageLevel, message, lastCaller.sourceURL(), lastCaller.lineNumber());
+    addMessageToConsole(JSMessageSource, LogMessageType, LogMessageLevel, message, callStack);
 }
 
 void InspectorConsoleAgent::frameWindowDiscarded(DOMWindow* window)
