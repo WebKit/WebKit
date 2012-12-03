@@ -1,3 +1,18 @@
+2012-12-03  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed fix after r136292 to make GIT-SVN repositories happy.
+
+        * win/WebKit2ExportGenerator.vcproj: Added property svn:eol-style.
+        * win/WebKit2ExportGeneratorCommon.vsprops: Added property svn:eol-style.
+        * win/WebKit2ExportGeneratorDebug.vsprops: Added property svn:eol-style.
+        * win/WebKit2ExportGeneratorDebugAll.vsprops: Added property svn:eol-style.
+        * win/WebKit2ExportGeneratorDebugCairoCFLite.vsprops: Added property svn:eol-style.
+        * win/WebKit2ExportGeneratorPostBuild.cmd: Added property svn:eol-style.
+        * win/WebKit2ExportGeneratorPreBuild.cmd: Added property svn:eol-style.
+        * win/WebKit2ExportGeneratorProduction.vsprops: Added property svn:eol-style.
+        * win/WebKit2ExportGeneratorRelease.vsprops: Added property svn:eol-style.
+        * win/WebKit2ExportGeneratorReleaseCairoCFLite.vsprops: Added property svn:eol-style.
+
 2012-12-03  Michael Brüning  <michael.bruning@digia.com>
 
         [Qt][WK2] New resize tests fail
