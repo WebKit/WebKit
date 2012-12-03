@@ -110,6 +110,8 @@ void WebCompositorInputHandlerImpl::handleInputEvent(const WebInputEvent& event)
         m_client->didNotHandleInputEvent(false /* sendToWidget */);
         break;
     }
+    if (event.modifiers & WebInputEvent::IsLastInputEventForCurrentVSync)
+        m_inputHandlerClient->didReceiveLastInputEventForVSync();
 }
 
 WebCompositorInputHandlerImpl::EventDisposition WebCompositorInputHandlerImpl::handleInputEventInternal(const WebInputEvent& event)

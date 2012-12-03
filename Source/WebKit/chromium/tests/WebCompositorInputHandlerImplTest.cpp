@@ -62,6 +62,8 @@ public:
     MOCK_METHOD2(scrollByIfPossible, bool(WebPoint, WebSize));
     MOCK_METHOD0(scrollEnd, void());
 
+    MOCK_METHOD0(didReceiveLastInputEventForVSync, void());
+
 private:
     virtual void startPageScaleAnimation(WebSize targetPosition,
                                          bool anchorPoint,
@@ -742,6 +744,17 @@ TEST_F(WebCompositorInputHandlerImplTest, gestureFlingAnimatesTouchscreen)
     EXPECT_CALL(m_mockClient, didHandleInputEvent());
     EXPECT_CALL(m_mockInputHandlerClient, scrollEnd());
     gesture.type = WebInputEvent::GestureFlingCancel;
+    m_inputHandler->handleInputEvent(gesture);
+}
+
+TEST_F(WebCompositorInputHandlerImplTest, lastInputEventForVSync)
+{
+    m_expectedDisposition = DidNotHandle;
+    VERIFY_AND_RESET_MOCKS();
+
+    gesture.type = WebInputEvent::GestureFlingCancel;
+    gesture.modifiers |= WebInputEvent::IsLastInputEventForCurrentVSync;
+    EXPECT_CALL(m_mockInputHandlerClient, didReceiveLastInputEventForVSync());
     m_inputHandler->handleInputEvent(gesture);
 }
 

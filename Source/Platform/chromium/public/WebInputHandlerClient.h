@@ -73,6 +73,9 @@ public:
     // Request another callback to WebInputHandler::animate().
     virtual void scheduleAnimation() = 0;
 
+    // Indicate that the final input event for the current vsync interval was received.
+    virtual void didReceiveLastInputEventForVSync() { }
+
 protected:
     virtual ~WebInputHandlerClient() { }
 };
