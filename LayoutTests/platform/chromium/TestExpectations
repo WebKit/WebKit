@@ -4219,8 +4219,6 @@ webkit.org/b/103721 [ Mac Win Linux ] compositing/reflections/nested-reflection-
 webkit.org/b/103721 [ Mac Win Linux ] compositing/reflections/nested-reflection-animated.html [ ImageOnlyFailure ]
 webkit.org/b/103721 [ Mac Win Linux ] platform/chromium/compositing/huge-layer-rotated.html [ ImageOnlyFailure ]
 
-webkit.org/b/103817 [ Mac Win Linux ] platform/chromium/fast/forms/calendar-picker/calendar-picker-datetime-with-step.html [ Failure ]
-
 crbug.com/163785 [ Mac Win Linux ] media/encrypted-media/encrypted-media-events.html [ Crash ]
 crbug.com/163785 [ Mac Win Linux ] media/encrypted-media/encrypted-media-not-loaded.html [ Crash ]
 crbug.com/163785 [ Mac Win Linux ] media/encrypted-media/encrypted-media-syntax.html [ Crash ]
