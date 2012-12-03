@@ -2442,3 +2442,6 @@ compositing/overflow/updating-scrolling-content.html
 media/video-size.html
 media/W3C/video/networkState/networkState_during_progress.html
 media/W3C/video/readyState/readyState_during_loadedmetadata.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=101539
+editing/execCommand/switch-list-type-with-orphaned-li.html
