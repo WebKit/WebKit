@@ -707,10 +707,7 @@ bool PDFPlugin::isFullFramePlugin()
     // <object> or <embed> plugins will appear to be in their parent frame, so we have to
     // check whether our frame's widget is exactly our PluginView.
     Document* document = webFrame()->coreFrame()->document();
-    if (document->isPluginDocument())
-        return (static_cast<PluginDocument*>(document)->pluginWidget() == pluginView());
-
-    return false;
+    return document->isPluginDocument() && static_cast<PluginDocument*>(document)->pluginWidget() == pluginView();
 }
 
 bool PDFPlugin::handlesPageScaleFactor()
