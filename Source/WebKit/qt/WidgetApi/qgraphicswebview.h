@@ -37,7 +37,7 @@ class QWebSettings;
 
 class QGraphicsWebViewPrivate;
 
-class QWEBKIT_EXPORT QGraphicsWebView : public QGraphicsWidget {
+class QWEBKITWIDGETS_EXPORT QGraphicsWebView : public QGraphicsWidget {
     Q_OBJECT
 
     Q_PROPERTY(QString title READ title NOTIFY titleChanged)

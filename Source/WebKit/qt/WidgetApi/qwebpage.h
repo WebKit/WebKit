@@ -65,7 +65,7 @@ namespace WebCore {
     struct FrameLoadRequest;
 }
 
-class QWEBKIT_EXPORT QWebPage : public QObject {
+class QWEBKITWIDGETS_EXPORT QWebPage : public QObject {
     Q_OBJECT
 
     Q_PROPERTY(bool modified READ isModified)
@@ -213,7 +213,7 @@ public:
         Geolocation
     };
 
-    class QWEBKIT_EXPORT ViewportAttributes {
+    class QWEBKITWIDGETS_EXPORT ViewportAttributes {
     public:
         ViewportAttributes();
         ViewportAttributes(const QWebPage::ViewportAttributes& other);

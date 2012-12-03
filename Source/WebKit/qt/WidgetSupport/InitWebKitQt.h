@@ -21,9 +21,11 @@
 #ifndef InitWebKitQt_h
 #define InitWebKitQt_h
 
+#include <qwebkitglobal.h>
+
 namespace WebKit {
 
-Q_DECL_EXPORT void initializeWebKitWidgets();
+QWEBKITWIDGETS_EXPORT void initializeWebKitWidgets();
 
 }
 #endif

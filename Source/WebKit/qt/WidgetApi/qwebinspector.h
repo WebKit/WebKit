@@ -27,7 +27,7 @@
 
 class QWebInspectorPrivate;
 
-class QWEBKIT_EXPORT QWebInspector : public QWidget {
+class QWEBKITWIDGETS_EXPORT QWebInspector : public QWidget {
     Q_OBJECT
 public:
     QWebInspector(QWidget* parent = 0);

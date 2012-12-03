@@ -38,7 +38,7 @@ class QWebPage;
 class QWebViewPrivate;
 class QWebNetworkRequest;
 
-class QWEBKIT_EXPORT QWebView : public QWidget {
+class QWEBKITWIDGETS_EXPORT QWebView : public QWidget {
     Q_OBJECT
     Q_PROPERTY(QString title READ title)
     Q_PROPERTY(QUrl url READ url WRITE setUrl)

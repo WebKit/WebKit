@@ -30,7 +30,7 @@
 
 namespace WebKit {
 
-Q_DECL_EXPORT void initializeWebKitWidgets()
+QWEBKITWIDGETS_EXPORT void initializeWebKitWidgets()
 {
     static bool initialized = false;
     if (initialized)
