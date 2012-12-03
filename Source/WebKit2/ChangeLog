@@ -1,3 +1,30 @@
+2012-12-03  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL][WK2] Add contents,size,changed signal to the ewk_view API
+        https://bugs.webkit.org/show_bug.cgi?id=103094
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        This patch emits signal to let applications know contents size.
+        Applications can use this signal to give some additional behavior such as
+        minimap, external scroll for quick movement.
+
+        * UIProcess/API/efl/EwkViewCallbacks.h: Added contents,size,changed signal.
+        * UIProcess/API/efl/EwkViewImpl.cpp: Removed dead code.
+        * UIProcess/API/efl/EwkViewImpl.h: Ditto.
+        (EwkViewImpl):
+        * UIProcess/API/efl/ewk_view.h: Added test case.
+        * UIProcess/API/efl/tests/test_ewk2_view.cpp:
+        (onContentsSizeChanged):
+        (TEST_F):
+        * UIProcess/efl/PageClientDefaultImpl.cpp: Emitted contents,size,changed signal.
+        (WebKit::PageClientDefaultImpl::didChangeContentsSize):
+        * UIProcess/efl/PageClientLegacyImpl.cpp: Ditto.
+        (WebKit::PageClientLegacyImpl::didChangeContentsSize):
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::contentsSizeChanged):
+        Sended DidChangeContentsSize message although TILED_BACKINGSTORE is disabled.
+
 2012-12-03  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed fix after r136292 to make GIT-SVN repositories happy.

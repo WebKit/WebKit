@@ -30,6 +30,7 @@
  *   ewk_auth_request_ref() on the request object to process the authentication asynchronously.
  * - "back,forward,list,changed", void: reports that the view's back / forward list had changed.
  * - "cancel,vibration", void: request to cancel the vibration.
+ * - "contents,size,changed", Ewk_CSS_Size*: reports that contents size was changed.
  * - "download,cancelled", Ewk_Download_Job*: reports that a download was effectively cancelled.
  * - "download,failed", Ewk_Download_Job_Error*: reports that a download failed with the given error.
  * - "download,finished", Ewk_Download_Job*: reports that a download completed successfully.
@@ -270,6 +271,17 @@ typedef struct Ewk_Download_Job_Error Ewk_Download_Job_Error;
 struct Ewk_Download_Job_Error {
     Ewk_Download_Job *download_job; /**< download that failed */
     Ewk_Error *error; /**< download error */
+};
+
+/// Creates a type name for Ewk_CSS_Size.
+typedef struct Ewk_CSS_Size Ewk_CSS_Size;
+
+/**
+ * @brief Structure representing size.
+ */
+struct Ewk_CSS_Size {
+    Evas_Coord w; /**< width */
+    Evas_Coord h; /**< height */
 };
 
 /**

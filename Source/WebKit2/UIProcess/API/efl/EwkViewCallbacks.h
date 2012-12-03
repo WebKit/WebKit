@@ -29,6 +29,7 @@
 #include "WKEinaSharedString.h"
 #include "ewk_private.h"
 #include <Evas.h>
+#include <WebCore/IntSize.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
@@ -50,6 +51,7 @@ struct Ewk_Download_Job_Error;
 struct Ewk_Resource_Request;
 struct Ewk_Resource_Load_Response;
 struct Ewk_Resource_Load_Error;
+struct Ewk_CSS_Size;
 
 namespace EwkViewCallbacks {
 
@@ -57,6 +59,7 @@ enum CallbackType {
     AuthenticationRequest,
     BackForwardListChange,
     CancelVibration,
+    ContentsSizeChanged,
     DownloadJobCancelled,
     DownloadJobFailed,
     DownloadJobFinished,
@@ -150,6 +153,22 @@ struct CallBack <callbackType, const char*> : public EvasObjectHolder {
     }
 };
 
+template <CallbackType callbackType>
+struct CallBack <callbackType, Ewk_CSS_Size*> : public EvasObjectHolder {
+    explicit CallBack(Evas_Object* view) : EvasObjectHolder(view) { }
+
+    void call(Ewk_CSS_Size* size)
+    {
+        evas_object_smart_callback_call(m_object, CallBackInfo<callbackType>::name(), size);
+    }
+
+    void call(const WebCore::IntSize& arg)
+    {
+        Ewk_CSS_Size size = { arg.width(), arg.height() };
+        call(&size);
+    }
+};
+
 #define DECLARE_EWK_VIEW_CALLBACK(callbackType, string, type) \
 template <>                                                   \
 struct CallBackInfo<callbackType> {                           \
@@ -161,6 +180,7 @@ struct CallBackInfo<callbackType> {                           \
 DECLARE_EWK_VIEW_CALLBACK(AuthenticationRequest, "authentication,request", Ewk_Auth_Request*);
 DECLARE_EWK_VIEW_CALLBACK(BackForwardListChange, "back,forward,list,changed", void);
 DECLARE_EWK_VIEW_CALLBACK(CancelVibration, "cancel,vibration", void);
+DECLARE_EWK_VIEW_CALLBACK(ContentsSizeChanged, "contents,size,changed", Ewk_CSS_Size*);
 DECLARE_EWK_VIEW_CALLBACK(DownloadJobCancelled, "download,cancelled", Ewk_Download_Job*);
 DECLARE_EWK_VIEW_CALLBACK(DownloadJobFailed, "download,failed", Ewk_Download_Job_Error*);
 DECLARE_EWK_VIEW_CALLBACK(DownloadJobFinished, "download,finished", Ewk_Download_Job*);

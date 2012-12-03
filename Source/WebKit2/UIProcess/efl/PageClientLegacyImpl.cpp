@@ -30,6 +30,7 @@
 #include "EwkViewImpl.h"
 #include "LayerTreeCoordinatorProxy.h"
 #include "NotImplemented.h"
+#include "ewk_view.h"
 
 using namespace WebCore;
 using namespace EwkViewCallbacks;
@@ -75,12 +76,11 @@ void PageClientLegacyImpl::didChangeViewportProperties(const WebCore::ViewportAt
 void PageClientLegacyImpl::didChangeContentsSize(const WebCore::IntSize& size)
 {
 #if USE(TILED_BACKING_STORE)
-    // m_viewImpl->informContentSizeChanged will be called as a result of setContentsSize
     m_viewImpl->page()->drawingArea()->layerTreeCoordinatorProxy()->setContentsSize(FloatSize(size.width(), size.height()));
     m_viewImpl->update();
-#else
-    m_viewImpl->informContentsSizeChange(size);
 #endif
+
+    m_viewImpl->smartCallback<ContentsSizeChanged>().call(size);
 }
 
 #if USE(TILED_BACKING_STORE)

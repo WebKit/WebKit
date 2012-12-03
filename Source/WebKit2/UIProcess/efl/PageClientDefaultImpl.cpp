@@ -28,6 +28,7 @@
 #include "PageClientDefaultImpl.h"
 
 #include "EwkViewImpl.h"
+#include "ewk_view.h"
 
 #if USE(TILED_BACKING_STORE)
 #include "PageViewportController.h"
@@ -94,9 +95,9 @@ void PageClientDefaultImpl::didChangeContentsSize(const WebCore::IntSize& size)
 #if USE(TILED_BACKING_STORE)
     ASSERT(m_pageViewportController);
     m_pageViewportController->didChangeContentsSize(size);
-#else
-    m_viewImpl->informContentsSizeChange(size);
 #endif
+
+    m_viewImpl->smartCallback<ContentsSizeChanged>().call(size);
 }
 
 #if USE(TILED_BACKING_STORE)

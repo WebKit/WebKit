@@ -742,15 +742,6 @@ void EwkViewImpl::dismissColorPicker()
 }
 #endif
 
-void EwkViewImpl::informContentsSizeChange(const IntSize& size)
-{
-#if USE(COORDINATED_GRAPHICS)
-    m_pageClient->didChangeContentsSize(size);
-#else
-    UNUSED_PARAM(size);
-#endif
-}
-
 COMPILE_ASSERT_MATCHING_ENUM(EWK_TEXT_DIRECTION_RIGHT_TO_LEFT, RTL);
 COMPILE_ASSERT_MATCHING_ENUM(EWK_TEXT_DIRECTION_LEFT_TO_RIGHT, LTR);
 

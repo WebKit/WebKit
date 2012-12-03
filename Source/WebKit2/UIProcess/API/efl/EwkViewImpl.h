@@ -193,7 +193,6 @@ public:
 #if USE(TILED_BACKING_STORE)
     void informLoadCommitted();
 #endif
-    void informContentsSizeChange(const WebCore::IntSize& size);
     unsigned long long informDatabaseQuotaReached(const String& databaseName, const String& displayName, unsigned long long currentQuota, unsigned long long currentOriginUsage, unsigned long long currentDatabaseUsage, unsigned long long expectedUsage);
 
 #if USE(TILED_BACKING_STORE)
