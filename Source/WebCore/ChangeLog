@@ -1,3 +1,31 @@
+2012-12-03  Max Vujovic  <mvujovic@adobe.com>
+
+        [CSS Shaders] Do not clamp indirect array indices during CSS Shaders ANGLE validation pass
+        https://bugs.webkit.org/show_bug.cgi?id=102731
+
+        Reviewed by Dean Jackson.
+
+        Before this patch, we validated all shaders with the compile flag
+        SH_CLAMP_INDIRECT_ARRAY_BOUNDS in ANGLEWebKitBridge. This would insert a GLSL function
+        "webgl_int_clamp" in validated CSS shaders. However, when validated CSS shaders would pass
+        through ANGLE again at the GC3D level, ANGLE would reject them because they would contain
+        the "webgl_" restricted prefix.
+
+        Now, we only pass the compile flag SH_CLAMP_INDIRECT_ARRAY_BOUNDS at the GC3D level.
+
+        Test: css3/filters/custom/custom-filter-array-uniform-indirect-index.html
+
+        * platform/graphics/ANGLEWebKitBridge.cpp:
+        (WebCore::ANGLEWebKitBridge::compileShaderSource):
+            Remove the SH_CLAMP_INDIRECT_ARRAY_BOUNDS compile flag.
+        * platform/graphics/filters/CustomFilterValidatedProgram.cpp:
+        (WebCore::CustomFilterValidatedProgram::compiledProgram):
+            Add an assert that validated programs compile at the GC3D or platform level to help us
+            catch validation and rewriting issues.
+        * platform/graphics/opengl/Extensions3DOpenGLCommon.cpp:
+        (WebCore::Extensions3DOpenGLCommon::getTranslatedShaderSourceANGLE):
+            Pass the SH_CLAMP_INDIRECT_ARRAY_BOUNDS to compileShaderSource.
+
 2012-12-03  Eugene Klyuchnikov  <eustas@chromium.org>
 
         Web Inspector: Make main-thread monitoring go through InspectorController

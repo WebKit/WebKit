@@ -205,6 +205,7 @@ PassRefPtr<CustomFilterCompiledProgram> CustomFilterValidatedProgram::compiledPr
     ASSERT(m_isInitialized && m_globalContext && !m_validatedVertexShader.isNull() && !m_validatedFragmentShader.isNull());
     if (!m_compiledProgram) {
         m_compiledProgram = CustomFilterCompiledProgram::create(m_globalContext->context(), m_validatedVertexShader, m_validatedFragmentShader, m_programInfo.programType());
+        ASSERT(m_compiledProgram->isInitialized());
         ASSERT(m_compiledProgram->samplerLocation() != -1 || !needsInputTexture());
     }
     return m_compiledProgram;

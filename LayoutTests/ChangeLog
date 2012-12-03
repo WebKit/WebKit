@@ -1,3 +1,22 @@
+2012-12-03  Max Vujovic  <mvujovic@adobe.com>
+
+        [CSS Shaders] Do not clamp indirect array indices during CSS Shaders ANGLE validation pass
+        https://bugs.webkit.org/show_bug.cgi?id=102731
+
+        Reviewed by Dean Jackson.
+
+        Add a vertex shader which indirectly indexes a uniform array. This shader should validate,
+        compile, and execute properly.
+
+        The GLSL ES 1.0 spec [1], Appendix A, Section 5 "Uniforms (excluding samplers)" says:
+        "In the vertex shader, support for all forms of array indexing is mandated."
+
+        [1]: http://www.khronos.org/registry/gles/specs/2.0/GLSL_ES_Specification_1.0.17.pdf
+
+        * css3/filters/custom/custom-filter-array-uniform-indirect-index-expected.html: Added.
+        * css3/filters/custom/custom-filter-array-uniform-indirect-index.html: Added.
+        * css3/filters/resources/array-indirect-index.vs: Added.
+
 2012-12-03  Tony Chang  <tony@chromium.org>
 
         Performance degradation while rendering MathML content, freezes the tab.
