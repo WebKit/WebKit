@@ -1164,6 +1164,7 @@ fast/events/constructors/media-key-event-constructor.html
 
 # missing testRunner.setStorageDatabaseIdleInterval() implementation
 storage/domstorage/storage-close-database-on-idle.html
+storage/domstorage/localstorage/close-idle-localstorage-databases-immediately.html
 
 # Missing targetDiv1.webkitRequestFullscreen() implementation
 # https://bugs.webkit.org/show_bug.cgi?id=92078
