@@ -316,6 +316,7 @@ void MediaPlayerPrivateGStreamer::load(const String& url)
     m_player->networkStateChanged();
     m_readyState = MediaPlayer::HaveNothing;
     m_player->readyStateChanged();
+    m_volumeAndMuteInitialized = false;
 
     // GStreamer needs to have the pipeline set to a paused state to
     // start providing anything useful.
@@ -1186,6 +1187,13 @@ void MediaPlayerPrivateGStreamer::updateStates()
         if (state == GST_STATE_PAUSED) {
             if (!m_webkitAudioSink)
                 updateAudioSink();
+
+            if (!m_volumeAndMuteInitialized) {
+                notifyPlayerOfVolumeChange();
+                notifyPlayerOfMute();
+                m_volumeAndMuteInitialized = true;
+            }
+
             if (m_buffering && m_bufferingPercentage == 100) {
                 m_buffering = false;
                 m_bufferingPercentage = 0;

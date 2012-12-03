@@ -193,6 +193,7 @@ class MediaPlayerPrivateGStreamer : public MediaPlayerPrivateInterface {
 #endif
             guint m_volumeTimerHandler;
             guint m_muteTimerHandler;
+            bool m_volumeAndMuteInitialized;
             bool m_hasVideo;
             bool m_hasAudio;
             guint m_audioTimerHandler;
