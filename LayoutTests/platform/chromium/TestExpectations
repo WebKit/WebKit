@@ -4225,4 +4225,4 @@ crbug.com/163785 [ Mac Win Linux ] media/encrypted-media/encrypted-media-events.
 crbug.com/163785 [ Mac Win Linux ] media/encrypted-media/encrypted-media-not-loaded.html [ Crash ]
 crbug.com/163785 [ Mac Win Linux ] media/encrypted-media/encrypted-media-syntax.html [ Crash ]
 
-webkit.org/b/103834 [ Mac ] fast/forms/month-multiple-fields/month-multiple-fields-keyboard-events.html [ Failure ]
+webkit.org/b/103834 [ Mac XP ] fast/forms/month-multiple-fields/month-multiple-fields-keyboard-events.html [ Failure ]
