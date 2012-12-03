@@ -1684,3 +1684,6 @@ webkit.org/b/103740 editing/selection/caret-alignment-for-vertical-text.html [ F
 
 # All debug bots timeout (crash) on this one
 webkit.org/b/56496 [ Debug ] fast/js/array-sort-modifying-tostring.html [ Crash Pass ]
+
+# volume is reset when mediaelement.src is modified
+webkit.org/b/103893 media/video-volume.html [ Failure ]
