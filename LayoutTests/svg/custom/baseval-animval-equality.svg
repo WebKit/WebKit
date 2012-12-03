@@ -9,6 +9,9 @@
   </foreignObject>
   <script type="text/javascript">
   <![CDATA[
+    if (window.testRunner)
+        window.testRunner.dumpAsText();
+
     function log(message) {
         var logDiv = document.getElementById('log');
         var newDiv = document.createElementNS("http://www.w3.org/1999/xhtml",'div');

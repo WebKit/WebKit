@@ -1,3 +1,25 @@
+2012-12-03  Balazs Kelemen  <kbalazs@webkit.org>
+
+        svg/custom/baseval-animval-equality.svg should use dumpAsText
+        https://bugs.webkit.org/show_bug.cgi?id=103873
+
+        Reviewed by Dirk Schulze.
+
+        Turn it to a dumpAsText test.
+
+        * platform/chromium-mac-lion/svg/custom/baseval-animval-equality-expected.txt: Removed.
+        * platform/chromium-mac-snowleopard/svg/custom/baseval-animval-equality-expected.txt: Removed.
+        * platform/chromium-mac/svg/custom/baseval-animval-equality-expected.txt: Removed.
+        * platform/chromium-win/svg/custom/baseval-animval-equality-expected.txt: Removed.
+        * platform/chromium/svg/custom/baseval-animval-equality-expected.txt: Removed.
+        * platform/gtk/svg/custom/baseval-animval-equality-expected.txt: Removed.
+        * platform/mac-lion/svg/custom/baseval-animval-equality-expected.txt: Removed.
+        * platform/mac-wk2/svg/custom/baseval-animval-equality-expected.txt: Removed.
+        * platform/mac/svg/custom/baseval-animval-equality-expected.txt: Removed.
+        * platform/qt/svg/custom/baseval-animval-equality-expected.txt: Removed.
+        * svg/custom/baseval-animval-equality-expected.txt: Added.
+        * svg/custom/baseval-animval-equality.svg:
+
 2012-12-03  Erik Arvidsson  <arv@chromium.org>
 
         Update Acid3 test to the latest version
