@@ -1,4 +1,3 @@
-#!/usr/bin/python
 # Copyright (C) 2012 Google Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -406,7 +405,3 @@ class TestPerfTestFactory(unittest.TestCase):
     def test_inspector_test(self):
         test = PerfTestFactory.create_perf_test(MockPort(), 'inspector/some-test', '/path/inspector/some-test')
         self.assertEqual(test.__class__, ChromiumStylePerfTest)
-
-
-if __name__ == '__main__':
-    unittest.main()

@@ -181,7 +181,3 @@ class QueueEngineTest(unittest.TestCase):
 
     def tearDown(self):
         shutil.rmtree(self.temp_dir)
-
-
-if __name__ == '__main__':
-    unittest.main()

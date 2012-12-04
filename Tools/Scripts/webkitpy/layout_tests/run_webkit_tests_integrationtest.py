@@ -1,4 +1,3 @@
-#!/usr/bin/python
 # Copyright (C) 2010 Google Inc. All rights reserved.
 # Copyright (C) 2010 Gabor Rapcsanyi (rgabor@inf.u-szeged.hu), University of Szeged
 # Copyright (C) 2011 Apple Inc. All rights reserved.
@@ -1106,6 +1105,3 @@ class PortTest(unittest.TestCase):
 
     def disabled_test_mac_lion(self):
         self.assert_mock_port_works('mac-lion')
-
-if __name__ == '__main__':
-    unittest.main()

@@ -229,7 +229,3 @@ class JSONGeneratorTest(unittest.TestCase):
         }
 
         self.assertEqual(json.dumps(trie), json.dumps(expected_trie))
-
-
-if __name__ == '__main__':
-    unittest.main()

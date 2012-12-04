@@ -179,7 +179,3 @@ class TestPlatformInfo(unittest.TestCase):
 
         info = self.make_info(fake_sys('freebsd9'))
         self.assertEqual(info.total_bytes_memory(), None)
-
-
-if __name__ == '__main__':
-    unittest.main()

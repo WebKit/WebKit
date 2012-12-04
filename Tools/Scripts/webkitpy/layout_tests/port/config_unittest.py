@@ -156,7 +156,3 @@ class ConfigTest(unittest.TestCase):
         c = self.make_config(exception=ScriptError())
         actual = c.default_configuration()
         self.assertEqual(actual, 'Release')
-
-
-if __name__ == '__main__':
-    unittest.main()

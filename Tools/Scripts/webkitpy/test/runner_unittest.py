@@ -95,7 +95,3 @@ class RunnerTest(unittest.TestCase):
         self.assertEqual(runner.tests_run, 3)
         self.assertEqual(len(runner.failures), 1)
         self.assertEqual(len(runner.errors), 1)
-
-
-if __name__ == '__main__':
-    unittest.main()

@@ -473,7 +473,3 @@ class BuildBotTest(unittest.TestCase):
         b = Build(None, 123, 123, False)
         b.results_url = self.results_url
         self.assertEqual("some-url.zip", b.results_zip_url())
-
-
-if __name__ == '__main__':
-    unittest.main()

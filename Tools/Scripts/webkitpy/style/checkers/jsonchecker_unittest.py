@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-#
 # Copyright (C) 2010 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -111,6 +109,3 @@ class JSONCheckerTest(unittest.TestCase):
                   ]
 }
 """)
-
-if __name__ == '__main__':
-    unittest.main()

@@ -134,6 +134,3 @@ class OmahaProxyTest(unittest.TestCase):
             self.assertTrue("date" in revision)
             self.assertEqual(len(revision.keys()), 4)
         self.assertEqual(revisions, self.expected_revisions)
-
-if __name__ == '__main__':
-    unittest.main()

@@ -267,7 +267,3 @@ class DriverTest(unittest.TestCase):
         driver = Driver(port, 0, pixel_tests=True)
         driver.start(True, [])
         self.assertTrue(driver._server_process.started)
-
-
-if __name__ == '__main__':
-    unittest.main()

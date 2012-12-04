@@ -64,7 +64,3 @@ class ShouldBuildTest(unittest.TestCase):
             for platform in ["mac-leopard", "mac-lion",  "mac-mountainlion", "mac-snowleopard", "win"]:
                 should_build = platform in platforms or "*" in platforms
                 self.assertEqual(build.should_build(platform, files), should_build, "%s should%s have built but did%s (files: %s)" % (platform, "" if should_build else "n't", "n't" if should_build else "", str(files)))
-
-
-if __name__ == "__main__":
-    unittest.main()

@@ -1,4 +1,3 @@
-#!/usr/bin/python
 # Copyright (C) 2012 Google Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -638,7 +637,3 @@ max 548000 bytes
         self.assertEqual(options.output_json_path, 'a/output.json')
         self.assertEqual(options.slave_config_json_path, 'a/source.json')
         self.assertEqual(options.test_results_server, 'somehost')
-
-
-if __name__ == '__main__':
-    unittest.main()

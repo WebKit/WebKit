@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # Copyright (C) 2011 Google Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -79,7 +78,3 @@ CONTENT OF TEST
         html_5 = """<link rel="help" href="RELEVANT_SPEC_SECTION">"""
         empty_tuple_4 = extract_reference_link.get_reference_link(html_5)
         self.assertEqual(empty_tuple_4, ([], []))
-
-
-if __name__ == "__main__":
-    unittest.main()

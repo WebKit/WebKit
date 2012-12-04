@@ -1,4 +1,3 @@
-#!/usr/bin/python
 # -*- coding: utf-8; -*-
 #
 # Copyright (C) 2011 Google Inc. All rights reserved.
@@ -4874,30 +4873,3 @@ class CppCheckerTest(unittest.TestCase):
         # Thus, just check the distinguishing case to verify that the
         # code defines __ne__.
         self.assertFalse(checker1 != checker2)
-
-
-def tearDown():
-    """A global check to make sure all error-categories have been tested.
-
-    The main tearDown() routine is the only code we can guarantee will be
-    run after all other tests have been executed.
-    """
-    try:
-        if _run_verifyallcategoriesseen:
-            ErrorCollector(None).verify_all_categories_are_seen()
-    except NameError:
-        # If nobody set the global _run_verifyallcategoriesseen, then
-        # we assume we shouldn't run the test
-        pass
-
-if __name__ == '__main__':
-    import sys
-    # We don't want to run the verify_all_categories_are_seen() test unless
-    # we're running the full test suite: if we only run one test,
-    # obviously we're not going to see all the error categories.  So we
-    # only run verify_all_categories_are_seen() when no commandline flags
-    # are passed in.
-    global _run_verifyallcategoriesseen
-    _run_verifyallcategoriesseen = (len(sys.argv) == 1)
-
-    unittest.main()

@@ -1,4 +1,3 @@
-#!/usr/bin/python
 # Copyright (C) 2009 Google Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -88,7 +87,3 @@ class TextCheckerTest(unittest.TestCase):
         checker = TextChecker("foo.txt", self.mock_handle_style_error)
         self.assertEqual(checker.file_path, "foo.txt")
         self.assertEqual(checker.handle_style_error, self.mock_handle_style_error)
-
-
-if __name__ == '__main__':
-    unittest.main()

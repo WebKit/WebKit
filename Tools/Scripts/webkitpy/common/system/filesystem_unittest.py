@@ -254,7 +254,3 @@ class RealFileSystemTest(unittest.TestCase, GenericFileSystemTests):
         self.assertEqual(fs.sep, os.sep)
         self.assertEqual(fs.join("foo", "bar"),
                           os.path.join("foo", "bar"))
-
-
-if __name__ == '__main__':
-    unittest.main()

@@ -1,4 +1,3 @@
-#!/usr/bin/python
 # Copyright (C) 2010 Google Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -704,7 +703,3 @@ class TestExpectationSerializationTests(unittest.TestCase):
         self.assert_round_trip('[ FOO ] bar [        BAZ ]  # Qux.', '[ FOO ] bar [ BAZ ] # Qux.')
         self.assert_round_trip('[ FOO ]       bar [    BAZ ]  # Qux.', '[ FOO ] bar [ BAZ ] # Qux.')
         self.assert_round_trip('[ FOO ]       bar     [    BAZ ]  # Qux.', '[ FOO ] bar [ BAZ ] # Qux.')
-
-
-if __name__ == '__main__':
-    unittest.main()

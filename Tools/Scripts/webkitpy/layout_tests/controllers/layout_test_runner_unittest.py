@@ -1,4 +1,3 @@
-#!/usr/bin/python
 # Copyright (C) 2012 Google Inc. All rights reserved.
 # Copyright (C) 2010 Gabor Rapcsanyi (rgabor@inf.u-szeged.hu), University of Szeged
 #

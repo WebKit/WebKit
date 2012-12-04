@@ -107,7 +107,3 @@ class FactoryTest(unittest.TestCase):
     def test_get_from_builder_name(self):
         self.assertEqual(factory.PortFactory(MockSystemHost()).get_from_builder_name('WebKit Mac10.7').name(),
                           'chromium-mac-lion')
-
-
-if __name__ == '__main__':
-    unittest.main()

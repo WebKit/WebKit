@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # Copyright (C) 2011 Google Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -92,7 +91,3 @@ class LRUCacheTest(unittest.TestCase):
     def test_set_again(self):
         self.lru['key_1'] = 'item_4'
         self.assertEqual(set(self.lru.items()), set([('key_1', 'item_4'), ('key_3', 'item_3'), ('key_2', 'item_2')]))
-
-
-if __name__ == "__main__":
-    unittest.main()

@@ -72,6 +72,3 @@ class SkipTest(unittest.TestCase):
         klass(self.foo_callback).test_foo()
         self.assertEqual(self.log_stream.getvalue(), 'Skipping webkitpy.test.skip_unittest.TestSkipFixture: Should see this message.\n')
         self.assertFalse(self.foo_was_called)
-
-if __name__ == '__main__':
-    unittest.main()

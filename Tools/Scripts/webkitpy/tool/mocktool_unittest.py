@@ -53,7 +53,3 @@ class MockOptionsTest(unittest.TestCase):
         # Test that keyword arguments work in the constructor.
         options = MockOptions(foo='bar')
         self.assertEqual(options.foo, 'bar')
-
-
-if __name__ == '__main__':
-    unittest.main()

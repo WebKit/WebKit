@@ -89,6 +89,3 @@ class DiffParserTest(unittest.TestCase):
         for prefix in prefixes:
             patch = p.sub(lambda x: " %s/" % prefix[x.group(1)], DIFF_TEST_DATA)
             self.test_diff_parser(diff_parser.DiffParser(patch.splitlines()))
-
-if __name__ == '__main__':
-    unittest.main()

@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # Copyright (c) 2009, Google Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -70,7 +69,3 @@ class DeprecatedPortTest(unittest.TestCase):
 
     def test_chromium_xvfb_port(self):
         self.assertEqual(ChromiumXVFBPort().run_webkit_tests_command(), ['xvfb-run'] + DeprecatedPort().script_shell_command('new-run-webkit-tests') + ['--chromium', '--skip-failing-tests'])
-
-
-if __name__ == '__main__':
-    unittest.main()

@@ -1,4 +1,3 @@
-#!/usr/bin/python
 # Copyright (C) 2011 Google Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -68,7 +67,3 @@ class ThirdpartyTest(unittest.TestCase):
         import webkitpy.thirdparty.autoinstalled.pylint
         import webkitpy.thirdparty.autoinstalled.webpagereplay
         import webkitpy.thirdparty.autoinstalled.pep8
-
-
-if __name__ == '__main__':
-    unittest.main()

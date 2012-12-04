@@ -101,7 +101,3 @@ class ChromiumMacPortTest(chromium_port_testcase.ChromiumPortTestCase):
 
     def test_path_to_image_diff(self):
         self.assertEqual(self.make_port()._path_to_image_diff(), '/mock-checkout/out/Release/ImageDiff')
-
-
-if __name__ == '__main__':
-    port_testcase.main()

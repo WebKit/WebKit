@@ -290,7 +290,3 @@ class ChromiumAndroidTwoPortsTest(unittest.TestCase):
         cmd_line = port1.driver_cmd_line()
         self.assertEqual(cmd_line.count('--encode-binary'), 1)
         self.assertEqual(cmd_line.count('--enable-hardware-gpu'), 1)
-
-
-if __name__ == '__main__':
-    unittest.main()

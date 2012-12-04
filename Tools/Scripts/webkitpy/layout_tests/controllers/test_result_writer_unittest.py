@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # Copyright (C) 2011 Google Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -54,7 +53,3 @@ class TestResultWriterTest(unittest.TestCase):
         test_result_writer.write_test_result(host.filesystem, ImageDiffTestPort(host), test_name,
                                              driver_output1, driver_output2, failures)
         self.assertEqual([0], used_tolerance_values)
-
-
-if __name__ == '__main__':
-    unittest.main()

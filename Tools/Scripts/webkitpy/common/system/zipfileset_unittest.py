@@ -92,7 +92,3 @@ class ZipFileSetTest(unittest.TestCase):
 
     def test_namelist(self):
         self.assertTrue('some-file' in self._zip.namelist())
-
-
-if __name__ == '__main__':
-    unittest.main()

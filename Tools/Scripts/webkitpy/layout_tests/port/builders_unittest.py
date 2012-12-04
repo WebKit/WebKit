@@ -39,6 +39,3 @@ class BuildersTest(unittest.TestCase):
         }
         for name, expected in tests.items():
             self.assertEqual(expected, builders.builder_path_from_name(name))
-
-if __name__ == '__main__':
-    unittest.main()

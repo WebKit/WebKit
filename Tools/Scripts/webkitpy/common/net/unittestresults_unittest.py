@@ -92,7 +92,3 @@ Expected: 6.28]]></failure>
 </testsuites>"""
         expected = ["ClassOne.TestOne", "ClassTwo.TestTwo"]
         self.assertEqual(expected, UnitTestResults.results_from_string(multiple_failures_per_test_xml))
-
-
-if __name__ == '__main__':
-    unittest.main()

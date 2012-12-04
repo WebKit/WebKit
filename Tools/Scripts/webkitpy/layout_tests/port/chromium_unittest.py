@@ -62,7 +62,3 @@ class ChromiumPortLoggingTest(logtesting.LoggingTestCase):
             'ERROR: To override, invoke with --nocheck-sys-deps\n',
             'ERROR: \n',
             'ERROR: testing output failure\n'])
-
-
-if __name__ == '__main__':
-    unittest.main()

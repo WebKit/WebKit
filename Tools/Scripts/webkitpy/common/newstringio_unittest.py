@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # Copyright (C) 2010 Google Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -39,6 +38,3 @@ class NewStringIOTest(unittest.TestCase):
         with newstringio.StringIO("foo") as f:
             contents = f.read()
         self.assertEqual(contents, "foo")
-
-if __name__ == '__main__':
-    unittest.main()

@@ -59,7 +59,3 @@ class TestWinNormalize(unittest.TestCase):
         if sys.platform != 'win32':
             return
         self.assert_filesystem_normalizes(FileSystem())
-
-
-if __name__ == '__main__':
-    unittest.main()

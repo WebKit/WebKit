@@ -1,4 +1,3 @@
-#!/usr/bin/python
 # Copyright (C) 2010, 2012 Google Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -287,7 +286,3 @@ BUGX : failures/expected/timeout.html = TIMEOUT
         printer.print_started_test('passes/image.html')
         printer.print_finished_test(result, expected=False, exp_str='', got_str='')
         self.assertNotEmpty(err)
-
-
-if __name__ == '__main__':
-    unittest.main()

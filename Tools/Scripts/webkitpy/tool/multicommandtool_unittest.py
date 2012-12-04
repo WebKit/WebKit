@@ -171,7 +171,3 @@ See 'trivial-tool help COMMAND' for more information on a specific command.
         tool = TrivialTool(commands=[command_with_options])
         expected_subcommand_help = "trivial [options]   help text\n\nLONG HELP\n\nOptions:\n  --my_option=MY_OPTION\n\n"
         self._assert_tool_main_outputs(tool, ["tool", "help", "trivial"], expected_subcommand_help)
-
-
-if __name__ == "__main__":
-    unittest.main()

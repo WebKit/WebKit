@@ -1607,6 +1607,3 @@ class GitTestWithMock(unittest.TestCase):
 
     def test_push_local_commits_to_server_without_username_and_with_password(self):
         self.assertRaises(AuthenticationError, self.make_scm().push_local_commits_to_server, {'password': 'blah'})
-
-if __name__ == '__main__':
-    unittest.main()

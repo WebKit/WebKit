@@ -497,7 +497,3 @@ class KeyCompareTest(unittest.TestCase):
         self.assert_cmp('/ab', '/a/a/b', -1)
         self.assert_cmp('/a/a/b', '/ab', 1)
         self.assert_cmp('/foo-bar/baz', '/foo/baz', -1)
-
-
-if __name__ == '__main__':
-    unittest.main()

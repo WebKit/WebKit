@@ -124,6 +124,3 @@ class FinderTest(unittest.TestCase):
 
         # Names that don't exist are caught later, at load time.
         self.check_names(['bar.notexist_unittest'], ['bar.notexist_unittest'])
-
-if __name__ == '__main__':
-    unittest.main()

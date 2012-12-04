@@ -36,6 +36,3 @@ class GrammarTest(unittest.TestCase):
         self.assertEqual(join_with_separators(["one"]), "one")
         self.assertEqual(join_with_separators(["one", "two"]), "one and two")
         self.assertEqual(join_with_separators(["one", "two", "three"]), "one, two, and three")
-
-if __name__ == '__main__':
-    unittest.main()

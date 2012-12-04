@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-#
 # Copyright (C) 2010 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -87,6 +85,3 @@ class XMLCheckerTest(unittest.TestCase):
 
     def test_no_error(self):
         self.assert_no_error('<foo>\n</foo>')
-
-if __name__ == '__main__':
-    unittest.main()

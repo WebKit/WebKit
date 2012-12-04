@@ -1,5 +1,3 @@
-#!/usr/bin/python
-#
 # Copyright (C) 2010 Google Inc. All rights reserved.
 # Copyright (C) 2009 Torch Mobile Inc.
 # Copyright (C) 2009 Apple Inc. All rights reserved.

@@ -206,7 +206,3 @@ password: "SECRETSAUCE"
             # FIXME: Using read_credentials here seems too broad as higher-priority
             # credential source could be affected by the user's environment.
             self.assertEqual(credentials.read_credentials(FakeUser), ("test@webkit.org", "NOMNOMNOM"))
-
-
-if __name__ == '__main__':
-    unittest.main()
