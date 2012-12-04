@@ -2355,28 +2355,26 @@ sub GenerateImplementation
         }
     }
 
-    if ($numFunctions > 0 || $numCachedAttributes > 0) {
-        if ($needsMarkChildren && !$interface->extendedAttributes->{"JSCustomMarkFunction"}) {
-            push(@implContent, "void ${className}::visitChildren(JSCell* cell, SlotVisitor& visitor)\n");
-            push(@implContent, "{\n");
-            push(@implContent, "    ${className}* thisObject = jsCast<${className}*>(cell);\n");
-            push(@implContent, "    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);\n");
-            push(@implContent, "    COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);\n");
-            push(@implContent, "    ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());\n");
-            push(@implContent, "    Base::visitChildren(thisObject, visitor);\n");
-            if ($interface->extendedAttributes->{"EventTarget"} || $interface->name eq "EventTarget") {
-                push(@implContent, "    thisObject->impl()->visitJSEventListeners(visitor);\n");
-            }
-            if ($numCachedAttributes > 0) {
-                foreach (@{$interface->attributes}) {
-                    my $attribute = $_;
-                    if ($attribute->signature->extendedAttributes->{"CachedAttribute"}) {
-                        push(@implContent, "    visitor.append(&thisObject->m_" . $attribute->signature->name . ");\n");
-                    }
+    if ($needsMarkChildren && !$interface->extendedAttributes->{"JSCustomMarkFunction"}) {
+        push(@implContent, "void ${className}::visitChildren(JSCell* cell, SlotVisitor& visitor)\n");
+        push(@implContent, "{\n");
+        push(@implContent, "    ${className}* thisObject = jsCast<${className}*>(cell);\n");
+        push(@implContent, "    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);\n");
+        push(@implContent, "    COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);\n");
+        push(@implContent, "    ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());\n");
+        push(@implContent, "    Base::visitChildren(thisObject, visitor);\n");
+        if ($interface->extendedAttributes->{"EventTarget"} || $interface->name eq "EventTarget") {
+            push(@implContent, "    thisObject->impl()->visitJSEventListeners(visitor);\n");
+        }
+        if ($numCachedAttributes > 0) {
+            foreach (@{$interface->attributes}) {
+                my $attribute = $_;
+                if ($attribute->signature->extendedAttributes->{"CachedAttribute"}) {
+                    push(@implContent, "    visitor.append(&thisObject->m_" . $attribute->signature->name . ");\n");
                 }
             }
-            push(@implContent, "}\n\n");
         }
+        push(@implContent, "}\n\n");
     }
 
     # Cached attributes are indeed allowed when there is a custom mark/visitChildren function.
