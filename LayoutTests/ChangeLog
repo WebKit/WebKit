@@ -1,5 +1,12 @@
 2012-12-04  Emil A Eklund  <eae@chromium.org>
 
+        Unreviewed chromium rebaselines.
+
+        * platform/chromium-mac-snowleopard/fast/parser/document-write-ignores-later-network-bytes-expected.png: Added.
+        * platform/chromium-mac-snowleopard/fast/parser/document-write-ignores-later-network-bytes-expected.txt: Added.
+
+2012-12-04  Emil A Eklund  <eae@chromium.org>
+
         Unreviewed chromium expectations update.
 
         * platform/chromium/TestExpectations:
