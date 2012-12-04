@@ -129,11 +129,11 @@ EwkViewImpl::EwkViewImpl(Evas_Object* view, PassRefPtr<EwkContext> context, Pass
 #if ENABLE(VIBRATION)
     , m_vibrationClient(VibrationClientEfl::create(this))
 #endif
-    , m_backForwardList(Ewk_Back_Forward_List::create(toAPI(m_pageProxy->backForwardList())))
+    , m_backForwardList(EwkBackForwardList::create(toAPI(m_pageProxy->backForwardList())))
 #if USE(TILED_BACKING_STORE)
     , m_scaleFactor(1)
 #endif
-    , m_settings(Ewk_Settings::create(this))
+    , m_settings(EwkSettings::create(this))
     , m_cursorIdentifier(0)
     , m_mouseEventsEnabled(false)
 #if ENABLE(TOUCH_EVENTS)
@@ -171,7 +171,7 @@ EwkViewImpl::EwkViewImpl(Evas_Object* view, PassRefPtr<EwkContext> context, Pass
     setMouseEventsEnabled(true);
 
     // Listen for favicon changes.
-    Ewk_Favicon_Database* iconDatabase = m_context->faviconDatabase();
+    EwkFaviconDatabase* iconDatabase = m_context->faviconDatabase();
     ASSERT(iconDatabase);
 
     iconDatabase->watchChanges(IconChangeCallbackData(EwkViewImpl::onFaviconChanged, this));
@@ -184,7 +184,7 @@ EwkViewImpl::~EwkViewImpl()
     m_pageProxy->close();
 
     // Unregister icon change callback.
-    Ewk_Favicon_Database* iconDatabase = m_context->faviconDatabase();
+    EwkFaviconDatabase* iconDatabase = m_context->faviconDatabase();
     ASSERT(iconDatabase);
 
     iconDatabase->unwatchChanges(EwkViewImpl::onFaviconChanged);
@@ -616,7 +616,7 @@ void EwkViewImpl::setTouchEventsEnabled(bool enabled)
  */
 void EwkViewImpl::informIconChange()
 {
-    Ewk_Favicon_Database* iconDatabase = m_context->faviconDatabase();
+    EwkFaviconDatabase* iconDatabase = m_context->faviconDatabase();
     ASSERT(iconDatabase);
 
     m_faviconURL = ewk_favicon_database_icon_url_get(iconDatabase, m_url);
@@ -718,7 +718,7 @@ void EwkViewImpl::requestColorPicker(WKColorPickerResultListenerRef listener, co
     if (m_colorPicker)
         dismissColorPicker();
 
-    m_colorPicker = Ewk_Color_Picker::create(listener, color);
+    m_colorPicker = EwkColorPicker::create(listener, color);
 
     sd->api->input_picker_color_request(sd, m_colorPicker.get());
 }
@@ -790,7 +790,7 @@ void EwkViewImpl::requestPopupMenu(WebPopupMenuProxyEfl* popupMenuProxy, const I
     if (m_popupMenu)
         closePopupMenu();
 
-    m_popupMenu = Ewk_Popup_Menu::create(this, popupMenuProxy, items, selectedIndex);
+    m_popupMenu = EwkPopupMenu::create(this, popupMenuProxy, items, selectedIndex);
 
     sd->api->popup_menu_show(sd, rect, static_cast<Ewk_Text_Direction>(textDirection), pageScaleFactor, m_popupMenu.get());
 }

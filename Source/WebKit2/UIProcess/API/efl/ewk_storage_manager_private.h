@@ -50,7 +50,7 @@ private:
     explicit EwkStorageManager(WebKeyValueStorageManagerProxy* storageManagerProxy);
 
     RefPtr<WebKeyValueStorageManagerProxy> m_storageManager;
-    mutable HashMap<WKSecurityOriginRef, RefPtr<Ewk_Security_Origin> > m_wrapperCache;
+    mutable HashMap<WKSecurityOriginRef, RefPtr<EwkSecurityOrigin> > m_wrapperCache;
 };
 
 #endif // ewk_storage_manager_private_h

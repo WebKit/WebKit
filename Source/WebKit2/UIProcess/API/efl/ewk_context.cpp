@@ -63,8 +63,8 @@ static inline ContextMap& contextMap()
 
 EwkContext::EwkContext(PassRefPtr<WebContext> context)
     : m_context(context)
-    , m_databaseManager(Ewk_Database_Manager::create(m_context))
-    , m_storageManager(Ewk_Storage_Manager::create(m_context))
+    , m_databaseManager(EwkDatabaseManager::create(m_context))
+    , m_storageManager(EwkStorageManager::create(m_context))
 #if ENABLE(BATTERY_STATUS)
     , m_batteryProvider(BatteryProvider::create(m_context))
 #endif
@@ -131,15 +131,15 @@ PassRefPtr<EwkContext> EwkContext::defaultContext()
     return defaultInstance;
 }
 
-Ewk_Cookie_Manager* EwkContext::cookieManager()
+EwkCookieManager* EwkContext::cookieManager()
 {
     if (!m_cookieManager)
-        m_cookieManager = Ewk_Cookie_Manager::create(WKContextGetCookieManager(toAPI(m_context.get())));
+        m_cookieManager = EwkCookieManager::create(WKContextGetCookieManager(toAPI(m_context.get())));
 
     return m_cookieManager.get();
 }
 
-Ewk_Database_Manager* EwkContext::databaseManager()
+EwkDatabaseManager* EwkContext::databaseManager()
 {
     return m_databaseManager.get();
 }
@@ -149,7 +149,7 @@ void EwkContext::ensureFaviconDatabase()
     if (m_faviconDatabase)
         return;
 
-    m_faviconDatabase = Ewk_Favicon_Database::create(m_context.get()->iconDatabase());
+    m_faviconDatabase = EwkFaviconDatabase::create(m_context.get()->iconDatabase());
 }
 
 bool EwkContext::setFaviconDatabaseDirectoryPath(const String& databaseDirectory)
@@ -168,7 +168,7 @@ bool EwkContext::setFaviconDatabaseDirectoryPath(const String& databaseDirectory
     return true;
 }
 
-Ewk_Favicon_Database* EwkContext::faviconDatabase()
+EwkFaviconDatabase* EwkContext::faviconDatabase()
 {
     ensureFaviconDatabase();
     ASSERT(m_faviconDatabase);
@@ -176,7 +176,7 @@ Ewk_Favicon_Database* EwkContext::faviconDatabase()
     return m_faviconDatabase.get();
 }
 
-Ewk_Storage_Manager* EwkContext::storageManager() const
+EwkStorageManager* EwkContext::storageManager() const
 {
     return m_storageManager.get();
 }

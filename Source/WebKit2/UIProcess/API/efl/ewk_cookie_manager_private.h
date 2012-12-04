@@ -52,7 +52,7 @@ class EwkCookieManager {
 public:
     static PassOwnPtr<EwkCookieManager> create(WKCookieManagerRef cookieManagerRef)
     {
-        return adoptPtr(new Ewk_Cookie_Manager(cookieManagerRef));
+        return adoptPtr(new EwkCookieManager(cookieManagerRef));
     }
 
     ~EwkCookieManager();

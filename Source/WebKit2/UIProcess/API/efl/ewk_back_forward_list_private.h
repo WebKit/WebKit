@@ -27,13 +27,12 @@
 #define ewk_back_forward_list_private_h
 
 #include "WKRetainPtr.h"
-#include "ewk_back_forward_list_item.h"
 #include "ewk_back_forward_list_item_private.h"
 #include <WebKit2/WKBase.h>
 #include <wtf/HashMap.h>
 #include <wtf/PassOwnPtr.h>
 
-typedef HashMap<WKBackForwardListItemRef, RefPtr<Ewk_Back_Forward_List_Item> > ItemsMap;
+typedef HashMap<WKBackForwardListItemRef, RefPtr<EwkBackForwardListItem> > ItemsMap;
 
 class EwkBackForwardList {
 public:
@@ -42,10 +41,10 @@ public:
         return adoptPtr(new EwkBackForwardList(listRef));
     }
 
-    Ewk_Back_Forward_List_Item* previousItem() const;
-    Ewk_Back_Forward_List_Item* currentItem() const;
-    Ewk_Back_Forward_List_Item* nextItem() const;
-    Ewk_Back_Forward_List_Item* itemAt(int index) const;
+    EwkBackForwardListItem* previousItem() const;
+    EwkBackForwardListItem* currentItem() const;
+    EwkBackForwardListItem* nextItem() const;
+    EwkBackForwardListItem* itemAt(int index) const;
 
     WKRetainPtr<WKArrayRef> backList(int limit = -1) const;
     WKRetainPtr<WKArrayRef> forwardList(int limit = -1) const;
@@ -57,7 +56,7 @@ public:
 private:
     explicit EwkBackForwardList(WKBackForwardListRef listRef);
 
-    Ewk_Back_Forward_List_Item* getFromCacheOrCreate(WKBackForwardListItemRef wkItem) const;
+    EwkBackForwardListItem* getFromCacheOrCreate(WKBackForwardListItemRef wkItem) const;
 
     WKRetainPtr<WKBackForwardListRef> m_wkList;
     mutable ItemsMap m_wrapperCache;

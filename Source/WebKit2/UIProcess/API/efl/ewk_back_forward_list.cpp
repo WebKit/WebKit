@@ -39,22 +39,22 @@ EwkBackForwardList::EwkBackForwardList(WKBackForwardListRef listRef)
     : m_wkList(listRef)
 { }
 
-Ewk_Back_Forward_List_Item* EwkBackForwardList::nextItem() const
+EwkBackForwardListItem* EwkBackForwardList::nextItem() const
 {
     return getFromCacheOrCreate(WKBackForwardListGetForwardItem(m_wkList.get()));
 }
 
-Ewk_Back_Forward_List_Item* EwkBackForwardList::previousItem() const
+EwkBackForwardListItem* EwkBackForwardList::previousItem() const
 {
     return getFromCacheOrCreate(WKBackForwardListGetBackItem(m_wkList.get()));
 }
 
-Ewk_Back_Forward_List_Item* EwkBackForwardList::currentItem() const
+EwkBackForwardListItem* EwkBackForwardList::currentItem() const
 {
     return getFromCacheOrCreate(WKBackForwardListGetCurrentItem(m_wkList.get()));
 }
 
-Ewk_Back_Forward_List_Item* EwkBackForwardList::itemAt(int index) const
+EwkBackForwardListItem* EwkBackForwardList::itemAt(int index) const
 {
     return getFromCacheOrCreate(WKBackForwardListGetItemAtIndex(m_wkList.get(), index));
 }
@@ -84,12 +84,12 @@ WKRetainPtr<WKArrayRef> EwkBackForwardList::forwardList(int limit) const
     return adoptWK(WKBackForwardListCopyForwardListWithLimit(m_wkList.get(), limit));
 }
 
-Ewk_Back_Forward_List_Item* EwkBackForwardList::getFromCacheOrCreate(WKBackForwardListItemRef wkItem) const
+EwkBackForwardListItem* EwkBackForwardList::getFromCacheOrCreate(WKBackForwardListItemRef wkItem) const
 {
     if (!wkItem)
         return 0;
 
-    RefPtr<Ewk_Back_Forward_List_Item> item = m_wrapperCache.get(wkItem);
+    RefPtr<EwkBackForwardListItem> item = m_wrapperCache.get(wkItem);
     if (!item) {
         item = EwkBackForwardListItem::create(wkItem);
         m_wrapperCache.set(wkItem, item);
@@ -108,7 +108,7 @@ Eina_List* EwkBackForwardList::createEinaList(WKArrayRef wkList) const
     const size_t count = WKArrayGetSize(wkList);
     for (size_t i = 0; i < count; ++i) {
         WKBackForwardListItemRef wkItem = static_cast<WKBackForwardListItemRef>(WKArrayGetItemAtIndex(wkList, i));
-        Ewk_Back_Forward_List_Item* item = getFromCacheOrCreate(wkItem);
+        EwkBackForwardListItem* item = getFromCacheOrCreate(wkItem);
         result = eina_list_append(result, ewk_object_ref(item));
     }
 

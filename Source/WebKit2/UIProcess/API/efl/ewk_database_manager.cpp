@@ -32,7 +32,6 @@
 #include "WebDatabaseManagerProxy.h"
 #include "ewk_database_manager_private.h"
 #include "ewk_error_private.h"
-#include "ewk_security_origin.h"
 #include "ewk_security_origin_private.h"
 
 using namespace WebKit;
@@ -53,7 +52,7 @@ Eina_List* EwkDatabaseManager::createOriginList(WKArrayRef origins) const
 
     for (size_t i = 0; i < length; ++i) {
         WKSecurityOriginRef wkOriginRef = static_cast<WKSecurityOriginRef>(WKArrayGetItemAtIndex(origins, i));
-        RefPtr<Ewk_Security_Origin> origin = m_wrapperCache.get(wkOriginRef);
+        RefPtr<EwkSecurityOrigin> origin = m_wrapperCache.get(wkOriginRef);
         if (!origin) {
             origin = EwkSecurityOrigin::create(wkOriginRef);
             m_wrapperCache.set(wkOriginRef, origin);
@@ -80,7 +79,7 @@ static void getDatabaseOriginsCallback(WKArrayRef origins, WKErrorRef wkError, v
 {
     OwnPtr<Ewk_Database_Origins_Async_Get_Context*> webDatabaseContext = adoptPtr(static_cast<Ewk_Database_Origins_Async_Get_Context*>(context));
     Eina_List* originList = webDatabaseContext->manager->createOriginList(origins);
-    OwnPtr<Ewk_Error> ewkError = Ewk_Error::create(wkError);
+    OwnPtr<EwkError> ewkError = EwkError::create(wkError);
     webDatabaseContext->callback(originList, ewkError.get(), webDatabaseContext->userData);
 }
 

@@ -110,7 +110,7 @@ void EwkCookieManager::getHTTPAcceptPolicy(WKCookieManagerGetHTTPCookieAcceptPol
 
 void EwkCookieManager::cookiesDidChange(WKCookieManagerRef, const void* clientInfo)
 {
-    Ewk_Cookie_Manager* manager = static_cast<Ewk_Cookie_Manager*>(const_cast<void*>(clientInfo));
+    EwkCookieManager* manager = static_cast<EwkCookieManager*>(const_cast<void*>(clientInfo));
 
     if (!manager->isWatchingForChanges())
         return;
@@ -155,7 +155,7 @@ struct Get_Policy_Async_Data {
 static void getAcceptPolicyCallback(WKHTTPCookieAcceptPolicy policy, WKErrorRef wkError, void* data)
 {
     Get_Policy_Async_Data* callbackData = static_cast<Get_Policy_Async_Data*>(data);
-    OwnPtr<Ewk_Error> ewkError = Ewk_Error::create(wkError);
+    OwnPtr<EwkError> ewkError = EwkError::create(wkError);
 
     callbackData->callback(static_cast<Ewk_Cookie_Accept_Policy>(policy), ewkError.get(), callbackData->userData);
 
@@ -185,7 +185,7 @@ static void getHostnamesWithCookiesCallback(WKArrayRef wkHostnames, WKErrorRef w
 {
     Eina_List* hostnames = 0;
     Get_Hostnames_Async_Data* callbackData = static_cast<Get_Hostnames_Async_Data*>(context);
-    OwnPtr<Ewk_Error> ewkError = Ewk_Error::create(wkError);
+    OwnPtr<EwkError> ewkError = EwkError::create(wkError);
 
     const size_t hostnameCount = WKArrayGetSize(wkHostnames);
     for (size_t i = 0; i < hostnameCount; ++i) {

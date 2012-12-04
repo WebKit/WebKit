@@ -29,7 +29,7 @@
 #include "WKDatabaseManager.h"
 #include "WebContext.h"
 #include "WebDatabaseManagerProxy.h"
-#include "ewk_security_origin.h"
+#include "ewk_security_origin_private.h"
 #include <WebKit2/WKBase.h>
 #include <wtf/PassOwnPtr.h>
 
@@ -50,6 +50,6 @@ private:
     explicit EwkDatabaseManager(WebDatabaseManagerProxy*);
 
     RefPtr<WebDatabaseManagerProxy> m_databaseManager;
-    mutable HashMap<WKSecurityOriginRef, RefPtr<Ewk_Security_Origin> > m_wrapperCache;
+    mutable HashMap<WKSecurityOriginRef, RefPtr<EwkSecurityOrigin> > m_wrapperCache;
 };
 #endif // ewk_database_manager_private_h

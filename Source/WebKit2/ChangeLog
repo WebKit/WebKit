@@ -1,3 +1,60 @@
+2012-12-04  Jaehun Lim  <ljaehun.lim@samsung.com>
+
+        [EFL][WK2] Use consistent class names inside Ewk classes
+        https://bugs.webkit.org/show_bug.cgi?id=103015
+
+        Reviewed by Gyuyoung Kim.
+
+        WebKit EFL doesn't use '_' in class names.
+        This patch removes the remaining uses of '_' inside Ewk classes.
+
+        * UIProcess/API/efl/EwkViewImpl.cpp:
+        (EwkViewImpl::EwkViewImpl):
+        (EwkViewImpl::~EwkViewImpl):
+        (EwkViewImpl::informIconChange):
+        (EwkViewImpl::requestColorPicker):
+        (EwkViewImpl::requestPopupMenu):
+        * UIProcess/API/efl/ewk_back_forward_list.cpp:
+        (EwkBackForwardList::nextItem):
+        (EwkBackForwardList::previousItem):
+        (EwkBackForwardList::currentItem):
+        (EwkBackForwardList::itemAt):
+        (EwkBackForwardList::getFromCacheOrCreate):
+        (EwkBackForwardList::createEinaList):
+        * UIProcess/API/efl/ewk_back_forward_list_private.h:
+        (EwkBackForwardList):
+        * UIProcess/API/efl/ewk_context.cpp:
+        (EwkContext::EwkContext):
+        (EwkContext::cookieManager):
+        (EwkContext::databaseManager):
+        (EwkContext::ensureFaviconDatabase):
+        (EwkContext::faviconDatabase):
+        (EwkContext::storageManager):
+        * UIProcess/API/efl/ewk_context_private.h:
+        (EwkContext):
+        * UIProcess/API/efl/ewk_cookie_manager.cpp:
+        (EwkCookieManager::cookiesDidChange):
+        (getAcceptPolicyCallback):
+        (getHostnamesWithCookiesCallback):
+        * UIProcess/API/efl/ewk_cookie_manager_private.h:
+        (EwkCookieManager::create):
+        * UIProcess/API/efl/ewk_database_manager.cpp:
+        (EwkDatabaseManager::createOriginList):
+        (getDatabaseOriginsCallback):
+        * UIProcess/API/efl/ewk_database_manager_private.h:
+        (EwkDatabaseManager):
+        * UIProcess/API/efl/ewk_favicon_database.cpp:
+        (EwkFaviconDatabase::didChangeIconForPageURL):
+        (EwkFaviconDatabase::iconDataReadyForPageURL):
+        * UIProcess/API/efl/ewk_popup_menu.cpp:
+        (EwkPopupMenu::EwkPopupMenu):
+        (EwkPopupMenu::~EwkPopupMenu):
+        * UIProcess/API/efl/ewk_storage_manager.cpp:
+        (EwkStorageManager::createOriginList):
+        (getStorageOriginsCallback):
+        * UIProcess/API/efl/ewk_storage_manager_private.h:
+        (EwkStorageManager):
+
 2012-12-03  Huang Dongsung  <luxtella@company100.net>
 
         Coordinated Graphics: Reorder messages to LayerTreeCoordinatorProxy

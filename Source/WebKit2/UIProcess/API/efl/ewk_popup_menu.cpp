@@ -42,14 +42,14 @@ EwkPopupMenu::EwkPopupMenu(EwkViewImpl* viewImpl, WebPopupMenuProxyEfl* popupMen
 {
     const size_t size = items.size();
     for (size_t i = 0; i < size; ++i)
-        m_popupMenuItems = eina_list_append(m_popupMenuItems, Ewk_Popup_Menu_Item::create(items[i]).leakPtr());
+        m_popupMenuItems = eina_list_append(m_popupMenuItems, EwkPopupMenuItem::create(items[i]).leakPtr());
 }
 
 EwkPopupMenu::~EwkPopupMenu()
 {
     void* item;
     EINA_LIST_FREE(m_popupMenuItems, item)
-        delete static_cast<Ewk_Popup_Menu_Item*>(item);
+        delete static_cast<EwkPopupMenuItem*>(item);
 }
 
 void EwkPopupMenu::close()
