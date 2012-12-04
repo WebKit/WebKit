@@ -424,6 +424,29 @@ EAPI Eina_Bool ewk_settings_local_storage_enabled_set(Ewk_Settings *settings, Ei
  */
 EAPI Eina_Bool ewk_settings_local_storage_enabled_get(const Ewk_Settings *settings);
 
+/**
+ * Toggles plug-ins support.
+ *
+ * By default, plug-ins support is enabled.
+ *
+ * @param settings settings object to set plug-ins support
+ * @param enable @c EINA_TRUE to enable plug-ins support
+ *        @c EINA_FALSE to disable
+ *
+ * @return @c EINA_TRUE on success or @c EINA_FALSE on failure
+ */
+EAPI Eina_Bool ewk_settings_plugins_enabled_set(Ewk_Settings *settings, Eina_Bool enable);
+
+/**
+ * Returns whether plug-ins support is enabled or not.
+ *
+ * @param settings settings object to query whether plug-ins support is enabled
+ *
+ * @return @c EINA_TRUE if plug-ins support is enabled
+ *         @c EINA_FALSE if not or on failure
+ */
+EAPI Eina_Bool ewk_settings_plugins_enabled_get(const Ewk_Settings *settings);
+
 #ifdef __cplusplus
 }
 #endif

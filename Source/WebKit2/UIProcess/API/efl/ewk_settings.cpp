@@ -348,3 +348,19 @@ Eina_Bool ewk_settings_local_storage_enabled_get(const Ewk_Settings* settings)
 
     return settings->preferences()->localStorageEnabled();
 }
+
+Eina_Bool ewk_settings_plugins_enabled_set(Ewk_Settings* settings, Eina_Bool enable)
+{
+    EINA_SAFETY_ON_NULL_RETURN_VAL(settings, false);
+
+    settings->preferences()->setPluginsEnabled(enable);
+
+    return true;
+}
+
+Eina_Bool ewk_settings_plugins_enabled_get(const Ewk_Settings* settings)
+{
+    EINA_SAFETY_ON_NULL_RETURN_VAL(settings, false);
+
+    return settings->preferences()->pluginsEnabled();
+}

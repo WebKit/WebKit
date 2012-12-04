@@ -221,3 +221,17 @@ TEST_F(EWK2UnitTestBase, ewk_settings_local_storage_enabled)
     ASSERT_TRUE(ewk_settings_local_storage_enabled_set(settings, true));
     ASSERT_TRUE(ewk_settings_local_storage_enabled_get(settings));
 }
+
+TEST_F(EWK2UnitTestBase, ewk_settings_plugins_enabled)
+{
+    Ewk_Settings* settings = ewk_view_settings_get(webView());
+
+    // Plug-ins support is enabled by default.
+    ASSERT_TRUE(ewk_settings_plugins_enabled_get(settings));
+
+    ASSERT_TRUE(ewk_settings_plugins_enabled_set(settings, true));
+    ASSERT_TRUE(ewk_settings_plugins_enabled_get(settings));
+
+    ASSERT_TRUE(ewk_settings_plugins_enabled_set(settings, false));
+    ASSERT_FALSE(ewk_settings_plugins_enabled_get(settings));
+}
