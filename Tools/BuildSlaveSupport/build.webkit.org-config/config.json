@@ -62,6 +62,7 @@
                     { "name": "google-linux-perf", "platform": "chromium-linux" },
                     { "name": "google-linux-android", "platform": "chromium-android" },
                     { "name": "google-android-tests", "platform": "chromium-android" },
+                    { "name": "google-android-perf", "platform": "chromium-android" },
 
                     { "name": "wincairo-1", "platform": "wincairo" },
 
@@ -298,12 +299,18 @@
                     {
                       "name": "Chromium Android Release", "type": "Build", "builddir": "chromium-linux-android",
                       "platform": "chromium-android", "configuration": "release", "architectures": ["i386"],
-                      "triggers": ["chromium-android-release-tests"], "slavenames": ["google-linux-android"]
+                      "triggers": ["chromium-android-release-tests", "chromium-android-release-perf"],
+                      "slavenames": ["google-linux-android"]
                     },
                     {
                       "name": "Chromium Android Release (Tests)", "type": "Test", "builddir": "chromium-android-release-tests",
                       "platform": "chromium-android", "configuration": "release", "architectures": ["i386"],
                       "slavenames": ["google-android-tests"]
+                    },
+                    {
+                      "name": "Chromium Android Release (Perf)", "type": "DownloadAndPerfTest", "builddir": "chromium-android-release-perf",
+                      "platform": "chromium-android", "configuration": "release", "architectures": ["i386"],
+                      "slavenames": ["google-android-perf"]
                     },
                     {
                       "name": "WinCairo Release", "type": "BuildAndTest", "builddir": "win-cairo-release",
@@ -413,6 +420,9 @@
                     },
                     { "type": "Triggerable", "name": "chromium-android-release-tests",
                       "builderNames": ["Chromium Android Release (Tests)"]
+                    },
+                    { "type": "Triggerable", "name": "chromium-android-release-perf",
+                      "builderNames": ["Chromium Android Release (Perf)"]
                     },
                     { "type": "Triggerable", "name": "gtk-linux-64-release-tests-wk2",
                       "builderNames": ["GTK Linux 64-bit Release WK2 (Tests)"]
