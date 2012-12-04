@@ -1,3 +1,25 @@
+2012-12-04  Zan Dobersek  <zandobersek@gmail.com>
+
+        [GTK] Insert the jhbuild wrapper command at the beginning of the command list
+        https://bugs.webkit.org/show_bug.cgi?id=103991
+
+        Reviewed by Martin Robinson.
+
+        Insert the Tools/gtk/run-with-jhbuild wrapper at the beginning of the
+        command that's being formed in multiprocessing bootstrap. The wrapper is
+        an executable Python script while the command being wrapped perhaps isn't
+        and therefore requires the Python interpreter to be listed at the beginning
+        of the command sublist that is then executed by the wrapper.
+
+        Specifically, the webkitpy/layout_tests/run_webkit_tests.py module file
+        is about to lose the executable bit and the Python-signaling shebang line.
+        The Jhbuild wrapper simply executes the command that's passed, but that errs
+        in this case unless the Python executable is executed and the module file
+        is passed to it as an argument.
+
+        * Scripts/webkitpy/common/multiprocessing_bootstrap.py:
+        (run):
+
 2012-12-04  Peter Beverloo  <peter@chromium.org>
 
         Add the Chromium Android Release (Perf) bot
