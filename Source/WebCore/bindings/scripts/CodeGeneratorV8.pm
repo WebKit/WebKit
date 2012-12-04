@@ -589,7 +589,7 @@ END
 inline v8::Handle<v8::Value> toV8Fast(${nativeType}* impl, const v8::AccessorInfo& info, Node* holder)
 {
     if (UNLIKELY(!impl))
-        return v8::Null(info.GetIsolate());
+        return v8Null(info.GetIsolate());
     // What we'd really like to check here is whether we're in the main world or
     // in an isolated world. The fastest way we know how to do that is to check
     // whether the holder's inline wrapper is the same wrapper we see in the
@@ -971,7 +971,7 @@ END
 
     # Generate security checks if necessary
     if ($attribute->signature->extendedAttributes->{"CheckSecurityForNode"}) {
-        push(@implContentDecls, "    if (!BindingSecurity::shouldAllowAccessToNode(BindingState::instance(), imp->" . $attribute->signature->name . "()))\n        return v8::Handle<v8::Value>(v8::Null(info.GetIsolate()));\n\n");
+        push(@implContentDecls, "    if (!BindingSecurity::shouldAllowAccessToNode(BindingState::instance(), imp->" . $attribute->signature->name . "()))\n        return v8::Handle<v8::Value>(v8Null(info.GetIsolate()));\n\n");
     }
 
     my $useExceptions = 1 if @{$attribute->getterExceptions};
@@ -1125,7 +1125,7 @@ END
         my $getterFunc = $codeGenerator->WK_lcfirst($attribute->signature->name);
         push(@implContentDecls, <<END);
     SerializedScriptValue* serialized = imp->${getterFunc}();
-    value = serialized ? serialized->deserialize() : v8::Handle<v8::Value>(v8::Null(info.GetIsolate()));
+    value = serialized ? serialized->deserialize() : v8::Handle<v8::Value>(v8Null(info.GetIsolate()));
     info.Holder()->SetHiddenValue(propertyName, value);
     return value;
 END
@@ -1608,7 +1608,7 @@ END
 
     if ($function->signature->extendedAttributes->{"CheckSecurityForNode"}) {
         push(@implContentDecls, "    if (!BindingSecurity::shouldAllowAccessToNode(BindingState::instance(), imp->" . $function->signature->name . "(ec)))\n");
-        push(@implContentDecls, "        return v8::Handle<v8::Value>(v8::Null(args.GetIsolate()));\n");
+        push(@implContentDecls, "        return v8::Handle<v8::Value>(v8Null(args.GetIsolate()));\n");
 END
     }
 
@@ -4118,12 +4118,12 @@ sub NativeToJSValue
 
     if ($type eq "EventListener") {
         AddToImplIncludes("V8AbstractEventListener.h");
-        return "${value} ? v8::Handle<v8::Value>(static_cast<V8AbstractEventListener*>(${value})->getListenerObject(imp->scriptExecutionContext())) : v8::Handle<v8::Value>(" . ($getIsolate ? "v8::Null($getIsolate)" : "v8::Null()") . ")";
+        return "${value} ? v8::Handle<v8::Value>(static_cast<V8AbstractEventListener*>(${value})->getListenerObject(imp->scriptExecutionContext())) : v8::Handle<v8::Value>(" . ($getIsolate ? "v8Null($getIsolate)" : "v8::Null()") . ")";
     }
 
     if ($type eq "SerializedScriptValue") {
         AddToImplIncludes("$type.h");
-        return "$value ? $value->deserialize() : v8::Handle<v8::Value>(" . ($getIsolate ? "v8::Null($getIsolate)" : "v8::Null()") . ")";
+        return "$value ? $value->deserialize() : v8::Handle<v8::Value>(" . ($getIsolate ? "v8Null($getIsolate)" : "v8::Null()") . ")";
     }
 
     AddToImplIncludes("wtf/RefCounted.h");

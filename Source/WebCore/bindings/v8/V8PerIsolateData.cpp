@@ -57,6 +57,7 @@ V8PerIsolateData::V8PerIsolateData(v8::Isolate* isolate)
     , m_gcEventData(adoptPtr(new GCEventData()))
     , m_shouldCollectGarbageSoon(false)
 {
+    m_v8Null.set(v8::Null(isolate));
 }
 
 V8PerIsolateData::~V8PerIsolateData()

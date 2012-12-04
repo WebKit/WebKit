@@ -72,13 +72,21 @@ namespace WebCore {
     // A helper for throwing JavaScript TypeError for not enough arguments.
     v8::Handle<v8::Value> throwNotEnoughArgumentsError(v8::Isolate*);
 
+    // A fast accessor for v8::Null(isolate). isolate must not be 0.
+    // If isolate can be 0, use v8NullWithCheck().
+    inline v8::Handle<v8::Value> v8Null(v8::Isolate* isolate)
+    {
+        ASSERT(isolate);
+        return V8PerIsolateData::from(isolate)->v8Null();
+    }
+
     // Since v8::Null(isolate) crashes if we pass a null isolate,
     // we need to use v8NullWithCheck(isolate) if an isolate can be null.
     //
     // FIXME: Remove all null isolates from V8 bindings, and remove v8NullWithCheck(isolate).
     inline v8::Handle<v8::Value> v8NullWithCheck(v8::Isolate* isolate)
     {
-        return isolate ? v8::Null(isolate) : v8::Null();
+        return isolate ? v8Null(isolate) : v8::Handle<v8::Value>(v8::Null());
     }
 
     // Convert v8 types to a WTF::String. If the V8 string is not already

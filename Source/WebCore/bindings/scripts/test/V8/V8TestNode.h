@@ -83,7 +83,7 @@ inline v8::Handle<v8::Value> toV8(TestNode* impl, v8::Handle<v8::Object> creatio
 inline v8::Handle<v8::Value> toV8Fast(TestNode* impl, const v8::AccessorInfo& info, Node* holder)
 {
     if (UNLIKELY(!impl))
-        return v8::Null(info.GetIsolate());
+        return v8Null(info.GetIsolate());
     // What we'd really like to check here is whether we're in the main world or
     // in an isolated world. The fastest way we know how to do that is to check
     // whether the holder's inline wrapper is the same wrapper we see in the

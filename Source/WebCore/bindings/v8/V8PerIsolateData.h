@@ -78,6 +78,8 @@ public:
     StringCache* stringCache() { return m_stringCache.get(); }
     IntegerCache* integerCache() { return m_integerCache.get(); }
 
+    v8::Handle<v8::Value> v8Null() { return m_v8Null.get(); }
+
     v8::Persistent<v8::Value> ensureLiveRoot();
 
 #if ENABLE(INSPECTOR)
@@ -138,6 +140,7 @@ private:
     v8::Persistent<v8::FunctionTemplate> m_lazyEventListenerToStringTemplate;
     OwnPtr<StringCache> m_stringCache;
     OwnPtr<IntegerCache> m_integerCache;
+    ScopedPersistent<v8::Value> m_v8Null;
 
     Vector<DOMDataStore*> m_domDataList;
     DOMDataStore* m_domDataStore;
