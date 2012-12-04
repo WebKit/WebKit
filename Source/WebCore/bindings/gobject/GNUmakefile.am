@@ -397,6 +397,7 @@ webkitgtk_built_h_api += \
 	DerivedSources/webkit/WebKitDOMNavigator.h \
 	DerivedSources/webkit/WebKitDOMPropertyNodeList.h \
 	DerivedSources/webkit/WebKitDOMScreen.h \
+	DerivedSources/webkit/WebKitDOMShadowRoot.h \
 	DerivedSources/webkit/WebKitDOMWebKitAnimation.h \
 	DerivedSources/webkit/WebKitDOMWebKitAnimationList.h \
 	DerivedSources/webkit/WebKitDOMWebKitPoint.h \
