@@ -273,6 +273,8 @@ sub listAllTests()
        if ($line =~ m/\.$/) {
           $suite = $line; # "SuiteName."
        } else {
+          # Disabling WebKit2 API test on Windows since we will be disabling WebKit2 on Windows.
+          next if (isAppleWinWebKit() && $suite =~ m/WebKit2*/);       
           $line =~ s/^\s*//; # "TestName"
           push @tests, $suite . $line; # "SuiteName.TestName"
         }
