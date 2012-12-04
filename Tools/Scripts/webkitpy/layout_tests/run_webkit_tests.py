@@ -435,5 +435,6 @@ if '__main__' == __name__:
         sys.exit(main())
     except KeyboardInterrupt:
         sys.exit(INTERRUPTED_EXIT_STATUS)
-    except:
-        sys.exit(EXCEPTIONAL_EXIT_STATUS)
+    except BaseException, e:
+        if e.__class__ is not SystemExit:
+            sys.exit(EXCEPTIONAL_EXIT_STATUS)

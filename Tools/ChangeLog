@@ -1,3 +1,18 @@
+2012-12-03  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed, functionality fix after r136437.
+
+        Calling sys.exit actually raises a SystemExit exception that
+        is then handled in the second block and causes the script to
+        return an 'exceptional' exit code rather than the code presenting
+        the number of failed tests.
+
+        This is just a temporary fix to get the faultless bots green while
+        they are unnecessarily red at the moment. The problem and a proper
+        fix will be properly addressed.
+
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+
 2012-12-03  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r136460.
