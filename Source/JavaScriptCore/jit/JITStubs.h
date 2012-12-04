@@ -57,8 +57,8 @@ namespace JSC {
     class JSStack;
     class JSValue;
     class JSValueEncodedAsPointer;
+    class LegacyProfiler;
     class NativeExecutable;
-    class Profiler;
     class PropertySlot;
     class PutPropertySlot;
     class RegExp;

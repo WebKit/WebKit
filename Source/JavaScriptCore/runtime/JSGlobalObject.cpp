@@ -58,6 +58,7 @@
 #include "JSNameScope.h"
 #include "JSONObject.h"
 #include "JSWithScope.h"
+#include "LegacyProfiler.h"
 #include "Lookup.h"
 #include "MathObject.h"
 #include "NameConstructor.h"
@@ -69,7 +70,6 @@
 #include "NumberPrototype.h"
 #include "ObjectConstructor.h"
 #include "ObjectPrototype.h"
-#include "Profiler.h"
 #include "RegExpConstructor.h"
 #include "RegExpMatchesArray.h"
 #include "RegExpObject.h"
@@ -122,7 +122,7 @@ JSGlobalObject::~JSGlobalObject()
     if (m_debugger)
         m_debugger->detach(this);
 
-    if (Profiler* profiler = globalData().enabledProfiler())
+    if (LegacyProfiler* profiler = globalData().enabledProfiler())
         profiler->stopProfiling(this);
 }
 

@@ -29,7 +29,7 @@
 #include "config.h"
 #include "ProfileNode.h"
 
-#include "Profiler.h"
+#include "LegacyProfiler.h"
 #include <stdio.h>
 #include <wtf/DateMath.h>
 #include <wtf/DataLog.h>

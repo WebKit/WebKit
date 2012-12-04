@@ -30,8 +30,8 @@
 #include "CallFrame.h"
 #include "JSValue.h"
 #include "Disassembler.h"
+#include "LegacyProfiler.h"
 #include "MacroAssemblerCodeRef.h"
-#include "Profiler.h"
 #endif
 
 namespace JSC {

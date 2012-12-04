@@ -1550,11 +1550,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\profiler\Profiler.cpp"
+				RelativePath="..\..\profiler\LegacyProfiler.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\profiler\Profiler.h"
+				RelativePath="..\..\profiler\LegacyProfiler.h"
 				>
 			</File>
 		</Filter>

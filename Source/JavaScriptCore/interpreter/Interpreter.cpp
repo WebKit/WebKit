@@ -52,12 +52,12 @@
 #include "JSString.h"
 #include "JSWithScope.h"
 #include "LLIntCLoop.h"
+#include "LegacyProfiler.h"
 #include "LiteralParser.h"
 #include "NameInstance.h"
 #include "ObjectPrototype.h"
 #include "Operations.h"
 #include "Parser.h"
-#include "Profiler.h"
 #include "RegExpObject.h"
 #include "RegExpPrototype.h"
 #include "Register.h"
@@ -773,13 +773,13 @@ NEVER_INLINE HandlerInfo* Interpreter::throwException(CallFrame*& callFrame, JSV
     HandlerInfo* handler = 0;
     while (isInterrupt || !(handler = codeBlock->handlerForBytecodeOffset(bytecodeOffset))) {
         if (!unwindCallFrame(callFrame, exceptionValue, bytecodeOffset, codeBlock)) {
-            if (Profiler* profiler = callFrame->globalData().enabledProfiler())
+            if (LegacyProfiler* profiler = callFrame->globalData().enabledProfiler())
                 profiler->exceptionUnwind(callFrame);
             return 0;
         }
     }
 
-    if (Profiler* profiler = callFrame->globalData().enabledProfiler())
+    if (LegacyProfiler* profiler = callFrame->globalData().enabledProfiler())
         profiler->exceptionUnwind(callFrame);
 
     // Unwind the scope chain within the exception handler's call frame.
@@ -966,7 +966,7 @@ failedJSONP:
     // Set the arguments for the callee:
     newCallFrame->setThisValue(thisObj);
 
-    if (Profiler* profiler = globalData.enabledProfiler())
+    if (LegacyProfiler* profiler = globalData.enabledProfiler())
         profiler->willExecute(callFrame, program->sourceURL(), program->lineNo());
 
     // Execute the code:
@@ -981,7 +981,7 @@ failedJSONP:
 #endif // ENABLE(JIT)
     }
 
-    if (Profiler* profiler = globalData.enabledProfiler())
+    if (LegacyProfiler* profiler = globalData.enabledProfiler())
         profiler->didExecute(callFrame, program->sourceURL(), program->lineNo());
 
     m_stack.popFrame(newCallFrame);
@@ -1037,7 +1037,7 @@ JSValue Interpreter::executeCall(CallFrame* callFrame, JSObject* function, CallT
     for (size_t i = 0; i < args.size(); ++i)
         newCallFrame->setArgument(i, args.at(i));
 
-    if (Profiler* profiler = globalData.enabledProfiler())
+    if (LegacyProfiler* profiler = globalData.enabledProfiler())
         profiler->willExecute(callFrame, function);
 
     JSValue result;
@@ -1055,7 +1055,7 @@ JSValue Interpreter::executeCall(CallFrame* callFrame, JSObject* function, CallT
             result = JSValue::decode(callData.native.function(newCallFrame));
     }
 
-    if (Profiler* profiler = globalData.enabledProfiler())
+    if (LegacyProfiler* profiler = globalData.enabledProfiler())
         profiler->didExecute(callFrame, function);
 
     m_stack.popFrame(newCallFrame);
@@ -1112,7 +1112,7 @@ JSObject* Interpreter::executeConstruct(CallFrame* callFrame, JSObject* construc
     for (size_t i = 0; i < args.size(); ++i)
         newCallFrame->setArgument(i, args.at(i));
 
-    if (Profiler* profiler = globalData.enabledProfiler())
+    if (LegacyProfiler* profiler = globalData.enabledProfiler())
         profiler->willExecute(callFrame, constructor);
 
     JSValue result;
@@ -1131,7 +1131,7 @@ JSObject* Interpreter::executeConstruct(CallFrame* callFrame, JSObject* construc
         }
     }
 
-    if (Profiler* profiler = globalData.enabledProfiler())
+    if (LegacyProfiler* profiler = globalData.enabledProfiler())
         profiler->didExecute(callFrame, constructor);
 
     m_stack.popFrame(newCallFrame);
@@ -1198,7 +1198,7 @@ JSValue Interpreter::execute(CallFrameClosure& closure)
     closure.resetCallFrame();
     m_stack.validateFence(closure.newCallFrame, "STEP 1");
 
-    if (Profiler* profiler = globalData.enabledProfiler())
+    if (LegacyProfiler* profiler = globalData.enabledProfiler())
         profiler->willExecute(closure.oldCallFrame, closure.function);
 
     // The code execution below may push more frames and point the topCallFrame
@@ -1223,7 +1223,7 @@ JSValue Interpreter::execute(CallFrameClosure& closure)
 #endif // ENABLE(JIT)
     }
 
-    if (Profiler* profiler = globalData.enabledProfiler())
+    if (LegacyProfiler* profiler = globalData.enabledProfiler())
         profiler->didExecute(closure.oldCallFrame, closure.function);
 
     m_stack.validateFence(closure.newCallFrame, "AFTER");
@@ -1304,7 +1304,7 @@ JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSValue
     // Set the arguments for the callee:
     newCallFrame->setThisValue(thisValue);
 
-    if (Profiler* profiler = globalData.enabledProfiler())
+    if (LegacyProfiler* profiler = globalData.enabledProfiler())
         profiler->willExecute(callFrame, eval->sourceURL(), eval->lineNo());
 
     // Execute the code:
@@ -1319,7 +1319,7 @@ JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSValue
 #endif // ENABLE(JIT)
     }
 
-    if (Profiler* profiler = globalData.enabledProfiler())
+    if (LegacyProfiler* profiler = globalData.enabledProfiler())
         profiler->didExecute(callFrame, eval->sourceURL(), eval->lineNo());
 
     m_stack.popFrame(newCallFrame);

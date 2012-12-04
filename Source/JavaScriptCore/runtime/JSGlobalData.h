@@ -72,9 +72,9 @@ namespace JSC {
     class JSObject;
     class Keywords;
     class LLIntOffsetsExtractor;
+    class LegacyProfiler;
     class NativeExecutable;
     class ParserArena;
-    class Profiler;
     class RegExpCache;
     class Stringifier;
     class Structure;
@@ -263,7 +263,7 @@ namespace JSC {
             return m_inDefineOwnProperty;
         }
 
-        Profiler* enabledProfiler()
+        LegacyProfiler* enabledProfiler()
         {
             return m_enabledProfiler;
         }
@@ -351,7 +351,7 @@ namespace JSC {
         String cachedDateString;
         double cachedDateStringValue;
 
-        Profiler* m_enabledProfiler;
+        LegacyProfiler* m_enabledProfiler;
         RegExpCache* m_regExpCache;
         BumpPointerAllocator m_regExpAllocator;
 

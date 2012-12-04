@@ -185,7 +185,7 @@ SOURCES += \
     profiler/Profile.cpp \
     profiler/ProfileGenerator.cpp \
     profiler/ProfileNode.cpp \
-    profiler/Profiler.cpp \
+    profiler/LegacyProfiler.cpp \
     runtime/ArgList.cpp \
     runtime/Arguments.cpp \
     runtime/ArrayConstructor.cpp \

@@ -27,20 +27,20 @@
 #include "JSProfilerPrivate.h"
 
 #include "APICast.h"
+#include "LegacyProfiler.h"
 #include "OpaqueJSString.h"
-#include "Profiler.h"
 
 using namespace JSC;
 
 void JSStartProfiling(JSContextRef ctx, JSStringRef title)
 {
-    Profiler::profiler()->startProfiling(toJS(ctx), title->string());
+    LegacyProfiler::profiler()->startProfiling(toJS(ctx), title->string());
 }
 
 void JSEndProfiling(JSContextRef ctx, JSStringRef title)
 {
     ExecState* exec = toJS(ctx);
-    Profiler* profiler = Profiler::profiler();
+    LegacyProfiler* profiler = LegacyProfiler::profiler();
     profiler->stopProfiling(exec, title->string());
 }
 

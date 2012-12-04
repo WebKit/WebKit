@@ -48,8 +48,8 @@
 #include "Interpreter.h"
 #include "JITDisassembler.h"
 #include "JSInterfaceJIT.h"
+#include "LegacyProfiler.h"
 #include "Opcode.h"
-#include "Profiler.h"
 #include <bytecode/SamplingTool.h>
 
 namespace JSC {

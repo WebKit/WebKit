@@ -37,7 +37,7 @@
 #include "Page.h"
 #include "ScriptObject.h"
 #include "ScriptState.h"
-#include <profiler/Profiler.h>
+#include <profiler/LegacyProfiler.h>
 #include <wtf/Forward.h>
 
 namespace WebCore {
@@ -59,7 +59,7 @@ unsigned ScriptProfiler::getHeapObjectId(const ScriptValue&)
 
 void ScriptProfiler::start(ScriptState* state, const String& title)
 {
-    JSC::Profiler::profiler()->startProfiling(state, title);
+    JSC::LegacyProfiler::profiler()->startProfiling(state, title);
 }
 
 void ScriptProfiler::startForPage(Page* inspectedPage, const String& title)
@@ -77,7 +77,7 @@ void ScriptProfiler::startForWorkerContext(WorkerContext* context, const String&
 
 PassRefPtr<ScriptProfile> ScriptProfiler::stop(ScriptState* state, const String& title)
 {
-    RefPtr<JSC::Profile> profile = JSC::Profiler::profiler()->stopProfiling(state, title);
+    RefPtr<JSC::Profile> profile = JSC::LegacyProfiler::profiler()->stopProfiling(state, title);
     return ScriptProfile::create(profile);
 }
 

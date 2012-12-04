@@ -303,7 +303,7 @@ EXPORTS
     ?parseDoubleFromLongString@Internal@WTF@@YANPB_WIAAI@Z
     ?positiveInfiniteTime@MediaTime@WTF@@SAABV12@XZ 
     ?process@InstrumentedPointerBase@MemoryInstrumentation@WTF@@QAEXPAV23@@Z
-    ?profiler@Profiler@JSC@@SAPAV12@XZ
+    ?profiler@LegacyProfiler@JSC@@SAPAV12@XZ
     ?protect@Heap@JSC@@QAEXVJSValue@2@@Z
     ?protectedGlobalObjectCount@Heap@JSC@@QAEIXZ
     ?protectedObjectCount@Heap@JSC@@QAEIXZ
@@ -368,9 +368,9 @@ EXPORTS
     ?slowValidateCell@JSC@@YAXPAVJSCell@1@@Z
     ?slowValidateCell@JSC@@YAXPAVJSGlobalObject@1@@Z
     ?sourceCode@JSFunction@JSC@@QBEPBVSourceCode@2@XZ
-    ?startProfiling@Profiler@JSC@@QAEXPAVExecState@2@ABVString@WTF@@@Z
+    ?startProfiling@LegacyProfiler@JSC@@QAEXPAVExecState@2@ABVString@WTF@@@Z
     ?startSampling@JSGlobalData@JSC@@QAEXXZ
-    ?stopProfiling@Profiler@JSC@@QAE?AV?$PassRefPtr@VProfile@JSC@@@WTF@@PAVExecState@2@ABVString@4@@Z
+    ?stopProfiling@LegacyProfiler@JSC@@QAE?AV?$PassRefPtr@VProfile@JSC@@@WTF@@PAVExecState@2@ABVString@4@@Z
     ?stopSampling@JSGlobalData@JSC@@QAEXXZ
     ?string@OpaqueJSString@@QBE?AVString@WTF@@XZ
     ?StringToDouble@StringToDoubleConverter@double_conversion@WTF@@SANPBDIPAI@Z

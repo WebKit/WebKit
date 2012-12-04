@@ -56,11 +56,11 @@
 #include "JSPropertyNameIterator.h"
 #include "JSString.h"
 #include "JSWithScope.h"
+#include "LegacyProfiler.h"
 #include "NameInstance.h"
 #include "ObjectPrototype.h"
 #include "Operations.h"
 #include "Parser.h"
-#include "Profiler.h"
 #include "RegExpObject.h"
 #include "RegExpPrototype.h"
 #include "Register.h"
@@ -2221,7 +2221,7 @@ DEFINE_STUB_FUNCTION(void, op_profile_will_call)
 {
     STUB_INIT_STACK_FRAME(stackFrame);
 
-    if (Profiler* profiler = stackFrame.globalData->enabledProfiler())
+    if (LegacyProfiler* profiler = stackFrame.globalData->enabledProfiler())
         profiler->willExecute(stackFrame.callFrame, stackFrame.args[0].jsValue());
 }
 
@@ -2229,7 +2229,7 @@ DEFINE_STUB_FUNCTION(void, op_profile_did_call)
 {
     STUB_INIT_STACK_FRAME(stackFrame);
 
-    if (Profiler* profiler = stackFrame.globalData->enabledProfiler())
+    if (LegacyProfiler* profiler = stackFrame.globalData->enabledProfiler())
         profiler->didExecute(stackFrame.callFrame, stackFrame.args[0].jsValue());
 }
 

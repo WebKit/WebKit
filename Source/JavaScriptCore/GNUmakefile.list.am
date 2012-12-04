@@ -477,8 +477,8 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/profiler/Profile.h \
 	Source/JavaScriptCore/profiler/ProfileNode.cpp \
 	Source/JavaScriptCore/profiler/ProfileNode.h \
-	Source/JavaScriptCore/profiler/Profiler.cpp \
-	Source/JavaScriptCore/profiler/Profiler.h \
+	Source/JavaScriptCore/profiler/LegacyProfiler.cpp \
+	Source/JavaScriptCore/profiler/LegacyProfiler.h \
 	Source/JavaScriptCore/runtime/ArgList.cpp \
 	Source/JavaScriptCore/runtime/ArgList.h \
 	Source/JavaScriptCore/runtime/Arguments.cpp \

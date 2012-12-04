@@ -32,8 +32,8 @@
 #include "JSStringRef.h"
 #include "JSFunction.h"
 #include "Interpreter.h"
+#include "LegacyProfiler.h"
 #include "Profile.h"
-#include "Profiler.h"
 #include "Tracing.h"
 
 namespace JSC {
@@ -63,7 +63,7 @@ void ProfileGenerator::addParentForConsoleStart(ExecState* exec)
     JSValue function;
 
     exec->interpreter()->retrieveLastCaller(exec, lineNumber, sourceID, sourceURL, function);
-    m_currentNode = ProfileNode::create(exec, Profiler::createCallIdentifier(exec, function ? function.toThisObject(exec) : 0, sourceURL, lineNumber), m_head.get(), m_head.get());
+    m_currentNode = ProfileNode::create(exec, LegacyProfiler::createCallIdentifier(exec, function ? function.toThisObject(exec) : 0, sourceURL, lineNumber), m_head.get(), m_head.get());
     m_head->insertNode(m_currentNode.get());
 }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,8 +26,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef Profiler_h
-#define Profiler_h
+#ifndef LegacyProfiler_h
+#define LegacyProfiler_h
 
 #include "Profile.h"
 #include <wtf/PassRefPtr.h>
@@ -36,38 +36,38 @@
 
 namespace JSC {
 
-    class ExecState;
-    class JSGlobalData;
-    class JSGlobalObject;
-    class JSObject;
-    class JSValue;
-    class ProfileGenerator;
-    struct CallIdentifier;
+class ExecState;
+class JSGlobalData;
+class JSGlobalObject;
+class JSObject;
+class JSValue;
+class ProfileGenerator;
+struct CallIdentifier;
 
-    class Profiler {
-        WTF_MAKE_FAST_ALLOCATED;
-    public:
-        JS_EXPORT_PRIVATE static Profiler* profiler(); 
-        static CallIdentifier createCallIdentifier(ExecState*, JSValue, const WTF::String& sourceURL, int lineNumber);
+class LegacyProfiler {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    JS_EXPORT_PRIVATE static LegacyProfiler* profiler(); 
+    static CallIdentifier createCallIdentifier(ExecState*, JSValue, const WTF::String& sourceURL, int lineNumber);
 
-        JS_EXPORT_PRIVATE void startProfiling(ExecState*, const WTF::String& title);
-        JS_EXPORT_PRIVATE PassRefPtr<Profile> stopProfiling(ExecState*, const WTF::String& title);
-        void stopProfiling(JSGlobalObject*);
+    JS_EXPORT_PRIVATE void startProfiling(ExecState*, const WTF::String& title);
+    JS_EXPORT_PRIVATE PassRefPtr<Profile> stopProfiling(ExecState*, const WTF::String& title);
+    void stopProfiling(JSGlobalObject*);
 
-        void willExecute(ExecState* callerCallFrame, JSValue function);
-        void willExecute(ExecState* callerCallFrame, const WTF::String& sourceURL, int startingLineNumber);
-        void didExecute(ExecState* callerCallFrame, JSValue function);
-        void didExecute(ExecState* callerCallFrame, const WTF::String& sourceURL, int startingLineNumber);
+    void willExecute(ExecState* callerCallFrame, JSValue function);
+    void willExecute(ExecState* callerCallFrame, const WTF::String& sourceURL, int startingLineNumber);
+    void didExecute(ExecState* callerCallFrame, JSValue function);
+    void didExecute(ExecState* callerCallFrame, const WTF::String& sourceURL, int startingLineNumber);
 
-        void exceptionUnwind(ExecState* handlerCallFrame);
+    void exceptionUnwind(ExecState* handlerCallFrame);
 
-        const Vector<RefPtr<ProfileGenerator> >& currentProfiles() { return m_currentProfiles; };
+    const Vector<RefPtr<ProfileGenerator> >& currentProfiles() { return m_currentProfiles; };
 
-    private:
-        Vector<RefPtr<ProfileGenerator> > m_currentProfiles;
-        static Profiler* s_sharedProfiler;
-    };
+private:
+    Vector<RefPtr<ProfileGenerator> > m_currentProfiles;
+    static LegacyProfiler* s_sharedLegacyProfiler;
+};
 
 } // namespace JSC
 
-#endif // Profiler_h
+#endif // LegacyProfiler_h

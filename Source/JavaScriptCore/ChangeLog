@@ -1,3 +1,61 @@
+2012-12-04  Filip Pizlo  <fpizlo@apple.com>
+
+        Rename Profiler to LegacyProfiler
+        https://bugs.webkit.org/show_bug.cgi?id=104031
+
+        Rubber stamped by Mark Hahnenberg
+
+        Make room in the namespace for https://bugs.webkit.org/show_bug.cgi?id=102999.
+
+        * API/JSProfilerPrivate.cpp:
+        (JSStartProfiling):
+        (JSEndProfiling):
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Target.pri:
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::throwException):
+        (JSC::Interpreter::execute):
+        (JSC::Interpreter::executeCall):
+        (JSC::Interpreter::executeConstruct):
+        * jit/JIT.h:
+        * jit/JITCode.h:
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        * jit/JITStubs.h:
+        (JSC):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * profiler/LegacyProfiler.cpp: Added.
+        (JSC):
+        (JSC::LegacyProfiler::profiler):
+        (JSC::LegacyProfiler::startProfiling):
+        (JSC::LegacyProfiler::stopProfiling):
+        (JSC::dispatchFunctionToProfiles):
+        (JSC::LegacyProfiler::willExecute):
+        (JSC::LegacyProfiler::didExecute):
+        (JSC::LegacyProfiler::exceptionUnwind):
+        (JSC::LegacyProfiler::createCallIdentifier):
+        (JSC::createCallIdentifierFromFunctionImp):
+        * profiler/LegacyProfiler.h: Added.
+        (JSC):
+        (LegacyProfiler):
+        (JSC::LegacyProfiler::currentProfiles):
+        * profiler/ProfileGenerator.cpp:
+        (JSC::ProfileGenerator::addParentForConsoleStart):
+        * profiler/ProfileNode.cpp:
+        * profiler/Profiler.cpp: Removed.
+        * profiler/Profiler.h: Removed.
+        * runtime/JSGlobalData.h:
+        (JSC):
+        (JSC::JSGlobalData::enabledProfiler):
+        (JSGlobalData):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::~JSGlobalObject):
+
 2012-12-03  Filip Pizlo  <fpizlo@apple.com>
 
         DFG should inline code blocks that use scoped variable access

@@ -552,7 +552,7 @@
 		9335F24D12E6765B002B5553 /* StringRecursionChecker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93345A8712D838C400302BE3 /* StringRecursionChecker.cpp */; };
 		9534AAFB0E5B7A9600B8A45B /* JSProfilerPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 952C63AC0E4777D600C13936 /* JSProfilerPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		95742F650DD11F5A000917FB /* Profile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 95742F630DD11F5A000917FB /* Profile.cpp */; };
-		95AB83420DA4322500BC83F3 /* Profiler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 95AB832E0DA42CAD00BC83F3 /* Profiler.cpp */; };
+		95AB83420DA4322500BC83F3 /* LegacyProfiler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 95AB832E0DA42CAD00BC83F3 /* LegacyProfiler.cpp */; };
 		95AB83560DA43C3000BC83F3 /* ProfileNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 95AB83540DA43B4400BC83F3 /* ProfileNode.cpp */; };
 		95CD45760E1C4FDD0085358E /* ProfileGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 95CD45740E1C4FDD0085358E /* ProfileGenerator.cpp */; };
 		95CD45770E1C4FDD0085358E /* ProfileGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = 95CD45750E1C4FDD0085358E /* ProfileGenerator.h */; settings = {ATTRIBUTES = (); }; };
@@ -682,7 +682,7 @@
 		BC18C44B0E16F5CD00B34460 /* Parser.h in Headers */ = {isa = PBXBuildFile; fileRef = 93F0B3AA09BB4DC00068FCE3 /* Parser.h */; settings = {ATTRIBUTES = (); }; };
 		BC18C4500E16F5CD00B34460 /* Profile.h in Headers */ = {isa = PBXBuildFile; fileRef = 95742F640DD11F5A000917FB /* Profile.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC18C4510E16F5CD00B34460 /* ProfileNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 95AB83550DA43B4400BC83F3 /* ProfileNode.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		BC18C4520E16F5CD00B34460 /* Profiler.h in Headers */ = {isa = PBXBuildFile; fileRef = 95AB832F0DA42CAD00BC83F3 /* Profiler.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BC18C4520E16F5CD00B34460 /* LegacyProfiler.h in Headers */ = {isa = PBXBuildFile; fileRef = 95AB832F0DA42CAD00BC83F3 /* LegacyProfiler.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC18C4540E16F5CD00B34460 /* PropertyNameArray.h in Headers */ = {isa = PBXBuildFile; fileRef = 65400C100A69BAF200509887 /* PropertyNameArray.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC18C4550E16F5CD00B34460 /* PropertySlot.h in Headers */ = {isa = PBXBuildFile; fileRef = 65621E6C089E859700760F35 /* PropertySlot.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC18C4560E16F5CD00B34460 /* Protect.h in Headers */ = {isa = PBXBuildFile; fileRef = 65C02FBB0637462A003E7EE6 /* Protect.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1368,8 +1368,8 @@
 		95742F630DD11F5A000917FB /* Profile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Profile.cpp; path = profiler/Profile.cpp; sourceTree = "<group>"; };
 		95742F640DD11F5A000917FB /* Profile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Profile.h; path = profiler/Profile.h; sourceTree = "<group>"; };
 		95988BA90E477BEC00D28D4D /* JSProfilerPrivate.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSProfilerPrivate.cpp; sourceTree = "<group>"; };
-		95AB832E0DA42CAD00BC83F3 /* Profiler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Profiler.cpp; path = profiler/Profiler.cpp; sourceTree = "<group>"; };
-		95AB832F0DA42CAD00BC83F3 /* Profiler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Profiler.h; path = profiler/Profiler.h; sourceTree = "<group>"; };
+		95AB832E0DA42CAD00BC83F3 /* LegacyProfiler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LegacyProfiler.cpp; path = profiler/LegacyProfiler.cpp; sourceTree = "<group>"; };
+		95AB832F0DA42CAD00BC83F3 /* LegacyProfiler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LegacyProfiler.h; path = profiler/LegacyProfiler.h; sourceTree = "<group>"; };
 		95AB83540DA43B4400BC83F3 /* ProfileNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ProfileNode.cpp; path = profiler/ProfileNode.cpp; sourceTree = "<group>"; };
 		95AB83550DA43B4400BC83F3 /* ProfileNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ProfileNode.h; path = profiler/ProfileNode.h; sourceTree = "<group>"; };
 		95C18D3E0C90E7EF00E72F73 /* JSRetainPtr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSRetainPtr.h; sourceTree = "<group>"; };
@@ -2522,8 +2522,8 @@
 				95CD45750E1C4FDD0085358E /* ProfileGenerator.h */,
 				95AB83540DA43B4400BC83F3 /* ProfileNode.cpp */,
 				95AB83550DA43B4400BC83F3 /* ProfileNode.h */,
-				95AB832E0DA42CAD00BC83F3 /* Profiler.cpp */,
-				95AB832F0DA42CAD00BC83F3 /* Profiler.h */,
+				95AB832E0DA42CAD00BC83F3 /* LegacyProfiler.cpp */,
+				95AB832F0DA42CAD00BC83F3 /* LegacyProfiler.h */,
 			);
 			name = profiler;
 			sourceTree = "<group>";
@@ -2876,7 +2876,7 @@
 				0FD82E54141DAEEE00179C94 /* SpeculatedType.h in Headers */,
 				BC18C4500E16F5CD00B34460 /* Profile.h in Headers */,
 				BC18C4510E16F5CD00B34460 /* ProfileNode.h in Headers */,
-				BC18C4520E16F5CD00B34460 /* Profiler.h in Headers */,
+				BC18C4520E16F5CD00B34460 /* LegacyProfiler.h in Headers */,
 				A7FB61001040C38B0017A286 /* PropertyDescriptor.h in Headers */,
 				BC95437D0EBA70FD0072B6D3 /* PropertyMapHashTable.h in Headers */,
 				BC18C4540E16F5CD00B34460 /* PropertyNameArray.h in Headers */,
@@ -3537,7 +3537,7 @@
 				95742F650DD11F5A000917FB /* Profile.cpp in Sources */,
 				95CD45760E1C4FDD0085358E /* ProfileGenerator.cpp in Sources */,
 				95AB83560DA43C3000BC83F3 /* ProfileNode.cpp in Sources */,
-				95AB83420DA4322500BC83F3 /* Profiler.cpp in Sources */,
+				95AB83420DA4322500BC83F3 /* LegacyProfiler.cpp in Sources */,
 				A7FB60A4103F7DC20017A286 /* PropertyDescriptor.cpp in Sources */,
 				14469DE7107EC7E700650446 /* PropertyNameArray.cpp in Sources */,
 				14469DE8107EC7E700650446 /* PropertySlot.cpp in Sources */,

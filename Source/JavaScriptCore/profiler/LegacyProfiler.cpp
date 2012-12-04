@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,11 +27,11 @@
  */
 
 #include "config.h"
-#include "Profiler.h"
+#include "LegacyProfiler.h"
 
-#include "CommonIdentifiers.h"
 #include "CallFrame.h"
 #include "CodeBlock.h"
+#include "CommonIdentifiers.h"
 #include "InternalFunction.h"
 #include "JSFunction.h"
 #include "JSGlobalObject.h"
@@ -49,16 +49,16 @@ static unsigned ProfilesUID = 0;
 
 static CallIdentifier createCallIdentifierFromFunctionImp(ExecState*, JSObject*, const String& defaultSourceURL, int defaultLineNumber);
 
-Profiler* Profiler::s_sharedProfiler = 0;
+LegacyProfiler* LegacyProfiler::s_sharedLegacyProfiler = 0;
 
-Profiler* Profiler::profiler()
+LegacyProfiler* LegacyProfiler::profiler()
 {
-    if (!s_sharedProfiler)
-        s_sharedProfiler = new Profiler();
-    return s_sharedProfiler;
+    if (!s_sharedLegacyProfiler)
+        s_sharedLegacyProfiler = new LegacyProfiler();
+    return s_sharedLegacyProfiler;
 }   
 
-void Profiler::startProfiling(ExecState* exec, const String& title)
+void LegacyProfiler::startProfiling(ExecState* exec, const String& title)
 {
     ASSERT_ARG(title, !title.isNull());
 
@@ -77,7 +77,7 @@ void Profiler::startProfiling(ExecState* exec, const String& title)
     m_currentProfiles.append(profileGenerator);
 }
 
-PassRefPtr<Profile> Profiler::stopProfiling(ExecState* exec, const String& title)
+PassRefPtr<Profile> LegacyProfiler::stopProfiling(ExecState* exec, const String& title)
 {
     JSGlobalObject* origin = exec ? exec->lexicalGlobalObject() : 0;
     for (ptrdiff_t i = m_currentProfiles.size() - 1; i >= 0; --i) {
@@ -97,7 +97,7 @@ PassRefPtr<Profile> Profiler::stopProfiling(ExecState* exec, const String& title
     return 0;
 }
 
-void Profiler::stopProfiling(JSGlobalObject* origin)
+void LegacyProfiler::stopProfiling(JSGlobalObject* origin)
 {
     for (ptrdiff_t i = m_currentProfiles.size() - 1; i >= 0; --i) {
         ProfileGenerator* profileGenerator = m_currentProfiles[i].get();
@@ -118,14 +118,14 @@ static inline void dispatchFunctionToProfiles(ExecState* callerOrHandlerCallFram
     }
 }
 
-void Profiler::willExecute(ExecState* callerCallFrame, JSValue function)
+void LegacyProfiler::willExecute(ExecState* callerCallFrame, JSValue function)
 {
     ASSERT(!m_currentProfiles.isEmpty());
 
     dispatchFunctionToProfiles(callerCallFrame, m_currentProfiles, &ProfileGenerator::willExecute, createCallIdentifier(callerCallFrame, function, "", 0), callerCallFrame->lexicalGlobalObject()->profileGroup());
 }
 
-void Profiler::willExecute(ExecState* callerCallFrame, const String& sourceURL, int startingLineNumber)
+void LegacyProfiler::willExecute(ExecState* callerCallFrame, const String& sourceURL, int startingLineNumber)
 {
     ASSERT(!m_currentProfiles.isEmpty());
 
@@ -134,28 +134,28 @@ void Profiler::willExecute(ExecState* callerCallFrame, const String& sourceURL, 
     dispatchFunctionToProfiles(callerCallFrame, m_currentProfiles, &ProfileGenerator::willExecute, callIdentifier, callerCallFrame->lexicalGlobalObject()->profileGroup());
 }
 
-void Profiler::didExecute(ExecState* callerCallFrame, JSValue function)
+void LegacyProfiler::didExecute(ExecState* callerCallFrame, JSValue function)
 {
     ASSERT(!m_currentProfiles.isEmpty());
 
     dispatchFunctionToProfiles(callerCallFrame, m_currentProfiles, &ProfileGenerator::didExecute, createCallIdentifier(callerCallFrame, function, "", 0), callerCallFrame->lexicalGlobalObject()->profileGroup());
 }
 
-void Profiler::didExecute(ExecState* callerCallFrame, const String& sourceURL, int startingLineNumber)
+void LegacyProfiler::didExecute(ExecState* callerCallFrame, const String& sourceURL, int startingLineNumber)
 {
     ASSERT(!m_currentProfiles.isEmpty());
 
     dispatchFunctionToProfiles(callerCallFrame, m_currentProfiles, &ProfileGenerator::didExecute, createCallIdentifier(callerCallFrame, JSValue(), sourceURL, startingLineNumber), callerCallFrame->lexicalGlobalObject()->profileGroup());
 }
 
-void Profiler::exceptionUnwind(ExecState* handlerCallFrame)
+void LegacyProfiler::exceptionUnwind(ExecState* handlerCallFrame)
 {
     ASSERT(!m_currentProfiles.isEmpty());
 
     dispatchFunctionToProfiles(handlerCallFrame, m_currentProfiles, &ProfileGenerator::exceptionUnwind, createCallIdentifier(handlerCallFrame, JSValue(), "", 0), handlerCallFrame->lexicalGlobalObject()->profileGroup());
 }
 
-CallIdentifier Profiler::createCallIdentifier(ExecState* exec, JSValue functionValue, const String& defaultSourceURL, int defaultLineNumber)
+CallIdentifier LegacyProfiler::createCallIdentifier(ExecState* exec, JSValue functionValue, const String& defaultSourceURL, int defaultLineNumber)
 {
     if (!functionValue)
         return CallIdentifier(GlobalCodeExecution, defaultSourceURL, defaultLineNumber);
