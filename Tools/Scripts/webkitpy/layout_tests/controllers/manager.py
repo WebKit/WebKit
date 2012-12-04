@@ -281,8 +281,6 @@ class Manager(object):
         # self._websocket_secure_server = websocket_server.PyWebSocket(
         #        options.results_directory, use_tls=True, port=9323)
 
-        self._paths = set()
-        self._test_names = None
         self._results_directory = self._port.results_directory()
         self._finder = LayoutTestFinder(self._port, self._options)
         self._runner = LayoutTestRunner(self._options, self._port, self._printer, self._results_directory, self._expectations, self._test_is_slow)
@@ -296,42 +294,34 @@ class Manager(object):
     def _is_websocket_test(self, test):
         return self.WEBSOCKET_SUBDIR in test
 
-    def _http_tests(self):
-        return set(test for test in self._test_names if self._is_http_test(test))
+    def _http_tests(self, test_names):
+        return set(test for test in test_names if self._is_http_test(test))
 
     def _is_perf_test(self, test):
         return self.PERF_SUBDIR == test or (self.PERF_SUBDIR + self._port.TEST_PATH_SEPARATOR) in test
 
-    def _prepare_lists(self):
-        tests_to_skip = self._finder.skip_tests(self._paths, self._test_names, self._expectations, self._http_tests())
-        self._test_names = [test for test in self._test_names if test not in tests_to_skip]
+    def _prepare_lists(self, paths, test_names):
+        tests_to_skip = self._finder.skip_tests(paths, test_names, self._expectations, self._http_tests(test_names))
+        tests_to_run = [test for test in test_names if test not in tests_to_skip]
 
         # Create a sorted list of test files so the subset chunk,
         # if used, contains alphabetically consecutive tests.
         if self._options.order == 'natural':
-            self._test_names.sort(key=self._port.test_key)
+            tests_to_run.sort(key=self._port.test_key)
         elif self._options.order == 'random':
-            random.shuffle(self._test_names)
+            random.shuffle(tests_to_run)
 
-        self._test_names, tests_in_other_chunks = self._finder.split_into_chunks(self._test_names)
+        tests_to_run, tests_in_other_chunks = self._finder.split_into_chunks(tests_to_run)
         self._expectations.add_skipped_tests(tests_in_other_chunks)
         tests_to_skip.update(tests_in_other_chunks)
 
-        if self._options.repeat_each > 1:
-            list_with_repetitions = []
-            for test in self._test_names:
-                list_with_repetitions += ([test] * self._options.repeat_each)
-            self._test_names = list_with_repetitions
+        summary = ResultSummary(self._expectations, len(tests_to_run) * self._options.repeat_each * self._options.iterations)
 
-        if self._options.iterations > 1:
-            self._test_names = self._test_names * self._options.iterations
-
-        summary = ResultSummary(self._expectations, len(self._test_names))
         for test_name in set(tests_to_skip):
             result = test_results.TestResult(test_name)
             result.type = test_expectations.SKIP
             summary.add(result, expected=True, test_is_slow=self._test_is_slow(test_name))
-        return summary
+        return summary, tests_to_run
 
     def _test_input_for_file(self, test_file):
         return TestInput(test_file,
@@ -348,12 +338,12 @@ class Manager(object):
     def _test_is_slow(self, test_file):
         return self._expectations.has_modifier(test_file, test_expectations.SLOW)
 
-    def needs_servers(self):
-        return any(self._test_requires_lock(test_name) for test_name in self._test_names) and self._options.http
+    def needs_servers(self, test_names):
+        return any(self._test_requires_lock(test_name) for test_name in test_names) and self._options.http
 
-    def _set_up_run(self):
+    def _set_up_run(self, test_names):
         self._printer.write_update("Checking build ...")
-        if not self._port.check_build(self.needs_servers()):
+        if not self._port.check_build(self.needs_servers(test_names)):
             _log.error("Build check failed")
             return False
 
@@ -366,7 +356,7 @@ class Manager(object):
         # Check that the system dependencies (themes, fonts, ...) are correct.
         if not self._options.nocheck_sys_deps:
             self._printer.write_update("Checking system dependencies ...")
-            if not self._port.check_sys_deps(self.needs_servers()):
+            if not self._port.check_sys_deps(self.needs_servers(test_names)):
                 self._port.stop_helper()
                 return False
 
@@ -383,32 +373,32 @@ class Manager(object):
         """Run all our tests on all our test files and return the number of unexpected results (0 == success)."""
         self._printer.write_update("Collecting tests ...")
         try:
-            self._paths, self._test_names = self._collect_tests(args)
+            paths, test_names = self._collect_tests(args)
         except IOError as exception:
             # This is raised if --test-list doesn't exist
             return -1
 
         self._printer.write_update("Parsing expectations ...")
-        self._expectations = test_expectations.TestExpectations(self._port, self._test_names)
+        self._expectations = test_expectations.TestExpectations(self._port, test_names)
 
-        num_all_test_files_found = len(self._test_names)
-        result_summary = self._prepare_lists()
+        num_all_test_files_found = len(test_names)
+        result_summary, test_names = self._prepare_lists(paths, test_names)
 
         # Check to make sure we're not skipping every test.
-        if not self._test_names:
+        if not test_names:
             _log.critical('No tests to run.')
             return -1
 
-        self._printer.print_found(num_all_test_files_found, len(self._test_names), self._options.repeat_each, self._options.iterations)
+        self._printer.print_found(num_all_test_files_found, len(test_names), self._options.repeat_each, self._options.iterations)
         self._printer.print_expected(result_summary, self._expectations.get_tests_with_result_type)
 
-        if not self._set_up_run():
+        if not self._set_up_run(test_names):
             return -1
 
         start_time = time.time()
 
         try:
-            result_summary = self._run_tests(self._test_names, result_summary, int(self._options.child_processes), retrying=False)
+            result_summary = self._run_tests(test_names, result_summary, int(self._options.child_processes), retrying=False)
 
             # We exclude the crashes from the list of results to retry, because
             # we want to treat even a potentially flaky crash as an error.
@@ -454,9 +444,13 @@ class Manager(object):
         return self._port.exit_code_from_summarized_results(unexpected_results)
 
     def _run_tests(self, tests, result_summary, num_workers, retrying):
-        test_inputs = [self._test_input_for_file(test) for test in tests]
         needs_http = self._port.requires_http_server() or any(self._is_http_test(test) for test in tests)
         needs_websockets = any(self._is_websocket_test(test) for test in tests)
+        test_inputs = []
+        for _ in xrange(self._options.iterations):
+            for test in tests:
+                for _ in xrange(self._options.repeat_each):
+                    test_inputs.append(self._test_input_for_file(test))
         return self._runner.run_tests(test_inputs, self._expectations, result_summary, num_workers, needs_http, needs_websockets, retrying)
 
     def _clean_up_run(self):
@@ -538,7 +532,7 @@ class Manager(object):
             self._port, self._options.builder_name, self._options.build_name,
             self._options.build_number, self._results_directory,
             BUILDER_BASE_URL,
-            self._expectations, result_summary, self._test_names,
+            self._expectations, result_summary,
             self._options.test_results_server,
             "layout-tests",
             self._options.master_name)

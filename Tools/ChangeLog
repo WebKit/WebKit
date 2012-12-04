@@ -1,3 +1,37 @@
+2012-12-04  Dirk Pranke  <dpranke@chromium.org>
+
+        nrwt: make paths and test_names passed arguments in Manager._prepare_lists et al
+        https://bugs.webkit.org/show_bug.cgi?id=104047
+
+        Reviewed by Eric Seidel.
+
+        The code becomes cleaner if we are just passing values around rather
+        than hanging them off the manager object, helps move _prepare_lists()
+        to a pure function, and is needed to eventually make the
+        result_summary object something returned from runner.run_tests()
+        (note that two more patches are needed for that to happen).
+
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        (Manager.__init__):
+        (Manager._http_tests):
+        (Manager._prepare_lists):
+        (Manager.needs_servers):
+        (Manager._set_up_run):
+        (Manager.run):
+        (Manager._run_tests):
+        (Manager._upload_json_files):
+        * Scripts/webkitpy/layout_tests/controllers/manager_unittest.py:
+        (ManagerTest.test_needs_servers.get_manager):
+        (ManagerTest.test_needs_servers):
+        (ManagerTest.integration_test_needs_servers.get_manager):
+        (ManagerTest.integration_test_needs_servers):
+        (ManagerTest.test_look_for_new_crash_logs.get_manager):
+        (ManagerTest):
+        (ManagerTest.test_look_for_new_crash_logs):
+        * Scripts/webkitpy/layout_tests/layout_package/json_layout_results_generator.py:
+        (JSONLayoutResultsGenerator.__init__):
+        (JSONLayoutResultsGenerator._get_modifier_char):
+
 2012-12-04  Adam Barth  <abarth@webkit.org>
 
         commit-queue can get stuck with a local commit

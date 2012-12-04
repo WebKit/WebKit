@@ -45,53 +45,50 @@ from webkitpy.tool.mocktool import MockOptions
 
 class ManagerTest(unittest.TestCase):
     def test_needs_servers(self):
-        def get_manager_with_tests(test_names):
+        def get_manager():
             port = Mock()  # FIXME: Use a tighter mock.
             port.TEST_PATH_SEPARATOR = '/'
             manager = Manager(port, options=MockOptions(http=True, max_locked_shards=1), printer=Mock())
-            manager._test_names = test_names
             return manager
 
-        manager = get_manager_with_tests(['fast/html'])
-        self.assertFalse(manager.needs_servers())
+        manager = get_manager()
+        self.assertFalse(manager.needs_servers(['fast/html']))
 
-        manager = get_manager_with_tests(['http/tests/misc'])
-        self.assertTrue(manager.needs_servers())
+        manager = get_manager()
+        self.assertTrue(manager.needs_servers(['http/tests/misc']))
 
     def integration_test_needs_servers(self):
-        def get_manager_with_tests(test_names):
+        def get_manager():
             host = MockHost()
             port = host.port_factory.get()
             manager = Manager(port, options=MockOptions(test_list=None, http=True, max_locked_shards=1), printer=Mock())
-            manager._collect_tests(test_names)
             return manager
 
-        manager = get_manager_with_tests(['fast/html'])
-        self.assertFalse(manager.needs_servers())
+        manager = get_manager()
+        self.assertFalse(manager.needs_servers(['fast/html']))
 
-        manager = get_manager_with_tests(['http/tests/mime'])
-        self.assertTrue(manager.needs_servers())
+        manager = get_manager()
+        self.assertTrue(manager.needs_servers(['http/tests/mime']))
 
         if sys.platform == 'win32':
-            manager = get_manager_with_tests(['fast\\html'])
-            self.assertFalse(manager.needs_servers())
+            manager = get_manager()
+            self.assertFalse(manager.needs_servers(['fast\\html']))
 
-            manager = get_manager_with_tests(['http\\tests\\mime'])
-            self.assertTrue(manager.needs_servers())
+            manager = get_manager()
+            self.assertTrue(manager.needs_servers(['http\\tests\\mime']))
 
     def test_look_for_new_crash_logs(self):
-        def get_manager_with_tests(test_names):
+        def get_manager():
             host = MockHost()
             port = host.port_factory.get('test-mac-leopard')
             manager = Manager(port, options=MockOptions(test_list=None, http=True, max_locked_shards=1), printer=Mock())
-            manager._collect_tests(test_names)
             return manager
         host = MockHost()
         port = host.port_factory.get('test-mac-leopard')
         tests = ['failures/expected/crash.html']
         expectations = test_expectations.TestExpectations(port, tests)
         rs = ResultSummary(expectations, len(tests))
-        manager = get_manager_with_tests(tests)
+        manager = get_manager()
         manager._look_for_new_crash_logs(rs, time.time())
 
 
