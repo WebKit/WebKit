@@ -1925,10 +1925,9 @@ spannable_string_t* InputHandler::spannableTextInRange(int start, int end, int32
     if (!isActiveTextEdit())
         return 0;
 
-    if (start == end)
+    if (start >= end)
         return 0;
 
-    ASSERT(end > start);
     int length = end - start;
 
     WTF::String textString = elementText().substring(start, length);
