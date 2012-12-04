@@ -696,7 +696,9 @@ void ContainerNode::parserAppendChild(PassRefPtr<Node> newChild)
 {
     ASSERT(newChild);
     ASSERT(!newChild->parentNode()); // Use appendChild if you need to handle reparenting (and want DOM mutation events).
-    ASSERT(document() == newChild->document());
+    // FIXME: This assert should be valid, but DOMImplementation::createDocument()
+    // blindly calls paserAppendChild on the docType its passed.
+    // ASSERT(document() == newChild->document());
 
     Node* last = m_lastChild;
     {

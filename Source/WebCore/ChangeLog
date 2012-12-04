@@ -1,3 +1,13 @@
+2012-12-03  Rafael Weinstein  <rafaelw@chromium.org>
+
+        Unreviewed build fix after r136467
+
+        The template element patch added asserts in parserAppendChild and parserInsertBefore which should be valid, but DOMImplementation::createDocument() calls parserAppendChild with docType without regard to its owner. This patch removes the assert and adds a FIXME.
+
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::parserInsertBefore):
+        (WebCore::ContainerNode::parserAppendChild):
+
 2012-12-03  Kentaro Hara  <haraken@chromium.org>
 
         [V8] Enter an Isolate before initializing PerIsolateData
