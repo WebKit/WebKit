@@ -35,8 +35,12 @@ G_BEGIN_DECLS
 #define WEBKIT_DOM_IS_TEST_SERIALIZED_SCRIPT_VALUE_INTERFACE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass),  WEBKIT_TYPE_DOM_TEST_SERIALIZED_SCRIPT_VALUE_INTERFACE))
 #define WEBKIT_DOM_TEST_SERIALIZED_SCRIPT_VALUE_INTERFACE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj),  WEBKIT_TYPE_DOM_TEST_SERIALIZED_SCRIPT_VALUE_INTERFACE, WebKitDOMTestSerializedScriptValueInterfaceClass))
 
+typedef struct _WebKitDOMTestSerializedScriptValueInterfacePrivate WebKitDOMTestSerializedScriptValueInterfacePrivate;
+
 struct _WebKitDOMTestSerializedScriptValueInterface {
     WebKitDOMObject parent_instance;
+
+    WebKitDOMTestSerializedScriptValueInterfacePrivate *priv;
 };
 
 struct _WebKitDOMTestSerializedScriptValueInterfaceClass {

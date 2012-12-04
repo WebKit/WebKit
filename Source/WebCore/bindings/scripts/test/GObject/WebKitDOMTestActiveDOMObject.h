@@ -35,8 +35,12 @@ G_BEGIN_DECLS
 #define WEBKIT_DOM_IS_TEST_ACTIVE_DOM_OBJECT_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass),  WEBKIT_TYPE_DOM_TEST_ACTIVE_DOM_OBJECT))
 #define WEBKIT_DOM_TEST_ACTIVE_DOM_OBJECT_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj),  WEBKIT_TYPE_DOM_TEST_ACTIVE_DOM_OBJECT, WebKitDOMTestActiveDOMObjectClass))
 
+typedef struct _WebKitDOMTestActiveDOMObjectPrivate WebKitDOMTestActiveDOMObjectPrivate;
+
 struct _WebKitDOMTestActiveDOMObject {
     WebKitDOMObject parent_instance;
+
+    WebKitDOMTestActiveDOMObjectPrivate *priv;
 };
 
 struct _WebKitDOMTestActiveDOMObjectClass {

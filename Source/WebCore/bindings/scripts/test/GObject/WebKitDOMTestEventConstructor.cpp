@@ -31,6 +31,10 @@
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
 
+struct _WebKitDOMTestEventConstructorPrivate {
+    RefPtr<WebCore::TestEventConstructor> coreObject;
+};
+
 namespace WebKit {
 
 WebKitDOMTestEventConstructor* kit(WebCore::TestEventConstructor* obj)
@@ -46,21 +50,12 @@ WebKitDOMTestEventConstructor* kit(WebCore::TestEventConstructor* obj)
 WebCore::TestEventConstructor* core(WebKitDOMTestEventConstructor* request)
 {
     g_return_val_if_fail(request, 0);
-
-    WebCore::TestEventConstructor* coreObject = static_cast<WebCore::TestEventConstructor*>(WEBKIT_DOM_OBJECT(request)->coreObject);
-    g_return_val_if_fail(coreObject, 0);
-
-    return coreObject;
+    return request->priv->coreObject.get();
 }
 
 WebKitDOMTestEventConstructor* wrapTestEventConstructor(WebCore::TestEventConstructor* coreObject)
 {
     g_return_val_if_fail(coreObject, 0);
-
-    // We call ref() rather than using a C++ smart pointer because we can't store a C++ object
-    // in a C-allocated GObject structure. See the finalize() code for the matching deref().
-    coreObject->ref();
-
     return WEBKIT_DOM_TEST_EVENT_CONSTRUCTOR(g_object_new(WEBKIT_TYPE_DOM_TEST_EVENT_CONSTRUCTOR, "core-object", coreObject, NULL));
 }
 
@@ -76,19 +71,11 @@ enum {
 
 static void webkit_dom_test_event_constructor_finalize(GObject* object)
 {
+    WebKitDOMTestEventConstructorPrivate* priv = WEBKIT_DOM_TEST_EVENT_CONSTRUCTOR(object)->priv;
 
-    WebKitDOMObject* domObject = WEBKIT_DOM_OBJECT(object);
-    
-    if (domObject->coreObject) {
-        WebCore::TestEventConstructor* coreObject = static_cast<WebCore::TestEventConstructor*>(domObject->coreObject);
+    WebKit::DOMObjectCache::forget(priv->coreObject.get());
 
-        WebKit::DOMObjectCache::forget(coreObject);
-        coreObject->deref();
-
-        domObject->coreObject = 0;
-    }
-
-
+    priv->~WebKitDOMTestEventConstructorPrivate();
     G_OBJECT_CLASS(webkit_dom_test_event_constructor_parent_class)->finalize(object);
 }
 
@@ -114,10 +101,22 @@ static void webkit_dom_test_event_constructor_get_property(GObject* object, guin
     }
 }
 
+static GObject* webkit_dom_test_event_constructor_constructor(GType type, guint constructPropertiesCount, GObjectConstructParam* constructProperties)
+{
+    GObject* object = G_OBJECT_CLASS(webkit_dom_test_event_constructor_parent_class)->constructor(type, constructPropertiesCount, constructProperties);
+
+    WebKitDOMTestEventConstructorPrivate* priv = WEBKIT_DOM_TEST_EVENT_CONSTRUCTOR(object)->priv;
+    priv->coreObject = static_cast<WebCore::TestEventConstructor*>(WEBKIT_DOM_OBJECT(object)->coreObject);
+
+    return object;
+}
+
 static void webkit_dom_test_event_constructor_class_init(WebKitDOMTestEventConstructorClass* requestClass)
 {
     GObjectClass* gobjectClass = G_OBJECT_CLASS(requestClass);
+    gobjectClass->constructor = webkit_dom_test_event_constructor_constructor;
     gobjectClass->finalize = webkit_dom_test_event_constructor_finalize;
+    g_type_class_add_private(gobjectClass, sizeof(WebKitDOMTestEventConstructorPrivate));
     gobjectClass->get_property = webkit_dom_test_event_constructor_get_property;
 
     g_object_class_install_property(gobjectClass,
@@ -136,8 +135,11 @@ static void webkit_dom_test_event_constructor_class_init(WebKitDOMTestEventConst
                                                            WEBKIT_PARAM_READABLE));
 }
 
-static void webkit_dom_test_event_constructor_init(WebKitDOMTestEventConstructor* request)
+static void webkit_dom_test_event_constructor_init(WebKitDOMTestEventConstructor* self)
 {
+    WebKitDOMTestEventConstructorPrivate* priv = G_TYPE_INSTANCE_GET_PRIVATE(self, WEBKIT_TYPE_DOM_TEST_EVENT_CONSTRUCTOR, WebKitDOMTestEventConstructorPrivate);
+    self->priv = priv;
+    new (priv) WebKitDOMTestEventConstructorPrivate();
 }
 
 gchar*

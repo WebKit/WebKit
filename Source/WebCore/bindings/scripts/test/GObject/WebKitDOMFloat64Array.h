@@ -35,8 +35,12 @@ G_BEGIN_DECLS
 #define WEBKIT_DOM_IS_FLOAT64ARRAY_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass),  WEBKIT_TYPE_DOM_FLOAT64ARRAY))
 #define WEBKIT_DOM_FLOAT64ARRAY_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj),  WEBKIT_TYPE_DOM_FLOAT64ARRAY, WebKitDOMFloat64ArrayClass))
 
+typedef struct _WebKitDOMFloat64ArrayPrivate WebKitDOMFloat64ArrayPrivate;
+
 struct _WebKitDOMFloat64Array {
     WebKitDOMArrayBufferView parent_instance;
+
+    WebKitDOMFloat64ArrayPrivate *priv;
 };
 
 struct _WebKitDOMFloat64ArrayClass {
