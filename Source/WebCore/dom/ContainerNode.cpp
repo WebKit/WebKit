@@ -76,15 +76,6 @@ ChildNodesLazySnapshot* ChildNodesLazySnapshot::latestSnapshot = 0;
 unsigned NoEventDispatchAssertion::s_count = 0;
 #endif
 
-static void collectTargetNodes(Node* node, NodeVector& nodes)
-{
-    if (node->nodeType() != Node::DOCUMENT_FRAGMENT_NODE) {
-        nodes.append(node);
-        return;
-    }
-    getChildNodes(node, nodes);
-}
-
 static void collectChildrenAndRemoveFromOldParent(Node* node, NodeVector& nodes, ExceptionCode& ec)
 {
     if (node->nodeType() != Node::DOCUMENT_FRAGMENT_NODE) {
@@ -311,25 +302,15 @@ void ContainerNode::parserInsertBefore(PassRefPtr<Node> newChild, Node* nextChil
     ASSERT(nextChild);
     ASSERT(nextChild->parentNode() == this);
     ASSERT(document() == newChild->document());
-
-    NodeVector targets;
-    collectTargetNodes(newChild.get(), targets);
-    if (targets.isEmpty())
-        return;
+    ASSERT(!newChild->isDocumentFragment());
 
     if (nextChild->previousSibling() == newChild || nextChild == newChild) // nothing to do
         return;
 
-    RefPtr<Node> next = nextChild;
-    RefPtr<Node> nextChildPreviousSibling = nextChild->previousSibling();
-    for (NodeVector::const_iterator it = targets.begin(); it != targets.end(); ++it) {
-        Node* child = it->get();
+    insertBeforeCommon(nextChild, newChild.get());
 
-        insertBeforeCommon(next.get(), child);
-
-        childrenChanged(true, nextChildPreviousSibling.get(), nextChild, 1);
-        ChildNodeInsertionNotifier(this).notify(child);
-    }
+    childrenChanged(true, newChild->previousSibling(), nextChild, 1);
+    ChildNodeInsertionNotifier(this).notify(newChild.get());
 }
 
 bool ContainerNode::replaceChild(PassRefPtr<Node> newChild, Node* oldChild, ExceptionCode& ec, bool shouldLazyAttach)
@@ -555,6 +536,7 @@ void ContainerNode::parserRemoveChild(Node* oldChild)
 {
     ASSERT(oldChild);
     ASSERT(oldChild->parentNode() == this);
+    ASSERT(!oldChild->isDocumentFragment());
 
     Node* prev = oldChild->previousSibling();
     Node* next = oldChild->nextSibling();
@@ -696,6 +678,7 @@ void ContainerNode::parserAppendChild(PassRefPtr<Node> newChild)
 {
     ASSERT(newChild);
     ASSERT(!newChild->parentNode()); // Use appendChild if you need to handle reparenting (and want DOM mutation events).
+    ASSERT(!newChild->isDocumentFragment());
     // FIXME: This assert should be valid, but DOMImplementation::createDocument()
     // blindly calls paserAppendChild on the docType its passed.
     // ASSERT(document() == newChild->document());
