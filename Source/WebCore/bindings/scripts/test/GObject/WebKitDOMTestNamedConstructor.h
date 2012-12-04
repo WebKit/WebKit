@@ -35,12 +35,8 @@ G_BEGIN_DECLS
 #define WEBKIT_DOM_IS_TEST_NAMED_CONSTRUCTOR_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass),  WEBKIT_TYPE_DOM_TEST_NAMED_CONSTRUCTOR))
 #define WEBKIT_DOM_TEST_NAMED_CONSTRUCTOR_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj),  WEBKIT_TYPE_DOM_TEST_NAMED_CONSTRUCTOR, WebKitDOMTestNamedConstructorClass))
 
-typedef struct _WebKitDOMTestNamedConstructorPrivate WebKitDOMTestNamedConstructorPrivate;
-
 struct _WebKitDOMTestNamedConstructor {
     WebKitDOMObject parent_instance;
-
-    WebKitDOMTestNamedConstructorPrivate *priv;
 };
 
 struct _WebKitDOMTestNamedConstructorClass {

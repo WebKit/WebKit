@@ -35,12 +35,8 @@ G_BEGIN_DECLS
 #define WEBKIT_DOM_IS_TEST_EVENT_TARGET_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass),  WEBKIT_TYPE_DOM_TEST_EVENT_TARGET))
 #define WEBKIT_DOM_TEST_EVENT_TARGET_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj),  WEBKIT_TYPE_DOM_TEST_EVENT_TARGET, WebKitDOMTestEventTargetClass))
 
-typedef struct _WebKitDOMTestEventTargetPrivate WebKitDOMTestEventTargetPrivate;
-
 struct _WebKitDOMTestEventTarget {
     WebKitDOMObject parent_instance;
-
-    WebKitDOMTestEventTargetPrivate *priv;
 };
 
 struct _WebKitDOMTestEventTargetClass {

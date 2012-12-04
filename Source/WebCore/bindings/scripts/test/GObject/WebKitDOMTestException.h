@@ -35,12 +35,8 @@ G_BEGIN_DECLS
 #define WEBKIT_DOM_IS_TEST_EXCEPTION_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass),  WEBKIT_TYPE_DOM_TEST_EXCEPTION))
 #define WEBKIT_DOM_TEST_EXCEPTION_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj),  WEBKIT_TYPE_DOM_TEST_EXCEPTION, WebKitDOMTestExceptionClass))
 
-typedef struct _WebKitDOMTestExceptionPrivate WebKitDOMTestExceptionPrivate;
-
 struct _WebKitDOMTestException {
     WebKitDOMObject parent_instance;
-
-    WebKitDOMTestExceptionPrivate *priv;
 };
 
 struct _WebKitDOMTestExceptionClass {

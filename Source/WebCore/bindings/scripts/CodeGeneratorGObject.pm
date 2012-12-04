@@ -641,11 +641,19 @@ EOF
     $implContent = << "EOF";
 static void ${lowerCaseIfaceName}_finalize(GObject* object)
 {
-    ${className}Private* priv = WEBKIT_DOM_${clsCaps}(object)->priv;
 $conditionGuardStart
-    WebKit::DOMObjectCache::forget(priv->coreObject.get());
+    WebKitDOMObject* domObject = WEBKIT_DOM_OBJECT(object);
+    
+    if (domObject->coreObject) {
+        WebCore::${interfaceName}* coreObject = static_cast<WebCore::${interfaceName}*>(domObject->coreObject);
+
+        WebKit::DOMObjectCache::forget(coreObject);
+        coreObject->deref();
+
+        domObject->coreObject = 0;
+    }
 $conditionGuardEnd
-    priv->~${className}Private();
+
     G_OBJECT_CLASS(${lowerCaseIfaceName}_parent_class)->finalize(object);
 }
 
@@ -679,22 +687,10 @@ EOF
     }
 
     $implContent = << "EOF";
-static GObject* ${lowerCaseIfaceName}_constructor(GType type, guint constructPropertiesCount, GObjectConstructParam* constructProperties)
-{
-    GObject* object = G_OBJECT_CLASS(${lowerCaseIfaceName}_parent_class)->constructor(type, constructPropertiesCount, constructProperties);
-$conditionGuardStart
-    ${className}Private* priv = WEBKIT_DOM_${clsCaps}(object)->priv;
-    priv->coreObject = static_cast<WebCore::${interfaceName}*>(WEBKIT_DOM_OBJECT(object)->coreObject);
-$conditionGuardEnd
-    return object;
-}
-
 static void ${lowerCaseIfaceName}_class_init(${className}Class* requestClass)
 {
     GObjectClass* gobjectClass = G_OBJECT_CLASS(requestClass);
-    gobjectClass->constructor = ${lowerCaseIfaceName}_constructor;
     gobjectClass->finalize = ${lowerCaseIfaceName}_finalize;
-    g_type_class_add_private(gobjectClass, sizeof(${className}Private));
 EOF
     push(@cBodyProperties, $implContent);
 
@@ -718,11 +714,8 @@ EOF
     $implContent = << "EOF";
 }
 
-static void ${lowerCaseIfaceName}_init(${className}* self)
+static void ${lowerCaseIfaceName}_init(${className}* request)
 {
-    ${className}Private* priv = G_TYPE_INSTANCE_GET_PRIVATE(self, WEBKIT_TYPE_DOM_${clsCaps}, ${className}Private);
-    self->priv = priv;
-    new (priv) ${className}Private();
 }
 
 EOF
@@ -766,12 +759,8 @@ EOF
 #define WEBKIT_DOM_IS_${clsCaps}_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass),  WEBKIT_TYPE_DOM_${clsCaps}))
 #define WEBKIT_DOM_${clsCaps}_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj),  WEBKIT_TYPE_DOM_${clsCaps}, ${className}Class))
 
-typedef struct _${className}Private ${className}Private;
-
 struct _${className} {
     ${parentClassName} parent_instance;
-
-    ${className}Private *priv;
 };
 
 struct _${className}Class {
@@ -1205,13 +1194,6 @@ sub GenerateCFile {
     my $clsCaps = uc(FixUpDecamelizedName(decamelize($interfaceName)));
     my $lowerCaseIfaceName = "webkit_dom_" . FixUpDecamelizedName(decamelize($interfaceName));
 
-    my $conditionalString = $codeGenerator->GenerateConditionalString($interface);
-    push(@cStructPriv, "struct _${className}Private {\n");
-    push(@cStructPriv, "#if ${conditionalString}\n") if $conditionalString;
-    push(@cStructPriv, "    RefPtr<WebCore::${interfaceName}> coreObject;\n");
-    push(@cStructPriv, "#endif // ${conditionalString}\n") if $conditionalString;
-    push(@cStructPriv, "};\n\n");
-
     $implContent = << "EOF";
 ${defineTypeMacro}(${className}, ${lowerCaseIfaceName}, ${parentGObjType}${defineTypeInterfaceImplementation}
 
@@ -1222,7 +1204,11 @@ EOF
 WebCore::${interfaceName}* core(${className}* request)
 {
     g_return_val_if_fail(request, 0);
-    return request->priv->coreObject.get();
+
+    WebCore::${interfaceName}* coreObject = static_cast<WebCore::${interfaceName}*>(WEBKIT_DOM_OBJECT(request)->coreObject);
+    g_return_val_if_fail(coreObject, 0);
+
+    return coreObject;
 }
 
 EOF
@@ -1235,6 +1221,11 @@ EOF
 ${className}* wrap${interfaceName}(WebCore::${interfaceName}* coreObject)
 {
     g_return_val_if_fail(coreObject, 0);
+
+    // We call ref() rather than using a C++ smart pointer because we can't store a C++ object
+    // in a C-allocated GObject structure. See the finalize() code for the matching deref().
+    coreObject->ref();
+
     return WEBKIT_DOM_${clsCaps}(g_object_new(WEBKIT_TYPE_DOM_${clsCaps}, "core-object", coreObject, NULL));
 }
 
@@ -1265,7 +1256,6 @@ sub GenerateEventTargetIface {
 
     my $interfaceName = $interface->name;
     my $decamelize = FixUpDecamelizedName(decamelize($interfaceName));
-    my $clsCaps = uc($decamelize);
 
     $implIncludes{"GObjectEventListener.h"} = 1;
     $implIncludes{"WebKitDOMEventTarget.h"} = 1;
@@ -1274,8 +1264,11 @@ sub GenerateEventTargetIface {
     my $impl = << "EOF";
 static void webkit_dom_${decamelize}_dispatch_event(WebKitDOMEventTarget* target, WebKitDOMEvent* event, GError** error)
 {
+    WebCore::Event* coreEvent = WebKit::core(event);
+    WebCore::${interfaceName}* coreTarget = static_cast<WebCore::${interfaceName}*>(WEBKIT_DOM_OBJECT(target)->coreObject);
+
     WebCore::ExceptionCode ec = 0;
-    WEBKIT_DOM_${clsCaps}(target)->priv->coreObject->dispatchEvent(WebKit::core(event), ec);
+    coreTarget->dispatchEvent(coreEvent, ec);
     if (ec) {
         WebCore::ExceptionCodeDescription description(ec);
         g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), description.code, description.name);
@@ -1284,13 +1277,13 @@ static void webkit_dom_${decamelize}_dispatch_event(WebKitDOMEventTarget* target
 
 static gboolean webkit_dom_${decamelize}_add_event_listener(WebKitDOMEventTarget* target, const char* eventName, GCallback handler, gboolean bubble, gpointer userData)
 {
-    WebCore::${interfaceName}* coreTarget = WEBKIT_DOM_${clsCaps}(target)->priv->coreObject.get();
+    WebCore::${interfaceName}* coreTarget = static_cast<WebCore::${interfaceName}*>(WEBKIT_DOM_OBJECT(target)->coreObject);
     return WebCore::GObjectEventListener::addEventListener(G_OBJECT(target), coreTarget, eventName, handler, bubble, userData);
 }
 
 static gboolean webkit_dom_${decamelize}_remove_event_listener(WebKitDOMEventTarget* target, const char* eventName, GCallback handler, gboolean bubble)
 {
-    WebCore::${interfaceName}* coreTarget = WEBKIT_DOM_${clsCaps}(target)->priv->coreObject.get();
+    WebCore::${interfaceName}* coreTarget = static_cast<WebCore::${interfaceName}*>(WEBKIT_DOM_OBJECT(target)->coreObject);
     return WebCore::GObjectEventListener::removeEventListener(G_OBJECT(target), coreTarget, eventName, handler, bubble);
 }
 
@@ -1439,7 +1432,6 @@ EOF
 
     print IMPL "#include <wtf/GetPtr.h>\n";
     print IMPL "#include <wtf/RefPtr.h>\n\n";
-    print IMPL @cStructPriv;
     print IMPL "#if ${conditionalString}\n\n" if $conditionalString;
 
     print IMPL "namespace WebKit {\n\n";
@@ -1461,7 +1453,6 @@ EOF
     @cBody = ();
     @cBodyPriv = ();
     @cBodyProperties = ();
-    @cStructPriv = ();
 }
 
 sub GenerateInterface {

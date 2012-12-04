@@ -35,12 +35,8 @@ G_BEGIN_DECLS
 #define WEBKIT_DOM_IS_TEST_EVENT_CONSTRUCTOR_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass),  WEBKIT_TYPE_DOM_TEST_EVENT_CONSTRUCTOR))
 #define WEBKIT_DOM_TEST_EVENT_CONSTRUCTOR_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj),  WEBKIT_TYPE_DOM_TEST_EVENT_CONSTRUCTOR, WebKitDOMTestEventConstructorClass))
 
-typedef struct _WebKitDOMTestEventConstructorPrivate WebKitDOMTestEventConstructorPrivate;
-
 struct _WebKitDOMTestEventConstructor {
     WebKitDOMObject parent_instance;
-
-    WebKitDOMTestEventConstructorPrivate *priv;
 };
 
 struct _WebKitDOMTestEventConstructorClass {

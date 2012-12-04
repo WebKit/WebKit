@@ -35,12 +35,8 @@ G_BEGIN_DECLS
 #define WEBKIT_DOM_IS_TEST_OVERLOADED_CONSTRUCTORS_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass),  WEBKIT_TYPE_DOM_TEST_OVERLOADED_CONSTRUCTORS))
 #define WEBKIT_DOM_TEST_OVERLOADED_CONSTRUCTORS_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj),  WEBKIT_TYPE_DOM_TEST_OVERLOADED_CONSTRUCTORS, WebKitDOMTestOverloadedConstructorsClass))
 
-typedef struct _WebKitDOMTestOverloadedConstructorsPrivate WebKitDOMTestOverloadedConstructorsPrivate;
-
 struct _WebKitDOMTestOverloadedConstructors {
     WebKitDOMObject parent_instance;
-
-    WebKitDOMTestOverloadedConstructorsPrivate *priv;
 };
 
 struct _WebKitDOMTestOverloadedConstructorsClass {

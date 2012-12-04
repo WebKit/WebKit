@@ -35,12 +35,8 @@ G_BEGIN_DECLS
 #define WEBKIT_DOM_IS_TEST_NODE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass),  WEBKIT_TYPE_DOM_TEST_NODE))
 #define WEBKIT_DOM_TEST_NODE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj),  WEBKIT_TYPE_DOM_TEST_NODE, WebKitDOMTestNodeClass))
 
-typedef struct _WebKitDOMTestNodePrivate WebKitDOMTestNodePrivate;
-
 struct _WebKitDOMTestNode {
     WebKitDOMNode parent_instance;
-
-    WebKitDOMTestNodePrivate *priv;
 };
 
 struct _WebKitDOMTestNodeClass {

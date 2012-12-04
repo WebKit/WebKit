@@ -35,12 +35,8 @@ G_BEGIN_DECLS
 #define WEBKIT_DOM_IS_TEST_CALLBACK_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass),  WEBKIT_TYPE_DOM_TEST_CALLBACK))
 #define WEBKIT_DOM_TEST_CALLBACK_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj),  WEBKIT_TYPE_DOM_TEST_CALLBACK, WebKitDOMTestCallbackClass))
 
-typedef struct _WebKitDOMTestCallbackPrivate WebKitDOMTestCallbackPrivate;
-
 struct _WebKitDOMTestCallback {
     WebKitDOMObject parent_instance;
-
-    WebKitDOMTestCallbackPrivate *priv;
 };
 
 struct _WebKitDOMTestCallbackClass {

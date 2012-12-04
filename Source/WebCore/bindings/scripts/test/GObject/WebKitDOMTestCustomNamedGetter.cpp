@@ -31,10 +31,6 @@
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
 
-struct _WebKitDOMTestCustomNamedGetterPrivate {
-    RefPtr<WebCore::TestCustomNamedGetter> coreObject;
-};
-
 namespace WebKit {
 
 WebKitDOMTestCustomNamedGetter* kit(WebCore::TestCustomNamedGetter* obj)
@@ -50,12 +46,21 @@ WebKitDOMTestCustomNamedGetter* kit(WebCore::TestCustomNamedGetter* obj)
 WebCore::TestCustomNamedGetter* core(WebKitDOMTestCustomNamedGetter* request)
 {
     g_return_val_if_fail(request, 0);
-    return request->priv->coreObject.get();
+
+    WebCore::TestCustomNamedGetter* coreObject = static_cast<WebCore::TestCustomNamedGetter*>(WEBKIT_DOM_OBJECT(request)->coreObject);
+    g_return_val_if_fail(coreObject, 0);
+
+    return coreObject;
 }
 
 WebKitDOMTestCustomNamedGetter* wrapTestCustomNamedGetter(WebCore::TestCustomNamedGetter* coreObject)
 {
     g_return_val_if_fail(coreObject, 0);
+
+    // We call ref() rather than using a C++ smart pointer because we can't store a C++ object
+    // in a C-allocated GObject structure. See the finalize() code for the matching deref().
+    coreObject->ref();
+
     return WEBKIT_DOM_TEST_CUSTOM_NAMED_GETTER(g_object_new(WEBKIT_TYPE_DOM_TEST_CUSTOM_NAMED_GETTER, "core-object", coreObject, NULL));
 }
 
@@ -65,37 +70,30 @@ G_DEFINE_TYPE(WebKitDOMTestCustomNamedGetter, webkit_dom_test_custom_named_gette
 
 static void webkit_dom_test_custom_named_getter_finalize(GObject* object)
 {
-    WebKitDOMTestCustomNamedGetterPrivate* priv = WEBKIT_DOM_TEST_CUSTOM_NAMED_GETTER(object)->priv;
 
-    WebKit::DOMObjectCache::forget(priv->coreObject.get());
+    WebKitDOMObject* domObject = WEBKIT_DOM_OBJECT(object);
+    
+    if (domObject->coreObject) {
+        WebCore::TestCustomNamedGetter* coreObject = static_cast<WebCore::TestCustomNamedGetter*>(domObject->coreObject);
 
-    priv->~WebKitDOMTestCustomNamedGetterPrivate();
+        WebKit::DOMObjectCache::forget(coreObject);
+        coreObject->deref();
+
+        domObject->coreObject = 0;
+    }
+
+
     G_OBJECT_CLASS(webkit_dom_test_custom_named_getter_parent_class)->finalize(object);
-}
-
-static GObject* webkit_dom_test_custom_named_getter_constructor(GType type, guint constructPropertiesCount, GObjectConstructParam* constructProperties)
-{
-    GObject* object = G_OBJECT_CLASS(webkit_dom_test_custom_named_getter_parent_class)->constructor(type, constructPropertiesCount, constructProperties);
-
-    WebKitDOMTestCustomNamedGetterPrivate* priv = WEBKIT_DOM_TEST_CUSTOM_NAMED_GETTER(object)->priv;
-    priv->coreObject = static_cast<WebCore::TestCustomNamedGetter*>(WEBKIT_DOM_OBJECT(object)->coreObject);
-
-    return object;
 }
 
 static void webkit_dom_test_custom_named_getter_class_init(WebKitDOMTestCustomNamedGetterClass* requestClass)
 {
     GObjectClass* gobjectClass = G_OBJECT_CLASS(requestClass);
-    gobjectClass->constructor = webkit_dom_test_custom_named_getter_constructor;
     gobjectClass->finalize = webkit_dom_test_custom_named_getter_finalize;
-    g_type_class_add_private(gobjectClass, sizeof(WebKitDOMTestCustomNamedGetterPrivate));
 }
 
-static void webkit_dom_test_custom_named_getter_init(WebKitDOMTestCustomNamedGetter* self)
+static void webkit_dom_test_custom_named_getter_init(WebKitDOMTestCustomNamedGetter* request)
 {
-    WebKitDOMTestCustomNamedGetterPrivate* priv = G_TYPE_INSTANCE_GET_PRIVATE(self, WEBKIT_TYPE_DOM_TEST_CUSTOM_NAMED_GETTER, WebKitDOMTestCustomNamedGetterPrivate);
-    self->priv = priv;
-    new (priv) WebKitDOMTestCustomNamedGetterPrivate();
 }
 
 void

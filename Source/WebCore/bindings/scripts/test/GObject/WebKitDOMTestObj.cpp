@@ -44,10 +44,6 @@
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
 
-struct _WebKitDOMTestObjPrivate {
-    RefPtr<WebCore::TestObj> coreObject;
-};
-
 namespace WebKit {
 
 WebKitDOMTestObj* kit(WebCore::TestObj* obj)
@@ -63,12 +59,21 @@ WebKitDOMTestObj* kit(WebCore::TestObj* obj)
 WebCore::TestObj* core(WebKitDOMTestObj* request)
 {
     g_return_val_if_fail(request, 0);
-    return request->priv->coreObject.get();
+
+    WebCore::TestObj* coreObject = static_cast<WebCore::TestObj*>(WEBKIT_DOM_OBJECT(request)->coreObject);
+    g_return_val_if_fail(coreObject, 0);
+
+    return coreObject;
 }
 
 WebKitDOMTestObj* wrapTestObj(WebCore::TestObj* coreObject)
 {
     g_return_val_if_fail(coreObject, 0);
+
+    // We call ref() rather than using a C++ smart pointer because we can't store a C++ object
+    // in a C-allocated GObject structure. See the finalize() code for the matching deref().
+    coreObject->ref();
+
     return WEBKIT_DOM_TEST_OBJ(g_object_new(WEBKIT_TYPE_DOM_TEST_OBJ, "core-object", coreObject, NULL));
 }
 
@@ -128,11 +133,19 @@ enum {
 
 static void webkit_dom_test_obj_finalize(GObject* object)
 {
-    WebKitDOMTestObjPrivate* priv = WEBKIT_DOM_TEST_OBJ(object)->priv;
 
-    WebKit::DOMObjectCache::forget(priv->coreObject.get());
+    WebKitDOMObject* domObject = WEBKIT_DOM_OBJECT(object);
+    
+    if (domObject->coreObject) {
+        WebCore::TestObj* coreObject = static_cast<WebCore::TestObj*>(domObject->coreObject);
 
-    priv->~WebKitDOMTestObjPrivate();
+        WebKit::DOMObjectCache::forget(coreObject);
+        coreObject->deref();
+
+        domObject->coreObject = 0;
+    }
+
+
     G_OBJECT_CLASS(webkit_dom_test_obj_parent_class)->finalize(object);
 }
 
@@ -505,22 +518,10 @@ static void webkit_dom_test_obj_get_property(GObject* object, guint propertyId, 
     }
 }
 
-static GObject* webkit_dom_test_obj_constructor(GType type, guint constructPropertiesCount, GObjectConstructParam* constructProperties)
-{
-    GObject* object = G_OBJECT_CLASS(webkit_dom_test_obj_parent_class)->constructor(type, constructPropertiesCount, constructProperties);
-
-    WebKitDOMTestObjPrivate* priv = WEBKIT_DOM_TEST_OBJ(object)->priv;
-    priv->coreObject = static_cast<WebCore::TestObj*>(WEBKIT_DOM_OBJECT(object)->coreObject);
-
-    return object;
-}
-
 static void webkit_dom_test_obj_class_init(WebKitDOMTestObjClass* requestClass)
 {
     GObjectClass* gobjectClass = G_OBJECT_CLASS(requestClass);
-    gobjectClass->constructor = webkit_dom_test_obj_constructor;
     gobjectClass->finalize = webkit_dom_test_obj_finalize;
-    g_type_class_add_private(gobjectClass, sizeof(WebKitDOMTestObjPrivate));
     gobjectClass->set_property = webkit_dom_test_obj_set_property;
     gobjectClass->get_property = webkit_dom_test_obj_get_property;
 
@@ -888,11 +889,8 @@ G_MAXLONG, /* max */
                                                            WEBKIT_PARAM_READABLE));
 }
 
-static void webkit_dom_test_obj_init(WebKitDOMTestObj* self)
+static void webkit_dom_test_obj_init(WebKitDOMTestObj* request)
 {
-    WebKitDOMTestObjPrivate* priv = G_TYPE_INSTANCE_GET_PRIVATE(self, WEBKIT_TYPE_DOM_TEST_OBJ, WebKitDOMTestObjPrivate);
-    self->priv = priv;
-    new (priv) WebKitDOMTestObjPrivate();
 }
 
 void

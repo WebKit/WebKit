@@ -1,3 +1,123 @@
+2012-12-04  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r136498.
+        http://trac.webkit.org/changeset/136498
+        https://bugs.webkit.org/show_bug.cgi?id=103992
+
+        Patch causes a lot of tests to crash in GTK+ bots (Requested
+        by KaL on #webkit).
+
+        * bindings/scripts/CodeGeneratorGObject.pm:
+        (GenerateProperties):
+        (GenerateHeader):
+        (GenerateCFile):
+        (GenerateEventTargetIface):
+        (WriteData):
+        * bindings/scripts/test/GObject/WebKitDOMFloat64Array.cpp:
+        (WebKit::core):
+        (WebKit::wrapFloat64Array):
+        (webkit_dom_float64array_finalize):
+        (webkit_dom_float64array_class_init):
+        (webkit_dom_float64array_init):
+        * bindings/scripts/test/GObject/WebKitDOMFloat64Array.h:
+        * bindings/scripts/test/GObject/WebKitDOMTestActiveDOMObject.cpp:
+        (WebKit::core):
+        (WebKit::wrapTestActiveDOMObject):
+        (webkit_dom_test_active_dom_object_finalize):
+        (webkit_dom_test_active_dom_object_class_init):
+        (webkit_dom_test_active_dom_object_init):
+        * bindings/scripts/test/GObject/WebKitDOMTestActiveDOMObject.h:
+        * bindings/scripts/test/GObject/WebKitDOMTestCallback.cpp:
+        (WebKit::core):
+        (WebKit::wrapTestCallback):
+        (webkit_dom_test_callback_finalize):
+        (webkit_dom_test_callback_class_init):
+        (webkit_dom_test_callback_init):
+        * bindings/scripts/test/GObject/WebKitDOMTestCallback.h:
+        * bindings/scripts/test/GObject/WebKitDOMTestCustomNamedGetter.cpp:
+        (WebKit::core):
+        (WebKit::wrapTestCustomNamedGetter):
+        (webkit_dom_test_custom_named_getter_finalize):
+        (webkit_dom_test_custom_named_getter_class_init):
+        (webkit_dom_test_custom_named_getter_init):
+        * bindings/scripts/test/GObject/WebKitDOMTestCustomNamedGetter.h:
+        * bindings/scripts/test/GObject/WebKitDOMTestEventConstructor.cpp:
+        (WebKit::core):
+        (WebKit::wrapTestEventConstructor):
+        (webkit_dom_test_event_constructor_finalize):
+        (webkit_dom_test_event_constructor_class_init):
+        (webkit_dom_test_event_constructor_init):
+        * bindings/scripts/test/GObject/WebKitDOMTestEventConstructor.h:
+        * bindings/scripts/test/GObject/WebKitDOMTestEventTarget.cpp:
+        (WebKit::core):
+        (WebKit::wrapTestEventTarget):
+        (webkit_dom_test_event_target_dispatch_event):
+        (webkit_dom_test_event_target_add_event_listener):
+        (webkit_dom_test_event_target_remove_event_listener):
+        (webkit_dom_test_event_target_finalize):
+        (webkit_dom_test_event_target_class_init):
+        (webkit_dom_test_event_target_init):
+        * bindings/scripts/test/GObject/WebKitDOMTestEventTarget.h:
+        * bindings/scripts/test/GObject/WebKitDOMTestException.cpp:
+        (WebKit::core):
+        (WebKit::wrapTestException):
+        (webkit_dom_test_exception_finalize):
+        (webkit_dom_test_exception_class_init):
+        (webkit_dom_test_exception_init):
+        * bindings/scripts/test/GObject/WebKitDOMTestException.h:
+        * bindings/scripts/test/GObject/WebKitDOMTestInterface.cpp:
+        (WebKit::core):
+        (WebKit::wrapTestInterface):
+        (webkit_dom_test_interface_finalize):
+        (webkit_dom_test_interface_class_init):
+        (webkit_dom_test_interface_init):
+        * bindings/scripts/test/GObject/WebKitDOMTestInterface.h:
+        * bindings/scripts/test/GObject/WebKitDOMTestMediaQueryListListener.cpp:
+        (WebKit::core):
+        (WebKit::wrapTestMediaQueryListListener):
+        (webkit_dom_test_media_query_list_listener_finalize):
+        (webkit_dom_test_media_query_list_listener_class_init):
+        (webkit_dom_test_media_query_list_listener_init):
+        * bindings/scripts/test/GObject/WebKitDOMTestMediaQueryListListener.h:
+        * bindings/scripts/test/GObject/WebKitDOMTestNamedConstructor.cpp:
+        (WebKit::core):
+        (WebKit::wrapTestNamedConstructor):
+        (webkit_dom_test_named_constructor_finalize):
+        (webkit_dom_test_named_constructor_class_init):
+        (webkit_dom_test_named_constructor_init):
+        * bindings/scripts/test/GObject/WebKitDOMTestNamedConstructor.h:
+        * bindings/scripts/test/GObject/WebKitDOMTestNode.cpp:
+        (WebKit::core):
+        (WebKit::wrapTestNode):
+        (webkit_dom_test_node_dispatch_event):
+        (webkit_dom_test_node_add_event_listener):
+        (webkit_dom_test_node_remove_event_listener):
+        (webkit_dom_test_node_finalize):
+        (webkit_dom_test_node_class_init):
+        (webkit_dom_test_node_init):
+        * bindings/scripts/test/GObject/WebKitDOMTestNode.h:
+        * bindings/scripts/test/GObject/WebKitDOMTestObj.cpp:
+        (WebKit::core):
+        (WebKit::wrapTestObj):
+        (webkit_dom_test_obj_finalize):
+        (webkit_dom_test_obj_class_init):
+        (webkit_dom_test_obj_init):
+        * bindings/scripts/test/GObject/WebKitDOMTestObj.h:
+        * bindings/scripts/test/GObject/WebKitDOMTestOverloadedConstructors.cpp:
+        (WebKit::core):
+        (WebKit::wrapTestOverloadedConstructors):
+        (webkit_dom_test_overloaded_constructors_finalize):
+        (webkit_dom_test_overloaded_constructors_class_init):
+        (webkit_dom_test_overloaded_constructors_init):
+        * bindings/scripts/test/GObject/WebKitDOMTestOverloadedConstructors.h:
+        * bindings/scripts/test/GObject/WebKitDOMTestSerializedScriptValueInterface.cpp:
+        (WebKit::core):
+        (WebKit::wrapTestSerializedScriptValueInterface):
+        (webkit_dom_test_serialized_script_value_interface_finalize):
+        (webkit_dom_test_serialized_script_value_interface_class_init):
+        (webkit_dom_test_serialized_script_value_interface_init):
+        * bindings/scripts/test/GObject/WebKitDOMTestSerializedScriptValueInterface.h:
+
 2012-12-04  Markus Heintz  <markusheintz@chromium.org>
 
         Web Inspector: Viewport console warnings cleanup.

@@ -31,10 +31,6 @@
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
 
-struct _WebKitDOMTestNamedConstructorPrivate {
-    RefPtr<WebCore::TestNamedConstructor> coreObject;
-};
-
 namespace WebKit {
 
 WebKitDOMTestNamedConstructor* kit(WebCore::TestNamedConstructor* obj)
@@ -50,12 +46,21 @@ WebKitDOMTestNamedConstructor* kit(WebCore::TestNamedConstructor* obj)
 WebCore::TestNamedConstructor* core(WebKitDOMTestNamedConstructor* request)
 {
     g_return_val_if_fail(request, 0);
-    return request->priv->coreObject.get();
+
+    WebCore::TestNamedConstructor* coreObject = static_cast<WebCore::TestNamedConstructor*>(WEBKIT_DOM_OBJECT(request)->coreObject);
+    g_return_val_if_fail(coreObject, 0);
+
+    return coreObject;
 }
 
 WebKitDOMTestNamedConstructor* wrapTestNamedConstructor(WebCore::TestNamedConstructor* coreObject)
 {
     g_return_val_if_fail(coreObject, 0);
+
+    // We call ref() rather than using a C++ smart pointer because we can't store a C++ object
+    // in a C-allocated GObject structure. See the finalize() code for the matching deref().
+    coreObject->ref();
+
     return WEBKIT_DOM_TEST_NAMED_CONSTRUCTOR(g_object_new(WEBKIT_TYPE_DOM_TEST_NAMED_CONSTRUCTOR, "core-object", coreObject, NULL));
 }
 
@@ -65,36 +70,29 @@ G_DEFINE_TYPE(WebKitDOMTestNamedConstructor, webkit_dom_test_named_constructor, 
 
 static void webkit_dom_test_named_constructor_finalize(GObject* object)
 {
-    WebKitDOMTestNamedConstructorPrivate* priv = WEBKIT_DOM_TEST_NAMED_CONSTRUCTOR(object)->priv;
 
-    WebKit::DOMObjectCache::forget(priv->coreObject.get());
+    WebKitDOMObject* domObject = WEBKIT_DOM_OBJECT(object);
+    
+    if (domObject->coreObject) {
+        WebCore::TestNamedConstructor* coreObject = static_cast<WebCore::TestNamedConstructor*>(domObject->coreObject);
 
-    priv->~WebKitDOMTestNamedConstructorPrivate();
+        WebKit::DOMObjectCache::forget(coreObject);
+        coreObject->deref();
+
+        domObject->coreObject = 0;
+    }
+
+
     G_OBJECT_CLASS(webkit_dom_test_named_constructor_parent_class)->finalize(object);
-}
-
-static GObject* webkit_dom_test_named_constructor_constructor(GType type, guint constructPropertiesCount, GObjectConstructParam* constructProperties)
-{
-    GObject* object = G_OBJECT_CLASS(webkit_dom_test_named_constructor_parent_class)->constructor(type, constructPropertiesCount, constructProperties);
-
-    WebKitDOMTestNamedConstructorPrivate* priv = WEBKIT_DOM_TEST_NAMED_CONSTRUCTOR(object)->priv;
-    priv->coreObject = static_cast<WebCore::TestNamedConstructor*>(WEBKIT_DOM_OBJECT(object)->coreObject);
-
-    return object;
 }
 
 static void webkit_dom_test_named_constructor_class_init(WebKitDOMTestNamedConstructorClass* requestClass)
 {
     GObjectClass* gobjectClass = G_OBJECT_CLASS(requestClass);
-    gobjectClass->constructor = webkit_dom_test_named_constructor_constructor;
     gobjectClass->finalize = webkit_dom_test_named_constructor_finalize;
-    g_type_class_add_private(gobjectClass, sizeof(WebKitDOMTestNamedConstructorPrivate));
 }
 
-static void webkit_dom_test_named_constructor_init(WebKitDOMTestNamedConstructor* self)
+static void webkit_dom_test_named_constructor_init(WebKitDOMTestNamedConstructor* request)
 {
-    WebKitDOMTestNamedConstructorPrivate* priv = G_TYPE_INSTANCE_GET_PRIVATE(self, WEBKIT_TYPE_DOM_TEST_NAMED_CONSTRUCTOR, WebKitDOMTestNamedConstructorPrivate);
-    self->priv = priv;
-    new (priv) WebKitDOMTestNamedConstructorPrivate();
 }
 

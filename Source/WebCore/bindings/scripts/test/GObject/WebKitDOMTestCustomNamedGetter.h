@@ -35,12 +35,8 @@ G_BEGIN_DECLS
 #define WEBKIT_DOM_IS_TEST_CUSTOM_NAMED_GETTER_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass),  WEBKIT_TYPE_DOM_TEST_CUSTOM_NAMED_GETTER))
 #define WEBKIT_DOM_TEST_CUSTOM_NAMED_GETTER_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj),  WEBKIT_TYPE_DOM_TEST_CUSTOM_NAMED_GETTER, WebKitDOMTestCustomNamedGetterClass))
 
-typedef struct _WebKitDOMTestCustomNamedGetterPrivate WebKitDOMTestCustomNamedGetterPrivate;
-
 struct _WebKitDOMTestCustomNamedGetter {
     WebKitDOMObject parent_instance;
-
-    WebKitDOMTestCustomNamedGetterPrivate *priv;
 };
 
 struct _WebKitDOMTestCustomNamedGetterClass {
