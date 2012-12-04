@@ -144,5 +144,15 @@ JSValue JSTestNode::getConstructor(ExecState* exec, JSGlobalObject* globalObject
     return getDOMConstructor<JSTestNodeConstructor>(exec, jsCast<JSDOMGlobalObject*>(globalObject));
 }
 
+void JSTestNode::visitChildren(JSCell* cell, SlotVisitor& visitor)
+{
+    JSTestNode* thisObject = jsCast<JSTestNode*>(cell);
+    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
+    COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
+    ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
+    Base::visitChildren(thisObject, visitor);
+    thisObject->impl()->visitJSEventListeners(visitor);
+}
+
 
 }
