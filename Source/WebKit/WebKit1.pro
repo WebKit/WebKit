@@ -12,6 +12,10 @@ include(WebKit1.pri)
 WEBKIT += wtf javascriptcore webcore
 QT += gui
 
+# This is relied upon by our export macros and seems not to be properly
+# defined by the logic in qt_module.prf as it should
+DEFINES += QT_BUILD_WEBKIT_LIB
+
 CONFIG += staticlib
 
 SOURCES += \
