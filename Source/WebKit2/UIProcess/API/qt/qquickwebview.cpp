@@ -326,7 +326,7 @@ void QQuickWebViewPrivate::initialize(WKContextRef contextRef, WKPageGroupRef pa
 
     q_ptr->setAcceptedMouseButtons(Qt::MouseButtonMask);
     q_ptr->setAcceptHoverEvents(true);
-    q_ptr->setFlags(QQuickItem::ItemAcceptsDrops);
+    q_ptr->setFlag(QQuickItem::ItemAcceptsDrops, true);
 }
 
 void QQuickWebViewPrivate::loadDidStop()
