@@ -386,7 +386,11 @@ void RenderLineBoxList::dirtyLinesFromChangedChild(RenderObject* container, Rend
         if (adjacentBox)
             adjacentBox->markDirty();
         adjacentBox = box->nextRootBox();
-        if (adjacentBox && (adjacentBox->lineBreakObj() == child || child->isBR() || (curr && curr->isBR())))
+        // If |child| has been inserted before the first element in the linebox, but after collapsed leading
+        // space, the search for |child|'s linebox will go past the leading space to the previous linebox and select that
+        // one as |box|. If we hit that situation here, dirty the |box| actually containing the child too. 
+        bool insertedAfterLeadingSpace = box->lineBreakObj() == child->previousSibling();
+        if (adjacentBox && (adjacentBox->lineBreakObj() == child || child->isBR() || (curr && curr->isBR()) || insertedAfterLeadingSpace))
             adjacentBox->markDirty();
     }
 }

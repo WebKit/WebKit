@@ -1,3 +1,27 @@
+2012-12-04  Robert Hogan  <robert@webkit.org>
+
+        Redrawing issue with inserting new inline element between existing inline elements
+        https://bugs.webkit.org/show_bug.cgi?id=50315
+
+        Reviewed by Levi Weintraub.
+
+        When inserting an element such as '<span>text<br></span>' between two lineboxes, the second of which has leading space
+        collapsed away after a line-break, dirtyLinesFromChangeChild() needs to ensure that the linebox the fragment is inserted into (the second 
+        of the two lineboxes) gets dirtied. 
+        
+        Since the element has been inserted before the first element in the linebox, but after the collapsed leading
+        space, the search for the new element's linebox will go past the leading space to the previous linebox and select that
+        one by mistake.
+        
+        So in order to ensure the element's linebox is dirtied make sure its previous sibling is not the line-break object of the
+        linebox we selected when searching for a linebox to dirty. If the previous sibling is the linebox's line-break object then
+        the element is in the one after the one we selected and we should dirty that linebox too. 
+
+        Test: fast/inline/layout-after-inserting-nested-br.html
+
+        * rendering/RenderLineBoxList.cpp:
+        (WebCore::RenderLineBoxList::dirtyLinesFromChangedChild):
+
 2012-12-04  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         IntSize::scale() should return rounded value
