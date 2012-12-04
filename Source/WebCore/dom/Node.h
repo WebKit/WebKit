@@ -793,7 +793,7 @@ private:
     virtual void refEventTarget();
     virtual void derefEventTarget();
 
-    virtual OwnPtr<NodeRareData> createRareData();
+    virtual PassOwnPtr<NodeRareData> createRareData();
     bool rareDataFocused() const;
 
     virtual RenderStyle* nonRendererStyle() const { return 0; }

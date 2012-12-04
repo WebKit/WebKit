@@ -207,8 +207,8 @@ inline ElementRareData* Element::ensureElementRareData()
 {
     return static_cast<ElementRareData*>(ensureRareData());
 }
-    
-OwnPtr<NodeRareData> Element::createRareData()
+
+PassOwnPtr<NodeRareData> Element::createRareData()
 {
     return adoptPtr(new ElementRareData(documentInternal()));
 }

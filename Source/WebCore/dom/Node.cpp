@@ -466,7 +466,7 @@ NodeRareData* Node::ensureRareData()
     return data;
 }
 
-OwnPtr<NodeRareData> Node::createRareData()
+PassOwnPtr<NodeRareData> Node::createRareData()
 {
     return adoptPtr(new NodeRareData(documentInternal()));
 }
