@@ -1,5 +1,12 @@
 2012-12-03  Roger Fong  <roger_fong@apple.com>
 
+        Unreviewed. Skip fast/js/kde/Array.html.
+        https://bugs.webkit.org/show_bug.cgi?id=103962.
+
+        * platform/win/TestExpectations:
+
+2012-12-03  Roger Fong  <roger_fong@apple.com>
+
         Unreviewed. Line ending fix.
 
         * platform/win/css3/filters/effect-reference-expected.txt:
