@@ -1,5 +1,14 @@
 2012-12-04  Stephen White  <senorblanco@chromium.org>
 
+        Unreviewed, rolling out r136530.
+        http://trac.webkit.org/changeset/136530
+
+        Broke build.webkit.org linux build
+
+        * DEPS:
+
+2012-12-04  Stephen White  <senorblanco@chromium.org>
+
         Unreviewed.  Rolled DEPS.
 
         * DEPS:
