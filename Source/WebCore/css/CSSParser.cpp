@@ -1652,6 +1652,11 @@ static inline bool isComma(CSSParserValue* value)
     return value && value->unit == CSSParserValue::Operator && value->iValue == ','; 
 }
 
+static inline bool isForwardSlashOperator(CSSParserValue* value)
+{
+    return value && value->unit == CSSParserValue::Operator && value->iValue == '/';
+}
+
 bool CSSParser::validWidth(CSSParserValue* value)
 {
     int id = value->id;
@@ -3001,7 +3006,7 @@ bool CSSParser::parseFillShorthand(CSSPropertyID propId, const CSSPropertyID* pr
         }
 
         bool sizeCSSPropertyExpected = false;
-        if ((val->unit == CSSParserValue::Operator && val->iValue == '/') && foundPositionCSSProperty) {
+        if (isForwardSlashOperator(val) && foundPositionCSSProperty) {
             sizeCSSPropertyExpected = true;
             m_valueList->next();
         }
@@ -5080,7 +5085,7 @@ bool CSSParser::parseFont(bool important)
     if (!value)
         return false;
 
-    if (value->unit == CSSParserValue::Operator && value->iValue == '/') {
+    if (isForwardSlashOperator(value)) {
         // The line-height property.
         value = m_valueList->next();
         if (!value)
@@ -6371,7 +6376,7 @@ bool CSSParser::parseBorderImage(CSSPropertyID propId, RefPtr<CSSValue>& result,
     while (CSSParserValue* val = m_valueList->current()) {
         context.setCanAdvance(false);
 
-        if (!context.canAdvance() && context.allowSlash() && val->unit == CSSParserValue::Operator && val->iValue == '/')
+        if (!context.canAdvance() && context.allowSlash() && isForwardSlashOperator(val))
             context.commitSlash();
 
         if (!context.canAdvance() && context.allowImage()) {
@@ -6787,7 +6792,7 @@ bool CSSParser::parseAspectRatio(bool important)
     CSSParserValue* op = m_valueList->valueAt(1);
     CSSParserValue* rvalue = m_valueList->valueAt(2);
 
-    if (op->unit != CSSParserValue::Operator || op->iValue != '/')
+    if (!isForwardSlashOperator(op))
         return false;
 
     if (!validUnit(lvalue, FNumber | FNonNeg) || !validUnit(rvalue, FNumber | FNonNeg))
