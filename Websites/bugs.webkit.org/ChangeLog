@@ -1,5 +1,20 @@
 2012-12-04  Ojan Vafai  <ojan@chromium.org>
 
+        Properly create the header links in the code review tool
+        https://bugs.webkit.org/show_bug.cgi?id=104037
+
+        Reviewed by Adam Barth.
+
+        Right now, we just prepend "header" to the two existing links and change
+        the first link to point to the header. The problem is that jQuery's prepend
+        method just prepends to each item in the jQuery object instead of adding
+        the item to the beginning of the list as this code assumed.
+
+        * code-review-test.html:
+        * code-review.js:
+
+2012-12-04  Ojan Vafai  <ojan@chromium.org>
+
         Can't add followup comment to a previous comment
         https://bugs.webkit.org/show_bug.cgi?id=104025
 

@@ -22,7 +22,7 @@ function inherits(childConstructor, parentConstructor) {
 }
 
 function log(msg) {
-    document.getElementById('output').innerHTML += msg + '\n\n';
+    document.getElementById('output').textContent += msg + '\n\n';
 }
 
 function ASSERT(msg, assertion) {
@@ -41,10 +41,32 @@ function ASSERT_EQUAL(actual, expected) {
 
 function testTracLinks() {
   var links = tracLinks('foo/bar/baz.cpp', '');
-  ASSERT_EQUAL($(links).attr('href'), 'http://trac.webkit.org/log/trunk/foo/bar/baz.h');
+  ASSERT_EQUAL($('<div>').append(links).html(),
+    '<a target="_blank" href="http://trac.webkit.org/log/trunk/foo/bar/baz.h">header</a>' +
+    '<a target="_blank" href="http://trac.webkit.org/browser/trunk/foo/bar/baz.cpp?annotate=blame">annotate</a>' +
+    '<a target="_blank" href="http://trac.webkit.org/log/trunk/foo/bar/baz.cpp">revision log</a>');
 
   var links = tracLinks('foo/bar.cpp/qux.mm', '');
-  ASSERT_EQUAL($(links).attr('href'), 'http://trac.webkit.org/log/trunk/foo/bar.cpp/qux.h');
+  ASSERT_EQUAL($('<div>').append(links).html(),
+    '<a target="_blank" href="http://trac.webkit.org/log/trunk/foo/bar.cpp/qux.h">header</a>' +
+    '<a target="_blank" href="http://trac.webkit.org/browser/trunk/foo/bar.cpp/qux.mm?annotate=blame">annotate</a>' +
+    '<a target="_blank" href="http://trac.webkit.org/log/trunk/foo/bar.cpp/qux.mm">revision log</a>
+');
+
+  var links = tracLinks('foo/bar.h', '');
+  ASSERT_EQUAL($('<div>').append(links).html(),
+    '<a target="_blank" href="http://trac.webkit.org/browser/trunk/foo/bar.h?annotate=blame">annotate</a>' +
+    '<a target="_blank" href="http://trac.webkit.org/log/trunk/foo/bar.h">revision log</a>');
+
+  var links = tracLinks('foo/bar.gypi', '');
+  ASSERT_EQUAL($('<div>').append(links).html(),
+    '<a target="_blank" href="http://trac.webkit.org/browser/trunk/foo/bar.gypi?annotate=blame">annotate</a>' +
+    '<a target="_blank" href="http://trac.webkit.org/log/trunk/foo/bar.gypi">revision log</a>');
+
+  var links = tracLinks('foo/ChangeLog', '');
+  ASSERT_EQUAL($('<div>').append(links).html(),
+    '<a target="_blank" href="http://trac.webkit.org/browser/trunk/foo/ChangeLog?annotate=blame">annotate</a>' +
+    '<a target="_blank" href="http://trac.webkit.org/log/trunk/foo/ChangeLog">revision log</a>');
 }
 
 function testDraftCommentSaver() {

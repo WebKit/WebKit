@@ -638,9 +638,10 @@ var CODE_REVIEW_UNITTEST;
     for (var i = 0; i < implementation_suffix_list.length; ++i) {
       var suffix = implementation_suffix_list[i];
       if (file_name.lastIndexOf(suffix) == file_name.length - suffix.length) {
-        trac_links.prepend('<a target="_blank">header</a>');
+        var new_link = $('<a target="_blank">header</a>');
         var stem = file_name.substr(0, file_name.length - suffix.length);
-        trac_links[0].href= 'http://trac.webkit.org/log/trunk/' + stem + '.h';
+        new_link[0].href= 'http://trac.webkit.org/log/trunk/' + stem + '.h';
+        trac_links = $.merge(new_link, trac_links);
       }
     }
     return trac_links;
