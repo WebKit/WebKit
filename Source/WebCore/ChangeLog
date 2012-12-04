@@ -1,3 +1,45 @@
+2012-12-03  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Simplify GObject DOM bindings code for handling properties
+        https://bugs.webkit.org/show_bug.cgi?id=101072
+
+        Reviewed by Xan Lopez.
+
+        Do not override GObjectClass::set_property if the wrapped object
+        doesn't have writable properties, and don't override
+        GObjectClass::get_property if the wrapped object doesn't have
+        properties at all. It reduces some GObject boilerplate in
+        generated code for some objects.
+
+        * bindings/scripts/CodeGeneratorGObject.pm:
+        (GenerateProperties):
+        * bindings/scripts/test/GObject/WebKitDOMFloat64Array.cpp:
+        (webkit_dom_float64array_class_init):
+        * bindings/scripts/test/GObject/WebKitDOMTestActiveDOMObject.cpp:
+        (webkit_dom_test_active_dom_object_class_init):
+        * bindings/scripts/test/GObject/WebKitDOMTestCallback.cpp:
+        (webkit_dom_test_callback_class_init):
+        * bindings/scripts/test/GObject/WebKitDOMTestCustomNamedGetter.cpp:
+        (webkit_dom_test_custom_named_getter_class_init):
+        * bindings/scripts/test/GObject/WebKitDOMTestEventConstructor.cpp:
+        (webkit_dom_test_event_constructor_class_init):
+        * bindings/scripts/test/GObject/WebKitDOMTestEventTarget.cpp:
+        (webkit_dom_test_event_target_class_init):
+        * bindings/scripts/test/GObject/WebKitDOMTestException.cpp:
+        (webkit_dom_test_exception_class_init):
+        * bindings/scripts/test/GObject/WebKitDOMTestInterface.cpp:
+        (webkit_dom_test_interface_class_init):
+        * bindings/scripts/test/GObject/WebKitDOMTestMediaQueryListListener.cpp:
+        (webkit_dom_test_media_query_list_listener_class_init):
+        * bindings/scripts/test/GObject/WebKitDOMTestNamedConstructor.cpp:
+        (webkit_dom_test_named_constructor_class_init):
+        * bindings/scripts/test/GObject/WebKitDOMTestNode.cpp:
+        (webkit_dom_test_node_class_init):
+        * bindings/scripts/test/GObject/WebKitDOMTestObj.cpp:
+        (webkit_dom_test_obj_class_init):
+        * bindings/scripts/test/GObject/WebKitDOMTestSerializedScriptValueInterface.cpp:
+        (webkit_dom_test_serialized_script_value_interface_class_init):
+
 2012-12-04  Kentaro Hara  <haraken@chromium.org>
 
         Unreviewed. Rebaselined run-bindings-tests.

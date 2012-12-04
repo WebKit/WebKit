@@ -78,10 +78,6 @@ WebKitDOMTestCallback* wrapTestCallback(WebCore::TestCallback* coreObject)
 
 G_DEFINE_TYPE(WebKitDOMTestCallback, webkit_dom_test_callback, WEBKIT_TYPE_DOM_OBJECT)
 
-enum {
-    PROP_0,
-};
-
 static void webkit_dom_test_callback_finalize(GObject* object)
 {
 #if ENABLE(SQL_DATABASE)
@@ -100,45 +96,10 @@ static void webkit_dom_test_callback_finalize(GObject* object)
     G_OBJECT_CLASS(webkit_dom_test_callback_parent_class)->finalize(object);
 }
 
-static void webkit_dom_test_callback_set_property(GObject* object, guint propertyId, const GValue* value, GParamSpec* pspec)
-{
-    WebCore::JSMainThreadNullState state;
-    switch (propertyId) {
-    default:
-        G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propertyId, pspec);
-        break;
-    }
-}
-
-
-static void webkit_dom_test_callback_get_property(GObject* object, guint propertyId, GValue* value, GParamSpec* pspec)
-{
-    WebCore::JSMainThreadNullState state;
-    switch (propertyId) {
-    default:
-        G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propertyId, pspec);
-        break;
-    }
-}
-
-
-static void webkit_dom_test_callback_constructed(GObject* object)
-{
-
-    if (G_OBJECT_CLASS(webkit_dom_test_callback_parent_class)->constructed)
-        G_OBJECT_CLASS(webkit_dom_test_callback_parent_class)->constructed(object);
-}
-
 static void webkit_dom_test_callback_class_init(WebKitDOMTestCallbackClass* requestClass)
 {
     GObjectClass* gobjectClass = G_OBJECT_CLASS(requestClass);
     gobjectClass->finalize = webkit_dom_test_callback_finalize;
-    gobjectClass->set_property = webkit_dom_test_callback_set_property;
-    gobjectClass->get_property = webkit_dom_test_callback_get_property;
-    gobjectClass->constructed = webkit_dom_test_callback_constructed;
-
-
-
 }
 
 static void webkit_dom_test_callback_init(WebKitDOMTestCallback* request)

@@ -551,25 +551,25 @@ sub GenerateProperties {
 
     # Properties
     my $implContent = "";
+    my @readableProperties = GetReadableProperties($interface->attributes);
+    my @writeableProperties = GetWriteableProperties(\@readableProperties);
+    my $numProperties = scalar @readableProperties;
 
     # Properties
-    $implContent = << "EOF";
+    my $privFunction = GetCoreObject($interfaceName, "coreSelf", "self");
+    if ($numProperties > 0) {
+        $implContent = << "EOF";
 enum {
     PROP_0,
 EOF
-    push(@cBodyProperties, $implContent);
+        push(@cBodyProperties, $implContent);
 
-    my @readableProperties = GetReadableProperties($interface->attributes);
-
-    my $privFunction = GetCoreObject($interfaceName, "coreSelf", "self");
-
-    my $txtGetProp = << "EOF";
+        my $txtGetProp = << "EOF";
 static void ${lowerCaseIfaceName}_get_property(GObject* object, guint propertyId, GValue* value, GParamSpec* pspec)
 {
     WebCore::JSMainThreadNullState state;
 EOF
-    push(@txtGetProps, $txtGetProp);
-    if (scalar @readableProperties > 0) {
+        push(@txtGetProps, $txtGetProp);
         $txtGetProp = << "EOF";
 $conditionGuardStart
     ${className}* self = WEBKIT_DOM_${clsCaps}(object);
@@ -577,63 +577,63 @@ $conditionGuardStart
 $conditionGuardEnd
 EOF
         push(@txtGetProps, $txtGetProp);
-    }
 
-    $txtGetProp = << "EOF";
+        $txtGetProp = << "EOF";
     switch (propertyId) {
 EOF
-    push(@txtGetProps, $txtGetProp);
+        push(@txtGetProps, $txtGetProp);
 
-    my @writeableProperties = GetWriteableProperties(\@readableProperties);
-
-    my $txtSetProps = << "EOF";
+        if (scalar @writeableProperties > 0) {
+            my $txtSetProps = << "EOF";
 static void ${lowerCaseIfaceName}_set_property(GObject* object, guint propertyId, const GValue* value, GParamSpec* pspec)
 {
     WebCore::JSMainThreadNullState state;
 EOF
-    push(@txtSetProps, $txtSetProps);
+            push(@txtSetProps, $txtSetProps);
 
-    if (scalar @writeableProperties > 0) {
-        $txtSetProps = << "EOF";
+            $txtSetProps = << "EOF";
 $conditionGuardStart
     ${className}* self = WEBKIT_DOM_${clsCaps}(object);
     $privFunction
 $conditionGuardEnd
 EOF
-        push(@txtSetProps, $txtSetProps);
-    }
+            push(@txtSetProps, $txtSetProps);
 
-    $txtSetProps = << "EOF";
+            $txtSetProps = << "EOF";
     switch (propertyId) {
 EOF
-    push(@txtSetProps, $txtSetProps);
+            push(@txtSetProps, $txtSetProps);
+        }
 
-    foreach my $attribute (@readableProperties) {
-        if ($attribute->signature->type ne "EventListener" &&
-            $attribute->signature->type ne "MediaQueryListListener") {
-            GenerateProperty($attribute, $interfaceName, \@writeableProperties, $interface);
+        foreach my $attribute (@readableProperties) {
+            if ($attribute->signature->type ne "EventListener" &&
+                $attribute->signature->type ne "MediaQueryListListener") {
+                GenerateProperty($attribute, $interfaceName, \@writeableProperties, $interface);
+            }
+        }
+
+        push(@cBodyProperties, "};\n\n");
+
+        $txtGetProp = << "EOF";
+    default:
+        G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propertyId, pspec);
+        break;
+    }
+}
+EOF
+        push(@txtGetProps, $txtGetProp);
+
+        if (scalar @writeableProperties > 0) {
+            $txtSetProps = << "EOF";
+    default:
+        G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propertyId, pspec);
+        break;
+    }
+}
+EOF
+            push(@txtSetProps, $txtSetProps);
         }
     }
-
-    push(@cBodyProperties, "};\n\n");
-
-    $txtGetProp = << "EOF";
-    default:
-        G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propertyId, pspec);
-        break;
-    }
-}
-EOF
-    push(@txtGetProps, $txtGetProp);
-
-    $txtSetProps = << "EOF";
-    default:
-        G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propertyId, pspec);
-        break;
-    }
-}
-EOF
-    push(@txtSetProps, $txtSetProps);
 
     # Do not insert extra spaces when interpolating array variables
     $" = "";
@@ -657,31 +657,61 @@ $conditionGuardEnd
     G_OBJECT_CLASS(${lowerCaseIfaceName}_parent_class)->finalize(object);
 }
 
-@txtSetProps
-
-@txtGetProps
-
-static void ${lowerCaseIfaceName}_constructed(GObject* object)
-{
 EOF
     push(@cBodyProperties, $implContent);
 
-    $implContent = << "EOF";
-@txtInstallEventListeners
-    if (G_OBJECT_CLASS(${lowerCaseIfaceName}_parent_class)->constructed)
-        G_OBJECT_CLASS(${lowerCaseIfaceName}_parent_class)->constructed(object);
+    if ($numProperties > 0) {
+        if (scalar @writeableProperties > 0) {
+            push(@cBodyProperties, @txtSetProps);
+            push(@cBodyProperties, "\n");
+        }
+        push(@cBodyProperties, @txtGetProps);
+        push(@cBodyProperties, "\n");
+    }
+
+    if (scalar @txtInstallEventListeners > 0) {
+        $implContent = << "EOF";
+static void ${lowerCaseIfaceName}_constructed(GObject* object)
+{
+    G_OBJECT_CLASS(${lowerCaseIfaceName}_parent_class)->constructed(object);
+EOF
+        push(@cBodyProperties, $implContent);
+        push(@cBodyProperties, "\n");
+        push(@cBodyProperties, @txtInstallEventListeners);
+
+        $implContent = << "EOF";
 }
 
+EOF
+        push(@cBodyProperties, $implContent);
+    }
+
+    $implContent = << "EOF";
 static void ${lowerCaseIfaceName}_class_init(${className}Class* requestClass)
 {
     GObjectClass* gobjectClass = G_OBJECT_CLASS(requestClass);
     gobjectClass->finalize = ${lowerCaseIfaceName}_finalize;
-    gobjectClass->set_property = ${lowerCaseIfaceName}_set_property;
-    gobjectClass->get_property = ${lowerCaseIfaceName}_get_property;
-    gobjectClass->constructed = ${lowerCaseIfaceName}_constructed;
+EOF
+    push(@cBodyProperties, $implContent);
 
-@txtInstallProps
-@txtInstallSignals
+    if (scalar @txtInstallEventListeners > 0) {
+        push(@cBodyProperties, "    gobjectClass->constructed = ${lowerCaseIfaceName}_constructed;\n");
+    }
+
+    if ($numProperties > 0) {
+        if (scalar @writeableProperties > 0) {
+            push(@cBodyProperties, "    gobjectClass->set_property = ${lowerCaseIfaceName}_set_property;\n");
+        }
+        push(@cBodyProperties, "    gobjectClass->get_property = ${lowerCaseIfaceName}_get_property;\n");
+        push(@cBodyProperties, "\n");
+        push(@cBodyProperties, @txtInstallProps);
+    }
+
+    if (scalar @txtInstallSignals > 0) {
+        push(@cBodyProperties, "\n");
+        push(@cBodyProperties, @txtInstallSignals);
+    }
+    $implContent = << "EOF";
 }
 
 static void ${lowerCaseIfaceName}_init(${className}* request)

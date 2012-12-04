@@ -128,7 +128,6 @@ static void webkit_dom_test_interface_set_property(GObject* object, guint proper
     }
 }
 
-
 static void webkit_dom_test_interface_get_property(GObject* object, guint propertyId, GValue* value, GParamSpec* pspec)
 {
     WebCore::JSMainThreadNullState state;
@@ -186,21 +185,12 @@ static void webkit_dom_test_interface_get_property(GObject* object, guint proper
     }
 }
 
-
-static void webkit_dom_test_interface_constructed(GObject* object)
-{
-
-    if (G_OBJECT_CLASS(webkit_dom_test_interface_parent_class)->constructed)
-        G_OBJECT_CLASS(webkit_dom_test_interface_parent_class)->constructed(object);
-}
-
 static void webkit_dom_test_interface_class_init(WebKitDOMTestInterfaceClass* requestClass)
 {
     GObjectClass* gobjectClass = G_OBJECT_CLASS(requestClass);
     gobjectClass->finalize = webkit_dom_test_interface_finalize;
     gobjectClass->set_property = webkit_dom_test_interface_set_property;
     gobjectClass->get_property = webkit_dom_test_interface_get_property;
-    gobjectClass->constructed = webkit_dom_test_interface_constructed;
 
     g_object_class_install_property(gobjectClass,
                                     PROP_SUPPLEMENTAL_STR1,
@@ -223,8 +213,6 @@ static void webkit_dom_test_interface_class_init(WebKitDOMTestInterfaceClass* re
                                                            "read-write  WebKitDOMNode* TestInterface.supplemental-node", /* longer - could do with some extra doc stuff here */
                                                            WEBKIT_TYPE_DOM_NODE, /* gobject type */
                                                            WEBKIT_PARAM_READWRITE));
-
-
 }
 
 static void webkit_dom_test_interface_init(WebKitDOMTestInterface* request)

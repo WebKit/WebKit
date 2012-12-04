@@ -91,17 +91,6 @@ static void webkit_dom_test_exception_finalize(GObject* object)
     G_OBJECT_CLASS(webkit_dom_test_exception_parent_class)->finalize(object);
 }
 
-static void webkit_dom_test_exception_set_property(GObject* object, guint propertyId, const GValue* value, GParamSpec* pspec)
-{
-    WebCore::JSMainThreadNullState state;
-    switch (propertyId) {
-    default:
-        G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propertyId, pspec);
-        break;
-    }
-}
-
-
 static void webkit_dom_test_exception_get_property(GObject* object, guint propertyId, GValue* value, GParamSpec* pspec)
 {
     WebCore::JSMainThreadNullState state;
@@ -120,21 +109,11 @@ static void webkit_dom_test_exception_get_property(GObject* object, guint proper
     }
 }
 
-
-static void webkit_dom_test_exception_constructed(GObject* object)
-{
-
-    if (G_OBJECT_CLASS(webkit_dom_test_exception_parent_class)->constructed)
-        G_OBJECT_CLASS(webkit_dom_test_exception_parent_class)->constructed(object);
-}
-
 static void webkit_dom_test_exception_class_init(WebKitDOMTestExceptionClass* requestClass)
 {
     GObjectClass* gobjectClass = G_OBJECT_CLASS(requestClass);
     gobjectClass->finalize = webkit_dom_test_exception_finalize;
-    gobjectClass->set_property = webkit_dom_test_exception_set_property;
     gobjectClass->get_property = webkit_dom_test_exception_get_property;
-    gobjectClass->constructed = webkit_dom_test_exception_constructed;
 
     g_object_class_install_property(gobjectClass,
                                     PROP_NAME,
@@ -143,8 +122,6 @@ static void webkit_dom_test_exception_class_init(WebKitDOMTestExceptionClass* re
                                                            "read-only  gchar* TestException.name", /* longer - could do with some extra doc stuff here */
                                                            "", /* default */
                                                            WEBKIT_PARAM_READABLE));
-
-
 }
 
 static void webkit_dom_test_exception_init(WebKitDOMTestException* request)

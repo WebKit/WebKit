@@ -92,17 +92,6 @@ static void webkit_dom_test_event_constructor_finalize(GObject* object)
     G_OBJECT_CLASS(webkit_dom_test_event_constructor_parent_class)->finalize(object);
 }
 
-static void webkit_dom_test_event_constructor_set_property(GObject* object, guint propertyId, const GValue* value, GParamSpec* pspec)
-{
-    WebCore::JSMainThreadNullState state;
-    switch (propertyId) {
-    default:
-        G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propertyId, pspec);
-        break;
-    }
-}
-
-
 static void webkit_dom_test_event_constructor_get_property(GObject* object, guint propertyId, GValue* value, GParamSpec* pspec)
 {
     WebCore::JSMainThreadNullState state;
@@ -125,21 +114,11 @@ static void webkit_dom_test_event_constructor_get_property(GObject* object, guin
     }
 }
 
-
-static void webkit_dom_test_event_constructor_constructed(GObject* object)
-{
-
-    if (G_OBJECT_CLASS(webkit_dom_test_event_constructor_parent_class)->constructed)
-        G_OBJECT_CLASS(webkit_dom_test_event_constructor_parent_class)->constructed(object);
-}
-
 static void webkit_dom_test_event_constructor_class_init(WebKitDOMTestEventConstructorClass* requestClass)
 {
     GObjectClass* gobjectClass = G_OBJECT_CLASS(requestClass);
     gobjectClass->finalize = webkit_dom_test_event_constructor_finalize;
-    gobjectClass->set_property = webkit_dom_test_event_constructor_set_property;
     gobjectClass->get_property = webkit_dom_test_event_constructor_get_property;
-    gobjectClass->constructed = webkit_dom_test_event_constructor_constructed;
 
     g_object_class_install_property(gobjectClass,
                                     PROP_ATTR1,
@@ -155,8 +134,6 @@ static void webkit_dom_test_event_constructor_class_init(WebKitDOMTestEventConst
                                                            "read-only  gchar* TestEventConstructor.attr2", /* longer - could do with some extra doc stuff here */
                                                            "", /* default */
                                                            WEBKIT_PARAM_READABLE));
-
-
 }
 
 static void webkit_dom_test_event_constructor_init(WebKitDOMTestEventConstructor* request)

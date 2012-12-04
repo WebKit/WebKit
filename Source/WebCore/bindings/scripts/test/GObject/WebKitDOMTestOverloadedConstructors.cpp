@@ -68,10 +68,6 @@ WebKitDOMTestOverloadedConstructors* wrapTestOverloadedConstructors(WebCore::Tes
 
 G_DEFINE_TYPE(WebKitDOMTestOverloadedConstructors, webkit_dom_test_overloaded_constructors, WEBKIT_TYPE_DOM_OBJECT)
 
-enum {
-    PROP_0,
-};
-
 static void webkit_dom_test_overloaded_constructors_finalize(GObject* object)
 {
 
@@ -90,45 +86,10 @@ static void webkit_dom_test_overloaded_constructors_finalize(GObject* object)
     G_OBJECT_CLASS(webkit_dom_test_overloaded_constructors_parent_class)->finalize(object);
 }
 
-static void webkit_dom_test_overloaded_constructors_set_property(GObject* object, guint propertyId, const GValue* value, GParamSpec* pspec)
-{
-    WebCore::JSMainThreadNullState state;
-    switch (propertyId) {
-    default:
-        G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propertyId, pspec);
-        break;
-    }
-}
-
-
-static void webkit_dom_test_overloaded_constructors_get_property(GObject* object, guint propertyId, GValue* value, GParamSpec* pspec)
-{
-    WebCore::JSMainThreadNullState state;
-    switch (propertyId) {
-    default:
-        G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propertyId, pspec);
-        break;
-    }
-}
-
-
-static void webkit_dom_test_overloaded_constructors_constructed(GObject* object)
-{
-
-    if (G_OBJECT_CLASS(webkit_dom_test_overloaded_constructors_parent_class)->constructed)
-        G_OBJECT_CLASS(webkit_dom_test_overloaded_constructors_parent_class)->constructed(object);
-}
-
 static void webkit_dom_test_overloaded_constructors_class_init(WebKitDOMTestOverloadedConstructorsClass* requestClass)
 {
     GObjectClass* gobjectClass = G_OBJECT_CLASS(requestClass);
     gobjectClass->finalize = webkit_dom_test_overloaded_constructors_finalize;
-    gobjectClass->set_property = webkit_dom_test_overloaded_constructors_set_property;
-    gobjectClass->get_property = webkit_dom_test_overloaded_constructors_get_property;
-    gobjectClass->constructed = webkit_dom_test_overloaded_constructors_constructed;
-
-
-
 }
 
 static void webkit_dom_test_overloaded_constructors_init(WebKitDOMTestOverloadedConstructors* request)

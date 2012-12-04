@@ -102,17 +102,6 @@ static void webkit_dom_test_serialized_script_value_interface_finalize(GObject* 
     G_OBJECT_CLASS(webkit_dom_test_serialized_script_value_interface_parent_class)->finalize(object);
 }
 
-static void webkit_dom_test_serialized_script_value_interface_set_property(GObject* object, guint propertyId, const GValue* value, GParamSpec* pspec)
-{
-    WebCore::JSMainThreadNullState state;
-    switch (propertyId) {
-    default:
-        G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propertyId, pspec);
-        break;
-    }
-}
-
-
 static void webkit_dom_test_serialized_script_value_interface_get_property(GObject* object, guint propertyId, GValue* value, GParamSpec* pspec)
 {
     WebCore::JSMainThreadNullState state;
@@ -177,21 +166,11 @@ static void webkit_dom_test_serialized_script_value_interface_get_property(GObje
     }
 }
 
-
-static void webkit_dom_test_serialized_script_value_interface_constructed(GObject* object)
-{
-
-    if (G_OBJECT_CLASS(webkit_dom_test_serialized_script_value_interface_parent_class)->constructed)
-        G_OBJECT_CLASS(webkit_dom_test_serialized_script_value_interface_parent_class)->constructed(object);
-}
-
 static void webkit_dom_test_serialized_script_value_interface_class_init(WebKitDOMTestSerializedScriptValueInterfaceClass* requestClass)
 {
     GObjectClass* gobjectClass = G_OBJECT_CLASS(requestClass);
     gobjectClass->finalize = webkit_dom_test_serialized_script_value_interface_finalize;
-    gobjectClass->set_property = webkit_dom_test_serialized_script_value_interface_set_property;
     gobjectClass->get_property = webkit_dom_test_serialized_script_value_interface_get_property;
-    gobjectClass->constructed = webkit_dom_test_serialized_script_value_interface_constructed;
 
     g_object_class_install_property(gobjectClass,
                                     PROP_VALUE,
@@ -228,8 +207,6 @@ static void webkit_dom_test_serialized_script_value_interface_class_init(WebKitD
                                                            "read-only  WebKitDOMSerializedScriptValue* TestSerializedScriptValueInterface.cached-readonly-value", /* longer - could do with some extra doc stuff here */
                                                            WEBKIT_TYPE_DOM_SERIALIZED_SCRIPT_VALUE, /* gobject type */
                                                            WEBKIT_PARAM_READABLE));
-
-
 }
 
 static void webkit_dom_test_serialized_script_value_interface_init(WebKitDOMTestSerializedScriptValueInterface* request)

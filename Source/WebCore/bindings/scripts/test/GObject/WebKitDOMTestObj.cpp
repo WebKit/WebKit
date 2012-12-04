@@ -283,7 +283,6 @@ static void webkit_dom_test_obj_set_property(GObject* object, guint propertyId, 
     }
 }
 
-
 static void webkit_dom_test_obj_get_property(GObject* object, guint propertyId, GValue* value, GParamSpec* pspec)
 {
     WebCore::JSMainThreadNullState state;
@@ -519,21 +518,12 @@ static void webkit_dom_test_obj_get_property(GObject* object, guint propertyId, 
     }
 }
 
-
-static void webkit_dom_test_obj_constructed(GObject* object)
-{
-
-    if (G_OBJECT_CLASS(webkit_dom_test_obj_parent_class)->constructed)
-        G_OBJECT_CLASS(webkit_dom_test_obj_parent_class)->constructed(object);
-}
-
 static void webkit_dom_test_obj_class_init(WebKitDOMTestObjClass* requestClass)
 {
     GObjectClass* gobjectClass = G_OBJECT_CLASS(requestClass);
     gobjectClass->finalize = webkit_dom_test_obj_finalize;
     gobjectClass->set_property = webkit_dom_test_obj_set_property;
     gobjectClass->get_property = webkit_dom_test_obj_get_property;
-    gobjectClass->constructed = webkit_dom_test_obj_constructed;
 
     g_object_class_install_property(gobjectClass,
                                     PROP_READ_ONLY_LONG_ATTR,
@@ -897,8 +887,6 @@ G_MAXLONG, /* max */
 G_MAXLONG, /* max */
 0, /* default */
                                                            WEBKIT_PARAM_READABLE));
-
-
 }
 
 static void webkit_dom_test_obj_init(WebKitDOMTestObj* request)

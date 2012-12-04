@@ -104,10 +104,6 @@ static void webkit_dom_event_target_init(WebKitDOMEventTargetIface* iface)
 
 G_DEFINE_TYPE_WITH_CODE(WebKitDOMTestEventTarget, webkit_dom_test_event_target, WEBKIT_TYPE_DOM_OBJECT, G_IMPLEMENT_INTERFACE(WEBKIT_TYPE_DOM_EVENT_TARGET, webkit_dom_event_target_init))
 
-enum {
-    PROP_0,
-};
-
 static void webkit_dom_test_event_target_finalize(GObject* object)
 {
 
@@ -126,45 +122,10 @@ static void webkit_dom_test_event_target_finalize(GObject* object)
     G_OBJECT_CLASS(webkit_dom_test_event_target_parent_class)->finalize(object);
 }
 
-static void webkit_dom_test_event_target_set_property(GObject* object, guint propertyId, const GValue* value, GParamSpec* pspec)
-{
-    WebCore::JSMainThreadNullState state;
-    switch (propertyId) {
-    default:
-        G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propertyId, pspec);
-        break;
-    }
-}
-
-
-static void webkit_dom_test_event_target_get_property(GObject* object, guint propertyId, GValue* value, GParamSpec* pspec)
-{
-    WebCore::JSMainThreadNullState state;
-    switch (propertyId) {
-    default:
-        G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propertyId, pspec);
-        break;
-    }
-}
-
-
-static void webkit_dom_test_event_target_constructed(GObject* object)
-{
-
-    if (G_OBJECT_CLASS(webkit_dom_test_event_target_parent_class)->constructed)
-        G_OBJECT_CLASS(webkit_dom_test_event_target_parent_class)->constructed(object);
-}
-
 static void webkit_dom_test_event_target_class_init(WebKitDOMTestEventTargetClass* requestClass)
 {
     GObjectClass* gobjectClass = G_OBJECT_CLASS(requestClass);
     gobjectClass->finalize = webkit_dom_test_event_target_finalize;
-    gobjectClass->set_property = webkit_dom_test_event_target_set_property;
-    gobjectClass->get_property = webkit_dom_test_event_target_get_property;
-    gobjectClass->constructed = webkit_dom_test_event_target_constructed;
-
-
-
 }
 
 static void webkit_dom_test_event_target_init(WebKitDOMTestEventTarget* request)
