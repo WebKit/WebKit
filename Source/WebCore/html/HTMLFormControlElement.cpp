@@ -204,9 +204,7 @@ static void focusPostAttach(Node* element, unsigned)
 
 void HTMLFormControlElement::attach()
 {
-    ASSERT(!attached());
-
-    suspendPostAttachCallbacks();
+    PostAttachCallbackDisabler disabler(this);
 
     HTMLElement::attach();
 
@@ -221,8 +219,6 @@ void HTMLFormControlElement::attach()
         ref();
         queuePostAttachCallback(focusPostAttach, this);
     }
-
-    resumePostAttachCallbacks();
 }
 
 void HTMLFormControlElement::didMoveToNewDocument(Document* oldDocument)

@@ -1813,8 +1813,8 @@ void Document::recalcStyle(StyleChange change)
         m_styleSheetCollection->setUsesRemUnit(true);
 
     m_inStyleRecalc = true;
-    suspendPostAttachCallbacks();
     {
+        PostAttachCallbackDisabler disabler(this);
         WidgetHierarchyUpdatesSuspensionScope suspendWidgetHierarchyUpdates;
 
         RefPtr<FrameView> frameView = view();
@@ -1870,7 +1870,6 @@ void Document::recalcStyle(StyleChange change)
             frameView->endDeferredRepaints();
         }
     }
-    resumePostAttachCallbacks();
 
     // If we wanted to call implicitClose() during recalcStyle, do so now that we're finished.
     if (m_closeAfterStyleRecalc) {

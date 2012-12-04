@@ -1143,36 +1143,32 @@ void Element::createRendererIfNeeded()
 
 void Element::attach()
 {
-    suspendPostAttachCallbacks();
-    {
-        WidgetHierarchyUpdatesSuspensionScope suspendWidgetHierarchyUpdates;
-        createRendererIfNeeded();
+    PostAttachCallbackDisabler callbackDisabler(this);
+    StyleResolverParentPusher parentPusher(this);
+    WidgetHierarchyUpdatesSuspensionScope suspendWidgetHierarchyUpdates;
 
-        StyleResolverParentPusher parentPusher(this);
+    createRendererIfNeeded();
 
-        if (parentElement() && parentElement()->isInCanvasSubtree())
-            setIsInCanvasSubtree(true);
+    if (parentElement() && parentElement()->isInCanvasSubtree())
+        setIsInCanvasSubtree(true);
 
-        // When a shadow root exists, it does the work of attaching the children.
-        if (ElementShadow* shadow = this->shadow()) {
-            parentPusher.push();
-            shadow->attach();
-        } else {
-            if (firstChild())
-                parentPusher.push();
-        }
-        ContainerNode::attach();
+    // When a shadow root exists, it does the work of attaching the children.
+    if (ElementShadow* shadow = this->shadow()) {
+        parentPusher.push();
+        shadow->attach();
+    } else if (firstChild())
+        parentPusher.push();
 
-        if (hasRareData()) {   
-            ElementRareData* data = elementRareData();
-            if (data->needsFocusAppearanceUpdateSoonAfterAttach()) {
-                if (isFocusable() && document()->focusedNode() == this)
-                    document()->updateFocusAppearanceSoon(false /* don't restore selection */);
-                data->setNeedsFocusAppearanceUpdateSoonAfterAttach(false);
-            }
+    ContainerNode::attach();
+
+    if (hasRareData()) {   
+        ElementRareData* data = elementRareData();
+        if (data->needsFocusAppearanceUpdateSoonAfterAttach()) {
+            if (isFocusable() && document()->focusedNode() == this)
+                document()->updateFocusAppearanceSoon(false /* don't restore selection */);
+            data->setNeedsFocusAppearanceUpdateSoonAfterAttach(false);
         }
     }
-    resumePostAttachCallbacks();
 }
 
 void Element::unregisterNamedFlowContentNode()

@@ -774,7 +774,7 @@ RenderObject* HTMLInputElement::createRenderer(RenderArena* arena, RenderStyle* 
 
 void HTMLInputElement::attach()
 {
-    suspendPostAttachCallbacks();
+    PostAttachCallbackDisabler disabler(this);
 
     if (!m_hasType)
         updateType();
@@ -785,8 +785,6 @@ void HTMLInputElement::attach()
 
     if (document()->focusedNode() == this)
         document()->updateFocusAppearanceSoon(true /* restore selection */);
-
-    resumePostAttachCallbacks();
 }
 
 void HTMLInputElement::detach()

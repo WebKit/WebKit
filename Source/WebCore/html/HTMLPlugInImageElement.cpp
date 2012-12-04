@@ -154,7 +154,7 @@ bool HTMLPlugInImageElement::willRecalcStyle(StyleChange)
 
 void HTMLPlugInImageElement::attach()
 {
-    suspendPostAttachCallbacks();
+    PostAttachCallbackDisabler disabler(this);
 
     bool isImage = isImageType();
     
@@ -168,10 +168,8 @@ void HTMLPlugInImageElement::attach()
             m_imageLoader = adoptPtr(new HTMLImageLoader(this));
         m_imageLoader->updateFromElement();
     }
-
-    resumePostAttachCallbacks();
 }
-    
+
 void HTMLPlugInImageElement::detach()
 {
     // FIXME: Because of the insanity that is HTMLPlugInImageElement::recalcStyle,
