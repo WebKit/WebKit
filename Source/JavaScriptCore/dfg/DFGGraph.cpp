@@ -245,7 +245,7 @@ void Graph::dump(PrintStream& out, const char* prefix, NodeIndex nodeIndex)
         for (unsigned i = 0; i < node.numConstants(); ++i) {
             if (i)
                 out.print(", ");
-            out.print(m_codeBlock->constantBuffer(node.startConstant())[i].description());
+            out.print(m_codeBlock->constantBuffer(node.startConstant())[i]);
         }
         out.print("]");
         hasPrinted = true;
@@ -258,7 +258,7 @@ void Graph::dump(PrintStream& out, const char* prefix, NodeIndex nodeIndex)
     if (op == JSConstant) {
         out.print(hasPrinted ? ", " : "", "$", node.constantNumber());
         JSValue value = valueOfJSConstant(nodeIndex);
-        out.print(" = ", value.description());
+        out.print(" = ", value);
         hasPrinted = true;
     }
     if (op == WeakJSConstant) {

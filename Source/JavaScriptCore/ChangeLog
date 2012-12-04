@@ -1,3 +1,36 @@
+2012-12-03  Filip Pizlo  <fpizlo@apple.com>
+
+        Replace JSValue::description() with JSValue::dump(PrintStream&)
+        https://bugs.webkit.org/show_bug.cgi?id=103866
+
+        Reviewed by Darin Adler.
+
+        JSValue now has a dump() method. Anywhere that you would have wanted to use
+        description(), you can either do toCString(value).data(), or if the callee
+        is a print()/dataLog() method then you just pass the value directly.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * bytecode/CodeBlock.cpp:
+        (JSC::valueToSourceString):
+        (JSC::CodeBlock::finalizeUnconditionally):
+        * bytecode/ValueProfile.h:
+        (JSC::ValueProfileBase::dump):
+        * bytecode/ValueRecovery.h:
+        (JSC::ValueRecovery::dump):
+        * dfg/DFGAbstractValue.h:
+        (JSC::DFG::AbstractValue::dump):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::dump):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::dumpRegisters):
+        * jsc.cpp:
+        (functionDescribe):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::llint_trace_value):
+        * runtime/JSValue.cpp:
+        (JSC::JSValue::dump):
+        * runtime/JSValue.h:
+
 2012-12-04  Filip Pizlo  <fpizlo@apple.com>
 
         jsc command line tool's support for typed arrays should be robust against array buffer allocation errors

@@ -48,6 +48,7 @@
 #include "LLIntExceptions.h"
 #include "LowLevelInterpreter.h"
 #include "Operations.h"
+#include <wtf/StringPrintStream.h>
 
 namespace JSC { namespace LLInt {
 
@@ -184,17 +185,18 @@ extern "C" SlowPathReturnType llint_trace_value(ExecState* exec, Instruction* pc
         EncodedJSValue asValue;
     } u;
     u.asValue = JSValue::encode(value);
-    dataLogF("%p / %p: executing bc#%zu, op#%u: Trace(%d): %d: %d: %08x:%08x: %s\n",
-            exec->codeBlock(),
-            exec,
-            static_cast<intptr_t>(pc - exec->codeBlock()->instructions().begin()),
-            exec->globalData().interpreter->getOpcodeID(pc[0].u.opcode),
-            fromWhere,
-            operand,
-            pc[operand].u.operand,
-            u.bits.tag,
-            u.bits.payload,
-            value.description());
+    dataLogF(
+        "%p / %p: executing bc#%zu, op#%u: Trace(%d): %d: %d: %08x:%08x: %s\n",
+        exec->codeBlock(),
+        exec,
+        static_cast<intptr_t>(pc - exec->codeBlock()->instructions().begin()),
+        exec->globalData().interpreter->getOpcodeID(pc[0].u.opcode),
+        fromWhere,
+        operand,
+        pc[operand].u.operand,
+        u.bits.tag,
+        u.bits.payload,
+        toCString(value).data());
     LLINT_END_IMPL();
 }
 

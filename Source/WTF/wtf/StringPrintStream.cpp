@@ -92,6 +92,12 @@ CString StringPrintStream::toCString()
     return CString(m_buffer, m_next);
 }
 
+String StringPrintStream::toString()
+{
+    ASSERT(m_next == strlen(m_buffer));
+    return String::fromUTF8(m_buffer, m_next);
+}
+
 void StringPrintStream::increaseSize(size_t newSize)
 {
     ASSERT(newSize > m_size);

@@ -43,6 +43,7 @@
 #include <string.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/MainThread.h>
+#include <wtf/StringPrintStream.h>
 #include <wtf/text/StringBuilder.h>
 
 #if !OS(WINDOWS)
@@ -311,7 +312,7 @@ EncodedJSValue JSC_HOST_CALL functionDebug(ExecState* exec)
 
 EncodedJSValue JSC_HOST_CALL functionDescribe(ExecState* exec)
 {
-    fprintf(stderr, "--> %s\n", exec->argument(0).description());
+    fprintf(stderr, "--> %s\n", toCString(exec->argument(0)).data());
     return JSValue::encode(jsUndefined());
 }
 

@@ -331,7 +331,7 @@ public:
             out.printf("arguments");
             break;
         case Constant:
-            out.printf("[%s]", constant().description());
+            out.print("[", constant(), "]");
             break;
         case DontKnow:
             out.printf("!");

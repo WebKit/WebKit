@@ -28,17 +28,19 @@
 
 #include <wtf/PrintStream.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/WTFString.h>
 
 namespace WTF {
 
 class StringPrintStream : public PrintStream {
 public:
-    StringPrintStream();
-    ~StringPrintStream();
+    WTF_EXPORT_PRIVATE StringPrintStream();
+    WTF_EXPORT_PRIVATE ~StringPrintStream();
     
     virtual void vprintf(const char* format, va_list) WTF_ATTRIBUTE_PRINTF(2, 0);
     
-    CString toCString();
+    WTF_EXPORT_PRIVATE CString toCString();
+    WTF_EXPORT_PRIVATE String toString();
     
 private:
     void increaseSize(size_t);
@@ -58,10 +60,19 @@ CString toCString(const T& value)
     return stream.toCString();
 }
 
+template<typename T>
+String toString(const T& value)
+{
+    StringPrintStream stream;
+    stream.print(value);
+    return stream.toString();
+}
+
 } // namespace WTF
 
 using WTF::StringPrintStream;
 using WTF::toCString;
+using WTF::toString;
 
 #endif // StringPrintStream_h
 

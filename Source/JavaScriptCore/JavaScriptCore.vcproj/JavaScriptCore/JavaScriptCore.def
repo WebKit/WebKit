@@ -11,7 +11,6 @@ EXPORTS
     ??0DropAllLocks@JSLock@JSC@@QAE@PAVJSGlobalData@2@@Z
     ??0DynamicGlobalObjectScope@JSC@@QAE@AAVJSGlobalData@1@PAVJSGlobalObject@1@@Z 
     ??0ErrorHandlingMode@Interpreter@JSC@@QAE@PAVExecState@2@@Z
-    ??1ErrorHandlingMode@Interpreter@JSC@@QAE@XZ
     ??0InstrumentedPointerBase@MemoryInstrumentation@WTF@@QAE@PAVMemoryObjectInfo@2@@Z
     ??0InternalFunction@JSC@@IAE@PAVJSGlobalObject@1@PAVStructure@1@@Z
     ??0JSGlobalObject@JSC@@IAE@AAVJSGlobalData@1@PAVStructure@1@PBUGlobalObjectMethodTable@1@@Z
@@ -27,6 +26,7 @@ EXPORTS
     ??0RegExpObject@JSC@@IAE@PAVJSGlobalObject@1@PAVStructure@1@PAVRegExp@1@@Z
     ??0SHA1@WTF@@QAE@XZ
     ??0StringObject@JSC@@IAE@AAVJSGlobalData@1@PAVStructure@1@@Z
+    ??0StringPrintStream@WTF@@QAE@XZ
     ??0Structure@JSC@@AAE@AAVJSGlobalData@1@PAVJSGlobalObject@1@VJSValue@1@ABVTypeInfo@1@PBUClassInfo@1@EH@Z
     ??0ThreadCondition@WTF@@QAE@XZ
     ??0WTFThreadData@WTF@@QAE@XZ
@@ -36,6 +36,7 @@ EXPORTS
     ??1Collator@WTF@@QAE@XZ
     ??1Debugger@JSC@@UAE@XZ
     ??1DropAllLocks@JSLock@JSC@@QAE@XZ
+    ??1ErrorHandlingMode@Interpreter@JSC@@QAE@XZ
     ??1JSGlobalData@JSC@@QAE@XZ
     ??1JSGlobalObject@JSC@@QAE@XZ
     ??1JSLockHolder@JSC@@QAE@XZ
@@ -44,6 +45,7 @@ EXPORTS
     ??1Mutex@WTF@@QAE@XZ
     ??1RefCountedLeakCounter@WTF@@QAE@XZ
     ??1SourceProviderCache@JSC@@QAE@XZ
+    ??1StringPrintStream@WTF@@UAE@XZ
     ??1ThreadCondition@WTF@@QAE@XZ
     ??1WeakHandleOwner@JSC@@UAE@XZ
     ??1WTFThreadData@WTF@@QAE@XZ
@@ -175,7 +177,6 @@ EXPORTS
     ?deletePropertyByIndex@JSObject@JSC@@SA_NPAVJSCell@2@PAVExecState@2@I@Z
     ?deletePropertyByIndex@JSProxy@JSC@@KA_NPAVJSCell@2@PAVExecState@2@I@Z
     ?deleteTable@HashTable@JSC@@QBEXXZ
-    ?description@JSValue@JSC@@QBEPADXZ
     ?despecifyDictionaryFunction@Structure@JSC@@QAEXAAVJSGlobalData@2@VPropertyName@2@@Z
     ?despecifyFunctionTransition@Structure@JSC@@SAPAV12@AAVJSGlobalData@2@PAV12@VPropertyName@2@@Z
     ?destroy@JSCell@JSC@@KAXPAV12@@Z
@@ -186,6 +187,7 @@ EXPORTS
     ?didTimeOut@TimeoutChecker@JSC@@QAE_NPAVExecState@2@@Z
     ?displayName@JSFunction@JSC@@QAE?AVString@WTF@@PAVExecState@2@@Z
     ?dtoa@WTF@@YAXQADNAA_NAAHAAI@Z
+    ?dump@JSValue@JSC@@QBEXAAVPrintStream@WTF@@@Z
     ?dumpAllOptions@Options@JSC@@SAXPAU_iobuf@@@Z
     ?dumpCallFrame@Interpreter@JSC@@QAEXPAVExecState@2@@Z
     ?dumpSampleData@JSGlobalData@JSC@@QAEXPAVExecState@2@@Z
@@ -384,6 +386,7 @@ EXPORTS
     ?tlsKeyCount@WTF@@YAAAJXZ
     ?tlsKeys@WTF@@YAPAKXZ
     ?toBoolean@JSString@JSC@@QBE_NXZ
+    ?toCString@StringPrintStream@WTF@@QAE?AVCString@2@XZ
     ?toDouble@MediaTime@WTF@@QBENXZ 
     ?ToExponential@DoubleToStringConverter@double_conversion@WTF@@QBE_NNHPAVStringBuilder@23@@Z
     ?ToFixed@DoubleToStringConverter@double_conversion@WTF@@QBE_NNHPAVStringBuilder@23@@Z

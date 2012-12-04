@@ -67,6 +67,7 @@
 #include <limits.h>
 #include <stdio.h>
 #include <wtf/StackStats.h>
+#include <wtf/StringPrintStream.h>
 #include <wtf/Threading.h>
 #include <wtf/WTFThreadData.h>
 #include <wtf/text/StringBuilder.h>
@@ -401,7 +402,7 @@ void Interpreter::dumpRegisters(CallFrame* callFrame)
         JSValue v = it->jsValue();
         int registerNumber = it - callFrame->registers();
         String name = codeBlock->nameForRegister(registerNumber);
-        dataLogF("[r% 3d %14s]      | %10p | %-16s 0x%lld \n", registerNumber, name.ascii().data(), it, v.description(), (long long)JSValue::encode(v));
+        dataLogF("[r% 3d %14s]      | %10p | %-16s 0x%lld \n", registerNumber, name.ascii().data(), it, toCString(v).data(), (long long)JSValue::encode(v));
         it++;
     }
     
@@ -436,7 +437,7 @@ void Interpreter::dumpRegisters(CallFrame* callFrame)
             JSValue v = it->jsValue();
             int registerNumber = it - callFrame->registers();
             String name = codeBlock->nameForRegister(registerNumber);
-            dataLogF("[r% 3d %14s]      | %10p | %-16s 0x%lld \n", registerNumber, name.ascii().data(), it, v.description(), (long long)JSValue::encode(v));
+            dataLogF("[r% 3d %14s]      | %10p | %-16s 0x%lld \n", registerNumber, name.ascii().data(), it, toCString(v).data(), (long long)JSValue::encode(v));
             ++it;
             ++registerCount;
         } while (it != end);
@@ -447,7 +448,7 @@ void Interpreter::dumpRegisters(CallFrame* callFrame)
     if (it != end) {
         do {
             JSValue v = (*it).jsValue();
-            dataLogF("[r% 3d]                     | %10p | %-16s 0x%lld \n", registerCount, it, v.description(), (long long)JSValue::encode(v));
+            dataLogF("[r% 3d]                     | %10p | %-16s 0x%lld \n", registerCount, it, toCString(v).data(), (long long)JSValue::encode(v));
             ++it;
             ++registerCount;
         } while (it != end);

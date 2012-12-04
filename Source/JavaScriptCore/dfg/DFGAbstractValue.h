@@ -377,7 +377,7 @@ struct AbstractValue {
             "(", SpeculationDump(m_type), ", ", arrayModesToString(m_arrayModes), ", ",
             m_currentKnownStructure, ", ", m_futurePossibleStructure);
         if (!!m_value)
-            out.print(", ", m_value.description());
+            out.print(", ", m_value);
         out.print(")");
     }
     
