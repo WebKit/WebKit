@@ -1,3 +1,20 @@
+2012-12-04  Abhishek Arya  <inferno@chromium.org>
+
+        Crash in CachedResource::checkNotify due to -webkit-crossfade.
+        https://bugs.webkit.org/show_bug.cgi?id=98068
+
+        Reviewed by Nate Chapin.
+
+        Make sure to not re-add the same client again for |m_cachedFromImage|
+        and |m_cachedToImage|. This would otherwise cause the CSSCrossfadeValue
+        client to not get removed from its cached image resource (when it is
+        going away).
+
+        Test: fast/images/crossfade-client-not-removed-crash.html
+
+        * css/CSSCrossfadeValue.cpp:
+        (WebCore::CSSCrossfadeValue::loadSubimages):
+
 2012-12-04  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Heap-use-after-free in WebCore::RenderLayer::paintList [MathML]
