@@ -32,7 +32,7 @@
 
 vars = {
   'chromium_svn': 'http://src.chromium.org/svn/trunk/src',
-  'chromium_rev': '170472'
+  'chromium_rev': '170977'
 }
 
 deps = {
@@ -117,6 +117,8 @@ deps = {
     From('chromium_deps', 'src/tools/grit'),
   'tools/gritsettings':
     Var('chromium_svn')+'/tools/gritsettings@'+Var('chromium_rev'),
+  'tools/generate_library_loader':
+    Var('chromium_svn')+'/tools/generate_library_loader@'+Var('chromium_rev'),
   'tools/generate_stubs':
     Var('chromium_svn')+'/tools/generate_stubs@'+Var('chromium_rev'),
   'tools/win':
