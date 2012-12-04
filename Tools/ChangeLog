@@ -1,5 +1,32 @@
 2012-12-04  Dirk Pranke  <dpranke@chromium.org>
 
+        nrwt: result summaries should not require a list of tests to skip
+        https://bugs.webkit.org/show_bug.cgi?id=103951
+
+        Reviewed by Ryosuke Niwa.
+
+        We shouldn't really be passing a list of tests to skip to the
+        ResultSummary objects; they should be handled like any other
+        test result as much as possible.
+
+        * Scripts/webkitpy/layout_tests/controllers/layout_test_runner_unittest.py:
+        (LayoutTestRunnerTests._result_summary):
+        (LayoutTestRunnerTests.test_update_summary_with_result):
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        (Manager._prepare_lists):
+        (Manager.run):
+        * Scripts/webkitpy/layout_tests/controllers/manager_unittest.py:
+        (ManagerTest.test_look_for_new_crash_logs):
+        (ResultSummaryTest.get_result_summary):
+        * Scripts/webkitpy/layout_tests/models/result_summary.py:
+        (ResultSummary.__init__):
+        * Scripts/webkitpy/layout_tests/models/test_expectations.py:
+        (TestExpectations):
+        * Scripts/webkitpy/layout_tests/views/printing_unittest.py:
+        (Testprinter.get_result_summary):
+
+2012-12-04  Dirk Pranke  <dpranke@chromium.org>
+
         nrwt: derive per-thread, per-worker stats from result summaries
         https://bugs.webkit.org/show_bug.cgi?id=103943
 

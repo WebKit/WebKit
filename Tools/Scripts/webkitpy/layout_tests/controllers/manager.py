@@ -325,7 +325,12 @@ class Manager(object):
             self._test_names = self._test_names * self._options.iterations
 
         iterations = self._options.repeat_each * self._options.iterations
-        return ResultSummary(self._expectations, set(self._test_names), iterations, tests_to_skip)
+        summary = ResultSummary(self._expectations, set(self._test_names), iterations)
+        for test_name in set(tests_to_skip):
+            result = test_results.TestResult(test_name)
+            result.type = test_expectations.SKIP
+            summary.add(result, expected=True, test_is_slow=self._test_is_slow(test_name))
+        return summary
 
     def _test_input_for_file(self, test_file):
         return TestInput(test_file,
@@ -413,7 +418,7 @@ class Manager(object):
                 _log.info('')
                 _log.info("Retrying %d unexpected failure(s) ..." % len(failures))
                 _log.info('')
-                retry_summary = self._run_tests(failures, ResultSummary(self._expectations, failures, 1, set()), 1, retrying=True)
+                retry_summary = self._run_tests(failures, ResultSummary(self._expectations, failures, 1), 1, retrying=True)
         finally:
             # If we are ctrl-c'ed; we still want to try and print the results we got, and clean up,
             # but we don't want to upload anything.

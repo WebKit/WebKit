@@ -754,7 +754,8 @@ class TestExpectations(object):
                     'text': TEXT,
                     'timeout': TIMEOUT,
                     'crash': CRASH,
-                    'missing': MISSING}
+                    'missing': MISSING,
+                    'skip': SKIP}
 
     # (aggregated by category, pass/fail/skip, type)
     EXPECTATION_DESCRIPTIONS = {SKIP: 'skipped',
