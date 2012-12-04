@@ -371,7 +371,7 @@ class ChromiumAndroidDriver(driver.Driver):
         self._has_setup = False
         self._original_governors = {}
         self._device_serial = port._get_device_serial(worker_number)
-        self._adb_command = [port.path_to_adb(), '-s', self._device_serial]
+        self._adb_command_base = None
 
     def __del__(self):
         self._teardown_performance()
@@ -426,7 +426,7 @@ class ChromiumAndroidDriver(driver.Driver):
     def _push_file_if_needed(self, host_file, device_file):
         assert os.path.exists(host_file)
         device_hashes = self._extract_hashes_from_md5sum_output(
-                self._port.host.executive.popen(self._adb_command + ['shell', MD5SUM_DEVICE_PATH, device_file],
+                self._port.host.executive.popen(self._adb_command() + ['shell', MD5SUM_DEVICE_PATH, device_file],
                                                 stdout=subprocess.PIPE).stdout)
         host_hashes = self._extract_hashes_from_md5sum_output(
                 self._port.host.executive.popen(args=['%s_host' % self._md5sum_path, host_file],
@@ -478,7 +478,7 @@ class ChromiumAndroidDriver(driver.Driver):
             error_handler = self._port._executive.ignore_error
         else:
             error_handler = None
-        result = self._port._executive.run_command(self._adb_command + cmd, error_handler=error_handler)
+        result = self._port._executive.run_command(self._adb_command() + cmd, error_handler=error_handler)
         # Limit the length to avoid too verbose output of commands like 'adb logcat' and 'cat /data/tombstones/tombstone01'
         # whose outputs are normally printed in later logs.
         self._log_debug('Run adb result: ' + result[:80])
@@ -548,7 +548,7 @@ class ChromiumAndroidDriver(driver.Driver):
     def cmd_line(self, pixel_tests, per_test_args):
         # The returned command line is used to start _server_process. In our case, it's an interactive 'adb shell'.
         # The command line passed to the DRT process is returned by _drt_cmd_line() instead.
-        return self._adb_command + ['shell']
+        return self._adb_command() + ['shell']
 
     def _file_exists_on_device(self, full_file_path):
         assert full_file_path.startswith('/')
@@ -611,7 +611,7 @@ class ChromiumAndroidDriver(driver.Driver):
 
         self._log_debug('Starting forwarder')
         self._forwarder_process = self._port._server_process_constructor(
-            self._port, 'Forwarder', self._adb_command + ['shell', '%s -D %s' % (DEVICE_FORWARDER_PATH, FORWARD_PORTS)])
+            self._port, 'Forwarder', self._adb_command() + ['shell', '%s -D %s' % (DEVICE_FORWARDER_PATH, FORWARD_PORTS)])
         self._forwarder_process.start()
 
         self._run_adb_command(['logcat', '-c'])
@@ -633,13 +633,13 @@ class ChromiumAndroidDriver(driver.Driver):
         # Start a process to read from the stdout fifo of the DumpRenderTree app and print to stdout.
         self._log_debug('Redirecting stdout to ' + self._out_fifo_path)
         self._read_stdout_process = self._port._server_process_constructor(
-            self._port, 'ReadStdout', self._adb_command + ['shell', 'cat', self._out_fifo_path])
+            self._port, 'ReadStdout', self._adb_command() + ['shell', 'cat', self._out_fifo_path])
         self._read_stdout_process.start()
 
         # Start a process to read from the stderr fifo of the DumpRenderTree app and print to stdout.
         self._log_debug('Redirecting stderr to ' + self._err_fifo_path)
         self._read_stderr_process = self._port._server_process_constructor(
-            self._port, 'ReadStderr', self._adb_command + ['shell', 'cat', self._err_fifo_path])
+            self._port, 'ReadStderr', self._adb_command() + ['shell', 'cat', self._err_fifo_path])
         self._read_stderr_process.start()
 
         self._log_debug('Redirecting stdin to ' + self._in_fifo_path)
@@ -717,3 +717,8 @@ class ChromiumAndroidDriver(driver.Driver):
                 if last_char in ('#', '$'):
                     return
             last_char = current_char
+
+    def _adb_command(self):
+        if not self._adb_command_base:
+            self._adb_command_base = [self._port.path_to_adb(), '-s', self._device_serial]
+        return self._adb_command_base

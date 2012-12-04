@@ -1,3 +1,24 @@
+2012-12-04  Peter Beverloo  <peter@chromium.org>
+
+        [Chromium] The ChromiumAndroidDriver constructor should not rely on adb being available
+        https://bugs.webkit.org/show_bug.cgi?id=103758
+
+        Reviewed by Eric Seidel.
+
+        Lazily initialize the adb command parameters rather than initializing it in the
+        constructor now that there is an assert if adb is not available on the system and
+        we're not in a Chromium Android checkout.
+
+        * Scripts/webkitpy/layout_tests/port/chromium_android.py:
+        (ChromiumAndroidDriver.__init__):
+        (ChromiumAndroidDriver._push_file_if_needed):
+        (ChromiumAndroidDriver._run_adb_command):
+        (ChromiumAndroidDriver.cmd_line):
+        (ChromiumAndroidDriver._start_once):
+        (ChromiumAndroidDriver._read_prompt):
+        (ChromiumAndroidDriver):
+        (ChromiumAndroidDriver._adb_command):
+
 2012-12-03  Ryosuke Niwa  <rniwa@webkit.org>
 
         Dromaeo should report individual test result
