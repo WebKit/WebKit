@@ -2230,15 +2230,7 @@ bool Element::isInTopLayer() const
 
 void Element::setIsInTopLayer(bool inTopLayer)
 {
-    if (isInTopLayer() == inTopLayer)
-        return;
-
     ensureElementRareData()->setIsInTopLayer(inTopLayer);
-
-    if (inTopLayer)
-        document()->addToTopLayer(this);
-    else
-        document()->removeFromTopLayer(this);
     setNeedsStyleRecalc(SyntheticStyleChange);
 }
 #endif

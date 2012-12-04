@@ -437,8 +437,8 @@ public:
 #endif
 
 #if ENABLE(DIALOG_ELEMENT)
-    virtual bool isInTopLayer() const;
-    virtual void setIsInTopLayer(bool);
+    bool isInTopLayer() const;
+    void setIsInTopLayer(bool);
 #endif
 
 #if ENABLE(POINTER_LOCK)
