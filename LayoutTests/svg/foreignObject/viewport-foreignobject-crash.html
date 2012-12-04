@@ -16,10 +16,10 @@ function crash() {
         document.body.innerHTML = "PASS";
         return;
     }
+    count += 1;
     document.body.appendChild(element);
     element.insertAdjacentHTML('beforeend', '<svg><foreignObject>A</foreignObject></svg>');
     element.focus();
-    count += 1;
 }
 
 document.addEventListener("DOMNodeInserted", crash, false);
