@@ -4249,4 +4249,4 @@ webkit.org/b/99800 fast/harness/perftests/perf-runner-compute-statistics.html [ 
 webkit.org/b/99800 fast/harness/perftests/runs-per-second-log.html [ Failure ]
 
 # Flaky on mac debug since r136472 or earlier
-webkit.org/b/104023 [ Mac Debug ] fast/dom/HTMLTemplateElement/inertContents.html [ Pass Text ]
+webkit.org/b/104023 [ Mac Debug ] fast/dom/HTMLTemplateElement/inertContents.html [ Failure Pass ]
