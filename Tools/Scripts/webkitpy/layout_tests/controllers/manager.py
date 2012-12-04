@@ -115,7 +115,7 @@ def summarize_results(port_obj, expectations, result_summary, retry_summary, onl
         port_obj: interface to port-specific hooks
         expectations: test_expectations.TestExpectations object
         result_summary: summary object from initial test runs
-        retry_summary: summary object from final test run of retried tests
+        retry_summary: summary object from final test run of retried tests (if any)
         only_unexpected: whether to return a summary only for the unexpected results
     Returns:
         A dictionary containing a summary of the unexpected results from the
@@ -183,16 +183,18 @@ def summarize_results(port_obj, expectations, result_summary, retry_summary, onl
             if test_name in result_summary.unexpected_results:
                 num_missing += 1
         elif test_name in result_summary.unexpected_results:
-            if test_name not in retry_summary.unexpected_results:
+            if retry_summary and test_name not in retry_summary.unexpected_results:
                 actual.extend(expectations.get_expectations_string(test_name).split(" "))
                 num_flaky += 1
-            else:
+            elif retry_summary:
                 retry_result_type = retry_summary.unexpected_results[test_name].type
                 if result_type != retry_result_type:
                     actual.append(keywords[retry_result_type])
                     num_flaky += 1
                 else:
                     num_regressions += 1
+            else:
+                num_regressions += 1
 
         test_dict['expected'] = expected
         test_dict['actual'] = " ".join(actual)
@@ -406,7 +408,6 @@ class Manager(object):
 
         start_time = time.time()
 
-        retry_summary = None
         try:
             result_summary = self._run_tests(self._test_names, result_summary, int(self._options.child_processes), retrying=False)
 
@@ -419,25 +420,22 @@ class Manager(object):
                 _log.info("Retrying %d unexpected failure(s) ..." % len(failures))
                 _log.info('')
                 retry_summary = self._run_tests(failures, ResultSummary(self._expectations, failures, 1), 1, retrying=True)
-        finally:
-            # If we are ctrl-c'ed; we still want to try and print the results we got, and clean up,
-            # but we don't want to upload anything.
-            end_time = time.time()
-
-            # Some crash logs can take a long time to be written out so look
-            # for new logs after the test run finishes.
-            self._look_for_new_crash_logs(result_summary, start_time)
-            if retry_summary:
-                self._look_for_new_crash_logs(retry_summary, start_time)
             else:
-                # FIXME: Modify summarize_results to handle retry_summary == None.
-                retry_summary = result_summary
-
+                retry_summary = None
+        finally:
             self._clean_up_run()
 
-            unexpected_results = summarize_results(self._port, self._expectations, result_summary, retry_summary, only_unexpected=True)
+        end_time = time.time()
 
-            self._printer.print_results(end_time - start_time, result_summary, unexpected_results)
+        # Some crash logs can take a long time to be written out so look
+        # for new logs after the test run finishes.
+        self._look_for_new_crash_logs(result_summary, start_time)
+        if retry_summary:
+            self._look_for_new_crash_logs(retry_summary, start_time)
+
+        unexpected_results = summarize_results(self._port, self._expectations, result_summary, retry_summary, only_unexpected=True)
+
+        self._printer.print_results(end_time - start_time, result_summary, unexpected_results)
 
         # FIXME: remove record_results. It's just used for testing. There's no need
         # for it to be a commandline argument.
