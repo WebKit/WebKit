@@ -44,7 +44,7 @@
         raises (DOMException);
     [CallWith=ScriptExecutionContext] IDBTransaction transaction(in DOMStringList storeNames, in [Optional=DefaultIsNullString] DOMString mode)
         raises (DOMException);
-    [CallWith=ScriptExecutionContext] IDBTransaction transaction(in sequence<String> storeNames, in [Optional=DefaultIsNullString] DOMString mode)
+    [CallWith=ScriptExecutionContext] IDBTransaction transaction(in sequence<DOMString> storeNames, in [Optional=DefaultIsNullString] DOMString mode)
         raises (DOMException);
     [CallWith=ScriptExecutionContext] IDBTransaction transaction(in DOMString storeName, in [Optional=DefaultIsNullString] DOMString mode)
         raises (DOMException);

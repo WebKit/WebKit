@@ -33,7 +33,7 @@
     Conditional=WEB_SOCKETS,
     ActiveDOMObject,
     Constructor(in DOMString url),
-    Constructor(in DOMString url, in sequence<String> protocols),
+    Constructor(in DOMString url, in sequence<DOMString> protocols),
     Constructor(in DOMString url, in DOMString protocol),
     ConstructorRaisesException,
     CallWith=ScriptExecutionContext,

@@ -133,8 +133,8 @@
     long lastSpellCheckRequestSequence(in Document document) raises (DOMException);
     long lastSpellCheckProcessedSequence(in Document document) raises (DOMException);
 
-    sequence<String> userPreferredLanguages();
-    void setUserPreferredLanguages(in sequence<String> languages);
+    sequence<DOMString> userPreferredLanguages();
+    void setUserPreferredLanguages(in sequence<DOMString> languages);
 
     unsigned long wheelEventHandlerCount(in Document document) raises (DOMException);
     unsigned long touchEventHandlerCount(in Document document) raises (DOMException);
@@ -183,7 +183,7 @@
 
     [Conditional=INSPECTOR] unsigned long numberOfLiveNodes();
     [Conditional=INSPECTOR] unsigned long numberOfLiveDocuments();
-    [Conditional=INSPECTOR] sequence<String> consoleMessageArgumentCounts(in Document document);
+    [Conditional=INSPECTOR] sequence<DOMString> consoleMessageArgumentCounts(in Document document);
     [Conditional=INSPECTOR] DOMWindow openDummyInspectorFrontend(in DOMString url);
     [Conditional=INSPECTOR] void closeDummyInspectorFrontend();
     [Conditional=INSPECTOR] void setInspectorResourcesDataSizeLimits(in long maximumResourcesContentSize, in long maximumSingleResourceContentSize) raises(DOMException);

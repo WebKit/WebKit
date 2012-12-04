@@ -3,6 +3,7 @@
  *  Copyright (C) 2003, 2004, 2005, 2006, 2008, 2009 Apple Inc. All rights reserved.
  *  Copyright (C) 2007 Samuel Weinig <sam@webkit.org>
  *  Copyright (C) 2009 Google, Inc. All rights reserved.
+ *  Copyright (C) 2012 Ericsson AB. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -410,6 +411,26 @@ enum ParameterDefaultPolicy {
             return !exec->hadException();
         }
     };
+
+    template <class T, class JST>
+    Vector<RefPtr<T> > toRefPtrNativeArray(JSC::ExecState* exec, JSC::JSValue value, T* (*toT)(JSC::JSValue value))
+    {
+        if (!isJSArray(value))
+            return Vector<RefPtr<T> >();
+
+        Vector<RefPtr<T> > result;
+        JSC::JSArray* array = asArray(value);
+        for (size_t i = 0; i < array->length(); ++i) {
+            JSC::JSValue element = array->getIndex(exec, i);
+            if (element.inherits(&JST::s_info))
+                result.append((*toT)(element));
+            else {
+                throwVMError(exec, createTypeError(exec, "Invalid Array element type"));
+                return Vector<RefPtr<T> >();
+            }
+        }
+        return result;
+    }
 
     template <class T>
     Vector<T> toNativeArray(JSC::ExecState* exec, JSC::JSValue value)

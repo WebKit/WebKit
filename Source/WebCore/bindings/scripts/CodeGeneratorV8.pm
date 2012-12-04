@@ -7,6 +7,7 @@
 # Copyright (C) 2009 Cameron McCormack <cam@mcc.id.au>
 # Copyright (C) Research In Motion Limited 2010. All rights reserved.
 # Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
+# Copyright (C) 2012 Ericsson AB. All rights reserved.
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Library General Public
@@ -1022,7 +1023,7 @@ END
         }
 
         $result = "v";
-        $result .= ".release()" if (IsRefPtrType($returnType));
+        $result .= ".release()" if ($codeGenerator->IsRefPtrType($returnType));
     } else {
         # Can inline the function call into the return statement to avoid overhead of using a Ref<> temporary
         $result = $getterString;
@@ -1265,7 +1266,7 @@ END
 
     my $result = "v";
     my $returnType = $attribute->signature->type;
-    if (IsRefPtrType($returnType) && !$codeGenerator->GetArrayType($returnType)) {
+    if ($codeGenerator->IsRefPtrType($returnType) && !$codeGenerator->GetArrayType($returnType)) {
         $result = "WTF::getPtr(" . $result . ")";
     }
 
@@ -1423,7 +1424,6 @@ sub GenerateParametersCheckExpression
             # For Callbacks only checks if the value is null or object.
             push(@andExpression, "(${value}->IsNull() || ${value}->IsFunction())");
         } elsif ($codeGenerator->IsArrayType($type) || $codeGenerator->GetSequenceType($type)) {
-            # FIXME: Add proper support for T[], T[]?, sequence<T>.
             if ($parameter->isNullable) {
                 push(@andExpression, "(${value}->IsNull() || ${value}->IsArray())");
             } else {
@@ -3597,7 +3597,7 @@ sub GenerateFunctionCallString()
     my $functionString = "$functionName(" . join(", ", @arguments) . ")";
 
     my $return = "result";
-    my $returnIsRef = IsRefPtrType($returnType);
+    my $returnIsRef = $codeGenerator->IsRefPtrType($returnType);
 
     if ($returnType eq "void") {
         $result .= $indent . "$functionString;\n";
@@ -3608,7 +3608,7 @@ sub GenerateFunctionCallString()
         $return = $functionString;
         $returnIsRef = 0;
 
-        if ($interfaceName eq "SVGTransformList" and IsRefPtrType($returnType)) {
+        if ($interfaceName eq "SVGTransformList" and $codeGenerator->IsRefPtrType($returnType)) {
             $return = "WTF::getPtr(" . $return . ")";
         }
     }
@@ -3675,25 +3675,6 @@ sub GetNativeTypeFromSignature
     return $type;
 }
 
-sub IsRefPtrType
-{
-    my $type = shift;
-
-    return 0 if $type eq "boolean";
-    return 0 if $type eq "float";
-    return 0 if $type eq "int";
-    return 0 if $type eq "Date";
-    return 0 if $type eq "DOMString";
-    return 0 if $type eq "double";
-    return 0 if $type eq "short";
-    return 0 if $type eq "long";
-    return 0 if $type eq "unsigned";
-    return 0 if $type eq "unsigned long";
-    return 0 if $type eq "unsigned short";
-
-    return 1;
-}
-
 sub GetNativeType
 {
     my $type = shift;
@@ -3707,9 +3688,6 @@ sub GetNativeType
             return "RefPtr<${svgNativeType} >";
         }
     }
-
-    my $sequenceType = $codeGenerator->GetSequenceType($type);
-    return "Vector<${sequenceType}>" if $sequenceType;
 
     if ($type eq "float" or $type eq "double") {
         return $type;
@@ -3747,12 +3725,22 @@ sub GetNativeType
     return "RefPtr<XPathNSResolver>" if $type eq "XPathNSResolver";
 
     return "RefPtr<DOMStringList>" if $type eq "DOMString[]";
-    return "RefPtr<${type}>" if IsRefPtrType($type) and not $isParameter;
+    return "RefPtr<${type}>" if $codeGenerator->IsRefPtrType($type) and not $isParameter;
 
     return "RefPtr<MediaQueryListListener>" if $type eq "MediaQueryListListener";
 
-    # FIXME: Support T[], T[]?, sequence<T> generically
+    # FIXME: Consider replacing DOMStringList with DOMString[] or sequence<DOMString>.
     return "RefPtr<DOMStringList>" if $type eq "DOMStringList";
+
+    my $arrayType = $codeGenerator->GetArrayType($type);
+    my $sequenceType = $codeGenerator->GetSequenceType($type);
+    my $arrayOrSequenceType = $arrayType || $sequenceType;
+
+    if ($arrayOrSequenceType) {
+        my $nativeType = GetNativeType($arrayOrSequenceType);
+        $nativeType .= " " if ($nativeType =~ />$/);
+        return "Vector<${nativeType}>";
+    }
 
     # Default, assume native type is a pointer with same type name as idl type
     return "${type}*";
@@ -3806,7 +3794,7 @@ sub JSValueToNative
     return "static_cast<Range::CompareHow>($value->Int32Value())" if $type eq "CompareHow";
     return "toWebCoreDate($value)" if $type eq "Date";
     return "toDOMStringList($value)" if $type eq "DOMStringList";
-    # FIXME: Add proper support for T[], T[]? and sequence<T>.
+    # FIXME: Consider replacing DOMStringList with DOMString[] or sequence<DOMString>.
     return "toDOMStringList($value)" if $type eq "DOMString[]";
 
     if ($type eq "DOMString" or $type eq "DOMUserData") {
@@ -3858,13 +3846,15 @@ sub JSValueToNative
     }
 
     my $arrayType = $codeGenerator->GetArrayType($type);
-    if ($arrayType) {
-        return "toNativeArray<$arrayType>($value)";
-    }
-
     my $sequenceType = $codeGenerator->GetSequenceType($type);
-    if ($sequenceType) {
-        return "toNativeArray<$sequenceType>($value)";
+    my $arrayOrSequenceType = $arrayType || $sequenceType;
+
+    if ($arrayOrSequenceType) {
+        if ($codeGenerator->IsRefPtrType($arrayOrSequenceType)) {
+            AddToImplIncludes("V8${arrayOrSequenceType}.h");
+            return "(toRefPtrNativeArray<${arrayOrSequenceType}, V8${arrayOrSequenceType}>($value))";
+        }
+        return "toNativeArray<" . GetNativeType($arrayOrSequenceType) . ">($value)";
     }
 
     AddIncludesForType($type);
@@ -3902,13 +3892,23 @@ sub CreateCustomSignature
                 $result .= "v8::Handle<v8::FunctionTemplate>()";
             } else {
                 my $type = $parameter->type;
+
+                my $arrayType = $codeGenerator->GetArrayType($type);
                 my $sequenceType = $codeGenerator->GetSequenceType($type);
-                if ($sequenceType) {
-                    if ($codeGenerator->SkipIncludeHeader($sequenceType)) {
+                my $arrayOrSequenceType = $arrayType || $sequenceType;
+
+                if ($arrayOrSequenceType) {
+                    if ($arrayType eq "DOMString") {
+                        AddToImplIncludes("V8DOMStringList.h");
+                        AddToImplIncludes("DOMStringList.h");
+
+                    } elsif ($codeGenerator->IsRefPtrType($arrayOrSequenceType)) {
+                        AddToImplIncludes(GetV8HeaderName($arrayOrSequenceType));
+                        AddToImplIncludes("${arrayOrSequenceType}.h");
+                    } else {
                         $result .= "v8::Handle<v8::FunctionTemplate>()";
                         next;
                     }
-                    AddToImplIncludes("$sequenceType.h");
                 } else {
                     AddToImplIncludes(GetV8HeaderName($type));
                 }
@@ -4091,24 +4091,19 @@ sub NativeToJSValue
     }
 
     my $arrayType = $codeGenerator->GetArrayType($type);
-    if ($arrayType) {
-        if ($type eq "DOMString[]") {
+    my $sequenceType = $codeGenerator->GetSequenceType($type);
+    my $arrayOrSequenceType = $arrayType || $sequenceType;
+
+    if ($arrayOrSequenceType) {
+        if ($arrayType eq "DOMString") {
             AddToImplIncludes("V8DOMStringList.h");
             AddToImplIncludes("DOMStringList.h");
-        } elsif (!$codeGenerator->SkipIncludeHeader($arrayType)) {
-            AddToImplIncludes("V8$arrayType.h");
-            AddToImplIncludes("$arrayType.h");
-        }
-        return "v8Array($value$getIsolateArg)";
-    }
 
-    my $sequenceType = $codeGenerator->GetSequenceType($type);
-    if ($sequenceType) {
-        if (!$codeGenerator->SkipIncludeHeader($sequenceType)) {
-            AddToImplIncludes("V8$sequenceType.h");
-            AddToImplIncludes("$sequenceType.h");
+        } elsif ($codeGenerator->IsRefPtrType($arrayOrSequenceType)) {
+            AddToImplIncludes(GetV8HeaderName($arrayOrSequenceType));
+            AddToImplIncludes("${arrayOrSequenceType}.h");
         }
-        return "v8Array($value$getIsolateArg)";
+        return "v8Array(${value}${getIsolateArg})";
     }
 
     AddIncludesForType($type);

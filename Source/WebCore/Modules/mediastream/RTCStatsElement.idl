@@ -27,5 +27,5 @@
 ] interface RTCStatsElement {
     readonly attribute Date timestamp;
     DOMString stat(in DOMString name);
-    sequence<String> names();
+    sequence<DOMString> names();
 };

@@ -189,7 +189,7 @@ static void longLongAttrAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Val
     INC_STATS("DOM.TestObj.longLongAttr._set");
     TestObj* imp = V8TestObj::toNative(info.Holder());
     long long v = toInt64(value);
-    imp->setLongLongAttr(WTF::getPtr(v));
+    imp->setLongLongAttr(v);
     return;
 }
 
@@ -205,7 +205,7 @@ static void unsignedLongLongAttrAttrSetter(v8::Local<v8::String> name, v8::Local
     INC_STATS("DOM.TestObj.unsignedLongLongAttr._set");
     TestObj* imp = V8TestObj::toNative(info.Holder());
     unsigned long long v = toInt64(value);
-    imp->setUnsignedLongLongAttr(WTF::getPtr(v));
+    imp->setUnsignedLongLongAttr(v);
     return;
 }
 
@@ -1108,7 +1108,7 @@ static v8::Handle<v8::Value> methodWithSequenceArgCallback(const v8::Arguments& 
     if (args.Length() < 1)
         return throwNotEnoughArgumentsError(args.GetIsolate());
     TestObj* imp = V8TestObj::toNative(args.Holder());
-    V8TRYCATCH(Vector<ScriptProfile>, sequenceArg, toNativeArray<ScriptProfile>(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined)));
+    V8TRYCATCH(Vector<RefPtr<ScriptProfile> >, sequenceArg, (toRefPtrNativeArray<ScriptProfile, V8ScriptProfile>(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined))));
     imp->methodWithSequenceArg(sequenceArg);
     return v8Undefined();
 }
@@ -1653,7 +1653,7 @@ static v8::Handle<v8::Value> overloadedMethod10Callback(const v8::Arguments& arg
     if (args.Length() < 1)
         return throwNotEnoughArgumentsError(args.GetIsolate());
     TestObj* imp = V8TestObj::toNative(args.Holder());
-    V8TRYCATCH(Vector<unsigned long>, arrayArg, toNativeArray<unsigned long>(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined)));
+    V8TRYCATCH(Vector<unsigned>, arrayArg, toNativeArray<unsigned>(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined)));
     imp->overloadedMethod(arrayArg);
     return v8Undefined();
 }

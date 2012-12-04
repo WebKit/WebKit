@@ -395,6 +395,17 @@ sub IsTypedArrayType
     return 0;
 }
 
+sub IsRefPtrType
+{
+    my $object = shift;
+    my $type = shift;
+
+    return 0 if $object->IsPrimitiveType($type);
+    return 0 if $type eq "DOMString";
+
+    return 1;
+}
+
 sub GetSVGTypeNeedingTearOff
 {
     my $object = shift;

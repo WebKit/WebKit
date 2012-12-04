@@ -1,3 +1,52 @@
+2012-12-04  Adam Bergkvist  <adam.bergkvist@ericsson.com>
+
+        Add support for generic types in arrays and sequences to the code generators
+        https://bugs.webkit.org/show_bug.cgi?id=103642
+
+        Reviewed by Kentaro Hara.
+
+        Updated the bindings generators to support arrays and sequences of host objects.
+
+        - Arrays and sequences of host objects are mapped to Vector<RefPtr<%RefPtrType%> >.
+        - Fixed issue where "sequence<String>" was used in IDL files instead of "sequence<DOMString>".
+
+        Updated existing test results.
+
+        * Modules/indexeddb/IDBDatabase.idl:
+        * Modules/indexeddb/IDBObjectStore.idl:
+        * Modules/mediastream/RTCStatsElement.idl:
+        * Modules/websockets/WebSocket.idl:
+        * bindings/js/JSDOMBinding.h:
+        (WebCore::toRefPtrNativeArray):
+        (WebCore):
+        * bindings/scripts/CodeGenerator.pm:
+        (IsRefPtrType):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (AddIncludesForType):
+        (GetNativeType):
+        (GetNativeVectorInnerType):
+        (JSValueToNative):
+        (NativeToJSValue):
+        * bindings/scripts/CodeGeneratorV8.pm:
+        (GenerateNormalAttrGetter):
+        (GenerateNormalAttrSetter):
+        (GenerateParametersCheckExpression):
+        (GenerateFunctionCallString):
+        (GetNativeType):
+        (JSValueToNative):
+        (CreateCustomSignature):
+        (NativeToJSValue):
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::jsTestObjPrototypeFunctionMethodWithSequenceArg):
+        * bindings/scripts/test/V8/V8TestObj.cpp:
+        (WebCore::TestObjV8Internal::longLongAttrAttrSetter):
+        (WebCore::TestObjV8Internal::unsignedLongLongAttrAttrSetter):
+        (WebCore::TestObjV8Internal::methodWithSequenceArgCallback):
+        (WebCore::TestObjV8Internal::overloadedMethod10Callback):
+        * bindings/v8/V8Binding.h:
+        (WebCore::toRefPtrNativeArray):
+        * testing/Internals.idl:
+
 2012-12-04  Antoine Quint  <graouts@apple.com>
 
         TextTrack's .kind property should return lower-case values
