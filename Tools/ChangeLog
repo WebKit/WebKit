@@ -1,3 +1,17 @@
+2012-12-04  Adam Barth  <abarth@webkit.org>
+
+        Remove obsolete code from webkitpy
+        https://bugs.webkit.org/show_bug.cgi?id=104029
+
+        Reviewed by Eric Seidel.
+
+        * Scripts/webkitpy/tool/bot/commitqueuetask.py:
+        (CommitQueueTask.run):
+        * Scripts/webkitpy/tool/steps/commit.py:
+        (Commit.options):
+        * Scripts/webkitpy/tool/steps/options.py:
+        (Options):
+
 2012-12-04  Jochen Eisinger  <jochen@chromium.org>
 
         [chromium] move WebPreferences and methods for modifying them to the TestRunner library

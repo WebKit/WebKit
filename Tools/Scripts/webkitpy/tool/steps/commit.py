@@ -40,12 +40,9 @@ _log = logging.getLogger(__name__)
 
 
 class Commit(AbstractStep):
-    # FIXME: This option exists only to make sure we don't break scripts which include --ignore-builders
-    # You can safely delete this option any time after 11/01/11.
     @classmethod
     def options(cls):
         return AbstractStep.options() + [
-            Options.check_builders,
             Options.non_interactive,
         ]
 
