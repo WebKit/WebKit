@@ -40,7 +40,8 @@ MOCK: user.open_url: file://...
 Was that diff correct?
 Committed r49824: <http://trac.webkit.org/changeset/49824>
 """
-        self.assert_execute_outputs(RollChromiumDEPS(), [6764], expected_logs=expected_logs)
+        options = MockOptions(non_interactive=False)
+        self.assert_execute_outputs(RollChromiumDEPS(), [6764], options=options, expected_logs=expected_logs)
 
     def test_update_chromium_deps_older_revision(self):
         options = MockOptions(non_interactive=False)

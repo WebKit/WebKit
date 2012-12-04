@@ -147,11 +147,11 @@ class Git(SCM, SVNRepository):
         return self._filesystem.exists(self.absolute_path(self._filesystem.join('.git', 'rebase-apply')))
 
     def working_directory_is_clean(self):
-        return self._run_git(['diff', 'HEAD', '--no-renames', '--name-only']) == ""
+        return self._run_git(['diff', self.remote_merge_base(), '--no-renames', '--name-only']) == ""
 
     def clean_working_directory(self):
         # Could run git clean here too, but that wouldn't match working_directory_is_clean
-        self._run_git(['reset', '--hard', 'HEAD'])
+        self._run_git(['reset', '--hard', self.remote_merge_base()])
         # Aborting rebase even though this does not match working_directory_is_clean
         if self.rebase_in_progress():
             self._run_git(['rebase', '--abort'])
