@@ -1,3 +1,20 @@
+2012-12-04  Antoine Quint  <graouts@apple.com>
+
+        INVALID_STATE_ERR error upon calling .addCue() for an already-in-use cue
+        https://bugs.webkit.org/show_bug.cgi?id=103264
+
+        Reviewed by Eric Carlson.
+
+        Adhere to the latest spec for TextTrack's .addCue() method. This also fixes
+        https://bugs.webkit.org/show_bug.cgi?id=103265 and we've removed
+        media/track/opera/interfaces/TextTrack/addCue.html from the Skipped list.
+
+        * html/track/TextTrack.cpp:
+        (WebCore::TextTrack::addCue):
+        * html/track/TextTrack.h:
+        (TextTrack):
+        * html/track/TextTrack.idl:
+
 2012-12-04  Mike West  <mkwst@chromium.org>
 
         Log to console when forms and popups are blocked by 'sandbox'.

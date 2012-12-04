@@ -214,7 +214,7 @@ TextTrackCueList* TextTrack::activeCues() const
     return 0;
 }
 
-void TextTrack::addCue(PassRefPtr<TextTrackCue> prpCue, ExceptionCode& ec)
+void TextTrack::addCue(PassRefPtr<TextTrackCue> prpCue)
 {
     if (!prpCue)
         return;
@@ -225,30 +225,19 @@ void TextTrack::addCue(PassRefPtr<TextTrackCue> prpCue, ExceptionCode& ec)
     if (isnan(cue->startTime()) || isnan(cue->endTime()) || cue->startTime() < 0 || cue->endTime() < 0)
         return;
 
-    // 4.8.10.12.4 Text track API
+    // 4.8.10.12.5 Text track API
 
     // The addCue(cue) method of TextTrack objects, when invoked, must run the following steps:
 
-    // 1. If the given cue is already associated with a text track other than 
-    // the method's TextTrack object's text track, then throw an InvalidStateError
-    // exception and abort these steps.
+    // 1. If the given cue is in a text track list of cues, then remove cue from that text track
+    // list of cues.
     TextTrack* cueTrack = cue->track();
-    if (cueTrack && cueTrack != this) {
-        ec = INVALID_STATE_ERR;
-        return;
-    }
+    if (cueTrack && cueTrack != this)
+        cueTrack->removeCue(cue.get(), ASSERT_NO_EXCEPTION);
 
-    // 2. Associate cue with the method's TextTrack object's text track, if it is 
-    // not currently associated with a text track.
+    // 2. Add cue to the method's TextTrack object's text track's text track list of cues.
     cue->setTrack(this);
-
-    // 3. If the given cue is already listed in the method's TextTrack object's text
-    // track's text track list of cues, then throw an InvalidStateError exception.
-    // 4. Add cue to the method's TextTrack object's text track's text track list of cues.
-    if (!ensureTextTrackCueList()->add(cue)) {
-        ec = INVALID_STATE_ERR;
-        return;
-    }
+    ensureTextTrackCueList()->add(cue);
     
     if (m_client)
         m_client->textTrackAddCue(this, cue.get());

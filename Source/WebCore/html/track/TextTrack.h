@@ -100,7 +100,7 @@ public:
     void clearClient() { m_client = 0; }
     TextTrackClient* client() { return m_client; }
 
-    void addCue(PassRefPtr<TextTrackCue>, ExceptionCode&);
+    void addCue(PassRefPtr<TextTrackCue>);
     void removeCue(TextTrackCue*, ExceptionCode&);
 
     void cueWillChange(TextTrackCue*);
