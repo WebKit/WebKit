@@ -3689,48 +3689,37 @@ sub GetNativeType
         }
     }
 
-    if ($type eq "float" or $type eq "double") {
-        return $type;
-    }
-
-    return "V8StringResource" if ($type eq "DOMString" or $type eq "DOMUserData") and $isParameter;
-    return "int" if $type eq "int";
-    return "int" if $type eq "short" or $type eq "unsigned short";
-    return "unsigned" if $type eq "unsigned long";
-    return "int" if $type eq "long";
+    return "float" if $type eq "float";
+    return "double" if $type eq "double";
+    return "int" if $type eq "long" or $type eq "int" or $type eq "short" or $type eq "unsigned short";
+    return "unsigned" if $type eq "unsigned long" or $type eq "unsigned int";
     return "long long" if $type eq "long long";
     return "unsigned long long" if $type eq "unsigned long long";
     return "bool" if $type eq "boolean";
+
+    return "V8StringResource" if $type eq "DOMString" and $isParameter;
     return "String" if $type eq "DOMString";
+
     return "Range::CompareHow" if $type eq "CompareHow";
     return "DOMTimeStamp" if $type eq "DOMTimeStamp";
-    return "unsigned" if $type eq "unsigned int";
+    return "double" if $type eq "Date";
+
     # FIXME: When EventTarget is an interface and not a mixin, fix this so that
     # EventTarget can be passed as a parameter.
     return "Node*" if $type eq "EventTarget" and $isParameter;
-    return "double" if $type eq "Date";
+
     return "ScriptValue" if $type eq "DOMObject" or $type eq "any";
     return "Dictionary" if $type eq "Dictionary";
 
-    return "String" if $type eq "DOMUserData";  # FIXME: Temporary hack?
-
-    # temporary hack
-    return "RefPtr<NodeFilter>" if $type eq "NodeFilter";
-
-    return "RefPtr<SerializedScriptValue>" if $type eq "SerializedScriptValue";
+    # FIXME: Consider replacing DOMStringList with DOMString[] or sequence<DOMString>.
+    return "RefPtr<DOMStringList>" if $type eq "DOMString[]" or $type eq "DOMStringList";
 
     return "RefPtr<IDBKey>" if $type eq "IDBKey";
-
-    # necessary as resolvers could be constructed on fly.
-    return "RefPtr<XPathNSResolver>" if $type eq "XPathNSResolver";
-
-    return "RefPtr<DOMStringList>" if $type eq "DOMString[]";
-    return "RefPtr<${type}>" if $codeGenerator->IsRefPtrType($type) and not $isParameter;
-
     return "RefPtr<MediaQueryListListener>" if $type eq "MediaQueryListListener";
-
-    # FIXME: Consider replacing DOMStringList with DOMString[] or sequence<DOMString>.
-    return "RefPtr<DOMStringList>" if $type eq "DOMStringList";
+    return "RefPtr<NodeFilter>" if $type eq "NodeFilter";
+    return "RefPtr<SerializedScriptValue>" if $type eq "SerializedScriptValue";
+    return "RefPtr<XPathNSResolver>" if $type eq "XPathNSResolver";
+    return "RefPtr<${type}>" if $codeGenerator->IsRefPtrType($type) and not $isParameter;
 
     my $arrayType = $codeGenerator->GetArrayType($type);
     my $sequenceType = $codeGenerator->GetSequenceType($type);
@@ -3797,7 +3786,7 @@ sub JSValueToNative
     # FIXME: Consider replacing DOMStringList with DOMString[] or sequence<DOMString>.
     return "toDOMStringList($value)" if $type eq "DOMString[]";
 
-    if ($type eq "DOMString" or $type eq "DOMUserData") {
+    if ($type eq "DOMString") {
         return $value;
     }
 
@@ -4205,7 +4194,6 @@ sub ConvertToV8StringResource
         $macro .= "_$suffix" if $suffix;
         return "$macro($nativeType, $variableName, $value);"
     } else {
-        # Don't know how to properly check for conversion exceptions when $parameter->type is "DOMUserData"
         return "$nativeType $variableName($value, true);";
     }
 }

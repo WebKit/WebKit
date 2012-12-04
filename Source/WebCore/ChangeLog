@@ -1,5 +1,21 @@
 2012-12-04  Adam Barth  <abarth@webkit.org>
 
+        [V8] GetNativeType in CodeGeneratorV8.pm needs a bath
+        https://bugs.webkit.org/show_bug.cgi?id=104022
+
+        Reviewed by Eric Seidel.
+
+        This change shouldn't have any effect on the generated code.
+
+        * bindings/scripts/CodeGeneratorV8.pm:
+        (GetNativeType):
+            - DOMUserData was removed in 2005. There's no need for the code
+              generator to still know about it.
+        (JSValueToNative):
+        (ConvertToV8StringResource):
+
+2012-12-04  Adam Barth  <abarth@webkit.org>
+
         [V8] EventTarget shouldn't be a special snowflake
         https://bugs.webkit.org/show_bug.cgi?id=104018
 
