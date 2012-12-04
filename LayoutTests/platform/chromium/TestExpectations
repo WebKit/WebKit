@@ -3874,9 +3874,6 @@ crbug.com/145590 [ Android ] media/W3C/video/canPlayType/canPlayType_two_implies
 crbug.com/145590 [ Android ] media/W3C/video/canPlayType/canPlayType_two_implies_one_6.html [ Failure ]
 crbug.com/145590 [ Android ] media/audio-data-url.html [ Failure ]
 crbug.com/145590 [ Android ] media/audio-repaint.html [ Failure Timeout ]
-crbug.com/145590 [ Android ] media/encrypted-media/encrypted-media-events.html [ Timeout ]
-crbug.com/145590 [ Android ] media/encrypted-media/encrypted-media-not-loaded.html [ Failure ]
-crbug.com/145590 [ Android ] media/encrypted-media/encrypted-media-syntax.html [ Failure ]
 crbug.com/145590 [ Android ] media/track/track-default-attribute.html [ Pass Timeout ]
 crbug.com/145590 [ Android ] media/video-buffered.html [ Failure ]
 crbug.com/145590 [ Android ] media/video-canvas-source.html [ Failure ]
@@ -4318,8 +4315,8 @@ webkit.org/b/103721 [ Mac Win Linux ] compositing/reflections/nested-reflection-
 webkit.org/b/103721 [ Mac Win Linux ] compositing/reflections/nested-reflection-animated.html [ ImageOnlyFailure ]
 webkit.org/b/103721 [ Mac Win Linux ] platform/chromium/compositing/huge-layer-rotated.html [ ImageOnlyFailure ]
 
-crbug.com/163785 [ Mac Win Linux ] media/encrypted-media/encrypted-media-events.html [ Crash ]
-crbug.com/163785 [ Mac Win Linux ] media/encrypted-media/encrypted-media-not-loaded.html [ Crash ]
-crbug.com/163785 [ Mac Win Linux ] media/encrypted-media/encrypted-media-syntax.html [ Crash ]
+crbug.com/163785 media/encrypted-media/encrypted-media-events.html [ Crash Timeout ]
+crbug.com/163785 media/encrypted-media/encrypted-media-not-loaded.html [ Crash Timeout ]
+crbug.com/163785 media/encrypted-media/encrypted-media-syntax.html [ Crash Timeout ]
 
 webkit.org/b/103834 [ Mac XP ] fast/forms/month-multiple-fields/month-multiple-fields-keyboard-events.html [ Failure ]
