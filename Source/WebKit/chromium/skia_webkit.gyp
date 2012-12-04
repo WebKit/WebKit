@@ -40,9 +40,14 @@
           # Place defines here that require significant WebKit rebaselining, or that
           # are otherwise best removed in WebKit and then rolled into Chromium.
           # Defines should be in single quotes and a comma must appear after every one.
+          # DO NOT remove the define until you are ready to rebaseline, and
+          # AFTER the flag has been removed from skia.gyp in Chromium.
+
           'SK_DISABLE_DITHER_32BIT_GRADIENT',
 
           'SK_DISABLE_DASHING_OPTIMIZATION',
+
+          'SK_DISABLE_SEPARABLE_MASK_BLUR',
         ],
       },
     },
