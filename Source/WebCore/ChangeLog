@@ -1,5 +1,23 @@
 2012-12-04  James Simonsen  <simonjam@chromium.org>
 
+        [User Timing] Fix clang build by removing need for exit time destructor
+        https://bugs.webkit.org/show_bug.cgi?id=104036
+
+        Reviewed by Tony Gentilcore.
+
+        Modeled after r99588.
+
+        No new tests. No change in functionality.
+
+        * page/PerformanceUserTiming.cpp:
+        (WebCore::UserTiming::UserTiming):
+        (WebCore::UserTiming::mark):
+        (WebCore::UserTiming::findExistingMarkStartTime):
+        * page/PerformanceUserTiming.h:
+        (UserTiming):
+
+2012-12-04  James Simonsen  <simonjam@chromium.org>
+
         [User Timing] Fix negative durations
         https://bugs.webkit.org/show_bug.cgi?id=104038
 

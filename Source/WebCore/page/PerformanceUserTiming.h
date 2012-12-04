@@ -49,6 +49,7 @@ typedef HashMap<String, Vector<RefPtr<PerformanceEntry> > > PerformanceEntryMap;
 class UserTiming : public RefCounted<UserTiming> {
 public:
     static PassRefPtr<UserTiming> create(Performance* performance) { return adoptRef(new UserTiming(performance)); }
+
     void mark(const String& markName, ExceptionCode&);
     void clearMarks(const String& markName);
 
@@ -63,8 +64,7 @@ public:
 
 private:
     explicit UserTiming(Performance*);
-    static HashMap<String, NavigationTimingFunction> m_restrictedKeyMap;
-    
+
     double findExistingMarkStartTime(const String& markName, ExceptionCode&);
     Performance* m_performance;
     PerformanceEntryMap m_marksMap;

@@ -36,46 +36,43 @@
 
 namespace WebCore {
 
-HashMap<String, NavigationTimingFunction> UserTiming::m_restrictedKeyMap;
+namespace {
+
+typedef HashMap<String, NavigationTimingFunction> RestrictedKeyMap;
+static RestrictedKeyMap restrictedKeyMap()
+{
+    DEFINE_STATIC_LOCAL(RestrictedKeyMap, map, ());
+    if (map.isEmpty()) {
+        map.add("navigationStart", &PerformanceTiming::navigationStart);
+        map.add("unloadEventStart", &PerformanceTiming::unloadEventStart);
+        map.add("unloadEventEnd", &PerformanceTiming::unloadEventEnd);
+        map.add("redirectStart", &PerformanceTiming::redirectStart);
+        map.add("redirectEnd", &PerformanceTiming::redirectEnd);
+        map.add("fetchStart", &PerformanceTiming::fetchStart);
+        map.add("domainLookupStart", &PerformanceTiming::domainLookupStart);
+        map.add("domainLookupEnd", &PerformanceTiming::domainLookupEnd);
+        map.add("connectStart", &PerformanceTiming::connectStart);
+        map.add("connectEnd", &PerformanceTiming::connectEnd);
+        map.add("secureConnectionStart", &PerformanceTiming::secureConnectionStart);
+        map.add("requestStart", &PerformanceTiming::requestStart);
+        map.add("responseStart", &PerformanceTiming::responseStart);
+        map.add("responseEnd", &PerformanceTiming::responseEnd);
+        map.add("domLoading", &PerformanceTiming::domLoading);
+        map.add("domInteractive", &PerformanceTiming::domInteractive);
+        map.add("domContentLoadedEventStart", &PerformanceTiming::domContentLoadedEventStart);
+        map.add("domContentLoadedEventEnd", &PerformanceTiming::domContentLoadedEventEnd);
+        map.add("domComplete", &PerformanceTiming::domComplete);
+        map.add("loadEventStart", &PerformanceTiming::loadEventStart);
+        map.add("loadEventEnd", &PerformanceTiming::loadEventEnd);
+    }
+    return map;
+}
+
+} // namespace anonymous
 
 UserTiming::UserTiming(Performance* performance)
     : m_performance(performance)
 {
-    static const struct RestrictedField {
-        String key;
-        NavigationTimingFunction navigationTimingFunction;
-    } defaultRestrictions[] = {
-        {"navigationStart", &PerformanceTiming::navigationStart},
-        {"unloadEventStart", &PerformanceTiming::unloadEventStart},
-        {"unloadEventEnd", &PerformanceTiming::unloadEventEnd},
-        {"redirectStart", &PerformanceTiming::redirectStart},
-        {"redirectEnd", &PerformanceTiming::redirectEnd},
-        {"fetchStart", &PerformanceTiming::fetchStart},
-        {"domainLookupStart", &PerformanceTiming::domainLookupStart},
-        {"domainLookupEnd", &PerformanceTiming::domainLookupEnd},
-        {"connectStart", &PerformanceTiming::connectStart},
-        {"connectEnd", &PerformanceTiming::connectEnd},
-        {"secureConnectionStart", &PerformanceTiming::secureConnectionStart},
-        {"requestStart", &PerformanceTiming::requestStart},
-        {"responseStart", &PerformanceTiming::responseStart},
-        {"responseEnd", &PerformanceTiming::responseEnd},
-        {"domLoading", &PerformanceTiming::domLoading},
-        {"domInteractive", &PerformanceTiming::domInteractive},
-        {"domContentLoadedEventStart", &PerformanceTiming::domContentLoadedEventStart},
-        {"domContentLoadedEventEnd", &PerformanceTiming::domContentLoadedEventEnd},
-        {"domComplete", &PerformanceTiming::domComplete},
-        {"loadEventStart", &PerformanceTiming::loadEventStart},
-        {"loadEventEnd", &PerformanceTiming::loadEventEnd}
-    };
-
-    if (!m_restrictedKeyMap.isEmpty())
-        return;
-
-    for (const struct RestrictedField* restriction = defaultRestrictions;
-        static_cast<unsigned>(restriction - defaultRestrictions) < ARRAY_SIZE(defaultRestrictions);
-        ++restriction) {
-        m_restrictedKeyMap.add(restriction->key, restriction->navigationTimingFunction);
-    }
 }
 
 static void insertPerformanceEntry(PerformanceEntryMap& performanceEntryMap, PassRefPtr<PerformanceEntry> performanceEntry)
@@ -105,7 +102,7 @@ static void clearPeformanceEntries(PerformanceEntryMap& performanceEntryMap, con
 void UserTiming::mark(const String& markName, ExceptionCode& ec)
 {
     ec = 0;
-    if (m_restrictedKeyMap.contains(markName)) {
+    if (restrictedKeyMap().contains(markName)) {
         ec = SYNTAX_ERR;
         return;
     }
@@ -126,8 +123,8 @@ double UserTiming::findExistingMarkStartTime(const String& markName, ExceptionCo
     if (m_marksMap.contains(markName))
         return m_marksMap.get(markName).last()->startTime();
 
-    if (m_restrictedKeyMap.contains(markName))
-        return static_cast<double>((m_performance->timing()->*(m_restrictedKeyMap.get(markName)))()) - m_performance->timing()->navigationStart();
+    if (restrictedKeyMap().contains(markName))
+        return static_cast<double>((m_performance->timing()->*(restrictedKeyMap().get(markName)))()) - m_performance->timing()->navigationStart();
 
     ec = SYNTAX_ERR;
     return 0.0;
