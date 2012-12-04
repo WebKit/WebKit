@@ -74,7 +74,7 @@ String RenderThemeChromiumAndroid::extraMediaControlsStyleSheet()
 
 String RenderThemeChromiumAndroid::extraDefaultStyleSheet()
 {
-    return RenderThemeChromiumDefault::extraDefaultStyleSheet() +
+    return RenderThemeChromiumLinux::extraDefaultStyleSheet() +
         String(themeChromiumAndroidUserAgentStyleSheet, sizeof(themeChromiumAndroidUserAgentStyleSheet));
 }
 

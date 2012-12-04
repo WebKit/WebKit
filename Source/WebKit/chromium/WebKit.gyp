@@ -439,6 +439,7 @@
                 'src/linux/WebFontInfo.cpp',
                 'src/linux/WebFontRendering.cpp',
                 'src/linux/WebFontRenderStyle.cpp',
+                'src/linux/WebRenderTheme.cpp',
                 'src/x11/WebScreenInfoFactory.cpp',
                 'src/mac/WebInputEventFactory.mm',
                 'src/mac/WebScreenInfoFactory.mm',
@@ -845,6 +846,10 @@
                     ],
                 }],
                 ['use_default_render_theme==1', {
+                    'sources/': [
+                        ['exclude', 'src/linux/WebRenderTheme.cpp'],
+                        ['exclude', 'public/linux/WebRenderTheme.h'],
+                    ],
                     'include_dirs': [
                         'public/default',
                     ],

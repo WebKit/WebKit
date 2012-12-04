@@ -1,3 +1,26 @@
+2012-12-03  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r136460.
+        http://trac.webkit.org/changeset/136460
+        https://bugs.webkit.org/show_bug.cgi?id=103958
+
+        This patch caused compile error when building DumpRenderTree
+        (Requested by tasak on #webkit).
+
+        * Platform.gypi:
+        * chromium/public/linux/WebThemeEngine.h: Added.
+        (WebKit):
+        (WebThemeEngine):
+        (ScrollbarTrackExtraParams):
+        (ButtonExtraParams):
+        (TextFieldExtraParams):
+        (MenuListExtraParams):
+        (SliderExtraParams):
+        (InnerSpinButtonExtraParams):
+        (ProgressBarExtraParams):
+        (WebKit::WebThemeEngine::getSize):
+        (WebKit::WebThemeEngine::paint):
+
 2012-12-03  Scott Violet  <sky@chromium.org>
 
         [chromium] Remove linux theme related files and switch to default

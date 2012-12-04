@@ -179,6 +179,10 @@
 #include "RenderThemeChromiumWin.h"
 #endif
 #else
+#if OS(UNIX) && !OS(DARWIN) && !ENABLE(DEFAULT_RENDER_THEME)
+#include "PlatformThemeChromiumLinux.h"
+#include "RenderThemeChromiumLinux.h"
+#endif
 #include "RenderTheme.h"
 #endif
 
@@ -3569,6 +3573,8 @@ void WebViewImpl::setScrollbarColors(unsigned inactiveColor,
                                      unsigned trackColor) {
 #if ENABLE(DEFAULT_RENDER_THEME)
     PlatformThemeChromiumDefault::setScrollbarColors(inactiveColor, activeColor, trackColor);
+#elif OS(UNIX) && !OS(DARWIN) && !OS(ANDROID)
+    PlatformThemeChromiumLinux::setScrollbarColors(inactiveColor, activeColor, trackColor);
 #endif
 }
 
@@ -3578,6 +3584,9 @@ void WebViewImpl::setSelectionColors(unsigned activeBackgroundColor,
                                      unsigned inactiveForegroundColor) {
 #if ENABLE(DEFAULT_RENDER_THEME)
     RenderThemeChromiumDefault::setSelectionColors(activeBackgroundColor, activeForegroundColor, inactiveBackgroundColor, inactiveForegroundColor);
+    theme()->platformColorsDidChange();
+#elif OS(UNIX) && !OS(DARWIN) && !OS(ANDROID)
+    RenderThemeChromiumLinux::setSelectionColors(activeBackgroundColor, activeForegroundColor, inactiveBackgroundColor, inactiveForegroundColor);
     theme()->platformColorsDidChange();
 #endif
 }
