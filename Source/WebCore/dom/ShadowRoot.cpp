@@ -164,15 +164,10 @@ PassRefPtr<Node> ShadowRoot::cloneNode(bool)
     return 0;
 }
 
-PassRefPtr<Node> ShadowRoot::cloneNode(bool deep, ExceptionCode& ec)
+PassRefPtr<Node> ShadowRoot::cloneNode(bool, ExceptionCode& ec)
 {
-    RefPtr<Node> clone = cloneNode(deep);
-    if (!clone) {
-        ec = DATA_CLONE_ERR;
-        return 0;
-    }
-
-    return clone;
+    ec = DATA_CLONE_ERR;
+    return 0;
 }
 
 String ShadowRoot::innerHTML() const
