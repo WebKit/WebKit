@@ -1,5 +1,17 @@
 2012-12-03  Tony Chang  <tony@chromium.org>
 
+        Unreviewed, add Chromium GTK+ baselines after r136409 (mathml sup/sub box changes).
+
+        * platform/gtk/TestExpectations:
+        * platform/gtk/mathml/presentation/roots-expected.txt:
+        * platform/gtk/mathml/presentation/row-alignment-expected.txt:
+        * platform/gtk/mathml/presentation/sub-expected.txt:
+        * platform/gtk/mathml/presentation/subsup-expected.txt:
+        * platform/gtk/mathml/presentation/sup-expected.txt:
+        * platform/gtk/mathml/presentation/tables-expected.txt:
+
+2012-12-03  Tony Chang  <tony@chromium.org>
+
         Unreviewed, add Chromium Win/Mac baselines after r136409 (mathml sup/sub box changes).
 
         * platform/chromium-mac-lion/mathml/presentation/row-alignment-expected.txt: Removed.

@@ -227,7 +227,7 @@ layer at (0,0) size 800x312
               RenderBlock {mi} at (0,13) size 8x9
                 RenderText {#text} at (0,-9) size 7x25
                   text run at (0,-9) width 7: "x"
-            RenderMathMLBlock (anonymous, flex) at (8,0) size 11x22
+            RenderMathMLBlock (anonymous, flex) at (8,0) size 11x17
               RenderMathMLSubSup {msubsup} at (0,0) size 11x17
                 RenderMathMLBlock (anonymous, flex) at (0,0) size 5x17 [padding: 6 0 2 0]
                   RenderBlock {mi} at (0,6) size 5x9
