@@ -106,6 +106,7 @@ NSString *WebConsoleMessageStartGroupMessageType = @"StartGroupMessageType";
 NSString *WebConsoleMessageStartGroupCollapsedMessageType = @"StartGroupCollapsedMessageType";
 NSString *WebConsoleMessageEndGroupMessageType = @"EndGroupMessageType";
 NSString *WebConsoleMessageAssertMessageType = @"AssertMessageType";
+NSString* WebConsoleMessageTimingMessageType = @"TimingMessageType";
 
 NSString *WebConsoleMessageTipMessageLevel = @"TipMessageLevel";
 NSString *WebConsoleMessageLogMessageLevel = @"LogMessageLevel";
@@ -377,6 +378,8 @@ inline static NSString *stringForMessageType(MessageType type)
         return WebConsoleMessageEndGroupMessageType;
     case AssertMessageType:
         return WebConsoleMessageAssertMessageType;
+    case TimingMessageType:
+        return WebConsoleMessageTimingMessageType;
     }
     ASSERT_NOT_REACHED();
     return @"";
