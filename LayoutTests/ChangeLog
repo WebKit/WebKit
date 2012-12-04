@@ -1,3 +1,16 @@
+2012-12-04  Emil A Eklund  <eae@chromium.org>
+
+        Unreviewed chromium rebaseline for r136508.
+
+        * platform/chromium-linux/compositing/masks/masked-ancestor-expected.png:
+        * platform/chromium-mac-lion/compositing/masks/masked-ancestor-expected.png:
+        * platform/chromium-mac-snowleopard/compositing/masks/masked-ancestor-expected.png:
+        * platform/chromium-mac/compositing/masks/masked-ancestor-expected.png:
+        * platform/chromium-win/compositing/masks/masked-ancestor-expected.png:
+        * platform/efl-wk1/compositing/masks: Added.
+        * platform/efl-wk1/compositing/masks/masked-ancestor-expected.png: Added.
+        * platform/efl/compositing/masks/masked-ancestor-expected.png: Removed.
+
 2012-12-04  Ken Kania  <kkania@chromium.org>
 
         Inspector: Introduce Input.dispatchKeyEvent and DOM.focus for typing simulation.
