@@ -3,6 +3,13 @@
         Unreviewed, WebKit gardening.
 
         * platform/chromium/TestExpectations:
+        Update flaky tests' expectations.
+
+2012-12-04  Takashi Sakamoto  <tasak@google.com>
+
+        Unreviewed, WebKit gardening.
+
+        * platform/chromium/TestExpectations:
         Mark css3/filters/effect-reference-hw.html and
         css3/filters/effect-reference-ordering-hw.html as crash.
 

@@ -956,7 +956,7 @@ crbug.com/8941 [ Win ] http/tests/xmlhttprequest/web-apps/012.html [ Failure ]
 # Incrorect results, in incorrect international font metrics.
 crbug.com/20521 [ Win ] fast/text/atsui-multiple-renderers.html [ Failure ]
 webkit.org/b/78544 [ Android Linux ] fast/text/atsui-multiple-renderers.html [ Failure ImageOnlyFailure Pass ]
-crbug.com/20521 [ Android ] fast/text/atsui-pointtooffset-calls-cg.html [ Failure ]
+crbug.com/20521 [ Android XP ] fast/text/atsui-pointtooffset-calls-cg.html [ Failure ]
 crbug.com/20521 [ Android ] fast/text/atsui-rtl-override-selection.html [ Failure ]
 
 # This test checks that we hack around a bug in helvetica.  We fail to.
@@ -2699,6 +2699,7 @@ webkit.org/b/60094 [ Debug ] fast/encoding/parser-tests-120.html [ Pass Timeout 
 
 # Flaky since creation because we lack testRunner.setSerializeHTTPLoads
 webkit.org/b/57593 [ Win Mac Android ] fast/preloader/document-write-2.html [ Failure ]
+webkit.org/b/57593 [ Linux ] fast/preloader/document-write-2.html [ Failure Pass ]
 webkit.org/b/57593 [ Win Mac Android ] fast/preloader/document-write.html [ Failure ]
 
 crbug.com/780807 http/tests/misc/webtiming-origins.html [ Failure Pass ]
