@@ -1335,6 +1335,7 @@ String FrameView::mediaType() const
 {
     // See if we have an override type.
     String overrideType = m_frame->loader()->client()->overrideMediaType();
+    InspectorInstrumentation::applyEmulatedMedia(m_frame.get(), &overrideType);
     if (!overrideType.isNull())
         return overrideType;
     return m_mediaType;

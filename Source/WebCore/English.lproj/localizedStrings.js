@@ -173,6 +173,7 @@ localizedStrings["Edit"] = "Edit";
 localizedStrings["Element state: %s"] = "Element state: %s";
 localizedStrings["Elements Panel"] = "Elements Panel";
 localizedStrings["Elements"] = "Elements";
+localizedStrings["Emulate CSS media"] = "Emulate CSS media";
 localizedStrings["Emulate touch events"] = "Emulate touch events";
 localizedStrings["Enable Breakpoint"] = "Enable Breakpoint";
 localizedStrings["Enable breakpoint"] = "Enable breakpoint";

@@ -1,3 +1,38 @@
+2012-12-04  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: [Overrides] Add ability to override the page CSS media type
+        https://bugs.webkit.org/show_bug.cgi?id=103752
+
+        Reviewed by Pavel Feldman.
+
+        This change emulates the CSS media types through the instrumentation of FrameView::mediaType().
+        Even though it already checks the associated FrameLoaderClient::overrideMediaType(), instrumenting
+        every single platform FrameLoaderClient implementation out there seems wrong.
+
+        Test: inspector/styles/media-emulation.html
+
+        * English.lproj/localizedStrings.js:
+        * inspector/Inspector.json: Add Page.setEmulatedMedia().
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::applyEmulatedMediaImpl): Added.
+        * inspector/InspectorInstrumentation.h:
+        (WebCore::InspectorInstrumentation::applyEmulatedMedia): Added.
+        * inspector/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::restore): Restores the media emulation state.
+        (WebCore::InspectorPageAgent::disable): Resets the media emulation state.
+        (WebCore::InspectorPageAgent::setEmulatedMedia): Added.
+        (WebCore::InspectorPageAgent::applyEmulatedMedia): Applies the emulated CSS media if needed.
+        * inspector/InspectorPageAgent.h:
+        * inspector/front-end/CSSStyleModel.js: Add the list of media types.
+        * inspector/front-end/OverridesView.js: Add the CSS media type override UI.
+        (WebInspector.OverridesView):
+        (WebInspector.OverridesView.prototype._createMediaEmulationElement): Builds the UI.
+        (WebInspector.OverridesView.prototype._emulateMediaChanged): Handles the control value changes.
+        * inspector/front-end/Settings.js: Add the "emulatedCSSMedia" setting.
+        * page/FrameView.cpp:
+        (WebCore::FrameView::mediaType):
+          Uses InspectorInstrumentation::applyEmulatedMedia() to provide the emulated value.
+
 2012-12-03  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Simplify GObject DOM bindings code for handling properties

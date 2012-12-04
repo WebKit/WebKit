@@ -158,6 +158,7 @@ public:
     static void applyUserAgentOverride(Frame*, String*);
     static void applyScreenWidthOverride(Frame*, long*);
     static void applyScreenHeightOverride(Frame*, long*);
+    static void applyEmulatedMedia(Frame*, String*);
     static bool shouldApplyScreenWidthOverride(Frame*);
     static bool shouldApplyScreenHeightOverride(Frame*);
     static void willSendRequest(Frame*, unsigned long identifier, DocumentLoader*, ResourceRequest&, const ResourceResponse& redirectResponse);
@@ -350,6 +351,7 @@ private:
     static void applyUserAgentOverrideImpl(InstrumentingAgents*, String*);
     static void applyScreenWidthOverrideImpl(InstrumentingAgents*, long*);
     static void applyScreenHeightOverrideImpl(InstrumentingAgents*, long*);
+    static void applyEmulatedMediaImpl(InstrumentingAgents*, String*);
     static bool shouldApplyScreenWidthOverrideImpl(InstrumentingAgents*);
     static bool shouldApplyScreenHeightOverrideImpl(InstrumentingAgents*);
     static void willSendRequestImpl(InstrumentingAgents*, unsigned long identifier, DocumentLoader*, ResourceRequest&, const ResourceResponse& redirectResponse);
@@ -1063,6 +1065,15 @@ inline bool InspectorInstrumentation::shouldApplyScreenWidthOverride(Frame* fram
         return shouldApplyScreenWidthOverrideImpl(instrumentingAgents);
 #endif
     return false;
+}
+
+inline void InspectorInstrumentation::applyEmulatedMedia(Frame* frame, String* media)
+{
+#if ENABLE(INSPECTOR)
+    FAST_RETURN_IF_NO_FRONTENDS(void());
+    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForFrame(frame))
+        applyEmulatedMediaImpl(instrumentingAgents, media);
+#endif
 }
 
 inline bool InspectorInstrumentation::shouldApplyScreenHeightOverride(Frame* frame)

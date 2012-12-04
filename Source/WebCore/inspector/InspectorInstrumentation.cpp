@@ -645,6 +645,12 @@ bool InspectorInstrumentation::shouldApplyScreenHeightOverrideImpl(Instrumenting
     return false;
 }
 
+void InspectorInstrumentation::applyEmulatedMediaImpl(InstrumentingAgents* instrumentingAgents, String* media)
+{
+    if (InspectorPageAgent* pageAgent = instrumentingAgents->inspectorPageAgent())
+        pageAgent->applyEmulatedMedia(media);
+}
+
 void InspectorInstrumentation::willSendRequestImpl(InstrumentingAgents* instrumentingAgents, unsigned long identifier, DocumentLoader* loader, ResourceRequest& request, const ResourceResponse& redirectResponse)
 {
     if (InspectorTimelineAgent* timelineAgent = instrumentingAgents->inspectorTimelineAgent())

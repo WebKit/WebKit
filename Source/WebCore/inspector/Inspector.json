@@ -429,6 +429,14 @@
                 "hidden": true
             },
             {
+                "name": "setEmulatedMedia",
+                "parameters": [
+                    { "name": "media", "type": "string", "description": "Media type to emulate. Empty string disables the override." }
+                ],
+                "description": "Emulates the given media for CSS media queries.",
+                "hidden": true
+            },
+            {
                 "name": "getCompositingBordersVisible",
                 "description": "Indicates the visibility of compositing borders.",
                 "returns": [

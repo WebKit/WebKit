@@ -77,6 +77,8 @@ WebInspector.CSSStyleModel.Events = {
     RegionLayoutUpdated: "RegionLayoutUpdated"
 }
 
+WebInspector.CSSStyleModel.MediaTypes = ["all", "braille", "embossed", "handheld", "print", "projection", "screen", "speech", "tty", "tv"];
+
 WebInspector.CSSStyleModel.prototype = {
     /**
      * @param {DOMAgent.NodeId} nodeId

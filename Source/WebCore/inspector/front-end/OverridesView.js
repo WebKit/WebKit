@@ -60,6 +60,7 @@ WebInspector.OverridesView = function()
     if (Capabilities.canOverrideDeviceOrientation)
         appendBlockTo(container, this._createDeviceOrientationOverrideControl());
     appendBlockTo(container, this._createCheckboxSetting(WebInspector.UIString("Emulate touch events"), WebInspector.settings.emulateTouchEvents));
+    appendBlockTo(container, this._createMediaEmulationElement());
 
     this._statusElement = document.createElement("span");
     this._statusElement.textContent = WebInspector.UIString("Overrides");
@@ -592,6 +593,51 @@ WebInspector.OverridesView.prototype = {
         this._gammaElement = this._createInput(cellElement, "device-orientation-override-gamma", String(deviceOrientation.gamma), this._applyDeviceOrientationUserInput.bind(this), true);
 
         return fieldsetElement;
+    },
+
+    _createMediaEmulationElement: function()
+    {
+        const p = document.createElement("p");
+        const labelElement = p.createChild("label");
+        const checkboxElement = labelElement.createChild("input");
+        checkboxElement.type = "checkbox";
+        checkboxElement.checked = false;
+        this._metricsCheckboxElement = checkboxElement;
+        labelElement.appendChild(document.createTextNode(WebInspector.UIString("Emulate CSS media")));
+
+        var mediaSelectElement = p.createChild("select");
+        var mediaTypes = WebInspector.CSSStyleModel.MediaTypes;
+        var defaultMedia = WebInspector.settings.emulatedCSSMedia.get();
+        for (var i = 0; i < mediaTypes.length; ++i) {
+            var mediaType = mediaTypes[i];
+            if (mediaType === "all") {
+                // "all" is not a device-specific media type.
+                continue;
+            }
+            var option = document.createElement("option");
+            option.text = mediaType;
+            option.value = mediaType;
+            mediaSelectElement.add(option);
+            if (mediaType === defaultMedia)
+                mediaSelectElement.selectedIndex = mediaSelectElement.options.length - 1;
+        }
+        mediaSelectElement.disabled = true;
+        var boundListener = this._emulateMediaChanged.bind(this, checkboxElement, mediaSelectElement);
+        checkboxElement.addEventListener("click", boundListener, false);
+        mediaSelectElement.addEventListener("change", boundListener, false);
+        return p;
+    },
+
+    _emulateMediaChanged: function(checkbox, select)
+    {
+        select.disabled = !checkbox.checked;
+        if (checkbox.checked) {
+            var media = select.options[select.selectedIndex].value;
+            WebInspector.settings.emulatedCSSMedia.set(media);
+            PageAgent.setEmulatedMedia(media);
+        } else
+            PageAgent.setEmulatedMedia("");
+        WebInspector.cssModel.mediaQueryResultChanged();
     },
 
     __proto__: WebInspector.View.prototype

@@ -120,6 +120,7 @@ public:
     virtual void clearDeviceOrientationOverride(ErrorString*);
     virtual void canOverrideDeviceOrientation(ErrorString*, bool*);
     virtual void setTouchEmulationEnabled(ErrorString*, bool);
+    virtual void setEmulatedMedia(ErrorString*, const String&);
     virtual void getCompositingBordersVisible(ErrorString*, bool* out_param);
     virtual void setCompositingBordersVisible(ErrorString*, bool);
 
@@ -138,6 +139,7 @@ public:
     void loaderDetachedFromFrame(DocumentLoader*);
     void applyScreenWidthOverride(long*);
     void applyScreenHeightOverride(long*);
+    void applyEmulatedMedia(String*);
     void didPaint(GraphicsContext*, const LayoutRect&);
     void didLayout();
     void didScroll();
