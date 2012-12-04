@@ -28,7 +28,9 @@
 #if PLATFORM(QT)
 #include "ImageDecoderQt.h"
 #endif
+#if !PLATFORM(QT) || USE(LIBJPEG)
 #include "JPEGImageDecoder.h"
+#endif
 #include "PNGImageDecoder.h"
 #include "PlatformMemoryInstrumentation.h"
 #include "SharedBuffer.h"
