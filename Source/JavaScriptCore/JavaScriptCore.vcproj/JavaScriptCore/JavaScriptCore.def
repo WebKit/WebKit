@@ -70,8 +70,8 @@ EXPORTS
     ?addPropertyTransition@Structure@JSC@@SAPAV12@AAVJSGlobalData@2@PAV12@VPropertyName@2@IPAVJSCell@2@AAH@Z
     ?addPropertyTransitionToExistingStructure@Structure@JSC@@SAPAV12@PAV12@VPropertyName@2@IPAVJSCell@2@AAH@Z
     ?addPropertyWithoutTransition@Structure@JSC@@QAEHAAVJSGlobalData@2@VPropertyName@2@IPAVJSCell@2@@Z
-    ?addPrivateBuffer@MemoryClassInfo@WTF@@QAEXIPBD@Z
-    ?addRawBuffer@MemoryClassInfo@WTF@@QAEXABQBXI@Z
+    ?addPrivateBuffer@MemoryClassInfo@WTF@@QAEXIPBD00@Z
+    ?addRawBuffer@MemoryClassInfo@WTF@@QAEXABQBXIPBD1@Z
     ?addSlowCase@Identifier@JSC@@CA?AV?$PassRefPtr@VStringImpl@WTF@@@WTF@@PAVExecState@2@PAVStringImpl@4@@Z
     ?addSlowCase@Identifier@JSC@@CA?AV?$PassRefPtr@VStringImpl@WTF@@@WTF@@PAVJSGlobalData@2@PAVStringImpl@4@@Z
     ?addStaticGlobals@JSGlobalObject@JSC@@IAEXPAUGlobalPropertyInfo@12@H@Z
@@ -327,6 +327,7 @@ EXPORTS
     ?removeBlock@MarkedAllocator@JSC@@QAEXPAVMarkedBlock@2@@Z
     ?removeDirect@JSObject@JSC@@QAE_NAAVJSGlobalData@2@VPropertyName@2@@Z
     ?reportAbandonedObjectGraph@Heap@JSC@@QAEXXZ
+    ?reportEdge@MemoryInstrumentation@WTF@@AAEXPAVMemoryObjectInfo@2@PBXPBD@Z
     ?reportExtraMemoryCostSlowCase@Heap@JSC@@AAEXI@Z
     ?reportSuccess@HeapStatistics@JSC@@SAXXZ
     ?reserveAndCommit@OSAllocator@WTF@@SAPAXIW4Usage@12@_N11@Z

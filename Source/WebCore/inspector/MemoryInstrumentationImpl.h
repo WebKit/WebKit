@@ -81,6 +81,10 @@ public:
     virtual void countObjectSize(const void*, MemoryObjectType, size_t) OVERRIDE;
     virtual bool visited(const void*) OVERRIDE;
     virtual bool checkCountedObject(const void*) OVERRIDE;
+    virtual void reportNode(const MemoryObjectInfo&) OVERRIDE { }
+    virtual void reportEdge(const void*, const void*, const char*) OVERRIDE { }
+    virtual void reportLeaf(const void*, const MemoryObjectInfo&, const char*) OVERRIDE { }
+    virtual void reportBaseAddress(const void*, const void*) OVERRIDE { }
 
     void reportMemoryUsage(MemoryObjectInfo*) const;
 

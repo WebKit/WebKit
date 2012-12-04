@@ -92,6 +92,10 @@ public:
     }
     virtual bool visited(const void* object) { return !m_visitedObjects.add(object).isNewEntry; }
     virtual bool checkCountedObject(const void*) { return true; }
+    virtual void reportNode(const MemoryObjectInfo&) OVERRIDE { }
+    virtual void reportEdge(const void*, const void*, const char*) OVERRIDE { }
+    virtual void reportLeaf(const void*, const MemoryObjectInfo&, const char*) OVERRIDE { }
+    virtual void reportBaseAddress(const void*, const void*) OVERRIDE { }
 
     size_t visitedObjects() const { return m_visitedObjects.size(); }
     size_t totalSize(const MemoryObjectType objectType) const

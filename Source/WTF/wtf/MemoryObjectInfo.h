@@ -31,6 +31,8 @@
 #ifndef MemoryObjectInfo_h
 #define MemoryObjectInfo_h
 
+#include <wtf/text/WTFString.h>
+
 namespace WTF {
 
 class MemoryClassInfo;
@@ -53,6 +55,9 @@ public:
     size_t objectSize() const { return m_objectSize; }
     const void* reportedPointer() const { return m_pointer; }
 
+    void setClassName(const String& className) { m_className = className; }
+    void setName(const String& name) { m_name = name; }
+
     MemoryInstrumentation* memoryInstrumentation() { return m_memoryInstrumentation; }
 
 private:
@@ -73,6 +78,8 @@ private:
     MemoryObjectType m_objectType;
     size_t m_objectSize;
     const void* m_pointer;
+    String m_className;
+    String m_name;
 };
 
 } // namespace WTF

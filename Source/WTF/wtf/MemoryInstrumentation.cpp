@@ -50,6 +50,11 @@ MemoryInstrumentation::~MemoryInstrumentation()
 {
 }
 
+void MemoryInstrumentation::reportEdge(MemoryObjectInfo* ownerObjectInfo, const void* target, const char* name)
+{
+    m_client->reportEdge(ownerObjectInfo->reportedPointer(), target, name);
+}
+
 MemoryObjectType MemoryInstrumentation::getObjectType(MemoryObjectInfo* objectInfo)
 {
     return objectInfo->objectType();
@@ -58,6 +63,14 @@ MemoryObjectType MemoryInstrumentation::getObjectType(MemoryObjectInfo* objectIn
 void MemoryInstrumentation::callReportObjectInfo(MemoryObjectInfo* memoryObjectInfo, const void* pointer, MemoryObjectType objectType, size_t objectSize)
 {
     memoryObjectInfo->reportObjectInfo(pointer, objectType, objectSize);
+}
+
+void MemoryInstrumentation::reportLinkToBuffer(const void* owner, const void* buffer, MemoryObjectType ownerObjectType, size_t size, const char* nodeName, const char* edgeName)
+{
+    MemoryObjectInfo memoryObjectInfo(this, ownerObjectType);
+    memoryObjectInfo.reportObjectInfo(buffer, ownerObjectType, size);
+    memoryObjectInfo.setName(nodeName);
+    m_client->reportLeaf(owner, memoryObjectInfo, edgeName);
 }
 
 MemoryInstrumentation::InstrumentedPointerBase::InstrumentedPointerBase(MemoryObjectInfo* memoryObjectInfo)
@@ -76,9 +89,13 @@ void MemoryInstrumentation::InstrumentedPointerBase::process(MemoryInstrumentati
 
     const void* pointer = memoryObjectInfo.reportedPointer();
     ASSERT(pointer);
-    if (pointer != originalPointer && memoryInstrumentation->visited(pointer))
-        return;
+    if (pointer != originalPointer) {
+        memoryInstrumentation->m_client->reportBaseAddress(originalPointer, pointer);
+        if (memoryInstrumentation->visited(pointer))
+            return;
+    }
     memoryInstrumentation->countObjectSize(pointer, memoryObjectInfo.objectType(), memoryObjectInfo.objectSize());
+    memoryInstrumentation->m_client->reportNode(memoryObjectInfo);
     if (!memoryInstrumentation->checkCountedObject(pointer)) {
 #if DEBUG_POINTER_INSTRUMENTATION
         fputs("Unknown object counted:\n", stderr);
@@ -94,18 +111,19 @@ void MemoryClassInfo::init(const void* pointer, MemoryObjectType objectType, siz
     m_objectType = m_memoryObjectInfo->objectType();
 }
 
-void MemoryClassInfo::addRawBuffer(const void* const& buffer, size_t size)
+void MemoryClassInfo::addRawBuffer(const void* const& buffer, size_t size, const char* nodeName, const char* edgeName)
 {
-    m_memoryInstrumentation->addRawBuffer(buffer, m_objectType, size);
+    m_memoryInstrumentation->addRawBuffer(m_memoryObjectInfo->reportedPointer(), buffer, m_objectType, size, nodeName, edgeName);
 }
 
-void MemoryClassInfo::addPrivateBuffer(size_t size, MemoryObjectType ownerObjectType)
+void MemoryClassInfo::addPrivateBuffer(size_t size, MemoryObjectType ownerObjectType, const char* nodeName, const char* edgeName)
 {
     if (!size)
         return;
     if (!ownerObjectType)
         ownerObjectType = m_objectType;
     m_memoryInstrumentation->countObjectSize(0, ownerObjectType, size);
+    m_memoryInstrumentation->reportLinkToBuffer(m_memoryObjectInfo->reportedPointer(), 0, ownerObjectType, size, nodeName, edgeName);
 }
 
 } // namespace WTF
