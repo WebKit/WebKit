@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-#
 # Copyright (C) 2011 Patrick Gansterer <paroga@paroga.com>
 #
 # Redistribution and use in source and binary forms, with or without

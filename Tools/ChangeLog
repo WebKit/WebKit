@@ -1,3 +1,66 @@
+2012-12-04  Zan Dobersek  <zandobersek@gmail.com>
+
+        Many webkitpy module files are executable, have shebang line
+        https://bugs.webkit.org/show_bug.cgi?id=103985
+
+        Reviewed by Dirk Pranke.
+
+        Remove the executable bit from webkitpy module files that are
+        unnecessarily executable. Remove the shebang line from webkitpy
+        module files, they are of no use. Only non-third-party files are
+        changed.
+
+        * Scripts/webkitpy/bindings/main.py:
+        * Scripts/webkitpy/common/config/watchlist:
+        * Scripts/webkitpy/common/find_files.py:
+        * Scripts/webkitpy/common/lru_cache.py:
+        * Scripts/webkitpy/common/multiprocessing_bootstrap.py:
+        * Scripts/webkitpy/common/net/file_uploader.py:
+        * Scripts/webkitpy/common/newstringio.py:
+        * Scripts/webkitpy/common/read_checksum_from_png.py:
+        * Scripts/webkitpy/common/system/autoinstall.py:
+        * Scripts/webkitpy/common/system/file_lock.py:
+        * Scripts/webkitpy/common/system/file_lock_mock.py:
+        * Scripts/webkitpy/common/version_check.py:
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        * Scripts/webkitpy/layout_tests/models/test_expectations.py:
+        * Scripts/webkitpy/layout_tests/models/test_failures.py:
+        * Scripts/webkitpy/layout_tests/models/test_input.py:
+        * Scripts/webkitpy/layout_tests/port/__init__.py:
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        * Scripts/webkitpy/layout_tests/port/builders.py:
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_android.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_linux.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_mac.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_win.py:
+        * Scripts/webkitpy/layout_tests/port/config.py:
+        * Scripts/webkitpy/layout_tests/port/factory.py:
+        * Scripts/webkitpy/layout_tests/port/http_lock.py:
+        * Scripts/webkitpy/layout_tests/port/image_diff.py:
+        * Scripts/webkitpy/layout_tests/port/mock_drt.py:
+        * Scripts/webkitpy/layout_tests/port/port_testcase.py:
+        * Scripts/webkitpy/layout_tests/port/server_process.py:
+        * Scripts/webkitpy/layout_tests/port/test.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        * Scripts/webkitpy/layout_tests/servers/apache_http_server.py:
+        * Scripts/webkitpy/layout_tests/servers/http_server.py:
+        * Scripts/webkitpy/layout_tests/servers/http_server_base.py:
+        * Scripts/webkitpy/layout_tests/servers/websocket_server.py:
+        * Scripts/webkitpy/layout_tests/views/metered_stream.py:
+        * Scripts/webkitpy/layout_tests/views/printing.py:
+        * Scripts/webkitpy/performance_tests/perftest.py:
+        * Scripts/webkitpy/performance_tests/perftestsrunner.py:
+        * Scripts/webkitpy/style/checkers/changelog.py:
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        * Scripts/webkitpy/style/checkers/xcodeproj.py:
+        * Scripts/webkitpy/to_be_moved/update_webgl_conformance_tests.py:
+        (main): There's no need to run this module in standalone because
+        it's wrapped by the Tools/Scripts/update-webgl-conformance-tests script.
+        * Scripts/webkitpy/tool/commands/upload.py:
+        * Scripts/webkitpy/tool/comments.py:
+        * Scripts/webkitpy/tool/main.py:
+
 2012-12-04  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add a Chromium Android Release (Perf) to the list of perf. bots.

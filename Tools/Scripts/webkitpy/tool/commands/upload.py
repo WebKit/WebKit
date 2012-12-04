@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # Copyright (c) 2009, 2010 Google Inc. All rights reserved.
 # Copyright (c) 2009 Apple Inc. All rights reserved.
 #

@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # Copyright (C) 2012 Google Inc. All rights reserved.
 # Copyright (C) 2012 Zoltan Horvath, Adobe Systems Incorporated. All rights reserved.
 #

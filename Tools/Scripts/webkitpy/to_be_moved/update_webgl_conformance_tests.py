@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 # Copyright (C) 2010 Google Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -157,7 +155,3 @@ def main():
         return 2
 
     return 0
-
-
-if __name__ == "__main__":
-    sys.exit(main())

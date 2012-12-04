@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # Copyright (c) 2011 Google Inc. All rights reserved.
 # Copyright (C) 2010 Chris Jerdonek (cjerdonek@webkit.org)
 #
