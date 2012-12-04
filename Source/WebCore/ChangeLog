@@ -1,3 +1,23 @@
+2012-12-04  Abhishek Arya  <inferno@chromium.org>
+
+        Heap-use-after-free in WebCore::StyleCachedImageSet::cssValue
+        https://bugs.webkit.org/show_bug.cgi?id=100621
+
+        Reviewed by Eric Seidel.
+
+        r115639 fixed a memory leak caused by reference cycle between StyleCachedImageSet
+        and its owner CSSImageSetValue. The fix caused StyleCachedImageSet to maintain
+        a weak pointer to CSSImageSetValue. This patch makes sure that the weak pointer
+        is cleared when CSSImageSetValue is going away.
+
+        Test: fast/css/image-set-value-not-removed-crash.html
+
+        * css/CSSImageSetValue.cpp:
+        (WebCore::CSSImageSetValue::~CSSImageSetValue):
+        * rendering/style/StyleCachedImageSet.h:
+        (WebCore::StyleCachedImageSet::clearImageSetValue):
+        (StyleCachedImageSet):
+
 2012-12-04  Adam Barth  <abarth@webkit.org>
 
         NodeFilter leaks memory in V8
