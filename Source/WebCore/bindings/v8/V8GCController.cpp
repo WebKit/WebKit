@@ -40,6 +40,8 @@
 #include "V8MessagePort.h"
 #include "V8MutationObserver.h"
 #include "V8Node.h"
+#include "V8NodeFilter.h"
+#include "V8NodeFilterCondition.h"
 #include "V8RecursionScope.h"
 #include "WrapperTypeInfo.h"
 #include <algorithm>
@@ -170,6 +172,7 @@ public:
         WrapperTypeInfo* type = V8DOMWrapper::domWrapperType(wrapper);
         void* object = toNative(wrapper);
 
+        // FIXME: Abstract this if cascade into a WrapperTypeInfo function.
         if (V8MessagePort::info.equals(type)) {
             // Mark each port as in-use if it's entangled. For simplicity's sake,
             // we assume all ports are remotely entangled, since the Chromium port
@@ -185,6 +188,9 @@ public:
             for (HashSet<Node*>::iterator it = observedNodes.begin(); it != observedNodes.end(); ++it)
                 m_grouper.addToGroup(V8GCController::opaqueRootForGC(*it), wrapper);
 #endif // ENABLE(MUTATION_OBSERVERS)
+        } else if (V8NodeFilter::info.equals(type)) {
+            NodeFilter* filter = static_cast<NodeFilter*>(object);
+            m_grouper.addToGroup(type->opaqueRootForGC(object, wrapper), static_cast<V8NodeFilterCondition*>(filter->condition())->callback());
         } else {
             ActiveDOMObject* activeDOMObject = type->toActiveDOMObject(wrapper);
             if (activeDOMObject && activeDOMObject->hasPendingActivity())

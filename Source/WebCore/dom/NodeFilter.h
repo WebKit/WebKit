@@ -82,6 +82,7 @@ namespace WebCore {
         short acceptNode(Node* node) const { return acceptNode(scriptStateFromNode(mainThreadNormalWorld(), node), node); }
         
         void setCondition(PassRefPtr<NodeFilterCondition> condition) { ASSERT(!m_condition); m_condition = condition; }
+        NodeFilterCondition* condition() const { return m_condition.get(); }
 
     private:
         explicit NodeFilter(PassRefPtr<NodeFilterCondition> condition) : m_condition(condition) { }

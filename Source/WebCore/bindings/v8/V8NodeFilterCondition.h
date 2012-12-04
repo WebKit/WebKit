@@ -43,19 +43,22 @@ class ScriptState;
 
 class V8NodeFilterCondition : public NodeFilterCondition {
 public:
-    static PassRefPtr<V8NodeFilterCondition> create(v8::Handle<v8::Value> filter)
+    static PassRefPtr<V8NodeFilterCondition> create(v8::Handle<v8::Value> callback)
     {
-        return adoptRef(new V8NodeFilterCondition(filter));
+        return adoptRef(new V8NodeFilterCondition(callback));
     }
 
     virtual ~V8NodeFilterCondition();
 
-    virtual short acceptNode(ScriptState*, Node*) const;
+    virtual short acceptNode(ScriptState*, Node*) const OVERRIDE;
+    v8::Persistent<v8::Value> callback() const { return m_callback.get(); }
 
 private:
-    explicit V8NodeFilterCondition(v8::Handle<v8::Value> filter);
+    explicit V8NodeFilterCondition(v8::Handle<v8::Value> callback);
 
-    ScopedPersistent<v8::Value> m_filter;
+    static void weakCallback(v8::Persistent<v8::Value>, void*);
+
+    ScopedPersistent<v8::Value> m_callback;
 };
 
 } // namespace WebCore
