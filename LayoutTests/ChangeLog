@@ -1,3 +1,34 @@
+2012-12-04  Jussi Kukkonen  <jussi.kukkonen@intel.com>
+
+        Make svg/dom/viewspec-parser-*.html non-flaky
+        https://bugs.webkit.org/show_bug.cgi?id=103744
+
+        Reviewed by Dirk Schulze.
+
+        Modified viewspec-parser-*.html in two ways:
+        - remove duplicate testing: the five files were all running
+          the exact same tests (only a few percent were unique).
+        - move the test division out of viewspec-parser.js to make it more
+          visible, divide the tests into logical sets.
+
+        * platform/efl-wk2/TestExpectations:
+        * svg/dom/resources/viewspec-parser.js:
+        (startViewspecTests):
+        * svg/dom/viewspec-parser-1-expected.txt:
+        * svg/dom/viewspec-parser-1.html:
+        * svg/dom/viewspec-parser-2-expected.txt:
+        * svg/dom/viewspec-parser-2.html:
+        * svg/dom/viewspec-parser-3-expected.txt:
+        * svg/dom/viewspec-parser-3.html:
+        * svg/dom/viewspec-parser-4-expected.txt:
+        * svg/dom/viewspec-parser-4.html:
+        * svg/dom/viewspec-parser-5-expected.txt:
+        * svg/dom/viewspec-parser-5.html:
+        * svg/dom/viewspec-parser-6-expected.txt: Added.
+        * svg/dom/viewspec-parser-6.html: Added.
+        * svg/dom/viewspec-parser-7-expected.txt: Added.
+        * svg/dom/viewspec-parser-7.html: Added.
+
 2012-12-03  Nate Chapin  <japhet@chromium.org>
 
         svg/foreignObject/viewport-foreignObject-crash.html recurses infinitely sometimes

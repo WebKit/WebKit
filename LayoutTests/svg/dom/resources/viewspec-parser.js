@@ -1,12 +1,6 @@
 description("This test fuzzes the transform parser with semi-random attribute values and dumps the results of any values that parse successfully.");
 
-var attributes = { // maps a viewspec attribute to its minimum argument count
-    viewBox: 6,
-    preserveAspectRatio: 1,
-    transform: 1,
-    zoomAndPan: 1,
-    viewTarget: 1
-};
+var testsToRun;
 
 var preserveAspectRatioValues = [ "Min", "Max", "Mid" ];
 
@@ -32,43 +26,6 @@ var characters = [
     "\t", // not a valid fragment char
     ","
 ];
-
-function buildTestsToRun()
-{
-  for (var attribute in attributes) {
-
-      // Too few / too many arguments
-      for (var i = 0; i < 5; i++) { //>
-          var attributeString = "svgView(" + attribute + "(";
-          for (var j = 0; j < i; j++) { //>
-              attributeString += "0";
-              if (j < i - 1) //>
-                  attributeString += ",";
-          }
-          attributeString += "))";
-          testsToRun.push(attributeString);
-      }
-
-      // Random assortments of valid characters
-      for (var i = 0; i < 50; i++) { //>
-          var attributeString = "svgView(" + attribute + "(";
-          var count = Math.scriptedRandomInt(20);
-          for (var j = 0; j < count; j++) { //>
-              attributeString += characters[Math.scriptedRandomInt(characters.length)];
-          }
-          testsToRun.push(attributeString);
-      }
-
-      // attribute names that are "off by one"
-      var extraChar = attribute.charAt(attribute.length - 1);
-      testsToRun.push("svgView(" + attribute + extraChar + "(0, 0)");
-      testsToRun.push("svgView(" + attribute.substring(0, attribute.length - 1) + "(0, 0)");
-
-      // Empty-ish attributes
-      testsToRun.push("svgView(" + attribute);
-      testsToRun.push("svgView(" + attribute + String.fromCharCode(0));
-  }
-}
 
 function zoomAndPanToString(zoomAndPan)
 {
@@ -157,8 +114,8 @@ function continueFuzzing(event)
     window.setTimeout(startNextTest, 0);
 }
 
-if (window.testRunner)
-    testRunner.waitUntilDone();
-
-buildTestsToRun();
-testFragment("");
+function startViewspecTests(tests)
+{
+    testsToRun = tests;
+    testFragment("");
+}

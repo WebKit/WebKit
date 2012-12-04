@@ -136,11 +136,6 @@ Bug(EFL) fast/layers/no-clipping-overflow-hidden-hardware-acceleration.html [ Im
 Bug(EFL) fast/events/domactivate-sets-underlying-click-event-as-handled.html [ Failure Pass ]
 Bug(EFL) http/tests/inspector/change-iframe-src.html [ Failure Pass ]
 Bug(EFL) http/tests/loading/fire-error-event-empty-404-script.html [ Crash Failure Pass ]
-Bug(EFL) svg/dom/viewspec-parser-3.html [ Failure Pass ]
-Bug(EFL) svg/dom/viewspec-parser-1.html [ Failure Pass ]
-Bug(EFL) svg/dom/viewspec-parser-4.html [ Failure Pass ]
-Bug(EFL) svg/dom/viewspec-parser-2.html [ Failure Pass ]
-Bug(EFL) svg/dom/viewspec-parser-5.html [ Failure Pass ]
 
 webkit.org/b/98761 svg/text/selection-tripleclick.svg [ Failure Pass ]
 

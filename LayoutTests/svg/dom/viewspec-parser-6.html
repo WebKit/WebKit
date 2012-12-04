@@ -10,9 +10,9 @@
 <script>
     var tests = [];
 
-    // preserveAspectRatio with random assortments of valid characters
+    // zoomAndPan with random assortments of valid characters
     for (var i = 0; i < 50; i++) { //>
-        var attributeString = "svgView(preserveAspectRatio(";
+        var attributeString = "svgView(zoomAndPan(";
         var count = Math.scriptedRandomInt(20);
         for (var j = 0; j < count; j++) { //>
             attributeString += characters[Math.scriptedRandomInt(characters.length)];
