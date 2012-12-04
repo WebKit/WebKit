@@ -52,7 +52,7 @@ class JSONLayoutResultsGenerator(json_results_generator.JSONResultsGeneratorBase
 
     def __init__(self, port, builder_name, build_name, build_number,
         results_file_base_path, builder_base_url,
-        test_timings, expectations, result_summary, all_tests,
+        expectations, result_summary, all_tests,
         test_results_server=None, test_type="", master_name=""):
         """Modifies the results.json file. Grabs it off the archive directory
         if it is not found locally.
@@ -71,7 +71,7 @@ class JSONLayoutResultsGenerator(json_results_generator.JSONResultsGeneratorBase
         self._result_summary = result_summary
         self._failures = dict((test_name, result_summary.results[test_name].type) for test_name in result_summary.failures)
         self._all_tests = all_tests
-        self._test_timings = dict((test_tuple.test_name, test_tuple.test_run_time) for test_tuple in test_timings)
+        self._test_timings = result_summary.results
 
         self.generate_json_output()
 
@@ -99,7 +99,7 @@ class JSONLayoutResultsGenerator(json_results_generator.JSONResultsGeneratorBase
     def _get_test_timing(self, test_name):
         if test_name in self._test_timings:
             # Floor for now to get time in seconds.
-            return int(self._test_timings[test_name])
+            return int(self._test_timings[test_name].test_run_time)
         return 0
 
     # override

@@ -148,39 +148,47 @@ class Printer(object):
             ndigits = int(math.log10(len(num))) + 1
         return ndigits
 
-    def print_results(self, run_time, thread_timings, test_timings, individual_test_timings, result_summary, unexpected_results):
-        self._print_timing_statistics(run_time, thread_timings, test_timings, individual_test_timings, result_summary)
+    def print_results(self, run_time, result_summary, unexpected_results):
+        self._print_timing_statistics(run_time, result_summary)
         self._print_result_summary(result_summary)
         self._print_one_line_summary(result_summary.total - result_summary.expected_skips,
                                      result_summary.expected - result_summary.expected_skips,
                                      result_summary.unexpected)
         self._print_unexpected_results(unexpected_results)
 
-    def _print_timing_statistics(self, total_time, thread_timings,
-                                 directory_test_timings, individual_test_timings,
-                                 result_summary):
+    def _print_timing_statistics(self, total_time, result_summary):
         self._print_debug("Test timing:")
         self._print_debug("  %6.2f total testing time" % total_time)
         self._print_debug("")
+
+        self._print_worker_statistics(result_summary, int(self._options.child_processes))
+        self._print_aggregate_test_statistics(result_summary)
+        self._print_individual_test_times(result_summary)
+        self._print_directory_timings(result_summary)
+
+    def _print_worker_statistics(self, result_summary, num_workers):
         self._print_debug("Thread timing:")
+        stats = {}
         cuml_time = 0
-        for t in thread_timings:
-            self._print_debug("    %10s: %5d tests, %6.2f secs" % (t['name'], t['num_tests'], t['total_time']))
-            cuml_time += t['total_time']
-        self._print_debug("   %6.2f cumulative, %6.2f optimal" % (cuml_time, cuml_time / int(self._options.child_processes)))
+        for result in result_summary.results.values():
+            stats.setdefault(result.worker_name, {'num_tests': 0, 'total_time': 0})
+            stats[result.worker_name]['num_tests'] += 1
+            stats[result.worker_name]['total_time'] += result.total_run_time
+            cuml_time += result.total_run_time
+
+        for worker_name in stats:
+            self._print_debug("    %10s: %5d tests, %6.2f secs" % (worker_name, stats[worker_name]['num_tests'], stats[worker_name]['total_time']))
+        self._print_debug("   %6.2f cumulative, %6.2f optimal" % (cuml_time, cuml_time / num_workers))
         self._print_debug("")
 
-        self._print_aggregate_test_statistics(individual_test_timings)
-        self._print_individual_test_times(individual_test_timings, result_summary)
-        self._print_directory_timings(directory_test_timings)
-
-    def _print_aggregate_test_statistics(self, individual_test_timings):
-        times_for_dump_render_tree = [test_stats.test_run_time for test_stats in individual_test_timings]
+    def _print_aggregate_test_statistics(self, result_summary):
+        times_for_dump_render_tree = [result.test_run_time for result in result_summary.results.values()]
         self._print_statistics_for_test_timings("PER TEST TIME IN TESTSHELL (seconds):", times_for_dump_render_tree)
 
-    def _print_individual_test_times(self, individual_test_timings, result_summary):
+    def _print_individual_test_times(self, result_summary):
         # Reverse-sort by the time spent in DumpRenderTree.
-        individual_test_timings.sort(lambda a, b: cmp(b.test_run_time, a.test_run_time))
+
+        individual_test_timings = sorted(result_summary.results.values(), key=lambda result: result.test_run_time, reverse=True)
         num_printed = 0
         slow_tests = []
         timeout_or_crash_tests = []
@@ -218,18 +226,23 @@ class Printer(object):
             test_run_time = round(test_tuple.test_run_time, 1)
             self._print_debug("  %s took %s seconds" % (test_tuple.test_name, test_run_time))
 
-    def _print_directory_timings(self, directory_test_timings):
+    def _print_directory_timings(self, result_summary):
+        stats = {}
+        for result in result_summary.results.values():
+            stats.setdefault(result.shard_name, {'num_tests': 0, 'total_time': 0})
+            stats[result.shard_name]['num_tests'] += 1
+            stats[result.shard_name]['total_time'] += result.total_run_time
+
         timings = []
-        for directory in directory_test_timings:
-            num_tests, time_for_directory = directory_test_timings[directory]
-            timings.append((round(time_for_directory, 1), directory, num_tests))
+        for directory in stats:
+            timings.append((directory, round(stats[directory]['total_time'], 1), stats[directory]['num_tests']))
         timings.sort()
 
         self._print_debug("Time to process slowest subdirectories:")
         min_seconds_to_print = 10
         for timing in timings:
             if timing[0] > min_seconds_to_print:
-                self._print_debug("  %s took %s seconds to run %s tests." % (timing[1], timing[0], timing[2]))
+                self._print_debug("  %s took %s seconds to run %s tests." % timing)
         self._print_debug("")
 
     def _print_statistics_for_test_timings(self, title, timings):

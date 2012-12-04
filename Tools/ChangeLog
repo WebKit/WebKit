@@ -1,3 +1,55 @@
+2012-12-04  Dirk Pranke  <dpranke@chromium.org>
+
+        nrwt: derive per-thread, per-worker stats from result summaries
+        https://bugs.webkit.org/show_bug.cgi?id=103943
+
+        Reviewed by Ojan Vafai.
+
+        This patch changes the manager and printing code to pull more           
+        information from the ResultSummary object rather than tracking          
+        additional statistics on the side. This allows us to consolidate        
+        a bunch of logic and remove a bunch of free-floating lists and dicts of 
+        of values. We add the shard_name and worker_name to each TestResult,    
+        and then modify print_timing_statistics() and upload_json_files()       
+        to just need the result summaries.                                      
+
+        Note that this patch also changes the timing statistics slightly
+        so that the individual test times are the times to run just the
+        tests themselves (TestResult.test_run_time) and do not include the
+        times taken to run the ref tests, compute diffs, etc. The aggregated
+        per-worker and per-shard statistics still use the total time to
+        process each test (TestResult.total_run_time).
+
+        * Scripts/webkitpy/layout_tests/controllers/layout_test_runner.py:
+        (LayoutTestRunner.__init__):
+        (LayoutTestRunner.run_tests):
+        (LayoutTestRunner._handle_finished_test_list):
+        (LayoutTestRunner._handle_finished_test):
+        (Worker.handle):
+        (Worker._run_test):
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        (summarize_results):
+        (Manager.run):
+        (Manager._upload_json_files):
+        * Scripts/webkitpy/layout_tests/controllers/manager_unittest.py:
+        (ResultSummaryTest.summarized_results):
+        * Scripts/webkitpy/layout_tests/layout_package/json_layout_results_generator.py:
+        (JSONLayoutResultsGenerator.__init__):
+        (JSONLayoutResultsGenerator._get_test_timing):
+        * Scripts/webkitpy/layout_tests/models/test_results.py:
+        (TestResult.__init__):
+        * Scripts/webkitpy/layout_tests/views/printing.py:
+        (Printer.print_results):
+        (Printer._print_timing_statistics):
+        (Printer):
+        (Printer._print_worker_statistics):
+        (Printer._print_aggregate_test_statistics):
+        (Printer._print_individual_test_times):
+        (Printer._print_directory_timings):
+        * Scripts/webkitpy/layout_tests/views/printing_unittest.py:
+        (Testprinter.test_print_unexpected_results.get_unexpected_results):
+        (Testprinter):
+
 2012-12-04  Adam Barth  <abarth@webkit.org>
 
         Remove obsolete code from webkitpy

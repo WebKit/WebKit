@@ -106,7 +106,7 @@ def use_trac_links_in_results_html(port_obj):
 # or split off from Manager onto another helper class, but should not be a free function.
 # Most likely this should be made into its own class, and this super-long function
 # split into many helper functions.
-def summarize_results(port_obj, expectations, result_summary, retry_summary, test_timings, only_unexpected):
+def summarize_results(port_obj, expectations, result_summary, retry_summary, only_unexpected):
     """Summarize failing results as a dict.
 
     FIXME: split this data structure into a separate class?
@@ -116,7 +116,6 @@ def summarize_results(port_obj, expectations, result_summary, retry_summary, tes
         expectations: test_expectations.TestExpectations object
         result_summary: summary object from initial test runs
         retry_summary: summary object from final test run of retried tests
-        test_timings: a list of TestResult objects which contain test runtimes in seconds
         only_unexpected: whether to return a summary only for the unexpected results
     Returns:
         A dictionary containing a summary of the unexpected results from the
@@ -401,14 +400,10 @@ class Manager(object):
             return -1
 
         start_time = time.time()
-        retry_summary = result_summary
 
-        # FIXME: move these fields into result_summary so we don't have to pass them around.
-        thread_timings = test_timings = {}
-        individual_test_timings = []
+        retry_summary = None
         try:
-            thread_timings, test_timings, individual_test_timings = \
-                self._run_tests(self._test_names, result_summary, int(self._options.child_processes), retrying=False)
+            result_summary = self._run_tests(self._test_names, result_summary, int(self._options.child_processes), retrying=False)
 
             # We exclude the crashes from the list of results to retry, because
             # we want to treat even a potentially flaky crash as an error.
@@ -418,9 +413,7 @@ class Manager(object):
                 _log.info('')
                 _log.info("Retrying %d unexpected failure(s) ..." % len(failures))
                 _log.info('')
-                # Note that we don't care about the values returned from the retry pass.
-                retry_summary = ResultSummary(self._expectations, failures, 1, set())
-                _ = self._run_tests(failures, retry_summary, 1, retrying=True)
+                retry_summary = self._run_tests(failures, ResultSummary(self._expectations, failures, 1, set()), 1, retrying=True)
         finally:
             # If we are ctrl-c'ed; we still want to try and print the results we got, and clean up,
             # but we don't want to upload anything.
@@ -429,20 +422,25 @@ class Manager(object):
             # Some crash logs can take a long time to be written out so look
             # for new logs after the test run finishes.
             self._look_for_new_crash_logs(result_summary, start_time)
-            self._look_for_new_crash_logs(retry_summary, start_time)
+            if retry_summary:
+                self._look_for_new_crash_logs(retry_summary, start_time)
+            else:
+                # FIXME: Modify summarize_results to handle retry_summary == None.
+                retry_summary = result_summary
+
             self._clean_up_run()
 
-            unexpected_results = summarize_results(self._port, self._expectations, result_summary, retry_summary, individual_test_timings, only_unexpected=True)
+            unexpected_results = summarize_results(self._port, self._expectations, result_summary, retry_summary, only_unexpected=True)
 
-            self._printer.print_results(end_time - start_time, thread_timings, test_timings, individual_test_timings, result_summary, unexpected_results)
+            self._printer.print_results(end_time - start_time, result_summary, unexpected_results)
 
         # FIXME: remove record_results. It's just used for testing. There's no need
         # for it to be a commandline argument.
         if self._options.record_results and not self._options.dry_run:
             self._port.print_leaks_summary()
             # Write the same data to log files and upload generated JSON files to appengine server.
-            summarized_results = summarize_results(self._port, self._expectations, result_summary, retry_summary, individual_test_timings, only_unexpected=False)
-            self._upload_json_files(summarized_results, result_summary, individual_test_timings)
+            summarized_results = summarize_results(self._port, self._expectations, result_summary, retry_summary, only_unexpected=False)
+            self._upload_json_files(summarized_results, result_summary)
 
         # Write the summary to disk (results.html) and display it if requested.
         if not self._options.dry_run:
@@ -516,20 +514,17 @@ class Manager(object):
 
         return failed_test_names
 
-    def _upload_json_files(self, summarized_results, result_summary, individual_test_timings):
+    def _upload_json_files(self, summarized_results, result_summary):
         """Writes the results of the test run as JSON files into the results
         dir and upload the files to the appengine server.
 
         Args:
-          unexpected_results: dict of unexpected results
           summarized_results: dict of results
           result_summary: full summary object
-          individual_test_timings: list of test times (used by the flakiness
-            dashboard).
         """
         _log.debug("Writing JSON files in %s." % self._results_directory)
 
-        times_trie = json_results_generator.test_timings_trie(self._port, individual_test_timings)
+        times_trie = json_results_generator.test_timings_trie(self._port, result_summary.results.values())
         times_json_path = self._filesystem.join(self._results_directory, "times_ms.json")
         json_results_generator.write_json(self._filesystem, times_trie, times_json_path)
 
@@ -540,7 +535,7 @@ class Manager(object):
         generator = json_layout_results_generator.JSONLayoutResultsGenerator(
             self._port, self._options.builder_name, self._options.build_name,
             self._options.build_number, self._results_directory,
-            BUILDER_BASE_URL, individual_test_timings,
+            BUILDER_BASE_URL,
             self._expectations, result_summary, self._test_names,
             self._options.test_results_server,
             "layout-tests",

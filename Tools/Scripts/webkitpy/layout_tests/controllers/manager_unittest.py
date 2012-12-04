@@ -177,8 +177,8 @@ class ResultSummaryTest(unittest.TestCase):
             retry.add(self.get_result('passes/text.html'), True, test_is_slow)
             retry.add(self.get_result('failures/expected/timeout.html'), True, test_is_slow)
             retry.add(self.get_result('failures/expected/crash.html'), True, test_is_slow)
-        unexpected_results = summarize_results(port, exp, rs, retry, test_timings={}, only_unexpected=True)
-        expected_results = summarize_results(port, exp, rs, retry, test_timings={}, only_unexpected=False)
+        unexpected_results = summarize_results(port, exp, rs, retry, only_unexpected=True)
+        expected_results = summarize_results(port, exp, rs, retry, only_unexpected=False)
         return expected_results, unexpected_results
 
     def test_no_svn_revision(self):
