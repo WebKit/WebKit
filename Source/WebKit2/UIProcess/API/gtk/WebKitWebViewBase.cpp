@@ -720,12 +720,14 @@ static void webkitWebViewBaseDragEnd(GtkWidget* widget, GdkDragContext* context)
 static void webkitWebViewBaseDragDataReceived(GtkWidget* widget, GdkDragContext* context, gint x, gint y, GtkSelectionData* selectionData, guint info, guint time)
 {
     WebKitWebViewBase* webViewBase = WEBKIT_WEB_VIEW_BASE(widget);
-    OwnPtr<DragData> dragData(webViewBase->priv->dragAndDropHelper.handleDragDataReceived(context, selectionData, info));
-    if (!dragData)
+    IntPoint position;
+    DataObjectGtk* dataObject = webViewBase->priv->dragAndDropHelper.handleDragDataReceived(context, selectionData, info, position);
+    if (!dataObject)
         return;
 
+    DragData dragData(dataObject, position, convertWidgetPointToScreenPoint(widget, position), gdkDragActionToDragOperation(gdk_drag_context_get_actions(context)));
     webViewBase->priv->pageProxy->resetDragOperation();
-    webViewBase->priv->pageProxy->dragEntered(dragData.get());
+    webViewBase->priv->pageProxy->dragEntered(&dragData);
     DragOperation operation = webViewBase->priv->pageProxy->dragSession().operation;
     gdk_drag_status(context, dragOperationToSingleGdkDragAction(operation), time);
 }
@@ -761,11 +763,13 @@ static AtkObject* webkitWebViewBaseGetAccessible(GtkWidget* widget)
 static gboolean webkitWebViewBaseDragMotion(GtkWidget* widget, GdkDragContext* context, gint x, gint y, guint time)
 {
     WebKitWebViewBase* webViewBase = WEBKIT_WEB_VIEW_BASE(widget);
-    OwnPtr<DragData> dragData(webViewBase->priv->dragAndDropHelper.handleDragMotion(context, IntPoint(x, y), time));
-    if (!dragData)
+    IntPoint position(x, y);
+    DataObjectGtk* dataObject = webViewBase->priv->dragAndDropHelper.handleDragMotion(context, position, time);
+    if (!dataObject)
         return TRUE;
 
-    webViewBase->priv->pageProxy->dragUpdated(dragData.get());
+    DragData dragData(dataObject, position, convertWidgetPointToScreenPoint(widget, position), gdkDragActionToDragOperation(gdk_drag_context_get_actions(context)));
+    webViewBase->priv->pageProxy->dragUpdated(&dragData);
     DragOperation operation = webViewBase->priv->pageProxy->dragSession().operation;
     gdk_drag_status(context, dragOperationToSingleGdkDragAction(operation), time);
     return TRUE;
@@ -791,13 +795,15 @@ static void webkitWebViewBaseDragLeave(GtkWidget* widget, GdkDragContext* contex
 static gboolean webkitWebViewBaseDragDrop(GtkWidget* widget, GdkDragContext* context, gint x, gint y, guint time)
 {
     WebKitWebViewBase* webViewBase = WEBKIT_WEB_VIEW_BASE(widget);
-    OwnPtr<DragData> dragData(webViewBase->priv->dragAndDropHelper.handleDragDrop(context, IntPoint(x, y)));
-    if (!dragData)
+    DataObjectGtk* dataObject = webViewBase->priv->dragAndDropHelper.handleDragDrop(context);
+    if (!dataObject)
         return FALSE;
 
+    IntPoint position(x, y);
+    DragData dragData(dataObject, position, convertWidgetPointToScreenPoint(widget, position), gdkDragActionToDragOperation(gdk_drag_context_get_actions(context)));
     SandboxExtension::Handle handle;
     SandboxExtension::HandleArray sandboxExtensionForUpload;
-    webViewBase->priv->pageProxy->performDrag(dragData.get(), String(), handle, sandboxExtensionForUpload);
+    webViewBase->priv->pageProxy->performDrag(&dragData, String(), handle, sandboxExtensionForUpload);
     gtk_drag_finish(context, TRUE, FALSE, time);
     return TRUE;
 }

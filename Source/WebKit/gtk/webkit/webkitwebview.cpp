@@ -1543,11 +1543,13 @@ static void webkit_web_view_drag_leave(GtkWidget* widget, GdkDragContext* contex
 static gboolean webkit_web_view_drag_motion(GtkWidget* widget, GdkDragContext* context, gint x, gint y, guint time)
 {
     WebKitWebView* webView = WEBKIT_WEB_VIEW(widget);
-    OwnPtr<DragData> dragData(webView->priv->dragAndDropHelper.handleDragMotion(context, IntPoint(x, y), time));
-    if (!dragData)
+    IntPoint position(x, y);
+    DataObjectGtk* dataObject = webView->priv->dragAndDropHelper.handleDragMotion(context, position, time);
+    if (!dataObject)
         return TRUE;
 
-    DragOperation operation = core(webView)->dragController()->dragUpdated(dragData.get()).operation;
+    DragData dragData(dataObject, position, convertWidgetPointToScreenPoint(widget, position), gdkDragActionToDragOperation(gdk_drag_context_get_actions(context)));
+    DragOperation operation = core(webView)->dragController()->dragUpdated(&dragData).operation;
     gdk_drag_status(context, dragOperationToSingleGdkDragAction(operation), time);
     return TRUE;
 }
@@ -1555,22 +1557,26 @@ static gboolean webkit_web_view_drag_motion(GtkWidget* widget, GdkDragContext* c
 static void webkit_web_view_drag_data_received(GtkWidget* widget, GdkDragContext* context, gint x, gint y, GtkSelectionData* selectionData, guint info, guint time)
 {
     WebKitWebView* webView = WEBKIT_WEB_VIEW(widget);
-    OwnPtr<DragData> dragData(webView->priv->dragAndDropHelper.handleDragDataReceived(context, selectionData, info));
-    if (!dragData)
+    IntPoint position;
+    DataObjectGtk* dataObject = webView->priv->dragAndDropHelper.handleDragDataReceived(context, selectionData, info, position);
+    if (!dataObject)
         return;
 
-    DragOperation operation = core(webView)->dragController()->dragEntered(dragData.get()).operation;
+    DragData dragData(dataObject, position, convertWidgetPointToScreenPoint(widget, position), gdkDragActionToDragOperation(gdk_drag_context_get_actions(context)));
+    DragOperation operation = core(webView)->dragController()->dragEntered(&dragData).operation;
     gdk_drag_status(context, dragOperationToSingleGdkDragAction(operation), time);
 }
 
 static gboolean webkit_web_view_drag_drop(GtkWidget* widget, GdkDragContext* context, gint x, gint y, guint time)
 {
     WebKitWebView* webView = WEBKIT_WEB_VIEW(widget);
-    OwnPtr<DragData> dragData(webView->priv->dragAndDropHelper.handleDragDrop(context, IntPoint(x, y)));
-    if (!dragData)
+    DataObjectGtk* dataObject = webView->priv->dragAndDropHelper.handleDragDrop(context);
+    if (!dataObject)
         return FALSE;
 
-    core(webView)->dragController()->performDrag(dragData.get());
+    IntPoint position(x, y);
+    DragData dragData(dataObject, position, convertWidgetPointToScreenPoint(widget, position), gdkDragActionToDragOperation(gdk_drag_context_get_actions(context)));
+    core(webView)->dragController()->performDrag(&dragData);
     gtk_drag_finish(context, TRUE, FALSE, time);
     return TRUE;
 }

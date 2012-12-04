@@ -47,9 +47,9 @@ public:
     void handleGetDragData(GdkDragContext*, GtkSelectionData*, guint info);
     void handleDragLeave(GdkDragContext*, DragExitedCallback);
     void handleDragLeaveLater(DroppingContext*);
-    PassOwnPtr<DragData> handleDragMotion(GdkDragContext*, const IntPoint&, unsigned time);
-    PassOwnPtr<DragData> handleDragDataReceived(GdkDragContext*, GtkSelectionData*, guint info);
-    PassOwnPtr<DragData> handleDragDrop(GdkDragContext*, const IntPoint&);
+    DataObjectGtk* handleDragMotion(GdkDragContext*, const IntPoint&, unsigned time);
+    DataObjectGtk* handleDragDataReceived(GdkDragContext*, GtkSelectionData*, unsigned info, IntPoint&);
+    DataObjectGtk* handleDragDrop(GdkDragContext*);
     void startedDrag(GdkDragContext*, DataObjectGtk*);
 
 private:

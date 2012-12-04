@@ -25,7 +25,6 @@
 #include "GtkVersioning.h"
 #include "PasteboardHelper.h"
 #include <gtk/gtk.h>
-#include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 
@@ -131,7 +130,7 @@ static void queryNewDropContextData(DroppingContext* dropContext, GtkWidget* wid
         gtk_drag_get_data(widget, gdkContext, acceptableTargets.at(i), time);
 }
 
-PassOwnPtr<DragData> GtkDragAndDropHelper::handleDragMotion(GdkDragContext* context, const IntPoint& position, unsigned time)
+DataObjectGtk* GtkDragAndDropHelper::handleDragMotion(GdkDragContext* context, const IntPoint& position, unsigned time)
 {
     DroppingContext* droppingContext = 0;
     DroppingContextMap::iterator iterator = m_droppingContexts.find(context);
@@ -149,48 +148,42 @@ PassOwnPtr<DragData> GtkDragAndDropHelper::handleDragMotion(GdkDragContext* cont
     // for the drag's data.
     ASSERT(droppingContext);
     if (droppingContext->pendingDataRequests > 0)
-        return adoptPtr(static_cast<DragData*>(0));
+        return 0;
 
-    return adoptPtr(new DragData(droppingContext->dataObject.get(), position,
-                                 convertWidgetPointToScreenPoint(m_widget, position),
-                                 gdkDragActionToDragOperation(gdk_drag_context_get_actions(context))));
+    return droppingContext->dataObject.get();
 }
 
-PassOwnPtr<DragData> GtkDragAndDropHelper::handleDragDataReceived(GdkDragContext* context, GtkSelectionData* selectionData, guint info)
+DataObjectGtk* GtkDragAndDropHelper::handleDragDataReceived(GdkDragContext* context, GtkSelectionData* selectionData, unsigned info, IntPoint& position)
 {
     DroppingContextMap::iterator iterator = m_droppingContexts.find(context);
     if (iterator == m_droppingContexts.end())
-        return adoptPtr(static_cast<DragData*>(0));
+        return 0;
 
     DroppingContext* droppingContext = iterator->value;
     droppingContext->pendingDataRequests--;
     PasteboardHelper::defaultPasteboardHelper()->fillDataObjectFromDropData(selectionData, info, droppingContext->dataObject.get());
 
     if (droppingContext->pendingDataRequests)
-        return adoptPtr(static_cast<DragData*>(0));
+        return 0;
 
     // The coordinates passed to drag-data-received signal are sometimes
     // inaccurate in DRT, so use the coordinates of the last motion event.
-    const IntPoint& position = droppingContext->lastMotionPosition;
+    position = droppingContext->lastMotionPosition;
 
     // If there are no more pending requests, start sending dragging data to WebCore.
-    return adoptPtr(new DragData(droppingContext->dataObject.get(), position, 
-                                 convertWidgetPointToScreenPoint(m_widget, position),
-                                 gdkDragActionToDragOperation(gdk_drag_context_get_actions(context))));
+    return droppingContext->dataObject.get();
 }
 
-PassOwnPtr<DragData> GtkDragAndDropHelper::handleDragDrop(GdkDragContext* context, const IntPoint& position)
+DataObjectGtk* GtkDragAndDropHelper::handleDragDrop(GdkDragContext* context)
 {
     DroppingContextMap::iterator iterator = m_droppingContexts.find(context);
     if (iterator == m_droppingContexts.end())
-        return adoptPtr(static_cast<DragData*>(0));
+        return 0;
 
     DroppingContext* droppingContext = iterator->value;
     droppingContext->dropHappened = true;
 
-    return adoptPtr(new DragData(droppingContext->dataObject.get(), position, 
-                                 convertWidgetPointToScreenPoint(m_widget, position),
-                                 gdkDragActionToDragOperation(gdk_drag_context_get_actions(context))));
+    return droppingContext->dataObject.get();
 }
 
 void GtkDragAndDropHelper::startedDrag(GdkDragContext* context, DataObjectGtk* dataObject)
