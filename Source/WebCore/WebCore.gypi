@@ -2377,6 +2377,7 @@
             'bindings/v8/custom/V8EntryCustom.cpp',
             'bindings/v8/custom/V8EntrySyncCustom.cpp',
             'bindings/v8/custom/V8EventCustom.cpp',
+            'bindings/v8/custom/V8EventTargetCustom.cpp',
             'bindings/v8/custom/V8FileReaderCustom.cpp',
             'bindings/v8/custom/V8GeolocationCustom.cpp',
             'bindings/v8/custom/V8HTMLAllCollectionCustom.cpp',

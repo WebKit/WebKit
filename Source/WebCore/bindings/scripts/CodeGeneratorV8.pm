@@ -4108,12 +4108,8 @@ sub NativeToJSValue
 
     AddIncludesForType($type);
 
-    if (IsDOMNodeType($type)) {
+    if (IsDOMNodeType($type) || $type eq "EventTarget") {
         return "toV8($value$getCreationContextArg$getIsolateArg)";
-    }
-
-    if ($type eq "EventTarget") {
-        return "V8DOMWrapper::convertEventTargetToV8Object($value$getCreationContextArg$getIsolateArg)";
     }
 
     if ($type eq "EventListener") {

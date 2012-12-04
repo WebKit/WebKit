@@ -33,14 +33,13 @@
 
 #include <wtf/ArrayBufferView.h>
 #include "DocumentLoader.h"
-#include "EventTargetHeaders.h"
-#include "EventTargetInterfaces.h"
 #include "Frame.h"
 #include "FrameLoaderClient.h"
 #include "StylePropertySet.h"
 #include "V8AbstractEventListener.h"
 #include "V8Binding.h"
 #include "V8Collection.h"
+#include "V8DOMWindow.h"
 #include "V8EventListener.h"
 #include "V8EventListenerList.h"
 #include "V8HTMLCollection.h"
@@ -174,23 +173,6 @@ bool V8DOMWrapper::isWrapperOfType(v8::Handle<v8::Value> value, WrapperTypeInfo*
 
     WrapperTypeInfo* typeInfo = static_cast<WrapperTypeInfo*>(object->GetAlignedPointerFromInternalField(v8DOMWrapperTypeIndex));
     return typeInfo == type;
-}
-
-#define TRY_TO_WRAP_WITH_INTERFACE(interfaceName) \
-    if (eventNames().interfaceFor##interfaceName == desiredInterface) \
-        return toV8(static_cast<interfaceName*>(target), creationContext, isolate);
-
-// A JS object of type EventTarget is limited to a small number of possible classes.
-v8::Handle<v8::Value> V8DOMWrapper::convertEventTargetToV8Object(EventTarget* target, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate)
-{
-    if (!target)
-        return v8NullWithCheck(isolate);
-
-    AtomicString desiredInterface = target->interfaceName();
-    DOM_EVENT_TARGET_INTERFACES_FOR_EACH(TRY_TO_WRAP_WITH_INTERFACE)
-
-    ASSERT_NOT_REACHED();
-    return v8Undefined();
 }
 
 PassRefPtr<EventListener> V8DOMWrapper::getEventListener(v8::Local<v8::Value> value, bool isAttribute, ListenerLookupType lookup)

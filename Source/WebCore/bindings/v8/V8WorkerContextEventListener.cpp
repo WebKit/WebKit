@@ -38,6 +38,7 @@
 #include "V8Binding.h"
 #include "V8DOMWrapper.h"
 #include "V8Event.h"
+#include "V8EventTarget.h"
 #include "V8GCController.h"
 #include "V8RecursionScope.h"
 #include "WorkerContext.h"
@@ -117,7 +118,7 @@ v8::Local<v8::Object> V8WorkerContextEventListener::getReceiverObject(ScriptExec
         return listener;
 
     EventTarget* target = event->currentTarget();
-    v8::Handle<v8::Value> value = V8DOMWrapper::convertEventTargetToV8Object(target);
+    v8::Handle<v8::Value> value = toV8(target);
     if (value.IsEmpty())
         return v8::Local<v8::Object>();
     return v8::Local<v8::Object>::New(v8::Handle<v8::Object>::Cast(value));

@@ -23,8 +23,9 @@
     ObjCProtocol,
     CPPPureInterface,
     OmitConstructor,
-    JSCustomToJSObject,
-    JSCustomToNativeObject
+    CustomToJSObject,
+    JSCustomToNativeObject,
+    V8NoWrapperCache
 ] interface EventTarget {
     [ObjCLegacyUnnamedParameters] void addEventListener(in DOMString type, 
                                          in EventListener listener, 
