@@ -154,7 +154,7 @@ void UserTiming::measure(const String& measureName, const String& startMark, con
             return;
     }
 
-    insertPerformanceEntry(m_measuresMap, PerformanceMeasure::create(measureName, startTime, endTime - startTime));
+    insertPerformanceEntry(m_measuresMap, PerformanceMeasure::create(measureName, startTime, endTime));
 }
 
 void UserTiming::clearMeasures(const String& measureName)

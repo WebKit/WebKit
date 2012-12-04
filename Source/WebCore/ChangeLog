@@ -1,3 +1,20 @@
+2012-12-04  James Simonsen  <simonjam@chromium.org>
+
+        [User Timing] Fix negative durations
+        https://bugs.webkit.org/show_bug.cgi?id=104038
+
+        Reviewed by Tony Gentilcore.
+
+        At some point, we went from passing in a duration to passing in the end time. User Timing
+        wasn't updated.
+
+        Tests: http/tests/w3c/webperf/submission/Intel/user-timing
+
+        * page/PerformanceMark.h:
+        (WebCore::PerformanceMark::PerformanceMark):
+        * page/PerformanceUserTiming.cpp:
+        (WebCore::UserTiming::measure):
+
 2012-12-04  Abhishek Arya  <inferno@chromium.org>
 
         Heap-use-after-free in WebCore::StyleCachedImageSet::cssValue
