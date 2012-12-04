@@ -280,6 +280,7 @@ bool LayerTreeCoordinator::flushPendingLayerChanges()
     if (m_shouldSyncRootLayer) {
         m_webPage->send(Messages::LayerTreeCoordinatorProxy::SetRootCompositingLayer(toCoordinatedGraphicsLayer(m_rootLayer.get())->id()));
         m_shouldSyncRootLayer = false;
+        m_shouldSyncFrame = true;
     }
 
     for (size_t i = 0; i < m_detachedLayers.size(); ++i)

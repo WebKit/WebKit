@@ -99,7 +99,6 @@ void LayerTreeCoordinatorProxy::deleteCompositingLayer(WebLayerID id)
 void LayerTreeCoordinatorProxy::setRootCompositingLayer(WebLayerID id)
 {
     dispatchUpdate(bind(&LayerTreeRenderer::setRootLayerID, m_renderer.get(), id));
-    updateViewport();
 }
 
 void LayerTreeCoordinatorProxy::setCompositingLayerState(WebLayerID id, const WebLayerInfo& info)
