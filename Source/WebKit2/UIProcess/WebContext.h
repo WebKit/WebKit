@@ -249,6 +249,9 @@ public:
     static bool applicationIsOccluded() { return s_applicationIsOccluded; }
 #endif
 
+    static void willStartUsingPrivateBrowsing();
+    static void willStopUsingPrivateBrowsing();
+
 private:
     WebContext(ProcessModel, const String& injectedBundlePath);
 
@@ -340,6 +343,10 @@ private:
 
     bool m_alwaysUsesComplexTextCodePath;
     bool m_shouldUseFontSmoothing;
+
+    // How many times an API call was used to enable the preference.
+    // The variable can be 0 when private browsing is used if it's enabled due to a persistent preference.
+    static unsigned m_privateBrowsingEnterCount;
 
     // Messages that were posted before any pages were created.
     // The client should use initialization messages instead, so that a restarted process would get the same state.

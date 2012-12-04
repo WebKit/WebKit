@@ -107,7 +107,7 @@ void WebProcessCreationParameters::encode(CoreIPC::ArgumentEncoder& encoder) con
     encoder << cfURLCacheDiskCapacity;
     encoder << cfURLCacheMemoryCapacity;
     encoder << initialHTTPCookieAcceptPolicy;
-#if PLATFORM(MAC) || USE(CFNETWORK)
+#if USE(CFNETWORK)
     CFDataRef storageSession = serializedDefaultStorageSession.get();
     encoder << static_cast<bool>(storageSession);
     if (storageSession)

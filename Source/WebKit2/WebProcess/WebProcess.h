@@ -210,6 +210,9 @@ public:
 
     void setCacheModel(uint32_t);
 
+    void ensurePrivateBrowsingSession();
+    void destroyPrivateBrowsingSession();
+
 private:
     WebProcess();
 

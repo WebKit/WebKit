@@ -1,3 +1,37 @@
+2012-12-03  Alexey Proskuryakov  <ap@apple.com>
+
+        [WK2] Track private browsing session explicitly
+        <rdar://problem/12714532>
+        https://bugs.webkit.org/show_bug.cgi?id=103953
+
+        Reviewed by Jessie Berlin.
+
+        * Shared/WebProcessCreationParameters.cpp: (WebKit::WebProcessCreationParameters::encode):
+        Fixed a confusing ifdef - this code is inside PLATFORM(WIN), so PLATFORM(MAC)
+        makes no sense.
+
+        * UIProcess/API/C/WKPreferences.cpp: (WKPreferencesSetPrivateBrowsingEnabled):
+        This is the only place in WK2 where we can learn that private browsing got disabled -
+        no other functions are called when there are no pages open.
+
+        * UIProcess/WebContext.h:
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::willStartUsingPrivateBrowsing):
+        (WebKit::WebContext::willStopUsingPrivateBrowsing):
+        Count the number of API calls. We only implement a single shared private browsing
+        session, not one per page group as API implies. When private browsing gets disabled,
+        we want to destroy its session.
+
+        * WebProcess/WebPage/WebPage.cpp: (WebKit::WebPage::updatePreferences):
+        Ensure a private browsing session if the current page needs it.
+
+        * WebProcess/WebProcess.h:
+        * WebProcess/WebProcess.messages.in:
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::ensurePrivateBrowsingSession):
+        (WebKit::WebProcess::destroyPrivateBrowsingSession):
+        Call through to WebFrameNetworkingContext.
+
 2012-12-04  Yuni Jeong  <yhnet.jung@samsung.com>
 
         [EFL][WK2] Add APIs to toggle plug-ins support.

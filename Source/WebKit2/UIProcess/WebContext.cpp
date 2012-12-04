@@ -89,6 +89,8 @@ namespace WebKit {
 
 static const double sharedSecondaryProcessShutdownTimeout = 60;
 
+unsigned WebContext::m_privateBrowsingEnterCount;
+
 DEFINE_DEBUG_ONLY_GLOBAL(WTF::RefCountedLeakCounter, webContextCounter, ("WebContext"));
 
 PassRefPtr<WebContext> WebContext::create(const String& injectedBundlePath)
@@ -320,6 +322,28 @@ void WebContext::setUsesNetworkProcess(bool usesNetworkProcess)
 #else
     UNUSED_PARAM(usesNetworkProcess);
 #endif
+}
+
+void WebContext::willStartUsingPrivateBrowsing()
+{
+    if (m_privateBrowsingEnterCount++)
+        return;
+
+    const Vector<WebContext*>& contexts = allContexts();
+    for (size_t i = 0, count = contexts.size(); i < count; ++i)
+        contexts[i]->sendToAllProcesses(Messages::WebProcess::EnsurePrivateBrowsingSession());
+}
+
+void WebContext::willStopUsingPrivateBrowsing()
+{
+    // If the client asks to disable private browsing without enabling it first, it may be resetting a persistent preference,
+    // so it is still necessary to destroy any existing private browsing session.
+    if (m_privateBrowsingEnterCount && --m_privateBrowsingEnterCount)
+        return;
+
+    const Vector<WebContext*>& contexts = allContexts();
+    for (size_t i = 0, count = contexts.size(); i < count; ++i)
+        contexts[i]->sendToAllProcesses(Messages::WebProcess::DestroyPrivateBrowsingSession());
 }
 
 WebProcessProxy* WebContext::ensureSharedWebProcess()

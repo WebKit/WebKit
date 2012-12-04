@@ -387,6 +387,20 @@ void WebProcess::fullKeyboardAccessModeChanged(bool fullKeyboardAccessEnabled)
     m_fullKeyboardAccessEnabled = fullKeyboardAccessEnabled;
 }
 
+void WebProcess::ensurePrivateBrowsingSession()
+{
+#if (PLATFORM(MAC) || USE(CFNETWORK)) && !PLATFORM(WIN)
+    WebFrameNetworkingContext::ensurePrivateBrowsingSession();
+#endif
+}
+
+void WebProcess::destroyPrivateBrowsingSession()
+{
+#if (PLATFORM(MAC) || USE(CFNETWORK)) && !PLATFORM(WIN)
+    WebFrameNetworkingContext::destroyPrivateBrowsingSession();
+#endif
+}
+
 void WebProcess::setVisitedLinkTable(const SharedMemory::Handle& handle)
 {
     RefPtr<SharedMemory> sharedMemory = SharedMemory::create(handle, SharedMemory::ReadOnly);

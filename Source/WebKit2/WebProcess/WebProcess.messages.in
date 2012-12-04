@@ -55,6 +55,10 @@ messages -> WebProcess {
     SetShouldPaintNativeControls(bool shouldPaintNativeControls)
 #endif
 
+    // Private browsing session is per process. Individual pages or page groups may use the private session or the default one as appropriate.
+    EnsurePrivateBrowsingSession()
+    DestroyPrivateBrowsingSession()
+
     # Plug-ins.
 #if ENABLE(NETSCAPE_PLUGIN_API)
     DidGetPlugins(uint64_t requestID, Vector<WebCore::PluginInfo> plugins) DispatchOnConnectionQueue

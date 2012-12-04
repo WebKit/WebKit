@@ -60,7 +60,6 @@
 #include "WebEvent.h"
 #include "WebEventConversion.h"
 #include "WebFrame.h"
-#include "WebFrameNetworkingContext.h"
 #include "WebFullScreenManager.h"
 #include "WebFullScreenManagerMessages.h"
 #include "WebGeolocationClient.h"
@@ -2233,12 +2232,8 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
     settings->setFrameFlatteningEnabled(store.getBoolValueForKey(WebPreferencesKey::frameFlatteningEnabledKey()));
 
     bool privateBrowsingEnabled = store.getBoolValueForKey(WebPreferencesKey::privateBrowsingEnabledKey());
-#if (PLATFORM(MAC) || USE(CFNETWORK)) && !PLATFORM(WIN)
     if (privateBrowsingEnabled)
-        WebFrameNetworkingContext::ensurePrivateBrowsingSession();
-    else
-        WebFrameNetworkingContext::destroyPrivateBrowsingSession();
-#endif
+        WebProcess::shared().ensurePrivateBrowsingSession();
     settings->setPrivateBrowsingEnabled(privateBrowsingEnabled);
 
     settings->setDeveloperExtrasEnabled(store.getBoolValueForKey(WebPreferencesKey::developerExtrasEnabledKey()));

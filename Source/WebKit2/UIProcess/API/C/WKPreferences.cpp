@@ -28,6 +28,7 @@
 #include "WKPreferencesPrivate.h"
 
 #include "WKAPICast.h"
+#include "WebContext.h"
 #include "WebPreferences.h"
 #include <WebCore/Settings.h>
 #include <wtf/PassRefPtr.h>
@@ -330,6 +331,15 @@ WKStringRef WKPreferencesCopyDefaultTextEncodingName(WKPreferencesRef preference
 
 void WKPreferencesSetPrivateBrowsingEnabled(WKPreferencesRef preferencesRef, bool enabled)
 {
+    if (toImpl(preferencesRef)->privateBrowsingEnabled() == enabled)
+        return;
+
+    // Regardless of whether there are any open pages, we should tell WebContext, so that it could track browsing sessions.
+    if (enabled)
+        WebContext::willStartUsingPrivateBrowsing();
+    else
+        WebContext::willStopUsingPrivateBrowsing();
+
     toImpl(preferencesRef)->setPrivateBrowsingEnabled(enabled);
 }
 
