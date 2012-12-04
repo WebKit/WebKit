@@ -228,7 +228,7 @@ function testReaddDiscardedCommentWithPreviousComment() {
   crawlDiff();
   appendToolbar();
 
-  var line = document.getElementById('line0')
+  var line = document.getElementById('line0');
   var author = "ojan@chromium.org";
   var comment_text = "This change sux.";
   addPreviousComment(line, author, comment_text);
@@ -257,6 +257,49 @@ function testReaddDiscardedCommentWithPreviousComment() {
 
   ASSERT_EQUAL(document.querySelectorAll('.comment').length, 1);
   ASSERT_EQUAL(strippedSavedComments(), '{"comments":[{"start_line_id":"line0","end_line_id":"line0","contents":"dummy content"}],"overall-comments":""}');
+
+  document.getElementById('diff-content').innerHTML = '';
+}
+
+function testSideBySideDiffWithPreviousCommentsOnSharedLine() {
+  document.getElementById('diff-content').innerHTML =
+      '<div class="FileDiff">' +
+        '<h1><a href="http://trac.webkit.org/browser/trunk/Source/WebCore/ChangeLog">Source/WebCore/ChangeLog</a></h1>' +
+        '<div class="DiffSection">' +
+          '<div class="DiffBlock">' +
+            '<div class="DiffBlockPart shared">' +
+              '<div class="Line LineContainer">' +
+              '<span class="from lineNumber">336</span><span class="to lineNumber">338</span><span class="text">    layoutFlexItems(*m_orderIterator, lineContexts);</span>' +
+              '</div>' +
+              '<div class="Line LineContainer">' +
+              '<span class="from lineNumber">337</span><span class="to lineNumber">339</span><span class="text"></span>' +
+              '</div>' +
+              '<div class="Line LineContainer">' +
+              '<span class="from lineNumber">338</span><span class="to lineNumber">340</span><span class="text">    LayoutUnit oldClientAfterEdge = clientLogicalBottom();</span>' +
+              '</div>' +
+            '</div><div class="clear_float">' +
+          '</div>' +
+        '</div>' +
+      '</div>';
+
+  next_line_id = 0;
+  eraseDraftComments();
+  crawlDiff();
+
+  convertAllFileDiffs('sidebyside', $('.FileDiff'));
+
+  displayPreviousComments([{
+    author: 'ojan@chromium.org',
+    file_name: 'Source/WebCore/ChangeLog',
+    line_number: 338,
+    comment_text: 'This change sux.'
+  }]);
+
+  var previous_comment = document.querySelector('.previousComment');
+  ASSERT_EQUAL(previous_comment.getAttribute('data-comment-for'), 'line0');
+
+  var new_comment = addCommentField(previous_comment);
+  ASSERT("New comment should exist and contain a textarea.", new_comment.find('textarea'));
 
   document.getElementById('diff-content').innerHTML = '';
 }

@@ -1,3 +1,19 @@
+2012-12-04  Ojan Vafai  <ojan@chromium.org>
+
+        Can't add followup comment to a previous comment
+        https://bugs.webkit.org/show_bug.cgi?id=104025
+
+        Reviewed by Adam Barth.
+
+        If we side-by-sidify a shared diff line, and then apply
+        a previous comment, we would incorrectly put the comment
+        on the Line instead of the LineContainer.
+
+        Also, get rid of global next_line_id to simplify testing.
+
+        * code-review-test.html:
+        * code-review.js:
+
 2012-11-06  Ryosuke Niwa  <rniwa@webkit.org>
 
         committers-autocomplete.js works only with WebKit based browsers

@@ -66,7 +66,6 @@ var CODE_REVIEW_UNITTEST;
   var minLeftSideRatio = 10;
   var maxLeftSideRatio = 90;
   var file_diff_being_resized = null;
-  var next_line_id = 0;
   var files = {};
   var original_file_contents = {};
   var patched_file_contents = {};
@@ -89,18 +88,15 @@ var CODE_REVIEW_UNITTEST;
     return 'line' + number;
   }
 
-  function nextLineID() {
-    return idForLine(next_line_id++);
-  }
-
   function forEachLine(callback) {
-    for (var i = 0; i < next_line_id; ++i) {
-      callback($('#' + idForLine(i)));
-    }
-  }
-
-  function idify() {
-    this.id = nextLineID();
+    var i = 0;
+    var line;
+    do {
+      line = $('#' + idForLine(i));
+      if (line[0])
+        callback(line);
+      i++;
+    } while (line[0]);
   }
 
   function hoverify() {
@@ -423,7 +419,7 @@ var CODE_REVIEW_UNITTEST;
       $(file).find(query).each(function() {
         if ($(this).text() != line_number)
           return;
-        var line = $(this).parent();
+        var line = lineContainerFromDescendant($(this));
         addPreviousComment(line, author, comment_text);
       });
     }
@@ -601,6 +597,11 @@ var CODE_REVIEW_UNITTEST;
   }
 
   function crawlDiff() {
+    var next_line_id = 0;
+    var idify = function() {
+      this.id = idForLine(next_line_id++);
+    }
+
     $('.Line').each(idify).each(hoverify);
     $('.FileDiff').each(function() {
       var header = $(this).children('h1');
@@ -1928,6 +1929,10 @@ var CODE_REVIEW_UNITTEST;
     return descendant.hasClass('Line') ? descendant : descendant.parents('.Line');
   }
 
+  function lineContainerFromDescendant(descendant) {
+    return descendant.hasClass('LineContainer') ? descendant : descendant.parents('.LineContainer');
+  }
+
   function lineFromLineContainer(lineContainer) {
     var line = $(lineContainer);
     if (!line.hasClass('Line'))
@@ -2037,6 +2042,8 @@ var CODE_REVIEW_UNITTEST;
     window.addPreviousComment = addPreviousComment;
     window.tracLinks = tracLinks;
     window.crawlDiff = crawlDiff;
+    window.convertAllFileDiffs = convertAllFileDiffs;
+    window.displayPreviousComments = displayPreviousComments;
     window.discardComment = discardComment;
     window.addCommentField = addCommentField;
     window.acceptComment = acceptComment;
