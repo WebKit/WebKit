@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    var mfenced = document.createElementNS("http://www.w3.org/1998/Math/MathML", "mfenced");
+
+    var docElt = document.documentElement;
+    docElt.parentNode.removeChild(docElt);
+
+    document.appendChild(mfenced);
+
+    var e = document.createElement("div");
+    e.innerHTML = "<a href='https://bugs.webkit.org/show_bug.cgi?id=100764'>Bug 100764</a>: Heap-use-after-free in WebCore::RenderLayer::paintList [MathML]<br>This test passes if it does not crash.";
+    mfenced.appendChild(e);
+</script>

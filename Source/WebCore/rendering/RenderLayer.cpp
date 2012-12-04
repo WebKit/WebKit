@@ -981,8 +981,10 @@ FloatPoint RenderLayer::perspectiveOrigin() const
 RenderLayer* RenderLayer::stackingContext() const
 {
     RenderLayer* layer = parent();
-    while (layer && !layer->isRootLayer() && !layer->renderer()->isRoot() && layer->renderer()->style()->hasAutoZIndex())
+    while (layer && !layer->isStackingContext())
         layer = layer->parent();
+
+    ASSERT(!layer || layer->isStackingContext());
     return layer;
 }
 
