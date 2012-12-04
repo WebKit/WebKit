@@ -61,8 +61,8 @@ WorkerScriptController::WorkerScriptController(WorkerContext* workerContext)
     , m_executionForbidden(false)
     , m_executionScheduledToTerminate(false)
 {
-    V8PerIsolateData* data = V8PerIsolateData::create(m_isolate);
     m_isolate->Enter();
+    V8PerIsolateData* data = V8PerIsolateData::create(m_isolate);
     m_domDataStore = adoptPtr(new DOMDataStore(DOMDataStore::Worker));
     data->setDOMDataStore(m_domDataStore.get());
 
