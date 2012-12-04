@@ -1,3 +1,26 @@
+2012-12-03  Scott Violet  <sky@chromium.org>
+
+        [chromium] Remove linux theme related files and switch to default
+        https://bugs.webkit.org/show_bug.cgi?id=103897
+
+        Reviewed by Darin Fisher.
+
+        linux theme related files are now named default. This removes
+        linux theme files, updates build files and removes ifdefs.
+
+        Code cleanup, no new tests.
+
+        * WebCore.gyp/WebCore.gyp: Update build rules
+        * WebCore.gypi: Update build rules
+        * platform/chromium/PlatformThemeChromiumLinux.cpp: Removed.
+        * platform/chromium/PlatformThemeChromiumLinux.h: Removed.
+        * platform/chromium/ScrollbarThemeChromiumLinux.cpp: Removed.
+        * platform/chromium/ScrollbarThemeChromiumLinux.h: Removed.
+        * rendering/RenderThemeChromiumAndroid.h: Change superclass
+        * rendering/RenderThemeChromiumAndroid.cpp: Change call to superclass
+        * rendering/RenderThemeChromiumLinux.cpp: Removed.
+        * rendering/RenderThemeChromiumLinux.h: Removed.
+
 2012-12-03  Pierre Rossi  <pierre.rossi@digia.com>
 
         [Qt] Unreviewed build fix after r136410

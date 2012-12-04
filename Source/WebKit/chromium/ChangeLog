@@ -1,3 +1,20 @@
+2012-12-03  Scott Violet  <sky@chromium.org>
+
+        [chromium] Remove linux theme related files and switch to default
+        https://bugs.webkit.org/show_bug.cgi?id=103897
+
+        Reviewed by Darin Fisher.
+
+        linux theme related files are now named default. This removes
+        linux files updates build files and removes ifdefs.
+
+        * WebKit.gyp: update rules.
+        * public/linux/WebRenderTheme.h: Removed.
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::setScrollbarColors): Update ifdefs
+        (WebKit::WebViewImpl::setSelectionColors): Update ifdefs
+        * src/linux/WebRenderTheme.cpp: Removed.
+
 2012-12-03  Fady Samuel  <fsamuel@chromium.org>
 
         [Chromium] Expose removeAttribute in WebElement
