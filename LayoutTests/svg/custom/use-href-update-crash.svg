@@ -3,7 +3,8 @@
   <!-- Test for https://bugs.webkit.org/show_bug.cgi?id=104004 -->
   <use id="use" xlink:href="foo.svg#foo"/>
   <text>PASS: did not crash.</text>
- 
+
+  <script src="../../fast/js/resources/js-test-pre.js"></script>
   <script>
     var use = document.getElementById('use');
     use.setAttribute('xlink:href', 'bar.svg#bar');
@@ -14,4 +15,5 @@
     if (window.testRunner)
       testRunner.dumpAsText();
   </script>
+  <script src="../../fast/js/resources/js-test-post.js"></script>
 </svg>
