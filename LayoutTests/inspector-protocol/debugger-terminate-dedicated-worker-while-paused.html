@@ -38,9 +38,7 @@ function test()
         if ("error" in messageObject) {
             InspectorTest.log("FAIL: Couldn't enable worker debugger: " + messageObject.error.message);
             InspectorTest.completeTest();
-            return;
         }
-        InspectorTest.log("didEnableWorkerDebugging");
     }
     InspectorTest.sendCommand("Worker.enable", {}, didEnableWorkerDebugging);
 
