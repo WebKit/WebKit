@@ -184,7 +184,10 @@ static EncodedJSValue JSC_HOST_CALL constructJS##name##Array(ExecState* callFram
     if (length < 0) \
         return JSValue::encode(jsUndefined()); \
     Structure* structure = JS##name##Array::createStructure(callFrame->globalData(), callFrame->lexicalGlobalObject(), callFrame->lexicalGlobalObject()->objectPrototype()); \
-    return JSValue::encode(JS##name##Array::create(structure, callFrame->lexicalGlobalObject(), name##Array::create(length)));\
+    RefPtr<name##Array> buffer = name##Array::create(length); \
+    if (!buffer) \
+        return throwVMError(callFrame, createRangeError(callFrame, "ArrayBuffer size is not a small enough positive integer.")); \
+    return JSValue::encode(JS##name##Array::create(structure, callFrame->lexicalGlobalObject(), buffer.release())); \
 }
 
 TYPED_ARRAY(Uint8, uint8_t);
