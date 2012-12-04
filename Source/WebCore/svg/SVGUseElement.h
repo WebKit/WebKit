@@ -114,6 +114,7 @@ private:
     bool instanceTreeIsLoading(SVGElementInstance*);
     virtual void notifyFinished(CachedResource*);
     Document* referencedDocument() const;
+    void setCachedDocument(CachedResourceHandle<CachedSVGDocument>);
 
     // SVGTests
     virtual void synchronizeRequiredFeatures() { SVGTests::synchronizeRequiredFeatures(this); }

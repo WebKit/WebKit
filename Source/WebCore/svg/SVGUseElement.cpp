@@ -107,8 +107,7 @@ PassRefPtr<SVGUseElement> SVGUseElement::create(const QualifiedName& tagName, Do
 
 SVGUseElement::~SVGUseElement()
 {
-    if (m_cachedDocument)
-        m_cachedDocument->removeClient(this);
+    setCachedDocument(0);
 
     clearResourceReferences();
 }
@@ -257,18 +256,14 @@ void SVGUseElement::svgAttributeChanged(const QualifiedName& attrName)
             if (url.hasFragmentIdentifier()) {
                 CachedResourceRequest request(ResourceRequest(url.string()));
                 request.setInitiator(this);
-                m_cachedDocument = document()->cachedResourceLoader()->requestSVGDocument(request);
-                if (m_cachedDocument)
-                    m_cachedDocument->addClient(this);
+                setCachedDocument(document()->cachedResourceLoader()->requestSVGDocument(request));
             }
-        }
+        } else
+            setCachedDocument(0);
 
-        if (m_cachedDocument && !isExternalReference) {
-            m_cachedDocument->removeClient(this);
-            m_cachedDocument = 0;
-        }
         if (!m_wasInsertedByParser)
             buildPendingResource();
+
         return;
     }
 
@@ -990,6 +985,19 @@ void SVGUseElement::finishParsingChildren()
         buildPendingResource();
         m_wasInsertedByParser = false;
     }
+}
+
+void SVGUseElement::setCachedDocument(CachedResourceHandle<CachedSVGDocument> cachedDocument)
+{
+    if (m_cachedDocument == cachedDocument)
+        return;
+
+    if (m_cachedDocument)
+        m_cachedDocument->removeClient(this);
+
+    m_cachedDocument = cachedDocument;
+    if (m_cachedDocument)
+        m_cachedDocument->addClient(this);
 }
 
 }
