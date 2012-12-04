@@ -2499,3 +2499,6 @@ fast/loader/javascript-url-in-embed.html
 media/progress-events-generated-correctly.html
 http/tests/cookies/third-party-cookie-relaxing.html
 accessibility/file-upload-button-with-axpress.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=102603
+fast/text/international/combining-marks-position.html
