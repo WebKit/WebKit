@@ -1,3 +1,26 @@
+2012-12-04  Antoine Quint  <graouts@apple.com>
+
+        TextTrack's .kind property should return lower-case values
+        https://bugs.webkit.org/show_bug.cgi?id=103411
+
+        Reviewed by Eric Carlson.
+
+        While the HTML "kind" attribute on the <track> element allows upper-case values, the related APIs
+        on HTMLMediaElement and TextTrack expect only to deal with lower-case values. As such, we're updating
+        TextTrack::isValidKindKeyword() to be case-sensitive and ensure that values fed from the DOM (the values
+        read from HTML attributes) are lower-case'd.
+
+        Thanks to this fix, we're no longer skipping media/track/opera/interfaces/TextTrack/kind.html and
+        media/track/opera/interfaces/HTMLElement/HTMLMediaElement/addTextTrack.html 
+
+        This patch also fixes https://bugs.webkit.org/show_bug.cgi?id=103256.
+
+        * html/HTMLTrackElement.cpp:
+        (WebCore::HTMLTrackElement::parseAttribute):
+        (WebCore::HTMLTrackElement::ensureTrack):
+        * html/track/TextTrack.cpp:
+        (WebCore::TextTrack::isValidKindKeyword):
+
 2012-12-04  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r136498.

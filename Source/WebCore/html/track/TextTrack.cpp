@@ -126,15 +126,15 @@ TextTrack::~TextTrack()
 
 bool TextTrack::isValidKindKeyword(const AtomicString& value)
 {
-    if (equalIgnoringCase(value, subtitlesKeyword()))
+    if (value == subtitlesKeyword())
         return true;
-    if (equalIgnoringCase(value, captionsKeyword()))
+    if (value == captionsKeyword())
         return true;
-    if (equalIgnoringCase(value, descriptionsKeyword()))
+    if (value == descriptionsKeyword())
         return true;
-    if (equalIgnoringCase(value, chaptersKeyword()))
+    if (value == chaptersKeyword())
         return true;
-    if (equalIgnoringCase(value, metadataKeyword()))
+    if (value == metadataKeyword())
         return true;
 
     return false;

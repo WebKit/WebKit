@@ -97,7 +97,7 @@ void HTMLTrackElement::parseAttribute(const QualifiedName& name, const AtomicStr
             // 4.8.10.12.3 Sourcing out-of-band text tracks
             // As the kind, label, and srclang attributes are set, changed, or removed, the text track must update accordingly...
         } else if (name == kindAttr)
-            track()->setKind(value);
+            track()->setKind(value.lower());
         else if (name == labelAttr)
             track()->setLabel(value);
         else if (name == srclangAttr)
@@ -168,7 +168,7 @@ LoadableTextTrack* HTMLTrackElement::ensureTrack()
 {
     if (!m_track) {
         // The kind attribute is an enumerated attribute, limited only to know values. It defaults to 'subtitles' if missing or invalid.
-        String kind = getAttribute(kindAttr);
+        String kind = getAttribute(kindAttr).lower();
         if (!TextTrack::isValidKindKeyword(kind))
             kind = TextTrack::subtitlesKeyword();
         m_track = LoadableTextTrack::create(this, kind, label(), srclang());
