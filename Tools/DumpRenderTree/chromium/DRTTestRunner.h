@@ -168,14 +168,6 @@ public:
     void setWindowIsKey(const CppArgumentList&, CppVariant*);
 
 
-    // Passes through to WebPreferences which allows the user to have a custom
-    // style sheet.
-    void setUserStyleSheetEnabled(const CppArgumentList&, CppVariant*);
-    void setUserStyleSheetLocation(const CppArgumentList&, CppVariant*);
-
-    // Passes this preference through to WebSettings.
-    void setAuthorAndUserStylesEnabled(const CppArgumentList&, CppVariant*);
-
     // Causes navigation actions just printout the intended navigation instead
     // of taking you to the page. This is used for cases like mailto, where you
     // don't actually want to open the mail program.
@@ -195,9 +187,6 @@ public:
 
     // Converts a URL starting with file:///tmp/ to the local mapping.
     void pathToLocalResource(const CppArgumentList&, CppVariant*);
-
-    // Set the WebPreference that controls webkit's popup blocking.
-    void setPopupBlockingEnabled(const CppArgumentList&, CppVariant*);
 
     // If true, causes provisional frame loads to be stopped for the remainder of
     // the test.
@@ -231,14 +220,8 @@ public:
     void testRepaint(const CppArgumentList&, CppVariant*);
     void repaintSweepHorizontally(const CppArgumentList&, CppVariant*);
 
-    void setJavaScriptCanAccessClipboard(const CppArgumentList&, CppVariant*);
-    void setXSSAuditorEnabled(const CppArgumentList&, CppVariant*);
-    void overridePreference(const CppArgumentList&, CppVariant*);
-    void setAllowUniversalAccessFromFileURLs(const CppArgumentList&, CppVariant*);
     void setAllowDisplayOfInsecureContent(const CppArgumentList&, CppVariant*);
-    void setAllowFileAccessFromFileURLs(const CppArgumentList&, CppVariant*);
     void setAllowRunningOfInsecureContent(const CppArgumentList&, CppVariant*);
-
 
     // Clears all databases.
     void clearAllDatabases(const CppArgumentList&, CppVariant*);
@@ -283,9 +266,6 @@ public:
     void setStorageAllowed(const CppArgumentList&, CppVariant*);
     void setPluginsAllowed(const CppArgumentList&, CppVariant*);
     void dumpPermissionClientCallbacks(const CppArgumentList&, CppVariant*);
-
-    // Enable or disable plugins.
-    void setPluginsEnabled(const CppArgumentList&, CppVariant*);
 
     void setShouldStayOnPageAfterHandlingBeforeUnload(const CppArgumentList&, CppVariant*);
 
@@ -539,8 +519,6 @@ private:
 
     // Bound variable to set whether postMessages should be intercepted or not
     CppVariant m_interceptPostMessage;
-
-    WebKit::WebURL m_userStyleSheetLocation;
 
     // WAV audio data is stored here.
     WebKit::WebArrayBufferView m_audioData;

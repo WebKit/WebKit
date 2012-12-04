@@ -1391,6 +1391,26 @@ WebKit::WebString WebViewHost::getAbsoluteWebStringFromUTF8Path(const std::strin
     return webkit_support::GetAbsoluteWebStringFromUTF8Path(path);
 }
 
+WebURL WebViewHost::localFileToDataURL(const WebKit::WebURL& url)
+{
+    return webkit_support::LocalFileToDataURL(url);
+}
+
+WebURL WebViewHost::rewriteLayoutTestsURL(const std::string& url)
+{
+    return webkit_support::RewriteLayoutTestsURL(url);
+}
+
+WebPreferences* WebViewHost::preferences()
+{
+    return m_shell->preferences();
+}
+
+void WebViewHost::applyPreferences()
+{
+    m_shell->applyPreferences();
+}
+
 // Public functions -----------------------------------------------------------
 
 WebViewHost::WebViewHost(TestShell* shell)

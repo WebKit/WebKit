@@ -1,3 +1,59 @@
+2012-12-04  Jochen Eisinger  <jochen@chromium.org>
+
+        [chromium] move WebPreferences and methods for modifying them to the TestRunner library
+        https://bugs.webkit.org/show_bug.cgi?id=103841
+
+        Reviewed by Darin Fisher.
+
+        * DumpRenderTree/DumpRenderTree.gypi:
+        * DumpRenderTree/chromium/DRTTestRunner.cpp:
+        (DRTTestRunner::DRTTestRunner):
+        (DRTTestRunner::reset):
+        * DumpRenderTree/chromium/DRTTestRunner.h:
+        (DRTTestRunner):
+        * DumpRenderTree/chromium/TestRunner/public/WebPreferences.h: Renamed from Tools/DumpRenderTree/chromium/WebPreferences.h.
+        (WebKit):
+        (WebTestRunner):
+        (WebPreferences):
+        (WebTestRunner::WebPreferences::WebPreferences):
+        * DumpRenderTree/chromium/TestRunner/public/WebTestDelegate.h:
+        (WebTestRunner):
+        (WebTestDelegate):
+        (WebTestRunner::WebTestDelegate::localFileToDataURL):
+        (WebTestRunner::WebTestDelegate::rewriteLayoutTestsURL):
+        (WebTestRunner::WebTestDelegate::preferences):
+        (WebTestRunner::WebTestDelegate::applyPreferences):
+        * DumpRenderTree/chromium/TestRunner/src/TestRunner.cpp:
+        (WebTestRunner::TestRunner::TestRunner):
+        (WebTestRunner::TestRunner::reset):
+        (WebTestRunner::TestRunner::setUserStyleSheetEnabled):
+        (WebTestRunner):
+        (WebTestRunner::TestRunner::setUserStyleSheetLocation):
+        (WebTestRunner::TestRunner::setAuthorAndUserStylesEnabled):
+        (WebTestRunner::TestRunner::setPopupBlockingEnabled):
+        (WebTestRunner::TestRunner::setJavaScriptCanAccessClipboard):
+        (WebTestRunner::TestRunner::setXSSAuditorEnabled):
+        (WebTestRunner::TestRunner::setAllowUniversalAccessFromFileURLs):
+        (WebTestRunner::TestRunner::setAllowFileAccessFromFileURLs):
+        (WebTestRunner::TestRunner::overridePreference):
+        (WebTestRunner::TestRunner::setPluginsEnabled):
+        * DumpRenderTree/chromium/TestRunner/src/TestRunner.h:
+        (TestRunner):
+        * DumpRenderTree/chromium/TestRunner/src/WebPreferences.cpp: Renamed from Tools/DumpRenderTree/chromium/WebPreferences.cpp.
+        (WebTestRunner::WebPreferences::reset):
+        (WebTestRunner):
+        (WebTestRunner::WebPreferences::applyTo):
+        * DumpRenderTree/chromium/TestShell.h:
+        (TestShell::preferences):
+        (TestShell):
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::localFileToDataURL):
+        (WebViewHost::rewriteLayoutTestsURL):
+        (WebViewHost::preferences):
+        (WebViewHost::applyPreferences):
+        * DumpRenderTree/chromium/WebViewHost.h:
+        (WebViewHost):
+
 2012-12-04  Zan Dobersek  <zandobersek@gmail.com>
 
         Many webkitpy unit tests can be run standalone, are executable

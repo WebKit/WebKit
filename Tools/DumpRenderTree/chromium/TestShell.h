@@ -93,7 +93,7 @@ public:
 #endif
     const TestEventPrinter* printer() const { return &m_printer; }
 
-    WebPreferences* preferences() { return &m_prefs; }
+    WebTestRunner::WebPreferences* preferences() { return &m_prefs; }
     void applyPreferences() { m_prefs.applyTo(m_webView); }
 
     WebPermissions* webPermissions() { return m_webPermissions.get(); }
@@ -241,7 +241,7 @@ private:
     bool m_perTilePaintingEnabled;
     bool m_acceleratedAnimationEnabled;
     bool m_deferredImageDecodingEnabled;
-    WebPreferences m_prefs;
+    WebTestRunner::WebPreferences m_prefs;
     bool m_stressOpt;
     bool m_stressDeopt;
     std::string m_javaScriptFlags;

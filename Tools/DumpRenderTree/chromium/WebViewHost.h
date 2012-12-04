@@ -143,6 +143,10 @@ class WebViewHost : public WebKit::WebViewClient, public WebKit::WebFrameClient,
     virtual WebKit::WebString registerIsolatedFileSystem(const WebKit::WebVector<WebKit::WebString>& absoluteFilenames) OVERRIDE;
     virtual long long getCurrentTimeInMillisecond() OVERRIDE;
     virtual WebKit::WebString getAbsoluteWebStringFromUTF8Path(const std::string& path) OVERRIDE;
+    virtual WebKit::WebURL localFileToDataURL(const WebKit::WebURL&) OVERRIDE;
+    virtual WebKit::WebURL rewriteLayoutTestsURL(const std::string&) OVERRIDE;
+    virtual WebTestRunner::WebPreferences* preferences() OVERRIDE;
+    virtual void applyPreferences() OVERRIDE;
 
     // NavigationHost
     virtual bool navigate(const TestNavigationEntry&, bool reload);

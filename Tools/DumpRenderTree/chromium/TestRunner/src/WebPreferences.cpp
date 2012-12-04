@@ -30,11 +30,58 @@
 
 #include "config.h"
 #include "WebPreferences.h"
-#include "WebRuntimeFeatures.h"
 
+#include "WebRuntimeFeatures.h"
 #include "WebView.h"
 
 using namespace WebKit;
+
+namespace WebTestRunner {
+
+namespace {
+
+void setStandardFontFamilyWrapper(WebSettings* settings, const WebString& font, UScriptCode script)
+{
+    settings->setStandardFontFamily(font, script);
+}
+
+void setFixedFontFamilyWrapper(WebSettings* settings, const WebString& font, UScriptCode script)
+{
+    settings->setFixedFontFamily(font, script);
+}
+
+void setSerifFontFamilyWrapper(WebSettings* settings, const WebString& font, UScriptCode script)
+{
+    settings->setSerifFontFamily(font, script);
+}
+
+void setSansSerifFontFamilyWrapper(WebSettings* settings, const WebString& font, UScriptCode script)
+{
+    settings->setSansSerifFontFamily(font, script);
+}
+
+void setCursiveFontFamilyWrapper(WebSettings* settings, const WebString& font, UScriptCode script)
+{
+    settings->setCursiveFontFamily(font, script);
+}
+
+void setFantasyFontFamilyWrapper(WebSettings* settings, const WebString& font, UScriptCode script)
+{
+    settings->setFantasyFontFamily(font, script);
+}
+
+typedef void (*SetFontFamilyWrapper)(WebSettings*, const WebString&, UScriptCode);
+
+void applyFontMap(WebSettings* settings, const WebPreferences::ScriptFontFamilyMap& map, SetFontFamilyWrapper setter)
+{
+    for (WebPreferences::ScriptFontFamilyMap::const_iterator iter = map.begin(); iter != map.end(); ++iter) {
+        const WebString& font = iter->second;
+        if (!font.isNull() && !font.isEmpty())
+            (*setter)(settings, font, static_cast<UScriptCode>(iter->first));
+    }
+}
+
+}
 
 void WebPreferences::reset()
 {
@@ -128,47 +175,6 @@ void WebPreferences::reset()
     shouldRespectImageOrientation = false;
 }
 
-static void setStandardFontFamilyWrapper(WebSettings* settings, const WebKit::WebString& font, UScriptCode script)
-{
-    settings->setStandardFontFamily(font, script);
-}
-
-static void setFixedFontFamilyWrapper(WebSettings* settings, const WebKit::WebString& font, UScriptCode script)
-{
-    settings->setFixedFontFamily(font, script);
-}
-
-static void setSerifFontFamilyWrapper(WebSettings* settings, const WebKit::WebString& font, UScriptCode script)
-{
-    settings->setSerifFontFamily(font, script);
-}
-
-static void setSansSerifFontFamilyWrapper(WebSettings* settings, const WebKit::WebString& font, UScriptCode script)
-{
-    settings->setSansSerifFontFamily(font, script);
-}
-
-static void setCursiveFontFamilyWrapper(WebSettings* settings, const WebKit::WebString& font, UScriptCode script)
-{
-    settings->setCursiveFontFamily(font, script);
-}
-
-static void setFantasyFontFamilyWrapper(WebSettings* settings, const WebKit::WebString& font, UScriptCode script)
-{
-    settings->setFantasyFontFamily(font, script);
-}
-
-typedef void (*SetFontFamilyWrapper)(WebSettings*, const WebString&, UScriptCode);
-
-static void applyFontMap(WebSettings* settings, const WebPreferences::ScriptFontFamilyMap& map, SetFontFamilyWrapper setter)
-{
-    for (WebPreferences::ScriptFontFamilyMap::const_iterator iter = map.begin(); iter != map.end(); ++iter) {
-        const WebString& font = iter->value;
-        if (!font.isNull() && !font.isEmpty())
-            (*setter)(settings, font, static_cast<UScriptCode>(iter->key));
-    }
-}
-
 void WebPreferences::applyTo(WebView* webView)
 {
     WebSettings* settings = webView->settings();
@@ -259,4 +265,6 @@ void WebPreferences::applyTo(WebView* webView)
     settings->setVisualWordMovementEnabled(false);
     settings->setPasswordEchoEnabled(false);
     settings->setApplyDeviceScaleFactorInCompositor(true);
+}
+
 }

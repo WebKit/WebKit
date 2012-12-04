@@ -33,6 +33,7 @@
 #define TestRunner_h
 
 #include "CppBoundClass.h"
+#include "platform/WebURL.h"
 
 namespace WebKit {
 class WebView;
@@ -150,6 +151,29 @@ private:
     void setTouchDragDropEnabled(const CppArgumentList&, CppVariant*);
 
     ///////////////////////////////////////////////////////////////////////////
+    // Methods modifying WebPreferences.
+
+    // Passes through to WebPreferences which allows the user to have a custom
+    // style sheet.
+    void setUserStyleSheetEnabled(const CppArgumentList&, CppVariant*);
+    void setUserStyleSheetLocation(const CppArgumentList&, CppVariant*);
+
+    // Passes this preference through to WebSettings.
+    void setAuthorAndUserStylesEnabled(const CppArgumentList&, CppVariant*);
+
+    // Set the WebPreference that controls webkit's popup blocking.
+    void setPopupBlockingEnabled(const CppArgumentList&, CppVariant*);
+
+    void setJavaScriptCanAccessClipboard(const CppArgumentList&, CppVariant*);
+    void setXSSAuditorEnabled(const CppArgumentList&, CppVariant*);
+    void setAllowUniversalAccessFromFileURLs(const CppArgumentList&, CppVariant*);
+    void setAllowFileAccessFromFileURLs(const CppArgumentList&, CppVariant*);
+    void overridePreference(const CppArgumentList&, CppVariant*);
+
+    // Enable or disable plugins.
+    void setPluginsEnabled(const CppArgumentList&, CppVariant*);
+
+    ///////////////////////////////////////////////////////////////////////////
     // Properties
     void workerThreadCount(CppVariant*);
 
@@ -172,6 +196,8 @@ private:
     bool pauseTransitionAtTimeOnElementWithId(const WebKit::WebString& propertyName, double time, const WebKit::WebString& elementId);
     bool elementDoesAutoCompleteForElementWithId(const WebKit::WebString&);
     int numberOfActiveAnimations();
+
+    WebKit::WebURL m_userStyleSheetLocation;
 
     // globalFlag is used by a number of layout tests in http/tests/security/dataURL.
     CppVariant m_globalFlag;

@@ -153,7 +153,6 @@ DRTTestRunner::DRTTestRunner(TestShell* shell)
 #endif
     bindMethod("notifyDone", &DRTTestRunner::notifyDone);
     bindMethod("numberOfPendingGeolocationPermissionRequests", &DRTTestRunner:: numberOfPendingGeolocationPermissionRequests);
-    bindMethod("overridePreference", &DRTTestRunner::overridePreference);
     bindMethod("pathToLocalResource", &DRTTestRunner::pathToLocalResource);
     bindMethod("queueBackNavigation", &DRTTestRunner::queueBackNavigation);
     bindMethod("queueForwardNavigation", &DRTTestRunner::queueForwardNavigation);
@@ -164,11 +163,8 @@ DRTTestRunner::DRTTestRunner(TestShell* shell)
     bindMethod("queueReload", &DRTTestRunner::queueReload);
     bindMethod("repaintSweepHorizontally", &DRTTestRunner::repaintSweepHorizontally);
     bindMethod("setAllowDisplayOfInsecureContent", &DRTTestRunner::setAllowDisplayOfInsecureContent);
-    bindMethod("setAllowFileAccessFromFileURLs", &DRTTestRunner::setAllowFileAccessFromFileURLs);
     bindMethod("setAllowRunningOfInsecureContent", &DRTTestRunner::setAllowRunningOfInsecureContent);
-    bindMethod("setAllowUniversalAccessFromFileURLs", &DRTTestRunner::setAllowUniversalAccessFromFileURLs);
     bindMethod("setAlwaysAcceptCookies", &DRTTestRunner::setAlwaysAcceptCookies);
-    bindMethod("setAuthorAndUserStylesEnabled", &DRTTestRunner::setAuthorAndUserStylesEnabled);
     bindMethod("setCanOpenWindows", &DRTTestRunner::setCanOpenWindows);
     bindMethod("setCloseRemainingWindowsWhenComplete", &DRTTestRunner::setCloseRemainingWindowsWhenComplete);
     bindMethod("setCustomPolicyDelegate", &DRTTestRunner::setCustomPolicyDelegate);
@@ -176,29 +172,23 @@ DRTTestRunner::DRTTestRunner(TestShell* shell)
     bindMethod("setDeferMainResourceDataLoad", &DRTTestRunner::setDeferMainResourceDataLoad);
     bindMethod("setAudioData", &DRTTestRunner::setAudioData);
     bindMethod("setGeolocationPermission", &DRTTestRunner::setGeolocationPermission);
-    bindMethod("setJavaScriptCanAccessClipboard", &DRTTestRunner::setJavaScriptCanAccessClipboard);
     bindMethod("setMockDeviceOrientation", &DRTTestRunner::setMockDeviceOrientation);
     bindMethod("setMockGeolocationPositionUnavailableError", &DRTTestRunner::setMockGeolocationPositionUnavailableError);
     bindMethod("setMockGeolocationPosition", &DRTTestRunner::setMockGeolocationPosition);
-    bindMethod("setPluginsEnabled", &DRTTestRunner::setPluginsEnabled);
 #if ENABLE(POINTER_LOCK)
     bindMethod("setPointerLockWillRespondAsynchronously", &DRTTestRunner::setPointerLockWillRespondAsynchronously);
     bindMethod("setPointerLockWillFailSynchronously", &DRTTestRunner::setPointerLockWillFailSynchronously);
 #endif
-    bindMethod("setPopupBlockingEnabled", &DRTTestRunner::setPopupBlockingEnabled);
     bindMethod("setPOSIXLocale", &DRTTestRunner::setPOSIXLocale);
     bindMethod("setPrinting", &DRTTestRunner::setPrinting);
     bindMethod("setSelectTrailingWhitespaceEnabled", &DRTTestRunner::setSelectTrailingWhitespaceEnabled);
     bindMethod("setBackingScaleFactor", &DRTTestRunner::setBackingScaleFactor);
     bindMethod("setSmartInsertDeleteEnabled", &DRTTestRunner::setSmartInsertDeleteEnabled);
     bindMethod("setStopProvisionalFrameLoads", &DRTTestRunner::setStopProvisionalFrameLoads);
-    bindMethod("setUserStyleSheetEnabled", &DRTTestRunner::setUserStyleSheetEnabled);
-    bindMethod("setUserStyleSheetLocation", &DRTTestRunner::setUserStyleSheetLocation);
     bindMethod("setWillSendRequestClearHeader", &DRTTestRunner::setWillSendRequestClearHeader);
     bindMethod("setWillSendRequestReturnsNull", &DRTTestRunner::setWillSendRequestReturnsNull);
     bindMethod("setWillSendRequestReturnsNullOnRedirect", &DRTTestRunner::setWillSendRequestReturnsNullOnRedirect);
     bindMethod("setWindowIsKey", &DRTTestRunner::setWindowIsKey);
-    bindMethod("setXSSAuditorEnabled", &DRTTestRunner::setXSSAuditorEnabled);
     bindMethod("showWebInspector", &DRTTestRunner::showWebInspector);
 #if ENABLE(NOTIFICATIONS)
     bindMethod("simulateLegacyWebNotificationClick", &DRTTestRunner::simulateLegacyWebNotificationClick);
@@ -582,7 +572,6 @@ void DRTTestRunner::reset()
     m_webHistoryItemCount.set(0);
     m_titleTextDirection.set("ltr");
     m_interceptPostMessage.set(false);
-    m_userStyleSheetLocation = WebURL();
     m_isPrinting = false;
 
     webkit_support::SetAcceptAllCookies(false);
@@ -660,45 +649,6 @@ void DRTTestRunner::setWindowIsKey(const CppArgumentList& arguments, CppVariant*
 {
     if (arguments.size() > 0 && arguments[0].isBool())
         m_shell->setFocus(m_shell->webView(), arguments[0].value.boolValue);
-    result->setNull();
-}
-
-void DRTTestRunner::setUserStyleSheetEnabled(const CppArgumentList& arguments, CppVariant* result)
-{
-    if (arguments.size() > 0 && arguments[0].isBool()) {
-        m_shell->preferences()->userStyleSheetLocation = arguments[0].value.boolValue ? m_userStyleSheetLocation : WebURL();
-        m_shell->applyPreferences();
-    }
-    result->setNull();
-}
-
-void DRTTestRunner::setUserStyleSheetLocation(const CppArgumentList& arguments, CppVariant* result)
-{
-    if (arguments.size() > 0 && arguments[0].isString()) {
-        m_userStyleSheetLocation = webkit_support::LocalFileToDataURL(
-            webkit_support::RewriteLayoutTestsURL(arguments[0].toString()));
-        m_shell->preferences()->userStyleSheetLocation = m_userStyleSheetLocation;
-        m_shell->applyPreferences();
-    }
-    result->setNull();
-}
-
-void DRTTestRunner::setAuthorAndUserStylesEnabled(const CppArgumentList& arguments, CppVariant* result)
-{
-    if (arguments.size() > 0 && arguments[0].isBool()) {
-        m_shell->preferences()->authorAndUserStylesEnabled = arguments[0].value.boolValue;
-        m_shell->applyPreferences();
-    }
-    result->setNull();
-}
-
-void DRTTestRunner::setPopupBlockingEnabled(const CppArgumentList& arguments, CppVariant* result)
-{
-    if (arguments.size() > 0 && arguments[0].isBool()) {
-        bool blockPopups = arguments[0].toBoolean();
-        m_shell->preferences()->javaScriptCanOpenWindowsAutomatically = !blockPopups;
-        m_shell->applyPreferences();
-    }
     result->setNull();
 }
 
@@ -936,47 +886,11 @@ void DRTTestRunner::repaintSweepHorizontally(const CppArgumentList&, CppVariant*
     result->setNull();
 }
 
-void DRTTestRunner::setJavaScriptCanAccessClipboard(const CppArgumentList& arguments, CppVariant* result)
-{
-    if (arguments.size() > 0 && arguments[0].isBool()) {
-        m_shell->preferences()->javaScriptCanAccessClipboard = arguments[0].value.boolValue;
-        m_shell->applyPreferences();
-    }
-    result->setNull();
-}
-
-void DRTTestRunner::setXSSAuditorEnabled(const CppArgumentList& arguments, CppVariant* result)
-{
-    if (arguments.size() > 0 && arguments[0].isBool()) {
-        m_shell->preferences()->XSSAuditorEnabled = arguments[0].value.boolValue;
-        m_shell->applyPreferences();
-    }
-    result->setNull();
-}
-
-void DRTTestRunner::setAllowUniversalAccessFromFileURLs(const CppArgumentList& arguments, CppVariant* result)
-{
-    if (arguments.size() > 0 && arguments[0].isBool()) {
-        m_shell->preferences()->allowUniversalAccessFromFileURLs = arguments[0].value.boolValue;
-        m_shell->applyPreferences();
-    }
-    result->setNull();
-}
-
 void DRTTestRunner::setAllowDisplayOfInsecureContent(const CppArgumentList& arguments, CppVariant* result)
 {
     if (arguments.size() > 0 && arguments[0].isBool())
         m_shell->webPermissions()->setDisplayingInsecureContentAllowed(arguments[0].toBoolean());
 
-    result->setNull();
-}
-
-void DRTTestRunner::setAllowFileAccessFromFileURLs(const CppArgumentList& arguments, CppVariant* result)
-{
-    if (arguments.size() > 0 && arguments[0].isBool()) {
-        m_shell->preferences()->allowFileAccessFromFileURLs = arguments[0].value.boolValue;
-        m_shell->applyPreferences();
-    }
     result->setNull();
 }
 
@@ -986,130 +900,6 @@ void DRTTestRunner::setAllowRunningOfInsecureContent(const CppArgumentList& argu
         m_shell->webPermissions()->setRunningInsecureContentAllowed(arguments[0].value.boolValue);
 
     result->setNull();
-}
-
-// Sets map based on scriptFontPairs, a collapsed vector of pairs of ISO 15924
-// four-letter script code and font such as:
-// { "Arab", "My Arabic Font", "Grek", "My Greek Font" }
-static void setFontMap(WebPreferences::ScriptFontFamilyMap& map, const Vector<WebString>& scriptFontPairs)
-{
-    map.clear();
-    size_t i = 0;
-    while (i + 1 < scriptFontPairs.size()) {
-        const WebString& script = scriptFontPairs[i++];
-        const WebString& font = scriptFontPairs[i++];
-
-        int32_t code = u_getPropertyValueEnum(UCHAR_SCRIPT, script.utf8().data());
-        if (code >= 0 && code < USCRIPT_CODE_LIMIT)
-            map.set(static_cast<int>(code), font);
-    }
-}
-
-void DRTTestRunner::overridePreference(const CppArgumentList& arguments, CppVariant* result)
-{
-    result->setNull();
-    if (arguments.size() != 2 || !arguments[0].isString())
-        return;
-
-    string key = arguments[0].toString();
-    CppVariant value = arguments[1];
-    WebPreferences* prefs = m_shell->preferences();
-    if (key == "WebKitStandardFont")
-        prefs->standardFontFamily = cppVariantToWebString(value);
-    else if (key == "WebKitFixedFont")
-        prefs->fixedFontFamily = cppVariantToWebString(value);
-    else if (key == "WebKitSerifFont")
-        prefs->serifFontFamily = cppVariantToWebString(value);
-    else if (key == "WebKitSansSerifFont")
-        prefs->sansSerifFontFamily = cppVariantToWebString(value);
-    else if (key == "WebKitCursiveFont")
-        prefs->cursiveFontFamily = cppVariantToWebString(value);
-    else if (key == "WebKitFantasyFont")
-        prefs->fantasyFontFamily = cppVariantToWebString(value);
-    else if (key == "WebKitStandardFontMap")
-        setFontMap(prefs->standardFontMap, cppVariantToWebStringArray(value));
-    else if (key == "WebKitFixedFontMap")
-        setFontMap(prefs->fixedFontMap, cppVariantToWebStringArray(value));
-    else if (key == "WebKitSerifFontMap")
-        setFontMap(prefs->serifFontMap, cppVariantToWebStringArray(value));
-    else if (key == "WebKitSansSerifFontMap")
-        setFontMap(prefs->sansSerifFontMap, cppVariantToWebStringArray(value));
-    else if (key == "WebKitCursiveFontMap")
-        setFontMap(prefs->cursiveFontMap, cppVariantToWebStringArray(value));
-    else if (key == "WebKitFantasyFontMap")
-        setFontMap(prefs->fantasyFontMap, cppVariantToWebStringArray(value));
-    else if (key == "WebKitDefaultFontSize")
-        prefs->defaultFontSize = cppVariantToInt32(value);
-    else if (key == "WebKitDefaultFixedFontSize")
-        prefs->defaultFixedFontSize = cppVariantToInt32(value);
-    else if (key == "WebKitMinimumFontSize")
-        prefs->minimumFontSize = cppVariantToInt32(value);
-    else if (key == "WebKitMinimumLogicalFontSize")
-        prefs->minimumLogicalFontSize = cppVariantToInt32(value);
-    else if (key == "WebKitDefaultTextEncodingName")
-        prefs->defaultTextEncodingName = cppVariantToWebString(value);
-    else if (key == "WebKitJavaScriptEnabled")
-        prefs->javaScriptEnabled = cppVariantToBool(value);
-    else if (key == "WebKitWebSecurityEnabled")
-        prefs->webSecurityEnabled = cppVariantToBool(value);
-    else if (key == "WebKitJavaScriptCanOpenWindowsAutomatically")
-        prefs->javaScriptCanOpenWindowsAutomatically = cppVariantToBool(value);
-    else if (key == "WebKitSupportsMultipleWindows")
-        prefs->supportsMultipleWindows = cppVariantToBool(value);
-    else if (key == "WebKitDisplayImagesKey")
-        prefs->loadsImagesAutomatically = cppVariantToBool(value);
-    else if (key == "WebKitPluginsEnabled")
-        prefs->pluginsEnabled = cppVariantToBool(value);
-    else if (key == "WebKitDOMPasteAllowedPreferenceKey")
-        prefs->DOMPasteAllowed = cppVariantToBool(value);
-    else if (key == "WebKitDeveloperExtrasEnabledPreferenceKey")
-        prefs->developerExtrasEnabled = cppVariantToBool(value);
-    else if (key == "WebKitShrinksStandaloneImagesToFit")
-        prefs->shrinksStandaloneImagesToFit = cppVariantToBool(value);
-    else if (key == "WebKitTextAreasAreResizable")
-        prefs->textAreasAreResizable = cppVariantToBool(value);
-    else if (key == "WebKitJavaEnabled")
-        prefs->javaEnabled = cppVariantToBool(value);
-    else if (key == "WebKitUsesPageCachePreferenceKey")
-        prefs->usesPageCache = cppVariantToBool(value);
-    else if (key == "WebKitPageCacheSupportsPluginsPreferenceKey")
-        prefs->pageCacheSupportsPlugins = cppVariantToBool(value);
-    else if (key == "WebKitJavaScriptCanAccessClipboard")
-        prefs->javaScriptCanAccessClipboard = cppVariantToBool(value);
-    else if (key == "WebKitXSSAuditorEnabled")
-        prefs->XSSAuditorEnabled = cppVariantToBool(value);
-    else if (key == "WebKitLocalStorageEnabledPreferenceKey")
-        prefs->localStorageEnabled = cppVariantToBool(value);
-    else if (key == "WebKitOfflineWebApplicationCacheEnabled")
-        prefs->offlineWebApplicationCacheEnabled = cppVariantToBool(value);
-    else if (key == "WebKitTabToLinksPreferenceKey")
-        prefs->tabsToLinks = cppVariantToBool(value);
-    else if (key == "WebKitWebGLEnabled")
-        prefs->experimentalWebGLEnabled = cppVariantToBool(value);
-    else if (key == "WebKitCSSRegionsEnabled")
-        prefs->experimentalCSSRegionsEnabled = cppVariantToBool(value);
-    else if (key == "WebKitCSSGridLayoutEnabled")
-        prefs->experimentalCSSGridLayoutEnabled = cppVariantToBool(value);
-    else if (key == "WebKitHyperlinkAuditingEnabled")
-        prefs->hyperlinkAuditingEnabled = cppVariantToBool(value);
-    else if (key == "WebKitEnableCaretBrowsing")
-        prefs->caretBrowsingEnabled = cppVariantToBool(value);
-    else if (key == "WebKitAllowDisplayingInsecureContent")
-        prefs->allowDisplayOfInsecureContent = cppVariantToBool(value);
-    else if (key == "WebKitAllowRunningInsecureContent")
-        prefs->allowRunningOfInsecureContent = cppVariantToBool(value);
-    else if (key == "WebKitCSSCustomFilterEnabled")
-        prefs->cssCustomFilterEnabled = cppVariantToBool(value);
-    else if (key == "WebKitShouldRespectImageOrientation")
-        prefs->shouldRespectImageOrientation = cppVariantToBool(value);
-    else if (key == "WebKitWebAudioEnabled") {
-        ASSERT(cppVariantToBool(value));
-    } else {
-        string message("Invalid name for preference: ");
-        message.append(key);
-        printErrorMessage(message);
-    }
-    m_shell->applyPreferences();
 }
 
 void DRTTestRunner::clearAllDatabases(const CppArgumentList& arguments, CppVariant* result)
@@ -1344,15 +1134,6 @@ void DRTTestRunner::setBackingScaleFactor(const CppArgumentList& arguments, CppV
     callbackArguments[0].set(arguments[1]);
     result->setNull();
     postTask(new InvokeCallbackTask(this, callbackArguments.release(), 1));
-}
-
-void DRTTestRunner::setPluginsEnabled(const CppArgumentList& arguments, CppVariant* result)
-{
-    if (arguments.size() > 0 && arguments[0].isBool()) {
-        m_shell->preferences()->pluginsEnabled = arguments[0].toBoolean();
-        m_shell->applyPreferences();
-    }
-    result->setNull();
 }
 
 void DRTTestRunner::setAudioData(const CppArgumentList& arguments, CppVariant* result)

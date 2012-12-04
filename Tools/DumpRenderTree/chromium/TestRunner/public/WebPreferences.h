@@ -31,14 +31,16 @@
 #ifndef WebPreferences_h
 #define WebPreferences_h
 
-#include "WebSettings.h"
-#include "platform/WebString.h"
-#include "platform/WebURL.h"
-#include <wtf/HashMap.h>
+#include "Platform/chromium/public/WebString.h"
+#include "Platform/chromium/public/WebURL.h"
+#include "WebKit/chromium/public/WebSettings.h"
+#include <map>
 
 namespace WebKit {
 class WebView;
 }
+
+namespace WebTestRunner {
 
 struct WebPreferences {
     WebKit::WebString standardFontFamily;
@@ -48,18 +50,8 @@ struct WebPreferences {
     WebKit::WebString cursiveFontFamily;
     WebKit::WebString fantasyFontFamily;
 
-    // UScriptCode uses -1 and 0 for UScriptInvalidCode and UScriptCommon.
-    // We need to use -2 and -3 for empty value and deleted value.
-    // (See WebCore::ScriptFontFamilyMap)
-    struct UScriptCodeHashTraits : WTF::GenericHashTraits<int> {
-        static const bool emptyValueIsZero = false;
-        static int emptyValue() { return -2; }
-        static void constructDeletedValue(int& slot) { slot = -3; }
-        static bool isDeletedValue(int value) { return value == -3; }
-    };
-
     // Map of UScriptCode to font such as USCRIPT_ARABIC to "My Arabic Font".
-    typedef HashMap<int, WebKit::WebString, DefaultHash<int>::Hash, UScriptCodeHashTraits> ScriptFontFamilyMap;
+    typedef std::map<int, WebKit::WebString> ScriptFontFamilyMap;
     ScriptFontFamilyMap standardFontMap;
     ScriptFontFamilyMap fixedFontMap;
     ScriptFontFamilyMap serifFontMap;
@@ -123,5 +115,7 @@ struct WebPreferences {
     void reset();
     void applyTo(WebKit::WebView*);
 };
+
+}
 
 #endif // WebPreferences_h
