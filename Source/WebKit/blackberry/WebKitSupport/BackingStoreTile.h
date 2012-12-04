@@ -72,7 +72,8 @@ class TileBuffer {
         TileBuffer(const Platform::IntSize&);
         ~TileBuffer();
         Platform::IntSize size() const;
-        Platform::IntRect rect() const;
+        Platform::IntRect surfaceRect() const;
+        Platform::IntRect pixelContentsRect() const;
 
         Platform::IntPoint lastRenderOrigin() const { return m_lastRenderOrigin; }
         void setLastRenderOrigin(const Platform::IntPoint& origin) { m_lastRenderOrigin = origin; }
@@ -80,7 +81,7 @@ class TileBuffer {
         void setLastRenderScale(double scale) { m_lastRenderScale = scale; }
 
         bool isRendered(double scale) const;
-        bool isRendered(const Platform::IntRectRegion& contents, double scale) const;
+        bool isRendered(const Platform::IntRectRegion& pixelContentsRegion, double scale) const;
         void clearRenderedRegion();
         void clearRenderedRegion(const Platform::IntRectRegion&);
         void addRenderedRegion(const Platform::IntRectRegion&);

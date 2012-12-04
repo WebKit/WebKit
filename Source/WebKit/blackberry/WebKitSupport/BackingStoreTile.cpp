@@ -53,19 +53,24 @@ Platform::IntSize TileBuffer::size() const
     return m_size;
 }
 
-Platform::IntRect TileBuffer::rect() const
+Platform::IntRect TileBuffer::surfaceRect() const
 {
     return Platform::IntRect(Platform::IntPoint::zero(), m_size);
 }
 
-bool TileBuffer::isRendered(double scale) const
+Platform::IntRect TileBuffer::pixelContentsRect() const
 {
-    return isRendered(rect(), scale);
+    return Platform::IntRect(m_lastRenderOrigin, m_size);
 }
 
-bool TileBuffer::isRendered(const Platform::IntRectRegion& contents, double scale) const
+bool TileBuffer::isRendered(double scale) const
 {
-    return m_lastRenderScale == scale && Platform::IntRectRegion::subtractRegions(contents, m_renderedRegion).isEmpty();
+    return isRendered(pixelContentsRect(), scale);
+}
+
+bool TileBuffer::isRendered(const Platform::IntRectRegion& pixelContentsRegion, double scale) const
+{
+    return m_lastRenderScale == scale && Platform::IntRectRegion::subtractRegions(pixelContentsRegion, m_renderedRegion).isEmpty();
 }
 
 void TileBuffer::clearRenderedRegion(const Platform::IntRectRegion& region)
@@ -90,7 +95,7 @@ Platform::IntRectRegion TileBuffer::renderedRegion() const
 
 Platform::IntRectRegion TileBuffer::notRenderedRegion() const
 {
-    return Platform::IntRectRegion::subtractRegions(rect(), renderedRegion());
+    return Platform::IntRectRegion::subtractRegions(pixelContentsRect(), m_renderedRegion);
 }
 
 Platform::Graphics::Buffer* TileBuffer::nativeBuffer() const

@@ -214,8 +214,7 @@ public:
     void paintDefaultBackground(const Platform::IntRect& dstRect, BlackBerry::Platform::ViewportAccessor*, bool flush);
     void blitOnIdle();
 
-    typedef std::pair<TileIndex, Platform::IntRect> TileRect;
-    Platform::IntRect blitTileRect(TileBuffer*, const TileRect&, const Platform::IntPoint&, const WebCore::TransformationMatrix&, BackingStoreGeometry*);
+    Platform::IntRect blitTileRect(TileBuffer*, const Platform::IntRect&, const Platform::IntPoint&, const WebCore::TransformationMatrix&, BackingStoreGeometry*);
 
 #if USE(ACCELERATED_COMPOSITING)
     // Use instead of blitVisibleContents() if you need more control over
@@ -238,11 +237,11 @@ public:
     void blitVerticalScrollbar();
 
     // Returns whether the tile index is currently visible or not.
-    bool isTileVisible(const TileIndex&) const;
+    bool isTileVisible(const TileIndex&, BackingStoreGeometry*) const;
     bool isTileVisible(const Platform::IntPoint&) const;
 
     // Returns a rect that is the union of all tiles that are visible.
-    Platform::IntRect visibleTilesRect() const;
+    Platform::IntRect visibleTilesRect(BackingStoreGeometry*) const;
 
     // Used to clip to the visible content for instance.
     Platform::IntRect tileVisibleContentsRect(const TileIndex&, BackingStoreGeometry*) const;
@@ -267,13 +266,9 @@ public:
     // Update an individual tile.
     void updateTile(const Platform::IntPoint& tileOrigin, bool immediate);
 
-    Platform::IntRect mapFromTilesToTransformedContents(const TileRect&) const;
-    Platform::IntRect mapFromTilesToTransformedContents(const TileRect&, BackingStoreGeometry*) const;
-
+    typedef std::pair<TileIndex, Platform::IntRect> TileRect;
     typedef WTF::Vector<TileRect> TileRectList;
-    TileRectList mapFromTransformedContentsToAbsoluteTileBoundaries(const Platform::IntRect&) const;
-    TileRectList mapFromTransformedContentsToTiles(const Platform::IntRect&) const;
-    TileRectList mapFromTransformedContentsToTiles(const Platform::IntRect&, BackingStoreGeometry*) const;
+    TileRectList mapFromPixelContentsToTiles(const Platform::IntRect&, BackingStoreGeometry*) const;
 
     void setTileMatrixNeedsUpdate() { m_tileMatrixNeedsUpdate = true; }
     void updateTileMatrixIfNeeded();
@@ -309,13 +304,12 @@ public:
     static int tileWidth();
     static int tileHeight();
     static Platform::IntSize tileSize();
-    static Platform::IntRect tileRect();
 
     // This takes transformed contents coordinates.
     void renderContents(BlackBerry::Platform::Graphics::Buffer*, const Platform::IntPoint& surfaceOffset, const Platform::IntRect& contentsRect) const;
     void renderContents(Platform::Graphics::Drawable* /*drawable*/, const Platform::IntRect& /*contentsRect*/, const Platform::IntSize& /*destinationSize*/) const;
 
-    void blitToWindow(const Platform::IntRect& dstRect, const BlackBerry::Platform::Graphics::Buffer* srcBuffer, const Platform::IntRect& srcRect, bool blend, unsigned char globalAlpha);
+    void blitToWindow(const Platform::IntRect& dstRect, const BlackBerry::Platform::Graphics::Buffer* srcBuffer, const Platform::IntRect& srcRect, BlackBerry::Platform::Graphics::BlendMode, unsigned char globalAlpha);
     void fillWindow(Platform::Graphics::FillPattern, const Platform::IntRect& dstRect, const Platform::IntPoint& contentsOrigin, double contentsScale);
 
     WebCore::Color webPageBackgroundColorUserInterfaceThread() const; // use WebSettings::backgroundColor() for the WebKit thread

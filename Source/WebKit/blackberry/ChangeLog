@@ -1,5 +1,53 @@
 2012-12-04  Jakob Petsovits  <jpetsovits@rim.com>
 
+        [BlackBerry] Store rendered regions in pixel contents coordinates.
+        https://bugs.webkit.org/show_bug.cgi?id=103930
+        PR 253496
+
+        Reviewed by Rob Buis.
+        Internally reviewed by Adam Treat.
+
+        Previously, the rendered region of a tile used to be
+        stored in coordinates relative to the tile origin.
+        This brings no benefits whatsoever and causes a lot
+        of unnecessary transformations, together with the
+        potential of incorrectly transforming rendered regions.
+
+        By storing the rendered region as what it is,
+        everything is more compact, easier to understand
+        and easier to use with other existing functionality.
+
+        * Api/BackingStore.cpp:
+        (BlackBerry::WebKit::BackingStorePrivate::clearAndUpdateTileOfNotRenderedRegion):
+        (BlackBerry::WebKit::BackingStorePrivate::isCurrentVisibleJob):
+        (BlackBerry::WebKit::BackingStorePrivate::render):
+        (BlackBerry::WebKit::BackingStorePrivate::renderVisibleContents):
+        (BlackBerry::WebKit::BackingStorePrivate::copyPreviousContentsToTileBuffer):
+        (BlackBerry::WebKit::BackingStorePrivate::blitVisibleContents):
+        (BlackBerry::WebKit::BackingStorePrivate::compositeContents):
+        (BlackBerry::WebKit::BackingStorePrivate::blitTileRect):
+        (BlackBerry::WebKit::BackingStorePrivate::isTileVisible):
+        (BlackBerry::WebKit::BackingStorePrivate::visibleTilesRect):
+        (BlackBerry::WebKit::BackingStorePrivate::tileVisibleContentsRect):
+        (BlackBerry::WebKit::BackingStorePrivate::tileContentsRect):
+        (BlackBerry::WebKit::BackingStorePrivate::updateTiles):
+        (BlackBerry::WebKit::BackingStorePrivate::updateTilesForScrollOrNotRenderedRegion):
+        (BlackBerry::WebKit::BackingStorePrivate::mapFromPixelContentsToTiles):
+        (BlackBerry::WebKit::BackingStorePrivate::transformChanged):
+        (BlackBerry::WebKit::BackingStorePrivate::blitToWindow):
+        * Api/BackingStore_p.h:
+        (BackingStorePrivate):
+        * WebKitSupport/BackingStoreTile.cpp:
+        (BlackBerry::WebKit::TileBuffer::surfaceRect):
+        (BlackBerry::WebKit::TileBuffer::pixelContentsRect):
+        (WebKit):
+        (BlackBerry::WebKit::TileBuffer::isRendered):
+        (BlackBerry::WebKit::TileBuffer::notRenderedRegion):
+        * WebKitSupport/BackingStoreTile.h:
+        (TileBuffer):
+
+2012-12-04  Jakob Petsovits  <jpetsovits@rim.com>
+
         [BlackBerry] Use updated API for backingstore tiles.
         https://bugs.webkit.org/show_bug.cgi?id=103970
         PR 212369
