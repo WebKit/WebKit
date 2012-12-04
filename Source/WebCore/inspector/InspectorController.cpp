@@ -55,6 +55,7 @@
 #include "InspectorFrontend.h"
 #include "InspectorFrontendClient.h"
 #include "InspectorIndexedDBAgent.h"
+#include "InspectorInputAgent.h"
 #include "InspectorInstrumentation.h"
 #include "InspectorMemoryAgent.h"
 #include "InspectorOverlay.h"
@@ -150,6 +151,8 @@ InspectorController::InspectorController(Page* page, InspectorClient* inspectorC
 #endif
 
     m_agents.append(InspectorCanvasAgent::create(m_instrumentingAgents.get(), m_state.get(), page, m_injectedScriptManager.get()));
+
+    m_agents.append(InspectorInputAgent::create(m_instrumentingAgents.get(), m_state.get(), page));
 
     ASSERT_ARG(inspectorClient, inspectorClient);
     m_injectedScriptManager->injectedScriptHost()->init(m_inspectorAgent

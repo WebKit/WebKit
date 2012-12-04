@@ -2880,6 +2880,8 @@
             'inspector/InspectorHistory.h',
             'inspector/InspectorIndexedDBAgent.cpp',
             'inspector/InspectorIndexedDBAgent.h',
+            'inspector/InspectorInputAgent.cpp',
+            'inspector/InspectorInputAgent.h',
             'inspector/InspectorInstrumentation.cpp',
             'inspector/InspectorInstrumentation.h',
             'inspector/InspectorMemoryAgent.cpp',

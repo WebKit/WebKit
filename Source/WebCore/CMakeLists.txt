@@ -1598,6 +1598,7 @@ SET(WebCore_SOURCES
     inspector/InspectorFrontendHost.cpp
     inspector/InspectorHistory.cpp
     inspector/InspectorIndexedDBAgent.cpp
+    inspector/InspectorInputAgent.cpp
     inspector/InspectorInstrumentation.cpp
     inspector/InspectorMemoryAgent.cpp
     inspector/InspectorOverlay.cpp

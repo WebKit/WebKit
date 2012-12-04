@@ -1,3 +1,20 @@
+2012-12-04  Ken Kania  <kkania@chromium.org>
+
+        Inspector: Introduce Input.dispatchKeyEvent and DOM.focus for typing simulation.
+        https://bugs.webkit.org/show_bug.cgi?id=103530
+
+        Reviewed by Yury Semikhatsky.
+
+        Input.dispatchKeyEvent simply calls EventHandler::keyEvent with the key event data
+        from the command parameters. The client will be responsible for providing proper
+        events to simulate desired typing behavior.
+        DOM.focus calls focus on a dom element.
+
+        * inspector-protocol/dom-focus-expected.txt: Added.
+        * inspector-protocol/dom-focus.html: Added.
+        * inspector-protocol/input/dispatchKeyEvent-expected.txt: Added.
+        * inspector-protocol/input/dispatchKeyEvent.html: Added.
+
 2012-12-04  Emil A Eklund  <eae@chromium.org>
 
         Unreviewed mathml rebaseline.

@@ -147,6 +147,7 @@ public:
     virtual void undo(ErrorString*);
     virtual void redo(ErrorString*);
     virtual void markUndoableState(ErrorString*);
+    virtual void focus(ErrorString*, int nodeId);
 
     void getEventListeners(Node*, Vector<EventListenerInfo>& listenersArray, bool includeAncestors);
 

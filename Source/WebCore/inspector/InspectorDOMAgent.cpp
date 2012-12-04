@@ -52,6 +52,7 @@
 #include "Document.h"
 #include "DocumentFragment.h"
 #include "DocumentType.h"
+#include "Element.h"
 #include "ElementShadow.h"
 #include "Event.h"
 #include "EventContext.h"
@@ -1156,17 +1157,29 @@ void InspectorDOMAgent::markUndoableState(ErrorString*)
     m_history->markUndoableState();
 }
 
-void InspectorDOMAgent::resolveNode(ErrorString* error, int nodeId, const String* const objectGroup, RefPtr<TypeBuilder::Runtime::RemoteObject>& result)
+void InspectorDOMAgent::focus(ErrorString* errorString, int nodeId)
+{
+    Element* element = assertElement(errorString, nodeId);
+    if (!element)
+        return;
+    if (!element->isFocusable()) {
+        *errorString = "Element is not focusable";
+        return;
+    }
+    element->focus();
+}
+
+void InspectorDOMAgent::resolveNode(ErrorString* errorString, int nodeId, const String* const objectGroup, RefPtr<TypeBuilder::Runtime::RemoteObject>& result)
 {
     String objectGroupName = objectGroup ? *objectGroup : "";
     Node* node = nodeForId(nodeId);
     if (!node) {
-        *error = "No node with given id found";
+        *errorString = "No node with given id found";
         return;
     }
     RefPtr<TypeBuilder::Runtime::RemoteObject> object = resolveNode(node, objectGroupName);
     if (!object) {
-        *error = "Node with given id does not belong to the document";
+        *errorString = "Node with given id does not belong to the document";
         return;
     }
     result = object;

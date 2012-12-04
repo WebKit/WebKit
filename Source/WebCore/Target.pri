@@ -772,6 +772,7 @@ SOURCES += \
     inspector/InspectorFrontendClientLocal.cpp \
     inspector/InspectorFrontendHost.cpp \
     inspector/InspectorHistory.cpp \
+    inspector/InspectorInputAgent.cpp \
     inspector/InspectorInstrumentation.cpp \
     inspector/InspectorMemoryAgent.cpp \
     inspector/InspectorOverlay.cpp \
