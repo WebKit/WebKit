@@ -29,9 +29,10 @@
 #if USE(ACCELERATED_COMPOSITING) && HAVE(GLX)
 
 #include "GLPlatformSurface.h"
-
+#if USE(GRAPHICS_SURFACE)
 #include <X11/extensions/Xcomposite.h>
 #include <X11/extensions/Xrender.h>
+#endif
 #include <wtf/Noncopyable.h>
 
 namespace WebCore {
@@ -105,7 +106,7 @@ public:
             m_VisualInfo = glXGetVisualFromFBConfig(display(), temp[i]);
             if (!m_VisualInfo)
                 continue;
-
+#if USE(GRAPHICS_SURFACE)
             if (m_supportsXRenderExtension) {
                 XRenderPictFormat* format = XRenderFindVisualFormat(display(), m_VisualInfo->visual);
                 if (format && format->direct.alphaMask > 0) {
@@ -114,6 +115,9 @@ public:
                     break;
                 }
             } else if (m_VisualInfo->depth == 32) {
+#else
+            if (m_VisualInfo->depth == 32) {
+#endif
                 selectedConfig = temp[i];
                 found = true;
             }
@@ -170,10 +174,10 @@ public:
                 GLX_DOUBLEBUFFER,  True,
                 None
             };
-
+#if USE(GRAPHICS_SURFACE)
             int eventBasep, errorBasep;
             m_supportsXRenderExtension = XRenderQueryExtension(display(), &eventBasep, &errorBasep);
-
+#endif
             m_surfaceContextfbConfig = createConfig(attributes);
         }
 
@@ -251,6 +255,7 @@ private:
     RefPtr<SharedX11Resources> m_sharedResources;
 };
 
+#if USE(GRAPHICS_SURFACE)
 class GLXTransportSurface : public GLXSurface {
     WTF_MAKE_NONCOPYABLE(GLXTransportSurface);
 
@@ -266,6 +271,7 @@ private:
     void initialize();
     void freeResources();
 };
+#endif
 
 class GLXPBuffer : public GLXSurface {
     WTF_MAKE_NONCOPYABLE(GLXPBuffer);

@@ -50,7 +50,7 @@ PassOwnPtr<GLPlatformSurface> GLPlatformSurface::createOffscreenSurface()
 
 PassOwnPtr<GLPlatformSurface> GLPlatformSurface::createTransportSurface()
 {
-#if HAVE(GLX)
+#if HAVE(GLX) && USE(GRAPHICS_SURFACE)
     OwnPtr<GLPlatformSurface> surface = adoptPtr(new GLXTransportSurface());
 
     if (surface->handle())

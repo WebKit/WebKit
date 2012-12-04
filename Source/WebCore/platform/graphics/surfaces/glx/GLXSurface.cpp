@@ -70,6 +70,7 @@ bool GLXSurface::isXRenderExtensionSupported()
     return m_sharedResources->isXRenderExtensionSupported();
 }
 
+#if USE(GRAPHICS_SURFACE)
 GLXTransportSurface::GLXTransportSurface()
     : GLXSurface()
 {
@@ -154,6 +155,7 @@ void GLXTransportSurface::freeResources()
     XDestroyWindow(display, m_drawable);
     m_drawable = 0;
 }
+#endif
 
 GLXPBuffer::GLXPBuffer()
     : GLXSurface()

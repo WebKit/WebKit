@@ -1,3 +1,22 @@
+2012-12-04  Kondapally Kalyan  <kalyan.kondapally@intel.com>
+
+        [EFL][WK2][AC] USE_GRAPHICS_SURFACE should be enabled only if Xcomposite and Xrender extensions are found.
+        https://bugs.webkit.org/show_bug.cgi?id=103710.
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        When using GLX back-end we are dependent on GLX support, Xcomposite and Xrender extensions.
+        In this case, GraphicsSurface usage depends on Xcomposite and Xrender extensions. 
+        USE_GRAPHICS_SURFACE should be enabled only if Xcomposite and Xrender extensions are found.
+
+        * platform/graphics/opengl/GLPlatformSurface.cpp:
+        (WebCore::GLPlatformSurface::createTransportSurface):
+        * platform/graphics/surfaces/glx/GLXSurface.cpp:
+        (WebCore):
+        * platform/graphics/surfaces/glx/GLXSurface.h:
+        (WebCore::SharedX11Resources::createConfig):
+        (SharedX11Resources):
+
 2012-12-04  Michael Pruett  <michael@68k.org>
 
         [JSC] Generate visitChildren() for uncustomized EventTarget interfaces
