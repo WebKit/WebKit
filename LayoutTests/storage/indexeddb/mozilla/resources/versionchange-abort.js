@@ -32,7 +32,6 @@ function prepareDatabase()
 
 function postAbort()
 {
-    debug("FIXME: Fails because of http://wkb.ug/102412");
     shouldBe("db.version", "0");
     shouldBe("db.objectStoreNames.length", "0");
 

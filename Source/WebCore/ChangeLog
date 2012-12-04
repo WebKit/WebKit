@@ -1,3 +1,34 @@
+2012-12-03  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: Correct database version after aborted upgrade
+        https://bugs.webkit.org/show_bug.cgi?id=103763
+
+        Reviewed by Tony Chang.
+
+        After an aborted "versionchange" transaction, the IDBDatabase would fetch a fresh snapshot
+        of the metadata from the back end. If the back end had already started a new "versionchange"
+        transaction the snapshot would be bogus. Instead, save a copy of the IDBDatabase's metadata
+        and roll back to that, as is done for IDBObjectStore.
+
+        Tests: storage/indexeddb/intversion-abort-in-initial-upgradeneeded.html
+               storage/indexeddb/mozilla/versionchange-abort.html
+               storage/indexeddb/unblocked-version-changes.html
+
+        * Modules/indexeddb/IDBDatabase.cpp:
+        (WebCore::IDBDatabase::IDBDatabase):
+        (WebCore::IDBDatabase::transactionCreated):
+        * Modules/indexeddb/IDBDatabase.h:
+        (WebCore::IDBDatabase::setMetadata): Let IDBOpenDBRequest and IDBTransaction tinker.
+        * Modules/indexeddb/IDBOpenDBRequest.cpp:
+        (WebCore::IDBOpenDBRequest::onUpgradeNeeded): Fetch new and compute old metadata.
+        (WebCore::IDBOpenDBRequest::onSuccess): Fetch new metadata, in case upgrade changed it.
+        * Modules/indexeddb/IDBTransaction.cpp:
+        (WebCore::IDBTransaction::create): Stash the old metadata, in case of rollback.
+        (WebCore::IDBTransaction::IDBTransaction):
+        (WebCore::IDBTransaction::onAbort): Revert the database as well as the stores.
+        * Modules/indexeddb/IDBTransaction.h:
+        (IDBTransaction):
+
 2012-12-03  Rafael Weinstein  <rafaelw@chromium.org>
 
         Implement HTMLTemplateElement

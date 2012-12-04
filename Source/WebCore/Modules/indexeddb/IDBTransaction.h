@@ -34,6 +34,7 @@
 #include "EventListener.h"
 #include "EventNames.h"
 #include "EventTarget.h"
+#include "IDBMetadata.h"
 #include "IDBTransactionCallbacks.h"
 #include "ScriptWrappable.h"
 #include <wtf/HashSet.h>
@@ -57,7 +58,7 @@ public:
     };
 
     static PassRefPtr<IDBTransaction> create(ScriptExecutionContext*, int64_t, PassRefPtr<IDBTransactionBackendInterface>, const Vector<String>& objectStoreNames, Mode, IDBDatabase*);
-    static PassRefPtr<IDBTransaction> create(ScriptExecutionContext*, int64_t, PassRefPtr<IDBTransactionBackendInterface>, const Vector<String>& objectStoreNames, Mode, IDBDatabase*, IDBOpenDBRequest*);
+    static PassRefPtr<IDBTransaction> create(ScriptExecutionContext*, int64_t, PassRefPtr<IDBTransactionBackendInterface>, IDBDatabase*, IDBOpenDBRequest*, const IDBDatabaseMetadata& previousMetadata);
     virtual ~IDBTransaction();
 
     static const AtomicString& modeReadOnly();
@@ -123,7 +124,7 @@ public:
     using RefCounted<IDBTransactionCallbacks>::deref;
 
 private:
-    IDBTransaction(ScriptExecutionContext*, int64_t, PassRefPtr<IDBTransactionBackendInterface>, const Vector<String>&, Mode, IDBDatabase*, IDBOpenDBRequest*);
+    IDBTransaction(ScriptExecutionContext*, int64_t, PassRefPtr<IDBTransactionBackendInterface>, const Vector<String>&, Mode, IDBDatabase*, IDBOpenDBRequest*, const IDBDatabaseMetadata&);
 
     void enqueueEvent(PassRefPtr<Event>);
     void closeOpenCursors();
@@ -166,6 +167,7 @@ private:
 
     typedef HashMap<RefPtr<IDBObjectStore>, IDBObjectStoreMetadata> IDBObjectStoreMetadataMap;
     IDBObjectStoreMetadataMap m_objectStoreCleanupMap;
+    IDBDatabaseMetadata m_previousMetadata;
 
     HashSet<IDBCursor*> m_openCursors;
 

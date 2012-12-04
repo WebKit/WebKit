@@ -14,11 +14,13 @@ request = indexedDB.open(dbname, 2)
 onUpgradeNeeded():
 db = request.result
 PASS db.version is 2
+transaction = request.transaction
 request = indexedDB.open(dbname, 3)
+transaction.abort()
 db.close()
 
 onError():
-FAIL db.version should be 0. Was 2.
+PASS db.version is 0
 
 onUpgradeNeeded2():
 db = request.result

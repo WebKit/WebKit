@@ -13,8 +13,7 @@ PASS db.objectStoreNames.length is 1
 index = objectStore.createIndex('bar', 'baz');
 PASS objectStore.indexNames.length is 1
 event.target.transaction.abort();
-FIXME: Fails because of http://wkb.ug/102412
-FAIL db.version should be 0 (of type number). Was  (of type string).
+PASS db.version is 0
 PASS db.objectStoreNames.length is 0
 PASS successfullyParsed is true
 

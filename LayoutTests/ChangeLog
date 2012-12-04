@@ -1,3 +1,20 @@
+2012-12-03  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: Correct database version after aborted upgrade
+        https://bugs.webkit.org/show_bug.cgi?id=103763
+
+        Reviewed by Tony Chang.
+
+        Update test expectations and tweak a test so it's testing what it claimed.
+
+        * storage/indexeddb/intversion-abort-in-initial-upgradeneeded-expected.txt:
+        * storage/indexeddb/mozilla/resources/versionchange-abort.js:
+        (postAbort):
+        * storage/indexeddb/mozilla/versionchange-abort-expected.txt:
+        * storage/indexeddb/resources/unblocked-version-changes.js:
+        (onUpgradeNeeded):
+        * storage/indexeddb/unblocked-version-changes-expected.txt:
+
 2012-12-03  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed. Gardening of Apple Windows port.

@@ -32,7 +32,12 @@
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 
-namespace WebCore { class IDBCallbacks; }
+namespace WebCore {
+
+class IDBCallbacks;
+class IDBDatabaseBackendInterface;
+
+} // namespace WebCore
 
 namespace WebKit {
 
@@ -57,7 +62,7 @@ public:
 
 private:
     RefPtr<WebCore::IDBCallbacks> m_callbacks;
-    bool m_didCreateDatabaseProxy;
+    RefPtr<WebCore::IDBDatabaseBackendInterface> m_databaseProxy;
 };
 
 } // namespace WebKit

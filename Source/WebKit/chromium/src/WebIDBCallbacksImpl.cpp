@@ -49,7 +49,6 @@ namespace WebKit {
 
 WebIDBCallbacksImpl::WebIDBCallbacksImpl(PassRefPtr<IDBCallbacks> callbacks)
     : m_callbacks(callbacks)
-    , m_didCreateDatabaseProxy(false)
 {
 }
 
@@ -74,8 +73,8 @@ void WebIDBCallbacksImpl::onSuccess(WebIDBCursor* cursor, const WebIDBKey& key, 
 
 void WebIDBCallbacksImpl::onSuccess(WebIDBDatabase* webKitInstance)
 {
-    if (m_didCreateDatabaseProxy) {
-        m_callbacks->onSuccess(IDBDatabaseBackendProxy::create(adoptPtr(static_cast<WebIDBDatabase*>(0))));
+    if (m_databaseProxy) {
+        m_callbacks->onSuccess(m_databaseProxy.release());
         return;
     }
     m_callbacks->onSuccess(IDBDatabaseBackendProxy::create(adoptPtr(webKitInstance)));
@@ -123,8 +122,8 @@ void WebIDBCallbacksImpl::onBlocked(long long oldVersion)
 
 void WebIDBCallbacksImpl::onUpgradeNeeded(long long oldVersion, WebIDBTransaction* transaction, WebIDBDatabase* database)
 {
-    m_didCreateDatabaseProxy = true;
-    m_callbacks->onUpgradeNeeded(oldVersion, IDBTransactionBackendProxy::create(adoptPtr(transaction)), IDBDatabaseBackendProxy::create(adoptPtr(database)));
+    m_databaseProxy = IDBDatabaseBackendProxy::create(adoptPtr(database));
+    m_callbacks->onUpgradeNeeded(oldVersion, IDBTransactionBackendProxy::create(adoptPtr(transaction)), m_databaseProxy);
 }
 
 } // namespace WebKit

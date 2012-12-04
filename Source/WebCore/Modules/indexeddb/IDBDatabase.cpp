@@ -68,7 +68,6 @@ IDBDatabase::IDBDatabase(ScriptExecutionContext* context, PassRefPtr<IDBDatabase
 {
     // We pass a reference of this object before it can be adopted.
     relaxAdoptionRequirement();
-    m_metadata = m_backend->metadata();
 }
 
 IDBDatabase::~IDBDatabase()
@@ -93,7 +92,6 @@ void IDBDatabase::transactionCreated(IDBTransaction* transaction)
     if (transaction->isVersionChange()) {
         ASSERT(!m_versionChangeTransaction);
         m_versionChangeTransaction = transaction;
-        m_metadata = m_backend->metadata();
     }
 }
 
@@ -106,7 +104,6 @@ void IDBDatabase::transactionFinished(IDBTransaction* transaction)
     if (transaction->isVersionChange()) {
         ASSERT(m_versionChangeTransaction == transaction);
         m_versionChangeTransaction = 0;
-        m_metadata = m_backend->metadata();
     }
 
     if (m_closePending && m_transactions.isEmpty())

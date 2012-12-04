@@ -55,6 +55,7 @@ public:
     static PassRefPtr<IDBDatabase> create(ScriptExecutionContext*, PassRefPtr<IDBDatabaseBackendInterface>, PassRefPtr<IDBDatabaseCallbacks>);
     ~IDBDatabase();
 
+    void setMetadata(const IDBDatabaseMetadata& metadata) { m_metadata = metadata; }
     void transactionCreated(IDBTransaction*);
     void transactionFinished(IDBTransaction*);
 
@@ -105,7 +106,6 @@ public:
 
 private:
     IDBDatabase(ScriptExecutionContext*, PassRefPtr<IDBDatabaseBackendInterface>, PassRefPtr<IDBDatabaseCallbacks>);
-
 
     // EventTarget
     virtual void refEventTarget() { ref(); }
