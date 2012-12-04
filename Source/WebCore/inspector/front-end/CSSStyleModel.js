@@ -800,7 +800,7 @@ WebInspector.CSSRule = function(payload, matchingSelectors)
     if (matchingSelectors)
         this.matchingSelectors = matchingSelectors;
     this.selectors = payload.selectorList.selectors;
-    this.selectorText = payload.selectorList.text;
+    this.selectorText = this.selectors.join(", ");
     this.selectorRange = payload.selectorList.range;
     this.sourceLine = payload.sourceLine;
     this.sourceURL = payload.sourceURL;

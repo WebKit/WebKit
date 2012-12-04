@@ -851,7 +851,6 @@ WebInspector.StylePropertiesSection = function(parentPane, styleRule, editable, 
 
     var selectorContainer = document.createElement("div");
     this._selectorElement = document.createElement("span");
-    this._selectorElement.addStyleClass("selector-matches");
     this._selectorElement.textContent = styleRule.selectorText;
     selectorContainer.appendChild(this._selectorElement);
 
@@ -984,6 +983,8 @@ WebInspector.StylePropertiesSection.prototype = {
 
     update: function(full)
     {
+        if (this.styleRule.selectorText)
+            this._selectorElement.textContent = this.styleRule.selectorText;
         if (full) {
             this.propertiesTreeOutline.removeChildren();
             this.populated = false;
@@ -1088,11 +1089,14 @@ WebInspector.StylePropertiesSection.prototype = {
         if (!rule)
             return;
 
-        var selectors = rule.selectors;
         var matchingSelectors = rule.matchingSelectors;
+        // .selector is rendered as non-affecting selector by default.
+        if (this.noAffect || matchingSelectors)
+            this._selectorElement.className = "selector";
         if (!matchingSelectors)
             return;
 
+        var selectors = rule.selectors;
         var fragment = document.createDocumentFragment();
         var currentMatch = 0;
         for (var i = 0, lastSelectorIndex = selectors.length - 1; i <= lastSelectorIndex ; ++i) {
@@ -1111,7 +1115,6 @@ WebInspector.StylePropertiesSection.prototype = {
                 fragment.appendChild(document.createTextNode(", "));
         }
 
-        this._selectorElement.className = "selector";
         this._selectorElement.removeChildren();
         this._selectorElement.appendChild(fragment);
     },
@@ -1289,6 +1292,8 @@ WebInspector.StylePropertiesSection.prototype = {
             return this._moveEditorFromSelector(moveDirection);
         }
 
+        var selectedNode = this._parentPane.node;
+
         function successCallback(newRule, doesAffectSelectedNode)
         {
             if (!doesAffectSelectedNode) {
@@ -1302,13 +1307,20 @@ WebInspector.StylePropertiesSection.prototype = {
             this.rule = newRule;
             this.styleRule = { section: this, style: newRule.style, selectorText: newRule.selectorText, media: newRule.media, sourceURL: newRule.sourceURL, rule: newRule };
 
-            this._parentPane.update();
+            this._parentPane.update(selectedNode);
 
-            this._moveEditorFromSelector(moveDirection);
+            finishOperationAndMoveEditor.call(this, moveDirection);
         }
 
-        var selectedNode = this._parentPane.node;
-        WebInspector.cssModel.setRuleSelector(this.rule.id, selectedNode ? selectedNode.id : 0, newContent, successCallback.bind(this), this._moveEditorFromSelector.bind(this, moveDirection));
+        function finishOperationAndMoveEditor(direction)
+        {
+            delete this._parentPane._userOperation;
+            this._moveEditorFromSelector(direction);
+        }
+
+        // This gets deleted in finishOperationAndMoveEditor(), which is called both on success and failure.
+        this._parentPane._userOperation = true;
+        WebInspector.cssModel.setRuleSelector(this.rule.id, selectedNode ? selectedNode.id : 0, newContent, successCallback.bind(this), finishOperationAndMoveEditor.bind(this, moveDirection));
     },
 
     editingSelectorCancelled: function()
@@ -1489,15 +1501,19 @@ WebInspector.BlankStylePropertiesSection.prototype = {
             if (this.element.parentElement) // Might have been detached already.
                 this._moveEditorFromSelector(moveDirection);
 
+            this._markSelectorMatches();
             delete this._parentPane._userOperation;
         }
 
+        if (newContent)
+            newContent = newContent.trim();
         this._parentPane._userOperation = true;
         WebInspector.cssModel.addRule(this.pane.node.id, newContent, successCallback.bind(this), this.editingSelectorCancelled.bind(this));
     },
 
     editingSelectorCancelled: function()
     {
+        delete this._parentPane._userOperation;
         if (!this.isBlank) {
             WebInspector.StylePropertiesSection.prototype.editingSelectorCancelled.call(this);
             return;
