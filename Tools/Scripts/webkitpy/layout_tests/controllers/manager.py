@@ -326,8 +326,7 @@ class Manager(object):
         if self._options.iterations > 1:
             self._test_names = self._test_names * self._options.iterations
 
-        iterations = self._options.repeat_each * self._options.iterations
-        summary = ResultSummary(self._expectations, set(self._test_names), iterations)
+        summary = ResultSummary(self._expectations, len(self._test_names))
         for test_name in set(tests_to_skip):
             result = test_results.TestResult(test_name)
             result.type = test_expectations.SKIP
@@ -419,7 +418,7 @@ class Manager(object):
                 _log.info('')
                 _log.info("Retrying %d unexpected failure(s) ..." % len(failures))
                 _log.info('')
-                retry_summary = self._run_tests(failures, ResultSummary(self._expectations, failures, 1), 1, retrying=True)
+                retry_summary = self._run_tests(failures, ResultSummary(self._expectations, len(failures)), 1, retrying=True)
             else:
                 retry_summary = None
         finally:

@@ -99,7 +99,7 @@ class LayoutTestRunnerTests(unittest.TestCase):
         return LockCheckingRunner(port, options, FakePrinter(), self, True)
 
     def _result_summary(self, runner, tests):
-        return ResultSummary(TestExpectations(runner._port, tests), tests, 1)
+        return ResultSummary(TestExpectations(runner._port, tests), len(tests))
 
     def _run_tests(self, runner, tests):
         test_inputs = [TestInput(test, 6000) for test in tests]
@@ -152,13 +152,13 @@ class LayoutTestRunnerTests(unittest.TestCase):
         expectations = TestExpectations(runner._port, tests=[test])
         runner._expectations = expectations
 
-        result_summary = ResultSummary(expectations, [test], 1)
+        result_summary = ResultSummary(expectations, 1)
         result = TestResult(test_name=test, failures=[test_failures.FailureReftestMismatchDidNotOccur()], reftest_type=['!='])
         runner._update_summary_with_result(result_summary, result)
         self.assertEqual(1, result_summary.expected)
         self.assertEqual(0, result_summary.unexpected)
 
-        result_summary = ResultSummary(expectations, [test], 1)
+        result_summary = ResultSummary(expectations, 1)
         result = TestResult(test_name=test, failures=[], reftest_type=['=='])
         runner._update_summary_with_result(result_summary, result)
         self.assertEqual(0, result_summary.expected)

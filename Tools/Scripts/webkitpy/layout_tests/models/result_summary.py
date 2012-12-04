@@ -31,8 +31,8 @@ from webkitpy.layout_tests.models.test_expectations import TestExpectations, SKI
 
 
 class ResultSummary(object):
-    def __init__(self, expectations, test_files, iterations):
-        self.total = len(test_files) * iterations
+    def __init__(self, expectations, num_tests):
+        self.total = num_tests
         self.remaining = self.total
         self.expectations = expectations
         self.expected = 0

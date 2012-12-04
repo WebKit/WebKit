@@ -99,7 +99,7 @@ class  Testprinter(unittest.TestCase):
         port.test_expectations_overrides = lambda: None
         expectations = test_expectations.TestExpectations(self._port, test_names)
 
-        rs = result_summary.ResultSummary(expectations, test_names, 1)
+        rs = result_summary.ResultSummary(expectations, len(test_names))
         return test_names, rs, expectations
 
     def test_configure_and_cleanup(self):

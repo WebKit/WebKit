@@ -1,5 +1,31 @@
 2012-12-04  Dirk Pranke  <dpranke@chromium.org>
 
+        nrwt: store only the total number of tests in the result summary
+        https://bugs.webkit.org/show_bug.cgi?id=103963
+
+        Reviewed by Ryosuke Niwa.
+
+        The result summary only needs the total number of tests that will
+        be run (including repetitions) in order to provide the correct stats;
+        it doesn't actually need to know how many unique tests there are, or
+        or how many repetitions there are.
+
+        * Scripts/webkitpy/layout_tests/controllers/layout_test_runner_unittest.py:
+        (LayoutTestRunnerTests._result_summary):
+        (LayoutTestRunnerTests.test_update_summary_with_result):
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        (Manager._prepare_lists):
+        (Manager.run):
+        * Scripts/webkitpy/layout_tests/controllers/manager_unittest.py:
+        (ManagerTest.test_look_for_new_crash_logs):
+        (ResultSummaryTest.get_result_summary):
+        * Scripts/webkitpy/layout_tests/models/result_summary.py:
+        (ResultSummary.__init__):
+        * Scripts/webkitpy/layout_tests/views/printing_unittest.py:
+        (Testprinter.get_result_summary):
+
+2012-12-04  Dirk Pranke  <dpranke@chromium.org>
+
         nrwt: do less work when ctrl-c'ed
         https://bugs.webkit.org/show_bug.cgi?id=103961
 

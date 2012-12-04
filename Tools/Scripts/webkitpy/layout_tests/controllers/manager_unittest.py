@@ -90,7 +90,7 @@ class ManagerTest(unittest.TestCase):
         port = host.port_factory.get('test-mac-leopard')
         tests = ['failures/expected/crash.html']
         expectations = test_expectations.TestExpectations(port, tests)
-        rs = ResultSummary(expectations, tests, 1)
+        rs = ResultSummary(expectations, len(tests))
         manager = get_manager_with_tests(tests)
         manager._look_for_new_crash_logs(rs, time.time())
 
@@ -141,7 +141,7 @@ class ResultSummaryTest(unittest.TestCase):
     def get_result_summary(self, port, test_names, expectations_str):
         port.expectations_dict = lambda: {'': expectations_str}
         expectations = test_expectations.TestExpectations(port, test_names)
-        return test_names, ResultSummary(expectations, test_names, 1), expectations
+        return test_names, ResultSummary(expectations, len(test_names)), expectations
 
     # FIXME: Use this to test more of summarize_results. This was moved from printing_unittest.py.
     def summarized_results(self, port, expected, passing, flaky, extra_tests=[], extra_expectations=None):
