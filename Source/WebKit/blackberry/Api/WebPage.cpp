@@ -3513,8 +3513,12 @@ void WebPagePrivate::resumeBackingStore()
     if (!m_backingStore->d->isActive()
         || shouldResetTilesWhenShown()
         || directRendering) {
-        // We need to reset all tiles so that we do not show any tiles whose content may
-        // have been replaced by another WebPage instance (i.e. another tab).
+        // Let the previously active backingstore release its tile buffers so
+        // the new WebPage instance (e.g. another tab) can render its contents.
+        WebPage* currentOwner = BackingStorePrivate::currentBackingStoreOwner();
+        if (currentOwner && currentOwner != m_webPage)
+            BackingStorePrivate::currentBackingStoreOwner()->d->m_backingStore->d->resetTiles();
+
         BackingStorePrivate::setCurrentBackingStoreOwner(m_webPage);
 
         // If we're OpenGL compositing, switching to accel comp drawing of the root layer

@@ -1,3 +1,30 @@
+2012-12-04  Jakob Petsovits  <jpetsovits@rim.com>
+
+        [BlackBerry] On taking over a backingstore, reset the previous page's tiles.
+        https://bugs.webkit.org/show_bug.cgi?id=103969
+        RIM PR 253496
+
+        Reviewed by George Staikos.
+
+        With buffers being explicitly reclaimed from backingstore
+        geometries, we have to make sure that the previously
+        active backingstore releases its front buffers for use
+        in the newly active one.
+
+        Previously, this clearing of backingstore tiles occurred
+        after the dormant backingstore is reactivated,
+        the backingstore active in the meantime would just use
+        the back buffer anyway and leave the dormant one with
+        dangling pointers that would just not be shown.
+        Now that we have a counted list of back buffers,
+        we need to be explicit about this thing upfront.
+
+        Fixes a crash that would occur after switching ownership
+        of the backingstore to a different WebPage.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::resumeBackingStore):
+
 2012-12-03  Jakob Petsovits  <jpetsovits@rim.com>
 
         [BlackBerry] Refactor the backingstore to swap full geometries.
