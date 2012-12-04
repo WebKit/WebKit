@@ -22,12 +22,19 @@ PerfTestRunner.now = function () {
 
 PerfTestRunner.storeHeapResults = function () { }
 
-var printStatistics = PerfTestRunner.printStatistics;
-PerfTestRunner.printStatistics = function (statistics, title) {
-    if (statistics.unit == 'bytes')
+var logStatistics = PerfTestRunner.logStatistics;
+PerfTestRunner.logStatistics = function (statistics, unit, title) {
+    if (unit == 'bytes')
         return;
-    statistics.stdev = statistics.stdev.toPrecision(3);
-    return printStatistics.call(PerfTestRunner, statistics, title);
+    return logStatistics.call(PerfTestRunner, statistics, unit, title);
+}
+
+var computeStatistics = PerfTestRunner.computeStatistics;
+PerfTestRunner.computeStatistics = function (values, unit) {
+    var statistics = computeStatistics(values, unit);
+    if (statistics.stdev)
+        statistics.stdev = statistics.stdev.toPrecision(3);
+    return statistics;
 }
 
 PerfTestRunner.measureRunsPerSecond({

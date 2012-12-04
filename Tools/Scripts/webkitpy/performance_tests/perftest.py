@@ -126,7 +126,10 @@ class PerfTest(object):
         re.compile(re.escape("""frame "<!--framePath //<!--frame0-->-->" - has 1 onunload handler(s)""")),
         re.compile(re.escape("""frame "<!--framePath //<!--frame0-->/<!--frame0-->-->" - has 1 onunload handler(s)""")),
         # Following is for html5.html
-        re.compile(re.escape("""Blocked access to external URL http://www.whatwg.org/specs/web-apps/current-work/"""))]
+        re.compile(re.escape("""Blocked access to external URL http://www.whatwg.org/specs/web-apps/current-work/""")),
+        # Dromaeo reports values for subtests. Ignore them for now.
+        re.compile(r'(?P<name>.+): \[(?P<values>(\d+(.\d+)?,\s+)*\d+(.\d+)?)\]'),
+    ]
 
     def _should_ignore_line_in_parser_test_result(self, line):
         return self._should_ignore_line(self._lines_to_ignore_in_parser_result, line)

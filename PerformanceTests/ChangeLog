@@ -1,3 +1,43 @@
+2012-12-03  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Dromaeo should report individual test result
+        https://bugs.webkit.org/show_bug.cgi?id=99800
+
+        Reviewed by Eric Seidel.
+
+        Made one small modification to Droameo's webrunner.js so that it reports individual runs/s values
+        for each subtest. This allows us to compute the aggregated run/s for each iteration like other
+        performance tests.
+
+        Also stop measuring memory usage in Dromaeo tests because some Dromaeo tests (e.g. jslib-modify-jquery)
+        have unrealistic memory usage, and measuring them at the time of teardown doesn't make much sense.
+
+        * Animation/balls.html: Fixed typo: measureValueAync.
+        * Dromaeo/resources/dromaeo/web/webrunner.js:
+
+        * Dromaeo/resources/dromaeorunner.js:
+        (DRT.setup): Call prepareToMeasureValuesAsync so that DRT.teardown can use meausreValueAsync, and log
+        "Running 5 times". Since the log container will be inserted before iframe, we need to explicitly insert
+        the iframe as the first child of the body element to avoid logs from affecting the iframe's position.
+        Also specify the number of iterations by calling PerfTestRunner.iterationCount() so that we may adjust
+        the number of iterations in PerfTestRunner.
+
+        (DRT.progress): Log individual measurement for each subtest.
+        (DRT.teardown): Compute the aggregated result for each iteration, and log them using measureValueAsync.
+
+        * resources/runner.js:
+        (PerfTestRunner.logStatistics): Merged printStatistics since it's no longer needed after r131638.
+        (PerfTestRunner): Removed getAndPrintMemoryStatistics since it was used only in Dromaeo tests but
+        we no longer measure memory usage in Dromaeo tests.
+
+        (start): Increment completedRuns from -1 to 0 for Dromaeo tests where we don't want to ignore the initial
+        measurement. Note that ignoreWarmUpAndLog ignores the measurements for which completedRuns is negative.
+
+        (ignoreWarmUpAndLog): We don't measure memory usage in Dromaeo tests. See above.
+        (PerfTestRunner.iterationCount): Added. This abstraction allows us to auto-adjust the number of iterations from
+        run-perf-tests in near future.
+        (PerfTestRunner.measureValueAsync): Renamed from measureValueAync.
+
 2012-11-29  Shinya Kawanaka  <shinyak@chromium.org>
 
         [Shadow] Performance tests of distribution for changing select attribute

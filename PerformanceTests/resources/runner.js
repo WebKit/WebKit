@@ -89,10 +89,6 @@ if (window.testRunner) {
 
     PerfTestRunner.logStatistics = function (values, unit, title) {
         var statistics = this.computeStatistics(values, unit);
-        this.printStatistics(statistics, title);
-    }
-
-    PerfTestRunner.printStatistics = function (statistics, title) {
         this.log("");
         this.log(title);
         if (statistics.values)
@@ -104,23 +100,13 @@ if (window.testRunner) {
         this.log("max " + statistics.max + " " + statistics.unit);
     }
 
-    PerfTestRunner.getUsedMallocHeap = function() {
+    function getUsedMallocHeap() {
         var stats = window.internals.mallocStatistics();
         return stats.committedVMBytes - stats.freeListBytes;
     }
 
-    PerfTestRunner.getUsedJSHeap = function() {
+    function getUsedJSHeap() {
         return console.memory.usedJSHeapSize;
-    }
-
-    PerfTestRunner.getAndPrintMemoryStatistics = function() {
-        if (!window.internals)
-            return;
-        var jsMemoryStats = PerfTestRunner.computeStatistics([PerfTestRunner.getUsedJSHeap()], "bytes");
-        PerfTestRunner.printStatistics(jsMemoryStats, "JS Heap:");
-
-        var mallocMemoryStats = PerfTestRunner.computeStatistics([PerfTestRunner.getUsedMallocHeap()], "bytes");
-        PerfTestRunner.printStatistics(mallocMemoryStats, "Malloc:");
     }
 
     PerfTestRunner.gc = function () {
@@ -170,6 +156,8 @@ if (window.testRunner) {
         iterationCount = test.iterationCount || 20;
         logLines = window.testRunner ? [] : null;
         PerfTestRunner.log("Running " + iterationCount + " times");
+        if (test.doNotIgnoreInitialRun)
+            completedIterations++;
         if (runner)
             scheduleNextRun(runner);
     }
@@ -206,9 +194,9 @@ if (window.testRunner) {
             PerfTestRunner.log("Ignoring warm-up run (" + labeledResult + ")");
         else {
             results.push(measuredValue);
-            if (window.internals) {
-                jsHeapResults.push(PerfTestRunner.getUsedJSHeap());
-                mallocHeapResults.push(PerfTestRunner.getUsedMallocHeap());
+            if (window.internals && !currentTest.doNotMeasureMemoryUsage) {
+                jsHeapResults.push(getUsedJSHeap());
+                mallocHeapResults.push(getUsedMallocHeap());
             }
             PerfTestRunner.log(labeledResult);
         }
@@ -235,12 +223,16 @@ if (window.testRunner) {
             testRunner.notifyDone();
     }
 
+    PerfTestRunner.iterationCount = function () {
+        return iterationCount;
+    }
+
     PerfTestRunner.prepareToMeasureValuesAsync = function (test) {
         PerfTestRunner.unit = test.unit;
         start(test);
     }
 
-    PerfTestRunner.measureValueAync = function (measuredValue) {
+    PerfTestRunner.measureValueAsync = function (measuredValue) {
         completedIterations++;
 
         try {

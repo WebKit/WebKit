@@ -2,32 +2,13 @@
      var DRT  = {
          baseURL: "./resources/dromaeo/web/index.html",
 
-         computeScores: function (results) {
-             var mean = 0, min = 0, max = 0, stdev = 0, varsum = 0;
-
-             for (var i = 0; i < results.length; ++i) {
-                 var item = results[i];
-                 mean += item.mean;
-                 min += item.min;
-                 max += item.max;
-                 varsum += item.deviation * item.deviation;
-             }
-
-             return {
-                 median: 0,
-                 mean: mean,
-                 min: min,
-                 max: max,
-                 stdev: Math.sqrt(varsum),
-                 unit: "runs/s"
-             };
-         },
-
          setup: function(testName) {
+             PerfTestRunner.prepareToMeasureValuesAsync({iterationCount: 5, doNotMeasureMemoryUsage: true, doNotIgnoreInitialRun: true, unit: 'runs/s'});
+
              var iframe = document.createElement("iframe");
-             var url = DRT.baseURL + "?" + testName;
+             var url = DRT.baseURL + "?" + testName + '&numTests=' + PerfTestRunner.iterationCount();
              iframe.setAttribute("src", url);
-             document.body.appendChild(iframe);
+             document.body.insertBefore(iframe, document.body.firstChild);
              iframe.addEventListener(
                  "load", function() {
                      DRT.targetDocument = iframe.contentDocument;
@@ -56,18 +37,25 @@
          },
 
          progress: function(message) {
-             if (message.status.score)
-                 DRT.log(message.status.score.mean);
+             var score = message.status.score;
+             if (score)
+                 DRT.log(score.name + ': [' + score.times.join(', ') + ']');
          },
 
          teardown: function(data) {
-             var scores = DRT.computeScores(data.result);
-             PerfTestRunner.printStatistics(scores, "Time:");
-             PerfTestRunner.getAndPrintMemoryStatistics();
-             window.setTimeout(function() {
-                 if (window.testRunner)
-                     testRunner.notifyDone();
-             }, 0);
+             PerfTestRunner.log('');
+
+             var tests = data.result;
+             var times = [];
+             for (var i = 0; i < tests.length; ++i) {
+                 for (var j = 0; j < tests[i].times.length; ++j) {
+                     var runsPerSecond = tests[i].times[j];
+                     times[j] = (times[j] || 0) + 1 / runsPerSecond;
+                 }
+             }
+
+             for (var i = 0; i < times.length; ++i)
+                 PerfTestRunner.measureValueAsync(1 / times[i]);
          },
 
          targetDelegateOf: function(functionName) {

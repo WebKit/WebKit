@@ -117,6 +117,33 @@ class MainTest(unittest.TestCase):
         for line in non_ignored_lines:
             self.assertFalse(test._should_ignore_line_in_stderr(line))
 
+    def test_parse_output_with_subtests(self):
+        output = DriverOutput('\n'.join([
+            'Running 20 times',
+            'some test: [1, 2, 3, 4, 5]',
+            'other test = else: [6, 7, 8, 9, 10]',
+            '',
+            'Time:',
+            'values 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19 ms',
+            'avg 1100 ms',
+            'median 1101 ms',
+            'stdev 11 ms',
+            'min 1080 ms',
+            'max 1120 ms']), image=None, image_hash=None, audio=None)
+        output_capture = OutputCapture()
+        output_capture.capture_output()
+        try:
+            test = PerfTest(MockPort(), 'some-test', '/path/some-dir/some-test')
+            self.assertEqual(test.parse_output(output),
+                {'some-test': {'avg': 1100.0, 'median': 1101.0, 'min': 1080.0, 'max': 1120.0, 'stdev': 11.0, 'unit': 'ms',
+                    'values': [i for i in range(1, 20)]}})
+        finally:
+            pass
+            actual_stdout, actual_stderr, actual_logs = output_capture.restore_output()
+        self.assertEqual(actual_stdout, '')
+        self.assertEqual(actual_stderr, '')
+        self.assertEqual(actual_logs, 'RESULT some-test= 1100.0 ms\nmedian= 1101.0 ms, stdev= 11.0 ms, min= 1080.0 ms, max= 1120.0 ms\n')
+
 
 class TestPageLoadingPerfTest(unittest.TestCase):
     class MockDriver(object):

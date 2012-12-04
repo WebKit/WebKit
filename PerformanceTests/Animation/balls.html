@@ -140,7 +140,7 @@
             var frameRateVal = FRAMES_PER_TIMER_READING * 1000 / ((currTime - frameTimes[0]) / (frameTimes.length - 1));
 
             if (!isNaN(frameRateVal))
-                PerfTestRunner.measureValueAync(frameRateVal);
+                PerfTestRunner.measureValueAsync(frameRateVal);
         }
     }
 

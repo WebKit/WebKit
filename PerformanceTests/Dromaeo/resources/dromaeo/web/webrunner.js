@@ -139,6 +139,7 @@
                                         data.version = testVersions[curID];
                                         data.name = title;
                                         data.scale = num;
+                                        data.times = times;
                                                                 
                                         logTest(data);
                         

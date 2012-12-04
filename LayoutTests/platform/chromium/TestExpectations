@@ -249,9 +249,6 @@ platform/qt/fast/forms [ WontFix ]
 inspector/styles/vendor-prefixes.html [ WontFix ]
 fast/css/apple-prefix.html [ WontFix ]
 
-# Perf tests aren't loaded on the chromium bots, so skip testing the framework
-fast/harness/perftests [ WontFix ]
-
 # Perf tests are really slow in debug builds and there are few benefits in
 # running them.
 [ Debug ] perf [ WontFix ]
