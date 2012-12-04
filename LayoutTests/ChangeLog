@@ -1,5 +1,23 @@
 2012-12-04  Emil A Eklund  <eae@chromium.org>
 
+        Unreviewed mathml rebaseline.
+
+        * platform/chromium-linux-x86/mathml/presentation/sub-expected.txt: Removed.
+        * platform/chromium-mac-lion/mathml/presentation/sub-expected.txt: Removed.
+        * platform/chromium/mathml/presentation/sub-expected.txt: Removed.
+        * platform/efl-wk1/mathml: Added.
+        * platform/efl-wk1/mathml/presentation: Added.
+        * platform/efl-wk1/mathml/presentation/roots-expected.txt: Added.
+        * platform/efl-wk1/mathml/presentation/row-alignment-expected.txt: Added.
+        * platform/efl-wk1/mathml/presentation/sub-expected.txt: Added.
+        * platform/efl-wk1/mathml/presentation/subsup-expected.txt: Added.
+        * platform/efl/mathml/presentation/roots-expected.txt: Removed.
+        * platform/efl/mathml/presentation/row-alignment-expected.txt: Removed.
+        * platform/efl/mathml/presentation/sub-expected.txt: Removed.
+        * platform/efl/mathml/presentation/subsup-expected.txt: Removed.
+
+2012-12-04  Emil A Eklund  <eae@chromium.org>
+
         Unreviewed, skip new broken tests in chromium.
 
         * platform/chromium/TestExpectations:
