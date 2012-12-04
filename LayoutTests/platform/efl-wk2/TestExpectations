@@ -197,9 +197,6 @@ webkit.org/b/103399 [ Debug ] fast/forms/basic-buttons.html [ Failure Pass ]
 webkit.org/b/103400 [ Debug ] compositing/overflow/content-gains-scrollbars.html [ Crash Pass ]
 webkit.org/b/103400 [ Debug ] compositing/overflow/content-loses-scrollbars.html [ Crash Pass ]
 
-# Easily reproducable flakiness on EFL WK2 only
-webkit.org/b/103882 css3/device-adapt/viewport-width-not-affecting-next-page.html [ Failure Pass ]
-
 webkit.org/b/103883 css3/selectors3/html/css3-modsel-1.html [ Failure Pass ]
 webkit.org/b/103883 css3/selectors3/xml/css3-modsel-1.xml [ Failure Pass ]
 webkit.org/b/103883 css3/selectors3/xhtml/css3-modsel-1.xml [ Failure Pass ]
