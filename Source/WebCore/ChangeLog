@@ -1,3 +1,40 @@
+2012-12-03  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        [CSS Grid Layout] Support paddings and margins on grid items
+        https://bugs.webkit.org/show_bug.cgi?id=103677
+
+        Reviewed by Tony Chang.
+
+        After bug 102968, we properly resolve grid items' width and height against the
+        grid areas' sizes. However we didn't check for paddings and margins, which is
+        what this change fixes..
+
+        Test: fast/css-grid-layout/percent-padding-margin-resolution-grid-item.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::computeLogicalWidthInRegion):
+        Don't stretch the end margin to match the containing block's extent.
+        The fix is similar to what was done for flex-box in bug 65887.
+
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::computeStickyPositionConstraints):
+        Added a comment about not using containingBlockLogicalWidthForContent.
+
+        (WebCore::RenderBoxModelObject::computedCSSPaddingTop):
+        (WebCore::RenderBoxModelObject::computedCSSPaddingBottom):
+        (WebCore::RenderBoxModelObject::computedCSSPaddingLeft):
+        (WebCore::RenderBoxModelObject::computedCSSPaddingRight):
+        (WebCore::RenderBoxModelObject::computedCSSPaddingBefore):
+        (WebCore::RenderBoxModelObject::computedCSSPaddingAfter):
+        (WebCore::RenderBoxModelObject::computedCSSPaddingStart):
+        (WebCore::RenderBoxModelObject::computedCSSPaddingEnd):
+        Updated these functions to use containingBlockLogicalWidthForContent.
+
+        * rendering/RenderGrid.h:
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::isRenderGrid):
+        Added isRenderGrid.
+
 2012-12-03  Scott Violet  <sky@chromium.org>
 
         [chromium] Remove linux theme related files and switch to default

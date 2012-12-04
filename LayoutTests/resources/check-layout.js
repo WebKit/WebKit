@@ -77,6 +77,78 @@ function checkExpectedValues(node, failures)
         if (actualDisplay != expectedDisplay)
             failures.push("Expected " + expectedDisplay + " for display, but got " + actualDisplay + ". ");
     }
+
+    var expectedPaddingTop = node.getAttribute && node.getAttribute("data-expected-padding-top");
+    if (expectedPaddingTop) {
+        var actualPaddingTop = getComputedStyle(node).paddingTop;
+        // Trim the unit "px" from the output.
+        actualPaddingTop = actualPaddingTop.substring(0, actualPaddingTop.length - 2);
+        if (actualPaddingTop != expectedPaddingTop)
+            failures.push("Expected " + expectedPaddingTop + " for padding-top, but got " + actualPaddingTop + ". ");
+    }
+
+    var expectedPaddingBottom = node.getAttribute && node.getAttribute("data-expected-padding-bottom");
+    if (expectedPaddingBottom) {
+        var actualPaddingBottom = getComputedStyle(node).paddingBottom;
+        // Trim the unit "px" from the output.
+        actualPaddingBottom = actualPaddingBottom.substring(0, actualPaddingBottom.length - 2);
+        if (actualPaddingBottom != expectedPaddingBottom)
+            failures.push("Expected " + expectedPaddingBottom + " for padding-bottom, but got " + actualPaddingBottom + ". ");
+    }
+
+    var expectedPaddingLeft = node.getAttribute && node.getAttribute("data-expected-padding-left");
+    if (expectedPaddingLeft) {
+        var actualPaddingLeft = getComputedStyle(node).paddingLeft;
+        // Trim the unit "px" from the output.
+        actualPaddingLeft = actualPaddingLeft.substring(0, actualPaddingLeft.length - 2);
+        if (actualPaddingLeft != expectedPaddingLeft)
+            failures.push("Expected " + expectedPaddingLeft + " for padding-left, but got " + actualPaddingLeft + ". ");
+    }
+
+    var expectedPaddingRight = node.getAttribute && node.getAttribute("data-expected-padding-right");
+    if (expectedPaddingRight) {
+        var actualPaddingRight = getComputedStyle(node).paddingRight;
+        // Trim the unit "px" from the output.
+        actualPaddingRight = actualPaddingRight.substring(0, actualPaddingRight.length - 2);
+        if (actualPaddingRight != expectedPaddingRight)
+            failures.push("Expected " + expectedPaddingRight + " for padding-right, but got " + actualPaddingRight + ". ");
+    }
+
+    var expectedMarginTop = node.getAttribute && node.getAttribute("data-expected-margin-top");
+    if (expectedMarginTop) {
+        var actualMarginTop = getComputedStyle(node).marginTop;
+        // Trim the unit "px" from the output.
+        actualMarginTop = actualMarginTop.substring(0, actualMarginTop.length - 2);
+        if (actualMarginTop != expectedMarginTop)
+            failures.push("Expected " + expectedMarginTop + " for margin-top, but got " + actualMarginTop + ". ");
+    }
+
+    var expectedMarginBottom = node.getAttribute && node.getAttribute("data-expected-margin-bottom");
+    if (expectedMarginBottom) {
+        var actualMarginBottom = getComputedStyle(node).marginBottom;
+        // Trim the unit "px" from the output.
+        actualMarginBottom = actualMarginBottom.substring(0, actualMarginBottom.length - 2);
+        if (actualMarginBottom != expectedMarginBottom)
+            failures.push("Expected " + expectedMarginBottom + " for margin-bottom, but got " + actualMarginBottom + ". ");
+    }
+
+    var expectedMarginLeft = node.getAttribute && node.getAttribute("data-expected-margin-left");
+    if (expectedMarginLeft) {
+        var actualMarginLeft = getComputedStyle(node).marginLeft;
+        // Trim the unit "px" from the output.
+        actualMarginLeft = actualMarginLeft.substring(0, actualMarginLeft.length - 2);
+        if (actualMarginLeft != expectedMarginLeft)
+            failures.push("Expected " + expectedMarginLeft + " for margin-left, but got " + actualMarginLeft + ". ");
+    }
+
+    var expectedMarginRight = node.getAttribute && node.getAttribute("data-expected-margin-right");
+    if (expectedMarginRight) {
+        var actualMarginRight = getComputedStyle(node).marginRight;
+        // Trim the unit "px" from the output.
+        actualMarginRight = actualMarginRight.substring(0, actualMarginRight.length - 2);
+        if (actualMarginRight != expectedMarginRight)
+            failures.push("Expected " + expectedMarginRight + " for margin-right, but got " + actualMarginRight + ". ");
+    }
 }
 
 window.checkLayout = function(selectorList)

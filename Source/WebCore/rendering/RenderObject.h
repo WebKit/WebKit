@@ -396,6 +396,8 @@ public:
     virtual bool isRenderFullScreenPlaceholder() const { return false; }
 #endif
 
+    virtual bool isRenderGrid() const { return false; }
+
     virtual bool isRenderFlowThread() const { return false; }
     virtual bool isRenderNamedFlowThread() const { return false; }
     

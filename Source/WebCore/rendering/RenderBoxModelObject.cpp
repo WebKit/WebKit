@@ -461,6 +461,8 @@ void RenderBoxModelObject::computeStickyPositionConstraints(StickyPositionViewpo
 
     LayoutRect containerContentRect = containingBlock->contentBoxRect();
 
+    // Sticky positioned element ignore any override logical width on the containing block (as they don't call
+    // containingBlockLogicalWidthForContent). It's unclear whether this is totally fine.
     LayoutUnit minLeftMargin = minimumValueForLength(style()->marginLeft(), containingBlock->availableLogicalWidth(), view());
     LayoutUnit minTopMargin = minimumValueForLength(style()->marginTop(), containingBlock->availableLogicalWidth(), view());
     LayoutUnit minRightMargin = minimumValueForLength(style()->marginRight(), containingBlock->availableLogicalWidth(), view());
@@ -555,7 +557,7 @@ LayoutUnit RenderBoxModelObject::computedCSSPaddingTop() const
     RenderView* renderView = 0;
     Length padding = style()->paddingTop();
     if (padding.isPercent())
-        w = containingBlock()->availableLogicalWidth();
+        w = containingBlockLogicalWidthForContent();
     else if (padding.isViewportPercentage())
         renderView = view();
     return minimumValueForLength(padding, w, renderView);
@@ -567,7 +569,7 @@ LayoutUnit RenderBoxModelObject::computedCSSPaddingBottom() const
     RenderView* renderView = 0;
     Length padding = style()->paddingBottom();
     if (padding.isPercent())
-        w = containingBlock()->availableLogicalWidth();
+        w = containingBlockLogicalWidthForContent();
     else if (padding.isViewportPercentage())
         renderView = view();
     return minimumValueForLength(padding, w, renderView);
@@ -579,7 +581,7 @@ LayoutUnit RenderBoxModelObject::computedCSSPaddingLeft() const
     RenderView* renderView = 0;
     Length padding = style()->paddingLeft();
     if (padding.isPercent())
-        w = containingBlock()->availableLogicalWidth();
+        w = containingBlockLogicalWidthForContent();
     else if (padding.isViewportPercentage())
         renderView = view();
     return minimumValueForLength(padding, w, renderView);
@@ -591,7 +593,7 @@ LayoutUnit RenderBoxModelObject::computedCSSPaddingRight() const
     RenderView* renderView = 0;
     Length padding = style()->paddingRight();
     if (padding.isPercent())
-        w = containingBlock()->availableLogicalWidth();
+        w = containingBlockLogicalWidthForContent();
     else if (padding.isViewportPercentage())
         renderView = view();
     return minimumValueForLength(padding, w, renderView);
@@ -603,7 +605,7 @@ LayoutUnit RenderBoxModelObject::computedCSSPaddingBefore() const
     RenderView* renderView = 0;
     Length padding = style()->paddingBefore();
     if (padding.isPercent())
-        w = containingBlock()->availableLogicalWidth();
+        w = containingBlockLogicalWidthForContent();
     else if (padding.isViewportPercentage())
         renderView = view();
     return minimumValueForLength(padding, w, renderView);
@@ -615,7 +617,7 @@ LayoutUnit RenderBoxModelObject::computedCSSPaddingAfter() const
     RenderView* renderView = 0;
     Length padding = style()->paddingAfter();
     if (padding.isPercent())
-        w = containingBlock()->availableLogicalWidth();
+        w = containingBlockLogicalWidthForContent();
     else if (padding.isViewportPercentage())
         renderView = view();
     return minimumValueForLength(padding, w, renderView);
@@ -627,7 +629,7 @@ LayoutUnit RenderBoxModelObject::computedCSSPaddingStart() const
     RenderView* renderView = 0;
     Length padding = style()->paddingStart();
     if (padding.isPercent())
-        w = containingBlock()->availableLogicalWidth();
+        w = containingBlockLogicalWidthForContent();
     else if (padding.isViewportPercentage())
         renderView = view();
     return minimumValueForLength(padding, w, renderView);
@@ -639,7 +641,7 @@ LayoutUnit RenderBoxModelObject::computedCSSPaddingEnd() const
     RenderView* renderView = 0;
     Length padding = style()->paddingEnd();
     if (padding.isPercent())
-        w = containingBlock()->availableLogicalWidth();
+        w = containingBlockLogicalWidthForContent();
     else if (padding.isViewportPercentage())
         renderView = view();
     return minimumValueForLength(padding, w, renderView);
