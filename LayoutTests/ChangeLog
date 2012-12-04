@@ -1,3 +1,15 @@
+2012-12-04  Antoine Quint  <graouts@apple.com>
+
+        Missing -expected.txt files for new <track> tests
+        https://bugs.webkit.org/show_bug.cgi?id=104006
+
+        Reviewed by Eric Carlson.
+
+        Add the missing -expected.txt files.
+
+        * media/track/opera/interfaces/HTMLElement/HTMLMediaElement/addTextTrack-expected.txt: Added.
+        * media/track/opera/interfaces/TextTrack/kind-expected.txt: Added.
+
 2012-12-04  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r136509.
