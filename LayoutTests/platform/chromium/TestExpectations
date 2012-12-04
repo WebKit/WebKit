@@ -89,6 +89,8 @@ webkit.org/b/102179 [ Win Debug ] platform/chromium/virtual/gpu/fast/hidpi/image
 webkit.org/b/102463 [ Win Debug ] fast/forms/validation-message-appearance.html [ Pass ImageOnlyFailure ]
 webkit.org/b/102464 [ Debug ] fast/images/webgl-teximage2d.html [ Pass Timeout ]
 webkit.org/b/102464 [ Debug ] platform/chromium/virtual/deferred/fast/images/webgl-teximage2d.html [ Pass Timeout ]
+webkit.org/b/103744 svg/dom/viewspec-parser-7.html [ Pass Timeout ]
+webkit.org/b/103744 svg/dom/viewspec-parser-6.html [ Pass Timeout ]
 
 # These tests started being slow when we switched to DRT.
 webkit.org/b/90488 [ Linux Win Debug ] inspector [ Pass Slow ]
