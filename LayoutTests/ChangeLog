@@ -1,3 +1,67 @@
+2012-12-04  Emil A Eklund  <eae@chromium.org>
+
+        Unreviewed chromium rebaseline for r136506 and 136502.
+
+        * platform/chromium-linux/compositing/absolute-position-changed-with-composited-parent-layer-expected.png: Removed.
+        * platform/chromium-linux/compositing/geometry/bounds-ignores-hidden-dynamic-negzindex-expected.png: Removed.
+        * platform/chromium-linux/media/track/opera: Added.
+        * platform/chromium-linux/media/track/opera/interfaces: Added.
+        * platform/chromium-linux/media/track/opera/interfaces/HTMLElement: Added.
+        * platform/chromium-linux/media/track/opera/interfaces/HTMLElement/HTMLMediaElement: Added.
+        * platform/chromium-linux/media/track/opera/interfaces/HTMLElement/HTMLMediaElement/addTextTrack-expected.txt: Added.
+        * platform/chromium-linux/media/track/opera/interfaces/TextTrack: Added.
+        * platform/chromium-linux/media/track/opera/interfaces/TextTrack/kind-expected.txt: Added.
+        * platform/chromium-mac-lion/media/track/opera: Added.
+        * platform/chromium-mac-lion/media/track/opera/interfaces: Added.
+        * platform/chromium-mac-lion/media/track/opera/interfaces/HTMLElement: Added.
+        * platform/chromium-mac-lion/media/track/opera/interfaces/HTMLElement/HTMLMediaElement: Added.
+        * platform/chromium-mac-lion/media/track/opera/interfaces/HTMLElement/HTMLMediaElement/addTextTrack-expected.txt: Added.
+        * platform/chromium-mac-lion/media/track/opera/interfaces/TextTrack: Added.
+        * platform/chromium-mac-lion/media/track/opera/interfaces/TextTrack/kind-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/compositing/geometry/bounds-ignores-hidden-dynamic-negzindex-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/media/track/opera: Added.
+        * platform/chromium-mac-snowleopard/media/track/opera/interfaces: Added.
+        * platform/chromium-mac-snowleopard/media/track/opera/interfaces/HTMLElement: Added.
+        * platform/chromium-mac-snowleopard/media/track/opera/interfaces/HTMLElement/HTMLMediaElement: Added.
+        * platform/chromium-mac-snowleopard/media/track/opera/interfaces/HTMLElement/HTMLMediaElement/addTextTrack-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/media/track/opera/interfaces/TextTrack: Added.
+        * platform/chromium-mac-snowleopard/media/track/opera/interfaces/TextTrack/kind-expected.txt: Added.
+        * platform/chromium-mac/compositing/geometry/bounds-ignores-hidden-dynamic-negzindex-expected.png:
+        * platform/chromium-mac/compositing/repaint/newly-composited-on-scroll-expected.png:
+        * platform/chromium-mac/media/track/opera: Added.
+        * platform/chromium-mac/media/track/opera/interfaces: Added.
+        * platform/chromium-mac/media/track/opera/interfaces/HTMLElement: Added.
+        * platform/chromium-mac/media/track/opera/interfaces/HTMLElement/HTMLMediaElement: Added.
+        * platform/chromium-mac/media/track/opera/interfaces/HTMLElement/HTMLMediaElement/addTextTrack-expected.txt: Added.
+        * platform/chromium-mac/media/track/opera/interfaces/TextTrack: Added.
+        * platform/chromium-mac/media/track/opera/interfaces/TextTrack/kind-expected.txt: Added.
+        * platform/chromium-win-xp/compositing/geometry/bounds-ignores-hidden-dynamic-negzindex-expected.png: Removed.
+        * platform/chromium-win-xp/media/track/opera: Added.
+        * platform/chromium-win-xp/media/track/opera/interfaces: Added.
+        * platform/chromium-win-xp/media/track/opera/interfaces/HTMLElement: Added.
+        * platform/chromium-win-xp/media/track/opera/interfaces/HTMLElement/HTMLMediaElement: Added.
+        * platform/chromium-win-xp/media/track/opera/interfaces/HTMLElement/HTMLMediaElement/addTextTrack-expected.txt: Added.
+        * platform/chromium-win-xp/media/track/opera/interfaces/TextTrack: Added.
+        * platform/chromium-win-xp/media/track/opera/interfaces/TextTrack/kind-expected.txt: Added.
+        * platform/chromium-win/compositing/absolute-position-changed-with-composited-parent-layer-expected.png: Removed.
+        * platform/chromium-win/compositing/geometry/bounds-ignores-hidden-dynamic-negzindex-expected.png:
+        * platform/chromium-win/compositing/iframes/composited-iframe-alignment-expected.png:
+        * platform/chromium-win/compositing/reflections/reflection-in-composited-expected.png:
+        * platform/chromium-win/media/track/opera: Added.
+        * platform/chromium-win/media/track/opera/interfaces: Added.
+        * platform/chromium-win/media/track/opera/interfaces/HTMLElement: Added.
+        * platform/chromium-win/media/track/opera/interfaces/HTMLElement/HTMLMediaElement: Added.
+        * platform/chromium-win/media/track/opera/interfaces/HTMLElement/HTMLMediaElement/addTextTrack-expected.txt: Added.
+        * platform/chromium-win/media/track/opera/interfaces/TextTrack: Added.
+        * platform/chromium-win/media/track/opera/interfaces/TextTrack/kind-expected.txt: Added.
+        * platform/efl-wk1/compositing/iframes: Added.
+        * platform/efl-wk1/compositing/iframes/composited-iframe-alignment-expected.png: Added.
+        * platform/efl-wk1/compositing/reflections/reflection-in-composited-expected.png: Added.
+        * platform/efl-wk1/compositing/repaint/newly-composited-on-scroll-expected.png: Added.
+        * platform/efl/compositing/iframes/composited-iframe-alignment-expected.png: Removed.
+        * platform/efl/compositing/reflections/reflection-in-composited-expected.png: Removed.
+        * platform/efl/compositing/repaint/newly-composited-on-scroll-expected.png: Removed.
+
 2012-12-04  Robert Hogan  <robert@webkit.org>
 
         Redrawing issue with inserting new inline element between existing inline elements
