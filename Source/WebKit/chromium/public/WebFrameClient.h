@@ -109,6 +109,10 @@ public:
     // is created and initialized.
     virtual void didCreateFrame(WebFrame* parent, WebFrame* child) { }
 
+    // This frame set its opener to null, disowning it.
+    // See http://html.spec.whatwg.org/#dom-opener.
+    virtual void didDisownOpener(WebFrame*) { }
+
     // This frame has been detached from the view, but has not been closed yet.
     virtual void frameDetached(WebFrame*) { }
 

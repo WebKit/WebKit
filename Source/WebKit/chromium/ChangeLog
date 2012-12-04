@@ -1,3 +1,21 @@
+2012-12-04  Charlie Reis  <creis@chromium.org>
+
+        Add FrameLoaderClient::didDisownOpener
+        https://bugs.webkit.org/show_bug.cgi?id=103789
+
+        Reviewed by Darin Fisher.
+
+        Forwards the didDisownOpener notification to the WebFrameClient.
+
+        * public/WebFrameClient.h:
+        (WebFrameClient):
+        (WebKit::WebFrameClient::didDisownOpener):
+        * src/FrameLoaderClientImpl.cpp:
+        (WebKit::FrameLoaderClientImpl::didDisownOpener):
+        (WebKit):
+        * src/FrameLoaderClientImpl.h:
+        (FrameLoaderClientImpl):
+
 2012-12-04  Stephen Chenney  <schenney@chromium.org>
 
         [chromium] Turn on the new Skia mask blur algorithm.
