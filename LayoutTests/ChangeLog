@@ -1,3 +1,10 @@
+2012-12-04  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. Skip flaky "fake mouse move tests" on Windows port.
+        https://bugs.webkit.org/show_bug.cgi?id=103043.
+
+        * platform/win/TestExpectations:
+
 2012-12-04  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Heap-use-after-free in WebCore::RenderLayer::paintList [MathML]

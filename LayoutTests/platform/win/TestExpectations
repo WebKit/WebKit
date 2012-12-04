@@ -2502,3 +2502,8 @@ fast/text/international/combining-marks-position.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=103968
 fast/loader/non-deferred-substitute-load.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=103043
+fast/events/frame-scroll-fake-mouse-move.html
+fast/events/overflow-scroll-fake-mouse-move.html
+
