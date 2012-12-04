@@ -26,8 +26,6 @@
 #ifndef IntSize_h
 #define IntSize_h
 
-#include <wtf/MathExtras.h>
-
 #if USE(CG) || USE(SKIA_ON_MAC_CHROMIUM)
 typedef struct CGSize CGSize;
 #endif
@@ -85,8 +83,8 @@ public:
 
     void scale(float widthScale, float heightScale)
     {
-        m_width = lroundf(static_cast<float>(m_width) * widthScale);
-        m_height = lroundf(static_cast<float>(m_height) * heightScale);
+        m_width = static_cast<int>(static_cast<float>(m_width) * widthScale);
+        m_height = static_cast<int>(static_cast<float>(m_height) * heightScale);
     }
     
     void scale(float scale)
