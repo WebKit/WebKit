@@ -56,6 +56,7 @@ SurfacePool* SurfacePool::globalSurfacePool()
 
 SurfacePool::SurfacePool()
     : m_visibleTileBuffer(0)
+    , m_numberOfFrontBuffers(0)
     , m_tileRenderingSurface(0)
     , m_initialized(false)
     , m_buffersSuspended(false)
@@ -63,9 +64,9 @@ SurfacePool::SurfacePool()
 {
 }
 
-int SurfacePool::size() const
+int SurfacePool::numberOfBackingStoreFrontBuffers() const
 {
-    return m_tileBufferPool.isEmpty() ? 0 : m_tileBufferPool.size() - 1 /*backbuffer*/;
+    return m_numberOfFrontBuffers;
 }
 
 void SurfacePool::initialize(const Platform::IntSize& tileSize)
@@ -74,11 +75,13 @@ void SurfacePool::initialize(const Platform::IntSize& tileSize)
         return;
     m_initialized = true;
 
-    const unsigned numberOfTiles = Platform::Settings::instance()->numberOfBackingStoreTiles();
+    m_numberOfFrontBuffers = Platform::Settings::instance()->numberOfBackingStoreFrontBuffers();
     const unsigned maxNumberOfTiles = Platform::Settings::instance()->maximumNumberOfBackingStoreTilesAcrossProcesses();
 
-    if (numberOfTiles) { // Only allocate if we actually use a backingstore.
-        unsigned byteLimit = (maxNumberOfTiles /*pool*/ + 2 /*visible tile buffer, backbuffer*/) * tileSize.width() * tileSize.height() * 4;
+    if (m_numberOfFrontBuffers) { // Only allocate if we actually use a backingstore.
+        Platform::IntSize screenSize = Platform::Graphics::Screen::primaryScreen()->size();
+        unsigned byteLimit = maxNumberOfTiles * tileSize.width() * tileSize.height() * 4;
+        byteLimit += screenSize.width() * screenSize.height() * 4; // visible tile buffer - FIXME, fragile for further maintenance as its size doesn't sync up with the rest
         bool success = Platform::Graphics::createPixmapGroup(SHARED_PIXMAP_GROUP, byteLimit);
         if (!success) {
             BBLOG(Platform::LogLevelWarn,
@@ -88,10 +91,11 @@ void SurfacePool::initialize(const Platform::IntSize& tileSize)
 
     m_tileRenderingSurface = Platform::Graphics::drawingSurface();
 
-    if (!numberOfTiles)
+    if (!m_numberOfFrontBuffers)
         return; // we only use direct rendering when 0 tiles are specified.
 
-    const unsigned numberOfPoolTiles = numberOfTiles + 1; // back buffer
+    const unsigned numberOfBackBuffers = Platform::Settings::instance()->numberOfBackingStoreBackBuffers();
+    const unsigned numberOfPoolTiles = m_numberOfFrontBuffers + numberOfBackBuffers; // back buffer
 
     for (size_t i = 0; i < numberOfPoolTiles; ++i)
         m_tileBufferPool.append(new TileBuffer(tileSize));

@@ -132,7 +132,8 @@ static String configPage()
     page += numberToHTMLTr("secondaryThreadStackSize", settings->secondaryThreadStackSize());
     page += numberToHTMLTr("maxPixelsPerDecodedImage", settings->maxPixelsPerDecodedImage());
     page += numberToHTMLTr("shouldReportLowMemoryToUser", settings->shouldReportLowMemoryToUser());
-    page += numberToHTMLTr("numberOfBackingStoreTiles", settings->numberOfBackingStoreTiles());
+    page += numberToHTMLTr("numberOfBackingStoreFrontBuffers", settings->numberOfBackingStoreFrontBuffers()));
+    page += numberToHTMLTr("numberOfBackingStoreBackBuffers", settings->numberOfBackingStoreBackBuffers()));
     page += numberToHTMLTr("maximumNumberOfBacking...AcrossProcesses", settings->maximumNumberOfBackingStoreTilesAcrossProcesses());
     page += numberToHTMLTr("tabsSupportedByClient", settings->tabsSupportedByClient());
     page += numberToHTMLTr("contextMenuEnabled", settings->contextMenuEnabled());

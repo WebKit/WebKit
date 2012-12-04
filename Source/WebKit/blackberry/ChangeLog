@@ -1,5 +1,32 @@
 2012-12-04  Jakob Petsovits  <jpetsovits@rim.com>
 
+        [BlackBerry] Use updated API for backingstore tiles.
+        https://bugs.webkit.org/show_bug.cgi?id=103970
+        PR 212369
+
+        Reviewed by George Staikos.
+        Internally reviewed by Arvid Nilsson.
+
+        We now make use of Platform::Settings::tileSize() in the
+        backingstore and don't hardcode the number of back buffers
+        like we used to.
+
+        * Api/BackingStore.cpp:
+        (BlackBerry::WebKit::bestDivisor):
+        (BlackBerry::WebKit::BackingStorePrivate::tileWidth):
+        (BlackBerry::WebKit::BackingStorePrivate::tileHeight):
+        (BlackBerry::WebKit::BackingStorePrivate::tileSize):
+        * WebKitSupport/AboutData.cpp:
+        (BlackBerry::WebKit::configPage):
+        * WebKitSupport/SurfacePool.cpp:
+        (BlackBerry::WebKit::SurfacePool::SurfacePool):
+        (BlackBerry::WebKit::SurfacePool::numberOfBackingStoreFrontBuffers):
+        (BlackBerry::WebKit::SurfacePool::initialize):
+        * WebKitSupport/SurfacePool.h:
+        (SurfacePool):
+
+2012-12-04  Jakob Petsovits  <jpetsovits@rim.com>
+
         [BlackBerry] On taking over a backingstore, reset the previous page's tiles.
         https://bugs.webkit.org/show_bug.cgi?id=103969
         RIM PR 253496

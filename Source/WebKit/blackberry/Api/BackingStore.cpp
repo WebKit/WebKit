@@ -121,7 +121,7 @@ static Divisor bestDivisor(Platform::IntSize size, int tileWidth, int tileHeight
     ASSERT(!surfacePool->isEmpty());
 
     // Store a static list of possible divisors.
-    static DivisorList divisorList = divisors(surfacePool->size());
+    static DivisorList divisorList = divisors(surfacePool->numberOfBackingStoreFrontBuffers());
 
     // The ratio we're looking to best imitate.
     float ratio = static_cast<float>(size.width()) / static_cast<float>(size.height());
@@ -2136,19 +2136,18 @@ Platform::IntSize BackingStorePrivate::expandedContentsSize() const
 
 int BackingStorePrivate::tileWidth()
 {
-    static int tileWidth = BlackBerry::Platform::Graphics::Screen::primaryScreen()->landscapeWidth();
-    return tileWidth;
+    return tileSize().width();
 }
 
 int BackingStorePrivate::tileHeight()
 {
-    static int tileHeight = BlackBerry::Platform::Graphics::Screen::primaryScreen()->landscapeHeight();
-    return tileHeight;
+    return tileSize().height();
 }
 
 Platform::IntSize BackingStorePrivate::tileSize()
 {
-    return Platform::IntSize(tileWidth(), tileHeight());
+    static Platform::IntSize tileSize = BlackBerry::Platform::Settings::instance()->tileSize();
+    return tileSize;
 }
 
 Platform::IntRect BackingStorePrivate::tileRect()
