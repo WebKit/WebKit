@@ -454,6 +454,8 @@ WebViewImpl::WebViewImpl(WebViewClient* client)
     , m_flingModifier(0)
     , m_validationMessage(ValidationMessageClientImpl::create(*client))
     , m_suppressInvalidations(false)
+    , m_showFPSCounter(false)
+    , m_showPaintRects(false)
 {
     // WebKit/win/WebView.cpp does the same thing, except they call the
     // KJS specific wrapper around this method. We need to have threading
@@ -845,7 +847,7 @@ void WebViewImpl::setShowFPSCounter(bool show)
 #endif
         m_layerTreeView->setShowFPSCounter(show);
     }
-    settingsImpl()->setShowFPSCounter(show);
+    m_showFPSCounter = show;
 }
 
 void WebViewImpl::setShowPaintRects(bool show)
@@ -854,7 +856,7 @@ void WebViewImpl::setShowPaintRects(bool show)
         TRACE_EVENT0("webkit", "WebViewImpl::setShowPaintRects");
         m_layerTreeView->setShowPaintRects(show);
     }
-    settingsImpl()->setShowPaintRects(show);
+    m_showPaintRects = show;
 }
 
 bool WebViewImpl::handleKeyEvent(const WebKeyboardEvent& event)
@@ -4046,8 +4048,8 @@ void WebViewImpl::setIsAcceleratedCompositingActive(bool active)
             if (layerTreeViewSettings.showPlatformLayerTree)
                 loadFontAtlasIfNecessary();
 
-            if (settingsImpl()->showFPSCounter())
-                setShowFPSCounter(true);
+            m_layerTreeView->setShowFPSCounter(m_showFPSCounter);
+            m_layerTreeView->setShowPaintRects(m_showPaintRects);
         } else {
             m_nonCompositedContentHost.clear();
             m_isAcceleratedCompositingActive = false;

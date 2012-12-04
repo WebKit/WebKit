@@ -883,6 +883,9 @@ private:
     OwnPtr<ValidationMessageClientImpl> m_validationMessage;
 
     bool m_suppressInvalidations;
+
+    bool m_showFPSCounter;
+    bool m_showPaintRects;
 };
 
 } // namespace WebKit
