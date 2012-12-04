@@ -1654,7 +1654,8 @@ static inline bool isComma(CSSParserValue* value)
 
 static inline bool isForwardSlashOperator(CSSParserValue* value)
 {
-    return value && value->unit == CSSParserValue::Operator && value->iValue == '/';
+    ASSERT(value);
+    return value->unit == CSSParserValue::Operator && value->iValue == '/';
 }
 
 bool CSSParser::validWidth(CSSParserValue* value)
