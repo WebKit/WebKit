@@ -27,10 +27,16 @@
 #define WebProcessInitialization_h
 
 #include "Connection.h"
+#include <wtf/text/WTFString.h>
 
 namespace WebKit {
 
-void InitializeWebProcess(const String& clientIdentifier, CoreIPC::Connection::Identifier connectionIdentifier);
+struct WebProcessInitializationParameters {
+    String clientIdentifier;
+    CoreIPC::Connection::Identifier connectionIdentifier;
+};
+
+void initializeWebProcess(const WebProcessInitializationParameters&);
 
 } // namespace WebKit
 

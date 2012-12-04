@@ -60,7 +60,10 @@ static void WebProcessServiceEventHandler(xpc_connection_t peer)
                 xpc_connection_send_message(xpc_dictionary_get_remote_connection(event), reply);
                 xpc_release(reply);
 
-                InitializeWebProcess(String(xpc_dictionary_get_string(event, "client-identifier")), CoreIPC::Connection::Identifier(xpc_dictionary_copy_mach_send(event, "server-port"), peer));
+                WebProcessInitializationParameters parameters;
+                parameters.clientIdentifier = xpc_dictionary_get_string(event, "client-identifier");
+                parameters.connectionIdentifier = xpc_dictionary_copy_mach_send(event, "server-port");
+                initializeWebProcess(parameters);
             }
         }
     });
@@ -70,7 +73,7 @@ static void WebProcessServiceEventHandler(xpc_connection_t peer)
 
 } // namespace WebKit
 
-int WebProcessServiceMain(int argc, char** argv)
+int webProcessServiceMain(int argc, char** argv)
 {
     // Remove the WebProcess shim from the DYLD_INSERT_LIBRARIES environment variable so any processes spawned by
     // the WebProcess don't try to insert the shim and crash.
@@ -80,13 +83,16 @@ int WebProcessServiceMain(int argc, char** argv)
     return 0;
 }
 
-void InitializeWebProcessForWebProcessServiceForWebKitDevelopment(const char* clientIdentifer, xpc_connection_t connection, mach_port_t serverPort)
+void initializeWebProcessForWebProcessServiceForWebKitDevelopment(const char* clientIdentifier, xpc_connection_t connection, mach_port_t serverPort)
 {
     // Remove the WebProcess shim from the DYLD_INSERT_LIBRARIES environment variable so any processes spawned by
     // the WebProcess don't try to insert the shim and crash.
     WebKit::EnvironmentUtilities::stripValuesEndingWithString("DYLD_INSERT_LIBRARIES", "/WebProcessShim.dylib");
 
-    WebKit::InitializeWebProcess(String(clientIdentifer), CoreIPC::Connection::Identifier(serverPort, connection));
+    WebKit::WebProcessInitializationParameters parameters;
+    parameters.clientIdentifier = clientIdentifier;
+    parameters.connectionIdentifier = CoreIPC::Connection::Identifier(serverPort, connection);
+    initializeWebProcess(parameters);
 }
 
 #endif // HAVE(XPC)

@@ -124,7 +124,7 @@ static void WebProcessServiceForWebKitDevelopmentEventHandler(xpc_connection_t p
                 }
 
                 typedef void (*InitializeWebProcessFunction)(const char* clientIdentifer, xpc_connection_t connection, mach_port_t serverPort);
-                InitializeWebProcessFunction InitializeWebProcessFunctionPtr = reinterpret_cast<InitializeWebProcessFunction>(dlsym(frameworkLibrary, "InitializeWebProcessForWebProcessServiceForWebKitDevelopment"));
+                InitializeWebProcessFunction InitializeWebProcessFunctionPtr = reinterpret_cast<InitializeWebProcessFunction>(dlsym(frameworkLibrary, "initializeWebProcessForWebProcessServiceForWebKitDevelopment"));
                 if (!InitializeWebProcessFunctionPtr) {
                     NSLog(@"Unable to find entry point in WebKit2.framework: %s\n", dlerror());
                     exit(EXIT_FAILURE);

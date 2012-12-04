@@ -185,7 +185,10 @@ int WebProcessMain(const CommandLine& commandLine)
     [[NSApplication sharedApplication] _installAutoreleasePoolsOnCurrentThreadIfNecessary];
 #endif
 
-    InitializeWebProcess(clientIdentifier, CoreIPC::Connection::Identifier(serverPort));
+    WebProcessInitializationParameters parameters;
+    parameters.clientIdentifier = clientIdentifier;
+    parameters.connectionIdentifier = serverPort;
+    initializeWebProcess(parameters);
 
     RunLoop::run();
 

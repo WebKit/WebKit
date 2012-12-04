@@ -37,22 +37,21 @@ using namespace WebCore;
 
 namespace WebKit {
 
-void InitializeWebProcess(const String& clientIdentifier, CoreIPC::Connection::Identifier connectionIdentifier)
+void initializeWebProcess(const WebProcessInitializationParameters& parameters)
 {
-    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+    @autoreleasepool {
+        InitWebCoreSystemInterface();
+        JSC::initializeThreading();
+        WTF::initializeMainThread();
+        RunLoop::initializeMainRunLoop();
 
-    InitWebCoreSystemInterface();
-    JSC::initializeThreading();
-    WTF::initializeMainThread();
-    RunLoop::initializeMainRunLoop();
-
-    WebProcess::shared().initializeShim();
-    WebProcess::shared().initializeSandbox(clientIdentifier);
-    WebProcess::shared().initialize(connectionIdentifier, RunLoop::main());
-
-    WKAXRegisterRemoteApp();
-
-    [pool drain];
+        WebProcess& webProcess = WebProcess::shared();
+        webProcess.initializeShim();
+        webProcess.initializeSandbox(parameters.clientIdentifier);
+        webProcess.initialize(parameters.connectionIdentifier, RunLoop::main());
+        
+        WKAXRegisterRemoteApp();
+    }
 }
 
 } // namespace WebKit

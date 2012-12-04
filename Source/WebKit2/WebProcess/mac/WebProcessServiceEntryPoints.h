@@ -36,12 +36,12 @@ extern "C" {
 
 // This entry point is used for the installed WebProcessService, which does not
 // need to be re-execed, or mess around with DYLD.
-WK_EXPORT int WebProcessServiceMain(int argc, char** argv);
+WK_EXPORT int webProcessServiceMain(int argc, char** argv);
 
 // This entry point is used for the WebProcessServiceForWebKitDevelopment
 // which needs to be re-exec, and can't link directly to WebKit2 requiring
 // some DYLD fiddling.
-WK_EXPORT void InitializeWebProcessForWebProcessServiceForWebKitDevelopment(const char* clientIdentifer, xpc_connection_t connection, mach_port_t serverPort);
+WK_EXPORT void initializeWebProcessForWebProcessServiceForWebKitDevelopment(const char* clientIdentifier, xpc_connection_t, mach_port_t serverPort);
 
 #ifdef __cplusplus
 }; // extern "C"

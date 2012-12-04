@@ -31,7 +31,7 @@
 
 int main(int argc, char** argv)
 {
-    return WebProcessServiceMain(argc, argv);
+    return webProcessServiceMain(argc, argv);
 }
 
 #else
