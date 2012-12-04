@@ -61,6 +61,7 @@ static void WebProcessServiceEventHandler(xpc_connection_t peer)
                 xpc_release(reply);
 
                 WebProcessInitializationParameters parameters;
+                parameters.uiProcessName = xpc_dictionary_get_string(event, "ui-process-name");
                 parameters.clientIdentifier = xpc_dictionary_get_string(event, "client-identifier");
                 parameters.connectionIdentifier = xpc_dictionary_copy_mach_send(event, "server-port");
                 initializeWebProcess(parameters);
@@ -83,13 +84,14 @@ int webProcessServiceMain(int argc, char** argv)
     return 0;
 }
 
-void initializeWebProcessForWebProcessServiceForWebKitDevelopment(const char* clientIdentifier, xpc_connection_t connection, mach_port_t serverPort)
+void initializeWebProcessForWebProcessServiceForWebKitDevelopment(const char* clientIdentifier, xpc_connection_t connection, mach_port_t serverPort, const char* uiProcessName)
 {
     // Remove the WebProcess shim from the DYLD_INSERT_LIBRARIES environment variable so any processes spawned by
     // the WebProcess don't try to insert the shim and crash.
     WebKit::EnvironmentUtilities::stripValuesEndingWithString("DYLD_INSERT_LIBRARIES", "/WebProcessShim.dylib");
 
     WebKit::WebProcessInitializationParameters parameters;
+    parameters.uiProcessName = uiProcessName;
     parameters.clientIdentifier = clientIdentifier;
     parameters.connectionIdentifier = CoreIPC::Connection::Identifier(serverPort, connection);
     initializeWebProcess(parameters);

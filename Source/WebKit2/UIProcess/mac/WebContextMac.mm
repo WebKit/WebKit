@@ -100,8 +100,6 @@ void WebContext::platformInitializeWebProcess(WebProcessCreationParameters& para
 {
     parameters.presenterApplicationPid = getpid();
 
-    parameters.parentProcessName = [[NSProcessInfo processInfo] processName];    
-
     NSURLCache *urlCache = [NSURLCache sharedURLCache];
     parameters.nsURLCacheMemoryCapacity = [urlCache memoryCapacity];
     parameters.nsURLCacheDiskCapacity = [urlCache diskCapacity];

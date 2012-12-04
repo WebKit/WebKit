@@ -93,7 +93,6 @@ void WebProcessCreationParameters::encode(CoreIPC::ArgumentEncoder& encoder) con
     encoder << uiProcessBundleIdentifier;
 #endif
 #if PLATFORM(MAC)
-    encoder << parentProcessName;
     encoder << presenterApplicationPid;
     encoder << nsURLCacheMemoryCapacity;
     encoder << nsURLCacheDiskCapacity;
@@ -198,8 +197,6 @@ bool WebProcessCreationParameters::decode(CoreIPC::ArgumentDecoder* decoder, Web
 #endif
 
 #if PLATFORM(MAC)
-    if (!decoder->decode(parameters.parentProcessName))
-        return false;
     if (!decoder->decode(parameters.presenterApplicationPid))
         return false;
     if (!decoder->decode(parameters.nsURLCacheMemoryCapacity))

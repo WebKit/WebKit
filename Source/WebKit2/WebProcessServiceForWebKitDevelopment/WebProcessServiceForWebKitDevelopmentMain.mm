@@ -123,9 +123,9 @@ static void WebProcessServiceForWebKitDevelopmentEventHandler(xpc_connection_t p
                     exit(EXIT_FAILURE);
                 }
 
-                typedef void (*InitializeWebProcessFunction)(const char* clientIdentifer, xpc_connection_t connection, mach_port_t serverPort);
-                InitializeWebProcessFunction InitializeWebProcessFunctionPtr = reinterpret_cast<InitializeWebProcessFunction>(dlsym(frameworkLibrary, "initializeWebProcessForWebProcessServiceForWebKitDevelopment"));
-                if (!InitializeWebProcessFunctionPtr) {
+                typedef void (*InitializeWebProcessFunction)(const char* clientIdentifer, xpc_connection_t connection, mach_port_t serverPort, const char* uiProcessName);
+                InitializeWebProcessFunction initializeWebProcessFunctionPtr = reinterpret_cast<InitializeWebProcessFunction>(dlsym(frameworkLibrary, "initializeWebProcessForWebProcessServiceForWebKitDevelopment"));
+                if (!initializeWebProcessFunctionPtr) {
                     NSLog(@"Unable to find entry point in WebKit2.framework: %s\n", dlerror());
                     exit(EXIT_FAILURE);
                 }
@@ -135,7 +135,7 @@ static void WebProcessServiceForWebKitDevelopmentEventHandler(xpc_connection_t p
                 xpc_connection_send_message(xpc_dictionary_get_remote_connection(event), reply);
                 xpc_release(reply);
 
-                InitializeWebProcessFunctionPtr(xpc_dictionary_get_string(event, "client-identifier"), peer, xpc_dictionary_copy_mach_send(event, "server-port"));
+                initializeWebProcessFunctionPtr(xpc_dictionary_get_string(event, "client-identifier"), peer, xpc_dictionary_copy_mach_send(event, "server-port"), xpc_dictionary_get_string(event, "ui-process-name"));
             }
         }
     });

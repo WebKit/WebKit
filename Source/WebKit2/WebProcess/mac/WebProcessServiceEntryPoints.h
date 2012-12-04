@@ -41,7 +41,7 @@ WK_EXPORT int webProcessServiceMain(int argc, char** argv);
 // This entry point is used for the WebProcessServiceForWebKitDevelopment
 // which needs to be re-exec, and can't link directly to WebKit2 requiring
 // some DYLD fiddling.
-WK_EXPORT void initializeWebProcessForWebProcessServiceForWebKitDevelopment(const char* clientIdentifier, xpc_connection_t, mach_port_t serverPort);
+WK_EXPORT void initializeWebProcessForWebProcessServiceForWebKitDevelopment(const char* clientIdentifier, xpc_connection_t, mach_port_t serverPort, const char* uiProcessName);
 
 #ifdef __cplusplus
 }; // extern "C"

@@ -186,6 +186,7 @@ int WebProcessMain(const CommandLine& commandLine)
 #endif
 
     WebProcessInitializationParameters parameters;
+    parameters.uiProcessName = commandLine["ui-process-name"];
     parameters.clientIdentifier = clientIdentifier;
     parameters.connectionIdentifier = serverPort;
     initializeWebProcess(parameters);

@@ -28,6 +28,7 @@
 
 #import "WebProcess.h"
 #import "WebSystemInterface.h"
+#import <WebCore/LocalizedStrings.h>
 #import <WebCore/RunLoop.h>
 #import <WebKitSystemInterface.h>
 #import <runtime/InitializeThreading.h>
@@ -44,6 +45,11 @@ void initializeWebProcess(const WebProcessInitializationParameters& parameters)
         JSC::initializeThreading();
         WTF::initializeMainThread();
         RunLoop::initializeMainRunLoop();
+
+        if (!parameters.uiProcessName.isNull()) {
+            NSString *applicationName = [NSString stringWithFormat:WEB_UI_STRING("%@ Web Content", "Visible name of the web process. The argument is the application name."), (NSString *)parameters.uiProcessName];
+            WKSetVisibleApplicationName((CFStringRef)applicationName);
+        }
 
         WebProcess& webProcess = WebProcess::shared();
         webProcess.initializeShim();

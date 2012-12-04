@@ -264,11 +264,6 @@ void WebProcess::platformInitializeWebProcess(const WebProcessCreationParameters
     SandboxExtension::consumePermanently(parameters.applicationCacheDirectoryExtensionHandle);
     SandboxExtension::consumePermanently(parameters.diskCacheDirectoryExtensionHandle);
 
-    if (!parameters.parentProcessName.isNull()) {
-        NSString *applicationName = [NSString stringWithFormat:WEB_UI_STRING("%@ Web Content", "Visible name of the web process. The argument is the application name."), (NSString *)parameters.parentProcessName];
-        WKSetVisibleApplicationName((CFStringRef)applicationName);
-    }
-
     if (!parameters.diskCacheDirectory.isNull()) {
         NSUInteger cacheMemoryCapacity = parameters.nsURLCacheMemoryCapacity;
         NSUInteger cacheDiskCapacity = parameters.nsURLCacheDiskCapacity;

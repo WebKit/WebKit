@@ -102,8 +102,6 @@ struct WebProcessCreationParameters {
 #endif
 
 #if PLATFORM(MAC)
-    String parentProcessName;
-
     pid_t presenterApplicationPid;
 
     uint64_t nsURLCacheMemoryCapacity;

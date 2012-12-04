@@ -32,6 +32,8 @@
 namespace WebKit {
 
 struct WebProcessInitializationParameters {
+    String uiProcessName;
+
     String clientIdentifier;
     CoreIPC::Connection::Identifier connectionIdentifier;
 };
