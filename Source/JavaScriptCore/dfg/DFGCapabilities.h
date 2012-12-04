@@ -82,6 +82,10 @@ inline bool canInlineResolveOperations(OpcodeID opcode, ResolveOperations* opera
         case ResolveOperation::GetAndReturnGlobalProperty:
         case ResolveOperation::GetAndReturnGlobalVar:
         case ResolveOperation::GetAndReturnGlobalVarWatchable:
+        case ResolveOperation::SkipScopes:
+        case ResolveOperation::SetBaseToScope:
+        case ResolveOperation::ReturnScopeAsBase:
+        case ResolveOperation::GetAndReturnScopedVar:
             continue;
 
         case ResolveOperation::Fail:
@@ -94,12 +98,8 @@ inline bool canInlineResolveOperations(OpcodeID opcode, ResolveOperations* opera
                 return false;
 
         case ResolveOperation::SkipTopScopeNode:
-        case ResolveOperation::SkipScopes:
-        case ResolveOperation::SetBaseToScope:
-        case ResolveOperation::ReturnScopeAsBase:
-        case ResolveOperation::GetAndReturnScopedVar:
-            // These opcodes would be easy to support with inlining, but we currently don't do it.
-            // The issue is that the scope chain will not be set correctly.
+            // We don't inline code blocks that create activations. Creation of
+            // activations is the only thing that leads to SkipTopScopeNode.
             return false;
 
         case ResolveOperation::CheckForDynamicEntriesBeforeGlobalScope:

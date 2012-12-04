@@ -1886,9 +1886,16 @@ void ByteCodeParser::prepareToParseBlock()
 
 NodeIndex ByteCodeParser::getScope(bool skipTop, unsigned skipCount)
 {
-    NodeIndex localBase = addToGraph(GetMyScope);
-    if (skipTop)
+    NodeIndex localBase;
+    if (m_inlineStackTop->m_inlineCallFrame) {
+        ASSERT(m_inlineStackTop->m_inlineCallFrame->callee);
+        localBase = cellConstant(m_inlineStackTop->m_inlineCallFrame->callee->scope());
+    } else
+        localBase = addToGraph(GetMyScope);
+    if (skipTop) {
+        ASSERT(!m_inlineStackTop->m_inlineCallFrame);
         localBase = addToGraph(SkipTopScope, localBase);
+    }
     for (unsigned n = skipCount; n--;)
         localBase = addToGraph(SkipScope, localBase);
     return localBase;
@@ -1954,7 +1961,6 @@ bool ByteCodeParser::parseResolveOperations(SpeculatedType prediction, unsigned 
             break;
 
         case ResolveOperation::SkipScopes:
-            ASSERT(!m_inlineStackTop->m_inlineCallFrame);
             skipCount += pc->m_scopesToSkip;
             skippedScopes = true;
             ++pc;

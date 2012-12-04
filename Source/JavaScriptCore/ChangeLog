@@ -1,5 +1,36 @@
 2012-12-03  Filip Pizlo  <fpizlo@apple.com>
 
+        DFG should inline code blocks that use scoped variable access
+        https://bugs.webkit.org/show_bug.cgi?id=103974
+
+        Reviewed by Oliver Hunt.
+
+        This mostly just turns on something we could have done all along, but also adds a few key
+        necessities to make this right:
+        
+        1) Constant folding of SkipScope, since if we inline with a known JSFunction* then the
+           scope is constant.
+        
+        2) Interference analysis for GetLocal<->PutScopedVar and SetLocal<->GetScopedVar.
+        
+        This is not meant to be a speed-up on major benchmarks since we don't yet inline most
+        closure calls for entirely unrelated reasons. But on toy programs it can be >2x faster.
+
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::execute):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::getScope):
+        (JSC::DFG::ByteCodeParser::parseResolveOperations):
+        * dfg/DFGCSEPhase.cpp:
+        (JSC::DFG::CSEPhase::scopedVarLoadElimination):
+        (JSC::DFG::CSEPhase::scopedVarStoreElimination):
+        (JSC::DFG::CSEPhase::getLocalLoadElimination):
+        (JSC::DFG::CSEPhase::setLocalStoreElimination):
+        * dfg/DFGCapabilities.h:
+        (JSC::DFG::canInlineResolveOperations):
+
+2012-12-03  Filip Pizlo  <fpizlo@apple.com>
+
         Replace JSValue::description() with JSValue::dump(PrintStream&)
         https://bugs.webkit.org/show_bug.cgi?id=103866
 

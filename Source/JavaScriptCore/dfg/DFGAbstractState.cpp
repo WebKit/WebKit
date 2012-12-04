@@ -1385,10 +1385,20 @@ bool AbstractState::execute(unsigned indexInBlock)
             
     case GetMyScope:
     case SkipTopScope:
-    case SkipScope:
         node.setCanExit(false);
         forNode(nodeIndex).set(SpecCellOther);
         break;
+
+    case SkipScope: {
+        node.setCanExit(false);
+        JSValue child = forNode(node.child1()).value();
+        if (child && trySetConstant(nodeIndex, JSValue(jsCast<JSScope*>(child.asCell())->next()))) {
+            m_foundConstants = true;
+            break;
+        }
+        forNode(nodeIndex).set(SpecCellOther);
+        break;
+    }
 
     case GetScopeRegisters:
         node.setCanExit(false);

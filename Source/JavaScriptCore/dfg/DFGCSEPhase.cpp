@@ -236,6 +236,13 @@ private:
                     return node.child3().index();
                 break;
             }
+            case SetLocal: {
+                VariableAccessData* variableAccessData = node.variableAccessData();
+                if (variableAccessData->isCaptured()
+                    && variableAccessData->local() == static_cast<VirtualRegister>(varNumber))
+                    return NoNode;
+                break;
+            }
             default:
                 break;
             }
@@ -315,6 +322,14 @@ private:
             case GetScopedVar: {
                 // Let's be conservative.
                 if (node.varNumber() == varNumber)
+                    return NoNode;
+                break;
+            }
+                
+            case GetLocal: {
+                VariableAccessData* variableAccessData = node.variableAccessData();
+                if (variableAccessData->isCaptured()
+                    && variableAccessData->local() == static_cast<VirtualRegister>(varNumber))
                     return NoNode;
                 break;
             }
@@ -830,6 +845,11 @@ private:
                 }
                 break;
                 
+            case PutScopedVar:
+                if (static_cast<VirtualRegister>(node.varNumber()) == local)
+                    return NoNode;
+                break;
+                
             default:
                 if (careAboutClobbering && m_graph.clobbersWorld(index))
                     return NoNode;
@@ -882,9 +902,13 @@ private:
                 return result;
             }
                 
+            case GetScopedVar:
+                if (static_cast<VirtualRegister>(node.varNumber()) == local)
+                    result.mayBeAccessed = true;
+                break;
+                
             case GetMyScope:
             case SkipTopScope:
-            case GetScopeRegisters:
                 if (m_graph.uncheckedActivationRegisterFor(node.codeOrigin) == local)
                     result.mayBeAccessed = true;
                 break;
