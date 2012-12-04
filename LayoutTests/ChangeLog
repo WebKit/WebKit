@@ -1,3 +1,40 @@
+2012-12-03  Tony Chang  <tony@chromium.org>
+
+        Unreviewed, add Chromium Win/Mac baselines after r136409 (mathml sup/sub box changes).
+
+        * platform/chromium-mac-lion/mathml/presentation/row-alignment-expected.txt: Removed.
+        * platform/chromium-mac-lion/mathml/presentation/sub-expected.txt: Added.
+        * platform/chromium-mac-lion/mathml/presentation/subsup-expected.txt: Removed.
+        * platform/chromium-mac-lion/mathml/presentation/sup-expected.txt: Copied from LayoutTests/platform/chromium-mac-snowleopard/mathml/presentation/sup-expected.txt.
+        * platform/chromium-mac-lion/mathml/presentation/tables-expected.txt:
+        * platform/chromium-mac-snowleopard/mathml/presentation/roots-expected.txt:
+        * platform/chromium-mac-snowleopard/mathml/presentation/row-alignment-expected.txt:
+        * platform/chromium-mac-snowleopard/mathml/presentation/sub-expected.txt:
+        * platform/chromium-mac-snowleopard/mathml/presentation/subsup-expected.txt:
+        * platform/chromium-mac-snowleopard/mathml/presentation/sup-expected.txt:
+        * platform/chromium-mac-snowleopard/mathml/presentation/tables-expected.txt:
+        * platform/chromium-mac/mathml/presentation/roots-expected.txt: Renamed from LayoutTests/platform/chromium/mathml/presentation/roots-expected.txt.
+        * platform/chromium-mac/mathml/presentation/row-alignment-expected.txt:
+        * platform/chromium-mac/mathml/presentation/sub-expected.txt: Added.
+        * platform/chromium-mac/mathml/presentation/subsup-expected.txt:
+        * platform/chromium-mac/mathml/presentation/sup-expected.txt: Copied from LayoutTests/platform/chromium-mac-snowleopard/mathml/presentation/sup-expected.txt.
+        * platform/chromium-mac/mathml/presentation/tables-expected.txt:
+        * platform/chromium-win-xp/mathml/presentation/roots-expected.txt:
+        * platform/chromium-win-xp/mathml/presentation/row-alignment-expected.txt:
+        * platform/chromium-win-xp/mathml/presentation/sub-expected.txt:
+        * platform/chromium-win-xp/mathml/presentation/subsup-expected.txt:
+        * platform/chromium-win-xp/mathml/presentation/sup-expected.txt:
+        * platform/chromium-win-xp/mathml/presentation/tables-expected.txt:
+        * platform/chromium-win/mathml/presentation/roots-expected.txt:
+        * platform/chromium-win/mathml/presentation/row-alignment-expected.txt:
+        * platform/chromium-win/mathml/presentation/sub-expected.txt:
+        * platform/chromium-win/mathml/presentation/subsup-expected.txt:
+        * platform/chromium-win/mathml/presentation/sup-expected.txt:
+        * platform/chromium-win/mathml/presentation/tables-expected.txt:
+        * platform/chromium/TestExpectations:
+        * platform/chromium/mathml/presentation/row-alignment-expected.txt: Removed.
+        * platform/chromium/mathml/presentation/subsup-expected.txt: Removed.
+
 2012-12-03  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed gardening on Apple Windows port.

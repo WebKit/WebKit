@@ -16,8 +16,8 @@ layer at (0,0) size 800x164
                       RenderBlock {mi} at (0,0) size 8x8
                         RenderText {#text} at (0,-8) size 8x19
                           text run at (0,-8) width 8: "a"
-                    RenderMathMLBlock (anonymous, flex) at (8,0) size 14x13
-                      RenderBlock {mn} at (0,3) size 14x10
+                    RenderMathMLBlock (anonymous, flex) at (8,3) size 14x10
+                      RenderBlock {mn} at (0,0) size 14x9
                         RenderText {#text} at (0,-3) size 14x14
                           text run at (0,-3) width 14: "11"
                 RenderTableCell {mtd} at (29,0) size 29x18 [r=0 c=1 rs=1 cs=1]
@@ -26,8 +26,8 @@ layer at (0,0) size 800x164
                       RenderBlock {mi} at (0,0) size 8x8
                         RenderText {#text} at (0,-8) size 8x19
                           text run at (0,-8) width 8: "a"
-                    RenderMathMLBlock (anonymous, flex) at (8,0) size 14x13
-                      RenderBlock {mn} at (0,3) size 14x10
+                    RenderMathMLBlock (anonymous, flex) at (8,3) size 14x10
+                      RenderBlock {mn} at (0,0) size 14x9
                         RenderText {#text} at (0,-3) size 14x14
                           text run at (0,-3) width 14: "12"
                 RenderTableCell {mtd} at (58,0) size 29x18 [r=0 c=2 rs=1 cs=1]
@@ -36,8 +36,8 @@ layer at (0,0) size 800x164
                       RenderBlock {mi} at (0,0) size 8x8
                         RenderText {#text} at (0,-8) size 8x19
                           text run at (0,-8) width 8: "a"
-                    RenderMathMLBlock (anonymous, flex) at (8,0) size 14x13
-                      RenderBlock {mn} at (0,3) size 14x10
+                    RenderMathMLBlock (anonymous, flex) at (8,3) size 14x10
+                      RenderBlock {mn} at (0,0) size 14x9
                         RenderText {#text} at (0,-3) size 14x14
                           text run at (0,-3) width 14: "13"
               RenderTableRow {mtr} at (0,18) size 87x22
@@ -47,8 +47,8 @@ layer at (0,0) size 800x164
                       RenderBlock {mi} at (0,0) size 8x12
                         RenderText {#text} at (0,-4) size 8x19
                           text run at (0,-4) width 8: "b"
-                    RenderMathMLBlock (anonymous, flex) at (8,0) size 14x17
-                      RenderBlock {mn} at (0,7) size 14x10
+                    RenderMathMLBlock (anonymous, flex) at (8,7) size 14x10
+                      RenderBlock {mn} at (0,0) size 14x9
                         RenderText {#text} at (0,-3) size 14x14
                           text run at (0,-3) width 14: "22"
                 RenderTableCell {mtd} at (58,18) size 29x22 [r=1 c=2 rs=1 cs=1]
@@ -57,8 +57,8 @@ layer at (0,0) size 800x164
                       RenderBlock {mi} at (0,0) size 8x12
                         RenderText {#text} at (0,-4) size 8x19
                           text run at (0,-4) width 8: "b"
-                    RenderMathMLBlock (anonymous, flex) at (8,0) size 14x17
-                      RenderBlock {mn} at (0,7) size 14x10
+                    RenderMathMLBlock (anonymous, flex) at (8,7) size 14x10
+                      RenderBlock {mn} at (0,0) size 14x9
                         RenderText {#text} at (0,-3) size 14x14
                           text run at (0,-3) width 14: "23"
               RenderTableRow {mtr} at (0,40) size 87x18
@@ -68,8 +68,8 @@ layer at (0,0) size 800x164
                       RenderBlock {mi} at (0,0) size 7x8
                         RenderText {#text} at (0,-8) size 7x19
                           text run at (0,-8) width 7: "c"
-                    RenderMathMLBlock (anonymous, flex) at (7,0) size 14x13
-                      RenderBlock {mn} at (0,3) size 14x10
+                    RenderMathMLBlock (anonymous, flex) at (7,3) size 14x10
+                      RenderBlock {mn} at (0,0) size 14x9
                         RenderText {#text} at (0,-3) size 14x14
                           text run at (0,-3) width 14: "31"
         RenderText {#text} at (0,0) size 0x0
@@ -86,8 +86,8 @@ layer at (0,0) size 800x164
                       RenderBlock {mi} at (0,0) size 8x8
                         RenderText {#text} at (0,-8) size 8x19
                           text run at (0,-8) width 8: "a"
-                    RenderMathMLBlock (anonymous, flex) at (8,0) size 7x13
-                      RenderBlock {mn} at (0,3) size 7x10
+                    RenderMathMLBlock (anonymous, flex) at (8,3) size 7x10
+                      RenderBlock {mn} at (0,0) size 7x9
                         RenderText {#text} at (0,-3) size 7x14
                           text run at (0,-3) width 7: "1"
                 RenderTableCell {mtd} at (29,0) size 29x18 [r=0 c=1 rs=1 cs=1]
@@ -96,8 +96,8 @@ layer at (0,0) size 800x164
                       RenderBlock {mi} at (0,0) size 8x8
                         RenderText {#text} at (0,-8) size 8x19
                           text run at (0,-8) width 8: "a"
-                    RenderMathMLBlock (anonymous, flex) at (8,0) size 14x13
-                      RenderBlock {mn} at (0,3) size 14x10
+                    RenderMathMLBlock (anonymous, flex) at (8,3) size 14x10
+                      RenderBlock {mn} at (0,0) size 14x9
                         RenderText {#text} at (0,-3) size 14x14
                           text run at (0,-3) width 14: "12"
                 RenderTableCell {mtd} at (58,0) size 29x18 [r=0 c=2 rs=1 cs=1]
@@ -106,8 +106,8 @@ layer at (0,0) size 800x164
                       RenderBlock {mi} at (0,0) size 8x8
                         RenderText {#text} at (0,-8) size 8x19
                           text run at (0,-8) width 8: "a"
-                    RenderMathMLBlock (anonymous, flex) at (8,0) size 14x13
-                      RenderBlock {mn} at (0,3) size 14x10
+                    RenderMathMLBlock (anonymous, flex) at (8,3) size 14x10
+                      RenderBlock {mn} at (0,0) size 14x9
                         RenderText {#text} at (0,-3) size 14x14
                           text run at (0,-3) width 14: "13"
               RenderTableRow {mtr} at (0,18) size 87x22
@@ -117,8 +117,8 @@ layer at (0,0) size 800x164
                       RenderBlock {mi} at (0,0) size 8x12
                         RenderText {#text} at (0,-4) size 8x19
                           text run at (0,-4) width 8: "b"
-                    RenderMathMLBlock (anonymous, flex) at (8,0) size 14x17
-                      RenderBlock {mn} at (0,7) size 14x10
+                    RenderMathMLBlock (anonymous, flex) at (8,7) size 14x10
+                      RenderBlock {mn} at (0,0) size 14x9
                         RenderText {#text} at (0,-3) size 14x14
                           text run at (0,-3) width 14: "21"
                 RenderTableCell {mtd} at (29,18) size 29x22 [r=1 c=1 rs=1 cs=1]
@@ -127,8 +127,8 @@ layer at (0,0) size 800x164
                       RenderBlock {mi} at (0,0) size 8x12
                         RenderText {#text} at (0,-4) size 8x19
                           text run at (0,-4) width 8: "b"
-                    RenderMathMLBlock (anonymous, flex) at (8,0) size 7x17
-                      RenderBlock {mn} at (0,7) size 7x10
+                    RenderMathMLBlock (anonymous, flex) at (8,7) size 7x10
+                      RenderBlock {mn} at (0,0) size 7x9
                         RenderText {#text} at (0,-3) size 7x14
                           text run at (0,-3) width 7: "2"
                 RenderTableCell {mtd} at (58,18) size 29x22 [r=1 c=2 rs=1 cs=1]
@@ -137,8 +137,8 @@ layer at (0,0) size 800x164
                       RenderBlock {mi} at (0,0) size 8x12
                         RenderText {#text} at (0,-4) size 8x19
                           text run at (0,-4) width 8: "b"
-                    RenderMathMLBlock (anonymous, flex) at (8,0) size 14x17
-                      RenderBlock {mn} at (0,7) size 14x10
+                    RenderMathMLBlock (anonymous, flex) at (8,7) size 14x10
+                      RenderBlock {mn} at (0,0) size 14x9
                         RenderText {#text} at (0,-3) size 14x14
                           text run at (0,-3) width 14: "23"
               RenderTableRow {mtr} at (0,40) size 87x18
@@ -148,8 +148,8 @@ layer at (0,0) size 800x164
                       RenderBlock {mi} at (0,0) size 7x8
                         RenderText {#text} at (0,-8) size 7x19
                           text run at (0,-8) width 7: "c"
-                    RenderMathMLBlock (anonymous, flex) at (7,0) size 14x13
-                      RenderBlock {mn} at (0,3) size 14x10
+                    RenderMathMLBlock (anonymous, flex) at (7,3) size 14x10
+                      RenderBlock {mn} at (0,0) size 14x9
                         RenderText {#text} at (0,-3) size 14x14
                           text run at (0,-3) width 14: "31"
                 RenderTableCell {mtd} at (29,40) size 29x18 [r=2 c=1 rs=1 cs=1]
@@ -158,8 +158,8 @@ layer at (0,0) size 800x164
                       RenderBlock {mi} at (0,0) size 7x8
                         RenderText {#text} at (0,-8) size 7x19
                           text run at (0,-8) width 7: "c"
-                    RenderMathMLBlock (anonymous, flex) at (7,0) size 14x13
-                      RenderBlock {mn} at (0,3) size 14x10
+                    RenderMathMLBlock (anonymous, flex) at (7,3) size 14x10
+                      RenderBlock {mn} at (0,0) size 14x9
                         RenderText {#text} at (0,-3) size 14x14
                           text run at (0,-3) width 14: "32"
                 RenderTableCell {mtd} at (58,40) size 29x18 [r=2 c=2 rs=1 cs=1]
@@ -168,8 +168,8 @@ layer at (0,0) size 800x164
                       RenderBlock {mi} at (0,0) size 7x8
                         RenderText {#text} at (0,-8) size 7x19
                           text run at (0,-8) width 7: "c"
-                    RenderMathMLBlock (anonymous, flex) at (7,0) size 7x13
-                      RenderBlock {mn} at (0,3) size 7x10
+                    RenderMathMLBlock (anonymous, flex) at (7,3) size 7x10
+                      RenderBlock {mn} at (0,0) size 7x9
                         RenderText {#text} at (0,-3) size 7x14
                           text run at (0,-3) width 7: "3"
           RenderBlock {mtext} at (88,30) size 3x4
@@ -184,8 +184,8 @@ layer at (0,0) size 800x164
                       RenderBlock {mi} at (0,0) size 8x8
                         RenderText {#text} at (0,-8) size 8x19
                           text run at (0,-8) width 8: "a"
-                    RenderMathMLBlock (anonymous, flex) at (8,0) size 7x13
-                      RenderBlock {mn} at (0,3) size 7x10
+                    RenderMathMLBlock (anonymous, flex) at (8,3) size 7x10
+                      RenderBlock {mn} at (0,0) size 7x9
                         RenderText {#text} at (0,-3) size 7x14
                           text run at (0,-3) width 7: "1"
                 RenderTableCell {mtd} at (29,0) size 29x18 [r=0 c=1 rs=1 cs=1]
@@ -194,8 +194,8 @@ layer at (0,0) size 800x164
                       RenderBlock {mi} at (0,0) size 8x8
                         RenderText {#text} at (0,-8) size 8x19
                           text run at (0,-8) width 8: "a"
-                    RenderMathMLBlock (anonymous, flex) at (8,0) size 14x13
-                      RenderBlock {mn} at (0,3) size 14x10
+                    RenderMathMLBlock (anonymous, flex) at (8,3) size 14x10
+                      RenderBlock {mn} at (0,0) size 14x9
                         RenderText {#text} at (0,-3) size 14x14
                           text run at (0,-3) width 14: "12"
                 RenderTableCell {mtd} at (58,0) size 29x18 [r=0 c=2 rs=1 cs=1]
@@ -204,8 +204,8 @@ layer at (0,0) size 800x164
                       RenderBlock {mi} at (0,0) size 8x8
                         RenderText {#text} at (0,-8) size 8x19
                           text run at (0,-8) width 8: "a"
-                    RenderMathMLBlock (anonymous, flex) at (8,0) size 14x13
-                      RenderBlock {mn} at (0,3) size 14x10
+                    RenderMathMLBlock (anonymous, flex) at (8,3) size 14x10
+                      RenderBlock {mn} at (0,0) size 14x9
                         RenderText {#text} at (0,-3) size 14x14
                           text run at (0,-3) width 14: "13"
               RenderTableRow {mtr} at (0,18) size 87x22
@@ -215,8 +215,8 @@ layer at (0,0) size 800x164
                       RenderBlock {mi} at (0,0) size 8x12
                         RenderText {#text} at (0,-4) size 8x19
                           text run at (0,-4) width 8: "b"
-                    RenderMathMLBlock (anonymous, flex) at (8,0) size 14x17
-                      RenderBlock {mn} at (0,7) size 14x10
+                    RenderMathMLBlock (anonymous, flex) at (8,7) size 14x10
+                      RenderBlock {mn} at (0,0) size 14x9
                         RenderText {#text} at (0,-3) size 14x14
                           text run at (0,-3) width 14: "21"
                 RenderTableCell {mtd} at (29,18) size 29x22 [r=1 c=1 rs=1 cs=1]
@@ -225,8 +225,8 @@ layer at (0,0) size 800x164
                       RenderBlock {mi} at (0,0) size 8x12
                         RenderText {#text} at (0,-4) size 8x19
                           text run at (0,-4) width 8: "b"
-                    RenderMathMLBlock (anonymous, flex) at (8,0) size 7x17
-                      RenderBlock {mn} at (0,7) size 7x10
+                    RenderMathMLBlock (anonymous, flex) at (8,7) size 7x10
+                      RenderBlock {mn} at (0,0) size 7x9
                         RenderText {#text} at (0,-3) size 7x14
                           text run at (0,-3) width 7: "2"
                 RenderTableCell {mtd} at (58,18) size 29x22 [r=1 c=2 rs=1 cs=1]
@@ -235,8 +235,8 @@ layer at (0,0) size 800x164
                       RenderBlock {mi} at (0,0) size 8x12
                         RenderText {#text} at (0,-4) size 8x19
                           text run at (0,-4) width 8: "b"
-                    RenderMathMLBlock (anonymous, flex) at (8,0) size 14x17
-                      RenderBlock {mn} at (0,7) size 14x10
+                    RenderMathMLBlock (anonymous, flex) at (8,7) size 14x10
+                      RenderBlock {mn} at (0,0) size 14x9
                         RenderText {#text} at (0,-3) size 14x14
                           text run at (0,-3) width 14: "23"
               RenderTableRow {mtr} at (0,40) size 87x18
@@ -246,8 +246,8 @@ layer at (0,0) size 800x164
                       RenderBlock {mi} at (0,0) size 7x8
                         RenderText {#text} at (0,-8) size 7x19
                           text run at (0,-8) width 7: "c"
-                    RenderMathMLBlock (anonymous, flex) at (7,0) size 14x13
-                      RenderBlock {mn} at (0,3) size 14x10
+                    RenderMathMLBlock (anonymous, flex) at (7,3) size 14x10
+                      RenderBlock {mn} at (0,0) size 14x9
                         RenderText {#text} at (0,-3) size 14x14
                           text run at (0,-3) width 14: "31"
                 RenderTableCell {mtd} at (29,40) size 29x18 [r=2 c=1 rs=1 cs=1]
@@ -256,8 +256,8 @@ layer at (0,0) size 800x164
                       RenderBlock {mi} at (0,0) size 7x8
                         RenderText {#text} at (0,-8) size 7x19
                           text run at (0,-8) width 7: "c"
-                    RenderMathMLBlock (anonymous, flex) at (7,0) size 14x13
-                      RenderBlock {mn} at (0,3) size 14x10
+                    RenderMathMLBlock (anonymous, flex) at (7,3) size 14x10
+                      RenderBlock {mn} at (0,0) size 14x9
                         RenderText {#text} at (0,-3) size 14x14
                           text run at (0,-3) width 14: "32"
                 RenderTableCell {mtd} at (58,40) size 29x18 [r=2 c=2 rs=1 cs=1]
@@ -266,8 +266,8 @@ layer at (0,0) size 800x164
                       RenderBlock {mi} at (0,0) size 7x8
                         RenderText {#text} at (0,-8) size 7x19
                           text run at (0,-8) width 7: "c"
-                    RenderMathMLBlock (anonymous, flex) at (7,0) size 7x13
-                      RenderBlock {mn} at (0,3) size 7x10
+                    RenderMathMLBlock (anonymous, flex) at (7,3) size 7x10
+                      RenderBlock {mn} at (0,0) size 7x9
                         RenderText {#text} at (0,-3) size 7x14
                           text run at (0,-3) width 7: "3"
           RenderBlock {mtext} at (178,30) size 3x4
@@ -282,8 +282,8 @@ layer at (0,0) size 800x164
                       RenderBlock {mi} at (0,0) size 8x8
                         RenderText {#text} at (0,-8) size 8x19
                           text run at (0,-8) width 8: "a"
-                    RenderMathMLBlock (anonymous, flex) at (8,0) size 7x13
-                      RenderBlock {mn} at (0,3) size 7x10
+                    RenderMathMLBlock (anonymous, flex) at (8,3) size 7x10
+                      RenderBlock {mn} at (0,0) size 7x9
                         RenderText {#text} at (0,-3) size 7x14
                           text run at (0,-3) width 7: "1"
                 RenderTableCell {mtd} at (56,0) size 29x18 [r=0 c=2 rs=1 cs=1]
@@ -292,8 +292,8 @@ layer at (0,0) size 800x164
                       RenderBlock {mi} at (0,0) size 8x8
                         RenderText {#text} at (0,-8) size 8x19
                           text run at (0,-8) width 8: "a"
-                    RenderMathMLBlock (anonymous, flex) at (8,0) size 14x13
-                      RenderBlock {mn} at (0,3) size 14x10
+                    RenderMathMLBlock (anonymous, flex) at (8,3) size 14x10
+                      RenderBlock {mn} at (0,0) size 14x9
                         RenderText {#text} at (0,-3) size 14x14
                           text run at (0,-3) width 14: "13"
               RenderTableRow {mtr} at (0,18) size 85x22
@@ -303,8 +303,8 @@ layer at (0,0) size 800x164
                       RenderBlock {mi} at (0,0) size 8x12
                         RenderText {#text} at (0,-4) size 8x19
                           text run at (0,-4) width 8: "b"
-                    RenderMathMLBlock (anonymous, flex) at (8,0) size 14x17
-                      RenderBlock {mn} at (0,7) size 14x10
+                    RenderMathMLBlock (anonymous, flex) at (8,7) size 14x10
+                      RenderBlock {mn} at (0,0) size 14x9
                         RenderText {#text} at (0,-3) size 14x14
                           text run at (0,-3) width 14: "23"
               RenderTableRow {mtr} at (0,40) size 85x18
@@ -314,8 +314,8 @@ layer at (0,0) size 800x164
                       RenderBlock {mi} at (0,0) size 7x8
                         RenderText {#text} at (0,-8) size 7x19
                           text run at (0,-8) width 7: "c"
-                    RenderMathMLBlock (anonymous, flex) at (7,0) size 14x13
-                      RenderBlock {mn} at (0,3) size 14x10
+                    RenderMathMLBlock (anonymous, flex) at (7,3) size 14x10
+                      RenderBlock {mn} at (0,0) size 14x9
                         RenderText {#text} at (0,-3) size 14x14
                           text run at (0,-3) width 14: "31"
                 RenderTableCell {mtd} at (28,40) size 28x18 [r=2 c=1 rs=1 cs=1]
@@ -324,8 +324,8 @@ layer at (0,0) size 800x164
                       RenderBlock {mi} at (0,0) size 7x8
                         RenderText {#text} at (0,-8) size 7x19
                           text run at (0,-8) width 7: "c"
-                    RenderMathMLBlock (anonymous, flex) at (7,0) size 14x13
-                      RenderBlock {mn} at (0,3) size 14x10
+                    RenderMathMLBlock (anonymous, flex) at (7,3) size 14x10
+                      RenderBlock {mn} at (0,0) size 14x9
                         RenderText {#text} at (0,-3) size 14x14
                           text run at (0,-3) width 14: "32"
                 RenderTableCell {mtd} at (56,40) size 29x18 [r=2 c=2 rs=1 cs=1]
@@ -334,8 +334,8 @@ layer at (0,0) size 800x164
                       RenderBlock {mi} at (0,0) size 7x8
                         RenderText {#text} at (0,-8) size 7x19
                           text run at (0,-8) width 7: "c"
-                    RenderMathMLBlock (anonymous, flex) at (7,0) size 7x13
-                      RenderBlock {mn} at (0,3) size 7x10
+                    RenderMathMLBlock (anonymous, flex) at (7,3) size 7x10
+                      RenderBlock {mn} at (0,0) size 7x9
                         RenderText {#text} at (0,-3) size 7x14
                           text run at (0,-3) width 7: "3"
         RenderText {#text} at (0,0) size 0x0

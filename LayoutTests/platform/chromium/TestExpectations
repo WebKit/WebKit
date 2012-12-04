@@ -3413,14 +3413,6 @@ webkit.org/b/84802 [ Mac Debug ] fast/js/random-array-gc-stress.html [ Pass Time
 
 webkit.org/b/84847 [ Win Release ] inspector/timeline/timeline-start-time.html [ Failure Pass ]
 
-# Needs rebaseline.
-webkit.org/b/103665 [ Win Mac ] mathml/presentation/roots.xhtml [ Text ]
-webkit.org/b/103665 [ Win Mac ] mathml/presentation/row-alignment.xhtml [ Text ]
-webkit.org/b/103665 [ Win Mac ] mathml/presentation/sub.xhtml  [ Text ]
-webkit.org/b/103665 [ Win Mac ] mathml/presentation/subsup.xhtml  [ Text ]
-webkit.org/b/103665 [ Win Mac ] mathml/presentation/sup.xhtml [ Text ]
-webkit.org/b/103665 [ Win Mac ] mathml/presentation/tables.xhtml [ Text ]
-
 crbug.com/128325 platform/chromium/compositing/overflow/overflow-scrolling-touch-stacking-context.html [ Failure ]
 
 webkit.org/b/85106 tables/mozilla/other/slashlogo.html [ Pass Slow ]
