@@ -333,8 +333,11 @@ void FrameLoader::submitForm(PassRefPtr<FormSubmission> submission)
     if (submission->action().isEmpty())
         return;
 
-    if (isDocumentSandboxed(m_frame, SandboxForms))
+    if (isDocumentSandboxed(m_frame, SandboxForms)) {
+        // FIXME: This message should be moved off the console once a solution to https://bugs.webkit.org/show_bug.cgi?id=103274 exists.
+        m_frame->document()->addConsoleMessage(HTMLMessageSource, LogMessageType, ErrorMessageLevel, "Blocked form submission to '" + submission->action().string() + "' because the form's frame is sandboxed and the 'allow-forms' permission is not set.");
         return;
+    }
 
     if (protocolIsJavaScript(submission->action())) {
         if (!m_frame->document()->contentSecurityPolicy()->allowFormAction(KURL(submission->action())))
@@ -3289,8 +3292,11 @@ Frame* createWindow(Frame* openerFrame, Frame* lookupFrame, const FrameLoadReque
     }
 
     // Sandboxed frames cannot open new auxiliary browsing contexts.
-    if (isDocumentSandboxed(openerFrame, SandboxPopups))
+    if (isDocumentSandboxed(openerFrame, SandboxPopups)) {
+        // FIXME: This message should be moved off the console once a solution to https://bugs.webkit.org/show_bug.cgi?id=103274 exists.
+        openerFrame->document()->addConsoleMessage(HTMLMessageSource, LogMessageType, ErrorMessageLevel, "Blocked opening '" + request.resourceRequest().url().string() + "' in a new window because the request was made in a sandboxed frame whose 'allow-popups' permission is not set.");
         return 0;
+    }
 
     // FIXME: Setting the referrer should be the caller's responsibility.
     FrameLoadRequest requestWithReferrer = request;
