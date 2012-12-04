@@ -124,6 +124,7 @@ sup interfaceName=HTMLElement
 table
 tbody interfaceName=HTMLTableSectionElement
 td interfaceName=HTMLTableCellElement
+template conditional=TEMPLATE_ELEMENT
 textarea interfaceName=HTMLTextAreaElement, constructorNeedsFormElement
 tfoot interfaceName=HTMLTableSectionElement
 th interfaceName=HTMLTableCellElement

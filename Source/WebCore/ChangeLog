@@ -1,3 +1,89 @@
+2012-12-03  Rafael Weinstein  <rafaelw@chromium.org>
+
+        Implement HTMLTemplateElement
+        https://bugs.webkit.org/show_bug.cgi?id=86031
+
+        Reviewed by Adam Barth.
+
+        Initial implementation. This patch includes the parser changes, new IDL and element implementation for <template>.
+
+        Spec: http://dvcs.w3.org/hg/webcomponents/raw-file/tip/spec/templates/index.html
+
+        Tests: fast/dom/HTMLTemplateElement/cloneNode.html
+               fast/dom/HTMLTemplateElement/inertContents.html
+               fast/dom/HTMLTemplateElement/innerHTML.html
+               fast/dom/HTMLTemplateElement/ownerDocument.html
+               html5lib/run-template.html
+
+        * WebCore.gypi:
+        * css/html.css:
+        (template):
+        * dom/Document.cpp:
+        (WebCore):
+        (WebCore::Document::templateContentsOwnerDocument):
+        * dom/Document.h:
+        (Document):
+        * editing/MarkupAccumulator.cpp:
+        (WebCore::MarkupAccumulator::serializeNodesWithNamespaces):
+        * html/HTMLElement.h:
+        (HTMLElement):
+        * html/HTMLElementsAllInOne.cpp:
+        * html/HTMLTagNames.in:
+        * html/HTMLTemplateElement.cpp: Added.
+        (WebCore):
+        (WebCore::HTMLTemplateElement::HTMLTemplateElement):
+        (WebCore::HTMLTemplateElement::setInnerHTML):
+        (WebCore::HTMLTemplateElement::~HTMLTemplateElement):
+        (WebCore::HTMLTemplateElement::create):
+        (WebCore::HTMLTemplateElement::content):
+        (WebCore::HTMLTemplateElement::setContent):
+        (WebCore::toHTMLTemplateElement):
+        * html/HTMLTemplateElement.h: Added.
+        (WebCore):
+        (HTMLTemplateElement):
+        (WebCore::toHTMLTemplateElement):
+        * html/HTMLTemplateElement.idl: Added.
+        * html/parser/HTMLConstructionSite.cpp:
+        (WebCore::executeTask):
+        (WebCore::HTMLConstructionSite::insertComment):
+        (WebCore::HTMLConstructionSite::insertTextNode):
+        (WebCore::HTMLConstructionSite::createElement):
+        (WebCore::HTMLConstructionSite::ownerDocumentForCurrentNode):
+        (WebCore):
+        (WebCore::HTMLConstructionSite::createHTMLElement):
+        (WebCore::HTMLConstructionSite::findFosterSite):
+        * html/parser/HTMLConstructionSite.h:
+        (HTMLConstructionSite):
+        * html/parser/HTMLElementStack.cpp:
+        (WebCore):
+        (WebCore::HTMLElementStack::hasTemplateInHTMLScope):
+        * html/parser/HTMLElementStack.h:
+        (HTMLElementStack):
+        * html/parser/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::constructTreeFromToken):
+        (WebCore::HTMLTreeBuilder::processStartTagForInBody):
+        (WebCore):
+        (WebCore::HTMLTreeBuilder::processTemplateEndTag):
+        (WebCore::HTMLTreeBuilder::processStartTagForInTable):
+        (WebCore::HTMLTreeBuilder::processStartTag):
+        (WebCore::HTMLTreeBuilder::processHtmlStartTagForInBody):
+        (WebCore::HTMLTreeBuilder::resetInsertionModeAppropriately):
+        (WebCore::HTMLTreeBuilder::processEndTagForInTableBody):
+        (WebCore::HTMLTreeBuilder::processEndTagForInRow):
+        (WebCore::HTMLTreeBuilder::processEndTagForInCell):
+        (WebCore::HTMLTreeBuilder::processEndTagForInBody):
+        (WebCore::HTMLTreeBuilder::processTrEndTagForInRow):
+        (WebCore::HTMLTreeBuilder::processTableEndTagForInTable):
+        (WebCore::HTMLTreeBuilder::processEndTag):
+        (WebCore::HTMLTreeBuilder::processCharacterBuffer):
+        (WebCore::HTMLTreeBuilder::processEndOfFile):
+        (WebCore::HTMLTreeBuilder::processStartTagForInHead):
+        * html/parser/HTMLTreeBuilder.h:
+        (HTMLTreeBuilder):
+        (WebCore::HTMLTreeBuilder::isParsingTemplateContents):
+        (WebCore::HTMLTreeBuilder::isParsingFragmentOrTemplateContents):
+        * page/DOMWindow.idl:
+
 2012-12-03  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r136460.

@@ -44,6 +44,7 @@
 #include "HTMLFormElement.h"
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
+#include "HTMLTemplateElement.h"
 #include "HTMLTextFormControlElement.h"
 #include "RenderWordBreak.h"
 #include "ScriptEventListener.h"
@@ -343,8 +344,14 @@ String HTMLElement::outerHTML() const
 
 void HTMLElement::setInnerHTML(const String& html, ExceptionCode& ec)
 {
-    if (RefPtr<DocumentFragment> fragment = createFragmentForInnerOuterHTML(html, this, AllowScriptingContent, ec))
-        replaceChildrenWithFragment(this, fragment.release(), ec);
+    if (RefPtr<DocumentFragment> fragment = createFragmentForInnerOuterHTML(html, this, AllowScriptingContent, ec)) {
+        ContainerNode* container = this;
+#if ENABLE(TEMPLATE_ELEMENT)
+        if (hasLocalName(templateTag))
+            container = toHTMLTemplateElement(this)->content();
+#endif
+        replaceChildrenWithFragment(container, fragment.release(), ec);
+    }
 }
 
 static void mergeWithNextTextNode(PassRefPtr<Node> node, ExceptionCode& ec)

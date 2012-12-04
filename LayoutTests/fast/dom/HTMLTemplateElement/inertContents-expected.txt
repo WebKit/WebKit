@@ -1,0 +1,7 @@
+http://baz.com/bat.jpg - willSendRequest <NSURLRequest URL http://baz.com/bat.jpg, main document URL inertContents.html, http method GET> redirectResponse (null)
+Blocked access to external URL http://baz.com/bat.jpg
+http://baz.com/bat.jpg - didFailLoadingWithError: <NSError domain NSURLErrorDomain, code -999, failing URL "(null)">
+The test asserts that elements within template contents are "inert", e.g. resources do not fetch, script does not run.
+
+pass!
+

@@ -472,6 +472,7 @@
     attribute HTMLTableElementConstructor HTMLTableElement;
     attribute HTMLTableRowElementConstructor HTMLTableRowElement;
     attribute HTMLTableSectionElementConstructor HTMLTableSectionElement;
+    attribute [Conditional=TEMPLATE_ELEMENT] HTMLTemplateElementConstructor HTMLTemplateElement;
     attribute HTMLTextAreaElementConstructor HTMLTextAreaElement;
     attribute HTMLTitleElementConstructor HTMLTitleElement;
     attribute HTMLUListElementConstructor HTMLUListElement;

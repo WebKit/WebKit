@@ -310,6 +310,7 @@ void ContainerNode::parserInsertBefore(PassRefPtr<Node> newChild, Node* nextChil
     ASSERT(newChild);
     ASSERT(nextChild);
     ASSERT(nextChild->parentNode() == this);
+    ASSERT(document() == newChild->document());
 
     NodeVector targets;
     collectTargetNodes(newChild.get(), targets);
@@ -695,6 +696,7 @@ void ContainerNode::parserAppendChild(PassRefPtr<Node> newChild)
 {
     ASSERT(newChild);
     ASSERT(!newChild->parentNode()); // Use appendChild if you need to handle reparenting (and want DOM mutation events).
+    ASSERT(document() == newChild->document());
 
     Node* last = m_lastChild;
     {

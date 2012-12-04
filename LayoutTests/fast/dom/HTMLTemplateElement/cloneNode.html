@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<template id="template">Contents</template>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script>
+
+description('Test that template contents are not cloned when the template element is cloned');
+
+if (!window.HTMLTemplateElement)
+    testFailed('This test requires ENABLE(TEMPLATE_ELEMENT)');
+
+var template = document.getElementById('template');
+shouldBe('template.content.childNodes.length', '1');
+var clone = template.cloneNode(true);
+shouldBe('clone.content.childNodes.length', '0');
+
+</script>

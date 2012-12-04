@@ -220,16 +220,24 @@ Markup._get = function(node, depth)
     case Node.DOCUMENT_FRAGMENT_NODE:
         if (node.nodeName == "#shadow-root")
           str += "<shadow:root>";
+        else
+          str += "#document-fragment";
     }
-
-    for (var i = 0, len = node.childNodes.length; i < len; i++) {
-        var selection = Markup._getSelectionMarker(node, i);
-        if (selection)
-            str += Markup._indent(depth + 1) + selection;
-
-        str += Markup._get(node.childNodes[i], depth + 1);
+    
+    
+    // HTML Template elements serialize their content DocumentFragment, and NOT their children.
+    if (node.namespaceURI = 'http://www.w3.org/1999/xhtml' && node.tagName == 'TEMPLATE') {
+        str += Markup._get(node.content, depth + 1);
+    } else {
+        for (var i = 0, len = node.childNodes.length; i < len; i++) {
+            var selection = Markup._getSelectionMarker(node, i);
+            if (selection)
+                str += Markup._indent(depth + 1) + selection;
+    
+            str += Markup._get(node.childNodes[i], depth + 1);
+        }
     }
-
+    
     str += Markup._getShadowHostIfPossible(node, depth);
     
     var selection = Markup._getSelectionMarker(node, i);
@@ -284,7 +292,7 @@ Markup._NAMESPACE_URI_MAP = {
 
 Markup._getSelectionFromNode = function(node)
 {
-    return node.ownerDocument.defaultView.getSelection();
+    return node.ownerDocument.defaultView ? node.ownerDocument.defaultView.getSelection() : null;
 }
 
 Markup._SELECTION_FOCUS = '<#selection-focus>';

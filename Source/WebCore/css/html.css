@@ -1262,6 +1262,12 @@ summary::-webkit-details-marker {
     margin-right: 0.4em;
 }
 
+#if defined(ENABLE_TEMPLATE_ELEMENT) && ENABLE_TEMPLATE_ELEMENT
+template {
+    display: none
+}
+#endif
+
 bdi, output {
     unicode-bidi: -webkit-isolate;
 }

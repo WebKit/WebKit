@@ -348,6 +348,7 @@ BINDING_IDLS = \
     $(WebCore)/html/HTMLTableElement.idl \
     $(WebCore)/html/HTMLTableRowElement.idl \
     $(WebCore)/html/HTMLTableSectionElement.idl \
+    $(WebCore)/html/HTMLTemplateElement.idl \
     $(WebCore)/html/HTMLTextAreaElement.idl \
     $(WebCore)/html/HTMLTitleElement.idl \
     $(WebCore)/html/HTMLTrackElement.idl \

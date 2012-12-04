@@ -1,0 +1,843 @@
+#data
+<body><template>Hello</template>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <template>
+|       #document-fragment
+|         "Hello"
+
+#data
+<template>Hello</template>
+#errors
+#document
+| <html>
+|   <head>
+|     <template>
+|       #document-fragment
+|         "Hello"
+|   <body>
+
+#data
+<template></template><div></div>
+#errors
+#document
+| <html>
+|   <head>
+|     <template>
+|       #document-fragment
+|   <body>
+|     <div>
+
+#data
+<html><template>Hello</template>
+#errors
+#document
+| <html>
+|   <head>
+|     <template>
+|       #document-fragment
+|         "Hello"
+|   <body>
+
+#data
+<head><template><div></div></template></head>
+#errors
+#document
+| <html>
+|   <head>
+|     <template>
+|       #document-fragment
+|         <div>
+|   <body>
+
+#data
+<div><template><div><span></template><b>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <div>
+|       <template>
+|         #document-fragment
+|           <div>
+|             <span>
+|       <b>
+
+#data
+<div><template></div>Hello
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <div>
+|       <template>
+|         #document-fragment
+|           "Hello"
+
+#data
+<div></template></div>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <div>
+
+#data
+<table><template></template></table>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <table>
+|       <template>
+|         #document-fragment
+
+#data
+<table><template></template></div>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <table>
+|       <template>
+|         #document-fragment
+
+#data
+<table><div><template></template></div>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <div>
+|       <template>
+|         #document-fragment
+|     <table>
+
+#data
+<table><template></template><div></div>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <div>
+|     <table>
+|       <template>
+|         #document-fragment
+
+#data
+<table>   <template></template></table>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <table>
+|       "   "
+|       <template>
+|         #document-fragment
+
+#data
+<table><tbody><template></template></tbody>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <table>
+|       <tbody>
+|         <template>
+|           #document-fragment
+
+#data
+<table><tbody><template></tbody></template>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <table>
+|       <tbody>
+|         <template>
+|           #document-fragment
+
+#data
+<table><tbody><template></template></tbody></table>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <table>
+|       <tbody>
+|         <template>
+|           #document-fragment
+
+#data
+<table><thead><template></template></thead>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <table>
+|       <thead>
+|         <template>
+|           #document-fragment
+
+#data
+<table><tfoot><template></template></tfoot>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <table>
+|       <tfoot>
+|         <template>
+|           #document-fragment
+
+#data
+<select><template></template></select>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <select>
+|       <template>
+|         #document-fragment
+
+#data
+<select><template><option></option></template></select>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <select>
+|       <template>
+|         #document-fragment
+|           <option>
+
+#data
+<template><option></option></select><option></option></template>
+#errors
+#document
+| <html>
+|   <head>
+|     <template>
+|       #document-fragment
+|         <option>
+|         <option>
+|   <body>
+
+#data
+<select><template></template><option></select>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <select>
+|       <template>
+|         #document-fragment
+|       <option>
+
+#data
+<select><option><template></template></select>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <select>
+|       <option>
+|         <template>
+|           #document-fragment
+
+#data
+<select><template>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <select>
+|       <template>
+|         #document-fragment
+
+#data
+<select><option></option><template>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <select>
+|       <option>
+|       <template>
+|         #document-fragment
+
+#data
+<select><option></option><template><option>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <select>
+|       <option>
+|       <template>
+|         #document-fragment
+|           <option>
+
+#data
+<table><thead><template><td></template></table>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <table>
+|       <thead>
+|         <template>
+|           #document-fragment
+|             <td>
+
+#data
+<table><template><thead></template></table>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <table>
+|       <template>
+|         #document-fragment
+|           <thead>
+
+#data
+<body><table><template><td></tr><div></template></table>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <table>
+|       <template>
+|         #document-fragment
+|           <td>
+|             <div>
+
+#data
+<table><template><thead></template></thead></table>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <table>
+|       <template>
+|         #document-fragment
+|           <thead>
+
+#data
+<table><thead><template><tr></template></table>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <table>
+|       <thead>
+|         <template>
+|           #document-fragment
+|             <tr>
+
+#data
+<table><template><tr></template></table>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <table>
+|       <template>
+|         #document-fragment
+|           <tr>
+
+#data
+<table><tr><template><td>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <table>
+|       <tbody>
+|         <tr>
+|           <template>
+|             #document-fragment
+|               <td>
+
+#data
+<table><template><tr><template><td></template></tr></template></table>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <table>
+|       <template>
+|         #document-fragment
+|           <tr>
+|             <template>
+|               #document-fragment
+|                 <td>
+
+#data
+<table><template><tr><template><td></td></template></tr></template></table>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <table>
+|       <template>
+|         #document-fragment
+|           <tr>
+|             <template>
+|               #document-fragment
+|                 <td>
+
+#data
+<table><template><td></template>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <table>
+|       <template>
+|         #document-fragment
+|           <td>
+
+#data
+<body><template><td></td></template>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <template>
+|       #document-fragment
+|         <td>
+
+#data
+<body><template><template><tr></tr></template><td></td></template>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <template>
+|       #document-fragment
+|         <template>
+|           #document-fragment
+|             <tr>
+|         <td>
+
+#data
+<table><colgroup><template><col>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <table>
+|       <colgroup>
+|         <template>
+|           #document-fragment
+|             <col>
+
+#data
+<frameset><template><frame></frame></template></frameset>
+#errors
+#document
+| <html>
+|   <head>
+|   <frameset>
+|     <template>
+|       #document-fragment
+|         <frame>
+
+#data
+<template><frame></frame></frameset><frame></frame></template>
+#errors
+#document
+| <html>
+|   <head>
+|     <template>
+|       #document-fragment
+|         <frame>
+|         <frame>
+|   <body>
+
+#data
+<template><div><frameset><span></span></div><span></span></template>
+#errors
+#document
+| <html>
+|   <head>
+|     <template>
+|       #document-fragment
+|         <div>
+|           <span>
+|         <span>
+|   <body>
+
+#data
+<body><template><div><frameset><span></span></div><span></span></template></body>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <template>
+|       #document-fragment
+|         <div>
+|           <span>
+|         <span>
+
+#data
+<body><template><script>var i = 1;</script><td></td></template>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <template>
+|       #document-fragment
+|         <script>
+|           "var i = 1;"
+|         <td>
+
+#data
+<body><template><tr><div></div></tr></template>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <template>
+|       #document-fragment
+|         <tr>
+|         <div>
+
+#data
+<body><template><tr></tr><td></td></template>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <template>
+|       #document-fragment
+|         <tr>
+|         <tr>
+|           <td>
+
+#data
+<body><template><td></td></tr><td></td></template>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <template>
+|       #document-fragment
+|         <td>
+|         <td>
+
+
+#data
+<body><template><td></td><tbody><td></td></template>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <template>
+|       #document-fragment
+|         <td>
+|         <td>
+
+#data
+<body><template><td></td><caption></caption><td></td></template>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <template>
+|       #document-fragment
+|         <td>
+|         <td>
+
+#data
+<body><template><td></td><colgroup></caption><td></td></template>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <template>
+|       #document-fragment
+|         <td>
+|         <td>
+
+#data
+<body><template><td></td></table><td></td></template>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <template>
+|       #document-fragment
+|         <td>
+|         <td>
+
+#data
+<body><template><tr></tr><tbody><tr></tr></template>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <template>
+|       #document-fragment
+|         <tr>
+|         <tr>
+
+#data
+<body><template><tr></tr><caption><tr></tr></template>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <template>
+|       #document-fragment
+|         <tr>
+|         <tr>
+
+#data
+<body><template><tr></tr></table><tr></tr></template>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <template>
+|       #document-fragment
+|         <tr>
+|         <tr>
+
+#data
+<body><template><thead></thead><caption></caption><tbody></tbody></template>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <template>
+|       #document-fragment
+|         <thead>
+|         <caption>
+|         <tbody>
+
+#data
+<body><template><thead></thead></table><tbody></tbody></template></body>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <template>
+|       #document-fragment
+|         <thead>
+|         <tbody>
+
+#data
+<body><template><div><tr></tr></div></template>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <template>
+|       #document-fragment
+|         <div>
+
+#data
+<body><template><em>Hello</em></template>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <template>
+|       #document-fragment
+|         <em>
+|           "Hello"
+
+#data
+<body><template><!--comment--></template>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <template>
+|       #document-fragment
+|         <!-- comment -->
+
+#data
+<body><template><style></style><td></td></template>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <template>
+|       #document-fragment
+|         <style>
+|         <td>
+
+#data
+<body><template><meta><td></td></template>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <template>
+|       #document-fragment
+|         <meta>
+|         <td>
+
+#data
+<body><template><link><td></td></template>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <template>
+|       #document-fragment
+|         <link>
+|         <td>
+
+#data
+<body><template><template><tr></tr></template><td></td></template>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <template>
+|       #document-fragment
+|         <template>
+|           #document-fragment
+|             <tr>
+|         <td>
+
+#data
+<body><table><colgroup><template><col></col></template></colgroup></table></body>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <table>
+|       <colgroup>
+|         <template>
+|           #document-fragment
+|             <col>
+
+#data
+<body a=b><template><div></div><body c=d><div></div></body></template></body>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     a="b"
+|     <template>
+|       #document-fragment
+|         <div>
+|         <div>
+
+#data
+<html a=b><template><div><html b=c><span></template>
+#errors
+#document
+| <html>
+|   a="b"
+|   <head>
+|     <template>
+|       #document-fragment
+|         <div>
+|           <span>
+|   <body>
+
+#data
+<html a=b><template><col></col><html b=c><col></col></template>
+#errors
+#document
+| <html>
+|   a="b"
+|   <head>
+|     <template>
+|       #document-fragment
+|         <col>
+|         <col>
+|   <body>
+
+#data
+<html a=b><template><frame></frame><html b=c><frame></frame></template>
+#errors
+#document
+| <html>
+|   a="b"
+|   <head>
+|     <template>
+|       #document-fragment
+|         <frame>
+|         <frame>
+|   <body>
+
+#data
+<body><template><tr></tr><template></template><td></td></template>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <template>
+|       #document-fragment
+|         <tr>
+|         <template>
+|           #document-fragment
+|         <td>

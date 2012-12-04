@@ -431,6 +431,8 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSHTMLTableRowElement.h \
 	DerivedSources/WebCore/JSHTMLTableSectionElement.cpp \
 	DerivedSources/WebCore/JSHTMLTableSectionElement.h \
+	DerivedSources/WebCore/JSHTMLTemplateElement.cpp \
+	DerivedSources/WebCore/JSHTMLTemplateElement.h \
 	DerivedSources/WebCore/JSHTMLTextAreaElement.cpp \
 	DerivedSources/WebCore/JSHTMLTextAreaElement.h \
 	DerivedSources/WebCore/JSHTMLTitleElement.cpp \
@@ -1489,6 +1491,7 @@ dom_binding_idls += \
 	$(WebCore)/html/HTMLTableElement.idl \
 	$(WebCore)/html/HTMLTableRowElement.idl \
 	$(WebCore)/html/HTMLTableSectionElement.idl \
+	$(WebCore)/html/HTMLTemplateElement.idl \
 	$(WebCore)/html/HTMLTextAreaElement.idl \
 	$(WebCore)/html/HTMLTitleElement.idl \
 	$(WebCore)/html/HTMLTrackElement.idl \
@@ -3437,6 +3440,8 @@ webcore_sources += \
 	Source/WebCore/html/HTMLTableRowsCollection.h \
 	Source/WebCore/html/HTMLTableSectionElement.cpp \
 	Source/WebCore/html/HTMLTableSectionElement.h \
+	Source/WebCore/html/HTMLTemplateElement.cpp \
+	Source/WebCore/html/HTMLTemplateElement.h \
 	Source/WebCore/html/HTMLTextAreaElement.cpp \
 	Source/WebCore/html/HTMLTextAreaElement.h \
 	Source/WebCore/html/HTMLTextFormControlElement.cpp \

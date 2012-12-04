@@ -1172,6 +1172,10 @@ public:
     const Vector<RefPtr<Element> >& topLayerElements() const { return m_topLayerElements; }
 #endif
 
+#if ENABLE(TEMPLATE_ELEMENT)
+    Document* templateContentsOwnerDocument();
+#endif
+
 protected:
     Document(Frame*, const KURL&, bool isXHTML, bool isHTML);
 
@@ -1527,6 +1531,10 @@ private:
 
     typedef HashMap<AtomicString, OwnPtr<Locale> > LocaleIdentifierToLocaleMap;
     LocaleIdentifierToLocaleMap m_localeCache;
+
+#if ENABLE(TEMPLATE_ELEMENT)
+    RefPtr<Document> m_templateContentsOwnerDocument;
+#endif
 };
 
 inline void Document::notifyRemovePendingSheetIfNeeded()

@@ -67,6 +67,12 @@ public:
     ~HTMLTreeBuilder();
 
     bool isParsingFragment() const { return !!m_fragmentContext.fragment(); }
+#if ENABLE(TEMPLATE_ELEMENT)
+    bool isParsingTemplateContents() const { return m_tree.openElements()->hasTemplateInHTMLScope(); }
+    bool isParsingFragmentOrTemplateContents() const { return isParsingFragment() || isParsingTemplateContents(); }
+#else
+    bool isParsingFragmentOrTemplateContents() const { return isParsingFragment(); }
+#endif
 
     void detach();
 
@@ -97,6 +103,7 @@ private:
         InHeadMode,
         InHeadNoscriptMode,
         AfterHeadMode,
+        TemplateContentsMode,
         InBodyMode,
         TextMode,
         InTableMode,
@@ -189,6 +196,11 @@ private:
     void setInsertionMode(InsertionMode mode) { m_insertionMode = mode; }
 
     void resetInsertionModeAppropriately();
+
+#if ENABLE(TEMPLATE_ELEMENT)
+    void processTemplateStartTag(AtomicHTMLToken*);
+    void processTemplateEndTag(AtomicHTMLToken*);
+#endif
 
     class FragmentParsingContext {
         WTF_MAKE_NONCOPYABLE(FragmentParsingContext);

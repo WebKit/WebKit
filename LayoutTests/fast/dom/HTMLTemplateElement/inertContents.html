@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+var testVal = 1;
+
+window.onload = function() {
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.dumpResourceLoadCallbacks();
+    }
+
+    if (testVal != 1)
+        return;
+
+    var templateContent = document.getElementById('template').content;
+    var img = templateContent.childNodes[1];
+    img.src = "http://baz.com/bat.jpg";
+    document.body.appendChild(templateContent);
+
+    if (testVal != 2)
+        return;
+
+    document.getElementById('output').innerText = 'pass!';
+}
+</script>
+</head>
+<body>
+<p>The test asserts that elements within template contents are "inert", e.g. resources do not fetch, script does not run.</p>
+<template id="template"><script>window.testVal = 2;</script><img src="http://foo.com/bar.jpg">
+</template>
+<div id="output">
+</div>
+</body>
+</html>

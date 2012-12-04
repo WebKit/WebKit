@@ -488,6 +488,7 @@ SET(WebCore_IDL_FILES
     html/HTMLTableElement.idl
     html/HTMLTableRowElement.idl
     html/HTMLTableSectionElement.idl
+    html/HTMLTemplateElement.idl
     html/HTMLTextAreaElement.idl
     html/HTMLTitleElement.idl
     html/HTMLTrackElement.idl
@@ -1431,6 +1432,7 @@ SET(WebCore_SOURCES
     html/HTMLTableRowElement.cpp
     html/HTMLTableRowsCollection.cpp
     html/HTMLTableSectionElement.cpp
+    html/HTMLTemplateElement.cpp
     html/HTMLTextAreaElement.cpp
     html/HTMLTextFormControlElement.cpp
     html/HTMLTitleElement.cpp
