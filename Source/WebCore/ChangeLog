@@ -1,3 +1,118 @@
+2012-12-04  Dan Bernstein  <mitz@apple.com>
+
+        FontPlatformData has unnecessary m_textOrientation member
+        https://bugs.webkit.org/show_bug.cgi?id=103971
+
+        Reviewed by Darin Adler.
+
+        Nothing in SimpleFontData depends on the FontPlatformData’s textOrientation, so we don’t
+        need separate data for vertical-right and upright. We simply choose between
+        verticalRightOrientationFontData() and uprightOrientationFontData() based on the
+        textOrientation in the FontDescription.
+
+        * WebCore.exp.in: Updated FontPlatformData constructor exports.
+
+        * css/CSSFontFaceSource.cpp:
+        (WebCore::CSSFontFaceSource::getFontData): Removed the text orientation bit from the hash key,
+        and updated for the removal of the TextOrientation parameter to
+        CachedFont::platformDataFromCustomData().
+
+        * loader/cache/CachedFont.cpp:
+        (WebCore::CachedFont::platformDataFromCustomData): Removed the TextOrientation parameter.
+        * loader/cache/CachedFont.h:
+
+        * platform/graphics/FontCache.cpp:
+        (WebCore::FontPlatformDataCacheKey::FontPlatformDataCacheKey): Removed the TextOrientation
+        parameter and initializer.
+        (WebCore::FontPlatformDataCacheKey::operator==): Updated for removal of m_textOrientation
+        member variable.
+        (FontPlatformDataCacheKey): Removed m_textOrientation member variable.
+        (WebCore::computeHash): Removed text orientation bit from the hash.
+        (WebCore::FontCache::getCachedFontPlatformData): Updated for FontPlatformDataCacheKey
+        change.
+
+        * platform/graphics/FontPlatformData.cpp:
+        (WebCore::FontPlatformData::FontPlatformData): Removed TextOrientation parameters and
+        initializers.
+        (WebCore::FontPlatformData::operator=): Updated for removal of m_textOrientation
+        member variable.
+        * platform/graphics/FontPlatformData.h:
+        (FontPlatformData): Removed m_textOrientation member variable, removed TextOrientation
+        parameters from constructors.
+        (WebCore::FontPlatformData::hash): Removed text orientation bit.
+        (WebCore::FontPlatformData::operator==): Updated for removed member variable.
+
+        * platform/graphics/cairo/FontCustomPlatformData.h:
+        (FontCustomPlatformData::fontPlatformData): Removed TextOrientation parameter.
+
+        * platform/graphics/chromium/FontCacheAndroid.cpp:
+        (WebCore::FontCache::createFontPlatformData): Updated for FontPlatformData change.
+
+        * platform/graphics/cocoa/FontPlatformDataCocoa.mm:
+        (WebCore::FontPlatformData::FontPlatformData): Removed TextOrientation parameter and
+        initializer.
+
+        * platform/graphics/freetype/FontCustomPlatformDataFreeType.cpp:
+        (WebCore::FontCustomPlatformData::fontPlatformData): Removed TextOrientation parameter.
+        * platform/graphics/harfbuzz/FontPlatformDataHarfBuzz.cpp:
+        (WebCore::FontPlatformData::FontPlatformData): Removed TextOrientation parameter and
+        initializers.
+        (WebCore::FontPlatformData::operator=): Updated for removed member variable.
+        (WebCore::FontPlatformData::operator==): Ditto.
+        (WebCore::FontPlatformData::hash): Removed text orientation bit.
+
+        * platform/graphics/harfbuzz/FontPlatformDataHarfBuzz.h:
+        (FontPlatformData): Removed TextOrientation parameter from the constructor declaration.
+
+        * platform/graphics/mac/FontCacheMac.mm:
+        (WebCore::FontCache::createFontPlatformData): Updated for FontPlatformData change.
+
+        * platform/graphics/mac/FontCustomPlatformData.cpp:
+        (WebCore::FontCustomPlatformData::fontPlatformData): Removed TextOrientation parameter.
+
+        * platform/graphics/mac/FontCustomPlatformData.h:
+        (FontCustomPlatformData): Removed TextOrientation parameter from declaration of
+        fontPlatformData().
+
+        * platform/graphics/mac/SimpleFontDataMac.mm:
+        (WebCore::SimpleFontData::getCompositeFontReferenceFontData): Updated for FontPlatformData
+        change.
+
+        * platform/graphics/pango/FontCustomPlatformDataPango.cpp:
+        (WebCore::FontCustomPlatformData::fontPlatformData): Removed TextOrientation parameter.
+        * platform/graphics/qt/FontCustomPlatformData.h:
+
+        * platform/graphics/qt/FontCustomPlatformDataQt.cpp:
+        (WebCore::FontCustomPlatformData::fontPlatformData): Ditto.
+
+        * platform/graphics/skia/FontCacheSkia.cpp:
+        (WebCore::FontCache::createFontPlatformData): Updated for FontPlatformData change.
+
+        * platform/graphics/skia/FontCustomPlatformData.cpp:
+        (WebCore::FontCustomPlatformData::fontPlatformData): Removed TextOrientation parameter.
+        * platform/graphics/skia/FontCustomPlatformData.h:
+
+        * platform/graphics/win/FontCustomPlatformData.cpp:
+        (WebCore::FontCustomPlatformData::fontPlatformData): Removed TextOrientation parameter.
+        * platform/graphics/win/FontCustomPlatformData.h:
+
+        * platform/graphics/win/FontCustomPlatformDataCairo.cpp:
+        (WebCore::FontCustomPlatformData::fontPlatformData): Removed TextOrientation parameter.
+        * platform/graphics/win/FontCustomPlatformDataCairo.h:
+
+        * platform/graphics/win/FontPlatformDataCGWin.cpp:
+        (WebCore::FontPlatformData::FontPlatformData): Removed m_textOrientation initializer.
+
+        * platform/graphics/win/FontPlatformDataCairoWin.cpp:
+        (WebCore::FontPlatformData::FontPlatformData): Ditto.
+
+        * platform/graphics/win/FontPlatformDataWin.cpp:
+        (WebCore::FontPlatformData::FontPlatformData): Ditto.
+
+        * platform/graphics/wince/FontCustomPlatformData.cpp:
+        (WebCore::FontCustomPlatformData::fontPlatformData): Removed TextOrientation parameter.
+        * platform/graphics/wince/FontCustomPlatformData.h:
+
 2012-12-04  Charlie Reis  <creis@chromium.org>
 
         Add FrameLoaderClient::didDisownOpener

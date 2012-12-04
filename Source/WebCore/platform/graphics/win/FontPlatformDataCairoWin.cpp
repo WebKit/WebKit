@@ -60,7 +60,6 @@ FontPlatformData::FontPlatformData(cairo_font_face_t* fontFace, float size, bool
     : m_font(0)
     , m_size(size)
     , m_orientation(Horizontal)
-    , m_textOrientation(TextOrientationVerticalRight)
     , m_widthVariant(RegularWidth)
     , m_scaledFont(0)
     , m_isColorBitmapFont(false)

@@ -42,7 +42,6 @@
 
 #include "FontOrientation.h"
 #include "FontWidthVariant.h"
-#include "TextOrientation.h"
 
 #if PLATFORM(WIN)
 #include "RefCountedGDIHandle.h"
@@ -106,15 +105,13 @@ public:
     FontPlatformData();
     FontPlatformData(const FontPlatformData&);
     FontPlatformData(const FontDescription&, const AtomicString& family);
-    FontPlatformData(float size, bool syntheticBold, bool syntheticOblique, FontOrientation = Horizontal,
-                     TextOrientation = TextOrientationVerticalRight, FontWidthVariant = RegularWidth);
+    FontPlatformData(float size, bool syntheticBold, bool syntheticOblique, FontOrientation = Horizontal, FontWidthVariant = RegularWidth);
 
 #if OS(DARWIN)
     FontPlatformData(NSFont*, float size, bool isPrinterFont = false, bool syntheticBold = false, bool syntheticOblique = false,
-                     FontOrientation = Horizontal, TextOrientation = TextOrientationVerticalRight, FontWidthVariant = RegularWidth);
+                     FontOrientation = Horizontal, FontWidthVariant = RegularWidth);
 #if USE(CG) || USE(SKIA_ON_MAC_CHROMIUM)
-    FontPlatformData(CGFontRef, float size, bool syntheticBold, bool syntheticOblique, FontOrientation,
-                     TextOrientation, FontWidthVariant);
+    FontPlatformData(CGFontRef, float size, bool syntheticBold, bool syntheticOblique, FontOrientation, FontWidthVariant);
 #endif
 #endif
 #if PLATFORM(WIN)
@@ -160,7 +157,6 @@ public:
     bool isPrinterFont() const { return m_isPrinterFont; }
 #endif
     FontOrientation orientation() const { return m_orientation; }
-    TextOrientation textOrientation() const { return m_textOrientation; }
     FontWidthVariant widthVariant() const { return m_widthVariant; }
 
     void setOrientation(FontOrientation orientation) { m_orientation = orientation; }
@@ -181,7 +177,7 @@ public:
 #if USE(CG) || USE(SKIA_ON_MAC_CHROMIUM)
         ASSERT(m_font || !m_cgFont);
 #endif
-        uintptr_t hashCodes[3] = { (uintptr_t)m_font, m_widthVariant, static_cast<uintptr_t>(m_isPrinterFont << 4 | m_textOrientation << 3 | m_orientation << 2 | m_syntheticBold << 1 | m_syntheticOblique) };
+        uintptr_t hashCodes[3] = { (uintptr_t)m_font, m_widthVariant, static_cast<uintptr_t>(m_isPrinterFont << 3 | m_orientation << 2 | m_syntheticBold << 1 | m_syntheticOblique) };
         return StringHasher::hashMemory<sizeof(hashCodes)>(hashCodes);
 #elif USE(CAIRO)
         return PtrHash<cairo_scaled_font_t*>::hash(m_scaledFont);
@@ -202,7 +198,6 @@ public:
             && m_isPrinterFont == other.m_isPrinterFont
 #endif
             && m_orientation == other.m_orientation
-            && m_textOrientation == other.m_textOrientation
             && m_widthVariant == other.m_widthVariant;
     }
 
@@ -250,7 +245,6 @@ public:
     bool m_syntheticBold;
     bool m_syntheticOblique;
     FontOrientation m_orientation;
-    TextOrientation m_textOrientation;
     float m_size;
     FontWidthVariant m_widthVariant;
 

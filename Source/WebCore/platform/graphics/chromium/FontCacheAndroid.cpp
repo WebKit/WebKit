@@ -178,8 +178,7 @@ FontPlatformData* FontCache::createFontPlatformData(const FontDescription& fontD
             result = new FontPlatformData(typeface, name, fontDescription.computedSize(),
                                           (style & SkTypeface::kBold) && !typeface->isBold(),
                                           (style & SkTypeface::kItalic) && !typeface->isItalic(),
-                                          fontDescription.orientation(),
-                                          fontDescription.textOrientation());
+                                          fontDescription.orientation());
     } else {
         typeface = SkTypeface::CreateFromName(name, SkTypeface::kNormal);
 
@@ -203,8 +202,7 @@ FontPlatformData* FontCache::createFontPlatformData(const FontDescription& fontD
             result = new FontPlatformData(typeface, name, fontDescription.computedSize(),
                                           (style & SkTypeface::kBold) && !typeface->isBold(),
                                           (style & SkTypeface::kItalic) && !typeface->isItalic(),
-                                          fontDescription.orientation(),
-                                          fontDescription.textOrientation());
+                                          fontDescription.orientation());
         }
     }
 

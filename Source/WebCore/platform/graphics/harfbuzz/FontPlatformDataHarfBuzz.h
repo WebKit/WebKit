@@ -36,7 +36,6 @@
 #include "OpenTypeVerticalData.h"
 #include "SharedBuffer.h"
 #include "SkPaint.h"
-#include "TextOrientation.h"
 #include <wtf/Forward.h>
 #include <wtf/RefPtr.h>
 #include <wtf/text/CString.h>
@@ -71,7 +70,7 @@ public:
     FontPlatformData();
     FontPlatformData(float textSize, bool fakeBold, bool fakeItalic);
     FontPlatformData(const FontPlatformData&);
-    FontPlatformData(SkTypeface*, const char* name, float textSize, bool fakeBold, bool fakeItalic, FontOrientation = Horizontal, TextOrientation = TextOrientationVerticalRight);
+    FontPlatformData(SkTypeface*, const char* name, float textSize, bool fakeBold, bool fakeItalic, FontOrientation = Horizontal);
     FontPlatformData(const FontPlatformData& src, float textSize);
     ~FontPlatformData();
 
@@ -144,7 +143,6 @@ private:
     bool m_fakeBold;
     bool m_fakeItalic;
     FontOrientation m_orientation;
-    TextOrientation m_textOrientation;
     FontRenderStyle m_style;
 #if USE(HARFBUZZ_NG)
     mutable RefPtr<HarfBuzzNGFace> m_harfbuzzFace;

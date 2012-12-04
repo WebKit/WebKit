@@ -238,7 +238,7 @@ FontPlatformData* FontCache::createFontPlatformData(const FontDescription& fontD
 
     // FontPlatformData::font() can be null for the case of Chromium out-of-process font loading.
     // In that case, we don't want to use the platformData.
-    OwnPtr<FontPlatformData> platformData = adoptPtr(new FontPlatformData(platformFont, size, fontDescription.usePrinterFont(), syntheticBold, syntheticOblique, fontDescription.orientation(), fontDescription.textOrientation(), fontDescription.widthVariant()));
+    OwnPtr<FontPlatformData> platformData = adoptPtr(new FontPlatformData(platformFont, size, fontDescription.usePrinterFont(), syntheticBold, syntheticOblique, fontDescription.orientation(), fontDescription.widthVariant()));
     if (!platformData->font())
         return 0;
     return platformData.leakPtr();

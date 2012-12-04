@@ -127,7 +127,7 @@ const SimpleFontData* SimpleFontData::getCompositeFontReferenceFontData(NSFont *
             bool syntheticBold = platformData().syntheticBold() && !(traits & kCTFontBoldTrait);
             bool syntheticOblique = platformData().syntheticOblique() && !(traits & kCTFontItalicTrait);
 
-            FontPlatformData substitutePlatform(substituteFont, platformData().size(), isUsingPrinterFont, syntheticBold, syntheticOblique, platformData().orientation(), platformData().textOrientation(), platformData().widthVariant());
+            FontPlatformData substitutePlatform(substituteFont, platformData().size(), isUsingPrinterFont, syntheticBold, syntheticOblique, platformData().orientation(), platformData().widthVariant());
             SimpleFontData* value = new SimpleFontData(substitutePlatform, isCustomFont());
             if (value) {
                 CFDictionaryAddValue(dictionary, key, value);

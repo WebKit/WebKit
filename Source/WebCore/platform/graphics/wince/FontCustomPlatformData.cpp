@@ -45,7 +45,7 @@ FontCustomPlatformData::~FontCustomPlatformData()
         g_customFontCache->unregisterFont(m_name);
 }
 
-FontPlatformData FontCustomPlatformData::fontPlatformData(int size, bool bold, bool italic, FontOrientation, TextOrientation, FontWidthVariant, FontRenderingMode renderingMode)
+FontPlatformData FontCustomPlatformData::fontPlatformData(int size, bool bold, bool italic, FontOrientation, FontWidthVariant, FontRenderingMode renderingMode)
 {
     FontDescription fontDesc;
     fontDesc.setComputedSize(size);

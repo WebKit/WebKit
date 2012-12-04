@@ -39,7 +39,6 @@ FontPlatformData::FontPlatformData(WTF::HashTableDeletedValueType)
     : m_syntheticBold(false)
     , m_syntheticOblique(false)
     , m_orientation(Horizontal)
-    , m_textOrientation(TextOrientationVerticalRight)
     , m_size(0)
     , m_widthVariant(RegularWidth)
 #if PLATFORM(WIN)
@@ -67,7 +66,6 @@ FontPlatformData::FontPlatformData()
     : m_syntheticBold(false)
     , m_syntheticOblique(false)
     , m_orientation(Horizontal)
-    , m_textOrientation(TextOrientationVerticalRight)
     , m_size(0)
     , m_widthVariant(RegularWidth)
 #if OS(DARWIN)
@@ -89,11 +87,10 @@ FontPlatformData::FontPlatformData()
 {
 }
 
-FontPlatformData::FontPlatformData(float size, bool syntheticBold, bool syntheticOblique, FontOrientation orientation, TextOrientation textOrientation, FontWidthVariant widthVariant)
+FontPlatformData::FontPlatformData(float size, bool syntheticBold, bool syntheticOblique, FontOrientation orientation, FontWidthVariant widthVariant)
     : m_syntheticBold(syntheticBold)
     , m_syntheticOblique(syntheticOblique)
     , m_orientation(orientation)
-    , m_textOrientation(textOrientation)
     , m_size(size)
     , m_widthVariant(widthVariant)
 #if OS(DARWIN)
@@ -116,12 +113,10 @@ FontPlatformData::FontPlatformData(float size, bool syntheticBold, bool syntheti
 }
 
 #if OS(DARWIN) && (USE(CG) || USE(SKIA_ON_MAC_CHROMIUM))
-FontPlatformData::FontPlatformData(CGFontRef cgFont, float size, bool syntheticBold, bool syntheticOblique, FontOrientation orientation,
-                                   TextOrientation textOrientation, FontWidthVariant widthVariant)
+FontPlatformData::FontPlatformData(CGFontRef cgFont, float size, bool syntheticBold, bool syntheticOblique, FontOrientation orientation, FontWidthVariant widthVariant)
     : m_syntheticBold(syntheticBold)
     , m_syntheticOblique(syntheticOblique)
     , m_orientation(orientation)
-    , m_textOrientation(textOrientation)
     , m_size(size)
     , m_widthVariant(widthVariant)
     , m_font(0)
@@ -137,7 +132,6 @@ FontPlatformData::FontPlatformData(const FontPlatformData& source)
     : m_syntheticBold(source.m_syntheticBold)
     , m_syntheticOblique(source.m_syntheticOblique)
     , m_orientation(source.m_orientation)
-    , m_textOrientation(source.m_textOrientation)
     , m_size(source.m_size)
     , m_widthVariant(source.m_widthVariant)
     , m_isColorBitmapFont(source.m_isColorBitmapFont)
@@ -158,7 +152,6 @@ const FontPlatformData& FontPlatformData::operator=(const FontPlatformData& othe
     m_syntheticBold = other.m_syntheticBold;
     m_syntheticOblique = other.m_syntheticOblique;
     m_orientation = other.m_orientation;
-    m_textOrientation = other.m_textOrientation;
     m_size = other.m_size;
     m_widthVariant = other.m_widthVariant;
     m_isColorBitmapFont = other.m_isColorBitmapFont;

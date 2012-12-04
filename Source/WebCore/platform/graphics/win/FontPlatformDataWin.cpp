@@ -41,7 +41,6 @@ FontPlatformData::FontPlatformData(HFONT font, float size, bool bold, bool obliq
     : m_font(RefCountedGDIHandle<HFONT>::create(font))
     , m_size(size)
     , m_orientation(Horizontal)
-    , m_textOrientation(TextOrientationVerticalRight)
     , m_widthVariant(RegularWidth)
 #if USE(CG)
     , m_cgFont(0)

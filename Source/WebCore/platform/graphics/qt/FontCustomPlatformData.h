@@ -25,7 +25,6 @@
 #include "FontOrientation.h"
 #include "FontRenderingMode.h"
 #include "FontWidthVariant.h"
-#include "TextOrientation.h"
 #include <QRawFont>
 #include <wtf/FastAllocBase.h>
 #include <wtf/Forward.h>
@@ -41,7 +40,7 @@ struct FontCustomPlatformData {
 public:
     FontCustomPlatformData() { }
 
-    FontPlatformData fontPlatformData(int size, bool bold, bool italic, FontOrientation = Horizontal, TextOrientation = TextOrientationVerticalRight,
+    FontPlatformData fontPlatformData(int size, bool bold, bool italic, FontOrientation = Horizontal,
                                       FontWidthVariant = RegularWidth, FontRenderingMode = NormalRenderingMode);
 
     static bool supportsFormat(const String&);

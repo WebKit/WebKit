@@ -118,7 +118,6 @@ FontPlatformData::FontPlatformData(HFONT hfont, CGFontRef font, float size, bool
     : m_syntheticBold(bold)
     , m_syntheticOblique(oblique)
     , m_orientation(Horizontal)
-    , m_textOrientation(TextOrientationVerticalRight)
     , m_size(size)
     , m_widthVariant(RegularWidth)
     , m_font(RefCountedGDIHandle<HFONT>::create(hfont))

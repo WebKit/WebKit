@@ -59,7 +59,7 @@ FontCustomPlatformData::~FontCustomPlatformData()
     cairo_font_face_destroy(m_fontFace);
 }
 
-FontPlatformData FontCustomPlatformData::fontPlatformData(int size, bool bold, bool italic, FontOrientation, TextOrientation, FontWidthVariant, FontRenderingMode)
+FontPlatformData FontCustomPlatformData::fontPlatformData(int size, bool bold, bool italic, FontOrientation, FontWidthVariant, FontRenderingMode)
 {
     return FontPlatformData(m_fontFace, size, bold, italic);
 }

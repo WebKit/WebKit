@@ -66,7 +66,7 @@ FontCustomPlatformData::~FontCustomPlatformData()
 }
 
 FontPlatformData FontCustomPlatformData::fontPlatformData(int size, bool bold, bool italic, FontOrientation orientation,
-                                                          TextOrientation textOrientation, FontWidthVariant, FontRenderingMode mode)
+                                                          FontWidthVariant, FontRenderingMode mode)
 {
 #if OS(WINDOWS)
     ASSERT(m_fontReference);
@@ -103,7 +103,7 @@ FontPlatformData FontCustomPlatformData::fontPlatformData(int size, bool bold, b
     return FontPlatformData(hfont, size, orientation);
 #elif OS(UNIX)
     ASSERT(m_fontReference);
-    return FontPlatformData(m_fontReference, "", size, bold && !m_fontReference->isBold(), italic && !m_fontReference->isItalic(), orientation, textOrientation);
+    return FontPlatformData(m_fontReference, "", size, bold && !m_fontReference->isBold(), italic && !m_fontReference->isItalic(), orientation);
 #else
     notImplemented();
     return FontPlatformData();

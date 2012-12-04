@@ -24,7 +24,6 @@
 #include "FontDescription.h"
 #include "FontRenderingMode.h"
 #include "FontWidthVariant.h"
-#include "TextOrientation.h"
 #include <wtf/Noncopyable.h>
 #include <wtf/text/WTFString.h>
 
@@ -50,7 +49,7 @@ namespace WebCore {
 
         ~FontCustomPlatformData();
 
-        FontPlatformData fontPlatformData(int size, bool bold, bool italic, FontOrientation = Horizontal, TextOrientation = TextOrientationVerticalRight, FontWidthVariant = RegularWidth, FontRenderingMode = NormalRenderingMode);
+        FontPlatformData fontPlatformData(int size, bool bold, bool italic, FontOrientation = Horizontal, FontWidthVariant = RegularWidth, FontRenderingMode = NormalRenderingMode);
 
         static bool supportsFormat(const String&);
 
