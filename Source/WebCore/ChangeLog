@@ -1,3 +1,22 @@
+2012-12-05  John J. Barton  <johnjbarton@chromium.org>
+
+        Web Inspector: more robust treeoutline.findTreeElement
+        https://bugs.webkit.org/show_bug.cgi?id=103911
+
+        Reviewed by Vsevolod Vlasov.
+
+        Non-recursive algorithm to populate the treeoutline given an DOMNode
+        as representedObject. Walk up the parents from the desired object
+        until we find one that is currently represented in the treeoutline 
+        cache. Then walk down, putting children in the cache until we get 
+        to the desired object again. 
+        With Pavel Feldeman <pfeldman@chromium.org>
+
+        No new tests, refactoring, no new function
+
+       * inspector/front-end/treeoutline.js:
+        (TreeOutline.prototype.findTreeElement):
+
 2012-12-05  Alexander Shalamov  <alexander.shalamov@intel.com>
 
         [EFL][GTK] List value response headers are not handled in RespourceResponse (libsoup specific)

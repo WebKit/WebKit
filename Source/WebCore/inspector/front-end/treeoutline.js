@@ -245,43 +245,22 @@ TreeOutline.prototype.findTreeElement = function(representedObject, isAncestor, 
     if (cachedElement)
         return cachedElement;
 
-    // The representedObject isn't known, so we start at the top of the tree and work down to find the first
-    // tree element that represents representedObject or one of its ancestors.
-    var item;
-    var found = false;
-    for (var i = 0; i < this.children.length; ++i) {
-        item = this.children[i];
-        if (item.representedObject === representedObject || isAncestor(item.representedObject, representedObject)) {
-            found = true;
+    // Walk up the parent pointers from the desired representedObject 
+    var ancestors = [];
+    for (var currentObject = getParent(representedObject); currentObject;  currentObject = getParent(currentObject)) {
+        ancestors.push(currentObject);
+        if (this.getCachedTreeElement(currentObject))  // stop climbing as soon as we hit
             break;
-        }
     }
-
-    if (!found)
+        
+    if (!currentObject)
         return null;
 
-    // Make sure the item that we found is connected to the root of the tree.
-    // Build up a list of representedObject's ancestors that aren't already in our tree.
-    var ancestors = [];
-    var currentObject = representedObject;
-    while (currentObject) {
-        ancestors.unshift(currentObject);
-        if (currentObject === item.representedObject)
-            break;
-        currentObject = getParent(currentObject);
-    }
-
-    // For each of those ancestors we populate them to fill in the tree.
-    for (var i = 0; i < ancestors.length; ++i) {
-        // Make sure we don't call findTreeElement with the same representedObject
-        // again, to prevent infinite recursion.
-        if (ancestors[i] === representedObject)
-            continue;
-        // FIXME: we could do something faster than findTreeElement since we will know the next
-        // ancestor exists in the tree.
-        item = this.findTreeElement(ancestors[i], isAncestor, getParent);
-        if (item)
-            item.onpopulate();
+    // Walk down to populate each ancestor's children, to fill in the tree and the cache.
+    for (var i = ancestors.length - 1; i >= 0; --i) {
+        var treeElement = this.getCachedTreeElement(ancestors[i]);
+        if (treeElement)
+            treeElement.onpopulate();  // fill the cache with the children of treeElement
     }
 
     return this.getCachedTreeElement(representedObject);
