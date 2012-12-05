@@ -4349,3 +4349,5 @@ webkit.org/b/104090 [ Mac Debug ] fast/css-grid-layout/grid-columns-rows-get-set
 webkit.org/b/104090 [ Mac Debug ] fast/css-grid-layout/grid-columns-rows-get-set.html [ Crash ]
 
 webkit.org/b/104092 fast/frames/paint-iframe-background.html [ Failure Pass ]
+
+webkit.org/b/103487 [ Linux ] fast/forms/placeholder-position.html [ ImageOnlyFailure Pass ]

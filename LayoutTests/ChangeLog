@@ -1,6 +1,14 @@
 2012-12-05  Takashi Sakamoto  <tasak@google.com>
 
         Unreviewed, WebKit gardening.
+        https://bugs.webkit.org/show_bug.cgi?id=103487
+
+        * platform/chromium/TestExpectations:
+        fast/forms/placeholder-position.html is flaky on linux.
+
+2012-12-05  Takashi Sakamoto  <tasak@google.com>
+
+        Unreviewed, WebKit gardening.
         https://bugs.webkit.org/show_bug.cgi?id=104092
 
         * platform/chromium/TestExpectations:
