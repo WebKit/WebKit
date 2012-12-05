@@ -36,8 +36,10 @@
     readonly attribute TextTrack track;
 
     attribute DOMString id;
-    attribute double startTime;
-    attribute double endTime;
+    attribute double startTime
+        setter raises (DOMException);
+    attribute double endTime
+        setter raises (DOMException);
     attribute boolean pauseOnExit;
 
     attribute DOMString vertical

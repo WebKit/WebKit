@@ -46,6 +46,7 @@
 #include "TextTrack.h"
 #include "TextTrackCueList.h"
 #include "WebVTTParser.h"
+#include <wtf/MathExtras.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
@@ -266,8 +267,14 @@ void TextTrackCue::setId(const String& id)
     cueDidChange();
 }
 
-void TextTrackCue::setStartTime(double value)
+void TextTrackCue::setStartTime(double value, ExceptionCode& ec)
 {
+    // NaN, Infinity and -Infinity values should trigger a TypeError.
+    if (isinf(value) || isnan(value)) {
+        ec = TypeError;
+        return;
+    }
+    
     // TODO(93143): Add spec-compliant behavior for negative time values.
     if (m_startTime == value || value < 0)
         return;
@@ -277,8 +284,14 @@ void TextTrackCue::setStartTime(double value)
     cueDidChange();
 }
     
-void TextTrackCue::setEndTime(double value)
+void TextTrackCue::setEndTime(double value, ExceptionCode& ec)
 {
+    // NaN, Infinity and -Infinity values should trigger a TypeError.
+    if (isinf(value) || isnan(value)) {
+        ec = TypeError;
+        return;
+    }
+
     // TODO(93143): Add spec-compliant behavior for negative time values.
     if (m_endTime == value || value < 0)
         return;
