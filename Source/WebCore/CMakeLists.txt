@@ -195,8 +195,10 @@ SET(WebCore_IDL_FILES
     Modules/indexeddb/IDBKey.idl
     Modules/indexeddb/IDBKeyRange.idl
     Modules/indexeddb/IDBObjectStore.idl
+    Modules/indexeddb/IDBOpenDBRequest.idl
     Modules/indexeddb/IDBRequest.idl
     Modules/indexeddb/IDBTransaction.idl
+    Modules/indexeddb/IDBUpgradeNeededEvent.idl
     Modules/indexeddb/IDBVersionChangeEvent.idl
     Modules/indexeddb/IDBVersionChangeRequest.idl
     Modules/indexeddb/WorkerContextIndexedDatabase.idl

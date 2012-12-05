@@ -64,8 +64,6 @@ JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, IDBAny* idbAny)
         return jsUndefined();
     case IDBAny::NullType:
         return jsNull();
-    case IDBAny::StringType:
-        return jsStringWithCache(exec, idbAny->string());
     case IDBAny::DOMStringListType:
         return toJS(exec, globalObject, idbAny->domStringList());
     case IDBAny::IDBCursorType:
@@ -84,8 +82,12 @@ JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, IDBAny* idbAny)
         return toJS(exec, globalObject, idbAny->idbObjectStore());
     case IDBAny::IDBTransactionType:
         return toJS(exec, globalObject, idbAny->idbTransaction());
-    case IDBAny::SerializedScriptValueType:
-        return idbAny->serializedScriptValue()->deserialize(exec, globalObject);
+    case IDBAny::ScriptValueType:
+        return idbAny->scriptValue().jsValue();
+    case IDBAny::IntegerType:
+        return jsNumber(idbAny->integer());
+    case IDBAny::StringType:
+        return jsStringWithCache(exec, idbAny->string());
     }
 
     ASSERT_NOT_REACHED();

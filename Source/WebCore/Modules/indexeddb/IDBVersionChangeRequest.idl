@@ -27,7 +27,8 @@
     Conditional=INDEXED_DATABASE,
     ActiveDOMObject,
     EventTarget,
-    JSNoStaticTables
+    JSNoStaticTables,
+    JSGenerateToJSObject
 ] interface IDBVersionChangeRequest : IDBRequest {
     attribute EventListener onblocked;
 };

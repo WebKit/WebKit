@@ -1,3 +1,53 @@
+2012-12-05  Michael Pruett  <michael@68k.org>
+
+        IndexedDB: Implement IndexedDB bindings for JSC
+        https://bugs.webkit.org/show_bug.cgi?id=103484
+
+        Reviewed by Kentaro Hara.
+
+        IndexedDB is currently implemented only for V8. This change adds
+        the bindings necessary for IndexedDB to work with JSC. With this
+        patch, IndexedDB for JSC passes 112 out of the 196 layout tests in
+        storage/indexeddb. IndexedDB is still not enabled for any JSC port.
+
+        Tests: storage/indexeddb/*
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Modules/indexeddb/IDBOpenDBRequest.idl:
+        * Modules/indexeddb/IDBVersionChangeRequest.idl:
+        * UseJSC.cmake:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/DOMRequestState.h: Added to match bindings/v8/DOMRequestState.h.
+        (WebCore):
+        (DOMRequestState):
+        (WebCore::DOMRequestState::DOMRequestState):
+        (WebCore::DOMRequestState::clear):
+        (Scope):
+        (WebCore::DOMRequestState::Scope::Scope):
+        (WebCore::DOMRequestState::exec):
+        * bindings/js/IDBBindingUtilities.cpp: Add utility functions matching those in bindings/v8/IDBBindingUtilities.cpp.
+        (WebCore::get):
+        (WebCore):
+        (WebCore::canSet):
+        (WebCore::set):
+        (WebCore::createIDBKeyFromValue):
+        (WebCore::getNthValueOnKeyPath):
+        (WebCore::createIDBKeyFromScriptValueAndKeyPath):
+        (WebCore::ensureNthValueOnKeyPath):
+        (WebCore::canInjectNthValueOnKeyPath):
+        (WebCore::injectIDBKeyIntoScriptValue):
+        (WebCore::canInjectIDBKeyIntoScriptValue):
+        (WebCore::deserializeIDBValue):
+        (WebCore::idbKeyToScriptValue):
+        * bindings/js/IDBBindingUtilities.h: Add utility functions matching those in bindings/v8/IDBBindingUtilities.h.
+        (WebCore):
+        * bindings/js/JSIDBAnyCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSIDBKeyCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSIDBVersionChangeRequestCustom.cpp: Removed.
+
 2012-12-05  Antoine Quint  <graouts@apple.com>
 
         TextTrackCue's .endTime property should fire a TypeError when NaN is assigned
