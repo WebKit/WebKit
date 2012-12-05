@@ -4254,6 +4254,7 @@ webkit.org/b/104023 [ Mac Debug ] fast/dom/HTMLTemplateElement/inertContents.htm
 
 # Needs platform-specific results
 webkit.org/b/104035 fast/text/orientation-sideways.html [ Missing ]
+webkit.org/b/104172 fast/text/decorations-with-text-combine.html [ Missing ]
 
 # Crash since r136588.
 webkit.org/b/104090 [ Mac Debug ] fast/css-grid-layout/grid-columns-rows-get-set-multiple.html [ Crash ]

@@ -1,3 +1,15 @@
+2012-12-05  Dan Bernstein  <mitz@apple.com>
+
+        Text decorations are rotated when text-combine takes effect
+        https://bugs.webkit.org/show_bug.cgi?id=104172
+
+        Reviewed by Dave Hyatt.
+
+        * fast/text/decorations-with-text-combine.html: Added.
+        * platform/chromium/TestExpectations: Added to tests missing platform-specific results.
+        * platform/mac/fast/text/decorations-with-text-combine-expected.png: Added.
+        * platform/mac/fast/text/decorations-with-text-combine-expected.txt: Added.
+
 2012-12-05  Tony Chang  <tony@chromium.org>
 
         Unreviewed, add Mac baselines after r136409 (mathml sup/sub box changes).

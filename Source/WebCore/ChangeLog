@@ -1,3 +1,16 @@
+2012-12-05  Dan Bernstein  <mitz@apple.com>
+
+        Text decorations are rotated when text-combine takes effect
+        https://bugs.webkit.org/show_bug.cgi?id=104172
+
+        Reviewed by Dave Hyatt.
+
+        Test: fast/text/decorations-with-text-combine.html
+
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::paint): Applied a rotation to the graphics context when painting
+        the text decorations for combined text.
+
 2012-12-05  Justin Novosad  <junov@google.com>
 
         [skia] Improve performance of GraphicsContext::createCompatibleBuffer by using SkDevice:createCompatibleDevice
