@@ -53,6 +53,7 @@ EwkFaviconDatabase::EwkFaviconDatabase(WebIconDatabase* iconDatabase)
 
 EwkFaviconDatabase::~EwkFaviconDatabase()
 {
+    WKIconDatabaseSetIconDatabaseClient(toAPI(m_iconDatabase.get()), 0);
 }
 
 String EwkFaviconDatabase::iconURLForPageURL(const String& pageURL) const

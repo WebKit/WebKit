@@ -1,3 +1,18 @@
+2012-12-05  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL][WK2] EWK2UnitTestBase.ewk_favicon_database_async_icon_get is crashing with new Ewk_Context
+        https://bugs.webkit.org/show_bug.cgi?id=104110
+
+        Reviewed by Laszlo Gombos.
+
+        Unregister the WKFaviconDatabase client in EwkFaviconDatabase
+        destructor to avoid crashing if the callbacks get called
+        after the EwkFaviconDatabase object has been destroyed (i.e.
+        the parent EwkContext object was destroyed).
+
+        * UIProcess/API/efl/ewk_favicon_database.cpp:
+        (EwkFaviconDatabase::~EwkFaviconDatabase):
+
 2012-12-05  Andras Becsi  <andras.becsi@digia.com>
 
         [Qt][WK2] REGRESSION(r135399): It made qmltests::DoubleTapToZoom::test_double_zoomInAndBack() API test fail
