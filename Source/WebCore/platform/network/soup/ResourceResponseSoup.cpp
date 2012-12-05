@@ -26,6 +26,7 @@
 #include "MIMETypeRegistry.h"
 #include "SoupURIUtils.h"
 #include <wtf/text/CString.h>
+#include <wtf/text/StringBuilder.h>
 #include <wtf/text/WTFString.h>
 
 using namespace std;
@@ -67,10 +68,24 @@ void ResourceResponse::updateFromSoupMessage(SoupMessage* soupMessage)
     const char* headerName;
     const char* headerValue;
 
+    // updateFromSoupMessage could be called several times for the same ResourceResponse object,
+    // thus, we need to clear old header values and update m_httpHeaderFields from soupMessage headers.
+    m_httpHeaderFields.clear();
+
     soup_message_headers_iter_init(&headersIter, soupMessage->response_headers);
-    while (soup_message_headers_iter_next(&headersIter, &headerName, &headerValue))
-        m_httpHeaderFields.set(String::fromUTF8WithLatin1Fallback(headerName, strlen(headerName)),
-                               String::fromUTF8WithLatin1Fallback(headerValue, strlen(headerValue)));
+    while (soup_message_headers_iter_next(&headersIter, &headerName, &headerValue)) {
+        String headerNameString = String::fromUTF8WithLatin1Fallback(headerName, strlen(headerName));
+        HTTPHeaderMap::const_iterator it = m_httpHeaderFields.find(headerNameString);
+        if (it == m_httpHeaderFields.end() || (it != m_httpHeaderFields.end() && it->value.isEmpty()))
+            m_httpHeaderFields.set(headerNameString, String::fromUTF8WithLatin1Fallback(headerValue, strlen(headerValue)));
+        else {
+            StringBuilder builder;
+            builder.append(it->value);
+            builder.appendLiteral(", ");
+            builder.append(String::fromUTF8WithLatin1Fallback(headerValue, strlen(headerValue)));
+            m_httpHeaderFields.set(headerNameString, builder.toString());
+        }
+    }
 
     m_soupFlags = soup_message_get_flags(soupMessage);
 

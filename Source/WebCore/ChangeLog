@@ -1,3 +1,19 @@
+2012-12-05  Alexander Shalamov  <alexander.shalamov@intel.com>
+
+        [EFL][GTK] List value response headers are not handled in RespourceResponse (libsoup specific)
+        https://bugs.webkit.org/show_bug.cgi?id=95181
+
+        Reviewed by Martin Robinson.
+
+        When list-value response headers are received, they are handled as single
+        value headers. This patch fixes incorrect behavior. New test was added to
+        verify list-value header handling.
+
+        Test: http/tests/xmlhttprequest/xmlhttprequest-test-custom-headers.html
+
+        * platform/network/soup/ResourceResponseSoup.cpp:
+        (WebCore::ResourceResponse::updateFromSoupMessage):
+
 2012-12-05  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: Don't include error message text in the editor buffer.
