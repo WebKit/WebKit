@@ -2755,21 +2755,25 @@ void RenderObject::getTextDecorationColors(int decorations, Color& underline, Co
 {
     RenderObject* curr = this;
     RenderStyle* styleToUse = 0;
+    ETextDecoration currDecs = TDNONE;
+    Color resultColor;
     do {
         styleToUse = curr->style(firstlineStyle);
-        int currDecs = styleToUse->textDecoration();
+        currDecs = styleToUse->textDecoration();
+        resultColor = decorationColor(styleToUse);
+        // Parameter 'decorations' is cast as an int to enable the bitwise operations below.
         if (currDecs) {
             if (currDecs & UNDERLINE) {
                 decorations &= ~UNDERLINE;
-                underline = decorationColor(styleToUse);
+                underline = resultColor;
             }
             if (currDecs & OVERLINE) {
                 decorations &= ~OVERLINE;
-                overline = decorationColor(styleToUse);
+                overline = resultColor;
             }
             if (currDecs & LINE_THROUGH) {
                 decorations &= ~LINE_THROUGH;
-                linethrough = decorationColor(styleToUse);
+                linethrough = resultColor;
             }
         }
         if (curr->isRubyText())
@@ -2783,12 +2787,13 @@ void RenderObject::getTextDecorationColors(int decorations, Color& underline, Co
     // If we bailed out, use the element we bailed out at (typically a <font> or <a> element).
     if (decorations && curr) {
         styleToUse = curr->style(firstlineStyle);
+        resultColor = decorationColor(styleToUse);
         if (decorations & UNDERLINE)
-            underline = decorationColor(styleToUse);
+            underline = resultColor;
         if (decorations & OVERLINE)
-            overline = decorationColor(styleToUse);
+            overline = resultColor;
         if (decorations & LINE_THROUGH)
-            linethrough = decorationColor(styleToUse);
+            linethrough = resultColor;
     }
 }
 
