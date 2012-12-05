@@ -40,9 +40,9 @@ void ElementRareData::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) cons
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::DOM);
     NodeRareData::reportMemoryUsage(memoryObjectInfo);
-    info.addMember(m_computedStyle);
 
-    info.addMember(m_datasetDOMStringMap);
+    info.addMember(m_computedStyle);
+    info.addMember(m_dataset);
     info.addMember(m_classList);
     info.addMember(m_shadow);
     info.addMember(m_attributeMap);

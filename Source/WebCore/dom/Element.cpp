@@ -190,7 +190,7 @@ Element::~Element()
 
     if (ElementShadow* elementShadow = shadow()) {
         elementShadow->removeAllShadowRoots();
-        elementRareData()->m_shadow.clear();
+        elementRareData()->setShadow(nullptr);
     }
 
     if (hasSyntheticAttrChildNodes())
@@ -287,11 +287,11 @@ NamedNodeMap* Element::attributes() const
 {
     ensureUpdatedAttributeData();
     ElementRareData* rareData = const_cast<Element*>(this)->ensureElementRareData();
-    if (NamedNodeMap* attributeMap = rareData->m_attributeMap.get())
+    if (NamedNodeMap* attributeMap = rareData->attributeMap())
         return attributeMap;
 
-    rareData->m_attributeMap = NamedNodeMap::create(const_cast<Element*>(this));
-    return rareData->m_attributeMap.get();
+    rareData->setAttributeMap(NamedNodeMap::create(const_cast<Element*>(this)));
+    return rareData->attributeMap();
 }
 
 Node::NodeType Element::nodeType() const
@@ -1347,17 +1347,17 @@ ElementShadow* Element::shadow() const
     if (!hasRareData())
         return 0;
 
-    return elementRareData()->m_shadow.get();
+    return elementRareData()->shadow();
 }
 
 ElementShadow* Element::ensureShadow()
 {
-    if (ElementShadow* shadow = ensureElementRareData()->m_shadow.get())
+    if (ElementShadow* shadow = ensureElementRareData()->shadow())
         return shadow;
 
     ElementRareData* data = elementRareData();
-    data->m_shadow = adoptPtr(new ElementShadow());
-    return data->m_shadow.get();
+    data->setShadow(adoptPtr(new ElementShadow()));
+    return data->shadow();
 }
 
 PassRefPtr<ShadowRoot> Element::createShadowRoot(ExceptionCode& ec)
@@ -1850,14 +1850,14 @@ void Element::setPseudo(const AtomicString& value)
 
 LayoutSize Element::minimumSizeForResizing() const
 {
-    return hasRareData() ? elementRareData()->m_minimumSizeForResizing : defaultMinimumSizeForResizing();
+    return hasRareData() ? elementRareData()->minimumSizeForResizing() : defaultMinimumSizeForResizing();
 }
 
 void Element::setMinimumSizeForResizing(const LayoutSize& size)
 {
-    if (size == defaultMinimumSizeForResizing() && !hasRareData())
+    if (!hasRareData() && size == defaultMinimumSizeForResizing())
         return;
-    ensureElementRareData()->m_minimumSizeForResizing = size;
+    ensureElementRareData()->setMinimumSizeForResizing(size);
 }
 
 RenderStyle* Element::computedStyle(PseudoId pseudoElementSpecifier)
@@ -1879,9 +1879,9 @@ RenderStyle* Element::computedStyle(PseudoId pseudoElementSpecifier)
         return 0;
 
     ElementRareData* data = ensureElementRareData();
-    if (!data->m_computedStyle)
-        data->m_computedStyle = document()->styleForElementIgnoringPendingStylesheets(this);
-    return pseudoElementSpecifier ? data->m_computedStyle->getCachedPseudoStyle(pseudoElementSpecifier) : data->m_computedStyle.get();
+    if (!data->computedStyle())
+        data->setComputedStyle(document()->styleForElementIgnoringPendingStylesheets(this));
+    return pseudoElementSpecifier ? data->computedStyle()->getCachedPseudoStyle(pseudoElementSpecifier) : data->computedStyle();
 }
 
 void Element::setStyleAffectedByEmpty()
@@ -2108,24 +2108,24 @@ bool Element::webkitMatchesSelector(const String& selector, ExceptionCode& ec)
 DOMTokenList* Element::classList()
 {
     ElementRareData* data = ensureElementRareData();
-    if (!data->m_classList)
-        data->m_classList = ClassList::create(this);
-    return data->m_classList.get();
+    if (!data->classList())
+        data->setClassList(ClassList::create(this));
+    return data->classList();
 }
 
 DOMTokenList* Element::optionalClassList() const
 {
     if (!hasRareData())
         return 0;
-    return elementRareData()->m_classList.get();
+    return elementRareData()->classList();
 }
 
 DOMStringMap* Element::dataset()
 {
     ElementRareData* data = ensureElementRareData();
-    if (!data->m_datasetDOMStringMap)
-        data->m_datasetDOMStringMap = DatasetDOMStringMap::create(this);
-    return data->m_datasetDOMStringMap.get();
+    if (!data->dataset())
+        data->setDataset(DatasetDOMStringMap::create(this));
+    return data->dataset();
 }
 
 KURL Element::getURLAttribute(const QualifiedName& name) const
@@ -2358,7 +2358,7 @@ bool Element::fastAttributeLookupAllowed(const QualifiedName& name) const
 #ifdef DUMP_NODE_STATISTICS
 bool Element::hasNamedNodeMap() const
 {
-    return hasRareData() && elementRareData()->m_attributeMap;
+    return hasRareData() && elementRareData()->attributeMap();
 }
 #endif
 
@@ -2476,14 +2476,14 @@ HTMLCollection* Element::cachedHTMLCollection(CollectionType type)
 
 IntSize Element::savedLayerScrollOffset() const
 {
-    return hasRareData() ? elementRareData()->m_savedLayerScrollOffset : IntSize();
+    return hasRareData() ? elementRareData()->savedLayerScrollOffset() : IntSize();
 }
 
 void Element::setSavedLayerScrollOffset(const IntSize& size)
 {
     if (size.isZero() && !hasRareData())
         return;
-    ensureElementRareData()->m_savedLayerScrollOffset = size;
+    ensureElementRareData()->setSavedLayerScrollOffset(size);
 }
 
 PassRefPtr<Attr> Element::attrIfExists(const QualifiedName& name)

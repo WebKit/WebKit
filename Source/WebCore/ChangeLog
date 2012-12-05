@@ -1,3 +1,86 @@
+2012-12-05  Elliott Sprehn  <esprehn@gmail.com>
+
+        Encapsulate ElementRareData for possible future sharing
+        https://bugs.webkit.org/show_bug.cgi?id=103948
+
+        Reviewed by Eric Seidel.
+
+        Encapsulate ElementRareData and make all access go through getters and
+        setters. This is already true for NodeRareData, but ElementRareData
+        had many places where people directly access it.
+
+        This the first step in possible future sharing of ElementRareData
+        instances across nodes. All nodes in a shadow tree have rare data to
+        store the TreeScope, but in most cases all they have is the TreeScope!
+        Instead of making every node in a shadow subtree have rare data
+        and use lots of memory we could just share a single instance of rare data
+        and only allocate a unique one on modification. Encapsulation lets us
+        assert about mutations on shared instances.
+
+        * dom/Element.cpp:
+        (WebCore::Element::~Element):
+        (WebCore::Element::attributes):
+        (WebCore::Element::shadow):
+        (WebCore::Element::ensureShadow):
+        (WebCore::Element::minimumSizeForResizing):
+        (WebCore::Element::setMinimumSizeForResizing):
+        (WebCore::Element::computedStyle):
+        (WebCore::Element::classList):
+        (WebCore::Element::optionalClassList):
+        (WebCore::Element::dataset):
+        (WebCore::Element::hasNamedNodeMap):
+        (WebCore::Element::savedLayerScrollOffset):
+        (WebCore::Element::setSavedLayerScrollOffset):
+        * dom/ElementRareData.cpp:
+        (WebCore::ElementRareData::reportMemoryUsage):
+        * dom/ElementRareData.h:
+        (WebCore::ElementRareData::needsFocusAppearanceUpdateSoonAfterAttach):
+        (WebCore::ElementRareData::setNeedsFocusAppearanceUpdateSoonAfterAttach):
+        (ElementRareData):
+        (WebCore::ElementRareData::styleAffectedByEmpty):
+        (WebCore::ElementRareData::setStyleAffectedByEmpty):
+        (WebCore::ElementRareData::isInCanvasSubtree):
+        (WebCore::ElementRareData::setIsInCanvasSubtree):
+        (WebCore::ElementRareData::containsFullScreenElement):
+        (WebCore::ElementRareData::setContainsFullScreenElement):
+        (WebCore::ElementRareData::isInTopLayer):
+        (WebCore::ElementRareData::setIsInTopLayer):
+        (WebCore::ElementRareData::childrenAffectedByHover):
+        (WebCore::ElementRareData::setChildrenAffectedByHover):
+        (WebCore::ElementRareData::childrenAffectedByActive):
+        (WebCore::ElementRareData::setChildrenAffectedByActive):
+        (WebCore::ElementRareData::childrenAffectedByDrag):
+        (WebCore::ElementRareData::setChildrenAffectedByDrag):
+        (WebCore::ElementRareData::childrenAffectedByFirstChildRules):
+        (WebCore::ElementRareData::setChildrenAffectedByFirstChildRules):
+        (WebCore::ElementRareData::childrenAffectedByLastChildRules):
+        (WebCore::ElementRareData::setChildrenAffectedByLastChildRules):
+        (WebCore::ElementRareData::childrenAffectedByDirectAdjacentRules):
+        (WebCore::ElementRareData::setChildrenAffectedByDirectAdjacentRules):
+        (WebCore::ElementRareData::childrenAffectedByForwardPositionalRules):
+        (WebCore::ElementRareData::setChildrenAffectedByForwardPositionalRules):
+        (WebCore::ElementRareData::childrenAffectedByBackwardPositionalRules):
+        (WebCore::ElementRareData::setChildrenAffectedByBackwardPositionalRules):
+        (WebCore::ElementRareData::childIndex):
+        (WebCore::ElementRareData::setChildIndex):
+        (WebCore::ElementRareData::shadow):
+        (WebCore::ElementRareData::setShadow):
+        (WebCore::ElementRareData::attributeMap):
+        (WebCore::ElementRareData::setAttributeMap):
+        (WebCore::ElementRareData::computedStyle):
+        (WebCore::ElementRareData::setComputedStyle):
+        (WebCore::ElementRareData::classList):
+        (WebCore::ElementRareData::setClassList):
+        (WebCore::ElementRareData::dataset):
+        (WebCore::ElementRareData::setDataset):
+        (WebCore::ElementRareData::minimumSizeForResizing):
+        (WebCore::ElementRareData::setMinimumSizeForResizing):
+        (WebCore::ElementRareData::savedLayerScrollOffset):
+        (WebCore::ElementRareData::setSavedLayerScrollOffset):
+        (WebCore::ElementRareData::resetComputedStyle):
+        * dom/NodeRareData.h:
+        (NodeRareData):
+
 2012-12-05  Mark Pilgrim  <pilgrim@chromium.org>
 
         [Chromium][Win] Remove theme-related functions from PlatformSupport

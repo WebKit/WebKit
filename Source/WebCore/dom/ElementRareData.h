@@ -40,45 +40,74 @@ public:
     void resetComputedStyle();
     void resetDynamicRestyleObservations();
 
-    using NodeRareData::needsFocusAppearanceUpdateSoonAfterAttach;
-    using NodeRareData::setNeedsFocusAppearanceUpdateSoonAfterAttach;
-    using NodeRareData::styleAffectedByEmpty;
-    using NodeRareData::setStyleAffectedByEmpty;
-    using NodeRareData::isInCanvasSubtree;
-    using NodeRareData::setIsInCanvasSubtree;
+    bool needsFocusAppearanceUpdateSoonAfterAttach() const { return m_needsFocusAppearanceUpdateSoonAfterAttach; }
+    void setNeedsFocusAppearanceUpdateSoonAfterAttach(bool needs) { m_needsFocusAppearanceUpdateSoonAfterAttach = needs; }
+
+    bool styleAffectedByEmpty() const { return m_styleAffectedByEmpty; }
+    void setStyleAffectedByEmpty(bool value) { m_styleAffectedByEmpty = value; }
+
+    bool isInCanvasSubtree() const { return m_isInCanvasSubtree; }
+    void setIsInCanvasSubtree(bool value) { m_isInCanvasSubtree = value; }
+
 #if ENABLE(FULLSCREEN_API)
-    using NodeRareData::containsFullScreenElement;
-    using NodeRareData::setContainsFullScreenElement;
+    bool containsFullScreenElement() { return m_containsFullScreenElement; }
+    void setContainsFullScreenElement(bool value) { m_containsFullScreenElement = value; }
 #endif
+
 #if ENABLE(DIALOG_ELEMENT)
-    using NodeRareData::isInTopLayer;
-    using NodeRareData::setIsInTopLayer;
+    bool isInTopLayer() const { return m_isInTopLayer; }
+    void setIsInTopLayer(bool value) { m_isInTopLayer = value; }
 #endif
-    using NodeRareData::childrenAffectedByHover;
-    using NodeRareData::setChildrenAffectedByHover;
-    using NodeRareData::childrenAffectedByActive;
-    using NodeRareData::setChildrenAffectedByActive;
-    using NodeRareData::childrenAffectedByDrag;
-    using NodeRareData::setChildrenAffectedByDrag;
-    using NodeRareData::childrenAffectedByFirstChildRules;
-    using NodeRareData::setChildrenAffectedByFirstChildRules;
-    using NodeRareData::childrenAffectedByLastChildRules;
-    using NodeRareData::setChildrenAffectedByLastChildRules;
-    using NodeRareData::childrenAffectedByDirectAdjacentRules;
-    using NodeRareData::setChildrenAffectedByDirectAdjacentRules;
-    using NodeRareData::childrenAffectedByForwardPositionalRules;
-    using NodeRareData::setChildrenAffectedByForwardPositionalRules;
-    using NodeRareData::childrenAffectedByBackwardPositionalRules;
-    using NodeRareData::setChildrenAffectedByBackwardPositionalRules;
-    using NodeRareData::childIndex;
-    using NodeRareData::setChildIndex;
+
+    bool childrenAffectedByHover() const { return m_childrenAffectedByHover; }
+    void setChildrenAffectedByHover(bool value) { m_childrenAffectedByHover = value; }
+    bool childrenAffectedByActive() const { return m_childrenAffectedByActive; }
+    void setChildrenAffectedByActive(bool value) { m_childrenAffectedByActive = value; }
+    bool childrenAffectedByDrag() const { return m_childrenAffectedByDrag; }
+    void setChildrenAffectedByDrag(bool value) { m_childrenAffectedByDrag = value; }
+
+    bool childrenAffectedByFirstChildRules() const { return m_childrenAffectedByFirstChildRules; }
+    void setChildrenAffectedByFirstChildRules(bool value) { m_childrenAffectedByFirstChildRules = value; }
+    bool childrenAffectedByLastChildRules() const { return m_childrenAffectedByLastChildRules; }
+    void setChildrenAffectedByLastChildRules(bool value) { m_childrenAffectedByLastChildRules = value; }
+    bool childrenAffectedByDirectAdjacentRules() const { return m_childrenAffectedByDirectAdjacentRules; }
+    void setChildrenAffectedByDirectAdjacentRules(bool value) { m_childrenAffectedByDirectAdjacentRules = value; }
+    bool childrenAffectedByForwardPositionalRules() const { return m_childrenAffectedByForwardPositionalRules; }
+    void setChildrenAffectedByForwardPositionalRules(bool value) { m_childrenAffectedByForwardPositionalRules = value; }
+    bool childrenAffectedByBackwardPositionalRules() const { return m_childrenAffectedByBackwardPositionalRules; }
+    void setChildrenAffectedByBackwardPositionalRules(bool value) { m_childrenAffectedByBackwardPositionalRules = value; }
+    unsigned childIndex() const { return m_childIndex; }
+    void setChildIndex(unsigned index) { m_childIndex = index; }
 
     virtual void reportMemoryUsage(MemoryObjectInfo*) const OVERRIDE;
 
+    ElementShadow* shadow() const { return m_shadow.get(); }
+    void setShadow(PassOwnPtr<ElementShadow> shadow) { m_shadow = shadow; }
+
+    NamedNodeMap* attributeMap() const { return m_attributeMap.get(); }
+    void setAttributeMap(PassOwnPtr<NamedNodeMap> attributeMap) { m_attributeMap = attributeMap; }
+
+    RenderStyle* computedStyle() const { return m_computedStyle.get(); }
+    void setComputedStyle(PassRefPtr<RenderStyle> computedStyle) { m_computedStyle = computedStyle; }
+
+    ClassList* classList() const { return m_classList.get(); }
+    void setClassList(PassOwnPtr<ClassList> classList) { m_classList = classList; }
+
+    DatasetDOMStringMap* dataset() const { return m_dataset.get(); }
+    void setDataset(PassOwnPtr<DatasetDOMStringMap> dataset) { m_dataset = dataset; }
+
+    LayoutSize minimumSizeForResizing() const { return m_minimumSizeForResizing; }
+    void setMinimumSizeForResizing(LayoutSize size) { m_minimumSizeForResizing = size; }
+
+    IntSize savedLayerScrollOffset() const { return m_savedLayerScrollOffset; }
+    void setSavedLayerScrollOffset(IntSize size) { m_savedLayerScrollOffset = size; }
+
+private:
+    // Many fields are in NodeRareData for better packing.
     LayoutSize m_minimumSizeForResizing;
     RefPtr<RenderStyle> m_computedStyle;
 
-    OwnPtr<DatasetDOMStringMap> m_datasetDOMStringMap;
+    OwnPtr<DatasetDOMStringMap> m_dataset;
     OwnPtr<ClassList> m_classList;
     OwnPtr<ElementShadow> m_shadow;
     OwnPtr<NamedNodeMap> m_attributeMap;
@@ -104,7 +133,7 @@ inline ElementRareData::~ElementRareData()
 
 inline void ElementRareData::resetComputedStyle()
 {
-    m_computedStyle.clear();
+    setComputedStyle(0);
     setStyleAffectedByEmpty(false);
     setChildIndex(0);
 }

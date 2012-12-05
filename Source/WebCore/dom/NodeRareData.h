@@ -327,42 +327,6 @@ public:
     virtual void reportMemoryUsage(MemoryObjectInfo*) const;
 
 protected:
-    // for ElementRareData
-    bool needsFocusAppearanceUpdateSoonAfterAttach() const { return m_needsFocusAppearanceUpdateSoonAfterAttach; }
-    void setNeedsFocusAppearanceUpdateSoonAfterAttach(bool needs) { m_needsFocusAppearanceUpdateSoonAfterAttach = needs; }
-    bool styleAffectedByEmpty() const { return m_styleAffectedByEmpty; }
-    void setStyleAffectedByEmpty(bool value) { m_styleAffectedByEmpty = value; }
-    bool isInCanvasSubtree() const { return m_isInCanvasSubtree; }
-    void setIsInCanvasSubtree(bool value) { m_isInCanvasSubtree = value; }
-#if ENABLE(FULLSCREEN_API)
-    bool containsFullScreenElement() { return m_containsFullScreenElement; }
-    void setContainsFullScreenElement(bool value) { m_containsFullScreenElement = value; }
-#endif
-#if ENABLE(DIALOG_ELEMENT)
-    bool isInTopLayer() const { return m_isInTopLayer; }
-    void setIsInTopLayer(bool value) { m_isInTopLayer = value; }
-#endif
-    bool childrenAffectedByHover() const { return m_childrenAffectedByHover; }
-    void setChildrenAffectedByHover(bool value) { m_childrenAffectedByHover = value; }
-    bool childrenAffectedByActive() const { return m_childrenAffectedByActive; }
-    void setChildrenAffectedByActive(bool value) { m_childrenAffectedByActive = value; }
-    bool childrenAffectedByDrag() const { return m_childrenAffectedByDrag; }
-    void setChildrenAffectedByDrag(bool value) { m_childrenAffectedByDrag = value; }
-
-    bool childrenAffectedByFirstChildRules() const { return m_childrenAffectedByFirstChildRules; }
-    void setChildrenAffectedByFirstChildRules(bool value) { m_childrenAffectedByFirstChildRules = value; }
-    bool childrenAffectedByLastChildRules() const { return m_childrenAffectedByLastChildRules; }
-    void setChildrenAffectedByLastChildRules(bool value) { m_childrenAffectedByLastChildRules = value; }
-    bool childrenAffectedByDirectAdjacentRules() const { return m_childrenAffectedByDirectAdjacentRules; }
-    void setChildrenAffectedByDirectAdjacentRules(bool value) { m_childrenAffectedByDirectAdjacentRules = value; }
-    bool childrenAffectedByForwardPositionalRules() const { return m_childrenAffectedByForwardPositionalRules; }
-    void setChildrenAffectedByForwardPositionalRules(bool value) { m_childrenAffectedByForwardPositionalRules = value; }
-    bool childrenAffectedByBackwardPositionalRules() const { return m_childrenAffectedByBackwardPositionalRules; }
-    void setChildrenAffectedByBackwardPositionalRules(bool value) { m_childrenAffectedByBackwardPositionalRules = value; }
-    unsigned childIndex() const { return m_childIndex; }
-    void setChildIndex(unsigned index) { m_childIndex = index; }
-
-private:
     OwnPtr<NodeListsNodeData> m_nodeLists;
     ChildNodeList* m_childNodeList;
     short m_tabIndex;
