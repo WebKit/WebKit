@@ -1,5 +1,16 @@
 2012-12-05  Zan Dobersek  <zandobersek@gmail.com>
 
+        Unreviewed gardening.
+
+        Moving Chromium's baseline for media/track/opera/interfaces/TextTrack/addCue.html
+        (that contains correct, platform-agnostic results) alongside the test.
+
+        * media/track/opera/interfaces/TextTrack/addCue-expected.txt: Copied from LayoutTests/platform/chromium/media/track/opera/interfaces/TextTrack/addCue-expected.txt.
+        * platform/chromium/media/track/opera/interfaces/TextTrack/addCue-expected.txt: Removed.
+        * platform/efl/TestExpectations: Removed the missing expectation for this test.
+
+2012-12-05  Zan Dobersek  <zandobersek@gmail.com>
+
         Unreviewed GTK gardening.
 
         Adding a platform-specific baseline for fast/css/image-set-value-not-removed-crash.html.
