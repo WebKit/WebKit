@@ -315,13 +315,7 @@ class Manager(object):
         self._expectations.add_skipped_tests(tests_in_other_chunks)
         tests_to_skip.update(tests_in_other_chunks)
 
-        summary = ResultSummary(self._expectations, len(tests_to_run) * self._options.repeat_each * self._options.iterations + len(tests_to_skip))
-
-        for test_name in set(tests_to_skip):
-            result = test_results.TestResult(test_name)
-            result.type = test_expectations.SKIP
-            summary.add(result, expected=True, test_is_slow=self._test_is_slow(test_name))
-        return summary, tests_to_run
+        return tests_to_run, tests_to_skip
 
     def _test_input_for_file(self, test_file):
         return TestInput(test_file,
@@ -382,23 +376,23 @@ class Manager(object):
         self._expectations = test_expectations.TestExpectations(self._port, test_names)
 
         num_all_test_files_found = len(test_names)
-        result_summary, test_names = self._prepare_lists(paths, test_names)
+        tests_to_run, tests_to_skip = self._prepare_lists(paths, test_names)
+
+        self._printer.print_found(num_all_test_files_found, len(tests_to_run), self._options.repeat_each, self._options.iterations)
 
         # Check to make sure we're not skipping every test.
-        if not test_names:
+        if not tests_to_run:
             _log.critical('No tests to run.')
             return -1
 
-        self._printer.print_found(num_all_test_files_found, len(test_names), self._options.repeat_each, self._options.iterations)
-        self._printer.print_expected(result_summary, self._expectations.get_tests_with_result_type)
-
-        if not self._set_up_run(test_names):
+        if not self._set_up_run(tests_to_run):
             return -1
 
         start_time = time.time()
 
         try:
-            result_summary = self._run_tests(test_names, result_summary, int(self._options.child_processes), retrying=False)
+            result_summary = self._run_tests(tests_to_run, tests_to_skip, self._options.repeat_each, self._options.iterations,
+                                             int(self._options.child_processes), retrying=False)
 
             # We exclude the crashes from the list of results to retry, because
             # we want to treat even a potentially flaky crash as an error.
@@ -408,7 +402,7 @@ class Manager(object):
                 _log.info('')
                 _log.info("Retrying %d unexpected failure(s) ..." % len(failures))
                 _log.info('')
-                retry_summary = self._run_tests(failures, ResultSummary(self._expectations, len(failures)), 1, retrying=True)
+                retry_summary = self._run_tests(failures, tests_to_skip=set(), repeat_each=1, iterations=1, num_workers=1, retrying=True)
             else:
                 retry_summary = None
         finally:
@@ -443,15 +437,26 @@ class Manager(object):
 
         return self._port.exit_code_from_summarized_results(unexpected_results)
 
-    def _run_tests(self, tests, result_summary, num_workers, retrying):
-        needs_http = self._port.requires_http_server() or any(self._is_http_test(test) for test in tests)
-        needs_websockets = any(self._is_websocket_test(test) for test in tests)
+    def _run_tests(self, tests_to_run, tests_to_skip, repeat_each, iterations, num_workers, retrying):
+        needs_http = self._port.requires_http_server() or any(self._is_http_test(test) for test in tests_to_run)
+        needs_websockets = any(self._is_websocket_test(test) for test in tests_to_run)
+
+        summary = ResultSummary(self._expectations, len(set(tests_to_run)) * repeat_each * iterations)
+        for test_name in set(tests_to_skip):
+            result = test_results.TestResult(test_name)
+            result.type = test_expectations.SKIP
+            summary.add(result, expected=True, test_is_slow=self._test_is_slow(test_name))
+
         test_inputs = []
-        for _ in xrange(self._options.iterations):
-            for test in tests:
-                for _ in xrange(self._options.repeat_each):
+        for _ in xrange(iterations):
+            for test in tests_to_run:
+                for _ in xrange(repeat_each):
                     test_inputs.append(self._test_input_for_file(test))
-        return self._runner.run_tests(test_inputs, self._expectations, result_summary, num_workers, needs_http, needs_websockets, retrying)
+
+        if not retrying:
+            self._printer.print_expected(summary, self._expectations.get_tests_with_result_type)
+
+        return self._runner.run_tests(test_inputs, self._expectations, summary, num_workers, needs_http, needs_websockets, retrying)
 
     def _clean_up_run(self):
         """Restores the system after we're done running tests."""
