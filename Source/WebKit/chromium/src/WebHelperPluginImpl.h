@@ -64,6 +64,7 @@ public:
 private:
     explicit WebHelperPluginImpl(WebWidgetClient*);
     bool initPage(WebKit::WebViewImpl*, const String& pluginType);
+    void destoryPage();
 
     // WebWidget methods:
     virtual void setCompositorSurfaceReady() OVERRIDE;

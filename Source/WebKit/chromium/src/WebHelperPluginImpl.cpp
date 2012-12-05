@@ -87,6 +87,9 @@ public:
 private:
     virtual void closeWindowSoon() OVERRIDE
     {
+        // This should never be called since the only way to close the
+        // invisible page is via closeHelperPlugin().
+        ASSERT_NOT_REACHED(); 
         m_widget->closeHelperPlugin();
     }
 
@@ -120,7 +123,6 @@ bool WebHelperPluginImpl::init(WebViewImpl* webView, const String& pluginType)
     if (!initPage(webView, pluginType))
         return false;
     m_widgetClient->show(WebNavigationPolicy());
-
     setFocus(true);
 
     return true;
@@ -133,6 +135,12 @@ void WebHelperPluginImpl::closeHelperPlugin()
         m_page->mainFrame()->loader()->stopAllLoaders();
         m_page->mainFrame()->loader()->stopLoading(UnloadEventPolicyNone);
     }
+
+    // We must destroy the page now in case the host page is being destroyed, in
+    // which case some of the objects the page depends on may have been
+    // destroyed by the time this->close() is called asynchronously.
+    destoryPage();
+
     // m_widgetClient might be 0 because this widget might be already closed.
     if (m_widgetClient) {
         // closeWidgetSoon() will call this->close() later.
@@ -201,6 +209,17 @@ bool WebHelperPluginImpl::initPage(WebKit::WebViewImpl* webView, const String& p
     return true;
 }
 
+void WebHelperPluginImpl::destoryPage()
+{
+    if (!m_page)
+        return;
+
+    if (m_page->mainFrame())
+        m_page->mainFrame()->loader()->frameDetached();
+
+    m_page.clear();
+}
+
 void WebHelperPluginImpl::setCompositorSurfaceReady()
 {
 }
@@ -225,17 +244,7 @@ void WebHelperPluginImpl::setFocus(bool enable)
 
 void WebHelperPluginImpl::close()
 {
-    RefPtr<WebFrameImpl> mainFrameImpl;
-
-    if (m_page) {
-        // Initiate shutdown. This will cause a lot of notifications to be sent.
-        if (m_page->mainFrame()) {
-            mainFrameImpl = WebFrameImpl::fromFrame(m_page->mainFrame());
-            m_page->mainFrame()->loader()->frameDetached();
-        }
-        m_page.clear();
-    }
-
+    ASSERT(!m_page); // Should only be called via closePopup().
     m_widgetClient = 0;
     deref();
 }
@@ -248,10 +257,10 @@ WebHelperPlugin* WebHelperPlugin::create(WebWidgetClient* client)
         CRASH();
     // A WebHelperPluginImpl instance usually has two references.
     //  - One owned by the instance itself. It represents the visible widget.
-    //  - One owned by a WebViewImpl. It's released when the WebViewImpl ask the
-    //    WebHelperPluginImpl to close.
+    //  - One owned by the hosting element. It's released when the hosting
+    //    element asks the WebHelperPluginImpl to close.
     // We need them because the closing operation is asynchronous and the widget
-    // can be closed while the WebViewImpl is unaware of it.
+    // can be closed while the hosting element is unaware of it.
     return adoptRef(new WebHelperPluginImpl(client)).leakRef();
 }
 

@@ -1,5 +1,38 @@
 2012-12-04  David Dorwin  <ddorwin@chromium.org>
 
+        [Chromium] Detach the frame and destroy the page immediately upon request to closeHelperPlugin().
+        https://bugs.webkit.org/show_bug.cgi?id=103947
+
+        Reviewed by Kent Tamura.
+
+        In the case that the host page is being destroyed, some of the objects
+        the page depends on, specifically RenderViewImpl, may be destroyed by
+        the time close() is called asynchronously.
+        The frameDetached() calling code was originally copied from
+        WebViewImpl::close(), but WebViewImpl does not have an asynchronous
+        closing mechanism like the WebWidgets.
+
+        This is the fix for http://crbug.com/160650
+
+        * src/WebHelperPluginImpl.cpp:
+        (WebKit::WebHelperPluginImpl::init):
+        (WebKit::WebHelperPluginImpl::closeHelperPlugin):
+        (WebKit::WebHelperPluginImpl::destoryPage):
+        (WebKit):
+        (WebKit::WebHelperPluginImpl::close):.
+        (WebKit::WebHelperPlugin::create):
+        * src/WebHelperPluginImpl.h:
+        (WebHelperPluginImpl):
+        * src/WebPagePopupImpl.cpp: Made similar changes since it follows the same model. (I think the way popups are closed has prevented the race condition from occurring for popups.)
+        (WebKit::WebPagePopupImpl::destoryPage):
+        (WebKit):
+        (WebKit::WebPagePopupImpl::close):
+        (WebKit::WebPagePopupImpl::closePopup):
+        * src/WebPagePopupImpl.h:
+        (WebPagePopupImpl):
+
+2012-12-04  David Dorwin  <ddorwin@chromium.org>
+
         [Chromium] Removed obsolete local variable from WebViewImpl.cpp.
         https://bugs.webkit.org/show_bug.cgi?id=104050
 

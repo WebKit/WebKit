@@ -225,6 +225,17 @@ bool WebPagePopupImpl::initPage()
     return true;
 }
 
+void WebPagePopupImpl::destoryPage()
+{
+    if (!m_page)
+        return;
+
+    if (m_page->mainFrame())
+        m_page->mainFrame()->loader()->frameDetached();
+
+    m_page.clear();
+}
+
 WebSize WebPagePopupImpl::size()
 {
     return m_popupClient->contentSize();
@@ -313,9 +324,7 @@ void WebPagePopupImpl::setFocus(bool enable)
 void WebPagePopupImpl::close()
 {
     m_closing = true;
-    if (m_page && m_page->mainFrame())
-        m_page->mainFrame()->loader()->frameDetached();
-    m_page.clear();
+    destoryPage(); // In case closePopup() was not called.
     m_widgetClient = 0;
     deref();
 }
@@ -329,6 +338,9 @@ void WebPagePopupImpl::closePopup()
         DOMWindowPagePopup::uninstall(m_page->mainFrame()->document()->domWindow());
     }
     m_closing = true;
+
+    destoryPage();
+
     // m_widgetClient might be 0 because this widget might be already closed.
     if (m_widgetClient) {
         // closeWidgetSoon() will call this->close() later.
