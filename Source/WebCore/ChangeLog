@@ -1,3 +1,160 @@
+2012-12-05  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: Replace use of ScriptExecutionContext::Task (Part 2)
+        https://bugs.webkit.org/show_bug.cgi?id=103931
+
+        Reviewed by Tony Chang.
+
+        Actually drop use of ScriptExecutionContext::Task and remove incorrect usage of
+        ThreadSafeRefCounted<>. Define a new IDBTransactionBackendImpl::Operation base class
+        for operations; storage of per-operation data becomes explicit.
+
+        No new tests - just a refactor.
+
+        * Modules/indexeddb/IDBCallbacks.h: Remove bogus "ThreadSafe"
+        * Modules/indexeddb/IDBCursorBackendImpl.cpp:
+        (WebCore::IDBCursorBackendImpl::CursorIterationOperation::create):
+        (IDBCursorBackendImpl::CursorIterationOperation):
+        (WebCore::IDBCursorBackendImpl::CursorIterationOperation::CursorIterationOperation):
+        (WebCore::IDBCursorBackendImpl::CursorAdvanceOperation::create):
+        (IDBCursorBackendImpl::CursorAdvanceOperation):
+        (WebCore::IDBCursorBackendImpl::CursorAdvanceOperation::CursorAdvanceOperation):
+        (WebCore::IDBCursorBackendImpl::CursorPrefetchIterationOperation::create):
+        (IDBCursorBackendImpl::CursorPrefetchIterationOperation):
+        (WebCore::IDBCursorBackendImpl::CursorPrefetchIterationOperation::CursorPrefetchIterationOperation):
+        (WebCore::IDBCursorBackendImpl::CursorAdvanceOperation::perform):
+        (WebCore::IDBCursorBackendImpl::CursorIterationOperation::perform):
+        (WebCore::IDBCursorBackendImpl::CursorPrefetchIterationOperation::perform):
+        * Modules/indexeddb/IDBCursorBackendInterface.h: Remove bogus "ThreadSafe"
+        * Modules/indexeddb/IDBDatabase.cpp:
+        * Modules/indexeddb/IDBDatabaseBackendImpl.cpp:
+        (WebCore::IDBDatabaseBackendImpl::CreateObjectStoreOperation::create):
+        (IDBDatabaseBackendImpl::CreateObjectStoreOperation):
+        (WebCore::IDBDatabaseBackendImpl::CreateObjectStoreOperation::CreateObjectStoreOperation):
+        (WebCore::IDBDatabaseBackendImpl::DeleteObjectStoreOperation::create):
+        (IDBDatabaseBackendImpl::DeleteObjectStoreOperation):
+        (WebCore::IDBDatabaseBackendImpl::DeleteObjectStoreOperation::DeleteObjectStoreOperation):
+        (WebCore::IDBDatabaseBackendImpl::VersionChangeOperation::create):
+        (IDBDatabaseBackendImpl::VersionChangeOperation):
+        (WebCore::IDBDatabaseBackendImpl::VersionChangeOperation::VersionChangeOperation):
+        (WebCore::IDBDatabaseBackendImpl::CreateObjectStoreAbortOperation::create):
+        (IDBDatabaseBackendImpl::CreateObjectStoreAbortOperation):
+        (WebCore::IDBDatabaseBackendImpl::CreateObjectStoreAbortOperation::CreateObjectStoreAbortOperation):
+        (WebCore::IDBDatabaseBackendImpl::DeleteObjectStoreAbortOperation::create):
+        (IDBDatabaseBackendImpl::DeleteObjectStoreAbortOperation):
+        (WebCore::IDBDatabaseBackendImpl::DeleteObjectStoreAbortOperation::DeleteObjectStoreAbortOperation):
+        (WebCore::IDBDatabaseBackendImpl::VersionChangeAbortOperation::create):
+        (IDBDatabaseBackendImpl::VersionChangeAbortOperation):
+        (WebCore::IDBDatabaseBackendImpl::VersionChangeAbortOperation::VersionChangeAbortOperation):
+        (WebCore::IDBDatabaseBackendImpl::createObjectStore):
+        (WebCore::IDBDatabaseBackendImpl::CreateObjectStoreOperation::perform):
+        (WebCore::IDBDatabaseBackendImpl::deleteObjectStore):
+        (WebCore::IDBDatabaseBackendImpl::DeleteObjectStoreOperation::perform):
+        (WebCore::IDBDatabaseBackendImpl::VersionChangeOperation::perform):
+        (WebCore::IDBDatabaseBackendImpl::runIntVersionChangeTransaction):
+        (WebCore::IDBDatabaseBackendImpl::CreateObjectStoreAbortOperation::perform):
+        (WebCore::IDBDatabaseBackendImpl::DeleteObjectStoreAbortOperation::perform):
+        (WebCore::IDBDatabaseBackendImpl::VersionChangeAbortOperation::perform):
+        * Modules/indexeddb/IDBDatabaseBackendInterface.h: Remove bogus "ThreadSafe"
+        * Modules/indexeddb/IDBDatabaseCallbacks.h: Remove bogus "ThreadSafe"
+        * Modules/indexeddb/IDBFactoryBackendImpl.cpp:
+        * Modules/indexeddb/IDBFactoryBackendInterface.h: Remove bogus "ThreadSafe"
+        * Modules/indexeddb/IDBIndexBackendImpl.cpp:
+        (WebCore::IDBIndexBackendImpl::OpenIndexCursorOperation::create):
+        (IDBIndexBackendImpl::OpenIndexCursorOperation):
+        (WebCore::IDBIndexBackendImpl::OpenIndexCursorOperation::OpenIndexCursorOperation):
+        (WebCore::IDBIndexBackendImpl::IndexCountOperation::create):
+        (IDBIndexBackendImpl::IndexCountOperation):
+        (WebCore::IDBIndexBackendImpl::IndexCountOperation::IndexCountOperation):
+        (WebCore::IDBIndexBackendImpl::IndexReferencedValueRetrievalOperation::create):
+        (IDBIndexBackendImpl::IndexReferencedValueRetrievalOperation):
+        (WebCore::IDBIndexBackendImpl::IndexReferencedValueRetrievalOperation::IndexReferencedValueRetrievalOperation):
+        (WebCore::IDBIndexBackendImpl::IndexValueRetrievalOperation::create):
+        (IDBIndexBackendImpl::IndexValueRetrievalOperation):
+        (WebCore::IDBIndexBackendImpl::IndexValueRetrievalOperation::IndexValueRetrievalOperation):
+        (WebCore::IDBIndexBackendImpl::OpenIndexCursorOperation::perform):
+        (WebCore::IDBIndexBackendImpl::openCursor):
+        (WebCore::IDBIndexBackendImpl::openKeyCursor):
+        (WebCore::IDBIndexBackendImpl::IndexCountOperation::perform):
+        (WebCore::IDBIndexBackendImpl::count):
+        (WebCore::IDBIndexBackendImpl::IndexReferencedValueRetrievalOperation::perform):
+        (WebCore::IDBIndexBackendImpl::IndexValueRetrievalOperation::perform):
+        (WebCore::IDBIndexBackendImpl::get):
+        (WebCore::IDBIndexBackendImpl::getKey):
+        * Modules/indexeddb/IDBIndexBackendInterface.h: Remove bogus "ThreadSafe"
+        * Modules/indexeddb/IDBKey.h: Remove bogus "ThreadSafe"
+        (IDBKey):
+        * Modules/indexeddb/IDBKeyRange.h: Remove bogus "ThreadSafe"
+        * Modules/indexeddb/IDBObjectStoreBackendImpl.cpp:
+        (WebCore::IDBObjectStoreBackendImpl::ObjectStoreRetrievalOperation::create):
+        (IDBObjectStoreBackendImpl::ObjectStoreRetrievalOperation):
+        (WebCore::IDBObjectStoreBackendImpl::ObjectStoreRetrievalOperation::ObjectStoreRetrievalOperation):
+        (WebCore::IDBObjectStoreBackendImpl::ObjectStoreStorageOperation::create):
+        (IDBObjectStoreBackendImpl::ObjectStoreStorageOperation):
+        (WebCore::IDBObjectStoreBackendImpl::ObjectStoreStorageOperation::ObjectStoreStorageOperation):
+        (WebCore::IDBObjectStoreBackendImpl::ObjectStoreIndexesReadyOperation::create):
+        (IDBObjectStoreBackendImpl::ObjectStoreIndexesReadyOperation):
+        (WebCore::IDBObjectStoreBackendImpl::ObjectStoreIndexesReadyOperation::ObjectStoreIndexesReadyOperation):
+        (WebCore::IDBObjectStoreBackendImpl::ObjectStoreDeletionOperation::create):
+        (IDBObjectStoreBackendImpl::ObjectStoreDeletionOperation):
+        (WebCore::IDBObjectStoreBackendImpl::ObjectStoreDeletionOperation::ObjectStoreDeletionOperation):
+        (WebCore::IDBObjectStoreBackendImpl::ObjectStoreClearOperation::create):
+        (IDBObjectStoreBackendImpl::ObjectStoreClearOperation):
+        (WebCore::IDBObjectStoreBackendImpl::ObjectStoreClearOperation::ObjectStoreClearOperation):
+        (WebCore::IDBObjectStoreBackendImpl::CreateIndexOperation::create):
+        (IDBObjectStoreBackendImpl::CreateIndexOperation):
+        (WebCore::IDBObjectStoreBackendImpl::CreateIndexOperation::CreateIndexOperation):
+        (WebCore::IDBObjectStoreBackendImpl::DeleteIndexOperation::create):
+        (IDBObjectStoreBackendImpl::DeleteIndexOperation):
+        (WebCore::IDBObjectStoreBackendImpl::DeleteIndexOperation::DeleteIndexOperation):
+        (WebCore::IDBObjectStoreBackendImpl::OpenObjectStoreCursorOperation::create):
+        (IDBObjectStoreBackendImpl::OpenObjectStoreCursorOperation):
+        (WebCore::IDBObjectStoreBackendImpl::OpenObjectStoreCursorOperation::OpenObjectStoreCursorOperation):
+        (WebCore::IDBObjectStoreBackendImpl::ObjectStoreCountOperation::create):
+        (IDBObjectStoreBackendImpl::ObjectStoreCountOperation):
+        (WebCore::IDBObjectStoreBackendImpl::ObjectStoreCountOperation::ObjectStoreCountOperation):
+        (WebCore::IDBObjectStoreBackendImpl::CreateIndexAbortOperation::create):
+        (IDBObjectStoreBackendImpl::CreateIndexAbortOperation):
+        (WebCore::IDBObjectStoreBackendImpl::CreateIndexAbortOperation::CreateIndexAbortOperation):
+        (WebCore::IDBObjectStoreBackendImpl::DeleteIndexAbortOperation::create):
+        (IDBObjectStoreBackendImpl::DeleteIndexAbortOperation):
+        (WebCore::IDBObjectStoreBackendImpl::DeleteIndexAbortOperation::DeleteIndexAbortOperation):
+        (WebCore::IDBObjectStoreBackendImpl::get):
+        (WebCore::IDBObjectStoreBackendImpl::ObjectStoreRetrievalOperation::perform):
+        (WebCore::IDBObjectStoreBackendImpl::put):
+        (WebCore):
+        (WebCore::IDBObjectStoreBackendImpl::setIndexesReady):
+        (WebCore::IDBObjectStoreBackendImpl::ObjectStoreIndexesReadyOperation::perform):
+        (WebCore::IDBObjectStoreBackendImpl::ObjectStoreStorageOperation::perform):
+        (WebCore::IDBObjectStoreBackendImpl::deleteFunction):
+        (WebCore::IDBObjectStoreBackendImpl::ObjectStoreDeletionOperation::perform):
+        (WebCore::IDBObjectStoreBackendImpl::clear):
+        (WebCore::IDBObjectStoreBackendImpl::ObjectStoreClearOperation::perform):
+        (WebCore::IDBObjectStoreBackendImpl::createIndex):
+        (WebCore::IDBObjectStoreBackendImpl::CreateIndexOperation::perform):
+        (WebCore::IDBObjectStoreBackendImpl::deleteIndex):
+        (WebCore::IDBObjectStoreBackendImpl::DeleteIndexOperation::perform):
+        (WebCore::IDBObjectStoreBackendImpl::openCursor):
+        (WebCore::IDBObjectStoreBackendImpl::OpenObjectStoreCursorOperation::perform):
+        (WebCore::IDBObjectStoreBackendImpl::count):
+        (WebCore::IDBObjectStoreBackendImpl::ObjectStoreCountOperation::perform):
+        (WebCore::IDBObjectStoreBackendImpl::CreateIndexAbortOperation::perform):
+        (WebCore::IDBObjectStoreBackendImpl::DeleteIndexAbortOperation::perform):
+        * Modules/indexeddb/IDBObjectStoreBackendInterface.h: Remove bogus "ThreadSafe"
+        * Modules/indexeddb/IDBRequest.h: Remove bogus "ThreadSafe"
+        (IDBRequest):
+        * Modules/indexeddb/IDBTransactionBackendImpl.cpp:
+        (WebCore::IDBTransactionBackendImpl::IDBTransactionBackendImpl): Appease RefPtr<> adoption strictness.
+        (WebCore::IDBTransactionBackendImpl::scheduleTask):
+        (WebCore::IDBTransactionBackendImpl::abort):
+        (WebCore::IDBTransactionBackendImpl::taskTimerFired):
+        * Modules/indexeddb/IDBTransactionBackendImpl.h:
+        (Operation):
+        (WebCore::IDBTransactionBackendImpl::Operation::~Operation):
+        (IDBTransactionBackendImpl):
+        (WebCore::IDBTransactionBackendImpl::scheduleTask):
+        * Modules/indexeddb/IDBTransactionBackendInterface.h: Remove bogus "ThreadSafe"
+
 2012-12-05  Noel Gordon  <noel.gordon@gmail.com>
 
         ENABLE(IMAGE_DECODER_DOWN_SAMPLING): Don't swizzle decode down sampled images

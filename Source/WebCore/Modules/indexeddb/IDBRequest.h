@@ -111,8 +111,8 @@ public:
 
     void transactionDidFinishAndDispatch();
 
-    using ThreadSafeRefCounted<IDBCallbacks>::ref;
-    using ThreadSafeRefCounted<IDBCallbacks>::deref;
+    using RefCounted<IDBCallbacks>::ref;
+    using RefCounted<IDBCallbacks>::deref;
 
     IDBTransactionBackendInterface::TaskType taskType() { return m_taskType; }
 

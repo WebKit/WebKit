@@ -48,7 +48,6 @@
 #include "ScriptExecutionContext.h"
 #include <limits>
 #include <wtf/Atomics.h>
-#include <wtf/Threading.h>
 
 namespace WebCore {
 

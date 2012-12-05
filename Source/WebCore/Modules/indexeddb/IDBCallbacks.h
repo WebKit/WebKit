@@ -35,7 +35,7 @@
 #include "IDBKeyPath.h"
 #include "IDBTransactionBackendInterface.h"
 #include "SerializedScriptValue.h"
-#include <wtf/Threading.h>
+#include <wtf/RefCounted.h>
 
 #if ENABLE(INDEXED_DATABASE)
 
@@ -44,8 +44,7 @@ class DOMStringList;
 class IDBCursorBackendInterface;
 class IDBObjectStoreBackendInterface;
 
-// FIXME: All child classes need to be made threadsafe.
-class IDBCallbacks : public ThreadSafeRefCounted<IDBCallbacks> {
+class IDBCallbacks : public RefCounted<IDBCallbacks> {
 public:
     virtual ~IDBCallbacks() { }
 

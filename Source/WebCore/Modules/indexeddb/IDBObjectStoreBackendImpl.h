@@ -42,7 +42,6 @@ class IDBDatabaseBackendImpl;
 class IDBIndexBackendImpl;
 class IDBTransactionBackendImpl;
 class IDBTransactionBackendInterface;
-class ScriptExecutionContext;
 struct IDBObjectStoreMetadata;
 
 class IDBObjectStoreBackendImpl : public IDBObjectStoreBackendInterface {

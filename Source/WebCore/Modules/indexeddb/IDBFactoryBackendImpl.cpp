@@ -35,7 +35,6 @@
 #include "IDBDatabaseException.h"
 #include "IDBTransactionCoordinator.h"
 #include "SecurityOrigin.h"
-#include <wtf/Threading.h>
 #include <wtf/UnusedParam.h>
 
 #if ENABLE(INDEXED_DATABASE)

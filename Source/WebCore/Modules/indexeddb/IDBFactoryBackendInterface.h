@@ -29,7 +29,7 @@
 #define IDBFactoryBackendInterface_h
 
 #include <wtf/PassRefPtr.h>
-#include <wtf/Threading.h>
+#include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
 
 #if ENABLE(INDEXED_DATABASE)
@@ -48,7 +48,7 @@ typedef int ExceptionCode;
 // This is implemented by IDBFactoryBackendImpl and optionally others (in order to proxy
 // calls across process barriers). All calls to these classes should be non-blocking and
 // trigger work on a background thread if necessary.
-class IDBFactoryBackendInterface : public ThreadSafeRefCounted<IDBFactoryBackendInterface> {
+class IDBFactoryBackendInterface : public RefCounted<IDBFactoryBackendInterface> {
 public:
     static PassRefPtr<IDBFactoryBackendInterface> create();
     virtual ~IDBFactoryBackendInterface() { }

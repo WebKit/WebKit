@@ -30,13 +30,13 @@
 
 #include "ScriptWrappable.h"
 #include <wtf/Forward.h>
-#include <wtf/Threading.h>
+#include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-class IDBKey : public ScriptWrappable, public ThreadSafeRefCounted<IDBKey> {
+class IDBKey : public ScriptWrappable, public RefCounted<IDBKey> {
 public:
     typedef Vector<RefPtr<IDBKey> > KeyArray;
 
@@ -145,8 +145,8 @@ public:
         return b - a;
     }
 
-    using ThreadSafeRefCounted<IDBKey>::ref;
-    using ThreadSafeRefCounted<IDBKey>::deref;
+    using RefCounted<IDBKey>::ref;
+    using RefCounted<IDBKey>::deref;
 
 private:
     IDBKey() : m_type(InvalidType), m_number(0), m_sizeEstimate(OverheadSize) { }

@@ -31,7 +31,6 @@
 #include "IDBDatabaseBackendImpl.h"
 #include "IDBObjectStoreBackendInterface.h"
 #include "IDBTransactionBackendImpl.h"
-#include "ScriptExecutionContext.h"
 
 namespace WebCore {
 

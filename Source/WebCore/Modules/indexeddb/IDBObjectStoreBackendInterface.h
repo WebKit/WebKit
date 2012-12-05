@@ -28,7 +28,8 @@
 
 #include "IDBCursor.h"
 #include "IDBTransactionBackendInterface.h"
-#include <wtf/Threading.h>
+#include <wtf/PassRefPtr.h>
+#include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
 
 #if ENABLE(INDEXED_DATABASE)
@@ -45,7 +46,7 @@ class SerializedScriptValue;
 
 typedef int ExceptionCode;
 
-class IDBObjectStoreBackendInterface : public ThreadSafeRefCounted<IDBObjectStoreBackendInterface> {
+class IDBObjectStoreBackendInterface : public RefCounted<IDBObjectStoreBackendInterface> {
 public:
     virtual ~IDBObjectStoreBackendInterface() { }
 

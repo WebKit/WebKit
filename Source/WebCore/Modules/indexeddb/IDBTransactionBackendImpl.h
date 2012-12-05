@@ -32,7 +32,6 @@
 #include "IDBDatabaseError.h"
 #include "IDBTransactionBackendInterface.h"
 #include "IDBTransactionCallbacks.h"
-#include "ScriptExecutionContext.h"
 #include "Timer.h"
 #include <wtf/Deque.h>
 #include <wtf/HashSet.h>
@@ -56,12 +55,18 @@ public:
     virtual void abort();
     virtual void setCallbacks(IDBTransactionCallbacks* callbacks) { m_callbacks = callbacks; }
 
+    class Operation {
+    public:
+        virtual ~Operation() { }
+        virtual void perform(IDBTransactionBackendImpl*) = 0;
+    };
+
     void abort(PassRefPtr<IDBDatabaseError>);
     void run();
     unsigned short mode() const { return m_mode; }
     bool isFinished() const { return m_state == Finished; }
-    bool scheduleTask(PassOwnPtr<ScriptExecutionContext::Task> task, PassOwnPtr<ScriptExecutionContext::Task> abortTask = nullptr) { return scheduleTask(NormalTask, task, abortTask); }
-    bool scheduleTask(TaskType, PassOwnPtr<ScriptExecutionContext::Task>, PassOwnPtr<ScriptExecutionContext::Task> abortTask = nullptr);
+    bool scheduleTask(PassOwnPtr<Operation> task, PassOwnPtr<Operation> abortTask = nullptr) { return scheduleTask(NormalTask, task, abortTask); }
+    bool scheduleTask(TaskType, PassOwnPtr<Operation>, PassOwnPtr<Operation> abortTask = nullptr);
     void registerOpenCursor(IDBCursorBackendImpl*);
     void unregisterOpenCursor(IDBCursorBackendImpl*);
     void addPreemptiveEvent() { m_pendingPreemptiveEvents++; }
@@ -97,7 +102,7 @@ private:
     RefPtr<IDBTransactionCallbacks> m_callbacks;
     RefPtr<IDBDatabaseBackendImpl> m_database;
 
-    typedef Deque<OwnPtr<ScriptExecutionContext::Task> > TaskQueue;
+    typedef Deque<OwnPtr<Operation> > TaskQueue;
     TaskQueue m_taskQueue;
     TaskQueue m_preemptiveTaskQueue;
     TaskQueue m_abortTaskQueue;

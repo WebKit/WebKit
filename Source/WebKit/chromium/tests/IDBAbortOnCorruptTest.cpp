@@ -43,8 +43,10 @@ namespace {
 
 class MockIDBCallbacks : public IDBCallbacks {
 public:
-    MockIDBCallbacks() : m_wasErrorCalled(false) { }
-
+    static PassRefPtr<MockIDBCallbacks> create()
+    {
+        return adoptRef(new MockIDBCallbacks());
+    }
     virtual ~MockIDBCallbacks()
     {
         EXPECT_TRUE(m_wasErrorCalled);
@@ -69,6 +71,8 @@ public:
     virtual void onSuccessWithPrefetch(const Vector<RefPtr<IDBKey> >&, const Vector<RefPtr<IDBKey> >&, const Vector<RefPtr<SerializedScriptValue> >&) { }
     virtual void onBlocked() { }
 private:
+    MockIDBCallbacks() : m_wasErrorCalled(false) { }
+
     bool m_wasErrorCalled;
 };
 
@@ -116,11 +120,11 @@ TEST(IDBAbortTest, TheTest)
 {
     RefPtr<IDBFactoryBackendImpl> factory = FailingIDBFactoryBackendImpl::create();
     const String& name = "db name";
-    MockIDBCallbacks callbacks;
+    RefPtr<MockIDBCallbacks> callbacks = MockIDBCallbacks::create();
     RefPtr<FakeIDBDatabaseCallbacks> databaseCallbacks = FakeIDBDatabaseCallbacks::create();
     RefPtr<SecurityOrigin> origin = SecurityOrigin::create("http", "localhost", 81);
     const int64_t DummyVersion = 2;
-    factory->open(name, DummyVersion, &callbacks, databaseCallbacks, origin, 0 /*Frame*/, String() /*path*/);
+    factory->open(name, DummyVersion, callbacks.get(), databaseCallbacks, origin, 0 /*Frame*/, String() /*path*/);
 }
 
 } // namespace
