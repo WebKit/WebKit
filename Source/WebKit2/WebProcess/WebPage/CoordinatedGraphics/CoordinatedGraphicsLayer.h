@@ -53,9 +53,9 @@ namespace WebKit {
 class CoordinatedGraphicsLayerClient {
 public:
     // CoordinatedTileClient
-    virtual void createTile(WebLayerID, int tileID, const SurfaceUpdateInfo&, const WebCore::IntRect&) = 0;
-    virtual void updateTile(WebLayerID, int tileID, const SurfaceUpdateInfo&, const WebCore::IntRect&) = 0;
-    virtual void removeTile(WebLayerID, int tileID) = 0;
+    virtual void createTile(WebLayerID, uint32_t tileID, const SurfaceUpdateInfo&, const WebCore::IntRect&) = 0;
+    virtual void updateTile(WebLayerID, uint32_t tileID, const SurfaceUpdateInfo&, const WebCore::IntRect&) = 0;
+    virtual void removeTile(WebLayerID, uint32_t tileID) = 0;
 
     virtual WebCore::IntRect visibleContentsRect() const = 0;
     virtual bool layerTreeTileUpdatesAllowed() const = 0;
@@ -152,9 +152,9 @@ public:
     virtual Color tiledBackingStoreBackgroundColor() const OVERRIDE;
 
     // CoordinatedTileClient
-    virtual void createTile(int tileID, const WebKit::SurfaceUpdateInfo&, const IntRect&) OVERRIDE;
-    virtual void updateTile(int tileID, const WebKit::SurfaceUpdateInfo&, const IntRect&) OVERRIDE;
-    virtual void removeTile(int tileID) OVERRIDE;
+    virtual void createTile(uint32_t tileID, const WebKit::SurfaceUpdateInfo&, const IntRect&) OVERRIDE;
+    virtual void updateTile(uint32_t tileID, const WebKit::SurfaceUpdateInfo&, const IntRect&) OVERRIDE;
+    virtual void removeTile(uint32_t tileID) OVERRIDE;
     virtual PassOwnPtr<GraphicsContext> beginContentUpdate(const IntSize&, int& atlasID, IntPoint&) OVERRIDE;
 
     void setCoordinator(WebKit::CoordinatedGraphicsLayerClient*);

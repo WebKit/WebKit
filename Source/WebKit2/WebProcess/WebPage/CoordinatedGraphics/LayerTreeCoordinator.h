@@ -78,9 +78,9 @@ public:
     virtual void deviceScaleFactorDidChange() { }
     virtual PassRefPtr<CoordinatedImageBacking> createImageBackingIfNeeded(WebCore::Image*) OVERRIDE;
 
-    virtual void createTile(WebLayerID, int tileID, const SurfaceUpdateInfo&, const WebCore::IntRect&);
-    virtual void updateTile(WebLayerID, int tileID, const SurfaceUpdateInfo&, const WebCore::IntRect&);
-    virtual void removeTile(WebLayerID, int tileID);
+    virtual void createTile(WebLayerID, uint32_t tileID, const SurfaceUpdateInfo&, const WebCore::IntRect&);
+    virtual void updateTile(WebLayerID, uint32_t tileID, const SurfaceUpdateInfo&, const WebCore::IntRect&);
+    virtual void removeTile(WebLayerID, uint32_t tileID);
     virtual WebCore::IntRect visibleContentsRect() const;
     virtual void renderNextFrame();
     virtual void purgeBackingStores();

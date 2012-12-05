@@ -100,9 +100,9 @@ public:
     void removeCustomFilterProgram(int id);
 #endif
 
-    void createTile(WebLayerID, int, float scale);
-    void removeTile(WebLayerID, int);
-    void updateTile(WebLayerID, int, const TileUpdate&);
+    void createTile(WebLayerID, uint32_t tileID, float scale);
+    void removeTile(WebLayerID, uint32_t tileID);
+    void updateTile(WebLayerID, uint32_t tileID, const TileUpdate&);
     void flushLayerChanges();
     void createImageBacking(CoordinatedImageBackingID);
     void updateImageBacking(CoordinatedImageBackingID, PassRefPtr<ShareableSurface>);

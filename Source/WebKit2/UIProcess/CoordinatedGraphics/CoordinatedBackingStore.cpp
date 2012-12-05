@@ -65,13 +65,13 @@ void CoordinatedBackingStoreTile::setBackBuffer(const IntRect& tileRect, const I
     m_surface = buffer;
 }
 
-void CoordinatedBackingStore::createTile(int id, float scale)
+void CoordinatedBackingStore::createTile(uint32_t id, float scale)
 {
     m_tiles.add(id, CoordinatedBackingStoreTile(scale));
     m_scale = scale;
 }
 
-void CoordinatedBackingStore::removeTile(int id)
+void CoordinatedBackingStore::removeTile(uint32_t id)
 {
     ASSERT(m_tiles.contains(id));
     m_tilesToRemove.add(id);
@@ -79,14 +79,14 @@ void CoordinatedBackingStore::removeTile(int id)
 
 void CoordinatedBackingStore::removeAllTiles()
 {
-    HashMap<int, CoordinatedBackingStoreTile>::iterator end = m_tiles.end();
-    for (HashMap<int, CoordinatedBackingStoreTile>::iterator it = m_tiles.begin(); it != end; ++it)
+    HashMap<uint32_t, CoordinatedBackingStoreTile>::iterator end = m_tiles.end();
+    for (HashMap<uint32_t, CoordinatedBackingStoreTile>::iterator it = m_tiles.begin(); it != end; ++it)
         m_tilesToRemove.add(it->key);
 }
 
-void CoordinatedBackingStore::updateTile(int id, const IntRect& sourceRect, const IntRect& tileRect, PassRefPtr<ShareableSurface> backBuffer, const IntPoint& offset)
+void CoordinatedBackingStore::updateTile(uint32_t id, const IntRect& sourceRect, const IntRect& tileRect, PassRefPtr<ShareableSurface> backBuffer, const IntPoint& offset)
 {
-    HashMap<int, CoordinatedBackingStoreTile>::iterator it = m_tiles.find(id);
+    HashMap<uint32_t, CoordinatedBackingStoreTile>::iterator it = m_tiles.find(id);
     ASSERT(it != m_tiles.end());
     it->value.incrementRepaintCount();
     it->value.setBackBuffer(tileRect, sourceRect, backBuffer, offset);
@@ -94,8 +94,8 @@ void CoordinatedBackingStore::updateTile(int id, const IntRect& sourceRect, cons
 
 PassRefPtr<BitmapTexture> CoordinatedBackingStore::texture() const
 {
-    HashMap<int, CoordinatedBackingStoreTile>::const_iterator end = m_tiles.end();
-    for (HashMap<int, CoordinatedBackingStoreTile>::const_iterator it = m_tiles.begin(); it != end; ++it) {
+    HashMap<uint32_t, CoordinatedBackingStoreTile>::const_iterator end = m_tiles.end();
+    for (HashMap<uint32_t, CoordinatedBackingStoreTile>::const_iterator it = m_tiles.begin(); it != end; ++it) {
         RefPtr<BitmapTexture> texture = it->value.texture();
         if (texture)
             return texture;
@@ -143,9 +143,9 @@ void CoordinatedBackingStore::paintToTextureMapper(TextureMapper* textureMapper,
     Vector<TextureMapperTile*> previousTilesToPaint;
 
     // We have to do this every time we paint, in case the opacity has changed.
-    HashMap<int, CoordinatedBackingStoreTile>::iterator end = m_tiles.end();
+    HashMap<uint32_t, CoordinatedBackingStoreTile>::iterator end = m_tiles.end();
     FloatRect coveredRect;
-    for (HashMap<int, CoordinatedBackingStoreTile>::iterator it = m_tiles.begin(); it != end; ++it) {
+    for (HashMap<uint32_t, CoordinatedBackingStoreTile>::iterator it = m_tiles.begin(); it != end; ++it) {
         CoordinatedBackingStoreTile& tile = it->value;
         if (!tile.texture())
             continue;
@@ -176,13 +176,13 @@ void CoordinatedBackingStore::paintToTextureMapper(TextureMapper* textureMapper,
 
 void CoordinatedBackingStore::commitTileOperations(TextureMapper* textureMapper)
 {
-    HashSet<int>::iterator tilesToRemoveEnd = m_tilesToRemove.end();
-    for (HashSet<int>::iterator it = m_tilesToRemove.begin(); it != tilesToRemoveEnd; ++it)
+    HashSet<uint32_t>::iterator tilesToRemoveEnd = m_tilesToRemove.end();
+    for (HashSet<uint32_t>::iterator it = m_tilesToRemove.begin(); it != tilesToRemoveEnd; ++it)
         m_tiles.remove(*it);
     m_tilesToRemove.clear();
 
-    HashMap<int, CoordinatedBackingStoreTile>::iterator tilesEnd = m_tiles.end();
-    for (HashMap<int, CoordinatedBackingStoreTile>::iterator it = m_tiles.begin(); it != tilesEnd; ++it)
+    HashMap<uint32_t, CoordinatedBackingStoreTile>::iterator tilesEnd = m_tiles.end();
+    for (HashMap<uint32_t, CoordinatedBackingStoreTile>::iterator it = m_tiles.begin(); it != tilesEnd; ++it)
         it->value.swapBuffers(textureMapper);
 }
 

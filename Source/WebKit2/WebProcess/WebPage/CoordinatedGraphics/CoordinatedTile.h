@@ -66,7 +66,7 @@ private:
     Coordinate m_coordinate;
     WebCore::IntRect m_rect;
 
-    int m_ID;
+    uint32_t m_ID;
     WebCore::IntRect m_dirtyRect;
 
     OwnPtr<WebCore::ImageBuffer> m_localBuffer;
@@ -75,9 +75,9 @@ private:
 class CoordinatedTileClient {
 public:
     virtual ~CoordinatedTileClient() { }
-    virtual void createTile(int tileID, const SurfaceUpdateInfo&, const WebCore::IntRect&) = 0;
-    virtual void updateTile(int tileID, const SurfaceUpdateInfo&, const WebCore::IntRect&) = 0;
-    virtual void removeTile(int tileID) = 0;
+    virtual void createTile(uint32_t tileID, const SurfaceUpdateInfo&, const WebCore::IntRect&) = 0;
+    virtual void updateTile(uint32_t tileID, const SurfaceUpdateInfo&, const WebCore::IntRect&) = 0;
+    virtual void removeTile(uint32_t tileID) = 0;
     virtual PassOwnPtr<WebCore::GraphicsContext> beginContentUpdate(const WebCore::IntSize&, int& atlasID, WebCore::IntPoint&) = 0;
 };
 

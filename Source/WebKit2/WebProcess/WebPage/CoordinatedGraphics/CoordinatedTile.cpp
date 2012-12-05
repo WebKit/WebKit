@@ -37,19 +37,21 @@ using namespace WebCore;
 
 namespace WebKit {
 
+static const uint32_t InvalidCoordinatedTileID = 0;
+
 CoordinatedTile::CoordinatedTile(CoordinatedTileClient* client, TiledBackingStore* tiledBackingStore, const Coordinate& tileCoordinate)
     : m_client(client)
     , m_tiledBackingStore(tiledBackingStore)
     , m_coordinate(tileCoordinate)
     , m_rect(tiledBackingStore->tileRectForCoordinate(tileCoordinate))
-    , m_ID(0)
+    , m_ID(InvalidCoordinatedTileID)
     , m_dirtyRect(m_rect)
 {
 }
 
 CoordinatedTile::~CoordinatedTile()
 {
-    if (m_ID)
+    if (m_ID != InvalidCoordinatedTileID)
         m_client->removeTile(m_ID);
 }
 
@@ -85,9 +87,12 @@ Vector<IntRect> CoordinatedTile::updateBackBuffer()
     updateInfo.scaleFactor = m_tiledBackingStore->contentsScale();
     graphicsContext.release();
 
-    static int id = 0;
-    if (!m_ID) {
-        m_ID = ++id;
+    static uint32_t id = 1;
+    if (m_ID == InvalidCoordinatedTileID) {
+        m_ID = id++;
+        // We may get an invalid ID due to wrap-around on overflow.
+        if (m_ID == InvalidCoordinatedTileID)
+            m_ID = id++;
         m_client->createTile(m_ID, updateInfo, m_rect);
     } else
         m_client->updateTile(m_ID, updateInfo, m_rect);
@@ -103,7 +108,7 @@ void CoordinatedTile::swapBackBufferToFront()
 
 bool CoordinatedTile::isReadyToPaint() const
 {
-    return !!m_ID;
+    return m_ID != InvalidCoordinatedTileID;
 }
 
 void CoordinatedTile::paint(GraphicsContext*, const IntRect&)

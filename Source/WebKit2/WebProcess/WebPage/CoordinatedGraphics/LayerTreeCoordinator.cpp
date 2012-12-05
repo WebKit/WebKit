@@ -639,19 +639,19 @@ bool LayerTreeHost::supportsAcceleratedCompositing()
     return true;
 }
 
-void LayerTreeCoordinator::createTile(WebLayerID layerID, int tileID, const SurfaceUpdateInfo& updateInfo, const WebCore::IntRect& tileRect)
+void LayerTreeCoordinator::createTile(WebLayerID layerID, uint32_t tileID, const SurfaceUpdateInfo& updateInfo, const WebCore::IntRect& tileRect)
 {
     m_shouldSyncFrame = true;
     m_webPage->send(Messages::LayerTreeCoordinatorProxy::CreateTileForLayer(layerID, tileID, tileRect, updateInfo));
 }
 
-void LayerTreeCoordinator::updateTile(WebLayerID layerID, int tileID, const SurfaceUpdateInfo& updateInfo, const WebCore::IntRect& tileRect)
+void LayerTreeCoordinator::updateTile(WebLayerID layerID, uint32_t tileID, const SurfaceUpdateInfo& updateInfo, const WebCore::IntRect& tileRect)
 {
     m_shouldSyncFrame = true;
     m_webPage->send(Messages::LayerTreeCoordinatorProxy::UpdateTileForLayer(layerID, tileID, tileRect, updateInfo));
 }
 
-void LayerTreeCoordinator::removeTile(WebLayerID layerID, int tileID)
+void LayerTreeCoordinator::removeTile(WebLayerID layerID, uint32_t tileID)
 {
     if (m_isPurging)
         return;
