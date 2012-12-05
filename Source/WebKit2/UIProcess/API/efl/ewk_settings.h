@@ -468,6 +468,32 @@ EAPI Eina_Bool ewk_settings_default_font_size_set(Ewk_Settings *settings, int si
  */
 EAPI int ewk_settings_default_font_size_get(const Ewk_Settings *settings);
 
+/**
+ * Enables/disables private browsing.
+ *
+ * By default, private browsing is disabled.
+ *
+ * @param settings settings object to set private browsing
+ * @param enable @c EINA_TRUE to enable private browsing
+ *        @c EINA_FALSE to disable
+ *
+ * @return @c EINA_TRUE on success or @c EINA_FALSE on failure
+ */
+EAPI Eina_Bool ewk_settings_private_browsing_enabled_set(Ewk_Settings *settings, Eina_Bool enable);
+
+/**
+ * Returns whether private browsing is enabled or not.
+ *
+ * Private Browsing allows a user to browse the Internet without saving any information
+ * about which sites and pages a user has visited.
+ *
+ * @param settings settings object to query whether private browsing is enabled
+ *
+ * @return @c EINA_TRUE if private browsing is enabled
+ *         @c EINA_FALSE if not or on failure
+ */
+EAPI Eina_Bool ewk_settings_private_browsing_enabled_get(const Ewk_Settings *settings);
+
 #ifdef __cplusplus
 }
 #endif
