@@ -105,7 +105,7 @@ void GCController::setJavaScriptGarbageCollectorTimerEnabled(bool enable)
 void GCController::discardAllCompiledCode()
 {
     JSLockHolder lock(JSDOMWindow::commonJSGlobalData());
-    JSDOMWindow::commonJSGlobalData()->heap.deleteAllCompiledCode();
+    JSDOMWindow::commonJSGlobalData()->discardAllCode();
 }
 
 } // namespace WebCore

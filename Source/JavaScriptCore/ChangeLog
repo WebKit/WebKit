@@ -1,3 +1,26 @@
+2012-12-05  Oliver Hunt  <oliver@apple.com>
+
+        Empty parse cache when receiving a low memory warning
+        https://bugs.webkit.org/show_bug.cgi?id=104161
+
+        Reviewed by Filip Pizlo.
+
+        This adds a function to the globaldata to empty all code related data
+        structures (code in the heap and the code cache).
+        It also adds a function to allow the CodeCache to actually be cleared
+        at all. 
+
+        * runtime/CodeCache.h:
+        (CacheMap):
+        (JSC::CacheMap::clear):
+        (JSC::CodeCache::clear):
+        (CodeCache):
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::discardAllCode):
+        (JSC):
+        * runtime/JSGlobalData.h:
+        (JSGlobalData):
+
 2012-12-05  Filip Pizlo  <fpizlo@apple.com>
 
         JSC profiler should not count executions of op_call_put_result because doing so changes DFG codegen

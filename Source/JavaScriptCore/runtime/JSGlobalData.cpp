@@ -431,6 +431,12 @@ void JSGlobalData::stopSampling()
     interpreter->stopSampling();
 }
 
+void JSGlobalData::discardAllCode()
+{
+    m_codeCache->clear();
+    heap.deleteAllCompiledCode();
+}
+
 void JSGlobalData::dumpSampleData(ExecState* exec)
 {
     interpreter->dumpSampleData(exec);

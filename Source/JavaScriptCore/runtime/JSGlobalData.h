@@ -450,6 +450,8 @@ namespace JSC {
         JSLock& apiLock() { return m_apiLock; }
         CodeCache* codeCache() { return m_codeCache.get(); }
 
+        JS_EXPORT_PRIVATE void discardAllCode();
+
     private:
         friend class LLIntOffsetsExtractor;
         

@@ -187,6 +187,7 @@ EXPORTS
     ?detach@Debugger@JSC@@UAEXPAVJSGlobalObject@2@@Z
     ?detachThread@WTF@@YAXI@Z
     ?didTimeOut@TimeoutChecker@JSC@@QAE_NPAVExecState@2@@Z
+    ?discardAllCode@JSGlobalData@JSC@@QAEXXZ
     ?displayName@JSFunction@JSC@@QAE?AVString@WTF@@PAVExecState@2@@Z
     ?dtoa@WTF@@YAXQADNAA_NAAHAAI@Z
     ?dump@JSValue@JSC@@QBEXAAVPrintStream@WTF@@@Z

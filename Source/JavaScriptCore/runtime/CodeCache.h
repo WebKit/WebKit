@@ -82,6 +82,17 @@ public:
         m_data[newIndex].second = value;
         ASSERT(m_map.size() <= CacheSize);
     }
+
+    void clear()
+    {
+        m_map.clear();
+        for (size_t i = 0; i < CacheSize; i++) {
+            m_data[i].first = KeyType();
+            m_data[i].second = EntryType();
+        }
+    }
+
+
 private:
     HashMap<KeyType, unsigned> m_map;
     FixedArray<std::pair<KeyType, EntryType>, CacheSize> m_data;
@@ -98,6 +109,14 @@ public:
     UnlinkedFunctionExecutable* getFunctionExecutableFromGlobalCode(JSGlobalData&, const Identifier&, const SourceCode&, ParserError&);
     void usedFunctionCode(JSGlobalData&, UnlinkedFunctionCodeBlock*);
     ~CodeCache();
+
+    void clear()
+    {
+        m_cachedCodeBlocks.clear();
+        m_cachedFunctionExecutables.clear();
+        m_cachedGlobalFunctions.clear();
+        m_recentlyUsedFunctionCode.clear();
+    }
 
     enum CodeType { EvalType, ProgramType, FunctionCallType, FunctionConstructType };
     typedef std::pair<String, unsigned> CodeBlockKey;
