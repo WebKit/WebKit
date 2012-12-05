@@ -145,7 +145,7 @@ v8::Handle<v8::Value> V8PerIsolateData::constructorOfToString(const v8::Argument
     // obscure and unlikely to be a problem.
     v8::Handle<v8::Value> value = args.Callee()->Get(v8::String::NewSymbol("toString"));
     if (!value->IsFunction()) 
-        return v8::String::New("");
+        return v8::String::Empty(args.GetIsolate());
     return v8::Handle<v8::Function>::Cast(value)->Call(args.This(), 0, 0);
 }
 

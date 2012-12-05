@@ -1,3 +1,53 @@
+2012-12-04  Kentaro Hara  <haraken@chromium.org>
+
+        [V8] Replace String::New("symbol") with String::NewSymbol("symbol")
+        https://bugs.webkit.org/show_bug.cgi?id=104084
+
+        Reviewed by Adam Barth.
+
+        V8 can look up symbols faster than strings. This is a final patch for the replacement.
+
+        No tests. No change in behavior.
+
+        * bindings/v8/DateExtension.cpp:
+        (WebCore::DateExtension::setAllowSleep):
+        (WebCore::DateExtension::GetNativeFunction):
+        * bindings/v8/NPV8Object.cpp:
+        (WebCore::npIdentifierToV8Identifier):
+        (_NPN_Invoke):
+        * bindings/v8/PageScriptDebugServer.cpp:
+        (WebCore::PageScriptDebugServer::addListener):
+        * bindings/v8/ScriptController.cpp:
+        (WebCore::ScriptController::setContextDebugId):
+        * bindings/v8/ScriptDebugServer.cpp:
+        (WebCore::ScriptDebugServer::callDebuggerMethod):
+        (WebCore::ScriptDebugServer::setBreakpoint):
+        (WebCore::ScriptDebugServer::removeBreakpoint):
+        (WebCore::ScriptDebugServer::clearBreakpoints):
+        (WebCore::ScriptDebugServer::setBreakpointsActivated):
+        (WebCore::ScriptDebugServer::handleV8DebugEvent):
+        (WebCore::ScriptDebugServer::dispatchDidParseSource):
+        * bindings/v8/ScriptObject.cpp:
+        (WebCore::ScriptGlobalObject::set):
+        (WebCore::ScriptGlobalObject::get):
+        (WebCore::ScriptGlobalObject::remove):
+        * bindings/v8/V8Binding.h:
+        (WebCore::toV8Sequence):
+        * bindings/v8/V8DOMWindowShell.cpp:
+        (WebCore::setInjectedScriptContextDebugId):
+        (WebCore::V8DOMWindowShell::updateDocumentProperty):
+        (WebCore::V8DOMWindowShell::clearDocumentProperty):
+        * bindings/v8/V8NPObject.cpp:
+        (WebCore::npObjectPropertyEnumerator):
+        * bindings/v8/V8NodeFilterCondition.cpp:
+        (WebCore::V8NodeFilterCondition::acceptNode):
+        * bindings/v8/V8PerIsolateData.cpp:
+        (WebCore::V8PerIsolateData::constructorOfToString):
+        * bindings/v8/WorkerScriptController.cpp:
+        (WebCore::WorkerScriptController::initializeContextIfNeeded):
+        * bindings/v8/WorkerScriptDebugServer.cpp:
+        (WebCore::WorkerScriptDebugServer::addListener):
+
 2012-12-04  Dan Bernstein  <mitz@apple.com>
 
         Support text-orientation: sideways-right (and sideways when it maps to sideways-right)

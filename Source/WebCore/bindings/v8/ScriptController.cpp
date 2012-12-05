@@ -713,7 +713,7 @@ bool ScriptController::setContextDebugId(int debugId)
     char buffer[32];
     snprintf(buffer, sizeof(buffer), "page,%d", debugId);
     buffer[31] = 0;
-    context->SetEmbedderData(0, v8::String::New(buffer));
+    context->SetEmbedderData(0, v8::String::NewSymbol(buffer));
 
     return true;
 }

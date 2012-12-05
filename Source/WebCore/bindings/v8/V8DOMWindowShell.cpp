@@ -78,7 +78,7 @@ static void setInjectedScriptContextDebugId(v8::Handle<v8::Context> targetContex
         snprintf(buffer, sizeof(buffer), "injected");
     else
         snprintf(buffer, sizeof(buffer), "injected,%d", debugId);
-    targetContext->SetEmbedderData(0, v8::String::New(buffer));
+    targetContext->SetEmbedderData(0, v8::String::NewSymbol(buffer));
 }
 
 PassOwnPtr<V8DOMWindowShell> V8DOMWindowShell::create(Frame* frame, PassRefPtr<DOMWrapperWorld> world)
@@ -366,7 +366,7 @@ void V8DOMWindowShell::updateDocumentProperty()
         return;
     }
     ASSERT(documentWrapper->IsObject());
-    m_context->Global()->ForceSet(v8::String::New("document"), documentWrapper, static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete));
+    m_context->Global()->ForceSet(v8::String::NewSymbol("document"), documentWrapper, static_cast<v8::PropertyAttribute>(v8::ReadOnly | v8::DontDelete));
 
     // We also stash a reference to the document on the inner global object so that
     // DOMWindow objects we obtain from JavaScript references are guaranteed to have
@@ -379,7 +379,7 @@ void V8DOMWindowShell::clearDocumentProperty()
     ASSERT(!m_context.isEmpty());
     if (!m_world->isMainWorld())
         return;
-    m_context->Global()->ForceDelete(v8::String::New("document"));
+    m_context->Global()->ForceDelete(v8::String::NewSymbol("document"));
 }
 
 void V8DOMWindowShell::setSecurityToken()

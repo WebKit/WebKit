@@ -65,7 +65,7 @@ v8::Local<v8::Object> ScriptObject::v8Object() const
 bool ScriptGlobalObject::set(ScriptState* scriptState, const char* name, const ScriptObject& value)
 {
     ScriptScope scope(scriptState);
-    scope.global()->Set(v8::String::New(name), value.v8Value());
+    scope.global()->Set(v8::String::NewSymbol(name), value.v8Value());
     return scope.success();
 }
 
@@ -73,14 +73,14 @@ bool ScriptGlobalObject::set(ScriptState* scriptState, const char* name, const S
 bool ScriptGlobalObject::set(ScriptState* scriptState, const char* name, InspectorFrontendHost* value)
 {
     ScriptScope scope(scriptState);
-    scope.global()->Set(v8::String::New(name), toV8(value));
+    scope.global()->Set(v8::String::NewSymbol(name), toV8(value));
     return scope.success();
 }
 
 bool ScriptGlobalObject::set(ScriptState* scriptState, const char* name, InjectedScriptHost* value)
 {
     ScriptScope scope(scriptState);
-    scope.global()->Set(v8::String::New(name), toV8(value));
+    scope.global()->Set(v8::String::NewSymbol(name), toV8(value));
     return scope.success();
 }
 #endif
@@ -88,7 +88,7 @@ bool ScriptGlobalObject::set(ScriptState* scriptState, const char* name, Injecte
 bool ScriptGlobalObject::get(ScriptState* scriptState, const char* name, ScriptObject& value)
 {
     ScriptScope scope(scriptState);
-    v8::Local<v8::Value> v8Value = scope.global()->Get(v8::String::New(name));
+    v8::Local<v8::Value> v8Value = scope.global()->Get(v8::String::NewSymbol(name));
     if (v8Value.IsEmpty())
         return false;
 
@@ -102,7 +102,7 @@ bool ScriptGlobalObject::get(ScriptState* scriptState, const char* name, ScriptO
 bool ScriptGlobalObject::remove(ScriptState* scriptState, const char* name)
 {
     ScriptScope scope(scriptState);
-    return scope.global()->Delete(v8::String::New(name));
+    return scope.global()->Delete(v8::String::NewSymbol(name));
 }
 
 } // namespace WebCore

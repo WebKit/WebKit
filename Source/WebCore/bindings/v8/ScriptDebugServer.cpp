@@ -60,7 +60,7 @@ private:
 
 v8::Local<v8::Value> ScriptDebugServer::callDebuggerMethod(const char* functionName, int argc, v8::Handle<v8::Value> argv[])
 {
-    v8::Handle<v8::Function> function = v8::Local<v8::Function>::Cast(m_debuggerScript.get()->Get(v8::String::New(functionName)));
+    v8::Handle<v8::Function> function = v8::Local<v8::Function>::Cast(m_debuggerScript.get()->Get(v8::String::NewSymbol(functionName)));
     V8RecursionScope::MicrotaskSuppression scope;
     return function->Call(m_debuggerScript.get(), argc, argv);
 }
@@ -78,17 +78,17 @@ String ScriptDebugServer::setBreakpoint(const String& sourceID, const ScriptBrea
     v8::Context::Scope contextScope(debuggerContext);
 
     v8::Local<v8::Object> args = v8::Object::New();
-    args->Set(v8::String::New("sourceID"), v8String(sourceID));
-    args->Set(v8::String::New("lineNumber"), v8Integer(scriptBreakpoint.lineNumber));
-    args->Set(v8::String::New("columnNumber"), v8Integer(scriptBreakpoint.columnNumber));
-    args->Set(v8::String::New("condition"), v8String(scriptBreakpoint.condition));
+    args->Set(v8::String::NewSymbol("sourceID"), v8String(sourceID));
+    args->Set(v8::String::NewSymbol("lineNumber"), v8Integer(scriptBreakpoint.lineNumber));
+    args->Set(v8::String::NewSymbol("columnNumber"), v8Integer(scriptBreakpoint.columnNumber));
+    args->Set(v8::String::NewSymbol("condition"), v8String(scriptBreakpoint.condition));
 
-    v8::Handle<v8::Function> setBreakpointFunction = v8::Local<v8::Function>::Cast(m_debuggerScript.get()->Get(v8::String::New("setBreakpoint")));
+    v8::Handle<v8::Function> setBreakpointFunction = v8::Local<v8::Function>::Cast(m_debuggerScript.get()->Get(v8::String::NewSymbol("setBreakpoint")));
     v8::Handle<v8::Value> breakpointId = v8::Debug::Call(setBreakpointFunction, args);
     if (!breakpointId->IsString())
         return "";
-    *actualLineNumber = args->Get(v8::String::New("lineNumber"))->Int32Value();
-    *actualColumnNumber = args->Get(v8::String::New("columnNumber"))->Int32Value();
+    *actualLineNumber = args->Get(v8::String::NewSymbol("lineNumber"))->Int32Value();
+    *actualColumnNumber = args->Get(v8::String::NewSymbol("columnNumber"))->Int32Value();
     return toWebCoreString(breakpointId->ToString());
 }
 
@@ -99,9 +99,9 @@ void ScriptDebugServer::removeBreakpoint(const String& breakpointId)
     v8::Context::Scope contextScope(debuggerContext);
 
     v8::Local<v8::Object> args = v8::Object::New();
-    args->Set(v8::String::New("breakpointId"), v8String(breakpointId));
+    args->Set(v8::String::NewSymbol("breakpointId"), v8String(breakpointId));
 
-    v8::Handle<v8::Function> removeBreakpointFunction = v8::Local<v8::Function>::Cast(m_debuggerScript.get()->Get(v8::String::New("removeBreakpoint")));
+    v8::Handle<v8::Function> removeBreakpointFunction = v8::Local<v8::Function>::Cast(m_debuggerScript.get()->Get(v8::String::NewSymbol("removeBreakpoint")));
     v8::Debug::Call(removeBreakpointFunction, args);
 }
 
@@ -112,7 +112,7 @@ void ScriptDebugServer::clearBreakpoints()
     v8::Local<v8::Context> debuggerContext = v8::Debug::GetDebugContext();
     v8::Context::Scope contextScope(debuggerContext);
 
-    v8::Handle<v8::Function> clearBreakpoints = v8::Local<v8::Function>::Cast(m_debuggerScript.get()->Get(v8::String::New("clearBreakpoints")));
+    v8::Handle<v8::Function> clearBreakpoints = v8::Local<v8::Function>::Cast(m_debuggerScript.get()->Get(v8::String::NewSymbol("clearBreakpoints")));
     v8::Debug::Call(clearBreakpoints);
 }
 
@@ -124,8 +124,8 @@ void ScriptDebugServer::setBreakpointsActivated(bool activated)
     v8::Context::Scope contextScope(debuggerContext);
 
     v8::Local<v8::Object> args = v8::Object::New();
-    args->Set(v8::String::New("enabled"), v8::Boolean::New(activated));
-    v8::Handle<v8::Function> setBreakpointsActivated = v8::Local<v8::Function>::Cast(m_debuggerScript.get()->Get(v8::String::New("setBreakpointsActivated")));
+    args->Set(v8::String::NewSymbol("enabled"), v8::Boolean::New(activated));
+    v8::Handle<v8::Function> setBreakpointsActivated = v8::Local<v8::Function>::Cast(m_debuggerScript.get()->Get(v8::String::NewSymbol("setBreakpointsActivated")));
     v8::Debug::Call(setBreakpointsActivated, args);
 
     m_breakpointsActivated = activated;
@@ -347,7 +347,7 @@ void ScriptDebugServer::handleV8DebugEvent(const v8::Debug::EventDetails& eventD
         v8::HandleScope scope;
         if (event == v8::AfterCompile) {
             v8::Context::Scope contextScope(v8::Debug::GetDebugContext());
-            v8::Handle<v8::Function> onAfterCompileFunction = v8::Local<v8::Function>::Cast(m_debuggerScript.get()->Get(v8::String::New("getAfterCompileScript")));
+            v8::Handle<v8::Function> onAfterCompileFunction = v8::Local<v8::Function>::Cast(m_debuggerScript.get()->Get(v8::String::NewSymbol("getAfterCompileScript")));
             v8::Handle<v8::Value> argv[] = { eventDetails.GetEventData() };
             v8::Handle<v8::Value> value = onAfterCompileFunction->Call(m_debuggerScript.get(), 1, argv);
             ASSERT(value->IsObject());
@@ -361,7 +361,7 @@ void ScriptDebugServer::handleV8DebugEvent(const v8::Debug::EventDetails& eventD
                 if (!stackTrace->GetFrameCount())
                     return;
                 v8::Handle<v8::Object> eventData = eventDetails.GetEventData();
-                v8::Handle<v8::Value> exceptionGetterValue = eventData->Get(v8::String::New("exception"));
+                v8::Handle<v8::Value> exceptionGetterValue = eventData->Get(v8::String::NewSymbol("exception"));
                 ASSERT(!exceptionGetterValue.IsEmpty() && exceptionGetterValue->IsFunction());
                 v8::Handle<v8::Value> argv[] = { v8Undefined() };
                 V8RecursionScope::MicrotaskSuppression scope;
@@ -377,17 +377,17 @@ void ScriptDebugServer::handleV8DebugEvent(const v8::Debug::EventDetails& eventD
 
 void ScriptDebugServer::dispatchDidParseSource(ScriptDebugListener* listener, v8::Handle<v8::Object> object)
 {
-    String sourceID = toWebCoreStringWithUndefinedOrNullCheck(object->Get(v8::String::New("id")));
+    String sourceID = toWebCoreStringWithUndefinedOrNullCheck(object->Get(v8::String::NewSymbol("id")));
 
     ScriptDebugListener::Script script;
-    script.url = toWebCoreStringWithUndefinedOrNullCheck(object->Get(v8::String::New("name")));
-    script.source = toWebCoreStringWithUndefinedOrNullCheck(object->Get(v8::String::New("source")));
-    script.sourceMappingURL = toWebCoreStringWithUndefinedOrNullCheck(object->Get(v8::String::New("sourceMappingURL")));
-    script.startLine = object->Get(v8::String::New("startLine"))->ToInteger()->Value();
-    script.startColumn = object->Get(v8::String::New("startColumn"))->ToInteger()->Value();
-    script.endLine = object->Get(v8::String::New("endLine"))->ToInteger()->Value();
-    script.endColumn = object->Get(v8::String::New("endColumn"))->ToInteger()->Value();
-    script.isContentScript = object->Get(v8::String::New("isContentScript"))->ToBoolean()->Value();
+    script.url = toWebCoreStringWithUndefinedOrNullCheck(object->Get(v8::String::NewSymbol("name")));
+    script.source = toWebCoreStringWithUndefinedOrNullCheck(object->Get(v8::String::NewSymbol("source")));
+    script.sourceMappingURL = toWebCoreStringWithUndefinedOrNullCheck(object->Get(v8::String::NewSymbol("sourceMappingURL")));
+    script.startLine = object->Get(v8::String::NewSymbol("startLine"))->ToInteger()->Value();
+    script.startColumn = object->Get(v8::String::NewSymbol("startColumn"))->ToInteger()->Value();
+    script.endLine = object->Get(v8::String::NewSymbol("endLine"))->ToInteger()->Value();
+    script.endColumn = object->Get(v8::String::NewSymbol("endColumn"))->ToInteger()->Value();
+    script.isContentScript = object->Get(v8::String::NewSymbol("isContentScript"))->ToBoolean()->Value();
 
     listener->didParseSource(sourceID, script);
 }

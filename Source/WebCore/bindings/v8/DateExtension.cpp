@@ -76,7 +76,7 @@ DateExtension* DateExtension::get()
 
 void DateExtension::setAllowSleep(bool allow)
 {
-    v8::Local<v8::Value> result = v8::Context::GetCurrent()->Global()->Get(v8::String::New("Date"));
+    v8::Local<v8::Value> result = v8::Context::GetCurrent()->Global()->Get(v8::String::NewSymbol("Date"));
     if (result.IsEmpty() || !result->IsObject())
         return;
 
@@ -96,9 +96,9 @@ void DateExtension::setAllowSleep(bool allow)
 
 v8::Handle<v8::FunctionTemplate> DateExtension::GetNativeFunction(v8::Handle<v8::String> name)
 {
-    if (name->Equals(v8::String::New("Setup")))
+    if (name->Equals(v8::String::NewSymbol("Setup")))
         return v8::FunctionTemplate::New(Setup);
-    if (name->Equals(v8::String::New("OnSleepDetected")))
+    if (name->Equals(v8::String::NewSymbol("OnSleepDetected")))
         return v8::FunctionTemplate::New(OnSleepDetected);
 
     return v8::Handle<v8::FunctionTemplate>();

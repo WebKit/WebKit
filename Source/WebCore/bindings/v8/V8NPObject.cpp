@@ -354,7 +354,7 @@ v8::Handle<v8::Array> npObjectPropertyEnumerator(const v8::AccessorInfo& info, b
             for (uint32_t i = 0; i < count; ++i) {
                 IdentifierRep* identifier = static_cast<IdentifierRep*>(identifiers[i]);
                 if (namedProperty)
-                    properties->Set(v8Integer(i, info.GetIsolate()), v8::String::New(identifier->string()));
+                    properties->Set(v8Integer(i, info.GetIsolate()), v8::String::NewSymbol(identifier->string()));
                 else
                     properties->Set(v8Integer(i, info.GetIsolate()), v8Integer(identifier->number(), info.GetIsolate()));
             }

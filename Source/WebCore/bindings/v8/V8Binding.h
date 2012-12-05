@@ -328,7 +328,7 @@ namespace WebCore {
         v8::Local<v8::Value> v8Value(v8::Local<v8::Value>::New(value));
         v8::Local<v8::Object> object = v8::Local<v8::Object>::Cast(v8Value);
 
-        V8TRYCATCH(v8::Local<v8::Value>, lengthValue, object->Get(v8::String::New("length")));
+        V8TRYCATCH(v8::Local<v8::Value>, lengthValue, object->Get(v8::String::NewSymbol("length")));
 
         if (lengthValue->IsUndefined() || lengthValue->IsNull()) {
             throwTypeError();
