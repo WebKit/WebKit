@@ -5862,6 +5862,7 @@ webcore_platform_sources += \
 	Source/WebCore/platform/text/LocaleNone.cpp \
 	Source/WebCore/platform/text/LocaleToScriptMapping.h \
 	Source/WebCore/platform/text/LocaleToScriptMappingDefault.cpp \
+	Source/WebCore/platform/text/NonCJKGlyphOrientation.h \
 	Source/WebCore/platform/text/ParserUtilities.h \
 	Source/WebCore/platform/text/PlatformLocale.cpp \
 	Source/WebCore/platform/text/PlatformLocale.h \
@@ -5897,7 +5898,6 @@ webcore_platform_sources += \
 	Source/WebCore/platform/text/TextEncoding.h \
 	Source/WebCore/platform/text/TextEncodingRegistry.cpp \
 	Source/WebCore/platform/text/TextEncodingRegistry.h \
-	Source/WebCore/platform/text/TextOrientation.h \
 	Source/WebCore/platform/text/TextStream.cpp \
 	Source/WebCore/platform/text/TextStream.h \
 	Source/WebCore/platform/text/transcoder/FontTranscoder.cpp \

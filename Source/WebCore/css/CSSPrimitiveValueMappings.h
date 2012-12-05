@@ -46,7 +46,6 @@
 #include "RenderStyleConstants.h"
 #include "SVGRenderStyleDefs.h"
 #include "TextDirection.h"
-#include "TextOrientation.h"
 #include "TextRenderingMode.h"
 #include "ThemeTypes.h"
 #include "UnicodeBidi.h"
@@ -2984,6 +2983,12 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(TextOrientation e)
 {
     m_primitiveUnitType = CSS_IDENT;
     switch (e) {
+    case TextOrientationSideways:
+        m_value.ident = CSSValueSideways;
+        break;
+    case TextOrientationSidewaysRight:
+        m_value.ident = CSSValueSidewaysRight;
+        break;
     case TextOrientationVerticalRight:
         m_value.ident = CSSValueVerticalRight;
         break;
@@ -2996,6 +3001,10 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(TextOrientation e)
 template<> inline CSSPrimitiveValue::operator TextOrientation() const
 {
     switch (m_value.ident) {
+    case CSSValueSideways:
+        return TextOrientationSideways;
+    case CSSValueSidewaysRight:
+        return TextOrientationSidewaysRight;
     case CSSValueVerticalRight:
         return TextOrientationVerticalRight;
     case CSSValueUpright:

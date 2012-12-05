@@ -64,7 +64,6 @@
 #include "StyleTransformData.h"
 #include "StyleVisualData.h"
 #include "TextDirection.h"
-#include "TextOrientation.h"
 #include "ThemeTypes.h"
 #include "TransformOperations.h"
 #include "UnicodeBidi.h"
@@ -835,6 +834,8 @@ public:
     const AtomicString& textEmphasisCustomMark() const { return rareInheritedData->textEmphasisCustomMark; }
     TextEmphasisPosition textEmphasisPosition() const { return static_cast<TextEmphasisPosition>(rareInheritedData->textEmphasisPosition); }
     const AtomicString& textEmphasisMarkString() const;
+
+    TextOrientation textOrientation() const { return static_cast<TextOrientation>(rareInheritedData->m_textOrientation); }
     
     // Return true if any transform related property (currently transform, transformStyle3D or perspective) 
     // indicates that we are transforming
@@ -1299,6 +1300,7 @@ public:
     void setTextEmphasisMark(TextEmphasisMark mark) { SET_VAR(rareInheritedData, textEmphasisMark, mark); }
     void setTextEmphasisCustomMark(const AtomicString& mark) { SET_VAR(rareInheritedData, textEmphasisCustomMark, mark); }
     void setTextEmphasisPosition(TextEmphasisPosition position) { SET_VAR(rareInheritedData, textEmphasisPosition, position); }
+    bool setTextOrientation(TextOrientation);
 
 #if ENABLE(CSS_FILTERS)
     void setFilter(const FilterOperations& ops) { SET_VAR(rareNonInheritedData.access()->m_filter, m_operations, ops); }
@@ -1468,7 +1470,14 @@ public:
             || display() == LIST_ITEM;
     }
 
-    void setWritingMode(WritingMode v) { inherited_flags.m_writingMode = v; }
+    bool setWritingMode(WritingMode v)
+    {
+        if (v == writingMode())
+            return false;
+
+        inherited_flags.m_writingMode = v;
+        return true;
+    }
 
     // A unique style is one that has matches something that makes it impossible to share.
     bool unique() const { return noninherited_flags.unique; }
@@ -1784,6 +1793,15 @@ inline bool RenderStyle::setTextSizeAdjust(bool b)
     if (compareEqual(rareInheritedData->textSizeAdjust, b))
         return false;
     rareInheritedData.access()->textSizeAdjust = b;
+    return true;
+}
+
+inline bool RenderStyle::setTextOrientation(TextOrientation textOrientation)
+{
+    if (compareEqual(rareInheritedData->m_textOrientation, textOrientation))
+        return false;
+
+    rareInheritedData.access()->m_textOrientation = textOrientation;
     return true;
 }
 

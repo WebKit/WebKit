@@ -192,7 +192,7 @@ const SimpleFontData* Font::fontDataForCombiningCharacterSequence(const UChar* c
                 if (isCJKIdeographOrSymbol(baseCharacter) && !simpleFontData->hasVerticalGlyphs()) {
                     variant = BrokenIdeographVariant;
                     simpleFontData = simpleFontData->brokenIdeographFontData().get();
-                } else if (m_fontDescription.textOrientation() == TextOrientationVerticalRight) {
+                } else if (m_fontDescription.nonCJKGlyphOrientation() == NonCJKGlyphOrientationVerticalRight) {
                     SimpleFontData* verticalRightFontData = simpleFontData->verticalRightOrientationFontData().get();
                     Glyph verticalRightGlyph = verticalRightFontData->glyphForCharacter(baseCharacter);
                     if (verticalRightGlyph == baseCharacterGlyphData.glyph)

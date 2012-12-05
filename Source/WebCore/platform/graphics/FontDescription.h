@@ -32,7 +32,7 @@
 #include "FontSmoothingMode.h"
 #include "FontTraitsMask.h"
 #include "FontWidthVariant.h"
-#include "TextOrientation.h"
+#include "NonCJKGlyphOrientation.h"
 #include "TextRenderingMode.h"
 #include "WebKitFontFamilyNames.h"
 #include <wtf/MathExtras.h>
@@ -80,7 +80,7 @@ public:
         : m_specifiedSize(0)
         , m_computedSize(0)
         , m_orientation(Horizontal)
-        , m_textOrientation(TextOrientationVerticalRight)
+        , m_nonCJKGlyphOrientation(NonCJKGlyphOrientationVerticalRight)
         , m_widthVariant(RegularWidth)
         , m_italic(FontItalicOff)
         , m_smallCaps(FontSmallCapsOff)
@@ -132,7 +132,7 @@ public:
     FontTraitsMask traitsMask() const;
     bool isSpecifiedFont() const { return m_isSpecifiedFont; }
     FontOrientation orientation() const { return static_cast<FontOrientation>(m_orientation); }
-    TextOrientation textOrientation() const { return static_cast<TextOrientation>(m_textOrientation); }
+    NonCJKGlyphOrientation nonCJKGlyphOrientation() const { return static_cast<NonCJKGlyphOrientation>(m_nonCJKGlyphOrientation); }
     FontWidthVariant widthVariant() const { return static_cast<FontWidthVariant>(m_widthVariant); }
     FontFeatureSettings* featureSettings() const { return m_featureSettings.get(); }
     FontDescription makeNormalFeatureSettings() const;
@@ -162,7 +162,7 @@ public:
     void setTextRenderingMode(TextRenderingMode rendering) { m_textRendering = rendering; }
     void setIsSpecifiedFont(bool isSpecifiedFont) { m_isSpecifiedFont = isSpecifiedFont; }
     void setOrientation(FontOrientation orientation) { m_orientation = orientation; }
-    void setTextOrientation(TextOrientation textOrientation) { m_textOrientation = textOrientation; }
+    void setNonCJKGlyphOrientation(NonCJKGlyphOrientation orientation) { m_nonCJKGlyphOrientation = orientation; }
     void setWidthVariant(FontWidthVariant widthVariant) { m_widthVariant = widthVariant; }
     void setScript(UScriptCode s) { m_script = s; }
     void setFeatureSettings(PassRefPtr<FontFeatureSettings> settings) { m_featureSettings = settings; }
@@ -176,7 +176,7 @@ private:
     float m_computedSize;    // Computed size adjusted for the minimum font size and the zoom factor.  
 
     unsigned m_orientation : 1; // FontOrientation - Whether the font is rendering on a horizontal line or a vertical line.
-    unsigned m_textOrientation : 1; // TextOrientation - Only used by vertical text. Determines the default orientation for non-ideograph glyphs.
+    unsigned m_nonCJKGlyphOrientation : 1; // NonCJKGlyphOrientation - Only used by vertical text. Determines the default orientation for non-ideograph glyphs.
 
     unsigned m_widthVariant : 2; // FontWidthVariant
 
@@ -226,7 +226,7 @@ inline bool FontDescription::operator==(const FontDescription& other) const
         && m_textRendering == other.m_textRendering
         && m_isSpecifiedFont == other.m_isSpecifiedFont
         && m_orientation == other.m_orientation
-        && m_textOrientation == other.m_textOrientation
+        && m_nonCJKGlyphOrientation == other.m_nonCJKGlyphOrientation
         && m_widthVariant == other.m_widthVariant
         && m_script == other.m_script
         && m_featureSettings == other.m_featureSettings;

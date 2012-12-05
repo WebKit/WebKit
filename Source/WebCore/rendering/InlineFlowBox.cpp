@@ -442,7 +442,7 @@ bool InlineFlowBox::requiresIdeographicBaseline(const GlyphOverflowAndFallbackFo
     if (isHorizontal())
         return false;
     
-    if (renderer()->style(isFirstLineStyle())->fontDescription().textOrientation() == TextOrientationUpright
+    if (renderer()->style(isFirstLineStyle())->fontDescription().nonCJKGlyphOrientation() == NonCJKGlyphOrientationUpright
         || renderer()->style(isFirstLineStyle())->font().primaryFont()->hasVerticalGlyphs())
         return true;
 

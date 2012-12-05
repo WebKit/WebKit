@@ -5701,7 +5701,7 @@
 		BCD0E0FC0E972C3500265DEA /* SecurityOriginHash.h in Headers */ = {isa = PBXBuildFile; fileRef = BCD0E0F90E972C3500265DEA /* SecurityOriginHash.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCD0FBD00DBD625E00B2F630 /* DOMAbstractView.mm in Sources */ = {isa = PBXBuildFile; fileRef = BCD0FBCF0DBD625E00B2F630 /* DOMAbstractView.mm */; };
 		BCD0FC4F0DBD720B00B2F630 /* DOMRGBColorInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = BCD0FC4E0DBD720B00B2F630 /* DOMRGBColorInternal.h */; };
-		BCD3F9831326C93700098A60 /* TextOrientation.h in Headers */ = {isa = PBXBuildFile; fileRef = BCD3F9821326C93700098A60 /* TextOrientation.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BCD3F9831326C93700098A60 /* NonCJKGlyphOrientation.h in Headers */ = {isa = PBXBuildFile; fileRef = BCD3F9821326C93700098A60 /* NonCJKGlyphOrientation.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCD41ABB0C060DE800C0E446 /* JSHTMLFrameSetElementCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCD41ABA0C060DE800C0E446 /* JSHTMLFrameSetElementCustom.cpp */; };
 		BCD533640ED6848900887468 /* CachedScriptSourceProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = BCD533630ED6848900887468 /* CachedScriptSourceProvider.h */; };
 		BCD8A5F015F56F2C0098D071 /* TextBreakIterator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCD8A5EF15F56F2C0098D071 /* TextBreakIterator.cpp */; };
@@ -13112,7 +13112,7 @@
 		BCD0E0F90E972C3500265DEA /* SecurityOriginHash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SecurityOriginHash.h; sourceTree = "<group>"; };
 		BCD0FBCF0DBD625E00B2F630 /* DOMAbstractView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMAbstractView.mm; sourceTree = "<group>"; };
 		BCD0FC4E0DBD720B00B2F630 /* DOMRGBColorInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMRGBColorInternal.h; sourceTree = "<group>"; };
-		BCD3F9821326C93700098A60 /* TextOrientation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextOrientation.h; sourceTree = "<group>"; };
+		BCD3F9821326C93700098A60 /* NonCJKGlyphOrientation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NonCJKGlyphOrientation.h; sourceTree = "<group>"; };
 		BCD41ABA0C060DE800C0E446 /* JSHTMLFrameSetElementCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLFrameSetElementCustom.cpp; sourceTree = "<group>"; };
 		BCD533630ED6848900887468 /* CachedScriptSourceProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CachedScriptSourceProvider.h; sourceTree = "<group>"; };
 		BCD8A5EF15F56F2C0098D071 /* TextBreakIterator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextBreakIterator.cpp; sourceTree = "<group>"; };
@@ -20267,6 +20267,7 @@
 				89B5EAA011E8003D00F2367E /* LineEnding.h */,
 				7633A72413D8B33A008501B6 /* LocaleToScriptMapping.h */,
 				7633A72513D8B33A008501B6 /* LocaleToScriptMappingDefault.cpp */,
+				BCD3F9821326C93700098A60 /* NonCJKGlyphOrientation.h */,
 				BC76AC110DD7AD5C00415F34 /* ParserUtilities.h */,
 				F544F78615CFB2A800AF33A8 /* PlatformLocale.cpp */,
 				F544F78715CFB2A800AF33A8 /* PlatformLocale.h */,
@@ -20306,7 +20307,6 @@
 				C105DA610F3AA68F001DD44F /* TextEncodingDetectorICU.cpp */,
 				B2C3DA180D006C1D00EF6F26 /* TextEncodingRegistry.cpp */,
 				B2C3DA190D006C1D00EF6F26 /* TextEncodingRegistry.h */,
-				BCD3F9821326C93700098A60 /* TextOrientation.h */,
 				B2C3DA1A0D006C1D00EF6F26 /* TextStream.cpp */,
 				B2C3DA1B0D006C1D00EF6F26 /* TextStream.h */,
 				A863E2001343412000274926 /* UnicodeBidi.h */,
@@ -25616,7 +25616,7 @@
 				CECADFCE1537791D00E37068 /* TextInsertionBaseCommand.h in Headers */,
 				93309E1C099E64920056E581 /* TextIterator.h in Headers */,
 				BCEF45E90E687767001C1287 /* TextMetrics.h in Headers */,
-				BCD3F9831326C93700098A60 /* TextOrientation.h in Headers */,
+				BCD3F9831326C93700098A60 /* NonCJKGlyphOrientation.h in Headers */,
 				930FC68A1072B9280045293E /* TextRenderingMode.h in Headers */,
 				93F198F608245E59001E9ABC /* TextResourceDecoder.h in Headers */,
 				A824B4650E2EF2EA0081A7B7 /* TextRun.h in Headers */,

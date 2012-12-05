@@ -85,6 +85,7 @@ StyleRareInheritedData::StyleRareInheritedData()
     , textEmphasisFill(TextEmphasisFillFilled)
     , textEmphasisMark(TextEmphasisMarkNone)
     , textEmphasisPosition(TextEmphasisPositionOver)
+    , m_textOrientation(TextOrientationVerticalRight)
     , m_lineBoxContain(RenderStyle::initialLineBoxContain())
 #if ENABLE(CSS_IMAGE_ORIENTATION)
     , m_imageOrientation(RenderStyle::initialImageOrientation())
@@ -151,6 +152,7 @@ StyleRareInheritedData::StyleRareInheritedData(const StyleRareInheritedData& o)
     , textEmphasisFill(o.textEmphasisFill)
     , textEmphasisMark(o.textEmphasisMark)
     , textEmphasisPosition(o.textEmphasisPosition)
+    , m_textOrientation(o.m_textOrientation)
     , m_lineBoxContain(o.m_lineBoxContain)
 #if ENABLE(CSS_IMAGE_ORIENTATION)
     , m_imageOrientation(o.m_imageOrientation)
@@ -241,6 +243,7 @@ bool StyleRareInheritedData::operator==(const StyleRareInheritedData& o) const
         && textEmphasisFill == o.textEmphasisFill
         && textEmphasisMark == o.textEmphasisMark
         && textEmphasisPosition == o.textEmphasisPosition
+        && m_textOrientation == o.m_textOrientation
         && m_lineBoxContain == o.m_lineBoxContain
         && hyphenationString == o.hyphenationString
         && locale == o.locale

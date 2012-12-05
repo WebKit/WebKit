@@ -42,9 +42,9 @@ using namespace std;
 
 namespace WebCore {
 
-static inline std::pair<GlyphData, GlyphPage*> glyphDataAndPageForCharacterWithTextOrientation(UChar32 character, TextOrientation orientation, GlyphData& data, GlyphPage* page, unsigned pageNumber)
+static inline std::pair<GlyphData, GlyphPage*> glyphDataAndPageForNonCJKCharacterWithGlyphOrientation(UChar32 character, NonCJKGlyphOrientation orientation, GlyphData& data, GlyphPage* page, unsigned pageNumber)
 {
-    if (orientation == TextOrientationVerticalRight) {
+    if (orientation == NonCJKGlyphOrientationVerticalRight) {
         RefPtr<SimpleFontData> verticalRightFontData = data.fontData->verticalRightOrientationFontData();
         GlyphPageTreeNode* verticalRightNode = GlyphPageTreeNode::getRootChild(verticalRightFontData.get(), pageNumber);
         GlyphPage* verticalRightPage = verticalRightNode->page();
@@ -58,7 +58,7 @@ static inline std::pair<GlyphData, GlyphPage*> glyphDataAndPageForCharacterWithT
             if (verticalRightData.fontData)
                 return make_pair(verticalRightData, verticalRightPage);
         }
-    } else if (orientation == TextOrientationUpright) {
+    } else if (orientation == NonCJKGlyphOrientationUpright) {
         RefPtr<SimpleFontData> uprightFontData = data.fontData->uprightOrientationFontData();
         GlyphPageTreeNode* uprightNode = GlyphPageTreeNode::getRootChild(uprightFontData.get(), pageNumber);
         GlyphPage* uprightPage = uprightNode->page();
@@ -125,7 +125,7 @@ std::pair<GlyphData, GlyphPage*> Font::glyphDataAndPageForCharacter(UChar32 c, b
                             break;
                         }
                     } else
-                        return glyphDataAndPageForCharacterWithTextOrientation(c, m_fontDescription.textOrientation(), data, page, pageNumber);
+                        return glyphDataAndPageForNonCJKCharacterWithGlyphOrientation(c, m_fontDescription.nonCJKGlyphOrientation(), data, page, pageNumber);
 
                     return make_pair(data, page);
                 }
@@ -221,7 +221,7 @@ std::pair<GlyphData, GlyphPage*> Font::glyphDataAndPageForCharacter(UChar32 c, b
             page->setGlyphDataForCharacter(c, data.glyph, data.fontData);
             data.fontData->setMaxGlyphPageTreeLevel(max(data.fontData->maxGlyphPageTreeLevel(), node->level()));
             if (!isCJKIdeographOrSymbol(c) && data.fontData->platformData().orientation() != Horizontal && !data.fontData->isTextOrientationFallback())
-                return glyphDataAndPageForCharacterWithTextOrientation(c, m_fontDescription.textOrientation(), data, fallbackPage, pageNumber);
+                return glyphDataAndPageForNonCJKCharacterWithGlyphOrientation(c, m_fontDescription.nonCJKGlyphOrientation(), data, fallbackPage, pageNumber);
 #endif
         }
         return make_pair(data, page);

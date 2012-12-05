@@ -2486,7 +2486,7 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(CSSPropert
         case CSSPropertyWebkitTextCombine:
             return cssValuePool().createValue(style->textCombine());
         case CSSPropertyWebkitTextOrientation:
-            return CSSPrimitiveValue::create(style->fontDescription().textOrientation());
+            return CSSPrimitiveValue::create(style->textOrientation());
         case CSSPropertyWebkitLineBoxContain:
             return createLineBoxContainValue(style->lineBoxContain());
         case CSSPropertyContent:

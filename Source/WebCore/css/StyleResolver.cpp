@@ -1406,6 +1406,40 @@ static void setStylesForPaginationMode(Pagination::Mode paginationMode, RenderSt
     }
 }
 
+static void getFontAndGlyphOrientation(const RenderStyle* style, FontOrientation& fontOrientation, NonCJKGlyphOrientation& glyphOrientation)
+{
+    if (style->isHorizontalWritingMode()) {
+        fontOrientation = Horizontal;
+        glyphOrientation = NonCJKGlyphOrientationVerticalRight;
+        return;
+    }
+
+    switch (style->textOrientation()) {
+    case TextOrientationVerticalRight:
+        fontOrientation = Vertical;
+        glyphOrientation = NonCJKGlyphOrientationVerticalRight;
+        return;
+    case TextOrientationUpright:
+        fontOrientation = Vertical;
+        glyphOrientation = NonCJKGlyphOrientationUpright;
+        return;
+    case TextOrientationSideways:
+        if (style->writingMode() == LeftToRightWritingMode) {
+            // FIXME: This should map to sideways-left, which is not supported yet.
+            fontOrientation = Vertical;
+            glyphOrientation = NonCJKGlyphOrientationVerticalRight;
+            return;
+        }
+        fontOrientation = Horizontal;
+        glyphOrientation = NonCJKGlyphOrientationVerticalRight;
+        return;
+    case TextOrientationSidewaysRight:
+        fontOrientation = Horizontal;
+        glyphOrientation = NonCJKGlyphOrientationVerticalRight;
+        return;
+    }
+}
+
 PassRefPtr<RenderStyle> StyleResolver::styleForDocument(Document* document, CSSFontSelector* fontSelector)
 {
     Frame* frame = document->frame();
@@ -1486,6 +1520,12 @@ PassRefPtr<RenderStyle> StyleResolver::styleForDocument(Document* document, CSSF
         fontDescription.setComputedSize(StyleResolver::getComputedSizeFromSpecifiedSize(document, documentStyle.get(), fontDescription.isAbsoluteSize(), size, useSVGZoomRules));
     } else
         fontDescription.setUsePrinterFont(document->printing());
+
+    FontOrientation fontOrientation;
+    NonCJKGlyphOrientation glyphOrientation;
+    getFontAndGlyphOrientation(documentStyle.get(), fontOrientation, glyphOrientation);
+    fontDescription.setOrientation(fontOrientation);
+    fontDescription.setNonCJKGlyphOrientation(glyphOrientation);
 
     documentStyle->setFontDescription(fontDescription);
     documentStyle->font().update(fontSelector);
@@ -2104,6 +2144,26 @@ bool StyleResolver::checkRegionStyle(Element* regionElement)
     return false;
 }
 
+static void checkForOrientationChange(RenderStyle* style, const RenderStyle* parentStyle)
+{
+    FontOrientation childFontOrientation;
+    NonCJKGlyphOrientation childGlyphOrientation;
+    getFontAndGlyphOrientation(style, childFontOrientation, childGlyphOrientation);
+
+    FontOrientation parentFontOrientation;
+    NonCJKGlyphOrientation parentGlyphOrientation;
+    getFontAndGlyphOrientation(parentStyle, parentFontOrientation, parentGlyphOrientation);
+
+    if (childFontOrientation == parentFontOrientation && childGlyphOrientation == parentGlyphOrientation)
+        return;
+
+    const FontDescription& childFont = style->fontDescription();
+    FontDescription newFontDescription(childFont);
+    newFontDescription.setNonCJKGlyphOrientation(childGlyphOrientation);
+    newFontDescription.setOrientation(childFontOrientation);
+    style->setFontDescription(newFontDescription);
+}
+
 void StyleResolver::updateFont()
 {
     if (!m_fontDirty)
@@ -2112,6 +2172,7 @@ void StyleResolver::updateFont()
     checkForTextSizeAdjust();
     checkForGenericFamilyChange(style(), m_parentStyle);
     checkForZoomChange(style(), m_parentStyle);
+    checkForOrientationChange(style(), m_parentStyle);
     m_style->font().update(m_fontSelector);
     m_fontDirty = false;
 }
@@ -3536,14 +3597,21 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
         HANDLE_INHERIT_AND_INITIAL(writingMode, WritingMode);
         
         if (primitiveValue)
-            m_style->setWritingMode(*primitiveValue);
-        
+            setWritingMode(*primitiveValue);
+
         // FIXME: It is not ok to modify document state while applying style.
         if (m_element && m_element == m_element->document()->documentElement())
             m_element->document()->setWritingModeSetOnDocumentElement(true);
-        FontDescription fontDescription = m_style->fontDescription();
-        fontDescription.setOrientation(m_style->isHorizontalWritingMode() ? Horizontal : Vertical);
-        setFontDescription(fontDescription);
+
+        return;
+    }
+
+    case CSSPropertyWebkitTextOrientation: {
+        HANDLE_INHERIT_AND_INITIAL(textOrientation, TextOrientation);
+
+        if (primitiveValue)
+            setTextOrientation(*primitiveValue);
+
         return;
     }
 
@@ -3869,7 +3937,6 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
     case CSSPropertyWebkitTextEmphasisPosition:
     case CSSPropertyWebkitTextEmphasisStyle:
     case CSSPropertyWebkitTextFillColor:
-    case CSSPropertyWebkitTextOrientation:
     case CSSPropertyWebkitTextSecurity:
     case CSSPropertyWebkitTextStrokeColor:
     case CSSPropertyWebkitTransformOrigin:

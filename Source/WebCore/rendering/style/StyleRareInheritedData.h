@@ -98,6 +98,7 @@ public:
     unsigned textEmphasisFill : 1; // TextEmphasisFill
     unsigned textEmphasisMark : 3; // TextEmphasisMark
     unsigned textEmphasisPosition : 1; // TextEmphasisPosition
+    unsigned m_textOrientation : 2; // TextOrientation
     unsigned m_lineBoxContain: 7; // LineBoxContain
     // CSS Image Values Level 3
 #if ENABLE(CSS_IMAGE_ORIENTATION)

@@ -1,3 +1,96 @@
+2012-12-04  Dan Bernstein  <mitz@apple.com>
+
+        Support text-orientation: sideways-right (and sideways when it maps to sideways-right)
+        https://bugs.webkit.org/show_bug.cgi?id=104035
+
+        Reviewed by Anders Carlsson.
+
+        Test: fast/text/orientation-sideways.html
+
+        * GNUmakefile.list.am: Updated for rename of TextOrientation.h.
+
+        * WebCore.gypi: Ditto.
+
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue): Changed to retrieve
+        text-orientation from RenderStyle rather than from the font description.
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue): Added sideways and sideways-right as acceptable
+        text-orientation values.
+
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue): Added mappings for sideways and
+        sideways-right.
+        (WebCore::CSSPrimitiveValue::operator TextOrientation): Ditto.
+
+        * css/CSSValueKeywords.in: Added sideways and sideways-right.
+
+        * css/StyleBuilder.cpp:
+        (WebCore::StyleBuilder::StyleBuilder): Removed text-orientation property handler, as it is
+        now handled in CSSStyleResolver.
+
+        * css/StyleResolver.cpp:
+        (WebCore::getFontAndGlyphOrientation): Added this helper function that determines the font
+        orientation and non-CJK glyph orientation based on writing-mode and text-orientation.
+        (WebCore::StyleResolver::styleForDocument): Added code to set the font orientation and
+        non-CJK glyph orientation in the document style.
+        (WebCore::checkForOrientationChange): Added. Sets the font orientation and non-CJK glyph
+        orientation in the child style if the difference between the parent and child styles requires
+        doing so.
+        (WebCore::StyleResolver::updateFont): Added call to checkForOrientationChange().
+        (WebCore::StyleResolver::applyProperty): Changed the writing-mode case to call the new
+        setWritingMode helper, which dirties the font as needed, rather than changing the font
+        here. Moved handling of text-orientation here, by calling setTextOrientation, which also
+        dirties the font as needed.
+
+        * css/StyleResolver.h:
+        (WebCore::StyleResolver::setWritingMode): Added. Dirties the font if the writing mode changes.
+        (WebCore::StyleResolver::setTextOrientation): Ditto for text orientation.
+
+        * platform/graphics/FontDescription.h:
+        (WebCore::FontDescription::FontDescription): Updated initializer for rename.
+        (WebCore::FontDescription::nonCJKGlyphOrientation): Renamed textOrientation to this.
+        (WebCore::FontDescription::setNonCJKGlyphOrientation): Renamed setTextOrientation to this.
+        (FontDescription): Renamed member variable m_textOrientation to m_nonCJKGlyphOrientation.
+        (WebCore::FontDescription::operator==): Updated for rename.
+
+        * platform/graphics/FontFastPath.cpp:
+        (WebCore::glyphDataAndPageForNonCJKCharacterWithGlyphOrientation): Renamed
+        glyphDataAndPageForCharacterWithTextOrientation to this and changed the parameter type from
+        TextOrientation to NonCJKGlyphOrientation.
+        (WebCore::Font::glyphDataAndPageForCharacter): Updated for above rename.
+
+        * platform/graphics/mac/FontComplexTextMac.cpp:
+        (WebCore::Font::fontDataForCombiningCharacterSequence): Updated for rename of
+        FontDescription::textOrientation().
+
+        * platform/text/NonCJKGlyphOrientation.h: Renamed TextOrientation.h to this, and renamed
+        the enum and its values to better reflect that they describe how glyphs for non-CJK
+        characters are to be rendered in vertical text.
+
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::requiresIdeographicBaseline): Updated for rename of
+        FontDescription::textOrientation().
+
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::diff): Made text-orientation change a layout change.
+
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::setTextOrientation): Added.
+
+        * rendering/style/RenderStyleConstants.h: Added a new TextOrientation enum here.
+
+        * rendering/style/StyleRareInheritedData.cpp:
+        (WebCore::StyleRareInheritedData::StyleRareInheritedData): Added initialization and copying
+        of m_textOrientation member variable.
+        (WebCore::StyleRareInheritedData::operator==): Added comparing of m_textOrientation.
+
+        * rendering/style/StyleRareInheritedData.h:
+        (StyleRareInheritedData): Added m_textOrientation member variable.
+
 2012-12-04  Kentaro Hara  <haraken@chromium.org>
 
         [V8] Use ScopedPersistent for IntegerCache::smallIntegers
