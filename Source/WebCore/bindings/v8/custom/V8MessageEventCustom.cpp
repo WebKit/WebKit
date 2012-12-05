@@ -52,7 +52,7 @@ v8::Handle<v8::Value> V8MessageEvent::dataAccessorGetter(v8::Local<v8::String> n
     case MessageEvent::DataTypeScriptValue: {
         ScriptValue scriptValue = event->dataAsScriptValue();
         if (scriptValue.hasNoValue())
-            result = v8::Null(info.GetIsolate());
+            result = v8Null(info.GetIsolate());
         else
             result = v8::Local<v8::Value>::New(scriptValue.v8Value());
         break;
@@ -62,7 +62,7 @@ v8::Handle<v8::Value> V8MessageEvent::dataAccessorGetter(v8::Local<v8::String> n
         if (SerializedScriptValue* serializedValue = event->dataAsSerializedScriptValue())
             result = serializedValue->deserialize(event->ports(), info.GetIsolate());
         else
-            result = v8::Null(info.GetIsolate());
+            result = v8Null(info.GetIsolate());
         break;
 
     case MessageEvent::DataTypeString: {

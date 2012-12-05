@@ -1,3 +1,59 @@
+2012-12-04  Kentaro Hara  <haraken@chromium.org>
+
+        [V8] Replace v8::Null(isolate) with v8Null(isolate)
+        https://bugs.webkit.org/show_bug.cgi?id=104070
+
+        Reviewed by Adam Barth.
+
+        v8Null(isolate) is a faster version of v8::Null(isolate).
+
+        No tests. No change in behavior.
+
+        * bindings/v8/V8Binding.h:
+        (WebCore::v8StringOrNull):
+        * bindings/v8/custom/V8ClipboardCustom.cpp:
+        (WebCore::V8Clipboard::typesAccessorGetter):
+        * bindings/v8/custom/V8CoordinatesCustom.cpp:
+        (WebCore::V8Coordinates::altitudeAccessorGetter):
+        (WebCore::V8Coordinates::altitudeAccuracyAccessorGetter):
+        (WebCore::V8Coordinates::headingAccessorGetter):
+        (WebCore::V8Coordinates::speedAccessorGetter):
+        * bindings/v8/custom/V8DeviceMotionEventCustom.cpp:
+        (WebCore::V8DeviceMotionEvent::accelerationAccessorGetter):
+        (WebCore::V8DeviceMotionEvent::accelerationIncludingGravityAccessorGetter):
+        (WebCore::V8DeviceMotionEvent::rotationRateAccessorGetter):
+        (WebCore::V8DeviceMotionEvent::intervalAccessorGetter):
+        * bindings/v8/custom/V8DeviceOrientationEventCustom.cpp:
+        (WebCore::V8DeviceOrientationEvent::alphaAccessorGetter):
+        (WebCore::V8DeviceOrientationEvent::betaAccessorGetter):
+        (WebCore::V8DeviceOrientationEvent::gammaAccessorGetter):
+        (WebCore::V8DeviceOrientationEvent::absoluteAccessorGetter):
+        * bindings/v8/custom/V8DocumentLocationCustom.cpp:
+        (WebCore::V8Document::locationAccessorGetter):
+        * bindings/v8/custom/V8HTMLCanvasElementCustom.cpp:
+        (WebCore::V8HTMLCanvasElement::getContextCallback):
+        * bindings/v8/custom/V8HistoryCustom.cpp:
+        (WebCore::V8History::stateAccessorGetter):
+        * bindings/v8/custom/V8MessageEventCustom.cpp:
+        (WebCore::V8MessageEvent::dataAccessorGetter):
+        * bindings/v8/custom/V8MicroDataItemValueCustom.cpp:
+        (WebCore::toV8):
+        * bindings/v8/custom/V8NodeCustom.cpp:
+        (WebCore::V8Node::insertBeforeCallback):
+        (WebCore::V8Node::replaceChildCallback):
+        (WebCore::V8Node::removeChildCallback):
+        (WebCore::V8Node::appendChildCallback):
+        * bindings/v8/custom/V8PopStateEventCustom.cpp:
+        (WebCore::V8PopStateEvent::stateAccessorGetter):
+        * bindings/v8/custom/V8SQLResultSetRowListCustom.cpp:
+        (WebCore::V8SQLResultSetRowList::itemCallback):
+        * bindings/v8/custom/V8TrackEventCustom.cpp:
+        (WebCore::V8TrackEvent::trackAccessorGetter):
+        * bindings/v8/custom/V8WebGLRenderingContextCustom.cpp:
+        (WebCore::toV8Object):
+        (WebCore::V8WebGLRenderingContext::getAttachedShadersCallback):
+        (WebCore::V8WebGLRenderingContext::getSupportedExtensionsCallback):
+
 2012-12-04  Min Qin  <qinmin@chromium.org>
 
         Make LazyDecodingPixelRef inherit from skia::LazyPixelRef so that cc thread can access it

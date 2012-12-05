@@ -84,7 +84,7 @@ v8::Handle<v8::Value> V8HTMLCanvasElement::getContextCallback(const v8::Argument
 #endif
     CanvasRenderingContext* result = imp->getContext(contextId, attrs.get());
     if (!result)
-        return v8::Null(args.GetIsolate());
+        return v8Null(args.GetIsolate());
     else if (result->is2d()) {
         v8::Handle<v8::Value> v8Result = toV8(static_cast<CanvasRenderingContext2D*>(result), args.Holder(), args.GetIsolate());
         if (InspectorInstrumentation::canvasAgentEnabled(imp->document())) {
@@ -116,7 +116,7 @@ v8::Handle<v8::Value> V8HTMLCanvasElement::getContextCallback(const v8::Argument
     }
 #endif
     ASSERT_NOT_REACHED();
-    return v8::Null(args.GetIsolate());
+    return v8Null(args.GetIsolate());
 }
 
 v8::Handle<v8::Value> V8HTMLCanvasElement::toDataURLCallback(const v8::Arguments& args)

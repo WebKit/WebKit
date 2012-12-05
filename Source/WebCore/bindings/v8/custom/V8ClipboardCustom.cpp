@@ -50,7 +50,7 @@ v8::Handle<v8::Value> V8Clipboard::typesAccessorGetter(v8::Local<v8::String> nam
 
     ListHashSet<String> types = clipboard->types();
     if (types.isEmpty())
-        return v8::Null(info.GetIsolate());
+        return v8Null(info.GetIsolate());
 
     v8::Local<v8::Array> result = v8::Array::New(types.size());
     ListHashSet<String>::const_iterator end = types.end();

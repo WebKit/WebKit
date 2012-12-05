@@ -157,7 +157,7 @@ namespace WebCore {
 
     inline v8::Handle<v8::Value> v8StringOrNull(const String& str, v8::Isolate* isolate = 0)
     {
-        return str.isNull() ? v8::Handle<v8::Value>(v8::Null()) : v8::Handle<v8::Value>(v8String(str, isolate));
+        return str.isNull() ? v8::Handle<v8::Value>(v8NullWithCheck(isolate)) : v8::Handle<v8::Value>(v8String(str, isolate));
     }
 
     inline v8::Handle<v8::Value> v8StringOrUndefined(const String& str, v8::Isolate* isolate = 0)

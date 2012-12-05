@@ -37,7 +37,7 @@ v8::Handle<v8::Value> V8Document::locationAccessorGetter(v8::Local<v8::String> n
 {
     Document* document = V8Document::toNative(info.Holder());
     if (!document->frame())
-        return v8::Null(info.GetIsolate());
+        return v8Null(info.GetIsolate());
 
     DOMWindow* window = document->domWindow();
     return toV8(window->location(), info.Holder(), info.GetIsolate());

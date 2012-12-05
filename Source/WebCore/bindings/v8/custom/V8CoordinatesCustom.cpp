@@ -37,7 +37,7 @@ v8::Handle<v8::Value> V8Coordinates::altitudeAccessorGetter(v8::Local<v8::String
     v8::Handle<v8::Object> holder = info.Holder();
     Coordinates* imp = V8Coordinates::toNative(holder);
     if (!imp->canProvideAltitude())
-        return v8::Null(info.GetIsolate());
+        return v8Null(info.GetIsolate());
     return v8::Number::New(imp->altitude());
 }
 
@@ -47,7 +47,7 @@ v8::Handle<v8::Value> V8Coordinates::altitudeAccuracyAccessorGetter(v8::Local<v8
     v8::Handle<v8::Object> holder = info.Holder();
     Coordinates* imp = V8Coordinates::toNative(holder);
     if (!imp->canProvideAltitudeAccuracy())
-        return v8::Null(info.GetIsolate());
+        return v8Null(info.GetIsolate());
     return v8::Number::New(imp->altitudeAccuracy());
 }
 
@@ -57,7 +57,7 @@ v8::Handle<v8::Value> V8Coordinates::headingAccessorGetter(v8::Local<v8::String>
     v8::Handle<v8::Object> holder = info.Holder();
     Coordinates* imp = V8Coordinates::toNative(holder);
     if (!imp->canProvideHeading())
-        return v8::Null(info.GetIsolate());
+        return v8Null(info.GetIsolate());
     return v8::Number::New(imp->heading());
 }
 
@@ -67,7 +67,7 @@ v8::Handle<v8::Value> V8Coordinates::speedAccessorGetter(v8::Local<v8::String> n
     v8::Handle<v8::Object> holder = info.Holder();
     Coordinates* imp = V8Coordinates::toNative(holder);
     if (!imp->canProvideSpeed())
-        return v8::Null(info.GetIsolate());
+        return v8Null(info.GetIsolate());
     return v8::Number::New(imp->speed());
 }
 

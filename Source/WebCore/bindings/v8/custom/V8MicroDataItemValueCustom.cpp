@@ -42,7 +42,7 @@ namespace WebCore {
 v8::Handle<v8::Value> toV8(MicroDataItemValue* itemValue, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate)
 {
     if (!itemValue)
-        return v8::Null();
+        return v8Null(isolate);
     if (itemValue->isNode())
         return toV8(itemValue->getNode(), creationContext, isolate);
     return v8String(itemValue->getString(), isolate);

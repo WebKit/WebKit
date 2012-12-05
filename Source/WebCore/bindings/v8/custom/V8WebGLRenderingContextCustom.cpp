@@ -132,7 +132,7 @@ static v8::Handle<v8::Value> toV8Object(const WebGLGetInfo& info, v8::Handle<v8:
     case WebGLGetInfo::kTypeInt:
         return v8Integer(info.getInt(), isolate);
     case WebGLGetInfo::kTypeNull:
-        return v8::Null(isolate);
+        return v8Null(isolate);
     case WebGLGetInfo::kTypeString:
         return v8String(info.getString());
     case WebGLGetInfo::kTypeUnsignedInt:
@@ -168,7 +168,7 @@ static v8::Handle<v8::Value> toV8Object(const WebGLGetInfo& info, v8::Handle<v8:
 static v8::Handle<v8::Value> toV8Object(WebGLExtension* extension, v8::Handle<v8::Object> contextObject, v8::Isolate* isolate)
 {
     if (!extension)
-        return v8::Null(isolate);
+        return v8Null(isolate);
     v8::Handle<v8::Value> extensionObject;
     const char* referenceName = 0;
     switch (extension->getName()) {
@@ -286,10 +286,10 @@ v8::Handle<v8::Value> V8WebGLRenderingContext::getAttachedShadersCallback(const 
     bool succeed = context->getAttachedShaders(program, shaders, ec);
     if (ec) {
         setDOMException(ec, args.GetIsolate());
-        return v8::Null(args.GetIsolate());
+        return v8Null(args.GetIsolate());
     }
     if (!succeed)
-        return v8::Null(args.GetIsolate());
+        return v8Null(args.GetIsolate());
     v8::Local<v8::Array> array = v8::Array::New(shaders.size());
     for (size_t ii = 0; ii < shaders.size(); ++ii)
         array->Set(v8Integer(ii, args.GetIsolate()), toV8(shaders[ii].get(), args.Holder(), args.GetIsolate()));
@@ -396,7 +396,7 @@ v8::Handle<v8::Value> V8WebGLRenderingContext::getSupportedExtensionsCallback(co
     INC_STATS("DOM.WebGLRenderingContext.getSupportedExtensionsCallback()");
     WebGLRenderingContext* imp = V8WebGLRenderingContext::toNative(args.Holder());
     if (imp->isContextLost())
-        return v8::Null(args.GetIsolate());
+        return v8Null(args.GetIsolate());
 
     Vector<String> value = imp->getSupportedExtensions();
     v8::Local<v8::Array> array = v8::Array::New(value.size());

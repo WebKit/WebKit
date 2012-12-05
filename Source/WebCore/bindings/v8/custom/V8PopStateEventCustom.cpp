@@ -61,7 +61,7 @@ v8::Handle<v8::Value> V8PopStateEvent::stateAccessorGetter(v8::Local<v8::String>
 
     History* history = event->history();
     if (!history || !event->serializedState())
-        return cacheState(info.Holder(), v8::Null(info.GetIsolate()));
+        return cacheState(info.Holder(), v8Null(info.GetIsolate()));
 
     // There's no cached value from a previous invocation, nor a state value was provided by the
     // event, but there is a history object, so first we need to see if the state object has been

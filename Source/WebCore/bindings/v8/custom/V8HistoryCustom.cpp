@@ -52,7 +52,7 @@ v8::Handle<v8::Value> V8History::stateAccessorGetter(v8::Local<v8::String> name,
         return value;
 
     SerializedScriptValue* serialized = history->state();
-    value = serialized ? serialized->deserialize(0, info.GetIsolate()) : v8::Handle<v8::Value>(v8::Null(info.GetIsolate()));
+    value = serialized ? serialized->deserialize(0, info.GetIsolate()) : v8::Handle<v8::Value>(v8Null(info.GetIsolate()));
     info.Holder()->SetHiddenValue(V8HiddenPropertyName::state(), value);
 
     return value;

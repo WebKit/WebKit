@@ -74,7 +74,7 @@ v8::Handle<v8::Value> V8Node::insertBeforeCallback(const v8::Arguments& args)
         return setDOMException(ec, args.GetIsolate());
     if (success)
         return args[0];
-    return v8::Null(args.GetIsolate());
+    return v8Null(args.GetIsolate());
 }
 
 // This function is customized to take advantage of the optional 4th argument: shouldLazyAttach
@@ -91,7 +91,7 @@ v8::Handle<v8::Value> V8Node::replaceChildCallback(const v8::Arguments& args)
         return setDOMException(ec, args.GetIsolate());
     if (success)
         return args[1];
-    return v8::Null(args.GetIsolate());
+    return v8Null(args.GetIsolate());
 }
 
 v8::Handle<v8::Value> V8Node::removeChildCallback(const v8::Arguments& args)
@@ -106,7 +106,7 @@ v8::Handle<v8::Value> V8Node::removeChildCallback(const v8::Arguments& args)
         return setDOMException(ec, args.GetIsolate());
     if (success)
         return args[0];
-    return v8::Null(args.GetIsolate());
+    return v8Null(args.GetIsolate());
 }
 
 // This function is customized to take advantage of the optional 4th argument: shouldLazyAttach
@@ -122,7 +122,7 @@ v8::Handle<v8::Value> V8Node::appendChildCallback(const v8::Arguments& args)
         return setDOMException(ec, args.GetIsolate());
     if (success)
         return args[0];
-    return v8::Null(args.GetIsolate());
+    return v8Null(args.GetIsolate());
 }
 
 v8::Handle<v8::Object> wrap(Node* impl, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate)
