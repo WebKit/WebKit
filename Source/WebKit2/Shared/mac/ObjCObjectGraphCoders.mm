@@ -75,7 +75,7 @@ static WebKitNSType typeFromObject(id object)
     if ([object isKindOfClass:[NSData class]])
         return NSDataType;
 #if defined(__LP64__) && defined(__clang__)
-    if ([object isKindOfClass:[WKBrowsingContextController class]])
+    if ([object isKindOfClass:[WKBrowsingContextController class]] || [object isKindOfClass:[WKWebProcessPlugInBrowserContextController class]])
         return WKBrowsingContextControllerType;
 #endif
 
