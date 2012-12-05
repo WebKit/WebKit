@@ -4347,3 +4347,5 @@ webkit.org/b/104089 fast/frames/viewsource-on-image-file.html [ Failure ]
 # Crash since r136588.
 webkit.org/b/104090 [ Mac Debug ] fast/css-grid-layout/grid-columns-rows-get-set-multiple.html [ Crash ]
 webkit.org/b/104090 [ Mac Debug ] fast/css-grid-layout/grid-columns-rows-get-set.html [ Crash ]
+
+webkit.org/b/104092 fast/frames/paint-iframe-background.html [ Failure Pass ]
