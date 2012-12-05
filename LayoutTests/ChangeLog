@@ -1,3 +1,19 @@
+2012-12-06  Keishi Hattori  <keishi@webkit.org>
+
+        [Chromium] Rebaseline suggestion picker tests because of CSS change in r136674
+
+        Unreviewed.
+
+        * platform/chromium-mac-lion/platform/chromium/fast/forms/suggestion-picker/date-suggestion-picker-appearance-rtl-expected.png:
+        * platform/chromium-mac-lion/platform/chromium/fast/forms/suggestion-picker/month-suggestion-picker-appearance-rtl-expected.png:
+        * platform/chromium-mac-lion/platform/chromium/fast/forms/suggestion-picker/week-suggestion-picker-appearance-rtl-expected.png:
+        * platform/chromium-mac-snowleopard/platform/chromium/fast/forms/suggestion-picker/date-suggestion-picker-appearance-rtl-expected.png:
+        * platform/chromium-mac-snowleopard/platform/chromium/fast/forms/suggestion-picker/month-suggestion-picker-appearance-rtl-expected.png:
+        * platform/chromium-mac-snowleopard/platform/chromium/fast/forms/suggestion-picker/week-suggestion-picker-appearance-rtl-expected.png:
+        * platform/chromium-mac/platform/chromium/fast/forms/suggestion-picker/date-suggestion-picker-appearance-rtl-expected.png:
+        * platform/chromium-mac/platform/chromium/fast/forms/suggestion-picker/month-suggestion-picker-appearance-rtl-expected.png:
+        * platform/chromium-mac/platform/chromium/fast/forms/suggestion-picker/week-suggestion-picker-appearance-rtl-expected.png:
+
 2012-12-05  Keishi Hattori  <keishi@webkit.org>
 
         Marking *-suggestion-picker-appearance-locale-hebrew.html tests as Missing
