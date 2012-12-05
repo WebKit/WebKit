@@ -75,9 +75,9 @@ bool FEColorMatrix::setValues(const Vector<float> &values)
 
 inline void matrix(float& red, float& green, float& blue, float& alpha, const Vector<float>& values)
 {
-    float r = values[0]  * red + values[1]  * green + values[2]  * blue + values[3]  * alpha + values[4] * 255;
-    float g = values[5]  * red + values[6]  * green + values[7]  * blue + values[8]  * alpha + values[9] * 255;
-    float b = values[10]  * red + values[11]  * green + values[12] * blue + values[13] * alpha + values[14] * 255;
+    float r = values[0] * red + values[1] * green + values[2] * blue + values[3] * alpha + values[4] * 255;
+    float g = values[5] * red + values[6] * green + values[7] * blue + values[8] * alpha + values[9] * 255;
+    float b = values[10] * red + values[11] * green + values[12] * blue + values[13] * alpha + values[14] * 255;
     float a = values[15] * red + values[16] * green + values[17] * blue + values[18] * alpha + values[19] * 255;
 
     red = r;
@@ -86,30 +86,11 @@ inline void matrix(float& red, float& green, float& blue, float& alpha, const Ve
     alpha = a;
 }
 
-inline void saturate(float& red, float& green, float& blue, const float& s)
+inline void saturateAndHueRotate(float& red, float& green, float& blue, const float* components)
 {
-    float r = (0.213 + 0.787 * s) * red + (0.715 - 0.715 * s) * green + (0.072 - 0.072 * s) * blue;
-    float g = (0.213 - 0.213 * s) * red + (0.715 + 0.285 * s) * green + (0.072 - 0.072 * s) * blue;
-    float b = (0.213 - 0.213 * s) * red + (0.715 - 0.715 * s) * green + (0.072 + 0.928 * s) * blue;
-
-    red = r;
-    green = g;
-    blue = b;
-}
-
-inline void huerotate(float& red, float& green, float& blue, const float& hue)
-{
-    float cosHue = cos(hue * piDouble / 180); 
-    float sinHue = sin(hue * piDouble / 180); 
-    float r = red   * (0.213 + cosHue * 0.787 - sinHue * 0.213) +
-               green * (0.715 - cosHue * 0.715 - sinHue * 0.715) +
-               blue  * (0.072 - cosHue * 0.072 + sinHue * 0.928);
-    float g = red   * (0.213 - cosHue * 0.213 + sinHue * 0.143) +
-               green * (0.715 + cosHue * 0.285 + sinHue * 0.140) +
-               blue  * (0.072 - cosHue * 0.072 - sinHue * 0.283);
-    float b = red   * (0.213 - cosHue * 0.213 - sinHue * 0.787) +
-               green * (0.715 - cosHue * 0.715 + sinHue * 0.715) +
-               blue  * (0.072 + cosHue * 0.928 + sinHue * 0.072);
+    float r = red * components[0] + green * components[1] + blue * components[2];
+    float g = red * components[3] + green * components[4] + blue * components[5];
+    float b = red * components[6] + green * components[7] + blue * components[8];
 
     red = r;
     green = g;
@@ -124,10 +105,45 @@ inline void luminance(float& red, float& green, float& blue, float& alpha)
     blue = 0;
 }
 
+inline void calculateSaturateComponents(float* components, float value)
+{
+    components[0] = (0.213 + 0.787 * value);
+    components[1] = (0.715 - 0.715 * value);
+    components[2] = (0.072 - 0.072 * value);
+    components[3] = (0.213 - 0.213 * value);
+    components[4] = (0.715 + 0.285 * value);
+    components[5] = (0.072 - 0.072 * value);
+    components[6] = (0.213 - 0.213 * value);
+    components[7] = (0.715 - 0.715 * value);
+    components[8] = (0.072 + 0.928 * value);
+}
+
+inline void calculateHueRotateComponents(float* components, float value)
+{
+    float cosHue = cos(value * piFloat / 180);
+    float sinHue = sin(value * piFloat / 180);
+    components[0] = 0.213 + cosHue * 0.787 - sinHue * 0.213;
+    components[1] = 0.715 - cosHue * 0.715 - sinHue * 0.715;
+    components[2] = 0.072 - cosHue * 0.072 + sinHue * 0.928;
+    components[3] = 0.213 - cosHue * 0.213 + sinHue * 0.143;
+    components[4] = 0.715 + cosHue * 0.285 + sinHue * 0.140;
+    components[5] = 0.072 - cosHue * 0.072 - sinHue * 0.283;
+    components[6] = 0.213 - cosHue * 0.213 - sinHue * 0.787;
+    components[7] = 0.715 - cosHue * 0.715 + sinHue * 0.715;
+    components[8] = 0.072 + cosHue * 0.928 + sinHue * 0.072;
+}
+
 template<ColorMatrixType filterType>
 void effectType(Uint8ClampedArray* pixelArray, const Vector<float>& values)
 {
     unsigned pixelArrayLength = pixelArray->length();
+    float components[9];
+
+    if (filterType == FECOLORMATRIX_TYPE_SATURATE)
+        calculateSaturateComponents(components, values[0]);
+    else if (filterType == FECOLORMATRIX_TYPE_HUEROTATE)
+        calculateHueRotateComponents(components, values[0]);
+
     for (unsigned pixelByteOffset = 0; pixelByteOffset < pixelArrayLength; pixelByteOffset += 4) {
         float red = pixelArray->item(pixelByteOffset);
         float green = pixelArray->item(pixelByteOffset + 1);
@@ -138,11 +154,9 @@ void effectType(Uint8ClampedArray* pixelArray, const Vector<float>& values)
             case FECOLORMATRIX_TYPE_MATRIX:
                 matrix(red, green, blue, alpha, values);
                 break;
-            case FECOLORMATRIX_TYPE_SATURATE: 
-                saturate(red, green, blue, values[0]);
-                break;
+            case FECOLORMATRIX_TYPE_SATURATE:
             case FECOLORMATRIX_TYPE_HUEROTATE:
-                huerotate(red, green, blue, values[0]);
+                saturateAndHueRotate(red, green, blue, components);
                 break;
             case FECOLORMATRIX_TYPE_LUMINANCETOALPHA:
                 luminance(red, green, blue, alpha);
