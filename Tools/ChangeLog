@@ -1,5 +1,17 @@
 2012-12-04  Dirk Pranke  <dpranke@chromium.org>
 
+        nrwt is not returning the exit status properly
+        https://bugs.webkit.org/show_bug.cgi?id=103830
+
+        Unreviewed, build fix.
+
+        The fix in r136474 wasn't quite right either, and would return
+        the correct exceptional status, but not the correct failing status.
+
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+
+2012-12-04  Dirk Pranke  <dpranke@chromium.org>
+
         nrwt: make paths and test_names passed arguments in Manager._prepare_lists et al
         https://bugs.webkit.org/show_bug.cgi?id=104047
 

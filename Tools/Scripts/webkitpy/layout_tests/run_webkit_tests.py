@@ -431,9 +431,9 @@ def main(argv=None):
 
 if '__main__' == __name__:
     try:
-        sys.exit(main())
+        exit_status = main()
     except KeyboardInterrupt:
-        sys.exit(INTERRUPTED_EXIT_STATUS)
+        exit_status = INTERRUPTED_EXIT_STATUS
     except BaseException, e:
-        if e.__class__ is not SystemExit:
-            sys.exit(EXCEPTIONAL_EXIT_STATUS)
+        exit_status = EXCEPTIONAL_EXIT_STATUS
+    sys.exit(exit_status)
