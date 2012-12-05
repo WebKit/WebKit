@@ -976,24 +976,22 @@ void ApplyStyleCommand::pushDownInlineStyleAroundNode(EditingStyle* style, Node*
         return;
 
     // The outer loop is traversing the tree vertically from highestAncestor to targetNode
-    Node* current = highestAncestor;
+    RefPtr<Node> current = highestAncestor;
     // Along the way, styled elements that contain targetNode are removed and accumulated into elementsToPushDown.
     // Each child of the removed element, exclusing ancestors of targetNode, is then wrapped by clones of elements in elementsToPushDown.
     Vector<RefPtr<Element> > elementsToPushDown;
-    while (current != targetNode) {
-        ASSERT(current);
-        ASSERT(current->contains(targetNode));
+    while (current && current != targetNode && current->contains(targetNode)) {
         NodeVector currentChildren;
-        getChildNodes(current, currentChildren);
+        getChildNodes(current.get(), currentChildren);
         RefPtr<StyledElement> styledElement;
-        if (current->isStyledElement() && isStyledInlineElementToRemove(static_cast<Element*>(current))) {
-            styledElement = static_cast<StyledElement*>(current);
+        if (current->isStyledElement() && isStyledInlineElementToRemove(static_cast<Element*>(current.get()))) {
+            styledElement = static_cast<StyledElement*>(current.get());
             elementsToPushDown.append(styledElement);
         }
 
         RefPtr<EditingStyle> styleToPushDown = EditingStyle::create();
         if (current->isHTMLElement())
-            removeInlineStyleFromElement(style, toHTMLElement(current), RemoveIfNeeded, styleToPushDown.get());
+            removeInlineStyleFromElement(style, toHTMLElement(current.get()), RemoveIfNeeded, styleToPushDown.get());
 
         // The inner loop will go through children on each level
         // FIXME: we should aggregate inline child elements together so that we don't wrap each child separately.
