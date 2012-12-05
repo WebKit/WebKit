@@ -1,9 +1,0 @@
-CONSOLE MESSAGE: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/get.txt. Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
-CONSOLE MESSAGE: line 58: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/get.txt. Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
-Tests that origin whitelisting for https does not match http URLs.
-
-Testing: http://localhost:8000/xmlhttprequest/resources/get.txt (sync)
-PASS: Error: NETWORK_ERR: XMLHttpRequest Exception 101
-Testing: http://localhost:8000/xmlhttprequest/resources/get.txt (async)
-PASS: 0
-
