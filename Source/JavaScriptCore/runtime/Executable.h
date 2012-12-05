@@ -564,6 +564,11 @@ namespace JSC {
         static FunctionExecutable* fromGlobalCode(const Identifier& name, ExecState*, Debugger*, const SourceCode&, JSObject** exception);
 
         static void destroy(JSCell*);
+        
+        UnlinkedFunctionExecutable* unlinkedExecutable()
+        {
+            return m_unlinkedExecutable.get();
+        }
 
         // Returns either call or construct bytecode. This can be appropriate
         // for answering questions that that don't vary between call and construct --

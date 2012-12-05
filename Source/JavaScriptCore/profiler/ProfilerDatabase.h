@@ -65,7 +65,7 @@ public:
     JS_EXPORT_PRIVATE bool save(const char* filename) const;
 
 private:
-    Bytecodes* addBytecodes(CodeBlockHash);
+    Bytecodes* addBytecodes(CodeBlockHash, const String& sourceCode);
     
     JSGlobalData& m_globalData;
     SegmentedVector<Bytecodes> m_bytecodes;

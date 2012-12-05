@@ -63,11 +63,12 @@ class Bytecode
 end
 
 class Bytecodes
-    attr_accessor :hash
+    attr_accessor :hash, :source
     include Enumerable
     
     def initialize(json)
         @hash = json["hash"].to_s
+        @source = json["sourceCode"].to_s
         @bytecode = {}
         json["bytecode"].each {
             | subJson |
@@ -201,6 +202,15 @@ def getHash(hash)
     end
 end
 
+def sourceOnOneLine(source)
+    source = source.gsub(/\s+/, ' ')
+    if source.size > 80
+        source[0..77] + "..."
+    else
+        source
+    end
+end
+
 def executeCommand(*commandArray)
     command = commandArray[0]
     args = commandArray[1..-1]
@@ -216,7 +226,7 @@ def executeCommand(*commandArray)
         hashCols = 14
         countCols = 10 * $engines.size
         
-        puts(rpad("CodeBlock", hashCols) + " " + rpad($engines.join("/") + " Counts", countCols))
+        puts(rpad("CodeBlock", hashCols) + " " + rpad($engines.join("/") + " Counts", countCols) + " Source")
         $bytecodes.sort {
             | a, b |
             b.totalMaxExecutionCount <=> a.totalMaxExecutionCount
@@ -226,7 +236,8 @@ def executeCommand(*commandArray)
                  center($engines.map {
                             | engine |
                             bytecode.maxExecutionCount(engine).to_s
-                        }.join("/"), countCols))
+                        }.join("/"), countCols) + " " +
+                 sourceOnOneLine(bytecode.source))
         }
     when "display", "d"
         case args.length

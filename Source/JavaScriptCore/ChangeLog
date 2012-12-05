@@ -1,3 +1,32 @@
+2012-12-04  Filip Pizlo  <fpizlo@apple.com>
+
+        display-profiler-output should be able to show source code
+        https://bugs.webkit.org/show_bug.cgi?id=104073
+
+        Reviewed by Oliver Hunt.
+
+        Modify the profiler database to store source code. For functions, we store the
+        function including the function signature.
+
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::unlinkedCodeBlock):
+        (CodeBlock):
+        * profiler/ProfilerBytecodes.cpp:
+        (JSC::Profiler::Bytecodes::Bytecodes):
+        (JSC::Profiler::Bytecodes::toJS):
+        * profiler/ProfilerBytecodes.h:
+        (Bytecodes):
+        (JSC::Profiler::Bytecodes::sourceCode):
+        * profiler/ProfilerDatabase.cpp:
+        (JSC::Profiler::Database::addBytecodes):
+        (JSC::Profiler::Database::ensureBytecodesFor):
+        * profiler/ProfilerDatabase.h:
+        (Database):
+        * runtime/CommonIdentifiers.h:
+        * runtime/Executable.h:
+        (FunctionExecutable):
+        (JSC::FunctionExecutable::unlinkedExecutable):
+
 2012-12-02  Filip Pizlo  <fpizlo@apple.com>
 
         JSC should be able to report profiling data associated with the IR dumps and disassembly

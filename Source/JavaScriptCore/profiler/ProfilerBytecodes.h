@@ -30,17 +30,19 @@
 #include "JSValue.h"
 #include "ProfilerBytecode.h"
 #include <wtf/PrintStream.h>
+#include <wtf/text/WTFString.h>
 
 namespace JSC { namespace Profiler {
 
 class Bytecodes {
 public:
-    Bytecodes(size_t id, CodeBlockHash);
+    Bytecodes(size_t id, const String& sourceCode, CodeBlockHash);
     ~Bytecodes();
     
     void append(const Bytecode& bytecode) { m_bytecode.append(bytecode); }
     
     size_t id() const { return m_id; }
+    const String& sourceCode() const { return m_sourceCode; }
     CodeBlockHash hash() const { return m_hash; }
     
     // Note that this data structure is not indexed by bytecode index.
@@ -56,6 +58,7 @@ public:
     
 private:
     size_t m_id;
+    String m_sourceCode;
     CodeBlockHash m_hash;
     Vector<Bytecode> m_bytecode;
 };

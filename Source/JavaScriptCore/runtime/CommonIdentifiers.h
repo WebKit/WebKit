@@ -73,6 +73,7 @@
     macro(prototype) \
     macro(set) \
     macro(source) \
+    macro(sourceCode) \
     macro(stack) \
     macro(test) \
     macro(toExponential) \
