@@ -241,6 +241,9 @@ namespace WebCore {
         void setShowRepaintCounter(bool);
         bool showRepaintCounter() const { return m_showRepaintCounter; }
 
+        void setShowTiledScrollingIndicator(bool);
+        bool showTiledScrollingIndicator() const { return m_showTiledScrollingIndicator; }
+
 #if PLATFORM(WIN) || (OS(WINDOWS) && PLATFORM(WX))
         static void setShouldUseHighResolutionTimers(bool);
         static bool shouldUseHighResolutionTimers() { return gShouldUseHighResolutionTimers; }
@@ -348,6 +351,7 @@ namespace WebCore {
         bool m_acceleratedCompositingEnabled : 1;
         bool m_showDebugBorders : 1;
         bool m_showRepaintCounter : 1;
+        bool m_showTiledScrollingIndicator : 1;
         bool m_tiledBackingStoreEnabled : 1;
         bool m_dnsPrefetchingEnabled : 1;
         bool m_unifiedTextCheckerEnabled : 1;

@@ -85,6 +85,7 @@ namespace WebKit {
     macro(CanvasUsesAcceleratedDrawing, canvasUsesAcceleratedDrawing, Bool, bool, true) \
     macro(CompositingBordersVisible, compositingBordersVisible, Bool, bool, false) \
     macro(CompositingRepaintCountersVisible, compositingRepaintCountersVisible, Bool, bool, false) \
+    macro(TiledScrollingIndicatorVisible, tiledScrollingIndicatorVisible, Bool, bool, false) \
     macro(CSSCustomFilterEnabled, cssCustomFilterEnabled, Bool, bool, true) \
     macro(WebGLEnabled, webGLEnabled, Bool, bool, false) \
     macro(Accelerated2dCanvasEnabled, accelerated2dCanvasEnabled, Bool, bool, false) \

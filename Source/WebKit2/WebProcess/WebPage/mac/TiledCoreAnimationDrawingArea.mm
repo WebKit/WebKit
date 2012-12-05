@@ -215,20 +215,11 @@ void TiledCoreAnimationDrawingArea::updatePreferences(const WebPreferencesStore&
     m_webPage->corePage()->settings()->setAcceleratedCompositingForFixedPositionEnabled(true);
     m_webPage->corePage()->settings()->setFixedPositionCreatesStackingContext(true);
 
-    bool showDebugBorders = m_webPage->corePage()->settings()->showDebugBorders();
-
-    if (showDebugBorders == !!m_debugInfoLayer)
+    bool showTiledScrollingIndicator = m_webPage->corePage()->settings()->showTiledScrollingIndicator();
+    if (showTiledScrollingIndicator == !!m_debugInfoLayer)
         return;
 
-    if (showDebugBorders) {
-        m_debugInfoLayer = [CALayer layer];
-        [m_rootLayer.get() addSublayer:m_debugInfoLayer.get()];
-    } else {
-        [m_debugInfoLayer.get() removeFromSuperlayer];
-        m_debugInfoLayer = nullptr;
-    }
-
-    ScrollingThread::dispatch(bind(&ScrollingTree::setDebugRootLayer, m_webPage->corePage()->scrollingCoordinator()->scrollingTree(), m_debugInfoLayer));
+    updateDebugInfoLayer(showTiledScrollingIndicator);
 }
 
 void TiledCoreAnimationDrawingArea::mainFrameContentSizeChanged(const IntSize& contentSize)
@@ -456,8 +447,7 @@ void TiledCoreAnimationDrawingArea::setRootCompositingLayer(CALayer *layer)
     if (m_pageOverlayLayer)
         [m_rootLayer.get() addSublayer:m_pageOverlayLayer->platformLayer()];
 
-    if (m_debugInfoLayer)
-        [m_rootLayer.get() addSublayer:m_debugInfoLayer.get()];
+    updateDebugInfoLayer(m_webPage->corePage()->settings()->showTiledScrollingIndicator());
 
     [CATransaction commit];
 }
@@ -492,6 +482,34 @@ void TiledCoreAnimationDrawingArea::destroyPageOverlayLayer()
 
     [m_pageOverlayLayer->platformLayer() removeFromSuperlayer];
     m_pageOverlayLayer = nullptr;
+}
+
+TiledBacking* TiledCoreAnimationDrawingArea::mainFrameTiledBacking() const
+{
+    Frame* frame = m_webPage->corePage()->mainFrame();
+    if (!frame)
+        return 0;
+    
+    FrameView* frameView = frame->view();
+    return frameView ? frameView->tiledBacking() : 0;
+}
+
+void TiledCoreAnimationDrawingArea::updateDebugInfoLayer(bool showLayer)
+{
+    if (showLayer) {
+        if (TiledBacking* tiledBacking = mainFrameTiledBacking())
+            m_debugInfoLayer = tiledBacking->tiledScrollingIndicatorLayer();
+        
+        if (m_debugInfoLayer) {
+#ifndef NDEBUG
+            [m_debugInfoLayer.get() setName:@"Debug Info"];
+#endif
+            [m_rootLayer.get() addSublayer:m_debugInfoLayer.get()];
+        }
+    } else if (m_debugInfoLayer) {
+        [m_debugInfoLayer.get() removeFromSuperlayer];
+        m_debugInfoLayer = nullptr;
+    }
 }
 
 } // namespace WebKit

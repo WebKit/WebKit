@@ -1,3 +1,57 @@
+2012-12-04  Simon Fraser  <simon.fraser@apple.com>
+
+        Show a mini visualizer for the tile cache tiles
+        https://bugs.webkit.org/show_bug.cgi?id=104053
+
+        Reviewed by Beth Dakin.
+
+        Replace the current red/green/yellow scrolling indicator with a
+        mini map of the tile cache that shows the current tiles, and the
+        visible rect.
+        
+        Visibility is controlled via a new preference.
+
+        * WebCore.exp.in: Add Settings::setShowTiledScrollingIndicator(bool),
+        and remove ScrollingTree::setDebugRootLayer(CALayer*)
+        * WebCore.xcodeproj/project.pbxproj: Remove ScrollingTreeMac.mm which
+        is no longer needed; it just contained debug layer stuff.
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings): Support the new setting.
+        (WebCore::Settings::setShowTiledScrollingIndicator):
+        * page/Settings.h:
+        (WebCore::Settings::showTiledScrollingIndicator):
+        * page/scrolling/ScrollingTree.cpp:
+        (WebCore::ScrollingTree::commitNewTreeState): We no longer update the debug
+        indicator on tree commit.
+        * page/scrolling/ScrollingTree.h:
+        (WebCore::ScrollingTree::hasWheelEventHandlers): Needed for the tiled
+        scrolling indicator.
+        (ScrollingTree):
+        * page/scrolling/mac/ScrollingCoordinatorMac.mm:
+        (WebCore::ScrollingCoordinatorMac::commitTreeState): Tell the TiledBacking
+        about the current scrolling mode.
+        * page/scrolling/mac/ScrollingTreeMac.mm: Removed.
+        * platform/graphics/TiledBacking.h: Add functions to set the indicator scrolling
+        mode, and to get the tiled scrolling indicator layer. This has to be parented by
+        the DrawingArea, to ensure that it's in front of all other layers.
+        * platform/graphics/ca/mac/TileCache.h:
+        (WebCore::TileCache::scale): Exposed for the indicator drawing code to use.
+        * platform/graphics/ca/mac/TileCache.mm:
+        (-[WebTileCacheMapLayer init]): The indicator has a sublayer which renders the
+        visible rect frame, owned by it.
+        (-[WebTileCacheMapLayer drawInContext:]):
+        (WebCore::TileCache::TileCache): The indicator mode has to be stored here,
+        since it can be pushed down before we have an indicator layer.
+        (WebCore::TileCache::~TileCache): Clear the TileCache on the indicator layer, which
+        may outlive us.
+        (WebCore::TileCache::revalidateTiles): Call updateTileCoverageMap().
+        (WebCore::TileCache::updateTileCoverageMap): Resize the indicator layer to fit
+        within the window, and update the indicator color.
+        (WebCore::TileCache::tiledScrollingIndicatorLayer): Create and initialize the layer.
+        (WebCore::TileCache::setScrollingModeIndication):
+        (WebCore::TileCache::drawTileMapContents): Draw small white rects for the tiles over
+        an translucent gray background.
+
 2012-12-04  David Grogan  <dgrogan@chromium.org>
 
         IndexedDB: Propagate more leveldb errors to IDBIndex and IDBObjectStore

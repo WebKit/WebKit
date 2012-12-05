@@ -170,6 +170,7 @@ Settings::Settings(Page* page)
     , m_acceleratedCompositingEnabled(true)
     , m_showDebugBorders(false)
     , m_showRepaintCounter(false)
+    , m_showTiledScrollingIndicator(false)
     , m_tiledBackingStoreEnabled(false)
     , m_dnsPrefetchingEnabled(false)
 #if USE(UNIFIED_TEXT_CHECKING)
@@ -587,6 +588,14 @@ void Settings::setShowRepaintCounter(bool enabled)
         
     m_showRepaintCounter = enabled;
     m_page->setNeedsRecalcStyleInAllFrames();
+}
+
+void Settings::setShowTiledScrollingIndicator(bool enabled)
+{
+    if (m_showTiledScrollingIndicator == enabled)
+        return;
+        
+    m_showTiledScrollingIndicator = enabled;
 }
 
 #if PLATFORM(WIN) || (OS(WINDOWS) && PLATFORM(WX))

@@ -38,6 +38,10 @@
 OBJC_CLASS CALayer;
 OBJC_CLASS WKContentLayer;
 
+namespace WebCore {
+class TiledBacking;
+}
+
 namespace WebKit {
 
 class LayerHostingContext;
@@ -92,6 +96,8 @@ private:
 
     void createPageOverlayLayer();
     void destroyPageOverlayLayer();
+    WebCore::TiledBacking* mainFrameTiledBacking() const;
+    void updateDebugInfoLayer(bool showLayer);
 
     bool m_layerTreeStateIsFrozen;
     WebCore::LayerFlushScheduler m_layerFlushScheduler;

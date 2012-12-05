@@ -1,3 +1,28 @@
+2012-12-04  Simon Fraser  <simon.fraser@apple.com>
+
+        Show a mini visualizer for the tile cache tiles
+        https://bugs.webkit.org/show_bug.cgi?id=104053
+
+        Reviewed by Beth Dakin.
+
+        Plumb through a preference that controls the visibility of a tiled
+        scrolling indicator, and parent that layer in the TiledCoreAnimationDrawingArea.
+
+        * Shared/WebPreferencesStore.h:
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetTiledScrollingIndicatorVisible):
+        (WKPreferencesGetTiledScrollingIndicatorVisible):
+        * UIProcess/API/C/WKPreferencesPrivate.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.h:
+        (TiledCoreAnimationDrawingArea):
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::updatePreferences):
+        (WebKit::TiledCoreAnimationDrawingArea::setRootCompositingLayer):
+        (WebKit::TiledCoreAnimationDrawingArea::mainFrameTiledBacking):
+        (WebKit::TiledCoreAnimationDrawingArea::updateDebugInfoLayer):
+
 2012-12-04  Anders Carlsson  <andersca@apple.com>
 
         Set the visible process name before entering the sandbox

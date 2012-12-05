@@ -45,6 +45,7 @@
 #include "ScrollingStateTree.h"
 #include "ScrollingThread.h"
 #include "ScrollingTree.h"
+#include "TiledBacking.h"
 
 #include <wtf/Functional.h>
 #include <wtf/MainThread.h>
@@ -412,6 +413,24 @@ void ScrollingCoordinatorMac::commitTreeState()
 
     OwnPtr<ScrollingStateTree> treeState = m_scrollingStateTree->commit();
     ScrollingThread::dispatch(bind(&ScrollingTree::commitNewTreeState, m_scrollingTree.get(), treeState.release()));
+
+    FrameView* frameView = m_page->mainFrame()->view();
+    if (!frameView)
+        return;
+    
+    TiledBacking* tiledBacking = frameView->tiledBacking();
+    if (!tiledBacking)
+        return;
+
+    ScrollingModeIndication indicatorMode;
+    if (shouldUpdateScrollLayerPositionOnMainThread())
+        indicatorMode = MainThreadScrollingBecauseOfStyleIndictaion;
+    else if (scrollingTree() && scrollingTree()->hasWheelEventHandlers())
+        indicatorMode =  MainThreadScrollingBecauseOfEventHandlersIndication;
+    else
+        indicatorMode = ThreadedScrollingIndication;
+    
+    tiledBacking->setScrollingModeIndication(indicatorMode);
 }
 
 String ScrollingCoordinatorMac::scrollingStateTreeAsText() const

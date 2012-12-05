@@ -412,7 +412,6 @@
 		1A2E6E590CC55213004A2062 /* SQLValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A2E6E570CC55213004A2062 /* SQLValue.cpp */; };
 		1A2E6E5A0CC55213004A2062 /* SQLValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A2E6E580CC55213004A2062 /* SQLValue.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1A2E6E7A0CC556D5004A2062 /* SQLiteAuthorizer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A2E6E780CC556D5004A2062 /* SQLiteAuthorizer.cpp */; };
-		1A35862C152522540022A659 /* ScrollingTreeMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A35862A152522540022A659 /* ScrollingTreeMac.mm */; };
 		1A3586DF15264C450022A659 /* RenderMultiColumnFlowThread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3586DD15264C450022A659 /* RenderMultiColumnFlowThread.cpp */; };
 		1A3586E015264C450022A659 /* RenderMultiColumnFlowThread.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A3586DE15264C450022A659 /* RenderMultiColumnFlowThread.h */; };
 		1A3586E115264F950022A659 /* SVGAnimatedIntegerOptionalInteger.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 71E623CE151F72A60036E2F4 /* SVGAnimatedIntegerOptionalInteger.cpp */; };
@@ -7552,7 +7551,6 @@
 		1A2E6E570CC55213004A2062 /* SQLValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SQLValue.cpp; path = sql/SQLValue.cpp; sourceTree = "<group>"; };
 		1A2E6E580CC55213004A2062 /* SQLValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SQLValue.h; path = sql/SQLValue.h; sourceTree = "<group>"; };
 		1A2E6E780CC556D5004A2062 /* SQLiteAuthorizer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SQLiteAuthorizer.cpp; path = sql/SQLiteAuthorizer.cpp; sourceTree = "<group>"; };
-		1A35862A152522540022A659 /* ScrollingTreeMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ScrollingTreeMac.mm; sourceTree = "<group>"; };
 		1A3586DD15264C450022A659 /* RenderMultiColumnFlowThread.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderMultiColumnFlowThread.cpp; sourceTree = "<group>"; };
 		1A3586DE15264C450022A659 /* RenderMultiColumnFlowThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderMultiColumnFlowThread.h; sourceTree = "<group>"; };
 		1A494BBB0A122DCD00FDAFC1 /* HTMLElement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HTMLElement.idl; sourceTree = "<group>"; };
@@ -14777,7 +14775,6 @@
 				1AF62F2314DAFE910041556C /* ScrollingThreadMac.mm */,
 				93C38C01164473DD00091EB2 /* ScrollingTreeFixedNode.h */,
 				93C38C02164473DD00091EB2 /* ScrollingTreeFixedNode.mm */,
-				1A35862A152522540022A659 /* ScrollingTreeMac.mm */,
 				93C4A4131629DF5A00C3EB6E /* ScrollingTreeScrollingNodeMac.h */,
 				93C4A4141629DF5A00C3EB6E /* ScrollingTreeScrollingNodeMac.mm */,
 			);
@@ -28406,7 +28403,6 @@
 				1AF62F2514DAFE9E0041556C /* ScrollingThread.cpp in Sources */,
 				1AF62F2414DAFE910041556C /* ScrollingThreadMac.mm in Sources */,
 				1AAADDA314DB409F00AF64B3 /* ScrollingTree.cpp in Sources */,
-				1A35862C152522540022A659 /* ScrollingTreeMac.mm in Sources */,
 				1AAADDE314DC8C8F00AF64B3 /* ScrollingTreeNode.cpp in Sources */,
 				9391A99C1629D70000297330 /* ScrollingTreeScrollingNode.cpp in Sources */,
 				93C4A4161629DF5A00C3EB6E /* ScrollingTreeScrollingNodeMac.mm in Sources */,

@@ -83,6 +83,10 @@ WK_EXPORT bool WKPreferencesGetCompositingBordersVisible(WKPreferencesRef);
 WK_EXPORT void WKPreferencesSetCompositingRepaintCountersVisible(WKPreferencesRef, bool);
 WK_EXPORT bool WKPreferencesGetCompositingRepaintCountersVisible(WKPreferencesRef);
 
+// Defaults to false.
+WK_EXPORT void WKPreferencesSetTiledScrollingIndicatorVisible(WKPreferencesRef, bool);
+WK_EXPORT bool WKPreferencesGetTiledScrollingIndicatorVisible(WKPreferencesRef);
+
 // Defaults to true.
 WK_EXPORT void WKPreferencesSetCSSCustomFilterEnabled(WKPreferencesRef, bool flag);
 WK_EXPORT bool WKPreferencesGetCSSCustomFilterEnabled(WKPreferencesRef);

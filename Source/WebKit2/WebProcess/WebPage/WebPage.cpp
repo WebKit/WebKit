@@ -2278,6 +2278,7 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
     settings->setCanvasUsesAcceleratedDrawing(store.getBoolValueForKey(WebPreferencesKey::canvasUsesAcceleratedDrawingKey()) && LayerTreeHost::supportsAcceleratedCompositing());
     settings->setShowDebugBorders(store.getBoolValueForKey(WebPreferencesKey::compositingBordersVisibleKey()));
     settings->setShowRepaintCounter(store.getBoolValueForKey(WebPreferencesKey::compositingRepaintCountersVisibleKey()));
+    settings->setShowTiledScrollingIndicator(store.getBoolValueForKey(WebPreferencesKey::tiledScrollingIndicatorVisibleKey()));
     settings->setCSSCustomFilterEnabled(store.getBoolValueForKey(WebPreferencesKey::cssCustomFilterEnabledKey()));
     RuntimeEnabledFeatures::setCSSRegionsEnabled(store.getBoolValueForKey(WebPreferencesKey::cssRegionsEnabledKey()));
     settings->setCSSGridLayoutEnabled(store.getBoolValueForKey(WebPreferencesKey::cssGridLayoutEnabledKey()));

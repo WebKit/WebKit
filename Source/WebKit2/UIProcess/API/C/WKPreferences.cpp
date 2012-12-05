@@ -438,6 +438,16 @@ bool WKPreferencesGetCompositingRepaintCountersVisible(WKPreferencesRef preferen
     return toImpl(preferencesRef)->compositingRepaintCountersVisible();
 }
 
+void WKPreferencesSetTiledScrollingIndicatorVisible(WKPreferencesRef preferencesRef, bool flag)
+{
+    toImpl(preferencesRef)->setTiledScrollingIndicatorVisible(flag);
+}
+
+bool WKPreferencesGetTiledScrollingIndicatorVisible(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->tiledScrollingIndicatorVisible();
+}
+
 void WKPreferencesSetCSSCustomFilterEnabled(WKPreferencesRef preferencesRef, bool flag)
 {
     toImpl(preferencesRef)->setCSSCustomFilterEnabled(flag);

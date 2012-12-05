@@ -71,6 +71,7 @@ public:
     // Returns true if the wheel event can be handled on the scrolling thread and false if the
     // event must be sent again to the WebCore event handler.
     EventResult tryToHandleWheelEvent(const PlatformWheelEvent&);
+    bool hasWheelEventHandlers() const { return m_hasWheelEventHandlers; }
 
     // Can be called from any thread. Will update the back forward state of the page, used for rubber-banding.
     void updateBackForwardState(bool canGoBack, bool canGoForward);
@@ -95,17 +96,11 @@ public:
 
     bool willWheelEventStartSwipeGesture(const PlatformWheelEvent&);
 
-#if PLATFORM(MAC)
-    void setDebugRootLayer(CALayer *);
-#endif
-
     void setScrollingPerformanceLoggingEnabled(bool flag);
     bool scrollingPerformanceLoggingEnabled();
 
 private:
     explicit ScrollingTree(ScrollingCoordinator*);
-
-    void updateDebugRootLayer();
 
     void removeDestroyedNodes(ScrollingStateTree*);
     void updateTreeFromStateNode(ScrollingStateNode*);

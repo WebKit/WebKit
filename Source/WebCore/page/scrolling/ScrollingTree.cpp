@@ -141,8 +141,6 @@ void ScrollingTree::commitNewTreeState(PassOwnPtr<ScrollingStateTree> scrollingS
 
     removeDestroyedNodes(scrollingStateTree.get());
     updateTreeFromStateNode(scrollingStateTree->rootStateNode());
-
-    updateDebugRootLayer();
 }
 
 void ScrollingTree::updateTreeFromStateNode(ScrollingStateNode* stateNode)
