@@ -315,7 +315,7 @@ class Manager(object):
         self._expectations.add_skipped_tests(tests_in_other_chunks)
         tests_to_skip.update(tests_in_other_chunks)
 
-        summary = ResultSummary(self._expectations, len(tests_to_run) * self._options.repeat_each * self._options.iterations)
+        summary = ResultSummary(self._expectations, len(tests_to_run) * self._options.repeat_each * self._options.iterations + len(tests_to_skip))
 
         for test_name in set(tests_to_skip):
             result = test_results.TestResult(test_name)

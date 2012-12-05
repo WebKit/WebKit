@@ -1,5 +1,24 @@
 2012-12-04  Dirk Pranke  <dpranke@chromium.org>
 
+        nrwt: fix total number of tests computed in the result summary
+        https://bugs.webkit.org/show_bug.cgi?id=104061
+
+        Unreviewed, build fix.
+
+        One of the recent changes to the resultsummary refactoring caused
+        us to not include the number of skipped tests in the total number
+        of tests, throwing off the totals printed in print_one_line_summary().
+
+        Unfortunately, given the current state of the code it is difficult
+        to construct an accurate unit test for this. I have verified the
+        fix by hand, and will write a test once the remaining refactoring
+        patches land, at which point it will be trivial to test it.
+
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        (Manager._prepare_lists):
+
+2012-12-04  Dirk Pranke  <dpranke@chromium.org>
+
         nrwt is not returning the exit status properly
         https://bugs.webkit.org/show_bug.cgi?id=103830
 
