@@ -21,6 +21,8 @@
 
 #include "SQLiteDatabase.h"
 
+#include <BlackBerryPlatformMisc.h>
+
 namespace WebCore {
 
 class AutofillBackingStore {
@@ -43,6 +45,8 @@ private:
     SQLiteStatement* m_updateStatement;
     SQLiteStatement* m_containsStatement;
     SQLiteStatement* m_getStatement;
+
+    DISABLE_COPY(AutofillBackingStore)
 };
 
 AutofillBackingStore& autofillBackingStore();

@@ -20,6 +20,7 @@
 #ifndef RSSParserBase_h
 #define RSSParserBase_h
 
+#include <BlackBerryPlatformMisc.h>
 #include <libxml/tree.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
@@ -86,6 +87,8 @@ public:
     String m_comments;
     Vector<String> m_categories;
     RSSEnclosure* m_enclosure;
+private:
+    DISABLE_COPY(RSSItem)
 };
 
 class RSSParserBase {
@@ -96,6 +99,8 @@ public:
     virtual bool parseBuffer(const char* buffer, int length, const char* url, const char* encoding) = 0;
 
     RSSFeed* m_root;
+private:
+    DISABLE_COPY(RSSParserBase)
 };
 
 String textFromXMLAttr(xmlAttr*);

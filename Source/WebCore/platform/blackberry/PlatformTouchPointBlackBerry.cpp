@@ -21,6 +21,7 @@
 #include "config.h"
 #include "PlatformTouchPoint.h"
 
+#include <BlackBerryPlatformAssert.h>
 #include <BlackBerryPlatformTouchEvent.h>
 
 #if ENABLE(TOUCH_EVENTS)
@@ -44,6 +45,10 @@ PlatformTouchPoint::PlatformTouchPoint(const BlackBerry::Platform::TouchPoint& p
         break;
     case BlackBerry::Platform::TouchPoint::TouchStationary:
         m_state = TouchStationary;
+        break;
+    default:
+        m_state = TouchStationary; // make sure m_state is initialized
+        BLACKBERRY_ASSERT(false);
         break;
     }
 }

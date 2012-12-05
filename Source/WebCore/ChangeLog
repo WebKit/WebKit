@@ -1,3 +1,27 @@
+2012-12-04  Anthony Scian  <ascian@rim.com>
+
+        Static code analysis warning fixes
+        https://bugs.webkit.org/show_bug.cgi?id=103837
+
+        Reviewed by Rob Buis.
+
+        172,174: disable copy ctor, op= in AutofillBackingStore
+        504,506: disable copy ctor, op= in CookieManager
+        1488,1491: disable copy ctor, op= in RSSParserBase
+        1489,1490: disable copy ctor, op= in RSSItem
+        514,516: disable copy ctor, op= in CredentialBackingStore
+        1363: m_state not initialized in ctor
+
+        * platform/blackberry/CookieManager.h:
+        * platform/blackberry/PlatformTouchPointBlackBerry.cpp:
+        (WebCore::PlatformTouchPoint::PlatformTouchPoint):
+        * platform/network/blackberry/AutofillBackingStore.h:
+        (AutofillBackingStore):
+        * platform/network/blackberry/CredentialBackingStore.h:
+        (CredentialBackingStore):
+        * platform/network/blackberry/rss/RSSParserBase.h:
+        (RSSParserBase):
+
 2012-12-04  Noel Gordon  <noel.gordon@gmail.com>
 
         [v8] Improve worker.postMessage() string performance: avoid utf8 conversion

@@ -136,6 +136,7 @@ private:
     CookieDatabaseBackingStore* m_cookieBackingStore;
     Timer<CookieManager> m_limitTimer;
 
+    DISABLE_COPY(CookieManager)
 };
 
 // Get the global instance.

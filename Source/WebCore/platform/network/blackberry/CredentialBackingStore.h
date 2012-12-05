@@ -24,6 +24,8 @@
 #include "Credential.h"
 #include "SQLiteDatabase.h"
 
+#include <BlackBerryPlatformMisc.h>
+
 namespace BlackBerry {
 namespace Platform {
 class CertMgrWrapper;
@@ -74,6 +76,8 @@ private:
     SQLiteStatement* m_removeNeverRememberStatement;
 
     BlackBerry::Platform::CertMgrWrapper* m_certMgrWrapper;
+
+    DISABLE_COPY(CredentialBackingStore)
 };
 
 CredentialBackingStore& credentialBackingStore();
