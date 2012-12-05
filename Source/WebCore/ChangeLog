@@ -1,3 +1,25 @@
+2012-12-05  Justin Novosad  <junov@google.com>
+
+        Use of uninitialized variable in WebCore::RenderBox::paintFillLayers
+        https://bugs.webkit.org/show_bug.cgi?id=104154
+
+        Reviewed by Stephen White.
+
+        Method FillLayer::clipOccludesNextLayers performs an internal
+        initialization when called on the first layer of a list of layers.
+        Without this initialization, calls to clipOccludesNextLayers on
+        subsequent layers will use uninitialized data.  In some cases, the
+        call to clipOccludesNextLayers was being short-circuited in
+        RenderBox::paintFillLayers. 
+        Fix: Predicate was permuted to ensure that clipOccludesNextLayers
+        is never short-circuited.
+        
+        Test: fast/backgrounds/size/contain-and-cover-zoomed.html
+        Running with valgrind reveals the error.
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::paintFillLayers):
+
 2012-12-05  Elliott Sprehn  <esprehn@gmail.com>
 
         Encapsulate ElementRareData for possible future sharing
