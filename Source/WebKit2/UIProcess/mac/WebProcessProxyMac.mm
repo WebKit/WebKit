@@ -28,8 +28,6 @@
 
 #import "SecItemRequestData.h"
 #import "SecItemResponseData.h"
-#import "SecKeychainItemRequestData.h"
-#import "SecKeychainItemResponseData.h"
 #import "WebProcessMessages.h"
 #import "WKFullKeyboardAccessWatcher.h"
 #import <Security/SecItem.h>
@@ -93,55 +91,6 @@ void WebProcessProxy::secItemRequest(CoreIPC::Connection* connection, uint64_t r
     // keychain interaction work on a global dispatch queue.
     dispatch_queue_t keychainWorkQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
     dispatchFunctionOnQueue(keychainWorkQueue, bind(handleSecItemRequest, RefPtr<CoreIPC::Connection>(connection), requestID, request));
-}
-
-static void handleSecKeychainItemRequest(CoreIPC::Connection* connection, uint64_t requestID, const SecKeychainItemRequestData& request)
-{
-    SecKeychainItemResponseData response;
-
-    switch (request.type()) {
-        case SecKeychainItemRequestData::CopyContent: {
-            SecKeychainItemRef item = request.keychainItem();
-            SecItemClass itemClass;
-            SecKeychainAttributeList* attrList = request.attributeList();    
-            UInt32 length = 0;
-            void* outData = 0;
-
-            OSStatus resultCode = SecKeychainItemCopyContent(item, &itemClass, attrList, &length, &outData);
-            RetainPtr<CFDataRef> data(AdoptCF, CFDataCreate(0, static_cast<const UInt8*>(outData), length));
-            response = SecKeychainItemResponseData(resultCode, itemClass, attrList, data.get());
-
-            SecKeychainItemFreeContent(attrList, outData);
-            break;
-        }
-
-        case SecKeychainItemRequestData::CreateFromContent: {
-            SecKeychainItemRef keychainItem;
-
-            OSStatus resultCode = SecKeychainItemCreateFromContent(request.itemClass(), request.attributeList(), request.length(), request.data(), 0, 0, &keychainItem);
-            response = SecKeychainItemResponseData(resultCode,  adoptCF(keychainItem));
-            break;
-        }
-
-        case SecKeychainItemRequestData::ModifyContent: {
-            OSStatus resultCode = SecKeychainItemModifyContent(request.keychainItem(), request.attributeList(), request.length(), request.data());
-            response = resultCode;
-            break;
-        }
-
-        default:
-            return;
-    }
-
-    connection->send(Messages::WebProcess::SecKeychainItemResponse(requestID, response), 0);
-}
-
-void WebProcessProxy::secKeychainItemRequest(CoreIPC::Connection* connection, uint64_t requestID, const SecKeychainItemRequestData& request)
-{
-    // Since we don't want the connection work queue to be held up, we do all
-    // keychain interaction work on a global dispatch queue.
-    dispatch_queue_t keychainWorkQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
-    dispatchFunctionOnQueue(keychainWorkQueue, bind(handleSecKeychainItemRequest, RefPtr<CoreIPC::Connection>(connection), requestID, request));
 }
 
 bool WebProcessProxy::fullKeyboardAccessEnabled()

@@ -28,6 +28,7 @@
 
 #import "CustomProtocolManager.h"
 #import "SandboxExtension.h"
+#import "SecItemShimMethods.h"
 #import "WKFullKeyboardAccessWatcher.h"
 #import "WebInspector.h"
 #import "WebPage.h"
@@ -46,12 +47,6 @@
 #import <mach/mach_error.h>
 #import <objc/runtime.h>
 #import <stdio.h>
-
-#if __MAC_OS_X_VERSION_MIN_REQUIRED == 1060
-#import "KeychainItemShimMethods.h"
-#else
-#import "SecItemShimMethods.h"
-#endif
 
 #if ENABLE(WEB_PROCESS_SANDBOX)
 #import <pwd.h>
@@ -296,11 +291,7 @@ void WebProcess::platformInitializeWebProcess(const WebProcessCreationParameters
 
 void WebProcess::initializeShim()
 {
-#if __MAC_OS_X_VERSION_MIN_REQUIRED == 1060
-    initializeKeychainItemShim();
-#else
     initializeSecItemShim();
-#endif
 }
 
 void WebProcess::platformTerminate()
@@ -316,13 +307,6 @@ void WebProcess::secItemResponse(CoreIPC::Connection*, uint64_t requestID, const
 {
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
     didReceiveSecItemResponse(requestID, response);
-#endif
-}
-
-void WebProcess::secKeychainItemResponse(CoreIPC::Connection*, uint64_t requestID, const SecKeychainItemResponseData& response)
-{
-#if __MAC_OS_X_VERSION_MIN_REQUIRED == 1060
-    didReceiveSecKeychainItemResponse(requestID, response);
 #endif
 }
 

@@ -407,12 +407,6 @@
 		512C06881638F67E00ABB911 /* HostRecord.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 512C06861638F67E00ABB911 /* HostRecord.cpp */; };
 		512C06891638F67E00ABB911 /* HostRecord.h in Headers */ = {isa = PBXBuildFile; fileRef = 512C06871638F67E00ABB911 /* HostRecord.h */; };
 		512C069016390E6900ABB911 /* NetworkResourceLoadSchedulerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 512C068F16390E6900ABB911 /* NetworkResourceLoadSchedulerMac.mm */; };
-		512DF6D8138C181A00A22FC6 /* KeychainItemShimMethods.h in Headers */ = {isa = PBXBuildFile; fileRef = 512DF6D6138C181A00A22FC6 /* KeychainItemShimMethods.h */; };
-		512DF6D9138C181A00A22FC6 /* KeychainItemShimMethods.mm in Sources */ = {isa = PBXBuildFile; fileRef = 512DF6D7138C181A00A22FC6 /* KeychainItemShimMethods.mm */; };
-		512DF6FE138C254600A22FC6 /* SecKeychainItemRequestData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5112CA4713858D4B0030867D /* SecKeychainItemRequestData.cpp */; };
-		512DF6FF138C254600A22FC6 /* SecKeychainItemRequestData.h in Headers */ = {isa = PBXBuildFile; fileRef = 5112CA4813858D4B0030867D /* SecKeychainItemRequestData.h */; };
-		512DF700138C254600A22FC6 /* SecKeychainItemResponseData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5112CA4913858D4B0030867D /* SecKeychainItemResponseData.cpp */; };
-		512DF701138C254600A22FC6 /* SecKeychainItemResponseData.h in Headers */ = {isa = PBXBuildFile; fileRef = 5112CA4A13858D4B0030867D /* SecKeychainItemResponseData.h */; };
 		512DF70A138C26C700A22FC6 /* KeychainAttribute.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5112CB071385B97B0030867D /* KeychainAttribute.cpp */; };
 		512DF70B138C26C700A22FC6 /* KeychainAttribute.h in Headers */ = {isa = PBXBuildFile; fileRef = 5112CB051385B8D90030867D /* KeychainAttribute.h */; };
 		512E34E4130B4D0500ABD19A /* WKApplicationCacheManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 517A33B3130B308C00F80CB5 /* WKApplicationCacheManager.cpp */; };
@@ -1633,10 +1627,6 @@
 		510FBB991288C95E00AFFDF4 /* WebContextMenuItemData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebContextMenuItemData.h; sourceTree = "<group>"; };
 		5110AE0A133C16CB0072717A /* WKIconDatabase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKIconDatabase.cpp; sourceTree = "<group>"; };
 		5110AE0B133C16CB0072717A /* WKIconDatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKIconDatabase.h; sourceTree = "<group>"; };
-		5112CA4713858D4B0030867D /* SecKeychainItemRequestData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SecKeychainItemRequestData.cpp; sourceTree = "<group>"; };
-		5112CA4813858D4B0030867D /* SecKeychainItemRequestData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SecKeychainItemRequestData.h; sourceTree = "<group>"; };
-		5112CA4913858D4B0030867D /* SecKeychainItemResponseData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SecKeychainItemResponseData.cpp; sourceTree = "<group>"; };
-		5112CA4A13858D4B0030867D /* SecKeychainItemResponseData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SecKeychainItemResponseData.h; sourceTree = "<group>"; };
 		5112CB051385B8D90030867D /* KeychainAttribute.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KeychainAttribute.h; sourceTree = "<group>"; };
 		5112CB071385B97B0030867D /* KeychainAttribute.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KeychainAttribute.cpp; sourceTree = "<group>"; };
 		511B24A4132E095700065A0C /* WebIconDatabaseProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebIconDatabaseProxy.cpp; path = IconDatabase/WebIconDatabaseProxy.cpp; sourceTree = "<group>"; };
@@ -1660,8 +1650,6 @@
 		512C06861638F67E00ABB911 /* HostRecord.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = HostRecord.cpp; path = NetworkProcess/HostRecord.cpp; sourceTree = "<group>"; };
 		512C06871638F67E00ABB911 /* HostRecord.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HostRecord.h; path = NetworkProcess/HostRecord.h; sourceTree = "<group>"; };
 		512C068F16390E6900ABB911 /* NetworkResourceLoadSchedulerMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = NetworkResourceLoadSchedulerMac.mm; sourceTree = "<group>"; };
-		512DF6D6138C181A00A22FC6 /* KeychainItemShimMethods.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KeychainItemShimMethods.h; sourceTree = "<group>"; };
-		512DF6D7138C181A00A22FC6 /* KeychainItemShimMethods.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = KeychainItemShimMethods.mm; sourceTree = "<group>"; };
 		512E3520130B550100ABD19A /* WebApplicationCacheManagerProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebApplicationCacheManagerProxy.cpp; sourceTree = "<group>"; };
 		512E3521130B550100ABD19A /* WebApplicationCacheManagerProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebApplicationCacheManagerProxy.h; sourceTree = "<group>"; };
 		512E352B130B55AF00ABD19A /* WebApplicationCacheManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebApplicationCacheManager.cpp; path = ApplicationCache/WebApplicationCacheManager.cpp; sourceTree = "<group>"; };
@@ -2644,8 +2632,6 @@
 		1A6FA01C11E1526300DB1371 /* mac */ = {
 			isa = PBXGroup;
 			children = (
-				512DF6D6138C181A00A22FC6 /* KeychainItemShimMethods.h */,
-				512DF6D7138C181A00A22FC6 /* KeychainItemShimMethods.mm */,
 				511F8A7D138B46FE00A95F44 /* SecItemShimMethods.h */,
 				511F8A7E138B46FE00A95F44 /* SecItemShimMethods.mm */,
 				BCDC308615FD6A8B006B6695 /* WebProcessInitialization.h */,
@@ -3815,10 +3801,6 @@
 				51D130501382EAC000351EDD /* SecItemRequestData.h */,
 				51D130511382EAC000351EDD /* SecItemResponseData.cpp */,
 				51D130521382EAC000351EDD /* SecItemResponseData.h */,
-				5112CA4713858D4B0030867D /* SecKeychainItemRequestData.cpp */,
-				5112CA4813858D4B0030867D /* SecKeychainItemRequestData.h */,
-				5112CA4913858D4B0030867D /* SecKeychainItemResponseData.cpp */,
-				5112CA4A13858D4B0030867D /* SecKeychainItemResponseData.h */,
 				BCE23262122C6CF300D5C35A /* WebCoreArgumentCodersMac.mm */,
 				BC111B5B112F629800337BAB /* WebEventFactory.h */,
 				BC111B5C112F629800337BAB /* WebEventFactory.mm */,
@@ -4591,7 +4573,6 @@
 				1AE49A4911FFA8CE0048B464 /* JSNPMethod.h in Headers */,
 				1AE4987811FF7FAA0048B464 /* JSNPObject.h in Headers */,
 				512DF70B138C26C700A22FC6 /* KeychainAttribute.h in Headers */,
-				512DF6D8138C181A00A22FC6 /* KeychainItemShimMethods.h in Headers */,
 				1A92DC1112F8BA460017AF65 /* LayerTreeContext.h in Headers */,
 				1A186EEA12EF7618008E5F37 /* LayerTreeHost.h in Headers */,
 				C064504A133BE709003470E2 /* LayerTreeHostCA.h in Headers */,
@@ -4661,8 +4642,6 @@
 				51D130541382EAC000351EDD /* SecItemRequestData.h in Headers */,
 				51D130561382EAC000351EDD /* SecItemResponseData.h in Headers */,
 				511F8A7F138B46FE00A95F44 /* SecItemShimMethods.h in Headers */,
-				512DF6FF138C254600A22FC6 /* SecKeychainItemRequestData.h in Headers */,
-				512DF701138C254600A22FC6 /* SecKeychainItemResponseData.h in Headers */,
 				33152976130D0CB200ED2483 /* SecurityOriginData.h in Headers */,
 				518D2CCB12D51DFB003BB93B /* SessionState.h in Headers */,
 				1A6420E512DCE2FF00CAAE2C /* ShareableBitmap.h in Headers */,
@@ -5540,7 +5519,6 @@
 				1AE49A4A11FFA8CE0048B464 /* JSNPMethod.cpp in Sources */,
 				1AE4987911FF7FAA0048B464 /* JSNPObject.cpp in Sources */,
 				512DF70A138C26C700A22FC6 /* KeychainAttribute.cpp in Sources */,
-				512DF6D9138C181A00A22FC6 /* KeychainItemShimMethods.mm in Sources */,
 				1A92DC1312F8BAB90017AF65 /* LayerTreeContextMac.mm in Sources */,
 				1A186EEB12EF7618008E5F37 /* LayerTreeHost.cpp in Sources */,
 				C0D74DDE133BE2D90089CD44 /* LayerTreeHostCA.cpp in Sources */,
@@ -5613,8 +5591,6 @@
 				51D130531382EAC000351EDD /* SecItemRequestData.cpp in Sources */,
 				51D130551382EAC000351EDD /* SecItemResponseData.cpp in Sources */,
 				511F8A80138B46FE00A95F44 /* SecItemShimMethods.mm in Sources */,
-				512DF6FE138C254600A22FC6 /* SecKeychainItemRequestData.cpp in Sources */,
-				512DF700138C254600A22FC6 /* SecKeychainItemResponseData.cpp in Sources */,
 				33152975130D0CB200ED2483 /* SecurityOriginData.cpp in Sources */,
 				518D2CCA12D51DFB003BB93B /* SessionState.cpp in Sources */,
 				1A6420E412DCE2FF00CAAE2C /* ShareableBitmap.cpp in Sources */,

@@ -106,7 +106,6 @@ class NetworkProcessConnection;
 
 #if USE(SECURITY_FRAMEWORK)
 class SecItemResponseData;
-class SecKeychainItemResponseData;
 #endif
 
 class WebProcess : public ChildProcess, private CoreIPC::Connection::QueueClient {
@@ -279,7 +278,6 @@ private:
 
 #if USE(SECURITY_FRAMEWORK)
     void secItemResponse(CoreIPC::Connection*, uint64_t requestID, const SecItemResponseData&);
-    void secKeychainItemResponse(CoreIPC::Connection*, uint64_t requestID, const SecKeychainItemResponseData&);
 #endif
 
     // ChildProcess
