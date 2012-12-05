@@ -210,7 +210,7 @@ private:
     bool m_inputModeEnabled;
 
     bool m_processingChange;
-    bool m_changingFocus;
+    bool m_shouldEnsureFocusTextElementVisibleOnSelectionChanged;
 
     FocusElementType m_currentFocusElementType;
     int64_t m_currentFocusElementTextEditMask;
