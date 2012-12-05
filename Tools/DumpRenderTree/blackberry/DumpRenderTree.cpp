@@ -138,6 +138,11 @@ static bool shouldLogFrameLoadDelegates(const String& url)
     return url.contains("loading/");
 }
 
+static bool shouldDumpAsText(const String& url)
+{
+    return url.contains("dumpAsText/");
+}
+
 namespace BlackBerry {
 namespace WebKit {
 
@@ -255,6 +260,10 @@ void DumpRenderTree::resetToConsistentStateBeforeTesting(const String& url, cons
 {
     gTestRunner = TestRunner::create(url.utf8().data(), imageHash.utf8().data());
 
+    if (shouldDumpAsText(url)) {
+        gTestRunner->setDumpAsText(true);
+        gTestRunner->setGeneratePixelResults(false);
+    }
     gTestRunner->setIconDatabaseEnabled(false);
 
     DumpRenderTreeSupport::resetGeolocationMock(m_page);
@@ -268,6 +277,8 @@ void DumpRenderTree::resetToConsistentStateBeforeTesting(const String& url, cons
     WorkQueue::shared()->setFrozen(false);
 
     WebSettings* settings = m_page->settings();
+    // Apply new settings to current page, see more in the destructor of WebSettingsTransaction.
+    WebSettingsTransaction webSettingTransaction(settings);
 
     settings->setTextReflowMode(WebSettings::TextReflowDisabled);
     settings->setJavaScriptEnabled(true);
@@ -285,8 +296,6 @@ void DumpRenderTree::resetToConsistentStateBeforeTesting(const String& url, cons
     settings->setFrameFlatteningEnabled(false);
     settings->setMaximumPagesInCache(0);
     settings->setPluginsEnabled(true);
-    // Apply new settings to current page, see more in the destructor of WebSettingsTransaction.
-    WebSettingsTransaction webSettingTransaction(settings);
 
     BlackBerry::WebKit::DumpRenderTree::currentInstance()->page()->clearBackForwardList(false);
 
