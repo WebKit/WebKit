@@ -167,7 +167,12 @@ public:
 
     // Modifies the zoomToFit algorithm logic to construct a scale such that the viewportSize above is equal to this size.
     bool hasVirtualViewport() const;
-    bool isUserScalable() const { return m_userScalable; }
+    bool isUserScalable() const
+    {
+        if (!respectViewport())
+            return true;
+        return m_userScalable;
+    }
     void setUserScalable(bool userScalable) { m_userScalable = userScalable; }
 
     // Sets default layout size without doing layout or marking as needing layout.
@@ -234,11 +239,12 @@ public:
     // Various scale factors.
     double currentScale() const { return m_transformationMatrix->m11(); }
     double zoomToFitScale() const;
+    bool respectViewport() const;
     double initialScale() const;
     void setInitialScale(double scale) { m_initialScale = scale; }
     double minimumScale() const
     {
-        return (m_minimumScale > zoomToFitScale() && m_minimumScale <= maximumScale()) ? m_minimumScale : zoomToFitScale();
+        return (m_minimumScale > zoomToFitScale() && m_minimumScale <= maximumScale() && respectViewport()) ? m_minimumScale : zoomToFitScale();
     }
 
     void setMinimumScale(double scale) { m_minimumScale = scale; }
@@ -533,6 +539,7 @@ public:
     double m_initialScale;
     double m_minimumScale;
     double m_maximumScale;
+    bool m_forceRespectViewportArguments;
 
     // Block zoom animation data.
     WebCore::FloatPoint m_finalBlockPoint;

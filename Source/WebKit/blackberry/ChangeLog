@@ -1,3 +1,38 @@
+2012-12-05  Jacky Jiang  <zhajiang@rim.com>
+
+        [BlackBerry] meta viewport pages are rendered at a bad initial scale
+        https://bugs.webkit.org/show_bug.cgi?id=104122
+
+        Reviewed by Rob Buis.
+        Internally reviewed by Arvid Nilsson.
+
+        PR: 240378
+        Many websites are rendered at a very bad initial scale because they
+        both specify meta viewport tag and have large width elements. In such
+        a case we will think the meta viewport tag is broken if the width of
+        any element is larger than the calculated layout viewport width.
+        The fix to this is straightforward that we will zoom the page to fit
+        the screen to have better user experience instead of respecting the
+        meta viewport. This can fix the issue on the websites such as
+        www.travelpod.com, www.forbes.com, interfacelift.com, www.sky.com,
+        raphaeljs.com and so on.
+        If non-empty m_userViewportArguments is applied, then we will force to
+        respect the viewport arguments. In this way we will restrict the fix to
+        browser only.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::WebPagePrivate):
+        (BlackBerry::WebKit::WebPagePrivate::setLoadState):
+        (BlackBerry::WebKit::WebPagePrivate::respectViewport):
+        (WebKit):
+        (BlackBerry::WebKit::WebPagePrivate::initialScale):
+        (BlackBerry::WebKit::WebPagePrivate::maximumScale):
+        (BlackBerry::WebKit::WebPagePrivate::dispatchViewportPropertiesDidChange):
+        * Api/WebPage_p.h:
+        (BlackBerry::WebKit::WebPagePrivate::isUserScalable):
+        (WebPagePrivate):
+        (BlackBerry::WebKit::WebPagePrivate::minimumScale):
+
 2012-12-05  Otto Derek Cheung  <otcheung@rim.com>
 
         [BlackBerry] GeolocationClientBB only holding the latest geolocation permission request

@@ -405,6 +405,7 @@ WebPagePrivate::WebPagePrivate(WebPage* webPage, WebPageClient* client, const In
     , m_initialScale(-1.0)
     , m_minimumScale(-1.0)
     , m_maximumScale(-1.0)
+    , m_forceRespectViewportArguments(false)
     , m_blockZoomFinalScale(1.0)
     , m_anchorInNodeRectRatio(-1, -1)
     , m_currentBlockZoomNode(0)
@@ -1087,6 +1088,7 @@ void WebPagePrivate::setLoadState(LoadState state)
             m_userPerformedManualZoom = false;
             m_userPerformedManualScroll = false;
             m_shouldUseFixedDesktopMode = false;
+            m_forceRespectViewportArguments = false;
             if (m_resetVirtualViewportOnCommitted) // For DRT.
                 m_virtualViewportSize = IntSize();
             if (m_webSettings->viewportWidth() > 0)
@@ -1108,6 +1110,8 @@ void WebPagePrivate::setLoadState(LoadState state)
                 // to any fallback values. If there is a meta viewport in the
                 // content it will overwrite the fallback arguments soon.
                 dispatchViewportPropertiesDidChange(m_userViewportArguments);
+                if (m_userViewportArguments != defaultViewportArguments)
+                    m_forceRespectViewportArguments = true;
             } else {
                 Platform::IntSize virtualViewport = recomputeVirtualViewportFromViewportArguments();
                 m_webPage->setVirtualViewportSize(virtualViewport);
@@ -1697,9 +1701,15 @@ double WebPagePrivate::zoomToFitScale() const
     return std::min(zoomToFitScale, maximumImageDocumentZoomToFitScale);
 }
 
+bool WebPagePrivate::respectViewport() const
+{
+    return m_forceRespectViewportArguments || contentsSize().width() <= m_virtualViewportSize.width();
+}
+
 double WebPagePrivate::initialScale() const
 {
-    if (m_initialScale > 0.0)
+
+    if (m_initialScale > 0.0 && respectViewport())
         return m_initialScale;
 
     if (m_webSettings->isZoomToFitOnLoad())
@@ -1755,7 +1765,7 @@ void WebPage::setMaximumScale(double maximumScale)
 
 double WebPagePrivate::maximumScale() const
 {
-    if (m_maximumScale >= zoomToFitScale() && m_maximumScale >= m_minimumScale)
+    if (m_maximumScale >= zoomToFitScale() && m_maximumScale >= m_minimumScale && respectViewport())
         return m_maximumScale;
 
     return hasVirtualViewport() ? std::max<double>(zoomToFitScale(), 4.0) : 4.0;
@@ -3461,9 +3471,10 @@ void WebPagePrivate::dispatchViewportPropertiesDidChange(const ViewportArguments
 
     // If the caller is trying to reset to default arguments, use the user supplied ones instead.
     static const ViewportArguments defaultViewportArguments;
-    if (arguments == defaultViewportArguments)
+    if (arguments == defaultViewportArguments) {
         m_viewportArguments = m_userViewportArguments;
-    else
+        m_forceRespectViewportArguments = m_userViewportArguments != defaultViewportArguments;
+    } else
         m_viewportArguments = arguments;
 
     // 0 width or height in viewport arguments makes no sense, and results in a very large initial scale.
