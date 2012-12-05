@@ -1673,7 +1673,7 @@ webkit.org/b/98647 [ Android ] css3/filters/effect-hue-rotate-hw.html [ ImageOnl
 webkit.org/b/98647 [ Android ] css3/filters/effect-invert-hw.html [ ImageOnlyFailure ]
 webkit.org/b/98647 [ Android ] css3/filters/effect-opacity-hw.html [ ImageOnlyFailure ]
 # Commented out until more generalized failure below is fixed & rebaselined.
-# webkit.org/b/98647 [ Android ] css3/filters/effect-reference-hw.html [ ImageOnlyFailure ]
+webkit.org/b/98647 [ Android ] css3/filters/effect-reference-hw.html [ ImageOnlyFailure ]
 webkit.org/b/98647 [ Android ] css3/filters/effect-saturate-hw.html [ ImageOnlyFailure ]
 webkit.org/b/98647 [ Android ] css3/filters/effect-sepia-hw.html [ ImageOnlyFailure ]
 webkit.org/b/98647 [ Android ] css3/filters/filter-change-repaint-composited.html [ ImageOnlyFailure ]
@@ -4197,10 +4197,9 @@ webkit.org/b/101897 [ MountainLion ] fast/regions/region-style-inline-background
 
 webkit.org/b/79446 svg/repaint/image-with-clip-path.svg [ Pass ImageOnlyFailure ]
 
-# Need to update after fixing webkit.org/b/103990.
-# webkit.org/b/100142 [ Win Mac ] css3/filters/effect-reference-hw.html [ Failure ImageOnlyFailure ]
+webkit.org/b/100142 [ Win ] css3/filters/effect-reference-hw.html [ ImageOnlyFailure ]
+webkit.org/b/100142 [ Mac ] css3/filters/effect-reference-hw.html [ Failure ]
 
-webkit.org/b/103990 css3/filters/effect-reference-hw.html [ Failure ]
 webkit.org/b/103990 css3/filters/effect-reference-ordering-hw.html [ Crash ]
 
 

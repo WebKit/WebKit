@@ -1,3 +1,10 @@
+2012-12-04  Takashi Sakamoto  <tasak@google.com>
+
+        Unreviewed, WebKit gardening.
+
+        * platform/chromium/TestExpectations:
+        Updated css3/filters/effect-reference-hw.html's expectation.
+
 2012-12-04  Florin Malita  <fmalita@chromium.org>
 
         Unreviewed gardening - skip use-href-update-crash.svg on Win.
