@@ -2907,6 +2907,8 @@ webcore_sources += \
 	Source/WebCore/dom/ProgressEvent.h \
 	Source/WebCore/dom/PropertyNodeList.cpp \
 	Source/WebCore/dom/PropertyNodeList.h \
+	Source/WebCore/dom/PseudoElement.cpp \
+	Source/WebCore/dom/PseudoElement.h \
 	Source/WebCore/dom/QualifiedName.cpp \
 	Source/WebCore/dom/QualifiedName.h \
 	Source/WebCore/dom/RangeBoundaryPoint.h \

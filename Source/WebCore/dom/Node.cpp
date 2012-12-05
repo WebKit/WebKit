@@ -447,6 +447,34 @@ void Node::setTreeScope(TreeScope* scope)
     ensureRareData()->setTreeScope(scope);
 }
 
+Node* Node::pseudoAwarePreviousSibling() const
+{
+    if (isElementNode() && !previousSibling()) {
+        Element* parent = parentOrHostElement();
+        if (!parent)
+            return 0;
+        if (isAfterPseudoElement() && parent->lastChild())
+            return parent->lastChild();
+        if (!isBeforePseudoElement())
+            return parent->beforePseudoElement();
+    }
+    return previousSibling();
+}
+
+Node* Node::pseudoAwareNextSibling() const
+{
+    if (isElementNode() && !nextSibling()) {
+        Element* parent = parentOrHostElement();
+        if (!parent)
+            return 0;
+        if (isBeforePseudoElement() && parent->firstChild())
+            return parent->firstChild();
+        if (!isAfterPseudoElement())
+            return parent->afterPseudoElement();
+    }
+    return nextSibling();
+}
+
 NodeRareData* Node::rareData() const
 {
     ASSERT(hasRareData());
@@ -704,6 +732,9 @@ bool Node::rendererIsEditable(EditableLevel editableLevel, UserSelectAllTreatmen
 {
     if (document()->frame() && document()->frame()->page() && document()->frame()->page()->isEditable() && !shadowRoot())
         return true;
+
+    if (isPseudoElement())
+        return false;
 
     // Ideally we'd call ASSERT(!needsStyleRecalc()) here, but
     // ContainerNode::setFocus() calls setNeedsStyleRecalc(), so the assertion

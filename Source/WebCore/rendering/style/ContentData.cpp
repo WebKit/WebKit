@@ -70,12 +70,7 @@ PassOwnPtr<ContentData> ContentData::clone() const
 RenderObject* ImageContentData::createRenderer(Document* doc, RenderStyle* pseudoStyle) const
 {
     RenderImage* image = new (doc->renderArena()) RenderImage(doc);
-    // Images are special and must inherit the pseudoStyle so the width and height of
-    // the pseudo element don't change the size of the image. In all other cases we
-    // can just share the style.
-    RefPtr<RenderStyle> style = RenderStyle::create();
-    style->inheritFrom(pseudoStyle);
-    image->setStyle(style.release());
+    image->setPseudoStyle(pseudoStyle);
     if (m_image)
         image->setImageResource(RenderImageResourceStyleImage::create(m_image.get()));
     else
@@ -86,21 +81,21 @@ RenderObject* ImageContentData::createRenderer(Document* doc, RenderStyle* pseud
 RenderObject* TextContentData::createRenderer(Document* doc, RenderStyle* pseudoStyle) const
 {
     RenderObject* renderer = new (doc->renderArena()) RenderTextFragment(doc, m_text.impl());
-    renderer->setStyle(pseudoStyle);
+    renderer->setPseudoStyle(pseudoStyle);
     return renderer;
 }
 
 RenderObject* CounterContentData::createRenderer(Document* doc, RenderStyle* pseudoStyle) const
 {
     RenderObject* renderer = new (doc->renderArena()) RenderCounter(doc, *m_counter);
-    renderer->setStyle(pseudoStyle);
+    renderer->setPseudoStyle(pseudoStyle);
     return renderer;
 }
 
 RenderObject* QuoteContentData::createRenderer(Document* doc, RenderStyle* pseudoStyle) const
 {
     RenderObject* renderer = new (doc->renderArena()) RenderQuote(doc, m_quote);
-    renderer->setStyle(pseudoStyle);
+    renderer->setPseudoStyle(pseudoStyle);
     return renderer;
 }
 

@@ -762,6 +762,9 @@ const char* RenderInline::renderName() const
         return "RenderInline (relative positioned)";
     if (isStickyPositioned())
         return "RenderInline (sticky positioned)";
+    // FIXME: Temporary hack while the new generated content system is being implemented.
+    if (isPseudoElement())
+        return "RenderInline (generated)";
     if (isAnonymous())
         return "RenderInline (generated)";
     if (isRunIn())

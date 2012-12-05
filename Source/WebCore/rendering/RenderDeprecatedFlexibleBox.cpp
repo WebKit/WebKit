@@ -1083,12 +1083,15 @@ LayoutUnit RenderDeprecatedFlexibleBox::allowedChildFlex(RenderBox* child, bool 
     return 0;
 }
 
-const char *RenderDeprecatedFlexibleBox::renderName() const
+const char* RenderDeprecatedFlexibleBox::renderName() const
 {
     if (isFloating())
         return "RenderDeprecatedFlexibleBox (floating)";
     if (isOutOfFlowPositioned())
         return "RenderDeprecatedFlexibleBox (positioned)";
+    // FIXME: Temporary hack while the new generated content system is being implemented.
+    if (isPseudoElement())
+        return "RenderDeprecatedFlexibleBox (generated)";
     if (isAnonymous())
         return "RenderDeprecatedFlexibleBox (generated)";
     if (isRelPositioned())

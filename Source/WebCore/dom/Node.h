@@ -190,6 +190,9 @@ public:
     bool hasAttributes() const;
     NamedNodeMap* attributes() const;
 
+    Node* pseudoAwarePreviousSibling() const;
+    Node* pseudoAwareNextSibling() const;
+
     virtual KURL baseURI() const;
     
     void getSubresourceURLs(ListHashSet<KURL>&) const;
@@ -233,6 +236,11 @@ public:
     bool isTextNode() const { return getFlag(IsTextFlag); }
     bool isHTMLElement() const { return getFlag(IsHTMLFlag); }
     bool isSVGElement() const { return getFlag(IsSVGFlag); }
+
+    bool isPseudoElement() const { return pseudoId() != NOPSEUDO; }
+    bool isBeforePseudoElement() const { return pseudoId() == BEFORE; }
+    bool isAfterPseudoElement() const { return pseudoId() == AFTER; }
+    PseudoId pseudoId() const { return (isElementNode() && hasCustomCallbacks()) ? customPseudoId() : NOPSEUDO; }
 
     virtual bool isMediaControlElement() const { return false; }
     virtual bool isMediaControls() const { return false; }
@@ -742,6 +750,7 @@ protected:
         CreateText = DefaultNodeFlags | IsTextFlag,
         CreateContainer = DefaultNodeFlags | IsContainerFlag, 
         CreateElement = CreateContainer | IsElementFlag, 
+        CreatePseudoElement =  CreateElement | InDocumentFlag,
         CreateShadowRoot = CreateContainer | IsDocumentFragmentFlag,
         CreateDocumentFragment = CreateContainer | IsDocumentFragmentFlag,
         CreateStyledElement = CreateElement | IsStyledElementFlag, 
@@ -753,6 +762,12 @@ protected:
         CreateEditingText = CreateText | HasNameOrIsEditingTextFlag,
     };
     Node(Document*, ConstructionType);
+
+    virtual PseudoId customPseudoId() const
+    {
+        ASSERT(hasCustomCallbacks());
+        return NOPSEUDO;
+    }
 
     virtual void didMoveToNewDocument(Document* oldDocument);
     

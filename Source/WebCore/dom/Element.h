@@ -43,6 +43,7 @@ class ElementRareData;
 class ElementShadow;
 class IntSize;
 class Locale;
+class PseudoElement;
 class RenderRegion;
 class ShadowRoot;
 class WebKitAnimationList;
@@ -365,6 +366,9 @@ public:
     virtual void finishParsingChildren();
     virtual void beginParsingChildren();
 
+    PseudoElement* beforePseudoElement() const;
+    PseudoElement* afterPseudoElement() const;
+
     // ElementTraversal API
     Element* firstElementChild() const;
     Element* lastElementChild() const;
@@ -493,6 +497,9 @@ protected:
     void classAttributeChanged(const AtomicString& newClassString);
 
 private:
+    void updatePseudoElement(PseudoId, StyleChange = NoChange);
+    PassRefPtr<PseudoElement> createPseudoElementIfNeeded(PseudoId);
+
     // FIXME: Remove the need for Attr to call willModifyAttribute/didModifyAttribute.
     friend class Attr;
 

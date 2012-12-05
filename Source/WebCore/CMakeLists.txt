@@ -1205,6 +1205,7 @@ SET(WebCore_SOURCES
     dom/ProcessingInstruction.cpp
     dom/ProgressEvent.cpp
     dom/PropertyNodeList.cpp
+    dom/PseudoElement.cpp
     dom/QualifiedName.cpp
     dom/Range.cpp
     dom/RangeException.cpp

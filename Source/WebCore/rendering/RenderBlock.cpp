@@ -3235,7 +3235,7 @@ bool RenderBlock::shouldPaintSelectionGaps() const
 
 bool RenderBlock::isSelectionRoot() const
 {
-    if (!node())
+    if (!node() || isPseudoElement())
         return false;
         
     // FIXME: Eventually tables should have to learn how to fill gaps between cells, at least in simple non-spanning cases.
@@ -7471,7 +7471,10 @@ const char* RenderBlock::renderName() const
         return "RenderBlock (anonymous multi-column span)";
     if (isAnonymousBlock())
         return "RenderBlock (anonymous)";
-    else if (isAnonymous())
+    // FIXME: Temporary hack while the new generated content system is being implemented.
+    if (isPseudoElement())
+        return "RenderBlock (generated)";
+    if (isAnonymous())
         return "RenderBlock (generated)";
     if (isRelPositioned())
         return "RenderBlock (relative positioned)";

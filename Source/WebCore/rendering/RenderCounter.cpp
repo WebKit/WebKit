@@ -501,7 +501,7 @@ PassRefPtr<StringImpl> RenderCounter::originalText() const
         while (true) {
             if (!beforeAfterContainer)
                 return 0;
-            if (!beforeAfterContainer->isAnonymous())
+            if (!beforeAfterContainer->isAnonymous() && !beforeAfterContainer->isPseudoElement())
                 return 0; // RenderCounters are restricted to before and after pseudo elements
             PseudoId containerStyle = beforeAfterContainer->style()->styleType();
             if ((containerStyle == BEFORE) || (containerStyle == AFTER))

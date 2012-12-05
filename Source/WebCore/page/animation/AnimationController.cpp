@@ -521,6 +521,10 @@ PassRefPtr<RenderStyle> AnimationController::updateAnimations(RenderObject* rend
     if (!renderer->document() || renderer->document()->inPageCache())
         return newStyle;
 
+    // FIXME: We do not animate generated content yet.
+    if (renderer->isPseudoElement())
+        return newStyle;
+
     RenderStyle* oldStyle = renderer->style();
 
     if ((!oldStyle || (!oldStyle->animations() && !oldStyle->transitions())) && (!newStyle->animations() && !newStyle->transitions()))
@@ -534,7 +538,7 @@ PassRefPtr<RenderStyle> AnimationController::updateAnimations(RenderObject* rend
     // against the animations in the style and make sure we're in sync.  If destination values
     // have changed, we reset the animation.  We then do a blend to get new values and we return
     // a new style.
-    ASSERT(renderer->node()); // FIXME: We do not animate generated content yet.
+    ASSERT(renderer->node() && !renderer->isPseudoElement()); // FIXME: We do not animate generated content yet.
 
     RefPtr<CompositeAnimation> rendererAnimations = m_data->accessCompositeAnimation(renderer);
     RefPtr<RenderStyle> blendedStyle = rendererAnimations->animate(renderer, oldStyle, newStyle);

@@ -142,7 +142,7 @@ RenderObject* RenderObject::createObject(Node* node, RenderStyle* style)
     // Works only if we have exactly one piece of content and it's a URL.
     // Otherwise acts as if we didn't support this feature.
     const ContentData* contentData = style->contentData();
-    if (contentData && !contentData->next() && contentData->isImage() && doc != node) {
+    if (contentData && !contentData->next() && contentData->isImage() && doc != node && !node->isPseudoElement()) {
         RenderImage* image = new (arena) RenderImage(node);
         // RenderImageResourceStyleImage requires a style being present on the image but we don't want to
         // trigger a style change now as the node is not fully attached. Moving this code to style change
@@ -1756,6 +1756,23 @@ StyleDifference RenderObject::adjustStyleDifference(StyleDifference diff, unsign
     return diff;
 }
 
+void RenderObject::setPseudoStyle(PassRefPtr<RenderStyle> pseudoStyle)
+{
+    ASSERT(pseudoStyle->styleType() == BEFORE || pseudoStyle->styleType() == AFTER);
+
+    // Images are special and must inherit the pseudoStyle so the width and height of
+    // the pseudo element doesn't change the size of the image. In all other cases we
+    // can just share the style.
+    if (isImage()) {
+        RefPtr<RenderStyle> style = RenderStyle::create();
+        style->inheritFrom(pseudoStyle.get());
+        setStyle(style.release());
+        return;
+    }
+
+    setStyle(pseudoStyle);
+}
+
 void RenderObject::setStyle(PassRefPtr<RenderStyle> style)
 {
     if (m_style == style) {
@@ -2972,7 +2989,8 @@ RenderBoxModelObject* RenderObject::offsetParent() const
 VisiblePosition RenderObject::createVisiblePosition(int offset, EAffinity affinity)
 {
     // If this is a non-anonymous renderer in an editable area, then it's simple.
-    if (Node* node = this->node()) {
+    if (node() && !isPseudoElement()) {
+        Node* node = this->node();
         if (!node->rendererIsEditable()) {
             // If it can be found, we prefer a visually equivalent position that is editable. 
             Position position = createLegacyEditingPosition(node, offset);
@@ -2998,8 +3016,8 @@ VisiblePosition RenderObject::createVisiblePosition(int offset, EAffinity affini
         // Find non-anonymous content after.
         RenderObject* renderer = child;
         while ((renderer = renderer->nextInPreOrder(parent))) {
-            if (Node* node = renderer->node())
-                return VisiblePosition(firstPositionInOrBeforeNode(node), DOWNSTREAM);
+            if (renderer->node() && !renderer->isPseudoElement())
+                return VisiblePosition(firstPositionInOrBeforeNode(renderer->node()), DOWNSTREAM);
         }
 
         // Find non-anonymous content before.
@@ -3007,13 +3025,13 @@ VisiblePosition RenderObject::createVisiblePosition(int offset, EAffinity affini
         while ((renderer = renderer->previousInPreOrder())) {
             if (renderer == parent)
                 break;
-            if (Node* node = renderer->node())
-                return VisiblePosition(lastPositionInOrAfterNode(node), DOWNSTREAM);
+            if (renderer->node() && !renderer->isPseudoElement())
+                return VisiblePosition(lastPositionInOrAfterNode(renderer->node()), DOWNSTREAM);
         }
 
         // Use the parent itself unless it too is anonymous.
-        if (Node* node = parent->node())
-            return VisiblePosition(firstPositionInOrBeforeNode(node), DOWNSTREAM);
+        if (parent->node() && !isPseudoElement())
+            return VisiblePosition(firstPositionInOrBeforeNode(parent->node()), DOWNSTREAM);
 
         // Repeat at the next level up.
         child = parent;

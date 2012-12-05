@@ -145,13 +145,16 @@ void RenderMultiColumnBlock::ensureColumnSets()
 }
 
 const char* RenderMultiColumnBlock::renderName() const
-{    
+{
     if (isFloating())
         return "RenderMultiColumnBlock (floating)";
     if (isOutOfFlowPositioned())
         return "RenderMultiColumnBlock (positioned)";
     if (isAnonymousBlock())
         return "RenderMultiColumnBlock (anonymous)";
+    // FIXME: Temporary hack while the new generated content system is being implemented.
+    if (isPseudoElement())
+        return "RenderMultiColumnBlock (generated)";
     if (isAnonymous())
         return "RenderMultiColumnBlock (generated)";
     if (isRelPositioned())

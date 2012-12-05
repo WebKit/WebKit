@@ -840,7 +840,7 @@ bool Position::hasRenderedNonAnonymousDescendantsWithHeight(RenderObject* render
 {
     RenderObject* stop = renderer->nextInPreOrderAfterChildren();
     for (RenderObject *o = renderer->firstChild(); o && o != stop; o = o->nextInPreOrder())
-        if (o->node()) {
+        if (o->node() && !o->node()->isPseudoElement()) {
             if ((o->isText() && toRenderText(o)->linesBoundingBox().height()) ||
                 (o->isBox() && toRenderBox(o)->borderBoundingBox().height()))
                 return true;

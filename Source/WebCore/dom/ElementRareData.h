@@ -27,6 +27,7 @@
 #include "ElementShadow.h"
 #include "NamedNodeMap.h"
 #include "NodeRareData.h"
+#include "PseudoElement.h"
 #include "StyleInheritedData.h"
 #include <wtf/OwnPtr.h>
 
@@ -36,6 +37,9 @@ class ElementRareData : public NodeRareData {
 public:
     ElementRareData(Document*);
     virtual ~ElementRareData();
+
+    void setPseudoElement(PseudoId, PassRefPtr<PseudoElement>);
+    PseudoElement* pseudoElement(PseudoId) const;
 
     void resetComputedStyle();
     void resetDynamicRestyleObservations();
@@ -112,7 +116,13 @@ private:
     OwnPtr<ElementShadow> m_shadow;
     OwnPtr<NamedNodeMap> m_attributeMap;
 
+    RefPtr<PseudoElement> m_generatedBefore;
+    RefPtr<PseudoElement> m_generatedAfter;
+
     IntSize m_savedLayerScrollOffset;
+
+private:
+    void releasePseudoElement(PseudoElement*);
 };
 
 inline IntSize defaultMinimumSizeForResizing()
@@ -123,12 +133,59 @@ inline IntSize defaultMinimumSizeForResizing()
 inline ElementRareData::ElementRareData(Document* document)
     : NodeRareData(document)
     , m_minimumSizeForResizing(defaultMinimumSizeForResizing())
+    , m_generatedBefore(0)
+    , m_generatedAfter(0)
 {
 }
 
 inline ElementRareData::~ElementRareData()
 {
     ASSERT(!m_shadow);
+    ASSERT(!m_generatedBefore);
+    ASSERT(!m_generatedAfter);
+}
+
+inline void ElementRareData::setPseudoElement(PseudoId pseudoId, PassRefPtr<PseudoElement> element)
+{
+    switch (pseudoId) {
+    case BEFORE:
+        releasePseudoElement(m_generatedBefore.get());
+        m_generatedBefore = element;
+        break;
+    case AFTER:
+        releasePseudoElement(m_generatedAfter.get());
+        m_generatedAfter = element;
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+    }
+}
+
+inline PseudoElement* ElementRareData::pseudoElement(PseudoId pseudoId) const
+{
+    switch (pseudoId) {
+    case BEFORE:
+        return m_generatedBefore.get();
+    case AFTER:
+        return m_generatedAfter.get();
+    default:
+        ASSERT_NOT_REACHED();
+        return 0;
+    }
+}
+
+inline void ElementRareData::releasePseudoElement(PseudoElement* element)
+{
+    if (!element)
+        return;
+
+    if (element->attached())
+        element->detach();
+
+    ASSERT(!element->nextSibling());
+    ASSERT(!element->previousSibling());
+
+    element->setParentOrHostNode(0);
 }
 
 inline void ElementRareData::resetComputedStyle()

@@ -64,6 +64,7 @@
 #include "NodeRenderingContext.h"
 #include "Page.h"
 #include "PointerLockController.h"
+#include "PseudoElement.h"
 #include "RenderRegion.h"
 #include "RenderView.h"
 #include "RenderWidget.h"
@@ -187,6 +188,12 @@ Element::~Element()
         ASSERT(!inNamedFlow());
     }
 #endif
+
+    if (hasRareData()) {
+        ElementRareData* data = elementRareData();
+        data->setPseudoElement(BEFORE, 0);
+        data->setPseudoElement(AFTER, 0);
+    }
 
     if (ElementShadow* elementShadow = shadow()) {
         elementShadow->removeAllShadowRoots();
@@ -1184,6 +1191,8 @@ void Element::detach()
     cancelFocusAppearanceUpdate();
     if (hasRareData()) {
         ElementRareData* data = elementRareData();
+        data->setPseudoElement(BEFORE, 0);
+        data->setPseudoElement(AFTER, 0);
         data->setIsInCanvasSubtree(false);
         data->resetComputedStyle();
         data->resetDynamicRestyleObservations();
@@ -2055,6 +2064,53 @@ void Element::normalizeAttributes()
         for (unsigned i = 0; i < attrNodeList->size(); ++i)
             attrNodeList->at(i)->normalize();
     }
+}
+
+void Element::updatePseudoElement(PseudoId pseudoId, StyleChange change)
+{
+    PseudoElement* existing = hasRareData() ? elementRareData()->pseudoElement(pseudoId) : 0;
+    if (existing) {
+        // PseudoElement styles hang off their parent element's style so if we needed
+        // a style recalc we should Force one on the pseudo.
+        existing->recalcStyle(needsStyleRecalc() ? Force : change);
+
+        // Wait until our parent is not displayed or pseudoElementRendererIsNeeded
+        // is false, otherwise we could continously create and destroy PseudoElements
+        // when RenderObject::isChildAllowed on our parent returns false for the
+        // PseudoElement's renderer for each style recalc.
+        if (!renderer() || !pseudoElementRendererIsNeeded(renderer()->getCachedPseudoStyle(pseudoId)))
+            elementRareData()->setPseudoElement(pseudoId, 0);
+    } else if (RefPtr<PseudoElement> element = createPseudoElementIfNeeded(pseudoId)) {
+        element->attach();
+        ensureElementRareData()->setPseudoElement(pseudoId, element.release());
+    }
+}
+
+PassRefPtr<PseudoElement> Element::createPseudoElementIfNeeded(PseudoId pseudoId)
+{
+    if (!document()->styleSheetCollection()->usesBeforeAfterRules())
+        return 0;
+
+    if (!renderer() || !renderer()->canHaveGeneratedChildren())
+        return 0;
+
+    if (isPseudoElement())
+        return 0;
+
+    if (!pseudoElementRendererIsNeeded(renderer()->getCachedPseudoStyle(pseudoId)))
+        return 0;
+
+    return PseudoElement::create(this, pseudoId);
+}
+
+PseudoElement* Element::beforePseudoElement() const
+{
+    return hasRareData() ? elementRareData()->pseudoElement(BEFORE) : 0;
+}
+
+PseudoElement* Element::afterPseudoElement() const
+{
+    return hasRareData() ? elementRareData()->pseudoElement(AFTER) : 0;
 }
 
 // ElementTraversal API

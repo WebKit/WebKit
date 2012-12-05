@@ -83,6 +83,15 @@ RenderObject* NodeRenderingContext::nextRenderer() const
     if (m_parentDetails.node() && !m_parentDetails.node()->attached())
         return 0;
 
+    // FIXME: This is wrong when the next sibling was actually moved around by shadow insertion points.
+    if (m_node->isPseudoElement()) {
+        for (Node* sibling = m_node->pseudoAwareNextSibling(); sibling; sibling = sibling->pseudoAwareNextSibling()) {
+            if (RenderObject* renderer = sibling->renderer())
+                return renderer;
+        }
+        return 0;
+    }
+
     ComposedShadowTreeWalker walker(m_node);
     for (walker.nextSibling(); walker.get(); walker.nextSibling()) {
         if (RenderObject* renderer = walker.get()->renderer()) {
@@ -100,6 +109,10 @@ RenderObject* NodeRenderingContext::previousRenderer() const
 {
     if (RenderObject* renderer = m_node->renderer())
         return renderer->previousSibling();
+
+    // FIXME: This method doesn't support pseudo elements since nothing needs
+    // previousRenderer() support for them yet.
+    ASSERT(!m_node->isPseudoElement());
 
     if (m_parentFlowRenderer)
         return m_parentFlowRenderer->previousRendererForNode(m_node);

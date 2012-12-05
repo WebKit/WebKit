@@ -142,7 +142,7 @@ static inline ExceptionCode checkAcceptChild(ContainerNode* newParent, Node* new
     if (!newChild)
         return NOT_FOUND_ERR;
 
-    // Goes common casae fast path if possible.
+    // Use common case fast path if possible.
     if ((newChild->isElementNode() || newChild->isTextNode()) && newParent->isElementNode()) {
         ASSERT(!newParent->isReadOnlyNode());
         ASSERT(!newParent->isDocumentTypeNode());
@@ -151,6 +151,11 @@ static inline ExceptionCode checkAcceptChild(ContainerNode* newParent, Node* new
             return HIERARCHY_REQUEST_ERR;
         return 0;
     }
+
+    // This should never happen, but also protect release builds from tree corruption.
+    ASSERT(!newChild->isPseudoElement());
+    if (newChild->isPseudoElement())
+        return HIERARCHY_REQUEST_ERR;
 
     if (newParent->isReadOnlyNode())
         return NO_MODIFICATION_ALLOWED_ERR;

@@ -1,3 +1,121 @@
+2012-12-05  Elliott Sprehn  <esprehn@chromium.org>
+
+        Add infrastructure for :before and :after in DOM
+        https://bugs.webkit.org/show_bug.cgi?id=103705
+
+        Reviewed by Eric Seidel.
+
+        Add all infrastructure for reimplementing generated content :before and
+        :after as DOM Elements. Now ElementRareData has two pointers to PseudoElements
+        for the generated content and Node has methods for traversing the tree
+        including generated content.
+
+        This will allow the generated content to be treated as real nodes instead
+        of anonymous and take part in the usual recalcStyle and attach flow which
+        fixes many bugs and vastly simplifies the ifecycle of generated content.
+
+        Instead of attempting to land both the infrastructure and enable it at
+        the same time which has proven problematic due to how drastic this change
+        is, this patch contains only the support code so a much smaller future
+        patch can be used to switch it on.
+
+        No new behavior, this is just the infrastructure.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/DOMAllInOne.cpp:
+        * dom/Element.cpp:
+        (WebCore::Element::~Element):
+        (WebCore::Element::detach):
+        (WebCore::Element::updatePseudoElement):
+        (WebCore::Element::createPseudoElementIfNeeded):
+        (WebCore::Element::beforePseudoElement):
+        (WebCore::Element::afterPseudoElement):
+        * dom/Element.h:
+        (Element):
+        * dom/ElementRareData.h:
+        (ElementRareData):
+        (WebCore::ElementRareData::ElementRareData):
+        (WebCore::ElementRareData::~ElementRareData):
+        (WebCore::ElementRareData::setPseudoElement):
+        (WebCore::ElementRareData::pseudoElement):
+        (WebCore::ElementRareData::releasePseudoElement):
+        * dom/Node.cpp:
+        (WebCore::Node::pseudoAwarePreviousSibling):
+        (WebCore::Node::pseudoAwareNextSibling):
+        (WebCore::Node::rendererIsEditable):
+        (WebCore::checkAcceptChild):
+        * dom/Node.h:
+        (Node):
+        (WebCore::Node::isPseudoElement):
+        (WebCore::Node::isBeforePseudoElement):
+        (WebCore::Node::isAfterPseudoElement):
+        (WebCore::Node::pseudoId):
+        (WebCore::Node::customPseudoId):
+        * dom/NodeRenderingContext.cpp:
+        (WebCore::NodeRenderingContext::nextRenderer):
+        (WebCore::NodeRenderingContext::previousRenderer):
+        * dom/Position.cpp:
+        (WebCore::Position::hasRenderedNonAnonymousDescendantsWithHeight):
+        * dom/PseudoElement.cpp: Added.
+        (WebCore::pseudoElementTagName):
+        (WebCore::PseudoElement::PseudoElement):
+        (WebCore::PseudoElement::customStyleForRenderer):
+        (WebCore::PseudoElement::attach):
+        (WebCore::PseudoElement::rendererIsNeeded):
+        (WebCore::PseudoElement::updateChildStyle):
+        (WebCore::PseudoElement::didRecalcStyle):
+        * dom/PseudoElement.h: Added.
+        (PseudoElement):
+        (WebCore::PseudoElement::create):
+        (WebCore::pseudoElementIsNeeded):
+        * editing/visible_units.cpp:
+        (WebCore::logicallyPreviousBox):
+        (WebCore::logicallyNextBox):
+        (WebCore::startPositionForLine):
+        (WebCore::endPositionForLine):
+        * page/animation/AnimationController.cpp:
+        (WebCore::AnimationController::updateAnimations):
+        * rendering/HitTestResult.cpp:
+        (WebCore::HitTestResult::setInnerNode):
+        (WebCore::HitTestResult::setInnerNonSharedNode):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::isSelectionRoot):
+        (WebCore::RenderBlock::renderName):
+        * rendering/RenderCounter.cpp:
+        (WebCore::RenderCounter::originalText):
+        * rendering/RenderDeprecatedFlexibleBox.cpp:
+        (WebCore::RenderDeprecatedFlexibleBox::renderName):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::renderName):
+        * rendering/RenderMultiColumnBlock.cpp:
+        (WebCore::RenderMultiColumnBlock::renderName):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::createObject):
+        (WebCore::RenderObject::setPseudoStyle):
+        (WebCore::RenderObject::createVisiblePosition):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::isPseudoElement):
+        (RenderObject):
+        (WebCore::RenderObject::generatingNode):
+        * rendering/RenderTableCell.h:
+        (WebCore::RenderTableCell::renderName):
+        * rendering/RenderTableRow.h:
+        (WebCore::RenderTableRow::renderName):
+        * rendering/RenderTableSection.h:
+        (WebCore::RenderTableSection::renderName):
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::RenderTreeAsText::writeRenderObject):
+        * rendering/style/ContentData.cpp:
+        (WebCore::ImageContentData::createRenderer):
+        (WebCore::TextContentData::createRenderer):
+        (WebCore::CounterContentData::createRenderer):
+        (WebCore::QuoteContentData::createRenderer):
+
 2012-12-05  Justin Novosad  <junov@google.com>
 
         Use of uninitialized variable in WebCore::RenderBox::paintFillLayers

@@ -114,6 +114,7 @@
 #include "PositionIterator.cpp"
 #include "ProcessingInstruction.cpp"
 #include "ProgressEvent.cpp"
+#include "PseudoElement.cpp"
 #include "Range.cpp"
 #include "RangeException.cpp"
 #include "RegisteredEventListener.cpp"

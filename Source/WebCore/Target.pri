@@ -441,6 +441,7 @@ SOURCES += \
     dom/ProcessingInstruction.cpp \
     dom/ProgressEvent.cpp \
     dom/PropertyNodeList.cpp \
+    dom/PseudoElement.cpp \
     dom/QualifiedName.cpp \
     dom/Range.cpp \
     dom/RangeException.cpp \
@@ -1618,6 +1619,7 @@ HEADERS += \
     dom/ProcessingInstruction.h \
     dom/ProgressEvent.h \
     dom/PropertyNodeList.h \
+    dom/PseudoElement.h \
     dom/QualifiedName.h \
     dom/Range.h \
     dom/RegisteredEventListener.h \
