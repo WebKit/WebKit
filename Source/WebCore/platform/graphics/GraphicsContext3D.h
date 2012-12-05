@@ -874,7 +874,7 @@ public:
     };
 
     // Packs the contents of the given Image which is passed in |pixels| into the passed Vector
-    // according to the given format and type, and obeying the flipY and premultiplyAlpha flags.
+    // according to the given format and type, and obeying the flipY and AlphaOp flags.
     // Returns true upon success.
     static bool packImageData(Image*, const void* pixels, GC3Denum format, GC3Denum type, bool flipY, AlphaOp, SourceDataFormat sourceFormat, unsigned width, unsigned height, unsigned sourceUnpackAlignment, Vector<uint8_t>& data);
 
@@ -895,9 +895,8 @@ public:
         unsigned imageSourceUnpackAlignment() { return m_imageSourceUnpackAlignment; } 
     private:
         // Each platform must provide an implementation of this method.
-        // Extracts the image and keeps track of its status, such as width, height, Source Alignment, format and AlphaOp etc
-        // needs to lock the resources or relevant data if needed
-        // Return true upon success
+        // Extracts the image and keeps track of its status, such as width, height, Source Alignment, format and AlphaOp etc,
+        // needs to lock the resources or relevant data if needed and returns true upon success
         bool extractImage(bool premultiplyAlpha, bool ignoreGammaAndColorProfile);
 
 #if USE(SKIA)

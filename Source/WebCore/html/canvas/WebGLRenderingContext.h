@@ -530,15 +530,11 @@ public:
     // Helper to restore state that clearing the framebuffer may destroy.
     void restoreStateAfterClear();
 
-    void texImage2DBase(GC3Denum target, GC3Dint level, GC3Denum internalformat,
-                        GC3Dsizei width, GC3Dsizei height, GC3Dint border,
-                        GC3Denum format, GC3Denum type, void* pixels, ExceptionCode&);
+    void texImage2DBase(GC3Denum target, GC3Dint level, GC3Denum internalformat, GC3Dsizei width, GC3Dsizei height, GC3Dint border, GC3Denum format, GC3Denum type, const void* pixels, ExceptionCode&);
     void texImage2DImpl(GC3Denum target, GC3Dint level, GC3Denum internalformat,
                         GC3Denum format, GC3Denum type, Image*,
                         bool flipY, bool premultiplyAlpha, ExceptionCode&);
-    void texSubImage2DBase(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset,
-                           GC3Dsizei width, GC3Dsizei height,
-                           GC3Denum format, GC3Denum type, void* pixels, ExceptionCode&);
+    void texSubImage2DBase(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset, GC3Dsizei width, GC3Dsizei height, GC3Denum format, GC3Denum type, const void* pixels, ExceptionCode&);
     void texSubImage2DImpl(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset,
                            GC3Denum format, GC3Denum type,
                            Image* image, bool flipY, bool premultiplyAlpha, ExceptionCode&);
