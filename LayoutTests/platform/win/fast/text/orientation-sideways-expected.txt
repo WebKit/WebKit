@@ -6,42 +6,42 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (0,0) size 784x30
         RenderText {#text} at (0,0) size 155x28
           text run at (0,0) width 155: "\x{653B}\x{6BBB}\x{2307}\x{30FC}\x{FF1C}\x{FF1D}4"
-      RenderBlock {DIV} at (0,30) size 119x175
+      RenderBlock {DIV} at (0,30) size 120x175
         RenderBlock {DIV} at (0,10) size 30x155
           RenderText {#text} at (0,0) size 28x155
             text run at (0,0) width 155: "\x{653B}\x{6BBB}\x{2307}\x{30FC}\x{FF1C}\x{FF1D}4"
-        RenderBlock {DIV} at (30,10) size 29x155 [color=#0000FF]
+        RenderBlock {DIV} at (30,10) size 30x155 [color=#0000FF]
           RenderText {#text} at (0,0) size 28x155
             text run at (0,0) width 155: "\x{653B}\x{6BBB}\x{2307}\x{30FC}\x{FF1C}\x{FF1D}4"
-        RenderBlock {DIV} at (59,10) size 30x155 [color=#008080]
+        RenderBlock {DIV} at (60,10) size 30x155 [color=#008080]
           RenderText {#text} at (0,0) size 28x155
             text run at (0,0) width 155: "\x{653B}\x{6BBB}\x{2307}\x{30FC}\x{FF1C}\x{FF1D}4"
-        RenderBlock {DIV} at (89,10) size 30x155 [color=#A52A2A]
+        RenderBlock {DIV} at (90,10) size 30x155 [color=#A52A2A]
           RenderText {#text} at (0,0) size 28x155
             text run at (0,0) width 155: "\x{653B}\x{6BBB}\x{2307}\x{30FC}\x{FF1C}\x{FF1D}4"
-      RenderBlock {DIV} at (0,205) size 119x175
+      RenderBlock {DIV} at (0,205) size 120x175
         RenderBlock {DIV} at (0,10) size 30x155
           RenderText {#text} at (0,0) size 28x155
             text run at (0,0) width 155: "\x{653B}\x{6BBB}\x{2307}\x{30FC}\x{FF1C}\x{FF1D}4"
-        RenderBlock {DIV} at (30,10) size 29x155 [color=#0000FF]
+        RenderBlock {DIV} at (30,10) size 30x155 [color=#0000FF]
           RenderText {#text} at (0,0) size 28x155
             text run at (0,0) width 155: "\x{653B}\x{6BBB}\x{2307}\x{30FC}\x{FF1C}\x{FF1D}4"
-        RenderBlock {DIV} at (59,10) size 30x155 [color=#008080]
+        RenderBlock {DIV} at (60,10) size 30x155 [color=#008080]
           RenderText {#text} at (0,0) size 28x155
             text run at (0,0) width 155: "\x{653B}\x{6BBB}\x{2307}\x{30FC}\x{FF1C}\x{FF1D}4"
-        RenderBlock {DIV} at (89,10) size 30x155 [color=#A52A2A]
+        RenderBlock {DIV} at (90,10) size 30x155 [color=#A52A2A]
           RenderText {#text} at (0,0) size 28x155
             text run at (0,0) width 155: "\x{653B}\x{6BBB}\x{2307}\x{30FC}\x{FF1C}\x{FF1D}4"
-      RenderBlock {DIV} at (0,380) size 119x155
+      RenderBlock {DIV} at (0,380) size 120x155
         RenderBlock {DIV} at (0,0) size 30x155
           RenderText {#text} at (0,0) size 28x155
             text run at (0,0) width 155: "\x{653B}\x{6BBB}\x{2307}\x{30FC}\x{FF1C}\x{FF1D}4"
-        RenderBlock {DIV} at (30,0) size 29x155 [color=#0000FF]
+        RenderBlock {DIV} at (30,0) size 30x155 [color=#0000FF]
           RenderText {#text} at (0,0) size 28x155
             text run at (0,0) width 155: "\x{653B}\x{6BBB}\x{2307}\x{30FC}\x{FF1C}\x{FF1D}4"
-        RenderBlock {DIV} at (59,0) size 30x155 [color=#008080]
+        RenderBlock {DIV} at (60,0) size 30x155 [color=#008080]
           RenderText {#text} at (0,0) size 28x155
             text run at (0,0) width 155: "\x{653B}\x{6BBB}\x{2307}\x{30FC}\x{FF1C}\x{FF1D}4"
-        RenderBlock {DIV} at (89,0) size 30x155 [color=#A52A2A]
+        RenderBlock {DIV} at (90,0) size 30x155 [color=#A52A2A]
           RenderText {#text} at (0,0) size 28x155
             text run at (0,0) width 155: "\x{653B}\x{6BBB}\x{2307}\x{30FC}\x{FF1C}\x{FF1D}4"
