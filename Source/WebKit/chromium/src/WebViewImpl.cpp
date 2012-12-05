@@ -1529,15 +1529,12 @@ PageGroup* WebViewImpl::defaultPageGroup()
 
 void WebViewImpl::close()
 {
-    RefPtr<WebFrameImpl> mainFrameImpl;
-
     if (m_page) {
         // Initiate shutdown for the entire frameset.  This will cause a lot of
         // notifications to be sent.
-        if (m_page->mainFrame()) {
-            mainFrameImpl = WebFrameImpl::fromFrame(m_page->mainFrame());
+        if (m_page->mainFrame())
             m_page->mainFrame()->loader()->frameDetached();
-        }
+
         m_page.clear();
     }
 

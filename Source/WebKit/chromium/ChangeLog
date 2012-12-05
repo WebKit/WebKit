@@ -1,3 +1,16 @@
+2012-12-04  David Dorwin  <ddorwin@chromium.org>
+
+        [Chromium] Removed obsolete local variable from WebViewImpl.cpp.
+        https://bugs.webkit.org/show_bug.cgi?id=104050
+
+        Reviewed by Kent Tamura.
+
+        These lines were added with the file in 50739#L761 but the later use
+        of this variable at L779 has since been removed.
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::close):
+
 2012-12-04  Alpha Lam  <hclam@chromium.org>
 
         [chromium] Implement cache eviction logic in ImageDecodingStore
