@@ -2439,3 +2439,5 @@ webkit.org/b/61138 http/tests/w3c/webperf/submission/resource-timing [ Skip ]
 
 # [Qt] A new compositing bug uncovered by r135859
 webkit.org/b/103424 fast/backgrounds/background-opaque-images-over-color.html
+
+webkit.org/b/104150 fast/media/implicit-media-all.html [ ImageOnlyFailure ]

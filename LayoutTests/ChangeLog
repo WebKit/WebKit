@@ -1,5 +1,14 @@
 2012-12-05  Zan Dobersek  <zandobersek@gmail.com>
 
+        Unreviewed gardening.
+
+        Manage failing fast/media reftests for EFL and Qt.
+
+        * platform/efl-wk2/TestExpectations:
+        * platform/qt/TestExpectations:
+
+2012-12-05  Zan Dobersek  <zandobersek@gmail.com>
+
         Unreviewed GTK gardening.
 
         Adding GTK-specific reference files for two fast/media tests after r136708.

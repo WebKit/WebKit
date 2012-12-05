@@ -301,13 +301,13 @@ webkit.org/b/93470 fast/dom/title-directionality.html [ Failure ]
 Bug(EFL) fast/events/touch/basic-single-touch-events.html [ Failure ]
 
 # WebKitTestRunner needs an implementation for testRunner.setViewModeMediaFeature
-Bug(EFL) fast/media/media-query-list-02.html [ Failure ]
-Bug(EFL) fast/media/media-query-list-03.html [ Failure ]
-Bug(EFL) fast/media/media-query-list-04.html [ Failure ]
-Bug(EFL) fast/media/media-query-list-05.html [ Failure ]
-Bug(EFL) fast/media/media-query-list-06.html [ Failure ]
-Bug(EFL) fast/media/media-query-list-07.html [ Failure ]
-Bug(EFL) fast/media/view-mode-media-feature.html [ Failure ]
+webkit.org/b/104148 fast/media/media-query-list-02.html [ Failure ]
+webkit.org/b/104148 fast/media/media-query-list-03.html [ Failure ]
+webkit.org/b/104148 fast/media/media-query-list-04.html [ Failure ]
+webkit.org/b/104148 fast/media/media-query-list-05.html [ Failure ]
+webkit.org/b/104148 fast/media/media-query-list-06.html [ Failure ]
+webkit.org/b/104148 fast/media/media-query-list-07.html [ Failure ]
+webkit.org/b/104148 fast/media/view-mode-media-feature.html [ ImageOnlyFailure ]
 
 # Needs grammar checking
 Bug(EFL) editing/spelling/grammar-edit-word.html [ Failure ]
