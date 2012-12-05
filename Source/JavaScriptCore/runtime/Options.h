@@ -75,6 +75,8 @@ namespace JSC {
     v(bool, showDFGDisassembly, false) \
     v(bool, showAllDFGNodes, false) \
     \
+    v(bool, enableProfiler, false) \
+    \
     v(unsigned, maximumOptimizationCandidateInstructionCount, 10000) \
     \
     v(unsigned, maximumFunctionForCallInlineCandidateInstructionCount, 180) \

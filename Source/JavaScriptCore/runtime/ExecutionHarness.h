@@ -43,6 +43,8 @@ inline bool prepareForExecution(ExecState* exec, OwnPtr<CodeBlockType>& codeBloc
         // Start off in the low level interpreter.
         LLInt::getEntrypoint(exec->globalData(), codeBlock.get(), jitCode);
         codeBlock->setJITCode(jitCode, MacroAssemblerCodePtr());
+        if (exec->globalData().m_perBytecodeProfiler)
+            exec->globalData().m_perBytecodeProfiler->ensureBytecodesFor(codeBlock.get());
         return true;
     }
 #endif // ENABLE(LLINT)
@@ -56,6 +58,8 @@ inline bool prepareFunctionForExecution(ExecState* exec, OwnPtr<FunctionCodeBloc
         // Start off in the low level interpreter.
         LLInt::getFunctionEntrypoint(exec->globalData(), kind, jitCode, jitCodeWithArityCheck);
         codeBlock->setJITCode(jitCode, jitCodeWithArityCheck);
+        if (exec->globalData().m_perBytecodeProfiler)
+            exec->globalData().m_perBytecodeProfiler->ensureBytecodesFor(codeBlock.get());
         return true;
     }
 #else

@@ -1,3 +1,37 @@
+2012-12-01  Filip Pizlo  <fpizlo@apple.com>
+
+        JSC should be able to report profiling data associated with the IR dumps and disassembly
+        https://bugs.webkit.org/show_bug.cgi?id=102999
+
+        Reviewed by Gavin Barraclough.
+
+        Made some minor changes to support the new profiler. FileOutputStream now has an
+        open() method, and DataLog uses it. StringPrintStream has a reset() method, which
+        allows you to reuse the same StringPrintStream for creating multiple strings.
+        SegmentedVector now has a const operator[]. And, WTFString now can do fromUTF8() on
+        a CString directly.
+
+        * wtf/DataLog.cpp:
+        (WTF::initializeLogFileOnce):
+        * wtf/FilePrintStream.cpp:
+        (WTF::FilePrintStream::open):
+        (WTF):
+        * wtf/FilePrintStream.h:
+        * wtf/SegmentedVector.h:
+        (WTF::SegmentedVector::at):
+        (SegmentedVector):
+        (WTF::SegmentedVector::operator[]):
+        * wtf/StringPrintStream.cpp:
+        (WTF::StringPrintStream::reset):
+        (WTF):
+        * wtf/StringPrintStream.h:
+        (StringPrintStream):
+        * wtf/text/WTFString.cpp:
+        (WTF::String::fromUTF8):
+        (WTF):
+        * wtf/text/WTFString.h:
+        (String):
+
 2012-12-04  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r136597.

@@ -912,6 +912,11 @@ String String::fromUTF8(const LChar* string)
     return fromUTF8(string, strlen(reinterpret_cast<const char*>(string)));
 }
 
+String String::fromUTF8(const CString& s)
+{
+    return fromUTF8(s.data());
+}
+
 String String::fromUTF8WithLatin1Fallback(const LChar* string, size_t size)
 {
     String utf8 = fromUTF8(string, size);

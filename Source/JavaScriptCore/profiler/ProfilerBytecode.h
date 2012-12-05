@@ -23,57 +23,39 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef StringPrintStream_h
-#define StringPrintStream_h
+#ifndef ProfilerBytecode_h
+#define ProfilerBytecode_h
 
-#include <wtf/PrintStream.h>
+#include "JSValue.h"
 #include <wtf/text/CString.h>
-#include <wtf/text/WTFString.h>
 
-namespace WTF {
+namespace JSC { namespace Profiler {
 
-class StringPrintStream : public PrintStream {
+class Bytecode {
 public:
-    WTF_EXPORT_PRIVATE StringPrintStream();
-    WTF_EXPORT_PRIVATE ~StringPrintStream();
+    Bytecode()
+        : m_bytecodeIndex(std::numeric_limits<unsigned>::max())
+    {
+    }
     
-    virtual void vprintf(const char* format, va_list) WTF_ATTRIBUTE_PRINTF(2, 0);
+    Bytecode(unsigned bytecodeIndex, const CString& description)
+        : m_bytecodeIndex(bytecodeIndex)
+        , m_description(description)
+    {
+    }
     
-    WTF_EXPORT_PRIVATE CString toCString();
-    WTF_EXPORT_PRIVATE String toString();
-    void reset();
+    unsigned bytecodeIndex() const { return m_bytecodeIndex; }
+    const CString& description() const { return m_description; }
     
+    JSValue toJS(ExecState*) const;
 private:
-    void increaseSize(size_t);
-    
-    char* m_buffer;
-    size_t m_next;
-    size_t m_size;
-    char m_inlineBuffer[128];
+    unsigned m_bytecodeIndex;
+    CString m_description;
 };
 
-// Stringify any type T that has a WTF::printInternal(PrintStream&, const T&)
-template<typename T>
-CString toCString(const T& value)
-{
-    StringPrintStream stream;
-    stream.print(value);
-    return stream.toCString();
-}
+inline unsigned getBytecodeIndexForBytecode(Bytecode* bytecode) { return bytecode->bytecodeIndex(); }
 
-template<typename T>
-String toString(const T& value)
-{
-    StringPrintStream stream;
-    stream.print(value);
-    return stream.toString();
-}
+} } // namespace JSC::Profiler
 
-} // namespace WTF
-
-using WTF::StringPrintStream;
-using WTF::toCString;
-using WTF::toString;
-
-#endif // StringPrintStream_h
+#endif // ProfilerBytecode_h
 

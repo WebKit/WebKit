@@ -23,57 +23,46 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef StringPrintStream_h
-#define StringPrintStream_h
+#ifndef ProfilerCompilation_h
+#define ProfilerCompilation_h
 
-#include <wtf/PrintStream.h>
-#include <wtf/text/CString.h>
-#include <wtf/text/WTFString.h>
+#include "JSValue.h"
+#include "ProfilerCompilationKind.h"
+#include "ProfilerCompiledBytecode.h"
+#include "ProfilerExecutionCounter.h"
+#include "ProfilerOriginStack.h"
+#include <wtf/FastAllocBase.h>
+#include <wtf/Noncopyable.h>
 
-namespace WTF {
+namespace JSC { namespace Profiler {
 
-class StringPrintStream : public PrintStream {
+class Bytecodes;
+
+// Represents the act of executing some bytecodes in some engine, and does
+// all of the counting for those executions.
+
+class Compilation {
+    WTF_MAKE_FAST_ALLOCATED; WTF_MAKE_NONCOPYABLE(Compilation);
 public:
-    WTF_EXPORT_PRIVATE StringPrintStream();
-    WTF_EXPORT_PRIVATE ~StringPrintStream();
+    Compilation(Bytecodes*, CompilationKind);
+    ~Compilation();
     
-    virtual void vprintf(const char* format, va_list) WTF_ATTRIBUTE_PRINTF(2, 0);
+    Bytecodes* bytecodes() const { return m_bytecodes; }
+    CompilationKind kind() const { return m_kind; }
     
-    WTF_EXPORT_PRIVATE CString toCString();
-    WTF_EXPORT_PRIVATE String toString();
-    void reset();
+    void addDescription(const CompiledBytecode&);
+    ExecutionCounter* executionCounterFor(const OriginStack&);
+    
+    JSValue toJS(ExecState*) const;
     
 private:
-    void increaseSize(size_t);
-    
-    char* m_buffer;
-    size_t m_next;
-    size_t m_size;
-    char m_inlineBuffer[128];
+    Bytecodes* m_bytecodes;
+    CompilationKind m_kind;
+    Vector<CompiledBytecode> m_descriptions;
+    HashMap<OriginStack, OwnPtr<ExecutionCounter> > m_counters;
 };
 
-// Stringify any type T that has a WTF::printInternal(PrintStream&, const T&)
-template<typename T>
-CString toCString(const T& value)
-{
-    StringPrintStream stream;
-    stream.print(value);
-    return stream.toCString();
-}
+} } // namespace JSC::Profiler
 
-template<typename T>
-String toString(const T& value)
-{
-    StringPrintStream stream;
-    stream.print(value);
-    return stream.toString();
-}
-
-} // namespace WTF
-
-using WTF::StringPrintStream;
-using WTF::toCString;
-using WTF::toString;
-
-#endif // StringPrintStream_h
+#endif // ProfilerCompilation_h
 

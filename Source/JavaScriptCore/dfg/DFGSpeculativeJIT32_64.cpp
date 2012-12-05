@@ -5044,6 +5044,10 @@ void SpeculativeJIT::compile(Node& node)
         break;
     }
 
+    case CountExecution:
+        m_jit.add64(TrustedImm32(1), MacroAssembler::AbsoluteAddress(node.executionCounter()->address()));
+        break;
+
     case Phantom:
         // This is a no-op.
         noResult(m_compileIndex);

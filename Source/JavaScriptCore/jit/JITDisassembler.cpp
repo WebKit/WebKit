@@ -31,6 +31,7 @@
 #include "CodeBlock.h"
 #include "CodeBlockWithJITType.h"
 #include "JIT.h"
+#include <wtf/StringPrintStream.h>
 
 namespace JSC {
 
@@ -47,18 +48,10 @@ JITDisassembler::~JITDisassembler()
 
 void JITDisassembler::dump(PrintStream& out, LinkBuffer& linkBuffer)
 {
-    out.print("Generated Baseline JIT code for ", CodeBlockWithJITType(m_codeBlock, JITCode::BaselineJIT), ", instruction count = ", m_codeBlock->instructionCount(), "\n");
-    out.print("   Code at [", RawPointer(linkBuffer.debugAddress()), ", ", RawPointer(static_cast<char*>(linkBuffer.debugAddress()) + linkBuffer.debugSize()), "):\n");
+    dumpHeader(out, linkBuffer);
     dumpDisassembly(out, linkBuffer, m_startOfCode, m_labelForBytecodeIndexInMainPath[0]);
     
-    MacroAssembler::Label firstSlowLabel;
-    for (unsigned i = 0; i < m_labelForBytecodeIndexInSlowPath.size(); ++i) {
-        if (m_labelForBytecodeIndexInSlowPath[i].isSet()) {
-            firstSlowLabel = m_labelForBytecodeIndexInSlowPath[i];
-            break;
-        }
-    }
-    dumpForInstructions(out, linkBuffer, "    ", m_labelForBytecodeIndexInMainPath, firstSlowLabel.isSet() ? firstSlowLabel : m_endOfSlowPath);
+    dumpForInstructions(out, linkBuffer, "    ", m_labelForBytecodeIndexInMainPath, firstSlowLabel());
     out.print("    (End Of Main Path)\n");
     dumpForInstructions(out, linkBuffer, "    (S) ", m_labelForBytecodeIndexInSlowPath, m_endOfSlowPath);
     out.print("    (End Of Slow Path)\n");
@@ -71,26 +64,93 @@ void JITDisassembler::dump(LinkBuffer& linkBuffer)
     dump(WTF::dataFile(), linkBuffer);
 }
 
-void JITDisassembler::dumpForInstructions(PrintStream& out, LinkBuffer& linkBuffer, const char* prefix, Vector<MacroAssembler::Label>& labels, MacroAssembler::Label endLabel)
+void JITDisassembler::reportToProfiler(Profiler::Compilation* compilation, LinkBuffer& linkBuffer)
 {
-    for (unsigned i = 0 ; i < labels.size();) {
+    StringPrintStream out;
+    
+    dumpHeader(out, linkBuffer);
+    compilation->addDescription(Profiler::CompiledBytecode(Profiler::OriginStack(), out.toCString()));
+    out.reset();
+    dumpDisassembly(out, linkBuffer, m_startOfCode, m_labelForBytecodeIndexInMainPath[0]);
+    compilation->addDescription(Profiler::CompiledBytecode(Profiler::OriginStack(), out.toCString()));
+    
+    reportInstructions(compilation, linkBuffer, "    ", m_labelForBytecodeIndexInMainPath, firstSlowLabel());
+    compilation->addDescription(Profiler::CompiledBytecode(Profiler::OriginStack(), "    (End Of Main Path)\n"));
+    reportInstructions(compilation, linkBuffer, "    (S) ", m_labelForBytecodeIndexInSlowPath, m_endOfSlowPath);
+    compilation->addDescription(Profiler::CompiledBytecode(Profiler::OriginStack(), "    (End Of Slow Path)\n"));
+    out.reset();
+    dumpDisassembly(out, linkBuffer, m_endOfSlowPath, m_endOfCode);
+    compilation->addDescription(Profiler::CompiledBytecode(Profiler::OriginStack(), out.toCString()));
+}
+
+void JITDisassembler::dumpHeader(PrintStream& out, LinkBuffer& linkBuffer)
+{
+    out.print("Generated Baseline JIT code for ", CodeBlockWithJITType(m_codeBlock, JITCode::BaselineJIT), ", instruction count = ", m_codeBlock->instructionCount(), "\n");
+    out.print("   Code at [", RawPointer(linkBuffer.debugAddress()), ", ", RawPointer(static_cast<char*>(linkBuffer.debugAddress()) + linkBuffer.debugSize()), "):\n");
+}
+
+MacroAssembler::Label JITDisassembler::firstSlowLabel()
+{
+    MacroAssembler::Label firstSlowLabel;
+    for (unsigned i = 0; i < m_labelForBytecodeIndexInSlowPath.size(); ++i) {
+        if (m_labelForBytecodeIndexInSlowPath[i].isSet()) {
+            firstSlowLabel = m_labelForBytecodeIndexInSlowPath[i];
+            break;
+        }
+    }
+    return firstSlowLabel.isSet() ? firstSlowLabel : m_endOfSlowPath;
+}
+
+Vector<JITDisassembler::DumpedOp> JITDisassembler::dumpVectorForInstructions(LinkBuffer& linkBuffer, const char* prefix, Vector<MacroAssembler::Label>& labels, MacroAssembler::Label endLabel)
+{
+    StringPrintStream out;
+    Vector<DumpedOp> result;
+    
+    for (unsigned i = 0; i < labels.size();) {
         if (!labels[i].isSet()) {
             i++;
             continue;
         }
+        out.reset();
+        result.append(DumpedOp());
+        result.last().index = i;
         out.print(prefix);
         m_codeBlock->dumpBytecode(out, i);
         for (unsigned nextIndex = i + 1; ; nextIndex++) {
             if (nextIndex >= labels.size()) {
                 dumpDisassembly(out, linkBuffer, labels[i], endLabel);
-                return;
+                result.last().disassembly = out.toCString();
+                return result;
             }
             if (labels[nextIndex].isSet()) {
                 dumpDisassembly(out, linkBuffer, labels[i], labels[nextIndex]);
+                result.last().disassembly = out.toCString();
                 i = nextIndex;
                 break;
             }
         }
+    }
+    
+    return result;
+}
+
+void JITDisassembler::dumpForInstructions(PrintStream& out, LinkBuffer& linkBuffer, const char* prefix, Vector<MacroAssembler::Label>& labels, MacroAssembler::Label endLabel)
+{
+    Vector<DumpedOp> dumpedOps = dumpVectorForInstructions(linkBuffer, prefix, labels, endLabel);
+    
+    for (unsigned i = 0; i < dumpedOps.size(); ++i)
+        out.print(dumpedOps[i].disassembly);
+}
+
+void JITDisassembler::reportInstructions(Profiler::Compilation* compilation, LinkBuffer& linkBuffer, const char* prefix, Vector<MacroAssembler::Label>& labels, MacroAssembler::Label endLabel)
+{
+    Vector<DumpedOp> dumpedOps = dumpVectorForInstructions(linkBuffer, prefix, labels, endLabel);
+    
+    for (unsigned i = 0; i < dumpedOps.size(); ++i) {
+        compilation->addDescription(
+            Profiler::CompiledBytecode(
+                Profiler::OriginStack(Profiler::Origin(compilation->bytecodes(), dumpedOps[i].index)),
+                dumpedOps[i].disassembly));
     }
 }
 

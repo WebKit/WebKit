@@ -45,7 +45,7 @@ JITCompiler::JITCompiler(Graph& dfg)
     , m_graph(dfg)
     , m_currentCodeOriginIndex(0)
 {
-    if (shouldShowDisassembly())
+    if (shouldShowDisassembly() || m_graph.m_globalData.m_perBytecodeProfiler)
         m_disassembler = adoptPtr(new Disassembler(dfg));
 }
 
@@ -236,8 +236,10 @@ bool JITCompiler::compile(JITCode& entry)
     link(linkBuffer);
     speculative.linkOSREntries(linkBuffer);
 
-    if (m_disassembler)
+    if (shouldShowDisassembly())
         m_disassembler->dump(linkBuffer);
+    if (m_graph.m_compilation)
+        m_disassembler->reportToProfiler(m_graph.m_compilation, linkBuffer);
 
     entry = JITCode(
         linkBuffer.finalizeCodeWithoutDisassembly(),
@@ -327,8 +329,10 @@ bool JITCompiler::compileFunction(JITCode& entry, MacroAssemblerCodePtr& entryWi
     linkBuffer.link(callStackCheck, cti_stack_check);
     linkBuffer.link(callArityCheck, m_codeBlock->m_isConstructor ? cti_op_construct_arityCheck : cti_op_call_arityCheck);
     
-    if (m_disassembler)
+    if (shouldShowDisassembly())
         m_disassembler->dump(linkBuffer);
+    if (m_graph.m_compilation)
+        m_disassembler->reportToProfiler(m_graph.m_compilation, linkBuffer);
 
     entryWithArityCheck = linkBuffer.locationOf(arityCheck);
     entry = JITCode(

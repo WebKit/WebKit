@@ -771,6 +771,7 @@ private:
         case Phantom:
         case InlineStart:
         case Nop:
+        case CountExecution:
             break;
             
         case LastNodeType:

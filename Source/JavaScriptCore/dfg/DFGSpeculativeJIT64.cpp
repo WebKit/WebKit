@@ -4912,6 +4912,10 @@ void SpeculativeJIT::compile(Node& node)
     case NewFunctionExpression:
         compileNewFunctionExpression(node);
         break;
+        
+    case CountExecution:
+        m_jit.add64(TrustedImm32(1), MacroAssembler::AbsoluteAddress(node.executionCounter()->address()));
+        break;
 
     case GarbageValue:
         // We should never get to the point of code emission for a GarbageValue

@@ -108,6 +108,8 @@ struct InlineCallFrame {
     
     CodeBlockHash hash() const;
     
+    CodeBlock* baselineCodeBlock() const;
+    
     void dump(PrintStream&) const;
 };
 

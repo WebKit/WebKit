@@ -5,6 +5,7 @@ EXPORTS
     ??0Collator@WTF@@QAE@PBD@Z
     ??0CString@WTF@@QAE@PBD@Z
     ??0CString@WTF@@QAE@PBDI@Z
+    ??0Database@Profiler@JSC@@QAE@AAVJSGlobalData@2@@Z
     ??0DateInstance@JSC@@IAE@PAVExecState@1@PAVStructure@1@@Z
     ??0DefaultGCActivityCallback@JSC@@QAE@PAVHeap@1@@Z
     ??0DropAllLocks@JSLock@JSC@@QAE@PAVExecState@2@@Z
@@ -34,6 +35,7 @@ EXPORTS
     ??1ArrayBufferView@WTF@@UAE@XZ
     ??1ClientData@JSGlobalData@JSC@@UAE@XZ
     ??1Collator@WTF@@QAE@XZ
+    ??1Database@Profiler@JSC@@QAE@XZ
     ??1Debugger@JSC@@UAE@XZ
     ??1DropAllLocks@JSLock@JSC@@QAE@XZ
     ??1ErrorHandlingMode@Interpreter@JSC@@QAE@XZ
@@ -341,6 +343,7 @@ EXPORTS
     ?restoreAll@Profile@JSC@@QAEXXZ
     ?retrieveCallerFromVMCode@Interpreter@JSC@@QBE?AVJSValue@2@PAVExecState@2@PAVJSFunction@2@@Z
     ?retrieveLastCaller@Interpreter@JSC@@QBEXPAVExecState@2@AAH1AAVString@WTF@@AAVJSValue@2@@Z
+    ?save@Database@Profiler@JSC@@QBE_NPBD@Z
     ?setConfigurable@PropertyDescriptor@JSC@@QAEX_N@Z
     ?setDescriptor@PropertyDescriptor@JSC@@QAEXVJSValue@2@I@Z
     ?setEnumerable@PropertyDescriptor@JSC@@QAEX_N@Z

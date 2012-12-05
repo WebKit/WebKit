@@ -1526,6 +1526,74 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\profiler\ProfilerBytecode.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\profiler\ProfilerBytecode.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\profiler\ProfilerBytecodes.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\profiler\ProfilerBytecodes.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\profiler\ProfilerCompilation.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\profiler\ProfilerCompilation.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\profiler\ProfilerCompilationKind.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\profiler\ProfilerCompilationKind.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\profiler\ProfilerCompiledBytecode.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\profiler\ProfilerCompiledBytecode.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\profiler\ProfilerDatabase.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\profiler\ProfilerDatabase.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\profiler\ProfilerExecutionCounter.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\profiler\ProfilerOrigin.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\profiler\ProfilerOrigin.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\profiler\ProfilerOriginStack.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\profiler\ProfilerOriginStack.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\profiler\Profile.cpp"
 				>
 			</File>

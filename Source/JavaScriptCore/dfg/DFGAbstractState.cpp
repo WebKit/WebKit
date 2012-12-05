@@ -1735,6 +1735,7 @@ bool AbstractState::execute(unsigned indexInBlock)
     case Phantom:
     case InlineStart:
     case Nop:
+    case CountExecution:
         node.setCanExit(false);
         break;
         

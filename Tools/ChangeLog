@@ -1,3 +1,21 @@
+2012-12-02  Filip Pizlo  <fpizlo@apple.com>
+
+        JSC should be able to report profiling data associated with the IR dumps and disassembly
+        https://bugs.webkit.org/show_bug.cgi?id=102999
+
+        Reviewed by Gavin Barraclough.
+
+        Added a tool that allows you to grok the output from JSC's new profiler. Currently,
+        this still gets confused a bit about the execution counts of a method running
+        standalone versus a method running inlined, but other than that, it's pretty cool.
+        See the attached "sampling profiling session" attached to the bug to see it in
+        action.
+        
+        Also had to feed EFL's build system.
+
+        * DumpRenderTree/efl/CMakeLists.txt:
+        * Scripts/display-profiler-output: Added.
+
 2012-12-04  Dirk Pranke  <dpranke@chromium.org>
 
         nrwt: fix total number of tests computed in the result summary

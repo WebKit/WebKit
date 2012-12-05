@@ -32,6 +32,7 @@
 
 #include "LinkBuffer.h"
 #include "MacroAssembler.h"
+#include "ProfilerDatabase.h"
 #include <wtf/Vector.h>
 
 namespace JSC {
@@ -58,9 +59,21 @@ public:
     
     void dump(LinkBuffer&);
     void dump(PrintStream&, LinkBuffer&);
+    void reportToProfiler(Profiler::Compilation*, LinkBuffer&);
 
 private:
+    void dumpHeader(PrintStream&, LinkBuffer&);
+    MacroAssembler::Label firstSlowLabel();
+    
+    struct DumpedOp {
+        unsigned index;
+        CString disassembly;
+    };
+    Vector<DumpedOp> dumpVectorForInstructions(LinkBuffer&, const char* prefix, Vector<MacroAssembler::Label>& labels, MacroAssembler::Label endLabel);
+        
     void dumpForInstructions(PrintStream&, LinkBuffer&, const char* prefix, Vector<MacroAssembler::Label>& labels, MacroAssembler::Label endLabel);
+    void reportInstructions(Profiler::Compilation*, LinkBuffer&, const char* prefix, Vector<MacroAssembler::Label>& labels, MacroAssembler::Label endLabel);
+    
     void dumpDisassembly(PrintStream&, LinkBuffer&, MacroAssembler::Label from, MacroAssembler::Label to);
     
     CodeBlock* m_codeBlock;

@@ -87,6 +87,7 @@ SET(DumpRenderTree_INCLUDE_DIRECTORIES
     ${JAVASCRIPTCORE_DIR}/interpreter
     ${JAVASCRIPTCORE_DIR}/jit
     ${JAVASCRIPTCORE_DIR}/llint
+    ${JAVASCRIPTCORE_DIR}/profiler
     ${JAVASCRIPTCORE_DIR}/runtime
     ${JAVASCRIPTCORE_DIR}/ForwardingHeaders
     ${TOOLS_DIR}/DumpRenderTree

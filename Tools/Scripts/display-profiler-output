@@ -1,0 +1,302 @@
+#!/usr/bin/env ruby
+
+# Copyright (C) 2012 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1. Redistributions of source code must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+# 2. Redistributions in binary form must reproduce the above copyright
+#    notice, this list of conditions and the following disclaimer in the
+#    documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+# THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+# PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+# BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+# THE POSSIBILITY OF SUCH DAMAGE.
+
+require 'rubygems'
+
+require 'json'
+require 'readline'
+
+class Bytecode
+    attr_accessor :bytecodeIndex, :description, :topCounts
+    
+    def initialize(bytecodeIndex, description)
+        @bytecodeIndex = bytecodeIndex
+        @description = description
+        @topCounts = []
+    end
+    
+    def addTopCount(count)
+        @topCounts << count
+    end
+    
+    def totalExecutionCount
+        sum = 0
+        @topCounts.each {
+            | value |
+            sum += value.count
+        }
+        sum
+    end
+    
+    def executionCount(engine)
+        sum = 0
+        @topCounts.each {
+            | value |
+            if value.engine == engine
+                sum += value.count
+            end
+        }
+        sum
+    end
+end
+
+class Bytecodes
+    attr_accessor :hash
+    include Enumerable
+    
+    def initialize(json)
+        @hash = json["hash"].to_s
+        @bytecode = {}
+        json["bytecode"].each {
+            | subJson |
+            index = subJson["bytecodeIndex"].to_i
+            @bytecode[index] = Bytecode.new(index, subJson["description"].to_s)
+        }
+    end
+    
+    def each
+        @bytecode.values.sort{|a, b| a.bytecodeIndex <=> b.bytecodeIndex}.each {
+            | value |
+            yield value
+        }
+    end
+    
+    def bytecode(bytecodeIndex)
+        @bytecode[bytecodeIndex]
+    end
+    
+    def totalMaxExecutionCount
+        max = 0
+        @bytecode.each_value {
+            | bytecode |
+            max = [max, bytecode.totalExecutionCount].max
+        }
+        max
+    end
+    
+    def maxExecutionCount(engine)
+        max = 0
+        @bytecode.each_value {
+            | bytecode |
+            max = [max, bytecode.executionCount(engine)].max
+        }
+        max
+    end
+end
+
+def originStackFromJSON(json)
+    json.map {
+        | subJson |
+        $bytecodes[subJson["bytecodesID"].to_i].bytecode(subJson["bytecodeIndex"].to_i)
+    }
+end
+
+class CompiledBytecode
+    attr_accessor :origin, :description
+    
+    def initialize(json)
+        @origin = originStackFromJSON(json["origin"])
+        @description = json["description"].to_s
+    end
+end
+
+class ExecutionCounter
+    attr_accessor :origin, :engine, :count
+    
+    def initialize(origin, engine, count)
+        @origin = origin
+        @engine = engine
+        @count = count
+    end
+end
+
+class Compilation
+    attr_accessor :bytecode, :engine, :descriptions, :counters
+    
+    def initialize(json)
+        @bytecode = $bytecodes[json["bytecodesID"].to_i]
+        @engine = json["compilationKind"]
+        @descriptions = json["descriptions"].map {
+            | subJson |
+            CompiledBytecode.new(subJson)
+        }
+        @counters = {}
+        json["counters"].each {
+            | subJson |
+            origin = originStackFromJSON(subJson["origin"])
+            counter = ExecutionCounter.new(origin, @engine, subJson["executionCount"].to_i)
+            @counters[origin] = counter
+            origin[-1].addTopCount(counter)
+        }
+    end
+end
+
+$json = JSON::parse(IO::read(ARGV[0]))
+$bytecodes = $json["bytecodes"].map {
+    | subJson |
+    Bytecodes.new(subJson)
+}
+$compilations = $json["compilations"].map {
+    | subJson |
+    Compilation.new(subJson)
+}
+$engines = ["Baseline", "DFG"]
+
+def lpad(str,chars)
+  if str.length>chars
+    str
+  else
+    "%#{chars}s"%(str)
+  end
+end
+
+def rpad(str, chars)
+    while str.length < chars
+        str += " "
+    end
+    str
+end
+
+def center(str, chars)
+    while str.length < chars
+        str += " "
+        if str.length < chars
+            str = " " + str
+        end
+    end
+    str
+end
+
+def mayBeHash(hash)
+    hash =~ /^#/ or hash.size == 6
+end
+
+def getHash(hash)
+    if hash =~ /^#/
+        $~.post_match
+    else
+        hash
+    end
+end
+
+module Commands
+    def self.CMD_help
+        puts "summary     Print a summary of code block execution rates."
+        puts "display     Display details for a code block."
+        puts "help        Print this message."
+        puts "quit        Quit."
+    end
+    
+    def self.CMD_quit
+        exit 0
+    end
+    
+    def self.CMD_summary
+        hashCols = 14
+        countCols = 10 * $engines.size
+        
+        puts(rpad("CodeBlock", hashCols) + " " + rpad($engines.join("/") + " Counts", countCols))
+        $bytecodes.sort {
+            | a, b |
+            b.totalMaxExecutionCount <=> a.totalMaxExecutionCount
+        }.each {
+            | bytecode |
+            puts(center("#" + bytecode.hash, hashCols) + " " +
+                 center($engines.map {
+                            | engine |
+                            bytecode.maxExecutionCount(engine).to_s
+                        }.join("/"), countCols))
+        }
+    end
+    
+    def self.CMD_display(*args)
+        case args.length
+        when 1
+            hash = args[0]
+            engine = "Baseline"
+            $compilations.each {
+                | compilation |
+                next if compilation.bytecode.hash != hash
+                
+                if compilation.engine == "DFG"
+                    engine = "DFG"
+                    break
+                end
+            }
+        when 2
+            if mayBeHash(args[0])
+                hash = args[0]
+                engine = args[1]
+            else
+                engine = args[0]
+                hash = args[1]
+            end
+        else
+            puts "Usage: summary <code block hash> <engine>"
+            return
+        end
+        
+        countCols = 10 * $engines.size
+        $compilations.each {
+            | compilation |
+            next if compilation.bytecode.hash != hash
+            next if compilation.engine != engine
+            
+            puts(rpad($engines.join("/") + " Counts", countCols) + " Disassembly for #{hash} in #{engine}")
+            compilation.descriptions.each {
+                | description |
+                next if description.description =~ /CountExecution\(/
+                if description.origin.empty?
+                    countsString = ""
+                else
+                    countsString = $engines.map {
+                        | engine |
+                        description.origin[-1].executionCount(engine)
+                    }.join("/")
+                end
+                description.description.split("\n").each {
+                    | line |
+                    puts(center(countsString, countCols) + " " + line.chomp)
+                }
+            }
+        }
+    end
+end
+
+def executeCommand(command, args)
+    if Commands.methods.find_index("CMD_#{command}")
+        Commands.send("CMD_#{command}", *args)
+    else
+        puts "Invalid command: #{command}"
+    end
+end
+
+executeCommand("summary", [])
+
+while commandLine = Readline.readline("> ", true)
+    commandArray = commandLine.split
+    executeCommand(commandArray[0], commandArray[1..-1])
+end
+

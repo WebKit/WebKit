@@ -23,57 +23,28 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef StringPrintStream_h
-#define StringPrintStream_h
+#ifndef ProfilerExecutionCounter_h
+#define ProfilerExecutionCounter_h
 
-#include <wtf/PrintStream.h>
-#include <wtf/text/CString.h>
-#include <wtf/text/WTFString.h>
+#include <wtf/FastAllocBase.h>
+#include <wtf/Noncopyable.h>
 
-namespace WTF {
+namespace JSC { namespace Profiler {
 
-class StringPrintStream : public PrintStream {
+class ExecutionCounter {
+    WTF_MAKE_FAST_ALLOCATED; WTF_MAKE_NONCOPYABLE(ExecutionCounter);
 public:
-    WTF_EXPORT_PRIVATE StringPrintStream();
-    WTF_EXPORT_PRIVATE ~StringPrintStream();
+    ExecutionCounter() : m_counter(0) { }
     
-    virtual void vprintf(const char* format, va_list) WTF_ATTRIBUTE_PRINTF(2, 0);
+    uint64_t* address() { return &m_counter; }
     
-    WTF_EXPORT_PRIVATE CString toCString();
-    WTF_EXPORT_PRIVATE String toString();
-    void reset();
-    
+    uint64_t count() const { return m_counter; }
+
 private:
-    void increaseSize(size_t);
-    
-    char* m_buffer;
-    size_t m_next;
-    size_t m_size;
-    char m_inlineBuffer[128];
+    uint64_t m_counter;
 };
 
-// Stringify any type T that has a WTF::printInternal(PrintStream&, const T&)
-template<typename T>
-CString toCString(const T& value)
-{
-    StringPrintStream stream;
-    stream.print(value);
-    return stream.toCString();
-}
+} } // namespace JSC::Profiler
 
-template<typename T>
-String toString(const T& value)
-{
-    StringPrintStream stream;
-    stream.print(value);
-    return stream.toString();
-}
-
-} // namespace WTF
-
-using WTF::StringPrintStream;
-using WTF::toCString;
-using WTF::toString;
-
-#endif // StringPrintStream_h
+#endif // ProfilerExecutionCounter_h
 

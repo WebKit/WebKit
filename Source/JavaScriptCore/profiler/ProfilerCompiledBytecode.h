@@ -23,57 +23,33 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef StringPrintStream_h
-#define StringPrintStream_h
+#ifndef ProfilerCompiledBytecode_h
+#define ProfilerCompiledBytecode_h
 
-#include <wtf/PrintStream.h>
+#include "JSValue.h"
+#include "ProfilerOriginStack.h"
 #include <wtf/text/CString.h>
-#include <wtf/text/WTFString.h>
 
-namespace WTF {
+namespace JSC { namespace Profiler {
 
-class StringPrintStream : public PrintStream {
+class CompiledBytecode {
 public:
-    WTF_EXPORT_PRIVATE StringPrintStream();
-    WTF_EXPORT_PRIVATE ~StringPrintStream();
+    // It's valid to have an empty OriginStack, which indicates that this is some
+    // sort of non-bytecode-related machine code.
+    CompiledBytecode(const OriginStack&, const CString& description);
+    ~CompiledBytecode();
     
-    virtual void vprintf(const char* format, va_list) WTF_ATTRIBUTE_PRINTF(2, 0);
+    const OriginStack& originStack() const { return m_origin; }
+    const CString& description() const { return m_description; }
     
-    WTF_EXPORT_PRIVATE CString toCString();
-    WTF_EXPORT_PRIVATE String toString();
-    void reset();
+    JSValue toJS(ExecState*) const;
     
 private:
-    void increaseSize(size_t);
-    
-    char* m_buffer;
-    size_t m_next;
-    size_t m_size;
-    char m_inlineBuffer[128];
+    OriginStack m_origin;
+    CString m_description;
 };
 
-// Stringify any type T that has a WTF::printInternal(PrintStream&, const T&)
-template<typename T>
-CString toCString(const T& value)
-{
-    StringPrintStream stream;
-    stream.print(value);
-    return stream.toCString();
-}
+} } // namespace JSC::Profiler
 
-template<typename T>
-String toString(const T& value)
-{
-    StringPrintStream stream;
-    stream.print(value);
-    return stream.toString();
-}
-
-} // namespace WTF
-
-using WTF::StringPrintStream;
-using WTF::toCString;
-using WTF::toString;
-
-#endif // StringPrintStream_h
+#endif // ProfilerCompiledBytecode_h
 

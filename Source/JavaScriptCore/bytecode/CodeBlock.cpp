@@ -1918,6 +1918,9 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
 
 CodeBlock::~CodeBlock()
 {
+    if (m_globalData->m_perBytecodeProfiler)
+        m_globalData->m_perBytecodeProfiler->notifyDestruction(this);
+    
 #if ENABLE(DFG_JIT)
     // Remove myself from the set of DFG code blocks. Note that I may not be in this set
     // (because I'm not a DFG code block), in which case this is a no-op anyway.

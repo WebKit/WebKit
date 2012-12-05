@@ -39,6 +39,7 @@
 #include "JSValue.h"
 #include "LLIntData.h"
 #include "NumericStrings.h"
+#include "ProfilerDatabase.h"
 #include "PrivateName.h"
 #include "SmallStrings.h"
 #include "Strong.h"
@@ -352,6 +353,7 @@ namespace JSC {
         double cachedDateStringValue;
 
         LegacyProfiler* m_enabledProfiler;
+        OwnPtr<Profiler::Database> m_perBytecodeProfiler;
         RegExpCache* m_regExpCache;
         BumpPointerAllocator m_regExpAllocator;
 

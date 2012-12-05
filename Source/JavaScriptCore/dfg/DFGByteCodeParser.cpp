@@ -2114,6 +2114,12 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         Instruction* currentInstruction = instructionsBegin + m_currentIndex;
         m_currentInstruction = currentInstruction; // Some methods want to use this, and we'd rather not thread it through calls.
         OpcodeID opcodeID = interpreter->getOpcodeID(currentInstruction->u.opcode);
+        
+        if (m_graph.m_compilation) {
+            addToGraph(CountExecution, OpInfo(m_graph.m_compilation->executionCounterFor(
+                Profiler::OriginStack(*m_globalData->m_perBytecodeProfiler, m_codeBlock, currentCodeOrigin()))));
+        }
+        
         switch (opcodeID) {
 
         // === Function entry opcodes ===

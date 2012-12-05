@@ -43,6 +43,7 @@ static const char* dfgOpNames[] = {
 Graph::Graph(JSGlobalData& globalData, CodeBlock* codeBlock, unsigned osrEntryBytecodeIndex, const Operands<JSValue>& mustHandleValues)
     : m_globalData(globalData)
     , m_codeBlock(codeBlock)
+    , m_compilation(globalData.m_perBytecodeProfiler ? globalData.m_perBytecodeProfiler->newCompilation(codeBlock, Profiler::DFG) : 0)
     , m_profiledBlock(codeBlock->alternative())
     , m_hasArguments(false)
     , m_osrEntryBytecodeIndex(osrEntryBytecodeIndex)
@@ -63,15 +64,15 @@ static void printWhiteSpace(PrintStream& out, unsigned amount)
         out.print(" ");
 }
 
-void Graph::dumpCodeOrigin(PrintStream& out, const char* prefix, NodeIndex prevNodeIndex, NodeIndex nodeIndex)
+bool Graph::dumpCodeOrigin(PrintStream& out, const char* prefix, NodeIndex prevNodeIndex, NodeIndex nodeIndex)
 {
     if (prevNodeIndex == NoNode)
-        return;
+        return false;
     
     Node& currentNode = at(nodeIndex);
     Node& previousNode = at(prevNodeIndex);
     if (previousNode.codeOrigin.inlineCallFrame == currentNode.codeOrigin.inlineCallFrame)
-        return;
+        return false;
     
     Vector<CodeOrigin> previousInlineStack = previousNode.codeOrigin.inlineStack();
     Vector<CodeOrigin> currentInlineStack = currentNode.codeOrigin.inlineStack();
@@ -84,11 +85,14 @@ void Graph::dumpCodeOrigin(PrintStream& out, const char* prefix, NodeIndex prevN
         }
     }
     
+    bool hasPrinted = false;
+    
     // Print the pops.
     for (unsigned i = previousInlineStack.size(); i-- > indexOfDivergence;) {
         out.print(prefix);
         printWhiteSpace(out, i * 2);
         out.print("<-- ", *previousInlineStack[i].inlineCallFrame, "\n");
+        hasPrinted = true;
     }
     
     // Print the pushes.
@@ -96,7 +100,10 @@ void Graph::dumpCodeOrigin(PrintStream& out, const char* prefix, NodeIndex prevN
         out.print(prefix);
         printWhiteSpace(out, i * 2);
         out.print("--> ", *currentInlineStack[i].inlineCallFrame, "\n");
+        hasPrinted = true;
     }
+    
+    return hasPrinted;
 }
 
 int Graph::amountOfNodeWhiteSpace(Node& node)
@@ -254,6 +261,13 @@ void Graph::dump(PrintStream& out, const char* prefix, NodeIndex nodeIndex)
         if (hasPrinted)
             out.print(", ");
         out.print(indexingTypeToString(node.indexingType()));
+        hasPrinted = true;
+    }
+    if (node.hasExecutionCounter()) {
+        if (hasPrinted)
+            out.print(", ");
+        out.print(RawPointer(node.executionCounter()));
+        hasPrinted = true;
     }
     if (op == JSConstant) {
         out.print(hasPrinted ? ", " : "", "$", node.constantNumber());

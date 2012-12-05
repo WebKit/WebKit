@@ -23,57 +23,44 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef StringPrintStream_h
-#define StringPrintStream_h
+#ifndef ProfilerBytecodes_h
+#define ProfilerBytecodes_h
 
+#include "CodeBlockHash.h"
+#include "JSValue.h"
+#include "ProfilerBytecode.h"
 #include <wtf/PrintStream.h>
-#include <wtf/text/CString.h>
-#include <wtf/text/WTFString.h>
 
-namespace WTF {
+namespace JSC { namespace Profiler {
 
-class StringPrintStream : public PrintStream {
+class Bytecodes {
 public:
-    WTF_EXPORT_PRIVATE StringPrintStream();
-    WTF_EXPORT_PRIVATE ~StringPrintStream();
+    Bytecodes(size_t id, CodeBlockHash);
+    ~Bytecodes();
     
-    virtual void vprintf(const char* format, va_list) WTF_ATTRIBUTE_PRINTF(2, 0);
+    void append(const Bytecode& bytecode) { m_bytecode.append(bytecode); }
     
-    WTF_EXPORT_PRIVATE CString toCString();
-    WTF_EXPORT_PRIVATE String toString();
-    void reset();
+    size_t id() const { return m_id; }
+    CodeBlockHash hash() const { return m_hash; }
+    
+    // Note that this data structure is not indexed by bytecode index.
+    unsigned size() const { return m_bytecode.size(); }
+    const Bytecode& at(unsigned i) const { return m_bytecode[i]; }
+    
+    unsigned indexForBytecodeIndex(unsigned bytecodeIndex) const;
+    const Bytecode& forBytecodeIndex(unsigned bytecodeIndex) const;
+    
+    void dump(PrintStream&) const;
+    
+    JSValue toJS(ExecState*) const;
     
 private:
-    void increaseSize(size_t);
-    
-    char* m_buffer;
-    size_t m_next;
-    size_t m_size;
-    char m_inlineBuffer[128];
+    size_t m_id;
+    CodeBlockHash m_hash;
+    Vector<Bytecode> m_bytecode;
 };
 
-// Stringify any type T that has a WTF::printInternal(PrintStream&, const T&)
-template<typename T>
-CString toCString(const T& value)
-{
-    StringPrintStream stream;
-    stream.print(value);
-    return stream.toCString();
-}
+} } // namespace JSC::Profiler
 
-template<typename T>
-String toString(const T& value)
-{
-    StringPrintStream stream;
-    stream.print(value);
-    return stream.toString();
-}
-
-} // namespace WTF
-
-using WTF::StringPrintStream;
-using WTF::toCString;
-using WTF::toString;
-
-#endif // StringPrintStream_h
+#endif // ProfilerBytecodes_h
 

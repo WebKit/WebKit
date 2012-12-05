@@ -128,7 +128,17 @@ namespace WTF {
             return segmentFor(index)->at(subscriptFor(index));
         }
 
+        const T& at(size_t index) const
+        {
+            return const_cast<SegmentedVector<T, SegmentSize, InlineCapacity>*>(this)->at(index);
+        }
+
         T& operator[](size_t index)
+        {
+            return at(index);
+        }
+
+        const T& operator[](size_t index) const
         {
             return at(index);
         }

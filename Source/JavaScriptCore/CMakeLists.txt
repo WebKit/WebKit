@@ -172,6 +172,23 @@ SET(JavaScriptCore_SOURCES
     parser/ParserArena.cpp
     parser/SourceProviderCache.cpp
 
+    profiler/ProfilerBytecode.cpp
+    profiler/ProfilerBytecode.h
+    profiler/ProfilerBytecodes.cpp
+    profiler/ProfilerBytecodes.h
+    profiler/ProfilerCompilation.cpp
+    profiler/ProfilerCompilation.h
+    profiler/ProfilerCompilationKind.cpp
+    profiler/ProfilerCompilationKind.h
+    profiler/ProfilerCompiledBytecode.cpp
+    profiler/ProfilerCompiledBytecode.h
+    profiler/ProfilerDatabase.cpp
+    profiler/ProfilerDatabase.h
+    profiler/ProfilerExecutionCounter.h
+    profiler/ProfilerOrigin.cpp
+    profiler/ProfilerOrigin.h
+    profiler/ProfilerOriginStack.cpp
+    profiler/ProfilerOriginStack.h
     profiler/Profile.cpp
     profiler/ProfileGenerator.cpp
     profiler/ProfileNode.cpp

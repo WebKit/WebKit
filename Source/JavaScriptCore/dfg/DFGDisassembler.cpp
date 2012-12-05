@@ -42,10 +42,53 @@ Disassembler::Disassembler(Graph& graph)
 
 void Disassembler::dump(PrintStream& out, LinkBuffer& linkBuffer)
 {
-    m_graph.m_dominators.computeIfNecessary(m_graph);
+    Vector<DumpedOp> ops = createDumpList(linkBuffer);
+    for (unsigned i = 0; i < ops.size(); ++i)
+        out.print(ops[i].text);
+}
+
+void Disassembler::dump(LinkBuffer& linkBuffer)
+{
+    dump(WTF::dataFile(), linkBuffer);
+}
+
+void Disassembler::reportToProfiler(Profiler::Compilation* compilation, LinkBuffer& linkBuffer)
+{
+    Vector<DumpedOp> ops = createDumpList(linkBuffer);
     
+    for (unsigned i = 0; i < ops.size(); ++i) {
+        Profiler::OriginStack stack;
+        
+        if (ops[i].codeOrigin.isSet())
+            stack = Profiler::OriginStack(*m_graph.m_globalData.m_perBytecodeProfiler, m_graph.m_codeBlock, ops[i].codeOrigin);
+        
+        compilation->addDescription(Profiler::CompiledBytecode(stack, ops[i].text));
+    }
+}
+
+void Disassembler::dumpHeader(PrintStream& out, LinkBuffer& linkBuffer)
+{
     out.print("Generated DFG JIT code for ", CodeBlockWithJITType(m_graph.m_codeBlock, JITCode::DFGJIT), ", instruction count = ", m_graph.m_codeBlock->instructionCount(), ":\n");
     out.print("    Code at [", RawPointer(linkBuffer.debugAddress()), ", ", RawPointer(static_cast<char*>(linkBuffer.debugAddress()) + linkBuffer.debugSize()), "):\n");
+}
+
+void Disassembler::append(Vector<Disassembler::DumpedOp>& result, StringPrintStream& out, CodeOrigin& previousOrigin)
+{
+    result.append(DumpedOp(previousOrigin, out.toCString()));
+    previousOrigin = CodeOrigin();
+    out.reset();
+}
+
+Vector<Disassembler::DumpedOp> Disassembler::createDumpList(LinkBuffer& linkBuffer)
+{
+    StringPrintStream out;
+    Vector<DumpedOp> result;
+    
+    CodeOrigin previousOrigin = CodeOrigin();
+    dumpHeader(out, linkBuffer);
+    append(result, out, previousOrigin);
+    
+    m_graph.m_dominators.computeIfNecessary(m_graph);
     
     const char* prefix = "    ";
     const char* disassemblyPrefix = "        ";
@@ -57,7 +100,9 @@ void Disassembler::dump(PrintStream& out, LinkBuffer& linkBuffer)
         if (!block)
             continue;
         dumpDisassembly(out, disassemblyPrefix, linkBuffer, previousLabel, m_labelForBlockIndex[blockIndex], lastNodeIndex);
+        append(result, out, previousOrigin);
         m_graph.dumpBlockHeader(out, prefix, blockIndex, Graph::DumpLivePhisOnly);
+        append(result, out, previousOrigin);
         NodeIndex lastNodeIndexForDisassembly = block->at(0);
         for (size_t i = 0; i < block->size(); ++i) {
             if (!m_graph[block->at(i)].willHaveCodeGenOrOSR() && !Options::showAllDFGNodes())
@@ -76,20 +121,25 @@ void Disassembler::dump(PrintStream& out, LinkBuffer& linkBuffer)
                     currentLabel = m_endOfMainPath;
             }
             dumpDisassembly(out, disassemblyPrefix, linkBuffer, previousLabel, currentLabel, lastNodeIndexForDisassembly);
-            m_graph.dumpCodeOrigin(out, prefix, lastNodeIndex, block->at(i));
+            append(result, out, previousOrigin);
+            previousOrigin = m_graph[block->at(i)].codeOrigin;
+            if (m_graph.dumpCodeOrigin(out, prefix, lastNodeIndex, block->at(i))) {
+                append(result, out, previousOrigin);
+                previousOrigin = m_graph[block->at(i)].codeOrigin;
+            }
             m_graph.dump(out, prefix, block->at(i));
             lastNodeIndex = block->at(i);
             lastNodeIndexForDisassembly = block->at(i);
         }
     }
     dumpDisassembly(out, disassemblyPrefix, linkBuffer, previousLabel, m_endOfMainPath, lastNodeIndex);
+    append(result, out, previousOrigin);
     out.print(prefix, "(End Of Main Path)\n");
+    append(result, out, previousOrigin);
     dumpDisassembly(out, disassemblyPrefix, linkBuffer, previousLabel, m_endOfCode, NoNode);
-}
-
-void Disassembler::dump(LinkBuffer& linkBuffer)
-{
-    dump(WTF::dataFile(), linkBuffer);
+    append(result, out, previousOrigin);
+    
+    return result;
 }
 
 void Disassembler::dumpDisassembly(PrintStream& out, const char* prefix, LinkBuffer& linkBuffer, MacroAssembler::Label& previousLabel, MacroAssembler::Label currentLabel, NodeIndex context)

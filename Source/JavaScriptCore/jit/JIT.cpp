@@ -89,6 +89,7 @@ JIT::JIT(JSGlobalData* globalData, CodeBlock* codeBlock)
     , m_lastResultBytecodeRegister(std::numeric_limits<int>::max())
     , m_jumpTargetsPosition(0)
 #endif
+    , m_compilation(0)
 #if USE(OS_RANDOMNESS)
     , m_randomGenerator(cryptographicallyRandomNumber())
 #else
@@ -232,6 +233,13 @@ void JIT::privateCompileMainPass()
 #if ENABLE(JIT_VERBOSE)
         dataLogF("Old JIT emitting code for bc#%u at offset 0x%lx.\n", m_bytecodeOffset, (long)debugOffset());
 #endif
+        
+        if (m_compilation) {
+            add64(
+                TrustedImm32(1),
+                AbsoluteAddress(m_compilation->executionCounterFor(Profiler::OriginStack(Profiler::Origin(
+                    m_compilation->bytecodes(), m_bytecodeOffset)))->address()));
+        }
 
         switch (m_interpreter->getOpcodeID(currentInstruction->u.opcode)) {
         DEFINE_BINARY_OP(op_del_by_val)
@@ -631,8 +639,10 @@ JITCode JIT::privateCompile(CodePtr* functionEntryArityCheck, JITCompilationEffo
     }
 #endif
     
-    if (Options::showDisassembly())
+    if (Options::showDisassembly() || m_globalData->m_perBytecodeProfiler)
         m_disassembler = adoptPtr(new JITDisassembler(m_codeBlock));
+    if (m_globalData->m_perBytecodeProfiler)
+        m_compilation = m_globalData->m_perBytecodeProfiler->newCompilation(m_codeBlock, Profiler::Baseline);
     
     if (m_disassembler)
         m_disassembler->setStartOfCode(label());
@@ -823,8 +833,10 @@ JITCode JIT::privateCompile(CodePtr* functionEntryArityCheck, JITCompilationEffo
     if (m_codeBlock->codeType() == FunctionCode && functionEntryArityCheck)
         *functionEntryArityCheck = patchBuffer.locationOf(arityCheck);
 
-    if (m_disassembler)
+    if (Options::showDisassembly())
         m_disassembler->dump(patchBuffer);
+    if (m_compilation)
+        m_disassembler->reportToProfiler(m_compilation, patchBuffer);
     
     CodeRef result = patchBuffer.finalizeCodeWithoutDisassembly();
     

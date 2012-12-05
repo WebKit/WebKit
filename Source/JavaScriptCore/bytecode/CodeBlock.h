@@ -160,6 +160,11 @@ namespace JSC {
             ASSERT(JITCode::isBaselineCode(result->getJITType()));
             return result;
         }
+#else
+        CodeBlock* baselineVersion()
+        {
+            return this;
+        }
 #endif
 
         void visitAggregate(SlotVisitor&);

@@ -23,57 +23,20 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef StringPrintStream_h
-#define StringPrintStream_h
+#include "config.h"
+#include "ProfilerBytecode.h"
 
-#include <wtf/PrintStream.h>
-#include <wtf/text/CString.h>
-#include <wtf/text/WTFString.h>
+#include "JSGlobalObject.h"
 
-namespace WTF {
+namespace JSC { namespace Profiler {
 
-class StringPrintStream : public PrintStream {
-public:
-    WTF_EXPORT_PRIVATE StringPrintStream();
-    WTF_EXPORT_PRIVATE ~StringPrintStream();
-    
-    virtual void vprintf(const char* format, va_list) WTF_ATTRIBUTE_PRINTF(2, 0);
-    
-    WTF_EXPORT_PRIVATE CString toCString();
-    WTF_EXPORT_PRIVATE String toString();
-    void reset();
-    
-private:
-    void increaseSize(size_t);
-    
-    char* m_buffer;
-    size_t m_next;
-    size_t m_size;
-    char m_inlineBuffer[128];
-};
-
-// Stringify any type T that has a WTF::printInternal(PrintStream&, const T&)
-template<typename T>
-CString toCString(const T& value)
+JSValue Bytecode::toJS(ExecState* exec) const
 {
-    StringPrintStream stream;
-    stream.print(value);
-    return stream.toCString();
+    JSObject* result = constructEmptyObject(exec);
+    result->putDirect(exec->globalData(), exec->propertyNames().bytecodeIndex, jsNumber(m_bytecodeIndex));
+    result->putDirect(exec->globalData(), exec->propertyNames().description, jsString(exec, String::fromUTF8(m_description)));
+    return result;
 }
 
-template<typename T>
-String toString(const T& value)
-{
-    StringPrintStream stream;
-    stream.print(value);
-    return stream.toString();
-}
-
-} // namespace WTF
-
-using WTF::StringPrintStream;
-using WTF::toCString;
-using WTF::toString;
-
-#endif // StringPrintStream_h
+} } // namespace JSC::Profiler
 

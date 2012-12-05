@@ -199,8 +199,8 @@ public:
     static void printNodeWhiteSpace(PrintStream&, Node&);
 
     // Dump the code origin of the given node as a diff from the code origin of the
-    // preceding node.
-    void dumpCodeOrigin(PrintStream&, const char* prefix, NodeIndex, NodeIndex);
+    // preceding node. Returns true if anything was printed.
+    bool dumpCodeOrigin(PrintStream&, const char* prefix, NodeIndex, NodeIndex);
 
     BlockIndex blockIndexForBytecodeOffset(Vector<BlockIndex>& blocks, unsigned bytecodeBegin);
 
@@ -671,6 +671,7 @@ public:
     
     JSGlobalData& m_globalData;
     CodeBlock* m_codeBlock;
+    Profiler::Compilation* m_compilation;
     CodeBlock* m_profiledBlock;
 
     Vector< OwnPtr<BasicBlock> , 8> m_blocks;

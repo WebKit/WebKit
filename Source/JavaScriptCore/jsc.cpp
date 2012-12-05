@@ -127,6 +127,7 @@ public:
         : m_interactive(false)
         , m_dump(false)
         , m_exitCode(false)
+        , m_profile(false)
     {
         parseArguments(argc, argv);
     }
@@ -136,6 +137,8 @@ public:
     bool m_exitCode;
     Vector<Script> m_scripts;
     Vector<String> m_arguments;
+    bool m_profile;
+    String m_profilerOutput;
 
     void parseArguments(int, char**);
 };
@@ -650,6 +653,7 @@ static NO_RETURN void printUsageStatement(bool help = false)
 #if HAVE(SIGNAL_H)
     fprintf(stderr, "  -s         Installs signal handlers that exit on a crash (Unix platforms only)\n");
 #endif
+    fprintf(stderr, "  -p <file>  Outputs profiling data to a file\n");
     fprintf(stderr, "  -x         Output exit code before terminating\n");
     fprintf(stderr, "\n");
     fprintf(stderr, "  --options                  Dumps all JSC VM options and exits\n");
@@ -686,6 +690,13 @@ void CommandLine::parseArguments(int argc, char** argv)
         }
         if (!strcmp(arg, "-d")) {
             m_dump = true;
+            continue;
+        }
+        if (!strcmp(arg, "-p")) {
+            if (++i == argc)
+                printUsageStatement();
+            m_profile = true;
+            m_profilerOutput = argv[i];
             continue;
         }
         if (!strcmp(arg, "-s")) {
@@ -751,6 +762,9 @@ int jscmain(int argc, char** argv)
     JSLockHolder lock(globalData.get());
     int result;
 
+    if (options.m_profile)
+        globalData->m_perBytecodeProfiler = adoptPtr(new Profiler::Database(*globalData));
+    
     GlobalObject* globalObject = GlobalObject::create(*globalData, GlobalObject::createStructure(*globalData, jsNull()), options.m_arguments);
     bool success = runWithScripts(globalObject, options.m_scripts, options.m_dump);
     if (options.m_interactive && success)
@@ -760,6 +774,11 @@ int jscmain(int argc, char** argv)
 
     if (options.m_exitCode)
         printf("jsc exiting %d\n", result);
+    
+    if (options.m_profile) {
+        if (!globalData->m_perBytecodeProfiler->save(options.m_profilerOutput.utf8().data()))
+            fprintf(stderr, "could not save profiler output.\n");
+    }
 
     return result;
 }

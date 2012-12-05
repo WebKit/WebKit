@@ -24,41 +24,50 @@
  */
 
 #include "config.h"
-#include "FilePrintStream.h"
+#include "ProfilerBytecodes.h"
 
-namespace WTF {
+#include "JSGlobalObject.h"
+#include <wtf/StringPrintStream.h>
 
-FilePrintStream::FilePrintStream(FILE* file, AdoptionMode adoptionMode)
-    : m_file(file)
-    , m_adoptionMode(adoptionMode)
+namespace JSC { namespace Profiler {
+
+Bytecodes::Bytecodes(size_t id, CodeBlockHash hash)
+    : m_id(id)
+    , m_hash(hash)
 {
 }
 
-FilePrintStream::~FilePrintStream()
+Bytecodes::~Bytecodes() { }
+
+unsigned Bytecodes::indexForBytecodeIndex(unsigned bytecodeIndex) const
 {
-    if (m_adoptionMode == Borrow)
-        return;
-    fclose(m_file);
+    return binarySearch<Bytecode, unsigned, getBytecodeIndexForBytecode>(const_cast<Bytecode*>(m_bytecode.begin()), m_bytecode.size(), bytecodeIndex) - m_bytecode.begin();
 }
 
-PassOwnPtr<FilePrintStream> FilePrintStream::open(const char* filename, const char* mode)
+const Bytecode& Bytecodes::forBytecodeIndex(unsigned bytecodeIndex) const
 {
-    FILE* file = fopen(filename, mode);
-    if (!file)
-        return PassOwnPtr<FilePrintStream>();
+    return at(indexForBytecodeIndex(bytecodeIndex));
+}
+
+void Bytecodes::dump(PrintStream& out) const
+{
+    out.print("#", m_hash, "(", m_id, ")");
+}
+
+JSValue Bytecodes::toJS(ExecState* exec) const
+{
+    JSObject* result = constructEmptyObject(exec);
     
-    return adoptPtr(new FilePrintStream(file));
+    result->putDirect(exec->globalData(), exec->propertyNames().bytecodesID, jsNumber(m_id));
+    result->putDirect(exec->globalData(), exec->propertyNames().hash, jsString(exec, String::fromUTF8(toCString(m_hash))));
+    
+    JSArray* stream = constructEmptyArray(exec, 0);
+    for (unsigned i = 0; i < m_bytecode.size(); ++i)
+        stream->putDirectIndex(exec, i, m_bytecode[i].toJS(exec));
+    result->putDirect(exec->globalData(), exec->propertyNames().bytecode, stream);
+    
+    return result;
 }
 
-void FilePrintStream::vprintf(const char* format, va_list argList)
-{
-    vfprintf(m_file, format, argList);
-}
-
-void FilePrintStream::flush()
-{
-    fflush(m_file);
-}
-
-} // namespace WTF
+} } // namespace JSC::Profiler
 

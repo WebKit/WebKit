@@ -73,10 +73,8 @@ static void initializeLogFileOnce()
 #endif
 
     if (filename) {
-        FILE* rawFile = fopen(actualFilename, "w");
-        if (rawFile)
-            file = new FilePrintStream(rawFile);
-        else
+        file = FilePrintStream::open(actualFilename, "w").leakPtr();
+        if (!file)
             fprintf(stderr, "Warning: Could not open log file %s for writing.\n", actualFilename);
     }
 #endif // DATA_LOG_TO_FILE

@@ -859,6 +859,16 @@ struct Node {
         ASSERT(hasArgumentPositionStart());
         return m_opInfo;
     }
+    
+    bool hasExecutionCounter()
+    {
+        return op() == CountExecution;
+    }
+    
+    Profiler::ExecutionCounter* executionCounter()
+    {
+        return bitwise_cast<Profiler::ExecutionCounter*>(m_opInfo);
+    }
 
     bool shouldGenerate()
     {

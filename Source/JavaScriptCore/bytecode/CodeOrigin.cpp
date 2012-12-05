@@ -26,6 +26,7 @@
 #include "config.h"
 #include "CodeOrigin.h"
 
+#include "CodeBlock.h"
 #include "Executable.h"
 
 namespace JSC {
@@ -71,6 +72,11 @@ void CodeOrigin::dump(PrintStream& out) const
 CodeBlockHash InlineCallFrame::hash() const
 {
     return executable->hashFor(specializationKind());
+}
+
+CodeBlock* InlineCallFrame::baselineCodeBlock() const
+{
+    return jsCast<FunctionExecutable*>(executable.get())->baselineCodeBlockFor(specializationKind());
 }
 
 void InlineCallFrame::dump(PrintStream& out) const

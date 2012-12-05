@@ -271,6 +271,23 @@
 		0FF42771159275D5004CB9FF /* ResolveGlobalStatus.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FF4276E159275D2004CB9FF /* ResolveGlobalStatus.cpp */; };
 		0FF42772159275D8004CB9FF /* ResolveGlobalStatus.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FF4276F159275D2004CB9FF /* ResolveGlobalStatus.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FF7168C15A3B235008F5DAA /* PropertyOffset.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FF7168A15A3B231008F5DAA /* PropertyOffset.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0FF729A5166AD351000F5BA3 /* ProfilerBytecode.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FF72993166AD347000F5BA3 /* ProfilerBytecode.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0FF729AD166AD35C000F5BA3 /* ProfilerBytecode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FF72992166AD347000F5BA3 /* ProfilerBytecode.cpp */; };
+		0FF729AE166AD35C000F5BA3 /* ProfilerBytecodes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FF72994166AD347000F5BA3 /* ProfilerBytecodes.cpp */; };
+		0FF729AF166AD35C000F5BA3 /* ProfilerCompilation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FF72996166AD347000F5BA3 /* ProfilerCompilation.cpp */; };
+		0FF729B0166AD35C000F5BA3 /* ProfilerCompilationKind.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FF72998166AD347000F5BA3 /* ProfilerCompilationKind.cpp */; };
+		0FF729B1166AD35C000F5BA3 /* ProfilerCompiledBytecode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FF7299A166AD347000F5BA3 /* ProfilerCompiledBytecode.cpp */; };
+		0FF729B2166AD35C000F5BA3 /* ProfilerDatabase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FF7299C166AD347000F5BA3 /* ProfilerDatabase.cpp */; };
+		0FF729B3166AD35C000F5BA3 /* ProfilerOrigin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FF7299F166AD347000F5BA3 /* ProfilerOrigin.cpp */; };
+		0FF729B4166AD35C000F5BA3 /* ProfilerOriginStack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FF729A1166AD347000F5BA3 /* ProfilerOriginStack.cpp */; };
+		0FF729B9166AD360000F5BA3 /* ProfilerBytecodes.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FF72995166AD347000F5BA3 /* ProfilerBytecodes.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0FF729BA166AD360000F5BA3 /* ProfilerCompilation.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FF72997166AD347000F5BA3 /* ProfilerCompilation.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0FF729BB166AD360000F5BA3 /* ProfilerCompilationKind.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FF72999166AD347000F5BA3 /* ProfilerCompilationKind.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0FF729BC166AD360000F5BA3 /* ProfilerCompiledBytecode.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FF7299B166AD347000F5BA3 /* ProfilerCompiledBytecode.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0FF729BD166AD360000F5BA3 /* ProfilerDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FF7299D166AD347000F5BA3 /* ProfilerDatabase.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0FF729BE166AD360000F5BA3 /* ProfilerExecutionCounter.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FF7299E166AD347000F5BA3 /* ProfilerExecutionCounter.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0FF729BF166AD360000F5BA3 /* ProfilerOrigin.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FF729A0166AD347000F5BA3 /* ProfilerOrigin.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0FF729C0166AD360000F5BA3 /* ProfilerOriginStack.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FF729A2166AD347000F5BA3 /* ProfilerOriginStack.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FF922D414F46B410041A24E /* LLIntOffsetsExtractor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F4680A114BA7F8200BFE272 /* LLIntOffsetsExtractor.cpp */; };
 		0FFFC95714EF90A000C72532 /* DFGCFAPhase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FFFC94B14EF909500C72532 /* DFGCFAPhase.cpp */; };
 		0FFFC95814EF90A200C72532 /* DFGCFAPhase.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FFFC94C14EF909500C72532 /* DFGCFAPhase.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1079,6 +1096,23 @@
 		0FF4276E159275D2004CB9FF /* ResolveGlobalStatus.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ResolveGlobalStatus.cpp; sourceTree = "<group>"; };
 		0FF4276F159275D2004CB9FF /* ResolveGlobalStatus.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResolveGlobalStatus.h; sourceTree = "<group>"; };
 		0FF7168A15A3B231008F5DAA /* PropertyOffset.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PropertyOffset.h; sourceTree = "<group>"; };
+		0FF72992166AD347000F5BA3 /* ProfilerBytecode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ProfilerBytecode.cpp; path = profiler/ProfilerBytecode.cpp; sourceTree = "<group>"; };
+		0FF72993166AD347000F5BA3 /* ProfilerBytecode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ProfilerBytecode.h; path = profiler/ProfilerBytecode.h; sourceTree = "<group>"; };
+		0FF72994166AD347000F5BA3 /* ProfilerBytecodes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ProfilerBytecodes.cpp; path = profiler/ProfilerBytecodes.cpp; sourceTree = "<group>"; };
+		0FF72995166AD347000F5BA3 /* ProfilerBytecodes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ProfilerBytecodes.h; path = profiler/ProfilerBytecodes.h; sourceTree = "<group>"; };
+		0FF72996166AD347000F5BA3 /* ProfilerCompilation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ProfilerCompilation.cpp; path = profiler/ProfilerCompilation.cpp; sourceTree = "<group>"; };
+		0FF72997166AD347000F5BA3 /* ProfilerCompilation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ProfilerCompilation.h; path = profiler/ProfilerCompilation.h; sourceTree = "<group>"; };
+		0FF72998166AD347000F5BA3 /* ProfilerCompilationKind.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ProfilerCompilationKind.cpp; path = profiler/ProfilerCompilationKind.cpp; sourceTree = "<group>"; };
+		0FF72999166AD347000F5BA3 /* ProfilerCompilationKind.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ProfilerCompilationKind.h; path = profiler/ProfilerCompilationKind.h; sourceTree = "<group>"; };
+		0FF7299A166AD347000F5BA3 /* ProfilerCompiledBytecode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ProfilerCompiledBytecode.cpp; path = profiler/ProfilerCompiledBytecode.cpp; sourceTree = "<group>"; };
+		0FF7299B166AD347000F5BA3 /* ProfilerCompiledBytecode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ProfilerCompiledBytecode.h; path = profiler/ProfilerCompiledBytecode.h; sourceTree = "<group>"; };
+		0FF7299C166AD347000F5BA3 /* ProfilerDatabase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ProfilerDatabase.cpp; path = profiler/ProfilerDatabase.cpp; sourceTree = "<group>"; };
+		0FF7299D166AD347000F5BA3 /* ProfilerDatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ProfilerDatabase.h; path = profiler/ProfilerDatabase.h; sourceTree = "<group>"; };
+		0FF7299E166AD347000F5BA3 /* ProfilerExecutionCounter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ProfilerExecutionCounter.h; path = profiler/ProfilerExecutionCounter.h; sourceTree = "<group>"; };
+		0FF7299F166AD347000F5BA3 /* ProfilerOrigin.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ProfilerOrigin.cpp; path = profiler/ProfilerOrigin.cpp; sourceTree = "<group>"; };
+		0FF729A0166AD347000F5BA3 /* ProfilerOrigin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ProfilerOrigin.h; path = profiler/ProfilerOrigin.h; sourceTree = "<group>"; };
+		0FF729A1166AD347000F5BA3 /* ProfilerOriginStack.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ProfilerOriginStack.cpp; path = profiler/ProfilerOriginStack.cpp; sourceTree = "<group>"; };
+		0FF729A2166AD347000F5BA3 /* ProfilerOriginStack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ProfilerOriginStack.h; path = profiler/ProfilerOriginStack.h; sourceTree = "<group>"; };
 		0FF922CF14F46B130041A24E /* JSCLLIntOffsetsExtractor */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = JSCLLIntOffsetsExtractor; sourceTree = BUILT_PRODUCTS_DIR; };
 		0FFFC94B14EF909500C72532 /* DFGCFAPhase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGCFAPhase.cpp; path = dfg/DFGCFAPhase.cpp; sourceTree = "<group>"; };
 		0FFFC94C14EF909500C72532 /* DFGCFAPhase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGCFAPhase.h; path = dfg/DFGCFAPhase.h; sourceTree = "<group>"; };
@@ -2516,6 +2550,23 @@
 			isa = PBXGroup;
 			children = (
 				95E3BC040E1AE68200B2D1C1 /* CallIdentifier.h */,
+				0FF72992166AD347000F5BA3 /* ProfilerBytecode.cpp */,
+				0FF72993166AD347000F5BA3 /* ProfilerBytecode.h */,
+				0FF72994166AD347000F5BA3 /* ProfilerBytecodes.cpp */,
+				0FF72995166AD347000F5BA3 /* ProfilerBytecodes.h */,
+				0FF72996166AD347000F5BA3 /* ProfilerCompilation.cpp */,
+				0FF72997166AD347000F5BA3 /* ProfilerCompilation.h */,
+				0FF72998166AD347000F5BA3 /* ProfilerCompilationKind.cpp */,
+				0FF72999166AD347000F5BA3 /* ProfilerCompilationKind.h */,
+				0FF7299A166AD347000F5BA3 /* ProfilerCompiledBytecode.cpp */,
+				0FF7299B166AD347000F5BA3 /* ProfilerCompiledBytecode.h */,
+				0FF7299C166AD347000F5BA3 /* ProfilerDatabase.cpp */,
+				0FF7299D166AD347000F5BA3 /* ProfilerDatabase.h */,
+				0FF7299E166AD347000F5BA3 /* ProfilerExecutionCounter.h */,
+				0FF7299F166AD347000F5BA3 /* ProfilerOrigin.cpp */,
+				0FF729A0166AD347000F5BA3 /* ProfilerOrigin.h */,
+				0FF729A1166AD347000F5BA3 /* ProfilerOriginStack.cpp */,
+				0FF729A2166AD347000F5BA3 /* ProfilerOriginStack.h */,
 				95742F630DD11F5A000917FB /* Profile.cpp */,
 				95742F640DD11F5A000917FB /* Profile.h */,
 				95CD45740E1C4FDD0085358E /* ProfileGenerator.cpp */,
@@ -3077,6 +3128,15 @@
 				0FDDBFB61666EEDA00C55FEF /* DFGVariableAccessDataDump.h in Headers */,
 				0F8F94411667633200D61971 /* CodeBlockHash.h in Headers */,
 				0F96EBB316676EF6008BADE3 /* CodeBlockWithJITType.h in Headers */,
+				0FF729A5166AD351000F5BA3 /* ProfilerBytecode.h in Headers */,
+				0FF729B9166AD360000F5BA3 /* ProfilerBytecodes.h in Headers */,
+				0FF729BA166AD360000F5BA3 /* ProfilerCompilation.h in Headers */,
+				0FF729BB166AD360000F5BA3 /* ProfilerCompilationKind.h in Headers */,
+				0FF729BC166AD360000F5BA3 /* ProfilerCompiledBytecode.h in Headers */,
+				0FF729BD166AD360000F5BA3 /* ProfilerDatabase.h in Headers */,
+				0FF729BE166AD360000F5BA3 /* ProfilerExecutionCounter.h in Headers */,
+				0FF729BF166AD360000F5BA3 /* ProfilerOrigin.h in Headers */,
+				0FF729C0166AD360000F5BA3 /* ProfilerOriginStack.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3665,6 +3725,14 @@
 				0F8F94421667633500D61971 /* CodeType.cpp in Sources */,
 				0F8F94441667635400D61971 /* JITCode.cpp in Sources */,
 				0F8F9446166764F100D61971 /* CodeOrigin.cpp in Sources */,
+				0FF729AD166AD35C000F5BA3 /* ProfilerBytecode.cpp in Sources */,
+				0FF729AE166AD35C000F5BA3 /* ProfilerBytecodes.cpp in Sources */,
+				0FF729AF166AD35C000F5BA3 /* ProfilerCompilation.cpp in Sources */,
+				0FF729B0166AD35C000F5BA3 /* ProfilerCompilationKind.cpp in Sources */,
+				0FF729B1166AD35C000F5BA3 /* ProfilerCompiledBytecode.cpp in Sources */,
+				0FF729B2166AD35C000F5BA3 /* ProfilerDatabase.cpp in Sources */,
+				0FF729B3166AD35C000F5BA3 /* ProfilerOrigin.cpp in Sources */,
+				0FF729B4166AD35C000F5BA3 /* ProfilerOriginStack.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
