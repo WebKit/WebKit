@@ -1430,6 +1430,8 @@ webkit.org/b/104104 fast/overflow/scrollbar-click-retains-focus.html [ Failure ]
 webkit.org/b/104089 fast/frames/viewsource-attribute.html [ Failure ]
 webkit.org/b/104089 fast/frames/viewsource-on-image-file.html [ Failure ]
 
+webkit.org/b/104054 svg/custom/use-href-update-crash.svg [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing
 #////////////////////////////////////////////////////////////////////////////////////////
