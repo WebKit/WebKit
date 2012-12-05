@@ -1,3 +1,16 @@
+2012-12-05  Joaquim Rocha  <jrocha@igalia.com>
+
+        URL schemes registered as local, no access, display isolated and as CORS enabled are not registered again after a web process crash
+        https://bugs.webkit.org/show_bug.cgi?id=104013
+
+        Reviewed by Darin Adler.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeWebProcess): Iterate through the schemes stored in
+        urlSchemesRegisteredAsLocal, urlSchemesRegisteredAsNoAccess,
+        urlSchemesRegisteredAsDisplayIsolated and urlSchemesRegisteredAsCORSEnabled and
+        call the respective (already existing) methods for registering them.
+
 2012-12-04  Yuni Jeong  <yhnet.jung@samsung.com>
 
         [EFL][WK2] Add APIs to get/set default font size.
