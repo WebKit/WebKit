@@ -1,3 +1,32 @@
+2012-12-04  Noel Gordon  <noel.gordon@gmail.com>
+
+        [v8] Improve worker.postMessage() string performance: avoid utf8 conversion
+        https://bugs.webkit.org/show_bug.cgi?id=102230
+
+        Reviewed by Eric Seidel.
+
+        Avoid utf8 conversion when serializing strings with SerializedScriptValue. Provide 
+        Ascii and UChar writers for v8 string serialization and provide a UChar reader for
+        deserialization. Define/use serialization StringUCharTag to indicate UChar strings
+        in the wire format. Increment the SerializedScriptValue wire format version.
+
+        In the wire format, StringUCharTag is followed by the string length in bytes, then
+        the length/2 UChars of the string.
+
+        Note the string length is VarInt encoded. During serialization, compute the number
+        of bytes used to encode the length and prepend a PaddingTag if needed so the UChar
+        data appears on an even-byte boundary. This prevents unaligned reads of UChar data
+        during deserialization (the deserialization buffer is even-byte aligned).
+
+        Testing transfers of large strings to and from workers indicates a 10X improvement
+        in transfer rate for strings, and strings within js objects, with this change. For
+        example, 500 MByte/s on my test machine (50 MByte/s without this change) for flat,
+        32 MByte string postMessage() transfers.
+
+        Covered by platform/chromium/fast/storage/serialized-script-value.html
+
+        * bindings/v8/SerializedScriptValue.cpp:
+
 2012-12-04  Kentaro Hara  <haraken@chromium.org>
 
         [V8] V8Binding::v8ExternalString() is redundant

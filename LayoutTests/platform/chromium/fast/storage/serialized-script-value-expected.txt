@@ -117,6 +117,18 @@ PASS JSON.stringify(newObj) is JSON.stringify(obj)
 Serialize {"hello":"there"}:
 PASS bufferView.length is expectedBufferValues.length
 
+Deserialize to {"a":"a","u":"αβ","d":42}:
+PASS JSON.stringify(newObj) is JSON.stringify(obj)
+PASS JSON.stringify(newObj) is JSON.stringify(obj)
+Serialize {"a":"a","u":"αβ","d":42}:
+PASS bufferView.length is expectedBufferValues.length
+
+Deserialize to {"a":"ab","u":"αβ","d":42}:
+PASS JSON.stringify(newObj) is JSON.stringify(obj)
+PASS JSON.stringify(newObj) is JSON.stringify(obj)
+Serialize {"a":"ab","u":"αβ","d":42}:
+PASS bufferView.length is expectedBufferValues.length
+
 Serialize undefined:
 PASS thrownException.code is expectedException
 PASS successfullyParsed is true

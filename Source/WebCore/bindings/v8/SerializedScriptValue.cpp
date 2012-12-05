@@ -168,6 +168,7 @@ typedef UChar BufferValueType;
 
 // WebCoreStrings are read as (length:uint32_t, string:UTF8[length]).
 // RawStrings are read as (length:uint32_t, string:UTF8[length]).
+// RawUCharStrings are read as (length:uint32_t, string:UChar[length/sizeof(UChar)]).
 // RawFiles are read as (path:WebCoreString, url:WebCoreStrng, type:WebCoreString).
 // There is a reference table that maps object references (uint32_t) to v8::Values.
 // Tokens marked with (ref) are inserted into the reference table and given the next object reference ID after decoding.
@@ -185,6 +186,7 @@ enum SerializationTag {
     TrueTag = 'T', // -> <true>
     FalseTag = 'F', // -> <false>
     StringTag = 'S', // string:RawString -> string
+    StringUCharTag = 'c', // string:RawUCharString -> string
     Int32Tag = 'I', // value:ZigZag-encoded int32 -> Integer
     Uint32Tag = 'U', // value:uint32_t -> Integer
     DateTag = 'D', // value:double -> Date (ref)
@@ -242,7 +244,8 @@ static bool shouldCheckForCycles(int depth)
 }
 
 // Increment this for each incompatible change to the wire format.
-static const uint32_t wireFormatVersion = 1;
+// Version 2: Added StringUCharTag for UChar v8 strings.
+static const uint32_t wireFormatVersion = 2;
 
 static const int maxDepth = 20000;
 
@@ -307,6 +310,40 @@ public:
         ASSERT(length >= 0);
         append(StringTag);
         doWriteString(data, length);
+    }
+
+    void writeAsciiString(v8::Handle<v8::String>& string)
+    {
+        int length = string->Length();
+        ASSERT(length >= 0);
+
+        append(StringTag);
+        doWriteUint32(static_cast<uint32_t>(length));
+        ensureSpace(length);
+
+        char* buffer = reinterpret_cast<char*>(byteAt(m_position));
+        string->WriteAscii(buffer, 0, length, v8StringWriteOptions());
+        m_position += length;
+    }
+
+    void writeUCharString(v8::Handle<v8::String>& string)
+    {
+        int length = string->Length();
+        ASSERT(length >= 0);
+
+        int size = length * sizeof(UChar);
+        int bytes = bytesNeededToWireEncode(static_cast<uint32_t>(size));
+        if ((m_position + 1 + bytes) & 1)
+            append(PaddingTag);
+
+        append(StringUCharTag);
+        doWriteUint32(static_cast<uint32_t>(size));
+        ensureSpace(size);
+
+        ASSERT(!(m_position & 1));
+        uint16_t* buffer = reinterpret_cast<uint16_t*>(byteAt(m_position));
+        string->Write(buffer, 0, length, v8StringWriteOptions());
+        m_position += size;
     }
 
     void writeStringObject(const char* data, int length)
@@ -546,6 +583,19 @@ private:
         doWriteString(buffer->data(), buffer->size());
     }
 
+    int bytesNeededToWireEncode(uint32_t value)
+    {
+        int bytes = 1;
+        while (true) {
+            value >>= varIntShift;
+            if (!value)
+                break;
+            ++bytes;
+        }
+
+        return bytes;
+    }
+
     template<class T>
     void doWriteUintHelper(T value)
     {
@@ -608,7 +658,15 @@ private:
             *byteAt(m_position) = static_cast<uint8_t>(PaddingTag);
     }
 
-    uint8_t* byteAt(int position) { return reinterpret_cast<uint8_t*>(m_buffer.data()) + position; }
+    uint8_t* byteAt(int position)
+    {
+        return reinterpret_cast<uint8_t*>(m_buffer.data()) + position;
+    }
+
+    int v8StringWriteOptions()
+    {
+        return v8::String::NO_NULL_TERMINATION | v8::String::PRESERVE_ASCII_NULL;
+    }
 
     Vector<BufferValueType> m_buffer;
     unsigned m_position;
@@ -970,8 +1028,11 @@ private:
 
     void writeString(v8::Handle<v8::Value> value)
     {
-        v8::String::Utf8Value stringValue(value);
-        m_writer.writeString(*stringValue, stringValue.length());
+        v8::Handle<v8::String> string = value.As<v8::String>();
+        if (!string->Length() || !string->MayContainNonAscii())
+            m_writer.writeAsciiString(string);
+        else
+            m_writer.writeUCharString(string);
     }
 
     void writeStringObject(v8::Handle<v8::Value> value)
@@ -1268,6 +1329,7 @@ public:
         , m_version(0)
         , m_isolate(isolate)
     {
+        ASSERT(!(reinterpret_cast<size_t>(buffer) & 1));
         ASSERT(length >= 0);
     }
 
@@ -1318,6 +1380,10 @@ public:
             break;
         case StringTag:
             if (!readString(value))
+                return false;
+            break;
+        case StringUCharTag:
+            if (!readUCharString(value))
                 return false;
             break;
         case StringObjectTag:
@@ -1546,6 +1612,19 @@ private:
         if (m_position + length > m_length)
             return false;
         *value = v8::String::New(reinterpret_cast<const char*>(m_buffer + m_position), length);
+        m_position += length;
+        return true;
+    }
+
+    bool readUCharString(v8::Handle<v8::Value>* value)
+    {
+        uint32_t length;
+        if (!doReadUint32(&length) || (length & 1))
+            return false;
+        if (m_position + length > m_length)
+            return false;
+        ASSERT(!(m_position & 1));
+        *value = v8::String::New(reinterpret_cast<const uint16_t*>(m_buffer + m_position), length / sizeof(UChar));
         m_position += length;
         return true;
     }

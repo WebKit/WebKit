@@ -1,3 +1,18 @@
+2012-12-04  Noel Gordon  <noel.gordon@gmail.com>
+
+        [v8] Improve worker.postMessage() string performance: avoid utf8 conversion
+        https://bugs.webkit.org/show_bug.cgi?id=102230
+
+        Reviewed by Eric Seidel.
+
+        Update serialized-script-value-expected results for the new SerializedScriptValue
+        wire format version. Add test cases for UChar string serialization to verify that
+        the UChar string data appears on an even-byte boundary in the wire format, and to
+        test reading string data from the previous wire format is backward-compatible.
+
+        * platform/chromium/fast/storage/serialized-script-value-expected.txt:
+        * platform/chromium/fast/storage/serialized-script-value.html:
+
 2012-12-04  Takashi Sakamoto  <tasak@google.com>
 
         Unreviewed, WebKit gardening. A rebaseline.
