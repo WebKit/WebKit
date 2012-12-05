@@ -100,25 +100,18 @@ v8::Local<v8::String> StringCache::v8ExternalStringSlow(StringImpl* stringImpl, 
     return newString;
 }
 
-void IntegerCache::createSmallIntegers(v8::Isolate* isolate)
+IntegerCache::IntegerCache()
 {
-    ASSERT(!m_initialized);
-    // We initialize m_smallIntegers not in a constructor but in v8Integer(),
-    // because Integer::New() requires a HandleScope. At the point where
-    // IntegerCache is constructed, a HandleScope might not exist.
+    v8::HandleScope handleScope;
     for (int value = 0; value < numberOfCachedSmallIntegers; value++)
-        m_smallIntegers[value] = v8::Persistent<v8::Integer>::New(v8::Integer::New(value, isolate));
-    m_initialized = true;
+        m_smallIntegers[value] = v8::Persistent<v8::Integer>::New(v8::Integer::New(value));
 }
 
 IntegerCache::~IntegerCache()
 {
-    if (m_initialized) {
-        for (int value = 0; value < numberOfCachedSmallIntegers; value++) {
-            m_smallIntegers[value].Dispose();
-            m_smallIntegers[value].Clear();
-        }
-        m_initialized = false;
+    for (int value = 0; value < numberOfCachedSmallIntegers; value++) {
+        m_smallIntegers[value].Dispose();
+        m_smallIntegers[value].Clear();
     }
 }
 
