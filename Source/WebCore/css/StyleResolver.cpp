@@ -961,6 +961,15 @@ void StyleResolver::matchAllRules(MatchResult& result, bool includeSMILPropertie
 #endif
 }
 
+bool StyleResolver::classNamesAffectedByRules(const SpaceSplitString& classNames) const
+{
+    for (unsigned i = 0; i < classNames.size(); ++i) {
+        if (m_features.classesInRules.contains(classNames[i].impl()))
+            return true;
+    }
+    return false;
+}
+
 inline void StyleResolver::initElement(Element* e)
 {
     if (m_element != e) {
@@ -1134,32 +1143,38 @@ static inline bool elementHasDirectionAuto(Element* element)
     return element->isHTMLElement() && toHTMLElement(element)->hasDirectionAuto();
 }
 
-static inline bool haveIdenticalStyleAffectingAttributes(StyledElement* a, StyledElement* b)
+bool StyleResolver::sharingCandidateHasIdenticalStyleAffectingAttributes(StyledElement* sharingCandidate) const
 {
-    if (a->attributeData() == b->attributeData())
+    if (m_element->attributeData() == sharingCandidate->attributeData())
         return true;
-    if (a->fastGetAttribute(XMLNames::langAttr) != b->fastGetAttribute(XMLNames::langAttr))
+    if (m_element->fastGetAttribute(XMLNames::langAttr) != sharingCandidate->fastGetAttribute(XMLNames::langAttr))
         return false;
-    if (a->fastGetAttribute(langAttr) != b->fastGetAttribute(langAttr))
+    if (m_element->fastGetAttribute(langAttr) != sharingCandidate->fastGetAttribute(langAttr))
         return false;
-    if (a->hasClass()) {
+
+    if (!m_elementAffectedByClassRules) {
+        if (sharingCandidate->hasClass() && classNamesAffectedByRules(sharingCandidate->classNames()))
+            return false;
+    } else if (sharingCandidate->hasClass()) {
 #if ENABLE(SVG)
         // SVG elements require a (slow!) getAttribute comparision because "class" is an animatable attribute for SVG.
-        if (a->isSVGElement()) {
-            if (a->getAttribute(classAttr) != b->getAttribute(classAttr))
+        if (m_element->isSVGElement()) {
+            if (m_element->getAttribute(classAttr) != sharingCandidate->getAttribute(classAttr))
                 return false;
-        } else
+        } else {
 #endif
-        if (a->attributeData()->classNames() != b->attributeData()->classNames())
-            return false;
-    }
+            if (m_element->classNames() != sharingCandidate->classNames())
+                return false;
+        }
+    } else
+        return false;
 
-    if (a->presentationAttributeStyle() != b->presentationAttributeStyle())
+    if (m_styledElement->presentationAttributeStyle() != sharingCandidate->presentationAttributeStyle())
         return false;
 
 #if ENABLE(PROGRESS_ELEMENT)
-    if (a->hasTagName(progressTag)) {
-        if (static_cast<HTMLProgressElement*>(a)->isDeterminate() != static_cast<HTMLProgressElement*>(b)->isDeterminate())
+    if (m_element->hasTagName(progressTag)) {
+        if (static_cast<HTMLProgressElement*>(m_element)->isDeterminate() != static_cast<HTMLProgressElement*>(sharingCandidate)->isDeterminate())
             return false;
     }
 #endif
@@ -1176,8 +1191,6 @@ bool StyleResolver::canShareStyleWithElement(StyledElement* element) const
     if (style->unique())
         return false;
     if (element->tagQName() != m_element->tagQName())
-        return false;
-    if (element->hasClass() != m_element->hasClass())
         return false;
     if (element->inlineStyle())
         return false;
@@ -1199,7 +1212,7 @@ bool StyleResolver::canShareStyleWithElement(StyledElement* element) const
         return false;
     if (element == element->document()->cssTarget())
         return false;
-    if (!haveIdenticalStyleAffectingAttributes(element, m_styledElement))
+    if (!sharingCandidateHasIdenticalStyleAffectingAttributes(element))
         return false;
     if (element->additionalPresentationAttributeStyle() != m_styledElement->additionalPresentationAttributeStyle())
         return false;
@@ -1292,6 +1305,10 @@ RenderStyle* StyleResolver::locateSharedStyle()
         return 0;
     if (elementHasDirectionAuto(m_element))
         return 0;
+
+    // Cache whether m_element is affected by any known class selectors.
+    // FIXME: This shouldn't be a member variable. The style sharing code could be factored out of StyleResolver.
+    m_elementAffectedByClassRules = m_element && m_element->hasClass() && classNamesAffectedByRules(m_element->classNames());
 
     // Check previous siblings and their cousins.
     unsigned count = 0;
