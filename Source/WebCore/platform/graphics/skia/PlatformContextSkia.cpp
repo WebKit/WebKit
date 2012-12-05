@@ -222,6 +222,11 @@ void PlatformContextSkia::setDrawingToImageBuffer(bool value)
     m_drawingToImageBuffer = value;
 }
 
+SkDevice* PlatformContextSkia::createCompatibleDevice(const IntSize& size, bool hasAlpha)
+{
+    return m_canvas->createCompatibleDevice(bitmap()->config(), size.width(), size.height(), !hasAlpha);
+}
+
 bool PlatformContextSkia::isDrawingToImageBuffer() const
 {
     return m_drawingToImageBuffer;

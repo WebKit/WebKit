@@ -82,7 +82,7 @@ namespace WebCore {
         void addColorStop(float, const Color&);
 
         void getColor(float value, float* r, float* g, float* b, float* a) const;
-        bool hasAlpha() const;
+        virtual bool hasAlpha() const OVERRIDE;
 
         bool isRadial() const { return m_radial; }
         bool isZeroSize() const { return m_p0.x() == m_p1.x() && m_p0.y() == m_p1.y() && (!m_radial || m_r0 == m_r1); }

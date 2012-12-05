@@ -1,3 +1,57 @@
+2012-12-05  Justin Novosad  <junov@google.com>
+
+        [skia] Improve performance of GraphicsContext::createCompatibleBuffer by using SkDevice:createCompatibleDevice
+        https://bugs.webkit.org/show_bug.cgi?id=103896
+
+        Reviewed by Stephen White.
+
+        Refactored GraphicsContext::createCompatibleBuffer (platform common
+        code) to use platform-specific implementations provided by ImageBuffer.
+        There is no change in behavior for non-skia ports. The skia
+        implementation uses skia'a own createCompatibleDevice implementation,
+        which offers several performance benefits:
+        1. For accelerated contexts, the backing store may be allocated from
+        the scratch texture pool, which minimizes texture allocation and
+        deallocation overhead.
+        2. The backing store will not be initially cleared if it is known
+        in advance that fully opaque contents will be drawn into the buffer.
+        3. For non-accelerated contexts, if the backing store is flagged as
+        opaque, faster blitter loop implementations will be used for drawing
+        the buffer contents into other buffers. (e.g. generated opaque gradient
+        fills)
+
+        No new tests: covered by existing layout tests 
+
+        * platform/graphics/Generator.h:
+        (Generator):
+        Added hasAlpha method so that it can be used by GeneratorGeneratedImage
+        * platform/graphics/GeneratorGeneratedImage.cpp:
+        (WebCore::GeneratorGeneratedImage::drawPattern):
+        Passing m_generator->hasAlpha() to createCompatibleBuffer in order to
+        take advantage of optimizations that apply to opaque buffers.
+        * platform/graphics/Gradient.h:
+        (Gradient):
+        Made hasAlpha virtual so that it now overrides Generator::hasAlpha
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::createCompatibleBuffer):
+        Refactored to use platform-specific implementation
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/ImageBuffer.cpp:
+        (WebCore::createCompatibleBuffer):
+        Non-skia implementation. Mimics old
+        GraphicsContext::createCompatibleBuffer
+        * platform/graphics/ImageBuffer.h:
+        (ImageBuffer):
+        New skia-specific constructor
+        * platform/graphics/skia/ImageBufferSkia.cpp:
+        (WebCore::ImageBuffer::createCompatibleBuffer):
+        (WebCore::ImageBuffer::ImageBuffer):
+        * platform/graphics/skia/PlatformContextSkia.cpp:
+        (WebCore::PlatformContextSkia::createCompatibleDevice):
+        (WebCore):
+        * platform/graphics/skia/PlatformContextSkia.h:
+        (PlatformContextSkia):
+
 2012-12-05  Alexis Menard  <alexis@webkit.org>
 
         REGRESSION (r136683): css3/calc/background-position-parsing.html failing on EFL Linux 64-bit Debug WK2

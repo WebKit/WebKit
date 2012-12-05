@@ -108,6 +108,42 @@ static SkCanvas* createNonPlatformCanvas(const IntSize& size)
     return pixelRef ? new SkCanvas(device) : 0;
 }
 
+PassOwnPtr<ImageBuffer> ImageBuffer::createCompatibleBuffer(const IntSize& size, float resolutionScale, ColorSpace colorSpace, const GraphicsContext* context, bool hasAlpha)
+{
+    bool success = false;
+    OwnPtr<ImageBuffer> buf = adoptPtr(new ImageBuffer(size, resolutionScale, colorSpace, context, hasAlpha, success));
+    if (!success)
+        return nullptr;
+    return buf.release();
+}
+
+ImageBuffer::ImageBuffer(const IntSize& size, float resolutionScale, ColorSpace, const GraphicsContext* compatibleContext, bool hasAlpha, bool& success)
+    : m_data(size)
+    , m_size(size)
+    , m_logicalSize(size)
+    , m_resolutionScale(resolutionScale)
+{
+    if (!compatibleContext) {
+        success = false;
+        return;
+    }
+
+    SkAutoTUnref<SkDevice> device(compatibleContext->platformContext()->createCompatibleDevice(size, hasAlpha));
+    SkPixelRef* pixelRef = device->accessBitmap(false).pixelRef();
+    if (!pixelRef) {
+        success = false;
+        return;
+    }
+
+    m_data.m_canvas = adoptPtr(new SkCanvas(device));
+    m_data.m_platformContext.setCanvas(m_data.m_canvas.get());
+    m_context = adoptPtr(new GraphicsContext(&m_data.m_platformContext));
+    m_context->platformContext()->setDrawingToImageBuffer(true);
+    m_context->scale(FloatSize(m_resolutionScale, m_resolutionScale));
+
+    success = true;
+}
+
 ImageBuffer::ImageBuffer(const IntSize& size, float resolutionScale, ColorSpace, RenderingMode renderingMode, DeferralMode deferralMode, bool& success)
     : m_data(size)
     , m_size(size)

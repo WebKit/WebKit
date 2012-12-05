@@ -93,6 +93,8 @@ namespace WebCore {
             return buf.release();
         }
 
+        static PassOwnPtr<ImageBuffer> createCompatibleBuffer(const IntSize&, float resolutionScale, ColorSpace, const GraphicsContext*, bool hasAlpha);
+
         ~ImageBuffer();
 
         // The actual resolution of the backing store
@@ -156,6 +158,9 @@ namespace WebCore {
         // This constructor will place its success into the given out-variable
         // so that create() knows when it should return failure.
         ImageBuffer(const IntSize&, float resolutionScale, ColorSpace, RenderingMode, DeferralMode, bool& success);
+#if USE(SKIA)
+        ImageBuffer(const IntSize&, float resolutionScale, ColorSpace, const GraphicsContext*, bool hasAlpha, bool& success);
+#endif
     };
 
 #if USE(CG) || USE(SKIA)
