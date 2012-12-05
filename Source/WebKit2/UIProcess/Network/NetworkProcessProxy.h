@@ -28,6 +28,7 @@
 
 #if ENABLE(NETWORK_PROCESS)
 
+#include "ChildProcessProxy.h"
 #include "Connection.h"
 #include "ProcessLauncher.h"
 #include "WebProcessProxyMessages.h"
@@ -38,14 +39,12 @@ namespace WebKit {
 class NetworkProcessManager;
 struct NetworkProcessCreationParameters;
 
-class NetworkProcessProxy : public RefCounted<NetworkProcessProxy>, CoreIPC::Connection::Client, ProcessLauncher::Client {
+class NetworkProcessProxy : public RefCounted<NetworkProcessProxy>, public ChildProcessProxy {
 public:
     static PassRefPtr<NetworkProcessProxy> create(NetworkProcessManager*);
     ~NetworkProcessProxy();
 
     void getNetworkProcessConnection(PassRefPtr<Messages::WebProcessProxy::GetNetworkProcessConnection::DelayedReply>);
-
-    bool isValid() const { return m_connection; }
 
 #if PLATFORM(MAC)
     void setApplicationIsOccluded(bool);
@@ -54,15 +53,15 @@ public:
 private:
     NetworkProcessProxy(NetworkProcessManager*);
 
+    virtual void getLaunchOptions(ProcessLauncher::LaunchOptions&) OVERRIDE;
     void platformInitializeNetworkProcess(NetworkProcessCreationParameters&);
 
     void networkProcessCrashedOrFailedToLaunch();
 
     // CoreIPC::Connection::Client
-    virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);
-    virtual void didClose(CoreIPC::Connection*);
-    virtual void didReceiveInvalidMessage(CoreIPC::Connection*, CoreIPC::StringReference messageReceiverName, CoreIPC::StringReference messageName);
-    virtual void syncMessageSendTimedOut(CoreIPC::Connection*);
+    virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&) OVERRIDE;
+    virtual void didClose(CoreIPC::Connection*) OVERRIDE;
+    virtual void didReceiveInvalidMessage(CoreIPC::Connection*, CoreIPC::StringReference messageReceiverName, CoreIPC::StringReference messageName) OVERRIDE;
 
     // Message handlers
     void didReceiveNetworkProcessProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);
@@ -70,12 +69,6 @@ private:
     
     // ProcessLauncher::Client
     virtual void didFinishLaunching(ProcessLauncher*, CoreIPC::Connection::Identifier);
-
-    // The connection to the network process.
-    RefPtr<CoreIPC::Connection> m_connection;
-
-    // The process launcher for the network process.
-    RefPtr<ProcessLauncher> m_processLauncher;
 
     NetworkProcessManager* m_networkProcessManager;
     

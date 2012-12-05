@@ -1,3 +1,78 @@
+2012-12-05  Alexey Proskuryakov  <ap@apple.com>
+
+        [WK2] Would like to queue messages while NetworkProcess is launching
+        https://bugs.webkit.org/show_bug.cgi?id=104143
+
+        Reviewed by Anders Carlsson.
+
+        Factored out process launching and message sending code to a ChildProcessProxy class.
+        Process closing and crashing code should be moved once we better understand common
+        requirements for the processes.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * win/WebKit2.vcproj:
+        Added ChildProcessProxy files.
+
+        * Shared/ChildProcessProxy.cpp: Added.
+        (WebKit::ChildProcessProxy::ChildProcessProxy):
+        (WebKit::ChildProcessProxy::~ChildProcessProxy):
+        (WebKit::ChildProcessProxy::fromConnection):
+        (WebKit::ChildProcessProxy::connect):
+        (WebKit::ChildProcessProxy::terminate):
+        (WebKit::ChildProcessProxy::sendMessage):
+        (WebKit::ChildProcessProxy::isLaunching):
+        (WebKit::ChildProcessProxy::didFinishLaunching):
+        (WebKit::ChildProcessProxy::clearConnection):
+        * Shared/ChildProcessProxy.h: Added.
+        (WebKit::ChildProcessProxy::connection):
+        (WebKit::ChildProcessProxy::isValid):
+        (WebKit::ChildProcessProxy::canSendMessage):
+        (WebKit::ChildProcessProxy::processIdentifier):
+        (WebKit::ChildProcessProxy::send):
+        (WebKit::ChildProcessProxy::sendSync):
+        Moved code from WebProcessProxy. Every ChildProcessProxy is a connection client,
+        but every one is a connection queue client, so that latter is passed as an argument.
+
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        Removed unused syncMessageSendTimedOut(), thank you OVERRIDE.
+
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::NetworkProcessProxy):
+        (WebKit::NetworkProcessProxy::getLaunchOptions):
+        (WebKit::NetworkProcessProxy::~NetworkProcessProxy):
+        (WebKit::NetworkProcessProxy::getNetworkProcessConnection):
+        (WebKit::NetworkProcessProxy::didFinishLaunching):
+        * UIProcess/Network/NetworkProcessProxy.h:
+        * UIProcess/Network/mac/NetworkProcessProxyMac.mm:
+        (WebKit::NetworkProcessProxy::setApplicationIsOccluded):
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::WebProcessProxy):
+        (WebKit::WebProcessProxy::~WebProcessProxy):
+        (WebKit::WebProcessProxy::getLaunchOptions):
+        (WebKit::WebProcessProxy::disconnect):
+        (WebKit::WebProcessProxy::didFinishLaunching):
+        Use shared code.
+
+        * UIProcess/WebProcessProxy.h: (WebKit::WebProcessProxy::fromConnection):
+        NetworkProcess inherits from conneciton client privately, so we need to do most
+        of the work in ClientProcessProxy, and further upcast here.
+
+        * UIProcess/efl/WebProcessProxyEfl.cpp:
+        (WebKit::WebProcessProxy::platformGetLaunchOptions):
+        * UIProcess/gtk/WebProcessProxyGtk.cpp:
+        (WebKit::WebProcessProxy::platformGetLaunchOptions):
+        * UIProcess/mac/WebProcessProxyMac.mm:
+        (WebKit::WebProcessProxy::platformGetLaunchOptions):
+        * UIProcess/qt/WebProcessProxyQt.cpp:
+        (WebKit::WebProcessProxy::platformGetLaunchOptions):
+        * UIProcess/win/WebProcessProxyWin.cpp:
+        (WebKit::WebProcessProxy::platformGetLaunchOptions):
+        Updated for renaming, platformConnect -> platformGetLaunchOptions().
+
 2012-12-05  Kiran Muppala  <cmuppala@apple.com>
 
         WebKit2 child processes need to initialize timer coalescing policy on Mac.

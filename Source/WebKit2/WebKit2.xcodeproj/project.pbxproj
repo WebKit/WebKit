@@ -1017,6 +1017,8 @@
 		E134F01712EA5D33004EC58D /* WKPrintingView.h in Headers */ = {isa = PBXBuildFile; fileRef = E134F01512EA5D11004EC58D /* WKPrintingView.h */; };
 		E134F01A12EA5D99004EC58D /* WKPrintingView.mm in Sources */ = {isa = PBXBuildFile; fileRef = E134F01912EA5D99004EC58D /* WKPrintingView.mm */; };
 		E13A8A30162879AC00392929 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E13A8A2F162879AC00392929 /* Cocoa.framework */; };
+		E1513C66166EABB200149FCB /* ChildProcessProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1513C64166EABB200149FCB /* ChildProcessProxy.cpp */; };
+		E1513C67166EABB200149FCB /* ChildProcessProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = E1513C65166EABB200149FCB /* ChildProcessProxy.h */; };
 		E179FD9C134D38060015B883 /* ArgumentCodersMac.h in Headers */ = {isa = PBXBuildFile; fileRef = E179FD9B134D38060015B883 /* ArgumentCodersMac.h */; };
 		E179FD9F134D38250015B883 /* ArgumentCodersMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = E179FD9E134D38250015B883 /* ArgumentCodersMac.mm */; };
 		E17BF99614D0A73E00A5A069 /* NetscapeSandboxFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = E17BF99514D0A73E00A5A069 /* NetscapeSandboxFunctions.h */; };
@@ -2308,6 +2310,8 @@
 		E13A8A4B16287A1B00392929 /* SharedWorkerProcess.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = SharedWorkerProcess.xcconfig; sourceTree = "<group>"; };
 		E14E99F814D879B4001D221F /* PluginProcess.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PluginProcess.entitlements; sourceTree = "<group>"; };
 		E14E99F914D879C9001D221F /* add-entitlements.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = "add-entitlements.sh"; sourceTree = "<group>"; };
+		E1513C64166EABB200149FCB /* ChildProcessProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ChildProcessProxy.cpp; sourceTree = "<group>"; };
+		E1513C65166EABB200149FCB /* ChildProcessProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChildProcessProxy.h; sourceTree = "<group>"; };
 		E179FD9B134D38060015B883 /* ArgumentCodersMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArgumentCodersMac.h; sourceTree = "<group>"; };
 		E179FD9E134D38250015B883 /* ArgumentCodersMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ArgumentCodersMac.mm; sourceTree = "<group>"; };
 		E17BF99514D0A73E00A5A069 /* NetscapeSandboxFunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetscapeSandboxFunctions.h; sourceTree = "<group>"; };
@@ -2756,6 +2760,8 @@
 				BC3065F91259344E00E71278 /* CacheModel.h */,
 				1A2D956E12848564001EB962 /* ChildProcess.cpp */,
 				1A2D956D12848564001EB962 /* ChildProcess.h */,
+				E1513C64166EABB200149FCB /* ChildProcessProxy.cpp */,
+				E1513C65166EABB200149FCB /* ChildProcessProxy.h */,
 				1A6F9F8E11E13EFC00DB1371 /* CommandLine.h */,
 				5136183B163126DA00A99DDE /* ConnectionStack.cpp */,
 				5136183C163126DA00A99DDE /* ConnectionStack.h */,
@@ -4995,6 +5001,7 @@
 				5175944B1657080400DD771D /* NetworkResourceLoaderMessages.h in Headers */,
 				BC8ACA1316670D89004C1941 /* ObjCObjectGraph.h in Headers */,
 				BC8ACA1516670D89004C1941 /* ObjCObjectGraphCoders.h in Headers */,
+				E1513C67166EABB200149FCB /* ChildProcessProxy.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5948,6 +5955,7 @@
 				5175944A1657080400DD771D /* NetworkResourceLoaderMessageReceiver.cpp in Sources */,
 				BC8ACA1416670D89004C1941 /* ObjCObjectGraph.mm in Sources */,
 				BC8ACA1616670D89004C1941 /* ObjCObjectGraphCoders.mm in Sources */,
+				E1513C66166EABB200149FCB /* ChildProcessProxy.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

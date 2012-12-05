@@ -90,7 +90,8 @@ PassRefPtr<WebProcessProxy> WebProcessProxy::create(PassRefPtr<WebContext> conte
 }
 
 WebProcessProxy::WebProcessProxy(PassRefPtr<WebContext> context)
-    : m_responsivenessTimer(this)
+    : ChildProcessProxy(this)
+    , m_responsivenessTimer(this)
     , m_context(context)
     , m_mayHaveUniversalFileReadSandboxExtension(false)
 #if ENABLE(CUSTOM_PROTOCOLS)
@@ -102,49 +103,19 @@ WebProcessProxy::WebProcessProxy(PassRefPtr<WebContext> context)
 
 WebProcessProxy::~WebProcessProxy()
 {
-    if (m_connection)
-        m_connection->invalidate();
-
     if (m_webConnection)
         m_webConnection->invalidate();
-
-    for (size_t i = 0; i < m_pendingMessages.size(); ++i)
-        m_pendingMessages[i].first.releaseArguments();
-
-    if (m_processLauncher) {
-        m_processLauncher->invalidate();
-        m_processLauncher = 0;
-    }
 }
 
-WebProcessProxy* WebProcessProxy::fromConnection(CoreIPC::Connection* connection)
+void WebProcessProxy::getLaunchOptions(ProcessLauncher::LaunchOptions& launchOptions)
 {
-    ASSERT(connection);
-
-    WebProcessProxy* webProcessProxy = static_cast<WebProcessProxy*>(connection->client());
-    ASSERT(webProcessProxy->connection() == connection);
-
-    return webProcessProxy;
-}
-
-void WebProcessProxy::connect()
-{
-    ASSERT(!m_processLauncher);
-
-    ProcessLauncher::LaunchOptions launchOptions;
     launchOptions.processType = ProcessLauncher::WebProcess;
-    platformConnect(launchOptions);
-    
-    m_processLauncher = ProcessLauncher::create(this, launchOptions);
+    platformGetLaunchOptions(launchOptions);
 }
 
 void WebProcessProxy::disconnect()
 {
-    if (m_connection) {
-        m_connection->removeQueueClient(this);
-        m_connection->invalidate();
-        m_connection = nullptr;
-    }
+    clearConnection();
 
     if (m_webConnection) {
         m_webConnection->invalidate();
@@ -161,36 +132,6 @@ void WebProcessProxy::disconnect()
     m_frameMap.clear();
 
     m_context->disconnectProcess(this);
-}
-
-bool WebProcessProxy::sendMessage(CoreIPC::MessageID messageID, PassOwnPtr<CoreIPC::MessageEncoder> encoder, unsigned messageSendFlags)
-{
-    // If we're waiting for the web process to launch, we need to stash away the messages so we can send them once we have
-    // a CoreIPC connection.
-    if (isLaunching()) {
-        m_pendingMessages.append(make_pair(CoreIPC::Connection::OutgoingMessage(messageID, encoder), messageSendFlags));
-        return true;
-    }
-
-    // If the web process has exited, m_connection will be null here.
-    if (!m_connection)
-        return false;
-
-    return connection()->sendMessage(messageID, encoder, messageSendFlags);
-}
-
-bool WebProcessProxy::isLaunching() const
-{
-    if (m_processLauncher)
-        return m_processLauncher->isLaunching();
-
-    return false;
-}
-
-void WebProcessProxy::terminate()
-{
-    if (m_processLauncher)
-        m_processLauncher->terminateProcess();
 }
 
 void WebProcessProxy::addMessageReceiver(CoreIPC::StringReference messageReceiverName, CoreIPC::MessageReceiver* messageReceiver)
@@ -554,34 +495,11 @@ void WebProcessProxy::didBecomeResponsive(ResponsivenessTimer*)
         pages[i]->processDidBecomeResponsive();
 }
 
-void WebProcessProxy::didFinishLaunching(ProcessLauncher*, CoreIPC::Connection::Identifier connectionIdentifier)
+void WebProcessProxy::didFinishLaunching(ProcessLauncher* launcher, CoreIPC::Connection::Identifier connectionIdentifier)
 {
-    didFinishLaunching(connectionIdentifier);
-}
-
-void WebProcessProxy::didFinishLaunching(CoreIPC::Connection::Identifier connectionIdentifier)
-{
-    ASSERT(!m_connection);
-
-    m_connection = CoreIPC::Connection::createServerConnection(connectionIdentifier, this, RunLoop::main());
-#if OS(DARWIN)
-    m_connection->setShouldCloseConnectionOnMachExceptions();
-#elif PLATFORM(QT) && !OS(WINDOWS)
-    m_connection->setShouldCloseConnectionOnProcessTermination(processIdentifier());
-#endif
-
-    m_connection->addQueueClient(this);
-    m_connection->open();
+    ChildProcessProxy::didFinishLaunching(launcher, connectionIdentifier);
 
     m_webConnection = WebConnectionToWebProcess::create(this);
-
-    for (size_t i = 0; i < m_pendingMessages.size(); ++i) {
-        CoreIPC::Connection::OutgoingMessage& outgoingMessage = m_pendingMessages[i].first;
-        unsigned messageSendFlags = m_pendingMessages[i].second;
-        connection()->sendMessage(outgoingMessage.messageID(), adoptPtr(outgoingMessage.arguments()), messageSendFlags);
-    }
-
-    m_pendingMessages.clear();
 
     // Tell the context that we finished launching.
     m_context->processDidFinishLaunching(this);

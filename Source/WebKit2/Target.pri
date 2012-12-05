@@ -74,6 +74,7 @@ HEADERS += \
     Shared/ShareableSurface.h \
     Shared/CacheModel.h \
     Shared/ChildProcess.h \
+    Shared/ChildProcessProxy.h \
     Shared/ConnectionStack.h \
     Shared/DictionaryPopupInfo.h \
     Shared/EditorState.h \
@@ -450,6 +451,7 @@ SOURCES += \
     Shared/Plugins/PluginModuleInfo.cpp \
     Shared/Plugins/PluginProcessCreationParameters.cpp \
     Shared/ChildProcess.cpp \
+    Shared/ChildProcessProxy.cpp \
     Shared/ConnectionStack.cpp \
     Shared/DictionaryPopupInfo.cpp \
     Shared/EditorState.cpp \

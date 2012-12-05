@@ -28,7 +28,7 @@
 
 namespace WebKit {
 
-void WebProcessProxy::platformConnect(ProcessLauncher::LaunchOptions& launchOptions)
+void WebProcessProxy::platformGetLaunchOptions(ProcessLauncher::LaunchOptions& launchOptions)
 {
 #ifndef NDEBUG
     const char* webProcessCmdPrefix = getenv("WEB_PROCESS_CMD_PREFIX");

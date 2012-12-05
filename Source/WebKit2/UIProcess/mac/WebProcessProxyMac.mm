@@ -112,7 +112,7 @@ static bool shouldUseXPC()
 }
 #endif
 
-void WebProcessProxy::platformConnect(ProcessLauncher::LaunchOptions& launchOptions)
+void WebProcessProxy::platformGetLaunchOptions(ProcessLauncher::LaunchOptions& launchOptions)
 {
     // We want the web process to match the architecture of the UI process.
     launchOptions.architecture = ProcessLauncher::LaunchOptions::MatchCurrentArchitecture;

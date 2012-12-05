@@ -59,13 +59,12 @@ private:
     void platformInitialize(const NetworkProcessCreationParameters&);
 
     // ChildProcess
-    virtual bool shouldTerminate();
+    virtual bool shouldTerminate() OVERRIDE;
 
     // CoreIPC::Connection::Client
-    virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);
-    virtual void didClose(CoreIPC::Connection*);
-    virtual void didReceiveInvalidMessage(CoreIPC::Connection*, CoreIPC::StringReference messageReceiverName, CoreIPC::StringReference messageName);
-    virtual void syncMessageSendTimedOut(CoreIPC::Connection*);
+    virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&) OVERRIDE;
+    virtual void didClose(CoreIPC::Connection*) OVERRIDE;
+    virtual void didReceiveInvalidMessage(CoreIPC::Connection*, CoreIPC::StringReference messageReceiverName, CoreIPC::StringReference messageName) OVERRIDE;
 
     // Message Handlers
     void didReceiveNetworkProcessMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);

@@ -28,7 +28,7 @@
 
 namespace WebKit {
 
-void WebProcessProxy::platformConnect(ProcessLauncher::LaunchOptions&)
+void WebProcessProxy::platformGetLaunchOptions(ProcessLauncher::LaunchOptions&)
 {
 }
 

@@ -45,7 +45,7 @@ void NetworkProcessProxy::setApplicationIsOccluded(bool applicationIsOccluded)
     if (!isValid())
         return;
     
-    m_connection->send(Messages::NetworkProcess::SetApplicationIsOccluded(applicationIsOccluded), 0);
+    connection()->send(Messages::NetworkProcess::SetApplicationIsOccluded(applicationIsOccluded), 0);
 }
 
 } // namespace WebKit

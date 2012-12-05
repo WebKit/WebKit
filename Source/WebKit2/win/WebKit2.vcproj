@@ -423,6 +423,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\Shared\ChildProcessProxy.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\Shared\ChildProcessProxy.h"
+				>
+			</File>
+			<File
 				RelativePath="..\Shared\CommandLine.h"
 				>
 			</File>

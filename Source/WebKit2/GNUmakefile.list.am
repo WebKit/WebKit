@@ -369,6 +369,8 @@ webkit2_sources += \
 	Source/WebKit2/Shared/CacheModel.h \
 	Source/WebKit2/Shared/ChildProcess.cpp \
 	Source/WebKit2/Shared/ChildProcess.h \
+	Source/WebKit2/Shared/ChildProcessProxy.cpp \
+	Source/WebKit2/Shared/ChildProcessProxy.h \
 	Source/WebKit2/Shared/CommandLine.h \
 	Source/WebKit2/Shared/ConnectionStack.cpp \
 	Source/WebKit2/Shared/ConnectionStack.h \
@@ -1274,6 +1276,8 @@ webkit2_plugin_process_sources += \
 	Source/WebKit2/PluginProcess/unix/PluginProcessUnix.cpp \
 	Source/WebKit2/Shared/ChildProcess.cpp \
 	Source/WebKit2/Shared/ChildProcess.h \
+	Source/WebKit2/Shared/ChildProcessProxy.cpp \
+	Source/WebKit2/Shared/ChildProcessProxy.h \
 	Source/WebKit2/Shared/ConnectionStack.cpp \
 	Source/WebKit2/Shared/ConnectionStack.h \
 	Source/WebKit2/Shared/ProcessExecutablePath.h \

@@ -92,10 +92,6 @@ void NetworkProcess::didReceiveInvalidMessage(CoreIPC::Connection*, CoreIPC::Str
     RunLoop::current()->stop();
 }
 
-void NetworkProcess::syncMessageSendTimedOut(CoreIPC::Connection*)
-{
-}
-
 void NetworkProcess::initializeNetworkProcess(const NetworkProcessCreationParameters& parameters)
 {
     platformInitialize(parameters);

@@ -33,7 +33,7 @@ Vector<HWND> WebProcessProxy::windowsToReceiveSentMessagesWhileWaitingForSyncRep
     return Vector<HWND>();
 }
 
-void WebProcessProxy::platformConnect(ProcessLauncher::LaunchOptions&)
+void WebProcessProxy::platformGetLaunchOptions(ProcessLauncher::LaunchOptions&)
 {
 }
 
