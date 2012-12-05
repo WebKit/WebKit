@@ -3609,9 +3609,9 @@ void WebPagePrivate::setViewportSize(const IntSize& transformedActualVisibleSize
 
     // Suspend all screen updates to the backingstore to make sure no-one tries to blit
     // while the window surface and the BackingStore are out of sync.
-    // FIXME: Do we really need to suspend/resume both backingstore and screen here?
-    m_backingStore->d->suspendBackingStoreUpdates();
+    BackingStore::ResumeUpdateOperation screenResumeOperation = BackingStore::Blit;
     m_backingStore->d->suspendScreenUpdates();
+    m_backingStore->d->suspendBackingStoreUpdates();
 
     // The screen rotation is a major state transition that in this case is not properly
     // communicated to the backing store, since it does early return in most methods when
@@ -3727,9 +3727,7 @@ void WebPagePrivate::setViewportSize(const IntSize& transformedActualVisibleSize
 
     // Need to resume so that the backingstore will start recording the invalidated
     // rects from below.
-    // FIXME: Do we really need to suspend/resume both backingstore and screen here?
     m_backingStore->d->resumeBackingStoreUpdates();
-    m_backingStore->d->resumeScreenUpdates(BackingStore::None);
 
     // We might need to layout here to get a correct contentsSize so that zoomToFit
     // is calculated correctly.
@@ -3801,10 +3799,8 @@ void WebPagePrivate::setViewportSize(const IntSize& transformedActualVisibleSize
 
     } else {
 
-        // Suspend all screen updates to the backingstore.
-        // FIXME: Do we really need to suspend/resume both backingstore and screen here?
+        // Suspend all updates to the backingstore.
         m_backingStore->d->suspendBackingStoreUpdates();
-        m_backingStore->d->suspendScreenUpdates();
 
         // If the zoom failed, then we should still preserve the special case of scroll position.
         IntPoint scrollPosition = this->scrollPosition();
@@ -3829,13 +3825,14 @@ void WebPagePrivate::setViewportSize(const IntSize& transformedActualVisibleSize
         if (needsLayout) {
             m_backingStore->d->resetTiles();
             m_backingStore->d->updateTiles(false /* updateVisible */, false /* immediate */);
+            screenResumeOperation = BackingStore::RenderAndBlit;
         }
 
         // If we need layout then render and blit, otherwise just blit as our viewport has changed.
-        // FIXME: Do we really need to suspend/resume both backingstore and screen here?
         m_backingStore->d->resumeBackingStoreUpdates();
-        m_backingStore->d->resumeScreenUpdates(needsLayout ? BackingStore::RenderAndBlit : BackingStore::Blit);
     }
+
+    m_backingStore->d->resumeScreenUpdates(screenResumeOperation);
 }
 
 void WebPage::setViewportSize(const Platform::IntSize& viewportSize, bool ensureFocusElementVisible)
