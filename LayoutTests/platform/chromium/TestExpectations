@@ -2280,12 +2280,12 @@ crbug.com/47035 [ Win Debug ] fast/loader/stateobjects/document-destroyed-naviga
 
 # CSS3 Hyphenation landed in http://trac.webkit.org/changeset/61548
 # We don't implement it yet.
-crbug.com/47083 [ Win Mac Android ] fast/text/hyphens.html [ Failure ImageOnlyFailure ]
-crbug.com/47083 [ Win Mac Android ] fast/text/hyphenate-character.html [ Failure ImageOnlyFailure ]
-crbug.com/47083 [ Win Mac Android ] fast/text/hyphenate-first-word.html [ Failure ImageOnlyFailure ]
+crbug.com/47083 fast/text/hyphens.html [ Failure ImageOnlyFailure ]
+crbug.com/47083 fast/text/hyphenate-character.html [ Failure ImageOnlyFailure ]
+crbug.com/47083 fast/text/hyphenate-first-word.html [ Failure ImageOnlyFailure ]
 crbug.com/47083 fast/text/hyphenate-limit-lines.html [ Failure ImageOnlyFailure ]
-crbug.com/47083 [ Win Mac Android ] fast/text/hyphenate-limit-before-after.html [ Failure ImageOnlyFailure ]
-crbug.com/47083 [ Win Mac Android ] fast/text/hyphenate-locale.html [ Failure ImageOnlyFailure ]
+crbug.com/47083 fast/text/hyphenate-limit-before-after.html [ Failure ImageOnlyFailure ]
+crbug.com/47083 fast/text/hyphenate-locale.html [ Failure ImageOnlyFailure ]
 
 crbug.com/48239 fast/js/function-apply.html [ Failure ]
 crbug.com/48239 fast/js/function-apply-aliased.html [ Failure Pass ]

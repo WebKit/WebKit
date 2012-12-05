@@ -1,3 +1,14 @@
+2012-12-05  Mike West  <mkwst@chromium.org>
+
+        [chromium] Unreviewed gardening.
+
+        fast/text/hyphenate-character.html, fast/text/hyphenate-first-word.html
+        fast/text/hyphenate-locale.html, and fast/text/hyphens.html have started
+        failing on Linux. Widening the skip to cover that platform as well (they
+        were already skipped for Windows, Mac, and Android.
+
+        * platform/chromium/TestExpectations:
+
 2012-12-05  Takashi Sakamoto  <tasak@google.com>
 
         Unreviewed, WebKit gardening.
