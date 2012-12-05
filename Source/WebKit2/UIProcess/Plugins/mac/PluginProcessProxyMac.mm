@@ -36,9 +36,7 @@
 #import <spawn.h>
 #import <wtf/text/CString.h>
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
 #import <QuartzCore/CARemoteLayerServer.h>
-#endif
 
 @interface WKPlaceholderModalWindow : NSWindow 
 @end
@@ -135,11 +133,7 @@ void PluginProcessProxy::platformInitializePluginProcess(PluginProcessCreationPa
 
 #if USE(ACCELERATED_COMPOSITING) && HAVE(HOSTED_CORE_ANIMATION)
     parameters.parentProcessName = [[NSProcessInfo processInfo] processName];
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
     mach_port_t renderServerPort = [[CARemoteLayerServer sharedServer] serverPort];
-#else
-    mach_port_t renderServerPort = WKInitializeRenderServer();
-#endif
 
     if (renderServerPort != MACH_PORT_NULL)
         parameters.acceleratedCompositingPort = CoreIPC::MachPort(renderServerPort, MACH_MSG_TYPE_COPY_SEND);

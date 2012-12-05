@@ -305,9 +305,7 @@ void WebProcess::platformTerminate()
 
 void WebProcess::secItemResponse(CoreIPC::Connection*, uint64_t requestID, const SecItemResponseData& response)
 {
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
     didReceiveSecItemResponse(requestID, response);
-#endif
 }
 
 } // namespace WebKit

@@ -46,10 +46,8 @@ public:
 
     char** environmentPointer() const { return m_environmentPointer; }
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
     static const char* preexistingProcessServiceNameKey();
     static const char* preexistingProcessTypeKey();
-#endif
 
 private:
     const char* valueIfVariableHasName(const char* environmentVariable, const char* name) const;

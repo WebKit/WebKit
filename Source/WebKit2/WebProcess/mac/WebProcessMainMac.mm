@@ -46,9 +46,7 @@
 #import <wtf/text/CString.h>
 #import <wtf/text/WTFString.h>
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
 extern "C" kern_return_t bootstrap_register2(mach_port_t, name_t, mach_port_t, uint64_t);
-#endif
 
 #if USE(APPKIT)
 @interface NSApplication (WebNSApplicationDetails)
@@ -72,9 +70,7 @@ int WebProcessMain(const CommandLine& commandLine)
 
     String serviceName = commandLine["servicename"];
     String clientExecutable;
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
     clientExecutable = commandLine["client-executable"];
-#endif
 
     if (serviceName.isEmpty() && clientExecutable.isEmpty())
         return EXIT_FAILURE;
@@ -95,9 +91,7 @@ int WebProcessMain(const CommandLine& commandLine)
             WTFLogAlways("No client identifier passed to the WebProcess");
             return EXIT_FAILURE;
         }
-    }
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
-    else {
+    } else {
         mach_port_name_t publishedService;
         mach_port_allocate(mach_task_self(), MACH_PORT_RIGHT_RECEIVE, &publishedService);
         mach_port_insert_right(mach_task_self(), publishedService, publishedService, MACH_MSG_TYPE_MAKE_SEND);
@@ -158,7 +152,6 @@ int WebProcessMain(const CommandLine& commandLine)
             return EXIT_FAILURE;
         }
     }
-#endif // __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
 
     String localization = commandLine["localization"];
     if (!localization.isEmpty()) {

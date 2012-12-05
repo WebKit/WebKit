@@ -3409,7 +3409,7 @@ void WebPage::commitPageTransitionViewport()
 }
 #endif
 
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
+#if PLATFORM(MAC)
 void WebPage::handleAlternativeTextUIResult(const String& result)
 {
     Frame* frame = m_page->focusController()->focusedOrMainFrame();

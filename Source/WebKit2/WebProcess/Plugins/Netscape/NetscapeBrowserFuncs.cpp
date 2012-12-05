@@ -39,7 +39,7 @@
 #include <utility>
 #include <wtf/text/StringBuilder.h>
 
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
+#if PLATFORM(MAC)
 #include "NetscapeSandboxFunctions.h"
 #endif
 
@@ -505,7 +505,7 @@ static NPError NPN_GetValue(NPP npp, NPNVariable variable, void *value)
             *(NPBool*)value = true;
             break;
 
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070 && ENABLE(PLUGIN_PROCESS)
+#if PLATFORM(MAC) && ENABLE(PLUGIN_PROCESS)
         case WKNVSandboxFunctions:
         {
             *(WKNSandboxFunctions **)value = netscapeSandboxFunctions();

@@ -302,7 +302,7 @@ messages -> WebPage {
     FindZoomableAreaForPoint(WebCore::IntPoint point, WebCore::IntSize area)
 #endif
 
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
+#if PLATFORM(MAC)
     HandleAlternativeTextUIResult(String result)
 #endif
 

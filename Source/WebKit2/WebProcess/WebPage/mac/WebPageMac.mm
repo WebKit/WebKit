@@ -490,7 +490,6 @@ void WebPage::performDictionaryLookupAtLocation(const FloatPoint& floatPoint)
 
     NSDictionary *options = nil;
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
     // As context, we are going to use the surrounding paragraph of text.
     VisiblePosition paragraphStart = startOfParagraph(position);
     VisiblePosition paragraphEnd = endOfParagraph(position);
@@ -505,11 +504,6 @@ void WebPage::performDictionaryLookupAtLocation(const FloatPoint& floatPoint)
     RefPtr<Range> finalRange = TextIterator::subrange(fullCharacterRange.get(), extractedRange.location, extractedRange.length);
     if (!finalRange)
         return;
-#else
-    RefPtr<Range> finalRange = makeRange(startOfWord(position), endOfWord(position));
-    if (!finalRange)
-        return;
-#endif
 
     performDictionaryLookupForRange(DictionaryPopupInfo::HotKey, frame, finalRange.get(), options);
 }
@@ -522,7 +516,6 @@ void WebPage::performDictionaryLookupForSelection(DictionaryPopupInfo::Type type
 
     NSDictionary *options = nil;
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
     VisiblePosition selectionStart = selection.visibleStart();
     VisiblePosition selectionEnd = selection.visibleEnd();
 
@@ -538,7 +531,6 @@ void WebPage::performDictionaryLookupForSelection(DictionaryPopupInfo::Type type
 
     // Since we already have the range we want, we just need to grab the returned options.
     WKExtractWordDefinitionTokenRangeFromContextualString(fullPlainTextString, rangeToPass, &options);
-#endif
 
     performDictionaryLookupForRange(type, frame, selectedRange.get(), options);
 }
@@ -561,9 +553,7 @@ void WebPage::performDictionaryLookupForRange(DictionaryPopupInfo::Type type, Fr
     DictionaryPopupInfo dictionaryPopupInfo;
     dictionaryPopupInfo.type = type;
     dictionaryPopupInfo.origin = FloatPoint(rangeRect.x(), rangeRect.y() + (style->fontMetrics().ascent() * pageScaleFactor()));
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
     dictionaryPopupInfo.options = (CFDictionaryRef)options;
-#endif
 
     NSAttributedString *nsAttributedString = [WebHTMLConverter editingAttributedStringFromRange:range];
 

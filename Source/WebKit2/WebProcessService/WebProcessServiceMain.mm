@@ -23,22 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <AvailabilityMacros.h>
-
-#if MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
-
 #import "WebProcessServiceEntryPoints.h"
 
 int main(int argc, char** argv)
 {
     return webProcessServiceMain(argc, argv);
 }
-
-#else
-
-int main(int argc, char** argv)
-{
-    return 0;
-}
-
-#endif

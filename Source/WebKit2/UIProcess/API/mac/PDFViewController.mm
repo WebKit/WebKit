@@ -504,7 +504,6 @@ bool PDFViewController::forwardScrollWheelEvent(NSEvent *wheelEvent)
     return true;
 }
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
 static IMP oldPDFViewScrollView_scrollWheel;
 
 static WKPDFView *findEnclosingWKPDFView(NSView *view)
@@ -539,7 +538,6 @@ static void PDFViewScrollView_scrollWheel(NSScrollView* self, SEL _cmd, NSEvent 
 
     wtfCallIMP<void>(oldPDFViewScrollView_scrollWheel, self, _cmd, wheelEvent);
 }
-#endif
 
 NSBundle* PDFViewController::pdfKitBundle()
 {
@@ -557,12 +555,10 @@ NSBundle* PDFViewController::pdfKitBundle()
     if (![pdfKitBundle load])
         LOG_ERROR("Couldn't load PDFKit.framework");
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
     if (Class pdfViewScrollViewClass = [pdfKitBundle classNamed:@"PDFViewScrollView"]) {
         if (Method scrollWheel = class_getInstanceMethod(pdfViewScrollViewClass, @selector(scrollWheel:)))
             oldPDFViewScrollView_scrollWheel = method_setImplementation(scrollWheel, reinterpret_cast<IMP>(PDFViewScrollView_scrollWheel));
     }
-#endif
 
     return pdfKitBundle;
 }

@@ -26,8 +26,6 @@
 #import "config.h"
 #import "SecItemShimMethods.h"
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
-
 #import "BlockingResponseMap.h"
 #import "SecItemRequestData.h"
 #import "SecItemResponseData.h"
@@ -118,5 +116,3 @@ void initializeSecItemShim()
 }
 
 } // namespace WebKit
-
-#endif // __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070

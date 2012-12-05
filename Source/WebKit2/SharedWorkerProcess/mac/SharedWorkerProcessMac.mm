@@ -46,7 +46,6 @@ extern "C" int sandbox_init_with_parameters(const char *profile, uint64_t flags,
 
 namespace WebKit {
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
 static void initializeSandbox()
 {
     NSBundle *webkit2Bundle = [NSBundle bundleForClass:NSClassFromString(@"WKView")];
@@ -58,7 +57,6 @@ static void initializeSandbox()
         exit(EX_NOPERM);
     }
 }
-#endif
 
 void SharedWorkerProcess::platformInitialize(const SharedWorkerProcessCreationParameters& parameters)
 {
@@ -68,9 +66,7 @@ void SharedWorkerProcess::platformInitialize(const SharedWorkerProcessCreationPa
     
     WKSetVisibleApplicationName((CFStringRef)applicationName);
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
     initializeSandbox();
-#endif
 }
 
 } // namespace WebKit

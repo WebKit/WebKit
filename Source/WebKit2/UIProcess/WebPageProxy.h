@@ -1015,12 +1015,10 @@ private:
 
 #if PLATFORM(MAC)
     void substitutionsPanelIsShowing(bool&);
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
     void showCorrectionPanel(int32_t panelType, const WebCore::FloatRect& boundingBoxOfReplacedString, const String& replacedString, const String& replacementString, const Vector<String>& alternativeReplacementStrings);
     void dismissCorrectionPanel(int32_t reason);
     void dismissCorrectionPanelSoon(int32_t reason, String& result);
     void recordAutocorrectionResponse(int32_t responseType, const String& replacedString, const String& replacementString);
-#endif // __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
 
 #if USE(DICTATION_ALTERNATIVES)
     void showDictationAlternativeUI(const WebCore::FloatRect& boundingBoxOfDictatedText, uint64_t dictationContext);

@@ -550,7 +550,7 @@ public:
 
     void unmarkAllMisspellings();
     void unmarkAllBadGrammar();
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
+#if PLATFORM(MAC)
     void handleAlternativeTextUIResult(const String&);
 #endif
 

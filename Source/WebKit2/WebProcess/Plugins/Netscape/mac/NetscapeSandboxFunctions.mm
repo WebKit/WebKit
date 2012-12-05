@@ -28,8 +28,6 @@
 
 #if ENABLE(NETSCAPE_PLUGIN_API) && ENABLE(PLUGIN_PROCESS)
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
-
 #import "PluginProcess.h"
 #import "NetscapePluginModule.h"
 #import "WebKitSystemInterface.h"
@@ -202,7 +200,5 @@ NPError WKN_FileStopAccessing(const char* path)
 
     return NPERR_NO_ERROR;
 }
-
-#endif // __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
 
 #endif // ENABLE(NETSCAPE_PLUGIN_API) && ENABLE(PLUGIN_PROCESS)

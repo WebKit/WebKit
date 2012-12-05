@@ -132,12 +132,10 @@ bool PluginInfoStore::shouldUsePlugin(Vector<PluginModuleInfo>& alreadyLoadedPlu
     if (!checkForPreferredPlugin(alreadyLoadedPlugins, plugin, "com.apple.java.JavaAppletPlugin",  oracleJavaAppletPluginBundleIdentifier))
         return false;
 
-#if MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
     if (plugin.bundleIdentifier == "com.apple.java.JavaAppletPlugin" && shouldBlockPlugin(plugin) && !WKIsJavaPlugInActive()) {
         // If the Apple Java plug-in is blocked and there's no Java runtime installed, just pretend that the plug-in doesn't exist.
         return false;
     }
-#endif
 
     return true;
 }
@@ -155,12 +153,10 @@ PluginModuleLoadPolicy PluginInfoStore::policyForPlugin(const PluginModuleInfo& 
 
 bool PluginInfoStore::reactivateInactivePlugin(const PluginModuleInfo& plugin)
 {
-#if MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
     if (plugin.bundleIdentifier == oracleJavaAppletPluginBundleIdentifier) {
         WKActivateJavaPlugIn();
         return true;
     }
-#endif
 
     return false;
 }

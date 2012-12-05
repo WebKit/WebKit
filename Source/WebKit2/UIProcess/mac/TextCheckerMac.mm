@@ -30,11 +30,9 @@
 #import <WebCore/NotImplemented.h>
 #import <wtf/RetainPtr.h>
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
 @interface NSSpellChecker (WebNSSpellCheckerDetails)
 - (NSString *)languageForWordRange:(NSRange)range inString:(NSString *)string orthography:(NSOrthography *)orthography;
 @end
-#endif
 
 static NSString* const WebAutomaticSpellingCorrectionEnabled = @"WebAutomaticSpellingCorrectionEnabled";
 static NSString* const WebContinuousSpellCheckingEnabled = @"WebContinuousSpellCheckingEnabled";
@@ -65,10 +63,8 @@ static void initializeState()
     textCheckerState.isAutomaticLinkDetectionEnabled = [[NSUserDefaults standardUserDefaults] boolForKey:WebAutomaticLinkDetectionEnabled];
     textCheckerState.isAutomaticTextReplacementEnabled = [[NSUserDefaults standardUserDefaults] boolForKey:WebAutomaticTextReplacementEnabled];
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
     if (![[NSUserDefaults standardUserDefaults] objectForKey:WebAutomaticSpellingCorrectionEnabled])
         textCheckerState.isAutomaticSpellingCorrectionEnabled = [NSSpellChecker isAutomaticSpellingCorrectionEnabled];
-#endif
 
     didInitializeState = true;
 }
@@ -372,7 +368,6 @@ void TextChecker::updateSpellingUIWithGrammarString(int64_t, const String& badGr
 
 void TextChecker::getGuessesForWord(int64_t spellDocumentTag, const String& word, const String& context, Vector<String>& guesses)
 {
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
     NSString* language = nil;
     NSOrthography* orthography = nil;
     NSSpellChecker *checker = [NSSpellChecker sharedSpellChecker];
@@ -381,9 +376,6 @@ void TextChecker::getGuessesForWord(int64_t spellDocumentTag, const String& word
         language = [checker languageForWordRange:NSMakeRange(0, context.length()) inString:context orthography:orthography];
     }
     NSArray* stringsArray = [checker guessesForWordRange:NSMakeRange(0, word.length()) inString:word language:language inSpellDocumentWithTag:spellDocumentTag];
-#else
-    NSArray* stringsArray = [[NSSpellChecker sharedSpellChecker] guessesForWord:word];
-#endif
 
     for (NSString *guess in stringsArray)
         guesses.append(guess);

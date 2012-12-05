@@ -50,7 +50,7 @@ struct DictionaryPopupInfo {
 
     WebCore::FloatPoint origin;
     Type type;
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
+#if PLATFORM(MAC)
     RetainPtr<CFDictionaryRef> options;
 #endif
 };

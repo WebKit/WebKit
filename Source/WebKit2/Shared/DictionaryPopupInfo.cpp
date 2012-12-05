@@ -39,7 +39,7 @@ void DictionaryPopupInfo::encode(CoreIPC::ArgumentEncoder& encoder) const
     encoder << origin;
     encoder.encodeEnum(type);
 
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
+#if PLATFORM(MAC)
     bool hadOptions = options;
     encoder << hadOptions;
     if (hadOptions)
@@ -53,7 +53,7 @@ bool DictionaryPopupInfo::decode(CoreIPC::ArgumentDecoder* decoder, DictionaryPo
         return false;
     if (!decoder->decodeEnum(result.type))
         return false;
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
+#if PLATFORM(MAC)
     bool hadOptions;
     if (!decoder->decodeBool(hadOptions))
         return false;

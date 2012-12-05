@@ -199,8 +199,7 @@ static NSPoint pointForEvent(NSEvent *event, NSView *windowView)
 
 static WebWheelEvent::Phase phaseForEvent(NSEvent *event)
 {
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
-    uint32_t phase = WebWheelEvent::PhaseNone; 
+    uint32_t phase = WebWheelEvent::PhaseNone;
     if ([event phase] & NSEventPhaseBegan)
         phase |= WebWheelEvent::PhaseBegan;
     if ([event phase] & NSEventPhaseStationary)
@@ -217,16 +216,12 @@ static WebWheelEvent::Phase phaseForEvent(NSEvent *event)
 #endif
 
     return static_cast<WebWheelEvent::Phase>(phase);
-#else
-    return WebWheelEvent::PhaseNone;
-#endif
 }
 
 static WebWheelEvent::Phase momentumPhaseForEvent(NSEvent *event)
 {
     uint32_t phase = WebWheelEvent::PhaseNone; 
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
     if ([event momentumPhase] & NSEventPhaseBegan)
         phase |= WebWheelEvent::PhaseBegan;
     if ([event momentumPhase] & NSEventPhaseStationary)
@@ -237,22 +232,6 @@ static WebWheelEvent::Phase momentumPhaseForEvent(NSEvent *event)
         phase |= WebWheelEvent::PhaseEnded;
     if ([event momentumPhase] & NSEventPhaseCancelled)
         phase |= WebWheelEvent::PhaseCancelled;
-#else
-    switch (WKGetNSEventMomentumPhase(event)) {
-    case WKEventPhaseNone:
-        phase = WebWheelEvent::PhaseNone;
-        break;
-    case WKEventPhaseBegan:
-        phase = WebWheelEvent::PhaseBegan;
-        break;
-    case WKEventPhaseChanged:
-        phase = WebWheelEvent::PhaseChanged;
-        break;
-    case WKEventPhaseEnded:
-        phase = WebWheelEvent::PhaseEnded;
-        break;
-    }
-#endif
 
     return static_cast<WebWheelEvent::Phase>(phase);
 }

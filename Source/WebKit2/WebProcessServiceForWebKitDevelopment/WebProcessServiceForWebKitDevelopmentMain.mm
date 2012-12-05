@@ -25,8 +25,6 @@
 
 #import <AvailabilityMacros.h>
 
-#if MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
-
 #import <crt_externs.h>
 #import <dlfcn.h>
 #import <mach-o/dyld.h>
@@ -73,11 +71,9 @@ static void WebProcessServiceForWebKitDevelopmentEventHandler(xpc_connection_t p
                 size_t outCount = 0;
                 posix_spawnattr_setbinpref_np(&attr, 1, cpuTypes, &outCount);
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
                 static const int allowExecutableHeapFlag = 0x2000;
                 if (xpc_dictionary_get_bool(event, "executable-heap"))
                     flags |= allowExecutableHeapFlag;
-#endif
 
                 posix_spawnattr_setflags(&attr, flags);
 
@@ -148,12 +144,3 @@ int main(int argc, char** argv)
     xpc_main(WebProcessServiceForWebKitDevelopmentEventHandler);
     return 0;;
 }
-
-#else
-
-int main(int argc, char** argv)
-{
-    return 0;
-}
-
-#endif

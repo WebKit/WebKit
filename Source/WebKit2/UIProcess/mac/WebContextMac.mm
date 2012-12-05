@@ -39,9 +39,7 @@
 #import <WebCore/PlatformPasteboard.h>
 #import <sys/param.h>
 
-#if HAVE(HOSTED_CORE_ANIMATION) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
 #import <QuartzCore/CARemoteLayerServer.h>
-#endif
 
 using namespace WebCore;
 
@@ -111,11 +109,7 @@ void WebContext::platformInitializeWebProcess(WebProcessCreationParameters& para
     parameters.shouldEnableKerningAndLigaturesByDefault = [[NSUserDefaults standardUserDefaults] boolForKey:WebKitKerningAndLigaturesEnabledByDefaultDefaultsKey];
 
 #if USE(ACCELERATED_COMPOSITING) && HAVE(HOSTED_CORE_ANIMATION)
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
     mach_port_t renderServerPort = [[CARemoteLayerServer sharedServer] serverPort];
-#else
-    mach_port_t renderServerPort = WKInitializeRenderServer();
-#endif
     if (renderServerPort != MACH_PORT_NULL)
         parameters.acceleratedCompositingPort = CoreIPC::MachPort(renderServerPort, MACH_MSG_TYPE_COPY_SEND);
 #endif

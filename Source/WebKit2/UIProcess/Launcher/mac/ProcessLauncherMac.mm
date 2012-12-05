@@ -97,10 +97,8 @@ static void setUpTerminationNotificationHandler(pid_t pid)
 
 static void addDYLDEnvironmentAdditions(const ProcessLauncher::LaunchOptions& launchOptions, bool isWebKitDevelopmentBuild, EnvironmentVariables& environmentVariables)
 {
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
     DynamicLinkerEnvironmentExtractor environmentExtractor([[NSBundle mainBundle] executablePath], _NSGetMachExecuteHeader()->cputype);
     environmentExtractor.getExtractedEnvironmentVariables(environmentVariables);
-#endif
 
     NSBundle *webKit2Bundle = [NSBundle bundleWithIdentifier:@"com.apple.WebKit2"];
     NSString *frameworksPath = [[webKit2Bundle bundlePath] stringByDeletingLastPathComponent];
@@ -244,9 +242,7 @@ static void createWebProcessServiceForWebKitDevelopment(const ProcessLauncher::L
     xpc_dictionary_set_value(reExecMessage, "environment", environment);
     xpc_release(environment);
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
     xpc_dictionary_set_bool(reExecMessage, "executable-heap", launchOptions.executableHeap);
-#endif
 
     xpc_connection_send_message(reExecConnection, reExecMessage);
     xpc_release(reExecMessage);
@@ -311,7 +307,6 @@ static void createWebProcessService(const ProcessLauncher::LaunchOptions& launch
 }
 #endif
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
 static bool tryPreexistingProcess(const ProcessLauncher::LaunchOptions& launchOptions, ProcessLauncher* that, DidFinishLaunchingProcessFunction didFinishLaunchingProcessFunction)
 {
     EnvironmentVariables environmentVariables;
@@ -357,7 +352,6 @@ static bool tryPreexistingProcess(const ProcessLauncher::LaunchOptions& launchOp
     RunLoop::main()->dispatch(bind(didFinishLaunchingProcessFunction, that, processIdentifier, CoreIPC::Connection::Identifier(listeningPort)));
     return true;
 }
-#endif
 
 static void createProcess(const ProcessLauncher::LaunchOptions& launchOptions, bool isWebKitDevelopmentBuild, ProcessLauncher* that, DidFinishLaunchingProcessFunction didFinishLaunchingProcessFunction)
 {
@@ -438,11 +432,9 @@ static void createProcess(const ProcessLauncher::LaunchOptions& launchOptions, b
     // Start suspended so we can set up the termination notification handler.
     flags |= POSIX_SPAWN_START_SUSPENDED;
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
     static const int allowExecutableHeapFlag = 0x2000;
     if (launchOptions.executableHeap)
         flags |= allowExecutableHeapFlag;
-#endif
 
     posix_spawnattr_setflags(&attr, flags);
 
@@ -472,10 +464,8 @@ static void createProcess(const ProcessLauncher::LaunchOptions& launchOptions, b
 
 void ProcessLauncher::launchProcess()
 {
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
     if (tryPreexistingProcess(m_launchOptions, this, &ProcessLauncher::didFinishLaunchingProcess))
         return;
-#endif
 
     bool isWebKitDevelopmentBuild = ![[[[NSBundle bundleWithIdentifier:@"com.apple.WebKit2"] bundlePath] stringByDeletingLastPathComponent] hasPrefix:@"/System/"];
 
