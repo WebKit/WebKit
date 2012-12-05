@@ -33,8 +33,6 @@
 #include "WebPrivateOwnPtr.h"
 #include "WebSize.h"
 
-class SkBitmap;
-
 namespace WebKit {
 class WebGraphicsContext3D;
 class WebLayer;
@@ -184,10 +182,6 @@ public:
 
     // Toggles the paint rects in the HUD layer
     virtual void setShowPaintRects(bool) { }
-
-    // Provides a font atlas to use for debug visualizations. The atlas must be a bitmap containing glyph data, a table of
-    // ASCII character values to a subrectangle of the atlas representing the corresponding glyph, and the glyph height.
-    virtual void setFontAtlas(WebRect asciiToRectTable[128], const SkBitmap&, int fontHeight) { }
 
     // Simulates a lost context. For testing only.
     virtual void loseCompositorContext(int numTimes) = 0;

@@ -431,7 +431,6 @@ WebViewImpl::WebViewImpl(WebViewClient* client)
     , m_compositorSurfaceReady(false)
     , m_deviceScaleInCompositor(1)
     , m_inputHandlerIdentifier(-1)
-    , m_isFontAtlasLoaded(false)
 #endif
 #if ENABLE(INPUT_SPEECH)
     , m_speechInputClient(SpeechInputClientImpl::create(client))
@@ -842,9 +841,6 @@ void WebViewImpl::setShowFPSCounter(bool show)
 {
     if (isAcceleratedCompositingActive()) {
         TRACE_EVENT0("webkit", "WebViewImpl::setShowFPSCounter");
-#if USE(ACCELERATED_COMPOSITING)
-        loadFontAtlasIfNecessary();
-#endif
         m_layerTreeView->setShowFPSCounter(show);
     }
     m_showFPSCounter = show;
@@ -4038,13 +4034,8 @@ void WebViewImpl::setIsAcceleratedCompositingActive(bool active)
             m_client->didActivateCompositor(m_inputHandlerIdentifier);
             m_isAcceleratedCompositingActive = true;
             m_compositorCreationFailed = false;
-            m_isFontAtlasLoaded = false;
             if (m_pageOverlays)
                 m_pageOverlays->update();
-
-            if (layerTreeViewSettings.showPlatformLayerTree)
-                loadFontAtlasIfNecessary();
-
             m_layerTreeView->setShowFPSCounter(m_showFPSCounter);
             m_layerTreeView->setShowPaintRects(m_showPaintRects);
         } else {
@@ -4056,21 +4047,6 @@ void WebViewImpl::setIsAcceleratedCompositingActive(bool active)
     }
     if (page())
         page()->mainFrame()->view()->setClipsRepaints(!m_isAcceleratedCompositingActive);
-}
-
-void WebViewImpl::loadFontAtlasIfNecessary()
-{
-    ASSERT(m_layerTreeView);
-
-    if (m_isFontAtlasLoaded)
-        return;
-
-    TRACE_EVENT0("webkit", "WebViewImpl::loadFontAtlas");
-    WebRect asciiToRectTable[128];
-    int fontHeight;
-    SkBitmap bitmap = WebCore::CompositorHUDFontAtlas::generateFontAtlas(asciiToRectTable, fontHeight);
-    m_layerTreeView->setFontAtlas(asciiToRectTable, bitmap, fontHeight);
-    m_isFontAtlasLoaded = true;
 }
 
 #endif
