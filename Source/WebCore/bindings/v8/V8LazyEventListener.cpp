@@ -155,7 +155,7 @@ void V8LazyEventListener::prepareListenerObject(ScriptExecutionContext* context)
             "};"
         "}}}})";
 
-    v8::Handle<v8::String> codeExternalString = v8ExternalString(code);
+    v8::Handle<v8::String> codeExternalString = v8String(code);
 
     v8::Handle<v8::Script> script = ScriptSourceCode::compileScript(codeExternalString, m_sourceURL, m_position);
     if (script.IsEmpty())
@@ -220,7 +220,7 @@ void V8LazyEventListener::prepareListenerObject(ScriptExecutionContext* context)
         toStringFunction = toStringTemplate->GetFunction();
     if (!toStringFunction.IsEmpty()) {
         String toStringString = "function " + m_functionName + "(" + m_eventParameterName + ") {\n  " + m_code + "\n}";
-        wrappedFunction->SetHiddenValue(V8HiddenPropertyName::toStringString(), v8ExternalString(toStringString));
+        wrappedFunction->SetHiddenValue(V8HiddenPropertyName::toStringString(), v8String(toStringString));
         wrappedFunction->Set(v8::String::NewSymbol("toString"), toStringFunction);
     }
 

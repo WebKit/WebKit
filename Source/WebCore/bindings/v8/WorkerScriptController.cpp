@@ -155,7 +155,7 @@ ScriptValue WorkerScriptController::evaluate(const String& script, const String&
 
     v8::TryCatch block;
 
-    v8::Local<v8::String> scriptString = v8ExternalString(script);
+    v8::Handle<v8::String> scriptString = v8String(script);
     v8::Handle<v8::Script> compiledScript = ScriptSourceCode::compileScript(scriptString, fileName, scriptStartPosition);
     v8::Local<v8::Value> result = ScriptRunner::runCompiledScript(compiledScript, m_workerContext);
 

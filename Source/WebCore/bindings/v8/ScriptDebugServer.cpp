@@ -435,10 +435,10 @@ void ScriptDebugServer::compileScript(ScriptState* state, const String& expressi
         return;
     v8::Context::Scope contextScope(context);
 
-    v8::Local<v8::String> code = v8ExternalString(expression);
+    v8::Handle<v8::String> code = v8String(expression);
     v8::TryCatch tryCatch;
 
-    v8::ScriptOrigin origin(v8ExternalString(sourceURL), v8Integer(0), v8Integer(0));
+    v8::ScriptOrigin origin(v8String(sourceURL), v8Integer(0), v8Integer(0));
     v8::Handle<v8::Script> script = v8::Script::New(code, &origin);
 
     if (tryCatch.HasCaught()) {

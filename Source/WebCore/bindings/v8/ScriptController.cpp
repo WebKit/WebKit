@@ -262,7 +262,7 @@ v8::Local<v8::Value> ScriptController::compileAndRunScript(const ScriptSourceCod
         tryCatch.SetVerbose(true);
 
         // Compile the script.
-        v8::Local<v8::String> code = v8ExternalString(source.source());
+        v8::Handle<v8::String> code = v8String(source.source());
 #if PLATFORM(CHROMIUM)
         TRACE_EVENT_BEGIN0("v8", "v8.compile");
 #endif

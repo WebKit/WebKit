@@ -948,7 +948,7 @@ END
             my $namespace = $codeGenerator->NamespaceForAttributeName($interfaceName, $contentAttributeName);
             AddToImplIncludes("${namespace}.h");
             push(@implContentDecls, "    Element* imp = V8Element::toNative(info.Holder());\n");
-            push(@implContentDecls, "    return v8ExternalString(imp->getAttribute(${namespace}::${contentAttributeName}Attr), info.GetIsolate());\n");
+            push(@implContentDecls, "    return v8String(imp->getAttribute(${namespace}::${contentAttributeName}Attr), info.GetIsolate());\n");
             push(@implContentDecls, "}\n\n");
             push(@implContentDecls, "#endif // ${conditionalString}\n\n") if $conditionalString;
             return;

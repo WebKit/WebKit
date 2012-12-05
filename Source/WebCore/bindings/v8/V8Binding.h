@@ -141,10 +141,11 @@ namespace WebCore {
         return stringResource;
     }
 
+    // Convert a string to a V8 string.
     // Return a V8 external string that shares the underlying buffer with the given
     // WebCore string. The reference counting mechanism is used to keep the
     // underlying buffer alive while the string is still live in the V8 engine.
-    inline v8::Local<v8::String> v8ExternalString(const String& string, v8::Isolate* isolate = 0)
+    inline v8::Handle<v8::String> v8String(const String& string, v8::Isolate* isolate = 0)
     {
         StringImpl* stringImpl = string.impl();
         if (!stringImpl)
@@ -154,10 +155,14 @@ namespace WebCore {
         return V8PerIsolateData::from(isolate)->stringCache()->v8ExternalString(stringImpl, isolate);
     }
 
-    // Convert a string to a V8 string.
-    inline v8::Handle<v8::String> v8String(const String& string, v8::Isolate* isolate = 0)
+    inline v8::Handle<v8::Value> v8StringOrNull(const String& str, v8::Isolate* isolate = 0)
     {
-        return v8ExternalString(string, isolate);
+        return str.isNull() ? v8::Handle<v8::Value>(v8::Null()) : v8::Handle<v8::Value>(v8String(str, isolate));
+    }
+
+    inline v8::Handle<v8::Value> v8StringOrUndefined(const String& str, v8::Isolate* isolate = 0)
+    {
+        return str.isNull() ? v8::Handle<v8::Value>(v8::Undefined()) : v8::Handle<v8::Value>(v8String(str, isolate));
     }
 
     inline v8::Handle<v8::Integer> v8Integer(int value, v8::Isolate* isolate = 0)
@@ -403,16 +408,6 @@ namespace WebCore {
     inline v8::Handle<v8::Boolean> v8BooleanWithCheck(bool value, v8::Isolate* isolate)
     {
         return isolate ? v8Boolean(value, isolate) : v8Boolean(value);
-    }
-
-    inline v8::Handle<v8::Value> v8StringOrNull(const String& str, v8::Isolate* isolate = 0)
-    {
-        return str.isNull() ? v8::Handle<v8::Value>(v8::Null()) : v8::Handle<v8::Value>(v8String(str, isolate));
-    }
-
-    inline v8::Handle<v8::Value> v8StringOrUndefined(const String& str, v8::Isolate* isolate = 0)
-    {
-        return str.isNull() ? v8::Handle<v8::Value>(v8::Undefined()) : v8::Handle<v8::Value>(v8String(str, isolate));
     }
 
     inline double toWebCoreDate(v8::Handle<v8::Value> object)
