@@ -1,3 +1,13 @@
+2012-12-05  Robert Hogan  <robert@webkit.org>
+
+        REGRESSION(r126683): Table cell are getting borders when the style doesn't mention any
+        https://bugs.webkit.org/show_bug.cgi?id=101677
+
+        Reviewed by Julien Chaffraix.
+
+        * fast/table/td-bordercolor-attribute-expected.txt: Added.
+        * fast/table/td-bordercolor-attribute.html: Added.
+
 2012-12-05  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed gardening.

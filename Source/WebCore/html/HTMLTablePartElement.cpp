@@ -40,7 +40,7 @@ using namespace HTMLNames;
 
 bool HTMLTablePartElement::isPresentationAttribute(const QualifiedName& name) const
 {
-    if (name == bgcolorAttr || name == backgroundAttr || name == bordercolorAttr || name == valignAttr || name == alignAttr || name == heightAttr)
+    if (name == bgcolorAttr || name == backgroundAttr || name == valignAttr || name == alignAttr || name == heightAttr)
         return true;
     return HTMLElement::isPresentationAttribute(name);
 }
@@ -53,11 +53,6 @@ void HTMLTablePartElement::collectStyleForPresentationAttribute(const Attribute&
         String url = stripLeadingAndTrailingHTMLSpaces(attribute.value());
         if (!url.isEmpty())
             style->setProperty(CSSProperty(CSSPropertyBackgroundImage, CSSImageValue::create(document()->completeURL(url).string())));
-    } else if (attribute.name() == bordercolorAttr) {
-        if (!attribute.value().isEmpty()) {
-            addHTMLColorToStyle(style, CSSPropertyBorderColor, attribute.value());
-            addPropertyToPresentationAttributeStyle(style, CSSPropertyBorderStyle, CSSValueSolid);
-        }
     } else if (attribute.name() == valignAttr) {
         if (equalIgnoringCase(attribute.value(), "top"))
             addPropertyToPresentationAttributeStyle(style, CSSPropertyVerticalAlign, CSSValueTop);
