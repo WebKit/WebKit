@@ -30,13 +30,6 @@
 
 using namespace WebCore;
 
-static const BlackBerry::Platform::String frameOrigin(Frame* frame)
-{
-    DOMWindow* window = frame->document()->domWindow();
-    SecurityOrigin* origin = window->document()->securityOrigin();
-    return BlackBerry::Platform::String(origin->toString().utf8().data());
-}
-
 GeolocationClientBlackBerry::GeolocationClientBlackBerry(BlackBerry::WebKit::WebPagePrivate* webPagePrivate)
     : m_webPagePrivate(webPagePrivate)
     , m_accuracy(false)
@@ -80,12 +73,7 @@ void GeolocationClientBlackBerry::requestPermission(Geolocation* location)
         return;
     }
 
-    DOMWindow* window = frame->document()->domWindow();
-    if (!window)
-        return;
-
-    const BlackBerry::Platform::String origin = frameOrigin(frame);
-    m_pendingPermissionGeolocation = location;
+    const String origin = frame->document()->securityOrigin()->toString();
 
     // Check global location setting, if it is off then we request an infobar that invokes a location settings card.
     // If it's on, then we request an infobar that allows the site to have permission to use geolocation.
@@ -95,15 +83,48 @@ void GeolocationClientBlackBerry::requestPermission(Geolocation* location)
             m_webPagePrivate->m_client->requestGlobalLocalServicePermission(this, origin);
             BlackBerry::Platform::GeolocationHandler::instance()->setAskedUserForGlobalPermission();
         } else
-            onPermission(false);
+            location->setIsAllowed(false);
         return;
     }
 
-    m_webPagePrivate->m_client->requestGeolocationPermission(this, origin);
+    // Add this geolocation permission request to our request map.
+    Vector<RefPtr<Geolocation> > geoRequestsForOrigin;
+    HashMap<String, Vector<RefPtr<Geolocation> > >::AddResult result = m_geolocationRequestMap.add(origin, geoRequestsForOrigin);
+    result.iterator->value.append(location);
+
+    // Avoid sending another request if the vector already has another geolocation pending for this origin in this page.
+    if (result.isNewEntry)
+        m_webPagePrivate->m_client->requestGeolocationPermission(this, origin);
 }
 
 void GeolocationClientBlackBerry::cancelPermissionRequest(Geolocation* location)
 {
+    Frame* frame = location->frame();
+    if (!frame)
+        return;
+
+    const String origin = frame->document()->securityOrigin()->toString();
+
+    // Remove the geolocation from the pending permission map.
+    HashMap<String, Vector<RefPtr<Geolocation> > >::iterator it = m_geolocationRequestMap.find(origin);
+
+    ASSERT(it != m_geolocationRequestMap.end());
+    if (it == m_geolocationRequestMap.end())
+        return;
+
+    Vector<RefPtr<Geolocation> >* result = &(it->value);
+
+    size_t geolocationCount = result->size();
+    for (size_t i = 0; i < geolocationCount; ++i) {
+        if ((*result)[i].get() == location) {
+            result->remove(i);
+            // Remove this vector from the pending permission map is it doesn't contain anymore geo objects
+            if (result->isEmpty())
+                m_geolocationRequestMap.remove(origin);
+            break;
+        }
+    }
+
     m_webPagePrivate->m_client->cancelGeolocationPermission();
 }
 
@@ -121,10 +142,17 @@ void GeolocationClientBlackBerry::onLocationError(const char* errorStr)
     GeolocationController::from(m_webPagePrivate->m_page)->errorOccurred(error.get());
 }
 
-void GeolocationClientBlackBerry::onPermission(bool isAllowed)
+void GeolocationClientBlackBerry::onPermission(const BlackBerry::Platform::String& origin, bool isAllowed)
 {
-    if (m_pendingPermissionGeolocation)
-        m_pendingPermissionGeolocation->setIsAllowed(isAllowed);
+    Vector<RefPtr<Geolocation> > pendingPermissionGeolocation = m_geolocationRequestMap.get(origin);
+
+    if (pendingPermissionGeolocation.isEmpty())
+        return;
+
+    size_t numberOfGeolocations = pendingPermissionGeolocation.size();
+    for (size_t i = 0; i < numberOfGeolocations; ++i)
+        pendingPermissionGeolocation[i]->setIsAllowed(isAllowed);
+    m_geolocationRequestMap.remove(origin);
 }
 
 void GeolocationClientBlackBerry::setEnableHighAccuracy(bool newAccuracy)
