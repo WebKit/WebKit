@@ -1,0 +1,10 @@
+CONSOLE MESSAGE: line 16: Uncaught ReferenceError: PerfTestRunner is not defined
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x52
+  RenderBlock {HTML} at (0,0) size 800x52
+    RenderBody {BODY} at (8,16) size 784x20
+      RenderBlock {P} at (0,0) size 784x20
+        RenderText {#text} at (0,0) size 444x19
+          text run at (0,0) width 444: "This test verifies PerfTestRunner.runPerSecond() outputs log as expected."
+      RenderBlock {DIV} at (0,36) size 784x0

@@ -1,3 +1,22 @@
+2012-12-05  Emil A Eklund  <eae@chromium.org>
+
+        Unreviewed chromium rebaselines.
+
+        * platform/chromium-linux/css3/filters/effect-reference-hw-expected.png: Added.
+        * platform/chromium-linux/plugins/npp-set-window-called-during-destruction-expected.txt: Added.
+        * platform/chromium-mac-lion/fast/harness: Added.
+        * platform/chromium-mac-lion/fast/harness/perftests: Added.
+        * platform/chromium-mac-lion/fast/harness/perftests/runs-per-second-log-expected.png: Added.
+        * platform/chromium-mac-lion/fast/harness/perftests/runs-per-second-log-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/fast/harness: Added.
+        * platform/chromium-mac-snowleopard/fast/harness/perftests: Added.
+        * platform/chromium-mac-snowleopard/fast/harness/perftests/runs-per-second-log-expected.png: Added.
+        * platform/chromium-win-xp/plugins/npp-set-window-called-during-destruction-expected.txt: Added.
+        * platform/chromium-win/fast/harness/perftests: Added.
+        * platform/chromium-win/fast/harness/perftests/runs-per-second-log-expected.png: Added.
+        * platform/chromium-win/fast/harness/perftests/runs-per-second-log-expected.txt: Added.
+        * platform/chromium/TestExpectations:
+
 2012-12-05  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed gardening.
