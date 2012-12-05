@@ -358,23 +358,6 @@ static PassOwnPtr<RuleSet> makeRuleSet(const Vector<RuleFeature>& rules)
     return ruleSet.release();
 }
 
-void StyleResolver::collectFeatures()
-{
-    m_features.clear();
-    // Collect all ids and rules using sibling selectors (:first-child and similar)
-    // in the current set of stylesheets. Style sharing code uses this information to reject
-    // sharing candidates.
-    m_features.add(defaultStyle->features());
-    m_features.add(m_authorStyle->features());
-    if (m_scopeResolver)
-        m_scopeResolver->collectFeaturesTo(m_features);
-    if (m_userStyle)
-        m_features.add(m_userStyle->features());
-
-    m_siblingRuleSet = makeRuleSet(m_features.siblingRules);
-    m_uncommonAttributeRuleSet = makeRuleSet(m_features.uncommonAttributeRules);
-}
-
 void StyleResolver::resetAuthorStyle()
 {
     m_authorStyle = RuleSet::create();
@@ -5246,6 +5229,29 @@ void StyleResolver::loadPendingResources()
     // Start loading the SVG Documents referenced by this style.
     loadPendingSVGDocuments();
 #endif
+}
+
+void StyleResolver::collectFeatures()
+{
+    m_features.clear();
+    // Collect all ids and rules using sibling selectors (:first-child and similar)
+    // in the current set of stylesheets. Style sharing code uses this information to reject
+    // sharing candidates.
+    m_features.add(defaultStyle->features());
+    m_features.add(m_authorStyle->features());
+    if (document()->isViewSource()) {
+        if (!defaultViewSourceStyle)
+            loadViewSourceStyle();
+        m_features.add(defaultViewSourceStyle->features());
+    }
+
+    if (m_scopeResolver)
+        m_scopeResolver->collectFeaturesTo(m_features);
+    if (m_userStyle)
+        m_features.add(m_userStyle->features());
+
+    m_siblingRuleSet = makeRuleSet(m_features.siblingRules);
+    m_uncommonAttributeRuleSet = makeRuleSet(m_features.uncommonAttributeRules);
 }
 
 void StyleResolver::MatchedProperties::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const

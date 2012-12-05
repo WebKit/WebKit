@@ -4256,10 +4256,6 @@ webkit.org/b/104023 [ Mac Debug ] fast/dom/HTMLTemplateElement/inertContents.htm
 # Needs platform-specific results
 webkit.org/b/104035 fast/text/orientation-sideways.html [ Missing ]
 
-# Fail since r136615.
-webkit.org/b/104089 fast/frames/viewsource-attribute.html [ Failure ]
-webkit.org/b/104089 fast/frames/viewsource-on-image-file.html [ Failure ]
-
 # Crash since r136588.
 webkit.org/b/104090 [ Mac Debug ] fast/css-grid-layout/grid-columns-rows-get-set-multiple.html [ Crash ]
 webkit.org/b/104090 [ Mac Debug ] fast/css-grid-layout/grid-columns-rows-get-set.html [ Crash ]

@@ -1249,6 +1249,3 @@ webkit.org/b/67434 [ Debug ] fast/block/float/overhanging-tall-block.html [ Skip
 Bug(jernoble) [ MountainLion Lion SnowLeopard ] media/video-src-blob.html
 
 webkit.org/b/104104 fast/overflow/scrollbar-click-retains-focus.html [ Failure ]
-
-webkit.org/b/104089 fast/frames/viewsource-attribute.html [ Failure ]
-webkit.org/b/104089 fast/frames/viewsource-on-image-file.html [ Failure ]

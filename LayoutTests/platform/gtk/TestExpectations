@@ -1415,9 +1415,6 @@ webkit.org/b/103740 editing/selection/caret-alignment-for-vertical-text.html [ F
 # volume is reset when mediaelement.src is modified
 webkit.org/b/103893 media/video-volume.html [ Failure ]
 
-webkit.org/b/104089 fast/frames/viewsource-attribute.html [ Failure ]
-webkit.org/b/104089 fast/frames/viewsource-on-image-file.html [ Failure ]
-
 webkit.org/b/104054 svg/custom/use-href-update-crash.svg [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////

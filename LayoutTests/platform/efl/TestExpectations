@@ -1703,6 +1703,3 @@ webkit.org/b/56496 [ Debug ] fast/js/array-sort-modifying-tostring.html [ Crash 
 
 # volume is reset when mediaelement.src is modified
 webkit.org/b/103893 media/video-volume.html [ Failure ]
-
-webkit.org/b/104089 fast/frames/viewsource-attribute.html [ Failure ]
-webkit.org/b/104089 fast/frames/viewsource-on-image-file.html [ Failure ]

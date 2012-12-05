@@ -1,3 +1,19 @@
+2012-12-05  Andreas Kling  <akling@apple.com>
+
+        REGRESSION(r136615): Incorrect style sharing in view-source documents.
+        <http://webkit.org/b/104089>
+
+        Reviewed by Antti Koivisto.
+
+        Unskip: fast/frames/viewsource-attribute.html
+                fast/frames/viewsource-on-image-file.html
+
+        * platform/chromium/TestExpectations:
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/qt/TestExpectations:
+
 2012-12-05  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed gardening.
