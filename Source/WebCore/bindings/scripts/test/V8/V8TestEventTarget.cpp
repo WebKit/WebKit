@@ -175,7 +175,7 @@ bool V8TestEventTarget::HasInstance(v8::Handle<v8::Value> value)
 v8::Handle<v8::Object> V8TestEventTarget::createWrapper(PassRefPtr<TestEventTarget> impl, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate)
 {
     ASSERT(impl.get());
-    ASSERT(DOMDataStore::current(isolate)->get(impl.get()).IsEmpty());
+    ASSERT(DOMDataStore::getWrapper(impl.get(), isolate).IsEmpty());
 
     v8::Handle<v8::Object> wrapper = V8DOMWrapper::createWrapper(creationContext, &info, impl.get());
     if (UNLIKELY(wrapper.IsEmpty()))

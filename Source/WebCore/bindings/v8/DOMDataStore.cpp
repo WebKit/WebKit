@@ -51,10 +51,15 @@ DOMDataStore::~DOMDataStore()
     m_wrapperMap.clear();
 }
 
-DOMDataStore* DOMDataStore::current(v8::Isolate* isolate)
+DOMDataStore* DOMDataStore::mainWorldStore()
 {
     DEFINE_STATIC_LOCAL(DOMDataStore, mainWorldDOMDataStore, (MainWorld));
+    ASSERT(isMainThread());
+    return &mainWorldDOMDataStore;
+}
 
+DOMDataStore* DOMDataStore::current(v8::Isolate* isolate)
+{
     V8PerIsolateData* data = isolate ? V8PerIsolateData::from(isolate) : V8PerIsolateData::current();
     if (UNLIKELY(!!data->domDataStore()))
         return data->domDataStore();
@@ -65,7 +70,7 @@ DOMDataStore* DOMDataStore::current(v8::Isolate* isolate)
             return isolatedWorld->isolatedWorldDOMDataStore();
     }
 
-    return &mainWorldDOMDataStore;
+    return mainWorldStore();
 }
 
 void DOMDataStore::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const

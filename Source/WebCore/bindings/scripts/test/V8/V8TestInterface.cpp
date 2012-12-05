@@ -119,7 +119,7 @@ static v8::Handle<v8::Value> supplementalNodeAttrGetter(v8::Local<v8::String> na
 {
     INC_STATS("DOM.TestInterface.supplementalNode._get");
     TestInterface* imp = V8TestInterface::toNative(info.Holder());
-    return toV8(TestSupplemental::supplementalNode(imp), info.Holder(), info.GetIsolate());
+    return toV8Fast(TestSupplemental::supplementalNode(imp), info, imp);
 }
 
 #endif // ENABLE(Condition11) || ENABLE(Condition12)
@@ -341,7 +341,7 @@ ActiveDOMObject* V8TestInterface::toActiveDOMObject(v8::Handle<v8::Object> objec
 v8::Handle<v8::Object> V8TestInterface::createWrapper(PassRefPtr<TestInterface> impl, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate)
 {
     ASSERT(impl.get());
-    ASSERT(DOMDataStore::current(isolate)->get(impl.get()).IsEmpty());
+    ASSERT(DOMDataStore::getWrapper(impl.get(), isolate).IsEmpty());
 
     v8::Handle<v8::Object> wrapper = V8DOMWrapper::createWrapper(creationContext, &info, impl.get());
     if (UNLIKELY(wrapper.IsEmpty()))

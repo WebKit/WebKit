@@ -534,14 +534,14 @@ END
 class ${nativeType};
 v8::Handle<v8::Value> toV8(${nativeType}*, v8::Handle<v8::Object> creationContext = v8::Handle<v8::Object>(), v8::Isolate* = 0);
 
-inline v8::Handle<v8::Value> toV8Fast(${nativeType}* impl, const v8::AccessorInfo& info, Node*)
+template<class HolderContainer, class Wrappable>
+inline v8::Handle<v8::Value> toV8Fast(${nativeType}* impl, const HolderContainer& container, Wrappable*)
 {
-    return toV8(impl, info.Holder(), info.GetIsolate());
+    return toV8(impl, container.Holder(), container.GetIsolate());
 }
 END
     } else {
 
-        my $getCachedWrapper = $codeGenerator->IsSubType($interface, "Node") ? "DOMDataStore::getNode(impl, isolate)" : "DOMDataStore::current(isolate)->get(impl)";
         my $createWrapperCall = $customWrap ? "${v8InterfaceName}::wrap" : "${v8InterfaceName}::createWrapper";
 
         if ($customWrap) {
@@ -555,7 +555,7 @@ END
 inline v8::Handle<v8::Object> wrap(${nativeType}* impl, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate = 0)
 {
     ASSERT(impl);
-    ASSERT($getCachedWrapper.IsEmpty());
+    ASSERT(DOMDataStore::getWrapper(impl, isolate).IsEmpty());
     return $createWrapperCall(impl, creationContext, isolate);
 }
 END
@@ -567,33 +567,32 @@ inline v8::Handle<v8::Value> toV8(${nativeType}* impl, v8::Handle<v8::Object> cr
 {
     if (UNLIKELY(!impl))
         return v8NullWithCheck(isolate);
-    v8::Handle<v8::Value> wrapper = $getCachedWrapper;
+    v8::Handle<v8::Value> wrapper = DOMDataStore::getWrapper(impl, isolate);
     if (!wrapper.IsEmpty())
         return wrapper;
     return wrap(impl, creationContext, isolate);
 }
-END
-        if ($codeGenerator->IsSubType($interface, "Node")) {
-            push(@headerContent, <<END);
 
-inline v8::Handle<v8::Value> toV8Fast(${nativeType}* impl, const v8::AccessorInfo& info, Node* holder)
+template<class HolderContainer, class Wrappable>
+inline v8::Handle<v8::Value> toV8Fast(${nativeType}* impl, const HolderContainer& container, Wrappable* wrappable)
 {
     if (UNLIKELY(!impl))
-        return v8Null(info.GetIsolate());
-    // What we'd really like to check here is whether we're in the main world or
-    // in an isolated world. The fastest way we know how to do that is to check
-    // whether the holder's inline wrapper is the same wrapper we see in the
-    // v8::AccessorInfo.
-    v8::Handle<v8::Object> wrapper = (holder->wrapper() == info.Holder()) ? impl->wrapper() : DOMDataStore::getNode(impl, info.GetIsolate());
+        return v8Null(container.GetIsolate());
+    v8::Handle<v8::Object> wrapper = DOMDataStore::getWrapperFast(impl, container, wrappable);
     if (!wrapper.IsEmpty())
         return wrapper;
-    return wrap(impl, info.Holder(), info.GetIsolate());
+    return wrap(impl, container.Holder(), container.GetIsolate());
 }
 END
-        }
     }
 
     push(@headerContent, <<END);
+
+template<class HolderContainer, class Wrappable>
+inline v8::Handle<v8::Value> toV8Fast(PassRefPtr< ${nativeType} > impl, const HolderContainer& container, Wrappable* wrappable)
+{
+    return toV8Fast(impl.get(), container, wrappable);
+}
 
 inline v8::Handle<v8::Value> toV8(PassRefPtr< ${nativeType} > impl, v8::Handle<v8::Object> creationContext = v8::Handle<v8::Object>(), v8::Isolate* isolate = 0)
 {
@@ -1044,7 +1043,7 @@ END
         # Check for a wrapper in the wrapper cache. If there is one, we know that a hidden reference has already
         # been created. If we don't find a wrapper, we create both a wrapper and a hidden reference.
         push(@implContentDecls, "    RefPtr<$returnType> result = ${getterString};\n");
-        push(@implContentDecls, "    v8::Handle<v8::Value> wrapper = result.get() ? v8::Handle<v8::Value>(DOMDataStore::current(info.GetIsolate())->get(result.get())) : v8Undefined();\n");
+        push(@implContentDecls, "    v8::Handle<v8::Value> wrapper = result.get() ? v8::Handle<v8::Value>(DOMDataStore::getWrapper(result.get(), info.GetIsolate())) : v8Undefined();\n");
         push(@implContentDecls, "    if (wrapper.IsEmpty()) {\n");
         push(@implContentDecls, "        wrapper = toV8(result.get(), info.Holder(), info.GetIsolate());\n"); # FIXME: Could use wrap here since the wrapper is empty.
         push(@implContentDecls, "        if (!wrapper.IsEmpty())\n");
@@ -1060,11 +1059,12 @@ END
         AddToImplIncludes("V8$attrType.h");
         my $svgNativeType = $codeGenerator->GetSVGTypeNeedingTearOff($attrType);
         # Convert from abstract SVGProperty to real type, so the right toJS() method can be invoked.
-        push(@implContentDecls, "    return toV8(static_cast<$svgNativeType*>($result), info.Holder(), info.GetIsolate());\n");
+        push(@implContentDecls, "    return toV8Fast(static_cast<$svgNativeType*>($result), info, imp);\n");
     } elsif ($codeGenerator->IsSVGTypeNeedingTearOff($attrType) and not $interfaceName =~ /List$/) {
         AddToImplIncludes("V8$attrType.h");
         AddToImplIncludes("SVGPropertyTearOff.h");
         my $tearOffType = $codeGenerator->GetSVGTypeNeedingTearOff($attrType);
+        my $wrappedValue;
         if ($codeGenerator->IsSVGTypeWithWritablePropertiesNeedingTearOff($attrType) and not defined $attribute->signature->extendedAttributes->{"Immutable"}) {
             my $getter = $result;
             $getter =~ s/imp->//;
@@ -1083,20 +1083,21 @@ END
                     $result =~ s/matrix/svgMatrix/;
                 }
 
-                push(@implContentDecls, "    return toV8(WTF::getPtr(${tearOffType}::create(wrapper, $result, $updateMethod)), info.Holder(), info.GetIsolate());\n");
+                $wrappedValue = "WTF::getPtr(${tearOffType}::create(wrapper, $result, $updateMethod))";
             } else {
                 AddToImplIncludes("SVGStaticPropertyTearOff.h");
                 $tearOffType =~ s/SVGPropertyTearOff</SVGStaticPropertyTearOff<$interfaceName, /;
 
-                push(@implContentDecls, "    return toV8(WTF::getPtr(${tearOffType}::create(imp, $result, $updateMethod)), info.Holder(), info.GetIsolate());\n");
+                $wrappedValue = "WTF::getPtr(${tearOffType}::create(imp, $result, $updateMethod))";
             }
         } elsif ($tearOffType =~ /SVGStaticListPropertyTearOff/) {
-            push(@implContentDecls, "    return toV8(WTF::getPtr(${tearOffType}::create(imp, $result)), info.Holder(), info.GetIsolate());\n");
+                $wrappedValue = "WTF::getPtr(${tearOffType}::create(imp, $result))";
         } elsif ($tearOffType =~ /SVG(Point|PathSeg)List/) {
-            push(@implContentDecls, "    return toV8(WTF::getPtr($result), info.Holder(), info.GetIsolate());\n");
+                $wrappedValue = "WTF::getPtr($result)";
         } else {
-            push(@implContentDecls, "    return toV8(WTF::getPtr(${tearOffType}::create($result)), info.Holder(), info.GetIsolate());\n");
+                $wrappedValue = "WTF::getPtr(${tearOffType}::create($result))";
         }
+        push(@implContentDecls, "    return toV8Fast($wrappedValue, info, imp);\n");
     } elsif ($attribute->signature->type eq "MessagePortArray") {
         AddToImplIncludes("MessagePort.h");
         AddToImplIncludes("V8MessagePort.h");
@@ -1108,7 +1109,7 @@ END
     MessagePortArray portsCopy(*ports);
     v8::Local<v8::Array> portArray = v8::Array::New(portsCopy.size());
     for (size_t i = 0; i < portsCopy.size(); ++i)
-        portArray->Set(v8Integer(i, info.GetIsolate()), toV8(portsCopy[i].get(), info.Holder(), info.GetIsolate()));
+        portArray->Set(v8Integer(i, info.GetIsolate()), toV8Fast(portsCopy[i].get(), info, imp));
     return portArray;
 END
     } elsif ($attribute->signature->type eq "SerializedScriptValue" && $attrExt->{"CachedAttribute"}) {
@@ -1119,11 +1120,8 @@ END
     info.Holder()->SetHiddenValue(propertyName, value);
     return value;
 END
-    } elsif (IsDOMNodeType($interfaceName) && IsDOMNodeType($attrType)) {
-        AddToImplIncludes($attrType.".h");
-        push(@implContentDecls, "    return toV8Fast($result, info, imp);\n");
     } else {
-        push(@implContentDecls, "    return " . NativeToJSValue($attribute->signature, $result, "info.Holder()", "info.GetIsolate()").";\n");
+        push(@implContentDecls, "    return " . NativeToJSValue($attribute->signature, $result, "info.Holder()", "info.GetIsolate()", "info", "imp").";\n");
     }
 
     push(@implContentDecls, "}\n\n");  # end of getter
@@ -3460,14 +3458,13 @@ sub GenerateToV8Converters
 
     my $createWrapperArgumentType = GetPassRefPtrType($nativeType);
     my $baseType = BaseInterfaceName($interface);
-    my $getCachedWrapper = $codeGenerator->IsSubType($interface, "Node") ? "DOMDataStore::getNode(impl.get(), isolate)" : "DOMDataStore::current(isolate)->get(impl.get())";
 
     push(@implContent, <<END);
 
 v8::Handle<v8::Object> ${v8InterfaceName}::createWrapper(${createWrapperArgumentType} impl, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate)
 {
     ASSERT(impl.get());
-    ASSERT($getCachedWrapper.IsEmpty());
+    ASSERT(DOMDataStore::getWrapper(impl.get(), isolate).IsEmpty());
 END
     if ($baseType ne $interfaceName) {
         push(@implContent, <<END);
@@ -3482,7 +3479,7 @@ END
     if (Frame* frame = impl->frame()) {
         if (frame->script()->initializeMainWorld()) {
             // initializeMainWorld may have created a wrapper for the object, retry from the start.
-            v8::Handle<v8::Object> wrapper = DOMDataStore::getNode(impl.get(), isolate);
+            v8::Handle<v8::Object> wrapper = DOMDataStore::getWrapper(impl.get(), isolate);
             if (!wrapper.IsEmpty())
                 return wrapper;
         }
@@ -3620,7 +3617,12 @@ sub GenerateFunctionCallString()
         AddToImplIncludes("V8$returnType.h");
         AddToImplIncludes("SVGPropertyTearOff.h");
         my $svgNativeType = $codeGenerator->GetSVGTypeNeedingTearOff($returnType);
-        $result .= $indent . "return toV8(WTF::getPtr(${svgNativeType}::create($return)), args.Holder(), args.GetIsolate());\n";
+        # FIXME: Update for all ScriptWrappables.
+        if (IsDOMNodeType($interfaceName)) {
+            $result .= $indent . "return toV8Fast(WTF::getPtr(${svgNativeType}::create($return)), args, imp);\n";
+        } else {
+            $result .= $indent . "return toV8(WTF::getPtr(${svgNativeType}::create($return)), args.Holder(), args.GetIsolate());\n";
+        }
         return $result;
     }
 
@@ -3630,7 +3632,16 @@ sub GenerateFunctionCallString()
     }
 
     $return .= ".release()" if ($returnIsRef);
-    $result .= $indent . "return " . NativeToJSValue($function->signature, $return, "args.Holder()", "args.GetIsolate()") . ";\n";
+
+    my $nativeValue;
+    # FIXME: Update for all ScriptWrappables.
+    if (IsDOMNodeType($interfaceName)) {
+        $nativeValue = NativeToJSValue($function->signature, $return, "args.Holder()", "args.GetIsolate()", "args", "imp");
+    } else {
+        $nativeValue = NativeToJSValue($function->signature, $return, "args.Holder()", "args.GetIsolate()");
+    }
+
+    $result .= $indent . "return " . $nativeValue . ";\n";
 
     return $result;
 }
@@ -4033,6 +4044,10 @@ sub NativeToJSValue
     my $getCreationContextArg = $getCreationContext ? ", $getCreationContext" : "";
     my $getIsolate = shift;
     my $getIsolateArg = $getIsolate ? ", $getIsolate" : "";
+    my $getHolderContainer = shift;
+    my $getHolderContainerArg = $getHolderContainer ? ", $getHolderContainer" : "";
+    my $getScriptWrappable = shift;
+    my $getScriptWrappableArg = $getScriptWrappable ? ", $getScriptWrappable" : "";
     my $type = $signature->type;
 
     return ($getIsolate ? "v8Boolean($value, $getIsolate)" : "v8Boolean($value)") if $type eq "boolean";
@@ -4088,7 +4103,10 @@ sub NativeToJSValue
     AddIncludesForType($type);
 
     if (IsDOMNodeType($type) || $type eq "EventTarget") {
-        return "toV8($value$getCreationContextArg$getIsolateArg)";
+      if ($getScriptWrappable) {
+          return "toV8Fast($value$getHolderContainerArg$getScriptWrappableArg)";
+      }
+      return "toV8($value$getCreationContextArg$getIsolateArg)";
     }
 
     if ($type eq "EventListener") {
@@ -4105,6 +4123,9 @@ sub NativeToJSValue
     AddToImplIncludes("wtf/RefPtr.h");
     AddToImplIncludes("wtf/GetPtr.h");
 
+    if ($getScriptWrappable) {
+          return "toV8Fast($value$getHolderContainerArg$getScriptWrappableArg)";
+    }
     return "toV8($value$getCreationContextArg$getIsolateArg)";
 }
 

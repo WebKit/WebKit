@@ -1,3 +1,27 @@
+2012-12-05  Dan Carney  <dcarney@google.com>
+
+        [V8] toV8Fast for all classes with ScriptWrapper Holder objects
+        https://bugs.webkit.org/show_bug.cgi?id=102686
+
+        Reviewed by Adam Barth.
+
+        This patch makes most generated bindings use toV8Fast
+        by adding a fast path to the main world DOMDataStore.
+        Additionally, toV8Fast is now being called on callbacks
+        which use v8::Arguments.
+
+        No new tests. No change in functionality.
+
+        * bindings/scripts/CodeGeneratorV8.pm:
+        (GenerateHeader):
+        (GenerateNormalAttrGetter):
+        (GenerateFunctionCallString):
+        (NativeToJSValue):
+        * bindings/v8/DOMDataStore.cpp:
+        (WebCore::DOMDataStore::mainWorldStore):
+        (WebCore::DOMDataStore::current):
+        * bindings/v8/DOMDataStore.h:
+
 2012-12-05  Andrey Adaikin  <aandrey@chromium.org>
 
         Web Inspector: [Canvas] nit: add more typization for js compiler

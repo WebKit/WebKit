@@ -102,7 +102,7 @@ namespace WebCore {
         v8::Persistent<v8::Object> wrapperHandle = v8::Persistent<v8::Object>::New(wrapper);
         ASSERT(maybeDOMWrapper(wrapperHandle));
         setWrapperClass(object.get(), wrapperHandle);
-        DOMDataStore::current(isolate)->set(object.leakRef(), wrapperHandle);
+        DOMDataStore::setWrapper(object.leakRef(), wrapperHandle, isolate);
         return wrapperHandle;
     }
 
