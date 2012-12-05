@@ -1,3 +1,22 @@
+2012-12-05  Mike West  <mkwst@chromium.org>
+
+        [efl] Unreviewed gardening.
+
+        Rebaselining tests after r136657 to pick up changes to console messages.
+
+        * platform/efl-wk1/fast/media/mq-resolution-dpi-dpcm-warning-expected.txt: Added.
+        * platform/efl-wk1/fast/media/mq-resolution-expected.txt: Added.
+        * platform/efl-wk1/fast/media/w3c/test_media_queries-expected.txt: Added.
+        * platform/efl-wk1/inspector/console/console-object-constructor-name-expected.txt: Added.
+        * platform/efl-wk2/fast/media/mq-resolution-dpi-dpcm-warning-expected.txt: Added.
+        * platform/efl-wk2/fast/media/mq-resolution-expected.txt: Added.
+        * platform/efl-wk2/fast/media/w3c/test_media_queries-expected.txt: Added.
+            These shouldn't have had line numbers; they were all pointing to the
+            end of the style or script block in which the message was generated.
+        * platform/efl-wk1/http/tests/xmlhttprequest/access-control-preflight-async-method-denied-expected.txt: Added.
+        * platform/efl-wk1/http/tests/xmlhttprequest/origin-whitelisting-https-expected.txt: Added.
+            New stack trace.
+
 2012-12-05  Kent Tamura  <tkent@chromium.org>
 
         Layout Test fast/forms/*-multiple-fields/*-multiple-fields-preserve-value-after-history-back.html are slow

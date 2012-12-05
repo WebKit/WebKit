@@ -1,0 +1,9 @@
+CONSOLE MESSAGE: line 11: [object Object]
+CONSOLE MESSAGE: line 12: [object Object]
+CONSOLE MESSAGE: line 13: [object Object]
+Tests that the name of the function invoked as object constructor will be displayed as its type in the front-end. Bug 50063.
+
+Parent {} console-object-constructor-name.html:11
+Parent {} console-object-constructor-name.html:12
+Object {} console-object-constructor-name.html:13
+
