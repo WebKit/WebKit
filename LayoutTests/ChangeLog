@@ -1,3 +1,15 @@
+2012-12-05  Tony Chang  <tony@chromium.org>
+
+        Unreviewed, add Mac baselines after r136409 (mathml sup/sub box changes).
+
+        * platform/mac/TestExpectations:
+        * platform/mac/mathml/presentation/roots-expected.txt:
+        * platform/mac/mathml/presentation/row-alignment-expected.txt:
+        * platform/mac/mathml/presentation/sub-expected.txt:
+        * platform/mac/mathml/presentation/subsup-expected.txt:
+        * platform/mac/mathml/presentation/sup-expected.txt:
+        * platform/mac/mathml/presentation/tables-expected.txt:
+
 2012-12-05  Leo Yang  <leoyang@rim.com>
 
         Extra space in fast/css/image-resolution/image-resolution.html

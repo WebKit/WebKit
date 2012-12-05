@@ -12,8 +12,8 @@ layer at (0,0) size 800x126
               RenderBlock {mi} at (0,0) size 7x9
                 RenderText {#text} at (0,-9) size 7x24
                   text run at (0,-9) width 7: "x"
-            RenderMathMLBlock (anonymous, flex) at (7,0) size 6x15
-              RenderBlock {mn} at (0,4) size 6x11
+            RenderMathMLBlock (anonymous, flex) at (7,4) size 6x11
+              RenderBlock {mn} at (0,0) size 6x10
                 RenderText {#text} at (0,-4) size 6x18
                   text run at (0,-4) width 6: "1"
         RenderText {#text} at (0,0) size 0x0
@@ -28,8 +28,8 @@ layer at (0,0) size 800x126
                   RenderBlock (anonymous) at (0,0) size 11x10
                     RenderText {mo} at (0,-8) size 11x24
                       text run at (0,-8) width 11: "+"
-            RenderMathMLBlock (anonymous, flex) at (11,0) size 7x14
-              RenderBlock {mi} at (0,7) size 7x7
+            RenderMathMLBlock (anonymous, flex) at (11,7) size 7x7
+              RenderBlock {mi} at (0,0) size 7x7
                 RenderText {#text} at (0,-7) size 5x18
                   text run at (0,-7) width 5: "x"
         RenderText {#text} at (0,0) size 0x0
@@ -44,8 +44,8 @@ layer at (0,0) size 800x126
                   RenderBlock (anonymous) at (0,0) size 9x23
                     RenderText {mo} at (0,-4) size 9x29
                       text run at (0,-4) width 9: "\x{222B}"
-            RenderMathMLBlock (anonymous, flex) at (9,0) size 9x23
-              RenderBlock {mi} at (0,14) size 9x9
+            RenderMathMLBlock (anonymous, flex) at (9,14) size 9x9
+              RenderBlock {mi} at (0,0) size 9x9
                 RenderText {#text} at (0,-5) size 7x18
                   text run at (0,-5) width 7: "Y"
         RenderText {#text} at (0,0) size 0x0

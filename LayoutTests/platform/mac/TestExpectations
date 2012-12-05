@@ -1144,14 +1144,6 @@ webkit.org/b/90007 http/tests/security/mixedContent/insecure-audio-video-in-main
 # Text Autosizing is not enabled.
 webkit.org/b/84186 fast/text-autosizing
 
-# Needs rebaseline.
-webkit.org/b/103665 mathml/presentation/roots.xhtml [ Failure ]
-webkit.org/b/103665 mathml/presentation/row-alignment.xhtml [ Failure ]
-webkit.org/b/103665 mathml/presentation/sub.xhtml  [ Failure ]
-webkit.org/b/103665 mathml/presentation/subsup.xhtml  [ Failure ]
-webkit.org/b/103665 mathml/presentation/sup.xhtml [ Failure ]
-webkit.org/b/103665 mathml/presentation/tables.xhtml [ Failure ]
-
 # Dialog element is not yet enabled.
 webkit.org/b/84635 fast/dom/HTMLDialogElement [ Skip ]
 
