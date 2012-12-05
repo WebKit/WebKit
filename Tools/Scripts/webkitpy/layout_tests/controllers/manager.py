@@ -56,16 +56,7 @@ BUILDER_BASE_URL = "http://build.chromium.org/buildbot/layout_test_results/"
 TestExpectations = test_expectations.TestExpectations
 
 
-def interpret_test_failures(port, test_name, failures):
-    """Interpret test failures and returns a test result as dict.
-
-    Args:
-        port: interface to port-specific hooks
-        test_name: test name relative to layout_tests directory
-        failures: list of test failures
-    Returns:
-        A dictionary like {'is_missing_text': True, ...}
-    """
+def interpret_test_failures(failures):
     test_dict = {}
     failure_types = [type(failure) for failure in failures]
     # FIXME: get rid of all this is_* values once there is a 1:1 map between
@@ -188,10 +179,8 @@ def summarize_results(port_obj, expectations, result_summary, retry_summary, onl
 
         test_dict['expected'] = expected
         test_dict['actual'] = " ".join(actual)
-        # FIXME: Set this correctly once https://webkit.org/b/37739 is fixed
-        # and only set it if there actually is stderr data.
 
-        test_dict.update(interpret_test_failures(port_obj, test_name, result.failures))
+        test_dict.update(interpret_test_failures(result.failures))
 
         # Store test hierarchically by directory. e.g.
         # foo/bar/baz.html: test_dict
