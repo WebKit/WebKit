@@ -884,6 +884,10 @@ void SelectionHandler::selectionPositionChanged(bool forceUpdateWithoutChange)
     // Enter selection mode if selection type is RangeSelection, and disable selection if
     // selection is active and becomes caret selection.
     Frame* frame = m_webPage->focusedOrMainFrame();
+
+    if (frame->view()->needsLayout())
+        return;
+
     WebCore::IntPoint framePos = m_webPage->frameOffset(frame);
     if (m_selectionActive && (m_caretActive || frame->selection()->isNone()))
         m_selectionActive = false;

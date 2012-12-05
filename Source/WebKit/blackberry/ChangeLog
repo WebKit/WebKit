@@ -1,3 +1,33 @@
+2012-12-04  Sean Wang  <Xuewen.Wang@torchmobile.com.cn>
+        [BlackBerry] VKB flickers in and out when tapping on webview after text selection on URL bar
+        https://bugs.webkit.org/show_bug.cgi?id=103874
+        PR245678
+
+        Reviewed by Rob Buis.
+        Internally reviewed by Mike Fenton.
+
+        When the virtual keyboard is hiding, the viewport is changed and the page needs
+        to relayout.At the same time, the user interface thread  is executing compositeLayers
+        and it will dispatch the updateDelegatedOverlays() to webkit thread which will trigger
+        the selectionPositionChanged() in webkit thread.
+
+        When the selectionPositionChanged() calls frame->selection()->selection().
+        visibleStart() and frame->selection()->selection().visibleEnd(), it will
+        trigger page relayout and return the relayouted selection start and end position.
+        These positions are out of the range which is recorded before its relayout.
+        As a result it think the selection start and end are all clipped out and it send
+        out an "empty selection"(not selected) changing event.
+
+        When the WebPageClient receives the empty selection changing event, it will consider
+        the selection process aborted and might cancel selection-related user interaction.
+        This is not what we intend to happen.
+
+        This patch stops the changing handling process and returns when the page needs relayout,
+        and the selection will be updated again when the page finishs relayout.
+
+        * WebKitSupport/SelectionHandler.cpp:
+        (BlackBerry::WebKit::SelectionHandler::selectionPositionChanged):
+
 2012-12-04  Andrew Lo  <anlo@rim.com>
 
         [BlackBerry] Scroll adjustments while typing scroll off page, then bounce back.
