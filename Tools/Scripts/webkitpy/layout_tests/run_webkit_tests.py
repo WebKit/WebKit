@@ -91,18 +91,15 @@ def run(port, options, args, regular_output=sys.stderr, buildbot_output=sys.stdo
         printer = printing.Printer(port, options, regular_output, buildbot_output, logger=logging.getLogger())
 
         _set_up_derived_options(port, options)
-
-        if options.lint_test_files:
-            return lint(port, options)
-
         manager = Manager(port, options, printer)
         printer.print_config(port.results_directory())
 
-        unexpected_result_count = manager.run(args)
-        _log.debug("Testing completed, Exit status: %d" % unexpected_result_count)
-        return unexpected_result_count
+        run_details = manager.run(args)
+        _log.debug("Testing completed, Exit status: %d" % run_details.exit_code)
+        return run_details
     finally:
         printer.cleanup()
+
 
 def _set_up_derived_options(port, options):
     """Sets the options values that depend on other options values."""
@@ -419,7 +416,9 @@ def main(argv=None):
 
     logging.getLogger().setLevel(logging.DEBUG if options.debug_rwt_logging else logging.INFO)
     try:
-        return run(port, options, args)
+        if options.lint_test_files:
+            return lint(port, options)
+        return run(port, options, args).exit_code
     except Exception, e:
         print >> sys.stderr, '\n%s raised: %s' % (e.__class__.__name__, str(e))
         traceback.print_exc(file=sys.stderr)

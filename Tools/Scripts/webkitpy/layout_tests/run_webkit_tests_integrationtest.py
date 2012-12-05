@@ -88,8 +88,8 @@ def passing_run(extra_args=None, port_obj=None, tests_included=False, host=None,
 
     buildbot_output = StringIO.StringIO()
     regular_output = StringIO.StringIO()
-    res = run_webkit_tests.run(port_obj, options, parsed_args, buildbot_output=buildbot_output, regular_output=regular_output)
-    return res == 0
+    run_details = run_webkit_tests.run(port_obj, options, parsed_args, buildbot_output=buildbot_output, regular_output=regular_output)
+    return run_details.exit_code == 0
 
 
 def logging_run(extra_args=None, port_obj=None, tests_included=False, host=None, new_results=False, shared_port=True):
@@ -112,12 +112,12 @@ def run_and_capture(port_obj, options, parsed_args, shared_port=True):
         oc.capture_output()
         buildbot_output = StringIO.StringIO()
         regular_output = StringIO.StringIO()
-        res = run_webkit_tests.run(port_obj, options, parsed_args,
-                                   buildbot_output=buildbot_output,
-                                   regular_output=regular_output)
+        run_details = run_webkit_tests.run(port_obj, options, parsed_args,
+                                           buildbot_output=buildbot_output,
+                                           regular_output=regular_output)
     finally:
         oc.restore_output()
-    return (res, buildbot_output, regular_output)
+    return (run_details.exit_code, buildbot_output, regular_output)
 
 
 def get_tests_run(extra_args=None, tests_included=False, flatten_batches=False,
@@ -245,30 +245,49 @@ class LintTest(unittest.TestCase, StreamTestingMixin):
         self.assertEqual(host.ports_parsed, ['a'])
 
     def test_lint_test_files(self):
-        res, out, err, user = logging_run(['--lint-test-files'])
+        oc = outputcapture.OutputCapture()
+        oc.capture_output()
+        try:
+            res = run_webkit_tests.main(['--platform', 'test', '--lint-test-files'])
+        finally:
+            out, err, logs = oc.restore_output()
+
         self.assertEqual(res, 0)
-        self.assertEmpty(out)
-        self.assertContains(err, 'Lint succeeded')
+        self.assertEqual(out, '')
+        self.assertEqual(err, '')
+        self.assertTrue('Lint succeeded' in logs)
 
     def test_lint_test_files__errors(self):
-        options, parsed_args = parse_args(['--lint-test-files'])
+        options, parsed_args = parse_args(['--platform', 'test', '--lint-test-files'])
         host = MockHost()
         port_obj = host.port_factory.get(options.platform, options=options)
         port_obj.expectations_dict = lambda: {'': '-- syntax error'}
-        res, out, err = run_and_capture(port_obj, options, parsed_args)
+
+        oc = outputcapture.OutputCapture()
+        oc.capture_output()
+        try:
+            res = run_webkit_tests.lint(port_obj, options)
+        finally:
+            out, err, logs = oc.restore_output()
 
         self.assertEqual(res, -1)
-        self.assertEmpty(out)
-        self.assertTrue(any(['Lint failed' in msg for msg in err.buflist]))
+        self.assertEqual(out, '')
+        self.assertEqual(err, '')
+        self.assertTrue('Lint failed' in logs)
 
         # ensure we lint *all* of the files in the cascade.
         port_obj.expectations_dict = lambda: {'foo': '-- syntax error1', 'bar': '-- syntax error2'}
-        res, out, err = run_and_capture(port_obj, options, parsed_args)
+        oc.capture_output()
+        try:
+            res = run_webkit_tests.lint(port_obj, options)
+        finally:
+            out, err, logs = oc.restore_output()
 
         self.assertEqual(res, -1)
-        self.assertEmpty(out)
-        self.assertTrue(any(['foo:1' in msg for msg in err.buflist]))
-        self.assertTrue(any(['bar:1' in msg for msg in err.buflist]))
+        self.assertEqual(out, '')
+        self.assertEqual(err, '')
+        self.assertTrue('foo:1' in logs)
+        self.assertTrue('bar:1' in logs)
 
 
 class MainTest(unittest.TestCase, StreamTestingMixin):
@@ -944,7 +963,7 @@ class MainTest(unittest.TestCase, StreamTestingMixin):
         port_obj = host.port_factory.get(port_name=options.platform, options=options)
         buildbot_output = StringIO.StringIO()
         regular_output = StringIO.StringIO()
-        res = run_webkit_tests.run(port_obj, options, parsed_args, buildbot_output=buildbot_output, regular_output=regular_output)
+        run_webkit_tests.run(port_obj, options, parsed_args, buildbot_output=buildbot_output, regular_output=regular_output)
         self.assertTrue('text.html passed' in regular_output.getvalue())
         self.assertTrue('image.html passed' in regular_output.getvalue())
 

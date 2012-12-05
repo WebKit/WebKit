@@ -56,6 +56,14 @@ BUILDER_BASE_URL = "http://build.chromium.org/buildbot/layout_test_results/"
 TestExpectations = test_expectations.TestExpectations
 
 
+class RunDetails(object):
+    def __init__(self, exit_code, summarized_results=None, result_summary=None, retry_summary=None):
+        self.exit_code = exit_code
+        self.summarized_results = summarized_results
+        self.result_summary = result_summary
+        self.retry_summary = retry_summary
+
+
 def interpret_test_failures(failures):
     test_dict = {}
     failure_types = [type(failure) for failure in failures]
@@ -331,13 +339,13 @@ class Manager(object):
         return True
 
     def run(self, args):
-        """Run all our tests on all our test files and return the number of unexpected results (0 == success)."""
+        """Run the tests and return a RunDetails object with the results."""
         self._printer.write_update("Collecting tests ...")
         try:
             paths, test_names = self._collect_tests(args)
         except IOError:
             # This is raised if --test-list doesn't exist
-            return -1
+            return RunDetails(exit_code=-1)
 
         self._printer.write_update("Parsing expectations ...")
         self._expectations = test_expectations.TestExpectations(self._port, test_names)
@@ -348,10 +356,10 @@ class Manager(object):
         # Check to make sure we're not skipping every test.
         if not tests_to_run:
             _log.critical('No tests to run.')
-            return -1
+            return RunDetails(exit_code=-1)
 
         if not self._set_up_run(tests_to_run):
-            return -1
+            return RunDetails(exit_code=-1)
 
         start_time = time.time()
         try:
@@ -391,7 +399,8 @@ class Manager(object):
                                                (self._options.full_results_html and result_summary.total_failures)):
                 self._port.show_results_html_file(results_path)
 
-        return self._port.exit_code_from_summarized_results(summarized_results)
+        return RunDetails(self._port.exit_code_from_summarized_results(summarized_results),
+                          summarized_results, result_summary, retry_summary)
 
     def _run_tests(self, tests_to_run, tests_to_skip, repeat_each, iterations, num_workers, retrying):
         needs_http = self._port.requires_http_server() or any(self._is_http_test(test) for test in tests_to_run)
