@@ -283,7 +283,7 @@ void Connection::markCurrentlyDispatchedMessageAsInvalid()
     m_didReceiveInvalidMessage = true;
 }
 
-PassOwnPtr<MessageEncoder> Connection::createSyncMessageEncoder(const StringReference messageReceiverName, const StringReference messageName, uint64_t destinationID, uint64_t& syncRequestID)
+PassOwnPtr<MessageEncoder> Connection::createSyncMessageEncoder(StringReference messageReceiverName, StringReference messageName, uint64_t destinationID, uint64_t& syncRequestID)
 {
     OwnPtr<MessageEncoder> encoder = MessageEncoder::create(messageReceiverName, messageName, destinationID);
 
@@ -319,7 +319,7 @@ bool Connection::sendSyncReply(PassOwnPtr<MessageEncoder> encoder)
     return sendMessage(MessageID(CoreIPCMessage::SyncMessageReply), encoder);
 }
 
-PassOwnPtr<MessageDecoder> Connection::waitForMessage(MessageID messageID, uint64_t destinationID, double timeout)
+PassOwnPtr<MessageDecoder> Connection::waitForMessage(StringReference messageReceiverName, StringReference messageName, uint64_t destinationID, double timeout)
 {
     // First, check if this message is already in the incoming messages queue.
     {
@@ -328,7 +328,7 @@ PassOwnPtr<MessageDecoder> Connection::waitForMessage(MessageID messageID, uint6
         for (Deque<IncomingMessage>::iterator it = m_incomingMessages.begin(), end = m_incomingMessages.end(); it != end; ++it) {
             IncomingMessage& message = *it;
 
-            if (message.messageID() == messageID && message.arguments()->destinationID() == destinationID) {
+            if (message.arguments()->messageReceiverName() == messageReceiverName && message.arguments()->messageName() == messageName && message.arguments()->destinationID() == destinationID) {
                 OwnPtr<MessageDecoder> decoder = message.releaseArguments();
 
                 m_incomingMessages.remove(it);
@@ -336,10 +336,10 @@ PassOwnPtr<MessageDecoder> Connection::waitForMessage(MessageID messageID, uint6
             }
         }
     }
-    
+
     double absoluteTime = currentTime() + timeout;
     
-    std::pair<unsigned, uint64_t> messageAndDestination(std::make_pair(messageID.toInt(), destinationID));
+    std::pair<std::pair<StringReference, StringReference>, uint64_t> messageAndDestination(std::make_pair(std::make_pair(messageReceiverName, messageName), destinationID));
     
     {
         MutexLocker locker(m_waitForMessageMutex);
@@ -348,20 +348,18 @@ PassOwnPtr<MessageDecoder> Connection::waitForMessage(MessageID messageID, uint6
         ASSERT(!m_waitForMessageMap.contains(messageAndDestination));
     
         // Insert our pending wait.
-        m_waitForMessageMap.set(messageAndDestination, 0);
+        m_waitForMessageMap.set(messageAndDestination, nullptr);
     }
     
     // Now wait for it to be set.
     while (true) {
         MutexLocker locker(m_waitForMessageMutex);
 
-        HashMap<std::pair<unsigned, uint64_t>, MessageDecoder*>::iterator it = m_waitForMessageMap.find(messageAndDestination);
+        HashMap<std::pair<std::pair<StringReference, StringReference>, uint64_t>, OwnPtr<MessageDecoder> >::iterator it = m_waitForMessageMap.find(messageAndDestination);
         if (it->value) {
-            // FIXME: m_waitForMessageMap should really hold OwnPtrs to
-            // ArgumentDecoders, but HashMap doesn't currently support OwnPtrs.
-            OwnPtr<MessageDecoder> decoder = adoptPtr(it->value);
+            OwnPtr<MessageDecoder> decoder = it->value.release();
             m_waitForMessageMap.remove(it);
-            
+
             return decoder.release();
         }
         
@@ -373,7 +371,7 @@ PassOwnPtr<MessageDecoder> Connection::waitForMessage(MessageID messageID, uint6
             break;
         }
     }
-    
+
     return nullptr;
 }
 
@@ -523,10 +521,10 @@ void Connection::processIncomingMessage(MessageID messageID, PassOwnPtr<MessageD
     // Check if we're waiting for this message.
     {
         MutexLocker locker(m_waitForMessageMutex);
-        
-        HashMap<std::pair<unsigned, uint64_t>, MessageDecoder*>::iterator it = m_waitForMessageMap.find(std::make_pair(messageID.toInt(), incomingMessage.destinationID()));
+
+        HashMap<std::pair<std::pair<StringReference, StringReference>, uint64_t>, OwnPtr<MessageDecoder> >::iterator it = m_waitForMessageMap.find(std::make_pair(std::make_pair(incomingMessage.arguments()->messageReceiverName(), incomingMessage.arguments()->messageName()), incomingMessage.destinationID()));
         if (it != m_waitForMessageMap.end()) {
-            it->value = incomingMessage.releaseArguments().leakPtr();
+            it->value = incomingMessage.releaseArguments();
             ASSERT(it->value);
         
             m_waitForMessageCondition.signal();

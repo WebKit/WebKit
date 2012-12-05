@@ -242,7 +242,7 @@ private:
     
     bool isValid() const { return m_client; }
     
-    PassOwnPtr<MessageDecoder> waitForMessage(MessageID, uint64_t destinationID, double timeout);
+    PassOwnPtr<MessageDecoder> waitForMessage(StringReference messageReceiverName, StringReference messageName, uint64_t destinationID, double timeout);
     
     PassOwnPtr<MessageDecoder> waitForSyncReply(uint64_t syncRequestID, double timeout, unsigned syncSendFlags);
 
@@ -300,7 +300,7 @@ private:
     
     ThreadCondition m_waitForMessageCondition;
     Mutex m_waitForMessageMutex;
-    HashMap<std::pair<unsigned, uint64_t>, MessageDecoder*> m_waitForMessageMap;
+    HashMap<std::pair<std::pair<StringReference, StringReference>, uint64_t>, OwnPtr<MessageDecoder> > m_waitForMessageMap;
 
     // Represents a sync request for which we're waiting on a reply.
     struct PendingSyncReply {
@@ -426,7 +426,7 @@ template<typename T> bool Connection::sendSync(const T& message, const typename 
 
 template<typename T> bool Connection::waitForAndDispatchImmediately(uint64_t destinationID, double timeout)
 {
-    OwnPtr<MessageDecoder> decoder = waitForMessage(MessageID(T::messageID), destinationID, timeout);
+    OwnPtr<MessageDecoder> decoder = waitForMessage(T::receiverName(), T::name(), destinationID, timeout);
     if (!decoder)
         return false;
 
