@@ -27,10 +27,6 @@
 base_directory = ENV['TARGET_BUILD_DIR'] or throw "Unable to find TARGET_BUILD_DIR in the environment!"
 is_shallow_bundle = (ENV['SHALLOW_BUNDLE'] || "NO").upcase == "YES"
 
-unless base_directory
-  throw "Unable to find TARGET_BUILD_DIR in the environment!"
-end
-
 Dir.chdir base_directory
 
 $PERMITTED_INCLUDE_TYPES = { :public => [ :public ], :private => [ :public, :private ] }
@@ -73,9 +69,6 @@ def resolve_include(header, included_header, permitted_types)
 
   # A header of any type including a WebCore header is a recipe for disaster.
   if framework == "WebCore"
-    # <rdar://problem/7718826> WebKeyGenerator.h should not include a WebCore header
-    return if header =~ /\/WebKeyGenerator.h$/ and included_header_name == "WebCoreKeyGenerator.h"
-
     print_error "#{header} included #{included_header}!"
     return
   end

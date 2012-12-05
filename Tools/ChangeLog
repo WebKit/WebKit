@@ -1,3 +1,14 @@
+2012-12-05  Joseph Pecoraro  <pecoraro@apple.com>
+
+        Remove stale check in check-for-webkit-framework-include-consistency
+        https://bugs.webkit.org/show_bug.cgi?id=103775
+
+        Reviewed by David Kilzer.
+
+        The underlying issue was fixed in r81173.
+
+        * Scripts/check-for-webkit-framework-include-consistency:
+
 2012-12-05  Dirk Pranke  <dpranke@chromium.org>
 
         nrwt: simplify the finding of tests to retry
