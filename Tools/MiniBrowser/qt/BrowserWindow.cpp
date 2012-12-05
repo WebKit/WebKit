@@ -39,8 +39,8 @@
 BrowserWindow::BrowserWindow(WindowOptions* options)
     : m_windowOptions(options)
 {
-    setWindowTitle("MiniBrowser");
-    setWindowFlags(Qt::Window | Qt::WindowTitleHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
+    setTitle("MiniBrowser");
+    setFlags(Qt::Window | Qt::WindowTitleHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
     setResizeMode(QQuickView::SizeRootObjectToView);
 
     // This allows starting MiniBrowser from the build directory without previously defining QML_IMPORT_PATH.
@@ -147,7 +147,7 @@ void BrowserWindow::onTitleChanged(QString title)
 {
     if (title.isEmpty())
         title = QLatin1String("MiniBrowser");
-    setWindowTitle(title);
+    setTitle(title);
 }
 
 void BrowserWindow::zoomIn()

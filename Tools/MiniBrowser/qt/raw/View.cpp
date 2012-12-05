@@ -62,7 +62,7 @@ View::View(const QString& url)
 {
     setSurfaceType(OpenGLSurface);
     setGeometry(50, 50, 980, 600);
-    setWindowFlags(Qt::Window | Qt::WindowTitleHint);
+    setFlags(Qt::Window | Qt::WindowTitleHint);
     create();
 
     m_context = new QOpenGLContext;

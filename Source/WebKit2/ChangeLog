@@ -1,3 +1,17 @@
+2012-12-05  Michael Brüning  <michael.bruning@digia.com>
+
+        Fix compilation for Qt5.0.0 stable branch.
+        https://bugs.webkit.org/show_bug.cgi?id=103870
+
+        Reviewed by Simon Hausmann.
+
+        QWindow::pos() and QQuickItem::pos() have been renamed to position().
+        Patch by Lars Knoll <lars.knoll@digia.com>
+
+        * UIProcess/qt/PageViewportControllerClientQt.cpp:
+        (WebKit::PageViewportControllerClientQt::setContentRectVisiblePositionAtScale):
+        (WebKit::PageViewportControllerClientQt::setViewportPosition):
+
 2012-12-05  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL][WK2] EWK2UnitTestBase.ewk_favicon_database_async_icon_get is crashing with new Ewk_Context
