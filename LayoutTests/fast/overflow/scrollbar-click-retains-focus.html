@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+
+<script src="../js/resources/js-test-pre.js"></script>
+
+<style>
+    /* Float everything so they fit inside the viewport for using eventSender to click */
+    section, footer, span, textarea, select { float: left; }
+</style>
+
+<footer>
+    <input>
+</footer>
+
+<section style="height: 100px; width: 100px; overflow: scroll;"></section>
+
+<div tabindex="1">
+    <header style="height: 100px; width: 100px; overflow: scroll;"></header>
+</div>
+
+<span contenteditable>
+    <u style="height: 100px; width: 100px; overflow: scroll; display: block;"></u>
+</span>
+
+<textarea rows="5">
+    Text.
+    Text.
+    Text.
+    Text.
+    Text.
+    Text.
+    Text.
+    Text.
+    Text.
+    Text.
+</textarea>
+
+<select multiple>
+    <option> Text.
+    <option> Text.
+    <option> Text.
+    <option> Text.
+    <option> Text.
+    <option> Text.
+    <option> Text.
+</select>
+
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+function click(x, y)
+{
+    if (window.eventSender) {
+        eventSender.mouseMoveTo(x, y);
+        eventSender.mouseDown();
+        eventSender.mouseUp();
+    }
+}
+
+function clickVerticalScrollbar(type)
+{
+    var element = document.querySelector(type);
+    click(element.offsetLeft + element.offsetWidth - 5, element.offsetTop + 5);
+}
+
+function clickHorizontalScrollbar(type)
+{
+    var element = document.querySelector(type);
+    click(element.offsetLeft + 5, element.offsetTop + element.offsetHeight - 5);
+}
+
+function test(name, fn)
+{
+    debug("<br>" + name);
+    fn();
+}
+
+description("This tests clicking scrollbars, which should only move the focus if an ancestor is mouse focusable.");
+
+test("Focus should remain in the input", function() {
+    document.querySelector("input").focus();
+    clickVerticalScrollbar("section");
+    clickHorizontalScrollbar("section");
+    shouldBeEqualToString("document.activeElement.tagName", "INPUT");
+});
+
+test("Focus should move if ancestor is mouse focusable", function() {
+    document.querySelector("input").focus();
+    clickVerticalScrollbar("header");
+    shouldBeEqualToString("document.activeElement.tagName", "DIV");
+    document.querySelector("input").focus();
+    clickHorizontalScrollbar("header");
+    shouldBeEqualToString("document.activeElement.tagName", "DIV");
+});
+
+test("Focus should move if ancestor is content editable", function() {
+    document.querySelector("input").focus();
+    clickVerticalScrollbar("u");
+    shouldBeEqualToString("document.activeElement.tagName", "SPAN");
+    document.querySelector("input").focus();
+    clickHorizontalScrollbar("u");
+    shouldBeEqualToString("document.activeElement.tagName", "SPAN");
+});
+
+test("Form controls should move the focus", function() {
+    clickVerticalScrollbar("textarea");
+    shouldBeEqualToString("document.activeElement.tagName", "TEXTAREA");
+    clickVerticalScrollbar("select");
+    shouldBeEqualToString("document.activeElement.tagName", "SELECT");
+});
+
+test("Disabled form controls should not move the focus", function() {
+    document.querySelector("input").focus();
+    document.querySelector("select").disabled = true;
+    clickVerticalScrollbar("select");
+    shouldBeEqualToString("document.activeElement.tagName", "INPUT");
+});
+</script>
+
+<script src="../js/resources/js-test-post.js"></script>

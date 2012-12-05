@@ -1,0 +1,28 @@
+This tests clicking scrollbars, which should only move the focus if an ancestor is mouse focusable.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+Focus should remain in the input
+PASS document.activeElement.tagName is "INPUT"
+
+Focus should move if ancestor is mouse focusable
+PASS document.activeElement.tagName is "DIV"
+PASS document.activeElement.tagName is "DIV"
+
+Focus should move if ancestor is content editable
+PASS document.activeElement.tagName is "SPAN"
+PASS document.activeElement.tagName is "SPAN"
+
+Form controls should move the focus
+PASS document.activeElement.tagName is "TEXTAREA"
+PASS document.activeElement.tagName is "SELECT"
+
+Disabled form controls should not move the focus
+PASS document.activeElement.tagName is "INPUT"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+

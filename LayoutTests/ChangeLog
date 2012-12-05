@@ -1,3 +1,16 @@
+2012-12-04  Elliott Sprehn  <esprehn@chromium.org>
+
+        Clicking a scrollbar unfocuses the current activeElement
+        https://bugs.webkit.org/show_bug.cgi?id=96335
+ 
+        Reviewed by Ojan Vafai.
+ 
+        Add test that ensures clicking inside a scrollbar doesn't move the
+        focus unless the scrollbar is inside a mouse focusable element.
+
+        * fast/overflow/scrollbar-click-retains-focus-expected.txt: Added.
+        * fast/overflow/scrollbar-click-retains-focus.html: Added.
+
 2012-12-04  Viatcheslav Ostapenko  <v.ostapenko@samsung.com>
 
         [EFL][WK2] Enable compositing pixel tests that are not fail after EFL WTR snapshot implementation.

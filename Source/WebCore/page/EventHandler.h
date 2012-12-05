@@ -290,6 +290,8 @@ private:
     void fakeMouseMoveEventTimerFired(DeferrableOneShotTimer<EventHandler>*);
     void cancelFakeMouseMoveEvent();
 
+    bool isInsideScrollbar(const IntPoint&) const;
+
 #if ENABLE(TOUCH_EVENTS)
     bool dispatchSyntheticTouchEventIfEnabled(const PlatformMouseEvent&);
 #endif

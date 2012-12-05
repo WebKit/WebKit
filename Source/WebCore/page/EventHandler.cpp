@@ -645,8 +645,8 @@ bool EventHandler::handleMousePressEvent(const MouseEventWithHitTestResults& eve
     bool singleClick = event.event().clickCount() <= 1;
 
     // If we got the event back, that must mean it wasn't prevented,
-    // so it's allowed to start a drag or selection.
-    m_mouseDownMayStartSelect = canMouseDownStartSelect(event.targetNode());
+    // so it's allowed to start a drag or selection if it wasn't in a scrollbar.
+    m_mouseDownMayStartSelect = canMouseDownStartSelect(event.targetNode()) && !event.scrollbar();
     
 #if ENABLE(DRAG_SUPPORT)
     // Careful that the drag starting logic stays in sync with eventMayStartDrag()
@@ -2395,6 +2395,10 @@ bool EventHandler::dispatchMouseEvent(const AtomicString& eventType, Node* targe
             node = node->parentOrHostNode();
         }
 
+        // Only change the focus when clicking scrollbars if it can transfered to a mouse focusable node.
+        if ((!node || !node->isMouseFocusable()) && isInsideScrollbar(mouseEvent.position()))
+            return false;
+
         // If focus shift is blocked, we eat the event.  Note we should never clear swallowEvent
         // if the page already set it (e.g., by canceling default behavior).
         if (Page* page = m_frame->page()) {
@@ -2409,6 +2413,18 @@ bool EventHandler::dispatchMouseEvent(const AtomicString& eventType, Node* targe
     }
 
     return !swallowEvent;
+}
+
+bool EventHandler::isInsideScrollbar(const IntPoint& windowPoint) const
+{
+    if (RenderView* renderView = m_frame->contentRenderer()) {
+        HitTestRequest request(HitTestRequest::ReadOnly);
+        HitTestResult result(windowPoint);
+        renderView->hitTest(request, result);
+        return result.scrollbar();
+    }
+
+    return false;
 }
 
 #if !PLATFORM(GTK) && !(PLATFORM(CHROMIUM) && (OS(UNIX) && !OS(DARWIN)))
@@ -2834,6 +2850,7 @@ bool EventHandler::sendContextMenuEvent(const PlatformMouseEvent& event)
 
     if (m_frame->editor()->behavior().shouldSelectOnContextualMenuClick()
         && !m_frame->selection()->contains(viewportPos)
+        && !mev.scrollbar()
         // FIXME: In the editable case, word selection sometimes selects content that isn't underneath the mouse.
         // If the selection is non-editable, we do word selection to make it easier to use the contextual menu items
         // available for text selections.  But only if we're above text.

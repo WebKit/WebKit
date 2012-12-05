@@ -1,3 +1,35 @@
+2012-12-04  Elliott Sprehn  <esprehn@chromium.org>
+
+        Clicking a scrollbar unfocuses the current activeElement
+        https://bugs.webkit.org/show_bug.cgi?id=96335
+
+        Reviewed by Ojan Vafai.
+
+        Previously we only tested for clicks inside frame scrollbars before
+        moving the focus, this patch expands the check to overflow scrollbars.
+        Now clicking inside a scrollbar only moves the focus when the scrollbar
+        has an ancestor that is mouse focusable.
+
+        This matches Gecko behavior, and was agreed to be the most sensible for now:
+        http://lists.whatwg.org/htdig.cgi/whatwg-whatwg.org/2012-October/037759.html
+
+        Test: fast/overflow/scrollbar-click-retains-focus.html
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleMousePressEvent):
+          Never start selections inside scrollbars because it would cause asserts. 
+          This wasn't a problem before because we always moved the focus when clicking a scrollbar.        
+        (WebCore::EventHandler::dispatchMouseEvent): 
+          Check that the click is not inside a scrollbar before moving the focus.
+        (WebCore::EventHandler::isInsideScrollbar): Tests if a point is in a scrollbar.
+        (WebCore):
+        (WebCore::EventHandler::sendContextMenuEvent):
+          Never start selections inside scrollbars because it would cause asserts.
+        * page/EventHandler.h:
+        (EventHandler):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::hitTestOverflowControls):
+
 2012-12-04  Kentaro Hara  <haraken@chromium.org>
 
         [V8] Replace String::New("symbol") with String::NewSymbol("symbol")

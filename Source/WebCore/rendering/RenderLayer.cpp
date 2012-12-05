@@ -2973,6 +2973,8 @@ bool RenderLayer::hitTestOverflowControls(HitTestResult& result, const IntPoint&
 
     int resizeControlSize = max(resizeControlRect.height(), 0);
 
+    // FIXME: We should hit test the m_scrollCorner and pass it back through the result.
+
     if (m_vBar && m_vBar->shouldParticipateInHitTesting()) {
         LayoutRect vBarRect(verticalScrollbarStart(0, box->width()),
                             box->borderTop(),
