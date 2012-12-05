@@ -1706,6 +1706,7 @@ fast/text/international/plane2.html
 fast/text/international/unicode-bidi-plaintext.html
 fast/text/international/vertical-text-glyph-test.html
 fast/text/international/vertical-text-metrics-test.html
+fast/text/orientation-sideways.html
 fast/writing-mode/japanese-ruby-horizontal-bt.html
 fast/writing-mode/japanese-ruby-vertical-lr.html
 fast/writing-mode/japanese-ruby-vertical-rl.html
