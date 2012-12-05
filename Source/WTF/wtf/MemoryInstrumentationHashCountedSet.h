@@ -37,7 +37,7 @@
 namespace WTF {
 
 template<typename ValueArg, typename HashArg, typename TraitsArg>
-void reportMemoryUsage(const HashCountedSet<ValueArg, HashArg, TraitsArg>* const& hashSet, MemoryObjectInfo* memoryObjectInfo)
+void reportMemoryUsage(const HashCountedSet<ValueArg, HashArg, TraitsArg>* hashSet, MemoryObjectInfo* memoryObjectInfo)
 {
     MemoryClassInfo info(memoryObjectInfo, hashSet);
 

@@ -37,7 +37,7 @@
 namespace WTF {
 
 template<typename T, size_t inlineCapacity>
-void reportMemoryUsage(const Vector<T, inlineCapacity>* const& vector, MemoryObjectInfo* memoryObjectInfo)
+void reportMemoryUsage(const Vector<T, inlineCapacity>* vector, MemoryObjectInfo* memoryObjectInfo)
 {
     MemoryClassInfo info(memoryObjectInfo, vector);
     if (inlineCapacity < vector->capacity())
