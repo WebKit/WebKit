@@ -1,3 +1,72 @@
+2012-12-05  Bear Travis  <betravis@adobe.com>
+
+        [CSS Exclusions] Enable shape-inside for multiple-segment polygons
+        https://bugs.webkit.org/show_bug.cgi?id=91878
+
+        Reviewed by David Hyatt.
+
+        Patch adding support for multiple-segment polygons for shape-insides from
+        the CSS Exclusions specification. The layout code has been modified to first
+        support dividing text into multiple segments per line, and then to lay out
+        multiple segments per line box.
+
+        Tests:  fast/exclusions/shape-inside/shape-inside-multiple-segments-001.html
+                fast/exclusions/shape-inside/shape-inside-multiple-segments-002.html
+                fast/exclusions/shape-inside/shape-inside-multiple-segments-003.html
+                fast/exclusions/shape-inside/shape-inside-multiple-segments-004.html
+
+        * platform/text/BidiResolver.h:
+        (WebCore::BidiCharacterRun::BidiCharacterRun):
+        (BidiCharacterRun): Added a 'startsSegment' bitfield to track whether a
+        run begins a new segment. The field is here, rather than in BidiRun, in
+        order to save space. See Bug 100173.
+        * rendering/BidiRun.h:
+        (WebCore::BidiRun::BidiRun):
+        (BidiRun): Set the initial value for 'startsSegment'.
+        * rendering/ExclusionShapeInsideInfo.cpp:
+        (WebCore::ExclusionShapeInsideInfo::computeSegmentsForLine): Clear the
+        segment ranges when computing segments for a new line.
+        * rendering/ExclusionShapeInsideInfo.h:
+        (LineSegmentRange): Added a new type to track segment offsets.
+        (WebCore::ExclusionShapeInsideInfo::segmentRanges): Added a getter for
+        the line segment ranges vector.
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::placeBoxesInInlineDirection): Modified to call
+        a refactored box placement algorithm that takes a beginning and end position.
+        (WebCore::InlineFlowBox::placeBoxRangeInInlineDirection): Similar to the
+        placeBoxes method, but takes an end position that may occur before the end
+        of the line.
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::exclusionShapeInsideInfo): Factored out calls
+        to ExclusionShapeInsideInfo to the .cpp file, as ExclusionShapeInsideInfo
+        requires InlineIterator.h, which would create a circular dependency in
+        ExclusionShapeInsideInfo.h.
+        * rendering/RenderBlock.h:
+        (WebCore::RenderBlock::exclusionShapeInsideInfo): Modified to call
+        exclusionShapeInsideInfo to be non-inline.
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::LineWidth::LineWidth): LineWidth now uses the number of computed
+        segmentRanges to determine which LineSegment to use when calculating width.
+        (WebCore::RenderBlock::createLineBoxes): Now takes a boolean to determine
+        whether or not it can share the same parentBox as its siblings (segments
+        must be able to position themselves separately in the RootInlineBox).
+        (WebCore::RenderBlock::constructLine):
+        (WebCore::computeExpansionForJustifiedText): Do include runs that start new
+        segments when calculating justification for the current segment.
+        (WebCore::RenderBlock::computeInlineDirectionPositionsForLine): Modified to
+        use the computeInlineDirectionPositionsForSegment, which can position
+        multiple segments of text per line.
+        (WebCore::RenderBlock::computeInlineDirectionPositionsForSegment): Positions
+        the given segment of text and calculates its layout offsets.
+        (WebCore::constructBidiRuns): Modified some variables from 'endOfLine' to 'endOfSegment'.
+        (WebCore::constructBidiRunsForLine): Construct the bidi runs for each segment in
+        the given line.
+        (WebCore::RenderBlock::layoutRunsAndFloatsInRange): Call constructBidiRunsForLine.
+        (WebCore::RenderBlock::LineBreaker::nextLineBreak): Moved the line breaking code
+        to break segments, with nextLineBreak iterating over segment breaks for the entire line.
+        (WebCore::RenderBlock::LineBreaker::nextSegmentBreak): Calculates how much text a
+        segment can hold. This code was originally in nextLineBreak.
+
 2012-12-05  Stephen White  <senorblanco@chromium.org>
 
         Unreviewed, rolling out r136630.

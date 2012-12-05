@@ -34,6 +34,7 @@
 
 #include "ExclusionShape.h"
 #include "FloatRect.h"
+#include "InlineIterator.h"
 #include "LayoutUnit.h"
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
@@ -42,6 +43,17 @@
 namespace WebCore {
 
 class RenderBlock;
+
+struct LineSegmentRange {
+    InlineIterator start;
+    InlineIterator end;
+    LineSegmentRange(InlineIterator start, InlineIterator end)
+        : start(start)
+        , end(end)
+    {
+    }
+};
+typedef Vector<LineSegmentRange> SegmentRangeList;
 
 class ExclusionShapeInsideInfo {
     WTF_MAKE_FAST_ALLOCATED;
@@ -66,6 +78,15 @@ public:
     {
         ASSERT(hasSegments());
         return m_segments;
+    }
+    SegmentRangeList& segmentRanges() { return m_segmentRanges; }
+    const SegmentRangeList& segmentRanges() const { return m_segmentRanges; }
+    const LineSegment* currentSegment() const
+    {
+        if (!hasSegments())
+            return 0;
+        ASSERT(m_segmentRanges.size() < m_segments.size());
+        return &m_segments[m_segmentRanges.size()];
     }
     bool computeSegmentsForLine(LayoutUnit lineTop, LayoutUnit lineHeight);
     void computeShapeSize(LayoutUnit logicalWidth, LayoutUnit logicalHeight);
@@ -97,6 +118,7 @@ private:
     LayoutUnit m_logicalHeight;
 
     SegmentList m_segments;
+    SegmentRangeList m_segmentRanges;
     bool m_shapeSizeDirty;
 };
 

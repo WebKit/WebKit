@@ -109,6 +109,7 @@ bool ExclusionShapeInsideInfo::computeSegmentsForLine(LayoutUnit lineTop, Layout
     m_lineTop = lineTop;
     m_lineHeight = lineHeight;
     m_segments.clear();
+    m_segmentRanges.clear();
 
     if (lineOverlapsShapeBounds()) {
         ASSERT(m_shape);

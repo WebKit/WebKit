@@ -1,0 +1,28 @@
+<html>
+<head>
+<script src='../resources/multi-segment-polygon.js'></script>
+<script>
+    window.onload = function() {
+        simulateWithText(250, 100, 100, "X<span style='font-size:.5em'> </span>X", 'shape1');
+        simulateWithText(250, 100, 50, "<span style='font-size:2em'>X</span> XX", 'shape2');
+        simulateWithText(250, 100, 50, "XX <span style='font-size:2em'>X</span>", 'shape3');
+    }
+</script>
+<style>
+    #shape1, #shape2, #shape3 {
+        margin: 10px 0;
+        vertical-align: bottom;
+    }
+</style>
+</head>
+<body>
+    This test requires the Ahem font, and tests should all display on a 5x2 grid of green
+    squares. These tests check the interaction of shape-inside with spans.
+    <div id='shape1'></div>
+    This test should display two 2x2 green squares, separated by a 1 unit space.
+    <div id='shape2'></div>
+    This test should display a 2x2 green square, and a 2x1 rectangle separated by a 1 unit space.
+    <div id='shape3'></div>
+    This test should display a 2x1 green rectangle, and a 2x2 square separated by a 1 unit space.
+</body>
+</html>

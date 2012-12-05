@@ -88,9 +88,8 @@ public:
         ASSERT(block);
 #if ENABLE(CSS_EXCLUSIONS)
         ExclusionShapeInsideInfo* exclusionShapeInsideInfo = layoutExclusionShapeInsideInfo(m_block);
-        // FIXME: Bug 91878: Add support for multiple segments, currently we only support one
-        if (exclusionShapeInsideInfo && exclusionShapeInsideInfo->hasSegments())
-            m_segment = &exclusionShapeInsideInfo->segments()[0];
+        if (exclusionShapeInsideInfo)
+            m_segment = exclusionShapeInsideInfo->currentSegment();
 #endif
         updateAvailableWidth();
     }
@@ -450,7 +449,7 @@ static bool parentIsConstructedOrHaveNext(InlineFlowBox* parentBox)
     return false;
 }
 
-InlineFlowBox* RenderBlock::createLineBoxes(RenderObject* obj, const LineInfo& lineInfo, InlineBox* childBox)
+InlineFlowBox* RenderBlock::createLineBoxes(RenderObject* obj, const LineInfo& lineInfo, InlineBox* childBox, bool startNewSegment)
 {
     // See if we have an unconstructed line box for this object that is also
     // the last item on the line.
@@ -473,7 +472,8 @@ InlineFlowBox* RenderBlock::createLineBoxes(RenderObject* obj, const LineInfo& l
         // the same line (this can happen with very fancy language mixtures).
         bool constructedNewBox = false;
         bool allowedToConstructNewBox = !hasDefaultLineBoxContain || !inlineFlow || inlineFlow->alwaysCreateLineBoxes();
-        bool canUseExistingParentBox = parentBox && !parentIsConstructedOrHaveNext(parentBox);
+        bool mustCreateBoxesToRoot = startNewSegment && !(parentBox && parentBox->isRootInlineBox());
+        bool canUseExistingParentBox = parentBox && !parentIsConstructedOrHaveNext(parentBox) && !mustCreateBoxesToRoot;
         if (allowedToConstructNewBox && !canUseExistingParentBox) {
             // We need to make a new box for this render object.  Once
             // made, we need to place it at the end of the current line.
@@ -570,10 +570,16 @@ RootInlineBox* RenderBlock::constructLine(BidiRunList<BidiRun>& bidiRuns, const 
 
         // If we have no parent box yet, or if the run is not simply a sibling,
         // then we need to construct inline boxes as necessary to properly enclose the
-        // run's inline box.
-        if (!parentBox || parentBox->renderer() != r->m_object->parent())
+        // run's inline box. Segments can only be siblings at the root level, as
+        // they are positioned separately.
+#if ENABLE(CSS_EXCLUSIONS)
+        bool runStartsSegment = r->m_startsSegment;
+#else
+        bool runStartsSegment = false;
+#endif
+        if (!parentBox || parentBox->renderer() != r->m_object->parent() || runStartsSegment)
             // Create new inline boxes all the way back to the appropriate insertion point.
-            parentBox = createLineBoxes(r->m_object->parent(), lineInfo, box);
+            parentBox = createLineBoxes(r->m_object->parent(), lineInfo, box, runStartsSegment);
         else {
             // Append the inline box to this line.
             parentBox->addToLine(box);
@@ -808,6 +814,11 @@ static inline void computeExpansionForJustifiedText(BidiRun* firstRun, BidiRun* 
 
     size_t i = 0;
     for (BidiRun* r = firstRun; r; r = r->next()) {
+#if ENABLE(CSS_EXCLUSIONS)
+        // This method is called once per segment, do not move past the current segment.
+        if (r->m_startsSegment)
+            break;
+#endif
         if (!r->m_box || r == trailingSpaceRun)
             continue;
         
@@ -883,17 +894,53 @@ void RenderBlock::computeInlineDirectionPositionsForLine(RootInlineBox* lineBox,
     // CSS 2.1: "'Text-indent' only affects a line if it is the first formatted line of an element. For example, the first line of an anonymous block 
     // box is only affected if it is the first child of its parent element."
     bool firstLine = lineInfo.isFirstLine() && !(isAnonymousBlock() && parent()->firstChild() != this);
-    float logicalLeft = pixelSnappedLogicalLeftOffsetForLine(logicalHeight(), firstLine, lineLogicalHeight);
-    float logicalRight = pixelSnappedLogicalRightOffsetForLine(logicalHeight(), firstLine, lineLogicalHeight);
+    float lineLogicalLeft = pixelSnappedLogicalLeftOffsetForLine(logicalHeight(), firstLine, lineLogicalHeight);
+    float lineLogicalRight = pixelSnappedLogicalRightOffsetForLine(logicalHeight(), firstLine, lineLogicalHeight);
+    float availableLogicalWidth;
+    bool needsWordSpacing;
 #if ENABLE(CSS_EXCLUSIONS)
     ExclusionShapeInsideInfo* exclusionShapeInsideInfo = layoutExclusionShapeInsideInfo(this);
     if (exclusionShapeInsideInfo && exclusionShapeInsideInfo->hasSegments()) {
-        logicalLeft = max<float>(roundToInt(exclusionShapeInsideInfo->segments()[0].logicalLeft), logicalLeft);
-        logicalRight = min<float>(floorToInt(exclusionShapeInsideInfo->segments()[0].logicalRight), logicalRight);
+        BidiRun* segmentStart = firstRun;
+        const SegmentList& segments = exclusionShapeInsideInfo->segments();
+        float logicalLeft = max<float>(roundToInt(segments[0].logicalLeft), lineLogicalLeft);
+        float logicalRight = min<float>(floorToInt(segments[0].logicalRight), lineLogicalRight);
+        float startLogicalLeft = logicalLeft;
+        float endLogicalRight = logicalLeft;
+        float minLogicalLeft = logicalLeft;
+        float maxLogicalRight = logicalLeft;
+        lineBox->beginPlacingBoxRangesInInlineDirection(logicalLeft);
+        for (size_t i = 0; i < segments.size(); i++) {
+            if (i) {
+                logicalLeft = max<float>(roundToInt(segments[i].logicalLeft), lineLogicalLeft);
+                logicalRight = min<float>(floorToInt(segments[i].logicalRight), lineLogicalRight);
+            }
+            availableLogicalWidth = logicalRight - logicalLeft;
+            BidiRun* newSegmentStart = computeInlineDirectionPositionsForSegment(lineBox, lineInfo, textAlign, logicalLeft, availableLogicalWidth, segmentStart, trailingSpaceRun, textBoxDataMap, verticalPositionCache, wordMeasurements);
+            needsWordSpacing = false;
+            endLogicalRight = lineBox->placeBoxRangeInInlineDirection(segmentStart->m_box, newSegmentStart ? newSegmentStart->m_box : 0, logicalLeft, minLogicalLeft, maxLogicalRight, needsWordSpacing, textBoxDataMap);
+            if (!newSegmentStart || !newSegmentStart->next())
+                break;
+            ASSERT(newSegmentStart->m_startsSegment);
+            // Discard the empty segment start marker bidi runs
+            segmentStart = newSegmentStart->next();
+        }
+        lineBox->endPlacingBoxRangesInInlineDirection(startLogicalLeft, endLogicalRight, minLogicalLeft, maxLogicalRight);
+        return;
     }
 #endif
-    float availableLogicalWidth = logicalRight - logicalLeft;
+    availableLogicalWidth = lineLogicalRight - lineLogicalLeft;
+    computeInlineDirectionPositionsForSegment(lineBox, lineInfo, textAlign, lineLogicalLeft, availableLogicalWidth, firstRun,  trailingSpaceRun, textBoxDataMap, verticalPositionCache, wordMeasurements);
+    // The widths of all runs are now known. We can now place every inline box (and
+    // compute accurate widths for the inline flow boxes).
+    needsWordSpacing = false;
+    lineBox->placeBoxesInInlineDirection(lineLogicalLeft, needsWordSpacing, textBoxDataMap);
+}
 
+BidiRun* RenderBlock::computeInlineDirectionPositionsForSegment(RootInlineBox* lineBox, const LineInfo& lineInfo, ETextAlign textAlign, float& logicalLeft,
+    float& availableLogicalWidth, BidiRun* firstRun, BidiRun* trailingSpaceRun, GlyphOverflowAndFallbackFontsMap& textBoxDataMap, VerticalPositionCache& verticalPositionCache,
+    WordMeasurements& wordMeasurements)
+{
     bool needsWordSpacing = false;
     float totalLogicalWidth = lineBox->getFlowSpacingLogicalWidth();
     unsigned expansionOpportunityCount = 0;
@@ -901,7 +948,14 @@ void RenderBlock::computeInlineDirectionPositionsForLine(RootInlineBox* lineBox,
     Vector<unsigned, 16> expansionOpportunities;
     RenderObject* previousObject = 0;
 
-    for (BidiRun* r = firstRun; r; r = r->next()) {
+    BidiRun* r = firstRun;
+    for (; r; r = r->next()) {
+#if ENABLE(CSS_EXCLUSIONS)
+        // Once we have reached the start of the next segment, we have finished
+        // computing the positions for this segment's contents.
+        if (r->m_startsSegment)
+            break;
+#endif
         if (!r->m_box || r->m_object->isOutOfFlowPositioned() || r->m_box->isLineBreak())
             continue; // Positioned objects are only participating to figure out their
                       // correct static x position.  They have no effect on the width.
@@ -951,10 +1005,7 @@ void RenderBlock::computeInlineDirectionPositionsForLine(RootInlineBox* lineBox,
 
     computeExpansionForJustifiedText(firstRun, trailingSpaceRun, expansionOpportunities, expansionOpportunityCount, totalLogicalWidth, availableLogicalWidth);
 
-    // The widths of all runs are now known.  We can now place every inline box (and
-    // compute accurate widths for the inline flow boxes).
-    needsWordSpacing = false;
-    lineBox->placeBoxesInInlineDirection(logicalLeft, needsWordSpacing, textBoxDataMap);
+    return r;
 }
 
 void RenderBlock::computeBlockDirectionPositionsForLine(RootInlineBox* lineBox, BidiRun* firstRun, GlyphOverflowAndFallbackFontsMap& textBoxDataMap,
@@ -1101,13 +1152,13 @@ static inline BidiStatus statusWithDirection(TextDirection textDirection, bool i
 }
 
 // FIXME: BidiResolver should have this logic.
-static inline void constructBidiRuns(InlineBidiResolver& topResolver, BidiRunList<BidiRun>& bidiRuns, const InlineIterator& endOfLine, VisualDirectionOverride override, bool previousLineBrokeCleanly)
+static inline void constructBidiRunsForSegment(InlineBidiResolver& topResolver, BidiRunList<BidiRun>& bidiRuns, const InlineIterator& endOfRuns, VisualDirectionOverride override, bool previousLineBrokeCleanly)
 {
     // FIXME: We should pass a BidiRunList into createBidiRunsForLine instead
     // of the resolver owning the runs.
     ASSERT(&topResolver.runs() == &bidiRuns);
     RenderObject* currentRoot = topResolver.position().root();
-    topResolver.createBidiRunsForLine(endOfLine, override, previousLineBrokeCleanly);
+    topResolver.createBidiRunsForLine(endOfRuns, override, previousLineBrokeCleanly);
 
     while (!topResolver.isolatedRuns().isEmpty()) {
         // It does not matter which order we resolve the runs as long as we resolve them all.
@@ -1147,7 +1198,7 @@ static inline void constructBidiRuns(InlineBidiResolver& topResolver, BidiRunLis
         // We stop at the next end of line; we may re-enter this isolate in the next call to constructBidiRuns().
         // FIXME: What should end and previousLineBrokeCleanly be?
         // rniwa says previousLineBrokeCleanly is just a WinIE hack and could always be false here?
-        isolatedResolver.createBidiRunsForLine(endOfLine, NoVisualOverride, previousLineBrokeCleanly);
+        isolatedResolver.createBidiRunsForLine(endOfRuns, NoVisualOverride, previousLineBrokeCleanly);
         // Note that we do not delete the runs from the resolver.
         // We're not guaranteed to get any BidiRuns in the previous step. If we don't, we allow the placeholder
         // itself to be turned into an InlineBox. We can't remove it here without potentially losing track of
@@ -1162,6 +1213,38 @@ static inline void constructBidiRuns(InlineBidiResolver& topResolver, BidiRunLis
             isolatedResolver.isolatedRuns().clear();
         }
     }
+}
+
+static inline void constructBidiRunsForLine(const RenderBlock* block, InlineBidiResolver& topResolver, BidiRunList<BidiRun>& bidiRuns, const InlineIterator& endOfLine, VisualDirectionOverride override, bool previousLineBrokeCleanly)
+{
+#if !ENABLE(CSS_EXCLUSIONS)
+    UNUSED_PARAM(block);
+    constructBidiRunsForSegment(topResolver, bidiRuns, endOfLine, override, previousLineBrokeCleanly);
+#else
+    ExclusionShapeInsideInfo* exclusionShapeInsideInfo = layoutExclusionShapeInsideInfo(block);
+    if (!exclusionShapeInsideInfo || !exclusionShapeInsideInfo->hasSegments()) {
+        constructBidiRunsForSegment(topResolver, bidiRuns, endOfLine, override, previousLineBrokeCleanly);
+        return;
+    }
+
+    const SegmentRangeList& segmentRanges = exclusionShapeInsideInfo->segmentRanges();
+    ASSERT(segmentRanges.size());
+
+    for (size_t i = 0; i < segmentRanges.size(); i++) {
+        InlineIterator segmentStart = segmentRanges[i].start;
+        InlineIterator segmentEnd = segmentRanges[i].end;
+        if (i) {
+            ASSERT(segmentStart.m_obj);
+            BidiRun* segmentMarker = createRun(segmentStart.m_pos, segmentStart.m_pos, segmentStart.m_obj, topResolver);
+            segmentMarker->m_startsSegment = true;
+            bidiRuns.addRun(segmentMarker);
+            // Do not collapse midpoints between segments
+            topResolver.midpointState().betweenMidpoints = false;
+        }
+        topResolver.setPosition(segmentStart, numberOfIsolateAncestors(segmentStart));
+        constructBidiRunsForSegment(topResolver, bidiRuns, segmentEnd, override, previousLineBrokeCleanly);
+    }
+#endif
 }
 
 // This function constructs line boxes for all of the text runs in the resolver and computes their position.
@@ -1461,7 +1544,7 @@ void RenderBlock::layoutRunsAndFloatsInRange(LineLayoutState& layoutState, Inlin
             }
             // FIXME: This ownership is reversed. We should own the BidiRunList and pass it to createBidiRunsForLine.
             BidiRunList<BidiRun>& bidiRuns = resolver.runs();
-            constructBidiRuns(resolver, bidiRuns, end, override, layoutState.lineInfo().previousLineBrokeCleanly());
+            constructBidiRunsForLine(this, resolver, bidiRuns, end, override, layoutState.lineInfo().previousLineBrokeCleanly());
             ASSERT(resolver.position() == end);
 
             BidiRun* trailingSpaceRun = !layoutState.lineInfo().previousLineBrokeCleanly() ? handleTrailingSpaces(bidiRuns, resolver.context()) : 0;
@@ -2323,6 +2406,48 @@ void RenderBlock::LineBreaker::reset()
 
 InlineIterator RenderBlock::LineBreaker::nextLineBreak(InlineBidiResolver& resolver, LineInfo& lineInfo, RenderTextInfo& renderTextInfo, FloatingObject* lastFloatFromPreviousLine, unsigned consecutiveHyphenatedLines, WordMeasurements& wordMeasurements)
 {
+#if !ENABLE(CSS_EXCLUSIONS)
+    return nextSegmentBreak(resolver, lineInfo, renderTextInfo, lastFloatFromPreviousLine, consecutiveHyphenatedLines, wordMeasurements);
+#else
+    ExclusionShapeInsideInfo* exclusionShapeInsideInfo = layoutExclusionShapeInsideInfo(m_block);
+    if (!exclusionShapeInsideInfo || !exclusionShapeInsideInfo->hasSegments())
+        return nextSegmentBreak(resolver, lineInfo, renderTextInfo, lastFloatFromPreviousLine, consecutiveHyphenatedLines, wordMeasurements);
+
+    InlineIterator end = resolver.position();
+    InlineIterator oldEnd = end;
+
+    const SegmentList& segments = exclusionShapeInsideInfo->segments();
+    SegmentRangeList& segmentRanges = exclusionShapeInsideInfo->segmentRanges();
+
+    for (unsigned i = 0; i < segments.size(); i++) {
+        InlineIterator segmentStart = resolver.position();
+        end = nextSegmentBreak(resolver, lineInfo, renderTextInfo, lastFloatFromPreviousLine, consecutiveHyphenatedLines, wordMeasurements);
+
+        ASSERT(segmentRanges.size() == i);
+        if (resolver.position() == end) {
+            // Nothing fit this segment
+            segmentRanges.append(LineSegmentRange(segmentStart, segmentStart));
+            resolver.setPositionIgnoringNestedIsolates(segmentStart);
+        } else {
+            // Note that resolver.position is already skipping some of the white space at the beginning of the line,
+            // so that's why segmentStart might be different than resolver.position().
+            LineSegmentRange range(resolver.position(), end);
+            segmentRanges.append(range);
+            resolver.setPosition(end, numberOfIsolateAncestors(end));
+
+            if (lineInfo.previousLineBrokeCleanly()) {
+                // If we hit a new line break, just stop adding anything to this line.
+                break;
+            }
+        }
+    }
+    resolver.setPositionIgnoringNestedIsolates(oldEnd);
+    return end;
+#endif
+}
+
+InlineIterator RenderBlock::LineBreaker::nextSegmentBreak(InlineBidiResolver& resolver, LineInfo& lineInfo, RenderTextInfo& renderTextInfo, FloatingObject* lastFloatFromPreviousLine, unsigned consecutiveHyphenatedLines, WordMeasurements& wordMeasurements)
+{
     reset();
 
     ASSERT(resolver.position().root() == m_block);
@@ -2904,6 +3029,8 @@ InlineIterator RenderBlock::LineBreaker::nextLineBreak(InlineBidiResolver& resol
         }
     }
 
+    // FIXME Bug 100049: We do not need to consume input in a multi-segment line
+    // unless no segment will.
     // make sure we consume at least one char/object.
     if (lBreak == resolver.position())
         lBreak.increment();
