@@ -1,3 +1,16 @@
+2012-12-05  Stephen White  <senorblanco@chromium.org>
+
+        Unreviewed, rolling out r136630.
+        http://trac.webkit.org/changeset/136630
+        https://bugs.webkit.org/show_bug.cgi?id=103555
+
+        It's breaking Chrome/Win Debug builds.
+
+        * platform/graphics/chromium/LazyDecodingPixelRef.cpp:
+        (WebCore::LazyDecodingPixelRef::LazyDecodingPixelRef):
+        * platform/graphics/chromium/LazyDecodingPixelRef.h:
+        (LazyDecodingPixelRef):
+
 2012-12-05  Andreas Kling  <akling@apple.com>
 
         REGRESSION(r136615): Incorrect style sharing in view-source documents.

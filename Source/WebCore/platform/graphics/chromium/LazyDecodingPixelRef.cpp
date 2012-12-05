@@ -34,7 +34,8 @@
 namespace WebCore {
 
 LazyDecodingPixelRef::LazyDecodingPixelRef(PassRefPtr<ImageFrameGenerator> frameGenerator, const SkISize& scaledSize, const SkIRect& scaledSubset)
-    : m_frameGenerator(frameGenerator)
+    : SkPixelRef(0)
+    , m_frameGenerator(frameGenerator)
     , m_scaledSize(scaledSize)
     , m_scaledSubset(scaledSubset)
     , m_lockedCachedImage(0)
@@ -88,20 +89,5 @@ bool LazyDecodingPixelRef::onLockPixelsAreWritable() const
 {
     return false;
 }
-
-bool LazyDecodingPixelRef::PrepareToDecode(const LazyPixelRef::PrepareParams& params)
-{
-    MutexLocker lock(m_mutex);
-    // TODO: check if only a particular rect is available in image cache.
-    UNUSED_PARAM(params);
-    return ImageDecodingStore::instance()->lockCompleteCache(m_frameGenerator.get(), m_scaledSize);
-}
-
-void LazyDecodingPixelRef::Decode()
-{
-    lockPixels();
-    unlockPixels();
-}
-
 
 } // namespace WebKit
