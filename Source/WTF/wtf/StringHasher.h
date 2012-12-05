@@ -63,6 +63,29 @@ public:
         m_hasPendingCharacter = true;
     }
 
+    template<typename T, UChar Converter(T)> inline void addCharacters(const T* data, unsigned length)
+    {
+        if (!length)
+            return;
+
+        if (m_hasPendingCharacter) {
+            addCharactersToHash(m_pendingCharacter, Converter(*data++));
+            m_hasPendingCharacter = false;
+            --length;
+        }
+
+        bool rem = length & 1;
+        length >>= 1;
+
+        while (length--) {
+            addCharactersToHash(Converter(data[0]), Converter(data[1]));
+            data += 2;
+        }
+
+        if (rem)
+            addCharacter(Converter(*data));
+    }
+
     inline unsigned hashWithTop8BitsMasked() const
     {
         unsigned result = avalancheBits();
@@ -145,17 +168,7 @@ public:
     template<typename T, UChar Converter(T)> static inline unsigned computeHash(const T* data, unsigned length)
     {
         StringHasher hasher;
-        bool rem = length & 1;
-        length >>= 1;
-
-        while (length--) {
-            hasher.addCharacters(Converter(data[0]), Converter(data[1]));
-            data += 2;
-        }
-
-        if (rem)
-            hasher.addCharacter(Converter(*data));
-
+        hasher.addCharacters<T, Converter>(data, length);
         return hasher.hash();
     }
 
