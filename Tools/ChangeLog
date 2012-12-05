@@ -1,3 +1,22 @@
+2012-12-05  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG profiler should display more information
+        https://bugs.webkit.org/show_bug.cgi?id=104163
+
+        Reviewed by Gavin Barraclough.
+
+        Added the following:
+        
+        - Distinguish between source counts and bytecode counts.
+        
+        - Add a "full" summary view that shows both kinds of counts, plus inline counts.
+        
+        - Add a "source" command to see the source.
+        
+        - Add a "bytecode" command to see the bytecode and counts.
+
+        * Scripts/display-profiler-output:
+
 2012-12-05  Yong Li  <yoli@rim.com>
 
         [BlackBerry] Build with libjpegturbo
