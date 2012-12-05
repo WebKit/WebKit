@@ -434,18 +434,6 @@ static MessageLevel viewportErrorMessageLevel(ViewportErrorCode errorCode)
     return ErrorMessageLevel;
 }
 
-// FIXME: Why is this different from SVGDocumentExtensions parserLineNumber?
-// FIXME: Callers should probably use ScriptController::eventHandlerLineNumber()
-static int parserLineNumber(Document* document)
-{
-    if (!document)
-        return 0;
-    ScriptableDocumentParser* parser = document->scriptableDocumentParser();
-    if (!parser)
-        return 0;
-    return parser->lineNumber().oneBasedInt();
-}
-
 void reportViewportWarning(Document* document, ViewportErrorCode errorCode, const String& replacement1, const String& replacement2)
 {
     Frame* frame = document->frame();
@@ -460,8 +448,9 @@ void reportViewportWarning(Document* document, ViewportErrorCode errorCode, cons
 
     if ((errorCode == UnrecognizedViewportArgumentValueError || errorCode == TruncatedViewportArgumentValueError) && replacement1.find(';') != WTF::notFound)
         message.append(" Note that ';' is not a separator in viewport values. The list should be comma-separated.");
+
     // FIXME: This message should be moved off the console once a solution to https://bugs.webkit.org/show_bug.cgi?id=103274 exists.
-    document->domWindow()->console()->addMessage(HTMLMessageSource, LogMessageType, viewportErrorMessageLevel(errorCode), message, document->url().string(), parserLineNumber(document));
+    document->addConsoleMessage(HTMLMessageSource, LogMessageType, viewportErrorMessageLevel(errorCode), message);
 }
 
 } // namespace WebCore

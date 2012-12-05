@@ -94,6 +94,8 @@ public:
     virtual void addInspectedNode(ErrorString*, int nodeId) = 0;
     virtual void addInspectedHeapObject(ErrorString*, int inspectedHeapObjectId);
 
+    virtual bool isWorkerAgent() = 0;
+
 protected:
     void addConsoleMessage(PassOwnPtr<ConsoleMessage>);
 

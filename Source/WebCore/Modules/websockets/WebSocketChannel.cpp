@@ -330,11 +330,8 @@ void WebSocketChannel::didFailSocketStream(SocketStreamHandle* handle, const Soc
             message = "WebSocket network error: error code " + String::number(error.errorCode());
         else
             message = "WebSocket network error: " + error.localizedDescription();
-        String failingURL = error.failingURL();
-        ASSERT(failingURL.isNull() || m_handshake->url().string() == failingURL);
-        if (failingURL.isNull())
-            failingURL = m_handshake->url().string();
-        m_document->addConsoleMessage(NetworkMessageSource, LogMessageType, ErrorMessageLevel, message, failingURL);
+        InspectorInstrumentation::didReceiveWebSocketFrameError(m_document, m_identifier, message);
+        m_document->addConsoleMessage(NetworkMessageSource, LogMessageType, ErrorMessageLevel, message);
     }
     m_shouldDiscardReceivedData = true;
     handle->disconnect();

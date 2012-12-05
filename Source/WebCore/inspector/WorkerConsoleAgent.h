@@ -47,6 +47,8 @@ public:
     }
     virtual ~WorkerConsoleAgent();
 
+    virtual bool isWorkerAgent() OVERRIDE { return true; }
+
 private:
     WorkerConsoleAgent(InstrumentingAgents*, InspectorState*, InjectedScriptManager*);
     virtual void addInspectedNode(ErrorString*, int nodeId);

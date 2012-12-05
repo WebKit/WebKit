@@ -1762,9 +1762,7 @@ void DOMWindow::printErrorMessage(const String& message)
     if (settings->privateBrowsingEnabled())
         return;
 
-    // FIXME: Add arguments so that we can provide a correct source URL and line number.
-    RefPtr<ScriptCallStack> stackTrace = createScriptCallStack(ScriptCallStack::maxCallStackSizeToCapture, true);
-    console()->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, message, stackTrace.release());
+    console()->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, message);
 }
 
 String DOMWindow::crossDomainAccessErrorMessage(DOMWindow* activeWindow)

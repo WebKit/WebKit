@@ -1176,6 +1176,8 @@ public:
     Document* templateContentsOwnerDocument();
 #endif
 
+    virtual void addConsoleMessage(MessageSource, MessageType, MessageLevel, const String& message, unsigned long requestIdentifier = 0);
+
 protected:
     Document(Frame*, const KURL&, bool isXHTML, bool isHTML);
 

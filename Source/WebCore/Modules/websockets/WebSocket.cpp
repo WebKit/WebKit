@@ -213,26 +213,26 @@ void WebSocket::connect(const String& url, const Vector<String>& protocols, Exce
     m_url = KURL(KURL(), url);
 
     if (!m_url.isValid()) {
-        scriptExecutionContext()->addConsoleMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, "Invalid url for WebSocket " + m_url.string(), scriptExecutionContext()->securityOrigin()->toString());
+        scriptExecutionContext()->addConsoleMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, "Invalid url for WebSocket " + m_url.string());
         m_state = CLOSED;
         ec = SYNTAX_ERR;
         return;
     }
 
     if (!m_url.protocolIs("ws") && !m_url.protocolIs("wss")) {
-        scriptExecutionContext()->addConsoleMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, "Wrong url scheme for WebSocket " + m_url.string(), scriptExecutionContext()->securityOrigin()->toString());
+        scriptExecutionContext()->addConsoleMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, "Wrong url scheme for WebSocket " + m_url.string());
         m_state = CLOSED;
         ec = SYNTAX_ERR;
         return;
     }
     if (m_url.hasFragmentIdentifier()) {
-        scriptExecutionContext()->addConsoleMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, "URL has fragment component " + m_url.string(), scriptExecutionContext()->securityOrigin()->toString());
+        scriptExecutionContext()->addConsoleMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, "URL has fragment component " + m_url.string());
         m_state = CLOSED;
         ec = SYNTAX_ERR;
         return;
     }
     if (!portAllowed(m_url)) {
-        scriptExecutionContext()->addConsoleMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, "WebSocket port " + String::number(m_url.port()) + " blocked", scriptExecutionContext()->securityOrigin()->toString());
+        scriptExecutionContext()->addConsoleMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, "WebSocket port " + String::number(m_url.port()) + " blocked");
         m_state = CLOSED;
         ec = SECURITY_ERR;
         return;
@@ -257,7 +257,7 @@ void WebSocket::connect(const String& url, const Vector<String>& protocols, Exce
     // comply with WebSocket API specification, but it seems to be the only reasonable way to handle this conflict.
     for (size_t i = 0; i < protocols.size(); ++i) {
         if (!isValidProtocolString(protocols[i])) {
-            scriptExecutionContext()->addConsoleMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, "Wrong protocol for WebSocket '" + encodeProtocolString(protocols[i]) + "'", scriptExecutionContext()->securityOrigin()->toString());
+            scriptExecutionContext()->addConsoleMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, "Wrong protocol for WebSocket '" + encodeProtocolString(protocols[i]) + "'");
             m_state = CLOSED;
             ec = SYNTAX_ERR;
             return;
@@ -266,7 +266,7 @@ void WebSocket::connect(const String& url, const Vector<String>& protocols, Exce
     HashSet<String> visited;
     for (size_t i = 0; i < protocols.size(); ++i) {
         if (visited.contains(protocols[i])) {
-            scriptExecutionContext()->addConsoleMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, "WebSocket protocols contain duplicates: '" + encodeProtocolString(protocols[i]) + "'", scriptExecutionContext()->securityOrigin()->toString());
+            scriptExecutionContext()->addConsoleMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, "WebSocket protocols contain duplicates: '" + encodeProtocolString(protocols[i]) + "'");
             m_state = CLOSED;
             ec = SYNTAX_ERR;
             return;

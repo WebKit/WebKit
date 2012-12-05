@@ -51,8 +51,10 @@ class ScriptValue;
 class ConsoleMessage {
     WTF_MAKE_NONCOPYABLE(ConsoleMessage); WTF_MAKE_FAST_ALLOCATED;
 public:
-    ConsoleMessage(MessageSource, MessageType, MessageLevel, const String& message, const String& url, unsigned line, unsigned long requestIdentifier = 0);
-    ConsoleMessage(MessageSource, MessageType, MessageLevel, const String& message, PassRefPtr<ScriptArguments>, PassRefPtr<ScriptCallStack>, unsigned long requestIdentifier = 0);
+    ConsoleMessage(bool canGenerateCallStack, MessageSource, MessageType, MessageLevel, const String& message, unsigned long requestIdentifier = 0);
+    ConsoleMessage(bool canGenerateCallStack, MessageSource, MessageType, MessageLevel, const String& message, const String& u, unsigned li, unsigned long requestIdentifier = 0);
+    ConsoleMessage(bool canGenerateCallStack, MessageSource, MessageType, MessageLevel, const String& message, PassRefPtr<ScriptCallStack>, unsigned long requestIdentifier = 0);
+    ConsoleMessage(bool canGenerateCallStack, MessageSource, MessageType, MessageLevel, const String& message, PassRefPtr<ScriptArguments>, ScriptState*, unsigned long requestIdentifier = 0);
     ~ConsoleMessage();
 
     void addToFrontend(InspectorFrontend::Console*, InjectedScriptManager*, bool generatePreview);
@@ -69,6 +71,8 @@ public:
     unsigned argumentCount();
 
 private:
+    void autogenerateMetadata(bool canGenerateCallStack, ScriptState* = 0);
+
     MessageSource m_source;
     MessageType m_type;
     MessageLevel m_level;

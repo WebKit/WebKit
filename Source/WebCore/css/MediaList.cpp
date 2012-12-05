@@ -324,12 +324,7 @@ static void addResolutionWarningMessageToConsole(Document* document, const Strin
 
     message.append(serializedExpression);
 
-    int lineNumber = 1;
-    ScriptableDocumentParser* parser = document->scriptableDocumentParser();
-    if (parser)
-        lineNumber = parser->lineNumber().oneBasedInt();
-
-    document->domWindow()->console()->addMessage(HTMLMessageSource, LogMessageType, TipMessageLevel, message, document->url().string(), lineNumber);
+    document->addConsoleMessage(HTMLMessageSource, LogMessageType, TipMessageLevel, message);
 }
 
 void reportMediaQueryWarningIfNeeded(Document* document, const MediaQuerySet* mediaQuerySet)

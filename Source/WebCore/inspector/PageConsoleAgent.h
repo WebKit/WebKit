@@ -50,6 +50,8 @@ public:
     }
     virtual ~PageConsoleAgent();
 
+    virtual bool isWorkerAgent() OVERRIDE { return false; }
+
 private:
     PageConsoleAgent(InstrumentingAgents*, InspectorAgent*, InspectorState*, InjectedScriptManager*, InspectorDOMAgent*);
     virtual void clearMessages(ErrorString*);

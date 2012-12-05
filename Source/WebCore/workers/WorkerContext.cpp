@@ -279,6 +279,17 @@ void WorkerContext::logExceptionToConsole(const String& errorMessage, const Stri
     thread()->workerReportingProxy().postExceptionToWorkerObject(errorMessage, lineNumber, sourceURL);
 }
 
+void WorkerContext::addConsoleMessage(MessageSource source, MessageType type, MessageLevel level, const String& message, unsigned long requestIdentifier)
+{
+    if (!isContextThread()) {
+        postTask(AddConsoleMessageTask::create(source, type, level, message));
+        return;
+    }
+    thread()->workerReportingProxy().postConsoleMessageToWorkerObject(source, type, level, message, 0, String());
+
+    addMessageToWorkerConsole(source, type, level, message, String(), 0, 0, requestIdentifier);
+}
+
 void WorkerContext::addMessage(MessageSource source, MessageType type, MessageLevel level, const String& message, const String& sourceURL, unsigned lineNumber, PassRefPtr<ScriptCallStack> callStack, unsigned long requestIdentifier)
 {
     if (!isContextThread()) {
