@@ -1165,7 +1165,9 @@ bool StyleResolver::sharingCandidateHasIdenticalStyleAffectingAttributes(StyledE
 #endif
             if (m_element->classNames() != sharingCandidate->classNames())
                 return false;
+#if ENABLE(SVG)
         }
+#endif
     } else
         return false;
 
