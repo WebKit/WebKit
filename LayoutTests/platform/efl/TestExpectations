@@ -1523,19 +1523,6 @@ webkit.org/b/98587 fast/writing-mode/vertical-subst-font-vert-no-dflt.html [ Ima
 
 webkit.org/b/99878 css3/flexbox/flexbox-baseline-margins.html [ Missing ImageOnlyFailure ]
 
-webkit.org/b/100463 mathml/msubsup-fuzz.html [ Crash Pass ]
-# Needs rebaseline
-webkit.org/b/97990 mathml/presentation/attributes.xhtml [ Failure ]
-webkit.org/b/97990 mathml/presentation/fractions.xhtml [ Failure ]
-webkit.org/b/97990 mathml/presentation/fractions-vertical-alignment.xhtml [ Failure ]
-webkit.org/b/97990 mathml/presentation/roots.xhtml [ Failure ]
-webkit.org/b/99921 mathml/presentation/fenced.xhtml [ Failure ]
-# Needs rebaseline after bug 97390
-webkit.org/b/97390 mathml/presentation/mo-stretch.html [ Failure Pass ]
-webkit.org/b/97390 mathml/presentation/row-alignment.xhtml [ Failure Pass ]
-webkit.org/b/97390 mathml/presentation/tables.xhtml [ Failure Pass ]
-webkit.org/b/97390 mathml/presentation/subsup.xhtml [ Failure Pass ]
-
 # css3-conditionals support is not yet enabled.
 webkit.org/b/86146 css3/supports.html
 
@@ -1675,14 +1662,6 @@ webkit.org/b/100846 inspector-protocol/debugger-terminate-dedicated-worker-while
 webkit.org/b/101439 media/progress-events-generated-correctly.html [ Failure ]
 
 webkit.org/b/101456 fast/repaint/block-selection-gap-in-table-cell.html [ ImageOnlyFailure ]
-
-# Needs rebaseline.
-webkit.org/b/103665 mathml/presentation/roots.xhtml [ Failure ]
-webkit.org/b/103665 mathml/presentation/row-alignment.xhtml [ Failure ]
-webkit.org/b/103665 mathml/presentation/sub.xhtml  [ Failure ]
-webkit.org/b/103665 mathml/presentation/subsup.xhtml  [ Failure ]
-webkit.org/b/103665 mathml/presentation/sup.xhtml [ Failure ]
-webkit.org/b/103665 mathml/presentation/tables.xhtml [ Failure ]
 
 # Identical failures on GTK, EFL and Qt.
 webkit.org/b/101539 editing/execCommand/switch-list-type-with-orphaned-li.html [ Failure ]

@@ -1,3 +1,45 @@
+2012-12-05  Thiago Marcos P. Santos  <thiago.santos@intel.com>
+
+        [EFL] Unreviewed gardening.
+
+        Updated the expectations of MathML tests.
+
+        * platform/efl-wk1/mathml/presentation/roots-expected.txt:
+        * platform/efl-wk1/mathml/presentation/row-alignment-expected.txt:
+        * platform/efl-wk1/mathml/presentation/sub-expected.txt:
+        * platform/efl-wk1/mathml/presentation/subsup-expected.txt:
+        * platform/efl-wk2/TestExpectations:
+        * platform/efl/TestExpectations:
+        * platform/efl/mathml/presentation/attributes-expected.png:
+        * platform/efl/mathml/presentation/attributes-expected.txt:
+        * platform/efl/mathml/presentation/fenced-expected.png:
+        * platform/efl/mathml/presentation/fenced-expected.txt:
+        * platform/efl/mathml/presentation/fenced-mi-expected.png:
+        * platform/efl/mathml/presentation/fractions-expected.png:
+        * platform/efl/mathml/presentation/fractions-expected.txt:
+        * platform/efl/mathml/presentation/fractions-vertical-alignment-expected.png:
+        * platform/efl/mathml/presentation/fractions-vertical-alignment-expected.txt:
+        * platform/efl/mathml/presentation/mo-stretch-expected.png:
+        * platform/efl/mathml/presentation/mo-stretch-expected.txt:
+        * platform/efl/mathml/presentation/mroot-pref-width-expected.png:
+        * platform/efl/mathml/presentation/roots-expected.png:
+        * platform/efl/mathml/presentation/roots-expected.txt: Copied from LayoutTests/platform/efl-wk1/mathml/presentation/roots-expected.txt.
+        * platform/efl/mathml/presentation/row-alignment-expected.png:
+        * platform/efl/mathml/presentation/row-alignment-expected.txt: Added.
+        * platform/efl/mathml/presentation/style-expected.png:
+        * platform/efl/mathml/presentation/sub-expected.png:
+        * platform/efl/mathml/presentation/sub-expected.txt: Copied from LayoutTests/platform/efl-wk1/mathml/presentation/sub-expected.txt.
+        * platform/efl/mathml/presentation/subsup-expected.png:
+        * platform/efl/mathml/presentation/subsup-expected.txt: Copied from LayoutTests/platform/efl-wk1/mathml/presentation/subsup-expected.txt.
+        * platform/efl/mathml/presentation/sup-expected.png:
+        * platform/efl/mathml/presentation/sup-expected.txt:
+        * platform/efl/mathml/presentation/tables-expected.png:
+        * platform/efl/mathml/presentation/tables-expected.txt:
+        * platform/efl/mathml/presentation/tokenElements-expected.png:
+        * platform/efl/mathml/presentation/under-expected.png:
+        * platform/efl/mathml/presentation/underover-expected.png:
+        * platform/efl/mathml/xHeight-expected.png:
+
 2012-12-05  Mike West  <mkwst@chromium.org>
 
         [efl] Unreviewed gardening.
