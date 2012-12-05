@@ -171,7 +171,7 @@ function setWindowRect(rect) {
 }
 
 function hideWindow() {
-    setWindowRect(new Rectangle(0, 0, 1, 1));
+    resizeWindow(1, 1);
 }
 
 window.addEventListener("resize", function() {
