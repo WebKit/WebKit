@@ -1,3 +1,31 @@
+2012-12-05  Bear Travis  <betravis@adobe.com>
+
+        Absolutely positioned non-replaced elements should resolve vertical margins against
+        their containing block's logical width
+        https://bugs.webkit.org/show_bug.cgi?id=103576
+
+        Reviewed by Emil A Eklund.
+
+        According to the CSS box model specification, all percentage margin & padding values,
+        including top & bottom, should be resolved based on the containing block's width.
+        http://www.w3.org/TR/CSS2/box.html#margin-properties
+        The writing modes specification has refined this definition to use the containing
+        block's logical width to resolve percentage margin & padding values.
+        http://dev.w3.org/csswg/css3-writing-modes/#dimension-mapping
+
+        Previously, positioned elements measured their container in the element's block
+        direction (containerLogicalHeight) to resolve margin-before/after, and in the inline
+        direction (containerLogicalWidth) to resolve margin-start/end. This patch measures the
+        container's logical width in its own inline direction (containerRelativeLogicalWidth)
+        to resolve all margin percentage values.
+
+        Test: fast/writing-mode/percentage-margins-absolute.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::computePositionedLogicalWidthUsing): Calculate the logical width
+        of the container, and use it to calculate margins.
+        (WebCore::RenderBox::computePositionedLogicalHeightUsing): Ditto.
+
 2012-12-04  Kentaro Hara  <haraken@chromium.org>
 
         [V8] Replace String::New("symbol") with String::NewSymbol("symbol") (part 2)
