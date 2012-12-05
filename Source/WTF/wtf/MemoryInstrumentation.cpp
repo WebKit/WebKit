@@ -111,7 +111,7 @@ void MemoryClassInfo::init(const void* pointer, MemoryObjectType objectType, siz
     m_objectType = m_memoryObjectInfo->objectType();
 }
 
-void MemoryClassInfo::addRawBuffer(const void* buffer, size_t size, const char* nodeName, const char* edgeName)
+void MemoryClassInfo::addRawBuffer(const void* const& buffer, size_t size, const char* nodeName, const char* edgeName)
 {
     m_memoryInstrumentation->addRawBuffer(m_memoryObjectInfo->reportedPointer(), buffer, m_objectType, size, nodeName, edgeName);
 }

@@ -39,7 +39,7 @@
 
 namespace WTF {
 
-inline void reportMemoryUsage(const StringImpl* stringImpl, MemoryObjectInfo* memoryObjectInfo)
+inline void reportMemoryUsage(const StringImpl* const& stringImpl, MemoryObjectInfo* memoryObjectInfo)
 {
     size_t selfSize = sizeof(StringImpl);
 
@@ -64,24 +64,24 @@ inline void reportMemoryUsage(const StringImpl* stringImpl, MemoryObjectInfo* me
     }
 }
 
-inline void reportMemoryUsage(const String* string, MemoryObjectInfo* memoryObjectInfo)
+inline void reportMemoryUsage(const String* const& string, MemoryObjectInfo* memoryObjectInfo)
 {
     MemoryClassInfo info(memoryObjectInfo, string);
     info.addMember(string->impl());
 }
 
-inline void reportMemoryUsage(const AtomicString* atomicString, MemoryObjectInfo* memoryObjectInfo)
+inline void reportMemoryUsage(const AtomicString* const& atomicString, MemoryObjectInfo* memoryObjectInfo)
 {
     MemoryClassInfo info(memoryObjectInfo, atomicString);
     info.addMember(atomicString->string());
 }
 
-inline void reportMemoryUsage(const CStringBuffer* cStringBuffer, MemoryObjectInfo* memoryObjectInfo)
+inline void reportMemoryUsage(const CStringBuffer* const& cStringBuffer, MemoryObjectInfo* memoryObjectInfo)
 {
     MemoryClassInfo info(memoryObjectInfo, cStringBuffer, 0, sizeof(*cStringBuffer) + cStringBuffer->length());
 }
 
-inline void reportMemoryUsage(const CString* cString, MemoryObjectInfo* memoryObjectInfo)
+inline void reportMemoryUsage(const CString* const& cString, MemoryObjectInfo* memoryObjectInfo)
 {
     MemoryClassInfo info(memoryObjectInfo, cString);
     info.addMember(cString->buffer());

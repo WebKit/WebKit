@@ -36,13 +36,13 @@
 
 namespace WTF {
 
-inline void reportMemoryUsage(const ArrayBufferView* arrayBufferView, MemoryObjectInfo* memoryObjectInfo)
+inline void reportMemoryUsage(const ArrayBufferView* const& arrayBufferView, MemoryObjectInfo* memoryObjectInfo)
 {
     MemoryClassInfo info(memoryObjectInfo, arrayBufferView);
     info.addMember(arrayBufferView->buffer().get());
 }
 
-inline void reportMemoryUsage(const ArrayBuffer* arrayBuffer, MemoryObjectInfo* memoryObjectInfo)
+inline void reportMemoryUsage(const ArrayBuffer* const& arrayBuffer, MemoryObjectInfo* memoryObjectInfo)
 {
     MemoryClassInfo info(memoryObjectInfo, arrayBuffer);
     info.addRawBuffer(arrayBuffer->data(), arrayBuffer->byteLength());

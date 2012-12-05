@@ -37,7 +37,7 @@
 namespace WTF {
 
 template<typename ValueArg, size_t inlineCapacity, typename HashArg>
-void reportMemoryUsage(const ListHashSet<ValueArg, inlineCapacity, HashArg>* set, MemoryObjectInfo* memoryObjectInfo)
+void reportMemoryUsage(const ListHashSet<ValueArg, inlineCapacity, HashArg>* const& set, MemoryObjectInfo* memoryObjectInfo)
 {
     MemoryClassInfo info(memoryObjectInfo, set);
     info.addPrivateBuffer(set->sizeInBytes() - sizeof(*set));

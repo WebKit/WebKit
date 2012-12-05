@@ -37,13 +37,13 @@
 
 namespace WTF {
 
-inline void reportMemoryUsage(const URLString* urlString, MemoryObjectInfo* memoryObjectInfo)
+inline void reportMemoryUsage(const URLString* const& urlString, MemoryObjectInfo* memoryObjectInfo)
 {
     MemoryClassInfo info(memoryObjectInfo, urlString);
     info.addMember(urlString->string());
 }
 
-inline void reportMemoryUsage(const ParsedURL* parsedURL, MemoryObjectInfo* memoryObjectInfo)
+inline void reportMemoryUsage(const ParsedURL* const& parsedURL, MemoryObjectInfo* memoryObjectInfo)
 {
     MemoryClassInfo info(memoryObjectInfo, parsedURL);
     info.addMember(parsedURL->spec());
