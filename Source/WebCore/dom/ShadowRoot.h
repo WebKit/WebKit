@@ -58,7 +58,7 @@ public:
     };
     static PassRefPtr<ShadowRoot> create(Element*, ShadowRootType, ExceptionCode& = ASSERT_NO_EXCEPTION);
 
-    void recalcShadowTreeStyle(StyleChange);
+    void recalcStyle(StyleChange);
 
     virtual bool applyAuthorStyles() const OVERRIDE;
     void setApplyAuthorStyles(bool);

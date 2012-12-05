@@ -37,7 +37,6 @@
 #include "InspectorInstrumentation.h"
 #include "ShadowRoot.h"
 #include "StyleResolver.h"
-#include "Text.h"
 
 namespace WebCore {
 
@@ -158,21 +157,8 @@ bool ElementShadow::needsStyleRecalc()
 
 void ElementShadow::recalcStyle(Node::StyleChange change)
 {
-    for (ShadowRoot* root = youngestShadowRoot(); root; root = root->olderShadowRoot()) {
-        StyleResolver* styleResolver = root->document()->styleResolver();
-        styleResolver->pushParentShadowRoot(root);
-
-        for (Node* n = root->firstChild(); n; n = n->nextSibling()) {
-            if (n->isElementNode())
-                static_cast<Element*>(n)->recalcStyle(change);
-            else if (n->isTextNode())
-                toText(n)->recalcTextStyle(change);
-        }
-
-        styleResolver->popParentShadowRoot(root);
-        root->clearNeedsStyleRecalc();
-        root->clearChildNeedsStyleRecalc();
-    }
+    for (ShadowRoot* root = youngestShadowRoot(); root; root = root->olderShadowRoot())
+        root->recalcStyle(change);
 }
 
 void ElementShadow::ensureDistribution()
