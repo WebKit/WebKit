@@ -141,13 +141,21 @@ void RenderGrid::computedUsedBreadthOfGridTracks(TrackSizingDirection direction,
     const Vector<GridTrackSize>& trackStyles = (direction == ForColumns) ? style()->gridColumns() : style()->gridRows();
     for (size_t i = 0; i < trackStyles.size(); ++i) {
         GridTrack track;
-        Length trackLength = trackStyles[i].length();
-        // FIXME: we stil need to support calc() here (bug 103761)
-        if (trackLength.isFixed() || trackLength.isPercent() || trackLength.isViewportPercentage())
-            track.m_usedBreadth = valueForLength(trackLength, direction == ForColumns ? logicalWidth() : computeContentLogicalHeight(MainOrPreferredSize, style()->logicalHeight()), view());
-        else
-            notImplemented();
+        switch (trackStyles[i].type()) {
+        case LengthTrackSizing: {
+            Length trackLength = trackStyles[i].length();
+            // FIXME: We stil need to support calc() here (bug 103761).
+            if (trackLength.isFixed() || trackLength.isPercent() || trackLength.isViewportPercentage())
+                track.m_usedBreadth = valueForLength(trackLength, direction == ForColumns ? logicalWidth() : computeContentLogicalHeight(MainOrPreferredSize, style()->logicalHeight()), view());
+            else
+                notImplemented();
 
+            break;
+        }
+        case MinMaxTrackSizing:
+            // FIXME: Implement support for minmax track sizing (bug 103311).
+            notImplemented();
+        }
         tracks.append(track);
     }
 }

@@ -4537,8 +4537,25 @@ bool CSSParser::parseGridTrackMinMax(CSSValueList* values)
 {
     CSSParserValue* currentValue = m_valueList->current();
     if (currentValue->id == CSSValueAuto) {
-        RefPtr<CSSPrimitiveValue> autoValue = cssValuePool().createIdentifierValue(CSSValueAuto);
-        values->append(autoValue.release());
+        values->append(cssValuePool().createIdentifierValue(CSSValueAuto));
+        return true;
+    }
+
+    if (currentValue->unit == CSSParserValue::Function && equalIgnoringCase(currentValue->function->name, "minmax(")) {
+        // The spec defines the following grammar: minmax( <track-breadth> , <track-breadth> )
+        CSSParserValueList* arguments = currentValue->function->args.get();
+        if (!arguments || arguments->size() != 3 || !isComma(arguments->valueAt(1)))
+            return false;
+
+        RefPtr<CSSPrimitiveValue> minTrackBreadth = parseGridBreadth(arguments->valueAt(0));
+        if (!minTrackBreadth)
+            return false;
+
+        RefPtr<CSSPrimitiveValue> maxTrackBreadth = parseGridBreadth(arguments->valueAt(2));
+        if (!maxTrackBreadth)
+            return false;
+
+        values->append(createPrimitiveValuePair(minTrackBreadth, maxTrackBreadth));
         return true;
     }
 

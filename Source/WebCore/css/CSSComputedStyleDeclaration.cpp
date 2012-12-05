@@ -30,6 +30,7 @@
 #include "CSSAspectRatioValue.h"
 #include "CSSBasicShapes.h"
 #include "CSSBorderImage.h"
+#include "CSSFunctionValue.h"
 #include "CSSLineBoxContainValue.h"
 #include "CSSParser.h"
 #include "CSSPrimitiveValue.h"
@@ -999,18 +1000,28 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::valueForFilter(const RenderObj
 }
 #endif
 
-static PassRefPtr<CSSValue> valueForGridTrackBreadth(const GridTrackSize& trackSize, const RenderStyle* style, RenderView *renderView)
+static PassRefPtr<CSSValue> valueForGridTrackBreadth(const Length& trackBreadth, const RenderStyle* style, RenderView *renderView)
 {
-    if (trackSize.length().isAuto())
+    if (trackBreadth.isAuto())
         return cssValuePool().createIdentifierValue(CSSValueAuto);
-    if (trackSize.length().isViewportPercentage())
-        return zoomAdjustedPixelValue(valueForLength(trackSize.length(), 0, renderView), style);
-    return zoomAdjustedPixelValueForLength(trackSize.length(), style);
+    if (trackBreadth.isViewportPercentage())
+        return zoomAdjustedPixelValue(valueForLength(trackBreadth, 0, renderView), style);
+    return zoomAdjustedPixelValueForLength(trackBreadth, style);
 }
 
 static PassRefPtr<CSSValue> valueForGridTrackMinMax(const GridTrackSize& trackSize, const RenderStyle* style, RenderView* renderView)
 {
-    return valueForGridTrackBreadth(trackSize, style, renderView);
+    switch (trackSize.type()) {
+    case LengthTrackSizing:
+        return valueForGridTrackBreadth(trackSize.length(), style, renderView);
+    case MinMaxTrackSizing:
+        RefPtr<CSSValueList> minMaxTrackBreadths = CSSValueList::createCommaSeparated();
+        minMaxTrackBreadths->append(valueForGridTrackBreadth(trackSize.minTrackBreadth(), style, renderView));
+        minMaxTrackBreadths->append(valueForGridTrackBreadth(trackSize.maxTrackBreadth(), style, renderView));
+        return CSSFunctionValue::create("minmax(", minMaxTrackBreadths);
+    }
+    ASSERT_NOT_REACHED();
+    return 0;
 }
 
 static PassRefPtr<CSSValue> valueForGridTrackGroup(const Vector<GridTrackSize>& trackSizes, const RenderStyle* style, RenderView* renderView)

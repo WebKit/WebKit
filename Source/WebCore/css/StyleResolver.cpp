@@ -2688,11 +2688,22 @@ static bool createGridTrackBreadth(CSSPrimitiveValue* primitiveValue, StyleResol
 
 static bool createGridTrackMinMax(CSSPrimitiveValue* primitiveValue, StyleResolver* selector, GridTrackSize& trackSize)
 {
-    Length workingLength;
-    if (!createGridTrackBreadth(primitiveValue, selector, workingLength))
+    Pair* minMaxTrackBreadth = primitiveValue->getPairValue();
+    if (!minMaxTrackBreadth) {
+        Length workingLength;
+        if (!createGridTrackBreadth(primitiveValue, selector, workingLength))
+            return false;
+
+        trackSize.setLength(workingLength);
+        return true;
+    }
+
+    Length minTrackBreadth;
+    Length maxTrackBreadth;
+    if (!createGridTrackBreadth(minMaxTrackBreadth->first(), selector, minTrackBreadth) || !createGridTrackBreadth(minMaxTrackBreadth->second(), selector, maxTrackBreadth))
         return false;
 
-    trackSize.setLength(workingLength);
+    trackSize.setMinMax(minTrackBreadth, maxTrackBreadth);
     return true;
 }
 

@@ -42,6 +42,10 @@ if (window.testRunner)
     -webkit-grid-columns: -webkit-fit-available;
     -webkit-grid-rows: -webkit-fit-available;
 }
+.gridWithMinMax {
+    -webkit-grid-columns: minmax(10%, 15px);
+    -webkit-grid-rows: minmax(20px, 50%);
+}
 </style>
 <script src="../js/resources/js-test-pre.js"></script>
 </head>
@@ -54,6 +58,7 @@ if (window.testRunner)
 <div class="grid gridWithViewPortPercentage" id="gridWithViewPortPercentageElement"></div>
 <div class="grid gridWithFitContent" id="gridWithFitContentElement"></div>
 <div class="grid gridWithFitAvailable" id="gridWithFitAvailableElement"></div>
+<div class="grid gridWithMinMax" id="gridWithMinMax"></div>
 <script src="resources/grid-columns-rows-get-set.js"></script>
 <script src="../js/resources/js-test-post.js"></script>
 </body>

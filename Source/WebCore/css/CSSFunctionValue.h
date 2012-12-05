@@ -40,12 +40,18 @@ public:
         return adoptRef(new CSSFunctionValue(function));
     }
 
+    static PassRefPtr<CSSFunctionValue> create(String name, PassRefPtr<CSSValueList> args)
+    {
+        return adoptRef(new CSSFunctionValue(name, args));
+    }
+
     String customCssText() const;
 
     void reportDescendantMemoryUsage(MemoryObjectInfo*) const;
 
 private:
     explicit CSSFunctionValue(CSSParserFunction*);
+    CSSFunctionValue(String, PassRefPtr<CSSValueList>);
 
     String m_name;
     RefPtr<CSSValueList> m_args;

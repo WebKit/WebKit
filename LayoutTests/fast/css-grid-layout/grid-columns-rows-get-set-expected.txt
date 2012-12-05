@@ -16,6 +16,9 @@ PASS getComputedStyle(gridWithEMElement, '').getPropertyValue('-webkit-grid-colu
 PASS getComputedStyle(gridWithEMElement, '').getPropertyValue('-webkit-grid-rows') is '150px'
 PASS getComputedStyle(gridWithViewPortPercentageElement, '').getPropertyValue('-webkit-grid-columns') is '64px'
 PASS getComputedStyle(gridWithViewPortPercentageElement, '').getPropertyValue('-webkit-grid-rows') is '60px'
+PASS getComputedStyle(gridWithMinMax, '').getPropertyValue('-webkit-grid-columns') is 'minmax(10%, 15px)'
+PASS getComputedStyle(gridWithMinMax, '').getPropertyValue('-webkit-grid-rows') is 'minmax(20px, 50%)'
+
 Test getting wrong values for -webkit-grid-columns and -webkit-grid-rows through CSS (they should resolve to the default: 'none')
 PASS getComputedStyle(gridWithFitContentElement, '').getPropertyValue('-webkit-grid-columns') is 'none'
 PASS getComputedStyle(gridWithFitContentElement, '').getPropertyValue('-webkit-grid-rows') is 'none'
@@ -35,6 +38,20 @@ PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-columns') is '
 PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-rows') is 'auto'
 PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-columns') is '80px'
 PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-rows') is '150px'
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-columns') is 'minmax(55%, 45px)'
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-rows') is 'minmax(30px, 40%)'
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-columns') is 'minmax(220px, 48px)'
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-rows') is 'minmax(80px, 50px)'
+
+Test setting grid-columns and grid-rows to bad minmax value through JS
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-columns') is 'none'
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-rows') is 'none'
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-columns') is 'none'
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-rows') is 'none'
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-columns') is 'none'
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-rows') is 'none'
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-columns') is 'none'
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-rows') is 'none'
 
 Test setting grid-columns and grid-rows back to 'none' through JS
 PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-columns') is '18px'
