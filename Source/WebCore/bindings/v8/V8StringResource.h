@@ -155,7 +155,7 @@ enum V8StringResourceMode {
 template <V8StringResourceMode Mode = DefaultMode>
 class V8StringResource {
 public:
-    V8StringResource(v8::Local<v8::Value> object)
+    V8StringResource(v8::Handle<v8::Value> object)
         : m_v8Object(object)
         , m_mode(Externalize)
         , m_string()
@@ -206,7 +206,7 @@ private:
         return StringType(m_string);
     }
 
-    v8::Local<v8::Value> m_v8Object;
+    v8::Handle<v8::Value> m_v8Object;
     ExternalMode m_mode;
     String m_string;
 };

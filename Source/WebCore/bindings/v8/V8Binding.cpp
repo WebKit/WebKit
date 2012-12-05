@@ -97,49 +97,6 @@ v8::Handle<v8::Value> throwNotEnoughArgumentsError(v8::Isolate* isolate)
     return V8ThrowException::throwNotEnoughArgumentsError(isolate);
 }
 
-static String v8NonStringValueToWebCoreString(v8::Handle<v8::Value> object)
-{
-    ASSERT(!object->IsString());
-    if (object->IsInt32())
-        return int32ToWebCoreString(object->Int32Value());
-
-    v8::TryCatch block;
-    v8::Handle<v8::String> v8String = object->ToString();
-    // Handle the case where an exception is thrown as part of invoking toString on the object.
-    if (block.HasCaught()) {
-        throwError(block.Exception());
-        return StringImpl::empty();
-    }
-    // This path is unexpected. However there is hypothesis that it
-    // might be combination of v8 and v8 bindings bugs. For now
-    // just bailout as we'll crash if attempt to convert empty handle into a string.
-    if (v8String.IsEmpty()) {
-        ASSERT_NOT_REACHED();
-        return StringImpl::empty();
-    }
-    return v8StringToWebCoreString<String>(v8String, DoNotExternalize);
-}
-
-static AtomicString v8NonStringValueToAtomicWebCoreString(v8::Handle<v8::Value> object)
-{
-    ASSERT(!object->IsString());
-    return AtomicString(v8NonStringValueToWebCoreString(object));
-}
-
-String toWebCoreString(v8::Handle<v8::Value> value)
-{
-    if (value->IsString())
-        return v8StringToWebCoreString<String>(v8::Handle<v8::String>::Cast(value), Externalize);
-    return v8NonStringValueToWebCoreString(value);
-}
-
-AtomicString toWebCoreAtomicString(v8::Handle<v8::Value> value)
-{
-    if (value->IsString())
-        return v8StringToWebCoreString<AtomicString>(v8::Handle<v8::String>::Cast(value), Externalize);
-    return v8NonStringValueToAtomicWebCoreString(value);
-}
-
 v8::Handle<v8::Value> v8Array(PassRefPtr<DOMStringList> stringList, v8::Isolate* isolate)
 {
     if (!stringList)

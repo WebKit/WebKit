@@ -93,10 +93,53 @@ namespace WebCore {
     // Convert v8 types to a WTF::String. If the V8 string is not already
     // an external string then it is transformed into an external string at this
     // point to avoid repeated conversions.
-    String toWebCoreString(v8::Handle<v8::Value>);
+    //
+    // FIXME: Replace all the call sites with V8TRYCATCH_FOR_V8STRINGRESOURCE().
+    // Using this method will lead to a wrong behavior, because you cannot stop the
+    // execution when an exception is thrown inside stringResource.prepare().
+    inline String toWebCoreString(v8::Handle<v8::Value> value)
+    {
+        V8StringResource<> stringResource(value);
+        if (!stringResource.prepare())
+            return String();
+        return stringResource;
+    }
 
-    // Convert a V8 value to a WTF::AtomicString.
-    AtomicString toWebCoreAtomicString(v8::Handle<v8::Value>);
+    // FIXME: See the above comment.
+    inline String toWebCoreStringWithNullCheck(v8::Handle<v8::Value> value)
+    {
+        V8StringResource<WithNullCheck> stringResource(value);
+        if (!stringResource.prepare())
+            return String();
+        return stringResource;
+    }
+
+    // FIXME: See the above comment.
+    inline String toWebCoreStringWithUndefinedOrNullCheck(v8::Handle<v8::Value> value)
+    {
+        V8StringResource<WithUndefinedOrNullCheck> stringResource(value);
+        if (!stringResource.prepare())
+            return String();
+        return stringResource;
+    }
+
+    // FIXME: See the above comment.
+    inline AtomicString toWebCoreAtomicString(v8::Handle<v8::Value> value)
+    {
+        V8StringResource<> stringResource(value);
+        if (!stringResource.prepare())
+            return AtomicString();
+        return stringResource;
+    }
+
+    // FIXME: See the above comment.
+    inline AtomicString toWebCoreAtomicStringWithNullCheck(v8::Handle<v8::Value> value)
+    {
+        V8StringResource<WithNullCheck> stringResource(value);
+        if (!stringResource.prepare())
+            return AtomicString();
+        return stringResource;
+    }
 
     // Return a V8 external string that shares the underlying buffer with the given
     // WebCore string. The reference counting mechanism is used to keep the
@@ -360,21 +403,6 @@ namespace WebCore {
     inline v8::Handle<v8::Boolean> v8BooleanWithCheck(bool value, v8::Isolate* isolate)
     {
         return isolate ? v8Boolean(value, isolate) : v8Boolean(value);
-    }
-
-    inline String toWebCoreStringWithNullCheck(v8::Handle<v8::Value> value)
-    {
-        return value->IsNull() ? String() : toWebCoreString(value);
-    }
-
-    inline String toWebCoreStringWithUndefinedOrNullCheck(v8::Handle<v8::Value> value)
-    {
-        return (value->IsNull() || value->IsUndefined()) ? String() : toWebCoreString(value);
-    }
-
-    inline AtomicString toWebCoreAtomicStringWithNullCheck(v8::Handle<v8::Value> value)
-    {
-        return value->IsNull() ? AtomicString() : toWebCoreAtomicString(value);
     }
 
     inline v8::Handle<v8::Value> v8StringOrNull(const String& str, v8::Isolate* isolate = 0)
