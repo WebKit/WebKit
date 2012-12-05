@@ -110,19 +110,6 @@ WrapperTypeInfo* V8DOMWrapper::domWrapperType(v8::Handle<v8::Object> object)
     return toWrapperTypeInfo(object);
 }
 
-PassRefPtr<NodeFilter> V8DOMWrapper::wrapNativeNodeFilter(v8::Handle<v8::Value> filter)
-{
-    // A NodeFilter is used when walking through a DOM tree or iterating tree
-    // nodes.
-    // FIXME: we may want to cache NodeFilterCondition and NodeFilter
-    // object, but it is minor.
-    // NodeFilter is passed to NodeIterator that has a ref counted pointer
-    // to NodeFilter. NodeFilter has a ref counted pointer to NodeFilterCondition.
-    // In NodeFilterCondition, filter object is persisted in its constructor,
-    // and disposed in its destructor.
-    return NodeFilter::create(V8NodeFilterCondition::create(filter));
-}
-
 v8::Local<v8::Object> V8DOMWrapper::instantiateV8Object(v8::Handle<v8::Object> creationContext, WrapperTypeInfo* type, void* impl)
 {
     V8WrapperInstantiationScope scope(creationContext);

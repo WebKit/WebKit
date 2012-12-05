@@ -42,6 +42,7 @@
 #include "V8DOMStringList.h"
 #include "V8DOMWindow.h"
 #include "V8Element.h"
+#include "V8NodeFilterCondition.h"
 #include "V8ObjectConstructor.h"
 #include "V8WorkerContext.h"
 #include "V8XPathNSResolver.h"
@@ -147,6 +148,11 @@ v8::Handle<v8::Value> v8Array(PassRefPtr<DOMStringList> stringList, v8::Isolate*
     for (unsigned i = 0; i < stringList->length(); ++i)
         result->Set(v8Integer(i, isolate), v8String(stringList->item(i), isolate));
     return result;
+}
+
+PassRefPtr<NodeFilter> toNodeFilter(v8::Handle<v8::Value> callback)
+{
+    return NodeFilter::create(V8NodeFilterCondition::create(callback));
 }
 
 int toInt32(v8::Handle<v8::Value> value, bool& ok)

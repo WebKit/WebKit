@@ -35,6 +35,7 @@
 #include "BindingSecurity.h"
 #include "DOMWrapperWorld.h"
 #include "Document.h"
+#include "NodeFilter.h"
 #include "V8BindingMacros.h"
 #include "V8DOMConfiguration.h"
 #include "V8DOMWrapper.h"
@@ -267,7 +268,6 @@ namespace WebCore {
         return result;
     }
 
-
     // Validates that the passed object is a sequence type per WebIDL spec
     // http://www.w3.org/TR/2012/WD-WebIDL-20120207/#es-sequence
     inline v8::Handle<v8::Value> toV8Sequence(v8::Handle<v8::Value> value, uint32_t& length)
@@ -292,6 +292,8 @@ namespace WebCore {
 
         return v8Value;
     }
+
+    PassRefPtr<NodeFilter> toNodeFilter(v8::Handle<v8::Value>);
 
     // Convert a value to a 32-bit integer.  The conversion fails if the
     // value cannot be converted to an integer or converts to nan or to an infinity.

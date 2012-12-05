@@ -35,7 +35,6 @@
 #include "DOMWrapperWorld.h"
 #include "Event.h"
 #include "Node.h"
-#include "NodeFilter.h"
 #include "V8CustomXPathNSResolver.h"
 #include "V8DOMWindowShell.h"
 #include "V8Utilities.h"
@@ -50,7 +49,6 @@ namespace WebCore {
     class DOMWindow;
     class EventTarget;
     class Frame;
-    class Node;
     class V8PerContextData;
     class WorkerContext;
 
@@ -91,9 +89,6 @@ namespace WebCore {
         static WrapperTypeInfo* domWrapperType(v8::Handle<v8::Object>);
 
         static PassRefPtr<EventListener> getEventListener(v8::Local<v8::Value> value, bool isAttribute, ListenerLookupType lookup);
-
-        // Wrap JS node filter in C++.
-        static PassRefPtr<NodeFilter> wrapNativeNodeFilter(v8::Handle<v8::Value>);
 
         template<typename T>
         static v8::Persistent<v8::Object> createDOMWrapper(PassRefPtr<T>, WrapperTypeInfo*, v8::Handle<v8::Object>, v8::Isolate* = 0);

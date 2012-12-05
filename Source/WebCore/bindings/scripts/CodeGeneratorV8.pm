@@ -3812,7 +3812,7 @@ sub JSValueToNative
     }
 
     if ($type eq "NodeFilter") {
-        return "V8DOMWrapper::wrapNativeNodeFilter($value)";
+        return "toNodeFilter($value)";
     }
 
     if ($type eq "MediaQueryListListener") {
