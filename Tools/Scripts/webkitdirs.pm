@@ -1005,6 +1005,8 @@ sub blackberryCMakeArguments()
     push @includeSystemDirectories, File::Spec->catdir($stageInc, "grskia");
     push @includeSystemDirectories, File::Spec->catdir($stageInc, "harfbuzz");
     push @includeSystemDirectories, File::Spec->catdir($stageInc, "imf");
+    # We only use jpeg-turbo for device build
+    push @includeSystemDirectories, File::Spec->catdir($stageInc, "jpeg-turbo") if $arch=~/arm/;
     push @includeSystemDirectories, $stageInc;
     push @includeSystemDirectories, File::Spec->catdir($stageInc, "browser", "platform");
     push @includeSystemDirectories, File::Spec->catdir($stageInc, "browser", "qsk");
