@@ -187,9 +187,19 @@ void IDBIndexBackendImpl::IndexReferencedValueRetrievalOperation::perform(Script
         key = backingStoreCursor->key();
     }
 
-    RefPtr<IDBKey> primaryKey = index->backingStore()->getPrimaryKeyViaIndex(transaction->backingStoreTransaction(), index->databaseId(), index->m_objectStoreBackend->id(), index->id(), *key);
+    RefPtr<IDBKey> primaryKey;
+    bool ok = index->backingStore()->getPrimaryKeyViaIndex(transaction->backingStoreTransaction(), index->databaseId(), index->m_objectStoreBackend->id(), index->id(), *key, primaryKey);
+    if (!ok) {
+        callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Internal error in getPrimaryKeyViaIndex."));
+        return;
+    }
 
-    String value = index->backingStore()->getRecord(transaction->backingStoreTransaction(), index->databaseId(), index->m_objectStoreBackend->id(), *primaryKey);
+    String value;
+    ok = index->backingStore()->getRecord(transaction->backingStoreTransaction(), index->databaseId(), index->m_objectStoreBackend->id(), *primaryKey, value);
+    if (!ok) {
+        callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Internal error in getRecord."));
+        return;
+    }
 
     if (value.isNull()) {
         callbacks->onSuccess();
@@ -216,7 +226,12 @@ void IDBIndexBackendImpl::IndexValueRetrievalOperation::perform(ScriptExecutionC
         return;
     }
 
-    RefPtr<IDBKey> keyResult = index->backingStore()->getPrimaryKeyViaIndex(transaction->backingStoreTransaction(), index->databaseId(), index->m_objectStoreBackend->id(), index->id(), *backingStoreCursor->key());
+    RefPtr<IDBKey> keyResult;
+    bool ok = index->backingStore()->getPrimaryKeyViaIndex(transaction->backingStoreTransaction(), index->databaseId(), index->m_objectStoreBackend->id(), index->id(), *backingStoreCursor->key(), keyResult);
+    if (!ok) {
+        callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Internal error in getPrimaryKeyViaIndex."));
+        return;
+    }
     if (!keyResult) {
         callbacks->onSuccess(static_cast<IDBKey*>(0));
         return;

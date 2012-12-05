@@ -4,6 +4,16 @@
 
         * DEPS:
 
+2012-11-30  David Grogan  <dgrogan@chromium.org>
+
+        IndexedDB: Propagate more leveldb errors to IDBIndex and IDBObjectStore
+        https://bugs.webkit.org/show_bug.cgi?id=103782
+
+        Reviewed by Tony Chang.
+
+        * tests/IDBFakeBackingStore.h:
+          Remove changed methods that are no longer necessary.
+
 2012-12-04  Stephen White  <senorblanco@chromium.org>
 
         Rolled DEPS (w/Linux build fix).  Unreviewed.

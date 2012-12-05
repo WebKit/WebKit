@@ -199,7 +199,12 @@ void IDBObjectStoreBackendImpl::ObjectStoreRetrievalOperation::perform(ScriptExe
         key = backingStoreCursor->key();
     }
 
-    String wireData = objectStore->backingStore()->getRecord(transaction->backingStoreTransaction(), objectStore->databaseId(), objectStore->id(), *key);
+    String wireData;
+    bool ok = objectStore->backingStore()->getRecord(transaction->backingStoreTransaction(), objectStore->databaseId(), objectStore->id(), *key, wireData);
+    if (!ok) {
+        callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Internal error in getRecord."));
+        return;
+    }
     if (wireData.isNull()) {
         callbacks->onSuccess();
         return;
@@ -277,7 +282,10 @@ private:
             return true;
 
         RefPtr<IDBKey> foundPrimaryKey;
-        bool found = backingStore.keyExistsInIndex(transaction, databaseId, objectStoreId, indexId, *indexKey, foundPrimaryKey);
+        bool found = false;
+        bool ok = backingStore.keyExistsInIndex(transaction, databaseId, objectStoreId, indexId, *indexKey, foundPrimaryKey, found);
+        // FIXME: Propagate this error up to script.
+        ASSERT_UNUSED(ok, ok);
         if (!found)
             return true;
         if (primaryKey && foundPrimaryKey->isEqual(primaryKey))

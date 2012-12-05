@@ -64,6 +64,9 @@ enum IDBLevelDBBackingStoreInternalErrorType {
     IDBLevelDBBackingStoreReadErrorKeyExistsInObjectStore,
     IDBLevelDBBackingStoreReadErrorLoadCurrentRow,
     IDBLevelDBBackingStoreReadErrorSetupMetadata,
+    IDBLevelDBBackingStoreReadErrorGetPrimaryKeyViaIndex,
+    IDBLevelDBBackingStoreReadErrorKeyExistsInIndex,
+    IDBLevelDBBackingStoreReadErrorVersionExists,
     IDBLevelDBBackingStoreInternalErrorMax,
 };
 static inline void recordInternalError(IDBLevelDBBackingStoreInternalErrorType type)
@@ -637,7 +640,7 @@ void IDBBackingStore::deleteObjectStore(IDBBackingStore::Transaction* transactio
     clearObjectStore(transaction, databaseId, objectStoreId);
 }
 
-String IDBBackingStore::getRecord(IDBBackingStore::Transaction* transaction, int64_t databaseId, int64_t objectStoreId, const IDBKey& key)
+bool IDBBackingStore::getRecord(IDBBackingStore::Transaction* transaction, int64_t databaseId, int64_t objectStoreId, const IDBKey& key, String& record)
 {
     IDB_TRACE("IDBBackingStore::getRecord");
     LevelDBTransaction* levelDBTransaction = IDBBackingStore::Transaction::levelDBTransactionFrom(transaction);
@@ -645,18 +648,24 @@ String IDBBackingStore::getRecord(IDBBackingStore::Transaction* transaction, int
     const Vector<char> leveldbKey = ObjectStoreDataKey::encode(databaseId, objectStoreId, key);
     Vector<char> data;
 
-    if (!levelDBTransaction->get(leveldbKey, data))
-        return String();
+    bool found = false;
+    bool ok = levelDBTransaction->safeGet(leveldbKey, data, found);
+    if (!ok) {
+        record = String();
+        InternalError(IDBLevelDBBackingStoreReadErrorGetRecord);
+        return false;
+    }
 
     int64_t version;
     const char* p = decodeVarInt(data.begin(), data.end(), version);
     if (!p) {
         InternalError(IDBLevelDBBackingStoreReadErrorGetRecord);
-        return String();
+        record = String();
+        return false;
     }
-    (void) version;
 
-    return decodeString(p, data.end());
+    record = decodeString(p, data.end());
+    return true;
 }
 
 static int64_t getNewVersionNumber(LevelDBTransaction* transaction, int64_t databaseId, int64_t objectStoreId)
@@ -974,21 +983,28 @@ static bool findGreatestKeyLessThanOrEqual(LevelDBTransaction* transaction, cons
     return true;
 }
 
-static bool versionExists(LevelDBTransaction* transaction, int64_t databaseId, int64_t objectStoreId, int64_t version, const Vector<char>& encodedPrimaryKey)
+static bool versionExists(LevelDBTransaction* transaction, int64_t databaseId, int64_t objectStoreId, int64_t version, const Vector<char>& encodedPrimaryKey, bool& exists)
 {
     const Vector<char> key = ExistsEntryKey::encode(databaseId, objectStoreId, encodedPrimaryKey);
     Vector<char> data;
 
-    if (!transaction->get(key, data))
+    bool ok = transaction->safeGet(key, data, exists);
+    if (!ok) {
+        InternalError(IDBLevelDBBackingStoreReadErrorVersionExists);
         return false;
+    }
+    if (!exists)
+        return true;
 
-    return decodeInt(data.begin(), data.end()) == version;
+    exists = (decodeInt(data.begin(), data.end()) == version);
+    return true;
 }
 
-bool IDBBackingStore::findKeyInIndex(IDBBackingStore::Transaction* transaction, int64_t databaseId, int64_t objectStoreId, int64_t indexId, const IDBKey& key, Vector<char>& foundEncodedPrimaryKey)
+bool IDBBackingStore::findKeyInIndex(IDBBackingStore::Transaction* transaction, int64_t databaseId, int64_t objectStoreId, int64_t indexId, const IDBKey& key, Vector<char>& foundEncodedPrimaryKey, bool& found)
 {
     IDB_TRACE("IDBBackingStore::findKeyInIndex");
     ASSERT(foundEncodedPrimaryKey.isEmpty());
+    found = false;
 
     LevelDBTransaction* levelDBTransaction = IDBBackingStore::Transaction::levelDBTransactionFrom(transaction);
     const Vector<char> leveldbKey = IndexDataKey::encode(databaseId, objectStoreId, indexId, key);
@@ -997,9 +1013,9 @@ bool IDBBackingStore::findKeyInIndex(IDBBackingStore::Transaction* transaction, 
 
     for (;;) {
         if (!it->isValid())
-            return false;
+            return true;
         if (compareIndexKeys(it->key(), leveldbKey) > 0)
-            return false;
+            return true;
 
         int64_t version;
         const char* p = decodeVarInt(it->value().begin(), it->value().end(), version);
@@ -1009,38 +1025,53 @@ bool IDBBackingStore::findKeyInIndex(IDBBackingStore::Transaction* transaction, 
         }
         foundEncodedPrimaryKey.append(p, it->value().end() - p);
 
-        if (!versionExists(levelDBTransaction, databaseId, objectStoreId, version, foundEncodedPrimaryKey)) {
+        bool exists = false;
+        bool ok = versionExists(levelDBTransaction, databaseId, objectStoreId, version, foundEncodedPrimaryKey, exists);
+        if (!ok)
+            return false;
+        if (!exists) {
             // Delete stale index data entry and continue.
             levelDBTransaction->remove(it->key());
             it->next();
             continue;
         }
-
+        found = true;
         return true;
     }
 }
 
-PassRefPtr<IDBKey> IDBBackingStore::getPrimaryKeyViaIndex(IDBBackingStore::Transaction* transaction, int64_t databaseId, int64_t objectStoreId, int64_t indexId, const IDBKey& key)
+bool IDBBackingStore::getPrimaryKeyViaIndex(IDBBackingStore::Transaction* transaction, int64_t databaseId, int64_t objectStoreId, int64_t indexId, const IDBKey& key, RefPtr<IDBKey>& primaryKey)
 {
     IDB_TRACE("IDBBackingStore::getPrimaryKeyViaIndex");
 
+    bool found = false;
     Vector<char> foundEncodedPrimaryKey;
-    if (findKeyInIndex(transaction, databaseId, objectStoreId, indexId, key, foundEncodedPrimaryKey)) {
-        RefPtr<IDBKey> primaryKey;
+    bool ok = findKeyInIndex(transaction, databaseId, objectStoreId, indexId, key, foundEncodedPrimaryKey, found);
+    if (!ok) {
+        InternalError(IDBLevelDBBackingStoreReadErrorGetPrimaryKeyViaIndex);
+        return false;
+    }
+    if (found) {
         decodeIDBKey(foundEncodedPrimaryKey.begin(), foundEncodedPrimaryKey.end(), primaryKey);
-        return primaryKey.release();
+        return true;
     }
 
-    return 0;
+    return true;
 }
 
-bool IDBBackingStore::keyExistsInIndex(IDBBackingStore::Transaction* transaction, int64_t databaseId, int64_t objectStoreId, int64_t indexId, const IDBKey& indexKey, RefPtr<IDBKey>& foundPrimaryKey)
+bool IDBBackingStore::keyExistsInIndex(IDBBackingStore::Transaction* transaction, int64_t databaseId, int64_t objectStoreId, int64_t indexId, const IDBKey& indexKey, RefPtr<IDBKey>& foundPrimaryKey, bool& exists)
 {
     IDB_TRACE("IDBBackingStore::keyExistsInIndex");
 
+    exists = false;
     Vector<char> foundEncodedPrimaryKey;
-    if (!findKeyInIndex(transaction, databaseId, objectStoreId, indexId, indexKey, foundEncodedPrimaryKey))
+    bool ok = findKeyInIndex(transaction, databaseId, objectStoreId, indexId, indexKey, foundEncodedPrimaryKey, exists);
+    if (!ok) {
+        InternalError(IDBLevelDBBackingStoreReadErrorKeyExistsInIndex);
         return false;
+    }
+    if (!exists)
+        return true;
 
     decodeIDBKey(foundEncodedPrimaryKey.begin(), foundEncodedPrimaryKey.end(), foundPrimaryKey);
     return true;
