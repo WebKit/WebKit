@@ -240,23 +240,23 @@ webkit.org/b/98940 fast/events/drag-dataTransferItemList.html [ Skip ]
 webkit.org/b/98940 fast/events/drag-dataTransferItemList-file-handling.html [ Skip ]
 
 # setAutomaticLinkDetectionEnabled is not yet implemented.
-webkit.org/b/99069 editing/inserting/typing-space-to-trigger-smart-link.html [ Skip ]
+webkit.org/b/99069 editing/inserting/typing-space-to-trigger-smart-link.html [ Failure ]
 
 # Custom MIME type support in DataTransfer is not yet implemented.
-webkit.org/b/99068 editing/pasteboard/clipboard-customData.html [ Skip ]
-webkit.org/b/99068 fast/events/drag-customData.html [ Skip ]
+webkit.org/b/99068 editing/pasteboard/clipboard-customData.html [ Failure ]
+webkit.org/b/99068 fast/events/drag-customData.html [ Failure ]
 
 # PasteBoard::plainText() does not support file names.
-webkit.org/b/99070 editing/pasteboard/drag-files-to-editable-element.html [ Skip ]
+webkit.org/b/99070 editing/pasteboard/drag-files-to-editable-element.html [ Failure ]
 
 # Animation API is disabled
-webkit.org/b/98941 animations/animation-api-1.html [ Skip ]
+webkit.org/b/98941 animations/animation-api-1.html [ Failure ]
 
 # Quota API is not supported.
-webkit.org/b/98942 storage/storageinfo-missing-arguments.html [ Skip ]
-webkit.org/b/98942 storage/storageinfo-no-callbacks.html [ Skip ]
-webkit.org/b/98942 storage/storageinfo-query-usage.html [ Skip ]
-webkit.org/b/98942 storage/storageinfo-request-quota.html [ Skip ]
+webkit.org/b/98942 storage/storageinfo-missing-arguments.html [ Failure ]
+webkit.org/b/98942 storage/storageinfo-no-callbacks.html [ Failure ]
+webkit.org/b/98942 storage/storageinfo-query-usage.html [ Failure ]
+webkit.org/b/98942 storage/storageinfo-request-quota.html [ Failure ]
 
 # This platform does not support the Page Visibility API.
 webkit.org/b/97324 fast/events/page-visibility-iframe-delete-test.html [ Skip ]
@@ -272,22 +272,23 @@ webkit.org/b/61661 editing/pasteboard/drag-drop-list.html [ Failure ]
 webkit.org/b/99065 http/tests/media/media-source [ Skip ]
 
 # Encrypted Media Extensions are not enabled.
-webkit.org/b/99024 media/encrypted-media [ Skip ]
-webkit.org/b/99024 fast/events/constructors/media-key-event-constructor.html [ Skip ]
+webkit.org/b/99024 media/encrypted-media [ Failure ]
+webkit.org/b/99024 media/encrypted-media/encrypted-media-events.html [ Timeout ]
+webkit.org/b/99024 fast/events/constructors/media-key-event-constructor.html [ Timeout ]
 
 # Tests that require ENABLE(DOWNLOAD_ATTRIBUTE).
-webkit.org/b/99025 fast/dom/HTMLAnchorElement/anchor-nodownload.html [ Skip ]
-webkit.org/b/99025 fast/dom/HTMLAnchorElement/anchor-download.html [ Skip ]
-webkit.org/b/99025 fast/dom/HTMLAnchorElement/anchor-nodownload-set.html [ Skip ]
-webkit.org/b/99025 fast/dom/HTMLAnchorElement/anchor-download-unset.html [ Skip ]
+webkit.org/b/99025 fast/dom/HTMLAnchorElement/anchor-nodownload.html [ Pass ]
+webkit.org/b/99025 fast/dom/HTMLAnchorElement/anchor-download.html [ Failure ]
+webkit.org/b/99025 fast/dom/HTMLAnchorElement/anchor-nodownload-set.html [ Failure ]
+webkit.org/b/99025 fast/dom/HTMLAnchorElement/anchor-download-unset.html [ Pass ]
 
 # CSS Filters is disabled
 webkit.org/b/99026 css3/filters [ Skip ]
 
 # CSS image-set support not yet enabled (needs ENABLE_CSS_IMAGE_SET).
-webkit.org/b/99027 fast/css/image-set-parsing.html [ Skip ]
-webkit.org/b/99027 fast/css/image-set-parsing-invalid.html [ Skip ]
-webkit.org/b/99027 fast/css/image-set-setting.html [ Skip ]
+webkit.org/b/99027 fast/css/image-set-parsing.html [ Failure ]
+webkit.org/b/99027 fast/css/image-set-parsing-invalid.html [ Pass ]
+webkit.org/b/99027 fast/css/image-set-setting.html [ Failure ]
 
 # For now, Web Audio API is disabled
 webkit.org/b/67187 webaudio [ Skip ]
@@ -298,7 +299,7 @@ webkit.org/b/67187 inspector-protocol/nmi-webaudio-leak-test.html [ Skip ]
 webkit.org/b/67187 webaudio/codec-tests
 
 # Needs testRunner.enableAutoResizeMode()
-webkit.org/b/99028 fast/autoresize [ Skip ]
+webkit.org/b/99028 fast/autoresize [ Failure ]
 
 # The GTK+ build bots don't yet have the muscle to run WebGL, 3D and compositing tests.
 webkit.org/b/71849 compositing [ Skip ]
@@ -322,7 +323,7 @@ webkit.org/b/99029 fast/dom/navigator-vibration.html [ Failure ]
 webkit.org/b/99031 java [ Skip ]
 
 # Directory upload is not enabled.
-webkit.org/b/99032 fast/forms/file/input-file-directory-upload.html [ Skip ]
+webkit.org/b/99032 fast/forms/file/input-file-directory-upload.html [ Timeout ]
 
 # Web Intents is not yet enabled.
 webkit.org/b/99035 webintents [ Skip ]
@@ -335,11 +336,11 @@ webkit.org/b/99036 http/tests/pointer-lock [ Skip ]
 
 # Battery Status API support not yet.
 webkit.org/b/95582 batterystatus [ Failure ]
-webkit.org/b/95582 batterystatus/event-after-navigation.html [ Skip ]
+webkit.org/b/95582 batterystatus/event-after-navigation.html [ Timeout ]
 
 # Network Information API support not yet.
 webkit.org/b/99052 networkinformation [ Failure ]
-webkit.org/b/99052 networkinformation/event-after-navigation.html [ Skip ]
+webkit.org/b/99052 networkinformation/event-after-navigation.html [ Timeout ]
 
 # Touch adjustment not enabled
 webkit.org/b/99054 touchadjustment [ Failure ]
@@ -353,20 +354,23 @@ webkit.org/b/85212 ietestcenter/css3/flexbox/flexbox-layout-002.htm [ ImageOnlyF
 webkit.org/b/94792 fast/sub-pixel [ Skip ]
 
 # Mediastream implementation is not complete yet.
-webkit.org/b/79203 fast/mediastream [ Skip ]
+webkit.org/b/79203 fast/mediastream [ Failure ]
+webkit.org/b/79203 fast/mediastream/RTCPeerConnection-stats.html [ Timeout ]
+webkit.org/b/79203 fast/mediastream/getusermedia.html [ Timeout ]
+webkit.org/b/79203 fast/mediastream/no-interface-object.html [ Pass ]
 
 # CSS Variables are not yet enabled.
 webkit.org/b/99057 fast/css/variables [ Skip ]
-webkit.org/b/99057 inspector/styles/variables
+webkit.org/b/99057 inspector/styles/variables [ Skip ]
 
 # CSS image-resolution is not yet enabled.
-webkit.org/b/99038 fast/css/image-resolution [ Skip ]
+webkit.org/b/99038 fast/css/image-resolution [ Failure ]
 
 # CSS image-orientation is not yet enabled.
-webkit.org/b/99040 fast/css/image-orientation
+webkit.org/b/99040 fast/css/image-orientation [ Failure ]
 
 # No CORS support for media elements is implemented yet.
-webkit.org/b/99037 http/tests/security/video-cross-origin-readback.html [ Skip ]
+webkit.org/b/99037 http/tests/security/video-cross-origin-readback.html [ Failure ]
 
 # UndoManager is not yet enabled.
 webkit.org/b/99041 editing/undomanager
@@ -382,17 +386,17 @@ webkit.org/b/31508 storage/websql/transaction-error-callback-isolated-world.html
 webkit.org/b/31508 storage/websql/transaction-success-callback-isolated-world.html [ Skip ]
 
 # Text Autosizing is not yet enabled.
-webkit.org/b/99063 fast/text-autosizing
+webkit.org/b/99063 fast/text-autosizing [ Skip ]
 
 # Dialog element is not yet enabled.
 webkit.org/b/99062 fast/dom/HTMLDialogElement [ Skip ]
 
 # Proximity Events is not supported.
-webkit.org/b/99060 proximity
-webkit.org/b/99060 fast/events/constructors/device-proximity-event-constructor.html
+webkit.org/b/99060 proximity [ Failure ]
+webkit.org/b/99060 fast/events/constructors/device-proximity-event-constructor.html [ Failure ]
 
 # HIDDEN_PAGE_DOM_TIMER_THROTTLING is not enabled
-webkit.org/b/99059 fast/dom/timer-throttling-hidden-page.html [ Skip ]
+webkit.org/b/99059 fast/dom/timer-throttling-hidden-page.html [ Failure ]
 
 # css3-conditionals support is not yet enabled.
 webkit.org/b/86146 css3/supports.html
@@ -408,7 +412,49 @@ webkit.org/b/95959 css3/device-adapt [ Skip ]
 webkit.org/b/102180 fast/canvas/canvas-resize-reset-pixelRatio.html [ Failure ]
 
 # Skip tests in fast/text/shaping
-webkit.org/b/90951 fast/text/shaping [ Skip ]
+webkit.org/b/90951 fast/text/shaping [ Missing ]
+
+# Fails until we enable the User Timing API.
+webkit.org/b/84893 http/tests/w3c/webperf/submission/Intel/user-timing [ Skip ]
+
+# Fails until we enable the Resource Timing API.
+webkit.org/b/61138 http/tests/w3c/webperf/submission/Intel/resource-timing [ Skip ]
+webkit.org/b/61138 http/tests/w3c/webperf/submission/resource-timing [ Skip ]
+
+# Opera-submitted tests to W3C for <track>, a lot of failures still.
+webkit.org/b/103926 media/track/opera/idl/media-idl-tests.html [ Skip ]
+webkit.org/b/103926 media/track/opera/interfaces/HTMLElement/HTMLMediaElement/crossOrigin.html [ Skip ]
+webkit.org/b/103926 media/track/opera/interfaces/HTMLElement/HTMLTrackElement/kind.html [ Skip ]
+webkit.org/b/103926 media/track/opera/interfaces/HTMLElement/HTMLTrackElement/src.html [ Skip ]
+webkit.org/b/103926 media/track/opera/interfaces/TextTrack/activeCues.html [ Skip ]
+webkit.org/b/103926 media/track/opera/interfaces/TextTrack/cues.html [ Skip ]
+webkit.org/b/103926 media/track/opera/interfaces/TextTrack/removeCue.html [ Skip ]
+webkit.org/b/103926 media/track/opera/interfaces/TrackEvent/constructor.html [ Skip ]
+webkit.org/b/103926 media/track/opera/interfaces/TrackEvent/createEvent.html [ Skip ]
+webkit.org/b/103926 media/track/opera/interfaces/TextTrackCue/align.html [ Skip ]
+webkit.org/b/103926 media/track/opera/interfaces/TextTrackCue/id.html [ Skip ]
+webkit.org/b/103926 media/track/opera/interfaces/TextTrackCue/getCueAsHTML.html [ Skip ]
+webkit.org/b/103926 media/track/opera/interfaces/TextTrackCue/line.html [ Skip ]
+webkit.org/b/103926 media/track/opera/interfaces/TextTrackCue/onenter.html [ Skip ]
+webkit.org/b/103926 media/track/opera/interfaces/TextTrackCue/onexit.html [ Skip ]
+webkit.org/b/103926 media/track/opera/interfaces/TextTrackCue/pauseOnExit.html [ Skip ]
+webkit.org/b/103926 media/track/opera/interfaces/TextTrackCue/snapToLines.html [ Skip ]
+webkit.org/b/103926 media/track/opera/interfaces/TextTrackCue/text.html [ Skip ]
+webkit.org/b/103926 media/track/opera/interfaces/TextTrackCue/track.html [ Skip ]
+webkit.org/b/103926 media/track/opera/interfaces/TextTrackCue/vertical.html [ Skip ]
+webkit.org/b/103926 media/track/opera/interfaces/TextTrackCueList/getter.html [ Skip ]
+webkit.org/b/103926 media/track/opera/interfaces/TextTrackList/getter.html [ Skip ]
+webkit.org/b/103926 media/track/opera/interfaces/TextTrackList/onremovetrack.html [ Skip ]
+webkit.org/b/103926 media/track/opera/track/track-element/cloneNode.html [ Skip ]
+webkit.org/b/103926 media/track/opera/track/track-element/src-clear-cues.html [ Skip ]
+webkit.org/b/103926 media/track/opera/track/webvtt/parsing/001.html [ Skip ]
+webkit.org/b/103926 media/track/opera/track/webvtt/parsing-cue-data/tests/entities.html [ Skip ] 
+webkit.org/b/103926 media/track/opera/track/webvtt/parsing-cue-data/tests/tags.html [ Skip ]
+webkit.org/b/103926 media/track/opera/track/webvtt/rendering/adhoc/12345_timestamps.html [ Skip ]
+webkit.org/b/103926 media/track/opera/track/webvtt/parsing-cue-data/tests/timestamps.html [ Skip ]
+webkit.org/b/103926 media/track/opera/track/webvtt/parsing-cue-data/tests/tree-building.html [ Skip ]
+webkit.org/b/103926 media/track/opera/track/webvtt/rendering/adhoc/cue_font_size_transition.html [ Skip ]
+webkit.org/b/103926 media/track/opera/track/webvtt/rendering/adhoc/voice_with_evil_timestamp.html [ Skip ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures
@@ -455,12 +501,6 @@ webkit.org/b/100688 fast/text/custom-font-data-crash2.html [ Crash Pass ]
 webkit.org/b/100688 fast/css/first-letter-text-fragment-crash.html [ Crash Pass ]
 webkit.org/b/100688 editing/selection/first-letter-selection-crash.html [ Crash Pass ]
 webkit.org/b/100688 editing/text-iterator/backward-textiterator-first-letter-crash.html [ Crash Pass ]
-
-# User Timing is not enable yet. so skip it.
-webkit.org/b/84893 http/tests/w3c/webperf/submission/Intel/user-timing [ Skip ]
-
-# Resource Timing is not enable yet, skip it.
-webkit.org/b/61138 http/tests/w3c/webperf/submission/Intel/resource-timing [ Skip ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Crashing tests
@@ -535,41 +575,6 @@ webkit.org/b/84856 media/media-controller-playback.html [ Failure Pass ]
 
 webkit.org/b/83878 media/track/track-mode.html [ Failure Pass ]
 webkit.org/b/88867 media/track/track-cue-rendering-snap-to-lines-not-set.html [ Failure Pass ]
-
-# Opera-submitted tests to W3C for <track>, a lot of failures still.
-webkit.org/b/103926 media/track/opera/idl/media-idl-tests.html [ Skip ]
-webkit.org/b/103926 media/track/opera/interfaces/HTMLElement/HTMLMediaElement/crossOrigin.html [ Skip ]
-webkit.org/b/103926 media/track/opera/interfaces/HTMLElement/HTMLTrackElement/kind.html [ Skip ]
-webkit.org/b/103926 media/track/opera/interfaces/HTMLElement/HTMLTrackElement/src.html [ Skip ]
-webkit.org/b/103926 media/track/opera/interfaces/TextTrack/activeCues.html [ Skip ]
-webkit.org/b/103926 media/track/opera/interfaces/TextTrack/cues.html [ Skip ]
-webkit.org/b/103926 media/track/opera/interfaces/TextTrack/removeCue.html [ Skip ]
-webkit.org/b/103926 media/track/opera/interfaces/TrackEvent/constructor.html [ Skip ]
-webkit.org/b/103926 media/track/opera/interfaces/TrackEvent/createEvent.html [ Skip ]
-webkit.org/b/103926 media/track/opera/interfaces/TextTrackCue/align.html [ Skip ]
-webkit.org/b/103926 media/track/opera/interfaces/TextTrackCue/id.html [ Skip ]
-webkit.org/b/103926 media/track/opera/interfaces/TextTrackCue/getCueAsHTML.html [ Skip ]
-webkit.org/b/103926 media/track/opera/interfaces/TextTrackCue/line.html [ Skip ]
-webkit.org/b/103926 media/track/opera/interfaces/TextTrackCue/onenter.html [ Skip ]
-webkit.org/b/103926 media/track/opera/interfaces/TextTrackCue/onexit.html [ Skip ]
-webkit.org/b/103926 media/track/opera/interfaces/TextTrackCue/pauseOnExit.html [ Skip ]
-webkit.org/b/103926 media/track/opera/interfaces/TextTrackCue/snapToLines.html [ Skip ]
-webkit.org/b/103926 media/track/opera/interfaces/TextTrackCue/text.html [ Skip ]
-webkit.org/b/103926 media/track/opera/interfaces/TextTrackCue/track.html [ Skip ]
-webkit.org/b/103926 media/track/opera/interfaces/TextTrackCue/vertical.html [ Skip ]
-webkit.org/b/103926 media/track/opera/interfaces/TextTrackCueList/getter.html [ Skip ]
-webkit.org/b/103926 media/track/opera/interfaces/TextTrackList/getter.html [ Skip ]
-webkit.org/b/103926 media/track/opera/interfaces/TextTrackList/onremovetrack.html [ Skip ]
-webkit.org/b/103926 media/track/opera/track/track-element/cloneNode.html [ Skip ]
-webkit.org/b/103926 media/track/opera/track/track-element/src-clear-cues.html [ Skip ]
-webkit.org/b/103926 media/track/opera/track/webvtt/parsing/001.html [ Skip ]
-webkit.org/b/103926 media/track/opera/track/webvtt/parsing-cue-data/tests/entities.html [ Skip ] 
-webkit.org/b/103926 media/track/opera/track/webvtt/parsing-cue-data/tests/tags.html [ Skip ]
-webkit.org/b/103926 media/track/opera/track/webvtt/rendering/adhoc/12345_timestamps.html [ Skip ]
-webkit.org/b/103926 media/track/opera/track/webvtt/parsing-cue-data/tests/timestamps.html [ Skip ]
-webkit.org/b/103926 media/track/opera/track/webvtt/parsing-cue-data/tests/tree-building.html [ Skip ]
-webkit.org/b/103926 media/track/opera/track/webvtt/rendering/adhoc/cue_font_size_transition.html [ Skip ]
-webkit.org/b/103926 media/track/opera/track/webvtt/rendering/adhoc/voice_with_evil_timestamp.html [ Skip ]
 
 webkit.org/b/49179 animations/stop-animation-on-suspend.html [ Failure Pass ]
 
@@ -1412,9 +1417,6 @@ webkit.org/b/102776 webkit.org/b/102993 media/media-document-audio-repaint.html 
 webkit.org/b/102776 media/track/track-cue-container-rendering-position.html [ Failure ]
 webkit.org/b/102776 media/track/track-cue-rendering-horizontal.html [ Failure ]
 webkit.org/b/102776 media/track/track-cue-rendering-vertical.html [ Failure ]
-
-# Fails until we enable the Resource Timing API.
-webkit.org/b/61138 http/tests/w3c/webperf/submission/resource-timing [ Skip ]
 
 webkit.org/b/103109 fast/dom/shadow/host-wrapper-reclaimed.html [ Failure ]
 
