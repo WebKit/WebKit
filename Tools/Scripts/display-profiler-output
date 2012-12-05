@@ -201,19 +201,18 @@ def getHash(hash)
     end
 end
 
-module Commands
-    def self.CMD_help
-        puts "summary     Print a summary of code block execution rates."
-        puts "display     Display details for a code block."
-        puts "help        Print this message."
-        puts "quit        Quit."
-    end
-    
-    def self.CMD_quit
+def executeCommand(*commandArray)
+    command = commandArray[0]
+    args = commandArray[1..-1]
+    case command
+    when "help", "h", "?"
+        puts "summary (s)     Print a summary of code block execution rates."
+        puts "display (d)     Display details for a code block."
+        puts "help (h)        Print this message."
+        puts "quit (q)        Quit."
+    when "quit", "q", "exit"
         exit 0
-    end
-    
-    def self.CMD_summary
+    when "summary", "s"
         hashCols = 14
         countCols = 10 * $engines.size
         
@@ -229,9 +228,7 @@ module Commands
                             bytecode.maxExecutionCount(engine).to_s
                         }.join("/"), countCols))
         }
-    end
-    
-    def self.CMD_display(*args)
+    when "display", "d"
         case args.length
         when 1
             hash = args[0]
@@ -282,21 +279,14 @@ module Commands
                 }
             }
         }
-    end
-end
-
-def executeCommand(command, args)
-    if Commands.methods.find_index("CMD_#{command}")
-        Commands.send("CMD_#{command}", *args)
     else
         puts "Invalid command: #{command}"
     end
 end
 
-executeCommand("summary", [])
+executeCommand("summary")
 
 while commandLine = Readline.readline("> ", true)
-    commandArray = commandLine.split
-    executeCommand(commandArray[0], commandArray[1..-1])
+    executeCommand(*commandLine.split)
 end
 

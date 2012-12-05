@@ -1,3 +1,13 @@
+2012-12-04  Filip Pizlo  <fpizlo@apple.com>
+
+        display-profiler-output should not use reflective infocation to resolve command names
+
+        Rubber stamped by Mark Hahnenberg.
+
+        Reflection is amazing, but here it was just kind of a bit much.
+
+        * Scripts/display-profiler-output:
+
 2012-12-02  Filip Pizlo  <fpizlo@apple.com>
 
         JSC should be able to report profiling data associated with the IR dumps and disassembly
