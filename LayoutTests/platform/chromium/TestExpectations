@@ -4339,3 +4339,6 @@ webkit.org/b/104023 [ Mac Debug ] fast/dom/HTMLTemplateElement/inertContents.htm
 
 # Needs platform-specific results
 webkit.org/b/104035 fast/text/orientation-sideways.html [ Missing ]
+
+webkit.org/b/104089 fast/frames/viewsource-attribute.html [ Failure ]
+webkit.org/b/104089 fast/frames/viewsource-on-image-file.html [ Failure ]
