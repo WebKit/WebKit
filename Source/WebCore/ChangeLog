@@ -1,5 +1,30 @@
 2012-12-05  Keishi Hattori  <keishi@webkit.org>
 
+        Fix text direction in datalist popup for time controls
+        https://bugs.webkit.org/show_bug.cgi?id=103853
+
+        Reviewed by Kent Tamura.
+
+        The datalist entry value should be displayed with the same text direction as the date/time format.
+
+        Tests: platform/chromium/fast/forms/suggestion-picker/datetime-suggestion-picker-appearance-locale-hebrew.html
+               platform/chromium/fast/forms/suggestion-picker/datetimelocal-suggestion-picker-appearance-locale-hebrew.html
+               platform/chromium/fast/forms/suggestion-picker/time-suggestion-picker-appearance-locale-hebrew.html
+
+        * Resources/pagepopups/calendarPicker.js: Renamed isCalendarRTL to isLocaleRTL.
+        (CalendarPicker.prototype._layout):
+        (CalendarPicker.prototype.fixWindowSize):
+        (DaysTable.prototype._handleKey):
+        (MonthPickerDaysTable.prototype._handleKey):
+        (WeekPickerDaysTable.prototype._handleKey):
+        * Resources/pagepopups/suggestionPicker.css:
+        (.suggestion-list-entry .title): Title should have the same text direction as the locale.
+        (.locale-rtl .suggestion-list-entry .title):
+        * Resources/pagepopups/suggestionPicker.js:
+        (SuggestionPicker.prototype._layout): Add locale-rtl class if the isLocaleRTL is true.
+
+2012-12-05  Keishi Hattori  <keishi@webkit.org>
+
         Fix flickering when hiding page popup
         https://bugs.webkit.org/show_bug.cgi?id=104100
 

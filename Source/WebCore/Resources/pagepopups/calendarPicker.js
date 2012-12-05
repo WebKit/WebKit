@@ -718,7 +718,7 @@ CalendarPicker.prototype.cleanup = function() {
 };
 
 CalendarPicker.prototype._layout = function() {
-    if (this._config.isCalendarRTL)
+    if (this._config.isLocaleRTL)
         this._element.classList.add("rtl");
     this._yearMonthController.attachTo(this._element);
     this._daysTable.attachTo(this._element);
@@ -753,7 +753,7 @@ CalendarPicker.prototype.fixWindowSize = function() {
     var DaysAreaContainerBorder = 1;
     var yearMonthEnd;
     var daysAreaEnd;
-    if (global.params.isCalendarRTL) {
+    if (global.params.isLocaleRTL) {
         var startOffset = this._element.offsetLeft + this._element.offsetWidth;
         yearMonthEnd = startOffset - yearMonthRightElement.offsetLeft;
         daysAreaEnd = startOffset - (daysAreaElement.offsetLeft + daysAreaElement.offsetWidth) + weekColumnWidth + maxCellWidth * 7 + DaysAreaContainerBorder;
@@ -1496,7 +1496,7 @@ DaysTable.prototype._handleKey = function(event) {
         return;
     }
 
-    if (key == (global.params.isCalendarRTL ? "Right" : "Left")) {
+    if (key == (global.params.isLocaleRTL ? "Right" : "Left")) {
         if (x == 0) {
             if (y == 0) {
                 if (!this._maybeSetPreviousMonth())
@@ -1518,7 +1518,7 @@ DaysTable.prototype._handleKey = function(event) {
             y--;
         this.updateSelection(event, x, y);
 
-    } else if (key == (global.params.isCalendarRTL ? "Left" : "Right")) {
+    } else if (key == (global.params.isLocaleRTL ? "Left" : "Right")) {
         if (x == 6) {
             if (y == DaysTable._Weeks - 1) {
                 if (!this._maybeSetNextMonth())
@@ -1654,13 +1654,13 @@ MonthPickerDaysTable.prototype._handleKey = function(event) {
         && (key == "Right" || key == "Left" || key == "Up" || key == "Down" || key == "PageUp" || key == "PageDown")) {
         this.selectRange(currentMonth);
         eventHandled = true;
-    } else if (key == (global.params.isCalendarRTL ? "Right" : "Left") || key == "Up" || key == "PageUp") {
+    } else if (key == (global.params.isLocaleRTL ? "Right" : "Left") || key == "Up" || key == "PageUp") {
         if (selectedMonth.valueOf() > currentMonth.valueOf())
             this.selectRangeAndShowEntireRange(currentMonth);
         else
             this.selectRangeAndShowEntireRange(currentMonth.previous());
         eventHandled = true;
-    } else if (key == (global.params.isCalendarRTL ? "Left" : "Right") || key == "Down" || key == "PageDown") {
+    } else if (key == (global.params.isLocaleRTL ? "Left" : "Right") || key == "Down" || key == "PageDown") {
         if (selectedMonth.valueOf() < currentMonth.valueOf())
             this.selectRangeAndShowEntireRange(currentMonth);
         else
@@ -1762,10 +1762,10 @@ WeekPickerDaysTable.prototype._handleKey = function(event) {
         && (key == "Right" || key == "Left" || key == "Up" || key == "Down" || key == "PageUp" || key == "PageDown")) {
         // Put the selection on a center cell.
         this._selectRangeAtPosition(3, Math.floor(DaysTable._Weeks / 2 - 1));
-    } else if (key == (global.params.isCalendarRTL ? "Right" : "Left") || key == "Up") {
+    } else if (key == (global.params.isLocaleRTL ? "Right" : "Left") || key == "Up") {
         this.selectRangeAndShowEntireRange(selectedWeek.previous());
         eventHandled = true;
-    } else if (key == (global.params.isCalendarRTL ? "Left" : "Right") || key == "Down") {
+    } else if (key == (global.params.isLocaleRTL ? "Left" : "Right") || key == "Down") {
         this.selectRangeAndShowEntireRange(selectedWeek.next());
         eventHandled = true;
     } else if (key == "PageUp") {

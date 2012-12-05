@@ -1,3 +1,24 @@
+2012-12-05  Keishi Hattori  <keishi@webkit.org>
+
+        Fix text direction in datalist popup for time controls
+        https://bugs.webkit.org/show_bug.cgi?id=103853
+
+        Reviewed by Kent Tamura.
+
+        * platform/chromium-mac/platform/chromium/fast/forms/suggestion-picker/datetime-suggestion-picker-appearance-locale-hebrew-expected.png: Added.
+        * platform/chromium-mac/platform/chromium/fast/forms/suggestion-picker/datetime-suggestion-picker-appearance-rtl-expected.png:
+        * platform/chromium-mac/platform/chromium/fast/forms/suggestion-picker/datetimelocal-suggestion-picker-appearance-locale-hebrew-expected.png: Added.
+        * platform/chromium-mac/platform/chromium/fast/forms/suggestion-picker/datetimelocal-suggestion-picker-appearance-rtl-expected.png:
+        * platform/chromium-mac/platform/chromium/fast/forms/suggestion-picker/time-suggestion-picker-appearance-locale-hebrew-expected.png: Added.
+        * platform/chromium-mac/platform/chromium/fast/forms/suggestion-picker/time-suggestion-picker-appearance-rtl-expected.png:
+        * platform/chromium/TestExpectations:
+        * platform/chromium/fast/forms/suggestion-picker/datetime-suggestion-picker-appearance-locale-hebrew-expected.txt: Added.
+        * platform/chromium/fast/forms/suggestion-picker/datetime-suggestion-picker-appearance-locale-hebrew.html: Added.
+        * platform/chromium/fast/forms/suggestion-picker/datetimelocal-suggestion-picker-appearance-locale-hebrew-expected.txt: Added.
+        * platform/chromium/fast/forms/suggestion-picker/datetimelocal-suggestion-picker-appearance-locale-hebrew.html: Added.
+        * platform/chromium/fast/forms/suggestion-picker/time-suggestion-picker-appearance-locale-hebrew-expected.txt: Added.
+        * platform/chromium/fast/forms/suggestion-picker/time-suggestion-picker-appearance-locale-hebrew.html: Added.
+
 2012-12-05  Mike West  <mkwst@chromium.org>
 
         [mac][chromium] Unreviewed gardening.

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+window.enablePixelTesting = true;
+if (window.internals)
+    internals.settings.setLangAttributeAwareFormControlUIEnabled(true);
+</script>
+<script src="../../../../../fast/js/resources/js-test-pre.js"></script>
+<script src="../../../../../fast/forms/resources/picker-common.js"></script>
+<script src="resources/suggestion-picker-common.js"></script>
+</head>
+<body style="background-color: #eeffff; padding: 0 50px;">
+<input type=datetime id=datetime value="2012-12-31T23:59Z" lang="he-il" list="suggestions" style="width: 250px;">
+<datalist id=suggestions>
+    <option label="Today">2012-11-22T12:00Z</option>
+    <option label="Tomorrow">2012-11-23T12:00Z</option>
+    <option>2012-11-22T01:03Z</option>
+    <option>2012-11-22T01:04Z</option>
+    <option>2012-11-22T01:05Z</option>
+    <option>2012-11-22T01:06Z</option>
+    <option>2012-11-22T01:07Z</option>
+    <option>2012-11-22T01:08Z</option>
+    <option>2012-11-22T01:09Z</option>
+    <option>2012-11-22T01:10Z</option>
+    <option>2012-11-22T01:11Z</option>
+    <option>2012-11-22T01:12Z</option>
+    <option>2012-11-22T01:13Z</option>
+    <option>2012-11-22T01:14Z</option>
+    <option>2012-11-22T01:15Z</option>
+    <option>2012-11-22T01:16Z</option>
+    <option>2012-11-22T01:17Z</option>
+    <option>2012-11-22T01:18Z</option>
+    <option>2012-11-22T01:19Z</option>
+</datalist>
+
+<p id="description" style="opacity: 0"></p>
+<div id="console" style="opacity: 0"></div>
+
+<script>
+openPicker(document.getElementById('datetime'), finishTest);
+
+function finishTest() {
+    popupWindow.focus();
+    eventSender.keyDown('downArrow');
+    finishJSTest();
+}
+</script>
+<script src="../../../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

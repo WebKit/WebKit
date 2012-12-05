@@ -36,6 +36,15 @@
     padding: 0 20px 0 4px;
 }
 
+.suggestion-list-entry .title {
+    direction: ltr;
+    display: inline-block;
+}
+
+.locale-rtl .suggestion-list-entry .title {
+    direction: rtl;
+}
+
 .measuring-width .suggestion-list-entry .label {
     float: none;
     margin-right: 0;
