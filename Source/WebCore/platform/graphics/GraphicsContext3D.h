@@ -26,10 +26,9 @@
 #ifndef GraphicsContext3D_h
 #define GraphicsContext3D_h
 
-#include "GraphicsTypes3D.h"
 #include "Image.h"
 #include "IntRect.h"
-#include "KURL.h"
+#include "GraphicsTypes3D.h"
 #include "PlatformLayer.h"
 #include <wtf/HashMap.h>
 #include <wtf/ListHashSet.h>
@@ -460,7 +459,6 @@ public:
         bool noExtensions;
         bool shareResources;
         bool preferDiscreteGPU;
-        KURL topDocumentURL;
     };
 
     enum RenderStyle {
