@@ -40,6 +40,7 @@
             'dependencies': [
                 '../../WTF/WTF.gyp/WTF.gyp:wtf',
                 '<(DEPTH)/skia/skia.gyp:skia',
+                '<(DEPTH)/build/temp_gyp/googleurl.gyp:googleurl',
             ],
             'include_dirs': [
                 '../chromium',
@@ -76,6 +77,9 @@
                     '<(output_dir)'
                 ],
             },
+            'export_dependent_settings': [
+                '<(DEPTH)/build/temp_gyp/googleurl.gyp:googleurl',
+            ],
             'conditions': [
                 ['inside_chromium_build==1', {
                     'conditions': [

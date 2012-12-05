@@ -425,7 +425,7 @@ PassOwnPtr<WebGLRenderingContext> WebGLRenderingContext::create(HTMLCanvasElemen
     attributes.shareResources = false;
 #endif
     attributes.preferDiscreteGPU = true;
-
+    attributes.topDocumentURL = document->topDocument()->url();
 
     RefPtr<GraphicsContext3D> context(GraphicsContext3D::create(attributes, hostWindow));
 

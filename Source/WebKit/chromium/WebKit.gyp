@@ -874,6 +874,7 @@
             'type': 'static_library',
             'dependencies': [
                 '../../WTF/WTF.gyp/WTF.gyp:wtf',
+                '<(chromium_src_dir)/build/temp_gyp/googleurl.gyp:googleurl',
             ],
             'defines': [
                 'WEBKIT_IMPLEMENTATION=1',

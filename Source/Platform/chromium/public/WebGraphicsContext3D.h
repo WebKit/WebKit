@@ -36,6 +36,7 @@
 #include "WebGraphicsMemoryStats.h"
 #include "WebNonCopyable.h"
 #include "WebString.h"
+#include "WebURL.h"
 
 #define USE_WGC3D_TYPES
 
@@ -109,6 +110,7 @@ public:
         bool shareResources;
         bool preferDiscreteGPU;
         bool noAutomaticFlushes;
+        WebURL topDocumentURL;
     };
 
     class WebGraphicsContextLostCallback {
