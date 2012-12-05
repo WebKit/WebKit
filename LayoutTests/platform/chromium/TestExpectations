@@ -4244,7 +4244,7 @@ webkit.org/b/103834 [ Mac XP ] fast/forms/month-multiple-fields/month-multiple-f
 # New tests added in r136492 that does not work in chromium
 webkit.org/b/99800 fast/harness/perftests/runs-per-second-iterations.html [ Failure ]
 webkit.org/b/99800 fast/harness/perftests/perf-runner-compute-statistics.html [ Failure ]
-webkit.org/b/99800 fast/harness/perftests/runs-per-second-log.html [ Failure Missing ]
+webkit.org/b/99800 fast/harness/perftests/runs-per-second-log.html [ ImageOnlyFailure Failure Missing ]
 
 # Flaky on mac debug since r136472 or earlier
 webkit.org/b/104023 [ Mac Debug ] fast/dom/HTMLTemplateElement/inertContents.html [ Failure Pass ]
