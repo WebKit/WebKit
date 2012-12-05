@@ -69,9 +69,9 @@ public:
     virtual void getExcludedIntervals(float logicalTop, float logicalHeight, SegmentList&) const = 0;
 
 protected:
-    float minYForLogicalLine(float logicalTop, float logicalHeight) const { return (m_writingMode == RightToLeftWritingMode) ? m_logicalBoxHeight - logicalTop - logicalHeight : logicalTop; }
-    float maxYForLogicalLine(float logicalTop, float logicalHeight) const { return (m_writingMode == RightToLeftWritingMode) ? m_logicalBoxHeight - logicalTop : logicalTop + logicalHeight; }
-    FloatRect internalToLogicalBoundingBox(FloatRect r) const { return (m_writingMode == RightToLeftWritingMode) ? FloatRect(r.x(), m_logicalBoxHeight - r.maxY(), r.width(), r.height()) : r; }
+    float minYForLogicalLine(float logicalTop, float logicalHeight) const { return isFlippedBlocksWritingMode(m_writingMode) ? m_logicalBoxHeight - logicalTop - logicalHeight : logicalTop; }
+    float maxYForLogicalLine(float logicalTop, float logicalHeight) const { return  isFlippedBlocksWritingMode(m_writingMode) ? m_logicalBoxHeight - logicalTop : logicalTop + logicalHeight; }
+    FloatRect internalToLogicalBoundingBox(const FloatRect& r) const { return isFlippedBlocksWritingMode(m_writingMode) ? FloatRect(r.x(), m_logicalBoxHeight - r.maxY(), r.width(), r.height()) : r; }
 
 private:
     WritingMode m_writingMode;
