@@ -1,3 +1,12 @@
+2012-12-04  Alpha Lam  <hclam@chromium.org>
+
+        Not reviewed. Build fix.
+
+        Fix Chromium Windows build.
+
+        * platform/graphics/chromium/ImageDecodingStore.h:
+        (CacheEntry):
+
 2012-12-04  Kentaro Hara  <haraken@chromium.org>
 
         [V8] Remove toV8Object()

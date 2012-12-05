@@ -69,7 +69,7 @@ private:
     typedef std::pair<const ImageFrameGenerator*, SkISize> CacheIdentifier;
 
     class CacheEntry : public DoublyLinkedListNode<CacheEntry> {
-        friend class DoublyLinkedListNode<CacheEntry>;
+        friend class WTF::DoublyLinkedListNode<CacheEntry>;
     public:
         static PassOwnPtr<CacheEntry> createAndUse(const ImageFrameGenerator* generator, PassOwnPtr<ScaledImageFragment> image)
         {
