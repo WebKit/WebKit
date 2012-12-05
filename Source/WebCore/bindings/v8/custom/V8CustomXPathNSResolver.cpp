@@ -58,7 +58,7 @@ V8CustomXPathNSResolver::~V8CustomXPathNSResolver()
 String V8CustomXPathNSResolver::lookupNamespaceURI(const String& prefix)
 {
     v8::Handle<v8::Function> lookupNamespaceURIFunc;
-    v8::Handle<v8::String> lookupNamespaceURIName = v8::String::New("lookupNamespaceURI");
+    v8::Handle<v8::String> lookupNamespaceURIName = v8::String::NewSymbol("lookupNamespaceURI");
 
     // Check if the resolver has a function property named lookupNamespaceURI.
     if (m_resolver->Has(lookupNamespaceURIName)) {

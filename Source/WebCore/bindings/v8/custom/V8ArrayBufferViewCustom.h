@@ -171,7 +171,7 @@ v8::Handle<v8::Value> constructWebGLArray(const v8::Arguments& args, WrapperType
         srcArray = args[0]->ToObject();
         if (srcArray.IsEmpty())
             return throwTypeError("Could not convert argument 0 to an array", args.GetIsolate());
-        len = toUInt32(srcArray->Get(v8::String::New("length")));
+        len = toUInt32(srcArray->Get(v8::String::NewSymbol("length")));
         doInstantiation = true;
     } else {
         bool ok = false;
@@ -244,7 +244,7 @@ v8::Handle<v8::Value> setWebGLArrayHelper(const v8::Arguments& args)
         uint32_t offset = 0;
         if (args.Length() == 2)
             offset = toUInt32(args[1]);
-        uint32_t length = toUInt32(array->Get(v8::String::New("length")));
+        uint32_t length = toUInt32(array->Get(v8::String::NewSymbol("length")));
         if (!impl->checkInboundData(offset, length))
             return throwError(v8RangeError, outOfRangeLengthAndOffset, args.GetIsolate());
         bool copied = copyElements(args.Holder(), array, length, offset, args.GetIsolate());

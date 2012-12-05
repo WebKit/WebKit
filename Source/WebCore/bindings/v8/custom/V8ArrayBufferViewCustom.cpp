@@ -37,7 +37,7 @@ const char hiddenCopyMethodName[] = "TypedArray::HiddenCopy::8NkZVq";
 
 v8::Handle<v8::Value> getHiddenCopyMethod(v8::Handle<v8::Object> prototype)
 {
-    v8::Handle<v8::String> key = v8::String::New(hiddenCopyMethodName);
+    v8::Handle<v8::String> key = v8::String::NewSymbol(hiddenCopyMethodName);
     return prototype->GetHiddenValue(key);
 }
 
@@ -48,7 +48,7 @@ v8::Handle<v8::Value> installHiddenCopyMethod(v8::Handle<v8::Object> prototype) 
                   sizeof(V8ArrayBufferViewCustomScript_js));
     v8::Handle<v8::Script> script = v8::Script::Compile(v8String(source));
     v8::Handle<v8::Value> value = script->Run();
-    v8::Handle<v8::String> key = v8::String::New(hiddenCopyMethodName);
+    v8::Handle<v8::String> key = v8::String::NewSymbol(hiddenCopyMethodName);
     prototype->SetHiddenValue(key, value);
     return value;
 }

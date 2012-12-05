@@ -403,7 +403,7 @@ inline void DialogHandler::dialogCreated(DOMWindow* dialogFrame)
     if (m_dialogArguments.IsEmpty())
         return;
     v8::Context::Scope scope(m_dialogContext);
-    m_dialogContext->Global()->Set(v8::String::New("dialogArguments"), m_dialogArguments);
+    m_dialogContext->Global()->Set(v8::String::NewSymbol("dialogArguments"), m_dialogArguments);
 }
 
 inline v8::Handle<v8::Value> DialogHandler::returnValue() const
@@ -411,7 +411,7 @@ inline v8::Handle<v8::Value> DialogHandler::returnValue() const
     if (m_dialogContext.IsEmpty())
         return v8::Undefined();
     v8::Context::Scope scope(m_dialogContext);
-    v8::Handle<v8::Value> returnValue = m_dialogContext->Global()->Get(v8::String::New("returnValue"));
+    v8::Handle<v8::Value> returnValue = m_dialogContext->Global()->Get(v8::String::NewSymbol("returnValue"));
     if (returnValue.IsEmpty())
         return v8::Undefined();
     return returnValue;

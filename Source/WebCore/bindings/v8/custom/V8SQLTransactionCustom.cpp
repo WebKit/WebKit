@@ -63,7 +63,7 @@ v8::Handle<v8::Value> V8SQLTransaction::executeSqlCallback(const v8::Arguments& 
 
         uint32_t sqlArgsLength = 0;
         v8::Local<v8::Object> sqlArgsObject = args[1]->ToObject();
-        V8TRYCATCH(v8::Local<v8::Value>, length, sqlArgsObject->Get(v8::String::New("length")));
+        V8TRYCATCH(v8::Local<v8::Value>, length, sqlArgsObject->Get(v8::String::NewSymbol("length")));
 
         if (isUndefinedOrNull(length))
             sqlArgsLength = sqlArgsObject->GetPropertyNames()->Length();

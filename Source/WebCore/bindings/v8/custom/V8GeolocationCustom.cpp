@@ -61,7 +61,7 @@ static PassRefPtr<PositionOptions> createPositionOptions(v8::Local<v8::Value> va
     // - If the getter or the property's valueOf method throws an exception, we
     //   quit so as not to risk overwriting the exception.
     // - If the value is absent or undefined, we don't override the default.
-    v8::Local<v8::Value> enableHighAccuracyValue = object->Get(v8::String::New("enableHighAccuracy"));
+    v8::Local<v8::Value> enableHighAccuracyValue = object->Get(v8::String::NewSymbol("enableHighAccuracy"));
     if (enableHighAccuracyValue.IsEmpty()) {
         succeeded = false;
         return 0;
@@ -75,7 +75,7 @@ static PassRefPtr<PositionOptions> createPositionOptions(v8::Local<v8::Value> va
         options->setEnableHighAccuracy(enableHighAccuracyBoolean->Value());
     }
 
-    v8::Local<v8::Value> timeoutValue = object->Get(v8::String::New("timeout"));
+    v8::Local<v8::Value> timeoutValue = object->Get(v8::String::NewSymbol("timeout"));
     if (timeoutValue.IsEmpty()) {
         succeeded = false;
         return 0;
@@ -99,7 +99,7 @@ static PassRefPtr<PositionOptions> createPositionOptions(v8::Local<v8::Value> va
         }
     }
 
-    v8::Local<v8::Value> maximumAgeValue = object->Get(v8::String::New("maximumAge"));
+    v8::Local<v8::Value> maximumAgeValue = object->Get(v8::String::NewSymbol("maximumAge"));
     if (maximumAgeValue.IsEmpty()) {
         succeeded = false;
         return 0;
