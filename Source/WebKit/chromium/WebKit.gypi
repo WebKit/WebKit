@@ -81,6 +81,7 @@
             'tests/IDBKeyPathTest.cpp',
             'tests/IDBLevelDBCodingTest.cpp',
             'tests/IDBRequestTest.cpp',
+            'tests/ImageDecodingStoreTest.cpp',
             'tests/ImageFrameGeneratorTest.cpp',
             'tests/ImageLayerChromiumTest.cpp',
             'tests/MockImageDecoder.h',

@@ -31,6 +31,8 @@
 #include "SkSize.h"
 #include "SkSizeHash.h"
 
+#include <wtf/DoublyLinkedList.h>
+#include <wtf/HashSet.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/ThreadingPrimitives.h>
@@ -56,42 +58,91 @@ public:
     void unlockCache(const ImageFrameGenerator*, const ScaledImageFragment*);
     const ScaledImageFragment* insertAndLockCache(const ImageFrameGenerator*, PassOwnPtr<ScaledImageFragment>);
 
-private:
-    struct CacheEntry {
-        static PassOwnPtr<CacheEntry> create() { return adoptPtr(new CacheEntry()); }
-        static PassOwnPtr<CacheEntry> createAndUse(PassOwnPtr<ScaledImageFragment> image) { return adoptPtr(new CacheEntry(image, 1)); }
+    // Remove all cache entries indexed by ImageFrameGenerator.
+    void removeCacheIndexedByGenerator(const ImageFrameGenerator*);
 
-        CacheEntry()
-            : useCount(0)
+    void setCacheLimitInBytes(size_t);
+    size_t memoryUsageInBytes();
+    unsigned cacheEntries();
+
+private:
+    typedef std::pair<const ImageFrameGenerator*, SkISize> CacheIdentifier;
+
+    class CacheEntry : public DoublyLinkedListNode<CacheEntry> {
+        friend class DoublyLinkedListNode<CacheEntry>;
+    public:
+        static PassOwnPtr<CacheEntry> createAndUse(const ImageFrameGenerator* generator, PassOwnPtr<ScaledImageFragment> image)
         {
+            return adoptPtr(new CacheEntry(generator, image, 1));
         }
 
-        CacheEntry(PassOwnPtr<ScaledImageFragment> image, int count)
-            : cachedImage(image)
-            , useCount(count)
+        CacheEntry(const ImageFrameGenerator* generator, PassOwnPtr<ScaledImageFragment> image, int count)
+            : m_prev(0)
+            , m_next(0)
+            , m_generator(generator)
+            , m_cachedImage(image)
+            , m_useCount(count)
         {
         }
 
         ~CacheEntry()
         {
-            ASSERT(!useCount);
+            ASSERT(!m_useCount);
         }
 
-        OwnPtr<ScaledImageFragment> cachedImage;
-        int useCount;
+        CacheIdentifier cacheKey() const { return std::make_pair(m_generator, m_cachedImage->scaledSize()); }
+        const ScaledImageFragment* cachedImage() const { return m_cachedImage.get(); }
+        int useCount() const { return m_useCount; }
+        void incrementUseCount() { ++m_useCount; }
+        void decrementUseCount() { --m_useCount; ASSERT(m_useCount >= 0); }
+
+        // FIXME: getSafeSize() returns size in bytes truncated to a 32-bits integer.
+        //        Find a way to get the size in 64-bits.
+        size_t memoryUsageInBytes() const { return cachedImage()->bitmap().getSafeSize(); }
+
+    private:
+        CacheEntry* m_prev;
+        CacheEntry* m_next;
+        const ImageFrameGenerator* m_generator;
+        OwnPtr<ScaledImageFragment> m_cachedImage;
+        int m_useCount;
     };
 
     ImageDecodingStore();
+
     void prune();
 
-    Vector<OwnPtr<CacheEntry> > m_cacheEntries;
+    // These methods are called while m_mutex is locked.
+    void insertCacheInternal(PassOwnPtr<CacheEntry>);
+    void removeFromCacheInternal(const CacheEntry*, Vector<OwnPtr<CacheEntry> >* deletionList);
+    void removeFromCacheListInternal(const Vector<OwnPtr<CacheEntry> >& deletionList);
+    void incrementMemoryUsage(size_t size) { m_memoryUsageInBytes += size; }
+    void decrementMemoryUsage(size_t size)
+    {
+        ASSERT(m_memoryUsageInBytes >= size);
+        m_memoryUsageInBytes -= size;
+    }
 
-    typedef std::pair<const ImageFrameGenerator*, SkISize> CacheIdentifier;
-    typedef HashMap<CacheIdentifier, CacheEntry*> CacheMap;
+    // Head of this list is the least recently used cache entry.
+    // Tail of this list is the most recently used cache entry.
+    DoublyLinkedList<CacheEntry> m_orderedCacheList;
+
+    typedef HashMap<CacheIdentifier, OwnPtr<CacheEntry> > CacheMap;
     CacheMap m_cacheMap;
 
-    // Protect concurrent access to all instances of CacheEntry stored in m_cacheEntries and
-    // m_cacheMap as well as the containers.
+    typedef HashSet<SkISize> SizeSet;
+    typedef HashMap<const ImageFrameGenerator*, SizeSet> CachedSizeMap;
+    CachedSizeMap m_cachedSizeMap;
+
+    size_t m_cacheLimitInBytes;
+    size_t m_memoryUsageInBytes;
+
+    // Protect concurrent access to these members:
+    //   m_orderedCacheList
+    //   m_cacheMap and all CacheEntrys stored in it
+    //   m_cachedSizeMap
+    //   m_cacheLimitInBytes
+    //   m_memoryUsageInBytes
     Mutex m_mutex;
 };
 

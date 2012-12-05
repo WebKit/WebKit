@@ -1,3 +1,49 @@
+2012-12-04  Alpha Lam  <hclam@chromium.org>
+
+        [chromium] Implement cache eviction logic in ImageDecodingStore
+        https://bugs.webkit.org/show_bug.cgi?id=103480
+
+        Reviewed by James Robinson.
+
+        Added ImageDecodingStoreTest for unit testing new image cache.
+
+        New tests:
+
+        ImageDecodingStoreTest.evictOneCache
+
+        Test eviction of one cache entry by setting a smaller cache limit.
+
+        ImageDecodingStoreTest.pruneOrderIsLeastRecentlyUsed
+
+        Test eviction order is least recently used.
+
+        ImageDecodingStoreTest.pruneCausedByInsertion
+
+        Test that eviction is triggered also by cache insertion.
+
+        ImageDecodingStoreTest.cacheInUseNotEvicted
+
+        Test that cache in use is not evicted.
+
+        ImageDecodingStoreTest.destroyImageFrameGenerator
+
+        Test that deleting a ImageFrameGenerator causes associated cache
+        entries to be removed.
+
+        * WebKit.gypi:
+        * tests/ImageDecodingStoreTest.cpp: Added.
+        (WebCore):
+        (ImageDecodingStoreTest):
+        (WebCore::ImageDecodingStoreTest::SetUp):
+        (WebCore::ImageDecodingStoreTest::TearDown):
+        (WebCore::ImageDecodingStoreTest::createCompleteImage):
+        (WebCore::ImageDecodingStoreTest::insertCache):
+        (WebCore::ImageDecodingStoreTest::lockCache):
+        (WebCore::ImageDecodingStoreTest::unlockCache):
+        (WebCore::ImageDecodingStoreTest::evictOneCache):
+        (WebCore::ImageDecodingStoreTest::isCacheAlive):
+        (WebCore::TEST_F):
+
 2012-12-04  Kenneth Russell  <kbr@google.com>
 
         Associate URLs with GraphicsContext3D instances created for WebGL

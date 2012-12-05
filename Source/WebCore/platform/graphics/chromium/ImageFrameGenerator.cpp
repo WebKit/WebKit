@@ -54,8 +54,11 @@ ImageFrameGenerator::ImageFrameGenerator(const SkISize& fullSize, PassRefPtr<Sha
 
 ImageFrameGenerator::~ImageFrameGenerator()
 {
-    // TODO: Call ImageDecodingStore to remove all cache entries indexed
-    // by this object.
+    // FIXME: This check is not really thread-safe. This should be changed to:
+    // ImageDecodingStore::removeCacheFromInstance(this);
+    // Which uses a lock internally.
+    if (ImageDecodingStore::instance())
+        ImageDecodingStore::instance()->removeCacheIndexedByGenerator(this);
 }
 
 void ImageFrameGenerator::setData(PassRefPtr<SharedBuffer> data, bool allDataReceived)
