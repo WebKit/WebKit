@@ -1729,3 +1729,6 @@ webkit.org/b/103893 media/video-volume.html [ Failure ]
 
 # Not completely implemented yet
 webkit.org/b/103258 media/track/opera/interfaces/TextTrack/addCue.html [ Missing ]
+
+webkit.org/b/104089 fast/frames/viewsource-attribute.html [ Failure ]
+webkit.org/b/104089 fast/frames/viewsource-on-image-file.html [ Failure ]

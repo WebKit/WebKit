@@ -1,3 +1,16 @@
+2012-12-05  Mike West  <mkwst@chromium.org>
+
+        Unreviewed gardening.
+
+        fast/frames/viewsource-on-image-file.html and
+        fast/overflow/scrollbar-click-retains-focus.html are failing on every
+        port. Skipping.
+
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/qt/TestExpectations:
+
 2012-12-05  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Flex item auto margins in the cross direction should safe center

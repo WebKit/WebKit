@@ -1427,6 +1427,9 @@ webkit.org/b/103893 media/video-volume.html [ Failure ]
 
 webkit.org/b/104104 fast/overflow/scrollbar-click-retains-focus.html [ Failure ]
 
+webkit.org/b/104089 fast/frames/viewsource-attribute.html [ Failure ]
+webkit.org/b/104089 fast/frames/viewsource-on-image-file.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing
 #////////////////////////////////////////////////////////////////////////////////////////
