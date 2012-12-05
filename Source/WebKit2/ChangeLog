@@ -1,3 +1,67 @@
+2012-12-05  Jae Hyun Park  <jae.park@company100.net>
+
+        Coordinated Graphics: Move AreaAllocator and UpdateAtlas to CoordinatedGraphics
+        https://bugs.webkit.org/show_bug.cgi?id=103864
+
+        Reviewed by Noam Rosenthal.
+
+        AreaAllocator and UpdateAtlas are only used for Coordinated Graphics.
+        So, these should be moved to CoordinatedGraphics to clarify the code.
+
+        No new test, because no change of behavior.
+
+        * CMakeLists.txt:
+        * Target.pri:
+        * WebProcess/WebPage/CoordinatedGraphics/AreaAllocator.cpp: Renamed from Source/WebKit2/WebProcess/WebPage/AreaAllocator.cpp.
+        (WebKit):
+        (WebKit::AreaAllocator::AreaAllocator):
+        (WebKit::AreaAllocator::~AreaAllocator):
+        (WebKit::AreaAllocator::expand):
+        (WebKit::AreaAllocator::expandBy):
+        (WebKit::AreaAllocator::release):
+        (WebKit::AreaAllocator::overhead):
+        (WebKit::AreaAllocator::roundAllocation):
+        (WebKit::GeneralAreaAllocator::GeneralAreaAllocator):
+        (WebKit::GeneralAreaAllocator::~GeneralAreaAllocator):
+        (WebKit::GeneralAreaAllocator::freeNode):
+        (WebKit::GeneralAreaAllocator::expand):
+        (WebKit::fitsWithin):
+        (WebKit::GeneralAreaAllocator::allocate):
+        (WebKit::GeneralAreaAllocator::allocateFromNode):
+        (WebKit::GeneralAreaAllocator::splitNode):
+        (WebKit::GeneralAreaAllocator::updateLargestFree):
+        (WebKit::GeneralAreaAllocator::release):
+        (WebKit::GeneralAreaAllocator::overhead):
+        * WebProcess/WebPage/CoordinatedGraphics/AreaAllocator.h: Renamed from Source/WebKit2/WebProcess/WebPage/AreaAllocator.h.
+        (WebCore::nextPowerOfTwo):
+        (WebCore):
+        (WebKit):
+        (AreaAllocator):
+        (WebKit::AreaAllocator::size):
+        (WebKit::AreaAllocator::minimumAllocation):
+        (WebKit::AreaAllocator::setMinimumAllocation):
+        (WebKit::AreaAllocator::margin):
+        (WebKit::AreaAllocator::setMargin):
+        (GeneralAreaAllocator):
+        (Node):
+        * WebProcess/WebPage/CoordinatedGraphics/UpdateAtlas.cpp: Renamed from Source/WebKit2/WebProcess/WebPage/UpdateAtlas.cpp.
+        (WebKit):
+        (WebKit::UpdateAtlas::UpdateAtlas):
+        (WebKit::UpdateAtlas::~UpdateAtlas):
+        (WebKit::UpdateAtlas::buildLayoutIfNeeded):
+        (WebKit::UpdateAtlas::didSwapBuffers):
+        (WebKit::UpdateAtlas::beginPaintingOnAvailableBuffer):
+        * WebProcess/WebPage/CoordinatedGraphics/UpdateAtlas.h: Renamed from Source/WebKit2/WebProcess/WebPage/UpdateAtlas.h.
+        (WebCore):
+        (WebKit):
+        (UpdateAtlasClient):
+        (UpdateAtlas):
+        (WebKit::UpdateAtlas::size):
+        (WebKit::UpdateAtlas::flags):
+        (WebKit::UpdateAtlas::addTimeInactive):
+        (WebKit::UpdateAtlas::isInactive):
+        (WebKit::UpdateAtlas::isInUse):
+
 2012-12-05  Michael Brüning  <michael.bruning@digia.com>
 
         Fix compilation for Qt5.0.0 stable branch.

@@ -24,6 +24,8 @@
 #include <IntRect.h>
 #include <IntSize.h>
 
+#if USE(COORDINATED_GRAPHICS)
+
 namespace WebCore {
 inline int nextPowerOfTwo(int number)
 {
@@ -107,4 +109,6 @@ private:
 
 } // namespace WebKit
 
-#endif
+#endif // USE(COORDINATED_GRAPHICS)
+
+#endif // AreaAllocator_h

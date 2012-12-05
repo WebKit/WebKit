@@ -481,11 +481,9 @@ SET(WebKit2_SOURCES
     WebProcess/WebPage/EventDispatcher.cpp
     WebProcess/WebPage/FindController.cpp
 
-    WebProcess/WebPage/AreaAllocator.cpp
     WebProcess/WebPage/LayerTreeHost.cpp
     WebProcess/WebPage/PageOverlay.cpp
     WebProcess/WebPage/TapHighlightController.cpp
-    WebProcess/WebPage/UpdateAtlas.cpp
     WebProcess/WebPage/WebBackForwardListProxy.cpp
     WebProcess/WebPage/WebContextMenu.cpp
     WebProcess/WebPage/WebFrame.cpp
@@ -495,10 +493,12 @@ SET(WebKit2_SOURCES
     WebProcess/WebPage/WebPageGroupProxy.cpp
     WebProcess/WebPage/WebUndoStep.cpp
 
+    WebProcess/WebPage/CoordinatedGraphics/AreaAllocator.cpp
     WebProcess/WebPage/CoordinatedGraphics/CoordinatedImageBacking.cpp
     WebProcess/WebPage/CoordinatedGraphics/CoordinatedGraphicsLayer.cpp
     WebProcess/WebPage/CoordinatedGraphics/CoordinatedTile.cpp
     WebProcess/WebPage/CoordinatedGraphics/LayerTreeCoordinator.cpp
+    WebProcess/WebPage/CoordinatedGraphics/UpdateAtlas.cpp
 )
 
 SET(WebKit2_MESSAGES_IN_FILES

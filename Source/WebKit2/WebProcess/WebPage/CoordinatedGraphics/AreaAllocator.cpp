@@ -19,6 +19,8 @@
 
 #include "config.h"
 
+#if USE(COORDINATED_GRAPHICS)
+
 #include "AreaAllocator.h"
 
 namespace WebKit {
@@ -135,14 +137,14 @@ void GeneralAreaAllocator::expand(const WebCore::IntSize& size)
         right->largestFree = m_root->rect.size();
         if (split == SplitOnX) {
             parent->rect = WebCore::IntRect(m_root->rect.x(), m_root->rect.y(),
-                                            m_root->rect.width() * 2, m_root->rect.height());
+                m_root->rect.width() * 2, m_root->rect.height());
             right->rect = WebCore::IntRect(m_root->rect.x() + m_root->rect.width(), m_root->rect.y(),
-                                           m_root->rect.width(), m_root->rect.height());
+                m_root->rect.width(), m_root->rect.height());
         } else {
             parent->rect = WebCore::IntRect(m_root->rect.x(), m_root->rect.y(),
-                                            m_root->rect.width(), m_root->rect.height() * 2);
+                m_root->rect.width(), m_root->rect.height() * 2);
             right->rect = WebCore::IntRect(m_root->rect.x(), m_root->rect.y() + m_root->rect.width(),
-                                           m_root->rect.width(), m_root->rect.height());
+                m_root->rect.width(), m_root->rect.height());
         }
         split = (split == SplitOnX ? SplitOnY : SplitOnX);
         m_root = parent;
@@ -254,14 +256,14 @@ GeneralAreaAllocator::Node* GeneralAreaAllocator::splitNode
 
     if (split == SplitOnX) {
         left->rect = WebCore::IntRect(node->rect.x(), node->rect.y(),
-                                      node->rect.width() / 2, node->rect.height());
+            node->rect.width() / 2, node->rect.height());
         right->rect = WebCore::IntRect(left->rect.maxX(), node->rect.y(),
-                                       node->rect.width() / 2, node->rect.height());
+            node->rect.width() / 2, node->rect.height());
     } else {
         left->rect = WebCore::IntRect(node->rect.x(), node->rect.y(),
-                                      node->rect.width(), node->rect.height() / 2);
+            node->rect.width(), node->rect.height() / 2);
         right->rect = WebCore::IntRect(node->rect.x(), left->rect.maxY(),
-                                       node->rect.width(), node->rect.height() / 2);
+            node->rect.width(), node->rect.height() / 2);
     }
 
     left->largestFree = left->rect.size();
@@ -274,9 +276,9 @@ void GeneralAreaAllocator::updateLargestFree(Node* node)
 {
     while ((node = node->parent)) {
         node->largestFree = WebCore::IntSize(
-                                std::max(node->left->largestFree.width(), node->right->largestFree.width()),
-                                std::max(node->left->largestFree.height(), node->right->largestFree.height())
-                            );
+            std::max(node->left->largestFree.width(), node->right->largestFree.width()),
+            std::max(node->left->largestFree.height(), node->right->largestFree.height())
+            );
     }
 }
 
@@ -329,3 +331,5 @@ int GeneralAreaAllocator::overhead() const
 }
 
 } // namespace
+
+#endif // USE(COORDINATED_GRAPHICS)

@@ -363,18 +363,18 @@ HEADERS += \
     WebProcess/WebCoreSupport/WebSearchPopupMenu.h \
     WebProcess/WebCoreSupport/WebVibrationClient.h \
     WebProcess/WebCoreSupport/qt/WebFrameNetworkingContext.h \
-    WebProcess/WebPage/AreaAllocator.h \
     WebProcess/WebPage/DrawingArea.h \
     WebProcess/WebPage/DrawingAreaImpl.h \
     WebProcess/WebPage/EventDispatcher.h \
     WebProcess/WebPage/FindController.h \
+    WebProcess/WebPage/CoordinatedGraphics/AreaAllocator.h \
     WebProcess/WebPage/CoordinatedGraphics/CoordinatedGraphicsLayer.h \
     WebProcess/WebPage/CoordinatedGraphics/CoordinatedImageBacking.h \
     WebProcess/WebPage/CoordinatedGraphics/CoordinatedTile.h \
     WebProcess/WebPage/CoordinatedGraphics/LayerTreeCoordinator.h \
+    WebProcess/WebPage/CoordinatedGraphics/UpdateAtlas.h \
     WebProcess/WebPage/TapHighlightController.h \
     WebProcess/WebPage/PageOverlay.h \
-    WebProcess/WebPage/UpdateAtlas.h \
     WebProcess/WebPage/WebContextMenu.h \
     WebProcess/WebPage/WebFrame.h \
     WebProcess/WebPage/WebInspector.h \
@@ -744,21 +744,21 @@ SOURCES += \
     WebProcess/WebCoreSupport/qt/WebDragClientQt.cpp \
     WebProcess/WebCoreSupport/qt/WebFrameNetworkingContext.cpp \
     WebProcess/WebCoreSupport/qt/WebPopupMenuQt.cpp \
-    WebProcess/WebPage/AreaAllocator.cpp \
     WebProcess/WebPage/DecoderAdapter.cpp \
     WebProcess/WebPage/DrawingArea.cpp \
     WebProcess/WebPage/DrawingAreaImpl.cpp \
     WebProcess/WebPage/EncoderAdapter.cpp \
     WebProcess/WebPage/EventDispatcher.cpp \
     WebProcess/WebPage/FindController.cpp \
+    WebProcess/WebPage/CoordinatedGraphics/AreaAllocator.cpp \
     WebProcess/WebPage/CoordinatedGraphics/CoordinatedGraphicsLayer.cpp \
     WebProcess/WebPage/CoordinatedGraphics/CoordinatedImageBacking.cpp \
     WebProcess/WebPage/CoordinatedGraphics/CoordinatedTile.cpp \
     WebProcess/WebPage/CoordinatedGraphics/LayerTreeCoordinator.cpp \
+    WebProcess/WebPage/CoordinatedGraphics/UpdateAtlas.cpp \
     WebProcess/WebPage/TapHighlightController.cpp \
     WebProcess/WebPage/LayerTreeHost.cpp \
     WebProcess/WebPage/PageOverlay.cpp \
-    WebProcess/WebPage/UpdateAtlas.cpp \
     WebProcess/WebPage/WebBackForwardListProxy.cpp \
     WebProcess/WebPage/WebContextMenu.cpp \
     WebProcess/WebPage/WebFrame.cpp \
