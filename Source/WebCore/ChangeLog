@@ -1,3 +1,37 @@
+2012-12-04  Adam Barth  <abarth@webkit.org>
+
+        [V8] Cleanup style in V8DOMWrapper
+        https://bugs.webkit.org/show_bug.cgi?id=104062
+
+        Reviewed by Kentaro Hara.
+
+        This patch moves a number of functions from inside the class
+        declaration to below the class declaration. I've also inlined
+        domWrapperType into each of its callers and renamed a few functions.
+        A subsequent patch will improve the names of the remaining functions.
+
+        * bindings/scripts/CodeGeneratorV8.pm:
+        (GenerateToV8Converters):
+        * bindings/v8/ScriptProfiler.cpp:
+        (WebCore::ScriptProfiler::visitExternalArrays):
+        * bindings/v8/V8Collection.h:
+        (WebCore::getNamedPropertyOfCollection):
+        (WebCore::getIndexedPropertyOfCollection):
+        * bindings/v8/V8DOMWrapper.cpp:
+        (WebCore::V8DOMWrapper::instantiateDOMWrapper):
+        (WebCore::V8DOMWrapper::isWrapperOfType):
+        * bindings/v8/V8DOMWrapper.h:
+        (V8DOMWrapper):
+        (WebCore::V8DOMWrapper::setWrapperClass):
+        (WebCore::V8DOMWrapper::setDOMWrapper):
+        (WebCore):
+        (WebCore::V8DOMWrapper::clearDOMWrapper):
+        (WebCore::V8DOMWrapper::lookupDOMWrapper):
+        (WebCore::V8DOMWrapper::createDOMWrapper):
+        * bindings/v8/V8GCController.cpp:
+        * bindings/v8/custom/V8InspectorFrontendHostCustom.cpp:
+        (WebCore::V8InspectorFrontendHost::showContextMenuCallback):
+
 2012-12-04  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r136597.

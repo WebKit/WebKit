@@ -218,7 +218,7 @@ void ScriptProfiler::visitExternalArrays(ExternalArrayVisitor* visitor)
                 return;
             ASSERT(value->IsObject());
             v8::Persistent<v8::Object> wrapper = v8::Persistent<v8::Object>::Cast(value);
-            if (!V8DOMWrapper::domWrapperType(wrapper)->isSubclass(&V8ArrayBufferView::info))
+            if (!toWrapperTypeInfo(wrapper)->isSubclass(&V8ArrayBufferView::info))
                 return;
             m_visitor->visitJSExternalArray(V8ArrayBufferView::toNative(wrapper));
         }

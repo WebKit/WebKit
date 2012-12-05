@@ -104,26 +104,17 @@ void V8DOMWrapper::setNamedHiddenReference(v8::Handle<v8::Object> parent, const 
     parent->SetHiddenValue(V8HiddenPropertyName::hiddenReferenceName(name, strlen(name)), child);
 }
 
-WrapperTypeInfo* V8DOMWrapper::domWrapperType(v8::Handle<v8::Object> object)
-{
-    ASSERT(V8DOMWrapper::maybeDOMWrapper(object));
-    return toWrapperTypeInfo(object);
-}
-
-v8::Local<v8::Object> V8DOMWrapper::instantiateV8Object(v8::Handle<v8::Object> creationContext, WrapperTypeInfo* type, void* impl)
+v8::Local<v8::Object> V8DOMWrapper::instantiateDOMWrapper(v8::Handle<v8::Object> creationContext, WrapperTypeInfo* type, void* impl)
 {
     V8WrapperInstantiationScope scope(creationContext);
 
     V8PerContextData* perContextData = V8PerContextData::from(scope.context());
-    v8::Local<v8::Object> instance = perContextData ? perContextData->createWrapperFromCache(type) : V8ObjectConstructor::newInstance(type->getTemplate()->GetFunction());
+    v8::Local<v8::Object> wrapper = perContextData ? perContextData->createWrapperFromCache(type) : V8ObjectConstructor::newInstance(type->getTemplate()->GetFunction());
 
-    // Avoid setting the DOM wrapper for failed allocations.
-    if (instance.IsEmpty())
-        return instance;
+    if (type == &V8HTMLDocument::info && !wrapper.IsEmpty())
+        wrapper = V8HTMLDocument::wrapInShadowObject(wrapper, static_cast<Node*>(impl));
 
-    if (type == &V8HTMLDocument::info)
-        instance = V8HTMLDocument::wrapInShadowObject(instance, static_cast<Node*>(impl));
-    return instance;
+    return wrapper;
 }
 
 static bool hasInternalField(v8::Handle<v8::Value> value)
@@ -154,11 +145,11 @@ bool V8DOMWrapper::isWrapperOfType(v8::Handle<v8::Value> value, WrapperTypeInfo*
     if (!hasInternalField(value))
         return false;
 
-    v8::Handle<v8::Object> object = v8::Handle<v8::Object>::Cast(value);
-    ASSERT(object->InternalFieldCount() >= v8DefaultWrapperInternalFieldCount);
-    ASSERT(object->GetAlignedPointerFromInternalField(v8DOMWrapperObjectIndex));
+    v8::Handle<v8::Object> wrapper = v8::Handle<v8::Object>::Cast(value);
+    ASSERT(wrapper->InternalFieldCount() >= v8DefaultWrapperInternalFieldCount);
+    ASSERT(wrapper->GetAlignedPointerFromInternalField(v8DOMWrapperObjectIndex));
 
-    WrapperTypeInfo* typeInfo = static_cast<WrapperTypeInfo*>(object->GetAlignedPointerFromInternalField(v8DOMWrapperTypeIndex));
+    WrapperTypeInfo* typeInfo = static_cast<WrapperTypeInfo*>(wrapper->GetAlignedPointerFromInternalField(v8DOMWrapperTypeIndex));
     return typeInfo == type;
 }
 

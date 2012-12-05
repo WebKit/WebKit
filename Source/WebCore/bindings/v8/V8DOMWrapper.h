@@ -46,12 +46,6 @@
 
 namespace WebCore {
 
-    class DOMWindow;
-    class EventTarget;
-    class Frame;
-    class V8PerContextData;
-    class WorkerContext;
-
     enum ListenerLookupType {
         ListenerFindOnly,
         ListenerFindOrCreate,
@@ -64,56 +58,54 @@ namespace WebCore {
         static bool maybeDOMWrapper(v8::Handle<v8::Value>);
 #endif
 
-        static void setDOMWrapper(v8::Handle<v8::Object> object, WrapperTypeInfo* type, void* impl)
-        {
-            ASSERT(object->InternalFieldCount() >= 2);
-            ASSERT(impl);
-            ASSERT(type);
-            object->SetAlignedPointerInInternalField(v8DOMWrapperObjectIndex, impl);
-            object->SetAlignedPointerInInternalField(v8DOMWrapperTypeIndex, type);
-        }
-
-        static void clearDOMWrapper(v8::Handle<v8::Object> object, WrapperTypeInfo* type)
-        {
-            ASSERT(object->InternalFieldCount() >= 2);
-            ASSERT(type);
-            object->SetAlignedPointerInInternalField(v8DOMWrapperTypeIndex, type);
-            object->SetAlignedPointerInInternalField(v8DOMWrapperObjectIndex, 0);
-        }
-
-        static v8::Handle<v8::Object> lookupDOMWrapper(v8::Handle<v8::FunctionTemplate> functionTemplate, v8::Handle<v8::Object> object)
-        {
-            return object.IsEmpty() ? object : object->FindInstanceInPrototypeChain(functionTemplate);
-        }
-
-        static WrapperTypeInfo* domWrapperType(v8::Handle<v8::Object>);
-
-        static PassRefPtr<EventListener> getEventListener(v8::Local<v8::Value> value, bool isAttribute, ListenerLookupType lookup);
+        static v8::Local<v8::Object> instantiateDOMWrapper(v8::Handle<v8::Object> creationContext, WrapperTypeInfo*, void*);
 
         template<typename T>
-        static v8::Persistent<v8::Object> createDOMWrapper(PassRefPtr<T>, WrapperTypeInfo*, v8::Handle<v8::Object>, v8::Isolate* = 0);
+        static inline v8::Persistent<v8::Object> createDOMWrapper(PassRefPtr<T>, WrapperTypeInfo*, v8::Handle<v8::Object>, v8::Isolate* = 0);
+        static inline void setDOMWrapper(v8::Handle<v8::Object>, WrapperTypeInfo*, void*);
+        static inline void clearDOMWrapper(v8::Handle<v8::Object>, WrapperTypeInfo*);
 
-        // Check whether a V8 value is a wrapper of type |classType|.
+        static inline v8::Handle<v8::Object> lookupDOMWrapper(v8::Handle<v8::FunctionTemplate>, v8::Handle<v8::Object>);
+
+        // FIXME: This function should probably move to V8EventListenerList.h
+        static PassRefPtr<EventListener> getEventListener(v8::Local<v8::Value>, bool isAttribute, ListenerLookupType);
+
         static bool isWrapperOfType(v8::Handle<v8::Value>, WrapperTypeInfo*);
 
+        // FIXME: Why is this function in V8DOMWrapper?
         static void setNamedHiddenReference(v8::Handle<v8::Object> parent, const char* name, v8::Handle<v8::Value> child);
 
-        static v8::Local<v8::Object> instantiateV8Object(v8::Handle<v8::Object> creationContext, WrapperTypeInfo*, void*);
-
     private:
-        static void setWrapperClass(void*, v8::Persistent<v8::Object> wrapper)
-        {
-            wrapper.SetWrapperClassId(v8DOMObjectClassId);
-        }
-
-        static void setWrapperClass(Node*, v8::Persistent<v8::Object> wrapper)
-        {
-            wrapper.SetWrapperClassId(v8DOMNodeClassId);
-        }
+        static void setWrapperClass(void*, v8::Persistent<v8::Object> wrapper) { wrapper.SetWrapperClassId(v8DOMObjectClassId); }
+        static void setWrapperClass(Node*, v8::Persistent<v8::Object> wrapper) { wrapper.SetWrapperClassId(v8DOMNodeClassId); }
     };
 
+    inline void V8DOMWrapper::setDOMWrapper(v8::Handle<v8::Object> wrapper, WrapperTypeInfo* type, void* object)
+    {
+        ASSERT(wrapper->InternalFieldCount() >= 2);
+        ASSERT(object);
+        ASSERT(type);
+        wrapper->SetAlignedPointerInInternalField(v8DOMWrapperObjectIndex, object);
+        wrapper->SetAlignedPointerInInternalField(v8DOMWrapperTypeIndex, type);
+    }
+
+    inline void V8DOMWrapper::clearDOMWrapper(v8::Handle<v8::Object> wrapper, WrapperTypeInfo* type)
+    {
+        ASSERT(wrapper->InternalFieldCount() >= 2);
+        ASSERT(type);
+        wrapper->SetAlignedPointerInInternalField(v8DOMWrapperTypeIndex, type);
+        wrapper->SetAlignedPointerInInternalField(v8DOMWrapperObjectIndex, 0);
+    }
+
+    inline v8::Handle<v8::Object> V8DOMWrapper::lookupDOMWrapper(v8::Handle<v8::FunctionTemplate> functionTemplate, v8::Handle<v8::Object> wrapper)
+    {
+        if (wrapper.IsEmpty())
+            return wrapper;
+        return wrapper->FindInstanceInPrototypeChain(functionTemplate);
+    }
+
     template<typename T>
-    v8::Persistent<v8::Object> V8DOMWrapper::createDOMWrapper(PassRefPtr<T> object, WrapperTypeInfo* type, v8::Handle<v8::Object> wrapper, v8::Isolate* isolate)
+    inline v8::Persistent<v8::Object> V8DOMWrapper::createDOMWrapper(PassRefPtr<T> object, WrapperTypeInfo* type, v8::Handle<v8::Object> wrapper, v8::Isolate* isolate)
     {
         setDOMWrapper(wrapper, type, object.get());
         v8::Persistent<v8::Object> wrapperHandle = v8::Persistent<v8::Object>::New(wrapper);

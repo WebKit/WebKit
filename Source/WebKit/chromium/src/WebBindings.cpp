@@ -211,7 +211,7 @@ static bool getRangeImpl(NPObject* object, WebRange* webRange)
 
     V8NPObject* v8NPObject = reinterpret_cast<V8NPObject*>(object);
     v8::Handle<v8::Object> v8Object(v8NPObject->v8Object);
-    if (!V8Range::info.equals(V8DOMWrapper::domWrapperType(v8Object)))
+    if (!V8Range::info.equals(toWrapperTypeInfo(v8Object)))
         return false;
 
     Range* native = V8Range::HasInstance(v8Object) ? V8Range::toNative(v8Object) : 0;

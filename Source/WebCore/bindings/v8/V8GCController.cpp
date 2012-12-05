@@ -169,7 +169,7 @@ public:
         if (value.IsIndependent())
             return;
 
-        WrapperTypeInfo* type = V8DOMWrapper::domWrapperType(wrapper);
+        WrapperTypeInfo* type = toWrapperTypeInfo(wrapper);
         void* object = toNative(wrapper);
 
         // FIXME: Abstract this if cascade into a WrapperTypeInfo function.
