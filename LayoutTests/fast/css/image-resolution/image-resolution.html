@@ -103,7 +103,7 @@ img.onload = function() {
             shouldBe('img.style.cssText', '""');
             return;
         }
-        shouldBe('img.style.cssText', '"image-resolution: ' + test + '; "');
+        shouldBe('img.style.cssText', '"image-resolution: ' + test + ';"');
         var expectedWidth = Math.floor(imgWidthPx / dppx);
         var expectedHeight = Math.floor(imgHeightPx / dppx);
         shouldBe('img.offsetWidth', stringify(expectedWidth));

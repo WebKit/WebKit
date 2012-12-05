@@ -6,71 +6,71 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 TEST "0dppx"
 PASS img.style.cssText is ""
 TEST "1dppx"
-PASS img.style.cssText is "image-resolution: 1dppx; "
+PASS img.style.cssText is "image-resolution: 1dppx;"
 PASS img.offsetWidth is 16
 PASS img.offsetHeight is 16
 TEST "2dppx"
-PASS img.style.cssText is "image-resolution: 2dppx; "
+PASS img.style.cssText is "image-resolution: 2dppx;"
 PASS img.offsetWidth is 8
 PASS img.offsetHeight is 8
 TEST "3dppx"
-PASS img.style.cssText is "image-resolution: 3dppx; "
+PASS img.style.cssText is "image-resolution: 3dppx;"
 PASS img.offsetWidth is 5
 PASS img.offsetHeight is 5
 TEST "4dppx"
-PASS img.style.cssText is "image-resolution: 4dppx; "
+PASS img.style.cssText is "image-resolution: 4dppx;"
 PASS img.offsetWidth is 4
 PASS img.offsetHeight is 4
 TEST "0dpi"
 PASS img.style.cssText is ""
 TEST "96dpi"
-PASS img.style.cssText is "image-resolution: 96dpi; "
+PASS img.style.cssText is "image-resolution: 96dpi;"
 PASS img.offsetWidth is 16
 PASS img.offsetHeight is 16
 TEST "192dpi"
-PASS img.style.cssText is "image-resolution: 192dpi; "
+PASS img.style.cssText is "image-resolution: 192dpi;"
 PASS img.offsetWidth is 8
 PASS img.offsetHeight is 8
 TEST "288dpi"
-PASS img.style.cssText is "image-resolution: 288dpi; "
+PASS img.style.cssText is "image-resolution: 288dpi;"
 PASS img.offsetWidth is 5
 PASS img.offsetHeight is 5
 TEST "384dpi"
-PASS img.style.cssText is "image-resolution: 384dpi; "
+PASS img.style.cssText is "image-resolution: 384dpi;"
 PASS img.offsetWidth is 4
 PASS img.offsetHeight is 4
 TEST "150dpi"
-PASS img.style.cssText is "image-resolution: 150dpi; "
+PASS img.style.cssText is "image-resolution: 150dpi;"
 PASS img.offsetWidth is 10
 PASS img.offsetHeight is 10
 TEST "300dpi"
-PASS img.style.cssText is "image-resolution: 300dpi; "
+PASS img.style.cssText is "image-resolution: 300dpi;"
 PASS img.offsetWidth is 5
 PASS img.offsetHeight is 5
 TEST "450dpi"
-PASS img.style.cssText is "image-resolution: 450dpi; "
+PASS img.style.cssText is "image-resolution: 450dpi;"
 PASS img.offsetWidth is 3
 PASS img.offsetHeight is 3
 TEST "600dpi"
-PASS img.style.cssText is "image-resolution: 600dpi; "
+PASS img.style.cssText is "image-resolution: 600dpi;"
 PASS img.offsetWidth is 2
 PASS img.offsetHeight is 2
 TEST "0dpcm"
 PASS img.style.cssText is ""
 TEST "37.7dpcm"
-PASS img.style.cssText is "image-resolution: 37.7dpcm; "
+PASS img.style.cssText is "image-resolution: 37.7dpcm;"
 PASS img.offsetWidth is 16
 PASS img.offsetHeight is 16
 TEST "75.5dpcm"
-PASS img.style.cssText is "image-resolution: 75.5dpcm; "
+PASS img.style.cssText is "image-resolution: 75.5dpcm;"
 PASS img.offsetWidth is 8
 PASS img.offsetHeight is 8
 TEST "113.3dpcm"
-PASS img.style.cssText is "image-resolution: 113.3dpcm; "
+PASS img.style.cssText is "image-resolution: 113.3dpcm;"
 PASS img.offsetWidth is 5
 PASS img.offsetHeight is 5
 TEST "151.1dpcm"
-PASS img.style.cssText is "image-resolution: 151.1dpcm; "
+PASS img.style.cssText is "image-resolution: 151.1dpcm;"
 PASS img.offsetWidth is 4
 PASS img.offsetHeight is 4
 TEST ""
@@ -80,35 +80,35 @@ PASS img.style.cssText is ""
 TEST "from-image 0dppx"
 PASS img.style.cssText is ""
 TEST "1dppx from-image"
-PASS img.style.cssText is "image-resolution: 1dppx from-image; "
+PASS img.style.cssText is "image-resolution: 1dppx from-image;"
 PASS img.offsetWidth is 16
 PASS img.offsetHeight is 16
 TEST "from-image 1dppx"
-PASS img.style.cssText is "image-resolution: from-image 1dppx; "
+PASS img.style.cssText is "image-resolution: from-image 1dppx;"
 PASS img.offsetWidth is 16
 PASS img.offsetHeight is 16
 TEST "2dppx from-image"
-PASS img.style.cssText is "image-resolution: 2dppx from-image; "
+PASS img.style.cssText is "image-resolution: 2dppx from-image;"
 PASS img.offsetWidth is 8
 PASS img.offsetHeight is 8
 TEST "from-image 2dppx"
-PASS img.style.cssText is "image-resolution: from-image 2dppx; "
+PASS img.style.cssText is "image-resolution: from-image 2dppx;"
 PASS img.offsetWidth is 8
 PASS img.offsetHeight is 8
 TEST "3dppx from-image"
-PASS img.style.cssText is "image-resolution: 3dppx from-image; "
+PASS img.style.cssText is "image-resolution: 3dppx from-image;"
 PASS img.offsetWidth is 5
 PASS img.offsetHeight is 5
 TEST "from-image 3dppx"
-PASS img.style.cssText is "image-resolution: from-image 3dppx; "
+PASS img.style.cssText is "image-resolution: from-image 3dppx;"
 PASS img.offsetWidth is 5
 PASS img.offsetHeight is 5
 TEST "4dppx from-image"
-PASS img.style.cssText is "image-resolution: 4dppx from-image; "
+PASS img.style.cssText is "image-resolution: 4dppx from-image;"
 PASS img.offsetWidth is 4
 PASS img.offsetHeight is 4
 TEST "from-image 4dppx"
-PASS img.style.cssText is "image-resolution: from-image 4dppx; "
+PASS img.style.cssText is "image-resolution: from-image 4dppx;"
 PASS img.offsetWidth is 4
 PASS img.offsetHeight is 4
 TEST "0dpi from-image"
@@ -116,67 +116,67 @@ PASS img.style.cssText is ""
 TEST "from-image 0dpi"
 PASS img.style.cssText is ""
 TEST "96dpi from-image"
-PASS img.style.cssText is "image-resolution: 96dpi from-image; "
+PASS img.style.cssText is "image-resolution: 96dpi from-image;"
 PASS img.offsetWidth is 16
 PASS img.offsetHeight is 16
 TEST "from-image 96dpi"
-PASS img.style.cssText is "image-resolution: from-image 96dpi; "
+PASS img.style.cssText is "image-resolution: from-image 96dpi;"
 PASS img.offsetWidth is 16
 PASS img.offsetHeight is 16
 TEST "192dpi from-image"
-PASS img.style.cssText is "image-resolution: 192dpi from-image; "
+PASS img.style.cssText is "image-resolution: 192dpi from-image;"
 PASS img.offsetWidth is 8
 PASS img.offsetHeight is 8
 TEST "from-image 192dpi"
-PASS img.style.cssText is "image-resolution: from-image 192dpi; "
+PASS img.style.cssText is "image-resolution: from-image 192dpi;"
 PASS img.offsetWidth is 8
 PASS img.offsetHeight is 8
 TEST "288dpi from-image"
-PASS img.style.cssText is "image-resolution: 288dpi from-image; "
+PASS img.style.cssText is "image-resolution: 288dpi from-image;"
 PASS img.offsetWidth is 5
 PASS img.offsetHeight is 5
 TEST "from-image 288dpi"
-PASS img.style.cssText is "image-resolution: from-image 288dpi; "
+PASS img.style.cssText is "image-resolution: from-image 288dpi;"
 PASS img.offsetWidth is 5
 PASS img.offsetHeight is 5
 TEST "384dpi from-image"
-PASS img.style.cssText is "image-resolution: 384dpi from-image; "
+PASS img.style.cssText is "image-resolution: 384dpi from-image;"
 PASS img.offsetWidth is 4
 PASS img.offsetHeight is 4
 TEST "from-image 384dpi"
-PASS img.style.cssText is "image-resolution: from-image 384dpi; "
+PASS img.style.cssText is "image-resolution: from-image 384dpi;"
 PASS img.offsetWidth is 4
 PASS img.offsetHeight is 4
 TEST "150dpi from-image"
-PASS img.style.cssText is "image-resolution: 150dpi from-image; "
+PASS img.style.cssText is "image-resolution: 150dpi from-image;"
 PASS img.offsetWidth is 10
 PASS img.offsetHeight is 10
 TEST "from-image 150dpi"
-PASS img.style.cssText is "image-resolution: from-image 150dpi; "
+PASS img.style.cssText is "image-resolution: from-image 150dpi;"
 PASS img.offsetWidth is 10
 PASS img.offsetHeight is 10
 TEST "300dpi from-image"
-PASS img.style.cssText is "image-resolution: 300dpi from-image; "
+PASS img.style.cssText is "image-resolution: 300dpi from-image;"
 PASS img.offsetWidth is 5
 PASS img.offsetHeight is 5
 TEST "from-image 300dpi"
-PASS img.style.cssText is "image-resolution: from-image 300dpi; "
+PASS img.style.cssText is "image-resolution: from-image 300dpi;"
 PASS img.offsetWidth is 5
 PASS img.offsetHeight is 5
 TEST "450dpi from-image"
-PASS img.style.cssText is "image-resolution: 450dpi from-image; "
+PASS img.style.cssText is "image-resolution: 450dpi from-image;"
 PASS img.offsetWidth is 3
 PASS img.offsetHeight is 3
 TEST "from-image 450dpi"
-PASS img.style.cssText is "image-resolution: from-image 450dpi; "
+PASS img.style.cssText is "image-resolution: from-image 450dpi;"
 PASS img.offsetWidth is 3
 PASS img.offsetHeight is 3
 TEST "600dpi from-image"
-PASS img.style.cssText is "image-resolution: 600dpi from-image; "
+PASS img.style.cssText is "image-resolution: 600dpi from-image;"
 PASS img.offsetWidth is 2
 PASS img.offsetHeight is 2
 TEST "from-image 600dpi"
-PASS img.style.cssText is "image-resolution: from-image 600dpi; "
+PASS img.style.cssText is "image-resolution: from-image 600dpi;"
 PASS img.offsetWidth is 2
 PASS img.offsetHeight is 2
 TEST "0dpcm from-image"
@@ -184,39 +184,39 @@ PASS img.style.cssText is ""
 TEST "from-image 0dpcm"
 PASS img.style.cssText is ""
 TEST "37.7dpcm from-image"
-PASS img.style.cssText is "image-resolution: 37.7dpcm from-image; "
+PASS img.style.cssText is "image-resolution: 37.7dpcm from-image;"
 PASS img.offsetWidth is 16
 PASS img.offsetHeight is 16
 TEST "from-image 37.7dpcm"
-PASS img.style.cssText is "image-resolution: from-image 37.7dpcm; "
+PASS img.style.cssText is "image-resolution: from-image 37.7dpcm;"
 PASS img.offsetWidth is 16
 PASS img.offsetHeight is 16
 TEST "75.5dpcm from-image"
-PASS img.style.cssText is "image-resolution: 75.5dpcm from-image; "
+PASS img.style.cssText is "image-resolution: 75.5dpcm from-image;"
 PASS img.offsetWidth is 8
 PASS img.offsetHeight is 8
 TEST "from-image 75.5dpcm"
-PASS img.style.cssText is "image-resolution: from-image 75.5dpcm; "
+PASS img.style.cssText is "image-resolution: from-image 75.5dpcm;"
 PASS img.offsetWidth is 8
 PASS img.offsetHeight is 8
 TEST "113.3dpcm from-image"
-PASS img.style.cssText is "image-resolution: 113.3dpcm from-image; "
+PASS img.style.cssText is "image-resolution: 113.3dpcm from-image;"
 PASS img.offsetWidth is 5
 PASS img.offsetHeight is 5
 TEST "from-image 113.3dpcm"
-PASS img.style.cssText is "image-resolution: from-image 113.3dpcm; "
+PASS img.style.cssText is "image-resolution: from-image 113.3dpcm;"
 PASS img.offsetWidth is 5
 PASS img.offsetHeight is 5
 TEST "151.1dpcm from-image"
-PASS img.style.cssText is "image-resolution: 151.1dpcm from-image; "
+PASS img.style.cssText is "image-resolution: 151.1dpcm from-image;"
 PASS img.offsetWidth is 4
 PASS img.offsetHeight is 4
 TEST "from-image 151.1dpcm"
-PASS img.style.cssText is "image-resolution: from-image 151.1dpcm; "
+PASS img.style.cssText is "image-resolution: from-image 151.1dpcm;"
 PASS img.offsetWidth is 4
 PASS img.offsetHeight is 4
 TEST "from-image"
-PASS img.style.cssText is "image-resolution: from-image; "
+PASS img.style.cssText is "image-resolution: from-image;"
 PASS img.offsetWidth is 16
 PASS img.offsetHeight is 16
 TEST "0dppx snap"
@@ -224,35 +224,35 @@ PASS img.style.cssText is ""
 TEST "snap 0dppx"
 PASS img.style.cssText is ""
 TEST "1dppx snap"
-PASS img.style.cssText is "image-resolution: 1dppx snap; "
+PASS img.style.cssText is "image-resolution: 1dppx snap;"
 PASS img.offsetWidth is 16
 PASS img.offsetHeight is 16
 TEST "snap 1dppx"
-PASS img.style.cssText is "image-resolution: snap 1dppx; "
+PASS img.style.cssText is "image-resolution: snap 1dppx;"
 PASS img.offsetWidth is 16
 PASS img.offsetHeight is 16
 TEST "2dppx snap"
-PASS img.style.cssText is "image-resolution: 2dppx snap; "
+PASS img.style.cssText is "image-resolution: 2dppx snap;"
 PASS img.offsetWidth is 8
 PASS img.offsetHeight is 8
 TEST "snap 2dppx"
-PASS img.style.cssText is "image-resolution: snap 2dppx; "
+PASS img.style.cssText is "image-resolution: snap 2dppx;"
 PASS img.offsetWidth is 8
 PASS img.offsetHeight is 8
 TEST "3dppx snap"
-PASS img.style.cssText is "image-resolution: 3dppx snap; "
+PASS img.style.cssText is "image-resolution: 3dppx snap;"
 PASS img.offsetWidth is 5
 PASS img.offsetHeight is 5
 TEST "snap 3dppx"
-PASS img.style.cssText is "image-resolution: snap 3dppx; "
+PASS img.style.cssText is "image-resolution: snap 3dppx;"
 PASS img.offsetWidth is 5
 PASS img.offsetHeight is 5
 TEST "4dppx snap"
-PASS img.style.cssText is "image-resolution: 4dppx snap; "
+PASS img.style.cssText is "image-resolution: 4dppx snap;"
 PASS img.offsetWidth is 4
 PASS img.offsetHeight is 4
 TEST "snap 4dppx"
-PASS img.style.cssText is "image-resolution: snap 4dppx; "
+PASS img.style.cssText is "image-resolution: snap 4dppx;"
 PASS img.offsetWidth is 4
 PASS img.offsetHeight is 4
 TEST "0dpi snap"
@@ -260,67 +260,67 @@ PASS img.style.cssText is ""
 TEST "snap 0dpi"
 PASS img.style.cssText is ""
 TEST "96dpi snap"
-PASS img.style.cssText is "image-resolution: 96dpi snap; "
+PASS img.style.cssText is "image-resolution: 96dpi snap;"
 PASS img.offsetWidth is 16
 PASS img.offsetHeight is 16
 TEST "snap 96dpi"
-PASS img.style.cssText is "image-resolution: snap 96dpi; "
+PASS img.style.cssText is "image-resolution: snap 96dpi;"
 PASS img.offsetWidth is 16
 PASS img.offsetHeight is 16
 TEST "192dpi snap"
-PASS img.style.cssText is "image-resolution: 192dpi snap; "
+PASS img.style.cssText is "image-resolution: 192dpi snap;"
 PASS img.offsetWidth is 8
 PASS img.offsetHeight is 8
 TEST "snap 192dpi"
-PASS img.style.cssText is "image-resolution: snap 192dpi; "
+PASS img.style.cssText is "image-resolution: snap 192dpi;"
 PASS img.offsetWidth is 8
 PASS img.offsetHeight is 8
 TEST "288dpi snap"
-PASS img.style.cssText is "image-resolution: 288dpi snap; "
+PASS img.style.cssText is "image-resolution: 288dpi snap;"
 PASS img.offsetWidth is 5
 PASS img.offsetHeight is 5
 TEST "snap 288dpi"
-PASS img.style.cssText is "image-resolution: snap 288dpi; "
+PASS img.style.cssText is "image-resolution: snap 288dpi;"
 PASS img.offsetWidth is 5
 PASS img.offsetHeight is 5
 TEST "384dpi snap"
-PASS img.style.cssText is "image-resolution: 384dpi snap; "
+PASS img.style.cssText is "image-resolution: 384dpi snap;"
 PASS img.offsetWidth is 4
 PASS img.offsetHeight is 4
 TEST "snap 384dpi"
-PASS img.style.cssText is "image-resolution: snap 384dpi; "
+PASS img.style.cssText is "image-resolution: snap 384dpi;"
 PASS img.offsetWidth is 4
 PASS img.offsetHeight is 4
 TEST "150dpi snap"
-PASS img.style.cssText is "image-resolution: 150dpi snap; "
+PASS img.style.cssText is "image-resolution: 150dpi snap;"
 PASS img.offsetWidth is 16
 PASS img.offsetHeight is 16
 TEST "snap 150dpi"
-PASS img.style.cssText is "image-resolution: snap 150dpi; "
+PASS img.style.cssText is "image-resolution: snap 150dpi;"
 PASS img.offsetWidth is 16
 PASS img.offsetHeight is 16
 TEST "300dpi snap"
-PASS img.style.cssText is "image-resolution: 300dpi snap; "
+PASS img.style.cssText is "image-resolution: 300dpi snap;"
 PASS img.offsetWidth is 5
 PASS img.offsetHeight is 5
 TEST "snap 300dpi"
-PASS img.style.cssText is "image-resolution: snap 300dpi; "
+PASS img.style.cssText is "image-resolution: snap 300dpi;"
 PASS img.offsetWidth is 5
 PASS img.offsetHeight is 5
 TEST "450dpi snap"
-PASS img.style.cssText is "image-resolution: 450dpi snap; "
+PASS img.style.cssText is "image-resolution: 450dpi snap;"
 PASS img.offsetWidth is 4
 PASS img.offsetHeight is 4
 TEST "snap 450dpi"
-PASS img.style.cssText is "image-resolution: snap 450dpi; "
+PASS img.style.cssText is "image-resolution: snap 450dpi;"
 PASS img.offsetWidth is 4
 PASS img.offsetHeight is 4
 TEST "600dpi snap"
-PASS img.style.cssText is "image-resolution: 600dpi snap; "
+PASS img.style.cssText is "image-resolution: 600dpi snap;"
 PASS img.offsetWidth is 2
 PASS img.offsetHeight is 2
 TEST "snap 600dpi"
-PASS img.style.cssText is "image-resolution: snap 600dpi; "
+PASS img.style.cssText is "image-resolution: snap 600dpi;"
 PASS img.offsetWidth is 2
 PASS img.offsetHeight is 2
 TEST "0dpcm snap"
@@ -328,35 +328,35 @@ PASS img.style.cssText is ""
 TEST "snap 0dpcm"
 PASS img.style.cssText is ""
 TEST "37.7dpcm snap"
-PASS img.style.cssText is "image-resolution: 37.7dpcm snap; "
+PASS img.style.cssText is "image-resolution: 37.7dpcm snap;"
 PASS img.offsetWidth is 16
 PASS img.offsetHeight is 16
 TEST "snap 37.7dpcm"
-PASS img.style.cssText is "image-resolution: snap 37.7dpcm; "
+PASS img.style.cssText is "image-resolution: snap 37.7dpcm;"
 PASS img.offsetWidth is 16
 PASS img.offsetHeight is 16
 TEST "75.5dpcm snap"
-PASS img.style.cssText is "image-resolution: 75.5dpcm snap; "
+PASS img.style.cssText is "image-resolution: 75.5dpcm snap;"
 PASS img.offsetWidth is 8
 PASS img.offsetHeight is 8
 TEST "snap 75.5dpcm"
-PASS img.style.cssText is "image-resolution: snap 75.5dpcm; "
+PASS img.style.cssText is "image-resolution: snap 75.5dpcm;"
 PASS img.offsetWidth is 8
 PASS img.offsetHeight is 8
 TEST "113.3dpcm snap"
-PASS img.style.cssText is "image-resolution: 113.3dpcm snap; "
+PASS img.style.cssText is "image-resolution: 113.3dpcm snap;"
 PASS img.offsetWidth is 5
 PASS img.offsetHeight is 5
 TEST "snap 113.3dpcm"
-PASS img.style.cssText is "image-resolution: snap 113.3dpcm; "
+PASS img.style.cssText is "image-resolution: snap 113.3dpcm;"
 PASS img.offsetWidth is 5
 PASS img.offsetHeight is 5
 TEST "151.1dpcm snap"
-PASS img.style.cssText is "image-resolution: 151.1dpcm snap; "
+PASS img.style.cssText is "image-resolution: 151.1dpcm snap;"
 PASS img.offsetWidth is 4
 PASS img.offsetHeight is 4
 TEST "snap 151.1dpcm"
-PASS img.style.cssText is "image-resolution: snap 151.1dpcm; "
+PASS img.style.cssText is "image-resolution: snap 151.1dpcm;"
 PASS img.offsetWidth is 4
 PASS img.offsetHeight is 4
 TEST "snap"
@@ -374,99 +374,99 @@ PASS img.style.cssText is ""
 TEST "snap from-image 0dppx"
 PASS img.style.cssText is ""
 TEST "1dppx from-image snap"
-PASS img.style.cssText is "image-resolution: 1dppx from-image snap; "
+PASS img.style.cssText is "image-resolution: 1dppx from-image snap;"
 PASS img.offsetWidth is 16
 PASS img.offsetHeight is 16
 TEST "1dppx snap from-image"
-PASS img.style.cssText is "image-resolution: 1dppx snap from-image; "
+PASS img.style.cssText is "image-resolution: 1dppx snap from-image;"
 PASS img.offsetWidth is 16
 PASS img.offsetHeight is 16
 TEST "from-image 1dppx snap"
-PASS img.style.cssText is "image-resolution: from-image 1dppx snap; "
+PASS img.style.cssText is "image-resolution: from-image 1dppx snap;"
 PASS img.offsetWidth is 16
 PASS img.offsetHeight is 16
 TEST "from-image snap 1dppx"
-PASS img.style.cssText is "image-resolution: from-image snap 1dppx; "
+PASS img.style.cssText is "image-resolution: from-image snap 1dppx;"
 PASS img.offsetWidth is 16
 PASS img.offsetHeight is 16
 TEST "snap 1dppx from-image"
-PASS img.style.cssText is "image-resolution: snap 1dppx from-image; "
+PASS img.style.cssText is "image-resolution: snap 1dppx from-image;"
 PASS img.offsetWidth is 16
 PASS img.offsetHeight is 16
 TEST "snap from-image 1dppx"
-PASS img.style.cssText is "image-resolution: snap from-image 1dppx; "
+PASS img.style.cssText is "image-resolution: snap from-image 1dppx;"
 PASS img.offsetWidth is 16
 PASS img.offsetHeight is 16
 TEST "2dppx from-image snap"
-PASS img.style.cssText is "image-resolution: 2dppx from-image snap; "
+PASS img.style.cssText is "image-resolution: 2dppx from-image snap;"
 PASS img.offsetWidth is 8
 PASS img.offsetHeight is 8
 TEST "2dppx snap from-image"
-PASS img.style.cssText is "image-resolution: 2dppx snap from-image; "
+PASS img.style.cssText is "image-resolution: 2dppx snap from-image;"
 PASS img.offsetWidth is 8
 PASS img.offsetHeight is 8
 TEST "from-image 2dppx snap"
-PASS img.style.cssText is "image-resolution: from-image 2dppx snap; "
+PASS img.style.cssText is "image-resolution: from-image 2dppx snap;"
 PASS img.offsetWidth is 8
 PASS img.offsetHeight is 8
 TEST "from-image snap 2dppx"
-PASS img.style.cssText is "image-resolution: from-image snap 2dppx; "
+PASS img.style.cssText is "image-resolution: from-image snap 2dppx;"
 PASS img.offsetWidth is 8
 PASS img.offsetHeight is 8
 TEST "snap 2dppx from-image"
-PASS img.style.cssText is "image-resolution: snap 2dppx from-image; "
+PASS img.style.cssText is "image-resolution: snap 2dppx from-image;"
 PASS img.offsetWidth is 8
 PASS img.offsetHeight is 8
 TEST "snap from-image 2dppx"
-PASS img.style.cssText is "image-resolution: snap from-image 2dppx; "
+PASS img.style.cssText is "image-resolution: snap from-image 2dppx;"
 PASS img.offsetWidth is 8
 PASS img.offsetHeight is 8
 TEST "3dppx from-image snap"
-PASS img.style.cssText is "image-resolution: 3dppx from-image snap; "
+PASS img.style.cssText is "image-resolution: 3dppx from-image snap;"
 PASS img.offsetWidth is 5
 PASS img.offsetHeight is 5
 TEST "3dppx snap from-image"
-PASS img.style.cssText is "image-resolution: 3dppx snap from-image; "
+PASS img.style.cssText is "image-resolution: 3dppx snap from-image;"
 PASS img.offsetWidth is 5
 PASS img.offsetHeight is 5
 TEST "from-image 3dppx snap"
-PASS img.style.cssText is "image-resolution: from-image 3dppx snap; "
+PASS img.style.cssText is "image-resolution: from-image 3dppx snap;"
 PASS img.offsetWidth is 5
 PASS img.offsetHeight is 5
 TEST "from-image snap 3dppx"
-PASS img.style.cssText is "image-resolution: from-image snap 3dppx; "
+PASS img.style.cssText is "image-resolution: from-image snap 3dppx;"
 PASS img.offsetWidth is 5
 PASS img.offsetHeight is 5
 TEST "snap 3dppx from-image"
-PASS img.style.cssText is "image-resolution: snap 3dppx from-image; "
+PASS img.style.cssText is "image-resolution: snap 3dppx from-image;"
 PASS img.offsetWidth is 5
 PASS img.offsetHeight is 5
 TEST "snap from-image 3dppx"
-PASS img.style.cssText is "image-resolution: snap from-image 3dppx; "
+PASS img.style.cssText is "image-resolution: snap from-image 3dppx;"
 PASS img.offsetWidth is 5
 PASS img.offsetHeight is 5
 TEST "4dppx from-image snap"
-PASS img.style.cssText is "image-resolution: 4dppx from-image snap; "
+PASS img.style.cssText is "image-resolution: 4dppx from-image snap;"
 PASS img.offsetWidth is 4
 PASS img.offsetHeight is 4
 TEST "4dppx snap from-image"
-PASS img.style.cssText is "image-resolution: 4dppx snap from-image; "
+PASS img.style.cssText is "image-resolution: 4dppx snap from-image;"
 PASS img.offsetWidth is 4
 PASS img.offsetHeight is 4
 TEST "from-image 4dppx snap"
-PASS img.style.cssText is "image-resolution: from-image 4dppx snap; "
+PASS img.style.cssText is "image-resolution: from-image 4dppx snap;"
 PASS img.offsetWidth is 4
 PASS img.offsetHeight is 4
 TEST "from-image snap 4dppx"
-PASS img.style.cssText is "image-resolution: from-image snap 4dppx; "
+PASS img.style.cssText is "image-resolution: from-image snap 4dppx;"
 PASS img.offsetWidth is 4
 PASS img.offsetHeight is 4
 TEST "snap 4dppx from-image"
-PASS img.style.cssText is "image-resolution: snap 4dppx from-image; "
+PASS img.style.cssText is "image-resolution: snap 4dppx from-image;"
 PASS img.offsetWidth is 4
 PASS img.offsetHeight is 4
 TEST "snap from-image 4dppx"
-PASS img.style.cssText is "image-resolution: snap from-image 4dppx; "
+PASS img.style.cssText is "image-resolution: snap from-image 4dppx;"
 PASS img.offsetWidth is 4
 PASS img.offsetHeight is 4
 TEST "0dpi from-image snap"
@@ -482,195 +482,195 @@ PASS img.style.cssText is ""
 TEST "snap from-image 0dpi"
 PASS img.style.cssText is ""
 TEST "96dpi from-image snap"
-PASS img.style.cssText is "image-resolution: 96dpi from-image snap; "
+PASS img.style.cssText is "image-resolution: 96dpi from-image snap;"
 PASS img.offsetWidth is 16
 PASS img.offsetHeight is 16
 TEST "96dpi snap from-image"
-PASS img.style.cssText is "image-resolution: 96dpi snap from-image; "
+PASS img.style.cssText is "image-resolution: 96dpi snap from-image;"
 PASS img.offsetWidth is 16
 PASS img.offsetHeight is 16
 TEST "from-image 96dpi snap"
-PASS img.style.cssText is "image-resolution: from-image 96dpi snap; "
+PASS img.style.cssText is "image-resolution: from-image 96dpi snap;"
 PASS img.offsetWidth is 16
 PASS img.offsetHeight is 16
 TEST "from-image snap 96dpi"
-PASS img.style.cssText is "image-resolution: from-image snap 96dpi; "
+PASS img.style.cssText is "image-resolution: from-image snap 96dpi;"
 PASS img.offsetWidth is 16
 PASS img.offsetHeight is 16
 TEST "snap 96dpi from-image"
-PASS img.style.cssText is "image-resolution: snap 96dpi from-image; "
+PASS img.style.cssText is "image-resolution: snap 96dpi from-image;"
 PASS img.offsetWidth is 16
 PASS img.offsetHeight is 16
 TEST "snap from-image 96dpi"
-PASS img.style.cssText is "image-resolution: snap from-image 96dpi; "
+PASS img.style.cssText is "image-resolution: snap from-image 96dpi;"
 PASS img.offsetWidth is 16
 PASS img.offsetHeight is 16
 TEST "192dpi from-image snap"
-PASS img.style.cssText is "image-resolution: 192dpi from-image snap; "
+PASS img.style.cssText is "image-resolution: 192dpi from-image snap;"
 PASS img.offsetWidth is 8
 PASS img.offsetHeight is 8
 TEST "192dpi snap from-image"
-PASS img.style.cssText is "image-resolution: 192dpi snap from-image; "
+PASS img.style.cssText is "image-resolution: 192dpi snap from-image;"
 PASS img.offsetWidth is 8
 PASS img.offsetHeight is 8
 TEST "from-image 192dpi snap"
-PASS img.style.cssText is "image-resolution: from-image 192dpi snap; "
+PASS img.style.cssText is "image-resolution: from-image 192dpi snap;"
 PASS img.offsetWidth is 8
 PASS img.offsetHeight is 8
 TEST "from-image snap 192dpi"
-PASS img.style.cssText is "image-resolution: from-image snap 192dpi; "
+PASS img.style.cssText is "image-resolution: from-image snap 192dpi;"
 PASS img.offsetWidth is 8
 PASS img.offsetHeight is 8
 TEST "snap 192dpi from-image"
-PASS img.style.cssText is "image-resolution: snap 192dpi from-image; "
+PASS img.style.cssText is "image-resolution: snap 192dpi from-image;"
 PASS img.offsetWidth is 8
 PASS img.offsetHeight is 8
 TEST "snap from-image 192dpi"
-PASS img.style.cssText is "image-resolution: snap from-image 192dpi; "
+PASS img.style.cssText is "image-resolution: snap from-image 192dpi;"
 PASS img.offsetWidth is 8
 PASS img.offsetHeight is 8
 TEST "288dpi from-image snap"
-PASS img.style.cssText is "image-resolution: 288dpi from-image snap; "
+PASS img.style.cssText is "image-resolution: 288dpi from-image snap;"
 PASS img.offsetWidth is 5
 PASS img.offsetHeight is 5
 TEST "288dpi snap from-image"
-PASS img.style.cssText is "image-resolution: 288dpi snap from-image; "
+PASS img.style.cssText is "image-resolution: 288dpi snap from-image;"
 PASS img.offsetWidth is 5
 PASS img.offsetHeight is 5
 TEST "from-image 288dpi snap"
-PASS img.style.cssText is "image-resolution: from-image 288dpi snap; "
+PASS img.style.cssText is "image-resolution: from-image 288dpi snap;"
 PASS img.offsetWidth is 5
 PASS img.offsetHeight is 5
 TEST "from-image snap 288dpi"
-PASS img.style.cssText is "image-resolution: from-image snap 288dpi; "
+PASS img.style.cssText is "image-resolution: from-image snap 288dpi;"
 PASS img.offsetWidth is 5
 PASS img.offsetHeight is 5
 TEST "snap 288dpi from-image"
-PASS img.style.cssText is "image-resolution: snap 288dpi from-image; "
+PASS img.style.cssText is "image-resolution: snap 288dpi from-image;"
 PASS img.offsetWidth is 5
 PASS img.offsetHeight is 5
 TEST "snap from-image 288dpi"
-PASS img.style.cssText is "image-resolution: snap from-image 288dpi; "
+PASS img.style.cssText is "image-resolution: snap from-image 288dpi;"
 PASS img.offsetWidth is 5
 PASS img.offsetHeight is 5
 TEST "384dpi from-image snap"
-PASS img.style.cssText is "image-resolution: 384dpi from-image snap; "
+PASS img.style.cssText is "image-resolution: 384dpi from-image snap;"
 PASS img.offsetWidth is 4
 PASS img.offsetHeight is 4
 TEST "384dpi snap from-image"
-PASS img.style.cssText is "image-resolution: 384dpi snap from-image; "
+PASS img.style.cssText is "image-resolution: 384dpi snap from-image;"
 PASS img.offsetWidth is 4
 PASS img.offsetHeight is 4
 TEST "from-image 384dpi snap"
-PASS img.style.cssText is "image-resolution: from-image 384dpi snap; "
+PASS img.style.cssText is "image-resolution: from-image 384dpi snap;"
 PASS img.offsetWidth is 4
 PASS img.offsetHeight is 4
 TEST "from-image snap 384dpi"
-PASS img.style.cssText is "image-resolution: from-image snap 384dpi; "
+PASS img.style.cssText is "image-resolution: from-image snap 384dpi;"
 PASS img.offsetWidth is 4
 PASS img.offsetHeight is 4
 TEST "snap 384dpi from-image"
-PASS img.style.cssText is "image-resolution: snap 384dpi from-image; "
+PASS img.style.cssText is "image-resolution: snap 384dpi from-image;"
 PASS img.offsetWidth is 4
 PASS img.offsetHeight is 4
 TEST "snap from-image 384dpi"
-PASS img.style.cssText is "image-resolution: snap from-image 384dpi; "
+PASS img.style.cssText is "image-resolution: snap from-image 384dpi;"
 PASS img.offsetWidth is 4
 PASS img.offsetHeight is 4
 TEST "150dpi from-image snap"
-PASS img.style.cssText is "image-resolution: 150dpi from-image snap; "
+PASS img.style.cssText is "image-resolution: 150dpi from-image snap;"
 PASS img.offsetWidth is 16
 PASS img.offsetHeight is 16
 TEST "150dpi snap from-image"
-PASS img.style.cssText is "image-resolution: 150dpi snap from-image; "
+PASS img.style.cssText is "image-resolution: 150dpi snap from-image;"
 PASS img.offsetWidth is 16
 PASS img.offsetHeight is 16
 TEST "from-image 150dpi snap"
-PASS img.style.cssText is "image-resolution: from-image 150dpi snap; "
+PASS img.style.cssText is "image-resolution: from-image 150dpi snap;"
 PASS img.offsetWidth is 16
 PASS img.offsetHeight is 16
 TEST "from-image snap 150dpi"
-PASS img.style.cssText is "image-resolution: from-image snap 150dpi; "
+PASS img.style.cssText is "image-resolution: from-image snap 150dpi;"
 PASS img.offsetWidth is 16
 PASS img.offsetHeight is 16
 TEST "snap 150dpi from-image"
-PASS img.style.cssText is "image-resolution: snap 150dpi from-image; "
+PASS img.style.cssText is "image-resolution: snap 150dpi from-image;"
 PASS img.offsetWidth is 16
 PASS img.offsetHeight is 16
 TEST "snap from-image 150dpi"
-PASS img.style.cssText is "image-resolution: snap from-image 150dpi; "
+PASS img.style.cssText is "image-resolution: snap from-image 150dpi;"
 PASS img.offsetWidth is 16
 PASS img.offsetHeight is 16
 TEST "300dpi from-image snap"
-PASS img.style.cssText is "image-resolution: 300dpi from-image snap; "
+PASS img.style.cssText is "image-resolution: 300dpi from-image snap;"
 PASS img.offsetWidth is 5
 PASS img.offsetHeight is 5
 TEST "300dpi snap from-image"
-PASS img.style.cssText is "image-resolution: 300dpi snap from-image; "
+PASS img.style.cssText is "image-resolution: 300dpi snap from-image;"
 PASS img.offsetWidth is 5
 PASS img.offsetHeight is 5
 TEST "from-image 300dpi snap"
-PASS img.style.cssText is "image-resolution: from-image 300dpi snap; "
+PASS img.style.cssText is "image-resolution: from-image 300dpi snap;"
 PASS img.offsetWidth is 5
 PASS img.offsetHeight is 5
 TEST "from-image snap 300dpi"
-PASS img.style.cssText is "image-resolution: from-image snap 300dpi; "
+PASS img.style.cssText is "image-resolution: from-image snap 300dpi;"
 PASS img.offsetWidth is 5
 PASS img.offsetHeight is 5
 TEST "snap 300dpi from-image"
-PASS img.style.cssText is "image-resolution: snap 300dpi from-image; "
+PASS img.style.cssText is "image-resolution: snap 300dpi from-image;"
 PASS img.offsetWidth is 5
 PASS img.offsetHeight is 5
 TEST "snap from-image 300dpi"
-PASS img.style.cssText is "image-resolution: snap from-image 300dpi; "
+PASS img.style.cssText is "image-resolution: snap from-image 300dpi;"
 PASS img.offsetWidth is 5
 PASS img.offsetHeight is 5
 TEST "450dpi from-image snap"
-PASS img.style.cssText is "image-resolution: 450dpi from-image snap; "
+PASS img.style.cssText is "image-resolution: 450dpi from-image snap;"
 PASS img.offsetWidth is 4
 PASS img.offsetHeight is 4
 TEST "450dpi snap from-image"
-PASS img.style.cssText is "image-resolution: 450dpi snap from-image; "
+PASS img.style.cssText is "image-resolution: 450dpi snap from-image;"
 PASS img.offsetWidth is 4
 PASS img.offsetHeight is 4
 TEST "from-image 450dpi snap"
-PASS img.style.cssText is "image-resolution: from-image 450dpi snap; "
+PASS img.style.cssText is "image-resolution: from-image 450dpi snap;"
 PASS img.offsetWidth is 4
 PASS img.offsetHeight is 4
 TEST "from-image snap 450dpi"
-PASS img.style.cssText is "image-resolution: from-image snap 450dpi; "
+PASS img.style.cssText is "image-resolution: from-image snap 450dpi;"
 PASS img.offsetWidth is 4
 PASS img.offsetHeight is 4
 TEST "snap 450dpi from-image"
-PASS img.style.cssText is "image-resolution: snap 450dpi from-image; "
+PASS img.style.cssText is "image-resolution: snap 450dpi from-image;"
 PASS img.offsetWidth is 4
 PASS img.offsetHeight is 4
 TEST "snap from-image 450dpi"
-PASS img.style.cssText is "image-resolution: snap from-image 450dpi; "
+PASS img.style.cssText is "image-resolution: snap from-image 450dpi;"
 PASS img.offsetWidth is 4
 PASS img.offsetHeight is 4
 TEST "600dpi from-image snap"
-PASS img.style.cssText is "image-resolution: 600dpi from-image snap; "
+PASS img.style.cssText is "image-resolution: 600dpi from-image snap;"
 PASS img.offsetWidth is 2
 PASS img.offsetHeight is 2
 TEST "600dpi snap from-image"
-PASS img.style.cssText is "image-resolution: 600dpi snap from-image; "
+PASS img.style.cssText is "image-resolution: 600dpi snap from-image;"
 PASS img.offsetWidth is 2
 PASS img.offsetHeight is 2
 TEST "from-image 600dpi snap"
-PASS img.style.cssText is "image-resolution: from-image 600dpi snap; "
+PASS img.style.cssText is "image-resolution: from-image 600dpi snap;"
 PASS img.offsetWidth is 2
 PASS img.offsetHeight is 2
 TEST "from-image snap 600dpi"
-PASS img.style.cssText is "image-resolution: from-image snap 600dpi; "
+PASS img.style.cssText is "image-resolution: from-image snap 600dpi;"
 PASS img.offsetWidth is 2
 PASS img.offsetHeight is 2
 TEST "snap 600dpi from-image"
-PASS img.style.cssText is "image-resolution: snap 600dpi from-image; "
+PASS img.style.cssText is "image-resolution: snap 600dpi from-image;"
 PASS img.offsetWidth is 2
 PASS img.offsetHeight is 2
 TEST "snap from-image 600dpi"
-PASS img.style.cssText is "image-resolution: snap from-image 600dpi; "
+PASS img.style.cssText is "image-resolution: snap from-image 600dpi;"
 PASS img.offsetWidth is 2
 PASS img.offsetHeight is 2
 TEST "0dpcm from-image snap"
@@ -686,107 +686,107 @@ PASS img.style.cssText is ""
 TEST "snap from-image 0dpcm"
 PASS img.style.cssText is ""
 TEST "37.7dpcm from-image snap"
-PASS img.style.cssText is "image-resolution: 37.7dpcm from-image snap; "
+PASS img.style.cssText is "image-resolution: 37.7dpcm from-image snap;"
 PASS img.offsetWidth is 16
 PASS img.offsetHeight is 16
 TEST "37.7dpcm snap from-image"
-PASS img.style.cssText is "image-resolution: 37.7dpcm snap from-image; "
+PASS img.style.cssText is "image-resolution: 37.7dpcm snap from-image;"
 PASS img.offsetWidth is 16
 PASS img.offsetHeight is 16
 TEST "from-image 37.7dpcm snap"
-PASS img.style.cssText is "image-resolution: from-image 37.7dpcm snap; "
+PASS img.style.cssText is "image-resolution: from-image 37.7dpcm snap;"
 PASS img.offsetWidth is 16
 PASS img.offsetHeight is 16
 TEST "from-image snap 37.7dpcm"
-PASS img.style.cssText is "image-resolution: from-image snap 37.7dpcm; "
+PASS img.style.cssText is "image-resolution: from-image snap 37.7dpcm;"
 PASS img.offsetWidth is 16
 PASS img.offsetHeight is 16
 TEST "snap 37.7dpcm from-image"
-PASS img.style.cssText is "image-resolution: snap 37.7dpcm from-image; "
+PASS img.style.cssText is "image-resolution: snap 37.7dpcm from-image;"
 PASS img.offsetWidth is 16
 PASS img.offsetHeight is 16
 TEST "snap from-image 37.7dpcm"
-PASS img.style.cssText is "image-resolution: snap from-image 37.7dpcm; "
+PASS img.style.cssText is "image-resolution: snap from-image 37.7dpcm;"
 PASS img.offsetWidth is 16
 PASS img.offsetHeight is 16
 TEST "75.5dpcm from-image snap"
-PASS img.style.cssText is "image-resolution: 75.5dpcm from-image snap; "
+PASS img.style.cssText is "image-resolution: 75.5dpcm from-image snap;"
 PASS img.offsetWidth is 8
 PASS img.offsetHeight is 8
 TEST "75.5dpcm snap from-image"
-PASS img.style.cssText is "image-resolution: 75.5dpcm snap from-image; "
+PASS img.style.cssText is "image-resolution: 75.5dpcm snap from-image;"
 PASS img.offsetWidth is 8
 PASS img.offsetHeight is 8
 TEST "from-image 75.5dpcm snap"
-PASS img.style.cssText is "image-resolution: from-image 75.5dpcm snap; "
+PASS img.style.cssText is "image-resolution: from-image 75.5dpcm snap;"
 PASS img.offsetWidth is 8
 PASS img.offsetHeight is 8
 TEST "from-image snap 75.5dpcm"
-PASS img.style.cssText is "image-resolution: from-image snap 75.5dpcm; "
+PASS img.style.cssText is "image-resolution: from-image snap 75.5dpcm;"
 PASS img.offsetWidth is 8
 PASS img.offsetHeight is 8
 TEST "snap 75.5dpcm from-image"
-PASS img.style.cssText is "image-resolution: snap 75.5dpcm from-image; "
+PASS img.style.cssText is "image-resolution: snap 75.5dpcm from-image;"
 PASS img.offsetWidth is 8
 PASS img.offsetHeight is 8
 TEST "snap from-image 75.5dpcm"
-PASS img.style.cssText is "image-resolution: snap from-image 75.5dpcm; "
+PASS img.style.cssText is "image-resolution: snap from-image 75.5dpcm;"
 PASS img.offsetWidth is 8
 PASS img.offsetHeight is 8
 TEST "113.3dpcm from-image snap"
-PASS img.style.cssText is "image-resolution: 113.3dpcm from-image snap; "
+PASS img.style.cssText is "image-resolution: 113.3dpcm from-image snap;"
 PASS img.offsetWidth is 5
 PASS img.offsetHeight is 5
 TEST "113.3dpcm snap from-image"
-PASS img.style.cssText is "image-resolution: 113.3dpcm snap from-image; "
+PASS img.style.cssText is "image-resolution: 113.3dpcm snap from-image;"
 PASS img.offsetWidth is 5
 PASS img.offsetHeight is 5
 TEST "from-image 113.3dpcm snap"
-PASS img.style.cssText is "image-resolution: from-image 113.3dpcm snap; "
+PASS img.style.cssText is "image-resolution: from-image 113.3dpcm snap;"
 PASS img.offsetWidth is 5
 PASS img.offsetHeight is 5
 TEST "from-image snap 113.3dpcm"
-PASS img.style.cssText is "image-resolution: from-image snap 113.3dpcm; "
+PASS img.style.cssText is "image-resolution: from-image snap 113.3dpcm;"
 PASS img.offsetWidth is 5
 PASS img.offsetHeight is 5
 TEST "snap 113.3dpcm from-image"
-PASS img.style.cssText is "image-resolution: snap 113.3dpcm from-image; "
+PASS img.style.cssText is "image-resolution: snap 113.3dpcm from-image;"
 PASS img.offsetWidth is 5
 PASS img.offsetHeight is 5
 TEST "snap from-image 113.3dpcm"
-PASS img.style.cssText is "image-resolution: snap from-image 113.3dpcm; "
+PASS img.style.cssText is "image-resolution: snap from-image 113.3dpcm;"
 PASS img.offsetWidth is 5
 PASS img.offsetHeight is 5
 TEST "151.1dpcm from-image snap"
-PASS img.style.cssText is "image-resolution: 151.1dpcm from-image snap; "
+PASS img.style.cssText is "image-resolution: 151.1dpcm from-image snap;"
 PASS img.offsetWidth is 4
 PASS img.offsetHeight is 4
 TEST "151.1dpcm snap from-image"
-PASS img.style.cssText is "image-resolution: 151.1dpcm snap from-image; "
+PASS img.style.cssText is "image-resolution: 151.1dpcm snap from-image;"
 PASS img.offsetWidth is 4
 PASS img.offsetHeight is 4
 TEST "from-image 151.1dpcm snap"
-PASS img.style.cssText is "image-resolution: from-image 151.1dpcm snap; "
+PASS img.style.cssText is "image-resolution: from-image 151.1dpcm snap;"
 PASS img.offsetWidth is 4
 PASS img.offsetHeight is 4
 TEST "from-image snap 151.1dpcm"
-PASS img.style.cssText is "image-resolution: from-image snap 151.1dpcm; "
+PASS img.style.cssText is "image-resolution: from-image snap 151.1dpcm;"
 PASS img.offsetWidth is 4
 PASS img.offsetHeight is 4
 TEST "snap 151.1dpcm from-image"
-PASS img.style.cssText is "image-resolution: snap 151.1dpcm from-image; "
+PASS img.style.cssText is "image-resolution: snap 151.1dpcm from-image;"
 PASS img.offsetWidth is 4
 PASS img.offsetHeight is 4
 TEST "snap from-image 151.1dpcm"
-PASS img.style.cssText is "image-resolution: snap from-image 151.1dpcm; "
+PASS img.style.cssText is "image-resolution: snap from-image 151.1dpcm;"
 PASS img.offsetWidth is 4
 PASS img.offsetHeight is 4
 TEST "from-image snap"
-PASS img.style.cssText is "image-resolution: from-image snap; "
+PASS img.style.cssText is "image-resolution: from-image snap;"
 PASS img.offsetWidth is 16
 PASS img.offsetHeight is 16
 TEST "snap from-image"
-PASS img.style.cssText is "image-resolution: snap from-image; "
+PASS img.style.cssText is "image-resolution: snap from-image;"
 PASS img.offsetWidth is 16
 PASS img.offsetHeight is 16
 PASS successfullyParsed is true
