@@ -1,3 +1,12 @@
+2012-12-05  Leo Yang  <leoyang@rim.com>
+
+        [BlackBerry] Enable CSS_IMAGE_RESOLUTION
+        https://bugs.webkit.org/show_bug.cgi?id=104132
+
+        Reviewed by Yong Li.
+
+        * Source/cmake/OptionsBlackBerry.cmake:
+
 2012-12-05  Laszlo Gombos  <l.gombos@samsung.com>
 
         [CMake] Enable to build WebKit sources without Tools

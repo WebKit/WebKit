@@ -194,7 +194,7 @@ my @features = (
       define => "ENABLE_CSS_IMAGE_ORIENTATION", default => 0, value => \$cssImageOrientationSupport },
 
     { option => "css-image-resolution", desc => "Toggle CSS image-resolution support",
-      define => "ENABLE_CSS_IMAGE_RESOLUTION", default => 0, value => \$cssImageResolutionSupport },
+      define => "ENABLE_CSS_IMAGE_RESOLUTION", default => isBlackBerry(), value => \$cssImageResolutionSupport },
 
     { option => "css-regions", desc => "Toggle CSS Regions support",
       define => "ENABLE_CSS_REGIONS", default => 1, value => \$cssRegionsSupport },
