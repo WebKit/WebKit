@@ -148,13 +148,13 @@ class Printer(object):
             ndigits = int(math.log10(len(num))) + 1
         return ndigits
 
-    def print_results(self, run_time, result_summary, unexpected_results):
+    def print_results(self, run_time, result_summary, summarized_results):
         self._print_timing_statistics(run_time, result_summary)
         self._print_result_summary(result_summary)
         self._print_one_line_summary(result_summary.total - result_summary.expected_skips,
                                      result_summary.expected - result_summary.expected_skips,
                                      result_summary.unexpected)
-        self._print_unexpected_results(unexpected_results)
+        self._print_unexpected_results(summarized_results)
 
     def _print_timing_statistics(self, total_time, result_summary):
         self._print_debug("Test timing:")
@@ -423,7 +423,7 @@ class Printer(object):
             relpath = '<none>'
         self._print_default('  %s: %s' % (extension[1:], relpath))
 
-    def _print_unexpected_results(self, unexpected_results):
+    def _print_unexpected_results(self, summarized_results):
         # Prints to the buildbot stream
         passes = {}
         flaky = {}
@@ -435,6 +435,14 @@ class Printer(object):
         def add_result(test, results, passes=passes, flaky=flaky, regressions=regressions):
             actual = results['actual'].split(" ")
             expected = results['expected'].split(" ")
+
+            def is_expected(result):
+                return (result in expected) or (result in ('TEXT', 'IMAGE+TEXT') and 'FAIL' in expected)
+
+            if all(is_expected(actual_result) for actual_result in actual):
+                # Don't print anything for tests that ran as expected.
+                return
+
             if actual == ['PASS']:
                 if 'CRASH' in expected:
                     add_to_dict_of_lists(passes, 'Expected to crash, but passed', test)
@@ -448,7 +456,7 @@ class Printer(object):
             else:
                 add_to_dict_of_lists(regressions, results['actual'], test)
 
-        resultsjsonparser.for_each_test(unexpected_results['tests'], add_result)
+        resultsjsonparser.for_each_test(summarized_results['tests'], add_result)
 
         if len(passes) or len(flaky) or len(regressions):
             self._print_for_bot("")
@@ -469,7 +477,7 @@ class Printer(object):
                 tests.sort()
 
                 for test in tests:
-                    result = resultsjsonparser.result_for_test(unexpected_results['tests'], test)
+                    result = resultsjsonparser.result_for_test(summarized_results['tests'], test)
                     actual = result['actual'].split(" ")
                     expected = result['expected'].split(" ")
                     result = TestExpectations.EXPECTATIONS[key.lower()]
@@ -489,7 +497,7 @@ class Printer(object):
                     self._print_for_bot("  %s [ %s ]" % (test, TestExpectationParser._inverted_expectation_tokens[key]))
                 self._print_for_bot("")
 
-        if len(unexpected_results['tests']) and self._options.debug_rwt_logging:
+        if len(summarized_results['tests']) and self._options.debug_rwt_logging:
             self._print_for_bot("%s" % ("-" * 78))
 
     def _print_quiet(self, msg):

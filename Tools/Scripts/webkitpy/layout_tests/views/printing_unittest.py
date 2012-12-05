@@ -193,14 +193,13 @@ class  Testprinter(unittest.TestCase):
                 rs.add(self.get_result('passes/text.html', test_expectations.TIMEOUT), expected, test_is_slow)
                 rs.add(self.get_result('failures/expected/timeout.html', test_expectations.CRASH), expected, test_is_slow)
                 rs.add(self.get_result('failures/expected/crash.html', test_expectations.TIMEOUT), expected, test_is_slow)
-            retry = rs
+            retry = None
             if flaky:
                 paths, retry, exp = self.get_result_summary(tests, expectations)
                 retry.add(self.get_result('passes/text.html'), True, test_is_slow)
                 retry.add(self.get_result('failures/expected/timeout.html'), True, test_is_slow)
                 retry.add(self.get_result('failures/expected/crash.html'), True, test_is_slow)
-            unexpected_results = manager.summarize_results(self._port, exp, rs, retry, only_unexpected=True)
-            return unexpected_results
+            return manager.summarize_results(self._port, exp, rs, retry)
 
         tests = ['passes/text.html', 'failures/expected/timeout.html', 'failures/expected/crash.html']
         expectations = ''

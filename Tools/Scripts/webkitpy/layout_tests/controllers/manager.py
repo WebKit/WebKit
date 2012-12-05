@@ -87,20 +87,8 @@ def use_trac_links_in_results_html(port_obj):
 # or split off from Manager onto another helper class, but should not be a free function.
 # Most likely this should be made into its own class, and this super-long function
 # split into many helper functions.
-def summarize_results(port_obj, expectations, result_summary, retry_summary, only_unexpected):
-    """Summarize failing results as a dict.
-
-    FIXME: split this data structure into a separate class?
-
-    Args:
-        port_obj: interface to port-specific hooks
-        expectations: test_expectations.TestExpectations object
-        result_summary: summary object from initial test runs
-        retry_summary: summary object from final test run of retried tests (if any)
-        only_unexpected: whether to return a summary only for the unexpected results
-    Returns:
-        A dictionary containing a summary of the unexpected results from the
-        run, with the following fields:
+def summarize_results(port_obj, expectations, result_summary, retry_summary):
+    """Returns a dictionary containing a summary of the test runs, with the following fields:
         'version': a version indicator
         'fixable': The number of fixable tests (NOW - PASS)
         'skipped': The number of skipped tests (NOW & SKIPPED)
@@ -130,9 +118,8 @@ def summarize_results(port_obj, expectations, result_summary, retry_summary, onl
         keywords[modifier_enum] = modifier_string.upper()
 
     tests = {}
-    original_results = result_summary.unexpected_results if only_unexpected else result_summary.results
 
-    for test_name, result in original_results.iteritems():
+    for test_name, result in result_summary.results.iteritems():
         # Note that if a test crashed in the original run, we ignore
         # whether or not it crashed when we retried it (if we retried it),
         # and always consider the result not flaky.
@@ -159,7 +146,8 @@ def summarize_results(port_obj, expectations, result_summary, retry_summary, onl
             if expected == 'PASS':
                 continue
         elif result_type == test_expectations.CRASH:
-            num_regressions += 1
+            if test_name in result_summary.unexpected_results:
+                num_regressions += 1
         elif result_type == test_expectations.MISSING:
             if test_name in result_summary.unexpected_results:
                 num_missing += 1
@@ -392,16 +380,14 @@ class Manager(object):
         if retry_summary:
             self._look_for_new_crash_logs(retry_summary, start_time)
 
-        unexpected_results = summarize_results(self._port, self._expectations, result_summary, retry_summary, only_unexpected=True)
-
-        self._printer.print_results(end_time - start_time, result_summary, unexpected_results)
+        summarized_results = summarize_results(self._port, self._expectations, result_summary, retry_summary)
+        self._printer.print_results(end_time - start_time, result_summary, summarized_results)
 
         # FIXME: remove record_results. It's just used for testing. There's no need
         # for it to be a commandline argument.
         if self._options.record_results and not self._options.dry_run:
             self._port.print_leaks_summary()
             # Write the same data to log files and upload generated JSON files to appengine server.
-            summarized_results = summarize_results(self._port, self._expectations, result_summary, retry_summary, only_unexpected=False)
             self._upload_json_files(summarized_results, result_summary)
 
         # Write the summary to disk (results.html) and display it if requested.
@@ -411,7 +397,7 @@ class Manager(object):
             if self._options.show_results and result_summary.unexpected_results or (self._options.full_results_html and result_summary.total_failures):
                 self._port.show_results_html_file(results_path)
 
-        return self._port.exit_code_from_summarized_results(unexpected_results)
+        return self._port.exit_code_from_summarized_results(summarized_results)
 
     def _run_tests(self, tests_to_run, tests_to_skip, repeat_each, iterations, num_workers, retrying):
         needs_http = self._port.requires_http_server() or any(self._is_http_test(test) for test in tests_to_run)

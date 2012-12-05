@@ -1,3 +1,32 @@
+2012-12-05  Dirk Pranke  <dpranke@chromium.org>
+
+        nrwt: only summarize the results one way
+        https://bugs.webkit.org/show_bug.cgi?id=104064
+
+        Reviewed by Ojan Vafai.
+
+        Change manager.summarize_results so that we always (and only)
+        include both expected and unexpected results. Previously we
+        would summarize the results twice, once with expected results
+        and once without. This made the code much more confusing than
+        it needed to be.
+
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        (summarize_results):
+        (Manager.run):
+        * Scripts/webkitpy/layout_tests/controllers/manager_unittest.py:
+        (ResultSummaryTest.summarized_results):
+        (ResultSummaryTest.test_no_svn_revision):
+        (ResultSummaryTest.test_svn_revision):
+        (ResultSummaryTest.test_summarized_results_wontfix):
+        * Scripts/webkitpy/layout_tests/views/printing.py:
+        (Printer.print_results):
+        (Printer._print_unexpected_results):
+        (Printer._print_unexpected_results.add_result):
+        * Scripts/webkitpy/layout_tests/views/printing_unittest.py:
+        (Testprinter.test_print_unexpected_results.get_unexpected_results):
+        (Testprinter):
+
 2012-12-05  Filip Pizlo  <fpizlo@apple.com>
 
         DFG profiler should display more information

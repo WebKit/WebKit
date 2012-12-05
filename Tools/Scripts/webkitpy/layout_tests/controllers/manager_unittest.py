@@ -161,33 +161,33 @@ class ResultSummaryTest(unittest.TestCase):
         for test in extra_tests:
             rs.add(self.get_result(test, test_expectations.CRASH), expected, test_is_slow)
 
-        retry = rs
         if flaky:
             paths, retry, exp = self.get_result_summary(port, tests, expectations)
             retry.add(self.get_result('passes/text.html'), True, test_is_slow)
             retry.add(self.get_result('failures/expected/timeout.html'), True, test_is_slow)
             retry.add(self.get_result('failures/expected/crash.html'), True, test_is_slow)
-        unexpected_results = summarize_results(port, exp, rs, retry, only_unexpected=True)
-        expected_results = summarize_results(port, exp, rs, retry, only_unexpected=False)
-        return expected_results, unexpected_results
+        else:
+            retry = None
+
+        return summarize_results(port, exp, rs, retry)
 
     def test_no_svn_revision(self):
         host = MockHost(initialize_scm_by_default=False)
         port = host.port_factory.get('test')
-        expected_results, unexpected_results = self.summarized_results(port, expected=False, passing=False, flaky=False)
-        self.assertTrue('revision' not in unexpected_results)
+        summarized_results = self.summarized_results(port, expected=False, passing=False, flaky=False)
+        self.assertTrue('revision' not in summarized_results)
 
     def test_svn_revision(self):
         host = MockHost(initialize_scm_by_default=False)
         port = host.port_factory.get('test')
         port._options.builder_name = 'dummy builder'
-        expected_results, unexpected_results = self.summarized_results(port, expected=False, passing=False, flaky=False)
-        self.assertNotEquals(unexpected_results['revision'], '')
+        summarized_results = self.summarized_results(port, expected=False, passing=False, flaky=False)
+        self.assertNotEquals(summarized_results['revision'], '')
 
     def test_summarized_results_wontfix(self):
         host = MockHost()
         port = host.port_factory.get('test')
         port._options.builder_name = 'dummy builder'
         port._filesystem.write_text_file(port._filesystem.join(port.layout_tests_dir(), "failures/expected/wontfix.html"), "Dummy test contents")
-        expected_results, unexpected_results = self.summarized_results(port, expected=False, passing=False, flaky=False, extra_tests=['failures/expected/wontfix.html'], extra_expectations='Bug(x) failures/expected/wontfix.html [ WontFix ]\n')
-        self.assertTrue(expected_results['tests']['failures']['expected']['wontfix.html']['wontfix'])
+        summarized_results = self.summarized_results(port, expected=False, passing=False, flaky=False, extra_tests=['failures/expected/wontfix.html'], extra_expectations='Bug(x) failures/expected/wontfix.html [ WontFix ]\n')
+        self.assertTrue(summarized_results['tests']['failures']['expected']['wontfix.html']['wontfix'])
