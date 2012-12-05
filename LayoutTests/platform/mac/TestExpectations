@@ -1057,6 +1057,9 @@ webkit.org/b/57688 fast/text/international/thai-line-breaks.html [ Failure Pass 
 # Fails on WK1, but passes on WK2.  (No syntax available for this situation.)
 webkit.org/b/58192 plugins/npp-set-window-called-during-destruction.html [ Failure Pass ]
 
+# https://bugs.webkit.org/show_bug.cgi?id=104054
+webkit.org/b/104054 svg/custom/use-href-update-crash.svg [ Failure Pass ]
+
 # Flakey plugin tests
 webkit.org/b/82752 plugins/netscape-dom-access-and-reload.html [ Failure Pass ]
 
