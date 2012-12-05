@@ -1,3 +1,13 @@
+2012-12-04  Viatcheslav Ostapenko  <v.ostapenko@samsung.com>
+
+        [EFL][WK2] Enable compositing pixel tests that are not fail after EFL WTR snapshot implementation.
+        https://bugs.webkit.org/show_bug.cgi?id=104075
+
+        Unreviewed, EFL gardening.
+
+        * platform/efl-wk1/TestExpectations:
+        * platform/efl/TestExpectations:
+
 2012-12-04  Noel Gordon  <noel.gordon@gmail.com>
 
         [v8] Improve worker.postMessage() string performance: avoid utf8 conversion

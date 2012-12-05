@@ -57,6 +57,11 @@ http/tests/xmlhttprequest/remember-bad-password.html
 # efl-wk1 has no support accelerated compositing
 webkit.org/b/103847 compositing/absolute-inside-out-of-view-fixed.html [ Failure ]
 webkit.org/b/103847 compositing/animation/animation-compositing.html [ Failure ]
+webkit.org/b/99043 compositing/backface-visibility/backface-visibility-3d.html [ ImageOnlyFailure ]
+webkit.org/b/99044 compositing/backface-visibility/backface-visibility-hierarchical-transform.html [ ImageOnlyFailure ]
+webkit.org/b/99045 compositing/backface-visibility/backface-visibility-image.html [ ImageOnlyFailure ]
+webkit.org/b/99047 compositing/backface-visibility/backface-visibility-non3d.html [ ImageOnlyFailure ]
+webkit.org/b/99048 compositing/backface-visibility/backface-visibility-simple.html [ ImageOnlyFailure ]
 webkit.org/b/103847 compositing/backface-visibility/backface-visibility-webgl.html [ Failure ]
 webkit.org/b/103847 compositing/backing/no-backing-for-clip-overlap.html [ Failure ]
 webkit.org/b/103847 compositing/backing/no-backing-for-clip.html [ Failure ]
