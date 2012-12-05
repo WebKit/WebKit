@@ -41,21 +41,41 @@ struct ExtensionMap {
     const char* mimeType;
 };
 
-// This is a short list of extensions not recognized by the freedesktop shared mimetype database 1.0.
+// This is a short list of extensions that are either not recognized by the freedesktop shared mimetype database 1.0,
+// or too essential for QtWebKit that we can not allow a user configuration to potentially override it.
+// Any extension that has to be recognized for the layout-tests to run should be added here.
 static const ExtensionMap extensionMap[] = {
-    { "mht", ".mht", "application/x-mimearchive" },
-    { "mhtml", ".mhtml", "application/x-mimearchive" },
-    { "text", ".text", "text/plain" },
-    { "wmlc", ".wmlc", "application/vnd.wap.wmlc" },
+    { "htm", ".htm", "text/html" },
+    { "html", ".html", "text/html" },
+    { "js", ".js", "application/javascript" },
+    { "mht", ".mht", "application/x-mimearchive" }, // Not in shared mimetype database
+    { "mhtml", ".mhtml", "application/x-mimearchive" }, // Not in shared mimetype database
+    { "svg", ".svg", "image/svg+xml" },
+    { "text", ".text", "text/plain" }, // Not in shared mimetype database
+    { "txt", ".txt", "text/plain"},
+    { "wmlc", ".wmlc", "application/vnd.wap.wmlc" }, // Not in shared mimetype database
+    { "xht", ".xht", "application/xhtml+xml" },
+    { "xhtml", ".xhtml", "application/xhtml+xml" },
+    { "xsl", ".xsl", "text/xsl" },
     { 0, 0, 0 }
 };
 
 String MIMETypeRegistry::getMIMETypeForExtension(const String &ext)
 {
-    // QMimeDatabase lacks the ability to query by extension alone, so we create a fake filename to lookup.
     String suffix = ext.lower();
+    const ExtensionMap *e = extensionMap;
+    while (e->extension) {
+        if (suffix == e->extension)
+            return e->mimeType;
+        ++e;
+    }
+
+    // QMimeDatabase lacks the ability to query by extension alone, so we create a fake filename to lookup.
     const QString filename = QStringLiteral("filename.") + QString(suffix);
 
+    // FIXME: We should get all the matched mimetypes with mimeTypesForFileName, and prefer one we support.
+    // But initializeSupportedImageMIMETypes will first have to stop using getMIMETypeForExtension, or we
+    // would be checking against an uninitialized set of supported mimetypes.
     QMimeType mimeType = QMimeDatabase().mimeTypeForFile(filename, QMimeDatabase::MatchExtension);
     if (mimeType.isValid() && !mimeType.isDefault()) {
         // getMIMETypeForExtension is used for preload mimetype check, so image looking files can not be loaded as anything but images.
@@ -65,28 +85,22 @@ String MIMETypeRegistry::getMIMETypeForExtension(const String &ext)
         return mimeType.name();
     }
 
-    const ExtensionMap *e = extensionMap;
-    while (e->extension) {
-        if (suffix == e->extension)
-            return e->mimeType;
-        ++e;
-    }
-
     return String();
 }
 
 String MIMETypeRegistry::getMIMETypeForPath(const String& path)
 {
-    QMimeType type = QMimeDatabase().mimeTypeForFile(path, QMimeDatabase::MatchExtension);
-    if (type.isValid() && !type.isDefault())
-        return type.name();
-
     const ExtensionMap *e = extensionMap;
     while (e->extension) {
-        if (path.endsWith(e->dotExtension))
+        if (path.endsWith(e->dotExtension, /* caseSensitive */ false))
             return e->mimeType;
         ++e;
     }
+
+    // FIXME: See comment in getMIMETypeForExtension.
+    QMimeType type = QMimeDatabase().mimeTypeForFile(path, QMimeDatabase::MatchExtension);
+    if (type.isValid() && !type.isDefault())
+        return type.name();
 
     return defaultMIMEType();
 }
