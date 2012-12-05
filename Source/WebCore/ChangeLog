@@ -1,3 +1,27 @@
+2012-12-05  Stephen White  <senorblanco@chromium.org>
+
+        Unreviewed, rolling out r136735.
+        http://trac.webkit.org/changeset/136735
+        https://bugs.webkit.org/show_bug.cgi?id=102699
+
+        Broke Chrome/Win build.
+
+        * platform/chromium/PlatformSupport.h:
+        (PlatformSupport):
+        * platform/chromium/ScrollbarThemeChromiumWin.cpp:
+        (WebCore::ScrollbarThemeChromiumWin::paintTrackPiece):
+        (WebCore::ScrollbarThemeChromiumWin::paintButton):
+        (WebCore::ScrollbarThemeChromiumWin::paintThumb):
+        * rendering/RenderThemeChromiumWin.cpp:
+        (WebCore):
+        (WebCore::RenderThemeChromiumWin::paintButton):
+        (WebCore::RenderThemeChromiumWin::paintSliderTrack):
+        (WebCore::RenderThemeChromiumWin::paintSliderThumb):
+        (WebCore::RenderThemeChromiumWin::paintMenuList):
+        (WebCore::RenderThemeChromiumWin::paintTextFieldInternal):
+        (WebCore::RenderThemeChromiumWin::paintInnerSpinButton):
+        (WebCore::RenderThemeChromiumWin::paintProgressBar):
+
 2012-12-05  Jun Jiang  <jun.a.jiang@intel.com>
 
         WebGL: use pointer to the source data for Image directly in texImage2D and texSubImage2D to avoid memory copy if no conversion is needed

@@ -1,5 +1,25 @@
 2012-12-05  Stephen White  <senorblanco@chromium.org>
 
+        Unreviewed, rolling out r136735.
+        http://trac.webkit.org/changeset/136735
+        https://bugs.webkit.org/show_bug.cgi?id=102699
+
+        Broke Chrome/Win build.
+
+        * src/PlatformSupport.cpp:
+        (WebCore):
+        (WebCore::PlatformSupport::paintButton):
+        (WebCore::PlatformSupport::paintMenuList):
+        (WebCore::PlatformSupport::paintScrollbarArrow):
+        (WebCore::PlatformSupport::paintScrollbarThumb):
+        (WebCore::PlatformSupport::paintScrollbarTrack):
+        (WebCore::PlatformSupport::paintSpinButton):
+        (WebCore::PlatformSupport::paintTextField):
+        (WebCore::PlatformSupport::paintTrackbar):
+        (WebCore::PlatformSupport::paintProgressBar):
+
+2012-12-05  Stephen White  <senorblanco@chromium.org>
+
         Unreviewed, rolling out r136741.
         http://trac.webkit.org/changeset/136741
         https://bugs.webkit.org/show_bug.cgi?id=104151
