@@ -11,14 +11,6 @@ ENDIF ()
 # -----------------------------------------------------------------------------
 # Default library type
 # -----------------------------------------------------------------------------
-SET(ENABLE_WEBCORE ON)
-
-IF (NOT DEFINED ENABLE_WEBKIT)
-    SET(ENABLE_WEBKIT ON)
-ENDIF ()
-
-SET(ENABLE_TOOLS ON)
-
 SET(WTF_DIR "${CMAKE_SOURCE_DIR}/Source/WTF")
 SET(JAVASCRIPTCORE_DIR "${CMAKE_SOURCE_DIR}/Source/JavaScriptCore")
 SET(WEBCORE_DIR "${CMAKE_SOURCE_DIR}/Source/WebCore")
@@ -35,6 +27,16 @@ SET(DERIVED_SOURCES_WEBKIT_DIR "${CMAKE_BINARY_DIR}/DerivedSources/WebKit")
 SET(DERIVED_SOURCES_WEBKIT2_DIR "${CMAKE_BINARY_DIR}/DerivedSources/WebKit2")
 
 SET(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/Source/cmake")
+
+SET(ENABLE_WEBCORE ON)
+
+IF (NOT DEFINED ENABLE_WEBKIT)
+    SET(ENABLE_WEBKIT ON)
+ENDIF ()
+
+IF (NOT DEFINED ENABLE_TOOLS AND EXISTS ${TOOLS_DIR})
+    SET(ENABLE_TOOLS ON)
+ENDIF()
 
 INCLUDE(WebKitMacros)
 INCLUDE(WebKitFS)
