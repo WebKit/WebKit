@@ -39,6 +39,8 @@ GeolocationClientBlackBerry::GeolocationClientBlackBerry(BlackBerry::WebKit::Web
 
 void GeolocationClientBlackBerry::geolocationDestroyed()
 {
+    BlackBerry::Platform::GeolocationHandler::instance()->unregisterFromPermissionTracking(this);
+
     delete this;
 }
 
@@ -87,6 +89,10 @@ void GeolocationClientBlackBerry::requestPermission(Geolocation* location)
         return;
     }
 
+    // Register the listener with the GeolocationHandler to receive permissions.
+    if (m_geolocationRequestMap.isEmpty())
+        BlackBerry::Platform::GeolocationHandler::instance()->registerPermissionTracking(this);
+
     // Add this geolocation permission request to our request map.
     Vector<RefPtr<Geolocation> > geoRequestsForOrigin;
     HashMap<String, Vector<RefPtr<Geolocation> > >::AddResult result = m_geolocationRequestMap.add(origin, geoRequestsForOrigin);
@@ -125,6 +131,9 @@ void GeolocationClientBlackBerry::cancelPermissionRequest(Geolocation* location)
         }
     }
 
+    if (m_geolocationRequestMap.isEmpty())
+        BlackBerry::Platform::GeolocationHandler::instance()->unregisterFromPermissionTracking(this);
+
     m_webPagePrivate->m_client->cancelGeolocationPermission();
 }
 
@@ -153,6 +162,9 @@ void GeolocationClientBlackBerry::onPermission(const BlackBerry::Platform::Strin
     for (size_t i = 0; i < numberOfGeolocations; ++i)
         pendingPermissionGeolocation[i]->setIsAllowed(isAllowed);
     m_geolocationRequestMap.remove(origin);
+
+    if (m_geolocationRequestMap.isEmpty())
+        BlackBerry::Platform::GeolocationHandler::instance()->unregisterFromPermissionTracking(this);
 }
 
 void GeolocationClientBlackBerry::setEnableHighAccuracy(bool newAccuracy)
