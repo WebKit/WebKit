@@ -640,7 +640,8 @@ void InjectedBundlePage::registerIntentServiceForFrame(WKBundlePageRef page, WKB
     InjectedBundle::shared().stringBuilder()->append(toWTFString(wkTitle.get()));
     InjectedBundle::shared().stringBuilder()->appendLiteral(" url=");
     WKRetainPtr<WKURLRef> wkUrl(AdoptWK, WKIntentServiceInfoCopyHref(serviceInfo));
-    InjectedBundle::shared().stringBuilder()->append(toWTFString(adoptWK(WKURLCopyString(wkUrl.get()))));
+    if (wkUrl)
+        InjectedBundle::shared().stringBuilder()->append(toWTFString(adoptWK(WKURLCopyString(wkUrl.get()))));
     InjectedBundle::shared().stringBuilder()->appendLiteral(" disposition=");
     WKRetainPtr<WKStringRef> wkDisposition(AdoptWK, WKIntentServiceInfoCopyDisposition(serviceInfo));
     InjectedBundle::shared().stringBuilder()->append(toWTFString(wkDisposition.get()));
