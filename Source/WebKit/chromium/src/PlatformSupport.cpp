@@ -46,6 +46,7 @@
 #include "WebScreenInfo.h"
 #include "WebViewClient.h"
 #include "WebViewImpl.h"
+#include "WebWorkerClientImpl.h"
 #include "platform/WebAudioBus.h"
 #include "platform/WebData.h"
 #include "platform/WebDragData.h"
@@ -90,5 +91,16 @@ bool PlatformSupport::plugins(bool refresh, Vector<PluginInfo>* results)
     webKitPlatformSupport()->getPluginList(refresh, &builder);
     return true;  // FIXME: There is no need for this function to return a value.
 }
+
+// These are temporary methods that the WebKit layer can use to call to the
+// Glue layer. Once the Glue layer moves entirely into the WebKit layer, these
+// methods will be deleted.
+
+#if ENABLE(WORKERS)
+WorkerContextProxy* WorkerContextProxy::create(Worker* worker)
+{
+    return WebWorkerClientImpl::createWorkerContextProxy(worker);
+}
+#endif
 
 } // namespace WebCore
