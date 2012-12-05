@@ -331,7 +331,7 @@ public:
     BackingStoreWindowBufferState* windowFrontBufferState() const;
     BackingStoreWindowBufferState* windowBackBufferState() const;
 
-    static void setCurrentBackingStoreOwner(WebPage* webPage) { BackingStorePrivate::s_currentBackingStoreOwner = webPage; }
+    static void setCurrentBackingStoreOwner(WebPage*);
     static WebPage* currentBackingStoreOwner() { return BackingStorePrivate::s_currentBackingStoreOwner; }
     bool isActive() const;
 

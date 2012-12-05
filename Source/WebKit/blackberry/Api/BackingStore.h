@@ -82,6 +82,7 @@ public:
 
 private:
     friend class BlackBerry::WebKit::BackingStoreClient;
+    friend class BlackBerry::WebKit::BackingStorePrivate;
     friend class BlackBerry::WebKit::WebPage;
     friend class BlackBerry::WebKit::WebPagePrivate; // FIXME: For now, we expose our internals to WebPagePrivate. See PR #120301.
     friend class BlackBerry::WebKit::WebPageCompositorPrivate;

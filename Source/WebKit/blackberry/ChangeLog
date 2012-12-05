@@ -1,5 +1,37 @@
 2012-12-05  Jakob Petsovits  <jpetsovits@rim.com>
 
+        [BlackBerry] Better crash fix for resetting tiles on a backingstore takeover.
+        https://bugs.webkit.org/show_bug.cgi?id=103969
+        RIM PR 258415
+
+        Reviewed by Adam Treat.
+
+        The previous attempt for releasing tile buffers from the
+        previously active backingstore did not take into account
+        that resetTiles() would sometimes return early without
+        having swapped the tiles and thus reclaiming them.
+
+        This patch removes the early returns, because it's safe
+        to swap in an empty geometry at any time and we should
+        always take the chance when we get it.
+
+        Also put the code that calls resetTiles() on an owner
+        switch right into setCurrentBackingStoreOwner(), so that
+        it will also release the buffers when the BackingStore
+        is destroyed (the function is then called with 0).
+
+        * Api/BackingStore.cpp:
+        (BlackBerry::WebKit::BackingStorePrivate::resetTiles):
+        (WebKit):
+        (BlackBerry::WebKit::BackingStorePrivate::setCurrentBackingStoreOwner):
+        * Api/BackingStore.h: Had to add the friend here to make the moved code work from the static function.
+        * Api/BackingStore_p.h:
+        (BackingStorePrivate):
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::resumeBackingStore):
+
+2012-12-05  Jakob Petsovits  <jpetsovits@rim.com>
+
         [BlackBerry] Keep screen updates suspended until after a viewport resize.
         https://bugs.webkit.org/show_bug.cgi?id=104041
 

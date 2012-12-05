@@ -1702,14 +1702,6 @@ void BackingStorePrivate::clearVisibleZoom()
 
 void BackingStorePrivate::resetTiles()
 {
-    if (!m_webPage->isVisible())
-        return;
-
-    if (!isActive()) {
-        m_webPage->d->setShouldResetTilesWhenShown(true);
-        return;
-    }
-
     BackingStoreGeometry* currentState = frontState();
 
     m_renderQueue->clear(currentState->backingStoreRect(), true /*clearRegularRenderJobs*/);
@@ -2490,6 +2482,17 @@ void BackingStorePrivate::drawAndBlendLayersForDirectRendering(const Platform::I
         compositor->drawLayers(dstRect, untransformedContentsRect);
 }
 #endif
+
+// static
+void BackingStorePrivate::setCurrentBackingStoreOwner(WebPage* webPage)
+{
+    // Let the previously active backingstore release its tile buffers so
+    // the new one (e.g. another tab) can use the buffers to render contents.
+    if (BackingStorePrivate::s_currentBackingStoreOwner && BackingStorePrivate::s_currentBackingStoreOwner != webPage)
+        BackingStorePrivate::s_currentBackingStoreOwner->d->m_backingStore->d->resetTiles();
+
+    BackingStorePrivate::s_currentBackingStoreOwner = webPage;
+}
 
 bool BackingStorePrivate::isActive() const
 {
