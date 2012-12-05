@@ -50,8 +50,7 @@ function testTracLinks() {
   ASSERT_EQUAL($('<div>').append(links).html(),
     '<a target="_blank" href="http://trac.webkit.org/log/trunk/foo/bar.cpp/qux.h">header</a>' +
     '<a target="_blank" href="http://trac.webkit.org/browser/trunk/foo/bar.cpp/qux.mm?annotate=blame">annotate</a>' +
-    '<a target="_blank" href="http://trac.webkit.org/log/trunk/foo/bar.cpp/qux.mm">revision log</a>
-');
+    '<a target="_blank" href="http://trac.webkit.org/log/trunk/foo/bar.cpp/qux.mm">revision log</a>');
 
   var links = tracLinks('foo/bar.h', '');
   ASSERT_EQUAL($('<div>').append(links).html(),

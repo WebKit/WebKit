@@ -1060,19 +1060,6 @@ var CODE_REVIEW_UNITTEST;
     g_overallCommentsInputTimer = setTimeout(saveDraftComments, 1000);
   }
 
-  function onBodyResize() {
-    updateToolbarAnchorState();
-  }
-
-  function updateToolbarAnchorState() {
-    var toolbar = $('#toolbar');
-    // Unanchor the toolbar and then see if it's bottom is below the body's bottom.
-    toolbar.toggleClass('anchored', false);
-    var toolbar_bottom = toolbar.offset().top + toolbar.outerHeight();
-    var should_anchor = toolbar_bottom >= document.body.clientHeight;
-    toolbar.toggleClass('anchored', should_anchor);
-  }
-
   function diffLinksHtml() {
     return '<a href="javascript:" class="unify-link">unified</a>' +
       '<a href="javascript:" class="side-by-side-link">side-by-side</a>';
@@ -1091,12 +1078,18 @@ var CODE_REVIEW_UNITTEST;
             '<button id="preview_comments">Preview</button>' +
             '<button id="post_comments">Publish</button> ' +
           '</span>' +
+          '<div class="clear_float"></div>' +
         '</div>' +
         '<div class="autosave-state"></div>' +
         '</div>');
 
     $('.overallComments textarea').bind('click', openOverallComments);
     $('.overallComments textarea').bind('input', handleOverallCommentsInput);
+
+    var toolbar = $('#toolbar');
+    toolbar.css('position', '-webkit-sticky');
+    var supportsSticky = toolbar.css('position') == '-webkit-sticky';
+    document.body.style.marginBottom = supportsSticky ? 0 : '40px';
   }
 
   function handleDocumentReady() {
@@ -1130,14 +1123,6 @@ var CODE_REVIEW_UNITTEST;
     $(document.body).prepend('<div id="comment_form" class="inactive"><div class="winter"></div><div class="lightbox"><iframe id="reviewform" src="attachment.cgi?id=' + attachment_id + '&action=reviewform"></iframe></div></div>');
     $('#reviewform').bind('load', handleReviewFormLoad);
 
-    // Create a dummy iframe and monitor resizes in it's contentWindow to detect when the top document's body changes size.
-    // FIXME: Should we setTimeout throttle these?
-    var resize_iframe = $('<iframe class="pseudo_resize_event_iframe"></iframe>');
-    $(document.body).append(resize_iframe);
-    // Handle the event on a timeout to avoid crashing Firefox.
-    $(resize_iframe[0].contentWindow).bind('resize', function() { setTimeout(onBodyResize, 0)});
-
-    updateToolbarAnchorState();
     loadDiffState();
     generateFileDiffResizeStyleElement();
   };
