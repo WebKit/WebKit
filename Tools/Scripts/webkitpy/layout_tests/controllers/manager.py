@@ -373,15 +373,12 @@ class Manager(object):
             result_summary = self._run_tests(tests_to_run, tests_to_skip, self._options.repeat_each, self._options.iterations,
                                              int(self._options.child_processes), retrying=False)
 
-            # We exclude the crashes from the list of results to retry, because
-            # we want to treat even a potentially flaky crash as an error.
-
-            failures = self._failed_test_names(result_summary, include_crashes=self._port.should_retry_crashes(), include_missing=False)
-            if self._options.retry_failures and failures and not result_summary.interrupted:
+            tests_to_retry = self._test_to_retry(result_summary, include_crashes=self._port.should_retry_crashes())
+            if self._options.retry_failures and tests_to_retry and not result_summary.interrupted:
                 _log.info('')
-                _log.info("Retrying %d unexpected failure(s) ..." % len(failures))
+                _log.info("Retrying %d unexpected failure(s) ..." % len(tests_to_retry))
                 _log.info('')
-                retry_summary = self._run_tests(failures, tests_to_skip=set(), repeat_each=1, iterations=1, num_workers=1, retrying=True)
+                retry_summary = self._run_tests(tests_to_retry, tests_to_skip=set(), repeat_each=1, iterations=1, num_workers=1, retrying=True)
             else:
                 retry_summary = None
         finally:
@@ -474,16 +471,11 @@ class Manager(object):
             if self._filesystem.isdir(self._filesystem.join(layout_tests_dir, dirname)):
                 self._filesystem.rmtree(self._filesystem.join(self._results_directory, dirname))
 
-    def _failed_test_names(self, result_summary, include_crashes, include_missing):
-        failed_test_names = []
-        for test, result in result_summary.unexpected_results.iteritems():
-            if (result.type == test_expectations.PASS or
-                (result.type == test_expectations.CRASH and not include_crashes) or
-                (result.type == test_expectations.MISSING and not include_missing)):
-                continue
-            failed_test_names.append(test)
-
-        return failed_test_names
+    def _test_to_retry(self, result_summary, include_crashes):
+        return [result.test_name for result in result_summary.unexpected_results.values() if
+                   ((result.type != test_expectations.PASS) and
+                    (result.type != test_expectations.MISSING) and
+                    (result.type != test_expectations.CRASH or include_crashes))]
 
     def _upload_json_files(self, summarized_results, result_summary):
         """Writes the results of the test run as JSON files into the results
