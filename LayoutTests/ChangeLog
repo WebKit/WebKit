@@ -1,3 +1,17 @@
+2012-12-05  Emil A Eklund  <eae@chromium.org>
+
+        Unreviewed chromium rebaselines.
+
+        * platform/chromium-mac/plugins/npp-set-window-called-during-destruction-expected.txt: Added.
+        * platform/chromium-win-xp/css3/flexbox: Added.
+        * platform/chromium-win-xp/css3/flexbox/repaint-column-reverse-expected.png: Added.
+        * platform/chromium-win/css3/filters/effect-reference-hw-expected.png:
+        * platform/chromium-win/plugins/npp-set-window-called-during-destruction-expected.txt:
+        * platform/chromium/plugins/npp-set-window-called-during-destruction-expected.txt: Removed.
+        * platform/win-7sp0/plugins: Added.
+        * platform/win-7sp0/plugins/npp-set-window-called-during-destruction-expected.txt: Added.
+        * platform/win/plugins/npp-set-window-called-during-destruction-expected.txt: Removed.
+
 2012-12-05  Thiago Marcos P. Santos  <thiago.santos@intel.com>
 
         [EFL] Unreviewed gardening.
