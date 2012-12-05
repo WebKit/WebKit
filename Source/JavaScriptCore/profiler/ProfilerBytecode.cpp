@@ -34,6 +34,7 @@ JSValue Bytecode::toJS(ExecState* exec) const
 {
     JSObject* result = constructEmptyObject(exec);
     result->putDirect(exec->globalData(), exec->propertyNames().bytecodeIndex, jsNumber(m_bytecodeIndex));
+    result->putDirect(exec->globalData(), exec->propertyNames().opcode, jsString(exec, String::fromUTF8(opcodeNames[m_opcodeID])));
     result->putDirect(exec->globalData(), exec->propertyNames().description, jsString(exec, String::fromUTF8(m_description)));
     return result;
 }

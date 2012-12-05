@@ -29,12 +29,17 @@ require 'json'
 require 'readline'
 
 class Bytecode
-    attr_accessor :bytecodeIndex, :description, :topCounts
+    attr_accessor :bytecodeIndex, :opcode, :description, :topCounts
     
-    def initialize(bytecodeIndex, description)
+    def initialize(bytecodeIndex, opcode, description)
         @bytecodeIndex = bytecodeIndex
+        @opcode = opcode
         @description = description
         @topCounts = []
+    end
+    
+    def shouldHaveCounts?
+        @opcode != "op_call_put_result"
     end
     
     def addTopCount(count)
@@ -73,7 +78,7 @@ class Bytecodes
         json["bytecode"].each {
             | subJson |
             index = subJson["bytecodeIndex"].to_i
-            @bytecode[index] = Bytecode.new(index, subJson["description"].to_s)
+            @bytecode[index] = Bytecode.new(index, subJson["opcode"].to_s, subJson["description"].to_s)
         }
     end
     
@@ -266,6 +271,11 @@ def executeCommand(*commandArray)
             return
         end
         
+        unless $engines.index(engine)
+            puts "#{engine} is not a valid engine, try #{$engines.join(' or ')}."
+            return
+        end
+        
         countCols = 10 * $engines.size
         $compilations.each {
             | compilation |
@@ -275,13 +285,15 @@ def executeCommand(*commandArray)
             puts(rpad($engines.join("/") + " Counts", countCols) + " Disassembly for #{hash} in #{engine}")
             compilation.descriptions.each {
                 | description |
-                next if description.description =~ /CountExecution\(/
-                if description.origin.empty?
+                # FIXME: We should have a better way of detecting things like CountExecution nodes
+                # and slow path entries in the baseline JIT.
+                next if description.description =~ /CountExecution\(/ and engine == "DFG"
+                if description.origin.empty? or not description.origin[-1].shouldHaveCounts? or (engine == "Baseline" and description.description =~ /^\s*\(S\)/)
                     countsString = ""
                 else
                     countsString = $engines.map {
-                        | engine |
-                        description.origin[-1].executionCount(engine)
+                        | myEngine |
+                        description.origin[-1].executionCount(myEngine)
                     }.join("/")
                 end
                 description.description.split("\n").each {

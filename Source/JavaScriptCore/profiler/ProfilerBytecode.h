@@ -27,6 +27,7 @@
 #define ProfilerBytecode_h
 
 #include "JSValue.h"
+#include "Opcode.h"
 #include <wtf/text/CString.h>
 
 namespace JSC { namespace Profiler {
@@ -38,18 +39,21 @@ public:
     {
     }
     
-    Bytecode(unsigned bytecodeIndex, const CString& description)
+    Bytecode(unsigned bytecodeIndex, OpcodeID opcodeID, const CString& description)
         : m_bytecodeIndex(bytecodeIndex)
+        , m_opcodeID(opcodeID)
         , m_description(description)
     {
     }
     
     unsigned bytecodeIndex() const { return m_bytecodeIndex; }
+    OpcodeID opcodeID() const { return m_opcodeID; }
     const CString& description() const { return m_description; }
     
     JSValue toJS(ExecState*) const;
 private:
     unsigned m_bytecodeIndex;
+    OpcodeID m_opcodeID;
     CString m_description;
 };
 

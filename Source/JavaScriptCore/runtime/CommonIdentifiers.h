@@ -67,6 +67,7 @@
     macro(name) \
     macro(now) \
     macro(Object) \
+    macro(opcode) \
     macro(origin) \
     macro(parse) \
     macro(propertyIsEnumerable) \

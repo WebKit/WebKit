@@ -72,7 +72,7 @@ inline bool compile(CompileMode compileMode, ExecState* exec, CodeBlock* codeBlo
         return false;
     
 #if DFG_ENABLE(DEBUG_VERBOSE)
-    dataLogF("DFG compiling code block %p(%p) for executable %p, number of instructions = %u.\n", codeBlock, codeBlock->alternative(), codeBlock->ownerExecutable(), codeBlock->instructionCount());
+    dataLog("DFG compiling ", *codeBlock, ", number of instructions = ", codeBlock->instructionCount(), "\n");
 #endif
     
     // Derive our set of must-handle values. The compilation must be at least conservative

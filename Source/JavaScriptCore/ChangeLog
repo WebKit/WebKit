@@ -1,3 +1,36 @@
+2012-12-05  Filip Pizlo  <fpizlo@apple.com>
+
+        JSC profiler should not count executions of op_call_put_result because doing so changes DFG codegen
+        https://bugs.webkit.org/show_bug.cgi?id=104102
+
+        Reviewed by Oliver Hunt.
+
+        This removes op_call_put_result from profiling, since profiling it has an effect on
+        codegen. This fix enables all of SunSpider, V8, and Kraken to be profiled with the
+        new profiler.
+        
+        To make this all fit together, the profiler now also reports in its output the exact
+        bytecode opcode name for each instruction (in addition to the stringified dump of that
+        bytecode), so that tools that grok the output can take note of op_call_put_result and
+        work around the fact that it has no counts.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        (JSC::DFG::ByteCodeParser::parseCodeBlock):
+        * dfg/DFGDriver.cpp:
+        (JSC::DFG::compile):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        * profiler/ProfilerBytecode.cpp:
+        (JSC::Profiler::Bytecode::toJS):
+        * profiler/ProfilerBytecode.h:
+        (JSC::Profiler::Bytecode::Bytecode):
+        (JSC::Profiler::Bytecode::opcodeID):
+        (Bytecode):
+        * profiler/ProfilerDatabase.cpp:
+        (JSC::Profiler::Database::ensureBytecodesFor):
+        * runtime/CommonIdentifiers.h:
+
 2012-12-04  Filip Pizlo  <fpizlo@apple.com>
 
         display-profiler-output should be able to show source code

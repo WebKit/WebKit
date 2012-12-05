@@ -234,14 +234,16 @@ void JIT::privateCompileMainPass()
         dataLogF("Old JIT emitting code for bc#%u at offset 0x%lx.\n", m_bytecodeOffset, (long)debugOffset());
 #endif
         
-        if (m_compilation) {
+        OpcodeID opcodeID = m_interpreter->getOpcodeID(currentInstruction->u.opcode);
+
+        if (m_compilation && opcodeID != op_call_put_result) {
             add64(
                 TrustedImm32(1),
                 AbsoluteAddress(m_compilation->executionCounterFor(Profiler::OriginStack(Profiler::Origin(
                     m_compilation->bytecodes(), m_bytecodeOffset)))->address()));
         }
 
-        switch (m_interpreter->getOpcodeID(currentInstruction->u.opcode)) {
+        switch (opcodeID) {
         DEFINE_BINARY_OP(op_del_by_val)
         DEFINE_BINARY_OP(op_in)
         DEFINE_BINARY_OP(op_less)

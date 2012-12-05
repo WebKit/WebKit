@@ -80,7 +80,7 @@ Bytecodes* Database::ensureBytecodesFor(CodeBlock* codeBlock)
     for (unsigned bytecodeIndex = 0; bytecodeIndex < codeBlock->instructions().size();) {
         out.reset();
         codeBlock->dumpBytecode(out, bytecodeIndex);
-        result->append(Bytecode(bytecodeIndex, out.toCString()));
+        result->append(Bytecode(bytecodeIndex, m_globalData.interpreter->getOpcodeID(codeBlock->instructions()[bytecodeIndex].u.opcode), out.toCString()));
         
         bytecodeIndex += opcodeLength(
             m_globalData.interpreter->getOpcodeID(
