@@ -1,3 +1,18 @@
+2012-12-05  Arnaud Renevier  <a.renevier@sisa.samsung.com>
+
+        [Gtk] navigator.plugins contains too many plugin entries. First one are garbages
+        https://bugs.webkit.org/show_bug.cgi?id=102438
+
+        Reviewed by Xan Lopez.
+
+        In getPluginInfo, outPlugins is resized to plugins.size and then,
+        plugins are appended to it. So at the end, outPlugins will be twice
+        too large, and first half will contain null objects. As outPlugins
+        size is 0 when calling getPluginInfo, we don't need to resize it.
+
+        * WebCoreSupport/PlatformStrategiesGtk.cpp:
+        (PlatformStrategiesGtk::getPluginInfo):
+
 2012-12-04  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Avoid unnecessary heap allocations during drag and drop operations

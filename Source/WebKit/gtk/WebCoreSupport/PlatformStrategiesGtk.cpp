@@ -130,7 +130,6 @@ void PlatformStrategiesGtk::getPluginInfo(const Page* page, Vector<PluginInfo>& 
 {
     PluginDatabase* database = PluginDatabase::installedPlugins();
     const Vector<PluginPackage*> &plugins = database->plugins();
-    outPlugins.resize(plugins.size());
 
     for (size_t i = 0; i < plugins.size(); ++i) {
         PluginPackage* package = plugins[i];
