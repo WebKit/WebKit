@@ -73,7 +73,7 @@ EXPORTS
     ?addPropertyTransitionToExistingStructure@Structure@JSC@@SAPAV12@PAV12@VPropertyName@2@IPAVJSCell@2@AAH@Z
     ?addPropertyWithoutTransition@Structure@JSC@@QAEHAAVJSGlobalData@2@VPropertyName@2@IPAVJSCell@2@@Z
     ?addPrivateBuffer@MemoryClassInfo@WTF@@QAEXIPBD00@Z
-    ?addRawBuffer@MemoryClassInfo@WTF@@QAEXABQBXIPBD1@Z
+    ?addRawBuffer@MemoryClassInfo@WTF@@QAEXPBXIPBD1@Z
     ?addSlowCase@Identifier@JSC@@CA?AV?$PassRefPtr@VStringImpl@WTF@@@WTF@@PAVExecState@2@PAVStringImpl@4@@Z
     ?addSlowCase@Identifier@JSC@@CA?AV?$PassRefPtr@VStringImpl@WTF@@@WTF@@PAVJSGlobalData@2@PAVStringImpl@4@@Z
     ?addStaticGlobals@JSGlobalObject@JSC@@IAEXPAUGlobalPropertyInfo@12@H@Z

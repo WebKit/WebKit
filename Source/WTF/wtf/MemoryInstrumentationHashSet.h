@@ -37,7 +37,7 @@
 namespace WTF {
 
 template<typename ValueArg, typename HashArg, typename TraitsArg>
-void reportMemoryUsage(const HashSet<ValueArg, HashArg, TraitsArg>* const& hashSet, MemoryObjectInfo* memoryObjectInfo)
+void reportMemoryUsage(const HashSet<ValueArg, HashArg, TraitsArg>* hashSet, MemoryObjectInfo* memoryObjectInfo)
 {
     MemoryClassInfo info(memoryObjectInfo, hashSet);
     info.addPrivateBuffer(sizeof(typename HashTable<ValueArg, ValueArg, IdentityExtractor, HashArg, TraitsArg, TraitsArg>::ValueType) * hashSet->capacity());
