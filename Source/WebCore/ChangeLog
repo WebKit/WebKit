@@ -1,3 +1,29 @@
+2012-12-05  Alexis Menard  <alexis@webkit.org>
+
+        REGRESSION (r136683): css3/calc/background-position-parsing.html failing on EFL Linux 64-bit Debug WK2
+        https://bugs.webkit.org/show_bug.cgi?id=104131
+
+        Reviewed by Antti Koivisto.
+
+        css3/calc/background-position-parsing.html assert in debug because we
+        call CSSParser::validUnit multiple times in a row. The problem was with
+        validUnit which check calc() values and save the result inside
+        m_parsedCalculation for later usage. validUnit expects you to
+        use m_parsedCalculation therefore calling validUnit again with
+        m_parsedCalculation being set asserts. As parseFillBackgroundPosition
+        just want to check wether the current value is maybe valid for
+        background-position we can just relax the check to allow either the
+        valid keywords or any other units (we will anyway filter the incorrect
+        values later in the parsing). The most important check at this point
+        for the shorthand is the validity of the keyword.
+
+        No new tests : the assert was covered by css3/calc/background-position-parsing.html.
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::isPotentialPositionValue):
+        (WebCore::CSSParser::parseFillBackgroundPosition):
+        * css/CSSParser.h:
+
 2012-12-05  Stephen White  <senorblanco@chromium.org>
 
         Unreviewed, rolling out r136735.

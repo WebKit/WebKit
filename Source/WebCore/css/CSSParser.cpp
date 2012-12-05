@@ -3857,9 +3857,9 @@ void CSSParser::parse3ValuesBackgroundPosition(CSSParserValueList* valueList, Re
 #endif
 }
 
-inline bool CSSParser::isPositionValue(CSSParserValue* value)
+inline bool CSSParser::isPotentialPositionValue(CSSParserValue* value)
 {
-    return isBackgroundPositionKeyword(value->id) || validUnit(value, FPercent | FLength);
+    return !value->id || isBackgroundPositionKeyword(value->id);
 }
 
 void CSSParser::parseFillBackgroundPosition(CSSParserValueList* valueList, RefPtr<CSSValue>& value1, RefPtr<CSSValue>& value2)
@@ -3867,7 +3867,7 @@ void CSSParser::parseFillBackgroundPosition(CSSParserValueList* valueList, RefPt
     unsigned numberOfValues = 0;
     for (unsigned i = valueList->currentIndex(); i < valueList->size(); ++i, ++numberOfValues) {
         CSSParserValue* current = valueList->valueAt(i);
-        if (isComma(current) || !current || (current->unit == CSSParserValue::Operator && current->iValue == '/') || !isPositionValue(current))
+        if (isComma(current) || !current || (current->unit == CSSParserValue::Operator && current->iValue == '/') || !isPotentialPositionValue(current))
             break;
     }
 
