@@ -1,1 +1,28 @@
-This tests that we avoid trying to lay out floats inside an inline with unicode-bidi: isolate. Test passes if we don't crash.
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderInline {BDI} at (0,0) size 574x18
+        RenderText {#text} at (0,0) size 0x0
+        RenderRuby (inline) {RUBY} at (0,0) size 254x18
+          RenderRubyRun (anonymous) at (0,136) size 254x18
+            RenderRubyBase (anonymous) at (0,0) size 254x18
+              RenderText {#text} at (0,0) size 254x18
+                text run at (0,0) width 254: "PASS, if no exception or crash in debug"
+        RenderText {#text} at (254,136) size 4x18
+          text run at (254,136) width 4: "     "
+        RenderInline {EM} at (0,0) size 312x18
+          RenderText {#text} at (258,136) size 4x18
+            text run at (258,136) width 4: "         "
+          RenderEmbeddedObject {EMBED} at (262,0) size 300x150
+          RenderText {#text} at (562,136) size 4x18
+            text run at (562,136) width 4: "         "
+          RenderText {#text} at (566,136) size 4x18
+            text run at (566,136) width 4: "     "
+        RenderText {#text} at (570,136) size 4x18
+          text run at (570,136) width 4: " "
+      RenderText {#text} at (574,136) size 4x18
+        text run at (574,136) width 4: " "
+      RenderText {#text} at (578,136) size 4x18
+        text run at (578,136) width 4: " "
