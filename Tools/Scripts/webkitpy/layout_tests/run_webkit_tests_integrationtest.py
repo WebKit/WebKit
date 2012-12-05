@@ -86,9 +86,8 @@ def passing_run(extra_args=None, port_obj=None, tests_included=False, host=None,
     if shared_port:
         port_obj.host.port_factory.get = lambda *args, **kwargs: port_obj
 
-    buildbot_output = StringIO.StringIO()
-    regular_output = StringIO.StringIO()
-    run_details = run_webkit_tests.run(port_obj, options, parsed_args, buildbot_output=buildbot_output, regular_output=regular_output)
+    logging_stream = StringIO.StringIO()
+    run_details = run_webkit_tests.run(port_obj, options, parsed_args, logging_stream=logging_stream)
     return run_details.exit_code == 0
 
 
@@ -100,8 +99,8 @@ def logging_run(extra_args=None, port_obj=None, tests_included=False, host=None,
     if not port_obj:
         port_obj = host.port_factory.get(port_name=options.platform, options=options)
 
-    res, buildbot_output, regular_output = run_and_capture(port_obj, options, parsed_args, shared_port)
-    return (res, buildbot_output, regular_output, host.user)
+    res, output = run_and_capture(port_obj, options, parsed_args, shared_port)
+    return (res, output, host.user)
 
 
 def run_and_capture(port_obj, options, parsed_args, shared_port=True):
@@ -110,14 +109,11 @@ def run_and_capture(port_obj, options, parsed_args, shared_port=True):
     oc = outputcapture.OutputCapture()
     try:
         oc.capture_output()
-        buildbot_output = StringIO.StringIO()
-        regular_output = StringIO.StringIO()
-        run_details = run_webkit_tests.run(port_obj, options, parsed_args,
-                                           buildbot_output=buildbot_output,
-                                           regular_output=regular_output)
+        logging_stream = StringIO.StringIO()
+        run_details = run_webkit_tests.run(port_obj, options, parsed_args, logging_stream=logging_stream)
     finally:
         oc.restore_output()
-    return (run_details.exit_code, buildbot_output, regular_output)
+    return (run_details.exit_code, logging_stream)
 
 
 def get_tests_run(extra_args=None, tests_included=False, flatten_batches=False,
@@ -302,7 +298,7 @@ class MainTest(unittest.TestCase, StreamTestingMixin):
         self.should_test_processes = not self._platform.is_win()
 
     def test_all(self):
-        res, out, err, user = logging_run([], tests_included=True)
+        res, _, _ = logging_run([], tests_included=True)
         self.assertEqual(res, unexpected_tests_count)
 
     def test_basic(self):
@@ -321,7 +317,7 @@ class MainTest(unittest.TestCase, StreamTestingMixin):
         if "WEBKIT_TEST_MAX_LOCKED_SHARDS" in os.environ:
             save_env_webkit_test_max_locked_shards = os.environ["WEBKIT_TEST_MAX_LOCKED_SHARDS"]
             del os.environ["WEBKIT_TEST_MAX_LOCKED_SHARDS"]
-        _, _, regular_output, _ = logging_run(['--debug-rwt-logging', '--child-processes', '2'], shared_port=False)
+        _, regular_output, _ = logging_run(['--debug-rwt-logging', '--child-processes', '2'], shared_port=False)
         try:
             self.assertTrue(any(['(1 locked)' in line for line in regular_output.buflist]))
         finally:
@@ -330,13 +326,13 @@ class MainTest(unittest.TestCase, StreamTestingMixin):
 
     def test_child_processes_2(self):
         if self.should_test_processes:
-            _, _, regular_output, _ = logging_run(
+            _, regular_output, _ = logging_run(
                 ['--debug-rwt-logging', '--child-processes', '2'], shared_port=False)
             self.assertTrue(any(['Running 2 ' in line for line in regular_output.buflist]))
 
     def test_child_processes_min(self):
         if self.should_test_processes:
-            _, _, regular_output, _ = logging_run(
+            _, regular_output, _ = logging_run(
                 ['--debug-rwt-logging', '--child-processes', '2', '-i', 'passes/passes', 'passes'],
                 tests_included=True, shared_port=False)
             self.assertTrue(any(['Running 1 ' in line for line in regular_output.buflist]))
@@ -367,40 +363,33 @@ class MainTest(unittest.TestCase, StreamTestingMixin):
 
     def test_full_results_html(self):
         # FIXME: verify html?
-        res, out, err, user = logging_run(['--full-results-html'])
+        res, _, _ = logging_run(['--full-results-html'])
         self.assertEqual(res, 0)
 
     def test_hung_thread(self):
-        res, out, err, user = logging_run(['--run-singly', '--time-out-ms=50',
-                                          'failures/expected/hang.html'],
-                                          tests_included=True)
+        res, err, _ = logging_run(['--run-singly', '--time-out-ms=50', 'failures/expected/hang.html'], tests_included=True)
         # Note that hang.html is marked as WontFix and all WontFix tests are
         # expected to Pass, so that actually running them generates an "unexpected" error.
         self.assertEqual(res, 1)
-        self.assertNotEmpty(out)
         self.assertNotEmpty(err)
 
     def test_keyboard_interrupt(self):
         # Note that this also tests running a test marked as SKIP if
         # you specify it explicitly.
-        self.assertRaises(KeyboardInterrupt, logging_run,
-            ['failures/expected/keyboard.html', '--child-processes', '1'],
-            tests_included=True)
+        self.assertRaises(KeyboardInterrupt, logging_run, ['failures/expected/keyboard.html', '--child-processes', '1'], tests_included=True)
 
         if self.should_test_processes:
             self.assertRaises(KeyboardInterrupt, logging_run,
                 ['failures/expected/keyboard.html', 'passes/text.html', '--child-processes', '2', '--force'], tests_included=True, shared_port=False)
 
     def test_no_tests_found(self):
-        res, out, err, user = logging_run(['resources'], tests_included=True)
+        res, err, _ = logging_run(['resources'], tests_included=True)
         self.assertEqual(res, -1)
-        self.assertEmpty(out)
         self.assertContains(err, 'No tests to run.\n')
 
     def test_no_tests_found_2(self):
-        res, out, err, user = logging_run(['foo'], tests_included=True)
+        res, err, _ = logging_run(['foo'], tests_included=True)
         self.assertEqual(res, -1)
-        self.assertEmpty(out)
         self.assertContains(err, 'No tests to run.\n')
 
     def test_natural_order(self):
@@ -490,10 +479,9 @@ class MainTest(unittest.TestCase, StreamTestingMixin):
         # The total number of tests should be: number_of_tests *
         # repeat_each * iterations
         host = MockHost()
-        res, out, err, _ = logging_run(
+        res, err, _ = logging_run(
             ['--iterations', '2', '--repeat-each', '4', '--debug-rwt-logging', 'passes/text.html', 'failures/expected/text.html'],
             tests_included=True, host=host)
-        self.assertContains(out, "=> Results: 8/16 tests passed (50.0%)\n")
         self.assertContains(err, "All 16 tests ran as expected.\n")
 
     def test_run_chunk(self):
@@ -545,7 +533,7 @@ class MainTest(unittest.TestCase, StreamTestingMixin):
         self.assertTrue(has_passes_text)
 
     def test_run_singly_actually_runs_tests(self):
-        res, _, _, _ = logging_run(['--run-singly', 'failures/unexpected'])
+        res, _, _ = logging_run(['--run-singly', 'failures/unexpected'])
         self.assertEqual(res, unexpected_failures)
 
     def test_single_file(self):
@@ -577,7 +565,7 @@ class MainTest(unittest.TestCase, StreamTestingMixin):
         tests_run = get_tests_run(['--test-list=%s' % filename], tests_included=True, flatten_batches=True, host=host)
         self.assertEqual(['passes/text.html'], tests_run)
         host.filesystem.remove(filename)
-        res, out, err, user = logging_run(['--test-list=%s' % filename], tests_included=True, host=host)
+        res, err, user = logging_run(['--test-list=%s' % filename], tests_included=True, host=host)
         self.assertEqual(res, -1)
         self.assertNotEmpty(err)
 
@@ -591,10 +579,9 @@ class MainTest(unittest.TestCase, StreamTestingMixin):
     def test_unexpected_failures(self):
         # Run tests including the unexpected failures.
         self._url_opened = None
-        res, out, err, user = logging_run(tests_included=True)
+        res, err, user = logging_run(tests_included=True)
 
         self.assertEqual(res, unexpected_tests_count)
-        self.assertNotEmpty(out)
         self.assertNotEmpty(err)
         self.assertEqual(user.opened_urls, [path.abspath_to_uri(MockHost().platform, '/tmp/layout-test-results/results.html')])
 
@@ -602,7 +589,7 @@ class MainTest(unittest.TestCase, StreamTestingMixin):
         # Test that we update expectations in place. If the expectation
         # is missing, update the expected generic location.
         host = MockHost()
-        res, out, err, _ = logging_run(['--no-show-results',
+        res, err, _ = logging_run(['--no-show-results',
             'failures/expected/missing_image.html',
             'failures/unexpected/missing_text.html',
             'failures/unexpected/text-image-checksum.html'],
@@ -624,7 +611,7 @@ class MainTest(unittest.TestCase, StreamTestingMixin):
         args = ['--pixel-tests', '--pixel-test-directory', 'failures/unexpected/pixeldir',
                 'failures/unexpected/pixeldir/image_in_pixeldir.html',
                 'failures/unexpected/image_not_in_pixeldir.html']
-        res, out, err, _ = logging_run(extra_args=args, host=host, tests_included=True)
+        res, err, _ = logging_run(extra_args=args, host=host, tests_included=True)
 
         self.assertEqual(res, 1)
         expected_token = '"unexpected":{"pixeldir":{"image_in_pixeldir.html":{"expected":"PASS","actual":"IMAGE"'
@@ -641,7 +628,7 @@ class MainTest(unittest.TestCase, StreamTestingMixin):
         host = MockHost()
         options, parsed_args = run_webkit_tests.parse_args(['--pixel-tests', '--no-new-test-results'])
         test_port = CustomExitCodePort(host, options=options)
-        res, out, err, _ = logging_run(['--no-show-results',
+        res, err, _ = logging_run(['--no-show-results',
             'failures/expected/missing_image.html',
             'failures/unexpected/missing_text.html',
             'failures/unexpected/text-image-checksum.html'],
@@ -650,12 +637,12 @@ class MainTest(unittest.TestCase, StreamTestingMixin):
 
     def test_crash_with_stderr(self):
         host = MockHost()
-        res, buildbot_output, regular_output, user = logging_run(['failures/unexpected/crash-with-stderr.html'], tests_included=True, host=host)
+        res, regular_output, user = logging_run(['failures/unexpected/crash-with-stderr.html'], tests_included=True, host=host)
         self.assertTrue(host.filesystem.read_text_file('/tmp/layout-test-results/full_results.json').find('{"crash-with-stderr.html":{"expected":"PASS","actual":"CRASH","has_stderr":true}}') != -1)
 
     def test_no_image_failure_with_image_diff(self):
         host = MockHost()
-        res, buildbot_output, regular_output, user = logging_run(['failures/unexpected/checksum-with-matching-image.html'], tests_included=True, host=host)
+        res, regular_output, user = logging_run(['failures/unexpected/checksum-with-matching-image.html'], tests_included=True, host=host)
         self.assertTrue(host.filesystem.read_text_file('/tmp/layout-test-results/full_results.json').find('"num_regressions":0') != -1)
 
     def test_crash_log(self):
@@ -666,7 +653,7 @@ class MainTest(unittest.TestCase, StreamTestingMixin):
         mock_crash_report = make_mock_crash_report_darwin('DumpRenderTree', 12345)
         host = MockHost()
         host.filesystem.write_text_file('/Users/mock/Library/Logs/DiagnosticReports/DumpRenderTree_2011-06-13-150719_quadzen.crash', mock_crash_report)
-        res, buildbot_output, regular_output, user = logging_run(['failures/unexpected/crash-with-stderr.html'], tests_included=True, host=host)
+        res, regular_output, user = logging_run(['failures/unexpected/crash-with-stderr.html'], tests_included=True, host=host)
         expected_crash_log = mock_crash_report
         self.assertEqual(host.filesystem.read_text_file('/tmp/layout-test-results/failures/unexpected/crash-with-stderr-crash-log.txt'), expected_crash_log)
 
@@ -678,12 +665,12 @@ class MainTest(unittest.TestCase, StreamTestingMixin):
         mock_crash_report = make_mock_crash_report_darwin('WebProcess', 12345)
         host = MockHost()
         host.filesystem.write_text_file('/Users/mock/Library/Logs/DiagnosticReports/WebProcess_2011-06-13-150719_quadzen.crash', mock_crash_report)
-        res, buildbot_output, regular_output, user = logging_run(['failures/unexpected/web-process-crash-with-stderr.html'], tests_included=True, host=host)
+        logging_run(['failures/unexpected/web-process-crash-with-stderr.html'], tests_included=True, host=host)
         self.assertEqual(host.filesystem.read_text_file('/tmp/layout-test-results/failures/unexpected/web-process-crash-with-stderr-crash-log.txt'), mock_crash_report)
 
     def test_exit_after_n_failures_upload(self):
         host = MockHost()
-        res, buildbot_output, regular_output, user = logging_run(
+        res, regular_output, user = logging_run(
            ['failures/unexpected/text-image-checksum.html', 'passes/text.html', '--exit-after-n-failures', '1'],
            tests_included=True, host=host)
 
@@ -761,7 +748,7 @@ class MainTest(unittest.TestCase, StreamTestingMixin):
 
         host = MockHost()
         with host.filesystem.mkdtemp() as tmpdir:
-            res, out, err, user = logging_run(['--results-directory=' + str(tmpdir)], tests_included=True, host=host)
+            res, err, user = logging_run(['--results-directory=' + str(tmpdir)], tests_included=True, host=host)
             self.assertEqual(user.opened_urls, [path.abspath_to_uri(host.platform, host.filesystem.join(tmpdir, 'results.html'))])
 
     def test_results_directory_default(self):
@@ -769,7 +756,7 @@ class MainTest(unittest.TestCase, StreamTestingMixin):
         # look for what the output results url was.
 
         # This is the default location.
-        res, out, err, user = logging_run(tests_included=True)
+        _, _, user = logging_run(tests_included=True)
         self.assertEqual(user.opened_urls, [path.abspath_to_uri(MockHost().platform, '/tmp/layout-test-results/results.html')])
 
     def test_results_directory_relative(self):
@@ -778,15 +765,14 @@ class MainTest(unittest.TestCase, StreamTestingMixin):
         host = MockHost()
         host.filesystem.maybe_make_directory('/tmp/cwd')
         host.filesystem.chdir('/tmp/cwd')
-        res, out, err, user = logging_run(['--results-directory=foo'], tests_included=True, host=host)
+        res, err, user = logging_run(['--results-directory=foo'], tests_included=True, host=host)
         self.assertEqual(user.opened_urls, [path.abspath_to_uri(host.platform, '/tmp/cwd/foo/results.html')])
 
     def test_retrying_and_flaky_tests(self):
         host = MockHost()
-        res, out, err, _ = logging_run(['--debug-rwt-logging', 'failures/flaky'], tests_included=True, host=host)
+        res, err, _ = logging_run(['--debug-rwt-logging', 'failures/flaky'], tests_included=True, host=host)
         self.assertEqual(res, 0)
         self.assertTrue('Retrying' in err.getvalue())
-        self.assertTrue('Unexpected flakiness' in out.getvalue())
         self.assertTrue(host.filesystem.exists('/tmp/layout-test-results/failures/flaky/text-actual.txt'))
         self.assertTrue(host.filesystem.exists('/tmp/layout-test-results/retries/tests_run0.txt'))
         self.assertFalse(host.filesystem.exists('/tmp/layout-test-results/retries/failures/flaky/text-actual.txt'))
@@ -794,12 +780,10 @@ class MainTest(unittest.TestCase, StreamTestingMixin):
         # Now we test that --clobber-old-results does remove the old entries and the old retries,
         # and that we don't retry again.
         host = MockHost()
-        res, out, err, _ = logging_run(['--no-retry-failures', '--clobber-old-results', 'failures/flaky'], tests_included=True, host=host)
+        res, err, _ = logging_run(['--no-retry-failures', '--clobber-old-results', 'failures/flaky'], tests_included=True, host=host)
         self.assertEqual(res, 1)
         self.assertTrue('Clobbering old results' in err.getvalue())
         self.assertTrue('flaky/text.html' in err.getvalue())
-        self.assertTrue('Unexpected text-only failures' in out.getvalue())
-        self.assertFalse('Unexpected flakiness' in out.getvalue())
         self.assertTrue(host.filesystem.exists('/tmp/layout-test-results/failures/flaky/text-actual.txt'))
         self.assertFalse(host.filesystem.exists('retries'))
 
@@ -872,7 +856,7 @@ class MainTest(unittest.TestCase, StreamTestingMixin):
 
     def test_reftest_should_not_use_naming_convention_if_not_listed_in_reftestlist(self):
         host = MockHost()
-        res, out, err, _ = logging_run(['--no-show-results', 'reftests/foo/'], tests_included=True, host=host)
+        res, err, _ = logging_run(['--no-show-results', 'reftests/foo/'], tests_included=True, host=host)
         json_string = host.filesystem.read_text_file('/tmp/layout-test-results/full_results.json')
         self.assertTrue(json_string.find('"unlistedtest.html":{"expected":"PASS","is_missing_text":true,"actual":"MISSING","is_missing_image":true}') != -1)
         self.assertTrue(json_string.find('"num_regressions":4') != -1)
@@ -922,7 +906,7 @@ class MainTest(unittest.TestCase, StreamTestingMixin):
         # Test to ensure that we don't generate -wdiff.html or -pretty.html if wdiff and PrettyPatch
         # aren't available.
         host = MockHost()
-        res, out, err, _ = logging_run(['--pixel-tests', 'failures/unexpected/text-image-checksum.html'], tests_included=True, host=host)
+        res, err, _ = logging_run(['--pixel-tests', 'failures/unexpected/text-image-checksum.html'], tests_included=True, host=host)
         written_files = host.filesystem.written_files
         self.assertTrue(any(path.endswith('-diff.txt') for path in written_files.keys()))
         self.assertFalse(any(path.endswith('-wdiff.html') for path in written_files.keys()))
@@ -934,19 +918,13 @@ class MainTest(unittest.TestCase, StreamTestingMixin):
         self.assertEqual(full_results['has_pretty_patch'], False)
 
     def test_unsupported_platform(self):
-        oc = outputcapture.OutputCapture()
-        try:
-            oc.capture_output()
-            res = run_webkit_tests.main(['--platform', 'foo'])
-        finally:
-            stdout, stderr, logs = oc.restore_output()
+        stdout = StringIO.StringIO()
+        stderr = StringIO.StringIO()
+        res = run_webkit_tests.main(['--platform', 'foo'], stdout, stderr)
 
         self.assertEqual(res, run_webkit_tests.EXCEPTIONAL_EXIT_STATUS)
-        self.assertEqual(stdout, '')
-        self.assertTrue('unsupported platform' in stderr)
-
-        # This is empty because we don't even get a chance to configure the logger before failing.
-        self.assertEqual(logs, '')
+        self.assertEqual(stdout.getvalue(), '')
+        self.assertTrue('unsupported platform' in stderr.getvalue())
 
     def test_verbose_in_child_processes(self):
         # When we actually run multiple processes, we may have to reconfigure logging in the
@@ -961,11 +939,10 @@ class MainTest(unittest.TestCase, StreamTestingMixin):
         options, parsed_args = parse_args(['--verbose', '--fully-parallel', '--child-processes', '2', 'passes/text.html', 'passes/image.html'], tests_included=True, print_nothing=False)
         host = MockHost()
         port_obj = host.port_factory.get(port_name=options.platform, options=options)
-        buildbot_output = StringIO.StringIO()
-        regular_output = StringIO.StringIO()
-        run_webkit_tests.run(port_obj, options, parsed_args, buildbot_output=buildbot_output, regular_output=regular_output)
-        self.assertTrue('text.html passed' in regular_output.getvalue())
-        self.assertTrue('image.html passed' in regular_output.getvalue())
+        logging_stream = StringIO.StringIO()
+        run_webkit_tests.run(port_obj, options, parsed_args, logging_stream=logging_stream)
+        self.assertTrue('text.html passed' in logging_stream.getvalue())
+        self.assertTrue('image.html passed' in logging_stream.getvalue())
 
 
 class EndToEndTest(unittest.TestCase):
@@ -976,7 +953,7 @@ class EndToEndTest(unittest.TestCase):
 
     def test_end_to_end(self):
         host = MockHost()
-        res, out, err, user = logging_run(tests_included=True, host=host)
+        res, _, user = logging_run(tests_included=True, host=host)
 
         self.assertEqual(res, unexpected_tests_count)
         results = self.parse_full_results(host.filesystem.read_text_file('/tmp/layout-test-results/full_results.json'))
@@ -991,7 +968,7 @@ class EndToEndTest(unittest.TestCase):
         # Test that we update expectations in place. If the expectation
         # is missing, update the expected generic location.
         host = MockHost()
-        res, out, err, _ = logging_run(['--no-show-results', 'reftests/foo/'], tests_included=True, host=host)
+        res, _, _ = logging_run(['--no-show-results', 'reftests/foo/'], tests_included=True, host=host)
         file_list = host.filesystem.written_files.keys()
         file_list.remove('/tmp/layout-test-results/tests_run0.txt')
         json_string = host.filesystem.read_text_file('/tmp/layout-test-results/full_results.json')
@@ -1023,13 +1000,12 @@ class RebaselineTest(unittest.TestCase, StreamTestingMixin):
         # Test that we update expectations in place. If the expectation
         # is missing, update the expected generic location.
         host = MockHost()
-        res, out, err, _ = logging_run(
+        res, err, _ = logging_run(
             ['--pixel-tests', '--reset-results', 'passes/image.html', 'failures/expected/missing_image.html'],
             tests_included=True, host=host, new_results=True)
         file_list = host.filesystem.written_files.keys()
         file_list.remove('/tmp/layout-test-results/tests_run0.txt')
         self.assertEqual(res, 0)
-        self.assertEmpty(out)
         self.assertEqual(len(file_list), 7)
         self.assertBaselines(file_list, "passes/image", [".txt", ".png"], err)
         self.assertBaselines(file_list, "failures/expected/missing_image", [".txt", ".png"], err)
@@ -1038,7 +1014,7 @@ class RebaselineTest(unittest.TestCase, StreamTestingMixin):
         # Test that we update expectations in place. If the expectation
         # is missing, update the expected generic location.
         host = MockHost()
-        res, out, err, _ = logging_run(['--no-show-results',
+        res, err, _ = logging_run(['--no-show-results',
             'failures/unexpected/missing_text.html',
             'failures/unexpected/missing_image.html',
             'failures/unexpected/missing_audio.html',
@@ -1047,7 +1023,6 @@ class RebaselineTest(unittest.TestCase, StreamTestingMixin):
         file_list = host.filesystem.written_files.keys()
         file_list.remove('/tmp/layout-test-results/tests_run0.txt')
         self.assertEqual(res, 0)
-        self.assertNotEmpty(out)
         self.assertEqual(len(file_list), 9)
         self.assertBaselines(file_list, "failures/unexpected/missing_text", [".txt"], err)
         self.assertBaselines(file_list, "platform/test/failures/unexpected/missing_image", [".png"], err)
@@ -1057,13 +1032,12 @@ class RebaselineTest(unittest.TestCase, StreamTestingMixin):
         # Test that we update the platform expectations in the version-specific directories
         # for both existing and new baselines.
         host = MockHost()
-        res, out, err, _ = logging_run(
+        res, err, _ = logging_run(
             ['--pixel-tests', '--new-baseline', 'passes/image.html', 'failures/expected/missing_image.html'],
             tests_included=True, host=host, new_results=True)
         file_list = host.filesystem.written_files.keys()
         file_list.remove('/tmp/layout-test-results/tests_run0.txt')
         self.assertEqual(res, 0)
-        self.assertEmpty(out)
         self.assertEqual(len(file_list), 7)
         self.assertBaselines(file_list,
             "platform/test-mac-leopard/passes/image", [".txt", ".png"], err)

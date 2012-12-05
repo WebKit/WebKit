@@ -39,6 +39,7 @@ from webkitpy.common.host import Host
 from webkitpy.layout_tests.controllers.manager import Manager
 from webkitpy.layout_tests.models import test_expectations
 from webkitpy.layout_tests.port import configuration_options, platform_options
+from webkitpy.layout_tests.views import buildbot_results
 from webkitpy.layout_tests.views import printing
 
 
@@ -86,9 +87,9 @@ def lint(port, options):
     return 0
 
 
-def run(port, options, args, regular_output=sys.stderr, buildbot_output=sys.stdout):
+def run(port, options, args, logging_stream):
     try:
-        printer = printing.Printer(port, options, regular_output, buildbot_output, logger=logging.getLogger())
+        printer = printing.Printer(port, options, logging_stream, logger=logging.getLogger())
 
         _set_up_derived_options(port, options)
         manager = Manager(port, options, printer)
@@ -396,7 +397,7 @@ def parse_args(args=None):
     return option_parser.parse_args(args)
 
 
-def main(argv=None):
+def main(argv=None, stdout=sys.stdout, stderr=sys.stderr):
     options, args = parse_args(argv)
     if options.platform and 'test' in options.platform:
         # It's a bit lame to import mocks into real code, but this allows the user
@@ -411,17 +412,23 @@ def main(argv=None):
         port = host.port_factory.get(options.platform, options)
     except NotImplementedError, e:
         # FIXME: is this the best way to handle unsupported port names?
-        print >> sys.stderr, str(e)
+        print >> stderr, str(e)
         return EXCEPTIONAL_EXIT_STATUS
 
     logging.getLogger().setLevel(logging.DEBUG if options.debug_rwt_logging else logging.INFO)
     try:
         if options.lint_test_files:
             return lint(port, options)
-        return run(port, options, args).exit_code
+
+        run_details = run(port, options, args, stderr)
+
+        bot_printer = buildbot_results.BuildBotPrinter(stdout, options.debug_rwt_logging)
+        bot_printer.print_results(run_details)
+
+        return run_details.exit_code
     except Exception, e:
-        print >> sys.stderr, '\n%s raised: %s' % (e.__class__.__name__, str(e))
-        traceback.print_exc(file=sys.stderr)
+        print >> stderr, '\n%s raised: %s' % (e.__class__.__name__, str(e))
+        traceback.print_exc(file=stderr)
         raise
 
 

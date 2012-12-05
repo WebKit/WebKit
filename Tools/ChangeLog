@@ -1,5 +1,92 @@
 2012-12-05  Dirk Pranke  <dpranke@chromium.org>
 
+        nrwt: split all of the buildbot-specific output into its own file
+        https://bugs.webkit.org/show_bug.cgi?id=104165
+
+        Reviewed by Ojan Vafai.
+
+        Now that we have the RunDetails object we can move all of the
+        buildbot-specific knowledge out of the core test-running code
+        and into the outermost run_webkit_tests layer.
+
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        (run):
+        (main):
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+        (passing_run):
+        (logging_run):
+        (run_and_capture):
+        (MainTest.test_all):
+        (MainTest.test_max_locked_shards):
+        (MainTest.test_child_processes_2):
+        (MainTest.test_child_processes_min):
+        (MainTest.test_full_results_html):
+        (MainTest.test_hung_thread):
+        (MainTest.test_keyboard_interrupt):
+        (MainTest.test_no_tests_found):
+        (MainTest.test_no_tests_found_2):
+        (MainTest.test_repeat_each_iterations_num_tests):
+        (MainTest.test_run_singly_actually_runs_tests):
+        (MainTest.test_test_list):
+        (MainTest.test_unexpected_failures):
+        (MainTest.test_missing_and_unexpected_results):
+        (MainTest.test_pixel_test_directories):
+        (MainTest.test_missing_and_unexpected_results_with_custom_exit_code):
+        (MainTest.test_crash_with_stderr):
+        (MainTest.test_no_image_failure_with_image_diff):
+        (MainTest.test_crash_log):
+        (MainTest.test_web_process_crash_log):
+        (MainTest.test_exit_after_n_failures_upload):
+        (MainTest.test_results_directory_absolute):
+        (MainTest.test_results_directory_default):
+        (MainTest.test_results_directory_relative):
+        (MainTest.test_retrying_and_flaky_tests):
+        (MainTest.test_reftest_should_not_use_naming_convention_if_not_listed_in_reftestlist):
+        (MainTest.test_output_diffs):
+        (MainTest.test_unsupported_platform):
+        (MainTest.test_verbose_in_child_processes):
+        (EndToEndTest.test_end_to_end):
+        (EndToEndTest.test_reftest_with_two_notrefs):
+        (RebaselineTest.test_reset_results):
+        (RebaselineTest.test_missing_results):
+        (RebaselineTest.test_new_baseline):
+        * Scripts/webkitpy/layout_tests/views/buildbot_results.py: Added.
+        (BuildBotPrinter):
+        (BuildBotPrinter.__init__):
+        (BuildBotPrinter.print_results):
+        (BuildBotPrinter._print):
+        (BuildBotPrinter.print_result_summary):
+        (BuildBotPrinter._print_result_summary_entry):
+        (BuildBotPrinter.print_unexpected_results):
+        (BuildBotPrinter.print_unexpected_results.add_to_dict_of_lists):
+        (BuildBotPrinter.print_unexpected_results.add_result):
+        * Scripts/webkitpy/layout_tests/views/buildbot_results_unittest.py: Added.
+        (BuildBotPrinterTests):
+        (BuildBotPrinterTests.assertEmpty):
+        (BuildBotPrinterTests.assertNotEmpty):
+        (BuildBotPrinterTests.get_printer):
+        (BuildBotPrinterTests.get_result):
+        (BuildBotPrinterTests.get_result_summary):
+        (BuildBotPrinterTests.test_print_unexpected_results):
+        (BuildBotPrinterTests.test_print_unexpected_results.get_unexpected_results):
+        * Scripts/webkitpy/layout_tests/views/printing.py:
+        (Printer):
+        (Printer.__init__):
+        (Printer.print_results):
+        (Printer._print_statistics_for_test_timings):
+        (Printer._print_baseline):
+        (Printer._print_debug):
+        * Scripts/webkitpy/layout_tests/views/printing_unittest.py:
+        (Testprinter.get_printer):
+        (Testprinter.get_result):
+        (Testprinter.test_configure_and_cleanup):
+        (Testprinter.test_print_config):
+        (Testprinter.test_print_one_line_summary):
+        (Testprinter.test_test_status_line):
+        (Testprinter.test_details):
+
+2012-12-05  Dirk Pranke  <dpranke@chromium.org>
+
         nrwt: collect all of the information about a run into a new RunDetails class
         https://bugs.webkit.org/show_bug.cgi?id=104158
 

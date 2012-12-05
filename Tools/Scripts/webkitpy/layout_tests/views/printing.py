@@ -32,7 +32,6 @@ import math
 import optparse
 
 from webkitpy.tool import grammar
-from webkitpy.common.net import resultsjsonparser
 from webkitpy.layout_tests.models import test_expectations
 from webkitpy.layout_tests.models.test_expectations import TestExpectations, TestExpectationParser
 from webkitpy.layout_tests.views.metered_stream import MeteredStream
@@ -55,23 +54,13 @@ def print_options():
 
 
 class Printer(object):
-    """Class handling all non-debug-logging printing done by run-webkit-tests.
+    """Class handling all non-debug-logging printing done by run-webkit-tests."""
 
-    Printing from run-webkit-tests falls into two buckets: general or
-    regular output that is read only by humans and can be changed at any
-    time, and output that is parsed by buildbots (and humans) and hence
-    must be changed more carefully and in coordination with the buildbot
-    parsing code (in chromium.org's buildbot/master.chromium/scripts/master/
-    log_parser/webkit_test_command.py script).
-
-    By default the buildbot-parsed code gets logged to stdout, and regular
-    output gets logged to stderr."""
-    def __init__(self, port, options, regular_output, buildbot_output, logger=None):
+    def __init__(self, port, options, regular_output, logger=None):
         self.num_completed = 0
         self.num_tests = 0
         self._port = port
         self._options = options
-        self._buildbot_stream = buildbot_output
         self._meter = MeteredStream(regular_output, options.debug_rwt_logging, logger=logger,
                                     number_of_columns=self._port.host.platform.terminal_width())
         self._running_tests = []
@@ -150,11 +139,9 @@ class Printer(object):
 
     def print_results(self, run_time, result_summary, summarized_results):
         self._print_timing_statistics(run_time, result_summary)
-        self._print_result_summary(result_summary)
         self._print_one_line_summary(result_summary.total - result_summary.expected_skips,
                                      result_summary.expected - result_summary.expected_skips,
                                      result_summary.unexpected)
-        self._print_unexpected_results(summarized_results)
 
     def _print_timing_statistics(self, total_time, result_summary):
         self._print_debug("Test timing:")
@@ -275,44 +262,6 @@ class Printer(object):
         self._print_debug("  Standard dev:    %6.3f" % std_deviation)
         self._print_debug("")
 
-    def _print_result_summary(self, result_summary):
-        if not self._options.debug_rwt_logging:
-            return
-
-        failed = result_summary.total_failures
-        total = result_summary.total - result_summary.expected_skips
-        passed = total - failed - result_summary.remaining
-        pct_passed = 0.0
-        if total > 0:
-            pct_passed = float(passed) * 100 / total
-
-        self._print_for_bot("=> Results: %d/%d tests passed (%.1f%%)" % (passed, total, pct_passed))
-        self._print_for_bot("")
-        self._print_result_summary_entry(result_summary, test_expectations.NOW, "Tests to be fixed")
-
-        self._print_for_bot("")
-        # FIXME: We should be skipping anything marked WONTFIX, so we shouldn't bother logging these stats.
-        self._print_result_summary_entry(result_summary, test_expectations.WONTFIX,
-            "Tests that will only be fixed if they crash (WONTFIX)")
-        self._print_for_bot("")
-
-    def _print_result_summary_entry(self, result_summary, timeline, heading):
-        total = len(result_summary.tests_by_timeline[timeline])
-        not_passing = (total -
-           len(result_summary.tests_by_expectation[test_expectations.PASS] &
-               result_summary.tests_by_timeline[timeline]))
-        self._print_for_bot("=> %s (%d):" % (heading, not_passing))
-
-        for result in TestExpectations.EXPECTATION_ORDER:
-            if result in (test_expectations.PASS, test_expectations.SKIP):
-                continue
-            results = (result_summary.tests_by_expectation[result] &
-                       result_summary.tests_by_timeline[timeline])
-            desc = TestExpectations.EXPECTATION_DESCRIPTIONS[result]
-            if not_passing and len(results):
-                pct = len(results) * 100.0 / not_passing
-                self._print_for_bot("  %5d %-24s (%4.1f%%)" % (len(results), desc, pct))
-
     def _print_one_line_summary(self, total, expected, unexpected):
         incomplete = total - expected - unexpected
         incomplete_str = ''
@@ -423,83 +372,6 @@ class Printer(object):
             relpath = '<none>'
         self._print_default('  %s: %s' % (extension[1:], relpath))
 
-    def _print_unexpected_results(self, summarized_results):
-        # Prints to the buildbot stream
-        passes = {}
-        flaky = {}
-        regressions = {}
-
-        def add_to_dict_of_lists(dict, key, value):
-            dict.setdefault(key, []).append(value)
-
-        def add_result(test, results, passes=passes, flaky=flaky, regressions=regressions):
-            actual = results['actual'].split(" ")
-            expected = results['expected'].split(" ")
-
-            def is_expected(result):
-                return (result in expected) or (result in ('TEXT', 'IMAGE+TEXT') and 'FAIL' in expected)
-
-            if all(is_expected(actual_result) for actual_result in actual):
-                # Don't print anything for tests that ran as expected.
-                return
-
-            if actual == ['PASS']:
-                if 'CRASH' in expected:
-                    add_to_dict_of_lists(passes, 'Expected to crash, but passed', test)
-                elif 'TIMEOUT' in expected:
-                    add_to_dict_of_lists(passes, 'Expected to timeout, but passed', test)
-                else:
-                    add_to_dict_of_lists(passes, 'Expected to fail, but passed', test)
-            elif len(actual) > 1:
-                # We group flaky tests by the first actual result we got.
-                add_to_dict_of_lists(flaky, actual[0], test)
-            else:
-                add_to_dict_of_lists(regressions, results['actual'], test)
-
-        resultsjsonparser.for_each_test(summarized_results['tests'], add_result)
-
-        if len(passes) or len(flaky) or len(regressions):
-            self._print_for_bot("")
-        if len(passes):
-            for key, tests in passes.iteritems():
-                self._print_for_bot("%s: (%d)" % (key, len(tests)))
-                tests.sort()
-                for test in tests:
-                    self._print_for_bot("  %s" % test)
-                self._print_for_bot("")
-            self._print_for_bot("")
-
-        if len(flaky):
-            descriptions = TestExpectations.EXPECTATION_DESCRIPTIONS
-            for key, tests in flaky.iteritems():
-                result = TestExpectations.EXPECTATIONS[key.lower()]
-                self._print_for_bot("Unexpected flakiness: %s (%d)" % (descriptions[result], len(tests)))
-                tests.sort()
-
-                for test in tests:
-                    result = resultsjsonparser.result_for_test(summarized_results['tests'], test)
-                    actual = result['actual'].split(" ")
-                    expected = result['expected'].split(" ")
-                    result = TestExpectations.EXPECTATIONS[key.lower()]
-                    # FIXME: clean this up once the old syntax is gone
-                    new_expectations_list = [TestExpectationParser._inverted_expectation_tokens[exp] for exp in list(set(actual) | set(expected))]
-                    self._print_for_bot("  %s [ %s ]" % (test, " ".join(new_expectations_list)))
-                self._print_for_bot("")
-            self._print_for_bot("")
-
-        if len(regressions):
-            descriptions = TestExpectations.EXPECTATION_DESCRIPTIONS
-            for key, tests in regressions.iteritems():
-                result = TestExpectations.EXPECTATIONS[key.lower()]
-                self._print_for_bot("Regressions: Unexpected %s (%d)" % (descriptions[result], len(tests)))
-                tests.sort()
-                for test in tests:
-                    self._print_for_bot("  %s [ %s ]" % (test, TestExpectationParser._inverted_expectation_tokens[key]))
-                self._print_for_bot("")
-
-        if len(summarized_results['tests']) and self._options.debug_rwt_logging:
-            self._print_for_bot("%s" % ("-" * 78))
-
     def _print_quiet(self, msg):
         self.writeln(msg)
 
@@ -510,9 +382,6 @@ class Printer(object):
     def _print_debug(self, msg):
         if self._options.debug_rwt_logging:
             self.writeln(msg)
-
-    def _print_for_bot(self, msg):
-        self._buildbot_stream.write(msg + "\n")
 
     def write_update(self, msg):
         self._meter.write_update(msg)
