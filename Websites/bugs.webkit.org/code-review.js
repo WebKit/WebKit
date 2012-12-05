@@ -1095,9 +1095,13 @@ var CODE_REVIEW_UNITTEST;
   function handleDocumentReady() {
     crawlDiff();
     fetchHistory();
+
     $(document.body).prepend('<div id="message">' +
         '<div class="help">Select line numbers to add a comment. Scroll though diffs with the "j" and "k" keys.' +
-          '<div class="DiffLinks LinkContainer">' + diffLinksHtml() + '</div>' +
+          '<div class="DiffLinks LinkContainer">' +
+            '<a href="javascript:" id="line-number-on-copy-link"></a> ' +
+            diffLinksHtml() +
+          '</div>' +
           '<a href="javascript:" class="more">[more]</a>' +
           '<div class="more-help inactive">' +
             '<div class="winter"></div>' +
@@ -1125,7 +1129,71 @@ var CODE_REVIEW_UNITTEST;
 
     loadDiffState();
     generateFileDiffResizeStyleElement();
+    updateLineNumberOnCopyLinkContents();
+
+    document.body.addEventListener('copy', handleCopy);
   };
+
+  function forEachNode(nodeList, callback) {
+    Array.prototype.forEach.call(nodeList, callback);
+  }
+
+  $('#line-number-on-copy-link').live('click', toggleShouldStripLineNumbersOnCopy);
+
+  function updateLineNumberOnCopyLinkContents() {
+    var link = document.getElementById('line-number-on-copy-link');
+    link.textContent = shouldStripLineNumbersOnCopy() ? 'Don\'t strip line numbers on copy' : 'Strip line numbers on copy';
+  }
+
+  function shouldStripLineNumbersOnCopy() {
+    return localStorage.getItem('code-review-line-numbers-on-copy') == 'true';
+  }
+
+  function toggleShouldStripLineNumbersOnCopy() {
+    localStorage.setItem('code-review-line-numbers-on-copy', !shouldStripLineNumbersOnCopy());
+    updateLineNumberOnCopyLinkContents();
+  }
+
+  function sanitizeFragmentForCopy(fragment, shouldStripLineNumbers) {
+    var classesToRemove = ['LinkContainer'];
+    if (shouldStripLineNumbers)
+      classesToRemove.push('lineNumber');
+
+    classesToRemove.forEach(function(className) {
+      forEachNode(fragment.querySelectorAll('.' + className), function(node) {
+        node.remove();
+      });
+    });
+
+    // Ensure that empty newlines show up in the copy now that
+    // the line might collapse since the line number doesn't take up space.
+    forEachNode(fragment.querySelectorAll('.text'), function(node) {
+      if (node.textContent.match(/^\s*$/))
+        node.innerHTML = '<br>';
+    });
+  }
+
+  function handleCopy(event) {
+    if (event.target.tagName == 'TEXTAREA')
+      return;
+    var selection = window.getSelection();
+    var range = selection.getRangeAt(0);
+    var selectionFragment = range.cloneContents();
+    sanitizeFragmentForCopy(selectionFragment, shouldStripLineNumbersOnCopy())
+
+    // FIXME: When event.clipboardData.setData supports text/html, remove all the code below.
+    // https://bugs.webkit.org/show_bug.cgi?id=104179
+    var container = document.createElement('div');
+    container.appendChild(selectionFragment);
+    document.body.appendChild(container);
+    selection.selectAllChildren(container);
+
+    setTimeout(function() {
+      container.remove();
+      selection.removeAllRanges();
+      selection.addRange(range);
+    });
+  }
 
   function handleReviewFormLoad() {
     var review_form_contents = $('#reviewform').contents();
@@ -2029,6 +2097,7 @@ var CODE_REVIEW_UNITTEST;
     window.tracLinks = tracLinks;
     window.crawlDiff = crawlDiff;
     window.convertAllFileDiffs = convertAllFileDiffs;
+    window.sanitizeFragmentForCopy = sanitizeFragmentForCopy;
     window.displayPreviousComments = displayPreviousComments;
     window.discardComment = discardComment;
     window.addCommentField = addCommentField;

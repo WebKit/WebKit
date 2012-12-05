@@ -325,6 +325,75 @@ function testSideBySideDiffWithPreviousCommentsOnSharedLine() {
   document.getElementById('diff-content').innerHTML = '';
 }
 
+function testSanitizeFragmentForCopy() {
+  var fragment = document.createElement('div');
+  fragment.innerHTML = '<div class="FileDiff">' +
+      '<h1><a href="http://trac.webkit.org/browser/trunk/Source/WebCore/ChangeLog">Source/WebCore/ChangeLog</a></h1>' +
+      '<div class="FileDiffLinkContainer LinkContainer" style="opacity: 0;"><a href="javascript:" class="unify-link cremed" style="display: inline;">unified</a></div>' +
+      '<div class="DiffSection">' +
+        '<div class="DiffBlock">' +
+          '<div class="DiffBlockPart shared">' +
+            '<div class="Line LineContainer">' +
+              '<span class="from lineNumber">336</span><span class="to lineNumber">338</span><span class="text">    layoutFlexItems(*m_orderIterator, lineContexts);</span>' +
+            '</div>' +
+            '<div class="Line LineContainer">' +
+              '<span class="from lineNumber">337</span><span class="to lineNumber">339</span><span class="text"></span>' +
+            '</div>' +
+            '<div class="Line LineContainer">' +
+              '<span class="from lineNumber">338</span><span class="to lineNumber">340</span><span class="text">    LayoutUnit oldClientAfterEdge = clientLogicalBottom();</span>' +
+            '</div>' +
+          '</div><div class="clear_float"></div>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
+
+  var expectedWithLineNumbers = '<div class="FileDiff">' +
+      '<h1><a href="http://trac.webkit.org/browser/trunk/Source/WebCore/ChangeLog">Source/WebCore/ChangeLog</a></h1>' +
+      '<div class="DiffSection">' +
+        '<div class="DiffBlock">' +
+          '<div class="DiffBlockPart shared">' +
+            '<div class="Line LineContainer">' +
+              '<span class="from lineNumber">336</span><span class="to lineNumber">338</span><span class="text">    layoutFlexItems(*m_orderIterator, lineContexts);</span>' +
+            '</div>' +
+            '<div class="Line LineContainer">' +
+              '<span class="from lineNumber">337</span><span class="to lineNumber">339</span><span class="text"><br></span>' +
+            '</div>' +
+            '<div class="Line LineContainer">' +
+              '<span class="from lineNumber">338</span><span class="to lineNumber">340</span><span class="text">    LayoutUnit oldClientAfterEdge = clientLogicalBottom();</span>' +
+            '</div>' +
+          '</div><div class="clear_float"></div>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
+
+  var fragmentCopy = fragment.cloneNode(true);
+  sanitizeFragmentForCopy(fragmentCopy, false);
+  ASSERT_EQUAL(fragmentCopy.innerHTML, expectedWithLineNumbers);
+
+  var expectedWithOutLineNumbers = '<div class="FileDiff">' +
+      '<h1><a href="http://trac.webkit.org/browser/trunk/Source/WebCore/ChangeLog">Source/WebCore/ChangeLog</a></h1>' +
+      '<div class="DiffSection">' +
+        '<div class="DiffBlock">' +
+          '<div class="DiffBlockPart shared">' +
+            '<div class="Line LineContainer">' +
+              '<span class="text">    layoutFlexItems(*m_orderIterator, lineContexts);</span>' +
+            '</div>' +
+            '<div class="Line LineContainer">' +
+              '<span class="text"><br></span>' +
+            '</div>' +
+            '<div class="Line LineContainer">' +
+              '<span class="text">    LayoutUnit oldClientAfterEdge = clientLogicalBottom();</span>' +
+            '</div>' +
+          '</div><div class="clear_float"></div>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
+
+  var fragmentCopy = fragment.cloneNode(true);
+  sanitizeFragmentForCopy(fragmentCopy, true);
+  ASSERT_EQUAL(fragmentCopy.innerHTML, expectedWithOutLineNumbers);
+}
+
 function testIsChangeLog() {
   ASSERT("Top-level ChangeLog file is a ChangeLog file", isChangeLog("ChangeLog"));
   ASSERT("Second-level ChangeLog file is a ChangeLog file", isChangeLog("Tools/ChangeLog"));
