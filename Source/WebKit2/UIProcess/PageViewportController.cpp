@@ -232,8 +232,8 @@ void PageViewportController::didChangeViewportAttributes(const WebCore::Viewport
     if (!m_initiallyFitToViewport)
         WebCore::restrictScaleFactorToInitialScaleIfNotUserScalable(m_rawAttributes);
 
-    if (updateMinimumScaleToFit(true))
-        m_client->didChangeViewportAttributes();
+    updateMinimumScaleToFit(true);
+    m_client->didChangeViewportAttributes();
 }
 
 WebCore::FloatSize PageViewportController::viewportSizeInContentsCoordinates() const
@@ -280,14 +280,14 @@ bool PageViewportController::updateMinimumScaleToFit(bool userInitiatedUpdate)
     if (m_viewportSize.isEmpty() || m_contentsSize.isEmpty())
         return false;
 
-    bool currentlyScaledToFit = fuzzyCompare(m_effectiveScale, toViewportScale(m_minimumScaleToFit), 0.001);
+    bool currentlyScaledToFit = fuzzyCompare(m_effectiveScale, toViewportScale(m_minimumScaleToFit), 0.0001);
 
     float minimumScale = WebCore::computeMinimumScaleFactorForContentContained(m_rawAttributes, WebCore::roundedIntSize(m_viewportSize), WebCore::roundedIntSize(m_contentsSize), devicePixelRatio());
 
     if (minimumScale <= 0)
         return false;
 
-    if (!fuzzyCompare(minimumScale, m_minimumScaleToFit, 0.001)) {
+    if (!fuzzyCompare(minimumScale, m_minimumScaleToFit, 0.0001)) {
         m_minimumScaleToFit = minimumScale;
 
         if (!hasSuspendedContent()) {
@@ -296,7 +296,7 @@ bool PageViewportController::updateMinimumScaleToFit(bool userInitiatedUpdate)
             else {
                 // Ensure the effective scale stays within bounds.
                 float boundedScale = innerBoundedViewportScale(m_effectiveScale);
-                if (!fuzzyCompare(boundedScale, m_effectiveScale, 0.001))
+                if (!fuzzyCompare(boundedScale, m_effectiveScale, 0.0001))
                     applyScaleAfterRenderingContents(boundedScale);
             }
         }

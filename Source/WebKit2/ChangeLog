@@ -1,3 +1,20 @@
+2012-12-05  Andras Becsi  <andras.becsi@digia.com>
+
+        [Qt][WK2] REGRESSION(r135399): It made qmltests::DoubleTapToZoom::test_double_zoomInAndBack() API test fail
+        https://bugs.webkit.org/show_bug.cgi?id=103889
+
+        Reviewed by Jocelyn Turcotte.
+
+        The client should always be notified in PageViewportController::didChangeViewportAttributes
+        about the changed attributes not only if the minimum scale changed. This ensures that these
+        changes are propagated to QWebKitTest and the zoom stack of double-tap-to-zoom is reset correctly.
+        Also increase precision of scale comparisons since the current value resulted in flakyness in
+        scale related API tests.
+
+        * UIProcess/PageViewportController.cpp:
+        (WebKit::PageViewportController::didChangeViewportAttributes):
+        (WebKit::PageViewportController::updateMinimumScaleToFit):
+
 2012-12-05  Christophe Dumez  <christophe.dumez@intel.com>
 
         [CoordinatedGraphics] Use unsigned integers for CoordinatedTile IDs
