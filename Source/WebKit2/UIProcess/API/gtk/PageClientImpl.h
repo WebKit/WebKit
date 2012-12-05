@@ -85,7 +85,6 @@ private:
     virtual PassRefPtr<WebColorChooserProxy> createColorChooserProxy(WebPageProxy*, const WebCore::Color& intialColor, const WebCore::IntRect&);
 #endif
     virtual void setFindIndicator(PassRefPtr<FindIndicator>, bool fadeOut, bool animate);
-    virtual void didChangeScrollbarsForMainFrame() const;
     virtual void flashBackingStoreUpdates(const Vector<WebCore::IntRect>& updateRects);
     virtual void getEditorCommandsForKeyEvent(const NativeWebKeyboardEvent&, const AtomicString&, Vector<WTF::String>&);
     virtual void findStringInCustomRepresentation(const String&, FindOptions, unsigned);

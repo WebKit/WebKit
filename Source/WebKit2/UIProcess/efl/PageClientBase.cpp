@@ -252,11 +252,6 @@ void PageClientBase::updateAcceleratedCompositingMode(const LayerTreeContext&)
 }
 #endif // USE(ACCELERATED_COMPOSITING)
 
-void PageClientBase::didChangeScrollbarsForMainFrame() const
-{
-    notImplemented();
-}
-
 void PageClientBase::didCommitLoadForMainFrame(bool)
 {
     notImplemented();

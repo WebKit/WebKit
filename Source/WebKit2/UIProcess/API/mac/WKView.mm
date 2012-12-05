@@ -105,13 +105,6 @@
 @end
 
 @interface NSWindow (WKNSWindowDetails)
-#if __MAC_OS_X_VERSION_MIN_REQUIRED == 1060
-- (NSRect)_growBoxRect;
-- (id)_growBoxOwner;
-- (void)_setShowOpaqueGrowBoxForOwner:(id)owner;
-- (BOOL)_updateGrowBoxForWindowFrameChange;
-#endif
-
 - (NSRect)_intersectBottomCornersWithRect:(NSRect)viewRect;
 - (void)_maskRoundedBottomCorners:(NSRect)clipRect;
 @end
@@ -1804,57 +1797,6 @@ static void createSandboxExtensionsForFileUpload(NSPasteboard *pasteboard, Sandb
 }
 
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED == 1060
-- (BOOL)_ownsWindowGrowBox
-{
-    NSWindow* window = [self window];
-    if (!window)
-        return NO;
-
-    NSView *superview = [self superview];
-    if (!superview)
-        return NO;
-
-    NSRect growBoxRect = [window _growBoxRect];
-    if (NSIsEmptyRect(growBoxRect))
-        return NO;
-
-    NSRect visibleRect = [self visibleRect];
-    if (NSIsEmptyRect(visibleRect))
-        return NO;
-
-    NSRect visibleRectInWindowCoords = [self convertRect:visibleRect toView:nil];
-    if (!NSIntersectsRect(growBoxRect, visibleRectInWindowCoords))
-        return NO;
-
-    return YES;
-}
-
-- (BOOL)_updateGrowBoxForWindowFrameChange
-{
-    // Temporarily enable the resize indicator to make a the _ownsWindowGrowBox calculation work.
-    BOOL wasShowingIndicator = [[self window] showsResizeIndicator];
-    if (!wasShowingIndicator)
-        [[self window] setShowsResizeIndicator:YES];
-
-    BOOL ownsGrowBox = [self _ownsWindowGrowBox];
-    _data->_page->setWindowResizerSize(ownsGrowBox ? enclosingIntRect([[self window] _growBoxRect]).size() : IntSize());
-
-    if (ownsGrowBox)
-        [[self window] _setShowOpaqueGrowBoxForOwner:(_data->_page->hasHorizontalScrollbar() || _data->_page->hasVerticalScrollbar() ? self : nil)];
-    else
-        [[self window] _setShowOpaqueGrowBoxForOwner:nil];
-
-    // Once WebCore can draw the window resizer, this should read:
-    // if (wasShowingIndicator)
-    //     [[self window] setShowsResizeIndicator:!ownsGrowBox];
-    if (!wasShowingIndicator)
-        [[self window] setShowsResizeIndicator:NO];
-
-    return ownsGrowBox;
-}
-#endif
-
 // FIXME: Use AppKit constants for these when they are available.
 static NSString * const windowDidChangeBackingPropertiesNotification = @"NSWindowDidChangeBackingPropertiesNotification";
 static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOldScaleFactorKey";
@@ -1922,11 +1864,6 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
     
     [self removeWindowObservers];
     [self addWindowObserversForWindow:window];
-
-#if __MAC_OS_X_VERSION_MIN_REQUIRED == 1060
-    if ([currentWindow _growBoxOwner] == self)
-        [currentWindow _setShowOpaqueGrowBoxForOwner:nil];
-#endif
 }
 
 - (void)viewDidMoveToWindow
@@ -2889,13 +2826,6 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
         DisableSecureEventInput();
         _data->_inSecureInputState = NO;
     }
-}
-
-- (void)_didChangeScrollbarsForMainFrame
-{
-#if __MAC_OS_X_VERSION_MIN_REQUIRED == 1060
-    [self _updateGrowBoxForWindowFrameChange];
-#endif
 }
 
 #if ENABLE(FULLSCREEN_API)

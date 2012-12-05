@@ -282,10 +282,6 @@ void PageClientImpl::pageClosed()
     notImplemented();
 }
 
-void PageClientImpl::didChangeScrollbarsForMainFrame() const
-{
-}
-
 void PageClientImpl::flashBackingStoreUpdates(const Vector<IntRect>&)
 {
     notImplemented();

@@ -85,8 +85,6 @@ namespace WebKit {
 - (void)_updateTextInputStateIncludingSecureInputState:(BOOL)updateSecureInputState;
 - (void)_resetTextInputState;
 
-- (void)_didChangeScrollbarsForMainFrame;
-
 - (WebKit::ColorSpaceData)_colorSpace;
 
 #if ENABLE(FULLSCREEN_API)

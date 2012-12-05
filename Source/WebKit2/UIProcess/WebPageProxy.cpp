@@ -3934,8 +3934,6 @@ void WebPageProxy::didChangeScrollbarsForMainFrame(bool hasHorizontalScrollbar, 
 {
     m_mainFrameHasHorizontalScrollbar = hasHorizontalScrollbar;
     m_mainFrameHasVerticalScrollbar = hasVerticalScrollbar;
-
-    m_pageClient->didChangeScrollbarsForMainFrame();
 }
 
 void WebPageProxy::didChangeScrollOffsetPinningForMainFrame(bool pinnedToLeftSide, bool pinnedToRightSide, bool pinnedToTopSide, bool pinnedToBottomSide)

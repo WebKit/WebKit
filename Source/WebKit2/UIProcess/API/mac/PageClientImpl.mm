@@ -432,11 +432,6 @@ CGContextRef PageClientImpl::containingWindowGraphicsContext()
     return static_cast<CGContextRef>([[window graphicsContext] graphicsPort]);
 }
 
-void PageClientImpl::didChangeScrollbarsForMainFrame() const
-{
-    [m_wkView _didChangeScrollbarsForMainFrame];
-}
-
 void PageClientImpl::didCommitLoadForMainFrame(bool useCustomRepresentation)
 {
     [m_wkView _setPageHasCustomRepresentation:useCustomRepresentation];

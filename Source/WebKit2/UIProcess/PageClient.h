@@ -236,8 +236,6 @@ public:
 #endif // USE(APPKIT)
 #endif // PLATFORM(MAC)
 
-    virtual void didChangeScrollbarsForMainFrame() const = 0;
-
     // Custom representations.
     virtual void didCommitLoadForMainFrame(bool useCustomRepresentation) = 0;
     virtual void didFinishLoadingDataForCustomRepresentation(const String& suggestedFilename, const CoreIPC::DataReference&) = 0;

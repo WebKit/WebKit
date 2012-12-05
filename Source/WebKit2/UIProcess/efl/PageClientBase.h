@@ -100,8 +100,6 @@ protected:
     virtual void updateAcceleratedCompositingMode(const LayerTreeContext&);
 #endif
 
-    virtual void didChangeScrollbarsForMainFrame() const;
-
     virtual void didCommitLoadForMainFrame(bool);
     virtual void didFinishLoadingDataForCustomRepresentation(const String&, const CoreIPC::DataReference&);
     virtual double customRepresentationZoomFactor();

@@ -1516,10 +1516,6 @@ void WebView::setCustomRepresentationZoomFactor(double)
 {
 }
 
-void WebView::didChangeScrollbarsForMainFrame() const
-{
-}
-
 void WebView::findStringInCustomRepresentation(const String&, FindOptions, unsigned)
 {
 }

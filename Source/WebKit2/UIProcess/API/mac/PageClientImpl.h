@@ -116,8 +116,6 @@ private:
     
     virtual CGContextRef containingWindowGraphicsContext();
 
-    virtual void didChangeScrollbarsForMainFrame() const;
-
     virtual void didCommitLoadForMainFrame(bool useCustomRepresentation);
     virtual void didFinishLoadingDataForCustomRepresentation(const String& suggestedFilename, const CoreIPC::DataReference&);
 
