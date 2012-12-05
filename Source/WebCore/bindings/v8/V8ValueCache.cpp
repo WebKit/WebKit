@@ -104,15 +104,7 @@ IntegerCache::IntegerCache()
 {
     v8::HandleScope handleScope;
     for (int value = 0; value < numberOfCachedSmallIntegers; value++)
-        m_smallIntegers[value] = v8::Persistent<v8::Integer>::New(v8::Integer::New(value));
-}
-
-IntegerCache::~IntegerCache()
-{
-    for (int value = 0; value < numberOfCachedSmallIntegers; value++) {
-        m_smallIntegers[value].Dispose();
-        m_smallIntegers[value].Clear();
-    }
+        m_smallIntegers[value].set(v8::Integer::New(value));
 }
 
 } // namespace WebCore
