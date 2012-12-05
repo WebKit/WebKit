@@ -33,6 +33,7 @@ import time
 
 from webkitpy.common import message_pool
 from webkitpy.layout_tests.controllers import single_test_runner
+from webkitpy.layout_tests.models.result_summary import ResultSummary
 from webkitpy.layout_tests.models import test_expectations
 from webkitpy.layout_tests.models import test_failures
 from webkitpy.layout_tests.models import test_results
@@ -60,36 +61,46 @@ class TestRunInterruptedException(Exception):
 
 
 class LayoutTestRunner(object):
-    def __init__(self, options, port, printer, results_directory, expectations, test_is_slow_fn):
+    def __init__(self, options, port, printer, results_directory, test_is_slow_fn):
         self._options = options
         self._port = port
         self._printer = printer
         self._results_directory = results_directory
-        self._expectations = None
         self._test_is_slow = test_is_slow_fn
         self._sharder = Sharder(self._port.split_test, self._options.max_locked_shards)
+        self._filesystem = self._port.host.filesystem
 
-        self._current_result_summary = None
+        self._expectations = None
+        self._test_inputs = []
         self._needs_http = None
         self._needs_websockets = None
         self._retrying = False
-        self._test_files_list = []
+
+        self._current_result_summary = None
         self._remaining_locked_shards = []
         self._has_http_lock = False
-        self._filesystem = self._port.host.filesystem
 
-    def run_tests(self, test_inputs, expectations, result_summary, num_workers, needs_http, needs_websockets, retrying):
-        self._current_result_summary = result_summary
+    def run_tests(self, expectations, test_inputs, tests_to_skip, num_workers, needs_http, needs_websockets, retrying):
         self._expectations = expectations
+        self._test_inputs = test_inputs
         self._needs_http = needs_http
         self._needs_websockets = needs_websockets
         self._retrying = retrying
-        self._test_files_list = [test_input.test_name for test_input in test_inputs]
-        self._printer.num_tests = len(self._test_files_list)
+
+        result_summary = ResultSummary(self._expectations, len(test_inputs))
+        self._current_result_summary = result_summary
+        self._remaining_locked_shards = []
+        self._has_http_lock = False
+        self._printer.num_tests = len(test_inputs)
         self._printer.num_completed = 0
 
-        self._has_http_lock = False
-        self._remaining_locked_shards = []
+        if not retrying:
+            self._printer.print_expected(result_summary, self._expectations.get_tests_with_result_type)
+
+        for test_name in set(tests_to_skip):
+            result = test_results.TestResult(test_name)
+            result.type = test_expectations.SKIP
+            result_summary.add(result, expected=True, test_is_slow=self._test_is_slow(test_name))
 
         self._printer.write_update('Sharding tests ...')
         locked_shards, unlocked_shards = self._sharder.shard_tests(test_inputs, int(self._options.child_processes), self._options.fully_parallel)
@@ -141,13 +152,13 @@ class LayoutTestRunner(object):
         return Worker(worker_connection, results_directory, self._options)
 
     def _mark_interrupted_tests_as_skipped(self, result_summary):
-        for test_name in self._test_files_list:
-            if test_name not in result_summary.results:
-                result = test_results.TestResult(test_name, [test_failures.FailureEarlyExit()])
+        for test_input in self._test_inputs:
+            if test_input.test_name not in result_summary.results:
+                result = test_results.TestResult(test_input.test_name, [test_failures.FailureEarlyExit()])
                 # FIXME: We probably need to loop here if there are multiple iterations.
                 # FIXME: Also, these results are really neither expected nor unexpected. We probably
                 # need a third type of result.
-                result_summary.add(result, expected=False, test_is_slow=self._test_is_slow(test_name))
+                result_summary.add(result, expected=False, test_is_slow=self._test_is_slow(test_input.test_name))
 
     def _interrupt_if_at_failure_limits(self, result_summary):
         # Note: The messages in this method are constructed to match old-run-webkit-tests

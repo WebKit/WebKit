@@ -48,6 +48,9 @@ class FakePrinter(object):
     num_completed = 0
     num_tests = 0
 
+    def print_expected(self, result_summary, get_tests_with_result_type):
+        pass
+
     def print_workers_and_shards(self, num_workers, num_shards, num_locked_shards):
         pass
 
@@ -69,7 +72,7 @@ class FakePrinter(object):
 
 class LockCheckingRunner(LayoutTestRunner):
     def __init__(self, port, options, printer, tester, http_lock):
-        super(LockCheckingRunner, self).__init__(options, port, printer, port.results_directory(), TestExpectations(port, []), lambda test_name: False)
+        super(LockCheckingRunner, self).__init__(options, port, printer, port.results_directory(), lambda test_name: False)
         self._finished_list_called = False
         self._tester = tester
         self._should_have_http_lock = http_lock
@@ -98,13 +101,10 @@ class LayoutTestRunnerTests(unittest.TestCase):
         port = port or host.port_factory.get(options.platform, options=options)
         return LockCheckingRunner(port, options, FakePrinter(), self, True)
 
-    def _result_summary(self, runner, tests):
-        return ResultSummary(TestExpectations(runner._port, tests), len(tests))
-
     def _run_tests(self, runner, tests):
         test_inputs = [TestInput(test, 6000) for test in tests]
         expectations = TestExpectations(runner._port, tests)
-        runner.run_tests(test_inputs, expectations, self._result_summary(runner, tests),
+        runner.run_tests(expectations, test_inputs, set(),
             num_workers=1, needs_http=any('http' in test for test in tests), needs_websockets=any(['websocket' in test for test in tests]), retrying=False)
 
     def test_http_locking(self):
@@ -120,9 +120,9 @@ class LayoutTestRunnerTests(unittest.TestCase):
         runner._options.exit_after_n_failures = None
         runner._options.exit_after_n_crashes_or_times = None
         test_names = ['passes/text.html', 'passes/image.html']
-        runner._test_files_list = test_names
+        runner._test_inputs = [TestInput(test_name, 6000) for test_name in test_names]
 
-        result_summary = self._result_summary(runner, test_names)
+        result_summary = ResultSummary(TestExpectations(runner._port, test_names), len(test_names))
         result_summary.unexpected_failures = 100
         result_summary.unexpected_crashes = 50
         result_summary.unexpected_timeouts = 50

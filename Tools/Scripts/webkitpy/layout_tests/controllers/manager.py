@@ -34,16 +34,11 @@ objects to the Manager. The Manager then aggregates the TestFailures to
 create a final report.
 """
 
-import errno
 import logging
-import math
-import Queue
 import random
-import re
 import sys
 import time
 
-from webkitpy.common import message_pool
 from webkitpy.layout_tests.controllers.layout_test_finder import LayoutTestFinder
 from webkitpy.layout_tests.controllers.layout_test_runner import LayoutTestRunner
 from webkitpy.layout_tests.controllers.test_result_writer import TestResultWriter
@@ -51,12 +46,7 @@ from webkitpy.layout_tests.layout_package import json_layout_results_generator
 from webkitpy.layout_tests.layout_package import json_results_generator
 from webkitpy.layout_tests.models import test_expectations
 from webkitpy.layout_tests.models import test_failures
-from webkitpy.layout_tests.models import test_results
 from webkitpy.layout_tests.models.test_input import TestInput
-from webkitpy.layout_tests.models.result_summary import ResultSummary
-from webkitpy.layout_tests.views import printing
-
-from webkitpy.tool import grammar
 
 _log = logging.getLogger(__name__)
 
@@ -283,7 +273,7 @@ class Manager(object):
 
         self._results_directory = self._port.results_directory()
         self._finder = LayoutTestFinder(self._port, self._options)
-        self._runner = LayoutTestRunner(self._options, self._port, self._printer, self._results_directory, self._expectations, self._test_is_slow)
+        self._runner = LayoutTestRunner(self._options, self._port, self._printer, self._results_directory, self._test_is_slow)
 
     def _collect_tests(self, args):
         return self._finder.find_tests(self._options, args)
@@ -368,7 +358,7 @@ class Manager(object):
         self._printer.write_update("Collecting tests ...")
         try:
             paths, test_names = self._collect_tests(args)
-        except IOError as exception:
+        except IOError:
             # This is raised if --test-list doesn't exist
             return -1
 
@@ -441,22 +431,13 @@ class Manager(object):
         needs_http = self._port.requires_http_server() or any(self._is_http_test(test) for test in tests_to_run)
         needs_websockets = any(self._is_websocket_test(test) for test in tests_to_run)
 
-        summary = ResultSummary(self._expectations, len(set(tests_to_run)) * repeat_each * iterations)
-        for test_name in set(tests_to_skip):
-            result = test_results.TestResult(test_name)
-            result.type = test_expectations.SKIP
-            summary.add(result, expected=True, test_is_slow=self._test_is_slow(test_name))
-
         test_inputs = []
         for _ in xrange(iterations):
             for test in tests_to_run:
                 for _ in xrange(repeat_each):
                     test_inputs.append(self._test_input_for_file(test))
 
-        if not retrying:
-            self._printer.print_expected(summary, self._expectations.get_tests_with_result_type)
-
-        return self._runner.run_tests(test_inputs, self._expectations, summary, num_workers, needs_http, needs_websockets, retrying)
+        return self._runner.run_tests(self._expectations, test_inputs, tests_to_skip, num_workers, needs_http, needs_websockets, retrying)
 
     def _clean_up_run(self):
         """Restores the system after we're done running tests."""
