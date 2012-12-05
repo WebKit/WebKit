@@ -342,10 +342,8 @@ class Manager(object):
         self._printer.write_update("Parsing expectations ...")
         self._expectations = test_expectations.TestExpectations(self._port, test_names)
 
-        num_all_test_files_found = len(test_names)
         tests_to_run, tests_to_skip = self._prepare_lists(paths, test_names)
-
-        self._printer.print_found(num_all_test_files_found, len(tests_to_run), self._options.repeat_each, self._options.iterations)
+        self._printer.print_found(len(test_names), len(tests_to_run), self._options.repeat_each, self._options.iterations)
 
         # Check to make sure we're not skipping every test.
         if not tests_to_run:
@@ -356,17 +354,17 @@ class Manager(object):
             return -1
 
         start_time = time.time()
-
         try:
             result_summary = self._run_tests(tests_to_run, tests_to_skip, self._options.repeat_each, self._options.iterations,
-                                             int(self._options.child_processes), retrying=False)
+                int(self._options.child_processes), retrying=False)
 
             tests_to_retry = self._test_to_retry(result_summary, include_crashes=self._port.should_retry_crashes())
             if self._options.retry_failures and tests_to_retry and not result_summary.interrupted:
                 _log.info('')
                 _log.info("Retrying %d unexpected failure(s) ..." % len(tests_to_retry))
                 _log.info('')
-                retry_summary = self._run_tests(tests_to_retry, tests_to_skip=set(), repeat_each=1, iterations=1, num_workers=1, retrying=True)
+                retry_summary = self._run_tests(tests_to_retry, tests_to_skip=set(), repeat_each=1, iterations=1,
+                    num_workers=1, retrying=True)
             else:
                 retry_summary = None
         finally:
@@ -383,18 +381,14 @@ class Manager(object):
         summarized_results = summarize_results(self._port, self._expectations, result_summary, retry_summary)
         self._printer.print_results(end_time - start_time, result_summary, summarized_results)
 
-        # FIXME: remove record_results. It's just used for testing. There's no need
-        # for it to be a commandline argument.
-        if self._options.record_results and not self._options.dry_run:
+        if not self._options.dry_run:
             self._port.print_leaks_summary()
-            # Write the same data to log files and upload generated JSON files to appengine server.
             self._upload_json_files(summarized_results, result_summary)
 
-        # Write the summary to disk (results.html) and display it if requested.
-        if not self._options.dry_run:
             results_path = self._filesystem.join(self._results_directory, "results.html")
             self._copy_results_html_file(results_path)
-            if self._options.show_results and result_summary.unexpected_results or (self._options.full_results_html and result_summary.total_failures):
+            if self._options.show_results and (result_summary.unexpected_results or
+                                               (self._options.full_results_html and result_summary.total_failures)):
                 self._port.show_results_html_file(results_path)
 
         return self._port.exit_code_from_summarized_results(summarized_results)
