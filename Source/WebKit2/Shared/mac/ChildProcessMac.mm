@@ -26,6 +26,8 @@
 #import "config.h"
 #import "ChildProcess.h"
 
+#import <mach/task.h>
+
 namespace WebKit {
 
 NSString * const ChildProcess::processSuppressionVisibleApplicationReason = @"Application is Visible";
@@ -62,10 +64,21 @@ void ChildProcess::enableProcessSuppression(NSString *reason)
 #endif
 }
 
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+static void initializeTimerCoalescingPolicy()
+{
+    // Set task_latency and task_throughput QOS tiers as appropriate for a visible application.
+    struct task_qos_policy qosinfo = { LATENCY_QOS_TIER_0, THROUGHPUT_QOS_TIER_0 };
+    kern_return_t kr = task_policy_set(mach_task_self(), TASK_BASE_QOS_POLICY, (task_policy_t)&qosinfo, TASK_QOS_POLICY_COUNT);
+    ASSERT_UNUSED(kr, kr == KERN_SUCCESS);
+}
+#endif
+
 void ChildProcess::platformInitialize()
 {
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
     setpriority(PRIO_DARWIN_PROCESS, 0, 0);
+    initializeTimerCoalescingPolicy();
 #endif
     disableProcessSuppression(processSuppressionVisibleApplicationReason);
 }
