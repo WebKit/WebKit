@@ -1,3 +1,12 @@
+2012-12-05  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening.
+
+        Skipping back the Media Stream layout tests, they're not behaving well.
+        Removing a few failure expectations for tests that are passing.
+
+        * platform/gtk/TestExpectations:
+
 2012-12-05  Emil A Eklund  <eae@chromium.org>
 
         Unreviewed chromium rebaselines.

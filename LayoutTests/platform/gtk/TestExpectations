@@ -354,10 +354,7 @@ webkit.org/b/85212 ietestcenter/css3/flexbox/flexbox-layout-002.htm [ ImageOnlyF
 webkit.org/b/94792 fast/sub-pixel [ Skip ]
 
 # Mediastream implementation is not complete yet.
-webkit.org/b/79203 fast/mediastream [ Failure ]
-webkit.org/b/79203 fast/mediastream/RTCPeerConnection-stats.html [ Timeout ]
-webkit.org/b/79203 fast/mediastream/getusermedia.html [ Timeout ]
-webkit.org/b/79203 fast/mediastream/no-interface-object.html [ Pass ]
+webkit.org/b/79203 fast/mediastream [ Skip ]
 
 # CSS Variables are not yet enabled.
 webkit.org/b/99057 fast/css/variables [ Skip ]
@@ -700,10 +697,6 @@ webkit.org/b/50740 [ Release ] editing/spelling/spellcheck-queue.html [ Timeout 
 Bug(GTK) media/progress-events-generated-correctly.html [ Timeout ]
 
 webkit.org/b/102257 fast/dom/Window/open-window-min-size.html [ Timeout ]
-
-webkit.org/b/103371 plugins/geturl-replace-query.html [ Timeout ]
-webkit.org/b/103371 plugins/get-file-url.html [ Timeout ]
-webkit.org/b/103371 http/tests/plugins/post-url-file.html [ Timeout ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests timing out
@@ -1397,9 +1390,6 @@ webkit.org/b/100424 editing/selection/user-select-all-selection.html [ Failure ]
 webkit.org/b/100846 inspector-protocol/debugger-pause-dedicated-worker.html [ Skip ]
 webkit.org/b/100846 inspector-protocol/debugger-terminate-dedicated-worker-while-paused.html [ Skip ]
 
-webkit.org/b/95299 fast/images/exif-orientation.html [ Failure ]
-webkit.org/b/95299 fast/images/exif-orientation-image-document.html [ Failure ]
-
 webkit.org/b/99893 svg/animations/mozilla/animateMotion-mpath-targetChange-1.svg [ ImageOnlyFailure ]
 
 webkit.org/b/101539 editing/execCommand/switch-list-type-with-orphaned-li.html [ Failure ]
@@ -1424,8 +1414,6 @@ webkit.org/b/103740 editing/selection/caret-alignment-for-vertical-text.html [ F
 
 # volume is reset when mediaelement.src is modified
 webkit.org/b/103893 media/video-volume.html [ Failure ]
-
-webkit.org/b/104104 fast/overflow/scrollbar-click-retains-focus.html [ Failure ]
 
 webkit.org/b/104089 fast/frames/viewsource-attribute.html [ Failure ]
 webkit.org/b/104089 fast/frames/viewsource-on-image-file.html [ Failure ]
