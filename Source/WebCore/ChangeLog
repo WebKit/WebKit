@@ -1,3 +1,33 @@
+2012-12-04  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Reduce the children repaints when moved multiple times during the layout
+        https://bugs.webkit.org/show_bug.cgi?id=103510
+
+        Reviewed by Darin Adler.
+
+        Cache the children positions before the layout and move to the
+        final position after the layout.
+
+        Test: css3/flexbox/repaint-column-reverse.html
+
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::OrderIterator::OrderIterator): Do not
+        call first() on the consructor.
+        (WebCore::RenderFlexibleBox::layoutBlock): Use a Vector with the
+        children frame rects before the layout and call
+        repaintChildrenDuringLayoutIfMoved() to repaint the children that
+        have been moved.
+        (WebCore::RenderFlexibleBox::appendChildrenFrameRects): Return a
+        Vector with children frame rects.
+        (WebCore::RenderFlexibleBox::repaintChildrenDuringLayoutIfMoved):
+        Call repaintDuringLayoutIfMoved() for every children using the old
+        frame rects.
+        (WebCore::RenderFlexibleBox::setFlowAwareLocationForChild): Do not
+        call repaintDuringLayoutIfMoved().
+        (WebCore::RenderFlexibleBox::layoutFlexItems): Make sure the
+        passed iterator points to the first child.
+        * rendering/RenderFlexibleBox.h:
+
 2012-12-05  Dan Carney  <dcarney@google.com>
 
         [V8] toV8Fast for all classes with ScriptWrapper Holder objects

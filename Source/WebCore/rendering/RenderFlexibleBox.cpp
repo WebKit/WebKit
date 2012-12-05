@@ -58,7 +58,6 @@ public:
     {
         copyToVector(orderValues, m_orderValues);
         std::sort(m_orderValues.begin(), m_orderValues.end());
-        first();
     }
 
     RenderBox* currentChild() { return m_currentChild; }
@@ -333,6 +332,9 @@ void RenderFlexibleBox::layoutBlock(bool relayoutChildren, LayoutUnit)
     OrderHashSet orderValues;
     computeMainAxisPreferredSizes(relayoutChildren, orderValues);
     m_orderIterator = adoptPtr(new OrderIterator(this, orderValues));
+
+    ChildFrameRects oldChildRects;
+    appendChildFrameRects(oldChildRects);
     layoutFlexItems(*m_orderIterator, lineContexts);
 
     LayoutUnit oldClientAfterEdge = clientLogicalBottom();
@@ -349,6 +351,7 @@ void RenderFlexibleBox::layoutBlock(bool relayoutChildren, LayoutUnit)
     computeRegionRangeForBlock();
     clearChildOverrideSizes();
 
+    repaintChildrenDuringLayoutIfMoved(oldChildRects);
     // FIXME: css3/flexbox/repaint-rtl-column.html seems to repaint more overflow than it needs to.
     computeOverflow(oldClientAfterEdge);
     statePusher.pop();
@@ -362,6 +365,35 @@ void RenderFlexibleBox::layoutBlock(bool relayoutChildren, LayoutUnit)
     repainter.repaintAfterLayout();
 
     setNeedsLayout(false);
+}
+
+void RenderFlexibleBox::appendChildFrameRects(ChildFrameRects& childFrameRects)
+{
+    ASSERT(m_orderIterator);
+
+    for (RenderBox* child = m_orderIterator->first(); child; child = m_orderIterator->next()) {
+        if (!child->isOutOfFlowPositioned())
+            childFrameRects.append(child->frameRect());
+    }
+}
+
+void RenderFlexibleBox::repaintChildrenDuringLayoutIfMoved(const ChildFrameRects& oldChildRects)
+{
+    ASSERT(m_orderIterator);
+
+    size_t childIndex = 0;
+    for (RenderBox* child = m_orderIterator->first(); child; child = m_orderIterator->next()) {
+        if (child->isOutOfFlowPositioned())
+            continue;
+
+        // If the child moved, we have to repaint it as well as any floating/positioned
+        // descendants. An exception is if we need a layout. In this case, we know we're going to
+        // repaint ourselves (and the child) anyway.
+        if (!selfNeedsLayout() && child->checkForRepaintDuringLayout())
+            child->repaintDuringLayoutIfMoved(oldChildRects[childIndex]);
+        ++childIndex;
+    }
+    ASSERT(childIndex == oldChildRects.size());
 }
 
 void RenderFlexibleBox::paintChildren(PaintInfo& paintInfo, const LayoutPoint& paintOffset, PaintInfo& paintInfoForChild, bool usePrintRect)
@@ -664,21 +696,10 @@ LayoutPoint RenderFlexibleBox::flowAwareLocationForChild(RenderBox* child) const
 
 void RenderFlexibleBox::setFlowAwareLocationForChild(RenderBox* child, const LayoutPoint& location)
 {
-    LayoutRect oldFrameRect = child->frameRect();
-
     if (isHorizontalFlow())
         child->setLocation(location);
     else
         child->setLocation(location.transposedPoint());
-
-    // If the child moved, we have to repaint it as well as any floating/positioned
-    // descendants. An exception is if we need a layout. In this case, we know we're going to
-    // repaint ourselves (and the child) anyway.
-    // FIXME: In some cases, we might overpaint as we move a child multiple times. We could reduce
-    // overpainting by keeping track of the original position of a child and running this check on
-    // the final position.
-    if (!selfNeedsLayout() && child->checkForRepaintDuringLayout())
-        child->repaintDuringLayoutIfMoved(oldFrameRect);
 }
 
 LayoutUnit RenderFlexibleBox::mainAxisBorderAndPaddingExtentForChild(RenderBox* child) const
@@ -710,6 +731,7 @@ void RenderFlexibleBox::layoutFlexItems(OrderIterator& iterator, WTF::Vector<Lin
     double totalWeightedFlexShrink;
     LayoutUnit minMaxAppliedMainAxisExtent;
 
+    iterator.first();
     LayoutUnit crossAxisOffset = flowAwareBorderBefore() + flowAwarePaddingBefore();
     while (computeNextFlexLine(iterator, orderedChildren, preferredMainAxisExtent, totalFlexGrow, totalWeightedFlexShrink, minMaxAppliedMainAxisExtent)) {
         LayoutUnit availableFreeSpace = mainAxisContentExtent(preferredMainAxisExtent) - preferredMainAxisExtent;

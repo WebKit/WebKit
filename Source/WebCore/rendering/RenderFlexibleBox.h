@@ -78,6 +78,9 @@ private:
     struct LineContext;
     struct Violation;
 
+    // Use an inline capacity of 8, since flexbox containers usually have less than 8 children.
+    typedef Vector<LayoutRect, 8> ChildFrameRects;
+
     bool hasOrthogonalFlow(RenderBox* child) const;
     bool isColumnFlow() const;
     bool isLeftToRightFlow() const;
@@ -122,6 +125,8 @@ private:
     bool updateAutoMarginsInCrossAxis(RenderBox* child, LayoutUnit availableAlignmentSpace);
     void repositionLogicalHeightDependentFlexItems(OrderIterator&, WTF::Vector<LineContext>&, LayoutUnit& oldClientAfterEdge);
     void clearChildOverrideSizes();
+    void appendChildFrameRects(ChildFrameRects&);
+    void repaintChildrenDuringLayoutIfMoved(const ChildFrameRects&);
 
     LayoutUnit availableAlignmentSpaceForChild(LayoutUnit lineCrossAxisExtent, RenderBox*);
     LayoutUnit marginBoxAscentForChild(RenderBox*);
