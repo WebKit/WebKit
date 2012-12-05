@@ -1,5 +1,7 @@
 /*
- * Copyright (C) 2012 Google Inc. All rights reserved.
+ * Copyright (C) 2008, 2009, 2010, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2012 Google Inc.
+ * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -10,10 +12,10 @@
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
  *
- * THIS SOFTWARE IS PROVIDED BY APPLE COMPUTER, INC. ``AS IS'' AND ANY
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
  * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE COMPUTER, INC. OR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
  * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
  * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
  * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
@@ -23,32 +25,52 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MediaControlsChromiumAndroid_h
-#define MediaControlsChromiumAndroid_h
+#ifndef RenderMediaControlElements_h
+#define RenderMediaControlElements_h
 
 #if ENABLE(VIDEO)
-#include "MediaControls.h"
-#include "MediaControlsChromium.h"
+
+#include "MediaControlElements.h"
+#include "RenderBlock.h"
+#include "RenderDeprecatedFlexibleBox.h"
 
 namespace WebCore {
 
-class MediaControlsChromiumAndroid : public MediaControlsChromium {
+class RenderMediaVolumeSliderContainer : public RenderBlock {
 public:
-    static PassRefPtr<MediaControlsChromiumAndroid> createControls(Document*);
-
-    virtual void setMediaController(MediaControllerInterface*) OVERRIDE;
-    virtual void playbackStarted() OVERRIDE;
-    virtual void playbackStopped() OVERRIDE;
+    RenderMediaVolumeSliderContainer(Node*);
 
 private:
-    explicit MediaControlsChromiumAndroid(Document*);
-
-    MediaControlOverlayPlayButtonElement* m_overlayPlayButton;
-    MediaControlOverlayEnclosureElement* m_overlayEnclosure;
+    virtual void layout();
 };
 
-}
+// ----------------------------
 
-#endif
+class RenderMediaControlTimeDisplay : public RenderDeprecatedFlexibleBox {
+public:
+    RenderMediaControlTimeDisplay(Node*);
 
-#endif
+private:
+    virtual void layout();
+};
+
+// ----------------------------
+
+#if ENABLE(VIDEO_TRACK)
+
+class RenderTextTrackContainerElement : public RenderBlock {
+public:
+    RenderTextTrackContainerElement(Node*);
+
+private:
+    virtual void layout();
+};
+
+#endif // ENABLE(VIDEO_TRACK)
+
+} // namespace WebCore
+
+#endif // ENABLE(VIDEO)
+
+#endif // RenderMediaControlElements_h
+

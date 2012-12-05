@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2007, 2008, 2009, 2010 Apple Inc. All rights reserved.
- * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2011, 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,33 +32,6 @@
 using namespace std;
 
 namespace WebCore {
-
-MediaControlChromiumEnclosureElement::MediaControlChromiumEnclosureElement(Document* document)
-    : MediaControlElement(document)
-{
-}
-
-MediaControlElementType MediaControlChromiumEnclosureElement::displayType() const
-{
-    // Mapping onto same MediaControlElementType as panel element, since it has similar properties.
-    return MediaControlsPanel;
-}
-
-MediaControlPanelEnclosureElement::MediaControlPanelEnclosureElement(Document* document)
-    : MediaControlChromiumEnclosureElement(document)
-{
-}
-
-PassRefPtr<MediaControlPanelEnclosureElement> MediaControlPanelEnclosureElement::create(Document* document)
-{
-    return adoptRef(new MediaControlPanelEnclosureElement(document));
-}
-
-const AtomicString& MediaControlPanelEnclosureElement::shadowPseudoId() const
-{
-    DEFINE_STATIC_LOCAL(AtomicString, id, ("-webkit-media-controls-enclosure"));
-    return id;
-}
 
 MediaControlsChromium::MediaControlsChromium(Document* document)
     : MediaControls(document)
@@ -128,7 +101,7 @@ bool MediaControlsChromium::initializeControls(Document* document)
     if (ec)
         return false;
 
-    RefPtr<MediaControlVolumeSliderElement> slider = MediaControlVolumeSliderElement::create(document);
+    RefPtr<MediaControlPanelVolumeSliderElement> slider = MediaControlPanelVolumeSliderElement::create(document);
     m_volumeSlider = slider.get();
     m_volumeSlider->setClearMutedOnUserInteraction(true);
     panel->appendChild(slider.release(), ec, true);
@@ -143,7 +116,7 @@ bool MediaControlsChromium::initializeControls(Document* document)
             return false;
     }
 
-    RefPtr<MediaControlFullscreenButtonElement> fullscreenButton = MediaControlFullscreenButtonElement::create(document, this);
+    RefPtr<MediaControlFullscreenButtonElement> fullscreenButton = MediaControlFullscreenButtonElement::create(document);
     m_fullScreenButton = fullscreenButton.get();
     panel->appendChild(fullscreenButton.release(), ec, true);
     if (ec)

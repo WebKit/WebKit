@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2007, 2008, 2009, 2010 Apple Inc. All rights reserved.
- * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2011, 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,23 +32,6 @@
 #include "MediaControls.h"
 
 namespace WebCore {
-
-class MediaControlChromiumEnclosureElement : public MediaControlElement {
-protected:
-    explicit MediaControlChromiumEnclosureElement(Document*);
-
-private:
-    virtual MediaControlElementType displayType() const;
-};
-
-class MediaControlPanelEnclosureElement : public MediaControlChromiumEnclosureElement {
-public:
-    static PassRefPtr<MediaControlPanelEnclosureElement> create(Document*);
-
-private:
-    explicit MediaControlPanelEnclosureElement(Document*);
-    virtual const AtomicString& shadowPseudoId() const;
-};
 
 class MediaControlsChromium : public MediaControls {
 public:

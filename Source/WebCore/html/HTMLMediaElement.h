@@ -247,6 +247,7 @@ public:
 
     void toggleTrackAtIndex(int index, bool exclusive = true);
     static int textTracksOffIndex() { return -1; }
+    static int textTracksIndexNotFound() { return -2; }
 
     bool userPrefersCaptions() const;
     bool userIsInterestedInThisTrackKind(String) const;

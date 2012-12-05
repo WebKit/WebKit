@@ -74,6 +74,7 @@
 #include "RenderListMarker.cpp"
 #include "RenderMarquee.cpp"
 #include "RenderMedia.cpp"
+#include "RenderMediaControlElements.cpp"
 #include "RenderMediaControls.cpp"
 #include "RenderMenuList.cpp"
 #include "RenderMeter.cpp"

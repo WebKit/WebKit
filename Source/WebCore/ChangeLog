@@ -1,3 +1,86 @@
+2012-12-04  Silvia Pfeiffer  <silviapf@chromium.org>
+
+        Refactor Media Control Elements to remove code duplication.
+        https://bugs.webkit.org/show_bug.cgi?id=101877
+
+        Reviewed by Eric Carlson.
+
+        Instead of having two different types of inheritance trees for
+        MediaControlElement and MediaControlInputElement, this
+        creates a stand-alone virtual class MediaControlElement that
+        provides the common functions: show(), hide(), isShowing(),
+        setMediaController(), displayType(), isMediaControlElement(),
+        shadowPseudoId(), mediaController(), setDisplayType().
+
+        The individual elements inherit from MediaControlElement and
+        either HTMLInputElement or HTMLDivElement. They extend/override
+        the base functions as appropriate.
+
+        As part of this, the RenderXXX classes mixed in between the media
+        controls in MediaControlElements.cpp are also moved to
+        rendering/RenderMediaControls.h/cpp to follow common code separation.
+
+        No new tests since this is just a refactoring.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        Build files extended with new files.
+
+        * html/HTMLMediaElement.h:
+        (WebCore::HTMLMediaElement::textTracksIndexNotFound):
+        Replaced const with function, since it is used in multiple files.
+
+        * html/shadow/MediaControlElementTypes.cpp: new file
+        * html/shadow/MediaControlElementTypes.h: new file
+        Added new MediaControlElement class. Moved MediaControlDivElement and MediaControlInputElement
+        classes into these files from MediaControlElements.cpp/h. Moved MediaControlElementTypes enum
+        into these. Moved other media control element classes that are the basis for inheriting media
+        control elements into these (MediaControlTimeDisplayElement, MediaControlMuteButtonElement,
+        MediaControlSeekButtonElement, MediaControlVolumeSliderElement).
+
+        * html/shadow/MediaControlElements.cpp:
+        * html/shadow/MediaControlElements.h:
+        Removed common functions between media elements that are now in the common
+        base class MediaControlElement.
+        Also moved common base classes to MediaControlElementTypes.h/cpp
+
+        * html/shadow/MediaControls.cpp:
+        * html/shadow/MediaControls.h:
+        Renamed MediaControlVolumeSliderElement to MediaControlPanelVolumeSliderElement
+        to be consistent in inheritance tree. Updated copyright date.
+
+        * html/shadow/MediaControlsApple.cpp:
+        * html/shadow/MediaControlsApple.h:
+        Renamed MediaControlVolumeSliderElement to MediaControlPanelVolumeSliderElement
+        to be consistent in inheritance tree. Updated copyright dates.n
+
+        * html/shadow/MediaControlsChromium.cpp:
+        * html/shadow/MediaControlsChromium.h:
+        Renamed MediaControlVolumeSliderElement to MediaControlPanelVolumeSliderElement
+        to be consistent in inheritance tree.
+        Moved enclosure element definitions to common MediaControlElements.cpp/h
+        file through which different media elements are made available to different ports.
+
+        * html/shadow/MediaControlsChromiumAndroid.cpp:
+        * html/shadow/MediaControlsChromiumAndroid.h:
+        Moved enclosure for overlay button to MediaControlElements.cpp/h files
+        through which different media elements are made available to different ports.
+
+        * rendering/RenderMediaControlElements.cpp: new file
+        * rendering/RenderMediaControlElements.h: new file
+        Moved rendering classes for media control elements into these files from
+        MediaControlElements.cpp/h.
+
+        * rendering/RenderThemeMac.mm:
+        Added new RenderMediaControlElements.h file.
+
+        * rendering/RenderingAllInOne.cpp:
+        Added new RenderMediaControlEleemnt.cpp file.
+
 2012-12-04  Kenneth Russell  <kbr@google.com>
 
         Associate URLs with GraphicsContext3D instances created for WebGL

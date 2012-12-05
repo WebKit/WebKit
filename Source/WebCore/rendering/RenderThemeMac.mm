@@ -27,6 +27,7 @@
 #import "MediaControlElements.h"
 #import "PaintInfo.h"
 #import "RenderMedia.h"
+#import "RenderMediaControlElements.h"
 #import "RenderMediaControls.h"
 #import "RenderView.h"
 #import "TimeRanges.h"

@@ -1544,8 +1544,9 @@ SET(WebCore_SOURCES
     html/shadow/HTMLShadowElement.cpp
     html/shadow/ImageInnerElement.cpp
     html/shadow/InsertionPoint.cpp
-    html/shadow/MediaControls.cpp
+    html/shadow/MediaControlElementTypes.cpp
     html/shadow/MediaControlElements.cpp
+    html/shadow/MediaControls.cpp
     html/shadow/MediaControlsApple.cpp
     html/shadow/MeterShadowElement.cpp
     html/shadow/ProgressShadowElement.cpp
@@ -2127,6 +2128,8 @@ SET(WebCore_SOURCES
     rendering/RenderListMarker.cpp
     rendering/RenderMarquee.cpp
     rendering/RenderMedia.cpp
+    rendering/RenderMediaControlElements.cpp
+    rendering/RenderMediaControls.cpp
     rendering/RenderMenuList.cpp
     rendering/RenderMeter.cpp
     rendering/RenderMultiColumnBlock.cpp

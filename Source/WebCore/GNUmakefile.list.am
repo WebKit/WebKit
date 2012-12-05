@@ -3560,10 +3560,12 @@ webcore_sources += \
 	Source/WebCore/html/shadow/InsertionPoint.h \
 	Source/WebCore/html/shadow/ImageInnerElement.cpp \
 	Source/WebCore/html/shadow/ImageInnerElement.h \
-	Source/WebCore/html/shadow/MediaControls.cpp \
-	Source/WebCore/html/shadow/MediaControls.h \
 	Source/WebCore/html/shadow/MediaControlElements.cpp \
 	Source/WebCore/html/shadow/MediaControlElements.h \
+	Source/WebCore/html/shadow/MediaControlElementTypes.cpp \
+	Source/WebCore/html/shadow/MediaControlElementTypes.h \
+	Source/WebCore/html/shadow/MediaControls.cpp \
+	Source/WebCore/html/shadow/MediaControls.h \
 	Source/WebCore/html/shadow/MediaControlsApple.cpp \
 	Source/WebCore/html/shadow/MediaControlsApple.h \
 	Source/WebCore/html/shadow/MeterShadowElement.cpp \
@@ -4325,6 +4327,10 @@ webcore_sources += \
 	Source/WebCore/rendering/RenderMarquee.h \
 	Source/WebCore/rendering/RenderMedia.cpp \
 	Source/WebCore/rendering/RenderMedia.h \
+	Source/WebCore/rendering/RenderMediaControlElements.cpp \
+	Source/WebCore/rendering/RenderMediaControlElements.h \
+	Source/WebCore/rendering/RenderMediaControls.cpp \
+	Source/WebCore/rendering/RenderMediaControls.h \
 	Source/WebCore/rendering/RenderMenuList.cpp \
 	Source/WebCore/rendering/RenderMenuList.h \
 	Source/WebCore/rendering/RenderMeter.cpp \
