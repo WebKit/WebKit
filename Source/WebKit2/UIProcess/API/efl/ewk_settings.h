@@ -447,6 +447,27 @@ EAPI Eina_Bool ewk_settings_plugins_enabled_set(Ewk_Settings *settings, Eina_Boo
  */
 EAPI Eina_Bool ewk_settings_plugins_enabled_get(const Ewk_Settings *settings);
 
+/**
+ * Sets the default font size.
+ *
+ * By default, the default font size is @c 16.
+ *
+ * @param settings settings object to set the default font size
+ * @param size a new default font size to set
+ *
+ * @return @c EINA_TRUE on success or @c EINA_FALSE on failure
+ */
+EAPI Eina_Bool ewk_settings_default_font_size_set(Ewk_Settings *settings, int size);
+
+/**
+ * Returns the default font size.
+ *
+ * @param settings settings object to get the default font size
+ *
+ * @return @c the default font size or @c 0 on failure
+ */
+EAPI int ewk_settings_default_font_size_get(const Ewk_Settings *settings);
+
 #ifdef __cplusplus
 }
 #endif
