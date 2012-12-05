@@ -1,5 +1,15 @@
 2012-12-05  Mike West  <mkwst@chromium.org>
 
+        [mac][chromium] Unreviewed gardening.
+
+        Rebaselining tests after r136657 to pick up changes to console messages.
+
+        * platform/chromium-linux/http/tests/security/xssAuditor/javascript-link-HTML-entities-null-char-expected.txt: Removed.
+        * platform/chromium-win/http/tests/security/xssAuditor/javascript-link-HTML-entities-null-char-expected.txt: Removed.
+        * platform/mac-wk2/http/tests/security/cross-origin-xsl-BLOCKED-expected.txt:
+
+2012-12-05  Mike West  <mkwst@chromium.org>
+
         [gtk] Unreviewed gardening.
 
         Rebaselining tests after r136657 to pick up changes to console messages.

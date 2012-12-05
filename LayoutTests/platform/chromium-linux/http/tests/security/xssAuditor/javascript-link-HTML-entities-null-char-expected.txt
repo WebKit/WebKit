@@ -1,3 +1,0 @@
-CONSOLE MESSAGE: line 14: Refused to execute a JavaScript script. Source code of script found within request.
-
-
