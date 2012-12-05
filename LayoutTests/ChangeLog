@@ -1,3 +1,367 @@
+2012-12-04  Stephen White  <senorblanco@chromium.org>
+
+        [chromium] New baselines after http://webkit.org/b/103906.  Unreviewed.
+
+        * platform/chromium-linux-x86/platform/chromium/virtual/softwarecompositing/shadows/shadow-drawing-expected.png: Copied from LayoutTests/platform/chromium-linux/compositing/shadows/shadow-drawing-expected.png.
+        * platform/chromium-linux/compositing/geometry/clipping-foreground-expected.png:
+        * platform/chromium-linux/compositing/iframes/composited-iframe-alignment-expected.png:
+        * platform/chromium-linux/compositing/masks/masked-ancestor-expected.png:
+        * platform/chromium-linux/compositing/shadows/shadow-drawing-expected.png:
+        * platform/chromium-linux/fast/borders/border-radius-constraints-expected.png:
+        * platform/chromium-linux/fast/borders/border-radius-split-inline-expected.png:
+        * platform/chromium-linux/fast/borders/mixed-border-styles-radius-expected.png:
+        * platform/chromium-linux/fast/box-shadow/basic-shadows-expected.png:
+        * platform/chromium-linux/fast/box-shadow/box-shadow-clipped-slices-expected.png:
+        * platform/chromium-linux/fast/box-shadow/box-shadow-transformed-expected.png:
+        * platform/chromium-linux/fast/box-shadow/inset-box-shadows-expected.png:
+        * platform/chromium-linux/fast/box-shadow/inset-expected.png:
+        * platform/chromium-linux/fast/box-shadow/shadow-tiling-artifact-expected.png:
+        * platform/chromium-linux/fast/css/background-clip-radius-values-expected.png:
+        * platform/chromium-linux/fast/css/box-shadow-and-border-radius-expected.png:
+        * platform/chromium-linux/fast/css/color-correction-on-box-shadow-expected.png:
+        * platform/chromium-linux/fast/css/color-correction-on-text-shadow-expected.png:
+        * platform/chromium-linux/fast/css/shadow-multiple-expected.png:
+        * platform/chromium-linux/fast/forms/validation-message-appearance-expected.png:
+        * platform/chromium-linux/fast/multicol/shadow-breaking-expected.png:
+        * platform/chromium-linux/fast/repaint/box-shadow-h-expected.png:
+        * platform/chromium-linux/fast/repaint/box-shadow-v-expected.png:
+        * platform/chromium-linux/fast/repaint/moving-shadow-on-path-expected.png:
+        * platform/chromium-linux/fast/repaint/shadow-multiple-horizontal-expected.png:
+        * platform/chromium-linux/fast/repaint/shadow-multiple-strict-horizontal-expected.png:
+        * platform/chromium-linux/fast/repaint/shadow-multiple-strict-vertical-expected.png:
+        * platform/chromium-linux/fast/repaint/shadow-multiple-vertical-expected.png:
+        * platform/chromium-linux/fast/text/shadow-translucent-fill-expected.png:
+        * platform/chromium-linux/fast/text/stroking-decorations-expected.png:
+        * platform/chromium-linux/fast/text/stroking-expected.png:
+        * platform/chromium-linux/fast/transforms/shadows-expected.png:
+        * platform/chromium-linux/fast/writing-mode/box-shadow-horizontal-bt-expected.png:
+        * platform/chromium-linux/fast/writing-mode/box-shadow-vertical-lr-expected.png:
+        * platform/chromium-linux/fast/writing-mode/box-shadow-vertical-rl-expected.png:
+        * platform/chromium-linux/fast/writing-mode/english-lr-text-expected.png:
+        * platform/chromium-linux/ietestcenter/css3/text/textshadow-001-expected.png:
+        * platform/chromium-linux/ietestcenter/css3/text/textshadow-002-expected.png:
+        * platform/chromium-linux/ietestcenter/css3/text/textshadow-003-expected.png:
+        * platform/chromium-linux/ietestcenter/css3/text/textshadow-004-expected.png:
+        * platform/chromium-linux/ietestcenter/css3/text/textshadow-010-expected.png:
+        * platform/chromium-linux/platform/chromium/fast/forms/calendar-picker/calendar-picker-appearance-expected.png:
+        * platform/chromium-linux/platform/chromium/fast/forms/calendar-picker/calendar-picker-appearance-ru-expected.png:
+        * platform/chromium-linux/platform/chromium/fast/forms/calendar-picker/calendar-picker-appearance-step-expected.png:
+        * platform/chromium-linux/platform/chromium/fast/forms/calendar-picker/month-picker-appearance-expected.png:
+        * platform/chromium-linux/platform/chromium/fast/forms/calendar-picker/month-picker-appearance-step-expected.png:
+        * platform/chromium-linux/platform/chromium/fast/forms/calendar-picker/week-picker-appearance-expected.png:
+        * platform/chromium-linux/platform/chromium/fast/forms/calendar-picker/week-picker-appearance-step-expected.png:
+        * platform/chromium-linux/platform/chromium/fast/forms/color/color-suggestion-picker-appearance-expected.png:
+        * platform/chromium-linux/platform/chromium/fast/forms/color/color-suggestion-picker-one-row-appearance-expected.png:
+        * platform/chromium-linux/platform/chromium/fast/forms/color/color-suggestion-picker-two-row-appearance-expected.png:
+        * platform/chromium-linux/platform/chromium/fast/forms/color/color-suggestion-picker-with-scrollbar-appearance-expected.png:
+        * platform/chromium-linux/platform/chromium/virtual/softwarecompositing/geometry/clipping-foreground-expected.png:
+        * platform/chromium-linux/platform/chromium/virtual/softwarecompositing/iframes/composited-iframe-alignment-expected.png:
+        * platform/chromium-linux/platform/chromium/virtual/softwarecompositing/masks/masked-ancestor-expected.png:
+        * platform/chromium-linux/platform/chromium/virtual/softwarecompositing/shadows/shadow-drawing-expected.png:
+        * platform/chromium-linux/svg/css/circle-in-mask-with-shadow-expected.png:
+        * platform/chromium-linux/svg/css/stars-with-shadow-expected.png:
+        * platform/chromium-linux/svg/css/text-gradient-shadow-expected.png:
+        * platform/chromium-linux/svg/css/text-shadow-multiple-expected.png:
+        * platform/chromium-linux/transitions/svg-text-shadow-transition-expected.png:
+        * platform/chromium-mac-lion/compositing/geometry/clipping-foreground-expected.png:
+        * platform/chromium-mac-lion/compositing/iframes/composited-iframe-alignment-expected.png:
+        * platform/chromium-mac-lion/compositing/masks/masked-ancestor-expected.png:
+        * platform/chromium-mac-lion/compositing/shadows/shadow-drawing-expected.png:
+        * platform/chromium-mac-lion/fast/borders/border-radius-constraints-expected.png:
+        * platform/chromium-mac-lion/fast/borders/border-radius-split-inline-expected.png:
+        * platform/chromium-mac-lion/fast/box-shadow/basic-shadows-expected.png:
+        * platform/chromium-mac-lion/fast/box-shadow/box-shadow-transformed-expected.png:
+        * platform/chromium-mac-lion/fast/box-shadow/inset-expected.png:
+        * platform/chromium-mac-lion/fast/css/color-correction-on-box-shadow-expected.png:
+        * platform/chromium-mac-lion/fast/css/color-correction-on-text-shadow-expected.png:
+        * platform/chromium-mac-lion/fast/css/shadow-multiple-expected.png:
+        * platform/chromium-mac-lion/fast/forms/validation-message-appearance-expected.png:
+        * platform/chromium-mac-lion/fast/multicol/shadow-breaking-expected.png:
+        * platform/chromium-mac-lion/fast/repaint/box-shadow-h-expected.png:
+        * platform/chromium-mac-lion/fast/repaint/box-shadow-v-expected.png:
+        * platform/chromium-mac-lion/fast/repaint/moving-shadow-on-path-expected.png:
+        * platform/chromium-mac-lion/fast/repaint/shadow-multiple-horizontal-expected.png:
+        * platform/chromium-mac-lion/fast/repaint/shadow-multiple-strict-horizontal-expected.png:
+        * platform/chromium-mac-lion/fast/repaint/shadow-multiple-strict-vertical-expected.png:
+        * platform/chromium-mac-lion/fast/repaint/shadow-multiple-vertical-expected.png:
+        * platform/chromium-mac-lion/fast/text/shadow-translucent-fill-expected.png:
+        * platform/chromium-mac-lion/fast/text/stroking-decorations-expected.png:
+        * platform/chromium-mac-lion/fast/text/stroking-expected.png:
+        * platform/chromium-mac-lion/fast/transforms/shadows-expected.png:
+        * platform/chromium-mac-lion/fast/writing-mode/box-shadow-horizontal-bt-expected.png:
+        * platform/chromium-mac-lion/fast/writing-mode/box-shadow-vertical-lr-expected.png:
+        * platform/chromium-mac-lion/fast/writing-mode/box-shadow-vertical-rl-expected.png:
+        * platform/chromium-mac-lion/fast/writing-mode/english-lr-text-expected.png:
+        * platform/chromium-mac-lion/ietestcenter/css3/text/textshadow-001-expected.png:
+        * platform/chromium-mac-lion/ietestcenter/css3/text/textshadow-002-expected.png:
+        * platform/chromium-mac-lion/ietestcenter/css3/text/textshadow-003-expected.png:
+        * platform/chromium-mac-lion/ietestcenter/css3/text/textshadow-004-expected.png:
+        * platform/chromium-mac-lion/ietestcenter/css3/text/textshadow-010-expected.png:
+        * platform/chromium-mac-lion/platform/chromium/fast/forms/calendar-picker/calendar-picker-appearance-expected.png:
+        * platform/chromium-mac-lion/platform/chromium/fast/forms/calendar-picker/calendar-picker-appearance-ru-expected.png:
+        * platform/chromium-mac-lion/platform/chromium/fast/forms/calendar-picker/calendar-picker-appearance-step-expected.png:
+        * platform/chromium-mac-lion/platform/chromium/fast/forms/calendar-picker/month-picker-appearance-expected.png:
+        * platform/chromium-mac-lion/platform/chromium/fast/forms/calendar-picker/month-picker-appearance-step-expected.png:
+        * platform/chromium-mac-lion/platform/chromium/fast/forms/calendar-picker/week-picker-appearance-expected.png:
+        * platform/chromium-mac-lion/platform/chromium/fast/forms/calendar-picker/week-picker-appearance-step-expected.png:
+        * platform/chromium-mac-lion/platform/chromium/fast/forms/color/color-suggestion-picker-appearance-expected.png:
+        * platform/chromium-mac-lion/platform/chromium/fast/forms/color/color-suggestion-picker-one-row-appearance-expected.png:
+        * platform/chromium-mac-lion/platform/chromium/fast/forms/color/color-suggestion-picker-two-row-appearance-expected.png:
+        * platform/chromium-mac-lion/platform/chromium/fast/forms/color/color-suggestion-picker-with-scrollbar-appearance-expected.png:
+        * platform/chromium-mac-lion/platform/chromium/virtual/softwarecompositing/geometry/clipping-foreground-expected.png:
+        * platform/chromium-mac-lion/platform/chromium/virtual/softwarecompositing/masks/masked-ancestor-expected.png:
+        * platform/chromium-mac-lion/platform/chromium/virtual/softwarecompositing/shadows/shadow-drawing-expected.png:
+        * platform/chromium-mac-lion/svg/css/stars-with-shadow-expected.png:
+        * platform/chromium-mac-lion/svg/css/text-gradient-shadow-expected.png:
+        * platform/chromium-mac-lion/svg/css/text-shadow-multiple-expected.png:
+        * platform/chromium-mac-lion/svg/custom/repaint-shadow-expected.png:
+        * platform/chromium-mac-lion/transitions/svg-text-shadow-transition-expected.png:
+        * platform/chromium-mac-snowleopard/compositing/geometry/clipping-foreground-expected.png:
+        * platform/chromium-mac-snowleopard/compositing/iframes/composited-iframe-alignment-expected.png:
+        * platform/chromium-mac-snowleopard/compositing/masks/masked-ancestor-expected.png:
+        * platform/chromium-mac-snowleopard/compositing/shadows/shadow-drawing-expected.png:
+        * platform/chromium-mac-snowleopard/fast/borders/border-radius-constraints-expected.png:
+        * platform/chromium-mac-snowleopard/fast/borders/border-radius-split-inline-expected.png:
+        * platform/chromium-mac-snowleopard/fast/box-shadow/basic-shadows-expected.png:
+        * platform/chromium-mac-snowleopard/fast/box-shadow/box-shadow-transformed-expected.png:
+        * platform/chromium-mac-snowleopard/fast/css/color-correction-on-box-shadow-expected.png:
+        * platform/chromium-mac-snowleopard/fast/css/color-correction-on-text-shadow-expected.png:
+        * platform/chromium-mac-snowleopard/fast/css/shadow-multiple-expected.png:
+        * platform/chromium-mac-snowleopard/fast/forms/validation-message-appearance-expected.png:
+        * platform/chromium-mac-snowleopard/fast/multicol/shadow-breaking-expected.png:
+        * platform/chromium-mac-snowleopard/fast/repaint/box-shadow-h-expected.png:
+        * platform/chromium-mac-snowleopard/fast/repaint/box-shadow-v-expected.png:
+        * platform/chromium-mac-snowleopard/fast/repaint/moving-shadow-on-path-expected.png:
+        * platform/chromium-mac-snowleopard/fast/text/shadow-translucent-fill-expected.png:
+        * platform/chromium-mac-snowleopard/fast/writing-mode/box-shadow-vertical-lr-expected.png:
+        * platform/chromium-mac-snowleopard/fast/writing-mode/box-shadow-vertical-rl-expected.png:
+        * platform/chromium-mac-snowleopard/ietestcenter/css3/text/textshadow-001-expected.png:
+        * platform/chromium-mac-snowleopard/ietestcenter/css3/text/textshadow-002-expected.png:
+        * platform/chromium-mac-snowleopard/ietestcenter/css3/text/textshadow-003-expected.png:
+        * platform/chromium-mac-snowleopard/ietestcenter/css3/text/textshadow-004-expected.png:
+        * platform/chromium-mac-snowleopard/ietestcenter/css3/text/textshadow-010-expected.png:
+        * platform/chromium-mac-snowleopard/platform/chromium/fast/forms/calendar-picker/calendar-picker-appearance-expected.png:
+        * platform/chromium-mac-snowleopard/platform/chromium/fast/forms/calendar-picker/calendar-picker-appearance-ru-expected.png:
+        * platform/chromium-mac-snowleopard/platform/chromium/fast/forms/calendar-picker/calendar-picker-appearance-step-expected.png:
+        * platform/chromium-mac-snowleopard/platform/chromium/fast/forms/calendar-picker/month-picker-appearance-expected.png:
+        * platform/chromium-mac-snowleopard/platform/chromium/fast/forms/calendar-picker/month-picker-appearance-step-expected.png:
+        * platform/chromium-mac-snowleopard/platform/chromium/fast/forms/calendar-picker/week-picker-appearance-expected.png:
+        * platform/chromium-mac-snowleopard/platform/chromium/fast/forms/calendar-picker/week-picker-appearance-step-expected.png:
+        * platform/chromium-mac-snowleopard/platform/chromium/fast/forms/color/color-suggestion-picker-appearance-expected.png:
+        * platform/chromium-mac-snowleopard/platform/chromium/fast/forms/color/color-suggestion-picker-one-row-appearance-expected.png:
+        * platform/chromium-mac-snowleopard/platform/chromium/fast/forms/color/color-suggestion-picker-two-row-appearance-expected.png:
+        * platform/chromium-mac-snowleopard/platform/chromium/fast/forms/color/color-suggestion-picker-with-scrollbar-appearance-expected.png:
+        * platform/chromium-mac-snowleopard/platform/chromium/virtual/softwarecompositing/geometry/clipping-foreground-expected.png:
+        * platform/chromium-mac-snowleopard/platform/chromium/virtual/softwarecompositing/iframes/composited-iframe-alignment-expected.png: Added.
+        * platform/chromium-mac-snowleopard/platform/chromium/virtual/softwarecompositing/masks/masked-ancestor-expected.png:
+        * platform/chromium-mac-snowleopard/platform/chromium/virtual/softwarecompositing/shadows/shadow-drawing-expected.png:
+        * platform/chromium-mac-snowleopard/svg/css/stars-with-shadow-expected.png:
+        * platform/chromium-mac-snowleopard/svg/css/text-shadow-multiple-expected.png:
+        * platform/chromium-mac-snowleopard/transitions/svg-text-shadow-transition-expected.png:
+        * platform/chromium-mac/compositing/culling/scrolled-within-boxshadow-expected.png: Added.
+        * platform/chromium-mac/compositing/culling/translated-boxshadow-expected.png: Added.
+        * platform/chromium-mac/compositing/culling/unscrolled-within-boxshadow-expected.png: Added.
+        * platform/chromium-mac/compositing/geometry/clipping-foreground-expected.png:
+        * platform/chromium-mac/compositing/geometry/foreground-layer-expected.png:
+        * platform/chromium-mac/compositing/iframes/composited-iframe-alignment-expected.png:
+        * platform/chromium-mac/compositing/masks/masked-ancestor-expected.png:
+        * platform/chromium-mac/compositing/shadows/shadow-drawing-expected.png:
+        * platform/chromium-mac/fast/borders/border-radius-constraints-expected.png:
+        * platform/chromium-mac/fast/borders/border-radius-split-inline-expected.png:
+        * platform/chromium-mac/fast/borders/mixed-border-styles-radius-expected.png:
+        * platform/chromium-mac/fast/box-shadow/basic-shadows-expected.png:
+        * platform/chromium-mac/fast/box-shadow/box-shadow-clipped-slices-expected.png:
+        * platform/chromium-mac/fast/box-shadow/box-shadow-radius-expected.png:
+        * platform/chromium-mac/fast/box-shadow/box-shadow-transformed-expected.png:
+        * platform/chromium-mac/fast/box-shadow/inset-box-shadow-radius-expected.png:
+        * platform/chromium-mac/fast/box-shadow/inset-box-shadows-expected.png:
+        * platform/chromium-mac/fast/box-shadow/inset-expected.png:
+        * platform/chromium-mac/fast/box-shadow/scaled-box-shadow-expected.png:
+        * platform/chromium-mac/fast/box-shadow/shadow-buffer-partial-expected.png:
+        * platform/chromium-mac/fast/box-shadow/shadow-tiling-artifact-expected.png:
+        * platform/chromium-mac/fast/box-shadow/single-pixel-shadow-expected.png:
+        * platform/chromium-mac/fast/canvas/fillText-shadow-expected.txt: Removed.
+        * platform/chromium-mac/fast/css/box-shadow-and-border-radius-expected.png:
+        * platform/chromium-mac/fast/css/color-correction-on-box-shadow-expected.png:
+        * platform/chromium-mac/fast/css/color-correction-on-text-shadow-expected.png:
+        * platform/chromium-mac/fast/css/shadow-multiple-expected.png:
+        * platform/chromium-mac/fast/forms/validation-message-appearance-expected.png:
+        * platform/chromium-mac/fast/multicol/shadow-breaking-expected.png:
+        * platform/chromium-mac/fast/repaint/box-shadow-h-expected.png:
+        * platform/chromium-mac/fast/repaint/box-shadow-v-expected.png:
+        * platform/chromium-mac/fast/repaint/moving-shadow-on-path-expected.png:
+        * platform/chromium-mac/fast/repaint/shadow-multiple-horizontal-expected.png:
+        * platform/chromium-mac/fast/repaint/shadow-multiple-strict-horizontal-expected.png:
+        * platform/chromium-mac/fast/repaint/shadow-multiple-strict-vertical-expected.png:
+        * platform/chromium-mac/fast/repaint/shadow-multiple-vertical-expected.png:
+        * platform/chromium-mac/fast/repaint/transform-replaced-shadows-expected.png:
+        * platform/chromium-mac/fast/text/shadow-translucent-fill-expected.png:
+        * platform/chromium-mac/fast/text/stroking-decorations-expected.png:
+        * platform/chromium-mac/fast/text/stroking-expected.png:
+        * platform/chromium-mac/fast/transforms/shadows-expected.png:
+        * platform/chromium-mac/fast/writing-mode/box-shadow-horizontal-bt-expected.png:
+        * platform/chromium-mac/fast/writing-mode/box-shadow-vertical-lr-expected.png:
+        * platform/chromium-mac/fast/writing-mode/box-shadow-vertical-rl-expected.png:
+        * platform/chromium-mac/fast/writing-mode/english-lr-text-expected.png:
+        * platform/chromium-mac/ietestcenter/css3/text/textshadow-001-expected.png:
+        * platform/chromium-mac/ietestcenter/css3/text/textshadow-002-expected.png:
+        * platform/chromium-mac/ietestcenter/css3/text/textshadow-003-expected.png:
+        * platform/chromium-mac/ietestcenter/css3/text/textshadow-004-expected.png:
+        * platform/chromium-mac/ietestcenter/css3/text/textshadow-010-expected.png:
+        * platform/chromium-mac/platform/chromium/fast/forms/calendar-picker/calendar-picker-appearance-expected.png:
+        * platform/chromium-mac/platform/chromium/fast/forms/calendar-picker/calendar-picker-appearance-ru-expected.png:
+        * platform/chromium-mac/platform/chromium/fast/forms/calendar-picker/calendar-picker-appearance-step-expected.png:
+        * platform/chromium-mac/platform/chromium/fast/forms/calendar-picker/month-picker-appearance-expected.png:
+        * platform/chromium-mac/platform/chromium/fast/forms/calendar-picker/month-picker-appearance-step-expected.png:
+        * platform/chromium-mac/platform/chromium/fast/forms/calendar-picker/week-picker-appearance-expected.png:
+        * platform/chromium-mac/platform/chromium/fast/forms/calendar-picker/week-picker-appearance-step-expected.png:
+        * platform/chromium-mac/platform/chromium/fast/forms/color/color-suggestion-picker-appearance-expected.png:
+        * platform/chromium-mac/platform/chromium/fast/forms/color/color-suggestion-picker-one-row-appearance-expected.png:
+        * platform/chromium-mac/platform/chromium/fast/forms/color/color-suggestion-picker-two-row-appearance-expected.png:
+        * platform/chromium-mac/platform/chromium/fast/forms/color/color-suggestion-picker-with-scrollbar-appearance-expected.png:
+        * platform/chromium-mac/platform/chromium/virtual/softwarecompositing/culling/scrolled-within-boxshadow-expected.png: Added.
+        * platform/chromium-mac/platform/chromium/virtual/softwarecompositing/culling/translated-boxshadow-expected.png: Added.
+        * platform/chromium-mac/platform/chromium/virtual/softwarecompositing/culling/unscrolled-within-boxshadow-expected.png: Added.
+        * platform/chromium-mac/platform/chromium/virtual/softwarecompositing/geometry/clipping-foreground-expected.png:
+        * platform/chromium-mac/platform/chromium/virtual/softwarecompositing/geometry/foreground-layer-expected.png: Added.
+        * platform/chromium-mac/platform/chromium/virtual/softwarecompositing/iframes/composited-iframe-alignment-expected.png: Added.
+        * platform/chromium-mac/platform/chromium/virtual/softwarecompositing/masks/masked-ancestor-expected.png:
+        * platform/chromium-mac/platform/chromium/virtual/softwarecompositing/shadows/shadow-drawing-expected.png:
+        * platform/chromium-mac/svg/css/circle-in-mask-with-shadow-expected.png:
+        * platform/chromium-mac/svg/css/path-with-shadow-expected.png:
+        * platform/chromium-mac/svg/css/shadow-and-opacity-expected.png:
+        * platform/chromium-mac/svg/css/shadow-with-large-radius-expected.png:
+        * platform/chromium-mac/svg/css/shadow-with-negative-offset-expected.png:
+        * platform/chromium-mac/svg/css/stars-with-shadow-expected.png:
+        * platform/chromium-mac/svg/css/text-gradient-shadow-expected.png:
+        * platform/chromium-mac/svg/css/text-shadow-multiple-expected.png:
+        * platform/chromium-mac/svg/custom/repaint-shadow-expected.png:
+        * platform/chromium-mac/svg/filters/shadow-on-rect-with-filter-expected.png:
+        * platform/chromium-mac/transitions/svg-text-shadow-transition-expected.png:
+        * platform/chromium-win-xp/compositing/shadows/shadow-drawing-expected.png:
+        * platform/chromium-win-xp/fast/repaint/box-shadow-h-expected.png:
+        * platform/chromium-win-xp/fast/repaint/box-shadow-v-expected.png:
+        * platform/chromium-win-xp/fast/text/stroking-decorations-expected.png:
+        * platform/chromium-win-xp/fast/text/stroking-expected.png:
+        * platform/chromium-win-xp/fast/writing-mode/english-lr-text-expected.png:
+        * platform/chromium-win-xp/platform/chromium/fast/forms/calendar-picker/calendar-picker-appearance-ru-expected.png:
+        * platform/chromium-win-xp/platform/chromium/virtual/softwarecompositing/masks/masked-ancestor-expected.png: Removed.
+        * platform/chromium-win-xp/platform/chromium/virtual/softwarecompositing/shadows/shadow-drawing-expected.png:
+        * platform/chromium-win/compositing/culling/scrolled-within-boxshadow-expected.png: Copied from LayoutTests/platform/chromium-win/platform/chromium/fast/forms/color/color-suggestion-picker-one-row-appearance-expected.png.
+        * platform/chromium-win/compositing/culling/translated-boxshadow-expected.png: Copied from LayoutTests/platform/chromium-win/platform/chromium/fast/forms/color/color-suggestion-picker-appearance-expected.png.
+        * platform/chromium-win/compositing/culling/unscrolled-within-boxshadow-expected.png: Copied from LayoutTests/platform/chromium-win/platform/chromium/fast/forms/color/color-suggestion-picker-one-row-appearance-expected.png.
+        * platform/chromium-win/compositing/geometry/clipping-foreground-expected.png:
+        * platform/chromium-win/compositing/geometry/foreground-layer-expected.png:
+        * platform/chromium-win/compositing/iframes/composited-iframe-alignment-expected.png:
+        * platform/chromium-win/compositing/masks/masked-ancestor-expected.png:
+        * platform/chromium-win/compositing/shadows/shadow-drawing-expected.png:
+        * platform/chromium-win/fast/borders/border-radius-constraints-expected.png:
+        * platform/chromium-win/fast/borders/border-radius-split-inline-expected.png:
+        * platform/chromium-win/fast/borders/mixed-border-styles-radius-expected.png:
+        * platform/chromium-win/fast/box-shadow/basic-shadows-expected.png:
+        * platform/chromium-win/fast/box-shadow/box-shadow-clipped-slices-expected.png:
+        * platform/chromium-win/fast/box-shadow/box-shadow-radius-expected.png:
+        * platform/chromium-win/fast/box-shadow/box-shadow-transformed-expected.png:
+        * platform/chromium-win/fast/box-shadow/inset-box-shadow-radius-expected.png:
+        * platform/chromium-win/fast/box-shadow/inset-box-shadows-expected.png:
+        * platform/chromium-win/fast/box-shadow/inset-expected.png:
+        * platform/chromium-win/fast/box-shadow/scaled-box-shadow-expected.png:
+        * platform/chromium-win/fast/box-shadow/shadow-buffer-partial-expected.png:
+        * platform/chromium-win/fast/box-shadow/shadow-tiling-artifact-expected.png:
+        * platform/chromium-win/fast/box-shadow/single-pixel-shadow-expected.png:
+        * platform/chromium-win/fast/css/box-shadow-and-border-radius-expected.png:
+        * platform/chromium-win/fast/css/color-correction-on-box-shadow-expected.png:
+        * platform/chromium-win/fast/css/color-correction-on-text-shadow-expected.png:
+        * platform/chromium-win/fast/css/shadow-multiple-expected.png:
+        * platform/chromium-win/fast/forms/validation-message-appearance-expected.png:
+        * platform/chromium-win/fast/multicol/shadow-breaking-expected.png:
+        * platform/chromium-win/fast/repaint/box-shadow-h-expected.png:
+        * platform/chromium-win/fast/repaint/box-shadow-v-expected.png:
+        * platform/chromium-win/fast/repaint/moving-shadow-on-path-expected.png:
+        * platform/chromium-win/fast/repaint/shadow-multiple-horizontal-expected.png:
+        * platform/chromium-win/fast/repaint/shadow-multiple-strict-horizontal-expected.png:
+        * platform/chromium-win/fast/repaint/shadow-multiple-strict-vertical-expected.png:
+        * platform/chromium-win/fast/repaint/shadow-multiple-vertical-expected.png:
+        * platform/chromium-win/fast/repaint/transform-replaced-shadows-expected.png:
+        * platform/chromium-win/fast/text/shadow-translucent-fill-expected.png:
+        * platform/chromium-win/fast/text/stroking-decorations-expected.png:
+        * platform/chromium-win/fast/text/stroking-expected.png:
+        * platform/chromium-win/fast/transforms/shadows-expected.png:
+        * platform/chromium-win/fast/writing-mode/box-shadow-horizontal-bt-expected.png:
+        * platform/chromium-win/fast/writing-mode/box-shadow-vertical-lr-expected.png:
+        * platform/chromium-win/fast/writing-mode/box-shadow-vertical-rl-expected.png:
+        * platform/chromium-win/fast/writing-mode/english-lr-text-expected.png:
+        * platform/chromium-win/ietestcenter/css3/text/textshadow-001-expected.png:
+        * platform/chromium-win/ietestcenter/css3/text/textshadow-002-expected.png:
+        * platform/chromium-win/ietestcenter/css3/text/textshadow-003-expected.png:
+        * platform/chromium-win/ietestcenter/css3/text/textshadow-004-expected.png:
+        * platform/chromium-win/ietestcenter/css3/text/textshadow-010-expected.png:
+        * platform/chromium-win/platform/chromium/fast/forms/calendar-picker/calendar-picker-appearance-expected.png:
+        * platform/chromium-win/platform/chromium/fast/forms/calendar-picker/calendar-picker-appearance-ru-expected.png:
+        * platform/chromium-win/platform/chromium/fast/forms/calendar-picker/calendar-picker-appearance-step-expected.png:
+        * platform/chromium-win/platform/chromium/fast/forms/calendar-picker/month-picker-appearance-expected.png:
+        * platform/chromium-win/platform/chromium/fast/forms/calendar-picker/month-picker-appearance-step-expected.png:
+        * platform/chromium-win/platform/chromium/fast/forms/calendar-picker/week-picker-appearance-expected.png:
+        * platform/chromium-win/platform/chromium/fast/forms/calendar-picker/week-picker-appearance-step-expected.png:
+        * platform/chromium-win/platform/chromium/fast/forms/color/color-suggestion-picker-appearance-expected.png:
+        * platform/chromium-win/platform/chromium/fast/forms/color/color-suggestion-picker-one-row-appearance-expected.png:
+        * platform/chromium-win/platform/chromium/fast/forms/color/color-suggestion-picker-two-row-appearance-expected.png:
+        * platform/chromium-win/platform/chromium/fast/forms/color/color-suggestion-picker-with-scrollbar-appearance-expected.png:
+        * platform/chromium-win/platform/chromium/virtual/softwarecompositing/culling/scrolled-within-boxshadow-expected.png: Copied from LayoutTests/platform/chromium-win/platform/chromium/fast/forms/color/color-suggestion-picker-one-row-appearance-expected.png.
+        * platform/chromium-win/platform/chromium/virtual/softwarecompositing/culling/translated-boxshadow-expected.png: Copied from LayoutTests/platform/chromium-win/platform/chromium/fast/forms/color/color-suggestion-picker-appearance-expected.png.
+        * platform/chromium-win/platform/chromium/virtual/softwarecompositing/culling/unscrolled-within-boxshadow-expected.png: Copied from LayoutTests/platform/chromium-win/platform/chromium/fast/forms/color/color-suggestion-picker-one-row-appearance-expected.png.
+        * platform/chromium-win/platform/chromium/virtual/softwarecompositing/geometry/clipping-foreground-expected.png: Added.
+        * platform/chromium-win/platform/chromium/virtual/softwarecompositing/geometry/foreground-layer-expected.png: Added.
+        * platform/chromium-win/platform/chromium/virtual/softwarecompositing/iframes/composited-iframe-alignment-expected.png:
+        * platform/chromium-win/platform/chromium/virtual/softwarecompositing/masks/masked-ancestor-expected.png:
+        * platform/chromium-win/platform/chromium/virtual/softwarecompositing/shadows/shadow-drawing-expected.png:
+        * platform/chromium-win/svg/css/circle-in-mask-with-shadow-expected.png:
+        * platform/chromium-win/svg/css/path-with-shadow-expected.png:
+        * platform/chromium-win/svg/css/shadow-and-opacity-expected.png:
+        * platform/chromium-win/svg/css/shadow-with-large-radius-expected.png:
+        * platform/chromium-win/svg/css/shadow-with-negative-offset-expected.png:
+        * platform/chromium-win/svg/css/stars-with-shadow-expected.png:
+        * platform/chromium-win/svg/css/text-gradient-shadow-expected.png:
+        * platform/chromium-win/svg/css/text-shadow-multiple-expected.png:
+        * platform/chromium-win/svg/custom/repaint-shadow-expected.png:
+        * platform/chromium-win/svg/filters/shadow-on-rect-with-filter-expected.png:
+        * platform/chromium-win/transitions/svg-text-shadow-transition-expected.png:
+        * platform/chromium/TestExpectations:
+        * platform/efl-wk1/compositing/geometry/clipping-foreground-expected.png: Renamed from LayoutTests/platform/efl/compositing/geometry/clipping-foreground-expected.png.
+        * platform/efl-wk1/compositing/geometry/foreground-layer-expected.png: Renamed from LayoutTests/platform/efl/compositing/geometry/foreground-layer-expected.png.
+        * platform/efl-wk1/fast/borders/border-radius-constraints-expected.png: Renamed from LayoutTests/platform/efl/fast/borders/border-radius-constraints-expected.png.
+        * platform/efl-wk1/fast/borders/border-radius-split-inline-expected.png: Renamed from LayoutTests/platform/efl/fast/borders/border-radius-split-inline-expected.png.
+        * platform/efl-wk1/fast/borders/mixed-border-styles-radius-expected.png: Renamed from LayoutTests/platform/efl/fast/borders/mixed-border-styles-radius-expected.png.
+        * platform/efl-wk1/fast/box-shadow/inset-box-shadows-expected.png: Renamed from LayoutTests/platform/efl/fast/box-shadow/inset-box-shadows-expected.png.
+        * platform/efl-wk1/fast/box-shadow/inset-expected.png: Renamed from LayoutTests/platform/efl/fast/box-shadow/inset-expected.png.
+        * platform/efl-wk1/fast/css/box-shadow-and-border-radius-expected.png: Renamed from LayoutTests/platform/efl/fast/css/box-shadow-and-border-radius-expected.png.
+        * platform/efl-wk1/fast/css/shadow-multiple-expected.png: Renamed from LayoutTests/platform/efl/fast/css/shadow-multiple-expected.png.
+        * platform/efl-wk1/fast/multicol/shadow-breaking-expected.png: Renamed from LayoutTests/platform/efl/fast/multicol/shadow-breaking-expected.png.
+        * platform/efl-wk1/fast/repaint/moving-shadow-on-path-expected.png: Renamed from LayoutTests/platform/efl/fast/repaint/moving-shadow-on-path-expected.png.
+        * platform/efl-wk1/fast/text/shadow-translucent-fill-expected.png: Renamed from LayoutTests/platform/efl/fast/text/shadow-translucent-fill-expected.png.
+        * platform/efl-wk1/fast/text/stroking-decorations-expected.png: Renamed from LayoutTests/platform/efl/fast/text/stroking-decorations-expected.png.
+        * platform/efl-wk1/fast/text/stroking-expected.png: Renamed from LayoutTests/platform/efl/fast/text/stroking-expected.png.
+        * platform/efl-wk1/fast/writing-mode/box-shadow-horizontal-bt-expected.png: Renamed from LayoutTests/platform/efl/fast/writing-mode/box-shadow-horizontal-bt-expected.png.
+        * platform/efl-wk1/fast/writing-mode/box-shadow-vertical-lr-expected.png: Renamed from LayoutTests/platform/efl/fast/writing-mode/box-shadow-vertical-lr-expected.png.
+        * platform/efl-wk1/fast/writing-mode/box-shadow-vertical-rl-expected.png: Renamed from LayoutTests/platform/efl/fast/writing-mode/box-shadow-vertical-rl-expected.png.
+        * platform/efl-wk1/fast/writing-mode/english-lr-text-expected.png: Renamed from LayoutTests/platform/efl/fast/writing-mode/english-lr-text-expected.png.
+        * platform/efl-wk1/ietestcenter/css3/text/textshadow-001-expected.png: Renamed from LayoutTests/platform/efl/ietestcenter/css3/text/textshadow-001-expected.png.
+        * platform/efl-wk1/ietestcenter/css3/text/textshadow-002-expected.png: Renamed from LayoutTests/platform/efl/ietestcenter/css3/text/textshadow-002-expected.png.
+        * platform/efl-wk1/ietestcenter/css3/text/textshadow-003-expected.png: Renamed from LayoutTests/platform/efl/ietestcenter/css3/text/textshadow-003-expected.png.
+        * platform/efl-wk1/ietestcenter/css3/text/textshadow-004-expected.png: Renamed from LayoutTests/platform/efl/ietestcenter/css3/text/textshadow-004-expected.png.
+        * platform/efl-wk1/ietestcenter/css3/text/textshadow-010-expected.png: Renamed from LayoutTests/platform/efl/ietestcenter/css3/text/textshadow-010-expected.png.
+        * platform/efl-wk1/svg/css/circle-in-mask-with-shadow-expected.png: Renamed from LayoutTests/platform/efl/svg/css/circle-in-mask-with-shadow-expected.png.
+        * platform/efl-wk1/svg/css/path-with-shadow-expected.png: Renamed from LayoutTests/platform/efl/svg/css/path-with-shadow-expected.png.
+        * platform/efl-wk1/svg/css/shadow-with-large-radius-expected.png: Renamed from LayoutTests/platform/efl/svg/css/shadow-with-large-radius-expected.png.
+        * platform/efl-wk1/svg/css/shadow-with-negative-offset-expected.png: Renamed from LayoutTests/platform/efl/svg/css/shadow-with-negative-offset-expected.png.
+        * platform/efl-wk1/svg/css/stars-with-shadow-expected.png: Renamed from LayoutTests/platform/efl/svg/css/stars-with-shadow-expected.png.
+        * platform/efl-wk1/svg/css/text-gradient-shadow-expected.png: Renamed from LayoutTests/platform/efl/svg/css/text-gradient-shadow-expected.png.
+        * platform/efl-wk1/svg/css/text-shadow-multiple-expected.png: Renamed from LayoutTests/platform/efl/svg/css/text-shadow-multiple-expected.png.
+        * platform/efl/fast/canvas/fillText-shadow-expected.txt: Removed.
+        * platform/gtk/fast/canvas/fillText-shadow-expected.txt: Removed.
+        * platform/gtk/svg/css/shadow-and-opacity-expected.png: Removed.
+        * svg/css/shadow-and-opacity-expected.png: Renamed from LayoutTests/platform/efl/svg/css/shadow-and-opacity-expected.png.
+
 2012-12-05  Keishi Hattori  <keishi@webkit.org>
 
         Fix text direction in datalist popup for time controls
