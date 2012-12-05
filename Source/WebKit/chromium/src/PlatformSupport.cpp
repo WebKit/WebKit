@@ -56,40 +56,10 @@
 #include "platform/WebString.h"
 #include "platform/WebURL.h"
 
-#if OS(WINDOWS)
-#include "platform/WebRect.h"
-#if !ENABLE(DEFAULT_RENDER_THEME)
-#include <public/win/WebThemeEngine.h>
-#endif // !ENABLE(DEFAULT_RENDER_THEME)
-#endif
-
-#if ENABLE(DEFAULT_RENDER_THEME)
-#include <public/default/WebThemeEngine.h>
-#endif
-
-#if OS(DARWIN)
-#include <public/mac/WebThemeEngine.h>
-#elif OS(UNIX)
-#include "WebFontRenderStyle.h"
-#if OS(ANDROID)
-#include <public/android/WebThemeEngine.h>
-#else
-#include "WebFontInfo.h"
-#if !ENABLE(DEFAULT_RENDER_THEME)
-#include <public/linux/WebThemeEngine.h>
-#endif // !ENABLE(DEFAULT_RENDER_THEME)
-#endif // OS(ANDROID)
-#endif // elif OS(UNIX)
-
-#include "NativeImageSkia.h"
-
-#include "BitmapImage.h"
 #include "FrameView.h"
-#include "GraphicsContext.h"
 #include "IDBFactoryBackendProxy.h"
 #include "KURL.h"
 #include "NotImplemented.h"
-#include "PlatformContextSkia.h"
 #include "PluginData.h"
 #include "SharedBuffer.h"
 
@@ -121,89 +91,6 @@ bool PlatformSupport::plugins(bool refresh, Vector<PluginInfo>* results)
     webKitPlatformSupport()->getPluginList(refresh, &builder);
     return true;  // FIXME: There is no need for this function to return a value.
 }
-
-// Theming --------------------------------------------------------------------
-
-#if OS(WINDOWS) && !ENABLE(DEFAULT_RENDER_THEME)
-
-void PlatformSupport::paintButton(
-    GraphicsContext* gc, int part, int state, int classicState,
-    const IntRect& rect)
-{
-    WebKit::Platform::current()->themeEngine()->paintButton(
-        gc->platformContext()->canvas(), part, state, classicState, rect);
-}
-
-void PlatformSupport::paintMenuList(
-    GraphicsContext* gc, int part, int state, int classicState,
-    const IntRect& rect)
-{
-    WebKit::Platform::current()->themeEngine()->paintMenuList(
-        gc->platformContext()->canvas(), part, state, classicState, rect);
-}
-
-void PlatformSupport::paintScrollbarArrow(
-    GraphicsContext* gc, int state, int classicState,
-    const IntRect& rect)
-{
-    WebKit::Platform::current()->themeEngine()->paintScrollbarArrow(
-        gc->platformContext()->canvas(), state, classicState, rect);
-}
-
-void PlatformSupport::paintScrollbarThumb(
-    GraphicsContext* gc, int part, int state, int classicState,
-    const IntRect& rect)
-{
-    WebKit::Platform::current()->themeEngine()->paintScrollbarThumb(
-        gc->platformContext()->canvas(), part, state, classicState, rect);
-}
-
-void PlatformSupport::paintScrollbarTrack(
-    GraphicsContext* gc, int part, int state, int classicState,
-    const IntRect& rect, const IntRect& alignRect)
-{
-    WebKit::Platform::current()->themeEngine()->paintScrollbarTrack(
-        gc->platformContext()->canvas(), part, state, classicState, rect,
-        alignRect);
-}
-
-void PlatformSupport::paintSpinButton(
-    GraphicsContext* gc, int part, int state, int classicState,
-    const IntRect& rect)
-{
-    WebKit::Platform::current()->themeEngine()->paintSpinButton(
-        gc->platformContext()->canvas(), part, state, classicState, rect);
-}
-
-void PlatformSupport::paintTextField(
-    GraphicsContext* gc, int part, int state, int classicState,
-    const IntRect& rect, const Color& color, bool fillContentArea,
-    bool drawEdges)
-{
-    // Fallback to white when |color| is invalid.
-    RGBA32 backgroundColor = color.isValid() ? color.rgb() : Color::white;
-
-    WebKit::Platform::current()->themeEngine()->paintTextField(
-        gc->platformContext()->canvas(), part, state, classicState, rect,
-        backgroundColor, fillContentArea, drawEdges);
-}
-
-void PlatformSupport::paintTrackbar(
-    GraphicsContext* gc, int part, int state, int classicState,
-    const IntRect& rect)
-{
-    WebKit::Platform::current()->themeEngine()->paintTrackbar(
-        gc->platformContext()->canvas(), part, state, classicState, rect);
-}
-
-void PlatformSupport::paintProgressBar(
-    GraphicsContext* gc, const IntRect& barRect, const IntRect& valueRect, bool determinate, double animatedSeconds)
-{
-    WebKit::Platform::current()->themeEngine()->paintProgressBar(
-        gc->platformContext()->canvas(), barRect, valueRect, determinate, animatedSeconds);
-}
-
-#endif
 
 // These are temporary methods that the WebKit layer can use to call to the
 // Glue layer. Once the Glue layer moves entirely into the WebKit layer, these

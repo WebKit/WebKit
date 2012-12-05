@@ -78,28 +78,6 @@ public:
 
     // Plugin -------------------------------------------------------------
     static bool plugins(bool refresh, Vector<PluginInfo>*);
-
-    // Theming ------------------------------------------------------------
-#if OS(WINDOWS) && !ENABLE(DEFAULT_RENDER_THEME)
-    static void paintButton(
-        GraphicsContext*, int part, int state, int classicState, const IntRect&);
-    static void paintMenuList(
-        GraphicsContext*, int part, int state, int classicState, const IntRect&);
-    static void paintScrollbarArrow(
-        GraphicsContext*, int state, int classicState, const IntRect&);
-    static void paintScrollbarThumb(
-        GraphicsContext*, int part, int state, int classicState, const IntRect&);
-    static void paintScrollbarTrack(
-        GraphicsContext*, int part, int state, int classicState, const IntRect&, const IntRect& alignRect);
-    static void paintSpinButton(
-        GraphicsContext*, int part, int state, int classicState, const IntRect&);
-    static void paintTextField(
-        GraphicsContext*, int part, int state, int classicState, const IntRect&, const Color&, bool fillContentArea, bool drawEdges);
-    static void paintTrackbar(
-        GraphicsContext*, int part, int state, int classicState, const IntRect&);
-    static void paintProgressBar(
-        GraphicsContext*, const IntRect& barRect, const IntRect& valueRect, bool determinate, double animatedSeconds);
-#endif
 };
 
 } // namespace WebCore
