@@ -1,3 +1,12 @@
+2012-12-05  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed gardening.
+
+        Removing redundant pixel and render tree baselines for fast/media tests.
+        This is the second and last patch covering non-Chromium ports.
+
+        Too many files to list.
+
 2012-12-05  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed rebaseline.
