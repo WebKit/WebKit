@@ -1,3 +1,28 @@
+2012-12-05  Kent Tamura  <tkent@chromium.org>
+
+        Layout Test fast/forms/*-multiple-fields/*-multiple-fields-preserve-value-after-history-back.html are slow
+        https://bugs.webkit.org/show_bug.cgi?id=104094
+
+        Reviewed by Kentaro Hara.
+
+        Make them faster by spliting them into the main frame HTML files
+        and the sub frame HTML files. The sub frame HTML files are loaded
+        five times in one test, and don't need to load
+        js-test-pre/post.js. This change makes them about 2x faster on my
+        local machine.
+
+        * fast/forms/date-multiple-fields/date-multiple-fields-preserve-value-after-history-back.html:
+        * fast/forms/date-multiple-fields/resources/preserve-value-after-history-back-frame.html: Copied from LayoutTests/fast/forms/date-multiple-fields/date-multiple-fields-preserve-value-after-history-back.html.
+        * fast/forms/datetimelocal-multiple-fields/datetimelocal-multiple-fields-preserve-value-after-history-back.html:
+        * fast/forms/datetimelocal-multiple-fields/resources/preserve-value-after-history-back-frame.html: Copied from LayoutTests/fast/forms/datetimelocal-multiple-fields/datetimelocal-multiple-fields-preserve-value-after-history-back.html.
+        * fast/forms/month-multiple-fields/month-multiple-fields-preserve-value-after-history-back.html:
+        * fast/forms/month-multiple-fields/resources/preserve-value-after-history-back-frame.html: Copied from LayoutTests/fast/forms/month-multiple-fields/month-multiple-fields-preserve-value-after-history-back.html.
+        * fast/forms/time-multiple-fields/resources/preserve-value-after-history-back-frame.html: Copied from LayoutTests/fast/forms/time-multiple-fields/time-multiple-fields-preserve-value-after-history-back.html.
+        * fast/forms/time-multiple-fields/time-multiple-fields-preserve-value-after-history-back.html:
+        * fast/forms/week-multiple-fields/resources/preserve-value-after-history-back-frame.html: Copied from LayoutTests/fast/forms/week-multiple-fields/week-multiple-fields-preserve-value-after-history-back.html.
+        * fast/forms/week-multiple-fields/week-multiple-fields-preserve-value-after-history-back.html:
+        * platform/chromium/TestExpectations:
+
 2012-12-05  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed gardening.

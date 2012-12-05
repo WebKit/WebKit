@@ -4,56 +4,24 @@
 <script src="../../../fast/js/resources/js-test-pre.js"></script>
 </head>
 <body>
-<div id="container">
-<input type="datetime-local" id="test1"><br>
-<input type="datetime-local" id="test2" min="1999-01-01T00:00" max="1999-12-31T23:59"><br>
-</div>
 <iframe id="iframe"></iframe>
 <script>
 description('Checks input value is preserved after backward and forward');
-if (!window.eventSender)
+if (!window.eventSender || !window.internals)
     debug('Please run within DRT/WTR');
 window.jsTestIsAsync = true;
 
-var iframe = document.getElementById('iframe');
-var testInput1 = document.getElementById('test1');
-var testInput2 = document.getElementById('test2');
 var state = 'direct';
-var pageName = location.search || '?page0';
 var testCases = [];
-
-function back(newState) {
-    parent.state = newState;
-    history.back();
-}
 
 function failed(message) {
     testFailed(message + ' in ' + state);
     finishJSTest();
 }
 
-function fieldsText(input) {
-    if (!window.internals)
-        return '';
-    var editElement = window.internals.oldestShadowRoot(input);
-    return editElement.textContent;
-}
-
 function finishTest() {
     runTestCases();
-    document.body.removeChild(document.getElementById('container'));
     finishJSTest();
-}
-
-function forward(newState) {
-    parent.state = newState;
-    history.forward();
-}
-
-function keyDown(key, modifiers) {
-    if (!window.eventSender)
-        return;
-    eventSender.keyDown(key, modifiers);
 }
 
 function runTestCases() {
@@ -66,89 +34,7 @@ function runTestCases() {
 }
 
 window.onload = function() {
-    switch (pageName) {
-    case '?page0':
-        iframe.src = location + '?page1';
-        break;
-
-    case '?page1':
-        switch (parent.state) {
-        case 'direct': {
-            testInput1.value = '12012-10-09T01:23';
-            testInput2.focus();
-            keyDown('upArrow'); // -> [01]/dd/yyyy --:-- --
-            keyDown('\t'); //      -> 01/[dd]/yyyy --:-- --
-            keyDown('\t'); //      -> 01/dd/[yyyy] --:-- --
-            keyDown('upArrow'); // -> 01/dd/[1999] --:-- --
-            keyDown('\t'); //      -> 01/dd/1999 [--]:-- --
-            keyDown('\t'); //      -> 01/dd/1999 --:[--] --
-            keyDown('upArrow'); // -> 01/dd/1999 --:[00] --
-
-            var nextUri = location.toString().replace('?page1', '?page2');
-            setTimeout(function () { window.location.href = nextUri; }, 0);
-            break;
-        }
-        case 'backTo1':
-            parent.testCases.push(
-                {
-                    'description' : 'Went back to a page. Checking a form control which had a full value',
-                    'actual' : testInput1.value,
-                    'expected' : '12012-10-09T01:23' },
-                {
-                    'description' : 'Went back to a page. Checking a form control which had a partial value',
-                    'actual' : fieldsText(testInput2),
-                    'expected' : '01/dd/1999 --:00 --'
-                });
-            forward('forwardTo2');
-            break;
-        case 'backTo1Second':
-            parent.finishTest();
-            break;
-        default:
-            failed('Unexpected state(' + parent.state + ')');
-            break;
-        }
-        break;
-
-    case '?page2':
-        switch (parent.state) {
-        case 'direct':
-            testInput1.value = '0001-11-17T23:55';
-            testInput2.focus();
-            keyDown('\t'); //        -> mm/[dd]/yyyy --:-- --
-            keyDown('downArrow'); // -> mm/[31]/yyyy --:-- --
-            keyDown('\t'); //        -> mm/31/[yyyy] --:-- --
-            keyDown('\t'); //        -> mm/31/yyyy [--]:-- --
-            keyDown('downArrow'); // -> mm/31/yyyy [12]:-- --
-            keyDown('\t'); //        -> mm/31/yyyy 12:[--] --
-            keyDown('\t'); //        -> mm/31/yyyy 12:-- [--]
-            keyDown('downArrow'); // -> mm/31/yyyy 12:-- [PM]
-            back('backTo1');
-            break;
-        case 'forwardTo2':
-            parent.testCases.push(
-                {
-                    'description' : 'Went forward to a page. Checking a form control which had a full value',
-                    'actual' : testInput1.value,
-                    'expected' : '0001-11-17T23:55'
-                },
-                {
-                    'description' : 'Went forward to a page. Checking a form control which had a partial value',
-                    'actual' : fieldsText(testInput2),
-                    'expected' : 'mm/31/yyyy 12:-- PM'
-                });
-            back('backTo1Second');
-            break;
-        default:
-            failed('Unexpected state(' + parent.state + ')');
-            break;
-        }
-        break;
-
-    default:
-        failed('Unexpected page(' + pageName + ')');
-        break;
-    }
+    document.getElementById('iframe').src = 'resources/preserve-value-after-history-back-frame.html?page1';
 };
 </script>
 <script src="../../../fast/js/resources/js-test-post.js"></script>
