@@ -422,5 +422,5 @@ WebInspector.Cookies.cookieDomainMatchesResourceDomain = function(cookieDomain, 
 {
     if (cookieDomain.charAt(0) !== '.')
         return resourceDomain === cookieDomain;
-    return !!resourceDomain.match(new RegExp("^([^\\.]+\\.)?" + cookieDomain.substring(1).escapeForRegExp() + "$", "i"));
+    return !!resourceDomain.match(new RegExp("^([^\\.]+\\.)*" + cookieDomain.substring(1).escapeForRegExp() + "$", "i"));
 }
