@@ -1,3 +1,23 @@
+2012-12-05  Zeno Albisser  <zeno@webkit.org>
+
+        [Qt][Mac] QWebView disappears when the system tries to hide the scrollbars.
+        https://bugs.webkit.org/show_bug.cgi?id=104116
+
+        This is a workaround for an issue in Qt that was
+        caused by Change-Id: I2000fa50d46b153e981ceafc12a53932a196382e
+        in qtbase.
+        Since we are drawing the scrollbars by ourselves, there is no
+        widget available that needs to be hidden by the style.
+        Therefore we have to disable transient scrollbar
+        animations on Mac.
+
+        Patch by: J-P Nurmi <jpnurmi@digia.com>
+
+        Reviewed by Simon Hausmann.
+
+        * WidgetSupport/QStyleFacadeImp.cpp:
+        (WebKit::QStyleFacadeImp::paintScrollBar):
+
 2012-12-04  Pierre Rossi  <pierre.rossi@digia.com>
 
         [Qt] Yet another unreviewed speculative windows build fix. 

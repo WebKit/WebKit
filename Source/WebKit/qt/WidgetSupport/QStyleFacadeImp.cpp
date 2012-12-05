@@ -454,23 +454,18 @@ void QStyleFacadeImp::paintScrollBar(QPainter *painter, const QStyleFacadeOption
 
     MappedStyleOption<QStyleOptionSlider> opt(widget, proxyOption);
 
-#ifdef Q_OS_MAC
-    // FIXME: We also need to check the widget style but today ScrollbarTheme is not aware of the page so we
-    // can't get the widget.
-    if (m_style->inherits("QMacStyle"))
-        m_style->drawComplexControl(QStyle::CC_ScrollBar, &opt, painter, widget);
-    else
-#endif
-    {
-        // The QStyle expects the background to be already filled.
-        painter->fillRect(opt.rect, opt.palette.background());
-
-        const QPoint topLeft = opt.rect.topLeft();
-        painter->translate(topLeft);
-        opt.rect.moveTo(QPoint(0, 0));
-        style()->drawComplexControl(QStyle::CC_ScrollBar, &opt, painter, widget);
-        opt.rect.moveTo(topLeft);
+    if (m_style->inherits("QMacStyle")) {
+        // FIXME: Disable transient scrollbar animations on OSX to avoid hiding the whole webview with the scrollbar fade out animation.
+        opt.styleObject = 0;
     }
+
+    painter->fillRect(opt.rect, opt.palette.background());
+
+    const QPoint topLeft = opt.rect.topLeft();
+    painter->translate(topLeft);
+    opt.rect.moveTo(QPoint(0, 0));
+    style()->drawComplexControl(QStyle::CC_ScrollBar, &opt, painter, widget);
+    opt.rect.moveTo(topLeft);
 }
 
 QObject* QStyleFacadeImp::widgetForPainter(QPainter* painter)
