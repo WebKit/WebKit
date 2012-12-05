@@ -1,3 +1,72 @@
+2012-12-05  Mike West  <mkwst@chromium.org>
+
+        Stop generating call stacks inside ContentSecurityPolicy
+        https://bugs.webkit.org/show_bug.cgi?id=104126
+
+        Reviewed by Yury Semikhatsky.
+
+        Now that bug 100650 has made it possible for ConsoleMessage to generate
+        call stacks, we can remove the stack being generated in
+        ContentSecurityPolicy::logToConsole. We need the ScriptState*, however,
+        so this patch makes it possible to pipe it through addConsoleMessage
+        down into the guts of the inspector.
+
+        This patch also removes an unused addConsoleMessage variant from
+        ScriptExecutionContext, which should have been removed from the patch to
+        100650 before landing it. My bad.
+
+        * dom/Document.cpp:
+        (WebCore::Document::addMessage):
+        * dom/Document.h:
+        (Document):
+            Accept a ScriptState* parameter in Document::addMessage, and pass it
+            through to Console::addMessage.
+        * dom/ScriptExecutionContext.cpp:
+        (WebCore::ScriptExecutionContext::addConsoleMessage):
+        * dom/ScriptExecutionContext.h:
+        (ScriptExecutionContext):
+            Accept a ScriptState* parameter in Document::addMessage, and pass it
+            through to ScriptExecutionContext::addMessage. Also, remove an unused
+            variant of ScriptExecutionContext::addConsoleMessage that accepted
+            only a call stack in addition to the basics.
+        * inspector/ConsoleMessage.cpp:
+        (WebCore::ConsoleMessage::ConsoleMessage):
+        * inspector/ConsoleMessage.h:
+        (ConsoleMessage):
+            Accept a ScriptState* and pass it into autogenerateMetadata for
+            call stack generational goodness.
+        * inspector/InspectorConsoleAgent.cpp:
+        (WebCore::InspectorConsoleAgent::addMessageToConsole):
+            Accept a ScriptState* and pass it into addConsoleMessage.
+        (WebCore::InspectorConsoleAgent::didFinishXHRLoading):
+        (WebCore::InspectorConsoleAgent::didReceiveResponse):
+        (WebCore::InspectorConsoleAgent::didFailLoading):
+            Add an empty ScriptState parameter to the addConsoleMessage call.
+        * inspector/InspectorConsoleAgent.h:
+        (InspectorConsoleAgent):
+        * inspector/InspectorConsoleInstrumentation.h:
+        (WebCore::InspectorInstrumentation::addMessageToConsole):
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore):
+        (WebCore::InspectorInstrumentation::addMessageToConsoleImpl):
+        * inspector/InspectorInstrumentation.h:
+        (InspectorInstrumentation):
+        * page/Console.cpp:
+        (WebCore::Console::addMessage):
+        * page/Console.h:
+        (Console):
+            Pipe ScriptState through the intermediate classes.
+        * page/ContentSecurityPolicy.cpp:
+        (WebCore::ContentSecurityPolicy::logToConsole):
+            Drop call stack generation, and pass ScriptState* into addConsoleMessage.
+        * workers/WorkerContext.cpp:
+        (WebCore::WorkerContext::addConsoleMessage):
+        (WebCore::WorkerContext::addMessage):
+        (WebCore::WorkerContext::addMessageToWorkerConsole):
+        * workers/WorkerContext.h:
+        (WorkerContext):
+            Accept ScriptState* and pass it into addMessageToConsole.
+
 2012-12-05  Rafael Weinstein  <rafaelw@chromium.org>
 
         DOMImplementation.createDocument should call appendChild rather than parserAppendChild to add docType and documentElement

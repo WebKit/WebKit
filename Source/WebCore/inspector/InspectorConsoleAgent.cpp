@@ -178,7 +178,7 @@ void InspectorConsoleAgent::addMessageToConsole(MessageSource source, MessageTyp
     addConsoleMessage(adoptPtr(new ConsoleMessage(!isWorkerAgent(), source, type, level, message, arguments, state, requestIdentifier)));
 }
 
-void InspectorConsoleAgent::addMessageToConsole(MessageSource source, MessageType type, MessageLevel level, const String& message, const String& scriptId, unsigned lineNumber, unsigned long requestIdentifier)
+void InspectorConsoleAgent::addMessageToConsole(MessageSource source, MessageType type, MessageLevel level, const String& message, const String& scriptId, unsigned lineNumber, ScriptState* state, unsigned long requestIdentifier)
 {
     if (!developerExtrasEnabled())
         return;
@@ -188,7 +188,7 @@ void InspectorConsoleAgent::addMessageToConsole(MessageSource source, MessageTyp
         clearMessages(&error);
     }
 
-    addConsoleMessage(adoptPtr(new ConsoleMessage(!isWorkerAgent(), source, type, level, message, scriptId, lineNumber, requestIdentifier)));
+    addConsoleMessage(adoptPtr(new ConsoleMessage(!isWorkerAgent(), source, type, level, message, scriptId, lineNumber, state, requestIdentifier)));
 }
 
 Vector<unsigned> InspectorConsoleAgent::consoleMessageArgumentCounts()
@@ -268,7 +268,7 @@ void InspectorConsoleAgent::didFinishXHRLoading(unsigned long requestIdentifier,
         return;
     if (m_frontend && m_state->getBoolean(ConsoleAgentState::monitoringXHR)) {
         String message = "XHR finished loading: \"" + url + "\".";
-        addMessageToConsole(NetworkMessageSource, LogMessageType, LogMessageLevel, message, sendURL, sendLineNumber, requestIdentifier);
+        addMessageToConsole(NetworkMessageSource, LogMessageType, LogMessageLevel, message, sendURL, sendLineNumber, 0, requestIdentifier);
     }
 
 
@@ -281,7 +281,7 @@ void InspectorConsoleAgent::didReceiveResponse(unsigned long requestIdentifier, 
 
     if (response.httpStatusCode() >= 400) {
         String message = "Failed to load resource: the server responded with a status of " + String::number(response.httpStatusCode()) + " (" + response.httpStatusText() + ')';
-        addMessageToConsole(NetworkMessageSource, LogMessageType, ErrorMessageLevel, message, response.url().string(), 0, requestIdentifier);
+        addMessageToConsole(NetworkMessageSource, LogMessageType, ErrorMessageLevel, message, response.url().string(), 0, 0, requestIdentifier);
     }
 }
 
@@ -297,7 +297,7 @@ void InspectorConsoleAgent::didFailLoading(unsigned long requestIdentifier, cons
         message.appendLiteral(": ");
         message.append(error.localizedDescription());
     }
-    addMessageToConsole(NetworkMessageSource, LogMessageType, ErrorMessageLevel, message.toString(), error.failingURL(), 0, requestIdentifier);
+    addMessageToConsole(NetworkMessageSource, LogMessageType, ErrorMessageLevel, message.toString(), error.failingURL(), 0, 0, requestIdentifier);
 }
 
 void InspectorConsoleAgent::setMonitoringXHREnabled(ErrorString*, bool enabled)

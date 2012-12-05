@@ -4756,7 +4756,7 @@ void Document::addConsoleMessage(MessageSource source, MessageType type, Message
     }
 }
 
-void Document::addMessage(MessageSource source, MessageType type, MessageLevel level, const String& message, const String& sourceURL, unsigned lineNumber, PassRefPtr<ScriptCallStack> callStack, unsigned long requestIdentifier)
+void Document::addMessage(MessageSource source, MessageType type, MessageLevel level, const String& message, const String& sourceURL, unsigned lineNumber, PassRefPtr<ScriptCallStack> callStack, ScriptState* state, unsigned long requestIdentifier)
 {
     if (!isContextThread()) {
         postTask(AddConsoleMessageTask::create(source, type, level, message));
@@ -4765,7 +4765,7 @@ void Document::addMessage(MessageSource source, MessageType type, MessageLevel l
 
     if (DOMWindow* window = domWindow()) {
         if (Console* console = window->console())
-            console->addMessage(source, type, level, message, sourceURL, lineNumber, callStack, requestIdentifier);
+            console->addMessage(source, type, level, message, sourceURL, lineNumber, callStack, state, requestIdentifier);
     }
 }
 

@@ -39,8 +39,6 @@
 #include "PingLoader.h"
 #include "RuntimeEnabledFeatures.h"
 #include "SchemeRegistry.h"
-#include "ScriptCallStack.h"
-#include "ScriptCallStackFactory.h"
 #include "ScriptState.h"
 #include "SecurityOrigin.h"
 #include "TextEncoding.h"
@@ -1694,16 +1692,7 @@ void ContentSecurityPolicy::reportInvalidSourceExpression(const String& directiv
 
 void ContentSecurityPolicy::logToConsole(const String& message, const String& contextURL, const WTF::OrdinalNumber& contextLine, ScriptState* state) const
 {
-    RefPtr<ScriptCallStack> callStack;
-    if (InspectorInstrumentation::consoleAgentEnabled(m_scriptExecutionContext)) {
-        if (state)
-            callStack = createScriptCallStackForConsole(state);
-        else
-            callStack = createScriptCallStack(ScriptCallStack::maxCallStackSizeToCapture, true);
-        if (callStack && !callStack->size())
-            callStack = 0;
-    }
-    m_scriptExecutionContext->addConsoleMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, message, contextURL, contextLine.oneBasedInt(), callStack);
+    m_scriptExecutionContext->addConsoleMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, message, contextURL, contextLine.oneBasedInt(), state);
 }
 
 void ContentSecurityPolicy::reportBlockedScriptExecutionToInspector(const String& directiveText) const
