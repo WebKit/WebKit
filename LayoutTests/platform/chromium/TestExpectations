@@ -4239,10 +4239,6 @@ webkit.org/b/103721 [ Mac Win Linux ] compositing/reflections/nested-reflection-
 webkit.org/b/103721 [ Mac Win Linux ] compositing/reflections/nested-reflection-animated.html [ ImageOnlyFailure ]
 webkit.org/b/103721 [ Mac Win Linux ] platform/chromium/compositing/huge-layer-rotated.html [ ImageOnlyFailure ]
 
-crbug.com/163785 media/encrypted-media/encrypted-media-events.html [ Crash Timeout ]
-crbug.com/163785 media/encrypted-media/encrypted-media-not-loaded.html [ Crash Timeout ]
-crbug.com/163785 media/encrypted-media/encrypted-media-syntax.html [ Crash Timeout ]
-
 webkit.org/b/103834 [ Mac XP ] fast/forms/month-multiple-fields/month-multiple-fields-keyboard-events.html [ Failure ]
 
 # New tests added in r136492 that does not work in chromium
