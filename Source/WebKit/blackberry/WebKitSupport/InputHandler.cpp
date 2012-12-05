@@ -1150,6 +1150,7 @@ void InputHandler::ensureFocusTextElementVisible(CaretScrollType scrollType)
         }
     }
 
+    bool shouldConstrainScrollingToContentEdge = true;
     Position start = elementFrame->selection()->start();
     if (start.anchorNode() && start.anchorNode()->renderer()) {
         if (RenderLayer* layer = start.anchorNode()->renderer()->enclosingLayer()) {
@@ -1198,7 +1199,9 @@ void InputHandler::ensureFocusTextElementVisible(CaretScrollType scrollType)
                                                                  horizontalScrollAlignment,
                                                                  verticalScrollAlignment));
 
-            mainFrameView->setConstrainsScrollingToContentEdge(false);
+            // Don't constrain scroll position when animation finishes.
+            shouldConstrainScrollingToContentEdge = false;
+
             // In order to adjust the scroll position to ensure the focused input field is visible,
             // we allow overscrolling. However this overscroll has to be strictly allowed towards the
             // bottom of the page on the y axis only, where the virtual keyboard pops up from.
@@ -1210,8 +1213,6 @@ void InputHandler::ensureFocusTextElementVisible(CaretScrollType scrollType)
     }
 
     if (destinationScrollLocation != mainFrameView->scrollPosition() || zoomScaleRequired != m_webPage->currentScale()) {
-        mainFrameView->setConstrainsScrollingToContentEdge(true);
-
         InputLog(LogLevelInfo, "InputHandler::ensureFocusTextElementVisible zooming in to %f and scrolling to point %d, %d", zoomScaleRequired, destinationScrollLocation.x(), destinationScrollLocation.y());
 
         // Animate to given scroll position & zoom level
@@ -1220,6 +1221,7 @@ void InputHandler::ensureFocusTextElementVisible(CaretScrollType scrollType)
         m_webPage->m_shouldReflowBlock = false;
         m_webPage->m_userPerformedManualZoom = true;
         m_webPage->m_userPerformedManualScroll = true;
+        m_webPage->m_shouldConstrainScrollingToContentEdge = shouldConstrainScrollingToContentEdge;
         m_webPage->client()->animateBlockZoom(zoomScaleRequired, m_webPage->m_finalBlockPoint);
     }
 }
@@ -2315,10 +2317,6 @@ bool InputHandler::setSpannableTextAndRelativeCursor(spannable_string_t* spannab
         m_composingTextStart = insertionPoint;
         m_composingTextEnd = insertionPoint + spannableString->length;
     }
-
-    // Scroll the field if necessary. The automatic update is suppressed
-    // by the processing change guard.
-    ensureFocusTextElementVisible(EdgeIfNeeded);
 
     return true;
 }

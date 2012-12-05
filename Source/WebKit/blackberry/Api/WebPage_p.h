@@ -543,6 +543,7 @@ public:
     RefPtr<WebCore::Node> m_currentBlockZoomNode;
     RefPtr<WebCore::Node> m_currentBlockZoomAdjustedNode;
     bool m_shouldReflowBlock;
+    bool m_shouldConstrainScrollingToContentEdge;
 
     double m_lastUserEventTimestamp; // Used to detect user scrolling.
 

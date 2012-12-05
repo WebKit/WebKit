@@ -410,6 +410,7 @@ WebPagePrivate::WebPagePrivate(WebPage* webPage, WebPageClient* client, const In
     , m_currentBlockZoomNode(0)
     , m_currentBlockZoomAdjustedNode(0)
     , m_shouldReflowBlock(false)
+    , m_shouldConstrainScrollingToContentEdge(true)
     , m_lastUserEventTimestamp(0.0)
     , m_pluginMouseButtonPressed(false)
     , m_pluginMayOpenNewTab(false)
@@ -2965,6 +2966,13 @@ void WebPagePrivate::zoomBlock()
     m_backingStore->d->suspendScreenUpdates();
     updateViewportSize();
 
+    FrameView* mainFrameView = m_mainFrame->view();
+    bool constrainsScrollingToContentEdge = true;
+    if (mainFrameView) {
+        constrainsScrollingToContentEdge = mainFrameView->constrainsScrollingToContentEdge();
+        mainFrameView->setConstrainsScrollingToContentEdge(m_shouldConstrainScrollingToContentEdge);
+    }
+
 #if ENABLE(VIEWPORT_REFLOW)
     requestLayoutIfNeeded();
     if (willUseTextReflow && m_shouldReflowBlock) {
@@ -3019,6 +3027,10 @@ void WebPagePrivate::zoomBlock()
 
     notifyTransformChanged();
     m_client->scaleChanged();
+
+    if (mainFrameView)
+        mainFrameView->setConstrainsScrollingToContentEdge(constrainsScrollingToContentEdge);
+
     // FIXME: Do we really need to suspend/resume both backingstore and screen here?
     m_backingStore->d->resumeBackingStoreUpdates();
     m_backingStore->d->resumeScreenUpdates(BackingStore::RenderAndBlit);
@@ -3039,6 +3051,7 @@ void WebPagePrivate::resetBlockZoom()
     m_currentBlockZoomNode = 0;
     m_currentBlockZoomAdjustedNode = 0;
     m_shouldReflowBlock = false;
+    m_shouldConstrainScrollingToContentEdge = true;
 }
 
 void WebPage::destroyWebPageCompositor()
