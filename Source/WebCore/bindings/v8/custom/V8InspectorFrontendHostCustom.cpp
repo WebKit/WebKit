@@ -71,12 +71,12 @@ static void populateContextMenuItems(v8::Local<v8::Array>& itemArray, ContextMen
 {
     for (size_t i = 0; i < itemArray->Length(); ++i) {
         v8::Local<v8::Object> item = v8::Local<v8::Object>::Cast(itemArray->Get(i));
-        v8::Local<v8::Value> type = item->Get(v8::String::New("type"));
-        v8::Local<v8::Value> id = item->Get(v8::String::New("id"));
-        v8::Local<v8::Value> label = item->Get(v8::String::New("label"));
-        v8::Local<v8::Value> enabled = item->Get(v8::String::New("enabled"));
-        v8::Local<v8::Value> checked = item->Get(v8::String::New("checked"));
-        v8::Local<v8::Value> subItems = item->Get(v8::String::New("subItems"));
+        v8::Local<v8::Value> type = item->Get(v8::String::NewSymbol("type"));
+        v8::Local<v8::Value> id = item->Get(v8::String::NewSymbol("id"));
+        v8::Local<v8::Value> label = item->Get(v8::String::NewSymbol("label"));
+        v8::Local<v8::Value> enabled = item->Get(v8::String::NewSymbol("enabled"));
+        v8::Local<v8::Value> checked = item->Get(v8::String::NewSymbol("checked"));
+        v8::Local<v8::Value> subItems = item->Get(v8::String::NewSymbol("subItems"));
         if (!type->IsString())
             continue;
         String typeString = toWebCoreStringWithNullCheck(type);

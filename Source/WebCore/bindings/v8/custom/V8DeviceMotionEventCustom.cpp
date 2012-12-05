@@ -40,18 +40,18 @@ namespace {
 static v8::Handle<v8::Value> createAccelerationObject(const DeviceMotionData::Acceleration* acceleration, v8::Isolate* isolate)
 {
     v8::Local<v8::Object> object = v8::Object::New();
-    object->Set(v8::String::New("x"), acceleration->canProvideX() ? v8::Number::New(acceleration->x()) : v8::Null(isolate));
-    object->Set(v8::String::New("y"), acceleration->canProvideY() ? v8::Number::New(acceleration->y()) : v8::Null(isolate));
-    object->Set(v8::String::New("z"), acceleration->canProvideZ() ? v8::Number::New(acceleration->z()) : v8::Null(isolate));
+    object->Set(v8::String::NewSymbol("x"), acceleration->canProvideX() ? v8::Number::New(acceleration->x()) : v8::Null(isolate));
+    object->Set(v8::String::NewSymbol("y"), acceleration->canProvideY() ? v8::Number::New(acceleration->y()) : v8::Null(isolate));
+    object->Set(v8::String::NewSymbol("z"), acceleration->canProvideZ() ? v8::Number::New(acceleration->z()) : v8::Null(isolate));
     return object;
 }
 
 static v8::Handle<v8::Value> createRotationRateObject(const DeviceMotionData::RotationRate* rotationRate, v8::Isolate* isolate)
 {
     v8::Local<v8::Object> object = v8::Object::New();
-    object->Set(v8::String::New("alpha"), rotationRate->canProvideAlpha() ? v8::Number::New(rotationRate->alpha()) : v8::Null(isolate));
-    object->Set(v8::String::New("beta"),  rotationRate->canProvideBeta()  ? v8::Number::New(rotationRate->beta())  : v8::Null(isolate));
-    object->Set(v8::String::New("gamma"), rotationRate->canProvideGamma() ? v8::Number::New(rotationRate->gamma()) : v8::Null(isolate));
+    object->Set(v8::String::NewSymbol("alpha"), rotationRate->canProvideAlpha() ? v8::Number::New(rotationRate->alpha()) : v8::Null(isolate));
+    object->Set(v8::String::NewSymbol("beta"),  rotationRate->canProvideBeta()  ? v8::Number::New(rotationRate->beta())  : v8::Null(isolate));
+    object->Set(v8::String::NewSymbol("gamma"), rotationRate->canProvideGamma() ? v8::Number::New(rotationRate->gamma()) : v8::Null(isolate));
     return object;
 }
 
@@ -63,19 +63,19 @@ RefPtr<DeviceMotionData::Acceleration> readAccelerationArgument(v8::Local<v8::Va
     // Given the test above, this will always yield an object.
     v8::Local<v8::Object> object = value->ToObject();
 
-    v8::Local<v8::Value> xValue = object->Get(v8::String::New("x"));
+    v8::Local<v8::Value> xValue = object->Get(v8::String::NewSymbol("x"));
     if (xValue.IsEmpty())
         return 0;
     bool canProvideX = !isUndefinedOrNull(xValue);
     double x = xValue->NumberValue();
 
-    v8::Local<v8::Value> yValue = object->Get(v8::String::New("y"));
+    v8::Local<v8::Value> yValue = object->Get(v8::String::NewSymbol("y"));
     if (yValue.IsEmpty())
         return 0;
     bool canProvideY = !isUndefinedOrNull(yValue);
     double y = yValue->NumberValue();
 
-    v8::Local<v8::Value> zValue = object->Get(v8::String::New("z"));
+    v8::Local<v8::Value> zValue = object->Get(v8::String::NewSymbol("z"));
     if (zValue.IsEmpty())
         return 0;
     bool canProvideZ = !isUndefinedOrNull(zValue);
@@ -95,19 +95,19 @@ RefPtr<DeviceMotionData::RotationRate> readRotationRateArgument(v8::Local<v8::Va
     // Given the test above, this will always yield an object.
     v8::Local<v8::Object> object = value->ToObject();
 
-    v8::Local<v8::Value> alphaValue = object->Get(v8::String::New("alpha"));
+    v8::Local<v8::Value> alphaValue = object->Get(v8::String::NewSymbol("alpha"));
     if (alphaValue.IsEmpty())
         return 0;
     bool canProvideAlpha = !isUndefinedOrNull(alphaValue);
     double alpha = alphaValue->NumberValue();
 
-    v8::Local<v8::Value> betaValue = object->Get(v8::String::New("beta"));
+    v8::Local<v8::Value> betaValue = object->Get(v8::String::NewSymbol("beta"));
     if (betaValue.IsEmpty())
         return 0;
     bool canProvideBeta = !isUndefinedOrNull(betaValue);
     double beta = betaValue->NumberValue();
 
-    v8::Local<v8::Value> gammaValue = object->Get(v8::String::New("gamma"));
+    v8::Local<v8::Value> gammaValue = object->Get(v8::String::NewSymbol("gamma"));
     if (gammaValue.IsEmpty())
         return 0;
     bool canProvideGamma = !isUndefinedOrNull(gammaValue);

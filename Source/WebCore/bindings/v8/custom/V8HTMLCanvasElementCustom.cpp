@@ -61,22 +61,22 @@ v8::Handle<v8::Value> V8HTMLCanvasElement::getContextCallback(const v8::Argument
         WebGLContextAttributes* webGLAttrs = static_cast<WebGLContextAttributes*>(attrs.get());
         if (args.Length() > 1 && args[1]->IsObject()) {
             v8::Handle<v8::Object> jsAttrs = args[1]->ToObject();
-            v8::Handle<v8::String> alpha = v8::String::New("alpha");
+            v8::Handle<v8::String> alpha = v8::String::NewSymbol("alpha");
             if (jsAttrs->Has(alpha))
                 webGLAttrs->setAlpha(jsAttrs->Get(alpha)->BooleanValue());
-            v8::Handle<v8::String> depth = v8::String::New("depth");
+            v8::Handle<v8::String> depth = v8::String::NewSymbol("depth");
             if (jsAttrs->Has(depth))
                 webGLAttrs->setDepth(jsAttrs->Get(depth)->BooleanValue());
-            v8::Handle<v8::String> stencil = v8::String::New("stencil");
+            v8::Handle<v8::String> stencil = v8::String::NewSymbol("stencil");
             if (jsAttrs->Has(stencil))
                 webGLAttrs->setStencil(jsAttrs->Get(stencil)->BooleanValue());
-            v8::Handle<v8::String> antialias = v8::String::New("antialias");
+            v8::Handle<v8::String> antialias = v8::String::NewSymbol("antialias");
             if (jsAttrs->Has(antialias))
                 webGLAttrs->setAntialias(jsAttrs->Get(antialias)->BooleanValue());
-            v8::Handle<v8::String> premultipliedAlpha = v8::String::New("premultipliedAlpha");
+            v8::Handle<v8::String> premultipliedAlpha = v8::String::NewSymbol("premultipliedAlpha");
             if (jsAttrs->Has(premultipliedAlpha))
                 webGLAttrs->setPremultipliedAlpha(jsAttrs->Get(premultipliedAlpha)->BooleanValue());
-            v8::Handle<v8::String> preserveDrawingBuffer = v8::String::New("preserveDrawingBuffer");
+            v8::Handle<v8::String> preserveDrawingBuffer = v8::String::NewSymbol("preserveDrawingBuffer");
             if (jsAttrs->Has(preserveDrawingBuffer))
                 webGLAttrs->setPreserveDrawingBuffer(jsAttrs->Get(preserveDrawingBuffer)->BooleanValue());
         }

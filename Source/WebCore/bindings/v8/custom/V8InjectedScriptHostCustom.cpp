@@ -124,31 +124,31 @@ v8::Handle<v8::Value> V8InjectedScriptHost::typeCallback(const v8::Arguments& ar
 
     v8::Handle<v8::Value> value = args[0];
     if (value->IsString())
-        return v8::String::New("string");
+        return v8::String::NewSymbol("string");
     if (value->IsArray())
-        return v8::String::New("array");
+        return v8::String::NewSymbol("array");
     if (value->IsBoolean())
-        return v8::String::New("boolean");
+        return v8::String::NewSymbol("boolean");
     if (value->IsNumber())
-        return v8::String::New("number");
+        return v8::String::NewSymbol("number");
     if (value->IsDate())
-        return v8::String::New("date");
+        return v8::String::NewSymbol("date");
     if (value->IsRegExp())
-        return v8::String::New("regexp");
+        return v8::String::NewSymbol("regexp");
     if (V8Node::HasInstance(value))
-        return v8::String::New("node");
+        return v8::String::NewSymbol("node");
     if (V8NodeList::HasInstance(value))
-        return v8::String::New("array");
+        return v8::String::NewSymbol("array");
     if (V8HTMLCollection::HasInstance(value))
-        return v8::String::New("array");
+        return v8::String::NewSymbol("array");
     if (V8Int8Array::HasInstance(value) || V8Int16Array::HasInstance(value) || V8Int32Array::HasInstance(value))
-        return v8::String::New("array");
+        return v8::String::NewSymbol("array");
     if (V8Uint8Array::HasInstance(value) || V8Uint16Array::HasInstance(value) || V8Uint32Array::HasInstance(value))
-        return v8::String::New("array");
+        return v8::String::NewSymbol("array");
     if (V8Float32Array::HasInstance(value) || V8Float64Array::HasInstance(value))
-        return v8::String::New("array");
+        return v8::String::NewSymbol("array");
     if (V8Uint8ClampedArray::HasInstance(value))
-        return v8::String::New("array");
+        return v8::String::NewSymbol("array");
     return v8::Undefined();
 }
 
@@ -168,26 +168,26 @@ v8::Handle<v8::Value> V8InjectedScriptHost::functionDetailsCallback(const v8::Ar
     int columnNumber = function->GetScriptColumnNumber();
 
     v8::Local<v8::Object> location = v8::Object::New();
-    location->Set(v8::String::New("lineNumber"), v8Integer(lineNumber, args.GetIsolate()));
-    location->Set(v8::String::New("columnNumber"), v8Integer(columnNumber, args.GetIsolate()));
-    location->Set(v8::String::New("scriptId"), function->GetScriptId()->ToString());
+    location->Set(v8::String::NewSymbol("lineNumber"), v8Integer(lineNumber, args.GetIsolate()));
+    location->Set(v8::String::NewSymbol("columnNumber"), v8Integer(columnNumber, args.GetIsolate()));
+    location->Set(v8::String::NewSymbol("scriptId"), function->GetScriptId()->ToString());
 
     v8::Local<v8::Object> result = v8::Object::New();
-    result->Set(v8::String::New("location"), location);
+    result->Set(v8::String::NewSymbol("location"), location);
 
     v8::Handle<v8::Value> name = function->GetName();
     if (name->IsString() && v8::Handle<v8::String>::Cast(name)->Length())
-        result->Set(v8::String::New("name"), name);
+        result->Set(v8::String::NewSymbol("name"), name);
 
     v8::Handle<v8::Value> inferredName = function->GetInferredName();
     if (inferredName->IsString() && v8::Handle<v8::String>::Cast(inferredName)->Length())
-        result->Set(v8::String::New("inferredName"), inferredName);
+        result->Set(v8::String::NewSymbol("inferredName"), inferredName);
 
     InjectedScriptHost* host = V8InjectedScriptHost::toNative(args.Holder());
     ScriptDebugServer& debugServer = host->scriptDebugServer();
     v8::Handle<v8::Value> scopes = debugServer.functionScopes(function);
     if (!scopes.IsEmpty() && scopes->IsArray())
-        result->Set(v8::String::New("rawScopes"), scopes);
+        result->Set(v8::String::NewSymbol("rawScopes"), scopes);
 
     return result;
 }
@@ -232,8 +232,8 @@ static v8::Handle<v8::Array> getJSListenerFunctions(Document* document, const Ev
         }
         ASSERT(!function.IsEmpty());
         v8::Local<v8::Object> listenerEntry = v8::Object::New();
-        listenerEntry->Set(v8::String::New("listener"), function);
-        listenerEntry->Set(v8::String::New("useCapture"), v8::Boolean::New(listenerInfo.eventListenerVector[i].useCapture));
+        listenerEntry->Set(v8::String::NewSymbol("listener"), function);
+        listenerEntry->Set(v8::String::NewSymbol("useCapture"), v8::Boolean::New(listenerInfo.eventListenerVector[i].useCapture));
         result->Set(v8::Number::New(outputIndex++), listenerEntry);
     }
     return result;
