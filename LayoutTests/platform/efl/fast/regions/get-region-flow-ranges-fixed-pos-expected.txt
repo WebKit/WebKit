@@ -1,7 +1,0 @@
-[CSSRegions] Test for Region::getRegionFlowRanges for fixed positioned elements
-PASS range1.length is 1
-PASS Array [wrapper,0,wrapper,1] is equal to [wrapper,0,wrapper,1]
-PASS successfullyParsed is true
-
-TEST COMPLETE
-

@@ -1,7 +1,0 @@
-Test for WebKit Bug 88133 Collecting a fixed positioned element in a named flow causes WebKit to crash.
-
-This test collects an absolutely positioned object into a named flow without flowing it into a region.
-
-The test passes if it does not crash or assert.
-
-PASS

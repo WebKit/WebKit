@@ -1,7 +1,0 @@
-Test for WebKit Bug 90792 Assert failure when layout positioned objects in regions
-
-This test collects an absolutely positioned element into a flow thread without any regions attached. The absolutely positioned element has a different writing mode than its parent but the same writing mode as the containing block.
-
-The test passes if it does not crash or assert.
-
-PASS

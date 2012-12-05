@@ -1,4 +1,0 @@
-Tests that changing a region element into a normal element makes the element's content available.
-
-This text should be visible when the element is no longer a region.
-PASS
