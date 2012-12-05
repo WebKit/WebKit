@@ -3857,12 +3857,17 @@ void CSSParser::parse3ValuesBackgroundPosition(CSSParserValueList* valueList, Re
 #endif
 }
 
+inline bool CSSParser::isPositionValue(CSSParserValue* value)
+{
+    return isBackgroundPositionKeyword(value->id) || validUnit(value, FPercent | FLength);
+}
+
 void CSSParser::parseFillBackgroundPosition(CSSParserValueList* valueList, RefPtr<CSSValue>& value1, RefPtr<CSSValue>& value2)
 {
     unsigned numberOfValues = 0;
     for (unsigned i = valueList->currentIndex(); i < valueList->size(); ++i, ++numberOfValues) {
         CSSParserValue* current = valueList->valueAt(i);
-        if (isComma(current) || !current)
+        if (isComma(current) || !current || (current->unit == CSSParserValue::Operator && current->iValue == '/') || !isPositionValue(current))
             break;
     }
 
@@ -4131,16 +4136,14 @@ bool CSSParser::parseFillProperty(CSSPropertyID propId, CSSPropertyID& propId1, 
                     break;
                 case CSSPropertyBackgroundPosition:
 #if ENABLE(CSS3_BACKGROUND)
-                    if (!inShorthand()) {
-                        parseFillBackgroundPosition(m_valueList.get(), currValue, currValue2);
-                        // parseFillBackgroundPosition advances the m_valueList pointer
-                        break;
-                    }
+                    parseFillBackgroundPosition(m_valueList.get(), currValue, currValue2);
+                    // parseFillBackgroundPosition advances the m_valueList pointer.
+                    break;
                     // Fall through to CSS 2.1 parsing.
 #endif
                 case CSSPropertyWebkitMaskPosition:
                     parseFillPosition(m_valueList.get(), currValue, currValue2);
-                    // parseFillPosition advances the m_valueList pointer
+                    // parseFillPosition advances the m_valueList pointer.
                     break;
                 case CSSPropertyBackgroundPositionX:
                 case CSSPropertyWebkitMaskPositionX: {

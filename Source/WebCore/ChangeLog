@@ -1,3 +1,28 @@
+2012-12-05  Alexis Menard  <alexis@webkit.org>
+
+        [CSS3 Backgrounds and Borders] Allow the CSS3 background position offset for background shorthand.
+        https://bugs.webkit.org/show_bug.cgi?id=104014
+
+        Reviewed by Dirk Schulze.
+
+        Add the support of the new <position> type if set from within the
+        background shorthand. The patch just modify the way we count the values
+        of the current context by checking wether we encounter a comma (it is
+        then the next background layer), or if we encounter a '/' (which is in the
+        background shorthand context the background-size) or any value that is
+        not a valid background-position keyword or length (which means we are
+        already parsing the next property of the background shorthand).
+
+        Tests: LayoutTests/fast/backgrounds/background-position-parsing-2.html
+        has been modified to cover this use case.
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::isPositionValue):
+        (WebCore):
+        (WebCore::CSSParser::parseFillBackgroundPosition):
+        (WebCore::CSSParser::parseFillProperty):
+        * css/CSSParser.h:
+
 2012-12-05  Elliott Sprehn  <esprehn@gmail.com>
 
         ShadowRoot should recalcStyle for itself

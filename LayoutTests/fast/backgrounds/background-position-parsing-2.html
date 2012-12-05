@@ -402,6 +402,130 @@ style.backgroundPosition = "solid, left bottom 20px";
 shouldBe("style.backgroundPosition", "'right 0% top 15px, right 20px bottom 0%'");
 shouldBe("computedStyle.backgroundPosition", "'right 0% top 15px, right 20px bottom 0%'");
 
+debug("background-position inside the background shorthand");
+style.background = "top 10% left 30% / 10em gray round fixed border-box";
+shouldBe("style.background", "'left 30% top 10% / 10em round fixed border-box border-box gray'");
+shouldBe("computedStyle.background", "'rgb(128, 128, 128) none round fixed left 30% top 10% / 160px border-box border-box'");
+
+style.background = "right top 15px / 10em gray round fixed border-box";
+shouldBe("style.background", "'right 0% top 15px / 10em round fixed border-box border-box gray'");
+shouldBe("computedStyle.background", "'rgb(128, 128, 128) none round fixed right 0% top 15px / 160px border-box border-box'");
+
+style.background = "left 10px center / 10em gray round fixed border-box";
+shouldBe("style.background", "'left 10px top 50% / 10em round fixed border-box border-box gray'");
+shouldBe("computedStyle.background", "'rgb(128, 128, 128) none round fixed left 10px top 50% / 160px border-box border-box'");
+
+style.background = "left 10px center round fixed border-box";
+shouldBe("style.background", "'left 10px top 50% round fixed border-box border-box'");
+shouldBe("computedStyle.background", "'rgba(0, 0, 0, 0) none round fixed left 10px top 50% / auto border-box border-box'");
+
+style.background = "center top 20px round fixed border-box";
+shouldBe("style.background", "'left 50% top 20px round fixed border-box border-box'");
+shouldBe("computedStyle.background", "'rgba(0, 0, 0, 0) none round fixed left 50% top 20px / auto border-box border-box'");
+
+style.background = "top 20px center round fixed border-box";
+shouldBe("style.background", "'left 50% top 20px round fixed border-box border-box'");
+shouldBe("computedStyle.background", "'rgba(0, 0, 0, 0) none round fixed left 50% top 20px / auto border-box border-box'");
+
+style.background = "top center round fixed border-box";
+shouldBe("style.background", "'50% 0% round fixed border-box border-box'");
+shouldBe("computedStyle.background", "'rgba(0, 0, 0, 0) none round fixed 50% 0% / auto border-box border-box'");
+
+style.background = "50px 60px / 50px round fixed border-box";
+shouldBe("style.background", "'50px 60px / 50px round fixed border-box border-box'");
+shouldBe("computedStyle.background", "'rgba(0, 0, 0, 0) none round fixed 50px 60px / 50px border-box border-box'");
+
+style.background = "50px / 50px round fixed border-box";
+shouldBe("style.background", "'50px 50% / 50px round fixed border-box border-box'");
+shouldBe("computedStyle.background", "'rgba(0, 0, 0, 0) none round fixed 50px 50% / 50px border-box border-box'");
+
+style.background = "left top 60px / 50px round fixed border-box";
+shouldBe("style.background", "'left 0% top 60px / 50px round fixed border-box border-box'");
+shouldBe("computedStyle.background", "'rgba(0, 0, 0, 0) none round fixed left 0% top 60px / 50px border-box border-box'");
+
+style.background = "left -20px top 60px / 50px round fixed border-box";
+shouldBe("style.background", "'left -20px top 60px / 50px round fixed border-box border-box'");
+shouldBe("computedStyle.background", "'rgba(0, 0, 0, 0) none round fixed left -20px top 60px / 50px border-box border-box'");
+
+style.background = "border-box left 20px top / 50px round fixed";
+shouldBe("style.background", "'left 20px top 0% / 50px round fixed border-box border-box'");
+shouldBe("computedStyle.background", "'rgba(0, 0, 0, 0) none round fixed left 20px top 0% / 50px border-box border-box'");
+
+style.background = "border-box round fixed left 20px top / 50px";
+shouldBe("style.background", "'left 20px top 0% / 50px round fixed border-box border-box'");
+shouldBe("computedStyle.background", "'rgba(0, 0, 0, 0) none round fixed left 20px top 0% / 50px border-box border-box'");
+
+style.background = "border-box round fixed left 20px top 40px / 50px";
+shouldBe("style.background", "'left 20px top 40px / 50px round fixed border-box border-box'");
+shouldBe("computedStyle.background", "'rgba(0, 0, 0, 0) none round fixed left 20px top 40px / 50px border-box border-box'");
+
+style.background = "border-box round fixed left 20px top 40px";
+shouldBe("style.background", "'left 20px top 40px round fixed border-box border-box'");
+shouldBe("computedStyle.background", "'rgba(0, 0, 0, 0) none round fixed left 20px top 40px / auto border-box border-box'");
+
+style.background = "top 10% left 30% gray round fixed border-box";
+shouldBe("style.background", "'left 30% top 10% round fixed border-box border-box gray'");
+shouldBe("computedStyle.background", "'rgb(128, 128, 128) none round fixed left 30% top 10% / auto border-box border-box'");
+
+debug("background-position inside the background shorthand, some invalid cases, no changes expected");
+style.background = "";
+style.background = "top 10% left 30% 50% gray round fixed border-box";
+shouldBe("style.background", "''");
+// This is the default computed style.
+shouldBe("computedStyle.background", "'rgba(0, 0, 0, 0) none repeat scroll 0% 0% / auto padding-box border-box'");
+
+style.background = "top 10% solid 30% gray round fixed border-box";
+shouldBe("style.background", "''");
+shouldBe("computedStyle.background", "'rgba(0, 0, 0, 0) none repeat scroll 0% 0% / auto padding-box border-box'");
+
+style.background = "top 10% left round gray round fixed border-box";
+shouldBe("style.background", "''");
+shouldBe("computedStyle.background", "'rgba(0, 0, 0, 0) none repeat scroll 0% 0% / auto padding-box border-box'");
+
+style.background = "top 10% top 30% gray round fixed border-box";
+shouldBe("style.background", "''");
+shouldBe("computedStyle.background", "'rgba(0, 0, 0, 0) none repeat scroll 0% 0% / auto padding-box border-box'");
+
+style.background = "center center center / 10em gray round fixed border-box";
+shouldBe("style.background", "''");
+shouldBe("computedStyle.background", "'rgba(0, 0, 0, 0) none repeat scroll 0% 0% / auto padding-box border-box'");
+
+style.background = "center center 30px / 10em gray round fixed border-box";
+shouldBe("style.background", "''");
+shouldBe("computedStyle.background", "'rgba(0, 0, 0, 0) none repeat scroll 0% 0% / auto padding-box border-box'");
+
+style.background = "top center left / 10em gray round fixed border-box";
+shouldBe("style.background", "''");
+shouldBe("computedStyle.background", "'rgba(0, 0, 0, 0) none repeat scroll 0% 0% / auto padding-box border-box'");
+
+style.background = "50% left / 10em gray round fixed border-box";
+shouldBe("style.background", "''");
+shouldBe("computedStyle.background", "'rgba(0, 0, 0, 0) none repeat scroll 0% 0% / auto padding-box border-box'");
+
+style.background = "solid / 10em gray round fixed border-box";
+shouldBe("style.background", "''");
+shouldBe("computedStyle.background", "'rgba(0, 0, 0, 0) none repeat scroll 0% 0% / auto padding-box border-box'");
+
+style.background = "top 10% left 20px 50% 50px gray round fixed border-box";
+shouldBe("style.background", "''");
+shouldBe("computedStyle.background", "'rgba(0, 0, 0, 0) none repeat scroll 0% 0% / auto padding-box border-box'");
+
+style.background = "20px 20px 30px / 40px gray round fixed border-box";
+shouldBe("style.background", "''");
+shouldBe("computedStyle.background", "'rgba(0, 0, 0, 0) none repeat scroll 0% 0% / auto padding-box border-box'");
+
+style.background = "20px 20px 30px 60px / 40px gray round fixed border-box";
+shouldBe("style.background", "''");
+shouldBe("computedStyle.background", "'rgba(0, 0, 0, 0) none repeat scroll 0% 0% / auto padding-box border-box'");
+
+style.background = "20px 20px 30px 60px 70px / 40px gray round fixed border-box";
+shouldBe("style.background", "''");
+shouldBe("computedStyle.background", "'rgba(0, 0, 0, 0) none repeat scroll 0% 0% / auto padding-box border-box'");
+
+style.background = "20px 20px 30px / 40px gray top left round fixed border-box";
+shouldBe("style.background", "''");
+shouldBe("computedStyle.background", "'rgba(0, 0, 0, 0) none repeat scroll 0% 0% / auto padding-box border-box'");
+
 document.body.removeChild(testContainer);
 </script>
 <script src="../js/resources/js-test-post.js"></script>
