@@ -1,5 +1,15 @@
 2012-12-05  Mike West  <mkwst@chromium.org>
 
+        [mac][gtk] Unreviewed gardening.
+
+        fast/overflow/scrollbar-click-retains-focus.html was added in r136646
+        and fails only on Mac WK1, and GTK. Skipping.
+
+        * platform/gtk/TestExpectations:
+        * platform/mac/TestExpectations:
+
+2012-12-05  Mike West  <mkwst@chromium.org>
+
         Web Inspector: Autogenerate stack traces and line numbers when possible.
         https://bugs.webkit.org/show_bug.cgi?id=100650
 

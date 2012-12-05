@@ -1425,6 +1425,8 @@ webkit.org/b/103740 editing/selection/caret-alignment-for-vertical-text.html [ F
 # volume is reset when mediaelement.src is modified
 webkit.org/b/103893 media/video-volume.html [ Failure ]
 
+webkit.org/b/104104 fast/overflow/scrollbar-click-retains-focus.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing
 #////////////////////////////////////////////////////////////////////////////////////////
