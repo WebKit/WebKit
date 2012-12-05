@@ -1,3 +1,13 @@
+2012-12-04  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. Add Windows specific results for some tests following r136558 and r136560.
+
+        Tests are indeed passing. The output is just slightly different on Windows.
+
+        * platform/win/TestExpectations:
+        * platform/win/fast/css/image-set-value-not-removed-crash-expected.txt: Added.
+        * platform/win/fast/images/crossfade-client-not-removed-crash-expected.txt: Added.
+
 2012-12-04  Julien Chaffraix  <jchaffraix@webkit.org>
 
         [CSS Grid Layout] Implement CSS parsing and handling for <track-minmax>
