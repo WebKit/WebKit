@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: line 64: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/access-control-preflight-denied-xsrf.php?state=method. Method DELETE is not allowed by Access-Control-Allow-Methods.
+PASS: Request successfully blocked.
+
+

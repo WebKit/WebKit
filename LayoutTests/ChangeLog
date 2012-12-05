@@ -1,5 +1,18 @@
 2012-12-05  Mike West  <mkwst@chromium.org>
 
+        [gtk] Unreviewed gardening.
+
+        Rebaselining tests after r136657 to pick up changes to console messages.
+
+        * platform/chromium-win/http/tests/security/cross-origin-xsl-BLOCKED-expected.txt: Removed.
+        * platform/chromium/http/tests/security/cross-origin-xsl-BLOCKED-expected.txt: Renamed from LayoutTests/platform/chromium-mac/http/tests/security/cross-origin-xsl-BLOCKED-expected.txt.
+        * platform/gtk/http/tests/security/cross-origin-xsl-BLOCKED-expected.txt:
+        * platform/gtk/http/tests/xmlhttprequest/access-control-preflight-async-header-denied-expected.txt: Added.
+        * platform/gtk/http/tests/xmlhttprequest/access-control-preflight-async-not-supported-expected.txt: Added.
+        * platform/gtk/svg/custom/polyline-setattribute-points-null-expected.txt:
+
+2012-12-05  Mike West  <mkwst@chromium.org>
+
         [qt] Unreviewed gardening.
 
         Rebaselining tests after r136657 to pick up changes to console messages.

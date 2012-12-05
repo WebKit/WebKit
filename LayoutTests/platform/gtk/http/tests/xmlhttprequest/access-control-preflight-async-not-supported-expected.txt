@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: line 64: XMLHttpRequest cannot load http://localhost:8000/xmlhttprequest/resources/access-control-preflight-denied-xsrf.php. Origin http://127.0.0.1:8000 is not allowed by Access-Control-Allow-Origin.
+PASS: Request successfully blocked.
+
+
