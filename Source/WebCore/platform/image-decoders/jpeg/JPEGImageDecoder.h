@@ -64,6 +64,12 @@ namespace WebCore {
         // JPEGImageReader!
         virtual bool setFailed();
 
+        bool willDownSample()
+        {
+            ASSERT(ImageDecoder::isSizeAvailable());
+            return m_scaled;
+        }
+
         bool outputScanlines();
         void jpegComplete();
 

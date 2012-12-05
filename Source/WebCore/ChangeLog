@@ -1,3 +1,27 @@
+2012-12-05  Noel Gordon  <noel.gordon@gmail.com>
+
+        ENABLE(IMAGE_DECODER_DOWN_SAMPLING): Don't swizzle decode down sampled images
+        https://bugs.webkit.org/show_bug.cgi?id=103856
+
+        Reviewed by Yong Li.
+
+        For ports using ENABLE(IMAGE_DECODER_DOWN_SAMPLING), turbo swizzle decodes provide
+        no speed-up when the decoded image will be down sampled because the data must pass
+        through the buffer.setRGBA() slow path. That is not the swizzled path. Instead use
+        JCS_RGB decodes to clarify the output color space handling in outputScanlines().
+
+        No new tests. Covered by existing JPEG decoding tests.
+
+        * platform/image-decoders/jpeg/JPEGImageDecoder.cpp:
+        (WebCore::JPEGImageReader::decode): libjpeg-turbo swizzle decodes provides no real
+        speed-up if the image will be down sampled. Revert to using JCS_RGA in this case.
+        (WebCore::setPixel): Remove the libjpeg-turbo JCS_EXT_BGRA and JCS_EXT_RGBA cases.
+        (WebCore::JPEGImageDecoder::outputScanlines): ditto.
+        * platform/image-decoders/jpeg/JPEGImageDecoder.h:
+        (WebCore::JPEGImageDecoder::willDownSample): Return true if image down sampling 
+        will be applied to the decoded image (m_scaled). Note: the willDownSample() return
+        value is valid only after setSize() has been called: add an ASSERT for that.
+
 2012-12-05  Michael Pruett  <michael@68k.org>
 
         IndexedDB: Implement IndexedDB bindings for JSC

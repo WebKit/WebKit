@@ -370,19 +370,6 @@ public:
                 return m_decoder->setFailed();
             }
 
-            // Don't allocate a giant and superfluous memory buffer when the
-            // image is a sequential JPEG.
-            m_info.buffered_image = jpeg_has_multiple_scans(&m_info);
-
-            // Used to set up image size so arrays can be allocated.
-            jpeg_calc_output_dimensions(&m_info);
-
-            // Make a one-row-high sample array that will go away when done with
-            // image. Always make it big enough to hold an RGB row.  Since this
-            // uses the IJG memory manager, it must be allocated before the call
-            // to jpeg_start_compress().
-            m_samples = (*m_info.mem->alloc_sarray)((j_common_ptr) &m_info, JPOOL_IMAGE, m_info.output_width * 4, 1);
-
             m_state = JPEG_START_DECOMPRESS;
 
             // We can fill in the size now that the header is available.
@@ -391,6 +378,12 @@ public:
 
             m_decoder->setOrientation(readImageOrientation(info()));
 
+#if ENABLE(IMAGE_DECODER_DOWN_SAMPLING) && defined(TURBO_JPEG_RGB_SWIZZLE)
+            // There's no point swizzle decoding if image down sampling will
+            // be applied. Revert to using JSC_RGB in that case.
+            if (m_decoder->willDownSample() && turboSwizzled(m_info.out_color_space))
+                m_info.out_color_space = JCS_RGB;
+#endif
             // Allow color management of the decoded RGBA pixels if possible.
             if (!m_decoder->ignoresGammaAndColorProfile()) {
                 ColorProfile rgbInputDeviceColorProfile = readColorProfile(info());
@@ -406,9 +399,23 @@ public:
 #endif
             }
 
+            // Don't allocate a giant and superfluous memory buffer when the
+            // image is a sequential JPEG.
+            m_info.buffered_image = jpeg_has_multiple_scans(&m_info);
+
+            // Used to set up image size so arrays can be allocated.
+            jpeg_calc_output_dimensions(&m_info);
+
+            // Make a one-row-high sample array that will go away when done with
+            // image. Always make it big enough to hold an RGB row. Since this
+            // uses the IJG memory manager, it must be allocated before the call
+            // to jpeg_start_compress().
+            // FIXME: note that some output color spaces do not need the samples
+            // buffer. Remove this allocation for those color spaces.
+            m_samples = (*m_info.mem->alloc_sarray)((j_common_ptr) &m_info, JPOOL_IMAGE, m_info.output_width * 4, 1);
+
             if (m_decodingSizeOnly) {
-                // We can stop here.  Reduce our buffer length and available
-                // data.
+                // We can stop here. Reduce our buffer length and available data.
                 m_bufferLength -= m_info.src->bytes_in_buffer;
                 m_info.src->bytes_in_buffer = 0;
                 return true;
@@ -641,12 +648,6 @@ void setPixel(ImageFrame& buffer, ImageFrame::PixelData* currentAddress, JSAMPAR
     JSAMPLE* jsample = *samples + column * (colorSpace == JCS_RGB ? 3 : 4);
 
     switch (colorSpace) {
-#if defined(TURBO_JPEG_RGB_SWIZZLE)
-    case JCS_EXT_BGRA:
-        buffer.setRGBA(currentAddress, jsample[2], jsample[1], jsample[0], 0xFF);
-        break;
-    case JCS_EXT_RGBA: // Fallback to JSC_RGB case here.
-#endif
     case JCS_RGB:
         buffer.setRGBA(currentAddress, jsample[0], jsample[1], jsample[2], 0xFF);
         break;
@@ -671,7 +672,6 @@ bool JPEGImageDecoder::outputScanlines(ImageFrame& buffer)
 {
     JSAMPARRAY samples = m_reader->samples();
     jpeg_decompress_struct* info = m_reader->info();
-
     int width = isScaled ? m_scaledColumns.size() : info->output_width;
 
     while (info->output_scanline < info->output_height) {
@@ -692,7 +692,6 @@ bool JPEGImageDecoder::outputScanlines(ImageFrame& buffer)
 #endif
 
         ImageFrame::PixelData* currentAddress = buffer.getAddr(0, destY);
-
         for (int x = 0; x < width; ++x) {
             setPixel<colorSpace>(buffer, currentAddress, samples, isScaled ? m_scaledColumns[x] : x);
             ++currentAddress;
@@ -751,12 +750,6 @@ bool JPEGImageDecoder::outputScanlines()
     // the proper code will be generated at compile time.
     case JCS_RGB:
         return outputScanlines<JCS_RGB>(buffer);
-#if defined(TURBO_JPEG_RGB_SWIZZLE)
-    case JCS_EXT_RGBA:
-        return outputScanlines<JCS_EXT_RGBA>(buffer);
-    case JCS_EXT_BGRA:
-        return outputScanlines<JCS_EXT_BGRA>(buffer);
-#endif
     case JCS_CMYK:
         return outputScanlines<JCS_CMYK>(buffer);
     default:
