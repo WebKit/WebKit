@@ -1,3 +1,25 @@
+2012-12-05  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Remove unneeded WTF prefix from WTF types in RenderFlexibleBox
+        https://bugs.webkit.org/show_bug.cgi?id=104109
+
+        Reviewed by Eric Seidel.
+
+        WTF prefix is not needed because WTF headers have a using
+        statement at the end of the file.
+
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::layoutBlock):
+        (WebCore::RenderFlexibleBox::repositionLogicalHeightDependentFlexItems):
+        (WebCore::RenderFlexibleBox::layoutFlexItems):
+        (WebCore::RenderFlexibleBox::freezeViolations):
+        (WebCore::RenderFlexibleBox::resolveFlexibleLengths):
+        (WebCore::RenderFlexibleBox::layoutAndPlaceChildren):
+        (WebCore::RenderFlexibleBox::alignFlexLines):
+        (WebCore::RenderFlexibleBox::alignChildren):
+        (WebCore::RenderFlexibleBox::flipForWrapReverse):
+        * rendering/RenderFlexibleBox.h:
+
 2012-12-05  Andras Becsi  <andras.becsi@digia.com>
 
         Fix compilation for Qt5.0.0 stable branch.
