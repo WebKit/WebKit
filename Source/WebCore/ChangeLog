@@ -1,3 +1,20 @@
+2012-12-05  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Flex item auto margins in the cross direction should safe center
+        https://bugs.webkit.org/show_bug.cgi?id=103919
+
+        Reviewed by Ojan Vafai.
+
+        Do not apply auto margins for cross axis if there's no alignment
+        space available.
+
+        Test: css3/flexbox/flex-flow-auto-margins-no-available-space.html
+
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::alignChildren): Make sure we pass a
+        positive value for availableAlignmentSpace to
+        updateAutoMarginsInCrossAxis().
+
 2012-12-05  Mike West  <mkwst@chromium.org>
 
         Web Inspector: Autogenerate stack traces and line numbers when possible.
