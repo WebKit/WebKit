@@ -59,16 +59,6 @@ inline v8::Handle<v8::Object> wrap(TestException* impl, v8::Handle<v8::Object> c
     return V8TestException::createWrapper(impl, creationContext, isolate);
 }
 
-inline v8::Handle<v8::Object> toV8Object(TestException* impl, v8::Handle<v8::Object> creationContext = v8::Handle<v8::Object>(), v8::Isolate* isolate = 0)
-{
-    if (UNLIKELY(!impl))
-        return v8::Handle<v8::Object>();
-    v8::Handle<v8::Object> wrapper = DOMDataStore::current(isolate)->get(impl);
-    if (!wrapper.IsEmpty())
-        return wrapper;
-    return wrap(impl, creationContext, isolate);
-}
-
 inline v8::Handle<v8::Value> toV8(TestException* impl, v8::Handle<v8::Object> creationContext = v8::Handle<v8::Object>(), v8::Isolate* isolate = 0)
 {
     if (UNLIKELY(!impl))

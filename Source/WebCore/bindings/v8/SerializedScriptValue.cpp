@@ -673,6 +673,24 @@ private:
     v8::Isolate* m_isolate;
 };
 
+static v8::Handle<v8::Object> toV8Object(MessagePort* impl, v8::Isolate* isolate)
+{
+    if (!impl)
+        return v8::Handle<v8::Object>();
+    v8::Handle<v8::Value> wrapper = toV8(impl, v8::Handle<v8::Object>(), isolate);
+    ASSERT(wrapper->IsObject());
+    return wrapper.As<v8::Object>();
+}
+
+static v8::Handle<v8::Object> toV8Object(ArrayBuffer* impl, v8::Isolate* isolate)
+{
+    if (!impl)
+        return v8::Handle<v8::Object>();
+    v8::Handle<v8::Value> wrapper = toV8(impl, v8::Handle<v8::Object>(), isolate);
+    ASSERT(wrapper->IsObject());
+    return wrapper.As<v8::Object>();
+}
+
 class Serializer {
     class StateBase;
 public:
@@ -697,11 +715,11 @@ public:
         ASSERT(!tryCatch.HasCaught());
         if (messagePorts) {
             for (size_t i = 0; i < messagePorts->size(); i++)
-                m_transferredMessagePorts.set(toV8Object(messagePorts->at(i).get(), v8::Handle<v8::Object>(), m_writer.getIsolate()), i);
+                m_transferredMessagePorts.set(toV8Object(messagePorts->at(i).get(), m_writer.getIsolate()), i);
         }
         if (arrayBuffers) {
             for (size_t i = 0; i < arrayBuffers->size(); i++)  {
-                v8::Handle<v8::Object> v8ArrayBuffer = toV8Object(arrayBuffers->at(i).get(), v8::Handle<v8::Object>(), m_writer.getIsolate());
+                v8::Handle<v8::Object> v8ArrayBuffer = toV8Object(arrayBuffers->at(i).get(), m_writer.getIsolate());
                 // Coalesce multiple occurences of the same buffer to the first index.
                 if (!m_transferredArrayBuffers.contains(v8ArrayBuffer))
                     m_transferredArrayBuffers.set(v8ArrayBuffer, i);
@@ -2119,7 +2137,7 @@ public:
             RefPtr<ArrayBuffer> buffer = ArrayBuffer::create(m_arrayBufferContents->at(index));
             buffer->setDeallocationObserver(V8ArrayBufferDeallocationObserver::instance());
             v8::V8::AdjustAmountOfExternalAllocatedMemory(buffer->byteLength());
-            result = toV8Object(buffer.get(), v8::Handle<v8::Object>(), m_reader.getIsolate());
+            result = toV8Object(buffer.get(), m_reader.getIsolate());
             m_arrayBuffers[index] = result;
         }
         *object = result;

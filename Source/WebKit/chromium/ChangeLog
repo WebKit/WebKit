@@ -1,3 +1,21 @@
+2012-12-04  Kentaro Hara  <haraken@chromium.org>
+
+        [V8] Remove toV8Object()
+        https://bugs.webkit.org/show_bug.cgi?id=103987
+
+        Reviewed by Adam Barth.
+
+        toV8Object() is used only for MessagePort and ArrayBuffer
+        only by SerializedScriptValue. It is wasteful to generate
+        toV8Object() for all interfaces.
+
+        No tests. No change in behavior.
+
+        * src/WebArrayBuffer.cpp:
+        (WebKit::WebArrayBuffer::toV8Value):
+        * src/WebBlob.cpp:
+        (WebKit::WebBlob::toV8Value):
+
 2012-12-04  David Dorwin  <ddorwin@chromium.org>
 
         [Chromium] Detach the frame and destroy the page immediately upon request to closeHelperPlugin().

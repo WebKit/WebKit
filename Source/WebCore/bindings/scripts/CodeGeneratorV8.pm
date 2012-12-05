@@ -563,16 +563,6 @@ END
 
         push(@headerContent, <<END);
 
-inline v8::Handle<v8::Object> toV8Object(${nativeType}* impl, v8::Handle<v8::Object> creationContext = v8::Handle<v8::Object>(), v8::Isolate* isolate = 0)
-{
-    if (UNLIKELY(!impl))
-        return v8::Handle<v8::Object>();
-    v8::Handle<v8::Object> wrapper = $getCachedWrapper;
-    if (!wrapper.IsEmpty())
-        return wrapper;
-    return wrap(impl, creationContext, isolate);
-}
-
 inline v8::Handle<v8::Value> toV8(${nativeType}* impl, v8::Handle<v8::Object> creationContext = v8::Handle<v8::Object>(), v8::Isolate* isolate = 0)
 {
     if (UNLIKELY(!impl))

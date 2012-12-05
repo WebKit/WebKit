@@ -56,16 +56,6 @@ private:
 
 v8::Handle<v8::Object> wrap(Float64Array* impl, v8::Handle<v8::Object> creationContext, v8::Isolate* = 0);
 
-inline v8::Handle<v8::Object> toV8Object(Float64Array* impl, v8::Handle<v8::Object> creationContext = v8::Handle<v8::Object>(), v8::Isolate* isolate = 0)
-{
-    if (UNLIKELY(!impl))
-        return v8::Handle<v8::Object>();
-    v8::Handle<v8::Object> wrapper = DOMDataStore::current(isolate)->get(impl);
-    if (!wrapper.IsEmpty())
-        return wrapper;
-    return wrap(impl, creationContext, isolate);
-}
-
 inline v8::Handle<v8::Value> toV8(Float64Array* impl, v8::Handle<v8::Object> creationContext = v8::Handle<v8::Object>(), v8::Isolate* isolate = 0)
 {
     if (UNLIKELY(!impl))

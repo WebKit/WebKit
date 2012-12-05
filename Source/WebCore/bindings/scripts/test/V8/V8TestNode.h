@@ -60,16 +60,6 @@ inline v8::Handle<v8::Object> wrap(TestNode* impl, v8::Handle<v8::Object> creati
     return V8TestNode::createWrapper(impl, creationContext, isolate);
 }
 
-inline v8::Handle<v8::Object> toV8Object(TestNode* impl, v8::Handle<v8::Object> creationContext = v8::Handle<v8::Object>(), v8::Isolate* isolate = 0)
-{
-    if (UNLIKELY(!impl))
-        return v8::Handle<v8::Object>();
-    v8::Handle<v8::Object> wrapper = DOMDataStore::getNode(impl, isolate);
-    if (!wrapper.IsEmpty())
-        return wrapper;
-    return wrap(impl, creationContext, isolate);
-}
-
 inline v8::Handle<v8::Value> toV8(TestNode* impl, v8::Handle<v8::Object> creationContext = v8::Handle<v8::Object>(), v8::Isolate* isolate = 0)
 {
     if (UNLIKELY(!impl))

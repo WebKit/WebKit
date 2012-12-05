@@ -59,16 +59,6 @@ inline v8::Handle<v8::Object> wrap(TestMediaQueryListListener* impl, v8::Handle<
     return V8TestMediaQueryListListener::createWrapper(impl, creationContext, isolate);
 }
 
-inline v8::Handle<v8::Object> toV8Object(TestMediaQueryListListener* impl, v8::Handle<v8::Object> creationContext = v8::Handle<v8::Object>(), v8::Isolate* isolate = 0)
-{
-    if (UNLIKELY(!impl))
-        return v8::Handle<v8::Object>();
-    v8::Handle<v8::Object> wrapper = DOMDataStore::current(isolate)->get(impl);
-    if (!wrapper.IsEmpty())
-        return wrapper;
-    return wrap(impl, creationContext, isolate);
-}
-
 inline v8::Handle<v8::Value> toV8(TestMediaQueryListListener* impl, v8::Handle<v8::Object> creationContext = v8::Handle<v8::Object>(), v8::Isolate* isolate = 0)
 {
     if (UNLIKELY(!impl))
