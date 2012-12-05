@@ -84,7 +84,7 @@ v8::Handle<v8::Value> V8AudioContext::constructorCallbackCustom(const v8::Argume
     
     // Transform the holder into a wrapper object for the audio context.
     v8::Handle<v8::Object> wrapper = args.Holder();
-    V8DOMWrapper::createDOMWrapper(audioContext.release(), &info, wrapper);
+    V8DOMWrapper::associateObjectWithWrapper(audioContext.release(), &info, wrapper);
     
     return wrapper;
 }

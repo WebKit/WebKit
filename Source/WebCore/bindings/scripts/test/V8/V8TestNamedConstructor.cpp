@@ -70,7 +70,7 @@ static v8::Handle<v8::Value> V8TestNamedConstructorConstructorCallback(const v8:
     if (ec)
         goto fail;
 
-    V8DOMWrapper::createDOMWrapper(impl.release(), &V8TestNamedConstructorConstructor::info, wrapper, args.GetIsolate());
+    V8DOMWrapper::associateObjectWithWrapper(impl.release(), &V8TestNamedConstructorConstructor::info, wrapper, args.GetIsolate());
     return wrapper;
   fail:
     return setDOMException(ec, args.GetIsolate());
@@ -152,12 +152,12 @@ v8::Handle<v8::Object> V8TestNamedConstructor::createWrapper(PassRefPtr<TestName
     ASSERT(impl.get());
     ASSERT(DOMDataStore::current(isolate)->get(impl.get()).IsEmpty());
 
-    v8::Handle<v8::Object> wrapper = V8DOMWrapper::instantiateV8Object(creationContext, &info, impl.get());
+    v8::Handle<v8::Object> wrapper = V8DOMWrapper::createWrapper(creationContext, &info, impl.get());
     if (UNLIKELY(wrapper.IsEmpty()))
         return wrapper;
 
     installPerContextProperties(wrapper, impl.get());
-    v8::Persistent<v8::Object> wrapperHandle = V8DOMWrapper::createDOMWrapper(impl, &info, wrapper, isolate);
+    v8::Persistent<v8::Object> wrapperHandle = V8DOMWrapper::associateObjectWithWrapper(impl, &info, wrapper, isolate);
     if (!hasDependentLifetime)
         wrapperHandle.MarkIndependent();
     return wrapper;

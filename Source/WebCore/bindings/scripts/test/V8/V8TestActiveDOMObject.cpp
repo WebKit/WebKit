@@ -74,7 +74,7 @@ static v8::Handle<v8::Value> postMessageAttrGetter(v8::Local<v8::String> name, c
 {
     INC_STATS("DOM.TestActiveDOMObject.postMessage._get");
     static v8::Persistent<v8::FunctionTemplate> privateTemplate = v8::Persistent<v8::FunctionTemplate>::New(v8::FunctionTemplate::New(TestActiveDOMObjectV8Internal::postMessageCallback, v8Undefined(), v8::Signature::New(V8TestActiveDOMObject::GetRawTemplate())));
-    v8::Handle<v8::Object> holder = V8DOMWrapper::lookupDOMWrapper(V8TestActiveDOMObject::GetTemplate(), info.This());
+    v8::Handle<v8::Object> holder = info.This()->FindInstanceInPrototypeChain(V8TestActiveDOMObject::GetTemplate());
     if (holder.IsEmpty()) {
         // can only reach here by 'object.__proto__.func', and it should passed
         // domain security check already
@@ -96,7 +96,7 @@ static v8::Handle<v8::Value> postMessageAttrGetter(v8::Local<v8::String> name, c
 static void TestActiveDOMObjectDomainSafeFunctionSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     INC_STATS("DOM.TestActiveDOMObject._set");
-    v8::Handle<v8::Object> holder = V8DOMWrapper::lookupDOMWrapper(V8TestActiveDOMObject::GetTemplate(), info.This());
+    v8::Handle<v8::Object> holder = info.This()->FindInstanceInPrototypeChain(V8TestActiveDOMObject::GetTemplate());
     if (holder.IsEmpty())
         return;
     TestActiveDOMObject* imp = V8TestActiveDOMObject::toNative(holder);
@@ -180,12 +180,12 @@ v8::Handle<v8::Object> V8TestActiveDOMObject::createWrapper(PassRefPtr<TestActiv
     ASSERT(impl.get());
     ASSERT(DOMDataStore::current(isolate)->get(impl.get()).IsEmpty());
 
-    v8::Handle<v8::Object> wrapper = V8DOMWrapper::instantiateV8Object(creationContext, &info, impl.get());
+    v8::Handle<v8::Object> wrapper = V8DOMWrapper::createWrapper(creationContext, &info, impl.get());
     if (UNLIKELY(wrapper.IsEmpty()))
         return wrapper;
 
     installPerContextProperties(wrapper, impl.get());
-    v8::Persistent<v8::Object> wrapperHandle = V8DOMWrapper::createDOMWrapper(impl, &info, wrapper, isolate);
+    v8::Persistent<v8::Object> wrapperHandle = V8DOMWrapper::associateObjectWithWrapper(impl, &info, wrapper, isolate);
     if (!hasDependentLifetime)
         wrapperHandle.MarkIndependent();
     return wrapper;

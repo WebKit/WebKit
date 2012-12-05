@@ -64,7 +64,7 @@ static v8::Local<v8::Object> createInjectedScriptHostV8Wrapper(InjectedScriptHos
         // Avoid setting the wrapper if allocation failed.
         return v8::Local<v8::Object>();
     }
-    V8DOMWrapper::setDOMWrapper(instance, &V8InjectedScriptHost::info, host);
+    V8DOMWrapper::setNativeInfo(instance, &V8InjectedScriptHost::info, host);
     // Create a weak reference to the v8 wrapper of InspectorBackend to deref
     // InspectorBackend when the wrapper is garbage collected.
     host->ref();
@@ -117,7 +117,7 @@ bool InjectedScriptManager::canAccessInspectedWindow(ScriptState* scriptState)
     v8::Local<v8::Object> global = context->Global();
     if (global.IsEmpty())
         return false;
-    v8::Handle<v8::Object> holder = V8DOMWrapper::lookupDOMWrapper(V8DOMWindow::GetTemplate(), global);
+    v8::Handle<v8::Object> holder = global->FindInstanceInPrototypeChain(V8DOMWindow::GetTemplate());
     if (holder.IsEmpty())
         return false;
     Frame* frame = V8DOMWindow::toNative(holder)->frame();

@@ -127,7 +127,7 @@ bool WorkerScriptController::initializeContextIfNeeded()
         return false;
     }
 
-    V8DOMWrapper::createDOMWrapper(PassRefPtr<WorkerContext>(m_workerContext), contextType, jsWorkerContext);
+    V8DOMWrapper::associateObjectWithWrapper(PassRefPtr<WorkerContext>(m_workerContext), contextType, jsWorkerContext);
 
     // Insert the object instance as the prototype of the shadow object.
     v8::Handle<v8::Object> globalObject = v8::Handle<v8::Object>::Cast(m_context->Global()->GetPrototype());
@@ -248,7 +248,7 @@ WorkerScriptController* WorkerScriptController::controllerForContext()
         return 0;
     v8::Handle<v8::Context> context = v8::Context::GetCurrent();
     v8::Handle<v8::Object> global = context->Global();
-    global = V8DOMWrapper::lookupDOMWrapper(V8WorkerContext::GetTemplate(), global);
+    global = global->FindInstanceInPrototypeChain(V8WorkerContext::GetTemplate());
     // Return 0 if the current executing context is not the worker context.
     if (global.IsEmpty())
         return 0;

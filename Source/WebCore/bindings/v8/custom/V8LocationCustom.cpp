@@ -148,7 +148,7 @@ v8::Handle<v8::Value> V8Location::reloadAccessorGetter(v8::Local<v8::String> nam
 {
     INC_STATS("DOM.Location.reload._get");
     static v8::Persistent<v8::FunctionTemplate> privateTemplate = v8::Persistent<v8::FunctionTemplate>::New(v8::FunctionTemplate::New(V8Location::reloadCallback, v8Undefined(), v8::Signature::New(V8Location::GetRawTemplate())));
-    v8::Handle<v8::Object> holder = V8DOMWrapper::lookupDOMWrapper(V8Location::GetTemplate(), info.This());
+    v8::Handle<v8::Object> holder = info.This()->FindInstanceInPrototypeChain(V8Location::GetTemplate());
     if (holder.IsEmpty()) {
         // can only reach here by 'object.__proto__.func', and it should passed
         // domain security check already
@@ -166,7 +166,7 @@ v8::Handle<v8::Value> V8Location::replaceAccessorGetter(v8::Local<v8::String> na
 {
     INC_STATS("DOM.Location.replace._get");
     static v8::Persistent<v8::FunctionTemplate> privateTemplate = v8::Persistent<v8::FunctionTemplate>::New(v8::FunctionTemplate::New(V8Location::replaceCallback, v8Undefined(), v8::Signature::New(V8Location::GetRawTemplate())));
-    v8::Handle<v8::Object> holder = V8DOMWrapper::lookupDOMWrapper(V8Location::GetTemplate(), info.This());
+    v8::Handle<v8::Object> holder = info.This()->FindInstanceInPrototypeChain(V8Location::GetTemplate());
     if (holder.IsEmpty()) {
         // can only reach here by 'object.__proto__.func', and it should passed
         // domain security check already
@@ -185,7 +185,7 @@ v8::Handle<v8::Value> V8Location::assignAccessorGetter(v8::Local<v8::String> nam
     INC_STATS("DOM.Location.assign._get");
     static v8::Persistent<v8::FunctionTemplate> privateTemplate =
         v8::Persistent<v8::FunctionTemplate>::New(v8::FunctionTemplate::New(V8Location::assignCallback, v8Undefined(), v8::Signature::New(V8Location::GetRawTemplate())));
-    v8::Handle<v8::Object> holder = V8DOMWrapper::lookupDOMWrapper(V8Location::GetTemplate(), info.This());
+    v8::Handle<v8::Object> holder = info.This()->FindInstanceInPrototypeChain(V8Location::GetTemplate());
     if (holder.IsEmpty()) {
         // can only reach here by 'object.__proto__.func', and it should passed
         // domain security check already

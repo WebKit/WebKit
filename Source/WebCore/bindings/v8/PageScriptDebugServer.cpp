@@ -56,7 +56,7 @@ static Frame* retrieveFrameWithGlobalObjectCheck(v8::Handle<v8::Context> context
     if (global.IsEmpty())
         return 0;
 
-    global = V8DOMWrapper::lookupDOMWrapper(V8DOMWindow::GetTemplate(), global);
+    global = global->FindInstanceInPrototypeChain(V8DOMWindow::GetTemplate());
     if (global.IsEmpty())
         return 0;
 

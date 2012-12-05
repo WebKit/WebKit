@@ -114,12 +114,12 @@ v8::Handle<v8::Object> V8TestCustomNamedGetter::createWrapper(PassRefPtr<TestCus
     ASSERT(impl.get());
     ASSERT(DOMDataStore::current(isolate)->get(impl.get()).IsEmpty());
 
-    v8::Handle<v8::Object> wrapper = V8DOMWrapper::instantiateV8Object(creationContext, &info, impl.get());
+    v8::Handle<v8::Object> wrapper = V8DOMWrapper::createWrapper(creationContext, &info, impl.get());
     if (UNLIKELY(wrapper.IsEmpty()))
         return wrapper;
 
     installPerContextProperties(wrapper, impl.get());
-    v8::Persistent<v8::Object> wrapperHandle = V8DOMWrapper::createDOMWrapper(impl, &info, wrapper, isolate);
+    v8::Persistent<v8::Object> wrapperHandle = V8DOMWrapper::associateObjectWithWrapper(impl, &info, wrapper, isolate);
     if (!hasDependentLifetime)
         wrapperHandle.MarkIndependent();
     return wrapper;

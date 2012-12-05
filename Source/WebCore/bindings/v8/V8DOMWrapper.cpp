@@ -104,7 +104,7 @@ void V8DOMWrapper::setNamedHiddenReference(v8::Handle<v8::Object> parent, const 
     parent->SetHiddenValue(V8HiddenPropertyName::hiddenReferenceName(name, strlen(name)), child);
 }
 
-v8::Local<v8::Object> V8DOMWrapper::instantiateDOMWrapper(v8::Handle<v8::Object> creationContext, WrapperTypeInfo* type, void* impl)
+v8::Local<v8::Object> V8DOMWrapper::createWrapper(v8::Handle<v8::Object> creationContext, WrapperTypeInfo* type, void* impl)
 {
     V8WrapperInstantiationScope scope(creationContext);
 

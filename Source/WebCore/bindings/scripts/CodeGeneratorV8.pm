@@ -804,7 +804,7 @@ static v8::Handle<v8::Value> ${funcName}AttrGetter(v8::Local<v8::String> name, c
 {
     INC_STATS(\"DOM.$interfaceName.$funcName._get\");
     static v8::Persistent<v8::FunctionTemplate> privateTemplate = v8::Persistent<v8::FunctionTemplate>::New($newTemplateString);
-    v8::Handle<v8::Object> holder = V8DOMWrapper::lookupDOMWrapper(${v8InterfaceName}::GetTemplate(), info.This());
+    v8::Handle<v8::Object> holder = info.This()->FindInstanceInPrototypeChain(${v8InterfaceName}::GetTemplate());
     if (holder.IsEmpty()) {
         // can only reach here by 'object.__proto__.func', and it should passed
         // domain security check already
@@ -835,7 +835,7 @@ sub GenerateDomainSafeFunctionSetter
 static void ${interfaceName}DomainSafeFunctionSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     INC_STATS("DOM.$interfaceName._set");
-    v8::Handle<v8::Object> holder = V8DOMWrapper::lookupDOMWrapper(${v8InterfaceName}::GetTemplate(), info.This());
+    v8::Handle<v8::Object> holder = info.This()->FindInstanceInPrototypeChain(${v8InterfaceName}::GetTemplate());
     if (holder.IsEmpty())
         return;
     ${interfaceName}* imp = ${v8InterfaceName}::toNative(holder);
@@ -931,7 +931,7 @@ END
         } else {
             # perform lookup first
             push(@implContentDecls, <<END);
-    v8::Handle<v8::Object> holder = V8DOMWrapper::lookupDOMWrapper(${v8InterfaceName}::GetTemplate(), info.This());
+    v8::Handle<v8::Object> holder = info.This()->FindInstanceInPrototypeChain(${v8InterfaceName}::GetTemplate());
     if (holder.IsEmpty())
         return v8Undefined();
 END
@@ -1971,7 +1971,7 @@ END
 
     push(@implContent, <<END);
 
-    V8DOMWrapper::createDOMWrapper(impl.release(), &info, wrapper, args.GetIsolate());
+    V8DOMWrapper::associateObjectWithWrapper(impl.release(), &info, wrapper, args.GetIsolate());
     return wrapper;
 END
 
@@ -2048,7 +2048,7 @@ END
     RefPtr<${interfaceName}> event = ${interfaceName}::create(type, eventInit);
 
     v8::Handle<v8::Object> wrapper = args.Holder();
-    V8DOMWrapper::createDOMWrapper(event.release(), &info, wrapper, args.GetIsolate());
+    V8DOMWrapper::associateObjectWithWrapper(event.release(), &info, wrapper, args.GetIsolate());
     return wrapper;
 }
 
@@ -2186,7 +2186,7 @@ END
 
     push(@implContent, <<END);
 
-    V8DOMWrapper::createDOMWrapper(impl.release(), &${v8InterfaceName}Constructor::info, wrapper, args.GetIsolate());
+    V8DOMWrapper::associateObjectWithWrapper(impl.release(), &${v8InterfaceName}Constructor::info, wrapper, args.GetIsolate());
     return wrapper;
 END
 
@@ -3502,12 +3502,12 @@ END
 
     push(@implContent, <<END);
 
-    v8::Handle<v8::Object> wrapper = V8DOMWrapper::instantiateDOMWrapper(creationContext, &info, impl.get());
+    v8::Handle<v8::Object> wrapper = V8DOMWrapper::createWrapper(creationContext, &info, impl.get());
     if (UNLIKELY(wrapper.IsEmpty()))
         return wrapper;
 
     installPerContextProperties(wrapper, impl.get());
-    v8::Persistent<v8::Object> wrapperHandle = V8DOMWrapper::createDOMWrapper(impl, &info, wrapper, isolate);
+    v8::Persistent<v8::Object> wrapperHandle = V8DOMWrapper::associateObjectWithWrapper(impl, &info, wrapper, isolate);
     if (!hasDependentLifetime)
         wrapperHandle.MarkIndependent();
     return wrapper;

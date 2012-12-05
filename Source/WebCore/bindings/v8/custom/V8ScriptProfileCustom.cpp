@@ -57,7 +57,7 @@ v8::Handle<v8::Value> toV8(ScriptProfile* impl, v8::Handle<v8::Object> creationC
         return v8Undefined();
     }
     impl->ref();
-    V8DOMWrapper::setDOMWrapper(instance, &V8ScriptProfile::info, impl);
+    V8DOMWrapper::setNativeInfo(instance, &V8ScriptProfile::info, impl);
     return instance;
 }
 

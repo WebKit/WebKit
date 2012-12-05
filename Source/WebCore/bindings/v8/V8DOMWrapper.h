@@ -58,14 +58,12 @@ namespace WebCore {
         static bool maybeDOMWrapper(v8::Handle<v8::Value>);
 #endif
 
-        static v8::Local<v8::Object> instantiateDOMWrapper(v8::Handle<v8::Object> creationContext, WrapperTypeInfo*, void*);
+        static v8::Local<v8::Object> createWrapper(v8::Handle<v8::Object> creationContext, WrapperTypeInfo*, void*);
 
         template<typename T>
-        static inline v8::Persistent<v8::Object> createDOMWrapper(PassRefPtr<T>, WrapperTypeInfo*, v8::Handle<v8::Object>, v8::Isolate* = 0);
-        static inline void setDOMWrapper(v8::Handle<v8::Object>, WrapperTypeInfo*, void*);
-        static inline void clearDOMWrapper(v8::Handle<v8::Object>, WrapperTypeInfo*);
-
-        static inline v8::Handle<v8::Object> lookupDOMWrapper(v8::Handle<v8::FunctionTemplate>, v8::Handle<v8::Object>);
+        static inline v8::Persistent<v8::Object> associateObjectWithWrapper(PassRefPtr<T>, WrapperTypeInfo*, v8::Handle<v8::Object>, v8::Isolate* = 0);
+        static inline void setNativeInfo(v8::Handle<v8::Object>, WrapperTypeInfo*, void*);
+        static inline void clearNativeInfo(v8::Handle<v8::Object>, WrapperTypeInfo*);
 
         // FIXME: This function should probably move to V8EventListenerList.h
         static PassRefPtr<EventListener> getEventListener(v8::Local<v8::Value>, bool isAttribute, ListenerLookupType);
@@ -80,7 +78,7 @@ namespace WebCore {
         static void setWrapperClass(Node*, v8::Persistent<v8::Object> wrapper) { wrapper.SetWrapperClassId(v8DOMNodeClassId); }
     };
 
-    inline void V8DOMWrapper::setDOMWrapper(v8::Handle<v8::Object> wrapper, WrapperTypeInfo* type, void* object)
+    inline void V8DOMWrapper::setNativeInfo(v8::Handle<v8::Object> wrapper, WrapperTypeInfo* type, void* object)
     {
         ASSERT(wrapper->InternalFieldCount() >= 2);
         ASSERT(object);
@@ -89,7 +87,7 @@ namespace WebCore {
         wrapper->SetAlignedPointerInInternalField(v8DOMWrapperTypeIndex, type);
     }
 
-    inline void V8DOMWrapper::clearDOMWrapper(v8::Handle<v8::Object> wrapper, WrapperTypeInfo* type)
+    inline void V8DOMWrapper::clearNativeInfo(v8::Handle<v8::Object> wrapper, WrapperTypeInfo* type)
     {
         ASSERT(wrapper->InternalFieldCount() >= 2);
         ASSERT(type);
@@ -97,17 +95,10 @@ namespace WebCore {
         wrapper->SetAlignedPointerInInternalField(v8DOMWrapperObjectIndex, 0);
     }
 
-    inline v8::Handle<v8::Object> V8DOMWrapper::lookupDOMWrapper(v8::Handle<v8::FunctionTemplate> functionTemplate, v8::Handle<v8::Object> wrapper)
-    {
-        if (wrapper.IsEmpty())
-            return wrapper;
-        return wrapper->FindInstanceInPrototypeChain(functionTemplate);
-    }
-
     template<typename T>
-    inline v8::Persistent<v8::Object> V8DOMWrapper::createDOMWrapper(PassRefPtr<T> object, WrapperTypeInfo* type, v8::Handle<v8::Object> wrapper, v8::Isolate* isolate)
+    inline v8::Persistent<v8::Object> V8DOMWrapper::associateObjectWithWrapper(PassRefPtr<T> object, WrapperTypeInfo* type, v8::Handle<v8::Object> wrapper, v8::Isolate* isolate)
     {
-        setDOMWrapper(wrapper, type, object.get());
+        setNativeInfo(wrapper, type, object.get());
         v8::Persistent<v8::Object> wrapperHandle = v8::Persistent<v8::Object>::New(wrapper);
         ASSERT(maybeDOMWrapper(wrapperHandle));
         setWrapperClass(object.get(), wrapperHandle);

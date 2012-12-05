@@ -1,5 +1,96 @@
 2012-12-04  Adam Barth  <abarth@webkit.org>
 
+        [V8] Rename V8DOMWrapper member functions to be more descriptive
+        https://bugs.webkit.org/show_bug.cgi?id=104069
+
+        Reviewed by Eric Seidel.
+
+        In addition to the renames, this patch also inline lookupDOMWrapper
+        into its callers.
+
+        * bindings/scripts/CodeGeneratorV8.pm:
+        (GenerateDomainSafeFunctionGetter):
+        (GenerateDomainSafeFunctionSetter):
+        (GenerateNormalAttrGetter):
+        (GenerateSingleConstructorCallback):
+        (GenerateEventConstructorCallback):
+        (GenerateNamedConstructorCallback):
+        (GenerateToV8Converters):
+        * bindings/scripts/test/V8/V8TestSerializedScriptValueInterface.cpp:
+        (WebCore::V8TestSerializedScriptValueInterface::constructorCallback):
+        * bindings/v8/Dictionary.cpp:
+        (WebCore::Dictionary::get):
+        * bindings/v8/PageScriptDebugServer.cpp:
+        (WebCore::retrieveFrameWithGlobalObjectCheck):
+        * bindings/v8/V8Binding.cpp:
+        (WebCore::toDOMWindow):
+        (WebCore::toScriptExecutionContext):
+        * bindings/v8/V8DOMWindowShell.cpp:
+        (WebCore::V8DOMWindowShell::clearForNavigation):
+        (WebCore::V8DOMWindowShell::installDOMWindow):
+        * bindings/v8/V8DOMWrapper.cpp:
+        (WebCore::V8DOMWrapper::create):
+        * bindings/v8/V8DOMWrapper.h:
+        (V8DOMWrapper):
+        (WebCore::V8DOMWrapper::setNativeInfo):
+        (WebCore::V8DOMWrapper::clearNativeInfo):
+        (WebCore::V8DOMWrapper::associateObjectWithWrapper):
+        * bindings/v8/V8Initializer.cpp:
+        (WebCore::findFrame):
+        * bindings/v8/V8NPObject.cpp:
+        (WebCore::createV8ObjectForNPObject):
+        (WebCore::forgetV8ObjectForNPObject):
+        * bindings/v8/WorkerScriptController.cpp:
+        (WebCore::WorkerScriptController::initializeContextIfNeeded):
+        (WebCore::WorkerScriptController::controllerForContext):
+        * bindings/v8/custom/V8ArrayBufferCustom.cpp:
+        (WebCore::V8ArrayBuffer::constructorCallbackCustom):
+        * bindings/v8/custom/V8ArrayBufferViewCustom.h:
+        (WebCore::wrapArrayBufferView):
+        (WebCore::constructWebGLArray):
+        * bindings/v8/custom/V8AudioContextCustom.cpp:
+        (WebCore::V8AudioContext::constructorCallbackCustom):
+        * bindings/v8/custom/V8DOMFormDataCustom.cpp:
+        (WebCore::V8DOMFormData::constructorCallbackCustom):
+        * bindings/v8/custom/V8DOMWindowCustom.cpp:
+        (WebCore::V8DOMWindow::eventAccessorGetter):
+        (WebCore::V8DOMWindow::eventAccessorSetter):
+        (WebCore::V8DOMWindow::toStringCallback):
+        (WebCore::V8DOMWindow::namedSecurityCheck):
+        (WebCore::V8DOMWindow::indexedSecurityCheck):
+        (WebCore::toV8):
+        * bindings/v8/custom/V8DataViewCustom.cpp:
+        (WebCore::V8DataView::constructorCallbackCustom):
+        * bindings/v8/custom/V8HTMLDocumentCustom.cpp:
+        (WebCore::V8HTMLDocument::wrapInShadowObject):
+        * bindings/v8/custom/V8HTMLImageElementConstructor.cpp:
+        (WebCore::v8HTMLImageElementConstructorCallback):
+        * bindings/v8/custom/V8InjectedScriptManager.cpp:
+        (WebCore::createInjectedScriptHostV8Wrapper):
+        (WebCore::InjectedScriptManager::canAccessInspectedWindow):
+        * bindings/v8/custom/V8IntentCustom.cpp:
+        (WebCore::V8Intent::constructorCallbackCustom):
+        * bindings/v8/custom/V8LocationCustom.cpp:
+        (WebCore::V8Location::reloadAccessorGetter):
+        (WebCore::V8Location::replaceAccessorGetter):
+        (WebCore::V8Location::assignAccessorGetter):
+        * bindings/v8/custom/V8MessageChannelCustom.cpp:
+        (WebCore::V8MessageChannel::constructorCallbackCustom):
+        * bindings/v8/custom/V8MessageEventCustom.cpp:
+        (WebCore::V8MessageEvent::initMessageEventCallback):
+        * bindings/v8/custom/V8MutationObserverCustom.cpp:
+        (WebCore::V8MutationObserver::constructorCallbackCustom):
+        * bindings/v8/custom/V8ScriptProfileCustom.cpp:
+        (WebCore::toV8):
+        * bindings/v8/custom/V8ScriptProfileNodeCustom.cpp:
+        (WebCore::toV8):
+        * bindings/v8/custom/V8WebKitPointCustom.cpp:
+        (WebCore::V8WebKitPoint::constructorCallbackCustom):
+        * bindings/v8/custom/V8XMLHttpRequestCustom.cpp:
+        (WebCore::V8XMLHttpRequest::constructorCallbackCustom):
+
+2012-12-04  Adam Barth  <abarth@webkit.org>
+
         [V8] Cleanup style in V8DOMWrapper
         https://bugs.webkit.org/show_bug.cgi?id=104062
 
