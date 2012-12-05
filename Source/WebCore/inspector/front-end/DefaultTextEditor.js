@@ -2492,8 +2492,12 @@ WebInspector.TextEditorMainPanel.prototype = {
         var textContents = [];
         var hasContent = false;
         for (var node = from ? from.nextSibling : this._container; node && node !== to; node = node.traverseNextNode(this._container)) {
-            if (node._isDecorationsElement)
-                continue;
+            if (node._isDecorationsElement) {
+                // Skip all children of the decoration container.
+                node = node.nextSibling;
+                if (!node || node === to)
+                    break;
+            }
             hasContent = true;
             if (node.nodeName.toLowerCase() === "br")
                 textContents.push("\n");

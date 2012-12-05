@@ -1,3 +1,16 @@
+2012-12-05  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: Don't include error message text in the editor buffer.
+        https://bugs.webkit.org/show_bug.cgi?id=103932
+
+        Reviewed by Alexander Pavlov.
+
+        * inspector/editor/editor-test.js:
+        (initialize_EditorTests.InspectorTest.getLineElement):
+        (initialize_EditorTests):
+        * inspector/editor/text-editor-type-over-decoration-expected.txt: Added.
+        * inspector/editor/text-editor-type-over-decoration.html: Added.
+
 2012-12-05  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed GTK gardening.

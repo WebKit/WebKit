@@ -50,4 +50,9 @@ InspectorTest.dumpEditorDOM = function(textEditor)
     }
 };
 
+InspectorTest.getLineElement = function(textEditor, lineNumber)
+{
+    return textEditor._mainPanel.chunkForLine(lineNumber).expandedLineRow(lineNumber);
+};
+
 }

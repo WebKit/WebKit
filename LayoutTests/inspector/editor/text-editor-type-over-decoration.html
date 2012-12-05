@@ -1,0 +1,35 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="editor-test.js?foo=143"></script>
+<script>
+
+function test()
+{
+    var textEditor = InspectorTest.createTestEditor(10);
+    var textModel = textEditor._textModel;
+
+    InspectorTest.dumpEditorChunks(textEditor);
+    var decorationElement = document.createElement("span");
+    decorationElement.textContent = "Decoration content";
+    textEditor.addDecoration(5, decorationElement);
+    InspectorTest.dumpEditorDOM(textEditor);
+
+    // Insert Enter before the decoration
+    var lineRowElement = InspectorTest.getLineElement(textEditor, 5);
+    lineRowElement.parentElement.insertBefore(document.createTextNode("a"), lineRowElement);
+    textEditor._mainPanel._applyDomUpdates({start:4, end:5});
+    InspectorTest.dumpEditorDOM(textEditor);
+    InspectorTest.completeTest();
+}
+
+</script>
+</head>
+
+<body onload="runTest()">
+<p>
+This test checks that typing over the decoration does not collect decoration text as a part of damaged DOM.
+</p>
+
+</body>
+</html>
