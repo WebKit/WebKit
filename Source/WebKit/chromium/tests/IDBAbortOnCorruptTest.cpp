@@ -112,6 +112,8 @@ public:
     virtual void onVersionChange(const String& version) OVERRIDE { }
     virtual void onVersionChange(int64_t oldVersion, int64_t newVersion) OVERRIDE { }
     virtual void onForcedClose() OVERRIDE { }
+    virtual void onAbort(int64_t transactionId, PassRefPtr<IDBDatabaseError> error) OVERRIDE { }
+    virtual void onComplete(int64_t transactionId) OVERRIDE { }
 private:
     FakeIDBDatabaseCallbacks() { }
 };

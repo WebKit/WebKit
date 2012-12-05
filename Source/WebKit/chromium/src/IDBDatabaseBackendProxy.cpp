@@ -94,6 +94,22 @@ PassRefPtr<IDBTransactionBackendInterface> IDBDatabaseBackendProxy::createTransa
     return IDBTransactionBackendProxy::create(transaction.release());
 }
 
+void IDBDatabaseBackendProxy::createTransaction(int64_t id, PassRefPtr<IDBDatabaseCallbacks> callbacks, const Vector<int64_t>& objectStoreIds, unsigned short mode)
+{
+    m_webIDBDatabase->createTransaction(id, new WebIDBDatabaseCallbacksImpl(callbacks), objectStoreIds, mode);
+}
+
+void IDBDatabaseBackendProxy::commit(int64_t transactionId)
+{
+    m_webIDBDatabase->commit(transactionId);
+}
+
+void IDBDatabaseBackendProxy::abort(int64_t transactionId)
+{
+    m_webIDBDatabase->abort(transactionId);
+}
+
+
 void IDBDatabaseBackendProxy::close(PassRefPtr<IDBDatabaseCallbacks>)
 {
     m_webIDBDatabase->close();

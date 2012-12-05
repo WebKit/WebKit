@@ -37,16 +37,17 @@
 
 namespace WebCore {
 
-PassRefPtr<IDBOpenDBRequest> IDBOpenDBRequest::create(ScriptExecutionContext* context, PassRefPtr<IDBAny> source, PassRefPtr<IDBDatabaseCallbacksImpl> callbacks, int64_t version)
+PassRefPtr<IDBOpenDBRequest> IDBOpenDBRequest::create(ScriptExecutionContext* context, PassRefPtr<IDBAny> source, PassRefPtr<IDBDatabaseCallbacksImpl> callbacks, int64_t transactionId, int64_t version)
 {
-    RefPtr<IDBOpenDBRequest> request(adoptRef(new IDBOpenDBRequest(context, source, callbacks, version)));
+    RefPtr<IDBOpenDBRequest> request(adoptRef(new IDBOpenDBRequest(context, source, callbacks, transactionId, version)));
     request->suspendIfNeeded();
     return request.release();
 }
 
-IDBOpenDBRequest::IDBOpenDBRequest(ScriptExecutionContext* context, PassRefPtr<IDBAny> source, PassRefPtr<IDBDatabaseCallbacksImpl> callbacks, int64_t version)
+IDBOpenDBRequest::IDBOpenDBRequest(ScriptExecutionContext* context, PassRefPtr<IDBAny> source, PassRefPtr<IDBDatabaseCallbacksImpl> callbacks, int64_t transactionId, int64_t version)
     : IDBRequest(context, source, IDBTransactionBackendInterface::NormalTask, 0)
     , m_databaseCallbacks(callbacks)
+    , m_transactionId(transactionId)
     , m_version(version)
 {
     ASSERT(!m_result);
@@ -100,8 +101,7 @@ void IDBOpenDBRequest::onUpgradeNeeded(int64_t oldVersion, PassRefPtr<IDBTransac
     }
     metadata.intVersion = oldVersion;
 
-    int64_t transactionId = IDBDatabase::nextTransactionId();
-    RefPtr<IDBTransaction> frontend = IDBTransaction::create(scriptExecutionContext(), transactionId, transactionBackend, idbDatabase.get(), this, metadata);
+    RefPtr<IDBTransaction> frontend = IDBTransaction::create(scriptExecutionContext(), m_transactionId, transactionBackend, idbDatabase.get(), this, metadata);
     transactionBackend->setCallbacks(frontend.get());
     m_transaction = frontend;
     m_result = IDBAny::create(idbDatabase.release());

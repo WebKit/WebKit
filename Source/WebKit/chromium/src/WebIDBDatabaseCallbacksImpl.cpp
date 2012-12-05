@@ -59,6 +59,17 @@ void WebIDBDatabaseCallbacksImpl::onVersionChange(const WebString& version)
     m_callbacks->onVersionChange(version);
 }
 
+void WebIDBDatabaseCallbacksImpl::onAbort(long long transactionId, const WebIDBDatabaseError& error)
+{
+    m_callbacks->onAbort(transactionId, error);
+}
+
+void WebIDBDatabaseCallbacksImpl::onComplete(long long transactionId)
+{
+    m_callbacks->onComplete(transactionId);
+}
+
+
 } // namespace WebKit
 
 #endif // ENABLE(INDEXED_DATABASE)

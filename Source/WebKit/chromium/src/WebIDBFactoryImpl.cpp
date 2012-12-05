@@ -65,12 +65,21 @@ void WebIDBFactoryImpl::getDatabaseNames(WebIDBCallbacks* callbacks, const WebSe
     m_idbFactoryBackend->getDatabaseNames(IDBCallbacksProxy::create(adoptPtr(callbacks)), origin, 0, dataDir);
 }
 
+// FIXME: Remove this method in https://bugs.webkit.org/show_bug.cgi?id=103923.
 void WebIDBFactoryImpl::open(const WebString& name, long long version, WebIDBCallbacks* callbacks, WebIDBDatabaseCallbacks* databaseCallbacks, const WebSecurityOrigin& origin, WebFrame*, const WebString& dataDir)
 {
     RefPtr<IDBCallbacksProxy> callbacksProxy = IDBCallbacksProxy::create(adoptPtr(callbacks));
     RefPtr<IDBDatabaseCallbacksProxy> databaseCallbacksProxy = IDBDatabaseCallbacksProxy::create(adoptPtr(databaseCallbacks));
     callbacksProxy->setDatabaseCallbacks(databaseCallbacksProxy);
     m_idbFactoryBackend->open(name, version, callbacksProxy.get(), databaseCallbacksProxy.get(), origin, 0, dataDir);
+}
+
+void WebIDBFactoryImpl::open(const WebString& name, long long version, long long transactionId, WebIDBCallbacks* callbacks, WebIDBDatabaseCallbacks* databaseCallbacks, const WebSecurityOrigin& origin, WebFrame*, const WebString& dataDir)
+{
+    RefPtr<IDBCallbacksProxy> callbacksProxy = IDBCallbacksProxy::create(adoptPtr(callbacks));
+    RefPtr<IDBDatabaseCallbacksProxy> databaseCallbacksProxy = IDBDatabaseCallbacksProxy::create(adoptPtr(databaseCallbacks));
+    callbacksProxy->setDatabaseCallbacks(databaseCallbacksProxy);
+    m_idbFactoryBackend->open(name, version, transactionId, callbacksProxy.get(), databaseCallbacksProxy.get(), origin, 0, dataDir);
 }
 
 void WebIDBFactoryImpl::deleteDatabase(const WebString& name, WebIDBCallbacks* callbacks, const WebSecurityOrigin& origin, WebFrame*, const WebString& dataDir)

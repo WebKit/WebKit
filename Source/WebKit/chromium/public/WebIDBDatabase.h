@@ -56,9 +56,14 @@ public:
         return 0;
     }
     virtual void deleteObjectStore(long long objectStoreId, const WebIDBTransaction& transaction, WebExceptionCode& ec) { WEBKIT_ASSERT_NOT_REACHED(); }
+    // FIXME: Remove this method in https://bugs.webkit.org/show_bug.cgi?id=103923.
     virtual WebIDBTransaction* createTransaction(long long id, const WebVector<long long>&, unsigned short mode) { WEBKIT_ASSERT_NOT_REACHED(); return 0; }
+    virtual void createTransaction(long long id, WebIDBDatabaseCallbacks* callbacks, const WebVector<long long>&, unsigned short mode) { WEBKIT_ASSERT_NOT_REACHED(); }
     virtual void close() { WEBKIT_ASSERT_NOT_REACHED(); }
     virtual void forceClose() { WEBKIT_ASSERT_NOT_REACHED(); }
+
+    virtual void abort(long long transactionId) { WEBKIT_ASSERT_NOT_REACHED(); }
+    virtual void commit(long long transactionId) { WEBKIT_ASSERT_NOT_REACHED(); }
 
 protected:
     WebIDBDatabase() { }

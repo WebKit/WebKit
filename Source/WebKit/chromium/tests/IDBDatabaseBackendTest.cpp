@@ -108,6 +108,8 @@ public:
     virtual void onVersionChange(const String& version) OVERRIDE { }
     virtual void onVersionChange(int64_t oldVersion, int64_t newVersion) OVERRIDE { }
     virtual void onForcedClose() OVERRIDE { }
+    virtual void onAbort(int64_t transactionId, PassRefPtr<IDBDatabaseError> error) OVERRIDE { }
+    virtual void onComplete(int64_t transactionId) OVERRIDE { }
 private:
     FakeIDBDatabaseCallbacks() { }
 };
@@ -152,13 +154,18 @@ public:
     virtual PassRefPtr<IDBObjectStoreBackendInterface> createObjectStore(int64_t, const String& name, const IDBKeyPath&, bool autoIncrement, IDBTransactionBackendInterface*, ExceptionCode&) { return 0; }
     virtual void deleteObjectStore(const String& name, IDBTransactionBackendInterface*, ExceptionCode&) { }
     virtual void deleteObjectStore(int64_t, IDBTransactionBackendInterface*, ExceptionCode&) { }
+    // FIXME: Remove this method in https://bugs.webkit.org/show_bug.cgi?id=103923.
     virtual PassRefPtr<IDBTransactionBackendInterface> createTransaction(int64_t, const Vector<int64_t>&, unsigned short mode) { return 0; }
+    void createTransaction(int64_t, PassRefPtr<IDBDatabaseCallbacks>, const Vector<int64_t>&, unsigned short mode) { }
 
     virtual void close(PassRefPtr<IDBDatabaseCallbacks>)
     {
         m_wasCloseCalled = true;
         m_webDatabase.close();
     }
+
+    virtual void abort(int64_t transactionId) { }
+    virtual void commit(int64_t transactionId) { }
 
 private:
     MockIDBDatabaseBackendProxy(WebIDBDatabaseImpl& webDatabase)

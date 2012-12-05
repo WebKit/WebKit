@@ -28,6 +28,8 @@
 #ifndef IDBFactoryBackendImpl_h
 #define IDBFactoryBackendImpl_h
 
+#include "IDBCallbacks.h"
+#include "IDBDatabaseCallbacks.h"
 #include "IDBFactoryBackendInterface.h"
 #include "SecurityOrigin.h"
 #include <wtf/HashMap.h>
@@ -56,7 +58,13 @@ public:
     virtual void removeIDBBackingStore(const String& fileIdentifier);
 
     virtual void getDatabaseNames(PassRefPtr<IDBCallbacks>, PassRefPtr<SecurityOrigin>, ScriptExecutionContext*, const String& dataDir);
-    virtual void open(const String& name, int64_t version, PassRefPtr<IDBCallbacks>, PassRefPtr<IDBDatabaseCallbacks>, PassRefPtr<SecurityOrigin>, ScriptExecutionContext*, const String& dataDir);
+    // FIXME: Remove this method in https://bugs.webkit.org/show_bug.cgi?id=103923.
+    virtual void open(const String& name, int64_t version, PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<IDBDatabaseCallbacks> databaseCallbacks, PassRefPtr<SecurityOrigin> securityOrigin, ScriptExecutionContext* context, const String& dataDir)
+    {
+        return open(name, version, 0, callbacks, databaseCallbacks, securityOrigin, context, dataDir);
+    }
+    virtual void open(const String& name, int64_t version, int64_t transactionId, PassRefPtr<IDBCallbacks>, PassRefPtr<IDBDatabaseCallbacks>, PassRefPtr<SecurityOrigin>, ScriptExecutionContext*, const String& dataDir);
+
     virtual void deleteDatabase(const String& name, PassRefPtr<IDBCallbacks>, PassRefPtr<SecurityOrigin>, ScriptExecutionContext*, const String& dataDir);
 
 protected:

@@ -71,6 +71,18 @@ void IDBDatabaseCallbacksImpl::connect(IDBDatabase* database)
     m_database = database;
 }
 
+void IDBDatabaseCallbacksImpl::onAbort(int64_t transactionId, PassRefPtr<IDBDatabaseError> error)
+{
+    if (m_database)
+        m_database->onAbort(transactionId, error);
+}
+
+void IDBDatabaseCallbacksImpl::onComplete(int64_t transactionId)
+{
+    if (m_database)
+        m_database->onComplete(transactionId);
+}
+
 } // namespace WebCore
 
 #endif

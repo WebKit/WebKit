@@ -78,6 +78,8 @@ public:
     // IDBDatabaseCallbacks
     virtual void onVersionChange(int64_t oldVersion, int64_t newVersion);
     virtual void onVersionChange(const String& requestedVersion);
+    virtual void onAbort(int64_t, PassRefPtr<IDBDatabaseError>);
+    virtual void onComplete(int64_t);
 
     // ActiveDOMObject
     virtual void stop() OVERRIDE;

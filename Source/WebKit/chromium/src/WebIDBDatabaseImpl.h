@@ -54,9 +54,13 @@ public:
 
     virtual WebIDBObjectStore* createObjectStore(long long, const WebString& name, const WebIDBKeyPath&, bool autoIncrement, const WebIDBTransaction&, WebExceptionCode&);
     virtual void deleteObjectStore(long long objectStoreId, const WebIDBTransaction&, WebExceptionCode&);
+    // FIXME: Remove this method in https://bugs.webkit.org/show_bug.cgi?id=103923.
     virtual WebIDBTransaction* createTransaction(long long id, const WebVector<long long>&, unsigned short mode);
+    virtual void createTransaction(long long id, WebIDBDatabaseCallbacks*, const WebVector<long long>&, unsigned short mode);
     virtual void forceClose();
     virtual void close();
+    virtual void abort(long long transactionId);
+    virtual void commit(long long transactionId);
 
 private:
     WTF::RefPtr<WebCore::IDBDatabaseBackendInterface> m_databaseBackend;

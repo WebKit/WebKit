@@ -41,7 +41,6 @@ class IDBTransactionCallbacks;
 
 typedef int ExceptionCode;
 
-// This class is shared by IDBTransaction (async) and IDBTransactionSync (sync).
 // This is implemented by IDBTransactionBackendImpl and optionally others (in order to proxy
 // calls across process barriers). All calls to these classes should be non-blocking and
 // trigger work on a background thread if necessary.

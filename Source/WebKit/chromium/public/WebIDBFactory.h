@@ -56,7 +56,9 @@ public:
     virtual void getDatabaseNames(WebIDBCallbacks* callbacks, const WebSecurityOrigin& origin, WebFrame* frame, const WebString& dataDir) { WEBKIT_ASSERT_NOT_REACHED(); }
 
     // The WebKit implementation of open ignores the WebFrame* parameter.
+    // FIXME: Remove this method in https://bugs.webkit.org/show_bug.cgi?id=103923.
     virtual void open(const WebString& name, long long version, WebIDBCallbacks* callbacks, WebIDBDatabaseCallbacks* databaseCallbacks, const WebSecurityOrigin& origin, WebFrame* frame, const WebString& dataDir) { WEBKIT_ASSERT_NOT_REACHED(); }
+    virtual void open(const WebString& name, long long version, long long transactionId, WebIDBCallbacks* callbacks, WebIDBDatabaseCallbacks* databaseCallbacks, const WebSecurityOrigin& origin, WebFrame* frame, const WebString& dataDir) { WEBKIT_ASSERT_NOT_REACHED(); }
 
     virtual void deleteDatabase(const WebString& name, WebIDBCallbacks*, const WebSecurityOrigin&, WebFrame*, const WebString& dataDir) { WEBKIT_ASSERT_NOT_REACHED(); }
 };

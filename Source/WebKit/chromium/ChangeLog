@@ -1,3 +1,95 @@
+2012-12-05  Alec Flett  <alecflett@chromium.org>
+
+        IndexedDB: Stub out transaction-backend methods
+        https://bugs.webkit.org/show_bug.cgi?id=103921
+
+        Reviewed by Dimitri Glazkov.
+
+        Add new signatures for refactoring, to allow
+        transaction_ids to make is through the open/onUpgradeNeeded
+        loop.
+
+        * public/WebIDBCallbacks.h:
+        (WebKit::WebIDBCallbacks::onUpgradeNeeded):
+        * public/WebIDBDatabase.h:
+        (WebKit::WebIDBDatabase::createTransaction):
+        (WebKit::WebIDBDatabase::abort):
+        (WebKit::WebIDBDatabase::commit):
+        (WebIDBDatabase):
+        * public/WebIDBDatabaseCallbacks.h:
+        (WebIDBDatabaseCallbacks):
+        (WebKit::WebIDBDatabaseCallbacks::onAbort):
+        (WebKit::WebIDBDatabaseCallbacks::onComplete):
+        * public/WebIDBFactory.h:
+        (WebKit::WebIDBFactory::open):
+        * src/IDBCallbacksProxy.cpp:
+        (WebKit::IDBCallbacksProxy::onUpgradeNeeded):
+        (WebKit):
+        * src/IDBCallbacksProxy.h:
+        (IDBCallbacksProxy):
+        * src/IDBDatabaseBackendProxy.cpp:
+        (WebKit::IDBDatabaseBackendProxy::createTransaction):
+        (WebKit):
+        (WebKit::IDBDatabaseBackendProxy::commit):
+        (WebKit::IDBDatabaseBackendProxy::abort):
+        * src/IDBDatabaseBackendProxy.h:
+        (IDBDatabaseBackendProxy):
+        * src/IDBDatabaseCallbacksProxy.cpp:
+        (WebKit::IDBDatabaseCallbacksProxy::onAbort):
+        (WebKit):
+        (WebKit::IDBDatabaseCallbacksProxy::onComplete):
+        * src/IDBDatabaseCallbacksProxy.h:
+        (IDBDatabaseCallbacksProxy):
+        * src/IDBFactoryBackendProxy.cpp:
+        (WebKit::IDBFactoryBackendProxy::open):
+        (WebKit):
+        * src/IDBFactoryBackendProxy.h:
+        (IDBFactoryBackendProxy):
+        * src/WebIDBCallbacksImpl.cpp:
+        (WebKit::WebIDBCallbacksImpl::onUpgradeNeeded):
+        (WebKit):
+        * src/WebIDBCallbacksImpl.h:
+        (WebIDBCallbacksImpl):
+        * src/WebIDBDatabaseCallbacksImpl.cpp:
+        (WebKit::WebIDBDatabaseCallbacksImpl::onAbort):
+        (WebKit):
+        (WebKit::WebIDBDatabaseCallbacksImpl::onComplete):
+        * src/WebIDBDatabaseCallbacksImpl.h:
+        (WebIDBDatabaseCallbacksImpl):
+        * src/WebIDBDatabaseImpl.cpp:
+        (WebKit::WebIDBDatabaseImpl::createTransaction):
+        (WebKit):
+        (WebKit::WebIDBDatabaseImpl::abort):
+        (WebKit::WebIDBDatabaseImpl::commit):
+        * src/WebIDBDatabaseImpl.h:
+        (WebIDBDatabaseImpl):
+        * src/WebIDBFactoryImpl.cpp:
+        (WebKit::WebIDBFactoryImpl::open):
+        (WebKit):
+        * src/WebIDBFactoryImpl.h:
+        (WebIDBFactoryImpl):
+        * tests/IDBAbortOnCorruptTest.cpp:
+        * tests/IDBDatabaseBackendTest.cpp:
+
+2012-11-27  Alec Flett  <alecflett@chromium.org>
+
+        IndexedDB: remove IDBDatabaseBackendInterface::transaction()
+        https://bugs.webkit.org/show_bug.cgi?id=102733
+
+        Reviewed by Darin Fisher.
+
+        Part 3 of a refactor - just remove the proxy code for the now
+        defunct transaction method.
+
+        * public/WebIDBDatabase.h:
+        * src/IDBDatabaseBackendProxy.cpp:
+        * src/IDBDatabaseBackendProxy.h:
+        (IDBDatabaseBackendProxy):
+        * src/WebIDBDatabaseImpl.cpp:
+        * src/WebIDBDatabaseImpl.h:
+        (WebIDBDatabaseImpl):
+        * tests/IDBDatabaseBackendTest.cpp:
+
 2012-12-05  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: Replace use of ScriptExecutionContext::Task (Part 2)

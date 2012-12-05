@@ -432,11 +432,17 @@ void IDBDatabaseBackendImpl::processPendingCalls()
     }
 }
 
+// FIXME: Remove this method in https://bugs.webkit.org/show_bug.cgi?id=103923.
 PassRefPtr<IDBTransactionBackendInterface> IDBDatabaseBackendImpl::createTransaction(int64_t transactionId, const Vector<int64_t>& objectStoreIds, unsigned short mode)
 {
     RefPtr<IDBTransactionBackendImpl> transaction = IDBTransactionBackendImpl::create(transactionId, objectStoreIds, mode, this);
     m_transactions.add(transaction.get());
     return transaction.release();
+}
+
+void IDBDatabaseBackendImpl::createTransaction(int64_t transactionId, PassRefPtr<IDBDatabaseCallbacks> callbacks, const Vector<int64_t>& objectStoreIds, unsigned short mode)
+{
+    ASSERT_NOT_REACHED();
 }
 
 void IDBDatabaseBackendImpl::openConnection(PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<IDBDatabaseCallbacks> databaseCallbacks)

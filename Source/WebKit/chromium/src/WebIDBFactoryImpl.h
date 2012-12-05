@@ -45,7 +45,9 @@ public:
     virtual ~WebIDBFactoryImpl();
 
     virtual void getDatabaseNames(WebIDBCallbacks*, const WebSecurityOrigin&, WebFrame*, const WebString& dataDir);
+    // FIXME: Remove this method in https://bugs.webkit.org/show_bug.cgi?id=103923.
     virtual void open(const WebString& name, long long version, WebIDBCallbacks*, WebIDBDatabaseCallbacks*, const WebSecurityOrigin&, WebFrame*, const WebString& dataDir);
+    virtual void open(const WebString& name, long long version, long long transactionId, WebIDBCallbacks*, WebIDBDatabaseCallbacks*, const WebSecurityOrigin&, WebFrame*, const WebString& dataDir);
     virtual void deleteDatabase(const WebString& name, WebIDBCallbacks*, const WebSecurityOrigin&, WebFrame*, const WebString& dataDir);
 
 private:

@@ -1,3 +1,70 @@
+2012-12-05  Alec Flett  <alecflett@chromium.org>
+
+        IndexedDB: Stub out transaction-backend methods
+        https://bugs.webkit.org/show_bug.cgi?id=103921
+
+        Reviewed by Dimitri Glazkov.
+
+        In preparation for a refactoring. Legacy methods 
+        will be removed in https://bugs.webkit.org/show_bug.cgi?id=103923.
+
+        No new tests, just adding unused methods for refactoring.
+
+        * Modules/indexeddb/IDBCallbacks.h:
+        (WebCore::IDBCallbacks::onUpgradeNeeded):
+        * Modules/indexeddb/IDBDatabase.cpp:
+        (WebCore::IDBDatabase::onAbort):
+        (WebCore):
+        (WebCore::IDBDatabase::onComplete):
+        * Modules/indexeddb/IDBDatabase.h:
+        (IDBDatabase):
+        * Modules/indexeddb/IDBDatabaseBackendImpl.cpp:
+        (WebCore::IDBDatabaseBackendImpl::createTransaction):
+        (WebCore):
+        * Modules/indexeddb/IDBDatabaseBackendImpl.h:
+        (IDBDatabaseBackendImpl):
+        (WebCore::IDBDatabaseBackendImpl::commit):
+        (WebCore::IDBDatabaseBackendImpl::abort):
+        * Modules/indexeddb/IDBDatabaseBackendInterface.h:
+        (IDBDatabaseBackendInterface):
+        * Modules/indexeddb/IDBDatabaseCallbacks.h:
+        (IDBDatabaseCallbacks):
+        * Modules/indexeddb/IDBDatabaseCallbacksImpl.cpp:
+        (WebCore::IDBDatabaseCallbacksImpl::onAbort):
+        (WebCore):
+        (WebCore::IDBDatabaseCallbacksImpl::onComplete):
+        * Modules/indexeddb/IDBDatabaseCallbacksImpl.h:
+        (IDBDatabaseCallbacksImpl):
+        * Modules/indexeddb/IDBFactoryBackendImpl.cpp:
+        (WebCore::IDBFactoryBackendImpl::open):
+        * Modules/indexeddb/IDBFactoryBackendImpl.h:
+        (WebCore::IDBFactoryBackendImpl::open):
+        (IDBFactoryBackendImpl):
+        * Modules/indexeddb/IDBFactoryBackendInterface.h:
+        (IDBFactoryBackendInterface):
+        * Modules/indexeddb/IDBOpenDBRequest.cpp:
+        (WebCore::IDBOpenDBRequest::onUpgradeNeeded):
+        (WebCore):
+        * Modules/indexeddb/IDBOpenDBRequest.h:
+        (IDBOpenDBRequest):
+        * Modules/indexeddb/IDBTransactionBackendInterface.h:
+        (WebCore):
+        * Modules/indexeddb/IDBTransactionCoordinator.h:
+
+2012-11-27  Alec Flett  <alecflett@chromium.org>
+
+        IndexedDB: remove IDBDatabaseBackendInterface::transaction()
+        https://bugs.webkit.org/show_bug.cgi?id=102733
+
+        Reviewed by Darin Fisher.
+
+        Part 3 of a refactor, remove the old transaction() method.
+
+        No new tests as this is just post-refactor cleanup.
+
+        * Modules/indexeddb/IDBDatabaseBackendInterface.h:
+        (IDBDatabaseBackendInterface):
+
 2012-12-05  Robert Hogan  <robert@webkit.org>
 
         REGRESSION(r126683): Table cell are getting borders when the style doesn't mention any

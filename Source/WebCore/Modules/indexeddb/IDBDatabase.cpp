@@ -109,6 +109,16 @@ void IDBDatabase::transactionFinished(IDBTransaction* transaction)
         closeConnection();
 }
 
+void IDBDatabase::onAbort(int64_t transactionId, PassRefPtr<IDBDatabaseError> error)
+{
+    ASSERT_NOT_REACHED();
+}
+
+void IDBDatabase::onComplete(int64_t transactionId)
+{
+    ASSERT_NOT_REACHED();
+}
+
 PassRefPtr<DOMStringList> IDBDatabase::objectStoreNames() const
 {
     RefPtr<DOMStringList> objectStoreNames = DOMStringList::create();

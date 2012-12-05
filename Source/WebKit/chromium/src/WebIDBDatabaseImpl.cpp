@@ -75,6 +75,7 @@ void WebIDBDatabaseImpl::deleteObjectStore(long long objectStoreId, const WebIDB
     m_databaseBackend->deleteObjectStore(objectStoreId, transaction.getIDBTransactionBackendInterface(), ec);
 }
 
+// FIXME: Remove this method in https://bugs.webkit.org/show_bug.cgi?id=103923.
 WebIDBTransaction* WebIDBDatabaseImpl::createTransaction(long long id, const WebVector<long long>& objectStoreIds, unsigned short mode)
 {
     Vector<int64_t> objectStoreIdList(objectStoreIds.size());
@@ -84,6 +85,15 @@ WebIDBTransaction* WebIDBDatabaseImpl::createTransaction(long long id, const Web
     if (!transaction)
         return 0;
     return new WebIDBTransactionImpl(transaction);
+}
+
+void WebIDBDatabaseImpl::createTransaction(long long id, WebIDBDatabaseCallbacks* callbacks, const WebVector<long long>& objectStoreIds, unsigned short mode)
+{
+    Vector<int64_t> objectStoreIdList(objectStoreIds.size());
+    for (size_t i = 0; i < objectStoreIds.size(); ++i)
+        objectStoreIdList[i] = objectStoreIds[i];
+    RefPtr<IDBDatabaseCallbacksProxy> databaseCallbacksProxy = IDBDatabaseCallbacksProxy::create(adoptPtr(callbacks));
+    m_databaseBackend->createTransaction(id, databaseCallbacksProxy.get(), objectStoreIdList, mode);
 }
 
 void WebIDBDatabaseImpl::close()
@@ -102,6 +112,18 @@ void WebIDBDatabaseImpl::forceClose()
     RefPtr<IDBDatabaseCallbacksProxy> callbacks = m_databaseCallbacks.release();
     m_databaseBackend->close(callbacks);
     callbacks->onForcedClose();
+}
+
+void WebIDBDatabaseImpl::abort(long long transactionId)
+{
+    if (m_databaseBackend)
+        m_databaseBackend->abort(transactionId);
+}
+
+void WebIDBDatabaseImpl::commit(long long transactionId)
+{
+    if (m_databaseBackend)
+        m_databaseBackend->commit(transactionId);
 }
 
 } // namespace WebKit
