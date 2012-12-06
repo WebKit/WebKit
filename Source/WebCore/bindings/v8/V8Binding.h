@@ -147,12 +147,11 @@ namespace WebCore {
     // underlying buffer alive while the string is still live in the V8 engine.
     inline v8::Handle<v8::String> v8String(const String& string, v8::Isolate* isolate = 0)
     {
-        StringImpl* stringImpl = string.impl();
-        if (!stringImpl)
-            return isolate ? v8::String::Empty(isolate) : v8::String::Empty();
         if (UNLIKELY(!isolate))
             isolate = v8::Isolate::GetCurrent();
-        return V8PerIsolateData::from(isolate)->stringCache()->v8ExternalString(stringImpl, isolate);
+        if (string.isNull())
+            return v8::String::Empty(isolate);
+        return V8PerIsolateData::from(isolate)->stringCache()->v8ExternalString(string.impl(), isolate);
     }
 
     inline v8::Handle<v8::Value> v8StringOrNull(const String& str, v8::Isolate* isolate = 0)

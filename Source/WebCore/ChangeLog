@@ -1,5 +1,21 @@
 2012-12-05  Kentaro Hara  <haraken@chromium.org>
 
+        [V8] Optimize v8String() for uninitialized DOM attributes
+        https://bugs.webkit.org/show_bug.cgi?id=104205
+
+        Reviewed by Adam Barth.
+
+        This patch makes uninitialized div.lang, div.title etc 6.3% faster.
+
+        [div.lang]
+        Before this patch: 12.6 ns
+        After this patch:  11.8 ns
+
+        * bindings/v8/V8Binding.h:
+        (WebCore::v8String):
+
+2012-12-05  Kentaro Hara  <haraken@chromium.org>
+
         [V8] Remove addImplicitReferencesForNodeWithEventListeners()
         https://bugs.webkit.org/show_bug.cgi?id=104203
 
