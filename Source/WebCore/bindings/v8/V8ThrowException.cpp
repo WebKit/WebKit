@@ -34,13 +34,13 @@ namespace WebCore {
 static v8::Handle<v8::Value> domExceptionStackGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     ASSERT(info.Data()->IsObject());
-    return info.Data()->ToObject()->Get(v8String("stack", info.GetIsolate()));
+    return info.Data()->ToObject()->Get(v8::String::NewSymbol("stack"));
 }
 
 static void domExceptionStackSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     ASSERT(info.Data()->IsObject());
-    info.Data()->ToObject()->Set(v8String("stack", info.GetIsolate()), value);
+    info.Data()->ToObject()->Set(v8::String::NewSymbol("stack"), value);
 }
 
 #define TRY_TO_CREATE_EXCEPTION(interfaceName) \
@@ -71,7 +71,7 @@ v8::Handle<v8::Value> V8ThrowException::setDOMException(int ec, v8::Isolate* iso
     v8::Handle<v8::Value> error = v8::Exception::Error(v8String(description.description, isolate));
     ASSERT(!error.IsEmpty());
     ASSERT(exception->IsObject());
-    exception->ToObject()->SetAccessor(v8String("stack", isolate), domExceptionStackGetter, domExceptionStackSetter, error);
+    exception->ToObject()->SetAccessor(v8::String::NewSymbol("stack"), domExceptionStackGetter, domExceptionStackSetter, error);
 
     return v8::ThrowException(exception);
 }

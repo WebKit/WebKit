@@ -46,19 +46,19 @@ namespace WebCore {
 v8::Handle<v8::Value> V8InspectorFrontendHost::platformCallback(const v8::Arguments& args)
 {
 #if defined(OS_MACOSX)
-    return v8String("mac", args.GetIsolate());
+    return v8::String::NewSymbol("mac");
 #elif defined(OS_LINUX)
-    return v8String("linux", args.GetIsolate());
+    return v8::String::NewSymbol("linux");
 #elif defined(OS_FREEBSD)
-    return v8String("freebsd", args.GetIsolate());
+    return v8::String::NewSymbol("freebsd");
 #elif defined(OS_OPENBSD)
-    return v8String("openbsd", args.GetIsolate());
+    return v8::String::NewSymbol("openbsd");
 #elif defined(OS_SOLARIS)
-    return v8String("solaris", args.GetIsolate());
+    return v8::String::NewSymbol("solaris");
 #elif defined(OS_WIN)
-    return v8String("windows", args.GetIsolate());
+    return v8::String::NewSymbol("windows");
 #else
-    return v8String("unknown", args.GetIsolate());
+    return v8::String::NewSymbol("unknown");
 #endif
 }
 

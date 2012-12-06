@@ -77,7 +77,7 @@ v8::Handle<v8::Value> V8JavaScriptCallFrame::thisObjectAccessorGetter(v8::Local<
 v8::Handle<v8::Value> V8JavaScriptCallFrame::typeAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     INC_STATS("V8JavaScriptCallFrame.typeAccessorGetter()");
-    return v8String("function", info.GetIsolate());
+    return v8::String::NewSymbol("function");
 }
 
 } // namespace WebCore

@@ -1,3 +1,34 @@
+2012-12-06  Kentaro Hara  <haraken@chromium.org>
+
+        [V8] Replace v8String("symbol") with v8::String::NewSymbol("symbol")
+        https://bugs.webkit.org/show_bug.cgi?id=104209
+
+        Reviewed by Adam Barth.
+
+        V8 can look up symbols faster than strings.
+
+        No tests. No change in behavior.
+
+        * bindings/v8/JavaScriptCallFrame.cpp:
+        (WebCore::JavaScriptCallFrame::caller):
+        (WebCore::JavaScriptCallFrame::sourceID):
+        (WebCore::JavaScriptCallFrame::line):
+        (WebCore::JavaScriptCallFrame::column):
+        (WebCore::JavaScriptCallFrame::functionName):
+        (WebCore::JavaScriptCallFrame::scopeChain):
+        (WebCore::JavaScriptCallFrame::scopeType):
+        (WebCore::JavaScriptCallFrame::thisObject):
+        (WebCore::JavaScriptCallFrame::evaluate):
+        (WebCore::JavaScriptCallFrame::restart):
+        * bindings/v8/V8ThrowException.cpp:
+        (WebCore::domExceptionStackGetter):
+        (WebCore::domExceptionStackSetter):
+        (WebCore::V8ThrowException::setDOMException):
+        * bindings/v8/custom/V8InspectorFrontendHostCustom.cpp:
+        (WebCore::V8InspectorFrontendHost::platformCallback):
+        * bindings/v8/custom/V8JavaScriptCallFrameCustom.cpp:
+        (WebCore::V8JavaScriptCallFrame::typeAccessorGetter):
+
 2012-12-06  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r136784 and r136802.

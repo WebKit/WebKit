@@ -52,7 +52,7 @@ JavaScriptCallFrame* JavaScriptCallFrame::caller()
     if (!m_caller) {
         v8::HandleScope handleScope;
         v8::Context::Scope contextScope(m_debuggerContext.get());
-        v8::Handle<v8::Value> callerFrame = m_callFrame.get()->Get(v8String("caller"));
+        v8::Handle<v8::Value> callerFrame = m_callFrame.get()->Get(v8::String::NewSymbol("caller"));
         if (!callerFrame->IsObject())
             return 0;
         m_caller = JavaScriptCallFrame::create(m_debuggerContext.get(), v8::Handle<v8::Object>::Cast(callerFrame));
@@ -64,7 +64,7 @@ int JavaScriptCallFrame::sourceID() const
 {
     v8::HandleScope handleScope;
     v8::Context::Scope contextScope(m_debuggerContext.get());
-    v8::Handle<v8::Value> result = m_callFrame.get()->Get(v8String("sourceID"));
+    v8::Handle<v8::Value> result = m_callFrame.get()->Get(v8::String::NewSymbol("sourceID"));
     if (result->IsInt32())
         return result->Int32Value();
     return 0;
@@ -74,7 +74,7 @@ int JavaScriptCallFrame::line() const
 {
     v8::HandleScope handleScope;
     v8::Context::Scope contextScope(m_debuggerContext.get());
-    v8::Handle<v8::Value> result = m_callFrame.get()->Get(v8String("line"));
+    v8::Handle<v8::Value> result = m_callFrame.get()->Get(v8::String::NewSymbol("line"));
     if (result->IsInt32())
         return result->Int32Value();
     return 0;
@@ -84,7 +84,7 @@ int JavaScriptCallFrame::column() const
 {
     v8::HandleScope handleScope;
     v8::Context::Scope contextScope(m_debuggerContext.get());
-    v8::Handle<v8::Value> result = m_callFrame.get()->Get(v8String("column"));
+    v8::Handle<v8::Value> result = m_callFrame.get()->Get(v8::String::NewSymbol("column"));
     if (result->IsInt32())
         return result->Int32Value();
     return 0;
@@ -94,13 +94,13 @@ String JavaScriptCallFrame::functionName() const
 {
     v8::HandleScope handleScope;
     v8::Context::Scope contextScope(m_debuggerContext.get());
-    v8::Handle<v8::Value> result = m_callFrame.get()->Get(v8String("functionName"));
+    v8::Handle<v8::Value> result = m_callFrame.get()->Get(v8::String::NewSymbol("functionName"));
     return toWebCoreStringWithUndefinedOrNullCheck(result);
 }
 
 v8::Handle<v8::Value> JavaScriptCallFrame::scopeChain() const
 {
-    v8::Handle<v8::Array> scopeChain = v8::Handle<v8::Array>::Cast(m_callFrame.get()->Get(v8String("scopeChain")));
+    v8::Handle<v8::Array> scopeChain = v8::Handle<v8::Array>::Cast(m_callFrame.get()->Get(v8::String::NewSymbol("scopeChain")));
     v8::Handle<v8::Array> result = v8::Array::New(scopeChain->Length());
     for (uint32_t i = 0; i < scopeChain->Length(); i++)
         result->Set(i, scopeChain->Get(i));
@@ -109,25 +109,25 @@ v8::Handle<v8::Value> JavaScriptCallFrame::scopeChain() const
 
 int JavaScriptCallFrame::scopeType(int scopeIndex) const
 {
-    v8::Handle<v8::Array> scopeType = v8::Handle<v8::Array>::Cast(m_callFrame.get()->Get(v8String("scopeType")));
+    v8::Handle<v8::Array> scopeType = v8::Handle<v8::Array>::Cast(m_callFrame.get()->Get(v8::String::NewSymbol("scopeType")));
     return scopeType->Get(scopeIndex)->Int32Value();
 }
 
 v8::Handle<v8::Value> JavaScriptCallFrame::thisObject() const
 {
-    return m_callFrame.get()->Get(v8String("thisObject"));
+    return m_callFrame.get()->Get(v8::String::NewSymbol("thisObject"));
 }
 
 v8::Handle<v8::Value> JavaScriptCallFrame::evaluate(const String& expression)
 {
-    v8::Handle<v8::Function> evalFunction = v8::Handle<v8::Function>::Cast(m_callFrame.get()->Get(v8String("evaluate")));
+    v8::Handle<v8::Function> evalFunction = v8::Handle<v8::Function>::Cast(m_callFrame.get()->Get(v8::String::NewSymbol("evaluate")));
     v8::Handle<v8::Value> argv[] = { v8String(expression) };
     return evalFunction->Call(m_callFrame.get(), 1, argv);
 }
 
 v8::Handle<v8::Value> JavaScriptCallFrame::restart()
 {
-    v8::Handle<v8::Function> restartFunction = v8::Handle<v8::Function>::Cast(m_callFrame.get()->Get(v8String("restart")));
+    v8::Handle<v8::Function> restartFunction = v8::Handle<v8::Function>::Cast(m_callFrame.get()->Get(v8::String::NewSymbol("restart")));
     return restartFunction->Call(m_callFrame.get(), 0, 0);
 }
 
