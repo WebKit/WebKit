@@ -1,3 +1,15 @@
+2012-12-06  Emil A Eklund  <eae@chromium.org>
+
+        Unreviewed chromium rebaselines.
+
+        * platform/chromium-linux-x86/compositing/geometry/bounds-ignores-hidden-dynamic-negzindex-expected.png: Removed.
+        * platform/chromium-linux-x86/platform/chromium/virtual/softwarecompositing/masks: Removed.
+        * platform/chromium-linux-x86/platform/chromium/virtual/softwarecompositing/masks/masked-ancestor-expected.png: Removed.
+        * platform/chromium-linux-x86/platform/chromium/virtual/softwarecompositing/shadows: Removed.
+        * platform/chromium-linux-x86/platform/chromium/virtual/softwarecompositing/shadows/shadow-drawing-expected.png: Removed.
+        * platform/chromium-mac-lion/platform/chromium/virtual/softwarecompositing/iframes: Added.
+        * platform/chromium-mac-lion/platform/chromium/virtual/softwarecompositing/iframes/composited-iframe-alignment-expected.png: Added.
+
 2012-12-06  Justin Novosad  <junov@google.com>
 
         New pixel baselines for fast/backgrounds/gradient-background-leakage.html
