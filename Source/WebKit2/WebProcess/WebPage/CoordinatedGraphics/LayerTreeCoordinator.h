@@ -135,6 +135,7 @@ private:
     virtual PassOwnPtr<WebCore::GraphicsLayer> createGraphicsLayer(WebCore::GraphicsLayerClient*) OVERRIDE;
 
     // LayerTreeCoordinator
+    void initializeRootCompositingLayer();
     void createPageOverlayLayer();
     void destroyPageOverlayLayer();
     bool flushPendingLayerChanges();
@@ -193,7 +194,6 @@ private:
 
     LayerTreeContext m_layerTreeContext;
     bool m_shouldSyncFrame;
-    bool m_shouldSyncRootLayer;
     WebCore::Timer<LayerTreeCoordinator> m_layerFlushTimer;
     WebCore::Timer<LayerTreeCoordinator> m_releaseInactiveAtlasesTimer;
     bool m_layerFlushSchedulingEnabled;
