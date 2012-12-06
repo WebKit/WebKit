@@ -1,3 +1,14 @@
+2012-12-06  Alexis Menard  <alexis@webkit.org>
+
+        [Mac] Unreviewed gardening after r136415.
+
+        r136415 enables the CSS3 background position offsets therefore this
+        expected png needs to be updated with the new result (the correct one
+        actually). It was not failing on the bot as the Apple Mac bot does not
+        seem to run pixel tests.
+
+        * platform/mac/ietestcenter/css3/bordersbackgrounds/background_position_three_four_values-expected.png:
+
 2012-12-06  Tommy Widenflycht  <tommyw@google.com>
 
         Speech Recognition API: Change the error code to a string on SpeechRecognitionError
