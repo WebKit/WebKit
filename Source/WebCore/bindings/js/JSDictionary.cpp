@@ -68,152 +68,182 @@ JSDictionary::GetPropertyResult JSDictionary::tryGetProperty(const char* propert
     return PropertyFound;
 }
 
-void JSDictionary::convertValue(ExecState* exec, JSValue value, bool& result)
+bool JSDictionary::convertValue(ExecState* exec, JSValue value, bool& result)
 {
     result = value.toBoolean(exec);
+    return true;
 }
 
-void JSDictionary::convertValue(ExecState* exec, JSValue value, int& result)
+bool JSDictionary::convertValue(ExecState* exec, JSValue value, int& result)
 {
     result = value.toInt32(exec);
+    return true;
 }
 
-void JSDictionary::convertValue(ExecState* exec, JSValue value, unsigned& result)
+bool JSDictionary::convertValue(ExecState* exec, JSValue value, unsigned& result)
 {
     result = value.toUInt32(exec);
+    return true;
 }
 
-void JSDictionary::convertValue(ExecState* exec, JSValue value, unsigned short& result)
+bool JSDictionary::convertValue(ExecState* exec, JSValue value, unsigned short& result)
 {
     result = static_cast<unsigned short>(value.toUInt32(exec));
+    return true;
 }
 
-void JSDictionary::convertValue(ExecState* exec, JSValue value, unsigned long& result)
+bool JSDictionary::convertValue(ExecState* exec, JSValue value, unsigned long& result)
 {
     result = static_cast<unsigned long>(value.toUInt32(exec));
+    return true;
 }
 
-void JSDictionary::convertValue(ExecState* exec, JSValue value, unsigned long long& result)
+bool JSDictionary::convertValue(ExecState* exec, JSValue value, unsigned long long& result)
 {
     double d = value.toNumber(exec);
     doubleToInteger(d, result);
+    return true;
 }
 
-void JSDictionary::convertValue(ExecState* exec, JSValue value, double& result)
+bool JSDictionary::convertValue(ExecState* exec, JSValue value, double& result)
 {
     result = value.toNumber(exec);
+    return true;
 }
 
-void JSDictionary::convertValue(JSC::ExecState* exec, JSC::JSValue value, Dictionary& result)
+bool JSDictionary::convertValue(JSC::ExecState* exec, JSC::JSValue value, Dictionary& result)
 {
     result = Dictionary(exec, value);
+    return true;
 }
 
-void JSDictionary::convertValue(ExecState* exec, JSValue value, String& result)
+bool JSDictionary::convertValue(ExecState* exec, JSValue value, String& result)
 {
     result = value.toString(exec)->value(exec);
+    return !exec->hadException();
 }
 
-void JSDictionary::convertValue(ExecState* exec, JSValue value, Vector<String>& result)
+bool JSDictionary::convertValue(ExecState* exec, JSValue value, Vector<String>& result)
 {
     if (value.isUndefinedOrNull())
-        return;
+        return false;
+
+    if (!value.isObject())
+        return false;
+    JSObject* object = asObject(value);
+    if (!isJSArray(object) && !object->inherits(&JSArray::s_info))
+        return false;
 
     unsigned length = 0;
-    JSObject* object = toJSSequence(exec, value, length);
+    object = toJSSequence(exec, value, length);
     if (exec->hadException())
-        return;
+        return false;
 
     for (unsigned i = 0 ; i < length; ++i) {
         JSValue itemValue = object->get(exec, i);
         if (exec->hadException())
-            return;
+            return false;
         result.append(itemValue.toString(exec)->value(exec));
     }
+
+    return !exec->hadException();
 }
 
-void JSDictionary::convertValue(ExecState* exec, JSValue value, ScriptValue& result)
+bool JSDictionary::convertValue(ExecState* exec, JSValue value, ScriptValue& result)
 {
     result = ScriptValue(exec->globalData(), value);
+    return true;
 }
 
-void JSDictionary::convertValue(ExecState* exec, JSValue value, RefPtr<SerializedScriptValue>& result)
+bool JSDictionary::convertValue(ExecState* exec, JSValue value, RefPtr<SerializedScriptValue>& result)
 {
     result = SerializedScriptValue::create(exec, value, 0, 0);
+    return !exec->hadException();
 }
 
-void JSDictionary::convertValue(ExecState*, JSValue value, RefPtr<DOMWindow>& result)
+bool JSDictionary::convertValue(ExecState*, JSValue value, RefPtr<DOMWindow>& result)
 {
     result = toDOMWindow(value);
+    return true;
 }
 
-void JSDictionary::convertValue(ExecState*, JSValue value, RefPtr<EventTarget>& result)
+bool JSDictionary::convertValue(ExecState*, JSValue value, RefPtr<EventTarget>& result)
 {
     result = toEventTarget(value);
+    return true;
 }
 
-void JSDictionary::convertValue(ExecState*, JSValue value, RefPtr<Node>& result)
+bool JSDictionary::convertValue(ExecState*, JSValue value, RefPtr<Node>& result)
 {
     result = toNode(value);
+    return true;
 }
 
-void JSDictionary::convertValue(ExecState*, JSValue value, RefPtr<Storage>& result)
+bool JSDictionary::convertValue(ExecState*, JSValue value, RefPtr<Storage>& result)
 {
     result = toStorage(value);
+    return true;
 }
 
-void JSDictionary::convertValue(ExecState* exec, JSValue value, MessagePortArray& result)
+bool JSDictionary::convertValue(ExecState* exec, JSValue value, MessagePortArray& result)
 {
     ArrayBufferArray arrayBuffers;
     fillMessagePortArray(exec, value, result, arrayBuffers);
+    return true;
 }
 
 #if ENABLE(VIDEO_TRACK)
-void JSDictionary::convertValue(ExecState*, JSValue value, RefPtr<TrackBase>& result)
+bool JSDictionary::convertValue(ExecState*, JSValue value, RefPtr<TrackBase>& result)
 {
     result = toTrack(value);
+    return true;
 }
 #endif
 
 #if ENABLE(MUTATION_OBSERVERS) || ENABLE(WEB_INTENTS)
-void JSDictionary::convertValue(ExecState* exec, JSValue value, HashSet<AtomicString>& result)
+bool JSDictionary::convertValue(ExecState* exec, JSValue value, HashSet<AtomicString>& result)
 {
     result.clear();
 
     if (value.isUndefinedOrNull())
-        return;
+        return false;
 
     unsigned length = 0;
     JSObject* object = toJSSequence(exec, value, length);
     if (exec->hadException())
-        return;
+        return false;
 
     for (unsigned i = 0 ; i < length; ++i) {
         JSValue itemValue = object->get(exec, i);
         if (exec->hadException())
-            return;
+            return false;
         result.add(itemValue.toString(exec)->value(exec));
     }
+
+    return !exec->hadException();
 }
 #endif
 
-void JSDictionary::convertValue(ExecState* exec, JSValue value, ArrayValue& result)
+bool JSDictionary::convertValue(ExecState* exec, JSValue value, ArrayValue& result)
 {
     if (value.isUndefinedOrNull())
-        return;
+        return false;
 
     result = ArrayValue(exec, value);
+    return true;
 }
 
-void JSDictionary::convertValue(JSC::ExecState*, JSC::JSValue value, RefPtr<Uint8Array>& result)
+bool JSDictionary::convertValue(JSC::ExecState*, JSC::JSValue value, RefPtr<Uint8Array>& result)
 {
     result = toUint8Array(value);
+    return true;
 }
 
 #if ENABLE(ENCRYPTED_MEDIA)
-void JSDictionary::convertValue(JSC::ExecState*, JSC::JSValue value, RefPtr<MediaKeyError>& result)
+bool JSDictionary::convertValue(JSC::ExecState*, JSC::JSValue value, RefPtr<MediaKeyError>& result)
 {
     result = toMediaKeyError(value);
+    return true;
 }
 #endif
 
