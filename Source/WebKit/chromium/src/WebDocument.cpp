@@ -194,15 +194,17 @@ WebDocumentType WebDocument::doctype() const
     return WebDocumentType(constUnwrap<Document>()->doctype());
 }
 
-void WebDocument::insertUserStyleSheet(const WebString& sourceCode, UserStyleLevel)
+void WebDocument::insertUserStyleSheet(const WebString& sourceCode, UserStyleLevel styleLevel)
 {
     RefPtr<Document> document = unwrap<Document>();
 
-    // FIXME: We currently ignore the passed in UserStyleLevel. http://crbug.com/162096
     RefPtr<StyleSheetContents> parsedSheet = StyleSheetContents::create(document.get());
-    parsedSheet->setIsUserStyleSheet(true);
+    parsedSheet->setIsUserStyleSheet(styleLevel == UserStyleUserLevel);
     parsedSheet->parseString(sourceCode);
-    document->styleSheetCollection()->addUserSheet(parsedSheet.release());
+    if (parsedSheet->isUserStyleSheet())
+        document->styleSheetCollection()->addUserSheet(parsedSheet);
+    else
+        document->styleSheetCollection()->addAuthorSheet(parsedSheet);
 }
 
 void WebDocument::cancelFullScreen()

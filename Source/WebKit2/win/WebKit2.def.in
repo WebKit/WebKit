@@ -379,3 +379,11 @@ EXPORTS
         ?solidColor@BitmapImage@WebCore@@MBE?AVColor@2@XZ
         ?draw@BitmapImage@WebCore@@MAEXPAVGraphicsContext@2@ABVFloatRect@2@1W4ColorSpace@2@W4CompositeOperator@2@W4RespectImageOrientationEnum@2@@Z
         ?frameCount@BitmapImage@WebCore@@MAEIXZ
+        ?addAuthorSheet@DocumentStyleSheetCollection@WebCore@@QAEXV?$PassRefPtr@VStyleSheetContents@WebCore@@@WTF@@@Z
+        ?parseString@StyleSheetContents@WebCore@@QAE_NABVString@WTF@@@Z
+        ??0CSSParserContext@WebCore@@QAE@PAVDocument@1@ABVKURL@1@ABVString@WTF@@@Z
+        ?emptyString@WTF@@YAABVString@1@XZ
+        ?invalidate@KURL@WebCore@@AAEXXZ
+        ??0StyleSheetContents@WebCore@@AAE@PAVStyleRuleImport@1@ABVString@WTF@@ABUCSSParserContext@1@@Z
+        ?addUserSheet@DocumentStyleSheetCollection@WebCore@@QAEXV?$PassRefPtr@VStyleSheetContents@WebCore@@@WTF@@@Z
+        ??1StyleSheetContents@WebCore@@QAE@XZ

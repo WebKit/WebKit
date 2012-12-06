@@ -56,6 +56,7 @@ public:
 
     CSSStyleSheet* pageUserSheet();
     const Vector<RefPtr<CSSStyleSheet> >& documentUserStyleSheets() const { return m_userStyleSheets; }
+    const Vector<RefPtr<CSSStyleSheet> >& documentAuthorStyleSheets() const { return m_authorStyleSheets; }
     const Vector<RefPtr<CSSStyleSheet> >& injectedUserStyleSheets() const;
     const Vector<RefPtr<CSSStyleSheet> >& injectedAuthorStyleSheets() const;
 
@@ -67,6 +68,7 @@ public:
     void invalidateInjectedStyleSheetCache();
     void updateInjectedStyleSheetCache() const;
 
+    void addAuthorSheet(PassRefPtr<StyleSheetContents> authorSheet);
     void addUserSheet(PassRefPtr<StyleSheetContents> userSheet);
 
     bool needsUpdateActiveStylesheetsOnStyleRecalc() const { return m_needsUpdateActiveStylesheetsOnStyleRecalc; }
@@ -132,6 +134,7 @@ private:
     mutable bool m_injectedStyleSheetCacheValid;
 
     Vector<RefPtr<CSSStyleSheet> > m_userStyleSheets;
+    Vector<RefPtr<CSSStyleSheet> > m_authorStyleSheets;
 
     bool m_hadActiveLoadingStylesheet;
     bool m_needsUpdateActiveStylesheetsOnStyleRecalc;

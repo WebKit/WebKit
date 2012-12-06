@@ -1,0 +1,43 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<style>
+  .styled {
+      background-color: red;
+      width: 0;
+      height: 100px;
+  }
+</style>
+<script src="../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<p>This test requires testRunner and window.internals.</p>
+<div id="test" class="styled"></div>
+<script>
+function test()
+{
+    if (!window.testRunner)
+        return;
+    testRunner.dumpAsText();
+    window.testElement = document.getElementById("test");
+    shouldBe("getComputedStyle(testElement).backgroundColor", "'rgb(255, 0, 0)'");
+    shouldBe("testElement.offsetWidth", "0");
+
+    if (!window.internals)
+        return;
+
+    // The author style above should override this user style.
+    internals.insertUserCSS(document, "body .styled { background-color: green; width: 100px; }");
+    shouldBe("getComputedStyle(testElement).backgroundColor", "'rgb(255, 0, 0)'");
+    shouldBe("testElement.offsetWidth", "0");
+
+    // Since this style is more specific, it should override the original author style above.
+    internals.insertAuthorCSS(document, "body .styled { background-color: green; width: 100px; }");
+    shouldBe("getComputedStyle(testElement).backgroundColor", "'rgb(0, 128, 0)'");
+    shouldBe("testElement.offsetWidth", "100");
+}
+
+test();
+</script>
+</body>
+</html>

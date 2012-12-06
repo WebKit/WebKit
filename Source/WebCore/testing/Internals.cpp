@@ -78,6 +78,7 @@
 #include "Settings.h"
 #include "ShadowRoot.h"
 #include "SpellChecker.h"
+#include "StyleSheetContents.h"
 #include "TextIterator.h"
 #include "TreeScope.h"
 #include "ViewportArguments.h"
@@ -1472,6 +1473,22 @@ void Internals::garbageCollectDocumentResources(Document* document, ExceptionCod
 void Internals::allowRoundingHacks() const
 {
     TextRun::setAllowsRoundingHacks(true);
+}
+
+void Internals::insertAuthorCSS(Document* document, const String& css) const
+{
+    RefPtr<StyleSheetContents> parsedSheet = StyleSheetContents::create(document);
+    parsedSheet->setIsUserStyleSheet(false);
+    parsedSheet->parseString(css);
+    document->styleSheetCollection()->addAuthorSheet(parsedSheet);
+}
+
+void Internals::insertUserCSS(Document* document, const String& css) const
+{
+    RefPtr<StyleSheetContents> parsedSheet = StyleSheetContents::create(document);
+    parsedSheet->setIsUserStyleSheet(true);
+    parsedSheet->parseString(css);
+    document->styleSheetCollection()->addUserSheet(parsedSheet);
 }
 
 String Internals::counterValue(Element* element)

@@ -81,6 +81,8 @@ DocumentStyleSheetCollection::~DocumentStyleSheetCollection()
         m_injectedAuthorStyleSheets[i]->clearOwnerNode();
     for (unsigned i = 0; i < m_userStyleSheets.size(); ++i)
         m_userStyleSheets[i]->clearOwnerNode();
+    for (unsigned i = 0; i < m_authorStyleSheets.size(); ++i)
+        m_authorStyleSheets[i]->clearOwnerNode();
 }
 
 void DocumentStyleSheetCollection::combineCSSFeatureFlags()
@@ -189,6 +191,13 @@ void DocumentStyleSheetCollection::invalidateInjectedStyleSheetCache()
 {
     m_injectedStyleSheetCacheValid = false;
     m_document->styleResolverChanged(DeferRecalcStyle);
+}
+
+void DocumentStyleSheetCollection::addAuthorSheet(PassRefPtr<StyleSheetContents> authorSheet)
+{
+    ASSERT(!authorSheet->isUserStyleSheet());
+    m_authorStyleSheets.append(CSSStyleSheet::create(authorSheet, m_document));
+    m_document->styleResolverChanged(RecalcStyleImmediately);
 }
 
 void DocumentStyleSheetCollection::addUserSheet(PassRefPtr<StyleSheetContents> userSheet)
@@ -456,6 +465,7 @@ bool DocumentStyleSheetCollection::updateActiveStyleSheets(UpdateFlag updateFlag
 
     Vector<RefPtr<CSSStyleSheet> > activeCSSStyleSheets;
     activeCSSStyleSheets.append(injectedAuthorStyleSheets());
+    activeCSSStyleSheets.append(documentAuthorStyleSheets());
     collectActiveCSSStyleSheetsFromSeamlessParents(activeCSSStyleSheets, m_document);
     filterEnabledCSSStyleSheets(activeCSSStyleSheets, activeStyleSheets);
 
@@ -494,6 +504,7 @@ void DocumentStyleSheetCollection::reportMemoryUsage(MemoryObjectInfo* memoryObj
     info.addMember(m_injectedUserStyleSheets);
     info.addMember(m_injectedAuthorStyleSheets);
     info.addMember(m_userStyleSheets);
+    info.addMember(m_authorStyleSheets);
     info.addMember(m_activeAuthorStyleSheets);
     info.addMember(m_styleSheetsForStyleSheetList);
     info.addMember(m_styleSheetCandidateNodes);

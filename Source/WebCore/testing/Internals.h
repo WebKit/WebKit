@@ -212,6 +212,9 @@ public:
 
     void allowRoundingHacks() const;
 
+    void insertAuthorCSS(Document*, const String&) const;
+    void insertUserCSS(Document*, const String&) const;
+
 #if ENABLE(INSPECTOR)
     unsigned numberOfLiveNodes() const;
     unsigned numberOfLiveDocuments() const;

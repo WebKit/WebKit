@@ -1,3 +1,31 @@
+2012-12-06  Tony Chang  <tony@chromium.org>
+
+        REGRESSION(r135082): Restore the ability to insert author level style sheets from script
+        https://bugs.webkit.org/show_bug.cgi?id=104042
+
+        Reviewed by Antti Koivisto.
+
+        Add DocumentStyleSheetCollection::addAuthorSheet so embedders can allow scripts
+        to insert author level styles. Expose the method to window.interals for testing.
+
+        Test: userscripts/insert-stylesheets.html
+
+        * WebCore.exp.in: Update exports for Internals.cpp.
+        * WebCore.order: Update exports for Internals.cpp.
+        * dom/DocumentStyleSheetCollection.cpp:
+        (WebCore::DocumentStyleSheetCollection::~DocumentStyleSheetCollection):
+        (WebCore::DocumentStyleSheetCollection::addAuthorSheet): Add the stylesheet and force a style recalc.
+        (WebCore::DocumentStyleSheetCollection::updateActiveStyleSheets): Include author level styles.
+        (WebCore::DocumentStyleSheetCollection::reportMemoryUsage): Include author styles.
+        * dom/DocumentStyleSheetCollection.h:
+        (WebCore::DocumentStyleSheetCollection::documentAuthorStyleSheets): Accessor.
+        (DocumentStyleSheetCollection): Keep track of author styles added by script.
+        * testing/Internals.cpp:
+        (WebCore::Internals::insertAuthorCSS): Testing addAuthorSheet.
+        (WebCore::Internals::insertUserCSS): Testing addUserSheet.
+        * testing/Internals.h:
+        * testing/Internals.idl: Add addAuthorSheet and addUserSheet.
+
 2012-12-06  Elliott Sprehn  <esprehn@gmail.com>
 
         Create only NodeRareDataBase when setting TreeScope

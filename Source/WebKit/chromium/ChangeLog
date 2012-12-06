@@ -1,3 +1,13 @@
+2012-12-06  Tony Chang  <tony@chromium.org>
+
+        REGRESSION(r135082): Restore the ability to insert author level style sheets from script
+        https://bugs.webkit.org/show_bug.cgi?id=104042
+
+        Reviewed by Antti Koivisto.
+
+        * src/WebDocument.cpp:
+        (WebKit::WebDocument::insertUserStyleSheet): Use addAuthorSheet if an author level script is requested.
+
 2012-12-06  Sadrul Habib Chowdhury  <sadrul@chromium.org>
 
         [chromium] Add some null-checks for the touch-lists in TouchEvent
