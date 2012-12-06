@@ -292,6 +292,10 @@
         },
         "Harfbuzz": {
             "filename": r"Source/WebCore/platform/graphics/harfbuzz",
+        },
+        "PerformanceTests": {
+            "filename": r"PerformanceTests"
+                        r"|Tools/Scripts/webkitpy/performance_tests",
         }
     },
     "CC_RULES": {
@@ -328,6 +332,7 @@
         "MediaStream": [ "tommyw@google.com", "hta@google.com" ],
         "NetworkInfo": [ "gyuyoung.kim@samsung.com" ],
         "OpenGL" : [ "noam@webkit.org", "dino@apple.com" ],
+        "PerformanceTests": [ "rniwa@webkit.org" ],
         "QtBuildSystem" : [ "vestbo@webkit.org", "abecsi@webkit.org" ],
         "QtGraphics" : [ "noam@webkit.org" ],
         "QtWebKit2PlatformSpecific": [ "alexis@webkit.org", "cmarcelo@webkit.org", "abecsi@webkit.org" ],

@@ -1,3 +1,9 @@
+2012-12-05  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add myself to watch changes in PerformanceTests/*.
+
+        * Scripts/webkitpy/common/config/watchlist:
+
 2012-12-05  Shinya Kawanaka  <shinyak@chromium.org>
 
         [Chromium] DRT on Windows crashes when a testcase has a progress element in indeterminate state
