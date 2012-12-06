@@ -1,3 +1,74 @@
+2012-12-05  Dirk Pranke  <dpranke@chromium.org>
+
+        nrwt: run_webkit_tests_integrationtest.py depends on being able to share a port w/ between master and worker
+        https://bugs.webkit.org/show_bug.cgi?id=78168
+
+        Reviewed by Ojan Vafai.
+
+        This patch adds a single ordered list to ResultSummary that contains
+        the results of every test run in order of result received, and
+        modifies the TestResults class to contain the list of references used
+        for each test as well as the pid of the driver; this allows us to stop
+        having to override the test drivers to record the tests, and makes the
+        integration tests that test rdering, retries, restarts, etc. black-box
+        tests.
+
+        * Scripts/webkitpy/layout_tests/controllers/single_test_runner.py:
+        (SingleTestRunner._run_rebaseline):
+        (SingleTestRunner._compare_output):
+        (SingleTestRunner._run_reftest):
+        (SingleTestRunner._compare_output_with_reference):
+        * Scripts/webkitpy/layout_tests/models/result_summary.py:
+        (ResultSummary.__init__):
+        (ResultSummary.add):
+        * Scripts/webkitpy/layout_tests/models/test_results.py:
+        (TestResult.__init__):
+        * Scripts/webkitpy/layout_tests/port/driver.py:
+        (DriverOutput.__init__):
+        (Driver.run_test):
+        * Scripts/webkitpy/layout_tests/port/test.py:
+        (TestDriver):
+        (TestDriver.__init__):
+        (TestDriver.run_test):
+        (TestDriver.stop):
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+        (get_tests_run):
+        (get_test_batches):
+        (get_test_results):
+        (MainTest.test_batch_size):
+        (MainTest.test_dryrun):
+        (MainTest.test_natural_order):
+        (MainTest.test_natural_order_test_specified_multiple_times):
+        (MainTest.test_random_order):
+        (MainTest.test_random_order_test_specified_multiple_times):
+        (MainTest.test_no_order):
+        (MainTest.test_no_order_test_specified_multiple_times):
+        (MainTest.test_no_order_with_directory_entries_in_natural_order):
+        (MainTest.test_repeat_each):
+        (MainTest.test_ignore_flag):
+        (MainTest.test_skipped_flag):
+        (MainTest.test_iterations):
+        (MainTest.test_run_chunk):
+        (MainTest.test_run_part):
+        (MainTest.test_run_singly):
+        (MainTest.test_skip_failing_tests):
+        (MainTest.test_single_file):
+        (MainTest.test_single_file_with_prefix):
+        (MainTest.test_single_skipped_file):
+        (MainTest.test_test_list):
+        (MainTest.test_test_list_with_prefix):
+        (MainTest.test_exit_after_n_failures):
+        (MainTest.test_exit_after_n_crashes):
+        (MainTest.test_run_order__inline):
+        (MainTest.test_reftest_run):
+        (MainTest.test_reftest_run_reftests_if_pixel_tests_are_disabled):
+        (MainTest.test_reftest_skip_reftests_if_no_ref_tests):
+        (MainTest.test_reftest_expected_html_should_be_ignored):
+        (MainTest.test_reftest_driver_should_run_expected_html):
+        (MainTest.test_reftest_driver_should_run_expected_mismatch_html):
+        (MainTest.test_no_http_tests):
+        (MainTest.test_platform_tests_are_found):
+
 2012-12-05  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Make WebCompositorOutputSurface an empty class when USE_CC_OUTPUT_SURFACE is defined.

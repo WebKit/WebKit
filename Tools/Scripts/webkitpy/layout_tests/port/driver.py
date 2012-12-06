@@ -78,7 +78,7 @@ class DriverOutput(object):
 
     def __init__(self, text, image, image_hash, audio, crash=False,
             test_time=0, measurements=None, timeout=False, error='', crashed_process_name='??',
-            crashed_pid=None, crash_log=None):
+            crashed_pid=None, crash_log=None, pid=None):
         # FIXME: Args could be renamed to better clarify what they do.
         self.text = text
         self.image = image  # May be empty-string if the test crashes.
@@ -93,6 +93,7 @@ class DriverOutput(object):
         self.measurements = measurements
         self.timeout = timeout
         self.error = error  # stderr output
+        self.pid = pid
 
     def has_stderr(self):
         return bool(self.error)
@@ -173,6 +174,7 @@ class Driver(object):
 
         crashed = self.has_crashed()
         timed_out = self._server_process.timed_out
+        pid = self._server_process.pid()
 
         if stop_when_done or crashed or timed_out:
             # We call stop() even if we crashed or timed out in order to get any remaining stdout/stderr output.
@@ -204,7 +206,7 @@ class Driver(object):
             crash=crashed, test_time=time.time() - test_begin_time, measurements=self._measurements,
             timeout=timed_out, error=self.error_from_test,
             crashed_process_name=self._crashed_process_name,
-            crashed_pid=self._crashed_pid, crash_log=crash_log)
+            crashed_pid=self._crashed_pid, crash_log=crash_log, pid=pid)
 
     def _get_crash_log(self, stdout, stderr, newer_than):
         return self._port._get_crash_log(self._crashed_process_name, self._crashed_pid, stdout, stderr, newer_than)

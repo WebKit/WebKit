@@ -43,7 +43,8 @@ class ResultSummary(object):
         self.total_tests_by_expectation = {}
         self.tests_by_expectation = {}
         self.tests_by_timeline = {}
-        self.results = {}
+        self.results = {}  # Map of test name to the last result for the test.
+        self.all_results = []  # All results from a run, including every iteration of every test.
         self.unexpected_results = {}
         self.failures = {}
         self.total_failures = 0
@@ -60,6 +61,8 @@ class ResultSummary(object):
         self.total_tests_by_expectation[test_result.type] += 1
         self.tests_by_expectation[test_result.type].add(test_result.test_name)
         self.results[test_result.test_name] = test_result
+        if test_result.type != SKIP:
+            self.all_results.append(test_result)
         self.remaining -= 1
         if len(test_result.failures):
             self.total_failures += 1

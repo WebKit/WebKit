@@ -29,7 +29,6 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import codecs
-import itertools
 import json
 import logging
 import os
@@ -116,54 +115,47 @@ def run_and_capture(port_obj, options, parsed_args, shared_port=True):
     return (run_details.exit_code, logging_stream)
 
 
-def get_tests_run(extra_args=None, tests_included=False, flatten_batches=False,
-                  host=None, include_reference_html=False):
-    extra_args = extra_args or []
-    if not tests_included:
-        # Not including http tests since they get run out of order (that
-        # behavior has its own test, see test_get_test_file_queue)
-        extra_args = ['passes', 'failures'] + extra_args
-    options, parsed_args = parse_args(extra_args, tests_included=True)
+def get_tests_run(args, host=None):
+    results = get_test_results(args, host)
+    return [result.test_name for result in results]
+
+
+def get_test_batches(args, host=None):
+    results = get_test_results(args, host)
+    batches = []
+    batch = []
+    current_pid = None
+    for result in results:
+        if batch and result.pid != current_pid:
+            batches.append(batch)
+            batch = []
+        batch.append(result.test_name)
+    if batch:
+        batches.append(batch)
+    return batches
+
+
+def get_test_results(args, host=None):
+    options, parsed_args = parse_args(args, tests_included=True)
 
     host = host or MockHost()
-    test_batches = []
+    port_obj = host.port_factory.get(port_name=options.platform, options=options)
 
-    class RecordingTestDriver(TestDriver):
-        def __init__(self, port, worker_number):
-            TestDriver.__init__(self, port, worker_number, pixel_tests=port.get_option('pixel_test'), no_timeout=False)
-            self._current_test_batch = None
+    oc = outputcapture.OutputCapture()
+    oc.capture_output()
+    logging_stream = StringIO.StringIO()
+    try:
+        run_details = run_webkit_tests.run(port_obj, options, parsed_args, logging_stream=logging_stream)
+    finally:
+        oc.restore_output()
 
-        def start(self):
-            pass
+    all_results = []
+    if run_details.result_summary:
+        all_results.extend(run_details.result_summary.all_results)
 
-        def stop(self):
-            self._current_test_batch = None
-
-        def run_test(self, test_input, stop_when_done):
-            if self._current_test_batch is None:
-                self._current_test_batch = []
-                test_batches.append(self._current_test_batch)
-            test_name = test_input.test_name
-            # In case of reftest, one test calls the driver's run_test() twice.
-            # We should not add a reference html used by reftests to tests unless include_reference_html parameter
-            # is explicitly given.
-            filesystem = self._port.host.filesystem
-            dirname, filename = filesystem.split(test_name)
-            if include_reference_html or not Port.is_reference_html_file(filesystem, dirname, filename):
-                self._current_test_batch.append(test_name)
-            return TestDriver.run_test(self, test_input, stop_when_done)
-
-    class RecordingTestPort(TestPort):
-        def create_driver(self, worker_number):
-            return RecordingTestDriver(self, worker_number)
-
-    recording_port = RecordingTestPort(host, options=options)
-    run_and_capture(recording_port, options, parsed_args)
-
-    if flatten_batches:
-        return list(itertools.chain(*test_batches))
-
-    return test_batches
+    if run_details.retry_summary:
+        all_results.extend(run_details.retry_summary.all_results)
+    return all_results
 
 
 # Update this magic number if you add an unexpected test to webkitpy.layout_tests.port.test
@@ -305,7 +297,7 @@ class MainTest(unittest.TestCase, StreamTestingMixin):
         self.assertTrue(passing_run())
 
     def test_batch_size(self):
-        batch_tests_run = get_tests_run(['--batch-size', '2'])
+        batch_tests_run = get_test_batches(['--batch-size', '2'])
         for batch in batch_tests_run:
             self.assertTrue(len(batch) <= 2, '%s had too many tests' % ', '.join(batch))
 
@@ -338,11 +330,11 @@ class MainTest(unittest.TestCase, StreamTestingMixin):
             self.assertTrue(any(['Running 1 ' in line for line in regular_output.buflist]))
 
     def test_dryrun(self):
-        batch_tests_run = get_tests_run(['--dry-run'])
-        self.assertEqual(batch_tests_run, [])
+        tests_run = get_tests_run(['--dry-run'])
+        self.assertEqual(tests_run, [])
 
-        batch_tests_run = get_tests_run(['-n'])
-        self.assertEqual(batch_tests_run, [])
+        tests_run = get_tests_run(['-n'])
+        self.assertEqual(tests_run, [])
 
     def test_exception_raised(self):
         # Exceptions raised by a worker are treated differently depending on
@@ -394,38 +386,38 @@ class MainTest(unittest.TestCase, StreamTestingMixin):
 
     def test_natural_order(self):
         tests_to_run = ['passes/audio.html', 'failures/expected/text.html', 'failures/expected/missing_text.html', 'passes/args.html']
-        tests_run = get_tests_run(['--order=natural'] + tests_to_run, tests_included=True, flatten_batches=True)
+        tests_run = get_tests_run(['--order=natural'] + tests_to_run)
         self.assertEqual(['failures/expected/missing_text.html', 'failures/expected/text.html', 'passes/args.html', 'passes/audio.html'], tests_run)
 
     def test_natural_order_test_specified_multiple_times(self):
         tests_to_run = ['passes/args.html', 'passes/audio.html', 'passes/audio.html', 'passes/args.html']
-        tests_run = get_tests_run(['--order=natural'] + tests_to_run, tests_included=True, flatten_batches=True)
+        tests_run = get_tests_run(['--order=natural'] + tests_to_run)
         self.assertEqual(['passes/args.html', 'passes/args.html', 'passes/audio.html', 'passes/audio.html'], tests_run)
 
     def test_random_order(self):
         tests_to_run = ['passes/audio.html', 'failures/expected/text.html', 'failures/expected/missing_text.html', 'passes/args.html']
-        tests_run = get_tests_run(['--order=random'] + tests_to_run, tests_included=True, flatten_batches=True)
+        tests_run = get_tests_run(['--order=random'] + tests_to_run)
         self.assertEqual(sorted(tests_to_run), sorted(tests_run))
 
     def test_random_order_test_specified_multiple_times(self):
         tests_to_run = ['passes/args.html', 'passes/audio.html', 'passes/audio.html', 'passes/args.html']
-        tests_run = get_tests_run(['--order=random'] + tests_to_run, tests_included=True, flatten_batches=True)
+        tests_run = get_tests_run(['--order=random'] + tests_to_run)
         self.assertEqual(tests_run.count('passes/audio.html'), 2)
         self.assertEqual(tests_run.count('passes/args.html'), 2)
 
     def test_no_order(self):
         tests_to_run = ['passes/audio.html', 'failures/expected/text.html', 'failures/expected/missing_text.html', 'passes/args.html']
-        tests_run = get_tests_run(['--order=none'] + tests_to_run, tests_included=True, flatten_batches=True)
+        tests_run = get_tests_run(['--order=none'] + tests_to_run)
         self.assertEqual(tests_to_run, tests_run)
 
     def test_no_order_test_specified_multiple_times(self):
         tests_to_run = ['passes/args.html', 'passes/audio.html', 'passes/audio.html', 'passes/args.html']
-        tests_run = get_tests_run(['--order=none'] + tests_to_run, tests_included=True, flatten_batches=True)
+        tests_run = get_tests_run(['--order=none'] + tests_to_run)
         self.assertEqual(tests_to_run, tests_run)
 
     def test_no_order_with_directory_entries_in_natural_order(self):
         tests_to_run = ['http/tests/ssl', 'perf/foo', 'http/tests/passes']
-        tests_run = get_tests_run(['--order=none'] + tests_to_run, tests_included=True, flatten_batches=True)
+        tests_run = get_tests_run(['--order=none'] + tests_to_run)
         self.assertEqual(tests_run, ['http/tests/ssl/text.html', 'perf/foo/test.html', 'http/tests/passes/image.html', 'http/tests/passes/text.html'])
 
     def test_gc_between_tests(self):
@@ -439,40 +431,38 @@ class MainTest(unittest.TestCase, StreamTestingMixin):
 
     def test_repeat_each(self):
         tests_to_run = ['passes/image.html', 'passes/text.html']
-        tests_run = get_tests_run(['--repeat-each', '2'] + tests_to_run, tests_included=True, flatten_batches=True)
+        tests_run = get_tests_run(['--repeat-each', '2'] + tests_to_run)
         self.assertEqual(tests_run, ['passes/image.html', 'passes/image.html', 'passes/text.html', 'passes/text.html'])
 
     def test_ignore_flag(self):
         # Note that passes/image.html is expected to be run since we specified it directly.
-        tests_run = get_tests_run(['-i', 'passes', 'passes/image.html'], flatten_batches=True, tests_included=True)
+        tests_run = get_tests_run(['-i', 'passes', 'passes/image.html'])
         self.assertFalse('passes/text.html' in tests_run)
         self.assertTrue('passes/image.html' in tests_run)
 
     def test_skipped_flag(self):
-        tests_run = get_tests_run(['passes'], tests_included=True, flatten_batches=True)
+        tests_run = get_tests_run(['passes'])
         self.assertFalse('passes/skipped/skip.html' in tests_run)
         num_tests_run_by_default = len(tests_run)
 
         # Check that nothing changes when we specify skipped=default.
-        self.assertEqual(len(get_tests_run(['--skipped=default', 'passes'], tests_included=True, flatten_batches=True)),
+        self.assertEqual(len(get_tests_run(['--skipped=default', 'passes'])),
                           num_tests_run_by_default)
 
         # Now check that we run one more test (the skipped one).
-        tests_run = get_tests_run(['--skipped=ignore', 'passes'], tests_included=True, flatten_batches=True)
+        tests_run = get_tests_run(['--skipped=ignore', 'passes'])
         self.assertTrue('passes/skipped/skip.html' in tests_run)
         self.assertEqual(len(tests_run), num_tests_run_by_default + 1)
 
         # Now check that we only run the skipped test.
-        self.assertEqual(get_tests_run(['--skipped=only', 'passes'], tests_included=True, flatten_batches=True),
-                          ['passes/skipped/skip.html'])
+        self.assertEqual(get_tests_run(['--skipped=only', 'passes']), ['passes/skipped/skip.html'])
 
         # Now check that we don't run anything.
-        self.assertEqual(get_tests_run(['--skipped=always', 'passes/skipped/skip.html'], tests_included=True, flatten_batches=True),
-                          [])
+        self.assertEqual(get_tests_run(['--skipped=always', 'passes/skipped/skip.html']), [])
 
     def test_iterations(self):
         tests_to_run = ['passes/image.html', 'passes/text.html']
-        tests_run = get_tests_run(['--iterations', '2'] + tests_to_run, tests_included=True, flatten_batches=True)
+        tests_run = get_tests_run(['--iterations', '2'] + tests_to_run)
         self.assertEqual(tests_run, ['passes/image.html', 'passes/text.html', 'passes/image.html', 'passes/text.html'])
 
     def test_repeat_each_iterations_num_tests(self):
@@ -486,13 +476,13 @@ class MainTest(unittest.TestCase, StreamTestingMixin):
 
     def test_run_chunk(self):
         # Test that we actually select the right chunk
-        all_tests_run = get_tests_run(flatten_batches=True)
-        chunk_tests_run = get_tests_run(['--run-chunk', '1:4'], flatten_batches=True)
+        all_tests_run = get_tests_run(['passes', 'failures'])
+        chunk_tests_run = get_tests_run(['--run-chunk', '1:4', 'passes', 'failures'])
         self.assertEqual(all_tests_run[4:8], chunk_tests_run)
 
         # Test that we wrap around if the number of tests is not evenly divisible by the chunk size
         tests_to_run = ['passes/error.html', 'passes/image.html', 'passes/platform_image.html', 'passes/text.html']
-        chunk_tests_run = get_tests_run(['--run-chunk', '1:3'] + tests_to_run, tests_included=True, flatten_batches=True)
+        chunk_tests_run = get_tests_run(['--run-chunk', '1:3'] + tests_to_run)
         self.assertEqual(['passes/text.html', 'passes/error.html', 'passes/image.html'], chunk_tests_run)
 
     def test_run_force(self):
@@ -504,17 +494,17 @@ class MainTest(unittest.TestCase, StreamTestingMixin):
     def test_run_part(self):
         # Test that we actually select the right part
         tests_to_run = ['passes/error.html', 'passes/image.html', 'passes/platform_image.html', 'passes/text.html']
-        tests_run = get_tests_run(['--run-part', '1:2'] + tests_to_run, tests_included=True, flatten_batches=True)
+        tests_run = get_tests_run(['--run-part', '1:2'] + tests_to_run)
         self.assertEqual(['passes/error.html', 'passes/image.html'], tests_run)
 
         # Test that we wrap around if the number of tests is not evenly divisible by the chunk size
         # (here we end up with 3 parts, each with 2 tests, and we only have 4 tests total, so the
         # last part repeats the first two tests).
-        chunk_tests_run = get_tests_run(['--run-part', '3:3'] + tests_to_run, tests_included=True, flatten_batches=True)
+        chunk_tests_run = get_tests_run(['--run-part', '3:3'] + tests_to_run)
         self.assertEqual(['passes/error.html', 'passes/image.html'], chunk_tests_run)
 
     def test_run_singly(self):
-        batch_tests_run = get_tests_run(['--run-singly'])
+        batch_tests_run = get_test_batches(['--run-singly'])
         for batch in batch_tests_run:
             self.assertEqual(len(batch), 1, '%s had too many tests' % ', '.join(batch))
 
@@ -524,7 +514,7 @@ class MainTest(unittest.TestCase, StreamTestingMixin):
         host = MockHost()
         host.filesystem.write_text_file('/tmp/overrides.txt', 'Bug(x) passes/image.html [ ImageOnlyFailure Pass ]\n')
 
-        batches = get_tests_run(['--skip-failing-tests', '--additional-expectations', '/tmp/overrides.txt'], host=host)
+        batches = get_test_batches(['--skip-failing-tests', '--additional-expectations', '/tmp/overrides.txt'], host=host)
         has_passes_text = False
         for batch in batches:
             self.assertFalse('failures/expected/text.html' in batch)
@@ -537,19 +527,15 @@ class MainTest(unittest.TestCase, StreamTestingMixin):
         self.assertEqual(res, unexpected_failures)
 
     def test_single_file(self):
-        # FIXME: We should consider replacing more of the get_tests_run()-style tests
-        # with tests that read the tests_run* files, like this one.
-        host = MockHost()
-        tests_run = passing_run(['passes/text.html'], tests_included=True, host=host)
-        self.assertEqual(host.filesystem.read_text_file('/tmp/layout-test-results/tests_run0.txt'),
-                          'passes/text.html\n')
+        tests_run = get_tests_run(['passes/text.html'])
+        self.assertEqual(tests_run, ['passes/text.html'])
 
     def test_single_file_with_prefix(self):
-        tests_run = get_tests_run(['LayoutTests/passes/text.html'], tests_included=True, flatten_batches=True)
+        tests_run = get_tests_run(['LayoutTests/passes/text.html'])
         self.assertEqual(['passes/text.html'], tests_run)
 
     def test_single_skipped_file(self):
-        tests_run = get_tests_run(['failures/expected/keybaord.html'], tests_included=True, flatten_batches=True)
+        tests_run = get_tests_run(['failures/expected/keybaord.html'])
         self.assertEqual([], tests_run)
 
     def test_stderr_is_saved(self):
@@ -562,7 +548,7 @@ class MainTest(unittest.TestCase, StreamTestingMixin):
         host = MockHost()
         filename = '/tmp/foo.txt'
         host.filesystem.write_text_file(filename, 'passes/text.html')
-        tests_run = get_tests_run(['--test-list=%s' % filename], tests_included=True, flatten_batches=True, host=host)
+        tests_run = get_tests_run(['--test-list=%s' % filename], host=host)
         self.assertEqual(['passes/text.html'], tests_run)
         host.filesystem.remove(filename)
         res, err, user = logging_run(['--test-list=%s' % filename], tests_included=True, host=host)
@@ -573,7 +559,7 @@ class MainTest(unittest.TestCase, StreamTestingMixin):
         host = MockHost()
         filename = '/tmp/foo.txt'
         host.filesystem.write_text_file(filename, 'LayoutTests/passes/text.html')
-        tests_run = get_tests_run(['--test-list=%s' % filename], tests_included=True, flatten_batches=True, host=host)
+        tests_run = get_tests_run(['--test-list=%s' % filename], host=host)
         self.assertEqual(['passes/text.html'], tests_run)
 
     def test_unexpected_failures(self):
@@ -692,54 +678,24 @@ class MainTest(unittest.TestCase, StreamTestingMixin):
 
     def test_exit_after_n_failures(self):
         # Unexpected failures should result in tests stopping.
-        tests_run = get_tests_run([
-                'failures/unexpected/text-image-checksum.html',
-                'passes/text.html',
-                '--exit-after-n-failures', '1',
-            ],
-            tests_included=True,
-            flatten_batches=True)
+        tests_run = get_tests_run(['failures/unexpected/text-image-checksum.html', 'passes/text.html', '--exit-after-n-failures', '1'])
         self.assertEqual(['failures/unexpected/text-image-checksum.html'], tests_run)
 
         # But we'll keep going for expected ones.
-        tests_run = get_tests_run([
-                'failures/expected/text.html',
-                'passes/text.html',
-                '--exit-after-n-failures', '1',
-            ],
-            tests_included=True,
-            flatten_batches=True)
+        tests_run = get_tests_run(['failures/expected/text.html', 'passes/text.html', '--exit-after-n-failures', '1'])
         self.assertEqual(['failures/expected/text.html', 'passes/text.html'], tests_run)
 
     def test_exit_after_n_crashes(self):
         # Unexpected crashes should result in tests stopping.
-        tests_run = get_tests_run([
-                'failures/unexpected/crash.html',
-                'passes/text.html',
-                '--exit-after-n-crashes-or-timeouts', '1',
-            ],
-            tests_included=True,
-            flatten_batches=True)
+        tests_run = get_tests_run(['failures/unexpected/crash.html', 'passes/text.html', '--exit-after-n-crashes-or-timeouts', '1'])
         self.assertEqual(['failures/unexpected/crash.html'], tests_run)
 
         # Same with timeouts.
-        tests_run = get_tests_run([
-                'failures/unexpected/timeout.html',
-                'passes/text.html',
-                '--exit-after-n-crashes-or-timeouts', '1',
-            ],
-            tests_included=True,
-            flatten_batches=True)
+        tests_run = get_tests_run(['failures/unexpected/timeout.html', 'passes/text.html', '--exit-after-n-crashes-or-timeouts', '1'])
         self.assertEqual(['failures/unexpected/timeout.html'], tests_run)
 
         # But we'll keep going for expected ones.
-        tests_run = get_tests_run([
-                'failures/expected/crash.html',
-                'passes/text.html',
-                '--exit-after-n-crashes-or-timeouts', '1',
-            ],
-            tests_included=True,
-            flatten_batches=True)
+        tests_run = get_tests_run(['failures/expected/crash.html', 'passes/text.html', '--exit-after-n-crashes-or-timeouts', '1'])
         self.assertEqual(['failures/expected/crash.html', 'passes/text.html'], tests_run)
 
     def test_results_directory_absolute(self):
@@ -791,10 +747,10 @@ class MainTest(unittest.TestCase, StreamTestingMixin):
         # These next tests test that we run the tests in ascending alphabetical
         # order per directory. HTTP tests are sharded separately from other tests,
         # so we have to test both.
-        tests_run = get_tests_run(['-i', 'passes/passes', 'passes'], tests_included=True, flatten_batches=True)
+        tests_run = get_tests_run(['-i', 'passes/passes', 'passes'])
         self.assertEqual(tests_run, sorted(tests_run))
 
-        tests_run = get_tests_run(['http/tests/passes'], tests_included=True, flatten_batches=True)
+        tests_run = get_tests_run(['http/tests/passes'])
         self.assertEqual(tests_run, sorted(tests_run))
 
     def test_tolerance(self):
@@ -829,30 +785,30 @@ class MainTest(unittest.TestCase, StreamTestingMixin):
                                      'virtual/passes/text.html', 'virtual/passes/args.html']))
 
     def test_reftest_run(self):
-        tests_run = get_tests_run(['passes/reftest.html'], tests_included=True, flatten_batches=True)
+        tests_run = get_tests_run(['passes/reftest.html'])
         self.assertEqual(['passes/reftest.html'], tests_run)
 
     def test_reftest_run_reftests_if_pixel_tests_are_disabled(self):
-        tests_run = get_tests_run(['--no-pixel-tests', 'passes/reftest.html'], tests_included=True, flatten_batches=True)
+        tests_run = get_tests_run(['--no-pixel-tests', 'passes/reftest.html'])
         self.assertEqual(['passes/reftest.html'], tests_run)
 
     def test_reftest_skip_reftests_if_no_ref_tests(self):
-        tests_run = get_tests_run(['--no-ref-tests', 'passes/reftest.html'], tests_included=True, flatten_batches=True)
+        tests_run = get_tests_run(['--no-ref-tests', 'passes/reftest.html'])
         self.assertEqual([], tests_run)
-        tests_run = get_tests_run(['--no-ref-tests', '--no-pixel-tests', 'passes/reftest.html'], tests_included=True, flatten_batches=True)
+        tests_run = get_tests_run(['--no-ref-tests', '--no-pixel-tests', 'passes/reftest.html'])
         self.assertEqual([], tests_run)
 
     def test_reftest_expected_html_should_be_ignored(self):
-        tests_run = get_tests_run(['passes/reftest-expected.html'], tests_included=True, flatten_batches=True)
+        tests_run = get_tests_run(['passes/reftest-expected.html'])
         self.assertEqual([], tests_run)
 
     def test_reftest_driver_should_run_expected_html(self):
-        tests_run = get_tests_run(['passes/reftest.html'], tests_included=True, flatten_batches=True, include_reference_html=True)
-        self.assertEqual(['passes/reftest.html', 'passes/reftest-expected.html'], tests_run)
+        tests_run = get_test_results(['passes/reftest.html'])
+        self.assertEqual(tests_run[0].references, ['passes/reftest-expected.html'])
 
     def test_reftest_driver_should_run_expected_mismatch_html(self):
-        tests_run = get_tests_run(['passes/mismatch.html'], tests_included=True, flatten_batches=True, include_reference_html=True)
-        self.assertEqual(['passes/mismatch.html', 'passes/mismatch-expected-mismatch.html'], tests_run)
+        tests_run = get_test_results(['passes/mismatch.html'])
+        self.assertEqual(tests_run[0].references, ['passes/mismatch-expected-mismatch.html'])
 
     def test_reftest_should_not_use_naming_convention_if_not_listed_in_reftestlist(self):
         host = MockHost()
@@ -885,20 +841,20 @@ class MainTest(unittest.TestCase, StreamTestingMixin):
         return [test for test in tests if type in test]
 
     def test_no_http_tests(self):
-        batch_tests_dryrun = get_tests_run(['LayoutTests/http', 'websocket/'], flatten_batches=True)
+        batch_tests_dryrun = get_tests_run(['LayoutTests/http', 'websocket/'])
         self.assertTrue(MainTest.has_test_of_type(batch_tests_dryrun, 'http'))
         self.assertTrue(MainTest.has_test_of_type(batch_tests_dryrun, 'websocket'))
 
-        batch_tests_run_no_http = get_tests_run(['--no-http', 'LayoutTests/http', 'websocket/'], flatten_batches=True)
+        batch_tests_run_no_http = get_tests_run(['--no-http', 'LayoutTests/http', 'websocket/'])
         self.assertFalse(MainTest.has_test_of_type(batch_tests_run_no_http, 'http'))
         self.assertFalse(MainTest.has_test_of_type(batch_tests_run_no_http, 'websocket'))
 
-        batch_tests_run_http = get_tests_run(['--http', 'LayoutTests/http', 'websocket/'], flatten_batches=True)
+        batch_tests_run_http = get_tests_run(['--http', 'LayoutTests/http', 'websocket/'])
         self.assertTrue(MainTest.has_test_of_type(batch_tests_run_http, 'http'))
         self.assertTrue(MainTest.has_test_of_type(batch_tests_run_http, 'websocket'))
 
     def test_platform_tests_are_found(self):
-        tests_run = get_tests_run(['--platform', 'test-mac-leopard', 'http'], tests_included=True, flatten_batches=True)
+        tests_run = get_tests_run(['--platform', 'test-mac-leopard', 'http'])
         self.assertTrue('platform/test-mac-leopard/http/test.html' in tests_run)
         self.assertFalse('platform/test-win-win7/http/test.html' in tests_run)
 
