@@ -1,3 +1,16 @@
+2012-12-06  Emil A Eklund  <eae@chromium.org>
+
+        Unreviewed chromium rebaseline for r136885.
+
+        * platform/chromium-mac-lion/compositing/geometry/fixed-position-composited-page-scale-down-expected.png:
+        * platform/chromium-mac-lion/platform/chromium/virtual/softwarecompositing/geometry/fixed-position-composited-page-scale-down-expected.png: Added.
+        * platform/chromium-mac-snowleopard/compositing/geometry/fixed-position-composited-page-scale-down-expected.png:
+        * platform/chromium-mac-snowleopard/platform/chromium/virtual/softwarecompositing/geometry/fixed-position-composited-page-scale-down-expected.png: Added.
+        * platform/chromium-mac/compositing/geometry/fixed-position-composited-page-scale-down-expected.png:
+        * platform/chromium-mac/platform/chromium/virtual/softwarecompositing/geometry/fixed-position-composited-page-scale-down-expected.png: Added.
+        * platform/efl-wk1/compositing/geometry/fixed-position-composited-page-scale-down-expected.png: Added.
+        * platform/efl/compositing/geometry/fixed-position-composited-page-scale-down-expected.png: Removed.
+
 2012-12-06  Jochen Eisinger  <jochen@chromium.org>
 
         [chromium] when forwarding events through the WebPluginContainer, create a UserGestureIndicator if processing a user gesture
