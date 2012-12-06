@@ -1,3 +1,20 @@
+2012-12-05  David Grogan  <dgrogan@chromium.org>
+
+        IndexedDB: Abort transactions because of leveldb errors part 3
+        https://bugs.webkit.org/show_bug.cgi?id=103960
+
+        Reviewed by Tony Chang.
+
+        Transactions are aborted when there are leveldb problems creating
+        indexes on an object store with existing data or when adding data to an
+        objectstore that has indexes.
+
+        * Modules/indexeddb/IDBObjectStoreBackendImpl.cpp:
+        (WebCore):
+        (WebCore::makeIndexWriters):
+        (WebCore::IDBObjectStoreBackendImpl::setIndexKeys):
+        (WebCore::IDBObjectStoreBackendImpl::ObjectStoreStorageOperation::perform):
+
 2012-12-05  Simon Fraser  <simon.fraser@apple.com>
 
         Fix some repaint/paintCounter confusion, and reset it when getting layers out of the layer pool

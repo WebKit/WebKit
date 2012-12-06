@@ -357,18 +357,22 @@ public:
     { }
 
     bool verifyIndexKeys(IDBBackingStore& backingStore, IDBBackingStore::Transaction* transaction,
-                         int64_t databaseId, int64_t objectStoreId, int64_t indexId,
-                         const IDBKey* primaryKey = 0, String* errorMessage = 0)
+        int64_t databaseId, int64_t objectStoreId, int64_t indexId, bool& canAddKeys,
+        const IDBKey* primaryKey = 0, String* errorMessage = 0) WARN_UNUSED_RETURN
     {
+        canAddKeys = false;
         for (size_t i = 0; i < m_indexKeys.size(); ++i) {
-            if (!addingKeyAllowed(backingStore, transaction, databaseId, objectStoreId, indexId,
-                                  (m_indexKeys)[i].get(), primaryKey)) {
+            bool ok = addingKeyAllowed(backingStore, transaction, databaseId, objectStoreId, indexId, (m_indexKeys)[i].get(), primaryKey, canAddKeys);
+            if (!ok)
+                return false;
+            if (!canAddKeys) {
                 if (errorMessage)
                     *errorMessage = String::format("Unable to add key to index '%s': at least one key does not satisfy the uniqueness requirements.",
                                                    m_indexMetadata.name.utf8().data());
-                return false;
+                return true;
             }
         }
+        canAddKeys = true;
         return true;
     }
 
@@ -383,22 +387,23 @@ public:
 private:
 
     bool addingKeyAllowed(IDBBackingStore& backingStore, IDBBackingStore::Transaction* transaction,
-                          int64_t databaseId, int64_t objectStoreId, int64_t indexId,
-                          const IDBKey* indexKey, const IDBKey* primaryKey) const
+        int64_t databaseId, int64_t objectStoreId, int64_t indexId,
+        const IDBKey* indexKey, const IDBKey* primaryKey, bool& allowed) const WARN_UNUSED_RETURN
     {
-        if (!m_indexMetadata.unique)
+        allowed = false;
+        if (!m_indexMetadata.unique) {
+            allowed = true;
             return true;
+        }
 
         RefPtr<IDBKey> foundPrimaryKey;
         bool found = false;
         bool ok = backingStore.keyExistsInIndex(transaction, databaseId, objectStoreId, indexId, *indexKey, foundPrimaryKey, found);
-        // FIXME: Propagate this error up to script.
-        ASSERT_UNUSED(ok, ok);
-        if (!found)
-            return true;
-        if (primaryKey && foundPrimaryKey->isEqual(primaryKey))
-            return true;
-        return false;
+        if (!ok)
+            return false;
+        if (!found || (primaryKey && foundPrimaryKey->isEqual(primaryKey)))
+            allowed = true;
+        return true;
     }
 
     const IDBIndexMetadata m_indexMetadata;
@@ -406,9 +411,10 @@ private:
 };
 }
 
-static bool makeIndexWriters(PassRefPtr<IDBTransactionBackendImpl> transaction, IDBObjectStoreBackendImpl* objectStore, PassRefPtr<IDBKey> primaryKey, bool keyWasGenerated, const Vector<int64_t>& indexIds, const Vector<IDBObjectStoreBackendInterface::IndexKeys>& indexKeys, Vector<OwnPtr<IndexWriter> >* indexWriters, String* errorMessage)
+WARN_UNUSED_RETURN static bool makeIndexWriters(PassRefPtr<IDBTransactionBackendImpl> transaction, IDBObjectStoreBackendImpl* objectStore, PassRefPtr<IDBKey> primaryKey, bool keyWasGenerated, const Vector<int64_t>& indexIds, const Vector<IDBObjectStoreBackendInterface::IndexKeys>& indexKeys, Vector<OwnPtr<IndexWriter> >* indexWriters, String* errorMessage, bool& completed)
 {
     ASSERT(indexIds.size() == indexKeys.size());
+    completed = false;
 
     HashMap<int64_t, IDBObjectStoreBackendInterface::IndexKeys> indexKeyMap;
     for (size_t i = 0; i < indexIds.size(); ++i)
@@ -427,17 +433,19 @@ static bool makeIndexWriters(PassRefPtr<IDBTransactionBackendImpl> transaction, 
         }
 
         OwnPtr<IndexWriter> indexWriter(adoptPtr(new IndexWriter(index->metadata(), keys)));
-        if (!indexWriter->verifyIndexKeys(*objectStore->backingStore(),
-                                          transaction->backingStoreTransaction(),
-                                          objectStore->databaseId(),
-                                          objectStore->id(),
-                                          index->id(), primaryKey.get(), errorMessage)) {
+        bool canAddKeys = false;
+        bool backingStoreSuccess = indexWriter->verifyIndexKeys(*objectStore->backingStore(),
+            transaction->backingStoreTransaction(), objectStore->databaseId(),
+            objectStore->id(), index->id(), canAddKeys, primaryKey.get(), errorMessage);
+        if (!backingStoreSuccess)
             return false;
-        }
+        if (!canAddKeys)
+            return true;
 
         indexWriters->append(indexWriter.release());
     }
 
+    completed = true;
     return true;
 }
 
@@ -465,7 +473,13 @@ void IDBObjectStoreBackendImpl::setIndexKeys(PassRefPtr<IDBKey> prpPrimaryKey, c
 
     Vector<OwnPtr<IndexWriter> > indexWriters;
     String errorMessage;
-    if (!makeIndexWriters(transaction, this, primaryKey, false, indexIds, indexKeys, &indexWriters, &errorMessage)) {
+    bool obeysConstraints = false;
+    bool backingStoreSuccess = makeIndexWriters(transaction, this, primaryKey, false, indexIds, indexKeys, &indexWriters, &errorMessage, obeysConstraints);
+    if (!backingStoreSuccess) {
+        transaction->abort(IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Internal error: backing store error updating index keys."));
+        return;
+    }
+    if (!obeysConstraints) {
         // FIXME: Need to deal with errorMessage here. makeIndexWriters only fails on uniqueness constraint errors.
         transaction->abort(IDBDatabaseError::create(IDBDatabaseException::ConstraintError, "Duplicate index keys exist in the object store."));
         return;
@@ -533,7 +547,13 @@ void IDBObjectStoreBackendImpl::ObjectStoreStorageOperation::perform(IDBTransact
 
     Vector<OwnPtr<IndexWriter> > indexWriters;
     String errorMessage;
-    if (!makeIndexWriters(transaction, m_objectStore.get(), m_key, keyWasGenerated, *m_popIndexIds, *m_popIndexKeys, &indexWriters, &errorMessage)) {
+    bool obeysConstraints = false;
+    bool backingStoreSuccess = makeIndexWriters(transaction, m_objectStore.get(), m_key, keyWasGenerated, *m_popIndexIds, *m_popIndexKeys, &indexWriters, &errorMessage, obeysConstraints);
+    if (!backingStoreSuccess) {
+        m_callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Internal error: backing store error updating index keys."));
+        return;
+    }
+    if (!obeysConstraints) {
         m_callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::ConstraintError, errorMessage));
         return;
     }
