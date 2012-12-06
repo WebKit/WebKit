@@ -2812,12 +2812,6 @@ webkit.org/b/61169 [ Android Linux Win ] css3/images/optimize-contrast-image.htm
 
 webkit.org/b/98906 platform/chromium/fast/forms/suggestion-picker/date-suggestion-picker-mouse-operations.html [ Pass Failure ]
 
-# Needs rebaseline
-webkit.org/b/103852 platform/chromium/fast/forms/suggestion-picker/time-suggestion-picker-appearance-rtl.html [ Pass ImageOnlyFailure ]
-webkit.org/b/103852 platform/chromium/fast/forms/suggestion-picker/datetime-suggestion-picker-appearance-locale-hebrew.html [ Pass ImageOnlyFailure Missing ]
-webkit.org/b/103852 platform/chromium/fast/forms/suggestion-picker/datetimelocal-suggestion-picker-appearance-locale-hebrew.html [ Pass ImageOnlyFailure Missing ]
-webkit.org/b/103852 platform/chromium/fast/forms/suggestion-picker/time-suggestion-picker-appearance-locale-hebrew.html [ Pass ImageOnlyFailure Missing ]
-
 # New test added in r87324
 crbug.com/83994 [ Win ] platform/win/plugins/call-javascript-that-destroys-plugin.html [ Failure ]
 
@@ -2835,21 +2829,6 @@ webkit.org/b/103869 fast/forms/time/time-appearance-basic.html [ ImageOnlyFailur
 webkit.org/b/103869 fast/forms/time/time-appearance-pseudo-elements.html [ ImageOnlyFailure ]
 webkit.org/b/103869 fast/forms/week/week-appearance-basic.html [ ImageOnlyFailure ]
 webkit.org/b/103869 fast/forms/week/week-appearance-pseudo-elements.html [ ImageOnlyFailure ]
-webkit.org/b/103869 platform/chromium/fast/forms/suggestion-picker/date-suggestion-picker-appearance-rtl.html [ ImageOnlyFailure ]
-webkit.org/b/103869 platform/chromium/fast/forms/suggestion-picker/date-suggestion-picker-appearance-with-scroll-bar.html [ ImageOnlyFailure ]
-webkit.org/b/103869 platform/chromium/fast/forms/suggestion-picker/date-suggestion-picker-appearance.html [ ImageOnlyFailure ]
-webkit.org/b/103869 platform/chromium/fast/forms/suggestion-picker/datetime-suggestion-picker-appearance-rtl.html [ ImageOnlyFailure ]
-webkit.org/b/103869 platform/chromium/fast/forms/suggestion-picker/datetime-suggestion-picker-appearance-with-scroll-bar.html [ ImageOnlyFailure ]
-webkit.org/b/103869 platform/chromium/fast/forms/suggestion-picker/datetime-suggestion-picker-appearance.html [ ImageOnlyFailure ]
-webkit.org/b/103869 platform/chromium/fast/forms/suggestion-picker/datetimelocal-suggestion-picker-appearance-rtl.html [ ImageOnlyFailure ]
-webkit.org/b/103869 platform/chromium/fast/forms/suggestion-picker/datetimelocal-suggestion-picker-appearance-with-scroll-bar.html [ ImageOnlyFailure ]
-webkit.org/b/103869 platform/chromium/fast/forms/suggestion-picker/datetimelocal-suggestion-picker-appearance.html [ ImageOnlyFailure ]
-webkit.org/b/103869 platform/chromium/fast/forms/suggestion-picker/month-suggestion-picker-appearance-rtl.html [ ImageOnlyFailure ]
-webkit.org/b/103869 platform/chromium/fast/forms/suggestion-picker/month-suggestion-picker-appearance-with-scroll-bar.html [ ImageOnlyFailure ]
-webkit.org/b/103869 platform/chromium/fast/forms/suggestion-picker/month-suggestion-picker-appearance.html [ ImageOnlyFailure ]
-webkit.org/b/103869 platform/chromium/fast/forms/suggestion-picker/week-suggestion-picker-appearance-rtl.html [ ImageOnlyFailure ]
-webkit.org/b/103869 platform/chromium/fast/forms/suggestion-picker/week-suggestion-picker-appearance-with-scroll-bar.html [ ImageOnlyFailure ]
-webkit.org/b/103869 platform/chromium/fast/forms/suggestion-picker/week-suggestion-picker-appearance.html [ ImageOnlyFailure ]
 
 #new test added. Still fails on chrome
 webkit.org/b/98315 css3/compositing/blend-mode-property.html [ Failure ]
