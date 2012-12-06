@@ -57,6 +57,8 @@ PassRefPtr<HTMLTemplateElement> HTMLTemplateElement::create(const QualifiedName&
     return adoptRef(new HTMLTemplateElement(tagName, document));
 }
 
+// FIXME: https://www.w3.org/Bugs/Public/show_bug.cgi?id=20127 (prevent DOM hierarchy cycles).
+// FIXME: https://www.w3.org/Bugs/Public/show_bug.cgi?id=20129 (extended adoptNode to consider template.content).
 DocumentFragment* HTMLTemplateElement::content() const
 {
     if (!m_content)
@@ -65,24 +67,15 @@ DocumentFragment* HTMLTemplateElement::content() const
     return m_content.get();
 }
 
-// FIXME: https://www.w3.org/Bugs/Public/show_bug.cgi?id=20127 (prevent DOM hierarchy cycles).
-// FIXME: https://www.w3.org/Bugs/Public/show_bug.cgi?id=20129 (extended adoptNode to consider template.content).
-void HTMLTemplateElement::setContent(PassRefPtr<DocumentFragment> prpContent, ExceptionCode& ec)
+PassRefPtr<Node> HTMLTemplateElement::cloneNode(bool deep)
 {
-    RefPtr<DocumentFragment> content = prpContent;
+    if (!deep)
+        return cloneElementWithoutChildren();
 
-    if (!content || content->isShadowRoot()) {
-        ec = TYPE_MISMATCH_ERR;
-        return;
-    }
-
-    if (m_content.get() == content.get())
-        return;
-
-    if (content->ownerDocument() != ownerDocument()->templateContentsOwnerDocument())
-        ownerDocument()->templateContentsOwnerDocument()->adoptNode(content, ASSERT_NO_EXCEPTION);
-
-    m_content = content;
+    RefPtr<Node> clone = cloneElementWithChildren();
+    if (m_content)
+        content()->cloneChildNodes(toHTMLTemplateElement(clone.get())->content());
+    return clone.release();
 }
 
 #ifndef NDEBUG

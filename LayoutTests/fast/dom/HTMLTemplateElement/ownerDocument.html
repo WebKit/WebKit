@@ -13,6 +13,11 @@ if (!window.HTMLTemplateElement)
 var template = document.getElementById('template');
 shouldBe('template.ownerDocument', 'document');
 
+var content = template.content;
+var df = document.createDocumentFragment();
+template.content = df;
+shouldBe('template.content', 'content');
+
 var templateContentOwnerDocument = template.content.ownerDocument;
 shouldBeTrue('templateContentOwnerDocument instanceof HTMLDocument');
 shouldNotBe('document', 'templateContentOwnerDocument');
@@ -27,23 +32,7 @@ var template2 = document.getElementById('template2');
 shouldBe('template2.ownerDocument', 'document');
 shouldBe('template2.content.ownerDocument', 'templateContentOwnerDocument');
 
-var df = document.createDocumentFragment();
-var span = df.appendChild(document.createElement('span'));
-shouldBe('df.ownerDocument', 'document');
-shouldBe('span.ownerDocument', 'document');
-
-template.content = df;
-shouldBe('df.ownerDocument', 'templateContentOwnerDocument');
-shouldBe('span.ownerDocument', 'templateContentOwnerDocument');
-
-shouldThrow('template.content = document.createElement("span");');
-shouldThrow('template.content = document.createTextNode("text");');
-if (window.WebKitShadowRoot) {
-    var div = document.createElement('div');
-    shouldThrow('template.content = new WebKitShadowRoot(div)');
-}
-
-var template3 = document.getElementById('template2');
+var template3 = document.getElementById('template3');
 shouldBe('template3.ownerDocument', 'document');
 shouldBe('template3.content.ownerDocument', 'templateContentOwnerDocument');
 shouldBe('template3.content.firstChild.ownerDocument', 'templateContentOwnerDocument');

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<template id="template"><span></span></template>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script>
+description('Test HTMLTemplateElement content node wrappers have the correct lifetime.');
+
+if (!window.HTMLTemplateElement)
+    testFailed('This test requires ENABLE(TEMPLATE_TAG)');
+
+var template = document.getElementById('template');
+var span = template.content.firstChild;
+shouldBe('span.tagName', '"SPAN"');
+
+span.expando = 'present';
+shouldBe('span.expando', '"present"');
+
+span = undefined;
+gc();
+span = template.content.firstChild;
+shouldBe('span.tagName', '"SPAN"');
+shouldBe('span.expando', '"present"');
+</script>
+<script src="../../js/resources/js-test-post.js"></script>

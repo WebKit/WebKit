@@ -1021,10 +1021,11 @@ END
     # Special case for readonly or Replaceable attributes (with a few exceptions). This attempts to ensure that JS wrappers don't get
     # garbage-collected prematurely when their lifetime is strongly tied to their owner. We accomplish this by inserting a reference to
     # the newly created wrapper into an internal field of the holder object.
-    if (!$codeGenerator->IsSubType($interface, "Node") && $attrName ne "self" && IsWrapperType($returnType) && (IsReadonly($attribute) || $attribute->signature->extendedAttributes->{"Replaceable"} || $attrName eq "location")
-        && $returnType ne "EventTarget" && $returnType ne "SerializedScriptValue" && $returnType ne "DOMWindow" 
-        && $returnType ne "MessagePortArray"
-        && $returnType !~ /SVG/ && $returnType !~ /HTML/ && !IsDOMNodeType($returnType)) {
+    if ((!$codeGenerator->IsSubType($interface, "Node") && $attrName ne "self" && IsWrapperType($returnType) && (IsReadonly($attribute) || $attribute->signature->extendedAttributes->{"Replaceable"} || $attrName eq "location")
+         && $returnType ne "EventTarget" && $returnType ne "SerializedScriptValue" && $returnType ne "DOMWindow"
+         && $returnType ne "MessagePortArray"
+         && $returnType !~ /SVG/ && $returnType !~ /HTML/ && !IsDOMNodeType($returnType))
+        || $attribute->signature->extendedAttributes->{"V8CacheAttributeForGC"}) {
 
         my $arrayType = $codeGenerator->GetArrayType($returnType);
         if ($arrayType) {

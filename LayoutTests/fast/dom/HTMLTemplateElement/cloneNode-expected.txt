@@ -4,5 +4,10 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 PASS template.content.childNodes.length is 1
-PASS clone.content.childNodes.length is 0
+PASS clone.content.childNodes.length is 1
+PASS clone.outerHTML is template.outerHTML
+PASS clone.content.firstChild is not template.content.firstChild
+PASS clone.content is not template.content
+PASS clone.firstChild.tagName is "DIV"
+PASS clone.firstChild is not div
 

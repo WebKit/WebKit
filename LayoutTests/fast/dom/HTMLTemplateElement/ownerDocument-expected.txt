@@ -4,6 +4,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 PASS template.ownerDocument is document
+PASS template.content is content
 PASS templateContentOwnerDocument instanceof HTMLDocument is true
 PASS document is not templateContentOwnerDocument
 PASS template.content.firstChild.ownerDocument is templateContentOwnerDocument
@@ -12,13 +13,6 @@ PASS innerTemplate.content.ownerDocument is templateContentOwnerDocument
 PASS innerTemplate.ownerDocument instanceof HTMLDocument is true
 PASS template2.ownerDocument is document
 PASS template2.content.ownerDocument is templateContentOwnerDocument
-PASS df.ownerDocument is document
-PASS span.ownerDocument is document
-PASS df.ownerDocument is templateContentOwnerDocument
-PASS span.ownerDocument is templateContentOwnerDocument
-PASS template.content = document.createElement("span"); threw exception Error: TypeMismatchError: DOM Exception 17.
-PASS template.content = document.createTextNode("text"); threw exception Error: TypeMismatchError: DOM Exception 17.
-PASS template.content = new WebKitShadowRoot(div) threw exception Error: TypeMismatchError: DOM Exception 17.
 PASS template3.ownerDocument is document
 PASS template3.content.ownerDocument is templateContentOwnerDocument
 PASS template3.content.firstChild.ownerDocument is templateContentOwnerDocument

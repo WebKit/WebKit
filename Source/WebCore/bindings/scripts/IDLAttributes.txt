@@ -108,6 +108,7 @@ TreatReturnedNullStringAs=Null|Undefined
 TreatUndefinedAs=NullString
 TypedArray=*
 URL
+V8CacheAttributeForGC
 V8Custom
 V8CustomConstructor
 V8CustomGetter

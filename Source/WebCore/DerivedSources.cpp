@@ -38,7 +38,7 @@
 #include "JSCanvasPattern.cpp"
 #include "JSCanvasRenderingContext.cpp"
 #include "JSCanvasRenderingContext2D.cpp"
-#if ENABLE(WEBGL)    
+#if ENABLE(WEBGL)
 #include "JSWebGLRenderingContext.cpp"
 #endif
 #include "JSCDATASection.cpp"
@@ -211,6 +211,9 @@
 #include "JSHTMLTableElement.cpp"
 #include "JSHTMLTableRowElement.cpp"
 #include "JSHTMLTableSectionElement.cpp"
+#if ENABLE(TEMPLATE_ELEMENT)
+#include "JSHTMLTemplateElement.cpp"
+#endif
 #include "JSHTMLTextAreaElement.cpp"
 #include "JSHTMLTitleElement.cpp"
 #include "JSHTMLUnknownElement.cpp"

@@ -101,6 +101,7 @@
 #include "JSHTMLOutputElementCustom.cpp"
 #include "JSHTMLSelectElementCustom.cpp"
 #include "JSHTMLStyleElementCustom.cpp"
+#include "JSHTMLTemplateElementCustom.cpp"
 #include "JSHistoryCustom.cpp"
 #include "JSImageConstructor.cpp"
 #include "JSImageDataCustom.cpp"

@@ -31,6 +31,6 @@
 [
     Conditional=TEMPLATE_ELEMENT
 ] interface HTMLTemplateElement : HTMLElement {
-    attribute DocumentFragment content setter raises (DOMException);
+    [JSCustom, V8CacheAttributeForGC] readonly attribute DocumentFragment content;
 };
 

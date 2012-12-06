@@ -144,6 +144,7 @@ SOURCES += \
      bindings/js/JSHTMLOutputElementCustom.cpp \
      bindings/js/JSHTMLSelectElementCustom.cpp \
      bindings/js/JSHTMLStyleElementCustom.cpp \
+     bindings/js/JSHTMLTemplateElementCustom.cpp \
      bindings/js/JSHistoryCustom.cpp \
      bindings/js/JSImageConstructor.cpp \
      bindings/js/JSImageDataCustom.cpp \

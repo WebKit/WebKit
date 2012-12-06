@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<template id="template">Contents</template>
+<template id="template"><span>Contents</span></template>
 <script src="../../js/resources/js-test-pre.js"></script>
 <script>
 
@@ -9,8 +9,15 @@ if (!window.HTMLTemplateElement)
     testFailed('This test requires ENABLE(TEMPLATE_ELEMENT)');
 
 var template = document.getElementById('template');
+var div = template.appendChild(document.createElement('div'));
+
 shouldBe('template.content.childNodes.length', '1');
 var clone = template.cloneNode(true);
-shouldBe('clone.content.childNodes.length', '0');
+shouldBe('clone.content.childNodes.length', '1');
+shouldBe('clone.outerHTML', 'template.outerHTML');
+shouldNotBe('clone.content.firstChild', 'template.content.firstChild');
+shouldNotBe('clone.content', 'template.content');
+shouldBe('clone.firstChild.tagName', '"DIV"');
+shouldNotBe('clone.firstChild', 'div');
 
 </script>

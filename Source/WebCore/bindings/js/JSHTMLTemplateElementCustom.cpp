@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012, Google Inc. All rights reserved.
+ * Copyright (C) 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -28,49 +28,38 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef HTMLTemplateElement_h
-#define HTMLTemplateElement_h
+#include "config.h"
 
 #if ENABLE(TEMPLATE_ELEMENT)
 
-#include "DocumentFragment.h"
-#include "HTMLElement.h"
+#include "JSHTMLTemplateElement.h"
+
+#include "HTMLTemplateElement.h"
+#include "JSDocumentFragment.h"
+#include <runtime/JSObject.h>
+#include <runtime/PrivateName.h>
+
+using namespace JSC;
 
 namespace WebCore {
 
-class HTMLTemplateElement : public HTMLElement {
-public:
-    static PassRefPtr<HTMLTemplateElement> create(const QualifiedName&, Document*);
-    virtual ~HTMLTemplateElement();
-
-    DocumentFragment* content() const;
-
-private:
-    virtual PassRefPtr<Node> cloneNode(bool deep) OVERRIDE;
-
-    HTMLTemplateElement(const QualifiedName&, Document*);
-
-    mutable RefPtr<DocumentFragment> m_content;
-};
-
-const HTMLTemplateElement* toHTMLTemplateElement(const Node*);
-
-inline HTMLTemplateElement* toHTMLTemplateElement(Node* node)
+JSValue JSHTMLTemplateElement::content(ExecState* exec) const
 {
-    return const_cast<HTMLTemplateElement*>(toHTMLTemplateElement(static_cast<const Node*>(node)));
-}
+    JSLockHolder lock(exec);
 
-#ifdef NDEBUG
+    HTMLTemplateElement* imp = static_cast<HTMLTemplateElement*>(impl());
+    DocumentFragment* content = imp->content();
 
-// The debug version of this, with assertions, is not inlined.
-inline const HTMLTemplateElement* toHTMLTemplateElement(const Node* node)
-{
-    return static_cast<const HTMLTemplateElement*>(node);
+    JSDOMWrapper* wrapper = getCachedWrapper(currentWorld(exec), content);
+    if (wrapper)
+        return wrapper;
+
+    wrapper = CREATE_DOM_WRAPPER(exec, globalObject(), DocumentFragment, content);
+    PrivateName propertyName;
+    const_cast<JSHTMLTemplateElement*>(this)->putDirect(globalObject()->globalData(), propertyName, wrapper);
+    return wrapper;
 }
-#endif // NDEBUG
 
 } // namespace WebCore
 
 #endif // ENABLE(TEMPLATE_ELEMENT)
-
-#endif // HTMLTemplateElement_h
