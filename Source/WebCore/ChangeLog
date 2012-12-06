@@ -1,3 +1,23 @@
+2012-12-06  Alexander Shalamov  <alexander.shalamov@intel.com>
+
+        XMLHttpRequest Content-Type should be taken from Blob type
+        https://bugs.webkit.org/show_bug.cgi?id=99983
+
+        Reviewed by Alexey Proskuryakov.
+
+        Fix XMLHttpRequest::send(Blob*) method, so that the Content-Type is set according to W3C specification.
+        http://www.w3.org/TR/XMLHttpRequest/#the-send-method
+
+        Added test that check if content type is set correctly when blob object is sent.
+
+        Test: http/tests/xmlhttprequest/post-blob-content-type.html
+
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::send):
+            Set correct MIME type for Blob objects.
+        * WebCore.vcproj/WebCore.vcproj:
+            Added ParsedContentType to project file.
+
 2012-12-06  Min Qin  <qinmin@chromium.org>
 
         Make LazyDecodingPixelRef inherit from skia::LazyPixelRef so that cc thread can access it

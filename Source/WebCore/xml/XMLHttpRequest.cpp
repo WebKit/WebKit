@@ -42,6 +42,7 @@
 #include "HistogramSupport.h"
 #include "InspectorInstrumentation.h"
 #include "MemoryCache.h"
+#include "ParsedContentType.h"
 #include "ResourceError.h"
 #include "ResourceRequest.h"
 #include "ScriptCallStack.h"
@@ -643,7 +644,17 @@ void XMLHttpRequest::send(Blob* body, ExceptionCode& ec)
         return;
 
     if (m_method != "GET" && m_method != "HEAD" && m_url.protocolIsInHTTPFamily()) {
-        // FIXME: Should we set a Content-Type if one is not set.
+        const String& contentType = getRequestHeader("Content-Type");
+        if (contentType.isEmpty()) {
+            const String& blobType = body->type();
+            if (!blobType.isEmpty() && isValidContentType(blobType))
+                setRequestHeaderInternal("Content-Type", blobType);
+            else {
+                // From FileAPI spec, whenever media type cannot be determined, empty string must be returned.
+                setRequestHeaderInternal("Content-Type", "");
+            }
+        }
+
         // FIXME: add support for uploading bundles.
         m_requestEntityBody = FormData::create();
         if (body->isFile())

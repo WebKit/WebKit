@@ -32665,6 +32665,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\platform\network\ParsedContentType.h"
+					>
+				</File>
+				<File
+					RelativePath="..\platform\network\ParsedContentType.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\platform\network\PlatformCookieJar.h"
 					>
 				</File>
