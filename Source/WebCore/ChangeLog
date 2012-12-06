@@ -1,3 +1,35 @@
+2012-12-05  No'am Rosenthal  <noam@webkit.org>
+
+        Coordinated Graphics: Enable support for setContentsToBackgroundColor
+        https://bugs.webkit.org/show_bug.cgi?id=104128
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Enable background color in GraphicsLayerTextureMapper, and paint it using TextureMapper::drawSolidColor.
+        Once https://bugs.webkit.org/show_bug.cgi?id=103786 is enabled, this would enable Qt/GTK/EFL to directly
+        composite colors that only have a background color, without having to create a backing store for them.
+        This would eliminate the memory usage for those layers, reduce the time needed for them to draw into the
+        backing store and upload the texture, and in the future allow direct compositing of things other than
+        background colors.
+
+        Compositing tests cover this, but are still skipped for ports using coordinated graphics. 
+        See https://bugs.webkit.org/show_bug.cgi?id=104129.
+
+        * platform/graphics/texmap/GraphicsLayerTextureMapper.cpp:
+        (WebCore::GraphicsLayerTextureMapper::setContentsToBackgroundColor):
+        (WebCore::GraphicsLayerTextureMapper::backgroundColor):
+            Maintain a backgroundColor member variable in GraphicsLayerTextureMapper
+
+        * platform/graphics/texmap/TextureMapperGL.cpp:
+        (WebCore::TextureMapperGL::drawSolidColor):
+            TextureMapperGL::drawSolidColor should allow blending when the solid color has alpha.
+
+        * platform/graphics/texmap/TextureMapperLayer.cpp:
+        (WebCore::TextureMapperLayer::paintSelf):
+        (WebCore::TextureMapperLayer::flushCompositingStateSelf):
+        * platform/graphics/texmap/TextureMapperLayer.h:
+        (State):
+
 2012-12-05  Kentaro Hara  <haraken@chromium.org>
 
         Unreviewed, rolling out r136481.

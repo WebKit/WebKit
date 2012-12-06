@@ -359,6 +359,16 @@ bool CoordinatedGraphicsLayer::setFilters(const FilterOperations& newFilters)
 }
 #endif
 
+void CoordinatedGraphicsLayer::setContentsToBackgroundColor(const Color& color)
+{
+    if (m_layerInfo.backgroundColor == color)
+        return;
+    m_layerInfo.backgroundColor = color;
+
+    // This is in line with what CA does.
+    setBackgroundColor(color);
+    didChangeLayerState();
+}
 
 void CoordinatedGraphicsLayer::setContentsToImage(Image* image)
 {

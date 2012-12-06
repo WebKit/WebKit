@@ -351,6 +351,17 @@ void GraphicsLayerTextureMapper::setContentsRect(const IntRect& value)
     notifyChange(TextureMapperLayer::ContentsRectChange);
 }
 
+void GraphicsLayerTextureMapper::setContentsToBackgroundColor(const Color& color)
+{
+    if (color == m_backgroundColor)
+        return;
+
+    m_backgroundColor = color;
+    setBackgroundColor(color);
+    notifyChange(TextureMapperLayer::ContentChange);
+}
+
+
 /* \reimp (GraphicsLayer.h)
 */
 void GraphicsLayerTextureMapper::setContentsToImage(Image* image)

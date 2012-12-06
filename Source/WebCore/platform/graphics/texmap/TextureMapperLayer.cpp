@@ -109,6 +109,14 @@ void TextureMapperLayer::paintSelf(const TextureMapperPaintOptions& options)
     float opacity = options.opacity;
     RefPtr<BitmapTexture> mask = options.mask;
 
+    if (m_state.backgroundColor.alpha() && !m_state.contentsRect.isEmpty()) {
+        Color color = m_state.backgroundColor;
+        float r, g, b, a;
+        color.getRGBA(r, g, b, a);
+        color = Color(r * opacity, g * opacity, b * opacity, a * opacity);
+        options.textureMapper->drawSolidColor(m_state.contentsRect, transform, color);
+    }
+
     if (m_backingStore) {
         ASSERT(m_state.drawsContent && m_state.contentsVisible && !m_size.isEmpty());
         ASSERT(!layerRect().isEmpty());
@@ -428,6 +436,7 @@ void TextureMapperLayer::flushCompositingStateSelf(GraphicsLayerTextureMapper* g
     m_state.backfaceVisibility = graphicsLayer->backfaceVisibility();
     m_state.childrenTransform = graphicsLayer->childrenTransform();
     m_state.opacity = graphicsLayer->opacity();
+    m_state.backgroundColor = graphicsLayer->backgroundColor();
 #if ENABLE(CSS_FILTERS)
     if (changeMask & FilterChange)
         m_state.filters = graphicsLayer->filters();

@@ -462,7 +462,7 @@ void TextureMapperGL::drawSolidColor(const FloatRect& rect, const Transformation
     color.getRGBA(r, g, b, a);
     m_context3D->uniform4f(program->colorLocation(), r, g, b, a);
 
-    drawQuad(rect, matrix, program.get(), GraphicsContext3D::TRIANGLE_FAN, false);
+    drawQuad(rect, matrix, program.get(), GraphicsContext3D::TRIANGLE_FAN, a < 1);
 }
 
 static TransformationMatrix viewportMatrix(GraphicsContext3D* context3D)

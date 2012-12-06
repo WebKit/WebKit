@@ -56,6 +56,7 @@ struct WebLayerInfo {
     WebCore::TransformationMatrix childrenTransform;
     WebCore::IntRect contentsRect;
     float opacity;
+    WebCore::Color backgroundColor;
 
     union {
         struct {

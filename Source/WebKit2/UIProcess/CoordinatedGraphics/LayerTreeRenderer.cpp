@@ -341,6 +341,7 @@ void LayerTreeRenderer::setLayerState(WebLayerID id, const WebLayerInfo& layerIn
     layer->setBackfaceVisibility(layerInfo.backfaceVisible);
     layer->setContentsOpaque(layerInfo.contentsOpaque);
     layer->setContentsRect(layerInfo.contentsRect);
+    layer->setContentsToBackgroundColor(layerInfo.backgroundColor);
     layer->setDrawsContent(layerInfo.drawsContent);
     layer->setContentsVisible(layerInfo.contentsVisible);
     toGraphicsLayerTextureMapper(layer)->setFixedToViewport(layerInfo.fixedToViewport);
