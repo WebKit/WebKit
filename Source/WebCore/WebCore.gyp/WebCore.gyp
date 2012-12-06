@@ -1601,7 +1601,6 @@
         'webcore_prerequisites',
       ],
       'sources': [
-        '<@(webcore_dom_privateheader_files)',
         '<@(webcore_dom_files)',
       ],
       'sources!': [
@@ -1623,7 +1622,6 @@
         'webcore_prerequisites',
       ],
       'sources': [
-        '<@(webcore_html_privateheader_files)',
         '<@(webcore_html_files)',
       ],
       'sources/': [
@@ -1644,7 +1642,6 @@
         'webcore_prerequisites',
       ],
       'sources': [
-        '<@(webcore_svg_privateheader_files)',
         '<@(webcore_svg_files)',
       ],
       'sources/': [
@@ -1661,7 +1658,6 @@
       # if this hard dependency could be split off the rest.
       'hard_dependency': 1,
       'sources': [
-        '<@(webcore_privateheader_files)',
         '<@(webcore_platform_files)',
 
         # For WebCoreSystemInterface, Mac-only.
@@ -1991,7 +1987,6 @@
         'webcore_prerequisites',
       ],
       'sources': [
-        '<@(webcore_privateheader_files)',
         '<@(webcore_files)',
       ],
       'sources/': [
@@ -2080,7 +2075,6 @@
       # if this hard dependency could be split off the rest.
       'hard_dependency': 1,
       'sources': [
-        '<@(webcore_privateheader_files)',
         '<@(webcore_files)',
       ],
       'sources/': [
