@@ -130,6 +130,9 @@ private:
     void layout(const LayoutParameters&, const DateComponents&);
     void updateUIState();
 
+    // Element function.
+    virtual PassRefPtr<RenderStyle> customStyleForRenderer() OVERRIDE;
+
     // DateTimeFieldElement::FieldOwner functions.
     virtual void didBlurFromField() OVERRIDE FINAL;
     virtual void didFocusOnField() OVERRIDE FINAL;

@@ -1,3 +1,88 @@
+2012-12-03  Kent Tamura  <tkent@chromium.org>
+
+        INPUT_MULTIPLE_FIELDS_UI doesn't show digits well in RTL locales
+        https://bugs.webkit.org/show_bug.cgi?id=103869
+
+        Reviewed by Hajime Morita.
+
+        We need to use display:inline elements to wrap sub-fields and static
+        text in DateTimeEditElement children to apply the Unicode Bidi
+        Algorithm.
+
+        Because we can't use display:inline-block for them, we can't specify
+        min-width CSS property for them. We stop using customStyleForRenderer of
+        sub-fields to specify each of their widths, and use
+        customStyleForRenderer of DateTimeEditElement to specify the total
+        required width. A sub-field width shrink and grow so that the width fits
+        to the field value, and a DateTimeEditElement doesn't.
+
+        No new tests. Coverred by existing tests, especially
+        fast/forms/datetime/datetime-appearance-l10n.html shows "23:59"
+        correctly.
+
+        * css/html.css:
+        (input::-webkit-datetime-edit-year-field):
+        - Make this display:inline to apply the Unicode Bidi Algorithm.
+        - Use padding instead of margin because of ease of width computation.
+          Also, the focus apparance gets better by padding.
+        - Don't allow to specify font property here because of ease of width
+          computation.
+        - Remove text-align:center. It doesn't work for display:inline.
+        (input::-webkit-datetime-edit-text):
+        - Make this display:inline to apply the Unicode Bidi Algorithm.
+        - Don't allow to specify font property here because of ease of width
+          computation.
+
+        * html/shadow/DateTimeEditElement.h:
+        (DateTimeEditElement): Declare customStyleForRenderer.
+        * html/shadow/DateTimeEditElement.cpp:
+        (WebCore::DateTimeEditElement::DateTimeEditElement):
+        Enable customStyleForRenderer.
+        (WebCore::DateTimeEditElement::customStyleForRenderer):
+        Compute required width with a font for this element and child maximum
+        widths, and set it to min-width style.
+        The resultant width value can be inaccurate if a page author specifies
+        padding, border, margin, etc. to ::-webkit-datetime-edit-*-field or
+        ::-webkit-datetime-edit-text. In such case, the page author should specify
+        wider width to <input>.
+
+        * dom/Element.h:
+        (Element): Add isDateTimeFieldElement to do static_cast<DateTimeFieldElement> safely.
+        * dom/Element.cpp:
+        (WebCore::Element::isDateTimeFieldElement): Added.
+
+        * html/shadow/DateTimeFieldElement.h:
+        (DateTimeFieldElement): Declare isDateTimeFieldElement and maximumWidth.
+        * html/shadow/DateTimeFieldElement.cpp:
+        (WebCore::DateTimeFieldElement::isDateTimeFieldElement):
+        Added. Returns true.
+        (WebCore::DateTimeFieldElement::maximumWidth):
+        Added. Returns padding width.
+
+        * html/shadow/DateTimeSymbolicFieldElement.h:
+        (DateTimeSymbolicFieldElement):
+        Remove customStyleForRenderer, and declare maximumWidth.
+        * html/shadow/DateTimeSymbolicFieldElement.cpp:
+        (WebCore::DateTimeSymbolicFieldElement::DateTimeSymbolicFieldElement):
+        Disable customStyleForRenderer.
+        (WebCore::DateTimeSymbolicFieldElement::maximumWidth):
+        Added. Returns the expected maximum width with the specified font.
+
+        * html/shadow/DateTimeNumericFieldElement.h:
+        (DateTimeNumericFieldElement):
+        Remove customStyleForRenderer, declare maximumWidth, and make m_placeholder
+        non-const because it is updated in the constructor.
+        * html/shadow/DateTimeNumericFieldElement.cpp:
+        (WebCore::DateTimeNumericFieldElement::DateTimeNumericFieldElement):
+        Disable customStyleForRenderer.
+        If a numeric value for this field is LTR and the whole direction is RTL,
+        wrap the placeholder string with left-to-right-mark and
+        right-to-left-mark so that it is handled as LTR. Without this,
+        sub-fields order would be changed when the content of a field is changed
+        from a placeholder to a numeric value.
+        (WebCore::DateTimeNumericFieldElement::maximumWidth):
+        Added. Returns the expected maximum width with the specified font.
+
 2012-12-05  Kent Tamura  <tkent@chromium.org>
 
         INPUT_MULTIPLE_FIELDS_UI: The hour, am/pm, millisecond fields should support read-only state correctly

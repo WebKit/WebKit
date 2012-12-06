@@ -1068,6 +1068,13 @@ RenderObject* Element::createRenderer(RenderArena*, RenderStyle* style)
     return RenderObject::createObject(this, style);
 }
 
+#if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
+bool Element::isDateTimeFieldElement() const
+{
+    return false;
+}
+#endif
+
 bool Element::wasChangedSinceLastFormControlChangeEvent() const
 {
     return false;

@@ -27,12 +27,9 @@
 #if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
 #include "DateTimeSymbolicFieldElement.h"
 
-#include "FontCache.h"
+#include "Font.h"
 #include "KeyboardEvent.h"
-#include "RenderStyle.h"
-#include "StyleResolver.h"
 #include "TextBreakIterator.h"
-#include "TextRun.h"
 #include <wtf/text/StringBuilder.h>
 #include <wtf/unicode/Unicode.h>
 
@@ -58,19 +55,14 @@ DateTimeSymbolicFieldElement::DateTimeSymbolicFieldElement(Document* document, F
     , m_typeAhead(this)
 {
     ASSERT(!symbols.isEmpty());
-    setHasCustomCallbacks();
 }
 
-PassRefPtr<RenderStyle> DateTimeSymbolicFieldElement::customStyleForRenderer()
+float DateTimeSymbolicFieldElement::maximumWidth(const Font& font)
 {
-    FontCachePurgePreventer fontCachePurgePreventer;
-    RefPtr<RenderStyle> originalStyle = document()->styleResolver()->styleForElement(this);
-    RefPtr<RenderStyle> style = RenderStyle::clone(originalStyle.get());
-    float maximumWidth = style->font().width(visibleEmptyValue());
+    float maximumWidth = font.width(visibleEmptyValue());
     for (unsigned index = 0; index < m_symbols.size(); ++index)
-        maximumWidth = std::max(maximumWidth, style->font().width(m_symbols[index]));
-    style->setMinWidth(Length(maximumWidth, Fixed));
-    return style.release();
+        maximumWidth = std::max(maximumWidth, font.width(m_symbols[index]));
+    return maximumWidth + DateTimeFieldElement::maximumWidth(font);
 }
 
 void DateTimeSymbolicFieldElement::handleKeyboardEvent(KeyboardEvent* keyboardEvent)

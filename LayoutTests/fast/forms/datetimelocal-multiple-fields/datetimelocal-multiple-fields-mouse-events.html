@@ -73,7 +73,7 @@ shouldBeZero('window.getSelection().rangeCount'); // No text selection.
 
 debug('');
 debug('==> Focus on the hour field.');
-mouseClickOn(input.offsetWidth - 156, center);
+mouseClickOn(190, center);
 keyDown('upArrow');
 shouldBeEqualToString('input.value', '2346-08-20T11:00');
 mouseClickOn(input.offsetWidth - spinButtonOffset, center - 1);
@@ -84,7 +84,7 @@ shouldBeZero('window.getSelection().rangeCount'); // No text selection.
 
 debug('');
 debug('==> Focus on the minute field.');
-mouseClickOn(input.offsetWidth - 108, center);
+mouseClickOn(240, center);
 keyDown('upArrow');
 shouldBeEqualToString('input.value', '2346-08-20T11:01');
 mouseClickOn(input.offsetWidth - spinButtonOffset, center - 1);

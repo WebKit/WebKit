@@ -144,6 +144,11 @@ void DateTimeFieldElement::initialize(const AtomicString& pseudo, const String& 
     appendChild(Text::create(document(), visibleValue()));
 }
 
+bool DateTimeFieldElement::isDateTimeFieldElement() const
+{
+    return true;
+}
+
 bool DateTimeFieldElement::isFocusable() const
 {
     if (isReadOnly())
@@ -166,6 +171,12 @@ bool DateTimeFieldElement::isRTL() const
 AtomicString DateTimeFieldElement::localeIdentifier() const
 {
     return m_fieldOwner ? m_fieldOwner->localeIdentifier() : nullAtom;
+}
+
+float DateTimeFieldElement::maximumWidth(const Font&)
+{
+    const float paddingLeftAndRight = 2; // This should match to html.css.
+    return paddingLeftAndRight;
 }
 
 void DateTimeFieldElement::setReadOnly()

@@ -40,7 +40,7 @@ var center = input.offsetHeight / 2;
 var spinButtonOffset = 26;
 
 debug('==> Focus on the month field.');
-mouseClickOn(100, center);
+mouseClickOn(16, center);
 keyDown('upArrow');
 shouldBeEqualToString('input.value', '2345-08');
 mouseClickOn(input.offsetWidth - spinButtonOffset, center - 1);
@@ -51,7 +51,7 @@ shouldBeZero('window.getSelection().rangeCount'); // No text selection.
 
 debug('');
 debug('==> Focus on the year field.');
-mouseClickOn(220, center);
+mouseClickOn(170, center);
 keyDown('upArrow');
 shouldBeEqualToString('input.value', '2346-08');
 mouseClickOn(input.offsetWidth - spinButtonOffset, center - 1);

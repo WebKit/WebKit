@@ -33,10 +33,13 @@
 #include "DateTimeFormat.h"
 #include "DateTimeSymbolicFieldElement.h"
 #include "EventHandler.h"
+#include "FontCache.h"
 #include "HTMLNames.h"
 #include "KeyboardEvent.h"
 #include "MouseEvent.h"
 #include "PlatformLocale.h"
+#include "RenderStyle.h"
+#include "StyleResolver.h"
 #include "Text.h"
 #include <wtf/DateMath.h>
 #include <wtf/text/StringBuilder.h>
@@ -301,6 +304,7 @@ DateTimeEditElement::DateTimeEditElement(Document* document, EditControlOwner& e
 {
     DEFINE_STATIC_LOCAL(AtomicString, dateTimeEditPseudoId, ("-webkit-datetime-edit", AtomicString::ConstructFromLiteral));
     setPseudo(dateTimeEditPseudoId);
+    setHasCustomCallbacks();
 }
 
 DateTimeEditElement::~DateTimeEditElement()
@@ -336,6 +340,31 @@ PassRefPtr<DateTimeEditElement> DateTimeEditElement::create(Document* document, 
 {
     RefPtr<DateTimeEditElement> container = adoptRef(new DateTimeEditElement(document, editControlOwner));
     return container.release();
+}
+
+PassRefPtr<RenderStyle> DateTimeEditElement::customStyleForRenderer()
+{
+    // FIXME: This is a kind of layout. We might want to introduce new renderer.
+    FontCachePurgePreventer fontCachePurgePreventer;
+    RefPtr<RenderStyle> originalStyle = document()->styleResolver()->styleForElement(this);
+    RefPtr<RenderStyle> style = RenderStyle::clone(originalStyle.get());
+    float width = 0;
+    for (Node* child = firstChild(); child; child = child->nextSibling()) {
+        if (!child->isElementNode())
+            continue;
+        Element* childElement = toElement(child);
+        if (childElement->isDateTimeFieldElement()) {
+            // We need to pass the Font of this element because child elements
+            // can't resolve inherited style at this timing.
+            width += static_cast<DateTimeFieldElement*>(childElement)->maximumWidth(style->font());
+        } else {
+            // ::-webkit-datetime-edit-text case. It has no
+            // border/padding/margin in html.css.
+            width += style->font().width(childElement->textContent());
+        }
+    }
+    style->setMinWidth(Length(ceilf(width), Fixed));
+    return style.release();
 }
 
 void DateTimeEditElement::didBlurFromField()

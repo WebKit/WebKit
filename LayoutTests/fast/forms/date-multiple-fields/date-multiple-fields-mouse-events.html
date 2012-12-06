@@ -62,7 +62,7 @@ shouldBeZero('window.getSelection().rangeCount'); // No text selection.
 
 debug('');
 debug('==> Focus on the year field.');
-mouseClickOn(input.offsetWidth - 64, center);
+mouseClickOn(input.offsetWidth - 100, center);
 keyDown('upArrow');
 shouldBeEqualToString('input.value', '2346-08-20');
 mouseClickOn(input.offsetWidth - spinButtonOffset, center - 1);

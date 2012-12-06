@@ -48,12 +48,12 @@ protected:
 private:
     static const int invalidIndex = -1;
 
-    virtual PassRefPtr<RenderStyle> customStyleForRenderer() OVERRIDE FINAL;
     String visibleEmptyValue() const;
 
     // DateTimeFieldElement functions.
     virtual void handleKeyboardEvent(KeyboardEvent*) OVERRIDE FINAL;
     virtual int maximum() const OVERRIDE FINAL;
+    virtual float maximumWidth(const Font&) OVERRIDE;
     virtual int minimum() const OVERRIDE FINAL;
     virtual void stepDown() OVERRIDE FINAL;
     virtual void stepUp() OVERRIDE FINAL;
