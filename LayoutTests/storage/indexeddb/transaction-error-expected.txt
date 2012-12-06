@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 71: Uncaught Error: This should *NOT* be caught!
+CONSOLE MESSAGE: line 73: Uncaught Error: This should *NOT* be caught!
 Test IDBTransaction.error cases.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
@@ -28,6 +28,8 @@ PASS request.error.name is 'ConstraintError'
 request_error = request.error
 Transaction received abort event.
 PASS trans.error is non-null.
+trans.webkitErrorMessage = Key already exists in the object store.
+PASS trans.webkitErrorMessage is non-null.
 PASS trans.error is request_error
 
 If the transaction is aborted due to an exception thrown from event callback, IDBTransaction.error should be AbortError:
@@ -37,6 +39,8 @@ PASS request.error.name is 'ConstraintError'
 Throwing exception...
 Transaction received abort event.
 PASS trans.error is non-null.
+trans.webkitErrorMessage = Uncaught exception in event handler.
+PASS trans.webkitErrorMessage is non-null.
 PASS trans.error.name is 'AbortError'
 
 If the transaction is aborted due to an error during commit, IDBTransaction.error should reflect that error:
@@ -49,7 +53,9 @@ This should fail due to the unique constraint:
 trans.objectStore('storeName').createIndex('indexName', 'id', {unique: true})
 Transaction received abort event.
 PASS trans.error is non-null.
-PASS trans.error.name is not 'AbortError'
+PASS trans.error.name is 'ConstraintError'
+trans.webkitErrorMessage = Duplicate index keys exist in the object store.
+PASS trans.webkitErrorMessage is non-null.
 
 PASS successfullyParsed is true
 

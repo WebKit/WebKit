@@ -135,15 +135,22 @@ const String& IDBTransaction::mode() const
     return mode;
 }
 
-void IDBTransaction::setError(PassRefPtr<DOMError> error)
+void IDBTransaction::setError(PassRefPtr<DOMError> error, const String& errorMessage)
 {
     ASSERT(m_state != Finished);
     ASSERT(error);
 
     // The first error to be set is the true cause of the
     // transaction abort.
-    if (!m_error)
+    if (!m_error) {
         m_error = error;
+        m_errorMessage = errorMessage;
+    }
+}
+
+String IDBTransaction::webkitErrorMessage() const
+{
+    return m_errorMessage;
 }
 
 PassRefPtr<IDBObjectStore> IDBTransaction::objectStore(const String& name, ExceptionCode& ec)
@@ -288,14 +295,15 @@ void IDBTransaction::unregisterRequest(IDBRequest* request)
     m_requestList.remove(request);
 }
 
-void IDBTransaction::onAbort(PassRefPtr<IDBDatabaseError> error)
+void IDBTransaction::onAbort(PassRefPtr<IDBDatabaseError> prpError)
 {
     IDB_TRACE("IDBTransaction::onAbort");
+    RefPtr<IDBDatabaseError> error = prpError;
     ASSERT(m_state != Finished);
 
     if (m_state != Finishing) {
         ASSERT(error.get());
-        setError(DOMError::create(error->name()));
+        setError(DOMError::create(error->name()), error->message());
 
         // Abort was not triggered by front-end, so outstanding requests must
         // be aborted now.

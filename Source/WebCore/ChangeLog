@@ -1,3 +1,32 @@
+2012-12-06  David Grogan  <dgrogan@chromium.org>
+
+        IndexedDB: Add webkitErrorMessage to IDBTransaction
+        https://bugs.webkit.org/show_bug.cgi?id=104199
+
+        Reviewed by Tony Chang.
+
+        Don't drop error messages on the floor.
+
+        Expose an error message on IDBTransaction to give developers more
+        information than the opaque error code currently available. This is
+        exactly what is done in IDBRequest. 
+
+        Tests - transaction-error.html
+
+        * Modules/indexeddb/IDBDatabaseError.h:
+        (WebCore::IDBDatabaseError::create):
+        * Modules/indexeddb/IDBRequest.cpp:
+        (WebCore::IDBRequest::dispatchEvent):
+        (WebCore::IDBRequest::uncaughtExceptionInEventHandler):
+        * Modules/indexeddb/IDBTransaction.cpp:
+        (WebCore::IDBTransaction::setError):
+        (WebCore):
+        (WebCore::IDBTransaction::webkitErrorMessage):
+        (WebCore::IDBTransaction::onAbort):
+        * Modules/indexeddb/IDBTransaction.h:
+        (IDBTransaction):
+        * Modules/indexeddb/IDBTransaction.idl:
+
 2012-12-06  Alexander Shalamov  <alexander.shalamov@intel.com>
 
         XMLHttpRequest Content-Type should be taken from Blob type

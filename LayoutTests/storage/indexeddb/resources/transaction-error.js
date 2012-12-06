@@ -48,6 +48,8 @@ function testErrorFromRequest()
     trans.onabort = function() {
         debug("Transaction received abort event.");
         shouldBeNonNull("trans.error");
+        debug("trans.webkitErrorMessage = " + trans.webkitErrorMessage);
+        shouldBeNonNull("trans.webkitErrorMessage");
         shouldBe("trans.error", "request_error");
         testErrorFromException();
     };
@@ -78,6 +80,8 @@ function testErrorFromException()
         self.onerror = self.originalWindowOnError;
 
         shouldBeNonNull("trans.error");
+        debug("trans.webkitErrorMessage = " + trans.webkitErrorMessage);
+        shouldBeNonNull("trans.webkitErrorMessage");
         shouldBe("trans.error.name", "'AbortError'");
         testErrorFromCommit();
     };
@@ -106,8 +110,9 @@ function testErrorFromCommit()
             trans.onabort = function() {
                 debug("Transaction received abort event.");
                 shouldBeNonNull("trans.error");
-                // FIXME: Test for a specific error here, when supported.
-                shouldNotBe("trans.error.name", "'AbortError'");
+                shouldBe("trans.error.name", "'ConstraintError'");
+                debug("trans.webkitErrorMessage = " + trans.webkitErrorMessage);
+                shouldBeNonNull("trans.webkitErrorMessage");
                 debug("");
                 finishJSTest();
             };

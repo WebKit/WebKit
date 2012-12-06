@@ -484,7 +484,7 @@ bool IDBRequest::dispatchEvent(PassRefPtr<Event> event)
         // Possibly abort the transaction. This must occur after unregistering (so this request
         // doesn't receive a second error) and before deactivating (which might trigger commit).
         if (event->type() == eventNames().errorEvent && dontPreventDefault && !m_requestAborted) {
-            m_transaction->setError(m_error);
+            m_transaction->setError(m_error, m_errorMessage);
             ExceptionCode unused;
             m_transaction->abort(unused);
         }
@@ -506,7 +506,7 @@ bool IDBRequest::dispatchEvent(PassRefPtr<Event> event)
 void IDBRequest::uncaughtExceptionInEventHandler()
 {
     if (m_transaction && !m_requestAborted) {
-        m_transaction->setError(DOMError::create(IDBDatabaseException::getErrorName(IDBDatabaseException::AbortError)));
+        m_transaction->setError(DOMError::create(IDBDatabaseException::getErrorName(IDBDatabaseException::AbortError)), "Uncaught exception in event handler.");
         ExceptionCode unused;
         m_transaction->abort(unused);
     }

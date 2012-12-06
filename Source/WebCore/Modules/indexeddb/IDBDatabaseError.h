@@ -46,7 +46,7 @@ public:
 
     static PassRefPtr<IDBDatabaseError> create(unsigned short code, const String& message)
     {
-        ASSERT(code >= IDBDatabaseException::IDBDatabaseExceptionOffset);
+        ASSERT_WITH_MESSAGE(code >= IDBDatabaseException::IDBDatabaseExceptionOffset, "%d >= %d", code, IDBDatabaseException::IDBDatabaseExceptionOffset);
         ASSERT(code < IDBDatabaseException::IDBDatabaseExceptionMax);
         return adoptRef(new IDBDatabaseError(code, message));
     }
