@@ -3,6 +3,7 @@ step=1
 step=0.0001  
 step=60  
 step=3600  
+step=86400  
 step mismatched  
 RTL 
 Disabled, step=3600  

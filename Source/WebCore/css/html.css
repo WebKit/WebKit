@@ -571,12 +571,10 @@ input::-webkit-datetime-edit-year-field:focus {
     outline: none;
 }
 
-/* This selector is used when step >= 3600 second but format contains minute field. */
-input::-webkit-datetime-edit-minute-field[readonly] {
-    color: GrayText;
-}
-
-/* This selector is used when step >= 60 second but format contains second field. */
+input::-webkit-datetime-edit-ampm-field[readonly],
+input::-webkit-datetime-edit-hour-field[readonly],
+input::-webkit-datetime-edit-millisecond-field[readonly],
+input::-webkit-datetime-edit-minute-field[readonly],
 input::-webkit-datetime-edit-second-field[readonly] {
     color: GrayText;
 }

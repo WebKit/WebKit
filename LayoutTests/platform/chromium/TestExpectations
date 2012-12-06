@@ -2819,6 +2819,7 @@ webkit.org/b/103852 platform/chromium/fast/forms/suggestion-picker/time-suggesti
 webkit.org/b/103852 platform/chromium/fast/forms/suggestion-picker/datetime-suggestion-picker-appearance-locale-hebrew.html [ Pass ImageOnlyFailure Missing ]
 webkit.org/b/103852 platform/chromium/fast/forms/suggestion-picker/datetimelocal-suggestion-picker-appearance-locale-hebrew.html [ Pass ImageOnlyFailure Missing ]
 webkit.org/b/103852 platform/chromium/fast/forms/suggestion-picker/time-suggestion-picker-appearance-locale-hebrew.html [ Pass ImageOnlyFailure Missing ]
+webkit.org/b/104210 fast/forms/time/time-appearance-basic.html [ Pass ImageOnlyFailure ]
 
 # New test added in r87324
 crbug.com/83994 [ Win ] platform/win/plugins/call-javascript-that-destroys-plugin.html [ Failure ]
