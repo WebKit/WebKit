@@ -1,3 +1,15 @@
+2012-12-06  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: Goto panel shortcuts and description are reversed
+        https://bugs.webkit.org/show_bug.cgi?id=103988
+
+        Reviewed by Pavel Feldman.
+
+        Swap the square brackets in the shortcuts.
+
+        * inspector/front-end/inspector.js:
+        (WebInspector._registerShortcuts):
+
 2012-12-06  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r136818.

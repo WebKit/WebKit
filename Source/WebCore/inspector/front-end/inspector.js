@@ -623,8 +623,8 @@ WebInspector._registerShortcuts = function()
     var shortcut = WebInspector.KeyboardShortcut;
     var section = WebInspector.shortcutsScreen.section(WebInspector.UIString("All Panels"));
     var keys = [
-        shortcut.makeDescriptor("]", shortcut.Modifiers.CtrlOrMeta),
-        shortcut.makeDescriptor("[", shortcut.Modifiers.CtrlOrMeta)
+        shortcut.makeDescriptor("[", shortcut.Modifiers.CtrlOrMeta),
+        shortcut.makeDescriptor("]", shortcut.Modifiers.CtrlOrMeta)
     ];
     section.addRelatedKeys(keys, WebInspector.UIString("Go to the panel to the left/right"));
 
