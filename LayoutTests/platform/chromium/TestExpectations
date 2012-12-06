@@ -3572,8 +3572,10 @@ crbug.com/132898 http/tests/websocket/tests/hybi/workers/close.html [ Failure Pa
 # Timing out on some Windows bots
 webkit.org/b/89510 [ Win ] gamepad/gamepad-polling-access.html [ Pass Timeout ]
 
-webkit.org/b/96839 compositing/geometry/fixed-position-transform-composited-page-scale.html [ ImageOnlyFailure Pass ]
-webkit.org/b/96839 platform/chromium/virtual/softwarecompositing/geometry/fixed-position-transform-composited-page-scale.html [ ImageOnlyFailure Pass ]
+webkit.org/b/96839 compositing/geometry/fixed-position-transform-composited-page-scale.html [ ImageOnlyFailure ]
+webkit.org/b/96839 platform/chromium/virtual/softwarecompositing/geometry/fixed-position-transform-composited-page-scale.html [ ImageOnlyFailure ]
+webkit.org/b/96839 compositing/geometry/fixed-position-transform-composited-page-scale-down.html [ ImageOnlyFailure ]
+webkit.org/b/96839 platform/chromium/virtual/softwarecompositing/geometry/fixed-position-transform-composited-page-scale-down.html [ ImageOnlyFailure ]
 webkit.org/b/89702 compositing/scaling/tiled-layer-recursion.html [ ImageOnlyFailure Pass ]
 webkit.org/b/89702 platform/chromium/virtual/softwarecompositing/scaling/tiled-layer-recursion.html [ ImageOnlyFailure Pass ]
 

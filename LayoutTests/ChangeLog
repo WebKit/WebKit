@@ -1,3 +1,23 @@
+2012-12-06  Xianzhu Wang  <wangxianzhu@chromium.org>
+
+        internals.settings.setEnableCompositingForFixedPosition() should be called before onload
+        https://bugs.webkit.org/show_bug.cgi?id=104277
+
+        Fixed some tests that set enableCompositingForFixedPosition in onload handler which may not take effect because it is too late.
+        Leave the image mismatches to bug 96839.
+
+        Reviewed by Simon Fraser.
+
+        * compositing/geometry/fixed-position-composited-page-scale-down.html:
+        * compositing/geometry/fixed-position-composited-page-scale-scroll.html:
+        * compositing/geometry/fixed-position-composited-page-scale.html:
+        * compositing/geometry/fixed-position-iframe-composited-page-scale-down.html:
+        * compositing/geometry/fixed-position-iframe-composited-page-scale.html:
+        * compositing/geometry/fixed-position-transform-composited-page-scale-down.html:
+        * compositing/geometry/fixed-position-transform-composited-page-scale.html:
+        * compositing/layer-creation/fixed-position-out-of-view.html:
+        * platform/chromium/TestExpectations: Mark the original flaky image mismatch as constantly failure. Add one image mismatch caused by this change but because of incorrect baseline.
+
 2012-12-06  Stephen White  <senorblanco@chromium.org>
 
         [Chromium] Unreviewed gardening.

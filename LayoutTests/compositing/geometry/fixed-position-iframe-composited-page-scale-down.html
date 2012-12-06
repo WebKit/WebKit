@@ -13,11 +13,11 @@
 }
 </style>
 <script>
+  if (window.internals) {
+    window.internals.settings.setEnableCompositingForFixedPosition(true);
+    window.internals.setPageScaleFactor(0.5, 0, 0);
+  }
   function test() {
-    if (window.internals) {
-      window.internals.settings.setEnableCompositingForFixedPosition(true);
-      window.internals.setPageScaleFactor(0.5, 0, 0);
-    }
     if (window.testRunner)
       testRunner.dumpAsText(true);
 

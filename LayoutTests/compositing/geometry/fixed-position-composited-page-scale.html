@@ -13,17 +13,15 @@
 }
 </style>
 <script>
-  function scale() {
-    if (window.internals) {
-      window.internals.settings.setEnableCompositingForFixedPosition(true);
-      window.internals.setPageScaleFactor(2, 0, 0);
-    }
-    if (window.testRunner)
-      testRunner.dumpAsText(true);
+  if (window.internals) {
+    window.internals.settings.setEnableCompositingForFixedPosition(true);
+    window.internals.setPageScaleFactor(2, 0, 0);
   }
+  if (window.testRunner)
+    testRunner.dumpAsText(true);
 </script>
 </head>
-<body onload="scale();" style="width:2000px;height:2000px;">
+<body style="width:2000px;height:2000px;">
 <div class="fixed-no-z-index">TEST</div><br>
 <div class="fixed-with-z-index">TEST</div>
 </body>

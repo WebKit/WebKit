@@ -14,18 +14,18 @@
 }
 </style>
 <script>
-  function scale() {
-    if (window.internals) {
-      window.internals.settings.setEnableCompositingForFixedPosition(true);
-      window.internals.setPageScaleFactor(2, 0, 0);
-    }
+  if (window.internals) {
+    window.internals.settings.setEnableCompositingForFixedPosition(true);
+    window.internals.setPageScaleFactor(2, 0, 0);
+  }
+  function test() {
     window.scrollTo(100,100);
     if (window.testRunner)
       testRunner.dumpAsText();
   }
 </script>
 </head>
-<body onload="scale();" style="width:2000px;height:2000px;">
+<body onload="test();" style="width:2000px;height:2000px;">
 <div class="fixed-no-z-index">This test should not hit an assertion in RenderGeometryMap in debug builds</div><br>
 <div class="fixed-with-z-index">This test should not hit an assertion in RenderGeometryMap in debug builds</div>
 </body>
