@@ -154,19 +154,17 @@ namespace WebCore {
         return V8PerIsolateData::from(isolate)->stringCache()->v8ExternalString(string.impl(), isolate);
     }
 
-    inline v8::Handle<v8::Value> v8StringOrNull(const String& string, v8::Isolate* isolate = 0)
+    inline v8::Handle<v8::Value> v8StringOrNull(const String& string, v8::Isolate* isolate)
     {
-        if (UNLIKELY(!isolate))
-            isolate = v8::Isolate::GetCurrent();
+        ASSERT(isolate);
         if (string.isNull())
             return v8Null(isolate);
         return V8PerIsolateData::from(isolate)->stringCache()->v8ExternalString(string.impl(), isolate);
     }
 
-    inline v8::Handle<v8::Value> v8StringOrUndefined(const String& string, v8::Isolate* isolate = 0)
+    inline v8::Handle<v8::Value> v8StringOrUndefined(const String& string, v8::Isolate* isolate)
     {
-        if (UNLIKELY(!isolate))
-            isolate = v8::Isolate::GetCurrent();
+        ASSERT(isolate);
         if (string.isNull())
             return v8::Undefined(isolate);
         return V8PerIsolateData::from(isolate)->stringCache()->v8ExternalString(string.impl(), isolate);

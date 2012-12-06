@@ -1,3 +1,18 @@
+2012-12-06  Kentaro Hara  <haraken@chromium.org>
+
+        [V8] Make an Isolate mandatory for v8StringOrNull() and v8StringOrUndefined()
+        https://bugs.webkit.org/show_bug.cgi?id=104213
+
+        Reviewed by Adam Barth.
+
+        All call sites of v8StringOrNull() and v8StringOrUndefined() have an Isolate.
+
+        No tests. No change in behavior.
+
+        * bindings/v8/V8Binding.h:
+        (WebCore::v8StringOrNull):
+        (WebCore::v8StringOrUndefined):
+
 2012-12-05  Kentaro Hara  <haraken@chromium.org>
 
         [V8] Implement deprecatedV8Integer(int i)
