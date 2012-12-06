@@ -134,7 +134,7 @@ PassRefPtr<EwkContext> EwkContext::defaultContext()
 EwkCookieManager* EwkContext::cookieManager()
 {
     if (!m_cookieManager)
-        m_cookieManager = EwkCookieManager::create(WKContextGetCookieManager(toAPI(m_context.get())));
+        m_cookieManager = EwkCookieManager::create(m_context->cookieManagerProxy());
 
     return m_cookieManager.get();
 }

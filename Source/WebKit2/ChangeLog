@@ -1,3 +1,29 @@
+2012-12-05  Jinwoo Song  <jinwoo7.song@samsung.com>
+
+        [EFL][WK2] Don't use the C API internally in ewk_cookie_manager
+        https://bugs.webkit.org/show_bug.cgi?id=103243
+
+        Reviewed by Gyuyoung Kim.
+
+        Used the C++ classes directly instead of the C API wrappers
+        to avoid a lot of toImpl/toAPI casts.
+
+        * UIProcess/API/efl/ewk_context.cpp:
+        (EwkContext::cookieManager):
+        * UIProcess/API/efl/ewk_cookie_manager.cpp:
+        (EwkCookieManager::EwkCookieManager):
+        (EwkCookieManager::~EwkCookieManager):
+        (EwkCookieManager::setPersistentStorage):
+        (EwkCookieManager::setHTTPAcceptPolicy):
+        (EwkCookieManager::clearHostnameCookies):
+        (EwkCookieManager::clearAllCookies):
+        (EwkCookieManager::watchChanges):
+        (EwkCookieManager::getHostNamesWithCookies):
+        (EwkCookieManager::getHTTPAcceptPolicy):
+        * UIProcess/API/efl/ewk_cookie_manager_private.h:
+        (EwkCookieManager::create):
+        (EwkCookieManager):
+
 2012-12-05  No'am Rosenthal  <noam@webkit.org>
 
         Coordinated Graphics: Enable support for setContentsToBackgroundColor
