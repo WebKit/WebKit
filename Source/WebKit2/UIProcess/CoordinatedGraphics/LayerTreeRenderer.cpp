@@ -328,7 +328,6 @@ void LayerTreeRenderer::removeCustomFilterProgram(int id)
 
 void LayerTreeRenderer::setLayerState(WebLayerID id, const WebLayerInfo& layerInfo)
 {
-    ASSERT(m_rootLayerID != InvalidWebLayerID);
     GraphicsLayer* layer = ensureLayer(id);
 
     layer->setReplicatedByLayer(layerByID(layerInfo.replica));
@@ -359,6 +358,8 @@ void LayerTreeRenderer::setLayerState(WebLayerID id, const WebLayerInfo& layerIn
     layer->setMasksToBounds(layerInfo.isRootLayer ? false : layerInfo.masksToBounds);
     layer->setOpacity(layerInfo.opacity);
     layer->setPreserves3D(layerInfo.preserves3D);
+    if (layerInfo.isRootLayer && m_rootLayerID != id)
+        setRootLayerID(id);
 }
 
 void LayerTreeRenderer::deleteLayer(WebLayerID layerID)
@@ -401,7 +402,10 @@ void LayerTreeRenderer::setRootLayerID(WebLayerID layerID)
     if (!layerID)
         return;
 
-    GraphicsLayer* layer = ensureLayer(layerID);
+    GraphicsLayer* layer = layerByID(layerID);
+    if (!layer)
+        return;
+
     m_rootLayer->addChild(layer);
 }
 

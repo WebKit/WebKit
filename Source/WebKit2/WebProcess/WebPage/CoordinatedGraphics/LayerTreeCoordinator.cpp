@@ -90,6 +90,7 @@ LayerTreeCoordinator::LayerTreeCoordinator(WebPage* webPage)
     , m_contentsScale(1)
     , m_shouldSendScrollPositionUpdate(true)
     , m_shouldSyncFrame(false)
+    , m_shouldSyncRootLayer(true)
     , m_layerFlushTimer(this, &LayerTreeCoordinator::layerFlushTimerFired)
     , m_releaseInactiveAtlasesTimer(this, &LayerTreeCoordinator::releaseInactiveAtlasesTimerFired)
     , m_layerFlushSchedulingEnabled(true)
@@ -119,14 +120,7 @@ LayerTreeCoordinator::LayerTreeCoordinator(WebPage* webPage)
     if (m_webPage->hasPageOverlay())
         createPageOverlayLayer();
 
-    initializeRootCompositingLayer();
     scheduleLayerFlush();
-}
-
-void LayerTreeCoordinator::initializeRootCompositingLayer()
-{
-    m_webPage->send(Messages::LayerTreeCoordinatorProxy::SetRootCompositingLayer(toCoordinatedGraphicsLayer(m_rootLayer.get())->id()));
-    m_shouldSyncFrame = true;
 }
 
 void LayerTreeCoordinator::setLayerFlushSchedulingEnabled(bool layerFlushingEnabled)
@@ -282,6 +276,12 @@ bool LayerTreeCoordinator::flushPendingLayerChanges()
     bool didSync = m_webPage->corePage()->mainFrame()->view()->flushCompositingStateIncludingSubframes();
 
     flushPendingImageBackingChanges();
+
+    if (m_shouldSyncRootLayer) {
+        m_webPage->send(Messages::LayerTreeCoordinatorProxy::SetRootCompositingLayer(toCoordinatedGraphicsLayer(m_rootLayer.get())->id()));
+        m_shouldSyncRootLayer = false;
+        m_shouldSyncFrame = true;
+    }
 
     for (size_t i = 0; i < m_detachedLayers.size(); ++i)
         m_webPage->send(Messages::LayerTreeCoordinatorProxy::DeleteCompositingLayer(m_detachedLayers[i]));
