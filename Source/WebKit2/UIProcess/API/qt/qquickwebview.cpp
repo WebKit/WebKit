@@ -280,6 +280,7 @@ QQuickWebViewPrivate::QQuickWebViewPrivate(QQuickWebView* viewport)
     viewport->setPixelAligned(true);
     QObject::connect(viewport, SIGNAL(visibleChanged()), viewport, SLOT(_q_onVisibleChanged()));
     QObject::connect(viewport, SIGNAL(urlChanged()), viewport, SLOT(_q_onUrlChanged()));
+    QObject::connect(experimental, SIGNAL(devicePixelRatioChanged()), experimental->test(), SIGNAL(devicePixelRatioChanged()));
     pageView.reset(new QQuickWebPage(viewport));
 }
 
