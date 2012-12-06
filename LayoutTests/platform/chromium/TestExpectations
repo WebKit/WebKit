@@ -4204,9 +4204,6 @@ webkit.org/b/103183 [ Linux Debug ] media/video-currentTime-set.html [ Crash ]
 webkit.org/b/103471 [ Win Mac Linux ] http/tests/navigation/slowmetaredirect-basic.html [ Pass Timeout ]
 webkit.org/b/103472 [ Mac Win Debug ] fast/frames/sandboxed-iframe-navigation-parent.html [ Pass Slow Crash ]
 
-# Rebaseline after https://codereview.chromium.org/11421080/ lands.
-Bug(scherkus) [ Win Mac Linux ] http/tests/media/video-buffered-range-contains-currentTime.html [ ImageOnlyFailure ]
-
 webkit.org/b/103609 [ MountainLion ] fast/regions/autoheight-dynamic-update.html [ ImageOnlyFailure ]
 webkit.org/b/103609 [ MountainLion ] fast/regions/firstletter-inside-flowthread.html [ ImageOnlyFailure ]
 webkit.org/b/103609 [ MountainLion ] fast/regions/listmarker-inside-flowthread.html [ ImageOnlyFailure ]
