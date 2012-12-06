@@ -45,7 +45,8 @@ namespace WebCore {
     V(scriptState) \
     V(sleepFunction) \
     V(state) \
-    V(toStringString)
+    V(toStringString) \
+    V(typedArrayHiddenCopyMethod)
 
     enum V8HiddenPropertyCreationType { NewSymbol, NewString };
 
