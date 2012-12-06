@@ -71,8 +71,9 @@ void DeviceController::removeAllDeviceEventListeners(DOMWindow* window)
         m_client->stopUpdating();
 }
 
-void DeviceController::dispatchDeviceEvent(PassRefPtr<Event> event)
+void DeviceController::dispatchDeviceEvent(PassRefPtr<Event> prpEvent)
 {
+    RefPtr<Event> event = prpEvent;
     Vector<RefPtr<DOMWindow> > listenerVector;
     copyToVector(m_listeners, listenerVector);
     for (size_t i = 0; i < listenerVector.size(); ++i) {
