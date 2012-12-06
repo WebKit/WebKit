@@ -6647,7 +6647,6 @@
 		FF945ECC161F7F3600971BC8 /* PseudoElement.h in Headers */ = {isa = PBXBuildFile; fileRef = FF945ECA161F7F3600971BC8 /* PseudoElement.h */; };
 		FFD5B97A135CC97800D5E92A /* PageVisibilityState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FFD5B977135CC97800D5E92A /* PageVisibilityState.cpp */; };
 		FFD5B97B135CC97800D5E92A /* PageVisibilityState.h in Headers */ = {isa = PBXBuildFile; fileRef = FFD5B978135CC97800D5E92A /* PageVisibilityState.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		FFD86E7815F9583600047233 /* JSDependentRetained.h in Headers */ = {isa = PBXBuildFile; fileRef = FFD86E7715F9583600047233 /* JSDependentRetained.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -14195,7 +14194,6 @@
 		FF945ECA161F7F3600971BC8 /* PseudoElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PseudoElement.h; sourceTree = "<group>"; };
 		FFD5B977135CC97800D5E92A /* PageVisibilityState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PageVisibilityState.cpp; sourceTree = "<group>"; };
 		FFD5B978135CC97800D5E92A /* PageVisibilityState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PageVisibilityState.h; sourceTree = "<group>"; };
-		FFD86E7715F9583600047233 /* JSDependentRetained.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDependentRetained.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -20446,7 +20444,6 @@
 				C585A66111D4FAC5004C3E4B /* IDBBindingUtilities.h */,
 				1C81BA030E97348300266E07 /* JavaScriptCallFrame.cpp */,
 				1C81BA040E97348300266E07 /* JavaScriptCallFrame.h */,
-				FFD86E7715F9583600047233 /* JSDependentRetained.h */,
 				BCE438A1140C0DBF005E437E /* JSDictionary.cpp */,
 				BCE4389B140B1BA7005E437E /* JSDictionary.h */,
 				93B70D4709EB0C7C009D8468 /* JSDOMBinding.cpp */,
@@ -24170,7 +24167,6 @@
 				2E97CE701293AD6B00C5C8FF /* JSDataView.h in Headers */,
 				4162A4581011464700DFF3ED /* JSDedicatedWorkerContext.h in Headers */,
 				FDA15ED212B03F94003A583A /* JSDelayNode.h in Headers */,
-				FFD86E7815F9583600047233 /* JSDependentRetained.h in Headers */,
 				31FB1A66120A5D3F00DC02A0 /* JSDeviceMotionEvent.h in Headers */,
 				59A86008119DAFA100DEF1EF /* JSDeviceOrientationEvent.h in Headers */,
 				BCE4389C140B1BA8005E437E /* JSDictionary.h in Headers */,

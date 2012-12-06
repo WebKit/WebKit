@@ -66409,10 +66409,6 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\bindings\js\JSDependentRetained.h"
-					>
-				</File>
-				<File
 					RelativePath="..\bindings\js\JSDesktopNotificationsCustom.cpp"
 					>
 					<FileConfiguration

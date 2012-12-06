@@ -109,8 +109,6 @@ public:
     int incrementRecursionLevel() { return ++m_recursionLevel; }
     int decrementRecursionLevel() { return --m_recursionLevel; }
 
-    int nextDependentRetainedId() { return m_nextDependentRetainedId++; }
-
 #ifndef NDEBUG
     int internalScriptRecursionLevel() const { return m_internalScriptRecursionLevel; }
     int incrementInternalScriptRecursionLevel() { return ++m_internalScriptRecursionLevel; }
@@ -153,7 +151,6 @@ private:
     friend class ConstructorMode;
 
     int m_recursionLevel;
-    int m_nextDependentRetainedId;
 
 #ifndef NDEBUG
     int m_internalScriptRecursionLevel;

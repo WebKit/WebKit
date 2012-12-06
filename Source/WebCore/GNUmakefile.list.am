@@ -2276,7 +2276,6 @@ webcore_sources += \
 	Source/WebCore/bindings/js/JSCustomSQLStatementErrorCallback.cpp \
 	Source/WebCore/bindings/js/JSCustomXPathNSResolver.cpp \
 	Source/WebCore/bindings/js/JSCustomXPathNSResolver.h \
-	Source/WebCore/bindings/js/JSDependentRetained.h \
 	Source/WebCore/bindings/js/JSDictionary.cpp \
 	Source/WebCore/bindings/js/JSDictionary.h \
 	Source/WebCore/bindings/js/JSDOMBinding.cpp \

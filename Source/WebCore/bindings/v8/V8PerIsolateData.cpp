@@ -50,7 +50,6 @@ V8PerIsolateData::V8PerIsolateData(v8::Isolate* isolate)
     , m_hiddenPropertyName(adoptPtr(new V8HiddenPropertyName()))
     , m_constructorMode(ConstructorMode::CreateNewObject)
     , m_recursionLevel(0)
-    , m_nextDependentRetainedId(0)
 #ifndef NDEBUG
     , m_internalScriptRecursionLevel(0)
 #endif
