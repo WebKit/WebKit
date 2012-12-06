@@ -1,3 +1,16 @@
+2012-12-05  KyungTae Kim  <ktf.kim@samsung.com>
+
+        [WK2][EFL] Gardening. Rebase fast/block/basic/020.html
+        https://bugs.webkit.org/show_bug.cgi?id=104195
+
+        Unreviewed Gardening.
+
+        The layer for "visibility:hidden;position:absolute;" object should be in RenderTree when USE(ACCELERATED_COMPOSITING),
+        because the HiddenLayers are included in zOrderList when CompositingMode is on.
+
+        * platform/efl-wk2/fast/block/basic/020-expected.txt: Added.
+        * platform/efl/TestExpectations:
+
 2012-12-05  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: Allow multiple transactions to interleave request execution
