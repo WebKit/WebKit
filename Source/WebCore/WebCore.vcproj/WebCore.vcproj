@@ -32665,11 +32665,11 @@
 					>
 				</File>
 				<File
-					RelativePath="..\platform\network\ParsedContentType.h"
+					RelativePath="..\platform\network\ParsedContentType.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\platform\network\ParsedContentType.cpp"
+					RelativePath="..\platform\network\ParsedContentType.h"
 					>
 				</File>
 				<File
@@ -41158,78 +41158,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\rendering\RenderMediaControls.cpp"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug_Cairo_CFLite|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release_Cairo_CFLite|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug_All|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Production|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\rendering\RenderMediaControls.h"
-				>
-				<FileConfiguration
-					Name="Debug_Cairo_CFLite|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release_Cairo_CFLite|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
 				RelativePath="..\rendering\RenderMediaControlElements.cpp"
 				>
 				<FileConfiguration
@@ -41283,6 +41211,78 @@
 			</File>
 			<File
 				RelativePath="..\rendering\RenderMediaControlElements.h"
+				>
+				<FileConfiguration
+					Name="Debug_Cairo_CFLite|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release_Cairo_CFLite|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\rendering\RenderMediaControls.cpp"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug_Cairo_CFLite|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release_Cairo_CFLite|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug_All|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Production|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\rendering\RenderMediaControls.h"
 				>
 				<FileConfiguration
 					Name="Debug_Cairo_CFLite|Win32"
@@ -45587,8 +45587,8 @@
 					>
 				</File>
 				<File
-				    RelativePath="..\rendering\style\ExclusionShapeValue.h"
-				    >
+					RelativePath="..\rendering\style\ExclusionShapeValue.h"
+					>
 				</File>
 				<File
 					RelativePath="..\rendering\style\FillLayer.cpp"
@@ -45648,6 +45648,10 @@
 				</File>
 				<File
 					RelativePath="..\rendering\style\GridPosition.h"
+					>
+				</File>
+				<File
+					RelativePath="..\rendering\style\GridTrackSize.h"
 					>
 				</File>
 				<File
@@ -46928,10 +46932,6 @@
 				</File>
 				<File
 					RelativePath="..\rendering\style\StyleVisualData.h"
-					>
-				</File>
-				<File
-					RelativePath="..\rendering\style\GridTrackSize.h"
 					>
 				</File>
 				<File
@@ -50756,6 +50756,54 @@
 			<File
 				RelativePath="..\dom\DocumentSharedObjectPool.cpp"
 				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug_Cairo_CFLite|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release_Cairo_CFLite|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug_All|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Production|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\dom\DocumentSharedObjectPool.h"
@@ -51229,7 +51277,7 @@
 				RelativePath="..\dom\DynamicNodeList.h"
 				>
 			</File>
-            <File
+			<File
 				RelativePath="..\dom\Element.cpp"
 				>
 				<FileConfiguration
@@ -53914,7 +53962,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\dom\PseudoElement.h"
+				RelativePath="..\dom\PropertyNodeList.h"
 				>
 			</File>
 			<File
@@ -53970,7 +54018,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\dom\PropertyNodeList.h"
+				RelativePath="..\dom\PseudoElement.h"
 				>
 			</File>
 			<File
@@ -60738,14 +60786,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\html\HTMLFormControlsCollection.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\html\HTMLFormControlsCollection.h"
-				>
-			</File>
-			<File
 				RelativePath="..\html\HTMLFormControlElement.cpp"
 				>
 				<FileConfiguration
@@ -60855,6 +60895,14 @@
 			</File>
 			<File
 				RelativePath="..\html\HTMLFormControlElementWithState.h"
+				>
+			</File>
+			<File
+				RelativePath="..\html\HTMLFormControlsCollection.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\html\HTMLFormControlsCollection.h"
 				>
 			</File>
 			<File
@@ -64193,14 +64241,14 @@
 				RelativePath="..\html\TimeRanges.h"
 				>
 			</File>
-  		<File
-  			RelativePath="..\html\TypeAhead.cpp"
-  			>
-  		</File>
-  		<File
-  			RelativePath="..\html\TypeAhead.h"
-  			>
-  		</File>
+			<File
+				RelativePath="..\html\TypeAhead.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\html\TypeAhead.h"
+				>
+			</File>
 			<File
 				RelativePath="..\html\URLInputType.cpp"
 				>
@@ -64609,19 +64657,19 @@
 					>
 				</File>
 				<File
-					RelativePath="..\html\shadow\MediaControlElementTypes.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\html\shadow\MediaControlElementTypes.h"
-					>
-				</File>
-				<File
 					RelativePath="..\html\shadow\MediaControlElements.cpp"
 					>
 				</File>
 				<File
 					RelativePath="..\html\shadow\MediaControlElements.h"
+					>
+				</File>
+				<File
+					RelativePath="..\html\shadow\MediaControlElementTypes.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\html\shadow\MediaControlElementTypes.h"
 					>
 				</File>
 				<File
@@ -76669,11 +76717,11 @@
 					>
 				</File>
 				<File
-					RelativePath="..\inspector\front-end\JavaScriptFormatter.js"
+					RelativePath="..\inspector\front-end\UglifyJS\JavaScriptFormatter.js"
 					>
 				</File>
 				<File
-					RelativePath="..\inspector\front-end\UglifyJS\JavaScriptFormatter.js"
+					RelativePath="..\inspector\front-end\JavaScriptFormatter.js"
 					>
 				</File>
 				<File

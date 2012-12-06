@@ -1,3 +1,14 @@
+2012-12-06  Brent Fulgham  <bfulgham@webkit.org>
+
+        [Windows, WinCairo] Unreviewed build correction.
+
+        Exclude 'DocumentSharedObjectPool.cpp' from build, since it is
+        built as part of DOMAllInOne.cpp.  The build (besides wasting
+        time) generates a bunch of build warnings for duplicate symbols.
+
+        * WebCore.vcproj/WebCore.vcproj: Mark DocumentSharedObjectPool.cpp
+        to not build independently of DOMAllInOne.cpp.
+
 2012-12-06  David Grogan  <dgrogan@chromium.org>
 
         IndexedDB: Abort transactions because of leveldb errors part 4
