@@ -151,7 +151,6 @@ public:
     ExpressionType createAssignResolve(const JSTokenLocation&, const Identifier&, ExpressionType, int, int, int) { return AssignmentExpr; }
     ExpressionType createFunctionExpr(const JSTokenLocation&, const Identifier*, int, int, int, int, int, int) { return FunctionExpr; }
     int createFunctionBody(const JSTokenLocation&, bool) { return 1; }
-    void setFunctionStart(int, int) { }
     int createArguments() { return 1; }
     int createArguments(int) { return 1; }
     int createArgumentsList(const JSTokenLocation&, int) { return 1; }

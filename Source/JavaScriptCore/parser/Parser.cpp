@@ -842,7 +842,6 @@ template <FunctionRequirements requirements, bool nameIsInContainingScope, class
         failIfFalse(popScope(functionScope, TreeBuilder::NeedsFreeVariableInfo));
         
         closeBracePos = cachedInfo->closeBracePos;
-        context.setFunctionStart(body, functionStart);
         m_token = cachedInfo->closeBraceToken();
         m_lexer->setOffset(m_token.m_location.endOffset);
         m_lexer->setLineNumber(m_token.m_location.line);
@@ -870,8 +869,7 @@ template <FunctionRequirements requirements, bool nameIsInContainingScope, class
         newInfo = adoptPtr(new SourceProviderCacheItem(functionStart, m_token.m_location.line, closeBracePos));
         functionScope->saveFunctionInfo(newInfo.get());
     }
-    context.setFunctionStart(body, functionStart);
-
+    
     failIfFalse(popScope(functionScope, TreeBuilder::NeedsFreeVariableInfo));
     matchOrFail(CLOSEBRACE);
     

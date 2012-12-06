@@ -113,7 +113,6 @@ public:
     void clear()
     {
         m_cachedCodeBlocks.clear();
-        m_cachedFunctionExecutables.clear();
         m_cachedGlobalFunctions.clear();
         m_recentlyUsedFunctionCode.clear();
     }
@@ -138,7 +137,6 @@ private:
     };
 
     CacheMap<CodeBlockKey, Strong<UnlinkedCodeBlock>, kMaxCodeBlockEntries> m_cachedCodeBlocks;
-    CacheMap<CodeBlockKey, Strong<UnlinkedFunctionCodeBlock>, kMaxFunctionCodeBlocks> m_cachedFunctionExecutables;
     CacheMap<GlobalFunctionKey, Strong<UnlinkedFunctionExecutable>, kMaxFunctionCodeBlocks> m_cachedGlobalFunctions;
     CacheMap<UnlinkedFunctionCodeBlock*, Strong<UnlinkedFunctionCodeBlock>, kMaxFunctionCodeBlocks> m_recentlyUsedFunctionCode;
 };

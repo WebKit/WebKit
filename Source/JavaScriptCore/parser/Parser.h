@@ -509,7 +509,7 @@ private:
     
     ScopeStack m_scopeStack;
     
-    const SourceProviderCacheItem* findCachedFunctionInfo(int openBracePos)
+    const SourceProviderCacheItem* findCachedFunctionInfo(int openBracePos) 
     {
         return m_functionCache ? m_functionCache->get(openBracePos) : 0;
     }
