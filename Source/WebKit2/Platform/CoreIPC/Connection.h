@@ -169,6 +169,8 @@ public:
     void incrementDispatchMessageMarkedDispatchWhenWaitingForSyncReplyCount() { ++m_inDispatchMessageMarkedDispatchWhenWaitingForSyncReplyCount; }
     void decrementDispatchMessageMarkedDispatchWhenWaitingForSyncReplyCount() { --m_inDispatchMessageMarkedDispatchWhenWaitingForSyncReplyCount; }
 
+    unsigned lastSentSyncMessageID() const { return m_lastSentSyncMessageID; }
+
 private:
     template<typename T> class Message {
     public:
@@ -249,6 +251,7 @@ private:
     Client* m_client;
     bool m_isServer;
     uint64_t m_syncRequestID;
+    unsigned m_lastSentSyncMessageID;
 
     bool m_onlySendMessagesAsDispatchWhenWaitingForSyncReplyWhenProcessingSuchAMessage;
     bool m_shouldExitOnSyncMessageSendFailure;

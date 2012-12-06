@@ -92,7 +92,7 @@ WK_EXPORT void WKPageSetShouldSendEventsSynchronously(WKPageRef page, bool sync)
 
 WK_EXPORT void WKPageSetMediaVolume(WKPageRef page, float volume);
 
-typedef void (*WKPageInvalidMessageFunction)(uint32_t messageID);
+typedef void (*WKPageInvalidMessageFunction)(uint32_t messageID, uint32_t lastSentSyncMessageID);
 WK_EXPORT void WKPageSetInvalidMessageFunction(WKPageInvalidMessageFunction function);
 
 #ifdef __cplusplus

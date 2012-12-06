@@ -195,6 +195,7 @@ Connection::Connection(Identifier identifier, bool isServer, Client* client, Run
     : m_client(client)
     , m_isServer(isServer)
     , m_syncRequestID(0)
+    , m_lastSentSyncMessageID(0)
     , m_onlySendMessagesAsDispatchWhenWaitingForSyncReplyWhenProcessingSuchAMessage(false)
     , m_shouldExitOnSyncMessageSendFailure(false)
     , m_didCloseOnConnectionWorkQueueCallback(0)
@@ -385,6 +386,8 @@ PassOwnPtr<ArgumentDecoder> Connection::sendSyncMessage(MessageID messageID, uin
         didFailToSendSyncMessage();
         return nullptr;
     }
+
+    m_lastSentSyncMessageID = messageID.toInt();
 
     // Push the pending sync reply information on our stack.
     {

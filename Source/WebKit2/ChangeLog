@@ -1,3 +1,25 @@
+2012-12-06  Anders Carlsson  <andersca@apple.com>
+
+        <rdar://problem/12828185> "Invalid message" crash reporter data should also include last sent sync message
+
+        Reviewed by Dan Bernstein.
+
+        Add a way to get the last sent sync message and pass it along to the invalid message callback.
+
+        * Platform/CoreIPC/Connection.cpp:
+        (CoreIPC::Connection::Connection):
+        (CoreIPC::Connection::sendSyncMessage):
+        * Platform/CoreIPC/Connection.h:
+        (CoreIPC::Connection::lastSentSyncMessageID):
+        (Connection):
+        * UIProcess/API/C/WKPagePrivate.h:
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit):
+        (WebKit::WebProcessProxy::didReceiveInvalidMessage):
+        (WebKit::WebProcessProxy::setInvalidMessageCallback):
+        * UIProcess/WebProcessProxy.h:
+        (WebProcessProxy):
+
 2012-11-28  Lucas Forschler  <lforschler@apple.com>
 
         Windows build fix.
