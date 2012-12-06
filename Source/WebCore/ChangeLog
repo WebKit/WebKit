@@ -1,3 +1,46 @@
+2012-12-05  Kentaro Hara  <haraken@chromium.org>
+
+        [V8] Implement deprecatedV8Integer(int i)
+        https://bugs.webkit.org/show_bug.cgi?id=104220
+
+        Reviewed by Adam Barth.
+
+        To make an Isolate mandatory in v8Integer(), we implement
+        deprecatedV8Integer(int i) for call sites that don't have
+        an Isolate. Eventually we want to kill deprecatedV8Integer(int i).
+
+        No new tests. No change in behavior.
+
+        * bindings/v8/Dictionary.cpp:
+        (WebCore::Dictionary::get):
+        * bindings/v8/NPV8Object.cpp:
+        (_NPN_Enumerate):
+        * bindings/v8/PageScriptDebugServer.cpp:
+        (WebCore::PageScriptDebugServer::addListener):
+        * bindings/v8/ScriptDebugServer.cpp:
+        (WebCore::ScriptDebugServer::setBreakpoint):
+        (WebCore::ScriptDebugServer::compileScript):
+        * bindings/v8/ScriptSourceCode.cpp:
+        (WebCore::ScriptSourceCode::compileScript):
+        * bindings/v8/V8Binding.h:
+        (WebCore):
+        (WebCore::deprecatedV8Integer):
+        * bindings/v8/V8DOMConfiguration.cpp:
+        (WebCore::V8DOMConfiguration::batchConfigureConstants):
+        * bindings/v8/V8NPUtils.cpp:
+        (WebCore::convertNPVariantToV8Object):
+        * bindings/v8/V8Utilities.cpp:
+        (WebCore::createHiddenDependency):
+        (WebCore::removeHiddenDependency):
+        * bindings/v8/V8WindowErrorHandler.cpp:
+        (WebCore::V8WindowErrorHandler::callListenerFunction):
+        * bindings/v8/V8WorkerContextErrorHandler.cpp:
+        (WebCore::V8WorkerContextErrorHandler::callListenerFunction):
+        * bindings/v8/WorkerScriptDebugServer.cpp:
+        (WebCore::WorkerScriptDebugServer::addListener):
+        * bindings/v8/custom/V8MutationCallbackCustom.cpp:
+        (WebCore::V8MutationCallback::handleEvent):
+
 2012-12-06  Hayato Ito  <hayato@chromium.org>
 
         Event's relatedTarget re-targeting does not occur for manually fired mouse events created by event.initMouseEvent().

@@ -108,7 +108,7 @@ void PageScriptDebugServer::addListener(ScriptDebugListener* listener, Page* pag
     ASSERT(!value->IsUndefined() && value->IsArray());
     v8::Handle<v8::Array> scriptsArray = v8::Handle<v8::Array>::Cast(value);
     for (unsigned i = 0; i < scriptsArray->Length(); ++i)
-        dispatchDidParseSource(listener, v8::Handle<v8::Object>::Cast(scriptsArray->Get(v8Integer(i))));
+        dispatchDidParseSource(listener, v8::Handle<v8::Object>::Cast(scriptsArray->Get(deprecatedV8Integer(i))));
 }
 
 void PageScriptDebugServer::removeListener(ScriptDebugListener* listener, Page* page)

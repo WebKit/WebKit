@@ -49,8 +49,8 @@ void V8DOMConfiguration::batchConfigureConstants(v8::Handle<v8::FunctionTemplate
 {
     for (size_t i = 0; i < constantCount; ++i) {
         const BatchedConstant* constant = &constants[i];
-        functionDescriptor->Set(v8::String::NewSymbol(constant->name), v8Integer(constant->value), v8::ReadOnly);
-        prototype->Set(v8::String::NewSymbol(constant->name), v8Integer(constant->value), v8::ReadOnly);
+        functionDescriptor->Set(v8::String::NewSymbol(constant->name), deprecatedV8Integer(constant->value), v8::ReadOnly);
+        prototype->Set(v8::String::NewSymbol(constant->name), deprecatedV8Integer(constant->value), v8::ReadOnly);
     }
 }
 

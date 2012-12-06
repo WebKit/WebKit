@@ -179,6 +179,12 @@ namespace WebCore {
         return V8PerIsolateData::from(isolate)->integerCache()->v8Integer(value, isolate);
     }
 
+    // FIXME: All call sites of this method should use v8Integer().
+    inline v8::Handle<v8::Integer> deprecatedV8Integer(int value)
+    {
+        return v8Integer(value, v8::Isolate::GetCurrent());
+    }
+
     inline v8::Handle<v8::Integer> v8UnsignedInteger(unsigned value, v8::Isolate* isolate = 0)
     {
         if (UNLIKELY(!isolate))

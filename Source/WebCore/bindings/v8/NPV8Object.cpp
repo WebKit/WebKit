@@ -537,7 +537,7 @@ bool _NPN_Enumerate(NPP npp, NPObject* npObject, NPIdentifier** identifier, uint
         *count = props->Length();
         *identifier = static_cast<NPIdentifier*>(malloc(sizeof(NPIdentifier*) * *count));
         for (uint32_t i = 0; i < *count; ++i) {
-            v8::Local<v8::Value> name = props->Get(v8Integer(i));
+            v8::Local<v8::Value> name = props->Get(deprecatedV8Integer(i));
             (*identifier)[i] = getStringIdentifier(v8::Local<v8::String>::Cast(name));
         }
         return true;

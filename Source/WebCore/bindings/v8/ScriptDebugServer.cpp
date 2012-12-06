@@ -79,8 +79,8 @@ String ScriptDebugServer::setBreakpoint(const String& sourceID, const ScriptBrea
 
     v8::Local<v8::Object> args = v8::Object::New();
     args->Set(v8::String::NewSymbol("sourceID"), v8String(sourceID));
-    args->Set(v8::String::NewSymbol("lineNumber"), v8Integer(scriptBreakpoint.lineNumber));
-    args->Set(v8::String::NewSymbol("columnNumber"), v8Integer(scriptBreakpoint.columnNumber));
+    args->Set(v8::String::NewSymbol("lineNumber"), deprecatedV8Integer(scriptBreakpoint.lineNumber));
+    args->Set(v8::String::NewSymbol("columnNumber"), deprecatedV8Integer(scriptBreakpoint.columnNumber));
     args->Set(v8::String::NewSymbol("condition"), v8String(scriptBreakpoint.condition));
 
     v8::Handle<v8::Function> setBreakpointFunction = v8::Local<v8::Function>::Cast(m_debuggerScript.get()->Get(v8::String::NewSymbol("setBreakpoint")));
@@ -438,7 +438,7 @@ void ScriptDebugServer::compileScript(ScriptState* state, const String& expressi
     v8::Handle<v8::String> code = v8String(expression);
     v8::TryCatch tryCatch;
 
-    v8::ScriptOrigin origin(v8String(sourceURL), v8Integer(0), v8Integer(0));
+    v8::ScriptOrigin origin(v8String(sourceURL), deprecatedV8Integer(0), deprecatedV8Integer(0));
     v8::Handle<v8::Script> script = v8::Script::New(code, &origin);
 
     if (tryCatch.HasCaught()) {

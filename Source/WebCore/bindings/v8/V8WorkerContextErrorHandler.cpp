@@ -55,7 +55,7 @@ v8::Local<v8::Value> V8WorkerContextErrorHandler::callListenerFunction(ScriptExe
         ErrorEvent* errorEvent = static_cast<ErrorEvent*>(event);
         v8::Local<v8::Function> callFunction = v8::Local<v8::Function>::Cast(listener);
         v8::Local<v8::Object> thisValue = v8::Context::GetCurrent()->Global();
-        v8::Handle<v8::Value> parameters[3] = { v8String(errorEvent->message()), v8String(errorEvent->filename()), v8Integer(errorEvent->lineno()) };
+        v8::Handle<v8::Value> parameters[3] = { v8String(errorEvent->message()), v8String(errorEvent->filename()), deprecatedV8Integer(errorEvent->lineno()) };
         V8RecursionScope recursionScope(context);
         returnValue = callFunction->Call(thisValue, 3, parameters);
     }
