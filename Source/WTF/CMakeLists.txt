@@ -1,1 +1,1 @@
-ADD_SUBDIRECTORY(wtf)
+add_subdirectory(wtf)

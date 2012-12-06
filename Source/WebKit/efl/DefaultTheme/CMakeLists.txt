@@ -1,7 +1,7 @@
-MACRO (GENERATE_THEME _target_name _name _option)
-    SET(DefaultTheme_DIR "${WEBKIT_DIR}/efl/DefaultTheme")
+macro(GENERATE_THEME _target_name _name _option)
+    set(DefaultTheme_DIR "${WEBKIT_DIR}/efl/DefaultTheme")
 
-    ADD_CUSTOM_COMMAND(
+    add_custom_command(
         OUTPUT ${THEME_BINARY_DIR}/${_name}
         COMMAND ${EDJE_CC_EXECUTABLE} -v ${_option} default.edc ${THEME_BINARY_DIR}/${_name}
         DEPENDS
@@ -98,19 +98,19 @@ MACRO (GENERATE_THEME _target_name _name _option)
         VERBATIM
     )
 
-    ADD_CUSTOM_TARGET(${_target_name} ALL
+    add_custom_target(${_target_name} ALL
         DEPENDS ${THEME_BINARY_DIR}/${_name}
     )
-ENDMACRO()
+endmacro()
 
-SET(DefaultTheme_DEFINITION "")
-IF (ENABLE_PROGRESS_ELEMENT)
-    LIST(APPEND DefaultTheme_DEFINITION "-DENABLE_PROGRESS_ELEMENT")
-ENDIF ()
+set(DefaultTheme_DEFINITION "")
+if (ENABLE_PROGRESS_ELEMENT)
+    list(APPEND DefaultTheme_DEFINITION "-DENABLE_PROGRESS_ELEMENT")
+endif ()
 
 GENERATE_THEME(DefaultTheme "default.edj" "${DefaultTheme_DEFINITION}")
-INSTALL(FILES "${THEME_BINARY_DIR}/default.edj" DESTINATION ${DATA_INSTALL_DIR}/themes)
+install(FILES "${THEME_BINARY_DIR}/default.edj" DESTINATION ${DATA_INSTALL_DIR}/themes)
 
-IF (ENABLE_API_TESTS)
+if (ENABLE_API_TESTS)
     GENERATE_THEME(BigButtonTheme "big_button_theme.edj" "-DBIG_BUTTON_THEME_FOR_TESTING")
-ENDIF ()
+endif ()

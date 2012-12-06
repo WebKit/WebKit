@@ -1,16 +1,16 @@
-ADD_CUSTOM_TARGET(forwarding-headersEflForTestWebKitAPI
+add_custom_target(forwarding-headersEflForTestWebKitAPI
     COMMAND ${PERL_EXECUTABLE} ${WEBKIT2_DIR}/Scripts/generate-forwarding-headers.pl ${WEBKIT2_DIR} ${DERIVED_SOURCES_WEBKIT2_DIR}/include efl
     COMMAND ${PERL_EXECUTABLE} ${WEBKIT2_DIR}/Scripts/generate-forwarding-headers.pl ${TESTWEBKITAPI_DIR} ${DERIVED_SOURCES_WEBKIT2_DIR}/include efl
 )
-SET(ForwardingHeadersForTestWebKitAPI_NAME forwarding-headersEflForTestWebKitAPI)
+set(ForwardingHeadersForTestWebKitAPI_NAME forwarding-headersEflForTestWebKitAPI)
 
-ADD_CUSTOM_TARGET(forwarding-headersSoupForTestWebKitAPI
+add_custom_target(forwarding-headersSoupForTestWebKitAPI
     COMMAND ${PERL_EXECUTABLE} ${WEBKIT2_DIR}/Scripts/generate-forwarding-headers.pl ${WEBKIT2_DIR} ${DERIVED_SOURCES_WEBKIT2_DIR}/include soup
     COMMAND ${PERL_EXECUTABLE} ${WEBKIT2_DIR}/Scripts/generate-forwarding-headers.pl ${TESTWEBKITAPI_DIR} ${DERIVED_SOURCES_WEBKIT2_DIR}/include soup
 )
-SET(ForwardingNetworkHeadersForTestWebKitAPI_NAME forwarding-headersSoupForTestWebKitAPI)
+set(ForwardingNetworkHeadersForTestWebKitAPI_NAME forwarding-headersSoupForTestWebKitAPI)
 
-INCLUDE_DIRECTORIES(
+include_directories(
     ${WEBKIT2_DIR}/UIProcess/API/C/soup
     ${WEBKIT2_DIR}/UIProcess/API/C/efl
     ${WEBKIT2_DIR}/UIProcess/API/efl
@@ -21,16 +21,16 @@ INCLUDE_DIRECTORIES(
     ${LIBSOUP_INCLUDE_DIRS}
 )
 
-SET(test_main_SOURCES
+set(test_main_SOURCES
     ${TESTWEBKITAPI_DIR}/efl/main.cpp
 )
 
-SET(bundle_harness_SOURCES
+set(bundle_harness_SOURCES
     ${TESTWEBKITAPI_DIR}/efl/InjectedBundleController.cpp
     ${TESTWEBKITAPI_DIR}/efl/PlatformUtilities.cpp
 )
 
-SET(webkit2_api_harness_SOURCES
+set(webkit2_api_harness_SOURCES
     ${TESTWEBKITAPI_DIR}/efl/PlatformUtilities.cpp
     ${TESTWEBKITAPI_DIR}/efl/PlatformWebView.cpp
 )
@@ -43,7 +43,7 @@ SET(webkit2_api_harness_SOURCES
 # Make sure that the tests are passing on both Debug and
 # Release builds before adding it to test_webkit2_api_BINARIES.
 
-SET(test_webkit2_api_BINARIES
+set(test_webkit2_api_BINARIES
     AboutBlankLoad
     CookieManager
     DOMWindowExtensionNoCache
@@ -76,7 +76,7 @@ SET(test_webkit2_api_BINARIES
     WillSendSubmitEvent
 )
 
-SET(test_webkit2_api_fail_BINARIES
+set(test_webkit2_api_fail_BINARIES
     CanHandleRequest
     DOMWindowExtensionBasic
     DownloadDecideDestinationCrash
@@ -87,7 +87,7 @@ SET(test_webkit2_api_fail_BINARIES
     WKPageGetScaleFactorNotZero
 )
 
-ADD_DEFINITIONS(-DTHEME_DIR="${THEME_BINARY_DIR}")
+add_definitions(-DTHEME_DIR="${THEME_BINARY_DIR}")
 
 # Tests disabled because of missing features on the test harness:
 #

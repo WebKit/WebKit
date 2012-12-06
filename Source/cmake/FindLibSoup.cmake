@@ -31,22 +31,22 @@
 # LibSoup does not provide an easy way to retrieve its version other than its
 # .pc file, so we need to rely on PC_LIBSOUP_VERSION and REQUIRE the .pc file
 # to be found.
-FIND_PACKAGE(PkgConfig)
-PKG_CHECK_MODULES(PC_LIBSOUP REQUIRED QUIET libsoup-2.4)
+find_package(PkgConfig)
+pkg_check_modules(PC_LIBSOUP REQUIRED QUIET libsoup-2.4)
 
-FIND_PATH(LIBSOUP_INCLUDE_DIRS
+find_path(LIBSOUP_INCLUDE_DIRS
     NAMES libsoup/soup.h
     HINTS ${PC_LIBSOUP_INCLUDEDIR}
           ${PC_LIBSOUP_INCLUDE_DIRS}
     PATH_SUFFIXES libsoup-2.4
 )
 
-FIND_LIBRARY(LIBSOUP_LIBRARIES
+find_library(LIBSOUP_LIBRARIES
     NAMES soup-2.4
     HINTS ${PC_LIBSOUP_LIBDIR}
           ${PC_LIBSOUP_LIBRARY_DIRS}
 )
 
-INCLUDE(FindPackageHandleStandardArgs)
+include(FindPackageHandleStandardArgs)
 FIND_PACKAGE_HANDLE_STANDARD_ARGS(LibSoup REQUIRED_VARS LIBSOUP_INCLUDE_DIRS LIBSOUP_LIBRARIES
                                           VERSION_VAR   PC_LIBSOUP_VERSION)

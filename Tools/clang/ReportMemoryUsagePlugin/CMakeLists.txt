@@ -1,6 +1,6 @@
 set(MODULE TRUE)
 
-set( LLVM_LINK_COMPONENTS support mc)
+set(LLVM_LINK_COMPONENTS support mc)
 
 add_clang_library(ReportMemoryUsage ReportMemoryUsage.cpp)
 

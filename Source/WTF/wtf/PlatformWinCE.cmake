@@ -1,8 +1,8 @@
-LIST(APPEND WTF_HEADERS
+list(APPEND WTF_HEADERS
     unicode/wchar/UnicodeWchar.h
 )
 
-LIST(APPEND WTF_SOURCES
+list(APPEND WTF_SOURCES
     NullPtr.cpp
     OSAllocatorWin.cpp
     ThreadingWin.cpp
@@ -17,6 +17,6 @@ LIST(APPEND WTF_SOURCES
     win/OwnPtrWin.cpp
 )
 
-LIST(APPEND WTF_LIBRARIES
+list(APPEND WTF_LIBRARIES
     mmtimer
 )

@@ -3,15 +3,15 @@
 # for our tests. The WebKit version of gtest needs access to some
 # headers from WTF and JSC for configuration.
 
-INCLUDE_DIRECTORIES(${THIRDPARTY_DIR}/gtest
+include_directories(${THIRDPARTY_DIR}/gtest
     ${THIRDPARTY_DIR}/gtest/include
     ${JAVASCRIPTCORE_DIR}
     ${WTF_DIR}
 )
 
-SET(GTEST_DIR "${THIRDPARTY_DIR}/gtest")
+set(GTEST_DIR "${THIRDPARTY_DIR}/gtest")
 
-ADD_LIBRARY(gtest SHARED
+add_library(gtest SHARED
     ${GTEST_DIR}/src/gtest.cc
     ${GTEST_DIR}/src/gtest-death-test.cc
     ${GTEST_DIR}/src/gtest-filepath.cc
@@ -21,13 +21,13 @@ ADD_LIBRARY(gtest SHARED
     ${GTEST_DIR}/src/gtest-typed-test.cc
 )
 
-ADD_DEFINITIONS(-DGTEST_CREATE_SHARED_LIBRARY=1)
+add_definitions(-DGTEST_CREATE_SHARED_LIBRARY=1)
 
-TARGET_LINK_LIBRARIES(gtest
+target_link_libraries(gtest
     ${WTF_LIBRARY_NAME}
 )
 
-IF(CMAKE_USE_PTHREADS_INIT)
-    TARGET_LINK_LIBRARIES(gtest ${CMAKE_THREAD_LIBS_INIT})
-    ADD_DEFINITIONS(-DGTEST_HAS_PTHREAD=1)
-ENDIF()
+if (CMAKE_USE_PTHREADS_INIT)
+    target_link_libraries(gtest ${CMAKE_THREAD_LIBS_INIT})
+    add_definitions(-DGTEST_HAS_PTHREAD=1)
+endif ()

@@ -1,4 +1,4 @@
-SET(DumpRenderTree_SOURCES
+set(DumpRenderTree_SOURCES
     ${TOOLS_DIR}/DumpRenderTree/DumpRenderTreeCommon.cpp
     ${TOOLS_DIR}/DumpRenderTree/CyclicRedundancyCheck.cpp
     ${TOOLS_DIR}/DumpRenderTree/GCController.cpp
@@ -21,11 +21,11 @@ SET(DumpRenderTree_SOURCES
     ${TOOLS_DIR}/DumpRenderTree/efl/WorkQueueItemEfl.cpp
 )
 
-SET(ImageDiff_SOURCES
+set(ImageDiff_SOURCES
     ${TOOLS_DIR}/DumpRenderTree/efl/ImageDiff.cpp
 )
 
-SET(DumpRenderTree_LIBRARIES
+set(DumpRenderTree_LIBRARIES
     ${JavaScriptCore_LIBRARY_NAME}
     ${WebCoreTestSupport_LIBRARY_NAME}
     ${WebCore_LIBRARY_NAME}
@@ -47,7 +47,7 @@ SET(DumpRenderTree_LIBRARIES
     ${LIBSOUP_LIBRARIES}
 )
 
-SET(DumpRenderTree_INCLUDE_DIRECTORIES
+set(DumpRenderTree_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/efl/ewk"
     ${WEBKIT_DIR}/efl
     ${WEBKIT_DIR}/efl/WebCoreSupport
@@ -115,16 +115,16 @@ SET(DumpRenderTree_INCLUDE_DIRECTORIES
 
 # FIXME: DOWNLOADED_FONTS_DIR should not hardcode the directory
 # structure. See <https://bugs.webkit.org/show_bug.cgi?id=81475>.
-ADD_DEFINITIONS(-DFONTS_CONF_DIR="${TOOLS_DIR}/DumpRenderTree/gtk/fonts"
+add_definitions(-DFONTS_CONF_DIR="${TOOLS_DIR}/DumpRenderTree/gtk/fonts"
                 -DDOWNLOADED_FONTS_DIR="${CMAKE_SOURCE_DIR}/WebKitBuild/Dependencies/Source/webkitgtk-test-fonts-0.0.3"
                 -DDATA_DIR="${THEME_BINARY_DIR}")
 
-INCLUDE_DIRECTORIES(${DumpRenderTree_INCLUDE_DIRECTORIES})
+include_directories(${DumpRenderTree_INCLUDE_DIRECTORIES})
 
-ADD_EXECUTABLE(DumpRenderTree ${DumpRenderTree_SOURCES})
-TARGET_LINK_LIBRARIES(DumpRenderTree ${DumpRenderTree_LIBRARIES})
-SET_TARGET_PROPERTIES(DumpRenderTree PROPERTIES FOLDER "Tools")
+add_executable(DumpRenderTree ${DumpRenderTree_SOURCES})
+target_link_libraries(DumpRenderTree ${DumpRenderTree_LIBRARIES})
+set_target_properties(DumpRenderTree PROPERTIES FOLDER "Tools")
 
-ADD_EXECUTABLE(ImageDiff ${ImageDiff_SOURCES})
-TARGET_LINK_LIBRARIES(ImageDiff ${DumpRenderTree_LIBRARIES})
-SET_TARGET_PROPERTIES(ImageDiff PROPERTIES FOLDER "Tools")
+add_executable(ImageDiff ${ImageDiff_SOURCES})
+target_link_libraries(ImageDiff ${DumpRenderTree_LIBRARIES})
+set_target_properties(ImageDiff PROPERTIES FOLDER "Tools")

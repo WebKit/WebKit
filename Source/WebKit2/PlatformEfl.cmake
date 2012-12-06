@@ -1,4 +1,4 @@
-LIST(APPEND WebKit2_SOURCES
+list(APPEND WebKit2_SOURCES
     Platform/efl/LoggingEfl.cpp
     Platform/efl/ModuleEfl.cpp
     Platform/efl/WorkQueueEfl.cpp
@@ -35,7 +35,7 @@ LIST(APPEND WebKit2_SOURCES
     Shared/Plugins/Netscape/x11/NetscapePluginModuleX11.cpp
 
     UIProcess/API/C/efl/WKView.cpp
-    
+
     UIProcess/API/cpp/efl/WKEinaSharedString.cpp
 
     UIProcess/API/C/soup/WKContextSoup.cpp
@@ -147,12 +147,12 @@ LIST(APPEND WebKit2_SOURCES
     WebProcess/soup/WebKitSoupRequestInputStream.cpp
 )
 
-LIST(APPEND WebKit2_MESSAGES_IN_FILES
+list(APPEND WebKit2_MESSAGES_IN_FILES
     UIProcess/soup/WebSoupRequestManagerProxy.messages.in
     WebProcess/soup/WebSoupRequestManager.messages.in
 )
 
-LIST(APPEND WebKit2_INCLUDE_DIRECTORIES
+list(APPEND WebKit2_INCLUDE_DIRECTORIES
     "${JAVASCRIPTCORE_DIR}/llint"
     "${WEBCORE_DIR}/platform/efl"
     "${WEBCORE_DIR}/platform/graphics/cairo"
@@ -191,13 +191,13 @@ LIST(APPEND WebKit2_INCLUDE_DIRECTORIES
     ${WTF_DIR}
 )
 
-IF (WTF_USE_3D_GRAPHICS)
-    LIST(APPEND WebKit2_INCLUDE_DIRECTORIES
+if (WTF_USE_3D_GRAPHICS)
+    list(APPEND WebKit2_INCLUDE_DIRECTORIES
         "${THIRDPARTY_DIR}/ANGLE/include/GLSLANG"
     )
-ENDIF ()
+endif ()
 
-LIST(APPEND WebKit2_LIBRARIES
+list(APPEND WebKit2_LIBRARIES
     ${CAIRO_LIBRARIES}
     ${ECORE_LIBRARIES}
     ${ECORE_EVAS_LIBRARIES}
@@ -220,11 +220,11 @@ LIST(APPEND WebKit2_LIBRARIES
     ${LIBSOUP_LIBRARIES}
 )
 
-LIST (APPEND WebProcess_SOURCES
+list(APPEND WebProcess_SOURCES
     efl/MainEfl.cpp
 )
 
-LIST (APPEND WebProcess_LIBRARIES
+list(APPEND WebProcess_LIBRARIES
     ${CAIRO_LIBRARIES}
     ${ECORE_IMF_LIBRARIES}
     ${EDJE_LIBRARIES}
@@ -236,24 +236,24 @@ LIST (APPEND WebProcess_LIBRARIES
     ${SQLITE_LIBRARIES}
 )
 
-IF (ENABLE_ECORE_X)
-    LIST(APPEND WebProcess_LIBRARIES
+if (ENABLE_ECORE_X)
+    list(APPEND WebProcess_LIBRARIES
         ${ECORE_X_LIBRARIES}
         ${X11_Xext_LIB})
-ENDIF ()
+endif ()
 
-ADD_CUSTOM_TARGET(forwarding-headerEfl
+add_custom_target(forwarding-headerEfl
     COMMAND ${PERL_EXECUTABLE} ${WEBKIT2_DIR}/Scripts/generate-forwarding-headers.pl ${WEBKIT2_DIR} ${DERIVED_SOURCES_WEBKIT2_DIR}/include efl
 )
-SET(ForwardingHeaders_NAME forwarding-headerEfl)
+set(ForwardingHeaders_NAME forwarding-headerEfl)
 
-ADD_CUSTOM_TARGET(forwarding-headerSoup
+add_custom_target(forwarding-headerSoup
     COMMAND ${PERL_EXECUTABLE} ${WEBKIT2_DIR}/Scripts/generate-forwarding-headers.pl ${WEBKIT2_DIR} ${DERIVED_SOURCES_WEBKIT2_DIR}/include soup
 )
-SET(ForwardingNetworkHeaders_NAME forwarding-headerSoup)
+set(ForwardingNetworkHeaders_NAME forwarding-headerSoup)
 
-CONFIGURE_FILE(efl/ewebkit2.pc.in ${CMAKE_BINARY_DIR}/WebKit2/efl/ewebkit2.pc @ONLY)
-SET (EWebKit2_HEADERS
+configure_file(efl/ewebkit2.pc.in ${CMAKE_BINARY_DIR}/WebKit2/efl/ewebkit2.pc @ONLY)
+set(EWebKit2_HEADERS
     "${CMAKE_CURRENT_SOURCE_DIR}/UIProcess/API/efl/EWebKit2.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/UIProcess/API/efl/ewk_auth_request.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/UIProcess/API/efl/ewk_back_forward_list.h"
@@ -289,35 +289,35 @@ SET (EWebKit2_HEADERS
     "${CMAKE_CURRENT_SOURCE_DIR}/UIProcess/API/efl/ewk_window_features.h"
 )
 
-INSTALL(FILES ${CMAKE_BINARY_DIR}/WebKit2/efl/ewebkit2.pc DESTINATION lib/pkgconfig)
-INSTALL(FILES ${EWebKit2_HEADERS} DESTINATION include/${WebKit2_LIBRARY_NAME}-${PROJECT_VERSION_MAJOR})
+install(FILES ${CMAKE_BINARY_DIR}/WebKit2/efl/ewebkit2.pc DESTINATION lib/pkgconfig)
+install(FILES ${EWebKit2_HEADERS} DESTINATION include/${WebKit2_LIBRARY_NAME}-${PROJECT_VERSION_MAJOR})
 
-IF (ENABLE_PLUGIN_PROCESS)
-    ADD_DEFINITIONS(-DENABLE_PLUGIN_PROCESS=1)
+if (ENABLE_PLUGIN_PROCESS)
+    add_definitions(-DENABLE_PLUGIN_PROCESS=1)
 
-    SET (PluginProcess_EXECUTABLE_NAME PluginProcess)
-    LIST (APPEND PluginProcess_INCLUDE_DIRECTORIES
+    set(PluginProcess_EXECUTABLE_NAME PluginProcess)
+    list(APPEND PluginProcess_INCLUDE_DIRECTORIES
         "${WEBKIT2_DIR}/PluginProcess/unix"
     )
 
-    INCLUDE_DIRECTORIES(${PluginProcess_INCLUDE_DIRECTORIES})
+    include_directories(${PluginProcess_INCLUDE_DIRECTORIES})
 
-    LIST (APPEND PluginProcess_SOURCES
+    list(APPEND PluginProcess_SOURCES
         ${WEBKIT2_DIR}/unix/PluginMainUnix.cpp
     )
 
-    SET(PluginProcess_LIBRARIES
+    set(PluginProcess_LIBRARIES
         ${WebKit2_LIBRARY_NAME}
     )
 
-    ADD_EXECUTABLE(${PluginProcess_EXECUTABLE_NAME} ${PluginProcess_SOURCES})
-    TARGET_LINK_LIBRARIES(${PluginProcess_EXECUTABLE_NAME} ${PluginProcess_LIBRARIES})
-    INSTALL(TARGETS ${PluginProcess_EXECUTABLE_NAME} DESTINATION "${EXEC_INSTALL_DIR}")
-ENDIF () # ENABLE_PLUGIN_PROCESS
+    add_executable(${PluginProcess_EXECUTABLE_NAME} ${PluginProcess_SOURCES})
+    target_link_libraries(${PluginProcess_EXECUTABLE_NAME} ${PluginProcess_LIBRARIES})
+    install(TARGETS ${PluginProcess_EXECUTABLE_NAME} DESTINATION "${EXEC_INSTALL_DIR}")
+endif () # ENABLE_PLUGIN_PROCESS
 
-INCLUDE_DIRECTORIES(${THIRDPARTY_DIR}/gtest/include)
+include_directories(${THIRDPARTY_DIR}/gtest/include)
 
-SET(EWK2UnitTests_LIBRARIES
+set(EWK2UnitTests_LIBRARIES
     ${WTF_LIBRARY_NAME}
     ${JavaScriptCore_LIBRARY_NAME}
     ${WebCore_LIBRARY_NAME}
@@ -333,18 +333,18 @@ SET(EWK2UnitTests_LIBRARIES
     gtest
 )
 
-IF (ENABLE_GLIB_SUPPORT)
-    LIST(APPEND EWK2UnitTests_LIBRARIES
+if (ENABLE_GLIB_SUPPORT)
+    list(APPEND EWK2UnitTests_LIBRARIES
         ${GLIB_LIBRARIES}
         ${GLIB_GTHREAD_LIBRARIES}
     )
-ENDIF()
+endif ()
 
-SET(WEBKIT2_EFL_TEST_DIR "${WEBKIT2_DIR}/UIProcess/API/efl/tests")
-SET(TEST_RESOURCES_DIR ${WEBKIT2_EFL_TEST_DIR}/resources)
-SET(TEST_INJECTED_BUNDLE_DIR ${WEBKIT2_EFL_TEST_DIR}/InjectedBundle)
+set(WEBKIT2_EFL_TEST_DIR "${WEBKIT2_DIR}/UIProcess/API/efl/tests")
+set(TEST_RESOURCES_DIR ${WEBKIT2_EFL_TEST_DIR}/resources)
+set(TEST_INJECTED_BUNDLE_DIR ${WEBKIT2_EFL_TEST_DIR}/InjectedBundle)
 
-ADD_DEFINITIONS(-DTEST_RESOURCES_DIR=\"${TEST_RESOURCES_DIR}\"
+add_definitions(-DTEST_RESOURCES_DIR=\"${TEST_RESOURCES_DIR}\"
     -DTEST_LIB_DIR=\"${CMAKE_LIBRARY_OUTPUT_DIRECTORY}\"
     -DTEST_THEME_DIR=\"${THEME_BINARY_DIR}\"
     -DGTEST_LINKED_AS_SHARED_LIBRARY=1
@@ -353,18 +353,18 @@ ADD_DEFINITIONS(-DTEST_RESOURCES_DIR=\"${TEST_RESOURCES_DIR}\"
     -DPLUGINPROCESSNAME=\"${PluginProcess_EXECUTABLE_NAME}\"
 )
 
-ADD_LIBRARY(ewk2UnitTestUtils
+add_library(ewk2UnitTestUtils
     ${WEBKIT2_EFL_TEST_DIR}/UnitTestUtils/EWK2UnitTestBase.cpp
     ${WEBKIT2_EFL_TEST_DIR}/UnitTestUtils/EWK2UnitTestEnvironment.cpp
     ${WEBKIT2_EFL_TEST_DIR}/UnitTestUtils/EWK2UnitTestMain.cpp
     ${WEBKIT2_EFL_TEST_DIR}/UnitTestUtils/EWK2UnitTestServer.cpp
 )
 
-TARGET_LINK_LIBRARIES(ewk2UnitTestUtils ${EWK2UnitTests_LIBRARIES})
+target_link_libraries(ewk2UnitTestUtils ${EWK2UnitTests_LIBRARIES})
 
 # The "ewk" on the test name needs to be suffixed with "2", otherwise it
 # will clash with tests from the WebKit 1 test suite.
-SET(EWK2UnitTests_BINARIES
+set(EWK2UnitTests_BINARIES
     test_ewk2_auth_request
     test_ewk2_back_forward_list
     test_ewk2_color_picker
@@ -388,23 +388,23 @@ SET(EWK2UnitTests_BINARIES
     test_ewk2_window_features
 )
 
-IF (ENABLE_API_TESTS)
-    FOREACH (testName ${EWK2UnitTests_BINARIES})
-        ADD_EXECUTABLE(${testName} ${WEBKIT2_EFL_TEST_DIR}/${testName}.cpp)
-        ADD_TEST(${testName} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${testName})
-        SET_TESTS_PROPERTIES(${testName} PROPERTIES TIMEOUT 60)
-        TARGET_LINK_LIBRARIES(${testName} ${EWK2UnitTests_LIBRARIES} ewk2UnitTestUtils)
-    ENDFOREACH ()
+if (ENABLE_API_TESTS)
+    foreach (testName ${EWK2UnitTests_BINARIES})
+        add_executable(${testName} ${WEBKIT2_EFL_TEST_DIR}/${testName}.cpp)
+        add_test(${testName} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${testName})
+        set_tests_properties(${testName} PROPERTIES TIMEOUT 60)
+        target_link_libraries(${testName} ${EWK2UnitTests_LIBRARIES} ewk2UnitTestUtils)
+    endforeach ()
 
-    ADD_LIBRARY(ewk2UnitTestInjectedBundleSample SHARED ${TEST_INJECTED_BUNDLE_DIR}/injected_bundle_sample.cpp)
-    TARGET_LINK_LIBRARIES(ewk2UnitTestInjectedBundleSample ${WebKit2_LIBRARY_NAME})
-ENDIF ()
+    add_library(ewk2UnitTestInjectedBundleSample SHARED ${TEST_INJECTED_BUNDLE_DIR}/injected_bundle_sample.cpp)
+    target_link_libraries(ewk2UnitTestInjectedBundleSample ${WebKit2_LIBRARY_NAME})
+endif ()
 
-IF (ENABLE_SPELLCHECK)
-    LIST(APPEND WebKit2_INCLUDE_DIRECTORIES
+if (ENABLE_SPELLCHECK)
+    list(APPEND WebKit2_INCLUDE_DIRECTORIES
         ${ENCHANT_INCLUDE_DIRS}
     )
-    LIST(APPEND WebKit2_LIBRARIES
+    list(APPEND WebKit2_LIBRARIES
         ${ENCHANT_LIBRARIES}
     )
-ENDIF()
+endif ()

@@ -1,4 +1,4 @@
-LIST(APPEND WebKit_INCLUDE_DIRECTORIES
+list(APPEND WebKit_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/page/win"
     "${WEBCORE_DIR}/platform/graphics/wince"
     "${WEBCORE_DIR}/platform/graphics/win"
@@ -9,7 +9,7 @@ LIST(APPEND WebKit_INCLUDE_DIRECTORIES
     wince/WebCoreSupport
 )
 
-LIST(APPEND WebKit_SOURCES
+list(APPEND WebKit_SOURCES
     wince/WebView.h
     wince/WebView.cpp
 
@@ -23,4 +23,4 @@ LIST(APPEND WebKit_SOURCES
     wince/WebCoreSupport/PlatformStrategiesWinCE.cpp
 )
 
-SET(WebKit_LIBRARY_TYPE STATIC)
+set(WebKit_LIBRARY_TYPE STATIC)

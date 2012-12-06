@@ -6,24 +6,24 @@
 #  DirectX_FOUND, If false, do not try to use DirectX.
 #  DirectX_ROOT_DIR, directory where DirectX was installed.
 
-FIND_PATH(DirectX_INCLUDE_DIRS d3d9.h PATHS
+find_path(DirectX_INCLUDE_DIRS d3d9.h PATHS
     "$ENV{DXSDK_DIR}/Include"
     "$ENV{PROGRAMFILES}/Microsoft DirectX SDK*/Include"
 )
 
-GET_FILENAME_COMPONENT(DirectX_ROOT_DIR "${DirectX_INCLUDE_DIRS}/.." ABSOLUTE)
+get_filename_component(DirectX_ROOT_DIR "${DirectX_INCLUDE_DIRS}/.." ABSOLUTE)
 
-IF (CMAKE_CL_64)
-    SET(DirectX_LIBRARY_PATHS "${DirectX_ROOT_DIR}/Lib/x64")
-ELSE ()
-    SET(DirectX_LIBRARY_PATHS "${DirectX_ROOT_DIR}/Lib/x86" "${DirectX_ROOT_DIR}/Lib")
-ENDIF ()
+if (CMAKE_CL_64)
+    set(DirectX_LIBRARY_PATHS "${DirectX_ROOT_DIR}/Lib/x64")
+else ()
+    set(DirectX_LIBRARY_PATHS "${DirectX_ROOT_DIR}/Lib/x86" "${DirectX_ROOT_DIR}/Lib")
+endif ()
 
-FIND_LIBRARY(DirectX_D3D9_LIBRARY d3d9 ${DirectX_LIBRARY_PATHS} NO_DEFAULT_PATH)
-FIND_LIBRARY(DirectX_D3DX9_LIBRARY d3dx9 ${DirectX_LIBRARY_PATHS} NO_DEFAULT_PATH)
-SET(DirectX_LIBRARIES ${DirectX_D3D9_LIBRARY} ${DirectX_D3DX9_LIBRARY})
+find_library(DirectX_D3D9_LIBRARY d3d9 ${DirectX_LIBRARY_PATHS} NO_DEFAULT_PATH)
+find_library(DirectX_D3DX9_LIBRARY d3dx9 ${DirectX_LIBRARY_PATHS} NO_DEFAULT_PATH)
+set(DirectX_LIBRARIES ${DirectX_D3D9_LIBRARY} ${DirectX_D3DX9_LIBRARY})
 
 # handle the QUIETLY and REQUIRED arguments and set DirectX_FOUND to TRUE if all listed variables are TRUE
-INCLUDE(FindPackageHandleStandardArgs)
+include(FindPackageHandleStandardArgs)
 FIND_PACKAGE_HANDLE_STANDARD_ARGS(DirectX DEFAULT_MSG DirectX_ROOT_DIR DirectX_LIBRARIES DirectX_INCLUDE_DIRS)
-MARK_AS_ADVANCED(DirectX_INCLUDE_DIRS DirectX_D3D9_LIBRARY DirectX_D3DX9_LIBRARY)
+mark_as_advanced(DirectX_INCLUDE_DIRS DirectX_D3D9_LIBRARY DirectX_D3DX9_LIBRARY)

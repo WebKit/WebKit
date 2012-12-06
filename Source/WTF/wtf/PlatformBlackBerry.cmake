@@ -1,4 +1,4 @@
-LIST(APPEND WTF_SOURCES
+list(APPEND WTF_SOURCES
     OSAllocatorPosix.cpp
     TCSystemAlloc.cpp
     ThreadIdentifierDataPthreads.cpp
@@ -7,6 +7,6 @@ LIST(APPEND WTF_SOURCES
     unicode/icu/CollatorICU.cpp
 )
 
-LIST(INSERT WTF_INCLUDE_DIRECTORIES 0
+list(INSERT WTF_INCLUDE_DIRECTORIES 0
     "${BLACKBERRY_THIRD_PARTY_DIR}/icu"
 )

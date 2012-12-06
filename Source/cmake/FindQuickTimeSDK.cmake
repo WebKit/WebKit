@@ -5,16 +5,16 @@
 #  QuickTime_LIBRARIES, libraries to link against to use QuickTime.
 #  QuickTime_FOUND, If false, do not try to use QuickTime.
 
-FIND_PATH(QuickTimeSDK_INCLUDE_DIRS QuickTime.h PATHS
+find_path(QuickTimeSDK_INCLUDE_DIRS QuickTime.h PATHS
     "$ENV{PROGRAMFILES}/QuickTime SDK/CIncludes"
 )
 
-SET(QuickTimeSDK_LIBRARY_PATH "${QuickTimeSDK_INCLUDE_DIRS}/../Libraries")
-FIND_LIBRARY(QuickTimeSDK_CVClient_LIBRARY CVClient ${QuickTimeSDK_LIBRARY_PATH} NO_DEFAULT_PATH)
-FIND_LIBRARY(QuickTimeSDK_QTMLClient_LIBRARY QTMLClient ${QuickTimeSDK_LIBRARY_PATH} NO_DEFAULT_PATH)
-SET(QuickTimeSDK_LIBRARIES ${QuickTimeSDK_CVClient_LIBRARY} ${QuickTimeSDK_QTMLClient_LIBRARY})
+set(QuickTimeSDK_LIBRARY_PATH "${QuickTimeSDK_INCLUDE_DIRS}/../Libraries")
+find_library(QuickTimeSDK_CVClient_LIBRARY CVClient ${QuickTimeSDK_LIBRARY_PATH} NO_DEFAULT_PATH)
+find_library(QuickTimeSDK_QTMLClient_LIBRARY QTMLClient ${QuickTimeSDK_LIBRARY_PATH} NO_DEFAULT_PATH)
+set(QuickTimeSDK_LIBRARIES ${QuickTimeSDK_CVClient_LIBRARY} ${QuickTimeSDK_QTMLClient_LIBRARY})
 
 # handle the QUIETLY and REQUIRED arguments and set QuickTimeSDK_FOUND to TRUE if all listed variables are TRUE
-INCLUDE(FindPackageHandleStandardArgs)
+include(FindPackageHandleStandardArgs)
 FIND_PACKAGE_HANDLE_STANDARD_ARGS(QuickTimeSDK DEFAULT_MSG QuickTimeSDK_LIBRARIES QuickTimeSDK_INCLUDE_DIRS)
-MARK_AS_ADVANCED(QuickTimeSDK_INCLUDE_DIRS QuickTimeSDK_CVClient_LIBRARY QuickTimeSDK_QTMLClient_LIBRARY)
+mark_as_advanced(QuickTimeSDK_INCLUDE_DIRS QuickTimeSDK_CVClient_LIBRARY QuickTimeSDK_QTMLClient_LIBRARY)

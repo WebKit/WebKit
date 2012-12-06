@@ -5,7 +5,7 @@
 #  E_DBUS_INCLUDE_DIRS - directories which contain the E_DBus headers.
 #  E_DBUS_LIBRARIES - libraries required to link against E_DBus.
 #
-# Optionally, the COMPONENTS keyword can be passed to FIND_PACKAGE()
+# Optionally, the COMPONENTS keyword can be passed to find_package()
 # and additional E_DBus libraries can be looked for. Currently, the
 # following libraries can be searched, and they define the following
 # variables if found:
@@ -35,7 +35,7 @@
 # OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-INCLUDE(EFLHelpers)
+include(EFLHelpers)
 
 FIND_EFL_LIBRARY(E_DBUS
     HEADERS E_DBus.h
@@ -50,13 +50,13 @@ FIND_EFL_LIBRARY(E_DBUS_EUKIT
     LIBRARY eukit
 )
 
-FOREACH(_component ${E_DBus_FIND_COMPONENTS})
-    SET(_e_dbus_component "E_DBUS_${_component}")
-    STRING(TOUPPER ${_e_dbus_component} _UPPER_NAME)
+foreach (_component ${E_DBus_FIND_COMPONENTS})
+    set(_e_dbus_component "E_DBUS_${_component}")
+    string(TOUPPER ${_e_dbus_component} _UPPER_NAME)
 
-    LIST(APPEND _E_DBUS_REQUIRED_COMPONENT_VARS ${_UPPER_NAME}_INCLUDE_DIRS ${_UPPER_NAME}_LIBRARIES)
-ENDFOREACH()
+    list(APPEND _E_DBUS_REQUIRED_COMPONENT_VARS ${_UPPER_NAME}_INCLUDE_DIRS ${_UPPER_NAME}_LIBRARIES)
+endforeach ()
 
-INCLUDE(FindPackageHandleStandardArgs)
+include(FindPackageHandleStandardArgs)
 FIND_PACKAGE_HANDLE_STANDARD_ARGS(E_DBus REQUIRED_VARS E_DBUS_INCLUDE_DIRS E_DBUS_LIBRARIES ${_E_DBUS_REQUIRED_COMPONENT_VARS}
                                          VERSION_VAR   E_DBUS_VERSION)

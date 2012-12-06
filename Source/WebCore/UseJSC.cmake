@@ -1,27 +1,27 @@
-LIST(APPEND WebCore_INCLUDE_DIRECTORIES
+list(APPEND WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/bindings/js"
     "${WEBCORE_DIR}/bridge/jsc"
 )
 
-LIST(APPEND WebCoreTestSupport_INCLUDE_DIRECTORIES
+list(APPEND WebCoreTestSupport_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/testing/js"
 )
 
-LIST(APPEND WebCore_IDL_INCLUDES
+list(APPEND WebCore_IDL_INCLUDES
     bindings/js
 )
 
-IF (PORT MATCHES "BlackBerry")
-    LIST(APPEND WebCore_IDL_INCLUDES
+if (PORT MATCHES "BlackBerry")
+    list(APPEND WebCore_IDL_INCLUDES
         testing/js
     )
-    LIST(APPEND WebCore_IDL_FILES
+    list(APPEND WebCore_IDL_FILES
         testing/Internals.idl
         testing/InternalSettings.idl
     )
-ENDIF ()
+endif ()
 
-LIST(APPEND WebCore_SOURCES
+list(APPEND WebCore_SOURCES
     bindings/js/ArrayValue.cpp
     bindings/js/BindingState.cpp
     bindings/js/CallbackFunction.cpp
@@ -174,47 +174,47 @@ LIST(APPEND WebCore_SOURCES
     bridge/jsc/BridgeJSC.cpp
 )
 
-LIST(APPEND WebCoreTestSupport_SOURCES
+list(APPEND WebCoreTestSupport_SOURCES
     testing/js/WebCoreTestSupport.cpp
 )
 
-IF (ENABLE_BLOB)
-    LIST(APPEND WebCore_SOURCES
+if (ENABLE_BLOB)
+    list(APPEND WebCore_SOURCES
         bindings/js/JSFileReaderCustom.cpp
     )
-ENDIF ()
+endif ()
 
-IF (ENABLE_REQUEST_ANIMATION_FRAME)
-    LIST(APPEND WebCore_SOURCES
+if (ENABLE_REQUEST_ANIMATION_FRAME)
+    list(APPEND WebCore_SOURCES
         bindings/js/JSRequestAnimationFrameCallbackCustom.cpp
     )
-ENDIF ()
+endif ()
 
-IF (ENABLE_SQL_DATABASE)
-    LIST(APPEND WebCore_SOURCES
+if (ENABLE_SQL_DATABASE)
+    list(APPEND WebCore_SOURCES
         bindings/js/JSCustomSQLStatementErrorCallback.cpp
         bindings/js/JSSQLResultSetRowListCustom.cpp
         bindings/js/JSSQLTransactionCustom.cpp
         bindings/js/JSSQLTransactionSyncCustom.cpp
     )
-ENDIF ()
+endif ()
 
-IF (ENABLE_INDEXED_DATABASE)
-    LIST(APPEND WebCore_SOURCES
+if (ENABLE_INDEXED_DATABASE)
+    list(APPEND WebCore_SOURCES
         bindings/js/IDBBindingUtilities.cpp
         bindings/js/JSIDBAnyCustom.cpp
         bindings/js/JSIDBKeyCustom.cpp
     )
-ENDIF ()
+endif ()
 
-IF (ENABLE_WEB_SOCKETS)
-    LIST(APPEND WebCore_SOURCES
+if (ENABLE_WEB_SOCKETS)
+    list(APPEND WebCore_SOURCES
         bindings/js/JSWebSocketCustom.cpp
     )
-ENDIF ()
+endif ()
 
-IF (ENABLE_WORKERS)
-    LIST(APPEND WebCore_SOURCES
+if (ENABLE_WORKERS)
+    list(APPEND WebCore_SOURCES
         bindings/js/JSDedicatedWorkerContextCustom.cpp
         bindings/js/JSWorkerContextBase.cpp
         bindings/js/JSWorkerContextCustom.cpp
@@ -222,94 +222,94 @@ IF (ENABLE_WORKERS)
         bindings/js/WorkerScriptController.cpp
         bindings/js/WorkerScriptDebugServer.cpp
     )
-ENDIF ()
+endif ()
 
-IF (ENABLE_VIDEO_TRACK)
-    LIST(APPEND WebCore_SOURCES
+if (ENABLE_VIDEO_TRACK)
+    list(APPEND WebCore_SOURCES
         bindings/js/JSTextTrackCueCustom.cpp
         bindings/js/JSTextTrackCustom.cpp
         bindings/js/JSTextTrackListCustom.cpp
         bindings/js/JSTrackCustom.cpp
         bindings/js/JSTrackEventCustom.cpp
     )
-ENDIF ()
+endif ()
 
-IF (ENABLE_SHARED_WORKERS)
-    LIST(APPEND WebCore_SOURCES
+if (ENABLE_SHARED_WORKERS)
+    list(APPEND WebCore_SOURCES
         bindings/js/JSSharedWorkerCustom.cpp
     )
-ENDIF ()
+endif ()
 
-IF (ENABLE_NOTIFICATIONS)
-    LIST(APPEND WebCore_SOURCES
+if (ENABLE_NOTIFICATIONS)
+    list(APPEND WebCore_SOURCES
         bindings/js/JSDesktopNotificationsCustom.cpp
         bindings/js/JSNotificationCustom.cpp
     )
-ENDIF ()
+endif ()
 
 if (ENABLE_FILE_SYSTEM)
-    LIST(APPEND WebCore_SOURCES
+    list(APPEND WebCore_SOURCES
         bindings/js/JSEntryCustom.cpp
         bindings/js/JSEntrySyncCustom.cpp
     )
-ENDIF ()
+endif ()
 
-IF (ENABLE_SVG)
-    LIST(APPEND WebCore_SOURCES
+if (ENABLE_SVG)
+    list(APPEND WebCore_SOURCES
         bindings/js/JSSVGElementInstanceCustom.cpp
         bindings/js/JSSVGLengthCustom.cpp
         bindings/js/JSSVGPathSegCustom.cpp
     )
-ENDIF ()
+endif ()
 
-IF (ENABLE_WEBGL)
-    LIST(APPEND WebCore_SOURCES
+if (ENABLE_WEBGL)
+    list(APPEND WebCore_SOURCES
         bindings/js/JSWebGLRenderingContextCustom.cpp
     )
-ENDIF ()
+endif ()
 
-IF (ENABLE_WEB_AUDIO)
-    LIST(APPEND WebCore_SOURCES
+if (ENABLE_WEB_AUDIO)
+    list(APPEND WebCore_SOURCES
         bindings/js/JSAudioBufferSourceNodeCustom.cpp
         bindings/js/JSAudioContextCustom.cpp
         bindings/js/JSScriptProcessorNodeCustom.cpp
     )
-ENDIF ()
+endif ()
 
-IF (ENABLE_WEB_INTENTS)
-    LIST (APPEND WebCore_SOURCES
+if (ENABLE_WEB_INTENTS)
+    list(APPEND WebCore_SOURCES
         bindings/js/JSIntentConstructor.cpp
     )
-ENDIF ()
+endif ()
 
-LIST(APPEND SCRIPTS_BINDINGS
+list(APPEND SCRIPTS_BINDINGS
     ${WEBCORE_DIR}/bindings/scripts/CodeGenerator.pm
     ${WEBCORE_DIR}/bindings/scripts/CodeGeneratorJS.pm
 )
 
-SET(IDL_INCLUDES "")
-FOREACH (_include ${WebCore_IDL_INCLUDES})
-    LIST(APPEND IDL_INCLUDES --include=${WEBCORE_DIR}/${_include})
-ENDFOREACH ()
+set(IDL_INCLUDES "")
+foreach (_include ${WebCore_IDL_INCLUDES})
+    list(APPEND IDL_INCLUDES --include=${WEBCORE_DIR}/${_include})
+endforeach ()
 
-FOREACH (_include ${WebCoreTestSupport_IDL_INCLUDES})
-    LIST(APPEND IDL_INCLUDES --include=${WEBCORE_DIR}/${_include})
-ENDFOREACH ()
+foreach (_include ${WebCoreTestSupport_IDL_INCLUDES})
+    list(APPEND IDL_INCLUDES --include=${WEBCORE_DIR}/${_include})
+endforeach ()
 
-SET(FEATURE_DEFINES_JAVASCRIPT "LANGUAGE_JAVASCRIPT=1 ${FEATURE_DEFINES_WITH_SPACE_SEPARATOR}")
+set(FEATURE_DEFINES_JAVASCRIPT "LANGUAGE_JAVASCRIPT=1 ${FEATURE_DEFINES_WITH_SPACE_SEPARATOR}")
 
 # Create JavaScript C++ code given an IDL input
-FOREACH (_idl ${WebCore_IDL_FILES})
-    SET(IDL_FILES_LIST "${IDL_FILES_LIST}${WEBCORE_DIR}/${_idl}\n")
-ENDFOREACH ()
+foreach (_idl ${WebCore_IDL_FILES})
+    set(IDL_FILES_LIST "${IDL_FILES_LIST}${WEBCORE_DIR}/${_idl}\n")
+endforeach ()
 
-FOREACH (_idl ${WebCoreTestSupport_IDL_FILES})
-    SET(IDL_FILES_LIST "${IDL_FILES_LIST}${WEBCORE_DIR}/${_idl}\n")
-ENDFOREACH ()
+foreach (_idl ${WebCoreTestSupport_IDL_FILES})
+    set(IDL_FILES_LIST "${IDL_FILES_LIST}${WEBCORE_DIR}/${_idl}\n")
+endforeach ()
 
-FILE(WRITE ${IDL_FILES_TMP} ${IDL_FILES_LIST})
+file(WRITE ${IDL_FILES_TMP} ${IDL_FILES_LIST})
 
-ADD_CUSTOM_COMMAND(
+add_custom_command(
     OUTPUT ${SUPPLEMENTAL_DEPENDENCY_FILE}
     DEPENDS ${WEBCORE_DIR}/bindings/scripts/preprocess-idls.pl ${SCRIPTS_PREPROCESS_IDLS} ${WebCore_IDL_FILES} ${WebCoreTestSupport_IDL_FILES} ${IDL_ATTRIBUTES_FILE}
     COMMAND ${PERL_EXECUTABLE} -I${WEBCORE_DIR}/bindings/scripts ${WEBCORE_DIR}/bindings/scripts/preprocess-idls.pl --defines "${FEATURE_DEFINES_JAVASCRIPT}" --idlFilesList ${IDL_FILES_TMP} --preprocessor "${CODE_GENERATOR_PREPROCESSOR}" --supplementalDependencyFile ${SUPPLEMENTAL_DEPENDENCY_FILE} --idlAttributesFile ${IDL_ATTRIBUTES_FILE}

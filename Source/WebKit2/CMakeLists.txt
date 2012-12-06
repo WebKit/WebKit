@@ -1,4 +1,4 @@
-SET(WebKit2_INCLUDE_DIRECTORIES
+set(WebKit2_INCLUDE_DIRECTORIES
     "${WEBKIT2_DIR}"
     "${WEBKIT2_DIR}/Platform"
     "${WEBKIT2_DIR}/Platform/CoreIPC"
@@ -112,7 +112,7 @@ SET(WebKit2_INCLUDE_DIRECTORIES
     "${CMAKE_SOURCE_DIR}/Source"
 )
 
-SET(WebKit2_SOURCES
+set(WebKit2_SOURCES
     Platform/Logging.cpp
     Platform/Module.cpp
     Platform/WorkQueue.cpp
@@ -348,7 +348,7 @@ SET(WebKit2_SOURCES
     UIProcess/CoordinatedGraphics/CoordinatedBackingStore.cpp
     UIProcess/CoordinatedGraphics/LayerTreeCoordinatorProxy.cpp
     UIProcess/CoordinatedGraphics/LayerTreeRenderer.cpp
-    
+
     UIProcess/Downloads/DownloadProxy.cpp
 
     UIProcess/InspectorServer/WebInspectorServer.cpp
@@ -502,7 +502,7 @@ SET(WebKit2_SOURCES
     WebProcess/WebPage/CoordinatedGraphics/UpdateAtlas.cpp
 )
 
-SET(WebKit2_MESSAGES_IN_FILES
+set(WebKit2_MESSAGES_IN_FILES
     PluginProcess/PluginControllerProxy.messages.in
     PluginProcess/PluginProcess.messages.in
     PluginProcess/WebProcessConnection.messages.in
@@ -531,7 +531,7 @@ SET(WebKit2_MESSAGES_IN_FILES
 
 
     UIProcess/CoordinatedGraphics/LayerTreeCoordinatorProxy.messages.in
-    
+
     UIProcess/Downloads/DownloadProxy.messages.in
 
     UIProcess/Notifications/WebNotificationManagerProxy.messages.in
@@ -578,24 +578,24 @@ SET(WebKit2_MESSAGES_IN_FILES
     WebProcess/WebPage/CoordinatedGraphics/LayerTreeCoordinator.messages.in
 )
 
-SET(WebProcess_EXECUTABLE_NAME WebProcess)
+set(WebProcess_EXECUTABLE_NAME WebProcess)
 
-SET(WebProcess_LIBRARIES
+set(WebProcess_LIBRARIES
     ${JavaScriptCore_LIBRARY_NAME}
     ${WebCore_LIBRARY_NAME}
     ${WebKit2_LIBRARY_NAME}
 )
 
-SET(WebKit2_LIBRARIES
+set(WebKit2_LIBRARIES
     ${WebCore_LIBRARY_NAME}
 )
 
 WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS()
 
 # Create JavaScript C++ code given an IDL input
-FOREACH (_file ${WebKit2_MESSAGES_IN_FILES})
-    GET_FILENAME_COMPONENT (_name ${_file} NAME_WE)
-    ADD_CUSTOM_COMMAND(
+foreach (_file ${WebKit2_MESSAGES_IN_FILES})
+    get_filename_component(_name ${_file} NAME_WE)
+    add_custom_command(
         OUTPUT ${DERIVED_SOURCES_WEBKIT2_DIR}/${_name}MessageReceiver.cpp ${DERIVED_SOURCES_WEBKIT2_DIR}/${_name}Messages.h
         MAIN_DEPENDENCY ${_file}
         DEPENDS ${WEBKIT2_DIR}/Scripts/webkit2/__init__.py
@@ -607,25 +607,25 @@ FOREACH (_file ${WebKit2_MESSAGES_IN_FILES})
         WORKING_DIRECTORY ${WEBKIT2_DIR}
         VERBATIM)
 
-    LIST(APPEND WebKit2_SOURCES ${DERIVED_SOURCES_WEBKIT2_DIR}/${_name}MessageReceiver.cpp)
-ENDFOREACH ()
+    list(APPEND WebKit2_SOURCES ${DERIVED_SOURCES_WEBKIT2_DIR}/${_name}MessageReceiver.cpp)
+endforeach ()
 
-ADD_DEFINITIONS(-DBUILDING_WEBKIT)
-INCLUDE_DIRECTORIES(${WebKit2_INCLUDE_DIRECTORIES})
-ADD_LIBRARY(${WebKit2_LIBRARY_NAME} ${WebKit2_LIBRARY_TYPE} ${WebKit2_SOURCES})
+add_definitions(-DBUILDING_WEBKIT)
+include_directories(${WebKit2_INCLUDE_DIRECTORIES})
+add_library(${WebKit2_LIBRARY_NAME} ${WebKit2_LIBRARY_TYPE} ${WebKit2_SOURCES})
 
-ADD_DEPENDENCIES(${WebKit2_LIBRARY_NAME} ${WebCore_LIBRARY_NAME})
-ADD_DEPENDENCIES(${WebKit2_LIBRARY_NAME} ${ForwardingHeaders_NAME})
-ADD_DEPENDENCIES(${WebKit2_LIBRARY_NAME} ${ForwardingNetworkHeaders_NAME})
-TARGET_LINK_LIBRARIES(${WebKit2_LIBRARY_NAME} ${WebKit2_LIBRARIES})
-SET_TARGET_PROPERTIES(${WebKit2_LIBRARY_NAME} PROPERTIES FOLDER "WebKit")
-SET_TARGET_PROPERTIES(${WebKit2_LIBRARY_NAME} PROPERTIES LINK_INTERFACE_LIBRARIES "")
+add_dependencies(${WebKit2_LIBRARY_NAME} ${WebCore_LIBRARY_NAME})
+add_dependencies(${WebKit2_LIBRARY_NAME} ${ForwardingHeaders_NAME})
+add_dependencies(${WebKit2_LIBRARY_NAME} ${ForwardingNetworkHeaders_NAME})
+target_link_libraries(${WebKit2_LIBRARY_NAME} ${WebKit2_LIBRARIES})
+set_target_properties(${WebKit2_LIBRARY_NAME} PROPERTIES FOLDER "WebKit")
+set_target_properties(${WebKit2_LIBRARY_NAME} PROPERTIES LINK_INTERFACE_LIBRARIES "")
 
-ADD_EXECUTABLE(${WebProcess_EXECUTABLE_NAME} ${WebProcess_SOURCES})
-TARGET_LINK_LIBRARIES(${WebProcess_EXECUTABLE_NAME} ${WebProcess_LIBRARIES})
-SET_TARGET_PROPERTIES(${WebProcess_EXECUTABLE_NAME} PROPERTIES FOLDER "WebKit")
+add_executable(${WebProcess_EXECUTABLE_NAME} ${WebProcess_SOURCES})
+target_link_libraries(${WebProcess_EXECUTABLE_NAME} ${WebProcess_LIBRARIES})
+set_target_properties(${WebProcess_EXECUTABLE_NAME} PROPERTIES FOLDER "WebKit")
 
-SET_TARGET_PROPERTIES(${WebKit2_LIBRARY_NAME} PROPERTIES VERSION ${PROJECT_VERSION} SOVERSION ${PROJECT_VERSION_MAJOR})
+set_target_properties(${WebKit2_LIBRARY_NAME} PROPERTIES VERSION ${PROJECT_VERSION} SOVERSION ${PROJECT_VERSION_MAJOR})
 
-INSTALL(TARGETS ${WebKit2_LIBRARY_NAME} DESTINATION "${LIB_INSTALL_DIR}")
-INSTALL(TARGETS ${WebProcess_EXECUTABLE_NAME} DESTINATION "${EXEC_INSTALL_DIR}")
+install(TARGETS ${WebKit2_LIBRARY_NAME} DESTINATION "${LIB_INSTALL_DIR}")
+install(TARGETS ${WebProcess_EXECUTABLE_NAME} DESTINATION "${EXEC_INSTALL_DIR}")

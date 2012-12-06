@@ -1,6 +1,6 @@
-SET(WEBKIT_TESTNETSCAPEPLUGIN_DIR "${TOOLS_DIR}/DumpRenderTree/TestNetscapePlugIn")
+set(WEBKIT_TESTNETSCAPEPLUGIN_DIR "${TOOLS_DIR}/DumpRenderTree/TestNetscapePlugIn")
 
-SET(WebKitTestNetscapePlugin_SOURCES
+set(WebKitTestNetscapePlugin_SOURCES
     ${WEBKIT_TESTNETSCAPEPLUGIN_DIR}/PluginObject.cpp
     ${WEBKIT_TESTNETSCAPEPLUGIN_DIR}/PluginTest.cpp
     ${WEBKIT_TESTNETSCAPEPLUGIN_DIR}/TestObject.cpp
@@ -27,12 +27,12 @@ SET(WebKitTestNetscapePlugin_SOURCES
     ${WEBKIT_TESTNETSCAPEPLUGIN_DIR}/Tests/x11/CallInvalidateRectWithNullNPPArgument.cpp
 )
 
-SET(WebKitTestNetscapePlugin_INCLUDE_DIRECTORIES
+set(WebKitTestNetscapePlugin_INCLUDE_DIRECTORIES
     ${WEBKIT_TESTNETSCAPEPLUGIN_DIR}
     ${WEBKIT_TESTNETSCAPEPLUGIN_DIR}/unix/ForwardingHeaders
     ${WEBCORE_DIR}
 )
 
-INCLUDE_DIRECTORIES(${WebKitTestNetscapePlugin_INCLUDE_DIRECTORIES})
+include_directories(${WebKitTestNetscapePlugin_INCLUDE_DIRECTORIES})
 
-ADD_LIBRARY(TestNetscapePlugin SHARED ${WebKitTestNetscapePlugin_SOURCES})
+add_library(TestNetscapePlugin SHARED ${WebKitTestNetscapePlugin_SOURCES})

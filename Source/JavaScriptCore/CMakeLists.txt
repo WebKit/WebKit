@@ -1,4 +1,4 @@
-SET(JavaScriptCore_INCLUDE_DIRECTORIES
+set(JavaScriptCore_INCLUDE_DIRECTORIES
     "${CMAKE_BINARY_DIR}"
     "${JAVASCRIPTCORE_DIR}"
     "${JAVASCRIPTCORE_DIR}/API"
@@ -23,7 +23,7 @@ SET(JavaScriptCore_INCLUDE_DIRECTORIES
     "${CMAKE_SOURCE_DIR}/Source"
 )
 
-SET(JavaScriptCore_SOURCES
+set(JavaScriptCore_SOURCES
     API/JSBase.cpp
     API/JSCallbackConstructor.cpp
     API/JSCallbackFunction.cpp
@@ -36,7 +36,7 @@ SET(JavaScriptCore_SOURCES
     API/JSValueRef.cpp
     API/JSWeakObjectMapRefPrivate.cpp
     API/OpaqueJSString.cpp
-    
+
     assembler/MacroAssembler.cpp
     assembler/LinkBuffer.cpp
 
@@ -108,7 +108,7 @@ SET(JavaScriptCore_SOURCES
     dfg/DFGVariableEventStream.cpp
     dfg/DFGValidate.cpp
     dfg/DFGVirtualRegisterAllocationPhase.cpp
-    
+
     disassembler/Disassembler.cpp
 
     heap/BlockAllocator.cpp
@@ -138,7 +138,7 @@ SET(JavaScriptCore_SOURCES
     debugger/Debugger.cpp
     debugger/DebuggerActivation.cpp
     debugger/DebuggerCallFrame.cpp
-    
+
     interpreter/AbstractPC.cpp
     interpreter/CallFrame.cpp
     interpreter/Interpreter.cpp
@@ -301,7 +301,7 @@ SET(JavaScriptCore_SOURCES
     yarr/YarrSyntaxChecker.cpp
 )
 
-SET(JavaScriptCore_LUT_FILES
+set(JavaScriptCore_LUT_FILES
     runtime/ArrayConstructor.cpp
     runtime/ArrayPrototype.cpp
     runtime/BooleanPrototype.cpp
@@ -323,25 +323,25 @@ SET(JavaScriptCore_LUT_FILES
     runtime/StringPrototype.cpp
 )
 
-SET(JavaScriptCore_LIBRARIES
+set(JavaScriptCore_LIBRARIES
     ${WTF_LIBRARY_NAME}
 )
 
-IF (ENABLE_LLINT)
+if (ENABLE_LLINT)
     # We cannot check for RUBY_FOUND because it is set only when the full package is installed and
     # the only thing we need is the interpreter. Unlike Python, cmake does not provide a macro
     # for finding the only Ruby interpreter.
-    IF (NOT RUBY_EXECUTABLE)
-        MESSAGE(FATAL_ERROR "The Ruby interpreter is needed to generate LLInt files.")
-    ENDIF ()
+    if (NOT RUBY_EXECUTABLE)
+        message(FATAL_ERROR "The Ruby interpreter is needed to generate LLInt files.")
+    endif ()
 
-    SET(LLINT_ASM
+    set(LLINT_ASM
         llint/LowLevelInterpreter.asm
         llint/LowLevelInterpreter32_64.asm
         llint/LowLevelInterpreter64.asm
     )
 
-    SET(OFFLINE_ASM
+    set(OFFLINE_ASM
         offlineasm/armv7.rb
         offlineasm/ast.rb
         offlineasm/backends.rb
@@ -359,7 +359,7 @@ IF (ENABLE_LLINT)
         offlineasm/x86.rb
     )
 
-    ADD_CUSTOM_COMMAND(
+    add_custom_command(
         OUTPUT ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/LLIntDesiredOffsets.h
         MAIN_DEPENDENCY ${JAVASCRIPTCORE_DIR}/offlineasm/generate_offset_extractor.rb
         DEPENDS ${LLINT_ASM} ${OFFLINE_ASM}
@@ -375,11 +375,11 @@ IF (ENABLE_LLINT)
     # Additionally, setting the OBJECT_DEPENDS property will make LLIntDesiredOffsets.h a Makefile
     # dependency of both LLIntOffsetsExtractor and LLIntOffsetsExtractor.cpp, so the command will
     # actually be run twice!
-    ADD_EXECUTABLE(LLIntOffsetsExtractor
+    add_executable(LLIntOffsetsExtractor
         ${JAVASCRIPTCORE_DIR}/llint/LLIntOffsetsExtractor.cpp
         ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/LLIntDesiredOffsets.h
     )
-    TARGET_LINK_LIBRARIES(LLIntOffsetsExtractor ${WTF_LIBRARY_NAME})
+    target_link_libraries(LLIntOffsetsExtractor ${WTF_LIBRARY_NAME})
 
     # The build system will execute asm.rb every time LLIntOffsetsExtractor's mtime is newer than
     # LLIntAssembly.h's mtime. The problem we have here is: asm.rb has some built-in optimization
@@ -387,7 +387,7 @@ IF (ENABLE_LLINT)
     # LLIntOffsetsExtractor matches, no output is generated. To make this target consistent and avoid
     # running this command for every build, we artificially update LLIntAssembly.h's mtime (using touch)
     # after every asm.rb run.
-    ADD_CUSTOM_COMMAND(
+    add_custom_command(
         OUTPUT ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/LLIntAssembly.h
         MAIN_DEPENDENCY ${JAVASCRIPTCORE_DIR}/offlineasm/asm.rb
         DEPENDS LLIntOffsetsExtractor ${LLINT_ASM} ${OFFLINE_ASM}
@@ -398,11 +398,11 @@ IF (ENABLE_LLINT)
     # The explanation for not making LLIntAssembly.h part of the OBJECT_DEPENDS property of some of
     # the .cpp files below is similar to the one in the previous comment. However, since these .cpp
     # files are used to build JavaScriptCore itself, we can just add LLIntAssembly.h to JSC_HEADERS
-    # since it is used in the ADD_LIBRARY() call at the end of this file.
-    LIST(APPEND JavaScriptCore_HEADERS
+    # since it is used in the add_library() call at the end of this file.
+    list(APPEND JavaScriptCore_HEADERS
         ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/LLIntAssembly.h
     )
-    LIST(APPEND JavaScriptCore_SOURCES
+    list(APPEND JavaScriptCore_SOURCES
         llint/LLIntCLoop.cpp
         llint/LLIntData.cpp
         llint/LLIntEntrypoints.cpp
@@ -411,16 +411,16 @@ IF (ENABLE_LLINT)
         llint/LLIntThunks.cpp
         llint/LowLevelInterpreter.cpp
     )
-ENDIF ()
+endif ()
 
 # GENERATOR 1-A: LUT creator
-FOREACH (_file ${JavaScriptCore_LUT_FILES})
-    GET_FILENAME_COMPONENT(_name ${_file} NAME_WE)
+foreach (_file ${JavaScriptCore_LUT_FILES})
+    get_filename_component(_name ${_file} NAME_WE)
     GENERATE_HASH_LUT(${JAVASCRIPTCORE_DIR}/${_file} ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/${_name}.lut.h)
-    LIST(APPEND JavaScriptCore_HEADERS ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/${_name}.lut.h)
-ENDFOREACH ()
+    list(APPEND JavaScriptCore_HEADERS ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/${_name}.lut.h)
+endforeach ()
 
-SET (JavaScriptCore_FORWARDING_HEADERS_DIRECTORIES
+set(JavaScriptCore_FORWARDING_HEADERS_DIRECTORIES
     assembler
     bytecode
     collector/handles
@@ -435,7 +435,7 @@ SET (JavaScriptCore_FORWARDING_HEADERS_DIRECTORIES
     yarr
 )
 
-SET (JavaScriptCore_FORWARDING_HEADERS_FILES
+set(JavaScriptCore_FORWARDING_HEADERS_FILES
     API/APICast.h
     API/APIShims.h
     API/JavaScript.h
@@ -460,10 +460,10 @@ SET (JavaScriptCore_FORWARDING_HEADERS_FILES
 
 # GENERATOR 1-B: particular LUT creator (for 1 file only)
 GENERATE_HASH_LUT(${JAVASCRIPTCORE_DIR}/parser/Keywords.table ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/Lexer.lut.h MAIN_DEPENDENCY)
-LIST(APPEND JavaScriptCore_HEADERS ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/Lexer.lut.h)
+list(APPEND JavaScriptCore_HEADERS ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/Lexer.lut.h)
 
 #GENERATOR: "RegExpJitTables.h": tables used by Yarr
-ADD_CUSTOM_COMMAND(
+add_custom_command(
     OUTPUT ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/RegExpJitTables.h
     MAIN_DEPENDENCY ${JAVASCRIPTCORE_DIR}/create_regex_tables
     COMMAND ${PYTHON_EXECUTABLE} ${JAVASCRIPTCORE_DIR}/create_regex_tables > ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/RegExpJitTables.h
@@ -472,25 +472,25 @@ ADD_SOURCE_DEPENDENCIES(${JAVASCRIPTCORE_DIR}/yarr/YarrPattern.cpp ${DERIVED_SOU
 
 
 #GENERATOR: "KeywordLookup.h": keyword decision tree used by the lexer
-ADD_CUSTOM_COMMAND(
+add_custom_command(
     OUTPUT ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/KeywordLookup.h
     MAIN_DEPENDENCY ${JAVASCRIPTCORE_DIR}/KeywordLookupGenerator.py
     COMMAND ${PYTHON_EXECUTABLE} ${JAVASCRIPTCORE_DIR}/KeywordLookupGenerator.py ${JAVASCRIPTCORE_DIR}/parser/Keywords.table > ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/KeywordLookup.h
     VERBATIM)
 ADD_SOURCE_DEPENDENCIES(${JAVASCRIPTCORE_DIR}/parser/Lexer.cpp ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/KeywordLookup.h)
 
-IF (WTF_CPU_ARM)
-    LIST(APPEND JavaScriptCore_SOURCES
+if (WTF_CPU_ARM)
+    list(APPEND JavaScriptCore_SOURCES
         assembler/ARMAssembler.cpp
         assembler/ARMv7Assembler.cpp
         assembler/MacroAssemblerARM.cpp
     )
-ELSEIF (WTF_CPU_MIPS)
-ELSEIF (WTF_CPU_X86)
-ELSEIF (WTF_CPU_X86_64)
-ELSE ()
-    MESSAGE(FATAL_ERROR "Unknown CPU")
-ENDIF ()
+elseif (WTF_CPU_MIPS)
+elseif (WTF_CPU_X86)
+elseif (WTF_CPU_X86_64)
+else ()
+    message(FATAL_ERROR "Unknown CPU")
+endif ()
 
 
 WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS()
@@ -498,17 +498,17 @@ WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS()
 WEBKIT_CREATE_FORWARDING_HEADERS(JavaScriptCore DIRECTORIES ${JavaScriptCore_FORWARDING_HEADERS_DIRECTORIES} FILES ${JavaScriptCore_FORWARDING_HEADERS_FILES})
 
 
-ADD_SUBDIRECTORY(shell)
+add_subdirectory(shell)
 
 WEBKIT_WRAP_SOURCELIST(${JavaScriptCore_SOURCES})
-INCLUDE_DIRECTORIES(${JavaScriptCore_INCLUDE_DIRECTORIES})
-ADD_DEFINITIONS(-DBUILDING_JavaScriptCore)
-ADD_LIBRARY(${JavaScriptCore_LIBRARY_NAME} ${JavaScriptCore_LIBRARY_TYPE} ${JavaScriptCore_HEADERS} ${JavaScriptCore_SOURCES})
-TARGET_LINK_LIBRARIES(${JavaScriptCore_LIBRARY_NAME} ${JavaScriptCore_LIBRARIES})
-SET_TARGET_PROPERTIES(${JavaScriptCore_LIBRARY_NAME} PROPERTIES FOLDER "JavaScriptCore")
-SET_TARGET_PROPERTIES(${JavaScriptCore_LIBRARY_NAME} PROPERTIES LINK_INTERFACE_LIBRARIES "")
+include_directories(${JavaScriptCore_INCLUDE_DIRECTORIES})
+add_definitions(-DBUILDING_JavaScriptCore)
+add_library(${JavaScriptCore_LIBRARY_NAME} ${JavaScriptCore_LIBRARY_TYPE} ${JavaScriptCore_HEADERS} ${JavaScriptCore_SOURCES})
+target_link_libraries(${JavaScriptCore_LIBRARY_NAME} ${JavaScriptCore_LIBRARIES})
+set_target_properties(${JavaScriptCore_LIBRARY_NAME} PROPERTIES FOLDER "JavaScriptCore")
+set_target_properties(${JavaScriptCore_LIBRARY_NAME} PROPERTIES LINK_INTERFACE_LIBRARIES "")
 
-IF (SHARED_CORE)
-    SET_TARGET_PROPERTIES(${JavaScriptCore_LIBRARY_NAME} PROPERTIES VERSION ${PROJECT_VERSION} SOVERSION ${PROJECT_VERSION_MAJOR})
-    INSTALL(TARGETS ${JavaScriptCore_LIBRARY_NAME} DESTINATION "${LIB_INSTALL_DIR}")
-ENDIF ()
+if (SHARED_CORE)
+    set_target_properties(${JavaScriptCore_LIBRARY_NAME} PROPERTIES VERSION ${PROJECT_VERSION} SOVERSION ${PROJECT_VERSION_MAJOR})
+    install(TARGETS ${JavaScriptCore_LIBRARY_NAME} DESTINATION "${LIB_INSTALL_DIR}")
+endif ()

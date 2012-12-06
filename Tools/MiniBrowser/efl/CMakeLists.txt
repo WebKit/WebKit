@@ -1,11 +1,11 @@
-SET(MiniBrowser_DIR "${TOOLS_DIR}/MiniBrowser/efl")
+set(MiniBrowser_DIR "${TOOLS_DIR}/MiniBrowser/efl")
 
-SET(MiniBrowser_SOURCES
+set(MiniBrowser_SOURCES
     ${TOOLS_DIR}/EWebLauncher/url_utils.c
     ${MiniBrowser_DIR}/main.c
 )
 
-SET(MiniBrowser_INCLUDE_DIRECTORIES
+set(MiniBrowser_INCLUDE_DIRECTORIES
     ${CAIRO_INCLUDE_DIRS}
     ${ECORE_INCLUDE_DIRS}
     ${ECORE_EVAS_INCLUDE_DIRS}
@@ -24,7 +24,7 @@ SET(MiniBrowser_INCLUDE_DIRECTORIES
     ${CMAKE_SOURCE_DIR}/Source
 )
 
-SET(MiniBrowser_LIBRARIES
+set(MiniBrowser_LIBRARIES
     ${JavaScriptCore_LIBRARY_NAME}
     ${WebCore_LIBRARY_NAME}
     ${WebKit2_LIBRARY_NAME}
@@ -44,17 +44,17 @@ SET(MiniBrowser_LIBRARIES
     ${SQLITE_LIBRARIES}
 )
 
-IF (ENABLE_GLIB_SUPPORT)
-    LIST(APPEND MiniBrowser_LIBRARIES
+if (ENABLE_GLIB_SUPPORT)
+    list(APPEND MiniBrowser_LIBRARIES
         ${GLIB_LIBRARIES}
         ${GLIB_GTHREAD_LIBRARIES}
     )
-ENDIF ()
+endif ()
 
-ADD_DEFINITIONS(-DTHEME_DIR=\"${THEME_BINARY_DIR}\")
+add_definitions(-DTHEME_DIR=\"${THEME_BINARY_DIR}\")
 
-INCLUDE_DIRECTORIES(${MiniBrowser_INCLUDE_DIRECTORIES})
+include_directories(${MiniBrowser_INCLUDE_DIRECTORIES})
 
-ADD_EXECUTABLE(MiniBrowser ${MiniBrowser_SOURCES})
-TARGET_LINK_LIBRARIES(MiniBrowser ${MiniBrowser_LIBRARIES})
-SET_TARGET_PROPERTIES(MiniBrowser PROPERTIES FOLDER "Tools")
+add_executable(MiniBrowser ${MiniBrowser_SOURCES})
+target_link_libraries(MiniBrowser ${MiniBrowser_LIBRARIES})
+set_target_properties(MiniBrowser PROPERTIES FOLDER "Tools")

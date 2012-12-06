@@ -1,4 +1,4 @@
-LIST(APPEND WebCore_INCLUDE_DIRECTORIES
+list(APPEND WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/platform/wince"
     "${WEBCORE_DIR}/platform/win"
     "${WEBCORE_DIR}/platform/graphics/wince"
@@ -15,7 +15,7 @@ LIST(APPEND WebCore_INCLUDE_DIRECTORIES
     "${3RDPARTY_DIR}/zlib"
 )
 
-LIST(APPEND WebCore_SOURCES
+list(APPEND WebCore_SOURCES
     page/win/DragControllerWin.cpp
     page/win/EventHandlerWin.cpp
     page/wince/FrameWinCE.cpp
@@ -103,7 +103,7 @@ LIST(APPEND WebCore_SOURCES
     platform/text/wince/TextBreakIteratorWince.cpp
 )
 
-LIST(APPEND WebCore_LIBRARIES
+list(APPEND WebCore_LIBRARIES
     libjpeg
     libpng
     libxml2
@@ -115,18 +115,18 @@ LIST(APPEND WebCore_LIBRARIES
 )
 
 
-IF (ENABLE_NETSCAPE_PLUGIN_API)
-    LIST(APPEND WebCore_SOURCES
+if (ENABLE_NETSCAPE_PLUGIN_API)
+    list(APPEND WebCore_SOURCES
         plugins/win/PluginMessageThrottlerWin.cpp
         plugins/win/PluginPackageWin.cpp
         plugins/win/PluginViewWin.cpp
         plugins/PluginPackage.cpp
         plugins/PluginView.cpp
     )
-ELSE ()
-    LIST(APPEND WebCore_SOURCES
+else ()
+    list(APPEND WebCore_SOURCES
         plugins/PluginPackage.cpp
         plugins/PluginPackageNone.cpp
         plugins/PluginViewNone.cpp
     )
-ENDIF ()
+endif ()

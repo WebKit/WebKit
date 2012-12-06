@@ -1,73 +1,72 @@
-SET(PROJECT_VERSION_MAJOR 0)
-SET(PROJECT_VERSION_MINOR 1)
-SET(PROJECT_VERSION ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR})
+set(PROJECT_VERSION_MAJOR 0)
+set(PROJECT_VERSION_MINOR 1)
+set(PROJECT_VERSION ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR})
 
-SET(DATA_DIR ${CMAKE_INSTALL_PREFIX}/share/${PROJECT_NAME}-${PROJECT_VERSION})
+set(DATA_DIR ${CMAKE_INSTALL_PREFIX}/share/${PROJECT_NAME}-${PROJECT_VERSION})
 
-ADD_DEFINITIONS(-DDATA_DIR="${DATA_DIR}")
+add_definitions(-DDATA_DIR="${DATA_DIR}")
 
-ADD_DEFINITIONS(-DWEBCORE_NAVIGATOR_VENDOR="Research In Motion, Ltd.")
-ADD_DEFINITIONS(-DBUILDING_BLACKBERRY__)
-ADD_DEFINITIONS(-DBUILD_WEBKIT)
+add_definitions(-DWEBCORE_NAVIGATOR_VENDOR="Research In Motion, Ltd.")
+add_definitions(-DBUILDING_BLACKBERRY__)
+add_definitions(-DBUILD_WEBKIT)
 
 # Workaround for now so that SK_DEBUG isn't defined in SkPreConfig.h
-ADD_DEFINITIONS(-DSK_RELEASE)
+add_definitions(-DSK_RELEASE)
 
 # TODO: Make this build-time configurable
-SET(WTF_USE_PTHREADS 1)
-ADD_DEFINITIONS(-DWTF_USE_PTHREADS=1)
-SET(WTF_USE_OPENTYPE_SANITIZER 1)
-ADD_DEFINITIONS(-DWTF_USE_OPENTYPE_SANITIZER=1)
+set(WTF_USE_PTHREADS 1)
+add_definitions(-DWTF_USE_PTHREADS=1)
+set(WTF_USE_OPENTYPE_SANITIZER 1)
+add_definitions(-DWTF_USE_OPENTYPE_SANITIZER=1)
 
-IF (SHARED_CORE)
-    ADD_DEFINITIONS(-DWTF_USE_EXPORT_MACROS=1)
-ENDIF()
+if (SHARED_CORE)
+    add_definitions(-DWTF_USE_EXPORT_MACROS=1)
+endif ()
 
-IF (ENABLE_GLES2)
-    SET(WTF_USE_ACCELERATED_COMPOSITING 1)
-    ADD_DEFINITIONS(-DWTF_USE_ACCELERATED_COMPOSITING=1)
-    ADD_DEFINITIONS(-DBLACKBERRY_PLATFORM_GRAPHICS_EGL=1)
-    ADD_DEFINITIONS(-DBLACKBERRY_PLATFORM_GRAPHICS_GLES2=1)
-    ADD_DEFINITIONS(-DBLACKBERRY_PLATFORM_GRAPHICS_DRAWING_SURFACE=1)
-    ADD_DEFINITIONS(-DBLACKBERRY_PLATFORM_EXPORT_WEBDOM=1)
-    ADD_DEFINITIONS(-DWTF_USE_ARENA_ALLOC_ALIGNMENT_INTEGER=1)
-ENDIF ()
+if (ENABLE_GLES2)
+    set(WTF_USE_ACCELERATED_COMPOSITING 1)
+    add_definitions(-DWTF_USE_ACCELERATED_COMPOSITING=1)
+    add_definitions(-DBLACKBERRY_PLATFORM_GRAPHICS_EGL=1)
+    add_definitions(-DBLACKBERRY_PLATFORM_GRAPHICS_GLES2=1)
+    add_definitions(-DBLACKBERRY_PLATFORM_GRAPHICS_DRAWING_SURFACE=1)
+    add_definitions(-DBLACKBERRY_PLATFORM_EXPORT_WEBDOM=1)
+    add_definitions(-DWTF_USE_ARENA_ALLOC_ALIGNMENT_INTEGER=1)
+endif ()
 
-IF (ADDITIONAL_SYSTEM_INCLUDE_PATH)
-    SET(CMAKE_INCLUDE_SYSTEM_FLAG_C "-Wp,-isystem")
-    SET(CMAKE_INCLUDE_SYSTEM_FLAG_CXX "-Wp,-isystem")
-    FOREACH (directory ${ADDITIONAL_SYSTEM_INCLUDE_PATH})
-        INCLUDE_DIRECTORIES(SYSTEM ${directory})
-    ENDFOREACH ()
-    IF(ENABLE_WEBGL)
-        INCLUDE_DIRECTORIES(SYSTEM ${THIRDPARTY_DIR}/ANGLE/include) #As system so as to be lower-priority than actual system headers
-    ENDIF ()
-ENDIF ()
+if (ADDITIONAL_SYSTEM_INCLUDE_PATH)
+    set(CMAKE_INCLUDE_SYSTEM_FLAG_C "-Wp,-isystem")
+    set(CMAKE_INCLUDE_SYSTEM_FLAG_CXX "-Wp,-isystem")
+    foreach (directory ${ADDITIONAL_SYSTEM_INCLUDE_PATH})
+        include_directories(SYSTEM ${directory})
+    endforeach ()
+    if (ENABLE_WEBGL)
+        include_directories(SYSTEM ${THIRDPARTY_DIR}/ANGLE/include) #As system so as to be lower-priority than actual system headers
+    endif ()
+endif ()
 
-IF (PUBLIC_BUILD)
-    ADD_DEFINITIONS(-DPUBLIC_BUILD=1)
+if (PUBLIC_BUILD)
     message("*** PUBLIC BUILD ***")
-ELSE (PUBLIC_BUILD)
+else (PUBLIC_BUILD)
     message("*** DRT is ENABLED ***")
-ENDIF ()
+endif ()
 
-ADD_DEFINITIONS(-D__QNXNTO__)
-ADD_DEFINITIONS(-D_FILE_OFFSET_BITS=64)
-ADD_DEFINITIONS(-D_LARGEFILE64_SOURCE)
+add_definitions(-D__QNXNTO__)
+add_definitions(-D_FILE_OFFSET_BITS=64)
+add_definitions(-D_LARGEFILE64_SOURCE)
 
 # Find a library only in the staging directory (which is the CMAKE_INSTALL_PATH)
 # TODO: CMAKE_INSTALL_PATH may not be staging directory.
-MACRO(FIND_STAGING_LIBRARY _var _libname)
-  FIND_LIBRARY(${_var} ${_libname}
-    PATHS "${CMAKE_LIBRARY_PATH}"
-    ENV "QNX_TARGET"
-    PATH_SUFFIXES "${CMAKE_SYSTEM_PROCESSOR}/usr/lib" "${CMAKE_SYSTEM_PROCESSOR}/lib"
-    NO_DEFAULT_PATH)
-ENDMACRO()
+macro(FIND_STAGING_LIBRARY _var _libname)
+    find_library(${_var} ${_libname}
+        PATHS "${CMAKE_LIBRARY_PATH}"
+        ENV "QNX_TARGET"
+        PATH_SUFFIXES "${CMAKE_SYSTEM_PROCESSOR}/usr/lib" "${CMAKE_SYSTEM_PROCESSOR}/lib"
+        NO_DEFAULT_PATH)
+endmacro()
 
-MACRO(FIND_STAGING_STATIC_LIBRARY _var _libname)
-  SET(${_var} "-Bstatic -l${_libname} -Bdynamic" CACHE STRING ${_libname})
-ENDMACRO()
+macro(FIND_STAGING_STATIC_LIBRARY _var _libname)
+  set(${_var} "-Bstatic -l${_libname} -Bdynamic" CACHE STRING ${_libname})
+endmacro()
 
 FIND_STAGING_LIBRARY(Skia_LIBRARY grskia)
 FIND_STAGING_LIBRARY(Skia_QNX_LIBRARY skia-qnx)
@@ -97,64 +96,64 @@ FIND_STAGING_LIBRARY(ITYPE_LIBRARY iType)
 FIND_STAGING_LIBRARY(WTLE_LIBRARY WTLE)
 
 # Use jpeg-turbo for device build
-IF (TARGETING_PLAYBOOK)
+if (TARGETING_PLAYBOOK)
     FIND_STAGING_STATIC_LIBRARY(JPEG_LIBRARY jpeg-webkit)
-ELSE ()
+else ()
     FIND_STAGING_LIBRARY(JPEG_LIBRARY jpeg)
-ENDIF ()
+endif ()
 
 # Add "-fPIC" to CMAKE_SHARED_LIBRARY_C_FLAGS and CMAKE_SHARED_LIBRARY_CXX_FLAGS
 # This is because "-fPIC" is not included in the default defines under Modules/Platform/QNX.cmake
-SET(CMAKE_SHARED_LIBRARY_C_FLAGS "-fPIC ${CMAKE_SHARED_LIBRARY_C_FLAGS}")
-SET(CMAKE_SHARED_LIBRARY_CXX_FLAGS "-fPIC ${CMAKE_SHARED_LIBRARY_CXX_FLAGS}")
+set(CMAKE_SHARED_LIBRARY_C_FLAGS "-fPIC ${CMAKE_SHARED_LIBRARY_C_FLAGS}")
+set(CMAKE_SHARED_LIBRARY_CXX_FLAGS "-fPIC ${CMAKE_SHARED_LIBRARY_CXX_FLAGS}")
 
 # Show unresolved symbols when doing the final shared object link
-IF (PROFILING)
-    SET(BLACKBERRY_LINK_FLAGS "-Wl,-z,defs -Wl,-z,relro -Wl,-E -Wl,--no-keep-memory")
-ELSE (PROFILING)
-    SET(BLACKBERRY_LINK_FLAGS "-Wl,-z,defs -Wl,-z,relro -Wl,--no-keep-memory")
-ENDIF ()
+if (PROFILING)
+    set(BLACKBERRY_LINK_FLAGS "-Wl,-z,defs -Wl,-z,relro -Wl,-E -Wl,--no-keep-memory")
+else (PROFILING)
+    set(BLACKBERRY_LINK_FLAGS "-Wl,-z,defs -Wl,-z,relro -Wl,--no-keep-memory")
+endif ()
 
 # Set custom CFLAGS for our port
-IF (CMAKE_COMPILER_IS_GNUCC)
-    SET(CMAKE_CXX_FLAGS "-fstack-protector -fno-rtti -Wformat -Wformat-security -Werror=format-security ${CMAKE_CXX_FLAGS}")
-    SET(CMAKE_C_FLAGS "-fstack-protector -Wformat -Wformat-security -Werror=format-security ${CMAKE_C_FLAGS}")
-    SET(JSC_LINK_FLAGS "-Wl,-z,defs -Wl,-z,relro -N1024K")
-ENDIF ()
+if (CMAKE_COMPILER_IS_GNUCC)
+    set(CMAKE_CXX_FLAGS "-fstack-protector -fno-rtti -Wformat -Wformat-security -Werror=format-security ${CMAKE_CXX_FLAGS}")
+    set(CMAKE_C_FLAGS "-fstack-protector -Wformat -Wformat-security -Werror=format-security ${CMAKE_C_FLAGS}")
+    set(JSC_LINK_FLAGS "-Wl,-z,defs -Wl,-z,relro -N1024K")
+endif ()
 
-IF (PROFILING)
-    SET(CMAKE_CXX_FLAGS "-finstrument-functions -g ${CMAKE_CXX_FLAGS}")
-    SET(CMAKE_C_FLAGS "-finstrument-functions -g ${CMAKE_C_FLAGS}")
-ENDIF ()
+if (PROFILING)
+    set(CMAKE_CXX_FLAGS "-finstrument-functions -g ${CMAKE_CXX_FLAGS}")
+    set(CMAKE_C_FLAGS "-finstrument-functions -g ${CMAKE_C_FLAGS}")
+endif ()
 
 # FIXME: Make this more elegant
-IF (TARGETING_PLAYBOOK)
-    SET(CMAKE_CXX_FLAGS "-mfpu=neon ${CMAKE_CXX_FLAGS}")
-    SET(CMAKE_C_FLAGS "-mfpu=neon ${CMAKE_C_FLAGS}")
-    SET(CMAKE_CXX_FLAGS "-mthumb -mthumb-interwork ${CMAKE_CXX_FLAGS}")
-    SET(CMAKE_C_FLAGS "-mthumb -mthumb-interwork ${CMAKE_C_FLAGS}")
+if (TARGETING_PLAYBOOK)
+    set(CMAKE_CXX_FLAGS "-mfpu=neon ${CMAKE_CXX_FLAGS}")
+    set(CMAKE_C_FLAGS "-mfpu=neon ${CMAKE_C_FLAGS}")
+    set(CMAKE_CXX_FLAGS "-mthumb -mthumb-interwork ${CMAKE_CXX_FLAGS}")
+    set(CMAKE_C_FLAGS "-mthumb -mthumb-interwork ${CMAKE_C_FLAGS}")
     # check for BB_RELEASE_FLAGS or BB_DEBUG_FLAGS to set CMAKE_C_FLAGS{DEBUG|RELEASE} CMAKE_CXX_FLAGS{DEBUG|RELEASE}
-    if( DEFINED ENV{BB_RELEASE_FLAGS} )
+    if (DEFINED ENV{BB_RELEASE_FLAGS})
         set(CMAKE_CXX_FLAGS_RELEASE  "$ENV{BB_RELEASE_FLAGS} -DNDEBUG")
         set(CMAKE_C_FLAGS_RELEASE  "$ENV{BB_RELEASE_FLAGS} -DNDEBUG")
-        message( "== ENV override RELEASE ${CMAKE_CXX_FLAGS_RELEASE}" )
-    endif()
-    if( DEFINED ENV{BB_DEBUG_FLAGS} )
+        message("== ENV override RELEASE ${CMAKE_CXX_FLAGS_RELEASE}")
+    endif ()
+    if (DEFINED ENV{BB_DEBUG_FLAGS})
         set(CMAKE_CXX_FLAGS_DEBUG "$ENV{BB_DEBUG_FLAGS}")
         set(CMAKE_C_FLAGS_DEBUG "$ENV{BB_DEBUG_FLAGS}")
-        message( "== ENV override DEBUG ${CMAKE_CXX_FLAGS_DEBUG}")
-    endif()
-ENDIF ()
+        message("== ENV override DEBUG ${CMAKE_CXX_FLAGS_DEBUG}")
+    endif ()
+endif ()
 
-INCLUDE_DIRECTORIES(${CMAKE_INCLUDE_PATH})
+include_directories(${CMAKE_INCLUDE_PATH})
 
-SET(JSC_EXECUTABLE_NAME jsc)
+set(JSC_EXECUTABLE_NAME jsc)
 
-SET(WTF_LIBRARY_NAME wtf)
-SET(JavaScriptCore_LIBRARY_NAME javascriptcore)
-SET(WebCore_LIBRARY_NAME webcore)
-SET(WebKit_LIBRARY_NAME webkit)
-SET(WebKit_DRT_LIBRARY_NAME webkit_DRT)
+set(WTF_LIBRARY_NAME wtf)
+set(JavaScriptCore_LIBRARY_NAME javascriptcore)
+set(WebCore_LIBRARY_NAME webcore)
+set(WebKit_LIBRARY_NAME webkit)
+set(WebKit_DRT_LIBRARY_NAME webkit_DRT)
 
 WEBKIT_OPTION_BEGIN()
 
@@ -204,29 +203,29 @@ WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_WEB_TIMING ON)
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_WORKERS ON)
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_XHR_RESPONSE_BLOB ON)
 
-IF (ENABLE_GLES2)
+if (ENABLE_GLES2)
     WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_3D_RENDERING ON)
     WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_ACCELERATED_2D_CANVAS ON)
     WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_CSS_FILTERS ON)
     WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_CSS_SHADERS ON)
     WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_WEBGL ON)
-ELSE ()
+else ()
     WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_3D_RENDERING OFF)
     WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_ACCELERATED_2D_CANVAS OFF)
     WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_CSS_FILTERS OFF)
     WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_CSS_SHADERS OFF)
     WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_WEBGL OFF)
-ENDIF ()
+endif ()
 
-IF (CMAKE_SYSTEM_PROCESSOR MATCHES x86)
+if (CMAKE_SYSTEM_PROCESSOR MATCHES x86)
     WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_JIT OFF)
-ELSE ()
+else ()
     WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_JIT ON)
-ENDIF ()
+endif ()
 
 WEBKIT_OPTION_END()
 
-ADD_DEFINITIONS(-DENABLE_BLACKBERRY_CREDENTIAL_PERSIST=1)
+add_definitions(-DENABLE_BLACKBERRY_CREDENTIAL_PERSIST=1)
 
 # Some of our files, such as platform/graphics/chromium/ComplexTextControllerLinux.cpp, require a
 # newer ICU version than the version associated with the headers in {WebCore, JavaScriptCore}/icu.
@@ -236,6 +235,6 @@ ADD_DEFINITIONS(-DENABLE_BLACKBERRY_CREDENTIAL_PERSIST=1)
 #
 # FIXME: Make this mechanism more general purpose. Maybe accept a list or directories/files to copy
 # instead of individual variables. Generalizing this solution may allow us to fix <https://bugs.webkit.org/show_bug.cgi?id=70913>.
-SET(BLACKBERRY_THIRD_PARTY_DIR "${CMAKE_BINARY_DIR}/ThirdPartyBlackBerry")
-FILE(COPY ${THIRD_PARTY_ICU_DIR} DESTINATION "${BLACKBERRY_THIRD_PARTY_DIR}/icu")
-FILE(COPY ${THIRD_PARTY_UNICODE_FILE} DESTINATION ${BLACKBERRY_THIRD_PARTY_DIR})
+set(BLACKBERRY_THIRD_PARTY_DIR "${CMAKE_BINARY_DIR}/ThirdPartyBlackBerry")
+file(COPY ${THIRD_PARTY_ICU_DIR} DESTINATION "${BLACKBERRY_THIRD_PARTY_DIR}/icu")
+file(COPY ${THIRD_PARTY_UNICODE_FILE} DESTINATION ${BLACKBERRY_THIRD_PARTY_DIR})

@@ -1,9 +1,9 @@
-LIST(INSERT WebCore_INCLUDE_DIRECTORIES 0
+list(INSERT WebCore_INCLUDE_DIRECTORIES 0
     "${BLACKBERRY_THIRD_PARTY_DIR}" # For <unicode.h>, which is included from <sys/keycodes.h>.
     "${BLACKBERRY_THIRD_PARTY_DIR}/icu"
 )
 
-LIST(APPEND WebCore_INCLUDE_DIRECTORIES
+list(APPEND WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/bindings/cpp"
     "${WEBCORE_DIR}/platform/blackberry/CookieDatabaseBackingStore"
     "${WEBCORE_DIR}/platform/graphics/blackberry/skia"
@@ -17,7 +17,7 @@ LIST(APPEND WebCore_INCLUDE_DIRECTORIES
 )
 
 # Skia sources
-LIST(APPEND WebCore_SOURCES
+list(APPEND WebCore_SOURCES
     platform/graphics/skia/FloatPointSkia.cpp
     platform/graphics/skia/FloatRectSkia.cpp
     platform/graphics/skia/FontCustomPlatformData.cpp
@@ -41,7 +41,7 @@ LIST(APPEND WebCore_SOURCES
 )
 
 # Skia font backend sources
-LIST(APPEND WebCore_SOURCES
+list(APPEND WebCore_SOURCES
     platform/graphics/blackberry/FontCacheBlackberry.cpp
     platform/graphics/blackberry/skia/PlatformBridge.cpp
     platform/graphics/harfbuzz/ComplexTextControllerHarfBuzz.cpp
@@ -55,7 +55,7 @@ LIST(APPEND WebCore_SOURCES
 )
 
 # Other sources
-LIST(APPEND WebCore_SOURCES
+list(APPEND WebCore_SOURCES
     bindings/cpp/WebDOMCString.cpp
     bindings/cpp/WebDOMEventTarget.cpp
     bindings/cpp/WebDOMString.cpp
@@ -80,7 +80,7 @@ LIST(APPEND WebCore_SOURCES
 )
 
 # Networking sources
-LIST(APPEND WebCore_SOURCES
+list(APPEND WebCore_SOURCES
     platform/network/MIMESniffing.cpp
     platform/network/ProxyServer.cpp
     platform/network/blackberry/AutofillBackingStore.cpp
@@ -103,12 +103,12 @@ LIST(APPEND WebCore_SOURCES
     platform/network/blackberry/rss/RSSParserBase.cpp
 )
 
-LIST(APPEND WebCore_USER_AGENT_STYLE_SHEETS
+list(APPEND WebCore_USER_AGENT_STYLE_SHEETS
     ${WEBCORE_DIR}/css/mediaControlsBlackBerry.css
     ${WEBCORE_DIR}/css/themeBlackBerry.css
 )
 
-LIST(APPEND WebCore_INCLUDE_DIRECTORIES
+list(APPEND WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/bridge/blackberry"
     "${WEBCORE_DIR}/history/blackberry"
     "${WEBCORE_DIR}/page/blackberry"
@@ -128,7 +128,7 @@ LIST(APPEND WebCore_INCLUDE_DIRECTORIES
 )
 
 # BlackBerry sources
-LIST(APPEND WebCore_SOURCES
+list(APPEND WebCore_SOURCES
     editing/blackberry/EditorBlackBerry.cpp
     editing/blackberry/SmartReplaceBlackBerry.cpp
     loader/blackberry/CookieJarBlackBerry.cpp
@@ -177,32 +177,32 @@ LIST(APPEND WebCore_SOURCES
 )
 
 # Credential Persistence sources
-LIST(APPEND WebCore_SOURCES
+list(APPEND WebCore_SOURCES
     platform/network/blackberry/CredentialBackingStore.cpp
     platform/network/blackberry/CredentialStorageBlackBerry.cpp
 )
 
 # File System support
-IF (ENABLE_FILE_SYSTEM)
-    LIST(APPEND WebCore_SOURCES
+if (ENABLE_FILE_SYSTEM)
+    list(APPEND WebCore_SOURCES
         platform/blackberry/AsyncFileSystemBlackBerry.cpp
     )
-ENDIF ()
+endif ()
 
 # Touch sources
-LIST(APPEND WebCore_SOURCES
+list(APPEND WebCore_SOURCES
     dom/Touch.cpp
     dom/TouchEvent.cpp
     dom/TouchList.cpp
 )
 
-IF (ENABLE_SMOOTH_SCROLLING)
-    LIST(APPEND WebCore_SOURCES
+if (ENABLE_SMOOTH_SCROLLING)
+    list(APPEND WebCore_SOURCES
         platform/blackberry/ScrollAnimatorBlackBerry.cpp
     )
-ENDIF ()
+endif ()
 
-LIST(APPEND WEBDOM_IDL_HEADERS
+list(APPEND WEBDOM_IDL_HEADERS
     bindings/cpp/WebDOMCString.h
     bindings/cpp/WebDOMEventTarget.h
     bindings/cpp/WebDOMObject.h
@@ -210,19 +210,19 @@ LIST(APPEND WEBDOM_IDL_HEADERS
 )
 
 if (ENABLE_REQUEST_ANIMATION_FRAME)
-    LIST(APPEND WebCore_SOURCES
+    list(APPEND WebCore_SOURCES
         platform/graphics/blackberry/DisplayRefreshMonitorBlackBerry.cpp
         platform/graphics/DisplayRefreshMonitor.cpp
     )
-ENDIF ()
+endif ()
 
 if (ENABLE_WEBGL)
-    ADD_DEFINITIONS (-DWTF_USE_OPENGL_ES_2=1)
-    LIST(APPEND WebCore_INCLUDE_DIRECTORIES
+    add_definitions(-DWTF_USE_OPENGL_ES_2=1)
+    list(APPEND WebCore_INCLUDE_DIRECTORIES
         "${WEBCORE_DIR}/platform/graphics/gpu"
         "${WEBCORE_DIR}/platform/graphics/opengl"
     )
-    LIST(APPEND WebCore_SOURCES
+    list(APPEND WebCore_SOURCES
         platform/graphics/blackberry/DrawingBufferBlackBerry.cpp
         platform/graphics/blackberry/GraphicsContext3DBlackBerry.cpp
         platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp
@@ -231,16 +231,16 @@ if (ENABLE_WEBGL)
         platform/graphics/opengl/Extensions3DOpenGLES.cpp
         platform/graphics/gpu/SharedGraphicsContext3D.cpp
     )
-ENDIF ()
+endif ()
 
 if (ENABLE_MEDIA_STREAM)
-    LIST(APPEND WebCore_SOURCES
+    list(APPEND WebCore_SOURCES
         platform/mediastream/blackberry/MediaStreamCenterBlackBerry.cpp
     )
-ENDIF ()
+endif ()
 
-IF (ENABLE_NETSCAPE_PLUGIN_API)
-    LIST(APPEND WebCore_SOURCES
+if (ENABLE_NETSCAPE_PLUGIN_API)
+    list(APPEND WebCore_SOURCES
         plugins/PluginDatabase.cpp
         plugins/PluginPackage.cpp
         plugins/PluginView.cpp
@@ -250,8 +250,8 @@ IF (ENABLE_NETSCAPE_PLUGIN_API)
         plugins/blackberry/PluginViewBlackBerry.cpp
         plugins/blackberry/PluginViewPrivateBlackBerry.cpp
     )
-ELSE ()
-    LIST(APPEND WebCore_SOURCES
+else ()
+    list(APPEND WebCore_SOURCES
         plugins/PluginDataNone.cpp
         plugins/PluginDatabase.cpp
         plugins/PluginPackage.cpp
@@ -259,13 +259,13 @@ ELSE ()
         plugins/PluginView.cpp
         plugins/PluginViewNone.cpp
     )
-ENDIF ()
+endif ()
 
 # To speed up linking when working on accel comp, you can move this whole chunk
 # to Source/WebKit/blackberry/CMakeListsBlackBerry.txt.
 # Append to WebKit_SOURCES instead of WebCore_SOURCES.
-IF (WTF_USE_ACCELERATED_COMPOSITING)
-    LIST(APPEND WebCore_SOURCES
+if (WTF_USE_ACCELERATED_COMPOSITING)
+    list(APPEND WebCore_SOURCES
         ${WEBCORE_DIR}/platform/graphics/GraphicsLayer.cpp
         ${WEBCORE_DIR}/platform/graphics/GraphicsLayerUpdater.cpp
         ${WEBCORE_DIR}/platform/graphics/blackberry/CanvasLayerWebKitThread.cpp
@@ -287,30 +287,30 @@ IF (WTF_USE_ACCELERATED_COMPOSITING)
         ${WEBCORE_DIR}/rendering/RenderLayerBacking.cpp
         ${WEBCORE_DIR}/rendering/RenderLayerCompositor.cpp
     )
-ENDIF ()
+endif ()
 
-SET(ENV{WEBKITDIR} ${CMAKE_SOURCE_DIR}/Source)
-SET(ENV{PLATFORMNAME} ${CMAKE_SYSTEM_NAME})
-EXECUTE_PROCESS(
+set(ENV{WEBKITDIR} ${CMAKE_SOURCE_DIR}/Source)
+set(ENV{PLATFORMNAME} ${CMAKE_SYSTEM_NAME})
+execute_process(
     COMMAND hostname
     OUTPUT_VARIABLE host
 )
-STRING(REPLACE "\n" "" host1 "${host}")
-SET(ENV{COMPUTERNAME} ${host1})
+string(REPLACE "\n" "" host1 "${host}")
+set(ENV{COMPUTERNAME} ${host1})
 
-IF ($ENV{PUBLIC_BUILD})
-    ADD_DEFINITIONS(-DPUBLIC_BUILD=$ENV{PUBLIC_BUILD})
-ENDIF ()
+if ($ENV{PUBLIC_BUILD})
+    add_definitions(-DPUBLIC_BUILD=$ENV{PUBLIC_BUILD})
+endif ()
 
-INSTALL(FILES ${WEBDOM_IDL_HEADERS} DESTINATION usr/include/browser/webkit/dom)
+install(FILES ${WEBDOM_IDL_HEADERS} DESTINATION usr/include/browser/webkit/dom)
 
 # Create DOM C++ code given an IDL input
 # We define a new list of feature defines that is prefixed with LANGUAGE_CPP=1 so as to avoid the
 # warning "missing whitespace after the macro name" when inlining "LANGUAGE_CPP=1 ${FEATURE_DEFINES}".
-SET(FEATURE_DEFINES_WEBCORE "LANGUAGE_CPP=1 ${FEATURE_DEFINES_WITH_SPACE_SEPARATOR}")
+set(FEATURE_DEFINES_WEBCORE "LANGUAGE_CPP=1 ${FEATURE_DEFINES_WITH_SPACE_SEPARATOR}")
 
 # FIXME: We need to add the IDLs for SQL storage and Web Workers. See PR #123484.
-SET(WebCore_NO_CPP_IDL_FILES
+set(WebCore_NO_CPP_IDL_FILES
     ${WebCore_SVG_IDL_FILES}
     dom/CustomEvent.idl
     dom/PopStateEvent.idl
@@ -318,27 +318,27 @@ SET(WebCore_NO_CPP_IDL_FILES
     inspector/ScriptProfileNode.idl
 )
 
-LIST(APPEND WebCore_IDL_FILES
+list(APPEND WebCore_IDL_FILES
     css/MediaQueryListListener.idl
 )
 
-SET(WebCore_CPP_IDL_FILES ${WebCore_IDL_FILES})
+set(WebCore_CPP_IDL_FILES ${WebCore_IDL_FILES})
 
-FOREACH (_file ${WebCore_NO_CPP_IDL_FILES})
-    STRING(REPLACE "${_file}" "" WebCore_CPP_IDL_FILES "${WebCore_CPP_IDL_FILES}")
-ENDFOREACH ()
+foreach (_file ${WebCore_NO_CPP_IDL_FILES})
+    string(REPLACE "${_file}" "" WebCore_CPP_IDL_FILES "${WebCore_CPP_IDL_FILES}")
+endforeach ()
 
-SET(WebCore_CPP_IDL_FILES
+set(WebCore_CPP_IDL_FILES
     dom/EventListener.idl
     "${WebCore_CPP_IDL_FILES}"
 )
 
-FOREACH (_idl ${WebCore_CPP_IDL_FILES})
-    SET(IDL_FILES_LIST "${IDL_FILES_LIST}${WEBCORE_DIR}/${_idl}\n")
-ENDFOREACH ()
-FILE(WRITE ${IDL_FILES_TMP} ${IDL_FILES_LIST})
+foreach (_idl ${WebCore_CPP_IDL_FILES})
+    set(IDL_FILES_LIST "${IDL_FILES_LIST}${WEBCORE_DIR}/${_idl}\n")
+endforeach ()
+file(WRITE ${IDL_FILES_TMP} ${IDL_FILES_LIST})
 
-ADD_CUSTOM_COMMAND(
+add_custom_command(
     OUTPUT ${SUPPLEMENTAL_DEPENDENCY_FILE}
     DEPENDS ${WEBCORE_DIR}/bindings/scripts/preprocess-idls.pl ${SCRIPTS_RESOLVE_SUPPLEMENTAL} ${WebCore_CPP_IDL_FILES} ${IDL_ATTRIBUTES_FILE}
     COMMAND ${PERL_EXECUTABLE} -I${WEBCORE_DIR}/bindings/scripts ${WEBCORE_DIR}/bindings/scripts/preprocess-idls.pl --defines "${FEATURE_DEFINES_JAVASCRIPT}" --idlFilesList ${IDL_FILES_TMP} --preprocessor "${CODE_GENERATOR_PREPROCESSOR}" --supplementalDependencyFile ${SUPPLEMENTAL_DEPENDENCY_FILE} --idlAttributesFile ${IDL_ATTRIBUTES_FILE}
@@ -353,16 +353,16 @@ GENERATE_BINDINGS(WebCore_SOURCES
     ${SUPPLEMENTAL_DEPENDENCY_FILE})
 
 # Generate contents for PopupPicker.cpp
-SET(WebCore_POPUP_CSS_AND_JS
+set(WebCore_POPUP_CSS_AND_JS
     ${WEBCORE_DIR}/Resources/blackberry/popupControlBlackBerry.css
     ${WEBCORE_DIR}/Resources/blackberry/selectControlBlackBerry.css
     ${WEBCORE_DIR}/Resources/blackberry/selectControlBlackBerry.js
 )
 
-ADD_CUSTOM_COMMAND(
+add_custom_command(
     OUTPUT ${DERIVED_SOURCES_WEBCORE_DIR}/PopupPicker.h ${DERIVED_SOURCES_WEBCORE_DIR}/PopupPicker.cpp
     MAIN_DEPENDENCY ${WEBCORE_DIR}/make-file-arrays.py
     DEPENDS ${WebCore_POPUP_CSS_AND_JS}
     COMMAND ${PYTHON_EXECUTABLE} ${WEBCORE_DIR}/make-file-arrays.py --out-h=${DERIVED_SOURCES_WEBCORE_DIR}/PopupPicker.h --out-cpp=${DERIVED_SOURCES_WEBCORE_DIR}/PopupPicker.cpp ${WebCore_POPUP_CSS_AND_JS}
 )
-LIST(APPEND WebCore_SOURCES ${DERIVED_SOURCES_WEBCORE_DIR}/PopupPicker.cpp)
+list(APPEND WebCore_SOURCES ${DERIVED_SOURCES_WEBCORE_DIR}/PopupPicker.cpp)

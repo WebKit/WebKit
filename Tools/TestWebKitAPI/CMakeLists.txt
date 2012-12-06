@@ -1,6 +1,6 @@
-SET(TESTWEBKITAPI_DIR "${TOOLS_DIR}/TestWebKitAPI")
+set(TESTWEBKITAPI_DIR "${TOOLS_DIR}/TestWebKitAPI")
 
-INCLUDE_DIRECTORIES(${CMAKE_BINARY_DIR}
+include_directories(${CMAKE_BINARY_DIR}
     ${TESTWEBKITAPI_DIR}
     ${CMAKE_SOURCE_DIR}/Source
     ${DERIVED_SOURCES_WEBCORE_DIR}
@@ -22,7 +22,7 @@ INCLUDE_DIRECTORIES(${CMAKE_BINARY_DIR}
 
 WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS()
 
-ADD_LIBRARY(TestWebKitAPIInjectedBundle SHARED
+add_library(TestWebKitAPIInjectedBundle SHARED
     ${bundle_harness_SOURCES}
     ${TESTWEBKITAPI_DIR}/InjectedBundleController.cpp
     ${TESTWEBKITAPI_DIR}/InjectedBundleMain.cpp
@@ -49,22 +49,22 @@ ADD_LIBRARY(TestWebKitAPIInjectedBundle SHARED
     ${TESTWEBKITAPI_DIR}/Tests/WebKit2/WillSendSubmitEvent_Bundle.cpp
 )
 
-TARGET_LINK_LIBRARIES(TestWebKitAPIInjectedBundle ${WTF_LIBRARY_NAME})
-ADD_DEPENDENCIES(TestWebKitAPIInjectedBundle ${WebKit2_LIBRARY_NAME} ${ForwardingHeadersForTestWebKitAPI_NAME} ${ForwardingNetworkHeadersForTestWebKitAPI_NAME})
+target_link_libraries(TestWebKitAPIInjectedBundle ${WTF_LIBRARY_NAME})
+add_dependencies(TestWebKitAPIInjectedBundle ${WebKit2_LIBRARY_NAME} ${ForwardingHeadersForTestWebKitAPI_NAME} ${ForwardingNetworkHeadersForTestWebKitAPI_NAME})
 
-GET_PROPERTY(TestWebKitAPIInjectedBundle_PATH TARGET TestWebKitAPIInjectedBundle PROPERTY LOCATION)
+get_property(TestWebKitAPIInjectedBundle_PATH TARGET TestWebKitAPIInjectedBundle PROPERTY LOCATION)
 
-ADD_DEFINITIONS(-DGTEST_LINKED_AS_SHARED_LIBRARY=1
+add_definitions(-DGTEST_LINKED_AS_SHARED_LIBRARY=1
     -DTEST_WEBKIT2_RESOURCES_DIR=\"${TESTWEBKITAPI_DIR}/Tests/WebKit2\"
     -DTEST_INJECTED_BUNDLE_PATH=\"${TestWebKitAPIInjectedBundle_PATH}\"
 )
 
-SET(test_wtf_LIBRARIES
+set(test_wtf_LIBRARIES
     ${WTF_LIBRARY_NAME}
     gtest
 )
 
-ADD_EXECUTABLE(test_wtf
+add_executable(test_wtf
     ${test_main_SOURCES}
     ${TESTWEBKITAPI_DIR}/TestsController.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WTF/AtomicString.cpp
@@ -88,29 +88,29 @@ ADD_EXECUTABLE(test_wtf
     ${TESTWEBKITAPI_DIR}/Tests/WTF/WTFString.cpp
 )
 
-TARGET_LINK_LIBRARIES(test_wtf ${test_wtf_LIBRARIES})
-ADD_DEPENDENCIES(test_wtf ${ForwardingHeadersForTestWebKitAPI_NAME} ${ForwardingNetworkHeadersForTestWebKitAPI_NAME})
-ADD_TEST(test_wtf ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_wtf)
-SET_TESTS_PROPERTIES(test_wtf PROPERTIES TIMEOUT 60)
+target_link_libraries(test_wtf ${test_wtf_LIBRARIES})
+add_dependencies(test_wtf ${ForwardingHeadersForTestWebKitAPI_NAME} ${ForwardingNetworkHeadersForTestWebKitAPI_NAME})
+add_test(test_wtf ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_wtf)
+set_tests_properties(test_wtf PROPERTIES TIMEOUT 60)
 
-SET(test_webcore_LIBRARIES
+set(test_webcore_LIBRARIES
     gtest
     ${WTF_LIBRARY_NAME}
     ${WebCore_LIBRARY_NAME}
 )
 
-ADD_EXECUTABLE(test_webcore
+add_executable(test_webcore
     ${test_main_SOURCES}
     ${TESTWEBKITAPI_DIR}/TestsController.cpp
     ${TESTWEBKITAPI_DIR}/Tests/WebCore/KURL.cpp
 )
 
-TARGET_LINK_LIBRARIES(test_webcore ${test_webcore_LIBRARIES})
-ADD_DEPENDENCIES(test_webcore ${ForwardingHeadersForTestWebKitAPI_NAME} ${ForwardingNetworkHeadersForTestWebKitAPI_NAME})
-ADD_TEST(test_webcore ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_webcore)
-SET_TESTS_PROPERTIES(test_webcore PROPERTIES TIMEOUT 60)
+target_link_libraries(test_webcore ${test_webcore_LIBRARIES})
+add_dependencies(test_webcore ${ForwardingHeadersForTestWebKitAPI_NAME} ${ForwardingNetworkHeadersForTestWebKitAPI_NAME})
+add_test(test_webcore ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_webcore)
+set_tests_properties(test_webcore PROPERTIES TIMEOUT 60)
 
-ADD_LIBRARY(TestWebKitAPIBase
+add_library(TestWebKitAPIBase
     ${test_main_SOURCES}
     ${webkit2_api_harness_SOURCES}
     ${TESTWEBKITAPI_DIR}/JavaScriptTest.cpp
@@ -118,9 +118,9 @@ ADD_LIBRARY(TestWebKitAPIBase
     ${TESTWEBKITAPI_DIR}/TestsController.cpp
 )
 
-ADD_DEPENDENCIES(TestWebKitAPIBase ${WebKit2_LIBRARY_NAME} ${ForwardingHeadersForTestWebKitAPI_NAME} ${ForwardingNetworkHeadersForTestWebKitAPI_NAME})
+add_dependencies(TestWebKitAPIBase ${WebKit2_LIBRARY_NAME} ${ForwardingHeadersForTestWebKitAPI_NAME} ${ForwardingNetworkHeadersForTestWebKitAPI_NAME})
 
-SET(test_webkit2_api_LIBRARIES
+set(test_webkit2_api_LIBRARIES
     TestWebKitAPIBase
     ${WTF_LIBRARY_NAME}
     ${JavaScriptCore_LIBRARY_NAME}
@@ -128,18 +128,18 @@ SET(test_webkit2_api_LIBRARIES
     gtest
 )
 
-FOREACH(testName ${test_webkit2_api_BINARIES})
-    ADD_EXECUTABLE(test_webkit2_api_${testName} ${TESTWEBKITAPI_DIR}/Tests/WebKit2/${testName}.cpp)
-    ADD_TEST(test_webkit2_api_${testName} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_webkit2_api_${testName})
-    SET_TESTS_PROPERTIES(test_webkit2_api_${testName} PROPERTIES TIMEOUT 60)
-    TARGET_LINK_LIBRARIES(test_webkit2_api_${testName} ${test_webkit2_api_LIBRARIES})
-ENDFOREACH()
+foreach (testName ${test_webkit2_api_BINARIES})
+    add_executable(test_webkit2_api_${testName} ${TESTWEBKITAPI_DIR}/Tests/WebKit2/${testName}.cpp)
+    add_test(test_webkit2_api_${testName} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_webkit2_api_${testName})
+    set_tests_properties(test_webkit2_api_${testName} PROPERTIES TIMEOUT 60)
+    target_link_libraries(test_webkit2_api_${testName} ${test_webkit2_api_LIBRARIES})
+endforeach ()
 
 # We don't run tests that are expected to fail. We could use the WILL_FAIL
 # property, but it reports failure when the test crashes or timeouts and would
 # make the bot red.
 
-FOREACH(testName ${test_webkit2_api_fail_BINARIES})
-    ADD_EXECUTABLE(test_webkit2_api_fail_${testName} ${TESTWEBKITAPI_DIR}/Tests/WebKit2/${testName}.cpp)
-    TARGET_LINK_LIBRARIES(test_webkit2_api_fail_${testName} ${test_webkit2_api_LIBRARIES})
-ENDFOREACH()
+foreach (testName ${test_webkit2_api_fail_BINARIES})
+    add_executable(test_webkit2_api_fail_${testName} ${TESTWEBKITAPI_DIR}/Tests/WebKit2/${testName}.cpp)
+    target_link_libraries(test_webkit2_api_fail_${testName} ${test_webkit2_api_LIBRARIES})
+endforeach ()

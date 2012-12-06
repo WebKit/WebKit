@@ -1,10 +1,10 @@
-SET(EWebLauncher_SOURCES
+set(EWebLauncher_SOURCES
     ${TOOLS_DIR}/EWebLauncher/url_bar.c
     ${TOOLS_DIR}/EWebLauncher/url_utils.c
     ${TOOLS_DIR}/EWebLauncher/main.c
 )
 
-SET(EWebLauncher_LIBRARIES
+set(EWebLauncher_LIBRARIES
     ${JavaScriptCore_LIBRARY_NAME}
     ${WebCore_LIBRARY_NAME}
     ${WebKit_LIBRARY_NAME}
@@ -23,7 +23,7 @@ SET(EWebLauncher_LIBRARIES
     ${LIBSOUP_LIBRARIES}
 )
 
-SET(EWebLauncher_INCLUDE_DIRECTORIES
+set(EWebLauncher_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/efl/ewk"
     ${CAIRO_INCLUDE_DIRS}
     ${ECORE_INCLUDE_DIRS}
@@ -37,11 +37,11 @@ SET(EWebLauncher_INCLUDE_DIRECTORIES
     ${LIBSOUP_INCLUDE_DIRS}
 )
 
-ADD_DEFINITIONS(-DTHEME_DIR=\"${THEME_BINARY_DIR}\")
+add_definitions(-DTHEME_DIR=\"${THEME_BINARY_DIR}\")
 
-INCLUDE_DIRECTORIES(${EWebLauncher_INCLUDE_DIRECTORIES})
-ADD_EXECUTABLE(EWebLauncher ${EWebLauncher_SOURCES})
-TARGET_LINK_LIBRARIES(EWebLauncher ${EWebLauncher_LIBRARIES})
-SET_TARGET_PROPERTIES(EWebLauncher PROPERTIES FOLDER "Tools")
+include_directories(${EWebLauncher_INCLUDE_DIRECTORIES})
+add_executable(EWebLauncher ${EWebLauncher_SOURCES})
+target_link_libraries(EWebLauncher ${EWebLauncher_LIBRARIES})
+set_target_properties(EWebLauncher PROPERTIES FOLDER "Tools")
 
-ADD_DEPENDENCIES(EWebLauncher ControlTheme)
+add_dependencies(EWebLauncher ControlTheme)
