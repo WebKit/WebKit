@@ -1,3 +1,21 @@
+2012-12-06  Min Qin  <qinmin@chromium.org>
+
+        Make LazyDecodingPixelRef inherit from skia::LazyPixelRef so that cc thread can access it
+        https://bugs.webkit.org/show_bug.cgi?id=103555
+
+        Reviewed by Stephen White.
+
+        Expose LazyDecodingPixelRef to the cc thread by inheriting from skia::LazyPixelRef.
+        No test added for now as impl side paiting is still WIP.
+
+        * platform/graphics/chromium/LazyDecodingPixelRef.cpp:
+        (WebCore::LazyDecodingPixelRef::LazyDecodingPixelRef):
+        (WebCore::LazyDecodingPixelRef::PrepareToDecode):
+        (WebCore):
+        (WebCore::LazyDecodingPixelRef::Decode):
+        * platform/graphics/chromium/LazyDecodingPixelRef.h:
+        (LazyDecodingPixelRef):
+
 2012-12-06  Kentaro Hara  <haraken@chromium.org>
 
         [V8] Make an Isolate mandatory in v8UnsignedInteger()
