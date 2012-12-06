@@ -125,6 +125,8 @@ deps = {
     Var('chromium_svn')+'/tools/win@'+Var('chromium_rev'),
   'ui':
     Var('chromium_svn')+'/ui@'+Var('chromium_rev'),
+  'win8':
+    Var('chromium_svn')+'/win8@'+Var('chromium_rev'),
 
   # other third party
   'third_party/pyftpdlib/src':
