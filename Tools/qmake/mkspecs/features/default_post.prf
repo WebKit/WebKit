@@ -301,6 +301,6 @@ for(target, $$list($$unique(DEFAULT_TARGETS))) {
 # desination dir is absolute and contains a static path component
 # that also contains either of those two words, so we make DESTDIR
 # relative.
-DESTDIR = $$replace(DESTDIR, ^$${ROOT_BUILD_DIR}, $${BUILD_ROOT_RELATIVE_TO_OUT_PWD})
+DESTDIR = $$replace(DESTDIR, ^$$re_escape($${ROOT_BUILD_DIR}), $${BUILD_ROOT_RELATIVE_TO_OUT_PWD})
 
 load(default_post) # Load Qt's defaults

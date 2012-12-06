@@ -22,8 +22,8 @@ isEmpty(pro_file): CONFIG += recursive_include
 
 # Resolve root directories for source and build
 ROOT_WEBKIT_DIR = $$replace(PWD, /Tools/qmake/mkspecs/features$,)
-WEBKIT_SUBDIR = $$replace(_PRO_FILE_PWD_, $${ROOT_WEBKIT_DIR},)
-ROOT_BUILD_DIR = $$replace(OUT_PWD, $${WEBKIT_SUBDIR}$,)
+WEBKIT_SUBDIR = $$replace(_PRO_FILE_PWD_, $$re_escape($${ROOT_WEBKIT_DIR}),)
+ROOT_BUILD_DIR = $$replace(OUT_PWD, $$re_escape($${WEBKIT_SUBDIR})$,)
 
 # Now we're ready to load default_pre from Qt
 load(default_pre)
@@ -32,7 +32,7 @@ equals(OUT_PWD, $${ROOT_BUILD_DIR}) {
     !recursive_include:CONFIG += root_project_file
     BUILD_ROOT_RELATIVE_TO_OUT_PWD = .
 } else {
-    subdir_parts = $$replace(OUT_PWD, ^$${ROOT_BUILD_DIR}/,)
+    subdir_parts = $$replace(OUT_PWD, ^$$re_escape($${ROOT_BUILD_DIR})/,)
     subdir_parts = $$split(subdir_parts, /)
     for(subdir, subdir_parts) {
         BUILD_ROOT_RELATIVE_TO_OUT_PWD += ..

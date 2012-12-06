@@ -1,3 +1,17 @@
+2012-12-06  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Fix the build if the path contains "+" character
+        https://bugs.webkit.org/show_bug.cgi?id=104120
+
+        Reviewed by Tor Arne Vestbø.
+
+        The second parameter of qmake's replace() is regular expression, so
+        we have to escape special characters in paths passed to replace().
+
+        * qmake/mkspecs/features/default_post.prf:
+        * qmake/mkspecs/features/default_pre.prf:
+        * qmake/mkspecs/features/functions.prf:
+
 2012-12-06  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r136825.

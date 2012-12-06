@@ -53,7 +53,7 @@ defineReplace(computeSubdirVariables) {
     }
 
     # Make directory relative
-    !isEmpty(subdirectory):subdirectory = $$replace(subdirectory, ^$${_PRO_FILE_PWD_}/,)
+    !isEmpty(subdirectory):subdirectory = $$replace(subdirectory, ^$$re_escape($${_PRO_FILE_PWD_})/,)
 
     !isEmpty(subdirectory) {
         subdir_command = cd $$toSystemPath($${subdirectory}$${QMAKE_DIR_SEP}) &&
@@ -245,7 +245,7 @@ defineTest(linkAgainstLibrary) {
 
     target = $$resolveFinalLibraryName($$target)
 
-    path = $$replace(source_dir, $${ROOT_WEBKIT_DIR}, $${ROOT_BUILD_DIR})/$$activeBuildConfig()
+    path = $$replace(source_dir, $$re_escape($${ROOT_WEBKIT_DIR}), $${ROOT_BUILD_DIR})/$$activeBuildConfig()
 
     force_static_libs_as_shared {
             LIBS += -L$${ROOT_BUILD_DIR}/lib -l$$target
