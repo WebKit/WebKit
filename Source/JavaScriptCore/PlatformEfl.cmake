@@ -10,11 +10,7 @@ list(APPEND JavaScriptCore_LIBRARIES
 )
 
 list(APPEND JavaScriptCore_INCLUDE_DIRECTORIES
+    ${JAVASCRIPTCORE_DIR}/wtf/gobject
     ${ICU_INCLUDE_DIRS}
 )
 
-if (ENABLE_GLIB_SUPPORT)
-    list(APPEND JavaScriptCore_INCLUDE_DIRECTORIES
-         ${JAVASCRIPTCORE_DIR}/wtf/gobject
-    )
-endif ()

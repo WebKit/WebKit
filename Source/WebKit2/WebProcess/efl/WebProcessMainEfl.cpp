@@ -88,12 +88,10 @@ WK_EXPORT int WebProcessMainEfl(int argc, char* argv[])
     }
 #endif
 
-#if ENABLE(GLIB_SUPPORT)
     g_type_init();
 
     if (!ecore_main_loop_glib_integrate())
         return 1;
-#endif
 
     JSC::initializeThreading();
     WTF::initializeMainThread();
