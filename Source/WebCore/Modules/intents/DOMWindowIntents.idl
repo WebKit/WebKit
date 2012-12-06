@@ -28,8 +28,8 @@
     Conditional=WEB_INTENTS,
     Supplemental=DOMWindow
 ] interface DOMWindowIntents {
-    attribute IntentConstructor WebKitIntent;
+    [V8EnabledAtRuntime] attribute IntentConstructor WebKitIntent;
 
-    [Replaceable] readonly attribute DeliveredIntent webkitIntent;
+    [Replaceable, V8EnabledAtRuntime] readonly attribute DeliveredIntent webkitIntent;
 };
 

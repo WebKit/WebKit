@@ -269,6 +269,12 @@ public:
     static void setRequestAutocompleteEnabled(bool isEnabled) { isRequestAutocompleteEnabled = isEnabled; }
 #endif
 
+#if ENABLE(WEB_INTENTS)
+    static bool webkitStartActivityEnabled() { return isWebIntentsEnabled; }
+    static bool webkitIntentEnabled() { return isWebIntentsEnabled; }
+    static bool webKitIntentEnabled() { return isWebIntentsEnabled; }
+    static void setWebIntentsEnabled(bool isEnabled) { isWebIntentsEnabled = isEnabled; }
+#endif
 
 private:
     // Never instantiate.
@@ -374,6 +380,11 @@ private:
 #if ENABLE(CSP_NEXT)
     static bool areExperimentalContentSecurityPolicyFeaturesEnabled;
 #endif
+
+#if ENABLE(WEB_INTENTS)
+    static bool isWebIntentsEnabled;
+#endif
+
 };
 
 } // namespace WebCore

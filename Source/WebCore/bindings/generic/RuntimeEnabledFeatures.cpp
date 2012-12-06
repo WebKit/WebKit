@@ -233,4 +233,8 @@ bool RuntimeEnabledFeatures::isRequestAutocompleteEnabled = false;
 bool RuntimeEnabledFeatures::areExperimentalContentSecurityPolicyFeaturesEnabled = false;
 #endif
 
+#if ENABLE(WEB_INTENTS)
+bool RuntimeEnabledFeatures::isWebIntentsEnabled = true;
+#endif
+
 } // namespace WebCore

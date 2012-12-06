@@ -1,3 +1,23 @@
+2012-12-05  Greg Billock  <gbillock@google.com>
+
+        Add runtime enable for web intents.
+        https://bugs.webkit.org/show_bug.cgi?id=103669
+
+        Reviewed by Adam Barth.
+
+        Make web intents Javascript API enabled by a runtime setting.
+
+        * Modules/intents/DOMWindowIntents.idl:
+        * Modules/intents/NavigatorIntents.idl:
+        * bindings/generic/RuntimeEnabledFeatures.cpp:
+        (WebCore):
+        * bindings/generic/RuntimeEnabledFeatures.h:
+        (RuntimeEnabledFeatures):
+        (WebCore::RuntimeEnabledFeatures::webkitStartActivityEnabled):
+        (WebCore::RuntimeEnabledFeatures::webkitIntentEnabled):
+        (WebCore::RuntimeEnabledFeatures::webKitIntentEnabled):
+        (WebCore::RuntimeEnabledFeatures::setWebIntentsEnabled):
+
 2012-12-05  Scott Violet  <sky@chromium.org>
 
         [chromium] Remove linux theme related files and switch to default

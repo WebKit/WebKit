@@ -162,6 +162,10 @@ public:
 
     WEBKIT_EXPORT static void enableExperimentalContentSecurityPolicyFeatures(bool);
     WEBKIT_EXPORT static bool isExperimentalContentSecurityPolicyFeaturesEnabled();
+
+    WEBKIT_EXPORT static void enableWebIntents(bool);
+    WEBKIT_EXPORT static bool isWebIntentsEnabled();
+
 private:
     WebRuntimeFeatures();
 };

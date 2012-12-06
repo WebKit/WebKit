@@ -21,9 +21,9 @@
     Conditional=WEB_INTENTS,
     Supplemental=Navigator
 ] interface NavigatorIntents {
-    void webkitStartActivity(in Intent intent,
-                             in [Callback, Optional] IntentResultCallback successCallback,
-                             in [Callback, Optional] IntentResultCallback failureCallback)
+    [V8EnabledAtRuntime] void webkitStartActivity(in Intent intent,
+                                                  in [Callback, Optional] IntentResultCallback successCallback,
+                                                  in [Callback, Optional] IntentResultCallback failureCallback)
         raises(DOMException);
 };
 
