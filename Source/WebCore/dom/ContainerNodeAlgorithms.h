@@ -47,7 +47,7 @@ private:
     void notifyNodeInsertedIntoTree(ContainerNode*);
 
     ContainerNode* m_insertionPoint;
-    OwnPtr<Vector<RefPtr<Node> > > m_postInsertionNotificationTargets;
+    Vector< RefPtr<Node> > m_postInsertionNotificationTargets;
 };
 
 class ChildNodeRemovalNotifier {
@@ -194,11 +194,8 @@ inline void ChildNodeInsertionNotifier::notifyNodeInsertedIntoDocument(Node* nod
 {
     ASSERT(m_insertionPoint->inDocument());
     RefPtr<Node> protect(node);
-    if (Node::InsertionShouldCallDidNotifySubtreeInsertions == node->insertedInto(m_insertionPoint)) {
-        if (!m_postInsertionNotificationTargets)
-            m_postInsertionNotificationTargets = adoptPtr(new Vector<RefPtr<Node> >);
-        m_postInsertionNotificationTargets->append(node);
-    }
+    if (Node::InsertionShouldCallDidNotifySubtreeInsertions == node->insertedInto(m_insertionPoint))
+        m_postInsertionNotificationTargets.append(node);
     if (node->isContainerNode())
         notifyDescendantInsertedIntoDocument(toContainerNode(node));
 }
@@ -208,11 +205,8 @@ inline void ChildNodeInsertionNotifier::notifyNodeInsertedIntoTree(ContainerNode
     NoEventDispatchAssertion assertNoEventDispatch;
     ASSERT(!m_insertionPoint->inDocument());
 
-    if (Node::InsertionShouldCallDidNotifySubtreeInsertions == node->insertedInto(m_insertionPoint)) {
-        if (!m_postInsertionNotificationTargets)
-            m_postInsertionNotificationTargets = adoptPtr(new Vector<RefPtr<Node> >);
-        m_postInsertionNotificationTargets->append(node);
-    }
+    if (Node::InsertionShouldCallDidNotifySubtreeInsertions == node->insertedInto(m_insertionPoint))
+        m_postInsertionNotificationTargets.append(node);
     notifyDescendantInsertedIntoTree(node);
 }
 
@@ -237,10 +231,8 @@ inline void ChildNodeInsertionNotifier::notify(Node* node)
     else if (node->isContainerNode())
         notifyNodeInsertedIntoTree(toContainerNode(node));
 
-    if (m_postInsertionNotificationTargets) {
-        for (size_t i = 0; i < m_postInsertionNotificationTargets->size(); ++i)
-            m_postInsertionNotificationTargets->at(i)->didNotifySubtreeInsertions(m_insertionPoint);
-    }
+    for (size_t i = 0; i < m_postInsertionNotificationTargets.size(); ++i)
+        m_postInsertionNotificationTargets[i]->didNotifySubtreeInsertions(m_insertionPoint);
 }
 
 
