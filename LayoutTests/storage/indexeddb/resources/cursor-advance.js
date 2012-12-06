@@ -51,7 +51,7 @@ function populateObjectStore()
         request = evalAndLog("request = objectStore.add(objectStoreData[i].value, objectStoreData[i].key);");
         request.onerror = unexpectedErrorCallback;
     }
-    request.onsuccess = testSimple;
+    trans.oncomplete = testSimple;
 }
 
 function createIndexes()
