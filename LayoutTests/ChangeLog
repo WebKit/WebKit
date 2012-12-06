@@ -1,3 +1,29 @@
+2012-12-06  Stephen Chenney  <schenney@chromium.org>
+
+        SVG <use> element inside an svg-as-image fails
+        https://bugs.webkit.org/show_bug.cgi?id=104007
+
+        Reviewed by Eric Seidel.
+
+        Upon redraw, SVGImage calls layout on the document it is drawing into
+        the image if the image, provided it believes the redraw does not need
+        to be delayed. Unfortunately, when an SVG <use> element is modified
+        (by animation, say) and regenerates its shadow tree, the destructors
+        invoke redraw, causing the SVGImage to call layout on something that
+        is in the process of being deleted. That's bad.
+
+        This change causes SVGImage to always delay the redraw. It is the most robust
+        way to protect against this problem, as there may be any number of
+        ways to cause this issue (a node being deleted in an svg-as-image
+        target) and this protects against them all.
+
+        The test case crashes in Asan Chromium.
+
+        * platform/chromium-win/svg/custom/use-disappears-after-style-update-expected.png: Changed as a result of this change.
+        * svg/as-image/animated-use-as-image-crash-expected.txt: Added.
+        * svg/as-image/animated-use-as-image-crash.html: Added.
+        * svg/as-image/resources/animated-href-on-use.svg: Added.
+
 2012-12-06  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed gardening, update an expected file.
