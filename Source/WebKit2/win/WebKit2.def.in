@@ -387,3 +387,5 @@ EXPORTS
         ??0StyleSheetContents@WebCore@@AAE@PAVStyleRuleImport@1@ABVString@WTF@@ABUCSSParserContext@1@@Z
         ?addUserSheet@DocumentStyleSheetCollection@WebCore@@QAEXV?$PassRefPtr@VStyleSheetContents@WebCore@@@WTF@@@Z
         ??1StyleSheetContents@WebCore@@QAE@XZ
+        ?insertAuthorCSS@Internals@WebCore@@QBEXPAVDocument@2@ABVString@WTF@@@Z
+        ?insertUserCSS@Internals@WebCore@@QBEXPAVDocument@2@ABVString@WTF@@@Z
