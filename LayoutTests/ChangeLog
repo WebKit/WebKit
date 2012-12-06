@@ -1,3 +1,20 @@
+2012-12-06  Tommy Widenflycht  <tommyw@google.com>
+
+        Speech Recognition API: Change the error code to a string on SpeechRecognitionError
+        https://bugs.webkit.org/show_bug.cgi?id=104254
+
+        Reviewed by Adam Barth.
+
+        Adjusting tests.
+
+        * fast/events/constructors/speech-recognition-error-constructor-expected.txt:
+        * fast/events/constructors/speech-recognition-error-constructor.html:
+        * fast/speech/scripted/speechrecognition-errors-expected.txt:
+        * fast/speech/scripted/speechrecognition-errors.html:
+        * fast/speech/scripted/speechrecognitionerror-basics-expected.txt:
+        * fast/speech/scripted/speechrecognitionerror-basics.html:
+        * platform/chromium/fast/events/constructors/speech-recognition-error-constructor-expected.txt:
+
 2012-12-06  Stephen Chenney  <schenney@chromium.org>
 
         SVG <use> element inside an svg-as-image fails

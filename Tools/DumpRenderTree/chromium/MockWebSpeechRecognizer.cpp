@@ -91,17 +91,17 @@ public:
 // Task for delivering an error event.
 class ErrorTask : public MockWebSpeechRecognizer::Task {
 public:
-    ErrorTask(MockWebSpeechRecognizer* mock, int code, const WebString& message)
+    ErrorTask(MockWebSpeechRecognizer* mock, WebSpeechRecognizerClient::ErrorCode code, const WebString& message)
         : MockWebSpeechRecognizer::Task(mock)
         , m_code(code)
         , m_message(message)
     {
     }
 
-    virtual void run() OVERRIDE { m_recognizer->client()->didReceiveError(m_recognizer->handle(), m_message, static_cast<WebSpeechRecognizerClient::ErrorCode>(m_code)); }
+    virtual void run() OVERRIDE { m_recognizer->client()->didReceiveError(m_recognizer->handle(), m_message, m_code); }
 
 private:
-    int m_code;
+    WebSpeechRecognizerClient::ErrorCode m_code;
     WebString m_message;
 };
 
@@ -166,8 +166,30 @@ void MockWebSpeechRecognizer::addMockResult(const WebString& transcript, float c
     m_mockConfidences.append(confidence);
 }
 
-void MockWebSpeechRecognizer::setError(int code, const WebString& message)
+void MockWebSpeechRecognizer::setError(const WebString& error, const WebString& message)
 {
+    WebSpeechRecognizerClient::ErrorCode code;
+    if (error == "OtherError")
+        code = WebSpeechRecognizerClient::OtherError;
+    else if (error == "NoSpeechError")
+        code = WebSpeechRecognizerClient::NoSpeechError;
+    else if (error == "AbortedError")
+        code = WebSpeechRecognizerClient::AbortedError;
+    else if (error == "AudioCaptureError")
+        code = WebSpeechRecognizerClient::AudioCaptureError;
+    else if (error == "NetworkError")
+        code = WebSpeechRecognizerClient::NetworkError;
+    else if (error == "NotAllowedError")
+        code = WebSpeechRecognizerClient::NotAllowedError;
+    else if (error == "ServiceNotAllowedError")
+        code = WebSpeechRecognizerClient::ServiceNotAllowedError;
+    else if (error == "BadGrammarError")
+        code = WebSpeechRecognizerClient::BadGrammarError;
+    else if (error == "LanguageNotSupportedError")
+        code = WebSpeechRecognizerClient::LanguageNotSupportedError;
+    else
+        return;
+
     clearTaskQueue();
     m_taskQueue.append(adoptPtr(new ErrorTask(this, code, message)));
     m_taskQueue.append(adoptPtr(new ClientCallTask(this, &WebSpeechRecognizerClient::didEnd)));

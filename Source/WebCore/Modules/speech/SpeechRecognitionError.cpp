@@ -31,9 +31,41 @@
 
 namespace WebCore {
 
-PassRefPtr<SpeechRecognitionError> SpeechRecognitionError::create(Code code, const String& message)
+static String ErrorCodeToString(SpeechRecognitionError::ErrorCode code)
 {
-    return adoptRef(new SpeechRecognitionError(code, message));
+    switch (code) {
+    case SpeechRecognitionError::ErrorCodeOther:
+        return ASCIILiteral("other");
+    case SpeechRecognitionError::ErrorCodeNoSpeech:
+        return ASCIILiteral("no-speech");
+    case SpeechRecognitionError::ErrorCodeAborted:
+        return ASCIILiteral("aborted");
+    case SpeechRecognitionError::ErrorCodeAudioCapture:
+        return ASCIILiteral("audio-capture");
+    case SpeechRecognitionError::ErrorCodeNetwork:
+        return ASCIILiteral("network");
+    case SpeechRecognitionError::ErrorCodeNotAllowed:
+        return ASCIILiteral("not-allowed");
+    case SpeechRecognitionError::ErrorCodeServiceNotAllowed:
+        return ASCIILiteral("service-not-allowed");
+    case SpeechRecognitionError::ErrorCodeBadGrammar:
+        return ASCIILiteral("bad-grammar");
+    case SpeechRecognitionError::ErrorCodeLanguageNotSupported:
+        return ASCIILiteral("language-not-supported");
+    }
+
+    ASSERT_NOT_REACHED();
+    return String();
+}
+
+PassRefPtr<SpeechRecognitionError> SpeechRecognitionError::create(ErrorCode code, const String& message)
+{
+    return adoptRef(new SpeechRecognitionError(ErrorCodeToString(code), message));
+}
+
+PassRefPtr<SpeechRecognitionError> SpeechRecognitionError::create()
+{
+    return adoptRef(new SpeechRecognitionError(emptyString(), emptyString()));
 }
 
 PassRefPtr<SpeechRecognitionError> SpeechRecognitionError::create(const AtomicString& eventName, const SpeechRecognitionErrorInit& initializer)
@@ -41,16 +73,16 @@ PassRefPtr<SpeechRecognitionError> SpeechRecognitionError::create(const AtomicSt
     return adoptRef(new SpeechRecognitionError(eventName, initializer));
 }
 
-SpeechRecognitionError::SpeechRecognitionError(Code code, const String& message)
+SpeechRecognitionError::SpeechRecognitionError(const String& error, const String& message)
     : Event(eventNames().errorEvent, /*canBubble=*/false, /*cancelable=*/false)
-    , m_code(static_cast<unsigned short>(code))
+    , m_error(error)
     , m_message(message)
 {
 }
 
 SpeechRecognitionError::SpeechRecognitionError(const AtomicString& eventName, const SpeechRecognitionErrorInit& initializer)
     : Event(eventName, initializer)
-    , m_code(initializer.code)
+    , m_error(initializer.error)
     , m_message(initializer.message)
 {
 }
@@ -61,7 +93,6 @@ const AtomicString& SpeechRecognitionError::interfaceName() const
 }
 
 SpeechRecognitionErrorInit::SpeechRecognitionErrorInit()
-    : code(0)
 {
 }
 

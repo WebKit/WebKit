@@ -9,7 +9,7 @@ PASS webkitSpeechRecognition == null is false
 notAllowedTest():
 onerror
 PASS count is 0
-PASS event.code is webkitSpeechRecognitionError.NOT_ALLOWED
+PASS event.error is "not-allowed"
 PASS event.message is "not allowed"
 PASS event.type is "error"
 onend

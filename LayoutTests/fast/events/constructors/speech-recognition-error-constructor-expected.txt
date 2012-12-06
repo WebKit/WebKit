@@ -5,13 +5,12 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 FAIL new webkitSpeechRecognitionError('eventType').bubbles should be false. Threw exception ReferenceError: Can't find variable: webkitSpeechRecognitionError
 FAIL new webkitSpeechRecognitionError('eventType').cancelable should be false. Threw exception ReferenceError: Can't find variable: webkitSpeechRecognitionError
-FAIL new webkitSpeechRecognitionError('eventType').code should be 0. Threw exception ReferenceError: Can't find variable: webkitSpeechRecognitionError
+FAIL new webkitSpeechRecognitionError('eventType').error should be . Threw exception ReferenceError: Can't find variable: webkitSpeechRecognitionError
 FAIL new webkitSpeechRecognitionError('eventType').message should be . Threw exception ReferenceError: Can't find variable: webkitSpeechRecognitionError
 FAIL new webkitSpeechRecognitionError('eventType', { bubbles: false }).bubbles should be false. Threw exception ReferenceError: Can't find variable: webkitSpeechRecognitionError
 FAIL new webkitSpeechRecognitionError('eventType', { bubbles: true }).bubbles should be true. Threw exception ReferenceError: Can't find variable: webkitSpeechRecognitionError
 FAIL new webkitSpeechRecognitionError('eventType', { cancelable: false }).cancelable should be false. Threw exception ReferenceError: Can't find variable: webkitSpeechRecognitionError
 FAIL new webkitSpeechRecognitionError('eventType', { cancelable: true }).cancelable should be true. Threw exception ReferenceError: Can't find variable: webkitSpeechRecognitionError
-FAIL new webkitSpeechRecognitionError('eventType', { code: 1 }).code should be 1. Threw exception ReferenceError: Can't find variable: webkitSpeechRecognitionError
-FAIL new webkitSpeechRecognitionError('eventType', { code: 12345 }).code should be 12345. Threw exception ReferenceError: Can't find variable: webkitSpeechRecognitionError
+FAIL new webkitSpeechRecognitionError('eventType', { error: 'bar' }).error should be bar. Threw exception ReferenceError: Can't find variable: webkitSpeechRecognitionError
 FAIL new webkitSpeechRecognitionError('eventType', { message: 'foo' }).message should be foo. Threw exception ReferenceError: Can't find variable: webkitSpeechRecognitionError
 

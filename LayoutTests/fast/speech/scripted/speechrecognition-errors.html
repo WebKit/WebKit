@@ -33,14 +33,14 @@ function notAllowedTest() {
     window.count = 0;
 
     r.start();
-    testRunner.setMockSpeechRecognitionError(webkitSpeechRecognitionError.NOT_ALLOWED, "not allowed");
+    testRunner.setMockSpeechRecognitionError("NotAllowedError", "not allowed");
 
     // Check that we get an error event.
     r.onerror = function() {
         debug('onerror');
         shouldBe('count', '0');
         count++;
-        shouldBe('event.code', 'webkitSpeechRecognitionError.NOT_ALLOWED');
+        shouldBeEqualToString('event.error', 'not-allowed');
         shouldBeEqualToString('event.message', 'not allowed');
         shouldBeEqualToString('event.type', 'error');
     }

@@ -137,7 +137,7 @@ void SpeechRecognitionClientProxy::didReceiveNoMatch(const WebSpeechRecognitionH
 void SpeechRecognitionClientProxy::didReceiveError(const WebSpeechRecognitionHandle& handle, const WebString& message, WebSpeechRecognizerClient::ErrorCode code)
 {
     RefPtr<SpeechRecognition> recognition = PassRefPtr<SpeechRecognition>(handle);
-    SpeechRecognitionError::Code errorCode = static_cast<SpeechRecognitionError::Code>(code);
+    SpeechRecognitionError::ErrorCode errorCode = static_cast<SpeechRecognitionError::ErrorCode>(code);
     recognition->didReceiveError(SpeechRecognitionError::create(errorCode, message));
 }
 

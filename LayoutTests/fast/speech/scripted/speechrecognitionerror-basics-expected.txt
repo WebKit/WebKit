@@ -5,15 +5,6 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 PASS 'webkitSpeechRecognitionError' in window is true
 PASS webkitSpeechRecognitionError == null is false
-PASS webkitSpeechRecognitionError.OTHER is 0
-PASS webkitSpeechRecognitionError.NO_SPEECH is 1
-PASS webkitSpeechRecognitionError.ABORTED is 2
-PASS webkitSpeechRecognitionError.AUDIO_CAPTURE is 3
-PASS webkitSpeechRecognitionError.NETWORK is 4
-PASS webkitSpeechRecognitionError.NOT_ALLOWED is 5
-PASS webkitSpeechRecognitionError.SERVICE_NOT_ALLOWED is 6
-PASS webkitSpeechRecognitionError.BAD_GRAMMAR is 7
-PASS webkitSpeechRecognitionError.LANGUAGE_NOT_SUPPORTED is 8
 PASS successfullyParsed is true
 
 TEST COMPLETE

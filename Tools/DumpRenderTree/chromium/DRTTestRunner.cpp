@@ -1036,11 +1036,11 @@ void DRTTestRunner::addMockSpeechRecognitionResult(const CppArgumentList& argume
 void DRTTestRunner::setMockSpeechRecognitionError(const CppArgumentList& arguments, CppVariant* result)
 {
     result->setNull();
-    if (arguments.size() < 2 || !arguments[0].isNumber() || !arguments[1].isString())
+    if (arguments.size() != 2 || !arguments[0].isString() || !arguments[1].isString())
         return;
 
     if (MockWebSpeechRecognizer* recognizer = m_shell->webViewHost()->mockSpeechRecognizer())
-        recognizer->setError(arguments[0].toInt32(), cppVariantToWebString(arguments[1]));
+        recognizer->setError(cppVariantToWebString(arguments[0]), cppVariantToWebString(arguments[1]));
 }
 
 void DRTTestRunner::wasMockSpeechRecognitionAborted(const CppArgumentList&, CppVariant* result)

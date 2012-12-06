@@ -13,7 +13,7 @@ description("This tests the constructor for the SpeechRecognitionError DOM class
 // Test constructor without initializer.
 shouldBe("new webkitSpeechRecognitionError('eventType').bubbles", "false");
 shouldBe("new webkitSpeechRecognitionError('eventType').cancelable", "false");
-shouldBe("new webkitSpeechRecognitionError('eventType').code", "0");
+shouldBeEqualToString("new webkitSpeechRecognitionError('eventType').error", "");
 shouldBeEqualToString("new webkitSpeechRecognitionError('eventType').message", "");
 
 // Test passing bubbles in the initializer.
@@ -25,8 +25,7 @@ shouldBe("new webkitSpeechRecognitionError('eventType', { cancelable: false }).c
 shouldBe("new webkitSpeechRecognitionError('eventType', { cancelable: true }).cancelable", "true");
 
 // Test passing code in the initializer.
-shouldBe("new webkitSpeechRecognitionError('eventType', { code: 1 }).code", "1");
-shouldBe("new webkitSpeechRecognitionError('eventType', { code: 12345 }).code", "12345");
+shouldBeEqualToString("new webkitSpeechRecognitionError('eventType', { error: 'bar' }).error", "bar");
 
 // Test passing message in the initializer.
 shouldBeEqualToString("new webkitSpeechRecognitionError('eventType', { message: 'foo' }).message", "foo");

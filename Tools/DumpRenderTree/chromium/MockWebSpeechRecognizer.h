@@ -52,7 +52,7 @@ public:
 
     // Methods accessed by layout tests:
     void addMockResult(const WebKit::WebString& transcript, float confidence);
-    void setError(int code, const WebKit::WebString& message);
+    void setError(const WebKit::WebString& error, const WebKit::WebString& message);
     bool wasAborted() const { return m_wasAborted; }
 
     // Methods accessed from Task objects:

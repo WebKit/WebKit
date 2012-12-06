@@ -12,17 +12,6 @@ function run() {
     shouldBeTrue("'webkitSpeechRecognitionError' in window");
     shouldBeFalse("webkitSpeechRecognitionError == null");
 
-    // Check for members of SpeechRecognitionError.
-    shouldBe("webkitSpeechRecognitionError.OTHER", "0");
-    shouldBe("webkitSpeechRecognitionError.NO_SPEECH", "1");
-    shouldBe("webkitSpeechRecognitionError.ABORTED", "2");
-    shouldBe("webkitSpeechRecognitionError.AUDIO_CAPTURE", "3");
-    shouldBe("webkitSpeechRecognitionError.NETWORK", "4");
-    shouldBe("webkitSpeechRecognitionError.NOT_ALLOWED", "5");
-    shouldBe("webkitSpeechRecognitionError.SERVICE_NOT_ALLOWED", "6");
-    shouldBe("webkitSpeechRecognitionError.BAD_GRAMMAR", "7");
-    shouldBe("webkitSpeechRecognitionError.LANGUAGE_NOT_SUPPORTED", "8");
-
     finishJSTest();
 }
 
