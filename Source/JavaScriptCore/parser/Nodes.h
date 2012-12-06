@@ -1424,6 +1424,9 @@ namespace JSC {
         bool functionNameIsInScope() { return m_functionNameIsInScopeToggle == FunctionNameIsInScope; }
         FunctionNameIsInScopeToggle functionNameIsInScopeToggle() { return m_functionNameIsInScopeToggle; }
 
+        void setFunctionStart(int functionStart) { m_functionStart = functionStart; }
+        int functionStart() const { return m_functionStart; }
+
         static const bool scopeIsFunction = true;
 
     private:
@@ -1434,6 +1437,7 @@ namespace JSC {
         Identifier m_inferredName;
         FunctionNameIsInScopeToggle m_functionNameIsInScopeToggle;
         RefPtr<FunctionParameters> m_parameters;
+        int m_functionStart;
     };
 
     class FuncExprNode : public ExpressionNode {

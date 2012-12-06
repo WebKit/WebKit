@@ -267,6 +267,11 @@ public:
     {
         return FunctionBodyNode::create(m_globalData, location, inStrictContext);
     }
+
+    void setFunctionStart(FunctionBodyNode* body, int functionStart)
+    {
+        body->setFunctionStart(functionStart);
+    }
     
     template <bool> PropertyNode* createGetterOrSetterProperty(const JSTokenLocation& location, PropertyNode::Type type, const Identifier* name, ParameterNode* params, FunctionBodyNode* body, int openBracePos, int closeBracePos, int bodyStartLine, int bodyEndLine)
     {
