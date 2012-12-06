@@ -28,10 +28,14 @@
 
 #import "WebCore/ResourceError.h"
 #import "WebErrors.h"
+#import <WebKitSystemInterface.h>
+#import <wtf/MainThread.h>
 
 using namespace WebCore;
 
 namespace WebKit {
+
+static CFURLStorageSessionRef privateBrowsingStorageSession;
 
 RemoteNetworkingContext::RemoteNetworkingContext(bool needsSiteSpecificQuirks, bool localFileContentSniffingEnabled)
     : m_needsSiteSpecificQuirks(needsSiteSpecificQuirks)
@@ -78,6 +82,39 @@ NSOperationQueue *RemoteNetworkingContext::scheduledOperationQueue() const
 ResourceError RemoteNetworkingContext::blockedError(const ResourceRequest& request) const
 {
     return WebKit::blockedError(request);
+}
+
+static String& privateBrowsingStorageSessionIdentifierBase()
+{
+    ASSERT(isMainThread());
+    DEFINE_STATIC_LOCAL(String, base, ());
+    return base;
+}
+
+void RemoteNetworkingContext::setPrivateBrowsingStorageSessionIdentifierBase(const String& identifier)
+{
+    privateBrowsingStorageSessionIdentifierBase() = identifier;
+}
+
+void RemoteNetworkingContext::ensurePrivateBrowsingSession()
+{
+    ASSERT(isMainThread());
+    if (privateBrowsingStorageSession)
+        return;
+
+    ASSERT(!privateBrowsingStorageSessionIdentifierBase().isNull());
+    RetainPtr<CFStringRef> cfIdentifier = String(privateBrowsingStorageSessionIdentifierBase() + ".PrivateBrowsing").createCFString();
+
+    privateBrowsingStorageSession = WKCreatePrivateStorageSession(cfIdentifier.get());
+}
+
+void RemoteNetworkingContext::destroyPrivateBrowsingSession()
+{
+    if (!privateBrowsingStorageSession)
+        return;
+
+    CFRelease(privateBrowsingStorageSession);
+    privateBrowsingStorageSession = 0;
 }
 
 }

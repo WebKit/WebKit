@@ -77,6 +77,8 @@ void WebFrameNetworkingContext::switchToNewTestingSession()
 
 void WebFrameNetworkingContext::ensurePrivateBrowsingSession()
 {
+    // FIXME (NetworkProcess): Don't create an unnecessary session when using network process.
+
     ASSERT(isMainThread());
     if (privateBrowsingStorageSession)
         return;

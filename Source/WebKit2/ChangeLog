@@ -1,3 +1,42 @@
+2012-12-06  Alexey Proskuryakov  <ap@apple.com>
+
+        Track private browsing session in network process
+        https://bugs.webkit.org/show_bug.cgi?id=104281
+
+        Reviewed by Jessie Berlin.
+
+        Added ensure/destroy messages that match what's done in WebProcess. Also similarly,
+        ensuring a private session may happen on demand if network process has been restarted
+        after a crash, or if private browsing is enabled via a persistent preference.
+
+        Eventually, we should find a way to share code between WebFrameNetworkingContext
+        and RemoteNetworkingContext.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::initializeNetworkProcess):
+        (WebKit::NetworkProcess::ensurePrivateBrowsingSession):
+        (WebKit::NetworkProcess::destroyPrivateBrowsingSession):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+        * NetworkProcess/mac/RemoteNetworkingContext.h:
+        (RemoteNetworkingContext):
+        * NetworkProcess/mac/RemoteNetworkingContext.mm:
+        (WebKit::privateBrowsingStorageSessionIdentifierBase):
+        (WebKit::RemoteNetworkingContext::setPrivateBrowsingStorageSessionIdentifierBase):
+        (WebKit::RemoteNetworkingContext::ensurePrivateBrowsingSession):
+        (WebKit::RemoteNetworkingContext::destroyPrivateBrowsingSession):
+        * Shared/Network/NetworkProcessCreationParameters.cpp:
+        (WebKit::NetworkProcessCreationParameters::encode):
+        (WebKit::NetworkProcessCreationParameters::decode):
+        * Shared/Network/NetworkProcessCreationParameters.h:
+        (NetworkProcessCreationParameters):
+        * UIProcess/Network/mac/NetworkProcessProxyMac.mm:
+        (WebKit::NetworkProcessProxy::platformInitializeNetworkProcess):
+        * WebProcess/WebCoreSupport/mac/WebFrameNetworkingContext.mm:
+        (WebKit::WebFrameNetworkingContext::ensurePrivateBrowsingSession):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeWebProcess):
+
 2012-12-06  Laszlo Gombos  <l.gombos@samsung.com>
 
         [EFL] Remove ENABLE_GLIB_SUPPORT CMake variable

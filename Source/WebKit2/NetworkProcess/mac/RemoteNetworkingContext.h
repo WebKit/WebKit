@@ -38,6 +38,10 @@ public:
     }
     virtual ~RemoteNetworkingContext();
 
+    static void setPrivateBrowsingStorageSessionIdentifierBase(const String&);
+    static void ensurePrivateBrowsingSession();
+    static void destroyPrivateBrowsingSession();
+
 private:
     RemoteNetworkingContext(bool needsSiteSpecificQuirks, bool localFileContentSniffingEnabled);
 

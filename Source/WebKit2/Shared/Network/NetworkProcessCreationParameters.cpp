@@ -40,6 +40,7 @@ void NetworkProcessCreationParameters::encode(CoreIPC::ArgumentEncoder& encoder)
 {
 #if PLATFORM(MAC)
     encoder << parentProcessName;
+    encoder << uiProcessBundleIdentifier;
 #endif
 }
 
@@ -47,6 +48,8 @@ bool NetworkProcessCreationParameters::decode(CoreIPC::ArgumentDecoder* decoder,
 {
 #if PLATFORM(MAC)
     if (!decoder->decode(result.parentProcessName))
+        return false;
+    if (!decoder->decode(result.uiProcessBundleIdentifier))
         return false;
 #endif
 

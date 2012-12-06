@@ -70,6 +70,8 @@ private:
     void didReceiveNetworkProcessMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);
     void initializeNetworkProcess(const NetworkProcessCreationParameters&);
     void createNetworkConnectionToWebProcess();
+    void ensurePrivateBrowsingSession();
+    void destroyPrivateBrowsingSession();
 
     // The connection to the UI process.
     RefPtr<CoreIPC::Connection> m_uiConnection;

@@ -38,6 +38,7 @@ namespace WebKit {
 void NetworkProcessProxy::platformInitializeNetworkProcess(NetworkProcessCreationParameters& parameters)
 {
     parameters.parentProcessName = [[NSProcessInfo processInfo] processName];
+    parameters.uiProcessBundleIdentifier = [[NSBundle mainBundle] bundleIdentifier];
 }
 
 void NetworkProcessProxy::setApplicationIsOccluded(bool applicationIsOccluded)

@@ -45,6 +45,7 @@ struct NetworkProcessCreationParameters {
 
 #if PLATFORM(MAC)
     String parentProcessName;
+    String uiProcessBundleIdentifier;
 #endif
 };
 
