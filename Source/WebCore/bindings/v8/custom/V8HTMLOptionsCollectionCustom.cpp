@@ -88,7 +88,7 @@ v8::Handle<v8::Value> V8HTMLOptionsCollection::removeCallback(const v8::Argument
 {
     INC_STATS("DOM.HTMLOptionsCollection.remove()");
     HTMLOptionsCollection* imp = V8HTMLOptionsCollection::toNative(args.Holder());
-    HTMLSelectElement* base = static_cast<HTMLSelectElement*>(imp->base());
+    HTMLSelectElement* base = static_cast<HTMLSelectElement*>(imp->ownerNode());
     return removeElement(base, args);
 }
 
@@ -155,7 +155,7 @@ v8::Handle<v8::Value> V8HTMLOptionsCollection::indexedPropertySetter(uint32_t in
 {
     INC_STATS("DOM.HTMLOptionsCollection.IndexedPropertySetter");
     HTMLOptionsCollection* collection = V8HTMLOptionsCollection::toNative(info.Holder());
-    HTMLSelectElement* base = static_cast<HTMLSelectElement*>(collection->base());
+    HTMLSelectElement* base = static_cast<HTMLSelectElement*>(collection->ownerNode());
     return toOptionsCollectionSetter(index, value, base, info.GetIsolate());
 }
 

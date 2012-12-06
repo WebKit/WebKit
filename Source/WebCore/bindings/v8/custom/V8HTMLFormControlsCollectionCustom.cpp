@@ -50,7 +50,7 @@ static v8::Handle<v8::Value> getNamedItems(HTMLFormControlsCollection* collectio
     if (namedItems.size() == 1)
         return toV8(namedItems.at(0).release(), creationContext, isolate);
 
-    return toV8(collection->base()->radioNodeList(name).get(), creationContext, isolate);
+    return toV8(collection->ownerNode()->radioNodeList(name).get(), creationContext, isolate);
 }
 
 v8::Handle<v8::Value> V8HTMLFormControlsCollection::namedPropertyGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)

@@ -58,7 +58,7 @@ void HTMLOptionsCollection::add(PassRefPtr<HTMLOptionElement> element, int index
     }
 
     ec = 0;
-    HTMLSelectElement* select = toHTMLSelectElement(base());
+    HTMLSelectElement* select = toHTMLSelectElement(ownerNode());
 
     if (index == -1 || unsigned(index) >= length())
         select->add(newOption, 0, ec);
@@ -70,22 +70,22 @@ void HTMLOptionsCollection::add(PassRefPtr<HTMLOptionElement> element, int index
 
 void HTMLOptionsCollection::remove(int index)
 {
-    toHTMLSelectElement(base())->remove(index);
+    toHTMLSelectElement(ownerNode())->remove(index);
 }
 
 int HTMLOptionsCollection::selectedIndex() const
 {
-    return toHTMLSelectElement(base())->selectedIndex();
+    return toHTMLSelectElement(ownerNode())->selectedIndex();
 }
 
 void HTMLOptionsCollection::setSelectedIndex(int index)
 {
-    toHTMLSelectElement(base())->setSelectedIndex(index);
+    toHTMLSelectElement(ownerNode())->setSelectedIndex(index);
 }
 
 void HTMLOptionsCollection::setLength(unsigned length, ExceptionCode& ec)
 {
-    toHTMLSelectElement(base())->setLength(length, ec);
+    toHTMLSelectElement(ownerNode())->setLength(length, ec);
 }
 
 } //namespace

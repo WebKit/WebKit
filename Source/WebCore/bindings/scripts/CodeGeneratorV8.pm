@@ -195,8 +195,7 @@ END
     if (GetGenerateIsReachable($interface) eq  "ImplDocument" ||
         GetGenerateIsReachable($interface) eq  "ImplElementRoot" ||
         GetGenerateIsReachable($interface) eq  "ImplOwnerRoot" ||
-        GetGenerateIsReachable($interface) eq  "ImplOwnerNodeRoot" ||
-        GetGenerateIsReachable($interface) eq  "ImplBaseRoot") {
+        GetGenerateIsReachable($interface) eq  "ImplOwnerNodeRoot") {
 
         $implIncludes{"V8GCController.h"} = 1;
 
@@ -205,7 +204,6 @@ END
         $methodName = "element" if (GetGenerateIsReachable($interface) eq "ImplElementRoot");
         $methodName = "owner" if (GetGenerateIsReachable($interface) eq "ImplOwnerRoot");
         $methodName = "ownerNode" if (GetGenerateIsReachable($interface) eq "ImplOwnerNodeRoot");
-        $methodName = "base" if (GetGenerateIsReachable($interface) eq "ImplBaseRoot");
 
         push(@implContent, <<END);
     if (Node* owner = impl->${methodName}())

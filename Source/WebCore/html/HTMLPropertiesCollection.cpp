@@ -66,7 +66,7 @@ void HTMLPropertiesCollection::updateRefElements() const
 
     m_itemRefElements.clear();
     setItemRefElementsCacheValid();
-    toHTMLElement(base())->getItemRefElements(m_itemRefElements);
+    toHTMLElement(ownerNode())->getItemRefElements(m_itemRefElements);
 }
 
 static Node* nextNodeWithProperty(Node* rootNode, Node* previous, Node* ownerNode)
@@ -137,7 +137,7 @@ PassRefPtr<DOMStringList> HTMLPropertiesCollection::names() const
 
 PassRefPtr<PropertyNodeList> HTMLPropertiesCollection::namedItem(const String& name) const
 {
-    return base()->propertyNodeList(name);
+    return ownerNode()->propertyNodeList(name);
 }
 
 bool HTMLPropertiesCollection::hasNamedItem(const AtomicString& name) const

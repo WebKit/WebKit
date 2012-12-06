@@ -22,7 +22,7 @@
     JSGenerateToNativeObject,
     CustomIndexedSetter,
     NamedGetter,
-    GenerateIsReachable=ImplBaseRoot,
+    GenerateIsReachable=ImplOwnerNodeRoot,
     V8DependentLifetime,
 ] interface HTMLOptionsCollection : HTMLCollection {
     attribute long selectedIndex;

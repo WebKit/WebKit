@@ -67,7 +67,7 @@ public:
 
     // This function is called from the JS binding code to determine if the NamedFlow object is reachable or not.
     // If the object has listeners, the object should only be discarded if the parent Document is not reachable.
-    Node* base() const;
+    Node* ownerNode() const;
 
     void setRenderer(RenderNamedFlowThread* parentFlowThread);
 

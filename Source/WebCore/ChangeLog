@@ -1,3 +1,61 @@
+2012-12-06  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Use ownerNode() instead of base() in HTMLCollection
+        https://bugs.webkit.org/show_bug.cgi?id=104244
+
+        Reviewed by Adam Barth.
+
+        Use ownerNode() instead of base() in HTMLCollection to match LiveNodeList.
+        Notice that the definition of base(), which this patch removes, is "return ownerNode()".
+
+        * bindings/js/JSHTMLFormControlsCollectionCustom.cpp:
+        (WebCore::getNamedItems):
+        * bindings/js/JSHTMLOptionsCollectionCustom.cpp:
+        (WebCore::JSHTMLOptionsCollection::indexSetter):
+        (WebCore::JSHTMLOptionsCollection::remove):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateImplementation):
+        * bindings/scripts/CodeGeneratorV8.pm:
+        (GenerateOpaqueRootForGC):
+        * bindings/scripts/IDLAttributes.txt:
+        * bindings/v8/custom/V8HTMLFormControlsCollectionCustom.cpp:
+        (WebCore::getNamedItems):
+        * bindings/v8/custom/V8HTMLOptionsCollectionCustom.cpp:
+        (WebCore::V8HTMLOptionsCollection::removeCallback):
+        (WebCore::V8HTMLOptionsCollection::indexedPropertySetter):
+        * dom/WebKitNamedFlow.cpp:
+        (WebCore::WebKitNamedFlow::ownerNode):
+        * dom/WebKitNamedFlow.h:
+        (WebKitNamedFlow):
+        * dom/WebKitNamedFlow.idl:
+        * html/HTMLAllCollection.idl:
+        * html/HTMLCollection.h:
+        (HTMLCollection):
+        * html/HTMLCollection.idl:
+        * html/HTMLFormControlsCollection.cpp:
+        (WebCore::HTMLFormControlsCollection::HTMLFormControlsCollection):
+        (WebCore::HTMLFormControlsCollection::create):
+        (WebCore::HTMLFormControlsCollection::formControlElements):
+        (WebCore::HTMLFormControlsCollection::formImageElements):
+        (WebCore::HTMLFormControlsCollection::namedItem):
+        (WebCore::HTMLFormControlsCollection::updateNameCache):
+        * html/HTMLFormControlsCollection.idl:
+        * html/HTMLNameCollection.cpp:
+        (WebCore::HTMLNameCollection::~HTMLNameCollection):
+        (WebCore::HTMLNameCollection::virtualItemAfter):
+        * html/HTMLOptionsCollection.cpp:
+        (WebCore::HTMLOptionsCollection::add):
+        (WebCore::HTMLOptionsCollection::remove):
+        (WebCore::HTMLOptionsCollection::selectedIndex):
+        (WebCore::HTMLOptionsCollection::setSelectedIndex):
+        (WebCore::HTMLOptionsCollection::setLength):
+        * html/HTMLOptionsCollection.idl:
+        * html/HTMLPropertiesCollection.cpp:
+        (WebCore::HTMLPropertiesCollection::updateRefElements):
+        (WebCore::HTMLPropertiesCollection::namedItem):
+        * html/HTMLTableRowsCollection.cpp:
+        (WebCore::HTMLTableRowsCollection::virtualItemAfter):
+
 2012-12-06  Tommy Widenflycht  <tommyw@google.com>
 
         Speech Recognition API: Change the error code to a string on SpeechRecognitionError

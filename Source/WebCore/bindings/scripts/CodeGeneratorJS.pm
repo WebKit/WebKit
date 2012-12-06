@@ -2510,8 +2510,8 @@ sub GenerateImplementation
                 $rootString .= "    void* root = WebCore::root(element);\n";
             } elsif ($interfaceName eq "CanvasRenderingContext") {
                 $rootString  = "    void* root = WebCore::root(js${interfaceName}->impl()->canvas());\n";
-            } elsif (GetGenerateIsReachable($interface) eq "ImplBaseRoot") {
-                $rootString  = "    void* root = WebCore::root(js${interfaceName}->impl()->base());\n";
+            } elsif (GetGenerateIsReachable($interface) eq "ImplOwnerNodeRoot") {
+                $rootString  = "    void* root = WebCore::root(js${interfaceName}->impl()->ownerNode());\n";
             } else {
                 $rootString  = "    void* root = WebCore::root(js${interfaceName}->impl());\n";
             }

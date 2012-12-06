@@ -41,8 +41,8 @@ HTMLNameCollection::HTMLNameCollection(Node* document, CollectionType type, cons
 
 HTMLNameCollection::~HTMLNameCollection()
 {
-    ASSERT(base());
-    ASSERT(base()->isDocumentNode());
+    ASSERT(ownerNode());
+    ASSERT(ownerNode()->isDocumentNode());
     ASSERT(type() == WindowNamedItems || type() == DocumentNamedItems);
 
     ownerNode()->nodeLists()->removeCacheWithAtomicName(this, type(), m_name);
@@ -51,15 +51,15 @@ HTMLNameCollection::~HTMLNameCollection()
 Element* HTMLNameCollection::virtualItemAfter(unsigned& offsetInArray, Element* previous) const
 {
     ASSERT_UNUSED(offsetInArray, !offsetInArray);
-    ASSERT(previous != base());
+    ASSERT(previous != ownerNode());
 
     Node* current;
     if (!previous)
-        current = base()->firstChild();
+        current = ownerNode()->firstChild();
     else
-        current = previous->traverseNextNode(base());
+        current = previous->traverseNextNode(ownerNode());
 
-    for (; current; current = current->traverseNextNode(base())) {
+    for (; current; current = current->traverseNextNode(ownerNode())) {
         if (!current->isElementNode())
             continue;
         Element* e = static_cast<Element*>(current);

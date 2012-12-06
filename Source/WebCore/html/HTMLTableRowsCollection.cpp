@@ -166,7 +166,7 @@ Element* HTMLTableRowsCollection::virtualItemAfter(unsigned& offsetInArray, Elem
 {
     ASSERT_UNUSED(offsetInArray, !offsetInArray);
     ASSERT(!previous || (previous->isHTMLElement() && toHTMLElement(previous)->hasLocalName(trTag)));
-    return rowAfter(static_cast<HTMLTableElement*>(base()), static_cast<HTMLTableRowElement*>(previous));
+    return rowAfter(static_cast<HTMLTableElement*>(ownerNode()), static_cast<HTMLTableRowElement*>(previous));
 }
 
 }

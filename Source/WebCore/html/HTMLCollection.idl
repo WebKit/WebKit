@@ -22,7 +22,7 @@
     IndexedGetter,
     NamedGetter,
     CustomToJSObject,
-    GenerateIsReachable=ImplBaseRoot,
+    GenerateIsReachable=ImplOwnerNodeRoot,
     V8DependentLifetime,
     ObjCPolymorphic
 ] interface HTMLCollection {

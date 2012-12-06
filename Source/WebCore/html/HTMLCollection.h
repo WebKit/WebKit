@@ -62,7 +62,6 @@ public:
         return item(0) && !item(1);
     }
 
-    Node* base() const { return ownerNode(); }
     virtual Element* virtualItemAfter(unsigned& offsetInArray, Element*) const;
 
 protected:

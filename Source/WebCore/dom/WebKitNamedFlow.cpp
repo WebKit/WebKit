@@ -216,7 +216,7 @@ ScriptExecutionContext* WebKitNamedFlow::scriptExecutionContext() const
     return m_flowManager->document();
 }
 
-Node* WebKitNamedFlow::base() const
+Node* WebKitNamedFlow::ownerNode() const
 {
     return m_flowManager->document();
 }

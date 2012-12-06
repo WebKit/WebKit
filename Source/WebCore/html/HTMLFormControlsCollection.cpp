@@ -36,15 +36,15 @@ using namespace HTMLNames;
 // Since the collections are to be "live", we have to do the
 // calculation every time if anything has changed.
 
-HTMLFormControlsCollection::HTMLFormControlsCollection(Node* base)
-    : HTMLCollection(base, FormControls, OverridesItemAfter)
+HTMLFormControlsCollection::HTMLFormControlsCollection(Node* ownerNode)
+    : HTMLCollection(ownerNode, FormControls, OverridesItemAfter)
 {
-    ASSERT(base->hasTagName(formTag) || base->hasTagName(fieldsetTag));
+    ASSERT(ownerNode->hasTagName(formTag) || ownerNode->hasTagName(fieldsetTag));
 }
 
-PassRefPtr<HTMLFormControlsCollection> HTMLFormControlsCollection::create(Node* base, CollectionType)
+PassRefPtr<HTMLFormControlsCollection> HTMLFormControlsCollection::create(Node* ownerNode, CollectionType)
 {
-    return adoptRef(new HTMLFormControlsCollection(base));
+    return adoptRef(new HTMLFormControlsCollection(ownerNode));
 }
 
 HTMLFormControlsCollection::~HTMLFormControlsCollection()
@@ -53,18 +53,18 @@ HTMLFormControlsCollection::~HTMLFormControlsCollection()
 
 const Vector<FormAssociatedElement*>& HTMLFormControlsCollection::formControlElements() const
 {
-    ASSERT(base());
-    ASSERT(base()->hasTagName(formTag) || base()->hasTagName(fieldsetTag));
-    if (base()->hasTagName(formTag))
-        return static_cast<HTMLFormElement*>(base())->associatedElements();
-    return static_cast<HTMLFieldSetElement*>(base())->associatedElements();
+    ASSERT(ownerNode());
+    ASSERT(ownerNode()->hasTagName(formTag) || ownerNode()->hasTagName(fieldsetTag));
+    if (ownerNode()->hasTagName(formTag))
+        return static_cast<HTMLFormElement*>(ownerNode())->associatedElements();
+    return static_cast<HTMLFieldSetElement*>(ownerNode())->associatedElements();
 }
 
 const Vector<HTMLImageElement*>& HTMLFormControlsCollection::formImageElements() const
 {
-    ASSERT(base());
-    ASSERT(base()->hasTagName(formTag));
-    return static_cast<HTMLFormElement*>(base())->imageElements();
+    ASSERT(ownerNode());
+    ASSERT(ownerNode()->hasTagName(formTag));
+    return static_cast<HTMLFormElement*>(ownerNode())->imageElements();
 }
 
 Element* HTMLFormControlsCollection::virtualItemAfter(unsigned& offset, Element* previousItem) const
@@ -111,7 +111,7 @@ Node* HTMLFormControlsCollection::namedItem(const AtomicString& name) const
     // attribute. If a match is not found, the method then searches for an
     // object with a matching name attribute, but only on those elements
     // that are allowed a name attribute.
-    const Vector<HTMLImageElement*>* imagesElements = base()->hasTagName(fieldsetTag) ? 0 : &formImageElements();
+    const Vector<HTMLImageElement*>* imagesElements = ownerNode()->hasTagName(fieldsetTag) ? 0 : &formImageElements();
     if (HTMLElement* item = firstNamedItem(formControlElements(), imagesElements, idAttr, name))
         return item;
 
@@ -144,7 +144,7 @@ void HTMLFormControlsCollection::updateNameCache() const
         }
     }
 
-    if (base()->hasTagName(formTag)) {
+    if (ownerNode()->hasTagName(formTag)) {
         const Vector<HTMLImageElement*>& imageElementsArray = formImageElements();
         for (unsigned i = 0; i < imageElementsArray.size(); ++i) {
             HTMLImageElement* element = imageElementsArray[i];

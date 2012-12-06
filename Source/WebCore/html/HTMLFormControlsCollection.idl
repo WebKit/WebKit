@@ -21,7 +21,7 @@
 [
     IndexedGetter,
     NamedGetter,
-    GenerateIsReachable=ImplBaseRoot,
+    GenerateIsReachable=ImplOwnerNodeRoot,
     V8DependentLifetime,
 ] interface HTMLFormControlsCollection : HTMLCollection {
     [Custom] Node namedItem(in [Optional=DefaultIsUndefined] DOMString name);

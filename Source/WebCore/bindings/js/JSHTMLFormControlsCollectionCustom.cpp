@@ -49,7 +49,7 @@ static JSValue getNamedItems(ExecState* exec, JSHTMLFormControlsCollection* coll
         return toJS(exec, collection->globalObject(), namedItems[0].get());
 
     ASSERT(collection->impl()->type() == FormControls);
-    return toJS(exec, collection->globalObject(), collection->impl()->base()->radioNodeList(name).get());
+    return toJS(exec, collection->globalObject(), collection->impl()->ownerNode()->radioNodeList(name).get());
 }
 
 bool JSHTMLFormControlsCollection::canGetItemsForName(ExecState*, HTMLFormControlsCollection* collection, PropertyName propertyName)
