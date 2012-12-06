@@ -1,3 +1,18 @@
+2012-12-06  David Reveman  <reveman@chromium.org>
+
+        [Chromium] Add GL_CHROMIUM_async_pixel_transfers extension support.
+        https://bugs.webkit.org/show_bug.cgi?id=103995
+
+        Reviewed by Kenneth Russell.
+
+        Add asyncTexImage2DCHROMIUM and asyncTexSubImage2DCHROMIUM to
+        WebGraphicsContext3D.h.
+
+        * chromium/public/WebGraphicsContext3D.h:
+        (WebGraphicsContext3D):
+        (WebKit::WebGraphicsContext3D::asyncTexImage2DCHROMIUM):
+        (WebKit::WebGraphicsContext3D::asyncTexSubImage2DCHROMIUM):
+
 2012-12-06  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r136784 and r136802.
