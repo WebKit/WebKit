@@ -1,3 +1,19 @@
+2012-12-06  Kentaro Hara  <haraken@chromium.org>
+
+        [V8] Make an Isolate mandatory in v8UnsignedInteger()
+        https://bugs.webkit.org/show_bug.cgi?id=104235
+
+        Reviewed by Adam Barth.
+
+        No tests. No change in behavior.
+
+        * bindings/v8/ArrayValue.cpp:
+        (WebCore::ArrayValue::get):
+        * bindings/v8/V8Binding.h:
+        (WebCore::v8UnsignedInteger):
+        * bindings/v8/V8LazyEventListener.cpp:
+        (WebCore::V8LazyEventListener::prepareListenerObject):
+
 2012-12-06  David Hyatt  <hyatt@apple.com>
 
         [New Multicolumn] Add requiresBalancing booleans to track which column sets need to rebalance.

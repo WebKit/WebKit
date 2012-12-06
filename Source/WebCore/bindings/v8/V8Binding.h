@@ -189,10 +189,9 @@ namespace WebCore {
         return v8Integer(value, v8::Isolate::GetCurrent());
     }
 
-    inline v8::Handle<v8::Integer> v8UnsignedInteger(unsigned value, v8::Isolate* isolate = 0)
+    inline v8::Handle<v8::Integer> v8UnsignedInteger(unsigned value, v8::Isolate* isolate)
     {
-        if (UNLIKELY(!isolate))
-            isolate = v8::Isolate::GetCurrent();
+        ASSERT(isolate);
         return V8PerIsolateData::from(isolate)->integerCache()->v8UnsignedInteger(value, isolate);
     }
 

@@ -60,12 +60,12 @@ bool ArrayValue::get(size_t index, Dictionary& value) const
     if (index >= m_array->Length())
         return false;
 
-    v8::Local<v8::Value> indexedValue = m_array->Get(v8UnsignedInteger(index));
+    ASSERT(m_isolate);
+    ASSERT(m_isolate == v8::Isolate::GetCurrent());
+    v8::Local<v8::Value> indexedValue = m_array->Get(v8UnsignedInteger(index, m_isolate));
     if (indexedValue.IsEmpty() || !indexedValue->IsObject())
         return false;
 
-    ASSERT(m_isolate);
-    ASSERT(m_isolate == v8::Isolate::GetCurrent());
     value = Dictionary(indexedValue, m_isolate);
     return true;
 }
