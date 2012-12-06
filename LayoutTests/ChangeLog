@@ -2,6 +2,24 @@
 
         [Chromium] Unreviewed gardening.
 
+        * platform/chromium-linux/fast/borders/border-radius-constraints-expected.png:
+        * platform/chromium-linux/fast/borders/mixed-border-styles-radius-expected.png:
+        * platform/chromium-linux/fast/css/background-clip-radius-values-expected.png:
+        * platform/chromium-mac-lion/fast/borders/border-radius-constraints-expected.png:
+        * platform/chromium-mac-lion/fast/css/background-clip-radius-values-expected.png: Removed.
+        * platform/chromium-mac-snowleopard/fast/borders/border-radius-constraints-expected.png:
+        * platform/chromium-mac/fast/borders/border-radius-constraints-expected.png:
+        * platform/chromium-mac/fast/borders/mixed-border-styles-radius-expected.png:
+        * platform/chromium-mac/fast/css/background-clip-radius-values-expected.png:
+        * platform/chromium-win/fast/borders/border-radius-constraints-expected.png:
+        * platform/chromium-win/fast/borders/mixed-border-styles-radius-expected.png:
+        * platform/chromium-win/fast/css/background-clip-radius-values-expected.png: Added.
+        * platform/chromium/TestExpectations:
+
+2012-12-06  Stephen White  <senorblanco@chromium.org>
+
+        [Chromium] Unreviewed gardening.
+
         Add some bug IDs to failing tests, and restore some old expectations.
         * platform/chromium/TestExpectations:
 
