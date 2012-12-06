@@ -391,11 +391,15 @@ WebCore::GraphicsLayer* LayerTreeRenderer::ensureLayer(WebLayerID id)
 
 void LayerTreeRenderer::setRootLayerID(WebLayerID layerID)
 {
-    ASSERT(layerID != m_rootLayerID);
-    ASSERT(layerID != InvalidWebLayerID);
+    if (layerID == m_rootLayerID)
+        return;
 
     m_rootLayerID = layerID;
+
     m_rootLayer->removeAllChildren();
+
+    if (!layerID)
+        return;
 
     GraphicsLayer* layer = ensureLayer(layerID);
     m_rootLayer->addChild(layer);
