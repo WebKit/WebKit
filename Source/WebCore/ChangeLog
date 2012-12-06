@@ -1,3 +1,10 @@
+2012-12-06  Kentaro Hara  <haraken@chromium.org>
+
+        Unreviewed. Fixed a wrong comment landed in r136822.
+
+        * bindings/v8/V8Binding.h:
+        (WebCore):
+
 2012-12-05  Kentaro Hara  <haraken@chromium.org>
 
         [V8] Implement deprecatedV8String()
