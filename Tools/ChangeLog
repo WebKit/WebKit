@@ -1,3 +1,18 @@
+2012-12-06  Andras Becsi  <andras.becsi@digia.com>
+
+        [Qt][Mac] Fix libxslt and libxml2 config tests
+        https://bugs.webkit.org/show_bug.cgi?id=104164
+
+        Reviewed by Simon Hausmann.
+
+        We should not use pkg-config on Mac instead use direct include
+        paths and add needed libraries to the linker options to detect
+        libxslt and libxml2 provided by the system.
+        Previously we would always fall back to qtxmlpatterns.
+
+        * qmake/config.tests/libxml2/libxml2.pro:
+        * qmake/config.tests/libxslt/libxslt.pro:
+
 2012-12-06  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Fix the build if the path contains "+" character

@@ -1,4 +1,9 @@
 CONFIG -= qt
 SOURCES = libxslt.cpp
-CONFIG += link_pkgconfig
-PKGCONFIG += libxslt
+mac {
+    INCLUDEPATH += /usr/include/libxslt /usr/include/libxml2
+    LIBS += -lxslt
+} else {
+    PKGCONFIG += libxslt
+    CONFIG += link_pkgconfig
+}
