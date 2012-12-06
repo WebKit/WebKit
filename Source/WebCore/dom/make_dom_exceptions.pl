@@ -151,6 +151,10 @@ sub generateImplementation()
         print F "#endif\n" if $conditional;
     }
 
+    print F "#if ENABLE(INDEXED_DATABASE)\n";
+    print F "#include \"IDBDatabaseException.h\"\n";
+    print F "#endif\n";
+
     print F "\n";
     print F "namespace WebCore {\n";
     print F "\n";
@@ -169,6 +173,15 @@ sub generateImplementation()
         print F "        return;\n";
         print F "#endif\n" if $conditional;
     }
+
+    # FIXME: This special case for IDB is undesirable. It is the first usage
+    # of "new style" DOMExceptions where there is no IDL type, but there are
+    # API-specific exception names and/or messages. Consider refactoring back
+    # into the code generator when a common pattern emerges.
+    print F "#if ENABLE(INDEXED_DATABASE)\n";
+    print F "    if (IDBDatabaseException::initializeDescription(ec, this))\n";
+    print F "        return;\n";
+    print F "#endif\n";
 
     print F "    if (DOMCoreException::initializeDescription(ec, this))\n";
     print F "        return;\n";

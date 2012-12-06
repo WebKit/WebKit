@@ -189,7 +189,6 @@ set(WebCore_IDL_FILES
     Modules/indexeddb/IDBCursor.idl
     Modules/indexeddb/IDBCursorWithValue.idl
     Modules/indexeddb/IDBDatabase.idl
-    Modules/indexeddb/IDBDatabaseException.idl
     Modules/indexeddb/IDBFactory.idl
     Modules/indexeddb/IDBIndex.idl
     Modules/indexeddb/IDBKey.idl

@@ -3,7 +3,6 @@ namespace=Exception
 DOMCoreException
 EventException
 FileException conditional=BLOB
-IDBDatabaseException conditional=INDEXED_DATABASE
 RangeException
 SQLException conditional=SQL_DATABASE
 SVGException conditional=SVG

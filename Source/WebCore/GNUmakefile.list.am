@@ -451,8 +451,6 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSIDBCursor.h \
 	DerivedSources/WebCore/JSIDBCursorWithValue.cpp \
 	DerivedSources/WebCore/JSIDBCursorWithValue.h \
-	DerivedSources/WebCore/JSIDBDatabaseException.cpp \
-	DerivedSources/WebCore/JSIDBDatabaseException.h \
 	DerivedSources/WebCore/JSIDBDatabase.cpp \
 	DerivedSources/WebCore/JSIDBDatabase.h \
 	DerivedSources/WebCore/JSIDBFactory.cpp \
@@ -1221,7 +1219,6 @@ dom_binding_idls += \
 	$(WebCore)/Modules/indexeddb/IDBAny.idl \
 	$(WebCore)/Modules/indexeddb/IDBCursor.idl \
 	$(WebCore)/Modules/indexeddb/IDBCursorWithValue.idl \
-	$(WebCore)/Modules/indexeddb/IDBDatabaseException.idl \
 	$(WebCore)/Modules/indexeddb/IDBDatabase.idl \
 	$(WebCore)/Modules/indexeddb/IDBFactory.idl \
 	$(WebCore)/Modules/indexeddb/IDBIndex.idl \
