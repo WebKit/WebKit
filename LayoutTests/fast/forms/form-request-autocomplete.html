@@ -55,6 +55,20 @@ function checkDynamicAttributes()
     form.requestAutocomplete();
 }
 
+function checkNonUserGesture()
+{
+    numErrorsExpected += 1;
+
+    var form = document.createElement('form');
+    checkForEnumerableProperties(form);
+    form.onautocompleteerror = onError;
+
+    setTimeout(function()
+    {
+        form.requestAutocomplete();
+    }, 0);
+}
+
 function onError()
 {
     numErrors += 1;

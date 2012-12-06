@@ -397,7 +397,7 @@ void HTMLFormElement::requestAutocomplete()
     if (!frame)
         return;
 
-    if (!shouldAutocomplete()) {
+    if (!shouldAutocomplete() || !ScriptController::processingUserGesture()) {
         finishRequestAutocomplete(AutocompleteResultError);
         return;
     }
