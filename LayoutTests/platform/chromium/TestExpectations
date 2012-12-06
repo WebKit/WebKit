@@ -2817,19 +2817,6 @@ crbug.com/83994 [ Win ] platform/win/plugins/call-javascript-that-destroys-plugi
 
 crbug.com/84032 [ Win ] fast/dom/object-plugin-hides-properties.html [ Pass Timeout ]
 
-# Need rebaseline
-webkit.org/b/103869 fast/forms/date/date-appearance-basic.html [ ImageOnlyFailure ]
-webkit.org/b/103869 fast/forms/date/date-appearance-l10n.html [ ImageOnlyFailure ]
-webkit.org/b/103869 fast/forms/date/date-appearance-pseudo-elements.html [ ImageOnlyFailure ]
-webkit.org/b/103869 fast/forms/datetime/datetime-appearance-l10n.html [ ImageOnlyFailure ]
-webkit.org/b/103869 fast/forms/month/month-appearance-basic.html [ ImageOnlyFailure ]
-webkit.org/b/103869 fast/forms/month/month-appearance-l10n.html [ ImageOnlyFailure ]
-webkit.org/b/103869 fast/forms/month/month-appearance-pseudo-elements.html [ ImageOnlyFailure ]
-webkit.org/b/103869 fast/forms/time/time-appearance-basic.html [ ImageOnlyFailure ]
-webkit.org/b/103869 fast/forms/time/time-appearance-pseudo-elements.html [ ImageOnlyFailure ]
-webkit.org/b/103869 fast/forms/week/week-appearance-basic.html [ ImageOnlyFailure ]
-webkit.org/b/103869 fast/forms/week/week-appearance-pseudo-elements.html [ ImageOnlyFailure ]
-
 #new test added. Still fails on chrome
 webkit.org/b/98315 css3/compositing/blend-mode-property.html [ Failure ]
 webkit.org/b/98315 css3/compositing/should-have-compositing-layer.html [ Failure ]
