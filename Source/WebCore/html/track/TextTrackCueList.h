@@ -54,6 +54,8 @@ public:
     bool add(PassRefPtr<TextTrackCue>);
     bool remove(TextTrackCue*);
     bool contains(TextTrackCue*) const;
+    
+    bool updateCueIndex(TextTrackCue*);
 
 private:
     TextTrackCueList();

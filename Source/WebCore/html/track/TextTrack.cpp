@@ -285,6 +285,9 @@ void TextTrack::cueDidChange(TextTrackCue* cue)
     if (!m_client)
         return;
 
+    // Make sure the TextTrackCueList order is up-to-date.
+    ensureTextTrackCueList()->updateCueIndex(cue);
+
     // ... and add it back again.
     m_client->textTrackAddCue(this, cue);
 }

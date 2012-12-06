@@ -424,7 +424,6 @@ webkit.org/b/103926 media/track/opera/interfaces/HTMLElement/HTMLMediaElement/cr
 webkit.org/b/103926 media/track/opera/interfaces/HTMLElement/HTMLTrackElement/kind.html [ Skip ]
 webkit.org/b/103926 media/track/opera/interfaces/HTMLElement/HTMLTrackElement/src.html [ Skip ]
 webkit.org/b/103926 media/track/opera/interfaces/TextTrack/activeCues.html [ Skip ]
-webkit.org/b/103926 media/track/opera/interfaces/TextTrack/cues.html [ Skip ]
 webkit.org/b/103926 media/track/opera/interfaces/TextTrack/removeCue.html [ Skip ]
 webkit.org/b/103926 media/track/opera/interfaces/TrackEvent/constructor.html [ Skip ]
 webkit.org/b/103926 media/track/opera/interfaces/TrackEvent/createEvent.html [ Skip ]

@@ -123,6 +123,15 @@ bool TextTrackCueList::contains(TextTrackCue* cue) const
     return m_list.contains(cue);
 }
 
+bool TextTrackCueList::updateCueIndex(TextTrackCue* cue)
+{
+    if (!contains(cue))
+        return false;
+    
+    remove(cue);
+    return add(cue);
+}
+
 void TextTrackCueList::clear()
 {
     m_list.clear();

@@ -14,15 +14,17 @@ setup(function(){
     window.t1_cues = t1.cues
     window.t2_cues = t2.cues
 });
-test(function(){
-    assert_equals(t1.cues, t1_cues, 't1.cues should return same object');
-    assert_equals(t2.cues, t2_cues, 't2.cues should return same object');
-    assert_not_equals(t1.cues, t2.cues, 't1.cues and t2.cues should be different objects');
-    assert_not_equals(t1.cues, null, 't1.cues should not be null');
-    assert_not_equals(t2.cues, null, 't2.cues should not be null');
-    assert_equals(t1.cues.length, 0, 't1.cues should have length 0');
-    assert_equals(t2.cues.length, 0, 't2.cues should have length 0');
-}, document.title+', empty list');
+// Skipping this test due to https://www.w3.org/Bugs/Public/show_bug.cgi?id=20066,
+// tracking uncommenting this when test is fixed with webkit.org/b/104255
+// test(function(){
+//     assert_equals(t1.cues, t1_cues, 't1.cues should return same object');
+//     assert_equals(t2.cues, t2_cues, 't2.cues should return same object');
+//     assert_not_equals(t1.cues, t2.cues, 't1.cues and t2.cues should be different objects');
+//     assert_not_equals(t1.cues, null, 't1.cues should not be null');
+//     assert_not_equals(t2.cues, null, 't2.cues should not be null');
+//     assert_equals(t1.cues.length, 0, 't1.cues should have length 0');
+//     assert_equals(t2.cues.length, 0, 't2.cues should have length 0');
+// }, document.title+', empty list');
 test(function(){
     var c = new TextTrackCue(0, 1, "text");
     c.id = "id";
@@ -62,7 +64,7 @@ test(function(){
     t1.cues[1].startTime = 0; // this should change the text track cue order
     assert_equals(t1.cues[0].id, 'id2');
     assert_equals(t1.cues[1].id, 'id');
-    t1.cues[1].startTime = 0.5; // this should change it back
+    t1.cues[0].startTime = 0.5; // this should change it back
     assert_equals(t1.cues[0].id, 'id');
     assert_equals(t1.cues[1].id, 'id2');
 }, document.title+', changing order');
