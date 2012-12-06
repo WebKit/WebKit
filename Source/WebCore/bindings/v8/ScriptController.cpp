@@ -262,7 +262,7 @@ v8::Local<v8::Value> ScriptController::compileAndRunScript(const ScriptSourceCod
         tryCatch.SetVerbose(true);
 
         // Compile the script.
-        v8::Handle<v8::String> code = v8String(source.source());
+        v8::Handle<v8::String> code = deprecatedV8String(source.source());
 #if PLATFORM(CHROMIUM)
         TRACE_EVENT_BEGIN0("v8", "v8.compile");
 #endif
@@ -491,7 +491,7 @@ void ScriptController::bindToWindowObject(Frame* frame, const String& key, NPObj
 
     // Attach to the global object.
     v8::Handle<v8::Object> global = v8Context->Global();
-    global->Set(v8String(key), value);
+    global->Set(deprecatedV8String(key), value);
 }
 
 bool ScriptController::haveInterpreter() const
@@ -514,7 +514,7 @@ void ScriptController::disableEval(const String& errorMessage)
     v8::HandleScope handleScope;
     v8::Handle<v8::Context> v8Context = m_windowShell->context();
     v8Context->AllowCodeGenerationFromStrings(false);
-    v8Context->SetErrorMessageForCodeGenerationFromStrings(v8String(errorMessage));
+    v8Context->SetErrorMessageForCodeGenerationFromStrings(deprecatedV8String(errorMessage));
 }
 
 PassScriptInstance ScriptController::createScriptInstanceForWidget(Widget* widget)

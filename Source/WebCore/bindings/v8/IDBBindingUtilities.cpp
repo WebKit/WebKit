@@ -108,7 +108,7 @@ static bool get(v8::Handle<v8::Value>& object, const String& keyPathElement, v8:
         result = v8::Number::New(length);
         return true;
     }
-    return object->IsObject() && getValueFrom(v8String(keyPathElement), result);
+    return object->IsObject() && getValueFrom(deprecatedV8String(keyPathElement), result);
 }
 
 static bool canSet(v8::Handle<v8::Value>& object, const String& keyPathElement)
@@ -118,7 +118,7 @@ static bool canSet(v8::Handle<v8::Value>& object, const String& keyPathElement)
 
 static bool set(v8::Handle<v8::Value>& object, const String& keyPathElement, const v8::Handle<v8::Value>& v8Value)
 {
-    return canSet(object, keyPathElement) && setValue(object, v8String(keyPathElement), v8Value);
+    return canSet(object, keyPathElement) && setValue(object, deprecatedV8String(keyPathElement), v8Value);
 }
 
 static v8::Handle<v8::Value> getNthValueOnKeyPath(v8::Handle<v8::Value>& rootValue, const Vector<String>& keyPathElements, size_t index)

@@ -55,7 +55,7 @@ v8::Local<v8::Value> V8WindowErrorHandler::callListenerFunction(ScriptExecutionC
     if (!listener.IsEmpty() && listener->IsFunction()) {
         v8::Local<v8::Function> callFunction = v8::Local<v8::Function>::Cast(listener);
         v8::Local<v8::Object> thisValue = v8::Context::GetCurrent()->Global();
-        v8::Handle<v8::Value> parameters[3] = { v8String(errorEvent->message()), v8String(errorEvent->filename()), deprecatedV8Integer(errorEvent->lineno()) };
+        v8::Handle<v8::Value> parameters[3] = { v8String(errorEvent->message()), deprecatedV8String(errorEvent->filename()), deprecatedV8Integer(errorEvent->lineno()) };
         v8::TryCatch tryCatch;
         tryCatch.SetVerbose(true);
         returnValue = ScriptController::callFunctionWithInstrumentation(0, callFunction, thisValue, 3, parameters);

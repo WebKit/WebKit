@@ -78,10 +78,10 @@ String ScriptDebugServer::setBreakpoint(const String& sourceID, const ScriptBrea
     v8::Context::Scope contextScope(debuggerContext);
 
     v8::Local<v8::Object> args = v8::Object::New();
-    args->Set(v8::String::NewSymbol("sourceID"), v8String(sourceID));
+    args->Set(v8::String::NewSymbol("sourceID"), deprecatedV8String(sourceID));
     args->Set(v8::String::NewSymbol("lineNumber"), deprecatedV8Integer(scriptBreakpoint.lineNumber));
     args->Set(v8::String::NewSymbol("columnNumber"), deprecatedV8Integer(scriptBreakpoint.columnNumber));
-    args->Set(v8::String::NewSymbol("condition"), v8String(scriptBreakpoint.condition));
+    args->Set(v8::String::NewSymbol("condition"), deprecatedV8String(scriptBreakpoint.condition));
 
     v8::Handle<v8::Function> setBreakpointFunction = v8::Local<v8::Function>::Cast(m_debuggerScript.get()->Get(v8::String::NewSymbol("setBreakpoint")));
     v8::Handle<v8::Value> breakpointId = v8::Debug::Call(setBreakpointFunction, args);
@@ -99,7 +99,7 @@ void ScriptDebugServer::removeBreakpoint(const String& breakpointId)
     v8::Context::Scope contextScope(debuggerContext);
 
     v8::Local<v8::Object> args = v8::Object::New();
-    args->Set(v8::String::NewSymbol("breakpointId"), v8String(breakpointId));
+    args->Set(v8::String::NewSymbol("breakpointId"), deprecatedV8String(breakpointId));
 
     v8::Handle<v8::Function> removeBreakpointFunction = v8::Local<v8::Function>::Cast(m_debuggerScript.get()->Get(v8::String::NewSymbol("removeBreakpoint")));
     v8::Debug::Call(removeBreakpointFunction, args);
@@ -231,7 +231,7 @@ bool ScriptDebugServer::setScriptSource(const String& sourceID, const String& ne
     if (!isPaused())
         contextScope = adoptPtr(new v8::Context::Scope(v8::Debug::GetDebugContext()));
 
-    v8::Handle<v8::Value> argv[] = { v8String(sourceID), v8String(newContent), v8Boolean(preview) };
+    v8::Handle<v8::Value> argv[] = { deprecatedV8String(sourceID), deprecatedV8String(newContent), v8Boolean(preview) };
 
     v8::TryCatch tryCatch;
     tryCatch.SetVerbose(false);
@@ -400,7 +400,7 @@ void ScriptDebugServer::ensureDebuggerScriptCompiled()
         v8::Context::Scope contextScope(debuggerContext);
         String debuggerScriptSource(reinterpret_cast<const char*>(DebuggerScriptSource_js), sizeof(DebuggerScriptSource_js));
         V8RecursionScope::MicrotaskSuppression recursionScope;
-        m_debuggerScript.set(v8::Handle<v8::Object>::Cast(v8::Script::Compile(v8String(debuggerScriptSource))->Run()));
+        m_debuggerScript.set(v8::Handle<v8::Object>::Cast(v8::Script::Compile(deprecatedV8String(debuggerScriptSource))->Run()));
     }
 }
 
@@ -435,10 +435,10 @@ void ScriptDebugServer::compileScript(ScriptState* state, const String& expressi
         return;
     v8::Context::Scope contextScope(context);
 
-    v8::Handle<v8::String> code = v8String(expression);
+    v8::Handle<v8::String> code = deprecatedV8String(expression);
     v8::TryCatch tryCatch;
 
-    v8::ScriptOrigin origin(v8String(sourceURL), deprecatedV8Integer(0), deprecatedV8Integer(0));
+    v8::ScriptOrigin origin(deprecatedV8String(sourceURL), deprecatedV8Integer(0), deprecatedV8Integer(0));
     v8::Handle<v8::Script> script = v8::Script::New(code, &origin);
 
     if (tryCatch.HasCaught()) {

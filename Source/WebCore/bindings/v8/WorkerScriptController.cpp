@@ -147,7 +147,7 @@ ScriptValue WorkerScriptController::evaluate(const String& script, const String&
 
     if (!m_disableEvalPending.isEmpty()) {
         m_context->AllowCodeGenerationFromStrings(false);
-        m_context->SetErrorMessageForCodeGenerationFromStrings(v8String(m_disableEvalPending));
+        m_context->SetErrorMessageForCodeGenerationFromStrings(deprecatedV8String(m_disableEvalPending));
         m_disableEvalPending = String();
     }
 
@@ -155,7 +155,7 @@ ScriptValue WorkerScriptController::evaluate(const String& script, const String&
 
     v8::TryCatch block;
 
-    v8::Handle<v8::String> scriptString = v8String(script);
+    v8::Handle<v8::String> scriptString = deprecatedV8String(script);
     v8::Handle<v8::Script> compiledScript = ScriptSourceCode::compileScript(scriptString, fileName, scriptStartPosition);
     v8::Local<v8::Value> result = ScriptRunner::runCompiledScript(compiledScript, m_workerContext);
 

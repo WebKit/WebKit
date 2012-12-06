@@ -62,13 +62,13 @@ void ScriptCallArgumentHandler::appendArgument(const ScriptValue& argument)
 void ScriptCallArgumentHandler::appendArgument(const String& argument)
 {
     ScriptScope scope(m_scriptState);
-    m_arguments.append(v8String(argument));
+    m_arguments.append(deprecatedV8String(argument));
 }
 
 void ScriptCallArgumentHandler::appendArgument(const char* argument)
 {
     ScriptScope scope(m_scriptState);
-    m_arguments.append(v8String(argument));
+    m_arguments.append(deprecatedV8String(argument));
 }
 
 void ScriptCallArgumentHandler::appendArgument(long argument)
@@ -118,7 +118,7 @@ ScriptValue ScriptFunctionCall::call(bool& hadException, bool reportExceptions)
     ScriptScope scope(m_scriptState, reportExceptions);
 
     v8::Local<v8::Object> thisObject = m_thisObject.v8Object();
-    v8::Local<v8::Value> value = thisObject->Get(v8String(m_name));
+    v8::Local<v8::Value> value = thisObject->Get(deprecatedV8String(m_name));
     if (!scope.success()) {
         hadException = true;
         return ScriptValue();
@@ -155,7 +155,7 @@ ScriptObject ScriptFunctionCall::construct(bool& hadException, bool reportExcept
     ScriptScope scope(m_scriptState, reportExceptions);
 
     v8::Local<v8::Object> thisObject = m_thisObject.v8Object();
-    v8::Local<v8::Value> value = thisObject->Get(v8String(m_name));
+    v8::Local<v8::Value> value = thisObject->Get(deprecatedV8String(m_name));
     if (!scope.success()) {
         hadException = true;
         return ScriptObject();

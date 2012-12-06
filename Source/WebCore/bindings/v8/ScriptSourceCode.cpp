@@ -59,7 +59,7 @@ PassOwnPtr<v8::ScriptData> ScriptSourceCode::precompileScript(v8::Handle<v8::Str
 
 v8::Handle<v8::Script> ScriptSourceCode::compileScript(v8::Handle<v8::String> code, const String& fileName, const TextPosition& scriptStartPosition, v8::ScriptData* scriptData)
 {
-    v8::Handle<v8::String> name = v8String(fileName);
+    v8::Handle<v8::String> name = deprecatedV8String(fileName);
     v8::Handle<v8::Integer> line = deprecatedV8Integer(scriptStartPosition.m_line.zeroBasedInt());
     v8::Handle<v8::Integer> column = deprecatedV8Integer(scriptStartPosition.m_column.zeroBasedInt());
     v8::ScriptOrigin origin(name, line, column);

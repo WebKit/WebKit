@@ -123,7 +123,7 @@ bool V8TestCallback::callbackWithClass2Param(Class2* class2Param, const String& 
             CRASH();
         return true;
     }
-    v8::Handle<v8::Value> strArgHandle = v8String(strArg);
+    v8::Handle<v8::Value> strArgHandle = deprecatedV8String(strArg);
     if (strArgHandle.IsEmpty()) {
         if (!isScriptControllerTerminating())
             CRASH();

@@ -48,7 +48,7 @@ namespace WebCore {
 void ScriptProfiler::start(ScriptState* state, const String& title)
 {
     v8::HandleScope hs;
-    v8::CpuProfiler::StartProfiling(v8String(title));
+    v8::CpuProfiler::StartProfiling(deprecatedV8String(title));
 }
 
 void ScriptProfiler::startForPage(Page*, const String& title)
@@ -67,8 +67,8 @@ PassRefPtr<ScriptProfile> ScriptProfiler::stop(ScriptState* state, const String&
 {
     v8::HandleScope hs;
     const v8::CpuProfile* profile = state ?
-        v8::CpuProfiler::StopProfiling(v8String(title), state->context()->GetSecurityToken()) :
-        v8::CpuProfiler::StopProfiling(v8String(title));
+        v8::CpuProfiler::StopProfiling(deprecatedV8String(title), state->context()->GetSecurityToken()) :
+        v8::CpuProfiler::StopProfiling(deprecatedV8String(title));
     return profile ? ScriptProfile::create(profile) : 0;
 }
 
@@ -152,7 +152,7 @@ PassRefPtr<ScriptHeapSnapshot> ScriptProfiler::takeHeapSnapshot(const String& ti
     v8::HandleScope hs;
     ASSERT(control);
     ActivityControlAdapter adapter(control);
-    const v8::HeapSnapshot* snapshot = v8::HeapProfiler::TakeSnapshot(v8String(title), v8::HeapSnapshot::kFull, &adapter);
+    const v8::HeapSnapshot* snapshot = v8::HeapProfiler::TakeSnapshot(deprecatedV8String(title), v8::HeapSnapshot::kFull, &adapter);
     return snapshot ? ScriptHeapSnapshot::create(snapshot) : 0;
 }
 

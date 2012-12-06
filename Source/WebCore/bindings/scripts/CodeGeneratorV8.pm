@@ -4081,7 +4081,7 @@ sub NativeToJSValue
 
             die "Unknown value for TreatReturnedNullStringAs extended attribute";
         }
-        return "v8String($value$getIsolateArg)";
+        return $getIsolate ? "v8String($value, $getIsolate)" : "deprecatedV8String($value)";
     }
 
     my $arrayType = $codeGenerator->GetArrayType($type);

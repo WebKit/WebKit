@@ -154,6 +154,12 @@ namespace WebCore {
         return V8PerIsolateData::from(isolate)->stringCache()->v8ExternalString(string.impl(), isolate);
     }
 
+    // FIXME: All call sites of this method should use v8UnsignedInteger().
+    inline v8::Handle<v8::String> deprecatedV8String(const String& string)
+    {
+        return v8String(string, v8::Isolate::GetCurrent());
+    }
+
     inline v8::Handle<v8::Value> v8StringOrNull(const String& string, v8::Isolate* isolate)
     {
         ASSERT(isolate);

@@ -121,7 +121,7 @@ v8::Handle<v8::Value> JavaScriptCallFrame::thisObject() const
 v8::Handle<v8::Value> JavaScriptCallFrame::evaluate(const String& expression)
 {
     v8::Handle<v8::Function> evalFunction = v8::Handle<v8::Function>::Cast(m_callFrame.get()->Get(v8::String::NewSymbol("evaluate")));
-    v8::Handle<v8::Value> argv[] = { v8String(expression) };
+    v8::Handle<v8::Value> argv[] = { deprecatedV8String(expression) };
     return evalFunction->Call(m_callFrame.get(), 1, argv);
 }
 

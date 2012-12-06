@@ -1,3 +1,75 @@
+2012-12-05  Kentaro Hara  <haraken@chromium.org>
+
+        [V8] Implement deprecatedV8String()
+        https://bugs.webkit.org/show_bug.cgi?id=104230
+
+        Reviewed by Adam Barth.
+
+        To make an Isolate mandatory in v8String(), we implement
+        deprecatedV8String() for call sites that don't have
+        an Isolate. Eventually we want to kill the method though.
+
+        No tests. No change in behavior.
+
+        * bindings/scripts/test/V8/V8TestCallback.cpp:
+        (WebCore::V8TestCallback::callbackWithClass2Param):
+        * bindings/v8/Dictionary.cpp:
+        (WebCore::Dictionary::getKey):
+        * bindings/v8/IDBBindingUtilities.cpp:
+        (WebCore::get):
+        (WebCore::set):
+        * bindings/v8/JavaScriptCallFrame.cpp:
+        (WebCore::JavaScriptCallFrame::evaluate):
+        * bindings/v8/ScriptController.cpp:
+        (WebCore::ScriptController::compileAndRunScript):
+        (WebCore::ScriptController::bindToWindowObject):
+        (WebCore::ScriptController::disableEval):
+        * bindings/v8/ScriptDebugServer.cpp:
+        (WebCore::ScriptDebugServer::setBreakpoint):
+        (WebCore::ScriptDebugServer::removeBreakpoint):
+        (WebCore::ScriptDebugServer::setScriptSource):
+        (WebCore::ScriptDebugServer::ensureDebuggerScriptCompiled):
+        (WebCore::ScriptDebugServer::compileScript):
+        * bindings/v8/ScriptFunctionCall.cpp:
+        (WebCore::ScriptCallArgumentHandler::appendArgument):
+        (WebCore::ScriptFunctionCall::call):
+        (WebCore::ScriptFunctionCall::construct):
+        * bindings/v8/ScriptProfiler.cpp:
+        (WebCore::ScriptProfiler::start):
+        (WebCore::ScriptProfiler::stop):
+        (WebCore::ScriptProfiler::takeHeapSnapshot):
+        * bindings/v8/ScriptSourceCode.cpp:
+        (WebCore::ScriptSourceCode::compileScript):
+        * bindings/v8/V8Binding.h:
+        (WebCore):
+        (WebCore::deprecatedV8String):
+        * bindings/v8/V8DOMWindowShell.cpp:
+        (WebCore::V8DOMWindowShell::initializeIfNeeded):
+        (WebCore::V8DOMWindowShell::namedItemAdded):
+        (WebCore::V8DOMWindowShell::namedItemRemoved):
+        * bindings/v8/V8LazyEventListener.cpp:
+        (WebCore::V8LazyEventListener::prepareListenerObject):
+        * bindings/v8/V8WindowErrorHandler.cpp:
+        (WebCore::V8WindowErrorHandler::callListenerFunction):
+        * bindings/v8/V8WorkerContextErrorHandler.cpp:
+        (WebCore::V8WorkerContextErrorHandler::callListenerFunction):
+        * bindings/v8/WorkerScriptController.cpp:
+        (WebCore::WorkerScriptController::evaluate):
+        * bindings/v8/custom/V8ArrayBufferViewCustom.cpp:
+        (WebCore::installHiddenCopyMethod):
+        (WebCore::copyElements):
+        * bindings/v8/custom/V8CustomXPathNSResolver.cpp:
+        (WebCore::V8CustomXPathNSResolver::lookupNamespaceURI):
+        * bindings/v8/custom/V8InjectedScriptHostCustom.cpp:
+        (WebCore::V8InjectedScriptHost::getEventListenersCallback):
+        * bindings/v8/custom/V8InjectedScriptManager.cpp:
+        (WebCore::InjectedScriptManager::createInjectedScript):
+        * bindings/v8/custom/V8MessageEventCustom.cpp:
+        (WebCore::V8MessageEvent::dataAccessorGetter):
+        * bindings/v8/custom/V8WebGLRenderingContextCustom.cpp:
+        (WebCore::toV8Object):
+        (WebCore::V8WebGLRenderingContext::getSupportedExtensionsCallback):
+
 2012-12-06  Keishi Hattori  <keishi@webkit.org>
 
         Page popup should align to the right when the anchor element is rtl

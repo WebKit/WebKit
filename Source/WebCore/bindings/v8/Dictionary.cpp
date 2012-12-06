@@ -102,7 +102,9 @@ bool Dictionary::getKey(const String& key, v8::Local<v8::Value>& value) const
     v8::Local<v8::Object> options = m_options->ToObject();
     ASSERT(!options.IsEmpty());
 
-    v8::Handle<v8::String> v8Key = v8String(key);
+    ASSERT(m_isolate);
+    ASSERT(m_isolate == v8::Isolate::GetCurrent());
+    v8::Handle<v8::String> v8Key = v8String(key, m_isolate);
     if (!options->Has(v8Key))
         return false;
     value = options->Get(v8Key);

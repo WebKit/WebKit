@@ -245,7 +245,7 @@ bool V8DOMWindowShell::initializeIfNeeded()
         if (m_frame->document()) {
             ContentSecurityPolicy* csp = m_frame->document()->contentSecurityPolicy();
             context->AllowCodeGenerationFromStrings(csp->allowEval(0, ContentSecurityPolicy::SuppressReport));
-            context->SetErrorMessageForCodeGenerationFromStrings(v8String(csp->evalDisabledErrorMessage()));
+            context->SetErrorMessageForCodeGenerationFromStrings(deprecatedV8String(csp->evalDisabledErrorMessage()));
         }
     } else {
         // Using the default security token means that the canAccess is always
@@ -452,7 +452,7 @@ void V8DOMWindowShell::namedItemAdded(HTMLDocument* document, const AtomicString
 
     ASSERT(!m_document.isEmpty());
     checkDocumentWrapper(m_document.get(), document);
-    m_document->SetAccessor(v8String(name), getter);
+    m_document->SetAccessor(deprecatedV8String(name), getter);
 }
 
 void V8DOMWindowShell::namedItemRemoved(HTMLDocument* document, const AtomicString& name)
@@ -470,7 +470,7 @@ void V8DOMWindowShell::namedItemRemoved(HTMLDocument* document, const AtomicStri
 
     ASSERT(!m_document.isEmpty());
     checkDocumentWrapper(m_document.get(), document);
-    m_document->Delete(v8String(name));
+    m_document->Delete(deprecatedV8String(name));
 }
 
 void V8DOMWindowShell::updateSecurityOrigin()
