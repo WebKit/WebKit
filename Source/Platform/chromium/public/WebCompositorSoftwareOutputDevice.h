@@ -28,6 +28,7 @@
 
 namespace WebKit {
 
+#ifndef USE_CC_SOFTWARE_OUTPUT_DEVICE
 class WebImage;
 struct WebSize;
 
@@ -46,6 +47,7 @@ public:
 
     virtual void didChangeViewportSize(WebSize) = 0;
 };
+#endif // USE_CC_SOFTWARE_OUTPUT_DEVICE
 
 }
 

@@ -1,3 +1,31 @@
+2012-12-05  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Make WebCompositorOutputSurface an empty class when USE_CC_OUTPUT_SURFACE is defined.
+        https://bugs.webkit.org/show_bug.cgi?id=103967
+
+        Reviewed by James Robinson.
+
+        When the USE_CC_OUTPUT_SURFACE flag is set:
+        - Make the WebCompositorOutputSurface class empty.
+        - Don't define the OutputSurfaceClient.
+        - Don't define the SoftwareOutputDevice.
+
+        WebCompositorSupport has methods to create a WebCompositorOutputSurface. They
+        will return NULL until the chromium side lands, and then they will be used
+        in place of the existing WebViewHost methods.
+
+        * chromium/public/WebCompositorOutputSurface.h:
+        (WebKit):
+        * chromium/public/WebCompositorOutputSurfaceClient.h:
+        (WebKit):
+        * chromium/public/WebCompositorSoftwareOutputDevice.h:
+        (WebKit):
+        * chromium/public/WebCompositorSupport.h:
+        (WebKit):
+        (WebCompositorSupport):
+        (WebKit::WebCompositorSupport::createOutputSurfaceFor3D):
+        (WebKit::WebCompositorSupport::createOutputSurfaceForSoftware):
+
 2012-12-05  Eberhard Graether  <egraether@google.com>
 
         [chromium] Remove WebLayerTreeView API to set font atlas

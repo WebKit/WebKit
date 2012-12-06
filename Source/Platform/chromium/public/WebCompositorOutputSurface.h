@@ -33,6 +33,9 @@ class WebGraphicsContext3D;
 class WebCompositorSoftwareOutputDevice;
 class WebCompositorOutputSurfaceClient;
 
+#ifdef USE_CC_OUTPUT_SURFACE
+class WebCompositorOutputSurface { };
+#else
 // Represents the output surface for a compositor. The compositor owns
 // and manages its destruction. Its lifetime is:
 //   1. Created on the main thread via WebLayerTreeViewClient::createOutputSurface.
@@ -69,6 +72,7 @@ public:
     // when capabilities().hasParentCompositor.
     virtual void sendFrameToParentCompositor(const WebCompositorFrame&) = 0;
 };
+#endif // USE_CC_COMPOSITOR_SURFACE
 
 }
 

@@ -30,6 +30,7 @@ namespace WebKit {
 
 struct WebCompositorFrameAck;
 
+#ifndef USE_CC_OUTPUT_SURFACE
 class WebCompositorOutputSurfaceClient {
 public:
     virtual void onVSyncParametersChanged(double monotonicTimebase, double intervalInSeconds) = 0;
@@ -38,6 +39,7 @@ public:
 protected:
     ~WebCompositorOutputSurfaceClient() { }
 };
+#endif
 
 }
 

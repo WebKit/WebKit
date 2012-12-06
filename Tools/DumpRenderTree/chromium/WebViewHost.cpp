@@ -75,6 +75,7 @@
 #include "webkit/support/webkit_support.h"
 #include <public/WebCString.h>
 #include <public/WebCompositorOutputSurface.h>
+#include <public/WebCompositorSupport.h>
 #include <public/WebDragData.h>
 #include <public/WebRect.h>
 #include <public/WebSize.h>
@@ -287,9 +288,18 @@ WebCompositorOutputSurface* WebViewHost::createOutputSurface()
     if (!webView())
         return 0;
 
-    if (m_shell->softwareCompositingEnabled())
-        return WebViewHostOutputSurface::createSoftware(adoptPtr(new WebViewHostSoftwareOutputDevice)).leakPtr();
-    return WebViewHostOutputSurface::create3d(adoptPtr(webkit_support::CreateGraphicsContext3D(WebGraphicsContext3D::Attributes(), webView()))).leakPtr();
+    if (m_shell->softwareCompositingEnabled()) {
+        WebCompositorOutputSurface* surface = WebKit::Platform::current()->compositorSupport()->createOutputSurfaceForSoftware();
+        if (!surface)
+            surface = WebViewHostOutputSurface::createSoftware(adoptPtr(new WebViewHostSoftwareOutputDevice)).leakPtr();
+        return surface;
+    }
+
+    WebGraphicsContext3D* context = webkit_support::CreateGraphicsContext3D(WebGraphicsContext3D::Attributes(), webView());
+    WebCompositorOutputSurface* surface = WebKit::Platform::current()->compositorSupport()->createOutputSurfaceFor3D(context);
+    if (!surface)
+        surface = WebViewHostOutputSurface::create3d(adoptPtr(context)).leakPtr();
+    return surface;
 }
 
 void WebViewHost::didAddMessageToConsole(const WebConsoleMessage& message, const WebString& sourceName, unsigned sourceLine)
