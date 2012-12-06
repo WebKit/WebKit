@@ -86,8 +86,7 @@ webkit.org/b/24182 [ Debug ] fast/dom/css-delete-doc.html [ Pass Slow ]
 webkit.org/b/100272 [ Debug ] fast/media/w3c/test_media_queries.html [ Pass Slow ]
 webkit.org/b/70878 [ Linux Debug ] http/tests/xmlhttprequest/xmlhttprequest-test-send-flag.html [ Pass Slow ]
 webkit.org/b/102179 [ Win Debug ] platform/chromium/virtual/gpu/fast/hidpi/image-set-without-specified-width.html [ Pass Slow ]
-# senorblanco:  uncomment this once tests have been rebaselined.
-# webkit.org/b/102463 [ Win Debug ] fast/forms/validation-message-appearance.html [ Pass ImageOnlyFailure ]
+webkit.org/b/102463 [ Debug ] fast/forms/validation-message-appearance.html [ Pass ImageOnlyFailure ]
 webkit.org/b/102464 [ Debug ] fast/images/webgl-teximage2d.html [ Pass Timeout ]
 webkit.org/b/102464 [ Debug ] platform/chromium/virtual/deferred/fast/images/webgl-teximage2d.html [ Pass Timeout ]
 webkit.org/b/103744 svg/dom/viewspec-parser-7.html [ Pass Timeout ]
@@ -109,7 +108,7 @@ webkit.org/b/98659 [ Debug ] fast/dom/gc-dom-tree-lifetime.html [ Pass Timeout ]
 webkit.org/b/101236 [ Debug ] css3/filters/custom/custom-filter-animation.html [ Pass Timeout ]
 
 # Has been failing since r133544-133546
-Bug(senorblanco) [ Release ] fast/js/toString-and-valueOf-override.html [ Failure ]
+webkit.org/b/104282 [ Release ] fast/js/toString-and-valueOf-override.html [ Failure ]
 
 webkit.org/b/101362 [ Debug ] fast/dom/Window/customized-property-survives-gc.html [ Pass Slow ]
 
@@ -4253,5 +4252,5 @@ webkit.org/b/103487 [ Linux ] fast/forms/placeholder-position.html [ ImageOnlyFa
 webkit.org/b/103510 css3/flexbox/repaint-column-reverse.html [ Missing ]
 
 # Flaky
-Bug(senorblanco) [ XP ] fonts/monospace.html [ Failure Pass ]
-Bug(senorblanco) [ Mac Debug ] fonts/monospace.html [ ImageOnlyFailure Pass ]
+webkit.org/b/104283 [ XP ] fonts/monospace.html [ Failure Pass ]
+webkit.org/b/104283 [ Mac Debug ] fonts/monospace.html [ ImageOnlyFailure Pass ]
