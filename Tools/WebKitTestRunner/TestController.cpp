@@ -564,6 +564,13 @@ bool TestController::resetStateToConsistentValues()
     // Re-set to the default backing scale factor by setting the custom scale factor to 0.
     WKPageSetCustomBackingScaleFactor(m_mainWebView->page(), 0);
 
+#if PLATFORM(EFL)
+    // EFL use a real window while other ports such as Qt don't.
+    // In EFL, we need to resize the window to the original size after calls to window.resizeTo.
+    WKRect rect = m_mainWebView->windowFrame();
+    m_mainWebView->setWindowFrame(WKRectMake(rect.origin.x, rect.origin.y, 800, 600));
+#endif
+
     // Reset notification permissions
     m_webNotificationProvider.reset();
 
