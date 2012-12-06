@@ -25,9 +25,20 @@
 
 require 'rubygems'
 
-require 'json'
 require 'readline'
-require 'highline'
+
+begin
+    require 'json'
+    require 'highline'
+rescue LoadError
+    $stderr.puts "Error: some required gems are not installed!"
+    $stderr.puts
+    $stderr.puts "Try running:"
+    $stderr.puts
+    $stderr.puts "sudo gem install json"
+    $stderr.puts "sudo gem install highline"
+    exit 1
+end
 
 class Bytecode
     attr_accessor :bytecodes, :bytecodeIndex, :opcode, :description, :topCounts, :bottomCounts, :machineInlinees
