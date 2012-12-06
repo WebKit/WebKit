@@ -137,6 +137,7 @@ TestWebPlugin::TestWebPlugin(WebKit::WebFrame* frame,
     , m_context(0)
     , m_touchEventRequest(WebKit::WebPluginContainer::TouchEventRequestTypeNone)
     , m_printEventDetails(false)
+    , m_printUserGestureStatus(false)
     , m_canProcessDrag(false)
 {
     static const WebString kAttributePrimitive = WebString::fromUTF8("primitive");
@@ -146,6 +147,7 @@ TestWebPlugin::TestWebPlugin(WebKit::WebFrame* frame,
     static const WebString kAttributeAcceptsTouch = WebString::fromUTF8("accepts-touch");
     static const WebString kAttributePrintEventDetails = WebString::fromUTF8("print-event-details");
     static const WebString kAttributeCanProcessDrag = WebString::fromUTF8("can-process-drag");
+    static const WebString kAttributePrintUserGestureStatus = WebString::fromUTF8("print-user-gesture-status");
 
     ASSERT(params.attributeNames.size() == params.attributeValues.size());
     size_t size = params.attributeNames.size();
@@ -167,6 +169,8 @@ TestWebPlugin::TestWebPlugin(WebKit::WebFrame* frame,
             m_printEventDetails = parseBoolean(attributeValue);
         else if (attributeName == kAttributeCanProcessDrag)
             m_canProcessDrag = parseBoolean(attributeValue);
+        else if (attributeName == kAttributePrintUserGestureStatus)
+            m_printUserGestureStatus = parseBoolean(attributeValue);
     }
 }
 
@@ -486,6 +490,8 @@ bool TestWebPlugin::handleInputEvent(const WebKit::WebInputEvent& event, WebKit:
     printf("Plugin received event: %s\n", eventName ? eventName : "unknown");
     if (m_printEventDetails)
         printEventDetails(event);
+    if (m_printUserGestureStatus)
+        printf("* %shandling user gesture\n", m_frame->isProcessingUserGesture() ? "" : "not ");
     return false;
 }
 

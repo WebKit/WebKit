@@ -134,6 +134,7 @@ private:
 
     WebKit::WebPluginContainer::TouchEventRequestType m_touchEventRequest;
     bool m_printEventDetails;
+    bool m_printUserGestureStatus;
     bool m_canProcessDrag;
 };
 

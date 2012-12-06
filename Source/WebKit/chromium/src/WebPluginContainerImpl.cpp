@@ -185,6 +185,9 @@ void WebPluginContainerImpl::handleEvent(Event* event)
     if (!m_webPlugin->acceptsInputEvents())
         return;
 
+    const WebInputEvent* currentInputEvent = WebViewImpl::currentInputEvent();
+    UserGestureIndicator gestureIndicator(currentInputEvent && WebInputEvent::isUserGestureEventType(currentInputEvent->type) ? DefinitelyProcessingUserGesture : PossiblyProcessingUserGesture);
+
     RefPtr<WebPluginContainerImpl> protector(this);
     // The events we pass are defined at:
     //    http://devedge-temp.mozilla.org/library/manuals/2002/plugin/1.0/structures5.html#1000000

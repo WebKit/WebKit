@@ -1,3 +1,23 @@
+2012-12-06  Jochen Eisinger  <jochen@chromium.org>
+
+        [chromium] when forwarding events through the WebPluginContainer, create a UserGestureIndicator if processing a user gesture
+        https://bugs.webkit.org/show_bug.cgi?id=104306
+
+        Reviewed by Dimitri Glazkov.
+
+        In http://trac.webkit.org/changeset/65964 a UserGestureIndicator was
+        introduced in chromium's WebKit layer intended to fix a problem with
+        plugins, however, it also affected regular event handling, so I removed
+        it in http://trac.webkit.org/changeset/128273. Turns out it still is a
+        problem for plugins. This change adds the UserGestureIndicator back,
+        however, only for the WebPluginContainer.
+
+        * public/WebInputEvent.h:
+        (WebInputEvent):
+        (WebKit::WebInputEvent::isUserGestureEventType):
+        * src/WebPluginContainerImpl.cpp:
+        (WebKit::WebPluginContainerImpl::handleEvent):
+
 2012-12-06  David Grogan  <dgrogan@chromium.org>
 
         IndexedDB: Abort transactions because of leveldb errors part 4
