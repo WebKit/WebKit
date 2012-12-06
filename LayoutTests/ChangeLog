@@ -1,5 +1,42 @@
 2012-12-06  Stephen Chenney  <schenney@chromium.org>
 
+        Rebaseline some expectations
+
+        Unreviewed expectations update
+
+        These test have expectations but apparently just need rebaselines.
+        Some may still be flakey.
+
+        * platform/chromium-linux/fast/canvas/canvas-incremental-repaint-expected.png:
+        * platform/chromium-linux/svg/css/group-with-shadow-expected.png:
+        * platform/chromium-linux/svg/custom/transform-with-shadow-and-gradient-expected.png: Added.
+        * platform/chromium-mac-lion/fast/canvas/canvas-incremental-repaint-expected.png:
+        * platform/chromium-mac-lion/svg/css/group-with-shadow-expected.png:
+        * platform/chromium-mac-lion/svg/custom/mask-invalidation-expected.png: Added.
+        * platform/chromium-mac-snowleopard/svg/custom/foreign-object-skew-expected.png:
+        * platform/chromium-mac-snowleopard/svg/custom/transform-with-shadow-and-gradient-expected.png: Removed.
+        * platform/chromium-mac/fast/canvas/canvas-incremental-repaint-expected.png:
+        * platform/chromium-mac/svg/css/group-with-shadow-expected.png:
+        * platform/chromium-mac/svg/custom/radialGradient-focal-radius-expected.png: Added.
+        * platform/chromium-mac/svg/custom/transform-with-shadow-and-gradient-expected.png: Added.
+        * platform/chromium-win-xp/svg/css/group-with-shadow-expected.png:
+        * platform/chromium-win/fast/canvas/canvas-incremental-repaint-expected.png:
+        * platform/chromium-win/svg/css/group-with-shadow-expected.png:
+        * platform/chromium-win/svg/custom/mask-invalidation-expected.png:
+        * platform/chromium-win/svg/custom/mouse-move-on-svg-container-expected.png:
+        * platform/chromium-win/svg/custom/mouse-move-on-svg-container-standalone-expected.png:
+        * platform/chromium-win/svg/custom/mouse-move-on-svg-root-expected.png:
+        * platform/chromium-win/svg/custom/mouse-move-on-svg-root-standalone-expected.png:
+        * platform/chromium-win/svg/custom/radialGradient-focal-radius-expected.png: Added.
+        * platform/chromium-win/svg/custom/transform-with-shadow-and-gradient-expected.png: Added.
+        * platform/chromium/svg/custom/radialGradient-focal-radius-expected.png: Removed.
+        * platform/chromium/svg/custom/transform-with-shadow-and-gradient-expected.png: Removed.
+        * platform/efl-wk1/svg/custom: Added.
+        * platform/efl-wk1/svg/custom/radialGradient-focal-radius-expected.png: Added.
+        * platform/efl/svg/custom/radialGradient-focal-radius-expected.png: Removed.
+
+2012-12-06  Stephen Chenney  <schenney@chromium.org>
+
         Test expectations update
         https://bugs.webkit.org/show_bug.cgi?id=104007
 
