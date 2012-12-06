@@ -1,3 +1,24 @@
+2012-12-05  Kentaro Hara  <haraken@chromium.org>
+
+        [V8] Pass Isolate to toDOMStringList()
+        https://bugs.webkit.org/show_bug.cgi?id=104224
+
+        Reviewed by Adam Barth.
+
+        No tests. No change in behavior.
+
+        * bindings/scripts/CodeGeneratorV8.pm:
+        (JSValueToNative):
+        * bindings/scripts/test/V8/V8TestObj.cpp:
+        (WebCore::TestObjV8Internal::overloadedMethod6Callback):
+        (WebCore::TestObjV8Internal::overloadedMethod7Callback):
+        (WebCore::TestObjV8Internal::overloadedMethod9Callback):
+        (WebCore::TestObjV8Internal::stringArrayFunctionCallback):
+        * bindings/v8/V8Binding.cpp:
+        (WebCore::toDOMStringList):
+        * bindings/v8/V8Binding.h:
+        (WebCore):
+
 2012-12-06  Kentaro Hara  <haraken@chromium.org>
 
         Remove JSDependentRetained.h and V8DependentRetained.h

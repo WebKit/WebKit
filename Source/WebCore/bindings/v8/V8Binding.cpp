@@ -196,7 +196,7 @@ void StringCache::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     info.addMember(m_stringCache);
 }
     
-PassRefPtr<DOMStringList> toDOMStringList(v8::Handle<v8::Value> value)
+PassRefPtr<DOMStringList> toDOMStringList(v8::Handle<v8::Value> value, v8::Isolate* isolate)
 {
     v8::Local<v8::Value> v8Value(v8::Local<v8::Value>::New(value));
 
@@ -211,7 +211,7 @@ PassRefPtr<DOMStringList> toDOMStringList(v8::Handle<v8::Value> value)
     RefPtr<DOMStringList> ret = DOMStringList::create();
     v8::Local<v8::Array> v8Array = v8::Local<v8::Array>::Cast(v8Value);
     for (size_t i = 0; i < v8Array->Length(); ++i) {
-        v8::Local<v8::Value> indexedValue = v8Array->Get(v8Integer(i));
+        v8::Local<v8::Value> indexedValue = v8Array->Get(v8Integer(i, isolate));
         ret->append(toWebCoreString(indexedValue));
     }
     return ret.release();

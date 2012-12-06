@@ -3783,9 +3783,9 @@ sub JSValueToNative
     return "toInt64($value)" if $type eq "unsigned long long" or $type eq "long long";
     return "static_cast<Range::CompareHow>($value->Int32Value())" if $type eq "CompareHow";
     return "toWebCoreDate($value)" if $type eq "Date";
-    return "toDOMStringList($value)" if $type eq "DOMStringList";
+    return "toDOMStringList($value, $getIsolate)" if $type eq "DOMStringList";
     # FIXME: Consider replacing DOMStringList with DOMString[] or sequence<DOMString>.
-    return "toDOMStringList($value)" if $type eq "DOMString[]";
+    return "toDOMStringList($value, $getIsolate)" if $type eq "DOMString[]";
 
     if ($type eq "DOMString") {
         return $value;

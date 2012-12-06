@@ -1609,7 +1609,7 @@ static v8::Handle<v8::Value> overloadedMethod6Callback(const v8::Arguments& args
     if (args.Length() < 1)
         return throwNotEnoughArgumentsError(args.GetIsolate());
     TestObj* imp = V8TestObj::toNative(args.Holder());
-    V8TRYCATCH(RefPtr<DOMStringList>, listArg, toDOMStringList(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined)));
+    V8TRYCATCH(RefPtr<DOMStringList>, listArg, toDOMStringList(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined), args.GetIsolate()));
     imp->overloadedMethod(listArg);
     return v8Undefined();
 }
@@ -1620,7 +1620,7 @@ static v8::Handle<v8::Value> overloadedMethod7Callback(const v8::Arguments& args
     if (args.Length() < 1)
         return throwNotEnoughArgumentsError(args.GetIsolate());
     TestObj* imp = V8TestObj::toNative(args.Holder());
-    V8TRYCATCH(RefPtr<DOMStringList>, arrayArg, toDOMStringList(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined)));
+    V8TRYCATCH(RefPtr<DOMStringList>, arrayArg, toDOMStringList(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined), args.GetIsolate()));
     imp->overloadedMethod(arrayArg);
     return v8Undefined();
 }
@@ -1642,7 +1642,7 @@ static v8::Handle<v8::Value> overloadedMethod9Callback(const v8::Arguments& args
     if (args.Length() < 1)
         return throwNotEnoughArgumentsError(args.GetIsolate());
     TestObj* imp = V8TestObj::toNative(args.Holder());
-    V8TRYCATCH(RefPtr<DOMStringList>, arrayArg, toDOMStringList(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined)));
+    V8TRYCATCH(RefPtr<DOMStringList>, arrayArg, toDOMStringList(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined), args.GetIsolate()));
     imp->overloadedMethod(arrayArg);
     return v8Undefined();
 }
@@ -1830,7 +1830,7 @@ static v8::Handle<v8::Value> stringArrayFunctionCallback(const v8::Arguments& ar
     TestObj* imp = V8TestObj::toNative(args.Holder());
     ExceptionCode ec = 0;
     {
-    V8TRYCATCH(RefPtr<DOMStringList>, values, toDOMStringList(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined)));
+    V8TRYCATCH(RefPtr<DOMStringList>, values, toDOMStringList(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined), args.GetIsolate()));
     RefPtr<DOMStringList> result = imp->stringArrayFunction(values, ec);
     if (UNLIKELY(ec))
         goto fail;
