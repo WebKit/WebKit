@@ -61,14 +61,19 @@ using namespace WebCore;
     _tileCache = tileCache;
 }
 
-- (unsigned)incrementRepaintCount
+- (void)resetPaintCount
 {
-    return ++_repaintCount;
+    _paintCount = 0;
 }
 
-- (unsigned)repaintCount
+- (unsigned)incrementPaintCount
 {
-    return _repaintCount;
+    return ++_paintCount;
+}
+
+- (unsigned)paintCount
+{
+    return _paintCount;
 }
 
 - (void)logFilledFreshTile
@@ -76,7 +81,7 @@ using namespace WebCore;
     IntRect visiblePart(enclosingIntRect([self frame]));
     visiblePart.intersect(_tileCache->visibleRect());
 
-    if ([self repaintCount] == 1 && !visiblePart.isEmpty())
+    if ([self paintCount] == 1 && !visiblePart.isEmpty())
         WTFLogAlways("SCROLLING: Filled visible fresh tile. Time: %f Unfilled Pixels: %u\n", WTF::monotonicallyIncreasingTime(), _tileCache->blankPixelCount());
 }
 

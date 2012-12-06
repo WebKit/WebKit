@@ -330,7 +330,7 @@ void ScrollingTreeScrollingNodeMac::logExposedUnfilledArea()
     layerQueue.append(m_scrollLayer.get());
     WebTileLayerList tiles;
 
-    while(!layerQueue.isEmpty() && tiles.isEmpty()) {
+    while (!layerQueue.isEmpty() && tiles.isEmpty()) {
         CALayer* layer = layerQueue.takeFirst();
         NSArray* sublayers = [[layer sublayers] copy];
 

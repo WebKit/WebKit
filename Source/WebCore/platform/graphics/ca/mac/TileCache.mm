@@ -410,7 +410,7 @@ unsigned TileCache::blankPixelCountForTiles(const WebTileLayerList& tiles, IntRe
         IntRect visiblePart(CGRectOffset([tileLayer frame], tileTranslation.x(), tileTranslation.y()));
         visiblePart.intersect(visibleRect);
 
-        if (!visiblePart.isEmpty() && [tileLayer repaintCount])
+        if (!visiblePart.isEmpty() && [tileLayer paintCount])
             paintedVisibleTiles.unite(visiblePart);
     }
 
@@ -601,6 +601,7 @@ RetainPtr<WebTileLayer> TileCache::createTileLayer(const IntRect& tileRect)
     if (layer) {
         // If we were able to restore a layer from the LayerPool, we should call setNeedsDisplay to
         // ensure we avoid stale content.
+        [layer resetPaintCount];
         [layer setNeedsDisplay];
     } else
         layer = adoptNS([[WebTileLayer alloc] init]);
@@ -639,13 +640,13 @@ bool TileCache::shouldShowRepaintCounters() const
 
 void TileCache::drawRepaintCounter(WebTileLayer *layer, CGContextRef context)
 {
-    unsigned repaintCount = [layer incrementRepaintCount];
+    unsigned paintCount = [layer incrementPaintCount];
     if (!shouldShowRepaintCounters())
         return;
 
     // FIXME: Some of this code could be shared with WebLayer.
     char text[16]; // that's a lot of repaints
-    snprintf(text, sizeof(text), "%d", repaintCount);
+    snprintf(text, sizeof(text), "%d", paintCount);
 
     CGRect indicatorBox = [layer bounds];
     indicatorBox.size.width = 12 + 10 * strlen(text);
