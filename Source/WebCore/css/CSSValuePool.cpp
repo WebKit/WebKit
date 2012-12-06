@@ -132,4 +132,20 @@ PassRefPtr<CSSValueList> CSSValuePool::createFontFaceValue(const AtomicString& s
     return value;
 }
 
+void CSSValuePool::drain()
+{
+    m_colorValueCache.clear();
+    m_fontFaceValueCache.clear();
+    m_fontFamilyValueCache.clear();
+
+    for (int i = 0; i < numCSSValueKeywords; ++i)
+        m_identifierValueCache[i] = 0;
+
+    for (int i = 0; i < maximumCacheableIntegerValue; ++i) {
+        m_pixelValueCache[i] = 0;
+        m_percentValueCache[i] = 0;
+        m_numberValueCache[i] = 0;
+    }
+}
+
 }

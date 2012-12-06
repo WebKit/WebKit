@@ -1,3 +1,19 @@
+2012-12-06  Andreas Kling  <akling@apple.com>
+
+        [Mac] Drain the CSSValuePool on memory pressure.
+        <http://webkit.org/b/104274>
+
+        Reviewed by Antti Koivisto.
+
+        Add a drain() mechanism to CSSValuePool and call it when we're under memory pressure.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSValuePool.cpp:
+        (WebCore::CSSValuePool::drain):
+        * css/CSSValuePool.h:
+        * platform/mac/MemoryPressureHandlerMac.mm:
+        (WebCore::MemoryPressureHandler::releaseMemory):
+
 2012-12-05  Adam Klein  <adamk@chromium.org>
 
         Remove gyp config for incomplete and unused Apple Mac gyp build
