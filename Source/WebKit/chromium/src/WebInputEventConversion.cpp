@@ -475,8 +475,10 @@ WebMouseEventBuilder::WebMouseEventBuilder(const Widget* widget, const WebCore::
 
 WebMouseEventBuilder::WebMouseEventBuilder(const Widget* widget, const WebCore::RenderObject* renderObject, const TouchEvent& event)
 {
+    if (!event.touches())
+        return;
     if (event.touches()->length() != 1) {
-        if (event.touches()->length() || event.type() != eventNames().touchendEvent || event.changedTouches()->length() != 1)
+        if (event.touches()->length() || event.type() != eventNames().touchendEvent || !event.changedTouches() || event.changedTouches()->length() != 1)
             return;
     }
 

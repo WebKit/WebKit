@@ -33,11 +33,13 @@
 #include "WebInputEventConversion.h"
 
 #include "KeyboardEvent.h"
+#include "TouchEvent.h"
 #include <gtest/gtest.h>
 
 using WebKit::WebInputEvent;
 using WebKit::WebKeyboardEvent;
 using WebKit::WebKeyboardEventBuilder;
+using WebKit::WebMouseEventBuilder;
 
 namespace {
 
@@ -70,6 +72,13 @@ TEST(WebInputEventConversionTest, WebKeyboardEventBuilder)
     modifiers = getModifiersForKeyLocationCode(WebCore::KeyboardEvent::DOM_KEY_LOCATION_NUMPAD);
     EXPECT_TRUE(modifiers & WebInputEvent::IsKeyPad);
     EXPECT_FALSE(modifiers & WebInputEvent::IsLeft || modifiers & WebInputEvent::IsRight);
+}
+
+TEST(WebInputEventConversionTest, WebTouchEventBuilder)
+{
+    RefPtr<WebCore::TouchEvent> event = WebCore::TouchEvent::create();
+    WebMouseEventBuilder mouse(0, 0, *event);
+    EXPECT_EQ(WebInputEvent::Undefined, mouse.type);
 }
 
 } // anonymous namespace
