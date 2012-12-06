@@ -1,3 +1,16 @@
+2012-12-06  Laszlo Gombos  <l.gombos@samsung.com>
+
+        [EFL] Optimize binary size by removing dead sections on unix/gcc
+        https://bugs.webkit.org/show_bug.cgi?id=102827
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Turn on -ffunction-sections -fdata-sections --gc-section flags
+        on unix for the gcc toolchain for release builds to optimize binary
+        size for the Efl port.
+
+        * Source/cmake/OptionsEfl.cmake:
+
 2012-12-06  Seokju Kwon  <seokju.kwon@gmail.com>
 
         [EFL] Fix destination path in Source/PlatformEfl.cmake

@@ -177,6 +177,13 @@ endif ()
 
 set(CPACK_SOURCE_GENERATOR TBZ2)
 
+# Optimize binary size for release builds by removing dead sections on unix/gcc
+if (CMAKE_BUILD_TYPE STREQUAL Release AND CMAKE_COMPILER_IS_GNUCC AND UNIX AND NOT APPLE)
+    set(CMAKE_C_FLAGS "-ffunction-sections -fdata-sections ${CMAKE_C_FLAGS}")
+    set(CMAKE_CXX_FLAGS "-ffunction-sections -fdata-sections ${CMAKE_CXX_FLAGS}")
+    set(CMAKE_SHARED_LINKER_FLAGS "-Wl,--gc-sections ${CMAKE_SHARED_LINKER_FLAGS}")
+endif ()
+
 if (WTF_USE_TILED_BACKING_STORE)
     add_definitions(-DWTF_USE_ACCELERATED_COMPOSITING=1)
 
