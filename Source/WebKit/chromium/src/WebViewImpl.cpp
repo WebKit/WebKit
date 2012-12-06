@@ -1221,6 +1221,10 @@ Node* WebViewImpl::bestTouchLinkNode(const WebGestureEvent& touchEvent)
     while (bestTouchNode && !invokesHandCursor(bestTouchNode, shiftKey, m_page->mainFrame()))
         bestTouchNode = bestTouchNode->parentNode();
 
+    // We should pick the largest enclosing node with hand cursor set.
+    while (bestTouchNode && bestTouchNode->parentNode() && invokesHandCursor(bestTouchNode->parentNode(), shiftKey, m_page->mainFrame()))
+        bestTouchNode = bestTouchNode->parentNode();
+
     return bestTouchNode;
 }
 

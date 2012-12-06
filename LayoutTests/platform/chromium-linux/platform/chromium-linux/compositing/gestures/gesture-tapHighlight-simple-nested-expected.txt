@@ -1,0 +1,2 @@
+Target Nested Link.
+This test is successful if "Target Nested Link" above is covered in a transparent green rectangle with square corners.
