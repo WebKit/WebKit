@@ -1,3 +1,9 @@
+2012-12-06  Max Vujovic  <mvujovic@adobe.com>
+
+        Unreviewed. Add myself to committers.py.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2012-12-06  Yael Aharon  <yael.aharon@intel.com>
 
         [EFL] [WK2] fast/dom/vertical-scrollbar-in-rtl.html makes fast/regions tests flaky
