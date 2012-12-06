@@ -1464,6 +1464,15 @@ RenderBlock::RenderTextInfo::~RenderTextInfo()
 {
 }
 
+// Before restarting the layout loop with a new logicalHeight, remove all floats that were added and reset the resolver.
+inline const InlineIterator& RenderBlock::restartLayoutRunsAndFloatsInRange(LayoutUnit oldLogicalHeight, LayoutUnit newLogicalHeight,  FloatingObject* lastFloatFromPreviousLine, InlineBidiResolver& resolver,  const InlineIterator& oldEnd)
+{
+    removeFloatingObjectsBelow(lastFloatFromPreviousLine, oldLogicalHeight);
+    setLogicalHeight(newLogicalHeight);
+    resolver.setPositionIgnoringNestedIsolates(oldEnd);
+    return oldEnd;
+}
+
 void RenderBlock::layoutRunsAndFloatsInRange(LineLayoutState& layoutState, InlineBidiResolver& resolver, const InlineIterator& cleanLineStart, const BidiStatus& cleanLineBidiStatus, unsigned consecutiveHyphenatedLines)
 {
     RenderStyle* styleToUse = style();
@@ -1530,6 +1539,13 @@ void RenderBlock::layoutRunsAndFloatsInRange(LineLayoutState& layoutState, Inlin
         }
         ASSERT(end != resolver.position());
 
+#if ENABLE(CSS_EXCLUSIONS)
+        if (exclusionShapeInsideInfo && wordMeasurements.size() && exclusionShapeInsideInfo->adjustLogicalLineTop(wordMeasurements[0].width)) {
+            end = restartLayoutRunsAndFloatsInRange(logicalHeight(), exclusionShapeInsideInfo->logicalLineTop() - absoluteLogicalTop, lastFloatFromPreviousLine, resolver, oldEnd);
+            continue;
+        }
+#endif
+
         // This is a short-cut for empty lines.
         if (layoutState.lineInfo().isEmpty()) {
             if (lastRootBox())
@@ -1582,10 +1598,7 @@ void RenderBlock::layoutRunsAndFloatsInRange(LineLayoutState& layoutState, Inlin
                         if (availableLogicalWidthForLine(oldLogicalHeight + adjustment, layoutState.lineInfo().isFirstLine()) != oldLineWidth) {
                             // We have to delete this line, remove all floats that got added, and let line layout re-run.
                             lineBox->deleteLine(renderArena());
-                            removeFloatingObjectsBelow(lastFloatFromPreviousLine, oldLogicalHeight);
-                            setLogicalHeight(oldLogicalHeight + adjustment);
-                            resolver.setPositionIgnoringNestedIsolates(oldEnd);
-                            end = oldEnd;
+                            end = restartLayoutRunsAndFloatsInRange(oldLogicalHeight, oldLogicalHeight + adjustment, lastFloatFromPreviousLine, resolver, oldEnd);
                             continue;
                         }
 

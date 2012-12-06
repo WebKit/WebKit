@@ -89,8 +89,11 @@ public:
         return &m_segments[m_segmentRanges.size()];
     }
     bool computeSegmentsForLine(LayoutUnit lineTop, LayoutUnit lineHeight);
+    bool adjustLogicalLineTop(float minSegmentWidth);
     void computeShapeSize(LayoutUnit logicalWidth, LayoutUnit logicalHeight);
     void dirtyShapeSize() { m_shapeSizeDirty = true; }
+
+    LayoutUnit logicalLineTop() const { return m_lineTop; }
 
 private:
     ExclusionShapeInsideInfo(RenderBlock*);

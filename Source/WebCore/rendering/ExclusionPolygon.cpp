@@ -376,4 +376,20 @@ void ExclusionPolygon::getIncludedIntervals(float logicalTop, float logicalHeigh
     }
 }
 
+bool ExclusionPolygon::firstIncludedIntervalLogicalTop(float minLogicalIntervalTop, const FloatSize& minLogicalIntervalSize, float& result) const
+{
+    // FIXME: This is just a temporary stub, https://bugs.webkit.org/show_bug.cgi?id=103429
+
+    if (minLogicalIntervalSize.width() > m_boundingBox.width())
+        return false;
+
+    float minY = minYForLogicalLine(minLogicalIntervalTop, minLogicalIntervalSize.height());
+    float maxY = maxYForLogicalLine(minLogicalIntervalTop, minLogicalIntervalSize.height());
+    if (minY < m_boundingBox.y() || maxY > m_boundingBox.maxY())
+        return false;
+
+    result = minLogicalIntervalTop;
+    return true;
+}
+
 } // namespace WebCore

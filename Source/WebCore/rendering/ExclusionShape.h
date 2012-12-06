@@ -67,11 +67,13 @@ public:
     virtual bool isEmpty() const = 0;
     virtual void getIncludedIntervals(float logicalTop, float logicalHeight, SegmentList&) const = 0;
     virtual void getExcludedIntervals(float logicalTop, float logicalHeight, SegmentList&) const = 0;
+    virtual bool firstIncludedIntervalLogicalTop(float minLogicalIntervalTop, const FloatSize& minLogicalIntervalSize, float& result) const = 0;
 
 protected:
     float minYForLogicalLine(float logicalTop, float logicalHeight) const { return isFlippedBlocksWritingMode(m_writingMode) ? m_logicalBoxHeight - logicalTop - logicalHeight : logicalTop; }
     float maxYForLogicalLine(float logicalTop, float logicalHeight) const { return  isFlippedBlocksWritingMode(m_writingMode) ? m_logicalBoxHeight - logicalTop : logicalTop + logicalHeight; }
     FloatRect internalToLogicalBoundingBox(const FloatRect& r) const { return isFlippedBlocksWritingMode(m_writingMode) ? FloatRect(r.x(), m_logicalBoxHeight - r.maxY(), r.width(), r.height()) : r; }
+    float logicalTopForMinY(float minY, float logicalHeight) const { return isFlippedBlocksWritingMode(m_writingMode) ? m_logicalBoxHeight - minY - logicalHeight : minY; }
 
 private:
     WritingMode m_writingMode;

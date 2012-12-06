@@ -118,5 +118,23 @@ bool ExclusionShapeInsideInfo::computeSegmentsForLine(LayoutUnit lineTop, Layout
     return m_segments.size();
 }
 
+bool ExclusionShapeInsideInfo::adjustLogicalLineTop(float minSegmentWidth)
+{
+    if (!m_shape || m_lineHeight <= 0 || m_lineTop > shapeLogicalBottom())
+        return false;
+
+    float floatNewLineTop;
+    if (m_shape->firstIncludedIntervalLogicalTop(m_lineTop, FloatSize(minSegmentWidth, m_lineHeight), floatNewLineTop)) {
+        // Use fromFloatCeil() to ensure that the returned LayoutUnit value is within the shape's bounds.
+        LayoutUnit newLineTop = LayoutUnit::fromFloatCeil(floatNewLineTop);
+        if (newLineTop > m_lineTop) {
+            m_lineTop = newLineTop;
+            return true;
+        }
+    }
+
+    return false;
+}
+
 }
 #endif

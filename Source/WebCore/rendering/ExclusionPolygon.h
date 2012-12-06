@@ -66,6 +66,7 @@ public:
     virtual bool isEmpty() const OVERRIDE { return m_empty; }
     virtual void getExcludedIntervals(float logicalTop, float logicalHeight, SegmentList&) const OVERRIDE;
     virtual void getIncludedIntervals(float logicalTop, float logicalHeight, SegmentList&) const OVERRIDE;
+    virtual bool firstIncludedIntervalLogicalTop(float minLogicalIntervalTop, const FloatSize& minLogicalIntervalSize, float&) const OVERRIDE;
 
 private:
     void computeXIntersections(float y, bool isMinY, Vector<ExclusionInterval>&) const;

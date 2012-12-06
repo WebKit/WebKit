@@ -37,7 +37,13 @@ namespace WebCore {
 static inline float ellipseXIntercept(float y, float rx, float ry)
 {
     ASSERT(ry > 0);
-    return rx * sqrt(1 - (y*y) / (ry*ry));
+    return rx * sqrt(1 - (y * y) / (ry * ry));
+}
+
+static inline float ellipseYIntercept(float x, float rx, float ry)
+{
+    ASSERT(rx > 0);
+    return ry * sqrt(1 - (x * x) / (rx * rx));
 }
 
 void ExclusionRectangle::getExcludedIntervals(float logicalTop, float logicalHeight, SegmentList& result) const
@@ -113,6 +119,57 @@ void ExclusionRectangle::getIncludedIntervals(float logicalTop, float logicalHei
     }
 
     result.append(LineSegment(x1, x2));
+}
+
+FloatPoint ExclusionRectangle::cornerInterceptForWidth(float width) const
+{
+    float xi = (m_width - width) / 2;
+    float yi = m_ry - ellipseYIntercept(m_rx - xi, m_rx, m_ry);
+    return FloatPoint(xi, yi);
+}
+
+bool ExclusionRectangle::firstIncludedIntervalLogicalTop(float minLogicalIntervalTop, const FloatSize& minLogicalIntervalSize, float& result) const
+{
+    if (minLogicalIntervalSize.width() > m_width)
+        return false;
+
+    float minY = std::max(m_y, minYForLogicalLine(minLogicalIntervalTop, minLogicalIntervalSize.height()));
+    float maxY = minY + minLogicalIntervalSize.height();
+    if (maxY > m_y + m_height)
+        return false;
+
+    bool intervalOverlapsMinCorner = minY < m_y + m_ry;
+    bool intervalOverlapsMaxCorner = maxY > m_y + m_height - m_ry;
+
+    if (!intervalOverlapsMinCorner && !intervalOverlapsMaxCorner) {
+        result = logicalTopForMinY(minY, minLogicalIntervalSize.height());
+        return true;
+    }
+
+    float centerY = m_y + m_height / 2;
+    bool minCornerDefinesX = fabs(centerY - minY) > fabs(centerY - maxY);
+    bool intervalFitsWithinCorners = minLogicalIntervalSize.width() + 2 * m_rx <= m_width;
+    FloatPoint cornerIntercept = cornerInterceptForWidth(minLogicalIntervalSize.width());
+
+    if (intervalOverlapsMinCorner && (!intervalOverlapsMaxCorner || minCornerDefinesX)) {
+        if (intervalFitsWithinCorners || m_y + cornerIntercept.y() < minY) {
+            result = logicalTopForMinY(minY, minLogicalIntervalSize.height());
+            return true;
+        }
+        if (minLogicalIntervalSize.height() < m_height - (2 * cornerIntercept.y())) {
+            result = logicalTopForMinY(m_y + cornerIntercept.y(), minLogicalIntervalSize.height());
+            return true;
+        }
+    }
+
+    if (intervalOverlapsMaxCorner && (!intervalOverlapsMinCorner || !minCornerDefinesX)) {
+        if (intervalFitsWithinCorners || minY <=  m_y + m_height - cornerIntercept.y() - minLogicalIntervalSize.height()) {
+            result = logicalTopForMinY(minY, minLogicalIntervalSize.height());
+            return true;
+        }
+    }
+
+    return false;
 }
 
 } // namespace WebCore

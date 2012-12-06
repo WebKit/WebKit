@@ -1,3 +1,18 @@
+2012-12-06  Hans Muller  <hmuller@adobe.com>
+
+        [CSS Exclusions] Add support for computing the first included interval position.
+        https://bugs.webkit.org/show_bug.cgi?id=103327
+
+        Test the rounded rectangle support for adjusting the top of a line downwards
+        when the first word doesn't fit within the shape.
+
+        Reviewed by Levi Weintraub.
+
+        * fast/exclusions/shape-inside/shape-inside-rounded-rectangle-fit-001-expected.html: Added.
+        * fast/exclusions/shape-inside/shape-inside-rounded-rectangle-fit-001.html: Added.
+        * fast/exclusions/shape-inside/shape-inside-rounded-rectangle-fit-002-expected.html: Added.
+        * fast/exclusions/shape-inside/shape-inside-rounded-rectangle-fit-002.html: Added.
+
 2012-12-06  Stephen Chenney  <schenney@chromium.org>
 
         Rebaseline some expectations
