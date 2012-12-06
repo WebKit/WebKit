@@ -1,3 +1,85 @@
+2012-12-06  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r136784 and r136802.
+        http://trac.webkit.org/changeset/136784
+        http://trac.webkit.org/changeset/136802
+        https://bugs.webkit.org/show_bug.cgi?id=104231
+
+        breaks chromium canary (Requested by morrita on #webkit).
+
+        * WebCore.gyp/WebCore.gyp:
+        * WebCore.gypi:
+        * platform/chromium/PlatformThemeChromiumLinux.cpp: Added.
+        (WebCore):
+        (WebCore::PlatformThemeChromiumLinux::setScrollbarColors):
+        (WebCore::clamp):
+        (WebCore::PlatformThemeChromiumLinux::saturateAndBrighten):
+        (WebCore::PlatformThemeChromiumLinux::outlineColor):
+        (WebCore::PlatformThemeChromiumLinux::paintArrowButton):
+        * platform/chromium/PlatformThemeChromiumLinux.h: Added.
+        (WebCore):
+        (PlatformThemeChromiumLinux):
+        (WebCore::PlatformThemeChromiumLinux::thumbInactiveColor):
+        (WebCore::PlatformThemeChromiumLinux::thumbActiveColor):
+        (WebCore::PlatformThemeChromiumLinux::trackColor):
+        (WebCore::PlatformThemeChromiumLinux::PlatformThemeChromiumLinux):
+        * platform/chromium/ScrollbarThemeChromiumLinux.cpp: Added.
+        (WebCore):
+        (WebCore::ScrollbarTheme::nativeTheme):
+        (WebCore::ScrollbarThemeChromiumLinux::scrollbarThickness):
+        (WebCore::ScrollbarThemeChromiumLinux::paintTrackPiece):
+        (WebCore::ScrollbarThemeChromiumLinux::paintButton):
+        (WebCore::ScrollbarThemeChromiumLinux::paintThumb):
+        (WebCore::ScrollbarThemeChromiumLinux::shouldCenterOnThumb):
+        (WebCore::ScrollbarThemeChromiumLinux::buttonSize):
+        (WebCore::ScrollbarThemeChromiumLinux::minimumThumbLength):
+        * platform/chromium/ScrollbarThemeChromiumLinux.h: Added.
+        (ScrollbarThemeChromiumLinux):
+        * rendering/RenderThemeChromiumAndroid.cpp:
+        (WebCore::RenderThemeChromiumAndroid::extraDefaultStyleSheet):
+        * rendering/RenderThemeChromiumAndroid.h:
+        * rendering/RenderThemeChromiumLinux.cpp: Added.
+        (WebCore):
+        (WebCore::getWebThemeState):
+        (WebCore::RenderThemeChromiumLinux::create):
+        (WebCore::RenderTheme::themeForPage):
+        (WebCore::RenderThemeChromiumLinux::RenderThemeChromiumLinux):
+        (WebCore::RenderThemeChromiumLinux::~RenderThemeChromiumLinux):
+        (WebCore::RenderThemeChromiumLinux::systemColor):
+        (WebCore::RenderThemeChromiumLinux::extraDefaultStyleSheet):
+        (WebCore::RenderThemeChromiumLinux::controlSupportsTints):
+        (WebCore::RenderThemeChromiumLinux::activeListBoxSelectionBackgroundColor):
+        (WebCore::RenderThemeChromiumLinux::activeListBoxSelectionForegroundColor):
+        (WebCore::RenderThemeChromiumLinux::inactiveListBoxSelectionBackgroundColor):
+        (WebCore::RenderThemeChromiumLinux::inactiveListBoxSelectionForegroundColor):
+        (WebCore::RenderThemeChromiumLinux::platformActiveSelectionBackgroundColor):
+        (WebCore::RenderThemeChromiumLinux::platformInactiveSelectionBackgroundColor):
+        (WebCore::RenderThemeChromiumLinux::platformActiveSelectionForegroundColor):
+        (WebCore::RenderThemeChromiumLinux::platformInactiveSelectionForegroundColor):
+        (WebCore::RenderThemeChromiumLinux::sliderTickSize):
+        (WebCore::RenderThemeChromiumLinux::sliderTickOffsetFromTrackCenter):
+        (WebCore::RenderThemeChromiumLinux::adjustSliderThumbSize):
+        (WebCore::RenderThemeChromiumLinux::supportsControlTints):
+        (WebCore::RenderThemeChromiumLinux::setCaretBlinkInterval):
+        (WebCore::RenderThemeChromiumLinux::caretBlinkIntervalInternal):
+        (WebCore::RenderThemeChromiumLinux::setSelectionColors):
+        (WebCore::RenderThemeChromiumLinux::paintCheckbox):
+        (WebCore::RenderThemeChromiumLinux::setCheckboxSize):
+        (WebCore::RenderThemeChromiumLinux::paintRadio):
+        (WebCore::RenderThemeChromiumLinux::setRadioSize):
+        (WebCore::RenderThemeChromiumLinux::paintButton):
+        (WebCore::RenderThemeChromiumLinux::paintTextField):
+        (WebCore::RenderThemeChromiumLinux::paintMenuList):
+        (WebCore::RenderThemeChromiumLinux::paintSliderTrack):
+        (WebCore::RenderThemeChromiumLinux::paintSliderThumb):
+        (WebCore::RenderThemeChromiumLinux::adjustInnerSpinButtonStyle):
+        (WebCore::RenderThemeChromiumLinux::paintInnerSpinButton):
+        (WebCore::RenderThemeChromiumLinux::paintProgressBar):
+        (WebCore::RenderThemeChromiumLinux::shouldOpenPickerWithF4Key):
+        * rendering/RenderThemeChromiumLinux.h: Added.
+        (WebCore):
+        (RenderThemeChromiumLinux):
+
 2012-12-05  Sankeerth V S  <sankeerth.vs@samsung.com>
 
         Web Inspector: Title of "Record Timeline" status button on "Timeline

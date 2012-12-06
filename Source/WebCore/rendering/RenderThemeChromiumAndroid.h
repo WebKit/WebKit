@@ -26,11 +26,11 @@
 #ifndef RenderThemeChromiumAndroid_h
 #define RenderThemeChromiumAndroid_h
 
-#include "RenderThemeChromiumDefault.h"
+#include "RenderThemeChromiumLinux.h"
 
 namespace WebCore {
 
-class RenderThemeChromiumAndroid : public RenderThemeChromiumDefault {
+class RenderThemeChromiumAndroid : public RenderThemeChromiumLinux {
 public:
     static PassRefPtr<RenderTheme> create();
     virtual String extraDefaultStyleSheet() OVERRIDE;

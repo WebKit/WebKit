@@ -1700,12 +1700,17 @@
         }],
         ['use_default_render_theme==1', {
           'sources/': [
+            ['exclude', 'platform/chromium/PlatformThemeChromiumLinux.h'],
+            ['exclude', 'platform/chromium/PlatformThemeChromiumLinux.cpp'],
             ['exclude', 'platform/chromium/PlatformThemeChromiumWin.h'],
             ['exclude', 'platform/chromium/PlatformThemeChromiumWin.cpp'],
+            ['exclude', 'platform/chromium/ScrollbarThemeChromiumLinux.cpp'],
+            ['exclude', 'platform/chromium/ScrollbarThemeChromiumLinux.h'],
             ['exclude', 'platform/chromium/ScrollbarThemeChromiumWin.cpp'],
             ['exclude', 'platform/chromium/ScrollbarThemeChromiumWin.h'],
           ],
-        }, { # use_default_render_theme==0
+        }],
+        ['use_default_render_theme==0', {
           'sources/': [
             ['exclude', 'platform/chromium/PlatformThemeChromiumDefault.cpp'],
             ['exclude', 'platform/chromium/PlatformThemeChromiumDefault.h'],
@@ -2008,6 +2013,7 @@
         }],
         ['use_default_render_theme==1', {
           'sources/': [
+            ['exclude', 'RenderThemeChromiumLinux.*'],
             ['exclude', 'RenderThemeChromiumWin.*'],
           ],
         }],
@@ -2054,7 +2060,7 @@
         ['OS=="android"', {
           'sources/': [
             ['include', 'rendering/RenderThemeChromiumFontProviderLinux\\.cpp$'],
-            ['include', 'rendering/RenderThemeChromiumDefault\\.cpp$'],
+            ['include', 'rendering/RenderThemeChromiumLinux\\.cpp$'],
           ],
         },{ # OS!="android"
           'sources/': [
