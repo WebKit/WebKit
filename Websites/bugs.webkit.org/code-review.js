@@ -1099,7 +1099,7 @@ var CODE_REVIEW_UNITTEST;
     $(document.body).prepend('<div id="message">' +
         '<div class="help">Select line numbers to add a comment. Scroll though diffs with the "j" and "k" keys.' +
           '<div class="DiffLinks LinkContainer">' +
-            '<a href="javascript:" id="line-number-on-copy-link"></a> ' +
+            '<input type="checkbox" id="line-number-on-copy"><label for="line-number-on-copy">Skip line numbers on copy</label>' +
             diffLinksHtml() +
           '</div>' +
           '<a href="javascript:" class="more">[more]</a>' +
@@ -1138,11 +1138,10 @@ var CODE_REVIEW_UNITTEST;
     Array.prototype.forEach.call(nodeList, callback);
   }
 
-  $('#line-number-on-copy-link').live('click', toggleShouldStripLineNumbersOnCopy);
+  $('#line-number-on-copy').live('click', toggleShouldStripLineNumbersOnCopy);
 
   function updateLineNumberOnCopyLinkContents() {
-    var link = document.getElementById('line-number-on-copy-link');
-    link.textContent = shouldStripLineNumbersOnCopy() ? 'Don\'t strip line numbers on copy' : 'Strip line numbers on copy';
+    document.getElementById('line-number-on-copy').checked = shouldStripLineNumbersOnCopy();
   }
 
   function shouldStripLineNumbersOnCopy() {

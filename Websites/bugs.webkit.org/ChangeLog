@@ -1,5 +1,17 @@
 2012-12-05  Ojan Vafai  <ojan@chromium.org>
 
+        Make the strip line numbers link into a checkbox
+        https://bugs.webkit.org/show_bug.cgi?id=104187
+
+        Reviewed by Tony Chang.
+
+        The link text was confusing.
+
+        * PrettyPatch/PrettyPatch.rb:
+        * code-review.js:
+
+2012-12-05  Ojan Vafai  <ojan@chromium.org>
+
         Sanitize content on copy in the code review tool
         https://bugs.webkit.org/show_bug.cgi?id=104155
 

@@ -417,6 +417,7 @@ h1 :hover {
   border: 0;
 }
 
+.LinkContainer label:after,
 .LinkContainer a:after {
   content: " | ";
   color: black;
@@ -424,6 +425,10 @@ h1 :hover {
 
 .LinkContainer a:last-of-type:after {
   content: "";
+}
+
+.LinkContainer label {
+  color: #039;
 }
 
 .help {
@@ -501,7 +506,7 @@ div:focus {
 }
 </style>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script> 
-<script src="code-review.js?version=44"></script>
+<script src="code-review.js?version=45"></script>
 </head>
 EOF
 
