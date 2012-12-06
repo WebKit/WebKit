@@ -225,57 +225,43 @@ class LintTest(unittest.TestCase, StreamTestingMixin):
                                                FakePort(host, 'b', 'path-to-b'),
                                                FakePort(host, 'b-win', 'path-to-b')))
 
-        self.assertEqual(run_webkit_tests.lint(host.port_factory.ports['a'], MockOptions(platform=None)), 0)
+        logging_stream = StringIO.StringIO()
+        self.assertEqual(run_webkit_tests.lint(host.port_factory.ports['a'], MockOptions(platform=None, debug_rwt_logging=False), logging_stream), 0)
         self.assertEqual(host.ports_parsed, ['a', 'b', 'b-win'])
 
         host.ports_parsed = []
-        self.assertEqual(run_webkit_tests.lint(host.port_factory.ports['a'], MockOptions(platform='a')), 0)
+        self.assertEqual(run_webkit_tests.lint(host.port_factory.ports['a'], MockOptions(platform='a', debug_rwt_logging=False), logging_stream), 0)
         self.assertEqual(host.ports_parsed, ['a'])
 
     def test_lint_test_files(self):
-        oc = outputcapture.OutputCapture()
-        oc.capture_output()
-        try:
-            res = run_webkit_tests.main(['--platform', 'test', '--lint-test-files'])
-        finally:
-            out, err, logs = oc.restore_output()
-
+        logging_stream = StringIO.StringIO()
+        options, _ = parse_args(['--platform', 'test', '--lint-test-files'])
+        host = MockHost()
+        port_obj = host.port_factory.get(options.platform, options=options)
+        res = run_webkit_tests.lint(port_obj, options, logging_stream)
         self.assertEqual(res, 0)
-        self.assertEqual(out, '')
-        self.assertEqual(err, '')
-        self.assertTrue('Lint succeeded' in logs)
+        self.assertTrue('Lint succeeded' in logging_stream.getvalue())
 
     def test_lint_test_files__errors(self):
-        options, parsed_args = parse_args(['--platform', 'test', '--lint-test-files'])
+        options, _ = parse_args(['--platform', 'test', '--lint-test-files'])
         host = MockHost()
         port_obj = host.port_factory.get(options.platform, options=options)
         port_obj.expectations_dict = lambda: {'': '-- syntax error'}
 
-        oc = outputcapture.OutputCapture()
-        oc.capture_output()
-        try:
-            res = run_webkit_tests.lint(port_obj, options)
-        finally:
-            out, err, logs = oc.restore_output()
+        logging_stream = StringIO.StringIO()
+        res = run_webkit_tests.lint(port_obj, options, logging_stream)
 
         self.assertEqual(res, -1)
-        self.assertEqual(out, '')
-        self.assertEqual(err, '')
-        self.assertTrue('Lint failed' in logs)
+        self.assertTrue('Lint failed' in logging_stream.getvalue())
 
         # ensure we lint *all* of the files in the cascade.
         port_obj.expectations_dict = lambda: {'foo': '-- syntax error1', 'bar': '-- syntax error2'}
-        oc.capture_output()
-        try:
-            res = run_webkit_tests.lint(port_obj, options)
-        finally:
-            out, err, logs = oc.restore_output()
+        logging_stream = StringIO.StringIO()
+        res = run_webkit_tests.lint(port_obj, options, logging_stream)
 
         self.assertEqual(res, -1)
-        self.assertEqual(out, '')
-        self.assertEqual(err, '')
-        self.assertTrue('foo:1' in logs)
-        self.assertTrue('bar:1' in logs)
+        self.assertTrue('foo:1' in logging_stream.getvalue())
+        self.assertTrue('bar:1' in logging_stream.getvalue())
 
 
 class MainTest(unittest.TestCase, StreamTestingMixin):

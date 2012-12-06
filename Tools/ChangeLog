@@ -1,3 +1,24 @@
+2012-12-06  Dirk Pranke  <dpranke@chromium.org>
+
+        new-run-webkit-tests --lint-test-files seems to be broken
+        https://bugs.webkit.org/show_bug.cgi?id=104296
+
+        Unreviewed, build fix.
+
+        My recent refactoring caused me to not initialize the printer
+        before calling lint(); this patch restructures the code to make
+        the lint routine self-contained and do all the work necessary.
+        This will also make it easier to move this code out into a standalone
+        file.
+
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        (lint):
+        (main):
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+        (LintTest.test_all_configurations):
+        (LintTest.test_lint_test_files):
+        (LintTest.test_lint_test_files__errors):
+
 2012-12-05  Filip Pizlo  <fpizlo@apple.com>
 
         DFG profiler should be helpful about gem installation

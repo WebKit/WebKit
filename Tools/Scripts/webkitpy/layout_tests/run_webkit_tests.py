@@ -54,8 +54,11 @@ INTERRUPTED_EXIT_STATUS = signal.SIGINT + 128
 EXCEPTIONAL_EXIT_STATUS = 254
 
 
-def lint(port, options):
+def lint(port, options, logging_stream):
     host = port.host
+    logging.getLogger().setLevel(logging.DEBUG if options.debug_rwt_logging else logging.INFO)
+    printer = printing.Printer(port, options, logging_stream, logger=logging.getLogger())
+
     if options.platform:
         ports_to_lint = [port]
     else:
@@ -82,8 +85,10 @@ def lint(port, options):
 
     if lint_failed:
         _log.error('Lint failed.')
+        printer.cleanup()
         return -1
     _log.info('Lint succeeded.')
+    printer.cleanup()
     return 0
 
 
@@ -415,11 +420,10 @@ def main(argv=None, stdout=sys.stdout, stderr=sys.stderr):
         print >> stderr, str(e)
         return EXCEPTIONAL_EXIT_STATUS
 
-    logging.getLogger().setLevel(logging.DEBUG if options.debug_rwt_logging else logging.INFO)
-    try:
-        if options.lint_test_files:
-            return lint(port, options)
+    if options.lint_test_files:
+        return lint(port, options, stderr)
 
+    try:
         run_details = run(port, options, args, stderr)
 
         bot_printer = buildbot_results.BuildBotPrinter(stdout, options.debug_rwt_logging)
