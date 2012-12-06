@@ -564,6 +564,10 @@ bool TestController::resetStateToConsistentValues()
     // Re-set to the default backing scale factor by setting the custom scale factor to 0.
     WKPageSetCustomBackingScaleFactor(m_mainWebView->page(), 0);
 
+    // Resize the window to original size. This is needed after calls to window.resizeTo.
+    WKRect rect = m_mainWebView->windowFrame();
+    m_mainWebView->setWindowFrame(WKRectMake(rect.origin.x, rect.origin.y, 800, 600));
+
     // Reset notification permissions
     m_webNotificationProvider.reset();
 
