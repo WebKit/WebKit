@@ -152,7 +152,7 @@ class WatchListParser(object):
             # modifying a list while iterating through it leads to undefined behavior.
             intructions_copy = cc_rule.instructions()[:]
             for email in intructions_copy:
-                if not accounts.account_by_login(email):
+                if not accounts.account_by_email(email):
                     cc_rule.remove_instruction(email)
                     self._log_error("The email alias %s which is in the watchlist is not listed as a contributor in committers.py" % email)
                     continue

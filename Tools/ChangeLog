@@ -1,3 +1,21 @@
+2012-12-06  Ojan Vafai  <ojan@chromium.org>
+
+        Allow for CCing a secondary email address from watchlists
+        https://bugs.webkit.org/show_bug.cgi?id=104286
+
+        Reviewed by Dirk Pranke.
+
+        Change my watchlist CC address so I can filter these separately from
+        when people explicitly CC me and update the watchlist parser to allow that.
+
+        * Scripts/webkitpy/common/config/committers.py:
+        * Scripts/webkitpy/common/config/watchlist:
+        * Scripts/webkitpy/common/watchlist/watchlistparser.py:
+        (WatchListParser._validate):
+        * Scripts/webkitpy/common/watchlist/watchlistparser_unittest.py:
+        (WatchListParserTest.test_cc_rule_with_invalid_email):
+        (WatchListParserTest.test_cc_rule_with_secondary_email):
+
 2012-12-06  Max Vujovic  <mvujovic@adobe.com>
 
         Unreviewed. Add myself to committers.py.
