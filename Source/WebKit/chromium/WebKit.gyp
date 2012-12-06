@@ -294,7 +294,6 @@
                 'public/gtk/WebInputEventFactory.h',
                 'public/linux/WebFontRenderStyle.h',
                 'public/linux/WebFontRendering.h',
-                'public/linux/WebRenderTheme.h',
                 'public/mac/WebInputEventFactory.h',
                 'public/mac/WebSandboxSupport.h',
                 'public/mac/WebScreenInfoFactory.h',
