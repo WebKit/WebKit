@@ -1,3 +1,19 @@
+2012-12-05  Kentaro Hara  <haraken@chromium.org>
+
+        [V8] Remove addImplicitReferencesForNodeWithEventListeners()
+        https://bugs.webkit.org/show_bug.cgi?id=104203
+
+        Reviewed by Adam Barth.
+
+        We can use opaqueRootForGC() instead. By this change, we can remove
+        all AddImplicitReferences() from V8 bindings.
+
+        Tests: fast/dom/gc-image-element.html
+               fast/dom/gc-image-element-2.html
+               fast/dom/inline-event-attributes-lookup-removed.html
+
+        * bindings/v8/V8GCController.cpp:
+
 2012-12-05  Andrei Bucur  <abucur@adobe.com>
 
         [CSS Regions] Blocks don't relayout children if the width of a region changes
