@@ -115,16 +115,13 @@ private:
 
 class MouseEventDispatchMediator : public EventDispatchMediator {
 public:
-    enum MouseEventType { SyntheticMouseEvent, NonSyntheticMouseEvent};
-    static PassRefPtr<MouseEventDispatchMediator> create(PassRefPtr<MouseEvent>, MouseEventType = NonSyntheticMouseEvent);
+    static PassRefPtr<MouseEventDispatchMediator> create(PassRefPtr<MouseEvent>);
 
 private:
-    explicit MouseEventDispatchMediator(PassRefPtr<MouseEvent>, MouseEventType);
+    explicit MouseEventDispatchMediator(PassRefPtr<MouseEvent>);
     MouseEvent* event() const;
 
     virtual bool dispatchEvent(EventDispatcher*) const;
-    bool isSyntheticMouseEvent() const { return m_mouseEventType == SyntheticMouseEvent; }
-    MouseEventType m_mouseEventType;
 };
 
 inline MouseEvent* toMouseEvent(Event* event)

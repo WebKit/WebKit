@@ -209,13 +209,13 @@ SimulatedMouseEvent::SimulatedMouseEvent(const AtomicString& eventType, PassRefP
     }
 }
 
-PassRefPtr<MouseEventDispatchMediator> MouseEventDispatchMediator::create(PassRefPtr<MouseEvent> mouseEvent, MouseEventType mouseEventType)
+PassRefPtr<MouseEventDispatchMediator> MouseEventDispatchMediator::create(PassRefPtr<MouseEvent> mouseEvent)
 {
-    return adoptRef(new MouseEventDispatchMediator(mouseEvent, mouseEventType));
+    return adoptRef(new MouseEventDispatchMediator(mouseEvent));
 }
 
-MouseEventDispatchMediator::MouseEventDispatchMediator(PassRefPtr<MouseEvent> mouseEvent, MouseEventType mouseEventType)
-    : EventDispatchMediator(mouseEvent), m_mouseEventType(mouseEventType)
+MouseEventDispatchMediator::MouseEventDispatchMediator(PassRefPtr<MouseEvent> mouseEvent)
+    : EventDispatchMediator(mouseEvent)
 {
 }
 
@@ -232,17 +232,14 @@ bool MouseEventDispatchMediator::dispatchEvent(EventDispatcher* dispatcher) cons
     if (event()->type().isEmpty())
         return true; // Shouldn't happen.
 
-    ASSERT(isSyntheticMouseEvent() || !event()->target() || event()->target() != event()->relatedTarget());
-
     EventTarget* relatedTarget = event()->relatedTarget();
     dispatcher->adjustRelatedTarget(event(), relatedTarget);
 
     dispatcher->dispatchEvent(event());
     bool swallowEvent = event()->defaultHandled() || event()->defaultPrevented();
 
-    if (isSyntheticMouseEvent() || event()->type() != eventNames().clickEvent || event()->detail() != 2)
+    if (event()->type() != eventNames().clickEvent || event()->detail() != 2)
         return !swallowEvent;
-
     // Special case: If it's a double click event, we also send the dblclick event. This is not part
     // of the DOM specs, but is used for compatibility with the ondblclick="" attribute. This is treated
     // as a separate event in other DOM-compliant browsers like Firefox, and so we do the same.
