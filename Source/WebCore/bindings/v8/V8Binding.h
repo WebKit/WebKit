@@ -154,14 +154,22 @@ namespace WebCore {
         return V8PerIsolateData::from(isolate)->stringCache()->v8ExternalString(string.impl(), isolate);
     }
 
-    inline v8::Handle<v8::Value> v8StringOrNull(const String& str, v8::Isolate* isolate = 0)
+    inline v8::Handle<v8::Value> v8StringOrNull(const String& string, v8::Isolate* isolate = 0)
     {
-        return str.isNull() ? v8::Handle<v8::Value>(v8NullWithCheck(isolate)) : v8::Handle<v8::Value>(v8String(str, isolate));
+        if (UNLIKELY(!isolate))
+            isolate = v8::Isolate::GetCurrent();
+        if (string.isNull())
+            return v8Null(isolate);
+        return V8PerIsolateData::from(isolate)->stringCache()->v8ExternalString(string.impl(), isolate);
     }
 
-    inline v8::Handle<v8::Value> v8StringOrUndefined(const String& str, v8::Isolate* isolate = 0)
+    inline v8::Handle<v8::Value> v8StringOrUndefined(const String& string, v8::Isolate* isolate = 0)
     {
-        return str.isNull() ? v8::Handle<v8::Value>(v8::Undefined()) : v8::Handle<v8::Value>(v8String(str, isolate));
+        if (UNLIKELY(!isolate))
+            isolate = v8::Isolate::GetCurrent();
+        if (string.isNull())
+            return v8::Undefined(isolate);
+        return V8PerIsolateData::from(isolate)->stringCache()->v8ExternalString(string.impl(), isolate);
     }
 
     inline v8::Handle<v8::Integer> v8Integer(int value, v8::Isolate* isolate = 0)
