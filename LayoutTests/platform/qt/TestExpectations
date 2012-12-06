@@ -324,9 +324,6 @@ webkit.org/b/92873 gamepad/gamepad-polling-access.html
 webkit.org/b/85580 fast/css/variables
 webkit.org/b/85580 inspector/styles/variables
 
-# UndoManager is not yet enabled.
-webkit.org/b/87908 editing/undomanager
-
 # CSS image-resolution is not yet enabled.
 webkit.org/b/85262 fast/css/image-resolution
 

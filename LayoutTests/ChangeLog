@@ -1,3 +1,47 @@
+2012-12-06  Zan Dobersek  <zandobersek@gmail.com>
+
+        UndoManager layout tests should be removed
+        https://bugs.webkit.org/show_bug.cgi?id=104246
+
+        Reviewed by Adam Barth.
+
+        The UndoManager feature support was removed from the source tree
+        in r133326. The layout tests should be removed as well. As with
+        the feature implementation, these too can be restored back when needed.
+
+        * editing/undomanager: Removed.
+        * editing/undomanager/automatic-transaction-attribute-expected.txt: Removed.
+        * editing/undomanager/automatic-transaction-attribute.html: Removed.
+        * editing/undomanager/automatic-transaction-data-expected.txt: Removed.
+        * editing/undomanager/automatic-transaction-data.html: Removed.
+        * editing/undomanager/automatic-transaction-node-expected.txt: Removed.
+        * editing/undomanager/automatic-transaction-node.html: Removed.
+        * editing/undomanager/document-has-undomanager-expected.txt: Removed.
+        * editing/undomanager/document-has-undomanager.html: Removed.
+        * editing/undomanager/domtransaction-survives-gc-expected.txt: Removed.
+        * editing/undomanager/domtransaction-survives-gc.html: Removed.
+        * editing/undomanager/undomanager-isolated-world-expected.txt: Removed.
+        * editing/undomanager/undomanager-isolated-world.html: Removed.
+        * editing/undomanager/undomanager-item-expected.txt: Removed.
+        * editing/undomanager/undomanager-item.html: Removed.
+        * editing/undomanager/undomanager-reenter-expected.txt: Removed.
+        * editing/undomanager/undomanager-reenter.html: Removed.
+        * editing/undomanager/undomanager-transact-expected.txt: Removed.
+        * editing/undomanager/undomanager-transact.html: Removed.
+        * editing/undomanager/undomanager-undo-redo-expected.txt: Removed.
+        * editing/undomanager/undomanager-undo-redo.html: Removed.
+        * editing/undomanager/undoscopehost-use-after-free-expected.txt: Removed.
+        * editing/undomanager/undoscopehost-use-after-free.html: Removed.
+        * platform/chromium/TestExpectations:
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/qt-4.8/TestExpectations:
+        * platform/qt-mac/TestExpectations:
+        * platform/qt/TestExpectations:
+        * platform/win/TestExpectations:
+        * platform/wincairo/TestExpectations:
+
 2012-12-06  Alexis Menard  <alexis@webkit.org>
 
         [Mac] Unreviewed gardening after r136415.

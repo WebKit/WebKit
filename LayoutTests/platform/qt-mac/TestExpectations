@@ -5795,9 +5795,6 @@ webkit.org/b/6033 css3/filters/regions-expanding.html [ ImageOnlyFailure Pass ]
 webkit.org/b/6033 css3/filters/simple-filter-rendering.html [ ImageOnlyFailure Pass ]
 webkit.org/b/6033 svg/filters/color-interpolation-filters.svg [ Missing Pass ]
 
-# UndoManager is not yet enabled.
-webkit.org/b/87908 editing/undomanager
-
 # CSS image-resolution is not yet enabled.
 webkit.org/b/85262 fast/css/image-resolution
 

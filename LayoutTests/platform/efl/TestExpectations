@@ -586,9 +586,6 @@ Bug(EFL) fast/forms/textarea/textarea-placeholder-paint-order.html [ Missing ]
 # Implementing copy{En,De}codedHostName only to test them does not make sense
 webkit.org/b/86080 fast/encoding/idn-security.html [ Skip ]
 
-# UndoManager is not yet enabled.
-webkit.org/b/87908 editing/undomanager
-
 # Disable webaudio codec tests, including proprietary codecs.
 webkit.org/b/88794 webaudio/codec-tests
 
