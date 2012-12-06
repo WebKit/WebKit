@@ -94,7 +94,6 @@ public:
     void setShadowPseudoId(Element*, const String&, ExceptionCode&);
 
     PassRefPtr<Element> createContentElement(Document*, ExceptionCode&);
-    Element* getElementByIdInShadowRoot(Node* shadowRoot, const String& id, ExceptionCode&);
     bool isValidContentSelect(Element* insertionPoint, ExceptionCode&);
     Node* treeScopeRootNode(Node*, ExceptionCode&);
     Node* parentTreeScope(Node*, ExceptionCode&);

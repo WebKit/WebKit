@@ -1,4 +1,4 @@
-Tests to ensure that internals.getElementByIdInShadowRoot can get an element in ShadowRoot by its id. Can only run within DRT
+Tests to ensure that ShadowRoot.getElementById can get an element in ShadowRoot by its id. Can only run within DRT
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 

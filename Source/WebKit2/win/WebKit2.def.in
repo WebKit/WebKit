@@ -194,7 +194,6 @@ EXPORTS
         ?garbageCollectDocumentResources@CachedResourceLoader@WebCore@@QAEXXZ
         ?getCachedDOMStructure@WebCore@@YAPAVStructure@JSC@@PAVJSDOMGlobalObject@1@PBUClassInfo@3@@Z
         ?getData16SlowCase@StringImpl@WTF@@ABEPB_WXZ
-        ?getElementById@TreeScope@WebCore@@QBEPAVElement@2@ABVAtomicString@WTF@@@Z
         ?getLocationAndLengthFromRange@TextIterator@WebCore@@SA_NPAVElement@2@PBVRange@2@AAI2@Z
         ?getReferencedFilePaths@FormController@WebCore@@SA?AV?$Vector@VString@WTF@@$0A@@WTF@@ABV34@@Z
         ?countElementShadow@ShadowRoot@WebCore@@QBEIXZ

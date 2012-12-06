@@ -1,3 +1,21 @@
+2012-12-06  Shinya Kawanaka  <shinyak@chromium.org>
+
+        Internals.getElementByIdInShadowRoot is nonsense now.
+        https://bugs.webkit.org/show_bug.cgi?id=104241
+
+        Reviewed by Kent Tamura.
+
+        Since we have ShadowRoot.getElementById() now, we don't need Internals.getElementByIdInShadowRoot, which is
+        the same functionality of ShadowRoot.getElementById().
+
+        Test: fast/dom/shadow/get-element-by-id-in-shadow-root.html
+
+        * WebCore.exp.in:
+        * testing/Internals.cpp:
+        * testing/Internals.h:
+        (Internals):
+        * testing/Internals.idl:
+
 2012-12-06  Kondapally Kalyan  <kalyan.kondapally@intel.com>
 
         [EFL] Active texture state gets corrupted after updating graphics surface contents.

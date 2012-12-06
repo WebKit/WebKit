@@ -55,7 +55,6 @@
     DOMString shadowPseudoId(in Element element) raises (DOMException);
     void setShadowPseudoId(in Element element, in DOMString id) raises (DOMException);
     Element createContentElement(in Document document) raises(DOMException);
-    Element getElementByIdInShadowRoot(in Node shadowRoot, in DOMString id) raises(DOMException);
     boolean isValidContentSelect(in Element contentElement) raises(DOMException);
     Node treeScopeRootNode(in Node node) raises (DOMException);
     Node parentTreeScope(in Node node) raises (DOMException);

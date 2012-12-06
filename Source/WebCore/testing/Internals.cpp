@@ -291,15 +291,6 @@ PassRefPtr<Element> Internals::createContentElement(Document* document, Exceptio
     return HTMLContentElement::create(document);
 }
 
-Element* Internals::getElementByIdInShadowRoot(Node* shadowRoot, const String& id, ExceptionCode& ec)
-{
-    if (!shadowRoot || !shadowRoot->isShadowRoot()) {
-        ec = INVALID_ACCESS_ERR;
-        return 0;
-    }
-    return toShadowRoot(shadowRoot)->getElementById(id);
-}
-
 bool Internals::isValidContentSelect(Element* insertionPoint, ExceptionCode& ec)
 {
     if (!insertionPoint || !insertionPoint->isInsertionPoint()) {

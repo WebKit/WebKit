@@ -81,7 +81,7 @@ function getNodeInShadowTreeStack(path)
         else
             return null;
         if (ids[i] != '')
-            node = internals.getElementByIdInShadowRoot(node, ids[i]);
+            node = node.getElementById(ids[i]);
     }
     return node;
 }
