@@ -1,3 +1,14 @@
+2012-12-06  Seokju Kwon  <seokju.kwon@gmail.com>
+
+        [EFL] Fix destination path in Source/PlatformEfl.cmake
+        https://bugs.webkit.org/show_bug.cgi?id=104237
+
+        Reviewed by Laszlo Gombos.
+
+        Remove InspectorBackendCommands.js when copying it for the consistency in Source/PlatformEfl.cmake.
+
+        * Source/PlatformEfl.cmake:
+
 2012-12-06  Shinya Kawanaka  <shinyak@chromium.org>
 
         Internals.getElementByIdInShadowRoot is nonsense now.
