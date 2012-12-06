@@ -3,6 +3,20 @@
         [Qt][WK2] Fix QWebKitTest's notification of device pixel ratio change
         https://bugs.webkit.org/show_bug.cgi?id=104269
 
+        Unreviewed, trivialy fixing last minute change.
+
+        Move signal emission to the correct place.
+
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewFlickablePrivate::onComponentComplete):
+        * UIProcess/qt/PageViewportControllerClientQt.cpp:
+        (WebKit::PageViewportControllerClientQt::PageViewportControllerClientQt):
+
+2012-12-06  Andras Becsi  <andras.becsi@digia.com>
+
+        [Qt][WK2] Fix QWebKitTest's notification of device pixel ratio change
+        https://bugs.webkit.org/show_bug.cgi?id=104269
+
         Reviewed by Kenneth Rohde Christiansen.
 
         Since the ViewportInfoItem of MiniBrowser is created before the

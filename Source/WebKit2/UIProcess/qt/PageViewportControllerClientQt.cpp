@@ -59,11 +59,6 @@ PageViewportControllerClientQt::PageViewportControllerClientQt(QQuickWebView* vi
 
     connect(m_scaleAnimation, SIGNAL(stateChanged(QAbstractAnimation::State, QAbstractAnimation::State)),
             SLOT(scaleAnimationStateChanged(QAbstractAnimation::State, QAbstractAnimation::State)));
-
-    // Notify about device pixel ratio here because due to the delayed instantiation
-    // of the viewport controller the correct value might not have reached QWebKitTest
-    // in time it was used from QML.
-    emit m_viewportItem->experimental()->test()->devicePixelRatioChanged();
 }
 
 void PageViewportControllerClientQt::ScaleAnimation::updateCurrentValue(const QVariant& value)

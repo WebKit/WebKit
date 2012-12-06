@@ -868,6 +868,11 @@ void QQuickWebViewFlickablePrivate::onComponentComplete()
     m_pageViewportController.reset(new PageViewportController(webPageProxy.get(), m_pageViewportControllerClient.data()));
     pageView->eventHandler()->setViewportController(m_pageViewportControllerClient.data());
 
+    // Notify about device pixel ratio here because due to the delayed instantiation
+    // of the viewport controller the correct value might not have reached QWebKitTest
+    // in time it was used from QML.
+    emit experimental->test()->devicePixelRatioChanged();
+
     // Trigger setting of correct visibility flags after everything was allocated and initialized.
     _q_onVisibleChanged();
 }
