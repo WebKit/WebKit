@@ -201,6 +201,7 @@ QWebPagePrivate::QWebPagePrivate(QWebPage *qq)
     , m_lastDropAction(Qt::IgnoreAction)
 {
     WebKit::initializeWebKitWidgets();
+    initializeWebCorePage();
     memset(actions, 0, sizeof(actions));
 
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)

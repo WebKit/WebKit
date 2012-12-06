@@ -167,10 +167,13 @@ QWebPageAdapter::QWebPageAdapter()
     , networkManager(0)
 {
     WebCore::initializeWebCoreQt();
+}
+
+void QWebPageAdapter::initializeWebCorePage()
+{
 #if ENABLE(GEOLOCATION) || ENABLE(DEVICE_ORIENTATION)
     bool useMock = QWebPageAdapter::drtRun;
 #endif
-
     Page::PageClients pageClients;
     pageClients.chromeClient = new ChromeClientQt(this);
     pageClients.contextMenuClient = new ContextMenuClientQt();

@@ -136,6 +136,9 @@ public:
     // the QWebPageAdapter and the QWebPagePrivate are intact when
     // various destruction callbacks from WebCore::Page::~Page() hit us.
     void deletePage();
+    // For similar reasons, we don't want to create the WebCore Page before
+    // we properly initialized the style factory callbacks.
+    void initializeWebCorePage();
 
     virtual void show() = 0;
     virtual void setFocus() = 0;

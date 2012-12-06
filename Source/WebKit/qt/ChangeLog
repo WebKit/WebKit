@@ -1,3 +1,25 @@
+2012-12-06  Pierre Rossi  <pierre.rossi@gmail.com>
+
+        [Qt] QWebView uses the mobile style and doesn't follow Qt's style
+        https://bugs.webkit.org/show_bug.cgi?id=104134
+
+        Reviewed by Simon Hausmann.
+
+        Another issue introduced by r136235.
+        Fix the order of initialization of the styleFactory and creation of the
+        WebCore Page. Since the latter has a RenderTheme member and the creation
+        of the appropriate RenderTheme type (QStyle-backed) is dependant on having
+        first initialized the theme factory function, we need to postpone this just
+        a little bit.
+
+        * WebCoreSupport/QWebPageAdapter.cpp:
+        (QWebPageAdapter::QWebPageAdapter):
+        (QWebPageAdapter::initializeWebCorePage): Added.
+        * WebCoreSupport/QWebPageAdapter.h:
+        * WidgetApi/qwebpage.cpp:
+        (QWebPagePrivate::QWebPagePrivate): call initializeWebCorePage only after 
+        having initialized WebKitWidgets related logic (QStyle hooks in this case).
+
 2012-12-05  Zeno Albisser  <zeno@webkit.org>
 
         [Qt][Mac] QWebView disappears when the system tries to hide the scrollbars.
