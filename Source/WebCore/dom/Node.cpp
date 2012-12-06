@@ -2481,6 +2481,8 @@ void Node::dispatchScopedEventDispatchMediator(PassRefPtr<EventDispatchMediator>
 
 bool Node::dispatchEvent(PassRefPtr<Event> event)
 {
+    if (event->isMouseEvent())
+        return EventDispatcher::dispatchEvent(this, MouseEventDispatchMediator::create(adoptRef(toMouseEvent(event.leakRef())), MouseEventDispatchMediator::SyntheticMouseEvent));
     return EventDispatcher::dispatchEvent(this, EventDispatchMediator::create(event));
 }
 

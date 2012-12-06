@@ -62,6 +62,9 @@ EventRelatedTargetAdjuster::EventRelatedTargetAdjuster(PassRefPtr<Node> node, Pa
 
 void EventRelatedTargetAdjuster::adjust(Vector<EventContext>& ancestors)
 {
+    // Synthetic mouse events can have a relatedTarget which is identical to the target.
+    bool targetIsIdenticalToToRelatedTarget = (m_node.get() == m_relatedTarget.get());
+
     Vector<EventTarget*> relatedTargetStack;
     TreeScope* lastTreeScope = 0;
     for (AncestorChainWalker walker(m_relatedTarget.get()); walker.get(); walker.parent()) {
@@ -93,7 +96,12 @@ void EventRelatedTargetAdjuster::adjust(Vector<EventContext>& ancestors)
             iter->setRelatedTarget(adjustedRelatedTarget);
         }
         lastTreeScope = scope;
-        if (iter->target() == adjustedRelatedTarget) {
+        if (targetIsIdenticalToToRelatedTarget) {
+            if (m_node->treeScope()->rootNode() == iter->node()) {
+                ancestors.shrink(iter + 1 - ancestors.begin());
+                break;
+            }
+        } else if (iter->target() == adjustedRelatedTarget) {
             // Event dispatching should be stopped here.
             ancestors.shrink(iter - ancestors.begin());
             break;
