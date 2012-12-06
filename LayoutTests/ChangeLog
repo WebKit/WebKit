@@ -1,3 +1,12 @@
+2012-12-06  Pavel Podivilov  <podivilov@google.com>
+
+        [chromium] Unreviewed, fix baselines for plugins/npp-set-window-called-during-destruction.html on win7.
+
+        * platform/chromium-linux/plugins/npp-set-window-called-during-destruction-expected.txt: Removed.
+        * platform/chromium-win-xp/plugins/npp-set-window-called-during-destruction-expected.txt: Removed.
+        * platform/chromium-win/plugins/npp-set-window-called-during-destruction-expected.txt:
+        * platform/win/plugins/npp-set-window-called-during-destruction-expected.txt: Removed.
+
 2012-12-06  Kent Tamura  <tkent@chromium.org>
 
         [Chromium] Test expectation update
