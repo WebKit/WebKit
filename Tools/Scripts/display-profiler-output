@@ -112,7 +112,7 @@ class Bytecode
 end
 
 class Bytecodes
-    attr_accessor :codeHash, :source, :machineInlineSites
+    attr_accessor :codeHash, :source, :machineInlineSites, :compilations
     
     def initialize(json)
         @codeHash = json["hash"].to_s
@@ -124,6 +124,7 @@ class Bytecodes
             @bytecode[index] = Bytecode.new(self, index, subJson["opcode"].to_s, subJson["description"].to_s)
         }
         @machineInlineSites = {} # maps compilation to a set of origins
+        @compilations = []
     end
     
     def each
@@ -224,10 +225,12 @@ class ExecutionCounter
 end
 
 class Compilation
-    attr_accessor :bytecode, :engine, :descriptions, :counters
+    attr_accessor :bytecode, :engine, :descriptions, :counters, :compilationIndex
     
     def initialize(json)
         @bytecode = $bytecodes[json["bytecodesID"].to_i]
+        @bytecode.compilations << self
+        @compilationIndex = @bytecode.compilations.size
         @engine = json["compilationKind"]
         @descriptions = json["descriptions"].map {
             | subJson |
@@ -255,6 +258,10 @@ class Compilation
     
     def counter(origin)
         @counters[origin]
+    end
+    
+    def to_s
+        "\##{bytecode.codeHash}-#{compilationIndex}-#{engine}"
     end
 end
 
@@ -387,6 +394,7 @@ def executeCommand(*commandArray)
         puts "source          Show the source for a code block."
         puts "bytecode (b)    Show the bytecode for a code block, with counts."
         puts "display (d)     Display details for a code block."
+        puts "inlines         Show all inlining stacks that the code block was on."
         puts "help (h)        Print this message."
         puts "quit (q)        Quit."
     when "quit", "q", "exit"
@@ -445,6 +453,82 @@ def executeCommand(*commandArray)
                 puts(center(countsString, countCols) + " " + center(machineString, machineCols) + (" " * pad) + bytecode.description.chomp)
             }
         }
+    when "inlines"
+        if args.length != 1
+            puts "Usage: inlines <code block hash>"
+            return
+        end
+        
+        hash = args[0]
+        
+        $bytecodes.each {
+            | bytecodes |
+            next if bytecodes.codeHash != hash
+            
+            # FIXME: print something useful to say more about which code block this is.
+            
+            $compilations.each {
+                | compilation |
+                myOrigins = []
+                compilation.descriptions.each {
+                    | description |
+                    if description.origin.index {
+                            | myBytecode |
+                            bytecodes == myBytecode.bytecodes
+                        }
+                        myOrigins << description.origin
+                    end
+                }
+                myOrigins.uniq!
+                myOrigins.sort! {
+                    | a, b |
+                    result = 0
+                    [a.size, b.size].min.times {
+                        | index |
+                        result = a[index].bytecodeIndex <=> b[index].bytecodeIndex
+                        break if result != 0
+                    }
+                    result
+                }
+                
+                next if myOrigins.empty?
+
+                printArray = []
+                lastPrintStack = []
+                
+                def originToPrintStack(origin)
+                    (0...(origin.size - 1)).map {
+                        | index |
+                        "bc\##{origin[index].bytecodeIndex} --> \##{origin[index + 1].bytecodes.codeHash}"
+                    }
+                end
+                
+                def printStack(printArray, stack, lastStack)
+                    stillCommon = true
+                    stack.each_with_index {
+                        | entry, index |
+                        next if stillCommon and entry == lastStack[index]
+                        printArray << ("    " * (index + 1) + entry)
+                        stillCommon = false
+                    }
+                end
+                
+                myOrigins.each {
+                    | origin |
+                    currentPrintStack = originToPrintStack(origin)
+                    printStack(printArray, currentPrintStack, lastPrintStack)
+                    lastPrintStack = currentPrintStack
+                }
+
+                next if printArray.empty?
+                
+                puts "Compilation #{compilation}:"
+                printArray.each {
+                    | entry |
+                    puts entry
+                }
+            }
+        }
     when "display", "d"
         case args.length
         when 1
@@ -484,13 +568,9 @@ def executeCommand(*commandArray)
         sourceCountCols = 10 * $engines.size
         
         first = true
-        count = 0
         $compilations.each {
             | compilation |
             next if compilation.bytecode.codeHash != hash
-
-            count += 1
-
             next if engine and compilation.engine != engine
             
             if first
@@ -499,7 +579,7 @@ def executeCommand(*commandArray)
                 puts
             end
             
-            puts("Compilation \##{count}:")
+            puts("Compilation #{compilation}:")
             puts(center("Actual Counts", actualCountCols) + " " + center("Source Counts", sourceCountCols) + " " + center("Disassembly in #{compilation.engine}", screenWidth - 1 - sourceCountCols - 1 - actualCountCols))
             puts((" " * actualCountCols) + " " + center("Base/DFG", sourceCountCols))
             compilation.descriptions.each {
