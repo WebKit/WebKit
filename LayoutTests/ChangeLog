@@ -1,3 +1,14 @@
+2012-12-06  Stephen Chenney  <schenney@chromium.org>
+
+        Fix a bad rebaseline
+
+        Unreviewed expectations fix.
+
+        This test is apparently flaky and I put in the wrong flake.
+
+        * platform/chromium-mac-lion/svg/custom/mask-invalidation-expected.png: Removed.
+        * platform/chromium-win/svg/custom/mask-invalidation-expected.png:
+
 2012-12-06  Hans Muller  <hmuller@adobe.com>
 
         [CSS Exclusions] Add support for computing the first included interval position.
