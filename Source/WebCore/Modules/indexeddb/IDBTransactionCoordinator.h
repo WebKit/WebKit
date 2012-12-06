@@ -57,12 +57,13 @@ private:
     IDBTransactionCoordinator();
 
     void processStartedTransactions();
+    bool canRunTransaction(IDBTransactionBackendImpl*);
 
     // This is just an efficient way to keep references to all transactions.
     HashMap<IDBTransactionBackendImpl*, RefPtr<IDBTransactionBackendImpl> > m_transactions;
     // Transactions in different states are grouped below.
-    ListHashSet<IDBTransactionBackendImpl*> m_startedTransactions;
-    HashSet<IDBTransactionBackendImpl*> m_runningTransactions;
+    ListHashSet<IDBTransactionBackendImpl*> m_queuedTransactions;
+    HashSet<IDBTransactionBackendImpl*> m_startedTransactions;
 };
 
 } // namespace WebCore

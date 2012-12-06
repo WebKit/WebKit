@@ -85,7 +85,7 @@ void IDBDatabaseBackendProxy::deleteObjectStore(int64_t objectStoreId, IDBTransa
     m_webIDBDatabase->deleteObjectStore(objectStoreId, *transactionProxy->getWebIDBTransaction(), ec);
 }
 
-PassRefPtr<IDBTransactionBackendInterface> IDBDatabaseBackendProxy::createTransaction(int64_t id, const Vector<int64_t>& objectStoreIds, unsigned short mode)
+PassRefPtr<IDBTransactionBackendInterface> IDBDatabaseBackendProxy::createTransaction(int64_t id, const Vector<int64_t>& objectStoreIds, IDBTransaction::Mode mode)
 {
     OwnPtr<WebIDBTransaction> transaction = adoptPtr(m_webIDBDatabase->createTransaction(id, objectStoreIds, mode));
     if (!transaction)

@@ -39,11 +39,9 @@ indexedDB.deleteDatabase(dbname)
 
 transaction #1 request successful
 PASS event.target.result is "value1"
-awaiting_transaction_count -= 1
 
 transaction #2 request successful
 PASS event.target.result is "value2"
-awaiting_transaction_count -= 1
 
 All transactions completed - database deletes should now be unblocked.
 

@@ -35,7 +35,7 @@ function testClose()
     debug("Step 2: Wait for all transactions created using connection to complete. Once they are complete, connection is closed.");
     evalAndLog("awaiting_transaction_count = 2");
     function transactionCompleted() {
-        evalAndLog("awaiting_transaction_count -= 1");
+        awaiting_transaction_count -= 1;
 
         if (awaiting_transaction_count == 0) {
             debug("");

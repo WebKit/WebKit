@@ -1,3 +1,49 @@
+2012-12-05  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: Allow multiple transactions to interleave request execution
+        https://bugs.webkit.org/show_bug.cgi?id=97570
+
+        Reviewed by Tony Chang.
+
+        Implement spec logic for allowing read-only transactions, and read-write transactions
+        with non-overlapping scopes, to run concurrently. Transactions all still run in the
+        same thread with tasks triggered via timers, so tasks and the underlying database
+        operations are interleaved rather than truly parallelized.
+
+        Within IDBTransactionCoordinator, rename started->queued, running->started to match
+        spec terminology and clear up confusion.
+
+        Test: storage/indexeddb/transaction-coordination-across-databases.html
+              storage/indexeddb/transaction-coordination-within-database.html
+              storage/indexeddb/transaction-readwrite-exclusive.html
+              storage/indexeddb/transaction-scope-sequencing.html
+              storage/indexeddb/transaction-starvation.html
+
+        * Modules/indexeddb/IDBDatabaseBackendImpl.cpp: Use IDBTransaction::Mode enum
+        (WebCore::IDBDatabaseBackendImpl::createTransaction):
+        * Modules/indexeddb/IDBDatabaseBackendImpl.h: Ditto.
+        (IDBDatabaseBackendImpl):
+        * Modules/indexeddb/IDBDatabaseBackendInterface.h: Ditto.
+        (IDBDatabaseBackendInterface):
+        * Modules/indexeddb/IDBTransactionBackendImpl.cpp: Convert scope as a HashSet for
+        fast intersecting.
+        (WebCore::IDBTransactionBackendImpl::create):
+        (WebCore::IDBTransactionBackendImpl::IDBTransactionBackendImpl):
+        * Modules/indexeddb/IDBTransactionBackendImpl.h:
+        (IDBTransactionBackendImpl):
+        (WebCore::IDBTransactionBackendImpl::mode):
+        (WebCore::IDBTransactionBackendImpl::scope):
+        * Modules/indexeddb/IDBTransactionCoordinator.cpp: Spec logic goes here.
+        (WebCore::IDBTransactionCoordinator::processStartedTransactions): Extend this
+        method to test all plausibly runnable transactions.
+        (WebCore):
+        (WebCore::IDBTransactionCoordinator::canRunTransaction): Test to see if one
+        particular transaction can be run.
+        (WebCore::IDBTransactionCoordinator::doScopesOverlap): Do a quick intersection
+        test between transaction scopes.
+        * Modules/indexeddb/IDBTransactionCoordinator.h:
+        (IDBTransactionCoordinator):
+
 2012-12-05  No'am Rosenthal  <noam@webkit.org>
 
         Coordinated Graphics: Enable support for setContentsToBackgroundColor

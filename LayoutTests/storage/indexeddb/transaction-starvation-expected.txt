@@ -1,0 +1,37 @@
+Check that read-only transactions don't starve read-write transactions.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+
+dbname = "transaction-starvation.html"
+indexedDB.deleteDatabase(dbname)
+indexedDB.open(dbname)
+
+prepareDatabase():
+db = event.target.result
+db.createObjectStore('store')
+
+runTransactions():
+db = event.target.result
+
+readWriteTransactionStarted = false
+readWriteTransactionComplete = false
+
+startReadOnlyTransaction():
+transaction = db.transaction('store', 'readonly')
+store = transaction.objectStore('store')
+Keep the transaction alive with an endless series of gets
+
+startReadWriteTransaction():
+transaction = db.transaction('store', 'readwrite')
+readWriteTransactionStarted = true
+
+readWriteTransactionComplete():
+PASS Transaction wasn't starved
+readWriteTransactionComplete = true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

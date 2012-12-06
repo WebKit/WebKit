@@ -47,7 +47,7 @@ public:
     virtual PassRefPtr<WebCore::IDBObjectStoreBackendInterface> createObjectStore(int64_t, const String& name, const WebCore::IDBKeyPath&, bool autoIncrement, WebCore::IDBTransactionBackendInterface*, WebCore::ExceptionCode&);
     virtual void deleteObjectStore(int64_t, WebCore::IDBTransactionBackendInterface*, WebCore::ExceptionCode&);
     // FIXME: Remove this method in https://bugs.webkit.org/show_bug.cgi?id=103923.
-    virtual PassRefPtr<WebCore::IDBTransactionBackendInterface> createTransaction(int64_t, const Vector<int64_t>&, unsigned short mode);
+    virtual PassRefPtr<WebCore::IDBTransactionBackendInterface> createTransaction(int64_t, const Vector<int64_t>&, WebCore::IDBTransaction::Mode);
     virtual void createTransaction(int64_t, PassRefPtr<WebCore::IDBDatabaseCallbacks>, const Vector<int64_t>&, unsigned short mode);
     virtual void close(PassRefPtr<WebCore::IDBDatabaseCallbacks>);
 

@@ -1,3 +1,26 @@
+2012-12-05  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: Allow multiple transactions to interleave request execution
+        https://bugs.webkit.org/show_bug.cgi?id=97570
+
+        Reviewed by Tony Chang.
+
+        New tests for parallel transactions, update existing tests that relied on sequential execution.
+
+        * storage/indexeddb/database-close-expected.txt:
+        * storage/indexeddb/mozilla/clear-expected.txt:
+        * storage/indexeddb/mozilla/resources/clear.js: Split up transaction steps.
+        * storage/indexeddb/resources/database-close.js: Don't log on individual transaction completion.
+        * storage/indexeddb/resources/transaction-coordination-within-database.js: Added.
+        * storage/indexeddb/resources/transaction-scope-sequencing.js: Added.
+        * storage/indexeddb/resources/transaction-starvation.js: Added.
+        * storage/indexeddb/transaction-coordination-within-database-expected.txt: Added.
+        * storage/indexeddb/transaction-coordination-within-database.html: Added.
+        * storage/indexeddb/transaction-scope-sequencing-expected.txt: Added.
+        * storage/indexeddb/transaction-scope-sequencing.html: Added.
+        * storage/indexeddb/transaction-starvation-expected.txt: Added.
+        * storage/indexeddb/transaction-starvation.html: Added.
+
 2012-12-05  Dan Bernstein  <mitz@apple.com>
 
         Text decorations are rotated when text-combine takes effect

@@ -38,12 +38,16 @@
 
 namespace WebCore {
 
-PassRefPtr<IDBTransactionBackendImpl> IDBTransactionBackendImpl::create(int64_t id, const Vector<int64_t>& objectStoreIds, unsigned short mode, IDBDatabaseBackendImpl* database)
+PassRefPtr<IDBTransactionBackendImpl> IDBTransactionBackendImpl::create(int64_t id, const Vector<int64_t>& objectStoreIds, IDBTransaction::Mode mode, IDBDatabaseBackendImpl* database)
 {
-    return adoptRef(new IDBTransactionBackendImpl(id, objectStoreIds, mode, database));
+    HashSet<int64_t> objectStoreHashSet;
+    for (size_t i = 0; i < objectStoreIds.size(); ++i)
+        objectStoreHashSet.add(objectStoreIds[i]);
+
+    return adoptRef(new IDBTransactionBackendImpl(id, objectStoreHashSet, mode, database));
 }
 
-IDBTransactionBackendImpl::IDBTransactionBackendImpl(int64_t id, const Vector<int64_t>& objectStoreIds, unsigned short mode, IDBDatabaseBackendImpl* database)
+IDBTransactionBackendImpl::IDBTransactionBackendImpl(int64_t id, const HashSet<int64_t>& objectStoreIds, IDBTransaction::Mode mode, IDBDatabaseBackendImpl* database)
     : m_id(id)
     , m_objectStoreIds(objectStoreIds)
     , m_mode(mode)

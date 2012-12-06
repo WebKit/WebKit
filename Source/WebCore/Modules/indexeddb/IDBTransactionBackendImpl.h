@@ -30,6 +30,7 @@
 
 #include "IDBBackingStore.h"
 #include "IDBDatabaseError.h"
+#include "IDBTransaction.h"
 #include "IDBTransactionBackendInterface.h"
 #include "IDBTransactionCallbacks.h"
 #include "Timer.h"
@@ -43,7 +44,7 @@ class IDBDatabaseBackendImpl;
 
 class IDBTransactionBackendImpl : public IDBTransactionBackendInterface {
 public:
-    static PassRefPtr<IDBTransactionBackendImpl> create(int64_t transactionId, const Vector<int64_t>&, unsigned short mode, IDBDatabaseBackendImpl*);
+    static PassRefPtr<IDBTransactionBackendImpl> create(int64_t transactionId, const Vector<int64_t>&, IDBTransaction::Mode, IDBDatabaseBackendImpl*);
     static IDBTransactionBackendImpl* from(IDBTransactionBackendInterface* interface)
     {
         return static_cast<IDBTransactionBackendImpl*>(interface);
@@ -63,7 +64,8 @@ public:
 
     void abort(PassRefPtr<IDBDatabaseError>);
     void run();
-    unsigned short mode() const { return m_mode; }
+    IDBTransaction::Mode mode() const { return m_mode; }
+    const HashSet<int64_t>& scope() const { return m_objectStoreIds; }
     bool isFinished() const { return m_state == Finished; }
     bool scheduleTask(PassOwnPtr<Operation> task, PassOwnPtr<Operation> abortTask = nullptr) { return scheduleTask(NormalTask, task, abortTask); }
     bool scheduleTask(TaskType, PassOwnPtr<Operation>, PassOwnPtr<Operation> abortTask = nullptr);
@@ -75,7 +77,7 @@ public:
     int64_t id() const { return m_id; }
 
 private:
-    IDBTransactionBackendImpl(int64_t id, const Vector<int64_t>& objectStoreIds, unsigned short mode, IDBDatabaseBackendImpl*);
+    IDBTransactionBackendImpl(int64_t id, const HashSet<int64_t>& objectStoreIds, IDBTransaction::Mode, IDBDatabaseBackendImpl*);
 
     enum State {
         Unused, // Created, but no tasks yet.
@@ -94,8 +96,8 @@ private:
     void closeOpenCursors();
 
     const int64_t m_id;
-    const Vector<int64_t> m_objectStoreIds;
-    const unsigned short m_mode;
+    const HashSet<int64_t> m_objectStoreIds;
+    const IDBTransaction::Mode m_mode;
 
     State m_state;
     bool m_commitPending;

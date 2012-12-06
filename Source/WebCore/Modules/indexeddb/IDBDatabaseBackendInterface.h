@@ -26,6 +26,7 @@
 #ifndef IDBDatabaseBackendInterface_h
 #define IDBDatabaseBackendInterface_h
 
+#include "IDBTransaction.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
@@ -56,7 +57,7 @@ public:
     virtual PassRefPtr<IDBObjectStoreBackendInterface> createObjectStore(int64_t, const String& name, const IDBKeyPath&, bool autoIncrement, IDBTransactionBackendInterface*, ExceptionCode&) = 0;
     virtual void deleteObjectStore(int64_t, IDBTransactionBackendInterface*, ExceptionCode&) = 0;
     // FIXME: Remove this method in https://bugs.webkit.org/show_bug.cgi?id=103923.
-    virtual PassRefPtr<IDBTransactionBackendInterface> createTransaction(int64_t transactionId, const Vector<int64_t>& objectStoreIds, unsigned short mode) = 0;
+    virtual PassRefPtr<IDBTransactionBackendInterface> createTransaction(int64_t transactionId, const Vector<int64_t>& objectStoreIds, IDBTransaction::Mode) = 0;
     virtual void createTransaction(int64_t transactionId, PassRefPtr<IDBDatabaseCallbacks>, const Vector<int64_t>& objectStoreIds, unsigned short mode) = 0;
     virtual void close(PassRefPtr<IDBDatabaseCallbacks>) = 0;
 
