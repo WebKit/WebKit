@@ -684,7 +684,6 @@ webkit.org/b/99306 fast/multicol/pagination-v-horizontal-tb.html [ ImageOnlyFail
 webkit.org/b/99306 fast/multicol/pagination-v-vertical-lr.html [ ImageOnlyFailure ]
 webkit.org/b/99306 fast/multicol/pagination-v-vertical-rl.html [ ImageOnlyFailure ]
 webkit.org/b/99306 fast/multicol/scrolling-overflow.html [ ImageOnlyFailure ]
-webkit.org/b/99306 fast/regions/autowidth-normalflow-maxwidth.html [ ImageOnlyFailure ]
 webkit.org/b/99306 fast/repaint/fixed-child-move-after-scroll.html [ ImageOnlyFailure ]
 webkit.org/b/99306 fast/repaint/fixed-child-of-transformed-move-after-scroll.html [ ImageOnlyFailure ]
 webkit.org/b/99306 fast/repaint/fixed-in-page-scale.html [ ImageOnlyFailure ]

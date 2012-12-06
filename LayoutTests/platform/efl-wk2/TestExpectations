@@ -560,7 +560,6 @@ webkit.org/b/103468 fast/dom/shadow/reprojection-id-modified.html [ ImageOnlyFai
 webkit.org/b/103468 fast/dom/shadow/shadow-reprojection-dynamic.html [ ImageOnlyFailure Pass ]
 webkit.org/b/103468 fast/dom/shadow/shadowdom-for-image-dynamic.html [ ImageOnlyFailure Pass ]
 webkit.org/b/103468 fast/forms/checkbox-appearance-change-by-checked.html [ ImageOnlyFailure Pass ]
-webkit.org/b/103468 fast/regions/autowidth-normalflow-maxwidth.html [ ImageOnlyFailure Pass ]
 webkit.org/b/103468 fast/repaint/percent-minheight-resize.html [ ImageOnlyFailure Pass ]
 webkit.org/b/103468 fast/replaced/replaced-last-line-layout.html [ ImageOnlyFailure Pass ]
 webkit.org/b/103468 svg/animations/mpath-remove-from-dependents-on-delete-crash.html [ ImageOnlyFailure Pass ]
