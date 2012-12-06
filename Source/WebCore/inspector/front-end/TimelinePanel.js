@@ -546,10 +546,13 @@ WebInspector.TimelinePanel.prototype = {
     {
         if (this._operationInProgress)
             return;
-        if (this.toggleTimelineButton.toggled)
+        if (this.toggleTimelineButton.toggled) {
             this._model.stopRecord();
+            this.toggleTimelineButton.title = WebInspector.UIString("Record");
+        }
         else {
             this._model.startRecord();
+            this.toggleTimelineButton.title = WebInspector.UIString("Stop");
             WebInspector.userMetrics.TimelineStarted.record();
         }
         this.toggleTimelineButton.toggled = !this.toggleTimelineButton.toggled;

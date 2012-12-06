@@ -1,3 +1,19 @@
+2012-12-05  Sankeerth V S  <sankeerth.vs@samsung.com>
+
+        Web Inspector: Title of "Record Timeline" status button on "Timeline
+        Panel" should reflect the recording state.
+        https://bugs.webkit.org/show_bug.cgi?id=104108
+
+        Reviewed by Alexander Pavlov.
+
+        Title should be toggled between "Record"/"Stop" to reflect current
+        state of the Status bar button.
+
+        No new tests as UI related change.
+
+        * inspector/front-end/TimelinePanel.js:
+        (WebInspector.TimelinePanel.prototype.get _toggleTimelineButtonClicked):
+
 2012-12-03  Kent Tamura  <tkent@chromium.org>
 
         INPUT_MULTIPLE_FIELDS_UI doesn't show digits well in RTL locales
