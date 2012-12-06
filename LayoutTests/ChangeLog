@@ -1,3 +1,31 @@
+2012-12-06  Zan Dobersek  <zandobersek@gmail.com>
+
+        Turn pixel tests in dom/xhtml/level3/core into reftests
+        https://bugs.webkit.org/show_bug.cgi?id=103809
+
+        Reviewed by Dirk Pranke.
+
+        Turn 15 pixel tests under dom/xhtml/level3/core into reftests.
+        The reference files are tailored so they present the same output that
+        the pixel baselines (being removed) do.
+
+        * dom/xhtml/level3/core/canonicalform08-expected.html: Added.
+        * dom/xhtml/level3/core/canonicalform09-expected.html: Added.
+        * dom/xhtml/level3/core/documentgetinputencoding03-expected.html: Added.
+        * dom/xhtml/level3/core/entitygetinputencoding02-expected.html: Added.
+        * dom/xhtml/level3/core/entitygetxmlversion02-expected.html: Added.
+        * dom/xhtml/level3/core/nodegetbaseuri05-expected.html: Added.
+        * dom/xhtml/level3/core/nodegetbaseuri07-expected.html: Added.
+        * dom/xhtml/level3/core/nodegetbaseuri09-expected.html: Added.
+        * dom/xhtml/level3/core/nodegetbaseuri10-expected.html: Added.
+        * dom/xhtml/level3/core/nodegetbaseuri11-expected.html: Added.
+        * dom/xhtml/level3/core/nodegetbaseuri15-expected.html: Added.
+        * dom/xhtml/level3/core/nodegetbaseuri17-expected.html: Added.
+        * dom/xhtml/level3/core/nodegetbaseuri18-expected.html: Added.
+        * dom/xhtml/level3/core/nodelookupnamespaceuri01-expected.html: Added.
+        * dom/xhtml/level3/core/nodelookupprefix19-expected.html: Added.
+        * The now-unnecessary pixel and render tree baselines: Removed.
+
 2012-12-05  Kent Tamura  <tkent@chromium.org>
 
         [Chromium] Test expectation update
