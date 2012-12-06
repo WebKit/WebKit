@@ -4100,11 +4100,8 @@ webkit.org/b/101897 [ MountainLion ] fast/regions/region-style-inline-background
 
 webkit.org/b/79446 svg/repaint/image-with-clip-path.svg [ Pass ImageOnlyFailure ]
 
-webkit.org/b/100142 [ Win ] css3/filters/effect-reference-hw.html [ ImageOnlyFailure ]
-webkit.org/b/100142 [ Mac ] css3/filters/effect-reference-hw.html [ Failure ]
-
-webkit.org/b/103990 css3/filters/effect-reference-ordering-hw.html [ Crash ]
-
+# Image is incorrect:  feSpecularLighting sample has a Y-flip.
+webkit.org/b/104289 css3/filters/effect-reference-hw.html [ Failure ImageOnlyFailure ]
 
 # Only ready for JSC so far, not fixed in v8 yet.
 webkit.org/b/97499 http/tests/security/script-crossorigin-onerror-information.html [ Failure ]
