@@ -150,9 +150,8 @@ function _adjustWindowRectHorizontally(windowRect, availRect, anchorRect, minWid
     windowRect.width = Math.min(windowRect.width, availRect.width);
     windowRect.width = Math.max(windowRect.width, minWidth);
     windowRect.x = anchorRect.x;
-    var availableSpaceToRight = availRect.maxX - anchorRect.x;
-    if (windowRect.width > availableSpaceToRight)
-        windowRect.x -= (windowRect.width - availableSpaceToRight);
+    if (global.params.isRTL)
+        windowRect.x += anchorRect.width - windowRect.width;
     windowRect.x = Math.min(windowRect.x, availRect.maxX - windowRect.width);
     windowRect.x = Math.max(windowRect.x, availRect.x);
 }
@@ -165,8 +164,13 @@ function setWindowRect(rect) {
         window.frameElement.style.width = rect.width + "px";
         window.frameElement.style.height = rect.height + "px";
     } else {
-        window.moveTo(rect.x - window.screen.availLeft, rect.y - window.screen.availTop);
-        window.resizeTo(rect.width, rect.height);
+        if (isWindowHidden()) {
+            window.moveTo(rect.x - window.screen.availLeft, rect.y - window.screen.availTop);
+            window.resizeTo(rect.width, rect.height);
+        } else {
+            window.resizeTo(rect.width, rect.height);
+            window.moveTo(rect.x - window.screen.availLeft, rect.y - window.screen.availTop);
+        }
     }
 }
 
@@ -174,8 +178,15 @@ function hideWindow() {
     resizeWindow(1, 1);
 }
 
+/**
+ * @return {!boolean}
+ */
+function isWindowHidden() {
+    return window.innerWidth === 1 && window.innerHeight === 1;
+}
+
 window.addEventListener("resize", function() {
-    if (window.innerWidth === 1 && window.innerHeight === 1)
+    if (isWindowHidden())
         window.dispatchEvent(new CustomEvent("didHide"));
     else
         window.dispatchEvent(new CustomEvent("didOpenPicker"));

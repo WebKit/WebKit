@@ -1,3 +1,19 @@
+2012-12-06  Keishi Hattori  <keishi@webkit.org>
+
+        Page popup should align to the right when the anchor element is rtl
+        https://bugs.webkit.org/show_bug.cgi?id=104219
+
+        Reviewed by Kent Tamura.
+
+        Page popup should align to the right edge of the anchor element when the anchor element is rtl.
+
+        No new tests. Mock page popup can't test popup window position.
+
+        * Resources/pagepopups/pickerCommon.js:
+        (_adjustWindowRectHorizontally): Align to the right edge when anchor element is rtl. Removed some redundant lines.
+        (setWindowRect): If the window is hidden we want to move first then resize so the popup doesn't flicker.
+        (isWindowHidden): Returns true if the window is hidden using hideWindow().
+
 2012-12-06  Kentaro Hara  <haraken@chromium.org>
 
         [V8] Make an Isolate mandatory for v8StringOrNull() and v8StringOrUndefined()
