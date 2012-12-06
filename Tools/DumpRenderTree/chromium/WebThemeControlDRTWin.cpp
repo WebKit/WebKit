@@ -235,6 +235,7 @@ void WebThemeControlDRTWin::markState()
     case UnknownState:
     case DisabledState:
     case NormalState:
+    case IndeterminateState:
         // Don't visually mark these states (color is enough).
         break;
     case ReadOnlyState:

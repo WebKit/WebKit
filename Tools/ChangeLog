@@ -1,3 +1,15 @@
+2012-12-05  Shinya Kawanaka  <shinyak@chromium.org>
+
+        [Chromium] DRT on Windows crashes when a testcase has a progress element in indeterminate state
+        https://bugs.webkit.org/show_bug.cgi?id=102459
+
+        Reviewed by Dimitri Glazkov.
+
+        Since WebThemeControlDRTWin::markState does not consider indeterminate state, DRT caused a crash.
+
+        * DumpRenderTree/chromium/WebThemeControlDRTWin.cpp:
+        (WebThemeControlDRTWin::markState):
+
 2012-12-05  Filip Pizlo  <fpizlo@apple.com>
 
         DFG profiler should be able to display where a code block was inlined into, and what it inlined
