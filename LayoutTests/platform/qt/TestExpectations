@@ -1692,6 +1692,7 @@ fast/text/international/wrap-CJK-001.html
 fast/repaint/japanese-rl-selection-clear.html
 fast/repaint/japanese-rl-selection-repaint.html
 fast/repaint/japanese-rl-selection-repaint-in-regions.html
+fast/text/decorations-with-text-combine.html
 fast/text/international/bdi-neutral-wrapped.html
 fast/text/international/bidi-mirror-he-ar.html
 fast/text/international/bold-bengali.html

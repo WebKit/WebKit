@@ -1,3 +1,9 @@
+2012-12-06  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed gardening, skip a new test because of missing test font.
+
+        * platform/qt/TestExpectations:
+
 2012-12-06  Stephen White  <senorblanco@chromium.org>
 
         [Chromium] Unreviewed gardening.
