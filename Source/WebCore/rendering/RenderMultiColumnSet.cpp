@@ -41,6 +41,7 @@ RenderMultiColumnSet::RenderMultiColumnSet(Node* node, RenderFlowThread* flowThr
     , m_computedColumnCount(1)
     , m_computedColumnWidth(0)
     , m_computedColumnHeight(0)
+    , m_requiresBalancing(false)
     , m_minimumColumnHeight(0)
     , m_forcedBreaksCount(0)
     , m_maximumDistanceBetweenForcedBreaks(0)

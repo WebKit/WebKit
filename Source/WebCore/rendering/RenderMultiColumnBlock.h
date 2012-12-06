@@ -45,6 +45,8 @@ public:
 
     RenderMultiColumnFlowThread* flowThread() const { return m_flowThread; }
 
+    bool requiresBalancing() const { return m_requiresBalancing; }
+
 private:
     virtual bool isRenderMultiColumnBlock() const { return true; }
     
@@ -65,6 +67,7 @@ private:
     LayoutUnit m_columnWidth; // since a multi-column block that is split across variable width pages or regions will have different column counts and widths in each.
                               // These values will be cached (eventually) for multi-column blocks.
     LayoutUnit m_columnHeight; // The current column height.
+    bool m_requiresBalancing; // Whether or not the block specified any kind of logical height. We have to balance by default if it didn't.
 };
 
 inline RenderMultiColumnBlock* toRenderMultiColumnBlock(RenderObject* object)

@@ -84,6 +84,9 @@ public:
         m_forcedBreakOffset = offsetFromFirstPage;
     }
 
+    bool requiresBalancing() const { return m_requiresBalancing; }
+    void setRequiresBalancing(bool balancing) { m_requiresBalancing = balancing; }
+
 private:
     virtual void updateLogicalWidth() OVERRIDE;
     virtual void updateLogicalHeight() OVERRIDE;
@@ -121,11 +124,27 @@ private:
     LayoutUnit m_computedColumnHeight;
     
     // The following variables are used when balancing the column set.
+    bool m_requiresBalancing; // Whether or not the columns in the column set have to be balanced, i.e., made to be similar logical heights.
     LayoutUnit m_minimumColumnHeight;
     unsigned m_forcedBreaksCount; // FIXME: We will ultimately need to cache more information to balance around forced breaks properly.
     LayoutUnit m_maximumDistanceBetweenForcedBreaks;
     LayoutUnit m_forcedBreakOffset;
 };
+
+inline RenderMultiColumnSet* toRenderMultiColumnSet(RenderObject* object)
+{
+    ASSERT(!object || object->isRenderMultiColumnSet());
+    return static_cast<RenderMultiColumnSet*>(object);
+}
+
+inline const RenderMultiColumnSet* toRenderMultiColumnSet(const RenderObject* object)
+{
+    ASSERT(!object || object->isRenderMultiColumnSet());
+    return static_cast<const RenderMultiColumnSet*>(object);
+}
+
+// This will catch anyone doing an unnecessary cast.
+void toRenderMultiColumnSet(const RenderMultiColumnSet*);
 
 } // namespace WebCore
 

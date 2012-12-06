@@ -39,6 +39,7 @@ RenderMultiColumnBlock::RenderMultiColumnBlock(Node* node)
     , m_columnCount(1)
     , m_columnWidth(0)
     , m_columnHeight(0)
+    , m_requiresBalancing(false)
 {
 }
 
@@ -83,7 +84,8 @@ void RenderMultiColumnBlock::checkForPaginationLogicalHeightChange(LayoutUnit& /
     // We don't actually update any of the variables. We just subclassed to adjust our column height.
     updateLogicalHeight();
     LayoutUnit newContentLogicalHeight = contentLogicalHeight();
-    if (newContentLogicalHeight > 0) {
+    m_requiresBalancing = !newContentLogicalHeight;
+    if (!m_requiresBalancing) {
         // The regions will be invalidated when we lay them out and they change size to
         // the new column height.
         if (columnHeight() != newContentLogicalHeight)
@@ -137,11 +139,16 @@ void RenderMultiColumnBlock::ensureColumnSets()
     // FIXME: For now just make one column set. This matches the old multi-column code.
     // Right now our goal is just feature parity with the old multi-column code so that we can switch over to the
     // new code as soon as possible.
-    if (flowThread() && !firstChild()->isRenderMultiColumnSet()) {
-        RenderMultiColumnSet* columnSet = new (renderArena()) RenderMultiColumnSet(document(), flowThread());
+    if (!flowThread())
+        return;
+
+    RenderMultiColumnSet* columnSet = firstChild()->isRenderMultiColumnSet() ? toRenderMultiColumnSet(firstChild()) : 0;
+    if (!columnSet) {
+        columnSet = new (renderArena()) RenderMultiColumnSet(document(), flowThread());
         columnSet->setStyle(RenderStyle::createAnonymousStyleWithDisplay(style(), BLOCK));
         RenderBlock::addChild(columnSet, firstChild());
     }
+    columnSet->setRequiresBalancing(requiresBalancing());
 }
 
 const char* RenderMultiColumnBlock::renderName() const
