@@ -147,6 +147,7 @@
        (global-name "com.apple.ocspd")
        (global-name "com.apple.pasteboard.1")
        (global-name "com.apple.system.opendirectoryd.api")
+       (global-name "com.apple.tccd")
        (global-name "com.apple.window_proxies")
        (global-name "com.apple.windowserver.active")
        (global-name "com.apple.cfnetwork.AuthBrokerAgent")
