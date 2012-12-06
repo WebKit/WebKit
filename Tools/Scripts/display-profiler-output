@@ -265,6 +265,16 @@ class Compilation
     end
 end
 
+if ARGV.length != 1
+    $stderr.puts "Usage: display-profiler-output <path to profiler output file>"
+    $stderr.puts
+    $stderr.puts "The typical usage pattern for the profiler currently looks something like:"
+    $stderr.puts
+    $stderr.puts "Path/To/jsc -p profile.json myprogram.js"
+    $stderr.puts "display-profiler-output profile.json"
+    exit 1
+end
+
 $json = JSON::parse(IO::read(ARGV[0]))
 $bytecodes = $json["bytecodes"].map {
     | subJson |
