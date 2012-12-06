@@ -1,3 +1,17 @@
+2012-12-06  Justin Novosad  <junov@google.com>
+
+        New pixel baselines for fast/backgrounds/gradient-background-leakage.html
+        https://bugs.webkit.org/show_bug.cgi?id=103896
+
+        Unreviewed
+
+        * platform/chromium-linux/fast/backgrounds/gradient-background-leakage-expected.png:
+        * platform/chromium-mac/fast/backgrounds/gradient-background-leakage-expected.png:
+        * platform/chromium/TestExpectations:
+        * platform/efl-wk1/fast/backgrounds: Added.
+        * platform/efl-wk1/fast/backgrounds/gradient-background-leakage-expected.png: Added.
+        * platform/efl/fast/backgrounds/gradient-background-leakage-expected.png: Removed.
+
 2012-12-06  Yael Aharon  <yael.aharon@intel.com>
 
         Unreviewed gardening.

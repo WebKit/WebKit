@@ -2185,9 +2185,6 @@ crbug.com/77494 [ Android ] fast/repaint/transform-replaced-shadows.html [ Failu
 
 crbug.com/43890 [ Win ] http/tests/loading/basic.html [ Failure Pass ]
 
-# Test requires ne baseline after fixing webkit.org/b/103896
-webkit.org/b/103896 fast/backgrounds/gradient-background-leakage.html [ Pass ImageOnlyFailure ]
-
 # The following tests fail on all platforms and need further investigation.
 # Many of these are skipped on the Mac platform
 webkit.org/b/45991 canvas/philip/tests/2d.drawImage.broken.html [ Failure ]
