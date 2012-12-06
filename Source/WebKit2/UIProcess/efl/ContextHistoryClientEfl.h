@@ -40,6 +40,8 @@ public:
         return adoptPtr(new ContextHistoryClientEfl(context));
     }
 
+    ~ContextHistoryClientEfl();
+
     void setCallbacks(Ewk_History_Navigation_Cb, Ewk_History_Client_Redirection_Cb, Ewk_History_Server_Redirection_Cb, Ewk_History_Title_Update_Cb, Ewk_History_Populate_Visited_Links_Cb, void*);
 
 private:
@@ -51,6 +53,7 @@ private:
     static void didUpdateHistoryTitle(WKContextRef, WKPageRef, WKStringRef, WKURLRef, WKFrameRef, const void*);
     static void populateVisitedLinks(WKContextRef, const void*);
 
+    RefPtr<WebContext> m_context;
     void* m_userData;
     Ewk_History_Navigation_Cb m_navigate;
     Ewk_History_Client_Redirection_Cb m_clientRedirect;

@@ -139,6 +139,11 @@ DownloadManagerEfl::DownloadManagerEfl(EwkContext* context)
     WKContextSetDownloadClient(toAPI(context->webContext().get()), &wkDownloadClient);
 }
 
+DownloadManagerEfl::~DownloadManagerEfl()
+{
+    WKContextSetDownloadClient(toAPI(m_context->webContext().get()), 0);
+}
+
 void DownloadManagerEfl::registerDownload(DownloadProxy* download, EwkViewImpl* viewImpl)
 {
     uint64_t downloadId = download->downloadID();
