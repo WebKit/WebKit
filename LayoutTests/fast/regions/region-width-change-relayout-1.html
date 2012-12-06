@@ -1,0 +1,31 @@
+<!doctype html>
+<html>
+    <head>
+        <style>
+            .flowContent { font-size: 50px; font-family: monospace; line-height: 2; color: green; }
+            #article { -webkit-flow-into: flow; }
+
+            .regionSize { width: 200px; }
+            .regionSize2 { width: 100px; }
+
+            #region { -webkit-flow-from: flow; height: 100px; border: 1px solid black;}
+            #region2 { -webkit-flow-from: flow; height: 100px; border: 1px solid black;}
+        </style>
+    </head>
+    <body>
+        <p>Test for <a href="https://bugs.webkit.org/show_bug.cgi?id=103993"> Blocks don't relayout children if the width of a region changes</a>.</p>
+        <p>When the width of a region decreases the lines in that region should be recomputed.</p>
+        <p>On success, there should be no text outside the black rectangles and both regions should have text in them.</p>
+        <div class="flowContent" id="article">
+            <span>
+                a a a a a
+            </span>
+        </div>
+        <div id="region" class="regionSize"></div>
+        <div id="region2" class="regionSize"></div>
+        <script>
+            document.body.offsetTop; //force layout
+            document.getElementById("region").className = "regionSize2";
+        </script>
+    </body>
+</html>

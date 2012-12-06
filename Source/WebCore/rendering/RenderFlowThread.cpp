@@ -462,6 +462,10 @@ bool RenderFlowThread::logicalWidthChangedInRegions(const RenderBlock* block, La
     RenderRegion* endRegion;
     getRegionRangeForBox(block, startRegion, endRegion);
 
+    // If the block doesn't have a startRegion (and implicitly a region range) it's safe to assume the width in regions has changed (e.g. the region chain was invalidated).
+    if (!startRegion)
+        return true;
+
     for (RenderRegionList::iterator iter = m_regionList.find(startRegion); iter != m_regionList.end(); ++iter) {
         RenderRegion* region = *iter;
         ASSERT(!region->needsLayout());
