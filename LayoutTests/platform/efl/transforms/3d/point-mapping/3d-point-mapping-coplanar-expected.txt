@@ -1,0 +1,37 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (0,0) size 800x600 [border: (1px solid #000000)]
+      RenderBlock (anonymous) at (1,1) size 798x342
+        RenderBlock {DIV} at (20,20) size 302x302 [border: (1px solid #000000)]
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {P} at (1,359) size 798x18
+        RenderText {#text} at (0,0) size 366x19
+          text run at (0,0) width 366: "When hit-testing coplanar elements, document order wins."
+layer at (30,400) size 306x72
+  RenderBlock (positioned) {DIV} at (30,400) size 306x72
+    RenderInline {SPAN} at (0,0) size 298x19 [color=#008000]
+      RenderText {#text} at (0,0) size 298x19
+        text run at (0,0) width 298: "PASS: event at (44, 44) hit box1 at offset (2, 2)"
+    RenderBR {BR} at (298,15) size 0x0
+    RenderInline {SPAN} at (0,0) size 298x19 [color=#008000]
+      RenderText {#text} at (0,18) size 298x19
+        text run at (0,18) width 298: "PASS: event at (70, 59) hit box2 at offset (2, 2)"
+    RenderBR {BR} at (298,33) size 0x0
+    RenderInline {SPAN} at (0,0) size 306x19 [color=#008000]
+      RenderText {#text} at (0,36) size 306x19
+        text run at (0,36) width 306: "PASS: event at (70, 101) hit box3 at offset (2, 2)"
+    RenderBR {BR} at (306,51) size 0x0
+    RenderInline {SPAN} at (0,0) size 306x19 [color=#008000]
+      RenderText {#text} at (0,54) size 306x19
+        text run at (0,54) width 306: "PASS: event at (70, 144) hit box4 at offset (2, 2)"
+    RenderBR {BR} at (306,69) size 0x0
+layer at (42,42) size 260x260
+  RenderBlock (relative positioned) {DIV} at (21,21) size 260x260 [bgcolor=#DDDDDD] [border: (1px solid #000000)]
+layer at (73,63) size 200x100
+  RenderBlock (positioned) {DIV} at (31,21) size 200x100 [bgcolor=#AAAAAA] [border: (1px solid #000000)]
+layer at (73,103) size 200x100
+  RenderBlock (positioned) {DIV} at (31,61) size 200x100 [bgcolor=#AAAAAA] [border: (1px solid #000000)]
+layer at (73,143) size 200x100
+  RenderBlock (positioned) {DIV} at (31,101) size 200x100 [bgcolor=#AAAAAA] [border: (1px solid #000000)]

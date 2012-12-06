@@ -1,3 +1,36 @@
+2012-12-06  Yael Aharon  <yael.aharon@intel.com>
+
+        Unreviewed gardening.
+
+        Add expected results for transforms/3d tests that are producing correct resulta.
+
+        * platform/efl/TestExpectations:
+        * platform/efl/transforms/3d: Added.
+        * platform/efl/transforms/3d/general: Added.
+        * platform/efl/transforms/3d/general/perspective-non-layer-expected.png: Added.
+        * platform/efl/transforms/3d/general/perspective-non-layer-expected.txt: Added.
+        * platform/efl/transforms/3d/general/perspective-units-expected.png: Added.
+        * platform/efl/transforms/3d/general/perspective-units-expected.txt: Added.
+        * platform/efl/transforms/3d/hit-testing: Added.
+        * platform/efl/transforms/3d/hit-testing/backface-hit-test-expected.png: Added.
+        * platform/efl/transforms/3d/hit-testing/backface-hit-test-expected.txt: Added.
+        * platform/efl/transforms/3d/hit-testing/backface-no-transform-hit-test-expected.png: Added.
+        * platform/efl/transforms/3d/hit-testing/backface-no-transform-hit-test-expected.txt: Added.
+        * platform/efl/transforms/3d/point-mapping: Added.
+        * platform/efl/transforms/3d/point-mapping/3d-point-mapping-2-expected.png: Added.
+        * platform/efl/transforms/3d/point-mapping/3d-point-mapping-2-expected.txt: Added.
+        * platform/efl/transforms/3d/point-mapping/3d-point-mapping-3-expected.png: Added.
+        * platform/efl/transforms/3d/point-mapping/3d-point-mapping-3-expected.txt: Added.
+        * platform/efl/transforms/3d/point-mapping/3d-point-mapping-coplanar-expected.png: Added.
+        * platform/efl/transforms/3d/point-mapping/3d-point-mapping-coplanar-expected.txt: Added.
+        * platform/efl/transforms/3d/point-mapping/3d-point-mapping-deep-expected.txt: Added.
+        * platform/efl/transforms/3d/point-mapping/3d-point-mapping-expected.png: Added.
+        * platform/efl/transforms/3d/point-mapping/3d-point-mapping-expected.txt: Added.
+        * platform/efl/transforms/3d/point-mapping/3d-point-mapping-overlapping-expected.png: Added.
+        * platform/efl/transforms/3d/point-mapping/3d-point-mapping-overlapping-expected.txt: Added.
+        * platform/efl/transforms/3d/point-mapping/3d-point-mapping-preserve-3d-expected.png: Added.
+        * platform/efl/transforms/3d/point-mapping/3d-point-mapping-preserve-3d-expected.txt: Added.
+
 2012-12-06  Stephen Chenney  <schenney@chromium.org>
 
         Fix a bad rebaseline
