@@ -236,8 +236,11 @@ IDBDatabaseBackendImpl::IDBDatabaseBackendImpl(const String& name, IDBBackingSto
 
 bool IDBDatabaseBackendImpl::openInternal()
 {
-    bool success = m_backingStore->getIDBDatabaseMetaData(m_metadata.name, &m_metadata);
+    bool success = false;
+    bool ok = m_backingStore->getIDBDatabaseMetaData(m_metadata.name, &m_metadata, success);
     ASSERT_WITH_MESSAGE(success == (m_metadata.id != InvalidId), "success = %s, m_id = %lld", success ? "true" : "false", static_cast<long long>(m_metadata.id));
+    if (!ok)
+        return false;
     if (success) {
         loadObjectStores();
         return true;
@@ -318,7 +321,11 @@ void IDBDatabaseBackendImpl::deleteObjectStore(int64_t id, IDBTransactionBackend
 void IDBDatabaseBackendImpl::DeleteObjectStoreOperation::perform(IDBTransactionBackendImpl* transaction)
 {
     IDB_TRACE("DeleteObjectStoreOperation");
-    m_database->m_backingStore->deleteObjectStore(transaction->backingStoreTransaction(), m_database->id(), m_objectStore->id());
+    bool ok = m_database->m_backingStore->deleteObjectStore(transaction->backingStoreTransaction(), m_database->id(), m_objectStore->id());
+    if (!ok) {
+        RefPtr<IDBDatabaseError> error = IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Internal error deleting object store.");
+        transaction->abort(error);
+    }
 }
 
 void IDBDatabaseBackendImpl::VersionChangeOperation::perform(IDBTransactionBackendImpl* transaction)

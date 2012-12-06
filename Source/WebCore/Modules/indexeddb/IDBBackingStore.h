@@ -52,7 +52,7 @@ public:
     static PassRefPtr<IDBBackingStore> open(SecurityOrigin*, const String& pathBase, const String& fileIdentifier, IDBFactoryBackendImpl*);
 
     virtual Vector<String> getDatabaseNames();
-    virtual bool getIDBDatabaseMetaData(const String& name, IDBDatabaseMetadata*);
+    virtual bool getIDBDatabaseMetaData(const String& name, IDBDatabaseMetadata*, bool& success) WARN_UNUSED_RETURN;
     virtual bool createIDBDatabaseMetaData(const String& name, const String& version, int64_t intVersion, int64_t& rowId);
     virtual bool updateIDBDatabaseMetaData(IDBBackingStore::Transaction*, int64_t rowId, const String& version);
     virtual bool updateIDBDatabaseIntVersion(IDBBackingStore::Transaction*, int64_t rowId, int64_t intVersion);
@@ -60,7 +60,7 @@ public:
 
     virtual Vector<IDBObjectStoreMetadata> getObjectStores(int64_t databaseId);
     virtual bool createObjectStore(IDBBackingStore::Transaction*, int64_t databaseId, int64_t objectStoreId, const String& name, const IDBKeyPath&, bool autoIncrement);
-    virtual void deleteObjectStore(IDBBackingStore::Transaction*, int64_t databaseId, int64_t objectStoreId);
+    virtual bool deleteObjectStore(IDBBackingStore::Transaction*, int64_t databaseId, int64_t objectStoreId) WARN_UNUSED_RETURN;
 
     class RecordIdentifier {
         WTF_MAKE_NONCOPYABLE(RecordIdentifier);

@@ -67,6 +67,7 @@ enum IDBLevelDBBackingStoreInternalErrorType {
     IDBLevelDBBackingStoreReadErrorGetPrimaryKeyViaIndex,
     IDBLevelDBBackingStoreReadErrorKeyExistsInIndex,
     IDBLevelDBBackingStoreReadErrorVersionExists,
+    IDBLevelDBBackingStoreReadErrorDeleteObjectStore,
     IDBLevelDBBackingStoreInternalErrorMax,
 };
 static inline void recordInternalError(IDBLevelDBBackingStoreInternalErrorType type)
@@ -121,17 +122,17 @@ static void putInt(LevelDBTransaction* transaction, const LevelDBSlice& key, int
 }
 
 template <typename DBOrTransaction>
-static bool getVarInt(DBOrTransaction* db, const LevelDBSlice& key, int64_t& foundInt)
+WARN_UNUSED_RETURN static bool getVarInt(DBOrTransaction* db, const LevelDBSlice& key, int64_t& foundInt, bool& found)
 {
     Vector<char> result;
-    bool found = false;
     bool ok = db->safeGet(key, result, found);
-    // FIXME: Notify the caller if !ok.
-    ASSERT_UNUSED(ok, ok);
-    if (!found)
+    if (!ok)
         return false;
+    if (!found)
+        return true;
 
-    return decodeVarInt(result.begin(), result.end(), foundInt) == result.end();
+    found = decodeVarInt(result.begin(), result.end(), foundInt) == result.end();
+    return true;
 }
 
 static void putVarInt(LevelDBTransaction* transaction, const LevelDBSlice& key, int64_t value)
@@ -140,15 +141,15 @@ static void putVarInt(LevelDBTransaction* transaction, const LevelDBSlice& key, 
 }
 
 template <typename DBOrTransaction>
-static bool getString(DBOrTransaction* db, const LevelDBSlice& key, String& foundString)
+WARN_UNUSED_RETURN static bool getString(DBOrTransaction* db, const LevelDBSlice& key, String& foundString, bool& found)
 {
     Vector<char> result;
-    bool found = false;
+    found = false;
     bool ok = db->safeGet(key, result, found);
-    // FIXME: Notify the caller if !ok.
-    ASSERT_UNUSED(ok, ok);
-    if (!found)
+    if (!ok)
         return false;
+    if (!found)
+        return true;
 
     foundString = decodeString(result.begin(), result.end());
     return true;
@@ -364,25 +365,35 @@ Vector<String> IDBBackingStore::getDatabaseNames()
     return foundNames;
 }
 
-bool IDBBackingStore::getIDBDatabaseMetaData(const String& name, IDBDatabaseMetadata* metadata)
+bool IDBBackingStore::getIDBDatabaseMetaData(const String& name, IDBDatabaseMetadata* metadata, bool& found)
 {
     const Vector<char> key = DatabaseNameKey::encode(m_identifier, name);
+    found = false;
 
-    bool ok = getInt(m_db.get(), key, metadata->id);
-    if (!ok)
-        return false;
+    found = getInt(m_db.get(), key, metadata->id);
+    if (!found)
+        return true;
 
-    ok = getString(m_db.get(), DatabaseMetaDataKey::encode(metadata->id, DatabaseMetaDataKey::UserVersion), metadata->version);
+    bool ok = getString(m_db.get(), DatabaseMetaDataKey::encode(metadata->id, DatabaseMetaDataKey::UserVersion), metadata->version, found);
     if (!ok) {
         InternalError(IDBLevelDBBackingStoreReadErrorGetIDBDatabaseMetaData);
         return false;
     }
+    if (!found) {
+        InternalError(IDBLevelDBBackingStoreConsistencyError);
+        return false;
+    }
 
-    ok = getVarInt(m_db.get(), DatabaseMetaDataKey::encode(metadata->id, DatabaseMetaDataKey::UserIntVersion), metadata->intVersion);
+    ok = getVarInt(m_db.get(), DatabaseMetaDataKey::encode(metadata->id, DatabaseMetaDataKey::UserIntVersion), metadata->intVersion, found);
     if (!ok) {
         InternalError(IDBLevelDBBackingStoreReadErrorGetIDBDatabaseMetaData);
         return false;
     }
+    if (!found) {
+        InternalError(IDBLevelDBBackingStoreConsistencyError);
+        return false;
+    }
+
     if (metadata->intVersion == IDBDatabaseMetadata::DefaultIntVersion)
         metadata->intVersion = IDBDatabaseMetadata::NoIntVersion;
 
@@ -459,7 +470,11 @@ bool IDBBackingStore::deleteDatabase(const String& name)
     OwnPtr<LevelDBWriteOnlyTransaction> transaction = LevelDBWriteOnlyTransaction::create(m_db.get());
 
     IDBDatabaseMetadata metadata;
-    if (!getIDBDatabaseMetaData(name, &metadata))
+    bool success = false;
+    bool ok = getIDBDatabaseMetaData(name, &metadata, success);
+    if (!ok)
+        return false;
+    if (!success)
         return true;
 
     const Vector<char> startKey = DatabaseMetaDataKey::encode(metadata.id, DatabaseMetaDataKey::OriginName);
@@ -622,13 +637,22 @@ bool IDBBackingStore::createObjectStore(IDBBackingStore::Transaction* transactio
     return true;
 }
 
-void IDBBackingStore::deleteObjectStore(IDBBackingStore::Transaction* transaction, int64_t databaseId, int64_t objectStoreId)
+bool IDBBackingStore::deleteObjectStore(IDBBackingStore::Transaction* transaction, int64_t databaseId, int64_t objectStoreId)
 {
     IDB_TRACE("IDBBackingStore::deleteObjectStore");
     LevelDBTransaction* levelDBTransaction = IDBBackingStore::Transaction::levelDBTransactionFrom(transaction);
 
     String objectStoreName;
-    getString(levelDBTransaction, ObjectStoreMetaDataKey::encode(databaseId, objectStoreId, ObjectStoreMetaDataKey::Name), objectStoreName);
+    bool found = false;
+    bool ok = getString(levelDBTransaction, ObjectStoreMetaDataKey::encode(databaseId, objectStoreId, ObjectStoreMetaDataKey::Name), objectStoreName, found);
+    if (!ok) {
+        InternalError(IDBLevelDBBackingStoreReadErrorDeleteObjectStore);
+        return false;
+    }
+    if (!found) {
+        InternalError(IDBLevelDBBackingStoreConsistencyError);
+        return false;
+    }
 
     deleteRange(levelDBTransaction, ObjectStoreMetaDataKey::encode(databaseId, objectStoreId, 0), ObjectStoreMetaDataKey::encodeMaxKey(databaseId, objectStoreId));
 
@@ -638,6 +662,7 @@ void IDBBackingStore::deleteObjectStore(IDBBackingStore::Transaction* transactio
     deleteRange(levelDBTransaction, IndexMetaDataKey::encode(databaseId, objectStoreId, 0, 0), IndexMetaDataKey::encodeMaxKey(databaseId, objectStoreId));
 
     clearObjectStore(transaction, databaseId, objectStoreId);
+    return true;
 }
 
 bool IDBBackingStore::getRecord(IDBBackingStore::Transaction* transaction, int64_t databaseId, int64_t objectStoreId, const IDBKey& key, String& record)

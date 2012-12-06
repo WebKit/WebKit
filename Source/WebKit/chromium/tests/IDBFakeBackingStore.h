@@ -33,7 +33,7 @@ namespace WebCore {
 class IDBFakeBackingStore : public IDBBackingStore {
 public:
     virtual Vector<String> getDatabaseNames() OVERRIDE { return Vector<String>(); }
-    virtual bool getIDBDatabaseMetaData(const String& name, IDBDatabaseMetadata*) OVERRIDE { return false; }
+    virtual bool getIDBDatabaseMetaData(const String& name, IDBDatabaseMetadata*, bool& found) OVERRIDE { return true; }
     virtual bool createIDBDatabaseMetaData(const String& name, const String& version, int64_t intVersion, int64_t& rowId) OVERRIDE { return true; }
     virtual bool updateIDBDatabaseMetaData(Transaction*, int64_t rowId, const String& version) OVERRIDE { return false; }
     virtual bool updateIDBDatabaseIntVersion(Transaction*, int64_t rowId, int64_t version) OVERRIDE { return false; }
@@ -41,7 +41,6 @@ public:
 
     virtual Vector<IDBObjectStoreMetadata> getObjectStores(int64_t databaseId) OVERRIDE { return Vector<IDBObjectStoreMetadata>(); }
     virtual bool createObjectStore(Transaction*, int64_t databaseId, int64_t objectStoreId, const String& name, const IDBKeyPath&, bool autoIncrement) OVERRIDE { return false; };
-    virtual void deleteObjectStore(Transaction*, int64_t databaseId, int64_t objectStoreId) OVERRIDE { }
 
     virtual void putRecord(Transaction*, int64_t databaseId, int64_t objectStoreId, const IDBKey&, const String& value, RecordIdentifier*) OVERRIDE { }
     virtual void clearObjectStore(Transaction*, int64_t databaseId, int64_t objectStoreId) OVERRIDE { }

@@ -1,3 +1,13 @@
+2012-12-06  David Grogan  <dgrogan@chromium.org>
+
+        IndexedDB: Abort transactions because of leveldb errors part 4
+        https://bugs.webkit.org/show_bug.cgi?id=103964
+
+        Reviewed by Tony Chang.
+
+        * tests/IDBFakeBackingStore.h:
+          Update one overridden method signature, delete another.
+
 2012-12-06  Tony Chang  <tony@chromium.org>
 
         REGRESSION(r135082): Restore the ability to insert author level style sheets from script
@@ -519,7 +529,7 @@
 
         * DEPS:
 
-2012-11-30  David Grogan  <dgrogan@chromium.org>
+2012-12-04  David Grogan  <dgrogan@chromium.org>
 
         IndexedDB: Propagate more leveldb errors to IDBIndex and IDBObjectStore
         https://bugs.webkit.org/show_bug.cgi?id=103782
