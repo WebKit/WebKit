@@ -1,3 +1,26 @@
+2012-12-05  Brent Fulgham  <bfulgham@webkit.org>
+
+        [Windows, WinCairo] Regenerate .def files on changes
+        https://bugs.webkit.org/show_bug.cgi?id=104136
+
+        Reviewed by Tim Horton.
+
+        The new .def file generator is not regenerating the link
+        export definitions once it creates the definition file
+        the first time. You must clean the build directory for
+        new symbols to be added (or removed).
+
+        * win/WebKit2.vcproj: Change the WebKit2.def file reference to
+          point to the generated version of the file.
+        * win/WebKit2ExportGenerator.vcproj: Add WebKit2.def.in as a source
+          file that participates in the build so that Visual Studio knows
+          to build the project when the file changes.
+        * win/WebKit2ExportGeneratorBuildCmd.cmd: Added. Refactor build
+          command into its own shell script.
+        * win/WebKit2ExportGeneratorPostBuild.cmd: Call new BuildCmd script.
+        * win/WebKit2ExportGeneratorPreBuild.cmd: Delete the old generator
+          and definition files to ensure a clean build.
+
 2012-12-05  Halton Huo  <halton.huo@intel.com>
 
         [CMake] Unify coding style for CMake files

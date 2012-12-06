@@ -4588,7 +4588,7 @@
 			>
 		</File>
 		<File
-			RelativePath=".\WebKit2.def"
+			RelativePath="$(ConfigurationBuildDir)\obj\WebKit2ExportGenerator\WebKit2.def"
 			>
 		</File>
 		<File
