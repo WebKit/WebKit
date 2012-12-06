@@ -154,7 +154,7 @@ uint32_t GraphicsContext3DPrivate::copyToGraphicsSurface()
 #endif
     }
 
-    m_platformSurface->updateContents(m_context->m_texture, IntRect(0, 0, m_context->m_currentWidth, m_context->m_currentHeight), m_context->m_boundFBO);
+    m_platformSurface->updateContents(m_context->m_texture, IntRect(0, 0, m_context->m_currentWidth, m_context->m_currentHeight), m_context->m_boundFBO, m_context->m_boundTexture0);
     return 0;
 }
 

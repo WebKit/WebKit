@@ -129,7 +129,7 @@ void GLPlatformSurface::copyTexture(uint32_t texture, const IntRect& sourceRect)
     glPopAttrib();
 }
 
-void GLPlatformSurface::updateContents(uint32_t texture, const IntRect& sourceRect, const GLuint bindFboId)
+void GLPlatformSurface::updateContents(const uint32_t texture, const IntRect& sourceRect, const GLuint bindFboId, const uint32_t bindTexture)
 {
     m_restoreNeeded = false;
 
@@ -148,7 +148,7 @@ void GLPlatformSurface::updateContents(uint32_t texture, const IntRect& sourceRe
     glBlitFramebuffer(x, y, width, height, x, y, width, height, GL_COLOR_BUFFER_BIT, GL_LINEAR);
     swapBuffers();
     glFramebufferTexture2D(GL_READ_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, 0, 0);
-    glBindTexture(GL_TEXTURE_2D, 0);
+    glBindTexture(GL_TEXTURE_2D, bindTexture);
     glBindFramebuffer(GL_FRAMEBUFFER, bindFboId);
 }
 
