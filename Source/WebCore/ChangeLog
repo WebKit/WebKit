@@ -1,3 +1,55 @@
+2012-12-06  Elliott Sprehn  <esprehn@gmail.com>
+
+        Create only NodeRareDataBase when setting TreeScope
+        https://bugs.webkit.org/show_bug.cgi?id=104202
+
+        Reviewed by Dimitri Glazkov.
+
+        Move many fields from NodeRareData into NodeRareDataBase and rename it
+        UncommonNodeData and add a flag to determine if a UncommonNodeData is
+        actually a full NodeRareData instance. By moving fields up from NodeRareData
+        we ensure that this new flag in the base class doesn't make NodeRareData
+        grow in size.
+
+        We then make setting the tree scope only allocate the UncommonNodeData
+        instead of creating the full NodeRareData or ElementRareData. This is
+        important because when putting nodes into ShadowRoot or any descendant
+        we must associate the node with a tree scope which adds rare data to the
+        node making NodeRareData and ElementRareData not very rare.
+
+        On 64bit, this reduces the overhead per element from 136 bytes to
+        32 bytes for a 76% savings, and on other nodes from 64 bytes to 32 bytes
+        for a 50% savings.
+
+        No new tests, no change in behavior.
+
+        * dom/Document.h:
+        (WebCore::Node::treeScope):
+        * dom/Element.cpp:
+        (WebCore::Element::createRareData):
+        * dom/ElementRareData.h:
+        (ElementRareData):
+        (WebCore::ElementRareData::ElementRareData):
+        * dom/Node.cpp:
+        (WebCore::Node::setTreeScope):
+        (WebCore::Node::ensureRareData):
+        (WebCore::Node::createRareData):
+        (WebCore::Node::clearRareData):
+        * dom/Node.h:
+        (WebCore::UncommonNodeData::create):
+        (UncommonNodeData):
+        (WebCore::UncommonNodeData::~UncommonNodeData):
+        (WebCore::UncommonNodeData::isNodeRareData):
+        (WebCore::UncommonNodeData::UncommonNodeData):
+        (WebCore::Node::renderer):
+        (WebCore::Node::setRenderer):
+        (Node):
+        (WebCore::Node::hasRareData):
+        (WebCore::Node::hasUncommonNodeData):
+        * dom/NodeRareData.h:
+        (WebCore::NodeRareData::NodeRareData):
+        (NodeRareData):
+
 2012-12-06  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: Remove IDBDatabaseException.idl

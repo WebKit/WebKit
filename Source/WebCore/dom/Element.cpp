@@ -217,7 +217,7 @@ inline ElementRareData* Element::ensureElementRareData()
 
 PassOwnPtr<NodeRareData> Element::createRareData()
 {
-    return adoptPtr(new ElementRareData(documentInternal()));
+    return adoptPtr(new ElementRareData());
 }
 
 DEFINE_VIRTUAL_ATTRIBUTE_EVENT_LISTENER(Element, blur);

@@ -441,10 +441,14 @@ void Node::setDocument(Document* document)
 
 void Node::setTreeScope(TreeScope* scope)
 {
-    if (!hasRareData() && scope->rootNode()->isDocumentNode())
+    if (!hasUncommonNodeData() && scope->rootNode()->isDocumentNode())
         return;
 
-    ensureRareData()->setTreeScope(scope);
+    if (!hasUncommonNodeData()) {
+        m_data.m_rareData = UncommonNodeData::create(scope, m_data.m_renderer);
+        setFlag(HasUncommonNodeData);
+    } else
+        rareData()->setTreeScope(scope);
 }
 
 Node* Node::pseudoAwarePreviousSibling() const
@@ -488,15 +492,21 @@ NodeRareData* Node::ensureRareData()
 
     NodeRareData* data = createRareData().leakPtr();
     ASSERT(data);
-    data->setRenderer(m_data.m_renderer);
+    data->setRenderer(renderer());
+    data->setTreeScope(treeScope());
+
+    if (hasUncommonNodeData())
+        delete m_data.m_rareData;
+
     m_data.m_rareData = data;
-    setFlag(HasRareDataFlag);
+    setFlag(HasUncommonNodeData);
+
     return data;
 }
 
 PassOwnPtr<NodeRareData> Node::createRareData()
 {
-    return adoptPtr(new NodeRareData(documentInternal()));
+    return adoptPtr(new NodeRareData());
 }
 
 void Node::clearRareData()
@@ -510,7 +520,7 @@ void Node::clearRareData()
     RenderObject* renderer = m_data.m_rareData->renderer();
     delete m_data.m_rareData;
     m_data.m_renderer = renderer;
-    clearFlag(HasRareDataFlag);
+    clearFlag(HasUncommonNodeData);
 }
 
 Node* Node::toNode()

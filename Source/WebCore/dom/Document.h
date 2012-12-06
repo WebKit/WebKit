@@ -1554,7 +1554,7 @@ inline bool Node::isDocumentNode() const
 
 inline TreeScope* Node::treeScope() const
 {
-    return hasRareData() ? m_data.m_rareData->treeScope() : documentInternal();
+    return hasUncommonNodeData() ? m_data.m_rareData->treeScope() : documentInternal();
 }
 
 inline Node::Node(Document* document, ConstructionType type)

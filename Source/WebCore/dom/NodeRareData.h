@@ -196,33 +196,11 @@ private:
     TagNodeListCacheNS m_tagNodeListCacheNS;
 };
 
-class NodeRareData : public NodeRareDataBase {
+class NodeRareData : public UncommonNodeData {
     WTF_MAKE_NONCOPYABLE(NodeRareData); WTF_MAKE_FAST_ALLOCATED;
 public:    
-    NodeRareData(Document* document)
-        : NodeRareDataBase(document)
-        , m_childNodeList(0)
-        , m_tabIndex(0)
-        , m_childIndex(0)
-        , m_tabIndexWasSetExplicitly(false)
-        , m_isFocused(false)
-        , m_needsFocusAppearanceUpdateSoonAfterAttach(false)
-        , m_styleAffectedByEmpty(false)
-        , m_isInCanvasSubtree(false)
-#if ENABLE(FULLSCREEN_API)
-        , m_containsFullScreenElement(false)
-#endif
-#if ENABLE(DIALOG_ELEMENT)
-        , m_isInTopLayer(false)
-#endif
-        , m_childrenAffectedByHover(false)
-        , m_childrenAffectedByActive(false)
-        , m_childrenAffectedByDrag(false)
-        , m_childrenAffectedByFirstChildRules(false)
-        , m_childrenAffectedByLastChildRules(false)
-        , m_childrenAffectedByDirectAdjacentRules(false)
-        , m_childrenAffectedByForwardPositionalRules(false)
-        , m_childrenAffectedByBackwardPositionalRules(false)
+    NodeRareData()
+        : m_childNodeList(0)
     {
     }
 
@@ -326,33 +304,9 @@ public:
 
     virtual void reportMemoryUsage(MemoryObjectInfo*) const;
 
-protected:
+private:
     OwnPtr<NodeListsNodeData> m_nodeLists;
     ChildNodeList* m_childNodeList;
-    short m_tabIndex;
-    unsigned short m_childIndex;
-    bool m_tabIndexWasSetExplicitly : 1;
-    bool m_isFocused : 1;
-    bool m_needsFocusAppearanceUpdateSoonAfterAttach : 1;
-    bool m_styleAffectedByEmpty : 1;
-    bool m_isInCanvasSubtree : 1;
-#if ENABLE(FULLSCREEN_API)
-    bool m_containsFullScreenElement : 1;
-#endif
-#if ENABLE(DIALOG_ELEMENT)
-    bool m_isInTopLayer : 1;
-#endif
-    bool m_childrenAffectedByHover : 1;
-    bool m_childrenAffectedByActive : 1;
-    bool m_childrenAffectedByDrag : 1;
-    // Bits for dynamic child matching.
-    // We optimize for :first-child and :last-child. The other positional child selectors like nth-child or
-    // *-child-of-type, we will just give up and re-evaluate whenever children change at all.
-    bool m_childrenAffectedByFirstChildRules : 1;
-    bool m_childrenAffectedByLastChildRules : 1;
-    bool m_childrenAffectedByDirectAdjacentRules : 1;
-    bool m_childrenAffectedByForwardPositionalRules : 1;
-    bool m_childrenAffectedByBackwardPositionalRules : 1;
 
 #if ENABLE(MUTATION_OBSERVERS)
     OwnPtr<Vector<OwnPtr<MutationObserverRegistration> > > m_mutationObserverRegistry;
