@@ -1,3 +1,16 @@
+2012-12-06  Oliver Hunt  <oliver@apple.com>
+
+        Tell heap that we've released all the compiled code.
+
+        Reviewed by Geoff Garen.
+
+        When we discard compiled code, inform the heap that we've
+        released an entire object graph.  This informs the heap that
+        it might want to perform a GC soon.
+
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::discardAllCode):
+
 2012-12-06  Laszlo Gombos  <l.gombos@samsung.com>
 
         [EFL] Remove ENABLE_GLIB_SUPPORT CMake variable

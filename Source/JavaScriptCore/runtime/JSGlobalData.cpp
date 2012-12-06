@@ -435,6 +435,7 @@ void JSGlobalData::discardAllCode()
 {
     m_codeCache->clear();
     heap.deleteAllCompiledCode();
+    heap.reportAbandonedObjectGraph();
 }
 
 void JSGlobalData::dumpSampleData(ExecState* exec)
