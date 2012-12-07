@@ -615,7 +615,8 @@ bool RenderBox::logicalScroll(ScrollLogicalDirection direction, ScrollGranularit
 
 bool RenderBox::canBeScrolledAndHasScrollableArea() const
 {
-    return canBeProgramaticallyScrolled() && (scrollHeight() != clientHeight() || scrollWidth() != clientWidth());
+    bool hasScrollableOverflow = hasScrollableOverflowX() || hasScrollableOverflowY();
+    return hasScrollableOverflow && canBeProgramaticallyScrolled();
 }
     
 bool RenderBox::canBeProgramaticallyScrolled() const

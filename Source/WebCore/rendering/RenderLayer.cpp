@@ -2636,6 +2636,16 @@ void RenderLayer::computeScrollDimensions()
     setScrollOrigin(IntPoint(-scrollableLeftOverflow, -scrollableTopOverflow));
 }
 
+bool RenderLayer::hasScrollableHorizontalOverflow() const
+{
+    return hasHorizontalOverflow() && renderBox()->scrollsOverflowX();
+}
+
+bool RenderLayer::hasScrollableVerticalOverflow() const
+{
+    return hasVerticalOverflow() && renderBox()->scrollsOverflowY();
+}
+
 bool RenderLayer::hasHorizontalOverflow() const
 {
     ASSERT(!m_scrollDimensionsDirty);
@@ -2718,7 +2728,7 @@ void RenderLayer::updateScrollbarsAfterLayout()
         m_vBar->setProportion(clientHeight, m_scrollSize.height());
     }
 
-    updateScrollableAreaSet((hasHorizontalOverflow || hasVerticalOverflow) && scrollsOverflow() && allowsScrolling());
+    updateScrollableAreaSet(hasScrollableHorizontalOverflow() || hasScrollableVerticalOverflow());
 }
 
 void RenderLayer::updateScrollInfoAfterLayout()
@@ -5098,7 +5108,7 @@ void RenderLayer::updateScrollbarsAfterStyleChange(const RenderStyle* oldStyle)
     }
 
     if (!m_scrollDimensionsDirty)
-        updateScrollableAreaSet((hasHorizontalOverflow() || hasVerticalOverflow()) && scrollsOverflow() && allowsScrolling());
+        updateScrollableAreaSet(hasScrollableHorizontalOverflow() || hasScrollableVerticalOverflow());
 }
 
 void RenderLayer::styleChanged(StyleDifference, const RenderStyle* oldStyle)

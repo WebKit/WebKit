@@ -1,3 +1,40 @@
+2012-12-05  Antonio Gomes  <a1.gomes@sisa.samsung.com>
+
+        Rework bug 97927 to not depend on RenderLayer::allowsScrolling
+        https://bugs.webkit.org/show_bug.cgi?id=103999
+
+        Reviewed by James Robinson.
+
+        Patch makes it possible for methods like
+        RenderLayer::{updateScrollbarsAfterLayout,updateScrollbarsAfterStyleChange}
+        to not depend on RenderLayer::allowsScrolling to determine if a layer should
+        be added or removed from its FrameView's ScrollableArea set.
+
+        Following the same logic, the patch also fixes RenderBox::canBeScrolledAndHasScrollableArea
+        method to take into account the box' scroll allowance in a given direction only
+        when it overflows. This allows simplifying custom methods like InRegionScrollerPrivate::canScrollRenderBox
+        (@WebKit/blackberry/Api/InRegionScroller.cpp).
+
+        The naming pattern for the newly added methods were chosen to keep the consistency
+        with the existing ones, in the same class.
+
+        No new test: it is already covered by ScrollingCoordinatorChromiumTest.clippedBodyTest.
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::canBeScrolledAndHasScrollableArea):
+        * rendering/RenderBox.h:
+        (RenderBox):
+        (WebCore::RenderBox::hasScrollableOverflowX):
+        (WebCore::RenderBox::hasScrollableOverflowY):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::hasScrollableHorizontalOverflow):
+        (WebCore):
+        (WebCore::RenderLayer::hasScrollableVerticalOverflow):
+        (WebCore::RenderLayer::updateScrollbarsAfterLayout):
+        (WebCore::RenderLayer::updateScrollbarsAfterStyleChange):
+        * rendering/RenderLayer.h:
+        (RenderLayer):
+
 2012-12-07  Max Feil  <mfeil@rim.com>
 
         [BlackBerry] make "isVideo" information available to platform media player
