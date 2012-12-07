@@ -30,6 +30,20 @@
 
 using namespace WebCore;
 
+static String getOrigin(Frame* frame) 
+{
+    String origin; 
+    SecurityOrigin* securityOrigin = frame->document()->securityOrigin();
+
+    // Special case for file.
+    if (securityOrigin->protocol() == "file")
+        origin = securityOrigin->fileSystemPath();
+    else
+        origin = securityOrigin->toString();
+
+    return origin;
+}
+
 GeolocationClientBlackBerry::GeolocationClientBlackBerry(BlackBerry::WebKit::WebPagePrivate* webPagePrivate)
     : m_webPagePrivate(webPagePrivate)
     , m_accuracy(false)
@@ -69,13 +83,16 @@ void GeolocationClientBlackBerry::requestPermission(Geolocation* location)
     if (!frame)
         return;
 
-    // FIXME: The geolocation setting for WebSettings is always true. Nothing ever toggles that setting.
     if (!m_webPagePrivate->m_webSettings->isGeolocationEnabled()) {
         location->setIsAllowed(false);
         return;
     }
 
-    const String origin = frame->document()->securityOrigin()->toString();
+    const String origin = getOrigin(frame);
+
+    // Special case for documents with the isUnique flag on. (ie. sandboxed iframes)
+    if (origin == "null")
+        location->setIsAllowed(false);
 
     // Check global location setting, if it is off then we request an infobar that invokes a location settings card.
     // If it's on, then we request an infobar that allows the site to have permission to use geolocation.
@@ -109,7 +126,7 @@ void GeolocationClientBlackBerry::cancelPermissionRequest(Geolocation* location)
     if (!frame)
         return;
 
-    const String origin = frame->document()->securityOrigin()->toString();
+    const String origin = getOrigin(frame);
 
     // Remove the geolocation from the pending permission map.
     HashMap<String, Vector<RefPtr<Geolocation> > >::iterator it = m_geolocationRequestMap.find(origin);

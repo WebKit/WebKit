@@ -1,3 +1,23 @@
+2012-12-07  Otto Derek Cheung  <otcheung@rim.com>
+
+        [BlackBerry] GeolocationClientBB should show file system path in prompts when host is not avaliable
+        https://bugs.webkit.org/show_bug.cgi?id=103785
+
+        PR 247656
+
+        Reviewed by Rob Buis.
+
+        Adding a special case for origins with protocol "file". We will use the filepath as
+        an origin when asking for geolocation permission.
+
+        If the origin is unique (ie. from a sandboxed iframe), we will fail the location request
+        right away.
+
+        * WebCoreSupport/GeolocationClientBlackBerry.cpp:
+        (getOrigin):
+        (GeolocationClientBlackBerry::requestPermission):
+        (GeolocationClientBlackBerry::cancelPermissionRequest):
+
 2012-12-07  Mike Lattanzio  <mlattanzio@rim.com>
 
         [BlackBerry] Update BlackBerry Port to use new Graphics::createBuffer BufferType enum values.
