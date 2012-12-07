@@ -240,7 +240,7 @@ PassRefPtr<CSSRule> StyleRuleBase::createCSSOMWrapper(CSSStyleSheet* parentSheet
 
 unsigned StyleRule::averageSizeInBytes()
 {
-    return sizeof(StyleRule) + StylePropertySet::averageSizeInBytes();
+    return sizeof(StyleRule) + sizeof(CSSSelector) + StylePropertySet::averageSizeInBytes();
 }
 
 void StyleRule::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const

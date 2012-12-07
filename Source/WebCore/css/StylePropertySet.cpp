@@ -1209,7 +1209,7 @@ CSSStyleDeclaration* StylePropertySet::ensureInlineCSSStyleDeclaration(const Sty
 unsigned StylePropertySet::averageSizeInBytes()
 {
     // Please update this if the storage scheme changes so that this longer reflects the actual size.
-    return sizeForImmutableStylePropertySetWithPropertyCount(2);
+    return sizeForImmutableStylePropertySetWithPropertyCount(4);
 }
 
 void StylePropertySet::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
