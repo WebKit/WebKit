@@ -54,7 +54,7 @@ class WebHelperPluginImpl : public WebHelperPlugin,
 
 public:
     virtual ~WebHelperPluginImpl();
-    bool init(WebViewImpl*, const String& pluginType);
+    bool initialize(WebViewImpl*, const String& pluginType);
     void closeHelperPlugin();
 
     // WebHelperPlugin methods:
@@ -63,7 +63,7 @@ public:
 
 private:
     explicit WebHelperPluginImpl(WebWidgetClient*);
-    bool initPage(WebKit::WebViewImpl*, const String& pluginType);
+    bool initializePage(WebKit::WebViewImpl*, const String& pluginType);
     void destoryPage();
 
     // WebWidget methods:

@@ -1466,7 +1466,7 @@ PagePopup* WebViewImpl::openPagePopup(PagePopupClient* client, const IntRect& or
     WebWidget* popupWidget = m_client->createPopupMenu(WebPopupTypePage);
     ASSERT(popupWidget);
     m_pagePopup = static_cast<WebPagePopupImpl*>(popupWidget);
-    if (!m_pagePopup->init(this, client, originBoundsInRootView)) {
+    if (!m_pagePopup->initialize(this, client, originBoundsInRootView)) {
         m_pagePopup->closePopup();
         m_pagePopup = 0;
     }
@@ -1499,7 +1499,7 @@ WebHelperPluginImpl* WebViewImpl::createHelperPlugin(const String& pluginType)
     ASSERT(popupWidget);
     WebHelperPluginImpl* helperPlugin = static_cast<WebHelperPluginImpl*>(popupWidget);
 
-    if (!helperPlugin->init(this, pluginType)) {
+    if (!helperPlugin->initialize(this, pluginType)) {
         helperPlugin->closeHelperPlugin();
         helperPlugin = 0;
     }

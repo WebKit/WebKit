@@ -115,12 +115,12 @@ WebHelperPluginImpl::~WebHelperPluginImpl()
     ASSERT(!m_page);
 }
 
-bool WebHelperPluginImpl::init(WebViewImpl* webView, const String& pluginType)
+bool WebHelperPluginImpl::initialize(WebViewImpl* webView, const String& pluginType)
 {
     ASSERT(webView);
     m_webView = webView;
 
-    if (!initPage(webView, pluginType))
+    if (!initializePage(webView, pluginType))
         return false;
     m_widgetClient->show(WebNavigationPolicy());
     setFocus(true);
@@ -180,7 +180,7 @@ WebPlugin* WebHelperPluginImpl::getPlugin()
     return plugin;
 }
 
-bool WebHelperPluginImpl::initPage(WebKit::WebViewImpl* webView, const String& pluginType)
+bool WebHelperPluginImpl::initializePage(WebKit::WebViewImpl* webView, const String& pluginType)
 {
     Page::PageClients pageClients;
     fillWithEmptyClients(pageClients);

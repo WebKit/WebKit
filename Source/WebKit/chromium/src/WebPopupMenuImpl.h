@@ -93,7 +93,7 @@ public:
     virtual bool isAcceleratedCompositingActive() const OVERRIDE { return false; }
 
     // WebPopupMenuImpl
-    void init(WebCore::FramelessScrollView* widget, const WebRect& bounds);
+    void initialize(WebCore::FramelessScrollView* widget, const WebRect& bounds);
 
     WebWidgetClient* client() { return m_client; }
 

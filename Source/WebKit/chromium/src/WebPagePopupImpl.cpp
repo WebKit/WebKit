@@ -172,7 +172,7 @@ WebPagePopupImpl::~WebPagePopupImpl()
     ASSERT(!m_page);
 }
 
-bool WebPagePopupImpl::init(WebViewImpl* webView, PagePopupClient* popupClient, const IntRect&)
+bool WebPagePopupImpl::initialize(WebViewImpl* webView, PagePopupClient* popupClient, const IntRect&)
 {
     ASSERT(webView);
     ASSERT(popupClient);
@@ -181,7 +181,7 @@ bool WebPagePopupImpl::init(WebViewImpl* webView, PagePopupClient* popupClient, 
 
     resize(m_popupClient->contentSize());
 
-    if (!initPage())
+    if (!initializePage())
         return false;
     m_widgetClient->show(WebNavigationPolicy());
     setFocus(true);
@@ -189,7 +189,7 @@ bool WebPagePopupImpl::init(WebViewImpl* webView, PagePopupClient* popupClient, 
     return true;
 }
 
-bool WebPagePopupImpl::initPage()
+bool WebPagePopupImpl::initializePage()
 {
     Page::PageClients pageClients;
     fillWithEmptyClients(pageClients);

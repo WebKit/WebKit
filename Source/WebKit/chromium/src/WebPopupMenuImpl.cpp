@@ -83,7 +83,7 @@ WebPopupMenuImpl::~WebPopupMenuImpl()
         m_widget->setClient(0);
 }
 
-void WebPopupMenuImpl::init(FramelessScrollView* widget, const WebRect& bounds)
+void WebPopupMenuImpl::initialize(FramelessScrollView* widget, const WebRect& bounds)
 {
     m_widget = widget;
     m_widget->setClient(this);
