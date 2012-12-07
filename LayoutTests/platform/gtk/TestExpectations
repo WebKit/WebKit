@@ -1415,6 +1415,8 @@ webkit.org/b/103893 media/video-volume.html [ Failure ]
 
 webkit.org/b/104054 svg/custom/use-href-update-crash.svg [ Failure ]
 
+webkit.org/b/104351 fast/exclusions/shape-inside/shape-inside-rounded-rectangle-fit-002.html [ ImageOnlyFailure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing
 #////////////////////////////////////////////////////////////////////////////////////////
