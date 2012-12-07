@@ -53,7 +53,7 @@ namespace WebCore {
 
         virtual IntSize size() const;
         virtual NativeImagePtr nativeImageForCurrentFrame();
-        virtual void draw(GraphicsContext*, const FloatRect& dstRect, const FloatRect& srcRect, ColorSpace styleColorSpace, CompositeOperator);
+        virtual void draw(GraphicsContext*, const FloatRect& dstRect, const FloatRect& srcRect, ColorSpace styleColorSpace, CompositeOperator, BlendMode);
 
     private:
         StillImage(const QPixmap&);

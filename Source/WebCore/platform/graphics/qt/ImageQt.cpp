@@ -232,7 +232,7 @@ void BitmapImage::invalidatePlatformData()
 
 // Drawing Routines
 void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& dst,
-                       const FloatRect& src, ColorSpace styleColorSpace, CompositeOperator op)
+    const FloatRect& src, ColorSpace styleColorSpace, CompositeOperator op, BlendMode)
 {
     QRectF normalizedDst = dst.normalized();
     QRectF normalizedSrc = src.normalized();

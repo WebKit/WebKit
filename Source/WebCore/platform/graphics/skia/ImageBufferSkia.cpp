@@ -245,7 +245,7 @@ static bool drawNeedsCopy(GraphicsContext* src, GraphicsContext* dst)
 }
 
 void ImageBuffer::draw(GraphicsContext* context, ColorSpace styleColorSpace, const FloatRect& destRect, const FloatRect& srcRect,
-                       CompositeOperator op, bool useLowQualityScale)
+    CompositeOperator op, BlendMode, bool useLowQualityScale)
 {
     RefPtr<Image> image = BitmapImageSingleFrameSkia::create(*m_data.m_platformContext.bitmap(), drawNeedsCopy(m_context.get(), context));
     context->drawImage(image.get(), styleColorSpace, destRect, srcRect, op, DoNotRespectImageOrientation, useLowQualityScale);

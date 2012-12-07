@@ -91,9 +91,9 @@ void Image::fillWithSolidColor(GraphicsContext* ctxt, const FloatRect& dstRect, 
     ctxt->setCompositeOperation(previousOperator);
 }
 
-void Image::draw(GraphicsContext* ctx, const FloatRect& dstRect, const FloatRect& srcRect, ColorSpace styleColorSpace, CompositeOperator op, RespectImageOrientationEnum)
+void Image::draw(GraphicsContext* ctx, const FloatRect& dstRect, const FloatRect& srcRect, ColorSpace styleColorSpace, CompositeOperator op, BlendMode blendMode, RespectImageOrientationEnum)
 {
-    draw(ctx, dstRect, srcRect, styleColorSpace, op);
+    draw(ctx, dstRect, srcRect, styleColorSpace, op, blendMode);
 }
 
 void Image::drawTiled(GraphicsContext* ctxt, const FloatRect& destRect, const FloatPoint& srcPoint, const FloatSize& scaledTileSize, ColorSpace styleColorSpace, CompositeOperator op)
@@ -129,7 +129,7 @@ void Image::drawTiled(GraphicsContext* ctxt, const FloatRect& destRect, const Fl
         visibleSrcRect.setY((destRect.y() - oneTileRect.y()) / scale.height());
         visibleSrcRect.setWidth(destRect.width() / scale.width());
         visibleSrcRect.setHeight(destRect.height() / scale.height());
-        draw(ctxt, destRect, visibleSrcRect, styleColorSpace, op);
+        draw(ctxt, destRect, visibleSrcRect, styleColorSpace, op, BlendModeNormal);
         return;
     }
 

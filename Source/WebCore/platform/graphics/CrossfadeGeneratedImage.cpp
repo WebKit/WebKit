@@ -81,7 +81,7 @@ void CrossfadeGeneratedImage::drawCrossfade(GraphicsContext* context)
     context->endTransparencyLayer();
 }
 
-void CrossfadeGeneratedImage::draw(GraphicsContext* context, const FloatRect& dstRect, const FloatRect& srcRect, ColorSpace, CompositeOperator compositeOp)
+void CrossfadeGeneratedImage::draw(GraphicsContext* context, const FloatRect& dstRect, const FloatRect& srcRect, ColorSpace, CompositeOperator compositeOp, BlendMode)
 {
     GraphicsContextStateSaver stateSaver(*context);
     context->setCompositeOperation(compositeOp);
