@@ -115,6 +115,7 @@ public:
     virtual void setLayoutFallbackWidth(int);
     virtual void setLoadsImagesAutomatically(bool);
     virtual void setLocalStorageEnabled(bool);
+    virtual void setLowLatencyRenderingEnabled(bool);
     virtual void setMaxUntiledLayerSize(WebSize);
     virtual void setMediaPlaybackRequiresUserGesture(bool);
     virtual void setMemoryInfoEnabled(bool);
@@ -170,6 +171,7 @@ public:
     bool showPlatformLayerTree() const { return m_showPlatformLayerTree; }
     bool showPaintRects() const { return m_showPaintRects; }
     bool renderVSyncEnabled() const { return m_renderVSyncEnabled; }
+    bool lowLatencyRenderingEnabled() const { return m_lowLatencyRenderingEnabled; }
     bool applyDeviceScaleFactorInCompositor() const { return m_applyDeviceScaleFactorInCompositor; }
     bool applyPageScaleFactorInCompositor() const;
     bool autoZoomFocusedNodeToLegibleScale() const { return m_autoZoomFocusedNodeToLegibleScale; }
@@ -186,6 +188,7 @@ private:
     bool m_showPlatformLayerTree;
     bool m_showPaintRects;
     bool m_renderVSyncEnabled;
+    bool m_lowLatencyRenderingEnabled;
     bool m_viewportEnabled;
     bool m_applyDeviceScaleFactorInCompositor;
     bool m_gestureTapHighlightEnabled;

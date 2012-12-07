@@ -123,6 +123,7 @@ public:
     virtual void setLayoutFallbackWidth(int) = 0;
     virtual void setLoadsImagesAutomatically(bool) = 0;
     virtual void setLocalStorageEnabled(bool) = 0;
+    virtual void setLowLatencyRenderingEnabled(bool) = 0;
     virtual void setMaxUntiledLayerSize(WebSize) = 0;
     virtual void setMediaPlaybackRequiresUserGesture(bool) = 0;
     virtual void setMemoryInfoEnabled(bool) = 0;

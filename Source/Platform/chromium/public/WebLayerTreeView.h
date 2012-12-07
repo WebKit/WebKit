@@ -51,6 +51,7 @@ public:
             , showPlatformLayerTree(false)
             , showPaintRects(false)
             , renderVSyncEnabled(true)
+            , lowLatencyRenderingEnabled(false)
             , perTilePaintingEnabled(false)
             , partialSwapEnabled(false)
             , acceleratedAnimationEnabled(true)
@@ -67,6 +68,7 @@ public:
         bool showPlatformLayerTree;
         bool showPaintRects;
         bool renderVSyncEnabled;
+        bool lowLatencyRenderingEnabled;
         bool perTilePaintingEnabled;
         bool partialSwapEnabled;
         bool acceleratedAnimationEnabled;
