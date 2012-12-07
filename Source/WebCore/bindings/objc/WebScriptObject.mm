@@ -501,12 +501,11 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
 
 - (JSObjectRef)JSObject
 {
+    if (![self _isSafeScript])
+        return 0;
     ExecState* exec = [self _rootObject]->globalObject()->globalExec();
     
     JSLockHolder lock(exec);
-    if (![self _isSafeScript])
-        return NULL;
-
     return toRef([self _imp]);
 }
 
