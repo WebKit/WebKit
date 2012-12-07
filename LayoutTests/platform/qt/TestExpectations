@@ -1095,6 +1095,7 @@ fast/canvas/2d.backingStorePixelRatio.html
 fast/canvas/2d.imageDataHD.html
 fast/canvas/canvas-as-image-hidpi.html
 fast/canvas/canvas-resize-reset-pixelRatio.html
+fast/events/mouse-cursor-image-set.html
 svg/as-image/svg-as-image-canvas.html
 
 # This requires didClearWindowObjectForFrameInIsolatedWorld foo in FrameLoaderClient
@@ -2438,3 +2439,11 @@ webkit.org/b/61138 http/tests/w3c/webperf/submission/resource-timing [ Skip ]
 webkit.org/b/103424 fast/backgrounds/background-opaque-images-over-color.html
 
 webkit.org/b/104150 fast/media/implicit-media-all.html [ ImageOnlyFailure ]
+
+# [Qt] new fast/exclusions/shape-inside/shape-inside-rounded-rectangle-fit-002.html fails since introduced in r136857
+webkit.org/b/104351 fast/exclusions/shape-inside/shape-inside-rounded-rectangle-fit-002.html
+
+# [Qt] new http/tests/xmlhttprequest/post-blob-content-type-sync.html and ~async.html fail since introduced in r136893
+# https://bugs.webkit.org/show_bug.cgi?id=104352
+http/tests/xmlhttprequest/post-blob-content-type-async.html
+http/tests/xmlhttprequest/post-blob-content-type-sync.html
