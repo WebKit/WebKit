@@ -1,3 +1,40 @@
+2012-12-06  Filip Pizlo  <fpizlo@apple.com>
+
+        Incorrect inequality for checking whether a statement is within bounds of a handler
+        https://bugs.webkit.org/show_bug.cgi?id=104313
+        <rdar://problem/12808934>
+
+        Reviewed by Geoffrey Garen.
+
+        The most relevant change is in handlerForBytecodeOffset(), which fixes the inequality
+        used for checking whether a handler is pertinent to the current instruction. '<' is
+        correct, but '<=' isn't, since the 'end' is not inclusive.
+        
+        Also found, and addressed, a benign goof in how the finally inliner works: sometimes
+        we will have end > start. This falls out naturally from how the inliner works and how
+        we pop scopes in the bytecompiler, but it's sufficiently surprising that, to avoid any
+        future confusion, I added a comment and some code to prune those handlers out. Because
+        of how the handler resolution works, these handlers would have been skipped anyway.
+        
+        Also made various fixes to debugging code, which was necessary for tracking this down.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpBytecode):
+        (JSC::CodeBlock::handlerForBytecodeOffset):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::generate):
+        * bytecompiler/Label.h:
+        (JSC::Label::bind):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::throwException):
+        * llint/LLIntExceptions.cpp:
+        (JSC::LLInt::interpreterThrowInCaller):
+        (JSC::LLInt::returnToThrow):
+        (JSC::LLInt::callToThrow):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        (JSC::LLInt::handleHostCall):
+
 2012-12-06  Rick Byers  <rbyers@chromium.org>
 
         CSS cursor property should support webkit-image-set

@@ -786,9 +786,12 @@ NEVER_INLINE HandlerInfo* Interpreter::throwException(CallFrame*& callFrame, JSV
     JSScope* scope = callFrame->scope();
     int scopeDelta = 0;
     if (!codeBlock->needsFullScopeChain() || codeBlock->codeType() != FunctionCode 
-        || callFrame->uncheckedR(codeBlock->activationRegister()).jsValue())
-        scopeDelta = depth(codeBlock, scope) - handler->scopeDepth;
-    ASSERT(scopeDelta >= 0);
+        || callFrame->uncheckedR(codeBlock->activationRegister()).jsValue()) {
+        int currentDepth = depth(codeBlock, scope);
+        int targetDepth = handler->scopeDepth;
+        scopeDelta = currentDepth - targetDepth;
+        ASSERT(scopeDelta >= 0);
+    }
     while (scopeDelta--)
         scope = scope->next();
     callFrame->setScope(scope);

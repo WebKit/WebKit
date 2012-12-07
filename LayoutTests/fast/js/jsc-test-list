@@ -338,6 +338,7 @@ fast/js/toString-for-var-decl
 fast/js/toString-number-dot-expr
 fast/js/toString-prefix-postfix-preserve-parens
 fast/js/toString-recursion
+fast/js/try-catch-try-try-catch-try-finally-return-catch-finally
 fast/js/try-try-return-finally-finally
 fast/js/typeof-codegen-crash
 fast/js/typeof-constant-string

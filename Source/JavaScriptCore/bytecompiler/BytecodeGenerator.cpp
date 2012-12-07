@@ -157,10 +157,38 @@ ParserError BytecodeGenerator::generate()
     
     for (unsigned i = 0; i < m_tryRanges.size(); ++i) {
         TryRange& range = m_tryRanges[i];
+        int start = range.start->bind();
+        int end = range.end->bind();
+        
+        // This will happen for empty try blocks and for some cases of finally blocks:
+        //
+        // try {
+        //    try {
+        //    } finally {
+        //        return 42;
+        //        // *HERE*
+        //    }
+        // } finally {
+        //    print("things");
+        // }
+        //
+        // The return will pop scopes to execute the outer finally block. But this includes
+        // popping the try context for the inner try. The try context is live in the fall-through
+        // part of the finally block not because we will emit a handler that overlaps the finally,
+        // but because we haven't yet had a chance to plant the catch target. Then when we finish
+        // emitting code for the outer finally block, we repush the try contex, this time with a
+        // new start index. But that means that the start index for the try range corresponding
+        // to the inner-finally-following-the-return (marked as "*HERE*" above) will be greater
+        // than the end index of the try block. This is harmless since end < start handlers will
+        // never get matched in our logic, but we do the runtime a favor and choose to not emit
+        // such handlers at all.
+        if (end <= start)
+            continue;
+        
         ASSERT(range.tryData->targetScopeDepth != UINT_MAX);
         UnlinkedHandlerInfo info = {
-            static_cast<uint32_t>(range.start->bind(0, 0)), static_cast<uint32_t>(range.end->bind(0, 0)),
-            static_cast<uint32_t>(range.tryData->target->bind(0, 0)),
+            static_cast<uint32_t>(start), static_cast<uint32_t>(end),
+            static_cast<uint32_t>(range.tryData->target->bind()),
             range.tryData->targetScopeDepth
         };
         m_codeBlock->addExceptionHandler(info);
