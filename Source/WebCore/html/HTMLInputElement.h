@@ -176,9 +176,6 @@ public:
     double valueAsNumber() const;
     void setValueAsNumber(double, ExceptionCode&, TextFieldEventBehavior = DispatchNoEvent);
 
-    virtual String placeholder() const;
-    virtual void setPlaceholder(const String&);
-
     String valueWithDefault() const;
 
     void setValueFromRenderer(const String&);

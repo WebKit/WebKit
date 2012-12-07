@@ -1051,16 +1051,6 @@ void HTMLInputElement::setValueAsNumber(double newValue, ExceptionCode& ec, Text
     m_inputType->setValueAsDouble(newValue, eventBehavior, ec);
 }
 
-String HTMLInputElement::placeholder() const
-{
-    return fastGetAttribute(placeholderAttr).string();
-}
-
-void HTMLInputElement::setPlaceholder(const String& value)
-{
-    setAttribute(placeholderAttr, value);
-}
-
 void HTMLInputElement::setValueFromRenderer(const String& value)
 {
     // File upload controls will never use this.

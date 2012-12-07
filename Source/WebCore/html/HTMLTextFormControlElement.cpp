@@ -116,7 +116,7 @@ String HTMLTextFormControlElement::strippedPlaceholder() const
 {
     // According to the HTML5 specification, we need to remove CR and LF from
     // the attribute value.
-    const AtomicString& attributeValue = getAttribute(placeholderAttr);
+    const AtomicString& attributeValue = fastGetAttribute(placeholderAttr);
     if (!attributeValue.contains(newlineCharacter) && !attributeValue.contains(carriageReturn))
         return attributeValue;
 
@@ -136,7 +136,7 @@ static bool isNotLineBreak(UChar ch) { return ch != newlineCharacter && ch != ca
 
 bool HTMLTextFormControlElement::isPlaceholderEmpty() const
 {
-    const AtomicString& attributeValue = getAttribute(placeholderAttr);
+    const AtomicString& attributeValue = fastGetAttribute(placeholderAttr);
     return attributeValue.string().find(isNotLineBreak) == notFound;
 }
 
