@@ -1184,10 +1184,8 @@ bool WebPagePrivate::shouldZoomAboutPoint(double scale, const FloatPoint&, bool 
     ASSERT(clampedScale);
     *clampedScale = scale;
 
-    if (currentScale() == scale) {
-        m_client->scaleChanged();
+    if (currentScale() == scale)
         return false;
-    }
 
     return true;
 }

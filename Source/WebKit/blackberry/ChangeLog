@@ -1,3 +1,29 @@
+2012-12-07  Andrew Lo  <anlo@rim.com>
+
+        [BlackBerry] Double zoom animation when focusing on input field.
+        https://bugs.webkit.org/show_bug.cgi?id=104375
+
+        Reviewed by Rob Buis.
+        Internally reviewed by Jakob Petsovits.
+
+        UI thread does not need to be notified of a scale change if the WebKit
+        thread scale has not changed.
+
+        This caused issues when two viewport resizes occured one after the other.
+        Before the scale change due to the first resize could be set in the WK
+        thread's scale value, it caused WK thread to dispatch a scaleChanged,
+        overwritting & resetting the new UI thread scale value, resulting in the
+        double zoom animation.
+
+        The larger issue dealing with synchronization between the threads where
+        scale changes could occur on either thread, however that is beyond the
+        scope of this change.
+
+        Internal PR253122
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::shouldZoomAboutPoint):
+
 2012-12-07  Xiaobo Wang  <xbwang@torchmobile.com.cn>
 
         [BlackBerry] DRT - Update implementation of TestRunner.setCustomPolicyDelegate()
