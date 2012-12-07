@@ -730,7 +730,7 @@ void Node::inspect()
 
 bool Node::rendererIsEditable(EditableLevel editableLevel, UserSelectAllTreatment treatment) const
 {
-    if (document()->frame() && document()->frame()->page() && document()->frame()->page()->isEditable() && !shadowRoot())
+    if (document()->frame() && document()->frame()->page() && document()->frame()->page()->isEditable() && !containingShadowRoot())
         return true;
 
     if (isPseudoElement())
@@ -1362,20 +1362,20 @@ bool Node::canStartSelection() const
 
 Element* Node::shadowHost() const
 {
-    if (ShadowRoot* root = shadowRoot())
+    if (ShadowRoot* root = containingShadowRoot())
         return root->host();
     return 0;
 }
 
 Node* Node::shadowAncestorNode() const
 {
-    if (ShadowRoot* root = shadowRoot())
+    if (ShadowRoot* root = containingShadowRoot())
         return root->host();
 
     return const_cast<Node*>(this);
 }
 
-ShadowRoot* Node::shadowRoot() const
+ShadowRoot* Node::containingShadowRoot() const
 {
     Node* root = const_cast<Node*>(this);
     while (root) {

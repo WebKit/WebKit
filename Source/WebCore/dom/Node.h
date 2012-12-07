@@ -265,7 +265,7 @@ public:
     // If this node is in a shadow tree, returns its shadow host. Otherwise, returns this.
     // Deprecated. Should use shadowHost() and check the return value.
     Node* shadowAncestorNode() const;
-    ShadowRoot* shadowRoot() const;
+    ShadowRoot* containingShadowRoot() const;
     ShadowRoot* youngestShadowRoot() const;
 
     // Returns 0, a child of ShadowRoot, or a legacy shadow root.

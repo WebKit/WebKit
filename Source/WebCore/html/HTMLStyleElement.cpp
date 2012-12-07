@@ -98,7 +98,7 @@ void HTMLStyleElement::scopedAttributeChanged(bool scoped)
         // As any <style> in a shadow tree is treated as "scoped",
         // need to remove the <style> from its shadow root.
         if (m_scopedStyleRegistrationState == RegisteredInShadowRoot)
-            unregisterWithScopingNode(shadowRoot());
+            unregisterWithScopingNode(containingShadowRoot());
 
         if (m_scopedStyleRegistrationState != RegisteredAsScoped)
             registerWithScopingNode(true);
@@ -131,7 +131,7 @@ void HTMLStyleElement::registerWithScopingNode(bool scoped)
     if (m_scopedStyleRegistrationState != NotRegistered)
         return;
 
-    ContainerNode* scope = scoped ? parentNode() : shadowRoot();
+    ContainerNode* scope = scoped ? parentNode() : containingShadowRoot();
     if (!scope)
         return;
     if (!scope->isElementNode() && !scope->isShadowRoot()) {
@@ -190,9 +190,9 @@ void HTMLStyleElement::removedFrom(ContainerNode* insertionPoint)
     if (m_scopedStyleRegistrationState != NotRegistered) {
         ContainerNode* scope;
         if (m_scopedStyleRegistrationState == RegisteredInShadowRoot) {
-            scope = shadowRoot();
+            scope = containingShadowRoot();
             if (!scope)
-                scope = insertionPoint->shadowRoot();
+                scope = insertionPoint->containingShadowRoot();
         } else
             scope = parentNode() ? parentNode() : insertionPoint;
         unregisterWithScopingNode(scope);

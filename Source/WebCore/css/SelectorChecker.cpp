@@ -448,7 +448,7 @@ SelectorChecker::SelectorMatch SelectorChecker::checkSelector(const SelectorChec
 
     if (context.selector->m_match == CSSSelector::PseudoElement) {
         if (context.selector->isCustomPseudoElement()) {
-            if (ShadowRoot* root = context.element->shadowRoot()) {
+            if (ShadowRoot* root = context.element->containingShadowRoot()) {
                 if (context.element->shadowPseudoId() != context.selector->value())
                     return SelectorFailsLocally;
 

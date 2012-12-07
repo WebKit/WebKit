@@ -1562,7 +1562,7 @@ Node* Range::firstNode() const
 
 ShadowRoot* Range::shadowRoot() const
 {
-    return startContainer() ? startContainer()->shadowRoot() : 0;
+    return startContainer() ? startContainer()->containingShadowRoot() : 0;
 }
 
 Node* Range::pastLastNode() const

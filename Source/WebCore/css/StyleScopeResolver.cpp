@@ -68,7 +68,7 @@ const ContainerNode* StyleScopeResolver::scopeFor(const CSSStyleSheet* sheet)
 
     HTMLStyleElement* styleElement = static_cast<HTMLStyleElement*>(ownerNode);
     if (!styleElement->scoped())
-        return styleElement->isInShadowTree() ? styleElement->shadowRoot() : 0;
+        return styleElement->isInShadowTree() ? styleElement->containingShadowRoot() : 0;
 
     ContainerNode* parent = styleElement->parentNode();
     if (!parent)
@@ -175,7 +175,7 @@ void StyleScopeResolver::addHostRule(StyleRuleHost* hostRule, bool hasDocumentSe
     if (!scope || !scope->isInShadowTree())
         return;
 
-    ShadowRoot* shadowRoot = scope->shadowRoot();
+    ShadowRoot* shadowRoot = scope->containingShadowRoot();
     if (!shadowRoot || !shadowRoot->host())
         return;
 

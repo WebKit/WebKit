@@ -200,7 +200,7 @@ void ElementShadow::setShouldCollectSelectFeatureSet()
 
     m_shouldCollectSelectFeatureSet = true;
 
-    if (ShadowRoot* parentShadowRoot = host()->shadowRoot()) {
+    if (ShadowRoot* parentShadowRoot = host()->containingShadowRoot()) {
         if (ElementShadow* parentElementShadow = parentShadowRoot->owner())
             parentElementShadow->setShouldCollectSelectFeatureSet();
     }

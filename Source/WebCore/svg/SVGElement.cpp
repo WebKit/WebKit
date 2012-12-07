@@ -301,7 +301,7 @@ void SVGElement::cursorImageValueRemoved()
 
 SVGElement* SVGElement::correspondingElement()
 {
-    ASSERT(!hasSVGRareData() || !svgRareData()->correspondingElement() || shadowRoot());
+    ASSERT(!hasSVGRareData() || !svgRareData()->correspondingElement() || containingShadowRoot());
     return hasSVGRareData() ? svgRareData()->correspondingElement() : 0;
 }
 
@@ -356,7 +356,7 @@ bool SVGElement::haveLoadedRequiredResources()
 static inline void collectInstancesForSVGElement(SVGElement* element, HashSet<SVGElementInstance*>& instances)
 {
     ASSERT(element);
-    if (element->shadowRoot())
+    if (element->containingShadowRoot())
         return;
 
     if (!element->isStyled())

@@ -1381,6 +1381,17 @@ PassRefPtr<ShadowRoot> Element::createShadowRoot(ExceptionCode& ec)
     return ShadowRoot::create(this, ec);
 }
 
+ShadowRoot* Element::shadowRoot() const
+{
+    ElementShadow* elementShadow = shadow();
+    if (!elementShadow)
+        return 0;
+    ShadowRoot* shadowRoot = elementShadow->youngestShadowRoot();
+    if (!shadowRoot->isAccessible())
+        return 0;
+    return shadowRoot;
+}
+
 ShadowRoot* Element::userAgentShadowRoot() const
 {
     if (ElementShadow* elementShadow = shadow()) {

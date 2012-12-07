@@ -1,3 +1,74 @@
+2012-12-06  Hajime Morrita  <morrita@google.com>
+
+        [Shadow DOM] Implement Element::shadowRoot with prefix
+        https://bugs.webkit.org/show_bug.cgi?id=102912
+
+        Reviewed by Dimitri Glazkov.
+
+        - Added Element::shadowRoot() which return the youngest author shadow root.
+        - Renamed existing Node::shadowRoot() to containingShadowRoot() to avoid name shadowing.
+          The name shadowRoot() is confusing anyway so this is good opportunity to rename it.
+
+        Test: fast/dom/shadow/shadow-aware-shadow-root.html
+
+        * css/SelectorChecker.cpp:
+        (WebCore::SelectorChecker::checkSelector):
+        * css/StyleScopeResolver.cpp:
+        (WebCore::StyleScopeResolver::scopeFor):
+        (WebCore::StyleScopeResolver::addHostRule):
+        * dom/Element.cpp:
+        (WebCore::Element::shadowRoot):
+        (WebCore):
+        * dom/Element.h:
+        (Element):
+        * dom/Element.idl:
+        * dom/ElementShadow.cpp:
+        (WebCore::ElementShadow::setShouldCollectSelectFeatureSet):
+        * dom/Node.cpp:
+        (WebCore::Node::rendererIsEditable):
+        (WebCore::Node::shadowHost):
+        (WebCore::Node::shadowAncestorNode):
+        (WebCore::Node::containingShadowRoot):
+        * dom/Node.h:
+        (Node):
+        * dom/Range.cpp:
+        (WebCore::Range::shadowRoot):
+        * dom/ShadowRoot.cpp:
+        (WebCore::ShadowRoot::insertedInto):
+        (WebCore::ShadowRoot::removedFrom):
+        * dom/ShadowRoot.h:
+        (WebCore::ShadowRoot::isAccessible):
+        * editing/TextIterator.cpp:
+        (WebCore::TextIterator::handleReplacedElement):
+        * editing/htmlediting.cpp:
+        (WebCore::indexForVisiblePosition):
+        * html/HTMLStyleElement.cpp:
+        (WebCore::HTMLStyleElement::scopedAttributeChanged):
+        (WebCore::HTMLStyleElement::registerWithScopingNode):
+        (WebCore::HTMLStyleElement::removedFrom):
+        * html/shadow/ContentDistributor.cpp:
+        (WebCore::ContentDistributor::distribute):
+        * html/shadow/HTMLContentElement.cpp:
+        (WebCore::HTMLContentElement::parseAttribute):
+        (WebCore::HTMLContentElement::insertedInto):
+        (WebCore::HTMLContentElement::removedFrom):
+        * html/shadow/HTMLShadowElement.cpp:
+        (WebCore::HTMLShadowElement::insertedInto):
+        (WebCore::HTMLShadowElement::removedFrom):
+        * html/shadow/InsertionPoint.cpp:
+        (WebCore::InsertionPoint::attach):
+        (WebCore::InsertionPoint::detach):
+        (WebCore::InsertionPoint::isActive):
+        (WebCore::InsertionPoint::childrenChanged):
+        (WebCore::InsertionPoint::insertedInto):
+        (WebCore::InsertionPoint::removedFrom):
+        (WebCore::InsertionPoint::setResetStyleInheritance):
+        * page/EventHandler.cpp:
+        (WebCore::instanceAssociatedWithShadowTreeElement):
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::correspondingElement):
+        (WebCore::collectInstancesForSVGElement):
+
 2012-12-06  Michael Pruett  <michael@68k.org>
 
         IndexedDB: Replace int64 with int64_t

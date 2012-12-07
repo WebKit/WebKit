@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+description("Tests for ShadowAware.shadowRoot property.");
+
+var host = document.createElement('div');
+shouldBeNull("host.webkitShadowRoot");
+var root1 = host.webkitCreateShadowRoot();
+shouldBe("root1", "host.webkitShadowRoot");
+var root2 = host.webkitCreateShadowRoot();
+shouldBe("root2", "host.webkitShadowRoot");
+
+var hostWithUAShadow = document.createElement('input');
+shouldBeNull("hostWithUAShadow.webkitShadowRoot");
+
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

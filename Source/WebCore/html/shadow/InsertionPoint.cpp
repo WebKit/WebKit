@@ -49,7 +49,7 @@ InsertionPoint::~InsertionPoint()
 
 void InsertionPoint::attach()
 {
-    if (ShadowRoot* root = shadowRoot())
+    if (ShadowRoot* root = containingShadowRoot())
         root->owner()->ensureDistribution();
     for (size_t i = 0; i < m_distribution.size(); ++i) {
         if (!m_distribution.at(i)->attached())
@@ -61,7 +61,7 @@ void InsertionPoint::attach()
 
 void InsertionPoint::detach()
 {
-    if (ShadowRoot* root = shadowRoot())
+    if (ShadowRoot* root = containingShadowRoot())
         root->owner()->ensureDistribution();
     for (size_t i = 0; i < m_distribution.size(); ++i)
         m_distribution.at(i)->detach();
@@ -81,7 +81,7 @@ bool InsertionPoint::isShadowBoundary() const
 
 bool InsertionPoint::isActive() const
 {
-    if (!shadowRoot())
+    if (!containingShadowRoot())
         return false;
     const Node* node = parentNode();
     while (node) {
@@ -128,7 +128,7 @@ Node* InsertionPoint::previousTo(const Node* node) const
 void InsertionPoint::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)
 {
     HTMLElement::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
-    if (ShadowRoot* root = shadowRoot())
+    if (ShadowRoot* root = containingShadowRoot())
         root->owner()->invalidateDistribution();
 }
 
@@ -136,7 +136,7 @@ Node::InsertionNotificationRequest InsertionPoint::insertedInto(ContainerNode* i
 {
     HTMLElement::insertedInto(insertionPoint);
     if (insertionPoint->inDocument()) {
-        if (ShadowRoot* root = shadowRoot()) {
+        if (ShadowRoot* root = containingShadowRoot()) {
             root->owner()->setValidityUndetermined();
             root->owner()->invalidateDistribution();
         }
@@ -148,9 +148,9 @@ Node::InsertionNotificationRequest InsertionPoint::insertedInto(ContainerNode* i
 void InsertionPoint::removedFrom(ContainerNode* insertionPoint)
 {
     if (insertionPoint->inDocument()) {
-        ShadowRoot* root = shadowRoot();
+        ShadowRoot* root = containingShadowRoot();
         if (!root)
-            root = insertionPoint->shadowRoot();
+            root = insertionPoint->containingShadowRoot();
 
         // host can be null when removedFrom() is called from ElementShadow destructor.
         if (root && root->host())
@@ -173,7 +173,7 @@ void InsertionPoint::setResetStyleInheritance(bool value)
     if (value != m_shouldResetStyleInheritance) {
         m_shouldResetStyleInheritance = value;
         if (attached() && isActive())
-            shadowRoot()->host()->setNeedsStyleRecalc();
+            containingShadowRoot()->host()->setNeedsStyleRecalc();
     }
 }
 

@@ -277,6 +277,7 @@ public:
     ElementShadow* shadow() const;
     ElementShadow* ensureShadow();
     PassRefPtr<ShadowRoot> createShadowRoot(ExceptionCode&);
+    ShadowRoot* shadowRoot() const;
 
     virtual void willAddAuthorShadowRoot() { }
     virtual bool areAuthorShadowsAllowed() const { return true; }

@@ -123,6 +123,7 @@
 #if defined(ENABLE_SHADOW_DOM) && ENABLE_SHADOW_DOM
     [Reflect=pseudo, V8EnabledAtRuntime=shadowDOM, ImplementedAs=pseudo] attribute DOMString webkitPseudo;
     [V8EnabledAtRuntime=shadowDOM, ImplementedAs=createShadowRoot] ShadowRoot webkitCreateShadowRoot() raises(DOMException);
+    [V8EnabledAtRuntime=shadowDOM, ImplementedAs=shadowRoot] readonly attribute ShadowRoot webkitShadowRoot;
 #endif
 
     // DOM 4

@@ -163,7 +163,7 @@ void ContentDistributor::distribute(Element* host)
 
     for (size_t i = activeShadowInsertionPoints.size(); i > 0; --i) {
         HTMLShadowElement* shadowElement = activeShadowInsertionPoints[i - 1];
-        ShadowRoot* root = shadowElement->shadowRoot();
+        ShadowRoot* root = shadowElement->containingShadowRoot();
         ASSERT(root);
         if (root->olderShadowRoot()) {
             distributeNodeChildrenTo(shadowElement, root->olderShadowRoot());

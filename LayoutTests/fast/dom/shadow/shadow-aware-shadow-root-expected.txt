@@ -1,0 +1,13 @@
+Tests for ShadowAware.shadowRoot property.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS host.webkitShadowRoot is null
+PASS root1 is host.webkitShadowRoot
+PASS root2 is host.webkitShadowRoot
+PASS hostWithUAShadow.webkitShadowRoot is null
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

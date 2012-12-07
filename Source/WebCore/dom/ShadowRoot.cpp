@@ -283,7 +283,7 @@ Node::InsertionNotificationRequest ShadowRoot::insertedInto(ContainerNode* inser
     if (m_registeredWithParentShadowRoot)
         return InsertionDone;
 
-    if (ShadowRoot* root = host()->shadowRoot()) {
+    if (ShadowRoot* root = host()->containingShadowRoot()) {
         root->registerElementShadow();
         m_registeredWithParentShadowRoot = true;
     }
@@ -294,9 +294,9 @@ Node::InsertionNotificationRequest ShadowRoot::insertedInto(ContainerNode* inser
 void ShadowRoot::removedFrom(ContainerNode* insertionPoint)
 {
     if (insertionPoint->inDocument() && m_registeredWithParentShadowRoot) {
-        ShadowRoot* root = host()->shadowRoot();
+        ShadowRoot* root = host()->containingShadowRoot();
         if (!root)
-            root = insertionPoint->shadowRoot();
+            root = insertionPoint->containingShadowRoot();
 
         if (root)
             root->unregisterElementShadow();

@@ -65,7 +65,7 @@ Node::InsertionNotificationRequest HTMLShadowElement::insertedInto(ContainerNode
     InsertionPoint::insertedInto(insertionPoint);
 
     if (insertionPoint->inDocument() && isActive()) {
-        if (ShadowRoot* root = shadowRoot()) {
+        if (ShadowRoot* root = containingShadowRoot()) {
             root->registerShadowElement();
             m_registeredWithShadowRoot = true;
         }
@@ -77,9 +77,9 @@ Node::InsertionNotificationRequest HTMLShadowElement::insertedInto(ContainerNode
 void HTMLShadowElement::removedFrom(ContainerNode* insertionPoint)
 {
     if (insertionPoint->inDocument() && m_registeredWithShadowRoot) {
-        ShadowRoot* root = shadowRoot();
+        ShadowRoot* root = containingShadowRoot();
         if (!root)
-            root = insertionPoint->shadowRoot();
+            root = insertionPoint->containingShadowRoot();
         if (root)
             root->unregisterShadowElement();
         m_registeredWithShadowRoot = false;
