@@ -939,6 +939,7 @@ SOURCES += \
     plugins/PluginMainThreadScheduler.cpp \
     plugins/DOMMimeType.cpp \
     plugins/DOMMimeTypeArray.cpp \
+    plugins/PlugInOriginHash.cpp \
     platform/animation/Animation.cpp \
     platform/animation/AnimationList.cpp \
     platform/Arena.cpp \
@@ -2342,6 +2343,7 @@ HEADERS += \
     plugins/PluginDebug.h \
     plugins/DOMPlugin.h \
     plugins/IFrameShimSupport.h \
+    plugins/PlugInOriginHash.h \
     plugins/PluginMainThreadScheduler.h \
     plugins/PluginPackage.h \
     plugins/PluginStream.h \

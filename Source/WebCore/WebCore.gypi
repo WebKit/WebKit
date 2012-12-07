@@ -2187,6 +2187,8 @@
             'plugins/DOMPluginArray.h',
             'plugins/IFrameShimSupport.cpp',
             'plugins/IFrameShimSupport.h',
+            'plugins/PlugInOriginHash.cpp',
+            'plugins/PlugInOriginHash.h',
             'plugins/PluginData.cpp',
             'plugins/PluginDataNone.cpp',
             'plugins/PluginDatabase.cpp',

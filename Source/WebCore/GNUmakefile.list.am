@@ -4180,6 +4180,8 @@ webcore_sources += \
 	Source/WebCore/plugins/DOMPlugin.h \
 	Source/WebCore/plugins/npapi.cpp \
 	Source/WebCore/plugins/npfunctions.h \
+	Source/WebCore/plugins/PlugInOriginHash.cpp \
+	Source/WebCore/plugins/PlugInOriginHash.h \
 	Source/WebCore/plugins/PluginDatabase.cpp \
 	Source/WebCore/plugins/PluginDatabase.h \
 	Source/WebCore/plugins/PluginData.cpp \
