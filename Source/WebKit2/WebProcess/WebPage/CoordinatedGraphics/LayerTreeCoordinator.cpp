@@ -671,7 +671,7 @@ void LayerTreeCoordinator::removeUpdateAtlas(int atlasID)
     m_webPage->send(Messages::LayerTreeCoordinatorProxy::RemoveUpdateAtlas(atlasID));
 }
 
-WebCore::IntRect LayerTreeCoordinator::visibleContentsRect() const
+WebCore::FloatRect LayerTreeCoordinator::visibleContentsRect() const
 {
     return m_visibleContentsRect;
 }
@@ -695,7 +695,7 @@ void LayerTreeCoordinator::setLayerAnimations(CoordinatedLayerID layerID, const 
     m_webPage->send(Messages::LayerTreeCoordinatorProxy::SetLayerAnimations(layerID, activeAnimations));
 }
 
-void LayerTreeCoordinator::setVisibleContentsRect(const IntRect& rect, float scale, const FloatPoint& trajectoryVector)
+void LayerTreeCoordinator::setVisibleContentsRect(const FloatRect& rect, float scale, const FloatPoint& trajectoryVector)
 {
     bool contentsRectDidChange = rect != m_visibleContentsRect;
     bool contentsScaleDidChange = scale != m_contentsScale;
@@ -717,8 +717,12 @@ void LayerTreeCoordinator::setVisibleContentsRect(const IntRect& rect, float sca
     }
 
     scheduleLayerFlush();
-    if (m_webPage->useFixedLayout())
-        m_webPage->setFixedVisibleContentRect(rect);
+    if (m_webPage->useFixedLayout()) {
+        // Round the rect instead of enclosing it to make sure that its size stays
+        // the same while panning. This can have nasty effects on layout.
+        m_webPage->setFixedVisibleContentRect(roundedIntRect(rect));
+    }
+
     if (contentsRectDidChange)
         m_shouldSendScrollPositionUpdate = true;
 }

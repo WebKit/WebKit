@@ -81,11 +81,11 @@ public:
     virtual void createTile(CoordinatedLayerID, uint32_t tileID, const SurfaceUpdateInfo&, const WebCore::IntRect&);
     virtual void updateTile(CoordinatedLayerID, uint32_t tileID, const SurfaceUpdateInfo&, const WebCore::IntRect&);
     virtual void removeTile(CoordinatedLayerID, uint32_t tileID);
-    virtual WebCore::IntRect visibleContentsRect() const;
+    virtual WebCore::FloatRect visibleContentsRect() const;
     virtual void renderNextFrame();
     virtual void purgeBackingStores();
     virtual bool layerTreeTileUpdatesAllowed() const;
-    virtual void setVisibleContentsRect(const WebCore::IntRect&, float scale, const WebCore::FloatPoint&);
+    virtual void setVisibleContentsRect(const WebCore::FloatRect&, float scale, const WebCore::FloatPoint&);
     virtual void didReceiveLayerTreeCoordinatorMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);
     virtual WebCore::GraphicsLayerFactory* graphicsLayerFactory() OVERRIDE;
 
@@ -187,7 +187,7 @@ private:
 
     bool m_waitingForUIProcess;
     bool m_isSuspended;
-    WebCore::IntRect m_visibleContentsRect;
+    WebCore::FloatRect m_visibleContentsRect;
     float m_contentsScale;
     bool m_shouldSendScrollPositionUpdate;
 

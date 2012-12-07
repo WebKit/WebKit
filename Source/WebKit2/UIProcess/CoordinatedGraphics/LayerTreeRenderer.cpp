@@ -221,7 +221,7 @@ void LayerTreeRenderer::adjustPositionForFixedLayers()
         toTextureMapperLayer(it->value)->setScrollPositionDeltaIfNeeded(delta);
 }
 
-void LayerTreeRenderer::didChangeScrollPosition(const IntPoint& position)
+void LayerTreeRenderer::didChangeScrollPosition(const FloatPoint& position)
 {
     m_pendingRenderedContentsScrollPosition = position;
 }
@@ -333,10 +333,11 @@ void LayerTreeRenderer::setLayerState(CoordinatedLayerID id, const CoordinatedLa
     layer->setReplicatedByLayer(layerByID(layerInfo.replica));
     layer->setMaskLayer(layerByID(layerInfo.mask));
 
+    layer->setAnchorPoint(layerInfo.anchorPoint);
     layer->setPosition(layerInfo.pos);
     layer->setSize(layerInfo.size);
+
     layer->setTransform(layerInfo.transform);
-    layer->setAnchorPoint(layerInfo.anchorPoint);
     layer->setChildrenTransform(layerInfo.childrenTransform);
     layer->setBackfaceVisibility(layerInfo.backfaceVisible);
     layer->setContentsOpaque(layerInfo.contentsOpaque);
@@ -450,6 +451,7 @@ void LayerTreeRenderer::createBackingStoreIfNeeded(GraphicsLayer* graphicsLayer)
         return; // The layer already has a backing store (and no pending removal).
 
     RefPtr<CoordinatedBackingStore> backingStore(CoordinatedBackingStore::create());
+
     backingStore->setSize(graphicsLayer->size());
     ASSERT(!m_pendingSyncBackingStores.contains(layer));
     m_pendingSyncBackingStores.add(layer, backingStore);

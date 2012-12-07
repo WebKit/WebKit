@@ -1,5 +1,6 @@
 #
 #    Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies)
+#    Copyright (C) 2012 Intel Corporation. All rights reserved.
 #
 #    This library is free software; you can redistribute it and/or
 #    modify it under the terms of the GNU Library General Public
@@ -20,7 +21,7 @@
 
 #if USE(COORDINATED_GRAPHICS)
 messages -> LayerTreeCoordinator {
-    SetVisibleContentsRect(WebCore::IntRect visibleContentsRect, float scale, WebCore::FloatPoint trajectoryVectory)
+    SetVisibleContentsRect(WebCore::FloatRect visibleContentsRect, float scale, WebCore::FloatPoint trajectoryVectory)
     RenderNextFrame()
     PurgeBackingStores()
 #if ENABLE(REQUEST_ANIMATION_FRAME)

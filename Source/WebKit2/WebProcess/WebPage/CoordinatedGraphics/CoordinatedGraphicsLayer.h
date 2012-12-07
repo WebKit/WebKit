@@ -57,7 +57,7 @@ public:
     virtual void updateTile(CoordinatedLayerID, uint32_t tileID, const SurfaceUpdateInfo&, const WebCore::IntRect&) = 0;
     virtual void removeTile(CoordinatedLayerID, uint32_t tileID) = 0;
 
-    virtual WebCore::IntRect visibleContentsRect() const = 0;
+    virtual WebCore::FloatRect visibleContentsRect() const = 0;
     virtual bool layerTreeTileUpdatesAllowed() const = 0;
     virtual PassRefPtr<CoordinatedImageBacking> createImageBackingIfNeeded(WebCore::Image*) = 0;
     virtual void syncLayerState(CoordinatedLayerID, const CoordinatedLayerInfo&) = 0;
@@ -129,7 +129,10 @@ public:
     virtual void removeAnimation(const String&) OVERRIDE;
     virtual void suspendAnimations(double time) OVERRIDE;
     virtual void resumeAnimations() OVERRIDE;
-    
+
+    FloatPoint computePositionRelativeToBase();
+    void computePixelAlignment(FloatPoint& position, FloatSize&, FloatPoint3D& anchorPoint, FloatSize& alignmentOffset);
+
     void setContentsScale(float);
     void setVisibleContentRectTrajectoryVector(const FloatPoint&);
 
@@ -210,6 +213,11 @@ private:
     WebKit::CoordinatedLayerInfo m_layerInfo;
     GraphicsLayerTransform m_layerTransform;
     TransformationMatrix m_cachedInverseTransform;
+    FloatSize m_pixelAlignmentOffset;
+    FloatSize m_adjustedSize;
+    FloatPoint m_adjustedPosition;
+    FloatPoint3D m_adjustedAnchorPoint;
+
     bool m_inUpdateMode : 1;
     bool m_shouldUpdateVisibleRect: 1;
     bool m_shouldSyncLayerState: 1;

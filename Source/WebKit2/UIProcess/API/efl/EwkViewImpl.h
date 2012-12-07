@@ -202,7 +202,7 @@ public:
     float scaleFactor() const { return m_scaleFactor; }
 
     void setPagePosition(const WebCore::FloatPoint& position) { m_pagePosition = position; }
-    const WebCore::IntPoint discretePagePosition() const { return roundedIntPoint(m_pagePosition); }
+    const WebCore::FloatPoint pagePosition() const { return m_pagePosition; }
 #endif
 
     // FIXME: needs refactoring (split callback invoke)

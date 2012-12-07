@@ -40,7 +40,7 @@ messages -> LayerTreeCoordinatorProxy {
     ClearImageBackingContents(uint64_t imageID)
     RemoveImageBacking(uint64_t imageID)
     DidRenderFrame(WebCore::IntSize contentsSize, WebCore::IntRect coveredRect)
-    DidChangeScrollPosition(WebCore::IntPoint position)
+    DidChangeScrollPosition(WebCore::FloatPoint position)
     SetLayerAnimations(uint32_t id, WebCore::GraphicsLayerAnimations animations)
     SetAnimationsLocked(bool locked)
 

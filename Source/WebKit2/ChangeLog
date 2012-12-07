@@ -1,3 +1,113 @@
+2012-12-07  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        [WK2][EFL][Qt] Pixel alignment is wrong in some cases involving a non-integral content scale
+        https://webkit.org/b/103519
+
+        Reviewed by Noam Rosenthal.
+
+        This patch removes the blurriness by pixel aligning the layers. It
+        does not fully remove the shaking, only minimizes it.
+
+        * UIProcess/API/efl/EwkViewImpl.cpp:
+        (EwkViewImpl::transformFromScene):
+        (EwkViewImpl::displayTimerFired):
+        * UIProcess/API/efl/EwkViewImpl.h:
+        (EwkViewImpl::pagePosition):
+
+            As the pixel alignment of the main layer is moved to the
+            PageViewportController, rename discretePagePosition to just
+            pagePosition. It now returns a FloatPoint but the positions
+            should still be discrete.
+
+        * UIProcess/CoordinatedGraphics/LayerTreeCoordinatorProxy.cpp:
+        (WebKit::LayerTreeCoordinatorProxy::setVisibleContentsRect):
+        (WebKit::LayerTreeCoordinatorProxy::didChangeScrollPosition):
+        * UIProcess/CoordinatedGraphics/LayerTreeCoordinatorProxy.h:
+        (LayerTreeCoordinatorProxy):
+        * UIProcess/CoordinatedGraphics/LayerTreeCoordinatorProxy.messages.in:
+        * UIProcess/CoordinatedGraphics/LayerTreeRenderer.cpp:
+        (WebKit::LayerTreeRenderer::didChangeScrollPosition):
+        * UIProcess/CoordinatedGraphics/LayerTreeRenderer.h:
+        (LayerTreeRenderer):
+        * WebProcess/WebPage/CoordinatedGraphics/LayerTreeCoordinator.cpp:
+        (WebKit::LayerTreeCoordinator::visibleContentsRect):
+        (WebKit::LayerTreeCoordinator::setVisibleContentsRect):
+        * WebProcess/WebPage/CoordinatedGraphics/LayerTreeCoordinator.h:
+        (LayerTreeCoordinator):
+        * WebProcess/WebPage/CoordinatedGraphics/LayerTreeCoordinator.messages.in:
+        * WebProcess/WebPage/LayerTreeHost.h:
+        (WebCore):
+        (WebKit::LayerTreeHost::setVisibleContentsRect):
+
+            Change the internal scroll position/visible contents rect
+            to be represented as float positions. The rounding to integer
+            values not happens just before setFixesVisibleContentsRect.
+            This makes it possible to know our exact positions and
+            calculate proper scroll deltas.
+
+        (WebKit::LayerTreeRenderer::setLayerState):
+
+            Group anchor point, position and size together.
+
+        * UIProcess/PageViewportController.h:
+        (PageViewportController):
+        * UIProcess/PageViewportController.cpp:
+        (WebKit::PageViewportController::PageViewportController):
+        (WebKit::PageViewportController::boundContentsPosition):
+        (WebKit::PageViewportController::boundContentsPositionAtScale):
+        (WebKit::PageViewportController::didRenderFrame):
+        (WebKit::PageViewportController::pageDidRequestScroll):
+        (WebKit::PageViewportController::didChangeContentsVisibility):
+        (WebKit::PageViewportController::syncVisibleContents):
+        (WebKit::PageViewportController::visibleContentsSize):
+        (WebKit::PageViewportController::applyPositionAfterRenderingContents):
+        * UIProcess/qt/PageViewportControllerClientQt.cpp:
+        (WebKit::PageViewportControllerClientQt::focusEditableArea):
+        (WebKit::PageViewportControllerClientQt::zoomToAreaGestureEnded):
+        (WebKit::PageViewportControllerClientQt::nearestValidVisibleContentsRect):
+
+            Some renaming as what was called viewportPos was actually the
+            contents position. Rename clampViewportToContents to
+            boundContentsPosition and remove scale argument which is has
+            direct access to.
+
+            Make the boundContentsPosition allow one extra pixel in each
+            orientation to allow for pixel alignment of fixed position layers
+
+        (WebKit::isIntegral):
+        (WebKit):
+        (WebKit::PageViewportController::pixelAlignedFloatPoint):
+
+            Introduce way to pixel align the main contents layer. Only in
+            use for EFL so far.
+
+        * UIProcess/efl/PageClientLegacyImpl.cpp:
+        (WebKit::PageClientLegacyImpl::updateViewportSize):
+        * UIProcess/efl/PageViewportControllerClientEfl.cpp:
+        (WebKit::PageViewportControllerClientEfl::setViewportPosition):
+        * UIProcess/efl/PageViewportControllerClientEfl.h:
+        (WebKit::PageViewportControllerClientEfl::contentPosition):
+        (PageViewportControllerClientEfl):
+
+            Store the contents position as a FloatPoint.
+
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedGraphicsLayer.cpp:
+        (WebCore::CoordinatedGraphicsLayer::flushCompositingStateForThisLayerOnly):
+        (WebCore::CoordinatedGraphicsLayer::setMaskLayer):
+        (WebCore::CoordinatedGraphicsLayer::syncLayerState):
+        (WebCore::CoordinatedGraphicsLayer::tiledBackingStoreVisibleRect):
+        (WebCore::isIntegral):
+        (WebCore):
+        (WebCore::CoordinatedGraphicsLayer::computePositionRelativeToBase):
+        (WebCore::CoordinatedGraphicsLayer::computePixelAlignment):
+        (WebCore::CoordinatedGraphicsLayer::computeTransformedVisibleRect):
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedGraphicsLayer.h:
+        (CoordinatedGraphicsLayerClient):
+        (CoordinatedGraphicsLayer):
+
+            Pixel align layers when the effective scale is not an integer
+            value. This code is based on code from GraphicsLayerCA.
+
 2012-12-07  Alexey Proskuryakov  <ap@apple.com>
 
         REGRESSION (r136770): Assertion failure in sendMessage() whenever WebProcess crashes

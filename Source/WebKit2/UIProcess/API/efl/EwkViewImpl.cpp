@@ -295,7 +295,7 @@ AffineTransform EwkViewImpl::transformFromScene() const
 
 #if USE(TILED_BACKING_STORE)
     transform.scale(1 / m_scaleFactor);
-    transform.translate(discretePagePosition().x(), discretePagePosition().y());
+    transform.translate(pagePosition().x(), pagePosition().y());
 #endif
 
     Ewk_View_Smart_Data* sd = smartData();
@@ -391,7 +391,7 @@ void EwkViewImpl::displayTimerFired(Timer<EwkViewImpl>*)
             return;
 
         RefPtr<cairo_t> graphicsContext = adoptRef(cairo_create(surface.get()));
-        cairo_translate(graphicsContext.get(), - discretePagePosition().x(), - discretePagePosition().y());
+        cairo_translate(graphicsContext.get(), - pagePosition().x(), - pagePosition().y());
         cairo_scale(graphicsContext.get(), m_scaleFactor, m_scaleFactor);
         renderer->paintToGraphicsContext(graphicsContext.get());
         evas_object_image_data_update_add(sd->image, 0, 0, viewport.width(), viewport.height());

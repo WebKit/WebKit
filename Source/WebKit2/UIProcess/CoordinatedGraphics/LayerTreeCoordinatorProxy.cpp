@@ -181,13 +181,11 @@ void LayerTreeCoordinatorProxy::setVisibleContentsRect(const FloatRect& rect, fl
     // Inform the renderer to adjust viewport-fixed layers.
     dispatchUpdate(bind(&LayerTreeRenderer::setVisibleContentsRect, m_renderer.get(), rect));
 
-    // Round the rect instead of enclosing it to make sure that its size stays the same while panning. This can have nasty effects on layout.
-    IntRect roundedRect = roundedIntRect(rect);
-    if (roundedRect == m_lastSentVisibleRect && scale == m_lastSentScale && trajectoryVector == m_lastSentTrajectoryVector)
+    if (rect == m_lastSentVisibleRect && scale == m_lastSentScale && trajectoryVector == m_lastSentTrajectoryVector)
         return;
 
-    m_drawingAreaProxy->page()->process()->send(Messages::LayerTreeCoordinator::SetVisibleContentsRect(roundedRect, scale, trajectoryVector), m_drawingAreaProxy->page()->pageID());
-    m_lastSentVisibleRect = roundedRect;
+    m_drawingAreaProxy->page()->process()->send(Messages::LayerTreeCoordinator::SetVisibleContentsRect(rect, scale, trajectoryVector), m_drawingAreaProxy->page()->pageID());
+    m_lastSentVisibleRect = rect;
     m_lastSentScale = scale;
     m_lastSentTrajectoryVector = trajectoryVector;
 }
@@ -210,7 +208,7 @@ void LayerTreeCoordinatorProxy::animationFrameReady()
 }
 #endif
 
-void LayerTreeCoordinatorProxy::didChangeScrollPosition(const IntPoint& position)
+void LayerTreeCoordinatorProxy::didChangeScrollPosition(const FloatPoint& position)
 {
     dispatchUpdate(bind(&LayerTreeRenderer::didChangeScrollPosition, m_renderer.get(), position));
 }

@@ -39,6 +39,7 @@ class MessageID;
 
 namespace WebCore {
 class FloatPoint;
+class FloatRect;
 class IntRect;
 class IntSize;
 class GraphicsLayer;
@@ -92,8 +93,7 @@ public:
     virtual void setBackgroundColor(const WebCore::Color&) { }
 
 #if USE(COORDINATED_GRAPHICS)
-    virtual void setVisibleContentsRect(const WebCore::IntRect&, float /* scale */, const WebCore::FloatPoint&) { }
-    virtual void setVisibleContentsRectForLayer(int /* layerID */, const WebCore::IntRect&) { }
+    virtual void setVisibleContentsRect(const WebCore::FloatRect&, float /* scale */, const WebCore::FloatPoint&) { }
     virtual void renderNextFrame() { }
     virtual void purgeBackingStores() { }
     virtual void didReceiveLayerTreeCoordinatorMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&) = 0;

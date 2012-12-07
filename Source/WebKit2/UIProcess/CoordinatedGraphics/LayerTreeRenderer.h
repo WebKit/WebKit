@@ -72,7 +72,7 @@ public:
     void paintToGraphicsContext(BackingStore::PlatformGraphicsContext);
     void setContentsSize(const WebCore::FloatSize&);
     void setVisibleContentsRect(const WebCore::FloatRect&);
-    void didChangeScrollPosition(const WebCore::IntPoint& position);
+    void didChangeScrollPosition(const WebCore::FloatPoint& position);
 #if USE(GRAPHICS_SURFACE)
     void createCanvas(CoordinatedLayerID, const WebCore::IntSize&, PassRefPtr<WebCore::GraphicsSurface>);
     void syncCanvas(CoordinatedLayerID, uint32_t frontBuffer);
@@ -185,8 +185,8 @@ private:
     typedef HashMap<CoordinatedLayerID, WebCore::GraphicsLayer*> LayerRawPtrMap;
     LayerRawPtrMap m_fixedLayers;
     CoordinatedLayerID m_rootLayerID;
-    WebCore::IntPoint m_renderedContentsScrollPosition;
-    WebCore::IntPoint m_pendingRenderedContentsScrollPosition;
+    WebCore::FloatPoint m_renderedContentsScrollPosition;
+    WebCore::FloatPoint m_pendingRenderedContentsScrollPosition;
     bool m_animationsLocked;
 #if ENABLE(REQUEST_ANIMATION_FRAME)
     bool m_animationFrameRequested;

@@ -78,7 +78,7 @@ public:
     void didReceiveLayerTreeCoordinatorProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);
     void updateViewport();
     void renderNextFrame();
-    void didChangeScrollPosition(const WebCore::IntPoint& position);
+    void didChangeScrollPosition(const WebCore::FloatPoint& position);
 #if USE(GRAPHICS_SURFACE)
     void createCanvas(CoordinatedLayerID, const WebCore::IntSize&, const WebCore::GraphicsSurfaceToken&);
     void syncCanvas(CoordinatedLayerID, uint32_t frontBuffer);
@@ -99,7 +99,7 @@ protected:
 
     DrawingAreaProxy* m_drawingAreaProxy;
     RefPtr<LayerTreeRenderer> m_renderer;
-    WebCore::IntRect m_lastSentVisibleRect;
+    WebCore::FloatRect m_lastSentVisibleRect;
     float m_lastSentScale;
     WebCore::FloatPoint m_lastSentTrajectoryVector;
     typedef HashMap<int /* atlasID */, RefPtr<ShareableSurface> > SurfaceMap;

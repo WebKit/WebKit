@@ -75,7 +75,7 @@ void PageViewportControllerClientEfl::didChangeContentsSize(const WebCore::IntSi
 
 void PageViewportControllerClientEfl::setViewportPosition(const WebCore::FloatPoint& contentsPoint)
 {
-    m_contentPosition = roundedIntPoint(contentsPoint);
+    m_contentPosition = contentsPoint;
 
     FloatPoint pos(contentsPoint);
     pos.scale(scaleFactor(), scaleFactor());

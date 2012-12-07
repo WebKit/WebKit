@@ -52,7 +52,13 @@ public:
 
     float innerBoundedViewportScale(float) const;
     float outerBoundedViewportScale(float) const;
-    WebCore::FloatPoint clampViewportToContents(const WebCore::FloatPoint& viewportPos, float viewportScale);
+
+    WebCore::FloatPoint pixelAlignedFloatPoint(const WebCore::FloatPoint&);
+
+    WebCore::FloatPoint boundContentsPosition(const WebCore::FloatPoint&);
+    WebCore::FloatPoint boundContentsPositionAtScale(const WebCore::FloatPoint&, float scale);
+
+    WebCore::FloatSize visibleContentsSize() const;
 
     bool hasSuspendedContent() const { return m_hasSuspendedContent; }
     bool hadUserInteraction() const { return m_hadUserInteraction; }
@@ -68,7 +74,7 @@ public:
 
     // Notifications from the viewport.
     void didChangeViewportSize(const WebCore::FloatSize& newSize);
-    void didChangeContentsVisibility(const WebCore::FloatPoint& viewportPos, float viewportScale, const WebCore::FloatPoint& trajectoryVector = WebCore::FloatPoint::zero());
+    void didChangeContentsVisibility(const WebCore::FloatPoint&, float scale, const WebCore::FloatPoint& trajectoryVector = WebCore::FloatPoint::zero());
 
     // Notifications from the WebProcess.
     void didCommitLoad();
@@ -85,7 +91,6 @@ private:
     void applyScaleAfterRenderingContents(float scale);
     void applyPositionAfterRenderingContents(const WebCore::FloatPoint& pos);
     bool updateMinimumScaleToFit(bool userInitiatedUpdate);
-    WebCore::FloatSize viewportSizeInContentsCoordinates() const;
 
     WebPageProxy* const m_webPageProxy;
     PageViewportControllerClient* m_client;
@@ -99,13 +104,13 @@ private:
     bool m_hasSuspendedContent;
     bool m_hadUserInteraction;
 
-    WebCore::FloatPoint m_viewportPos;
-    WebCore::FloatSize m_viewportSize;
+    WebCore::FloatPoint m_contentsPosition;
     WebCore::FloatSize m_contentsSize;
+    WebCore::FloatSize m_viewportSize;
     WebCore::IntSize m_clientContentsSize;
     float m_effectiveScale; // Should always be cssScale * devicePixelRatio.
 
-    bool m_viewportPosIsLocked;
+    bool m_contentsPositionIsLocked;
     bool m_effectiveScaleIsLocked;
     WebCore::FloatRect m_lastFrameCoveredRect;
 };

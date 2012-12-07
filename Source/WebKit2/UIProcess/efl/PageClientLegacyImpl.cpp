@@ -50,7 +50,7 @@ void PageClientLegacyImpl::didCommitLoad()
 void PageClientLegacyImpl::updateViewportSize(const WebCore::IntSize& size)
 {
 #if USE(TILED_BACKING_STORE)
-    m_viewImpl->page()->drawingArea()->setVisibleContentsRect(IntRect(m_viewImpl->discretePagePosition(), size), m_viewImpl->scaleFactor(), FloatPoint());
+    m_viewImpl->page()->drawingArea()->setVisibleContentsRect(IntRect(roundedIntPoint(m_viewImpl->pagePosition()), size), m_viewImpl->scaleFactor(), FloatPoint());
 #else
     UNUSED_PARAM(size);
 #endif
