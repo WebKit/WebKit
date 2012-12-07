@@ -93,9 +93,9 @@ webkit.org/b/103744 svg/dom/viewspec-parser-7.html [ Pass Timeout ]
 webkit.org/b/103744 svg/dom/viewspec-parser-6.html [ Pass Timeout ]
 
 # These tests started being slow when we switched to DRT.
-webkit.org/b/90488 [ Linux Win Debug ] inspector [ Pass Slow ]
-webkit.org/b/90488 [ Linux Win Debug ] http/tests/inspector [ Pass Slow ]
-webkit.org/b/90488 [ Linux Win Debug ] http/tests/inspector-enabled [ Pass Slow ]
+webkit.org/b/90488 [ Debug ] inspector [ Pass Slow ]
+webkit.org/b/90488 [ Debug ] http/tests/inspector [ Pass Slow ]
+webkit.org/b/90488 [ Debug ] http/tests/inspector-enabled [ Pass Slow ]
 
 # Chromium r163873 slowed down these tests
 webkit.org/b/100287 [ Linux Win Mac ] compositing/culling/filter-occlusion-blur-large.html [ Pass Slow ]
@@ -1020,17 +1020,11 @@ http/tests/inspector/network/network-content-replacement-embed.html [ WontFix ]
 # Works slowly, we have an equivalent test that doesn't open Inspector and runs fast.
 [ Linux Debug ] inspector/profiler/cpu-profiler-profiling.html [ WontFix ]
 
-webkit.org/b/91435 [ Linux Win ] http/tests/inspector/extensions-ignore-cache.html [ Pass Timeout ]
-webkit.org/b/91435 [ Linux ] inspector/timeline/timeline-network-received-data.html [ Failure Pass ]
+webkit.org/b/91435 http/tests/inspector/extensions-ignore-cache.html [ Pass Timeout ]
+webkit.org/b/91435 [ Linux Mac ] inspector/timeline/timeline-network-received-data.html [ Failure Pass ]
 webkit.org/b/91435 [ Win Release ] inspector/timeline/timeline-network-received-data.html [ Failure Pass ]
 
-# Add support for inspector layout tests on Mac.
-crbug.com/89357 [ Mac ] inspector
-crbug.com/89357 [ Mac ] http/tests/inspector
-crbug.com/89357 [ Mac ] http/tests/inspector-enabled
-crbug.com/89357 [ Mac ] platform/chromium/inspector
-
-crbug.com/67662 [ Linux Win ] http/tests/inspector/console-websocket-error.html [ Failure Timeout ]
+crbug.com/67662 http/tests/inspector/console-websocket-error.html [ Failure Timeout ]
 
 # Transferred time/size are not supported in DRT.
 http/tests/inspector/network/network-timing.html [ WontFix ]
@@ -1048,10 +1042,6 @@ webkit.org/b/60107 [ Win Release ] inspector/console/console-object-constructor-
 webkit.org/b/60107 [ Win Release ] inspector/console/console-log-before-inspector-open.html [ Failure Pass ]
 webkit.org/b/60107 [ Win Release ] inspector/console/console-tests.html [ Failure Pass ]
 webkit.org/b/60107 [ Win Release ] inspector/console/console-clear.html [ Failure Pass ]
-webkit.org/b/60107 [ Linux Win Debug ] inspector/console/console-object-constructor-name.html [ Pass Slow ]
-webkit.org/b/60107 [ Linux Win Debug ] inspector/console/console-log-before-inspector-open.html [ Pass Slow ]
-webkit.org/b/60107 [ Linux Win Debug ] inspector/console/console-tests.html [ Pass Slow ]
-webkit.org/b/60107 [ Linux Win Debug ] inspector/console/console-clear.html [ Pass Slow ]
 
 # The test is too slow, even SLOW does not help.
 webkit.org/b/82894 [ Release ] inspector/profiler/heap-snapshot-inspect-dom-wrapper.html [ Pass Timeout ]
@@ -1059,18 +1049,16 @@ webkit.org/b/82894 [ Debug ] inspector/profiler/heap-snapshot-inspect-dom-wrappe
 
 webkit.org/b/60109 [ Win Release ] inspector/elements/edit-dom-actions.html [ Failure Pass ]
 webkit.org/b/60109 [ Win Debug ] inspector/elements/edit-dom-actions.html [ Pass Timeout ]
-webkit.org/b/60109 [ Linux Release ] inspector/elements/edit-dom-actions.html [ Pass Timeout ]
+webkit.org/b/60109 [ Linux Mac Release ] inspector/elements/edit-dom-actions.html [ Pass Timeout ]
 
-webkit.org/b/72434 [ Linux Win Release ] inspector/styles/svg-style.xhtml [ Failure Pass ]
-webkit.org/b/72434 [ Linux Win Debug ] inspector/styles/svg-style.xhtml [ Failure Slow ]
+webkit.org/b/72434 [ Release ] inspector/styles/svg-style.xhtml [ Failure Pass ]
+webkit.org/b/72434 [ Debug ] inspector/styles/svg-style.xhtml [ Failure Slow ]
 
 webkit.org/b/74654 http/tests/inspector/network/network-worker.html
 
 webkit.org/b/75186 [ Linux ] http/tests/inspector-enabled/dedicated-workers-list.html [ Skip ]
 
-webkit.org/b/75647 http/tests/inspector/network/download.html [ Pass Timeout ]
-
-webkit.org/b/78810 [ Linux Win Debug ] inspector/debugger/script-formatter-console.html [ Pass Slow ]
+webkit.org/b/75647 http/tests/inspector/network/download.html [ Pass Timeout Failure ]
 
 # -----------------------------------------------------------------
 # Editing tests
@@ -3343,7 +3331,7 @@ crbug.com/121442 [ Linux Release ] plugins/iframe-shims.html [ Crash Pass ]
 webkit.org/b/83219 [ Lion MountainLion ] fonts/cursive.html [ Failure ImageOnlyFailure Pass ]
 webkit.org/b/83324 [ Win Debug ] fast/js/cross-global-object-inline-global-var.html [ Failure Pass ]
 
-crbug.com/122462 [ Linux Win ] http/tests/inspector/inspect-element.html [ Failure Slow ]
+crbug.com/122462 http/tests/inspector/inspect-element.html [ Failure Slow ]
 
 webkit.org/b/83635 [ Android ] fast/canvas/2d.backingStorePixelRatio.html [ Failure Timeout ]
 webkit.org/b/83635 [ Android ] platform/chromium/virtual/gpu/fast/canvas/2d.backingStorePixelRatio.html [ Failure Timeout ]
@@ -3446,20 +3434,20 @@ webkit.org/b/85950 [ Linux Debug ] platform/chromium/virtual/softwarecompositing
 
 webkit.org/b/81416 fast/dom/wrapper-scope.html [ Failure ]
 
-webkit.org/b/86439 [ Linux Win ] inspector/extensions/extensions-events.html [ Pass Timeout ]
-webkit.org/b/86439 [ Linux Win Debug ] inspector/extensions/extensions-sidebar.html [ Pass Timeout ]
+webkit.org/b/86439 inspector/extensions/extensions-events.html [ Pass Timeout ]
+webkit.org/b/86439 [ Debug ] inspector/extensions/extensions-sidebar.html [ Pass Timeout ]
 
 webkit.org/b/86114 [ Mac Win Debug ] animations/combo-transform-translate+scale.html [ Failure Pass ]
 
-webkit.org/b/92279 [ Linux Win ] http/tests/inspector/resource-har-pages.html [ Failure Pass Slow ]
+webkit.org/b/92279 http/tests/inspector/resource-har-pages.html [ Failure Pass Slow ]
 
 webkit.org/b/88964 [ Mac ] http/tests/misc/embedCrasher.html [ Missing Pass ]
 
 webkit.org/b/86674 [ Debug ] fast/dom/HTMLObjectElement/beforeload-set-text-crash.xhtml [ Pass Timeout ]
 
-webkit.org/b/86683 [ Linux Win Debug ] inspector/profiler/heap-snapshot-summary-show-ranges.html [ Failure Slow ]
-webkit.org/b/86683 [ Linux Win Release ] inspector/profiler/heap-snapshot-summary-show-ranges.html [ Failure Pass Slow ]
-webkit.org/b/102781 [ Linux Win DEBUG ] inspector/profiler/cpu-profiler-profiling-without-inspector.html [ Crash Pass ]
+webkit.org/b/86683 [ Debug ] inspector/profiler/heap-snapshot-summary-show-ranges.html [ Failure Slow ]
+webkit.org/b/86683 [ Release ] inspector/profiler/heap-snapshot-summary-show-ranges.html [ Failure Pass Slow ]
+webkit.org/b/102781 [ DEBUG ] inspector/profiler/cpu-profiler-profiling-without-inspector.html [ Crash Pass ]
 
 webkit.org/b/86908 [ Win ] http/tests/security/cross-frame-access-put.html [ Failure Pass ]
 
@@ -3620,7 +3608,8 @@ webkit.org/b/90746 fast/multicol/column-span-parent-continuation-crash.html [ Cr
 # Flaky
 webkit.org/b/90896 [ Win Debug ] fast/js/dfg-cross-global-object-inline-new-array-literal.html [ Failure Pass ]
 
-webkit.org/b/90899 [ Linux Win Debug ] platform/chromium/inspector/styles/device-metrics-fit-window.html [ Pass Slow ]
+webkit.org/b/104362 [ Mac Release ] platform/chromium/inspector/styles/device-metrics-fit-window.html [ Failure ]
+webkit.org/b/104362 [ Mac Debug ] platform/chromium/inspector/styles/device-metrics-fit-window.html [ Failure Slow ]
 
 webkit.org/b/90900 [ SnowLeopard Lion ] tables/mozilla_expected_failures/other/empty_cells.html [ Failure Pass ]
 
@@ -3637,7 +3626,7 @@ webkit.org/b/91255 [ Lion ] fast/multicol/table-vertical-align.html [ Failure ]
 webkit.org/b/91372 [ Win ] css2.1/20110323/vertical-align-boxes-001.htm [ ImageOnlyFailure ]
 
 # Fails on Win
-webkit.org/b/93624 [ Win Linux ] inspector/console/console-format-collections.html [ Failure Pass ]
+webkit.org/b/93624 inspector/console/console-format-collections.html [ Failure Pass ]
 
 # Started failing around r122770
 webkit.org/b/91445 [ Linux ] plugins/embed-attributes-style.html [ ImageOnlyFailure Pass ]
@@ -3915,7 +3904,7 @@ webkit.org/b/97816 [ Linux ] platform/chromium/compositing/plugins/webplugin-ref
 webkit.org/b/63899 [ Mac Win Android ] fast/replaced/border-radius-clip-content-edge.html [ Pass ImageOnlyFailure ]
 
 # Started failing on r128793
-webkit.org/b/96953 [ Win Linux ] http/tests/inspector/network/network-xhr-replay.html [ Timeout Crash ]
+webkit.org/b/96953 http/tests/inspector/network/network-xhr-replay.html [ Timeout Crash Pass ]
 
 webkit.org/b/96596 fast/js/array-bad-time.html [ Failure ]
 webkit.org/b/96596 fast/js/array-slow-put.html [ Failure ]
@@ -4139,7 +4128,7 @@ webkit.org/b/101408 platform/chromium/fast/forms/calendar-picker/calendar-picker
 
 webkit.org/b/101539 [ Linux Win ] editing/execCommand/switch-list-type-with-orphaned-li.html [ Failure ]
 
-webkit.org/b/101618 [ Win Linux ] http/tests/inspector/indexeddb/database-data.html [ Pass Crash ]
+webkit.org/b/101618 http/tests/inspector/indexeddb/database-data.html [ Pass Crash ]
 
 webkit.org/b/90022 fast/canvas/canvas-resize-reset-pixelRatio.html [ WontFix ]
 webkit.org/b/90022 platform/chromium/virtual/gpu/fast/canvas/canvas-resize-reset-pixelRatio.html [ WontFix ]
@@ -4181,8 +4170,8 @@ webkit.org/b/103148 [ Lion ] fast/table/border-collapsing/004-vertical.html [ Pa
 webkit.org/b/103154 [ Win7 SnowLeopard Lion Linux Debug ] fast/frames/frame-unload-crash2.html [ Pass Timeout ]
 webkit.org/b/103148 [ Lion ] fast/text/large-text-composed-char.html [ Pass ImageOnlyFailure ]
 webkit.org/b/103148 [ Lion ] fast/text/text-letter-spacing.html [ Pass ImageOnlyFailure ]
-webkit.org/b/103161 [ Linux Win ] inspector/console/command-line-api-inspect.html [ Pass Failure ]
-webkit.org/b/103161 [ Linux Win ] inspector/runtime/runtime-localStorage-getProperties.html [ Pass Failure ]
+webkit.org/b/103161 inspector/console/command-line-api-inspect.html [ Pass Failure ]
+webkit.org/b/103161 inspector/runtime/runtime-localStorage-getProperties.html [ Pass Failure ]
 webkit.org/b/103148 [ Linux Win Mac ] svg/batik/text/textPosition2.svg [ Pass Failure ]
 webkit.org/b/103181 [ Win7 ] http/tests/local/drag-over-remote-content.html [ Pass Crash Timeout ]
 webkit.org/b/103183 [ Win7 SnowLeopard ] media/video-seek-past-end-playing.html [ Pass Crash ]

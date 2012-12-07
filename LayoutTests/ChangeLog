@@ -1,3 +1,23 @@
+2012-12-07  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: enable inspector tests on chromium-mac.
+        https://bugs.webkit.org/show_bug.cgi?id=104357
+
+        Reviewed by Pavel Feldman.
+
+        After chromium r171707 patch we can enable inspector tests on chromium-mac.
+        Two expectation files were moved from chromium-win to chromium because chromium-mac doesn't inherit expectations from chromium-win.
+	Expectations in chromium-mac were removed because they were added by mistake.
+	[ Win Linux ] filter was removed because I need to add Mac but [ Mac Win Linux ] is equivalent to nothing.
+
+        * platform/chromium-mac/inspector/console/command-line-api-getEventListeners-expected.txt: Removed.
+        * platform/chromium-mac/inspector/cookie-parser-expected.txt: Removed.
+        * platform/chromium-mac/inspector/debugger/debugger-activation-crash2-expected.txt: Removed.
+        * platform/chromium-mac/inspector/debugger/event-listener-breakpoints-expected.txt: Removed.
+        * platform/chromium/TestExpectations:
+        * platform/chromium/inspector/console/command-line-api-getEventListeners-expected.txt: Renamed from LayoutTests/platform/chromium-win/inspector/console/command-line-api-getEventListeners-expected.txt.
+        * platform/chromium/inspector/debugger/debugger-scripts-expected.txt: Renamed from LayoutTests/platform/chromium-win/inspector/debugger/debugger-scripts-expected.txt.
+
 2012-12-07  Sudarsana Nagineni  <sudarsana.nagineni@intel.com>
 
         Unreviewed EFL gardening.

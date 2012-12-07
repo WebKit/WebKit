@@ -1,2 +1,0 @@
-
-Tests for a crash when paused at a breakpoint caused by inaccurate Activation records. Bug 57120
