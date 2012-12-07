@@ -1,3 +1,31 @@
+2012-12-06  Hayato Ito  <hayato@chromium.org>
+
+        Event's relatedTarget re-targeting does not occur for manually fired mouse events created by event.initMouseEvent().
+        https://bugs.webkit.org/show_bug.cgi?id=102681
+
+        Reviewed by Dimitri Glazkov.
+
+        Make sure that event's relatedTarget re-targeting occurs for mouse
+        events created by event.initMouseEvent().  Since user-generated
+        mouse events can have a relatedTarget which is same to the target
+        node, the algorithm which calculates event's ancestors is also
+        updated so that ancestors are not shrunk wrongly.
+
+        Test: fast/events/dispatch-synthetic-mouseevent.html
+              fast/dom/shadow/shadow-dom-event-dispatching.html
+
+        * dom/EventDispatcher.cpp:
+        (WebCore::EventRelatedTargetAdjuster::adjust):
+        * dom/MouseEvent.cpp:
+        (WebCore::MouseEventDispatchMediator::create):
+        (WebCore::MouseEventDispatchMediator::MouseEventDispatchMediator):
+        (WebCore::MouseEventDispatchMediator::dispatchEvent):
+        * dom/MouseEvent.h:
+        (WebCore::MouseEventDispatchMediator::isSyntheticMouseEvent):
+        (MouseEventDispatchMediator):
+        * dom/Node.cpp:
+        (WebCore::Node::dispatchEvent):
+
 2012-12-06  Kunihiko Sakamoto  <ksakamoto@chromium.org>
 
         Disabled file input box stops a certain other div from being rendered

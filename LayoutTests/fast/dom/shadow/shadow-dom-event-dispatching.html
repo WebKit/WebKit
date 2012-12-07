@@ -378,6 +378,58 @@ function testEventsOnFallbackElements()
     debugDispatchedEvent('click');
 }
 
+function testEventsFiredManually()
+{
+    sandbox.innerHTML = '';
+    sandbox.appendChild(
+        createDOM('div', {'id': 'top'},
+                  createDOM('div', {'id': 'host'},
+                            createShadowRoot(
+                                createDOM('div', {'id': 'div1'}),
+                                createDOM('div', {'id': 'div2'})))));
+
+    addEventListeners(['top', 'host', 'host/', 'host/div1', 'host/div2']);
+    getNodeInShadowTreeStack('host/').id = 'shadow-root';
+    showSandboxTree();
+
+    var div1 = getNodeInShadowTreeStack('host/div1');
+    var div2 = getNodeInShadowTreeStack('host/div2');
+
+    clearEventRecords();
+    var event = document.createEvent("MouseEvents");
+    event.initMouseEvent("mouseover", true, false, window,
+                         0, 10, 10, 10, 10, false, false, false, false, 0, div1);
+    div2.dispatchEvent(event);
+
+    debugDispatchedEvent('mouseout');
+    debugDispatchedEvent('mouseover');
+}
+
+function testEventsFiredManuallyWithRelatedTargetSameToTarget()
+{
+    sandbox.innerHTML = '';
+    sandbox.appendChild(
+        createDOM('div', {'id': 'top'},
+                  createDOM('div', {'id': 'host'},
+                            createShadowRoot(
+                                createDOM('div', {'id': 'div1'})))));
+
+    addEventListeners(['top', 'host', 'host/', 'host/div1']);
+    getNodeInShadowTreeStack('host/').id = 'shadow-root';
+    showSandboxTree();
+
+    var div1 = getNodeInShadowTreeStack('host/div1');
+
+    clearEventRecords();
+    var event = document.createEvent("MouseEvents");
+    event.initMouseEvent("mouseover", true, false, window,
+                         0, 10, 10, 10, 10, false, false, false, false, 0, div1);
+    div1.dispatchEvent(event);
+
+    debugDispatchedEvent('mouseout');
+    debugDispatchedEvent('mouseover');
+}
+
 function test()
 {
     if (window.testRunner)
@@ -393,6 +445,8 @@ function test()
     testEventsOnMultipleShadowRoots();
     testEventsOnNonDistributedNodes();
     testEventsOnFallbackElements();
+    testEventsFiredManually();
+    testEventsFiredManuallyWithRelatedTargetSameToTarget();
 }
 
 test();
