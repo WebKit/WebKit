@@ -1985,4 +1985,9 @@ bool SerializedScriptValue::serializationDidCompleteSuccessfully(SerializationRe
     return (code == SuccessfullyCompleted);
 }
 
+uint32_t SerializedScriptValue::wireFormatVersion()
+{
+    return CurrentVersion;
+}
+
 }

@@ -47,8 +47,9 @@
 //
 // Global meta-data have keys with prefix (0,0,0), followed by a type byte:
 //
-//     <0, 0, 0, 0>                                           => IndexedDB/LevelDB schema version (0 for now) [SchemaVersionKey]
+//     <0, 0, 0, 0>                                           => IndexedDB/LevelDB schema version [SchemaVersionKey]
 //     <0, 0, 0, 1>                                           => The maximum database id ever allocated [MaxDatabaseIdKey]
+//     <0, 0, 0, 2>                                           => SerializedScriptValue version [DataVersionKey]
 //     <0, 0, 0, 100, database id>                            => Existence implies the database id is in the free list [DatabaseFreeListKey]
 //     <0, 0, 0, 201, utf16 origin name, utf16 database name> => Database id [DatabaseNameKey]
 //
@@ -154,7 +155,8 @@ static const unsigned char ExistsEntryIndexId = 2;
 
 static const unsigned char SchemaVersionTypeByte = 0;
 static const unsigned char MaxDatabaseIdTypeByte = 1;
-static const unsigned char MaxSimpleGlobalMetaDataTypeByte = 2; // Insert before this and increment.
+static const unsigned char DataVersionTypeByte = 2;
+static const unsigned char MaxSimpleGlobalMetaDataTypeByte = 3; // Insert before this and increment.
 static const unsigned char DatabaseFreeListTypeByte = 100;
 static const unsigned char DatabaseNameTypeByte = 201;
 
@@ -1044,6 +1046,14 @@ Vector<char> MaxDatabaseIdKey::encode()
     KeyPrefix prefix(0, 0, 0);
     Vector<char> ret = prefix.encode();
     ret.append(encodeByte(MaxDatabaseIdTypeByte));
+    return ret;
+}
+
+Vector<char> DataVersionKey::encode()
+{
+    KeyPrefix prefix(0, 0, 0);
+    Vector<char> ret = prefix.encode();
+    ret.append(encodeByte(DataVersionTypeByte));
     return ret;
 }
 

@@ -181,30 +181,51 @@ public:
     virtual const char* name() const { return "idb_cmp1"; }
 };
 
-const int64_t latestSchemaVersion = 1;
+// 0 - Initial version.
+// 1 - Adds UserIntVersion to DatabaseMetaData.
+// 2 - Adds DataVersion to to global metadata.
+const int64_t latestKnownSchemaVersion = 2;
 static bool isSchemaKnown(LevelDBDatabase* db)
 {
-    int64_t schemaVersion = 0;
-    const Vector<char> metaDataKey = SchemaVersionKey::encode();
-    if (!getInt(db, metaDataKey, schemaVersion))
+    int64_t dbSchemaVersion = 0;
+    if (!getInt(db, SchemaVersionKey::encode(), dbSchemaVersion))
         return true;
-    return schemaVersion <= latestSchemaVersion;
+    if (dbSchemaVersion > latestKnownSchemaVersion)
+        return false;
+
+    const uint32_t latestKnownDataVersion = SerializedScriptValue::wireFormatVersion();
+    int64_t dbDataVersion = 0;
+    if (!getInt(db, DataVersionKey::encode(), dbDataVersion))
+        return true;
+
+    if (dbDataVersion > latestKnownDataVersion)
+        return false;
+
+    return true;
 }
 
 static bool setUpMetadata(LevelDBDatabase* db, const String& origin)
 {
-    const Vector<char> metaDataKey = SchemaVersionKey::encode();
+    const uint32_t latestKnownDataVersion = SerializedScriptValue::wireFormatVersion();
+    const Vector<char> schemaVersionKey = SchemaVersionKey::encode();
+    const Vector<char> dataVersionKey = DataVersionKey::encode();
+
     RefPtr<LevelDBTransaction> transaction = LevelDBTransaction::create(db);
 
-    int64_t schemaVersion = 0;
-    if (!getInt(transaction.get(), metaDataKey, schemaVersion)) {
-        schemaVersion = latestSchemaVersion;
-        putInt(transaction.get(), metaDataKey, latestSchemaVersion);
+    int64_t dbSchemaVersion = 0;
+    int64_t dbDataVersion = 0;
+    if (!getInt(transaction.get(), schemaVersionKey, dbSchemaVersion)) {
+        // Initialize new backing store.
+        dbSchemaVersion = latestKnownSchemaVersion;
+        putInt(transaction.get(), schemaVersionKey, dbSchemaVersion);
+        dbDataVersion = latestKnownDataVersion;
+        putInt(transaction.get(), dataVersionKey, dbDataVersion);
     } else {
-        ASSERT(schemaVersion <= latestSchemaVersion);
-        if (!schemaVersion) {
-            schemaVersion = latestSchemaVersion;
-            putInt(transaction.get(), metaDataKey, schemaVersion);
+        // Upgrade old backing store.
+        ASSERT(dbSchemaVersion <= latestKnownSchemaVersion);
+        if (dbSchemaVersion < 1) {
+            dbSchemaVersion = 1;
+            putInt(transaction.get(), schemaVersionKey, dbSchemaVersion);
             const Vector<char> startKey = DatabaseNameKey::encodeMinKeyForOrigin(origin);
             const Vector<char> stopKey = DatabaseNameKey::encodeStopKeyForOrigin(origin);
             OwnPtr<LevelDBIterator> it = db->createIterator();
@@ -218,9 +239,27 @@ static bool setUpMetadata(LevelDBDatabase* db, const String& origin)
                 putVarInt(transaction.get(), intVersionKey, IDBDatabaseMetadata::DefaultIntVersion);
             }
         }
+        if (dbSchemaVersion < 2) {
+            dbSchemaVersion = 2;
+            putInt(transaction.get(), schemaVersionKey, dbSchemaVersion);
+            dbDataVersion = SerializedScriptValue::wireFormatVersion();
+            putInt(transaction.get(), dataVersionKey, dbDataVersion);
+        }
     }
 
-    ASSERT(schemaVersion == latestSchemaVersion);
+    // All new values will be written using this serialization version.
+    if (!getInt(transaction.get(), dataVersionKey, dbDataVersion)) {
+        InternalError(IDBLevelDBBackingStoreReadError);
+        return false;
+    }
+    if (dbDataVersion < latestKnownDataVersion) {
+        dbDataVersion = latestKnownDataVersion;
+        putInt(transaction.get(), dataVersionKey, dbDataVersion);
+    }
+
+    ASSERT(dbSchemaVersion == latestKnownSchemaVersion);
+    ASSERT(dbDataVersion == latestKnownDataVersion);
+
     if (!transaction->commit()) {
         InternalError(IDBLevelDBBackingStoreWriteError);
         return false;

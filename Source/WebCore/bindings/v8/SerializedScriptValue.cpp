@@ -2449,4 +2449,9 @@ SerializedScriptValue::~SerializedScriptValue()
     }
 }
 
+uint32_t SerializedScriptValue::wireFormatVersion()
+{
+    return WebCore::wireFormatVersion;
+}
+
 } // namespace WebCore

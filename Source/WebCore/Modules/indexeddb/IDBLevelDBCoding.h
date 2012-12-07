@@ -111,6 +111,11 @@ public:
     static Vector<char> encode();
 };
 
+class DataVersionKey {
+public:
+    static Vector<char> encode();
+};
+
 class DatabaseFreeListKey {
 public:
     DatabaseFreeListKey();

@@ -65,6 +65,8 @@ public:
     static PassRefPtr<SerializedScriptValue> booleanValue(bool value, v8::Isolate* = 0);
     static PassRefPtr<SerializedScriptValue> numberValue(double value, v8::Isolate* = 0);
 
+    static uint32_t wireFormatVersion();
+
     PassRefPtr<SerializedScriptValue> release();
 
     String toWireString() const { return m_data; }
