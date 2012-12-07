@@ -1,5 +1,5 @@
 ALERT: PASS: Executed script in data URL
-Verify that sandboxed frames with sandbox="allow-scripts" can execute scripts, but other sandboxed frames cannot. Also verify that removing the sandbox="allow-scripts" attribute at runtime prevents new scripts from launching, but existing ones keep running.
+Verify that sandboxed frames with sandbox="allow-scripts" can execute scripts, but other sandboxed frames cannot. Also verify that adding a sandbox attribute at runtime does not effect the current state of the iframe.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 

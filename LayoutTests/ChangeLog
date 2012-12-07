@@ -1,3 +1,22 @@
+2012-12-07  Mike West  <mkwst@chromium.org>
+
+        fast/frames/sandboxed-iframe-scripting.html contains very misleading comments.
+        https://bugs.webkit.org/show_bug.cgi?id=104363
+
+        Reviewed by Darin Adler.
+
+        The comments in this test describe a state that is in fact the opposite
+        of what's being tested. That confused me. This patch corrects the
+        comments to make it clear that adding a sandbox attribute at runtime has
+        no effect on the frame; the sandboxing flags are set when the nested
+        browsing context is _navigated_, not when the attribute changes value.
+
+        Spec: http://www.whatwg.org/specs/web-apps/current-work/multipage/the-iframe-element.html#attr-iframe-sandbox
+
+        * fast/frames/resources/sandboxed-iframe-script-dynamic.html:
+        * fast/frames/sandboxed-iframe-scripting-expected.txt:
+        * fast/frames/sandboxed-iframe-scripting.html:
+
 2012-12-07  Antoine Quint  <graouts@apple.com>
 
         Provide the backend for exposing the layer tree to the Web Inspector

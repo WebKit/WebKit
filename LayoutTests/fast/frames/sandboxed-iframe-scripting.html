@@ -38,9 +38,8 @@ window.onload = function()
 
     <script>
     description("Verify that sandboxed frames with sandbox=&quot;allow-scripts&quot; can execute scripts, "
-                 + "but other sandboxed frames cannot. Also verify that removing the "
-                 + "sandbox=&quot;allow-scripts&quot; attribute at runtime prevents new scripts from launching, "
-                 + "but existing ones keep running.");
+                 + "but other sandboxed frames cannot. Also verify that adding a sandbox attribute at runtime "
+                 + "does not effect the current state of the iframe.");
     </script>
 </body>
 </html>
