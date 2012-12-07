@@ -306,6 +306,14 @@ void FileInputType::createShadowSubtree()
     element()->userAgentShadowRoot()->appendChild(element()->multiple() ? UploadButtonElement::createForMultiple(element()->document()): UploadButtonElement::create(element()->document()), ec);
 }
 
+void FileInputType::disabledAttributeChanged()
+{
+    ASSERT(element()->shadow());
+    UploadButtonElement* button = static_cast<UploadButtonElement*>(element()->userAgentShadowRoot()->firstChild());
+    if (button)
+        button->setDisabled(element()->disabled());
+}
+
 void FileInputType::multipleAttributeChanged()
 {
     ASSERT(element()->shadow());

@@ -72,14 +72,6 @@ void RenderFileUploadControl::updateFromElement()
     ASSERT(input->isFileUpload());
 
     if (HTMLInputElement* button = uploadButton()) {
-        bool newDisabled = !theme()->isEnabled(this);
-        // We should avoid to call HTMLFormControlElement::setDisabled() as
-        // possible because setAttribute() in setDisabled() can cause style
-        // recalculation, and HTMLFormControlElement::recalcStyle() calls
-        // updateFromElement() eventually.
-        if (button->disabled() != newDisabled)
-            button->setDisabled(newDisabled);
-
         bool newCanReceiveDroppedFilesState = input->canReceiveDroppedFiles();
         if (m_canReceiveDroppedFiles != newCanReceiveDroppedFilesState) {
             m_canReceiveDroppedFiles = newCanReceiveDroppedFilesState;

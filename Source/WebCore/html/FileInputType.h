@@ -71,6 +71,7 @@ private:
     virtual Icon* icon() const OVERRIDE;
     virtual bool isFileUpload() const OVERRIDE;
     virtual void createShadowSubtree() OVERRIDE;
+    virtual void disabledAttributeChanged() OVERRIDE;
     virtual void multipleAttributeChanged() OVERRIDE;
     virtual String defaultToolTip() const OVERRIDE;
 

@@ -1,3 +1,30 @@
+2012-12-06  Kunihiko Sakamoto  <ksakamoto@chromium.org>
+
+        Disabled file input box stops a certain other div from being rendered
+        https://bugs.webkit.org/show_bug.cgi?id=104226
+
+        Reviewed by Dimitri Glazkov.
+
+        The bug was caused by setNeedsStyleRecalc() call during style recalculation,
+        which resulted in inconsistent ChildNeedsStyleRecalc flags in DOM tree.
+
+        When reattach of file input happens during style recalculation,
+        RenderFileUploadControl::updateFromElement() is called from attach().
+        It may change the disabled state of the upload button in its shadow tree,
+        but it triggers style recalculation.
+
+        This patch solves this issue by setting disabled state of the upload button in
+        FileInputType::disabledAttributeChanged instead of RenderFileUploadControl.
+
+        Test: fast/forms/file/sibling-of-disabled-file-input.html
+
+        * html/FileInputType.cpp:
+        (WebCore::FileInputType::disabledAttributeChanged): Added.
+        * html/FileInputType.h:
+        (FileInputType): Declare disabledAttributeChanged.
+        * rendering/RenderFileUploadControl.cpp:
+        (WebCore::RenderFileUploadControl::updateFromElement): Remove call to button->setDisabled().
+
 2012-12-06  Dominic Cooney  <dominicc@chromium.org>
 
         Element.pseudo property should be prefixed
