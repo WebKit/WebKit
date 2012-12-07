@@ -20,6 +20,7 @@
 #ifndef QWebPageAdapter_h
 #define QWebPageAdapter_h
 
+#include "PlatformExportMacros.h"
 #include "QWebPageClient.h"
 #include "ViewportArguments.h"
 #include "qwebhistory.h"
