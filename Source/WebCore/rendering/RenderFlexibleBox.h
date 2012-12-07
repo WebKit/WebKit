@@ -118,12 +118,12 @@ private:
     LayoutUnit mainAxisScrollbarExtentForChild(RenderBox* child) const;
     LayoutUnit preferredMainAxisContentExtentForChild(RenderBox* child);
 
-    void layoutFlexItems(OrderIterator&, Vector<LineContext>&);
+    void layoutFlexItems(Vector<LineContext>&);
     LayoutUnit autoMarginOffsetInMainAxis(const OrderedFlexItemList&, LayoutUnit& availableFreeSpace);
     void updateAutoMarginsInMainAxis(RenderBox* child, LayoutUnit autoMarginOffset);
     bool hasAutoMarginsInCrossAxis(RenderBox* child) const;
     bool updateAutoMarginsInCrossAxis(RenderBox* child, LayoutUnit availableAlignmentSpace);
-    void repositionLogicalHeightDependentFlexItems(OrderIterator&, Vector<LineContext>&, LayoutUnit& oldClientAfterEdge);
+    void repositionLogicalHeightDependentFlexItems(Vector<LineContext>&, LayoutUnit& oldClientAfterEdge);
     void clearChildOverrideSizes();
     void appendChildFrameRects(ChildFrameRects&);
     void repaintChildrenDuringLayoutIfMoved(const ChildFrameRects&);
@@ -134,7 +134,7 @@ private:
     LayoutUnit computeChildMarginValue(Length margin, RenderView*);
     void computeMainAxisPreferredSizes(bool relayoutChildren, OrderHashSet&);
     LayoutUnit adjustChildSizeForMinAndMax(RenderBox*, LayoutUnit childSize);
-    bool computeNextFlexLine(OrderIterator&, OrderedFlexItemList& orderedChildren, LayoutUnit& preferredMainAxisExtent, double& totalFlexGrow, double& totalWeightedFlexShrink, LayoutUnit& minMaxAppliedMainAxisExtent);
+    bool computeNextFlexLine(OrderedFlexItemList& orderedChildren, LayoutUnit& preferredMainAxisExtent, double& totalFlexGrow, double& totalWeightedFlexShrink, LayoutUnit& minMaxAppliedMainAxisExtent);
 
     bool resolveFlexibleLengths(FlexSign, const OrderedFlexItemList&, LayoutUnit& availableFreeSpace, double& totalFlexGrow, double& totalWeightedFlexShrink, InflexibleFlexItemSize&, Vector<LayoutUnit>& childSizes);
     void freezeViolations(const Vector<Violation>&, LayoutUnit& availableFreeSpace, double& totalFlexGrow, double& totalWeightedFlexShrink, InflexibleFlexItemSize&);
@@ -146,11 +146,11 @@ private:
     size_t numberOfInFlowPositionedChildren(const OrderedFlexItemList&) const;
     void layoutAndPlaceChildren(LayoutUnit& crossAxisOffset, const OrderedFlexItemList&, const Vector<LayoutUnit>& childSizes, LayoutUnit availableFreeSpace, Vector<LineContext>&);
     void layoutColumnReverse(const OrderedFlexItemList&, LayoutUnit crossAxisOffset, LayoutUnit availableFreeSpace);
-    void alignFlexLines(OrderIterator&, Vector<LineContext>&);
-    void alignChildren(OrderIterator&, const Vector<LineContext>&);
+    void alignFlexLines(Vector<LineContext>&);
+    void alignChildren(const Vector<LineContext>&);
     void applyStretchAlignmentToChild(RenderBox*, LayoutUnit lineCrossAxisExtent);
-    void flipForRightToLeftColumn(OrderIterator&);
-    void flipForWrapReverse(OrderIterator&, const Vector<LineContext>&, LayoutUnit crossAxisStartEdge);
+    void flipForRightToLeftColumn();
+    void flipForWrapReverse(const Vector<LineContext>&, LayoutUnit crossAxisStartEdge);
 
     OwnPtr<OrderIterator> m_orderIterator;
     int m_numberOfInFlowChildrenOnFirstLine;
