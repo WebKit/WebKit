@@ -1,3 +1,95 @@
+2012-12-06  Philip Rogers  <pdr@google.com>
+
+        Unify SVG's animation and target tracking systems.
+        https://bugs.webkit.org/show_bug.cgi?id=102655
+
+        Reviewed by Dirk Schulze.
+
+        This patch unifies our animation target tracking system and regular target tracking system.
+        This simplifies the code, fixes a bug, and cleans up a historically security-sensitive area.
+
+        Background: When <use>, <mpath>, <animate>, etc. reference another element using
+        xlink:href="#id", we need to track when #id changes to #otherId, when #id is removed, etc.
+        This bookkeeping of element -> target is done in SVGDocumentExtensions. Additionally, when
+        a target changes that causes layout (e.g., rect.x is changed), all dependent elements with
+        renderers are notified (<animate> has no renderer and will not use this).
+
+        Previously, xlink:href changes were lazily resolved when targetElement() was called, target
+        changes were tracked using the animation tracking framework, and pending targets did not
+        work (e.g., <animate xlink:href="#p"><!--animate is now pending #p --><rect id="p"/>).
+
+        After this patch, we no longer lazily resolve targetElement() but instead change it when
+        our xlink:href attribute changes. Instead of using the animation tracking framework in
+        SVGDocumentExtensions, we now use the regular target tracking framework. Lastly, by using
+        the regular target tracking framework we are able to hook into the pending resource handling
+        which fixes a bug (see the test).
+
+        A test has been added to test that the order of animation elements does not matter. A second
+        test has been added to show we do not regress a pending-while-pending case.
+
+        Tests: svg/animations/svg-animation-order.html
+               svg/custom/svg-pending-twice.html
+
+        * svg/SVGAnimateElement.cpp:
+        (WebCore::SVGAnimateElement::setTargetElement):
+
+            setTargetElement and setAttributeName now work similarly. When the corresponding attribute
+            changes, we update our internal state (target or attributeName) and save it instead of
+            looking these values up on each iteration.
+
+        (WebCore::SVGAnimateElement::setAttributeName):
+        (WebCore):
+        (WebCore::SVGAnimateElement::resetAnimatedPropertyType):
+        * svg/SVGAnimateElement.h:
+        (SVGAnimateElement):
+        * svg/SVGAnimationElement.cpp:
+        (WebCore::SVGAnimationElement::setAttributeType):
+        (WebCore::SVGAnimationElement::setTargetElement):
+        (WebCore::SVGAnimationElement::setAttributeName):
+        * svg/SVGAnimationElement.h:
+        (SVGAnimationElement):
+        * svg/SVGDocumentExtensions.cpp:
+        (WebCore::SVGDocumentExtensions::~SVGDocumentExtensions):
+        (WebCore):
+        * svg/SVGDocumentExtensions.h:
+        (SVGDocumentExtensions):
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::~SVGElement):
+        (WebCore::SVGElement::removedFrom):
+        (WebCore::SVGElement::attributeChanged):
+        * svg/SVGElementInstance.cpp:
+        (WebCore::SVGElementInstance::invalidateAllInstancesOfElement):
+
+            This can be removed after r131631 landed.
+
+        * svg/SVGMPathElement.cpp:
+        (WebCore::SVGMPathElement::buildPendingResource):
+        * svg/SVGTextPathElement.cpp:
+        (WebCore::SVGTextPathElement::buildPendingResource):
+
+            A bug was discovered in review with our resource tracking in a pending-while-pending
+            case. SVGMpathElement and SVGTextPathElement have been updated to fix this as well.
+
+        * svg/animation/SVGSMILElement.cpp:
+
+            The changes in SVGSMILElement should look very similar to SVGFEImageElement,
+            SVGMPathElement, etc. The idea is to build pending resources when added or
+            removed from the document, or when the href attribute changes.
+
+        (WebCore::SVGSMILElement::~SVGSMILElement):
+        (WebCore):
+        (WebCore::SVGSMILElement::clearResourceReferences):
+        (WebCore::SVGSMILElement::buildPendingResource):
+        (WebCore::SVGSMILElement::insertedInto):
+        (WebCore::SVGSMILElement::removedFrom):
+        (WebCore::SVGSMILElement::svgAttributeChanged):
+        (WebCore::SVGSMILElement::setAttributeName):
+        (WebCore::SVGSMILElement::setTargetElement):
+        * svg/animation/SVGSMILElement.h:
+        (WebCore):
+        (WebCore::SVGSMILElement::targetElement):
+        (SVGSMILElement):
+
 2012-12-06  Jon Lee  <jonlee@apple.com>
 
         Retry snapshots if they are too empty

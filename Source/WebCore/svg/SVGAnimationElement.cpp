@@ -319,7 +319,7 @@ void SVGAnimationElement::setAttributeType(const AtomicString& attributeType)
         m_attributeType = AttributeTypeXML;
     else
         m_attributeType = AttributeTypeAuto;
-    checkInvalidCSSAttributeType(targetElement(DoNotResolveNewTarget));
+    checkInvalidCSSAttributeType(targetElement());
 }
 
 String SVGAnimationElement::toValue() const
@@ -677,18 +677,16 @@ void SVGAnimationElement::determinePropertyValueTypes(const String& from, const 
         m_toPropertyValueType = InheritValue;
 }
 
-void SVGAnimationElement::targetElementWillChange(SVGElement* currentTarget, SVGElement* newTarget)
+void SVGAnimationElement::setTargetElement(SVGElement* target)
 {
-    SVGSMILElement::targetElementWillChange(currentTarget, newTarget);
-
-    checkInvalidCSSAttributeType(newTarget);
+    SVGSMILElement::setTargetElement(target);
+    checkInvalidCSSAttributeType(target);
 }
 
 void SVGAnimationElement::setAttributeName(const QualifiedName& attributeName)
 {
     SVGSMILElement::setAttributeName(attributeName);
-
-    checkInvalidCSSAttributeType(targetElement(DoNotResolveNewTarget));
+    checkInvalidCSSAttributeType(targetElement());
 }
 
 void SVGAnimationElement::checkInvalidCSSAttributeType(SVGElement* target)

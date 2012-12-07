@@ -50,7 +50,6 @@ SVGDocumentExtensions::SVGDocumentExtensions(Document* document)
 
 SVGDocumentExtensions::~SVGDocumentExtensions()
 {
-    deleteAllValues(m_animatedElements);
     deleteAllValues(m_pendingResources);
     deleteAllValues(m_pendingResourcesForRemoval);
 }
@@ -131,58 +130,6 @@ void SVGDocumentExtensions::dispatchSVGLoadEventToOutermostSVGElements()
             continue;
         outerSVG->sendSVGLoadEventIfPossible();
     }
-}
-
-void SVGDocumentExtensions::addAnimationElementToTarget(SVGSMILElement* animationElement, SVGElement* targetElement)
-{
-    ASSERT(targetElement);
-    ASSERT(animationElement);
-
-    if (HashSet<SVGSMILElement*>* animationElementsForTarget = m_animatedElements.get(targetElement)) {
-        animationElementsForTarget->add(animationElement);
-        return;
-    }
-
-    HashSet<SVGSMILElement*>* animationElementsForTarget = new HashSet<SVGSMILElement*>;
-    animationElementsForTarget->add(animationElement);
-    m_animatedElements.set(targetElement, animationElementsForTarget);
-}
-
-void SVGDocumentExtensions::removeAnimationElementFromTarget(SVGSMILElement* animationElement, SVGElement* targetElement)
-{
-    ASSERT(targetElement);
-    ASSERT(animationElement);
-
-    HashMap<SVGElement*, HashSet<SVGSMILElement*>* >::iterator it = m_animatedElements.find(targetElement);
-    ASSERT(it != m_animatedElements.end());
-    
-    HashSet<SVGSMILElement*>* animationElementsForTarget = it->value;
-    ASSERT(!animationElementsForTarget->isEmpty());
-
-    animationElementsForTarget->remove(animationElement);
-    if (animationElementsForTarget->isEmpty()) {
-        m_animatedElements.remove(it);
-        delete animationElementsForTarget;
-    }
-}
-
-void SVGDocumentExtensions::removeAllAnimationElementsFromTarget(SVGElement* targetElement)
-{
-    ASSERT(targetElement);
-    HashMap<SVGElement*, HashSet<SVGSMILElement*>* >::iterator it = m_animatedElements.find(targetElement);
-    if (it == m_animatedElements.end())
-        return;
-
-    HashSet<SVGSMILElement*>* animationElementsForTarget = it->value;
-    Vector<SVGSMILElement*> toBeReset;
-
-    HashSet<SVGSMILElement*>::iterator end = animationElementsForTarget->end();
-    for (HashSet<SVGSMILElement*>::iterator it = animationElementsForTarget->begin(); it != end; ++it)
-        toBeReset.append(*it);
-
-    Vector<SVGSMILElement*>::iterator vectorEnd = toBeReset.end();
-    for (Vector<SVGSMILElement*>::iterator vectorIt = toBeReset.begin(); vectorIt != vectorEnd; ++vectorIt)
-        (*vectorIt)->resetTargetElement();
 }
 
 static void reportMessage(Document* document, MessageLevel level, const String& message)

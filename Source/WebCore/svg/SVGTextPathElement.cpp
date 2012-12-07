@@ -163,11 +163,14 @@ void SVGTextPathElement::buildPendingResource()
     String id;
     Element* target = SVGURIReference::targetElementFromIRIString(href(), document(), &id);
     if (!target) {
-        if (hasPendingResources() || id.isEmpty())
+        // Do not register as pending if we are already pending this resource.
+        if (document()->accessSVGExtensions()->isElementPendingResource(this, id))
             return;
 
-        document()->accessSVGExtensions()->addPendingResource(id, this);
-        ASSERT(hasPendingResources());
+        if (!id.isEmpty()) {
+            document()->accessSVGExtensions()->addPendingResource(id, this);
+            ASSERT(hasPendingResources());
+        }
     } else if (target->isSVGElement()) {
         // Register us with the target in the dependencies map. Any change of hrefElement
         // that leads to relayout/repainting now informs us, so we can react to it.

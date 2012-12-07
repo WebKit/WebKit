@@ -33,8 +33,6 @@
 
 namespace WebCore {
 
-enum ResolveTarget { DoNotResolveNewTarget, ResolveNewTarget };
-
 class ConditionEventListener;
 class SMILTimeContainer;
 
@@ -58,8 +56,7 @@ public:
 
     SMILTimeContainer* timeContainer() const { return m_timeContainer.get(); }
 
-    SVGElement* targetElement(ResolveTarget = ResolveNewTarget);
-    void resetTargetElement(ResolveTarget = ResolveNewTarget);
+    SVGElement* targetElement() const { return m_targetElement; }
     const QualifiedName& attributeName() const { return m_attributeName; }
 
     void beginByLinkActivation();
@@ -120,10 +117,13 @@ protected:
     void setInactive() { m_activeState = Inactive; }
 
     // Sub-classes may need to take action when the target is changed.
-    virtual void targetElementWillChange(SVGElement* currentTarget, SVGElement* newTarget);
+    virtual void setTargetElement(SVGElement*);
     virtual void setAttributeName(const QualifiedName&);
 
 private:
+    void buildPendingResource();
+    void clearResourceReferences();
+
     virtual void startedActiveInterval() = 0;
     void endedActiveInterval();
     virtual void updateAnimation(float percent, unsigned repeat, SVGSMILElement* resultElement) = 0;

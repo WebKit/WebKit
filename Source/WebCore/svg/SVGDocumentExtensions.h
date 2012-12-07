@@ -59,10 +59,6 @@ public:
     void pauseAnimations();
     void unpauseAnimations();
     void dispatchSVGLoadEventToOutermostSVGElements();
-    
-    void addAnimationElementToTarget(SVGSMILElement*, SVGElement*);
-    void removeAnimationElementFromTarget(SVGSMILElement*, SVGElement*);
-    void removeAllAnimationElementsFromTarget(SVGElement*);
 
     void reportWarning(const String&);
     void reportError(const String&);
@@ -83,7 +79,6 @@ public:
 private:
     Document* m_document; // weak reference
     HashSet<SVGSVGElement*> m_timeContainers; // For SVG 1.2 support this will need to be made more general.
-    HashMap<SVGElement*, HashSet<SVGSMILElement*>* > m_animatedElements;
 #if ENABLE(SVG_FONTS)
     HashSet<SVGFontFaceElement*> m_svgFontFaceElements;
 #endif

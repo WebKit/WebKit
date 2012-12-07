@@ -396,16 +396,26 @@ float SVGAnimateElement::calculateDistance(const String& fromString, const Strin
     return ensureAnimator()->calculateDistance(fromString, toString);
 }
 
-void SVGAnimateElement::targetElementWillChange(SVGElement* currentTarget, SVGElement* newTarget)
+void SVGAnimateElement::setTargetElement(SVGElement* target)
 {
-    SVGAnimationElement::targetElementWillChange(currentTarget, newTarget);
+    SVGAnimationElement::setTargetElement(target);
+    resetAnimatedPropertyType();
+}
 
+void SVGAnimateElement::setAttributeName(const QualifiedName& attributeName)
+{
+    SVGAnimationElement::setAttributeName(attributeName);
+    resetAnimatedPropertyType();
+}
+
+void SVGAnimateElement::resetAnimatedPropertyType()
+{
     ASSERT(!m_animatedType);
     m_fromType.clear();
     m_toType.clear();
     m_toAtEndOfDurationType.clear();
     m_animator.clear();
-    m_animatedPropertyType = newTarget ? determineAnimatedPropertyType(newTarget) : AnimatedString;
+    m_animatedPropertyType = targetElement() ? determineAnimatedPropertyType(targetElement()) : AnimatedString;
 }
 
 SVGAnimatedTypeAnimator* SVGAnimateElement::ensureAnimator()

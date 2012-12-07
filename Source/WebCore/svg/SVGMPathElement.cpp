@@ -64,7 +64,8 @@ void SVGMPathElement::buildPendingResource()
     String id;
     Element* target = SVGURIReference::targetElementFromIRIString(href(), document(), &id);
     if (!target) {
-        if (hasPendingResources())
+        // Do not register as pending if we are already pending this resource.
+        if (document()->accessSVGExtensions()->isElementPendingResource(this, id))
             return;
 
         if (!id.isEmpty()) {
