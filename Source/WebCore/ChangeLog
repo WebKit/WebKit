@@ -1,3 +1,93 @@
+2012-12-07  Stephen White  <senorblanco@chromium.org>
+
+        CSS url() filters with forward references don't work
+        https://bugs.webkit.org/show_bug.cgi?id=90405
+
+        Based on a patch by Keyar Hood.
+
+        Reviewed by Dirk Schulze.
+
+        In order for CSS to reference SVG filters that will occur later in
+        the document, or will be added at a future time, we need a way to
+        notify the target element (the one the filter style is applied to)
+        when the correct SVG filter is added to the DOM.
+        There is already code for SVG elements that handles this problem, in
+        SVGResourcesCache. This patch allows any element to have a reference to
+        an SVG element in SVGResourceCache.
+
+        Tests: css3/filters/effect-reference-after.html
+               css3/filters/effect-reference-delete-crash.html
+               css3/filters/effect-reference-delete.html
+               css3/filters/effect-reference-rename.html
+               css3/filters/effect-reference-reset-style-delete-crash.html
+               svg/filters/filter-cycle.html
+
+        * dom/Element.cpp:
+        (WebCore::Element::hasPendingResources): Added
+        (WebCore::Element::setHasPendingResources): Added
+        (WebCore::Element::clearHasPendingResources): Added
+        * dom/Element.h:
+        Accessors for ElementRareData's new bit flag.
+        (WebCore::Element::buildPendingResource):
+        Virtual function to override for referenced elements (moved from SVGElement).
+        * dom/ElementRareData.h:
+        (WebCore::ElementRareData::ElementRareData):
+        Add a new bit flag to indicate whether the element depends on pending resources or not.
+        * platform/graphics/texmap/TextureMapperImageBuffer.cpp:
+        (WebCore::BitmapTextureImageBuffer::applyFilters):
+        Changed to the new function signature for FilterEffectRenderer::build().
+        * rendering/FilterEffectRenderer.cpp:
+        (WebCore::FilterEffectRenderer::buildReferenceFilter):
+        Changed signature to accept a RenderObject rather than a Document, so we know which node to notify when the SVG filter arrives.  If the referenced filter cannot be found, add its id as a pending reference.
+        (WebCore::FilterEffectRenderer::build):
+        Changed signature to accept a RenderObject rather than a Document, so we know which node to notify when the SVG filter arrives.
+        * rendering/FilterEffectRenderer.h:
+        Change to signatures of build() and buildReferenceFilter() to pass
+        a RenderObject instead of a Document.
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateOrRemoveFilterEffectRenderer):
+        Use the new semantics for FilterEffectRenderer::build().
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::willBeDestroyed):
+        Notify the cache if a RenderObject is destroyed.
+        * rendering/svg/RenderSVGResourceContainer.cpp:
+        (WebCore::RenderSVGResourceContainer::registerResource):
+        Call clearHasPendingResourceIfPossible on the SVGDocumentExtensions, not
+        on the element, since we want to support generic Elements.
+        * rendering/svg/SVGResources.cpp:
+        (WebCore::SVGResources::buildCachedResources):
+        Add support for building filters on non-SVG elements.
+        * rendering/svg/SVGResourcesCache.cpp:
+        (WebCore::SVGResourcesCache::addResourcesFromRenderObject):
+        Do cycle detection only on SVG elements.
+        (WebCore::SVGResourcesCache::clientStyleChanged):
+        For non-SVG elements, set a synthetic style change when parent resources
+        are invalidated.
+        (WebCore::SVGResourcesCache::resourceDestroyed):
+        Add support for non-SVG Elements.
+        * svg/SVGDocumentExtensions.cpp:
+        (WebCore::SVGDocumentExtensions::addPendingResource):
+        (WebCore::SVGDocumentExtensions::isElementPendingResources):
+        (WebCore::SVGDocumentExtensions::isElementPendingResource):
+        (WebCore::SVGDocumentExtensions::removeElementFromPendingResources):
+        (WebCore::SVGDocumentExtensions::removeElementFromPendingResourcesForRemoval):
+        Changed to allow use of Element instead of SVGElement.
+        (WebCore::SVGDocumentExtensions::clearHasPendingResourcesIfPossible):
+        Moved from SVGElement, and made to work on any Element.  This way,
+        we avoid adding this function to Element itself.
+        * svg/SVGDocumentExtensions.h:
+        SVGElement -> Element.
+        * svg/SVGElement.cpp:
+        * svg/SVGElement.h:
+        All functions moved to Element, except for clearHasPendingResourcesIfPossible() moved to SVGDocumentExtensions.
+        * svg/SVGElementRareData.h:
+        (WebCore::SVGElementRareData::SVGElementRareData):
+        m_hasPendingResources add accessors moved to ElementRareData.
+        * svg/SVGStyledElement.cpp:
+        (WebCore::SVGStyledElement::buildPendingResourcesIfNeeded):
+        SVGElement -> Element, and call SVGDocumentExtensions for
+        clearHasPendingResourcesIfPossible().
+
 2012-12-07  Eberhard Graether  <egraether@google.com>
 
         Web Inspector: Add shortcut to set visibility:hidden on elements in the ElementsPanel

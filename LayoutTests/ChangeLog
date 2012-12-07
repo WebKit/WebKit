@@ -1,3 +1,31 @@
+2012-12-07  Stephen White  <senorblanco@chromium.org>
+
+        CSS url() filters with forward references don't work
+        https://bugs.webkit.org/show_bug.cgi?id=90405
+
+        Based on a patch by Keyar Hood.
+
+        Reviewed by Dirk Schulze.
+
+        * css3/filters/effect-reference-after-expected.txt: Added.
+        * css3/filters/effect-reference-after.html: Added.
+        * css3/filters/effect-reference-delete-crash-expected.txt: Added.
+        * css3/filters/effect-reference-delete-crash.html: Added.
+        * css3/filters/effect-reference-delete-expected.txt: Added.
+        * css3/filters/effect-reference-delete.html: Added.
+        * css3/filters/effect-reference-rename-expected.txt: Added.
+        * css3/filters/effect-reference-rename.html: Added.
+        * css3/filters/effect-reference-reset-style-delete-crash-expected.txt: Added.
+        * css3/filters/effect-reference-reset-style-delete-crash.html: Added.
+        * css3/filters/script-tests/effect-reference-delete-crash.js: Added.
+        * css3/filters/script-tests/effect-reference-reset-style-delete-crash.js: Added.
+        * svg/filters/filter-cycle.html: Added.
+        * svg/filters/filter-cycle-expected.html: Added.
+        * platform/chromium-linux/css3/filters/effect-reference-after-expected: Added.
+        * platform/chromium-linux/css3/filters/effect-reference-delete-expected.png: Added.
+        * platform/chromium-linux/css3/filters/effect-reference-rename-expected.png: Added.
+        * platform/chromium/TestExpectations:
+
 2012-12-07  Alexis Menard  <alexis@webkit.org>
 
         Unreviewed EFL gardening.

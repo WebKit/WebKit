@@ -81,6 +81,7 @@
 #if ENABLE(SVG)
 #include "RenderSVGResourceContainer.h"
 #include "SVGRenderSupport.h"
+#include "SVGResourcesCache.h"
 #endif
 
 using namespace std;
@@ -2375,6 +2376,10 @@ void RenderObject::willBeDestroyed()
         document()->axObjectCache()->remove(this);
     }
     animation()->cancelAnimations(this);
+
+#if ENABLE(SVG)
+    SVGResourcesCache::clientDestroyed(this);
+#endif
 
     remove();
 

@@ -88,6 +88,9 @@ inline bool isFilterSizeValid(FloatRect rect)
 #if ENABLE(CSS_SHADERS) && USE(3D_GRAPHICS)
 static PassRefPtr<FECustomFilter> createCustomFilterEffect(Filter* filter, Document* document, ValidatedCustomFilterOperation* operation)
 {
+    if (!document)
+        return 0;
+
     CustomFilterGlobalContext* globalContext = document->renderView()->customFilterGlobalContext();
     globalContext->prepareContextIfNeeded(document->view()->hostWindow());
     if (!globalContext->context())
@@ -122,9 +125,15 @@ GraphicsContext* FilterEffectRenderer::inputContext()
     return sourceImage() ? sourceImage()->context() : 0;
 }
 
-PassRefPtr<FilterEffect> FilterEffectRenderer::buildReferenceFilter(Document* document, PassRefPtr<FilterEffect> previousEffect, ReferenceFilterOperation* filterOperation)
+PassRefPtr<FilterEffect> FilterEffectRenderer::buildReferenceFilter(RenderObject* renderer, PassRefPtr<FilterEffect> previousEffect, ReferenceFilterOperation* filterOperation)
 {
 #if ENABLE(SVG)
+    if (!renderer)
+        return 0;
+
+    Document* document = renderer->document();
+    ASSERT(document);
+
     CachedSVGDocumentReference* cachedSVGDocumentReference = filterOperation->cachedSVGDocumentReference();
     CachedSVGDocument* cachedSVGDocument = cachedSVGDocumentReference ? cachedSVGDocumentReference->document() : 0;
 
@@ -137,8 +146,12 @@ PassRefPtr<FilterEffect> FilterEffectRenderer::buildReferenceFilter(Document* do
         return 0;
 
     Element* filter = document->getElementById(filterOperation->fragment());
-    if (!filter)
+    if (!filter) {
+        // Although we did not find the referenced filter, it might exist later
+        // in the document
+        document->accessSVGExtensions()->addPendingResource(filterOperation->fragment(), toElement(renderer->node()));
         return 0;
+    }
 
     RefPtr<FilterEffect> effect;
 
@@ -176,12 +189,8 @@ PassRefPtr<FilterEffect> FilterEffectRenderer::buildReferenceFilter(Document* do
 #endif
 }
 
-bool FilterEffectRenderer::build(Document* document, const FilterOperations& operations)
+bool FilterEffectRenderer::build(RenderObject* renderer, const FilterOperations& operations)
 {
-#if !ENABLE(CSS_SHADERS) || !USE(3D_GRAPHICS)
-    UNUSED_PARAM(document);
-#endif
-
 #if ENABLE(CSS_SHADERS)
     m_hasCustomShaderFilter = false;
 #endif
@@ -201,7 +210,7 @@ bool FilterEffectRenderer::build(Document* document, const FilterOperations& ope
         switch (filterOperation->getOperationType()) {
         case FilterOperation::REFERENCE: {
             ReferenceFilterOperation* referenceOperation = static_cast<ReferenceFilterOperation*>(filterOperation);
-            effect = buildReferenceFilter(document, previousEffect, referenceOperation);
+            effect = buildReferenceFilter(renderer, previousEffect, referenceOperation);
             referenceOperation->setFilterEffect(effect);
             break;
         }
@@ -344,6 +353,7 @@ bool FilterEffectRenderer::build(Document* document, const FilterOperations& ope
             break;
         case FilterOperation::VALIDATED_CUSTOM: {
             ValidatedCustomFilterOperation* customFilterOperation = static_cast<ValidatedCustomFilterOperation*>(filterOperation);
+            Document* document = renderer ? renderer->document() : 0;
             effect = createCustomFilterEffect(this, document, customFilterOperation);
             if (effect)
                 m_hasCustomShaderFilter = true;

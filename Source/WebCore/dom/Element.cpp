@@ -2693,4 +2693,21 @@ void Element::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     info.addMember(m_attributeData);
 }
 
+#if ENABLE(SVG)
+bool Element::hasPendingResources() const
+{
+    return hasRareData() && elementRareData()->hasPendingResources();
+}
+
+void Element::setHasPendingResources()
+{
+    ensureElementRareData()->setHasPendingResources(true);
+}
+
+void Element::clearHasPendingResources()
+{
+    ensureElementRareData()->setHasPendingResources(false);
+}
+#endif
+
 } // namespace WebCore

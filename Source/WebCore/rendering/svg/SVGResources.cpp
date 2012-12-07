@@ -190,6 +190,17 @@ bool SVGResources::buildCachedResources(const RenderObject* object, const SVGRen
 
     Node* node = object->node();
     ASSERT(node);
+    if (!node->isSVGElement()) {
+        Document* document = object->document();
+        ASSERT(document);
+
+        if (!style->hasFilter())
+            return false;
+
+        AtomicString id(style->filterResource());
+        return setFilter(getRenderSVGResourceById<RenderSVGResourceFilter>(document, id));
+    }
+
     ASSERT(node->isSVGElement());
 
     SVGElement* element = static_cast<SVGElement*>(node);

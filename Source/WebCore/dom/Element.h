@@ -427,6 +427,10 @@ public:
 
 #if ENABLE(SVG)
     virtual bool childShouldCreateRenderer(const NodeRenderingContext&) const;
+    bool hasPendingResources() const;
+    void setHasPendingResources();
+    void clearHasPendingResources();
+    virtual void buildPendingResource() { };
 #endif
     
 #if ENABLE(FULLSCREEN_API)
