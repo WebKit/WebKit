@@ -250,6 +250,7 @@ private:
     RefPtr<ShareableBitmap> m_transientPaintingSnapshot;
     // This timer is used when plugin snapshotting is enabled, to capture a plugin placeholder.
     WebCore::DeferrableOneShotTimer<PluginView> m_pluginSnapshotTimer;
+    unsigned m_countSnapshotRetries;
 
     double m_pageScaleFactor;
 };

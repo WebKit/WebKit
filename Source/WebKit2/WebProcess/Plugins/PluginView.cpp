@@ -34,6 +34,7 @@
 #include "WebPage.h"
 #include "WebPageProxyMessages.h"
 #include "WebProcess.h"
+#include <WebCore/BitmapImage.h>
 #include <WebCore/Chrome.h>
 #include <WebCore/CookieJar.h>
 #include <WebCore/Credential.h>
@@ -70,6 +71,7 @@ namespace WebKit {
 
 // This simulated mouse click delay in HTMLPlugInImageElement.cpp should generally be the same or shorter than this delay.
 static const double pluginSnapshotTimerDelay = 1.1;
+static const unsigned maximumSnapshotRetries = 5;
 
 class PluginView::URLRequest : public RefCounted<URLRequest> {
 public:
@@ -272,6 +274,7 @@ PluginView::PluginView(PassRefPtr<HTMLPlugInElement> pluginElement, PassRefPtr<P
 #endif
     , m_manualStreamState(StreamStateInitial)
     , m_pluginSnapshotTimer(this, &PluginView::pluginSnapshotTimerFired, pluginSnapshotTimerDelay)
+    , m_countSnapshotRetries(0)
     , m_pageScaleFactor(1)
 {
     m_webPage->addPluginView(this);
@@ -1494,9 +1497,71 @@ void PluginView::windowedPluginGeometryDidChange(const WebCore::IntRect& frameRe
 }
 #endif
 
-void PluginView::pluginSnapshotTimerFired(DeferrableOneShotTimer<PluginView>* timer)
+#if PLATFORM(MAC)
+static bool isAlmostSolidColor(BitmapImage* bitmap)
 {
-    ASSERT_UNUSED(timer, timer == &m_pluginSnapshotTimer);
+    CGImageRef image = bitmap->getCGImageRef();
+    ASSERT(CGImageGetBitsPerComponent(image) == 8);
+
+    CGBitmapInfo imageInfo = CGImageGetBitmapInfo(image);
+    if (!(imageInfo & kCGBitmapByteOrder32Little) || (imageInfo & kCGBitmapAlphaInfoMask) != kCGImageAlphaPremultipliedFirst) {
+        // FIXME: Consider being able to handle other pixel formats.
+        ASSERT_NOT_REACHED();
+        return false;
+    }
+
+    size_t width = CGImageGetWidth(image);
+    size_t height = CGImageGetHeight(image);
+    size_t bytesPerRow = CGImageGetBytesPerRow(image);
+
+    RetainPtr<CFDataRef> provider = adoptCF(CGDataProviderCopyData(CGImageGetDataProvider(image)));
+    const UInt8* data = CFDataGetBytePtr(provider.get());
+
+    // Overlay a grid of sampling dots on top of a grayscale version of the image.
+    // For the interior points, calculate the difference in luminance among the sample point
+    // and its surrounds points, scaled by transparency.
+    const unsigned sampleRows = 7;
+    const unsigned sampleCols = 7;
+    // FIXME: Refine the proper number of samples, and accommodate different aspect ratios.
+    if (width < sampleCols || height < sampleRows)
+        return false;
+
+    // Ensure that the last row/column land on the image perimeter.
+    const float strideWidth = static_cast<float>(width - 1) / (sampleCols - 1);
+    const float strideHeight = static_cast<float>(height - 1) / (sampleRows - 1);
+    float samples[sampleRows][sampleCols];
+
+    // Find the luminance of the sample points.
+    float y = 0;
+    const UInt8* row = data;
+    for (unsigned i = 0; i < sampleRows; ++i) {
+        float x = 0;
+        for (unsigned j = 0; j < sampleCols; ++j) {
+            const UInt8* p0 = row + (static_cast<int>(x + .5)) * 4;
+            // R G B A
+            samples[i][j] = (0.2125 * *p0 + 0.7154 * *(p0+1) + 0.0721 * *(p0+2)) * *(p0+3) / 255;
+            x += strideWidth;
+        }
+        y += strideHeight;
+        row = data + (static_cast<int>(y + .5)) * bytesPerRow;
+    }
+
+    // Determine the image score.
+    float accumScore = 0;
+    for (unsigned i = 1; i < sampleRows - 1; ++i) {
+        for (unsigned j = 1; j < sampleCols - 1; ++j) {
+            float diff = samples[i - 1][j] + samples[i + 1][j] + samples[i][j - 1] + samples[i][j + 1] - 4 * samples[i][j];
+            accumScore += diff * diff;
+        }
+    }
+
+    // The score for a given sample can be within the range of 0 and 255^2.
+    return accumScore < 2500 * (sampleRows - 2) * (sampleCols - 2);
+}
+#endif
+
+void PluginView::pluginSnapshotTimerFired(DeferrableOneShotTimer<PluginView>*)
+{
     ASSERT(m_plugin);
 
     // Snapshot might be 0 if plugin size is 0x0.
@@ -1504,7 +1569,16 @@ void PluginView::pluginSnapshotTimerFired(DeferrableOneShotTimer<PluginView>* ti
     RefPtr<Image> snapshotImage;
     if (snapshot)
         snapshotImage = snapshot->createImage();
-    m_pluginElement->updateSnapshot(snapshotImage.release());
+    m_pluginElement->updateSnapshot(snapshotImage.get());
+
+#if PLATFORM(MAC)
+    if (snapshotImage && isAlmostSolidColor(static_cast<BitmapImage*>(snapshotImage.get())) && m_countSnapshotRetries < maximumSnapshotRetries) {
+        ++m_countSnapshotRetries;
+        m_pluginSnapshotTimer.restart();
+        return;
+    }
+#endif
+
     destroyPluginAndReset();
     m_plugin = 0;
 }

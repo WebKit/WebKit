@@ -253,7 +253,7 @@ void HTMLPlugInImageElement::updateWidgetCallback(Node* n, unsigned)
 
 void HTMLPlugInImageElement::updateSnapshot(PassRefPtr<Image> image)
 {
-    if (displayState() > WaitingForSnapshot || !renderer()->isSnapshottedPlugIn())
+    if (displayState() > DisplayingSnapshot || !renderer()->isSnapshottedPlugIn())
         return;
 
     toRenderSnapshottedPlugIn(renderer())->updateSnapshot(image);
