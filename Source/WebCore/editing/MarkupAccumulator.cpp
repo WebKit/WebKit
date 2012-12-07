@@ -455,13 +455,13 @@ void MarkupAccumulator::appendAttribute(StringBuilder& result, Element* element,
     else {
         QualifiedName prefixedName = attribute.name();
         if (attribute.namespaceURI() == XLinkNames::xlinkNamespaceURI) {
-            if (attribute.prefix() != xlinkAtom)
+            if (!attribute.prefix())
                 prefixedName.setPrefix(xlinkAtom);
         } else if (attribute.namespaceURI() == XMLNames::xmlNamespaceURI) {
-            if (attribute.prefix() != xmlAtom)
+            if (!attribute.prefix())
                 prefixedName.setPrefix(xmlAtom);
         } else if (attribute.namespaceURI() == XMLNSNames::xmlnsNamespaceURI) {
-            if (attribute.name() != XMLNSNames::xmlnsAttr && attribute.prefix() != xmlnsAtom)
+            if (attribute.name() != XMLNSNames::xmlnsAttr && !attribute.prefix())
                 prefixedName.setPrefix(xmlnsAtom);
         }
         result.append(prefixedName.toString());

@@ -1,3 +1,25 @@
+2012-12-07  Stephen Chenney  <schenney@chromium.org>
+
+        XMLSerializer is too aggressive in adding prefixes
+        https://bugs.webkit.org/show_bug.cgi?id=104387
+
+        Reviewed by Ryosuke Niwa.
+
+        We have been adding "xlink:" and "xmlns:" and "xml:" prefixes to any
+        attribute that is in one of those namespaces but which did not already
+        have the matching prefix. This appears to be in error, at least
+        compared to other browsers.
+
+        The correct behavior appears to be to add the prefix only if there is
+        no existing prefix. If there is an existing prefix, we now leave it alone.
+
+        No new tests. Existing test expanded.
+
+        * editing/MarkupAccumulator.cpp:
+        (WebCore::MarkupAccumulator::appendAttribute): Only replace the prefix
+        attribute name prefix if it is empty, and in one of the recognised
+        namespaces.
+
 2012-12-07  Jon Lee  <jonlee@apple.com>
 
         Display the auto-start label image after a delay

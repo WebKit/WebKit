@@ -41,8 +41,12 @@
         var serializer = new XMLSerializer();
         var xmlString = serializer.serializeToString(target);
 
+        var xlink_str = '<El a:title="C" a:href="H" xmlns:a="http://www.w3.org/1999/xlink" />';
+        var xlink_dom = new DOMParser().parseFromString(xlink_str, 'text/xml');
+        var xlink_output = serializer.serializeToString(xlink_dom);
+
         var svgText = document.getElementById("svgoutput");
-        svgText.textContent = xmlString;
+        svgText.textContent = xmlString + "\n" + xlink_output;
     }
     </script>
 </head>
