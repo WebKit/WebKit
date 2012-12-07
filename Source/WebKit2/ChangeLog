@@ -1,3 +1,15 @@
+2012-12-07  Helder Correia  <helder.correia@nokia.com>
+
+        [CoordGfx] Variable name starts with upper case character
+        https://bugs.webkit.org/show_bug.cgi?id=104327
+
+        Reviewed by Noam Rosenthal.
+
+        Just fixing a typo.
+
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedGraphicsLayer.cpp:
+        (WebCore::CoordinatedGraphicsLayer::setMaskLayer):
+
 2012-12-07  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         [WK2][EFL][Qt] Pixel alignment is wrong in some cases involving a non-integral content scale

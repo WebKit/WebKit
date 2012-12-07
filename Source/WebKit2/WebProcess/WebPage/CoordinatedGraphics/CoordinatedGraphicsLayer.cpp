@@ -404,8 +404,8 @@ void CoordinatedGraphicsLayer::setMaskLayer(GraphicsLayer* layer)
 
     layer->setSize(size());
     layer->setContentsVisible(contentsAreVisible());
-    CoordinatedGraphicsLayer* CoordinatedGraphicsLayer = toCoordinatedGraphicsLayer(layer);
-    CoordinatedGraphicsLayer->didChangeLayerState();
+    CoordinatedGraphicsLayer* coordinatedLayer = toCoordinatedGraphicsLayer(layer);
+    coordinatedLayer->didChangeLayerState();
     didChangeLayerState();
 }
 
