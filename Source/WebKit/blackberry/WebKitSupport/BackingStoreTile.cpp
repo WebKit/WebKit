@@ -101,7 +101,7 @@ Platform::IntRectRegion TileBuffer::notRenderedRegion() const
 Platform::Graphics::Buffer* TileBuffer::nativeBuffer() const
 {
     if (!m_nativeBuffer)
-        m_nativeBuffer = createBuffer(m_size, Platform::Graphics::TileBuffer, SurfacePool::globalSurfacePool()->sharedPixmapGroup());
+        m_nativeBuffer = createBuffer(m_size, Platform::Graphics::AlwaysBacked, SurfacePool::globalSurfacePool()->sharedPixmapGroup());
 
     return m_nativeBuffer;
 }

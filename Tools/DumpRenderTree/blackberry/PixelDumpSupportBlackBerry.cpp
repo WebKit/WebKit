@@ -86,7 +86,7 @@ PassRefPtr<BitmapContext> createBitmapContextFromWebView(bool /*onscreen*/, bool
             memcpy(data, windowPixels, windowSize.width() * windowSize.height() * 4);
     }
 #else
-    BlackBerry::Platform::Graphics::Buffer* buffer = BlackBerry::Platform::Graphics::createBuffer(windowSize, BlackBerry::Platform::Graphics::TemporaryBuffer);
+    BlackBerry::Platform::Graphics::Buffer* buffer = BlackBerry::Platform::Graphics::createBuffer(windowSize, BlackBerry::Platform::Graphics::AlwaysBacked);
     BlackBerry::Platform::Graphics::Drawable* drawable = BlackBerry::Platform::Graphics::lockBufferDrawable(buffer);
     if (drawable) {
         backingStore->drawContents(drawable, windowRect, windowSize);

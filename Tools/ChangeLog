@@ -1,3 +1,19 @@
+2012-12-07  Mike Lattanzio  <mlattanzio@rim.com>
+
+        [BlackBerry] Update BlackBerry Port to use new Graphics::createBuffer BufferType enum values.
+        https://bugs.webkit.org/show_bug.cgi?id=104121
+
+        Reviewed by Rob Buis.
+
+        Update createBuffer call to reflect new BufferType enum.
+        Internal PR 254649
+        Internal Review: Jakob Petsovits
+
+        DRT is always backed for maximum compatibility.
+
+        * DumpRenderTree/blackberry/PixelDumpSupportBlackBerry.cpp:
+        (createBitmapContextFromWebView):
+
 2012-12-07  Jochen Eisinger  <jochen@chromium.org>
 
         Add 'CHROMIUM_DEVEL_SANDBOX' to the environment variables to copy for layout test drivers

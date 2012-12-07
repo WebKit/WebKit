@@ -1119,6 +1119,7 @@ bool BackingStorePrivate::render(const Platform::IntRect& rect)
         backBuffer->clearRenderedRegion();
 
         BlackBerry::Platform::Graphics::Buffer* nativeBuffer = backBuffer->nativeBuffer();
+        BlackBerry::Platform::Graphics::setBufferOpaqueHint(nativeBuffer, !Color(m_webPage->settings()->backgroundColor()).hasAlpha());
 
         // TODO: This code is only needed for EGLImage code path, but preferrably BackingStore
         // should not know that, and the synchronization should be in BlackBerry::Platform::Graphics
