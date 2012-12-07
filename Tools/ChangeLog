@@ -1,3 +1,10 @@
+2012-12-07  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed fix, unbreak run-launcher after library renaming.
+
+        * Scripts/webkitdirs.pm:
+        (builtDylibPathForName):
+
 2012-12-06  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed fix after r136896, unbreak --debug-rwt to make bots result verbose again.
