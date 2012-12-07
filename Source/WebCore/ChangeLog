@@ -1,3 +1,32 @@
+2012-12-07  Alexis Menard  <alexis@webkit.org>
+
+        Improve r136754 by hardening checks of expected values for background-position.
+        https://bugs.webkit.org/show_bug.cgi?id=104380
+
+        Reviewed by Antti Koivisto.
+
+        r136754 was landed to fix the problem of checking successively two calc
+        values with validUnit. It was asserting as validUnit expect you to use
+        the parsed value of the calc after the call. In this case we pre-check the
+        background-position longhand to count how many values it has to then
+        call the right parsing functions accordingly. While r136754 is not
+        wrong it is better to harden isPotentialPositionValue with the real
+        expected units and keywords. For this matter we can reuse the
+        ReleaseParsedCalcValueCondition enum which was created with the same
+        idea as this patch. If you are not interested of the calc parsed
+        value when calling validUnit() you can now specify it, I believe it is
+        good to have it explicit to avoid mistake in the future.
+
+        No new tests : this is covered by css3/*, fast/backgrounds/*.
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::validCalculationUnit):
+        (WebCore::CSSParser::validUnit):
+        (WebCore::CSSParser::isPotentialPositionValue):
+        * css/CSSParser.h:
+        (WebCore::CSSParser::validUnit):
+        (CSSParser):
+
 2012-12-07  Brent Fulgham  <bfulgham@webkit.org>
 
         Remove unnecessary casts in transformations.

@@ -1487,7 +1487,7 @@ KURL CSSParser::completeURL(const String& url) const
     return completeURL(m_context, url);
 }
 
-bool CSSParser::validCalculationUnit(CSSParserValue* value, Units unitflags)
+bool CSSParser::validCalculationUnit(CSSParserValue* value, Units unitflags, ReleaseParsedCalcValueCondition releaseCalc)
 {
     bool mustBeNonNegative = unitflags & FNonNeg;
 
@@ -1525,7 +1525,7 @@ bool CSSParser::validCalculationUnit(CSSParserValue* value, Units unitflags)
     case CalcOther:
         break;
     }
-    if (!b)
+    if (!b || releaseCalc == ReleaseParsedCalcValue)
         m_parsedCalculation.release();
     return b;    
 }
@@ -1536,10 +1536,10 @@ inline bool CSSParser::shouldAcceptUnitLessValues(CSSParserValue* value, Units u
     return (unitflags & (FLength | FAngle | FTime)) && (!value->fValue || cssParserMode == CSSQuirksMode || cssParserMode == SVGAttributeMode);
 }
 
-bool CSSParser::validUnit(CSSParserValue* value, Units unitflags, CSSParserMode cssParserMode)
+bool CSSParser::validUnit(CSSParserValue* value, Units unitflags, CSSParserMode cssParserMode, ReleaseParsedCalcValueCondition releaseCalc)
 {
     if (isCalculation(value))
-        return validCalculationUnit(value, unitflags);
+        return validCalculationUnit(value, unitflags, releaseCalc);
         
     bool b = false;
     switch (value->unit) {
@@ -3875,7 +3875,7 @@ void CSSParser::parse3ValuesBackgroundPosition(CSSParserValueList* valueList, Re
 
 inline bool CSSParser::isPotentialPositionValue(CSSParserValue* value)
 {
-    return !value->id || isBackgroundPositionKeyword(value->id);
+    return isBackgroundPositionKeyword(value->id) || validUnit(value, FPercent | FLength, ReleaseParsedCalcValue);
 }
 
 void CSSParser::parseFillBackgroundPosition(CSSParserValueList* valueList, RefPtr<CSSValue>& value1, RefPtr<CSSValue>& value2)
