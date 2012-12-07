@@ -1,3 +1,16 @@
+2012-12-07  Kent Tamura  <tkent@chromium.org>
+
+        REGRESSION(r136631): Fix null pointer dereference in WebPagePopupImpl::paint
+        https://bugs.webkit.org/show_bug.cgi?id=104350
+
+        Reviewed by Hajime Morita.
+
+        We changed WebPagePopupImpl so that it deleted m_page in
+        closePopup. However, paint function is still called.
+
+        * src/WebPagePopupImpl.cpp:
+        (WebKit::WebPagePopupImpl::paint): Block by m_closing.
+
 2012-12-06  Kent Tamura  <tkent@chromium.org>
 
         Refactoring: Clean up placeholder attribute usage

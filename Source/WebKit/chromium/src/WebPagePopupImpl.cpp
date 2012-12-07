@@ -261,7 +261,8 @@ void WebPagePopupImpl::layout()
 
 void WebPagePopupImpl::paint(WebCanvas* canvas, const WebRect& rect, PaintOptions)
 {
-    PageWidgetDelegate::paint(m_page.get(), 0, canvas, rect, PageWidgetDelegate::Opaque, m_webView->settingsImpl()->applyDeviceScaleFactorInCompositor());
+    if (!m_closing)
+        PageWidgetDelegate::paint(m_page.get(), 0, canvas, rect, PageWidgetDelegate::Opaque, m_webView->settingsImpl()->applyDeviceScaleFactorInCompositor());
 }
 
 void WebPagePopupImpl::resize(const WebSize& newSize)
