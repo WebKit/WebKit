@@ -22,6 +22,7 @@
 #define CoordinatedGraphicsLayer_h
 
 #include "CoordinatedImageBacking.h"
+#include "CoordinatedLayerInfo.h"
 #include "CoordinatedTile.h"
 #include "FloatPoint3D.h"
 #include "GraphicsLayer.h"
@@ -34,7 +35,6 @@
 #include "TiledBackingStoreClient.h"
 #include "TransformationMatrix.h"
 #include "UpdateInfo.h"
-#include "WebLayerTreeInfo.h"
 #include "WebProcess.h"
 #if USE(GRAPHICS_SURFACE)
 #include <WebCore/GraphicsSurfaceToken.h>
@@ -53,25 +53,25 @@ namespace WebKit {
 class CoordinatedGraphicsLayerClient {
 public:
     // CoordinatedTileClient
-    virtual void createTile(WebLayerID, uint32_t tileID, const SurfaceUpdateInfo&, const WebCore::IntRect&) = 0;
-    virtual void updateTile(WebLayerID, uint32_t tileID, const SurfaceUpdateInfo&, const WebCore::IntRect&) = 0;
-    virtual void removeTile(WebLayerID, uint32_t tileID) = 0;
+    virtual void createTile(CoordinatedLayerID, uint32_t tileID, const SurfaceUpdateInfo&, const WebCore::IntRect&) = 0;
+    virtual void updateTile(CoordinatedLayerID, uint32_t tileID, const SurfaceUpdateInfo&, const WebCore::IntRect&) = 0;
+    virtual void removeTile(CoordinatedLayerID, uint32_t tileID) = 0;
 
     virtual WebCore::IntRect visibleContentsRect() const = 0;
     virtual bool layerTreeTileUpdatesAllowed() const = 0;
     virtual PassRefPtr<CoordinatedImageBacking> createImageBackingIfNeeded(WebCore::Image*) = 0;
-    virtual void syncLayerState(WebLayerID, const WebLayerInfo&) = 0;
-    virtual void syncLayerChildren(WebLayerID, const Vector<WebLayerID>&) = 0;
+    virtual void syncLayerState(CoordinatedLayerID, const CoordinatedLayerInfo&) = 0;
+    virtual void syncLayerChildren(CoordinatedLayerID, const Vector<CoordinatedLayerID>&) = 0;
 #if ENABLE(CSS_FILTERS)
-    virtual void syncLayerFilters(WebLayerID, const WebCore::FilterOperations&) = 0;
+    virtual void syncLayerFilters(CoordinatedLayerID, const WebCore::FilterOperations&) = 0;
 #endif
 #if USE(GRAPHICS_SURFACE)
-    virtual void createCanvas(WebLayerID, WebCore::PlatformLayer*) = 0;
-    virtual void syncCanvas(WebLayerID, WebCore::PlatformLayer*) = 0;
-    virtual void destroyCanvas(WebLayerID) = 0;
+    virtual void createCanvas(CoordinatedLayerID, WebCore::PlatformLayer*) = 0;
+    virtual void syncCanvas(CoordinatedLayerID, WebCore::PlatformLayer*) = 0;
+    virtual void destroyCanvas(CoordinatedLayerID) = 0;
 #endif
 
-    virtual void setLayerAnimations(WebLayerID, const WebCore::GraphicsLayerAnimations&) = 0;
+    virtual void setLayerAnimations(CoordinatedLayerID, const WebCore::GraphicsLayerAnimations&) = 0;
 
     virtual void detachLayer(WebCore::CoordinatedGraphicsLayer*) = 0;
     virtual void syncFixedLayers() = 0;
@@ -135,7 +135,7 @@ public:
 
     void setRootLayer(bool);
 
-    WebKit::WebLayerID id() const;
+    WebKit::CoordinatedLayerID id() const;
 
     void setFixedToViewport(bool isFixed) { m_fixedToViewport = isFixed; }
 
@@ -206,8 +206,8 @@ private:
 
     void animationStartedTimerFired(Timer<CoordinatedGraphicsLayer>*);
 
-    WebKit::WebLayerID m_id;
-    WebKit::WebLayerInfo m_layerInfo;
+    WebKit::CoordinatedLayerID m_id;
+    WebKit::CoordinatedLayerInfo m_layerInfo;
     GraphicsLayerTransform m_layerTransform;
     TransformationMatrix m_cachedInverseTransform;
     bool m_inUpdateMode : 1;

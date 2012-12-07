@@ -1,4 +1,4 @@
-    /*
+/*
  * Copyright (C) 2011 Apple Inc. All rights reserved.
  * Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
  *
@@ -99,14 +99,14 @@ LayerTreeCoordinator::LayerTreeCoordinator(WebPage* webPage)
 {
     // Create a root layer.
     m_rootLayer = GraphicsLayer::create(this, this);
-    CoordinatedGraphicsLayer* webRootLayer = toCoordinatedGraphicsLayer(m_rootLayer.get());
-    webRootLayer->setRootLayer(true);
+    CoordinatedGraphicsLayer* coordinatedRootLayer = toCoordinatedGraphicsLayer(m_rootLayer.get());
+    coordinatedRootLayer->setRootLayer(true);
 #ifndef NDEBUG
     m_rootLayer->setName("LayerTreeCoordinator root layer");
 #endif
     m_rootLayer->setDrawsContent(false);
     m_rootLayer->setSize(m_webPage->size());
-    m_layerTreeContext.webLayerID = toCoordinatedGraphicsLayer(webRootLayer)->id();
+    m_layerTreeContext.coordinatedLayerID = toCoordinatedGraphicsLayer(coordinatedRootLayer)->id();
 
     m_nonCompositedContentLayer = GraphicsLayer::create(this, this);
 #ifndef NDEBUG
@@ -306,7 +306,7 @@ bool LayerTreeCoordinator::flushPendingLayerChanges()
     return didSync;
 }
 
-void LayerTreeCoordinator::syncLayerState(WebLayerID id, const WebLayerInfo& info)
+void LayerTreeCoordinator::syncLayerState(CoordinatedLayerID id, const CoordinatedLayerInfo& info)
 {
     if (m_shouldSendScrollPositionUpdate) {
         m_webPage->send(Messages::LayerTreeCoordinatorProxy::DidChangeScrollPosition(m_visibleContentsRect.location()));
@@ -317,14 +317,14 @@ void LayerTreeCoordinator::syncLayerState(WebLayerID id, const WebLayerInfo& inf
     m_webPage->send(Messages::LayerTreeCoordinatorProxy::SetCompositingLayerState(id, info));
 }
 
-void LayerTreeCoordinator::syncLayerChildren(WebLayerID id, const Vector<WebLayerID>& children)
+void LayerTreeCoordinator::syncLayerChildren(CoordinatedLayerID id, const Vector<CoordinatedLayerID>& children)
 {
     m_shouldSyncFrame = true;
     m_webPage->send(Messages::LayerTreeCoordinatorProxy::SetCompositingLayerChildren(id, children));
 }
 
 #if USE(GRAPHICS_SURFACE)
-void LayerTreeCoordinator::createCanvas(WebLayerID id, PlatformLayer* canvasPlatformLayer)
+void LayerTreeCoordinator::createCanvas(CoordinatedLayerID id, PlatformLayer* canvasPlatformLayer)
 {
     m_shouldSyncFrame = true;
     GraphicsSurfaceToken token = canvasPlatformLayer->graphicsSurfaceToken();
@@ -332,14 +332,14 @@ void LayerTreeCoordinator::createCanvas(WebLayerID id, PlatformLayer* canvasPlat
     m_webPage->send(Messages::LayerTreeCoordinatorProxy::CreateCanvas(id, canvasSize, token));
 }
 
-void LayerTreeCoordinator::syncCanvas(WebLayerID id, PlatformLayer* canvasPlatformLayer)
+void LayerTreeCoordinator::syncCanvas(CoordinatedLayerID id, PlatformLayer* canvasPlatformLayer)
 {
     m_shouldSyncFrame = true;
     uint32_t frontBuffer = canvasPlatformLayer->copyToGraphicsSurface();
     m_webPage->send(Messages::LayerTreeCoordinatorProxy::SyncCanvas(id, frontBuffer));
 }
 
-void LayerTreeCoordinator::destroyCanvas(WebLayerID id)
+void LayerTreeCoordinator::destroyCanvas(CoordinatedLayerID id)
 {
     if (m_isPurging)
         return;
@@ -350,7 +350,7 @@ void LayerTreeCoordinator::destroyCanvas(WebLayerID id)
 #endif
 
 #if ENABLE(CSS_FILTERS)
-void LayerTreeCoordinator::syncLayerFilters(WebLayerID id, const FilterOperations& filters)
+void LayerTreeCoordinator::syncLayerFilters(CoordinatedLayerID id, const FilterOperations& filters)
 {
     m_shouldSyncFrame = true;
 #if ENABLE(CSS_SHADERS)
@@ -639,19 +639,19 @@ bool LayerTreeHost::supportsAcceleratedCompositing()
     return true;
 }
 
-void LayerTreeCoordinator::createTile(WebLayerID layerID, uint32_t tileID, const SurfaceUpdateInfo& updateInfo, const WebCore::IntRect& tileRect)
+void LayerTreeCoordinator::createTile(CoordinatedLayerID layerID, uint32_t tileID, const SurfaceUpdateInfo& updateInfo, const WebCore::IntRect& tileRect)
 {
     m_shouldSyncFrame = true;
     m_webPage->send(Messages::LayerTreeCoordinatorProxy::CreateTileForLayer(layerID, tileID, tileRect, updateInfo));
 }
 
-void LayerTreeCoordinator::updateTile(WebLayerID layerID, uint32_t tileID, const SurfaceUpdateInfo& updateInfo, const WebCore::IntRect& tileRect)
+void LayerTreeCoordinator::updateTile(CoordinatedLayerID layerID, uint32_t tileID, const SurfaceUpdateInfo& updateInfo, const WebCore::IntRect& tileRect)
 {
     m_shouldSyncFrame = true;
     m_webPage->send(Messages::LayerTreeCoordinatorProxy::UpdateTileForLayer(layerID, tileID, tileRect, updateInfo));
 }
 
-void LayerTreeCoordinator::removeTile(WebLayerID layerID, uint32_t tileID)
+void LayerTreeCoordinator::removeTile(CoordinatedLayerID layerID, uint32_t tileID)
 {
     if (m_isPurging)
         return;
@@ -677,7 +677,7 @@ WebCore::IntRect LayerTreeCoordinator::visibleContentsRect() const
 }
 
 
-void LayerTreeCoordinator::setLayerAnimations(WebLayerID layerID, const GraphicsLayerAnimations& animations)
+void LayerTreeCoordinator::setLayerAnimations(CoordinatedLayerID layerID, const GraphicsLayerAnimations& animations)
 {
     m_shouldSyncFrame = true;
     GraphicsLayerAnimations activeAnimations = animations.getActiveAnimations();

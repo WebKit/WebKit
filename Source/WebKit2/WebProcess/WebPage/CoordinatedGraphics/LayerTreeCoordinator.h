@@ -78,9 +78,9 @@ public:
     virtual void deviceScaleFactorDidChange() { }
     virtual PassRefPtr<CoordinatedImageBacking> createImageBackingIfNeeded(WebCore::Image*) OVERRIDE;
 
-    virtual void createTile(WebLayerID, uint32_t tileID, const SurfaceUpdateInfo&, const WebCore::IntRect&);
-    virtual void updateTile(WebLayerID, uint32_t tileID, const SurfaceUpdateInfo&, const WebCore::IntRect&);
-    virtual void removeTile(WebLayerID, uint32_t tileID);
+    virtual void createTile(CoordinatedLayerID, uint32_t tileID, const SurfaceUpdateInfo&, const WebCore::IntRect&);
+    virtual void updateTile(CoordinatedLayerID, uint32_t tileID, const SurfaceUpdateInfo&, const WebCore::IntRect&);
+    virtual void removeTile(CoordinatedLayerID, uint32_t tileID);
     virtual WebCore::IntRect visibleContentsRect() const;
     virtual void renderNextFrame();
     virtual void purgeBackingStores();
@@ -89,16 +89,16 @@ public:
     virtual void didReceiveLayerTreeCoordinatorMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);
     virtual WebCore::GraphicsLayerFactory* graphicsLayerFactory() OVERRIDE;
 
-    virtual void syncLayerState(WebLayerID, const WebLayerInfo&);
-    virtual void syncLayerChildren(WebLayerID, const Vector<WebLayerID>&);
-    virtual void setLayerAnimations(WebLayerID, const WebCore::GraphicsLayerAnimations&);
+    virtual void syncLayerState(CoordinatedLayerID, const CoordinatedLayerInfo&);
+    virtual void syncLayerChildren(CoordinatedLayerID, const Vector<CoordinatedLayerID>&);
+    virtual void setLayerAnimations(CoordinatedLayerID, const WebCore::GraphicsLayerAnimations&);
 #if ENABLE(CSS_FILTERS)
-    virtual void syncLayerFilters(WebLayerID, const WebCore::FilterOperations&);
+    virtual void syncLayerFilters(CoordinatedLayerID, const WebCore::FilterOperations&);
 #endif
 #if USE(GRAPHICS_SURFACE)
-    virtual void createCanvas(WebLayerID, WebCore::PlatformLayer*) OVERRIDE;
-    virtual void syncCanvas(WebLayerID, WebCore::PlatformLayer*) OVERRIDE;
-    virtual void destroyCanvas(WebLayerID) OVERRIDE;
+    virtual void createCanvas(CoordinatedLayerID, WebCore::PlatformLayer*) OVERRIDE;
+    virtual void syncCanvas(CoordinatedLayerID, WebCore::PlatformLayer*) OVERRIDE;
+    virtual void destroyCanvas(CoordinatedLayerID) OVERRIDE;
 #endif
     virtual void detachLayer(WebCore::CoordinatedGraphicsLayer*);
     virtual void syncFixedLayers();
@@ -171,7 +171,7 @@ private:
     OwnPtr<WebCore::GraphicsLayer> m_pageOverlayLayer;
 
     HashSet<WebCore::CoordinatedGraphicsLayer*> m_registeredLayers;
-    Vector<WebLayerID> m_detachedLayers;
+    Vector<CoordinatedLayerID> m_detachedLayers;
     typedef HashMap<CoordinatedImageBackingID, RefPtr<CoordinatedImageBacking> > ImageBackingMap;
     ImageBackingMap m_imageBackings;
     Vector<OwnPtr<UpdateAtlas> > m_updateAtlases;

@@ -42,13 +42,13 @@ using namespace WebKit;
 
 namespace WebCore {
 
-static HashMap<WebLayerID, CoordinatedGraphicsLayer*>& layerByIDMap()
+static HashMap<CoordinatedLayerID, CoordinatedGraphicsLayer*>& layerByIDMap()
 {
-    static HashMap<WebLayerID, CoordinatedGraphicsLayer*> globalMap;
+    static HashMap<CoordinatedLayerID, CoordinatedGraphicsLayer*> globalMap;
     return globalMap;
 }
 
-static WebLayerID toWebLayerID(GraphicsLayer* layer)
+static CoordinatedLayerID toCoordinatedLayerID(GraphicsLayer* layer)
 {
     return layer ? toCoordinatedGraphicsLayer(layer)->id() : 0;
 }
@@ -124,7 +124,7 @@ CoordinatedGraphicsLayer::CoordinatedGraphicsLayer(GraphicsLayerClient* client)
     , m_canvasPlatformLayer(0)
     , m_animationStartedTimer(this, &CoordinatedGraphicsLayer::animationStartedTimerFired)
 {
-    static WebLayerID nextLayerID = 1;
+    static CoordinatedLayerID nextLayerID = 1;
     m_id = nextLayerID++;
     layerByIDMap().add(id(), this);
 }
@@ -441,7 +441,7 @@ void CoordinatedGraphicsLayer::setNeedsDisplayInRect(const FloatRect& rect)
     didChangeLayerState();
 }
 
-WebLayerID CoordinatedGraphicsLayer::id() const
+CoordinatedLayerID CoordinatedGraphicsLayer::id() const
 {
     return m_id;
 }
@@ -472,9 +472,9 @@ void CoordinatedGraphicsLayer::syncChildren()
     if (!m_shouldSyncChildren)
         return;
     m_shouldSyncChildren = false;
-    Vector<WebLayerID> childIDs;
+    Vector<CoordinatedLayerID> childIDs;
     for (size_t i = 0; i < children().size(); ++i)
-        childIDs.append(toWebLayerID(children()[i]));
+        childIDs.append(toCoordinatedLayerID(children()[i]));
 
     m_coordinator->syncLayerChildren(m_id, childIDs);
 }
@@ -531,12 +531,12 @@ void CoordinatedGraphicsLayer::syncLayerState()
     m_layerInfo.contentsRect = contentsRect();
     m_layerInfo.drawsContent = drawsContent();
     m_layerInfo.contentsVisible = contentsAreVisible();
-    m_layerInfo.mask = toWebLayerID(maskLayer());
+    m_layerInfo.mask = toCoordinatedLayerID(maskLayer());
     m_layerInfo.masksToBounds = masksToBounds();
     m_layerInfo.opacity = opacity();
     m_layerInfo.pos = position();
     m_layerInfo.preserves3D = preserves3D();
-    m_layerInfo.replica = toWebLayerID(replicaLayer());
+    m_layerInfo.replica = toCoordinatedLayerID(replicaLayer());
     m_layerInfo.size = size();
     m_layerInfo.transform = transform();
     m_coordinator->syncLayerState(m_id, m_layerInfo);

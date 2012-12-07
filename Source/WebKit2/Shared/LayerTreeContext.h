@@ -57,11 +57,11 @@ public:
 #elif PLATFORM(WIN)
     HWND window;
 #elif PLATFORM(QT)
-    uint32_t webLayerID;
+    uint32_t coordinatedLayerID;
 #elif PLATFORM(GTK)
     uint64_t windowHandle;
 #elif PLATFORM(EFL)
-    uint32_t webLayerID;
+    uint32_t coordinatedLayerID;
 #endif
 };
 

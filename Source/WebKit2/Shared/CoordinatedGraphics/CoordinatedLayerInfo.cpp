@@ -20,7 +20,7 @@
 #include "config.h"
 
 #if USE(COORDINATED_GRAPHICS)
-#include "WebLayerTreeInfo.h"
+#include "CoordinatedLayerInfo.h"
 
 #include "ArgumentCoders.h"
 #include "Arguments.h"
@@ -30,14 +30,14 @@ using namespace CoreIPC;
 
 namespace WebKit {
 
-void WebLayerInfo::encode(CoreIPC::ArgumentEncoder& encoder) const
+void CoordinatedLayerInfo::encode(CoreIPC::ArgumentEncoder& encoder) const
 {
-    SimpleArgumentCoder<WebLayerInfo>::encode(encoder, *this);
+    SimpleArgumentCoder<CoordinatedLayerInfo>::encode(encoder, *this);
 }
 
-bool WebLayerInfo::decode(CoreIPC::ArgumentDecoder* decoder, WebLayerInfo& info)
+bool CoordinatedLayerInfo::decode(CoreIPC::ArgumentDecoder* decoder, CoordinatedLayerInfo& info)
 {
-    return SimpleArgumentCoder<WebLayerInfo>::decode(decoder, info);
+    return SimpleArgumentCoder<CoordinatedLayerInfo>::decode(decoder, info);
 }
 }
-#endif
+#endif // USE(COORDINATED_GRAPHICS)

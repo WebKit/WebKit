@@ -22,10 +22,10 @@
 
 #if USE(COORDINATED_GRAPHICS)
 #include "BackingStore.h"
+#include "CoordinatedLayerInfo.h"
 #include "ShareableSurface.h"
 #include "TextureMapper.h"
 #include "TextureMapperBackingStore.h"
-#include "WebLayerTreeInfo.h"
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/GraphicsLayer.h>
 #include <WebCore/GraphicsLayerAnimation.h>
@@ -48,8 +48,8 @@ namespace WebKit {
 
 class CoordinatedBackingStore;
 class LayerTreeCoordinatorProxy;
-class WebLayerInfo;
-class WebLayerUpdateInfo;
+class CoordinatedLayerInfo;
+class CoordinatedLayerUpdateInfo;
 
 class LayerTreeRenderer : public ThreadSafeRefCounted<LayerTreeRenderer>, public WebCore::GraphicsLayerClient {
 public:
@@ -74,9 +74,9 @@ public:
     void setVisibleContentsRect(const WebCore::FloatRect&);
     void didChangeScrollPosition(const WebCore::IntPoint& position);
 #if USE(GRAPHICS_SURFACE)
-    void createCanvas(WebLayerID, const WebCore::IntSize&, PassRefPtr<WebCore::GraphicsSurface>);
-    void syncCanvas(WebLayerID, uint32_t frontBuffer);
-    void destroyCanvas(WebLayerID);
+    void createCanvas(CoordinatedLayerID, const WebCore::IntSize&, PassRefPtr<WebCore::GraphicsSurface>);
+    void syncCanvas(CoordinatedLayerID, uint32_t frontBuffer);
+    void destroyCanvas(CoordinatedLayerID);
 #endif
 
     void detach();
@@ -87,12 +87,12 @@ public:
     void purgeGLResources();
     void setActive(bool);
 
-    void deleteLayer(WebLayerID);
-    void setRootLayerID(WebLayerID);
-    void setLayerChildren(WebLayerID, const Vector<WebLayerID>&);
-    void setLayerState(WebLayerID, const WebLayerInfo&);
+    void deleteLayer(CoordinatedLayerID);
+    void setRootLayerID(CoordinatedLayerID);
+    void setLayerChildren(CoordinatedLayerID, const Vector<CoordinatedLayerID>&);
+    void setLayerState(CoordinatedLayerID, const CoordinatedLayerInfo&);
 #if ENABLE(CSS_FILTERS)
-    void setLayerFilters(WebLayerID, const WebCore::FilterOperations&);
+    void setLayerFilters(CoordinatedLayerID, const WebCore::FilterOperations&);
 #endif
 #if ENABLE(CSS_SHADERS)
     void injectCachedCustomFilterPrograms(const WebCore::FilterOperations& filters) const;
@@ -100,15 +100,15 @@ public:
     void removeCustomFilterProgram(int id);
 #endif
 
-    void createTile(WebLayerID, uint32_t tileID, float scale);
-    void removeTile(WebLayerID, uint32_t tileID);
-    void updateTile(WebLayerID, uint32_t tileID, const TileUpdate&);
+    void createTile(CoordinatedLayerID, uint32_t tileID, float scale);
+    void removeTile(CoordinatedLayerID, uint32_t tileID);
+    void updateTile(CoordinatedLayerID, uint32_t tileID, const TileUpdate&);
     void flushLayerChanges();
     void createImageBacking(CoordinatedImageBackingID);
     void updateImageBacking(CoordinatedImageBackingID, PassRefPtr<ShareableSurface>);
     void clearImageBackingContents(CoordinatedImageBackingID);
     void removeImageBacking(CoordinatedImageBackingID);
-    void setLayerAnimations(WebLayerID, const WebCore::GraphicsLayerAnimations&);
+    void setLayerAnimations(CoordinatedLayerID, const WebCore::GraphicsLayerAnimations&);
     void setAnimationsLocked(bool);
     void setBackgroundColor(const WebCore::Color&);
     void setDrawsBackground(bool enable) { m_setDrawsBackground = enable; }
@@ -118,9 +118,9 @@ public:
 #endif
 
 private:
-    PassOwnPtr<WebCore::GraphicsLayer> createLayer(WebLayerID);
+    PassOwnPtr<WebCore::GraphicsLayer> createLayer(CoordinatedLayerID);
 
-    WebCore::GraphicsLayer* layerByID(WebLayerID id) { return (id == InvalidWebLayerID) ? 0 : m_layers.get(id); }
+    WebCore::GraphicsLayer* layerByID(CoordinatedLayerID id) { return (id == InvalidCoordinatedLayerID) ? 0 : m_layers.get(id); }
     WebCore::GraphicsLayer* rootLayer() { return m_rootLayer.get(); }
 
     void syncRemoteContent();
@@ -142,7 +142,7 @@ private:
     void assignImageBackingToLayer(WebCore::GraphicsLayer*, CoordinatedImageBackingID);
     void removeReleasedImageBackingsIfNeeded();
     void ensureRootLayer();
-    WebCore::GraphicsLayer* ensureLayer(WebLayerID);
+    WebCore::GraphicsLayer* ensureLayer(CoordinatedLayerID);
     void commitPendingBackingStoreOperations();
 
     CoordinatedBackingStore* getBackingStore(WebCore::GraphicsLayer*);
@@ -170,7 +170,7 @@ private:
     HashSet<RefPtr<CoordinatedBackingStore> > m_backingStoresWithPendingBuffers;
 
 #if USE(GRAPHICS_SURFACE)
-    typedef HashMap<WebLayerID, RefPtr<WebCore::TextureMapperSurfaceBackingStore> > SurfaceBackingStoreMap;
+    typedef HashMap<CoordinatedLayerID, RefPtr<WebCore::TextureMapperSurfaceBackingStore> > SurfaceBackingStoreMap;
     SurfaceBackingStoreMap m_surfaceBackingStores;
 #endif
 
@@ -180,11 +180,11 @@ private:
 
     OwnPtr<WebCore::GraphicsLayer> m_rootLayer;
 
-    typedef HashMap<WebLayerID, OwnPtr<WebCore::GraphicsLayer> > LayerMap;
+    typedef HashMap<CoordinatedLayerID, OwnPtr<WebCore::GraphicsLayer> > LayerMap;
     LayerMap m_layers;
-    typedef HashMap<WebLayerID, WebCore::GraphicsLayer*> LayerRawPtrMap;
+    typedef HashMap<CoordinatedLayerID, WebCore::GraphicsLayer*> LayerRawPtrMap;
     LayerRawPtrMap m_fixedLayers;
-    WebLayerID m_rootLayerID;
+    CoordinatedLayerID m_rootLayerID;
     WebCore::IntPoint m_renderedContentsScrollPosition;
     WebCore::IntPoint m_pendingRenderedContentsScrollPosition;
     bool m_animationsLocked;

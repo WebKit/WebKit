@@ -50,8 +50,6 @@ namespace WebKit {
 class LayerTreeContext;
 class LayerTreeCoordinatorProxy;
 class UpdateInfo;
-class WebLayerTreeInfo;
-class WebLayerUpdateInfo;
 class WebPageProxy;
 
 class DrawingAreaProxy {

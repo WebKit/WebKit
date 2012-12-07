@@ -1,3 +1,116 @@
+2012-12-06  Jae Hyun Park  <jae.park@company100.net>
+
+        Coordinated Graphics: Rename WebLayerTreeInfo to CoordinatedLayerInfo
+        https://bugs.webkit.org/show_bug.cgi?id=103983
+
+        Reviewed by Noam Rosenthal.
+
+        This patch refactors WebLayerTreeInfo in 2 areas.
+
+        1. WebLayerTreeInfo is only used by Coordinated Graphics. So, the file
+        should be located in WebKit2/Shared/CoordinatedGraphics instead of
+        WebKit2/Shared.
+
+        2. The name of WebLayerTreeInfo is incorrect. Currently,
+        WebLayerTreeInfo only has WebLayerInfo struct. Also, it is hard to know
+        what WebLayer is since we don't use that name anymore. More appropriate
+        name for WebLayerInfo would be CoordinatedLayerInfo.
+
+        No new test, because no behavioral change.
+
+        * CMakeLists.txt:
+        * Scripts/webkit2/messages.py:
+        (headers_for_type):
+        * Shared/CoordinatedGraphics/CoordinatedLayerInfo.cpp: Renamed from Source/WebKit2/Shared/WebLayerTreeInfo.cpp.
+        (WebKit):
+        (WebKit::CoordinatedLayerInfo::encode):
+        (WebKit::CoordinatedLayerInfo::decode):
+        * Shared/CoordinatedGraphics/CoordinatedLayerInfo.h: Renamed from Source/WebKit2/Shared/WebLayerTreeInfo.h.
+        (WebKit):
+        (WebKit::CoordinatedLayerInfo::CoordinatedLayerInfo):
+        (CoordinatedLayerInfo):
+        * Shared/LayerTreeContext.h:
+        (LayerTreeContext):
+        * Shared/efl/LayerTreeContextEfl.cpp:
+        (WebKit::LayerTreeContext::LayerTreeContext):
+        (WebKit::LayerTreeContext::encode):
+        (WebKit::LayerTreeContext::decode):
+        (WebKit::LayerTreeContext::isEmpty):
+        (WebKit::operator==):
+        * Shared/qt/LayerTreeContextQt.cpp:
+        (WebKit::LayerTreeContext::LayerTreeContext):
+        (WebKit::LayerTreeContext::encode):
+        (WebKit::LayerTreeContext::decode):
+        (WebKit::LayerTreeContext::isEmpty):
+        (WebKit::operator==):
+        * Target.pri:
+        * UIProcess/CoordinatedGraphics/LayerTreeCoordinatorProxy.cpp:
+        (WebKit::LayerTreeCoordinatorProxy::createTileForLayer):
+        (WebKit::LayerTreeCoordinatorProxy::updateTileForLayer):
+        (WebKit::LayerTreeCoordinatorProxy::removeTileForLayer):
+        (WebKit::LayerTreeCoordinatorProxy::deleteCompositingLayer):
+        (WebKit::LayerTreeCoordinatorProxy::setRootCompositingLayer):
+        (WebKit::LayerTreeCoordinatorProxy::setCompositingLayerState):
+        (WebKit::LayerTreeCoordinatorProxy::setCompositingLayerChildren):
+        (WebKit::LayerTreeCoordinatorProxy::setCompositingLayerFilters):
+        (WebKit::LayerTreeCoordinatorProxy::setLayerAnimations):
+        (WebKit::LayerTreeCoordinatorProxy::createCanvas):
+        (WebKit::LayerTreeCoordinatorProxy::syncCanvas):
+        (WebKit::LayerTreeCoordinatorProxy::destroyCanvas):
+        * UIProcess/CoordinatedGraphics/LayerTreeCoordinatorProxy.h:
+        (WebKit):
+        (LayerTreeCoordinatorProxy):
+        * UIProcess/CoordinatedGraphics/LayerTreeCoordinatorProxy.messages.in:
+        * UIProcess/CoordinatedGraphics/LayerTreeRenderer.cpp:
+        (WebKit::LayerTreeRenderer::LayerTreeRenderer):
+        (WebKit::LayerTreeRenderer::createLayer):
+        (WebKit::LayerTreeRenderer::createCanvas):
+        (WebKit::LayerTreeRenderer::syncCanvas):
+        (WebKit::LayerTreeRenderer::destroyCanvas):
+        (WebKit::LayerTreeRenderer::setLayerChildren):
+        (WebKit::LayerTreeRenderer::setLayerFilters):
+        (WebKit::LayerTreeRenderer::setLayerState):
+        (WebKit::LayerTreeRenderer::deleteLayer):
+        (WebKit::LayerTreeRenderer::ensureLayer):
+        (WebKit::LayerTreeRenderer::setRootLayerID):
+        (WebKit::LayerTreeRenderer::createTile):
+        (WebKit::LayerTreeRenderer::removeTile):
+        (WebKit::LayerTreeRenderer::updateTile):
+        (WebKit::LayerTreeRenderer::ensureRootLayer):
+        (WebKit::LayerTreeRenderer::purgeGLResources):
+        (WebKit::LayerTreeRenderer::setLayerAnimations):
+        * UIProcess/CoordinatedGraphics/LayerTreeRenderer.h:
+        (WebKit):
+        (LayerTreeRenderer):
+        (WebKit::LayerTreeRenderer::layerByID):
+        * UIProcess/DrawingAreaProxy.h:
+        (WebKit):
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedGraphicsLayer.cpp:
+        (WebCore::layerByIDMap):
+        (WebCore::toCoordinatedLayerID):
+        (WebCore::CoordinatedGraphicsLayer::CoordinatedGraphicsLayer):
+        (WebCore::CoordinatedGraphicsLayer::id):
+        (WebCore::CoordinatedGraphicsLayer::syncChildren):
+        (WebCore::CoordinatedGraphicsLayer::syncLayerState):
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedGraphicsLayer.h:
+        (CoordinatedGraphicsLayerClient):
+        (CoordinatedGraphicsLayer):
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedImageBacking.h:
+        * WebProcess/WebPage/CoordinatedGraphics/LayerTreeCoordinator.cpp:
+        (WebKit::LayerTreeCoordinator::LayerTreeCoordinator):
+        (WebKit::LayerTreeCoordinator::syncLayerState):
+        (WebKit::LayerTreeCoordinator::syncLayerChildren):
+        (WebKit::LayerTreeCoordinator::createCanvas):
+        (WebKit::LayerTreeCoordinator::syncCanvas):
+        (WebKit::LayerTreeCoordinator::destroyCanvas):
+        (WebKit::LayerTreeCoordinator::syncLayerFilters):
+        (WebKit::LayerTreeCoordinator::createTile):
+        (WebKit::LayerTreeCoordinator::updateTile):
+        (WebKit::LayerTreeCoordinator::removeTile):
+        (WebKit::LayerTreeCoordinator::setLayerAnimations):
+        * WebProcess/WebPage/CoordinatedGraphics/LayerTreeCoordinator.h:
+        (LayerTreeCoordinator):
+
 2012-12-06  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r136900.

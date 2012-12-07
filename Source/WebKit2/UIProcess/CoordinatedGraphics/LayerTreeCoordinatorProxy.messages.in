@@ -19,7 +19,7 @@
 
 #if USE(COORDINATED_GRAPHICS)
 messages -> LayerTreeCoordinatorProxy {
-    SetCompositingLayerState(uint32_t id, WebKit::WebLayerInfo layerInfo)
+    SetCompositingLayerState(uint32_t id, WebKit::CoordinatedLayerInfo layerInfo)
     SetCompositingLayerChildren(uint32_t id, Vector<uint32_t> children)
 #if ENABLE(CSS_FILTERS)
     SetCompositingLayerFilters(uint32_t id, WebCore::FilterOperations filters)

@@ -17,8 +17,8 @@
  Boston, MA 02110-1301, USA.
  */
 
-#ifndef WebLayerTreeInfo_h
-#define WebLayerTreeInfo_h
+#ifndef CoordinatedLayerInfo_h
+#define CoordinatedLayerInfo_h
 
 #if USE(COORDINATED_GRAPHICS)
 
@@ -30,23 +30,23 @@
 
 namespace WebKit {
 
-typedef uint32_t WebLayerID;
-enum { InvalidWebLayerID = 0 };
+typedef uint32_t CoordinatedLayerID;
+enum { InvalidCoordinatedLayerID = 0 };
 
 typedef uint64_t CoordinatedImageBackingID;
 enum { InvalidCoordinatedImageBackingID = 0 };
 
-// NOTE: WebLayerInfo should only use POD types, as to make serialization faster.
-struct WebLayerInfo {
-    WebLayerInfo()
-        : replica(InvalidWebLayerID)
-        , mask(InvalidWebLayerID)
+// NOTE: CoordinatedLayerInfo should only use POD types, as to make serialization faster.
+struct CoordinatedLayerInfo {
+    CoordinatedLayerInfo()
+        : replica(InvalidCoordinatedLayerID)
+        , mask(InvalidCoordinatedLayerID)
         , imageID(InvalidCoordinatedImageBackingID)
         , opacity(0)
         , flags(0) { }
 
-    WebLayerID replica;
-    WebLayerID mask;
+    CoordinatedLayerID replica;
+    CoordinatedLayerID mask;
     CoordinatedImageBackingID imageID;
 
     WebCore::FloatPoint pos;
@@ -69,15 +69,15 @@ struct WebLayerInfo {
             bool isRootLayer: 1;
             bool fixedToViewport : 1;
         };
-        unsigned int flags;
+        unsigned flags;
     };
 
     void encode(CoreIPC::ArgumentEncoder&) const;
-    static bool decode(CoreIPC::ArgumentDecoder*, WebLayerInfo&);
+    static bool decode(CoreIPC::ArgumentDecoder*, CoordinatedLayerInfo&);
 };
 
 }
 
-#endif // USE(ACCELERATED_COMPOSITING)
+#endif // USE(COORDINATED_GRAPHICS)
 
-#endif // WebLayerTreeInfo_h
+#endif // CoordinatedLayerInfo_h

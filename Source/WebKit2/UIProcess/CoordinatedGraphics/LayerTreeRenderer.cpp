@@ -74,7 +74,7 @@ static bool layerShouldHaveBackingStore(GraphicsLayer* layer)
 LayerTreeRenderer::LayerTreeRenderer(LayerTreeCoordinatorProxy* layerTreeCoordinatorProxy)
     : m_layerTreeCoordinatorProxy(layerTreeCoordinatorProxy)
     , m_isActive(false)
-    , m_rootLayerID(InvalidWebLayerID)
+    , m_rootLayerID(InvalidCoordinatedLayerID)
     , m_animationsLocked(false)
 #if ENABLE(REQUEST_ANIMATION_FRAME)
     , m_animationFrameRequested(false)
@@ -89,7 +89,7 @@ LayerTreeRenderer::~LayerTreeRenderer()
 {
 }
 
-PassOwnPtr<GraphicsLayer> LayerTreeRenderer::createLayer(WebLayerID)
+PassOwnPtr<GraphicsLayer> LayerTreeRenderer::createLayer(CoordinatedLayerID)
 {
     GraphicsLayerTextureMapper* newLayer = new GraphicsLayerTextureMapper(this);
     newLayer->setHasOwnBackingStore(false);
@@ -227,7 +227,7 @@ void LayerTreeRenderer::didChangeScrollPosition(const IntPoint& position)
 }
 
 #if USE(GRAPHICS_SURFACE)
-void LayerTreeRenderer::createCanvas(WebLayerID id, const WebCore::IntSize& canvasSize, PassRefPtr<GraphicsSurface> surface)
+void LayerTreeRenderer::createCanvas(CoordinatedLayerID id, const WebCore::IntSize& canvasSize, PassRefPtr<GraphicsSurface> surface)
 {
     ASSERT(m_textureMapper);
     GraphicsLayer* layer = layerByID(id);
@@ -241,7 +241,7 @@ void LayerTreeRenderer::createCanvas(WebLayerID id, const WebCore::IntSize& canv
     layer->setContentsToMedia(canvasBackingStore.get());
 }
 
-void LayerTreeRenderer::syncCanvas(WebLayerID id, uint32_t frontBuffer)
+void LayerTreeRenderer::syncCanvas(CoordinatedLayerID id, uint32_t frontBuffer)
 {
     ASSERT(m_textureMapper);
     ASSERT(m_surfaceBackingStores.contains(id));
@@ -252,7 +252,7 @@ void LayerTreeRenderer::syncCanvas(WebLayerID id, uint32_t frontBuffer)
     canvasBackingStore->swapBuffersIfNeeded(frontBuffer);
 }
 
-void LayerTreeRenderer::destroyCanvas(WebLayerID id)
+void LayerTreeRenderer::destroyCanvas(CoordinatedLayerID id)
 {
     ASSERT(m_textureMapper);
     GraphicsLayer* layer = layerByID(id);
@@ -264,13 +264,13 @@ void LayerTreeRenderer::destroyCanvas(WebLayerID id)
 }
 #endif
 
-void LayerTreeRenderer::setLayerChildren(WebLayerID id, const Vector<WebLayerID>& childIDs)
+void LayerTreeRenderer::setLayerChildren(CoordinatedLayerID id, const Vector<CoordinatedLayerID>& childIDs)
 {
     GraphicsLayer* layer = ensureLayer(id);
     Vector<GraphicsLayer*> children;
 
     for (size_t i = 0; i < childIDs.size(); ++i) {
-        WebLayerID childID = childIDs[i];
+        CoordinatedLayerID childID = childIDs[i];
         GraphicsLayer* child = layerByID(childID);
         if (!child) {
             OwnPtr<GraphicsLayer*> newChild = createLayer(childID);
@@ -283,7 +283,7 @@ void LayerTreeRenderer::setLayerChildren(WebLayerID id, const Vector<WebLayerID>
 }
 
 #if ENABLE(CSS_FILTERS)
-void LayerTreeRenderer::setLayerFilters(WebLayerID id, const FilterOperations& filters)
+void LayerTreeRenderer::setLayerFilters(CoordinatedLayerID id, const FilterOperations& filters)
 {
     GraphicsLayer* layer = ensureLayer(id);
 
@@ -326,7 +326,7 @@ void LayerTreeRenderer::removeCustomFilterProgram(int id)
 }
 #endif // ENABLE(CSS_SHADERS)
 
-void LayerTreeRenderer::setLayerState(WebLayerID id, const WebLayerInfo& layerInfo)
+void LayerTreeRenderer::setLayerState(CoordinatedLayerID id, const CoordinatedLayerInfo& layerInfo)
 {
     GraphicsLayer* layer = ensureLayer(id);
 
@@ -362,7 +362,7 @@ void LayerTreeRenderer::setLayerState(WebLayerID id, const WebLayerInfo& layerIn
         setRootLayerID(id);
 }
 
-void LayerTreeRenderer::deleteLayer(WebLayerID layerID)
+void LayerTreeRenderer::deleteLayer(CoordinatedLayerID layerID)
 {
     OwnPtr<GraphicsLayer> layer = m_layers.take(layerID);
     if (!layer)
@@ -377,7 +377,7 @@ void LayerTreeRenderer::deleteLayer(WebLayerID layerID)
 }
 
 
-WebCore::GraphicsLayer* LayerTreeRenderer::ensureLayer(WebLayerID id)
+WebCore::GraphicsLayer* LayerTreeRenderer::ensureLayer(CoordinatedLayerID id)
 {
     LayerMap::iterator it = m_layers.find(id);
     if (it != m_layers.end())
@@ -390,7 +390,7 @@ WebCore::GraphicsLayer* LayerTreeRenderer::ensureLayer(WebLayerID id)
     return layer;
 }
 
-void LayerTreeRenderer::setRootLayerID(WebLayerID layerID)
+void LayerTreeRenderer::setRootLayerID(CoordinatedLayerID layerID)
 {
     if (layerID == m_rootLayerID)
         return;
@@ -485,7 +485,7 @@ void LayerTreeRenderer::resetBackingStoreSizeToLayerSize(GraphicsLayer* graphics
     backingStore->setSize(graphicsLayer->size());
 }
 
-void LayerTreeRenderer::createTile(WebLayerID layerID, uint32_t tileID, float scale)
+void LayerTreeRenderer::createTile(CoordinatedLayerID layerID, uint32_t tileID, float scale)
 {
     GraphicsLayer* layer = layerByID(layerID);
     ASSERT(layer);
@@ -495,7 +495,7 @@ void LayerTreeRenderer::createTile(WebLayerID layerID, uint32_t tileID, float sc
     resetBackingStoreSizeToLayerSize(layer);
 }
 
-void LayerTreeRenderer::removeTile(WebLayerID layerID, uint32_t tileID)
+void LayerTreeRenderer::removeTile(CoordinatedLayerID layerID, uint32_t tileID)
 {
     GraphicsLayer* layer = layerByID(layerID);
     ASSERT(layer);
@@ -508,7 +508,7 @@ void LayerTreeRenderer::removeTile(WebLayerID layerID, uint32_t tileID)
     m_backingStoresWithPendingBuffers.add(backingStore);
 }
 
-void LayerTreeRenderer::updateTile(WebLayerID layerID, uint32_t tileID, const TileUpdate& update)
+void LayerTreeRenderer::updateTile(CoordinatedLayerID layerID, uint32_t tileID, const TileUpdate& update)
 {
     GraphicsLayer* layer = layerByID(layerID);
     ASSERT(layer);
@@ -620,7 +620,7 @@ void LayerTreeRenderer::ensureRootLayer()
     if (m_rootLayer)
         return;
 
-    m_rootLayer = createLayer(InvalidWebLayerID);
+    m_rootLayer = createLayer(InvalidCoordinatedLayerID);
     m_rootLayer->setMasksToBounds(false);
     m_rootLayer->setDrawsContent(false);
     m_rootLayer->setAnchorPoint(FloatPoint3D(0, 0, 0));
@@ -663,7 +663,7 @@ void LayerTreeRenderer::purgeGLResources()
 
     m_rootLayer->removeAllChildren();
     m_rootLayer.clear();
-    m_rootLayerID = InvalidWebLayerID;
+    m_rootLayerID = InvalidCoordinatedLayerID;
     m_layers.clear();
     m_fixedLayers.clear();
     m_textureMapper.clear();
@@ -680,7 +680,7 @@ void LayerTreeRenderer::purgeBackingStores()
         m_layerTreeCoordinatorProxy->purgeBackingStores();
 }
 
-void LayerTreeRenderer::setLayerAnimations(WebLayerID id, const GraphicsLayerAnimations& animations)
+void LayerTreeRenderer::setLayerAnimations(CoordinatedLayerID id, const GraphicsLayerAnimations& animations)
 {
     GraphicsLayerTextureMapper* layer = toGraphicsLayerTextureMapper(layerByID(id));
     if (!layer)

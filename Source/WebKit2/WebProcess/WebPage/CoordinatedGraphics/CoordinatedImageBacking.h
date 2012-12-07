@@ -28,9 +28,9 @@
 #define CoordinatedImageBacking_h
 
 #if USE(COORDINATED_GRAPHICS)
+#include "CoordinatedLayerInfo.h"
 #include "Image.h"
 #include "ShareableSurface.h"
-#include "WebLayerTreeInfo.h"
 #include <WebCore/Timer.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
