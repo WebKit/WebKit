@@ -54,6 +54,7 @@ public:
     // IDBTransactionBackendInterface
     virtual PassRefPtr<IDBObjectStoreBackendInterface> objectStore(int64_t, ExceptionCode&);
     virtual void abort();
+    void commit();
     virtual void setCallbacks(IDBTransactionCallbacks* callbacks) { m_callbacks = callbacks; }
 
     class Operation {
@@ -87,7 +88,6 @@ private:
     };
 
     void start();
-    void commit();
 
     bool isTaskQueueEmpty() const;
     bool hasPendingTasks() const;

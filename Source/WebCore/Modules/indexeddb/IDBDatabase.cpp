@@ -85,8 +85,8 @@ int64_t IDBDatabase::nextTransactionId()
 void IDBDatabase::transactionCreated(IDBTransaction* transaction)
 {
     ASSERT(transaction);
-    ASSERT(!m_transactions.contains(transaction));
-    m_transactions.add(transaction);
+    ASSERT(!m_transactions.contains(transaction->id()));
+    m_transactions.add(transaction->id(), transaction);
 
     if (transaction->isVersionChange()) {
         ASSERT(!m_versionChangeTransaction);
@@ -97,8 +97,9 @@ void IDBDatabase::transactionCreated(IDBTransaction* transaction)
 void IDBDatabase::transactionFinished(IDBTransaction* transaction)
 {
     ASSERT(transaction);
-    ASSERT(m_transactions.contains(transaction));
-    m_transactions.remove(transaction);
+    ASSERT(m_transactions.contains(transaction->id()));
+    ASSERT(m_transactions.get(transaction->id()) == transaction);
+    m_transactions.remove(transaction->id());
 
     if (transaction->isVersionChange()) {
         ASSERT(m_versionChangeTransaction == transaction);
@@ -111,12 +112,14 @@ void IDBDatabase::transactionFinished(IDBTransaction* transaction)
 
 void IDBDatabase::onAbort(int64_t transactionId, PassRefPtr<IDBDatabaseError> error)
 {
-    ASSERT_NOT_REACHED();
+    ASSERT(m_transactions.contains(transactionId));
+    m_transactions.get(transactionId)->onAbort(error);
 }
 
 void IDBDatabase::onComplete(int64_t transactionId)
 {
-    ASSERT_NOT_REACHED();
+    ASSERT(m_transactions.contains(transactionId));
+    m_transactions.get(transactionId)->onComplete();
 }
 
 PassRefPtr<DOMStringList> IDBDatabase::objectStoreNames() const
@@ -268,7 +271,7 @@ PassRefPtr<IDBTransaction> IDBDatabase::transaction(ScriptExecutionContext* cont
 void IDBDatabase::forceClose()
 {
     ExceptionCode ec = 0;
-    for (HashSet<IDBTransaction*>::iterator it = m_transactions.begin(); it != m_transactions.end(); ++it)
+    for (TransactionMap::const_iterator::Values it = m_transactions.begin().values(), end = m_transactions.end().values(); it != end; ++it)
         (*it)->abort(ec);
     this->close();
 }

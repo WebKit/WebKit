@@ -125,11 +125,11 @@ TEST(IDBDatabaseBackendTest, ConnectionLifecycle)
 
     RefPtr<MockIDBCallbacks> request1 = MockIDBCallbacks::create();
     RefPtr<FakeIDBDatabaseCallbacks> connection1 = FakeIDBDatabaseCallbacks::create();
-    db->openConnectionWithVersion(request1, connection1, IDBDatabaseMetadata::NoIntVersion);
+    db->openConnectionWithVersion(request1, connection1, 1, IDBDatabaseMetadata::NoIntVersion);
 
     RefPtr<MockIDBCallbacks> request2 = MockIDBCallbacks::create();
     RefPtr<FakeIDBDatabaseCallbacks> connection2 = FakeIDBDatabaseCallbacks::create();
-    db->openConnectionWithVersion(request2, connection2, IDBDatabaseMetadata::NoIntVersion);
+    db->openConnectionWithVersion(request2, connection2, 2, IDBDatabaseMetadata::NoIntVersion);
 
     db->close(connection1);
     EXPECT_GT(backingStore->refCount(), 1);
@@ -192,7 +192,7 @@ TEST(IDBDatabaseBackendTest, ForcedClose)
 
     RefPtr<MockIDBDatabaseBackendProxy> proxy = MockIDBDatabaseBackendProxy::create(webDatabase);
     RefPtr<MockIDBCallbacks> request = MockIDBCallbacks::create();
-    backend->openConnectionWithVersion(request, connectionProxy, IDBDatabaseMetadata::NoIntVersion);
+    backend->openConnectionWithVersion(request, connectionProxy, 3, IDBDatabaseMetadata::NoIntVersion);
 
     ScriptExecutionContext* context = 0;
     RefPtr<IDBDatabase> idbDatabase = IDBDatabase::create(context, proxy, connection);

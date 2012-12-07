@@ -55,8 +55,8 @@ public:
     static const int64_t InvalidId = 0;
     int64_t id() const { return m_metadata.id; }
 
-    void openConnection(PassRefPtr<IDBCallbacks>, PassRefPtr<IDBDatabaseCallbacks>);
-    void openConnectionWithVersion(PassRefPtr<IDBCallbacks>, PassRefPtr<IDBDatabaseCallbacks>, int64_t version);
+    void openConnection(PassRefPtr<IDBCallbacks>, PassRefPtr<IDBDatabaseCallbacks>, int64_t transactionId);
+    void openConnectionWithVersion(PassRefPtr<IDBCallbacks>, PassRefPtr<IDBDatabaseCallbacks>, int64_t transactionId, int64_t version);
     void deleteDatabase(PassRefPtr<IDBCallbacks>);
 
     // IDBDatabaseBackendInterface
@@ -68,8 +68,8 @@ public:
     virtual void createTransaction(int64_t transactionId, PassRefPtr<IDBDatabaseCallbacks>, const Vector<int64_t>& objectStoreIds, unsigned short mode);
     virtual void close(PassRefPtr<IDBDatabaseCallbacks>);
 
-    virtual void commit(int64_t transactionId) { ASSERT_NOT_REACHED(); }
-    virtual void abort(int64_t transactionId) { ASSERT_NOT_REACHED(); }
+    virtual void commit(int64_t transactionId);
+    virtual void abort(int64_t transactionId);
 
     PassRefPtr<IDBObjectStoreBackendImpl> objectStore(int64_t id);
     IDBTransactionCoordinator* transactionCoordinator() const { return m_transactionCoordinator.get(); }
@@ -82,7 +82,7 @@ private:
     IDBDatabaseBackendImpl(const String& name, IDBBackingStore* database, IDBFactoryBackendImpl*, const String& uniqueIdentifier);
 
     bool openInternal();
-    void runIntVersionChangeTransaction(int64_t requestedVersion, PassRefPtr<IDBCallbacks>, PassRefPtr<IDBDatabaseCallbacks>);
+    void runIntVersionChangeTransaction(PassRefPtr<IDBCallbacks>, PassRefPtr<IDBDatabaseCallbacks>, int64_t transactionId, int64_t requestedVersion);
     void loadObjectStores();
     size_t connectionCount();
     void processPendingCalls();
@@ -109,8 +109,8 @@ private:
     OwnPtr<IDBTransactionCoordinator> m_transactionCoordinator;
     RefPtr<IDBTransactionBackendImpl> m_runningVersionChangeTransaction;
 
-    typedef HashSet<IDBTransactionBackendImpl*> TransactionSet;
-    TransactionSet m_transactions;
+    typedef HashMap<int64_t, IDBTransactionBackendImpl*> TransactionMap;
+    TransactionMap m_transactions;
 
     class PendingOpenCall;
     Deque<OwnPtr<PendingOpenCall> > m_pendingOpenCalls;

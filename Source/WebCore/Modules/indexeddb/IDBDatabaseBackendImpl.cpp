@@ -76,14 +76,15 @@ private:
 
 class IDBDatabaseBackendImpl::VersionChangeOperation : public IDBTransactionBackendImpl::Operation {
 public:
-    static PassOwnPtr<IDBTransactionBackendImpl::Operation> create(PassRefPtr<IDBDatabaseBackendImpl> database, int64_t version, PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<IDBDatabaseCallbacks> databaseCallbacks)
+    static PassOwnPtr<IDBTransactionBackendImpl::Operation> create(PassRefPtr<IDBDatabaseBackendImpl> database, int64_t transactionId, int64_t version, PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<IDBDatabaseCallbacks> databaseCallbacks)
     {
-        return adoptPtr(new VersionChangeOperation(database, version, callbacks, databaseCallbacks));
+        return adoptPtr(new VersionChangeOperation(database, transactionId, version, callbacks, databaseCallbacks));
     }
     virtual void perform(IDBTransactionBackendImpl*);
 private:
-    VersionChangeOperation(PassRefPtr<IDBDatabaseBackendImpl> database, int64_t version, PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<IDBDatabaseCallbacks> databaseCallbacks)
+    VersionChangeOperation(PassRefPtr<IDBDatabaseBackendImpl> database, int64_t transactionId, int64_t version, PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<IDBDatabaseCallbacks> databaseCallbacks)
         : m_database(database)
+        , m_transactionId(transactionId)
         , m_version(version)
         , m_callbacks(callbacks)
         , m_databaseCallbacks(databaseCallbacks)
@@ -91,6 +92,7 @@ private:
     }
 
     RefPtr<IDBDatabaseBackendImpl> m_database;
+    int64_t m_transactionId;
     int64_t m_version;
     RefPtr<IDBCallbacks> m_callbacks;
     RefPtr<IDBDatabaseCallbacks> m_databaseCallbacks;
@@ -155,44 +157,50 @@ private:
 
 class IDBDatabaseBackendImpl::PendingOpenCall {
 public:
-    static PassOwnPtr<PendingOpenCall> create(PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<IDBDatabaseCallbacks> databaseCallbacks)
+    static PassOwnPtr<PendingOpenCall> create(PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<IDBDatabaseCallbacks> databaseCallbacks, int64_t transactionId)
     {
-        return adoptPtr(new PendingOpenCall(callbacks, databaseCallbacks));
+        return adoptPtr(new PendingOpenCall(callbacks, databaseCallbacks, transactionId));
     }
     PassRefPtr<IDBCallbacks> callbacks() { return m_callbacks; }
     PassRefPtr<IDBDatabaseCallbacks> databaseCallbacks() { return m_databaseCallbacks; }
+    int64_t transactionId() const { return m_transactionId; }
 
 private:
-    PendingOpenCall(PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<IDBDatabaseCallbacks> databaseCallbacks)
+    PendingOpenCall(PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<IDBDatabaseCallbacks> databaseCallbacks, int64_t transactionId)
         : m_callbacks(callbacks)
         , m_databaseCallbacks(databaseCallbacks)
+        , m_transactionId(transactionId)
     {
     }
 
     RefPtr<IDBCallbacks> m_callbacks;
     RefPtr<IDBDatabaseCallbacks> m_databaseCallbacks;
+    const int64_t m_transactionId;
 };
 
 class IDBDatabaseBackendImpl::PendingOpenWithVersionCall {
 public:
-    static PassOwnPtr<PendingOpenWithVersionCall> create(PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<IDBDatabaseCallbacks> databaseCallbacks, int64_t version)
+    static PassOwnPtr<PendingOpenWithVersionCall> create(PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<IDBDatabaseCallbacks> databaseCallbacks, int64_t transactionId, int64_t version)
     {
-        return adoptPtr(new PendingOpenWithVersionCall(callbacks, databaseCallbacks, version));
+        return adoptPtr(new PendingOpenWithVersionCall(callbacks, databaseCallbacks, transactionId, version));
     }
     PassRefPtr<IDBCallbacks> callbacks() { return m_callbacks; }
     PassRefPtr<IDBDatabaseCallbacks> databaseCallbacks() { return m_databaseCallbacks; }
     int64_t version() { return m_version; }
+    int64_t transactionId() const { return m_transactionId; }
 
 private:
-    PendingOpenWithVersionCall(PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<IDBDatabaseCallbacks> databaseCallbacks, int64_t version)
+    PendingOpenWithVersionCall(PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<IDBDatabaseCallbacks> databaseCallbacks, int64_t transactionId, int64_t version)
         : m_callbacks(callbacks)
         , m_databaseCallbacks(databaseCallbacks)
         , m_version(version)
+        , m_transactionId(transactionId)
     {
     }
     RefPtr<IDBCallbacks> m_callbacks;
     RefPtr<IDBDatabaseCallbacks> m_databaseCallbacks;
     int64_t m_version;
+    const int64_t m_transactionId;
 };
 
 class IDBDatabaseBackendImpl::PendingDeleteCall {
@@ -318,6 +326,19 @@ void IDBDatabaseBackendImpl::deleteObjectStore(int64_t id, IDBTransactionBackend
     m_objectStores.remove(id);
 }
 
+void IDBDatabaseBackendImpl::commit(int64_t transactionId)
+{
+    ASSERT(m_transactions.contains(transactionId));
+    m_transactions.get(transactionId)->commit();
+}
+
+void IDBDatabaseBackendImpl::abort(int64_t transactionId)
+{
+    ASSERT(m_transactions.contains(transactionId));
+    m_transactions.get(transactionId)->abort();
+}
+
+
 void IDBDatabaseBackendImpl::DeleteObjectStoreOperation::perform(IDBTransactionBackendImpl* transaction)
 {
     IDB_TRACE("DeleteObjectStoreOperation");
@@ -342,7 +363,7 @@ void IDBDatabaseBackendImpl::VersionChangeOperation::perform(IDBTransactionBacke
         return;
     }
     ASSERT(!m_database->m_pendingSecondHalfOpenWithVersion);
-    m_database->m_pendingSecondHalfOpenWithVersion = PendingOpenWithVersionCall::create(m_callbacks, m_databaseCallbacks, m_version);
+    m_database->m_pendingSecondHalfOpenWithVersion = PendingOpenWithVersionCall::create(m_callbacks, m_databaseCallbacks, m_transactionId, m_version);
     m_callbacks->onUpgradeNeeded(oldVersion, transaction, m_database);
 }
 
@@ -358,8 +379,9 @@ void IDBDatabaseBackendImpl::transactionStarted(PassRefPtr<IDBTransactionBackend
 void IDBDatabaseBackendImpl::transactionFinished(PassRefPtr<IDBTransactionBackendImpl> prpTransaction)
 {
     RefPtr<IDBTransactionBackendImpl> transaction = prpTransaction;
-    ASSERT(m_transactions.contains(transaction.get()));
-    m_transactions.remove(transaction.get());
+    ASSERT(m_transactions.contains(transaction->id()));
+    ASSERT(m_transactions.get(transaction->id()) == transaction.get());
+    m_transactions.remove(transaction->id());
     if (transaction->mode() == IDBTransaction::VERSION_CHANGE) {
         ASSERT(transaction.get() == m_runningVersionChangeTransaction.get());
         m_runningVersionChangeTransaction.clear();
@@ -426,7 +448,7 @@ void IDBDatabaseBackendImpl::processPendingCalls()
     m_pendingOpenWithVersionCalls.swap(pendingOpenWithVersionCalls);
     while (!pendingOpenWithVersionCalls.isEmpty()) {
         OwnPtr<PendingOpenWithVersionCall> pendingOpenWithVersionCall = pendingOpenWithVersionCalls.takeFirst();
-        openConnectionWithVersion(pendingOpenWithVersionCall->callbacks(), pendingOpenWithVersionCall->databaseCallbacks(), pendingOpenWithVersionCall->version());
+        openConnectionWithVersion(pendingOpenWithVersionCall->callbacks(), pendingOpenWithVersionCall->databaseCallbacks(), pendingOpenWithVersionCall->transactionId(), pendingOpenWithVersionCall->version());
     }
 
     // Open calls can be requeued if an openWithVersion call started a version
@@ -435,7 +457,7 @@ void IDBDatabaseBackendImpl::processPendingCalls()
     m_pendingOpenCalls.swap(pendingOpenCalls);
     while (!pendingOpenCalls.isEmpty()) {
         OwnPtr<PendingOpenCall> pendingOpenCall = pendingOpenCalls.takeFirst();
-        openConnection(pendingOpenCall->callbacks(), pendingOpenCall->databaseCallbacks());
+        openConnection(pendingOpenCall->callbacks(), pendingOpenCall->databaseCallbacks(), pendingOpenCall->transactionId());
     }
 }
 
@@ -443,7 +465,8 @@ void IDBDatabaseBackendImpl::processPendingCalls()
 PassRefPtr<IDBTransactionBackendInterface> IDBDatabaseBackendImpl::createTransaction(int64_t transactionId, const Vector<int64_t>& objectStoreIds, IDBTransaction::Mode mode)
 {
     RefPtr<IDBTransactionBackendImpl> transaction = IDBTransactionBackendImpl::create(transactionId, objectStoreIds, mode, this);
-    m_transactions.add(transaction.get());
+    ASSERT(!m_transactions.contains(transactionId));
+    m_transactions.add(transactionId, transaction.get());
     return transaction.release();
 }
 
@@ -452,11 +475,11 @@ void IDBDatabaseBackendImpl::createTransaction(int64_t transactionId, PassRefPtr
     ASSERT_NOT_REACHED();
 }
 
-void IDBDatabaseBackendImpl::openConnection(PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<IDBDatabaseCallbacks> databaseCallbacks)
+void IDBDatabaseBackendImpl::openConnection(PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<IDBDatabaseCallbacks> databaseCallbacks, int64_t transactionId)
 {
     ASSERT(m_backingStore.get());
     if (!m_pendingDeleteCalls.isEmpty() || m_runningVersionChangeTransaction) {
-        m_pendingOpenCalls.append(PendingOpenCall::create(callbacks, databaseCallbacks));
+        m_pendingOpenCalls.append(PendingOpenCall::create(callbacks, databaseCallbacks, transactionId));
         return;
     }
     if (m_metadata.id == InvalidId && !openInternal()) {
@@ -467,14 +490,14 @@ void IDBDatabaseBackendImpl::openConnection(PassRefPtr<IDBCallbacks> callbacks, 
         // Spec says: If no version is specified and no database exists, set
         // database version to 1. We infer that the database didn't exist from
         // its lack of either type of version.
-        openConnectionWithVersion(callbacks, databaseCallbacks, 1);
+        openConnectionWithVersion(callbacks, databaseCallbacks, transactionId, 1);
         return;
     }
     m_databaseCallbacksSet.add(RefPtr<IDBDatabaseCallbacks>(databaseCallbacks));
     callbacks->onSuccess(this);
 }
 
-void IDBDatabaseBackendImpl::runIntVersionChangeTransaction(int64_t requestedVersion, PassRefPtr<IDBCallbacks> prpCallbacks, PassRefPtr<IDBDatabaseCallbacks> prpDatabaseCallbacks)
+void IDBDatabaseBackendImpl::runIntVersionChangeTransaction(PassRefPtr<IDBCallbacks> prpCallbacks, PassRefPtr<IDBDatabaseCallbacks> prpDatabaseCallbacks, int64_t transactionId, int64_t requestedVersion)
 {
     RefPtr<IDBCallbacks> callbacks = prpCallbacks;
     RefPtr<IDBDatabaseCallbacks> databaseCallbacks = prpDatabaseCallbacks;
@@ -495,28 +518,27 @@ void IDBDatabaseBackendImpl::runIntVersionChangeTransaction(int64_t requestedVer
         callbacks->onBlocked(m_metadata.intVersion);
     // FIXME: Add test for m_runningVersionChangeTransaction.
     if (m_runningVersionChangeTransaction || connectionCount()) {
-        m_pendingOpenWithVersionCalls.append(PendingOpenWithVersionCall::create(callbacks, databaseCallbacks, requestedVersion));
+        m_pendingOpenWithVersionCalls.append(PendingOpenWithVersionCall::create(callbacks, databaseCallbacks, transactionId, requestedVersion));
         return;
     }
 
     Vector<int64_t> objectStoreIds;
-    // FIXME: The transactionId needs to be piped in through IDBDatabaseBackendInterface::open().
-    RefPtr<IDBTransactionBackendInterface> transactionInterface = createTransaction(0, objectStoreIds, IDBTransaction::VERSION_CHANGE);
+    RefPtr<IDBTransactionBackendInterface> transactionInterface = createTransaction(transactionId, objectStoreIds, IDBTransaction::VERSION_CHANGE);
     RefPtr<IDBTransactionBackendImpl> transaction = IDBTransactionBackendImpl::from(transactionInterface.get());
 
-    if (!transaction->scheduleTask(VersionChangeOperation::create(this, requestedVersion, callbacks, databaseCallbacks), VersionChangeAbortOperation::create(this, m_metadata.version, m_metadata.intVersion))) {
+    if (!transaction->scheduleTask(VersionChangeOperation::create(this, transactionId, requestedVersion, callbacks, databaseCallbacks), VersionChangeAbortOperation::create(this, m_metadata.version, m_metadata.intVersion))) {
         ASSERT_NOT_REACHED();
     }
     ASSERT(!m_pendingSecondHalfOpenWithVersion);
     m_databaseCallbacksSet.add(databaseCallbacks);
 }
 
-void IDBDatabaseBackendImpl::openConnectionWithVersion(PassRefPtr<IDBCallbacks> prpCallbacks, PassRefPtr<IDBDatabaseCallbacks> prpDatabaseCallbacks, int64_t version)
+void IDBDatabaseBackendImpl::openConnectionWithVersion(PassRefPtr<IDBCallbacks> prpCallbacks, PassRefPtr<IDBDatabaseCallbacks> prpDatabaseCallbacks, int64_t transactionId, int64_t version)
 {
     RefPtr<IDBCallbacks> callbacks = prpCallbacks;
     RefPtr<IDBDatabaseCallbacks> databaseCallbacks = prpDatabaseCallbacks;
     if (!m_pendingDeleteCalls.isEmpty() || m_runningVersionChangeTransaction) {
-        m_pendingOpenWithVersionCalls.append(PendingOpenWithVersionCall::create(callbacks, databaseCallbacks, version));
+        m_pendingOpenWithVersionCalls.append(PendingOpenWithVersionCall::create(callbacks, databaseCallbacks, transactionId, version));
         return;
     }
     if (m_metadata.id == InvalidId) {
@@ -528,7 +550,7 @@ void IDBDatabaseBackendImpl::openConnectionWithVersion(PassRefPtr<IDBCallbacks> 
         }
     }
     if (version > m_metadata.intVersion) {
-        runIntVersionChangeTransaction(version, callbacks, databaseCallbacks);
+        runIntVersionChangeTransaction(callbacks, databaseCallbacks, transactionId, version);
         return;
     }
     if (version < m_metadata.intVersion) {
@@ -597,8 +619,8 @@ void IDBDatabaseBackendImpl::close(PassRefPtr<IDBDatabaseCallbacks> prpCallbacks
 
     // FIXME: Add a test for the m_pendingOpenCalls and m_pendingOpenWithVersionCalls cases below.
     if (!connectionCount() && !m_pendingOpenCalls.size() && !m_pendingOpenWithVersionCalls.size() && !m_pendingDeleteCalls.size()) {
-        TransactionSet transactions(m_transactions);
-        for (TransactionSet::const_iterator it = transactions.begin(); it != transactions.end(); ++it)
+        TransactionMap transactions(m_transactions);
+        for (TransactionMap::const_iterator::Values it = transactions.values().begin(), end = transactions.values().end(); it != end; ++it)
             (*it)->abort();
 
         ASSERT(m_transactions.isEmpty());

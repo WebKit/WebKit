@@ -1,3 +1,41 @@
+2012-12-07  Alec Flett  <alecflett@chromium.org>
+
+        IndexedDB: propagate transaction_ids through open/upgradeneeded
+        https://bugs.webkit.org/show_bug.cgi?id=103922
+
+        Reviewed by Tony Chang.
+
+        Make sure front-end is always generating the transaction id,
+        so that it can be relied upon as an alternative to the
+        to-be-deprecated IDBTransactionBackendInterface pointer.
+
+        No new tests, this is one stage in a larger refactor.
+
+        * Modules/indexeddb/IDBDatabaseBackendImpl.cpp:
+        (WebCore::IDBDatabaseBackendImpl::VersionChangeOperation::create):
+        (WebCore::IDBDatabaseBackendImpl::VersionChangeOperation::VersionChangeOperation):
+        (IDBDatabaseBackendImpl::VersionChangeOperation):
+        (WebCore::IDBDatabaseBackendImpl::PendingOpenCall::create):
+        (WebCore::IDBDatabaseBackendImpl::PendingOpenCall::transactionId):
+        (WebCore::IDBDatabaseBackendImpl::PendingOpenCall::PendingOpenCall):
+        (IDBDatabaseBackendImpl::PendingOpenCall):
+        (WebCore::IDBDatabaseBackendImpl::PendingOpenWithVersionCall::create):
+        (WebCore::IDBDatabaseBackendImpl::PendingOpenWithVersionCall::transactionId):
+        (WebCore::IDBDatabaseBackendImpl::PendingOpenWithVersionCall::PendingOpenWithVersionCall):
+        (IDBDatabaseBackendImpl::PendingOpenWithVersionCall):
+        (WebCore::IDBDatabaseBackendImpl::VersionChangeOperation::perform):
+        (WebCore::IDBDatabaseBackendImpl::processPendingCalls):
+        (WebCore::IDBDatabaseBackendImpl::createTransaction):
+        (WebCore::IDBDatabaseBackendImpl::openConnection):
+        (WebCore::IDBDatabaseBackendImpl::runIntVersionChangeTransaction):
+        (WebCore::IDBDatabaseBackendImpl::openConnectionWithVersion):
+        * Modules/indexeddb/IDBDatabaseBackendImpl.h:
+        (IDBDatabaseBackendImpl):
+        * Modules/indexeddb/IDBFactory.cpp:
+        (WebCore::IDBFactory::openInternal):
+        * Modules/indexeddb/IDBFactoryBackendImpl.cpp:
+        (WebCore::IDBFactoryBackendImpl::open):
+
 2012-12-07  Dima Gorbik  <dgorbik@apple.com>
 
         Implement general ::cue pseudo element for the <video>

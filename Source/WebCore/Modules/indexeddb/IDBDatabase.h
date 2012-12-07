@@ -120,7 +120,8 @@ private:
     IDBDatabaseMetadata m_metadata;
     RefPtr<IDBDatabaseBackendInterface> m_backend;
     RefPtr<IDBTransaction> m_versionChangeTransaction;
-    HashSet<IDBTransaction*> m_transactions;
+    typedef HashMap<int64_t, IDBTransaction*> TransactionMap;
+    TransactionMap m_transactions;
 
     bool m_closePending;
     bool m_contextStopped;
