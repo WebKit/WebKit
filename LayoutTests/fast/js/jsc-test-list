@@ -89,6 +89,8 @@ fast/js/dfg-array-push-bad-time
 fast/js/dfg-array-push-slow-put
 fast/js/dfg-bool-to-int32-reuse
 fast/js/dfg-branch-not-fail
+fast/js/dfg-cfg-simplify-phantom-get-local-on-same-block-set-local
+fast/js/dfg-cfg-simplify-redundant-dead-get-local
 fast/js/dfg-check-two-structures
 fast/js/dfg-constant-fold-first-local-read-after-block-merge
 fast/js/dfg-convert-this-dom-window

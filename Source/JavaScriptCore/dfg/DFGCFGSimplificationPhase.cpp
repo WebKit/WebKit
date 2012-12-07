@@ -305,8 +305,6 @@ private:
         dataLogF("        Original has local r%d.\n", originalNode->local());
 #endif
         ASSERT(child.local() == originalNode->local());
-        if (changeRef)
-            ASSERT(originalNode->shouldGenerate());
         // Possibilities:
         // SetLocal -> the secondBlock is getting the value of something that is immediately
         //     available in the first block with a known NodeIndex.
@@ -326,6 +324,8 @@ private:
         }
         switch (originalNode->op()) {
         case SetLocal: {
+            if (changeRef)
+                ASSERT(originalNode->shouldGenerate());
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
             dataLogF("        It's a SetLocal.\n");
 #endif
@@ -336,11 +336,16 @@ private:
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
             dataLogF("        It's a GetLocal.\n");
 #endif
-            m_graph.changeIndex(edge, originalNodeIndex, changeRef);
+            if (originalNode->shouldGenerate())
+                m_graph.changeIndex(edge, originalNodeIndex, changeRef);
+            // If we have a GetLocal that points to a child GetLocal that is dead, then
+            // we have no need to do anything: this original GetLocal is still valid.
             break;
         }
         case Phi:
         case SetArgument: {
+        if (changeRef)
+            ASSERT(originalNode->shouldGenerate());
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
             dataLogF("        It's Phi/SetArgument.\n");
 #endif

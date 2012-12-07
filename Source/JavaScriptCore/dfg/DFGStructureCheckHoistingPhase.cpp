@@ -222,7 +222,7 @@ public:
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
                     dataLog(
                         "Zeroing the structure to hoist for ", VariableAccessDataDump(m_graph, variable),
-                        " because the OSR entry value is not a cell: ", value.description(), ".\n");
+                        " because the OSR entry value is not a cell: ", value, ".\n");
 #endif
                     iter->value.m_structure = 0;
                     continue;
