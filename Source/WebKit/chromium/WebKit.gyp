@@ -661,6 +661,7 @@
                 'src/WorkerAsyncFileSystemChromium.h',
                 'src/WorkerAsyncFileWriterChromium.cpp',
                 'src/WorkerAsyncFileWriterChromium.h',
+                'src/WorkerContextProxy.cpp',
                 'src/WorkerFileSystemCallbacksBridge.cpp',
                 'src/WorkerFileSystemCallbacksBridge.h',
                 'src/WorkerFileWriterCallbacksBridge.cpp',
