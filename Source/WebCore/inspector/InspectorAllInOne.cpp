@@ -59,6 +59,7 @@
 #include "InspectorIndexedDBAgent.cpp"
 #include "InspectorInputAgent.cpp"
 #include "InspectorInstrumentation.cpp"
+#include "InspectorLayerTreeAgent.cpp"
 #include "InspectorMemoryAgent.cpp"
 #include "InspectorOverlay.cpp"
 #include "InspectorPageAgent.cpp"

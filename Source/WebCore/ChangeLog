@@ -1,3 +1,99 @@
+2012-12-07  Antoine Quint  <graouts@apple.com>
+
+        Provide the backend for exposing the layer tree to the Web Inspector
+        https://bugs.webkit.org/show_bug.cgi?id=103513
+
+        Reviewed by Pavel Feldman.
+
+        The purpose of this patch is to provide a new agent enabling the Web Inspector to interface
+        with WebCore to access information about the render layer tree and, more specifically, expose
+        useful information about layers backed by textures composited on the GPU such as metrics and
+        backing store. Thus we now provide a LayerTreeAgent which will inform the front-end of 
+        changes to the render layer tree via a new layerTreeDidChange event, providing an object
+        containing the entire hierarchy of RenderLayers for the inspected document. This hierarchy 
+        can be queried at any time using the .getLayerTree() method on the LayerTreeAgent. Finally, 
+        the LayerTreeAgent also exposes a .nodeIdForLayerId() method allowing to get the id of the 
+        node associated with the RenderLayer with the provided layer id.
+        
+        In terms of implementation, RenderLayerCompositor has been changed such that in its 
+        updateCompositingLayers() method we call the layerTreeDidChange method on the 
+        InspectorLayerTreeAgent instance via the InspectorInstrumentation.
+
+        Test: inspector-protocol/layer-tree.html
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * inspector/Inspector.json: Define new types IntRect (x, y, width, height) and Layer, which 
+        holds the information for a RenderLayer (layerId, bounds, isComposited, memory, 
+        compositedBounds) and its children (childLayers). We also define the methods of the 
+        LayerTreeAgent object (enable, disable, getLayerTree, nodeIdForLayerId) and the 
+        layerTreeDidChange event it  
+        fires.
+        * inspector/InspectorAllInOne.cpp:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::InspectorController):
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::pushNodePathForRenderLayerToFrontend): New method facilitating 
+        pushing the node associated with a given RenderLayer to the front-end.
+        (WebCore):
+        * inspector/InspectorDOMAgent.h:
+        (InspectorDOMAgent):
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore):
+        (WebCore::InspectorInstrumentation::didCommitLoadImpl):
+        (WebCore::InspectorInstrumentation::layerTreeDidChangeImpl):
+        (WebCore::InspectorInstrumentation::renderLayerDestroyedImpl):
+        * inspector/InspectorInstrumentation.h:
+        (WebCore):
+        (InspectorInstrumentation):
+        (WebCore::InspectorInstrumentation::layerTreeDidChange):
+        (WebCore::InspectorInstrumentation::renderLayerDestroyed):
+        * inspector/InspectorLayerTreeAgent.cpp: Added.
+        (WebCore):
+        (LayerTreeAgentState):
+        (WebCore::InspectorLayerTreeAgent::InspectorLayerTreeAgent):
+        (WebCore::InspectorLayerTreeAgent::~InspectorLayerTreeAgent):
+        (WebCore::InspectorLayerTreeAgent::setFrontend):
+        (WebCore::InspectorLayerTreeAgent::clearFrontend):
+        (WebCore::InspectorLayerTreeAgent::restore):
+        (WebCore::InspectorLayerTreeAgent::reset):
+        (WebCore::InspectorLayerTreeAgent::enable):
+        (WebCore::InspectorLayerTreeAgent::disable):
+        (WebCore::InspectorLayerTreeAgent::layerTreeDidChange):
+        (WebCore::InspectorLayerTreeAgent::renderLayerDestroyed):
+        (WebCore::InspectorLayerTreeAgent::getLayerTree):
+        (WebCore::InspectorLayerTreeAgent::buildObjectForRootLayer):
+        (WebCore::InspectorLayerTreeAgent::buildObjectForLayer): Build the entire hierarchy of 
+        RenderLayers from the provided RenderLayer.
+        (WebCore::InspectorLayerTreeAgent::buildObjectForIntRect):
+        (WebCore::InspectorLayerTreeAgent::bind):
+        (WebCore::InspectorLayerTreeAgent::unbind):
+        (WebCore::InspectorLayerTreeAgent::nodeIdForLayerId):
+        * inspector/InspectorLayerTreeAgent.h: Added.
+        (WebCore):
+        (InspectorLayerTreeAgent):
+        (WebCore::InspectorLayerTreeAgent::create):
+        * inspector/InstrumentingAgents.h:
+        (WebCore):
+        (WebCore::InstrumentingAgents::InstrumentingAgents):
+        (InstrumentingAgents):
+        (WebCore::InstrumentingAgents::inspectorLayerTreeAgent):
+        (WebCore::InstrumentingAgents::setInspectorLayerTreeAgent):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::updateCompositingLayers): Call the layerTreeDidChange method 
+        on the LayerTreeAgent via the InspectorInstrumentation to inform the front-end that the 
+        RenderLayer hierarchy has changed.
+        (WebCore):
+        (WebCore::RenderLayerCompositor::layerBecameNonComposited): Call the renderLayerDestroyed 
+        method on the LayerTreeAgent via the InspectorInstrumentation to unbind the layer that is 
+        being destroyed.
+        * rendering/RenderLayerCompositor.h:
+        (RenderLayerCompositor):
+
 2012-12-07  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: Check SSV version when opening database

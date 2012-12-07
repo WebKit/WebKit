@@ -47,6 +47,7 @@ class InspectorDOMStorageAgent;
 class InspectorDatabaseAgent;
 class InspectorDebuggerAgent;
 class InspectorFileSystemAgent;
+class InspectorLayerTreeAgent;
 class InspectorPageAgent;
 class InspectorProfilerAgent;
 class InspectorResourceAgent;
@@ -66,6 +67,7 @@ public:
         : m_inspectorAgent(0)
         , m_inspectorPageAgent(0)
         , m_inspectorCSSAgent(0)
+        , m_inspectorLayerTreeAgent(0)
         , m_inspectorConsoleAgent(0)
         , m_inspectorDOMAgent(0)
         , m_inspectorResourceAgent(0)
@@ -158,10 +160,18 @@ public:
     InspectorCanvasAgent* inspectorCanvasAgent() const { return m_inspectorCanvasAgent; }
     void setInspectorCanvasAgent(InspectorCanvasAgent* agent) { m_inspectorCanvasAgent = agent; }
 
+#if USE(ACCELERATED_COMPOSITING)
+    InspectorLayerTreeAgent* inspectorLayerTreeAgent() const { return m_inspectorLayerTreeAgent; }
+    void setInspectorLayerTreeAgent(InspectorLayerTreeAgent* agent) { m_inspectorLayerTreeAgent = agent; }
+#endif
+
 private:
     InspectorAgent* m_inspectorAgent;
     InspectorPageAgent* m_inspectorPageAgent;
     InspectorCSSAgent* m_inspectorCSSAgent;
+#if USE(ACCELERATED_COMPOSITING)
+    InspectorLayerTreeAgent* m_inspectorLayerTreeAgent;
+#endif
     InspectorConsoleAgent* m_inspectorConsoleAgent;
     InspectorDOMAgent* m_inspectorDOMAgent;
     InspectorResourceAgent* m_inspectorResourceAgent;

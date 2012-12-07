@@ -776,6 +776,7 @@ SOURCES += \
     inspector/InspectorHistory.cpp \
     inspector/InspectorInputAgent.cpp \
     inspector/InspectorInstrumentation.cpp \
+    inspector/InspectorLayerTreeAgent.cpp \
     inspector/InspectorMemoryAgent.cpp \
     inspector/InspectorOverlay.cpp \
     inspector/InspectorPageAgent.cpp \
@@ -1929,6 +1930,7 @@ HEADERS += \
     inspector/InspectorFrontendHost.h \
     inspector/InspectorHistory.h \
     inspector/InspectorInstrumentation.h \
+    inspector/InspectorLayerTreeAgent.h \
     inspector/InspectorMemoryAgent.h \
     inspector/InspectorOverlay.h \
     inspector/InspectorPageAgent.h \

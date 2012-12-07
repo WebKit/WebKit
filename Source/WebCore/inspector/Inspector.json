@@ -3285,5 +3285,72 @@
             }
         ],
         "events": []
+    },
+    {
+        "domain": "LayerTree",
+        "hidden": true,
+        "types": [
+            {
+                "id": "LayerId",
+                "type": "string",
+                "description": "Unique RenderLayer identifier."
+            },
+            {
+                "id": "IntRect",
+                "type": "object",
+                "description": "A rectangle.",
+                "properties": [
+                    { "name": "x", "type": "integer", "description": "The x position." },
+                    { "name": "y", "type": "integer", "description": "The y position." },
+                    { "name": "width", "type": "integer", "description": "The width metric." },
+                    { "name": "height", "type": "integer", "description": "The height metric." }
+                ]
+            },
+            {
+                "id": "Layer",
+                "type": "object",
+                "description": "Information about a compositing layer.",
+                "properties": [
+                    { "name": "layerId", "$ref": "LayerId", "description": "The unique id for this layer." },
+                    { "name": "bounds", "$ref": "IntRect", "description": "Bounds of the layer." },
+                    { "name": "isComposited", "type": "boolean", "description": "Indicates whether this layer is composited." },
+                    { "name": "memory", "type": "integer", "optional": true, "description": "Estimated memory used by this layer." },
+                    { "name": "compositedBounds", "$ref": "IntRect", "optional": true, "description": "The bounds of the composited layer." },
+                    { "name": "childLayers", "type": "array", "optional": true, "items": { "$ref": "Layer" }, "description": "Child layers." }
+                ]
+            }
+        ],
+        "commands": [
+            {
+                "name": "enable",
+                "description": "Enables compositing tree inspection."
+            },
+            {
+                "name": "disable",
+                "description": "Disables compositing tree inspection."
+            },
+            {
+                "name": "getLayerTree",
+                "description": "Returns the layer tree structure of the current page.",
+                "returns": [
+                    { "name": "layerTree", "$ref": "Layer", "description": "Layer tree structure of the current page." }
+                ]
+            },
+            {
+                "name": "nodeIdForLayerId",
+                "description": "Returns the node id for a given layer id.",
+                "parameters": [
+                    { "name": "layerId", "$ref": "LayerId" }
+                ],
+                "returns": [
+                    { "name": "nodeId", "$ref": "DOM.NodeId", "description": "The node id for the given layer id." }
+                ]
+            }
+        ],
+        "events": [
+            {
+                "name": "layerTreeDidChange"
+            }
+        ]
     }]
 }

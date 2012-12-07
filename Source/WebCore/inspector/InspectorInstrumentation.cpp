@@ -54,6 +54,7 @@
 #include "InspectorDOMAgent.h"
 #include "InspectorDOMStorageAgent.h"
 #include "InspectorDebuggerAgent.h"
+#include "InspectorLayerTreeAgent.h"
 #include "InspectorPageAgent.h"
 #include "InspectorProfilerAgent.h"
 #include "InspectorResourceAgent.h"
@@ -908,7 +909,10 @@ void InspectorInstrumentation::didCommitLoadImpl(InstrumentingAgents* instrument
             domStorageAgent->clearResources();
         if (InspectorDOMAgent* domAgent = instrumentingAgents->inspectorDOMAgent())
             domAgent->setDocument(mainFrame->document());
-
+#if USE(ACCELERATED_COMPOSITING)
+        if (InspectorLayerTreeAgent* layerTreeAgent = instrumentingAgents->inspectorLayerTreeAgent())
+            layerTreeAgent->reset();
+#endif
         inspectorAgent->didCommitLoad();
     }
     if (InspectorPageAgent* pageAgent = instrumentingAgents->inspectorPageAgent())
@@ -1295,6 +1299,20 @@ DeviceOrientationData* InspectorInstrumentation::overrideDeviceOrientationImpl(I
         deviceOrientation = pageAgent->overrideDeviceOrientation(deviceOrientation);
     return deviceOrientation;
 }
+
+#if USE(ACCELERATED_COMPOSITING)
+void InspectorInstrumentation::layerTreeDidChangeImpl(InstrumentingAgents* instrumentingAgents)
+{
+    if (InspectorLayerTreeAgent* layerTreeAgent = instrumentingAgents->inspectorLayerTreeAgent())
+        layerTreeAgent->layerTreeDidChange();
+}
+
+void InspectorInstrumentation::renderLayerDestroyedImpl(InstrumentingAgents* instrumentingAgents, const RenderLayer* renderLayer)
+{
+    if (InspectorLayerTreeAgent* layerTreeAgent = instrumentingAgents->inspectorLayerTreeAgent())
+        layerTreeAgent->renderLayerDestroyed(renderLayer);
+}
+#endif
 
 } // namespace WebCore
 

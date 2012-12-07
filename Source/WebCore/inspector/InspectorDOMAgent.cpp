@@ -564,6 +564,11 @@ int InspectorDOMAgent::pushNodePathToFrontend(Node* nodeToPush)
     return map->get(nodeToPush);
 }
 
+int InspectorDOMAgent::pushNodePathForRenderLayerToFrontend(const RenderLayer* renderLayer)
+{
+    return pushNodePathToFrontend(renderLayer->renderer()->node());
+}
+
 int InspectorDOMAgent::boundNodeId(Node* node)
 {
     return m_documentNodeToIdMap.get(node);

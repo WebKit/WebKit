@@ -37,6 +37,7 @@
 #include "InspectorFrontend.h"
 #include "InspectorOverlay.h"
 #include "InspectorValues.h"
+#include "RenderLayer.h"
 #include "Timer.h"
 
 #include <wtf/Deque.h>
@@ -200,6 +201,7 @@ public:
 
     // Methods called from other agents.
     InspectorPageAgent* pageAgent() { return m_pageAgent; }
+    int pushNodePathForRenderLayerToFrontend(const RenderLayer*);
 
 private:
     InspectorDOMAgent(InstrumentingAgents*, InspectorPageAgent*, InspectorState*, InjectedScriptManager*, InspectorOverlay*);

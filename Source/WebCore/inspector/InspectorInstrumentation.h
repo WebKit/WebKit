@@ -60,6 +60,7 @@ class InspectorTimelineAgent;
 class InstrumentingAgents;
 class KURL;
 class Node;
+class RenderLayer;
 class RenderObject;
 class ResourceRequest;
 class ResourceResponse;
@@ -280,6 +281,11 @@ public:
 
     static DeviceOrientationData* overrideDeviceOrientation(Page*, DeviceOrientationData*);
 
+#if USE(ACCELERATED_COMPOSITING)
+    static void layerTreeDidChange(Page*);
+    static void renderLayerDestroyed(Page*, const RenderLayer*);
+#endif
+
 private:
 #if ENABLE(INSPECTOR)
     static void didClearWindowObjectInWorldImpl(InstrumentingAgents*, Frame*, DOMWrapperWorld*);
@@ -458,6 +464,12 @@ private:
 #endif
 
     static DeviceOrientationData* overrideDeviceOrientationImpl(InstrumentingAgents*, DeviceOrientationData*);
+
+#if USE(ACCELERATED_COMPOSITING)
+    static void layerTreeDidChangeImpl(InstrumentingAgents*);
+    static void renderLayerDestroyedImpl(InstrumentingAgents*, const RenderLayer*);
+#endif
+
     static int s_frontendCounter;
 #endif
 };
@@ -1531,6 +1543,20 @@ inline DeviceOrientationData* InspectorInstrumentation::overrideDeviceOrientatio
 #endif
     return deviceOrientation;
 }
+
+#if USE(ACCELERATED_COMPOSITING)
+inline void InspectorInstrumentation::layerTreeDidChange(Page* page)
+{
+    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForPage(page))
+        layerTreeDidChangeImpl(instrumentingAgents);
+}
+
+inline void InspectorInstrumentation::renderLayerDestroyed(Page* page, const RenderLayer* renderLayer)
+{
+    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForPage(page))
+        renderLayerDestroyedImpl(instrumentingAgents, renderLayer);
+}
+#endif
 
 #if ENABLE(INSPECTOR)
 inline bool InspectorInstrumentation::collectingHTMLParseErrors(Page* page)

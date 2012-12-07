@@ -1119,6 +1119,7 @@ webkit.org/b/79766 compositing/tiling/tile-cache-zoomed.html [ Failure ]
 webkit.org/b/79766 compositing/video/video-poster.html [ Failure ]
 webkit.org/b/79766 compositing/geometry/fixed-position-composited-switch.html [ Failure ]
 webkit.org/b/79766 compositing/visibility/visibility-image-layers-dynamic.html [ Failure ]
+webkit.org/b/104372 inspector-protocol/layer-tree.html [ Skip ]
 
 # LAYER_TREE_INCLUDES_VISIBLE_RECTS option to layerTreeAsText is only applicable to Mac.
 compositing/visible-rect [ Skip ]

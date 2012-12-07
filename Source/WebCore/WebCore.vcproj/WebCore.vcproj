@@ -75634,6 +75634,30 @@
 				>
 			</File>
 			<File
+				RelativePath="..\inspector\InspectorLayerTreeAgent.cpp"
+				>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Production|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\inspector\InspectorLayerTreeAgent.h"
+				>
+			</File>
+			<File
 				RelativePath="..\inspector\InspectorMemoryAgent.cpp"
 				>
 				<FileConfiguration

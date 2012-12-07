@@ -1830,6 +1830,8 @@
             'inspector/InspectorInputAgent.h',
             'inspector/InspectorInstrumentation.cpp',
             'inspector/InspectorInstrumentation.h',
+            'inspector/InspectorLayerTreeAgent.cpp',
+            'inspector/InspectorLayerTreeAgent.h',
             'inspector/InspectorMemoryAgent.cpp',
             'inspector/InspectorMemoryAgent.h',
             'inspector/InspectorOverlay.cpp',

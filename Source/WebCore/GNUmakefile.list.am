@@ -3749,6 +3749,8 @@ webcore_sources += \
 	Source/WebCore/inspector/InspectorInputAgent.h \
 	Source/WebCore/inspector/InspectorInstrumentation.cpp \
 	Source/WebCore/inspector/InspectorInstrumentation.h \
+	Source/WebCore/inspector/InspectorLayerTreeAgent.cpp \
+	Source/WebCore/inspector/InspectorLayerTreeAgent.h \
 	Source/WebCore/inspector/InspectorMemoryAgent.cpp \
 	Source/WebCore/inspector/InspectorMemoryAgent.h \
 	Source/WebCore/inspector/InspectorOverlay.cpp \

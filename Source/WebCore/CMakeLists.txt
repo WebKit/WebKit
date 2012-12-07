@@ -1603,6 +1603,7 @@ set(WebCore_SOURCES
     inspector/InspectorIndexedDBAgent.cpp
     inspector/InspectorInputAgent.cpp
     inspector/InspectorInstrumentation.cpp
+    inspector/InspectorLayerTreeAgent.cpp
     inspector/InspectorMemoryAgent.cpp
     inspector/InspectorOverlay.cpp
     inspector/InspectorProfilerAgent.cpp

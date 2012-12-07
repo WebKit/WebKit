@@ -1912,6 +1912,8 @@
 		71904DEA156A633A001E1BA5 /* DOMSVGViewSpecInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 718512331568649800C40967 /* DOMSVGViewSpecInternal.h */; };
 		71A57DF1154BE25C0009D120 /* SVGPathUtilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 71A57DEF154BE25C0009D120 /* SVGPathUtilities.cpp */; };
 		71A57DF2154BE25C0009D120 /* SVGPathUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 71A57DF0154BE25C0009D120 /* SVGPathUtilities.h */; };
+		71B1E125164048F700B1880A /* InspectorLayerTreeAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = 71B1E124164048CC00B1880A /* InspectorLayerTreeAgent.h */; };
+		71B1E1261640491A00B1880A /* InspectorLayerTreeAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 71B1E123164048CC00B1880A /* InspectorLayerTreeAgent.cpp */; };
 		71CC7A20152A0BFE009EEAF9 /* SVGAnimatedEnumeration.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 71CC7A1F152A0BFE009EEAF9 /* SVGAnimatedEnumeration.cpp */; };
 		71DCB7011568197600862271 /* JSSVGZoomAndPan.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 71DCB6FF1568197600862271 /* JSSVGZoomAndPan.cpp */; };
 		71DCB7021568197600862271 /* JSSVGZoomAndPan.h in Headers */ = {isa = PBXBuildFile; fileRef = 71DCB7001568197600862271 /* JSSVGZoomAndPan.h */; };
@@ -9205,6 +9207,8 @@
 		718512331568649800C40967 /* DOMSVGViewSpecInternal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DOMSVGViewSpecInternal.h; sourceTree = "<group>"; };
 		71A57DEF154BE25C0009D120 /* SVGPathUtilities.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGPathUtilities.cpp; sourceTree = "<group>"; };
 		71A57DF0154BE25C0009D120 /* SVGPathUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGPathUtilities.h; sourceTree = "<group>"; };
+		71B1E123164048CC00B1880A /* InspectorLayerTreeAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorLayerTreeAgent.cpp; sourceTree = "<group>"; };
+		71B1E124164048CC00B1880A /* InspectorLayerTreeAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorLayerTreeAgent.h; sourceTree = "<group>"; };
 		71CC7A1F152A0BFE009EEAF9 /* SVGAnimatedEnumeration.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGAnimatedEnumeration.cpp; sourceTree = "<group>"; };
 		71DCB6FF1568197600862271 /* JSSVGZoomAndPan.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGZoomAndPan.cpp; sourceTree = "<group>"; };
 		71DCB7001568197600862271 /* JSSVGZoomAndPan.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSSVGZoomAndPan.h; sourceTree = "<group>"; };
@@ -14843,6 +14847,8 @@
 				AA73183C159255B900A93E6E /* InjectedScriptCanvasModule.cpp */,
 				AA73183D159255B900A93E6E /* InjectedScriptCanvasModule.h */,
 				AA9030FE157E16A000276247 /* InjectedScriptCanvasModuleSource.js */,
+				71B1E123164048CC00B1880A /* InspectorLayerTreeAgent.cpp */,
+				71B1E124164048CC00B1880A /* InspectorLayerTreeAgent.h */,
 				7A0E76F610BF08ED00A0276E /* InjectedScriptHost.cpp */,
 				7A0E76F710BF08ED00A0276E /* InjectedScriptHost.h */,
 				7A0E76F810BF08ED00A0276E /* InjectedScriptHost.idl */,
@@ -23368,6 +23374,7 @@
 				8502AB540AD438C000378540 /* DOMSVGFEFuncGElement.h in Headers */,
 				8502AB980AD4394E00378540 /* DOMSVGFEFuncGElementInternal.h in Headers */,
 				8502AB560AD438C000378540 /* DOMSVGFEFuncRElement.h in Headers */,
+				71B1E125164048F700B1880A /* InspectorLayerTreeAgent.h in Headers */,
 				8502AB990AD4394E00378540 /* DOMSVGFEFuncRElementInternal.h in Headers */,
 				8502AB580AD438C000378540 /* DOMSVGFEGaussianBlurElement.h in Headers */,
 				8502AB9A0AD4394E00378540 /* DOMSVGFEGaussianBlurElementInternal.h in Headers */,
@@ -26234,6 +26241,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				71B1E1261640491A00B1880A /* InspectorLayerTreeAgent.cpp in Sources */,
 				97BC69DA1505F076001B74AC /* AbstractDatabase.cpp in Sources */,
 				41E1B1D00FF5986900576B3B /* AbstractWorker.cpp in Sources */,
 				0F29C16E1300C2E2002D794E /* AccessibilityAllInOne.cpp in Sources */,

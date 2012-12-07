@@ -170,11 +170,7 @@ public:
     void clearBackingForAllLayers();
     
     void layerBecameComposited(const RenderLayer*) { ++m_compositedLayerCount; }
-    void layerBecameNonComposited(const RenderLayer*)
-    {
-        ASSERT(m_compositedLayerCount > 0);
-        --m_compositedLayerCount;
-    }
+    void layerBecameNonComposited(const RenderLayer*);
     
 #if ENABLE(VIDEO)
     // Use by RenderVideo to ask if it should try to use accelerated compositing.
