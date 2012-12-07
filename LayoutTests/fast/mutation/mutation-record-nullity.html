@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <script src="../js/resources/js-test-pre.js"></script>
 <script>
-description('Non-relevant properties on mutation records should be null');
+description('Non-relevant properties on mutation records should be null, except for NodeLists, which should be empty');
 var observer = new WebKitMutationObserver(function() {});
 
 var text = document.createTextNode('something');
@@ -12,10 +12,10 @@ debug('characterData record:');
 shouldBeNull('record.attributeName');
 shouldBeNull('record.attributeNamespace');
 shouldBeNull('record.oldValue');
-shouldBeNull('record.addedNodes');
-shouldBeNull('record.removedNodes');
 shouldBeNull('record.previousSibling');
 shouldBeNull('record.nextSibling');
+shouldBe('record.addedNodes.length', '0');
+shouldBe('record.removedNodes.length', '0');
 
 var div = document.createElement('div');
 observer.observe(div, {childList: true});
@@ -32,9 +32,9 @@ record = observer.takeRecords()[0];
 debug('\nattributes record:');
 shouldBeNull('record.attributeNamespace');
 shouldBeNull('record.oldValue');
-shouldBeNull('record.addedNodes');
-shouldBeNull('record.removedNodes');
 shouldBeNull('record.previousSibling');
 shouldBeNull('record.nextSibling');
+shouldBe('record.addedNodes.length', '0');
+shouldBe('record.removedNodes.length', '0');
 </script>
 <script src="../js/resources/js-test-post.js"></script>

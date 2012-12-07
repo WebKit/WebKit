@@ -40,10 +40,16 @@ namespace WebCore {
 
     class StaticNodeList : public NodeList {
     public:
-        // Adopts the contents of the nodes vector.
         static PassRefPtr<StaticNodeList> adopt(Vector<RefPtr<Node> >& nodes)
         {
-            return adoptRef(new StaticNodeList(nodes));
+            RefPtr<StaticNodeList> nodeList = adoptRef(new StaticNodeList);
+            nodeList->m_nodes.swap(nodes);
+            return nodeList.release();
+        }
+
+        static PassRefPtr<StaticNodeList> createEmpty()
+        {
+            return adoptRef(new StaticNodeList);
         }
 
         virtual unsigned length() const OVERRIDE;
@@ -51,10 +57,8 @@ namespace WebCore {
         virtual Node* namedItem(const AtomicString&) const OVERRIDE;
 
     private:
-        explicit StaticNodeList(Vector<RefPtr<Node> >& nodes)
-        {
-            m_nodes.swap(nodes);
-        }
+        StaticNodeList() { }
+
         Vector<RefPtr<Node> > m_nodes;
     };
 
