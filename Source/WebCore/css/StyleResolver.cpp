@@ -1420,6 +1420,11 @@ static void getFontAndGlyphOrientation(const RenderStyle* style, FontOrientation
         fontOrientation = Horizontal;
         glyphOrientation = NonCJKGlyphOrientationVerticalRight;
         return;
+    default:
+        ASSERT_NOT_REACHED();
+        fontOrientation = Horizontal;
+        glyphOrientation = NonCJKGlyphOrientationVerticalRight;
+        return;
     }
 }
 
