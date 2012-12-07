@@ -1,3 +1,14 @@
+2012-12-07  Brent Fulgham  <bfulgham@webkit.org>
+
+        Unreviewed build correction after 136959.
+
+        The initialization list should follow the same compiler macro
+        exclusions as the class members.
+
+        * inspector/InstrumentingAgents.h: Add USE(ACCELERATED_COMPOSITING)
+          guards around m_inspectorLayerTreeAgent as this does not exist
+          when the guard is false.
+
 2012-12-07  Rik Cabanier  <cabanier@adobe.com>
 
         Extend platform layer so it can pass blend modes to the compositing calls
