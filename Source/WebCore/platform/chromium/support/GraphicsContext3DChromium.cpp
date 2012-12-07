@@ -76,6 +76,7 @@ PassRefPtr<GraphicsContext3D> GraphicsContext3D::create(GraphicsContext3D::Attri
     webAttributes.noExtensions = attrs.noExtensions;
     webAttributes.shareResources = attrs.shareResources;
     webAttributes.preferDiscreteGPU = attrs.preferDiscreteGPU;
+    webAttributes.topDocumentURL = attrs.topDocumentURL.string();
 
     OwnPtr<WebKit::WebGraphicsContext3D> webContext = adoptPtr(WebKit::Platform::current()->createOffscreenGraphicsContext3D(webAttributes));
     if (!webContext)
