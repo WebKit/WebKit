@@ -45,7 +45,7 @@ static inline void addCaseFoldedCharacters(StringHasher& hasher, const String& s
 
 unsigned PlugInOriginHash::hash(HTMLPlugInImageElement* plugInElement, const KURL& plugInURL)
 {
-    ASSERT(document()->page());
+    ASSERT(plugInElement->document()->page());
 
     // We want to avoid concatenating the strings and then taking the hash, since that could lead to an expensive conversion.
     // We also want to avoid using the hash() function in StringImpl or CaseFoldingHash because that masks out bits for the use of flags.
