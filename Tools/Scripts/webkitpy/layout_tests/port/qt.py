@@ -90,7 +90,7 @@ class QtPort(Port):
         if self.operating_system() == 'mac':
             return self._build_path('lib/QtWebKitWidgets.framework/QtWebKitWidgets')
         else:
-            return self._build_path('lib/libQtWebKitWidgets.so')
+            return self._build_path('lib/libQt5WebKitWidgets.so')
 
     def _modules_to_search_for_symbols(self):
         # We search in every library to be reliable in the case of building with CONFIG+=force_static_libs_as_shared.

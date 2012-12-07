@@ -1,3 +1,16 @@
+2012-12-07  Gwang Yoon Hwang  <ryumiel@company100.net>
+
+        [Qt] Adjust library name in layout_tests/port/qt.py after Qt5-r40
+        https://bugs.webkit.org/show_bug.cgi?id=104348
+
+        Reviewed by Csaba Osztrogonác.
+
+        After Qt-5.0.0-r40, the library was renamed from QtWebKitWidgets to
+        Qt5WebKitWidgets. run-webkit-tests were still looking for QtWebKitWidgets
+
+        * Scripts/webkitpy/layout_tests/port/qt.py:
+        (QtPort._path_to_webcore_library):
+
 2012-12-07  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed fix, unbreak run-launcher after library renaming.
