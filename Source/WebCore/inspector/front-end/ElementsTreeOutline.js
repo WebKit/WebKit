@@ -559,6 +559,10 @@ WebInspector.ElementsTreeOutline.prototype = {
             }
         }
 
+        if (event.keyCode === WebInspector.KeyboardShortcut.Keys.H.code) {
+            WebInspector.cssModel.toggleInlineVisibility(node.id);
+            return;
+        }
     },
 
     _toggleEditAsHTML: function(node)

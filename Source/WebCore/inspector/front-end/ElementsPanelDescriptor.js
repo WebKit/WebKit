@@ -63,6 +63,7 @@ WebInspector.ElementsPanelDescriptor.prototype = {
         elementsSection.addRelatedKeys(expandCollapse, WebInspector.UIString("Expand/collapse"));
 
         elementsSection.addAlternateKeys(WebInspector.ElementsPanelDescriptor.ShortcutKeys.EditAttribute, WebInspector.UIString("Edit attribute"));
+        elementsSection.addAlternateKeys(WebInspector.ElementsPanelDescriptor.ShortcutKeys.HideElement, WebInspector.UIString("Hide element"));
         elementsSection.addAlternateKeys(WebInspector.ElementsPanelDescriptor.ShortcutKeys.ToggleEditAsHTML, WebInspector.UIString("Toggle edit as HTML"));
 
         var stylesPaneSection = WebInspector.shortcutsScreen.section(WebInspector.UIString("Styles Pane"));
@@ -105,6 +106,10 @@ WebInspector.ElementsPanelDescriptor.ShortcutKeys = {
 
     EditAttribute: [
         WebInspector.KeyboardShortcut.makeDescriptor(WebInspector.KeyboardShortcut.Keys.Enter)
+    ],
+
+    HideElement: [
+        WebInspector.KeyboardShortcut.makeDescriptor(WebInspector.KeyboardShortcut.Keys.H)
     ],
 
     ToggleEditAsHTML: [

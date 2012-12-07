@@ -645,6 +645,7 @@ localizedStrings["Touch"] = "Touch";
 localizedStrings["Close"] = "Close";
 localizedStrings["Close Others"] = "Close Others";
 localizedStrings["Close All"] = "Close All";
+localizedStrings["Hide element"] = "Hide element";
 localizedStrings["Toggle edit as HTML"] = "Toggle edit as HTML";
 localizedStrings["Pin navigator"] = "Pin navigator";
 localizedStrings["Show navigator"] = "Show navigator";

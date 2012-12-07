@@ -90,7 +90,8 @@ WebInspector.KeyboardShortcut.Keys = {
     Period: { code: 190, name: "." },
     Slash: { code: 191, name: "/" },
     Apostrophe: { code: 192, name: "`" },
-    SingleQuote: { code: 222, name: "\'" }
+    SingleQuote: { code: 222, name: "\'" },
+    H: { code: 72, name: "H" }
 };
 
 /**
