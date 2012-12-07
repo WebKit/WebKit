@@ -1092,7 +1092,7 @@ bool StyleResolver::canShareStyleWithControl(StyledElement* element) const
         return false;
     if (thisInputElement->isIndeterminate() != otherInputElement->isIndeterminate())
         return false;
-    if (thisInputElement->required() != otherInputElement->required())
+    if (thisInputElement->isRequired() != otherInputElement->isRequired())
         return false;
 
     if (element->isEnabledFormControl() != m_element->isEnabledFormControl())

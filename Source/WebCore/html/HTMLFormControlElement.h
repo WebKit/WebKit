@@ -75,7 +75,7 @@ public:
     // Determines whether or not a control will be automatically focused.
     virtual bool autofocus() const;
 
-    bool required() const;
+    bool isRequired() const;
 
     const AtomicString& type() const { return formControlType(); }
 
@@ -153,7 +153,7 @@ private:
     OwnPtr<ValidationMessage> m_validationMessage;
     bool m_disabled : 1;
     bool m_readOnly : 1;
-    bool m_required : 1;
+    bool m_isRequired : 1;
     bool m_valueMatchesRenderer : 1;
 
     enum AncestorDisabledState { AncestorDisabledStateUnknown, AncestorDisabledStateEnabled, AncestorDisabledStateDisabled };

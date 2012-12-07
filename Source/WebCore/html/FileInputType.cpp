@@ -165,7 +165,7 @@ bool FileInputType::appendFormData(FormDataList& encoding, bool multipart) const
 
 bool FileInputType::valueMissing(const String& value) const
 {
-    return element()->required() && value.isEmpty();
+    return element()->isRequired() && value.isEmpty();
 }
 
 String FileInputType::valueMissingText() const

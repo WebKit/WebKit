@@ -80,7 +80,7 @@ private:
     virtual bool isEmptyValue() const { return value().isEmpty(); }
 
     virtual bool isOptionalFormControl() const { return !isRequiredFormControl(); }
-    virtual bool isRequiredFormControl() const { return required(); }
+    virtual bool isRequiredFormControl() const { return isRequired(); }
 
     virtual void defaultEventHandler(Event*);
     

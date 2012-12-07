@@ -1433,7 +1433,7 @@ void HTMLInputElement::unregisterForSuspensionCallbackIfNeeded()
 
 bool HTMLInputElement::isRequiredFormControl() const
 {
-    return m_inputType->supportsRequired() && required();
+    return m_inputType->supportsRequired() && isRequired();
 }
 
 bool HTMLInputElement::shouldMatchReadOnlySelector() const
@@ -1888,7 +1888,7 @@ bool HTMLInputElement::setupDateTimeChooserParameters(DateTimeChooserParameters&
     parameters.type = type();
     parameters.minimum = minimum();
     parameters.maximum = maximum();
-    parameters.required = required();
+    parameters.required = isRequired();
     if (!RuntimeEnabledFeatures::langAttributeAwareFormControlUIEnabled())
         parameters.locale = defaultLanguage();
     else {

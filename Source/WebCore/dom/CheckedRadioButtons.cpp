@@ -81,7 +81,7 @@ void RadioButtonGroup::add(HTMLInputElement* button)
     if (!m_members.add(button).isNewEntry)
         return;
     bool groupWasValid = isValid();
-    if (button->required())
+    if (button->isRequired())
         ++m_requiredCount;
     if (button->checked())
         setCheckedButton(button);
@@ -116,7 +116,7 @@ void RadioButtonGroup::requiredAttributeChanged(HTMLInputElement* button)
     ASSERT(button->isRadioButton());
     ASSERT(m_members.contains(button));
     bool wasValid = isValid();
-    if (button->required())
+    if (button->isRequired())
         ++m_requiredCount;
     else {
         ASSERT(m_requiredCount);
@@ -134,7 +134,7 @@ void RadioButtonGroup::remove(HTMLInputElement* button)
         return;
     bool wasValid = isValid();
     m_members.remove(it);
-    if (button->required()) {
+    if (button->isRequired()) {
         ASSERT(m_requiredCount);
         --m_requiredCount;
     }

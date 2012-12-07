@@ -51,7 +51,7 @@ HTMLFormControlElement::HTMLFormControlElement(const QualifiedName& tagName, Doc
     : LabelableElement(tagName, document)
     , m_disabled(false)
     , m_readOnly(false)
-    , m_required(false)
+    , m_isRequired(false)
     , m_valueMatchesRenderer(false)
     , m_ancestorDisabledState(AncestorDisabledStateUnknown)
     , m_dataListAncestorState(Unknown)
@@ -139,9 +139,9 @@ void HTMLFormControlElement::parseAttribute(const QualifiedName& name, const Ato
                 renderer()->theme()->stateChanged(renderer(), ReadOnlyState);
         }
     } else if (name == requiredAttr) {
-        bool oldRequired = m_required;
-        m_required = !value.isNull();
-        if (oldRequired != m_required)
+        bool wasRequired = m_isRequired;
+        m_isRequired = !value.isNull();
+        if (wasRequired != m_isRequired)
             requiredAttributeChanged();
     } else
         HTMLElement::parseAttribute(name, value);
@@ -288,9 +288,9 @@ bool HTMLFormControlElement::autofocus() const
     return hasAttribute(autofocusAttr);
 }
 
-bool HTMLFormControlElement::required() const
+bool HTMLFormControlElement::isRequired() const
 {
-    return m_required;
+    return m_isRequired;
 }
 
 static void updateFromElementCallback(Node* node, unsigned)

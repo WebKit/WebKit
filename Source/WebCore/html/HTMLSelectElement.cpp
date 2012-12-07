@@ -160,7 +160,7 @@ bool HTMLSelectElement::valueMissing() const
     if (!willValidate())
         return false;
 
-    if (!isRequiredFormControl())
+    if (!isRequired())
         return false;
 
     int firstSelectionIndex = selectedIndex();
@@ -484,7 +484,7 @@ void HTMLSelectElement::setLength(unsigned newLen, ExceptionCode& ec)
 
 bool HTMLSelectElement::isRequiredFormControl() const
 {
-    return required();
+    return isRequired();
 }
 
 // Returns the 1st valid item |skip| items from |listIndex| in direction |direction| if there is one.

@@ -1,3 +1,44 @@
+2012-12-06  Kent Tamura  <tkent@chromium.org>
+
+        Refactoring: Rename HTMLFormControlElement::required to isRequired
+        https://bugs.webkit.org/show_bug.cgi?id=104336
+
+        Reviewed by Kentaro Hara.
+
+        m_required should be m_isRequired, and required() should be
+        isRequired. It's safe to rename them because HTML*Element::required IDL
+        attributes are [Reflected].
+        http://www.webkit.org/coding/coding-style.html#names-bool
+
+        * accessibility/AccessibilityNodeObject.cpp:
+        (WebCore::AccessibilityNodeObject::isRequired):
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::canShareStyleWithControl):
+        * dom/CheckedRadioButtons.cpp:
+        (WebCore::RadioButtonGroup::add):
+        (WebCore::RadioButtonGroup::requiredAttributeChanged):
+        (WebCore::RadioButtonGroup::remove):
+        * html/CheckboxInputType.cpp:
+        (WebCore::CheckboxInputType::valueMissing):
+        * html/FileInputType.cpp:
+        (WebCore::FileInputType::valueMissing):
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::HTMLFormControlElement):
+        (WebCore::HTMLFormControlElement::parseAttribute):
+        (WebCore::HTMLFormControlElement::isRequired):
+        * html/HTMLFormControlElement.h:
+        (HTMLFormControlElement):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::isRequiredFormControl):
+        (WebCore::HTMLInputElement::setupDateTimeChooserParameters):
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::valueMissing):
+        (WebCore::HTMLSelectElement::isRequiredFormControl):
+        * html/HTMLTextAreaElement.h:
+        (WebCore::HTMLTextAreaElement::isRequiredFormControl):
+        * html/TextFieldInputType.cpp:
+        (WebCore::TextFieldInputType::valueMissing):
+
 2012-12-06  Hajime Morrita  <morrita@google.com>
 
         [Shadow DOM] Implement Element::shadowRoot with prefix
