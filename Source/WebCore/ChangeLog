@@ -1,3 +1,20 @@
+2012-12-07  Robert Hogan  <robert@webkit.org>
+
+        REGRESSION(r127163): Content is offset to the right at rea.ru
+        https://bugs.webkit.org/show_bug.cgi?id=103116
+
+        Reviewed by David Hyatt.
+
+        The top margin edge of a self-collapsing block that clears a float intrudes up into it by the height of the margin,
+        so to ensure any child floats of the self-collapsing block only go as far as the top content edge 
+        add the margin back in to the block's current height before placing them.
+
+        Tests: fast/block/margin-collapse/self-collapsing-block-with-float-child-collapsed-margins.html
+               fast/block/margin-collapse/self-collapsing-block-with-float-child.html
+
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::LineBreaker::skipLeadingWhitespace):
+
 2012-12-07  Alexis Menard  <alexis@webkit.org>
 
         Improve r136754 by hardening checks of expected values for background-position.
