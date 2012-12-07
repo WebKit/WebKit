@@ -496,6 +496,8 @@ public:
      */
     void styleResolverChanged(StyleResolverUpdateFlag);
 
+    void didAccessStyleResolver();
+
     void evaluateMediaQueryList();
 
     // Never returns 0.
@@ -1259,6 +1261,10 @@ private:
     void addMutationEventListenerTypeIfEnabled(ListenerType);
 
     int m_guardRefCount;
+
+    void styleResolverThrowawayTimerFired(Timer<Document>*);
+    Timer<Document> m_styleResolverThrowawayTimer;
+    double m_lastStyleResolverAccessTime;
 
     OwnPtr<StyleResolver> m_styleResolver;
     bool m_didCalculateStyleResolver;

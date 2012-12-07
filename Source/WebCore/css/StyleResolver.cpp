@@ -1601,6 +1601,8 @@ PassRefPtr<RenderStyle> StyleResolver::styleForElement(Element* element, RenderS
     if (cloneForParent)
         m_parentStyle = 0;
 
+    document()->didAccessStyleResolver();
+
     // Now return the style.
     return m_style.release();
 }
@@ -1653,6 +1655,8 @@ PassRefPtr<RenderStyle> StyleResolver::styleForKeyframe(const RenderStyle* eleme
                 keyframeValue.addProperty(property);
         }
     }
+
+    document()->didAccessStyleResolver();
 
     return m_style.release();
 }
@@ -1757,6 +1761,8 @@ PassRefPtr<RenderStyle> StyleResolver::pseudoStyleForElement(PseudoId pseudo, El
     // Start loading resources referenced by this style.
     loadPendingResources();
 
+    document()->didAccessStyleResolver();
+
     // Now return the style.
     return m_style.release();
 }
@@ -1795,6 +1801,8 @@ PassRefPtr<RenderStyle> StyleResolver::styleForPage(int pageIndex)
 
     // Start loading resources referenced by this style.
     loadPendingResources();
+
+    document()->didAccessStyleResolver();
 
     // Now return the style.
     return m_style.release();

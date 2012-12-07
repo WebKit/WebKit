@@ -1,3 +1,43 @@
+2012-12-07  Andreas Kling  <akling@apple.com>
+
+        Throw away StyleResolvers that haven't been used for a long time.
+        <http://webkit.org/b/104314>
+
+        Reviewed by Antti Koivisto.
+
+        A lot of memory gets tied up in StyleResolver and the structures and caches that hang from it.
+        Add a mechanism to throw it away after it's been unused for a while (1 minute.)
+        This frees up large amounts of memory on inactive pages (background tabs) and static content.
+
+        We already have a number of scenarios where the document style is invalidated by throwing away
+        the StyleResolver so the major code paths are prepared for having a null StyleResolver* on occasion.
+
+        ~20MB progression on Membuster3.
+
+        * css/StyleResolver.cpp:
+        (WebCore::StyleResolver::styleForElement):
+        (WebCore::StyleResolver::styleForKeyframe):
+        (WebCore::StyleResolver::pseudoStyleForElement):
+        (WebCore::StyleResolver::styleForPage):
+
+            Call document()->didAccessStyleResolver() from the relevant parts of StyleResolver's public API.
+            This prevents Document from throwing the StyleResolver away for 1 minute after it's used.
+
+        * dom/Document.h:
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        (WebCore::Document::createStyleResolver):
+        (WebCore::Document::didAccessStyleResolver):
+        (WebCore::Document::styleResolverThrowawayTimerFired):
+
+            Add a mechanism to call clearStyleResolver() on a refreshing timer.
+
+        * dom/Element.cpp:
+        (WebCore::Element::attributeChanged):
+
+            If an attribute change occurs while the document doesn't have a StyleResolver, dirty the element style
+            since we can't be sure that the attribute change didn't affect any rules.
+
 2012-12-07  Antonio Gomes  <a1.gomes@sisa.samsung.com>
 
         REGRESSION(r136947): Made two tests fail on all platforms (Requested by tonikitoo-ll on #webkit).

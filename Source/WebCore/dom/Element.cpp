@@ -799,6 +799,9 @@ void Element::attributeChanged(const QualifiedName& name, const AtomicString& ne
 
     invalidateNodeListCachesInAncestors(&name, this);
 
+    // If there is currently no StyleResolver, we can't be sure that this attribute change won't affect style.
+    shouldInvalidateStyle |= !styleResolver;
+
     if (shouldInvalidateStyle)
         setNeedsStyleRecalc();
 
