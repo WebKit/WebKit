@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../js/resources/js-test-pre.js"></script>
+<style type="text/css">
+</style>
+</head>
+<body>
+<p id="description"></p>
+<p><a href=https://bugs.webkit.org/show_bug.cgi?id=99493>Bug 99493</a></p>
+<div id="test-container">
+  <div style='cursor: -webkit-image-set(url(resources/greenbox.png) 1x), pointer'>25x25 image at 1x</div>
+  <div style='cursor: -webkit-image-set(url(resources/greenbox.png) 2x), pointer'>25x25 image at 2x</div>
+  <div style='cursor: -webkit-image-set(url(resources/greenbox.png) 1x, url(resources/greenbox30.png) 2x), pointer'>25x25 image at 1x, 30x30 image at 2x</div>
+  <div style='cursor: -webkit-image-set(url(resources/greenbox.png) 1.5x, url(resources/greenbox30.png) 5x), pointer'>25x25 image at 1.5x, 30x30 image at 5x</div>
+  <div style='cursor: -webkit-image-set(url(resources/greenbox.png) 0.0001x), pointer'>Invalid tiny scale with fallback to pointer</div>
+  <div style='cursor: -webkit-image-set(url(resources/greenbox200.png) 1x), pointer'>Over-large image with fallback to pointer</div>
+  <div style='cursor: -webkit-image-set(url(resources/greenbox200.png) 4x), pointer'>200x200 image at 4x (not over-large in UI pixels)</div>
+  <div style='cursor: -webkit-image-set(url(doesntexist.png) 1x), url(resources/greenbox.png), pointer'>Non-existent image in image-set with fallback to 25x25 image</div>
+  <div style='cursor: -webkit-image-set(url(resources/greenbox.png) 1x, url(resources/greenbox30.png) 2x) 5 3, pointer'>Explicit hotspot at (5,3) logical in 1x and 2x</div>
+  <div style='cursor: -webkit-image-set(url(resources/greenbox.png) 0.7x, url(resources/greenbox30.png) 1.4x) 7 3, pointer'>Explicit hotspot at (7,3) logical in 0.7x and 1.4x - should round to nearest integer</div>
+  <div style='cursor: -webkit-image-set(url(resources/greenbox-hotspot5-4.cur) 1x, url(resources/greenbox30-hotspot28-3.cur) 2x), pointer'>Implicit hot-spot at (5,4) physical for 1x and (28,3) physical for 2x</div>
+</div>
+<br/>
+<div id="console"></div>
+<script>
+var imagesLeftToLoad = 0;
+
+function onImageLoad(success, ondone, e) {
+
+    // This debug output is non-deterministic and contains absolute URLs - only show when
+    // not running in DRT
+    if (!window.testRunner)
+        debug( 'Event "' + e.type + '": ' + e.target.src);
+
+    if (!success)
+        testFailed('Got unexpected \'' + e.type + '\' event for image: ' + e.target.src); 
+
+    imagesLeftToLoad--;
+    
+    if (imagesLeftToLoad < 0)
+        testFailed('Got more load/error callback than expected.');
+    
+    if (imagesLeftToLoad == 0)
+        ondone();
+}
+
+function checkCursors() {
+    debug('Checking cursors with device pixel ratio of ' + window.devicePixelRatio);  
+    debug('----------------------------------------------');
+	
+    var nodesToTest = document.querySelectorAll('#test-container > div');
+    for (var i = 0; i < nodesToTest.length; i++) {
+        var node = nodesToTest[i];
+        debug('TEST CASE: ' + node.textContent);
+        // Make sure the node is visible and move the mouse over top of it.
+        document.body.scrollTop = node.offsetTop - 50;
+        eventSender.mouseMoveTo(node.offsetLeft + 3, node.offsetTop - document.body.scrollTop + 3);
+
+        // Get details of the current mouse cursor.
+        // Note that we could return structured data which we then validate, but that's a lot more
+        // work and is redundant with relying on the expected output anyway.  Better to just dump
+        // it and inspect that it matches the description.
+        debug('Cursor Info: ' + window.internals.getCurrentCursorInfo(document));
+        debug('');
+    }
+}
+
+function runTests() {
+    if (window.eventSender) {
+        checkCursors();
+        // Repeat in high-dpi mode
+        testRunner.setBackingScaleFactor(2, function() {
+            // Failed images are apparently reset on scale factor change. 
+            ensureImagesLoaded([{ url: 'doesntexist.png', error: true }], function() {
+                checkCursors();
+                document.getElementById('test-container').style.display = 'none';
+                finishJSTest();
+            });
+    	});	
+    } else {
+        finishJSTest();
+    }
+}
+
+function ensureImagesLoaded(imagesToLoad, callback)
+{
+    imagesLeftToLoad = imagesToLoad.length;
+    for (var i = 0; i < imagesToLoad.length; i++) {
+        var img = new Image();
+        var expectError = imagesToLoad[i].error; 
+        img.addEventListener('load', onImageLoad.bind(undefined, !expectError, callback));
+        img.addEventListener('error', onImageLoad.bind(undefined, expectError, callback));
+        img.src = imagesToLoad[i].url;
+    }
+}
+
+description("Test that mouse cursors are applied correctly.");
+
+if (!window.eventSender) {
+    testFailed('This test requires DumpRenderTree');
+}
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+    window.jsTestIsAsync = true;
+}
+
+// Now wait for each image to load or fail to load before starting tests.
+// Without this we can get null images in the cursors - eg. no known size.
+var imagesToLoad = [
+ { url: 'resources/greenbox.png' },
+ { url: 'resources/greenbox30.png' },
+ { url: 'resources/greenbox200.png' },
+ { url: 'resources/greenbox-hotspot35-4.cur' },
+ { url: 'resources/greenbox30-hotspot28-3.cur' },
+ { url: 'doesntexist.png', error: true } ];
+ensureImagesLoaded(imagesToLoad, runTests);
+
+</script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

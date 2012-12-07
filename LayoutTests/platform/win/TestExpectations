@@ -51,6 +51,8 @@ css3/masking/clip-path-circle-relative-overflow.html
 # CSS image-set support not yet enabled (needs ENABLE_CSS_IMAGE_SET).
 fast/css/image-set-parsing.html
 fast/css/image-set-parsing-invalid.html
+fast/css/cursor-parsing-image-set.html
+fast/events/mouse-cursor-image-set.html
 
 # CSS3 Background is not yet enabled (needs ENABLE_CSS3_BACKGROUND).
 webkit.org/b/37514 fast/backgrounds/background-position-parsing-2.html [ Text ]

@@ -27,14 +27,15 @@
 
 namespace WebCore {
 
+class Document;
 class Element;
 class SVGElement;
 
-class CSSCursorImageValue : public CSSImageValue {
+class CSSCursorImageValue : public CSSValue {
 public:
-    static PassRefPtr<CSSCursorImageValue> create(const String& url, bool hasHotSpot, const IntPoint& hotSpot)
+    static PassRefPtr<CSSCursorImageValue> create(PassRefPtr<CSSValue> imageValue, bool hasHotSpot, const IntPoint& hotSpot)
     {
-        return adoptRef(new CSSCursorImageValue(url, hasHotSpot, hotSpot));
+        return adoptRef(new CSSCursorImageValue(imageValue, hasHotSpot, hotSpot));
     }
 
     ~CSSCursorImageValue();
@@ -51,7 +52,8 @@ public:
     String customCssText() const;
 
     bool updateIfSVGCursorIsUsed(Element*);
-    StyleCachedImage* cachedImage(CachedResourceLoader*);
+    StyleImage* cachedImage(CachedResourceLoader*);
+    StyleImage* cachedOrPendingImage(Document*);
 
 #if ENABLE(SVG)
     void removeReferencedElement(SVGElement*);
@@ -60,10 +62,20 @@ public:
     void reportDescendantMemoryUsage(MemoryObjectInfo*) const;
 
 private:
-    CSSCursorImageValue(const String& url, bool hasHotSpot, const IntPoint& hotSpot);
+    CSSCursorImageValue(PassRefPtr<CSSValue> imageValue, bool hasHotSpot, const IntPoint& hotSpot);
+
+#if ENABLE(SVG)
+    bool isSVGCursor() const;
+    String cachedImageURL();
+    void clearCachedImage();
+#endif
+
+    RefPtr<CSSValue> m_imageValue;
 
     bool m_hasHotSpot;
     IntPoint m_hotSpot;
+    RefPtr<StyleImage> m_image;
+    bool m_accessedImage;
 
 #if ENABLE(SVG)
     HashSet<SVGElement*> m_referencedElements;

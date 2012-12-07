@@ -26,6 +26,7 @@
 #ifndef StylePendingImage_h
 #define StylePendingImage_h
 
+#include "CSSCursorImageValue.h"
 #include "CSSImageGeneratorValue.h"
 #if ENABLE(CSS_IMAGE_SET)
 #include "CSSImageSetValue.h"
@@ -49,6 +50,7 @@ public:
     virtual PassRefPtr<CSSValue> cssValue() const { return m_value; }
     CSSImageValue* cssImageValue() const { return m_value->isImageValue() ? static_cast<CSSImageValue*>(m_value) : 0; }
     CSSImageGeneratorValue* cssImageGeneratorValue() const { return m_value->isImageGeneratorValue() ? static_cast<CSSImageGeneratorValue*>(m_value) : 0; }
+    CSSCursorImageValue* cssCursorImageValue() const { return m_value->isCursorImageValue() ? static_cast<CSSCursorImageValue*>(m_value) : 0; }
 #if ENABLE(CSS_IMAGE_SET)
     CSSImageSetValue* cssImageSetValue() const { return m_value->isImageSetValue() ? static_cast<CSSImageSetValue*>(m_value) : 0; }
 #endif

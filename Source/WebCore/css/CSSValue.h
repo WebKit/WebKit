@@ -79,7 +79,7 @@ public:
 #if ENABLE(CSS_IMAGE_SET)
     bool isImageSetValue() const { return m_classType == ImageSetClass; }
 #endif
-    bool isImageValue() const { return m_classType == ImageClass || m_classType == CursorImageClass; }
+    bool isImageValue() const { return m_classType == ImageClass; }
     bool isImplicitInitialValue() const;
     bool isInheritedValue() const { return m_classType == InheritedClass; }
     bool isInitialValue() const { return m_classType == InitialClass; }

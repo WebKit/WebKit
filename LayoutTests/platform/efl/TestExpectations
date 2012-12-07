@@ -57,6 +57,10 @@ http/tests/cache/subresource-fragment-identifier.html
 fast/dom/Window/slow-unload-handler.html
 fast/dom/Window/slow-unload-handler-only-frame-is-stopped.html
 
+# Need ENABLE(MOUSE_CURSOR_SCALE)
+fast/css/cursor-parsing-image-set.html
+fast/events/mouse-cursor-image-set.html
+
 # ----------------------------------------
 # Tests which also fail in other platforms
 # ----------------------------------------

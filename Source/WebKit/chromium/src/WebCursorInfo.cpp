@@ -40,7 +40,7 @@ namespace WebKit {
 WebCursorInfo::WebCursorInfo(const Cursor& cursor)
     : type(static_cast<Type>(cursor.type()))
     , hotSpot(cursor.hotSpot())
-    , imageScaleFactor(1)
+    , imageScaleFactor(cursor.imageScaleFactor())
     , customImage(cursor.image())
 #ifdef WIN32
     , externalHandle(0)

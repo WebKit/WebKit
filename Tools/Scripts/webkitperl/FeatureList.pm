@@ -105,6 +105,7 @@ my (
     $meterTagSupport,
     $mhtmlSupport,
     $microdataSupport,
+    $mouseCursorScaleSupport,
     $mutationObserversSupport,
     $netscapePluginAPISupport,
     $networkInfoSupport,
@@ -330,6 +331,9 @@ my @features = (
 
     { option => "microdata", desc => "Toggle Microdata support",
       define => "ENABLE_MICRODATA", default => (isEfl() || isBlackBerry()), value => \$microdataSupport },
+
+    { option => "mouse-cursor-scale", desc => "Toggle Scaled mouse cursor support",
+      define => "ENABLE_MOUSE_CURSOR_SCALE", default => 0, value => \$mouseCursorScaleSupport },
 
     { option => "mutation-observers", desc => "Toggle Mutation Observers support",
       define => "ENABLE_MUTATION_OBSERVERS", default => 1, value => \$mutationObserversSupport },

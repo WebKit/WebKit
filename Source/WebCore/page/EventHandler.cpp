@@ -111,6 +111,10 @@
 #include "TouchList.h"
 #endif
 
+#if ENABLE(CSS_IMAGE_SET)
+#include "StyleCachedImageSet.h"
+#endif
+
 namespace WebCore {
 
 using namespace HTMLNames;
@@ -147,6 +151,14 @@ const double fakeMouseMoveRunningAverageCount = 10;
 // Not sure this distinction really matters in practice.
 const double fakeMouseMoveIntervalReductionLimit = 0.5;
 const double fakeMouseMoveIntervalReductionFraction = 0.75;
+
+const int maximumCursorSize = 128;
+#if ENABLE(MOUSE_CURSOR_SCALE)
+// It's pretty unlikely that a scale of less than one would ever be used. But all we really
+// need to ensure here is that the scale isn't so small that integer overflow can occur when
+// dividing cursor sizes (limited above) by the scale.
+const double minimumCursorScale = 0.001;
+#endif
 
 enum NoCursorChangeType { NoCursorChange };
 
@@ -1450,19 +1462,35 @@ OptionalCursor EventHandler::selectCursor(const MouseEventWithHitTestResults& ev
     if (style && style->cursors()) {
         const CursorList* cursors = style->cursors();
         for (unsigned i = 0; i < cursors->size(); ++i) {
-            CachedImage* cimage = 0;
-            StyleImage* image = (*cursors)[i].image();
-            if (image && image->isCachedImage())
-                cimage = static_cast<StyleCachedImage*>(image)->cachedImage();
-            if (!cimage)
+            StyleImage* styleImage = (*cursors)[i].image();
+            if (!styleImage)
                 continue;
+            CachedImage* cachedImage = styleImage->cachedImage();
+            if (!cachedImage)
+                continue;
+            float scale = styleImage->imageScaleFactor();
+            // Get hotspot and convert from logical pixels to physical pixels.
             IntPoint hotSpot = (*cursors)[i].hotSpot();
-            // Limit the size of cursors so that they cannot be used to cover UI elements in chrome.
-            IntSize size = cimage->imageForRenderer(renderer)->size();
-            if (size.width() > 128 || size.height() > 128)
+            hotSpot.scale(scale, scale);
+            IntSize size = cachedImage->imageForRenderer(renderer)->size();
+            if (cachedImage->errorOccurred())
                 continue;
-            if (!cimage->errorOccurred())
-                return Cursor(cimage->imageForRenderer(renderer), hotSpot);
+            // Limit the size of cursors (in UI pixels) so that they cannot be
+            // used to cover UI elements in chrome.
+            size.scale(1 / scale);
+            if (size.width() > maximumCursorSize || size.height() > maximumCursorSize)
+                continue;
+
+            Image* image = cachedImage->imageForRenderer(renderer);
+#if ENABLE(MOUSE_CURSOR_SCALE)
+            // Ensure no overflow possible in calculations above.
+            if (scale < minimumCursorScale)
+                continue;
+            return Cursor(image, hotSpot, scale);
+#else
+            ASSERT(scale == 1);
+            return Cursor(image, hotSpot);
+#endif // ENABLE(MOUSE_CURSOR_SCALE)
         }
     }
 

@@ -1,0 +1,48 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<p><a href=https://bugs.webkit.org/show_bug.cgi?id=99493>Bug 99493</a></p>
+<div id="console"></div>
+<script>
+description("Test the parsing of the cursor property when used with -webkit-image-set.");
+
+function makeCursorRule(rule)
+{
+    return "cursor: " + rule + ";";
+}
+
+function testCursorRule(rule)
+{
+    var cssText = makeCursorRule(rule);
+    shouldBeEqualToString('roundtripCssRule("' + cssText + '")', cssText);
+}
+
+function roundtripCssRule(cssText)
+{
+    var div = document.createElement("div");
+    div.setAttribute("style", cssText);
+    document.body.appendChild(div);
+    var result = div.style.cssText;
+    document.body.removeChild(div);
+    return result;
+}
+
+// Note that any absolute URL will suffice for these tests (can't use relative URLs
+// since they'll be converted to absolute form in the output).  I chose file URLs just
+// to avoid triggering any network activity.
+
+debug('Test a bunch of cursor rules which should round-trip exactly.');
+testCursorRule('-webkit-image-set(url(file:///foo.png) 1x), auto');
+testCursorRule('-webkit-image-set(url(file:///foo.png) 1x, url(file:///foo2x.png) 2x), auto');
+testCursorRule('-webkit-image-set(url(file:///foo.png) 1x, url(file:///foo2x.png) 2x) 2 3, auto');
+testCursorRule('-webkit-image-set(url(file:///foo03.png) 0.3x, url(file:///foo5x.png) 5x) 6 5, url(file:///foo.png) 12 3, pointer');
+
+successfullyParsed = true;
+</script>
+<script src="../js/resources/js-test-post.js"></script>
+</body>
+</html>

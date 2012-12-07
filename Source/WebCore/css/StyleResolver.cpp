@@ -3985,6 +3985,9 @@ PassRefPtr<StyleImage> StyleResolver::styleImage(CSSPropertyID property, CSSValu
         return setOrPendingFromValue(property, static_cast<CSSImageSetValue*>(value));
 #endif
 
+    if (value->isCursorImageValue())
+        return cursorOrPendingFromValue(property, static_cast<CSSCursorImageValue*>(value));
+
     return 0;
 }
 
@@ -4014,6 +4017,14 @@ PassRefPtr<StyleImage> StyleResolver::setOrPendingFromValue(CSSPropertyID proper
     return image.release();
 }
 #endif
+
+PassRefPtr<StyleImage> StyleResolver::cursorOrPendingFromValue(CSSPropertyID property, CSSCursorImageValue* value)
+{
+    RefPtr<StyleImage> image = value->cachedOrPendingImage(document());
+    if (image && image->isPendingImage())
+        m_pendingImageProperties.set(property, value);
+    return image.release();
+}
 
 void StyleResolver::checkForTextSizeAdjust()
 {
@@ -5121,6 +5132,11 @@ PassRefPtr<StyleImage> StyleResolver::loadPendingImage(StylePendingImage* pendin
         CSSImageGeneratorValue* imageGeneratorValue = pendingImage->cssImageGeneratorValue();
         imageGeneratorValue->loadSubimages(cachedResourceLoader);
         return StyleGeneratedImage::create(imageGeneratorValue);
+    }
+
+    if (pendingImage->cssCursorImageValue()) {
+        CSSCursorImageValue* cursorImageValue = pendingImage->cssCursorImageValue();
+        return cursorImageValue->cachedImage(cachedResourceLoader);
     }
 
 #if ENABLE(CSS_IMAGE_SET)

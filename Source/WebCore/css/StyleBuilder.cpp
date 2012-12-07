@@ -1092,7 +1092,7 @@ public:
                     CSSCursorImageValue* image = static_cast<CSSCursorImageValue*>(item);
                     if (image->updateIfSVGCursorIsUsed(styleResolver->element())) // Elements with SVG cursors are not allowed to share style.
                         styleResolver->style()->setUnique();
-                    styleResolver->style()->addCursor(styleResolver->cachedOrPendingFromValue(CSSPropertyCursor, image), image->hotSpot());
+                    styleResolver->style()->addCursor(styleResolver->styleImage(CSSPropertyCursor, image), image->hotSpot());
                 } else if (item->isPrimitiveValue()) {
                     CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(item);
                     if (primitiveValue->isIdent())

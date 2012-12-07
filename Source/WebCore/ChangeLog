@@ -1,3 +1,79 @@
+2012-12-06  Rick Byers  <rbyers@chromium.org>
+
+        CSS cursor property should support webkit-image-set
+        https://bugs.webkit.org/show_bug.cgi?id=99493
+
+        Reviewed by Beth Dakin.
+
+        Add support for image scale factors attached to custom mouse cursor images
+        behind ENABLE(MOUSE_CURSOR_SCALE).
+
+        This required refactoring CSSCursorImageValue to derive directly from
+        CSSValue since it can contain either a CSSImageValue or a CSSImageSetValue.
+        If it contains an image-set, then we can plumb directly through to the
+        CSSImageSetValue.  If it contains an image, then either we can plumb directly
+        through to the CSSImageValue, or if the URL represents an SVG cursor we have
+        to intercept the image loading in order to substitute the actual SVG image URL
+        and do the appropriate lifetime management.
+
+        Tests: fast/css/cursor-parsing-image-set.html
+               fast/events/mouse-cursor-image-set.html
+
+        * Configurations/FeatureDefines.xcconfig: Add ENABLE_MOUSE_CURSOR_SCALE - disabled
+        * GNUmakefile.features.am: ditto
+        * css/CSSCursorImageValue.cpp: Refactor to inherit directly from CSSValue and support image sets
+        (WebCore::CSSCursorImageValue::CSSCursorImageValue):
+        (WebCore::CSSCursorImageValue::~CSSCursorImageValue):
+        (WebCore::CSSCursorImageValue::customCssText):
+        (WebCore::CSSCursorImageValue::updateIfSVGCursorIsUsed):
+        (WebCore::CSSCursorImageValue::cachedImage):
+        (WebCore::CSSCursorImageValue::cachedOrPendingImage):
+        (WebCore::CSSCursorImageValue::isSVGCursor):
+        (WebCore::CSSCursorImageValue::cachedImageURL):
+        (WebCore::CSSCursorImageValue::clearCachedImage):
+        (WebCore::CSSCursorImageValue::reportDescendantMemoryUsage):
+        * css/CSSCursorImageValue.h: Remove cursor-specific hacks
+        (WebCore::CSSCursorImageValue::create):
+        (CSSCursorImageValue):
+        * css/CSSImageValue.cpp:
+        (WebCore::CSSImageValue::cachedImage):
+        * css/CSSImageValue.h:
+        (CSSImageValue):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue): Parse cursor(-webkit-image-set(...)) rules
+        * css/CSSValue.h:
+        (WebCore::CSSValue::isImageValue):
+        * css/StyleBuilder.cpp:
+        (WebCore::ApplyPropertyCursor::applyValue):
+        * css/StyleResolver.cpp: Hook up new CSSCursorImageValue support since it can't be handled like other images any more.
+        (WebCore::StyleResolver::styleImage):
+        (WebCore::StyleResolver::cursorOrPendingFromValue):
+        (WebCore::StyleResolver::loadPendingImage):
+        * css/StyleResolver.h:
+        (StyleResolver):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::selectCursor): Handle StyleCachedImageSet images and plumb scale factor through
+        * platform/Cursor.cpp:
+        (WebCore::Cursor::Cursor): Add imageScaleFactor
+        * platform/Cursor.h: Add imageScaleFactor
+        (Cursor):
+        (WebCore::Cursor::imageScaleFactor):
+        * platform/chromium/CursorChromium.cpp: Add imageScaleFactor
+        (WebCore::Cursor::Cursor):
+        (WebCore::Cursor::operator=):
+        * rendering/style/CursorData.h: Clarify hotspot units
+        (CursorData):
+        * rendering/style/StyleCachedImage.h:
+        (StyleCachedImage::cachedImage): Override new virtual.
+        * rendering/style/StyleCachedImageSet.h:
+        (StyleCachedImageSet::cachedImage): Override new virtual.
+        * rendering/style/StyleImage.h:
+        (StyleImage::cachedImage): Add new virtual method to avoid lots of casts and typechecks.
+        * rendering/style/StylePendingImage.h: Add CSSCursorImageValue support
+        (WebCore::StylePendingImage::cssCursorImageValue):
+        * testing/Internals.cpp:
+        (WebCore::Internals::getCurrentCursorInfo): Print non-identity scale factors for testing
+
 2012-12-06  Hayato Ito  <hayato@chromium.org>
 
         Event's relatedTarget re-targeting does not occur for manually fired mouse events created by event.initMouseEvent().

@@ -56,13 +56,6 @@ public:
 
     void setInitiator(const AtomicString& name) { m_initiatorName = name; }
 
-protected:
-    CSSImageValue(ClassType, const String& url);
-
-    StyleCachedImage* cachedImage(CachedResourceLoader*, const String& url);
-    String cachedImageURL();
-    void clearCachedImage();
-
 private:
     explicit CSSImageValue(const String& url);
     CSSImageValue(const String& url, StyleImage*);

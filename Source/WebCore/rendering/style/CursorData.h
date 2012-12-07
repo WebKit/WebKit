@@ -51,6 +51,7 @@ public:
     StyleImage* image() const { return m_image.get(); }    
     void setImage(PassRefPtr<StyleImage> image) { m_image = image; }    
 
+    // Hot spot in the image in logical pixels.
     const IntPoint& hotSpot() const { return m_hotSpot; }
     
 private:

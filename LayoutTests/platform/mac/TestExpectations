@@ -1236,4 +1236,8 @@ webkit.org/b/67434 [ Debug ] fast/block/float/overhanging-tall-block.html [ Skip
 # Mountain Lion and prior do not support custom media data loading
 Bug(jernoble) [ MountainLion Lion SnowLeopard ] media/video-src-blob.html
 
+# Needs ENABLE(MOUSE_CURSOR_SCALE)
+webkit.org/b/102579 fast/css/cursor-parsing-image-set.html [ Fail ]
+webkit.org/b/102579 fast/events/mouse-cursor-image-set.html [ Fail ]
+
 webkit.org/b/104104 fast/overflow/scrollbar-click-retains-focus.html [ Failure ]

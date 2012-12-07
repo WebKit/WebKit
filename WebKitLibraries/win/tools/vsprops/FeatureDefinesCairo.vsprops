@@ -262,6 +262,11 @@
 		PerformEnvironmentSet="true"
 	/>
   <UserMacro
+        Name="ENABLE_MOUSE_CURSOR_SCALE"
+        Value=""
+        PerformEnvironmentSet="true"
+    />
+  <UserMacro
 		Name="ENABLE_MUTATION_OBSERVERS"
 		Value="ENABLE_MUTATION_OBSERVERS"
 		PerformEnvironmentSet="true"

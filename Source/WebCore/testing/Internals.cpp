@@ -84,7 +84,6 @@
 #include "ViewportArguments.h"
 #include <wtf/text/StringBuffer.h>
 
-
 #if ENABLE(INPUT_TYPE_COLOR)
 #include "ColorChooser.h"
 #endif
@@ -104,6 +103,10 @@
 
 #if ENABLE(TOUCH_ADJUSTMENT)
 #include "WebKitPoint.h"
+#endif
+
+#if ENABLE(MOUSE_CURSOR_SCALE)
+#include <wtf/dtoa.h>
 #endif
 
 #if PLATFORM(CHROMIUM)
@@ -1714,6 +1717,13 @@ String Internals::getCurrentCursorInfo(Document* document, ExceptionCode& ec)
         result.append("x");
         result.appendNumber(size.height());
     }
+#if ENABLE(MOUSE_CURSOR_SCALE)
+    if (cursor.imageScaleFactor() != 1) {
+        result.append(" scale=");
+        NumberToStringBuffer buffer;
+        result.append(numberToFixedPrecisionString(cursor.imageScaleFactor(), 8, buffer, true));
+    }
+#endif
     return result.toString();
 #else
     return "FAIL: Cursor details not available on this platform.";

@@ -1904,16 +1904,29 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
         break;
 
     case CSSPropertyCursor: {
-        // [<uri>,]*  [ auto | crosshair | default | pointer | progress | move | e-resize | ne-resize |
+        // Grammar defined by CSS3 UI and modified by CSS4 images:
+        // [ [<image> [<x> <y>]?,]*
+        // [ auto | crosshair | default | pointer | progress | move | e-resize | ne-resize |
         // nw-resize | n-resize | se-resize | sw-resize | s-resize | w-resize | ew-resize |
         // ns-resize | nesw-resize | nwse-resize | col-resize | row-resize | text | wait | help |
         // vertical-text | cell | context-menu | alias | copy | no-drop | not-allowed | -webkit-zoom-in
         // -webkit-zoom-out | all-scroll | -webkit-grab | -webkit-grabbing ] ] | inherit
         RefPtr<CSSValueList> list;
-        while (value && value->unit == CSSPrimitiveValue::CSS_URI) {
-            if (!list)
-                list = CSSValueList::createCommaSeparated();
-            String uri = value->string;
+        while (value) {
+            RefPtr<CSSValue> image = 0;
+            if (value->unit == CSSPrimitiveValue::CSS_URI) {
+                String uri = value->string;
+                if (!uri.isNull())
+                    image = CSSImageValue::create(completeURL(uri));
+#if ENABLE(CSS_IMAGE_SET)
+            } else if (value->unit == CSSParserValue::Function && equalIgnoringCase(value->function->name, "-webkit-image-set(")) {
+                image = parseImageSet(m_valueList.get());
+                if (!image)
+                    break;
+#endif
+            } else
+                break;
+
             Vector<int> coords;
             value = m_valueList->next();
             while (value && value->unit == CSSPrimitiveValue::CSS_NUMBER) {
@@ -1930,8 +1943,11 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
                 hotSpot = IntPoint(coords[0], coords[1]);
             }
 
-            if (!uri.isNull())
-                list->append(CSSCursorImageValue::create(completeURL(uri), hasHotSpot, hotSpot));
+            if (!list)
+                list = CSSValueList::createCommaSeparated();
+
+            if (image)
+                list->append(CSSCursorImageValue::create(image, hasHotSpot, hotSpot));
 
             if ((inStrictMode() && !value) || (value && !(value->unit == CSSParserValue::Operator && value->iValue == ',')))
                 return false;

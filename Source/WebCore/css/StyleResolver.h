@@ -45,16 +45,17 @@ namespace WebCore {
 
 enum ESmartMinimumForFontSize { DoNotUseSmartMinimumForFontSize, UseSmartMinimumForFontFize };
 
+class CSSCursorImageValue;
 class CSSFontSelector;
-class CSSPageRule;
-class CSSPrimitiveValue;
-class CSSProperty;
-class CSSRuleList;
 class CSSFontFace;
 class CSSFontFaceRule;
 class CSSImageGeneratorValue;
 class CSSImageSetValue;
 class CSSImageValue;
+class CSSPageRule;
+class CSSPrimitiveValue;
+class CSSProperty;
+class CSSRuleList;
 class CSSSelector;
 class CSSStyleRule;
 class CSSStyleSheet;
@@ -414,6 +415,7 @@ public:
 #if ENABLE(CSS_IMAGE_SET)
     PassRefPtr<StyleImage> setOrPendingFromValue(CSSPropertyID, CSSImageSetValue*);
 #endif
+    PassRefPtr<StyleImage> cursorOrPendingFromValue(CSSPropertyID, CSSCursorImageValue*);
 
     bool applyPropertyToRegularStyle() const { return m_applyPropertyToRegularStyle; }
     bool applyPropertyToVisitedLinkStyle() const { return m_applyPropertyToVisitedLinkStyle; }
