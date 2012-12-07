@@ -3503,8 +3503,6 @@ webkit.org/b/102164 [ MountainLion ] fast/regions/autowidth-normalflow-vertrl.ht
 webkit.org/b/102164 [ MountainLion ] fast/regions/region-style-image-background-color.html [ ImageOnlyFailure ]
 webkit.org/b/102164 [ MountainLion ] fast/regions/render-region-custom-style-mark.html [ ImageOnlyFailure ]
 
-webkit.org/b/87273 [ Release ] webaudio/audioparam-connect-audioratesignal.html [ Pass Timeout ]
-
 webkit.org/b/87321 [ XP ] fast/history/history-subframe-with-name.html [ Failure Pass ]
 webkit.org/b/87321 [ XP ] fast/history/history-traversal-is-asynchronous.html [ Failure Pass ]
 
