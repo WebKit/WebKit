@@ -1,14 +1,14 @@
 This test checks pseudo attribute is exposed correctly.
 
-PASS div.pseudo is ''
+PASS div.webkitPseudo is ''
 PASS div.getAttribute('pseudo') is null
-PASS div.pseudo is 'foo'
+PASS div.webkitPseudo is 'foo'
 PASS div.getAttribute('pseudo') is 'foo'
-PASS div.pseudo is 'bar'
+PASS div.webkitPseudo is 'bar'
 PASS div.getAttribute('pseudo') is 'bar'
-PASS div.pseudo is ''
+PASS div.webkitPseudo is ''
 PASS div.getAttribute('pseudo') is null
-PASS div.pseudo is 'first-letter'
+PASS div.webkitPseudo is 'first-letter'
 PASS successfullyParsed is true
 
 TEST COMPLETE

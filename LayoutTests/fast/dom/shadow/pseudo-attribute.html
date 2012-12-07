@@ -10,24 +10,24 @@
 <script>
 var div = document.createElement('div');
 
-shouldBe("div.pseudo", "''");
+shouldBe("div.webkitPseudo", "''");
 shouldBe("div.getAttribute('pseudo')", "null");
 
 div.setAttribute("pseudo", "foo");
-shouldBe("div.pseudo", "'foo'");
+shouldBe("div.webkitPseudo", "'foo'");
 shouldBe("div.getAttribute('pseudo')", "'foo'");
 
-div.pseudo = "bar";
-shouldBe("div.pseudo", "'bar'");
+div.webkitPseudo = "bar";
+shouldBe("div.webkitPseudo", "'bar'");
 shouldBe("div.getAttribute('pseudo')", "'bar'");
 
 div.removeAttribute('pseudo');
-shouldBe("div.pseudo", "''");
+shouldBe("div.webkitPseudo", "''");
 shouldBe("div.getAttribute('pseudo')", "null");
 
 // Checks pseudo accepts known pseudo-element word.
-div.pseudo = 'first-letter';
-shouldBe("div.pseudo", "'first-letter'");
+div.webkitPseudo = 'first-letter';
+shouldBe("div.webkitPseudo", "'first-letter'");
 
 finishJSTest();
 </script>

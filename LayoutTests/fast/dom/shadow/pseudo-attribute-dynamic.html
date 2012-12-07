@@ -24,12 +24,12 @@ if (window.testRunner)
 
 var shadowRoot = new WebKitShadowRoot(host);
 var div = document.createElement('div');
-div.pseudo = 'x-foo';
+div.webkitPseudo = 'x-foo';
 div.innerHTML = "This should be blue.";
 shadowRoot.appendChild(div);
 
 setTimeout(function() {
-    div.pseudo = 'x-bar';
+    div.webkitPseudo = 'x-bar';
     if (window.testRunner)
         testRunner.notifyDone();
 }, 0);
