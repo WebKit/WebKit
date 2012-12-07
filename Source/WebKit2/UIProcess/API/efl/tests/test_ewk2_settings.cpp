@@ -263,3 +263,27 @@ TEST_F(EWK2UnitTestBase, ewk_settings_private_browsing_enabled)
     ASSERT_TRUE(ewk_settings_private_browsing_enabled_set(settings, false));
     ASSERT_FALSE(ewk_settings_private_browsing_enabled_get(settings));
 }
+
+TEST_F(EWK2UnitTestBase, ewk_settings_text_autosizing_enabled)
+{
+    Ewk_Settings* settings = ewk_view_settings_get(webView());
+
+#if ENABLE(TEXT_AUTOSIZING)
+    // Text autosizing should be disabled by default.
+    ASSERT_FALSE(ewk_settings_text_autosizing_enabled_get(settings));
+
+    ASSERT_TRUE(ewk_settings_text_autosizing_enabled_set(settings, false));
+    ASSERT_FALSE(ewk_settings_text_autosizing_enabled_get(settings));
+
+    ASSERT_TRUE(ewk_settings_text_autosizing_enabled_set(settings, true));
+    ASSERT_TRUE(ewk_settings_text_autosizing_enabled_get(settings));
+#else
+    ASSERT_FALSE(ewk_settings_text_autosizing_enabled_get(settings));
+
+    ASSERT_FALSE(ewk_settings_text_autosizing_enabled_set(settings, false));
+    ASSERT_FALSE(ewk_settings_text_autosizing_enabled_get(settings));
+
+    ASSERT_FALSE(ewk_settings_text_autosizing_enabled_set(settings, true));
+    ASSERT_FALSE(ewk_settings_text_autosizing_enabled_get(settings));
+#endif
+}

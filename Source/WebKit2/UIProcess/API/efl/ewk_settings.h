@@ -494,6 +494,34 @@ EAPI Eina_Bool ewk_settings_private_browsing_enabled_set(Ewk_Settings *settings,
  */
 EAPI Eina_Bool ewk_settings_private_browsing_enabled_get(const Ewk_Settings *settings);
 
+/**
+ * Enables/disables text autosizing.
+ *
+ * By default, the text autosizing is disabled.
+ *
+ * @param settings settings object to set the text autosizing
+ * @param enable @c EINA_TRUE to enable the text autosizing
+ *               @c EINA_FALSE to disable
+ *
+ * @return @c EINA_TRUE on success or @c EINA_FALSE on failure
+ *
+ * @see ewk_settings_text_autosizing_enabled_get()
+ */
+EAPI Eina_Bool ewk_settings_text_autosizing_enabled_set(Ewk_Settings *settings, Eina_Bool enable);
+
+/**
+ * Returns whether the text autosizing is enabled.
+ *
+ * The text autosizing is a feature which adjusts the font size of text in wide
+ * columns, and makes text more legible.
+ *
+ * @param settings settings object to query whether text autosizing is enabled
+ *
+ * @return @c EINA_TRUE if the text autosizing is enabled
+ *         @c EINA_FALSE if not or on failure
+ */
+EAPI Eina_Bool ewk_settings_text_autosizing_enabled_get(const Ewk_Settings *settings);
+
 #ifdef __cplusplus
 }
 #endif

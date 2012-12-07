@@ -396,3 +396,31 @@ Eina_Bool ewk_settings_private_browsing_enabled_get(const Ewk_Settings* settings
 
     return settings->preferences()->privateBrowsingEnabled();
 }
+
+Eina_Bool ewk_settings_text_autosizing_enabled_set(Ewk_Settings* settings, Eina_Bool enable)
+{
+#if ENABLE(TEXT_AUTOSIZING)
+    EINA_SAFETY_ON_NULL_RETURN_VAL(settings, false);
+
+    settings->preferences()->setTextAutosizingEnabled(enable);
+
+    return true;
+#else
+    UNUSED_PARAM(settings);
+    UNUSED_PARAM(enable);
+    return false;
+#endif
+}
+
+Eina_Bool ewk_settings_text_autosizing_enabled_get(const Ewk_Settings* settings)
+{
+#if ENABLE(TEXT_AUTOSIZING)
+    EINA_SAFETY_ON_NULL_RETURN_VAL(settings, false);
+
+    return settings->preferences()->textAutosizingEnabled();
+#else
+    UNUSED_PARAM(settings);
+    return false;
+#endif
+}
+
