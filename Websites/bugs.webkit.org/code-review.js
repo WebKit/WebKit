@@ -1160,7 +1160,7 @@ var CODE_REVIEW_UNITTEST;
 
     classesToRemove.forEach(function(className) {
       forEachNode(fragment.querySelectorAll('.' + className), function(node) {
-        node.remove();
+        $(node).remove();
       });
     });
 
@@ -1188,7 +1188,7 @@ var CODE_REVIEW_UNITTEST;
     selection.selectAllChildren(container);
 
     setTimeout(function() {
-      container.remove();
+      $(container).remove();
       selection.removeAllRanges();
       selection.addRange(range);
     });

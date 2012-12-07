@@ -1,3 +1,15 @@
+2012-12-06  Ojan Vafai  <ojan@chromium.org>
+
+        Review page is super flakey now
+        https://bugs.webkit.org/show_bug.cgi?id=104331
+
+        Committing without review since this is breaking the code review tool.
+
+        remove is only shipping in Chromium. Use jQuery's remove instead.
+
+        * PrettyPatch/PrettyPatch.rb:
+        * code-review.js:
+
 2012-12-05  Ojan Vafai  <ojan@chromium.org>
 
         Make the strip line numbers link into a checkbox
