@@ -1,3 +1,19 @@
+2012-12-07  Antonio Gomes  <a1.gomes@sisa.samsung.com>
+
+        REGRESSION(r136947): Made two tests fail on all platforms (Requested by tonikitoo-ll on #webkit).
+        https://bugs.webkit.org/show_bug.cgi?id=104368
+
+        Unreviewed partial rollout.
+
+        r136947 was too aggressive in the sense of fixing RenderBox::canBeScrolledAndHasScrollableArea
+        as part of itself. Revert the related changes in order to fix both
+        fast/events/autoscroll-should-not-stop-on-keypress.html and
+        fast/events/autoscroll-in-textfield.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::canBeScrolledAndHasScrollableArea):
+        * rendering/RenderBox.h:
+
 2012-12-07  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         [TexMap] Can not do multiple accelerated animations
