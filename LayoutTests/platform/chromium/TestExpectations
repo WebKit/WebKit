@@ -4166,7 +4166,6 @@ webkit.org/b/102542 [ Linux Mac Win ] compositing/checkerboard.html [ ImageOnlyF
 
 webkit.org/b/102724 svg/carto.net/colourpicker.svg [ ImageOnlyFailure ]
 
-webkit.org/b/103927 http/tests/w3c/webperf/submission/resource-timing/html/test_resource_attribute_order.html [ Text ]
 webkit.org/b/103927 http/tests/w3c/webperf/submission/resource-timing/html/test_resource_dynamic_insertion.html [ Text ]
 webkit.org/b/103927 http/tests/w3c/webperf/submission/resource-timing/html/test_resource_frame_initiator_type.html [ Text ]
 webkit.org/b/103927 http/tests/w3c/webperf/submission/resource-timing/html/test_resource_initiator_types.html [ Text ]
