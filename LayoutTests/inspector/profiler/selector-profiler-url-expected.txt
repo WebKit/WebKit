@@ -1,0 +1,5 @@
+Tests that CSS selector profile entries contain valid stylesheet URLs. Bug 104225.
+
+Value
+#input:focus stylesheet URL: inspector/profiler/selector-profiler-url.html
+

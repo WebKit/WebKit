@@ -64,6 +64,7 @@
 #include "ScriptArguments.h"
 #include "ScriptCallStack.h"
 #include "ScriptProfile.h"
+#include "StyleResolver.h"
 #include "StyleRule.h"
 #include "WorkerContext.h"
 #include "WorkerRuntimeAgent.h"
@@ -569,12 +570,12 @@ void InspectorInstrumentation::didScheduleStyleRecalculationImpl(InstrumentingAg
         resourceAgent->didScheduleStyleRecalculation(document);
 }
 
-InspectorInstrumentationCookie InspectorInstrumentation::willMatchRuleImpl(InstrumentingAgents* instrumentingAgents, const StyleRule* rule)
+InspectorInstrumentationCookie InspectorInstrumentation::willMatchRuleImpl(InstrumentingAgents* instrumentingAgents, StyleRule* rule, StyleResolver* styleResolver)
 {
     InspectorCSSAgent* cssAgent = instrumentingAgents->inspectorCSSAgent();
     if (cssAgent) {
-        RefPtr<CSSRule> cssRule = rule->createCSSOMWrapper();
-        cssAgent->willMatchRule(static_cast<CSSStyleRule*>(cssRule.get()));
+        CSSStyleRule* cssRule = styleResolver->ensureFullCSSOMWrapperForInspector(rule);
+        cssAgent->willMatchRule(cssRule);
         return InspectorInstrumentationCookie(instrumentingAgents, 1);
     }
 
@@ -588,12 +589,12 @@ void InspectorInstrumentation::didMatchRuleImpl(const InspectorInstrumentationCo
         cssAgent->didMatchRule(matched);
 }
 
-InspectorInstrumentationCookie InspectorInstrumentation::willProcessRuleImpl(InstrumentingAgents* instrumentingAgents, const StyleRule* rule)
+InspectorInstrumentationCookie InspectorInstrumentation::willProcessRuleImpl(InstrumentingAgents* instrumentingAgents, StyleRule* rule, StyleResolver* styleResolver)
 {
     InspectorCSSAgent* cssAgent = instrumentingAgents->inspectorCSSAgent();
     if (cssAgent) {
-        RefPtr<CSSRule> cssRule = rule->createCSSOMWrapper();
-        cssAgent->willProcessRule(static_cast<CSSStyleRule*>(cssRule.get()));
+        CSSStyleRule* cssRule = styleResolver->ensureFullCSSOMWrapperForInspector(rule);
+        cssAgent->willProcessRule(cssRule);
         return InspectorInstrumentationCookie(instrumentingAgents, 1);
     }
 

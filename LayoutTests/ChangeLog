@@ -1,3 +1,13 @@
+2012-12-07  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: the "Sources" column is always empty in CSS selector profiles
+        https://bugs.webkit.org/show_bug.cgi?id=104225
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/profiler/selector-profiler-url-expected.txt: Added.
+        * inspector/profiler/selector-profiler-url.html: Added.
+
 2012-12-07  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: enable inspector tests on chromium-mac.
