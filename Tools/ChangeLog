@@ -1,3 +1,39 @@
+2012-12-07  Xiaobo Wang  <xbwang@torchmobile.com.cn>
+
+        [BlackBerry] DRT - Update implementation of TestRunner.setCustomPolicyDelegate()
+        https://bugs.webkit.org/show_bug.cgi?id=104243
+
+        RIM PR 259337
+
+        Reviewed by Rob Buis.
+
+        1. Implement calculation of navigation originating in
+        didDecidePolicyForNavigationAction().
+        2. Implement policy delegate for resource response.
+        3. Enable customPolicyDelegate if waitForPolicyDelegate() is called.
+        4. Minor optional updates in dump() and dumpFrameLoadCallbacks().
+
+        The patch fixed the following tests:
+        - http/tests/download
+        - fast/forms/mailto/formenctype-attribute-button-html.html
+        - fast/forms/mailto/formenctype-attribute-input-html.html
+        - fast/encoding/mailto-always-utf-8.html
+
+        * DumpRenderTree/blackberry/DumpRenderTree.cpp:
+        (BlackBerry::WebKit::DumpRenderTree::DumpRenderTree):
+        (BlackBerry::WebKit::DumpRenderTree::resetToConsistentStateBeforeTesting):
+        (BlackBerry::WebKit::DumpRenderTree::dump):
+        (BlackBerry::WebKit::DumpRenderTree::didFinishLoadForFrame):
+        (BlackBerry::WebKit::DumpRenderTree::didDecidePolicyForNavigationAction):
+        (BlackBerry::WebKit::DumpRenderTree::didDecidePolicyForResponse):
+        (BlackBerry::WebKit::DumpRenderTree::setCustomPolicyDelegate):
+        * DumpRenderTree/blackberry/DumpRenderTreeBlackBerry.h:
+        (DumpRenderTree):
+        * DumpRenderTree/blackberry/TestRunnerBlackBerry.cpp:
+        (TestRunner::setCustomPolicyDelegate):
+        (TestRunner::waitForPolicyDelegate):
+        (TestRunner::overridePreference):
+
 2012-12-07  Gwang Yoon Hwang  <ryumiel@company100.net>
 
         [Qt] Adjust library name in layout_tests/port/qt.py after Qt5-r40

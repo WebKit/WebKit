@@ -191,9 +191,7 @@ void TestRunner::setCacheModel(int)
 
 void TestRunner::setCustomPolicyDelegate(bool setDelegate, bool permissive)
 {
-    UNUSED_PARAM(setDelegate);
-    UNUSED_PARAM(permissive);
-    notImplemented();
+    BlackBerry::WebKit::DumpRenderTree::currentInstance()->setCustomPolicyDelegate(setDelegate, permissive);
 }
 
 void TestRunner::clearApplicationCacheForOrigin(OpaqueJSString*)
@@ -302,6 +300,7 @@ void TestRunner::setUserStyleSheetLocation(JSStringRef path)
 
 void TestRunner::waitForPolicyDelegate()
 {
+    setCustomPolicyDelegate(true, true);
     setWaitToDump(true);
     waitForPolicy = true;
 }
@@ -439,6 +438,8 @@ void TestRunner::overridePreference(JSStringRef key, JSStringRef value)
         mainFrame->page()->settings()->setHyperlinkAuditingEnabled(valueStr == "true" || valueStr == "1");
     else if (keyStr == "WebSocketsEnabled")
         BlackBerry::WebKit::DumpRenderTree::currentInstance()->page()->settings()->setWebSocketsEnabled(valueStr == "true" || valueStr == "1");
+    else if (keyStr == "WebKitDefaultTextEncodingName")
+        BlackBerry::WebKit::DumpRenderTree::currentInstance()->page()->settings()->setDefaultTextEncodingName(valueStr);
 }
 
 void TestRunner::setAlwaysAcceptCookies(bool alwaysAcceptCookies)

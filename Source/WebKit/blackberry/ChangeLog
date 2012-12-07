@@ -1,3 +1,34 @@
+2012-12-07  Xiaobo Wang  <xbwang@torchmobile.com.cn>
+
+        [BlackBerry] DRT - Update implementation of TestRunner.setCustomPolicyDelegate()
+        https://bugs.webkit.org/show_bug.cgi?id=104243
+
+        RIM PR 259337
+
+        Reviewed by Rob Buis.
+
+        1. Add DRT callback in dispatchDecidePolicyForResponse.
+        2. Pass frame pointer to DRT callback in
+        dispatchDecidePolicyForNavigationAction, so that it can be used to
+        calculate originating.
+        3. Fix some webkit style errors.
+
+        The patch fixed the following tests:
+        - http/tests/download
+        - fast/forms/mailto/formenctype-attribute-button-html.html
+        - fast/forms/mailto/formenctype-attribute-input-html.html
+        - fast/encoding/mailto-always-utf-8.html
+
+        * Api/DumpRenderTreeClient.h:
+        * WebCoreSupport/FrameLoaderClientBlackBerry.cpp:
+        (WebCore::FrameLoaderClientBlackBerry::dispatchDecidePolicyForResponse):
+        (WebCore::FrameLoaderClientBlackBerry::dispatchDecidePolicyForNavigationAction):
+        (WebCore::FrameLoaderClientBlackBerry::transitionToCommittedForNewPage):
+        (WebCore::FrameLoaderClientBlackBerry::dispatchDidFinishLoad):
+        (WebCore::FrameLoaderClientBlackBerry::dispatchDidFailProvisionalLoad):
+        (WebCore::FrameLoaderClientBlackBerry::dispatchWillSendRequest):
+        (WebCore::FrameLoaderClientBlackBerry::decidePolicyForExternalLoad):
+
 2012-12-07  Mary Wu  <mary.wu@torchmobile.com.cn>
 
         [BlackBerry] new target window would cause the url being loaded twice

@@ -55,12 +55,13 @@ public:
     virtual void didFinishDocumentLoadForFrame(WebCore::Frame*) = 0;
     virtual void didClearWindowObjectInWorld(WebCore::DOMWrapperWorld*, JSGlobalContextRef, JSObjectRef windowObject) = 0;
     virtual void didReceiveTitleForFrame(const String& title, WebCore::Frame*) = 0;
-    virtual void didDecidePolicyForNavigationAction(const WebCore::NavigationAction&, const WebCore::ResourceRequest&) = 0;
+    virtual void didDecidePolicyForNavigationAction(const WebCore::NavigationAction&, const WebCore::ResourceRequest&, WebCore::Frame*) = 0;
+    virtual void didDecidePolicyForResponse(const WebCore::ResourceResponse&) = 0;
     virtual void didDispatchWillPerformClientRedirect() = 0;
     virtual void didHandleOnloadEventsForFrame(WebCore::Frame*) = 0;
 
     // ChromeClient delegates
-    virtual void addMessageToConsole(const String& message, unsigned int lineNumber, const String& sourceID) = 0;
+    virtual void addMessageToConsole(const String& message, unsigned lineNumber, const String& sourceID) = 0;
     virtual void runJavaScriptAlert(const String& message) = 0;
     virtual bool runJavaScriptConfirm(const String& message) = 0;
     virtual String runJavaScriptPrompt(const String& message, const String& defaultValue) = 0;
