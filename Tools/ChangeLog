@@ -1,3 +1,11 @@
+2012-12-06  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed fix after r136896, unbreak --debug-rwt to make bots result verbose again.
+        https://bugs.webkit.org/show_bug.cgi?id=104296
+
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        (main):
+
 2012-12-06  Rick Byers  <rbyers@chromium.org>
 
         CSS cursor property should support webkit-image-set

@@ -420,6 +420,8 @@ def main(argv=None, stdout=sys.stdout, stderr=sys.stderr):
         print >> stderr, str(e)
         return EXCEPTIONAL_EXIT_STATUS
 
+    logging.getLogger().setLevel(logging.DEBUG if options.debug_rwt_logging else logging.INFO)
+
     if options.lint_test_files:
         return lint(port, options, stderr)
 
