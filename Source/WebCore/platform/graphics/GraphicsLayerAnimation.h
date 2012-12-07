@@ -85,6 +85,7 @@ public:
 
     void add(const GraphicsLayerAnimation&);
     void remove(const String& name);
+    void remove(const String& name, AnimatedPropertyID);
     void pause(const String&, double);
     void suspend(double);
     void resume();

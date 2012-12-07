@@ -2387,7 +2387,6 @@ webkit.org/b/99306 animations/additive-transform-animations.html [ ImageOnlyFail
 webkit.org/b/99306 animations/cross-fade-webkit-mask-box-image.html [ ImageOnlyFailure ]
 webkit.org/b/99306 animations/missing-values-first-keyframe.html [ ImageOnlyFailure ]
 webkit.org/b/99306 animations/missing-values-last-keyframe.html [ ImageOnlyFailure ]
-webkit.org/b/99306 animations/opacity-transform-animation.html [ ImageOnlyFailure ]
 webkit.org/b/99306 css3/filters/effect-blur-hw.html [ ImageOnlyFailure ] # Blur effect radius is too small on WebKit1, the effect not applied at all on WebKit2.
 
 # REGRESSION(r132143): It made fast/xmlhttprequest/xmlhttprequest-recursive-sync-event.html flakey
