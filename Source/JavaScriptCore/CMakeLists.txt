@@ -254,6 +254,7 @@ set(JavaScriptCore_SOURCES
     runtime/LiteralParser.cpp
     runtime/Lookup.cpp
     runtime/MathObject.cpp
+    runtime/MemoryStatistics.cpp
     runtime/NameConstructor.cpp
     runtime/NameConstructor.h
     runtime/NameInstance.cpp

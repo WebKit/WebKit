@@ -1,7 +1,3 @@
-list(APPEND JavaScriptCore_SOURCES
-    jit/ExecutableAllocator.cpp
-)
-
 if (ENABLE_JIT AND WTF_CPU_ARM)
     add_custom_command(
         OUTPUT ${DERIVED_SOURCES_DIR}/GeneratedJITStubs.asm
