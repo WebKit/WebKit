@@ -161,12 +161,13 @@ void MediaPlayerPrivate::load(const WTF::String& url)
 
     void* tabId = m_webCorePlayer->mediaPlayerClient()->mediaPlayerHostWindow()->platformPageClient();
     int playerID = m_webCorePlayer->mediaPlayerClient()->mediaPlayerHostWindow()->platformPageClient()->playerID();
+    bool isVideo = m_webCorePlayer->mediaPlayerClient()->mediaPlayerIsVideo();
 
     deleteGuardedObject(m_platformPlayer);
 #if USE(ACCELERATED_COMPOSITING)
-    m_platformPlayer = PlatformPlayer::create(this, tabId, true, modifiedUrl.utf8().data());
+    m_platformPlayer = PlatformPlayer::create(this, tabId, isVideo, true, modifiedUrl.utf8().data());
 #else
-    m_platformPlayer = PlatformPlayer::create(this, tabId, false, modifiedUrl.utf8().data());
+    m_platformPlayer = PlatformPlayer::create(this, tabId, isVideo, false, modifiedUrl.utf8().data());
 #endif
 
     WTF::String cookiePairs;
