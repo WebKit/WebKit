@@ -477,14 +477,17 @@ static bool convertStringToWchar(const WTF::String& string, wchar_t* dest, int d
 {
     ASSERT(dest);
 
-    if (!string.length()) {
+    int length = string.length();
+
+    if (!length) {
         destLength = 0;
         return true;
     }
 
     UErrorCode ec = U_ZERO_ERROR;
+
     // wchar_t strings sent to IMF are 32 bit so casting to UChar32 is safe.
-    u_strToUTF32(reinterpret_cast<UChar32*>(dest), destCapacity, destLength, string.characters(), string.length(), &ec);
+    u_strToUTF32(reinterpret_cast<UChar32*>(dest), destCapacity, destLength, string.characters(), length, &ec);
     if (ec) {
         logAlways(LogLevelCritical, "InputHandler::convertStringToWchar Error converting string ec (%d).", ec);
         destLength = 0;
@@ -574,6 +577,8 @@ void InputHandler::learnText()
 void InputHandler::requestCheckingOfString(PassRefPtr<WebCore::TextCheckingRequest> textCheckingRequest)
 {
     m_request = textCheckingRequest;
+
+    InputLog(LogLevelInfo, "InputHandler::requestCheckingOfString '%s'", m_request->text().latin1().data());
 
     if (!m_request) {
         SpellingLog(LogLevelWarn, "InputHandler::requestCheckingOfString did not receive a valid request.");
@@ -1499,7 +1504,7 @@ void InputHandler::cancelSelection()
 
 bool InputHandler::handleKeyboardInput(const Platform::KeyboardEvent& keyboardEvent, bool changeIsPartOfComposition)
 {
-    InputLog(LogLevelInfo, "InputHandler::handleKeyboardInput received character=%lc, type=%d", keyboardEvent.character(), keyboardEvent.type());
+    InputLog(LogLevelInfo, "InputHandler::handleKeyboardInput received character='%c', type=%d", keyboardEvent.character(), keyboardEvent.type());
 
     // Clearing the m_receivedBackspaceKeyDown state on any KeyboardEvent.
     m_receivedBackspaceKeyDown = false;
