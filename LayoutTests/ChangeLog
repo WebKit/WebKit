@@ -1,3 +1,14 @@
+2012-12-07  Dima Gorbik  <dgorbik@apple.com>
+
+        Implement general ::cue pseudo element for the <video>
+        https://bugs.webkit.org/show_bug.cgi?id=104043
+
+        Reviewed by Eric Carlson.
+
+        * media/track/captions-webvtt/styling.vtt: Added.
+        * media/track/track-css-all-cues-expected.txt: Added.
+        * media/track/track-css-all-cues.html: Added.
+
 2012-12-07  Kondapally Kalyan  <kalyan.kondapally@intel.com>
 
         Fix webgl-depth-texture.html to match the test expectation.

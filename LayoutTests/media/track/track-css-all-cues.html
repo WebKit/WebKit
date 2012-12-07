@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+        <script src=../media-file.js></script>
+        <script src=../video-test.js></script>
+        <script src=../media-controls.js></script>
+
+        <style>
+
+        video::cue { color:red }
+
+        </style>
+
+        <script>
+
+        function seeked()
+        {
+            testExpected("getComputedStyle(textTrackDisplayElement(video).firstChild).color", "rgb(255, 0, 0)");
+            endTest();
+        }
+
+        function loaded()
+        {
+            consoleWrite("Test that style to all cues is applied correctly.");
+            findMediaElement();
+            video.src = findMediaFile('video', '../content/test');
+            waitForEvent('seeked', seeked);
+            waitForEvent('canplaythrough', function() { video.currentTime = .5; });
+        }
+
+        </script>
+    </head>
+    <body onload="loaded()">
+        <video controls >
+            <track src="captions-webvtt/styling.vtt" kind="captions" default>
+        </video>
+    </body>
+</html>

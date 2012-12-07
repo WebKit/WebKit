@@ -1,0 +1,6 @@
+Test that style to all cues is applied correctly.
+EVENT(canplaythrough)
+EVENT(seeked)
+EXPECTED (getComputedStyle(textTrackDisplayElement(video).firstChild).color == 'rgb(255, 0, 0)') OK
+END OF TEST
+

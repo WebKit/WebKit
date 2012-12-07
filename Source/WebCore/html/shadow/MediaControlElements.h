@@ -438,6 +438,7 @@ public:
 
     void updateDisplay();
     void updateSizes();
+    void createSubtrees(Document*);
 
 private:
     explicit MediaControlTextTrackContainerElement(Document*);
@@ -447,6 +448,7 @@ private:
 
     IntRect m_videoDisplaySize;
     float m_fontSize;
+    RefPtr<HTMLElement> m_cueContainer;
 };
 
 #endif
