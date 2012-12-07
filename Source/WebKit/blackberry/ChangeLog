@@ -1,3 +1,18 @@
+2012-12-07  Nima Ghanavatian  <nghanavatian@rim.com>
+
+        [BlackBerry] Strip whitespace from learned text.
+        https://bugs.webkit.org/show_bug.cgi?id=104391
+
+        Reviewed by Rob Buis.
+
+        This was removing the first word from the sentence being learned. Using
+        stripWhiteSpace to remove spaces from the start and end of the text.
+
+        Internally reviewed by Mike Fenton.
+
+        * WebKitSupport/InputHandler.cpp:
+        (BlackBerry::WebKit::InputHandler::learnText):
+
 2012-12-07  Otto Derek Cheung  <otcheung@rim.com>
 
         [BlackBerry] GeolocationClientBB should show file system path in prompts when host is not avaliable

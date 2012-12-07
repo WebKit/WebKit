@@ -558,7 +558,7 @@ void InputHandler::learnText()
 
     WTF::String textInField(elementText());
     textInField = textInField.substring(std::max(0, static_cast<int>(textInField.length() - MaxLearnTextDataSize)), textInField.length());
-    textInField.remove(0, textInField.find(" "));
+    textInField = textInField.stripWhiteSpace();
 
     // Build up the 500 character strings in word chunks.
     // Spec says 1000, but memory corruption has been observed.
