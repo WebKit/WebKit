@@ -30,6 +30,7 @@
 
 #include "RenderImageResource.h"
 #include "RenderTheme.h"
+#include "Timer.h"
 
 namespace WebCore {
 
@@ -43,6 +44,7 @@ public:
     void updateSnapshot(PassRefPtr<Image>);
 
     void handleEvent(Event*);
+    void hoverDelayTimerFired(DeferrableOneShotTimer<RenderSnapshottedPlugIn>*);
 
 private:
     HTMLPlugInImageElement* plugInImageElement() const;
@@ -54,14 +56,15 @@ private:
     virtual void paintReplaced(PaintInfo&, const LayoutPoint&) OVERRIDE;
 
     void paintReplacedSnapshot(PaintInfo&, const LayoutPoint&);
-    void paintButton(PaintInfo&, const LayoutPoint&);
-    void repaintButton();
+    void paintLabel(PaintInfo&, const LayoutPoint&);
+    void repaintLabel();
 
     virtual void layout() OVERRIDE;
 
     OwnPtr<RenderImageResource> m_snapshotResource;
-    LayoutRect m_buttonRect;
-    bool m_isMouseInButtonRect;
+    LayoutRect m_labelRect;
+    bool m_shouldShowLabel;
+    DeferrableOneShotTimer<RenderSnapshottedPlugIn> m_hoverDelayTimer;
 };
 
 inline RenderSnapshottedPlugIn* toRenderSnapshottedPlugIn(RenderObject* object)

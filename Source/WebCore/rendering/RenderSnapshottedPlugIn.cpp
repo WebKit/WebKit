@@ -39,12 +39,14 @@ namespace WebCore {
 
 static const int autoStartPlugInSizeThresholdWidth = 1;
 static const int autoStartPlugInSizeThresholdHeight = 1;
-static const int startButtonPadding = 10;
+static const int startLabelPadding = 10;
+static const double hoverDelay = 1;
 
 RenderSnapshottedPlugIn::RenderSnapshottedPlugIn(HTMLPlugInImageElement* element)
     : RenderEmbeddedObject(element)
     , m_snapshotResource(RenderImageResource::create())
-    , m_isMouseInButtonRect(false)
+    , m_shouldShowLabel(false)
+    , m_hoverDelayTimer(this, &RenderSnapshottedPlugIn::hoverDelayTimerFired, hoverDelay)
 {
     m_snapshotResource->initialize(this);
 }
@@ -84,7 +86,8 @@ void RenderSnapshottedPlugIn::paintReplaced(PaintInfo& paintInfo, const LayoutPo
 {
     if (plugInImageElement()->displayState() < HTMLPlugInElement::PlayingWithPendingMouseClick) {
         paintReplacedSnapshot(paintInfo, paintOffset);
-        paintButton(paintInfo, paintOffset);
+        if (m_shouldShowLabel)
+            paintLabel(paintInfo, paintOffset);
         return;
     }
 
@@ -122,39 +125,36 @@ void RenderSnapshottedPlugIn::paintReplacedSnapshot(PaintInfo& paintInfo, const 
     context->drawImage(image.get(), style()->colorSpace(), alignedRect, CompositeSourceOver, shouldRespectImageOrientation(), useLowQualityScaling);
 }
 
-static Image* startButtonImage()
+static Image* startLabelImage()
 {
-    static Image* buttonImage = Image::loadPlatformResource("startButton").leakRef();
-    return buttonImage;
+    static Image* labelImage = Image::loadPlatformResource("startButton").leakRef();
+    return labelImage;
 }
 
-static Image* startButtonPressedImage()
-{
-    static Image* buttonImage = Image::loadPlatformResource("startButtonPressed").leakRef();
-    return buttonImage;
-}
-
-void RenderSnapshottedPlugIn::paintButton(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
+void RenderSnapshottedPlugIn::paintLabel(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
     LayoutRect contentRect = contentBoxRect();
     if (contentRect.isEmpty())
         return;
 
-    Image* buttonImage = startButtonImage();
-    if (plugInImageElement()->active()) {
-        if (m_isMouseInButtonRect)
-            buttonImage = startButtonPressedImage();
-    } else if (!plugInImageElement()->hovered())
+    if (!plugInImageElement()->hovered())
         return;
 
-    LayoutPoint contentLocation = paintOffset + contentRect.maxXMaxYCorner() - buttonImage->size() - LayoutSize(startButtonPadding, startButtonPadding);
-    paintInfo.context->drawImage(buttonImage, ColorSpaceDeviceRGB, roundedIntPoint(contentLocation), buttonImage->rect());
+    Image* labelImage = startLabelImage();
+    LayoutPoint contentLocation = paintOffset + contentRect.maxXMaxYCorner() - labelImage->size() - LayoutSize(startLabelPadding, startLabelPadding);
+    paintInfo.context->drawImage(labelImage, ColorSpaceDeviceRGB, roundedIntPoint(contentLocation), labelImage->rect());
 }
 
-void RenderSnapshottedPlugIn::repaintButton()
+void RenderSnapshottedPlugIn::repaintLabel()
 {
-    // FIXME: This is unfortunate. We should just repaint the button.
+    // FIXME: This is unfortunate. We should just repaint the label.
     repaint();
+}
+
+void RenderSnapshottedPlugIn::hoverDelayTimerFired(DeferrableOneShotTimer<RenderSnapshottedPlugIn>*)
+{
+    m_shouldShowLabel = true;
+    repaintLabel();
 }
 
 CursorDirective RenderSnapshottedPlugIn::getCursor(const LayoutPoint& point, Cursor& overrideCursor) const
@@ -173,27 +173,36 @@ void RenderSnapshottedPlugIn::handleEvent(Event* event)
 
     MouseEvent* mouseEvent = static_cast<MouseEvent*>(event);
 
-    if (event->type() == eventNames().clickEvent && mouseEvent->button() == LeftButton) {
-        if (m_isMouseInButtonRect)
-            plugInImageElement()->setDisplayState(HTMLPlugInElement::Playing);
-        else {
-            plugInImageElement()->setDisplayState(HTMLPlugInElement::PlayingWithPendingMouseClick);
-            plugInImageElement()->setPendingClickEvent(mouseEvent);
-        }
+    if (event->type() == eventNames().clickEvent) {
+        if (mouseEvent->button() != LeftButton)
+            return;
+
+        plugInImageElement()->setDisplayState(HTMLPlugInElement::PlayingWithPendingMouseClick);
+        plugInImageElement()->setPendingClickEvent(mouseEvent);
+
         if (widget()) {
             if (Frame* frame = document()->frame())
                 frame->loader()->client()->recreatePlugin(widget());
             repaint();
         }
         event->setDefaultHandled();
-    } else if (event->type() == eventNames().mouseoverEvent || event->type() == eventNames().mouseoutEvent)
-        repaintButton();
-    else if (event->type() == eventNames().mousedownEvent) {
-        bool isMouseInButtonRect = m_buttonRect.contains(IntPoint(mouseEvent->offsetX(), mouseEvent->offsetY()));
-        if (isMouseInButtonRect != m_isMouseInButtonRect) {
-            m_isMouseInButtonRect = isMouseInButtonRect;
-            repaintButton();
-        }
+    } else if (event->type() == eventNames().mousedownEvent) {
+        if (mouseEvent->button() != LeftButton)
+            return;
+
+        if (m_hoverDelayTimer.isActive())
+            m_hoverDelayTimer.stop();
+
+        event->setDefaultHandled();
+    } else if (event->type() == eventNames().mouseoverEvent) {
+        m_hoverDelayTimer.restart();
+        event->setDefaultHandled();
+    } else if (event->type() == eventNames().mouseoutEvent) {
+        if (m_hoverDelayTimer.isActive())
+            m_hoverDelayTimer.stop();
+        m_shouldShowLabel = false;
+        repaintLabel();
+        event->setDefaultHandled();
     }
 }
 
@@ -208,8 +217,8 @@ void RenderSnapshottedPlugIn::layout()
             plugInImageElement()->setDisplayState(HTMLPlugInElement::Playing);
     }
 
-    LayoutSize buttonSize = startButtonImage()->size();
-    m_buttonRect = LayoutRect(contentBoxRect().maxXMaxYCorner() - LayoutSize(startButtonPadding, startButtonPadding) - buttonSize, buttonSize);
+    LayoutSize labelSize = startLabelImage()->size();
+    m_labelRect = LayoutRect(contentBoxRect().maxXMaxYCorner() - LayoutSize(startLabelPadding, startLabelPadding) - labelSize, labelSize);
 }
 
 } // namespace WebCore

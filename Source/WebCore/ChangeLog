@@ -1,3 +1,38 @@
+2012-12-07  Jon Lee  <jonlee@apple.com>
+
+        Display the auto-start label image after a delay
+        https://bugs.webkit.org/show_bug.cgi?id=104173
+        <rdar://problem/12820071>
+
+        Reviewed by Dan Bernstein.
+
+        Treat the button now as a label. Once the user has hovered over the plug-in, wait a little while before showing the label.
+
+        * rendering/RenderSnapshottedPlugIn.h:
+        (RenderSnapshottedPlugIn): Add a one-shot timer, and a variable representing whether the label should
+        be drawn. Remove the variable that determines whether the label is active.
+
+        * rendering/RenderSnapshottedPlugIn.cpp:
+        (WebCore::RenderSnapshottedPlugIn::RenderSnapshottedPlugIn): Set the time to a delay of 1 second.
+        (WebCore::RenderSnapshottedPlugIn::paintReplaced): Paint the label only when we should.
+        (WebCore::RenderSnapshottedPlugIn::paintLabel): The label should only paint in its hovered state.
+        (WebCore::startLabelImage): Renamed.
+        (WebCore::RenderSnapshottedPlugIn::repaintLabel): Renamed.
+        (WebCore::RenderSnapshottedPlugIn::hoverDelayTimerFired): Now that the timer has fired, we should paint
+        the label. Repaint.
+        (WebCore::RenderSnapshottedPlugIn::handleEvent): Update event handling. Click event handler is the
+        same, except we move the label check inside so that if the click is not the left label we don't
+        fall through to the other irrevelant if clauses.
+            For the mouse down handler, make sure to check for the left label. If the hover timer is still running,
+        stop it, so that we don't draw a label while the user is in the middle of a mouse gesture.
+            Redo mouse over and out. On mouse over we start the delay timer. On mouse out we stop the delay timer
+        if it is still running, reset state, and paint the label out.
+        (WebCore::RenderSnapshottedPlugIn::layout): Refactor.
+
+        * Resources/startButtonPressed.png: Removed.
+        * Resources/startButtonPressed@2x.png: Removed.
+        * WebCore.xcodeproj/project.pbxproj:
+
 2012-12-07  Scott Violet  <sky@chromium.org>
 
         [chromium] Remove linux theme related files and switch to default

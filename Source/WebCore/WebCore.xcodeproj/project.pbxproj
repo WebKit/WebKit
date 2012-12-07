@@ -933,8 +933,6 @@
 		319FBD5F15D2F464009640A6 /* CachedImageClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 319FBD5D15D2F444009640A6 /* CachedImageClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		31A963A51655D426000D4645 /* startButton.png in Resources */ = {isa = PBXBuildFile; fileRef = 31A963A11655D426000D4645 /* startButton.png */; };
 		31A963A61655D426000D4645 /* startButton@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 31A963A21655D426000D4645 /* startButton@2x.png */; };
-		31A963A71655D426000D4645 /* startButtonPressed.png in Resources */ = {isa = PBXBuildFile; fileRef = 31A963A31655D426000D4645 /* startButtonPressed.png */; };
-		31A963A81655D426000D4645 /* startButtonPressed@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 31A963A41655D426000D4645 /* startButtonPressed@2x.png */; };
 		31C0FF210E4CEB6E007D6FE5 /* WebKitAnimationEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 31C0FF1B0E4CEB6E007D6FE5 /* WebKitAnimationEvent.cpp */; };
 		31C0FF220E4CEB6E007D6FE5 /* WebKitAnimationEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 31C0FF1C0E4CEB6E007D6FE5 /* WebKitAnimationEvent.h */; };
 		31C0FF240E4CEB6E007D6FE5 /* WebKitTransitionEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 31C0FF1E0E4CEB6E007D6FE5 /* WebKitTransitionEvent.cpp */; };
@@ -8131,8 +8129,6 @@
 		319FBD5D15D2F444009640A6 /* CachedImageClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CachedImageClient.h; sourceTree = "<group>"; };
 		31A963A11655D426000D4645 /* startButton.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = startButton.png; sourceTree = "<group>"; };
 		31A963A21655D426000D4645 /* startButton@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "startButton@2x.png"; sourceTree = "<group>"; };
-		31A963A31655D426000D4645 /* startButtonPressed.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = startButtonPressed.png; sourceTree = "<group>"; };
-		31A963A41655D426000D4645 /* startButtonPressed@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "startButtonPressed@2x.png"; sourceTree = "<group>"; };
 		31C0FF1B0E4CEB6E007D6FE5 /* WebKitAnimationEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebKitAnimationEvent.cpp; sourceTree = "<group>"; };
 		31C0FF1C0E4CEB6E007D6FE5 /* WebKitAnimationEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKitAnimationEvent.h; sourceTree = "<group>"; };
 		31C0FF1D0E4CEB6E007D6FE5 /* WebKitAnimationEvent.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebKitAnimationEvent.idl; sourceTree = "<group>"; };
@@ -14541,8 +14537,6 @@
 				85136C960AED665900F90A3D /* southWestResizeCursor.png */,
 				31A963A11655D426000D4645 /* startButton.png */,
 				31A963A21655D426000D4645 /* startButton@2x.png */,
-				31A963A31655D426000D4645 /* startButtonPressed.png */,
-				31A963A41655D426000D4645 /* startButtonPressed@2x.png */,
 				93153BDB141959BB00FCF5BE /* textAreaResizeCorner.png */,
 				9370918C1416D86B00477333 /* textAreaResizeCorner@2x.png */,
 				46D4F2480AF97E810035385A /* verticalTextCursor.png */,
@@ -26055,8 +26049,6 @@
 				1AB1AE7B0C051FDE00139F4F /* zoomOutCursor.png in Resources */,
 				31A963A51655D426000D4645 /* startButton.png in Resources */,
 				31A963A61655D426000D4645 /* startButton@2x.png in Resources */,
-				31A963A71655D426000D4645 /* startButtonPressed.png in Resources */,
-				31A963A81655D426000D4645 /* startButtonPressed@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
