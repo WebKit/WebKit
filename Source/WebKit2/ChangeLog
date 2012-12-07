@@ -1,3 +1,14 @@
+2012-12-06  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r136900.
+        http://trac.webkit.org/changeset/136900
+        https://bugs.webkit.org/show_bug.cgi?id=104318
+
+        Unreviewed build for Windows port. (Requested by rfong on
+        #webkit).
+
+        * win/WebKit2.def.in:
+
 2012-12-06  Jon Lee  <jonlee@apple.com>
 
         Retry snapshots if they are too empty
