@@ -85,7 +85,7 @@ bool ChildProcessProxy::sendMessage(CoreIPC::MessageID messageID, PassOwnPtr<Cor
     }
 
     // If the web process has exited, connection will be null here.
-    if (!connection())
+    if (!m_connection)
         return false;
 
     return connection()->sendMessage(messageID, encoder, messageSendFlags);
