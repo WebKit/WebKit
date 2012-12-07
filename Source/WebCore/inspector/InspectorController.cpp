@@ -135,7 +135,7 @@ InspectorController::InspectorController(Page* page, InspectorClient* inspectorC
     m_agents.append(consoleAgentPtr.release());
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
-    OwnPtr<InspectorDebuggerAgent> debuggerAgentPtr(PageDebuggerAgent::create(m_instrumentingAgents.get(), m_state.get(), page, m_injectedScriptManager.get(), m_overlay.get()));
+    OwnPtr<InspectorDebuggerAgent> debuggerAgentPtr(PageDebuggerAgent::create(m_instrumentingAgents.get(), m_state.get(), pageAgent, m_injectedScriptManager.get(), m_overlay.get()));
     m_debuggerAgent = debuggerAgentPtr.get();
     m_agents.append(debuggerAgentPtr.release());
 

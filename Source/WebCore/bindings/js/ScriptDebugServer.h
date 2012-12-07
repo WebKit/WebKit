@@ -90,6 +90,11 @@ public:
     void recompileAllJSFunctionsSoon();
     virtual void recompileAllJSFunctions(Timer<ScriptDebugServer>* = 0) = 0;
 
+    void setScriptPreprocessor(const String&)
+    {
+        // FIXME(webkit.org/b/82203): Implement preprocessor.
+    }
+
     bool isPaused() { return m_paused; }
 
     void compileScript(ScriptState*, const String& expression, const String& sourceURL, String* scriptId, String* exceptionMessage);

@@ -77,7 +77,6 @@ public:
     virtual void clearFrontend();
     virtual void restore();
 
-    void didClearMainFrameWindowObject();
     bool isPaused();
     void addMessageToConsole(MessageSource, MessageType);
 
@@ -144,6 +143,7 @@ protected:
     virtual void disable();
     virtual void didPause(ScriptState*, const ScriptValue& callFrames, const ScriptValue& exception);
     virtual void didContinue();
+    void reset();
 
 private:
     void enable();

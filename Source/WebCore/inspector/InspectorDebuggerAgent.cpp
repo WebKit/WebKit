@@ -186,14 +186,6 @@ void InspectorDebuggerAgent::setBreakpointsActive(ErrorString*, bool active)
         scriptDebugServer().deactivateBreakpoints();
 }
 
-void InspectorDebuggerAgent::didClearMainFrameWindowObject()
-{
-    m_scripts.clear();
-    m_breakpointIdToDebugServerBreakpointIds.clear();
-    if (m_frontend)
-        m_frontend->globalObjectCleared();
-}
-
 bool InspectorDebuggerAgent::isPaused()
 {
     return scriptDebugServer().isPaused();
@@ -757,6 +749,14 @@ void ScriptDebugListener::Script::reportMemoryUsage(MemoryObjectInfo* memoryObje
     info.addMember(url);
     info.addMember(source);
     info.addMember(sourceMappingURL);
+}
+
+void InspectorDebuggerAgent::reset()
+{
+    m_scripts.clear();
+    m_breakpointIdToDebugServerBreakpointIds.clear();
+    if (m_frontend)
+        m_frontend->globalObjectCleared();
 }
 
 } // namespace WebCore

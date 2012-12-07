@@ -192,22 +192,23 @@ InspectorTest.navigate = function(url, callback)
     InspectorTest.evaluateInConsole("window.location = '" + url + "'");
 }
 
-InspectorTest.hardReloadPage = function(callback)
+InspectorTest.hardReloadPage = function(callback, scriptToEvaluateOnLoad, scriptPreprocessor)
 {
-    InspectorTest._innerReloadPage(true, callback);
+    InspectorTest._innerReloadPage(true, callback, scriptToEvaluateOnLoad, scriptPreprocessor);
 }
 
-InspectorTest.reloadPage = function(callback)
+InspectorTest.reloadPage = function(callback, scriptToEvaluateOnLoad, scriptPreprocessor)
 {
-    InspectorTest._innerReloadPage(false, callback);
+    InspectorTest._innerReloadPage(false, callback, scriptToEvaluateOnLoad, scriptPreprocessor);
 }
 
-InspectorTest._innerReloadPage = function(hardReload, callback)
+InspectorTest._innerReloadPage = function(hardReload, callback, scriptToEvaluateOnLoad, scriptPreprocessor)
 {
     InspectorTest._pageLoadedCallback = InspectorTest.safeWrap(callback);
 
-    WebInspector.panel("network")._reset();
-    PageAgent.reload(hardReload);
+    if (WebInspector.panels.network)
+        WebInspector.panels.network._reset();
+    PageAgent.reload(hardReload, scriptToEvaluateOnLoad, scriptPreprocessor);
 }
 
 InspectorTest.pageLoaded = function()

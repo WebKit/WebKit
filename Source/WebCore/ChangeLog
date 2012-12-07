@@ -1,3 +1,62 @@
+2012-10-03  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: provide a way to reload page with given script preprocessor.
+        https://bugs.webkit.org/show_bug.cgi?id=80992
+
+        Reviewed by Yury Semikhatsky.
+
+        This change introduces a way to inject 'preprocessor' script that would process
+        each JavaScript file before it gets into the VM for compilation. That way inspector
+        can expose capabilities such as assessing code coverage or tracing all the calls.
+
+        Preprocessor script is stored in the page agent where it waits for reload to happen.
+        Upon reload, ScriptDebugServer is using it to patch the script sources.
+
+        
+        Test: inspector/debugger/debugger-script-preprocessor.html
+
+        * bindings/js/ScriptDebugServer.h:
+        (WebCore::ScriptDebugServer::setScriptPreprocessor):
+        (ScriptDebugServer):
+        * bindings/v8/DebuggerScript.js:
+        * bindings/v8/ScriptDebugServer.cpp:
+        (ScriptDebugServer::ScriptPreprocessor):
+        (WebCore::ScriptDebugServer::ScriptPreprocessor::ScriptPreprocessor):
+        (WebCore::ScriptDebugServer::ScriptPreprocessor::preprocessSourceCode):
+        (WebCore::ScriptDebugServer::ScriptPreprocessor::~ScriptPreprocessor):
+        (WebCore):
+        (WebCore::ScriptDebugServer::~ScriptDebugServer):
+        (WebCore::ScriptDebugServer::setScriptSource):
+        (WebCore::ScriptDebugServer::setScriptPreprocessor):
+        (WebCore::ScriptDebugServer::handleV8DebugEvent):
+        * bindings/v8/ScriptDebugServer.h:
+        (ScriptDebugServer):
+        * bindings/v8/custom/V8InjectedScriptManager.cpp:
+        (WebCore::InjectedScriptManager::createInjectedScript):
+        * inspector/Inspector.json:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::InspectorController):
+        * inspector/InspectorDebuggerAgent.h:
+        (InspectorDebuggerAgent):
+        * inspector/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::reload):
+        (WebCore::InspectorPageAgent::frameNavigated):
+        * inspector/InspectorPageAgent.h:
+        (WebCore::InspectorPageAgent::page):
+        (WebCore::InspectorPageAgent::scriptPreprocessor):
+        (InspectorPageAgent):
+        * inspector/PageDebuggerAgent.cpp:
+        (WebCore::PageDebuggerAgent::create):
+        (WebCore::PageDebuggerAgent::PageDebuggerAgent):
+        (WebCore::PageDebuggerAgent::startListeningScriptDebugServer):
+        (WebCore::PageDebuggerAgent::stopListeningScriptDebugServer):
+        (WebCore::PageDebuggerAgent::injectedScriptForEval):
+        (WebCore::PageDebuggerAgent::didClearMainFrameWindowObject):
+        (WebCore):
+        * inspector/PageDebuggerAgent.h:
+        (WebCore):
+        (PageDebuggerAgent):
+
 2012-12-07  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: the "Sources" column is always empty in CSS selector profiles

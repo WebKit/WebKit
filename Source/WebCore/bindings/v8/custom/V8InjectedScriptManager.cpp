@@ -35,6 +35,7 @@
 #include "BindingState.h"
 #include "DOMWindow.h"
 #include "InjectedScriptHost.h"
+#include "ScriptDebugServer.h"
 #include "ScriptObject.h"
 #include "V8Binding.h"
 #include "V8DOMWindow.h"

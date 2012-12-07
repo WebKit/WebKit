@@ -53,6 +53,7 @@ class InspectorResourceAgent;
 class InspectorTimelineAgent;
 class InspectorWorkerAgent;
 class Page;
+class PageDebuggerAgent;
 class PageRuntimeAgent;
 class WorkerContext;
 class WorkerRuntimeAgent;
@@ -81,6 +82,7 @@ public:
         , m_inspectorApplicationCacheAgent(0)
 #if ENABLE(JAVASCRIPT_DEBUGGER)
         , m_inspectorDebuggerAgent(0)
+        , m_pageDebuggerAgent(0)
         , m_inspectorDOMDebuggerAgent(0)
         , m_inspectorProfilerAgent(0)
 #endif
@@ -138,6 +140,9 @@ public:
     InspectorDebuggerAgent* inspectorDebuggerAgent() const { return m_inspectorDebuggerAgent; }
     void setInspectorDebuggerAgent(InspectorDebuggerAgent* agent) { m_inspectorDebuggerAgent = agent; }
 
+    PageDebuggerAgent* pageDebuggerAgent() const { return m_pageDebuggerAgent; }
+    void setPageDebuggerAgent(PageDebuggerAgent* agent) { m_pageDebuggerAgent = agent; }
+
     InspectorDOMDebuggerAgent* inspectorDOMDebuggerAgent() const { return m_inspectorDOMDebuggerAgent; }
     void setInspectorDOMDebuggerAgent(InspectorDOMDebuggerAgent* agent) { m_inspectorDOMDebuggerAgent = agent; }
 
@@ -173,6 +178,7 @@ private:
     InspectorApplicationCacheAgent* m_inspectorApplicationCacheAgent;
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     InspectorDebuggerAgent* m_inspectorDebuggerAgent;
+    PageDebuggerAgent* m_pageDebuggerAgent;
     InspectorDOMDebuggerAgent* m_inspectorDOMDebuggerAgent;
     InspectorProfilerAgent* m_inspectorProfilerAgent;
 #endif

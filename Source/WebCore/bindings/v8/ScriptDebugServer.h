@@ -86,6 +86,8 @@ public:
     void recompileAllJSFunctionsSoon() { }
     void recompileAllJSFunctions(Timer<ScriptDebugServer>* = 0) { }
 
+    void setScriptPreprocessor(const String& preprocessorBody);
+
     class Task {
     public:
         virtual ~Task() { }
@@ -105,7 +107,7 @@ public:
 
 protected:
     ScriptDebugServer();
-    ~ScriptDebugServer() { }
+    virtual ~ScriptDebugServer();
     
     ScriptValue currentCallFrame();
 
@@ -125,14 +127,19 @@ protected:
 
     v8::Local<v8::Value> callDebuggerMethod(const char* functionName, int argc, v8::Handle<v8::Value> argv[]);
 
+    String preprocessSourceCode(const String& sourceCode);
+
     PauseOnExceptionsState m_pauseOnExceptionsState;
     ScopedPersistent<v8::Object> m_debuggerScript;
     ScopedPersistent<v8::Object> m_executionState;
     v8::Local<v8::Context> m_pausedContext;
-
     bool m_breakpointsActivated;
     ScopedPersistent<v8::FunctionTemplate> m_breakProgramCallbackTemplate;
     HashMap<String, OwnPtr<ScopedPersistent<v8::Script> > > m_compiledScripts;
+    
+private:
+    class ScriptPreprocessor;
+    OwnPtr<ScriptPreprocessor> m_scriptPreprocessor;
 };
 
 } // namespace WebCore

@@ -210,7 +210,7 @@ DebuggerScript.stepOutOfFunction = function(execState)
     execState.prepareStep(Debug.StepAction.StepOut, 1);
 }
 
-DebuggerScript.setScriptSource = function(scriptId, newSource, preview)
+DebuggerScript.liveEditScriptSource = function(scriptId, newSource, preview)
 {
     var scripts = Debug.scripts();
     var scriptToEdit = null;
@@ -235,6 +235,18 @@ DebuggerScript.clearBreakpoints = function(execState, args)
 DebuggerScript.setBreakpointsActivated = function(execState, args)
 {
     Debug.debuggerFlags().breakPointsActive.setValue(args.enabled);
+}
+
+DebuggerScript.getScriptSource = function(eventData)
+{
+    return eventData.script().source();
+}
+
+DebuggerScript.setScriptSource = function(eventData, source)
+{
+    if (eventData.script().data() === "injected-script")
+        return;
+    eventData.script().setSource(source);
 }
 
 DebuggerScript._frameMirrorToJSCallFrame = function(frameMirror, callerFrame)
