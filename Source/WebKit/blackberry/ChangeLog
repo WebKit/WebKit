@@ -1,3 +1,23 @@
+2012-12-07  Mary Wu  <mary.wu@torchmobile.com.cn>
+
+        [BlackBerry] new target window would cause the url being loaded twice
+        https://bugs.webkit.org/show_bug.cgi?id=104086
+
+        Reviewed by Yong Li.
+
+        When webkit need to open window for a new target like "_blank", it would
+        load the url subsequently after createWindow. But the chrome browser would
+        load the url again when it get the OpenWindowEvent from native, which
+        causes the url being loaded twice. We should make sure that createWindow() be
+        used to create a new window only, not loading url, so we pass empty url
+        as parameter.
+
+        RIM PR# 257329
+        Internally reviewed by Charles Wei.
+
+        * WebCoreSupport/FrameLoaderClientBlackBerry.cpp:
+        (WebCore::FrameLoaderClientBlackBerry::dispatchCreatePage):
+
 2012-12-05  Otto Derek Cheung  <otcheung@rim.com>
 
         [BlackBerry] Geolocation prompts won't respond to the correct geolocation object if the user opens two pages and respond in the reversed order
