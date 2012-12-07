@@ -302,10 +302,12 @@ public:
     virtual bool willRespondToMouseClickEvents() OVERRIDE { return true; }
 
     void updateDisplay();
-    void resetTrackListMenu();
+    void resetTrackListMenu() { m_trackListHasChanged = true; }
 
 private:
     MediaControlClosedCaptionsTrackListElement(Document*, MediaControls*);
+
+    void rebuildTrackListMenu();
 
     virtual const AtomicString& shadowPseudoId() const OVERRIDE;
     virtual void defaultEventHandler(Event*) OVERRIDE;
@@ -313,6 +315,7 @@ private:
     typedef Vector<RefPtr<Element> > TrackMenuItems;
     TrackMenuItems menuItems;
     MediaControls* m_controls;
+    bool m_trackListHasChanged;
 };
 
 // ----------------------------

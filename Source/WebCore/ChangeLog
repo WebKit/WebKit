@@ -1,3 +1,38 @@
+2012-12-07  Eric Carlson  <eric.carlson@apple.com>
+
+        Captions menu doesn't update to track changes
+        https://bugs.webkit.org/show_bug.cgi?id=104393
+
+        Reviewed by Dean Jackson.
+
+        Flag the captions menu as needing an update when tracks are added or removed. Don't actually
+        change the menu until it needs to be displayed.
+
+        No new tests, media/video-controls-captions-trackmenu.html was updated to test this.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::addTextTrack): Call closedCaptionTracksChanged().
+        (WebCore::HTMLMediaElement::didRemoveTrack): Ditto.
+        (WebCore::HTMLMediaElement::configureTextTracks): Ditto.
+
+        * html/shadow/MediaControlElements.cpp:
+        (WebCore::MediaControlClosedCaptionsTrackListElement::MediaControlClosedCaptionsTrackListElement):
+            Intialize m_trackListHasChanged.
+        (WebCore::MediaControlClosedCaptionsTrackListElement::updateDisplay): Call rebuildTrackListMenu if
+            the track list has changed.
+        (WebCore::MediaControlClosedCaptionsTrackListElement::rebuildTrackListMenu): Renamed from resetTrackListMenu.
+        * html/shadow/MediaControlElements.h:
+        (WebCore::MediaControlClosedCaptionsTrackListElement::resetTrackListMenu): Just set m_trackListHasChanged.
+
+        * html/shadow/MediaControls.h:
+        (WebCore::MediaControls::closedCaptionTracksChanged): New, do nothing for base class.
+
+        * html/shadow/MediaControlsApple.cpp:
+        (WebCore::MediaControlsApple::toggleClosedCaptionTrackList): Update the track list before 
+            showing it.
+        (WebCore::MediaControlsApple::closedCaptionTracksChanged):
+        * html/shadow/MediaControlsApple.h:
+
 2012-12-07  Stephen White  <senorblanco@chromium.org>
 
         CSS url() filters with forward references don't work

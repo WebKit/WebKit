@@ -488,9 +488,18 @@ void MediaControlsApple::toggleClosedCaptionTrackList()
     if (m_closedCaptionsContainer) {
         if (m_closedCaptionsContainer->isShowing())
             m_closedCaptionsContainer->hide();
-        else
+        else {
+            if (m_closedCaptionsTrackList)
+                m_closedCaptionsTrackList->updateDisplay();
             m_closedCaptionsContainer->show();
+        }
     }
+}
+
+void MediaControlsApple::closedCaptionTracksChanged()
+{
+    if (m_closedCaptionsTrackList)
+        m_closedCaptionsTrackList->resetTrackListMenu();
 }
 
 }

@@ -13,7 +13,7 @@
 
             function clickCCButton()
             {
-                consoleWrite("*** Click the CC button.");
+                consoleWrite("<br>*** Click the CC button.");
                 eventSender.mouseMoveTo(captionsButtonCoordinates[0], captionsButtonCoordinates[1]);
                 eventSender.mouseDown();
                 eventSender.mouseUp();
@@ -21,8 +21,11 @@
 
             function startTest()
             {
+                consoleWrite("<br>*** Add another text track.");
+                run('video.addTextTrack("captions", "Commentary", "ru")');
+
                 if (window.eventSender) {
-                    consoleWrite("*** Set the user language preference.");
+                    consoleWrite("<br>*** Set the user language preference.");
                     run("internals.setUserPreferredLanguages(['en'])");
 
                     try {
@@ -36,7 +39,7 @@
                 }
             }
 
-            function selectCaptionMenuItem(index, nextStep)
+            function trackMenuList()
             {
                 var trackListElement;
                 try {
@@ -45,24 +48,36 @@
                     failTest(exception.description);
                     return;
                 }
-                // Track list should have a <ul> with four <li> children (One of them is "Off").
+                // Track list should have a <ul> with five <li> children (One of them is "Off").
                 var trackList = trackListElement.querySelector("ul");
                 if (!trackList) {
                     failTest("Could not find a child ul element in track list menu");
                     return;
                 }
-                logResult(true, "Found tracklist menu and list of tracks");
                 var trackListItems = trackList.querySelectorAll("li");
                 if (!trackListItems) {
                     failTest("Could not find a child li elements in track list menu");
                     return;
                 }
-                if (trackListItems.length != 4) {
-                    failTest("Expected 4 tracks in menu but found " + trackListItems.length);
+
+                return trackListItems;
+            }
+
+            function testMenu()
+            {
+                var trackListItems = trackMenuList();
+                var expectedItemCount = video.textTracks.length + 1;
+                if (trackListItems.length != expectedItemCount) {
+                    failTest("Expected " + expectedItemCount + " items in menu but found " + trackListItems.length);
                     return;
                 }
-                logResult(true, "Found four available tracks in menu");
+                logResult(true, "Found " + expectedItemCount + " menu items");
+            }
+
+            function selectCaptionMenuItem(index, nextStep)
+            {
                 // Click on the selected item
+                var trackListItems = trackMenuList();
                 var selectedTrackItem = trackListItems[index];
                 var boundingRect = selectedTrackItem.getBoundingClientRect();
                 var x = boundingRect.left + boundingRect.width / 2;
@@ -70,7 +85,7 @@
                 eventSender.mouseMoveTo(x, y);
                 eventSender.mouseDown();
                 eventSender.mouseUp();
-                window.setTimeout(nextStep, 100);
+                window.setTimeout(function() { testMenu(); nextStep(); }, 100);
             }
 
             function turnCaptionsOn()
@@ -82,22 +97,27 @@
 
             function testCaptionsVisible()
             {
-                testExpected("video.textTracks.length", 3);
+                testExpected("video.textTracks.length", 4);
                 consoleWrite("Track 0 should be disabled");
                 testExpected("video.textTracks[0].mode", "disabled");
                 consoleWrite("Track 1 should be showing");
                 testExpected("video.textTracks[1].mode", "showing");
                 consoleWrite("Track 2 should be disabled");
                 testExpected("video.textTracks[2].mode", "disabled");
+                consoleWrite("Track 3 should be disabled");
+                testExpected("video.textTracks[3].mode", "disabled");
                 testExpected("textTrackDisplayElement(video, 'display').innerText", "Lorem");
+
+                consoleWrite("<br>*** Remove a track.");
+                run('video.removeChild(document.querySelectorAll("track")[0])');
+
                 clickCCButton();
                 window.setTimeout(turnCaptionsOff, 100);
             }
 
             function turnCaptionsOff()
             {
-                consoleWrite("*** Turning captions on");
-                // Click the Off button
+                consoleWrite("*** Turning captions off");
                 selectCaptionMenuItem(0, testCaptionsDisabled);
             }
 
@@ -110,7 +130,6 @@
                 testExpected("video.textTracks[1].mode", "disabled");
                 consoleWrite("Track 2 should be disabled");
                 testExpected("video.textTracks[2].mode", "disabled");
-                testExpected("textTrackDisplayElement(video, 'display').innerText", "Lorem");
                 testExpected("textTrackDisplayElement(video, 'display').innerText", "Lorem");
                 endTest();
             }

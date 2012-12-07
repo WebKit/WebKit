@@ -2804,6 +2804,9 @@ PassRefPtr<TextTrack> HTMLMediaElement::addTextTrack(const String& kind, const S
     // ... its text track mode to the text track hidden mode, and its text track list of cues to an empty list ...
     textTrack->setMode(TextTrack::hiddenKeyword());
 
+    if (hasMediaControls())
+        mediaControls()->closedCaptionTracksChanged();
+
     return textTrack.release();
 }
 
@@ -2876,6 +2879,9 @@ void HTMLMediaElement::didRemoveTrack(HTMLTrackElement* trackElement)
             textTrackRemoveCue(cues->item(i)->track(), cues->item(i));
         endIgnoringTrackDisplayUpdateRequests();
     }
+
+    if (hasMediaControls())
+        mediaControls()->closedCaptionTracksChanged();
 
     size_t index = m_textTracksWhenResourceSelectionBegan.find(textTrack.get());
     if (index != notFound)
@@ -3072,6 +3078,9 @@ void HTMLMediaElement::configureTextTracks()
         configureTextTrackGroup(metadataTracks);
     if (otherTracks.tracks.size())
         configureTextTrackGroup(otherTracks);
+
+    if (hasMediaControls())
+        mediaControls()->closedCaptionTracksChanged();
 }
 #endif
 

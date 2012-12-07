@@ -59,11 +59,11 @@ public:
     virtual void updateStatusDisplay() OVERRIDE;
 
     virtual void changedClosedCaptionsVisibility() OVERRIDE;
-    void toggleClosedCaptionTrackList();
+    virtual void toggleClosedCaptionTrackList() OVERRIDE;
+    virtual void closedCaptionTracksChanged() OVERRIDE;
 
 private:
     MediaControlsApple(Document*);
-
 
     MediaControlRewindButtonElement* m_rewindButton;
     MediaControlReturnToRealtimeButtonElement* m_returnToRealTimeButton;

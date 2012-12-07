@@ -1,24 +1,33 @@
 Test that we are able to trigger the list of captions, and select from the list.
 
 EVENT(canplaythrough)
+
+*** Add another text track.
+RUN(video.addTextTrack("captions", "Commentary", "ru"))
+
 *** Set the user language preference.
 RUN(internals.setUserPreferredLanguages(['en']))
+
 *** Click the CC button.
 *** Turning captions on
-Found tracklist menu and list of tracks OK
-Found four available tracks in menu OK
-EXPECTED (video.textTracks.length == '3') OK
+Found 5 menu items OK
+EXPECTED (video.textTracks.length == '4') OK
 Track 0 should be disabled
 EXPECTED (video.textTracks[0].mode == 'disabled') OK
 Track 1 should be showing
 EXPECTED (video.textTracks[1].mode == 'showing') OK
 Track 2 should be disabled
 EXPECTED (video.textTracks[2].mode == 'disabled') OK
+Track 3 should be disabled
+EXPECTED (video.textTracks[3].mode == 'disabled') OK
 EXPECTED (textTrackDisplayElement(video, 'display').innerText == 'Lorem') OK
+
+*** Remove a track.
+RUN(video.removeChild(document.querySelectorAll("track")[0]))
+
 *** Click the CC button.
-*** Turning captions on
-Found tracklist menu and list of tracks OK
-Found four available tracks in menu OK
+*** Turning captions off
+Found 4 menu items OK
 EXPECTED (video.textTracks.length == '3') OK
 Track 0 should be disabled
 EXPECTED (video.textTracks[0].mode == 'disabled') OK
@@ -26,7 +35,6 @@ Track 1 should be disabled
 EXPECTED (video.textTracks[1].mode == 'disabled') OK
 Track 2 should be disabled
 EXPECTED (video.textTracks[2].mode == 'disabled') OK
-No text track cue with display id '-webkit-media-text-track-display' is currently visible
 No text track cue with display id '-webkit-media-text-track-display' is currently visible
 END OF TEST
 

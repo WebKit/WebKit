@@ -727,6 +727,7 @@ const AtomicString& MediaControlClosedCaptionsContainerElement::shadowPseudoId()
 MediaControlClosedCaptionsTrackListElement::MediaControlClosedCaptionsTrackListElement(Document* document, MediaControls* controls)
     : MediaControlDivElement(document, MediaClosedCaptionsTrackList)
     , m_controls(controls)
+    , m_trackListHasChanged(true)
 {
 }
 
@@ -795,6 +796,9 @@ void MediaControlClosedCaptionsTrackListElement::updateDisplay()
     if (!trackList || !trackList->length())
         return;
 
+    if (m_trackListHasChanged)
+        rebuildTrackListMenu();
+    
     bool captionsVisible = mediaElement->closedCaptionsVisible();
     for (unsigned i = 0, length = menuItems.size(); i < length; ++i) {
         RefPtr<Element> trackItem = menuItems[i];
@@ -819,12 +823,14 @@ void MediaControlClosedCaptionsTrackListElement::updateDisplay()
 #endif
 }
 
-void MediaControlClosedCaptionsTrackListElement::resetTrackListMenu()
+void MediaControlClosedCaptionsTrackListElement::rebuildTrackListMenu()
 {
 #if ENABLE(VIDEO_TRACK)
     // Remove any existing content.
     removeChildren();
     menuItems.clear();
+
+    m_trackListHasChanged = false;
 
     if (!mediaController()->hasClosedCaptions())
         return;
