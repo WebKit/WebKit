@@ -24,7 +24,8 @@
 #if USE(3D_GRAPHICS) || USE(ACCELERATED_COMPOSITING)
 
 #include "GraphicsContext3DPrivate.h"
-#include "ImageData.h"
+#include "Image.h"
+#include "ImageSource.h"
 #include "NotImplemented.h"
 #include "OpenGLShims.h"
 #include "PlatformContextCairo.h"
@@ -243,12 +244,69 @@ void GraphicsContext3D::createGraphicsSurfaces(const IntSize& size)
 
 GraphicsContext3D::ImageExtractor::~ImageExtractor()
 {
+    delete m_decoder;
 }
 
-bool GraphicsContext3D::ImageExtractor::extractImage(bool /*premultiplyAlpha*/, bool /*ignoreGammaAndColorProfile*/)
+bool GraphicsContext3D::ImageExtractor::extractImage(bool premultiplyAlpha, bool ignoreGammaAndColorProfile)
 {
-    notImplemented();
-    return false;
+    // This implementation is taken from GraphicsContext3DCairo.
+
+    if (!m_image)
+        return false;
+
+    // We need this to stay in scope because the native image is just a shallow copy of the data.
+    m_decoder = new ImageSource(premultiplyAlpha ? ImageSource::AlphaPremultiplied : ImageSource::AlphaNotPremultiplied, ignoreGammaAndColorProfile ? ImageSource::GammaAndColorProfileIgnored : ImageSource::GammaAndColorProfileApplied);
+
+    if (!m_decoder)
+        return false;
+
+    ImageSource& decoder = *m_decoder;
+    m_alphaOp = AlphaDoNothing;
+
+    if (m_image->data()) {
+        decoder.setData(m_image->data(), true);
+
+        if (!decoder.frameCount() || !decoder.frameIsCompleteAtIndex(0))
+            return false;
+
+        OwnPtr<NativeImageCairo> nativeImage = adoptPtr(decoder.createFrameAtIndex(0));
+        m_imageSurface = nativeImage->surface();
+    } else {
+        NativeImageCairo* nativeImage = m_image->nativeImageForCurrentFrame();
+        m_imageSurface = (nativeImage) ? nativeImage->surface() : 0;
+
+        if (!premultiplyAlpha)
+            m_alphaOp = AlphaDoUnmultiply;
+    }
+
+    if (!m_imageSurface)
+        return false;
+
+    m_imageWidth = cairo_image_surface_get_width(m_imageSurface.get());
+    m_imageHeight = cairo_image_surface_get_height(m_imageSurface.get());
+
+    if (!m_imageWidth || !m_imageHeight)
+        return false;
+
+    if (cairo_image_surface_get_format(m_imageSurface.get()) != CAIRO_FORMAT_ARGB32)
+        return false;
+
+    uint srcUnpackAlignment = 1;
+    size_t bytesPerRow = cairo_image_surface_get_stride(m_imageSurface.get());
+    size_t bitsPerPixel = 32;
+    unsigned padding = bytesPerRow - bitsPerPixel / 8 * m_imageWidth;
+
+    if (padding) {
+        srcUnpackAlignment = padding + 1;
+        while (bytesPerRow % srcUnpackAlignment)
+            ++srcUnpackAlignment;
+    }
+
+    m_imagePixelData = cairo_image_surface_get_data(m_imageSurface.get());
+    m_imageSourceFormat = SourceFormatBGRA8;
+    m_imageSourceUnpackAlignment = srcUnpackAlignment;
+
+    return true;
 }
 
 } // namespace WebCore
