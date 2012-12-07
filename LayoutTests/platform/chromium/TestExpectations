@@ -4002,8 +4002,6 @@ webkit.org/b/99604 [ Mac Win ] http/tests/workers/text-encoding.html [ Pass Cras
 webkit.org/b/98257 fast/canvas/webgl/oes-element-index-uint.html [ Failure Pass ]
 webkit.org/b/98257 platform/chromium/virtual/gpu/fast/canvas/webgl/oes-element-index-uint.html [ Failure Pass ]
 
-# Resource Timing is not enable yet, skip it.
-webkit.org/b/61138 http/tests/w3c/webperf/submission/Intel/resource-timing [ Skip ]
 webkit.org/b/99802 [ MountainLion ] fast/forms/text-control-intrinsic-widths.html [ Failure ]
 
 webkit.org/b/99873 platform/chromium/virtual/gpu/fast/canvas/webgl/array-bounds-clamping.html [ Text ]
@@ -4159,6 +4157,8 @@ webkit.org/b/103927 http/tests/w3c/webperf/submission/resource-timing/html/test_
 webkit.org/b/103927 http/tests/w3c/webperf/submission/resource-timing/html/test_resource_frame_initiator_type.html [ Text ]
 webkit.org/b/103927 http/tests/w3c/webperf/submission/resource-timing/html/test_resource_initiator_types.html [ Text ]
 webkit.org/b/103927 http/tests/w3c/webperf/submission/resource-timing/html/test_resource_redirects.html [ Text ]
+webkit.org/b/103927 http/tests/w3c/webperf/submission/Intel/resource-timing/test_resource_timing_cross_origin_resource_request.html [ Text ]
+webkit.org/b/103927 http/tests/w3c/webperf/submission/Intel/resource-timing/test_resource_timing_timing_allow_cross_origin_resource_request.html [ Text ]
 
 webkit.org/b/103062 [ Debug ] fast/canvas/canvas-strokePath-gradient-shadow.html [ Crash ]
 webkit.org/b/103062 [ Debug ] fast/canvas/canvas-strokeRect-gradient-shadow.html [ Crash ]
