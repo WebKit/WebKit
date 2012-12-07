@@ -56,15 +56,15 @@ PassRefPtr<TransformOperation> RotateTransformOperation::blend(const TransformOp
     // Create the 2 rotation matrices
     TransformationMatrix fromT;
     TransformationMatrix toT;
-    fromT.rotate3d((float)(fromOp ? fromOp->m_x : 0),
-                   (float)(fromOp ? fromOp->m_y : 0),
-                   (float)(fromOp ? fromOp->m_z : 1),
-                   (float)(fromOp ? fromOp->m_angle : 0));
+    fromT.rotate3d((fromOp ? fromOp->m_x : 0),
+        (fromOp ? fromOp->m_y : 0),
+        (fromOp ? fromOp->m_z : 1),
+        (fromOp ? fromOp->m_angle : 0));
 
-    toT.rotate3d((float)(toOp ? toOp->m_x : 0),
-                 (float)(toOp ? toOp->m_y : 0),
-                 (float)(toOp ? toOp->m_z : 1),
-                 (float)(toOp ? toOp->m_angle : 0));
+    toT.rotate3d((toOp ? toOp->m_x : 0),
+        (toOp ? toOp->m_y : 0),
+        (toOp ? toOp->m_z : 1),
+        (toOp ? toOp->m_angle : 0));
     
     // Blend them
     toT.blend(fromT, progress);

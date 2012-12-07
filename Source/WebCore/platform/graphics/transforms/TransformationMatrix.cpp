@@ -531,12 +531,12 @@ TransformationMatrix& TransformationMatrix::rotateFromVector(double x, double y)
 
 TransformationMatrix& TransformationMatrix::flipX()
 {
-    return scaleNonUniform(-1.0f, 1.0f);
+    return scaleNonUniform(-1.0, 1.0);
 }
 
 TransformationMatrix& TransformationMatrix::flipY()
 {
-    return scaleNonUniform(1.0f, -1.0f);
+    return scaleNonUniform(1.0, -1.0);
 }
 
 FloatPoint TransformationMatrix::projectPoint(const FloatPoint& p, bool* clamped) const
@@ -752,45 +752,45 @@ TransformationMatrix& TransformationMatrix::rotate3d(double x, double y, double 
     TransformationMatrix mat;
 
     // Optimize cases where the axis is along a major axis
-    if (x == 1.0f && y == 0.0f && z == 0.0f) {
-        mat.m_matrix[0][0] = 1.0f;
-        mat.m_matrix[0][1] = 0.0f;
-        mat.m_matrix[0][2] = 0.0f;
-        mat.m_matrix[1][0] = 0.0f;
+    if (x == 1.0 && y == 0.0 && z == 0.0) {
+        mat.m_matrix[0][0] = 1.0;
+        mat.m_matrix[0][1] = 0.0;
+        mat.m_matrix[0][2] = 0.0;
+        mat.m_matrix[1][0] = 0.0;
         mat.m_matrix[1][1] = cosTheta;
         mat.m_matrix[1][2] = sinTheta;
-        mat.m_matrix[2][0] = 0.0f;
+        mat.m_matrix[2][0] = 0.0;
         mat.m_matrix[2][1] = -sinTheta;
         mat.m_matrix[2][2] = cosTheta;
-        mat.m_matrix[0][3] = mat.m_matrix[1][3] = mat.m_matrix[2][3] = 0.0f;
-        mat.m_matrix[3][0] = mat.m_matrix[3][1] = mat.m_matrix[3][2] = 0.0f;
-        mat.m_matrix[3][3] = 1.0f;
-    } else if (x == 0.0f && y == 1.0f && z == 0.0f) {
+        mat.m_matrix[0][3] = mat.m_matrix[1][3] = mat.m_matrix[2][3] = 0.0;
+        mat.m_matrix[3][0] = mat.m_matrix[3][1] = mat.m_matrix[3][2] = 0.0;
+        mat.m_matrix[3][3] = 1.0;
+    } else if (x == 0.0 && y == 1.0 && z == 0.0) {
         mat.m_matrix[0][0] = cosTheta;
-        mat.m_matrix[0][1] = 0.0f;
+        mat.m_matrix[0][1] = 0.0;
         mat.m_matrix[0][2] = -sinTheta;
-        mat.m_matrix[1][0] = 0.0f;
-        mat.m_matrix[1][1] = 1.0f;
-        mat.m_matrix[1][2] = 0.0f;
+        mat.m_matrix[1][0] = 0.0;
+        mat.m_matrix[1][1] = 1.0;
+        mat.m_matrix[1][2] = 0.0;
         mat.m_matrix[2][0] = sinTheta;
-        mat.m_matrix[2][1] = 0.0f;
+        mat.m_matrix[2][1] = 0.0;
         mat.m_matrix[2][2] = cosTheta;
-        mat.m_matrix[0][3] = mat.m_matrix[1][3] = mat.m_matrix[2][3] = 0.0f;
-        mat.m_matrix[3][0] = mat.m_matrix[3][1] = mat.m_matrix[3][2] = 0.0f;
-        mat.m_matrix[3][3] = 1.0f;
-    } else if (x == 0.0f && y == 0.0f && z == 1.0f) {
+        mat.m_matrix[0][3] = mat.m_matrix[1][3] = mat.m_matrix[2][3] = 0.0;
+        mat.m_matrix[3][0] = mat.m_matrix[3][1] = mat.m_matrix[3][2] = 0.0;
+        mat.m_matrix[3][3] = 1.0;
+    } else if (x == 0.0 && y == 0.0 && z == 1.0) {
         mat.m_matrix[0][0] = cosTheta;
         mat.m_matrix[0][1] = sinTheta;
-        mat.m_matrix[0][2] = 0.0f;
+        mat.m_matrix[0][2] = 0.0;
         mat.m_matrix[1][0] = -sinTheta;
         mat.m_matrix[1][1] = cosTheta;
-        mat.m_matrix[1][2] = 0.0f;
-        mat.m_matrix[2][0] = 0.0f;
-        mat.m_matrix[2][1] = 0.0f;
-        mat.m_matrix[2][2] = 1.0f;
-        mat.m_matrix[0][3] = mat.m_matrix[1][3] = mat.m_matrix[2][3] = 0.0f;
-        mat.m_matrix[3][0] = mat.m_matrix[3][1] = mat.m_matrix[3][2] = 0.0f;
-        mat.m_matrix[3][3] = 1.0f;
+        mat.m_matrix[1][2] = 0.0;
+        mat.m_matrix[2][0] = 0.0;
+        mat.m_matrix[2][1] = 0.0;
+        mat.m_matrix[2][2] = 1.0;
+        mat.m_matrix[0][3] = mat.m_matrix[1][3] = mat.m_matrix[2][3] = 0.0;
+        mat.m_matrix[3][0] = mat.m_matrix[3][1] = mat.m_matrix[3][2] = 0.0;
+        mat.m_matrix[3][3] = 1.0;
     } else {
         // This case is the rotation about an arbitrary unit vector.
         //
@@ -809,9 +809,9 @@ TransformationMatrix& TransformationMatrix::rotate3d(double x, double y, double 
         mat.m_matrix[2][0] = x * z * oneMinusCosTheta + y * sinTheta;
         mat.m_matrix[2][1] = y * z * oneMinusCosTheta - x * sinTheta;
         mat.m_matrix[2][2] = cosTheta + z * z * oneMinusCosTheta;
-        mat.m_matrix[0][3] = mat.m_matrix[1][3] = mat.m_matrix[2][3] = 0.0f;
-        mat.m_matrix[3][0] = mat.m_matrix[3][1] = mat.m_matrix[3][2] = 0.0f;
-        mat.m_matrix[3][3] = 1.0f;
+        mat.m_matrix[0][3] = mat.m_matrix[1][3] = mat.m_matrix[2][3] = 0.0;
+        mat.m_matrix[3][0] = mat.m_matrix[3][1] = mat.m_matrix[3][2] = 0.0;
+        mat.m_matrix[3][3] = 1.0;
     }
     multiply(mat);
     return *this;
@@ -831,16 +831,16 @@ TransformationMatrix& TransformationMatrix::rotate3d(double rx, double ry, doubl
     
     mat.m_matrix[0][0] = cosTheta;
     mat.m_matrix[0][1] = sinTheta;
-    mat.m_matrix[0][2] = 0.0f;
+    mat.m_matrix[0][2] = 0.0;
     mat.m_matrix[1][0] = -sinTheta;
     mat.m_matrix[1][1] = cosTheta;
-    mat.m_matrix[1][2] = 0.0f;
-    mat.m_matrix[2][0] = 0.0f;
-    mat.m_matrix[2][1] = 0.0f;
-    mat.m_matrix[2][2] = 1.0f;
-    mat.m_matrix[0][3] = mat.m_matrix[1][3] = mat.m_matrix[2][3] = 0.0f;
-    mat.m_matrix[3][0] = mat.m_matrix[3][1] = mat.m_matrix[3][2] = 0.0f;
-    mat.m_matrix[3][3] = 1.0f;
+    mat.m_matrix[1][2] = 0.0;
+    mat.m_matrix[2][0] = 0.0;
+    mat.m_matrix[2][1] = 0.0;
+    mat.m_matrix[2][2] = 1.0;
+    mat.m_matrix[0][3] = mat.m_matrix[1][3] = mat.m_matrix[2][3] = 0.0;
+    mat.m_matrix[3][0] = mat.m_matrix[3][1] = mat.m_matrix[3][2] = 0.0;
+    mat.m_matrix[3][3] = 1.0;
     
     TransformationMatrix rmat(mat);
     
@@ -848,35 +848,35 @@ TransformationMatrix& TransformationMatrix::rotate3d(double rx, double ry, doubl
     cosTheta = cos(ry);
     
     mat.m_matrix[0][0] = cosTheta;
-    mat.m_matrix[0][1] = 0.0f;
+    mat.m_matrix[0][1] = 0.0;
     mat.m_matrix[0][2] = -sinTheta;
-    mat.m_matrix[1][0] = 0.0f;
-    mat.m_matrix[1][1] = 1.0f;
-    mat.m_matrix[1][2] = 0.0f;
+    mat.m_matrix[1][0] = 0.0;
+    mat.m_matrix[1][1] = 1.0;
+    mat.m_matrix[1][2] = 0.0;
     mat.m_matrix[2][0] = sinTheta;
-    mat.m_matrix[2][1] = 0.0f;
+    mat.m_matrix[2][1] = 0.0;
     mat.m_matrix[2][2] = cosTheta;
-    mat.m_matrix[0][3] = mat.m_matrix[1][3] = mat.m_matrix[2][3] = 0.0f;
-    mat.m_matrix[3][0] = mat.m_matrix[3][1] = mat.m_matrix[3][2] = 0.0f;
-    mat.m_matrix[3][3] = 1.0f;
+    mat.m_matrix[0][3] = mat.m_matrix[1][3] = mat.m_matrix[2][3] = 0.0;
+    mat.m_matrix[3][0] = mat.m_matrix[3][1] = mat.m_matrix[3][2] = 0.0;
+    mat.m_matrix[3][3] = 1.0;
 
     rmat.multiply(mat);
 
     sinTheta = sin(rx);
     cosTheta = cos(rx);
     
-    mat.m_matrix[0][0] = 1.0f;
-    mat.m_matrix[0][1] = 0.0f;
-    mat.m_matrix[0][2] = 0.0f;
-    mat.m_matrix[1][0] = 0.0f;
+    mat.m_matrix[0][0] = 1.0;
+    mat.m_matrix[0][1] = 0.0;
+    mat.m_matrix[0][2] = 0.0;
+    mat.m_matrix[1][0] = 0.0;
     mat.m_matrix[1][1] = cosTheta;
     mat.m_matrix[1][2] = sinTheta;
-    mat.m_matrix[2][0] = 0.0f;
+    mat.m_matrix[2][0] = 0.0;
     mat.m_matrix[2][1] = -sinTheta;
     mat.m_matrix[2][2] = cosTheta;
-    mat.m_matrix[0][3] = mat.m_matrix[1][3] = mat.m_matrix[2][3] = 0.0f;
-    mat.m_matrix[3][0] = mat.m_matrix[3][1] = mat.m_matrix[3][2] = 0.0f;
-    mat.m_matrix[3][3] = 1.0f;
+    mat.m_matrix[0][3] = mat.m_matrix[1][3] = mat.m_matrix[2][3] = 0.0;
+    mat.m_matrix[3][0] = mat.m_matrix[3][1] = mat.m_matrix[3][2] = 0.0;
+    mat.m_matrix[3][3] = 1.0;
 
     rmat.multiply(mat);
 
@@ -1299,13 +1299,13 @@ void TransformationMatrix::recompose(const DecomposedType& decomp)
     makeIdentity();
     
     // first apply perspective
-    m_matrix[0][3] = (float) decomp.perspectiveX;
-    m_matrix[1][3] = (float) decomp.perspectiveY;
-    m_matrix[2][3] = (float) decomp.perspectiveZ;
-    m_matrix[3][3] = (float) decomp.perspectiveW;
+    m_matrix[0][3] = decomp.perspectiveX;
+    m_matrix[1][3] = decomp.perspectiveY;
+    m_matrix[2][3] = decomp.perspectiveZ;
+    m_matrix[3][3] = decomp.perspectiveW;
     
     // now translate
-    translate3d((float) decomp.translateX, (float) decomp.translateY, (float) decomp.translateZ);
+    translate3d(decomp.translateX, decomp.translateY, decomp.translateZ);
     
     // apply rotation
     double xx = decomp.quaternionX * decomp.quaternionX;
@@ -1329,24 +1329,24 @@ void TransformationMatrix::recompose(const DecomposedType& decomp)
     // now apply skew
     if (decomp.skewYZ) {
         TransformationMatrix tmp;
-        tmp.setM32((float) decomp.skewYZ);
+        tmp.setM32(decomp.skewYZ);
         multiply(tmp);
     }
     
     if (decomp.skewXZ) {
         TransformationMatrix tmp;
-        tmp.setM31((float) decomp.skewXZ);
+        tmp.setM31(decomp.skewXZ);
         multiply(tmp);
     }
     
     if (decomp.skewXY) {
         TransformationMatrix tmp;
-        tmp.setM21((float) decomp.skewXY);
+        tmp.setM21(decomp.skewXY);
         multiply(tmp);
     }
     
     // finally, apply scale
-    scale3d((float) decomp.scaleX, (float) decomp.scaleY, (float) decomp.scaleZ);
+    scale3d(decomp.scaleX, decomp.scaleY, decomp.scaleZ);
 }
 
 bool TransformationMatrix::isIntegerTranslation() const
