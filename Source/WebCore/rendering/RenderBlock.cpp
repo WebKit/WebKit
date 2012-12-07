@@ -7251,11 +7251,8 @@ bool RenderBlock::lineWidthForPaginatedLineChanged(RootInlineBox* rootBox, Layou
         return false;
 
     RenderRegion* currentRegion = regionAtBlockOffset(rootBox->lineTopWithLeading() + lineDelta);
-    // Just bail if we still don't have a region.
-    if (!rootBox->hasContainingRegion() && !currentRegion)
-        return false;
     // Just bail if the region didn't change.
-    if (rootBox->hasContainingRegion() && rootBox->containingRegion() == currentRegion)
+    if (rootBox->containingRegion() == currentRegion)
         return false;
     return rootBox->paginatedLineWidth() != availableLogicalWidthForContent(currentRegion, offsetFromLogicalTopOfFirstPage());
 }

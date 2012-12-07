@@ -250,28 +250,27 @@ void RootInlineBox::childRemoved(InlineBox* box)
     }
 }
 
+RenderRegion* RootInlineBox::containingRegion() const
+{
+    RenderRegion* region = m_fragmentationData ? m_fragmentationData->m_containingRegion : 0;
+
+#ifndef NDEBUG
+    if (region) {
+        RenderFlowThread* flowThread = block()->enclosingRenderFlowThread();
+        const RenderRegionList& regionList = flowThread->renderRegionList();
+        ASSERT(regionList.contains(region));
+    }
+#endif
+
+    return region;
+}
+
 void RootInlineBox::setContainingRegion(RenderRegion* region)
 {
     ASSERT(!isDirty());
     ASSERT(block()->inRenderFlowThread());
     LineFragmentationData* fragmentationData  = ensureLineFragmentationData();
     fragmentationData->m_containingRegion = region;
-    fragmentationData->m_hasContainingRegion = !!region;
-}
-
-RootInlineBox::LineFragmentationData* RootInlineBox::LineFragmentationData::sanitize(const RenderBlock* block)
-{
-    ASSERT(block->inRenderFlowThread());
-    if (!m_containingRegion)
-        return this;
-
-    RenderFlowThread* flowThread = block->enclosingRenderFlowThread();
-    const RenderRegionList& regionList = flowThread->renderRegionList();
-    // For pointer types the hash function is |safeToCompareToEmptyOrDeleted|. There shouldn't be any problems if m_containingRegion was deleted.
-    if (!regionList.contains(m_containingRegion))
-        m_containingRegion = 0;
-
-    return this;
 }
 
 LayoutUnit RootInlineBox::alignBoxesInBlockDirection(LayoutUnit heightOfBlock, GlyphOverflowAndFallbackFontsMap& textBoxDataMap, VerticalPositionCache& verticalPositionCache)

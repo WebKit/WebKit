@@ -1,3 +1,29 @@
+2012-12-06  Andrei Bucur  <abucur@adobe.com>
+
+        [CSS Regions] Remove the sanitize mechanism from LineFragmentationData
+        https://bugs.webkit.org/show_bug.cgi?id=104234
+
+        Reviewed by David Hyatt.
+
+        Remove previous work that ensured an invalid region is never returned by the containingRegion getter. After r136793 the blocks always
+        relayout children if the region chain changes. This means the sanitize() method is only necessary when all the regions are removed.
+        This case is treated separately in layoutInlineChildren.
+
+        Tests: no new functionality, no bug fixed.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::lineWidthForPaginatedLineChanged):
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::layoutInlineChildren):
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::containingRegion):
+        (WebCore):
+        (WebCore::RootInlineBox::setContainingRegion):
+        * rendering/RootInlineBox.h:
+        (RootInlineBox):
+        (WebCore::RootInlineBox::LineFragmentationData::LineFragmentationData):
+        (LineFragmentationData):
+
 2012-12-06  Kenneth Russell  <kbr@google.com>
 
         Associate URLs with GraphicsContext3D instances created for WebGL

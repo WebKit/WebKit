@@ -63,8 +63,7 @@ public:
     LayoutUnit paginatedLineWidth() const { return m_fragmentationData ? m_fragmentationData->m_paginatedLineWidth : LayoutUnit(0); }
     void setPaginatedLineWidth(LayoutUnit width) { ensureLineFragmentationData()->m_paginatedLineWidth = width; }
 
-    RenderRegion* containingRegion() const { return m_fragmentationData ? m_fragmentationData->sanitize(block())->m_containingRegion : 0; }
-    bool hasContainingRegion() const { return m_fragmentationData ? m_fragmentationData->m_hasContainingRegion : false; }
+    RenderRegion* containingRegion() const;
     void setContainingRegion(RenderRegion*);
 
     LayoutUnit selectionTop() const;
@@ -229,21 +228,16 @@ private:
             , m_paginationStrut(0)
             , m_paginatedLineWidth(0)
             , m_isFirstAfterPageBreak(false)
-            , m_hasContainingRegion(false)
         {
 
         }
 
-        LineFragmentationData* sanitize(const RenderBlock*);
-
         // It should not be assumed the |containingRegion| is always valid.
-        // It can also be 0 if the flow has no region chain or an invalid pointer if the region is no longer in the chain.
-        // Use |sanitize| to filter an invalid region.
+        // It can also be 0 if the flow has no region chain.
         RenderRegion* m_containingRegion;
         LayoutUnit m_paginationStrut;
         LayoutUnit m_paginatedLineWidth;
-        unsigned m_isFirstAfterPageBreak : 1;
-        unsigned m_hasContainingRegion : 1; // We need to keep this to differentiate between the case of a void region and an invalid region.
+        bool m_isFirstAfterPageBreak;
     };
 
     OwnPtr<LineFragmentationData> m_fragmentationData;
