@@ -127,7 +127,7 @@ PassRefPtr<IDBOpenDBRequest> IDBFactory::openInternal(ScriptExecutionContext* co
         return 0;
 
     RefPtr<IDBDatabaseCallbacksImpl> databaseCallbacks = IDBDatabaseCallbacksImpl::create();
-    int64 transactionId = IDBDatabase::nextTransactionId();
+    int64_t transactionId = IDBDatabase::nextTransactionId();
     RefPtr<IDBOpenDBRequest> request = IDBOpenDBRequest::create(context, IDBAny::createNull(), databaseCallbacks, transactionId, version);
     // FIXME: pass the transactionId in here in https://bugs.webkit.org/show_bug.cgi?id=103922
     m_backend->open(name, version, request, databaseCallbacks, context->securityOrigin(), context, getIndexedDBDatabasePath(context));
