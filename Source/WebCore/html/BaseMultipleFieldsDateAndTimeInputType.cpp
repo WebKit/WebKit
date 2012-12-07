@@ -86,12 +86,12 @@ bool BaseMultipleFieldsDateAndTimeInputType::hasCustomFocusLogic() const
 
 bool BaseMultipleFieldsDateAndTimeInputType::isEditControlOwnerDisabled() const
 {
-    return element()->readOnly();
+    return element()->disabled();
 }
 
 bool BaseMultipleFieldsDateAndTimeInputType::isEditControlOwnerReadOnly() const
 {
-    return element()->disabled();
+    return element()->readOnly();
 }
 
 void BaseMultipleFieldsDateAndTimeInputType::focusAndSelectSpinButtonOwner()
