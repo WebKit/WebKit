@@ -1,3 +1,21 @@
+2012-12-06  Emil A Eklund  <eae@chromium.org>
+
+        Unreviewed chromium rebaseline for r136909.
+
+        * platform/chromium-win-xp/http/tests/w3c: Added.
+        * platform/chromium-win-xp/http/tests/w3c/webperf: Added.
+        * platform/chromium-win-xp/http/tests/w3c/webperf/submission: Added.
+        * platform/chromium-win-xp/http/tests/w3c/webperf/submission/Intel: Added.
+        * platform/chromium-win-xp/http/tests/w3c/webperf/submission/Intel/user-timing: Added.
+        * platform/chromium-win-xp/http/tests/w3c/webperf/submission/Intel/user-timing/test_user_timing_mark-expected.txt: Added.
+        * platform/chromium-win/http/tests/w3c: Added.
+        * platform/chromium-win/http/tests/w3c/webperf: Added.
+        * platform/chromium-win/http/tests/w3c/webperf/submission: Added.
+        * platform/chromium-win/http/tests/w3c/webperf/submission/Intel: Added.
+        * platform/chromium-win/http/tests/w3c/webperf/submission/Intel/user-timing: Added.
+        * platform/chromium-win/http/tests/w3c/webperf/submission/Intel/user-timing/test_user_timing_clearMarks-expected.txt: Added.
+        * platform/chromium-win/http/tests/w3c/webperf/submission/Intel/user-timing/test_user_timing_mark-expected.txt: Added.
+
 2012-12-06  Philip Rogers  <pdr@google.com>
 
         Unify SVG's animation and target tracking systems.

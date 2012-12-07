@@ -1,0 +1,63 @@
+Description
+
+This test validates functionality of the interface window.performance.clearMarks.
+
+
+PASS There should be 2 entries. 
+PASS Entries in entrylist should be in order. 
+PASS Entry "1" should be one that we have set. 
+PASS entryType should be "mark". 
+PASS startTime should greater than 0. 
+PASS duration of mark should be 0. 
+PASS Entry "abc" should be one that we have set. 
+PASS entryType should be "mark". 
+PASS startTime should greater than 0. 
+PASS duration of mark should be 0. 
+PASS Marks that we cleared should not exist anymore. 
+PASS There should be 1 entries. 
+PASS Entries in entrylist should be in order. 
+PASS Entry "abc" should be one that we have set. 
+PASS entryType should be "mark". 
+PASS startTime should greater than 0. 
+PASS duration of mark should be 0. 
+PASS Marks that we cleared should not exist anymore. 
+PASS There should be 0 entries. 
+PASS Entries in entrylist should be in order. 
+PASS Marks that we cleared should not exist anymore. 
+PASS No marks should exist after we clear all. 
+PASS There should be 4 entries. 
+PASS Entries in entrylist should be in order. 
+PASS Entry "1" should be one that we have set. 
+PASS entryType should be "mark". 
+PASS startTime should greater than 0. 
+PASS duration of mark should be 0. 
+PASS Entry "1" should be one that we have set. 
+PASS entryType should be "mark". 
+PASS startTime should greater than 0. 
+PASS duration of mark should be 0. 
+PASS Entry "abc" should be one that we have set. 
+PASS entryType should be "mark". 
+PASS startTime should greater than 0. 
+PASS duration of mark should be 0. 
+PASS Entry "abc" should be one that we have set. 
+PASS entryType should be "mark". 
+PASS startTime should greater than 0. 
+PASS duration of mark should be 0. 
+PASS Marks that we cleared should not exist anymore. 
+PASS There should be 2 entries. 
+PASS Entries in entrylist should be in order. 
+PASS Entry "abc" should be one that we have set. 
+PASS entryType should be "mark". 
+PASS startTime should greater than 0. 
+PASS duration of mark should be 0. 
+PASS Entry "abc" should be one that we have set. 
+PASS entryType should be "mark". 
+PASS startTime should greater than 0. 
+PASS duration of mark should be 0. 
+PASS Marks that we cleared should not exist anymore. 
+PASS There should be 0 entries. 
+PASS Entries in entrylist should be in order. 
+PASS Marks that we cleared should not exist anymore. 
+PASS Nothing should happen if we clear a non-exist mark. 
+PASS No marks should exist when we clear all. 
+
