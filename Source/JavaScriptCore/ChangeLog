@@ -1,5 +1,19 @@
 2012-12-07  Jonathan Liu  <net147@gmail.com>
 
+        Add missing forward declaration for JSC::ArrayAllocationProfile
+        https://bugs.webkit.org/show_bug.cgi?id=104425
+
+        Reviewed by Kentaro Hara.
+
+        The header for the JSC::ArrayConstructor class is missing a forward
+        declaration for the JSC::ArrayAllocationProfile class which causes
+        compilation to fail when compiling with MinGW-w64.
+
+        * runtime/ArrayConstructor.h:
+        (JSC):
+
+2012-12-07  Jonathan Liu  <net147@gmail.com>
+
         Add missing const qualifier to JSC::CodeBlock::getJITType()
         https://bugs.webkit.org/show_bug.cgi?id=104424
 

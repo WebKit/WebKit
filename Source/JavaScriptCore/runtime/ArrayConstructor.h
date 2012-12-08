@@ -25,6 +25,7 @@
 
 namespace JSC {
 
+class ArrayAllocationProfile;
 class ArrayPrototype;
 class JSArray;
 
