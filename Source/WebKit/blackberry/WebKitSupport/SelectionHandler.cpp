@@ -654,9 +654,16 @@ void SelectionHandler::selectObject(TextGranularity granularity)
 
     SelectionLog(LogLevelInfo, "SelectionHandler::selectObject using current selection");
 
-    // Use the current selection as the selection point.
     ASSERT(focusedFrame->selection()->selectionType() != VisibleSelection::NoSelection);
-    m_selectionActive = expandSelectionToGranularity(focusedFrame, focusedFrame->selection()->selection(), granularity, true /* isInputMode */);
+
+    // Use the current selection as the selection point.
+    VisibleSelection selectionOrigin = focusedFrame->selection()->selection();
+
+    // If this is the end of the input field, make sure we select the last word.
+    if (m_webPage->m_inputHandler->isCaretAtEndOfText())
+        selectionOrigin = previousWordPosition(selectionOrigin.start());
+
+    m_selectionActive = expandSelectionToGranularity(focusedFrame, selectionOrigin, granularity, true /* isInputMode */);
 }
 
 void SelectionHandler::selectObject(Node* node)

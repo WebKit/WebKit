@@ -121,6 +121,8 @@ public:
 
     WebCore::IntRect boundingBoxForInputField();
 
+    bool isCaretAtEndOfText();
+
     // IMF driven calls.
     bool setBatchEditingActive(bool);
     bool setSelection(int start, int end, bool changeIsPartOfComposition = false);

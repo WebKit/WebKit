@@ -1864,6 +1864,11 @@ bool InputHandler::setBatchEditingActive(bool active)
     return true;
 }
 
+bool InputHandler::isCaretAtEndOfText()
+{
+    return caretPosition() == elementText().length();
+}
+
 int InputHandler::caretPosition() const
 {
     if (!isActiveTextEdit())
