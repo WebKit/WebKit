@@ -49,6 +49,8 @@
        (home-literal "/Library/Preferences/com.apple.LaunchServices.plist")
        (home-literal "/Library/Preferences/com.apple.QTKit.plist")
        (home-literal "/Library/Preferences/com.apple.WebFoundation.plist")
+       (home-literal "/Library/Preferences/com.apple.avfoundation.plist")
+       (home-literal "/Library/Preferences/com.apple.coremedia.plist")
        (home-literal "/Library/Preferences/com.apple.security.plist")
        (home-literal "/Library/Preferences/com.apple.security.revocation.plist")
        (home-literal "/Library/Preferences/com.apple.speech.recognition.AppleSpeechRecognition.prefs.plist")

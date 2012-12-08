@@ -1,3 +1,18 @@
+2012-12-07  Jer Noble  <jer.noble@apple.com>
+
+        Allow the WebProcess access to the CoreMedia preferences file.
+        https://bugs.webkit.org/show_bug.cgi?id=104320
+        <rdar://problem/10904519>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Allow read access to ~/Library/Preferences/com.apple.coremedia.plist and com.apple.avfoundation.plist
+        by the WebProcess. The QuickTime.plugin uses CoreMedia for playback, so allow PluginProcess
+        to access those preferences as well.
+
+        * PluginProcess/mac/com.apple.WebKit.PluginProcess.sb.in:
+        * WebProcess/com.apple.WebProcess.sb.in:
+
 2012-12-07  Tim Horton  <timothy_horton@apple.com>
 
         [wk2] WebProcessServiceForWebKitDevelopment should forward stdout and stderr to the UIProcess

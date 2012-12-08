@@ -46,6 +46,8 @@
        (home-literal "/Library/Preferences/com.apple.iWork.Pages.plist")
        (home-literal "/Library/Preferences/com.apple.LaunchServices.plist")
        (home-literal "/Library/Preferences/com.apple.MultitouchSupport.plist")
+       (home-literal "/Library/Preferences/com.apple.avfoundation.plist")
+       (home-literal "/Library/Preferences/com.apple.coremedia.plist")
        (home-literal "/Library/Preferences/com.apple.opengl.plist")
        (home-literal "/Library/Preferences/com.apple.security.plist")
        (home-literal "/Library/Preferences/com.apple.security_common.plist")
