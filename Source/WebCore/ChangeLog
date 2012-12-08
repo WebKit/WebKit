@@ -1,5 +1,12 @@
 2012-12-08  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Qt Linux Minimal build fix after r136975.
+
+        * dom/ElementRareData.h:
+        (ElementRareData):
+
+2012-12-08  Ryosuke Niwa  <rniwa@webkit.org>
+
         Qt Linux Minimal build fix attempt after r136959.
 
         * inspector/InspectorInstrumentation.h:
