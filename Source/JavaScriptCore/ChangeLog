@@ -1,3 +1,16 @@
+2012-12-07  Jonathan Liu  <net147@gmail.com>
+
+        Add missing const qualifier to JSC::CodeBlock::getJITType()
+        https://bugs.webkit.org/show_bug.cgi?id=104424
+
+        Reviewed by Laszlo Gombos.
+
+        JSC::CodeBlock::getJITType() has the const qualifier when JIT is
+        enabled but is missing the const qualifier when JIT is disabled.
+
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::getJITType):
+
 2012-12-07  Oliver Hunt  <oliver@apple.com>
 
         Make function code cache proportional to main codeblock cache
