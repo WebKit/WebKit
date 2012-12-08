@@ -164,6 +164,8 @@ static void connectToWebProcessServiceForWebKitDevelopment(const ProcessLauncher
     xpc_dictionary_set_mach_send(bootstrapMessage, "server-port", listeningPort);
     xpc_dictionary_set_string(bootstrapMessage, "client-identifier", clientIdentifier.data());
     xpc_dictionary_set_string(bootstrapMessage, "ui-process-name", [[[NSProcessInfo processInfo] processName] UTF8String]);
+    xpc_dictionary_set_fd(bootstrapMessage, "stdout", STDOUT_FILENO);
+    xpc_dictionary_set_fd(bootstrapMessage, "stderr", STDERR_FILENO);
 
     that->ref();
 

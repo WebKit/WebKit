@@ -131,6 +131,9 @@ static void WebProcessServiceForWebKitDevelopmentEventHandler(xpc_connection_t p
                 xpc_connection_send_message(xpc_dictionary_get_remote_connection(event), reply);
                 xpc_release(reply);
 
+                dup2(xpc_dictionary_dup_fd(event, "stdout"), STDOUT_FILENO);
+                dup2(xpc_dictionary_dup_fd(event, "stderr"), STDERR_FILENO);
+
                 initializeWebProcessFunctionPtr(xpc_dictionary_get_string(event, "client-identifier"), peer, xpc_dictionary_copy_mach_send(event, "server-port"), xpc_dictionary_get_string(event, "ui-process-name"));
             }
         }
