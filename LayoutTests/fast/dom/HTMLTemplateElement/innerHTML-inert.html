@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script>
+description("Test that setting HTMLTemplateElement.innerHTML uses the inert document when creating elements");
+jsTestIsAsync = true;
+
+var template = document.createElement('template');
+var div = document.createElement('div');
+var attemptedLoad = false;
+function finish() {
+    shouldBeFalse('attemptedLoad');
+    finishJSTest();
+}
+
+template.innerHTML = '<img src="http://inactive.com/foo.jpg" onerror="attemptedLoad = true">';
+div.innerHTML = '<img src="http://active.com/bar.jpg" onerror="finish()">';
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
