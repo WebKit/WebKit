@@ -1,3 +1,13 @@
+2012-12-08  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Reviewed by Martin Robinson.
+
+        Update the Chromium/Chrome version we advertise in our User-Agent
+        string to version 25, to better match our current reality.
+
+        * platform/gtk/UserAgentGtk.cpp:
+        (WebCore::standardUserAgent):
+
 2012-12-08  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r137006.

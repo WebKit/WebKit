@@ -89,7 +89,7 @@ String standardUserAgent(const String& applicationName, const String& applicatio
     // CSS, or custom fonts. In some cases sites won't load resources at all.
     DEFINE_STATIC_LOCAL(const CString, uaVersion, (String::format("%i.%i", WEBKIT_USER_AGENT_MAJOR_VERSION, WEBKIT_USER_AGENT_MINOR_VERSION).utf8()));
     DEFINE_STATIC_LOCAL(const String, staticUA, (String::format("Mozilla/5.0 (%s; %s) AppleWebKit/%s (KHTML, like Gecko) "
-                                                                "Chromium/18.0.1025.168 Chrome/18.0.1025.168 Safari/%s",
+                                                                "Chromium/25.0.1349.2 Chrome/25.0.1349.2 Safari/%s",
                                                                 platformForUAString(), platformVersionForUAString().utf8().data(),
                                                                 uaVersion.data(), uaVersion.data())));
     if (applicationName.isEmpty())
