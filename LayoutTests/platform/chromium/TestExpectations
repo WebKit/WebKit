@@ -1590,7 +1590,6 @@ webkit.org/b/98647 [ Android ] fast/canvas/canvas-toDataURL-webp.html [ ImageOnl
 webkit.org/b/98647 [ Android ] compositing/backface-visibility/backface-visibility-3d.html [ ImageOnlyFailure ]
 webkit.org/b/98647 [ Android ] compositing/backface-visibility/backface-visibility-image.html [ ImageOnlyFailure ]
 webkit.org/b/98647 [ Android ] compositing/backface-visibility/backface-visibility-non3d.html [ ImageOnlyFailure ]
-webkit.org/b/98647 [ Android ] compositing/backface-visibility/backface-visibility-webgl.html [ ImageOnlyFailure ]
 webkit.org/b/98647 [ Android ] compositing/color-matching/image-color-matching.html [ ImageOnlyFailure ]
 webkit.org/b/98647 [ Android ] compositing/color-matching/pdf-image-match.html [ ImageOnlyFailure ]
 webkit.org/b/98647 [ Android ] compositing/culling/filter-occlusion-blur-large.html [ ImageOnlyFailure ]
@@ -4210,8 +4209,9 @@ webkit.org/b/104092 fast/frames/paint-iframe-background.html [ Failure Pass ]
 
 webkit.org/b/103487 [ Linux ] fast/forms/placeholder-position.html [ ImageOnlyFailure Pass ]
 
-# Missing since r136656
-
 # Flaky
 webkit.org/b/104283 [ XP ] fonts/monospace.html [ Failure Pass ]
 webkit.org/b/104283 [ Mac Debug ] fonts/monospace.html [ ImageOnlyFailure Pass ]
+
+# First row, third column is wrong.
+crbug.com/164997 compositing/backface-visibility/backface-visibility-webgl.html [ ImageOnlyFailure ]
