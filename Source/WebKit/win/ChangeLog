@@ -1,3 +1,16 @@
+2012-12-08  Seokju Kwon  <seokju.kwon@gmail.com>
+
+        Remove unused headers
+        https://bugs.webkit.org/show_bug.cgi?id=104428
+
+        Reviewed by Kentaro Hara.
+
+        Header inclusion cleanup.
+        Remove <WebCore/NotImplement.h>.
+
+        * WebCoreSupport/WebInspectorClient.cpp:
+        * WebMutableURLRequest.cpp:
+
 2012-12-07  Anders Carlsson  <andersca@apple.com>
 
         Remove WebKit2 related projects from WebKit.sln

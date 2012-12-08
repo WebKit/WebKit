@@ -34,7 +34,6 @@
 #include "WebProcess.h"
 #include <WebCore/FocusController.h>
 #include <WebCore/KeyboardEvent.h>
-#include <WebCore/NotImplemented.h>
 #include <WebCore/Page.h>
 
 using namespace WebCore;

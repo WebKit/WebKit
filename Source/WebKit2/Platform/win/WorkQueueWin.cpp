@@ -26,7 +26,6 @@
 #include "config.h"
 #include "WorkQueue.h"
 
-#include <WebCore/NotImplemented.h>
 #include <wtf/Threading.h>
 
 inline WorkQueue::WorkItemWin::WorkItemWin(const Function<void()>& function, WorkQueue* queue)

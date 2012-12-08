@@ -31,7 +31,6 @@
 #include <QObject>
 #include <QThread>
 #include <QProcess>
-#include <WebCore/NotImplemented.h>
 #include <wtf/Threading.h>
 
 class WorkQueue::WorkItemQt : public QObject {

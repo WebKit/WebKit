@@ -1,3 +1,21 @@
+2012-12-08  Seokju Kwon  <seokju.kwon@gmail.com>
+
+        Remove unused headers
+        https://bugs.webkit.org/show_bug.cgi?id=104428
+
+        Reviewed by Kentaro Hara.
+
+        Header inclusion cleanup.
+        Remove <WebCore/NotImplement.h>.
+
+        * Platform/qt/WorkQueueQt.cpp:
+        * Platform/win/WorkQueueWin.cpp:
+        * Shared/qt/ShareableBitmapQt.cpp:
+        * UIProcess/Launcher/qt/ProcessLauncherQt.cpp:
+        * UIProcess/win/TextCheckerWin.cpp:
+        * UIProcess/win/WebContextMenuProxyWin.cpp:
+        * WebProcess/WebCoreSupport/efl/WebEditorClientEfl.cpp:
+
 2012-12-07  Jinwoo Song  <jinwoo7.song@samsung.com>
 
         [EFL][WK2] Remove unused source file from PlatformEfl.cmake

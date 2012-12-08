@@ -32,7 +32,6 @@
 #include <QtGlobal>
 #include <WebCore/BitmapImage.h>
 #include <WebCore/GraphicsContext.h>
-#include <WebCore/NotImplemented.h>
 
 using namespace WebCore;
 

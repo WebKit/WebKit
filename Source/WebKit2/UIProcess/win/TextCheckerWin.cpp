@@ -28,7 +28,6 @@
 
 #include "TextCheckerState.h"
 #include "WebTextChecker.h"
-#include <WebCore/NotImplemented.h>
 
 using namespace WebCore;
 
