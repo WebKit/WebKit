@@ -1,0 +1,26 @@
+scroll me
+ (GraphicsLayer
+  (bounds 800.00 600.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 600.00)
+      (children 3
+        (GraphicsLayer
+          (position 8.00 8.00)
+          (bounds 20.00 20.00)
+        )
+        (GraphicsLayer
+          (position 10.00 10.00)
+          (bounds 400.00 100.00)
+          (drawsContent 1)
+        )
+        (GraphicsLayer
+          (position 200.00 8.00)
+          (bounds 204.00 204.00)
+          (drawsContent 1)
+        )
+      )
+    )
+  )
+)
+

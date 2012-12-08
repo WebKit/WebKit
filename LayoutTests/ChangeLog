@@ -1,3 +1,149 @@
+2012-12-08  No'am Rosenthal  <noam@webkit.org>
+
+        Use background color for GraphicsLayers when applicable
+        https://bugs.webkit.org/show_bug.cgi?id=103786
+
+        Created new tests for composited background colors, update existing tests that are affected by the change,
+        and created platform-specific overrides for Chromium, since it does not yet support composited background
+        colors.
+
+        Reviewed by Simon Fraser.
+
+        * compositing/background-color/background-color-alpha-expected.html: Added.
+        * compositing/background-color/background-color-alpha.html: Added.
+        * compositing/background-color/background-color-change-to-text-expected.html: Added.
+        * compositing/background-color/background-color-change-to-text.html: Added.
+        * compositing/background-color/background-color-composite-expected.html: Added.
+        * compositing/background-color/background-color-composite.html: Added.
+        * compositing/background-color/background-color-container-expected.html: Added.
+        * compositing/background-color/background-color-container.html: Added.
+        * compositing/background-color/background-color-content-clip-expected.html: Added.
+        * compositing/background-color/background-color-content-clip.html: Added.
+        * compositing/background-color/background-color-padding-change-expected.html: Added.
+        * compositing/background-color/background-color-padding-change.html: Added.
+        * compositing/background-color/background-color-padding-clip-expected.html: Added.
+        * compositing/background-color/background-color-padding-clip.html: Added.
+        * compositing/background-color/background-color-simple-expected.html: Added.
+        * compositing/background-color/background-color-simple.html: Added.
+        * compositing/background-color/background-color-text-change-expected.html: Added.
+        * compositing/background-color/background-color-text-change.html: Added.
+        * compositing/background-color/background-color-text-clip-expected.html: Added.
+        * compositing/background-color/background-color-text-clip.html: Added.
+                Added new tests for the specific functionality added, with the edge cases regarding composited
+                backgrounds.
+
+        * compositing/backing/no-backing-for-clip-expected.txt:
+        * compositing/backing/no-backing-for-clip-overlap-expected.txt:
+        * compositing/backing/no-backing-for-perspective-expected.txt:
+        * compositing/columns/composited-in-paginated-expected.txt:
+        * compositing/geometry/ancestor-overflow-change-expected.txt:
+        * compositing/geometry/bounds-ignores-hidden-composited-descendant-expected.txt:
+        * compositing/geometry/bounds-ignores-hidden-dynamic-negzindex-expected.txt:
+        * compositing/geometry/clip-expected.txt:
+        * compositing/geometry/composited-in-columns-expected.txt:
+        * compositing/geometry/flipped-writing-mode-expected.txt:
+        * compositing/geometry/layer-due-to-layer-children-deep-switch-expected.txt:
+        * compositing/geometry/limit-layer-bounds-fixed-positioned-expected.txt:
+        * compositing/geometry/limit-layer-bounds-overflow-root-expected.txt:
+        * compositing/geometry/limit-layer-bounds-positioned-expected.txt:
+        * compositing/geometry/limit-layer-bounds-positioned-transition-expected.txt:
+        * compositing/geometry/limit-layer-bounds-transformed-expected.txt:
+        * compositing/geometry/limit-layer-bounds-transformed-overflow-expected.txt:
+        * compositing/geometry/preserve-3d-switching-expected.txt:
+        * compositing/iframes/become-composited-nested-iframes-expected.txt:
+        * compositing/iframes/become-overlapped-iframe-expected.txt:
+        * compositing/iframes/composited-parent-iframe-expected.txt:
+        * compositing/iframes/connect-compositing-iframe-delayed-expected.txt:
+        * compositing/iframes/connect-compositing-iframe-expected.txt:
+        * compositing/iframes/connect-compositing-iframe2-expected.txt:
+        * compositing/iframes/connect-compositing-iframe3-expected.txt:
+        * compositing/iframes/enter-compositing-iframe-expected.txt:
+        * compositing/iframes/iframe-resize-expected.txt:
+        * compositing/iframes/invisible-nested-iframe-hide-expected.txt:
+        * compositing/iframes/invisible-nested-iframe-show-expected.txt:
+        * compositing/iframes/overlapped-iframe-expected.txt:
+        * compositing/iframes/overlapped-iframe-iframe-expected.txt:
+        * compositing/iframes/page-cache-layer-tree-expected.txt:
+        * compositing/iframes/scrolling-iframe-expected.txt:
+        * compositing/layer-creation/animation-overlap-with-children-expected.txt:
+        * compositing/layer-creation/fixed-position-and-transform-expected.txt:
+        * compositing/layer-creation/fixed-position-under-transform-expected.txt:
+        * compositing/layer-creation/no-compositing-for-preserve-3d-expected.txt:
+        * compositing/layer-creation/overflow-scroll-overlap-expected.txt:
+        * compositing/layer-creation/overlap-animation-expected.txt:
+        * compositing/layer-creation/overlap-child-layer-expected.txt:
+        * compositing/layer-creation/overlap-clipping-expected.txt:
+        * compositing/layer-creation/overlap-transformed-and-clipped-expected.txt:
+        * compositing/layer-creation/overlap-transformed-layer-expected.txt:
+        * compositing/layer-creation/overlap-transforms-expected.txt:
+        * compositing/layer-creation/scroll-partial-update-expected.txt:
+        * compositing/layer-creation/spanOverlapsCanvas-expected.txt:
+        * compositing/layer-creation/stacking-context-overlap-expected.txt:
+        * compositing/layer-creation/stacking-context-overlap-nested-expected.txt:
+        * compositing/layer-creation/translatez-overlap-expected.txt:
+        * compositing/overflow-trumps-transform-style-expected.txt:
+        * compositing/overflow/clip-descendents-expected.txt:
+        * compositing/plugins/no-backing-store-expected.txt:
+        * compositing/rtl/rtl-absolute-expected.txt:
+        * compositing/rtl/rtl-absolute-overflow-expected.txt:
+        * compositing/rtl/rtl-absolute-overflow-scrolled-expected.txt:
+        * compositing/rtl/rtl-fixed-expected.txt:
+        * compositing/rtl/rtl-fixed-overflow-expected.txt:
+        * compositing/rtl/rtl-relative-expected.txt:
+        * compositing/tiled-layers-hidpi-expected.txt:
+        * compositing/visible-rect/2d-transformed-expected.txt:
+        * compositing/visible-rect/3d-transform-style-expected.txt:
+        * compositing/visible-rect/3d-transformed-expected.txt:
+        * compositing/visible-rect/animated-expected.txt:
+        * compositing/visible-rect/animated-from-none-expected.txt:
+        * compositing/visible-rect/clipped-by-viewport-expected.txt:
+        * compositing/visible-rect/clipped-visible-rect-expected.txt:
+        * compositing/visible-rect/iframe-and-layers-expected.txt:
+        * compositing/visible-rect/nested-transform-expected.txt:
+        * compositing/visible-rect/scrolled-expected.txt:
+        * css3/filters/filtered-compositing-descendant-expected.txt:
+                Updated existing tests that now print different layer-tree results.
+
+        * platform/chromium/compositing/backing/no-backing-for-clip-expected.txt: Copied from LayoutTests/compositing/backing/no-backing-for-clip-expected.txt.
+        * platform/chromium/compositing/backing/no-backing-for-clip-overlap-expected.txt: Copied from LayoutTests/compositing/backing/no-backing-for-clip-overlap-expected.txt.
+        * platform/chromium/compositing/backing/no-backing-for-perspective-expected.txt: Copied from LayoutTests/compositing/backing/no-backing-for-perspective-expected.txt.
+        * platform/chromium/compositing/columns/composited-in-paginated-expected.txt: Copied from LayoutTests/compositing/columns/composited-in-paginated-expected.txt.
+        * platform/chromium/compositing/geometry/ancestor-overflow-change-expected.txt: Copied from LayoutTests/compositing/geometry/ancestor-overflow-change-expected.txt.
+        * platform/chromium/compositing/geometry/bounds-ignores-hidden-composited-descendant-expected.txt: Copied from LayoutTests/compositing/geometry/bounds-ignores-hidden-composited-descendant-expected.txt.
+        * platform/chromium/compositing/geometry/bounds-ignores-hidden-dynamic-negzindex-expected.txt: Copied from LayoutTests/compositing/geometry/bounds-ignores-hidden-dynamic-negzindex-expected.txt.
+        * platform/chromium/compositing/geometry/clip-expected.txt: Copied from LayoutTests/compositing/geometry/clip-expected.txt.
+        * platform/chromium/compositing/geometry/composited-in-columns-expected.txt: Copied from LayoutTests/compositing/geometry/composited-in-columns-expected.txt.
+        * platform/chromium/compositing/geometry/flipped-writing-mode-expected.txt: Copied from LayoutTests/compositing/geometry/flipped-writing-mode-expected.txt.
+        * platform/chromium/compositing/geometry/layer-due-to-layer-children-deep-switch-expected.txt: Copied from LayoutTests/compositing/geometry/layer-due-to-layer-children-deep-switch-expected.txt.
+        * platform/chromium/compositing/geometry/limit-layer-bounds-overflow-root-expected.txt: Copied from LayoutTests/compositing/geometry/limit-layer-bounds-overflow-root-expected.txt.
+        * platform/chromium/compositing/geometry/limit-layer-bounds-positioned-expected.txt: Copied from LayoutTests/compositing/geometry/limit-layer-bounds-positioned-expected.txt.
+        * platform/chromium/compositing/geometry/limit-layer-bounds-positioned-transition-expected.txt: Copied from LayoutTests/compositing/geometry/limit-layer-bounds-positioned-transition-expected.txt.
+        * platform/chromium/compositing/geometry/limit-layer-bounds-transformed-expected.txt: Copied from LayoutTests/compositing/geometry/limit-layer-bounds-transformed-expected.txt.
+        * platform/chromium/compositing/geometry/preserve-3d-switching-expected.txt: Copied from LayoutTests/compositing/geometry/preserve-3d-switching-expected.txt.
+        * platform/chromium/compositing/iframes/invisible-nested-iframe-hide-expected.txt: Copied from LayoutTests/compositing/iframes/invisible-nested-iframe-hide-expected.txt.
+        * platform/chromium/compositing/layer-creation/fixed-position-and-transform-expected.txt: Copied from LayoutTests/compositing/layer-creation/fixed-position-and-transform-expected.txt.
+        * platform/chromium/compositing/layer-creation/fixed-position-under-transform-expected.txt: Copied from LayoutTests/compositing/layer-creation/fixed-position-under-transform-expected.txt.
+        * platform/chromium/compositing/layer-creation/no-compositing-for-preserve-3d-expected.txt: Copied from LayoutTests/compositing/layer-creation/no-compositing-for-preserve-3d-expected.txt.
+        * platform/chromium/compositing/layer-creation/overlap-animation-expected.txt: Copied from LayoutTests/compositing/layer-creation/overlap-animation-expected.txt.
+        * platform/chromium/compositing/layer-creation/overlap-child-layer-expected.txt: Copied from LayoutTests/compositing/layer-creation/overlap-child-layer-expected.txt.
+        * platform/chromium/compositing/layer-creation/overlap-clipping-expected.txt: Copied from LayoutTests/compositing/layer-creation/overlap-clipping-expected.txt.
+        * platform/chromium/compositing/layer-creation/overlap-transformed-and-clipped-expected.txt: Copied from LayoutTests/compositing/layer-creation/overlap-transformed-and-clipped-expected.txt.
+        * platform/chromium/compositing/layer-creation/overlap-transformed-layer-expected.txt: Copied from LayoutTests/compositing/layer-creation/overlap-transformed-layer-expected.txt.
+        * platform/chromium/compositing/layer-creation/overlap-transforms-expected.txt: Copied from LayoutTests/compositing/layer-creation/overlap-transforms-expected.txt.
+        * platform/chromium/compositing/layer-creation/scroll-partial-update-expected.txt: Copied from LayoutTests/compositing/layer-creation/scroll-partial-update-expected.txt.
+        * platform/chromium/compositing/layer-creation/stacking-context-overlap-expected.txt: Copied from LayoutTests/compositing/layer-creation/stacking-context-overlap-expected.txt.
+        * platform/chromium/compositing/layer-creation/stacking-context-overlap-nested-expected.txt: Copied from LayoutTests/compositing/layer-creation/stacking-context-overlap-nested-expected.txt.
+        * platform/chromium/compositing/layer-creation/translatez-overlap-expected.txt: Copied from LayoutTests/compositing/layer-creation/translatez-overlap-expected.txt.
+        * platform/chromium/compositing/overflow-trumps-transform-style-expected.txt: Copied from LayoutTests/compositing/overflow-trumps-transform-style-expected.txt.
+        * platform/chromium/compositing/rtl/rtl-absolute-expected.txt: Copied from LayoutTests/compositing/rtl/rtl-absolute-expected.txt.
+        * platform/chromium/compositing/rtl/rtl-absolute-overflow-expected.txt: Copied from LayoutTests/compositing/rtl/rtl-absolute-overflow-expected.txt.
+        * platform/chromium/compositing/rtl/rtl-absolute-overflow-scrolled-expected.txt: Copied from LayoutTests/compositing/rtl/rtl-absolute-overflow-scrolled-expected.txt.
+        * platform/chromium/compositing/rtl/rtl-fixed-expected.txt: Copied from LayoutTests/compositing/rtl/rtl-fixed-expected.txt.
+        * platform/chromium/compositing/rtl/rtl-fixed-overflow-expected.txt: Copied from LayoutTests/compositing/rtl/rtl-fixed-overflow-expected.txt.
+        * platform/chromium/compositing/rtl/rtl-relative-expected.txt: Copied from LayoutTests/compositing/rtl/rtl-relative-expected.txt.
+        * platform/chromium/css3/filters/filtered-compositing-descendant-expected.txt: Copied from LayoutTests/css3/filters/filtered-compositing-descendant-expected.txt.
+                Create chromium-specific results since chromium does not yet support setContentsToBackgroundColor.
+
 2012-12-08  Kondapally Kalyan  <kalyan.kondapally@intel.com>
 
         [EFL] Enable WebGL by default.

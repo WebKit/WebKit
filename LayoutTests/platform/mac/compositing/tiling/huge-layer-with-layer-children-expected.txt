@@ -16,12 +16,12 @@ This is some text
             (GraphicsLayer
               (position 51.00 101.00)
               (bounds 200.00 200.00)
-              (drawsContent 1)
+              (backgroundColor #FF0000)
             )
             (GraphicsLayer
               (position 51.00 4701.00)
               (bounds 200.00 200.00)
-              (drawsContent 1)
+              (backgroundColor #0000FF)
             )
           )
         )

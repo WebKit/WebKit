@@ -17,7 +17,7 @@ The green box appear angled out from the yellow box and embedded in it.
               (bounds 280.00 280.00)
               (opacity 0.80)
               (preserves3D 1)
-              (drawsContent 1)
+              (backgroundColor #FFFF00)
               (transform [0.77 -0.56 -0.32 0.00] [0.00 0.50 -0.87 0.00] [0.64 0.66 0.38 0.00] [0.00 0.00 0.00 1.00])
               (children 1
                 (GraphicsLayer

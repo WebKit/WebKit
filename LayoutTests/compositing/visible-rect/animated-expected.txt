@@ -18,7 +18,7 @@
               (children 1
                 (GraphicsLayer
                   (bounds 200.00 200.00)
-                  (drawsContent 1)
+                  (backgroundColor #0000FF)
                   (transform [1.00 0.00 0.00 0.00] [0.00 1.00 0.00 0.00] [0.00 0.00 1.00 0.00] [-100.00 0.00 0.00 1.00])
                   (visible rect 100.00, 0.00 100.00 x 200.00)
                 )

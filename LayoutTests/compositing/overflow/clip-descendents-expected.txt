@@ -13,7 +13,7 @@ Test overflow clipping of composited elements in various configurations.
             (GraphicsLayer
               (position 2.00 12.00)
               (bounds 100.00 150.00)
-              (drawsContent 1)
+              (backgroundColor #808080)
               (transform [1.00 0.00 0.00 0.00] [0.00 1.00 0.00 0.00] [0.00 0.00 1.00 0.00] [0.00 0.00 1.00 1.00])
             )
           )
@@ -41,7 +41,7 @@ Test overflow clipping of composited elements in various configurations.
             (GraphicsLayer
               (position 2.00 12.00)
               (bounds 100.00 150.00)
-              (drawsContent 1)
+              (backgroundColor #808080)
               (transform [1.00 0.00 0.00 0.00] [0.00 1.00 0.00 0.00] [0.00 0.00 1.00 0.00] [0.00 0.00 1.00 1.00])
             )
           )
@@ -57,7 +57,7 @@ Test overflow clipping of composited elements in various configurations.
                 (GraphicsLayer
                   (position 2.00 12.00)
                   (bounds 100.00 150.00)
-                  (drawsContent 1)
+                  (backgroundColor #808080)
                   (transform [1.00 0.00 0.00 0.00] [0.00 1.00 0.00 0.00] [0.00 0.00 1.00 0.00] [0.00 0.00 1.00 1.00])
                 )
               )
@@ -74,7 +74,7 @@ Test overflow clipping of composited elements in various configurations.
                 (GraphicsLayer
                   (position 2.00 12.00)
                   (bounds 100.00 150.00)
-                  (drawsContent 1)
+                  (backgroundColor #808080)
                   (transform [1.00 0.00 0.00 0.00] [0.00 1.00 0.00 0.00] [0.00 0.00 1.00 0.00] [0.00 0.00 1.00 1.00])
                 )
               )

@@ -55,7 +55,7 @@
         (GraphicsLayer
           (position 8.00 226.00)
           (bounds 200.00 200.00)
-          (drawsContent 1)
+          (backgroundColor #0000FF)
           (transform [1.00 0.00 0.00 0.00] [0.00 1.00 0.00 0.00] [0.00 0.00 1.00 0.00] [0.00 0.00 1.00 1.00])
           (visible rect 0.00, 0.00 200.00 x 200.00)
         )
