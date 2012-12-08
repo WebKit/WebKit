@@ -600,12 +600,12 @@ static PassRefPtr<CSSValueList> createPositionListForLayer(CSSPropertyID propert
 {
     RefPtr<CSSValueList> positionList = CSSValueList::createSpaceSeparated();
     if (layer->isBackgroundOriginSet()) {
-        ASSERT_UNUSED(propertyID, propertyID == CSSPropertyBackgroundPosition);
+        ASSERT_UNUSED(propertyID, propertyID == CSSPropertyBackgroundPosition || propertyID == CSSPropertyWebkitMaskPosition);
         positionList->append(cssValuePool().createValue(layer->backgroundXOrigin()));
     }
     positionList->append(zoomAdjustedPixelValueForLength(layer->xPosition(), style));
     if (layer->isBackgroundOriginSet()) {
-        ASSERT(propertyID == CSSPropertyBackgroundPosition);
+        ASSERT(propertyID == CSSPropertyBackgroundPosition || propertyID == CSSPropertyWebkitMaskPosition);
         positionList->append(cssValuePool().createValue(layer->backgroundYOrigin()));
     }
     positionList->append(zoomAdjustedPixelValueForLength(layer->yPosition(), style));

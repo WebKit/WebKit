@@ -1,3 +1,37 @@
+2012-12-07  Alexis Menard  <alexis@webkit.org>
+
+        Enable CSS3 position offset for CSS Masking.
+        https://bugs.webkit.org/show_bug.cgi?id=104252
+
+        Reviewed by Dirk Schulze.
+
+        To follow CSS3 background-position, mask-position should also support
+        the new <position> type (http://dvcs.w3.org/hg/FXTF/raw-file/tip/masking/index.html#mask-property).
+        Now the code is shared between background and mask I renamed the
+        functions used to be more generic. Note that the feature flag is not
+        meant to stay and will be removed in a following commit.
+
+        No new tests : I modified LayoutTests/fast/masking/parsing-mask.html to
+        cover the new feature.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::createPositionListForLayer):
+        * css/CSSParser.cpp:
+        (WebCore::isFillPositionKeyword):
+        (WebCore::CSSParser::parse4ValuesFillPosition):
+        (WebCore::CSSParser::parse3ValuesFillPosition):
+        (WebCore::CSSParser::isPotentialPositionValue):
+        (WebCore::CSSParser::parseFillPosition):
+        (WebCore::CSSParser::parse2ValuesFillPosition):
+        (WebCore::CSSParser::parseFillProperty):
+        (WebCore::CSSParser::parseTransformOriginShorthand):
+        (WebCore::CSSParser::parseRadialGradient):
+        (WebCore::CSSParser::parsePerspectiveOrigin):
+        * css/CSSParser.h:
+        * css/CSSToStyleMap.cpp:
+        (WebCore::CSSToStyleMap::mapFillXPosition):
+        (WebCore::CSSToStyleMap::mapFillYPosition):
+
 2012-12-07  No'am Rosenthal  <noam@webkit.org>
 
         Use background color for GraphicsLayers when applicable

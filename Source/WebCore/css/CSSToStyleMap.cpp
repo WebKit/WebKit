@@ -229,7 +229,7 @@ void CSSToStyleMap::mapFillXPosition(CSSPropertyID propertyID, FillLayer* layer,
 #if ENABLE(CSS3_BACKGROUND)
     Pair* pair = primitiveValue->getPairValue();
     if (pair) {
-        ASSERT_UNUSED(propertyID, propertyID == CSSPropertyBackgroundPositionX);
+        ASSERT_UNUSED(propertyID, propertyID == CSSPropertyBackgroundPositionX || propertyID == CSSPropertyWebkitMaskPositionX);
         primitiveValue = pair->second();
     }
 #else
@@ -269,7 +269,7 @@ void CSSToStyleMap::mapFillYPosition(CSSPropertyID propertyID, FillLayer* layer,
 #if ENABLE(CSS3_BACKGROUND)
     Pair* pair = primitiveValue->getPairValue();
     if (pair) {
-        ASSERT_UNUSED(propertyID, propertyID == CSSPropertyBackgroundPositionY);
+        ASSERT_UNUSED(propertyID, propertyID == CSSPropertyBackgroundPositionY || propertyID == CSSPropertyWebkitMaskPositionY);
         primitiveValue = pair->second();
     }
 #else
