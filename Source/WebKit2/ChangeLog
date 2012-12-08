@@ -1,3 +1,9 @@
+2012-12-08  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Unreviewed. Make building the WebKit2 GIR file conditional on building the WebKit2 library.
+
+        * GNUmakefile.am:
+
 2012-10-31  Jesse van den Kieboom  <jessevdk@gnome.org>
 
         Enable webkit2 introspection
