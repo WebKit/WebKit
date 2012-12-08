@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-void GeneratorGeneratedImage::draw(GraphicsContext* destContext, const FloatRect& destRect, const FloatRect& srcRect, ColorSpace, CompositeOperator compositeOp, BlendMode)
+void GeneratorGeneratedImage::draw(GraphicsContext* destContext, const FloatRect& destRect, const FloatRect& srcRect, ColorSpace, CompositeOperator compositeOp)
 {
     GraphicsContextStateSaver stateSaver(*destContext);
     destContext->setCompositeOperation(compositeOp);

@@ -63,7 +63,7 @@ namespace WebCore {
         virtual IntSize size() const;
 
         PDFDocumentImage();
-        virtual void draw(GraphicsContext*, const FloatRect& dstRect, const FloatRect& srcRect, ColorSpace styleColorSpace, CompositeOperator, BlendMode);
+        virtual void draw(GraphicsContext*, const FloatRect& dstRect, const FloatRect& srcRect, ColorSpace styleColorSpace, CompositeOperator);
         
         void setCurrentPage(int);
         int pageCount() const;

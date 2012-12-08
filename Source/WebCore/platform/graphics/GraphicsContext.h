@@ -165,7 +165,6 @@ namespace WebCore {
             , fillColorSpace(ColorSpaceDeviceRGB)
             , shadowColorSpace(ColorSpaceDeviceRGB)
             , compositeOperator(CompositeSourceOver)
-            , blendMode(BlendModeNormal)
             , shouldAntialias(true)
             , shouldSmoothFonts(true)
             , shouldSubpixelQuantizeFonts(true)
@@ -204,7 +203,6 @@ namespace WebCore {
         ColorSpace shadowColorSpace;
 
         CompositeOperator compositeOperator;
-        BlendMode blendMode;
 
         bool shouldAntialias : 1;
         bool shouldSmoothFonts : 1;
@@ -273,7 +271,7 @@ namespace WebCore {
         void applyFillPattern();
         void drawPath(const Path&);
 
-        void drawNativeImage(NativeImagePtr, const FloatSize& selfSize, ColorSpace styleColorSpace, const FloatRect& destRect, const FloatRect& srcRect, CompositeOperator = CompositeSourceOver, BlendMode = BlendModeNormal, ImageOrientation = DefaultImageOrientation);
+        void drawNativeImage(NativeImagePtr, const FloatSize& selfSize, ColorSpace styleColorSpace, const FloatRect& destRect, const FloatRect& srcRect, CompositeOperator = CompositeSourceOver, ImageOrientation = DefaultImageOrientation);
 
         // Allow font smoothing (LCD antialiasing). Not part of the graphics state.
         void setAllowsFontSmoothing(bool);
@@ -324,19 +322,18 @@ namespace WebCore {
         void drawImage(Image*, ColorSpace styleColorSpace, const IntRect& destRect, const IntRect& srcRect, CompositeOperator = CompositeSourceOver, RespectImageOrientationEnum = DoNotRespectImageOrientation, bool useLowQualityScale = false);
         void drawImage(Image*, ColorSpace styleColorSpace, const FloatRect& destRect, const FloatRect& srcRect = FloatRect(0, 0, -1, -1),
                        CompositeOperator = CompositeSourceOver, RespectImageOrientationEnum = DoNotRespectImageOrientation, bool useLowQualityScale = false);
-        void drawImage(Image*, ColorSpace styleColorSpace, const FloatRect& destRect, const FloatRect& srcRect, CompositeOperator, BlendMode, RespectImageOrientationEnum = DoNotRespectImageOrientation, bool useLowQualityScale = false);
-        
         void drawTiledImage(Image*, ColorSpace styleColorSpace, const IntRect& destRect, const IntPoint& srcPoint, const IntSize& tileSize,
                        CompositeOperator = CompositeSourceOver, bool useLowQualityScale = false);
         void drawTiledImage(Image*, ColorSpace styleColorSpace, const IntRect& destRect, const IntRect& srcRect,
                             const FloatSize& tileScaleFactor, Image::TileRule hRule = Image::StretchTile, Image::TileRule vRule = Image::StretchTile,
                             CompositeOperator = CompositeSourceOver, bool useLowQualityScale = false);
 
-        void drawImageBuffer(ImageBuffer*, ColorSpace styleColorSpace, const IntPoint&, CompositeOperator = CompositeSourceOver, BlendMode = BlendModeNormal);
-        void drawImageBuffer(ImageBuffer*, ColorSpace styleColorSpace, const IntRect&, CompositeOperator = CompositeSourceOver, BlendMode = BlendModeNormal, bool useLowQualityScale = false);
-        void drawImageBuffer(ImageBuffer*, ColorSpace styleColorSpace, const IntPoint& destPoint, const IntRect& srcRect, CompositeOperator = CompositeSourceOver, BlendMode = BlendModeNormal);
-        void drawImageBuffer(ImageBuffer*, ColorSpace styleColorSpace, const IntRect& destRect, const IntRect& srcRect, CompositeOperator = CompositeSourceOver, BlendMode = BlendModeNormal, bool useLowQualityScale = false);
-        void drawImageBuffer(ImageBuffer*, ColorSpace styleColorSpace, const FloatRect& destRect, const FloatRect& srcRect = FloatRect(0, 0, -1, -1), CompositeOperator = CompositeSourceOver, BlendMode = BlendModeNormal, bool useLowQualityScale = false);
+        void drawImageBuffer(ImageBuffer*, ColorSpace styleColorSpace, const IntPoint&, CompositeOperator = CompositeSourceOver);
+        void drawImageBuffer(ImageBuffer*, ColorSpace styleColorSpace, const IntRect&, CompositeOperator = CompositeSourceOver, bool useLowQualityScale = false);
+        void drawImageBuffer(ImageBuffer*, ColorSpace styleColorSpace, const IntPoint& destPoint, const IntRect& srcRect, CompositeOperator = CompositeSourceOver);
+        void drawImageBuffer(ImageBuffer*, ColorSpace styleColorSpace, const IntRect& destRect, const IntRect& srcRect, CompositeOperator = CompositeSourceOver, bool useLowQualityScale = false);
+        void drawImageBuffer(ImageBuffer*, ColorSpace styleColorSpace, const FloatRect& destRect, const FloatRect& srcRect = FloatRect(0, 0, -1, -1),
+                             CompositeOperator = CompositeSourceOver, bool useLowQualityScale = false);
 
         void setImageInterpolationQuality(InterpolationQuality);
         InterpolationQuality imageInterpolationQuality() const;
@@ -405,7 +402,7 @@ namespace WebCore {
 
         void setAlpha(float);
 
-        void setCompositeOperation(CompositeOperator, BlendMode = BlendModeNormal);
+        void setCompositeOperation(CompositeOperator);
         CompositeOperator compositeOperation() const;
 
         void clip(const Path&);
@@ -559,7 +556,7 @@ namespace WebCore {
         void setPlatformShadow(const FloatSize&, float blur, const Color&, ColorSpace);
         void clearPlatformShadow();
 
-        void setPlatformCompositeOperation(CompositeOperator, BlendMode = BlendModeNormal);
+        void setPlatformCompositeOperation(CompositeOperator);
 
         void beginPlatformTransparencyLayer(float opacity);
         void endPlatformTransparencyLayer();

@@ -84,7 +84,7 @@ public:
 
     virtual void draw(WebCore::GraphicsContext*, const WebCore::FloatRect&,
                       const WebCore::FloatRect&, WebCore::ColorSpace,
-                      WebCore::CompositeOperator, WebCore::BlendMode)
+                      WebCore::CompositeOperator)
     {
     }
 

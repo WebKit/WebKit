@@ -1006,7 +1006,7 @@ void GraphicsContext::setAlpha(float alpha)
     platformContext()->setGlobalAlpha(alpha);
 }
 
-void GraphicsContext::setPlatformCompositeOperation(CompositeOperator op, BlendMode)
+void GraphicsContext::setPlatformCompositeOperation(CompositeOperator op)
 {
     if (paintingDisabled())
         return;

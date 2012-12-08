@@ -71,13 +71,12 @@ BitmapImage::BitmapImage(NativeImageCairo* nativeImage, ImageObserver* observer)
     checkForSolidColor();
 }
 
-void BitmapImage::draw(GraphicsContext* context, const FloatRect& dst, const FloatRect& src, ColorSpace styleColorSpace, CompositeOperator op, BlendMode blendMode)
+void BitmapImage::draw(GraphicsContext* context, const FloatRect& dst, const FloatRect& src, ColorSpace styleColorSpace, CompositeOperator op)
 {
-    draw(context, dst, src, styleColorSpace, op, blendMode, DoNotRespectImageOrientation);
+    draw(context, dst, src, styleColorSpace, op, DoNotRespectImageOrientation);
 }
 
-void BitmapImage::draw(GraphicsContext* context, const FloatRect& dst, const FloatRect& src, ColorSpace styleColorSpace, CompositeOperator op,
-    BlendMode, RespectImageOrientationEnum shouldRespectImageOrientation)
+void BitmapImage::draw(GraphicsContext* context, const FloatRect& dst, const FloatRect& src, ColorSpace styleColorSpace, CompositeOperator op, RespectImageOrientationEnum shouldRespectImageOrientation)
 {
     if (!dst.width() || !dst.height() || !src.width() || !src.height())
         return;

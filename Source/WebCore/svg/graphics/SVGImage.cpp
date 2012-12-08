@@ -146,7 +146,7 @@ void SVGImage::drawSVGToImageBuffer(ImageBuffer* buffer, const IntSize& size, fl
         buffer->context()->clearRect(enclosingIntRect(scaledRect));
 
     // Draw SVG on top of ImageBuffer.
-    draw(buffer->context(), enclosingIntRect(scaledRect), rect, ColorSpaceDeviceRGB, CompositeSourceOver, BlendModeNormal);
+    draw(buffer->context(), enclosingIntRect(scaledRect), rect, ColorSpaceDeviceRGB, CompositeSourceOver);
 
     // Reset container size & zoom to initial state. Otherwhise the size() of this
     // image would return whatever last size was set by drawSVGToImageBuffer().
@@ -167,7 +167,7 @@ void SVGImage::drawSVGToImageBuffer(ImageBuffer* buffer, const IntSize& size, fl
     frame->view()->endDisableRepaints();
 }
 
-void SVGImage::draw(GraphicsContext* context, const FloatRect& dstRect, const FloatRect& srcRect, ColorSpace, CompositeOperator compositeOp, BlendMode)
+void SVGImage::draw(GraphicsContext* context, const FloatRect& dstRect, const FloatRect& srcRect, ColorSpace, CompositeOperator compositeOp)
 {
     if (!m_page)
         return;
@@ -277,7 +277,7 @@ NativeImagePtr SVGImage::nativeImageForCurrentFrame()
         OwnPtr<ImageBuffer> buffer = ImageBuffer::create(size(), 1);
         if (!buffer) // failed to allocate image
             return 0;
-        draw(buffer->context(), rect(), rect(), ColorSpaceDeviceRGB, CompositeSourceOver, BlendModeNormal);
+        draw(buffer->context(), rect(), rect(), ColorSpaceDeviceRGB, CompositeSourceOver);
         m_frameCache = buffer->copyImage(CopyBackingStore);
     }
     return m_frameCache->nativeImageForCurrentFrame();

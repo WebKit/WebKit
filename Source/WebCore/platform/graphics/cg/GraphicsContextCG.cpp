@@ -265,7 +265,7 @@ void GraphicsContext::restorePlatformState()
     m_data->m_userToDeviceTransformKnownToBeIdentity = false;
 }
 
-void GraphicsContext::drawNativeImage(NativeImagePtr imagePtr, const FloatSize& imageSize, ColorSpace styleColorSpace, const FloatRect& destRect, const FloatRect& srcRect, CompositeOperator op, BlendMode blendMode, ImageOrientation orientation)
+void GraphicsContext::drawNativeImage(NativeImagePtr imagePtr, const FloatSize& imageSize, ColorSpace styleColorSpace, const FloatRect& destRect, const FloatRect& srcRect, CompositeOperator op, ImageOrientation orientation)
 {
     RetainPtr<CGImageRef> image(imagePtr);
 
@@ -324,7 +324,7 @@ void GraphicsContext::drawNativeImage(NativeImagePtr imagePtr, const FloatSize& 
     if (!shouldUseSubimage && currHeight < imageSize.height())
         adjustedDestRect.setHeight(adjustedDestRect.height() * currHeight / imageSize.height());
 
-    setPlatformCompositeOperation(op, blendMode);
+    setPlatformCompositeOperation(op);
 
     // ImageOrientation expects the origin to be at (0, 0)
     CGContextTranslateCTM(context, adjustedDestRect.x(), adjustedDestRect.y());
@@ -1698,7 +1698,7 @@ void GraphicsContext::setPlatformShouldSmoothFonts(bool enable)
     CGContextSetShouldSmoothFonts(platformContext(), enable);
 }
 
-void GraphicsContext::setPlatformCompositeOperation(CompositeOperator mode, BlendMode)
+void GraphicsContext::setPlatformCompositeOperation(CompositeOperator mode)
 {
     if (paintingDisabled())
         return;

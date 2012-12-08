@@ -259,7 +259,7 @@ NativeImagePtr ImageBuffer::copyNativeImage(BackingStoreCopy copyBehavior) const
     return image;
 }
 
-void ImageBuffer::draw(GraphicsContext* destContext, ColorSpace styleColorSpace, const FloatRect& destRect, const FloatRect& srcRect, CompositeOperator op, BlendMode blendMode, bool useLowQualityScale)
+void ImageBuffer::draw(GraphicsContext* destContext, ColorSpace styleColorSpace, const FloatRect& destRect, const FloatRect& srcRect, CompositeOperator op, bool useLowQualityScale)
 {
     UNUSED_PARAM(useLowQualityScale);
     ColorSpace colorSpace = (destContext == m_context) ? ColorSpaceDeviceRGB : styleColorSpace;
@@ -272,7 +272,7 @@ void ImageBuffer::draw(GraphicsContext* destContext, ColorSpace styleColorSpace,
 
     FloatRect adjustedSrcRect = srcRect;
     adjustedSrcRect.scale(m_resolutionScale, m_resolutionScale);
-    destContext->drawNativeImage(image.get(), internalSize(), colorSpace, destRect, adjustedSrcRect, op, blendMode);
+    destContext->drawNativeImage(image.get(), internalSize(), colorSpace, destRect, adjustedSrcRect, op);
 }
 
 void ImageBuffer::drawPattern(GraphicsContext* destContext, const FloatRect& srcRect, const AffineTransform& patternTransform, const FloatPoint& phase, ColorSpace styleColorSpace, CompositeOperator op, const FloatRect& destRect)

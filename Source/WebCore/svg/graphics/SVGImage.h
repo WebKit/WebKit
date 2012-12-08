@@ -83,7 +83,7 @@ private:
     virtual NativeImagePtr frameAtIndex(size_t) { return 0; }
 
     SVGImage(ImageObserver*);
-    virtual void draw(GraphicsContext*, const FloatRect& fromRect, const FloatRect& toRect, ColorSpace styleColorSpace, CompositeOperator, BlendMode);
+    virtual void draw(GraphicsContext*, const FloatRect& fromRect, const FloatRect& toRect, ColorSpace styleColorSpace, CompositeOperator);
 
     virtual NativeImagePtr nativeImageForCurrentFrame();
 

@@ -583,12 +583,12 @@ void BitmapImage::checkForSolidColor()
     }
 }
 
-void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& dstRect, const FloatRect& srcRect, ColorSpace colorSpace, CompositeOperator compositeOp, BlendMode blendMode)
+void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& dstRect, const FloatRect& srcRect, ColorSpace colorSpace, CompositeOperator compositeOp)
 {
-    draw(ctxt, dstRect, srcRect, colorSpace, compositeOp, blendMode, DoNotRespectImageOrientation);
+    draw(ctxt, dstRect, srcRect, colorSpace, compositeOp, DoNotRespectImageOrientation);
 }
 
-void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& dstRect, const FloatRect& srcRect, ColorSpace colorSpace, CompositeOperator compositeOp, BlendMode, RespectImageOrientationEnum shouldRespectImageOrientation)
+void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& dstRect, const FloatRect& srcRect, ColorSpace colorSpace, CompositeOperator compositeOp, RespectImageOrientationEnum shouldRespectImageOrientation)
 {
     if (!m_source.initialized())
         return;
@@ -643,10 +643,10 @@ void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& dstRect, const Fl
 // FIXME: These should go into BitmapImageSingleFrameSkia.cpp
 
 void BitmapImageSingleFrameSkia::draw(GraphicsContext* ctxt,
-    const FloatRect& dstRect,
-    const FloatRect& srcRect,
-    ColorSpace styleColorSpace,
-    CompositeOperator compositeOp, BlendMode)
+                                      const FloatRect& dstRect,
+                                      const FloatRect& srcRect,
+                                      ColorSpace styleColorSpace,
+                                      CompositeOperator compositeOp)
 {
     FloatRect normDstRect = normalizeRect(dstRect);
     FloatRect normSrcRect = normalizeRect(srcRect);
