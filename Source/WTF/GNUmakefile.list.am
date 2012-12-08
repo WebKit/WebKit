@@ -135,7 +135,7 @@ wtf_sources += \
     Source/WTF/wtf/RandomNumber.cpp \
     Source/WTF/wtf/RandomNumber.h \
     Source/WTF/wtf/RandomNumberSeed.h \
-    Source/WTF/wtf/RawPointer.h\ 
+    Source/WTF/wtf/RawPointer.h \
     Source/WTF/wtf/RedBlackTree.h \
     Source/WTF/wtf/RefCounted.h \
     Source/WTF/wtf/RefCountedArray.h \
