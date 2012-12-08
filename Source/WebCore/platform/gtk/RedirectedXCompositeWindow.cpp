@@ -192,7 +192,7 @@ void RedirectedXCompositeWindow::resize(const IntSize& size)
 
 GLContext* RedirectedXCompositeWindow::context()
 {
-    ASSERT(m_needsContext);
+    ASSERT(m_needsContext == CreateGLContext);
 
     if (m_context)
         return m_context.get();
