@@ -131,12 +131,18 @@ private:
     GlobalFunctionKey makeGlobalFunctionKey(const SourceCode&, const String&);
 
     enum {
-        kMaxCodeBlockEntries = 1024,
+        kMaxRootCodeBlockEntries = 1024,
         kMaxGlobalFunctionEntries = 1024,
-        kMaxFunctionCodeBlocks = 1024
+        // Sampling content on a number of sites indicates that
+        // on average there are 6-7 functions used per root codeblock.
+        // So we'll allow an average of 8 to give some leeway for increasing
+        // page complexity over time. Note that is simply a probabalistic
+        // measure and does not result in a hard limit of cache entries
+        // in each code block.
+        kMaxFunctionCodeBlocks = kMaxRootCodeBlockEntries * 8
     };
 
-    CacheMap<CodeBlockKey, Strong<UnlinkedCodeBlock>, kMaxCodeBlockEntries> m_cachedCodeBlocks;
+    CacheMap<CodeBlockKey, Strong<UnlinkedCodeBlock>, kMaxRootCodeBlockEntries> m_cachedCodeBlocks;
     CacheMap<GlobalFunctionKey, Strong<UnlinkedFunctionExecutable>, kMaxFunctionCodeBlocks> m_cachedGlobalFunctions;
     CacheMap<UnlinkedFunctionCodeBlock*, Strong<UnlinkedFunctionCodeBlock>, kMaxFunctionCodeBlocks> m_recentlyUsedFunctionCode;
 };
