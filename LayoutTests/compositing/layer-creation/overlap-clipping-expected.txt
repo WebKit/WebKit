@@ -10,19 +10,19 @@
           (children 1
             (GraphicsLayer
               (bounds 500.00 100.00)
-              (drawsContent 1)
+              (backgroundColor #008000)
             )
           )
         )
         (GraphicsLayer
           (position 50.00 200.00)
           (bounds 500.00 100.00)
-          (drawsContent 1)
+          (backgroundColor #008000)
         )
         (GraphicsLayer
           (position 450.00 200.00)
           (bounds 100.00 100.00)
-          (drawsContent 1)
+          (backgroundColor #0000FF)
         )
       )
     )

@@ -1,3 +1,77 @@
+2012-12-07  No'am Rosenthal  <noam@webkit.org>
+
+        Use background color for GraphicsLayers when applicable
+        https://bugs.webkit.org/show_bug.cgi?id=103786
+
+        Updated RenderLayerBacking to call GraphicsLayer::setContentsToBackgroundColor when the following conditions take place:
+        1. The layer doesn't paint its own content, other than background/decoration.
+        2. There are no borders or other box decorations (border radius, borders, outline, shadow etc.)
+        3. The image has only a background color, and no background image.
+        4. background-composite is set to source-over, and background-clip is anything apart from text.
+        5. The port supports setContentsToBackgroundColor.
+
+        This allows any implementation of GraphicsLayer that supports setContentsToBackgroundColor to avoid allocating a backing store
+        for that layer, but instead draw that solid color directly.
+        In addition to setting the background color, the layer's contentsRect needs to be adjusted, since the default contents rect of
+        a layer is not always equivalent to the rect where the background is supposed to be painted, which is derived from the box's
+        background-clip property.
+
+        Reviewed by Simon Fraser.
+
+        Tests: compositing/background-color/background-color-alpha.html
+               compositing/background-color/background-color-change-to-text.html
+               compositing/background-color/background-color-composite.html
+               compositing/background-color/background-color-container.html
+               compositing/background-color/background-color-content-clip.html
+               compositing/background-color/background-color-padding-change.html
+               compositing/background-color/background-color-padding-clip.html
+               compositing/background-color/background-color-simple.html
+               compositing/background-color/background-color-text-change.html
+               compositing/background-color/background-color-text-clip.html
+
+        * platform/graphics/GraphicsLayer.h:
+        (WebCore::GraphicsLayer::supportsBackgroundColorContent):
+            Allows different implementation of GraphicsLayer to identify whether they implement setContentsToBackgroundColor.
+            Currently only the MAC implementation and TextureMapper falls under that category.
+
+        * rendering/RenderBox.h:
+        (WebCore::RenderBox::paddingBoxRect):
+            Added paddingBoxRect to compliment borderBoxRect and contentsBoxRect. paddingBoxRect corresponds to 
+            background-clip: padding.
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateGraphicsLayerConfiguration):
+            Update the background color if needed, for every configuration change.
+            This should accomodate the old behavior for full-screen, while enabling background color changes for other layers.
+
+        (WebCore::RenderLayerBacking::updateGraphicsLayerGeometry):
+            Move the contentsRect logic to updateContentsRect.
+
+        (WebCore::RenderLayerBacking::updateContentsRect):
+            Use the background box when directly compositing backgrounds.
+
+        (WebCore::RenderLayerBacking::updateBackgroundColor):
+            Set the background color if applicable, otherwise set to trasnparent and clear.
+            This was not needed in the past because background colors were only used for the special case of full-screen.
+
+        (WebCore::supportsDirectBoxDecorationsComposition):
+            Helper function to determine whether a particular background can be directly composited. Right now only 
+            background color can be composited, and only if the GraphicsLayer implementation supports background colors.
+            Also we don't yet support background-clip: text and any background-composite other than source-over.
+
+        (WebCore::RenderLayerBacking::paintsBoxDecorations):
+            Apply the new supportsDirectBoxDecorationsComposition logic.
+
+        (WebCore::RenderLayerBacking::contentsBox):
+            Remove unnecessary local variable.
+
+        (WebCore::backgroundRectForBox):
+        (WebCore::RenderLayerBacking::backgroundBox):
+            Figure out the correct rect for the GraphicsLayer's contentsRect, based on the renderer's backgroundClip.
+            The rectangle has to be adjusted based on the composited layer offset, and snapped to an IntRect as 
+            GraphicsLayer::contentsRect expects snapped pixels.
+
+
 2012-12-06  Ryosuke Niwa  <rniwa@webkit.org>
 
         Shrink the size of NodeRareData by moving pointers into separate objects

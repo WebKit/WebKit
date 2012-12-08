@@ -12,7 +12,7 @@ scroll me
         (GraphicsLayer
           (position 10.00 10.00)
           (bounds 400.00 100.00)
-          (drawsContent 1)
+          (backgroundColor #0000007F)
         )
         (GraphicsLayer
           (position 200.00 8.00)

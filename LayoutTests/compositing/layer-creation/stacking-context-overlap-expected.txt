@@ -7,7 +7,7 @@
         (GraphicsLayer
           (position 8.00 8.00)
           (bounds 20.00 20.00)
-          (drawsContent 1)
+          (backgroundColor #0000FF)
         )
         (GraphicsLayer
           (position 8.00 18.00)

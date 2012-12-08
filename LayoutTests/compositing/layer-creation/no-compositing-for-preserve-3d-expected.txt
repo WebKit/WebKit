@@ -16,7 +16,7 @@ This layer should be composited.
             (GraphicsLayer
               (position 31.00 49.00)
               (bounds 100.00 100.00)
-              (drawsContent 1)
+              (backgroundColor #C0C0C0)
               (transform [0.98 0.00 -0.17 0.00] [0.00 1.00 0.00 0.00] [0.17 0.00 0.98 0.00] [0.00 0.00 0.00 1.00])
             )
           )

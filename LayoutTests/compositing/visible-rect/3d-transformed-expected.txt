@@ -20,7 +20,7 @@
                 (GraphicsLayer
                   (anchor 0.20 0.20)
                   (bounds 500.00 500.00)
-                  (drawsContent 1)
+                  (backgroundColor #0000FF)
                   (transform [1.00 0.00 0.00 0.00] [0.00 0.71 0.71 0.00] [0.00 -0.71 0.71 0.00] [0.00 0.00 0.00 1.00])
                   (visible rect 0.00, 0.00 220.62 x 218.46)
                 )
@@ -42,7 +42,7 @@
                 (GraphicsLayer
                   (anchor 0.20 0.20)
                   (bounds 500.00 500.00)
-                  (drawsContent 1)
+                  (backgroundColor #0000FF)
                   (transform [0.71 0.00 0.71 0.00] [0.00 1.00 0.00 0.00] [-0.71 0.00 0.71 0.00] [0.00 0.00 0.00 1.00])
                   (visible rect 0.00, 0.00 218.46 x 220.62)
                 )

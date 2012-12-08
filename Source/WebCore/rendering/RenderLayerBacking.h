@@ -164,6 +164,7 @@ public:
 #endif
 
     IntRect contentsBox() const;
+    IntRect backgroundBox() const;
     
     // For informative purposes only.
     CompositingLayerType compositingLayerType() const;
@@ -203,6 +204,7 @@ private:
     bool requiresVerticalScrollbarLayer() const;
     bool requiresScrollCornerLayer() const;
     bool updateScrollingLayers(bool scrollingLayers);
+    void updateDrawsContent(bool isSimpleContainer);
 
     GraphicsLayerPaintingPhase paintingPhaseForPrimaryLayer() const;
     
@@ -237,7 +239,8 @@ private:
     void updateImageContents();
 
     Color rendererBackgroundColor() const;
-    void updateBackgroundColor();
+    void updateBackgroundColor(bool isSimpleContainer);
+    void updateContentsRect(bool isSimpleContainer);
 
     bool containsNonEmptyRenderers() const;
     bool hasVisibleNonCompositingDescendantLayers() const;

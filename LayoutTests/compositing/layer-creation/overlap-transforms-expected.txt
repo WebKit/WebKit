@@ -15,13 +15,13 @@
                 (GraphicsLayer
                   (position 10.00 10.00)
                   (bounds 100.00 100.00)
-                  (drawsContent 1)
+                  (backgroundColor #0000FF)
                   (transform [1.00 0.00 0.00 0.00] [0.00 1.00 0.00 0.00] [0.00 0.00 1.00 0.00] [0.00 0.00 1.00 1.00])
                 )
                 (GraphicsLayer
                   (position 10.00 120.00)
                   (bounds 100.00 100.00)
-                  (drawsContent 1)
+                  (backgroundColor #0000FF)
                 )
               )
             )

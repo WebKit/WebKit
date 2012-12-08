@@ -139,6 +139,7 @@ public:
     void setFrameRect(const LayoutRect& rect) { m_frameRect = rect; }
 
     LayoutRect borderBoxRect() const { return LayoutRect(LayoutPoint(), size()); }
+    LayoutRect paddingBoxRect() const { return LayoutRect(borderLeft(), borderTop(), contentWidth() + paddingLeft() + paddingRight(), contentHeight() + paddingTop() + paddingBottom()); }
     IntRect pixelSnappedBorderBoxRect() const { return IntRect(IntPoint(), m_frameRect.pixelSnappedSize()); }
     virtual IntRect borderBoundingBox() const { return pixelSnappedBorderBoxRect(); } 
 

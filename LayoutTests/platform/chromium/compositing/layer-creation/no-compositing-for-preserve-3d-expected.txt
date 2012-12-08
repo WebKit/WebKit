@@ -1,0 +1,28 @@
+This layer should not be composited.
+This layer should not be composited.
+This layer should be composited.
+(GraphicsLayer
+  (bounds 785.00 611.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 785.00 611.00)
+      (children 1
+        (GraphicsLayer
+          (position 18.00 390.00)
+          (bounds 342.00 180.00)
+          (preserves3D 1)
+          (drawsContent 1)
+          (children 1
+            (GraphicsLayer
+              (position 31.00 49.00)
+              (bounds 100.00 100.00)
+              (drawsContent 1)
+              (transform [0.98 0.00 -0.17 0.00] [0.00 1.00 0.00 0.00] [0.17 0.00 0.98 0.00] [0.00 0.00 0.00 1.00])
+            )
+          )
+        )
+      )
+    )
+  )
+)
+
