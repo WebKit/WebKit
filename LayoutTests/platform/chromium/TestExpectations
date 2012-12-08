@@ -4217,7 +4217,15 @@ webkit.org/b/104283 [ Mac Debug ] fonts/monospace.html [ ImageOnlyFailure Pass ]
 # First row, third column is wrong.
 crbug.com/164997 compositing/backface-visibility/backface-visibility-webgl.html [ ImageOnlyFailure ]
 
-# Flaky
+# Flaky on Win
 Bug(senorblanco) [ Win ] http/tests/w3c/webperf/submission/Intel/user-timing/test_user_timing_mark.html [ Failure Pass ]
 Bug(senorblanco) [ Win ] http/tests/w3c/webperf/submission/Intel/user-timing/test_user_timing_clearMarks.html [ Failure Pass ]
 Bug(senorblanco) [ Win ] http/tests/w3c/webperf/submission/Intel/user-timing/test_user_timing_measure_associate_with_navigation_timing.html [ Failure Pass ]
+
+# Flaky since r136945
+webkit.org/b/94002 [ Win Mac Debug ] inspector/debugger/live-edit-breakpoints.html [ Failure Timeout ]
+webkit.org/b/94002 [ Mac Debug ] inspector/debugger/live-edit.html [ Crash Pass Timeout ]
+
+# This one has correct results, but the tools refuse to rebaseline it.
+Bug(senorblanco) [ MountainLion ] compositing/background-color/background-color-change-to-text.html [ ImageOnlyFailure ]
+Bug(senorblanco) [ MountainLion ] platform/chromium/virtual/softwarecompositing/background-color/background-color-change-to-text.html [ ImageOnlyFailure ]
