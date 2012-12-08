@@ -1547,14 +1547,23 @@ inline DeviceOrientationData* InspectorInstrumentation::overrideDeviceOrientatio
 #if USE(ACCELERATED_COMPOSITING)
 inline void InspectorInstrumentation::layerTreeDidChange(Page* page)
 {
+#if ENABLE(INSPECTOR)
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForPage(page))
         layerTreeDidChangeImpl(instrumentingAgents);
+#else
+    UNUSED_PARAM(page);
+#endif
 }
 
 inline void InspectorInstrumentation::renderLayerDestroyed(Page* page, const RenderLayer* renderLayer)
 {
+#if ENABLE(INSPECTOR)
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForPage(page))
         renderLayerDestroyedImpl(instrumentingAgents, renderLayer);
+#else
+    UNUSED_PARAM(page);
+    UNUSED_PARAM(renderLayer);
+#endif
 }
 #endif
 
