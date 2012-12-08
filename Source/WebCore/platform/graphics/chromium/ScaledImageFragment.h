@@ -49,6 +49,7 @@ public:
     const SkBitmap& bitmap() const { return m_bitmap; }
     SkBitmap& bitmap() { return m_bitmap; }
     bool isComplete() const { return m_isComplete; }
+    void setIsComplete() { m_isComplete = true; }
 
 private:
     SkISize m_scaledSize;

@@ -38,6 +38,8 @@ public:
 
 class MockImageDecoder : public ImageDecoder {
 public:
+    static PassOwnPtr<MockImageDecoder> create(MockImageDecoderClient* client) { return adoptPtr(new MockImageDecoder(client)); }
+
     MockImageDecoder(MockImageDecoderClient* client)
         : ImageDecoder(ImageSource::AlphaPremultiplied, ImageSource::GammaAndColorProfileApplied)
         , m_frameBufferRequestCount(0)
@@ -47,6 +49,14 @@ public:
     ~MockImageDecoder()
     {
         m_client->decoderBeingDestroyed();
+    }
+
+    virtual bool setSize(unsigned width, unsigned height)
+    {
+        ImageDecoder::setSize(width, height);
+        m_frameBufferCache.resize(1);
+        m_frameBufferCache[0].setSize(width, height);
+        return true;
     }
 
     virtual String filenameExtension() const
@@ -59,8 +69,6 @@ public:
         ++m_frameBufferRequestCount;
         m_client->frameBufferRequested();
 
-        m_frameBufferCache.resize(1);
-        m_frameBufferCache[0].setSize(size().width(), size().height());
         m_frameBufferCache[0].setStatus(m_client->frameStatus());
         return &m_frameBufferCache[0];
     }

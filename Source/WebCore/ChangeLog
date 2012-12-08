@@ -1,3 +1,76 @@
+2012-12-07  Alpha Lam  <hclam@chromium.org>
+
+        [chromium] ImageDecodingStore should cache partially decoded images
+        https://bugs.webkit.org/show_bug.cgi?id=103796
+
+        Reviewed by Stephen White.
+
+        Implement caching for incomplete images, meaning the image is partially
+        decoded. The image is cached together with partially decoded ImageDecoder.
+        This allows decoding to resume in a later time.
+
+        Caching logic for incomplete images is implemented in ImageDecodingStore.
+
+        Logic for resuming image decoding is implemented in ImageFrameGenerator.
+
+        ImageDecodingStore allows storing incomplete image with the decoder.
+        The cache entry can be used in a later time to read and write (i.e. resume
+        decoding.) To avoid the same entry being written and read at the same time,
+        an incomplete entry can be used by one user only. Concurrent access to
+        an incomplete entry should never happen and is checked by an assert.
+        An entry can becomes complete when decoding is finished. In this case
+        the associated decoder is deleted. Once an entry becomes complete concurrent
+        read is allowed.
+
+        ImageFrameGenerator performs the logic to resume image decoding. It
+        performs the following operations in sequence:
+        - Try to lookup a complete image
+        - Try to perform scaling on a complete image
+        - Try to lookup an incomplete image and resume decoding & scaling
+        - Everything fails, start decoding from scratch
+        The entire sequence of operations in under a mutex, hence there will be
+        no more than 1 user of an incomplete cache entry at the same time.
+
+        New unit tests in ImageDecodingStoreTest and ImageFrameGeneratorTest.
+
+        * platform/graphics/chromium/ImageDecodingStore.cpp:
+        (WebCore::ImageDecodingStore::lockCache):
+        Change of method definition to return an image and ImageDecoder.
+        (WebCore::ImageDecodingStore::unlockCache):
+        (WebCore::ImageDecodingStore::insertAndLockCache):
+        (WebCore::ImageDecodingStore::overwriteAndLockCache):
+        New method to allow an incomplete cache entry be overwritten.
+        (WebCore):
+        * platform/graphics/chromium/ImageDecodingStore.h:
+        (ImageDecodingStore):
+        (WebCore::ImageDecodingStore::CacheEntry::createAndUse):
+        (WebCore::ImageDecodingStore::CacheEntry::CacheEntry):
+        (WebCore::ImageDecodingStore::CacheEntry::cachedImage):
+        (WebCore::ImageDecodingStore::CacheEntry::cachedDecoder):
+        (WebCore::ImageDecodingStore::CacheEntry::releaseCachedDecoder):
+        (WebCore::ImageDecodingStore::CacheEntry::overwriteCachedImage):
+        New method to allow an incomplete image be overwitten.
+        (CacheEntry):
+        * platform/graphics/chromium/ImageFrameGenerator.cpp:
+        (WebCore::ImageFrameGenerator::ImageFrameGenerator):
+        (WebCore::ImageFrameGenerator::decodeAndScale):
+        (WebCore::ImageFrameGenerator::tryToLockCompleteCache):
+        (WebCore::ImageFrameGenerator::tryToScale):
+        (WebCore::ImageFrameGenerator::tryToResumeDecodeAndScale):
+        New method to lookup an incomplete cache entry and resume decoding.
+        (WebCore):
+        (WebCore::ImageFrameGenerator::tryToDecodeAndScale):
+        (WebCore::ImageFrameGenerator::decoder):
+        New helper method to do decoding for a full sized image.
+        (WebCore::ImageFrameGenerator::prepareData):
+        New helper method to prepare data safely.
+        * platform/graphics/chromium/ImageFrameGenerator.h:
+        (ImageFrameGenerator):
+        * platform/graphics/chromium/LazyDecodingPixelRef.cpp:
+        (WebCore::LazyDecodingPixelRef::onLockPixels):
+        * platform/graphics/chromium/ScaledImageFragment.h:
+        (WebCore::ScaledImageFragment::setIsComplete):
+
 2012-12-07  Alexis Menard  <alexis@webkit.org>
 
         Enable CSS3 position offset for CSS Masking.

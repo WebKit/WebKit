@@ -35,6 +35,7 @@
 #include <wtf/RefPtr.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/ThreadingPrimitives.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
@@ -66,13 +67,19 @@ public:
 
 private:
     // These methods are called while m_decodeMutex is locked.
-    const ScaledImageFragment* tryToLockCache(const SkISize& scaledSize);
+    const ScaledImageFragment* tryToLockCompleteCache(const SkISize& scaledSize);
     const ScaledImageFragment* tryToScale(const ScaledImageFragment* fullSizeImage, const SkISize& scaledSize);
+    const ScaledImageFragment* tryToResumeDecodeAndScale(const SkISize& scaledSize);
     const ScaledImageFragment* tryToDecodeAndScale(const SkISize& scaledSize);
+
+    // Use the given decoder to decode. If a decoder is not given then try to create one.
+    PassOwnPtr<ScaledImageFragment> decode(ImageDecoder**);
+    void prepareData(RefPtr<SharedBuffer>*, bool* allDataReceived);
 
     SkISize m_fullSize;
     RefPtr<SharedBuffer> m_data;
     bool m_allDataReceived;
+    bool m_decodeFailedAndEmpty;
 
     OwnPtr<ImageDecoderFactory> m_imageDecoderFactory;
 

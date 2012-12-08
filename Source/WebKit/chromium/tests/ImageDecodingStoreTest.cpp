@@ -28,6 +28,7 @@
 #include "ImageDecodingStore.h"
 
 #include "ImageFrameGenerator.h"
+#include "MockImageDecoder.h"
 #include "SharedBuffer.h"
 #include <gtest/gtest.h>
 
@@ -35,18 +36,35 @@ using namespace WebCore;
 
 namespace {
 
-class ImageDecodingStoreTest : public ::testing::Test {
+class ImageDecodingStoreTest : public ::testing::Test, public MockImageDecoderClient {
 public:
     virtual void SetUp()
     {
         ImageDecodingStore::initializeOnce();
         m_data = SharedBuffer::create();
         m_generator = ImageFrameGenerator::create(SkISize::Make(100, 100), m_data, true);
+        m_decodersDestroyed = 0;
     }
 
     virtual void TearDown()
     {
         ImageDecodingStore::shutdown();
+    }
+
+    virtual void decoderBeingDestroyed()
+    {
+        ++m_decodersDestroyed;
+    }
+
+    virtual void frameBufferRequested()
+    {
+        // Decoder is never used by ImageDecodingStore.
+        ASSERT_TRUE(false);
+    }
+
+    virtual ImageFrame::FrameStatus frameStatus()
+    {
+        return ImageFrame::FramePartial;
     }
 
 protected:
@@ -58,6 +76,14 @@ protected:
         return ScaledImageFragment::create(size, bitmap, true);
     }
 
+    PassOwnPtr<ScaledImageFragment> createIncompleteImage(const SkISize& size)
+    {
+        SkBitmap bitmap;
+        bitmap.setConfig(SkBitmap::kARGB_8888_Config, size.width(), size.height());
+        bitmap.allocPixels();
+        return ScaledImageFragment::create(size, bitmap, false);
+    }
+
     void insertCache(const SkISize& size)
     {
         const ScaledImageFragment* image = ImageDecodingStore::instance()->insertAndLockCache(
@@ -67,7 +93,10 @@ protected:
 
     const ScaledImageFragment* lockCache(const SkISize& size)
     {
-        return ImageDecodingStore::instance()->lockCompleteCache(m_generator.get(), size);
+        const ScaledImageFragment* cachedImage = 0;
+        if (ImageDecodingStore::instance()->lockCache(m_generator.get(), size, ImageDecodingStore::CacheCanBeIncomplete, &cachedImage))
+            return cachedImage;
+        return 0;
     }
 
     void unlockCache(const ScaledImageFragment* cachedImage)
@@ -95,6 +124,7 @@ protected:
 
     RefPtr<SharedBuffer> m_data;
     RefPtr<ImageFrameGenerator> m_generator;
+    int m_decodersDestroyed;
 };
 
 TEST_F(ImageDecodingStoreTest, evictOneCache)
@@ -181,7 +211,7 @@ TEST_F(ImageDecodingStoreTest, cacheInUseNotEvicted)
     EXPECT_EQ(3u, ImageDecodingStore::instance()->cacheEntries());
 
     const ScaledImageFragment* cachedImage = lockCache(SkISize::Make(1, 1));
-    EXPECT_TRUE(cachedImage);
+    ASSERT_TRUE(cachedImage);
 
     // Cache 2 is evicted because cache 1 is in use.
     evictOneCache();
@@ -202,6 +232,53 @@ TEST_F(ImageDecodingStoreTest, destroyImageFrameGenerator)
 
     m_generator.clear();
     EXPECT_FALSE(ImageDecodingStore::instance()->cacheEntries());
+}
+
+TEST_F(ImageDecodingStoreTest, insertIncompleteCache)
+{
+    const SkISize size = SkISize::Make(1, 1);
+    const ScaledImageFragment* cachedImage = ImageDecodingStore::instance()->insertAndLockCache(
+        m_generator.get(), createIncompleteImage(size), MockImageDecoder::create(this));
+    EXPECT_EQ(1u, ImageDecodingStore::instance()->cacheEntries());
+    unlockCache(cachedImage);
+
+    ImageDecoder* decoder = 0;
+    EXPECT_TRUE(ImageDecodingStore::instance()->lockCache(m_generator.get(), size, ImageDecodingStore::CacheCanBeIncomplete, &cachedImage, &decoder));
+    EXPECT_TRUE(decoder);
+    ASSERT_TRUE(cachedImage);
+    EXPECT_FALSE(cachedImage->isComplete());
+    unlockCache(cachedImage);
+    EXPECT_EQ(0, m_decodersDestroyed);
+}
+
+TEST_F(ImageDecodingStoreTest, insertCompleteCacheWithDecoder)
+{
+    const ScaledImageFragment* cachedImage = ImageDecodingStore::instance()->insertAndLockCache(
+        m_generator.get(), createCompleteImage(SkISize::Make(1, 1)), MockImageDecoder::create(this));
+    unlockCache(cachedImage);
+    EXPECT_EQ(1u, ImageDecodingStore::instance()->cacheEntries());
+    EXPECT_EQ(1, m_decodersDestroyed);
+}
+
+TEST_F(ImageDecodingStoreTest, incompleteCacheBecomesComplete)
+{
+    const SkISize size = SkISize::Make(1, 1);
+    const ScaledImageFragment* cachedImage = ImageDecodingStore::instance()->insertAndLockCache(
+        m_generator.get(), createIncompleteImage(size), MockImageDecoder::create(this));
+    ImageDecodingStore::instance()->unlockCache(m_generator.get(), cachedImage);
+    EXPECT_EQ(1u, ImageDecodingStore::instance()->cacheEntries());
+
+    ImageDecoder* decoder = 0;
+    EXPECT_TRUE(ImageDecodingStore::instance()->lockCache(m_generator.get(), size, ImageDecodingStore::CacheCanBeIncomplete, &cachedImage, &decoder));
+    EXPECT_TRUE(decoder);
+    ASSERT_TRUE(cachedImage);
+    EXPECT_FALSE(cachedImage->isComplete());
+
+    cachedImage = ImageDecodingStore::instance()->overwriteAndLockCache(
+        m_generator.get(), cachedImage, createCompleteImage(size));
+    EXPECT_TRUE(cachedImage->isComplete());
+    EXPECT_EQ(1, m_decodersDestroyed);
+    ImageDecodingStore::instance()->unlockCache(m_generator.get(), cachedImage);
 }
 
 } // namespace

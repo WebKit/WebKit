@@ -60,7 +60,8 @@ void* LazyDecodingPixelRef::onLockPixels(SkColorTable**)
     m_mutex.lock();
     ASSERT(!m_lockedCachedImage);
 
-    m_lockedCachedImage = ImageDecodingStore::instance()->lockCompleteCache(m_frameGenerator.get(), m_scaledSize);
+    if (!ImageDecodingStore::instance()->lockCache(m_frameGenerator.get(), m_scaledSize, ImageDecodingStore::CacheMustBeComplete, &m_lockedCachedImage))
+        m_lockedCachedImage = 0;
 
     // Use ImageFrameGenerator to generate the image. It will lock the cache
     // entry for us.
@@ -91,10 +92,13 @@ bool LazyDecodingPixelRef::onLockPixelsAreWritable() const
 
 bool LazyDecodingPixelRef::PrepareToDecode(const LazyPixelRef::PrepareParams& params)
 {
-    MutexLocker lock(m_mutex);
     // TODO: check if only a particular rect is available in image cache.
     UNUSED_PARAM(params);
-    return ImageDecodingStore::instance()->lockCompleteCache(m_frameGenerator.get(), m_scaledSize);
+    const ScaledImageFragment* cachedImage = 0;
+    bool cached = ImageDecodingStore::instance()->lockCache(m_frameGenerator.get(), m_scaledSize, ImageDecodingStore::CacheMustBeComplete, &cachedImage);
+    if (cached)
+        ImageDecodingStore::instance()->unlockCache(m_frameGenerator.get(), cachedImage);
+    return cached;
 }
 
 void LazyDecodingPixelRef::Decode()

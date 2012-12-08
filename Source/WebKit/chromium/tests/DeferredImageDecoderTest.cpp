@@ -76,9 +76,10 @@ public:
         ImageDecodingStore::initializeOnce();
         DeferredImageDecoder::setEnabled(true);
         m_data = SharedBuffer::create(whitePNG, sizeof(whitePNG));
-        m_actualDecoder = new MockImageDecoder(this);
+        OwnPtr<MockImageDecoder> decoder = MockImageDecoder::create(this);
+        m_actualDecoder = decoder.get();
         m_actualDecoder->setSize(1, 1);
-        m_lazyDecoder = DeferredImageDecoder::createForTesting(adoptPtr(m_actualDecoder));
+        m_lazyDecoder = DeferredImageDecoder::createForTesting(decoder.release());
         m_lazyDecoder->setData(m_data.get(), true);
         m_canvas.reset(createRasterCanvas(100, 100));
         m_frameBufferRequestCount = 0;
