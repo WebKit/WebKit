@@ -1,0 +1,112 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock (floating) {DIV} at (4,0) size 344x276
+        RenderBlock {P} at (0,16) size 344x20
+          RenderText {#text} at (0,0) size 188x19
+            text run at (0,0) width 188: "The initial value (should be like "
+          RenderInline {TT} at (0,0) size 32x16
+            RenderText {#text} at (188,3) size 32x16
+              text run at (188,3) width 32: "auto"
+          RenderText {#text} at (220,0) size 5x19
+            text run at (220,0) width 5: ")"
+        RenderBlock {DIV} at (0,52) size 344x224 [border: (3px solid #000000)]
+          RenderBlock (floating) {DIV} at (262,7) size 75x90 [bgcolor=#F0F8FF]
+          RenderText {#text} at (7,7) size 330x209
+            text run at (7,7) width 245: "The chief difficulty Alice found at"
+            text run at (7,28) width 194: "first was in managing her "
+            text run at (201,28) width 51: "flamin" + hyphen string "-"
+            text run at (7,49) width 245: "go: she succeeded in getting its"
+            text run at (7,70) width 158: "body tucked away, "
+            text run at (165,70) width 87: "comfortably"
+            text run at (7,91) width 245: "enough, under her arm, with its"
+            text run at (7,112) width 146: "legs hanging down, "
+            text run at (153,112) width 184: "but generally, just as she"
+            text run at (7,133) width 268: "had got its neck nicely straightened "
+            text run at (275,133) width 62: "out, and"
+            text run at (7,154) width 330: "was going to give the hedgehog a blow with"
+            text run at (7,175) width 84: "its head, it "
+            text run at (91,175) width 246: "would twist itself round and look"
+            text run at (7,196) width 117: "up in her face\x{2026}"
+      RenderBlock (floating) {DIV} at (356,0) size 344x276
+        RenderBlock {P} at (0,16) size 344x20
+          RenderText {#text} at (0,0) size 76x19
+            text run at (0,0) width 76: "The default ("
+          RenderInline {TT} at (0,0) size 200x16
+            RenderText {#text} at (76,3) size 200x16
+              text run at (76,3) width 200: "hyphenate-character: auto"
+          RenderText {#text} at (276,0) size 5x19
+            text run at (276,0) width 5: ")"
+        RenderBlock {DIV} at (0,52) size 344x224 [border: (3px solid #000000)]
+          RenderBlock (floating) {DIV} at (262,7) size 75x90 [bgcolor=#F0F8FF]
+          RenderText {#text} at (7,7) size 330x209
+            text run at (7,7) width 245: "The chief difficulty Alice found at"
+            text run at (7,28) width 194: "first was in managing her "
+            text run at (201,28) width 51: "flamin" + hyphen string "-"
+            text run at (7,49) width 245: "go: she succeeded in getting its"
+            text run at (7,70) width 158: "body tucked away, "
+            text run at (165,70) width 87: "comfortably"
+            text run at (7,91) width 245: "enough, under her arm, with its"
+            text run at (7,112) width 146: "legs hanging down, "
+            text run at (153,112) width 184: "but generally, just as she"
+            text run at (7,133) width 268: "had got its neck nicely straightened "
+            text run at (275,133) width 62: "out, and"
+            text run at (7,154) width 330: "was going to give the hedgehog a blow with"
+            text run at (7,175) width 84: "its head, it "
+            text run at (91,175) width 246: "would twist itself round and look"
+            text run at (7,196) width 117: "up in her face\x{2026}"
+      RenderBlock (floating) {DIV} at (4,276) size 344x276
+        RenderBlock {P} at (0,16) size 344x20
+          RenderText {#text} at (0,0) size 43x19
+            text run at (0,0) width 43: "Bullet ("
+          RenderInline {TT} at (0,0) size 224x16
+            RenderText {#text} at (43,3) size 224x16
+              text run at (43,3) width 224: "hyphenate-character: \"\\2022\""
+          RenderText {#text} at (267,0) size 5x19
+            text run at (267,0) width 5: ")"
+        RenderBlock {DIV} at (0,52) size 344x224 [border: (3px solid #000000)]
+          RenderBlock (floating) {DIV} at (262,7) size 75x90 [bgcolor=#F0F8FF]
+          RenderText {#text} at (7,7) size 330x209
+            text run at (7,7) width 245: "The chief difficulty Alice found at"
+            text run at (7,28) width 194: "first was in managing her "
+            text run at (201,28) width 51: "flamin" + hyphen string "\x{2022}"
+            text run at (7,49) width 245: "go: she succeeded in getting its"
+            text run at (7,70) width 158: "body tucked away, "
+            text run at (165,70) width 87: "comfortably"
+            text run at (7,91) width 245: "enough, under her arm, with its"
+            text run at (7,112) width 146: "legs hanging down, "
+            text run at (153,112) width 184: "but generally, just as she"
+            text run at (7,133) width 268: "had got its neck nicely straightened "
+            text run at (275,133) width 62: "out, and"
+            text run at (7,154) width 330: "was going to give the hedgehog a blow with"
+            text run at (7,175) width 84: "its head, it "
+            text run at (91,175) width 246: "would twist itself round and look"
+            text run at (7,196) width 117: "up in her face\x{2026}"
+      RenderBlock (floating) {DIV} at (356,276) size 352x276
+        RenderBlock {P} at (0,16) size 352x20
+          RenderText {#text} at (0,0) size 131x19
+            text run at (0,0) width 131: "Middle dot and tilde ("
+          RenderInline {TT} at (0,0) size 216x16
+            RenderText {#text} at (131,3) size 216x16
+              text run at (131,3) width 216: "hyphenate-character: \"\\B7~\""
+          RenderText {#text} at (347,0) size 5x19
+            text run at (347,0) width 5: ")"
+        RenderBlock {DIV} at (0,52) size 344x224 [border: (3px solid #000000)]
+          RenderBlock (floating) {DIV} at (262,7) size 75x90 [bgcolor=#F0F8FF]
+          RenderText {#text} at (7,7) size 330x209
+            text run at (7,7) width 245: "The chief difficulty Alice found at"
+            text run at (7,28) width 245: "first was in managing her"
+            text run at (7,49) width 245: "flamingo: she succeeded in getting"
+            text run at (7,70) width 172: "its body tucked away, "
+            text run at (179,70) width 73: "comfort" + hyphen string "\x{B7}~"
+            text run at (7,91) width 245: "ably enough, under her arm, with"
+            text run at (7,112) width 173: "its legs hanging down, "
+            text run at (180,112) width 157: "but generally, just as"
+            text run at (7,133) width 302: "she had got its neck nicely straightened "
+            text run at (309,133) width 28: "out,"
+            text run at (7,154) width 330: "and was going to give the hedgehog a blow"
+            text run at (7,175) width 122: "with its head, it "
+            text run at (129,175) width 208: "would twist itself round and"
+            text run at (7,196) width 153: "look up in her face\x{2026}"

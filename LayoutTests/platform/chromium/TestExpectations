@@ -2001,9 +2001,6 @@ crbug.com/24182 [ Debug ] fast/forms/input-maxlength.html [ Pass Slow ]
 # WebKit roll 49405:49413
 crbug.com/28409 http/tests/xmlhttprequest/logout.html [ Failure ]
 
-# I don't think we've ever passed this test correctly.
-webkit.org/b/73329 [ Android Linux Win ] fast/text/international/hindi-whitespace.html [ Failure ]
-
 # The following upstream patches add -Webkit-color-correction support:
 # http://trac.webkit.org/changeset/50760
 # http://trac.webkit.org/changeset/50852
@@ -2255,15 +2252,6 @@ crbug.com/46603 [ Debug ] fast/frames/lots-of-iframes.html [ Skip ]
 crbug.com/46603 [ Debug ] fast/frames/lots-of-objects.html [ Skip ]
 
 crbug.com/47035 [ Win Debug ] fast/loader/stateobjects/document-destroyed-navigate-back-with-fragment-scroll.html [ Failure Pass ]
-
-# CSS3 Hyphenation landed in http://trac.webkit.org/changeset/61548
-# We don't implement it yet.
-crbug.com/47083 fast/text/hyphens.html [ Failure ImageOnlyFailure ]
-crbug.com/47083 fast/text/hyphenate-character.html [ Failure ImageOnlyFailure ]
-crbug.com/47083 fast/text/hyphenate-first-word.html [ Failure ImageOnlyFailure ]
-crbug.com/47083 fast/text/hyphenate-limit-lines.html [ Failure ImageOnlyFailure ]
-crbug.com/47083 fast/text/hyphenate-limit-before-after.html [ Failure ImageOnlyFailure ]
-crbug.com/47083 fast/text/hyphenate-locale.html [ Failure ImageOnlyFailure ]
 
 crbug.com/48239 fast/js/function-apply.html [ Failure ]
 crbug.com/48239 fast/js/function-apply-aliased.html [ Failure Pass ]
@@ -3094,8 +3082,6 @@ webkit.org/b/69210 [ SnowLeopard ] fast/inline/continuation-outlines-with-layers
 webkit.org/b/69210 [ Mac ] fast/inline/continuation-outlines-with-layers.html [ Failure ]
 
 webkit.org/b/79013 http/tests/workers/terminate-during-sync-operation.html [ Pass Timeout Crash ]
-
-crbug.com/115055 fast/js/cyclic-prototypes.html [ Failure ]
 
 crbug.com/113063 [ Debug ] storage/indexeddb/basics-workers.html [ Crash Pass ]
 
@@ -4145,7 +4131,7 @@ webkit.org/b/85522 http/tests/security/sandboxed-iframe-form-top.html [ Skip ]
 webkit.org/b/102542 [ Win7 ] platform/chromium/virtual/softwarecompositing/checkerboard.html [ Image ]
 webkit.org/b/102542 [ Linux Mac Win ] compositing/checkerboard.html [ ImageOnlyFailure ]
 
-webkit.org/b/102724 svg/carto.net/colourpicker.svg [ ImageOnlyFailure ]
+webkit.org/b/102724 [ Linux ] svg/carto.net/colourpicker.svg [ ImageOnlyFailure Pass ]
 
 webkit.org/b/103927 http/tests/w3c/webperf/submission/resource-timing/html/test_resource_dynamic_insertion.html [ Text ]
 webkit.org/b/103927 http/tests/w3c/webperf/submission/resource-timing/html/test_resource_frame_initiator_type.html [ Text ]
@@ -4225,7 +4211,6 @@ webkit.org/b/104092 fast/frames/paint-iframe-background.html [ Failure Pass ]
 webkit.org/b/103487 [ Linux ] fast/forms/placeholder-position.html [ ImageOnlyFailure Pass ]
 
 # Missing since r136656
-webkit.org/b/103510 css3/flexbox/repaint-column-reverse.html [ Missing ]
 
 # Flaky
 webkit.org/b/104283 [ XP ] fonts/monospace.html [ Failure Pass ]
