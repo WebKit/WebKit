@@ -81,10 +81,10 @@ public:
 
     PassRefPtr<SharedBitmap> clipBitmap(const IntRect& rect, bool useAlpha);
 
-    void draw(GraphicsContext* ctxt, const IntRect& dstRect, const IntRect& srcRect, ColorSpace styleColorSpace, CompositeOperator compositeOp);
+    void draw(GraphicsContext* ctxt, const IntRect& dstRect, const IntRect& srcRect, ColorSpace styleColorSpace, CompositeOperator compositeOp, BlendMode blendMode);
     void drawPattern(GraphicsContext* ctxt, const FloatRect& tileRectIn, const AffineTransform& patternTransform,
                     const FloatPoint& phase, ColorSpace styleColorSpace, CompositeOperator op, const FloatRect& destRect, const IntSize& origSourceSize);
-    void draw(HDC, const IntRect& dstRect, const IntRect& srcRect, CompositeOperator compositeOp);
+    void draw(HDC, const IntRect& dstRect, const IntRect& srcRect, CompositeOperator compositeOp, BlendMode blendMode);
     void drawPattern(HDC, const AffineTransform&, const FloatRect& tileRectIn, const AffineTransform& patternTransform,
                     const FloatPoint& phase, ColorSpace styleColorSpace, CompositeOperator op, const FloatRect& destRect, const IntSize& origSourceSize);
 

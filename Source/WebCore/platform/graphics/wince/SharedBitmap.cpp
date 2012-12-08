@@ -235,14 +235,14 @@ bool SharedBitmap::ensureHandle()
     return true;
 }
 
-void SharedBitmap::draw(GraphicsContext* ctxt, const IntRect& dstRect, const IntRect& srcRect, ColorSpace styleColorSpace, CompositeOperator compositeOp)
+void SharedBitmap::draw(GraphicsContext* ctxt, const IntRect& dstRect, const IntRect& srcRect, ColorSpace styleColorSpace, CompositeOperator compositeOp, BlendMode blendMode)
 {
     if (!m_pixels)
         return;
-    ctxt->drawBitmap(this, dstRect, srcRect, styleColorSpace, compositeOp);
+    ctxt->drawBitmap(this, dstRect, srcRect, styleColorSpace, compositeOp, blendMode);
 }
 
-void SharedBitmap::draw(HDC hdc, const IntRect& dstRect, const IntRect& srcRect, CompositeOperator compositeOp)
+void SharedBitmap::draw(HDC hdc, const IntRect& dstRect, const IntRect& srcRect, CompositeOperator compositeOp, BlendMode blendMode)
 {
     if (!m_pixels)
         return;

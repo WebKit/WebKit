@@ -1,3 +1,22 @@
+2012-12-08  Patrick Gansterer  <paroga@webkit.org>
+
+        Build fix for WinCE after r137011.
+
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/wince/GraphicsContextWinCE.cpp:
+        (WebCore::GraphicsContext::setPlatformCompositeOperation):
+        (WebCore::GraphicsContext::drawBitmap):
+        * platform/graphics/wince/ImageBufferWinCE.cpp:
+        (WebCore::BufferedImage::draw):
+        (WebCore::ImageBuffer::draw):
+        * platform/graphics/wince/ImageWinCE.cpp:
+        (WebCore::BitmapImage::getHBITMAPOfSize):
+        (WebCore::BitmapImage::drawFrameMatchingSourceSize):
+        (WebCore::BitmapImage::draw):
+        * platform/graphics/wince/SharedBitmap.cpp:
+        (WebCore::SharedBitmap::draw):
+        * platform/graphics/wince/SharedBitmap.h:
+
 2012-12-08  Gavin Peters  <gavinp@chromium.org>
 
         Add status events on <link rel=prerender> elements.
