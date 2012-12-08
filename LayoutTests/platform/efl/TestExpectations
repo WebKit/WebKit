@@ -350,8 +350,10 @@ inspector/timeline/timeline-receive-response-event.html
 # ENABLE(DRAGGABLE_REGION) is disabled
 fast/css/draggable-region-parser.html
 
-# http://webkit.org/b/96828
-fast/canvas/webgl/oes-vertex-array-object.html
+webkit.org/b/99096 fast/canvas/webgl/arraybuffer-transfer-of-control.html [ Failure Pass ]
+
+# Expected to fail until support for extension is implemented
+webkit.org/b/96828 fast/canvas/webgl/oes-vertex-array-object.html [ Failure Pass ]
 
 # Expected to fail until OES_element_index_uint extension is implemented
 webkit.org/b/98257 fast/canvas/webgl/oes-element-index-uint.html [ Failure Pass ]
@@ -1129,23 +1131,6 @@ webkit.org/b/86727 compositing/plugins/invalidate_rect.html [ Failure ]
 
 # EFL's LayoutTestController does not implement display
 webkit.org/b/86730 compositing/layer-creation/fixed-position-scroll.html [ Missing ]
-
-# EFL does not support WebGL
-webkit.org/b/77219 compositing/backface-visibility/backface-visibility-webgl.html [ Failure ]
-webkit.org/b/77219 compositing/visibility/visibility-simple-webgl-layer.html [ Failure ]
-webkit.org/b/77219 compositing/webgl/webgl-background-color.html [ Skip ]
-webkit.org/b/77219 compositing/webgl/webgl-no-alpha.html [ Skip ]
-webkit.org/b/77219 compositing/webgl/webgl-nonpremultiplied-blend.html [ Skip ]
-webkit.org/b/77219 compositing/webgl/webgl-reflection.html [ Skip ]
-webkit.org/b/77219 fast/canvas/webgl [ Skip ]
-webkit.org/b/77219 fast/dom/constructed-objects-prototypes.html [ Failure ]
-webkit.org/b/77219 fast/events/constructors/webgl-context-event-constructor.html [ Skip ]
-webkit.org/b/77219 fast/images/webgl-teximage2d.html [ Skip ]
-webkit.org/b/77219 http/tests/canvas/webgl/origin-clean-conformance.html [ Skip ]
-webkit.org/b/77219 http/tests/security/webgl-remote-read-remote-image-allowed-with-credentials.html [ Skip ]
-webkit.org/b/77219 http/tests/security/webgl-remote-read-remote-image-allowed.html [ Skip ]
-webkit.org/b/77219 http/tests/security/webgl-remote-read-remote-image-blocked-no-crossorigin.html [ Skip ]
-webkit.org/b/77219 inspector/profiler/webgl [ Skip ]
 
 webkit.org/b/84759 ietestcenter/css3/multicolumn/column-containing-block-001.htm [ ImageOnlyFailure ]
 webkit.org/b/84760 ietestcenter/css3/multicolumn/column-containing-block-002.htm [ ImageOnlyFailure ]
