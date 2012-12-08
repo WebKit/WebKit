@@ -90,6 +90,8 @@ void LinkLoader::notifyFinished(CachedResource* resource)
     m_cachedLinkResource = 0;
 }
 
+#if ENABLE(LINK_PRERENDER)
+
 void LinkLoader::didStartPrerender()
 {
     m_client->didStartLinkPrerender();
@@ -109,6 +111,8 @@ void LinkLoader::didSendDOMContentLoadedForPrerender()
 {
     m_client->didSendDOMContentLoadedForLinkPrerender();
 }
+
+#endif
 
 bool LinkLoader::loadLink(const LinkRelAttribute& relAttribute, const String& type,
                           const String& sizes, const KURL& href, Document* document)
