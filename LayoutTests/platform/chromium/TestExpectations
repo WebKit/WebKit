@@ -3302,7 +3302,7 @@ webkit.org/b/82776 storage/indexeddb/pending-version-change-stuck.html
 webkit.org/b/82776 storage/indexeddb/pending-version-change-stuck-works-with-terminate.html
 webkit.org/b/82776 storage/indexeddb/pending-version-change-on-exit.html
 
-webkit.org/b/ [ Win Release ] http/tests/xmlhttprequest/redirect-cross-origin-post.html [ Failure Pass ]
+webkit.org/b/ [ Win ] http/tests/xmlhttprequest/redirect-cross-origin-post.html [ Failure Pass ]
 
 crbug.com/121442 [ Linux Debug ] plugins/iframe-shims.html [ Crash ]
 crbug.com/121442 [ Linux Release ] plugins/iframe-shims.html [ Crash Pass ]
@@ -3692,7 +3692,8 @@ webkit.org/b/94002 [ Win7 Debug ] inspector/debugger [ Pass Timeout ]
 webkit.org/b/99389 [ Win ] inspector/debugger/xhr-breakpoints.html [ Pass Text ]
 
 # Timing out/Flaky
-webkit.org/b/94002 [ Win Debug ] inspector/styles/styles-computed-trace.html [ Pass Timeout ]
+webkit.org/b/94002 [ Win Mac Debug ] inspector/styles/styles-computed-trace.html [ Failure Timeout ]
+webkit.org/b/94002 [ Linux Debug ] inspector/styles/styles-computed-trace.html [ Pass Timeout ]
 
 # Added by bug 89826
 webkit.org/b/94003 [ Win ] fast/css/word-spacing-characters-complex-text.html [ ImageOnlyFailure ]
@@ -4215,3 +4216,8 @@ webkit.org/b/104283 [ Mac Debug ] fonts/monospace.html [ ImageOnlyFailure Pass ]
 
 # First row, third column is wrong.
 crbug.com/164997 compositing/backface-visibility/backface-visibility-webgl.html [ ImageOnlyFailure ]
+
+# Flaky
+Bug(senorblanco) [ Win ] http/tests/w3c/webperf/submission/Intel/user-timing/test_user_timing_mark.html [ Failure Pass ]
+Bug(senorblanco) [ Win ] http/tests/w3c/webperf/submission/Intel/user-timing/test_user_timing_clearMarks.html [ Failure Pass ]
+Bug(senorblanco) [ Win ] http/tests/w3c/webperf/submission/Intel/user-timing/test_user_timing_measure_associate_with_navigation_timing.html [ Failure Pass ]
