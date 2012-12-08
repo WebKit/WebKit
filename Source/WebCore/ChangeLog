@@ -1,3 +1,10 @@
+2012-12-08  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Build fix after r137003. Wrap NodeMutationObserverData with ENABLE(MUTATION_OBSERVERS).
+
+        * dom/NodeRareData.h:
+        (NodeRareData):
+
 2012-12-08  Patrick Gansterer  <paroga@webkit.org>
 
         Build fix for ENABLE(SVG) && !ENABLE(FILTERS) after r136975.

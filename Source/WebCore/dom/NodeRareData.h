@@ -226,12 +226,14 @@ private:
 class NodeRareData : public NodeRareDataBase {
     WTF_MAKE_NONCOPYABLE(NodeRareData); WTF_MAKE_FAST_ALLOCATED;
 
+#if ENABLE(MUTATION_OBSERVERS)
     struct NodeMutationObserverData {
         Vector<OwnPtr<MutationObserverRegistration> > m_registry;
         HashSet<MutationObserverRegistration*> m_transientRegistry;
 
         static PassOwnPtr<NodeMutationObserverData> create() { return adoptPtr(new NodeMutationObserverData); }
     };
+#endif
 
     struct NodeMicroDataTokenLists {
         RefPtr<DOMSettableTokenList> m_itemProp;
