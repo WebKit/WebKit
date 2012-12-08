@@ -106,6 +106,9 @@ list(APPEND WebKit2_SOURCES
     UIProcess/efl/WebPreferencesEfl.cpp
     UIProcess/efl/WebProcessProxyEfl.cpp
 
+    UIProcess/InspectorServer/efl/WebInspectorServerEfl.cpp
+    UIProcess/InspectorServer/soup/WebSocketServerSoup.cpp
+
     UIProcess/soup/WebCookieManagerProxySoup.cpp
     UIProcess/soup/WebSoupRequestManagerClient.cpp
     UIProcess/soup/WebSoupRequestManagerProxy.cpp

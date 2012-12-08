@@ -1,3 +1,33 @@
+2012-12-08  Seokju Kwon  <seokju.kwon@gmail.com>
+
+        [EFL][WK2] Add Remote Web Inspector
+        https://bugs.webkit.org/show_bug.cgi?id=98705
+
+        Reviewed by Gyuyoung Kim.
+
+        Add Remote Web Inspector to EFL port.
+        The WebInspectorSever will be started during WebKit context initialization.
+        The IP address and port number for the server can be set in WEBKIT_INSPECTOR_SERVER.
+
+        * CMakeLists.txt:
+        * PlatformEfl.cmake:
+        * UIProcess/InspectorServer/WebInspectorServer.h:
+        (WebInspectorServer):
+        * UIProcess/InspectorServer/WebSocketServer.h:
+        (WebSocketServer):
+        * UIProcess/InspectorServer/efl/WebInspectorServerEfl.cpp: Added.
+        (WebKit):
+        (WebKit::inspectorResourcePath):
+        (WebKit::WebInspectorServer::platformResourceForPath):
+        (WebKit::WebInspectorServer::buildPageList):
+        * UIProcess/InspectorServer/soup/WebSocketServerSoup.cpp:
+        (WebKit::connectionCallback):
+        * UIProcess/efl/WebContextEfl.cpp:
+        (WebKit::initializeInspectorServer):
+        (WebKit):
+        (WebKit::WebContext::platformInitializeWebProcess):
+        * config.h:
+
 2012-12-08  Gustavo Noronha Silva  <gns@gnome.org>
 
         Unreviewed. Make building the WebKit2 GIR file conditional on building the WebKit2 library.

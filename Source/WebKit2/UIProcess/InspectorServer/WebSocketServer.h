@@ -29,15 +29,14 @@
 
 #if ENABLE(INSPECTOR_SERVER)
 
-#if PLATFORM(GTK)
-#include <gio/gio.h>
-#endif
 #include <wtf/Deque.h>
 #include <wtf/OwnPtr.h>
-#if PLATFORM(GTK)
+#include <wtf/text/WTFString.h>
+
+#if USE(SOUP)
+#include <gio/gio.h>
 #include <wtf/gobject/GRefPtr.h>
 #endif
-#include <wtf/text/WTFString.h>
 
 #if PLATFORM(QT)
 namespace WebKit {
@@ -84,7 +83,7 @@ private:
     unsigned short m_port;
 #if PLATFORM(QT)
     OwnPtr<QtTcpServerHandler> m_tcpServerHandler;
-#elif PLATFORM(GTK)
+#elif USE(SOUP)
     GRefPtr<GSocketService> m_socketService;
 #endif
     friend class WebSocketServerConnection;

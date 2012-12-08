@@ -39,7 +39,7 @@ using namespace WebCore;
 
 namespace WebKit {
 
-static gboolean connectionCallback(GSocketService* service, GSocketConnection* connection, GObject* sourceObject, WebSocketServer* server)
+static gboolean connectionCallback(GSocketService* /*service*/, GSocketConnection* connection, GObject* /*sourceObject*/, WebSocketServer* server)
 {
 #if !LOG_DISABLED
     GRefPtr<GSocketAddress> socketAddress = adoptGRef(g_socket_connection_get_remote_address(connection, 0));
