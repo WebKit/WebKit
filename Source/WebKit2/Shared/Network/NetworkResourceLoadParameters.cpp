@@ -38,14 +38,16 @@ NetworkResourceLoadParameters::NetworkResourceLoadParameters()
     : m_priority(ResourceLoadPriorityVeryLow)
     , m_contentSniffingPolicy(SniffContent)
     , m_allowStoredCredentials(DoNotAllowStoredCredentials)
+    , m_inPrivateBrowsingMode(false)
 {
 }
 
-NetworkResourceLoadParameters::NetworkResourceLoadParameters(const ResourceRequest& request, ResourceLoadPriority priority, ContentSniffingPolicy contentSniffingPolicy, StoredCredentials allowStoredCredentials)
+NetworkResourceLoadParameters::NetworkResourceLoadParameters(const ResourceRequest& request, ResourceLoadPriority priority, ContentSniffingPolicy contentSniffingPolicy, StoredCredentials allowStoredCredentials, bool inPrivateBrowsingMode)
     : m_request(request)
     , m_priority(priority)
     , m_contentSniffingPolicy(contentSniffingPolicy)
     , m_allowStoredCredentials(allowStoredCredentials)
+    , m_inPrivateBrowsingMode(inPrivateBrowsingMode)
 {
 }
 
@@ -55,6 +57,7 @@ void NetworkResourceLoadParameters::encode(CoreIPC::ArgumentEncoder& encoder) co
     encoder.encodeEnum(m_priority);
     encoder.encodeEnum(m_contentSniffingPolicy);
     encoder.encodeEnum(m_allowStoredCredentials);
+    encoder.encode(m_inPrivateBrowsingMode);
 }
 
 bool NetworkResourceLoadParameters::decode(CoreIPC::ArgumentDecoder* decoder, NetworkResourceLoadParameters& result)
@@ -66,6 +69,8 @@ bool NetworkResourceLoadParameters::decode(CoreIPC::ArgumentDecoder* decoder, Ne
     if (!decoder->decodeEnum(result.m_contentSniffingPolicy))
         return false;
     if (!decoder->decodeEnum(result.m_allowStoredCredentials))
+        return false;
+    if (!decoder->decode(result.m_inPrivateBrowsingMode))
         return false;
 
     return true;

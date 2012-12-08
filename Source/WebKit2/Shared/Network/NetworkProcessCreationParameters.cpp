@@ -42,6 +42,7 @@ void NetworkProcessCreationParameters::encode(CoreIPC::ArgumentEncoder& encoder)
     encoder << parentProcessName;
     encoder << uiProcessBundleIdentifier;
 #endif
+    encoder << privateBrowsingEnabled;
 }
 
 bool NetworkProcessCreationParameters::decode(CoreIPC::ArgumentDecoder* decoder, NetworkProcessCreationParameters& result)
@@ -52,6 +53,8 @@ bool NetworkProcessCreationParameters::decode(CoreIPC::ArgumentDecoder* decoder,
     if (!decoder->decode(result.uiProcessBundleIdentifier))
         return false;
 #endif
+    if (!decoder->decode(result.privateBrowsingEnabled))
+        return false;
 
     return true;
 }

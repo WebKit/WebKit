@@ -82,7 +82,7 @@ void NetworkResourceLoader::start()
     ref();
     
     // FIXME (NetworkProcess): Create RemoteNetworkingContext with actual settings.
-    m_networkingContext = RemoteNetworkingContext::create(false, false);
+    m_networkingContext = RemoteNetworkingContext::create(false, false, m_requestParameters.inPrivateBrowsingMode());
 
     // FIXME (NetworkProcess): Pass an actual value for defersLoading
     m_handle = ResourceHandle::create(m_networkingContext.get(), m_requestParameters.request(), this, false /* defersLoading */, m_requestParameters.contentSniffingPolicy() == SniffContent);
@@ -234,9 +234,11 @@ void NetworkResourceLoader::cannotShowURL(WebCore::ResourceHandle*)
     notImplemented();
 }
 
-void NetworkResourceLoader::willCacheResponse(WebCore::ResourceHandle*, WebCore::CacheStoragePolicy&)
+void NetworkResourceLoader::willCacheResponse(WebCore::ResourceHandle*, WebCore::CacheStoragePolicy& policy)
 {
-    notImplemented();
+    // FIXME (12838543): Unsure if this is needed, private session is in-memory anyway.
+    if (policy == StorageAllowed && m_requestParameters.inPrivateBrowsingMode())
+        policy = StorageAllowedInMemoryOnly;
 }
 
 bool NetworkResourceLoader::shouldUseCredentialStorage(ResourceHandle*)

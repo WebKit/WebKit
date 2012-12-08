@@ -1,3 +1,72 @@
+2012-12-07  Alexey Proskuryakov  <ap@apple.com>
+
+        Network process should use a correct storage session in private browsing mode
+        <rdar://problem/12838490>
+        https://bugs.webkit.org/show_bug.cgi?id=104401
+
+        Reviewed by Brady Eidson.
+
+        Notify NetworkProcess when it needs to create or destroy a private browsing session,
+        and add a NetworkResourceLoadParameters member telling if the particular resource
+        should be requested using it.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::cookiesForDOM):
+        (WebKit::NetworkConnectionToWebProcess::setCookiesFromDOM):
+        (WebKit::NetworkConnectionToWebProcess::cookiesEnabled):
+        (WebKit::NetworkConnectionToWebProcess::getRawCookies):
+        (WebKit::NetworkConnectionToWebProcess::deleteCookie):
+        (WebKit::NetworkConnectionToWebProcess::getHostnamesWithCookies):
+        (WebKit::NetworkConnectionToWebProcess::deleteCookiesForHostname):
+        (WebKit::NetworkConnectionToWebProcess::deleteAllCookies):
+        Added another dummy argument to dummy networking context.
+
+        * NetworkProcess/NetworkProcess.cpp: (WebKit::NetworkProcess::initializeNetworkProcess):
+        Ensure private browsing session if it's needed due to a persistent preference, not
+        an API call at runtime (which is handled below as ensure/destroy).
+
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::start): Pass private browsing state to RemoteNetworkingContext
+        used for loading.
+        (WebKit::NetworkResourceLoader::willCacheResponse): Added an implemntation that
+        matches WebCore, but may be not needed.
+
+        * NetworkProcess/mac/RemoteNetworkingContext.h: (WebKit::RemoteNetworkingContext::create):
+        Store privateBrowsingEnabled flag.
+
+        * NetworkProcess/mac/RemoteNetworkingContext.mm: (WebKit::RemoteNetworkingContext::storageSession):
+        Return a private session when it's in use.
+
+        * Shared/Network/NetworkProcessCreationParameters.cpp:
+        (WebKit::NetworkProcessCreationParameters::encode):
+        (WebKit::NetworkProcessCreationParameters::decode):
+        * Shared/Network/NetworkProcessCreationParameters.h:
+        Pass privateBrowsingEnabled flag to the new process.
+
+        * Shared/Network/NetworkResourceLoadParameters.cpp:
+        (WebKit::NetworkResourceLoadParameters::NetworkResourceLoadParameters):
+        (WebKit::NetworkResourceLoadParameters::encode):
+        (WebKit::NetworkResourceLoadParameters::decode):
+        * Shared/Network/NetworkResourceLoadParameters.h:
+        (WebKit::NetworkResourceLoadParameters::inPrivateBrowsingMode):
+        Pass inPrivateBrowsingMode flag for the request.
+
+        * UIProcess/Network/NetworkProcessManager.h: (WebKit::NetworkProcessManager::process):
+        Exposed, so that we can send messages without going through NetworkProcessManager.
+
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::usesNetworkProcess):
+        (WebKit::anyContextUsesNetworkProcess):
+        (WebKit::WebContext::willStartUsingPrivateBrowsing):
+        (WebKit::WebContext::willStopUsingPrivateBrowsing):
+        Notify NetworkProcess when entering or exiting private browsing.
+
+        * UIProcess/WebContext.h: Exposed usesNetworkProcess() for the new static function
+        anyContextUsesNetworkProcess to use.
+
+        * WebProcess/Network/WebResourceLoadScheduler.cpp: (WebKit::WebResourceLoadScheduler::scheduleLoad):
+        Put current private browsing state over in NetworkResourceLoadParameters.
+
 2012-12-07  Helder Correia  <helder.correia@nokia.com>
 
         [CoordGfx] Variable name starts with upper case character

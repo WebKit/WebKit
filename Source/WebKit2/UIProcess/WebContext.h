@@ -244,6 +244,7 @@ public:
     void textCheckerStateChanged();
 
     void setUsesNetworkProcess(bool);
+    bool usesNetworkProcess() const;
 
 #if PLATFORM(MAC)
     static bool applicationIsOccluded() { return s_applicationIsOccluded; }

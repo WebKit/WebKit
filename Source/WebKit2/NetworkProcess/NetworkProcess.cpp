@@ -101,6 +101,9 @@ void NetworkProcess::initializeNetworkProcess(const NetworkProcessCreationParame
 #if PLATFORM(MAC) || USE(CFNETWORK)
     RemoteNetworkingContext::setPrivateBrowsingStorageSessionIdentifierBase(parameters.uiProcessBundleIdentifier);
 #endif
+
+    if (parameters.privateBrowsingEnabled)
+        RemoteNetworkingContext::ensurePrivateBrowsingSession();
 }
 
 void NetworkProcess::createNetworkConnectionToWebProcess()

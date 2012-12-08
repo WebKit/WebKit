@@ -73,6 +73,8 @@
 
 #if ENABLE(NETWORK_PROCESS)
 #include "NetworkProcessManager.h"
+#include "NetworkProcessMessages.h"
+#include "NetworkProcessProxy.h"
 #endif
 
 #if USE(SOUP)
@@ -324,10 +326,36 @@ void WebContext::setUsesNetworkProcess(bool usesNetworkProcess)
 #endif
 }
 
+bool WebContext::usesNetworkProcess() const
+{
+#if ENABLE(NETWORK_PROCESS)
+    return m_usesNetworkProcess;
+#else
+    return false;
+#endif
+}
+
+#if ENABLE(NETWORK_PROCESS)
+static bool anyContextUsesNetworkProcess()
+{
+    const Vector<WebContext*>& contexts = WebContext::allContexts();
+    for (size_t i = 0, count = contexts.size(); i < count; ++i)
+    if (contexts[i]->usesNetworkProcess())
+        return true;
+
+    return false;
+}
+#endif
+
 void WebContext::willStartUsingPrivateBrowsing()
 {
     if (m_privateBrowsingEnterCount++)
         return;
+
+#if ENABLE(NETWORK_PROCESS)
+    if (anyContextUsesNetworkProcess())
+        NetworkProcessManager::shared().process()->send(Messages::NetworkProcess::EnsurePrivateBrowsingSession(), 0);
+#endif
 
     const Vector<WebContext*>& contexts = allContexts();
     for (size_t i = 0, count = contexts.size(); i < count; ++i)
@@ -340,6 +368,11 @@ void WebContext::willStopUsingPrivateBrowsing()
     // so it is still necessary to destroy any existing private browsing session.
     if (m_privateBrowsingEnterCount && --m_privateBrowsingEnterCount)
         return;
+
+#if ENABLE(NETWORK_PROCESS)
+    if (anyContextUsesNetworkProcess())
+        NetworkProcessManager::shared().process()->send(Messages::NetworkProcess::DestroyPrivateBrowsingSession(), 0);
+#endif
 
     const Vector<WebContext*>& contexts = allContexts();
     for (size_t i = 0, count = contexts.size(); i < count; ++i)

@@ -37,9 +37,10 @@ namespace WebKit {
 
 static CFURLStorageSessionRef privateBrowsingStorageSession;
 
-RemoteNetworkingContext::RemoteNetworkingContext(bool needsSiteSpecificQuirks, bool localFileContentSniffingEnabled)
+RemoteNetworkingContext::RemoteNetworkingContext(bool needsSiteSpecificQuirks, bool localFileContentSniffingEnabled, bool privateBrowsingEnabled)
     : m_needsSiteSpecificQuirks(needsSiteSpecificQuirks)
     , m_localFileContentSniffingEnabled(localFileContentSniffingEnabled)
+    , m_privateBrowsingEnabled(privateBrowsingEnabled)
 {
 }
 
@@ -64,7 +65,11 @@ bool RemoteNetworkingContext::localFileContentSniffingEnabled() const
 
 CFURLStorageSessionRef RemoteNetworkingContext::storageSession() const
 {
-    // FIXME (NetworkProcess): Implement.
+    if (m_privateBrowsingEnabled) {
+        ASSERT(privateBrowsingStorageSession);
+        return privateBrowsingStorageSession;
+    }
+    // FIXME (NetworkProcess): Return a default session that's used for testing.
     return 0;
 }
 

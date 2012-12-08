@@ -47,6 +47,8 @@ struct NetworkProcessCreationParameters {
     String parentProcessName;
     String uiProcessBundleIdentifier;
 #endif
+
+    bool privateBrowsingEnabled;
 };
 
 } // namespace WebKit
