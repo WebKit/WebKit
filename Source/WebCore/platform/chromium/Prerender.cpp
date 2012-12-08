@@ -31,6 +31,7 @@
 
 #include "config.h"
 #include "Prerender.h"
+#include "PrerenderClient.h"
 
 #include <public/Platform.h>
 #include <public/WebPrerender.h>
@@ -43,8 +44,9 @@
 
 namespace WebCore {
 
-Prerender::Prerender(const KURL& url, const String& referrer, ReferrerPolicy policy)
-    : m_url(url)
+Prerender::Prerender(PrerenderClient* client, const KURL& url, const String& referrer, ReferrerPolicy policy)
+    : m_client(client)
+    , m_url(url)
     , m_referrer(referrer)
     , m_referrerPolicy(policy)
 {
@@ -54,13 +56,17 @@ Prerender::~Prerender()
 {
 }
 
+void Prerender::removeClient()
+{
+    m_client = 0;
+}
+
 void Prerender::add()
 {
     WebKit::WebPrerenderingSupport* platform = WebKit::WebPrerenderingSupport::current();
     if (!platform)
         return;
-    WebKit::WebPrerender webPrerender(this);
-    platform->add(webPrerender);
+    platform->add(WebKit::WebPrerender(this));
 }
 
 void Prerender::cancel()
@@ -68,8 +74,7 @@ void Prerender::cancel()
     WebKit::WebPrerenderingSupport* platform = WebKit::WebPrerenderingSupport::current();
     if (!platform)
         return;
-    WebKit::WebPrerender webPrerender(this);
-    platform->cancel(webPrerender);
+    platform->cancel(WebKit::WebPrerender(this));
 }
 
 void Prerender::abandon()
@@ -77,8 +82,7 @@ void Prerender::abandon()
     WebKit::WebPrerenderingSupport* platform = WebKit::WebPrerenderingSupport::current();
     if (!platform)
         return;
-    WebKit::WebPrerender webPrerender(this);
-    platform->abandon(webPrerender);
+    platform->abandon(WebKit::WebPrerender(this));
 }
 
 void Prerender::suspend()
@@ -89,6 +93,30 @@ void Prerender::suspend()
 void Prerender::resume()
 {
     add();
+}
+
+void Prerender::didStartPrerender()
+{
+    if (m_client)
+        m_client->didStartPrerender();
+}
+
+void Prerender::didStopPrerender()
+{
+    if (m_client)
+        m_client->didStopPrerender();
+}
+
+void Prerender::didSendLoadForPrerender()
+{
+    if (m_client)
+        m_client->didSendLoadForPrerender();
+}
+
+void Prerender::didSendDOMContentLoadedForPrerender()
+{
+    if (m_client)
+        m_client->didSendDOMContentLoadedForPrerender();
 }
 
 }

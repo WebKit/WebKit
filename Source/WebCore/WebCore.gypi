@@ -3472,6 +3472,7 @@
             'platform/PlatformTouchEvent.h',
             'platform/PlatformTouchPoint.h',
             'platform/PrerenderHandle.h',
+            'platform/PrerenderClient.h',
             'platform/PurgeableBuffer.h',
             'platform/ReferrerPolicy.h',
             'platform/RunLoopTimer.h',

@@ -44,16 +44,17 @@ namespace WebCore {
 
 class KURL;
 class Prerender;
+class PrerenderClient;
 
 class PrerenderHandle : public RefCounted<PrerenderHandle> {
     WTF_MAKE_NONCOPYABLE(PrerenderHandle);
 public:
-    static PassRefPtr<PrerenderHandle> create(const KURL&, const String& referrer, ReferrerPolicy);
+    static PassRefPtr<PrerenderHandle> create(PrerenderClient*, const KURL&, const String& referrer, ReferrerPolicy);
     ~PrerenderHandle();
 
     Prerender* prerender();
 
-    // FIXME: one day there will be events here, and we will be a PrerenderClient.
+    void removeClient();
 
     // A prerender link element is added when it is inserted into a document.
     void add();
@@ -75,7 +76,8 @@ public:
     ReferrerPolicy referrerPolicy() const;
 
 private:
-    PrerenderHandle(const KURL&, const String& referrer, ReferrerPolicy);
+    PrerenderHandle(PrerenderClient*, const KURL&, const String& referrer, ReferrerPolicy);
+
     RefPtr<Prerender> m_prerender;
 };
 

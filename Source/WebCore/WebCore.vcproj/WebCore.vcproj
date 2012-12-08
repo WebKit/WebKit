@@ -28742,6 +28742,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\platform\PrerenderClient.h"
+				>
+			</File>
+			<File
 				RelativePath="..\platform\PrerenderHandle.h"
 				>
 			</File>

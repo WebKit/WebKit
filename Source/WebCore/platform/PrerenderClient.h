@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2012 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -26,28 +26,27 @@
  * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
  */
 
-#ifndef FrameTestHelpers_h
-#define FrameTestHelpers_h
+#ifndef PrerenderClient_h
+#define PrerenderClient_h
 
-#include <string>
+namespace WebCore {
 
-namespace WebKit {
+class PrerenderClient {
+#if ENABLE(LINK_PRERENDER)
+public:
+    virtual ~PrerenderClient() { }
 
-class WebFrame;
-class WebFrameClient;
-class WebView;
-class WebViewClient;
+    virtual void didStartPrerender() = 0;
+    virtual void didStopPrerender() = 0;
+    virtual void didSendLoadForPrerender() = 0;
+    virtual void didSendDOMContentLoadedForPrerender() = 0;
+#endif
+};
 
-namespace FrameTestHelpers {
+}
 
-void loadFrame(WebFrame*, const std::string& url);
 
-WebView* createWebView(bool enableJavascript = false, WebFrameClient* = 0, WebViewClient* = 0);
-WebView* createWebViewAndLoad(const std::string& url, bool enableJavascript = false, WebFrameClient* = 0, WebViewClient* = 0);
-
-} // namespace FrameTestHelpers
-} // namespace WebKit
-
-#endif // FrameTestHelpers_h
+#endif

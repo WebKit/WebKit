@@ -1,0 +1,69 @@
+<html>
+  <head>
+    <script>
+      function log(message)
+      {
+          var item = document.createElement("li");
+          item.appendChild(document.createTextNode(message));
+          document.getElementById("console").appendChild(item);
+      }
+
+    </script>
+
+  </head>
+  <body>
+    <ul id=console>
+    </ul>
+
+    <link id="firstPrerender" rel=prerender href="http://first-prerender.com/"/>
+    <link id="secondPrerender" rel=prerender href="http://second-prerender.com/"/>
+
+    <p id="emptyParagraph"></p>
+
+    <script>
+      var firstPrerender = document.getElementById('firstPrerender');
+      var secondPrerender = document.getElementById('secondPrerender');
+
+      function removeFirstPrerender()
+      {
+          var link = document.getElementById('firstPrerender');
+          link.parentElement.removeChild(link);
+      }
+
+      function removeSecondPrerender()
+      {
+          var link = document.getElementById('firstPrerender');
+          link.parentElement.removeChild(link);
+      }
+
+      function removeThirdPrerender()
+      {
+          var link = document.getElementById('thirdPrerender');
+          link.parentElement.removeChild(link);
+      }
+
+      firstPrerender.addEventListener('webkitprerenderstart', function() { log("first_webkitprerenderstart"); }, false);
+      firstPrerender.addEventListener('webkitprerenderstop', function() { log("first_webkitprerenderstop"); }, false);
+      firstPrerender.addEventListener('webkitprerenderload', function() { log("first_webkitprerenderload"); }, false);
+      firstPrerender.addEventListener('webkitprerenderdomcontentloaded', function() { log("first_webkitprerenderdomcontentloaded"); }, false);
+
+      secondPrerender.addEventListener('webkitprerenderstart', function() { log("second_webkitprerenderstart"); }, false);
+      secondPrerender.addEventListener('webkitprerenderstop', function() { log("second_webkitprerenderstop"); }, false);
+      secondPrerender.addEventListener('webkitprerenderload', function() { log("second_webkitprerenderload"); }, false);
+      secondPrerender.addEventListener('webkitprerenderdomcontentloaded', function() { log("second_webkitprerenderdomcontentloaded"); }, false);
+
+      function addThirdPrerender()
+      {
+          var emptyParagraph = document.getElementById("emptyParagraph");
+          emptyParagraph.innerHTML = '<link id="thirdPrerender" rel=prerender href="http://third-prererender.com/"/>';
+          var thirdPrerender = document.getElementById('thirdPrerender');
+
+          thirdPrerender.addEventListener('webkitprerenderstart', function() { log("third_webkitprerenderstart"); }, false);
+          thirdPrerender.addEventListener('webkitprerenderstop', function() { log("third_webkitprerenderstop"); }, false);
+          thirdPrerender.addEventListener('webkitprerenderload', function() { log("third_webkitprerenderload"); }, false);
+          thirdPrerender.addEventListener('webkitprerenderdomcontentloaded', function() { log("third_webkitprerenderdomcontentloaded"); }, false);
+      }
+    </script>
+  </body>
+</html>
+

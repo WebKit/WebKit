@@ -89,8 +89,14 @@ private:
     virtual void notifyLoadedSheetAndAllCriticalSubresources(bool errorOccurred);
     virtual void startLoadingDynamicSheet();
 
-    virtual void linkLoaded();
-    virtual void linkLoadingErrored();
+    virtual void linkLoaded() OVERRIDE;
+    virtual void linkLoadingErrored() OVERRIDE;
+#if ENABLE(LINK_PRERENDER) 
+    virtual void didStartLinkPrerender() OVERRIDE;
+    virtual void didStopLinkPrerender() OVERRIDE;
+    virtual void didSendLoadForLinkPrerender() OVERRIDE;
+    virtual void didSendDOMContentLoadedForLinkPrerender() OVERRIDE;
+#endif
 
     bool isAlternate() const { return m_disabledState == Unset && m_relAttribute.m_isAlternate; }
     

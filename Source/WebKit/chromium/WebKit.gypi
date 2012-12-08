@@ -99,6 +99,7 @@
             'tests/PaintAggregatorTest.cpp',
             'tests/PlatformContextSkiaTest.cpp',
             'tests/PopupContainerTest.cpp',
+            'tests/PrerenderingTest.cpp',
             'tests/RegionTest.cpp',
             'tests/RenderTableCellTest.cpp',
             'tests/RenderTableRowTest.cpp',

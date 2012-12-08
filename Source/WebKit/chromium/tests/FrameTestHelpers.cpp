@@ -72,7 +72,7 @@ static WebViewClient* defaultWebViewClient()
     return &client;
 }
 
-WebView* createWebViewAndLoad(const std::string& url, bool enableJavascript, WebFrameClient* webFrameClient, WebViewClient* webViewClient)
+WebView* createWebView(bool enableJavascript, WebFrameClient* webFrameClient, WebViewClient* webViewClient)
 {
     if (!webFrameClient)
         webFrameClient = defaultWebFrameClient();
@@ -82,6 +82,13 @@ WebView* createWebViewAndLoad(const std::string& url, bool enableJavascript, Web
     webView->settings()->setJavaScriptEnabled(enableJavascript);
     webView->settings()->setDeviceSupportsMouse(false);
     webView->initializeMainFrame(webFrameClient);
+
+    return webView;
+}
+
+WebView* createWebViewAndLoad(const std::string& url, bool enableJavascript, WebFrameClient* webFrameClient, WebViewClient* webViewClient)
+{
+    WebView* webView = createWebView(enableJavascript, webFrameClient, webViewClient);
 
     loadFrame(webView->mainFrame(), url);
     webkit_support::ServeAsynchronousMockedRequests();

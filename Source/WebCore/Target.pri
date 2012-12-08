@@ -2335,6 +2335,7 @@ HEADERS += \
     platform/Timer.h \
     platform/Widget.h \
     platform/PlatformStrategies.h \
+    platform/PrerenderClient.h \
     platform/PrerenderHandle.h \
     platform/LocalizedStrings.h \
     plugins/DOMMimeTypeArray.h \

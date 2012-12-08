@@ -70,7 +70,7 @@ Prerenderer::~Prerenderer()
 {
 }
 
-PassRefPtr<PrerenderHandle> Prerenderer::render(const KURL& url)
+PassRefPtr<PrerenderHandle> Prerenderer::render(PrerenderClient* prerenderClient, const KURL& url)
 {
     // Prerenders are unlike requests in most ways (for instance, they pass down fragments, and they don't return data),
     // but they do have referrers.
@@ -81,7 +81,7 @@ PassRefPtr<PrerenderHandle> Prerenderer::render(const KURL& url)
 
     const String referrer = SecurityPolicy::generateReferrerHeader(referrerPolicy, url, document()->frame()->loader()->outgoingReferrer());
 
-    RefPtr<PrerenderHandle> prerenderHandle = PrerenderHandle::create(url, referrer, referrerPolicy);
+    RefPtr<PrerenderHandle> prerenderHandle = PrerenderHandle::create(prerenderClient, url, referrer, referrerPolicy);
 
     if (client())
         client()->willAddPrerender(prerenderHandle.get());

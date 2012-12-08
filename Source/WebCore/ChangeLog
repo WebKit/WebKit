@@ -1,3 +1,86 @@
+2012-12-08  Gavin Peters  <gavinp@chromium.org>
+
+        Add status events on <link rel=prerender> elements.
+        https://bugs.webkit.org/show_bug.cgi?id=96474
+
+        Reviewed by Adam Barth.
+
+        The new PrerenderStatusEvent is sent to link elements when
+        prerenders are started by the embedder, and also sent when they
+        are stopped. Pages using this feature can now serialize launching
+        prerenders, and track timing performance.
+
+        Tested in a new WebKitUnitTest for the chromium port.
+
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/EventNames.h:
+        (WebCore):
+        * html/HTMLLinkElement.cpp:
+        (WebCore):
+        (WebCore::HTMLLinkElement::didStartLinkPrerender):
+        (WebCore::HTMLLinkElement::didStopLinkPrerender):
+        (WebCore::HTMLLinkElement::didSendLoadForLinkPrerender):
+        (WebCore::HTMLLinkElement::didSendDOMContentLoadedForLinkPrerender):
+        * html/HTMLLinkElement.h:
+        (HTMLLinkElement):
+        * loader/LinkLoader.cpp:
+        (WebCore::LinkLoader::didStartPrerender):
+        (WebCore):
+        (WebCore::LinkLoader::didStopPrerender):
+        (WebCore::LinkLoader::didSendLoadForPrerender):
+        (WebCore::LinkLoader::didSendDOMContentLoadedForPrerender):
+        (WebCore::LinkLoader::loadLink):
+        * loader/LinkLoader.h:
+        (LinkLoader):
+        * loader/LinkLoaderClient.h:
+        (LinkLoaderClient):
+        * loader/Prerenderer.cpp:
+        (WebCore::Prerenderer::render):
+        * loader/Prerenderer.h:
+        (WebCore):
+        (Prerenderer):
+        * platform/PrerenderClient.h: Copied from Source/WebCore/loader/LinkLoaderClient.h.
+        (WebCore):
+        (PrerenderClient):
+        (WebCore::PrerenderClient::~PrerenderClient):
+        * platform/PrerenderHandle.h:
+        (WebCore):
+        (PrerenderHandle):
+        * platform/chromium/Prerender.cpp:
+        (WebCore::Prerender::Prerender):
+        (WebCore::Prerender::removeClient):
+        (WebCore):
+        (WebCore::Prerender::add):
+        (WebCore::Prerender::cancel):
+        (WebCore::Prerender::abandon):
+        (WebCore::Prerender::didStartPrerender):
+        (WebCore::Prerender::didStopPrerender):
+        (WebCore::Prerender::didSendLoadForPrerender):
+        (WebCore::Prerender::didSendDOMContentLoadedForPrerender):
+        * platform/chromium/Prerender.h:
+        (WebKit):
+        (WebCore):
+        (Prerender):
+        * platform/chromium/PrerenderHandle.cpp:
+        (WebCore::PrerenderHandle::create):
+        (WebCore::PrerenderHandle::PrerenderHandle):
+        (WebCore::PrerenderHandle::~PrerenderHandle):
+        (WebCore::PrerenderHandle::removeClient):
+        (WebCore):
+        * platform/chromium/support/WebPrerender.cpp:
+        (WebKit::WebPrerender::toPrerender):
+        (WebKit):
+        (WebKit::WebPrerender::assign):
+        (WebKit::WebPrerender::isNull):
+        (WebKit::WebPrerender::didStartPrerender):
+        (WebKit::WebPrerender::didStopPrerender):
+        (WebKit::WebPrerender::didSendLoadForPrerender):
+        (WebKit::WebPrerender::didSendDOMContentLoadedForPrerender):
+
 2012-12-08  Gustavo Noronha Silva  <gns@gnome.org>
 
         Reviewed by Martin Robinson.

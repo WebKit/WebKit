@@ -54,10 +54,23 @@ public:
         virtual ~ExtraData() { }
     };
 
+    WebPrerender() { }
+    WebPrerender(const WebPrerender& other) { assign(other); }
+    WebPrerender& operator=(const WebPrerender& other)
+    {
+        assign(other);
+        return *this;
+    }
+
 #if WEBKIT_IMPLEMENTATION
     explicit WebPrerender(PassRefPtr<WebCore::Prerender>);
     ~WebPrerender();
+
+    const WebCore::Prerender* toPrerender() const;
 #endif
+
+    WEBKIT_EXPORT void assign(const WebPrerender&);
+    WEBKIT_EXPORT bool isNull() const;
 
     WEBKIT_EXPORT WebURL url() const;
     WEBKIT_EXPORT WebString referrer() const;
@@ -66,9 +79,12 @@ public:
     WEBKIT_EXPORT void setExtraData(ExtraData*);
     WEBKIT_EXPORT const ExtraData* extraData() const;
 
-private:
-    WebPrerender();
+    WEBKIT_EXPORT void didStartPrerender();
+    WEBKIT_EXPORT void didStopPrerender();
+    WEBKIT_EXPORT void didSendLoadForPrerender();
+    WEBKIT_EXPORT void didSendDOMContentLoadedForPrerender();
 
+private:
     WebPrivatePtr<WebCore::Prerender> m_private;
 };
 

@@ -42,23 +42,29 @@
 
 namespace WebCore {
 
-PassRefPtr<PrerenderHandle> PrerenderHandle::create(const KURL& url, const String& referrer, ReferrerPolicy policy)
+PassRefPtr<PrerenderHandle> PrerenderHandle::create(PrerenderClient* client, const KURL& url, const String& referrer, ReferrerPolicy policy)
 {
-    return adoptRef(new PrerenderHandle(url, referrer, policy));
+    return adoptRef(new PrerenderHandle(client, url, referrer, policy));
 }
 
-PrerenderHandle::PrerenderHandle(const KURL& url, const String& referrer, ReferrerPolicy policy)
-    : m_prerender(adoptRef(new Prerender(url, referrer, policy)))
+PrerenderHandle::PrerenderHandle(PrerenderClient* client, const KURL& url, const String& referrer, ReferrerPolicy policy)
+    : m_prerender(adoptRef(new Prerender(client, url, referrer, policy)))
 {
 }
 
 PrerenderHandle::~PrerenderHandle()
 {
+    m_prerender->removeClient();
 }
 
 Prerender* PrerenderHandle::prerender()
 {
     return m_prerender.get();
+}
+
+void PrerenderHandle::removeClient()
+{
+    prerender()->removeClient();
 }
 
 void PrerenderHandle::add()

@@ -729,6 +729,7 @@
                                 'tests/ListenerLeakTest.cpp',
                                 'tests/LinkHighlightTest.cpp',
                                 'tests/PopupMenuTest.cpp',
+                                'tests/PrerenderingTest.cpp',
                                 'tests/RenderTableCellTest.cpp',
                                 'tests/RenderTableRowTest.cpp',
                                 'tests/ScrollingCoordinatorChromiumTest.cpp',

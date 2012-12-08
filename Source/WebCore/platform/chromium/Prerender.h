@@ -44,7 +44,13 @@
 
 #if ENABLE(LINK_PRERENDER)
 
+namespace WebKit {
+class WebPrerender;
+}
+
 namespace WebCore {
+
+class PrerenderClient;
 
 class Prerender : public RefCounted<Prerender> {
     WTF_MAKE_NONCOPYABLE(Prerender);
@@ -54,8 +60,10 @@ public:
         virtual ~ExtraData() { }
     };
 
-    Prerender(const KURL&, const String& referrer, ReferrerPolicy);
+    Prerender(PrerenderClient*, const KURL&, const String& referrer, ReferrerPolicy);
     ~Prerender();
+
+    void removeClient();
 
     void add();
     void cancel();
@@ -69,8 +77,15 @@ public:
 
     void setExtraData(PassRefPtr<ExtraData> extraData) { m_extraData = extraData; }
     ExtraData* extraData() { return m_extraData.get(); }
+    
+    void didStartPrerender();
+    void didStopPrerender();
+    void didSendLoadForPrerender();
+    void didSendDOMContentLoadedForPrerender();
 
 private:
+    PrerenderClient* m_client;
+
     const KURL m_url;
     const String m_referrer;
     const ReferrerPolicy m_referrerPolicy;
