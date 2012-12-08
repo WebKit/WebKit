@@ -1652,8 +1652,6 @@ webkit.org/b/98647 [ Android ] css3/filters/effect-grayscale-hw.html [ ImageOnly
 webkit.org/b/98647 [ Android ] css3/filters/effect-hue-rotate-hw.html [ ImageOnlyFailure ]
 webkit.org/b/98647 [ Android ] css3/filters/effect-invert-hw.html [ ImageOnlyFailure ]
 webkit.org/b/98647 [ Android ] css3/filters/effect-opacity-hw.html [ ImageOnlyFailure ]
-# Commented out until more generalized failure below is fixed & rebaselined.
-# webkit.org/b/98647 [ Android ] css3/filters/effect-reference-hw.html [ ImageOnlyFailure ]
 webkit.org/b/98647 [ Android ] css3/filters/effect-saturate-hw.html [ ImageOnlyFailure ]
 webkit.org/b/98647 [ Android ] css3/filters/effect-sepia-hw.html [ ImageOnlyFailure ]
 webkit.org/b/98647 [ Android ] css3/filters/filter-change-repaint-composited.html [ ImageOnlyFailure ]
@@ -3658,11 +3656,6 @@ webkit.org/b/92938 compositing/layer-creation/animation-overlap-with-children.ht
 webkit.org/b/92938 platform/chromium/virtual/softwarecompositing/layer-creation/animation-overlap-with-children.html [ Failure Pass ]
 
 webkit.org/b/92941 accessibility/loading-iframe-updates-axtree.html [ Crash Pass ]
-
-# Tests added by bug 90405. Need rebaselining for platforms other than linux.
-webkit.org/b/93149 css3/filters/effect-reference-after.html [ ImageOnlyFailure Missing ]
-webkit.org/b/93149 css3/filters/effect-reference-delete.html [ ImageOnlyFailure Missing ]
-webkit.org/b/93149 css3/filters/effect-reference-rename.html [ ImageOnlyFailure Missing ]
 
 # Tests added by bug 76270. According to bug 92968, they should be skipped in Chromium.
 webkit.org/b/92968 http/tests/appcache/abort-cache-onchecking-manifest-404.html
