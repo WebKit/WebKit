@@ -4093,7 +4093,6 @@ void WebPage::touchPointAsMouseEvent(const Platform::TouchPoint& point)
 
     Platform::TouchPoint tPoint = point;
     tPoint.m_pos = d->mapFromTransformed(tPoint.m_pos);
-    tPoint.m_screenPos = tPoint.m_screenPos;
 
     d->m_touchEventHandler->handleTouchPoint(tPoint);
 }
