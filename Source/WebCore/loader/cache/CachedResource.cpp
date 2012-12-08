@@ -438,7 +438,6 @@ void CachedResource::stopLoading()
     // canceled loads, which silently set our request to 0. Be sure to notify our
     // client in that case, so we don't seem to continue loading forever.
     if (isLoading()) {
-        ASSERT(!m_error.isNull());
         setLoading(false);
         setStatus(LoadError);
         checkNotify();
