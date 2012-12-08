@@ -235,6 +235,7 @@ class NodeRareData : public NodeRareDataBase {
     };
 #endif
 
+#if ENABLE(MICRODATA)
     struct NodeMicroDataTokenLists {
         RefPtr<DOMSettableTokenList> m_itemProp;
         RefPtr<DOMSettableTokenList> m_itemRef;
@@ -242,6 +243,7 @@ class NodeRareData : public NodeRareDataBase {
 
         static PassOwnPtr<NodeMicroDataTokenLists> create() { return adoptPtr(new NodeMicroDataTokenLists); }
     };
+#endif
 
 public:    
     NodeRareData(Document* document)
