@@ -12,12 +12,18 @@
         (GraphicsLayer
           (position 8.00 41.00)
           (bounds 400.00 400.00)
-          (backgroundColor #008000)
+          (drawsContent 1)
+          (repaint rects
+            (rect 0.00 0.00 400.00 400.00)
+          )
           (children 1
             (GraphicsLayer
               (position 50.00 50.00)
               (bounds 75.00 75.00)
-              (backgroundColor #0000FF)
+              (drawsContent 1)
+              (repaint rects
+                (rect 0.00 0.00 75.00 75.00)
+              )
             )
           )
         )

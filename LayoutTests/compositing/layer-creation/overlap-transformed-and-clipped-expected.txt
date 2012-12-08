@@ -13,11 +13,11 @@
               (children 2
                 (GraphicsLayer
                   (bounds 100.00 100.00)
-                  (backgroundColor #FF0000)
+                  (drawsContent 1)
                 )
                 (GraphicsLayer
                   (bounds 100.00 100.00)
-                  (backgroundColor #008000)
+                  (drawsContent 1)
                 )
               )
             )

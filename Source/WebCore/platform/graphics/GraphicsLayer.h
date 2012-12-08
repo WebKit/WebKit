@@ -425,15 +425,6 @@ public:
     static void setGraphicsLayerFactory(GraphicsLayerFactoryCallback);
 #endif
 
-    static bool supportsBackgroundColorContent()
-    {
-#if PLATFORM(MAC) || USE(TEXTURE_MAPPER)
-        return true;
-#else
-        return false;
-#endif
-    }
-
     void updateDebugIndicators();
 
 protected:

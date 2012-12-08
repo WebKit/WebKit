@@ -1,3 +1,28 @@
+2012-12-08  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r137006.
+        http://trac.webkit.org/changeset/137006
+        https://bugs.webkit.org/show_bug.cgi?id=104446
+
+        Broke plugin painting on Mac (youtube, etc.) (Requested by
+        thorton_ on #webkit).
+
+        * platform/graphics/GraphicsLayer.h:
+        (GraphicsLayer):
+        * rendering/RenderBox.h:
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateGraphicsLayerConfiguration):
+        (WebCore::clipBox):
+        (WebCore::RenderLayerBacking::updateGraphicsLayerGeometry):
+        (WebCore::RenderLayerBacking::updateDrawsContent):
+        (WebCore::RenderLayerBacking::updateBackgroundColor):
+        (WebCore::RenderLayerBacking::paintsBoxDecorations):
+        (WebCore::RenderLayerBacking::contentChanged):
+        (WebCore::RenderLayerBacking::updateImageContents):
+        (WebCore::RenderLayerBacking::contentsBox):
+        * rendering/RenderLayerBacking.h:
+        (RenderLayerBacking):
+
 2012-12-08  Wei James  <james.wei@intel.com>
 
         Remove incorrect ASSERT for m_error in CachedResource

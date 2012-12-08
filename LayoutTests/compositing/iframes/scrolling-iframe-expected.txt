@@ -29,7 +29,7 @@
                                 (GraphicsLayer
                                   (position 108.00 100.00)
                                   (bounds 200.00 200.00)
-                                  (backgroundColor #0000FF)
+                                  (drawsContent 1)
                                 )
                               )
                             )
@@ -46,7 +46,7 @@
         (GraphicsLayer
           (position 5.00 5.00)
           (bounds 50.00 50.00)
-          (backgroundColor #00000033)
+          (drawsContent 1)
         )
       )
     )

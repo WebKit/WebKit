@@ -12,7 +12,7 @@ Text here
         (GraphicsLayer
           (position 29.00 134.00)
           (bounds 100.00 100.00)
-          (backgroundColor #FF0000)
+          (drawsContent 1)
         )
         (GraphicsLayer
           (position 0.00 113.00)

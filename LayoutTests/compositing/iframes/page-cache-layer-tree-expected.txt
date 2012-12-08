@@ -52,7 +52,7 @@ This tests that layers are rebuilt properly after the page is restored from the 
         (GraphicsLayer
           (position 13.00 55.00)
           (bounds 50.00 50.00)
-          (backgroundColor #00000033)
+          (drawsContent 1)
         )
         (GraphicsLayer
           (position 8.00 274.00)
@@ -77,7 +77,7 @@ This tests that layers are rebuilt properly after the page is restored from the 
                                 (GraphicsLayer
                                   (position 108.00 100.00)
                                   (bounds 200.00 200.00)
-                                  (backgroundColor #0000FF)
+                                  (drawsContent 1)
                                 )
                               )
                             )
@@ -94,7 +94,7 @@ This tests that layers are rebuilt properly after the page is restored from the 
         (GraphicsLayer
           (position 13.00 279.00)
           (bounds 50.00 50.00)
-          (backgroundColor #00000033)
+          (drawsContent 1)
         )
       )
     )

@@ -1,3 +1,155 @@
+2012-12-08  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r137006.
+        http://trac.webkit.org/changeset/137006
+        https://bugs.webkit.org/show_bug.cgi?id=104446
+
+        Broke plugin painting on Mac (youtube, etc.) (Requested by
+        thorton_ on #webkit).
+
+        * compositing/background-color/background-color-alpha-expected.html: Removed.
+        * compositing/background-color/background-color-alpha.html: Removed.
+        * compositing/background-color/background-color-change-to-text-expected.html: Removed.
+        * compositing/background-color/background-color-change-to-text.html: Removed.
+        * compositing/background-color/background-color-composite-expected.html: Removed.
+        * compositing/background-color/background-color-composite.html: Removed.
+        * compositing/background-color/background-color-container-expected.html: Removed.
+        * compositing/background-color/background-color-container.html: Removed.
+        * compositing/background-color/background-color-content-clip-expected.html: Removed.
+        * compositing/background-color/background-color-content-clip.html: Removed.
+        * compositing/background-color/background-color-padding-change-expected.html: Removed.
+        * compositing/background-color/background-color-padding-change.html: Removed.
+        * compositing/background-color/background-color-padding-clip-expected.html: Removed.
+        * compositing/background-color/background-color-padding-clip.html: Removed.
+        * compositing/background-color/background-color-simple-expected.html: Removed.
+        * compositing/background-color/background-color-simple.html: Removed.
+        * compositing/background-color/background-color-text-change-expected.html: Removed.
+        * compositing/background-color/background-color-text-change.html: Removed.
+        * compositing/background-color/background-color-text-clip-expected.html: Removed.
+        * compositing/background-color/background-color-text-clip.html: Removed.
+        * compositing/backing/no-backing-for-clip-expected.txt:
+        * compositing/backing/no-backing-for-clip-overlap-expected.txt:
+        * compositing/backing/no-backing-for-perspective-expected.txt:
+        * compositing/columns/composited-in-paginated-expected.txt:
+        * compositing/geometry/ancestor-overflow-change-expected.txt:
+        * compositing/geometry/bounds-ignores-hidden-composited-descendant-expected.txt:
+        * compositing/geometry/bounds-ignores-hidden-dynamic-negzindex-expected.txt:
+        * compositing/geometry/clip-expected.txt:
+        * compositing/geometry/composited-in-columns-expected.txt:
+        * compositing/geometry/flipped-writing-mode-expected.txt:
+        * compositing/geometry/layer-due-to-layer-children-deep-switch-expected.txt:
+        * compositing/geometry/limit-layer-bounds-fixed-positioned-expected.txt:
+        * compositing/geometry/limit-layer-bounds-overflow-root-expected.txt:
+        * compositing/geometry/limit-layer-bounds-positioned-expected.txt:
+        * compositing/geometry/limit-layer-bounds-positioned-transition-expected.txt:
+        * compositing/geometry/limit-layer-bounds-transformed-expected.txt:
+        * compositing/geometry/limit-layer-bounds-transformed-overflow-expected.txt:
+        * compositing/geometry/preserve-3d-switching-expected.txt:
+        * compositing/iframes/become-composited-nested-iframes-expected.txt:
+        * compositing/iframes/become-overlapped-iframe-expected.txt:
+        * compositing/iframes/composited-parent-iframe-expected.txt:
+        * compositing/iframes/connect-compositing-iframe-delayed-expected.txt:
+        * compositing/iframes/connect-compositing-iframe-expected.txt:
+        * compositing/iframes/connect-compositing-iframe2-expected.txt:
+        * compositing/iframes/connect-compositing-iframe3-expected.txt:
+        * compositing/iframes/enter-compositing-iframe-expected.txt:
+        * compositing/iframes/iframe-resize-expected.txt:
+        * compositing/iframes/invisible-nested-iframe-hide-expected.txt:
+        * compositing/iframes/invisible-nested-iframe-show-expected.txt:
+        * compositing/iframes/overlapped-iframe-expected.txt:
+        * compositing/iframes/overlapped-iframe-iframe-expected.txt:
+        * compositing/iframes/page-cache-layer-tree-expected.txt:
+        * compositing/iframes/scrolling-iframe-expected.txt:
+        * compositing/layer-creation/animation-overlap-with-children-expected.txt:
+        * compositing/layer-creation/fixed-position-and-transform-expected.txt:
+        * compositing/layer-creation/fixed-position-under-transform-expected.txt:
+        * compositing/layer-creation/no-compositing-for-preserve-3d-expected.txt:
+        * compositing/layer-creation/overflow-scroll-overlap-expected.txt:
+        * compositing/layer-creation/overlap-animation-expected.txt:
+        * compositing/layer-creation/overlap-child-layer-expected.txt:
+        * compositing/layer-creation/overlap-clipping-expected.txt:
+        * compositing/layer-creation/overlap-transformed-and-clipped-expected.txt:
+        * compositing/layer-creation/overlap-transformed-layer-expected.txt:
+        * compositing/layer-creation/overlap-transforms-expected.txt:
+        * compositing/layer-creation/scroll-partial-update-expected.txt:
+        * compositing/layer-creation/spanOverlapsCanvas-expected.txt:
+        * compositing/layer-creation/stacking-context-overlap-expected.txt:
+        * compositing/layer-creation/stacking-context-overlap-nested-expected.txt:
+        * compositing/layer-creation/translatez-overlap-expected.txt:
+        * compositing/overflow-trumps-transform-style-expected.txt:
+        * compositing/overflow/clip-descendents-expected.txt:
+        * compositing/overflow/content-gains-scrollbars-expected.txt:
+        * compositing/overflow/overflow-scrollbar-layers-expected.txt:
+        * compositing/overflow/resize-painting-expected.txt:
+        * compositing/plugins/no-backing-store-expected.txt:
+        * compositing/rtl/rtl-absolute-expected.txt:
+        * compositing/rtl/rtl-absolute-overflow-expected.txt:
+        * compositing/rtl/rtl-absolute-overflow-scrolled-expected.txt:
+        * compositing/rtl/rtl-fixed-expected.txt:
+        * compositing/rtl/rtl-fixed-overflow-expected.txt:
+        * compositing/rtl/rtl-relative-expected.txt:
+        * compositing/tiled-layers-hidpi-expected.txt:
+        * compositing/visible-rect/2d-transformed-expected.txt:
+        * compositing/visible-rect/3d-transform-style-expected.txt:
+        * compositing/visible-rect/3d-transformed-expected.txt:
+        * compositing/visible-rect/animated-expected.txt:
+        * compositing/visible-rect/animated-from-none-expected.txt:
+        * compositing/visible-rect/clipped-by-viewport-expected.txt:
+        * compositing/visible-rect/clipped-visible-rect-expected.txt:
+        * compositing/visible-rect/iframe-and-layers-expected.txt:
+        * compositing/visible-rect/nested-transform-expected.txt:
+        * compositing/visible-rect/scrolled-expected.txt:
+        * css3/filters/filtered-compositing-descendant-expected.txt:
+        * platform/chromium/compositing/backing/no-backing-for-clip-expected.txt: Removed.
+        * platform/chromium/compositing/backing/no-backing-for-clip-overlap-expected.txt: Removed.
+        * platform/chromium/compositing/backing/no-backing-for-perspective-expected.txt: Removed.
+        * platform/chromium/compositing/columns/composited-in-paginated-expected.txt: Removed.
+        * platform/chromium/compositing/geometry/ancestor-overflow-change-expected.txt: Removed.
+        * platform/chromium/compositing/geometry/bounds-ignores-hidden-composited-descendant-expected.txt: Removed.
+        * platform/chromium/compositing/geometry/bounds-ignores-hidden-dynamic-negzindex-expected.txt: Removed.
+        * platform/chromium/compositing/geometry/clip-expected.txt: Removed.
+        * platform/chromium/compositing/geometry/composited-in-columns-expected.txt: Removed.
+        * platform/chromium/compositing/geometry/flipped-writing-mode-expected.txt: Removed.
+        * platform/chromium/compositing/geometry/layer-due-to-layer-children-deep-switch-expected.txt: Removed.
+        * platform/chromium/compositing/geometry/limit-layer-bounds-overflow-root-expected.txt: Removed.
+        * platform/chromium/compositing/geometry/limit-layer-bounds-positioned-expected.txt: Removed.
+        * platform/chromium/compositing/geometry/limit-layer-bounds-positioned-transition-expected.txt: Removed.
+        * platform/chromium/compositing/geometry/limit-layer-bounds-transformed-expected.txt: Removed.
+        * platform/chromium/compositing/geometry/preserve-3d-switching-expected.txt: Removed.
+        * platform/chromium/compositing/iframes/invisible-nested-iframe-hide-expected.txt: Removed.
+        * platform/chromium/compositing/layer-creation/fixed-position-and-transform-expected.txt: Removed.
+        * platform/chromium/compositing/layer-creation/fixed-position-under-transform-expected.txt: Removed.
+        * platform/chromium/compositing/layer-creation/no-compositing-for-preserve-3d-expected.txt: Removed.
+        * platform/chromium/compositing/layer-creation/overlap-animation-expected.txt: Removed.
+        * platform/chromium/compositing/layer-creation/overlap-child-layer-expected.txt: Removed.
+        * platform/chromium/compositing/layer-creation/overlap-clipping-expected.txt: Removed.
+        * platform/chromium/compositing/layer-creation/overlap-transformed-and-clipped-expected.txt: Removed.
+        * platform/chromium/compositing/layer-creation/overlap-transformed-layer-expected.txt: Removed.
+        * platform/chromium/compositing/layer-creation/overlap-transforms-expected.txt: Removed.
+        * platform/chromium/compositing/layer-creation/scroll-partial-update-expected.txt: Removed.
+        * platform/chromium/compositing/layer-creation/stacking-context-overlap-expected.txt: Removed.
+        * platform/chromium/compositing/layer-creation/stacking-context-overlap-nested-expected.txt: Removed.
+        * platform/chromium/compositing/layer-creation/translatez-overlap-expected.txt: Removed.
+        * platform/chromium/compositing/overflow-trumps-transform-style-expected.txt: Removed.
+        * platform/chromium/compositing/overflow/content-gains-scrollbars-expected.txt:
+        * platform/chromium/compositing/overflow/overflow-scrollbar-layers-expected.txt:
+        * platform/chromium/compositing/overflow/resize-painting-expected.txt:
+        * platform/chromium/compositing/rtl/rtl-absolute-expected.txt: Removed.
+        * platform/chromium/compositing/rtl/rtl-absolute-overflow-expected.txt: Removed.
+        * platform/chromium/compositing/rtl/rtl-absolute-overflow-scrolled-expected.txt: Removed.
+        * platform/chromium/compositing/rtl/rtl-fixed-expected.txt: Removed.
+        * platform/chromium/compositing/rtl/rtl-fixed-overflow-expected.txt: Removed.
+        * platform/chromium/compositing/rtl/rtl-relative-expected.txt: Removed.
+        * platform/chromium/css3/filters/filtered-compositing-descendant-expected.txt: Removed.
+        * platform/mac/compositing/geometry/fixed-position-composited-switch-expected.txt:
+        * platform/mac/compositing/iframes/resizer-expected.txt:
+        * platform/mac/compositing/repaint/invalidations-on-composited-layers-expected.txt:
+        * platform/mac/compositing/tiling/crash-reparent-tiled-layer-expected.txt:
+        * platform/mac/compositing/tiling/huge-layer-add-remove-child-expected.txt:
+        * platform/mac/compositing/tiling/huge-layer-with-layer-children-expected.txt:
+        * platform/mac/compositing/tiling/huge-layer-with-layer-children-resize-expected.txt:
+        * platform/mac/compositing/tiling/tile-cache-zoomed-expected.txt:
+
 2012-12-08  Stephen White  <senorblanco@chromium.org>
 
         [Chromium] Unreviewed gardening.
