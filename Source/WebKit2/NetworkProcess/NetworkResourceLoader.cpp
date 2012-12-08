@@ -234,13 +234,6 @@ void NetworkResourceLoader::cannotShowURL(WebCore::ResourceHandle*)
     notImplemented();
 }
 
-void NetworkResourceLoader::willCacheResponse(WebCore::ResourceHandle*, WebCore::CacheStoragePolicy& policy)
-{
-    // FIXME (12838543): Unsure if this is needed, private session is in-memory anyway.
-    if (policy == StorageAllowed && m_requestParameters.inPrivateBrowsingMode())
-        policy = StorageAllowedInMemoryOnly;
-}
-
 bool NetworkResourceLoader::shouldUseCredentialStorage(ResourceHandle*)
 {
     // When the WebProcess is handling loading a client is consulted each time this shouldUseCredentialStorage question is asked.

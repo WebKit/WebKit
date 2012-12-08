@@ -80,7 +80,6 @@ public:
     virtual void didFail(WebCore::ResourceHandle*, const WebCore::ResourceError&) OVERRIDE;
     virtual void wasBlocked(WebCore::ResourceHandle*) OVERRIDE;
     virtual void cannotShowURL(WebCore::ResourceHandle*) OVERRIDE;
-    virtual void willCacheResponse(WebCore::ResourceHandle*, WebCore::CacheStoragePolicy&) OVERRIDE;
     virtual bool shouldUseCredentialStorage(WebCore::ResourceHandle*) OVERRIDE;
     virtual void didReceiveAuthenticationChallenge(WebCore::ResourceHandle*, const WebCore::AuthenticationChallenge&) OVERRIDE;
     virtual void didCancelAuthenticationChallenge(WebCore::ResourceHandle*, const WebCore::AuthenticationChallenge&) OVERRIDE;

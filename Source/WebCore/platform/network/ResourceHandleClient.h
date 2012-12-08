@@ -82,8 +82,6 @@ namespace WebCore {
         virtual void didReceiveDataArray(ResourceHandle*, CFArrayRef) { }
 #endif
 
-        virtual void willCacheResponse(ResourceHandle*, CacheStoragePolicy&) { }
-
         virtual bool shouldUseCredentialStorage(ResourceHandle*) { return false; }
         virtual void didReceiveAuthenticationChallenge(ResourceHandle*, const AuthenticationChallenge&) { }
         virtual void didCancelAuthenticationChallenge(ResourceHandle*, const AuthenticationChallenge&) { }

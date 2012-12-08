@@ -865,16 +865,6 @@ void ResourceHandle::receivedCancellation(const AuthenticationChallenge& challen
     if (newResponse != cachedResponse)
         return newResponse;
     
-    CacheStoragePolicy policy = static_cast<CacheStoragePolicy>([newResponse storagePolicy]);
-        
-    m_handle->client()->willCacheResponse(m_handle, policy);
-
-    if (static_cast<NSURLCacheStoragePolicy>(policy) != [newResponse storagePolicy])
-        newResponse = [[[NSCachedURLResponse alloc] initWithResponse:[newResponse response]
-                                                                data:[newResponse data]
-                                                            userInfo:[newResponse userInfo]
-                                                       storagePolicy:static_cast<NSURLCacheStoragePolicy>(policy)] autorelease];
-
     return newResponse;
 }
 
