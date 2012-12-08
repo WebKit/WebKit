@@ -221,7 +221,7 @@ public:
     void exitFullScreenForElement(WebCore::Element*);
 #endif
     void contentsSizeChanged(const WebCore::IntSize&);
-    void overflowExceedsContentsSize() { m_overflowExceedsContentsSize = true; }
+    void overflowExceedsContentsSize();
     void layoutFinished();
     void setNeedTouchEvents(bool);
     void notifyPopupAutofillDialog(const Vector<String>&);

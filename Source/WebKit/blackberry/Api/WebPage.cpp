@@ -1554,6 +1554,17 @@ void WebPagePrivate::contentsSizeChanged(const IntSize& contentsSize)
 #endif
 }
 
+void WebPagePrivate::overflowExceedsContentsSize()
+{
+    m_overflowExceedsContentsSize = true;
+    if (absoluteVisibleOverflowSize().width() < DEFAULT_MAX_LAYOUT_WIDTH && !hasVirtualViewport()) {
+        if (setViewMode(viewMode())) {
+            setNeedsLayout();
+            requestLayoutIfNeeded();
+        }
+    }
+}
+
 void WebPagePrivate::layoutFinished()
 {
     if (!m_contentsSizeChanged && !m_overflowExceedsContentsSize)
