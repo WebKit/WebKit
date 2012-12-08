@@ -38,5 +38,5 @@
     Node item(in unsigned long index);
 
     readonly attribute DOMStringList names;
-    PropertyNodeList namedItem(in DOMString name);
+    [ImplementedAs=propertyNodeList] PropertyNodeList namedItem(in DOMString name);
 };

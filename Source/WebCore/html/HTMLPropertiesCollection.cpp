@@ -135,7 +135,7 @@ PassRefPtr<DOMStringList> HTMLPropertiesCollection::names() const
     return m_propertyNames;
 }
 
-PassRefPtr<PropertyNodeList> HTMLPropertiesCollection::namedItem(const String& name) const
+PassRefPtr<PropertyNodeList> HTMLPropertiesCollection::propertyNodeList(const String& name) const
 {
     return ownerNode()->propertyNodeList(name);
 }

@@ -49,7 +49,7 @@ public:
     void updateRefElements() const;
 
     PassRefPtr<DOMStringList> names() const;
-    virtual PassRefPtr<PropertyNodeList> namedItem(const String&) const OVERRIDE;
+    virtual PassRefPtr<PropertyNodeList> propertyNodeList(const String&) const;
     virtual bool hasNamedItem(const AtomicString&) const OVERRIDE;
 
     void invalidateCache() const

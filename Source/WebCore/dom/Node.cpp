@@ -560,13 +560,7 @@ void Node::setNodeValue(const String& /*nodeValue*/, ExceptionCode& ec)
 
 PassRefPtr<NodeList> Node::childNodes()
 {
-    NodeRareData* data = ensureRareData();
-    if (data->childNodeList())
-        return PassRefPtr<NodeList>(data->childNodeList());
-
-    RefPtr<ChildNodeList> list = ChildNodeList::create(this);
-    data->setChildNodeList(list.get());
-    return list.release();
+    return ensureRareData()->ensureNodeLists()->ensureChildNodeList(this);
 }
 
 Node *Node::lastDescendant() const
@@ -1017,8 +1011,10 @@ void Document::invalidateNodeListCaches(const QualifiedName* attrName)
 
 void Node::invalidateNodeListCachesInAncestors(const QualifiedName* attrName, Element* attributeOwnerElement)
 {
-    if (hasRareData() && (!attrName || isAttributeNode()))
-        rareData()->clearChildNodeListCache();
+    if (hasRareData() && (!attrName || isAttributeNode())) {
+        if (NodeListsNodeData* lists = rareData()->nodeLists())
+            lists->clearChildNodeListCache();
+    }
 
     // Modifications to attributes that are not associated with an Element can't invalidate NodeList caches.
     if (attrName && !attributeOwnerElement)
@@ -1041,12 +1037,6 @@ void Node::invalidateNodeListCachesInAncestors(const QualifiedName* attrName, El
 NodeListsNodeData* Node::nodeLists()
 {
     return hasRareData() ? rareData()->nodeLists() : 0;
-}
-
-void Node::removeCachedChildNodeList()
-{
-    ASSERT(rareData());
-    rareData()->setChildNodeList(0);
 }
 
 Node* Node::traverseNextAncestorSibling() const

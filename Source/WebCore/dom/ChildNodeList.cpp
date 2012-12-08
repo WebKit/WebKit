@@ -24,6 +24,7 @@
 #include "ChildNodeList.h"
 
 #include "Element.h"
+#include "NodeRareData.h"
 
 namespace WebCore {
 
@@ -34,7 +35,7 @@ ChildNodeList::ChildNodeList(PassRefPtr<Node> node)
 
 ChildNodeList::~ChildNodeList()
 {
-    ownerNode()->removeCachedChildNodeList();
+    ownerNode()->nodeLists()->removeChildNodeList(this);
 }
 
 bool ChildNodeList::nodeMatches(Element* testNode) const
