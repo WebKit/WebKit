@@ -212,7 +212,6 @@ endif
 
 if ENABLE_WEBKIT2
 pkgconfig_DATA += Source/WebKit2/webkit2gtk-@WEBKITGTK_API_VERSION@.pc
-endif
 
 if ENABLE_INTROSPECTION
 
@@ -261,6 +260,7 @@ WebKit2-@WEBKITGTK_API_VERSION@.typelib: WebKit2-@WEBKITGTK_API_VERSION@.gir $(G
 
 CLEANFILES += WebKit2-@WEBKITGTK_API_VERSION@.gir WebKit2-@WEBKITGTK_API_VERSION@.typelib
 
+endif
 endif
 
 # WebKit2 specific variables
