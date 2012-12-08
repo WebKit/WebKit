@@ -31,7 +31,6 @@
 #include <BlackBerryPlatformLog.h>
 #include <BlackBerryPlatformMemory.h>
 #include <BlackBerryPlatformSettings.h>
-#include <BlackBerryPlatformWebKitCredits.h>
 #include <BuildInformation.h>
 #include <heap/Heap.h>
 #include <process.h>
@@ -499,18 +498,6 @@ static String buildPage()
     return result;
 }
 
-static String creditsPage()
-{
-    String result;
-
-    result.append(writeHeader("Credits"));
-    result.append(String("<style> .about {padding:14px;} </style>"));
-    result.append(String(BlackBerry::Platform::WEBKITCREDITS));
-    result.append(String("</body></html>"));
-
-    return result;
-}
-
 static String cookiePage()
 {
     String result;
@@ -524,9 +511,6 @@ static String cookiePage()
 
 String aboutData(String aboutWhat)
 {
-    if (equalIgnoringCase(aboutWhat, "credits"))
-        return creditsPage();
-
     if (aboutWhat.startsWith("cache"))
         return cachePage(aboutWhat.substring(5));
 
