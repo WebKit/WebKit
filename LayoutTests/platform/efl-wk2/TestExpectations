@@ -52,6 +52,9 @@ webkit.org/b/98747 plugins/document-open.html [ Crash ]
 webkit.org/b/102200 fast/dom/HTMLAnchorElement/anchor-download.html [ Crash Failure ]
 webkit.org/b/102200 fast/dom/HTMLAnchorElement/anchor-nodownload-set.html [ Crash Failure ]
 
+# Hitting m_childRuleCSSOMWrappers.size() == ruleCount assertion after r136948.
+webkit.org/b/104225 [ Debug ] inspector/styles/import-pseudoclass-crash.html [ Crash ]
+
 # Hitting !decoder.destinationID() assertion.
 webkit.org/b/102651 [ Debug ] networkinformation/multiple-frames.html [ Crash ]
 webkit.org/b/102651 [ Debug ] networkinformation/basic-all-types-of-events.html [ Crash ]

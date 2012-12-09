@@ -2,6 +2,16 @@
 
         Unreviewed EFL gardening.
 
+        Mark inspector/styles/import-pseudoclass-crash.html as crashing
+        since it is hitting m_childRuleCSSOMWrappers.size() == ruleCount
+        assertion after r136948.
+
+        * platform/efl-wk2/TestExpectations:
+
+2012-12-09  Christophe Dumez  <christophe.dumez@intel.com>
+
+        Unreviewed EFL gardening.
+
         Skip fast/text/hyphenate-locale.html since the EFL port does
         not support hyphenation. Also remove wrong expected results
         for WK1 EFL.
