@@ -88,7 +88,7 @@ private:
     MockGraphicsLayerClient m_client;
 };
 
-TEST_F(GraphicsLayerChromiumTest, updateLayerPreserves3DWithAnimations)
+TEST_F(GraphicsLayerChromiumTest, DISABLED_updateLayerPreserves3DWithAnimations)
 {
     ASSERT_FALSE(m_platformLayer->hasActiveAnimation());
 

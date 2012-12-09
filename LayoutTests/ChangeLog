@@ -1,3 +1,9 @@
+2012-12-09  Stephen White  <senorblanco@chromium.org>
+
+        [Chromium] Unreviewed gardening.
+
+        * platform/chromium/TestExpectations:
+
 2012-12-09  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: do not treat object as equal to itself when logging to console

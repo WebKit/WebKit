@@ -1527,11 +1527,6 @@ crbug.com/8729 [ Win ] http/tests/multipart/invalid-image-data.html [ Failure ]
 # We ignore tab/option-tab distinctions (may be other problems too).
 crbug.com/94274 [ Mac ] fast/events/option-tab.html [ Failure ]
 
-# These two have a different object type in the dom dump. Plugin-related.
-# Ignored on Win/Linux because they rely on QT to provide a TIFF decoder.
-crbug.com/10378 [ Mac ] fast/images/embed-image.html [ Failure ]
-crbug.com/10378 [ Mac ] fast/images/object-image.html [ Failure ]
-
 # The following are flaky in that some times the timeout or crash, but we think
 # it is because of bugs in other parts of the code and not specific to what
 # these tests are doing.  The are being noted here so we can get the buildbots
@@ -1559,9 +1554,6 @@ crbug.com/23477 [ Mac ] platform/chromium/virtual/gpu/fast/canvas/canvas-increme
 
 # Unexpected gray
 crbug.com/23476 [ Mac ] fast/frames/inline-object-inside-frameset.html [ ImageOnlyFailure ]
-crbug.com/23476 [ Mac ] fast/text/font-initial.html [ ImageOnlyFailure ]
-
-crbug.com/23473 [ Mac ] fast/repaint/body-background-image.html [ ImageOnlyFailure ]
 crbug.com/23473 [ Mac ] fast/repaint/selection-clear.html [ ImageOnlyFailure ]
 crbug.com/23473 [ Mac ] fast/repaint/table-cell-overflow.html [ ImageOnlyFailure ]
 crbug.com/23473 [ Mac ] fast/repaint/table-extra-bottom-grow.html [ ImageOnlyFailure ]
@@ -2790,7 +2782,6 @@ webkit.org/b/74219 fast/regions/positioned-objects-block-static-spanning-regions
 webkit.org/b/96267 fast/regions/autoheight-regions-mark.html [ Pass ]
 
 webkit.org/b/74137 [ SnowLeopard ] fast/regions/outline-sides-in-region.html [ Pass Timeout ]
-webkit.org/b/83824 [ Mac ] fast/regions/region-overflow-break.html [ ImageOnlyFailure ]
 webkit.org/b/74137 fast/regions/float-pushed-width-change.html [ ImageOnlyFailure Pass ]
 webkit.org/b/74137 [ SnowLeopard ] fast/regions/region-overflow-auto-overflow-hidden.html [ Failure ]
 webkit.org/b/74137 [ Lion MountainLion Win ] fast/regions/region-overflow-auto-overflow-hidden.html [ Missing ]
@@ -3500,15 +3491,15 @@ webkit.org/b/87653 [ Android Linux Win ] platform/chromium/virtual/softwarecompo
 webkit.org/b/87748 [ Mac ] fast/forms/select/optgroup-clicking.html [ Failure ]
 
 webkit.org/b/87772 [ Release ] svg/dom/viewspec-parser-1.html [ Pass Slow ]
-webkit.org/b/87772 [ Debug ] svg/dom/viewspec-parser-1.html [ Timeout ]
+webkit.org/b/87772 [ Debug ] svg/dom/viewspec-parser-1.html [ Timeout Pass ]
 webkit.org/b/87772 [ Release ] svg/dom/viewspec-parser-2.html [ Pass Slow ]
-webkit.org/b/87772 [ Debug ] svg/dom/viewspec-parser-2.html [ Timeout ]
+webkit.org/b/87772 [ Debug ] svg/dom/viewspec-parser-2.html [ Timeout Pass ]
 webkit.org/b/87772 [ Release ] svg/dom/viewspec-parser-3.html [ Pass Slow ]
-webkit.org/b/87772 [ Debug ] svg/dom/viewspec-parser-3.html [ Timeout ]
+webkit.org/b/87772 [ Debug ] svg/dom/viewspec-parser-3.html [ Timeout Pass ]
 webkit.org/b/87772 [ Release ] svg/dom/viewspec-parser-4.html [ Pass Slow ]
-webkit.org/b/87772 [ Debug ] svg/dom/viewspec-parser-4.html [ Timeout ]
+webkit.org/b/87772 [ Debug ] svg/dom/viewspec-parser-4.html [ Timeout Pass ]
 webkit.org/b/87772 [ Release ] svg/dom/viewspec-parser-5.html [ Pass Slow ]
-webkit.org/b/87772 [ Debug ] svg/dom/viewspec-parser-5.html [ Timeout ]
+webkit.org/b/87772 [ Debug ] svg/dom/viewspec-parser-5.html [ Timeout Pass ]
 
 webkit.org/b/87880 [ Release ] fast/layers/scroll-with-transform-composited-layer.html [ ImageOnlyFailure Pass ]
 
@@ -3845,7 +3836,7 @@ crbug.com/146401 [ Android ] css3/filters/custom/filter-fallback-to-software.htm
 crbug.com/146401 [ Android ] fast/css/sticky/sticky-writing-mode-vertical-lr.html [ ImageOnlyFailure ]
 
 webkit.org/b/96441 [ Win Android Debug ] fast/hidpi/gradient-with-scaled-ancestor.html [ ImageOnlyFailure ]
-webkit.org/b/96441 [ Linux SnowLeopard Win ] platform/chromium/virtual/gpu/fast/hidpi/gradient-with-scaled-ancestor.html [ ImageOnlyFailure ]
+webkit.org/b/96441 [ Linux Win ] platform/chromium/virtual/gpu/fast/hidpi/gradient-with-scaled-ancestor.html [ ImageOnlyFailure ]
 
 webkit.org/b/96950 [ Linux ] http/tests/cache/cancel-during-revalidation-succeeded.html [ Failure Pass ]
 
@@ -4140,9 +4131,6 @@ webkit.org/b/103927 http/tests/w3c/webperf/submission/resource-timing/html/test_
 webkit.org/b/103927 http/tests/w3c/webperf/submission/Intel/resource-timing/test_resource_timing_cross_origin_resource_request.html [ Text ]
 webkit.org/b/103927 http/tests/w3c/webperf/submission/Intel/resource-timing/test_resource_timing_timing_allow_cross_origin_resource_request.html [ Text ]
 
-webkit.org/b/103062 [ Debug ] fast/canvas/canvas-strokePath-gradient-shadow.html [ Crash ]
-webkit.org/b/103062 [ Debug ] fast/canvas/canvas-strokeRect-gradient-shadow.html [ Crash ]
-
 webkit.org/b/103093 [ Mac Win ] media/video-preload.html [ Crash Pass ]
 webkit.org/b/103148 [ Win Mac ] fast/frames/iframe-scaling-with-scroll.html [ Pass ImageOnlyFailure ]
 webkit.org/b/103148 [ Lion ] fast/frames/iframe-scrolling-attribute.html [ Pass ImageOnlyFailure ]
@@ -4188,7 +4176,7 @@ webkit.org/b/103721 [ Mac Win Linux ] compositing/reflections/nested-reflection-
 webkit.org/b/103721 [ Mac Win Linux ] compositing/reflections/nested-reflection-animated.html [ ImageOnlyFailure ]
 webkit.org/b/103721 [ Mac Win Linux ] platform/chromium/compositing/huge-layer-rotated.html [ ImageOnlyFailure ]
 
-webkit.org/b/103834 [ Mac XP ] fast/forms/month-multiple-fields/month-multiple-fields-keyboard-events.html [ Failure ]
+webkit.org/b/103834 [ SnowLeopard XP ] fast/forms/month-multiple-fields/month-multiple-fields-keyboard-events.html [ Failure ]
 
 # Need baseline
 webkit.org/b/10439 fast/forms/datetimelocal/datetimelocal-appearance-basic.html [ Missing ImageOnlyFailure ]
@@ -4197,7 +4185,7 @@ webkit.org/b/10439 fast/forms/datetimelocal/datetimelocal-appearance-l10n.html [
 # New tests added in r136492 that does not work in chromium
 webkit.org/b/99800 fast/harness/perftests/runs-per-second-iterations.html [ Failure ]
 webkit.org/b/99800 fast/harness/perftests/perf-runner-compute-statistics.html [ Failure ]
-webkit.org/b/99800 fast/harness/perftests/runs-per-second-log.html [ ImageOnlyFailure Failure Missing ]
+webkit.org/b/99800 fast/harness/perftests/runs-per-second-log.html [ ImageOnlyFailure Missing Pass ]
 
 # Flaky on mac debug since r136472 or earlier
 webkit.org/b/104023 [ Mac Debug ] fast/dom/HTMLTemplateElement/inertContents.html [ Failure Pass ]
