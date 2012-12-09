@@ -11,14 +11,6 @@ CONSOLE MESSAGE: Blocked form submission to 'javascript:top.disallowedFormSubmit
 CONSOLE MESSAGE: Blocked form submission to 'javascript:top.disallowedFormSubmitted();' because the form's frame is sandboxed and the 'allow-forms' permission is not set.
 CONSOLE MESSAGE: Blocked form submission to 'javascript:top.disallowedFormSubmitted();' because the form's frame is sandboxed and the 'allow-forms' permission is not set.
 CONSOLE MESSAGE: Blocked form submission to 'javascript:top.disallowedFormSubmitted();' because the form's frame is sandboxed and the 'allow-forms' permission is not set.
-CONSOLE MESSAGE: Blocked script execution in 'sandboxed-iframe-attribute-parsing-disallowed.html' because the document's frame is sandboxed and the 'allow-scripts' permission is not set.
-CONSOLE MESSAGE: Blocked script execution in 'sandboxed-iframe-attribute-parsing-disallowed.html' because the document's frame is sandboxed and the 'allow-scripts' permission is not set.
-CONSOLE MESSAGE: Blocked script execution in 'sandboxed-iframe-attribute-parsing-disallowed.html' because the document's frame is sandboxed and the 'allow-scripts' permission is not set.
-CONSOLE MESSAGE: Blocked script execution in 'sandboxed-iframe-attribute-parsing-disallowed.html' because the document's frame is sandboxed and the 'allow-scripts' permission is not set.
-CONSOLE MESSAGE: Blocked script execution in 'sandboxed-iframe-attribute-parsing-disallowed.html' because the document's frame is sandboxed and the 'allow-scripts' permission is not set.
-CONSOLE MESSAGE: Blocked script execution in 'sandboxed-iframe-attribute-parsing-disallowed.html' because the document's frame is sandboxed and the 'allow-scripts' permission is not set.
-CONSOLE MESSAGE: Blocked script execution in 'sandboxed-iframe-attribute-parsing-disallowed.html' because the document's frame is sandboxed and the 'allow-scripts' permission is not set.
-CONSOLE MESSAGE: Blocked script execution in 'sandboxed-iframe-attribute-parsing-disallowed.html' because the document's frame is sandboxed and the 'allow-scripts' permission is not set.
 This test case verifies the parsing of the iframe sandbox attribute. Two sets of iframes are used: one where scripting is allowed, and another one where it is disallowed. The test verifies that the allowed frames execute scripts (but other sandboxed properties still apply -- specifically, forms are disabled), and the disallowed ones do not. If successful the test prints "PASS".
 
                   

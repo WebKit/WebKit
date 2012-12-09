@@ -1,2 +1,1 @@
-CONSOLE MESSAGE: Blocked script execution in 'data:text/html,<script>alert('FAIL');</script>' because the document's frame is sandboxed and the 'allow-scripts' permission is not set.
 This test passes if it doesn't alert fail. 

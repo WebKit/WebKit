@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: Blocked script execution in 'http://127.0.0.1:8000/security/isolatedWorld/resources/fail.html' because the document's frame is sandboxed and the 'allow-scripts' permission is not set.
 ALERT: PASS
 Test that executing scripts in an isolated world works even inside sandboxed iframes. The test passes, if an alert with the text "PASS" is shown.
 

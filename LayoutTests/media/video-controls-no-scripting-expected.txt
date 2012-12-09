@@ -1,5 +1,3 @@
-CONSOLE MESSAGE: Blocked script execution in 'video-controls-no-scripting-iframe.html' because the document's frame is sandboxed and the 'allow-scripts' permission is not set.
-CONSOLE MESSAGE: line 13: Blocked script execution in 'video-controls-no-scripting-iframe.html' because the document's frame is sandboxed and the 'allow-scripts' permission is not set.
 
 Tests that the built-in controls are always enabled when JavaScript is disabled.
 
