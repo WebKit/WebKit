@@ -823,7 +823,7 @@ sub GetGReturnMacro {
 
     my $condition;
     if ($paramIDLType eq "GError") {
-        $condition = "!$paramName || *$paramName";
+        $condition = "!$paramName || !*$paramName";
     } elsif (IsGDOMClassType($paramIDLType)) {
         my $paramTypeCaps = uc(FixUpDecamelizedName(decamelize($paramIDLType)));
         $condition = "WEBKIT_DOM_IS_${paramTypeCaps}($paramName)";

@@ -1,3 +1,16 @@
+2012-12-09  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Fix the GError check in GObject DOM bindings.
+
+        Reviewed by Xan Lopez.
+
+        Previous commit introduced a check to make sure the passed GError
+        is valid in all DOM methods receiving an error.
+
+        * bindings/scripts/CodeGeneratorGObject.pm:
+        (GetGReturnMacro): Check that the passed GError either is NULL or
+        the pointer has been initialized to NULL.
+
 2012-12-09  Leo Yang  <leoyang@rim.com>
 
         [BlackBerry] Adapt to name change of createNetworkBufferByCopyingData()
