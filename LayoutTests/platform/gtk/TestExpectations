@@ -313,6 +313,7 @@ webkit.org/b/71849 http/tests/security/webgl-remote-read-remote-image-allowed.ht
 webkit.org/b/71849 http/tests/security/webgl-remote-read-remote-image-allowed-with-credentials.html [ Skip ]
 webkit.org/b/71849 http/tests/security/webgl-remote-read-remote-image-blocked-no-crossorigin.html [ Skip ]
 webkit.org/b/71849 inspector/profiler/webgl [ Skip ]
+webkit.org/b/71849 inspector-protocol/layer-tree.html [ Failure ]
 webkit.org/b/71849 transforms/3d [ Skip ]
 
 # LAYER_TREE_INCLUDES_VISIBLE_RECTS option to layerTreeAsText is only applicable to Mac.
@@ -1416,6 +1417,12 @@ webkit.org/b/103893 media/video-volume.html [ Failure ]
 webkit.org/b/104054 svg/custom/use-href-update-crash.svg [ Failure ]
 
 webkit.org/b/104351 fast/exclusions/shape-inside/shape-inside-rounded-rectangle-fit-002.html [ ImageOnlyFailure ]
+
+webkit.org/b/104469 fast/dom/MicroData/nameditem-must-be-case-sensitive.html [ Failure ]
+webkit.org/b/104469 fast/dom/MicroData/nameditem-must-return-correct-item-properties.html [ Failure ]
+webkit.org/b/104469 fast/dom/MicroData/nameditem-returns-propertynodelist.html [ Failure ]
+webkit.org/b/104469 fast/dom/MicroData/properties-collection-nameditem-test.html [ Failure ]
+webkit.org/b/104469 fast/dom/MicroData/propertynodelist-getvalues-test.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing

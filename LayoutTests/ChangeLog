@@ -1,3 +1,12 @@
+2012-12-09  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed GTK gardening.
+
+        Adding a failure expectation for an accelerated compositing layout test introduced in r136959.
+        Adding failure expectations for MicroData layout tests that regressed in r137003.
+
+        * platform/gtk/TestExpectations:
+
 2012-12-08  Kangil Han  <kangil.han@samsung.com>
 
         [EFL][WK1] Gardening for WebGL
