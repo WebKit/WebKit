@@ -1,3 +1,19 @@
+2012-12-09  Kondapally Kalyan  <kalyan.kondapally@intel.com>
+
+        [EFL] [WebGL] Path is not resized correctly.
+        https://bugs.webkit.org/show_bug.cgi?id=104458.
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        In GraphicsContext3D::paintToCanvas, we flip the contents and draw on the surface.
+        The operations done to flip the image (translation and scale) are done before rectangle with correct size
+        is added to current path. This resulted in updating pixels at wrong positions.
+
+        Covered by existing tests.
+
+        * platform/graphics/efl/GraphicsContext3DEfl.cpp:
+        (WebCore::GraphicsContext3D::paintToCanvas):
+
 2012-12-09  Joone Hur  <joone.hur@intel.com>
 
         [GTK][AC] build fix after r130525 and r133332

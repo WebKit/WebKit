@@ -223,14 +223,14 @@ void GraphicsContext3D::paintToCanvas(const unsigned char* imagePixels, int imag
     RefPtr<cairo_surface_t> imageSurface = adoptRef(cairo_image_surface_create_for_data(
         const_cast<unsigned char*>(imagePixels), CAIRO_FORMAT_ARGB32, imageWidth, imageHeight, imageWidth * 4));
 
-    // OpenGL keeps the pixels stored bottom up, so we need to flip the image here.
-    cairo_translate(cr, 0, imageHeight);
-    cairo_scale(cr, 1, -1); 
+    cairo_rectangle(cr, 0, 0, canvasWidth, canvasHeight);
 
+    // OpenGL keeps the pixels stored bottom up, so we need to flip the image here.
+    cairo_matrix_t matrix;
+    cairo_matrix_init(&matrix, 1.0, 0.0, 0.0, -1.0, 0.0, imageHeight);
+    cairo_set_matrix(cr, &matrix);
     cairo_set_operator(cr, CAIRO_OPERATOR_SOURCE);
     cairo_set_source_surface(cr, imageSurface.get(), 0, 0);
-    cairo_rectangle(cr, 0, 0, canvasWidth, -canvasHeight);
-
     cairo_fill(cr);
     context->restore();
 }
