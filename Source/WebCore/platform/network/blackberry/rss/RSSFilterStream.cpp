@@ -539,10 +539,10 @@ void RSSFilterStream::handleRSSContent()
     BlackBerry::Platform::NetworkBuffer* buffer;
     std::string html;
     if (!convertContentToHtml(html))
-        buffer = BlackBerry::Platform::createNetworkBufferWithData(m_content.c_str(), m_content.size());
+        buffer = BlackBerry::Platform::createNetworkBufferByCopyingData(m_content.c_str(), m_content.size());
     else {
         updateRSSHeaders(html.size());
-        buffer = BlackBerry::Platform::createNetworkBufferWithData(html.c_str(), html.size());
+        buffer = BlackBerry::Platform::createNetworkBufferByCopyingData(html.c_str(), html.size());
     }
 
     sendSavedHeaders();
