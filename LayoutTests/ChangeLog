@@ -1,3 +1,15 @@
+2012-11-06  Aaron Colwell  <acolwell@chromium.org>
+
+        Heap-buffer-overflow in WebCore::TextTrackCueList::add
+        https://bugs.webkit.org/show_bug.cgi?id=101018
+
+        Reviewed by Eric Carlson.
+
+        Added a test case to verify that adding a cue to the beginning of a non-empty list doesn't crash.
+
+        * media/track/track-add-remove-cue-expected.txt:
+        * media/track/track-add-remove-cue.html:
+
 2012-11-06  Ken Buchanan  <kenrb@chromium.org>
 
         Crash due to column span under button element
