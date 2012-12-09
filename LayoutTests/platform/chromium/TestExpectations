@@ -4230,10 +4230,6 @@ Bug(senorblanco) [ Win ] http/tests/w3c/webperf/submission/Intel/user-timing/tes
 webkit.org/b/94002 [ Win Mac Debug ] inspector/debugger/live-edit-breakpoints.html [ Failure Timeout ]
 webkit.org/b/94002 [ Mac Debug ] inspector/debugger/live-edit.html [ Crash Pass Timeout ]
 
-# This one has correct results, but the tools refuse to rebaseline it.
-Bug(senorblanco) [ MountainLion ] compositing/background-color/background-color-change-to-text.html [ ImageOnlyFailure ]
-Bug(senorblanco) [ MountainLion ] platform/chromium/virtual/softwarecompositing/background-color/background-color-change-to-text.html [ ImageOnlyFailure ]
-
 # Asserting since r136948.
 webkit.org/b/104473 [ Debug ] inspector/styles/import-pseudoclass-crash.html [ Crash ]
 
