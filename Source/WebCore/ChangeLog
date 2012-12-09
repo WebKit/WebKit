@@ -1,3 +1,35 @@
+2012-12-09  Jon Lee  <jonlee@apple.com>
+
+        [WK2] Move button image to injected bundle
+        https://bugs.webkit.org/show_bug.cgi?id=104107
+        <rdar://problem/12813842>
+
+        Reviewed by Simon Fraser.
+
+        Update RenderSnapshottedPlugIn to retrieve the start button image from the ChromeClient. Expand the
+        kinds of images available for use as the button. Try to find the best sized button to use for the plug-in,
+        otherwise use no image at all.
+
+        * rendering/RenderSnapshottedPlugIn.h: Add an enum representing the size to use. Remove the label rect
+        variable since it is unneeded.
+        * rendering/RenderSnapshottedPlugIn.cpp:
+        (WebCore::RenderSnapshottedPlugIn::startLabelImage): Maintain a cache of the images for reuse. Index into the
+        array using the enum. If the image has been loaded, or an attempt was made, then return the result. Otherwise
+        ask the chrome client for the image.
+        (WebCore::RenderSnapshottedPlugIn::paintLabel): Determine the proper label to use, and paint if the image is
+        available.
+        (WebCore::RenderSnapshottedPlugIn::tryToFitStartLabel): Compare the label size with the provided content
+        box. Return a LayoutRect representing the label's placement. If it doesn't fit, return an empty rect.
+        (WebCore::RenderSnapshottedPlugIn::layout): The rect is not needed because it is all determined at paint time.
+
+        * page/ChromeClient.h:
+        (WebCore::ChromeClient::plugInStartLabelImage): Added.
+
+        * WebCore.exp.in: Expose GraphicsContext::drawNativeImage() for WKImageCG.cpp.
+        * WebCore.xcodeproj/project.pbxproj: Remove start button assets.
+        * Resources/startButton.png: Removed.
+        * Resources/startButton@2x.png: Removed.
+
 2012-12-09  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r137053.

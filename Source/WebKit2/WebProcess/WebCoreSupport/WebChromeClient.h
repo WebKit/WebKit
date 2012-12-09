@@ -28,6 +28,7 @@
 #define WebChromeClient_h
 
 #include <WebCore/ChromeClient.h>
+#include <WebCore/Image.h>
 #include <WebCore/ViewportArguments.h>
 #include <wtf/text/WTFString.h>
 
@@ -224,6 +225,8 @@ private:
     virtual void numWheelEventHandlersChanged(unsigned) OVERRIDE;
 
     virtual void logDiagnosticMessage(const String& message, const String& description, const String& success) OVERRIDE;
+
+    virtual PassRefPtr<WebCore::Image> plugInStartLabelImage(WebCore::RenderSnapshottedPlugIn::LabelSize) const OVERRIDE;
 
     String m_cachedToolTip;
     mutable RefPtr<WebFrame> m_cachedFrameSetLargestFrame;

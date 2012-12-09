@@ -32,6 +32,7 @@
 #include "PopupMenu.h"
 #include "PopupMenuClient.h"
 #include "RenderEmbeddedObject.h"
+#include "RenderSnapshottedPlugIn.h"
 #include "ScrollTypes.h"
 #include "SearchPopupMenu.h"
 #include "WebCoreKeyboardUIMode.h"
@@ -371,6 +372,8 @@ namespace WebCore {
         virtual FloatSize minimumWindowSize() const { return FloatSize(100, 100); };
 
         virtual bool isEmptyChromeClient() const { return false; }
+
+        virtual PassRefPtr<Image> plugInStartLabelImage(RenderSnapshottedPlugIn::LabelSize) const { return 0; }
 
     protected:
         virtual ~ChromeClient() { }

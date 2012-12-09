@@ -163,4 +163,24 @@ uint64_t InjectedBundlePageUIClient::didExceedDatabaseQuota(WebPage* page, WebSe
     return m_client.didExceedDatabaseQuota(toAPI(page), toAPI(origin), toAPI(databaseName.impl()), toAPI(databaseDisplayName.impl()), currentQuotaBytes, currentOriginUsageBytes, currentDatabaseUsageBytes, expectedUsageBytes, m_client.clientInfo);
 }
 
+PassRefPtr<WebImage> InjectedBundlePageUIClient::plugInStartLabelImage(RenderSnapshottedPlugIn::LabelSize size) const
+{
+    if (!m_client.plugInStartLabelImage)
+        return 0;
+
+    WKBundlePageLabelSize wkSize;
+    switch (size) {
+    case RenderSnapshottedPlugIn::LabelSizeSmall:
+        wkSize = WKBundlePageLabelSizeSmall;
+        break;
+    case RenderSnapshottedPlugIn::LabelSizeLarge:
+        wkSize = WKBundlePageLabelSizeLarge;
+        break;
+    default:
+        return 0;
+    }
+
+    return adoptRef(toImpl(m_client.plugInStartLabelImage(wkSize, m_client.clientInfo)));
+}
+
 } // namespace WebKit

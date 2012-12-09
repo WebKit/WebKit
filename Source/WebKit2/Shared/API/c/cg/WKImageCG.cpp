@@ -29,6 +29,7 @@
 #include "ShareableBitmap.h"
 #include "WKSharedAPICast.h"
 #include "WebImage.h"
+#include <WebCore/ColorSpace.h>
 #include <WebCore/GraphicsContext.h>
 
 using namespace WebKit;
@@ -54,6 +55,8 @@ WKImageRef WKImageCreateFromCGImage(CGImageRef imageRef, WKImageOptions options)
         return 0;
 
     OwnPtr<GraphicsContext> graphicsContext = webImage->bitmap()->createGraphicsContext();
-    CGContextDrawImage(graphicsContext->platformContext(), CGRectMake(0, 0, imageSize.width(), imageSize.height()), imageRef);
+    FloatRect rect(FloatPoint(0, 0), imageSize);
+    graphicsContext->clearRect(rect);
+    graphicsContext->drawNativeImage(imageRef, imageSize, WebCore::ColorSpaceDeviceRGB, rect, rect);
     return toAPI(webImage.release().leakRef());
 }

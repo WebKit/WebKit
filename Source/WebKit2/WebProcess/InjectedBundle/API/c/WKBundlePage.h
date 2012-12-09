@@ -225,7 +225,13 @@ enum {
     WKBundlePageUIElementHidden
 };
 typedef uint32_t WKBundlePageUIElementVisibility;
-    
+
+enum {
+    WKBundlePageLabelSizeSmall,
+    WKBundlePageLabelSizeLarge,
+};
+typedef uint32_t WKBundlePageLabelSize;
+
 // UI Client
 typedef void (*WKBundlePageWillAddMessageToConsoleCallback)(WKBundlePageRef page, WKStringRef message, uint32_t lineNumber, const void *clientInfo);
 typedef void (*WKBundlePageWillSetStatusbarTextCallback)(WKBundlePageRef page, WKStringRef statusbarText, const void *clientInfo);
@@ -242,6 +248,7 @@ typedef WKBundlePageUIElementVisibility (*WKBundlePageMenuBarIsVisibleCallback)(
 typedef WKBundlePageUIElementVisibility (*WKBundlePageToolbarsAreVisibleCallback)(WKBundlePageRef page, const void *clientInfo);
 typedef void (*WKBundlePageReachedAppCacheOriginQuotaCallback)(WKBundlePageRef page, WKSecurityOriginRef origin, int64_t totalBytesNeeded, const void *clientInfo);
 typedef uint64_t (*WKBundlePageExceededDatabaseQuotaCallback)(WKBundlePageRef page, WKSecurityOriginRef origin, WKStringRef databaseName, WKStringRef databaseDisplayName, uint64_t currentQuotaBytes, uint64_t currentOriginUsageBytes, uint64_t currentDatabaseUsageBytes, uint64_t expectedUsageBytes, const void *clientInfo);
+typedef WKImageRef (*WKBundlePagePlugInStartLabelImageCallback)(WKBundlePageLabelSize size, const void *clientInfo);
 
 struct WKBundlePageUIClient {
     int                                                                 version;
@@ -266,7 +273,7 @@ struct WKBundlePageUIClient {
 
     // Version 2.
     WKBundlePageExceededDatabaseQuotaCallback                           didExceedDatabaseQuota;
-
+    WKBundlePagePlugInStartLabelImageCallback                           plugInStartLabelImage;
 };
 typedef struct WKBundlePageUIClient WKBundlePageUIClient;
 
