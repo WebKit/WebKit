@@ -1,4 +1,22 @@
 =================
+WebKitGTK+ 1.10.2
+=================
+
+What's new in WebKitGTK+ 1.10.2?
+
+  - WebCore has been split in a few more convenience libtool libraries,
+    which should fix problems with linking in some architectures and
+    with make's command line length limit.
+  - WebKit2 introspection files will also be built if introspection is
+    enabled.
+  - Includes fixes for the following CVEs:
+      CVE-2012-5112, CVE-2012-5133
+  - Web audio has been fixed to use a GstBuffer per-channel when looping,
+    which sidesteps a race when dealing with the object references. It
+    also got improvements to error handling and ease of testing when loading
+    resources.
+
+=================
 WebKitGTK+ 1.10.1
 =================
 
