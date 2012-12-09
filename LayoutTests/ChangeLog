@@ -2,6 +2,15 @@
 
         Unreviewed EFL gardening.
 
+        Mark 2 compositing/background-color ref tests introduced
+        in r137006 as failing for WK2 EFL.
+
+        * platform/efl-wk2/TestExpectations:
+
+2012-12-09  Christophe Dumez  <christophe.dumez@intel.com>
+
+        Unreviewed EFL gardening.
+
         Rebaseline 2 media/track test cases after r136991.
 
         * platform/efl/media/track/track-cue-rendering-horizontal-expected.txt:

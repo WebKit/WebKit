@@ -375,6 +375,10 @@ webkit.org/b/82020 plugins/netscape-dom-access-and-reload.html [ Failure ]
 webkit.org/b/98741 plugins/npruntime/browser-object-identity.html [ Failure ]
 webkit.org/b/98741 plugins/refcount-leaks.html [ Failure ]
 
+# New compositing tests introduced in r137051 that fail on WK2 EFL.
+webkit.org/b/104476 compositing/background-color/background-color-padding-change.html [ ImageOnlyFailure ]
+webkit.org/b/104476 compositing/background-color/background-color-text-change.html [ ImageOnlyFailure ]
+
 # NPP_SetWindow is not called during plugin destruction on X11.
 webkit.org/b/63261 plugins/npp-set-window-called-during-destruction.html [ Failure ]
 
