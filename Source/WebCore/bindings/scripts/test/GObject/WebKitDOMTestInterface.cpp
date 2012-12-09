@@ -253,7 +253,7 @@ webkit_dom_test_interface_supplemental_method2(WebKitDOMTestInterface* self, con
     g_return_val_if_fail(WEBKIT_DOM_IS_TEST_INTERFACE(self), 0);
     g_return_val_if_fail(strArg, 0);
     g_return_val_if_fail(WEBKIT_DOM_IS_TEST_OBJ(objArg), 0);
-    g_return_val_if_fail(!error || *error, 0);
+    g_return_val_if_fail(!error || !*error, 0);
     WebCore::TestInterface* item = WebKit::core(self);
     WTF::String convertedStrArg = WTF::String::fromUTF8(strArg);
     WebCore::TestObj* convertedObjArg = WebKit::core(objArg);

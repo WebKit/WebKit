@@ -1,3 +1,26 @@
+2012-12-09  Zan Dobersek  <zandobersek@gmail.com>
+
+        Unreviewed update for the GObject bindings after r137074 and r137078.
+
+        * bindings/scripts/test/GObject/WebKitDOMTestEventTarget.cpp:
+        (webkit_dom_test_event_target_dispatch_event):
+        * bindings/scripts/test/GObject/WebKitDOMTestInterface.cpp:
+        (webkit_dom_test_interface_supplemental_method2):
+        * bindings/scripts/test/GObject/WebKitDOMTestObj.cpp:
+        (webkit_dom_test_obj_method_that_requires_all_args_and_throws):
+        (webkit_dom_test_obj_method_with_exception):
+        (webkit_dom_test_obj_with_script_state_void_exception):
+        (webkit_dom_test_obj_with_script_state_obj_exception):
+        (webkit_dom_test_obj_with_script_execution_context_and_script_state_obj_exception):
+        (webkit_dom_test_obj_strict_function):
+        (webkit_dom_test_obj_get_attr_with_getter_exception):
+        (webkit_dom_test_obj_set_attr_with_setter_exception):
+        (webkit_dom_test_obj_get_string_attr_with_getter_exception):
+        (webkit_dom_test_obj_set_string_attr_with_setter_exception):
+        (webkit_dom_test_obj_get_with_script_state_attribute_raises):
+        (webkit_dom_test_obj_get_with_script_execution_context_attribute_raises):
+        (webkit_dom_test_obj_get_with_script_execution_context_and_script_state_attribute_raises):
+
 2012-12-09  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Fix the GError check in GObject DOM bindings.

@@ -974,7 +974,7 @@ webkit_dom_test_obj_method_that_requires_all_args_and_throws(WebKitDOMTestObj* s
     g_return_val_if_fail(WEBKIT_DOM_IS_TEST_OBJ(self), 0);
     g_return_val_if_fail(strArg, 0);
     g_return_val_if_fail(WEBKIT_DOM_IS_TEST_OBJ(objArg), 0);
-    g_return_val_if_fail(!error || *error, 0);
+    g_return_val_if_fail(!error || !*error, 0);
     WebCore::TestObj* item = WebKit::core(self);
     WTF::String convertedStrArg = WTF::String::fromUTF8(strArg);
     WebCore::TestObj* convertedObjArg = WebKit::core(objArg);
@@ -1027,7 +1027,7 @@ webkit_dom_test_obj_method_with_exception(WebKitDOMTestObj* self, GError** error
 {
     WebCore::JSMainThreadNullState state;
     g_return_if_fail(WEBKIT_DOM_IS_TEST_OBJ(self));
-    g_return_if_fail(!error || *error);
+    g_return_if_fail(!error || !*error);
     WebCore::TestObj* item = WebKit::core(self);
     WebCore::ExceptionCode ec = 0;
     item->methodWithException(ec);
@@ -1061,7 +1061,7 @@ webkit_dom_test_obj_with_script_state_void_exception(WebKitDOMTestObj* self, GEr
 {
     WebCore::JSMainThreadNullState state;
     g_return_if_fail(WEBKIT_DOM_IS_TEST_OBJ(self));
-    g_return_if_fail(!error || *error);
+    g_return_if_fail(!error || !*error);
     WebCore::TestObj* item = WebKit::core(self);
     WebCore::ExceptionCode ec = 0;
     item->withScriptStateVoidException(ec);
@@ -1076,7 +1076,7 @@ webkit_dom_test_obj_with_script_state_obj_exception(WebKitDOMTestObj* self, GErr
 {
     WebCore::JSMainThreadNullState state;
     g_return_val_if_fail(WEBKIT_DOM_IS_TEST_OBJ(self), 0);
-    g_return_val_if_fail(!error || *error, 0);
+    g_return_val_if_fail(!error || !*error, 0);
     WebCore::TestObj* item = WebKit::core(self);
     WebCore::ExceptionCode ec = 0;
     RefPtr<WebCore::TestObj> gobjectResult = WTF::getPtr(item->withScriptStateObjException(ec));
@@ -1110,7 +1110,7 @@ webkit_dom_test_obj_with_script_execution_context_and_script_state_obj_exception
 {
     WebCore::JSMainThreadNullState state;
     g_return_val_if_fail(WEBKIT_DOM_IS_TEST_OBJ(self), 0);
-    g_return_val_if_fail(!error || *error, 0);
+    g_return_val_if_fail(!error || !*error, 0);
     WebCore::TestObj* item = WebKit::core(self);
     WebCore::ExceptionCode ec = 0;
     RefPtr<WebCore::TestObj> gobjectResult = WTF::getPtr(item->withScriptExecutionContextAndScriptStateObjException(ec));
@@ -1364,7 +1364,7 @@ webkit_dom_test_obj_strict_function(WebKitDOMTestObj* self, const gchar* str, gf
     WebCore::JSMainThreadNullState state;
     g_return_val_if_fail(WEBKIT_DOM_IS_TEST_OBJ(self), 0);
     g_return_val_if_fail(str, 0);
-    g_return_val_if_fail(!error || *error, 0);
+    g_return_val_if_fail(!error || !*error, 0);
     WebCore::TestObj* item = WebKit::core(self);
     WTF::String convertedStr = WTF::String::fromUTF8(str);
     WebCore::ExceptionCode ec = 0;
@@ -1802,7 +1802,7 @@ webkit_dom_test_obj_get_attr_with_getter_exception(WebKitDOMTestObj* self, GErro
 {
     WebCore::JSMainThreadNullState state;
     g_return_val_if_fail(WEBKIT_DOM_IS_TEST_OBJ(self), 0);
-    g_return_val_if_fail(!error || *error, 0);
+    g_return_val_if_fail(!error || !*error, 0);
     WebCore::TestObj* item = WebKit::core(self);
     WebCore::ExceptionCode ec = 0;
     glong result = item->attrWithGetterException(ec);
@@ -1837,7 +1837,7 @@ webkit_dom_test_obj_set_attr_with_setter_exception(WebKitDOMTestObj* self, glong
 {
     WebCore::JSMainThreadNullState state;
     g_return_if_fail(WEBKIT_DOM_IS_TEST_OBJ(self));
-    g_return_if_fail(!error || *error);
+    g_return_if_fail(!error || !*error);
     WebCore::TestObj* item = WebKit::core(self);
     WebCore::ExceptionCode ec = 0;
     item->setAttrWithSetterException(value, ec);
@@ -1852,7 +1852,7 @@ webkit_dom_test_obj_get_string_attr_with_getter_exception(WebKitDOMTestObj* self
 {
     WebCore::JSMainThreadNullState state;
     g_return_val_if_fail(WEBKIT_DOM_IS_TEST_OBJ(self), 0);
-    g_return_val_if_fail(!error || *error, 0);
+    g_return_val_if_fail(!error || !*error, 0);
     WebCore::TestObj* item = WebKit::core(self);
     WebCore::ExceptionCode ec = 0;
     gchar* result = convertToUTF8String(item->stringAttrWithGetterException(ec));
@@ -1886,7 +1886,7 @@ webkit_dom_test_obj_set_string_attr_with_setter_exception(WebKitDOMTestObj* self
     WebCore::JSMainThreadNullState state;
     g_return_if_fail(WEBKIT_DOM_IS_TEST_OBJ(self));
     g_return_if_fail(value);
-    g_return_if_fail(!error || *error);
+    g_return_if_fail(!error || !*error);
     WebCore::TestObj* item = WebKit::core(self);
     WTF::String convertedValue = WTF::String::fromUTF8(value);
     WebCore::ExceptionCode ec = 0;
@@ -1942,7 +1942,7 @@ webkit_dom_test_obj_get_with_script_state_attribute_raises(WebKitDOMTestObj* sel
 {
     WebCore::JSMainThreadNullState state;
     g_return_val_if_fail(WEBKIT_DOM_IS_TEST_OBJ(self), 0);
-    g_return_val_if_fail(!error || *error, 0);
+    g_return_val_if_fail(!error || !*error, 0);
     WebCore::TestObj* item = WebKit::core(self);
     WebCore::ExceptionCode ec = 0;
     RefPtr<WebCore::TestObj> gobjectResult = WTF::getPtr(item->withScriptStateAttributeRaises(ec));
@@ -1969,7 +1969,7 @@ webkit_dom_test_obj_get_with_script_execution_context_attribute_raises(WebKitDOM
 {
     WebCore::JSMainThreadNullState state;
     g_return_val_if_fail(WEBKIT_DOM_IS_TEST_OBJ(self), 0);
-    g_return_val_if_fail(!error || *error, 0);
+    g_return_val_if_fail(!error || !*error, 0);
     WebCore::TestObj* item = WebKit::core(self);
     WebCore::ExceptionCode ec = 0;
     RefPtr<WebCore::TestObj> gobjectResult = WTF::getPtr(item->withScriptExecutionContextAttributeRaises(ec));
@@ -2017,7 +2017,7 @@ webkit_dom_test_obj_get_with_script_execution_context_and_script_state_attribute
 {
     WebCore::JSMainThreadNullState state;
     g_return_val_if_fail(WEBKIT_DOM_IS_TEST_OBJ(self), 0);
-    g_return_val_if_fail(!error || *error, 0);
+    g_return_val_if_fail(!error || !*error, 0);
     WebCore::TestObj* item = WebKit::core(self);
     WebCore::ExceptionCode ec = 0;
     RefPtr<WebCore::TestObj> gobjectResult = WTF::getPtr(item->withScriptExecutionContextAndScriptStateAttributeRaises(ec));

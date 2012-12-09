@@ -152,7 +152,7 @@ webkit_dom_test_event_target_dispatch_event(WebKitDOMTestEventTarget* self, WebK
     WebCore::JSMainThreadNullState state;
     g_return_val_if_fail(WEBKIT_DOM_IS_TEST_EVENT_TARGET(self), FALSE);
     g_return_val_if_fail(WEBKIT_DOM_IS_EVENT(evt), FALSE);
-    g_return_val_if_fail(!error || *error, FALSE);
+    g_return_val_if_fail(!error || !*error, FALSE);
     WebCore::TestEventTarget* item = WebKit::core(self);
     WebCore::Event* convertedEvt = WebKit::core(evt);
     WebCore::ExceptionCode ec = 0;
