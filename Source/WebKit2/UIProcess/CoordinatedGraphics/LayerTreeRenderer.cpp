@@ -227,7 +227,7 @@ void LayerTreeRenderer::didChangeScrollPosition(const FloatPoint& position)
 }
 
 #if USE(GRAPHICS_SURFACE)
-void LayerTreeRenderer::createCanvas(CoordinatedLayerID id, const WebCore::IntSize& canvasSize, PassRefPtr<GraphicsSurface> surface)
+void LayerTreeRenderer::createCanvas(CoordinatedLayerID id, const WebCore::IntSize&, PassRefPtr<GraphicsSurface> surface)
 {
     ASSERT(m_textureMapper);
     GraphicsLayer* layer = layerByID(id);

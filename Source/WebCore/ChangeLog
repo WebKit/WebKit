@@ -1,3 +1,15 @@
+2012-12-09  Kangil Han  <kangil.han@samsung.com>
+
+        Fix unused parameter compile warnings
+        https://bugs.webkit.org/show_bug.cgi?id=104463
+
+        Reviewed by Kentaro Hara.
+
+        Remove compile warning messages by omitting parameter name.
+
+        * platform/graphics/surfaces/GraphicsSurface.cpp:
+        (WebCore::GraphicsSurface::GraphicsSurface):
+
 2012-12-08  Rakesh KN  <rakeshchaitan@gmail.com>
 
         Build break if SVG is disabled

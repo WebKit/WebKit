@@ -83,7 +83,7 @@ IntSize GraphicsSurface::size() const
     return platformSize();
 }
 
-GraphicsSurface::GraphicsSurface(const IntSize& size, Flags flags)
+GraphicsSurface::GraphicsSurface(const IntSize&, Flags flags)
     : m_flags(flags)
     , m_platformSurface(0)
     , m_texture(0)
