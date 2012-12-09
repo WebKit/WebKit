@@ -41,7 +41,8 @@ namespace WebKit {
 
 WebKitDOMTestCustomNamedGetter* kit(WebCore::TestCustomNamedGetter* obj)
 {
-    g_return_val_if_fail(obj, 0);
+    if (!obj)
+        return 0;
 
     if (gpointer ret = DOMObjectCache::get(obj))
         return static_cast<WebKitDOMTestCustomNamedGetter*>(ret);
@@ -51,14 +52,12 @@ WebKitDOMTestCustomNamedGetter* kit(WebCore::TestCustomNamedGetter* obj)
 
 WebCore::TestCustomNamedGetter* core(WebKitDOMTestCustomNamedGetter* request)
 {
-    g_return_val_if_fail(request, 0);
-
-    return static_cast<WebCore::TestCustomNamedGetter*>(WEBKIT_DOM_OBJECT(request)->coreObject);
+    return request ? static_cast<WebCore::TestCustomNamedGetter*>(WEBKIT_DOM_OBJECT(request)->coreObject) : 0;
 }
 
 WebKitDOMTestCustomNamedGetter* wrapTestCustomNamedGetter(WebCore::TestCustomNamedGetter* coreObject)
 {
-    g_return_val_if_fail(coreObject, 0);
+    ASSERT(coreObject);
     return WEBKIT_DOM_TEST_CUSTOM_NAMED_GETTER(g_object_new(WEBKIT_TYPE_DOM_TEST_CUSTOM_NAMED_GETTER, "core-object", coreObject, NULL));
 }
 
@@ -104,10 +103,10 @@ static void webkit_dom_test_custom_named_getter_init(WebKitDOMTestCustomNamedGet
 void
 webkit_dom_test_custom_named_getter_another_function(WebKitDOMTestCustomNamedGetter* self, const gchar* str)
 {
-    g_return_if_fail(self);
     WebCore::JSMainThreadNullState state;
-    WebCore::TestCustomNamedGetter* item = WebKit::core(self);
+    g_return_if_fail(WEBKIT_DOM_IS_TEST_CUSTOM_NAMED_GETTER(self));
     g_return_if_fail(str);
+    WebCore::TestCustomNamedGetter* item = WebKit::core(self);
     WTF::String convertedStr = WTF::String::fromUTF8(str);
     item->anotherFunction(convertedStr);
 }

@@ -45,7 +45,8 @@ namespace WebKit {
 
 WebKitDOMTestEventTarget* kit(WebCore::TestEventTarget* obj)
 {
-    g_return_val_if_fail(obj, 0);
+    if (!obj)
+        return 0;
 
     if (gpointer ret = DOMObjectCache::get(obj))
         return static_cast<WebKitDOMTestEventTarget*>(ret);
@@ -55,14 +56,12 @@ WebKitDOMTestEventTarget* kit(WebCore::TestEventTarget* obj)
 
 WebCore::TestEventTarget* core(WebKitDOMTestEventTarget* request)
 {
-    g_return_val_if_fail(request, 0);
-
-    return static_cast<WebCore::TestEventTarget*>(WEBKIT_DOM_OBJECT(request)->coreObject);
+    return request ? static_cast<WebCore::TestEventTarget*>(WEBKIT_DOM_OBJECT(request)->coreObject) : 0;
 }
 
 WebKitDOMTestEventTarget* wrapTestEventTarget(WebCore::TestEventTarget* coreObject)
 {
-    g_return_val_if_fail(coreObject, 0);
+    ASSERT(coreObject);
     return WEBKIT_DOM_TEST_EVENT_TARGET(g_object_new(WEBKIT_TYPE_DOM_TEST_EVENT_TARGET, "core-object", coreObject, NULL));
 }
 
@@ -140,26 +139,22 @@ static void webkit_dom_test_event_target_init(WebKitDOMTestEventTarget* request)
 WebKitDOMNode*
 webkit_dom_test_event_target_item(WebKitDOMTestEventTarget* self, gulong index)
 {
-    g_return_val_if_fail(self, 0);
     WebCore::JSMainThreadNullState state;
+    g_return_val_if_fail(WEBKIT_DOM_IS_TEST_EVENT_TARGET(self), 0);
     WebCore::TestEventTarget* item = WebKit::core(self);
     RefPtr<WebCore::Node> gobjectResult = WTF::getPtr(item->item(index));
-    WebKitDOMNode* result = WebKit::kit(gobjectResult.get());
-    return result;
+    return WebKit::kit(gobjectResult.get());
 }
 
 gboolean
 webkit_dom_test_event_target_dispatch_event(WebKitDOMTestEventTarget* self, WebKitDOMEvent* evt, GError** error)
 {
-    g_return_val_if_fail(self, 0);
     WebCore::JSMainThreadNullState state;
+    g_return_val_if_fail(WEBKIT_DOM_IS_TEST_EVENT_TARGET(self), FALSE);
+    g_return_val_if_fail(WEBKIT_DOM_IS_EVENT(evt), FALSE);
+    g_return_val_if_fail(!error || *error, FALSE);
     WebCore::TestEventTarget* item = WebKit::core(self);
-    g_return_val_if_fail(evt, 0);
-    WebCore::Event* convertedEvt = 0;
-    if (evt) {
-        convertedEvt = WebKit::core(evt);
-        g_return_val_if_fail(convertedEvt, 0);
-    }
+    WebCore::Event* convertedEvt = WebKit::core(evt);
     WebCore::ExceptionCode ec = 0;
     gboolean result = item->dispatchEvent(convertedEvt, ec);
     if (ec) {

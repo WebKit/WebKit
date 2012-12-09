@@ -41,7 +41,8 @@ namespace WebKit {
 
 WebKitDOMTestMediaQueryListListener* kit(WebCore::TestMediaQueryListListener* obj)
 {
-    g_return_val_if_fail(obj, 0);
+    if (!obj)
+        return 0;
 
     if (gpointer ret = DOMObjectCache::get(obj))
         return static_cast<WebKitDOMTestMediaQueryListListener*>(ret);
@@ -51,14 +52,12 @@ WebKitDOMTestMediaQueryListListener* kit(WebCore::TestMediaQueryListListener* ob
 
 WebCore::TestMediaQueryListListener* core(WebKitDOMTestMediaQueryListListener* request)
 {
-    g_return_val_if_fail(request, 0);
-
-    return static_cast<WebCore::TestMediaQueryListListener*>(WEBKIT_DOM_OBJECT(request)->coreObject);
+    return request ? static_cast<WebCore::TestMediaQueryListListener*>(WEBKIT_DOM_OBJECT(request)->coreObject) : 0;
 }
 
 WebKitDOMTestMediaQueryListListener* wrapTestMediaQueryListListener(WebCore::TestMediaQueryListListener* coreObject)
 {
-    g_return_val_if_fail(coreObject, 0);
+    ASSERT(coreObject);
     return WEBKIT_DOM_TEST_MEDIA_QUERY_LIST_LISTENER(g_object_new(WEBKIT_TYPE_DOM_TEST_MEDIA_QUERY_LIST_LISTENER, "core-object", coreObject, NULL));
 }
 

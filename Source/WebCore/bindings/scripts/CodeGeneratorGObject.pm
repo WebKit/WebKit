@@ -818,6 +818,30 @@ EOF
     push(@hBody, $implContent);
 }
 
+sub GetGReturnMacro {
+    my ($paramName, $paramIDLType, $returnType) = @_;
+
+    my $condition;
+    if ($paramIDLType eq "GError") {
+        $condition = "!$paramName || *$paramName";
+    } elsif (IsGDOMClassType($paramIDLType)) {
+        my $paramTypeCaps = uc(FixUpDecamelizedName(decamelize($paramIDLType)));
+        $condition = "WEBKIT_DOM_IS_${paramTypeCaps}($paramName)";
+    } else {
+        $condition = "$paramName";
+    }
+
+    my $macro;
+    if ($returnType ne "void") {
+        $defaultReturn = $returnType eq "gboolean" ? "FALSE" : 0;
+        $macro = "    g_return_val_if_fail($condition, $defaultReturn);\n";
+    } else {
+        $macro = "    g_return_if_fail($condition);\n";
+    }
+
+    return $macro;
+}
+
 sub GenerateFunction {
     my ($object, $interfaceName, $function, $prefix, $parentNode) = @_;
 
@@ -915,17 +939,11 @@ sub GenerateFunction {
     push(@cBody, "#if ${parentConditionalString}\n") if $parentConditionalString;
     push(@cBody, "#if ${conditionalString}\n") if $conditionalString;
 
-    if ($returnType ne "void") {
-        # TODO: return proper default result
-        push(@cBody, "    g_return_val_if_fail(self, 0);\n");
-    } else {
-        push(@cBody, "    g_return_if_fail(self);\n");
-    }
-
     push(@cBody, "    WebCore::JSMainThreadNullState state;\n");
 
-    # The WebKit::core implementations check for null already; no need to duplicate effort.
-    push(@cBody, "    WebCore::${interfaceName}* item = WebKit::core(self);\n");
+    # g_return macros to check parameters of public methods.
+    $gReturnMacro = GetGReturnMacro("self", $interfaceName, $returnType);
+    push(@cBody, $gReturnMacro);
 
     foreach my $param (@{$function->parameters}) {
         my $paramName = $param->name;
@@ -933,18 +951,22 @@ sub GenerateFunction {
         my $paramTypeIsPrimitive = $codeGenerator->IsPrimitiveType($paramIDLType);
         my $paramIsGDOMType = IsGDOMClassType($paramIDLType);
         if (!$paramTypeIsPrimitive) {
-            if ($returnType ne "void") {
-                # TODO: return proper default result
-                # FIXME: Temporary hack for generating a proper implementation
-                #        of the webkit_dom_document_evaluate function (Bug-ID: 42115)
-                if (!(($functionName eq "webkit_dom_document_evaluate") && ($paramIDLType eq "XPathResult"))) {
-                    push(@cBody, "    g_return_val_if_fail($paramName, 0);\n");
-                }
-            } else {
-                push(@cBody, "    g_return_if_fail($paramName);\n");
+            # FIXME: Temporary hack for generating a proper implementation
+            #        of the webkit_dom_document_evaluate function (Bug-ID: 42115)
+            if (!(($functionName eq "webkit_dom_document_evaluate") && ($paramIDLType eq "XPathResult"))) {
+                $gReturnMacro = GetGReturnMacro($paramName, $paramIDLType, $returnType);
+                push(@cBody, $gReturnMacro);
             }
         }
     }
+
+    if (@{$function->raisesExceptions}) {
+        $gReturnMacro = GetGReturnMacro("error", "GError", $returnType);
+        push(@cBody, $gReturnMacro);
+    }
+
+    # The WebKit::core implementations check for null already; no need to duplicate effort.
+    push(@cBody, "    WebCore::${interfaceName}* item = WebKit::core(self);\n");
 
     $returnParamName = "";
     foreach my $param (@{$function->parameters}) {
@@ -958,18 +980,7 @@ sub GenerateFunction {
         } elsif ($paramIDLType eq "CompareHow") {
             push(@cBody, "    WebCore::Range::CompareHow ${convertedParamName} = static_cast<WebCore::Range::CompareHow>($paramName);\n");
         } elsif ($paramIsGDOMType) {
-            push(@cBody, "    WebCore::${paramIDLType}* ${convertedParamName} = 0;\n");
-            push(@cBody, "    if (${paramName}) {\n");
-            push(@cBody, "        ${convertedParamName} = WebKit::core($paramName);\n");
-
-            if ($returnType ne "void") {
-                # TODO: return proper default result
-                push(@cBody, "        g_return_val_if_fail(${convertedParamName}, 0);\n");
-            } else {
-                push(@cBody, "        g_return_if_fail(${convertedParamName});\n");
-            }
-
-            push(@cBody, "    }\n");
+            push(@cBody, "    WebCore::${paramIDLType}* ${convertedParamName} = WebKit::core($paramName);\n");
         }
         $returnParamName = $convertedParamName if $param->extendedAttributes->{"CustomReturn"};
     }
@@ -1007,10 +1018,7 @@ sub GenerateFunction {
         push(@cBody, "    bool ok = item->${functionImplementationName}(" . join(", ", @callImplParams) . ");\n");
         my $customNodeAppendChild = << "EOF";
     if (ok)
-    {
-        ${returnType} result = WebKit::kit($returnParamName);
-        return result;
-    }
+        return WebKit::kit($returnParamName);
 EOF
         push(@cBody, $customNodeAppendChild);
     
@@ -1022,7 +1030,7 @@ EOF
 EOF
             push(@cBody, $exceptionHandling);
         }
-        push(@cBody, "return 0;");
+        push(@cBody, "    return 0;\n");
         push(@cBody, "}\n\n");
         return;
     } elsif ($functionSigType eq "DOMString") {
@@ -1105,13 +1113,12 @@ EOF
     if ($returnType ne "void" && !$functionHasCustomReturn) {
         if ($functionSigType ne "DOMObject") {
             if ($returnValueIsGDOMType) {
-                push(@cBody, "    ${returnType} result = WebKit::kit(gobjectResult.get());\n");
+                push(@cBody, "    return WebKit::kit(gobjectResult.get());\n");
+            } else {
+                push(@cBody, "    return result;\n");
             }
-        }
-        if ($functionSigType eq "DOMObject") {
-            push(@cBody, "    return 0; // TODO: return canvas object\n");
         } else {
-            push(@cBody, "    return result;\n");
+            push(@cBody, "    return 0; // TODO: return canvas object\n");
         }
     }
 
@@ -1260,7 +1267,8 @@ EOF
         $implContent = << "EOF";
 ${className}* kit(WebCore::$interfaceName* obj)
 {
-    g_return_val_if_fail(obj, 0);
+    if (!obj)
+        return 0;
 
     if (gpointer ret = DOMObjectCache::get(obj))
         return static_cast<${className}*>(ret);
@@ -1275,14 +1283,12 @@ EOF
     $implContent = << "EOF";
 WebCore::${interfaceName}* core(${className}* request)
 {
-    g_return_val_if_fail(request, 0);
-
-    return static_cast<WebCore::${interfaceName}*>(WEBKIT_DOM_OBJECT(request)->coreObject);
+    return request ? static_cast<WebCore::${interfaceName}*>(WEBKIT_DOM_OBJECT(request)->coreObject) : 0;
 }
 
 ${className}* wrap${interfaceName}(WebCore::${interfaceName}* coreObject)
 {
-    g_return_val_if_fail(coreObject, 0);
+    ASSERT(coreObject);
     return WEBKIT_DOM_${clsCaps}(g_object_new(WEBKIT_TYPE_DOM_${clsCaps}, "core-object", coreObject, NULL));
 }
 

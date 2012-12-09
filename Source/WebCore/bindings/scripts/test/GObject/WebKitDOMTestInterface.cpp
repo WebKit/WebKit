@@ -48,7 +48,8 @@ namespace WebKit {
 
 WebKitDOMTestInterface* kit(WebCore::TestInterface* obj)
 {
-    g_return_val_if_fail(obj, 0);
+    if (!obj)
+        return 0;
 
     if (gpointer ret = DOMObjectCache::get(obj))
         return static_cast<WebKitDOMTestInterface*>(ret);
@@ -58,14 +59,12 @@ WebKitDOMTestInterface* kit(WebCore::TestInterface* obj)
 
 WebCore::TestInterface* core(WebKitDOMTestInterface* request)
 {
-    g_return_val_if_fail(request, 0);
-
-    return static_cast<WebCore::TestInterface*>(WEBKIT_DOM_OBJECT(request)->coreObject);
+    return request ? static_cast<WebCore::TestInterface*>(WEBKIT_DOM_OBJECT(request)->coreObject) : 0;
 }
 
 WebKitDOMTestInterface* wrapTestInterface(WebCore::TestInterface* coreObject)
 {
-    g_return_val_if_fail(coreObject, 0);
+    ASSERT(coreObject);
     return WEBKIT_DOM_TEST_INTERFACE(g_object_new(WEBKIT_TYPE_DOM_TEST_INTERFACE, "core-object", coreObject, NULL));
 }
 
@@ -231,8 +230,8 @@ webkit_dom_test_interface_supplemental_method1(WebKitDOMTestInterface* self)
 {
 #if ENABLE(Condition1) || ENABLE(Condition2)
 #if ENABLE(Condition11) || ENABLE(Condition12)
-    g_return_if_fail(self);
     WebCore::JSMainThreadNullState state;
+    g_return_if_fail(WEBKIT_DOM_IS_TEST_INTERFACE(self));
     WebCore::TestInterface* item = WebKit::core(self);
     WebCore::TestSupplemental::supplementalMethod1(item);
 #else
@@ -250,25 +249,21 @@ webkit_dom_test_interface_supplemental_method2(WebKitDOMTestInterface* self, con
 {
 #if ENABLE(Condition1) || ENABLE(Condition2)
 #if ENABLE(Condition11) || ENABLE(Condition12)
-    g_return_val_if_fail(self, 0);
     WebCore::JSMainThreadNullState state;
-    WebCore::TestInterface* item = WebKit::core(self);
+    g_return_val_if_fail(WEBKIT_DOM_IS_TEST_INTERFACE(self), 0);
     g_return_val_if_fail(strArg, 0);
-    g_return_val_if_fail(objArg, 0);
+    g_return_val_if_fail(WEBKIT_DOM_IS_TEST_OBJ(objArg), 0);
+    g_return_val_if_fail(!error || *error, 0);
+    WebCore::TestInterface* item = WebKit::core(self);
     WTF::String convertedStrArg = WTF::String::fromUTF8(strArg);
-    WebCore::TestObj* convertedObjArg = 0;
-    if (objArg) {
-        convertedObjArg = WebKit::core(objArg);
-        g_return_val_if_fail(convertedObjArg, 0);
-    }
+    WebCore::TestObj* convertedObjArg = WebKit::core(objArg);
     WebCore::ExceptionCode ec = 0;
     RefPtr<WebCore::TestObj> gobjectResult = WTF::getPtr(WebCore::TestSupplemental::supplementalMethod2(item, convertedStrArg, convertedObjArg, ec));
     if (ec) {
         WebCore::ExceptionCodeDescription ecdesc(ec);
         g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), ecdesc.code, ecdesc.name);
     }
-    WebKitDOMTestObj* result = WebKit::kit(gobjectResult.get());
-    return result;
+    return WebKit::kit(gobjectResult.get());
 #else
     WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition11")
     WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition12")
@@ -286,8 +281,8 @@ webkit_dom_test_interface_supplemental_method4(WebKitDOMTestInterface* self)
 {
 #if ENABLE(Condition1) || ENABLE(Condition2)
 #if ENABLE(Condition11) || ENABLE(Condition12)
-    g_return_if_fail(self);
     WebCore::JSMainThreadNullState state;
+    g_return_if_fail(WEBKIT_DOM_IS_TEST_INTERFACE(self));
     WebCore::TestInterface* item = WebKit::core(self);
     WebCore::TestSupplemental::supplementalMethod4(item);
 #else
@@ -305,8 +300,8 @@ webkit_dom_test_interface_get_supplemental_str1(WebKitDOMTestInterface* self)
 {
 #if ENABLE(Condition1) || ENABLE(Condition2)
 #if ENABLE(Condition11) || ENABLE(Condition12)
-    g_return_val_if_fail(self, 0);
     WebCore::JSMainThreadNullState state;
+    g_return_val_if_fail(WEBKIT_DOM_IS_TEST_INTERFACE(self), 0);
     WebCore::TestInterface* item = WebKit::core(self);
     gchar* result = convertToUTF8String(WebCore::TestSupplemental::supplementalStr1(item));
     return result;
@@ -327,8 +322,8 @@ webkit_dom_test_interface_get_supplemental_str2(WebKitDOMTestInterface* self)
 {
 #if ENABLE(Condition1) || ENABLE(Condition2)
 #if ENABLE(Condition11) || ENABLE(Condition12)
-    g_return_val_if_fail(self, 0);
     WebCore::JSMainThreadNullState state;
+    g_return_val_if_fail(WEBKIT_DOM_IS_TEST_INTERFACE(self), 0);
     WebCore::TestInterface* item = WebKit::core(self);
     gchar* result = convertToUTF8String(WebCore::TestSupplemental::supplementalStr2(item));
     return result;
@@ -349,10 +344,10 @@ webkit_dom_test_interface_set_supplemental_str2(WebKitDOMTestInterface* self, co
 {
 #if ENABLE(Condition1) || ENABLE(Condition2)
 #if ENABLE(Condition11) || ENABLE(Condition12)
-    g_return_if_fail(self);
     WebCore::JSMainThreadNullState state;
-    WebCore::TestInterface* item = WebKit::core(self);
+    g_return_if_fail(WEBKIT_DOM_IS_TEST_INTERFACE(self));
     g_return_if_fail(value);
+    WebCore::TestInterface* item = WebKit::core(self);
     WTF::String convertedValue = WTF::String::fromUTF8(value);
     WebCore::TestSupplemental::setSupplementalStr2(item, convertedValue);
 #else
@@ -370,12 +365,11 @@ webkit_dom_test_interface_get_supplemental_node(WebKitDOMTestInterface* self)
 {
 #if ENABLE(Condition1) || ENABLE(Condition2)
 #if ENABLE(Condition11) || ENABLE(Condition12)
-    g_return_val_if_fail(self, 0);
     WebCore::JSMainThreadNullState state;
+    g_return_val_if_fail(WEBKIT_DOM_IS_TEST_INTERFACE(self), 0);
     WebCore::TestInterface* item = WebKit::core(self);
     RefPtr<WebCore::Node> gobjectResult = WTF::getPtr(WebCore::TestSupplemental::supplementalNode(item));
-    WebKitDOMNode* result = WebKit::kit(gobjectResult.get());
-    return result;
+    return WebKit::kit(gobjectResult.get());
 #else
     WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition11")
     WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition12")
@@ -393,15 +387,11 @@ webkit_dom_test_interface_set_supplemental_node(WebKitDOMTestInterface* self, We
 {
 #if ENABLE(Condition1) || ENABLE(Condition2)
 #if ENABLE(Condition11) || ENABLE(Condition12)
-    g_return_if_fail(self);
     WebCore::JSMainThreadNullState state;
+    g_return_if_fail(WEBKIT_DOM_IS_TEST_INTERFACE(self));
+    g_return_if_fail(WEBKIT_DOM_IS_NODE(value));
     WebCore::TestInterface* item = WebKit::core(self);
-    g_return_if_fail(value);
-    WebCore::Node* convertedValue = 0;
-    if (value) {
-        convertedValue = WebKit::core(value);
-        g_return_if_fail(convertedValue);
-    }
+    WebCore::Node* convertedValue = WebKit::core(value);
     WebCore::TestSupplemental::setSupplementalNode(item, convertedValue);
 #else
     WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition11")

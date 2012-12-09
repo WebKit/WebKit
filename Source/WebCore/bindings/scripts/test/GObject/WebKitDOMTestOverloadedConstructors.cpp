@@ -41,7 +41,8 @@ namespace WebKit {
 
 WebKitDOMTestOverloadedConstructors* kit(WebCore::TestOverloadedConstructors* obj)
 {
-    g_return_val_if_fail(obj, 0);
+    if (!obj)
+        return 0;
 
     if (gpointer ret = DOMObjectCache::get(obj))
         return static_cast<WebKitDOMTestOverloadedConstructors*>(ret);
@@ -51,14 +52,12 @@ WebKitDOMTestOverloadedConstructors* kit(WebCore::TestOverloadedConstructors* ob
 
 WebCore::TestOverloadedConstructors* core(WebKitDOMTestOverloadedConstructors* request)
 {
-    g_return_val_if_fail(request, 0);
-
-    return static_cast<WebCore::TestOverloadedConstructors*>(WEBKIT_DOM_OBJECT(request)->coreObject);
+    return request ? static_cast<WebCore::TestOverloadedConstructors*>(WEBKIT_DOM_OBJECT(request)->coreObject) : 0;
 }
 
 WebKitDOMTestOverloadedConstructors* wrapTestOverloadedConstructors(WebCore::TestOverloadedConstructors* coreObject)
 {
-    g_return_val_if_fail(coreObject, 0);
+    ASSERT(coreObject);
     return WEBKIT_DOM_TEST_OVERLOADED_CONSTRUCTORS(g_object_new(WEBKIT_TYPE_DOM_TEST_OVERLOADED_CONSTRUCTORS, "core-object", coreObject, NULL));
 }
 

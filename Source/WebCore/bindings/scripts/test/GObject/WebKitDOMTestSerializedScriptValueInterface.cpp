@@ -48,7 +48,8 @@ namespace WebKit {
 
 WebKitDOMTestSerializedScriptValueInterface* kit(WebCore::TestSerializedScriptValueInterface* obj)
 {
-    g_return_val_if_fail(obj, 0);
+    if (!obj)
+        return 0;
 
     if (gpointer ret = DOMObjectCache::get(obj))
         return static_cast<WebKitDOMTestSerializedScriptValueInterface*>(ret);
@@ -58,14 +59,12 @@ WebKitDOMTestSerializedScriptValueInterface* kit(WebCore::TestSerializedScriptVa
 
 WebCore::TestSerializedScriptValueInterface* core(WebKitDOMTestSerializedScriptValueInterface* request)
 {
-    g_return_val_if_fail(request, 0);
-
-    return static_cast<WebCore::TestSerializedScriptValueInterface*>(WEBKIT_DOM_OBJECT(request)->coreObject);
+    return request ? static_cast<WebCore::TestSerializedScriptValueInterface*>(WEBKIT_DOM_OBJECT(request)->coreObject) : 0;
 }
 
 WebKitDOMTestSerializedScriptValueInterface* wrapTestSerializedScriptValueInterface(WebCore::TestSerializedScriptValueInterface* coreObject)
 {
-    g_return_val_if_fail(coreObject, 0);
+    ASSERT(coreObject);
     return WEBKIT_DOM_TEST_SERIALIZED_SCRIPT_VALUE_INTERFACE(g_object_new(WEBKIT_TYPE_DOM_TEST_SERIALIZED_SCRIPT_VALUE_INTERFACE, "core-object", coreObject, NULL));
 }
 
@@ -224,21 +223,13 @@ void
 webkit_dom_test_serialized_script_value_interface_accept_transfer_list(WebKitDOMTestSerializedScriptValueInterface* self, WebKitDOMSerializedScriptValue* data, WebKitDOMArray* transferList)
 {
 #if ENABLE(Condition1) || ENABLE(Condition2)
-    g_return_if_fail(self);
     WebCore::JSMainThreadNullState state;
+    g_return_if_fail(WEBKIT_DOM_IS_TEST_SERIALIZED_SCRIPT_VALUE_INTERFACE(self));
+    g_return_if_fail(WEBKIT_DOM_IS_SERIALIZED_SCRIPT_VALUE(data));
+    g_return_if_fail(WEBKIT_DOM_IS_ARRAY(transferList));
     WebCore::TestSerializedScriptValueInterface* item = WebKit::core(self);
-    g_return_if_fail(data);
-    g_return_if_fail(transferList);
-    WebCore::SerializedScriptValue* convertedData = 0;
-    if (data) {
-        convertedData = WebKit::core(data);
-        g_return_if_fail(convertedData);
-    }
-    WebCore::Array* convertedTransferList = 0;
-    if (transferList) {
-        convertedTransferList = WebKit::core(transferList);
-        g_return_if_fail(convertedTransferList);
-    }
+    WebCore::SerializedScriptValue* convertedData = WebKit::core(data);
+    WebCore::Array* convertedTransferList = WebKit::core(transferList);
     item->acceptTransferList(convertedData, convertedTransferList);
 #else
     WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition1")
@@ -250,33 +241,17 @@ void
 webkit_dom_test_serialized_script_value_interface_multi_transfer_list(WebKitDOMTestSerializedScriptValueInterface* self, WebKitDOMSerializedScriptValue* first, WebKitDOMArray* tx, WebKitDOMSerializedScriptValue* second, WebKitDOMArray* txx)
 {
 #if ENABLE(Condition1) || ENABLE(Condition2)
-    g_return_if_fail(self);
     WebCore::JSMainThreadNullState state;
+    g_return_if_fail(WEBKIT_DOM_IS_TEST_SERIALIZED_SCRIPT_VALUE_INTERFACE(self));
+    g_return_if_fail(WEBKIT_DOM_IS_SERIALIZED_SCRIPT_VALUE(first));
+    g_return_if_fail(WEBKIT_DOM_IS_ARRAY(tx));
+    g_return_if_fail(WEBKIT_DOM_IS_SERIALIZED_SCRIPT_VALUE(second));
+    g_return_if_fail(WEBKIT_DOM_IS_ARRAY(txx));
     WebCore::TestSerializedScriptValueInterface* item = WebKit::core(self);
-    g_return_if_fail(first);
-    g_return_if_fail(tx);
-    g_return_if_fail(second);
-    g_return_if_fail(txx);
-    WebCore::SerializedScriptValue* convertedFirst = 0;
-    if (first) {
-        convertedFirst = WebKit::core(first);
-        g_return_if_fail(convertedFirst);
-    }
-    WebCore::Array* convertedTx = 0;
-    if (tx) {
-        convertedTx = WebKit::core(tx);
-        g_return_if_fail(convertedTx);
-    }
-    WebCore::SerializedScriptValue* convertedSecond = 0;
-    if (second) {
-        convertedSecond = WebKit::core(second);
-        g_return_if_fail(convertedSecond);
-    }
-    WebCore::Array* convertedTxx = 0;
-    if (txx) {
-        convertedTxx = WebKit::core(txx);
-        g_return_if_fail(convertedTxx);
-    }
+    WebCore::SerializedScriptValue* convertedFirst = WebKit::core(first);
+    WebCore::Array* convertedTx = WebKit::core(tx);
+    WebCore::SerializedScriptValue* convertedSecond = WebKit::core(second);
+    WebCore::Array* convertedTxx = WebKit::core(txx);
     item->multiTransferList(convertedFirst, convertedTx, convertedSecond, convertedTxx);
 #else
     WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition1")
@@ -288,12 +263,11 @@ WebKitDOMSerializedScriptValue*
 webkit_dom_test_serialized_script_value_interface_get_value(WebKitDOMTestSerializedScriptValueInterface* self)
 {
 #if ENABLE(Condition1) || ENABLE(Condition2)
-    g_return_val_if_fail(self, 0);
     WebCore::JSMainThreadNullState state;
+    g_return_val_if_fail(WEBKIT_DOM_IS_TEST_SERIALIZED_SCRIPT_VALUE_INTERFACE(self), 0);
     WebCore::TestSerializedScriptValueInterface* item = WebKit::core(self);
     RefPtr<WebCore::SerializedScriptValue> gobjectResult = WTF::getPtr(item->value());
-    WebKitDOMSerializedScriptValue* result = WebKit::kit(gobjectResult.get());
-    return result;
+    return WebKit::kit(gobjectResult.get());
 #else
     WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition1")
     WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition2")
@@ -305,15 +279,11 @@ void
 webkit_dom_test_serialized_script_value_interface_set_value(WebKitDOMTestSerializedScriptValueInterface* self, WebKitDOMSerializedScriptValue* value)
 {
 #if ENABLE(Condition1) || ENABLE(Condition2)
-    g_return_if_fail(self);
     WebCore::JSMainThreadNullState state;
+    g_return_if_fail(WEBKIT_DOM_IS_TEST_SERIALIZED_SCRIPT_VALUE_INTERFACE(self));
+    g_return_if_fail(WEBKIT_DOM_IS_SERIALIZED_SCRIPT_VALUE(value));
     WebCore::TestSerializedScriptValueInterface* item = WebKit::core(self);
-    g_return_if_fail(value);
-    WebCore::SerializedScriptValue* convertedValue = 0;
-    if (value) {
-        convertedValue = WebKit::core(value);
-        g_return_if_fail(convertedValue);
-    }
+    WebCore::SerializedScriptValue* convertedValue = WebKit::core(value);
     item->setValue(convertedValue);
 #else
     WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition1")
@@ -325,12 +295,11 @@ WebKitDOMSerializedScriptValue*
 webkit_dom_test_serialized_script_value_interface_get_readonly_value(WebKitDOMTestSerializedScriptValueInterface* self)
 {
 #if ENABLE(Condition1) || ENABLE(Condition2)
-    g_return_val_if_fail(self, 0);
     WebCore::JSMainThreadNullState state;
+    g_return_val_if_fail(WEBKIT_DOM_IS_TEST_SERIALIZED_SCRIPT_VALUE_INTERFACE(self), 0);
     WebCore::TestSerializedScriptValueInterface* item = WebKit::core(self);
     RefPtr<WebCore::SerializedScriptValue> gobjectResult = WTF::getPtr(item->readonlyValue());
-    WebKitDOMSerializedScriptValue* result = WebKit::kit(gobjectResult.get());
-    return result;
+    return WebKit::kit(gobjectResult.get());
 #else
     WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition1")
     WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition2")
@@ -342,12 +311,11 @@ WebKitDOMSerializedScriptValue*
 webkit_dom_test_serialized_script_value_interface_get_cached_value(WebKitDOMTestSerializedScriptValueInterface* self)
 {
 #if ENABLE(Condition1) || ENABLE(Condition2)
-    g_return_val_if_fail(self, 0);
     WebCore::JSMainThreadNullState state;
+    g_return_val_if_fail(WEBKIT_DOM_IS_TEST_SERIALIZED_SCRIPT_VALUE_INTERFACE(self), 0);
     WebCore::TestSerializedScriptValueInterface* item = WebKit::core(self);
     RefPtr<WebCore::SerializedScriptValue> gobjectResult = WTF::getPtr(item->cachedValue());
-    WebKitDOMSerializedScriptValue* result = WebKit::kit(gobjectResult.get());
-    return result;
+    return WebKit::kit(gobjectResult.get());
 #else
     WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition1")
     WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition2")
@@ -359,15 +327,11 @@ void
 webkit_dom_test_serialized_script_value_interface_set_cached_value(WebKitDOMTestSerializedScriptValueInterface* self, WebKitDOMSerializedScriptValue* value)
 {
 #if ENABLE(Condition1) || ENABLE(Condition2)
-    g_return_if_fail(self);
     WebCore::JSMainThreadNullState state;
+    g_return_if_fail(WEBKIT_DOM_IS_TEST_SERIALIZED_SCRIPT_VALUE_INTERFACE(self));
+    g_return_if_fail(WEBKIT_DOM_IS_SERIALIZED_SCRIPT_VALUE(value));
     WebCore::TestSerializedScriptValueInterface* item = WebKit::core(self);
-    g_return_if_fail(value);
-    WebCore::SerializedScriptValue* convertedValue = 0;
-    if (value) {
-        convertedValue = WebKit::core(value);
-        g_return_if_fail(convertedValue);
-    }
+    WebCore::SerializedScriptValue* convertedValue = WebKit::core(value);
     item->setCachedValue(convertedValue);
 #else
     WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition1")
@@ -379,12 +343,11 @@ WebKitDOMMessagePortArray*
 webkit_dom_test_serialized_script_value_interface_get_ports(WebKitDOMTestSerializedScriptValueInterface* self)
 {
 #if ENABLE(Condition1) || ENABLE(Condition2)
-    g_return_val_if_fail(self, 0);
     WebCore::JSMainThreadNullState state;
+    g_return_val_if_fail(WEBKIT_DOM_IS_TEST_SERIALIZED_SCRIPT_VALUE_INTERFACE(self), 0);
     WebCore::TestSerializedScriptValueInterface* item = WebKit::core(self);
     RefPtr<WebCore::MessagePortArray> gobjectResult = WTF::getPtr(item->ports());
-    WebKitDOMMessagePortArray* result = WebKit::kit(gobjectResult.get());
-    return result;
+    return WebKit::kit(gobjectResult.get());
 #else
     WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition1")
     WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition2")
@@ -396,12 +359,11 @@ WebKitDOMSerializedScriptValue*
 webkit_dom_test_serialized_script_value_interface_get_cached_readonly_value(WebKitDOMTestSerializedScriptValueInterface* self)
 {
 #if ENABLE(Condition1) || ENABLE(Condition2)
-    g_return_val_if_fail(self, 0);
     WebCore::JSMainThreadNullState state;
+    g_return_val_if_fail(WEBKIT_DOM_IS_TEST_SERIALIZED_SCRIPT_VALUE_INTERFACE(self), 0);
     WebCore::TestSerializedScriptValueInterface* item = WebKit::core(self);
     RefPtr<WebCore::SerializedScriptValue> gobjectResult = WTF::getPtr(item->cachedReadonlyValue());
-    WebKitDOMSerializedScriptValue* result = WebKit::kit(gobjectResult.get());
-    return result;
+    return WebKit::kit(gobjectResult.get());
 #else
     WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition1")
     WEBKIT_WARN_FEATURE_NOT_PRESENT("Condition2")

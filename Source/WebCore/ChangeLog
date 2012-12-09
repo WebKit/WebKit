@@ -1,5 +1,237 @@
 2012-12-09  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Clean up g_return macros usage in GObject DOM bindings
+        https://bugs.webkit.org/show_bug.cgi?id=101079
+
+        Reviewed by Xan Lopez.
+
+        Several improvements:
+
+          - Move g_return macros at the beginning of the methods.
+          - Use them only to check parameters of public API.
+          - Use GObject macros to check GObjects.
+          - Check also GError parameters.
+          - Use early returns in kit and core methods, since they should
+            work even if g_return macros are disabled handling NULL
+            gracefully.
+
+        * bindings/scripts/CodeGeneratorGObject.pm:
+        (GetGReturnMacro):
+        (GenerateFunction):
+        (GenerateCFile):
+        (Generate):
+        * bindings/scripts/test/GObject/WebKitDOMFloat64Array.cpp:
+        (WebKit::kit):
+        (WebKit::core):
+        (WebKit::wrapFloat64Array):
+        (webkit_dom_float64array_foo):
+        * bindings/scripts/test/GObject/WebKitDOMTestActiveDOMObject.cpp:
+        (WebKit::kit):
+        (WebKit::core):
+        (WebKit::wrapTestActiveDOMObject):
+        (webkit_dom_test_active_dom_object_exciting_function):
+        (webkit_dom_test_active_dom_object_post_message):
+        (webkit_dom_test_active_dom_object_get_exciting_attr):
+        * bindings/scripts/test/GObject/WebKitDOMTestCallback.cpp:
+        (WebKit::kit):
+        (WebKit::core):
+        (WebKit::wrapTestCallback):
+        (webkit_dom_test_callback_callback_with_no_param):
+        (webkit_dom_test_callback_callback_with_class1param):
+        (webkit_dom_test_callback_callback_with_class2param):
+        (webkit_dom_test_callback_callback_with_non_bool_return_type):
+        (webkit_dom_test_callback_callback_with_string_list):
+        (webkit_dom_test_callback_callback_with_boolean):
+        (webkit_dom_test_callback_callback_requires_this_to_pass):
+        * bindings/scripts/test/GObject/WebKitDOMTestCustomNamedGetter.cpp:
+        (WebKit::kit):
+        (WebKit::core):
+        (WebKit::wrapTestCustomNamedGetter):
+        (webkit_dom_test_custom_named_getter_another_function):
+        * bindings/scripts/test/GObject/WebKitDOMTestEventConstructor.cpp:
+        (WebKit::kit):
+        (WebKit::core):
+        (WebKit::wrapTestEventConstructor):
+        (webkit_dom_test_event_constructor_get_attr1):
+        (webkit_dom_test_event_constructor_get_attr2):
+        * bindings/scripts/test/GObject/WebKitDOMTestEventTarget.cpp:
+        (WebKit::kit):
+        (WebKit::core):
+        (WebKit::wrapTestEventTarget):
+        (webkit_dom_test_event_target_item):
+        (webkit_dom_test_event_target_dispatch_event):
+        * bindings/scripts/test/GObject/WebKitDOMTestException.cpp:
+        (WebKit::kit):
+        (WebKit::core):
+        (WebKit::wrapTestException):
+        (webkit_dom_test_exception_get_name):
+        * bindings/scripts/test/GObject/WebKitDOMTestInterface.cpp:
+        (WebKit::kit):
+        (WebKit::core):
+        (WebKit::wrapTestInterface):
+        (webkit_dom_test_interface_supplemental_method1):
+        (webkit_dom_test_interface_supplemental_method2):
+        (webkit_dom_test_interface_supplemental_method4):
+        (webkit_dom_test_interface_get_supplemental_str1):
+        (webkit_dom_test_interface_get_supplemental_str2):
+        (webkit_dom_test_interface_set_supplemental_str2):
+        (webkit_dom_test_interface_get_supplemental_node):
+        (webkit_dom_test_interface_set_supplemental_node):
+        * bindings/scripts/test/GObject/WebKitDOMTestMediaQueryListListener.cpp:
+        (WebKit::kit):
+        (WebKit::core):
+        (WebKit::wrapTestMediaQueryListListener):
+        * bindings/scripts/test/GObject/WebKitDOMTestNamedConstructor.cpp:
+        (WebKit::kit):
+        (WebKit::core):
+        (WebKit::wrapTestNamedConstructor):
+        * bindings/scripts/test/GObject/WebKitDOMTestNode.cpp:
+        (WebKit::kit):
+        (WebKit::core):
+        (WebKit::wrapTestNode):
+        * bindings/scripts/test/GObject/WebKitDOMTestObj.cpp:
+        (WebKit::kit):
+        (WebKit::core):
+        (WebKit::wrapTestObj):
+        (webkit_dom_test_obj_void_method):
+        (webkit_dom_test_obj_void_method_with_args):
+        (webkit_dom_test_obj_long_method):
+        (webkit_dom_test_obj_long_method_with_args):
+        (webkit_dom_test_obj_obj_method):
+        (webkit_dom_test_obj_obj_method_with_args):
+        (webkit_dom_test_obj_method_that_requires_all_args_and_throws):
+        (webkit_dom_test_obj_serialized_value):
+        (webkit_dom_test_obj_idb_key):
+        (webkit_dom_test_obj_options_object):
+        (webkit_dom_test_obj_method_with_exception):
+        (webkit_dom_test_obj_with_script_state_void):
+        (webkit_dom_test_obj_with_script_state_obj):
+        (webkit_dom_test_obj_with_script_state_void_exception):
+        (webkit_dom_test_obj_with_script_state_obj_exception):
+        (webkit_dom_test_obj_with_script_execution_context):
+        (webkit_dom_test_obj_with_script_execution_context_and_script_state):
+        (webkit_dom_test_obj_with_script_execution_context_and_script_state_obj_exception):
+        (webkit_dom_test_obj_with_script_execution_context_and_script_state_with_spaces):
+        (webkit_dom_test_obj_method_with_optional_arg):
+        (webkit_dom_test_obj_method_with_non_optional_arg_and_optional_arg):
+        (webkit_dom_test_obj_method_with_non_optional_arg_and_two_optional_args):
+        (webkit_dom_test_obj_method_with_optional_string):
+        (webkit_dom_test_obj_method_with_optional_string_is_undefined):
+        (webkit_dom_test_obj_method_with_optional_string_is_null_string):
+        (webkit_dom_test_obj_conditional_method1):
+        (webkit_dom_test_obj_conditional_method2):
+        (webkit_dom_test_obj_conditional_method3):
+        (webkit_dom_test_obj_class_method):
+        (webkit_dom_test_obj_class_method_with_optional):
+        (webkit_dom_test_obj_overloaded_method1):
+        (webkit_dom_test_obj_convert1):
+        (webkit_dom_test_obj_convert2):
+        (webkit_dom_test_obj_convert4):
+        (webkit_dom_test_obj_convert5):
+        (webkit_dom_test_obj_mutable_point_function):
+        (webkit_dom_test_obj_immutable_point_function):
+        (webkit_dom_test_obj_orange):
+        (webkit_dom_test_obj_strict_function):
+        (webkit_dom_test_obj_variadic_string_method):
+        (webkit_dom_test_obj_variadic_double_method):
+        (webkit_dom_test_obj_variadic_node_method):
+        (webkit_dom_test_obj_get_read_only_long_attr):
+        (webkit_dom_test_obj_get_read_only_string_attr):
+        (webkit_dom_test_obj_get_read_only_test_obj_attr):
+        (webkit_dom_test_obj_get_short_attr):
+        (webkit_dom_test_obj_set_short_attr):
+        (webkit_dom_test_obj_get_unsigned_short_attr):
+        (webkit_dom_test_obj_set_unsigned_short_attr):
+        (webkit_dom_test_obj_get_long_attr):
+        (webkit_dom_test_obj_set_long_attr):
+        (webkit_dom_test_obj_get_long_long_attr):
+        (webkit_dom_test_obj_set_long_long_attr):
+        (webkit_dom_test_obj_get_unsigned_long_long_attr):
+        (webkit_dom_test_obj_set_unsigned_long_long_attr):
+        (webkit_dom_test_obj_get_string_attr):
+        (webkit_dom_test_obj_set_string_attr):
+        (webkit_dom_test_obj_get_test_obj_attr):
+        (webkit_dom_test_obj_set_test_obj_attr):
+        (webkit_dom_test_obj_get_xml_obj_attr):
+        (webkit_dom_test_obj_set_xml_obj_attr):
+        (webkit_dom_test_obj_get_create):
+        (webkit_dom_test_obj_set_create):
+        (webkit_dom_test_obj_get_reflected_string_attr):
+        (webkit_dom_test_obj_set_reflected_string_attr):
+        (webkit_dom_test_obj_get_reflected_integral_attr):
+        (webkit_dom_test_obj_set_reflected_integral_attr):
+        (webkit_dom_test_obj_get_reflected_unsigned_integral_attr):
+        (webkit_dom_test_obj_set_reflected_unsigned_integral_attr):
+        (webkit_dom_test_obj_get_reflected_boolean_attr):
+        (webkit_dom_test_obj_set_reflected_boolean_attr):
+        (webkit_dom_test_obj_get_reflected_url_attr):
+        (webkit_dom_test_obj_set_reflected_url_attr):
+        (webkit_dom_test_obj_get_reflected_custom_integral_attr):
+        (webkit_dom_test_obj_set_reflected_custom_integral_attr):
+        (webkit_dom_test_obj_get_reflected_custom_boolean_attr):
+        (webkit_dom_test_obj_set_reflected_custom_boolean_attr):
+        (webkit_dom_test_obj_get_reflected_custom_url_attr):
+        (webkit_dom_test_obj_set_reflected_custom_url_attr):
+        (webkit_dom_test_obj_get_attr_with_getter_exception):
+        (webkit_dom_test_obj_set_attr_with_getter_exception):
+        (webkit_dom_test_obj_get_attr_with_setter_exception):
+        (webkit_dom_test_obj_set_attr_with_setter_exception):
+        (webkit_dom_test_obj_get_string_attr_with_getter_exception):
+        (webkit_dom_test_obj_set_string_attr_with_getter_exception):
+        (webkit_dom_test_obj_get_string_attr_with_setter_exception):
+        (webkit_dom_test_obj_set_string_attr_with_setter_exception):
+        (webkit_dom_test_obj_get_with_script_state_attribute):
+        (webkit_dom_test_obj_set_with_script_state_attribute):
+        (webkit_dom_test_obj_get_with_script_execution_context_attribute):
+        (webkit_dom_test_obj_set_with_script_execution_context_attribute):
+        (webkit_dom_test_obj_get_with_script_state_attribute_raises):
+        (webkit_dom_test_obj_set_with_script_state_attribute_raises):
+        (webkit_dom_test_obj_get_with_script_execution_context_attribute_raises):
+        (webkit_dom_test_obj_set_with_script_execution_context_attribute_raises):
+        (webkit_dom_test_obj_get_with_script_execution_context_and_script_state_attribute):
+        (webkit_dom_test_obj_set_with_script_execution_context_and_script_state_attribute):
+        (webkit_dom_test_obj_get_with_script_execution_context_and_script_state_attribute_raises):
+        (webkit_dom_test_obj_set_with_script_execution_context_and_script_state_attribute_raises):
+        (webkit_dom_test_obj_get_with_script_execution_context_and_script_state_with_spaces_attribute):
+        (webkit_dom_test_obj_set_with_script_execution_context_and_script_state_with_spaces_attribute):
+        (webkit_dom_test_obj_get_conditional_attr1):
+        (webkit_dom_test_obj_set_conditional_attr1):
+        (webkit_dom_test_obj_get_conditional_attr2):
+        (webkit_dom_test_obj_set_conditional_attr2):
+        (webkit_dom_test_obj_get_conditional_attr3):
+        (webkit_dom_test_obj_set_conditional_attr3):
+        (webkit_dom_test_obj_get_any_attribute):
+        (webkit_dom_test_obj_set_any_attribute):
+        (webkit_dom_test_obj_get_content_document):
+        (webkit_dom_test_obj_get_mutable_point):
+        (webkit_dom_test_obj_set_mutable_point):
+        (webkit_dom_test_obj_get_immutable_point):
+        (webkit_dom_test_obj_set_immutable_point):
+        (webkit_dom_test_obj_get_strawberry):
+        (webkit_dom_test_obj_set_strawberry):
+        (webkit_dom_test_obj_get_strict_float):
+        (webkit_dom_test_obj_set_strict_float):
+        (webkit_dom_test_obj_get_description):
+        (webkit_dom_test_obj_get_id):
+        (webkit_dom_test_obj_set_id):
+        (webkit_dom_test_obj_get_hash):
+        (webkit_dom_test_obj_get_replaceable_attribute):
+        * bindings/scripts/test/GObject/WebKitDOMTestSerializedScriptValueInterface.cpp:
+        (WebKit::kit):
+        (WebKit::core):
+        (WebKit::wrapTestSerializedScriptValueInterface):
+        (webkit_dom_test_serialized_script_value_interface_accept_transfer_list):
+        (webkit_dom_test_serialized_script_value_interface_multi_transfer_list):
+        (webkit_dom_test_serialized_script_value_interface_get_value):
+        (webkit_dom_test_serialized_script_value_interface_set_value):
+        (webkit_dom_test_serialized_script_value_interface_get_readonly_value):
+        (webkit_dom_test_serialized_script_value_interface_get_cached_value):
+        (webkit_dom_test_serialized_script_value_interface_set_cached_value):
+        (webkit_dom_test_serialized_script_value_interface_get_ports):
+        (webkit_dom_test_serialized_script_value_interface_get_cached_readonly_value):
+
+2012-12-09  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Use a private struct and placement new syntax in GObject DOM bindings
         https://bugs.webkit.org/show_bug.cgi?id=101074
 

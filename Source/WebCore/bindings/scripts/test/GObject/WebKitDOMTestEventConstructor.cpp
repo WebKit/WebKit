@@ -41,7 +41,8 @@ namespace WebKit {
 
 WebKitDOMTestEventConstructor* kit(WebCore::TestEventConstructor* obj)
 {
-    g_return_val_if_fail(obj, 0);
+    if (!obj)
+        return 0;
 
     if (gpointer ret = DOMObjectCache::get(obj))
         return static_cast<WebKitDOMTestEventConstructor*>(ret);
@@ -51,14 +52,12 @@ WebKitDOMTestEventConstructor* kit(WebCore::TestEventConstructor* obj)
 
 WebCore::TestEventConstructor* core(WebKitDOMTestEventConstructor* request)
 {
-    g_return_val_if_fail(request, 0);
-
-    return static_cast<WebCore::TestEventConstructor*>(WEBKIT_DOM_OBJECT(request)->coreObject);
+    return request ? static_cast<WebCore::TestEventConstructor*>(WEBKIT_DOM_OBJECT(request)->coreObject) : 0;
 }
 
 WebKitDOMTestEventConstructor* wrapTestEventConstructor(WebCore::TestEventConstructor* coreObject)
 {
-    g_return_val_if_fail(coreObject, 0);
+    ASSERT(coreObject);
     return WEBKIT_DOM_TEST_EVENT_CONSTRUCTOR(g_object_new(WEBKIT_TYPE_DOM_TEST_EVENT_CONSTRUCTOR, "core-object", coreObject, NULL));
 }
 
@@ -148,8 +147,8 @@ static void webkit_dom_test_event_constructor_init(WebKitDOMTestEventConstructor
 gchar*
 webkit_dom_test_event_constructor_get_attr1(WebKitDOMTestEventConstructor* self)
 {
-    g_return_val_if_fail(self, 0);
     WebCore::JSMainThreadNullState state;
+    g_return_val_if_fail(WEBKIT_DOM_IS_TEST_EVENT_CONSTRUCTOR(self), 0);
     WebCore::TestEventConstructor* item = WebKit::core(self);
     gchar* result = convertToUTF8String(item->attr1());
     return result;
@@ -158,8 +157,8 @@ webkit_dom_test_event_constructor_get_attr1(WebKitDOMTestEventConstructor* self)
 gchar*
 webkit_dom_test_event_constructor_get_attr2(WebKitDOMTestEventConstructor* self)
 {
-    g_return_val_if_fail(self, 0);
     WebCore::JSMainThreadNullState state;
+    g_return_val_if_fail(WEBKIT_DOM_IS_TEST_EVENT_CONSTRUCTOR(self), 0);
     WebCore::TestEventConstructor* item = WebKit::core(self);
     gchar* result = convertToUTF8String(item->attr2());
     return result;
