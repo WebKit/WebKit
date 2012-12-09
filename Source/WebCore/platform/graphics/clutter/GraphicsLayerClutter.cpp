@@ -28,8 +28,9 @@
 
 #if USE(ACCELERATED_COMPOSITING)
 #include "GraphicsLayerClutter.h"
-#include "GraphicsLayerFactory.h"
 
+#include "FloatRect.h"
+#include "GraphicsLayerFactory.h"
 #include "NotImplemented.h"
 
 namespace WebCore {
