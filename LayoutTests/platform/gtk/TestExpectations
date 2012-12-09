@@ -1422,6 +1422,22 @@ webkit.org/b/104469 fast/dom/MicroData/nameditem-returns-propertynodelist.html [
 webkit.org/b/104469 fast/dom/MicroData/properties-collection-nameditem-test.html [ Failure ]
 webkit.org/b/104469 fast/dom/MicroData/propertynodelist-getvalues-test.html [ Failure ]
 
+webkit.org/b/104493 http/tests/security/xss-DENIED-xml-external-entity.xhtml [ Failure ]
+webkit.org/b/104493 svg/custom/deep-dynamic-updates.svg [ Failure ]
+webkit.org/b/104493 svg/custom/foreignObject-crash-on-hover.xml [ Failure ]
+webkit.org/b/104493 svg/custom/js-update-gradient.svg [ Failure ]
+webkit.org/b/104493 svg/custom/js-update-path-changes.svg [ Failure ]
+webkit.org/b/104493 svg/custom/js-update-path-removal.svg [ Failure ]
+webkit.org/b/104493 svg/custom/js-update-pattern-child.svg [ Failure ]
+webkit.org/b/104493 svg/custom/js-update-pattern.svg [ Failure ]
+webkit.org/b/104493 svg/custom/js-update-polygon-changes.svg [ Failure ]
+webkit.org/b/104493 svg/custom/js-update-polygon-removal.svg [ Failure ]
+webkit.org/b/104493 svg/custom/js-update-stop-linked-gradient.svg [ Failure ]
+webkit.org/b/104493 svg/custom/js-update-stop.svg [ Failure ]
+webkit.org/b/104493 svg/custom/js-update-transform-addition.svg [ Failure ]
+webkit.org/b/104493 svg/custom/js-update-transform-changes.svg [ Failure ]
+webkit.org/b/104493 svg/custom/text-xy-updates-SVGList.xhtml [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing
 #////////////////////////////////////////////////////////////////////////////////////////
