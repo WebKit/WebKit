@@ -240,8 +240,10 @@ int AccessibilityUIElement::childrenCount()
 
 AccessibilityUIElement AccessibilityUIElement::elementAtPoint(int x, int y)
 {
-    // FIXME: implement
-    return 0;
+    if (!m_element)
+        return 0;
+
+    return AccessibilityUIElement(atk_component_ref_accessible_at_point(ATK_COMPONENT(m_element), x, y, ATK_XY_WINDOW));
 }
 
 AccessibilityUIElement AccessibilityUIElement::linkedUIElementAtIndex(unsigned index)

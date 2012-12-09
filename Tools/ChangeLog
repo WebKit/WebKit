@@ -1,3 +1,16 @@
+2012-12-09  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        [GTK] accessibility/label-for-control-hittest.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=98368
+
+        Reviewed by Martin Robinson.
+
+        The test was failing because AccessibilityUIElement::elementAtPoint was
+        not implemented.
+
+        * DumpRenderTree/gtk/AccessibilityUIElementGtk.cpp:
+        (AccessibilityUIElement::elementAtPoint): implemented
+
 2012-12-09  Jon Lee  <jonlee@apple.com>
 
         [WK2] Move button image to injected bundle
