@@ -245,28 +245,28 @@ static void webkit_hit_test_result_class_init(WebKitHitTestResultClass* webHitTe
     /**
      * WebKitHitTestResult:x:
      *
-     * The x coordintate of the event relative to the view's window.
+     * The x coordinate of the event relative to the view's window.
      *
      * Since: 1.10
      */
     g_object_class_install_property(objectClass, PROP_X,
                                     g_param_spec_int("x",
                                                      _("X coordinate"),
-                                                     _("The x coordintate of the event relative to the view's window."),
+                                                     _("The x coordinate of the event relative to the view's window."),
                                                      G_MININT, G_MAXINT, 0,
                                                      static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY)));
 
     /**
      * WebKitHitTestResult:y:
      *
-     * The x coordintate of the event relative to the view's window.
+     * The x coordinate of the event relative to the view's window.
      *
      * Since: 1.10
      */
     g_object_class_install_property(objectClass, PROP_Y,
                                     g_param_spec_int("y",
                                                      _("Y coordinate"),
-                                                     _("The y coordintate of the event relative to the view's window."),
+                                                     _("The y coordinate of the event relative to the view's window."),
                                                      G_MININT, G_MAXINT, 0,
                                                      static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY)));
 
