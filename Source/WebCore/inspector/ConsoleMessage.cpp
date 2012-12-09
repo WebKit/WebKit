@@ -219,6 +219,11 @@ bool ConsoleMessage::isEqual(ConsoleMessage* msg) const
     if (m_arguments) {
         if (!m_arguments->isEqual(msg->m_arguments.get()))
             return false;
+        // Never treat objects as equal - their properties might change over time.
+        for (size_t i = 0; i < m_arguments->argumentCount(); ++i) {
+            if (m_arguments->argumentAt(i).isObject())
+                return false;
+        }
     } else if (msg->m_arguments)
         return false;
 

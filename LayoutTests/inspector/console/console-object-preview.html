@@ -1,0 +1,75 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="../../http/tests/inspector/console-test.js"></script>
+<script>
+
+function logToConsole()
+{
+    console.log("Mutating object in a loop");
+    var object = { a: 0, b: 0 };
+    for (var i = 0; i < 3; ++i) {
+        object.c = i;
+        console.log(object);
+    }
+
+    console.log("Mutating array in a loop");
+    var array = [0, 0, 0];
+    for (var i = 0; i < 3; ++i) {
+        array[2] = i;
+        console.log(array);
+    }
+
+    console.log("Object with many properties");
+    var objectWithManyProperties = {};
+    for (var i = 0; i < 10; ++i) {
+        objectWithManyProperties["property_" + i] = i;
+    }
+    console.log(objectWithManyProperties);
+
+    console.log("Array with many properties");
+    var arrayWithManyProperties = [0, 1];
+    for (var i = 0; i < 10; ++i) {
+        arrayWithManyProperties["property_" + i] = i;
+    }
+    console.log(arrayWithManyProperties);
+
+    console.log("Object with proto");
+    var objectWithProto = { d: 1 };
+    objectWithProto.__proto__ = object;
+    console.log(objectWithProto);
+
+    console.log("Sparse array");
+    var sparseArray = new Array(150);
+    sparseArray[50] = 50;
+    console.log(sparseArray);
+
+    console.log("Dense array with indexes and propeties");
+    var denseArray = new Array(150);
+    for (var i = 0; i < 150; ++i) {
+        denseArray[i] = i;
+        denseArray["property_" + i] = i;
+    }
+    console.log(denseArray);
+}
+
+function test()
+{
+    InspectorTest.evaluateInPage("logToConsole()", callback);
+
+    function callback()
+    {
+        InspectorTest.dumpConsoleMessages();
+        InspectorTest.completeTest();
+    }
+}
+</script>
+</head>
+
+<body onload="runTest()">
+<p>
+Tests that console produces instant previews for arrays and objects.
+</p>
+
+</body>
+</html>
