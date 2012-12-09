@@ -113,7 +113,8 @@ bool ExecutionCounter::hasCrossedThreshold(CodeBlock* codeBlock) const
     double modifiedThreshold = applyMemoryUsageHeuristics(m_activeThreshold, codeBlock);
     
     return static_cast<double>(m_totalCount) + m_counter >=
-         modifiedThreshold - static_cast<double>(m_activeThreshold) / 2;
+        modifiedThreshold - static_cast<double>(
+            std::min(m_activeThreshold, Options::maximumExecutionCountsBetweenCheckpoints())) / 2;
 }
 
 bool ExecutionCounter::setThreshold(CodeBlock* codeBlock)

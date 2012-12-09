@@ -315,8 +315,7 @@ enum EntryKind { Prologue, ArityCheck };
 static SlowPathReturnType entryOSR(ExecState* exec, Instruction*, CodeBlock* codeBlock, const char *name, EntryKind kind)
 {
 #if ENABLE(JIT_VERBOSE_OSR)
-    dataLogF("%p: Entered %s with executeCounter = %s\n", codeBlock, name,
-            codeBlock->llintExecuteCounter().status());
+    dataLog(*codeBlock, ": Entered ", name, " with executeCounter = ", codeBlock->llintExecuteCounter(), "\n");
 #else
     UNUSED_PARAM(name);
 #endif
@@ -364,8 +363,7 @@ LLINT_SLOW_PATH_DECL(loop_osr)
     CodeBlock* codeBlock = exec->codeBlock();
     
 #if ENABLE(JIT_VERBOSE_OSR)
-    dataLogF("%p: Entered loop_osr with executeCounter = %s\n", codeBlock,
-            codeBlock->llintExecuteCounter().status());
+    dataLog(*codeBlock, ": Entered loop_osr with executeCounter = ", codeBlock->llintExecuteCounter(), "\n");
 #endif
     
     if (!shouldJIT(exec)) {
@@ -395,8 +393,7 @@ LLINT_SLOW_PATH_DECL(replace)
     CodeBlock* codeBlock = exec->codeBlock();
     
 #if ENABLE(JIT_VERBOSE_OSR)
-    dataLogF("%p: Entered replace with executeCounter = %s\n", codeBlock,
-            codeBlock->llintExecuteCounter().status());
+    dataLog(*codeBlock, ": Entered replace with executeCounter = ", codeBlock->llintExecuteCounter(), "\n");
 #endif
     
     if (shouldJIT(exec))

@@ -270,6 +270,8 @@
 		0FF427651591A1CE004CB9FF /* DFGDisassembler.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FF427621591A1C9004CB9FF /* DFGDisassembler.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FF42771159275D5004CB9FF /* ResolveGlobalStatus.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FF4276E159275D2004CB9FF /* ResolveGlobalStatus.cpp */; };
 		0FF42772159275D8004CB9FF /* ResolveGlobalStatus.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FF4276F159275D2004CB9FF /* ResolveGlobalStatus.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0FF60AC216740F8300029779 /* ReduceWhitespace.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FF60AC016740F8100029779 /* ReduceWhitespace.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0FF60AC316740F8800029779 /* ReduceWhitespace.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FF60ABF16740F8100029779 /* ReduceWhitespace.cpp */; };
 		0FF7168C15A3B235008F5DAA /* PropertyOffset.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FF7168A15A3B231008F5DAA /* PropertyOffset.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FF729A5166AD351000F5BA3 /* ProfilerBytecode.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FF72993166AD347000F5BA3 /* ProfilerBytecode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0FF729AD166AD35C000F5BA3 /* ProfilerBytecode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FF72992166AD347000F5BA3 /* ProfilerBytecode.cpp */; };
@@ -1095,6 +1097,8 @@
 		0FF427621591A1C9004CB9FF /* DFGDisassembler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGDisassembler.h; path = dfg/DFGDisassembler.h; sourceTree = "<group>"; };
 		0FF4276E159275D2004CB9FF /* ResolveGlobalStatus.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ResolveGlobalStatus.cpp; sourceTree = "<group>"; };
 		0FF4276F159275D2004CB9FF /* ResolveGlobalStatus.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResolveGlobalStatus.h; sourceTree = "<group>"; };
+		0FF60ABF16740F8100029779 /* ReduceWhitespace.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ReduceWhitespace.cpp; sourceTree = "<group>"; };
+		0FF60AC016740F8100029779 /* ReduceWhitespace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReduceWhitespace.h; sourceTree = "<group>"; };
 		0FF7168A15A3B231008F5DAA /* PropertyOffset.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PropertyOffset.h; sourceTree = "<group>"; };
 		0FF72992166AD347000F5BA3 /* ProfilerBytecode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ProfilerBytecode.cpp; path = profiler/ProfilerBytecode.cpp; sourceTree = "<group>"; };
 		0FF72993166AD347000F5BA3 /* ProfilerBytecode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ProfilerBytecode.h; path = profiler/ProfilerBytecode.h; sourceTree = "<group>"; };
@@ -2627,11 +2631,11 @@
 				0F93329314CA7DC10085F3C6 /* CallLinkStatus.cpp */,
 				0F93329414CA7DC10085F3C6 /* CallLinkStatus.h */,
 				0F0B83B814BCF95B00885B4F /* CallReturnOffsetToBytecodeOffset.h */,
+				969A07900ED1D3AE00F1F681 /* CodeBlock.cpp */,
+				969A07910ED1D3AE00F1F681 /* CodeBlock.h */,
 				0F8F943D1667632D00D61971 /* CodeBlockHash.cpp */,
 				0F8F943E1667632D00D61971 /* CodeBlockHash.h */,
 				0F96EBB116676EF4008BADE3 /* CodeBlockWithJITType.h */,
-				969A07900ED1D3AE00F1F681 /* CodeBlock.cpp */,
-				969A07910ED1D3AE00F1F681 /* CodeBlock.h */,
 				0F8F9445166764EE00D61971 /* CodeOrigin.cpp */,
 				0FBD7E671447998F00481315 /* CodeOrigin.h */,
 				0F8F943F1667632D00D61971 /* CodeType.cpp */,
@@ -2664,6 +2668,8 @@
 				0F93329914CA7DC10085F3C6 /* PutByIdStatus.cpp */,
 				0F93329A14CA7DC10085F3C6 /* PutByIdStatus.h */,
 				0F9FC8C114E1B5FB00D52AE0 /* PutKind.h */,
+				0FF60ABF16740F8100029779 /* ReduceWhitespace.cpp */,
+				0FF60AC016740F8100029779 /* ReduceWhitespace.h */,
 				0FF4276E159275D2004CB9FF /* ResolveGlobalStatus.cpp */,
 				0FF4276F159275D2004CB9FF /* ResolveGlobalStatus.h */,
 				A7AFC17715F7EFE30048F57B /* ResolveOperation.h */,
@@ -2679,6 +2685,8 @@
 				0F766D3715AE4A1A008F363E /* StructureStubClearingWatchpoint.h */,
 				BCCF0D0B0EF0B8A500413C8F /* StructureStubInfo.cpp */,
 				BCCF0D070EF0AAB900413C8F /* StructureStubInfo.h */,
+				A79E781E15EECBA80047C855 /* UnlinkedCodeBlock.cpp */,
+				A79E781F15EECBA80047C855 /* UnlinkedCodeBlock.h */,
 				0F963B3613FC6FDE0002D9B2 /* ValueProfile.h */,
 				0F426A451460CBAB00131F8F /* ValueRecovery.h */,
 				0F426A461460CBAB00131F8F /* VirtualRegister.h */,
@@ -2688,8 +2696,6 @@
 				0F93329914CA7DC10085F3C6 /* PutByIdStatus.cpp */,
 				0F93329A14CA7DC10085F3C6 /* PutByIdStatus.h */,
 				0F93329B14CA7DC10085F3C6 /* StructureSet.h */,
-				A79E781E15EECBA80047C855 /* UnlinkedCodeBlock.cpp */,
-				A79E781F15EECBA80047C855 /* UnlinkedCodeBlock.h */,
 			);
 			path = bytecode;
 			sourceTree = "<group>";
@@ -3137,6 +3143,7 @@
 				0FF729BE166AD360000F5BA3 /* ProfilerExecutionCounter.h in Headers */,
 				0FF729BF166AD360000F5BA3 /* ProfilerOrigin.h in Headers */,
 				0FF729C0166AD360000F5BA3 /* ProfilerOriginStack.h in Headers */,
+				0FF60AC216740F8300029779 /* ReduceWhitespace.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3733,6 +3740,7 @@
 				0FF729B2166AD35C000F5BA3 /* ProfilerDatabase.cpp in Sources */,
 				0FF729B3166AD35C000F5BA3 /* ProfilerOrigin.cpp in Sources */,
 				0FF729B4166AD35C000F5BA3 /* ProfilerOriginStack.cpp in Sources */,
+				0FF60AC316740F8800029779 /* ReduceWhitespace.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

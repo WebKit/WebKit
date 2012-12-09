@@ -1822,12 +1822,15 @@ DEFINE_STUB_FUNCTION(void, optimize)
 
     if (!codeBlock->checkIfOptimizationThresholdReached()) {
         codeBlock->updateAllPredictions();
+#if ENABLE(JIT_VERBOSE_OSR)
+        dataLog("Choosing not to optimize ", *codeBlock, " yet.\n");
+#endif
         return;
     }
 
     if (codeBlock->hasOptimizedReplacement()) {
 #if ENABLE(JIT_VERBOSE_OSR)
-        dataLogF("Considering OSR ", *codeBlock, " -> ", *codeBlock->replacement(), ".\n");
+        dataLog("Considering OSR ", *codeBlock, " -> ", *codeBlock->replacement(), ".\n");
 #endif
         // If we have an optimized replacement, then it must be the case that we entered
         // cti_optimize from a loop. That's because is there's an optimized replacement,
@@ -1844,7 +1847,7 @@ DEFINE_STUB_FUNCTION(void, optimize)
         // additional checking anyway, to reduce the amount of recompilation thrashing.
         if (codeBlock->replacement()->shouldReoptimizeFromLoopNow()) {
 #if ENABLE(JIT_VERBOSE_OSR)
-            dataLogF("Triggering reoptimization of ", *codeBlock, "(", *codeBlock->replacement(), ") (in loop).\n");
+            dataLog("Triggering reoptimization of ", *codeBlock, "(", *codeBlock->replacement(), ") (in loop).\n");
 #endif
             codeBlock->reoptimize();
             return;
@@ -1852,23 +1855,27 @@ DEFINE_STUB_FUNCTION(void, optimize)
     } else {
         if (!codeBlock->shouldOptimizeNow()) {
 #if ENABLE(JIT_VERBOSE_OSR)
-            dataLogF("Delaying optimization for ", *codeBlock, " (in loop) because of insufficient profiling.\n");
+            dataLog("Delaying optimization for ", *codeBlock, " (in loop) because of insufficient profiling.\n");
 #endif
             return;
         }
+        
+#if ENABLE(JIT_VERBOSE_OSR)
+        dataLog("Triggering optimized compilation of ", *codeBlock, "\n");
+#endif
         
         JSScope* scope = callFrame->scope();
         JSObject* error = codeBlock->compileOptimized(callFrame, scope, bytecodeIndex);
 #if ENABLE(JIT_VERBOSE_OSR)
         if (error)
-            dataLogF("WARNING: optimized compilation failed.\n");
+            dataLog("WARNING: optimized compilation failed.\n");
 #else
         UNUSED_PARAM(error);
 #endif
         
         if (codeBlock->replacement() == codeBlock) {
 #if ENABLE(JIT_VERBOSE_OSR)
-            dataLogF("Optimizing ", *codeBlock, " failed.\n");
+            dataLog("Optimizing ", *codeBlock, " failed.\n");
 #endif
             
             ASSERT(codeBlock->getJITType() == JITCode::BaselineJIT);
@@ -1887,7 +1894,7 @@ DEFINE_STUB_FUNCTION(void, optimize)
                 RawPointer((STUB_RETURN_ADDRESS).value()), " -> ", RawPointer(address), ".\n");
         }
 #if ENABLE(JIT_VERBOSE_OSR)
-        dataLogF("Optimizing ", *codeBlock, " succeeded, performing OSR after a delay of ", codeBlock->optimizationDelayCounter(), ".\n");
+        dataLog("Optimizing ", *codeBlock, " succeeded, performing OSR after a delay of ", codeBlock->optimizationDelayCounter(), ".\n");
 #endif
 
         codeBlock->optimizeSoon();
@@ -1896,7 +1903,7 @@ DEFINE_STUB_FUNCTION(void, optimize)
     }
     
 #if ENABLE(JIT_VERBOSE_OSR)
-    dataLogF("Optimizing ", *codeBlock, " succeeded, OSR failed, after a delay of ", codeBlock->optimizationDelayCounter(), ".\n");
+    dataLog("Optimizing ", *codeBlock, " succeeded, OSR failed, after a delay of ", codeBlock->optimizationDelayCounter(), ".\n");
 #endif
 
     // Count the OSR failure as a speculation failure. If this happens a lot, then
@@ -1904,7 +1911,7 @@ DEFINE_STUB_FUNCTION(void, optimize)
     optimizedCodeBlock->countOSRExit();
     
 #if ENABLE(JIT_VERBOSE_OSR)
-    dataLogF("Encountered OSR failure ", *codeBlock, " -> ", *codeBlock->replacement(), ".\n");
+    dataLog("Encountered OSR failure ", *codeBlock, " -> ", *codeBlock->replacement(), ".\n");
 #endif
 
     // We are a lot more conservative about triggering reoptimization after OSR failure than
@@ -1917,7 +1924,7 @@ DEFINE_STUB_FUNCTION(void, optimize)
     // reoptimization trigger.
     if (optimizedCodeBlock->shouldReoptimizeNow()) {
 #if ENABLE(JIT_VERBOSE_OSR)
-        dataLogF("Triggering reoptimization of ", *codeBlock, " -> ", *codeBlock->replacement(), " (after OSR fail).\n");
+        dataLog("Triggering reoptimization of ", *codeBlock, " -> ", *codeBlock->replacement(), " (after OSR fail).\n");
 #endif
         codeBlock->reoptimize();
         return;

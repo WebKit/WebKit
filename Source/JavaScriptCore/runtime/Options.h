@@ -89,7 +89,7 @@ namespace JSC {
     v(int32, thresholdForJITSoon, 100) \
     \
     v(int32, thresholdForOptimizeAfterWarmUp, 1000) \
-    v(int32, thresholdForOptimizeAfterLongWarmUp, 5000) \
+    v(int32, thresholdForOptimizeAfterLongWarmUp, 1000) \
     v(int32, thresholdForOptimizeSoon, 1000) \
     \
     v(int32, executionCounterIncrementForLoop, 1) \

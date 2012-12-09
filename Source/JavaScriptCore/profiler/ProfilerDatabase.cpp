@@ -57,25 +57,7 @@ Bytecodes* Database::ensureBytecodesFor(CodeBlock* codeBlock)
     if (iter != m_bytecodesMap.end())
         return iter->value;
     
-    String sourceCode;
-    
-    if (codeBlock->codeType() == FunctionCode) {
-        SourceProvider* provider = codeBlock->source();
-        FunctionExecutable* executable = jsCast<FunctionExecutable*>(codeBlock->ownerExecutable());
-        UnlinkedFunctionExecutable* unlinked = executable->unlinkedExecutable();
-        unsigned unlinkedStartOffset = unlinked->startOffset();
-        unsigned linkedStartOffset = executable->source().startOffset();
-        int delta = linkedStartOffset - unlinkedStartOffset;
-        StringBuilder builder;
-        builder.append("function ");
-        builder.append(provider->getRange(
-            delta + unlinked->functionStartOffset(),
-            delta + unlinked->startOffset() + unlinked->sourceLength()));
-        sourceCode = builder.toString();
-    } else
-        sourceCode = codeBlock->ownerExecutable()->source().toString();
-    
-    Bytecodes* result = addBytecodes(codeBlock->hash(), sourceCode);
+    Bytecodes* result = addBytecodes(codeBlock->hash(), codeBlock->sourceCodeForTools());
     
     for (unsigned bytecodeIndex = 0; bytecodeIndex < codeBlock->instructions().size();) {
         out.reset();

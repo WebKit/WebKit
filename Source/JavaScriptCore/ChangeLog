@@ -1,3 +1,87 @@
+2012-12-08  Filip Pizlo  <fpizlo@apple.com>
+
+        JSC should scale the optimization threshold for a code block according to the cost of compiling it
+        https://bugs.webkit.org/show_bug.cgi?id=104406
+
+        Reviewed by Oliver Hunt.
+
+        We've long known that we want to scale the execution count threshold needed for the DFG
+        to kick in to scale according to some estimate of the cost of compiling that code block.
+        This institutes a relationship like this:
+        
+        threshold = thresholdSetting * (a * sqrt(instructionCount + b) + abs(c * instructionCount) + d
+        
+        Where a, b, c, d are coefficients derived from fitting the above expression to various
+        data points, which I chose based on looking at one benchmark (3d-cube) and from my
+        own intuitions.
+        
+        Making this work well also required changing the thresholdForOptimizeAfterLongWarmUp
+        from 5000 to 1000.
+        
+        This is a >1% speed-up on SunSpider, a >3% speed-up on V8Spider, ~1% speed-up on V8v7,
+        neutral on Octane, and neutral on Kraken.
+        
+        I also out-of-lined a bunch of methods related to these heuristics, because I couldn't
+        stand having them defined in the header anymore. I also made improvements to debugging
+        code because I needed it for tuning this change.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Target.pri:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::sourceCodeForTools):
+        (JSC::CodeBlock::sourceCodeOnOneLine):
+        (JSC::CodeBlock::dumpBytecode):
+        (JSC::CodeBlock::CodeBlock):
+        (JSC::CodeBlock::reoptimizationRetryCounter):
+        (JSC::CodeBlock::countReoptimization):
+        (JSC::CodeBlock::optimizationThresholdScalingFactor):
+        (JSC::clipThreshold):
+        (JSC::CodeBlock::counterValueForOptimizeAfterWarmUp):
+        (JSC::CodeBlock::counterValueForOptimizeAfterLongWarmUp):
+        (JSC::CodeBlock::counterValueForOptimizeSoon):
+        (JSC::CodeBlock::checkIfOptimizationThresholdReached):
+        (JSC::CodeBlock::optimizeNextInvocation):
+        (JSC::CodeBlock::dontOptimizeAnytimeSoon):
+        (JSC::CodeBlock::optimizeAfterWarmUp):
+        (JSC::CodeBlock::optimizeAfterLongWarmUp):
+        (JSC::CodeBlock::optimizeSoon):
+        (JSC::CodeBlock::adjustedExitCountThreshold):
+        (JSC::CodeBlock::exitCountThresholdForReoptimization):
+        (JSC::CodeBlock::exitCountThresholdForReoptimizationFromLoop):
+        (JSC::CodeBlock::shouldReoptimizeNow):
+        (JSC::CodeBlock::shouldReoptimizeFromLoopNow):
+        * bytecode/CodeBlock.h:
+        * bytecode/ExecutionCounter.cpp:
+        (JSC::ExecutionCounter::hasCrossedThreshold):
+        * bytecode/ReduceWhitespace.cpp: Added.
+        (JSC::reduceWhitespace):
+        * bytecode/ReduceWhitespace.h: Added.
+        * dfg/DFGCapabilities.cpp:
+        (JSC::DFG::mightCompileEval):
+        (JSC::DFG::mightCompileProgram):
+        (JSC::DFG::mightCompileFunctionForCall):
+        (JSC::DFG::mightCompileFunctionForConstruct):
+        (JSC::DFG::mightInlineFunctionForCall):
+        (JSC::DFG::mightInlineFunctionForConstruct):
+        * dfg/DFGCapabilities.h:
+        * dfg/DFGDisassembler.cpp:
+        (JSC::DFG::Disassembler::dumpHeader):
+        * dfg/DFGOSREntry.cpp:
+        (JSC::DFG::prepareOSREntry):
+        * jit/JITDisassembler.cpp:
+        (JSC::JITDisassembler::dumpHeader):
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::entryOSR):
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * profiler/ProfilerDatabase.cpp:
+        (JSC::Profiler::Database::ensureBytecodesFor):
+        * runtime/Options.h:
+
 2012-12-07  Jonathan Liu  <net147@gmail.com>
 
         Add missing forward declaration for JSC::ArrayAllocationProfile

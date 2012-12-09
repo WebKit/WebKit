@@ -33,6 +33,33 @@
 namespace JSC { namespace DFG {
 
 #if ENABLE(DFG_JIT)
+bool mightCompileEval(CodeBlock* codeBlock)
+{
+    return codeBlock->instructionCount() <= Options::maximumOptimizationCandidateInstructionCount();
+}
+bool mightCompileProgram(CodeBlock* codeBlock)
+{
+    return codeBlock->instructionCount() <= Options::maximumOptimizationCandidateInstructionCount();
+}
+bool mightCompileFunctionForCall(CodeBlock* codeBlock)
+{
+    return codeBlock->instructionCount() <= Options::maximumOptimizationCandidateInstructionCount();
+}
+bool mightCompileFunctionForConstruct(CodeBlock* codeBlock)
+{
+    return codeBlock->instructionCount() <= Options::maximumOptimizationCandidateInstructionCount();
+}
+
+bool mightInlineFunctionForCall(CodeBlock* codeBlock)
+{
+    return codeBlock->instructionCount() <= Options::maximumFunctionForCallInlineCandidateInstructionCount()
+        && !codeBlock->ownerExecutable()->needsActivation();
+}
+bool mightInlineFunctionForConstruct(CodeBlock* codeBlock)
+{
+    return codeBlock->instructionCount() <= Options::maximumFunctionForConstructInlineCandidateInstructionCount()
+        && !codeBlock->ownerExecutable()->needsActivation();
+}
 
 static inline void debugFail(CodeBlock* codeBlock, OpcodeID opcodeID, bool result)
 {

@@ -39,33 +39,12 @@ namespace JSC { namespace DFG {
 #if ENABLE(DFG_JIT)
 // Fast check functions; if they return true it is still necessary to
 // check opcodes.
-inline bool mightCompileEval(CodeBlock* codeBlock)
-{
-    return codeBlock->instructionCount() <= Options::maximumOptimizationCandidateInstructionCount();
-}
-inline bool mightCompileProgram(CodeBlock* codeBlock)
-{
-    return codeBlock->instructionCount() <= Options::maximumOptimizationCandidateInstructionCount();
-}
-inline bool mightCompileFunctionForCall(CodeBlock* codeBlock)
-{
-    return codeBlock->instructionCount() <= Options::maximumOptimizationCandidateInstructionCount();
-}
-inline bool mightCompileFunctionForConstruct(CodeBlock* codeBlock)
-{
-    return codeBlock->instructionCount() <= Options::maximumOptimizationCandidateInstructionCount();
-}
-
-inline bool mightInlineFunctionForCall(CodeBlock* codeBlock)
-{
-    return codeBlock->instructionCount() <= Options::maximumFunctionForCallInlineCandidateInstructionCount()
-        && !codeBlock->ownerExecutable()->needsActivation();
-}
-inline bool mightInlineFunctionForConstruct(CodeBlock* codeBlock)
-{
-    return codeBlock->instructionCount() <= Options::maximumFunctionForConstructInlineCandidateInstructionCount()
-        && !codeBlock->ownerExecutable()->needsActivation();
-}
+bool mightCompileEval(CodeBlock*);
+bool mightCompileProgram(CodeBlock*);
+bool mightCompileFunctionForCall(CodeBlock*);
+bool mightCompileFunctionForConstruct(CodeBlock*);
+bool mightInlineFunctionForCall(CodeBlock*);
+bool mightInlineFunctionForConstruct(CodeBlock*);
 
 // Opcode checking.
 inline bool canInlineResolveOperations(OpcodeID opcode, ResolveOperations* operations)
