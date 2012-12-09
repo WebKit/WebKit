@@ -1,3 +1,25 @@
+2012-12-08  Kent Tamura  <tkent@chromium.org>
+
+        Add appearance tests for input[type=datetime-local]
+        https://bugs.webkit.org/show_bug.cgi?id=104439
+
+        Reviewed by Kentaro Hara.
+
+        * fast/forms/datetimelocal/datetimelocal-appearance-basic-expected.txt: Added.
+        * fast/forms/datetimelocal/datetimelocal-appearance-basic.html: Added.
+        * fast/forms/datetimelocal/datetimelocal-appearance-l10n-expected.txt: Added.
+        * fast/forms/datetimelocal/datetimelocal-appearance-l10n.html: Added.
+        * platform/chromium-mac/fast/forms/datetimelocal/datetimelocal-appearance-basic-expected.png: Added.
+        * platform/chromium-mac/fast/forms/datetimelocal/datetimelocal-appearance-l10n-expected.png:
+        Added.
+        The placeholder strings "yyyy" "mm" "dd" are expected to be
+        non-localized because they don't support
+        setLangAttributeAwareFormControlUIEnabled(true).
+        Note that sub-fields order of filled-outs input and empty inputs
+        in ar-eg and he-il locales are mismatched. It will be addressed in
+        webkit.org/b/104438.
+        * platform/chromium/TestExpectations:
+
 2012-12-08  No'am Rosenthal  <noam@webkit.org>
 
         Use background color for GraphicsLayers when applicable
