@@ -4233,3 +4233,9 @@ webkit.org/b/94002 [ Mac Debug ] inspector/debugger/live-edit.html [ Crash Pass 
 # This one has correct results, but the tools refuse to rebaseline it.
 Bug(senorblanco) [ MountainLion ] compositing/background-color/background-color-change-to-text.html [ ImageOnlyFailure ]
 Bug(senorblanco) [ MountainLion ] platform/chromium/virtual/softwarecompositing/background-color/background-color-change-to-text.html [ ImageOnlyFailure ]
+
+# Asserting since r136948.
+webkit.org/b/104473 [ Debug ] inspector/styles/import-pseudoclass-crash.html [ Crash ]
+
+# Flaky on Win (perhaps due to lighttpd?)
+Bug(senorblanco) [ Win ] http/tests/w3c/webperf/submission/resource-timing/html/test_resource_attribute_order.html [ Failure Pass ]

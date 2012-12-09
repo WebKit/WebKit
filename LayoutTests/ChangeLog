@@ -1,3 +1,42 @@
+2012-12-09  Stephen White  <senorblanco@chromium.org>
+
+        [Chromium] Unreviewed gardening.
+
+        * platform/chromium-linux-x86/platform/chromium/virtual/softwarecompositing/rtl/rtl-fixed-overflow-scrolled-expected.txt: Added.
+        * platform/chromium-linux-x86/platform/chromium/virtual/softwarecompositing/rtl/rtl-iframe-absolute-expected.txt: Added.
+        * platform/chromium-linux-x86/platform/chromium/virtual/softwarecompositing/rtl/rtl-iframe-fixed-expected.txt: Added.
+        * platform/chromium-linux-x86/platform/chromium/virtual/softwarecompositing/rtl/rtl-iframe-relative-expected.txt: Added.
+        * platform/chromium-linux/platform/chromium/virtual/softwarecompositing/rtl/rtl-fixed-overflow-scrolled-expected.txt: Added.
+        * platform/chromium-linux/platform/chromium/virtual/softwarecompositing/rtl/rtl-iframe-absolute-expected.txt: Added.
+        * platform/chromium-linux/platform/chromium/virtual/softwarecompositing/rtl/rtl-iframe-fixed-expected.txt: Added.
+        * platform/chromium-linux/platform/chromium/virtual/softwarecompositing/rtl/rtl-iframe-relative-expected.txt: Added.
+        * platform/chromium-mac-lion/platform/chromium/virtual/softwarecompositing/rtl/rtl-fixed-overflow-scrolled-expected.txt: Added.
+        * platform/chromium-mac-lion/platform/chromium/virtual/softwarecompositing/rtl/rtl-iframe-absolute-expected.txt: Added.
+        * platform/chromium-mac-lion/platform/chromium/virtual/softwarecompositing/rtl/rtl-iframe-fixed-expected.txt: Added.
+        * platform/chromium-mac-lion/platform/chromium/virtual/softwarecompositing/rtl/rtl-iframe-relative-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/platform/chromium/virtual/softwarecompositing/rtl/rtl-fixed-overflow-scrolled-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/platform/chromium/virtual/softwarecompositing/rtl/rtl-iframe-absolute-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/platform/chromium/virtual/softwarecompositing/rtl/rtl-iframe-fixed-expected.txt: Added.
+        * platform/chromium-mac-snowleopard/platform/chromium/virtual/softwarecompositing/rtl/rtl-iframe-relative-expected.txt: Added.
+        * platform/chromium-mac/compositing/tiling/huge-layer-add-remove-child-expected.txt: Added.
+        * platform/chromium-mac/compositing/tiling/huge-layer-with-layer-children-expected.txt: Added.
+        * platform/chromium-mac/compositing/tiling/huge-layer-with-layer-children-resize-expected.txt: Added.
+        * platform/chromium-mac/platform/chromium/virtual/softwarecompositing/rtl/rtl-fixed-overflow-scrolled-expected.txt: Added.
+        * platform/chromium-mac/platform/chromium/virtual/softwarecompositing/rtl/rtl-iframe-absolute-expected.txt: Added.
+        * platform/chromium-mac/platform/chromium/virtual/softwarecompositing/rtl/rtl-iframe-fixed-expected.txt: Added.
+        * platform/chromium-mac/platform/chromium/virtual/softwarecompositing/rtl/rtl-iframe-relative-expected.txt: Added.
+        * platform/chromium-mac/platform/chromium/virtual/softwarecompositing/tiling/huge-layer-add-remove-child-expected.txt: Added.
+        * platform/chromium-mac/platform/chromium/virtual/softwarecompositing/tiling/huge-layer-with-layer-children-expected.txt: Added.
+        * platform/chromium-win-xp/platform/chromium/virtual/softwarecompositing/rtl/rtl-fixed-overflow-scrolled-expected.txt: Added.
+        * platform/chromium-win-xp/platform/chromium/virtual/softwarecompositing/rtl/rtl-iframe-absolute-expected.txt: Added.
+        * platform/chromium-win-xp/platform/chromium/virtual/softwarecompositing/rtl/rtl-iframe-fixed-expected.txt: Added.
+        * platform/chromium-win-xp/platform/chromium/virtual/softwarecompositing/rtl/rtl-iframe-relative-expected.txt: Added.
+        * platform/chromium/TestExpectations:
+        * platform/chromium/compositing/rtl/rtl-fixed-overflow-scrolled-expected.txt: Added.
+        * platform/chromium/compositing/rtl/rtl-iframe-absolute-expected.txt: Added.
+        * platform/chromium/compositing/rtl/rtl-iframe-fixed-expected.txt: Added.
+        * platform/chromium/compositing/rtl/rtl-iframe-relative-expected.txt: Added.
+
 2012-12-09  Mihnea Ovidenie  <mihnea@adobe.com>
 
         Unreviewed. Unskip a skipped test for which i have added expectation in http://trac.webkit.org/changeset/135851.
