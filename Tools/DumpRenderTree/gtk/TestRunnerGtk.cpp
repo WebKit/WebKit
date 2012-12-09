@@ -415,15 +415,6 @@ void TestRunner::setAutofilled(JSContextRef context, JSValueRef nodeObject, bool
     DumpRenderTreeSupportGtk::setAutofilled(context, nodeObject, isAutofilled);
 }
 
-void TestRunner::disableImageLoading()
-{
-    WebKitWebView* view = webkit_web_frame_get_web_view(mainFrame);
-    ASSERT(view);
-
-    WebKitWebSettings* settings = webkit_web_view_get_settings(view);
-    g_object_set(G_OBJECT(settings), "auto-load-images", FALSE, NULL);
-}
-
 void TestRunner::setMockDeviceOrientation(bool canProvideAlpha, double alpha, bool canProvideBeta, double beta, bool canProvideGamma, double gamma)
 {
     // FIXME: Implement for DeviceOrientation layout tests.

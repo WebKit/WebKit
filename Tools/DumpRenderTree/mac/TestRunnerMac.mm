@@ -631,11 +631,6 @@ void TestRunner::setViewModeMediaFeature(JSStringRef mode)
     // FIXME: implement
 }
 
-void TestRunner::disableImageLoading()
-{
-    [[WebPreferences standardPreferences] setLoadsImagesAutomatically:NO];
-}
-
 void TestRunner::dispatchPendingLoadRequests()
 {
     [[mainFrame webView] _dispatchPendingLoadRequests];

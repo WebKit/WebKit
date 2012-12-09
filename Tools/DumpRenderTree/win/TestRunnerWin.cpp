@@ -137,19 +137,6 @@ JSStringRef TestRunner::copyEncodedHostName(JSStringRef name)
     return 0;
 }
 
-void TestRunner::disableImageLoading()
-{
-    COMPtr<IWebView> webView;
-    if (FAILED(frame->webView(&webView)))
-        return;
-    
-    COMPtr<IWebPreferences> preferences;
-    if (FAILED(webView->preferences(&preferences)))
-        return;
-    
-    preferences->setLoadsImagesAutomatically(FALSE);
-}
-
 void TestRunner::dispatchPendingLoadRequests()
 {
     // FIXME: Implement for testing fix for 6727495

@@ -353,11 +353,6 @@ void TestRunner::setAutofilled(JSContextRef context, JSValueRef nodeObject, bool
     DumpRenderTreeSupportEfl::setAutofilled(context, nodeObject, autofilled);
 }
 
-void TestRunner::disableImageLoading()
-{
-    ewk_view_setting_auto_load_images_set(browser->mainView(), EINA_FALSE);
-}
-
 void TestRunner::setMockDeviceOrientation(bool, double, bool, double, bool, double)
 {
     // FIXME: Implement for DeviceOrientation layout tests.

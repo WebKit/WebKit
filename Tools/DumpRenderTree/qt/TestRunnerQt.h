@@ -193,7 +193,6 @@ public Q_SLOTS:
     void removeOriginAccessWhitelistEntry(const QString& sourceOrigin, const QString& destinationProtocol, const QString& destinationHost, bool allowDestinationSubdomains);
 
     void dispatchPendingLoadRequests();
-    void disableImageLoading();
 
     void clearAllApplicationCaches();
     void clearApplicationCacheForOrigin(const QString& url);

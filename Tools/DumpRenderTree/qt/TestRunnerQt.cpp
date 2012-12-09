@@ -563,11 +563,6 @@ unsigned TestRunner::numberOfActiveAnimations() const
     return DumpRenderTreeSupportQt::numberOfActiveAnimations(frame->handle());
 }
 
-void TestRunner::disableImageLoading()
-{
-    m_drt->webPage()->settings()->setAttribute(QWebSettings::AutoLoadImages, false);
-}
-
 void TestRunner::dispatchPendingLoadRequests()
 {
     // FIXME: Implement for testing fix for 6727495

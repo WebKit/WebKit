@@ -415,11 +415,6 @@ void TestRunner::removeAllVisitedLinks()
     notImplemented();
 }
 
-void TestRunner::disableImageLoading()
-{
-    BlackBerry::WebKit::DumpRenderTree::currentInstance()->page()->settings()->setLoadsImagesAutomatically(false);
-}
-
 void TestRunner::overridePreference(JSStringRef key, JSStringRef value)
 {
     if (!mainFrame)
@@ -440,6 +435,8 @@ void TestRunner::overridePreference(JSStringRef key, JSStringRef value)
         BlackBerry::WebKit::DumpRenderTree::currentInstance()->page()->settings()->setWebSocketsEnabled(valueStr == "true" || valueStr == "1");
     else if (keyStr == "WebKitDefaultTextEncodingName")
         BlackBerry::WebKit::DumpRenderTree::currentInstance()->page()->settings()->setDefaultTextEncodingName(valueStr);
+    else if (keyStr == "WebKitDisplayImagesKey")
+        BlackBerry::WebKit::DumpRenderTree::currentInstance()->page()->settings()->setLoadsImagesAutomatically(valueStr == "true" || valueStr == "1");
 }
 
 void TestRunner::setAlwaysAcceptCookies(bool alwaysAcceptCookies)

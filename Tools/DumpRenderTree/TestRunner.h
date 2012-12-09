@@ -57,7 +57,6 @@ public:
     JSStringRef copyDecodedHostName(JSStringRef name);
     JSStringRef copyEncodedHostName(JSStringRef name);
     void deliverWebIntent(JSStringRef action, JSStringRef type, JSStringRef data);
-    void disableImageLoading();
     void dispatchPendingLoadRequests();
     void display();
     void displayInvalidatedRegion();
