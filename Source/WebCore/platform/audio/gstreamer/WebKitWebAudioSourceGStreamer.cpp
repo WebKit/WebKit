@@ -49,7 +49,6 @@ struct _WebKitWebAudioSourcePrivate {
     AudioBus* bus;
     AudioIOCallback* provider;
     guint framesToPull;
-    guint64 currentBufferOffset;
 
     GRefPtr<GstElement> interleave;
     GRefPtr<GstElement> wavEncoder;
@@ -185,7 +184,6 @@ static void webkit_web_audio_src_init(WebKitWebAudioSrc* src)
 
     priv->provider = 0;
     priv->bus = 0;
-    priv->currentBufferOffset = 0;
 
     priv->mutex = g_new(GStaticRecMutex, 1);
     g_static_rec_mutex_init(priv->mutex);
@@ -219,7 +217,6 @@ static void webKitWebAudioSrcConstructed(GObject* object)
     gst_bin_add_many(GST_BIN(src), priv->interleave.get(), priv->wavEncoder.get(), NULL);
     gst_element_link_pads_full(priv->interleave.get(), "src", priv->wavEncoder.get(), "sink", GST_PAD_LINK_CHECK_NOTHING);
 
-
     // For each channel of the bus create a new upstream branch for interleave, like:
     // queue ! capsfilter ! audioconvert. which is plugged to a new interleave request sinkpad.
     for (unsigned channelIndex = 0; channelIndex < priv->bus->numberOfChannels(); channelIndex++) {
@@ -246,7 +243,6 @@ static void webKitWebAudioSrcConstructed(GObject* object)
 
     }
     priv->pads = g_slist_reverse(priv->pads);
-
 
     // wavenc's src pad is the only visible pad of our element.
     GRefPtr<GstPad> targetPad = adoptGRef(gst_element_get_static_pad(priv->wavEncoder.get(), "src"));
@@ -323,32 +319,33 @@ static void webKitWebAudioSrcLoop(WebKitWebAudioSrc* src)
     if (!priv->provider || !priv->bus)
         return;
 
+    GSList* channelBufferList = 0;
+    unsigned bufferSize = priv->framesToPull * sizeof(float);
+    for (unsigned i = 0; i < g_slist_length(priv->pads); i++) {
+        GstBuffer* channelBuffer = gst_buffer_new_and_alloc(bufferSize);
+        ASSERT(channelBuffer);
+        channelBufferList = g_slist_prepend(channelBufferList, channelBuffer);
+        priv->bus->setChannelMemory(i, reinterpret_cast<float*>(GST_BUFFER_DATA(channelBuffer)), priv->framesToPull);
+    }
+    channelBufferList = g_slist_reverse(channelBufferList);
+
     // FIXME: Add support for local/live audio input.
     priv->provider->render(0, priv->bus, priv->framesToPull);
 
-    unsigned bufferSize = priv->framesToPull * sizeof(float);
-    for (unsigned index = 0; index < g_slist_length(priv->pads); index++) {
-        GstPad* pad = static_cast<GstPad*>(g_slist_nth_data(priv->pads, index));
-
-        GstBuffer* buffer = gst_buffer_new();
-        ASSERT(buffer);
-        ASSERT(!GST_BUFFER_MALLOCDATA(buffer));
-
-        GST_BUFFER_DATA(buffer) = reinterpret_cast<guint8*>(const_cast<float*>(priv->bus->channel(index)->data()));
-        GST_BUFFER_SIZE(buffer) = bufferSize;
-        GST_BUFFER_OFFSET(buffer) = priv->currentBufferOffset;
-        GST_BUFFER_OFFSET_END(buffer) = priv->currentBufferOffset + priv->framesToPull;
+    for (unsigned i = 0; i < g_slist_length(priv->pads); i++) {
+        GstPad* pad = static_cast<GstPad*>(g_slist_nth_data(priv->pads, i));
+        GstBuffer* channelBuffer = static_cast<GstBuffer*>(g_slist_nth_data(channelBufferList, i));
 
         GRefPtr<GstCaps> monoCaps = adoptGRef(getGStreamerMonoAudioCaps(priv->sampleRate));
         GstStructure* structure = gst_caps_get_structure(monoCaps.get(), 0);
-        GstAudioChannelPosition channelPosition = webKitWebAudioGStreamerChannelPosition(index);
+        GstAudioChannelPosition channelPosition = webKitWebAudioGStreamerChannelPosition(i);
         gst_audio_set_channel_positions(structure, &channelPosition);
-        gst_buffer_set_caps(buffer, monoCaps.get());
+        gst_buffer_set_caps(channelBuffer, monoCaps.get());
 
-        gst_pad_chain(pad, buffer);
+        gst_pad_chain(pad, channelBuffer);
     }
 
-    priv->currentBufferOffset += priv->framesToPull;
+    g_slist_free(channelBufferList);
 }
 
 static GstStateChangeReturn webKitWebAudioSrcChangeState(GstElement* element, GstStateChange transition)
