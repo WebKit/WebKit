@@ -1342,6 +1342,7 @@ webkit.org/b/88961 http/tests/misc/redirect-to-about-blank.html [ Failure ]
 
 # EFL port does not support hyphenation
 webkit.org/b/89830 fast/text/hyphen-min-preferred-width.html [ ImageOnlyFailure ]
+webkit.org/b/89830 fast/text/hyphenate-locale.html [ Skip ]
 
 # EFL's LayoutTestController does not implement setAsynchronousSpellCheckingEnabled
 webkit.org/b/86637 editing/spelling/spellcheck-async.html [ Failure ]

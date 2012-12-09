@@ -1,5 +1,17 @@
 2012-12-09  Christophe Dumez  <christophe.dumez@intel.com>
 
+        Unreviewed EFL gardening.
+
+        Skip fast/text/hyphenate-locale.html since the EFL port does
+        not support hyphenation. Also remove wrong expected results
+        for WK1 EFL.
+
+        * platform/efl-wk1/fast/text/hyphenate-locale-expected.png: Removed.
+        * platform/efl-wk1/fast/text/hyphenate-locale-expected.txt: Removed.
+        * platform/efl/TestExpectations:
+
+2012-12-09  Christophe Dumez  <christophe.dumez@intel.com>
+
         Unreviewing gardening.
 
         Rebaseline several compositing test cases after r137051.
