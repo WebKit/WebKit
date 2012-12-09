@@ -24,6 +24,7 @@ layer at (8,8) size 320x240
   RenderDeprecatedFlexibleBox (relative positioned) {DIV} at (0,0) size 320x240
 layer at (8,8) size 320x220
   RenderBlock (relative positioned) {DIV} at (0,0) size 320x220 [color=#FFFFFF]
+    RenderInline {SPAN} at (0,0) size 0x0
 layer at (12,8) size 14x220 scrollX 2 scrollWidth 16
   RenderBlock (positioned) {DIV} at (4,0) size 14x220
     RenderInline {DIV} at (0,0) size 18x116 [bgcolor=#000000CC]
