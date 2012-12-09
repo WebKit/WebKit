@@ -50,6 +50,7 @@ class CustomFilterProgram;
 class Document;
 class GraphicsContext;
 class RenderLayer;
+class RenderObject;
 
 class FilterEffectRendererHelper {
 public:
