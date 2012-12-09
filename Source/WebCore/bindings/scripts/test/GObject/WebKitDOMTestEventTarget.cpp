@@ -49,9 +49,9 @@ WebKitDOMTestEventTarget* kit(WebCore::TestEventTarget* obj)
         return 0;
 
     if (gpointer ret = DOMObjectCache::get(obj))
-        return static_cast<WebKitDOMTestEventTarget*>(ret);
+        return WEBKIT_DOM_TEST_EVENT_TARGET(ret);
 
-    return static_cast<WebKitDOMTestEventTarget*>(g_object_new(WEBKIT_TYPE_DOM_TEST_EVENT_TARGET, "core-object", obj, NULL));
+    return wrapTestEventTarget(obj);
 }
 
 WebCore::TestEventTarget* core(WebKitDOMTestEventTarget* request)

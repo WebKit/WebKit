@@ -46,9 +46,9 @@ WebKitDOMTestActiveDOMObject* kit(WebCore::TestActiveDOMObject* obj)
         return 0;
 
     if (gpointer ret = DOMObjectCache::get(obj))
-        return static_cast<WebKitDOMTestActiveDOMObject*>(ret);
+        return WEBKIT_DOM_TEST_ACTIVE_DOM_OBJECT(ret);
 
-    return static_cast<WebKitDOMTestActiveDOMObject*>(g_object_new(WEBKIT_TYPE_DOM_TEST_ACTIVE_DOM_OBJECT, "core-object", obj, NULL));
+    return wrapTestActiveDOMObject(obj);
 }
 
 WebCore::TestActiveDOMObject* core(WebKitDOMTestActiveDOMObject* request)

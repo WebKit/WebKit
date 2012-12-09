@@ -41,9 +41,9 @@ WebKitDOMFloat64Array* kit(WebCore::Float64Array* obj)
         return 0;
 
     if (gpointer ret = DOMObjectCache::get(obj))
-        return static_cast<WebKitDOMFloat64Array*>(ret);
+        return WEBKIT_DOM_FLOAT64ARRAY(ret);
 
-    return static_cast<WebKitDOMFloat64Array*>(g_object_new(WEBKIT_TYPE_DOM_FLOAT64ARRAY, "core-object", obj, NULL));
+    return wrapFloat64Array(obj);
 }
 
 WebCore::Float64Array* core(WebKitDOMFloat64Array* request)

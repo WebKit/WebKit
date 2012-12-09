@@ -45,9 +45,9 @@ WebKitDOMTestEventConstructor* kit(WebCore::TestEventConstructor* obj)
         return 0;
 
     if (gpointer ret = DOMObjectCache::get(obj))
-        return static_cast<WebKitDOMTestEventConstructor*>(ret);
+        return WEBKIT_DOM_TEST_EVENT_CONSTRUCTOR(ret);
 
-    return static_cast<WebKitDOMTestEventConstructor*>(g_object_new(WEBKIT_TYPE_DOM_TEST_EVENT_CONSTRUCTOR, "core-object", obj, NULL));
+    return wrapTestEventConstructor(obj);
 }
 
 WebCore::TestEventConstructor* core(WebKitDOMTestEventConstructor* request)

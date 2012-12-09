@@ -45,9 +45,9 @@ WebKitDOMTestException* kit(WebCore::TestException* obj)
         return 0;
 
     if (gpointer ret = DOMObjectCache::get(obj))
-        return static_cast<WebKitDOMTestException*>(ret);
+        return WEBKIT_DOM_TEST_EXCEPTION(ret);
 
-    return static_cast<WebKitDOMTestException*>(g_object_new(WEBKIT_TYPE_DOM_TEST_EXCEPTION, "core-object", obj, NULL));
+    return wrapTestException(obj);
 }
 
 WebCore::TestException* core(WebKitDOMTestException* request)

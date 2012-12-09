@@ -52,9 +52,9 @@ WebKitDOMTestSerializedScriptValueInterface* kit(WebCore::TestSerializedScriptVa
         return 0;
 
     if (gpointer ret = DOMObjectCache::get(obj))
-        return static_cast<WebKitDOMTestSerializedScriptValueInterface*>(ret);
+        return WEBKIT_DOM_TEST_SERIALIZED_SCRIPT_VALUE_INTERFACE(ret);
 
-    return static_cast<WebKitDOMTestSerializedScriptValueInterface*>(g_object_new(WEBKIT_TYPE_DOM_TEST_SERIALIZED_SCRIPT_VALUE_INTERFACE, "core-object", obj, NULL));
+    return wrapTestSerializedScriptValueInterface(obj);
 }
 
 WebCore::TestSerializedScriptValueInterface* core(WebKitDOMTestSerializedScriptValueInterface* request)

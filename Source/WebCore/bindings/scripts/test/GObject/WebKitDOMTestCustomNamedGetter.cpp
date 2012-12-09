@@ -45,9 +45,9 @@ WebKitDOMTestCustomNamedGetter* kit(WebCore::TestCustomNamedGetter* obj)
         return 0;
 
     if (gpointer ret = DOMObjectCache::get(obj))
-        return static_cast<WebKitDOMTestCustomNamedGetter*>(ret);
+        return WEBKIT_DOM_TEST_CUSTOM_NAMED_GETTER(ret);
 
-    return static_cast<WebKitDOMTestCustomNamedGetter*>(g_object_new(WEBKIT_TYPE_DOM_TEST_CUSTOM_NAMED_GETTER, "core-object", obj, NULL));
+    return wrapTestCustomNamedGetter(obj);
 }
 
 WebCore::TestCustomNamedGetter* core(WebKitDOMTestCustomNamedGetter* request)

@@ -45,9 +45,9 @@ WebKitDOMTestNamedConstructor* kit(WebCore::TestNamedConstructor* obj)
         return 0;
 
     if (gpointer ret = DOMObjectCache::get(obj))
-        return static_cast<WebKitDOMTestNamedConstructor*>(ret);
+        return WEBKIT_DOM_TEST_NAMED_CONSTRUCTOR(ret);
 
-    return static_cast<WebKitDOMTestNamedConstructor*>(g_object_new(WEBKIT_TYPE_DOM_TEST_NAMED_CONSTRUCTOR, "core-object", obj, NULL));
+    return wrapTestNamedConstructor(obj);
 }
 
 WebCore::TestNamedConstructor* core(WebKitDOMTestNamedConstructor* request)

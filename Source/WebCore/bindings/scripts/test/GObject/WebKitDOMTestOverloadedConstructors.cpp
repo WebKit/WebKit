@@ -45,9 +45,9 @@ WebKitDOMTestOverloadedConstructors* kit(WebCore::TestOverloadedConstructors* ob
         return 0;
 
     if (gpointer ret = DOMObjectCache::get(obj))
-        return static_cast<WebKitDOMTestOverloadedConstructors*>(ret);
+        return WEBKIT_DOM_TEST_OVERLOADED_CONSTRUCTORS(ret);
 
-    return static_cast<WebKitDOMTestOverloadedConstructors*>(g_object_new(WEBKIT_TYPE_DOM_TEST_OVERLOADED_CONSTRUCTORS, "core-object", obj, NULL));
+    return wrapTestOverloadedConstructors(obj);
 }
 
 WebCore::TestOverloadedConstructors* core(WebKitDOMTestOverloadedConstructors* request)

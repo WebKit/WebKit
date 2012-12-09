@@ -52,9 +52,9 @@ WebKitDOMTestInterface* kit(WebCore::TestInterface* obj)
         return 0;
 
     if (gpointer ret = DOMObjectCache::get(obj))
-        return static_cast<WebKitDOMTestInterface*>(ret);
+        return WEBKIT_DOM_TEST_INTERFACE(ret);
 
-    return static_cast<WebKitDOMTestInterface*>(g_object_new(WEBKIT_TYPE_DOM_TEST_INTERFACE, "core-object", obj, NULL));
+    return wrapTestInterface(obj);
 }
 
 WebCore::TestInterface* core(WebKitDOMTestInterface* request)

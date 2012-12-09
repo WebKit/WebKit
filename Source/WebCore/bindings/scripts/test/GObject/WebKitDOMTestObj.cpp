@@ -58,9 +58,9 @@ WebKitDOMTestObj* kit(WebCore::TestObj* obj)
         return 0;
 
     if (gpointer ret = DOMObjectCache::get(obj))
-        return static_cast<WebKitDOMTestObj*>(ret);
+        return WEBKIT_DOM_TEST_OBJ(ret);
 
-    return static_cast<WebKitDOMTestObj*>(g_object_new(WEBKIT_TYPE_DOM_TEST_OBJ, "core-object", obj, NULL));
+    return wrapTestObj(obj);
 }
 
 WebCore::TestObj* core(WebKitDOMTestObj* request)

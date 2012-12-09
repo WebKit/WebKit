@@ -1243,9 +1243,9 @@ ${className}* kit(WebCore::$interfaceName* obj)
         return 0;
 
     if (gpointer ret = DOMObjectCache::get(obj))
-        return static_cast<${className}*>(ret);
+        return WEBKIT_DOM_${clsCaps}(ret);
 
-    return static_cast<${className}*>(g_object_new(WEBKIT_TYPE_DOM_${clsCaps}, "core-object", obj, NULL));
+    return wrap${interfaceName}(obj);
 }
 
 EOF

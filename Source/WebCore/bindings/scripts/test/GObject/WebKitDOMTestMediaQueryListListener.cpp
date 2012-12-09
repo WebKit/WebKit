@@ -45,9 +45,9 @@ WebKitDOMTestMediaQueryListListener* kit(WebCore::TestMediaQueryListListener* ob
         return 0;
 
     if (gpointer ret = DOMObjectCache::get(obj))
-        return static_cast<WebKitDOMTestMediaQueryListListener*>(ret);
+        return WEBKIT_DOM_TEST_MEDIA_QUERY_LIST_LISTENER(ret);
 
-    return static_cast<WebKitDOMTestMediaQueryListListener*>(g_object_new(WEBKIT_TYPE_DOM_TEST_MEDIA_QUERY_LIST_LISTENER, "core-object", obj, NULL));
+    return wrapTestMediaQueryListListener(obj);
 }
 
 WebCore::TestMediaQueryListListener* core(WebKitDOMTestMediaQueryListListener* request)

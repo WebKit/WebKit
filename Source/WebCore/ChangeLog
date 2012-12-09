@@ -1,3 +1,41 @@
+2012-12-09  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Use GObject casts instead of C++ cast for GObjects in DOM bindings
+        https://bugs.webkit.org/show_bug.cgi?id=104492
+
+        Reviewed by Martin Robinson.
+
+        * bindings/scripts/CodeGeneratorGObject.pm:
+        (GenerateCFile):
+        * bindings/scripts/test/GObject/WebKitDOMFloat64Array.cpp:
+        (WebKit::kit):
+        * bindings/scripts/test/GObject/WebKitDOMTestActiveDOMObject.cpp:
+        (WebKit::kit):
+        * bindings/scripts/test/GObject/WebKitDOMTestCallback.cpp:
+        (WebKit::kit):
+        * bindings/scripts/test/GObject/WebKitDOMTestCustomNamedGetter.cpp:
+        (WebKit::kit):
+        * bindings/scripts/test/GObject/WebKitDOMTestEventConstructor.cpp:
+        (WebKit::kit):
+        * bindings/scripts/test/GObject/WebKitDOMTestEventTarget.cpp:
+        (WebKit::kit):
+        * bindings/scripts/test/GObject/WebKitDOMTestException.cpp:
+        (WebKit::kit):
+        * bindings/scripts/test/GObject/WebKitDOMTestInterface.cpp:
+        (WebKit::kit):
+        * bindings/scripts/test/GObject/WebKitDOMTestMediaQueryListListener.cpp:
+        (WebKit::kit):
+        * bindings/scripts/test/GObject/WebKitDOMTestNamedConstructor.cpp:
+        (WebKit::kit):
+        * bindings/scripts/test/GObject/WebKitDOMTestNode.cpp:
+        (WebKit::kit):
+        * bindings/scripts/test/GObject/WebKitDOMTestObj.cpp:
+        (WebKit::kit):
+        * bindings/scripts/test/GObject/WebKitDOMTestOverloadedConstructors.cpp:
+        (WebKit::kit):
+        * bindings/scripts/test/GObject/WebKitDOMTestSerializedScriptValueInterface.cpp:
+        (WebKit::kit):
+
 2012-12-09  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: do not treat object as equal to itself when logging to console
