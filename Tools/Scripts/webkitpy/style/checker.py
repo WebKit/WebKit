@@ -39,6 +39,7 @@ from checkers.common import categories as CommonCategories
 from checkers.common import CarriageReturnChecker
 from checkers.changelog import ChangeLogChecker
 from checkers.cpp import CppChecker
+from checkers.cmake import CMakeChecker
 from checkers.jsonchecker import JSONChecker
 from checkers.png import PNGChecker
 from checkers.python import PythonChecker
@@ -306,6 +307,8 @@ _XML_FILE_EXTENSIONS = [
 
 _PNG_FILE_EXTENSION = 'png'
 
+_CMAKE_FILE_EXTENSION = 'cmake'
+
 # Files to skip that are less obvious.
 #
 # Some files should be skipped when checking style. For example,
@@ -496,6 +499,7 @@ class FileType:
     WATCHLIST = 7
     XML = 8
     XCODEPROJ = 9
+    CMAKE = 10
 
 
 class CheckerDispatcher(object):
@@ -574,6 +578,8 @@ class CheckerDispatcher(object):
             return FileType.XCODEPROJ
         elif file_extension == _PNG_FILE_EXTENSION:
             return FileType.PNG
+        elif ((file_extension == _CMAKE_FILE_EXTENSION) or os.path.basename(file_path) == 'CMakeLists.txt'):
+            return FileType.CMAKE
         elif ((not file_extension and os.path.join("Tools", "Scripts") in file_path) or
               file_extension in _TEXT_FILE_EXTENSIONS or os.path.basename(file_path) == 'TestExpectations'):
             return FileType.TEXT
@@ -604,6 +610,8 @@ class CheckerDispatcher(object):
             checker = XcodeProjectFileChecker(file_path, handle_style_error)
         elif file_type == FileType.PNG:
             checker = PNGChecker(file_path, handle_style_error)
+        elif file_type == FileType.CMAKE:
+            checker = CMakeChecker(file_path, handle_style_error)
         elif file_type == FileType.TEXT:
             basename = os.path.basename(file_path)
             if basename == 'TestExpectations':

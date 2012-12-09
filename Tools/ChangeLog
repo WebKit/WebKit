@@ -1,3 +1,34 @@
+2012-12-08  Halton Huo  <halton.huo@intel.com>
+
+        [CMake] Add CMake style checker
+        https://bugs.webkit.org/show_bug.cgi?id=104240
+
+        Reviewed by Eric Seidel.
+
+        The CMake style checker is followed by existing style checkers like cpp, python.
+        Unit test is added as well.
+
+        * Scripts/webkitpy/style/checker.py: Use CMakeChecker CMAKE type files(.cmake or CMakeLists.txt)
+        (FileType):
+        (CheckerDispatcher._file_type):
+        (CheckerDispatcher._create_checker):
+        * Scripts/webkitpy/style/checkers/cmake.py: Added.
+        (CMakeChecker):
+        (CMakeChecker.__init__): 
+        (CMakeChecker.check):
+        (CMakeChecker._process_line):
+        (CMakeChecker._check_trailing_whitespace):
+        (CMakeChecker._check_no_space_cmds):
+        (CMakeChecker._check_one_space_cmds):
+        (CMakeChecker._check_non_lowercase_cmd):
+        (CMakeChecker._check_indent):
+        * Scripts/webkitpy/style/checkers/cmake_unittest.py: Added.
+        (CMakeCheckerTest):
+        (CMakeCheckerTest.test_init):
+        (CMakeCheckerTest.test_init._mock_handle_style_error):
+        (CMakeCheckerTest.test_check):
+        (CMakeCheckerTest.test_check._mock_handle_style_error):
+
 2012-12-08  Kondapally Kalyan  <kalyan.kondapally@intel.com>
 
         [EFL] Enable WebGL by default.
