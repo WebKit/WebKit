@@ -78,6 +78,13 @@ sub GetParentClassName {
     return "WebKitDOM" . $interface->parents(0);
 }
 
+sub GetParentImplClassName {
+    my $interface = shift;
+
+    return "Object" if @{$interface->parents} eq 0;
+    return $interface->parents(0);
+}
+
 # From String::CamelCase 0.01
 sub camelize
 {
@@ -540,6 +547,7 @@ sub GenerateProperties {
 
     my $clsCaps = substr(ClassNameToGObjectType($className), 12);
     my $lowerCaseIfaceName = "webkit_dom_" . (FixUpDecamelizedName(decamelize($interfaceName)));
+    my $parentImplClassName = GetParentImplClassName($interface);
 
     my $conditionGuardStart = "";
     my $conditionGuardEnd = "";
@@ -638,27 +646,21 @@ EOF
     # Do not insert extra spaces when interpolating array variables
     $" = "";
 
-    $implContent = << "EOF";
+    if ($parentImplClassName eq "Object") {
+        $implContent = << "EOF";
 static void ${lowerCaseIfaceName}_finalize(GObject* object)
 {
+    ${className}Private* priv = WEBKIT_DOM_${clsCaps}_GET_PRIVATE(object);
 $conditionGuardStart
-    WebKitDOMObject* domObject = WEBKIT_DOM_OBJECT(object);
-    
-    if (domObject->coreObject) {
-        WebCore::${interfaceName}* coreObject = static_cast<WebCore::${interfaceName}*>(domObject->coreObject);
-
-        WebKit::DOMObjectCache::forget(coreObject);
-        coreObject->deref();
-
-        domObject->coreObject = 0;
-    }
+    WebKit::DOMObjectCache::forget(priv->coreObject.get());
 $conditionGuardEnd
-
+    priv->~${className}Private();
     G_OBJECT_CLASS(${lowerCaseIfaceName}_parent_class)->finalize(object);
 }
 
 EOF
-    push(@cBodyProperties, $implContent);
+        push(@cBodyProperties, $implContent);
+    }
 
     if ($numProperties > 0) {
         if (scalar @writeableProperties > 0) {
@@ -686,36 +688,77 @@ EOF
         push(@cBodyProperties, $implContent);
     }
 
+    # Add a constructor implementation only for direct subclasses of Object to make sure
+    # that the WebCore wrapped object is added only once to the DOM cache. The DOM garbage
+    # collector works because Node is a direct subclass of Object and the version of
+    # DOMObjectCache::put() that receives a Node (which is the one setting the frame) is
+    # always called for DOM objects derived from Node.
+    if ($parentImplClassName eq "Object") {
+        $implContent = << "EOF";
+static GObject* ${lowerCaseIfaceName}_constructor(GType type, guint constructPropertiesCount, GObjectConstructParam* constructProperties)
+{
+    GObject* object = G_OBJECT_CLASS(${lowerCaseIfaceName}_parent_class)->constructor(type, constructPropertiesCount, constructProperties);
+$conditionGuardStart
+    ${className}Private* priv = WEBKIT_DOM_${clsCaps}_GET_PRIVATE(object);
+    priv->coreObject = static_cast<WebCore::${interfaceName}*>(WEBKIT_DOM_OBJECT(object)->coreObject);
+    WebKit::DOMObjectCache::put(priv->coreObject.get(), object);
+$conditionGuardEnd
+    return object;
+}
+
+EOF
+        push(@cBodyProperties, $implContent);
+    }
+
     $implContent = << "EOF";
 static void ${lowerCaseIfaceName}_class_init(${className}Class* requestClass)
 {
-    GObjectClass* gobjectClass = G_OBJECT_CLASS(requestClass);
-    gobjectClass->finalize = ${lowerCaseIfaceName}_finalize;
 EOF
     push(@cBodyProperties, $implContent);
 
-    if (scalar @txtInstallEventListeners > 0) {
-        push(@cBodyProperties, "    gobjectClass->constructed = ${lowerCaseIfaceName}_constructed;\n");
-    }
+    if ($parentImplClassName eq "Object" || scalar @txtInstallEventListeners > 0 || $numProperties > 0) {
+        push(@cBodyProperties, "    GObjectClass* gobjectClass = G_OBJECT_CLASS(requestClass);\n");
 
-    if ($numProperties > 0) {
-        if (scalar @writeableProperties > 0) {
-            push(@cBodyProperties, "    gobjectClass->set_property = ${lowerCaseIfaceName}_set_property;\n");
+        if ($parentImplClassName eq "Object") {
+            push(@cBodyProperties, "    g_type_class_add_private(gobjectClass, sizeof(${className}Private));\n");
+            push(@cBodyProperties, "    gobjectClass->constructor = ${lowerCaseIfaceName}_constructor;\n");
+            push(@cBodyProperties, "    gobjectClass->finalize = ${lowerCaseIfaceName}_finalize;\n");
         }
-        push(@cBodyProperties, "    gobjectClass->get_property = ${lowerCaseIfaceName}_get_property;\n");
-        push(@cBodyProperties, "\n");
-        push(@cBodyProperties, @txtInstallProps);
-    }
 
-    if (scalar @txtInstallSignals > 0) {
-        push(@cBodyProperties, "\n");
-        push(@cBodyProperties, @txtInstallSignals);
+        if (scalar @txtInstallEventListeners > 0) {
+            push(@cBodyProperties, "    gobjectClass->constructed = ${lowerCaseIfaceName}_constructed;\n");
+        }
+
+        if ($numProperties > 0) {
+            if (scalar @writeableProperties > 0) {
+                push(@cBodyProperties, "    gobjectClass->set_property = ${lowerCaseIfaceName}_set_property;\n");
+            }
+            push(@cBodyProperties, "    gobjectClass->get_property = ${lowerCaseIfaceName}_get_property;\n");
+            push(@cBodyProperties, "\n");
+            push(@cBodyProperties, @txtInstallProps);
+        }
+
+        if (scalar @txtInstallSignals > 0) {
+            push(@cBodyProperties, "\n");
+            push(@cBodyProperties, @txtInstallSignals);
+        }
     }
     $implContent = << "EOF";
 }
 
 static void ${lowerCaseIfaceName}_init(${className}* request)
 {
+EOF
+    push(@cBodyProperties, $implContent);
+
+    if ($parentImplClassName eq "Object") {
+        $implContent = << "EOF";
+    ${className}Private* priv = WEBKIT_DOM_${clsCaps}_GET_PRIVATE(request);
+    new (priv) ${className}Private();
+EOF
+        push(@cBodyProperties, $implContent);
+    }
+    $implContent = << "EOF";
 }
 
 EOF
@@ -1193,6 +1236,19 @@ sub GenerateCFile {
 
     my $clsCaps = uc(FixUpDecamelizedName(decamelize($interfaceName)));
     my $lowerCaseIfaceName = "webkit_dom_" . FixUpDecamelizedName(decamelize($interfaceName));
+    my $parentImplClassName = GetParentImplClassName($interface);
+
+    # Add a private struct only for direct subclasses of Object so that we can use RefPtr
+    # for the WebCore wrapped object and make sure we only increment the reference counter once.
+    if ($parentImplClassName eq "Object") {
+        my $conditionalString = $codeGenerator->GenerateConditionalString($interface);
+        push(@cStructPriv, "#define WEBKIT_DOM_${clsCaps}_GET_PRIVATE(obj) G_TYPE_INSTANCE_GET_PRIVATE(obj, WEBKIT_TYPE_DOM_${clsCaps}, ${className}Private)\n\n");
+        push(@cStructPriv, "typedef struct _${className}Private {\n");
+        push(@cStructPriv, "#if ${conditionalString}\n") if $conditionalString;
+        push(@cStructPriv, "    RefPtr<WebCore::${interfaceName}> coreObject;\n");
+        push(@cStructPriv, "#endif // ${conditionalString}\n") if $conditionalString;
+        push(@cStructPriv, "} ${className}Private;\n\n");
+    }
 
     $implContent = << "EOF";
 ${defineTypeMacro}(${className}, ${lowerCaseIfaceName}, ${parentGObjType}${defineTypeInterfaceImplementation}
@@ -1200,15 +1256,34 @@ ${defineTypeMacro}(${className}, ${lowerCaseIfaceName}, ${parentGObjType}${defin
 EOF
     push(@cBodyProperties, $implContent);
 
+    if (!UsesManualKitImplementation($interfaceName)) {
+        $implContent = << "EOF";
+${className}* kit(WebCore::$interfaceName* obj)
+{
+    g_return_val_if_fail(obj, 0);
+
+    if (gpointer ret = DOMObjectCache::get(obj))
+        return static_cast<${className}*>(ret);
+
+    return static_cast<${className}*>(g_object_new(WEBKIT_TYPE_DOM_${clsCaps}, "core-object", obj, NULL));
+}
+
+EOF
+        push(@cBodyPriv, $implContent);
+    }
+
     $implContent = << "EOF";
 WebCore::${interfaceName}* core(${className}* request)
 {
     g_return_val_if_fail(request, 0);
 
-    WebCore::${interfaceName}* coreObject = static_cast<WebCore::${interfaceName}*>(WEBKIT_DOM_OBJECT(request)->coreObject);
-    g_return_val_if_fail(coreObject, 0);
+    return static_cast<WebCore::${interfaceName}*>(WEBKIT_DOM_OBJECT(request)->coreObject);
+}
 
-    return coreObject;
+${className}* wrap${interfaceName}(WebCore::${interfaceName}* coreObject)
+{
+    g_return_val_if_fail(coreObject, 0);
+    return WEBKIT_DOM_${clsCaps}(g_object_new(WEBKIT_TYPE_DOM_${clsCaps}, "core-object", coreObject, NULL));
 }
 
 EOF
@@ -1216,21 +1291,6 @@ EOF
 
     $object->GenerateProperties($interfaceName, $interface);
     $object->GenerateFunctions($interfaceName, $interface);
-
-    my $wrapMethod = << "EOF";
-${className}* wrap${interfaceName}(WebCore::${interfaceName}* coreObject)
-{
-    g_return_val_if_fail(coreObject, 0);
-
-    // We call ref() rather than using a C++ smart pointer because we can't store a C++ object
-    // in a C-allocated GObject structure. See the finalize() code for the matching deref().
-    coreObject->ref();
-
-    return WEBKIT_DOM_${clsCaps}(g_object_new(WEBKIT_TYPE_DOM_${clsCaps}, "core-object", coreObject, NULL));
-}
-
-EOF
-    push(@cBodyPriv, $wrapMethod);
 }
 
 sub GenerateEndHeader {
@@ -1322,22 +1382,6 @@ sub Generate {
     $implIncludes{"ExceptionCode.h"} = 1;
 
     $hdrIncludes{"webkit/${parentClassName}.h"} = 1;
-
-    if (!UsesManualKitImplementation($interfaceName)) {
-        my $converter = << "EOF";
-${className}* kit(WebCore::$interfaceName* obj)
-{
-    g_return_val_if_fail(obj, 0);
-
-    if (gpointer ret = DOMObjectCache::get(obj))
-        return static_cast<${className}*>(ret);
-
-    return static_cast<${className}*>(DOMObjectCache::put(obj, WebKit::wrap${interfaceName}(obj)));
-}
-
-EOF
-    push(@cBodyPriv, $converter);
-    }
 
     $object->GenerateHeader($interfaceName, $parentClassName);
     $object->GenerateCFile($interfaceName, $parentClassName, $parentGObjType, $interface);
@@ -1432,6 +1476,7 @@ EOF
 
     print IMPL "#include <wtf/GetPtr.h>\n";
     print IMPL "#include <wtf/RefPtr.h>\n\n";
+    print IMPL @cStructPriv;
     print IMPL "#if ${conditionalString}\n\n" if $conditionalString;
 
     print IMPL "namespace WebKit {\n\n";
@@ -1453,6 +1498,7 @@ EOF
     @cBody = ();
     @cBodyPriv = ();
     @cBodyProperties = ();
+    @cStructPriv = ();
 }
 
 sub GenerateInterface {

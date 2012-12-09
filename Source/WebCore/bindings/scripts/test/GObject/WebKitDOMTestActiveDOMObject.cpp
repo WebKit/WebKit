@@ -32,6 +32,12 @@
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
 
+#define WEBKIT_DOM_TEST_ACTIVE_DOM_OBJECT_GET_PRIVATE(obj) G_TYPE_INSTANCE_GET_PRIVATE(obj, WEBKIT_TYPE_DOM_TEST_ACTIVE_DOM_OBJECT, WebKitDOMTestActiveDOMObjectPrivate)
+
+typedef struct _WebKitDOMTestActiveDOMObjectPrivate {
+    RefPtr<WebCore::TestActiveDOMObject> coreObject;
+} WebKitDOMTestActiveDOMObjectPrivate;
+
 namespace WebKit {
 
 WebKitDOMTestActiveDOMObject* kit(WebCore::TestActiveDOMObject* obj)
@@ -41,27 +47,19 @@ WebKitDOMTestActiveDOMObject* kit(WebCore::TestActiveDOMObject* obj)
     if (gpointer ret = DOMObjectCache::get(obj))
         return static_cast<WebKitDOMTestActiveDOMObject*>(ret);
 
-    return static_cast<WebKitDOMTestActiveDOMObject*>(DOMObjectCache::put(obj, WebKit::wrapTestActiveDOMObject(obj)));
+    return static_cast<WebKitDOMTestActiveDOMObject*>(g_object_new(WEBKIT_TYPE_DOM_TEST_ACTIVE_DOM_OBJECT, "core-object", obj, NULL));
 }
 
 WebCore::TestActiveDOMObject* core(WebKitDOMTestActiveDOMObject* request)
 {
     g_return_val_if_fail(request, 0);
 
-    WebCore::TestActiveDOMObject* coreObject = static_cast<WebCore::TestActiveDOMObject*>(WEBKIT_DOM_OBJECT(request)->coreObject);
-    g_return_val_if_fail(coreObject, 0);
-
-    return coreObject;
+    return static_cast<WebCore::TestActiveDOMObject*>(WEBKIT_DOM_OBJECT(request)->coreObject);
 }
 
 WebKitDOMTestActiveDOMObject* wrapTestActiveDOMObject(WebCore::TestActiveDOMObject* coreObject)
 {
     g_return_val_if_fail(coreObject, 0);
-
-    // We call ref() rather than using a C++ smart pointer because we can't store a C++ object
-    // in a C-allocated GObject structure. See the finalize() code for the matching deref().
-    coreObject->ref();
-
     return WEBKIT_DOM_TEST_ACTIVE_DOM_OBJECT(g_object_new(WEBKIT_TYPE_DOM_TEST_ACTIVE_DOM_OBJECT, "core-object", coreObject, NULL));
 }
 
@@ -76,19 +74,11 @@ enum {
 
 static void webkit_dom_test_active_dom_object_finalize(GObject* object)
 {
+    WebKitDOMTestActiveDOMObjectPrivate* priv = WEBKIT_DOM_TEST_ACTIVE_DOM_OBJECT_GET_PRIVATE(object);
 
-    WebKitDOMObject* domObject = WEBKIT_DOM_OBJECT(object);
-    
-    if (domObject->coreObject) {
-        WebCore::TestActiveDOMObject* coreObject = static_cast<WebCore::TestActiveDOMObject*>(domObject->coreObject);
+    WebKit::DOMObjectCache::forget(priv->coreObject.get());
 
-        WebKit::DOMObjectCache::forget(coreObject);
-        coreObject->deref();
-
-        domObject->coreObject = 0;
-    }
-
-
+    priv->~WebKitDOMTestActiveDOMObjectPrivate();
     G_OBJECT_CLASS(webkit_dom_test_active_dom_object_parent_class)->finalize(object);
 }
 
@@ -110,9 +100,22 @@ static void webkit_dom_test_active_dom_object_get_property(GObject* object, guin
     }
 }
 
+static GObject* webkit_dom_test_active_dom_object_constructor(GType type, guint constructPropertiesCount, GObjectConstructParam* constructProperties)
+{
+    GObject* object = G_OBJECT_CLASS(webkit_dom_test_active_dom_object_parent_class)->constructor(type, constructPropertiesCount, constructProperties);
+
+    WebKitDOMTestActiveDOMObjectPrivate* priv = WEBKIT_DOM_TEST_ACTIVE_DOM_OBJECT_GET_PRIVATE(object);
+    priv->coreObject = static_cast<WebCore::TestActiveDOMObject*>(WEBKIT_DOM_OBJECT(object)->coreObject);
+    WebKit::DOMObjectCache::put(priv->coreObject.get(), object);
+
+    return object;
+}
+
 static void webkit_dom_test_active_dom_object_class_init(WebKitDOMTestActiveDOMObjectClass* requestClass)
 {
     GObjectClass* gobjectClass = G_OBJECT_CLASS(requestClass);
+    g_type_class_add_private(gobjectClass, sizeof(WebKitDOMTestActiveDOMObjectPrivate));
+    gobjectClass->constructor = webkit_dom_test_active_dom_object_constructor;
     gobjectClass->finalize = webkit_dom_test_active_dom_object_finalize;
     gobjectClass->get_property = webkit_dom_test_active_dom_object_get_property;
 
@@ -129,6 +132,8 @@ G_MAXLONG, /* max */
 
 static void webkit_dom_test_active_dom_object_init(WebKitDOMTestActiveDOMObject* request)
 {
+    WebKitDOMTestActiveDOMObjectPrivate* priv = WEBKIT_DOM_TEST_ACTIVE_DOM_OBJECT_GET_PRIVATE(request);
+    new (priv) WebKitDOMTestActiveDOMObjectPrivate();
 }
 
 void

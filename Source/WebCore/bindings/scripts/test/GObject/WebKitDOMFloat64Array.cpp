@@ -42,27 +42,19 @@ WebKitDOMFloat64Array* kit(WebCore::Float64Array* obj)
     if (gpointer ret = DOMObjectCache::get(obj))
         return static_cast<WebKitDOMFloat64Array*>(ret);
 
-    return static_cast<WebKitDOMFloat64Array*>(DOMObjectCache::put(obj, WebKit::wrapFloat64Array(obj)));
+    return static_cast<WebKitDOMFloat64Array*>(g_object_new(WEBKIT_TYPE_DOM_FLOAT64ARRAY, "core-object", obj, NULL));
 }
 
 WebCore::Float64Array* core(WebKitDOMFloat64Array* request)
 {
     g_return_val_if_fail(request, 0);
 
-    WebCore::Float64Array* coreObject = static_cast<WebCore::Float64Array*>(WEBKIT_DOM_OBJECT(request)->coreObject);
-    g_return_val_if_fail(coreObject, 0);
-
-    return coreObject;
+    return static_cast<WebCore::Float64Array*>(WEBKIT_DOM_OBJECT(request)->coreObject);
 }
 
 WebKitDOMFloat64Array* wrapFloat64Array(WebCore::Float64Array* coreObject)
 {
     g_return_val_if_fail(coreObject, 0);
-
-    // We call ref() rather than using a C++ smart pointer because we can't store a C++ object
-    // in a C-allocated GObject structure. See the finalize() code for the matching deref().
-    coreObject->ref();
-
     return WEBKIT_DOM_FLOAT64ARRAY(g_object_new(WEBKIT_TYPE_DOM_FLOAT64ARRAY, "core-object", coreObject, NULL));
 }
 
@@ -70,28 +62,8 @@ WebKitDOMFloat64Array* wrapFloat64Array(WebCore::Float64Array* coreObject)
 
 G_DEFINE_TYPE(WebKitDOMFloat64Array, webkit_dom_float64array, WEBKIT_TYPE_DOM_ARRAY_BUFFER_VIEW)
 
-static void webkit_dom_float64array_finalize(GObject* object)
-{
-
-    WebKitDOMObject* domObject = WEBKIT_DOM_OBJECT(object);
-    
-    if (domObject->coreObject) {
-        WebCore::Float64Array* coreObject = static_cast<WebCore::Float64Array*>(domObject->coreObject);
-
-        WebKit::DOMObjectCache::forget(coreObject);
-        coreObject->deref();
-
-        domObject->coreObject = 0;
-    }
-
-
-    G_OBJECT_CLASS(webkit_dom_float64array_parent_class)->finalize(object);
-}
-
 static void webkit_dom_float64array_class_init(WebKitDOMFloat64ArrayClass* requestClass)
 {
-    GObjectClass* gobjectClass = G_OBJECT_CLASS(requestClass);
-    gobjectClass->finalize = webkit_dom_float64array_finalize;
 }
 
 static void webkit_dom_float64array_init(WebKitDOMFloat64Array* request)

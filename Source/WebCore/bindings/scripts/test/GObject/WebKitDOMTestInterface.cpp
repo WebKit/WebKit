@@ -34,6 +34,14 @@
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
 
+#define WEBKIT_DOM_TEST_INTERFACE_GET_PRIVATE(obj) G_TYPE_INSTANCE_GET_PRIVATE(obj, WEBKIT_TYPE_DOM_TEST_INTERFACE, WebKitDOMTestInterfacePrivate)
+
+typedef struct _WebKitDOMTestInterfacePrivate {
+#if ENABLE(Condition1) || ENABLE(Condition2)
+    RefPtr<WebCore::TestInterface> coreObject;
+#endif // ENABLE(Condition1) || ENABLE(Condition2)
+} WebKitDOMTestInterfacePrivate;
+
 #if ENABLE(Condition1) || ENABLE(Condition2)
 
 namespace WebKit {
@@ -45,27 +53,19 @@ WebKitDOMTestInterface* kit(WebCore::TestInterface* obj)
     if (gpointer ret = DOMObjectCache::get(obj))
         return static_cast<WebKitDOMTestInterface*>(ret);
 
-    return static_cast<WebKitDOMTestInterface*>(DOMObjectCache::put(obj, WebKit::wrapTestInterface(obj)));
+    return static_cast<WebKitDOMTestInterface*>(g_object_new(WEBKIT_TYPE_DOM_TEST_INTERFACE, "core-object", obj, NULL));
 }
 
 WebCore::TestInterface* core(WebKitDOMTestInterface* request)
 {
     g_return_val_if_fail(request, 0);
 
-    WebCore::TestInterface* coreObject = static_cast<WebCore::TestInterface*>(WEBKIT_DOM_OBJECT(request)->coreObject);
-    g_return_val_if_fail(coreObject, 0);
-
-    return coreObject;
+    return static_cast<WebCore::TestInterface*>(WEBKIT_DOM_OBJECT(request)->coreObject);
 }
 
 WebKitDOMTestInterface* wrapTestInterface(WebCore::TestInterface* coreObject)
 {
     g_return_val_if_fail(coreObject, 0);
-
-    // We call ref() rather than using a C++ smart pointer because we can't store a C++ object
-    // in a C-allocated GObject structure. See the finalize() code for the matching deref().
-    coreObject->ref();
-
     return WEBKIT_DOM_TEST_INTERFACE(g_object_new(WEBKIT_TYPE_DOM_TEST_INTERFACE, "core-object", coreObject, NULL));
 }
 
@@ -84,19 +84,11 @@ enum {
 
 static void webkit_dom_test_interface_finalize(GObject* object)
 {
+    WebKitDOMTestInterfacePrivate* priv = WEBKIT_DOM_TEST_INTERFACE_GET_PRIVATE(object);
 #if ENABLE(Condition1) || ENABLE(Condition2)
-    WebKitDOMObject* domObject = WEBKIT_DOM_OBJECT(object);
-    
-    if (domObject->coreObject) {
-        WebCore::TestInterface* coreObject = static_cast<WebCore::TestInterface*>(domObject->coreObject);
-
-        WebKit::DOMObjectCache::forget(coreObject);
-        coreObject->deref();
-
-        domObject->coreObject = 0;
-    }
+    WebKit::DOMObjectCache::forget(priv->coreObject.get());
 #endif // ENABLE(Condition1) || ENABLE(Condition2)
-
+    priv->~WebKitDOMTestInterfacePrivate();
     G_OBJECT_CLASS(webkit_dom_test_interface_parent_class)->finalize(object);
 }
 
@@ -185,9 +177,22 @@ static void webkit_dom_test_interface_get_property(GObject* object, guint proper
     }
 }
 
+static GObject* webkit_dom_test_interface_constructor(GType type, guint constructPropertiesCount, GObjectConstructParam* constructProperties)
+{
+    GObject* object = G_OBJECT_CLASS(webkit_dom_test_interface_parent_class)->constructor(type, constructPropertiesCount, constructProperties);
+#if ENABLE(Condition1) || ENABLE(Condition2)
+    WebKitDOMTestInterfacePrivate* priv = WEBKIT_DOM_TEST_INTERFACE_GET_PRIVATE(object);
+    priv->coreObject = static_cast<WebCore::TestInterface*>(WEBKIT_DOM_OBJECT(object)->coreObject);
+    WebKit::DOMObjectCache::put(priv->coreObject.get(), object);
+#endif // ENABLE(Condition1) || ENABLE(Condition2)
+    return object;
+}
+
 static void webkit_dom_test_interface_class_init(WebKitDOMTestInterfaceClass* requestClass)
 {
     GObjectClass* gobjectClass = G_OBJECT_CLASS(requestClass);
+    g_type_class_add_private(gobjectClass, sizeof(WebKitDOMTestInterfacePrivate));
+    gobjectClass->constructor = webkit_dom_test_interface_constructor;
     gobjectClass->finalize = webkit_dom_test_interface_finalize;
     gobjectClass->set_property = webkit_dom_test_interface_set_property;
     gobjectClass->get_property = webkit_dom_test_interface_get_property;
@@ -217,6 +222,8 @@ static void webkit_dom_test_interface_class_init(WebKitDOMTestInterfaceClass* re
 
 static void webkit_dom_test_interface_init(WebKitDOMTestInterface* request)
 {
+    WebKitDOMTestInterfacePrivate* priv = WEBKIT_DOM_TEST_INTERFACE_GET_PRIVATE(request);
+    new (priv) WebKitDOMTestInterfacePrivate();
 }
 
 void

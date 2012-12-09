@@ -43,27 +43,19 @@ WebKitDOMTestNode* kit(WebCore::TestNode* obj)
     if (gpointer ret = DOMObjectCache::get(obj))
         return static_cast<WebKitDOMTestNode*>(ret);
 
-    return static_cast<WebKitDOMTestNode*>(DOMObjectCache::put(obj, WebKit::wrapTestNode(obj)));
+    return static_cast<WebKitDOMTestNode*>(g_object_new(WEBKIT_TYPE_DOM_TEST_NODE, "core-object", obj, NULL));
 }
 
 WebCore::TestNode* core(WebKitDOMTestNode* request)
 {
     g_return_val_if_fail(request, 0);
 
-    WebCore::TestNode* coreObject = static_cast<WebCore::TestNode*>(WEBKIT_DOM_OBJECT(request)->coreObject);
-    g_return_val_if_fail(coreObject, 0);
-
-    return coreObject;
+    return static_cast<WebCore::TestNode*>(WEBKIT_DOM_OBJECT(request)->coreObject);
 }
 
 WebKitDOMTestNode* wrapTestNode(WebCore::TestNode* coreObject)
 {
     g_return_val_if_fail(coreObject, 0);
-
-    // We call ref() rather than using a C++ smart pointer because we can't store a C++ object
-    // in a C-allocated GObject structure. See the finalize() code for the matching deref().
-    coreObject->ref();
-
     return WEBKIT_DOM_TEST_NODE(g_object_new(WEBKIT_TYPE_DOM_TEST_NODE, "core-object", coreObject, NULL));
 }
 
@@ -103,28 +95,8 @@ static void webkit_dom_event_target_init(WebKitDOMEventTargetIface* iface)
 
 G_DEFINE_TYPE_WITH_CODE(WebKitDOMTestNode, webkit_dom_test_node, WEBKIT_TYPE_DOM_NODE, G_IMPLEMENT_INTERFACE(WEBKIT_TYPE_DOM_EVENT_TARGET, webkit_dom_event_target_init))
 
-static void webkit_dom_test_node_finalize(GObject* object)
-{
-
-    WebKitDOMObject* domObject = WEBKIT_DOM_OBJECT(object);
-    
-    if (domObject->coreObject) {
-        WebCore::TestNode* coreObject = static_cast<WebCore::TestNode*>(domObject->coreObject);
-
-        WebKit::DOMObjectCache::forget(coreObject);
-        coreObject->deref();
-
-        domObject->coreObject = 0;
-    }
-
-
-    G_OBJECT_CLASS(webkit_dom_test_node_parent_class)->finalize(object);
-}
-
 static void webkit_dom_test_node_class_init(WebKitDOMTestNodeClass* requestClass)
 {
-    GObjectClass* gobjectClass = G_OBJECT_CLASS(requestClass);
-    gobjectClass->finalize = webkit_dom_test_node_finalize;
 }
 
 static void webkit_dom_test_node_init(WebKitDOMTestNode* request)

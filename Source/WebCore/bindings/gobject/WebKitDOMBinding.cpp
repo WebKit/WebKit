@@ -66,7 +66,7 @@ static gpointer createWrapper(Node* node)
         break;
     }
 
-    return DOMObjectCache::put(node, wrappedNode);
+    return wrappedNode;
 }
 
 WebKitDOMNode* kit(Node* node)
@@ -97,7 +97,7 @@ WebKitDOMElement* kit(Element* element)
     else
         wrappedElement = wrapElement(element);
 
-    return static_cast<WebKitDOMElement*>(DOMObjectCache::put(element, wrappedElement));
+    return static_cast<WebKitDOMElement*>(wrappedElement);
 }
 
 WebKitDOMEvent* kit(Event* event)
@@ -118,7 +118,7 @@ WebKitDOMEvent* kit(Event* event)
     else
         wrappedEvent = wrapEvent(event);
 
-    return static_cast<WebKitDOMEvent*>(DOMObjectCache::put(event, wrappedEvent));
+    return static_cast<WebKitDOMEvent*>(wrappedEvent);
 }
 
 static gpointer wrapEventTarget(EventTarget* target)
@@ -135,7 +135,7 @@ static gpointer wrapEventTarget(EventTarget* target)
         wrappedTarget = wrapDOMWindow(window);
     }
 
-    return DOMObjectCache::put(target, wrappedTarget);
+    return wrappedTarget;
 }
 
 WebKitDOMEventTarget* kit(WebCore::EventTarget* obj)
@@ -145,7 +145,7 @@ WebKitDOMEventTarget* kit(WebCore::EventTarget* obj)
     if (gpointer ret = DOMObjectCache::get(obj))
         return static_cast<WebKitDOMEventTarget*>(ret);
 
-    return static_cast<WebKitDOMEventTarget*>(DOMObjectCache::put(obj, WebKit::wrapEventTarget(obj)));
+    return static_cast<WebKitDOMEventTarget*>(wrapEventTarget(obj));
 }
 
 } // namespace WebKit

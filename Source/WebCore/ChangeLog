@@ -1,3 +1,145 @@
+2012-12-09  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Use a private struct and placement new syntax in GObject DOM bindings
+        https://bugs.webkit.org/show_bug.cgi?id=101074
+
+        Reviewed by Xan Lopez.
+
+        It allows to use RefPtr for the wrapped object and it simplifies
+        the code. Only the classes deriving from WebKitDOMObject keep a
+        reference of the wrapped object in a private struct. The wrapped
+        object is added to the cache in GObjectClass::constructor() and
+        removed in GObjectClass::finalize().
+
+        * bindings/gobject/WebKitDOMBinding.cpp:
+        (WebKit::createWrapper):
+        (WebKit::kit):
+        (WebKit::wrapEventTarget):
+        * bindings/scripts/CodeGeneratorGObject.pm:
+        (GetParentImplClassName):
+        (GenerateProperties):
+        (GenerateCFile):
+        (Generate):
+        (WriteData):
+        * bindings/scripts/test/GObject/WebKitDOMFloat64Array.cpp:
+        (WebKit::kit):
+        (WebKit::core):
+        (WebKit::wrapFloat64Array):
+        (webkit_dom_float64array_class_init):
+        * bindings/scripts/test/GObject/WebKitDOMTestActiveDOMObject.cpp:
+        (_WebKitDOMTestActiveDOMObjectPrivate):
+        (WebKit::kit):
+        (WebKit::core):
+        (WebKit::wrapTestActiveDOMObject):
+        (webkit_dom_test_active_dom_object_finalize):
+        (webkit_dom_test_active_dom_object_constructor):
+        (webkit_dom_test_active_dom_object_class_init):
+        (webkit_dom_test_active_dom_object_init):
+        * bindings/scripts/test/GObject/WebKitDOMTestCallback.cpp:
+        (_WebKitDOMTestCallbackPrivate):
+        (WebKit::kit):
+        (WebKit::core):
+        (WebKit::wrapTestCallback):
+        (webkit_dom_test_callback_finalize):
+        (webkit_dom_test_callback_constructor):
+        (webkit_dom_test_callback_class_init):
+        (webkit_dom_test_callback_init):
+        * bindings/scripts/test/GObject/WebKitDOMTestCustomNamedGetter.cpp:
+        (_WebKitDOMTestCustomNamedGetterPrivate):
+        (WebKit::kit):
+        (WebKit::core):
+        (WebKit::wrapTestCustomNamedGetter):
+        (webkit_dom_test_custom_named_getter_finalize):
+        (webkit_dom_test_custom_named_getter_constructor):
+        (webkit_dom_test_custom_named_getter_class_init):
+        (webkit_dom_test_custom_named_getter_init):
+        * bindings/scripts/test/GObject/WebKitDOMTestEventConstructor.cpp:
+        (_WebKitDOMTestEventConstructorPrivate):
+        (WebKit::kit):
+        (WebKit::core):
+        (WebKit::wrapTestEventConstructor):
+        (webkit_dom_test_event_constructor_finalize):
+        (webkit_dom_test_event_constructor_constructor):
+        (webkit_dom_test_event_constructor_class_init):
+        (webkit_dom_test_event_constructor_init):
+        * bindings/scripts/test/GObject/WebKitDOMTestEventTarget.cpp:
+        (_WebKitDOMTestEventTargetPrivate):
+        (WebKit::kit):
+        (WebKit::core):
+        (WebKit::wrapTestEventTarget):
+        (webkit_dom_test_event_target_finalize):
+        (webkit_dom_test_event_target_constructor):
+        (webkit_dom_test_event_target_class_init):
+        (webkit_dom_test_event_target_init):
+        * bindings/scripts/test/GObject/WebKitDOMTestException.cpp:
+        (_WebKitDOMTestExceptionPrivate):
+        (WebKit::kit):
+        (WebKit::core):
+        (WebKit::wrapTestException):
+        (webkit_dom_test_exception_finalize):
+        (webkit_dom_test_exception_constructor):
+        (webkit_dom_test_exception_class_init):
+        (webkit_dom_test_exception_init):
+        * bindings/scripts/test/GObject/WebKitDOMTestInterface.cpp:
+        (_WebKitDOMTestInterfacePrivate):
+        (WebKit::kit):
+        (WebKit::core):
+        (WebKit::wrapTestInterface):
+        (webkit_dom_test_interface_finalize):
+        (webkit_dom_test_interface_constructor):
+        (webkit_dom_test_interface_class_init):
+        (webkit_dom_test_interface_init):
+        * bindings/scripts/test/GObject/WebKitDOMTestMediaQueryListListener.cpp:
+        (_WebKitDOMTestMediaQueryListListenerPrivate):
+        (WebKit::kit):
+        (WebKit::core):
+        (WebKit::wrapTestMediaQueryListListener):
+        (webkit_dom_test_media_query_list_listener_finalize):
+        (webkit_dom_test_media_query_list_listener_constructor):
+        (webkit_dom_test_media_query_list_listener_class_init):
+        (webkit_dom_test_media_query_list_listener_init):
+        * bindings/scripts/test/GObject/WebKitDOMTestNamedConstructor.cpp:
+        (_WebKitDOMTestNamedConstructorPrivate):
+        (WebKit::kit):
+        (WebKit::core):
+        (WebKit::wrapTestNamedConstructor):
+        (webkit_dom_test_named_constructor_finalize):
+        (webkit_dom_test_named_constructor_constructor):
+        (webkit_dom_test_named_constructor_class_init):
+        (webkit_dom_test_named_constructor_init):
+        * bindings/scripts/test/GObject/WebKitDOMTestNode.cpp:
+        (WebKit::kit):
+        (WebKit::core):
+        (WebKit::wrapTestNode):
+        (webkit_dom_test_node_class_init):
+        * bindings/scripts/test/GObject/WebKitDOMTestObj.cpp:
+        (_WebKitDOMTestObjPrivate):
+        (WebKit::kit):
+        (WebKit::core):
+        (WebKit::wrapTestObj):
+        (webkit_dom_test_obj_finalize):
+        (webkit_dom_test_obj_constructor):
+        (webkit_dom_test_obj_class_init):
+        (webkit_dom_test_obj_init):
+        * bindings/scripts/test/GObject/WebKitDOMTestOverloadedConstructors.cpp:
+        (_WebKitDOMTestOverloadedConstructorsPrivate):
+        (WebKit::kit):
+        (WebKit::core):
+        (WebKit::wrapTestOverloadedConstructors):
+        (webkit_dom_test_overloaded_constructors_finalize):
+        (webkit_dom_test_overloaded_constructors_constructor):
+        (webkit_dom_test_overloaded_constructors_class_init):
+        (webkit_dom_test_overloaded_constructors_init):
+        * bindings/scripts/test/GObject/WebKitDOMTestSerializedScriptValueInterface.cpp:
+        (_WebKitDOMTestSerializedScriptValueInterfacePrivate):
+        (WebKit::kit):
+        (WebKit::core):
+        (WebKit::wrapTestSerializedScriptValueInterface):
+        (webkit_dom_test_serialized_script_value_interface_finalize):
+        (webkit_dom_test_serialized_script_value_interface_constructor):
+        (webkit_dom_test_serialized_script_value_interface_class_init):
+        (webkit_dom_test_serialized_script_value_interface_init):
+
 2012-12-09  Jon Lee  <jonlee@apple.com>
 
         [WK2] Move button image to injected bundle
