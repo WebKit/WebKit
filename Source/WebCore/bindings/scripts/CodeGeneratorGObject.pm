@@ -31,8 +31,6 @@ my %hdrIncludes = ();
 my $defineTypeMacro = "G_DEFINE_TYPE";
 my $defineTypeInterfaceImplementation = ")";
 my @txtEventListeners = ();
-my @txtInstallEventListeners = ();
-my @txtInstallSignals = ();
 my @txtInstallProps = ();
 my @txtSetProps = ();
 my @txtGetProps = ();
@@ -671,23 +669,6 @@ EOF
         push(@cBodyProperties, "\n");
     }
 
-    if (scalar @txtInstallEventListeners > 0) {
-        $implContent = << "EOF";
-static void ${lowerCaseIfaceName}_constructed(GObject* object)
-{
-    G_OBJECT_CLASS(${lowerCaseIfaceName}_parent_class)->constructed(object);
-EOF
-        push(@cBodyProperties, $implContent);
-        push(@cBodyProperties, "\n");
-        push(@cBodyProperties, @txtInstallEventListeners);
-
-        $implContent = << "EOF";
-}
-
-EOF
-        push(@cBodyProperties, $implContent);
-    }
-
     # Add a constructor implementation only for direct subclasses of Object to make sure
     # that the WebCore wrapped object is added only once to the DOM cache. The DOM garbage
     # collector works because Node is a direct subclass of Object and the version of
@@ -716,17 +697,13 @@ static void ${lowerCaseIfaceName}_class_init(${className}Class* requestClass)
 EOF
     push(@cBodyProperties, $implContent);
 
-    if ($parentImplClassName eq "Object" || scalar @txtInstallEventListeners > 0 || $numProperties > 0) {
+    if ($parentImplClassName eq "Object" || $numProperties > 0) {
         push(@cBodyProperties, "    GObjectClass* gobjectClass = G_OBJECT_CLASS(requestClass);\n");
 
         if ($parentImplClassName eq "Object") {
             push(@cBodyProperties, "    g_type_class_add_private(gobjectClass, sizeof(${className}Private));\n");
             push(@cBodyProperties, "    gobjectClass->constructor = ${lowerCaseIfaceName}_constructor;\n");
             push(@cBodyProperties, "    gobjectClass->finalize = ${lowerCaseIfaceName}_finalize;\n");
-        }
-
-        if (scalar @txtInstallEventListeners > 0) {
-            push(@cBodyProperties, "    gobjectClass->constructed = ${lowerCaseIfaceName}_constructed;\n");
         }
 
         if ($numProperties > 0) {
@@ -736,11 +713,6 @@ EOF
             push(@cBodyProperties, "    gobjectClass->get_property = ${lowerCaseIfaceName}_get_property;\n");
             push(@cBodyProperties, "\n");
             push(@cBodyProperties, @txtInstallProps);
-        }
-
-        if (scalar @txtInstallSignals > 0) {
-            push(@cBodyProperties, "\n");
-            push(@cBodyProperties, @txtInstallSignals);
         }
     }
     $implContent = << "EOF";

@@ -1,3 +1,14 @@
+2012-12-09  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Remove unused code in GObject DOM bindings generator
+        https://bugs.webkit.org/show_bug.cgi?id=104490
+
+        Reviewed by Martin Robinson.
+
+        * bindings/scripts/CodeGeneratorGObject.pm:
+        (GenerateProperties): Remove code to install event listeners and
+        signals.
+
 2012-12-09  Zan Dobersek  <zandobersek@gmail.com>
 
         Unreviewed update for the GObject bindings after r137074 and r137078.
