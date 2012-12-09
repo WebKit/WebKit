@@ -25,7 +25,7 @@
                                 (GraphicsLayer
                                   (position 242.00 58.00)
                                   (bounds 100.00 100.00)
-                                  (drawsContent 1)
+                                  (backgroundColor #008000)
                                 )
                               )
                             )

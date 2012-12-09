@@ -1,3 +1,19 @@
+2012-12-09  Christophe Dumez  <christophe.dumez@intel.com>
+
+        Unreviewing gardening.
+
+        Rebaseline several compositing test cases after r137051.
+
+        * compositing/iframes/overlapped-nested-iframes-expected.txt:
+        * compositing/rtl/rtl-fixed-overflow-scrolled-expected.txt:
+        * compositing/rtl/rtl-iframe-absolute-expected.txt:
+        * compositing/rtl/rtl-iframe-fixed-expected.txt:
+        * compositing/rtl/rtl-iframe-relative-expected.txt:
+        * compositing/tiling/crash-reparent-tiled-layer-expected.txt:
+        * compositing/tiling/huge-layer-add-remove-child-expected.txt:
+        * compositing/tiling/huge-layer-with-layer-children-expected.txt:
+        * compositing/tiling/huge-layer-with-layer-children-resize-expected.txt:
+
 2012-12-09  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r137053.
