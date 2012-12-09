@@ -1,3 +1,9 @@
+2012-12-09  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        Unreviewed. Unskip a skipped test for which i have added expectation in http://trac.webkit.org/changeset/135851.
+
+        * platform/gtk-wk2/TestExpectations:
+
 2012-12-09  Joanmarie Diggs  <jdiggs@igalia.com>
 
         [GTK] accessibility/label-for-control-hittest.html is failing
