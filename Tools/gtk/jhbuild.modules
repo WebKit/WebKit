@@ -228,10 +228,10 @@
   </autotools>
 
   <autotools id="libxml2">
-    <branch module="/libxml2/libxml2-2.8.0.tar.gz" version="2.8.0"
+    <branch module="/libxml2/libxml2-2.9.0.tar.gz" version="2.9.0"
             repo="xmlsoft.org"
-            hash="sha256:f2e2d0e322685193d1affec83b21dc05d599e17a7306d7b90de95bb5b9ac622a"
-            md5sum="c62106f02ee00b6437f0fb9d370c1093"/>
+            hash="sha256:ad25d91958b7212abdc12b9611cfb4dc4e5cddb6d1e9891532f48aacee422b82"
+            md5sum="5b9bebf4f5d2200ae2c4efe8fa6103f7"/>
   </autotools>
 
 </moduleset>

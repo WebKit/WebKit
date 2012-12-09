@@ -1,3 +1,16 @@
+2012-12-09  Dan Winship  <danw@gnome.org>
+
+        [GTK] Bump libxml2 requirement in jhbuild.modules
+        https://bugs.webkit.org/show_bug.cgi?id=104477
+
+        Reviewed by Martin Robinson.
+
+        Fedora 18's Apache depends on symbols in libxml2 2.9.0, so the
+        tests won't run if we only have libxml2 2.8.0 installed in the
+        jhbuild root.
+
+        * gtk/jhbuild.modules:
+
 2012-12-09  Zan Dobersek  <zandobersek@gmail.com>
 
         Remove testRunner.disableImageLoading()
