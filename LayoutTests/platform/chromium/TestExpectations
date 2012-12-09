@@ -2036,9 +2036,9 @@ crbug.com/2844 [ Win ] http/tests/appcache/update-cache.html [ Pass Timeout ]
 
 # These tests sometimes pass and sometimes have a text difference due
 # to chromium's appcache being async.
-crbug.com/2844 [ Win Release ] http/tests/appcache/top-frame-3.html [ Failure Pass Timeout ]
+webkit.org/b/104489 [ Win Release ] http/tests/appcache/top-frame-3.html [ Failure Pass Timeout ]
 crbug.com/2844 [ Android Linux Mac ] http/tests/appcache/top-frame-3.html [ Failure Pass Timeout ]
-crbug.com/2844 [ Win Release ] http/tests/appcache/top-frame-4.html [ Failure Pass Timeout ]
+webkit.org/b/104489 [ Win Release ] http/tests/appcache/top-frame-4.html [ Failure Pass Timeout ]
 crbug.com/2844 [ Android Linux Mac ] http/tests/appcache/top-frame-4.html [ Failure Pass Timeout ]
 
 # These fail because chromium's appcache is async but webkit's is not.
@@ -4222,9 +4222,9 @@ webkit.org/b/104283 [ Mac Debug ] fonts/monospace.html [ ImageOnlyFailure Pass ]
 crbug.com/164997 compositing/backface-visibility/backface-visibility-webgl.html [ ImageOnlyFailure ]
 
 # Flaky on Win
-Bug(senorblanco) [ Win ] http/tests/w3c/webperf/submission/Intel/user-timing/test_user_timing_mark.html [ Failure Pass ]
-Bug(senorblanco) [ Win ] http/tests/w3c/webperf/submission/Intel/user-timing/test_user_timing_clearMarks.html [ Failure Pass ]
-Bug(senorblanco) [ Win ] http/tests/w3c/webperf/submission/Intel/user-timing/test_user_timing_measure_associate_with_navigation_timing.html [ Failure Pass ]
+webkit.org/b/104489 [ Win ] http/tests/w3c/webperf/submission/Intel/user-timing/test_user_timing_mark.html [ Failure Pass ]
+webkit.org/b/104489 [ Win ] http/tests/w3c/webperf/submission/Intel/user-timing/test_user_timing_clearMarks.html [ Failure Pass ]
+webkit.org/b/104489 [ Win ] http/tests/w3c/webperf/submission/Intel/user-timing/test_user_timing_measure_associate_with_navigation_timing.html [ Failure Pass ]
 
 # Flaky since r136945
 webkit.org/b/94002 [ Win Mac Debug ] inspector/debugger/live-edit-breakpoints.html [ Failure Timeout ]
@@ -4234,4 +4234,4 @@ webkit.org/b/94002 [ Mac Debug ] inspector/debugger/live-edit.html [ Crash Pass 
 webkit.org/b/104473 [ Debug ] inspector/styles/import-pseudoclass-crash.html [ Crash ]
 
 # Flaky on Win (perhaps due to lighttpd?)
-Bug(senorblanco) [ Win ] http/tests/w3c/webperf/submission/resource-timing/html/test_resource_attribute_order.html [ Failure Pass ]
+webkit.org/b/104489 [ Win ] http/tests/w3c/webperf/submission/resource-timing/html/test_resource_attribute_order.html [ Failure Pass ]
