@@ -1622,6 +1622,13 @@ Bug(EFL) transitions/negative-delay.html [ Failure Pass ]
 webkit.org/b/102068 webkit.org/b/102993 media/audio-repaint.html [ Failure ]
 webkit.org/b/102068 webkit.org/b/102993 media/media-document-audio-repaint.html [ Failure ]
 
+# MicroData test cases failing after r137003.
+webkit.org/b/104469 fast/dom/MicroData/nameditem-must-be-case-sensitive.html [ Failure ]
+webkit.org/b/104469 fast/dom/MicroData/nameditem-must-return-correct-item-properties.html [ Failure ]
+webkit.org/b/104469 fast/dom/MicroData/nameditem-returns-propertynodelist.html [ Failure ]
+webkit.org/b/104469 fast/dom/MicroData/properties-collection-nameditem-test.html [ Failure ]
+webkit.org/b/104469 fast/dom/MicroData/propertynodelist-getvalues-test.html [ Failure ]
+
 # It may even be the case that the tests themselves are wrong.
 webkit.org/b/100859 ietestcenter/css3/bordersbackgrounds/background-repeat-space-padding-box.htm [ ImageOnlyFailure Missing ]
 webkit.org/b/100857 ietestcenter/css3/text/textshadow-005.htm [ ImageOnlyFailure Missing ]
