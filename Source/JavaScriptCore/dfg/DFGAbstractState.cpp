@@ -1590,6 +1590,8 @@ bool AbstractState::execute(unsigned indexInBlock)
             || value.m_currentKnownStructure.isSubsetOf(set))
             m_foundConstants = true;
         node.setCanExit(true);
+        if (node.child2())
+            forNode(node.child2()).filter(SpecInt32);
         clobberStructures(indexInBlock);
         value.filter(set);
         m_haveStructures = true;

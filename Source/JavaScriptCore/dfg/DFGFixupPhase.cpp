@@ -172,7 +172,7 @@ private:
                     m_graph[node.child1()].prediction() & SpecCell,
                     SpecInt32,
                     m_graph[node.child2()].prediction()));
-            blessArrayOperation(node.child1(), node.child2(), 2);
+            blessArrayOperation(node.child1(), Edge(), 2);
             
             Node* nodePtr = &m_graph[m_compileIndex];
             switch (nodePtr->arrayMode().type()) {
@@ -186,7 +186,7 @@ private:
         }
             
         case ArrayPop: {
-            blessArrayOperation(node.child1(), node.child2(), 1);
+            blessArrayOperation(node.child1(), Edge(), 1);
             break;
         }
             
