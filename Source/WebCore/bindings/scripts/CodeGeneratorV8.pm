@@ -2747,7 +2747,11 @@ END
             $indexer = $function->signature;
         }
 
-        if ($function->signature->name eq "namedItem") {
+        if ($interfaceName eq "HTMLPropertiesCollection") {
+            if ($function->signature->name eq "propertyNodeList") {
+                $namedPropertyGetter = $function->signature;
+            }
+        } elsif ($function->signature->name eq "namedItem") {
             $namedPropertyGetter = $function->signature;
         }
 

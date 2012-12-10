@@ -24,6 +24,7 @@
 #include "HTMLCollection.h"
 #include "HTMLFormControlsCollection.h"
 #include "HTMLOptionsCollection.h"
+#include "HTMLPropertiesCollection.h"
 #include "JSDOMBinding.h"
 #include "JSHTMLAllCollection.h"
 #include "JSHTMLFormControlsCollection.h"
@@ -32,6 +33,7 @@
 #include "JSNodeList.h"
 #include "JSRadioNodeList.h"
 #include "Node.h"
+#include "PropertyNodeList.h"
 #include "RadioNodeList.h"
 #include "StaticNodeList.h"
 #include <wtf/Vector.h>
@@ -50,7 +52,12 @@ JSValue JSHTMLCollection::nameGetter(ExecState* exec, JSValue slotBase, Property
 {
     JSHTMLCollection* collection = jsCast<JSHTMLCollection*>(asObject(slotBase));
     const AtomicString& name = propertyNameToAtomicString(propertyName);
-    return toJS(exec, collection->globalObject(), collection->impl()->namedItem(name));
+    HTMLCollection* impl = collection->impl();
+#if ENABLE(MICRODATA)
+    if (impl->type() == ItemProperties)
+        return toJS(exec, collection->globalObject(), static_cast<HTMLPropertiesCollection*>(impl)->propertyNodeList(name));
+#endif
+    return toJS(exec, collection->globalObject(), impl->namedItem(name));
 }
 
 JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, HTMLCollection* collection)
