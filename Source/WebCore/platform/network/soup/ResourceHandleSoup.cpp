@@ -491,7 +491,7 @@ static bool handleUnignoredTLSErrors(ResourceHandle* handle)
     return true;
 }
 
-static void nextMultipartResponsePartCallback(GObject* source, GAsyncResult* result, gpointer data)
+static void nextMultipartResponsePartCallback(GObject* /*source*/, GAsyncResult* result, gpointer data)
 {
     RefPtr<ResourceHandle> handle = static_cast<ResourceHandle*>(data);
 

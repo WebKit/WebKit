@@ -1,3 +1,16 @@
+2012-12-10  KyungTae Kim  <ktf.kim@samsung.com>
+
+        [soup] Fix build warning in ResourceHandleSoup.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=104605
+
+        Reviewed by Martin Robinson.
+
+        The nextMultipartResponsePartCallback has unused parameter 'source',
+        comment out it to fix 'unused parameter' build warning.
+
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::nextMultipartResponsePartCallback):
+
 2012-12-10  Simon Fraser  <simon.fraser@apple.com>
 
         Fix frame border painting in tiled drawing mode
