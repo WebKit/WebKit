@@ -631,13 +631,8 @@ void RenderLayerBacking::updateGraphicsLayerGeometry()
     
     FloatSize oldSize = m_graphicsLayer->size();
     FloatSize newSize = relativeCompositingBounds.size();
-    if (oldSize != newSize) {
+    if (oldSize != newSize)
         m_graphicsLayer->setSize(newSize);
-        // A bounds change will almost always require redisplay. Usually that redisplay
-        // will happen because of a repaint elsewhere, but not always:
-        // e.g. see RenderView::setMaximalOutlineSize()
-        m_graphicsLayer->setNeedsDisplay();
-    }
 
     // If we have a layer that clips children, position it.
     IntRect clippingBox;

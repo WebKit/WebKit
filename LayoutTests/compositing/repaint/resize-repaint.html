@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+        #resizing {
+            width: 400px;
+            border: 1px solid black;
+            -webkit-transform: translateZ(0);
+        }
+
+        #resizing > div {
+            height: 50px;
+            margin: 1px;
+            background-color: silver;
+        }
+    </style>
+    <script>
+        if (window.testRunner)
+            testRunner.dumpAsText();
+        
+        function doTest()
+        {
+            // Force compositing update before changing layer size.
+            window.internals.layerTreeAsText(document);
+
+            var resizingDiv = document.getElementById('resizing');
+            
+            for (var i = 0; i < 2; ++i) {
+                var newDiv = document.createElement('div');
+                resizingDiv.appendChild(newDiv);
+            }
+
+            if (window.internals)
+                window.internals.startTrackingRepaints(document);
+
+            for (var i = 0; i < 2; ++i) {
+                var newDiv = document.createElement('div');
+                resizingDiv.appendChild(newDiv);
+            }
+            
+            if (window.internals)
+                document.getElementById('layers').textContent = window.internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_REPAINT_RECTS);
+        }
+        
+        window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+
+<div id="resizing"></div>
+<pre id="layers"></pre>
+
+</body>
+</html>
