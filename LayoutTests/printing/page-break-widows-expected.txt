@@ -11,7 +11,8 @@ PASS: page number of "page2-2" is 2
 PASS: page number of "page3-1" is 3
 PASS: page number of "page3-2" is 3
 PASS: page number of "page4" is 4
-FAIL: expected page number of "page5" is 5. Was 4
+PASS: page number of "page5" is 5
+All tests passed
 
 PASS successfullyParsed is true
 

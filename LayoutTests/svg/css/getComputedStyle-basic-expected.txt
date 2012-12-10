@@ -124,7 +124,7 @@ rect: style.getPropertyValue(min-width) : 0px
 rect: style.getPropertyCSSValue(min-width) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(opacity) : 1
 rect: style.getPropertyCSSValue(opacity) : [object CSSPrimitiveValue]
-rect: style.getPropertyValue(orphans) : 2
+rect: style.getPropertyValue(orphans) : auto
 rect: style.getPropertyCSSValue(orphans) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(outline-color) : rgb(0, 0, 0)
 rect: style.getPropertyCSSValue(outline-color) : [object CSSPrimitiveValue]
@@ -188,7 +188,7 @@ rect: style.getPropertyValue(visibility) : visible
 rect: style.getPropertyCSSValue(visibility) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(white-space) : normal
 rect: style.getPropertyCSSValue(white-space) : [object CSSPrimitiveValue]
-rect: style.getPropertyValue(widows) : 2
+rect: style.getPropertyValue(widows) : auto
 rect: style.getPropertyCSSValue(widows) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(width) : auto
 rect: style.getPropertyCSSValue(width) : [object CSSPrimitiveValue]
@@ -624,7 +624,7 @@ g: style.getPropertyValue(min-width) : 0px
 g: style.getPropertyCSSValue(min-width) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(opacity) : 1
 g: style.getPropertyCSSValue(opacity) : [object CSSPrimitiveValue]
-g: style.getPropertyValue(orphans) : 2
+g: style.getPropertyValue(orphans) : auto
 g: style.getPropertyCSSValue(orphans) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(outline-color) : rgb(0, 0, 0)
 g: style.getPropertyCSSValue(outline-color) : [object CSSPrimitiveValue]
@@ -688,7 +688,7 @@ g: style.getPropertyValue(visibility) : visible
 g: style.getPropertyCSSValue(visibility) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(white-space) : normal
 g: style.getPropertyCSSValue(white-space) : [object CSSPrimitiveValue]
-g: style.getPropertyValue(widows) : 2
+g: style.getPropertyValue(widows) : auto
 g: style.getPropertyCSSValue(widows) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(width) : auto
 g: style.getPropertyCSSValue(width) : [object CSSPrimitiveValue]

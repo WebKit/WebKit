@@ -62,7 +62,7 @@ max-width: none
 min-height: 0px
 min-width: 0px
 opacity: 1
-orphans: 2
+orphans: auto
 outline-color: rgb(0, 0, 0)
 outline-style: none
 outline-width: 0px
@@ -94,7 +94,7 @@ unicode-bidi: normal
 vertical-align: baseline
 visibility: visible
 white-space: normal
-widows: 2
+widows: auto
 width: 50%
 word-break: normal
 word-spacing: 0px

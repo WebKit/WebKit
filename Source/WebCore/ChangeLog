@@ -1,3 +1,57 @@
+2012-12-10  Dean Jackson  <dino@apple.com>
+
+        Support for CSS widows and orphans
+        https://bugs.webkit.org/show_bug.cgi?id=9410
+
+        Reviewed by Darin Adler.
+
+        The CSS 'widow' and 'orphan' properties were supported by the parser and
+        style system, but were not actually doing anything in layout. Now they do!
+
+        In order to not break existing content, I unfortunately had to go against
+        the specification and change our default value from 2 to auto. A value of
+        auto means that widows and orphans will not cause any page/column breaks.
+
+        Supporting orphans was a small change. During line layout, if we realise
+        we need to move to a new page in a situation that would create an orphan,
+        move the entire block to the new page. There was already code to do this.
+
+        Support for widows was trickier. When we finish laying out a block, count
+        the number of hanging lines. If we've created a widow, and there are enough
+        available lines on the previous page, then steal some and remember the line
+        to break at. Trigger a relayout. Then notice the line that was marked for
+        breaking and avoid the widow. This means some blocks go through layout
+        twice, but as long as the widow value is small it shouldn't be a huge penalty.
+
+        Tests: fast/multicol/widows-and-orphans.html (new test)
+               printing/page-break-orphans.html
+               printing/page-break-orphans-and-widows.html
+               printing/page-break-widows.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue): Return CSSValueAuto for widows and orphans if necessary.
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue): Support "auto" in widow and orphan property parsing.
+        * css/StyleBuilder.cpp:
+        (WebCore::StyleBuilder::StyleBuilder): Change property handler to something that supports auto.
+        * page/animation/CSSPropertyAnimation.cpp:
+        (WebCore::CSSPropertyAnimation::ensurePropertyMap): Add widows and orphans to the animation map.
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::layoutBlockChild): Detect if we've caused a widow-fixing break, and request relayout evaluation.
+        (WebCore::RenderBlock::markForPaginationRelayoutIfNeeded): Test for a widow-fixing line.
+        (WebCore::RenderBlock::setBreakAtLineToAvoidWidow): New function to remember where we should break on next layout.
+        (WebCore::RenderBlock::adjustLinePositionForPagination): Move the entire block to a new page if this would create an orphan.
+        * rendering/RenderBlock.h:
+        (WebCore::RenderBlock::shouldBreakAtLineToAvoidWidow): New function to indicate if we are remembering a widow.
+        (WebCore::RenderBlock::clearShouldBreakAtLineToAvoidWidow): Reset the line breaks.
+        (WebCore::RenderBlock::lineBreakToAvoidWidow):
+        (WebCore::RenderBlock::RenderBlockRareData::RenderBlockRareData): Add a flag for indicating if we are remembering a line, and the actual line itself.
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::layoutRunsAndFloatsInRange): The code to detect and fix widows. Explained above.
+        * rendering/style/RenderStyle.h: New methods for indicating if widows and orphans are non-default values.
+        * rendering/style/StyleRareInheritedData.cpp: Ditto.
+        * rendering/style/StyleRareInheritedData.h: Ditto.
+
 2012-12-10  Zan Dobersek  <zandobersek@gmail.com>
 
         REGRESSION (r118735): svg/dom/complex-svgView-specification.html, svg/dom/SVGViewSpec.html, svg/dom/viewspec-parser.html failing on GTK Linux 64-bit Release

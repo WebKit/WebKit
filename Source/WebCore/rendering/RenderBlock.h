@@ -306,7 +306,12 @@ public:
 
     LayoutUnit paginationStrut() const { return m_rareData ? m_rareData->m_paginationStrut : LayoutUnit(); }
     void setPaginationStrut(LayoutUnit);
-    
+
+    bool shouldBreakAtLineToAvoidWidow() const { return m_rareData && m_rareData->m_shouldBreakAtLineToAvoidWidow; }
+    void clearShouldBreakAtLineToAvoidWidow() const;
+    RootInlineBox* lineBreakToAvoidWidow() const { return m_rareData ? m_rareData->m_lineBreakToAvoidWidow : 0; }
+    void setBreakAtLineToAvoidWidow(RootInlineBox*);
+
     // The page logical offset is the object's offset from the top of the page in the page progression
     // direction (so an x-offset in vertical text and a y-offset for horizontal text).
     LayoutUnit pageLogicalOffset() const { return m_rareData ? m_rareData->m_pageLogicalOffset : LayoutUnit(); }
@@ -1149,6 +1154,8 @@ protected:
             , m_paginationStrut(0)
             , m_pageLogicalOffset(0)
             , m_lineGridBox(0)
+            , m_shouldBreakAtLineToAvoidWidow(false)
+            , m_lineBreakToAvoidWidow(0)
         { 
         }
 
@@ -1175,6 +1182,9 @@ protected:
         LayoutUnit m_pageLogicalOffset;
         
         RootInlineBox* m_lineGridBox;
+
+        bool m_shouldBreakAtLineToAvoidWidow;
+        RootInlineBox* m_lineBreakToAvoidWidow;
      };
 
     OwnPtr<RenderBlockRareData> m_rareData;
