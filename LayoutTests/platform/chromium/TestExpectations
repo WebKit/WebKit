@@ -97,6 +97,9 @@ webkit.org/b/90488 [ Debug ] inspector [ Pass Slow ]
 webkit.org/b/90488 [ Debug ] http/tests/inspector [ Pass Slow ]
 webkit.org/b/90488 [ Debug ] http/tests/inspector-enabled [ Pass Slow ]
 
+# Similar slowness, but always times out on some platforms.
+webkit.org/b/90488 [ Win Mac Debug ] inspector/styles/styles-computed-trace.html [ Timeout ]
+
 # Chromium r163873 slowed down these tests
 webkit.org/b/100287 [ Linux Win Mac ] compositing/culling/filter-occlusion-blur-large.html [ Pass Slow ]
 webkit.org/b/66989 transforms/3d/point-mapping/3d-point-mapping-deep.html [ Failure ImageOnlyFailure Slow ]
