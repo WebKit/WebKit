@@ -1,3 +1,14 @@
+2012-12-10  peavo@outlook.com  <peavo@outlook.com>
+
+        [WinCairo] Compile fix in ImageCairoWin.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=104554
+
+        Reviewed by Brent Fulgham.
+
+        * platform/graphics/win/ImageCairoWin.cpp:
+        (WebCore::BitmapImage::getHBITMAPOfSize): Added parameter.
+        (WebCore::BitmapImage::drawFrameMatchingSourceSize): Added parameter.
+
 2012-12-10  Mike West  <mkwst@chromium.org>
 
         Log to console when script is blocked by sandbox attributes.
