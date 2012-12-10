@@ -234,9 +234,7 @@ FrameView::~FrameView()
         m_actionScheduler->clear();
     }
     
-    if (AXObjectCache::accessibilityEnabled() && axObjectCache())
-        axObjectCache()->remove(this);
-    
+    removeFromAXObjectCache();
     resetScrollbars();
 
     // Custom scrollbars should already be destroyed at this point
@@ -299,7 +297,13 @@ void FrameView::reset()
     m_disableRepaints = 0;
 }
 
-bool FrameView::isFrameView() const 
+void FrameView::removeFromAXObjectCache()
+{
+    if (AXObjectCache::accessibilityEnabled() && axObjectCache())
+        axObjectCache()->remove(this);
+}
+
+bool FrameView::isFrameView() const
 { 
     return true; 
 }
@@ -350,6 +354,14 @@ void FrameView::init()
         if (marginHeight != -1)
             setMarginHeight(marginHeight);
     }
+}
+    
+void FrameView::prepareForDetach()
+{
+    detachCustomScrollbars();
+    // When the view is no longer associated with a frame, it needs to be removed from the ax object cache
+    // right now, otherwise it won't be able to reach the topDocument()'s axObject cache later.
+    removeFromAXObjectCache();
 }
 
 void FrameView::detachCustomScrollbars()

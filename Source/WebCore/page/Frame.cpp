@@ -255,7 +255,7 @@ void Frame::setView(PassRefPtr<FrameView> view)
     // from messing with the view such that its scroll bars won't be torn down.
     // FIXME: We should revisit this.
     if (m_view)
-        m_view->detachCustomScrollbars();
+        m_view->prepareForDetach();
 
     // Prepare for destruction now, so any unload event handlers get run and the DOMWindow is
     // notified. If we wait until the view is destroyed, then things won't be hooked up enough for

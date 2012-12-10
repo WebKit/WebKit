@@ -156,6 +156,7 @@ public:
 
     void resetScrollbars();
     void resetScrollbarsAndClearContentsSize();
+    void prepareForDetach();
     void detachCustomScrollbars();
     virtual void recalculateScrollbarOverlayStyle();
 
@@ -470,6 +471,7 @@ private:
 
     virtual AXObjectCache* axObjectCache() const;
     void notifyWidgetsInAllFrames(WidgetNotification);
+    void removeFromAXObjectCache();
     
     static double sCurrentPaintTimeStamp; // used for detecting decoded resource thrash in the cache
 

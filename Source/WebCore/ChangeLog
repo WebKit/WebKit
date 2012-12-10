@@ -1,3 +1,31 @@
+2012-12-10  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Crash in NSAccessibilityUnignoredDescendant
+        https://bugs.webkit.org/show_bug.cgi?id=104468
+
+        Reviewed by Anders Carlsson.
+
+        This crash occurred because AccessibilityScrollView stopped retaining it's ScrollView pointer.
+
+        Unfortunately, there was still a case that didn't correctly clear that variable. 
+
+        That case was when a Frame had a new FrameView associated with it. The old FrameView didn't inform the 
+        accessibility object cache that it should be removed. As a result, when the FrameView deallocated and 
+        did try to remove, it used the wrong AXObjectCache because it was no longer correctly hooked into the 
+        document tree.
+
+        No new tests. Existing tests will stop crashing.
+ 
+        * page/Frame.cpp:
+        (WebCore::Frame::setView): change the name of the method that tells the FrameView to detach
+        * page/FrameView.cpp:
+        (WebCore::FrameView::~FrameView):
+        (WebCore::FrameView::removeFromAXObjectCache): add a method that can be called in multiple places
+        (WebCore::FrameView::isFrameView):
+        (WebCore::FrameView::prepareForDetach): detaches scrollbars and accessibility
+        * page/FrameView.h:
+        (FrameView):
+
 2012-12-10  Mark Pilgrim  <pilgrim@chromium.org>
 
         [Chromium] Move getPluginsList out of PlatformSupport
