@@ -81,41 +81,40 @@ private:
     enum GetPropertyResult {
         ExceptionThrown,
         NoPropertyFound,
-        PropertyFound,
-        ConversionFailed
+        PropertyFound
     };
     
     template <typename T, typename Result>
     GetPropertyResult tryGetPropertyAndResult(const char* propertyName, T* context, void (*setter)(T* context, const Result&)) const;
     GetPropertyResult tryGetProperty(const char* propertyName, JSC::JSValue&) const;
 
-    static bool convertValue(JSC::ExecState*, JSC::JSValue, bool& result);
-    static bool convertValue(JSC::ExecState*, JSC::JSValue, int& result);
-    static bool convertValue(JSC::ExecState*, JSC::JSValue, unsigned& result);
-    static bool convertValue(JSC::ExecState*, JSC::JSValue, unsigned short& result);
-    static bool convertValue(JSC::ExecState*, JSC::JSValue, unsigned long& result);
-    static bool convertValue(JSC::ExecState*, JSC::JSValue, unsigned long long& result);
-    static bool convertValue(JSC::ExecState*, JSC::JSValue, double& result);
-    static bool convertValue(JSC::ExecState*, JSC::JSValue, Dictionary& result);
-    static bool convertValue(JSC::ExecState*, JSC::JSValue, String& result);
-    static bool convertValue(JSC::ExecState*, JSC::JSValue, ScriptValue& result);
-    static bool convertValue(JSC::ExecState*, JSC::JSValue, Vector<String>& result);
-    static bool convertValue(JSC::ExecState*, JSC::JSValue, RefPtr<SerializedScriptValue>& result);
-    static bool convertValue(JSC::ExecState*, JSC::JSValue, RefPtr<DOMWindow>& result);
-    static bool convertValue(JSC::ExecState*, JSC::JSValue, RefPtr<EventTarget>& result);
-    static bool convertValue(JSC::ExecState*, JSC::JSValue, RefPtr<Node>& result);
-    static bool convertValue(JSC::ExecState*, JSC::JSValue, RefPtr<Storage>& result);
-    static bool convertValue(JSC::ExecState*, JSC::JSValue, MessagePortArray& result);
+    static void convertValue(JSC::ExecState*, JSC::JSValue, bool& result);
+    static void convertValue(JSC::ExecState*, JSC::JSValue, int& result);
+    static void convertValue(JSC::ExecState*, JSC::JSValue, unsigned& result);
+    static void convertValue(JSC::ExecState*, JSC::JSValue, unsigned short& result);
+    static void convertValue(JSC::ExecState*, JSC::JSValue, unsigned long& result);
+    static void convertValue(JSC::ExecState*, JSC::JSValue, unsigned long long& result);
+    static void convertValue(JSC::ExecState*, JSC::JSValue, double& result);
+    static void convertValue(JSC::ExecState*, JSC::JSValue, Dictionary& result);
+    static void convertValue(JSC::ExecState*, JSC::JSValue, String& result);
+    static void convertValue(JSC::ExecState*, JSC::JSValue, ScriptValue& result);
+    static void convertValue(JSC::ExecState*, JSC::JSValue, Vector<String>& result);
+    static void convertValue(JSC::ExecState*, JSC::JSValue, RefPtr<SerializedScriptValue>& result);
+    static void convertValue(JSC::ExecState*, JSC::JSValue, RefPtr<DOMWindow>& result);
+    static void convertValue(JSC::ExecState*, JSC::JSValue, RefPtr<EventTarget>& result);
+    static void convertValue(JSC::ExecState*, JSC::JSValue, RefPtr<Node>& result);
+    static void convertValue(JSC::ExecState*, JSC::JSValue, RefPtr<Storage>& result);
+    static void convertValue(JSC::ExecState*, JSC::JSValue, MessagePortArray& result);
 #if ENABLE(VIDEO_TRACK)
-    static bool convertValue(JSC::ExecState*, JSC::JSValue, RefPtr<TrackBase>& result);
+    static void convertValue(JSC::ExecState*, JSC::JSValue, RefPtr<TrackBase>& result);
 #endif
 #if ENABLE(MUTATION_OBSERVERS) || ENABLE(WEB_INTENTS)
-    static bool convertValue(JSC::ExecState*, JSC::JSValue, HashSet<AtomicString>& result);
+    static void convertValue(JSC::ExecState*, JSC::JSValue, HashSet<AtomicString>& result);
 #endif
-    static bool convertValue(JSC::ExecState*, JSC::JSValue, ArrayValue& result);
-    static bool convertValue(JSC::ExecState*, JSC::JSValue, RefPtr<Uint8Array>& result);
+    static void convertValue(JSC::ExecState*, JSC::JSValue, ArrayValue& result);
+    static void convertValue(JSC::ExecState*, JSC::JSValue, RefPtr<Uint8Array>& result);
 #if ENABLE(ENCRYPTED_MEDIA)
-    static bool convertValue(JSC::ExecState*, JSC::JSValue, RefPtr<MediaKeyError>& result);
+    static void convertValue(JSC::ExecState*, JSC::JSValue, RefPtr<MediaKeyError>& result);
 #endif
 
     JSC::ExecState* m_exec;
@@ -150,19 +149,15 @@ JSDictionary::GetPropertyResult JSDictionary::tryGetPropertyAndResult(const char
         return getPropertyResult;
     case PropertyFound: {
         Result result;
-        if (!convertValue(m_exec, value, result)) {
-            if (m_exec->hadException())
-                return ExceptionThrown;
-            return ConversionFailed;
-        }
+        convertValue(m_exec, value, result);
+
+        if (m_exec->hadException())
+            return ExceptionThrown;
 
         setter(context, result);
         break;
     }
     case NoPropertyFound:
-        break;
-    case ConversionFailed:
-        ASSERT_NOT_REACHED();
         break;
     }
 
