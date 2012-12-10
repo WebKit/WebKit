@@ -431,6 +431,8 @@ public:
     ExclusionShapeInsideInfo* exclusionShapeInsideInfo() const;
 #endif
 
+    virtual void reportMemoryUsage(MemoryObjectInfo*) const OVERRIDE;
+
 protected:
     virtual void willBeDestroyed();
 
@@ -521,8 +523,6 @@ protected:
     void computeRegionRangeForBlock();
 
     virtual void checkForPaginationLogicalHeightChange(LayoutUnit& pageLogicalHeight, bool& pageLogicalHeightChanged, bool& hasSpecifiedPageLogicalHeight);
-
-    virtual void reportMemoryUsage(MemoryObjectInfo*) const OVERRIDE;
 
 private:
 #if ENABLE(CSS_EXCLUSIONS)

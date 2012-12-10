@@ -1,3 +1,12 @@
+2012-12-09  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: Unreviewed: move reportMemoryUsage to public section.
+
+        * rendering/RenderBlock.h:
+        (RenderBlock):
+        * rendering/RenderBox.h:
+        (RenderBox):
+
 2012-12-08  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: adds an option to remove toolbar icons.
