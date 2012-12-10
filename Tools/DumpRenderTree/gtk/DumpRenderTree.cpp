@@ -1259,11 +1259,9 @@ static CString descriptionSuitableForTestResult(WebKitNetworkResponse* response)
 
 static void willSendRequestCallback(WebKitWebView* webView, WebKitWebFrame* webFrame, WebKitWebResource* resource, WebKitNetworkRequest* request, WebKitNetworkResponse* response)
 {
-
-
     if (!done && gTestRunner->willSendRequestReturnsNull()) {
         // As requested by the TestRunner, don't perform the request.
-        webkit_network_request_set_uri(request, "about:blank");
+        soup_message_set_status(webkit_network_request_get_message(request), SOUP_STATUS_CANCELLED);
         return;
     }
 

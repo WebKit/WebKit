@@ -1,3 +1,16 @@
+2012-12-10  Zan Dobersek  <zandobersek@gmail.com>
+
+        REGRESSION (r118735): svg/dom/complex-svgView-specification.html, svg/dom/SVGViewSpec.html, svg/dom/viewspec-parser.html failing on GTK Linux 64-bit Release
+        https://bugs.webkit.org/show_bug.cgi?id=87734
+
+        Reviewed by Martin Robinson.
+
+        When willSendRequest should return null in testing, cancel the SoupMessage
+        instead of setting the request's URI to about:blank.
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (willSendRequestCallback):
+
 2012-12-10  Jochen Eisinger  <jochen@chromium.org>
 
         [chromium] Move the test implementation of WebKit::WebPlugin to the TestRunner library

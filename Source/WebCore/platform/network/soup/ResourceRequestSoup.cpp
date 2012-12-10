@@ -85,13 +85,8 @@ SoupMessage* ResourceRequest::toSoupMessage() const
 
 void ResourceRequest::updateFromSoupMessage(SoupMessage* soupMessage)
 {
-    bool shouldPortBeResetToZero = m_url.hasPort() && !m_url.port();
-    m_url = soupURIToKURL(soup_message_get_uri(soupMessage));
-
-    // SoupURI cannot differeniate between an explicitly specified port 0 and
-    // no port specified.
-    if (shouldPortBeResetToZero)
-        m_url.setPort(0);
+    if (soupMessage->status_code == SOUP_STATUS_CANCELLED)
+        setURL(KURL());
 
     m_httpMethod = String::fromUTF8(soupMessage->method);
 

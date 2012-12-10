@@ -1,3 +1,19 @@
+2012-12-10  Zan Dobersek  <zandobersek@gmail.com>
+
+        REGRESSION (r118735): svg/dom/complex-svgView-specification.html, svg/dom/SVGViewSpec.html, svg/dom/viewspec-parser.html failing on GTK Linux 64-bit Release
+        https://bugs.webkit.org/show_bug.cgi?id=87734
+
+        Reviewed by Martin Robinson.
+
+        Don't modify ResourceRequest's URL to have the value of the (encoded)
+        URI of the SoupMessage. The only exception is in the case of cancelled
+        SoupMessage - the URL of the ResourceRequest should then be null.
+
+        No new tests - existing tests should show no regressions.
+
+        * platform/network/soup/ResourceRequestSoup.cpp:
+        (WebCore::ResourceRequest::updateFromSoupMessage):
+
 2012-12-10  Gustavo Noronha Silva  <gns@gnome.org>
 
         Unreviewed distcheck fix.
