@@ -38,4 +38,5 @@ tools/
 ui/
 v8/
 webkit/
+win8/
 xcodebuild/

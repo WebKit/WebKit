@@ -1,3 +1,15 @@
+2012-12-10  Mike West  <mkwst@chromium.org>
+
+        [chromium] Add 'WebKit/chromium/win8' to .gitignore
+        https://bugs.webkit.org/show_bug.cgi?id=104534
+
+        Reviewed by Jochen Eisinger.
+
+        I've now added it via 'git add' once, and via 'git commit -a' twice.
+        Let's make that more difficult, shall we?
+
+        * .gitignore:
+
 2012-12-10  Kent Tamura  <tkent@chromium.org>
 
         Refactoring: Introduce HTMLFormControlElement::isDisabledOrReadOnly
