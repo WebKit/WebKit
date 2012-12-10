@@ -27,8 +27,8 @@
 #include "CoordinatedLayerInfo.h"
 #include "DrawingAreaProxy.h"
 #include "Region.h"
-#include "ShareableSurface.h"
 #include "SurfaceUpdateInfo.h"
+#include "WebCoordinatedSurface.h"
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/GraphicsLayer.h>
 #include <WebCore/GraphicsLayerAnimation.h>
@@ -69,10 +69,10 @@ public:
     void createTileForLayer(CoordinatedLayerID, uint32_t tileID, const WebCore::IntRect&, const SurfaceUpdateInfo&);
     void updateTileForLayer(CoordinatedLayerID, uint32_t tileID, const WebCore::IntRect&, const SurfaceUpdateInfo&);
     void removeTileForLayer(CoordinatedLayerID, uint32_t tileID);
-    void createUpdateAtlas(int atlasID, const ShareableSurface::Handle&);
+    void createUpdateAtlas(int atlasID, const WebCoordinatedSurface::Handle&);
     void removeUpdateAtlas(int atlasID);
     void createImageBacking(CoordinatedImageBackingID);
-    void updateImageBacking(CoordinatedImageBackingID, const ShareableSurface::Handle&);
+    void updateImageBacking(CoordinatedImageBackingID, const WebCoordinatedSurface::Handle&);
     void clearImageBackingContents(CoordinatedImageBackingID);
     void removeImageBacking(CoordinatedImageBackingID);
     void didReceiveLayerTreeCoordinatorProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::MessageDecoder&);
@@ -102,7 +102,7 @@ protected:
     WebCore::FloatRect m_lastSentVisibleRect;
     float m_lastSentScale;
     WebCore::FloatPoint m_lastSentTrajectoryVector;
-    typedef HashMap<int /* atlasID */, RefPtr<ShareableSurface> > SurfaceMap;
+    typedef HashMap<int /* atlasID */, RefPtr<CoordinatedSurface> > SurfaceMap;
     SurfaceMap m_surfaces;
 };
 

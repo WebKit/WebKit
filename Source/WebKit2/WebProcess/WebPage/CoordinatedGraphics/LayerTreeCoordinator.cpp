@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2011 Apple Inc. All rights reserved.
  * Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies).
+ * Copyright (C) 2012 Company 100, Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -577,7 +578,7 @@ void LayerTreeCoordinator::createImageBacking(CoordinatedImageBackingID imageID)
     m_webPage->send(Messages::LayerTreeCoordinatorProxy::CreateImageBacking(imageID));
 }
 
-void LayerTreeCoordinator::updateImageBacking(CoordinatedImageBackingID imageID, const ShareableSurface::Handle& handle)
+void LayerTreeCoordinator::updateImageBacking(CoordinatedImageBackingID imageID, const WebCoordinatedSurface::Handle& handle)
 {
     m_shouldSyncFrame = true;
     m_webPage->send(Messages::LayerTreeCoordinatorProxy::UpdateImageBacking(imageID, handle));
@@ -665,7 +666,7 @@ void LayerTreeCoordinator::removeTile(CoordinatedLayerID layerID, uint32_t tileI
     m_webPage->send(Messages::LayerTreeCoordinatorProxy::RemoveTileForLayer(layerID, tileID));
 }
 
-void LayerTreeCoordinator::createUpdateAtlas(int atlasID, const ShareableSurface::Handle& handle)
+void LayerTreeCoordinator::createUpdateAtlas(int atlasID, const WebCoordinatedSurface::Handle& handle)
 {
     m_webPage->send(Messages::LayerTreeCoordinatorProxy::CreateUpdateAtlas(atlasID, handle));
 }
@@ -775,12 +776,12 @@ void LayerTreeCoordinator::purgeBackingStores()
     m_updateAtlases.clear();
 }
 
-PassOwnPtr<WebCore::GraphicsContext> LayerTreeCoordinator::beginContentUpdate(const WebCore::IntSize& size, ShareableBitmap::Flags flags, int& atlasID, WebCore::IntPoint& offset)
+PassOwnPtr<GraphicsContext> LayerTreeCoordinator::beginContentUpdate(const IntSize& size, CoordinatedSurface::Flags flags, int& atlasID, IntPoint& offset)
 {
-    OwnPtr<WebCore::GraphicsContext> graphicsContext;
+    OwnPtr<GraphicsContext> graphicsContext;
     for (unsigned i = 0; i < m_updateAtlases.size(); ++i) {
         UpdateAtlas* atlas = m_updateAtlases[i].get();
-        if (atlas->flags() == flags) {
+        if (atlas->supportsAlpha() == (flags & CoordinatedSurface::SupportsAlpha)) {
             // This will return null if there is no available buffer space.
             graphicsContext = atlas->beginPaintingOnAvailableBuffer(atlasID, size, offset);
             if (graphicsContext)
@@ -811,7 +812,7 @@ void LayerTreeCoordinator::releaseInactiveAtlasesTimerFired(Timer<LayerTreeCoord
         UpdateAtlas* atlas = m_updateAtlases[i].get();
         if (!atlas->isInUse())
             atlas->addTimeInactive(ReleaseInactiveAtlasesTimerInterval);
-        bool usableForNonCompositedContent = atlas->flags() == ShareableBitmap::NoFlags;
+        bool usableForNonCompositedContent = !atlas->supportsAlpha();
         if (atlas->isInactive()) {
             if (!foundActiveAtlasForNonCompositedContent && !atlasToKeepAnyway && usableForNonCompositedContent)
                 atlasToKeepAnyway = m_updateAtlases[i].release();

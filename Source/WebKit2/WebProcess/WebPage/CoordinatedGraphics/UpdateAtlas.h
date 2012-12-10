@@ -1,5 +1,6 @@
 /*
  Copyright (C) 2012 Nokia Corporation and/or its subsidiary(-ies)
+ Copyright (C) 2012 Company 100, Inc.
 
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Library General Public
@@ -22,7 +23,7 @@
 
 #include "AreaAllocator.h"
 #include "IntSize.h"
-#include "ShareableSurface.h"
+#include "WebCoordinatedSurface.h"
 
 #if USE(COORDINATED_GRAPHICS)
 namespace WebCore {
@@ -34,14 +35,14 @@ namespace WebKit {
 
 class UpdateAtlasClient {
 public:
-    virtual void createUpdateAtlas(int atlasID, const ShareableSurface::Handle&) = 0;
+    virtual void createUpdateAtlas(int atlasID, const WebCoordinatedSurface::Handle&) = 0;
     virtual void removeUpdateAtlas(int atlasID) = 0;
 };
 
 class UpdateAtlas {
     WTF_MAKE_NONCOPYABLE(UpdateAtlas);
 public:
-    UpdateAtlas(UpdateAtlasClient*, int dimension, ShareableBitmap::Flags);
+    UpdateAtlas(UpdateAtlasClient*, int dimension, CoordinatedSurface::Flags);
     ~UpdateAtlas();
 
     inline WebCore::IntSize size() const { return m_surface->size(); }
@@ -49,7 +50,7 @@ public:
     // Returns a null pointer of there is no available buffer.
     PassOwnPtr<WebCore::GraphicsContext> beginPaintingOnAvailableBuffer(int& atlasID, const WebCore::IntSize&, WebCore::IntPoint& offset);
     void didSwapBuffers();
-    ShareableBitmap::Flags flags() const { return m_flags; }
+    bool supportsAlpha() const { return m_surface->supportsAlpha(); }
 
     void addTimeInactive(double seconds)
     {
@@ -70,8 +71,8 @@ private:
     UpdateAtlasClient* m_client;
     OwnPtr<GeneralAreaAllocator> m_areaAllocator;
     ShareableBitmap::Flags m_flags;
-    RefPtr<ShareableSurface> m_surface;
-    ShareableSurface::Handle m_handle;
+    RefPtr<CoordinatedSurface> m_surface;
+    WebCoordinatedSurface::Handle m_handle;
     double m_inactivityInSeconds;
     int m_ID;
     bool m_isVaild;

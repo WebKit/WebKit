@@ -21,8 +21,8 @@
 #include "CoordinatedBackingStore.h"
 
 #if USE(COORDINATED_GRAPHICS)
+#include "CoordinatedSurface.h"
 #include "GraphicsLayer.h"
-#include "ShareableSurface.h"
 #include "TextureMapper.h"
 #include "TextureMapperGL.h"
 
@@ -51,13 +51,13 @@ void CoordinatedBackingStoreTile::swapBuffers(WebCore::TextureMapper* textureMap
 
     ASSERT(textureMapper->maxTextureSize().width() >= m_tileRect.size().width() && textureMapper->maxTextureSize().height() >= m_tileRect.size().height());
     if (shouldReset)
-        texture->reset(m_tileRect.size(), m_surface->flags() & ShareableBitmap::SupportsAlpha ? BitmapTexture::SupportsAlpha : 0);
+        texture->reset(m_tileRect.size(), m_surface->supportsAlpha());
 
     m_surface->copyToTexture(texture, m_sourceRect, m_surfaceOffset);
     m_surface.clear();
 }
 
-void CoordinatedBackingStoreTile::setBackBuffer(const IntRect& tileRect, const IntRect& sourceRect, PassRefPtr<ShareableSurface> buffer, const IntPoint& offset)
+void CoordinatedBackingStoreTile::setBackBuffer(const IntRect& tileRect, const IntRect& sourceRect, PassRefPtr<CoordinatedSurface> buffer, const IntPoint& offset)
 {
     m_sourceRect = sourceRect;
     m_tileRect = tileRect;
@@ -84,7 +84,7 @@ void CoordinatedBackingStore::removeAllTiles()
         m_tilesToRemove.add(it->key);
 }
 
-void CoordinatedBackingStore::updateTile(uint32_t id, const IntRect& sourceRect, const IntRect& tileRect, PassRefPtr<ShareableSurface> backBuffer, const IntPoint& offset)
+void CoordinatedBackingStore::updateTile(uint32_t id, const IntRect& sourceRect, const IntRect& tileRect, PassRefPtr<CoordinatedSurface> backBuffer, const IntPoint& offset)
 {
     HashMap<uint32_t, CoordinatedBackingStoreTile>::iterator it = m_tiles.find(id);
     ASSERT(it != m_tiles.end());

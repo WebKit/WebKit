@@ -30,7 +30,6 @@
 #include "GraphicsLayerTransform.h"
 #include "Image.h"
 #include "IntSize.h"
-#include "ShareableBitmap.h"
 #include "TiledBackingStore.h"
 #include "TiledBackingStoreClient.h"
 #include "TransformationMatrix.h"
@@ -75,7 +74,7 @@ public:
 
     virtual void detachLayer(WebCore::CoordinatedGraphicsLayer*) = 0;
     virtual void syncFixedLayers() = 0;
-    virtual PassOwnPtr<WebCore::GraphicsContext> beginContentUpdate(const WebCore::IntSize&, ShareableBitmap::Flags, int& atlasID, WebCore::IntPoint&) = 0;
+    virtual PassOwnPtr<WebCore::GraphicsContext> beginContentUpdate(const WebCore::IntSize&, CoordinatedSurface::Flags, int& atlasID, WebCore::IntPoint&) = 0;
 };
 }
 

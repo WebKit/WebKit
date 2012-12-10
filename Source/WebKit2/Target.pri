@@ -71,7 +71,6 @@ HEADERS += \
     Shared/API/c/qt/WKImageQt.h \
     Shared/APIClientTraits.h \
     Shared/ShareableBitmap.h \
-    Shared/ShareableSurface.h \
     Shared/CacheModel.h \
     Shared/ChildProcess.h \
     Shared/ChildProcessProxy.h \
@@ -136,6 +135,8 @@ HEADERS += \
     Shared/WebUserContentURLPattern.h \
     Shared/CoordinatedGraphics/CoordinatedGraphicsArgumentCoders.h \
     Shared/CoordinatedGraphics/CoordinatedLayerInfo.h \
+    Shared/CoordinatedGraphics/CoordinatedSurface.h \
+    Shared/CoordinatedGraphics/WebCoordinatedSurface.h \
     Shared/CoordinatedGraphics/WebCustomFilterProgram.h \
     Shared/Plugins/Netscape/NetscapePluginModule.h \
     Shared/Plugins/NPRemoteObjectMap.h \
@@ -442,7 +443,6 @@ SOURCES += \
     Shared/Plugins/Netscape/NetscapePluginModuleNone.cpp \
     Shared/Plugins/Netscape/x11/NetscapePluginModuleX11.cpp \
     Shared/ShareableBitmap.cpp \
-    Shared/ShareableSurface.cpp \
     Shared/Plugins/NPRemoteObjectMap.cpp \
     Shared/Plugins/NPIdentifierData.cpp \
     Shared/Plugins/NPObjectMessageReceiver.cpp \
@@ -505,6 +505,7 @@ SOURCES += \
     Shared/WebWheelEvent.cpp \
     Shared/CoordinatedGraphics/CoordinatedGraphicsArgumentCoders.cpp \
     Shared/CoordinatedGraphics/CoordinatedLayerInfo.cpp \
+    Shared/CoordinatedGraphics/WebCoordinatedSurface.cpp \
     Shared/CoordinatedGraphics/WebCustomFilterProgramProxy.cpp \
     Shared/qt/ArgumentCodersQt.cpp \
     Shared/qt/LayerTreeContextQt.cpp \

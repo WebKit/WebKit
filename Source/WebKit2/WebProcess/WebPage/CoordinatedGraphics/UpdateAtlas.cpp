@@ -1,5 +1,6 @@
 /*
  Copyright (C) 2012 Nokia Corporation and/or its subsidiary(-ies)
+ Copyright (C) 2012 Company 100, Inc.
 
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Library General Public
@@ -30,7 +31,7 @@ using namespace WebCore;
 
 namespace WebKit {
 
-UpdateAtlas::UpdateAtlas(UpdateAtlasClient* client, int dimension, ShareableBitmap::Flags flags)
+UpdateAtlas::UpdateAtlas(UpdateAtlasClient* client, int dimension, CoordinatedSurface::Flags flags)
     : m_client(client)
     , m_flags(flags)
     , m_inactivityInSeconds(0)
@@ -39,9 +40,9 @@ UpdateAtlas::UpdateAtlas(UpdateAtlasClient* client, int dimension, ShareableBitm
     static int nextID = 0;
     m_ID = ++nextID;
     IntSize size = nextPowerOfTwo(IntSize(dimension, dimension));
-    m_surface = ShareableSurface::create(size, flags, ShareableSurface::SupportsGraphicsSurface);
+    m_surface = CoordinatedSurface::create(size, flags);
 
-    if (!m_surface->createHandle(m_handle)) {
+    if (!static_cast<WebCoordinatedSurface*>(m_surface.get())->createHandle(m_handle)) {
         m_isVaild = false;
         return;
     }
@@ -86,7 +87,7 @@ PassOwnPtr<GraphicsContext> UpdateAtlas::beginPaintingOnAvailableBuffer(int& atl
     offset = rect.location();
     OwnPtr<GraphicsContext> graphicsContext = m_surface->createGraphicsContext(rect);
 
-    if (flags() & ShareableBitmap::SupportsAlpha) {
+    if (supportsAlpha()) {
         graphicsContext->setCompositeOperation(CompositeCopy);
         graphicsContext->fillRect(IntRect(IntPoint::zero(), size), Color::transparent, ColorSpaceDeviceRGB);
         graphicsContext->setCompositeOperation(CompositeSourceOver);

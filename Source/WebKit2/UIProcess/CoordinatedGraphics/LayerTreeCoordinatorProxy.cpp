@@ -25,7 +25,6 @@
 #include "CoordinatedLayerInfo.h"
 #include "LayerTreeCoordinatorMessages.h"
 #include "LayerTreeRenderer.h"
-#include "UpdateInfo.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebPageProxy.h"
 #include "WebProcessProxy.h"
@@ -79,10 +78,10 @@ void LayerTreeCoordinatorProxy::removeTileForLayer(CoordinatedLayerID layerID, u
     dispatchUpdate(bind(&LayerTreeRenderer::removeTile, m_renderer.get(), layerID, tileID));
 }
 
-void LayerTreeCoordinatorProxy::createUpdateAtlas(int atlasID, const ShareableSurface::Handle& handle)
+void LayerTreeCoordinatorProxy::createUpdateAtlas(int atlasID, const WebCoordinatedSurface::Handle& handle)
 {
     ASSERT(!m_surfaces.contains(atlasID));
-    m_surfaces.add(atlasID, ShareableSurface::create(handle));
+    m_surfaces.add(atlasID, WebCoordinatedSurface::create(handle));
 }
 
 void LayerTreeCoordinatorProxy::removeUpdateAtlas(int atlasID)
@@ -146,9 +145,9 @@ void LayerTreeCoordinatorProxy::createImageBacking(CoordinatedImageBackingID ima
     dispatchUpdate(bind(&LayerTreeRenderer::createImageBacking, m_renderer.get(), imageID));
 }
 
-void LayerTreeCoordinatorProxy::updateImageBacking(CoordinatedImageBackingID imageID, const ShareableSurface::Handle& handle)
+void LayerTreeCoordinatorProxy::updateImageBacking(CoordinatedImageBackingID imageID, const WebCoordinatedSurface::Handle& handle)
 {
-    dispatchUpdate(bind(&LayerTreeRenderer::updateImageBacking, m_renderer.get(), imageID, ShareableSurface::create(handle)));
+    dispatchUpdate(bind(&LayerTreeRenderer::updateImageBacking, m_renderer.get(), imageID, WebCoordinatedSurface::create(handle)));
 }
 
 void LayerTreeCoordinatorProxy::clearImageBackingContents(CoordinatedImageBackingID imageID)

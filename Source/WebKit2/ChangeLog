@@ -1,3 +1,92 @@
+2012-12-10  Huang Dongsung  <luxtella@company100.net>
+
+        Coordinated Graphics: Add CoordinatedSurface to remove the dependency of ShareableSurface from Coordinated Graphics.
+        https://bugs.webkit.org/show_bug.cgi?id=100819
+
+        Reviewed by Noam Rosenthal.
+
+        Internal Review by Gwang Yoon Hwang and Jae Hyun Park.
+
+        It is a preparation patch for Threaded Coordinated Graphics on WK1.
+
+        Create a CoordinatedSurface class that can be the base class both for
+        the current IPC-based ShareableSurface, renamed here to
+        WebCoordinatedSurface, and to a future thread-based surface
+        implementation.
+
+        * CMakeLists.txt:
+        * Shared/CoordinatedGraphics/CoordinatedSurface.h: Added.
+        (WebCore):
+        (WebKit):
+        (CoordinatedSurface):
+        (WebKit::CoordinatedSurface::~CoordinatedSurface):
+        (WebKit::CoordinatedSurface::supportsAlpha):
+        * Shared/CoordinatedGraphics/WebCoordinatedSurface.cpp: Renamed from Source/WebKit2/Shared/ShareableSurface.cpp.
+          Extends CoordinatedSurface.
+        (WebKit):
+        (WebKit::WebCoordinatedSurface::Handle::Handle):
+        (WebKit::WebCoordinatedSurface::Handle::encode):
+        (WebKit::WebCoordinatedSurface::Handle::decode):
+        (WebKit::CoordinatedSurface::create):
+        (WebKit::WebCoordinatedSurface::create):
+        (WebKit::WebCoordinatedSurface::createWithSurface):
+        (WebKit::WebCoordinatedSurface::createGraphicsContext):
+        (WebKit::WebCoordinatedSurface::WebCoordinatedSurface):
+        (WebKit::WebCoordinatedSurface::~WebCoordinatedSurface):
+        (WebKit::WebCoordinatedSurface::createHandle):
+        (WebKit::WebCoordinatedSurface::copyToTexture):
+        * Shared/CoordinatedGraphics/WebCoordinatedSurface.h: Renamed from Source/WebKit2/Shared/ShareableSurface.h.
+        (WebCore):
+        (WebKit):
+        (WebCoordinatedSurface):
+        (Handle):
+        (WebKit::WebCoordinatedSurface::Handle::graphicsSurfaceToken):
+        (WebKit::WebCoordinatedSurface::isBackedByGraphicsSurface):
+        * Target.pri:
+        * UIProcess/CoordinatedGraphics/CoordinatedBackingStore.cpp:
+        (WebKit::CoordinatedBackingStoreTile::swapBuffers):
+        (WebKit::CoordinatedBackingStoreTile::setBackBuffer):
+        (WebKit::CoordinatedBackingStore::updateTile):
+        * UIProcess/CoordinatedGraphics/CoordinatedBackingStore.h:
+        (WebKit):
+        (CoordinatedBackingStoreTile):
+        (CoordinatedBackingStore):
+        * UIProcess/CoordinatedGraphics/LayerTreeCoordinatorProxy.cpp:
+        (WebKit::LayerTreeCoordinatorProxy::createUpdateAtlas):
+        (WebKit::LayerTreeCoordinatorProxy::updateImageBacking):
+        * UIProcess/CoordinatedGraphics/LayerTreeCoordinatorProxy.h:
+        (LayerTreeCoordinatorProxy):
+        * UIProcess/CoordinatedGraphics/LayerTreeCoordinatorProxy.messages.in:
+        * UIProcess/CoordinatedGraphics/LayerTreeRenderer.cpp:
+        (WebKit::LayerTreeRenderer::updateImageBacking):
+        * UIProcess/CoordinatedGraphics/LayerTreeRenderer.h:
+        (TileUpdate):
+        (WebKit::LayerTreeRenderer::TileUpdate::TileUpdate):
+        (LayerTreeRenderer):
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedGraphicsLayer.cpp:
+        (WebCore::CoordinatedGraphicsLayer::beginContentUpdate):
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedGraphicsLayer.h:
+        (CoordinatedGraphicsLayerClient):
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedImageBacking.cpp:
+        (WebKit::CoordinatedImageBacking::update):
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedImageBacking.h:
+        (Coordinator):
+        (CoordinatedImageBacking):
+        * WebProcess/WebPage/CoordinatedGraphics/LayerTreeCoordinator.cpp:
+        (WebKit::LayerTreeCoordinator::updateImageBacking):
+        (WebKit::LayerTreeCoordinator::createUpdateAtlas):
+        (WebKit::LayerTreeCoordinator::beginContentUpdate):
+        (WebKit::LayerTreeCoordinator::releaseInactiveAtlasesTimerFired):
+        * WebProcess/WebPage/CoordinatedGraphics/LayerTreeCoordinator.h:
+        (LayerTreeCoordinator):
+        * WebProcess/WebPage/CoordinatedGraphics/UpdateAtlas.cpp:
+        (WebKit::UpdateAtlas::UpdateAtlas):
+        (WebKit::UpdateAtlas::beginPaintingOnAvailableBuffer):
+        * WebProcess/WebPage/CoordinatedGraphics/UpdateAtlas.h:
+        (UpdateAtlasClient):
+        (UpdateAtlas):
+        (WebKit::UpdateAtlas::supportsAlpha):
+
 2012-12-09  Huang Dongsung  <luxtella@company100.net>
 
         Coordinated Graphics: Reorder messages to LayerTreeCoordinatorProxy

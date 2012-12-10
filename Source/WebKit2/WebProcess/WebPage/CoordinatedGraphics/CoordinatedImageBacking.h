@@ -29,8 +29,9 @@
 
 #if USE(COORDINATED_GRAPHICS)
 #include "CoordinatedLayerInfo.h"
+#include "CoordinatedSurface.h"
 #include "Image.h"
-#include "ShareableSurface.h"
+#include "WebCoordinatedSurface.h"
 #include <WebCore/Timer.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
@@ -42,7 +43,7 @@ public:
     class Coordinator {
     public:
         virtual void createImageBacking(CoordinatedImageBackingID) = 0;
-        virtual void updateImageBacking(CoordinatedImageBackingID, const ShareableSurface::Handle&) = 0;
+        virtual void updateImageBacking(CoordinatedImageBackingID, const WebCoordinatedSurface::Handle&) = 0;
         virtual void clearImageBackingContents(CoordinatedImageBackingID) = 0;
         virtual void removeImageBacking(CoordinatedImageBackingID) = 0;
     };
@@ -80,8 +81,8 @@ private:
     CoordinatedImageBackingID m_id;
     Vector<Host*> m_hosts;
 
-    RefPtr<ShareableSurface> m_surface;
-    OwnPtr<ShareableSurface::Handle> m_handle;
+    RefPtr<CoordinatedSurface> m_surface;
+    OwnPtr<WebCoordinatedSurface::Handle> m_handle;
 
     WebCore::Timer<CoordinatedImageBacking> m_clearContentsTimer;
 

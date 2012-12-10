@@ -740,7 +740,7 @@ PassOwnPtr<GraphicsContext> CoordinatedGraphicsLayer::beginContentUpdate(const I
     if (!m_coordinator)
         return PassOwnPtr<WebCore::GraphicsContext>();
 
-    return m_coordinator->beginContentUpdate(size, contentsOpaque() ? 0 : ShareableBitmap::SupportsAlpha, atlas, offset);
+    return m_coordinator->beginContentUpdate(size, contentsOpaque() ? CoordinatedSurface::NoFlags : CoordinatedSurface::SupportsAlpha, atlas, offset);
 }
 
 void CoordinatedGraphicsLayer::createTile(uint32_t tileID, const SurfaceUpdateInfo& updateInfo, const WebCore::IntRect& tileRect)

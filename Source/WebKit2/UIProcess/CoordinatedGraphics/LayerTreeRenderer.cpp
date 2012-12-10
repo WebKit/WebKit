@@ -524,7 +524,7 @@ void LayerTreeRenderer::createImageBacking(CoordinatedImageBackingID imageID)
     m_imageBackings.add(imageID, backingStore.release());
 }
 
-void LayerTreeRenderer::updateImageBacking(CoordinatedImageBackingID imageID, PassRefPtr<ShareableSurface> surface)
+void LayerTreeRenderer::updateImageBacking(CoordinatedImageBackingID imageID, PassRefPtr<CoordinatedSurface> surface)
 {
     ASSERT(m_imageBackings.contains(imageID));
     ImageBackingMap::iterator it = m_imageBackings.find(imageID);

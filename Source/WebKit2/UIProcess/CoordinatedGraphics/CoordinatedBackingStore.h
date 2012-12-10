@@ -29,7 +29,7 @@
 
 namespace WebKit {
 
-class ShareableSurface;
+class CoordinatedSurface;
 
 class CoordinatedBackingStoreTile : public WebCore::TextureMapperTile {
 public:
@@ -44,10 +44,10 @@ public:
     inline void incrementRepaintCount() { ++m_repaintCount; }
     inline int repaintCount() const { return m_repaintCount; }
     void swapBuffers(WebCore::TextureMapper*);
-    void setBackBuffer(const WebCore::IntRect&, const WebCore::IntRect&, PassRefPtr<ShareableSurface> buffer, const WebCore::IntPoint&);
+    void setBackBuffer(const WebCore::IntRect&, const WebCore::IntRect&, PassRefPtr<CoordinatedSurface> buffer, const WebCore::IntPoint&);
 
 private:
-    RefPtr<ShareableSurface> m_surface;
+    RefPtr<CoordinatedSurface> m_surface;
     WebCore::IntRect m_sourceRect;
     WebCore::IntRect m_tileRect;
     WebCore::IntPoint m_surfaceOffset;
@@ -60,7 +60,7 @@ public:
     void createTile(uint32_t tileID, float);
     void removeTile(uint32_t tileID);
     void removeAllTiles();
-    void updateTile(uint32_t tileID, const WebCore::IntRect&, const WebCore::IntRect&, PassRefPtr<ShareableSurface>, const WebCore::IntPoint&);
+    void updateTile(uint32_t tileID, const WebCore::IntRect&, const WebCore::IntRect&, PassRefPtr<CoordinatedSurface>, const WebCore::IntPoint&);
     static PassRefPtr<CoordinatedBackingStore> create() { return adoptRef(new CoordinatedBackingStore); }
     void commitTileOperations(WebCore::TextureMapper*);
     PassRefPtr<WebCore::BitmapTexture> texture() const;

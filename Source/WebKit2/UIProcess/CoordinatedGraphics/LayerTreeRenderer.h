@@ -23,7 +23,7 @@
 #if USE(COORDINATED_GRAPHICS)
 #include "BackingStore.h"
 #include "CoordinatedLayerInfo.h"
-#include "ShareableSurface.h"
+#include "CoordinatedSurface.h"
 #include "TextureMapper.h"
 #include "TextureMapperBackingStore.h"
 #include <WebCore/GraphicsContext.h>
@@ -56,9 +56,9 @@ public:
     struct TileUpdate {
         WebCore::IntRect sourceRect;
         WebCore::IntRect tileRect;
-        RefPtr<ShareableSurface> surface;
+        RefPtr<CoordinatedSurface> surface;
         WebCore::IntPoint offset;
-        TileUpdate(const WebCore::IntRect& source, const WebCore::IntRect& tile, PassRefPtr<ShareableSurface> newSurface, const WebCore::IntPoint& newOffset)
+        TileUpdate(const WebCore::IntRect& source, const WebCore::IntRect& tile, PassRefPtr<CoordinatedSurface> newSurface, const WebCore::IntPoint& newOffset)
             : sourceRect(source)
             , tileRect(tile)
             , surface(newSurface)
@@ -105,7 +105,7 @@ public:
     void updateTile(CoordinatedLayerID, uint32_t tileID, const TileUpdate&);
     void flushLayerChanges();
     void createImageBacking(CoordinatedImageBackingID);
-    void updateImageBacking(CoordinatedImageBackingID, PassRefPtr<ShareableSurface>);
+    void updateImageBacking(CoordinatedImageBackingID, PassRefPtr<CoordinatedSurface>);
     void clearImageBackingContents(CoordinatedImageBackingID);
     void removeImageBacking(CoordinatedImageBackingID);
     void setLayerAnimations(CoordinatedLayerID, const WebCore::GraphicsLayerAnimations&);

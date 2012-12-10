@@ -103,10 +103,10 @@ void CoordinatedImageBacking::update()
         }
     }
 
-    m_surface = ShareableSurface::create(m_image->size(), m_image->currentFrameHasAlpha() ? ShareableBitmap::SupportsAlpha : ShareableBitmap::NoFlags, ShareableSurface::SupportsGraphicsSurface);
-    m_handle = adoptPtr(new ShareableSurface::Handle());
+    m_surface = CoordinatedSurface::create(m_image->size(), m_image->currentFrameHasAlpha() ? CoordinatedSurface::SupportsAlpha : CoordinatedSurface::NoFlags);
+    m_handle = adoptPtr(new WebCoordinatedSurface::Handle());
 
-    if (!m_surface->createHandle(*m_handle)) {
+    if (!static_cast<WebCoordinatedSurface*>(m_surface.get())->createHandle(*m_handle)) {
         releaseSurfaceIfNeeded();
         m_isDirty = false;
         return;

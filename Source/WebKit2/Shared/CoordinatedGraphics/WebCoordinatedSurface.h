@@ -1,5 +1,6 @@
 /*
  Copyright (C) 2012 Nokia Corporation and/or its subsidiary(-ies)
+ Copyright (C) 2012 Company 100, Inc.
 
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Library General Public
@@ -17,12 +18,12 @@
  Boston, MA 02110-1301, USA.
  */
 
-#ifndef ShareableSurface_h
-#define ShareableSurface_h
+#ifndef WebCoordinatedSurface_h
+#define WebCoordinatedSurface_h
 
+#if USE(COORDINATED_GRAPHICS)
+#include "CoordinatedSurface.h"
 #include "ShareableBitmap.h"
-
-#include <wtf/ThreadSafeRefCounted.h>
 
 #if USE(GRAPHICS_SURFACE)
 #include "GraphicsSurface.h"
@@ -30,26 +31,17 @@
 
 namespace WebCore {
 class BitmapTexture;
-class Image;
 class GraphicsContext;
 }
 
 namespace WebKit {
 
-class ShareableSurface : public ThreadSafeRefCounted<ShareableSurface> {
+class WebCoordinatedSurface : public CoordinatedSurface {
 public:
-    enum Hint {
-        SupportsGraphicsSurface = 0x01
-    };
-
-    typedef unsigned Hints;
-
     class Handle {
         WTF_MAKE_NONCOPYABLE(Handle);
     public:
         Handle();
-
-        bool isNull() const;
 
         void encode(CoreIPC::ArgumentEncoder&) const;
         static bool decode(CoreIPC::ArgumentDecoder*, Handle&);
@@ -59,56 +51,54 @@ public:
 #endif
 
     private:
-        friend class ShareableSurface;
+        friend class WebCoordinatedSurface;
         mutable ShareableBitmap::Handle m_bitmapHandle;
 #if USE(GRAPHICS_SURFACE)
         WebCore::GraphicsSurfaceToken m_graphicsSurfaceToken;
 #endif
         WebCore::IntSize m_size;
-        ShareableBitmap::Flags m_flags;
+        CoordinatedSurface::Flags m_flags;
     };
 
-    // Create a new ShareableSurface, and allocate either a GraphicsSurface or a ShareableBitmap as backing.
-    static PassRefPtr<ShareableSurface> create(const WebCore::IntSize&, ShareableBitmap::Flags, Hints);
+    // Create a new WebCoordinatedSurface, and allocate either a GraphicsSurface or a ShareableBitmap as backing.
+    static PassRefPtr<WebCoordinatedSurface> create(const WebCore::IntSize&, Flags);
 
     // Create a shareable surface from a handle.
-    static PassRefPtr<ShareableSurface> create(const Handle&);
-
-    ShareableBitmap::Flags flags() const { return m_flags; }
+    static PassRefPtr<WebCoordinatedSurface> create(const Handle&);
 
     // Create a handle.
     bool createHandle(Handle&);
 
-    ~ShareableSurface();
+    virtual ~WebCoordinatedSurface();
 
-    const WebCore::IntSize& size() const { return m_size; }
-    WebCore::IntRect bounds() const { return WebCore::IntRect(WebCore::IntPoint(), size()); }
+    virtual WebCore::IntSize size() const OVERRIDE { return m_size; }
 
-    // Create a graphics context that can be used to paint into the backing store.
-    PassOwnPtr<WebCore::GraphicsContext> createGraphicsContext(const WebCore::IntRect&);
+    virtual PassOwnPtr<WebCore::GraphicsContext> createGraphicsContext(const WebCore::IntRect&) OVERRIDE;
 
 #if USE(TEXTURE_MAPPER)
-    void copyToTexture(PassRefPtr<WebCore::BitmapTexture>, const WebCore::IntRect& target, const WebCore::IntPoint& sourceOffset);
+    virtual void copyToTexture(PassRefPtr<WebCore::BitmapTexture>, const WebCore::IntRect& target, const WebCore::IntPoint& sourceOffset) OVERRIDE;
 #endif
 
 private:
-    ShareableSurface(const WebCore::IntSize&, ShareableBitmap::Flags, PassRefPtr<ShareableBitmap>);
+    WebCoordinatedSurface(const WebCore::IntSize&, Flags, PassRefPtr<ShareableBitmap>);
 
-    // Create a ShareableSurface referencing an existing ShareableBitmap.
-    static PassRefPtr<ShareableSurface> create(const WebCore::IntSize&, ShareableBitmap::Flags, PassRefPtr<ShareableBitmap>);
+    virtual Flags flags() const OVERRIDE { return m_flags; }
+
+    // Create a WebCoordinatedSurface referencing an existing ShareableBitmap.
+    static PassRefPtr<WebCoordinatedSurface> create(const WebCore::IntSize&, Flags, PassRefPtr<ShareableBitmap>);
 
 #if USE(GRAPHICS_SURFACE)
-    ShareableSurface(const WebCore::IntSize&, ShareableBitmap::Flags, PassRefPtr<WebCore::GraphicsSurface>);
+    WebCoordinatedSurface(const WebCore::IntSize&, Flags, PassRefPtr<WebCore::GraphicsSurface>);
     // Create a shareable bitmap backed by a graphics surface.
-    static PassRefPtr<ShareableSurface> createWithSurface(const WebCore::IntSize&, ShareableBitmap::Flags);
-    // Create a ShareableSurface referencing an existing GraphicsSurface.
-    static PassRefPtr<ShareableSurface> create(const WebCore::IntSize&, ShareableBitmap::Flags, PassRefPtr<WebCore::GraphicsSurface>);
+    static PassRefPtr<WebCoordinatedSurface> createWithSurface(const WebCore::IntSize&, Flags);
+    // Create a WebCoordinatedSurface referencing an existing GraphicsSurface.
+    static PassRefPtr<WebCoordinatedSurface> create(const WebCore::IntSize&, Flags, PassRefPtr<WebCore::GraphicsSurface>);
 
     bool isBackedByGraphicsSurface() const { return !!m_graphicsSurface; }
 #endif
 
     WebCore::IntSize m_size;
-    ShareableBitmap::Flags m_flags;
+    Flags m_flags;
     RefPtr<ShareableBitmap> m_bitmap;
 
 #if USE(GRAPHICS_SURFACE)
@@ -118,4 +108,5 @@ private:
 
 } // namespace WebKit
 
-#endif // ShareableSurface_h
+#endif // USE(COORDINATED_GRAPHICS)
+#endif // WebCoordinatedSurface_h

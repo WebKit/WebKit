@@ -156,7 +156,6 @@ set(WebKit2_SOURCES
     Shared/SecurityOriginData.cpp
     Shared/SessionState.cpp
     Shared/ShareableBitmap.cpp
-    Shared/ShareableSurface.cpp
     Shared/StatisticsData.cpp
     Shared/SurfaceUpdateInfo.cpp
     Shared/UpdateInfo.cpp
@@ -221,6 +220,7 @@ set(WebKit2_SOURCES
 
     Shared/CoordinatedGraphics/CoordinatedGraphicsArgumentCoders.cpp
     Shared/CoordinatedGraphics/CoordinatedLayerInfo.cpp
+    Shared/CoordinatedGraphics/WebCoordinatedSurface.cpp
     Shared/CoordinatedGraphics/WebCustomFilterProgramProxy.cpp
 
     Shared/Plugins/NPIdentifierData.cpp

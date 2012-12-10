@@ -28,6 +28,7 @@
 #include "LayerTreeHost.h"
 #include "Timer.h"
 #include "UpdateAtlas.h"
+#include "WebCoordinatedSurface.h"
 #include <WebCore/GraphicsLayerClient.h>
 #include <WebCore/GraphicsLayerFactory.h>
 #include <wtf/OwnPtr.h>
@@ -103,10 +104,10 @@ public:
     virtual void detachLayer(WebCore::CoordinatedGraphicsLayer*);
     virtual void syncFixedLayers();
 
-    virtual PassOwnPtr<WebCore::GraphicsContext> beginContentUpdate(const WebCore::IntSize&, ShareableBitmap::Flags, int& atlasID, WebCore::IntPoint&);
+    virtual PassOwnPtr<WebCore::GraphicsContext> beginContentUpdate(const WebCore::IntSize&, CoordinatedSurface::Flags, int& atlasID, WebCore::IntPoint&);
 
     // UpdateAtlasClient
-    virtual void createUpdateAtlas(int atlasID, const ShareableSurface::Handle&);
+    virtual void createUpdateAtlas(int atlasID, const WebCoordinatedSurface::Handle&);
     virtual void removeUpdateAtlas(int atlasID);
 
 #if ENABLE(REQUEST_ANIMATION_FRAME)
@@ -125,7 +126,7 @@ private:
 
     // CoordinatedImageBacking::Coordinator
     virtual void createImageBacking(CoordinatedImageBackingID) OVERRIDE;
-    virtual void updateImageBacking(CoordinatedImageBackingID, const ShareableSurface::Handle&) OVERRIDE;
+    virtual void updateImageBacking(CoordinatedImageBackingID, const WebCoordinatedSurface::Handle&) OVERRIDE;
     virtual void clearImageBackingContents(CoordinatedImageBackingID) OVERRIDE;
     virtual void removeImageBacking(CoordinatedImageBackingID) OVERRIDE;
 
