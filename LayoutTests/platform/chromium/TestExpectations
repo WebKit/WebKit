@@ -4226,3 +4226,7 @@ webkit.org/b/103767  [ Win Mac Linux ] media/track/track-in-band.html [ Skip ]
 
 # Flaky on Win (perhaps due to lighttpd?)
 webkit.org/b/104489 [ Win ] http/tests/w3c/webperf/submission/resource-timing/html/test_resource_attribute_order.html [ Failure Pass ]
+
+# Failing differently since r137152, probably just need rebaselines
+webkit.org/b/104567 [ XP ] fast/forms/date-multiple-fields/date-multiple-fields-keyboard-events.html [ Failure ]
+webkit.org/b/104567 [ XP ] fast/forms/datetimelocal-multiple-fields/datetimelocal-multiple-fields-keyboard-events.html [ Failure ]
