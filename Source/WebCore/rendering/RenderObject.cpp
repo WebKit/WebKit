@@ -68,6 +68,7 @@
 #include "Settings.h"
 #include "StyleResolver.h"
 #include "TransformState.h"
+#include "WebCoreMemoryInstrumentation.h"
 #include "htmlediting.h"
 #include <algorithm>
 #include <stdio.h>
@@ -3081,6 +3082,16 @@ bool RenderObject::canHaveGeneratedChildren() const
 bool RenderObject::canBeReplacedWithInlineRunIn() const
 {
     return true;
+}
+
+void RenderObject::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+{
+    MemoryClassInfo info(memoryObjectInfo, this, PlatformMemoryTypes::Rendering);
+    info.addMember(m_style);
+    info.addWeakPointer(m_node);
+    info.addWeakPointer(m_parent);
+    info.addWeakPointer(m_previous);
+    info.addWeakPointer(m_next);
 }
 
 #if ENABLE(SVG)

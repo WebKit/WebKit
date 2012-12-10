@@ -35,6 +35,7 @@
 #include "GraphicsContext.h"
 #include "GraphicsLayer.h"
 #include "FloatPoint.h"
+#include "PlatformMemoryInstrumentation.h"
 #include "PlatformWheelEvent.h"
 #include "ScrollAnimator.h"
 #include "ScrollbarTheme.h"
@@ -418,6 +419,12 @@ IntRect ScrollableArea::visibleContentRect(bool includeScrollbars) const
                    scrollPosition().y(),
                    std::max(0, visibleWidth() + verticalScrollbarWidth),
                    std::max(0, visibleHeight() + horizontalScrollbarHeight));
+}
+
+void ScrollableArea::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+{
+    MemoryClassInfo info(memoryObjectInfo, this);
+    info.addMember(m_scrollAnimator);
 }
 
 } // namespace WebCore

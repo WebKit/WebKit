@@ -2729,8 +2729,7 @@ void Node::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     info.addMember(m_document);
     info.addMember(m_next);
     info.addMember(m_previous);
-    if (RenderObject* renderer = this->renderer())
-        info.addMember(renderer->style());
+    info.addMember(this->renderer());
     if (hasRareData())
         info.addMember(rareData());
 }

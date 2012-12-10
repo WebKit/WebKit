@@ -85,6 +85,14 @@ public:
     {
         m_sizesMap = m_client->sizesMap();
 
+        // FIXME: We filter out Rendering type because the coverage is not good enough at the moment
+        // and report RenderArena size instead.
+        for (TypeNameToSizeMap::iterator i = m_sizesMap.begin(); i != m_sizesMap.end(); ++i) {
+            if (i->key == PlatformMemoryTypes::Rendering) {
+                m_sizesMap.remove(i);
+                break;
+            }
+        }
         Vector<String> objectTypes;
         objectTypes.appendRange(m_sizesMap.keys().begin(), m_sizesMap.keys().end());
 

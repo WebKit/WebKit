@@ -39,6 +39,7 @@
 #include "StyleInheritedData.h"
 #include "TransformState.h"
 #include "VisiblePosition.h"
+#include "WebCoreMemoryInstrumentation.h"
 
 #include <wtf/TemporaryChange.h>
 
@@ -1643,5 +1644,13 @@ void RenderInline::addAnnotatedRegions(Vector<AnnotatedRegionValue>& regions)
 #endif
 }
 #endif
+
+void RenderInline::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+{
+    MemoryClassInfo info(memoryObjectInfo, this, PlatformMemoryTypes::Rendering);
+    RenderBoxModelObject::reportMemoryUsage(memoryObjectInfo);
+    info.addMember(m_children);
+    info.addMember(m_lineBoxes);
+}
 
 } // namespace WebCore

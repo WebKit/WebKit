@@ -43,6 +43,7 @@
 #include "TextBreakIterator.h"
 #include "TextResourceDecoder.h"
 #include "VisiblePosition.h"
+#include "WebCoreMemoryInstrumentation.h"
 #include "break_lines.h"
 #include <wtf/AlwaysInline.h>
 #include <wtf/text/StringBuffer.h>
@@ -1928,6 +1929,15 @@ void RenderText::momentarilyRevealLastTypedCharacter(unsigned lastTypedCharacter
         gSecureTextTimers->add(this, secureTextTimer);
     }
     secureTextTimer->restartWithNewText(lastTypedCharacterOffset);
+}
+
+void RenderText::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+{
+    MemoryClassInfo info(memoryObjectInfo, this, PlatformMemoryTypes::Rendering);
+    RenderObject::reportMemoryUsage(memoryObjectInfo);
+    info.addMember(m_text);
+    info.addMember(m_firstTextBox);
+    info.addMember(m_lastTextBox);
 }
 
 } // namespace WebCore

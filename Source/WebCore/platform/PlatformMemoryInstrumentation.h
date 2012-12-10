@@ -43,6 +43,8 @@ class PlatformMemoryTypes {
 public:
     static MemoryObjectType Image;
     static MemoryObjectType Loader;
+    static MemoryObjectType Rendering;
+    static MemoryObjectType Layers;
 
     static MemoryObjectType Audio;
     static MemoryObjectType AudioSharedData;

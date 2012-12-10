@@ -600,6 +600,8 @@ protected:
 
     RenderObject* splitAnonymousBoxesAroundChild(RenderObject* beforeChild);
  
+    virtual void reportMemoryUsage(MemoryObjectInfo*) const OVERRIDE;
+
 private:
     bool fixedElementLaysOutRelativeToFrame(Frame*, FrameView*) const;
 

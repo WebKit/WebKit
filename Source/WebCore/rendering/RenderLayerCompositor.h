@@ -227,6 +227,8 @@ public:
     void resetTrackedRepaintRects();
     void setTracksRepaints(bool);
 
+    void reportMemoryUsage(MemoryObjectInfo*) const;
+
 private:
     class OverlapMap;
 

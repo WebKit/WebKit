@@ -522,6 +522,8 @@ protected:
 
     virtual void checkForPaginationLogicalHeightChange(LayoutUnit& pageLogicalHeight, bool& pageLogicalHeightChanged, bool& hasSpecifiedPageLogicalHeight);
 
+    virtual void reportMemoryUsage(MemoryObjectInfo*) const OVERRIDE;
+
 private:
 #if ENABLE(CSS_EXCLUSIONS)
     void computeExclusionShapeSize();

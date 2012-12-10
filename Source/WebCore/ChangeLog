@@ -1,3 +1,87 @@
+2012-12-09  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Native Memory Instrumentation: instrument a part of RenderObject class tree.
+        https://bugs.webkit.org/show_bug.cgi?id=103564
+
+        Reviewed by Eric Seidel.
+
+        Many RenderObject descendants have OwnPtrs and RefPtrs members.
+        Looks like we have to instrument all the RenderObject classes and visit
+        all the render objects instead of counting entire render arena memory.
+
+        * WebCore.exp.in:
+        * dom/Node.cpp:
+        (WebCore::Node::reportMemoryUsage):
+        * dom/WebCoreMemoryInstrumentation.cpp:
+        (WebCore):
+        * inspector/InspectorMemoryAgent.cpp:
+        (WebCore::reportRenderTreeInfo):
+        (WebCore):
+        * platform/PlatformMemoryInstrumentation.cpp:
+        (WebCore):
+        * platform/PlatformMemoryInstrumentation.h:
+        (PlatformMemoryTypes):
+        * platform/graphics/GraphicsLayer.cpp:
+        (WebCore::GraphicsLayer::reportMemoryUsage):
+        (WebCore):
+        * platform/graphics/GraphicsLayer.h:
+        (GraphicsLayer):
+        * platform/graphics/chromium/GraphicsLayerChromium.cpp:
+        (WebCore::GraphicsLayerChromium::reportMemoryUsage):
+        (WebCore):
+        * platform/graphics/chromium/GraphicsLayerChromium.h:
+        (GraphicsLayerChromium):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::reportMemoryUsage):
+        (WebCore):
+        * rendering/RenderBlock.h:
+        (RenderBlock):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::reportMemoryUsage):
+        (WebCore):
+        * rendering/RenderBox.h:
+        (RenderBox):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::reportMemoryUsage):
+        (WebCore):
+        * rendering/RenderInline.h:
+        (RenderInline):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::reportMemoryUsage):
+        (WebCore):
+        * rendering/RenderLayer.h:
+        (RenderLayer):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::reportMemoryUsage):
+        (WebCore):
+        * rendering/RenderLayerBacking.h:
+        (RenderLayerBacking):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::reportMemoryUsage):
+        (WebCore):
+        * rendering/RenderLayerCompositor.h:
+        (RenderLayerCompositor):
+        * rendering/RenderLayerModelObject.cpp:
+        (WebCore::RenderLayerModelObject::reportMemoryUsage):
+        (WebCore):
+        * rendering/RenderLayerModelObject.h:
+        (RenderLayerModelObject):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::reportMemoryUsage):
+        (WebCore):
+        * rendering/RenderObject.h:
+        (RenderObject):
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::reportMemoryUsage):
+        (WebCore):
+        * rendering/RenderText.h:
+        (RenderText):
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::reportMemoryUsage):
+        (WebCore):
+        * rendering/RenderView.h:
+        (RenderView):
+
 2012-12-09  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION (r137003): failures in MicroData tests on EFL, GTK

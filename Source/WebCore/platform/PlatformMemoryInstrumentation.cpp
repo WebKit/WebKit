@@ -39,6 +39,8 @@ namespace WebCore {
 
 MemoryObjectType PlatformMemoryTypes::Image = "Page.Image";
 MemoryObjectType PlatformMemoryTypes::Loader = "Page.Loader";
+MemoryObjectType PlatformMemoryTypes::Rendering = "Page.Rendering";
+MemoryObjectType PlatformMemoryTypes::Layers = "Page.Rendering.Layers";
 
 MemoryObjectType PlatformMemoryTypes::Audio = "Page.Audio";
 MemoryObjectType PlatformMemoryTypes::AudioSharedData = "Page.Audio.SharedData";

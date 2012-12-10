@@ -54,6 +54,7 @@
 #include "RenderView.h"
 #include "ScrollbarTheme.h"
 #include "TransformState.h"
+#include "WebCoreMemoryInstrumentation.h"
 #include <algorithm>
 #include <math.h>
 
@@ -4229,6 +4230,14 @@ RenderObject* RenderBox::splitAnonymousBoxesAroundChild(RenderObject* beforeChil
 
     ASSERT(beforeChild->parent() == this);
     return beforeChild;
+}
+
+void RenderBox::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+{
+    MemoryClassInfo info(memoryObjectInfo, this, PlatformMemoryTypes::Rendering);
+    RenderBoxModelObject::reportMemoryUsage(memoryObjectInfo);
+    info.addWeakPointer(m_inlineBoxWrapper);
+    info.addMember(m_overflow);
 }
 
 } // namespace WebCore

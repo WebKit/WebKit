@@ -58,6 +58,7 @@
 #include "Settings.h"
 #include "TiledBacking.h"
 #include "TransformState.h"
+#include "WebCoreMemoryInstrumentation.h"
 
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
 #include "HTMLMediaElement.h"
@@ -2775,6 +2776,27 @@ Page* RenderLayerCompositor::page() const
         return frame->page();
     
     return 0;
+}
+
+void RenderLayerCompositor::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+{
+    MemoryClassInfo info(memoryObjectInfo, this, PlatformMemoryTypes::Rendering);
+    info.addWeakPointer(m_renderView);
+    info.addMember(m_rootContentLayer);
+    info.addMember(m_updateCompositingLayersTimer);
+    info.addMember(m_clipLayer);
+    info.addMember(m_scrollLayer);
+    info.addMember(m_viewportConstrainedLayers);
+    info.addMember(m_viewportConstrainedLayersNeedingUpdate);
+    info.addMember(m_overflowControlsHostLayer);
+    info.addMember(m_layerForHorizontalScrollbar);
+    info.addMember(m_layerForVerticalScrollbar);
+    info.addMember(m_layerForScrollCorner);
+#if ENABLE(RUBBER_BANDING)
+    info.addMember(m_layerForOverhangAreas);
+    info.addMember(m_contentShadowLayer);
+#endif
+    info.addMember(m_layerUpdater);
 }
 
 } // namespace WebCore

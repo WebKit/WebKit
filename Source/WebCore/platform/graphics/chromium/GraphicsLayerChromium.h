@@ -152,6 +152,8 @@ public:
     // Exposed for tests.
     WebKit::WebLayer* contentsLayer() const { return m_contentsLayer; }
 
+    virtual void reportMemoryUsage(MemoryObjectInfo*) const OVERRIDE;
+
 private:
     void updateNames();
     void updateChildList();

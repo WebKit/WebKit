@@ -709,6 +709,8 @@ public:
     bool isInTopLayerSubtree() const;
 #endif
 
+    virtual void reportMemoryUsage(MemoryObjectInfo*) const OVERRIDE;
+
 private:
     void updateZOrderLists();
     void rebuildZOrderLists();

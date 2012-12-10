@@ -53,6 +53,7 @@
 #include "Image.h"
 #include "NativeImageSkia.h"
 #include "PlatformContextSkia.h"
+#include "PlatformMemoryInstrumentation.h"
 #include "ScrollableArea.h"
 #include "SkImageFilter.h"
 #include "SkMatrix44.h"
@@ -70,6 +71,7 @@
 #include <public/WebTransformationMatrix.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/HashSet.h>
+#include <wtf/MemoryInstrumentationHashMap.h>
 #include <wtf/StringExtras.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringHash.h>
@@ -877,6 +879,21 @@ void GraphicsLayerChromium::didScroll()
 {
     if (m_scrollableArea)
         m_scrollableArea->scrollToOffsetWithoutAnimation(IntPoint(m_layer->layer()->scrollPosition()));
+}
+
+void GraphicsLayerChromium::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+{
+    MemoryClassInfo info(memoryObjectInfo, this, PlatformMemoryTypes::Layers);
+    GraphicsLayer::reportMemoryUsage(memoryObjectInfo);
+    info.addMember(m_nameBase);
+    info.addMember(m_layer);
+    info.addMember(m_transformLayer);
+    info.addMember(m_imageLayer);
+    info.addMember(m_contentsLayer);
+    info.addMember(m_linkHighlight);
+    info.addMember(m_opaqueRectTrackingContentLayerDelegate);
+    info.addMember(m_animationIdMap);
+    info.addMember(m_scrollableArea);
 }
 
 } // namespace WebCore

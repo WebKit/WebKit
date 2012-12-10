@@ -55,6 +55,7 @@
 #include "Settings.h"
 #include "StyleResolver.h"
 #include "TiledBacking.h"
+#include "WebCoreMemoryInstrumentation.h"
 #include <wtf/CurrentTime.h>
 #include <wtf/text/StringBuilder.h>
 
@@ -2029,6 +2030,22 @@ bool RenderLayerBacking::contentsVisible(const GraphicsLayer*, const IntRect& lo
     return absoluteContentQuad.enclosingBoundingBox().intersects(visibleContentRect);
 }
 #endif
+
+void RenderLayerBacking::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+{
+    MemoryClassInfo info(memoryObjectInfo, this, PlatformMemoryTypes::Rendering);
+    info.addWeakPointer(m_owningLayer);
+    info.addMember(m_ancestorClippingLayer);
+    info.addMember(m_graphicsLayer);
+    info.addMember(m_foregroundLayer);
+    info.addMember(m_containmentLayer);
+    info.addMember(m_maskLayer);
+    info.addMember(m_layerForHorizontalScrollbar);
+    info.addMember(m_layerForVerticalScrollbar);
+    info.addMember(m_layerForScrollCorner);
+    info.addMember(m_scrollingLayer);
+    info.addMember(m_scrollingContentsLayer);
+}
 
 } // namespace WebCore
 

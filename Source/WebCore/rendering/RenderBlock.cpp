@@ -61,6 +61,7 @@
 #include "SVGTextRunRenderingContext.h"
 #include "ShadowRoot.h"
 #include "TransformState.h"
+#include "WebCoreMemoryInstrumentation.h"
 #include <wtf/StdLibExtras.h>
 #if ENABLE(CSS_EXCLUSIONS)
 #include "ExclusionShapeInsideInfo.h"
@@ -7729,5 +7730,15 @@ String ValueToString<RenderBlock::FloatingObject*>::string(const RenderBlock::Fl
 }
 
 #endif
+
+void RenderBlock::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+{
+    MemoryClassInfo info(memoryObjectInfo, this, PlatformMemoryTypes::Rendering);
+    RenderBox::reportMemoryUsage(memoryObjectInfo);
+    info.addMember(m_floatingObjects);
+    info.addMember(m_rareData);
+    info.addMember(m_children);
+    info.addMember(m_lineBoxes);
+}
 
 } // namespace WebCore

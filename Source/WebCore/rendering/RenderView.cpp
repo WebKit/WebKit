@@ -40,6 +40,7 @@
 #include "RenderWidgetProtector.h"
 #include "StyleInheritedData.h"
 #include "TransformState.h"
+#include "WebCoreMemoryInstrumentation.h"
 
 #if USE(ACCELERATED_COMPOSITING)
 #include "RenderLayerCompositor.h"
@@ -1008,6 +1009,26 @@ RenderBlock::IntervalArena* RenderView::intervalArena()
     if (!m_intervalArena)
         m_intervalArena = IntervalArena::create();
     return m_intervalArena.get();
+}
+
+void RenderView::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+{
+    MemoryClassInfo info(memoryObjectInfo, this, PlatformMemoryTypes::Rendering);
+    RenderBlock::reportMemoryUsage(memoryObjectInfo);
+    info.addWeakPointer(m_frameView);
+    info.addWeakPointer(m_selectionStart);
+    info.addWeakPointer(m_selectionEnd);
+    info.addMember(m_widgets);
+    info.addMember(m_layoutState);
+#if USE(ACCELERATED_COMPOSITING)
+    info.addMember(m_compositor);
+#endif
+#if ENABLE(CSS_SHADERS) && USE(3D_GRAPHICS)
+    info.addMember(m_customFilterGlobalContext);
+#endif
+    info.addMember(m_flowThreadController);
+    info.addMember(m_intervalArena);
+    info.addWeakPointer(m_renderQuoteHead);
 }
 
 } // namespace WebCore

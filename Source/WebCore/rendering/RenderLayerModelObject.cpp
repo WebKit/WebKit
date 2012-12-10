@@ -27,6 +27,7 @@
 
 #include "RenderLayer.h"
 #include "RenderView.h"
+#include "WebCoreMemoryInstrumentation.h"
 
 using namespace std;
 
@@ -172,6 +173,13 @@ void RenderLayerModelObject::styleDidChange(StyleDifference diff, const RenderSt
                 frameView->removeViewportConstrainedObject(this);
         }
     }
+}
+
+void RenderLayerModelObject::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+{
+    MemoryClassInfo info(memoryObjectInfo, this, PlatformMemoryTypes::Rendering);
+    RenderObject::reportMemoryUsage(memoryObjectInfo);
+    info.addWeakPointer(m_layer);
 }
 
 } // namespace WebCore

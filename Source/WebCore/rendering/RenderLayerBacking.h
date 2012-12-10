@@ -185,6 +185,7 @@ public:
 #if ENABLE(CSS_COMPOSITING)
     void setBlendMode(BlendMode);
 #endif
+    void reportMemoryUsage(MemoryObjectInfo*) const;
 
 private:
     void createPrimaryGraphicsLayer();
