@@ -1,3 +1,12 @@
+2012-12-10  Martin Robinson  <mrobinson@igalia.com>
+
+        Fix the GTK+ build after a collision of two patches.
+
+        Unreviewed build fix.
+
+        * bindings/gobject/GNUmakefile.am: The GObject DOM bindings library needs to
+        include the harfbuzz cflags when compiling.
+
 2012-12-10  Parth Patel  <parpatel@rim.com>
 
         Make hiddenPageDomTimerInterval a setting
