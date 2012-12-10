@@ -40,12 +40,7 @@ static String executablePath(QString baseName)
     if (QFile::exists(expectedPath))
         return String(expectedPath);
 
-    QLibraryInfo::LibraryLocation location = QLibraryInfo::BinariesPath;
-#if USE(LIBEXECDIR)
-    location = QLibraryInfo::LibraryExecutablesPath;
-#endif
-
-    expectedPath = QLibraryInfo::location(location) + QDir::separator() + baseName;
+    expectedPath = QLibraryInfo::location(QLibraryInfo::LibraryExecutablesPath) + QDir::separator() + baseName;
     if (QFile::exists(expectedPath))
         return String(expectedPath);
 

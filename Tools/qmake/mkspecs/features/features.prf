@@ -37,7 +37,6 @@ defineTest(detectFeatures) {
     haveQtModule(widgets): WEBKIT_CONFIG += have_qstyle
     haveQtModule(testlib): WEBKIT_CONFIG += have_qttestlib
 
-    config_libexecdir: WEBKIT_CONFIG += use_libexecdir
     config_libxml2: WEBKIT_CONFIG += use_libxml2
     config_libxslt: WEBKIT_CONFIG += xslt
     config_libzlib: WEBKIT_CONFIG += use_zlib

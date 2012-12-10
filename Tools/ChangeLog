@@ -1,3 +1,17 @@
+2012-12-10  Simon Hausmann  <simon.hausmann@digia.com>
+
+        [Qt] Use QLibraryInfo::LibraryExecutablesPath unconditionally
+        https://bugs.webkit.org/show_bug.cgi?id=104541
+
+        Reviewed by Jocelyn Turcotte.
+
+        We now depend on a Qt 5 version that is guaranteed to have this API, so we
+        can remove the configure checks for it.
+
+        * qmake/config.tests/libexecdir/libexecdir.cpp: Removed.
+        * qmake/config.tests/libexecdir/libexecdir.pro: Removed.
+        * qmake/mkspecs/features/features.prf:
+
 2012-12-10  Víctor Manuel Jáquez Leal  <vjaquez@igalia.com>
 
         REGRESSION(r135863): GtkLauncher --help no longer displays all help options
