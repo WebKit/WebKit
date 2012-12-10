@@ -46,7 +46,7 @@ public:
 
     virtual ~CoordinatedSurface() { }
 
-    bool supportsAlpha() { return flags() & SupportsAlpha; }
+    bool supportsAlpha() const { return flags() & SupportsAlpha; }
     virtual WebCore::IntSize size() const = 0;
 
     // Create a graphics context that can be used to paint into the backing store.

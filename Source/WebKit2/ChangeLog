@@ -5,6 +5,25 @@
 
         Reviewed by Kenneth Rohde Christiansen.
 
+        It is a follow-up patch of r137117.
+
+        There are two changes
+        1. Add a const qualifier to supportsAlpha().
+        2. Use << instead of encode() when using ArgumentEncoder.
+
+        * Shared/CoordinatedGraphics/CoordinatedSurface.h:
+        (WebKit::CoordinatedSurface::supportsAlpha):
+        * Shared/CoordinatedGraphics/WebCoordinatedSurface.cpp:
+        (WebKit::WebCoordinatedSurface::Handle::encode):
+        (WebKit::WebCoordinatedSurface::copyToTexture):
+
+2012-12-10  Huang Dongsung  <luxtella@company100.net>
+
+        Coordinated Graphics: Remove the dependency of ShareableSurface from Coordinated Graphics.
+        https://bugs.webkit.org/show_bug.cgi?id=100819
+
+        Reviewed by Kenneth Rohde Christiansen.
+
         WebCoordinatedSurface::copyToTexture should return early if the backend
         is GraphicsSurface.
 

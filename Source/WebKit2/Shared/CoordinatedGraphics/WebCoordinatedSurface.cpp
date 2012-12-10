@@ -41,14 +41,13 @@ WebCoordinatedSurface::Handle::Handle()
 
 void WebCoordinatedSurface::Handle::encode(CoreIPC::ArgumentEncoder& encoder) const
 {
-    encoder.encode(m_size);
-    encoder.encode(m_flags);
+    encoder << m_size << m_flags;
 #if USE(GRAPHICS_SURFACE)
-    encoder.encode(m_graphicsSurfaceToken);
+    encoder << m_graphicsSurfaceToken;
     if (m_graphicsSurfaceToken.isValid())
         return;
 #endif
-    encoder.encode(m_bitmapHandle);
+    encoder << m_bitmapHandle;
 }
 
 bool WebCoordinatedSurface::Handle::decode(CoreIPC::ArgumentDecoder* decoder, Handle& handle)
