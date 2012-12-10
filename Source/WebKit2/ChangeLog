@@ -1,3 +1,16 @@
+2012-12-10  Alberto Garcia  <agarcia@igalia.com>
+
+        WebKitWebViewBase produces a warning if compiled with gcc
+        https://bugs.webkit.org/show_bug.cgi?id=104561
+
+        Reviewed by Carlos Garcia Campos.
+
+        * UIProcess/API/gtk/WebKitWebViewBase.h:
+        since this file can be included from C code, use void to
+        explicitly specify that webkit_web_view_base_get_type() doesn't
+        have parameters. Otherwise we get "warning: function declaration
+        isn't a prototype" with -Wstrict-prototypes.
+
 2012-12-10  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [WK2] TiledBackingStore: remove unneeded 'treatAsInitialValue' parameter from PageViewportControllerClient::setContentsScale

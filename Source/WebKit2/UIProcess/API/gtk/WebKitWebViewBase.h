@@ -65,7 +65,7 @@ struct _WebKitWebViewBaseClass {
 };
 
 WEBKIT_API GType
-webkit_web_view_base_get_type();
+webkit_web_view_base_get_type (void);
 
 G_END_DECLS
 
