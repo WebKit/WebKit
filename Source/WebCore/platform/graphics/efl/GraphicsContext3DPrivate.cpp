@@ -25,14 +25,6 @@
 
 #include "HostWindow.h"
 #include "NotImplemented.h"
-#include "PlatformContextCairo.h"
-
-#if USE(OPENGL_ES_2)
-#include <GLES2/gl2.h>
-#include <GLES2/gl2ext.h>
-#else
-#include "OpenGLShims.h"
-#endif
 
 namespace WebCore {
 
@@ -131,7 +123,7 @@ void GraphicsContext3DPrivate::paintToTextureMapper(TextureMapper*, const FloatR
 #endif
 
 #if USE(GRAPHICS_SURFACE)
-void GraphicsContext3DPrivate::createGraphicsSurfaces(const IntSize&)
+void GraphicsContext3DPrivate::didResizeCanvas()
 {
     m_pendingSurfaceResize = true;
 }
@@ -146,15 +138,31 @@ uint32_t GraphicsContext3DPrivate::copyToGraphicsSurface()
         m_platformSurface->setGeometry(IntRect(0, 0, m_context->m_currentWidth, m_context->m_currentHeight));
     }
 
-    if (m_context->m_attrs.antialias) {
-#if !USE(OPENGL_ES_2)
-        glBindFramebuffer(GL_READ_FRAMEBUFFER_EXT, m_context->m_multisampleFBO);
-        glBindFramebuffer(GL_DRAW_FRAMEBUFFER_EXT, m_context->m_fbo);
-        glBlitFramebuffer(0, 0, m_context->m_currentWidth, m_context->m_currentHeight, 0, 0, m_context->m_currentWidth, m_context->m_currentHeight, GL_COLOR_BUFFER_BIT, GL_LINEAR);
-#endif
+    bool enableScissorTest = false;
+    int width = m_context->m_currentWidth;
+    int height = m_context->m_currentHeight;
+
+    // We should copy the full buffer, and not respect the current scissor bounds.
+    // FIXME: It would be more efficient to track the state of the scissor test.
+    if (m_context->isEnabled(GraphicsContext3D::SCISSOR_TEST)) {
+        enableScissorTest = true;
+        m_context->disable(GraphicsContext3D::SCISSOR_TEST);
     }
 
-    m_platformSurface->updateContents(m_context->m_texture, IntRect(0, 0, m_context->m_currentWidth, m_context->m_currentHeight), m_context->m_boundFBO, m_context->m_boundTexture0);
+    if (m_context->m_attrs.antialias) {
+
+        glBindFramebuffer(GL_READ_FRAMEBUFFER_EXT, m_context->m_multisampleFBO);
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER_EXT, m_context->m_fbo);
+
+        // Use NEAREST as no scale is performed during the blit.
+        glBlitFramebuffer(0, 0, width, height, 0, 0, width, height, GraphicsContext3D::COLOR_BUFFER_BIT, GraphicsContext3D::NEAREST);
+    }
+
+    m_platformSurface->updateContents(m_context->m_boundFBO);
+
+    if (enableScissorTest)
+        m_context->enable(GraphicsContext3D::SCISSOR_TEST);
+
     return 0;
 }
 

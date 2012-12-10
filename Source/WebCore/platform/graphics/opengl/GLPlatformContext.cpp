@@ -41,17 +41,14 @@ static GLPlatformContext* m_currentContext = 0;
 
 PassOwnPtr<GLPlatformContext> GLPlatformContext::createContext(GraphicsContext3D::RenderStyle renderStyle)
 {
-    static bool initializedShims = false;
+    if (!initializeOpenGLShims())
+        return nullptr;
 
-    if (!initializedShims) {
-        initializedShims = initializeOpenGLShims();
+    if (!glGetGraphicsResetStatusARB) {
 #if HAVE(GLX)
         glGetGraphicsResetStatusARB = reinterpret_cast<PFNGLGETGRAPHICSRESETSTATUSARBPROC>(glXGetProcAddressARB(reinterpret_cast<const GLubyte*>("glGetGraphicsResetStatusARB")));
 #endif
     }
-
-    if (!initializedShims)
-        return nullptr;
 
     switch (renderStyle) {
     case GraphicsContext3D::RenderOffscreen:

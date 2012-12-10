@@ -29,6 +29,7 @@
 #if USE(ACCELERATED_COMPOSITING)
 
 #include "GLDefs.h"
+#include "IntRect.h"
 #include <wtf/Noncopyable.h>
 #include <wtf/PassOwnPtr.h>
 
@@ -51,6 +52,9 @@ public:
 
     const IntRect& geometry() const;
 
+    // Creates FBO used by the surface. Buffers can be bound to this FBO.
+    void initialize(GLuint* frameBufferId);
+
     // Get the underlying platform specific surface handle.
     PlatformSurface handle() const;
 
@@ -58,14 +62,12 @@ public:
 
     virtual void swapBuffers();
 
-    virtual void copyTexture(uint32_t texture, const IntRect& sourceRect);
-
-    // Convenience Function to update surface backbuffer with texture contents, restore current FBO and Texture.
+    // Convenience Function to update surface contents.
     // Function does the following(in order):
-    // a)Blits texture contents to back buffer.
-    // b)Calls Swap Buffers.
-    // c)Sets current FBO as bindFboId and binds texture to bindTexture.
-    virtual void updateContents(const uint32_t texture, const IntRect& sourceRect, const GLuint bindFboId, const uint32_t bindTexture);
+    // a) Blits back buffer contents to front buffer.
+    // b) Calls Swap Buffers.
+    // c) Sets current FBO as bindFboId.
+    virtual void updateContents(const GLuint bindFboId);
 
     virtual void setGeometry(const IntRect& newRect);
 

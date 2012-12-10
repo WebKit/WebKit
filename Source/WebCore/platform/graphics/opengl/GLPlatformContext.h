@@ -30,6 +30,7 @@
 
 #include "GLDefs.h"
 #include "GLPlatformSurface.h"
+#include "GraphicsContext3D.h"
 #include <wtf/Noncopyable.h>
 #include <wtf/PassOwnPtr.h>
 

@@ -80,7 +80,7 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3D::Attributes attrs, HostWi
 
     if (renderStyle == RenderOffscreen) {
         // Create buffers for the canvas FBO.
-        glGenFramebuffers(/* count */ 1, &m_fbo);
+        m_private->m_platformSurface->initialize(&m_fbo);
 
         // Create a texture to render into.
         glGenTextures(1, &m_texture);
@@ -134,18 +134,14 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3D::Attributes attrs, HostWi
     glEnable(GL_POINT_SPRITE);
     glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
 #endif
-    glClearColor(0.0, 0.0, 0.0, 0.0);
+    if (renderStyle != RenderToCurrentGLContext)
+        glClearColor(0.0, 0.0, 0.0, 0.0);
 }
 
 GraphicsContext3D::~GraphicsContext3D()
 {
     if (!m_private || !makeContextCurrent())
         return;
-
-    if (!m_fbo) {
-        m_private->releaseResources();
-        return;
-    }
 
     glDeleteTextures(1, &m_texture);
 
@@ -167,7 +163,6 @@ GraphicsContext3D::~GraphicsContext3D()
         glDeleteRenderbuffers(1, &m_depthStencilBuffer);
     }
 
-    glDeleteFramebuffers(1, &m_fbo);
     m_private->releaseResources();
 }
 
@@ -236,9 +231,9 @@ void GraphicsContext3D::paintToCanvas(const unsigned char* imagePixels, int imag
 }
 
 #if USE(GRAPHICS_SURFACE)
-void GraphicsContext3D::createGraphicsSurfaces(const IntSize& size)
+void GraphicsContext3D::createGraphicsSurfaces(const IntSize&)
 {
-    m_private->createGraphicsSurfaces(size);
+    m_private->didResizeCanvas();
 }
 #endif
 

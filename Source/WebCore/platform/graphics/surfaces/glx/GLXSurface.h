@@ -34,6 +34,7 @@
 #include <X11/extensions/Xrender.h>
 #endif
 #include <wtf/Noncopyable.h>
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 

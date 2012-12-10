@@ -56,7 +56,7 @@ public:
 #if USE(GRAPHICS_SURFACE)
     virtual uint32_t copyToGraphicsSurface();
     virtual GraphicsSurfaceToken graphicsSurfaceToken() const;
-    void createGraphicsSurfaces(const IntSize&);
+    void didResizeCanvas();
 #endif
     bool makeContextCurrent();
     void releaseResources();

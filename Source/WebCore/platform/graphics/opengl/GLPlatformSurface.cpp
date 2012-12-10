@@ -72,6 +72,14 @@ GLPlatformSurface::~GLPlatformSurface()
 {
 }
 
+void GLPlatformSurface::initialize(GLuint* frameBufferId)
+{
+    if (!m_fboId)
+        glGenFramebuffers(1, &m_fboId);
+
+    *frameBufferId = m_fboId;
+}
+
 PlatformSurface GLPlatformSurface::handle() const
 {
     return m_drawable;
@@ -97,58 +105,23 @@ void GLPlatformSurface::swapBuffers()
     notImplemented();
 }
 
-void GLPlatformSurface::copyTexture(uint32_t texture, const IntRect& sourceRect)
+void GLPlatformSurface::updateContents(const GLuint bindFboId)
 {
     if (!m_fboId)
-        glGenFramebuffers(1, &m_fboId);
+        return;
 
-    m_restoreNeeded = true;
-    int x = sourceRect.x();
-    int y = sourceRect.y();
-    int width = sourceRect.width();
-    int height = sourceRect.height();
-
-    glPushAttrib(GL_COLOR_BUFFER_BIT);
-
-    GLint previousFBO;
-    glGetIntegerv(GL_FRAMEBUFFER_BINDING, &previousFBO);
-
-    glBindFramebuffer(GL_READ_FRAMEBUFFER, m_fboId);
-
-    glBindTexture(GL_TEXTURE_2D, texture);
-    glFramebufferTexture2D(GL_READ_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
-
-    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
-
-    glBlitFramebuffer(x, y, width, height, x, y, width, height, GL_COLOR_BUFFER_BIT, GL_LINEAR);
-
-    glFramebufferTexture2D(GL_READ_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, 0, 0);
-    glBindTexture(GL_TEXTURE_2D, 0);
-    glBindFramebuffer(GL_FRAMEBUFFER, previousFBO);
-
-    glPopAttrib();
-}
-
-void GLPlatformSurface::updateContents(const uint32_t texture, const IntRect& sourceRect, const GLuint bindFboId, const uint32_t bindTexture)
-{
     m_restoreNeeded = false;
 
-    if (!m_fboId)
-        glGenFramebuffers(1, &m_fboId);
-
-    int x = sourceRect.x();
-    int y = sourceRect.y();
-    int width = sourceRect.width();
-    int height = sourceRect.height();
+    int x = 0;
+    int y = 0;
+    int width = m_rect.width();
+    int height = m_rect.height();
 
     glBindFramebuffer(GL_READ_FRAMEBUFFER, m_fboId);
-    glBindTexture(GL_TEXTURE_2D, texture);
-    glFramebufferTexture2D(GL_READ_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
-    glBlitFramebuffer(x, y, width, height, x, y, width, height, GL_COLOR_BUFFER_BIT, GL_LINEAR);
+    // Use NEAREST as no scale is performed during the blit.
+    glBlitFramebuffer(x, y, width, height, x, y, width, height, GL_COLOR_BUFFER_BIT, GL_NEAREST);
     swapBuffers();
-    glFramebufferTexture2D(GL_READ_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, 0, 0);
-    glBindTexture(GL_TEXTURE_2D, bindTexture);
     glBindFramebuffer(GL_FRAMEBUFFER, bindFboId);
 }
 
