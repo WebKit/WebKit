@@ -278,6 +278,7 @@ pseudo
 readonly
 rel
 required
+reset-style-inheritance
 results
 rev
 reversed

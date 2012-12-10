@@ -1,3 +1,34 @@
+2012-12-09  Takashi Sakamoto  <tasak@google.com>
+
+        [Shadow DOM]: reset-style-inheritance doesn't work for insertion point
+        https://bugs.webkit.org/show_bug.cgi?id=103711
+
+        Reviewed by Hajime Morita.
+
+        reset-style-inheritance can be specified by using insertion points'
+        attribute, e.g. <content reset-style-inheritance>.
+        c.f. shadow dom spec:
+        https://dvcs.w3.org/hg/webcomponents/raw-file/tip/spec/shadow/index.html#styles
+
+        No new tests. Updated an existing test,
+        fast/dom/shadow/insertion-point-resetStyleInheritance.html to cover
+        this feature.
+
+        * html/HTMLAttributeNames.in:
+        Added HTMLNames::reset_style_inheritanceAttr.
+        * html/shadow/InsertionPoint.cpp:
+        (WebCore::InsertionPoint::InsertionPoint):
+        (WebCore::InsertionPoint::parseAttribute):
+        Since both shadow and content elements have to support
+        reset-style-inheritance, added InsertionPoint::parseAttribute.
+        (WebCore::InsertionPoint::resetStyleInheritance):
+        (WebCore::InsertionPoint::setResetStyleInheritance):
+        Modified to update reset-style-inheritance attribute value.
+        * html/shadow/InsertionPoint.h:
+        (InsertionPoint):
+        Removed m_shouldResetStyleInheritance. Instead, use
+        reset-style-inheritance attribute value.
+
 2012-12-09  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Native Memory Instrumentation: instrument a part of RenderObject class tree.

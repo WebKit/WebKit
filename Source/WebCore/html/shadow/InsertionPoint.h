@@ -80,10 +80,11 @@ protected:
     virtual void childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta) OVERRIDE;
     virtual InsertionNotificationRequest insertedInto(ContainerNode*) OVERRIDE;
     virtual void removedFrom(ContainerNode*) OVERRIDE;
+    virtual void parseAttribute(const QualifiedName&, const AtomicString&) OVERRIDE;
 
 private:
+
     ContentDistribution m_distribution;
-    bool m_shouldResetStyleInheritance : 1;
 };
 
 inline InsertionPoint* toInsertionPoint(Node* node)

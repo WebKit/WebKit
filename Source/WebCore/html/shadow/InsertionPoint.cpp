@@ -32,14 +32,17 @@
 #include "InsertionPoint.h"
 
 #include "ElementShadow.h"
+#include "HTMLNames.h"
+#include "QualifiedName.h"
 #include "ShadowRoot.h"
 #include "StaticNodeList.h"
 
 namespace WebCore {
 
+using namespace HTMLNames;
+
 InsertionPoint::InsertionPoint(const QualifiedName& tagName, Document* document)
     : HTMLElement(tagName, document, CreateInsertionPoint)
-    , m_shouldResetStyleInheritance(false)
 {
 }
 
@@ -163,18 +166,24 @@ void InsertionPoint::removedFrom(ContainerNode* insertionPoint)
     HTMLElement::removedFrom(insertionPoint);
 }
 
+void InsertionPoint::parseAttribute(const QualifiedName& name, const AtomicString& value)
+{
+    if (name == reset_style_inheritanceAttr) {
+        if (!inDocument() || !attached() || !isActive())
+            return;
+        containingShadowRoot()->host()->setNeedsStyleRecalc();
+    } else
+        HTMLElement::parseAttribute(name, value);
+}
+
 bool InsertionPoint::resetStyleInheritance() const
 {
-    return m_shouldResetStyleInheritance;
+    return fastHasAttribute(reset_style_inheritanceAttr);
 }
 
 void InsertionPoint::setResetStyleInheritance(bool value)
 {
-    if (value != m_shouldResetStyleInheritance) {
-        m_shouldResetStyleInheritance = value;
-        if (attached() && isActive())
-            containingShadowRoot()->host()->setNeedsStyleRecalc();
-    }
+    setBooleanAttribute(reset_style_inheritanceAttr, value);
 }
 
 } // namespace WebCore

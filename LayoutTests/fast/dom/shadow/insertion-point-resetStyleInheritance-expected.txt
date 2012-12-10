@@ -4,6 +4,12 @@ PASS window.getComputedStyle(document.getElementById("no-reset-style-inheritance
 Test case: reset-style-inhertiace basic test. color value should be initial because insertion point's resetStyleInheritance is true.
 PASS window.getComputedStyle(document.getElementById("reset-style-inheritance").firstChild).color is "rgb(0, 0, 0)"
 PASS window.getComputedStyle(document.getElementById("reset-style-inheritance").firstChild).backgroundColor is "rgba(0, 0, 0, 0)"
+Test case: make a content element reset-style-inhertiace by using its attribute. color value should be initial because insertion point's resetStyleInheritance is true.
+PASS window.getComputedStyle(document.getElementById("reset-style-inheritance").firstChild).color is "rgb(0, 0, 0)"
+PASS window.getComputedStyle(document.getElementById("reset-style-inheritance").firstChild).backgroundColor is "rgba(0, 0, 0, 0)"
+Test case: make a shadow element reset-style-inhertiace by using its attribute. color value should be initial because insertion point's resetStyleInheritance is true.
+PASS window.getComputedStyle(document.getElementById("reset-style-inheritance").firstChild).color is "rgb(0, 0, 0)"
+PASS window.getComputedStyle(document.getElementById("reset-style-inheritance").firstChild).backgroundColor is "rgba(0, 0, 0, 0)"
 Test case: reset-style-inhertiace changes dynamically. Firstly color value should be inherited. Next, initial. At last, inherited.
 PASS window.getComputedStyle(document.getElementById("reset-style-inheritance-dynamic").firstChild).color is "rgb(255, 238, 238)"
 PASS window.getComputedStyle(document.getElementById("reset-style-inheritance-dynamic").firstChild).backgroundColor is "rgba(0, 0, 0, 0)"

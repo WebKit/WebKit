@@ -34,6 +34,28 @@ function testResetStyleInheritance() {
     shouldBe('window.getComputedStyle(document.getElementById("reset-style-inheritance").firstChild).backgroundColor', '"rgba(0, 0, 0, 0)"');
 }
 
+function testResetStyleInheritanceWithAttribute() {
+    debug("Test case: make a content element reset-style-inhertiace by using its attribute. color value should be initial because insertion point's resetStyleInheritance is true.");
+    var div = document.getElementById('reset-style-inheritance');
+
+    var shadowRoot = new WebKitShadowRoot(div);
+    shadowRoot.innerHTML = '<content id="content" reset-style-inheritance></content>';
+
+    shouldBe('window.getComputedStyle(document.getElementById("reset-style-inheritance").firstChild).color', '"rgb(0, 0, 0)"');
+    shouldBe('window.getComputedStyle(document.getElementById("reset-style-inheritance").firstChild).backgroundColor', '"rgba(0, 0, 0, 0)"');
+}
+
+function testShadowResetStyleInheritanceWithAttribute() {
+    debug("Test case: make a shadow element reset-style-inhertiace by using its attribute. color value should be initial because insertion point's resetStyleInheritance is true.");
+    var div = document.getElementById('reset-style-inheritance');
+
+    var shadowRoot = new WebKitShadowRoot(div);
+    shadowRoot.innerHTML = '<shadow id="content" reset-style-inheritance></content>';
+
+    shouldBe('window.getComputedStyle(document.getElementById("reset-style-inheritance").firstChild).color', '"rgb(0, 0, 0)"');
+    shouldBe('window.getComputedStyle(document.getElementById("reset-style-inheritance").firstChild).backgroundColor', '"rgba(0, 0, 0, 0)"');
+}
+
 function testResetStyleInheritanceDynamic() {
     debug("Test case: reset-style-inhertiace changes dynamically. Firstly color value should be inherited. Next, initial. At last, inherited.");
     var div = document.getElementById('reset-style-inheritance-dynamic');
@@ -106,6 +128,8 @@ function testResetStyleInheritanceWithMultipleInsertionPoints() {
 function runTests() {
     testNoResetStyleInheritance();
     testResetStyleInheritance();
+    testResetStyleInheritanceWithAttribute();
+    testShadowResetStyleInheritanceWithAttribute();
     testResetStyleInheritanceDynamic();
     testResetStyleInheritanceWithoutCrossingUpperBoundary()
     testResetStyleInheritanceWithMultipleShadowRoots();
