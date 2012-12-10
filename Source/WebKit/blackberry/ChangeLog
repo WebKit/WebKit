@@ -1,3 +1,19 @@
+2012-12-10  Max Feil  <mfeil@rim.com>
+
+        [BlackBerry] Flash content is being rendered as garbled characters when Flashplayer is disabled
+        https://bugs.webkit.org/show_bug.cgi?id=104505
+
+        Reviewed by Antonio Gomes.
+
+        The check to allow video and audio as the source of embed and
+        object elements is causing a problem when the Flashplayer plugin
+        is disabled. We have to take Flash content into account in this
+        check otherwise the swf contents will be rendered as garbled
+        text characters where there should just be blank space.
+
+        * WebCoreSupport/FrameLoaderClientBlackBerry.cpp:
+        (WebCore::FrameLoaderClientBlackBerry::createPlugin):
+
 2012-12-10  Parth Patel  <parpatel@rim.com>
 
         [BlackBerry] Make hiddenPageDomTimerInterval a setting 

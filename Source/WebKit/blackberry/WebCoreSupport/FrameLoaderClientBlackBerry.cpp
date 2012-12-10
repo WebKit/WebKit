@@ -344,8 +344,14 @@ PassRefPtr<Widget> FrameLoaderClientBlackBerry::createPlugin(const IntSize& plug
     if (PluginDatabase::installedPlugins()->isMIMETypeRegistered(mimeType))
         return PluginView::create(m_frame, pluginSize, element, url, paramNames, paramValues, mimeType, loadManually);
 
-    // If it's not the plugin type we support, try load directly from browser.
-    if (m_frame->loader() && m_frame->loader()->subframeLoader() && !url.isNull())
+    // This is not a plugin type that is currently supported or enabled. Try
+    // to load the url directly. This check is performed to allow video and
+    // audio to be referenced as the source of embed or object elements.
+    // For media of this kind the mime type passed into this function
+    // will generally be a valid media mime type, or it may be null. We
+    // explicitly check for Flash content so it does not get rendered as
+    // text at this point, producing garbled characters.
+    if (mimeType != "application/x-shockwave-flash" && m_frame->loader() && m_frame->loader()->subframeLoader() && !url.isNull())
         m_frame->loader()->subframeLoader()->requestFrame(element, url, String());
 
     return 0;
