@@ -40,37 +40,29 @@
 
 namespace WebCore {
 
-V8NodeFilterCondition::V8NodeFilterCondition(v8::Handle<v8::Value> callback)
-    : m_callback(callback)
+V8NodeFilterCondition::V8NodeFilterCondition(v8::Handle<v8::Value> filter)
+    : m_filter(filter)
 {
-    m_callback.get().MakeWeak(this, weakCallback);
 }
 
 V8NodeFilterCondition::~V8NodeFilterCondition()
 {
 }
 
-void V8NodeFilterCondition::weakCallback(v8::Persistent<v8::Value> value, void* context)
-{
-    V8NodeFilterCondition* condition = static_cast<V8NodeFilterCondition*>(context);
-    ASSERT(condition->callback() == value);
-    condition->m_callback.clear();
-}
-
 short V8NodeFilterCondition::acceptNode(ScriptState* state, Node* node) const
 {
     ASSERT(v8::Context::InContext());
 
-    if (!m_callback->IsObject())
+    if (!m_filter->IsObject())
         return NodeFilter::FILTER_ACCEPT;
 
     v8::TryCatch exceptionCatcher;
 
     v8::Handle<v8::Function> callback;
-    if (m_callback->IsFunction())
-        callback = v8::Handle<v8::Function>::Cast(m_callback.get());
+    if (m_filter->IsFunction())
+        callback = v8::Handle<v8::Function>::Cast(m_filter.get());
     else {
-        v8::Local<v8::Value> value = m_callback->ToObject()->Get(v8::String::NewSymbol("acceptNode"));
+        v8::Local<v8::Value> value = m_filter->ToObject()->Get(v8::String::NewSymbol("acceptNode"));
         if (!value->IsFunction()) {
             throwTypeError("NodeFilter object does not have an acceptNode function");
             return NodeFilter::FILTER_REJECT;
