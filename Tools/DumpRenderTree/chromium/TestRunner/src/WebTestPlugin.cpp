@@ -24,20 +24,26 @@
  */
 
 #include "config.h"
-#include "TestWebPlugin.h"
+#include "WebTestPlugin.h"
 
 #include "WebFrame.h"
 #include "WebInputEvent.h"
-#include "platform/WebGraphicsContext3D.h"
 #include "WebKit.h"
-#include "platform/WebKitPlatformSupport.h"
 #include "WebPluginContainer.h"
 #include "WebPluginParams.h"
+#include "WebTestDelegate.h"
 #include "WebTouchPoint.h"
+#include "platform/WebGraphicsContext3D.h"
+#include "platform/WebKitPlatformSupport.h"
 #include <wtf/Assertions.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/WTFString.h>
 
 using namespace WebKit;
+
+namespace WebTestRunner {
+
+namespace {
 
 // GLenum values copied from gl2.h.
 #define GL_FALSE                  0
@@ -69,7 +75,7 @@ using namespace WebKit;
 #define GL_FRAMEBUFFER_COMPLETE   0x8CD5
 #define GL_FRAMEBUFFER            0x8D40
 
-static void premultiplyAlpha(const unsigned colorIn[3], float alpha, float colorOut[4])
+void premultiplyAlpha(const unsigned colorIn[3], float alpha, float colorOut[4])
 {
     for (int i = 0; i < 3; ++i)
         colorOut[i] = (colorIn[i] / 255.0f) * alpha;
@@ -77,16 +83,16 @@ static void premultiplyAlpha(const unsigned colorIn[3], float alpha, float color
     colorOut[3] = alpha;
 }
 
-static const char* pointState(WebKit::WebTouchPoint::State state)
+const char* pointState(WebTouchPoint::State state)
 {
     switch (state) {
-    case WebKit::WebTouchPoint::StateReleased:
+    case WebTouchPoint::StateReleased:
         return "Released";
-    case WebKit::WebTouchPoint::StatePressed:
+    case WebTouchPoint::StatePressed:
         return "Pressed";
-    case WebKit::WebTouchPoint::StateMoved:
+    case WebTouchPoint::StateMoved:
         return "Moved";
-    case WebKit::WebTouchPoint::StateCancelled:
+    case WebTouchPoint::StateCancelled:
         return "Cancelled";
     default:
         return "Unknown";
@@ -96,46 +102,133 @@ static const char* pointState(WebKit::WebTouchPoint::State state)
     return 0;
 }
 
-static void printTouchList(const WebKit::WebTouchPoint* points, int length)
+void printTouchList(WebTestDelegate* delegate, const WebTouchPoint* points, int length)
 {
     for (int i = 0; i < length; ++i)
-        printf("* %d, %d: %s\n", points[i].position.x, points[i].position.y, pointState(points[i].state));
+        delegate->printMessage(std::string("* ") + String::number(points[i].position.x).ascii().data() + ", " + String::number(points[i].position.y).ascii().data() + ": " + pointState(points[i].state) + "\n");
 }
 
-static void printEventDetails(const WebKit::WebInputEvent& event)
+void printEventDetails(WebTestDelegate* delegate, const WebInputEvent& event)
 {
-    if (WebKit::WebInputEvent::isTouchEventType(event.type)) {
-        const WebKit::WebTouchEvent& touch = static_cast<const WebKit::WebTouchEvent&>(event);
-        printTouchList(touch.touches, touch.touchesLength);
-        printTouchList(touch.changedTouches, touch.changedTouchesLength);
-        printTouchList(touch.targetTouches, touch.targetTouchesLength);
-    } else if (WebKit::WebInputEvent::isMouseEventType(event.type) || event.type == WebKit::WebInputEvent::MouseWheel) {
-        const WebKit::WebMouseEvent& mouse = static_cast<const WebKit::WebMouseEvent&>(event);
-        printf("* %d, %d\n", mouse.x, mouse.y);
-    } else if (WebKit::WebInputEvent::isGestureEventType(event.type)) {
-        const WebKit::WebGestureEvent& gesture = static_cast<const WebKit::WebGestureEvent&>(event);
-        printf("* %d, %d\n", gesture.x, gesture.y);
+    if (WebInputEvent::isTouchEventType(event.type)) {
+        const WebTouchEvent& touch = static_cast<const WebTouchEvent&>(event);
+        printTouchList(delegate, touch.touches, touch.touchesLength);
+        printTouchList(delegate, touch.changedTouches, touch.changedTouchesLength);
+        printTouchList(delegate, touch.targetTouches, touch.targetTouchesLength);
+    } else if (WebInputEvent::isMouseEventType(event.type) || event.type == WebInputEvent::MouseWheel) {
+        const WebMouseEvent& mouse = static_cast<const WebMouseEvent&>(event);
+        delegate->printMessage(std::string("* ") + String::number(mouse.x).ascii().data() + ", " + String::number(mouse.y).ascii().data() + "\n");
+    } else if (WebInputEvent::isGestureEventType(event.type)) {
+        const WebGestureEvent& gesture = static_cast<const WebGestureEvent&>(event);
+        delegate->printMessage(std::string("* ") + String::number(gesture.x).ascii().data() + ", " + String::number(gesture.y).ascii().data() + "\n");
     }
 }
 
-static WebKit::WebPluginContainer::TouchEventRequestType parseTouchEventRequestType(const WebString& string)
+WebPluginContainer::TouchEventRequestType parseTouchEventRequestType(const WebString& string)
 {
     DEFINE_STATIC_LOCAL(const WebString, kPrimitiveRaw, (WebString::fromUTF8("raw")));
     DEFINE_STATIC_LOCAL(const WebString, kPrimitiveSynthetic, (WebString::fromUTF8("synthetic")));
 
     if (string == kPrimitiveRaw)
-        return WebKit::WebPluginContainer::TouchEventRequestTypeRaw;
+        return WebPluginContainer::TouchEventRequestTypeRaw;
     if (string == kPrimitiveSynthetic)
-        return WebKit::WebPluginContainer::TouchEventRequestTypeSynthesizedMouse;
-    return WebKit::WebPluginContainer::TouchEventRequestTypeNone;
+        return WebPluginContainer::TouchEventRequestTypeSynthesizedMouse;
+    return WebPluginContainer::TouchEventRequestTypeNone;
 }
 
-TestWebPlugin::TestWebPlugin(WebKit::WebFrame* frame,
-                             const WebKit::WebPluginParams& params)
+class WebTestPluginImpl : public WebTestPlugin {
+public:
+    WebTestPluginImpl(WebFrame*, const WebPluginParams&, WebTestDelegate*);
+    virtual ~WebTestPluginImpl();
+
+    // WebPlugin methods:
+    virtual bool initialize(WebPluginContainer*);
+    virtual void destroy();
+    virtual NPObject* scriptableObject() { return 0; }
+    virtual bool canProcessDrag() const { return m_canProcessDrag; }
+    virtual void paint(WebCanvas*, const WebRect&) { }
+    virtual void updateGeometry(const WebRect& frameRect, const WebRect& clipRect, const WebVector<WebRect>& cutOutsRects, bool isVisible);
+    virtual void updateFocus(bool) { }
+    virtual void updateVisibility(bool) { }
+    virtual bool acceptsInputEvents() { return true; }
+    virtual bool handleInputEvent(const WebInputEvent&, WebCursorInfo&);
+    virtual bool handleDragStatusUpdate(WebDragStatus, const WebDragData&, WebDragOperationsMask, const WebPoint& position, const WebPoint& screenPosition);
+    virtual void didReceiveResponse(const WebURLResponse&) { }
+    virtual void didReceiveData(const char* data, int dataLength) { }
+    virtual void didFinishLoading() { }
+    virtual void didFailLoading(const WebURLError&) { }
+    virtual void didFinishLoadingFrameRequest(const WebURL&, void* notifyData) { }
+    virtual void didFailLoadingFrameRequest(const WebURL&, void* notifyData, const WebURLError&) { }
+    virtual bool isPlaceholder() { return false; }
+
+private:
+    enum Primitive {
+        PrimitiveNone,
+        PrimitiveTriangle
+    };
+
+    struct Scene {
+        Primitive primitive;
+        unsigned backgroundColor[3];
+        unsigned primitiveColor[3];
+        float opacity;
+
+        unsigned vbo;
+        unsigned program;
+        int colorLocation;
+        int positionLocation;
+
+        Scene()
+            : primitive(PrimitiveNone)
+            , opacity(1.0f) // Fully opaque.
+            , vbo(0)
+            , program(0)
+            , colorLocation(-1)
+            , positionLocation(-1)
+        {
+            backgroundColor[0] = backgroundColor[1] = backgroundColor[2] = 0;
+            primitiveColor[0] = primitiveColor[1] = primitiveColor[2] = 0;
+        }
+    };
+
+    // Functions for parsing plugin parameters.
+    Primitive parsePrimitive(const WebString&);
+    void parseColor(const WebString&, unsigned color[3]);
+    float parseOpacity(const WebString&);
+    bool parseBoolean(const WebString&);
+
+    // Functions for loading and drawing scene.
+    bool initScene();
+    void drawScene();
+    void destroyScene();
+    bool initProgram();
+    bool initPrimitive();
+    void drawPrimitive();
+    unsigned loadShader(unsigned type, const WTF::CString& source);
+    unsigned loadProgram(const WTF::CString& vertexSource, const WTF::CString& fragmentSource);
+
+    WebFrame* m_frame;
+    WebTestDelegate* m_delegate;
+    WebPluginContainer* m_container;
+
+    WebRect m_rect;
+    WebGraphicsContext3D* m_context;
+    unsigned m_colorTexture;
+    unsigned m_framebuffer;
+    Scene m_scene;
+
+    WebPluginContainer::TouchEventRequestType m_touchEventRequest;
+    bool m_printEventDetails;
+    bool m_printUserGestureStatus;
+    bool m_canProcessDrag;
+};
+
+WebTestPluginImpl::WebTestPluginImpl(WebFrame* frame, const WebPluginParams& params, WebTestDelegate* delegate)
     : m_frame(frame)
+    , m_delegate(delegate)
     , m_container(0)
     , m_context(0)
-    , m_touchEventRequest(WebKit::WebPluginContainer::TouchEventRequestTypeNone)
+    , m_touchEventRequest(WebPluginContainer::TouchEventRequestTypeNone)
     , m_printEventDetails(false)
     , m_printUserGestureStatus(false)
     , m_canProcessDrag(false)
@@ -174,17 +267,11 @@ TestWebPlugin::TestWebPlugin(WebKit::WebFrame* frame,
     }
 }
 
-TestWebPlugin::~TestWebPlugin()
+WebTestPluginImpl::~WebTestPluginImpl()
 {
 }
 
-const WebString& TestWebPlugin::mimeType()
-{
-    static const WebString kMimeType = WebString::fromUTF8("application/x-webkit-test-webplugin");
-    return kMimeType;
-}
-
-bool TestWebPlugin::initialize(WebPluginContainer* container)
+bool WebTestPluginImpl::initialize(WebPluginContainer* container)
 {
     WebGraphicsContext3D::Attributes attrs;
     m_context = webKitPlatformSupport()->createOffscreenGraphicsContext3D(attrs);
@@ -204,7 +291,7 @@ bool TestWebPlugin::initialize(WebPluginContainer* container)
     return true;
 }
 
-void TestWebPlugin::destroy()
+void WebTestPluginImpl::destroy()
 {
     destroyScene();
 
@@ -215,10 +302,7 @@ void TestWebPlugin::destroy()
     m_frame = 0;
 }
 
-void TestWebPlugin::updateGeometry(const WebRect& frameRect,
-                                   const WebRect& clipRect,
-                                   const WebVector<WebRect>& cutOutsRects,
-                                   bool isVisible)
+void WebTestPluginImpl::updateGeometry(const WebRect& frameRect, const WebRect& clipRect, const WebVector<WebRect>& cutOutsRects, bool isVisible)
 {
     if (clipRect == m_rect)
         return;
@@ -244,7 +328,7 @@ void TestWebPlugin::updateGeometry(const WebRect& frameRect,
     m_container->commitBackingTexture();
 }
 
-TestWebPlugin::Primitive TestWebPlugin::parsePrimitive(const WebString& string)
+WebTestPluginImpl::Primitive WebTestPluginImpl::parsePrimitive(const WebString& string)
 {
     static const WebString kPrimitiveNone = WebString::fromUTF8("none");
     static const WebString kPrimitiveTriangle = WebString::fromUTF8("triangle");
@@ -261,7 +345,7 @@ TestWebPlugin::Primitive TestWebPlugin::parsePrimitive(const WebString& string)
 
 // FIXME: This method should already exist. Use it.
 // For now just parse primary colors.
-void TestWebPlugin::parseColor(const WebString& string, unsigned color[3])
+void WebTestPluginImpl::parseColor(const WebString& string, unsigned color[3])
 {
     color[0] = color[1] = color[2] = 0;
     if (string == "black")
@@ -277,18 +361,18 @@ void TestWebPlugin::parseColor(const WebString& string, unsigned color[3])
         ASSERT_NOT_REACHED();
 }
 
-float TestWebPlugin::parseOpacity(const WebString& string)
+float WebTestPluginImpl::parseOpacity(const WebString& string)
 {
     return static_cast<float>(atof(string.utf8().data()));
 }
 
-bool TestWebPlugin::parseBoolean(const WebString& string)
+bool WebTestPluginImpl::parseBoolean(const WebString& string)
 {
     static const WebString kPrimitiveTrue = WebString::fromUTF8("true");
     return string == kPrimitiveTrue;
 }
 
-bool TestWebPlugin::initScene()
+bool WebTestPluginImpl::initScene()
 {
     float color[4];
     premultiplyAlpha(m_scene.backgroundColor, m_scene.opacity, color);
@@ -308,7 +392,7 @@ bool TestWebPlugin::initScene()
     return m_scene.primitive != PrimitiveNone ? initProgram() && initPrimitive() : true;
 }
 
-void TestWebPlugin::drawScene()
+void WebTestPluginImpl::drawScene()
 {
     m_context->viewport(0, 0, m_rect.width, m_rect.height);
     m_context->clear(GL_COLOR_BUFFER_BIT);
@@ -317,7 +401,7 @@ void TestWebPlugin::drawScene()
         drawPrimitive();
 }
 
-void TestWebPlugin::destroyScene()
+void WebTestPluginImpl::destroyScene()
 {
     if (m_scene.program) {
         m_context->deleteProgram(m_scene.program);
@@ -339,7 +423,7 @@ void TestWebPlugin::destroyScene()
     }
 }
 
-bool TestWebPlugin::initProgram()
+bool WebTestPluginImpl::initProgram()
 {
     const CString vertexSource(
         "attribute vec4 position;  \n"
@@ -365,7 +449,7 @@ bool TestWebPlugin::initProgram()
     return true;
 }
 
-bool TestWebPlugin::initPrimitive()
+bool WebTestPluginImpl::initPrimitive()
 {
     ASSERT(m_scene.primitive == PrimitiveTriangle);
 
@@ -373,16 +457,17 @@ bool TestWebPlugin::initPrimitive()
     if (!m_scene.vbo)
         return false;
 
-    const float vertices[] = { 0.0f,  0.8f, 0.0f,
-                              -0.8f, -0.8f, 0.0f,
-                               0.8f, -0.8f, 0.0f };
+    const float vertices[] = {
+        0.0f,  0.8f, 0.0f,
+        -0.8f, -0.8f, 0.0f,
+        0.8f, -0.8f, 0.0f };
     m_context->bindBuffer(GL_ARRAY_BUFFER, m_scene.vbo);
     m_context->bufferData(GL_ARRAY_BUFFER, sizeof(vertices), 0, GL_STATIC_DRAW);
     m_context->bufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
     return true;
 }
 
-void TestWebPlugin::drawPrimitive()
+void WebTestPluginImpl::drawPrimitive()
 {
     ASSERT(m_scene.primitive == PrimitiveTriangle);
     ASSERT(m_scene.vbo);
@@ -402,7 +487,7 @@ void TestWebPlugin::drawPrimitive()
     m_context->drawArrays(GL_TRIANGLES, 0, 3);
 }
 
-unsigned TestWebPlugin::loadShader(unsigned type, const CString& source)
+unsigned WebTestPluginImpl::loadShader(unsigned type, const CString& source)
 {
     unsigned shader = m_context->createShader(type);
     if (shader) {
@@ -419,8 +504,7 @@ unsigned TestWebPlugin::loadShader(unsigned type, const CString& source)
     return shader;
 }
 
-unsigned TestWebPlugin::loadProgram(const CString& vertexSource,
-                                    const CString& fragmentSource)
+unsigned WebTestPluginImpl::loadProgram(const CString& vertexSource, const CString& fragmentSource)
 {
     unsigned vertexShader = loadShader(GL_VERTEX_SHADER, vertexSource);
     unsigned fragmentShader = loadShader(GL_FRAGMENT_SHADER, fragmentSource);
@@ -445,76 +529,98 @@ unsigned TestWebPlugin::loadProgram(const CString& vertexSource,
     return program;
 }
 
-bool TestWebPlugin::handleInputEvent(const WebKit::WebInputEvent& event, WebKit::WebCursorInfo& info)
+bool WebTestPluginImpl::handleInputEvent(const WebInputEvent& event, WebCursorInfo& info)
 {
     const char* eventName = 0;
     switch (event.type) {
-    case WebKit::WebInputEvent::Undefined:           eventName = "unknown"; break;
+    case WebInputEvent::Undefined:           eventName = "unknown"; break;
 
-    case WebKit::WebInputEvent::MouseDown:           eventName = "MouseDown"; break;
-    case WebKit::WebInputEvent::MouseUp:             eventName = "MouseUp"; break;
-    case WebKit::WebInputEvent::MouseMove:           eventName = "MouseMove"; break;
-    case WebKit::WebInputEvent::MouseEnter:          eventName = "MouseEnter"; break;
-    case WebKit::WebInputEvent::MouseLeave:          eventName = "MouseLeave"; break;
-    case WebKit::WebInputEvent::ContextMenu:         eventName = "ContextMenu"; break;
+    case WebInputEvent::MouseDown:           eventName = "MouseDown"; break;
+    case WebInputEvent::MouseUp:             eventName = "MouseUp"; break;
+    case WebInputEvent::MouseMove:           eventName = "MouseMove"; break;
+    case WebInputEvent::MouseEnter:          eventName = "MouseEnter"; break;
+    case WebInputEvent::MouseLeave:          eventName = "MouseLeave"; break;
+    case WebInputEvent::ContextMenu:         eventName = "ContextMenu"; break;
 
-    case WebKit::WebInputEvent::MouseWheel:          eventName = "MouseWheel"; break;
+    case WebInputEvent::MouseWheel:          eventName = "MouseWheel"; break;
 
-    case WebKit::WebInputEvent::RawKeyDown:          eventName = "RawKeyDown"; break;
-    case WebKit::WebInputEvent::KeyDown:             eventName = "KeyDown"; break;
-    case WebKit::WebInputEvent::KeyUp:               eventName = "KeyUp"; break;
-    case WebKit::WebInputEvent::Char:                eventName = "Char"; break;
+    case WebInputEvent::RawKeyDown:          eventName = "RawKeyDown"; break;
+    case WebInputEvent::KeyDown:             eventName = "KeyDown"; break;
+    case WebInputEvent::KeyUp:               eventName = "KeyUp"; break;
+    case WebInputEvent::Char:                eventName = "Char"; break;
 
-    case WebKit::WebInputEvent::GestureScrollBegin:  eventName = "GestureScrollBegin"; break;
-    case WebKit::WebInputEvent::GestureScrollEnd:    eventName = "GestureScrollEnd"; break;
-    case WebKit::WebInputEvent::GestureScrollUpdate: eventName = "GestureScrollUpdate"; break;
-    case WebKit::WebInputEvent::GestureFlingStart:   eventName = "GestureFlingStart"; break;
-    case WebKit::WebInputEvent::GestureFlingCancel:  eventName = "GestureFlingCancel"; break;
-    case WebKit::WebInputEvent::GestureTap:          eventName = "GestureTap"; break;
-    case WebKit::WebInputEvent::GestureTapDown:      eventName = "GestureTapDown"; break;
-    case WebKit::WebInputEvent::GestureTapCancel:    eventName = "GestureTapCancel"; break;
-    case WebKit::WebInputEvent::GestureDoubleTap:    eventName = "GestureDoubleTap"; break;
-    case WebKit::WebInputEvent::GestureTwoFingerTap: eventName = "GestureTwoFingerTap"; break;
-    case WebKit::WebInputEvent::GestureLongPress:    eventName = "GestureLongPress"; break;
-    case WebKit::WebInputEvent::GestureLongTap:      eventName = "GestureLongTap"; break;
-    case WebKit::WebInputEvent::GesturePinchBegin:   eventName = "GesturePinchBegin"; break;
-    case WebKit::WebInputEvent::GesturePinchEnd:     eventName = "GesturePinchEnd"; break;
-    case WebKit::WebInputEvent::GesturePinchUpdate:  eventName = "GesturePinchUpdate"; break;
+    case WebInputEvent::GestureScrollBegin:  eventName = "GestureScrollBegin"; break;
+    case WebInputEvent::GestureScrollEnd:    eventName = "GestureScrollEnd"; break;
+    case WebInputEvent::GestureScrollUpdate: eventName = "GestureScrollUpdate"; break;
+    case WebInputEvent::GestureFlingStart:   eventName = "GestureFlingStart"; break;
+    case WebInputEvent::GestureFlingCancel:  eventName = "GestureFlingCancel"; break;
+    case WebInputEvent::GestureTap:          eventName = "GestureTap"; break;
+    case WebInputEvent::GestureTapDown:      eventName = "GestureTapDown"; break;
+    case WebInputEvent::GestureTapCancel:    eventName = "GestureTapCancel"; break;
+    case WebInputEvent::GestureDoubleTap:    eventName = "GestureDoubleTap"; break;
+    case WebInputEvent::GestureTwoFingerTap: eventName = "GestureTwoFingerTap"; break;
+    case WebInputEvent::GestureLongPress:    eventName = "GestureLongPress"; break;
+    case WebInputEvent::GestureLongTap:      eventName = "GestureLongTap"; break;
+    case WebInputEvent::GesturePinchBegin:   eventName = "GesturePinchBegin"; break;
+    case WebInputEvent::GesturePinchEnd:     eventName = "GesturePinchEnd"; break;
+    case WebInputEvent::GesturePinchUpdate:  eventName = "GesturePinchUpdate"; break;
 
-    case WebKit::WebInputEvent::TouchStart:          eventName = "TouchStart"; break;
-    case WebKit::WebInputEvent::TouchMove:           eventName = "TouchMove"; break;
-    case WebKit::WebInputEvent::TouchEnd:            eventName = "TouchEnd"; break;
-    case WebKit::WebInputEvent::TouchCancel:         eventName = "TouchCancel"; break;
+    case WebInputEvent::TouchStart:          eventName = "TouchStart"; break;
+    case WebInputEvent::TouchMove:           eventName = "TouchMove"; break;
+    case WebInputEvent::TouchEnd:            eventName = "TouchEnd"; break;
+    case WebInputEvent::TouchCancel:         eventName = "TouchCancel"; break;
     }
 
-    printf("Plugin received event: %s\n", eventName ? eventName : "unknown");
+    m_delegate->printMessage(std::string("Plugin received event: ") + (eventName ? eventName : "unknown") + "\n");
     if (m_printEventDetails)
-        printEventDetails(event);
+        printEventDetails(m_delegate, event);
     if (m_printUserGestureStatus)
-        printf("* %shandling user gesture\n", m_frame->isProcessingUserGesture() ? "" : "not ");
+        m_delegate->printMessage(std::string("* ") + (m_frame->isProcessingUserGesture() ? "" : "not ") + "handling user gesture\n");
     return false;
 }
 
-bool TestWebPlugin::handleDragStatusUpdate(WebKit::WebDragStatus dragStatus, const WebKit::WebDragData&, WebKit::WebDragOperationsMask, const WebKit::WebPoint& position, const WebKit::WebPoint& screenPosition)
+bool WebTestPluginImpl::handleDragStatusUpdate(WebDragStatus dragStatus, const WebDragData&, WebDragOperationsMask, const WebPoint& position, const WebPoint& screenPosition)
 {
     const char* dragStatusName = 0;
     switch (dragStatus) {
-    case WebKit::WebDragStatusEnter:
+    case WebDragStatusEnter:
         dragStatusName = "DragEnter";
         break;
-    case WebKit::WebDragStatusOver:
+    case WebDragStatusOver:
         dragStatusName = "DragOver";
         break;
-    case WebKit::WebDragStatusLeave:
+    case WebDragStatusLeave:
         dragStatusName = "DragLeave";
         break;
-    case WebKit::WebDragStatusDrop:
+    case WebDragStatusDrop:
         dragStatusName = "DragDrop";
         break;
-    case WebKit::WebDragStatusUnknown:
+    case WebDragStatusUnknown:
         ASSERT_NOT_REACHED();
     }
-    printf("Plugin received event: %s\n", dragStatusName);
+    m_delegate->printMessage(std::string("Plugin received event: ") + dragStatusName + "\n");
     return false;
 }
 
+}
+
+WebTestPlugin* WebTestPlugin::create(WebFrame* frame, const WebPluginParams& params, WebTestDelegate* delegate)
+{
+    return new WebTestPluginImpl(frame, params, delegate);
+}
+
+WebTestPlugin::WebTestPlugin()
+{
+}
+
+WebTestPlugin::~WebTestPlugin()
+{
+}
+
+const WebString& WebTestPlugin::mimeType()
+{
+    static const WebString kMimeType = WebString::fromUTF8("application/x-webkit-test-webplugin");
+    return kMimeType;
+}
+
+}

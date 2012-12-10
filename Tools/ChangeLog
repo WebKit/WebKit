@@ -1,3 +1,30 @@
+2012-12-10  Jochen Eisinger  <jochen@chromium.org>
+
+        [chromium] Move the test implementation of WebKit::WebPlugin to the TestRunner library
+        https://bugs.webkit.org/show_bug.cgi?id=104537
+
+        Reviewed by Tony Chang.
+
+        In order to hide implementation details from the public TestRunner API,
+        I moved the plugin to WebTestPluginImpl and added a static create
+        method to WebTestPlugin. Also, I renamed the plugin from TestWebPlugin
+        to WebTestPlugin to be more in line with other classes in the
+        TestRunner API.
+
+        * DumpRenderTree/DumpRenderTree.gypi:
+        * DumpRenderTree/chromium/TestRunner/public/WebTestPlugin.h: Added.
+        (WebTestRunner):
+        (WebTestPlugin):
+        * DumpRenderTree/chromium/TestRunner/src/WebTestPlugin.cpp: Renamed from Tools/DumpRenderTree/chromium/TestWebPlugin.cpp.
+        (WebTestRunner::WebTestPlugin::create):
+        (WebTestRunner):
+        (WebTestRunner::WebTestPlugin::WebTestPlugin):
+        (WebTestRunner::WebTestPlugin::~WebTestPlugin):
+        (WebTestRunner::WebTestPlugin::mimeType):
+        * DumpRenderTree/chromium/TestWebPlugin.h: Removed.
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::createPlugin):
+
 2012-12-10  Dirk Pranke  <dpranke@chromium.org>
 
         run_webkit_tests throws exception when DRT is not present

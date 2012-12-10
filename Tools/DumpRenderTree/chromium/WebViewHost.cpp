@@ -38,7 +38,6 @@
 #include "Task.h"
 #include "TestNavigationController.h"
 #include "TestShell.h"
-#include "TestWebPlugin.h"
 #include "WebCachedURLRequest.h"
 #include "WebConsoleMessage.h"
 #include "WebContextMenuData.h"
@@ -62,6 +61,7 @@
 #include "WebRange.h"
 #include "WebScreenInfo.h"
 #include "WebStorageNamespace.h"
+#include "WebTestPlugin.h"
 #include "WebTextCheckingCompletion.h"
 #include "WebTextCheckingResult.h"
 #include "WebUserMediaClientMock.h"
@@ -876,8 +876,8 @@ void WebViewHost::exitFullScreen()
 
 WebPlugin* WebViewHost::createPlugin(WebFrame* frame, const WebPluginParams& params)
 {
-    if (params.mimeType == TestWebPlugin::mimeType())
-        return new TestWebPlugin(frame, params);
+    if (params.mimeType == WebTestPlugin::mimeType())
+        return WebTestPlugin::create(frame, params, this);
 
     return webkit_support::CreateWebPlugin(frame, params);
 }
