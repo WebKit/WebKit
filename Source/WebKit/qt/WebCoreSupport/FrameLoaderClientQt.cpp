@@ -1349,14 +1349,15 @@ ObjectContentType FrameLoaderClientQt::objectContentType(const KURL& url, const 
     if (!mimeType.length())
         mimeType = MIMETypeRegistry::getMIMETypeForExtension(extension);
 
-    if (!mimeType.length())
+    bool arePluginsEnabled = (m_frame && m_frame->settings() && m_frame->settings()->arePluginsEnabled());
+    if (arePluginsEnabled && !mimeType.length())
         mimeType = PluginDatabase::installedPlugins()->MIMETypeForExtension(extension);
 
     if (!mimeType.length())
         return ObjectContentFrame;
 
     ObjectContentType plugInType = ObjectContentNone;
-    if (PluginDatabase::installedPlugins()->isMIMETypeRegistered(mimeType))
+    if (arePluginsEnabled && PluginDatabase::installedPlugins()->isMIMETypeRegistered(mimeType))
         plugInType = ObjectContentNetscapePlugin;
     else if (m_frame->page() && m_frame->page()->pluginData() && m_frame->page()->pluginData()->supportsMimeType(mimeType))
         plugInType = ObjectContentOtherPlugin;
