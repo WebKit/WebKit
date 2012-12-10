@@ -44,6 +44,7 @@ void WebHitTestResult::Data::encode(CoreIPC::ArgumentEncoder& encoder) const
     encoder << linkTitle;
     encoder << isContentEditable;
     encoder << elementBoundingBox;
+    encoder << isScrollbar;
 }
 
 bool WebHitTestResult::Data::decode(CoreIPC::ArgumentDecoder* decoder, WebHitTestResult::Data& hitTestResultData)
@@ -55,7 +56,8 @@ bool WebHitTestResult::Data::decode(CoreIPC::ArgumentDecoder* decoder, WebHitTes
         || !decoder->decode(hitTestResultData.linkLabel)
         || !decoder->decode(hitTestResultData.linkTitle)
         || !decoder->decode(hitTestResultData.isContentEditable)
-        || !decoder->decode(hitTestResultData.elementBoundingBox))
+        || !decoder->decode(hitTestResultData.elementBoundingBox)
+        || !decoder->decode(hitTestResultData.isScrollbar))
         return false;
 
     return true;

@@ -52,6 +52,7 @@ public:
         String linkTitle;
         bool isContentEditable;
         WebCore::IntRect elementBoundingBox;
+        bool isScrollbar;
 
         Data()
         {
@@ -83,6 +84,7 @@ public:
             , linkTitle(hitTestResult.titleDisplayString())
             , isContentEditable(hitTestResult.isContentEditable())
             , elementBoundingBox(elementBoundingBoxInWindowCoordinates(hitTestResult))
+            , isScrollbar(hitTestResult.scrollbar())
         {
         }
 
@@ -103,6 +105,8 @@ public:
     bool isContentEditable() const { return m_data.isContentEditable; }
 
     WebCore::IntRect elementBoundingBox() const { return m_data.elementBoundingBox; }
+
+    bool isScrollbar() const { return m_data.isScrollbar; }
 
 private:
     explicit WebHitTestResult(const WebHitTestResult::Data& hitTestResultData)

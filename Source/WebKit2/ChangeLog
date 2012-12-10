@@ -1,3 +1,42 @@
+2012-12-10  Eduardo Lima Mitev  <elima@igalia.com>
+
+        [GTK] Expose HitTestResult::scrollbar() condition in API
+        https://bugs.webkit.org/show_bug.cgi?id=104369
+
+        Reviewed by Carlos Garcia Campos.
+
+        This patch populates WebCore::HitTestResult::scrollbar() condition
+        in WebKitHitTestResult public API, and includes a corresponding unit
+        test.
+
+        * Shared/WebHitTestResult.cpp: Adds new isScrollbar member to
+        encoding and decoding methods to carry the scrollbar condition
+        from Web process to UI process.
+        (WebKit::WebHitTestResult::Data::encode):
+        (WebKit::WebHitTestResult::Data::decode):
+        * Shared/WebHitTestResult.h:
+        (Data): Adds new bool member isScrollbar.
+        (WebKit::WebHitTestResult::Data::Data): Initializes isScrollbar from
+        WebCore::HitTestResult::scrollbar().
+        (WebKit::WebHitTestResult::isScrollbar): Method that returns value
+        of isScrollbar member.
+        (WebHitTestResult):
+        * UIProcess/API/gtk/WebKitHitTestResult.cpp:
+        (webkitHitTestResultCreate): Adds scrollbar condition to context upon
+        initialization.
+        (webkitHitTestResultCompare): Adds comparison of scrollbar condition.
+        (webkit_hit_test_result_context_is_scrollbar): Public accessor for
+        scrollbar presence in context.
+        * UIProcess/API/gtk/WebKitHitTestResult.h: Adds new flag
+        WEBKIT_HIT_TEST_RESULT_CONTEXT_SCROLLBAR to
+        WebKitHitTestResultContext enum.
+        * UIProcess/API/gtk/docs/webkit2gtk-sections.txt: Adds new API symbol
+        to the corresponding documentation sections.
+        * UIProcess/API/gtk/tests/TestWebKitWebView.cpp:
+        (testWebViewMouseTarget): Updates mouse-target
+        test to include assertions for hitting scrollbar condition, and
+        an new HTML to privide a positive case.
+
 2012-12-10  Alexis Menard  <alexis@webkit.org>
 
         [CSS3 Backgrounds and Borders] Remove CSS3_BACKGROUND feature flag.

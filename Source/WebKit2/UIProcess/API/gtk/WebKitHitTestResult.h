@@ -47,16 +47,18 @@ typedef struct _WebKitHitTestResultPrivate WebKitHitTestResultPrivate;
  * @WEBKIT_HIT_TEST_RESULT_CONTEXT_IMAGE: an image element.
  * @WEBKIT_HIT_TEST_RESULT_CONTEXT_MEDIA: a video or audio element.
  * @WEBKIT_HIT_TEST_RESULT_CONTEXT_EDITABLE: an editable element
+ * @WEBKIT_HIT_TEST_RESULT_CONTEXT_SCROLLBAR: a scrollbar element.
  *
  * Enum values with flags representing the context of a #WebKitHitTestResult.
  */
 typedef enum
 {
-    WEBKIT_HIT_TEST_RESULT_CONTEXT_DOCUMENT = 1 << 1,
-    WEBKIT_HIT_TEST_RESULT_CONTEXT_LINK     = 1 << 2,
-    WEBKIT_HIT_TEST_RESULT_CONTEXT_IMAGE    = 1 << 3,
-    WEBKIT_HIT_TEST_RESULT_CONTEXT_MEDIA    = 1 << 4,
-    WEBKIT_HIT_TEST_RESULT_CONTEXT_EDITABLE = 1 << 5
+    WEBKIT_HIT_TEST_RESULT_CONTEXT_DOCUMENT  = 1 << 1,
+    WEBKIT_HIT_TEST_RESULT_CONTEXT_LINK      = 1 << 2,
+    WEBKIT_HIT_TEST_RESULT_CONTEXT_IMAGE     = 1 << 3,
+    WEBKIT_HIT_TEST_RESULT_CONTEXT_MEDIA     = 1 << 4,
+    WEBKIT_HIT_TEST_RESULT_CONTEXT_EDITABLE  = 1 << 5,
+    WEBKIT_HIT_TEST_RESULT_CONTEXT_SCROLLBAR = 1 << 6
 } WebKitHitTestResultContext;
 
 struct _WebKitHitTestResult {
@@ -101,6 +103,9 @@ webkit_hit_test_result_get_image_uri        (WebKitHitTestResult *hit_test_resul
 
 WEBKIT_API const gchar *
 webkit_hit_test_result_get_media_uri        (WebKitHitTestResult *hit_test_result);
+
+WEBKIT_API gboolean
+webkit_hit_test_result_context_is_scrollbar (WebKitHitTestResult *hit_test_result);
 
 G_END_DECLS
 

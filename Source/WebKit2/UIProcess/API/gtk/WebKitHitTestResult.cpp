@@ -240,6 +240,9 @@ WebKitHitTestResult* webkitHitTestResultCreate(WebHitTestResult* hitTestResult)
     if (hitTestResult->isContentEditable())
         context |= WEBKIT_HIT_TEST_RESULT_CONTEXT_EDITABLE;
 
+    if (hitTestResult->isScrollbar())
+        context |= WEBKIT_HIT_TEST_RESULT_CONTEXT_SCROLLBAR;
+
     const String& linkTitle = hitTestResult->linkTitle();
     const String& linkLabel = hitTestResult->linkLabel();
 
@@ -262,6 +265,7 @@ bool webkitHitTestResultCompare(WebKitHitTestResult* hitTestResult, WebHitTestRe
 {
     WebKitHitTestResultPrivate* priv = hitTestResult->priv;
     return webHitTestResult->isContentEditable() == webkit_hit_test_result_context_is_editable(hitTestResult)
+        && webHitTestResult->isScrollbar() == webkit_hit_test_result_context_is_scrollbar(hitTestResult)
         && stringIsEqualToCString(webHitTestResult->absoluteLinkURL(), priv->linkURI)
         && stringIsEqualToCString(webHitTestResult->linkTitle(), priv->linkTitle)
         && stringIsEqualToCString(webHitTestResult->linkLabel(), priv->linkLabel)
@@ -432,4 +436,21 @@ const gchar* webkit_hit_test_result_get_media_uri(WebKitHitTestResult* hitTestRe
     g_return_val_if_fail(WEBKIT_IS_HIT_TEST_RESULT(hitTestResult), 0);
 
     return hitTestResult->priv->mediaURI.data();
+}
+
+/**
+ * webkit_hit_test_result_context_is_scrollbar:
+ * @hit_test_result: a #WebKitHitTestResult
+ *
+ * Gets whether %WEBKIT_HIT_TEST_RESULT_CONTEXT_SCROLLBAR flag is present in
+ * #WebKitHitTestResult:context.
+ *
+ * Returns: %TRUE if there's a scrollbar element at the coordinates of the @hit_test_result,
+ *    or %FALSE otherwise
+ */
+gboolean webkit_hit_test_result_context_is_scrollbar(WebKitHitTestResult* hitTestResult)
+{
+    g_return_val_if_fail(WEBKIT_IS_HIT_TEST_RESULT(hitTestResult), FALSE);
+
+    return hitTestResult->priv->context & WEBKIT_HIT_TEST_RESULT_CONTEXT_SCROLLBAR;
 }
