@@ -90,7 +90,7 @@ LayerTreeCoordinator::LayerTreeCoordinator(WebPage* webPage)
     , m_contentsScale(1)
     , m_shouldSendScrollPositionUpdate(true)
     , m_shouldSyncFrame(false)
-    , m_shouldSyncRootLayer(true)
+    , m_didInitializeRootCompositingLayer(false)
     , m_layerFlushTimer(this, &LayerTreeCoordinator::layerFlushTimerFired)
     , m_releaseInactiveAtlasesTimer(this, &LayerTreeCoordinator::releaseInactiveAtlasesTimerFired)
     , m_layerFlushSchedulingEnabled(true)
@@ -268,6 +268,8 @@ bool LayerTreeCoordinator::flushPendingLayerChanges()
     if (m_waitingForUIProcess)
         return false;
 
+    initializeRootCompositingLayerIfNeeded();
+
     m_rootLayer->flushCompositingStateForThisLayerOnly();
     m_nonCompositedContentLayer->flushCompositingStateForThisLayerOnly();
     if (m_pageOverlayLayer)
@@ -276,12 +278,6 @@ bool LayerTreeCoordinator::flushPendingLayerChanges()
     bool didSync = m_webPage->corePage()->mainFrame()->view()->flushCompositingStateIncludingSubframes();
 
     flushPendingImageBackingChanges();
-
-    if (m_shouldSyncRootLayer) {
-        m_webPage->send(Messages::LayerTreeCoordinatorProxy::SetRootCompositingLayer(toCoordinatedGraphicsLayer(m_rootLayer.get())->id()));
-        m_shouldSyncRootLayer = false;
-        m_shouldSyncFrame = true;
-    }
 
     for (size_t i = 0; i < m_detachedLayers.size(); ++i)
         m_webPage->send(Messages::LayerTreeCoordinatorProxy::DeleteCompositingLayer(m_detachedLayers[i]));
@@ -304,6 +300,16 @@ bool LayerTreeCoordinator::flushPendingLayerChanges()
     }
 
     return didSync;
+}
+
+void LayerTreeCoordinator::initializeRootCompositingLayerIfNeeded()
+{
+    if (m_didInitializeRootCompositingLayer)
+        return;
+
+    m_webPage->send(Messages::LayerTreeCoordinatorProxy::SetRootCompositingLayer(toCoordinatedGraphicsLayer(m_rootLayer.get())->id()));
+    m_didInitializeRootCompositingLayer = true;
+    m_shouldSyncFrame = true;
 }
 
 void LayerTreeCoordinator::syncLayerState(CoordinatedLayerID id, const CoordinatedLayerInfo& info)

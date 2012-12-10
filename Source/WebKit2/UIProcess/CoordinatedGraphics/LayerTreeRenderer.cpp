@@ -328,6 +328,7 @@ void LayerTreeRenderer::removeCustomFilterProgram(int id)
 
 void LayerTreeRenderer::setLayerState(CoordinatedLayerID id, const CoordinatedLayerInfo& layerInfo)
 {
+    ASSERT(m_rootLayerID != InvalidCoordinatedLayerID);
     GraphicsLayer* layer = ensureLayer(id);
 
     layer->setReplicatedByLayer(layerByID(layerInfo.replica));
@@ -359,8 +360,6 @@ void LayerTreeRenderer::setLayerState(CoordinatedLayerID id, const CoordinatedLa
     layer->setMasksToBounds(layerInfo.isRootLayer ? false : layerInfo.masksToBounds);
     layer->setOpacity(layerInfo.opacity);
     layer->setPreserves3D(layerInfo.preserves3D);
-    if (layerInfo.isRootLayer && m_rootLayerID != id)
-        setRootLayerID(id);
 }
 
 void LayerTreeRenderer::deleteLayer(CoordinatedLayerID layerID)
@@ -403,10 +402,7 @@ void LayerTreeRenderer::setRootLayerID(CoordinatedLayerID layerID)
     if (!layerID)
         return;
 
-    GraphicsLayer* layer = layerByID(layerID);
-    if (!layer)
-        return;
-
+    GraphicsLayer* layer = ensureLayer(layerID);
     m_rootLayer->addChild(layer);
 }
 

@@ -1,3 +1,27 @@
+2012-12-09  Huang Dongsung  <luxtella@company100.net>
+
+        Coordinated Graphics: Reorder messages to LayerTreeCoordinatorProxy
+        https://bugs.webkit.org/show_bug.cgi?id=103843
+
+        Reviewed by Noam Rosenthal.
+
+        Send SetRootCompositingLayer message to the UI process before
+        flushing compositing states of layer tree.
+
+        This is in preparation for refactoring TextureMapper to work in an actor
+        model (http://webkit.org/b/103854).
+
+        * UIProcess/CoordinatedGraphics/LayerTreeRenderer.cpp:
+        (WebKit::LayerTreeRenderer::setLayerState):
+        (WebKit::LayerTreeRenderer::setRootLayerID):
+        * WebProcess/WebPage/CoordinatedGraphics/LayerTreeCoordinator.cpp:
+        (WebKit::LayerTreeCoordinator::LayerTreeCoordinator):
+        (WebKit::LayerTreeCoordinator::flushPendingLayerChanges):
+        (WebKit::LayerTreeCoordinator::initializeRootCompositingLayerIfNeeded):
+        (WebKit):
+        * WebProcess/WebPage/CoordinatedGraphics/LayerTreeCoordinator.h:
+        (LayerTreeCoordinator):
+
 2012-12-09  Jon Lee  <jonlee@apple.com>
 
         [WK2] Move button image to injected bundle
