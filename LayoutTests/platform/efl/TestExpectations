@@ -592,9 +592,6 @@ Bug(EFL) fast/forms/textarea/textarea-placeholder-paint-order.html [ Missing ]
 # Implementing copy{En,De}codedHostName only to test them does not make sense
 webkit.org/b/86080 fast/encoding/idn-security.html [ Skip ]
 
-# Disable webaudio codec tests, including proprietary codecs.
-webkit.org/b/88794 webaudio/codec-tests
-
 # Text Autosizing is not yet enabled.
 webkit.org/b/84186 fast/text-autosizing
 
@@ -1169,9 +1166,8 @@ webkit.org/b/88080 http/tests/pointer-lock [ Skip ]
 
 # Requires WEB_AUDIO support.
 webkit.org/b/91738 webaudio [ Skip ]
-inspector-protocol/nmi-webaudio.html
-inspector-protocol/nmi-webaudio-leak-test.html
-
+webkit.org/b/91738 inspector-protocol/nmi-webaudio.html [ Skip ]
+webkit.org/b/91738 inspector-protocol/nmi-webaudio-leak-test.html [ Skip ]
 
 # Requires MEDIA_STREAM support.
 webkit.org/b/87662 fast/mediastream [ Skip ]
