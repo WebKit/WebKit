@@ -1,5 +1,30 @@
 2012-12-10  Simon Fraser  <simon.fraser@apple.com>
 
+        Fix frame border painting in tiled drawing mode
+        https://bugs.webkit.org/show_bug.cgi?id=104453
+        <rdar://problem/11678611>
+
+        Reviewed by Dan Bernstein.
+
+        Frame borders were not correctly invalidated when in tiled drawing mode, because
+        RenderFrameSet::layout() invalidated directly on the view, which skips the tile
+        cache.
+        
+        Fix by invalidating like all other renderers, via the repaint container.
+        
+        Also, the layer transform should be updated before the invalidation, and
+        we make use of RenderObject::updateLayerTransform() which has the same behavior
+        as the old code.
+
+        Attempts to make a layout test failed. Resizing composited framesets repainted
+        via layer resizing, and an attempt to make a ref test in tiled drawing mode
+        failed (the test passed without the patch).
+
+        * rendering/RenderFrameSet.cpp:
+        (WebCore::RenderFrameSet::layout):
+
+2012-12-10  Simon Fraser  <simon.fraser@apple.com>
+
         When converting a layer into a tiled layer, ensure that we update the visible rect
         https://bugs.webkit.org/show_bug.cgi?id=104467
 
