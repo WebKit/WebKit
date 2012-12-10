@@ -509,6 +509,7 @@ void TileCache::updateTileCoverageMap()
 {
     FloatRect containerBounds = bounds();
     FloatRect visibleRect = this->visibleRect();
+    visibleRect.contract(4, 4); // Layer is positioned 2px from top and left edges.
 
     float widthScale = 1;
     float scale = 1;
@@ -517,15 +518,16 @@ void TileCache::updateTileCoverageMap()
         scale = std::min(widthScale, visibleRect.height() / containerBounds.height());
     }
     
+    float indicatorScale = scale * m_scale;
     FloatRect mapBounds = containerBounds;
-    mapBounds.scale(scale, scale);
+    mapBounds.scale(indicatorScale, indicatorScale);
     
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     
     [m_tiledScrollingIndicatorLayer.get() setBounds:mapBounds];
     [m_tiledScrollingIndicatorLayer.get() setNeedsDisplay];
 
-    visibleRect.scale(scale, scale);
+    visibleRect.scale(indicatorScale, indicatorScale);
     visibleRect.expand(2, 2);
     [[m_tiledScrollingIndicatorLayer.get() visibleRectFrameLayer] setFrame:visibleRect];
 
@@ -686,16 +688,17 @@ void TileCache::drawTileMapContents(CGContextRef context, CGRect layerBounds)
     
     CGContextSetRGBFillColor(context, 1, 1, 1, 1);
     CGContextSetRGBStrokeColor(context, 0, 0, 0, 1);
-    CGContextSetLineWidth(context, 1 / scaleFactor);
 
     CGFloat contextScale = scaleFactor / scale();
     CGContextScaleCTM(context, contextScale, contextScale);
+
+    CGContextSetLineWidth(context, 0.5 / contextScale);
     
     for (TileMap::const_iterator it = m_tiles.begin(), end = m_tiles.end(); it != end; ++it) {
         WebTileLayer* tileLayer = it->value.get();
         CGRect frame = [tileLayer frame];
-        CGContextStrokeRect(context, frame);
         CGContextFillRect(context, frame);
+        CGContextStrokeRect(context, frame);
     }
 }
     
