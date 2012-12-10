@@ -31,6 +31,7 @@
 #include "HTMLTableColElement.h"
 #include "RenderTable.h"
 #include "RenderTableCell.h"
+#include "WebCoreMemoryInstrumentation.h"
 
 namespace WebCore {
 
@@ -185,6 +186,13 @@ const BorderValue& RenderTableCol::borderAdjoiningCellAfter(const RenderTableCel
 {
     ASSERT_UNUSED(cell, table()->colElement(cell->col() - 1) == this);
     return style()->borderEnd();
+}
+
+void RenderTableCol::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+{
+    MemoryClassInfo info(memoryObjectInfo, this, PlatformMemoryTypes::Rendering);
+    RenderBox::reportMemoryUsage(memoryObjectInfo);
+    info.addMember(m_children);
 }
 
 }

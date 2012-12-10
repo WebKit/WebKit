@@ -88,6 +88,8 @@ public:
     const BorderValue& borderAdjoiningStartCell(const RenderTableCell*) const;
     const BorderValue& borderAdjoiningEndCell(const RenderTableCell*) const;
 
+    virtual void reportMemoryUsage(MemoryObjectInfo*) const OVERRIDE;
+
 private:
     virtual RenderObjectChildList* virtualChildren() { return children(); }
     virtual const RenderObjectChildList* virtualChildren() const { return children(); }

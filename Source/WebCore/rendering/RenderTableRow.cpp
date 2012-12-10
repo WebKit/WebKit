@@ -33,6 +33,7 @@
 #include "RenderTableCell.h"
 #include "RenderView.h"
 #include "StyleInheritedData.h"
+#include "WebCoreMemoryInstrumentation.h"
 
 namespace WebCore {
 
@@ -266,6 +267,13 @@ RenderTableRow* RenderTableRow::createAnonymousWithParentRenderer(const RenderOb
     RenderTableRow* newRow = new (parent->renderArena()) RenderTableRow(parent->document() /* is anonymous */);
     newRow->setStyle(newStyle.release());
     return newRow;
+}
+
+void RenderTableRow::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+{
+    MemoryClassInfo info(memoryObjectInfo, this, PlatformMemoryTypes::Rendering);
+    RenderBox::reportMemoryUsage(memoryObjectInfo);
+    info.addMember(m_children);
 }
 
 } // namespace WebCore

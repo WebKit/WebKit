@@ -1,3 +1,48 @@
+2012-12-10  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: Native Memory Instrumentation: instrument RenderBox descendants.
+        https://bugs.webkit.org/show_bug.cgi?id=104026
+
+        Reviewed by Eric Seidel.
+
+        Plain vanilla instrumentation for RenderBox descendants.
+
+        * rendering/RenderFrameSet.cpp:
+        (WebCore::RenderFrameSet::reportMemoryUsage):
+        (WebCore):
+        (WebCore::RenderFrameSet::GridAxis::reportMemoryUsage):
+        * rendering/RenderFrameSet.h:
+        (RenderFrameSet):
+        (GridAxis):
+        * rendering/RenderListMarker.cpp:
+        (WebCore::RenderListMarker::reportMemoryUsage):
+        (WebCore):
+        * rendering/RenderListMarker.h:
+        (RenderListMarker):
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::reportMemoryUsage):
+        (WebCore):
+        * rendering/RenderReplaced.h:
+        (RenderReplaced):
+        * rendering/RenderTableCol.cpp:
+        (WebCore::RenderTableCol::reportMemoryUsage):
+        (WebCore):
+        * rendering/RenderTableCol.h:
+        (RenderTableCol):
+        * rendering/RenderTableRow.cpp:
+        (WebCore::RenderTableRow::reportMemoryUsage):
+        (WebCore):
+        * rendering/RenderTableRow.h:
+        (RenderTableRow):
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::reportMemoryUsage):
+        (WebCore):
+        (WebCore::RenderTableSection::RowStruct::reportMemoryUsage):
+        (WebCore::RenderTableSection::CellStruct::reportMemoryUsage):
+        * rendering/RenderTableSection.h:
+        (CellStruct):
+        (RowStruct):
+
 2012-12-10  Alejandro Piñeiro  <apinheiro@igalia.com>
 
         AX: wrong Enabled states on a ListBox
