@@ -1884,7 +1884,6 @@ HEADERS += \
     html/shadow/MediaControlsApple.h \
     html/shadow/DetailsMarkerControl.h \
     html/track/InbandTextTrack.h \
-    html/track/InbandTextTrackPrivate.h \
     html/track/LoadableTextTrack.h \
     html/track/TextTrack.h \
     html/track/TextTrackCue.h \
@@ -2174,6 +2173,8 @@ HEADERS += \
     platform/graphics/Image.h \
     platform/graphics/ImageOrientation.h \
     platform/graphics/ImageSource.h \
+    platform/graphics/InbandTextTrackPrivate.h \
+    platform/graphics/InbandTextTrackPrivateClient.h \
     platform/graphics/IntPoint.h \
     platform/graphics/IntPointHash.h \
     platform/graphics/IntRect.h \

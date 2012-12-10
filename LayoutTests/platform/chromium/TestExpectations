@@ -4221,5 +4221,8 @@ webkit.org/b/94002 [ Mac Debug ] inspector/debugger/live-edit.html [ Crash Pass 
 # Asserting since r136948.
 webkit.org/b/104473 [ Debug ] inspector/styles/import-pseudoclass-crash.html [ Crash ]
 
+# No support for exposing in-band text tracks
+webkit.org/b/103767  [ Win Mac Linux ] media/track/track-in-band.html [ Skip ]
+
 # Flaky on Win (perhaps due to lighttpd?)
 webkit.org/b/104489 [ Win ] http/tests/w3c/webperf/submission/resource-timing/html/test_resource_attribute_order.html [ Failure Pass ]

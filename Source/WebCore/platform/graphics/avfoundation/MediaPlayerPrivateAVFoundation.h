@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,6 +35,8 @@
 
 namespace WebCore {
 
+class InbandTextTrackPrivateAVF;
+
 class MediaPlayerPrivateAVFoundation : public MediaPlayerPrivateInterface {
 public:
 
@@ -48,6 +50,11 @@ public:
     virtual void seekCompleted(bool);
     virtual void didEnd();
     virtual void contentsNeedsDisplay() { }
+#if HAVE(AVFOUNDATION_TEXT_TRACK_SUPPORT)
+    virtual void configureInbandTracks();
+    virtual void setCurrentTrack(InbandTextTrackPrivateAVF*) { }
+    virtual InbandTextTrackPrivateAVF* currentTrack() { return 0; }
+#endif
 
     class Notification {
     public:
@@ -69,6 +76,7 @@ public:
             SeekCompleted,
             DurationChanged,
             ContentsNeedsDisplay,
+            InbandTracksNeedConfiguration
         };
         
         Notification()
@@ -86,9 +94,9 @@ public:
         }
         
         Notification(Type type, bool finished)
-        : m_type(type)
-        , m_time(0)
-        , m_finished(finished)
+            : m_type(type)
+            , m_time(0)
+            , m_finished(finished)
         {
         }
         
@@ -108,6 +116,11 @@ public:
     void scheduleMainThreadNotification(Notification::Type, bool completed);
     void dispatchNotification();
     void clearMainThreadPendingFlag();
+
+#if HAVE(AVFOUNDATION_TEXT_TRACK_SUPPORT)
+    void flushCurrentCue(InbandTextTrackPrivateAVF*);
+    void trackModeChanged();
+#endif
 
 protected:
     MediaPlayerPrivateAVFoundation(MediaPlayer*);
@@ -234,7 +247,7 @@ protected:
     virtual void setUpVideoRendering();
     virtual void tearDownVideoRendering();
     bool hasSetUpVideoRendering() const;
-
+    
     static void mainThreadCallback(void*);
     
     void invalidateCachedDuration();
@@ -245,6 +258,10 @@ protected:
 
     virtual String engineDescription() const { return "AVFoundation"; }
 
+#if HAVE(AVFOUNDATION_TEXT_TRACK_SUPPORT)
+    Vector<RefPtr<InbandTextTrackPrivateAVF> > m_textTracks;
+#endif
+    
 private:
     MediaPlayer* m_player;
 
@@ -279,6 +296,7 @@ private:
     bool m_ignoreLoadStateChanges;
     bool m_haveReportedFirstVideoFrame;
     bool m_playWhenFramesAvailable;
+    bool m_inbandTrackConfigurationPending;
 };
 
 } // namespace WebCore

@@ -1,3 +1,85 @@
+2012-12-10  Eric Carlson  <eric.carlson@apple.com>
+
+        Add support for in-band text tracks to Mac port
+        https://bugs.webkit.org/show_bug.cgi?id=103663
+
+        Reviewed by Sam Weinig.
+
+        Test: media/track/track-in-band.html
+
+        * GNUmakefile.list.am: Move InbandTextTrackPrivate.h to platform/graphics. Add InbandTextTrackPrivateClient.h.
+        * Target.pri: Ditto.
+        * WebCore.gypi: Ditto.
+
+        * WebCore.xcodeproj/project.pbxproj: Add new files.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::setReadyState): No need to call processInbandTextTracks, in-band tracks
+            are now registered by the media engine as they are discovered.
+        (WebCore::HTMLMediaElement::mediaPlayerDidAddTrack): New, called by the media player when a new
+            in-band track is found.
+        (WebCore::HTMLMediaElement::mediaPlayerDidRemoveTrack): New, called by the media player when an
+            in-band track goes away.
+        * html/HTMLMediaElement.h:
+
+        * html/track/InbandTextTrack.cpp:
+        (WebCore::InbandTextTrack::InbandTextTrack): Use m_private instead of tracksPrivate because
+            it is zeroed during assignment.
+
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::addTextTrack): New MediaPlayerClient method to allow MediaPlayerPrivate subclasses
+            to add a new in-band track.
+        (WebCore::MediaPlayer::removeTextTrack): New MediaPlayerClient method to allow MediaPlayerPrivate subclasses
+            to remove a new in-band track.
+        * platform/graphics/MediaPlayer.h:
+        * platform/graphics/MediaPlayerPrivate.h:
+
+        * platform/graphics/avfoundation/InbandTextTrackPrivateAVF.cpp: Added.
+        (WebCore::InbandTextTrackPrivateAVF::InbandTextTrackPrivateAVF):
+        (WebCore::InbandTextTrackPrivateAVF::~InbandTextTrackPrivateAVF):
+        (WebCore::InbandTextTrackPrivateAVF::processCueAttributes): Convert an attribute string into WebVTT 
+            cue setting and content strings.
+        (WebCore::InbandTextTrackPrivateAVF::processCue): Process a new cue.
+        (WebCore::InbandTextTrackPrivateAVF::disconnect): Clear member variables.
+        (WebCore::InbandTextTrackPrivateAVF::resetCueValues): Reset cue values to defaults.
+        (WebCore::InbandTextTrackPrivateAVF::setMode): Set track mode and call player's trackModeChanged.
+        * platform/graphics/avfoundation/InbandTextTrackPrivateAVF.h: Added.
+
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp: Initialize 
+            m_inbandTrackConfigurationPending.
+        (WebCore::MediaPlayerPrivateAVFoundation::MediaPlayerPrivateAVFoundation):
+        (WebCore::MediaPlayerPrivateAVFoundation::seekCompleted): Flush the currently accumulating
+            cue so it doesn't get the wrong duration.
+        (WebCore::MediaPlayerPrivateAVFoundation::dispatchNotification): Handle InbandTracksNeedConfiguration.
+        (WebCore::MediaPlayerPrivateAVFoundation::flushCurrentCue): New, pass the current cue up to the client.
+        (WebCore::MediaPlayerPrivateAVFoundation::configureInbandTracks): Configure in-band tracks.
+        (WebCore::MediaPlayerPrivateAVFoundation::trackModeChanged): Schedule a call to configureInbandTracks.
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.h:
+
+        * platform/graphics/avfoundation/objc/InbandTextTrackPrivateAVFObjC.h: Added.
+        * platform/graphics/avfoundation/objc/InbandTextTrackPrivateAVFObjC.mm: Added.
+        (WebCore::InbandTextTrackPrivateAVFObjC::InbandTextTrackPrivateAVFObjC):
+        (WebCore::InbandTextTrackPrivateAVFObjC::disconnect):
+        (WebCore::InbandTextTrackPrivateAVFObjC::kind): Return track kind.
+        (WebCore::InbandTextTrackPrivateAVFObjC::label): Return track label.
+        (WebCore::InbandTextTrackPrivateAVFObjC::language): Return track language.
+        (WebCore::InbandTextTrackPrivateAVFObjC::isDefault): 
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h:
+        (MediaPlayerPrivateAVFoundationObjC):
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::playerItem):
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::MediaPlayerPrivateAVFoundationObjC): Initialize m_currentTrack.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::cancelLoad): Clear m_legibleOutput.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::tracksChanged): Create and initialize m_legibleOutput.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::processTextTracks): Called when the player item's
+            "tracks" changes, add and remove in-band text tracks as necessary.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::processCue): Pass an attributed string to the current 
+            track to be processed.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::setCurrentTrack): Tell AVFoundation to select an in-band track.
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::currentTrack): Return the current track.
+        (-[WebCoreAVFMovieObserver legibleOutput:didOutputAttributedStrings:nativeSampleBuffers:forItemTime:]): Legible
+            output delegate.
+
 2012-12-10  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: fix front-end compilation warnings

@@ -1240,4 +1240,7 @@ Bug(jernoble) [ MountainLion Lion SnowLeopard ] media/video-src-blob.html
 webkit.org/b/102579 fast/css/cursor-parsing-image-set.html [ Fail ]
 webkit.org/b/102579 fast/events/mouse-cursor-image-set.html [ Fail ]
 
+# Mountain Lion and prior do not allow access to in-band text tracks
+webkit.org/b/103663 [ MountainLion Lion SnowLeopard ] media/track/track-in-band.html
+
 webkit.org/b/104104 fast/overflow/scrollbar-click-retains-focus.html [ Failure ]

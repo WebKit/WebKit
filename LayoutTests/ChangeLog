@@ -1,3 +1,23 @@
+2012-12-10  Eric Carlson  <eric.carlson@apple.com>
+
+        Add support for in-band text tracks to Mac port
+        https://bugs.webkit.org/show_bug.cgi?id=103663
+
+        Reviewed by Sam Weinig.
+
+        Test for initial support for in-band text tracks. New test skipped on all ports that don't 
+        have support in the media engine.
+
+        * media/content/counting-subtitled.m4v: Added.
+        * media/track/track-in-band-expected.txt: Added.
+        * media/track/track-in-band.html: Added.
+        * platform/chromium/TestExpectations:
+        * platform/efl/TestExpectations:
+        * platform/gtk/TestExpectations:
+        * platform/mac/TestExpectations:
+        * platform/qt/TestExpectations:
+        * platform/win/TestExpectations:
+
 2012-12-10  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Unreviewed: Web Inspector: update test expectation for inspector/styles/styles-computed-trace.html.
@@ -7966,12 +7986,12 @@
         * platform/chromium-mac-snowleopard/fast/forms/date/date-appearance-pseudo-classes-expected.png: Removed.
         * platform/chromium-mac/fast/forms/date/date-appearance-pseudo-classes-expected.png: Removed.
         * platform/chromium-win/fast/forms/date/date-appearance-pseudo-classes-expected.png: Removed.
+
         * platform/efl/TestExpectations:
         * platform/gtk/TestExpectations:
         * platform/mac/TestExpectations:
         * platform/qt/TestExpectations:
         * platform/win/TestExpectations:
-
 2012-11-28  Tommy Widenflycht  <tommyw@google.com>
 
         Add basic implementation for MediaStreamAudioDestinationNode

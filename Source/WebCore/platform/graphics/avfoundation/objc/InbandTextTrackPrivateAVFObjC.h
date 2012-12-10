@@ -20,43 +20,50 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef InbandTextTrack_h
-#define InbandTextTrack_h
+#ifndef InbandTextTrackPrivateAVFObjC_h
+#define InbandTextTrackPrivateAVFObjC_h
 
-#if ENABLE(VIDEO_TRACK)
+#if ENABLE(VIDEO) && USE(AVFOUNDATION) && HAVE(AVFOUNDATION_TEXT_TRACK_SUPPORT)
 
-#include "InbandTextTrackPrivate.h"
-#include "InbandTextTrackPrivateClient.h"
-#include "TextTrack.h"
-#include <wtf/RefPtr.h>
+#include "InbandTextTrackPrivateAVF.h"
+#include <wtf/RetainPtr.h>
+
+OBJC_CLASS AVPlayerItem;
+OBJC_CLASS AVMediaSelectionOption;
 
 namespace WebCore {
 
-class Document;
-class InbandTextTrackPrivate;
-class MediaPlayer;
-class TextTrackCue;
+class MediaPlayerPrivateAVFoundationObjC;
 
-class InbandTextTrack : public TextTrack, public InbandTextTrackPrivateClient {
+class InbandTextTrackPrivateAVFObjC : public InbandTextTrackPrivateAVF {
 public:
-    static PassRefPtr<InbandTextTrack> create(ScriptExecutionContext*, TextTrackClient*, PassRefPtr<InbandTextTrackPrivate>);
-    virtual ~InbandTextTrack();
+    static PassRefPtr<InbandTextTrackPrivateAVFObjC> create(MediaPlayerPrivateAVFoundationObjC* player,  AVMediaSelectionOption* selection)
+    {
+        return adoptRef(new InbandTextTrackPrivateAVFObjC(player, selection));
+    }
 
-    virtual void setMode(const AtomicString&) OVERRIDE;
-    size_t inbandTrackIndex();
+    ~InbandTextTrackPrivateAVFObjC() { }
 
-private:
-    InbandTextTrack(ScriptExecutionContext*, TextTrackClient*, PassRefPtr<InbandTextTrackPrivate>);
+    virtual InbandTextTrackPrivate::Kind kind() const OVERRIDE;
+    virtual AtomicString label() const OVERRIDE;
+    virtual AtomicString language() const OVERRIDE;
+    virtual bool isDefault() const OVERRIDE;
 
-    virtual void addCue(InbandTextTrackPrivate*, double, double, const String&, const String&, const String&) OVERRIDE;
+    virtual void disconnect() OVERRIDE;
 
-    RefPtr<InbandTextTrackPrivate> m_private;
+    AVMediaSelectionOption *mediaSelectionOption() const { return m_mediaSelectionOption.get(); }
+
+protected:
+    InbandTextTrackPrivateAVFObjC(MediaPlayerPrivateAVFoundationObjC*, AVMediaSelectionOption*);
+    
+    RetainPtr<AVPlayerItem> m_avPlayerItem;
+    RetainPtr<AVMediaSelectionOption> m_mediaSelectionOption;
 };
 
-} // namespace WebCore
+}
 
 #endif
 #endif

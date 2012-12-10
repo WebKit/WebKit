@@ -62,7 +62,6 @@ class GStreamerGWorld;
 class InbandTextTrackPrivate;
 class MediaPlayerPrivateInterface;
 class MediaSource;
-class TextTrackClient;
 
 // Structure that will hold every native
 // types supported by the current media player.
@@ -210,6 +209,11 @@ public:
     virtual HostWindow* mediaPlayerHostWindow() { return 0; }
     virtual IntRect mediaPlayerWindowClipRect() { return IntRect(); }
     virtual CachedResourceLoader* mediaPlayerCachedResourceLoader() { return 0; }
+
+#if ENABLE(VIDEO_TRACK)
+    virtual void mediaPlayerDidAddTrack(PassRefPtr<InbandTextTrackPrivate>) { }
+    virtual void mediaPlayerDidRemoveTrack(PassRefPtr<InbandTextTrackPrivate>) { }
+#endif
 };
 
 class MediaPlayerSupportsTypeClient {
@@ -430,8 +434,8 @@ public:
     CachedResourceLoader* cachedResourceLoader();
 
 #if ENABLE(VIDEO_TRACK)
-    void getTextTracks(Vector<RefPtr<InbandTextTrackPrivate> >&);
-    void setTextTrackClient(TextTrackClient*);
+    void addTextTrack(PassRefPtr<InbandTextTrackPrivate>);
+    void removeTextTrack(PassRefPtr<InbandTextTrackPrivate>);
 #endif
 
 private:

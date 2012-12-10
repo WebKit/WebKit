@@ -23,55 +23,22 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef InbandTextTrackPrivate_h
-#define InbandTextTrackPrivate_h
+#ifndef InbandTextTrackPrivateClient_h
+#define InbandTextTrackPrivateClient_h
 
-#include <wtf/Forward.h>
-#include <wtf/Noncopyable.h>
-#include <wtf/RefCounted.h>
-#include <wtf/text/AtomicString.h>
+#include <wtf/text/WTFString.h>
 
 #if ENABLE(VIDEO_TRACK)
 
 namespace WebCore {
 
-class InbandTextTrackClient;
+class InbandTextTrackPrivate;
 
-class InbandTextTrackPrivate : public RefCounted<InbandTextTrackPrivate> {
-    WTF_MAKE_NONCOPYABLE(InbandTextTrackPrivate); WTF_MAKE_FAST_ALLOCATED;
+class InbandTextTrackPrivateClient {
 public:
-    static PassRefPtr<InbandTextTrackPrivate> create()
-    {
-        return adoptRef(new InbandTextTrackPrivate());
-    }
-    virtual ~InbandTextTrackPrivate() { }
+    virtual ~InbandTextTrackPrivateClient() { }
     
-    void setClient(InbandTextTrackClient* client) { m_client = client; }
-    InbandTextTrackClient* client() { return m_client; }
-
-    enum Mode { disabled, hidden, showing };
-    virtual void setMode(Mode mode) { m_mode = mode; };
-    virtual InbandTextTrackPrivate::Mode mode() const { return m_mode; }
-
-    enum Kind { subtitles, captions, descriptions, chapters, metadata, none };
-    virtual Kind kind() const { return subtitles; }
-
-    virtual AtomicString label() const { return emptyString(); }
-    virtual AtomicString language() const { return emptyString(); }
-    virtual bool isDefault() const { return false; }
-
-    virtual int textTrackIndex() const { return 0; }
-
-protected:
-    InbandTextTrackPrivate()
-        : m_client(0)
-        , m_mode(disabled)
-    {
-    }
-
-private:
-    InbandTextTrackClient* m_client;
-    Mode m_mode;
+    virtual void addCue(InbandTextTrackPrivate*, double /*start*/, double /*end*/, const String& /*id*/, const String& /*content*/, const String& /*settings*/) = 0;
 };
 
 } // namespace WebCore

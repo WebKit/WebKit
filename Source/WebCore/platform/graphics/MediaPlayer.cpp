@@ -1114,14 +1114,20 @@ CachedResourceLoader* MediaPlayer::cachedResourceLoader()
 }
 
 #if ENABLE(VIDEO_TRACK)
-void MediaPlayer::getTextTracks(Vector<RefPtr<InbandTextTrackPrivate> >& tracks)
+void MediaPlayer::addTextTrack(PassRefPtr<InbandTextTrackPrivate> track)
 {
-    m_private->getTextTracks(tracks);
+    if (!m_mediaPlayerClient)
+        return;
+
+    m_mediaPlayerClient->mediaPlayerDidAddTrack(track);
 }
 
-void MediaPlayer::setTextTrackClient(TextTrackClient* client)
+void MediaPlayer::removeTextTrack(PassRefPtr<InbandTextTrackPrivate> track)
 {
-    m_private->setTextTrackClient(client);
+    if (!m_mediaPlayerClient)
+        return;
+
+    m_mediaPlayerClient->mediaPlayerDidRemoveTrack(track);
 }
 #endif
 

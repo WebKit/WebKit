@@ -184,10 +184,6 @@ public:
     virtual MediaPlayer::MediaKeyException cancelKeyRequest(const String&, const String&) { return MediaPlayer::KeySystemNotSupported; }
 #endif
 
-#if ENABLE(VIDEO_TRACK)
-    virtual void getTextTracks(Vector<RefPtr<InbandTextTrackPrivate> >&) { }
-    virtual void setTextTrackClient(TextTrackClient*) { }
-#endif
 };
 
 }

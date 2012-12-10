@@ -3617,7 +3617,6 @@ webcore_sources += \
 	Source/WebCore/html/TimeRanges.h \
 	Source/WebCore/html/track/InbandTextTrack.cpp \
 	Source/WebCore/html/track/InbandTextTrack.h \
-	Source/WebCore/html/track/InbandTextTrackPrivate.h \
 	Source/WebCore/html/track/LoadableTextTrack.cpp \
 	Source/WebCore/html/track/LoadableTextTrack.h \
 	Source/WebCore/html/track/TextTrack.cpp \
@@ -5519,6 +5518,8 @@ webcore_platform_sources += \
 	Source/WebCore/platform/graphics/ImageOrientation.h \
 	Source/WebCore/platform/graphics/ImageSource.cpp \
 	Source/WebCore/platform/graphics/ImageSource.h \
+	Source/WebCore/platform/graphics/InbandTextTrackPrivate.h \
+	Source/WebCore/platform/graphics/InbandTextTrackPrivateClient.h \
 	Source/WebCore/platform/graphics/IntPoint.h \
 	Source/WebCore/platform/graphics/IntPointHash.h \
 	Source/WebCore/platform/graphics/IntRect.cpp \

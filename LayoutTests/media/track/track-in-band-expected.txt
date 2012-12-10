@@ -1,0 +1,31 @@
+In-band text tracks.
+
+EVENT(canplaythrough)
+
+** Check initial in-band track states
+EXPECTED (video.textTracks.length == '2') OK
+EXPECTED (addtrackEventCount == '2') OK
+
+
+RUN(inbandTrack1 = video.textTracks[0])
+RUN(inbandTrack2 = video.textTracks[1])
+EXPECTED (inbandTrack1.mode == 'disabled') OK
+EXPECTED (inbandTrack1.cues == 'null') OK
+EXPECTED (inbandTrack1.language == 'en') OK
+EXPECTED (inbandTrack1.kind == 'subtitles') OK
+EXPECTED (inbandTrack2.mode == 'disabled') OK
+EXPECTED (inbandTrack2.cues == 'null') OK
+EXPECTED (inbandTrack2.language == 'fr') OK
+EXPECTED (inbandTrack2.kind == 'subtitles') OK
+
+** Add tracks, check sort order
+RUN(addTrack = video.addTextTrack('captions', 'Caption Track', 'en'))
+RUN(trackElement = document.createElement('track'))
+RUN(video.appendChild(trackElement))
+EXPECTED (video.textTracks.length == '4') OK
+EXPECTED (video.textTracks[0] == 'trackElement.track') OK
+EXPECTED (video.textTracks[1] == 'addTrack') OK
+EXPECTED (video.textTracks[2] == 'inbandTrack1') OK
+EXPECTED (video.textTracks[3] == 'inbandTrack2') OK
+END OF TEST
+

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+        <script src=../media-file.js></script>
+        <script src=../video-test.js></script>
+        <script>
+
+            var addtrackEventCount = 0;
+
+            function compareTracks(track1, track2)
+            {
+                var equal = (eval(track1) == eval(track2));
+                reportExpected(equal, track1, "==", track2, track1);
+            }
+
+            function canplaythrough()
+            {
+                consoleWrite("<br><i>** Check initial in-band track states<" + "/i>");
+                testExpected("video.textTracks.length", 2);
+                testExpected("addtrackEventCount", 2);
+                consoleWrite("<br>");
+
+                run("inbandTrack1 = video.textTracks[0]");
+                run("inbandTrack2 = video.textTracks[1]");
+                testExpected("inbandTrack1.mode", "disabled");
+                testExpected("inbandTrack1.cues", null);
+                testExpected("inbandTrack1.language", "en");
+                testExpected("inbandTrack1.kind", "subtitles");
+                testExpected("inbandTrack2.mode", "disabled");
+                testExpected("inbandTrack2.cues", null);
+                testExpected("inbandTrack2.language", "fr");
+                testExpected("inbandTrack2.kind", "subtitles");
+
+                consoleWrite("<br><i>** Add tracks, check sort order<" + "/i>");
+                run("addTrack = video.addTextTrack('captions', 'Caption Track', 'en')");
+                run("trackElement = document.createElement('track')");
+                trackElement.label = '<track>';
+                run("video.appendChild(trackElement)");
+                testExpected("video.textTracks.length", 4);
+
+                compareTracks("video.textTracks[0]", "trackElement.track");
+                compareTracks("video.textTracks[1]", "addTrack");
+                compareTracks("video.textTracks[2]", "inbandTrack1");
+                compareTracks("video.textTracks[3]", "inbandTrack2");
+                endTest();
+            }
+
+            function setup()
+            {
+                findMediaElement();
+                video.textTracks.addEventListener("addtrack", function() { ++addtrackEventCount; });
+                video.src = '../content/counting-subtitled.m4v';
+                waitForEvent('canplaythrough', canplaythrough);
+            }
+
+        </script>
+    </head>
+    <body onload="setup()">
+        <video controls></video>
+        <p>In-band text tracks.</p>
+    </body>
+</html>

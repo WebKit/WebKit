@@ -23,37 +23,55 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef InbandTextTrack_h
-#define InbandTextTrack_h
+#ifndef InbandTextTrackPrivate_h
+#define InbandTextTrackPrivate_h
+
+#include <wtf/Forward.h>
+#include <wtf/Noncopyable.h>
+#include <wtf/RefCounted.h>
+#include <wtf/text/AtomicString.h>
 
 #if ENABLE(VIDEO_TRACK)
 
-#include "InbandTextTrackPrivate.h"
-#include "InbandTextTrackPrivateClient.h"
-#include "TextTrack.h"
-#include <wtf/RefPtr.h>
-
 namespace WebCore {
 
-class Document;
-class InbandTextTrackPrivate;
-class MediaPlayer;
-class TextTrackCue;
+class InbandTextTrackPrivateClient;
 
-class InbandTextTrack : public TextTrack, public InbandTextTrackPrivateClient {
+class InbandTextTrackPrivate : public RefCounted<InbandTextTrackPrivate> {
+    WTF_MAKE_NONCOPYABLE(InbandTextTrackPrivate); WTF_MAKE_FAST_ALLOCATED;
 public:
-    static PassRefPtr<InbandTextTrack> create(ScriptExecutionContext*, TextTrackClient*, PassRefPtr<InbandTextTrackPrivate>);
-    virtual ~InbandTextTrack();
+    static PassRefPtr<InbandTextTrackPrivate> create()
+    {
+        return adoptRef(new InbandTextTrackPrivate());
+    }
+    virtual ~InbandTextTrackPrivate() { }
 
-    virtual void setMode(const AtomicString&) OVERRIDE;
-    size_t inbandTrackIndex();
+    void setClient(InbandTextTrackPrivateClient* client) { m_client = client; }
+    InbandTextTrackPrivateClient* client() { return m_client; }
+
+    enum Mode { Disabled, Hidden, Showing };
+    virtual void setMode(Mode mode) { m_mode = mode; };
+    virtual InbandTextTrackPrivate::Mode mode() const { return m_mode; }
+
+    enum Kind { Subtitles, Captions, Descriptions, Chapters, Metadata, None };
+    virtual Kind kind() const { return Subtitles; }
+
+    virtual AtomicString label() const { return emptyString(); }
+    virtual AtomicString language() const { return emptyString(); }
+    virtual bool isDefault() const { return false; }
+
+    virtual int textTrackIndex() const { return 0; }
+
+protected:
+    InbandTextTrackPrivate()
+        : m_client(0)
+        , m_mode(Disabled)
+    {
+    }
 
 private:
-    InbandTextTrack(ScriptExecutionContext*, TextTrackClient*, PassRefPtr<InbandTextTrackPrivate>);
-
-    virtual void addCue(InbandTextTrackPrivate*, double, double, const String&, const String&, const String&) OVERRIDE;
-
-    RefPtr<InbandTextTrackPrivate> m_private;
+    InbandTextTrackPrivateClient* m_client;
+    Mode m_mode;
 };
 
 } // namespace WebCore

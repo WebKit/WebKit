@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,6 +35,7 @@
 #import "FrameView.h"
 #import "FloatConversion.h"
 #import "GraphicsContext.h"
+#import "InbandTextTrackPrivateAVFObjC.h"
 #import "KURL.h"
 #import "Logging.h"
 #import "SecurityOrigin.h"
@@ -94,6 +95,26 @@ SOFT_LINK_CONSTANT(CoreMedia, kCMTimeZero, CMTime)
 #define AVAssetImageGeneratorApertureModeCleanAperture getAVAssetImageGeneratorApertureModeCleanAperture()
 #define AVURLAssetReferenceRestrictionsKey getAVURLAssetReferenceRestrictionsKey()
 
+#if HAVE(AVFOUNDATION_TEXT_TRACK_SUPPORT)
+typedef AVMediaSelectionGroup AVMediaSelectionGroupType;
+typedef AVMediaSelectionOption AVMediaSelectionOptionType;
+
+SOFT_LINK_CLASS(AVFoundation, AVPlayerItemLegibleOutput)
+SOFT_LINK_CLASS(AVFoundation, AVMediaSelectionGroup)
+SOFT_LINK_CLASS(AVFoundation, AVMediaSelectionOption)
+
+SOFT_LINK_POINTER(AVFoundation, AVMediaCharacteristicLegible, NSString *)
+SOFT_LINK_POINTER(AVFoundation, AVMediaTypeSubtitle, NSString *)
+SOFT_LINK_POINTER(AVFoundation, AVMediaCharacteristicContainsOnlyForcedSubtitles, NSString *)
+
+#define AVPlayerItemLegibleOutput getAVPlayerItemLegibleOutputClass()
+#define AVMediaSelectionGroup getAVMediaSelectionGroupClass()
+#define AVMediaSelectionOption getAVMediaSelectionOptionClass()
+#define AVMediaCharacteristicLegible getAVMediaCharacteristicLegible()
+#define AVMediaTypeSubtitle getAVMediaTypeSubtitle()
+#define AVMediaCharacteristicContainsOnlyForcedSubtitles getAVMediaCharacteristicContainsOnlyForcedSubtitles()
+#endif
+
 #define kCMTimeZero getkCMTimeZero()
 
 using namespace WebCore;
@@ -104,7 +125,11 @@ enum MediaPlayerAVFoundationObservationContext {
     MediaPlayerAVFoundationObservationContextPlayer
 };
 
+#if HAVE(AVFOUNDATION_TEXT_TRACK_SUPPORT)
+@interface WebCoreAVFMovieObserver : NSObject <AVPlayerItemLegibleOutputPushDelegate>
+#else
 @interface WebCoreAVFMovieObserver : NSObject
+#endif
 {
     MediaPlayerPrivateAVFoundationObjC* m_callback;
     int m_delayCallbacks;
@@ -116,6 +141,9 @@ enum MediaPlayerAVFoundationObservationContext {
 -(void)seekCompleted:(BOOL)finished;
 -(void)didEnd:(NSNotification *)notification;
 -(void)observeValueForKeyPath:keyPath ofObject:(id)object change:(NSDictionary *)change context:(MediaPlayerAVFoundationObservationContext)context;
+#if HAVE(AVFOUNDATION_TEXT_TRACK_SUPPORT)
+- (void)legibleOutput:(id)output didOutputAttributedStrings:(NSArray *)strings nativeSampleBuffers:(NSArray *)nativeSamples forItemTime:(CMTime)itemTime;
+#endif
 @end
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
@@ -162,6 +190,9 @@ MediaPlayerPrivateAVFoundationObjC::MediaPlayerPrivateAVFoundationObjC(MediaPlay
 #if ENABLE(ENCRYPTED_MEDIA)
     , m_loaderDelegate(AdoptNS, [[WebCoreAVFLoaderDelegate alloc] initWithCallback:this])
 #endif
+#if HAVE(AVFOUNDATION_TEXT_TRACK_SUPPORT)
+    , m_currentTrack(0)
+#endif
 {
 }
 
@@ -184,6 +215,14 @@ void MediaPlayerPrivateAVFoundationObjC::cancelLoad()
         [m_avAsset.get() cancelLoading];
         m_avAsset = nil;
     }
+
+#if HAVE(AVFOUNDATION_TEXT_TRACK_SUPPORT)
+    if (m_legibleOutput) {
+        if (m_avPlayerItem)
+            [m_avPlayerItem.get() removeOutput:m_legibleOutput.get()];
+        m_legibleOutput = nil;
+    }
+#endif
     if (m_avPlayerItem) {
         for (NSString *keyName in itemKVOProperties())
             [m_avPlayerItem.get() removeObserver:m_objcObserver.get() forKeyPath:keyName];
@@ -346,7 +385,12 @@ void MediaPlayerPrivateAVFoundationObjC::createAVPlayer()
 
     m_avPlayer.adoptNS([[AVPlayer alloc] init]);
     [m_avPlayer.get() addObserver:m_objcObserver.get() forKeyPath:@"rate" options:nil context:(void *)MediaPlayerAVFoundationObservationContextPlayer];
+
+#if HAVE(AVFOUNDATION_TEXT_TRACK_SUPPORT)
+    [m_avPlayer.get() setAppliesMediaSelectionCriteriaAutomatically:YES];
+#endif
     
+
     if (m_avPlayerItem)
         [m_avPlayer.get() replaceCurrentItemWithPlayerItem:m_avPlayerItem.get()];
 
@@ -840,6 +884,23 @@ void MediaPlayerPrivateAVFoundationObjC::tracksChanged()
     if (!m_avAsset)
         return;
 
+#if HAVE(AVFOUNDATION_TEXT_TRACK_SUPPORT)
+    if (m_avPlayerItem && !m_legibleOutput) {
+        m_legibleOutput = adoptNS([[AVPlayerItemLegibleOutput alloc] initWithMediaSubtypesForNativeRepresentation:nil]);
+        [m_legibleOutput.get() setSuppressesPlayerRendering:YES];
+
+        // We enabled automatic media selection because we want alternate audio tracks to be enabled/disabled automatically,
+        // but set the selected legible track to nil so text tracks will not be automatically configured.
+        [m_avPlayerItem.get() selectMediaOption:nil inMediaSelectionGroup:[m_avAsset.get() mediaSelectionGroupForMediaCharacteristic:AVMediaCharacteristicLegible]];
+
+        [m_legibleOutput.get() setDelegate:m_objcObserver.get() queue:dispatch_get_main_queue()];
+        [m_legibleOutput.get() setAdvanceIntervalForDelegateInvocation:NSTimeIntervalSince1970];
+        [m_avPlayerItem.get() addOutput:m_legibleOutput.get()];
+    }
+#endif
+
+    bool hasCaptions = false;
+
     // This is called whenever the tracks collection changes so cache hasVideo and hasAudio since we are
     // asked about those fairly fequently.
     if (!m_avPlayerItem) {
@@ -847,11 +908,10 @@ void MediaPlayerPrivateAVFoundationObjC::tracksChanged()
         // prior to becoming ready to play.
         setHasVideo([[m_avAsset.get() tracksWithMediaCharacteristic:AVMediaCharacteristicVisual] count]);
         setHasAudio([[m_avAsset.get() tracksWithMediaCharacteristic:AVMediaCharacteristicAudible] count]);
-        setHasClosedCaptions([[m_avAsset.get() tracksWithMediaType:AVMediaTypeClosedCaption] count]);
+        hasCaptions = [[m_avAsset.get() tracksWithMediaType:AVMediaTypeClosedCaption] count];
     } else {
         bool hasVideo = false;
         bool hasAudio = false;
-        bool hasCaptions = false;
         NSArray *tracks = [m_avPlayerItem.get() tracks];
         for (AVPlayerItemTrack *track in tracks) {
             if ([track isEnabled]) {
@@ -866,10 +926,20 @@ void MediaPlayerPrivateAVFoundationObjC::tracksChanged()
         }
         setHasVideo(hasVideo);
         setHasAudio(hasAudio);
-        setHasClosedCaptions(hasCaptions);
     }
 
-    LOG(Media, "WebCoreAVFMovieObserver:tracksChanged(%p) - hasVideo = %s, hasAudio = %s, hasCaptions = %s", 
+#if HAVE(AVFOUNDATION_TEXT_TRACK_SUPPORT)
+    if (!hasCaptions) {
+        AVMediaSelectionGroupType *legibleGroup = [m_avAsset.get() mediaSelectionGroupForMediaCharacteristic:AVMediaCharacteristicLegible];
+        hasCaptions = [[AVMediaSelectionGroup playableMediaSelectionOptionsFromArray:[legibleGroup options]] count];
+    }
+    if (hasCaptions)
+        processTextTracks();
+#endif
+
+    setHasClosedCaptions(hasCaptions);
+
+    LOG(Media, "WebCoreAVFMovieObserver:tracksChanged(%p) - hasVideo = %s, hasAudio = %s, hasCaptions = %s",
         this, boolString(hasVideo()), boolString(hasAudio()), boolString(hasClosedCaptions()));
 
     sizeChanged();
@@ -1121,6 +1191,92 @@ MediaPlayer::MediaKeyException MediaPlayerPrivateAVFoundationObjC::cancelKeyRequ
 }
 #endif
 
+#if HAVE(AVFOUNDATION_TEXT_TRACK_SUPPORT)
+    
+void MediaPlayerPrivateAVFoundationObjC::processTextTracks()
+{
+    AVMediaSelectionGroupType *legibleGroup = [m_avAsset.get() mediaSelectionGroupForMediaCharacteristic:AVMediaCharacteristicLegible];
+    if (!legibleGroup) {
+        LOG(Media, "MediaPlayerPrivateAVFoundationObjC::processTextTracks(%p) - nil mediaSelectionGroup", this);
+        return;
+    }
+
+    Vector<RefPtr<InbandTextTrackPrivateAVF> > removedTextTracks = m_textTracks;
+    NSArray *legibleOptions = [AVMediaSelectionGroup playableMediaSelectionOptionsFromArray:[legibleGroup options]];
+    for (AVMediaSelectionOptionType *option in legibleOptions) {
+        bool newTrack = true;
+        for (unsigned i = removedTextTracks.size(); i > 0; --i) {
+            RefPtr<InbandTextTrackPrivateAVFObjC> track = static_cast<InbandTextTrackPrivateAVFObjC*>(removedTextTracks[i - 1].get());
+            if ([track->mediaSelectionOption() isEqual:option]) {
+                removedTextTracks.remove(i - 1);
+                newTrack = false;
+                break;
+            }
+        }
+        if (!newTrack)
+            continue;
+
+        if ([[option mediaType] isEqualToString:AVMediaTypeSubtitle]) {
+            if (![option hasMediaCharacteristic:AVMediaCharacteristicContainsOnlyForcedSubtitles]) {
+                AVMediaSelectionOptionType *forcedOnlyOption = [option associatedMediaSelectionOptionInMediaSelectionGroup:legibleGroup];
+                if (forcedOnlyOption)
+                    continue;
+            }
+        }
+
+        m_textTracks.append(InbandTextTrackPrivateAVFObjC::create(this, option));
+    }
+
+    if (removedTextTracks.size()) {
+        for (unsigned i = 0; i < m_textTracks.size(); ++i) {
+            RefPtr<InbandTextTrackPrivateAVF> track = static_cast<InbandTextTrackPrivateAVF*>(m_textTracks[i].get());
+            
+            if (!removedTextTracks.contains(track))
+                continue;
+    
+            player()->removeTextTrack(removedTextTracks[i].get());
+            m_textTracks.remove(i);
+        }
+    }
+
+    for (unsigned i = 0; i < m_textTracks.size(); ++i) {
+        RefPtr<InbandTextTrackPrivateAVF> track = static_cast<InbandTextTrackPrivateAVF*>(m_textTracks[i].get());
+
+        track->setTextTrackIndex(i);
+        if (track->hasBeenReported())
+            continue;
+
+        track->setHasBeenReported(true);
+        player()->addTextTrack(track.get());
+    }
+    LOG(Media, "MediaPlayerPrivateAVFoundationObjC::processTextTracks(%p) - found %i media selection options", this, m_textTracks.size());
+}
+
+void MediaPlayerPrivateAVFoundationObjC::processCue(NSArray *attributedStrings, double time)
+{
+    if (!m_currentTrack)
+        return;
+
+    m_currentTrack->processCue(reinterpret_cast<CFArrayRef>(attributedStrings), time);
+}
+
+void MediaPlayerPrivateAVFoundationObjC::setCurrentTrack(InbandTextTrackPrivateAVF *track)
+{
+    InbandTextTrackPrivateAVFObjC* trackPrivate = static_cast<InbandTextTrackPrivateAVFObjC*>(track);
+    AVMediaSelectionOptionType *mediaSelectionOption = trackPrivate ? trackPrivate->mediaSelectionOption() : 0;
+
+    LOG(Media, "MediaPlayerPrivateAVFoundationObjC::setCurrentTrack(%p) - selecting media option %p", this, mediaSelectionOption);
+
+    [m_avPlayerItem.get() selectMediaOption:mediaSelectionOption inMediaSelectionGroup:[m_avAsset.get() mediaSelectionGroupForMediaCharacteristic:AVMediaCharacteristicLegible]];
+    m_currentTrack = trackPrivate;
+}
+
+InbandTextTrackPrivateAVF* MediaPlayerPrivateAVFoundationObjC::currentTrack()
+{
+    return m_currentTrack;
+}
+#endif // HAVE(AVFOUNDATION_TEXT_TRACK_SUPPORT)
+
 NSArray* assetMetadataKeyNames()
 {
     static NSArray* keys;
@@ -1245,6 +1401,21 @@ NSArray* itemKVOProperties()
             m_callback->scheduleMainThreadNotification(MediaPlayerPrivateAVFoundation::Notification::PlayerRateChanged);
     }
 }
+
+#if HAVE(AVFOUNDATION_TEXT_TRACK_SUPPORT)
+- (void)legibleOutput:(id)output didOutputAttributedStrings:(NSArray *)strings nativeSampleBuffers:(NSArray *)nativeSamples forItemTime:(CMTime)itemTime
+{
+    UNUSED_PARAM(output);
+    UNUSED_PARAM(nativeSamples);
+
+    if (!m_callback)
+        return;
+
+    dispatch_async(dispatch_get_main_queue(), ^{
+        m_callback->processCue(strings, CMTimeGetSeconds(itemTime));
+    });
+}
+#endif
 
 @end
 

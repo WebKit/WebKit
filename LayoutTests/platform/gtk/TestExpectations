@@ -1422,6 +1422,9 @@ webkit.org/b/104493 svg/custom/js-update-transform-addition.svg [ Failure ]
 webkit.org/b/104493 svg/custom/js-update-transform-changes.svg [ Failure ]
 webkit.org/b/104493 svg/custom/text-xy-updates-SVGList.xhtml [ Failure ]
 
+# No support for exposing in-band text tracks
+webkit.org/b/103771 media/track/track-in-band.html [ Skip ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing
 #////////////////////////////////////////////////////////////////////////////////////////

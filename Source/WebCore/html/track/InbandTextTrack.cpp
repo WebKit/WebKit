@@ -39,29 +39,34 @@
 
 namespace WebCore {
 
+PassRefPtr<InbandTextTrack> InbandTextTrack::create(ScriptExecutionContext* context, TextTrackClient* client, PassRefPtr<InbandTextTrackPrivate> playerPrivate)
+{
+    return adoptRef(new InbandTextTrack(context, client, playerPrivate));
+}
+
 InbandTextTrack::InbandTextTrack(ScriptExecutionContext* context, TextTrackClient* client, PassRefPtr<InbandTextTrackPrivate> tracksPrivate)
     : TextTrack(context, client, emptyString(), tracksPrivate->label(), tracksPrivate->language(), InBand)
     , m_private(tracksPrivate)
 {
     m_private->setClient(this);
     
-    switch (tracksPrivate->kind()) {
-    case InbandTextTrackPrivate::subtitles:
+    switch (m_private->kind()) {
+    case InbandTextTrackPrivate::Subtitles:
         setKind(TextTrack::subtitlesKeyword());
         break;
-    case InbandTextTrackPrivate::captions:
+    case InbandTextTrackPrivate::Captions:
         setKind(TextTrack::captionsKeyword());
         break;
-    case InbandTextTrackPrivate::descriptions:
+    case InbandTextTrackPrivate::Descriptions:
         setKind(TextTrack::descriptionsKeyword());
         break;
-    case InbandTextTrackPrivate::chapters:
+    case InbandTextTrackPrivate::Chapters:
         setKind(TextTrack::chaptersKeyword());
         break;
-    case InbandTextTrackPrivate::metadata:
+    case InbandTextTrackPrivate::Metadata:
         setKind(TextTrack::metadataKeyword());
         break;
-    case InbandTextTrackPrivate::none:
+    case InbandTextTrackPrivate::None:
     default:
         ASSERT_NOT_REACHED();
         break;
@@ -78,11 +83,11 @@ void InbandTextTrack::setMode(const AtomicString& mode)
     TextTrack::setMode(mode);
 
     if (mode == TextTrack::disabledKeyword())
-        m_private->setMode(InbandTextTrackPrivate::disabled);
+        m_private->setMode(InbandTextTrackPrivate::Disabled);
     else if (mode == TextTrack::hiddenKeyword())
-        m_private->setMode(InbandTextTrackPrivate::hidden);
+        m_private->setMode(InbandTextTrackPrivate::Hidden);
     else if (mode == TextTrack::showingKeyword())
-        m_private->setMode(InbandTextTrackPrivate::showing);
+        m_private->setMode(InbandTextTrackPrivate::Showing);
     else
         ASSERT_NOT_REACHED();
 }
