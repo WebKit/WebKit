@@ -1,3 +1,19 @@
+2012-12-10  Kent Tamura  <tkent@chromium.org>
+
+        Refactoring: Remove HTMLFormControlElement::autofocus
+        https://bugs.webkit.org/show_bug.cgi?id=104524
+
+        Reviewed by Kentaro Hara.
+
+        autofocus function is used only by HTMLFormControlElement itself, no
+        sub-classes override it, and it is not exposed via an IDL attribute,
+
+        No new tests. This doesn't make any behavior changes.
+
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::shouldAutofocus): Use fastHasAttribute instead of autofocus().
+        * html/HTMLFormControlElement.h: Remove autofocus().
+
 2012-12-10  Jonathan Liu  <net147@gmail.com>
 
         Fix GC3Dintptr and GC3Dsizeiptr typedefs for Win64

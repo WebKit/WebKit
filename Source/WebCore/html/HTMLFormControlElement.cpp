@@ -166,7 +166,7 @@ void HTMLFormControlElement::requiredAttributeChanged()
 
 static bool shouldAutofocus(HTMLFormControlElement* element)
 {
-    if (!element->autofocus())
+    if (!element->fastHasAttribute(autofocusAttr))
         return false;
     if (!element->renderer())
         return false;
@@ -276,11 +276,6 @@ bool HTMLFormControlElement::disabled() const
     if (m_ancestorDisabledState == AncestorDisabledStateUnknown)
         updateAncestorDisabledState();
     return m_ancestorDisabledState == AncestorDisabledStateDisabled;
-}
-
-bool HTMLFormControlElement::autofocus() const
-{
-    return hasAttribute(autofocusAttr);
 }
 
 bool HTMLFormControlElement::isRequired() const
