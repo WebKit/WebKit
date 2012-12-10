@@ -4198,6 +4198,13 @@ webkit.org/b/104092 fast/frames/paint-iframe-background.html [ Failure Pass ]
 
 webkit.org/b/103487 [ Linux ] fast/forms/placeholder-position.html [ ImageOnlyFailure Pass ]
 
+# Fail only on WebKit-only checkout
+webkit.org/b/104548 [ Linux ] fast/text/hyphenate-character.html [ Failure ]
+webkit.org/b/104548 [ Linux ] fast/text/hyphenate-first-word.html [ Failure ]
+webkit.org/b/104548 [ Linux ] fast/text/hyphenate-limit-lines.html [ Failure ]
+webkit.org/b/104548 [ Linux ] fast/text/hyphenate-locale.html [ Failure ]
+webkit.org/b/104548 [ Linux ] fast/text/hyphens.html [ Failure ]
+
 # Flaky
 webkit.org/b/104283 [ XP ] fonts/monospace.html [ Failure Pass ]
 webkit.org/b/104283 [ Mac Debug ] fonts/monospace.html [ ImageOnlyFailure Pass ]
