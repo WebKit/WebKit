@@ -51,7 +51,7 @@ from webkitpy.common.host_mock import MockHost
 from webkitpy.layout_tests import port
 from webkitpy.layout_tests import run_webkit_tests
 from webkitpy.layout_tests.port import Port
-from webkitpy.layout_tests.port.test import TestPort, TestDriver
+from webkitpy.layout_tests.port import test
 from webkitpy.test.skip import skip_if
 from webkitpy.tool.mocktool import MockOptions
 
@@ -156,12 +156,6 @@ def get_test_results(args, host=None):
     if run_details.retry_summary:
         all_results.extend(run_details.retry_summary.all_results)
     return all_results
-
-
-# Update this magic number if you add an unexpected test to webkitpy.layout_tests.port.test
-# FIXME: It's nice to have a routine in port/test.py that returns this number.
-unexpected_failures = 12
-unexpected_tests_count = unexpected_failures + 4
 
 
 class StreamTestingMixin(object):
@@ -275,12 +269,38 @@ class MainTest(unittest.TestCase, StreamTestingMixin):
         # properly on cygwin (bug 63846).
         self.should_test_processes = not self._platform.is_win()
 
-    def test_all(self):
-        res, _, _ = logging_run([], tests_included=True)
-        self.assertEqual(res, unexpected_tests_count)
-
     def test_basic(self):
-        self.assertTrue(passing_run())
+        options, args = parse_args(tests_included=True)
+        logging_stream = StringIO.StringIO()
+        host = MockHost()
+        port_obj = host.port_factory.get(options.platform, options)
+        details = run_webkit_tests.run(port_obj, options, args, logging_stream)
+
+        # These numbers will need to be updated whenever we add new tests.
+        self.assertEqual(details.result_summary.total, test.TOTAL_TESTS)
+        self.assertEqual(details.result_summary.expected_skips, test.TOTAL_SKIPS)
+        self.assertEqual(len(details.result_summary.unexpected_results), test.UNEXPECTED_PASSES + test.UNEXPECTED_FAILURES)
+        self.assertEqual(details.exit_code, test.UNEXPECTED_FAILURES)
+        self.assertEqual(details.retry_summary.total, test.TOTAL_RETRIES)
+
+        one_line_summary = "%d tests ran as expected, %d didn't:\n" % (
+            details.result_summary.total - details.result_summary.expected_skips - len(details.result_summary.unexpected_results),
+            len(details.result_summary.unexpected_results))
+        self.assertTrue(one_line_summary in logging_stream.buflist)
+
+        # Ensure the results were summarized properly.
+        self.assertEqual(details.summarized_results['num_regressions'], details.exit_code)
+
+        # Ensure the image diff percentage is in the results.
+        self.assertEqual(details.summarized_results['tests']['failures']['expected']['image.html']['image_diff_percent'], 1)
+
+        # Ensure the results were written out and displayed.
+        full_results_text = host.filesystem.read_text_file('/tmp/layout-test-results/full_results.json')
+        json_to_eval = full_results_text.replace("ADD_RESULTS(", "").replace(");", "")
+        self.assertEqual(json.loads(json_to_eval), details.summarized_results)
+
+        self.assertEqual(host.user.opened_urls, [path.abspath_to_uri(MockHost().platform, '/tmp/layout-test-results/results.html')])
+
 
     def test_batch_size(self):
         batch_tests_run = get_test_batches(['--batch-size', '2'])
@@ -509,8 +529,8 @@ class MainTest(unittest.TestCase, StreamTestingMixin):
         self.assertTrue(has_passes_text)
 
     def test_run_singly_actually_runs_tests(self):
-        res, _, _ = logging_run(['--run-singly', 'failures/unexpected'])
-        self.assertEqual(res, unexpected_failures)
+        res, _, _ = logging_run(['--run-singly'], tests_included=True)
+        self.assertEqual(res, test.UNEXPECTED_FAILURES - 1)  # failures/expected/hang.html actually passes w/ --run-singly.
 
     def test_single_file(self):
         tests_run = get_tests_run(['passes/text.html'])
@@ -548,15 +568,6 @@ class MainTest(unittest.TestCase, StreamTestingMixin):
         tests_run = get_tests_run(['--test-list=%s' % filename], host=host)
         self.assertEqual(['passes/text.html'], tests_run)
 
-    def test_unexpected_failures(self):
-        # Run tests including the unexpected failures.
-        self._url_opened = None
-        res, err, user = logging_run(tests_included=True)
-
-        self.assertEqual(res, unexpected_tests_count)
-        self.assertNotEmpty(err)
-        self.assertEqual(user.opened_urls, [path.abspath_to_uri(MockHost().platform, '/tmp/layout-test-results/results.html')])
-
     def test_missing_and_unexpected_results(self):
         # Test that we update expectations in place. If the expectation
         # is missing, update the expected generic location.
@@ -593,7 +604,7 @@ class MainTest(unittest.TestCase, StreamTestingMixin):
     def test_missing_and_unexpected_results_with_custom_exit_code(self):
         # Test that we update expectations in place. If the expectation
         # is missing, update the expected generic location.
-        class CustomExitCodePort(TestPort):
+        class CustomExitCodePort(test.TestPort):
             def exit_code_from_summarized_results(self, unexpected_results):
                 return unexpected_results['num_regressions'] + unexpected_results['num_missing']
 
@@ -740,7 +751,7 @@ class MainTest(unittest.TestCase, StreamTestingMixin):
         self.assertEqual(tests_run, sorted(tests_run))
 
     def test_tolerance(self):
-        class ImageDiffTestPort(TestPort):
+        class ImageDiffTestPort(test.TestPort):
             def diff_image(self, expected_contents, actual_contents, tolerance=None):
                 self.tolerance_used_for_diff_image = self._options.tolerance
                 return (True, 1, None)
@@ -892,19 +903,6 @@ class EndToEndTest(unittest.TestCase):
         json_to_eval = full_results_text.replace("ADD_RESULTS(", "").replace(");", "")
         compressed_results = json.loads(json_to_eval)
         return compressed_results
-
-    def test_end_to_end(self):
-        host = MockHost()
-        res, _, user = logging_run(tests_included=True, host=host)
-
-        self.assertEqual(res, unexpected_tests_count)
-        results = self.parse_full_results(host.filesystem.read_text_file('/tmp/layout-test-results/full_results.json'))
-
-        # Check to ensure we're passing back image diff %age correctly.
-        self.assertEqual(results['tests']['failures']['expected']['image.html']['image_diff_percent'], 1)
-
-        # Check that we attempted to display the results page in a browser.
-        self.assertTrue(user.opened_urls)
 
     def test_reftest_with_two_notrefs(self):
         # Test that we update expectations in place. If the expectation

@@ -1,3 +1,32 @@
+2012-12-10  Dirk Pranke  <dpranke@chromium.org>
+
+        nrwt: fix total number of tests computed in the result summary
+        https://bugs.webkit.org/show_bug.cgi?id=104061
+
+        Reviewed by Jochen Eisinger.
+
+        Good thing I left this open, because I actually broke it again
+        the same way in a merge. Fix the computation of the one_line_summary
+        again, and add tests for it (also clean up some redundant tests).
+
+        Also, add constants into the test port code so that the knowledge
+        of how many tests should fail and how is next to the list of tests,
+        rather than a totally different place.
+
+        * Scripts/webkitpy/layout_tests/controllers/layout_test_runner.py:
+        (LayoutTestRunner.run_tests):
+        * Scripts/webkitpy/layout_tests/port/test.py:
+        (TestList.__getitem__):
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+        (get_test_results):
+        (MainTest.setUp):
+        (MainTest.test_basic):
+        (MainTest.test_run_singly_actually_runs_tests):
+        (MainTest.test_test_list_with_prefix):
+        (MainTest.test_missing_and_unexpected_results_with_custom_exit_code.CustomExitCodePort):
+        (MainTest.test_tolerance.ImageDiffTestPort):
+        (EndToEndTest.parse_full_results):
+
 2012-12-10  Mike West  <mkwst@chromium.org>
 
         Log to console when script is blocked by sandbox attributes.

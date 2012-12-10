@@ -97,6 +97,15 @@ class TestList(object):
     def __getitem__(self, item):
         return self.tests[item]
 
+#
+# These numbers may need to be updated whenever we add or delete tests.
+#
+TOTAL_TESTS = 104
+TOTAL_SKIPS = 25
+TOTAL_RETRIES = 14
+
+UNEXPECTED_PASSES = 6
+UNEXPECTED_FAILURES = 17
 
 def unit_test_list():
     tests = TestList()

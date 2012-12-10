@@ -87,7 +87,7 @@ class LayoutTestRunner(object):
         self._needs_websockets = needs_websockets
         self._retrying = retrying
 
-        result_summary = ResultSummary(self._expectations, len(test_inputs))
+        result_summary = ResultSummary(self._expectations, len(test_inputs) + len(tests_to_skip))
         self._current_result_summary = result_summary
         self._remaining_locked_shards = []
         self._has_http_lock = False
