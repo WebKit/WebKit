@@ -1,3 +1,15 @@
+2012-12-10  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
+
+        [Qt] Remove the support for building a debug WebKit with a release Qt
+        https://bugs.webkit.org/show_bug.cgi?id=104560
+
+        Reviewed by Tor Arne Vestbø.
+
+        This creates issues with non-framework builds of Qt (necessary for debug-only
+        builds) since a Qt5 prefix is now added to the base target name.
+
+        * Source/api.pri:
+
 2012-12-09  Gustavo Noronha Silva  <gustavo.noronha@collabora.com>
 
         [Soup] utilize multipart/x-mixed-replace support recently added to libsoup

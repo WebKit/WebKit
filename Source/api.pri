@@ -58,9 +58,6 @@ BASE_TARGET = $$TARGET
 
 load(qt_module)
 
-# Allow doing a debug-only build of WebKit (not supported by Qt)
-macx:!debug_and_release:debug: TARGET = $$BASE_TARGET
-
 # Make sure the install_name of the QtWebKit library point to webkit
 force_independent:macx {
     # We do our own absolute path so that we can trick qmake into
