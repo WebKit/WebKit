@@ -57,6 +57,7 @@ void globalInitialize()
         return;
     gIsGlobalInitialized = true;
 
+    WebCore::Settings::setHiddenPageDOMTimerAlignmentInterval(BlackBerry::Platform::Settings::instance()->isChromeProcess() ? 0 : 1);
 #if ENABLE(BLACKBERRY_DEBUG_MEMORY)
     blackberryDebugInitialize();
 #endif

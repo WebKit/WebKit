@@ -192,6 +192,9 @@ namespace WebCore {
         static void setDefaultMinDOMTimerInterval(double); // Interval specified in seconds.
         static double defaultMinDOMTimerInterval();
         
+        static void setHiddenPageDOMTimerAlignmentInterval(double); // Interval specified in seconds.
+        static double hiddenPageDOMTimerAlignmentInterval();
+
         void setMinDOMTimerInterval(double); // Per-page; initialized to default value.
         double minDOMTimerInterval();
 
@@ -385,6 +388,8 @@ namespace WebCore {
 #if USE(JSC)
         static bool gShouldRespectPriorityInCSSAttributeSetters;
 #endif
+
+        static double gHiddenPageDOMTimerAlignmentInterval;
     };
 
 } // namespace WebCore

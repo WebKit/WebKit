@@ -83,6 +83,7 @@ static inline const AtomicString& getGenericFontFamilyForScript(const ScriptFont
 
 double Settings::gDefaultMinDOMTimerInterval = 0.010; // 10 milliseconds
 double Settings::gDefaultDOMTimerAlignmentInterval = 0;
+double Settings::gHiddenPageDOMTimerAlignmentInterval = 1.0;
 
 #if USE(SAFARI_THEME)
 bool Settings::gShouldPaintNativeControls = true;
@@ -198,6 +199,16 @@ PassOwnPtr<Settings> Settings::create(Page* page)
 {
     return adoptPtr(new Settings(page));
 } 
+
+void Settings::setHiddenPageDOMTimerAlignmentInterval(double hiddenPageDOMTimerAlignmentinterval)
+{
+    gHiddenPageDOMTimerAlignmentInterval = hiddenPageDOMTimerAlignmentinterval;
+}
+
+double Settings::hiddenPageDOMTimerAlignmentInterval()
+{
+    return gHiddenPageDOMTimerAlignmentInterval;
+}
 
 #if !PLATFORM(MAC) && !PLATFORM(BLACKBERRY)
 void Settings::initializeDefaultFontFamilies()

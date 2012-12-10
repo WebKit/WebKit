@@ -1,3 +1,16 @@
+2012-12-10  Parth Patel  <parpatel@rim.com>
+
+        [BlackBerry] Make hiddenPageDomTimerInterval a setting 
+        https://bugs.webkit.org/show_bug.cgi?id=104555
+
+        Reviewed by Yong Li.
+
+        HiddenPageDomTimerInterval in setting in webcore can be utilized by browser application
+        when needed.
+
+        * Api/BlackBerryGlobal.cpp:
+        (BlackBerry::WebKit::globalInitialize):
+
 2012-12-10  Nima Ghanavatian  <nghanavatian@rim.com>
 
         [BlackBerry] Fix warning for comparison between signed and unsigned

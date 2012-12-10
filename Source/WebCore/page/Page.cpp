@@ -82,7 +82,6 @@
 namespace WebCore {
 
 static HashSet<Page*>* allPages;
-static const double hiddenPageTimerAlignmentInterval = 1.0; // once a second
 
 DEFINE_DEBUG_ONLY_GLOBAL(WTF::RefCountedLeakCounter, pageCounter, ("Page"));
 
@@ -1129,7 +1128,7 @@ void Page::setVisibilityState(PageVisibilityState visibilityState, bool isInitia
 
 #if ENABLE(HIDDEN_PAGE_DOM_TIMER_THROTTLING)
     if (visibilityState == WebCore::PageVisibilityStateHidden)
-        setTimerAlignmentInterval(hiddenPageTimerAlignmentInterval);
+        setTimerAlignmentInterval(Settings::hiddenPageDOMTimerAlignmentInterval());
     else
         setTimerAlignmentInterval(Settings::defaultDOMTimerAlignmentInterval());
 #if !ENABLE(PAGE_VISIBILITY_API)
