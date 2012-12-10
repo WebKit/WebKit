@@ -1,3 +1,21 @@
+2012-12-10  Michael Brüning  <michael.bruning@digia.com>
+
+        [Qt] Builds for Mac are tied to the OS system instead of the SDK version.
+        https://bugs.webkit.org/show_bug.cgi?id=104529
+
+        Reviewed by Simon Hausmann.
+
+        Using work by Eike Ziller <eike.ziller@digia.com>.
+
+        The build system now first tries to assign the correct system libraries
+        for the SDK being used for Mac builds. If this does not yield any
+        result, it falls back to using the Mac OS version to determine the
+        correct library.
+
+        No new tests (not applicable).
+
+        * WebCore.pri:
+
 2012-12-10  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Unreviewed: touch RenderingAllInOne.cpp to fix Apple Windows builder.
