@@ -953,14 +953,12 @@ bool AccessibilityUIElement::isFocusable() const
 
 bool AccessibilityUIElement::isSelectable() const
 {
-    // FIXME: implement
-    return false;
+    return checkElementState(m_element, ATK_STATE_SELECTABLE);
 }
 
 bool AccessibilityUIElement::isMultiSelectable() const
 {
-    // FIXME: implement
-    return false;
+    return checkElementState(m_element, ATK_STATE_MULTISELECTABLE);
 }
 
 bool AccessibilityUIElement::isSelectedOptionActive() const
