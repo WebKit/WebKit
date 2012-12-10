@@ -386,7 +386,7 @@ WebInspector.ConsoleMessageImpl.prototype = {
      */
     useArrayPreviewInFormatter: function(array)
     {
-        return !!array.preview;
+        return this.type !== WebInspector.ConsoleMessage.MessageType.DirXML && !!array.preview;
     },
 
     _formatParameterAsArray: function(array, elem)

@@ -3595,7 +3595,7 @@ webkit.org/b/91255 [ Lion ] fast/multicol/table-vertical-align.html [ Failure ]
 webkit.org/b/91372 [ Win ] css2.1/20110323/vertical-align-boxes-001.htm [ ImageOnlyFailure ]
 
 # Fails on Win
-webkit.org/b/93624 inspector/console/console-format-collections.html [ Failure Pass ]
+webkit.org/b/93624 [ Win ] inspector/console/console-format-collections.html [ Failure Pass ]
 
 # Started failing around r122770
 webkit.org/b/91445 [ Linux ] plugins/embed-attributes-style.html [ ImageOnlyFailure Pass ]

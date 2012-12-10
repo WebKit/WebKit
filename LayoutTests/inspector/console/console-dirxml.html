@@ -4,7 +4,7 @@
 <script src="../../http/tests/inspector/console-test.js"></script>
 <script>
 
-function onload()
+function logToConsole()
 {
     var fragment = document.createDocumentFragment();
     fragment.appendChild(document.createElement("p"));
@@ -13,19 +13,23 @@ function onload()
     console.dirxml(fragment);
     console.dirxml(fragment.firstChild);
     console.log([fragment.firstChild]);
-
-    runTest();
+    console.dirxml([document, fragment, document.createElement("span")]);
 }
 
 function test()
 {
-    InspectorTest.dumpConsoleMessages();
-    InspectorTest.completeTest();
+    InspectorTest.evaluateInPage("logToConsole()");
+    InspectorTest.runAfterPendingDispatches(callback);
+    function callback()
+    {
+        InspectorTest.dumpConsoleMessages();
+        InspectorTest.completeTest();
+    }
 }
 </script>
 </head>
 
-<body onload="onload()">
+<body onload="runTest()">
 <p>
 Tests that console logging dumps proper messages.
 </p>
