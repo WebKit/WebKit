@@ -277,10 +277,6 @@ class ChromiumPort(Port):
             "ff_aac_decoder": ["webaudio/codec-tests/aac"],
         }
 
-    def skipped_layout_tests(self, test_list):
-        # FIXME: Merge w/ WebKitPort.skipped_layout_tests()
-        return set(self._skipped_tests_for_unsupported_features(test_list))
-
     def setup_test_run(self):
         # Delete the disk cache if any to ensure a clean test run.
         dump_render_tree_binary_path = self._path_to_driver()

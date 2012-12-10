@@ -1,5 +1,28 @@
 2012-12-10  Dirk Pranke  <dpranke@chromium.org>
 
+        nrwt: use the default logic for skipping platform-specific tests for chromium
+        https://bugs.webkit.org/show_bug.cgi?id=104403
+
+        Reviewed by Stephen White.
+
+        I thought I had fixed this a while ago, but the chromium port was
+        using custom logic to figure out which platform/* tests to run (or
+        skip) and as a result we were getting some odd behavior (like running
+        tests in chromium-linux on chromium-mac, but only when there was
+        an expectation listed for the test).
+
+        Ports are supposed to only run the tests found under their
+        baseline_search_path() by default.
+
+        Not writing a test for this; theoretically there shouldn't been a
+        test checking that the behavior for Chromium was *different* than
+        the other ports before.
+
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+        (ChromiumPort._missing_symbol_to_skipped_tests):
+
+2012-12-10  Dirk Pranke  <dpranke@chromium.org>
+
         fix regression in test-webkitpy after r137189
         https://bugs.webkit.org/show_bug.cgi?id=104589
 

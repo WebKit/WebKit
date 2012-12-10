@@ -234,17 +234,6 @@ webkit.org/b/98212 fast/dom/Geolocation/coordinates-interface-attributes.html [ 
 # WONTFIX TESTS
 # -----------------------------------------------------------------
 
-# Run the Mac-specific platform tests, but only to check for crashes.
-platform/gtk [ WontFix ]
-platform/mac [ WontFix ]
-platform/mac-wk2 [ WontFix ]
-platform/qt [ WontFix ]
-platform/qt/plugins/qt-qwidget-plugin.html [ WontFix ]
-platform/qt/fast/forms [ WontFix ]
-[ Mac Win ] platform/chromium-linux [ WontFix ]
-[ Linux Mac ] platform/win [ WontFix ]
-[ Linux Win Mac ] platform/chromium-android [ WontFix ]
-
 # These tests are for -apple- and -khtml- prefixes, which we don't support
 inspector/styles/vendor-prefixes.html [ WontFix ]
 fast/css/apple-prefix.html [ WontFix ]

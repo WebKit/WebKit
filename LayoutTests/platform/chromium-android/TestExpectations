@@ -3,13 +3,6 @@
 #
 # Other rules should be in platform/chromium/TestExpectations.
 
-# Skip tests of other platforms to save time.
-platform/gtk [ WontFix ]
-platform/mac [ WontFix ]
-platform/mac-wk2 [ WontFix ]
-platform/qt [ WontFix ]
-platform/win [ WontFix ]
-
 # Features not supported: http://crbug.com/145338.
 crbug.com/145338 compositing/plugins
 crbug.com/145338 plugins
