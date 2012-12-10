@@ -27,6 +27,8 @@
 #if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
 #include "DateTimeNumericFieldElement.h"
 
+#include "CSSPropertyNames.h"
+#include "CSSValueKeywords.h"
 #include "Font.h"
 #include "KeyboardEvent.h"
 #include "PlatformLocale.h"
@@ -70,12 +72,8 @@ DateTimeNumericFieldElement::DateTimeNumericFieldElement(Document* document, Fie
     if (localeForOwner().isRTL()) {
         Direction dir = direction(formatValue(this->maximum())[0]);
         if (dir == LeftToRight || dir == EuropeanNumber || dir == ArabicNumber) {
-            StringBuilder builder;
-            builder.reserveCapacity(m_placeholder.length() + 2);
-            builder.append(leftToRightMark);
-            builder.append(m_placeholder);
-            builder.append(rightToLeftMark);
-            m_placeholder = builder.toString();
+            setInlineStyleProperty(CSSPropertyUnicodeBidi, CSSValueBidiOverride);
+            setInlineStyleProperty(CSSPropertyDirection, CSSValueLtr);
         }
     }
 }

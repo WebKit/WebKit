@@ -196,10 +196,10 @@ beginTest('RTL Left/Right keys', '2012-09-28');
 // 2012/09/[28]
 keyDown('1'); //          -> 2012/09/[01]
 shouldBeEqualToString('input.value', '2012-09-01');
-keyDown('leftArrow'); //  -> 2012/[09]/01
+keyDown('rightArrow'); //  -> 2012/[09]/01
 keyDown('2'); //          -> [2012]/02/01
 shouldBeEqualToString('input.value', '2012-02-01');
-keyDown('rightArrow'); // -> 2012/[02]/01
+keyDown('leftArrow'); // -> 2012/[02]/01
 keyDown('3'); //          -> [2012]/03/01
 shouldBeEqualToString('input.value', '2012-03-01');
 input.removeAttribute("lang");

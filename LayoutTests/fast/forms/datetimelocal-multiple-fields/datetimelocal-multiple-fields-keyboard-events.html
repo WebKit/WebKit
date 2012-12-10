@@ -206,14 +206,14 @@ beginTest('RTL Left/Right keys', '2012-09-28T23:00');
 // 00:23 2012/09/[28]
 keyDown('1'); //          -> 00:23 2012/09/[01]
 shouldBeEqualToString('input.value', '2012-09-01T23:00');
-keyDown('leftArrow'); //  -> 00:23 2012/[09]/01
+keyDown('rightArrow'); //  -> 00:23 2012/[09]/01
 keyDown('2'); //          -> 00:23 [2012]/02/01
-keyDown('leftArrow'); //  -> 00:[23] 2012/09/01
+keyDown('rightArrow'); //  -> 00:[23] 2012/09/01
 keyDown('1'); //  -> 00:[01] 2012/09/01
 shouldBeEqualToString('input.value', '2012-02-01T01:00');
-keyDown('rightArrow'); // -> 00:01 [2012]/09/01
+keyDown('leftArrow'); // -> 00:01 [2012]/09/01
 keyDown('8'); //          -> 00:01 [0008]/09/01
-keyDown('rightArrow'); // -> 00:01 0008/[09]/01
+keyDown('leftArrow'); // -> 00:01 0008/[09]/01
 keyDown('3'); //          -> 00:01 [0008]/03/01
 shouldBeEqualToString('input.value', '0008-03-01T01:00');
 input.removeAttribute('lang');

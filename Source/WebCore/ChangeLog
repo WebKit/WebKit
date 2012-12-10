@@ -1,3 +1,29 @@
+2012-12-10  Kent Tamura  <tkent@chromium.org>
+
+        Visual order of empty value placeholder in INPUT_MULTIPLE_FIELDS_UI is wrong in RTL
+        https://bugs.webkit.org/show_bug.cgi?id=104438
+
+        Reviewed by Hajime Morita.
+
+        No new tests. This updates datetimelocal-appearance-l10n.html for he-il
+        and ar-eg locales.
+
+        * html/shadow/DateTimeNumericFieldElement.cpp:
+        (WebCore::DateTimeNumericFieldElement::DateTimeNumericFieldElement):
+        We should not append Right-to-left-mark to each of placeholder
+        strings. It makes numeric field separators such as ':' and '/' RTL, and
+        makes a wrong visual order. We use unicode-bidi:bidi-override and
+        direction:ltr instead. It means we force LTR only to this element
+        * html/shadow/DateTimeNumericFieldElement.h:
+        Makes m_placeholder const again.
+        * html/shadow/DateTimeEditElement.cpp:
+        (WebCore::DateTimeEditBuilder::visitLiteral):
+        Explicitly set right-to-left-mark before S, WS, ON types according to
+        Unicod Bidirectional Algorithm Table 4 [1]. This is needed because we
+        don't have context like "This literal follows European/Arabic numbers"
+        in a case of showing placeholders.
+        [1] http://www.unicode.org/reports/tr9/#Bidirectional_Character_Types
+
 2012-12-09  Gustavo Noronha Silva  <gustavo.noronha@collabora.com>
 
         [Soup] utilize multipart/x-mixed-replace support recently added to libsoup

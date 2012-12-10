@@ -168,13 +168,13 @@ shouldBeEqualToString('input.value', '12:02:56');
 // lang-attribute-aware-form-control-UI feature.
 input.setAttribute("lang", "he-il");
 beginTest('RTL Left/Right keys', '04:56');
-keyDown('1'); //          -> 56:[01]
+keyDown('1'); //          -> [01]:56
 shouldBeEqualToString('input.value', '01:56');
-keyDown('leftArrow'); //  -> [56]:01
-keyDown('2'); //          -> [02]:01
+keyDown('rightArrow'); // -> 01:[56]
+keyDown('2'); //          -> 01:[02]
 shouldBeEqualToString('input.value', '01:02');
-keyDown('rightArrow'); // -> 02:[01]
-keyDown('3'); //          -> 01:[03]
+keyDown('leftArrow'); //  -> [01]:02
+keyDown('3'); //          -> [03]:02
 shouldBeEqualToString('input.value', '03:02');
 input.removeAttribute("lang");
 </script>

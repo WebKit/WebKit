@@ -4175,8 +4175,9 @@ webkit.org/b/103721 [ Mac Win Linux ] platform/chromium/compositing/huge-layer-r
 webkit.org/b/103834 [ SnowLeopard XP ] fast/forms/month-multiple-fields/month-multiple-fields-keyboard-events.html [ Failure ]
 
 # Need baseline
-webkit.org/b/10439 fast/forms/datetimelocal/datetimelocal-appearance-basic.html [ Missing ImageOnlyFailure ]
-webkit.org/b/10439 fast/forms/datetimelocal/datetimelocal-appearance-l10n.html [ Missing ImageOnlyFailure ]
+webkit.org/b/104438 fast/forms/datetimelocal/datetimelocal-appearance-basic.html [ Missing ImageOnlyFailure ]
+webkit.org/b/104438 fast/forms/datetimelocal/datetimelocal-appearance-l10n.html [ Missing ImageOnlyFailure ]
+webkit.org/b/104438 fast/forms/time-multiple-fields/time-multiple-fields-localization.html [ Failure ]
 
 # New tests added in r136492 that do not work in chromium
 webkit.org/b/99800 fast/harness/perftests/runs-per-second-iterations.html [ Failure Pass ]

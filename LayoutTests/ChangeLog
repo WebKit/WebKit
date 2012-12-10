@@ -1,3 +1,19 @@
+2012-12-10  Kent Tamura  <tkent@chromium.org>
+
+        Visual order of empty value placeholder in INPUT_MULTIPLE_FIELDS_UI is wrong in RTL
+        https://bugs.webkit.org/show_bug.cgi?id=104438
+
+        Reviewed by Hajime Morita.
+
+        * platform/chromium-mac/fast/forms/datetimelocal/datetimelocal-appearance-l10n-expected.png:
+        * platform/chromium/TestExpectations:
+        Update bug numbers and add time-multiple-fields-localization.html.
+        * fast/forms/date-multiple-fields/date-multiple-fields-keyboard-events.html:
+        Adjust test scenario for the new behavior.
+        * fast/forms/datetimelocal-multiple-fields/datetimelocal-multiple-fields-keyboard-events.html:
+        * fast/forms/month-multiple-fields/month-multiple-fields-keyboard-events.html:
+        * fast/forms/time-multiple-fields/time-multiple-fields-keyboard-events.html:
+
 2012-12-09  Gustavo Noronha Silva  <gustavo.noronha@collabora.com>
 
         [Soup] utilize multipart/x-mixed-replace support recently added to libsoup

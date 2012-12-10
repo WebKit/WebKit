@@ -47,6 +47,7 @@
 namespace WebCore {
 
 using namespace HTMLNames;
+using namespace WTF::Unicode;
 
 class DateTimeEditBuilder : private DateTimeFormat::TokenHandler {
     WTF_MAKE_NONCOPYABLE(DateTimeEditBuilder);
@@ -288,6 +289,11 @@ void DateTimeEditBuilder::visitLiteral(const String& text)
     ASSERT(text.length());
     RefPtr<HTMLDivElement> element = HTMLDivElement::create(m_editElement.document());
     element->setPseudo(textPseudoId);
+    if (m_parameters.locale.isRTL() && text.length()) {
+        Direction dir = direction(text[0]);
+        if (dir == SegmentSeparator || dir == WhiteSpaceNeutral || dir == OtherNeutral)
+            element->appendChild(Text::create(m_editElement.document(), String(&rightToLeftMark, 1)));
+    }
     element->appendChild(Text::create(m_editElement.document(), text));
     m_editElement.appendChild(element);
 }

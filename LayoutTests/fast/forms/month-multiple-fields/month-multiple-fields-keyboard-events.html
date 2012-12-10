@@ -214,8 +214,8 @@ shouldBeEqualToString('input.value', '2012-10');
 keyDown('leftArrow'); // -> [2012] M10
 keyDown('2'); //         -> [0002] M10
 shouldBeEqualToString('input.value', '0002-10');
-keyDown('rightArrow'); // -> 0002 [M10]
-keyDown('upArrow'); //    -> 0002 [M11]
+keyDown('\t', ['shiftKey']); // -> 0002 [M10]
+keyDown('upArrow'); //          -> 0002 [M11]
 shouldBeEqualToString('input.value', '0002-11');
 input.removeAttribute("lang");
 </script>

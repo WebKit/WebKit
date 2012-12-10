@@ -81,7 +81,7 @@ private:
     Locale& localeForOwner() const;
 
     DOMTimeStamp m_lastDigitCharTime;
-    String m_placeholder;
+    const String m_placeholder;
     const Range m_range;
     int m_value;
     bool m_hasValue;
