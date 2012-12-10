@@ -1,3 +1,13 @@
+2012-12-10  Nima Ghanavatian  <nghanavatian@rim.com>
+
+        [BlackBerry] Fix warning for comparison between signed and unsigned
+        https://bugs.webkit.org/show_bug.cgi?id=104563
+
+        Reviewed by Rob Buis.
+
+        * WebKitSupport/InputHandler.cpp:
+        (BlackBerry::WebKit::InputHandler::isCaretAtEndOfText):
+
 2012-12-10  Charles Wei  <charles.wei@torchmobile.com.cn>
 
         [BlackBerry] Webkit crashes sometimes (even though very rarely) when deleting a webview

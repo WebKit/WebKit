@@ -1866,7 +1866,7 @@ bool InputHandler::setBatchEditingActive(bool active)
 
 bool InputHandler::isCaretAtEndOfText()
 {
-    return caretPosition() == elementText().length();
+    return caretPosition() == static_cast<int>(elementText().length());
 }
 
 int InputHandler::caretPosition() const
