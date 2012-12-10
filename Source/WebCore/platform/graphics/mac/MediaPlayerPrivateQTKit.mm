@@ -1343,6 +1343,18 @@ void MediaPlayerPrivateQTKit::paintCurrentFrameInContext(GraphicsContext* contex
     paint(context, r);
 }
 
+#if PLATFORM(QT) && USE(QTKIT)
+static inline void swapBgrToRgb(uint32_t* pixel, uint32_t width, uint32_t height)
+{
+    uint32_t* end = pixel + (width * height);
+
+    while (pixel < end) {
+        *pixel = ((*pixel << 16) & 0xff0000) | ((*pixel >> 16) & 0xff) | (*pixel & 0xff00ff00);
+        ++pixel;
+    }
+}
+#endif
+
 void MediaPlayerPrivateQTKit::paint(GraphicsContext* context, const IntRect& r)
 {
     if (context->paintingDisabled() || m_hasUnsupportedTracks)
@@ -1359,15 +1371,17 @@ void MediaPlayerPrivateQTKit::paint(GraphicsContext* context, const IntRect& r)
     IntRect paintRect(IntPoint(0, 0), IntSize(r.width(), r.height()));
 
 #if PLATFORM(QT) && USE(QTKIT)
-    // In Qt, GraphicsContext is a QPainter so every transformations applied on it won't matter because here
-    // the video is rendered by QuickTime not by Qt.
-    CGContextRef cgContext = static_cast<CGContextRef>([[NSGraphicsContext currentContext] graphicsPort]);
-    CGContextSaveGState(cgContext);
-    CGContextSetInterpolationQuality(cgContext, kCGInterpolationLow);
-    CGContextTranslateCTM(cgContext, r.x(), r.y() + r.height());
-    CGContextScaleCTM(cgContext, scaleFactor.width(), scaleFactor.height());
-
-    newContext = [NSGraphicsContext currentContext];
+    NSBitmapImageRep *imageRep = [[NSBitmapImageRep alloc] initWithBitmapDataPlanes: NULL
+                                                            pixelsWide: paintRect.width()
+                                                            pixelsHigh: paintRect.height()
+                                                            bitsPerSample: 8
+                                                            samplesPerPixel: 4
+                                                            hasAlpha: YES
+                                                            isPlanar: NO
+                                                            colorSpaceName: NSCalibratedRGBColorSpace
+                                                            bytesPerRow: 4 * paintRect.width() // 32 bit per pixel.
+                                                            bitsPerPixel: 32];
+    newContext = [NSGraphicsContext graphicsContextWithBitmapImageRep: imageRep];
 #else
     GraphicsContextStateSaver stateSaver(*context);
     context->translate(r.x(), r.y() + r.height());
@@ -1430,7 +1444,12 @@ void MediaPlayerPrivateQTKit::paint(GraphicsContext* context, const IntRect& r)
     }
 #endif
 #if PLATFORM(QT) && USE(QTKIT)
-    CGContextRestoreGState(cgContext);
+    unsigned char* bitmap = [imageRep bitmapData];
+    swapBgrToRgb(reinterpret_cast<uint32_t*>(bitmap), paintRect.width(), paintRect.height());
+    QImage videoFrame(bitmap, paintRect.width(), paintRect.height(), QImage::Format_ARGB32);
+    QPainter* painter = context->platformContext();
+    painter->drawImage(QRect(r), videoFrame);
+    [imageRep release];
 #endif
     END_BLOCK_OBJC_EXCEPTIONS;
     [m_objcObserver.get() setDelayCallbacks:NO];
