@@ -484,7 +484,6 @@ int main(int argc, char* argv[])
     };
 
     gtk_init(&argc, &argv);
-    gst_init(&argc, &argv);
 
     GOptionContext *context = g_option_context_new(0);
     g_option_context_add_main_entries(context, commandLineOptions, 0);
