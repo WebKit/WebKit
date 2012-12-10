@@ -31,8 +31,10 @@
 
 namespace JSC { namespace Profiler {
 
-Bytecodes::Bytecodes(size_t id, const String& sourceCode, CodeBlockHash hash)
+Bytecodes::Bytecodes(
+    size_t id, const String& inferredName, const String& sourceCode, CodeBlockHash hash)
     : m_id(id)
+    , m_inferredName(inferredName)
     , m_sourceCode(sourceCode)
     , m_hash(hash)
 {
@@ -60,6 +62,7 @@ JSValue Bytecodes::toJS(ExecState* exec) const
     JSObject* result = constructEmptyObject(exec);
     
     result->putDirect(exec->globalData(), exec->propertyNames().bytecodesID, jsNumber(m_id));
+    result->putDirect(exec->globalData(), exec->propertyNames().inferredName, jsString(exec, m_inferredName));
     result->putDirect(exec->globalData(), exec->propertyNames().sourceCode, jsString(exec, m_sourceCode));
     result->putDirect(exec->globalData(), exec->propertyNames().hash, jsString(exec, String::fromUTF8(toCString(m_hash))));
     

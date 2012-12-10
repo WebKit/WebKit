@@ -60,6 +60,7 @@
     macro(id) \
     macro(ignoreCase) \
     macro(index) \
+    macro(inferredName) \
     macro(input) \
     macro(isArray) \
     macro(isPrototypeOf) \

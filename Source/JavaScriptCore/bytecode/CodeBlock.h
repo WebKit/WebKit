@@ -131,7 +131,8 @@ namespace JSC {
         JS_EXPORT_PRIVATE virtual ~CodeBlock();
         
         UnlinkedCodeBlock* unlinkedCodeBlock() const { return m_unlinkedCode.get(); }
-
+        
+        String inferredName() const;
         CodeBlockHash hash() const;
         String sourceCodeForTools() const; // Not quite the actual source we parsed; this will do things like prefix the source for a function with a reified signature.
         String sourceCodeOnOneLine() const; // As sourceCodeForTools(), but replaces all whitespace runs with a single space.

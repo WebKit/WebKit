@@ -36,12 +36,13 @@ namespace JSC { namespace Profiler {
 
 class Bytecodes {
 public:
-    Bytecodes(size_t id, const String& sourceCode, CodeBlockHash);
+    Bytecodes(size_t id, const String& inferredName, const String& sourceCode, CodeBlockHash);
     ~Bytecodes();
     
     void append(const Bytecode& bytecode) { m_bytecode.append(bytecode); }
     
     size_t id() const { return m_id; }
+    const String& inferredName() const { return m_inferredName; }
     const String& sourceCode() const { return m_sourceCode; }
     CodeBlockHash hash() const { return m_hash; }
     
@@ -58,6 +59,7 @@ public:
     
 private:
     size_t m_id;
+    String m_inferredName;
     String m_sourceCode;
     CodeBlockHash m_hash;
     Vector<Bytecode> m_bytecode;

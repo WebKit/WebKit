@@ -41,9 +41,10 @@ Database::~Database()
 {
 }
 
-Bytecodes* Database::addBytecodes(CodeBlockHash hash, const String& sourceCode)
+Bytecodes* Database::addBytecodes(
+    CodeBlockHash hash, const String& inferredName, const String& sourceCode)
 {
-    m_bytecodes.append(Bytecodes(m_bytecodes.size(), sourceCode, hash));
+    m_bytecodes.append(Bytecodes(m_bytecodes.size(), inferredName, sourceCode, hash));
     return &m_bytecodes.last();
 }
 
@@ -57,7 +58,8 @@ Bytecodes* Database::ensureBytecodesFor(CodeBlock* codeBlock)
     if (iter != m_bytecodesMap.end())
         return iter->value;
     
-    Bytecodes* result = addBytecodes(codeBlock->hash(), codeBlock->sourceCodeForTools());
+    Bytecodes* result = addBytecodes(
+        codeBlock->hash(), codeBlock->inferredName(), codeBlock->sourceCodeForTools());
     
     for (unsigned bytecodeIndex = 0; bytecodeIndex < codeBlock->instructions().size();) {
         out.reset();

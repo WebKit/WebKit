@@ -133,10 +133,11 @@ class Bytecode
 end
 
 class Bytecodes
-    attr_accessor :codeHash, :source, :machineInlineSites, :compilations
+    attr_accessor :codeHash, :inferredName, :source, :machineInlineSites, :compilations
     
     def initialize(json)
         @codeHash = json["hash"].to_s
+        @inferredName = json["inferredName"].to_s
         @source = json["sourceCode"].to_s
         @bytecode = {}
         json["bytecode"].each {
@@ -146,6 +147,28 @@ class Bytecodes
         }
         @machineInlineSites = {} # maps compilation to a set of origins
         @compilations = []
+    end
+    
+    def name(limit)
+        if to_s.size > limit
+            "\##{@codeHash}"
+        else
+            to_s
+        end
+    end
+    
+    def to_s
+        "#{@inferredName}\##{@codeHash}"
+    end
+    
+    def matches(pattern)
+        if pattern =~ /^#/
+            $~.post_match == @codeHash
+        elsif pattern =~ /#/
+            pattern == to_s
+        else
+            pattern == @inferredName or pattern == @codeHash
+        end
     end
     
     def each
@@ -318,7 +341,7 @@ class Compilation
     end
     
     def to_s
-        "\##{bytecode.codeHash}-#{compilationIndex}-#{engine}"
+        "#{bytecode}-#{compilationIndex}-#{engine}"
     end
 end
 
@@ -388,15 +411,7 @@ def center(str, chars)
 end
 
 def mayBeHash(hash)
-    hash =~ /^#/ or hash.size == 6
-end
-
-def getHash(hash)
-    if hash =~ /^#/
-        $~.post_match
-    else
-        hash
-    end
+    hash =~ /#/ or hash.size == 6
 end
 
 def sourceOnOneLine(source, limit)
@@ -410,7 +425,7 @@ end
 def summary(mode)
     remaining = screenWidth
     
-    hashCols = 11
+    hashCols = 20
     remaining -= hashCols + 1
     
     countCols = 9 * $engines.size
@@ -460,7 +475,7 @@ def summary(mode)
         b.totalMaxTopExecutionCount <=> a.totalMaxTopExecutionCount
     }.each {
         | bytecode |
-        print(center("#" + bytecode.codeHash, hashCols) + " " +
+        print(center(bytecode.name(hashCols), hashCols) + " " +
               center($engines.map {
                          | engine |
                          bytecode.maxTopExecutionCount(engine).to_s
@@ -507,7 +522,7 @@ def executeCommand(*commandArray)
         end
         $bytecodes.each {
             | bytecode |
-            if bytecode.codeHash == args[0]
+            if bytecode.matches(args[0])
                 puts bytecode.source
             end
         }
@@ -526,12 +541,12 @@ def executeCommand(*commandArray)
             pad += 1
         end
         
-        puts(center("Source Counts", countCols) + " " + center("Machine Counts", machineCols) +
-             (" " * pad) + center("Bytecode for #{hash}", screenWidth - pad - countCols - 1 - machineCols))
-        puts(center("Base/DFG", countCols) + " " + center("Base/DFG", countCols))
         $bytecodes.each {
             | bytecodes |
-            next if bytecodes.codeHash != hash
+            next unless bytecodes.matches(hash)
+            puts(center("Source Counts", countCols) + " " + center("Machine Counts", machineCols) +
+                 (" " * pad) + center("Bytecode for #{bytecodes}", screenWidth - pad - countCols - 1 - machineCols))
+            puts(center("Base/DFG", countCols) + " " + center("Base/DFG", countCols))
             bytecodes.each {
                 | bytecode |
                 if bytecode.shouldHaveCounts?
@@ -565,7 +580,7 @@ def executeCommand(*commandArray)
         
         $bytecodes.each {
             | bytecodes |
-            next if bytecodes.codeHash != hash
+            next unless bytecodes.matches(hash)
             
             # FIXME: print something useful to say more about which code block this is.
             
@@ -601,7 +616,7 @@ def executeCommand(*commandArray)
                 def originToPrintStack(origin)
                     (0...(origin.size - 1)).map {
                         | index |
-                        "bc\##{origin[index].bytecodeIndex} --> \##{origin[index + 1].bytecodes.codeHash}"
+                        "bc\##{origin[index].bytecodeIndex} --> #{origin[index + 1].bytecodes}"
                     }
                 end
                 
@@ -674,15 +689,13 @@ def executeCommand(*commandArray)
             engine = trueEngine
         end
         
-        hash = getHash(hash)
-        
         actualCountCols = 13
         sourceCountCols = 10 * $engines.size
         
         first = true
         $compilations.each {
             | compilation |
-            next if compilation.bytecode.codeHash != hash
+            next unless compilation.bytecode.matches(hash)
             next if engine and compilation.engine != engine
             next if compilationIndex and compilation.compilationIndex != compilationIndex
             

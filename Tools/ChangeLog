@@ -1,3 +1,17 @@
+2012-12-10  Filip Pizlo  <fpizlo@apple.com>
+
+        JSC profiling and debug dump code should use inferred names when possible
+        https://bugs.webkit.org/show_bug.cgi?id=104519
+
+        Reviewed by Oliver Hunt.
+
+        The format I'm using for referring to a code block is now name#hash. For example,
+        v8-crypto has something called bnpSquareTo#B5QFbU. The profiler allows you to use
+        either the hash, the inferred name, or the combined hash and full name when referring
+        to blocks.
+
+        * Scripts/display-profiler-output:
+
 2012-12-09  Filip Pizlo  <fpizlo@apple.com>
 
         Profiler should say things about OSR exits

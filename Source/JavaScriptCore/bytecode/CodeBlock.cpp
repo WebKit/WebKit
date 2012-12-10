@@ -64,6 +64,21 @@ namespace JSC {
 using namespace DFG;
 #endif
 
+String CodeBlock::inferredName() const
+{
+    switch (codeType()) {
+    case GlobalCode:
+        return "<global>";
+    case EvalCode:
+        return "<eval>";
+    case FunctionCode:
+        return jsCast<FunctionExecutable*>(ownerExecutable())->unlinkedExecutable()->inferredName().string();
+    default:
+        CRASH();
+        return String();
+    }
+}
+
 CodeBlockHash CodeBlock::hash() const
 {
     return CodeBlockHash(ownerExecutable()->source(), specializationKind());
@@ -95,7 +110,7 @@ String CodeBlock::sourceCodeOnOneLine() const
 
 void CodeBlock::dumpAssumingJITType(PrintStream& out, JITCode::JITType jitType) const
 {
-    out.print("#", hash(), ":[", RawPointer(this), "->", RawPointer(ownerExecutable()), ", ", jitType, codeType());
+    out.print(inferredName(), "#", hash(), ":[", RawPointer(this), "->", RawPointer(ownerExecutable()), ", ", jitType, codeType());
     if (codeType() == FunctionCode)
         out.print(specializationKind());
     out.print("]");

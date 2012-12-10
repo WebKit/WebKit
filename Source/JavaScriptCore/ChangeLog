@@ -1,3 +1,28 @@
+2012-12-10  Filip Pizlo  <fpizlo@apple.com>
+
+        JSC profiling and debug dump code should use inferred names when possible
+        https://bugs.webkit.org/show_bug.cgi?id=104519
+
+        Reviewed by Oliver Hunt.
+
+        This does as advertised: the profiler now knows the inferred name of all code blocks,
+        and all uses of CodeBlock::dump() dump it along with the hash.
+        
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::inferredName):
+        (JSC::CodeBlock::dumpAssumingJITType):
+        * bytecode/CodeBlock.h:
+        * profiler/ProfilerBytecodes.cpp:
+        (JSC::Profiler::Bytecodes::Bytecodes):
+        (JSC::Profiler::Bytecodes::toJS):
+        * profiler/ProfilerBytecodes.h:
+        (JSC::Profiler::Bytecodes::inferredName):
+        * profiler/ProfilerDatabase.cpp:
+        (JSC::Profiler::Database::addBytecodes):
+        (JSC::Profiler::Database::ensureBytecodesFor):
+        * profiler/ProfilerDatabase.h:
+        * runtime/CommonIdentifiers.h:
+
 2012-12-09  Filip Pizlo  <fpizlo@apple.com>
 
         Profiler should say things about OSR exits
