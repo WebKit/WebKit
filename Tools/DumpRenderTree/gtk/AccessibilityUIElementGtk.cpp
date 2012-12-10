@@ -37,6 +37,19 @@
 #include <wtf/text/WTFString.h>
 #include <wtf/unicode/CharacterNames.h>
 
+static String coreAttributeToAtkAttribute(JSStringRef attribute)
+{
+    size_t bufferSize = JSStringGetMaximumUTF8CStringSize(attribute);
+    GOwnPtr<gchar> buffer(static_cast<gchar*>(g_malloc(bufferSize)));
+    JSStringGetUTF8CString(attribute, buffer.get(), bufferSize);
+
+    String attributeString = String::fromUTF8(buffer.get());
+    if (attributeString == "AXPlaceholderValue")
+        return "placeholder-text";
+
+    return "";
+}
+
 static inline String roleToString(AtkRole role)
 {
     switch (role) {
@@ -764,7 +777,19 @@ void AccessibilityUIElement::setSelectedTextRange(unsigned location, unsigned le
 
 JSStringRef AccessibilityUIElement::stringAttributeValue(JSStringRef attribute)
 {
-    // FIXME: implement
+    if (!m_element)
+        return JSStringCreateWithCharacters(0, 0);
+
+    String atkAttributeName = coreAttributeToAtkAttribute(attribute);
+    if (atkAttributeName.isEmpty())
+        return JSStringCreateWithCharacters(0, 0);
+
+    for (GSList* atkAttributes = atk_object_get_attributes(ATK_OBJECT(m_element)); atkAttributes; atkAttributes = atkAttributes->next) {
+        AtkAttribute* atkAttribute = static_cast<AtkAttribute*>(atkAttributes->data);
+        if (!strcmp(atkAttribute->name, atkAttributeName.utf8().data()))
+            return JSStringCreateWithUTF8CString(atkAttribute->value);
+    }
+
     return JSStringCreateWithCharacters(0, 0);
 }
 

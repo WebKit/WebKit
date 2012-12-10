@@ -455,6 +455,10 @@ static AtkAttributeSet* webkitAccessibleGetAttributes(AtkObject* object)
     if (coreObject->isAccessibilityTable() && !coreObject->isDataTable())
         attributeSet = addToAtkAttributeSet(attributeSet, "layout-guess", "true");
 
+    String placeholder = coreObject->placeholderValue();
+    if (!placeholder.isEmpty())
+        attributeSet = addToAtkAttributeSet(attributeSet, "placeholder-text", placeholder.utf8().data());
+
     return attributeSet;
 }
 
