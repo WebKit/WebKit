@@ -50,7 +50,6 @@ Bug(GTK) http/tests/security/resources/drag-drop-allowed.html [ Skip ]
 # [GTK] Implement drag and drop support in WebKit2
 # https://bugs.webkit.org/show_bug.cgi?id=63706
 # Implement EditingCallbacks deletegates in the WebKitTestRunner
-webkit.org/b/63706 accessibility/editable-webarea-context-menu-point.html [ Failure ]
 webkit.org/b/63706 editing/pasteboard/4947130.html [ Failure ]
 webkit.org/b/63706 editing/pasteboard/dataTransfer-setData-getData.html [ Failure Timeout ]
 webkit.org/b/63706 editing/pasteboard/drag-and-drop-image-contenteditable.html [ Failure Timeout ]

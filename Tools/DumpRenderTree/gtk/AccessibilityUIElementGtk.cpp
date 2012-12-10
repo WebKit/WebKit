@@ -478,11 +478,13 @@ double AccessibilityUIElement::height()
 
 double AccessibilityUIElement::clickPointX()
 {
+    // Note: This is not something we have in ATK.
     return 0.f;
 }
 
 double AccessibilityUIElement::clickPointY()
 {
+    // Note: This is not something we have in ATK.
     return 0.f;
 }
 
