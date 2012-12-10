@@ -1,3 +1,15 @@
+2012-12-10  Yi Shen  <max.hong.shen@gmail.com>
+
+        Keyboard caret movement in textarea with RTL Override Character can make tab unresponsive
+        https://bugs.webkit.org/show_bug.cgi?id=103067
+
+        Reviewed by Ryosuke Niwa.
+
+        New test for moving caret in textarea with RTL override character causes crash.
+
+        * editing/selection/move-by-character-crash-test-textarea-expected.txt: Added.
+        * editing/selection/move-by-character-crash-test-textarea.html: Added.
+
 2012-12-10  Dirk Pranke  <dpranke@chromium.org>
 
         nrwt: use the default logic for skipping platform-specific tests for chromium
